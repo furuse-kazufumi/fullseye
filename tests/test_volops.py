@@ -558,3 +558,162 @@ def test_tiled_map_fail_closed_contracts():
     r = _rng(1).random((5, 3, 3))
     assert np.array_equal(volops.vol_tiled_map(r, lambda s: s, tile=99), r)
     assert np.array_equal(volops.vol_tiled_map(r, lambda s: s, tile=1, overlap=3), r)
+
+
+# --------------------------------------------------------------------------- #
+# stereology / morphometry                                                    #
+#
+# ★これらは「HALCON がボクセル型を持たない」ことを理由に足した族なので、正しさの
+#   根拠は**幾何が保証する真値**しかない。だから全部、真値の分かる形(球・立方体・
+#   トーラス・既知 sigma の白色雑音)で検査する。
+# --------------------------------------------------------------------------- #
+
+def _spheres(shape=(64, 64, 64), spec=((16, 16, 16, 4), (16, 48, 48, 7),
+                                       (48, 16, 48, 10))):
+    """直径が既知の球を互いに離して置いた体積と、その仕様を返す。"""
+    zz, yy, xx = np.mgrid[0:shape[0], 0:shape[1], 0:shape[2]]
+    m = np.zeros(shape)
+    for cz, cy, cx, r in spec:
+        m[(zz - cz) ** 2 + (yy - cy) ** 2 + (xx - cx) ** 2 <= r * r] = 1.0
+    return m, spec
+
+
+def test_vol_local_std_recovers_a_known_sigma_within_its_error_bound():
+    """既知の sigma を入れたら、その値が返ること + 誤差が閉形式と合うこと。
+
+    1 体素あたりの相対標準誤差は ``1/sqrt(2(n-1))``、``n = size**3``。実測が理論の
+    1.2 倍以内に収まることまで見る(白色雑音なので、それ以上ずれたら推定が壊れている)。
+    """
+    rng = _rng(20260916)
+    for sigma_true in (0.01, 0.05):
+        v = 0.5 + rng.normal(0, sigma_true, (48, 48, 48))
+        for k in (3, 5, 9):
+            s = volops.vol_local_std(v, size=k)
+            assert abs(float(s.mean()) - sigma_true) < 0.02 * sigma_true, \
+                f"sigma を復元できていない: true={sigma_true} k={k} est={s.mean():.5g}"
+            predicted = 1.0 / np.sqrt(2.0 * (k ** 3 - 1))
+            measured = float(s.std() / s.mean())
+            assert measured < 1.2 * predicted, \
+                f"誤差が閉形式より大きい: k={k} 実測={measured:.4g} 理論={predicted:.4g}"
+
+
+def test_vol_local_std_is_exactly_zero_on_a_uniform_block_at_any_level():
+    """一様なブロックでは、明るさをどこに置いても偽のテクスチャが出ないこと。
+
+    ``E[x^2] - E[x]^2`` をそのまま計算すると、値が 0 から離れているほど桁落ちが
+    大きくなり、一様面に雑音模様が残る。平均を引いてから分散を取っているのが効いて
+    いるかを、**輝度 1000 まで**振って確かめる。
+    """
+    for level in (0.0, 0.5, 1.0, 1000.0):
+        s = volops.vol_local_std(np.full((24, 24, 24), level), size=5)
+        assert float(s.max()) == 0.0, f"一様ブロック(c={level})に偽の分散: {s.max():.3e}"
+
+
+def test_vol_local_thickness_returns_the_exact_diameter_and_never_leaks():
+    """球の直径をそのまま返し、前景の外へ 1 体素も漏らさないこと。
+
+    ★漏れの検査が要る理由: 離散の球で膨らませると境界の外の体素まで塗ってしまう。
+    中心の値は正しいままなので**中心だけ見る検査では捕まらず**、粒度分布の生存率が
+    1.0 を超えて初めて気づいた(2026-09-16)。
+    """
+    m, spec = _spheres()
+    th = volops.vol_local_thickness(m)
+    for cz, cy, cx, r in spec:
+        assert abs(th[cz, cy, cx] - 2 * r) < 1e-9, \
+            f"直径が合わない: 真={2 * r} 推定={th[cz, cy, cx]:.4g}"
+    leaked = int(((th > 0.0) & (m == 0.0)).sum())
+    assert leaked == 0, f"前景の外に {leaked} 体素漏れている"
+    # 球の中は「その球の直径」で一様に埋まる(局所肉厚の定義そのもの)
+    vals = np.unique(th[m > 0])
+    assert sorted(float(v) for v in vals) == [2.0 * r for _, _, _, r in
+                                              sorted(spec, key=lambda t: t[3])], \
+        f"球ごとに一様でない: {vals}"
+
+
+def test_vol_local_thickness_is_millimetre_aware():
+    """spacing を渡すと体素でなくミリで返すこと(異方ボクセルでも球はミリの球)。"""
+    m, _ = _spheres(shape=(48, 48, 48), spec=((24, 24, 24, 8),))
+    vox = volops.vol_local_thickness(m)
+    mm = volops.vol_local_thickness(m, spacing=(0.5, 0.5, 0.5))
+    assert abs(float(mm[24, 24, 24]) - 0.5 * float(vox[24, 24, 24])) < 1e-9, \
+        "spacing が効いていない(ミリに換算されていない)"
+
+
+def test_vol_euler_number_splits_tunnels_from_cavities():
+    """位相が分かっている 3 形状で、b0 / b1 / b2 が別々に当たること。
+
+    ``chi`` ひとつでは「貫通孔だらけの発泡体」と「密閉気泡だらけの発泡体」を
+    区別できない —— そこを分けるのがこの op の存在理由なので、両方作って確かめる。
+    """
+    solid = np.zeros((40, 40, 40))
+    solid[10:30, 10:30, 10:30] = 1.0
+    r = volops.vol_euler_number(solid)
+    assert (r["objects"], r["tunnels"], r["cavities"]) == (1, 0, 0), r
+
+    shell = solid.copy()
+    shell[15:25, 15:25, 15:25] = 0.0                      # 密閉気泡 1 個
+    r = volops.vol_euler_number(shell)
+    assert (r["objects"], r["tunnels"], r["cavities"]) == (1, 0, 1), r
+
+    zz, yy, xx = np.mgrid[0:48, 0:48, 0:48]               # 貫通孔 1 個
+    q = np.sqrt((yy - 24.0) ** 2 + (xx - 24.0) ** 2) - 14.0
+    torus = ((q ** 2 + (zz - 24.0) ** 2) <= 25.0).astype(float)
+    r = volops.vol_euler_number(torus)
+    assert (r["objects"], r["tunnels"], r["cavities"]) == (1, 1, 0), r
+
+    with pytest.raises(ValueError, match="connectivity"):
+        volops.vol_euler_number(solid, connectivity=7)
+
+
+def test_vol_granulometry_recovers_the_sizes_and_their_volume_fractions():
+    """既知の 3 つの球径と、その体積分率をそのまま返すこと。
+
+    ★生存率が 1.0 から 0.0 まで**通り切る**ことも見る: 半径列を最大厚さで止めると
+    一番太い特徴の質量が一度も消えず、分布から丸ごと落ちる(実測で体積の 71% が
+    欠け、平均径が 18.0 のところ 15.1 になった)。
+    """
+    m, spec = _spheres()
+    g = volops.vol_granulometry(m)
+    th = volops.vol_local_thickness(m)
+    fg = th[m > 0]
+    assert abs(g["mean_size"] - float(fg.mean())) < 1e-9
+    assert g["surviving_fraction"][0] == 1.0, "生存率が 1.0 から始まっていない"
+    assert g["surviving_fraction"][-1] == 0.0, \
+        "生存率が 0 まで下がっていない(一番太い特徴の質量が落ちている)"
+    # 密度は既知の 3 つの直径にだけ立ち、その高さは体積分率に一致する
+    sizes = np.asarray(g["sizes"][:-1])
+    dens = np.asarray(g["density"])
+    peaks = {float(s): float(d) for s, d in zip(sizes, dens) if d > 1e-9}
+    want = {}
+    for _, _, _, r in spec:
+        want[2.0 * r] = float((fg == 2.0 * r).sum()) / fg.size
+    assert set(peaks) == set(want), f"径が合わない: got={sorted(peaks)} want={sorted(want)}"
+    for s in want:
+        assert abs(peaks[s] - want[s]) < 1e-9, f"直径 {s} の体積分率が合わない"
+
+
+def test_vol_orientation_coherence_separates_one_direction_from_none():
+    """一方向の構造は 1 に近く、等方雑音は低く、一様ブロックはちょうど 0。
+
+    ★一様ブロックの検査が肝: 固有値分解は丸め屑からでも「向き」を作れてしまうので、
+    テンソルの跡に相対床を置いていないと、明るさを変えただけで値が動く。
+    """
+    zz, yy, xx = np.mgrid[0:40, 0:40, 0:40]
+    layered = 0.5 + 0.4 * np.sin(2.0 * np.pi * xx / 8.0)      # x にだけ変化
+    assert float(np.median(volops.vol_orientation_coherence(layered))) > 0.9
+
+    iso = _rng(7).normal(0.5, 0.05, (40, 40, 40))
+    assert float(np.median(volops.vol_orientation_coherence(iso))) < 0.5
+
+    for level in (0.0, 0.5, 1.0, 1000.0):
+        o = volops.vol_orientation_coherence(np.full((24, 24, 24), level))
+        assert float(o.max()) == 0.0, f"一様ブロック(c={level})で向きが立った: {o.max():.3e}"
+
+
+def test_the_stereology_ops_are_fail_closed_on_a_non_volume():
+    """2-D を渡したら黙って通さないこと(時間軸を z と読み違える事故を型で止める)。"""
+    flat = np.zeros((16, 16))
+    with pytest.raises(ValueError, match="D, H, W"):
+        volops.vol_local_std(flat)
+    with pytest.raises(ValueError, match="D, H, W"):
+        volops.vol_orientation_coherence(flat)

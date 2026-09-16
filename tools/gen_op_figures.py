@@ -695,6 +695,11 @@ def _short(v, n: int = 40) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--only", default="",
+                    help="この op だけ描き直して manifest に混ぜ戻す(カンマ区切り)。"
+                         "op を 1 本直しただけで全数 50 分を回さずに済ませるため。"
+                         "★整合性のために manifest の他の行はそのまま残すので、"
+                         "**登録簿を増減させたときは使わない**(全数で回すこと)。")
     ap.add_argument("--out", default=FIG_DIR)
     a = ap.parse_args()
 
@@ -705,7 +710,15 @@ def main() -> int:
     base = canonical_image()
     rows, stats = {}, {"ok": 0, "unreachable": 0, "failed": 0, "domain": 0, "empty": 0}
     t0 = time.time()
-    todo = list(OPS.REGISTRY)[: a.limit or None]
+    only = {n.strip() for n in a.only.split(",") if n.strip()}
+    if only:
+        known = {o.name for o in OPS.REGISTRY}
+        missing = sorted(only - known)
+        if missing:
+            raise SystemExit("--only に登録簿に無い op: %s" % ", ".join(missing))
+        todo = [o for o in OPS.REGISTRY if o.name in only]
+    else:
+        todo = list(OPS.REGISTRY)[: a.limit or None]
     for op in todo:
         pre = PREFIX_OP.get(op.name, PREFIX.get(op.in_sort))
         if op.name in DOMAIN_MISMATCH:
@@ -778,11 +791,27 @@ def main() -> int:
                                                    str(exc)[:160])}
             stats["failed"] += 1
 
+    if only:
+        # 既存 manifest に混ぜ戻す。混ぜたあとの **全行**から数え直さないと、
+        # 集計だけが「今回描いた数本」になって台帳が嘘をつく。
+        mpath = os.path.join(a.out, "figures.json")
+        if os.path.exists(mpath):
+            with open(mpath, encoding="utf-8") as f:
+                prev = json.load(f)
+            merged = dict(prev.get("ops") or {})
+            merged.update(rows)
+            rows = merged
+        stats = {k: 0 for k in ("ok", "unreachable", "failed", "domain", "empty")}
+        for r in rows.values():
+            st = r.get("status")
+            if st in stats:
+                stats[st] += 1
+
     n_sw = sum(1 for r in rows.values() if r.get("extra", {}).get("a") or r.get("extra", {}).get("b"))
     n_gif = sum(1 for r in rows.values() if r.get("extra", {}).get("gif"))
     n_ch = sum(1 for r in rows.values() if r.get("extra", {}).get("chain"))
     stats.update({"with_sweep": n_sw, "with_gif": n_gif, "with_chain": n_ch})
-    if not a.limit:
+    if not a.limit and not only:
         # 全数生成のときだけ、manifest に無い古い図を消す(形式を PNG → JPEG に変えた
         # ときの残骸が 2026-09-07 に 1,900 枚残っていた)。inputs/ と figures.json は残す。
         keep = {"figures.json"}
@@ -795,7 +824,7 @@ def main() -> int:
             if os.path.isfile(fp) and f not in keep:
                 os.remove(fp)
                 stats["pruned"] = stats.get("pruned", 0) + 1
-    out = {"generated_for": len(todo), "size": SIZE, "stats": stats, "ops": rows}
+    out = {"generated_for": len(rows), "size": SIZE, "stats": stats, "ops": rows}
     with open(os.path.join(a.out, "figures.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1, sort_keys=True)
     print("[figures] %d op: 図あり %d / 型が届かない %d / 定義域が合わない %d / 空を返した %d / 落ちた %d  (%.1f 秒)"

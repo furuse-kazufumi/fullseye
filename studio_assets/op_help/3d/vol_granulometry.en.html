@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_granulometry — 3D <code style="color:#22d3bf">feature</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_granulometry(vol_binary, radii=None, spacing=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import volops; volops.vol_granulometry(vol_binary, radii=None, spacing=None)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;vol_granulometry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.vol_granulometry(...)</code> returns **only the declared out type <code style="color:#22d3bf">measurement</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.vol_granulometry.raw(...)</code> or call <code style="color:#22d3bf">volops.vol_granulometry</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">中央径</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Pore / particle <b>size distribution</b> of a binary volume (opening series).</p>
+<p>Opening by a ball of radius `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> deletes every feature narrower than </code><code style="color:#22d3bf">2r</code>`.</p>
+<p>Tracking the surviving volume fraction as `<code style="color:#22d3bf">r</code>` grows gives the cumulative</p>
+<p>size distribution `<code style="color:#22d3bf">F(r)</code>`; its negative increment is the size density — the</p>
+<p>fraction of material that sits in features of that size.  This is Matheron&#x27;s</p>
+<p>granulometry, the measurement behind every &quot;pore size distribution&quot; plot in</p>
+<p>casting, foam and powder work.</p>
+<p>Computed from the local-thickness volume rather than by repeated openings:</p>
+<p>the two agree exactly (a voxel survives the opening of radius `<code style="color:#22d3bf">r</code>` iff its</p>
+<p>local thickness is at least `<code style="color:#22d3bf">2r</code>`) and one distance transform replaces N</p>
+<p>morphological passes.</p>
+<p>*radii* are in the units of *spacing* (millimetres when *spacing* is given,</p>
+<p>voxels otherwise); leave it `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">min(spacing)</code>`-steps up to the</p>
+<p>largest thickness present.  Returns ``{&quot;radii&quot;: [...], &quot;surviving_fraction&quot;:</p>
+<p>[...], &quot;density&quot;: [...], &quot;mean_size&quot;: float, &quot;d50&quot;: float, &quot;units&quot;: &quot;mm&quot;|&quot;voxel&quot;}``</p>
+<p>where sizes are <b>diameters</b> (`<code style="color:#22d3bf">2r</code>`), because that is what a pore diameter</p>
+<p>means.</p>
+<p><b>Applicability.</b> (1) A distribution is only as good as the threshold that</p>
+<p>made the binary volume — report it.  (2) Features touching the volume border</p>
+<p>are truncated and bias the distribution downward; crop or state it.</p>
+<p>(3) `<code style="color:#22d3bf">d50</code>` is interpolated between the two bracketing radii, so it is no</p>
+<p>finer than the radius step.</p>
+<p>HALCON has no granulometry operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:ct_porosity_and_fibre_morphometry">ct_porosity_and_fibre_morphometry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/ct_porosity_and_fibre_morphometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">measurement</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">feature</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a> · <a style="color:#22d3bf" href="op3d:curvature_maps">curvature_maps</a> · <a style="color:#22d3bf" href="op3d:edt_jfa">edt_jfa</a> · <a style="color:#22d3bf" href="op3d:vol_frangi">vol_frangi</a> · <a style="color:#22d3bf" href="op3d:vol_local_std">vol_local_std</a> · <a style="color:#22d3bf" href="op3d:vol_local_thickness">vol_local_thickness</a> · <a style="color:#22d3bf" href="op3d:vol_orientation_coherence">vol_orientation_coherence</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volops.py — 3D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

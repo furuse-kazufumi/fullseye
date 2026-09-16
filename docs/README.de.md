@@ -9,7 +9,7 @@
 
 *Sechs Akte, ausschließlich echte Operator-Ausgaben: Kantenorientierung, Blob-Auswahl, Subpixel-Messung, SDF zu Mesh, LiDAR-Clustering, Objektiv-Defokus.*
 
-**Fullseye** (Arbeitsname imgevolve) ist ein Werkzeug auf HALCON-/HDevelop-Niveau: eine numpy-native Bibliothek von Bildverarbeitungs-Operatoren, dazu eine visuelle Pipeline-Entwurfsumgebung im Stil von HDevelop (Fullseye Studio) und eine ausführende Laufzeitumgebung (FullseyeEngine). Es umfasst rund **902** Operatoren (gezählt in der Registry), bietet für **979/2313** tatsächliche HALCON-Operatoren eine genuine (wirklich gleichwertige) Implementierung und deckt 48 Kategorien ab.
+**Fullseye** (Arbeitsname imgevolve) ist ein Werkzeug auf HALCON-/HDevelop-Niveau: eine numpy-native Bibliothek von Bildverarbeitungs-Operatoren, dazu eine visuelle Pipeline-Entwurfsumgebung im Stil von HDevelop (Fullseye Studio) und eine ausführende Laufzeitumgebung (FullseyeEngine). Es umfasst rund **905** Operatoren (gezählt in der Registry), bietet für **979/2313** tatsächliche HALCON-Operatoren eine genuine (wirklich gleichwertige) Implementierung und deckt 48 Kategorien ab.
 
 ★ **Selten für eine Bildverarbeitungsbibliothek, bringt Fullseye auch virtuelles optisches Design mit** — dünne/dicke Linsen, Raytracing, Seidel-Aberrationen und PSF/MTF, dazu eine Damped-Least-Squares-Optimierung (Levenberg–Marquardt) der Linsenverordnung selbst (`optimize_lens`). Man kann **das abbildende System entwerfen und sein Bild dann mit den obigen Operatoren prüfen — durchgängig**, ein Unterscheidungsmerkmal für Halbleiter und Präzisionsmesstechnik.
 
@@ -63,16 +63,16 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**1,948 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **49 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**1,956 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **49 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 902/902, typisiertes Ledger 1025/1037, Fassade `fullseye.<name>` 547/1122 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 905/905, typisiertes Ledger 1030/1042, Fassade `fullseye.<name>` 552/1127 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 1953 Notizen verweisen **1913** auf mindestens ein lauffähiges Beispiel (40 ohne), **1934** haben einen Nutzungsabschnitt ab 120 Zeichen (19 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 1953.
+**Gemessener Inhalt**: von 1961 Notizen verweisen **1921** auf mindestens ein lauffähiges Beispiel (40 ohne), **1942** haben einen Nutzungsabschnitt ab 120 Zeichen (19 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 1961.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
-| `2d` | 919 | [INDEX](ops/2d/INDEX.md) |
-| `3d` | 358 | [INDEX](ops/3d/INDEX.md) |
+| `2d` | 922 | [INDEX](ops/2d/INDEX.md) |
+| `3d` | 363 | [INDEX](ops/3d/INDEX.md) |
 | `optics` | 127 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
@@ -204,7 +204,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Dokumentkarte — alle 160
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 1,948 Operator-Notizen und 49 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 1,956 Operator-Notizen und 49 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 

@@ -105,8 +105,14 @@ EXCLUDED = {
     "tools/gen_sample_images.py": "サンプル素材の再生成。入力が変わらない限り回す必要がない。",
     "tools/gen_sample_3d.py": "3-D サンプル素材の再生成。入力が変わらない限り回す必要がない。",
     "tools/gen_itokawa_turntable.py": "実データのターンテーブル動画。素材が変わらない限り不要。",
-    "tools/gen_op_figures.py": ("op ノートの図を描く。画像なので回すたびにバイトが変わり、"
-                                "drift 検査にできない(図が古いかは目で見る)。"),
+    "tools/gen_op_figures.py": ("op ノートの図を描く。★**op を足したら、これを先に回してから "
+                                "regen_all を回すこと** —— ノートは図を埋め込むので依存がある。"
+                                "逆順でやると test_op_figures 3 本と "
+                                "test_opdocs::test_notes_match_generator_no_drift が落ち、"
+                                "「両方回したのに落ちる」ので回し忘れと区別がつかない(2026-09-16 に実測)。"
+                                "ここから外してあるのは図のバイトが非決定だからだが、実測では "
+                                "2,817 本中 44 本しか変わらず、非決定なのは tb_project と dots_image の "
+                                "2 本だけだった。"),
     "tools/gen_sample_thumbs.py": "サンプル画像のサムネ。同上(画像)。",
     "tools/build_exhibits.py": ("展示の素材づくり(図の再描画を伴う)。目次側の生成は "
                                 "gen_wingpoc_gallery / gen_op_catalog が担う。"),

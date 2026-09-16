@@ -1,4 +1,4 @@
-# 3D operator help — 358 ops in 66 categories
+# 3D operator help — 363 ops in 66 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -65,9 +65,9 @@
 
 [canny3d](edges/canny3d.md) · [edge_points](edges/edge_points.md) · [gradient3d](edges/gradient3d.md) · [link_edges](edges/link_edges.md) · [log_zero_crossings](edges/log_zero_crossings.md)
 
-### feature (9)
+### feature (14)
 
-[curvature_maps](feature/curvature_maps.md) · [edt_jfa](feature/edt_jfa.md) · [hessian3d](feature/hessian3d.md) · [sobel3d](feature/sobel3d.md) · [vol_frangi](feature/vol_frangi.md) · [vol_gradient_magnitude](feature/vol_gradient_magnitude.md) · [vol_hessian_blobness](feature/vol_hessian_blobness.md) · [vol_local_maxima](feature/vol_local_maxima.md) · [vol_sato](feature/vol_sato.md)
+[curvature_maps](feature/curvature_maps.md) · [edt_jfa](feature/edt_jfa.md) · [hessian3d](feature/hessian3d.md) · [sobel3d](feature/sobel3d.md) · [vol_euler_number](feature/vol_euler_number.md) · [vol_frangi](feature/vol_frangi.md) · [vol_gradient_magnitude](feature/vol_gradient_magnitude.md) · [vol_granulometry](feature/vol_granulometry.md) · [vol_hessian_blobness](feature/vol_hessian_blobness.md) · [vol_local_maxima](feature/vol_local_maxima.md) · [vol_local_std](feature/vol_local_std.md) · [vol_local_thickness](feature/vol_local_thickness.md) · [vol_orientation_coherence](feature/vol_orientation_coherence.md) · [vol_sato](feature/vol_sato.md)
 
 ### feature_register (7)
 

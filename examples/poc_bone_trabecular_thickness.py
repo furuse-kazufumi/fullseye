@@ -703,10 +703,27 @@ def section_tool_gaps() -> None:
     print("6) 道具の穴(この PoC で使ってみて)")
     print("=" * 78)
     m = np.zeros((40, 60)); m[15:26, 5:55] = 1.0
-    # (a) 2-D の局所厚さ(最大内接円)op が無い —— 3-D には medial_axis_points がある
-    assert not hasattr(fs.ledger, "local_thickness") and "local_thickness" not in fs.op_names()
-    print("  (a) 2-D の局所厚さ(Hildebrand の最大内接円)が公開経路に無い。この PoC は"
-          "\n      blob_distance を半径ごとに回して自前で組んだ(3-D は medial_axis_points が近い)。")
+    # (a) 【2026-09-17 塞がった】2-D の局所厚さ op を registry に足した(`local_thickness`)。
+    #     3-D も `fs.vol_local_thickness` が入った(`vol_wall_thickness` は線分プローブで別物)。
+    #     ★穴が塞がったので、所見を「無い」から「**規約が 1 画素ずれる**」に書き換える。
+    assert "local_thickness" in fs.op_names()
+    band = m > 0.5
+    mine = local_thickness(band)                       # この PoC の規約: 直径 = 2r - 1
+    r_cap = 12
+    theirs = np.asarray(fs.apply(m, "local_thickness", a=1.0, b=0.5)) * (2 * r_cap)
+    true_px = int(band[:, 30].sum())                   # 帯の本当の画素幅
+    d_mine, d_theirs = float(mine[20, 30]), float(theirs[20, 30])
+    assert abs(d_theirs - d_mine - 1.0) < 1e-9, (d_mine, d_theirs)
+    # 漏れないこと(前景の外は 0)—— registry 版は 2026-09-17 にここを直した
+    assert not ((theirs > 0) & ~band).any()
+    print("  (a) 【塞がった】`local_thickness` が registry に入った"
+          "(3-D は `fs.vol_local_thickness`)。"
+          "\n      ただし**規約が 1 画素ちがう**: 幅 %d px の帯で、この PoC の"
+          "自前実装は %.0f px(= 2r-1、画素を数える流儀)、"
+          "\n      registry 版は %.0f px(= 2r、内接円の直径そのもの。"
+          "BoneJ / ImageJ の Local Thickness と同じ)。"
+          "\n      どちらが正しいかでなく**どちらを報告しているか**の問題なので、"
+          "数字には必ず規約を添えること。" % (true_px, d_mine, d_theirs))
     # (b) 進化 op の距離変換は最大値で正規化 → 画素単位は ledger.blob_distance だけ
     dn = np.asarray(fs.apply(m, "dist_transform"))
     assert abs(float(dn.max()) - 1.0) < 1e-9

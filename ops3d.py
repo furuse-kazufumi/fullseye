@@ -157,6 +157,14 @@ _CATALOG = {
         # volops の Hessian 固有値ベース特徴(2026-08-31 登録。実装は既存・api 公開済み
         # だったが _CATALOG に無く発見不能だった)。医用 CT の血管/気道・産業 CT の欠陥
         ("vol_frangi", "volops", ["voxel"], "voxel", False),
+        # 形態計測(ステレオロジー)—— HALCON は voxel 型を持たないので全部こちら側。
+        # 構造テンソルだけは HALCON も内部で使っているが(coherence_enhancing_diff)、
+        # 向きも異方度も**返さない**。測った量を返すのがこちらの差。
+        ("vol_local_std", "volops", ["voxel"], "voxel", False),
+        ("vol_local_thickness", "volops", ["voxel"], "voxel", False),
+        ("vol_orientation_coherence", "volops", ["voxel"], "voxel", False),
+        ("vol_euler_number", "volops", ["voxel"], "measurement", False),
+        ("vol_granulometry", "volops", ["voxel"], "measurement", False),
         ("vol_sato", "volops", ["voxel"], "voxel", False),
         ("vol_hessian_blobness", "volops", ["voxel"], "voxel", False),
         ("vol_gradient_magnitude", "volops", ["voxel"], "voxel", False),
@@ -855,6 +863,11 @@ RESULT_ADAPTERS = {
     "gicp": lambda r: (r["R"], r["t"]) if isinstance(r, dict) else r,
     "rigid_flow": lambda r: (r["R"], r["t"]) if isinstance(r, dict) else r,
     "vol_label": lambda r: r[0],                    # (labels, n)
+    # dict を返す 2 本は、台帳の "measurement" 契約(スカラー)に合わせて代表値を出す。
+    # 全部の数字が要るときは ops3d.get(name)(...) か fullseye の facade で直に呼ぶ
+    # (surface_residual -> pv と同じ作法)。
+    "vol_euler_number": lambda r: float(r["euler"]),      # chi(b0-b1+b2)
+    "vol_granulometry": lambda r: float(r["d50"]),        # 中央径
     # grid_coords は (座標場, extent) を返す。宣言型は座標場そのもの。extent は
     # world へ戻すための補助情報なので、要る呼び手は素の関数を直接呼ぶ
     # (vol_crop_domain / distance_ridge と同じ扱い)。

@@ -1,10 +1,10 @@
 {
- "n_ops": 1944,
+ "n_ops": 1952,
  "tiers": {
   "color": 12,
-  "ledger": 1025,
+  "ledger": 1030,
   "nary": 17,
-  "registry": 890
+  "registry": 893
  },
  "sorts": [
   "angle",
@@ -12705,6 +12705,19 @@
    ]
   },
   {
+   "name": "vol_euler_number",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "measurement",
+   "category": "feature",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "voxel"
+   ]
+  },
+  {
    "name": "vol_fft_bandpass",
    "halcon": "",
    "in_sort": "voxel",
@@ -12787,6 +12800,19 @@
    "halcon": "",
    "in_sort": "voxel",
    "out_sort": "voxel",
+   "category": "feature",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "voxel"
+   ]
+  },
+  {
+   "name": "vol_granulometry",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "measurement",
    "category": "feature",
    "tier": "ledger",
    "ledger": "ops3d",
@@ -12942,6 +12968,45 @@
    "halcon": "",
    "in_sort": "voxel",
    "out_sort": "points",
+   "category": "feature",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "voxel"
+   ]
+  },
+  {
+   "name": "vol_local_std",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "voxel",
+   "category": "feature",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "voxel"
+   ]
+  },
+  {
+   "name": "vol_local_thickness",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "voxel",
+   "category": "feature",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "voxel"
+   ]
+  },
+  {
+   "name": "vol_orientation_coherence",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "voxel",
    "category": "feature",
    "tier": "ledger",
    "ledger": "ops3d",
@@ -16583,6 +16648,14 @@
    "tier": "registry"
   },
   {
+   "name": "local_thickness",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
    "name": "local_threshold",
    "halcon": "local_threshold",
    "in_sort": "image",
@@ -18225,6 +18298,22 @@
   {
    "name": "std_filter",
    "halcon": "deviation_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "structure_tensor_coherence",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "structure_tensor_orientation",
+   "halcon": null,
    "in_sort": "image",
    "out_sort": "image",
    "category": "texture",

@@ -1,4 +1,4 @@
-# 2D operator help — 919 ops in 49 categories
+# 2D operator help — 922 ops in 49 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/2d/<category>/<op>.md` を走査。
 
@@ -130,9 +130,9 @@
 
 [identity](misc/identity.md)
 
-### morphology (33)
+### morphology (34)
 
-[bothat](morphology/bothat.md) · [cv_blackhat](morphology/cv_blackhat.md) · [cv_close](morphology/cv_close.md) · [cv_dilate](morphology/cv_dilate.md) · [cv_erode](morphology/cv_erode.md) · [cv_gradient](morphology/cv_gradient.md) · [cv_open](morphology/cv_open.md) · [cv_tophat](morphology/cv_tophat.md) · [f2_gray_inside](morphology/f2_gray_inside.md) · [f2_gray_skeleton](morphology/f2_gray_skeleton.md) · [gclose](morphology/gclose.md) · [gdilate](morphology/gdilate.md) · [gerode](morphology/gerode.md) · [gopen](morphology/gopen.md) · [gray_bothat](morphology/gray_bothat.md) · [gray_closing](morphology/gray_closing.md) · [gray_closing_rect](morphology/gray_closing_rect.md) · [gray_closing_shape](morphology/gray_closing_shape.md) · [gray_dilation](morphology/gray_dilation.md) · [gray_dilation_shape](morphology/gray_dilation_shape.md) · [gray_erosion](morphology/gray_erosion.md) · [gray_erosion_shape](morphology/gray_erosion_shape.md) · [gray_opening](morphology/gray_opening.md) · [gray_opening_rect](morphology/gray_opening_rect.md) · [gray_opening_shape](morphology/gray_opening_shape.md) · [gray_tophat](morphology/gray_tophat.md) · [morph_grad](morphology/morph_grad.md) · [sk_area_opening](morphology/sk_area_opening.md) · [tophat](morphology/tophat.md) · [xsk2_diameter_opening](morphology/xsk2_diameter_opening.md) · [xsk2_reconstruction](morphology/xsk2_reconstruction.md) · [xsk3_area_closing](morphology/xsk3_area_closing.md) · [xsk3_diameter_closing](morphology/xsk3_diameter_closing.md)
+[bothat](morphology/bothat.md) · [cv_blackhat](morphology/cv_blackhat.md) · [cv_close](morphology/cv_close.md) · [cv_dilate](morphology/cv_dilate.md) · [cv_erode](morphology/cv_erode.md) · [cv_gradient](morphology/cv_gradient.md) · [cv_open](morphology/cv_open.md) · [cv_tophat](morphology/cv_tophat.md) · [f2_gray_inside](morphology/f2_gray_inside.md) · [f2_gray_skeleton](morphology/f2_gray_skeleton.md) · [gclose](morphology/gclose.md) · [gdilate](morphology/gdilate.md) · [gerode](morphology/gerode.md) · [gopen](morphology/gopen.md) · [gray_bothat](morphology/gray_bothat.md) · [gray_closing](morphology/gray_closing.md) · [gray_closing_rect](morphology/gray_closing_rect.md) · [gray_closing_shape](morphology/gray_closing_shape.md) · [gray_dilation](morphology/gray_dilation.md) · [gray_dilation_shape](morphology/gray_dilation_shape.md) · [gray_erosion](morphology/gray_erosion.md) · [gray_erosion_shape](morphology/gray_erosion_shape.md) · [gray_opening](morphology/gray_opening.md) · [gray_opening_rect](morphology/gray_opening_rect.md) · [gray_opening_shape](morphology/gray_opening_shape.md) · [gray_tophat](morphology/gray_tophat.md) · [local_thickness](morphology/local_thickness.md) · [morph_grad](morphology/morph_grad.md) · [sk_area_opening](morphology/sk_area_opening.md) · [tophat](morphology/tophat.md) · [xsk2_diameter_opening](morphology/xsk2_diameter_opening.md) · [xsk2_reconstruction](morphology/xsk2_reconstruction.md) · [xsk3_area_closing](morphology/xsk3_area_closing.md) · [xsk3_diameter_closing](morphology/xsk3_diameter_closing.md)
 
 ### morphology_markers (1)
 
@@ -194,9 +194,9 @@
 
 [tac_contact_mask](tactile/tac_contact_mask.md) · [tac_height_from_shading](tactile/tac_height_from_shading.md) · [tac_pressure_proxy](tactile/tac_pressure_proxy.md) · [tac_shear_field](tactile/tac_shear_field.md) · [tac_surface_normal](tactile/tac_surface_normal.md)
 
-### texture (23)
+### texture (25)
 
-[cooc_feature_matrix](texture/cooc_feature_matrix.md) · [deviation_image](texture/deviation_image.md) · [entropy_image](texture/entropy_image.md) · [f2_symmetry](texture/f2_symmetry.md) · [gabor](texture/gabor.md) · [gen_gabor](texture/gen_gabor.md) · [local_std](texture/local_std.md) · [sk_entropy](texture/sk_entropy.md) · [sk_frangi](texture/sk_frangi.md) · [sk_gabor](texture/sk_gabor.md) · [sk_hessian](texture/sk_hessian.md) · [sk_lbp](texture/sk_lbp.md) · [sk_meijering](texture/sk_meijering.md) · [sk_shape_index](texture/sk_shape_index.md) · [std_filter](texture/std_filter.md) · [texture_laws](texture/texture_laws.md) · [tf_census_transform](texture/tf_census_transform.md) · [tf_rank_transform](texture/tf_rank_transform.md) · [xsk2_hog](texture/xsk2_hog.md) · [xsk_meijering](texture/xsk_meijering.md) · [xsk_sato](texture/xsk_sato.md) · [xsk_struct_coherence](texture/xsk_struct_coherence.md) · [xsp_hilbert_env](texture/xsp_hilbert_env.md)
+[cooc_feature_matrix](texture/cooc_feature_matrix.md) · [deviation_image](texture/deviation_image.md) · [entropy_image](texture/entropy_image.md) · [f2_symmetry](texture/f2_symmetry.md) · [gabor](texture/gabor.md) · [gen_gabor](texture/gen_gabor.md) · [local_std](texture/local_std.md) · [sk_entropy](texture/sk_entropy.md) · [sk_frangi](texture/sk_frangi.md) · [sk_gabor](texture/sk_gabor.md) · [sk_hessian](texture/sk_hessian.md) · [sk_lbp](texture/sk_lbp.md) · [sk_meijering](texture/sk_meijering.md) · [sk_shape_index](texture/sk_shape_index.md) · [std_filter](texture/std_filter.md) · [structure_tensor_coherence](texture/structure_tensor_coherence.md) · [structure_tensor_orientation](texture/structure_tensor_orientation.md) · [texture_laws](texture/texture_laws.md) · [tf_census_transform](texture/tf_census_transform.md) · [tf_rank_transform](texture/tf_rank_transform.md) · [xsk2_hog](texture/xsk2_hog.md) · [xsk_meijering](texture/xsk_meijering.md) · [xsk_sato](texture/xsk_sato.md) · [xsk_struct_coherence](texture/xsk_struct_coherence.md) · [xsp_hilbert_env](texture/xsp_hilbert_env.md)
 
 ### texture_feature (1)
 

@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_granulometry — 3D <code style="color:#22d3bf">feature</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_granulometry(vol_binary, radii=None, spacing=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volops; volops.vol_granulometry(vol_binary, radii=None, spacing=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_granulometry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.vol_granulometry(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">measurement</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.vol_granulometry.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">volops.vol_granulometry</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">中央径</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>이진 볼륨의 기공・입자 <b>크기 분포</b>(열림 연산 계열에서).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Opening by a ball of radius `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> deletes every feature narrower than </code><code style="color:#22d3bf">2r</code>`.</p>
+<p>Tracking the surviving volume fraction as `<code style="color:#22d3bf">r</code>` grows gives the cumulative</p>
+<p>size distribution `<code style="color:#22d3bf">F(r)</code>`; its negative increment is the size density — the</p>
+<p>fraction of material that sits in features of that size.  This is Matheron&#x27;s</p>
+<p>granulometry, the measurement behind every &quot;pore size distribution&quot; plot in</p>
+<p>casting, foam and powder work.</p>
+<p>Computed from the local-thickness volume rather than by repeated openings:</p>
+<p>the two agree exactly (a voxel survives the opening of radius `<code style="color:#22d3bf">r</code>` iff its</p>
+<p>local thickness is at least `<code style="color:#22d3bf">2r</code>`) and one distance transform replaces N</p>
+<p>morphological passes.</p>
+<p>*radii* are in the units of *spacing* (millimetres when *spacing* is given,</p>
+<p>voxels otherwise); leave it `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">min(spacing)</code>`-steps up to the</p>
+<p>largest thickness present.  Returns ``{&quot;radii&quot;: [...], &quot;surviving_fraction&quot;:</p>
+<p>[...], &quot;density&quot;: [...], &quot;mean_size&quot;: float, &quot;d50&quot;: float, &quot;units&quot;: &quot;mm&quot;|&quot;voxel&quot;}``</p>
+<p>where sizes are <b>diameters</b> (`<code style="color:#22d3bf">2r</code>`), because that is what a pore diameter</p>
+<p>means.</p>
+<p><b>Applicability.</b> (1) A distribution is only as good as the threshold that</p>
+<p>made the binary volume — report it.  (2) Features touching the volume border</p>
+<p>are truncated and bias the distribution downward; crop or state it.</p>
+<p>(3) `<code style="color:#22d3bf">d50</code>` is interpolated between the two bracketing radii, so it is no</p>
+<p>finer than the radius step.</p>
+<p>HALCON has no granulometry operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:ct_porosity_and_fibre_morphometry">ct_porosity_and_fibre_morphometry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/ct_porosity_and_fibre_morphometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">measurement</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">feature</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a> · <a style="color:#22d3bf" href="op3d:curvature_maps">curvature_maps</a> · <a style="color:#22d3bf" href="op3d:edt_jfa">edt_jfa</a> · <a style="color:#22d3bf" href="op3d:vol_frangi">vol_frangi</a> · <a style="color:#22d3bf" href="op3d:vol_local_std">vol_local_std</a> · <a style="color:#22d3bf" href="op3d:vol_local_thickness">vol_local_thickness</a> · <a style="color:#22d3bf" href="op3d:vol_orientation_coherence">vol_orientation_coherence</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volops.py — 3D 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

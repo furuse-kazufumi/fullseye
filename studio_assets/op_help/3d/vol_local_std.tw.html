@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_local_std — 3D <code style="color:#22d3bf">feature</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_local_std(vol, size=5)</code>(要直接呼叫實作,<code style="color:#22d3bf">import volops; volops.vol_local_std(vol, size=5)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;vol_local_std&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>立方視窗內的局部標準差(不偏)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>The 3-D counterpart of the registry op `<code style="color:#22d3bf">local_std</code>` (HALCON&#x27;s</p>
+<p>`<code style="color:#22d3bf">deviation_image</code>`).  The variance is taken **after subtracting the global</p>
+<p>mean** — `<code style="color:#22d3bf">E[x^2] - E[x]^2</code>` loses every significant digit on a volume whose</p>
+<p>values sit far from zero, and the leftover shows up as a fake texture on a</p>
+<p>uniform block.  It is then unbiased twice: `<code style="color:#22d3bf">n/(n-1)</code>` on the variance and</p>
+<p>`<code style="color:#22d3bf">c4(n)</code><code style="color:#22d3bf"> on the square root, so the estimate of </code><code style="color:#22d3bf">sigma</code>` itself (not of</p>
+<p>`<code style="color:#22d3bf">sigma^2</code>`) is unbiased.</p>
+<p>*size* is the edge of the cubic window in voxels (odd, &gt;= 3), so</p>
+<p>`<code style="color:#22d3bf">n = size**3</code>` voxels enter each estimate.  **The relative standard error of</p>
+<p>a single voxel&#x27;s estimate is `<code style="color:#22d3bf">1/sqrt(2(n-1))</code>`** — 3.1% for a 5x5x5 window,</p>
+<p>1.1% for 9x9x9.  Quote that figure whenever a noise or roughness number is</p>
+<p>read off this volume.</p>
+<p>Returns a `<code style="color:#22d3bf">(D, H, W)</code>` float64 volume in the input&#x27;s own units (it is *not*</p>
+<p>normalised, so values from different scans compare directly).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:ct_porosity_and_fibre_morphometry">ct_porosity_and_fibre_morphometry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/ct_porosity_and_fibre_morphometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">voxel</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a> · <a style="color:#22d3bf" href="op3d:curvature_maps">curvature_maps</a> · <a style="color:#22d3bf" href="op3d:edt_jfa">edt_jfa</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">feature</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a> · <a style="color:#22d3bf" href="op3d:curvature_maps">curvature_maps</a> · <a style="color:#22d3bf" href="op3d:edt_jfa">edt_jfa</a> · <a style="color:#22d3bf" href="op3d:vol_frangi">vol_frangi</a> · <a style="color:#22d3bf" href="op3d:vol_local_thickness">vol_local_thickness</a> · <a style="color:#22d3bf" href="op3d:vol_orientation_coherence">vol_orientation_coherence</a> · <a style="color:#22d3bf" href="op3d:vol_euler_number">vol_euler_number</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volops.py — 3D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">local_thickness — 2D <code style="color:#22d3bf">morphology</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;local_thickness&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/local_thickness.png" alt="local_thickness: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_thickness.a.jpg">local_thickness: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_thickness.b.jpg">local_thickness: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_thickness.inputs.jpg">local_thickness: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>各前景画素に「そこを覆える<b>最大の円の直径</b>」を入れて返す(局所肉厚)。</p>
+<p>明るい側を前景とみなす閾値が `<code style="color:#22d3bf">b</code><code style="color:#22d3bf">(0.1〜0.9)。</code><code style="color:#22d3bf">a</code>` が測る上限の半径(1〜12 画素)で、</p>
+<p>出力はその上限で割って `<code style="color:#22d3bf">[0,1]</code><code style="color:#22d3bf"> に収めてある —— **絶対値が要るときは </code><code style="color:#22d3bf">a</code>` から</p>
+<p>上限を逆算して掛け戻すこと**。</p>
+<p>粒径・気孔径・肉厚を「1 枚の地図」として出す古典的な量で、モルフォロジーの</p>
+<p>粒度測定(granulometry)と同じもの: ある画素の値が `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> なら、その画素は半径 </code><code style="color:#22d3bf">r</code>` の</p>
+<p>円による開処理を生き残る。距離変換で内接円の半径を求め、半径の大きい順にその円が</p>
+<p>覆う範囲へ書き込む、という素直な実装。</p>
+<p><b>適用条件</b>: (1) 前景を 1 つの閾値で決めるので、照明むらがあると太さが場所によって</p>
+<p>偏る —— 先に `<code style="color:#22d3bf">local_threshold</code><code style="color:#22d3bf"> などで平坦化すること。(2) 上限 </code><code style="color:#22d3bf">a</code>` より太い構造は</p>
+<p><b>上限で頭打ちになる</b>(飽和しているかは出力の最大値が 1.0 に貼りついているかで分かる)。</p>
+<p>(3) 画素単位の量なので、直径が 3 画素を切ると量子化の刻みが 30% を超える。</p>
+<p><b>用途</b>: 鋳巣・発泡体の気孔径分布、粉体の粒径、薄肉部の検出、繊維の太さ。</p>
+<p>3-D 版は `<code style="color:#22d3bf">ops3d</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">vol_wall_thickness</code>`。HALCON に対応する単体 op は無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">local_thickness 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:local_thickness%200.35%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:local_thickness%200.35%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_morphology">gallery2d_morphology</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_morphology.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_bone_trabecular_thickness">poc_bone_trabecular_thickness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_bone_trabecular_thickness.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">image</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">morphology</code>)</h3>
+<p><a style="color:#22d3bf" href="op:gerode">gerode</a> · <a style="color:#22d3bf" href="op:gdilate">gdilate</a> · <a style="color:#22d3bf" href="op:gopen">gopen</a> · <a style="color:#22d3bf" href="op:gclose">gclose</a> · <a style="color:#22d3bf" href="op:tophat">tophat</a> · <a style="color:#22d3bf" href="op:bothat">bothat</a> · <a style="color:#22d3bf" href="op:morph_grad">morph_grad</a> · <a style="color:#22d3bf" href="op:sk_area_opening">sk_area_opening</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

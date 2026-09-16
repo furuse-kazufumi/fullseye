@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_euler_number — 3D <code style="color:#22d3bf">feature</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_euler_number(vol_binary, connectivity=26)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volops; volops.vol_euler_number(vol_binary, connectivity=26)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_euler_number&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.vol_euler_number(...)</code> は**宣言 out 型 <code style="color:#22d3bf">measurement</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.vol_euler_number.raw(...)</code>、または <code style="color:#22d3bf">volops.vol_euler_number</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">chi(b0-b1+b2)</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Euler characteristic of a binary volume, split into its three Betti numbers.</p>
+<p>`<code style="color:#22d3bf">chi = b0 - b1 + b2</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">b0</code><code style="color:#22d3bf"> counts **separate objects**, </code><code style="color:#22d3bf">b1</code>`</p>
+<p>counts <b>tunnels</b> (handles that pass right through) and `<code style="color:#22d3bf">b2</code>` counts</p>
+<p><b>enclosed cavities</b>.  For porous media that split is the whole point:</p>
+<p>`<code style="color:#22d3bf">b1</code>` is open, connected porosity — the paths a fluid can take — while</p>
+<p>`<code style="color:#22d3bf">b2</code><code style="color:#22d3bf"> is closed porosity that no fluid reaches.  A single </code><code style="color:#22d3bf">chi</code>` cannot</p>
+<p>tell a foam with many tunnels from one with many sealed bubbles; the three</p>
+<p>numbers can.</p>
+<p>*connectivity* is `<code style="color:#22d3bf">6</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">18</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">26</code>` for the foreground; the background</p>
+<p>is counted with the complementary neighbourhood (`<code style="color:#22d3bf">26</code><code style="color:#22d3bf"> vs </code><code style="color:#22d3bf">6</code>`), which is</p>
+<p>what makes the pair of counts consistent — using the same neighbourhood for</p>
+<p>both is the classical way to produce a set that is simultaneously connected</p>
+<p>and disconnected.</p>
+<p>Returns ``{&quot;euler&quot;: chi, &quot;objects&quot;: b0, &quot;tunnels&quot;: b1, &quot;cavities&quot;: b2,</p>
+<p>&quot;connectivity&quot;: connectivity}`<code style="color:#22d3bf">.  </code><code style="color:#22d3bf">b1</code><code style="color:#22d3bf"> is derived as </code><code style="color:#22d3bf">b0 + b2 - chi</code>`, so</p>
+<p>it inherits the exactness of the other three.</p>
+<p>HALCON&#x27;s `<code style="color:#22d3bf">euler_number</code>` is 2-D (regions) only; there is no voxel</p>
+<p>equivalent.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:ct_porosity_and_fibre_morphometry">ct_porosity_and_fibre_morphometry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/ct_porosity_and_fibre_morphometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">measurement</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">feature</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a> · <a style="color:#22d3bf" href="op3d:curvature_maps">curvature_maps</a> · <a style="color:#22d3bf" href="op3d:edt_jfa">edt_jfa</a> · <a style="color:#22d3bf" href="op3d:vol_frangi">vol_frangi</a> · <a style="color:#22d3bf" href="op3d:vol_local_std">vol_local_std</a> · <a style="color:#22d3bf" href="op3d:vol_local_thickness">vol_local_thickness</a> · <a style="color:#22d3bf" href="op3d:vol_orientation_coherence">vol_orientation_coherence</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volops.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

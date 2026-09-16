@@ -211,6 +211,8 @@ from volops import (  # noqa: E402,F401
     vol_watershed,
     vol_reduce_domain, vol_bounding_box, vol_crop_domain, vol_uncrop,
     vol_boundary, vol_boundary_points, vol_tiled_map,
+    vol_local_std, vol_local_thickness, vol_euler_number,
+    vol_granulometry, vol_orientation_coherence,
 )
 from volregion import (  # noqa: E402,F401
     VolRLE, vol_rle_encode, vol_rle_decode, vol_rle_volume, vol_rle_bbox,
@@ -771,6 +773,8 @@ __all__ = [
     "vol_label", "vol_region_props", "vol_gradient_magnitude", "vol_local_maxima", "vol_watershed",
     "vol_reduce_domain", "vol_bounding_box", "vol_crop_domain", "vol_uncrop",
     "vol_boundary", "vol_boundary_points", "vol_tiled_map",
+    "vol_local_std", "vol_local_thickness", "vol_euler_number",
+    "vol_granulometry", "vol_orientation_coherence",
     "volregion", "VolRLE", "vol_rle_encode", "vol_rle_decode", "vol_rle_volume",
     "vol_rle_bbox", "vol_rle_centroid", "vol_rle_union", "vol_rle_intersect",
     "vol_rle_difference", "vol_rle_components",

@@ -97,6 +97,9 @@ from scipy import ndimage
 
 __all__ = [
     "vol_frangi", "vol_sato", "vol_hessian_blobness",
+    # 形態計測(ステレオロジー)—— HALCON はボクセル型を持たないので全部こちら側
+    "vol_local_std", "vol_local_thickness", "vol_euler_number",
+    "vol_granulometry", "vol_orientation_coherence",
     "vol_distance_transform", "vol_label", "vol_region_props",
     "vol_gradient_magnitude", "vol_local_maxima", "vol_watershed",
     "volume_downsample",
@@ -988,3 +991,276 @@ def vol_tiled_map(vol, fn, tile=64, overlap=8):
         out[z0:z1] = piece[z0 - a:z0 - a + (z1 - z0)]
     return out
 
+
+# --------------------------------------------------------------------------- #
+# stereology / morphometry                                                    #
+# --------------------------------------------------------------------------- #
+def vol_local_std(vol, size=5):
+    """Unbiased local standard deviation inside a cubic window.
+
+    The 3-D counterpart of the registry op ``local_std`` (HALCON's
+    ``deviation_image``).  The variance is taken **after subtracting the global
+    mean** — ``E[x^2] - E[x]^2`` loses every significant digit on a volume whose
+    values sit far from zero, and the leftover shows up as a fake texture on a
+    uniform block.  It is then unbiased twice: ``n/(n-1)`` on the variance and
+    ``c4(n)`` on the square root, so the estimate of ``sigma`` itself (not of
+    ``sigma^2``) is unbiased.
+
+    *size* is the edge of the cubic window in voxels (odd, >= 3), so
+    ``n = size**3`` voxels enter each estimate.  **The relative standard error of
+    a single voxel's estimate is ``1/sqrt(2(n-1))``** — 3.1% for a 5x5x5 window,
+    1.1% for 9x9x9.  Quote that figure whenever a noise or roughness number is
+    read off this volume.
+
+    Returns a ``(D, H, W)`` float64 volume in the input's own units (it is *not*
+    normalised, so values from different scans compare directly).
+    """
+    x = np.asarray(vol, dtype=np.float64)
+    if x.ndim != 3:
+        raise ValueError("vol_local_std expects a (D, H, W) volume, got shape %r"
+                         % (x.shape,))
+    k = int(size)
+    if k < 3 or k % 2 == 0:
+        raise ValueError("size must be an odd integer >= 3, got %r" % (size,))
+    _check_voxels(x, MAX_VOXELS, "vol_local_std", "MAX_VOXELS")
+    x0 = x - float(np.mean(x))
+    m = ndimage.uniform_filter(x0, size=k)
+    m2 = ndimage.uniform_filter(x0 * x0, size=k)
+    n = k ** 3
+    var = np.maximum(m2 - m * m, 0.0) * (n / (n - 1.0))
+    return np.ascontiguousarray(np.sqrt(var) / _c4_3d(n), dtype=np.float64)
+
+
+def _c4_3d(n: int) -> float:
+    """``c4(n) = sqrt(2/(n-1)) * Gamma(n/2)/Gamma((n-1)/2)``, the residual bias of
+    ``sqrt`` of an unbiased variance.  ``~ 1 - 1/(4n)``; computed through
+    ``gammaln`` so that n in the thousands does not overflow."""
+    from scipy.special import gammaln
+    import math
+    return math.sqrt(2.0 / (n - 1)) * math.exp(gammaln(n / 2.0) - gammaln((n - 1) / 2.0))
+
+
+def vol_local_thickness(vol_binary, spacing=None, max_radius=None):
+    """Local thickness map: the diameter of the largest ball that covers each voxel.
+
+    For every foreground voxel this is ``max{ 2r : the voxel lies inside some ball
+    of radius r that fits entirely in the foreground }`` — the classical
+    granulometric size, and the quantity trabecular-bone and industrial-CT work
+    calls *local thickness* (a pore's local thickness is its diameter; a wall's is
+    its thickness).  Computed from the exact distance transform: take the voxels
+    whose distance is at least ``r`` as ball centres and paint the balls they
+    cover, largest radius first.
+
+    ★**Distinct from ``vol_wall_thickness``**, which walks a single probe segment
+    ``p0 -> p1`` and returns a list of crossings.  This one is a *volume*, so the
+    thickness of every feature is available at once and can be histogrammed.
+
+    Pass *spacing* ``(sz, sy, sx)`` (or a :class:`volio.VolumeMeta`) and the
+    result is in **millimetres**; otherwise in voxels.  *max_radius* caps the
+    search (in the same units); leave it ``None`` to derive it from the largest
+    distance actually present, which costs one pass more but never saturates.
+
+    **Applicability.** (1) The foreground comes from a single threshold, so
+    beam hardening or a brightness gradient biases the thickness across the
+    volume — flatten first.  (2) With anisotropic voxels the ball is a ball in
+    millimetres, not in voxels, so *spacing* is not cosmetic.  (3) A feature
+    three voxels across is quantised at better than 30% only if you say so:
+    report the voxel size next to any thickness number.
+
+    Returns a ``(D, H, W)`` float64 volume, 0 on the background.
+    """
+    m = _as_binary(vol_binary)
+    _check_voxels(m, MAX_VOXELS, "vol_local_thickness", "MAX_VOXELS")
+    sp = _spacing_tuple(spacing) or (1.0, 1.0, 1.0)
+    dt = ndimage.distance_transform_edt(m, sampling=sp)
+    if not dt.any():
+        return np.zeros(m.shape, dtype=np.float64)
+    r_top = float(dt.max()) if max_radius is None else float(max_radius)
+    if r_top <= 0.0:
+        return np.zeros(m.shape, dtype=np.float64)
+    # 半径の刻みは「一番細かい軸の 1 ボクセル」。これより細かく刻んでも情報は増えない。
+    step = min(sp)
+    # ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので
+    #   (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
+    radii = np.arange(np.floor(r_top / step) * step, 0.0, -step, dtype=np.float64)
+    out = np.zeros(m.shape, dtype=np.float64)
+    for r in radii:
+        centres = dt >= r
+        if not centres.any():
+            continue
+        nz = [max(1, int(np.ceil(r / s))) for s in sp]
+        zz, yy, xx = np.mgrid[-nz[0]:nz[0] + 1, -nz[1]:nz[1] + 1, -nz[2]:nz[2] + 1]
+        ball = ((zz * sp[0]) ** 2 + (yy * sp[1]) ** 2 + (xx * sp[2]) ** 2) <= r * r
+        covered = ndimage.binary_dilation(centres, structure=ball)
+        out = np.where(covered & (out == 0.0), 2.0 * r, out)
+    # ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の
+    #   生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
+    out = np.where(m, out, 0.0)
+    return np.ascontiguousarray(out, dtype=np.float64)
+
+
+def vol_euler_number(vol_binary, connectivity=26):
+    """Euler characteristic of a binary volume, split into its three Betti numbers.
+
+    ``chi = b0 - b1 + b2`` where ``b0`` counts **separate objects**, ``b1``
+    counts **tunnels** (handles that pass right through) and ``b2`` counts
+    **enclosed cavities**.  For porous media that split is the whole point:
+    ``b1`` is open, connected porosity — the paths a fluid can take — while
+    ``b2`` is closed porosity that no fluid reaches.  A single ``chi`` cannot
+    tell a foam with many tunnels from one with many sealed bubbles; the three
+    numbers can.
+
+    *connectivity* is ``6``, ``18`` or ``26`` for the foreground; the background
+    is counted with the complementary neighbourhood (``26`` vs ``6``), which is
+    what makes the pair of counts consistent — using the same neighbourhood for
+    both is the classical way to produce a set that is simultaneously connected
+    and disconnected.
+
+    Returns ``{"euler": chi, "objects": b0, "tunnels": b1, "cavities": b2,
+    "connectivity": connectivity}``.  ``b1`` is derived as ``b0 + b2 - chi``, so
+    it inherits the exactness of the other three.
+
+    HALCON's ``euler_number`` is 2-D (regions) only; there is no voxel
+    equivalent.
+    """
+    m = _as_binary(vol_binary)
+    _check_voxels(m, MAX_VOXELS, "vol_euler_number", "MAX_VOXELS")
+    rank = {6: 1, 18: 2, 26: 3}.get(int(connectivity)) \
+        if float(connectivity) == int(connectivity) else None
+    if rank is None:
+        raise ValueError("connectivity must be 6, 18 or 26, got %r" % (connectivity,))
+    from skimage.measure import euler_number as _sk_euler
+    chi = int(_sk_euler(m, connectivity=rank))
+    fg = ndimage.generate_binary_structure(3, rank)
+    b0 = int(ndimage.label(m, structure=fg)[1])
+    # 空洞 = 体積の縁に触れていない背景成分。前景と相補の近傍で数える。
+    bg_rank = 1 if rank == 3 else 3
+    bg_lab, bg_n = ndimage.label(~m, structure=ndimage.generate_binary_structure(3, bg_rank))
+    border = set(np.unique(np.concatenate([
+        bg_lab[0].ravel(), bg_lab[-1].ravel(),
+        bg_lab[:, 0].ravel(), bg_lab[:, -1].ravel(),
+        bg_lab[:, :, 0].ravel(), bg_lab[:, :, -1].ravel()])))
+    border.discard(0)
+    b2 = int(bg_n - len(border))
+    return {"euler": chi, "objects": b0, "tunnels": int(b0 + b2 - chi),
+            "cavities": b2, "connectivity": int(connectivity)}
+
+
+def vol_granulometry(vol_binary, radii=None, spacing=None):
+    """Pore / particle **size distribution** of a binary volume (opening series).
+
+    Opening by a ball of radius ``r`` deletes every feature narrower than ``2r``.
+    Tracking the surviving volume fraction as ``r`` grows gives the cumulative
+    size distribution ``F(r)``; its negative increment is the size density — the
+    fraction of material that sits in features of that size.  This is Matheron's
+    granulometry, the measurement behind every "pore size distribution" plot in
+    casting, foam and powder work.
+
+    Computed from the local-thickness volume rather than by repeated openings:
+    the two agree exactly (a voxel survives the opening of radius ``r`` iff its
+    local thickness is at least ``2r``) and one distance transform replaces N
+    morphological passes.
+
+    *radii* are in the units of *spacing* (millimetres when *spacing* is given,
+    voxels otherwise); leave it ``None`` for ``min(spacing)``-steps up to the
+    largest thickness present.  Returns ``{"radii": [...], "surviving_fraction":
+    [...], "density": [...], "mean_size": float, "d50": float, "units": "mm"|"voxel"}``
+    where sizes are **diameters** (``2r``), because that is what a pore diameter
+    means.
+
+    **Applicability.** (1) A distribution is only as good as the threshold that
+    made the binary volume — report it.  (2) Features touching the volume border
+    are truncated and bias the distribution downward; crop or state it.
+    (3) ``d50`` is interpolated between the two bracketing radii, so it is no
+    finer than the radius step.
+
+    HALCON has no granulometry operator.
+    """
+    m = _as_binary(vol_binary)
+    sp = _spacing_tuple(spacing)
+    units = "mm" if sp else "voxel"
+    th = vol_local_thickness(m, spacing=sp)          # 直径
+    fg = th[m > 0]
+    if fg.size == 0:
+        return {"sizes": [], "surviving_fraction": [], "density": [],
+                "mean_size": 0.0, "d50": 0.0, "units": units}
+    step = min(sp) if sp else 1.0
+    if radii is None:
+        # ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が
+        #   一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が
+        #   18.0 のところ 15.1 になった)。
+        radii = np.arange(step, float(fg.max()) / 2.0 + 2.0 * step, step, dtype=np.float64)
+    radii = np.asarray(radii, dtype=np.float64)
+    sizes = 2.0 * radii
+    # F(s) = 厚さが s 以上の前景の割合(1 から 0 へ単調減少)
+    surv = np.array([float((fg >= s).sum()) / fg.size for s in sizes])
+    # 密度は「区間 [sizes[i], sizes[i+1]) に入る質量」なので、**下側の径**に帰属させる。
+    # 上側に付けると 1 段分だけ太く報告してしまう。
+    dens = surv[:-1] - surv[1:]
+    # 平均径と D50 は**厚さの体積から直接**求める —— ビン分けの誤差を混ぜない。
+    mean = float(fg.mean())
+    d50 = float(np.median(fg))
+    return {"sizes": sizes.tolist(), "surviving_fraction": surv.tolist(),
+            "density": dens.tolist(), "mean_size": mean, "d50": d50,
+            "units": units}
+
+
+#: 3-D 構造テンソルが「向きを持っている」と言える下限(跡に対する相対量)。
+#: ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を
+#: 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
+_VOL_ST_FLOOR = 1e-6
+
+
+def vol_orientation_coherence(vol, sigma=1.0, rho=3.0):
+    """How strongly the local structure points **one way** (3-D structure tensor).
+
+    Builds ``J = G_rho * (grad I)(grad I)^T`` and returns
+
+        (l1 - l3) / (l1 + l2 + l3),   l1 >= l2 >= l3
+
+    in ``[0, 1]``: ``1`` where one direction dominates (a fibre, a lamella edge,
+    a crack face), ``0`` where the gradient is isotropic (a uniform block, white
+    noise) or where two directions are equally strong.  *sigma* smooths before
+    differentiating (so noise is not differentiated into structure); *rho* is the
+    integration width — make it larger than the spacing of the structure you are
+    measuring.
+
+    **HALCON computes this tensor and throws it away**: ``coherence_enhancing_diff``
+    uses it to steer a diffusion but exposes neither the orientation nor the
+    coherence.  Returning the measurement is the point of this operator.
+
+    **Applicability.** (1) ``rho`` too small collapses the tensor to rank 1 and
+    the answer sticks at 1 everywhere — that is *not* perfect alignment, it is a
+    failure to measure.  (2) Two fibre families crossing at equal strength read
+    as 0, indistinguishable from a uniform block; pair it with ``vol_local_std``
+    to tell "no direction" from "no structure".  (3) Voxels whose tensor trace is
+    below ``1e-6`` of the volume maximum return 0.
+
+    Returns a ``(D, H, W)`` float64 volume in ``[0, 1]``.
+    """
+    x = np.asarray(vol, dtype=np.float64)
+    if x.ndim != 3:
+        raise ValueError("vol_orientation_coherence expects a (D, H, W) volume, "
+                         "got shape %r" % (x.shape,))
+    _check_voxels(x, MAX_VOXELS, "vol_orientation_coherence", "MAX_VOXELS")
+    g = ndimage.gaussian_filter(x, float(sigma))
+    gz, gy, gx = np.gradient(g)
+    comp = {}
+    for na, a_ in (("z", gz), ("y", gy), ("x", gx)):
+        for nb, b_ in (("z", gz), ("y", gy), ("x", gx)):
+            if na + nb in comp or nb + na in comp:
+                continue
+            comp[na + nb] = ndimage.gaussian_filter(a_ * b_, float(rho))
+    j = np.empty(x.shape + (3, 3), dtype=np.float64)
+    idx = {"z": 0, "y": 1, "x": 2}
+    for key, val in comp.items():
+        i, k = idx[key[0]], idx[key[1]]
+        j[..., i, k] = val
+        j[..., k, i] = val
+    w = np.linalg.eigvalsh(j)                 # 昇順 l3 <= l2 <= l1
+    tr = w.sum(axis=-1)
+    scale = float(np.max(tr)) if tr.size else 0.0
+    floor = max(np.finfo(np.float64).tiny, _VOL_ST_FLOOR * scale)
+    coh = (w[..., 2] - w[..., 0]) / np.maximum(tr, floor)
+    return np.ascontiguousarray(np.where(tr <= floor, 0.0, np.clip(coh, 0.0, 1.0)),
+                                dtype=np.float64)

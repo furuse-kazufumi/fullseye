@@ -1,6 +1,6 @@
 # Fullseye 3-D ビジョン — 事例ギャラリー(EXAMPLES_3D)
 
-Fullseye の 3-D オペレータ群(`ops3d` = 358 の型付き op)を、**実問題を解く実行可能な事例**（全 117 件）で示します。
+Fullseye の 3-D オペレータ群(`ops3d` = 363 の型付き op)を、**実問題を解く実行可能な事例**（全 118 件）で示します。
 各事例は自己完結・自己検証のスクリプト(`examples_3d/<id>.py`)で、データを読み・op を呼び・**ground truth を print して assert** します。
 一覧は `examples3d.py` レジストリが正本で、`examples3d.validate()` が全件を実行して**動くものだけ**を掲示します。
 
@@ -21,7 +21,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 ## 実データ源
 
-- **合成データ(制御GT)** — 89 事例
+- **合成データ(制御GT)** — 90 事例
 - **手続き生成(GTは幾何/解析)** — 14 事例
 - **骨格CT(MS-Human-700 実解剖骨)** — 4 事例
 - **小惑星イトカワ(Gaskell形状モデル/JAXA)** — 6 事例
@@ -215,6 +215,10 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 ### match_localize
 
 - **3-D テンプレート定位(NCC/形状/chamfer/Hough/MIP/曲率)** (`matching_localize`, synthetic) — 同一の合成シーン(滑らかな充実球=ターゲット と、球と同一ピーク濃度の立方体=おとり を離して配置)に対し、match3d の 6 定位手法を全て当てて、球テンプレートの中心を真値±2 voxel(実測の 6 手法合議 spread は 0.87vox)で復元できることを検証する事例。球は表面点群(match_points_ncc 用)と解析的 smooth 占有場(voxel 5 手法用)を同一幾何から生成し(bounds=(0,N-1) で world…
+
+### measurement
+
+- **産業CTの形態計測 —— 気孔径分布・局所肉厚・開/閉気孔・繊維配向** (`ct_porosity_and_fibre_morphometry`, synthetic) — 真値の分かる合成ボリュームで、気孔径分布と体積分率、局所肉厚(ミリ換算)、貫通孔と閉気孔の別、配向の揃い具合を復元できることを数値で確かめる。
 
 ### mesh_processing
 

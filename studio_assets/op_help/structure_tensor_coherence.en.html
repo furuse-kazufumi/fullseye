@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">structure_tensor_coherence — 2D <code style="color:#22d3bf">texture</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;structure_tensor_coherence&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/structure_tensor_coherence.png" alt="structure_tensor_coherence: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*The output is shown in a viridis-like pseudo-colour (dark purple = low, yellow = high) so that a field of quantities — distance, phase, orientation, depth — can be read.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/structure_tensor_coherence.a.jpg">structure_tensor_coherence: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/structure_tensor_coherence.b.jpg">structure_tensor_coherence: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/structure_tensor_coherence.inputs.jpg">structure_tensor_coherence: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>局所の<b>向きの揃い具合</b>(構造テンソルの異方度)を `<code style="color:#22d3bf">[0,1]</code>` で返す。</p>
+<p>`<code style="color:#22d3bf">(lambda1 - lambda2) / (lambda1 + lambda2)</code><code style="color:#22d3bf"> そのもの。</code><code style="color:#22d3bf">1</code>` は完全に一方向(理想的な縞)、</p>
+<p>`<code style="color:#22d3bf">0</code><code style="color:#22d3bf"> は等方(平坦面・白色雑音・十字の交点)。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">b</code>` は</p>
+<p>`<code style="color:#22d3bf">structure_tensor_orientation</code>` と同じ 2 つのスケール。</p>
+<p>**`<code style="color:#22d3bf">structure_tensor_orientation</code>` と対で使う**: 向きの図は全画素に値が入るので、</p>
+<p>向きが意味を持たない所も色がつく。この op を重みにして初めて「どこの向きを信じてよいか」</p>
+<p>が分かる。</p>
+<p><b>適用条件と既知の落とし穴</b>: (1) `<code style="color:#22d3bf">b</code>`(積分窓)が小さすぎるとテンソルの階数が 1 に</p>
+<p>落ちて<b>どこでも 1 に貼りつく</b> —— 揃っているのではなく測れていない。(2) 2 方向が</p>
+<p>同じ強さで交差する所(織物の交点・格子)では `<code style="color:#22d3bf">0</code>` に落ちる —— 「構造が無い」のでは</p>
+<p>なく「向きが 1 つに決まらない」で、平坦面と区別できない。区別したいときは</p>
+<p>`<code style="color:#22d3bf">local_std</code>` を併記する。</p>
+<p>跡が全画像最大の `<code style="color:#22d3bf">1e-6</code><code style="color:#22d3bf"> を下回る画素は </code><code style="color:#22d3bf">0</code>` を返す(平坦面)。HALCON に対応する</p>
+<p>単体 op は無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">structure_tensor_coherence 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:structure_tensor_coherence%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:structure_tensor_coherence%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">image</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">texture</code>)</h3>
+<p><a style="color:#22d3bf" href="op:std_filter">std_filter</a> · <a style="color:#22d3bf" href="op:local_std">local_std</a> · <a style="color:#22d3bf" href="op:structure_tensor_orientation">structure_tensor_orientation</a> · <a style="color:#22d3bf" href="op:gabor">gabor</a> · <a style="color:#22d3bf" href="op:sk_frangi">sk_frangi</a> · <a style="color:#22d3bf" href="op:sk_meijering">sk_meijering</a> · <a style="color:#22d3bf" href="op:sk_hessian">sk_hessian</a> · <a style="color:#22d3bf" href="op:sk_gabor">sk_gabor</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

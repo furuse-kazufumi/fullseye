@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1944,
- "n_notes": 1948,
+ "n_ops": 1952,
+ "n_notes": 1956,
  "notes": {
   "vol_dilate": [
    {
@@ -4898,6 +4898,16 @@
     "path": "docs/ops/2d/morphology/gray_tophat.md"
    }
   ],
+  "local_thickness": [
+   {
+    "op": "local_thickness",
+    "dim": "2d",
+    "category": "morphology",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/morphology/local_thickness.md"
+   }
+  ],
   "morph_grad": [
    {
     "op": "morph_grad",
@@ -7938,6 +7948,26 @@
     "path": "docs/ops/2d/texture/std_filter.md"
    }
   ],
+  "structure_tensor_coherence": [
+   {
+    "op": "structure_tensor_coherence",
+    "dim": "2d",
+    "category": "texture",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/texture/structure_tensor_coherence.md"
+   }
+  ],
+  "structure_tensor_orientation": [
+   {
+    "op": "structure_tensor_orientation",
+    "dim": "2d",
+    "category": "texture",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/texture/structure_tensor_orientation.md"
+   }
+  ],
   "texture_laws": [
    {
     "op": "texture_laws",
@@ -10326,6 +10356,16 @@
     "path": "docs/ops/3d/feature/sobel3d.md"
    }
   ],
+  "vol_euler_number": [
+   {
+    "op": "vol_euler_number",
+    "dim": "3d",
+    "category": "feature",
+    "in": "voxel",
+    "out": "measurement",
+    "path": "docs/ops/3d/feature/vol_euler_number.md"
+   }
+  ],
   "vol_frangi": [
    {
     "op": "vol_frangi",
@@ -10346,6 +10386,16 @@
     "path": "docs/ops/3d/feature/vol_gradient_magnitude.md"
    }
   ],
+  "vol_granulometry": [
+   {
+    "op": "vol_granulometry",
+    "dim": "3d",
+    "category": "feature",
+    "in": "voxel",
+    "out": "measurement",
+    "path": "docs/ops/3d/feature/vol_granulometry.md"
+   }
+  ],
   "vol_hessian_blobness": [
    {
     "op": "vol_hessian_blobness",
@@ -10364,6 +10414,36 @@
     "in": "voxel",
     "out": "points",
     "path": "docs/ops/3d/feature/vol_local_maxima.md"
+   }
+  ],
+  "vol_local_std": [
+   {
+    "op": "vol_local_std",
+    "dim": "3d",
+    "category": "feature",
+    "in": "voxel",
+    "out": "voxel",
+    "path": "docs/ops/3d/feature/vol_local_std.md"
+   }
+  ],
+  "vol_local_thickness": [
+   {
+    "op": "vol_local_thickness",
+    "dim": "3d",
+    "category": "feature",
+    "in": "voxel",
+    "out": "voxel",
+    "path": "docs/ops/3d/feature/vol_local_thickness.md"
+   }
+  ],
+  "vol_orientation_coherence": [
+   {
+    "op": "vol_orientation_coherence",
+    "dim": "3d",
+    "category": "feature",
+    "in": "voxel",
+    "out": "voxel",
+    "path": "docs/ops/3d/feature/vol_orientation_coherence.md"
    }
   ],
   "vol_sato": [

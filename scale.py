@@ -52,6 +52,7 @@ _NOT_TILE_SAFE = frozenset({
     'diff_of_gauss', 'dist_transform', 'distance_transform', 'dl_aniso_diffusion', 'dog', 'dots_image',
     'edges_color', 'em_skeleton', 'entropy_image', 'equ_histo_image', 'equ_histo_image_rect', 'equalize',
     'f2_gauss_pyramid', 'f2_gray_inside', 'f2_gray_skeleton', 'f2_symmetry', 'f2_topographic', 'fill_up_shape',
+    'structure_tensor_orientation', 'structure_tensor_coherence',
     'frei_amp', 'get_region_convex', 'gray_bothat', 'gray_range_rect', 'gray_tophat', 'illuminate',
     'junctions_skeleton', 'kirsch_amp', 'laplace', 'laplace_of_gauss', 'log', 'monotony',
     'morph_grad', 'morph_skeleton', 'points_foerstner', 'points_harris_binomial', 'prewitt_amp', 'prewitt_mag',
@@ -73,6 +74,22 @@ _NOT_TILE_SAFE = frozenset({
 })
 
 # class + reason for a measured non-tileable op, from its (optimistic) category.
+#: カテゴリの理由では言い当てられない op だけ、ここで上書きする。
+#: 理由が違うと「どう直せばよいか」まで違ってしまう —— 構造テンソルの 2 本は
+#: 「テクスチャの支持長がハローを超える」のではなく、**全画像の最大値を床に使う**
+#: から割れる。床は一様面で arctan2 が丸め屑を増幅するのを止めるためのもので、
+#: タイルごとに取り直すと、真っ平らなタイルでは屑そのものが最大値になって床が効かない。
+_NOT_TILE_SAFE_OP_REASON = {
+    "structure_tensor_orientation": (
+        "global_reduce",
+        "local derivatives, but the 'is there a direction at all' floor is relative to the "
+        "whole-image tensor maximum; a per-tile floor lets rounding dust pass on a flat tile. "
+        "Run it once on the full image."),
+    "structure_tensor_coherence": (
+        "global_reduce",
+        "same whole-image floor as structure_tensor_orientation; run once on the full image."),
+}
+
 _NOT_TILE_SAFE_REASON = {
     "region":     ("global", "region shape/topology (skeleton, distance, connectivity, bounding shapes) needs the whole connected region"),
     "gray":       ("global", "needs whole-image statistics (histogram / contrast normalization); compute globally"),
@@ -110,7 +127,7 @@ def scale_class(op) -> dict:
         return {"class": "global", "tile_safe": False,
                 "reason": "needs global statistics (histogram/threshold); compute stats globally, then apply"}
     if name in _NOT_TILE_SAFE:
-        cls, reason = _NOT_TILE_SAFE_REASON.get(
+        cls, reason = _NOT_TILE_SAFE_OP_REASON.get(name) or _NOT_TILE_SAFE_REASON.get(
             cat, ("global", "measured non-tileable under haloed tiling"))
         return {"class": cls, "tile_safe": False, "reason": reason}
     if cat in _TILE_SAFE_CATS:

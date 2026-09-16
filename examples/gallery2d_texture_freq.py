@@ -104,6 +104,7 @@ OPS = [
     "f2_symmetry", "dc_structure_texture", "dc_texture_residual", "dc_rpca_lowrank",
     "dc_rpca_sparse", "dc_retinex", "dc_local_contrast_norm", "dc_homomorphic",
     "tf_census_transform", "tf_rank_transform", "local_std",
+    "structure_tensor_orientation", "structure_tensor_coherence",
 ]
 
 KNOBS = [(0.0, 0.0), (0.5, 0.5), (1.0, 1.0), (0.15, 0.85)]
@@ -229,6 +230,38 @@ def run_ground_truth() -> int:
     # 「返すだけ」でないことの裏取り: 正規化する相棒は絶対値を返せない(null を破る)
     noisy = np.clip(0.5 + rng_gt.normal(0, 0.02, (192, 192)), 0.0, 1.0)
     assert float(BY["std_filter"].fn(noisy.copy(), 0.5, 0.5).max()) > 0.9,         "std_filter is expected to be normalised (max ~1.0); the pair no longer differs"
+    checks += 1
+
+    # GT3c: 構造テンソルは **既知の角度**を返すこと。向きは 180 度で一周するので
+    #       0 度と 180 度は同じ —— 比較は周期を畳んでから行う。
+    #       さらに 3 つの null を破る: (a) 一様面では向きを返さない(明るさを振っても
+    #       1 ミリも動かない)、(b) 交差格子では「向きが 1 つに決まらない」を異方度で
+    #       言う、(c) 等方雑音の異方度は理想縞よりはっきり低い。
+    yy_gt, xx_gt = np.mgrid[0:96, 0:96]
+    for deg in (0.0, 30.0, 60.0, 135.0):
+        th = np.deg2rad(deg)
+        phase = xx_gt * np.sin(th) - yy_gt * np.cos(th)
+        stripes = 0.5 + 0.4 * np.sin(2.0 * np.pi * phase / 12.0)
+        o = BY["structure_tensor_orientation"].fn(stripes.copy(), 0.2, 0.5)
+        est = (float(np.median(o[24:72, 24:72])) * 180.0) % 180.0
+        err = min(abs(est - deg), 180.0 - abs(est - deg))
+        assert err < 2.0,             f"structure_tensor_orientation missed the angle: true={deg} est={est:.4g}"
+        coh = BY["structure_tensor_coherence"].fn(stripes.copy(), 0.2, 0.5)
+        assert float(np.median(coh[24:72, 24:72])) > 0.9,             f"coherence too low on ideal stripes: {np.median(coh[24:72, 24:72]):.4g}"
+    # (a) 一様面 —— 明るさを変えても「向き未定義」の 0.5 から動かない。
+    #     床を外すと丸め屑が arctan2 に増幅され、ここが 0..1 全域に散る。
+    for c_gt in (0.0, 0.25, 0.5, 0.75, 1.0):
+        o_flat = BY["structure_tensor_orientation"].fn(np.full((48, 48), c_gt), 0.2, 0.5)
+        assert float(np.abs(o_flat - 0.5).max()) == 0.0,             f"orientation drifted on a uniform field at c={c_gt}"
+        c_flat = BY["structure_tensor_coherence"].fn(np.full((48, 48), c_gt), 0.2, 0.5)
+        assert float(c_flat.max()) == 0.0, f"coherence non-zero on a uniform field at c={c_gt}"
+    # (b) 交差格子 —— 構造はあるが向きは 1 つに決まらない。
+    cross = (0.5 + 0.2 * np.sin(2.0 * np.pi * xx_gt / 12.0)
+             + 0.2 * np.sin(2.0 * np.pi * yy_gt / 12.0))
+    assert float(np.median(BY["structure_tensor_coherence"].fn(cross, 0.2, 0.5))) < 0.2,         "coherence should collapse where two directions cross"
+    # (c) 等方雑音 —— 理想縞(~1.0)とはっきり差がつくこと。
+    iso = np.clip(np.random.default_rng(7).normal(0.5, 0.05, (96, 96)), 0.0, 1.0)
+    assert float(np.median(BY["structure_tensor_coherence"].fn(iso, 0.2, 0.5))) < 0.5,         "coherence should be low on isotropic noise"
     checks += 1
 
     # GT4: rank_transform is invariant to a positive gain (ordinal), but NOT to

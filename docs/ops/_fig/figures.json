@@ -1,5 +1,5 @@
 {
- "generated_for": 902,
+ "generated_for": 905,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -8017,6 +8017,30 @@
    "pseudocolor": true,
    "status": "ok"
   },
+  "local_thickness": {
+   "color_ok": true,
+   "extra": {
+    "a": "local_thickness.a.jpg",
+    "b": "local_thickness.b.jpg",
+    "inputs": "local_thickness.inputs.jpg"
+   },
+   "fig": "local_thickness.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "local_thickness 0.35 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "local_threshold": {
    "color_ok": true,
    "extra": {
@@ -12977,6 +13001,54 @@
    ],
    "out_kind": "ndarray",
    "program": "std_filter 0.50 0.50",
+   "pseudocolor": true,
+   "status": "ok"
+  },
+  "structure_tensor_coherence": {
+   "color_ok": true,
+   "extra": {
+    "a": "structure_tensor_coherence.a.jpg",
+    "b": "structure_tensor_coherence.b.jpg",
+    "inputs": "structure_tensor_coherence.inputs.jpg"
+   },
+   "fig": "structure_tensor_coherence.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "structure_tensor_coherence 0.50 0.50",
+   "pseudocolor": true,
+   "status": "ok"
+  },
+  "structure_tensor_orientation": {
+   "color_ok": true,
+   "extra": {
+    "a": "structure_tensor_orientation.a.jpg",
+    "b": "structure_tensor_orientation.b.jpg",
+    "inputs": "structure_tensor_orientation.inputs.jpg"
+   },
+   "fig": "structure_tensor_orientation.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "structure_tensor_orientation 0.50 0.50",
    "pseudocolor": true,
    "status": "ok"
   },
@@ -21143,10 +21215,10 @@
   "domain": 3,
   "empty": 1,
   "failed": 0,
-  "ok": 898,
+  "ok": 901,
   "unreachable": 0,
   "with_chain": 366,
   "with_gif": 40,
-  "with_sweep": 548
+  "with_sweep": 551
  }
 }

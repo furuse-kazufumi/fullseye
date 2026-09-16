@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-16 22:39:23
+- **最終更新**: 2026-09-17 00:51:06
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+fb656cf11 local_std を足し、サンプルデータの利用条件を人が読める所まで出す
 57dbcc5e4 実測した事実の差し込みを 6 言語で出す —— docstring に連結していたのが設計の誤りだった
 acc21258e CI だけが赤だった原因 —— 門が次元をまたぐ同名ノートを、環境ごとに違う側から掴んでいた
 d04d2ddf3 空フレームの掃きが image->region を落としていた —— 直したら「欠陥 100%」になる op が 20 本出た
@@ -19,13 +20,13 @@ ad4360b3c triage が「壊れた第 2 実装」を「正規化の穴」と誤分
 d1e2ad7bb 無人実行が 1 本の不良 C で死んでいた —— 15 分間「走っている」と思い込んでいた
 216162db0 CI を赤にしていた 3 件を直した —— 的を絞ったテストだけ見ていて 10 コミット気づかなかった
 0a561655a 失敗した op の記録が消えていた —— 「失敗が不可視」は「発見ゼロ」と同じ形の事故
-fb5fd5303 連結性の測定器: 陽性対照は通したが、**収穫はほぼゼロ**だった(負の結果として残す)
 ```
 
 ## 現在の git status
 
 ```
-M docs/AI_RAG_GUIDE.de.md
+M api.py
+ M docs/AI_RAG_GUIDE.de.md
  M docs/AI_RAG_GUIDE.en.md
  M docs/AI_RAG_GUIDE.ko.md
  M docs/AI_RAG_GUIDE.md
@@ -37,6 +38,7 @@ M docs/AI_RAG_GUIDE.de.md
  M docs/DESIGN_NOTES.md
  M docs/DESIGN_NOTES.tw.md
  M docs/DESIGN_NOTES.zh.md
+ M docs/EXAMPLES_3D.md
  M docs/OP_CATALOG.md
  M docs/OP_INDEX.json
  M docs/README.de.md
@@ -46,14 +48,53 @@ M docs/AI_RAG_GUIDE.de.md
  M docs/README.tw.md
  M docs/README.zh.md
  M docs/SESSION_SUMMARY.md
+ M docs/articles/exhibits/wingpoc.en.md
+ M docs/articles/exhibits/wingpoc.ja.md
+ M docs/articles/fullseye_poc_museum_qiita_en.md
+ M docs/articles/fullseye_poc_museum_qiita_ja.md
  M docs/design_notes.json
+ M docs/i18n/op_summary.json
  M docs/ops/2d/INDEX.md
+ M docs/ops/2d/morphology/bothat.md
+ M docs/ops/2d/morphology/cv_blackhat.md
+ M docs/ops/2d/morphology/cv_close.md
+ M docs/ops/2d/morphology/cv_dilate.md
+ M docs/ops/2d/morphology/cv_erode.md
+ M docs/ops/2d/morphology/cv_gradient.md
+ M docs/ops/2d/morphology/cv_open.md
+ M docs/ops/2d/morphology/cv_tophat.md
+ M docs/ops/2d/morphology/f2_gray_inside.md
+ M docs/ops/2d/morphology/f2_gray_skeleton.md
+ M docs/ops/2d/morphology/gclose.md
+ M docs/ops/2d/morphology/gdilate.md
+ M docs/ops/2d/morphology/gerode.md
+ M docs/ops/2d/morphology/gopen.md
+ M docs/ops/2d/morphology/gray_bothat.md
+ M docs/ops/2d/morphology/gray_closing.md
+ M docs/ops/2d/morphology/gray_closing_rect.md
+ M docs/ops/2d/morphology/gray_closing_shape.md
+ M docs/ops/2d/morphology/gray_dilation.md
+ M docs/ops/2d/morphology/gray_dilation_shape.md
+ M docs/ops/2d/morphology/gray_erosion.md
+ M docs/ops/2d/morphology/gray_erosion_shape.md
+ M docs/ops/2d/morphology/gray_opening.md
+ M docs/ops/2d/morphology/gray_opening_rect.md
+ M docs/ops/2d/morphology/gray_opening_shape.md
+ M docs/ops/2d/morphology/gray_tophat.md
+ M docs/ops/2d/morphology/morph_grad.md
+ M docs/ops/2d/morphology/sk_area_opening.md
+ M docs/ops/2d/morphology/tophat.md
+ M docs/ops/2d/morphology/xsk2_diameter_opening.md
+ M docs/ops/2d/morphology/xsk2_reconstruction.md
+ M docs/ops/2d/morphology/xsk3_area_closing.md
+ M docs/ops/2d/morphology/xsk3_diameter_closing.md
  M docs/ops/2d/texture/cooc_feature_matrix.md
  M docs/ops/2d/texture/deviation_image.md
  M docs/ops/2d/texture/entropy_image.md
  M docs/ops/2d/texture/f2_symmetry.md
  M docs/ops/2d/texture/gabor.md
  M docs/ops/2d/texture/gen_gabor.md
+ M docs/ops/2d/texture/local_std.md
  M docs/ops/2d/texture/sk_entropy.md
  M docs/ops/2d/texture/sk_frangi.md
  M docs/ops/2d/texture/sk_gabor.md
@@ -70,66 +111,149 @@ M docs/AI_RAG_GUIDE.de.md
  M docs/ops/2d/texture/xsk_sato.md
  M docs/ops/2d/texture/xsk_struct_coherence.md
  M docs/ops/2d/texture/xsp_hilbert_env.md
+ M docs/ops/3d/INDEX.md
+ M docs/ops/3d/feature/curvature_maps.md
+ M docs/ops/3d/feature/edt_jfa.md
+ M docs/ops/3d/feature/hessian3d.md
+ M docs/ops/3d/feature/sobel3d.md
+ M docs/ops/3d/feature/vol_frangi.md
+ M docs/ops/3d/feature/vol_gradient_magnitude.md
+ M docs/ops/3d/feature/vol_hessian_blobness.md
+ M docs/ops/3d/feature/vol_local_maxima.md
+ M docs/ops/3d/feature/vol_sato.md
  M docs/ops/INDEX.de.md
  M docs/ops/INDEX.en.md
  M docs/ops/INDEX.ko.md
  M docs/ops/INDEX.md
  M docs/ops/INDEX.tw.md
  M docs/ops/INDEX.zh.md
- M docs/ops/SAMPLES.md
- M docs/ops/_fig/adaptive_gauss_thresh.a.jpg
- M docs/ops/_fig/adaptive_gauss_thresh.b.jpg
- M docs/ops/_fig/adaptive_gauss_thresh.inputs.jpg
- M docs/ops/_fig/adaptive_gauss_thresh.png
- M docs/ops/_fig/deviation_image.a.jpg
- M docs/ops/_fig/deviation_image.inputs.jpg
- M docs/ops/_fig/deviation_image.png
- M docs/ops/_fig/dots_image.a.jpg
- M docs/ops/_fig/dots_image.inputs.jpg
- M docs/ops/_fig/dots_image.png
- M docs/ops/_fig/dyn_threshold.a.jpg
- M docs/ops/_fig/dyn_threshold.b.jpg
- M docs/ops/_fig/dyn_threshold.inputs.jpg
- M docs/ops/_fig/dyn_threshold.png
  M docs/ops/_fig/figures.json
- M docs/ops/_fig/frei_dir.inputs.jpg
- M docs/ops/_fig/frei_dir.png
- M docs/ops/_fig/kirsch_dir.inputs.jpg
- M docs/ops/_fig/kirsch_dir.png
- M docs/ops/_fig/laplace_of_gauss.a.jpg
- M docs/ops/_fig/laplace_of_gauss.inputs.jpg
- M docs/ops/_fig/laplace_of_gauss.png
- M docs/ops/_fig/local_threshold.a.jpg
- M docs/ops/_fig/local_threshold.b.jpg
- M docs/ops/_fig/local_threshold.inputs.jpg
- M docs/ops/_fig/local_threshold.png
- M docs/ops/_fig/log.a.jpg
- M docs/ops/_fig/log.inputs.jpg
- M docs/ops/_fig/log.png
- M docs/ops/_fig/robinson_dir.inputs.jpg
- M docs/ops/_fig/robinson_dir.png
- M docs/ops/_fig/tb_project.chain.jpg
- M docs/ops/_fig/tb_project.inputs.jpg
- M docs/ops/_fig/tb_project.png
- M docs/ops/_fig/zero_crossing.a.jpg
- M docs/ops/_fig/zero_crossing.inputs.jpg
- M docs/ops/_fig/zero_crossing.png
- M docs/ops/_fig/zero_crossing_sub_pix.a.jpg
- M docs/ops/_fig/zero_crossing_sub_pix.inputs.jpg
- M docs/ops/_fig/zero_crossing_sub_pix.png
+ M examples/gallery2d_morphology.py
  M examples/gallery2d_texture_freq.py
+ M examples/poc_bone_trabecular_thickness.py
+ M examples3d.py
  M fullseye/OP_CATALOG.md
+ M fullseye/__init__.py
  M fullseye/data/OP_INDEX.json
  M fullseye/data/OP_NOTES.json
  M fullseye/skill_template/SKILL.md
  M ops.py
+ M ops3d.py
+ M scale.py
  M skills/fullseye-ops/SKILL.md
+ M studio_assets/op_help/3d/curvature_maps.de.html
+ M studio_assets/op_help/3d/curvature_maps.en.html
+ M studio_assets/op_help/3d/curvature_maps.html
+ M studio_assets/op_help/3d/curvature_maps.ko.html
+ M studio_assets/op_help/3d/curvature_maps.tw.html
+ M studio_assets/op_help/3d/curvature_maps.zh.html
+ M studio_assets/op_help/3d/edt_jfa.de.html
+ M studio_assets/op_help/3d/edt_jfa.en.html
+ M studio_assets/op_help/3d/edt_jfa.html
+ M studio_assets/op_help/3d/edt_jfa.ko.html
+ M studio_assets/op_help/3d/edt_jfa.tw.html
+ M studio_assets/op_help/3d/edt_jfa.zh.html
+ M studio_assets/op_help/3d/hessian3d.de.html
+ M studio_assets/op_help/3d/hessian3d.en.html
+ M studio_assets/op_help/3d/hessian3d.html
+ M studio_assets/op_help/3d/hessian3d.ko.html
+ M studio_assets/op_help/3d/hessian3d.tw.html
+ M studio_assets/op_help/3d/hessian3d.zh.html
+ M studio_assets/op_help/3d/sobel3d.de.html
+ M studio_assets/op_help/3d/sobel3d.en.html
+ M studio_assets/op_help/3d/sobel3d.html
+ M studio_assets/op_help/3d/sobel3d.ko.html
+ M studio_assets/op_help/3d/sobel3d.tw.html
+ M studio_assets/op_help/3d/sobel3d.zh.html
+ M studio_assets/op_help/3d/vol_frangi.de.html
+ M studio_assets/op_help/3d/vol_frangi.en.html
+ M studio_assets/op_help/3d/vol_frangi.html
+ M studio_assets/op_help/3d/vol_frangi.ja.html
+ M studio_assets/op_help/3d/vol_frangi.ko.html
+ M studio_assets/op_help/3d/vol_frangi.tw.html
+ M studio_assets/op_help/3d/vol_frangi.zh.html
+ M studio_assets/op_help/3d/vol_gradient_magnitude.de.html
+ M studio_assets/op_help/3d/vol_gradient_magnitude.en.html
+ M studio_assets/op_help/3d/vol_gradient_magnitude.html
+ M studio_assets/op_help/3d/vol_gradient_magnitude.ja.html
+ M studio_assets/op_help/3d/vol_gradient_magnitude.ko.html
+ M studio_assets/op_help/3d/vol_gradient_magnitude.tw.html
+ M studio_assets/op_help/3d/vol_gradient_magnitude.zh.html
+ M studio_assets/op_help/3d/vol_hessian_blobness.de.html
+ M studio_assets/op_help/3d/vol_hessian_blobness.en.html
+ M studio_assets/op_help/3d/vol_hessian_blobness.html
+ M studio_assets/op_help/3d/vol_hessian_blobness.ja.html
+ M studio_assets/op_help/3d/vol_hessian_blobness.ko.html
+ M studio_assets/op_help/3d/vol_hessian_blobness.tw.html
+ M studio_assets/op_help/3d/vol_hessian_blobness.zh.html
+ M studio_assets/op_help/3d/vol_local_maxima.de.html
+ M studio_assets/op_help/3d/vol_local_maxima.en.html
+ M studio_assets/op_help/3d/vol_local_maxima.html
+ M studio_assets/op_help/3d/vol_local_maxima.ja.html
+ M studio_assets/op_help/3d/vol_local_maxima.ko.html
+ M studio_assets/op_help/3d/vol_local_maxima.tw.html
+ M studio_assets/op_help/3d/vol_local_maxima.zh.html
+ M studio_assets/op_help/3d/vol_sato.de.html
+ M studio_assets/op_help/3d/vol_sato.en.html
+ M studio_assets/op_help/3d/vol_sato.html
+ M studio_assets/op_help/3d/vol_sato.ja.html
+ M studio_assets/op_help/3d/vol_sato.ko.html
+ M studio_assets/op_help/3d/vol_sato.tw.html
+ M studio_assets/op_help/3d/vol_sato.zh.html
+ M studio_assets/op_help/bothat.de.html
+ M studio_assets/op_help/bothat.en.html
+ M studio_assets/op_help/bothat.html
+ M studio_assets/op_help/bothat.ko.html
+ M studio_assets/op_help/bothat.tw.html
+ M studio_assets/op_help/bothat.zh.html
  M studio_assets/op_help/cooc_feature_matrix.de.html
  M studio_assets/op_help/cooc_feature_matrix.en.html
  M studio_assets/op_help/cooc_feature_matrix.html
  M studio_assets/op_help/cooc_feature_matrix.ko.html
  M studio_assets/op_help/cooc_feature_matrix.tw.html
  M studio_assets/op_help/cooc_feature_matrix.zh.html
+ M studio_assets/op_help/cv_blackhat.de.html
+ M studio_assets/op_help/cv_blackhat.en.html
+ M studio_assets/op_help/cv_blackhat.html
+ M studio_assets/op_help/cv_blackhat.ko.html
+ M studio_assets/op_help/cv_blackhat.tw.html
+ M studio_assets/op_help/cv_blackhat.zh.html
+ M studio_assets/op_help/cv_close.de.html
+ M studio_assets/op_help/cv_close.en.html
+ M studio_assets/op_help/cv_close.html
+ M studio_assets/op_help/cv_close.ko.html
+ M studio_assets/op_help/cv_close.tw.html
+ M studio_assets/op_help/cv_close.zh.html
+ M studio_assets/op_help/cv_dilate.de.html
+ M studio_assets/op_help/cv_dilate.en.html
+ M studio_assets/op_help/cv_dilate.html
+ M studio_assets/op_help/cv_dilate.ko.html
+ M studio_assets/op_help/cv_dilate.tw.html
+ M studio_assets/op_help/cv_dilate.zh.html
+ M studio_assets/op_help/cv_erode.de.html
+ M studio_assets/op_help/cv_erode.en.html
+ M studio_assets/op_help/cv_erode.html
+ M studio_assets/op_help/cv_erode.ko.html
+ M studio_assets/op_help/cv_erode.tw.html
+ M studio_assets/op_help/cv_erode.zh.html
+ M studio_assets/op_help/cv_gradient.de.html
+ M studio_assets/op_help/cv_gradient.en.html
+ M studio_assets/op_help/cv_gradient.html
+ M studio_assets/op_help/cv_gradient.ko.html
+ M studio_assets/op_help/cv_gradient.tw.html
+ M studio_assets/op_help/cv_gradient.zh.html
+ M studio_assets/op_help/cv_open.de.html
+ M studio_assets/op_help/cv_open.en.html
+ M studio_assets/op_help/cv_open.html
+ M studio_assets/op_help/cv_open.ko.html
+ M studio_assets/op_help/cv_open.tw.html
+ M studio_assets/op_help/cv_open.zh.html
+ M studio_assets/op_help/cv_tophat.de.html
+ M studio_assets/op_help/cv_tophat.en.html
+ M studio_assets/op_help/cv_tophat.html
+ M studio_assets/op_help/cv_tophat.ko.html
+ M studio_assets/op_help/cv_tophat.tw.html
+ M studio_assets/op_help/cv_tophat.zh.html
  M studio_assets/op_help/deviation_image.de.html
  M studio_assets/op_help/deviation_image.en.html
  M studio_assets/op_help/deviation_image.html
@@ -142,6 +266,20 @@ M docs/AI_RAG_GUIDE.de.md
  M studio_assets/op_help/entropy_image.ko.html
  M studio_assets/op_help/entropy_image.tw.html
  M studio_assets/op_help/entropy_image.zh.html
+ M studio_assets/op_help/f2_gray_inside.de.html
+ M studio_assets/op_help/f2_gray_inside.en.html
+ M studio_assets/op_help/f2_gray_inside.html
+ M studio_assets/op_help/f2_gray_inside.ja.html
+ M studio_assets/op_help/f2_gray_inside.ko.html
+ M studio_assets/op_help/f2_gray_inside.tw.html
+ M studio_assets/op_help/f2_gray_inside.zh.html
+ M studio_assets/op_help/f2_gray_skeleton.de.html
+ M studio_assets/op_help/f2_gray_skeleton.en.html
+ M studio_assets/op_help/f2_gray_skeleton.html
+ M studio_assets/op_help/f2_gray_skeleton.ja.html
+ M studio_assets/op_help/f2_gray_skeleton.ko.html
+ M studio_assets/op_help/f2_gray_skeleton.tw.html
+ M studio_assets/op_help/f2_gray_skeleton.zh.html
  M studio_assets/op_help/f2_symmetry.de.html
  M studio_assets/op_help/f2_symmetry.en.html
  M studio_assets/op_help/f2_symmetry.html
@@ -149,19 +287,6 @@ M docs/AI_RAG_GUIDE.de.md
  M studio_assets/op_help/f2_symmetry.ko.html
  M studio_assets/op_help/f2_symmetry.tw.html
  M studio_assets/op_help/f2_symmetry.zh.html
- M studio_assets/op_help/fig/adaptive_gauss_thresh.png
- M studio_assets/op_help/fig/deviation_image.png
- M studio_assets/op_help/fig/dots_image.png
- M studio_assets/op_help/fig/dyn_threshold.png
- M studio_assets/op_help/fig/frei_dir.png
- M studio_assets/op_help/fig/kirsch_dir.png
- M studio_assets/op_help/fig/laplace_of_gauss.png
- M studio_assets/op_help/fig/local_threshold.png
- M studio_assets/op_help/fig/log.png
- M studio_assets/op_help/fig/robinson_dir.png
- M studio_assets/op_help/fig/tb_project.png
- M studio_assets/op_help/fig/zero_crossing.png
- M studio_assets/op_help/fig/zero_crossing_sub_pix.png
  M studio_assets/op_help/gabor.de.html
  M studio_assets/op_help/gabor.en.html
  M studio_assets/op_help/gabor.html
@@ -169,12 +294,126 @@ M docs/AI_RAG_GUIDE.de.md
  M studio_assets/op_help/gabor.ko.html
  M studio_assets/op_help/gabor.tw.html
  M studio_assets/op_help/gabor.zh.html
+ M studio_assets/op_help/gclose.de.html
+ M studio_assets/op_help/gclose.en.html
+ M studio_assets/op_help/gclose.html
+ M studio_assets/op_help/gclose.ko.html
+ M studio_assets/op_help/gclose.tw.html
+ M studio_assets/op_help/gclose.zh.html
+ M studio_assets/op_help/gdilate.de.html
+ M studio_assets/op_help/gdilate.en.html
+ M studio_assets/op_help/gdilate.html
+ M studio_assets/op_help/gdilate.ko.html
+ M studio_assets/op_help/gdilate.tw.html
+ M studio_assets/op_help/gdilate.zh.html
  M studio_assets/op_help/gen_gabor.de.html
  M studio_assets/op_help/gen_gabor.en.html
  M studio_assets/op_help/gen_gabor.html
  M studio_assets/op_help/gen_gabor.ko.html
  M studio_assets/op_help/gen_gabor.tw.html
  M studio_assets/op_help/gen_gabor.zh.html
+ M studio_assets/op_help/gerode.de.html
+ M studio_assets/op_help/gerode.en.html
+ M studio_assets/op_help/gerode.html
+ M studio_assets/op_help/gerode.ko.html
+ M studio_assets/op_help/gerode.tw.html
+ M studio_assets/op_help/gerode.zh.html
+ M studio_assets/op_help/gopen.de.html
+ M studio_assets/op_help/gopen.en.html
+ M studio_assets/op_help/gopen.html
+ M studio_assets/op_help/gopen.ko.html
+ M studio_assets/op_help/gopen.tw.html
+ M studio_assets/op_help/gopen.zh.html
+ M studio_assets/op_help/gray_bothat.de.html
+ M studio_assets/op_help/gray_bothat.en.html
+ M studio_assets/op_help/gray_bothat.html
+ M studio_assets/op_help/gray_bothat.ko.html
+ M studio_assets/op_help/gray_bothat.tw.html
+ M studio_assets/op_help/gray_bothat.zh.html
+ M studio_assets/op_help/gray_closing.de.html
+ M studio_assets/op_help/gray_closing.en.html
+ M studio_assets/op_help/gray_closing.html
+ M studio_assets/op_help/gray_closing.ko.html
+ M studio_assets/op_help/gray_closing.tw.html
+ M studio_assets/op_help/gray_closing.zh.html
+ M studio_assets/op_help/gray_closing_rect.de.html
+ M studio_assets/op_help/gray_closing_rect.en.html
+ M studio_assets/op_help/gray_closing_rect.html
+ M studio_assets/op_help/gray_closing_rect.ko.html
+ M studio_assets/op_help/gray_closing_rect.tw.html
+ M studio_assets/op_help/gray_closing_rect.zh.html
+ M studio_assets/op_help/gray_closing_shape.de.html
+ M studio_assets/op_help/gray_closing_shape.en.html
+ M studio_assets/op_help/gray_closing_shape.html
+ M studio_assets/op_help/gray_closing_shape.ko.html
+ M studio_assets/op_help/gray_closing_shape.tw.html
+ M studio_assets/op_help/gray_closing_shape.zh.html
+ M studio_assets/op_help/gray_dilation.de.html
+ M studio_assets/op_help/gray_dilation.en.html
+ M studio_assets/op_help/gray_dilation.html
+ M studio_assets/op_help/gray_dilation.ko.html
+ M studio_assets/op_help/gray_dilation.tw.html
+ M studio_assets/op_help/gray_dilation.zh.html
+ M studio_assets/op_help/gray_dilation_shape.de.html
+ M studio_assets/op_help/gray_dilation_shape.en.html
+ M studio_assets/op_help/gray_dilation_shape.html
+ M studio_assets/op_help/gray_dilation_shape.ko.html
+ M studio_assets/op_help/gray_dilation_shape.tw.html
+ M studio_assets/op_help/gray_dilation_shape.zh.html
+ M studio_assets/op_help/gray_erosion.de.html
+ M studio_assets/op_help/gray_erosion.en.html
+ M studio_assets/op_help/gray_erosion.html
+ M studio_assets/op_help/gray_erosion.ko.html
+ M studio_assets/op_help/gray_erosion.tw.html
+ M studio_assets/op_help/gray_erosion.zh.html
+ M studio_assets/op_help/gray_erosion_shape.de.html
+ M studio_assets/op_help/gray_erosion_shape.en.html
+ M studio_assets/op_help/gray_erosion_shape.html
+ M studio_assets/op_help/gray_erosion_shape.ko.html
+ M studio_assets/op_help/gray_erosion_shape.tw.html
+ M studio_assets/op_help/gray_erosion_shape.zh.html
+ M studio_assets/op_help/gray_opening.de.html
+ M studio_assets/op_help/gray_opening.en.html
+ M studio_assets/op_help/gray_opening.html
+ M studio_assets/op_help/gray_opening.ko.html
+ M studio_assets/op_help/gray_opening.tw.html
+ M studio_assets/op_help/gray_opening.zh.html
+ M studio_assets/op_help/gray_opening_rect.de.html
+ M studio_assets/op_help/gray_opening_rect.en.html
+ M studio_assets/op_help/gray_opening_rect.html
+ M studio_assets/op_help/gray_opening_rect.ko.html
+ M studio_assets/op_help/gray_opening_rect.tw.html
+ M studio_assets/op_help/gray_opening_rect.zh.html
+ M studio_assets/op_help/gray_opening_shape.de.html
+ M studio_assets/op_help/gray_opening_shape.en.html
+ M studio_assets/op_help/gray_opening_shape.html
+ M studio_assets/op_help/gray_opening_shape.ko.html
+ M studio_assets/op_help/gray_opening_shape.tw.html
+ M studio_assets/op_help/gray_opening_shape.zh.html
+ M studio_assets/op_help/gray_tophat.de.html
+ M studio_assets/op_help/gray_tophat.en.html
+ M studio_assets/op_help/gray_tophat.html
+ M studio_assets/op_help/gray_tophat.ko.html
+ M studio_assets/op_help/gray_tophat.tw.html
+ M studio_assets/op_help/gray_tophat.zh.html
+ M studio_assets/op_help/local_std.de.html
+ M studio_assets/op_help/local_std.en.html
+ M studio_assets/op_help/local_std.html
+ M studio_assets/op_help/local_std.ko.html
+ M studio_assets/op_help/local_std.tw.html
+ M studio_assets/op_help/local_std.zh.html
+ M studio_assets/op_help/morph_grad.de.html
+ M studio_assets/op_help/morph_grad.en.html
+ M studio_assets/op_help/morph_grad.html
+ M studio_assets/op_help/morph_grad.ko.html
+ M studio_assets/op_help/morph_grad.tw.html
+ M studio_assets/op_help/morph_grad.zh.html
+ M studio_assets/op_help/sk_area_opening.de.html
+ M studio_assets/op_help/sk_area_opening.en.html
+ M studio_assets/op_help/sk_area_opening.html
+ M studio_assets/op_help/sk_area_opening.ko.html
+ M studio_assets/op_help/sk_area_opening.tw.html
+ M studio_assets/op_help/sk_area_opening.zh.html
  M studio_assets/op_help/sk_entropy.de.html
  M studio_assets/op_help/sk_entropy.en.html
  M studio_assets/op_help/sk_entropy.html
@@ -243,12 +482,42 @@ M docs/AI_RAG_GUIDE.de.md
  M studio_assets/op_help/tf_rank_transform.ko.html
  M studio_assets/op_help/tf_rank_transform.tw.html
  M studio_assets/op_help/tf_rank_transform.zh.html
+ M studio_assets/op_help/tophat.de.html
+ M studio_assets/op_help/tophat.en.html
+ M studio_assets/op_help/tophat.html
+ M studio_assets/op_help/tophat.ko.html
+ M studio_assets/op_help/tophat.tw.html
+ M studio_assets/op_help/tophat.zh.html
+ M studio_assets/op_help/xsk2_diameter_opening.de.html
+ M studio_assets/op_help/xsk2_diameter_opening.en.html
+ M studio_assets/op_help/xsk2_diameter_opening.html
+ M studio_assets/op_help/xsk2_diameter_opening.ko.html
+ M studio_assets/op_help/xsk2_diameter_opening.tw.html
+ M studio_assets/op_help/xsk2_diameter_opening.zh.html
  M studio_assets/op_help/xsk2_hog.de.html
  M studio_assets/op_help/xsk2_hog.en.html
  M studio_assets/op_help/xsk2_hog.html
  M studio_assets/op_help/xsk2_hog.ko.html
  M studio_assets/op_help/xsk2_hog.tw.html
  M studio_assets/op_help/xsk2_hog.zh.html
+ M studio_assets/op_help/xsk2_reconstruction.de.html
+ M studio_assets/op_help/xsk2_reconstruction.en.html
+ M studio_assets/op_help/xsk2_reconstruction.html
+ M studio_assets/op_help/xsk2_reconstruction.ko.html
+ M studio_assets/op_help/xsk2_reconstruction.tw.html
+ M studio_assets/op_help/xsk2_reconstruction.zh.html
+ M studio_assets/op_help/xsk3_area_closing.de.html
+ M studio_assets/op_help/xsk3_area_closing.en.html
+ M studio_assets/op_help/xsk3_area_closing.html
+ M studio_assets/op_help/xsk3_area_closing.ko.html
+ M studio_assets/op_help/xsk3_area_closing.tw.html
+ M studio_assets/op_help/xsk3_area_closing.zh.html
+ M studio_assets/op_help/xsk3_diameter_closing.de.html
+ M studio_assets/op_help/xsk3_diameter_closing.en.html
+ M studio_assets/op_help/xsk3_diameter_closing.html
+ M studio_assets/op_help/xsk3_diameter_closing.ko.html
+ M studio_assets/op_help/xsk3_diameter_closing.tw.html
+ M studio_assets/op_help/xsk3_diameter_closing.zh.html
  M studio_assets/op_help/xsk_meijering.de.html
  M studio_assets/op_help/xsk_meijering.en.html
  M studio_assets/op_help/xsk_meijering.html
@@ -273,41 +542,107 @@ M docs/AI_RAG_GUIDE.de.md
  M studio_assets/op_help/xsp_hilbert_env.ko.html
  M studio_assets/op_help/xsp_hilbert_env.tw.html
  M studio_assets/op_help/xsp_hilbert_env.zh.html
- M tests/test_docs_index_reachable.py
- M tests/test_sample_data.py
- M tools/opdocs.py
-?? docs/ops/2d/texture/local_std.md
-?? docs/ops/_fig/local_std.a.jpg
-?? docs/ops/_fig/local_std.b.jpg
-?? docs/ops/_fig/local_std.inputs.jpg
-?? docs/ops/_fig/local_std.png
-?? studio_assets/op_help/fig/local_std.png
-?? studio_assets/op_help/local_std.de.html
-?? studio_assets/op_help/local_std.en.html
-?? studio_assets/op_help/local_std.html
-?? studio_assets/op_help/local_std.ko.html
-?? studio_assets/op_help/local_std.tw.html
-?? studio_assets/op_help/local_std.zh.html
+ M tests/test_volops.py
+ M tools/gen_op_figures.py
+ M tools/regen_all.py
+ M volops.py
+?? docs/ops/2d/morphology/local_thickness.md
+?? docs/ops/2d/texture/structure_tensor_coherence.md
+?? docs/ops/2d/texture/structure_tensor_orientation.md
+?? docs/ops/3d/feature/vol_euler_number.md
+?? docs/ops/3d/feature/vol_granulometry.md
+?? docs/ops/3d/feature/vol_local_std.md
+?? docs/ops/3d/feature/vol_local_thickness.md
+?? docs/ops/3d/feature/vol_orientation_coherence.md
+?? docs/ops/_fig/local_thickness.a.jpg
+?? docs/ops/_fig/local_thickness.b.jpg
+?? docs/ops/_fig/local_thickness.inputs.jpg
+?? docs/ops/_fig/local_thickness.png
+?? docs/ops/_fig/structure_tensor_coherence.a.jpg
+?? docs/ops/_fig/structure_tensor_coherence.b.jpg
+?? docs/ops/_fig/structure_tensor_coherence.inputs.jpg
+?? docs/ops/_fig/structure_tensor_coherence.png
+?? docs/ops/_fig/structure_tensor_orientation.a.jpg
+?? docs/ops/_fig/structure_tensor_orientation.b.jpg
+?? docs/ops/_fig/structure_tensor_orientation.inputs.jpg
+?? docs/ops/_fig/structure_tensor_orientation.png
+?? examples_3d/ct_porosity_and_fibre_morphometry.py
+?? studio_assets/op_help/3d/vol_euler_number.de.html
+?? studio_assets/op_help/3d/vol_euler_number.en.html
+?? studio_assets/op_help/3d/vol_euler_number.html
+?? studio_assets/op_help/3d/vol_euler_number.ja.html
+?? studio_assets/op_help/3d/vol_euler_number.ko.html
+?? studio_assets/op_help/3d/vol_euler_number.tw.html
+?? studio_assets/op_help/3d/vol_euler_number.zh.html
+?? studio_assets/op_help/3d/vol_granulometry.de.html
+?? studio_assets/op_help/3d/vol_granulometry.en.html
+?? studio_assets/op_help/3d/vol_granulometry.html
+?? studio_assets/op_help/3d/vol_granulometry.ja.html
+?? studio_assets/op_help/3d/vol_granulometry.ko.html
+?? studio_assets/op_help/3d/vol_granulometry.tw.html
+?? studio_assets/op_help/3d/vol_granulometry.zh.html
+?? studio_assets/op_help/3d/vol_local_std.de.html
+?? studio_assets/op_help/3d/vol_local_std.en.html
+?? studio_assets/op_help/3d/vol_local_std.html
+?? studio_assets/op_help/3d/vol_local_std.ja.html
+?? studio_assets/op_help/3d/vol_local_std.ko.html
+?? studio_assets/op_help/3d/vol_local_std.tw.html
+?? studio_assets/op_help/3d/vol_local_std.zh.html
+?? studio_assets/op_help/3d/vol_local_thickness.de.html
+?? studio_assets/op_help/3d/vol_local_thickness.en.html
+?? studio_assets/op_help/3d/vol_local_thickness.html
+?? studio_assets/op_help/3d/vol_local_thickness.ja.html
+?? studio_assets/op_help/3d/vol_local_thickness.ko.html
+?? studio_assets/op_help/3d/vol_local_thickness.tw.html
+?? studio_assets/op_help/3d/vol_local_thickness.zh.html
+?? studio_assets/op_help/3d/vol_orientation_coherence.de.html
+?? studio_assets/op_help/3d/vol_orientation_coherence.en.html
+?? studio_assets/op_help/3d/vol_orientation_coherence.html
+?? studio_assets/op_help/3d/vol_orientation_coherence.ja.html
+?? studio_assets/op_help/3d/vol_orientation_coherence.ko.html
+?? studio_assets/op_help/3d/vol_orientation_coherence.tw.html
+?? studio_assets/op_help/3d/vol_orientation_coherence.zh.html
+?? studio_assets/op_help/fig/local_thickness.png
+?? studio_assets/op_help/fig/structure_tensor_coherence.png
+?? studio_assets/op_help/fig/structure_tensor_orientation.png
+?? studio_assets/op_help/local_thickness.de.html
+?? studio_assets/op_help/local_thickness.en.html
+?? studio_assets/op_help/local_thickness.html
+?? studio_assets/op_help/local_thickness.ko.html
+?? studio_assets/op_help/local_thickness.tw.html
+?? studio_assets/op_help/local_thickness.zh.html
+?? studio_assets/op_help/structure_tensor_coherence.de.html
+?? studio_assets/op_help/structure_tensor_coherence.en.html
+?? studio_assets/op_help/structure_tensor_coherence.html
+?? studio_assets/op_help/structure_tensor_coherence.ko.html
+?? studio_assets/op_help/structure_tensor_coherence.tw.html
+?? studio_assets/op_help/structure_tensor_coherence.zh.html
+?? studio_assets/op_help/structure_tensor_orientation.de.html
+?? studio_assets/op_help/structure_tensor_orientation.en.html
+?? studio_assets/op_help/structure_tensor_orientation.html
+?? studio_assets/op_help/structure_tensor_orientation.ko.html
+?? studio_assets/op_help/structure_tensor_orientation.tw.html
+?? studio_assets/op_help/structure_tensor_orientation.zh.html
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-22:39 docs/README.md
-22:38 examples/README.md
-22:38 docs/maturity.json
-22:38 docs/MATURITY.md
-22:38 docs/HARDENING.md
-22:38 docs/HARDENING.en.md
-22:38 docs/CAPABILITIES.md
-22:38 docs/CAPABILITIES.en.md
-22:38 fullseye/OP_CATALOG.md
-22:38 docs/OP_CATALOG.md
-22:38 studio_assets/op_help/fig/zoom_region.png
-22:38 studio_assets/op_help/fig/zoom_image_size.png
-22:38 studio_assets/op_help/fig/zoom_image_factor.png
-22:38 studio_assets/op_help/fig/zero_crossing_sub_pix.png
-22:38 studio_assets/op_help/fig/zero_crossing.png
+00:51 docs/ops/dem/INDEX.md
+00:51 docs/ops/shape2d/INDEX.md
+00:51 docs/ops/piv/INDEX.md
+00:51 docs/ops/blob/INDEX.md
+00:51 docs/ops/volcolor/INDEX.md
+00:51 docs/ops/videostream/INDEX.md
+00:51 docs/ops/tomography/INDEX.md
+00:51 docs/ops/shapestat/INDEX.md
+00:51 docs/ops/roughness/INDEX.md
+00:51 docs/ops/reprconv/INDEX.md
+00:51 docs/ops/profile/INDEX.md
+00:51 docs/ops/oned/INDEX.md
+00:51 docs/ops/measure1d/INDEX.md
+00:51 docs/ops/imgmetrics/INDEX.md
+00:51 docs/ops/imgforensics/INDEX.md
 ```
 
 ---

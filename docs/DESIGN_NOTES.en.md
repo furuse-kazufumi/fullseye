@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 683. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 692. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -24,8 +24,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `api.py`
 
-- **L587** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
-- **L1346** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
+- **L589** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
+- **L1350** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
 
 ## `astrostack.py`
 
@@ -157,6 +157,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L59** — ★EXTEND: cell size [m]. For real data, obtain it via dem_cell_size_webmercator(zoom, latitude).
 - **L158** — ★Honest observation: when there is a no-data cell partway down a slope, its northern neighbour, even as an outlet, does not drain into the no-data but goes south-west (the direction with a finite drop). The implementation is "drain into no-data only when there is nowhere else to descend", narrower than the docstring's "allows flow toward no-data". Here we only print and do not assert.
 
+## `examples/gallery2d_morphology.py`
+
+- **L201** _(ja)_ — ★背景の 1 点だけでは足りない —— **前景の外に 1 画素も漏れていない**ことを 全数で見る。離散の円板で膨らませると境界の外まで塗ってしまい、最初の実装は 前景 197 画素の円に対して外へ 48 画素(24%)漏らしていた。中心の値は正しい ままなので、中心だけ見る検査では捕まらない。
+
 ## `examples/piv_flow_from_particles.py`
 
 - **L27** — ★Since it imports a module (pivops) at the repo root, place the repo root at the front so it runs straight from a checkout. Same convention as the other examples. Without this, `py -3.11 examples/<name>.py` fails with ModuleNotFoundError (measured 2026-09-09: of the 83 that had no gate to run them, only these 2 of this kind failed).
@@ -206,6 +210,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_bilateral_asymmetry.py`
 
 - **L585** — ★Keep it in a form that can pass the hole-D gate as is (the margin collapses first, the angle jumps afterward).
+
+## `examples/poc_bone_trabecular_thickness.py`
+
+- **L708** _(ja)_ — ★穴が塞がったので、所見を「無い」から「**規約が 1 画素ずれる**」に書き換える。
 
 ## `examples/poc_bump_coplanarity.py`
 
@@ -848,7 +856,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `fullseye/__init__.py`
 
-- **L531** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
+- **L533** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
 
 ## `fullseye/mcp/catalog.py`
 
@@ -921,18 +929,20 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `ops.py`
 
-- **L661** — ★Pad the edges **with the edge value**. Previously it was ``np.convolve(x, k, "same")``, which averages the w points at both ends **with zero** -- the start and end of a contour got dragged toward the origin (0,0) by up to 50 px or more, producing a figure where the red streaks of 140 contours converged to the upper left (found 2026-09-06 when per-op figures were first made; in numerical tests the mean deviation was 0.3 px and it was invisible).
-- **L1532** — ★**A ledger of ops that crash the whole process on the native side with a degenerate input** (2026-09-05). `guard` can only catch Python exceptions. Once something is written out of bounds inside C/C++, it is over there, and the user's whole pipeline vanishes -- the worst way for fail-soft to break. There is no recourse but to reject at the entrance, so **list it here with a reason and set a barrier at registration time**. **Behaviour differs by platform** -- that is the reason this ledger exists. The 3 below crash on Linux (Ubuntu 24.04 / Python 3.12 / PyPI wheel), but **on Windows not one reproduced with the same input**. A different native build means the boundary breaks differently, so a fine line of 'this kind of input is fine' cannot be trusted -- **reject degenerate inputs wholesale**. Not 'remove it once fixed' but **remove it once the upstream can be confirmed fixed** (this is not our own code, so the removal condition differs).
+- **L407** _(ja)_ — ★一様な面では勾配が丸め屑しか残らず、``arctan2`` はその屑の符号で**任意の角度**を 返す —— 明るさを 0.01 変えただけで向きが一斉に変わる。絶対値の床では画像の 明るさに依存してしまうので、必ず**相対量**で切る。
+- **L511** _(ja)_ — ★膨張は前景をはみ出す。連続の世界では半径 r の円は収まっているが、**離散の 円板**で膨らませると境界の外の画素まで塗る —— 実測で前景 197 画素の円に 対し外へ 48 画素(24%)漏れ、そのせいで粒度分布の生存率が 1.0 を超えた。 太さは前景の量なので、必ず前景で切る。
+- **L788** — ★Pad the edges **with the edge value**. Previously it was ``np.convolve(x, k, "same")``, which averages the w points at both ends **with zero** -- the start and end of a contour got dragged toward the origin (0,0) by up to 50 px or more, producing a figure where the red streaks of 140 contours converged to the upper left (found 2026-09-06 when per-op figures were first made; in numerical tests the mean deviation was 0.3 px and it was invisible).
+- **L1662** — ★**A ledger of ops that crash the whole process on the native side with a degenerate input** (2026-09-05). `guard` can only catch Python exceptions. Once something is written out of bounds inside C/C++, it is over there, and the user's whole pipeline vanishes -- the worst way for fail-soft to break. There is no recourse but to reject at the entrance, so **list it here with a reason and set a barrier at registration time**. **Behaviour differs by platform** -- that is the reason this ledger exists. The 3 below crash on Linux (Ubuntu 24.04 / Python 3.12 / PyPI wheel), but **on Windows not one reproduced with the same input**. A different native build means the boundary breaks differently, so a fine line of 'this kind of input is fine' cannot be trusted -- **reject degenerate inputs wholesale**. Not 'remove it once fixed' but **remove it once the upstream can be confirmed fixed** (this is not our own code, so the removal condition differs).
 
 ## `ops3d.py`
 
-- **L375** — ★out is not image2d but **rgbimage** (measured 2026-09-02). Both the docstring and the implementation say 'RGB (size, size, 3) float [0,1]', and only this line claimed a 2-D luminance image. This op only ran once a mesh seed was supplied, and the type predicate surfaced it with a TYPEMISS: "declared 'image2d' but returned ndarray(512,512,3)" (until then, because of the shape that splits (V,F) into 2 positional arguments, it had **never run once**). The other 3 render_* ops (ambient_occlusion / cast_shadow / supersample_mesh) are 2-D as measured, so image2d is fine for them -- the lie was only this one line.
-- **L465** _(ja)_ — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
-- **L616** — ★Added 2026-09-08. Until then the pose helper for carving (visualhull.look_at) could not be reached from any public layer, and grabbing the same-named render3d.look_at (gluLookAt, -Z forward) resulted in **an empty hull without exception** (poc_livestock_body_volume).
-- **L637** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
-- **L727** — ★The reason (a) for holding it back -- 'the points candidate list gets shorter and silently overwrites the existing champion' -- is gone now that backends_typed.TYPE_TO_SORT folds coordgrid -> points: the 2-D bridges tb_sphere_sdf / tb_box_sdf carry INPUT_ADAPTERS._points_to_grid and **actually build a coordinate field from the point cloud**, so their "points" declaration is not a lie (measured: passing (64,3) returns (16,16,16) = alive). The lie was only on the 3-D ledger side.
-- **L882** — ★axis=1. The canonical form of `pairs` is **(N,2)** (measured: the 6 consuming ops explicitly reject (2,N)). While the predicate was `lambda v: True`, this produced (2,n) and declared as its type 'a shape no consumer can accept'
-- **L920** — ★The canonical form of position is **3 components [z, y, x]**. Decided not by majority vote but by **running the consumers**: refine_translation_lk / refine_lm fail-closed with "init_pos must have exactly 3 components [z, y, x] (got 4)" when passed 4 components (measured). The generator is also 3 components (8.0, 8.0, 8.0). But the match_* family returns **4 components [score, d, h, w]** as per docstring, so flowing it with a declared out of "position" wipes out the downstream refinement ops = a type lie. Since score itself is honest information, **the function side is not trimmed** (get() stays at 4 components), and the coordinates alone are extracted on the call() side that claims the ledger's type (the same treatment as project_points).
+- **L383** — ★out is not image2d but **rgbimage** (measured 2026-09-02). Both the docstring and the implementation say 'RGB (size, size, 3) float [0,1]', and only this line claimed a 2-D luminance image. This op only ran once a mesh seed was supplied, and the type predicate surfaced it with a TYPEMISS: "declared 'image2d' but returned ndarray(512,512,3)" (until then, because of the shape that splits (V,F) into 2 positional arguments, it had **never run once**). The other 3 render_* ops (ambient_occlusion / cast_shadow / supersample_mesh) are 2-D as measured, so image2d is fine for them -- the lie was only this one line.
+- **L473** _(ja)_ — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
+- **L624** — ★Added 2026-09-08. Until then the pose helper for carving (visualhull.look_at) could not be reached from any public layer, and grabbing the same-named render3d.look_at (gluLookAt, -Z forward) resulted in **an empty hull without exception** (poc_livestock_body_volume).
+- **L645** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
+- **L735** — ★The reason (a) for holding it back -- 'the points candidate list gets shorter and silently overwrites the existing champion' -- is gone now that backends_typed.TYPE_TO_SORT folds coordgrid -> points: the 2-D bridges tb_sphere_sdf / tb_box_sdf carry INPUT_ADAPTERS._points_to_grid and **actually build a coordinate field from the point cloud**, so their "points" declaration is not a lie (measured: passing (64,3) returns (16,16,16) = alive). The lie was only on the 3-D ledger side.
+- **L895** — ★axis=1. The canonical form of `pairs` is **(N,2)** (measured: the 6 consuming ops explicitly reject (2,N)). While the predicate was `lambda v: True`, this produced (2,n) and declared as its type 'a shape no consumer can accept'
+- **L933** — ★The canonical form of position is **3 components [z, y, x]**. Decided not by majority vote but by **running the consumers**: refine_translation_lk / refine_lm fail-closed with "init_pos must have exactly 3 components [z, y, x] (got 4)" when passed 4 components (measured). The generator is also 3 components (8.0, 8.0, 8.0). But the match_* family returns **4 components [score, d, h, w]** as per docstring, so flowing it with a declared out of "position" wipes out the downstream refinement ops = a type lie. Since score itself is honest information, **the function side is not trimmed** (get() stays at 4 components), and the coordinates alone are extracted on the call() side that claims the ledger's type (the same treatment as project_points).
 
 ## `opsastrostack.py`
 
@@ -1265,6 +1275,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L319** — ★Collins (VSAM 2000): **both are relative to the current frame**. Until 2026-09-05 this test expected the consecutive pair |f[t-1]-f[t-2]|, freezing an implementation bug as the spec (always all-zero for a uniform object moving at constant velocity -- the regression test below).
 
+## `tests/test_volops.py`
+
+- **L566** _(ja)_ — ★これらは「HALCON がボクセル型を持たない」ことを理由に足した族なので、正しさの 根拠は**幾何が保証する真値**しかない。だから全部、真値の分かる形(球・立方体・ トーラス・既知 sigma の白色雑音)で検査する。 --------------------------------------------------------------------------- #
+
 ## `tools/chain_fuzz.py`
 
 - **L43** — ★The catalog, hints and adapters have the shipped module ``typed_catalog`` as the source of truth (2026-09-05). They used to live here, and backends_typed read them by adding tools/ to sys.path -- as a result tb_* 143 op silently vanished in the wheel. The direction was reversed.
@@ -1343,7 +1357,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L105** — ★2026-09-08: `tb_angle_3points` and `tb_indices_to_labels`, which were in this table, were not "outside the figure's domain" but **op that must not be put on the bridge**. The former takes 3 vectors so it can't be called with a single point cloud, and the latter returns 1-D yet declares out as `labels` (→ volume = ndim 3). Both, while registered, had **never once run**, and fail-soft was returning plausible values. Moved to `backends_typed._OP_BRIDGE_SKIP` and removed from this table -- there was a record that no figure came out, yet nowhere a record of the inability to run itself (there were two gates, and only one had noticed).
 - **L115** _(ja)_ — ★2026-09-13: op が evolute 検証を得て厳格化。ECEF は地球表面(中心から ~6.4M m)の 座標を要るが、画像由来の合成点は原点付近で**必ず楕円体の evolute 内**に落ちるため 正しく拒否される(実データでは動く。合成入力では図を作れない恒久的な定義域ミスマッチ)。
 - **L127** — ★2026-09-07 (user instruction "there's no need to consolidate into one image; things that are stepwise or have multiple conditions should be split out", "for some things a pseudo-color is easier to understand", "complex ones may even be an animated GIF"). In addition to the main figure `<op>.png`: `<op>.a.jpg` / `<op>.b.jpg` — 3 images with the knob swept to 0.1 / 0.5 / 0.9 (**only when the output changes**; if it doesn't change, the reason goes in the manifest) `<op>.chain.jpg` — a stepwise figure for an op that has a preceding op (image → intermediate → output) `<op>.gif` — when the output is video / light field / volume, showing frames / viewpoints / slices in sequence (the still `<op>.png` is the finished form and the GIF is additional; Studio's QTextBrowser shows the first frame). Apply pseudo-color only to the output of a **field of quantity** (distance, phase, orientation, depth, curvature …), and write `(viridis)` in the caption. Filter types stay gray (don't present them as a color-changing op).
-- **L730** — ★"It ran" and "a meaningful output came out" are different (2026-09-07, user's remark "what's with the pure-black out?"). If an empty array is counted as "has a figure", a black slab becomes a figure. Record empty as empty and write the reason in the note.
+- **L743** — ★"It ran" and "a meaningful output came out" are different (2026-09-07, user's remark "what's with the pure-black out?"). If an empty array is counted as "has a figure", a black slab becomes a figure. Record empty as empty and write the reason in the note.
 
 ## `tools/gen_wing2d_gallery.py`
 
@@ -1400,7 +1414,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L54** — ★The only generated artifact outside `tools/`. That is exactly why it was missed — as long as you look for generators under `tools/*.py`, this one is never found.
 - **L77** — * ★ And dangerous: an article right after generation writes images with **relative paths**. The published version has them changed to absolute URLs on `raw.githubusercontent.com` (with a relative path Qiita does not show images —— memory `feedback_qiita_svg_path_and_cache`). Running only the generator rolls those absolute URLs back by 42 lines. **If you run it, carry it all the way through the article's publishing steps.** Write exclusions **by file name**. Summarizing them in prose ("the 10 of wing*_gallery") cannot be matched by machine, and the `unclassified()` below stops working.
-- **L167** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
+- **L173** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
 
 ## `typed_catalog.py`
 
@@ -1415,6 +1429,13 @@ This repository records *why* things are the way they are in **comments in the s
 ## `visualhull.py`
 
 - **L123** — ★ **Every single** point behind the camera = almost certainly a convention mismatch in the pose (2026-09-08, hit by poc_livestock_body_volume). This function requires the OpenCV convention (+Z forward), but what bears the name ``look_at`` in the public layer is render3d's gluLookAt version (−Z forward, a 4x4). Passing its ``M[:3,:3], M[:3,3]`` makes every voxel judged as behind, and **an empty silhouette without exception** is returned, giving an empty hull. Silently returning empty is indistinguishable from "fully carved," so here alone we raise our voice (there are valid cases —— the object being behind the field of view —— so keep it to a warning rather than a raise).
+
+## `volops.py`
+
+- **L1083** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
+- **L1096** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
+- **L1189** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
+- **L1209** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
 
 ## `world_render.py`
 

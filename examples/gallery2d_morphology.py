@@ -94,7 +94,7 @@ OPS = [
     "gray_tophat", "gray_bothat", "gray_erosion_shape", "gray_dilation_shape",
     "gray_opening_rect", "gray_closing_rect", "xsk2_reconstruction",
     "xsk2_diameter_opening", "xsk3_area_closing", "xsk3_diameter_closing",
-    "f2_gray_skeleton", "f2_gray_inside",
+    "f2_gray_skeleton", "f2_gray_inside", "local_thickness",
 ]
 
 
@@ -183,6 +183,30 @@ def main() -> int:
     bh_flat = bh[18:28, 30:37].mean()
     assert bh_spot > bh_flat + 0.1, \
         f"bothat: 小暗点応答が平坦背景を上回らない(spot={bh_spot:.3f} flat={bh_flat:.3f})"
+    gt_checks += 1
+
+    # 7. local_thickness: **既知の直径**をそのまま返すこと(近似でなく厳密に合う)。
+    #    円の中心では「内接円の直径」がそのまま太さなので、真値が分かる。
+    #    null を破る 2 つ: (a) 背景は 0、(b) 上限を下げると太い円は頭打ちになる
+    #    —— 頭打ちが起きなければ、上限が効いていないということ。
+    lt_img = np.zeros((128, 128))
+    ly, lx = np.mgrid[0:128, 0:128]
+    for cy, cx, r in ((30, 30, 4), (30, 90, 8), (90, 30, 11)):
+        lt_img[(ly - cy) ** 2 + (lx - cx) ** 2 <= r * r] = 1.0
+    r_max = 12
+    lt = np.asarray(BY["local_thickness"].fn(lt_img.copy(), 1.0, 0.5)) * (2 * r_max)
+    for cy, cx, r in ((30, 30, 4), (30, 90, 8), (90, 30, 11)):
+        assert abs(lt[cy, cx] - 2 * r) < 1e-9,             f"local_thickness: 直径が合わない(真={2 * r} 推定={lt[cy, cx]:.4g})"
+    assert lt[0, 0] == 0.0, "local_thickness: 背景が 0 でない"
+    # ★背景の 1 点だけでは足りない —— **前景の外に 1 画素も漏れていない**ことを
+    #   全数で見る。離散の円板で膨らませると境界の外まで塗ってしまい、最初の実装は
+    #   前景 197 画素の円に対して外へ 48 画素(24%)漏らしていた。中心の値は正しい
+    #   ままなので、中心だけ見る検査では捕まらない。
+    leaked = int(((lt > 0.0) & (lt_img == 0.0)).sum())
+    assert leaked == 0, f"local_thickness: 前景の外に {leaked} 画素漏れている"
+    # (b) 上限 a を下げる -> 直径 22 の円は頭打ちになり、出力の最大が 1.0 に貼りつく
+    lt_small = np.asarray(BY["local_thickness"].fn(lt_img.copy(), 0.3, 0.5))
+    assert lt_small.max() >= 0.999,         "local_thickness: 上限を下げても飽和しない(上限が効いていない)"
     gt_checks += 1
 
     print(f"PASS: {len(OPS)} ops exercised, all finite/typed/deterministic; {gt_checks} GT checks")

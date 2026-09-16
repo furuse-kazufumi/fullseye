@@ -44,7 +44,7 @@ detector. Reference: Sato et al., Medical Image Analysis 1998.
 
 ## 同カテゴリ(`feature`)
 
-[sobel3d](sobel3d.md) · [hessian3d](hessian3d.md) · [curvature_maps](curvature_maps.md) · [edt_jfa](edt_jfa.md) · [vol_frangi](vol_frangi.md) · [vol_hessian_blobness](vol_hessian_blobness.md) · [vol_gradient_magnitude](vol_gradient_magnitude.md) · [vol_local_maxima](vol_local_maxima.md)
+[sobel3d](sobel3d.md) · [hessian3d](hessian3d.md) · [curvature_maps](curvature_maps.md) · [edt_jfa](edt_jfa.md) · [vol_frangi](vol_frangi.md) · [vol_local_std](vol_local_std.md) · [vol_local_thickness](vol_local_thickness.md) · [vol_orientation_coherence](vol_orientation_coherence.md)
 
 ---
 *Provenance: volops.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

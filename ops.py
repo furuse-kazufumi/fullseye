@@ -389,6 +389,133 @@ def _local_std(v, a, b):
     return np.sqrt(var) / _c4(n)
 
 
+def _structure_tensor(x, sigma, rho):
+    """構造テンソル ``J = G_rho * (grad I)(grad I)^T`` の 3 成分を返す。
+
+    ``sigma`` は微分を取る前の平滑(雑音を微分で増幅しないため)、``rho`` は
+    テンソルを積分する窓の広さ。**2 つのスケールは別物**で、``rho`` を 0 にすると
+    テンソルの階数が 1 に落ちて向きしか残らない(異方度が常に 1 になる)。
+    """
+    g = ndimage.gaussian_filter(np.asarray(x, np.float64), sigma)
+    gy, gx = np.gradient(g)
+    return (ndimage.gaussian_filter(gx * gx, rho),
+            ndimage.gaussian_filter(gy * gy, rho),
+            ndimage.gaussian_filter(gx * gy, rho))
+
+
+#: 構造テンソルが「向きを持っている」と言える下限(テンソルの跡に対する相対量)。
+#: ★一様な面では勾配が丸め屑しか残らず、``arctan2`` はその屑の符号で**任意の角度**を
+#: 返す —— 明るさを 0.01 変えただけで向きが一斉に変わる。絶対値の床では画像の
+#: 明るさに依存してしまうので、必ず**相対量**で切る。
+_ST_FLOOR = 1e-6
+
+
+def _st_orientation(v, a, b):
+    """局所の**縞の走る向き**(構造テンソルの主軸)を ``[0,1]`` に写して返す。
+
+``0`` と ``1`` がともに水平、``0.5`` が垂直にあたる(向きは 180 度で一周するので、
+``0`` と ``1`` は同じ向き —— **この出力を差分すると境目で偽の段差が出る**ことに注意)。
+
+``a`` が微分前の平滑 ``sigma``(0.5〜3.0 画素)、``b`` が積分窓 ``rho``(1.0〜8.0 画素)。
+``rho`` は「どれくらいの広さで向きが揃っているとみなすか」で、繊維や研磨目のピッチより
+大きく取る。
+
+**適用条件**: 向きが定義できるのは**勾配が構造的に偏っている所だけ**。テンソルの
+異方度が跡に対して ``1e-6`` を下回る画素(平坦面・等方な雑音)は「向き未定義」として
+``0.5`` を返す —— ここで床を置かないと、一様な面で丸め屑が ``arctan2`` に増幅されて
+**明るさを 0.01 変えただけで向きが一斉に反転する**。向きの確からしさは
+``structure_tensor_coherence`` で別に測ること。
+
+**用途**: 繊維強化材の繊維配向、圧延・研磨の条痕方向、木目、結晶粒の伸長方向。
+HALCON に対応する単体 op は無い。"""
+    x = np.asarray(v, np.float64)
+    sigma = 0.5 + 2.5 * float(np.clip(a, 0.0, 1.0))
+    rho = 1.0 + 7.0 * float(np.clip(b, 0.0, 1.0))
+    jxx, jyy, jxy = _structure_tensor(x, sigma, rho)
+    d = jxx - jyy
+    mag = np.sqrt(d * d + 4.0 * jxy * jxy)          # lambda1 - lambda2
+    tr = jxx + jyy                                   # lambda1 + lambda2
+    scale = float(np.max(tr)) if tr.size else 0.0
+    weak = mag <= max(np.finfo(np.float64).tiny, _ST_FLOOR * scale)
+    th = 0.5 * np.arctan2(2.0 * jxy, d)              # 勾配の主軸 (-pi/2, pi/2]
+    th = th + 0.5 * np.pi                            # 縞の向き = 勾配に直交
+    return np.where(weak, 0.5, (th / np.pi) % 1.0)
+
+
+def _st_coherence(v, a, b):
+    """局所の**向きの揃い具合**(構造テンソルの異方度)を ``[0,1]`` で返す。
+
+``(lambda1 - lambda2) / (lambda1 + lambda2)`` そのもの。``1`` は完全に一方向(理想的な縞)、
+``0`` は等方(平坦面・白色雑音・十字の交点)。``a``/``b`` は
+``structure_tensor_orientation`` と同じ 2 つのスケール。
+
+**``structure_tensor_orientation`` と対で使う**: 向きの図は全画素に値が入るので、
+向きが意味を持たない所も色がつく。この op を重みにして初めて「どこの向きを信じてよいか」
+が分かる。
+
+**適用条件と既知の落とし穴**: (1) ``b``(積分窓)が小さすぎるとテンソルの階数が 1 に
+落ちて**どこでも 1 に貼りつく** —— 揃っているのではなく測れていない。(2) 2 方向が
+同じ強さで交差する所(織物の交点・格子)では ``0`` に落ちる —— 「構造が無い」のでは
+なく「向きが 1 つに決まらない」で、平坦面と区別できない。区別したいときは
+``local_std`` を併記する。
+
+跡が全画像最大の ``1e-6`` を下回る画素は ``0`` を返す(平坦面)。HALCON に対応する
+単体 op は無い。"""
+    x = np.asarray(v, np.float64)
+    sigma = 0.5 + 2.5 * float(np.clip(a, 0.0, 1.0))
+    rho = 1.0 + 7.0 * float(np.clip(b, 0.0, 1.0))
+    jxx, jyy, jxy = _structure_tensor(x, sigma, rho)
+    d = jxx - jyy
+    mag = np.sqrt(d * d + 4.0 * jxy * jxy)
+    tr = jxx + jyy
+    scale = float(np.max(tr)) if tr.size else 0.0
+    floor = max(np.finfo(np.float64).tiny, _ST_FLOOR * scale)
+    return np.where(tr <= floor, 0.0, mag / np.maximum(tr, floor))
+
+
+def _local_thickness(v, a, b):
+    """各前景画素に「そこを覆える**最大の円の直径**」を入れて返す(局所肉厚)。
+
+明るい側を前景とみなす閾値が ``b``(0.1〜0.9)。``a`` が測る上限の半径(1〜12 画素)で、
+出力はその上限で割って ``[0,1]`` に収めてある —— **絶対値が要るときは ``a`` から
+上限を逆算して掛け戻すこと**。
+
+粒径・気孔径・肉厚を「1 枚の地図」として出す古典的な量で、モルフォロジーの
+粒度測定(granulometry)と同じもの: ある画素の値が ``r`` なら、その画素は半径 ``r`` の
+円による開処理を生き残る。距離変換で内接円の半径を求め、半径の大きい順にその円が
+覆う範囲へ書き込む、という素直な実装。
+
+**適用条件**: (1) 前景を 1 つの閾値で決めるので、照明むらがあると太さが場所によって
+偏る —— 先に ``local_threshold`` などで平坦化すること。(2) 上限 ``a`` より太い構造は
+**上限で頭打ちになる**(飽和しているかは出力の最大値が 1.0 に貼りついているかで分かる)。
+(3) 画素単位の量なので、直径が 3 画素を切ると量子化の刻みが 30% を超える。
+
+**用途**: 鋳巣・発泡体の気孔径分布、粉体の粒径、薄肉部の検出、繊維の太さ。
+3-D 版は ``ops3d`` の ``vol_wall_thickness``。HALCON に対応する単体 op は無い。"""
+    x = np.asarray(v, np.float64)
+    rmax = 1 + int(round(float(np.clip(a, 0.0, 1.0)) * 11))       # 1..12
+    thr = 0.1 + 0.8 * float(np.clip(b, 0.0, 1.0))
+    mask = x > thr
+    if not mask.any():
+        return np.zeros_like(x)
+    d = ndimage.distance_transform_edt(mask)
+    out = np.zeros_like(x)
+    yy, xx = np.mgrid[-rmax:rmax + 1, -rmax:rmax + 1]
+    for r in range(rmax, 0, -1):
+        centres = d >= r
+        if not centres.any():
+            continue
+        disc = (yy * yy + xx * xx) <= r * r
+        covered = ndimage.binary_dilation(centres, structure=disc)
+        out = np.where(covered & (out == 0.0), 2.0 * r, out)
+    # ★膨張は前景をはみ出す。連続の世界では半径 r の円は収まっているが、**離散の
+    #   円板**で膨らませると境界の外の画素まで塗る —— 実測で前景 197 画素の円に
+    #   対し外へ 48 画素(24%)漏れ、そのせいで粒度分布の生存率が 1.0 を超えた。
+    #   太さは前景の量なので、必ず前景で切る。
+    out = np.where(mask, out, 0.0)
+    return np.clip(out / (2.0 * rmax), 0.0, 1.0)
+
+
 def _fft_mask(v, cutoff, high):
     H, W = v.shape
     rad = np.sqrt(np.fft.fftfreq(H)[:, None] ** 2 + np.fft.fftfreq(W)[None, :] ** 2)
@@ -1216,6 +1343,9 @@ _DEFS = [
     ("highpass", "frequency", "highpass_image", IMAGE, IMAGE, _highpass),
     ("std_filter", "texture", "deviation_image", IMAGE, IMAGE, _std_filter),
     ("local_std", "texture", None, IMAGE, IMAGE, _local_std),
+    ("structure_tensor_orientation", "texture", None, IMAGE, IMAGE, _st_orientation),
+    ("structure_tensor_coherence", "texture", None, IMAGE, IMAGE, _st_coherence),
+    ("local_thickness", "morphology", None, IMAGE, IMAGE, _local_thickness),
     # image -> region (segmentation)
     ("threshold", "segmentation", "threshold", IMAGE, REGION, _threshold),
     ("otsu", "segmentation", "binary_threshold", IMAGE, REGION, _otsu),
