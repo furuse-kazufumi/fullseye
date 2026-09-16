@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 681. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 683. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -921,8 +921,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `ops.py`
 
-- **L628** — ★Pad the edges **with the edge value**. Previously it was ``np.convolve(x, k, "same")``, which averages the w points at both ends **with zero** -- the start and end of a contour got dragged toward the origin (0,0) by up to 50 px or more, producing a figure where the red streaks of 140 contours converged to the upper left (found 2026-09-06 when per-op figures were first made; in numerical tests the mean deviation was 0.3 px and it was invisible).
-- **L1498** — ★**A ledger of ops that crash the whole process on the native side with a degenerate input** (2026-09-05). `guard` can only catch Python exceptions. Once something is written out of bounds inside C/C++, it is over there, and the user's whole pipeline vanishes -- the worst way for fail-soft to break. There is no recourse but to reject at the entrance, so **list it here with a reason and set a barrier at registration time**. **Behaviour differs by platform** -- that is the reason this ledger exists. The 3 below crash on Linux (Ubuntu 24.04 / Python 3.12 / PyPI wheel), but **on Windows not one reproduced with the same input**. A different native build means the boundary breaks differently, so a fine line of 'this kind of input is fine' cannot be trusted -- **reject degenerate inputs wholesale**. Not 'remove it once fixed' but **remove it once the upstream can be confirmed fixed** (this is not our own code, so the removal condition differs).
+- **L661** — ★Pad the edges **with the edge value**. Previously it was ``np.convolve(x, k, "same")``, which averages the w points at both ends **with zero** -- the start and end of a contour got dragged toward the origin (0,0) by up to 50 px or more, producing a figure where the red streaks of 140 contours converged to the upper left (found 2026-09-06 when per-op figures were first made; in numerical tests the mean deviation was 0.3 px and it was invisible).
+- **L1532** — ★**A ledger of ops that crash the whole process on the native side with a degenerate input** (2026-09-05). `guard` can only catch Python exceptions. Once something is written out of bounds inside C/C++, it is over there, and the user's whole pipeline vanishes -- the worst way for fail-soft to break. There is no recourse but to reject at the entrance, so **list it here with a reason and set a barrier at registration time**. **Behaviour differs by platform** -- that is the reason this ledger exists. The 3 below crash on Linux (Ubuntu 24.04 / Python 3.12 / PyPI wheel), but **on Windows not one reproduced with the same input**. A different native build means the boundary breaks differently, so a fine line of 'this kind of input is fine' cannot be trusted -- **reject degenerate inputs wholesale**. Not 'remove it once fixed' but **remove it once the upstream can be confirmed fixed** (this is not our own code, so the removal condition differs).
 
 ## `ops3d.py`
 
@@ -1121,7 +1121,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L210** — ★It used to pass on "there are 20 lines and 4 dimension names are visible", but that goes green even if hundreds of ops drop (Codex's adversarial review, 2026-09-06). Reconcile against the **actual count per dimension**, down to the last one.
 - **L249** — ★Output where they differ. Without it, you cannot chase order-dependent failures (like registry pollution) that only fail in the full suite.
 - **L312** — ★With only counts and names, the type contract (in_sort/out_sort), category, HALCON correspondence, and tier all stay stale while going green (Codex's adversarial review, 2026-09-06). RAG reads in_sort/out_sort to pick type-connectable ops, so if that is stale it **confidently proposes a chain that does not connect**. Reconcile including the contents.
-- **L457** — ★Check that the output "has content" —— a gate that only checks agreement goes green even when both are empty # --------------------------------------------------------------------------- # Measured 2026-09-06. **Falls below it and it fails** (raising it is fine).
+- **L400** _(ja)_ — ★日本語版だけを見ていた門を 6 言語に広げた(2026-09-16)。`local_std` を足した ときに ja/en/ko/tw/zh が 1,947 のまま落ちたが、**de は落ちなかった** —— ドイツ語の桁区切りはピリオドで `1.947` と書くため、`"{:,}"` では一致も 不一致も見えない。門が 1 言語にしか立っていないと、他の 5 言語は黙って腐る。
+- **L467** — ★Check that the output "has content" —— a gate that only checks agreement goes green even when both are empty # --------------------------------------------------------------------------- # Measured 2026-09-06. **Falls below it and it fails** (raising it is fine).
 
 ## `tests/test_dsp.py`
 
@@ -1238,6 +1239,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_rust_abi_parity.py`
 
 - **L402** _(ja)_ — ★契約では **FS_E_INVALID_ARG**(引数が定義域の外)であって FS_E_TYPE ではない。 `FsValueError` を足すまでは両方 `FsTypeError` で、Rust が 1 を返すのに Python は 2 相当を投げる、という**状態コードの食い違い**が残っていた。
+
+## `tests/test_sample_data.py`
+
+- **L125** _(ja)_ — ★台帳は前からあったのに、**人が読む `docs/ops/SAMPLES.md` には出ていなかった** (2026-09-16)。表の列は id / 種別 / アクセス / URL だけで、ライセンスと商用可否は ソースを読まないと分からなかった —— 看板(「DL URL / ライセンス」)と中身がずれて いた。出す側を直したので、ここでは**台帳が空欄を作らないこと**を固定する。 --------------------------------------------------------------------------- #
 
 ## `tests/test_shapestats.py`
 
@@ -1383,8 +1388,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L877** — ★ A bridging op (``tb_<name>``) has the same implementation as the ledger's ``<name>``, and examples are written under the ledger name. Until 2026-09-06, 147 of them were "zero examples," but that only meant we had not counted that **examples calling the same implementation exist under a different name**. Inherit the ledger-side examples and note explicitly in the note that they are "examples of the original op" (so as not to lie).
 - **L1097** — ★An n-ary operator cannot be called through `fullseye.apply` — that is the one-image model. Writing the one-image call form here makes **the note lie**, and telling the reader how to call the operator is the note's only job, so a wrong call form is worse than none. The public route is `fullseye.FullseyeGraph`.
 - **L1116** — ★2026-09-07: **Write the public path first**. This only wrote a direct import of the implementation module and did not surface `fullseye.ledger.<name>`, which users actually use (all 1,244 ops other than 2-D). The reason PoCs repeatedly reported "not in fs.<name>" was not that the name was missing but that **the entry point was not written**.
-- **L1482** — ★ Surface the entry points in 6 languages (2026-09-09). The leaves (Studio's op help) have 10,191 pages across 6 languages, yet **the index leading there was Japanese only** —— a gap of the form where the translations exist but cannot be reached. The frame's wording goes into `T()`, so holes in the parallel translations are watched by the existing gate (test_chrome_translation_table_has_no_holes).
-- **L1527** — ★ For a long time this pointed only at `2d/guides/` and never once sent readers to the guides of the 30 families such as optics, PIV, and tomography (fixed 2026-09-09).
+- **L1527** — ★ Surface the entry points in 6 languages (2026-09-09). The leaves (Studio's op help) have 10,191 pages across 6 languages, yet **the index leading there was Japanese only** —— a gap of the form where the translations exist but cannot be reached. The frame's wording goes into `T()`, so holes in the parallel translations are watched by the existing gate (test_chrome_translation_table_has_no_holes).
+- **L1572** — ★ For a long time this pointed only at `2d/guides/` and never once sent readers to the guides of the 30 families such as optics, PIV, and tomography (fixed 2026-09-09).
 
 ## `tools/preflight.py`
 

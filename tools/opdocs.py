@@ -1345,6 +1345,41 @@ def cmd_md():
 # sample-data catalog  (real download URLs / licences)
 # ------------------------------------------------------------------ #
 
+# ---- サンプルデータの利用条件(台帳 `sample_data.MANIFEST` の値を出すだけ) ----
+#: 空欄・不明は「制限なし」ではなく「**調べていない**」。可と書くより強い害があるので
+#: 明示的な値として持つ。
+_TERMS_UNKNOWN = "要確認"
+
+#: 商用利用。``check`` は「未確認」であって「可」ではない。
+_COMMERCIAL_JA = {"yes": "可", "no": "**不可**(非商用のみ)", "check": _TERMS_UNKNOWN}
+
+#: 成果公開(派生画像・モデルを外に出してよいか)は商用可否と**別の軸**。台帳には
+#: 持たせず、**ライセンス本文が言い切っている場合だけ**ここで導出する。
+_PUBLISH_FREE = ("cc0", "public domain", "u.s. government work", "unlicense")
+_PUBLISH_ATTRIB = ("cc-by-4.0", "cc by 4.0")
+
+
+def _publish_verdict(e: dict) -> str:
+    """派生成果を公開してよいか。既定は ``要確認``。
+
+    ★商用可否が未確認の源で公開だけ「可」になることはない —— 同じライセンス本文から
+    読むのだから、公開の確かさが商用の確かさを越えられない。この歯止めが無いと
+    ``empiar`` の ``"per-entry (mostly CC0/CC-BY; see entry)"`` が ``cc0`` の部分一致で
+    「可」に化ける(2026-09-16 に実測)。**濁した文を確定値にしない。**
+    """
+    com = e.get("commercial")
+    if com == "no":
+        return "非商用に限る"
+    if com != "yes":
+        return _TERMS_UNKNOWN
+    lic = (e.get("license") or "").lower()
+    if any(k in lic for k in _PUBLISH_FREE):
+        return "可"
+    if any(k in lic for k in _PUBLISH_ATTRIB) and "-nc" not in lic:
+        return "可(要表示)"
+    return _TERMS_UNKNOWN
+
+
 def samples_md() -> str:
     """``docs/ops/SAMPLES.md`` の中身を**書かずに**組み立てて返す。
 
@@ -1362,12 +1397,22 @@ def samples_md() -> str:
         import sample_data as sd
         out.append("## 3-D / ボリューム(実 DL URL)")
         out.append("")
-        out.append("| id | 種別 | アクセス | 出典 / DL URL |")
-        out.append("|----|------|----------|----------------|")
+        out.append("| id | 種別 | ライセンス | 商用利用 | 成果公開 | アクセス | 出典 / DL URL |")
+        out.append("|----|------|-----------|---------|---------|----------|----------------|")
         for e in sd.catalog():
             url = e.get("url") or e.get("source_page") or ""
-            out.append(f"| `{e.get('id','')}` | {e.get('category','')} | {e.get('access','')} "
-                       f"| <{url}> |")
+            out.append(f"| `{e.get('id','')}` | {e.get('category','')} "
+                       f"| {e.get('license') or _TERMS_UNKNOWN} "
+                       f"| {_COMMERCIAL_JA.get(e.get('commercial',''), _TERMS_UNKNOWN)} "
+                       f"| {_publish_verdict(e)} "
+                       f"| {e.get('access','')} | <{url}> |")
+        out.append("")
+        out.append("**3 つの軸は別もの**: 「手元で使う」(アクセス)・「商用に使う」"
+                   "(商用利用)・「派生画像やモデルを外に出す」(成果公開)。"
+                   f"**{_TERMS_UNKNOWN}** は「制限が無い」ではなく"
+                   "**こちらで条件を確認していない**という意味 —— 出典ページの規約を"
+                   "読んでから使ってください。成果公開はライセンス本文が言い切っている"
+                   "ものだけ「可」にしてあり、それ以外は既定で要確認です。")
         out.append("")
         out.append("取得: `py -3.11 -c \"import sample_data; sample_data.download('bunny', yes=True)\"` "
                    "(`access=direct` のみ自動 DL、`gated`/`info` は出典ページから手動)。", )

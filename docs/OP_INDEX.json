@@ -1,10 +1,10 @@
 {
- "n_ops": 1943,
+ "n_ops": 1944,
  "tiers": {
   "color": 12,
   "ledger": 1025,
   "nary": 17,
-  "registry": 889
+  "registry": 890
  },
  "sorts": [
   "angle",
@@ -16572,6 +16572,14 @@
    "in_sort": "image",
    "out_sort": "region",
    "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "local_std",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
    "tier": "registry"
   },
   {

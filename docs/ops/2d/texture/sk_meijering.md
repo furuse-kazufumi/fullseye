@@ -69,7 +69,7 @@ sk_meijering 0.50 0.50
 
 ## 同カテゴリ(`texture`)
 
-[std_filter](std_filter.md) · [gabor](gabor.md) · [sk_frangi](sk_frangi.md) · [sk_hessian](sk_hessian.md) · [sk_gabor](sk_gabor.md) · [sk_lbp](sk_lbp.md) · [sk_entropy](sk_entropy.md) · [sk_shape_index](sk_shape_index.md)
+[std_filter](std_filter.md) · [local_std](local_std.md) · [gabor](gabor.md) · [sk_frangi](sk_frangi.md) · [sk_hessian](sk_hessian.md) · [sk_gabor](sk_gabor.md) · [sk_lbp](sk_lbp.md) · [sk_entropy](sk_entropy.md)
 
 ---
 *Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

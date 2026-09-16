@@ -397,9 +397,19 @@ def test_the_rag_guide_note_count_is_current():
     import gen_docs_index_ops as G
 
     n = len(G._records())
-    s = (DOCS / "AI_RAG_GUIDE.md").read_text(encoding="utf-8")
-    assert "{:,}".format(n) in s, (
-        "docs/AI_RAG_GUIDE.md のノート枚数が古い(いまは %s 枚)" % "{:,}".format(n))
+    # ★日本語版だけを見ていた門を 6 言語に広げた(2026-09-16)。`local_std` を足した
+    # ときに ja/en/ko/tw/zh が 1,947 のまま落ちたが、**de は落ちなかった** ——
+    # ドイツ語の桁区切りはピリオドで `1.947` と書くため、`"{:,}"` では一致も
+    # 不一致も見えない。門が 1 言語にしか立っていないと、他の 5 言語は黙って腐る。
+    seps = {"de": ".", None: ","}
+    stale = []
+    for path in sorted(DOCS.glob("AI_RAG_GUIDE*.md")):
+        lang = path.name.split(".")[1] if path.name.count(".") > 1 else None
+        want = "{:,}".format(n).replace(",", seps.get(lang, ","))
+        if want not in path.read_text(encoding="utf-8"):
+            stale.append("%s(%s と書くこと)" % (path.name, want))
+    assert not stale, (
+        "AI_RAG_GUIDE のノート枚数が古い(いまは %d 枚): %s" % (n, ", ".join(stale)))
 
 
 def test_the_note_files_on_disk_match_the_ledger_exactly():

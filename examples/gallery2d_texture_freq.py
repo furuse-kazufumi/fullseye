@@ -103,7 +103,7 @@ OPS = [
     "xsk2_hog", "xsk2_radon", "xwt_subband_tile", "xwt_mra_component",
     "f2_symmetry", "dc_structure_texture", "dc_texture_residual", "dc_rpca_lowrank",
     "dc_rpca_sparse", "dc_retinex", "dc_local_contrast_norm", "dc_homomorphic",
-    "tf_census_transform", "tf_rank_transform",
+    "tf_census_transform", "tf_rank_transform", "local_std",
 ]
 
 KNOBS = [(0.0, 0.0), (0.5, 0.5), (1.0, 1.0), (0.15, 0.85)]
@@ -214,6 +214,21 @@ def run_ground_truth() -> int:
     sf_tex = BY["std_filter"].fn(tex.copy(), 0.5, 0.5)
     assert float(sf_flat.mean()) < 1e-3, f"std_filter not ~0 on flat: {sf_flat.mean():.4g}"
     assert float(sf_tex.mean()) > 0.1, f"std_filter too small on texture: {sf_tex.mean():.4g}"
+    checks += 1
+
+    # GT3b: local_std は **絶対値**を返す —— 既知の sigma を入れたら、その値が返ること。
+    #       `std_filter` は画像ごとに正規化するので同じ検査ができない(最大が常に 1.0)。
+    #       ここが 2 つの op を分けている点なので、**数字で**確かめる。
+    #       閉形式の誤差: 1 画素あたりの相対標準誤差は 1/sqrt(2(n-1))。窓 n 画素を
+    #       多数平均するので、画像平均はそれよりずっと締まる —— 許容を 3% に置く。
+    rng_gt = np.random.default_rng(20260916)
+    for sigma_true in (0.02, 0.08):
+        noisy = np.clip(0.5 + rng_gt.normal(0, sigma_true, (192, 192)), 0.0, 1.0)
+        est = float(BY["local_std"].fn(noisy.copy(), 0.5, 0.5).mean())
+        assert abs(est - sigma_true) < 0.03 * sigma_true,             f"local_std did not recover sigma: true={sigma_true} est={est:.5g}"
+    # 「返すだけ」でないことの裏取り: 正規化する相棒は絶対値を返せない(null を破る)
+    noisy = np.clip(0.5 + rng_gt.normal(0, 0.02, (192, 192)), 0.0, 1.0)
+    assert float(BY["std_filter"].fn(noisy.copy(), 0.5, 0.5).max()) > 0.9,         "std_filter is expected to be normalised (max ~1.0); the pair no longer differs"
     checks += 1
 
     # GT4: rank_transform is invariant to a positive gain (ordinal), but NOT to

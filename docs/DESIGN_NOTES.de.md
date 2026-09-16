@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 681. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 683. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -921,8 +921,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `ops.py`
 
-- **L628** — ★Die Raender **mit dem Randwert** auffuellen. Zuvor war es ``np.convolve(x, k, "same")``, was die w Punkte an beiden Enden **mit Null** mittelt -- Anfang und Ende einer Kontur wurden um bis zu 50 px oder mehr Richtung Ursprung (0,0) gezogen, was eine Abbildung ergab, in der die roten Streifen von 140 Konturen nach oben links konvergierten (gefunden 2026-09-06, als erstmals Abbildungen pro op erstellt wurden; in numerischen Tests betrug die mittlere Abweichung 0.3 px und war unsichtbar).
-- **L1498** — ★**Ein Verzeichnis von ops, die auf der nativen Seite bei einer degenerierten Eingabe den ganzen Prozess zum Absturz bringen** (2026-09-05). `guard` kann nur Python-Ausnahmen abfangen. Sobald innerhalb von C/C++ ausserhalb der Grenzen geschrieben wird, ist es dort vorbei, und die gesamte Pipeline des Nutzers verschwindet -- die schlimmste Art, wie fail-soft bricht. Es bleibt nur die Abweisung am Eingang, also **hier mit Begruendung auffuehren und zur Registrierungszeit eine Schranke setzen**. **Das Verhalten unterscheidet sich je nach Plattform** -- das ist der Existenzgrund dieses Verzeichnisses. Die 3 unten stuerzen unter Linux (Ubuntu 24.04 / Python 3.12 / PyPI-wheel) ab, aber **unter Windows reproduzierte sich mit derselben Eingabe kein einziger**. Ein anderer nativer Build bedeutet, dass die Grenze anders bricht, also ist eine feine Trennlinie 'diese Art von Eingabe ist in Ordnung' nicht vertrauenswuerdig -- **degenerierte Eingaben pauschal ablehnen**. Nicht 'entfernen, sobald behoben', sondern **entfernen, sobald bestaetigt werden kann, dass der Upstream behoben ist** (dies ist nicht unser eigener Code, also unterscheidet sich die Entfernungsbedingung).
+- **L661** — ★Die Raender **mit dem Randwert** auffuellen. Zuvor war es ``np.convolve(x, k, "same")``, was die w Punkte an beiden Enden **mit Null** mittelt -- Anfang und Ende einer Kontur wurden um bis zu 50 px oder mehr Richtung Ursprung (0,0) gezogen, was eine Abbildung ergab, in der die roten Streifen von 140 Konturen nach oben links konvergierten (gefunden 2026-09-06, als erstmals Abbildungen pro op erstellt wurden; in numerischen Tests betrug die mittlere Abweichung 0.3 px und war unsichtbar).
+- **L1532** — ★**Ein Verzeichnis von ops, die auf der nativen Seite bei einer degenerierten Eingabe den ganzen Prozess zum Absturz bringen** (2026-09-05). `guard` kann nur Python-Ausnahmen abfangen. Sobald innerhalb von C/C++ ausserhalb der Grenzen geschrieben wird, ist es dort vorbei, und die gesamte Pipeline des Nutzers verschwindet -- die schlimmste Art, wie fail-soft bricht. Es bleibt nur die Abweisung am Eingang, also **hier mit Begruendung auffuehren und zur Registrierungszeit eine Schranke setzen**. **Das Verhalten unterscheidet sich je nach Plattform** -- das ist der Existenzgrund dieses Verzeichnisses. Die 3 unten stuerzen unter Linux (Ubuntu 24.04 / Python 3.12 / PyPI-wheel) ab, aber **unter Windows reproduzierte sich mit derselben Eingabe kein einziger**. Ein anderer nativer Build bedeutet, dass die Grenze anders bricht, also ist eine feine Trennlinie 'diese Art von Eingabe ist in Ordnung' nicht vertrauenswuerdig -- **degenerierte Eingaben pauschal ablehnen**. Nicht 'entfernen, sobald behoben', sondern **entfernen, sobald bestaetigt werden kann, dass der Upstream behoben ist** (dies ist nicht unser eigener Code, also unterscheidet sich die Entfernungsbedingung).
 
 ## `ops3d.py`
 
@@ -1121,7 +1121,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L210** — ★Früher genügte "es gibt 20 Zeilen und 4 Dimensionsnamen sind sichtbar", aber das wird grün, selbst wenn Hunderte ops wegfallen (Codex' adversariales Review, 2026-09-06). Gegen die **tatsächliche Zahl je Dimension** abgleichen, bis auf den letzten Eintrag.
 - **L249** — ★Ausgeben, wo sie sich unterscheiden. Ohne das lassen sich reihenfolgeabhängige Fehler (etwa Register-Verschmutzung), die nur in der Gesamt-Suite auftreten, nicht verfolgen.
 - **L312** — ★Mit nur Anzahl und Namen bleiben der Typvertrag (in_sort/out_sort), die Kategorie, die HALCON-Entsprechung und der tier komplett veraltet und werden trotzdem grün (Codex' adversariales Review, 2026-09-06). RAG liest in_sort/out_sort, um typverknüpfbare ops zu wählen; ist das veraltet, **schlägt es voller Zuversicht eine Kette vor, die nicht verbindet**. Samt Inhalt abgleichen.
-- **L457** — ★Prüfen, dass die Ausgabe "Inhalt hat" —— ein Gate, das nur die Übereinstimmung prüft, wird grün, selbst wenn beide leer sind # --------------------------------------------------------------------------- # Gemessen 2026-09-06. **Unterschreitet man es, schlägt es fehl** (Anheben ist erlaubt).
+- **L400** _(ja)_ — ★日本語版だけを見ていた門を 6 言語に広げた(2026-09-16)。`local_std` を足した ときに ja/en/ko/tw/zh が 1,947 のまま落ちたが、**de は落ちなかった** —— ドイツ語の桁区切りはピリオドで `1.947` と書くため、`"{:,}"` では一致も 不一致も見えない。門が 1 言語にしか立っていないと、他の 5 言語は黙って腐る。
+- **L467** — ★Prüfen, dass die Ausgabe "Inhalt hat" —— ein Gate, das nur die Übereinstimmung prüft, wird grün, selbst wenn beide leer sind # --------------------------------------------------------------------------- # Gemessen 2026-09-06. **Unterschreitet man es, schlägt es fehl** (Anheben ist erlaubt).
 
 ## `tests/test_dsp.py`
 
@@ -1238,6 +1239,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_rust_abi_parity.py`
 
 - **L402** _(ja)_ — ★契約では **FS_E_INVALID_ARG**(引数が定義域の外)であって FS_E_TYPE ではない。 `FsValueError` を足すまでは両方 `FsTypeError` で、Rust が 1 を返すのに Python は 2 相当を投げる、という**状態コードの食い違い**が残っていた。
+
+## `tests/test_sample_data.py`
+
+- **L125** _(ja)_ — ★台帳は前からあったのに、**人が読む `docs/ops/SAMPLES.md` には出ていなかった** (2026-09-16)。表の列は id / 種別 / アクセス / URL だけで、ライセンスと商用可否は ソースを読まないと分からなかった —— 看板(「DL URL / ライセンス」)と中身がずれて いた。出す側を直したので、ここでは**台帳が空欄を作らないこと**を固定する。 --------------------------------------------------------------------------- #
 
 ## `tests/test_shapestats.py`
 
@@ -1383,8 +1388,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L877** — ★ Ein Brücken-op (``tb_<name>``) hat dieselbe Implementierung wie das ``<name>`` des Ledgers, und Beispiele werden unter dem Ledger-Namen geschrieben. Bis zum 2026-09-06 galten 147 davon als "null Beispiele", aber das bedeutete nur, dass wir nicht gezählt hatten, dass **Beispiele, die dieselbe Implementierung aufrufen, unter einem anderen Namen existieren**. Erbe die Beispiele der Ledger-Seite und vermerke in der Notiz ausdrücklich, dass es "Beispiele des ursprünglichen op" sind (um nicht zu lügen).
 - **L1097** — ★Ein n-ärer Operator lässt sich nicht über `fullseye.apply` aufrufen — das ist das Ein-Bild-Modell. Die Ein-Bild-Aufrufform hier hinzuschreiben lässt **die Notiz lügen**; die einzige Aufgabe dieser Notiz ist zu sagen, wie man aufruft, also ist eine falsche Aufrufform schlimmer als gar keine. Der öffentliche Weg ist `fullseye.FullseyeGraph`.
 - **L1116** — ★2026-09-07: **Schreibe zuerst den öffentlichen Pfad**. Hier stand nur ein direkter Import des Implementierungsmoduls, und `fullseye.ledger.<name>`, das Nutzer tatsächlich verwenden, tauchte nicht auf (alle 1.244 ops außer 2-D). Dass PoCs wiederholt "nicht in fs.<name>" meldeten, lag nicht daran, dass der Name fehlte, sondern daran, dass **der Einstiegspunkt nicht geschrieben war**.
-- **L1482** — ★ Gib die Einstiegspunkte in 6 Sprachen aus (2026-09-09). Die Blätter (Studios op-Hilfe) haben 10.191 Seiten in 6 Sprachen, doch **der Index, der dorthin führt, war nur Japanisch** —— eine Lücke der Form, dass die Übersetzungen existieren, aber nicht erreichbar sind. Der Wortlaut des Rahmens kommt in `T()`, sodass Löcher in den Paralleltexten vom bestehenden Gate (test_chrome_translation_table_has_no_holes) überwacht werden.
-- **L1527** — ★ Dies zeigte lange nur auf `2d/guides/` und schickte die Leser kein einziges Mal zu den Leitfäden der 30 Familien wie Optik, PIV und Tomographie (behoben 2026-09-09).
+- **L1527** — ★ Gib die Einstiegspunkte in 6 Sprachen aus (2026-09-09). Die Blätter (Studios op-Hilfe) haben 10.191 Seiten in 6 Sprachen, doch **der Index, der dorthin führt, war nur Japanisch** —— eine Lücke der Form, dass die Übersetzungen existieren, aber nicht erreichbar sind. Der Wortlaut des Rahmens kommt in `T()`, sodass Löcher in den Paralleltexten vom bestehenden Gate (test_chrome_translation_table_has_no_holes) überwacht werden.
+- **L1572** — ★ Dies zeigte lange nur auf `2d/guides/` und schickte die Leser kein einziges Mal zu den Leitfäden der 30 Familien wie Optik, PIV und Tomographie (behoben 2026-09-09).
 
 ## `tools/preflight.py`
 

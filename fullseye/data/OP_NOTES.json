@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1943,
- "n_notes": 1947,
+ "n_ops": 1944,
+ "n_notes": 1948,
  "notes": {
   "vol_dilate": [
    {
@@ -7840,6 +7840,16 @@
     "out": "image",
     "halcon": "gen_gabor",
     "path": "docs/ops/2d/texture/gen_gabor.md"
+   }
+  ],
+  "local_std": [
+   {
+    "op": "local_std",
+    "dim": "2d",
+    "category": "texture",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/texture/local_std.md"
    }
   ],
   "sk_entropy": [

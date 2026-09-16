@@ -1,5 +1,5 @@
 {
- "generated_for": 901,
+ "generated_for": 902,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -7991,6 +7991,30 @@
    "out_kind": "ndarray",
    "program": "local_min 0.50 0.50",
    "pseudocolor": false,
+   "status": "ok"
+  },
+  "local_std": {
+   "color_ok": true,
+   "extra": {
+    "a": "local_std.a.jpg",
+    "b": "local_std.b.jpg",
+    "inputs": "local_std.inputs.jpg"
+   },
+   "fig": "local_std.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "local_std 0.50 0.50",
+   "pseudocolor": true,
    "status": "ok"
   },
   "local_threshold": {
@@ -21119,10 +21143,10 @@
   "domain": 3,
   "empty": 1,
   "failed": 0,
-  "ok": 897,
+  "ok": 898,
   "unreachable": 0,
   "with_chain": 366,
   "with_gif": 40,
-  "with_sweep": 547
+  "with_sweep": 548
  }
 }

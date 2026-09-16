@@ -57,7 +57,7 @@ instructions for the AI". To install it by hand, just copy `skills/fullseye-ops`
 
 ## Tier 2 (optional): a clustered corpus — an advanced form with external tools
 
-You can also build a "navigable corpus" that hierarchically clusters the **1,947 notes** into topic
+You can also build a "navigable corpus" that hierarchically clusters the **1,948 notes** into topic
 clusters with an LLM summary per cluster. Internally we use the `corpus2skill` of a
 [RAPTOR](https://github.com/gadievron/raptor) fork (TF-IDF + k-means + LLM summary), but **this is
 an optional optimization, not a requirement**. The only requirement is "take `docs/ops` as input and

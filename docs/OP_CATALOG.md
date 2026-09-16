@@ -1019,7 +1019,7 @@ _計 358 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 901 ops / 48 categories。_
+_計 902 ops / 48 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1814,8 +1814,9 @@ _計 901 ops / 48 categories。_
 - `tac_pressure_proxy` `image → image` · 例: `sim2real_and_alife`
 - `tac_shear_field` `image → image` · 例: `sim2real_and_alife`
 
-### texture(22)
+### texture(23)
 - `std_filter` (halcon: `deviation_image`) `image → image` · 例: `gallery2d_texture_freq`
+- `local_std` `image → image` · 例: `gallery2d_texture_freq`
 - `gabor` (halcon: `gen_gabor`) `image → image` · 例: `gallery2d_texture_freq`
 - `sk_frangi` (halcon: `lines_gauss`) `image → image` · 例: `gallery2d_texture_freq`, `poc_fresco_craquelure`, `poc_solar_el_inspection`
 - `sk_meijering` (halcon: `lines_gauss`) `image → image` · 例: `gallery2d_texture_freq`

@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">local_std — 2D <code style="color:#22d3bf">texture</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;local_std&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/local_std.png" alt="local_std: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*输出以类 viridis 伪彩色显示(深紫 = 小，黄 = 大)，便于读取距离、相位、方向、深度这类“量的场”。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_std.a.jpg">local_std: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_std.b.jpg">local_std: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_std.inputs.jpg">local_std: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>局所窓内の標準偏差を<b>入力と同じ単位で</b>返す(正規化しない)。HALCON の `<code style="color:#22d3bf">deviation_image</code>`（Calculate the standard deviation of gray values within rectangular windows.）に相当。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の**幅**を、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が窓の**高さ**をそれぞれ </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k</code><code style="color:#22d3bf">）に振る —— HALCON の </code><code style="color:#22d3bf">deviation_image(image, width, height)</code>` と同じく矩形窓を取れる。</p>
+<p>**`<code style="color:#22d3bf">std_filter</code><code style="color:#22d3bf"> との違いはここだけで、そこが肝心**: </code><code style="color:#22d3bf">std_filter</code><code style="color:#22d3bf"> は出力をその画像の最大値で正規化するので、**画像をまたいで値を比較できない**(弱いテクスチャしか無い画像では雑音が 1.0 まで持ち上がる)。この op は割らないので、**別の画像・別の時刻の値とそのまま比べられる**。HALCON の </code><code style="color:#22d3bf">deviation_image</code><code style="color:#22d3bf"> も正規化しないので、意味としてはこちらが忠実。平滑化フィルタの </code><code style="color:#22d3bf">sigma_image</code>` とは別物(あちらは σ を使って平滑化する)。</p>
+<p><b>推定量と誤差(閉形式)</b>: 窓の画素数を `<code style="color:#22d3bf">n = 幅 x 高さ</code><code style="color:#22d3bf"> として、平均を引いた分散を </code><code style="color:#22d3bf">n/(n-1)</code><code style="color:#22d3bf"> で不偏化し、さらに </code><code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> の残る偏りを </code><code style="color:#22d3bf">c4(n) ≈ 1 - 1/(4n)</code><code style="color:#22d3bf"> で抜く。したがって推定はほぼ無偏(実測: 真値の 99.8〜100.1%)。**1 画素あたりの相対標準誤差は </code><code style="color:#22d3bf">1/sqrt(2(n-1))</code>`** —— 3x3 窓で約 25%、9x9 窓で約 7.9%(実測が理論と一致)。粗さや雑音量を数字で言うときは、この幅を併記すること。</p>
+<p>入力が `<code style="color:#22d3bf">[0,1]</code><code style="color:#22d3bf"> なら出力は </code><code style="color:#22d3bf">0</code><code style="color:#22d3bf"> 以上 </code><code style="color:#22d3bf">0.55</code>` 以下(最大は窓の半分が 0・半分が 1 のとき)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
+<p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">local_std 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:local_std%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:local_std%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">texture</code>)</h3>
+<p><a style="color:#22d3bf" href="op:std_filter">std_filter</a> · <a style="color:#22d3bf" href="op:gabor">gabor</a> · <a style="color:#22d3bf" href="op:sk_frangi">sk_frangi</a> · <a style="color:#22d3bf" href="op:sk_meijering">sk_meijering</a> · <a style="color:#22d3bf" href="op:sk_hessian">sk_hessian</a> · <a style="color:#22d3bf" href="op:sk_gabor">sk_gabor</a> · <a style="color:#22d3bf" href="op:sk_lbp">sk_lbp</a> · <a style="color:#22d3bf" href="op:sk_entropy">sk_entropy</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

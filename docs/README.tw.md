@@ -9,7 +9,7 @@
 
 *六幕，全部是真實的運算子輸出：邊緣方向 / 連通域篩選 / 次像素量測 / SDF 轉網格 / 點雲分群 / 鏡頭離焦。*
 
-**Fullseye**（開發代號 imgevolve）是一套 HALCON/HDevelop 等級的實用軟體：由 numpy 原生的影像處理運算子函式庫、HDevelop 風格的視覺化管線設計環境（Fullseye Studio），以及負責執行的 runtime（FullseyeEngine）三者組成。運算子約 **901** 個（以 registry 計），其中 **979/2313** 個真實的 HALCON 運算子做到 genuine（真正等效）的實作，涵蓋 48 個類別。
+**Fullseye**（開發代號 imgevolve）是一套 HALCON/HDevelop 等級的實用軟體：由 numpy 原生的影像處理運算子函式庫、HDevelop 風格的視覺化管線設計環境（Fullseye Studio），以及負責執行的 runtime（FullseyeEngine）三者組成。運算子約 **902** 個（以 registry 計），其中 **979/2313** 個真實的 HALCON 運算子做到 genuine（真正等效）的實作，涵蓋 48 個類別。
 
 ★ **在影像處理函式庫中少見，Fullseye 還內建「虛擬光學設計」** —— 薄/厚透鏡、光線追蹤、Seidel 像差與 PSF/MTF，並以阻尼最小二乘（Levenberg–Marquardt）最佳化透鏡處方本身（`optimize_lens`）。可從**設計成像系統，到用上述運算子檢查其成像，一氣呵成** —— 在半導體與精密計量中是明確的差異化。
 
@@ -63,15 +63,15 @@
 
 ## 尋找運算子
 
-共有 **1,947 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **49 篇族群指南**。依維度的入口:
+共有 **1,948 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **49 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 901/901、型別台帳 1025/1037、單行門面 `fullseye.<名稱>` 547/1122 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 902/902、型別台帳 1025/1037、單行門面 `fullseye.<名稱>` 547/1122 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 1952 篇中，附有可執行範例的 **1912** 篇(40 篇沒有)，用法說明 120 字以上的 **1933** 篇(19 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)1952 篇全有。
+**內容實測**: 1953 篇中，附有可執行範例的 **1913** 篇(40 篇沒有)，用法說明 120 字以上的 **1934** 篇(19 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)1953 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
-| `2d` | 918 | [INDEX](ops/2d/INDEX.md) |
+| `2d` | 919 | [INDEX](ops/2d/INDEX.md) |
 | `3d` | 358 | [INDEX](ops/3d/INDEX.md) |
 | `optics` | 127 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
@@ -204,7 +204,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文件地圖 — 共 160 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 1,947 篇運算子說明與 49 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 1,948 篇運算子說明與 49 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 

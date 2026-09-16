@@ -1,4 +1,4 @@
-# 2D operator help — 918 ops in 49 categories
+# 2D operator help — 919 ops in 49 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/2d/<category>/<op>.md` を走査。
 
@@ -194,9 +194,9 @@
 
 [tac_contact_mask](tactile/tac_contact_mask.md) · [tac_height_from_shading](tactile/tac_height_from_shading.md) · [tac_pressure_proxy](tactile/tac_pressure_proxy.md) · [tac_shear_field](tactile/tac_shear_field.md) · [tac_surface_normal](tactile/tac_surface_normal.md)
 
-### texture (22)
+### texture (23)
 
-[cooc_feature_matrix](texture/cooc_feature_matrix.md) · [deviation_image](texture/deviation_image.md) · [entropy_image](texture/entropy_image.md) · [f2_symmetry](texture/f2_symmetry.md) · [gabor](texture/gabor.md) · [gen_gabor](texture/gen_gabor.md) · [sk_entropy](texture/sk_entropy.md) · [sk_frangi](texture/sk_frangi.md) · [sk_gabor](texture/sk_gabor.md) · [sk_hessian](texture/sk_hessian.md) · [sk_lbp](texture/sk_lbp.md) · [sk_meijering](texture/sk_meijering.md) · [sk_shape_index](texture/sk_shape_index.md) · [std_filter](texture/std_filter.md) · [texture_laws](texture/texture_laws.md) · [tf_census_transform](texture/tf_census_transform.md) · [tf_rank_transform](texture/tf_rank_transform.md) · [xsk2_hog](texture/xsk2_hog.md) · [xsk_meijering](texture/xsk_meijering.md) · [xsk_sato](texture/xsk_sato.md) · [xsk_struct_coherence](texture/xsk_struct_coherence.md) · [xsp_hilbert_env](texture/xsp_hilbert_env.md)
+[cooc_feature_matrix](texture/cooc_feature_matrix.md) · [deviation_image](texture/deviation_image.md) · [entropy_image](texture/entropy_image.md) · [f2_symmetry](texture/f2_symmetry.md) · [gabor](texture/gabor.md) · [gen_gabor](texture/gen_gabor.md) · [local_std](texture/local_std.md) · [sk_entropy](texture/sk_entropy.md) · [sk_frangi](texture/sk_frangi.md) · [sk_gabor](texture/sk_gabor.md) · [sk_hessian](texture/sk_hessian.md) · [sk_lbp](texture/sk_lbp.md) · [sk_meijering](texture/sk_meijering.md) · [sk_shape_index](texture/sk_shape_index.md) · [std_filter](texture/std_filter.md) · [texture_laws](texture/texture_laws.md) · [tf_census_transform](texture/tf_census_transform.md) · [tf_rank_transform](texture/tf_rank_transform.md) · [xsk2_hog](texture/xsk2_hog.md) · [xsk_meijering](texture/xsk_meijering.md) · [xsk_sato](texture/xsk_sato.md) · [xsk_struct_coherence](texture/xsk_struct_coherence.md) · [xsp_hilbert_env](texture/xsp_hilbert_env.md)
 
 ### texture_feature (1)
 
