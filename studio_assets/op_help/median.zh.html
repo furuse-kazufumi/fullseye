@@ -7,15 +7,15 @@
 <p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
 <p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/median.a.jpg">median: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
-<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/median.b.jpg">median: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/median.inputs.jpg">median: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>中值滤波器。相当于 HALCON 的 `<code style="color:#22d3bf">median_image</code>`（Compute a median filter with various masks.）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓サイズを </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code>` は未使用。塩胡椒ノイズなど外れ値に強く、ガウシアン平滑よりエッジを保ちやすい。</p>
-<p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（实测。</code>tools/impl2/border_probe.py`）。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓サイズを </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が**端の扱い**を選ぶ: </code><code style="color:#22d3bf">b &lt;= 0.5</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 </code><code style="color:#22d3bf">nearest</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">constant</code><code style="color:#22d3bf">(0 で埋める)/ </code><code style="color:#22d3bf">wrap</code><code style="color:#22d3bf">(反対側から巻き取る)。★**窓が 3 のときは </code><code style="color:#22d3bf">reflect</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">nearest</code>` が原理的に一致する**(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。塩胡椒ノイズなど外れ値に強く、ガウシアン平滑よりエッジを保ちやすい。</p>
 <p><b>旋钮（实测）</b>：`<code style="color:#22d3bf">a</code>` 以<b>离散档位</b>生效，切换点在 a ≈ 0.25、0.49、0.75（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

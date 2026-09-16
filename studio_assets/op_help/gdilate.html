@@ -7,13 +7,14 @@
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gdilate.a.jpg">gdilate: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
-<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gdilate.b.jpg">gdilate: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gdilate.inputs.jpg">gdilate: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*カラー (H,W,3) の入力は載せていない: この op は色チャネルを 3 本目の空間軸として扱う(色を跨ぐ)ため。チャネルごとに分けて呼ぶこと。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>グレースケール膨張（明るい側に広げる）。HALCON の `<code style="color:#22d3bf">gray_dilation</code>`（Perform a gray value dilation on an image.）に相当。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が構造要素（正方形）の一辺を </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。実装は矩形窓の最大値フィルタと同じ（</code><code style="color:#22d3bf">_max_filter</code>` と等価）。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が構造要素の一辺を </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が**構造要素の形**を選ぶ: </code><code style="color:#22d3bf">b &lt;= 0.5</code><code style="color:#22d3bf"> で正方形(2026-09-17 までの挙動、分離可能なので最速)、以降 </code><code style="color:#22d3bf">十字</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">円板</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">水平線</code><code style="color:#22d3bf">。円板は HALCON の </code><code style="color:#22d3bf">gen_disc_se</code><code style="color:#22d3bf"> に、水平線は方向性のある欠陥(横筋・スジ)を残したまま縦方向だけ均すのに使う。★正方形以外は footprint 経由になるので**目に見えて遅い**。正方形のときは矩形窓の最大値フィルタと等価（</code><code style="color:#22d3bf">_max_filter</code>`）。</p>
 <p><b>つまみ(実測)</b>: `<code style="color:#22d3bf">a</code>` は<b>段階的</b>に効き、切り替わるのは a ≈ 0.25、0.49、0.75(実測。刻み 0.02 の掃きで測った位置)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology ファミリ ガイド</a></p>

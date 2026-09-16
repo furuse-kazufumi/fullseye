@@ -7,14 +7,15 @@
 <p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
 <p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gopen.a.jpg">gopen: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
-<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gopen.b.jpg">gopen: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gopen.inputs.jpg">gopen: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Grayscale opening (erosion followed by dilation). Equivalent to HALCON&#x27;s `<code style="color:#22d3bf">gray_opening</code>` (Perform a gray value opening on an image.).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が構造要素の一辺を </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code>` は未使用。明るい小さな突起（ノイズ状の輝点）を除去しつつ、大きな明域の形はほぼ保つ。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が構造要素の一辺を </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が**構造要素の形**を選ぶ: </code><code style="color:#22d3bf">b &lt;= 0.5</code><code style="color:#22d3bf"> で正方形(2026-09-17 までの挙動、分離可能なので最速)、以降 </code><code style="color:#22d3bf">十字</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">円板</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">水平線</code><code style="color:#22d3bf">。円板は HALCON の </code><code style="color:#22d3bf">gen_disc_se</code>` に、水平線は方向性のある欠陥(横筋・スジ)を残したまま縦方向だけ均すのに使う。★正方形以外は footprint 経由になるので<b>目に見えて遅い</b>。明るい小さな突起（ノイズ状の輝点）を除去しつつ、大きな明域の形はほぼ保つ。</p>
 <p><b>Knobs (measured)</b>: `<code style="color:#22d3bf">a</code>` acts in <b>discrete steps</b>; it switches at a ≈ 0.25、0.49 (measured on a sweep of step 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>

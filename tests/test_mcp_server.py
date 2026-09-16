@@ -277,8 +277,14 @@ def test_op_help_returns_a_real_note_with_figures(cat):
     assert h["frontmatter"]["op"] == "gaussian" and h["frontmatter"]["halcon"] == "gauss_filter"
     assert h["body_chars"] > 500
     assert "## 使い方" in text and "gauss_filter" in text
-    assert "b`` は未使用" in text or "b は未使用" in text or "b`` は出力を変えない" in text or "b は出力を変えない" in text, (
-        "つまみの実効(b が効かない)がノートから消えた")
+    # ★2026-09-17 に ``b`` は「未使用」から**端の扱いを選ぶつまみ**になった。
+    #   ノートがその意味と**歴史側の帯**を両方書いていることを固定する ——
+    #   どちらか片方だけだと、保存済みプログラムを読む人が挙動を誤解する。
+    assert "端の扱い" in text, "b が何を選ぶのかがノートから消えた"
+    assert "b <= 0.5" in text or "b`` <= 0.5" in text, (
+        "歴史的な挙動がどの帯にあるかがノートから消えた")
+    assert sum(m in text for m in ("reflect", "nearest", "constant", "wrap")) >= 3, (
+        "選択肢の名前がノートに出ていない")
     kinds = {f["kind"] for f in h["figures"]}
     assert {".png", ".a.jpg"} <= kinds, kinds
     links = [c for c in res["content"] if c["type"] == "resource_link"]

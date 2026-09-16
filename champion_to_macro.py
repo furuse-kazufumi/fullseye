@@ -78,6 +78,34 @@ def _score3(ops, prob, stages, cfg) -> dict:
     }
 
 
+#: 2026-09-17 より前に進化した DNA では、これらの op の ``b`` は **死んだノブ**で、
+#: どんな値でも出力は同じだった。その日に ``b`` が端の扱い・構造要素の形を選ぶように
+#: なったので、**当時の記録をそのまま読むと別のパイプラインになる**(実測: macro_binarize
+#: の gopen が b=1.00 で水平線の構造要素に、macro_vol_denoise の vol_gaussian が
+#: b=0.89 で wrap の端処理に化け、保存済みスコアが再現しなくなった)。
+#: 取り込み時に**歴史的な規約へ釘付け**する —— DNA の意味を保つための移行であって、
+#: 値を都合よく書き換えているのではない。
+_B_WAS_DEAD_BEFORE_20260917 = frozenset((
+    "gaussian", "mean_box", "median", "gerode", "gdilate", "gopen", "gclose",
+    "vol_gaussian",
+))
+_B_PINNED = 0.0
+
+
+def _pin_dead_b(stages_spec, captured: str) -> tuple:
+    """当時 ``b`` が効かなかった段の ``b`` を歴史側へ釘付けし、直した段名を返す。"""
+    if captured >= "2026-09-17":
+        return stages_spec, []
+    pinned = []
+    out = []
+    for st in stages_spec:
+        if st["op"] in _B_WAS_DEAD_BEFORE_20260917 and float(st["b"]) > 0.5:
+            st = dict(st, b=_B_PINNED)
+            pinned.append("%s(b=%.2f -> %.2f)" % (st["op"], float(stages_spec[len(out)]["b"]), _B_PINNED))
+        out.append(st)
+    return out, pinned
+
+
 def build_entry(champion_path: str, name: str, meta: dict) -> dict:
     import ops
     import problems
@@ -92,6 +120,10 @@ def build_entry(champion_path: str, name: str, meta: dict) -> dict:
         raise SystemExit(f"[abort] unknown problem {problem!r}")
     prob = problems.PROBLEMS[problem]
     cfg = ch["config"]
+
+    stages_spec, b_pinned = _pin_dead_b(stages_spec, str(meta.get("date", "")) or "1970-01-01")
+    if b_pinned:
+        print("[pin] %s: b が死んでいた段を歴史側へ: %s" % (name, ", ".join(b_pinned)))
 
     used = [s["op"] for s in stages_spec]
     missing = [u for u in used if u not in ops._BY_NAME]

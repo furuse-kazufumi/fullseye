@@ -7,15 +7,15 @@
 <p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
 <p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/median.a.jpg">median: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
-<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/median.b.jpg">median: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/median.inputs.jpg">median: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Median filter. Equivalent to HALCON&#x27;s `<code style="color:#22d3bf">median_image</code>` (Compute a median filter with various masks.).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓サイズを </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code>` は未使用。塩胡椒ノイズなど外れ値に強く、ガウシアン平滑よりエッジを保ちやすい。</p>
-<p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (measured; </code>tools/impl2/border_probe.py`).</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓サイズを </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が**端の扱い**を選ぶ: </code><code style="color:#22d3bf">b &lt;= 0.5</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 </code><code style="color:#22d3bf">nearest</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">constant</code><code style="color:#22d3bf">(0 で埋める)/ </code><code style="color:#22d3bf">wrap</code><code style="color:#22d3bf">(反対側から巻き取る)。★**窓が 3 のときは </code><code style="color:#22d3bf">reflect</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">nearest</code>` が原理的に一致する**(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。塩胡椒ノイズなど外れ値に強く、ガウシアン平滑よりエッジを保ちやすい。</p>
 <p><b>Knobs (measured)</b>: `<code style="color:#22d3bf">a</code>` acts in <b>discrete steps</b>; it switches at a ≈ 0.25、0.49、0.75 (measured on a sweep of step 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

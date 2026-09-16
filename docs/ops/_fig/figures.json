@@ -4363,6 +4363,7 @@
    "color_ok": false,
    "extra": {
     "a": "gaussian.a.jpg",
+    "b": "gaussian.b.jpg",
     "inputs": "gaussian.inputs.jpg"
    },
    "fig": "gaussian.png",
@@ -4376,9 +4377,7 @@
     "pcb",
     "color"
    ],
-   "knob_dead": [
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "ndarray",
    "program": "gaussian 0.35 0.50",
    "pseudocolor": false,
@@ -4388,6 +4387,7 @@
    "color_ok": false,
    "extra": {
     "a": "gclose.a.jpg",
+    "b": "gclose.b.jpg",
     "inputs": "gclose.inputs.jpg"
    },
    "fig": "gclose.png",
@@ -4401,9 +4401,7 @@
     "pcb",
     "color"
    ],
-   "knob_dead": [
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "ndarray",
    "program": "gclose 0.35 0.50",
    "pseudocolor": false,
@@ -4413,6 +4411,7 @@
    "color_ok": false,
    "extra": {
     "a": "gdilate.a.jpg",
+    "b": "gdilate.b.jpg",
     "inputs": "gdilate.inputs.jpg"
    },
    "fig": "gdilate.png",
@@ -4426,9 +4425,7 @@
     "pcb",
     "color"
    ],
-   "knob_dead": [
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "ndarray",
    "program": "gdilate 0.35 0.50",
    "pseudocolor": false,
@@ -4540,6 +4537,7 @@
    "color_ok": true,
    "extra": {
     "a": "gerode.a.jpg",
+    "b": "gerode.b.jpg",
     "inputs": "gerode.inputs.jpg"
    },
    "fig": "gerode.png",
@@ -4553,9 +4551,7 @@
     "pcb",
     "color"
    ],
-   "knob_dead": [
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "ndarray",
    "program": "gerode 0.35 0.50",
    "pseudocolor": false,
@@ -4631,6 +4627,7 @@
    "color_ok": true,
    "extra": {
     "a": "gopen.a.jpg",
+    "b": "gopen.b.jpg",
     "inputs": "gopen.inputs.jpg"
    },
    "fig": "gopen.png",
@@ -4644,9 +4641,7 @@
     "pcb",
     "color"
    ],
-   "knob_dead": [
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "ndarray",
    "program": "gopen 0.35 0.50",
    "pseudocolor": false,
@@ -8514,6 +8509,7 @@
    "color_ok": false,
    "extra": {
     "a": "mean_box.a.jpg",
+    "b": "mean_box.b.jpg",
     "inputs": "mean_box.inputs.jpg"
    },
    "fig": "mean_box.png",
@@ -8527,9 +8523,7 @@
     "pcb",
     "color"
    ],
-   "knob_dead": [
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "ndarray",
    "program": "mean_box 0.35 0.50",
    "pseudocolor": false,
@@ -8614,6 +8608,7 @@
    "color_ok": false,
    "extra": {
     "a": "median.a.jpg",
+    "b": "median.b.jpg",
     "inputs": "median.inputs.jpg"
    },
    "fig": "median.png",
@@ -8627,9 +8622,7 @@
     "pcb",
     "color"
    ],
-   "knob_dead": [
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "ndarray",
    "program": "median 0.50 0.50",
    "pseudocolor": false,
@@ -18023,6 +18016,7 @@
    "color_ok": false,
    "extra": {
     "a": "vol_gaussian.a.jpg",
+    "b": "vol_gaussian.b.jpg",
     "chain": "vol_gaussian.chain.jpg",
     "gif": "vol_gaussian.gif",
     "inputs": "vol_gaussian.inputs.jpg"
@@ -18038,9 +18032,7 @@
     "pcb",
     "color"
    ],
-   "knob_dead": [
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "ndarray",
    "program": "img_to_volume 0.50 0.50\nvol_gaussian 0.50 0.50",
    "pseudocolor": false,

@@ -25,7 +25,9 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ![gdilate: knob a sweep](../../_fig/gdilate.a.jpg)
 
-*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![gdilate: knob b sweep](../../_fig/gdilate.b.jpg)
 
 **別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
 
@@ -37,7 +39,7 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 グレースケール膨張（明るい側に広げる）。HALCON の ``gray_dilation``（Perform a gray value dilation on an image.）に相当。
 
-``a`` が構造要素（正方形）の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。実装は矩形窓の最大値フィルタと同じ（``_max_filter`` と等価）。
+``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` が**構造要素の形**を選ぶ: ``b <= 0.5`` で正方形(2026-09-17 までの挙動、分離可能なので最速)、以降 ``十字`` / ``円板`` / ``水平線``。円板は HALCON の ``gen_disc_se`` に、水平線は方向性のある欠陥(横筋・スジ)を残したまま縦方向だけ均すのに使う。★正方形以外は footprint 経由になるので**目に見えて遅い**。正方形のときは矩形窓の最大値フィルタと等価（``_max_filter``）。
 
 **つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.25、0.49、0.75(実測。刻み 0.02 の掃きで測った位置)。
 

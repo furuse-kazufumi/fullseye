@@ -7,14 +7,15 @@
 <p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
 <p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gerode.a.jpg">gerode: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
-<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gerode.b.jpg">gerode: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gerode.inputs.jpg">gerode: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>灰度腐蚀（向暗侧扩展）。相当于 HALCON 的 `<code style="color:#22d3bf">gray_erosion</code>`（Perform a gray value erosion on an image.）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が構造要素（正方形）の一辺を </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。実装は矩形窓の最小値フィルタと同じ（</code><code style="color:#22d3bf">_min_filter</code>` と等価）で、HALCON の任意形状構造要素とは異なり常に正方形。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が構造要素の一辺を </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が**構造要素の形**を選ぶ: </code><code style="color:#22d3bf">b &lt;= 0.5</code><code style="color:#22d3bf"> で正方形(2026-09-17 までの挙動、分離可能なので最速)、以降 </code><code style="color:#22d3bf">十字</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">円板</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">水平線</code><code style="color:#22d3bf">。円板は HALCON の </code><code style="color:#22d3bf">gen_disc_se</code><code style="color:#22d3bf"> に、水平線は方向性のある欠陥(横筋・スジ)を残したまま縦方向だけ均すのに使う。★正方形以外は footprint 経由になるので**目に見えて遅い**。正方形のときは矩形窓の最小値フィルタと等価（</code><code style="color:#22d3bf">_min_filter</code>`）。</p>
 <p><b>旋钮（实测）</b>：`<code style="color:#22d3bf">a</code>` 以<b>离散档位</b>生效，切换点在 a ≈ 0.25、0.49、0.75（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>

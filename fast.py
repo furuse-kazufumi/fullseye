@@ -399,6 +399,27 @@ def has(name: str) -> bool:
     return name in FAST
 
 
+#: 2 つ目のノブ(``b``)で端の扱い・構造要素の形を選ぶようになった op。
+#: ★twin はどれも**歴史的な規約(reflect / 正方形)しか実装していない**ので、
+#:  ``b`` が新しい選択肢を選んでいる間は **core にそのまま落ちる**。
+#:  速くはならないが、答えは 1 ビットも変わらない —— median の k>5 と同じ扱い。
+#:  ここを黙って無視すると「速いが違う」ができる(実測: parity が 11 件割れた)。
+_KNOB_B_OPTIONED = frozenset((
+    "gaussian", "mean_box", "median", "gerode", "gdilate", "gopen", "gclose",
+    "gauss_filter", "gauss_image", "mean_image", "median_image",
+    "median_separate", "median_weighted", "eliminate_min_max",
+    "gray_erosion", "gray_dilation", "gray_opening", "gray_closing",
+))
+
+
+def _b_selects_a_new_option(name: str, a: float, b: float) -> bool:
+    """*name* の ``b`` が歴史的な規約から外れているか。"""
+    if name not in _KNOB_B_OPTIONED:
+        return False
+    import ops
+    return ops._border(b) != "reflect" or ops._se(b, ops._k(a)) is not None
+
+
 def apply_fast(name: str, v, a: float = 0.5, b: float = 0.5):
     """twin を 1 つ走らせる。契約は core と同じ float64 [0,1] -> float64。
 
@@ -408,6 +429,9 @@ def apply_fast(name: str, v, a: float = 0.5, b: float = 0.5):
     twin = FAST.get(name)
     if twin is None:
         raise KeyError("no CPU fast twin for %r (fast.FAST has %d)" % (name, len(FAST)))
+    if _b_selects_a_new_option(name, a, b):
+        import ops
+        return ops.RT[name](np.asarray(v, np.float64).copy(), a, b)
     return twin.fn(v, a, b)
 
 
@@ -422,6 +446,11 @@ def apply_uint8(name: str, img_u8, a: float = 0.5, b: float = 0.5):
     if fn is None:
         raise KeyError("no uint8 integer kernel for %r — the float64 twin is %s"
                        % (name, "present" if name in FAST else "absent"))
+    if _b_selects_a_new_option(name, a, b):
+        import ops                                  # core を uint8 の土俵に合わせる
+        x = np.asarray(img_u8, np.uint8)
+        out = ops.RT[name](x.astype(np.float64) / 255.0, a, b)
+        return np.clip(np.round(np.asarray(out, np.float64) * 255.0), 0, 255).astype(np.uint8)
     return fn(img_u8, a, b)
 
 

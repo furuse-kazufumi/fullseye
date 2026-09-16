@@ -25,7 +25,9 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ![median: knob a sweep](../../_fig/median.a.jpg)
 
-*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![median: knob b sweep](../../_fig/median.b.jpg)
 
 **別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
 
@@ -37,9 +39,7 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 メディアン（中央値）フィルタ。HALCON の ``median_image``（Compute a median filter with various masks.）に相当。
 
-``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。塩胡椒ノイズなど外れ値に強く、ガウシアン平滑よりエッジを保ちやすい。
-
-**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` が**端の扱い**を選ぶ: ``b <= 0.5`` で ``reflect``(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 ``nearest`` / ``constant``(0 で埋める)/ ``wrap``(反対側から巻き取る)。★**窓が 3 のときは ``reflect`` と ``nearest`` が原理的に一致する**(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。塩胡椒ノイズなど外れ値に強く、ガウシアン平滑よりエッジを保ちやすい。
 
 **つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.25、0.49、0.75(実測。刻み 0.02 の掃きで測った位置)。
 

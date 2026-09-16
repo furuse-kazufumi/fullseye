@@ -25,7 +25,9 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ![gaussian: knob a sweep](../../_fig/gaussian.a.jpg)
 
-*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![gaussian: knob b sweep](../../_fig/gaussian.b.jpg)
 
 **別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
 
@@ -37,7 +39,7 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。
 
-``a`` が標準偏差 σ を ``0.3〜3.0`` に線形に振る（``σ = 0.3 + 2.7a``）。``b`` は未使用。実装は ``scipy.ndimage.gaussian_filter`` をそのまま呼ぶ（境界は scipy 既定の ``reflect``）。ノイズ除去や後段のエッジ検出前のぼかしに使う。σ が大きいほど細部が失われる。
+``a`` が標準偏差 σ を ``0.3〜3.0`` に線形に振る（``σ = 0.3 + 2.7a``）。``b`` が**端の扱い**を選ぶ: ``b <= 0.5`` で ``reflect``(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 ``nearest`` / ``constant``(0 で埋める)/ ``wrap``(反対側から巻き取る)。★**窓が 3 のときは ``reflect`` と ``nearest`` が原理的に一致する**(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。実装は ``scipy.ndimage.gaussian_filter``。ノイズ除去や後段のエッジ検出前のぼかしに使う。σ が大きいほど細部が失われる。
 
 ## 詳しい使い方ガイド
 

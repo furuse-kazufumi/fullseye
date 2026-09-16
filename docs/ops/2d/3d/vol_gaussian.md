@@ -23,7 +23,9 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ![vol_gaussian: knob a sweep](../../_fig/vol_gaussian.a.jpg)
 
-*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![vol_gaussian: knob b sweep](../../_fig/vol_gaussian.b.jpg)
 
 **段階**(前置きの op → この op。左から順):
 
@@ -41,7 +43,7 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 3D ボリュームの等方ガウシアン平滑化。対応する HALCON op は指定されていない。
 
-``a`` が標準偏差 σ を ``0.3〜3.0``（``0.3+2.7a``）に振る。``b`` は未使用。``scipy.ndimage`` は次元非依存（N-D）なので、2-D の ``_gaussian`` と全く同じ式をそのまま 3 軸（CT/MRI/深度スタック等）に適用する。
+``a`` が標準偏差 σ を ``0.3〜3.0``（``0.3+2.7a``）に振る。``b`` が**端の扱い**を選ぶ: ``b <= 0.5`` で ``reflect``(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 ``nearest`` / ``constant``(0 で埋める)/ ``wrap``(反対側から巻き取る)。★**窓が 3 のときは ``reflect`` と ``nearest`` が原理的に一致する**(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。``scipy.ndimage`` は次元非依存（N-D）なので、2-D の ``_gaussian`` と全く同じ式をそのまま 3 軸（CT/MRI/深度スタック等）に適用する。
 
 ## 詳しい使い方ガイド
 

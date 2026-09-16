@@ -7,13 +7,14 @@
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/mean_box.a.jpg">mean_box: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
-<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/mean_box.b.jpg">mean_box: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/mean_box.inputs.jpg">mean_box: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*カラー (H,W,3) の入力は載せていない: この op は色チャネルを 3 本目の空間軸として扱う(色を跨ぐ)ため。チャネルごとに分けて呼ぶこと。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>矩形窓の単純平均（box）フィルタ。HALCON の `<code style="color:#22d3bf">mean_image</code>`（Smooth by averaging.）に相当。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf"> の4段階（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> を4分割して丸める）に切り替える。</code><code style="color:#22d3bf">b</code>` は未使用。ガウシアンより計算は軽いがリンギングが出やすく、エッジがぼやける。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf"> の4段階（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> を4分割して丸める）に切り替える。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が**端の扱い**を選ぶ: </code><code style="color:#22d3bf">b &lt;= 0.5</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 </code><code style="color:#22d3bf">nearest</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">constant</code><code style="color:#22d3bf">(0 で埋める)/ </code><code style="color:#22d3bf">wrap</code><code style="color:#22d3bf">(反対側から巻き取る)。★**窓が 3 のときは </code><code style="color:#22d3bf">reflect</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">nearest</code>` が原理的に一致する**(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。ガウシアンより計算は軽いがリンギングが出やすく、エッジがぼやける。</p>
 <p><b>端の扱い</b>: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 `<code style="color:#22d3bf">reflect</code>`)(2026-09-16 に実測して記録)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank ファミリ ガイド</a></p>

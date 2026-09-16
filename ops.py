@@ -184,20 +184,20 @@ def _identity(v, a, b):
 def _gaussian(v, a, b):
     """等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。
 
-``a`` が標準偏差 σ を ``0.3〜3.0`` に線形に振る（``σ = 0.3 + 2.7a``）。``b`` は未使用。実装は ``scipy.ndimage.gaussian_filter`` をそのまま呼ぶ（境界は scipy 既定の ``reflect``）。ノイズ除去や後段のエッジ検出前のぼかしに使う。σ が大きいほど細部が失われる。"""
-    return ndimage.gaussian_filter(v, sigma=0.3 + 2.7 * a)
+``a`` が標準偏差 σ を ``0.3〜3.0`` に線形に振る（``σ = 0.3 + 2.7a``）。``b`` が**端の扱い**を選ぶ: ``b <= 0.5`` で ``reflect``(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 ``nearest`` / ``constant``(0 で埋める)/ ``wrap``(反対側から巻き取る)。★**窓が 3 のときは ``reflect`` と ``nearest`` が原理的に一致する**(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。実装は ``scipy.ndimage.gaussian_filter``。ノイズ除去や後段のエッジ検出前のぼかしに使う。σ が大きいほど細部が失われる。"""
+    return ndimage.gaussian_filter(v, sigma=0.3 + 2.7 * a, mode=_border(b))
 def _mean_box(v, a, b):
     """矩形窓の単純平均（box）フィルタ。HALCON の ``mean_image``（Smooth by averaging.）に相当。
 
-``a`` が窓の一辺を ``3,5,7,9`` の4段階（``_k(a)``、``a`` を4分割して丸める）に切り替える。``b`` は未使用。ガウシアンより計算は軽いがリンギングが出やすく、エッジがぼやける。
+``a`` が窓の一辺を ``3,5,7,9`` の4段階（``_k(a)``、``a`` を4分割して丸める）に切り替える。``b`` が**端の扱い**を選ぶ: ``b <= 0.5`` で ``reflect``(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 ``nearest`` / ``constant``(0 で埋める)/ ``wrap``(反対側から巻き取る)。★**窓が 3 のときは ``reflect`` と ``nearest`` が原理的に一致する**(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。ガウシアンより計算は軽いがリンギングが出やすく、エッジがぼやける。
 
 **端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(2026-09-16 に実測して記録)。"""
-    return ndimage.uniform_filter(v, size=_k(a))
+    return ndimage.uniform_filter(v, size=_k(a), mode=_border(b))
 def _median(v, a, b):
     """メディアン（中央値）フィルタ。HALCON の ``median_image``（Compute a median filter with various masks.）に相当。
 
-``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。塩胡椒ノイズなど外れ値に強く、ガウシアン平滑よりエッジを保ちやすい。"""
-    return ndimage.median_filter(v, size=_k(a))
+``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` が**端の扱い**を選ぶ: ``b <= 0.5`` で ``reflect``(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 ``nearest`` / ``constant``(0 で埋める)/ ``wrap``(反対側から巻き取る)。★**窓が 3 のときは ``reflect`` と ``nearest`` が原理的に一致する**(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。塩胡椒ノイズなど外れ値に強く、ガウシアン平滑よりエッジを保ちやすい。"""
+    return ndimage.median_filter(v, size=_k(a), mode=_border(b))
 def _min_filter(v, a, b):
     """矩形窓内の最小値フィルタ（グレースケール侵食に相当）。HALCON の ``gray_erosion_rect``（Determine the minimum gray value within a rectangle.）に相当。
 
@@ -216,23 +216,23 @@ def _percentile(v, a, b):
 def _erode_g(v, a, b):
     """グレースケール侵食（暗い側に広げる）。HALCON の ``gray_erosion``（Perform a gray value erosion on an image.）に相当。
 
-``a`` が構造要素（正方形）の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。実装は矩形窓の最小値フィルタと同じ（``_min_filter`` と等価）で、HALCON の任意形状構造要素とは異なり常に正方形。"""
-    return ndimage.grey_erosion(v, size=_k(a))
+``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` が**構造要素の形**を選ぶ: ``b <= 0.5`` で正方形(2026-09-17 までの挙動、分離可能なので最速)、以降 ``十字`` / ``円板`` / ``水平線``。円板は HALCON の ``gen_disc_se`` に、水平線は方向性のある欠陥(横筋・スジ)を残したまま縦方向だけ均すのに使う。★正方形以外は footprint 経由になるので**目に見えて遅い**。正方形のときは矩形窓の最小値フィルタと等価（``_min_filter``）。"""
+    return _morph(ndimage.grey_erosion, v, a, b)
 def _dilate_g(v, a, b):
     """グレースケール膨張（明るい側に広げる）。HALCON の ``gray_dilation``（Perform a gray value dilation on an image.）に相当。
 
-``a`` が構造要素（正方形）の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。実装は矩形窓の最大値フィルタと同じ（``_max_filter`` と等価）。"""
-    return ndimage.grey_dilation(v, size=_k(a))
+``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` が**構造要素の形**を選ぶ: ``b <= 0.5`` で正方形(2026-09-17 までの挙動、分離可能なので最速)、以降 ``十字`` / ``円板`` / ``水平線``。円板は HALCON の ``gen_disc_se`` に、水平線は方向性のある欠陥(横筋・スジ)を残したまま縦方向だけ均すのに使う。★正方形以外は footprint 経由になるので**目に見えて遅い**。正方形のときは矩形窓の最大値フィルタと等価（``_max_filter``）。"""
+    return _morph(ndimage.grey_dilation, v, a, b)
 def _open_g(v, a, b):
     """グレースケールオープニング（侵食してから膨張）。HALCON の ``gray_opening``（Perform a gray value opening on an image.）に相当。
 
-``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。明るい小さな突起（ノイズ状の輝点）を除去しつつ、大きな明域の形はほぼ保つ。"""
-    return ndimage.grey_opening(v, size=_k(a))
+``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` が**構造要素の形**を選ぶ: ``b <= 0.5`` で正方形(2026-09-17 までの挙動、分離可能なので最速)、以降 ``十字`` / ``円板`` / ``水平線``。円板は HALCON の ``gen_disc_se`` に、水平線は方向性のある欠陥(横筋・スジ)を残したまま縦方向だけ均すのに使う。★正方形以外は footprint 経由になるので**目に見えて遅い**。明るい小さな突起（ノイズ状の輝点）を除去しつつ、大きな明域の形はほぼ保つ。"""
+    return _morph(ndimage.grey_opening, v, a, b)
 def _close_g(v, a, b):
     """グレースケールクロージング（膨張してから侵食）。HALCON の ``gray_closing``（Perform a gray value closing on an image.）に相当。
 
-``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。暗い小さな欠け（ノイズ状の暗点）を埋めつつ、大きな暗域の形はほぼ保つ。"""
-    return ndimage.grey_closing(v, size=_k(a))
+``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` が**構造要素の形**を選ぶ: ``b <= 0.5`` で正方形(2026-09-17 までの挙動、分離可能なので最速)、以降 ``十字`` / ``円板`` / ``水平線``。円板は HALCON の ``gen_disc_se`` に、水平線は方向性のある欠陥(横筋・スジ)を残したまま縦方向だけ均すのに使う。★正方形以外は footprint 経由になるので**目に見えて遅い**。暗い小さな欠け（ノイズ状の暗点）を埋めつつ、大きな暗域の形はほぼ保つ。"""
+    return _morph(ndimage.grey_closing, v, a, b)
 def _tophat(v, a, b):
     """ホワイトトップハット（原画像 − オープニング）。HALCON の ``gray_tophat``（Perform a gray value top hat transformation on an image.）に相当。
 
@@ -985,6 +985,64 @@ def _effective_bit_depth(v, a, b):
     return float(np.clip(bits, 1.0, 16.0) / 16.0)
 
 
+
+# --------------------------------------------------------------------------- #
+# 2 つ目のノブ(``b``)に選択肢を持たせる
+#
+# ★**歴史的な挙動を ``b <= 0.5`` の帯に置く**。これらの op の ``b`` は 2026-09-17 まで
+#   「未使用」で、保存済みの進化プログラムが持つ ``b`` の値は事実上ばらばらに散って
+#   いる。新しい選択肢を上半分だけに割り当てれば、**およそ半数の既存プログラムは
+#   1 ビットも結果が変わらない**(全域に割り当てると全部変わる)。
+#   `b <= 0.5` が旧実装とビット一致することは tests/test_knob_b_options.py が固定する。
+# --------------------------------------------------------------------------- #
+
+#: 端の扱い。``reflect`` が scipy の既定 = これまでの挙動。
+_BORDER_MODES = ("reflect", "nearest", "constant", "wrap")
+
+
+def _border(b) -> str:
+    """``b`` を scipy の ``mode`` に写す。``b <= 0.5`` は必ず ``reflect``。"""
+    x = float(np.clip(b, 0.0, 1.0))
+    # ★境目は **0.5 を含めて**歴史側に置く。0.5 は「まん中」として既定値に使われて
+    #   いて(api.apply の既定、studio の中央、保存済みプログラムの初期値)、ここを
+    #   新しい側に入れると**既定のまま呼んだだけで答えが変わる**。実測で gaussian と
+    #   その HALCON 別名の一致検査まで割れた。
+    if x <= 0.5:
+        return "reflect"
+    return _BORDER_MODES[1 + min(2, int((x - 0.5) / (0.5 / 3.0)))]
+
+
+#: 構造要素の形。正方形 = これまでの挙動(``size=k`` の分離可能な高速経路)。
+_SE_SHAPES = ("square", "cross", "disc", "line")
+
+
+def _se(b, k):
+    """``b`` を構造要素に写す。``b <= 0.5`` は ``None``(= 正方形の高速経路)。
+
+    円板と十字は HALCON が ``gen_disc_se`` / 任意形状で持っているもので、
+    ここが「常に正方形」だったのが 2-D 側の積み残しだった(各 op の docstring に
+    「HALCON の任意形状構造要素とは異なり常に正方形」と書いてあった)。
+    """
+    x = float(np.clip(b, 0.0, 1.0))
+    if x <= 0.5:                                     # 0.5 は歴史側(既定値のため)
+        return None
+    which = 1 + min(2, int((x - 0.5) / (0.5 / 3.0)))
+    r = k // 2
+    yy, xx = np.mgrid[-r:r + 1, -r:r + 1]
+    if which == 1:
+        return (yy == 0) | (xx == 0)                    # 十字
+    if which == 2:
+        return (yy * yy + xx * xx) <= r * r             # 円板
+    return yy == 0                                      # 水平線
+
+
+def _morph(fn, v, a, b):
+    """``b`` で構造要素を選ぶモルフォロジー。正方形は従来どおり ``size=`` 経路。"""
+    k = _k(a)
+    fp = _se(b, k)
+    return fn(v, size=k) if fp is None else fn(v, footprint=fp)
+
+
 def _fft_mask(v, cutoff, high):
     H, W = v.shape
     rad = np.sqrt(np.fft.fftfreq(H)[:, None] ** 2 + np.fft.fftfreq(W)[None, :] ** 2)
@@ -1645,8 +1703,8 @@ def _decode_barcode(v, a, b):
 def _vol_gaussian(v, a, b):
     """3D ボリュームの等方ガウシアン平滑化。対応する HALCON op は指定されていない。
 
-``a`` が標準偏差 σ を ``0.3〜3.0``（``0.3+2.7a``）に振る。``b`` は未使用。``scipy.ndimage`` は次元非依存（N-D）なので、2-D の ``_gaussian`` と全く同じ式をそのまま 3 軸（CT/MRI/深度スタック等）に適用する。"""
-    return ndimage.gaussian_filter(v, sigma=0.3 + 2.7 * a)
+``a`` が標準偏差 σ を ``0.3〜3.0``（``0.3+2.7a``）に振る。``b`` が**端の扱い**を選ぶ: ``b <= 0.5`` で ``reflect``(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 ``nearest`` / ``constant``(0 で埋める)/ ``wrap``(反対側から巻き取る)。★**窓が 3 のときは ``reflect`` と ``nearest`` が原理的に一致する**(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。``scipy.ndimage`` は次元非依存（N-D）なので、2-D の ``_gaussian`` と全く同じ式をそのまま 3 軸（CT/MRI/深度スタック等）に適用する。"""
+    return ndimage.gaussian_filter(v, sigma=0.3 + 2.7 * a, mode=_border(b))
 
 
 def _vol_median(v, a, b):

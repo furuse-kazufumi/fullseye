@@ -183,7 +183,7 @@
    {
     "op": "gopen",
     "a": 0.3774757893995089,
-    "b": 1.0
+    "b": 0.0
    },
    {
     "op": "unsharp",
@@ -191,7 +191,7 @@
     "b": 0.6808532667629071
    }
   ],
-  "pipeline": "bilateral(a=0.06,b=0.89) -> unsharp(a=0.51,b=0.34) -> bilateral(a=0.04,b=0.24) -> lowpass(a=0.75,b=0.59) -> gopen(a=0.38,b=1.00) -> unsharp(a=0.78,b=0.68)",
+  "pipeline": "bilateral(a=0.06,b=0.89) -> unsharp(a=0.51,b=0.34) -> bilateral(a=0.04,b=0.24) -> lowpass(a=0.75,b=0.59) -> gopen(a=0.38,b=0.00) -> unsharp(a=0.78,b=0.68)",
   "provenance": {
    "source": "evolve.py / robust.py, core-only search (IMGEVOLVE_NO_BACKENDS=1)",
    "champion_file": "out/macro_binarize/champion_binarize.json",
@@ -250,10 +250,10 @@
    {
     "op": "vol_gaussian",
     "a": 0.0760881116165437,
-    "b": 0.8875448600421568
+    "b": 0.0
    }
   ],
-  "pipeline": "vol_threshold(a=0.52,b=0.76) -> vol_gaussian(a=0.08,b=0.89)",
+  "pipeline": "vol_threshold(a=0.52,b=0.76) -> vol_gaussian(a=0.08,b=0.00)",
   "provenance": {
    "source": "evolve.py / robust.py, core-only search (IMGEVOLVE_NO_BACKENDS=1)",
    "champion_file": "out/macro_voldenoise/champion_vol_denoise.json",
