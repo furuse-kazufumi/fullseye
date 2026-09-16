@@ -1,0 +1,12 @@
+{
+  "op": "gray_bothat",
+  "note": "docs/ops/2d/morphology/gray_bothat.md",
+  "note_sha256_16": "82b34aad6a92c190",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:27:32",
+  "c_path": "impl2/c/qwen2.5-14b/gray_bothat.c",
+  "prompt_sha256_16": "14b935a807f09113",
+  "gen_seconds": 21.1,
+  "status": "compile_error",
+  "compile_error": ":17:20: error: 'NULL' undeclared (first use in this function)\n   17 |     if (closing == NULL) {\n      |                    ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_bothat.c:2:1: note: 'NULL' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'\n    1 | #include <math.h>\n  +++ |+#include <stddef.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_bothat.c:17:20: note: each undeclared identifier is reported only once for each function it appears in\n   17 |     if (closing == NULL) {\n      |                    ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_bothat.c:61:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   61 |     free(closing);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_bothat.c:61:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_bothat.c:61:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_bothat.c:61:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

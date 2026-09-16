@@ -1,0 +1,12 @@
+{
+  "op": "sobel_dir",
+  "note": "docs/ops/2d/edges/sobel_dir.md",
+  "note_sha256_16": "b41fdadcdd5de5e4",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:53:37",
+  "c_path": "impl2/c/qwen2.5-14b/sobel_dir.c",
+  "prompt_sha256_16": "af88056c712dacb2",
+  "gen_seconds": 17.3,
+  "status": "compile_error",
+  "compile_error": "olve\\impl2\\c\\qwen2.5-14b\\sobel_dir.c:37:28: error: implicit declaration of function 'atan2' [-Wimplicit-function-declaration]\n   37 |             double angle = atan2(dy, dx);\n      |                            ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sobel_dir.c:1:1: note: include '<math.h>' or provide a declaration of 'atan2'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sobel_dir.c:37:28: warning: incompatible implicit declaration of built-in function 'atan2' [-Wbuiltin-declaration-mismatch]\n   37 |             double angle = atan2(dy, dx);\n      |                            ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sobel_dir.c:37:28: note: include '<math.h>' or provide a declaration of 'atan2'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sobel_dir.c:39:30: error: 'M_PI' undeclared (first use in this function)\n   39 |                 angle += 2 * M_PI;\n      |                              ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sobel_dir.c:39:30: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

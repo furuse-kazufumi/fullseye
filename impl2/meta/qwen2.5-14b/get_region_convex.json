@@ -1,0 +1,12 @@
+{
+  "op": "get_region_convex",
+  "note": "docs/ops/2d/region/get_region_convex.md",
+  "note_sha256_16": "81e3791ec8818c3b",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:18:45",
+  "c_path": "impl2/c/qwen2.5-14b/get_region_convex.c",
+  "prompt_sha256_16": "80fc61aaa41cc54d",
+  "gen_seconds": 12.5,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\get_region_convex.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\get_region_convex.c:27:34: error: implicit declaration of function 'orientation' [-Wimplicit-function-declaration]\n   27 |         while (hull_size >= 2 && orientation(hull[hull_size - 2], hull[hull_size - 1], i) <= 0) {\n      |                                  ^~~~~~~~~~~\n"
+}

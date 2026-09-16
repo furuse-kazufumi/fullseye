@@ -1,0 +1,12 @@
+{
+  "op": "sk_skeleton",
+  "note": "docs/ops/2d/region/sk_skeleton.md",
+  "note_sha256_16": "e2e4f613859c1b07",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:25:07",
+  "c_path": "impl2/c/qwen2.5-14b/sk_skeleton.c",
+  "prompt_sha256_16": "8a247eb9bce3c668",
+  "gen_seconds": 11.4,
+  "status": "compile_error",
+  "compile_error": "ment 1 of 'can_remove_pixel' from incompatible pointer type [-Wincompatible-pointer-types]\n   70 |             if (can_remove_pixel(temp, y, x, h, w)) {\n      |                                  ^~~~\n      |                                  |\n      |                                  int *\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_skeleton.c:44:43: note: expected 'const double *' but argument is of type 'int *'\n   44 | static int can_remove_pixel(const double* in, int y, int x, int h, int w) {\n      |                             ~~~~~~~~~~~~~~^~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_skeleton.c:79:34: error: passing argument 1 of 'can_remove_pixel' from incompatible pointer type [-Wincompatible-pointer-types]\n   79 |             if (can_remove_pixel(temp, y, x, h, w)) {\n      |                                  ^~~~\n      |                                  |\n      |                                  int *\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_skeleton.c:44:43: note: expected 'const double *' but argument is of type 'int *'\n   44 | static int can_remove_pixel(const double* in, int y, int x, int h, int w) {\n      |                             ~~~~~~~~~~~~~~^~\n"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "eliminate_sp",
+  "note": "docs/ops/2d/rank/eliminate_sp.md",
+  "note_sha256_16": "648de315cde8a51b",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:25:12",
+  "c_path": "impl2/c/qwen2.5-14b/eliminate_sp.c",
+  "prompt_sha256_16": "3a3f903ad3cacf70",
+  "gen_seconds": 10.3,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\eliminate_sp.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\eliminate_sp.c:35:35: error: implicit declaration of function 'fabs' [-Wimplicit-function-declaration]\n   35 |                     double diff = fabs(pixel - out[y * w + x]);\n      |                                   ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\eliminate_sp.c:1:1: note: include '<math.h>' or provide a declaration of 'fabs'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\eliminate_sp.c:35:35: warning: incompatible implicit declaration of built-in function 'fabs' [-Wbuiltin-declaration-mismatch]\n   35 |                     double diff = fabs(pixel - out[y * w + x]);\n      |                                   ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\eliminate_sp.c:35:35: note: include '<math.h>' or provide a declaration of 'fabs'\n"
+}

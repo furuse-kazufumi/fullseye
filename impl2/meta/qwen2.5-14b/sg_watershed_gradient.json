@@ -1,0 +1,12 @@
+{
+  "op": "sg_watershed_gradient",
+  "note": "docs/ops/2d/segment/sg_watershed_gradient.md",
+  "note_sha256_16": "971d7ba861432845",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:15:37",
+  "c_path": "impl2/c/qwen2.5-14b/sg_watershed_gradient.c",
+  "prompt_sha256_16": "0c3c7559042de4dc",
+  "gen_seconds": 22.0,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_watershed_gradient.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_watershed_gradient.c:26:35: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]\n   26 |             gradient[y * w + x] = sqrt(gx * gx + gy * gy);\n      |                                   ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_watershed_gradient.c:1:1: note: include '<math.h>' or provide a declaration of 'sqrt'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_watershed_gradient.c:26:35: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]\n   26 |             gradient[y * w + x] = sqrt(gx * gx + gy * gy);\n      |                                   ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_watershed_gradient.c:26:35: note: include '<math.h>' or provide a declaration of 'sqrt'\n"
+}

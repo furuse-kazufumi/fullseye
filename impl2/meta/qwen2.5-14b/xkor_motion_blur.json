@@ -1,0 +1,12 @@
+{
+  "op": "xkor_motion_blur",
+  "note": "docs/ops/2d/smoothing/xkor_motion_blur.md",
+  "note_sha256_16": "f4fe787d5b50eca7",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:08:16",
+  "c_path": "impl2/c/qwen2.5-14b/xkor_motion_blur.c",
+  "prompt_sha256_16": "72c47c606f983815",
+  "gen_seconds": 18.2,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xkor_motion_blur.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xkor_motion_blur.c:12:32: error: 'M_PI' undeclared (first use in this function)\n   12 |     double angle = 360.0 * a * M_PI / 180.0; // 角度をラジアンに変換\n      |                                ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xkor_motion_blur.c:12:32: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

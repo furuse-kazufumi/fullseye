@@ -1,0 +1,12 @@
+{
+  "op": "sk_li",
+  "note": "docs/ops/2d/segmentation/sk_li.md",
+  "note_sha256_16": "04fd92911eeda63c",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:16:34",
+  "c_path": "impl2/c/qwen2.5-14b/sk_li.c",
+  "prompt_sha256_16": "5a6aec0b81ec52ff",
+  "gen_seconds": 19.9,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_li.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_li.c:28:26: error: 'DBL_MAX' undeclared (first use in this function)\n   28 |     double min_entropy = DBL_MAX;\n      |                          ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_li.c:4:1: note: 'DBL_MAX' is defined in header '<float.h>'; this is probably fixable by adding '#include <float.h>'\n    3 | #include <string.h>\n  +++ |+#include <float.h>\n    4 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_li.c:28:26: note: each undeclared identifier is reported only once for each function it appears in\n   28 |     double min_entropy = DBL_MAX;\n      |                          ^~~~~~~\n"
+}

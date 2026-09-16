@@ -3,10 +3,9 @@
   "note": "docs/ops/2d/artificial_life/alife_reaction_bz.md",
   "note_sha256_16": "4d6908e1ea36a618",
   "model": "qwen2.5:14b",
-  "generated_at": "2026-09-16T09:55:20",
+  "generated_at": "2026-09-16T10:24:25",
   "c_path": "impl2/c/qwen2.5-14b/alife_reaction_bz.c",
-  "prompt_sha256_16": "bdebf5032a4e94a8",
-  "gen_seconds": 9.1,
+  "reused_existing_c": true,
   "status": "compile_error",
   "compile_error": "void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_reaction_bz.c:19:33: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n   19 |         double* temp = (double*)malloc(h * w * sizeof(double)); // 一時的な状態を保存する配列\n      |                                 ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_reaction_bz.c:19:33: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_reaction_bz.c:52:9: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   52 |         free(temp); // 一時的な状態を保存する配列の解放\n      |         ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_reaction_bz.c:52:9: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_reaction_bz.c:52:9: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_reaction_bz.c:52:9: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
 }

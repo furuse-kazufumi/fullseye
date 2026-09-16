@@ -1,0 +1,12 @@
+{
+  "op": "grad_dir",
+  "note": "docs/ops/2d/edges/grad_dir.md",
+  "note_sha256_16": "b506e1b751151ad8",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:27:18",
+  "c_path": "impl2/c/qwen2.5-14b/grad_dir.c",
+  "prompt_sha256_16": "39a1739f98c6725c",
+  "gen_seconds": 12.4,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\grad_dir.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\grad_dir.c:35:39: error: 'M_PI' undeclared (first use in this function)\n   35 |             out[y * w + x] = (angle + M_PI) / (2 * M_PI); // [0, 1] に正規化\n      |                                       ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\grad_dir.c:35:39: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "sk_gabor",
+  "note": "docs/ops/2d/texture/sk_gabor.md",
+  "note_sha256_16": "dcf552ab81e1dd61",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:01:26",
+  "c_path": "impl2/c/qwen2.5-14b/sk_gabor.c",
+  "prompt_sha256_16": "a7de14a683c63b22",
+  "gen_seconds": 12.8,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_gabor.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_gabor.c:15:31: error: 'M_PI' undeclared (first use in this function)\n   15 |     double sigma = 1.0 / (2 * M_PI * frequency);  // ガウスカーネルの標準偏差\n      |                               ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_gabor.c:15:31: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

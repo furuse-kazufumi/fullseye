@@ -1,0 +1,12 @@
+{
+  "op": "xsp_dct",
+  "note": "docs/ops/2d/frequency/xsp_dct.md",
+  "note_sha256_16": "88689b0af9f12cba",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:05:10",
+  "c_path": "impl2/c/qwen2.5-14b/xsp_dct.c",
+  "prompt_sha256_16": "c051ce4dd9ecd899",
+  "gen_seconds": 17.0,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_dct.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_dct.c:29:42: error: 'M_PI' undeclared (first use in this function)\n   29 |                     double cos_val = cos(M_PI * (2 * i + 1) * y / (2 * h)) * cos(M_PI * (2 * j + 1) * x / (2 * w));\n      |                                          ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_dct.c:29:42: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

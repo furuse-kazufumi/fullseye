@@ -1,0 +1,12 @@
+{
+  "op": "ph_reaction_diffusion",
+  "note": "docs/ops/2d/physics/ph_reaction_diffusion.md",
+  "note_sha256_16": "a82ecabe6b72fc71",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:37:13",
+  "c_path": "impl2/c/qwen2.5-14b/ph_reaction_diffusion.c",
+  "prompt_sha256_16": "cae1c82622d201f7",
+  "gen_seconds": 23.1,
+  "status": "compile_error",
+  "compile_error": "nclude '<stdlib.h>' or provide a declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_reaction_diffusion.c:18:26: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n   18 |     double *u = (double*)malloc(h * w * sizeof(double));\n      |                          ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_reaction_diffusion.c:18:26: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_reaction_diffusion.c:68:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   68 |     free(u);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_reaction_diffusion.c:68:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_reaction_diffusion.c:68:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_reaction_diffusion.c:68:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

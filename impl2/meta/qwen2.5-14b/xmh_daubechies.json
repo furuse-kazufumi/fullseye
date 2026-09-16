@@ -1,0 +1,12 @@
+{
+  "op": "xmh_daubechies",
+  "note": "docs/ops/2d/transform/xmh_daubechies.md",
+  "note_sha256_16": "aabecc3b0c8e82e6",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:48:13",
+  "c_path": "impl2/c/qwen2.5-14b/xmh_daubechies.c",
+  "prompt_sha256_16": "abcb14788ab3964d",
+  "gen_seconds": 26.9,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xmh_daubechies.c:6:48: error: 'D_MAX_TAPS' undeclared here (not in a function)\n    6 | void daubechies_filter(double a, double filter[D_MAX_TAPS]) {\n      |                                                ^~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xmh_daubechies.c: In function 'apply_daubechies':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xmh_daubechies.c:25:19: error: 'D_MAX_TAPS' undeclared (first use in this function)\n   25 |     double filter[D_MAX_TAPS];\n      |                   ^~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xmh_daubechies.c:25:19: note: each undeclared identifier is reported only once for each function it appears in\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xmh_daubechies.c:26:26: error: type of formal parameter 2 is incomplete\n   26 |     daubechies_filter(a, filter);\n      |                          ^~~~~~\n"
+}

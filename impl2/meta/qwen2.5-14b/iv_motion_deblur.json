@@ -1,0 +1,12 @@
+{
+  "op": "iv_motion_deblur",
+  "note": "docs/ops/2d/restoration/iv_motion_deblur.md",
+  "note_sha256_16": "9b66b360818ed2ce",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:32:28",
+  "c_path": "impl2/c/qwen2.5-14b/iv_motion_deblur.c",
+  "prompt_sha256_16": "6f371be20c1431bb",
+  "gen_seconds": 27.5,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_motion_deblur.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_motion_deblur.c:6:24: error: 'M_PI' undeclared (first use in this function)\n    6 |     double theta = b * M_PI; // ブラーの角度 (0..180 deg)\n      |                        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_motion_deblur.c:6:24: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

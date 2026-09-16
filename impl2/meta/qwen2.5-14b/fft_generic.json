@@ -1,0 +1,12 @@
+{
+  "op": "fft_generic",
+  "note": "docs/ops/2d/frequency/fft_generic.md",
+  "note_sha256_16": "7ca5cf4be3bf60d0",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:26:36",
+  "c_path": "impl2/c/qwen2.5-14b/fft_generic.c",
+  "prompt_sha256_16": "b0b4612bbcc16ab6",
+  "gen_seconds": 19.9,
+  "status": "compile_error",
+  "compile_error": "n + index * w, w);\n      |                              ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\fft_generic.c:53:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   53 |     free(fft_in);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\fft_generic.c:53:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\fft_generic.c:53:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\fft_generic.c:53:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\fft_generic.c: At top level:\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\fft_generic.c:58:8: error: conflicting types for 'fft_1d'; have 'double(double *, int)'\n   58 | double fft_1d(double* data, int n) {\n      |        ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\fft_generic.c:25:30: note: previous implicit declaration of 'fft_1d' with type 'int()'\n   25 |             fft_out[index] = fft_1d(fft_in + index * w, w);\n      |                              ^~~~~~\n"
+}

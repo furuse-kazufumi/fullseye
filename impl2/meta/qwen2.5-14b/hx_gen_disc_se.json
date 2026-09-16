@@ -1,0 +1,12 @@
+{
+  "op": "hx_gen_disc_se",
+  "note": "docs/ops/2d/halcon_ext/hx_gen_disc_se.md",
+  "note_sha256_16": "9e37be7c9cc641ff",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:09:54",
+  "c_path": "impl2/c/qwen2.5-14b/hx_gen_disc_se.c",
+  "prompt_sha256_16": "8c79ff798f68f785",
+  "gen_seconds": 6.6,
+  "status": "compile_error",
+  "compile_error": "t w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_disc_se.c:3:41: warning: incompatible implicit declaration of built-in function 'fmin' [-Wbuiltin-declaration-mismatch]\n    3 |     double radius = (0.05 + 0.35 * a) * fmin(h, w) / 2.0;\n      |                                         ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_disc_se.c:3:41: note: include '<math.h>' or provide a declaration of 'fmin'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_disc_se.c:20:31: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]\n   20 |             double distance = sqrt((x - center_x) * (x - center_x) + (y - center_y) * (y - center_y));\n      |                               ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_disc_se.c:20:31: note: include '<math.h>' or provide a declaration of 'sqrt'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_disc_se.c:20:31: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_disc_se.c:20:31: note: include '<math.h>' or provide a declaration of 'sqrt'\n"
+}

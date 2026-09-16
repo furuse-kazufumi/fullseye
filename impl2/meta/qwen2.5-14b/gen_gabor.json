@@ -1,0 +1,12 @@
+{
+  "op": "gen_gabor",
+  "note": "docs/ops/2d/texture/gen_gabor.md",
+  "note_sha256_16": "48d3eb7da2bced73",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:27:00",
+  "c_path": "impl2/c/qwen2.5-14b/gen_gabor.c",
+  "prompt_sha256_16": "9e62064f52c8afa0",
+  "gen_seconds": 17.3,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gen_gabor.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gen_gabor.c:8:20: error: 'M_PI' undeclared (first use in this function)\n    8 |     double theta = M_PI * a;  // 方向 θ\n      |                    ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gen_gabor.c:8:20: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

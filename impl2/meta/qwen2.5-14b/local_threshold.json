@@ -1,0 +1,12 @@
+{
+  "op": "local_threshold",
+  "note": "docs/ops/2d/segmentation/local_threshold.md",
+  "note_sha256_16": "d68fadf44f9957a1",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:21:21",
+  "c_path": "impl2/c/qwen2.5-14b/local_threshold.c",
+  "prompt_sha256_16": "c923fbb3aa2028c9",
+  "gen_seconds": 10.8,
+  "status": "compile_error",
+  "compile_error": "include '<stdlib.h>' or provide a declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\local_threshold.c:14:31: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n   14 |     double* kernel = (double*)malloc(kernel_size * kernel_size * sizeof(double));\n      |                               ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\local_threshold.c:14:31: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\local_threshold.c:49:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   49 |     free(kernel);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\local_threshold.c:49:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\local_threshold.c:49:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\local_threshold.c:49:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

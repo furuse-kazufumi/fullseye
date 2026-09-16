@@ -1,0 +1,12 @@
+{
+  "op": "xsitk_curvature_flow",
+  "note": "docs/ops/2d/extra/xsitk_curvature_flow.md",
+  "note_sha256_16": "7f150df55d7129af",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:10:02",
+  "c_path": "impl2/c/qwen2.5-14b/xsitk_curvature_flow.c",
+  "prompt_sha256_16": "0546c64f7885a4e5",
+  "gen_seconds": 27.9,
+  "status": "compile_error",
+  "compile_error": " declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_curvature_flow.c:14:34: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n   14 |     double* padded_in = (double*)malloc(padded_h * padded_w * sizeof(double));\n      |                                  ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_curvature_flow.c:14:34: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_curvature_flow.c:63:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   63 |     free(padded_in);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_curvature_flow.c:63:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_curvature_flow.c:63:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_curvature_flow.c:63:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

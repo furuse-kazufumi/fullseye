@@ -1,0 +1,12 @@
+{
+  "op": "roberts",
+  "note": "docs/ops/2d/edges/roberts.md",
+  "note_sha256_16": "784c89b9481f1b6a",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:38:30",
+  "c_path": "impl2/c/qwen2.5-14b/roberts.c",
+  "prompt_sha256_16": "471f534d4a53437c",
+  "gen_seconds": 16.0,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\roberts.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\roberts.c:16:27: error: implicit declaration of function 'hypot' [-Wimplicit-function-declaration]\n   16 |             double edge = hypot(dx, dy);\n      |                           ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\roberts.c:1:1: note: include '<math.h>' or provide a declaration of 'hypot'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\roberts.c:16:27: warning: incompatible implicit declaration of built-in function 'hypot' [-Wbuiltin-declaration-mismatch]\n   16 |             double edge = hypot(dx, dy);\n      |                           ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\roberts.c:16:27: note: include '<math.h>' or provide a declaration of 'hypot'\n"
+}

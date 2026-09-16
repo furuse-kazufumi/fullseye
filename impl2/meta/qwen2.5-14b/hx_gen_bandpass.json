@@ -1,0 +1,12 @@
+{
+  "op": "hx_gen_bandpass",
+  "note": "docs/ops/2d/halcon_ext/hx_gen_bandpass.md",
+  "note_sha256_16": "edcdb79febbd5e75",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:31:26",
+  "c_path": "impl2/c/qwen2.5-14b/hx_gen_bandpass.c",
+  "prompt_sha256_16": "3a3fe022711616ea",
+  "gen_seconds": 24.0,
+  "status": "compile_error",
+  "compile_error": "ude '<math.h>' or provide a declaration of 'sqrt'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_bandpass.c:27:24: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]\n   27 |             double r = sqrt(cy * cy + cx * cx);\n      |                        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_bandpass.c:27:24: note: include '<math.h>' or provide a declaration of 'sqrt'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_bandpass.c:44:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   44 |     free(fft_result);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_bandpass.c:44:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_bandpass.c:44:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_bandpass.c:44:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "xmh_soft",
+  "note": "docs/ops/2d/intensity_transform/xmh_soft.md",
+  "note_sha256_16": "2b60ce38ef78130e",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:48:40",
+  "c_path": "impl2/c/qwen2.5-14b/xmh_soft.c",
+  "prompt_sha256_16": "0ec53c0fb3e4b495",
+  "gen_seconds": 17.4,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xmh_soft.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xmh_soft.c:19:17: error: implicit declaration of function 'fabs' [-Wimplicit-function-declaration]\n   19 |             if (fabs(pixel) < threshold) {\n      |                 ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xmh_soft.c:1:1: note: include '<math.h>' or provide a declaration of 'fabs'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xmh_soft.c:19:17: warning: incompatible implicit declaration of built-in function 'fabs' [-Wbuiltin-declaration-mismatch]\n   19 |             if (fabs(pixel) < threshold) {\n      |                 ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xmh_soft.c:19:17: note: include '<math.h>' or provide a declaration of 'fabs'\n"
+}

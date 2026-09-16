@@ -1,0 +1,12 @@
+{
+  "op": "hx_shade_height_field",
+  "note": "docs/ops/2d/halcon_ext/hx_shade_height_field.md",
+  "note_sha256_16": "9282492886a61e02",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:30:54",
+  "c_path": "impl2/c/qwen2.5-14b/hx_shade_height_field.c",
+  "prompt_sha256_16": "e3ccd1b15aa00341",
+  "gen_seconds": 25.6,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_shade_height_field.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_shade_height_field.c:8:25: error: 'M_PI' undeclared (first use in this function)\n    8 |     double az = a * 2 * M_PI; // 方位角\n      |                         ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_shade_height_field.c:8:25: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

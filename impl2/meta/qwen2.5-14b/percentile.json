@@ -1,0 +1,12 @@
+{
+  "op": "percentile",
+  "note": "docs/ops/2d/rank/percentile.md",
+  "note_sha256_16": "a9d8148eba616ed7",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:35:03",
+  "c_path": "impl2/c/qwen2.5-14b/percentile.c",
+  "prompt_sha256_16": "0d120bb321871791",
+  "gen_seconds": 21.8,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\percentile.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\percentile.c:38:70: error: 'compare' undeclared (first use in this function)\n   38 |             qsort(window, window_size * window_size, sizeof(double), compare);\n      |                                                                      ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\percentile.c:38:70: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "hx_gen_circle_sector",
+  "note": "docs/ops/2d/halcon_ext/hx_gen_circle_sector.md",
+  "note_sha256_16": "b6ccf8b580202d2b",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:11:19",
+  "c_path": "impl2/c/qwen2.5-14b/hx_gen_circle_sector.c",
+  "prompt_sha256_16": "7c852d7202b6cdbe",
+  "gen_seconds": 12.4,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_circle_sector.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_circle_sector.c:11:35: error: 'M_PI' undeclared (first use in this function)\n   11 |     double sweep = 0.1 + a * (2 * M_PI - 0.1);\n      |                                   ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_circle_sector.c:11:35: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

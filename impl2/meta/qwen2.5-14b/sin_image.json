@@ -1,0 +1,12 @@
+{
+  "op": "sin_image",
+  "note": "docs/ops/2d/arithmetic/sin_image.md",
+  "note_sha256_16": "de3101ec6c0ab3a2",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:00:10",
+  "c_path": "impl2/c/qwen2.5-14b/sin_image.c",
+  "prompt_sha256_16": "3fc002fd9a5dc3ad",
+  "gen_seconds": 6.3,
+  "status": "compile_error",
+  "compile_error": "aration of function 'sin' [-Wimplicit-function-declaration]\n   12 |             double output = (sin(2 * M_PI * input) + 1) / 2;\n      |                              ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sin_image.c:1:1: note: include '<math.h>' or provide a declaration of 'sin'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sin_image.c:12:30: warning: incompatible implicit declaration of built-in function 'sin' [-Wbuiltin-declaration-mismatch]\n   12 |             double output = (sin(2 * M_PI * input) + 1) / 2;\n      |                              ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sin_image.c:12:30: note: include '<math.h>' or provide a declaration of 'sin'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sin_image.c:12:38: error: 'M_PI' undeclared (first use in this function)\n   12 |             double output = (sin(2 * M_PI * input) + 1) / 2;\n      |                                      ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sin_image.c:12:38: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

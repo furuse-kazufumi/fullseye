@@ -1,0 +1,5126 @@
+[
+  {
+    "op": "abs_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "acos_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "adaptive_gauss_thresh",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "add_noise_distribution",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "add_noise_white",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "affine_trans_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "affine_trans_image_size",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "affine_trans_region",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "affine_warp",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "alife_curvature_flow",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "alife_cyclic_ca",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "alife_dla",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "alife_gray_scott",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "alife_langton_ant",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "alife_lenia",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "alife_life_step",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "alife_perona_malik",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "alife_reaction_bz",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "alife_sandpile",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "alife_turing",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "alife_wolfram1d",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "constant_half",
+      "diagonal",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "anisotropic_diffusion",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "asin_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "atan_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "aug_barrel",
+    "verdict": "impl2_defect",
+    "note": "差が値域を大きく超える(最大 2.07e+179)が、Fullseye 側は正規化していない —— 第 2 実装の値が壊れている疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "aug_chromatic",
+    "verdict": "impl2_defect",
+    "note": "差が値域を大きく超える(最大 3.31)が、Fullseye 側は正規化していない —— 第 2 実装の値が壊れている疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "aug_cutout",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "aug_fixed_pattern",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "aug_jpeg_blocks",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "aug_motion_blur",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "aug_read_noise",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "aug_rolling_shutter",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "aug_shot_noise",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "aug_vignette",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "auto_threshold",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "constant_half",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "bandpass_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "bilateral",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "bilateral_filter",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "bin_threshold",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "constant_half",
+      "random",
+      "single_pixel",
+      "zeros"
+    ]
+  },
+  {
+    "op": "binary_threshold",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "binomial_filter",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "bit_not",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "bothat",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "boundary",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "canny",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "clahe",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "closing_circle",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "closing_golay",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "closing_rectangle1",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "coherence_enhancing_diff",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "convex_fill",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_zeros",
+      "blob_at_corner",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN",
+      "single_pixel_on"
+    ]
+  },
+  {
+    "op": "corner_response",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "cos_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "cv_adaptive_gauss",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "cv_adaptive_mean",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "cv_bilateral",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "cv_blackhat",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "cv_box",
+    "verdict": "impl2_defect",
+    "note": "差が値域を大きく超える(最大 8.87e+265)が、Fullseye 側は正規化していない —— 第 2 実装の値が壊れている疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "cv_canny",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_corner",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "cv_clahe",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "cv_close",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "cv_corner_harris",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "cv_dilate",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "diagonal",
+      "impulse_center",
+      "impulse_corner",
+      "random"
+    ]
+  },
+  {
+    "op": "cv_erode",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "frame",
+      "random"
+    ]
+  },
+  {
+    "op": "cv_gaussian",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "cv_gradient",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "cv_laplacian",
+    "verdict": "spec_gap_normalisation_documented",
+    "note": "Fullseye は画像ごとに正規化していると実測済みで、第 2 実装はしていない(差 最大 14)。正規化の定義が書かれていない",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ],
+    "resolved_by_sweep": true
+  },
+  {
+    "op": "cv_median",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "cv_min_eigen",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "cv_nlmeans",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "cv_open",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "cv_otsu",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "cv_precorner",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "cv_scharr",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "cv_sharpen",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "cv_tophat",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "cv_trunc",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "dc_homomorphic",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "dc_local_contrast_norm",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "dc_retinex",
+    "verdict": "impl2_defect",
+    "note": "差が値域を大きく超える(最大 22.4)が、Fullseye 側は正規化していない —— 第 2 実装の値が壊れている疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "dc_rpca_lowrank",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "dc_rpca_sparse",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "dc_structure_texture",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "dc_texture_residual",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "deform_ffd",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "deform_mls",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "deform_tps",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "derivate_gauss",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "deviation_image",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "diff_of_gauss",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "dilation_circle",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "dilation_golay",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN",
+      "single_pixel_on"
+    ]
+  },
+  {
+    "op": "dilation_rectangle1",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "blob_at_corner",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "single_pixel_on",
+      "two_blobs",
+      "vertical_line"
+    ]
+  },
+  {
+    "op": "dilation_seq",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "blob_at_corner",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "single_pixel_on",
+      "two_blobs",
+      "vertical_line"
+    ]
+  },
+  {
+    "op": "dl_aniso_diffusion",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "dl_guided_filter",
+    "verdict": "impl2_defect",
+    "note": "差が値域を大きく超える(最大 2.91)が、Fullseye 側は正規化していない —— 第 2 実装の値が壊れている疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "dog",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "dots_image",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "dual_rank",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "dual_threshold",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "dyn_threshold",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "diagonal",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "edges_image",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "eliminate_min_max",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "eliminate_sp",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "em_skeleton",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "entropy_image",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "equ_histo_image",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "equ_histo_image_rect",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "equalize",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "erosion_circle",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "erosion_golay",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "erosion_rectangle1",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "all_ones",
+      "corner_touch_blocks"
+    ]
+  },
+  {
+    "op": "erosion_seq",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "exp_image",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "f2_bit_slice",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "f2_expand_domain",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "f2_gauss_pyramid",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "f2_gray_inside",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "f2_gray_skeleton",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "f2_lut_trans",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "f2_shock",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "f2_symmetry",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "f2_topographic",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "fast_threshold",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "fft_generic",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "fft_image",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "fft_image_inv",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "fill_holes",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "blob_at_corner",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "single_pixel_on",
+      "two_blobs",
+      "vertical_line"
+    ]
+  },
+  {
+    "op": "fill_up",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "all_zeros",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole"
+    ]
+  },
+  {
+    "op": "fill_up_shape",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "blob_at_corner",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "single_pixel_on",
+      "two_blobs",
+      "vertical_line"
+    ]
+  },
+  {
+    "op": "frei_amp",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "frei_dir",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "gabor",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "gamma",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "gamma_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "gauss_filter",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "gauss_image",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "gaussian",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "gclose",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "gdilate",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "gen_gabor",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "gerode",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "get_region_contour",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "get_region_convex",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "gopen",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "grad_dir",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "gray_bothat",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "gray_closing",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "gray_closing_rect",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "gray_closing_shape",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "gray_dilation",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "gray_dilation_rect",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "gray_dilation_shape",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "diagonal",
+      "impulse_center",
+      "impulse_corner",
+      "random"
+    ]
+  },
+  {
+    "op": "gray_erosion",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "gray_erosion_rect",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "gray_erosion_shape",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "gray_opening",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "gray_opening_rect",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "gray_opening_shape",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "gray_range_rect",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "gray_tophat",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "guided_filter",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "h_threshold",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "highpass",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "highpass_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hough_circle_trans",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hough_line_trans",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_char_threshold",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "hx_clip_region_rel",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_close_edges",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "hx_close_edges_length",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "hx_closing",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "single_pixel_on"
+    ]
+  },
+  {
+    "op": "hx_detect_edge_segments",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "hx_dilation1",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "blob_at_corner",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "ring_with_hole",
+      "single_pixel_on",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "hx_dilation2",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "blob_at_corner",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "ring_with_hole",
+      "single_pixel_on",
+      "two_blobs",
+      "vertical_line"
+    ]
+  },
+  {
+    "op": "hx_disparity_to_xyz",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "constant_half",
+      "random",
+      "single_pixel",
+      "zeros"
+    ]
+  },
+  {
+    "op": "hx_erosion1",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "hx_expand_region",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "blob_at_corner",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "ring_with_hole",
+      "single_pixel_on",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "hx_fill_interlace",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "hx_fit_surface1",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "hx_fit_surface2",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_full_domain",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "hx_gabor",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_gen_bandfilter",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "hx_gen_bandpass",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_gen_checker_region",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "hx_gen_circle",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_gen_circle_sector",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_gen_derivative_filter",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "hx_gen_disc_se",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_gen_ellipse",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "hx_gen_ellipse_sector",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_gen_empty_region",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "hx_gen_grid_region",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_gen_highpass",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "hx_gen_image_proto",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "hx_gen_lowpass",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_gen_rectangle2",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_get_domain",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "hx_histo_to_thresh",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_lowlands",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "random"
+    ]
+  },
+  {
+    "op": "hx_mean_shape",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "hx_move_region",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "single_pixel_on",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "hx_nonmax_dir",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_opening",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "corner_touch_blocks",
+      "ring_with_hole",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "hx_plane_deviation",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "hx_plateaus_center",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_rectangle1_domain",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "hx_region_to_label",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が model_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_region_to_mean",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "hx_shade_height_field",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "hx_split_skeleton_region",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "hysteresis_threshold",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "illuminate",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "invert",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "invert_image",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "invert_region",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "isotropic_diffusion",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "it_add_image_border",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "it_bit_lshift",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "it_bit_mask",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "it_bit_rshift",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "it_change_format",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "it_convert_image_type",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "it_crop_domain",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "impulse_center",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "it_crop_part",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "impulse_center",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "it_crop_rectangle1",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "it_full_domain",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "it_region_to_bin",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "constant_half"
+    ]
+  },
+  {
+    "op": "iv_backproject_superres",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "iv_gradient_inpaint",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "iv_motion_deblur",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "iv_richardson_lucy",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "iv_unsharp_deblur",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "iv_wiener_deconv_spatial",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "junctions_skeleton",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "two_blobs",
+      "vertical_line"
+    ]
+  },
+  {
+    "op": "kirsch_amp",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "kirsch_dir",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "laplace",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "laplace_of_gauss",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "local_max",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "local_min",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "local_threshold",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "log",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "log_image",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "lowpass",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "macro_binarize",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "macro_denoise",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "macro_edge",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "max_filter",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "mean_box",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "mean_curvature_flow",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "mean_image",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "mean_sp",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "median",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "median_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "median_rect",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "median_separate",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "median_weighted",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "min_filter",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "mirror_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "mirror_region",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "monotony",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "morph_grad",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "morph_skeleton",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN",
+      "single_pixel_on"
+    ]
+  },
+  {
+    "op": "nonmax_suppression_amp",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "random"
+    ]
+  },
+  {
+    "op": "opening_circle",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "opening_golay",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "opening_rectangle1",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN",
+      "single_pixel_on"
+    ]
+  },
+  {
+    "op": "otsu",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "constant_half",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "percentile",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "ph_coherence_enhancing_diffusion",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "ph_heat_flow",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "ph_mean_curvature_motion",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "ph_perona_malik",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "ph_reaction_diffusion",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "ph_total_variation_flow",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "phase_deg",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "phase_rad",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "points_foerstner",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "points_harris_binomial",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "polar_trans_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "polar_trans_image_ext",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "polar_trans_image_inv",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "polar_trans_region_inv",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "pouring",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "pow_image",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "power_byte",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "power_ln",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "power_real",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が model_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "prewitt_amp",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "prewitt_dir",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "prewitt_mag",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "projective_trans_image",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "projective_trans_image_size",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "projective_trans_region",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN",
+      "single_pixel_on"
+    ]
+  },
+  {
+    "op": "pruning",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "two_blobs",
+      "vertical_line"
+    ]
+  },
+  {
+    "op": "r2_endpoints_skeleton",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "ring_with_hole",
+      "row_1xN",
+      "single_pixel_on",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "r2_inner_circle",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "all_ones",
+      "all_zeros",
+      "blob_at_corner",
+      "corner_touch_blocks",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "r2_inner_rectangle1",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN",
+      "single_pixel_on",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "r2_partition_rectangle",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "all_ones",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "ring_with_hole",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "r2_smallest_circle",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "r2_smallest_rectangle1",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "r2_smallest_rectangle2",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "r2_sort_region",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "r2_split_skeleton_lines",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN",
+      "single_pixel_on"
+    ]
+  },
+  {
+    "op": "r2_union1",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "r3_background_seg",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "all_zeros",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole"
+    ]
+  },
+  {
+    "op": "r3_clip_region",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "r3_eliminate_runs",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "r3_label_to_region",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "r3_partition_dynamic",
+    "verdict": "spec_gap_connectivity",
+    "note": "連結性の探針でだけ分かれる。4/8 連結の別が未記載",
+    "probes_bad": [
+      "ring_with_hole"
+    ]
+  },
+  {
+    "op": "r3_polar_trans_region",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "r3_rank_region",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch_blocks",
+      "ring_with_hole",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "r3_select_region_point",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "rank_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "rank_rect",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "reg_close",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_zeros",
+      "blob_at_corner",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "single_pixel_on",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "reg_dilate",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "reg_erode",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "reg_open",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "two_blobs",
+      "vertical_line"
+    ]
+  },
+  {
+    "op": "region_boundary",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "ring_with_hole"
+    ]
+  },
+  {
+    "op": "regiongrowing",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner"
+    ]
+  },
+  {
+    "op": "regiongrowing_mean",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "remove_noise_region",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "single_pixel_on"
+    ]
+  },
+  {
+    "op": "remove_small",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "checkerboard8",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "rescale_img",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が model_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "rft_generic",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "roberts",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "roberts_mag",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "robinson_amp",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "robinson_dir",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "rotate_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "rotate_img",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "scale_clip",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "scale_image",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "scale_image_max",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "constant_half",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "segment_image_mser",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "select_largest",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "select_shape",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "select_shape_std",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sg_felzenszwalb",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "sg_gmm_segment",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sg_kmeans_intensity",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "sg_normalized_cut_2",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "sg_region_growing_seeded",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sg_slic_superpixels",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sg_watershed_gradient",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "shape_trans",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sigma_image",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "sigmoid",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "simulate_defocus",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "simulate_motion",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sin_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sk_adapthist",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "sk_adjust_log",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sk_area_opening",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "sk_autolevel",
+    "verdict": "impl2_defect",
+    "note": "差が値域を大きく超える(最大 255)が、Fullseye 側は正規化していない —— 第 2 実装の値が壊れている疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "sk_butterworth",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sk_canny",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "sk_chan_vese",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "sk_clear_border",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "ring_with_hole",
+      "single_pixel_on",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "sk_convex",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "sk_corner_harris",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "sk_dog",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sk_enhance_contrast",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "sk_entropy",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "sk_farid",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "sk_felzenszwalb",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "checkerboard8",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "sk_find_boundaries",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN",
+      "single_pixel_on"
+    ]
+  },
+  {
+    "op": "sk_frangi",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "sk_gabor",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sk_hessian",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "sk_hessian_det",
+    "verdict": "spec_gap_normalisation_documented",
+    "note": "Fullseye は画像ごとに正規化していると実測済みで、第 2 実装はしていない(差 最大 6.01)。正規化の定義が書かれていない",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel",
+      "zeros"
+    ],
+    "resolved_by_sweep": true
+  },
+  {
+    "op": "sk_hysteresis",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "sk_lbp",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sk_li",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sk_local_maxima",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "sk_medial",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "sk_median_disk",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sk_meijering",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "sk_niblack",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "sk_nlm",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sk_otsu",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sk_remove_holes",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_zeros",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "sk_rolling_ball",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sk_sauvola",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sk_scharr",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sk_shape_index",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "sk_skeleton",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sk_slic",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "sk_swirl",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "sk_thin",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "corner_touch_blocks",
+      "ring_with_hole",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "sk_tv",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "sk_tv_bregman",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "sk_wavelet",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "checkerboard8",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "random"
+    ]
+  },
+  {
+    "op": "sk_yen",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "random"
+    ]
+  },
+  {
+    "op": "skeleton",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "smallest_rectangle1",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "smooth_image",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "sobel_amp",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "sobel_dir",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "sobel_mag",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "sqrt_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "std_filter",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "tac_contact_mask",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "tac_height_from_shading",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "tac_pressure_proxy",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "tac_shear_field",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "tac_surface_normal",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "tan_image",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "texture_laws",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "tf_census_transform",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "tf_gradient_domain_reintegrate",
+    "verdict": "spec_gap_normalisation_documented",
+    "note": "Fullseye は画像ごとに正規化していると実測済みで、第 2 実装はしていない(差 最大 5)。正規化の定義が書かれていない",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ],
+    "resolved_by_sweep": true
+  },
+  {
+    "op": "tf_log_polar",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "tf_phase_congruency",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "tf_radon_sinogram",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "tf_rank_transform",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "tf_steerable_filter",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "thinning",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "corner_touch_blocks",
+      "ring_with_hole",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "thinning_golay",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "thinning_seq",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "threshold",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "tm_backproject_unfiltered",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "tm_fbp_reconstruct",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "tm_radon_forward",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "tm_sart_reconstruct",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "tm_sinogram_denoise",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "tophat",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "transpose_region",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "trimmed_mean",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "unsharp",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "var_threshold",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "watersheds",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "watersheds_threshold",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xcv2_hitmiss",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_zeros",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "xcv2_meanshift",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xcv2_warp_logpolar",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xcv3_denoise_tvl1",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xcv3_inpaint_ns",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xcv3_pyr_laplacian",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "xcv_detail_enhance",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xcv_edge_preserving",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xcv_grabcut",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "xcv_inpaint",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "xcv_pencil_sketch",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xcv_stylization",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "xcv_watershed_markers",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xkor_bilateral",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xkor_canny",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "xkor_clahe",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xkor_dog",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xkor_gaussian",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "xkor_gftt",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xkor_harris",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "xkor_hessian",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "xkor_laplacian",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "xkor_median",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xkor_motion_blur",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xkor_unsharp",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xmh_bernsen",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "xmh_bwperim",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "xmh_daubechies",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xmh_haar",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xmh_majority",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch_blocks",
+      "ring_with_hole",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "xmh_regmin",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xmh_selfmatch",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "xmh_soft",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xpil_autocontrast",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "xpil_contour",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "random"
+    ]
+  },
+  {
+    "op": "xpil_contrast",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "xpil_detail",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "xpil_edge_enhance",
+    "verdict": "impl2_defect",
+    "note": "差が値域を大きく超える(最大 7)が、Fullseye 側は正規化していない —— 第 2 実装の値が壊れている疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xpil_emboss",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xpil_find_edges",
+    "verdict": "impl2_defect",
+    "note": "差が値域を大きく超える(最大 4)が、Fullseye 側は正規化していない —— 第 2 実装の値が壊れている疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "xpil_mode_filter",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "xpil_offset",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "xpil_posterize",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xpil_smooth_more",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xpil_solarize",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "xpil_unsharp_mask",
+    "verdict": "impl2_defect",
+    "note": "差が値域を大きく超える(最大 2.25)が、Fullseye 側は正規化していない —— 第 2 実装の値が壊れている疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xsitk_closing_by_recon",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "xsitk_confidence_connected",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xsitk_connected_threshold",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "checkerboard8",
+      "diagonal",
+      "random"
+    ]
+  },
+  {
+    "op": "xsitk_curv_aniso_diff",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsitk_curvature_flow",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsitk_grayscale_fillhole",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "xsitk_grayscale_grindpeak",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsitk_huang_thresh",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsitk_laplacian_sharpen",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "xsitk_maxentropy_thresh",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "xsitk_minmax_curv_flow",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "xsitk_moments_thresh",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsitk_opening_by_recon",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "xsk2_corner_kr",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xsk2_diameter_opening",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xsk2_h_maxima",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "xsk2_hog",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsk2_inv_gauss_grad",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "xsk2_isotropic_close",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "xsk2_multiotsu",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "xsk2_radon",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsk2_rank_geomean",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xsk2_reconstruction",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xsk2_wiener",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsk3_area_closing",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "xsk3_corner_fast",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsk3_corner_moravec",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsk3_diameter_closing",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xsk3_h_minima",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsk3_integral_image",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "xsk3_peak_local_max",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "checkerboard8",
+      "diagonal",
+      "impulse_center",
+      "random"
+    ]
+  },
+  {
+    "op": "xsk3_rank_equalize",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "xsk3_rank_majority",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "xsk3_rank_mean_bilateral",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsk3_rank_otsu",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "xsk3_rank_subtract_mean",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xsk3_threshold_local_median",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "xsk_flood",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsk_hessian_eig",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xsk_inpaint",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "xsk_meijering",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xsk_random_walker",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "xsk_richardson_lucy",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsk_sato",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "xsk_struct_coherence",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xsk_unwrap_phase",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsp_cspline_smooth",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsp_dct",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsp_dct_denoise",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が model_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsp_dct_lowpass",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsp_detrend_flatten",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "xsp_gauss_grad_mag",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsp_hilbert_env",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xsp_morph_laplace",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xsp_savgol",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "xsp_wiener",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xwt_directional_detail",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "xwt_firm_denoise",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
+  },
+  {
+    "op": "xwt_hf_reconstruct",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xwt_lf_reconstruct",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "xwt_mra_component",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "xwt_subband_tile",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "xwt_visushrink",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "zero_crossing",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "zoom_image_factor",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  },
+  {
+    "op": "zoom_image_size",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "zoom_region",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が compile_error(Fullseye 側の情報は得られていない)"
+  }
+]

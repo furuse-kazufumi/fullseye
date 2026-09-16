@@ -1,0 +1,12 @@
+{
+  "op": "r2_smallest_rectangle2",
+  "note": "docs/ops/2d/region/r2_smallest_rectangle2.md",
+  "note_sha256_16": "685b64e477340909",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:15:14",
+  "c_path": "impl2/c/qwen2.5-14b/r2_smallest_rectangle2.c",
+  "prompt_sha256_16": "a8f2769816e1a807",
+  "gen_seconds": 33.7,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r2_smallest_rectangle2.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r2_smallest_rectangle2.c:37:69: error: 'compare' undeclared (first use in this function)\n   37 |     qsort(convex_hull_sorted, convex_hull_size, 2 * sizeof(double), compare);\n      |                                                                     ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r2_smallest_rectangle2.c:37:69: note: each undeclared identifier is reported only once for each function it appears in\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r2_smallest_rectangle2.c:51:31: error: 'M_PI' undeclared (first use in this function)\n   51 |             angle_diff += 2 * M_PI;\n      |                               ^~~~\n"
+}

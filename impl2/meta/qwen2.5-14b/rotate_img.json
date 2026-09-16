@@ -1,0 +1,12 @@
+{
+  "op": "rotate_img",
+  "note": "docs/ops/2d/geometry/rotate_img.md",
+  "note_sha256_16": "29463912bca6356b",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:49:51",
+  "c_path": "impl2/c/qwen2.5-14b/rotate_img.c",
+  "prompt_sha256_16": "57b5d8c4114e91d2",
+  "gen_seconds": 15.7,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rotate_img.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rotate_img.c:9:21: error: 'M_PI' undeclared (first use in this function)\n    9 |     double angle = -M_PI / 4 + M_PI / 2 * a; // -45° + 90°·a\n      |                     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rotate_img.c:9:21: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

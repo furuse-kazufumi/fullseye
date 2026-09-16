@@ -1,0 +1,12 @@
+{
+  "op": "xsitk_grayscale_grindpeak",
+  "note": "docs/ops/2d/extra/xsitk_grayscale_grindpeak.md",
+  "note_sha256_16": "853a723f7261249d",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:50:13",
+  "c_path": "impl2/c/qwen2.5-14b/xsitk_grayscale_grindpeak.c",
+  "prompt_sha256_16": "2fdc201176b8a280",
+  "gen_seconds": 16.8,
+  "status": "compile_error",
+  "compile_error": "out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_grayscale_grindpeak.c:25:33: warning: incompatible implicit declaration of built-in function 'fmin' [-Wbuiltin-declaration-mismatch]\n   25 |                     local_min = fmin(local_min, in[ny * w + nx]);\n      |                                 ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_grayscale_grindpeak.c:25:33: note: include '<math.h>' or provide a declaration of 'fmin'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_grayscale_grindpeak.c:26:33: error: implicit declaration of function 'fmax' [-Wimplicit-function-declaration]\n   26 |                     local_max = fmax(local_max, in[ny * w + nx]);\n      |                                 ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_grayscale_grindpeak.c:26:33: note: include '<math.h>' or provide a declaration of 'fmax'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_grayscale_grindpeak.c:26:33: warning: incompatible implicit declaration of built-in function 'fmax' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_grayscale_grindpeak.c:26:33: note: include '<math.h>' or provide a declaration of 'fmax'\n"
+}

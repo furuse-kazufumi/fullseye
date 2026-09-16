@@ -1,0 +1,12 @@
+{
+  "op": "sk_rolling_ball",
+  "note": "docs/ops/2d/smoothing/sk_rolling_ball.md",
+  "note_sha256_16": "ffe16ab155fbd4b6",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:52:42",
+  "c_path": "impl2/c/qwen2.5-14b/sk_rolling_ball.c",
+  "prompt_sha256_16": "1c4d3f4c39861e11",
+  "gen_seconds": 20.6,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_rolling_ball.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_rolling_ball.c:27:39: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]\n   27 |                     double distance = sqrt(dx * dx + dy * dy);\n      |                                       ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_rolling_ball.c:1:1: note: include '<math.h>' or provide a declaration of 'sqrt'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_rolling_ball.c:27:39: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]\n   27 |                     double distance = sqrt(dx * dx + dy * dy);\n      |                                       ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_rolling_ball.c:27:39: note: include '<math.h>' or provide a declaration of 'sqrt'\n"
+}

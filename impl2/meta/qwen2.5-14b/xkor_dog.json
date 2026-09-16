@@ -1,0 +1,12 @@
+{
+  "op": "xkor_dog",
+  "note": "docs/ops/2d/edges/xkor_dog.md",
+  "note_sha256_16": "8c14518cfc3a4fe3",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:47:18",
+  "c_path": "impl2/c/qwen2.5-14b/xkor_dog.c",
+  "prompt_sha256_16": "3416cb5da292a086",
+  "gen_seconds": 21.8,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xkor_dog.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xkor_dog.c:21:77: error: 'M_PI' undeclared (first use in this function)\n   21 |             double g = exp(-(x * x + y * y) / (2 * sigma1 * sigma1)) / (2 * M_PI * sigma1 * sigma1);\n      |                                                                             ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xkor_dog.c:21:77: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

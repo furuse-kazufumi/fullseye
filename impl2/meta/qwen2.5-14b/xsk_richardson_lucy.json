@@ -1,0 +1,12 @@
+{
+  "op": "xsk_richardson_lucy",
+  "note": "docs/ops/2d/restoration/xsk_richardson_lucy.md",
+  "note_sha256_16": "1a09018e1264a58a",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:53:04",
+  "c_path": "impl2/c/qwen2.5-14b/xsk_richardson_lucy.c",
+  "prompt_sha256_16": "394f036c280a17e5",
+  "gen_seconds": 25.6,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk_richardson_lucy.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk_richardson_lucy.c:6:45: error: variable-sized object may not be initialized except with an empty initializer\n    6 |     const double psf[psf_size * psf_size] = {\n      |                                             ^\n"
+}

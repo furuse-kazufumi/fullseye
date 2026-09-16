@@ -1,0 +1,12 @@
+{
+  "op": "xsitk_moments_thresh",
+  "note": "docs/ops/2d/extra/xsitk_moments_thresh.md",
+  "note_sha256_16": "c4d6e75f31e53b14",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:26:53",
+  "c_path": "impl2/c/qwen2.5-14b/xsitk_moments_thresh.c",
+  "prompt_sha256_16": "bc26047b8b350c29",
+  "gen_seconds": 7.6,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_moments_thresh.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_moments_thresh.c:37:31: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]\n   37 |     double threshold = mean + sqrt(variance);\n      |                               ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_moments_thresh.c:1:1: note: include '<math.h>' or provide a declaration of 'sqrt'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_moments_thresh.c:37:31: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]\n   37 |     double threshold = mean + sqrt(variance);\n      |                               ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_moments_thresh.c:37:31: note: include '<math.h>' or provide a declaration of 'sqrt'\n"
+}

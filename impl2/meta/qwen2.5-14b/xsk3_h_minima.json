@@ -1,0 +1,12 @@
+{
+  "op": "xsk3_h_minima",
+  "note": "docs/ops/2d/segmentation/xsk3_h_minima.md",
+  "note_sha256_16": "5ba21816082e25e8",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:27:01",
+  "c_path": "impl2/c/qwen2.5-14b/xsk3_h_minima.c",
+  "prompt_sha256_16": "d7c588ec24dc037f",
+  "gen_seconds": 7.8,
+  "status": "compile_error",
+  "compile_error": "    ~                                                                                  ^\n      |                                                                                                                          )\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk3_h_minima.c:27:35: error: too few arguments to function 'fmin'; expected 2, have 1\n   27 |             double min_neighbor = fmin(fmin(fmin(fmin(north, south), fmin(east, west)), fmin(fmin(ne, nw), fmin(se, sw)));\n      |                                   ^~~~\nIn file included from C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk3_h_minima.c:1:\nC:/Users/puruy/AppData/Local/Microsoft/WinGet/Packages/BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe/mingw64/x86_64-w64-mingw32/include/math.h:1002:25: note: declared here\n 1002 |   extern double __cdecl fmin (double, double);\n      |                         ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk3_h_minima.c:33:9: error: expected ',' or ';' before '}' token\n   33 |         }\n      |         ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk3_h_minima.c:35:1: error: expected declaration or statement at end of input\n   35 | }\n      | ^\n"
+}

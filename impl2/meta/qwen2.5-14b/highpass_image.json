@@ -1,0 +1,12 @@
+{
+  "op": "highpass_image",
+  "note": "docs/ops/2d/frequency/highpass_image.md",
+  "note_sha256_16": "7886200e7c8d9dfa",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:28:42",
+  "c_path": "impl2/c/qwen2.5-14b/highpass_image.c",
+  "prompt_sha256_16": "696b4b741b042e5d",
+  "gen_seconds": 23.6,
+  "status": "compile_error",
+  "compile_error": "C:/Users/puruy/AppData/Local/Microsoft/WinGet/Packages/BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/16.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\\Users\\puruy\\AppData\\Local\\Temp\\ccsWQuim.o:highpass_image.c:(.text+0x5a): undefined reference to `fft'\nC:/Users/puruy/AppData/Local/Microsoft/WinGet/Packages/BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/16.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\\Users\\puruy\\AppData\\Local\\Temp\\ccsWQuim.o:highpass_image.c:(.text+0x115): undefined reference to `ifft'\nC:/Users/puruy/AppData/Local/Microsoft/WinGet/Packages/BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/16.1.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\\Users\\puruy\\AppData\\Local\\Temp\\ccsWQuim.o:highpass_image.c:(.text+0x188): undefined reference to `ifft'\ncollect2.exe: error: ld returned 1 exit status\n"
+}

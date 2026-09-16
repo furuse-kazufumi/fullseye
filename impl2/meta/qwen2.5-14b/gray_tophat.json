@@ -1,0 +1,12 @@
+{
+  "op": "gray_tophat",
+  "note": "docs/ops/2d/morphology/gray_tophat.md",
+  "note_sha256_16": "b10b33833c270ffb",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:28:24",
+  "c_path": "impl2/c/qwen2.5-14b/gray_tophat.c",
+  "prompt_sha256_16": "8643c9a891d349b5",
+  "gen_seconds": 18.0,
+  "status": "compile_error",
+  "compile_error": "or: implicit declaration of function 'fmax' [-Wimplicit-function-declaration]\n   37 |         max_val = fmax(max_val, out[i]);\n      |                   ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_tophat.c:37:19: note: include '<math.h>' or provide a declaration of 'fmax'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_tophat.c:37:19: warning: incompatible implicit declaration of built-in function 'fmax' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_tophat.c:37:19: note: include '<math.h>' or provide a declaration of 'fmax'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_tophat.c:45:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   45 |     free(opening);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_tophat.c:45:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_tophat.c:45:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_tophat.c:45:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

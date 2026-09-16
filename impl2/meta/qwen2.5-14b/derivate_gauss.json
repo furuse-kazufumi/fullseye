@@ -1,0 +1,11 @@
+{
+  "op": "derivate_gauss",
+  "note": "docs/ops/2d/edges/derivate_gauss.md",
+  "note_sha256_16": "eb1c830511d5fec9",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:24:55",
+  "c_path": "impl2/c/qwen2.5-14b/derivate_gauss.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "n]\n   42 |         free(padded_in);\n      |         ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\derivate_gauss.c:42:9: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\derivate_gauss.c:42:9: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\derivate_gauss.c:42:9: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\derivate_gauss.c:57:9: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\n   57 |         free(padded_in);\n      |         ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\derivate_gauss.c:57:9: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\derivate_gauss.c:93:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\n   93 |     free(padded_in);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\derivate_gauss.c:93:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

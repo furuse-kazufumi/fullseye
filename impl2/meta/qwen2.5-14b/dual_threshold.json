@@ -1,0 +1,12 @@
+{
+  "op": "dual_threshold",
+  "note": "docs/ops/2d/segmentation/dual_threshold.md",
+  "note_sha256_16": "9738ad515b8d2b53",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:08:14",
+  "c_path": "impl2/c/qwen2.5-14b/dual_threshold.c",
+  "prompt_sha256_16": "4962da1c5c4bbf31",
+  "gen_seconds": 5.7,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\dual_threshold.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\dual_threshold.c:9:17: error: implicit declaration of function 'fabs' [-Wimplicit-function-declaration]\n    9 |             if (fabs(pixel - 0.5) > (0.1 + 0.35 * a)) {\n      |                 ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\dual_threshold.c:1:1: note: include '<math.h>' or provide a declaration of 'fabs'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\dual_threshold.c:9:17: warning: incompatible implicit declaration of built-in function 'fabs' [-Wbuiltin-declaration-mismatch]\n    9 |             if (fabs(pixel - 0.5) > (0.1 + 0.35 * a)) {\n      |                 ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\dual_threshold.c:9:17: note: include '<math.h>' or provide a declaration of 'fabs'\n"
+}

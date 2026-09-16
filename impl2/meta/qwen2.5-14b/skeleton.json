@@ -1,0 +1,12 @@
+{
+  "op": "skeleton",
+  "note": "docs/ops/2d/region/skeleton.md",
+  "note_sha256_16": "74f9cea40ad1b716",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:21:15",
+  "c_path": "impl2/c/qwen2.5-14b/skeleton.c",
+  "prompt_sha256_16": "acd5fb0fdf62be0f",
+  "gen_seconds": 12.6,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\skeleton.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\skeleton.c:41:43: error: implicit declaration of function 'count_neighbors' [-Wimplicit-function-declaration]\n   41 |                 if (pixel_value == 1.0 && count_neighbors(neighbors) > 1) {\n      |                                           ^~~~~~~~~~~~~~~\n"
+}

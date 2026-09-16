@@ -3,13 +3,14 @@
   "note": "docs/ops/2d/noise/add_noise_white.md",
   "note_sha256_16": "006ff1ca3b3b0bab",
   "model": "qwen2.5:14b",
-  "generated_at": "2026-09-16T09:51:59",
+  "generated_at": "2026-09-16T10:24:17",
   "c_path": "impl2/c/qwen2.5-14b/add_noise_white.c",
   "reused_existing_c": true,
   "compiled": true,
   "in_sort": "image",
   "out_sort": "image",
   "probe_set": "image",
+  "aborted_after_crashes": 3,
   "probes": [
     {
       "probe": "checkerboard8",
@@ -24,33 +25,23 @@
       "a": 0.1,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.3598116914391183,
+      "max_abs_diff": 0.3549433449663226,
       "non_finite": false
     },
     {
       "probe": "ramp_y",
       "a": 0.1,
       "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.3914686370196182,
-      "non_finite": false
+      "status": "impl2_crashed"
     },
     {
       "probe": "constant_half",
       "a": 0.1,
       "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.3914686370196182,
-      "non_finite": false
-    },
-    {
-      "probe": "zeros",
-      "a": 0.1,
-      "b": 0.5,
       "status": "impl2_crashed"
     },
     {
-      "probe": "impulse_center",
+      "probe": "zeros",
       "a": 0.1,
       "b": 0.5,
       "status": "compared",
@@ -58,332 +49,10 @@
       "non_finite": false
     },
     {
-      "probe": "impulse_corner",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "frame",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.3309176369455516,
-      "non_finite": false
-    },
-    {
-      "probe": "diagonal",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.3449106378206976,
-      "non_finite": false
-    },
-    {
-      "probe": "row_1xN",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "col_Nx1",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.22871884481821736,
-      "non_finite": false
-    },
-    {
-      "probe": "single_pixel",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "random",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.35869880782634567,
-      "non_finite": false
-    },
-    {
-      "probe": "checkerboard8",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "ramp_x",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "ramp_y",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.3883836033610945,
-      "non_finite": false
-    },
-    {
-      "probe": "constant_half",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "zeros",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.27982514471513636,
-      "non_finite": false
-    },
-    {
       "probe": "impulse_center",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.27982514471513636,
-      "non_finite": false
-    },
-    {
-      "probe": "impulse_corner",
-      "a": 0.5,
+      "a": 0.1,
       "b": 0.5,
       "status": "impl2_crashed"
-    },
-    {
-      "probe": "frame",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.30287284747480403,
-      "non_finite": false
-    },
-    {
-      "probe": "diagonal",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.27982514471513636,
-      "non_finite": false
-    },
-    {
-      "probe": "row_1xN",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.3100819614799616,
-      "non_finite": false
-    },
-    {
-      "probe": "col_Nx1",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "single_pixel",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "random",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "checkerboard8",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.2071550321263755,
-      "non_finite": false
-    },
-    {
-      "probe": "ramp_x",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.435969454099254,
-      "non_finite": false
-    },
-    {
-      "probe": "ramp_y",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.372873738634386,
-      "non_finite": false
-    },
-    {
-      "probe": "constant_half",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.42800827519113843,
-      "non_finite": false
-    },
-    {
-      "probe": "zeros",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "impulse_center",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "impulse_corner",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.32846870505481224,
-      "non_finite": false
-    },
-    {
-      "probe": "frame",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.35010887218765174,
-      "non_finite": false
-    },
-    {
-      "probe": "diagonal",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.32846870505481224,
-      "non_finite": false
-    },
-    {
-      "probe": "row_1xN",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "col_Nx1",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.3438841679002386,
-      "non_finite": false
-    },
-    {
-      "probe": "single_pixel",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.21009005577304096,
-      "non_finite": false
-    },
-    {
-      "probe": "random",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.3601038338443326,
-      "non_finite": false
-    },
-    {
-      "probe": "checkerboard8",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "ramp_x",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "ramp_y",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "constant_half",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "zeros",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "impulse_center",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "compared",
-      "max_abs_diff": 0.4663752411918939,
-      "non_finite": false
-    },
-    {
-      "probe": "impulse_corner",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "frame",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "impl2_crashed"
-    },
-    {
-      "probe": "diagonal",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "compared",
-      "max_abs_diff": 0.4663752411918939,
-      "non_finite": false
-    },
-    {
-      "probe": "row_1xN",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "compared",
-      "max_abs_diff": 0.4638520007678386,
-      "non_finite": false
-    },
-    {
-      "probe": "col_Nx1",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "compared",
-      "max_abs_diff": 0.4638520007678386,
-      "non_finite": false
-    },
-    {
-      "probe": "single_pixel",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "compared",
-      "max_abs_diff": 0.11801081878332131,
-      "non_finite": false
-    },
-    {
-      "probe": "random",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "compared",
-      "max_abs_diff": 0.5878997706773035,
-      "non_finite": false
     }
   ],
   "worst_max_abs_diff": null,

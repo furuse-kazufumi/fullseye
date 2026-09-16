@@ -3,10 +3,9 @@
   "note": "docs/ops/2d/artificial_life/alife_sandpile.md",
   "note_sha256_16": "604959c7b4050e8d",
   "model": "qwen2.5:14b",
-  "generated_at": "2026-09-16T09:55:30",
+  "generated_at": "2026-09-16T10:24:25",
   "c_path": "impl2/c/qwen2.5-14b/alife_sandpile.c",
-  "prompt_sha256_16": "bc7d24481300d371",
-  "gen_seconds": 8.5,
+  "reused_existing_c": true,
   "status": "compile_error",
   "compile_error": "e.c:23:18: error: '_SANDPILE_BUDGET' undeclared (first use in this function)\n   23 |     int budget = _SANDPILE_BUDGET; // 假设_SANDPILE_BUDGET为一个全局定义的常量，表示总工作预算\n      |                  ^~~~~~~~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_sandpile.c:23:18: note: each undeclared identifier is reported only once for each function it appears in\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_sandpile.c:26:9: error: implicit declaration of function 'memcpy' [-Wimplicit-function-declaration]\n   26 |         memcpy(new_grains, grains, grid_size * sizeof(int));\n      |         ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_sandpile.c:3:1: note: include '<string.h>' or provide a declaration of 'memcpy'\n    2 | #include <stdlib.h>\n  +++ |+#include <string.h>\n    3 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_sandpile.c:26:9: warning: incompatible implicit declaration of built-in function 'memcpy' [-Wbuiltin-declaration-mismatch]\n   26 |         memcpy(new_grains, grains, grid_size * sizeof(int));\n      |         ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_sandpile.c:26:9: note: include '<string.h>' or provide a declaration of 'memcpy'\n"
 }

@@ -1,0 +1,12 @@
+{
+  "op": "select_shape_std",
+  "note": "docs/ops/2d/region/select_shape_std.md",
+  "note_sha256_16": "48a3f91945ed4d7c",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:18:04",
+  "c_path": "impl2/c/qwen2.5-14b/select_shape_std.c",
+  "prompt_sha256_16": "a3e4e382edca24e1",
+  "gen_seconds": 18.2,
+  "status": "compile_error",
+  "compile_error": "licit declaration of built-in function 'memcpy' [-Wbuiltin-declaration-mismatch]\n   11 |     memcpy(temp, in, h * w * sizeof(double));\n      |     ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_shape_std.c:11:5: note: include '<string.h>' or provide a declaration of 'memcpy'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_shape_std.c:21:28: error: implicit declaration of function 'flood_fill' [-Wimplicit-function-declaration]\n   21 |                 int area = flood_fill(temp, h, w, y, x, label);\n      |                            ^~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_shape_std.c:43:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   43 |     free(temp);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_shape_std.c:43:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_shape_std.c:43:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_shape_std.c:43:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

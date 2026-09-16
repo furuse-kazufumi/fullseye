@@ -1,0 +1,11 @@
+{
+  "op": "deform_mls",
+  "note": "docs/ops/2d/deformation/deform_mls.md",
+  "note_sha256_16": "6220bcf37340afb5",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:24:31",
+  "c_path": "impl2/c/qwen2.5-14b/deform_mls.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\deform_mls.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\deform_mls.c:46:44: error: 'M_PI' undeclared (first use in this function)\n   46 |             double qx = wx + amp * sin(2 * M_PI * px);\n      |                                            ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\deform_mls.c:46:44: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

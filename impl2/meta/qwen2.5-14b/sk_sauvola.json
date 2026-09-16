@@ -1,0 +1,12 @@
+{
+  "op": "sk_sauvola",
+  "note": "docs/ops/2d/segmentation/sk_sauvola.md",
+  "note_sha256_16": "a959e0cfdc274c0d",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:17:15",
+  "c_path": "impl2/c/qwen2.5-14b/sk_sauvola.c",
+  "prompt_sha256_16": "ec493045eecba647",
+  "gen_seconds": 28.0,
+  "status": "compile_error",
+  "compile_error": "4b\\sk_sauvola.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_sauvola.c:17:34: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n   17 |     double* padded_in = (double*)malloc(padded_h * padded_w * sizeof(double));\n      |                                  ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_sauvola.c:17:34: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_sauvola.c:71:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   71 |     free(padded_in);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_sauvola.c:71:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_sauvola.c:71:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_sauvola.c:71:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

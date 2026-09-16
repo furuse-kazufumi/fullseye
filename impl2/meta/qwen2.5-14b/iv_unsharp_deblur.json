@@ -1,0 +1,12 @@
+{
+  "op": "iv_unsharp_deblur",
+  "note": "docs/ops/2d/restoration/iv_unsharp_deblur.md",
+  "note_sha256_16": "d8cbc71e94f8b9b2",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:33:59",
+  "c_path": "impl2/c/qwen2.5-14b/iv_unsharp_deblur.c",
+  "prompt_sha256_16": "72a48480c1b21b68",
+  "gen_seconds": 31.3,
+  "status": "compile_error",
+  "compile_error": "clude '<stdlib.h>' or provide a declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_unsharp_deblur.c:54:33: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n   54 |         double* temp = (double*)malloc(h * w * sizeof(double));\n      |                                 ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_unsharp_deblur.c:54:33: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_unsharp_deblur.c:66:9: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   66 |         free(temp);\n      |         ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_unsharp_deblur.c:66:9: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_unsharp_deblur.c:66:9: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_unsharp_deblur.c:66:9: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

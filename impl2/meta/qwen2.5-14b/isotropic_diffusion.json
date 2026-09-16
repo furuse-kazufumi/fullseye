@@ -1,0 +1,12 @@
+{
+  "op": "isotropic_diffusion",
+  "note": "docs/ops/2d/smoothing/isotropic_diffusion.md",
+  "note_sha256_16": "2746fc6ea89e7401",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:41:52",
+  "c_path": "impl2/c/qwen2.5-14b/isotropic_diffusion.c",
+  "prompt_sha256_16": "608183d1c6182ef9",
+  "gen_seconds": 28.1,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\isotropic_diffusion.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\isotropic_diffusion.c:22:67: error: 'M_PI' undeclared (first use in this function)\n   22 |         kernel[i] = exp(-x * x / (2 * sigma * sigma)) / (sqrt(2 * M_PI) * sigma);\n      |                                                                   ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\isotropic_diffusion.c:22:67: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

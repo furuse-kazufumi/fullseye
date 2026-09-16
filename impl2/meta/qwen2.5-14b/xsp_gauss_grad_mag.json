@@ -1,0 +1,12 @@
+{
+  "op": "xsp_gauss_grad_mag",
+  "note": "docs/ops/2d/edges/xsp_gauss_grad_mag.md",
+  "note_sha256_16": "98258cd080b2b765",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:03:51",
+  "c_path": "impl2/c/qwen2.5-14b/xsp_gauss_grad_mag.c",
+  "prompt_sha256_16": "ef71ba826814ea3c",
+  "gen_seconds": 42.4,
+  "status": "compile_error",
+  "compile_error": "'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_gauss_grad_mag.c:14:40: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n   14 |     double* gaussian_kernel = (double*)malloc(kernel_size * kernel_size * sizeof(double));\n      |                                        ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_gauss_grad_mag.c:14:40: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_gauss_grad_mag.c:108:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n  108 |     free(gaussian_kernel);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_gauss_grad_mag.c:108:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_gauss_grad_mag.c:108:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_gauss_grad_mag.c:108:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

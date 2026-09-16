@@ -1,0 +1,12 @@
+{
+  "op": "iv_wiener_deconv_spatial",
+  "note": "docs/ops/2d/restoration/iv_wiener_deconv_spatial.md",
+  "note_sha256_16": "741a0d244703b40a",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:32:55",
+  "c_path": "impl2/c/qwen2.5-14b/iv_wiener_deconv_spatial.c",
+  "prompt_sha256_16": "906b295eb4cf47d8",
+  "gen_seconds": 14.4,
+  "status": "compile_error",
+  "compile_error": "deconv_spatial.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_wiener_deconv_spatial.c:15:86: error: implicit declaration of function 'pow' [-Wimplicit-function-declaration]\n   15 |             double spatial_frequency_response = 1.0 / (1.0 + noise_to_signal_ratio * pow(blur_sigma, 2));\n      |                                                                                      ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_wiener_deconv_spatial.c:1:1: note: include '<math.h>' or provide a declaration of 'pow'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_wiener_deconv_spatial.c:15:86: warning: incompatible implicit declaration of built-in function 'pow' [-Wbuiltin-declaration-mismatch]\n   15 |             double spatial_frequency_response = 1.0 / (1.0 + noise_to_signal_ratio * pow(blur_sigma, 2));\n      |                                                                                      ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_wiener_deconv_spatial.c:15:86: note: include '<math.h>' or provide a declaration of 'pow'\n"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "erosion_circle",
+  "note": "docs/ops/2d/region/erosion_circle.md",
+  "note_sha256_16": "9174ab3f537cf96d",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:17:51",
+  "c_path": "impl2/c/qwen2.5-14b/erosion_circle.c",
+  "prompt_sha256_16": "caf8efa332e4da19",
+  "gen_seconds": 18.6,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\erosion_circle.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\erosion_circle.c:7:29: error: implicit declaration of function '_rad' [-Wimplicit-function-declaration]\n    7 |     int radius = (int)round(_rad(a) * 4); // _rad(a) 为 0 到 1 的值，这里假设 _rad(a) 为线性映射到 0 到 4 的范围\n      |                             ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\erosion_circle.c: At top level:\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\erosion_circle.c:45:8: error: conflicting types for '_rad'; have 'double(double)'\n   45 | double _rad(double a) {\n      |        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\erosion_circle.c:7:29: note: previous implicit declaration of '_rad' with type 'int()'\n    7 |     int radius = (int)round(_rad(a) * 4); // _rad(a) 为 0 到 1 的值，这里假设 _rad(a) 为线性映射到 0 到 4 的范围\n      |                             ^~~~\n"
+}

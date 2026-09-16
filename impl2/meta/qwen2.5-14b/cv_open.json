@@ -1,0 +1,11 @@
+{
+  "op": "cv_open",
+  "note": "docs/ops/2d/morphology/cv_open.md",
+  "note_sha256_16": "1d5b46303afc281b",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:24:29",
+  "c_path": "impl2/c/qwen2.5-14b/cv_open.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "ion 'fprintf' [-Wbuiltin-declaration-mismatch]\n   15 |         fprintf(stderr, \"Structuring element size must be odd.\\n\");\n      |         ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_open.c:15:9: note: include '<stdio.h>' or provide a declaration of 'fprintf'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_open.c:15:17: error: 'stderr' undeclared (first use in this function)\n   15 |         fprintf(stderr, \"Structuring element size must be odd.\\n\");\n      |                 ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_open.c:15:17: note: 'stderr' is defined in header '<stdio.h>'; this is probably fixable by adding '#include <stdio.h>'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_open.c:15:17: note: each undeclared identifier is reported only once for each function it appears in\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_open.c:22:9: warning: incompatible implicit declaration of built-in function 'fprintf' [-Wbuiltin-declaration-mismatch]\n   22 |         fprintf(stderr, \"Memory allocation failed.\\n\");\n      |         ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_open.c:22:9: note: include '<stdio.h>' or provide a declaration of 'fprintf'\n"
+}

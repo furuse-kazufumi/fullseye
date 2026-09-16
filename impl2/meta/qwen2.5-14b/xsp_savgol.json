@@ -1,0 +1,39 @@
+{
+  "op": "xsp_savgol",
+  "note": "docs/ops/2d/smoothing/xsp_savgol.md",
+  "note_sha256_16": "faaf3811be15d6e6",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:04:33",
+  "c_path": "impl2/c/qwen2.5-14b/xsp_savgol.c",
+  "prompt_sha256_16": "c02f57700ef106aa",
+  "gen_seconds": 38.1,
+  "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
+  "aborted_after_crashes": 3,
+  "probes": [
+    {
+      "probe": "checkerboard8",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "impl2_crashed"
+    },
+    {
+      "probe": "ramp_x",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "impl2_crashed"
+    },
+    {
+      "probe": "ramp_y",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "impl2_crashed"
+    }
+  ],
+  "worst_max_abs_diff": null,
+  "agrees": false,
+  "tol": 1e-09,
+  "status": "diverges"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "select_shape",
+  "note": "docs/ops/2d/region/select_shape.md",
+  "note_sha256_16": "fcf59145a1a4f616",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:24:03",
+  "c_path": "impl2/c/qwen2.5-14b/select_shape.c",
+  "prompt_sha256_16": "8aad6602da29068f",
+  "gen_seconds": 8.1,
+  "status": "compile_error",
+  "compile_error": "apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_shape.c:23:35: error: assignment of read-only location '*(in + (sizetype)((long long unsigned int)(y * w + x) * 8))'\n   23 |                     in[y * w + x] = 0.0; // 探索済みの画素を 0 に設定\n      |                                   ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_shape.c:27:33: error: implicit declaration of function 'abs' [-Wimplicit-function-declaration]\n   27 |                             if (abs(dx + dy) == 1 && y + dy >= 0 && y + dy < h && x + dx >= 0 && x + dx < w) {\n      |                                 ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_shape.c:1:1: note: include '<stdlib.h>' or provide a declaration of 'abs'\n  +++ |+#include <stdlib.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_shape.c:30:65: error: assignment of read-only location '*(in + (sizetype)((long long unsigned int)((y + dy) * w + (x + dx)) * 8))'\n   30 |                                     in[(y + dy) * w + (x + dx)] = 0.0; // 探索済みの画素を 0 に設定\n      |                                                                 ^\n"
+}

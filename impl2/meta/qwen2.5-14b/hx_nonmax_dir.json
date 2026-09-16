@@ -1,0 +1,12 @@
+{
+  "op": "hx_nonmax_dir",
+  "note": "docs/ops/2d/halcon_ext/hx_nonmax_dir.md",
+  "note_sha256_16": "5e8da459bec57014",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:31:54",
+  "c_path": "impl2/c/qwen2.5-14b/hx_nonmax_dir.c",
+  "prompt_sha256_16": "d0c0be8cd5b21248",
+  "gen_seconds": 26.0,
+  "status": "compile_error",
+  "compile_error": "\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_nonmax_dir.c:26:26: note: include '<math.h>' or provide a declaration of 'atan2'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_nonmax_dir.c:26:48: error: 'M_PI' undeclared (first use in this function)\n   26 |             double dir = atan2(gy, gx) * 180 / M_PI;\n      |                                                ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_nonmax_dir.c:26:48: note: each undeclared identifier is reported only once for each function it appears in\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_nonmax_dir.c:33:26: error: implicit declaration of function 'hypot' [-Wimplicit-function-declaration]\n   33 |             double mag = hypot(gx, gy);\n      |                          ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_nonmax_dir.c:33:26: note: include '<math.h>' or provide a declaration of 'hypot'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_nonmax_dir.c:33:26: warning: incompatible implicit declaration of built-in function 'hypot' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_nonmax_dir.c:33:26: note: include '<math.h>' or provide a declaration of 'hypot'\n"
+}

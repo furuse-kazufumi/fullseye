@@ -1,0 +1,12 @@
+{
+  "op": "hx_gen_circle",
+  "note": "docs/ops/2d/halcon_ext/hx_gen_circle.md",
+  "note_sha256_16": "c9e52abe79bed064",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:19:44",
+  "c_path": "impl2/c/qwen2.5-14b/hx_gen_circle.c",
+  "prompt_sha256_16": "26261260b112ed8d",
+  "gen_seconds": 14.7,
+  "status": "compile_error",
+  "compile_error": "licit declaration of function 'MIN' [-Wimplicit-function-declaration]\n    4 |     double radius = MIN(h, w) * 0.1 + a * 0.4 * MIN(h, w); // 0.1 から 0.5 の範囲に a をマッピング\n      |                     ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_circle.c:21:31: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]\n   21 |             double distance = sqrt((x - center_x) * (x - center_x) + (y - center_y) * (y - center_y));\n      |                               ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_circle.c:1:1: note: include '<math.h>' or provide a declaration of 'sqrt'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_circle.c:21:31: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]\n   21 |             double distance = sqrt((x - center_x) * (x - center_x) + (y - center_y) * (y - center_y));\n      |                               ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_circle.c:21:31: note: include '<math.h>' or provide a declaration of 'sqrt'\n"
+}

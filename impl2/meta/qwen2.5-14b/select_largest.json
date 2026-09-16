@@ -1,0 +1,12 @@
+{
+  "op": "select_largest",
+  "note": "docs/ops/2d/region/select_largest.md",
+  "note_sha256_16": "bdbd368681a62722",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:14:34",
+  "c_path": "impl2/c/qwen2.5-14b/select_largest.c",
+  "prompt_sha256_16": "ee304f996330f199",
+  "gen_seconds": 21.7,
+  "status": "compile_error",
+  "compile_error": "ib.h>' or provide a declaration of 'malloc'\n  +++ |+#include <stdlib.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_largest.c:7:24: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n    7 |     int* areas = (int*)malloc(num_pixels * sizeof(int));\n      |                        ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_largest.c:7:24: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_largest.c:54:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   54 |     free(areas);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_largest.c:54:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_largest.c:54:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\select_largest.c:54:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

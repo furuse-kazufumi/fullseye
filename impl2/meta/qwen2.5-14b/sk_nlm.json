@@ -1,0 +1,12 @@
+{
+  "op": "sk_nlm",
+  "note": "docs/ops/2d/smoothing/sk_nlm.md",
+  "note_sha256_16": "6a42477240d0ff1a",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:02:09",
+  "c_path": "impl2/c/qwen2.5-14b/sk_nlm.c",
+  "prompt_sha256_16": "d9232517c4d67e54",
+  "gen_seconds": 24.0,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_nlm.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_nlm.c:8:18: error: 'h' redeclared as different kind of symbol\n    8 |     const double h = h_base + h_range * a; // 実際のカットオフ距離\n      |                  ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_nlm.c:3:38: note: previous definition of 'h' with type 'int'\n    3 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\n      |                                  ~~~~^\n"
+}

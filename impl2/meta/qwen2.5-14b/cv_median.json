@@ -1,0 +1,11 @@
+{
+  "op": "cv_median",
+  "note": "docs/ops/2d/rank/cv_median.md",
+  "note_sha256_16": "fb21be104344db25",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:24:29",
+  "c_path": "impl2/c/qwen2.5-14b/cv_median.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "    6 |     if (padded_in == NULL) {\n      |                      ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_median.c:39:13: error: implicit declaration of function 'qsort' [-Wimplicit-function-declaration]\n   39 |             qsort(values, ksize * ksize, sizeof(double), compare);\n      |             ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_median.c:39:58: error: 'compare' undeclared (first use in this function)\n   39 |             qsort(values, ksize * ksize, sizeof(double), compare);\n      |                                                          ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_median.c:44:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   44 |     free(padded_in);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_median.c:44:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_median.c:44:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_median.c:44:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

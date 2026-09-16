@@ -1,0 +1,12 @@
+{
+  "op": "xsk2_hog",
+  "note": "docs/ops/2d/texture/xsk2_hog.md",
+  "note_sha256_16": "371ab4783174ad92",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:50:53",
+  "c_path": "impl2/c/qwen2.5-14b/xsk2_hog.c",
+  "prompt_sha256_16": "828e170d3da240b0",
+  "gen_seconds": 36.1,
+  "status": "compile_error",
+  "compile_error": " with an empty initializer\n   44 |             double block_gradients[num_orientations * block_size * block_size] = {0};\n      |                                                                                  ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk2_hog.c:61:26: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]\n   61 |             block_norm = sqrt(block_norm);\n      |                          ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk2_hog.c:61:26: note: include '<math.h>' or provide a declaration of 'sqrt'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk2_hog.c:87:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   87 |     free(gradients);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk2_hog.c:87:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk2_hog.c:87:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk2_hog.c:87:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

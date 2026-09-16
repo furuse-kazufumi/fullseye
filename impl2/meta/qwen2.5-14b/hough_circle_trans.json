@@ -1,0 +1,12 @@
+{
+  "op": "hough_circle_trans",
+  "note": "docs/ops/2d/features/hough_circle_trans.md",
+  "note_sha256_16": "25e439117faab276",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:29:05",
+  "c_path": "impl2/c/qwen2.5-14b/hough_circle_trans.c",
+  "prompt_sha256_16": "6f3c80d3e2874505",
+  "gen_seconds": 28.0,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hough_circle_trans.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hough_circle_trans.c:49:52: error: 'M_PI' undeclared (first use in this function)\n   49 |                         double rad_theta = theta * M_PI / 180.0;\n      |                                                    ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hough_circle_trans.c:49:52: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

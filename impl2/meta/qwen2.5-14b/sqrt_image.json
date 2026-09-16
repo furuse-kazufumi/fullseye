@@ -1,0 +1,12 @@
+{
+  "op": "sqrt_image",
+  "note": "docs/ops/2d/arithmetic/sqrt_image.md",
+  "note_sha256_16": "707b2c40d23afc90",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:03:29",
+  "c_path": "impl2/c/qwen2.5-14b/sqrt_image.c",
+  "prompt_sha256_16": "0b6c589bbf79df35",
+  "gen_seconds": 12.4,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sqrt_image.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sqrt_image.c:13:34: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]\n   13 |                 out[y * w + x] = sqrt(input_value);\n      |                                  ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sqrt_image.c:1:1: note: include '<math.h>' or provide a declaration of 'sqrt'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sqrt_image.c:13:34: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]\n   13 |                 out[y * w + x] = sqrt(input_value);\n      |                                  ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sqrt_image.c:13:34: note: include '<math.h>' or provide a declaration of 'sqrt'\n"
+}

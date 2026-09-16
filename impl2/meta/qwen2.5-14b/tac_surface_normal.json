@@ -1,0 +1,12 @@
+{
+  "op": "tac_surface_normal",
+  "note": "docs/ops/2d/tactile/tac_surface_normal.md",
+  "note_sha256_16": "4dcbe88f88db86c6",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:43:43",
+  "c_path": "impl2/c/qwen2.5-14b/tac_surface_normal.c",
+  "prompt_sha256_16": "3b19294aeb3080ca",
+  "gen_seconds": 25.6,
+  "status": "compile_error",
+  "compile_error": "ude '<stdlib.h>' or provide a declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tac_surface_normal.c:13:33: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n   13 |     double* smoothed = (double*)malloc(h * w * sizeof(double));\n      |                                 ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tac_surface_normal.c:13:33: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tac_surface_normal.c:66:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   66 |     free(smoothed);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tac_surface_normal.c:66:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tac_surface_normal.c:66:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tac_surface_normal.c:66:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "gauss_filter",
+  "note": "docs/ops/2d/smoothing/gauss_filter.md",
+  "note_sha256_16": "8be33b5cd1c4a1be",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:26:37",
+  "c_path": "impl2/c/qwen2.5-14b/gauss_filter.c",
+  "prompt_sha256_16": "1c22fe64a3080bfd",
+  "gen_seconds": 21.4,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gauss_filter.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gauss_filter.c:34:47: error: 'M_PI' undeclared (first use in this function)\n   34 |     double factor = 1.0 / (sigma * sqrt(2.0 * M_PI));\n      |                                               ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gauss_filter.c:34:47: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

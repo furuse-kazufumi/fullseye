@@ -1,0 +1,12 @@
+{
+  "op": "it_add_image_border",
+  "note": "docs/ops/2d/geometry/it_add_image_border.md",
+  "note_sha256_16": "578dcb92b8b25bab",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:32:53",
+  "c_path": "impl2/c/qwen2.5-14b/it_add_image_border.c",
+  "prompt_sha256_16": "5b700d6e8f49fa10",
+  "gen_seconds": 7.2,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\it_add_image_border.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\it_add_image_border.c:3:33: error: implicit declaration of function 'round' [-Wimplicit-function-declaration]\n    3 |     int border_width = 1 + (int)round(a * 6);\n      |                                 ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\it_add_image_border.c:1:1: note: include '<math.h>' or provide a declaration of 'round'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\it_add_image_border.c:3:33: warning: incompatible implicit declaration of built-in function 'round' [-Wbuiltin-declaration-mismatch]\n    3 |     int border_width = 1 + (int)round(a * 6);\n      |                                 ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\it_add_image_border.c:3:33: note: include '<math.h>' or provide a declaration of 'round'\n"
+}

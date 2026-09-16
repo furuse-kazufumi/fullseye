@@ -1,0 +1,12 @@
+{
+  "op": "hx_gen_lowpass",
+  "note": "docs/ops/2d/halcon_ext/hx_gen_lowpass.md",
+  "note_sha256_16": "b6f763172bdf6716",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:30:09",
+  "c_path": "impl2/c/qwen2.5-14b/hx_gen_lowpass.c",
+  "prompt_sha256_16": "30bed8dfa1454e71",
+  "gen_seconds": 21.6,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_lowpass.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_lowpass.c:19:24: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]\n   19 |             double r = sqrt(fy * fy + fx * fx);\n      |                        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_lowpass.c:1:1: note: include '<math.h>' or provide a declaration of 'sqrt'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_lowpass.c:19:24: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]\n   19 |             double r = sqrt(fy * fy + fx * fx);\n      |                        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_lowpass.c:19:24: note: include '<math.h>' or provide a declaration of 'sqrt'\n"
+}

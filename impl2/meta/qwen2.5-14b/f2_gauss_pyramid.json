@@ -1,0 +1,12 @@
+{
+  "op": "f2_gauss_pyramid",
+  "note": "docs/ops/2d/smoothing/f2_gauss_pyramid.md",
+  "note_sha256_16": "f31270653eb44718",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:25:05",
+  "c_path": "impl2/c/qwen2.5-14b/f2_gauss_pyramid.c",
+  "prompt_sha256_16": "1398265c84283bed",
+  "gen_seconds": 11.0,
+  "status": "compile_error",
+  "compile_error": "     |                                ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\f2_gauss_pyramid.c:16:32: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\f2_gauss_pyramid.c:39:13: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   39 |             free(tmp);\n      |             ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\f2_gauss_pyramid.c:39:13: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\f2_gauss_pyramid.c:39:13: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\f2_gauss_pyramid.c:39:13: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\f2_gauss_pyramid.c:47:13: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\n   47 |             free(tmp);\n      |             ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\f2_gauss_pyramid.c:47:13: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

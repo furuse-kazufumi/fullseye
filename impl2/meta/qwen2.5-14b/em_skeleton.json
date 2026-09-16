@@ -1,0 +1,12 @@
+{
+  "op": "em_skeleton",
+  "note": "docs/ops/2d/region/em_skeleton.md",
+  "note_sha256_16": "8d4655af732a679a",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:08:20",
+  "c_path": "impl2/c/qwen2.5-14b/em_skeleton.c",
+  "prompt_sha256_16": "92b206d7188c8ea1",
+  "gen_seconds": 24.0,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\em_skeleton.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\em_skeleton.c:77:27: error: assignment of read-only location '*(in + (sizetype)((long long unsigned int)(y * w + x) * 8))'\n   77 |             in[y * w + x] = out[y * w + x];\n      |                           ^\n"
+}

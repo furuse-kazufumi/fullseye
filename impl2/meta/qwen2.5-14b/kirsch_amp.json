@@ -1,0 +1,12 @@
+{
+  "op": "kirsch_amp",
+  "note": "docs/ops/2d/edges/kirsch_amp.md",
+  "note_sha256_16": "70784e46c499855c",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:44:07",
+  "c_path": "impl2/c/qwen2.5-14b/kirsch_amp.c",
+  "prompt_sha256_16": "529aac514a540bd3",
+  "gen_seconds": 20.4,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\kirsch_amp.c: In function 'interpolate':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\kirsch_amp.c:28:18: error: array subscript is not an integer\n   28 |         return in[y * w + x];\n      |                  ^\n"
+}

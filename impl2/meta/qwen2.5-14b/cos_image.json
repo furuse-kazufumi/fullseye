@@ -1,0 +1,11 @@
+{
+  "op": "cos_image",
+  "note": "docs/ops/2d/arithmetic/cos_image.md",
+  "note_sha256_16": "d1e61ecf97252f70",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:24:27",
+  "c_path": "impl2/c/qwen2.5-14b/cos_image.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "tion]\n   11 |             double output_value = (cos(2 * M_PI * input_value) + 1) / 2;\n      |                                    ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cos_image.c:1:1: note: include '<math.h>' or provide a declaration of 'cos'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cos_image.c:11:36: warning: incompatible implicit declaration of built-in function 'cos' [-Wbuiltin-declaration-mismatch]\n   11 |             double output_value = (cos(2 * M_PI * input_value) + 1) / 2;\n      |                                    ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cos_image.c:11:36: note: include '<math.h>' or provide a declaration of 'cos'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cos_image.c:11:44: error: 'M_PI' undeclared (first use in this function)\n   11 |             double output_value = (cos(2 * M_PI * input_value) + 1) / 2;\n      |                                            ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cos_image.c:11:44: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

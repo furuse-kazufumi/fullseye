@@ -1,0 +1,12 @@
+{
+  "op": "iv_richardson_lucy",
+  "note": "docs/ops/2d/restoration/iv_richardson_lucy.md",
+  "note_sha256_16": "7798270d37d1b33c",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:43:34",
+  "c_path": "impl2/c/qwen2.5-14b/iv_richardson_lucy.c",
+  "prompt_sha256_16": "4564a9f5598563bd",
+  "gen_seconds": 33.1,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_richardson_lucy.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_richardson_lucy.c:20:5: error: too many arguments to function 'gaussian_psf'; expected 2, have 3\n   20 |     gaussian_psf(RL_SIGMA, kernel_size, psf);\n      |     ^~~~~~~~~~~~                        ~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_richardson_lucy.c:14:12: note: declared here\n   14 |     double gaussian_psf(double sigma, int size);\n      |            ^~~~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_richardson_lucy.c: At top level:\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_richardson_lucy.c:93:8: error: conflicting types for 'gaussian_psf'; have 'double(double,  int,  double *)'\n   93 | double gaussian_psf(double sigma, int size, double* psf) {\n      |        ^~~~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\iv_richardson_lucy.c:14:12: note: previous declaration of 'gaussian_psf' with type 'double(double,  int)'\n   14 |     double gaussian_psf(double sigma, int size);\n      |            ^~~~~~~~~~~~\n"
+}

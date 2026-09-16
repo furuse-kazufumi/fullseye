@@ -1,0 +1,12 @@
+{
+  "op": "hx_fit_surface2",
+  "note": "docs/ops/2d/halcon_ext/hx_fit_surface2.md",
+  "note_sha256_16": "1b0706d7bdd8f78a",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:30:46",
+  "c_path": "impl2/c/qwen2.5-14b/hx_fit_surface2.c",
+  "prompt_sha256_16": "3e7205ebe1c1c0ad",
+  "gen_seconds": 40.0,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_fit_surface2.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_fit_surface2.c:28:12: error: 'b' redeclared as different kind of symbol\n   28 |     double b[6] = {0};\n      |            ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_fit_surface2.c:3:65: note: previous definition of 'b' with type 'double'\n    3 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\n      |                                                          ~~~~~~~^\n"
+}

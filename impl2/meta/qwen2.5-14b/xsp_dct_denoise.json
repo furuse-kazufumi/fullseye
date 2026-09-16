@@ -1,0 +1,11 @@
+{
+  "op": "xsp_dct_denoise",
+  "note": "docs/ops/2d/smoothing/xsp_dct_denoise.md",
+  "note_sha256_16": "b9156b24b4d401ba",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:53:49",
+  "c_path": "impl2/c/qwen2.5-14b/xsp_dct_denoise.c",
+  "prompt_sha256_16": "c626d310172b781a",
+  "status": "model_error",
+  "reason": "timed out"
+}

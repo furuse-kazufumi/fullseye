@@ -1,0 +1,12 @@
+{
+  "op": "ph_total_variation_flow",
+  "note": "docs/ops/2d/physics/ph_total_variation_flow.md",
+  "note_sha256_16": "ddcd1360e5cb550c",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:35:45",
+  "c_path": "impl2/c/qwen2.5-14b/ph_total_variation_flow.c",
+  "prompt_sha256_16": "ef7afbfe41e80738",
+  "gen_seconds": 19.1,
+  "status": "compile_error",
+  "compile_error": "(temp == NULL) {\n      |                     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_total_variation_flow.c:2:1: note: 'NULL' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'\n    1 | #include <math.h>\n  +++ |+#include <stddef.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_total_variation_flow.c:14:21: note: each undeclared identifier is reported only once for each function it appears in\n   14 |         if (temp == NULL) {\n      |                     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_total_variation_flow.c:49:9: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   49 |         free(temp);\n      |         ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_total_variation_flow.c:49:9: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_total_variation_flow.c:49:9: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_total_variation_flow.c:49:9: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

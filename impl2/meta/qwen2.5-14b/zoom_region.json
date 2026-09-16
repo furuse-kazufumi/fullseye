@@ -1,0 +1,12 @@
+{
+  "op": "zoom_region",
+  "note": "docs/ops/2d/geometry/zoom_region.md",
+  "note_sha256_16": "d734d01a7b6b36aa",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:21:32",
+  "c_path": "impl2/c/qwen2.5-14b/zoom_region.c",
+  "prompt_sha256_16": "199b12481a65aa3a",
+  "gen_seconds": 18.7,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zoom_region.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zoom_region.c:46:28: error: array subscript is not an integer\n   46 |             double v00 = in[y0 * w + x0];\n      |                            ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zoom_region.c:47:28: error: array subscript is not an integer\n   47 |             double v01 = in[y0 * w + x1];\n      |                            ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zoom_region.c:48:28: error: array subscript is not an integer\n   48 |             double v10 = in[y1 * w + x0];\n      |                            ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zoom_region.c:49:28: error: array subscript is not an integer\n   49 |             double v11 = in[y1 * w + x1];\n      |                            ^\n"
+}

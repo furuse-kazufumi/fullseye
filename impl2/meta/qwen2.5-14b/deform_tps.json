@@ -1,0 +1,11 @@
+{
+  "op": "deform_tps",
+  "note": "docs/ops/2d/deformation/deform_tps.md",
+  "note_sha256_16": "23835a69fbc60eec",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:24:30",
+  "c_path": "impl2/c/qwen2.5-14b/deform_tps.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\deform_tps.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\deform_tps.c:27:35: error: 'M_PI' undeclared (first use in this function)\n   27 |         double dx = amp * sin(2 * M_PI * freq * nx);\n      |                                   ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\deform_tps.c:27:35: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

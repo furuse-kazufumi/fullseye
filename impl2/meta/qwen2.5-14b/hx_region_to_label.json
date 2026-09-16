@@ -1,0 +1,11 @@
+{
+  "op": "hx_region_to_label",
+  "note": "docs/ops/2d/halcon_ext/hx_region_to_label.md",
+  "note_sha256_16": "be7b4f5b1dfb8c9f",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:31:36",
+  "c_path": "impl2/c/qwen2.5-14b/hx_region_to_label.c",
+  "prompt_sha256_16": "c42421bb1c71db0f",
+  "status": "model_error",
+  "reason": "timed out"
+}

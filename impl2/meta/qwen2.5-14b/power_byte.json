@@ -1,0 +1,12 @@
+{
+  "op": "power_byte",
+  "note": "docs/ops/2d/frequency/power_byte.md",
+  "note_sha256_16": "68005150f5fc26f7",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:37:02",
+  "c_path": "impl2/c/qwen2.5-14b/power_byte.c",
+  "prompt_sha256_16": "8248c318759bba8f",
+  "gen_seconds": 15.3,
+  "status": "compile_error",
+  "compile_error": "gevolve\\impl2\\c\\qwen2.5-14b\\power_byte.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\power_byte.c:7:31: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n    7 |     double* fft_in = (double*)malloc(h * w * sizeof(double));\n      |                               ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\power_byte.c:7:31: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\power_byte.c:31:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   31 |     free(fft_in);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\power_byte.c:31:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\power_byte.c:31:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\power_byte.c:31:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

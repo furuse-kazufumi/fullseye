@@ -1,0 +1,12 @@
+{
+  "op": "fft_image_inv",
+  "note": "docs/ops/2d/frequency/fft_image_inv.md",
+  "note_sha256_16": "03b9351d7b72ffa8",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:25:51",
+  "c_path": "impl2/c/qwen2.5-14b/fft_image_inv.c",
+  "prompt_sha256_16": "62f71333737af6cc",
+  "gen_seconds": 19.7,
+  "status": "compile_error",
+  "compile_error": "ing '#include <stddef.h>'\n    1 | #include <math.h>\n  +++ |+#include <stddef.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\fft_image_inv.c:13:17: note: each undeclared identifier is reported only once for each function it appears in\n   13 |     if (temp == NULL) {\n      |                 ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\fft_image_inv.c:32:41: error: 'M_PI' undeclared (first use in this function)\n   32 |                     double angle = -2 * M_PI * (u * x / (double)w + v * y / (double)h);\n      |                                         ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\fft_image_inv.c:54:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   54 |     free(temp);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\fft_image_inv.c:54:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\fft_image_inv.c:54:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\fft_image_inv.c:54:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

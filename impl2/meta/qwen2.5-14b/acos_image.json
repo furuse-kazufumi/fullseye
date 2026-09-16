@@ -3,7 +3,7 @@
   "note": "docs/ops/2d/arithmetic/acos_image.md",
   "note_sha256_16": "d89abfa230e94d9c",
   "model": "qwen2.5:14b",
-  "generated_at": "2026-09-16T09:51:58",
+  "generated_at": "2026-09-16T10:24:17",
   "c_path": "impl2/c/qwen2.5-14b/acos_image.c",
   "reused_existing_c": true,
   "status": "compile_error",

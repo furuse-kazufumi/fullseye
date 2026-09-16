@@ -1,0 +1,12 @@
+{
+  "op": "binary_threshold",
+  "note": "docs/ops/2d/segmentation/binary_threshold.md",
+  "note_sha256_16": "4af09f03aa2fea72",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:06:36",
+  "c_path": "impl2/c/qwen2.5-14b/binary_threshold.c",
+  "prompt_sha256_16": "8b4552e317c7119f",
+  "gen_seconds": 16.2,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\binary_threshold.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\binary_threshold.c:7:26: error: variable-sized object may not be initialized except with an empty initializer\n    7 |     int hist[hist_max] = {0};\n      |                          ^\n"
+}

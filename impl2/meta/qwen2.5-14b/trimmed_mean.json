@@ -1,0 +1,12 @@
+{
+  "op": "trimmed_mean",
+  "note": "docs/ops/2d/rank/trimmed_mean.md",
+  "note_sha256_16": "2c9372281d618d2a",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:06:09",
+  "c_path": "impl2/c/qwen2.5-14b/trimmed_mean.c",
+  "prompt_sha256_16": "4637ecc44b04d05a",
+  "gen_seconds": 20.4,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\trimmed_mean.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\trimmed_mean.c:52:13: error: implicit declaration of function 'qsort' [-Wimplicit-function-declaration]\n   52 |             qsort(window, window_size * window_size, sizeof(double), compare);\n      |             ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\trimmed_mean.c:52:70: error: 'compare' undeclared (first use in this function)\n   52 |             qsort(window, window_size * window_size, sizeof(double), compare);\n      |                                                                      ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\trimmed_mean.c:52:70: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

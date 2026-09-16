@@ -1,0 +1,12 @@
+{
+  "op": "polar_trans_image",
+  "note": "docs/ops/2d/geometry/polar_trans_image.md",
+  "note_sha256_16": "ca8a3ef9492d27ee",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:38:01",
+  "c_path": "impl2/c/qwen2.5-14b/polar_trans_image.c",
+  "prompt_sha256_16": "72ef442d34af93fd",
+  "gen_seconds": 22.5,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\polar_trans_image.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\polar_trans_image.c:38:50: error: 'M_PI' undeclared (first use in this function)\n   38 |                 int out_idx = (int)(angle / (2 * M_PI) * out_w);\n      |                                                  ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\polar_trans_image.c:38:50: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

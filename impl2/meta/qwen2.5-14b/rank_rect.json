@@ -1,0 +1,12 @@
+{
+  "op": "rank_rect",
+  "note": "docs/ops/2d/rank/rank_rect.md",
+  "note_sha256_16": "7f4389d910ab0f42",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:38:01",
+  "c_path": "impl2/c/qwen2.5-14b/rank_rect.c",
+  "prompt_sha256_16": "87266bcb40ada05e",
+  "gen_seconds": 28.5,
+  "status": "compile_error",
+  "compile_error": "licit-function-declaration]\n   47 |             qsort(window, window_size * window_size, sizeof(double), compare);\n      |             ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rank_rect.c:47:70: error: 'compare' undeclared (first use in this function)\n   47 |             qsort(window, window_size * window_size, sizeof(double), compare);\n      |                                                                      ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rank_rect.c:47:70: note: each undeclared identifier is reported only once for each function it appears in\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rank_rect.c:56:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   56 |     free(extended_in);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rank_rect.c:56:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rank_rect.c:56:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rank_rect.c:56:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

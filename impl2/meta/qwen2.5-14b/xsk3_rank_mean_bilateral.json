@@ -1,0 +1,12 @@
+{
+  "op": "xsk3_rank_mean_bilateral",
+  "note": "docs/ops/2d/smoothing/xsk3_rank_mean_bilateral.md",
+  "note_sha256_16": "85f4f9ec1af13269",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:12:12",
+  "c_path": "impl2/c/qwen2.5-14b/xsk3_rank_mean_bilateral.c",
+  "prompt_sha256_16": "3e428d0181d7cf90",
+  "gen_seconds": 17.8,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk3_rank_mean_bilateral.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk3_rank_mean_bilateral.c:23:39: error: implicit declaration of function 'fabs' [-Wimplicit-function-declaration]\n   23 |                         double diff = fabs(pixel - center);\n      |                                       ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk3_rank_mean_bilateral.c:1:1: note: include '<math.h>' or provide a declaration of 'fabs'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk3_rank_mean_bilateral.c:23:39: warning: incompatible implicit declaration of built-in function 'fabs' [-Wbuiltin-declaration-mismatch]\n   23 |                         double diff = fabs(pixel - center);\n      |                                       ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk3_rank_mean_bilateral.c:23:39: note: include '<math.h>' or provide a declaration of 'fabs'\n"
+}

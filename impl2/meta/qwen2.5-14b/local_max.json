@@ -1,0 +1,12 @@
+{
+  "op": "local_max",
+  "note": "docs/ops/2d/segmentation/local_max.md",
+  "note_sha256_16": "af9c40ecb8d260a0",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:13:02",
+  "c_path": "impl2/c/qwen2.5-14b/local_max.c",
+  "prompt_sha256_16": "8a9bf45292c67ca6",
+  "gen_seconds": 20.9,
+  "status": "compile_error",
+  "compile_error": "c:1:1: note: 'bool' is defined in header '<stdbool.h>'; this is probably fixable by adding '#include <stdbool.h>'\n  +++ |+#include <stdbool.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\local_max.c:15:27: error: 'true' undeclared (first use in this function)\n   15 |             bool is_max = true; // 現在の画素が最大値であるかのフラグ\n      |                           ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\local_max.c:15:27: note: 'true' is defined in header '<stdbool.h>'; this is probably fixable by adding '#include <stdbool.h>'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\local_max.c:15:27: note: each undeclared identifier is reported only once for each function it appears in\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\local_max.c:25:38: error: 'false' undeclared (first use in this function)\n   25 |                             is_max = false; // 最大値が更新された場合、フラグを false に\n      |                                      ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\local_max.c:25:38: note: 'false' is defined in header '<stdbool.h>'; this is probably fixable by adding '#include <stdbool.h>'\n"
+}

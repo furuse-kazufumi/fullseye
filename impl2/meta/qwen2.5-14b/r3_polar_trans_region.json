@@ -1,0 +1,12 @@
+{
+  "op": "r3_polar_trans_region",
+  "note": "docs/ops/2d/region/r3_polar_trans_region.md",
+  "note_sha256_16": "8339f070b484716e",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:16:17",
+  "c_path": "impl2/c/qwen2.5-14b/r3_polar_trans_region.c",
+  "prompt_sha256_16": "84363455735a1195",
+  "gen_seconds": 16.3,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r3_polar_trans_region.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r3_polar_trans_region.c:19:28: error: 'M_PI' undeclared (first use in this function)\n   19 |     double angle_end = 2 * M_PI * (0.25 + 0.75 * b);\n      |                            ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r3_polar_trans_region.c:19:28: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

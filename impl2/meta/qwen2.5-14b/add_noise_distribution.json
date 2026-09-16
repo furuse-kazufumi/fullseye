@@ -3,7 +3,7 @@
   "note": "docs/ops/2d/noise/add_noise_distribution.md",
   "note_sha256_16": "c48a7579cd49cb55",
   "model": "qwen2.5:14b",
-  "generated_at": "2026-09-16T09:51:58",
+  "generated_at": "2026-09-16T10:24:17",
   "c_path": "impl2/c/qwen2.5-14b/add_noise_distribution.c",
   "reused_existing_c": true,
   "compiled": true,

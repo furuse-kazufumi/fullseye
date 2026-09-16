@@ -1,0 +1,12 @@
+{
+  "op": "sg_slic_superpixels",
+  "note": "docs/ops/2d/segment/sg_slic_superpixels.md",
+  "note_sha256_16": "ff5d4cda925f3d68",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:18:51",
+  "c_path": "impl2/c/qwen2.5-14b/sg_slic_superpixels.c",
+  "prompt_sha256_16": "33d8f9d02efecea5",
+  "gen_seconds": 16.3,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_slic_superpixels.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_slic_superpixels.c:11:22: error: implicit declaration of function 'max'; did you mean 'fmax'? [-Wimplicit-function-declaration]\n   11 |     int n_segments = max(2, round(6 + (1 - a) * 40));\n      |                      ^~~\n      |                      fmax\n"
+}

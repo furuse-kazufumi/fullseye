@@ -1,0 +1,12 @@
+{
+  "op": "zero_crossing",
+  "note": "docs/ops/2d/segmentation/zero_crossing.md",
+  "note_sha256_16": "b6d992b1aba3399f",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:23:32",
+  "c_path": "impl2/c/qwen2.5-14b/zero_crossing.c",
+  "prompt_sha256_16": "db0ad0f042085109",
+  "gen_seconds": 14.2,
+  "status": "compile_error",
+  "compile_error": "math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zero_crossing.c:20:52: warning: incompatible implicit declaration of built-in function 'exp' [-Wbuiltin-declaration-mismatch]\n   20 |             gaussian_kernel[i * kernel_size + j] = exp(-(x * x + y * y) / (2.0 * sigma * sigma));\n      |                                                    ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zero_crossing.c:20:52: note: include '<math.h>' or provide a declaration of 'exp'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zero_crossing.c:71:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   71 |     free(gaussian_kernel);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zero_crossing.c:71:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zero_crossing.c:71:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zero_crossing.c:71:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

@@ -1,0 +1,11 @@
+{
+  "op": "rescale_img",
+  "note": "docs/ops/2d/geometry/rescale_img.md",
+  "note_sha256_16": "d3e45f418a59d4e4",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:49:20",
+  "c_path": "impl2/c/qwen2.5-14b/rescale_img.c",
+  "prompt_sha256_16": "c3aa83a35c3ea486",
+  "status": "model_error",
+  "reason": "timed out"
+}

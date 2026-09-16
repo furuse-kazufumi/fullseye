@@ -1,0 +1,12 @@
+{
+  "op": "frei_dir",
+  "note": "docs/ops/2d/edges/frei_dir.md",
+  "note_sha256_16": "d4914003f7d627ab",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:26:11",
+  "c_path": "impl2/c/qwen2.5-14b/frei_dir.c",
+  "prompt_sha256_16": "1e33d72d76fc1960",
+  "gen_seconds": 24.5,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\frei_dir.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\frei_dir.c:40:51: error: 'M_PI' undeclared (first use in this function)\n   40 |             out[y * w + x] = atan2(gy, gx) / (2 * M_PI) + 0.5; // [0, 1] に正規化\n      |                                                   ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\frei_dir.c:40:51: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

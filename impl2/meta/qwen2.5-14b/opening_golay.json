@@ -1,0 +1,12 @@
+{
+  "op": "opening_golay",
+  "note": "docs/ops/2d/region/opening_golay.md",
+  "note_sha256_16": "583e057030fc52af",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:21:51",
+  "c_path": "impl2/c/qwen2.5-14b/opening_golay.c",
+  "prompt_sha256_16": "9adcbffcf0fdd096",
+  "gen_seconds": 16.9,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\opening_golay.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\opening_golay.c:51:33: error: 'max_dist' undeclared (first use in this function)\n   51 |                     if (dist <= max_dist) {\n      |                                 ^~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\opening_golay.c:51:33: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

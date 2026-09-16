@@ -1,0 +1,12 @@
+{
+  "op": "xkor_bilateral",
+  "note": "docs/ops/2d/smoothing/xkor_bilateral.md",
+  "note_sha256_16": "c8a4a3f675ae8acb",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:07:25",
+  "c_path": "impl2/c/qwen2.5-14b/xkor_bilateral.c",
+  "prompt_sha256_16": "8189dc4751328e92",
+  "gen_seconds": 13.5,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xkor_bilateral.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xkor_bilateral.c:22:34: error: implicit declaration of function 'exp' [-Wimplicit-function-declaration]\n   22 |                     double g_s = exp(-(kx * kx + ky * ky) / (2.0 * sigma_s * sigma_s));\n      |                                  ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xkor_bilateral.c:1:1: note: include '<math.h>' or provide a declaration of 'exp'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xkor_bilateral.c:22:34: warning: incompatible implicit declaration of built-in function 'exp' [-Wbuiltin-declaration-mismatch]\n   22 |                     double g_s = exp(-(kx * kx + ky * ky) / (2.0 * sigma_s * sigma_s));\n      |                                  ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xkor_bilateral.c:22:34: note: include '<math.h>' or provide a declaration of 'exp'\n"
+}

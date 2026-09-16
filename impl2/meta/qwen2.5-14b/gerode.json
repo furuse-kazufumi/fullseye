@@ -1,0 +1,12 @@
+{
+  "op": "gerode",
+  "note": "docs/ops/2d/morphology/gerode.md",
+  "note_sha256_16": "e466b0cd9cb6f143",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:27:20",
+  "c_path": "impl2/c/qwen2.5-14b/gerode.c",
+  "prompt_sha256_16": "ae62c5b057b6f9fc",
+  "gen_seconds": 11.8,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gerode.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gerode.c:24:35: error: implicit declaration of function 'fmin' [-Wimplicit-function-declaration]\n   24 |                         min_val = fmin(min_val, in[ny * w + nx]);\n      |                                   ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gerode.c:1:1: note: include '<math.h>' or provide a declaration of 'fmin'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gerode.c:24:35: warning: incompatible implicit declaration of built-in function 'fmin' [-Wbuiltin-declaration-mismatch]\n   24 |                         min_val = fmin(min_val, in[ny * w + nx]);\n      |                                   ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gerode.c:24:35: note: include '<math.h>' or provide a declaration of 'fmin'\n"
+}

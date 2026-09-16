@@ -1,0 +1,39 @@
+{
+  "op": "polar_trans_region_inv",
+  "note": "docs/ops/2d/geometry/polar_trans_region_inv.md",
+  "note_sha256_16": "66ab2e41e481cf74",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:22:08",
+  "c_path": "impl2/c/qwen2.5-14b/polar_trans_region_inv.c",
+  "prompt_sha256_16": "b1a374c940ab2d9f",
+  "gen_seconds": 8.6,
+  "compiled": true,
+  "in_sort": "region",
+  "out_sort": "region",
+  "probe_set": "region",
+  "aborted_after_crashes": 3,
+  "probes": [
+    {
+      "probe": "checkerboard8",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "impl2_crashed"
+    },
+    {
+      "probe": "corner_touch2",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "impl2_crashed"
+    },
+    {
+      "probe": "two_blobs",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "impl2_crashed"
+    }
+  ],
+  "worst_max_abs_diff": null,
+  "agrees": false,
+  "tol": 1e-09,
+  "status": "diverges"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "hx_gen_grid_region",
+  "note": "docs/ops/2d/halcon_ext/hx_gen_grid_region.md",
+  "note_sha256_16": "7bc2e1adf7477625",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:20:17",
+  "c_path": "impl2/c/qwen2.5-14b/hx_gen_grid_region.c",
+  "prompt_sha256_16": "8ea6a144399fd790",
+  "gen_seconds": 13.0,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_grid_region.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_grid_region.c:5:27: error: implicit declaration of function 'MIN' [-Wimplicit-function-declaration]\n    5 |     int grid_size = (int)(MIN(h, w) * grid_spacing);\n      |                           ^~~\n"
+}

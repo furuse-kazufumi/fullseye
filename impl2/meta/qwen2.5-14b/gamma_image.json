@@ -1,0 +1,12 @@
+{
+  "op": "gamma_image",
+  "note": "docs/ops/2d/gray/gamma_image.md",
+  "note_sha256_16": "ee4d3b441f32e249",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:26:35",
+  "c_path": "impl2/c/qwen2.5-14b/gamma_image.c",
+  "prompt_sha256_16": "4210027f8a2b67df",
+  "gen_seconds": 9.1,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gamma_image.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gamma_image.c:20:24: error: implicit declaration of function 'pow' [-Wimplicit-function-declaration]\n   20 |             out[idx] = pow(value, gamma);\n      |                        ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gamma_image.c:1:1: note: include '<math.h>' or provide a declaration of 'pow'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gamma_image.c:20:24: warning: incompatible implicit declaration of built-in function 'pow' [-Wbuiltin-declaration-mismatch]\n   20 |             out[idx] = pow(value, gamma);\n      |                        ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gamma_image.c:20:24: note: include '<math.h>' or provide a declaration of 'pow'\n"
+}

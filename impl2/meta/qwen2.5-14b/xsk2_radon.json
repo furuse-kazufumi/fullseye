@@ -1,0 +1,12 @@
+{
+  "op": "xsk2_radon",
+  "note": "docs/ops/2d/frequency/xsk2_radon.md",
+  "note_sha256_16": "3ca0f95022df1605",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:51:29",
+  "c_path": "impl2/c/qwen2.5-14b/xsk2_radon.c",
+  "prompt_sha256_16": "06a49db7e6e0fcc7",
+  "gen_seconds": 10.2,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk2_radon.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk2_radon.c:13:25: error: 'M_PI' undeclared (first use in this function)\n   13 |     double angle_step = M_PI / num_angles; // 角度のステップ\n      |                         ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk2_radon.c:13:25: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

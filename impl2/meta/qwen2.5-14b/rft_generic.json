@@ -1,0 +1,12 @@
+{
+  "op": "rft_generic",
+  "note": "docs/ops/2d/frequency/rft_generic.md",
+  "note_sha256_16": "beb196b0c8e3ca26",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:49:13",
+  "c_path": "impl2/c/qwen2.5-14b/rft_generic.c",
+  "prompt_sha256_16": "f52188b895eab7c7",
+  "gen_seconds": 12.4,
+  "status": "compile_error",
+  "compile_error": "de a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rft_generic.c:44:26: error: implicit declaration of function 'cabs' [-Wimplicit-function-declaration]\n   44 |         double abs_val = cabs(complex_out[i]);\n      |                          ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rft_generic.c:2:1: note: include '<complex.h>' or provide a declaration of 'cabs'\n    1 | #include <math.h>\n  +++ |+#include <complex.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rft_generic.c:44:26: warning: incompatible implicit declaration of built-in function 'cabs' [-Wbuiltin-declaration-mismatch]\n   44 |         double abs_val = cabs(complex_out[i]);\n      |                          ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rft_generic.c:44:26: note: include '<complex.h>' or provide a declaration of 'cabs'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rft_generic.c:59:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\n   59 |     free(complex_out);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rft_generic.c:59:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

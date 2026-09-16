@@ -1,0 +1,12 @@
+{
+  "op": "macro_edge",
+  "note": "docs/ops/2d/macro/macro_edge.md",
+  "note_sha256_16": "b26835dd1ff0136a",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:13:23",
+  "c_path": "impl2/c/qwen2.5-14b/macro_edge.c",
+  "prompt_sha256_16": "f6035f3aa4aa779e",
+  "gen_seconds": 13.7,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\macro_edge.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\macro_edge.c:45:37: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]\n   45 |             double edge_intensity = sqrt(gx * gx + gy * gy);\n      |                                     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\macro_edge.c:1:1: note: include '<math.h>' or provide a declaration of 'sqrt'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\macro_edge.c:45:37: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]\n   45 |             double edge_intensity = sqrt(gx * gx + gy * gy);\n      |                                     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\macro_edge.c:45:37: note: include '<math.h>' or provide a declaration of 'sqrt'\n"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "xsk_unwrap_phase",
+  "note": "docs/ops/2d/restoration/xsk_unwrap_phase.md",
+  "note_sha256_16": "ab9d44a03bc02775",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:53:30",
+  "c_path": "impl2/c/qwen2.5-14b/xsk_unwrap_phase.c",
+  "prompt_sha256_16": "f853788caede78ef",
+  "gen_seconds": 18.7,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk_unwrap_phase.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk_unwrap_phase.c:12:52: error: 'M_PI' undeclared (first use in this function)\n   12 |             double phase = (in[y * w + x] - 0.5) * M_PI * 2.0;\n      |                                                    ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk_unwrap_phase.c:12:52: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

@@ -1,0 +1,11 @@
+{
+  "op": "deform_ffd",
+  "note": "docs/ops/2d/deformation/deform_ffd.md",
+  "note_sha256_16": "cc5e5979220cf07a",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:24:55",
+  "c_path": "impl2/c/qwen2.5-14b/deform_ffd.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "ouble t, int order) {\n      |        ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\deform_ffd.c:25:37: note: previous implicit declaration of 'bspline' with type 'int()'\n   25 |                     double weight = bspline(u - (j + 1), 3) * bspline(v - (i + 1), 3);\n      |                                     ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\deform_ffd.c: In function 'bspline':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\deform_ffd.c:65:37: error: implicit declaration of function 'comb' [-Wimplicit-function-declaration]\n   65 |             double b = pow(-1, i) * comb(order, i) * pow(t - i, order);\n      |                                     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\deform_ffd.c: At top level:\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\deform_ffd.c:73:8: error: conflicting types for 'comb'; have 'double(int,  int)'\n   73 | double comb(int n, int k) {\n      |        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\deform_ffd.c:65:37: note: previous implicit declaration of 'comb' with type 'int()'\n   65 |             double b = pow(-1, i) * comb(order, i) * pow(t - i, order);\n      |                                     ^~~~\n"
+}

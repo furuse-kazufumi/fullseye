@@ -1,0 +1,12 @@
+{
+  "op": "sk_butterworth",
+  "note": "docs/ops/2d/frequency/sk_butterworth.md",
+  "note_sha256_16": "dc809a464bda1f8b",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:40:00",
+  "c_path": "impl2/c/qwen2.5-14b/sk_butterworth.c",
+  "prompt_sha256_16": "3ac54faea390bfb4",
+  "gen_seconds": 23.6,
+  "status": "compile_error",
+  "compile_error": "n]\n   30 |     ifft_transform(fft_out, h, w, out);\n      |     ^~~~~~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_butterworth.c: At top level:\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_butterworth.c:43:6: warning: conflicting types for 'fft_transform'; have 'void(const double *, int,  int,  double *)'\n   43 | void fft_transform(const double* in, int h, int w, double* out) {\n      |      ^~~~~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_butterworth.c:12:5: note: previous implicit declaration of 'fft_transform' with type 'void(const double *, int,  int,  double *)'\n   12 |     fft_transform(in, h, w, fft_in);\n      |     ^~~~~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_butterworth.c:47:6: warning: conflicting types for 'ifft_transform'; have 'void(const double *, int,  int,  double *)'\n   47 | void ifft_transform(const double* in, int h, int w, double* out) {\n      |      ^~~~~~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_butterworth.c:30:5: note: previous implicit declaration of 'ifft_transform' with type 'void(const double *, int,  int,  double *)'\n   30 |     ifft_transform(fft_out, h, w, out);\n      |     ^~~~~~~~~~~~~~\n"
+}

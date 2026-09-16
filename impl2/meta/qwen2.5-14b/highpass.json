@@ -1,0 +1,12 @@
+{
+  "op": "highpass",
+  "note": "docs/ops/2d/frequency/highpass.md",
+  "note_sha256_16": "7ac139ebd6ace275",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:29:40",
+  "c_path": "impl2/c/qwen2.5-14b/highpass.c",
+  "prompt_sha256_16": "3712b1f31f174fc9",
+  "gen_seconds": 18.2,
+  "status": "compile_error",
+  "compile_error": "\\c\\qwen2.5-14b\\highpass.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\highpass.c:15:38: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n   15 |     double* complex_input = (double*)malloc(h * w * 2 * sizeof(double));\n      |                                      ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\highpass.c:15:38: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\highpass.c:44:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   44 |     free(complex_input);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\highpass.c:44:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\highpass.c:44:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\highpass.c:44:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

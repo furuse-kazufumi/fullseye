@@ -1,0 +1,12 @@
+{
+  "op": "xsk3_corner_moravec",
+  "note": "docs/ops/2d/edges/xsk3_corner_moravec.md",
+  "note_sha256_16": "b9b052699d3c6963",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:52:01",
+  "c_path": "impl2/c/qwen2.5-14b/xsk3_corner_moravec.c",
+  "prompt_sha256_16": "b943b8c768b4a35a",
+  "gen_seconds": 19.0,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk3_corner_moravec.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk3_corner_moravec.c:25:27: error: assignment of read-only location '*(in + (sizetype)((long long unsigned int)(y * w + x) * 8))'\n   25 |             in[y * w + x] = (in[y * w + x] - min_val) / range;\n      |                           ^\n"
+}

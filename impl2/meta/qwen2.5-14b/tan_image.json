@@ -1,0 +1,12 @@
+{
+  "op": "tan_image",
+  "note": "docs/ops/2d/arithmetic/tan_image.md",
+  "note_sha256_16": "0c42134c0febded3",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:04:17",
+  "c_path": "impl2/c/qwen2.5-14b/tan_image.c",
+  "prompt_sha256_16": "0c6dd18c4ff65b19",
+  "gen_seconds": 15.2,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tan_image.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tan_image.c:13:44: error: 'M_PI' undeclared (first use in this function)\n   13 |             double angle = (pixel - 0.5) * M_PI * 0.9;\n      |                                            ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tan_image.c:13:44: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

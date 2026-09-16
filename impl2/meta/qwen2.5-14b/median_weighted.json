@@ -1,0 +1,12 @@
+{
+  "op": "median_weighted",
+  "note": "docs/ops/2d/rank/median_weighted.md",
+  "note_sha256_16": "5e965131ec529647",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:46:25",
+  "c_path": "impl2/c/qwen2.5-14b/median_weighted.c",
+  "prompt_sha256_16": "529bb1b394c2e8ee",
+  "gen_seconds": 14.5,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\median_weighted.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\median_weighted.c:53:13: error: implicit declaration of function 'qsort' [-Wimplicit-function-declaration]\n   53 |             qsort(window, window_size * window_size, sizeof(double), compare);\n      |             ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\median_weighted.c:53:70: error: 'compare' undeclared (first use in this function)\n   53 |             qsort(window, window_size * window_size, sizeof(double), compare);\n      |                                                                      ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\median_weighted.c:53:70: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

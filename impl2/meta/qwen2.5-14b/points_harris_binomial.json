@@ -1,0 +1,12 @@
+{
+  "op": "points_harris_binomial",
+  "note": "docs/ops/2d/edges/points_harris_binomial.md",
+  "note_sha256_16": "68953e2b397df312",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:47:48",
+  "c_path": "impl2/c/qwen2.5-14b/points_harris_binomial.c",
+  "prompt_sha256_16": "7b227e335be3b6a7",
+  "gen_seconds": 23.1,
+  "status": "compile_error",
+  "compile_error": "ovide a declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\points_harris_binomial.c:9:33: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n    9 |     double* smoothed = (double*)malloc(h * w * sizeof(double));\n      |                                 ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\points_harris_binomial.c:9:33: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\points_harris_binomial.c:65:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   65 |     free(smoothed);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\points_harris_binomial.c:65:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\points_harris_binomial.c:65:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\points_harris_binomial.c:65:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "sg_region_growing_seeded",
+  "note": "docs/ops/2d/segment/sg_region_growing_seeded.md",
+  "note_sha256_16": "7d83dbc99a77ab86",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:24:23",
+  "c_path": "impl2/c/qwen2.5-14b/sg_region_growing_seeded.c",
+  "prompt_sha256_16": "8d49eef19ca77d60",
+  "gen_seconds": 8.5,
+  "status": "compile_error",
+  "compile_error": ", int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_region_growing_seeded.c:42:55: warning: incompatible implicit declaration of built-in function 'fabs' [-Wbuiltin-declaration-mismatch]\n   42 |                             if (!mask[ny * w + nx] && fabs(value - neighbor_value) <= a) {\n      |                                                       ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_region_growing_seeded.c:42:55: note: include '<math.h>' or provide a declaration of 'fabs'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_region_growing_seeded.c:59:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   59 |     free(mask);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_region_growing_seeded.c:59:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_region_growing_seeded.c:59:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_region_growing_seeded.c:59:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

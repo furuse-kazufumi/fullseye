@@ -1,0 +1,12 @@
+{
+  "op": "r3_clip_region",
+  "note": "docs/ops/2d/region/r3_clip_region.md",
+  "note_sha256_16": "418affbd1250e153",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:23:11",
+  "c_path": "impl2/c/qwen2.5-14b/r3_clip_region.c",
+  "prompt_sha256_16": "6b02d6efc220eb40",
+  "gen_seconds": 9.0,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r3_clip_region.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r3_clip_region.c:3:14: error: implicit declaration of function 'MAX' [-Wimplicit-function-declaration]\n    3 |     int wh = MAX(1, (int)round(a * h));\n      |              ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r3_clip_region.c:3:26: error: implicit declaration of function 'round' [-Wimplicit-function-declaration]\n    3 |     int wh = MAX(1, (int)round(a * h));\n      |                          ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r3_clip_region.c:1:1: note: include '<math.h>' or provide a declaration of 'round'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r3_clip_region.c:3:26: warning: incompatible implicit declaration of built-in function 'round' [-Wbuiltin-declaration-mismatch]\n    3 |     int wh = MAX(1, (int)round(a * h));\n      |                          ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r3_clip_region.c:3:26: note: include '<math.h>' or provide a declaration of 'round'\n"
+}

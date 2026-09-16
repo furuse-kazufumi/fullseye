@@ -1,0 +1,12 @@
+{
+  "op": "gray_erosion_rect",
+  "note": "docs/ops/2d/rank/gray_erosion_rect.md",
+  "note_sha256_16": "72afa951f2397151",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:28:06",
+  "c_path": "impl2/c/qwen2.5-14b/gray_erosion_rect.c",
+  "prompt_sha256_16": "3db6e926e3e7594e",
+  "gen_seconds": 8.3,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_erosion_rect.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_erosion_rect.c:35:35: error: implicit declaration of function 'fmin' [-Wimplicit-function-declaration]\n   35 |                         min_val = fmin(min_val, in[ny * w + nx]);\n      |                                   ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_erosion_rect.c:1:1: note: include '<math.h>' or provide a declaration of 'fmin'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_erosion_rect.c:35:35: warning: incompatible implicit declaration of built-in function 'fmin' [-Wbuiltin-declaration-mismatch]\n   35 |                         min_val = fmin(min_val, in[ny * w + nx]);\n      |                                   ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_erosion_rect.c:35:35: note: include '<math.h>' or provide a declaration of 'fmin'\n"
+}

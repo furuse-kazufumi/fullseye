@@ -1,0 +1,12 @@
+{
+  "op": "hough_line_trans",
+  "note": "docs/ops/2d/features/hough_line_trans.md",
+  "note_sha256_16": "729d272e95df46a2",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:29:58",
+  "c_path": "impl2/c/qwen2.5-14b/hough_line_trans.c",
+  "prompt_sha256_16": "3716fef8bad2191a",
+  "gen_seconds": 33.0,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hough_line_trans.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hough_line_trans.c:39:48: error: 'M_PI' undeclared (first use in this function)\n   39 |                     double rad_theta = theta * M_PI / 180.0;\n      |                                                ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hough_line_trans.c:39:48: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "xsk3_corner_fast",
+  "note": "docs/ops/2d/edges/xsk3_corner_fast.md",
+  "note_sha256_16": "0888c8eb64e132ce",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:03:19",
+  "c_path": "impl2/c/qwen2.5-14b/xsk3_corner_fast.c",
+  "prompt_sha256_16": "1fac0c1cabd52957",
+  "gen_seconds": 25.5,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk3_corner_fast.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk3_corner_fast.c:27:35: error: 'M_PI' undeclared (first use in this function)\n   27 |                 int nx = (x + cos(M_PI * i / 8.0)) + 0.5;\n      |                                   ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk3_corner_fast.c:27:35: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

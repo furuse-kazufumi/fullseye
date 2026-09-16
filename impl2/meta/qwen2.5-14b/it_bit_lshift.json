@@ -1,0 +1,12 @@
+{
+  "op": "it_bit_lshift",
+  "note": "docs/ops/2d/gray/it_bit_lshift.md",
+  "note_sha256_16": "e93efecd2e23073b",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:31:28",
+  "c_path": "impl2/c/qwen2.5-14b/it_bit_lshift.c",
+  "prompt_sha256_16": "35cc77d13ebedc0c",
+  "gen_seconds": 15.3,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\it_bit_lshift.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\it_bit_lshift.c:3:29: error: implicit declaration of function 'round' [-Wimplicit-function-declaration]\n    3 |     int shift_amount = (int)round(a * 7.0);\n      |                             ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\it_bit_lshift.c:1:1: note: include '<math.h>' or provide a declaration of 'round'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\it_bit_lshift.c:3:29: warning: incompatible implicit declaration of built-in function 'round' [-Wbuiltin-declaration-mismatch]\n    3 |     int shift_amount = (int)round(a * 7.0);\n      |                             ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\it_bit_lshift.c:3:29: note: include '<math.h>' or provide a declaration of 'round'\n"
+}

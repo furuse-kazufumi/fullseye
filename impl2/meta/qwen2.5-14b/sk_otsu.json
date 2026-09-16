@@ -1,0 +1,12 @@
+{
+  "op": "sk_otsu",
+  "note": "docs/ops/2d/segmentation/sk_otsu.md",
+  "note_sha256_16": "d48f9d89161453a4",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:25:00",
+  "c_path": "impl2/c/qwen2.5-14b/sk_otsu.c",
+  "prompt_sha256_16": "42eef90e095a1211",
+  "gen_seconds": 7.2,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_otsu.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_otsu.c:7:26: error: variable-sized object may not be initialized except with an empty initializer\n    7 |     int hist[hist_max] = {0};\n      |                          ^\n"
+}

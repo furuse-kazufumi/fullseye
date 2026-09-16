@@ -1,0 +1,12 @@
+{
+  "op": "rotate_image",
+  "note": "docs/ops/2d/geometry/rotate_image.md",
+  "note_sha256_16": "950410789fb87cd5",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:59:31",
+  "c_path": "impl2/c/qwen2.5-14b/rotate_image.c",
+  "prompt_sha256_16": "fe4a6641bd304bd8",
+  "gen_seconds": 17.3,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rotate_image.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rotate_image.c:5:32: error: 'M_PI' undeclared (first use in this function)\n    5 |     double angle = (a - 0.5) * M_PI / 2.0; // -45°〜+45°の範囲に変換\n      |                                ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\rotate_image.c:5:32: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

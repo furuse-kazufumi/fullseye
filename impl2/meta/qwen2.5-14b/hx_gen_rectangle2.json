@@ -1,0 +1,12 @@
+{
+  "op": "hx_gen_rectangle2",
+  "note": "docs/ops/2d/halcon_ext/hx_gen_rectangle2.md",
+  "note_sha256_16": "64b8bed531967f69",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:11:51",
+  "c_path": "impl2/c/qwen2.5-14b/hx_gen_rectangle2.c",
+  "prompt_sha256_16": "049ed62dc8c7c2bd",
+  "gen_seconds": 17.2,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_rectangle2.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_rectangle2.c:13:24: error: 'M_PI' undeclared (first use in this function)\n   13 |     double angle = b * M_PI;\n      |                        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_rectangle2.c:13:24: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

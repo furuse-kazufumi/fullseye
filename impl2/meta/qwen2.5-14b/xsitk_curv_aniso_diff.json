@@ -1,0 +1,12 @@
+{
+  "op": "xsitk_curv_aniso_diff",
+  "note": "docs/ops/2d/extra/xsitk_curv_aniso_diff.md",
+  "note_sha256_16": "cc310448d0549e79",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:49:52",
+  "c_path": "impl2/c/qwen2.5-14b/xsitk_curv_aniso_diff.c",
+  "prompt_sha256_16": "a6d2d91f7f547de1",
+  "gen_seconds": 21.3,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_curv_aniso_diff.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_curv_aniso_diff.c:43:31: error: assignment of read-only location '*(in + (sizetype)((long long unsigned int)(y * w + x) * 8))'\n   43 |                 in[y * w + x] = out[y * w + x];\n      |                               ^\n"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "laplace_of_gauss",
+  "note": "docs/ops/2d/edges/laplace_of_gauss.md",
+  "note_sha256_16": "46465ed57b74b6ca",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:44:28",
+  "c_path": "impl2/c/qwen2.5-14b/laplace_of_gauss.c",
+  "prompt_sha256_16": "5ab50044de84c01e",
+  "gen_seconds": 39.8,
+  "status": "compile_error",
+  "compile_error": "auss.c:19:40: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\laplace_of_gauss.c:25:75: error: 'M_PI' undeclared (first use in this function)\n   25 |             double g = exp(-(x * x + y * y) / (2 * sigma * sigma)) / (2 * M_PI * sigma * sigma);\n      |                                                                           ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\laplace_of_gauss.c:25:75: note: each undeclared identifier is reported only once for each function it appears in\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\laplace_of_gauss.c:81:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   81 |     free(gaussian_kernel);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\laplace_of_gauss.c:81:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\laplace_of_gauss.c:81:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\laplace_of_gauss.c:81:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

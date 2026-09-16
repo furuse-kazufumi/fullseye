@@ -1,0 +1,12 @@
+{
+  "op": "hx_gabor",
+  "note": "docs/ops/2d/halcon_ext/hx_gabor.md",
+  "note_sha256_16": "3601b594a8884fb6",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:29:38",
+  "c_path": "impl2/c/qwen2.5-14b/hx_gabor.c",
+  "prompt_sha256_16": "2ba12d66fe4cba62",
+  "gen_seconds": 15.9,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gabor.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gabor.c:5:24: error: 'M_PI' undeclared (first use in this function)\n    5 |     double theta = a * M_PI;  // 方位\n      |                        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gabor.c:5:24: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

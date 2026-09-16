@@ -1,0 +1,38 @@
+{
+  "op": "aug_shot_noise",
+  "note": "docs/ops/2d/augmentation/aug_shot_noise.md",
+  "note_sha256_16": "3d1f1d870daa9eff",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:24:26",
+  "c_path": "impl2/c/qwen2.5-14b/aug_shot_noise.c",
+  "reused_existing_c": true,
+  "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
+  "aborted_after_crashes": 3,
+  "probes": [
+    {
+      "probe": "checkerboard8",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "impl2_crashed"
+    },
+    {
+      "probe": "ramp_x",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "impl2_crashed"
+    },
+    {
+      "probe": "ramp_y",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "impl2_crashed"
+    }
+  ],
+  "worst_max_abs_diff": null,
+  "agrees": false,
+  "tol": 1e-09,
+  "status": "diverges"
+}

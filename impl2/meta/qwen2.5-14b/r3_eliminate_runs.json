@@ -1,0 +1,12 @@
+{
+  "op": "r3_eliminate_runs",
+  "note": "docs/ops/2d/region/r3_eliminate_runs.md",
+  "note_sha256_16": "58ec836f9c926c63",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:16:03",
+  "c_path": "impl2/c/qwen2.5-14b/r3_eliminate_runs.c",
+  "prompt_sha256_16": "c3c9546e77ec4d26",
+  "gen_seconds": 14.1,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r3_eliminate_runs.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\r3_eliminate_runs.c:10:23: error: implicit declaration of function 'MAX' [-Wimplicit-function-declaration]\n   10 |     int min_len = 1 + MAX(1, (int)round(8 * a));\n      |                       ^~~\n"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "prewitt_mag",
+  "note": "docs/ops/2d/edges/prewitt_mag.md",
+  "note_sha256_16": "9d80bc42aae44953",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:48:36",
+  "c_path": "impl2/c/qwen2.5-14b/prewitt_mag.c",
+  "prompt_sha256_16": "9b44c2f0d83f64f9",
+  "gen_seconds": 17.8,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\prewitt_mag.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\prewitt_mag.c:39:26: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]\n   39 |             double mag = sqrt(gx * gx + gy * gy);\n      |                          ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\prewitt_mag.c:1:1: note: include '<math.h>' or provide a declaration of 'sqrt'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\prewitt_mag.c:39:26: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]\n   39 |             double mag = sqrt(gx * gx + gy * gy);\n      |                          ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\prewitt_mag.c:39:26: note: include '<math.h>' or provide a declaration of 'sqrt'\n"
+}

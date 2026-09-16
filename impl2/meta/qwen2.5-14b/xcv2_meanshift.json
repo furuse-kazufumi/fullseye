@@ -1,0 +1,12 @@
+{
+  "op": "xcv2_meanshift",
+  "note": "docs/ops/2d/segmentation/xcv2_meanshift.md",
+  "note_sha256_16": "99743d501cdeff6d",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:45:55",
+  "c_path": "impl2/c/qwen2.5-14b/xcv2_meanshift.c",
+  "prompt_sha256_16": "f38feb1eb3892ee7",
+  "gen_seconds": 20.6,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xcv2_meanshift.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xcv2_meanshift.c:28:29: error: implicit declaration of function 'fabs' [-Wimplicit-function-declaration]\n   28 |                         if (fabs(pixel - in[y * w + x]) <= sr) {\n      |                             ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xcv2_meanshift.c:1:1: note: include '<math.h>' or provide a declaration of 'fabs'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xcv2_meanshift.c:28:29: warning: incompatible implicit declaration of built-in function 'fabs' [-Wbuiltin-declaration-mismatch]\n   28 |                         if (fabs(pixel - in[y * w + x]) <= sr) {\n      |                             ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xcv2_meanshift.c:28:29: note: include '<math.h>' or provide a declaration of 'fabs'\n"
+}

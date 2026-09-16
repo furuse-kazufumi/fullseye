@@ -1,0 +1,11 @@
+{
+  "op": "bandpass_image",
+  "note": "docs/ops/2d/frequency/bandpass_image.md",
+  "note_sha256_16": "bdd53e4b453a8ca2",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:24:20",
+  "c_path": "impl2/c/qwen2.5-14b/bandpass_image.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": ":51:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\bandpass_image.c: At top level:\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\bandpass_image.c:57:6: warning: conflicting types for 'fft_transform'; have 'void(const double *, int,  int,  double *)'\n   57 | void fft_transform(const double* in, int h, int w, double* out) {\n      |      ^~~~~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\bandpass_image.c:23:5: note: previous implicit declaration of 'fft_transform' with type 'void(const double *, int,  int,  double *)'\n   23 |     fft_transform(fft_in, h, w, fft_out);\n      |     ^~~~~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\bandpass_image.c:62:6: warning: conflicting types for 'ifft_transform'; have 'void(const double *, int,  int,  double *)'\n   62 | void ifft_transform(const double* in, int h, int w, double* out) {\n      |      ^~~~~~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\bandpass_image.c:41:5: note: previous implicit declaration of 'ifft_transform' with type 'void(const double *, int,  int,  double *)'\n   41 |     ifft_transform(fft_out, h, w, fft_out);\n      |     ^~~~~~~~~~~~~~\n"
+}

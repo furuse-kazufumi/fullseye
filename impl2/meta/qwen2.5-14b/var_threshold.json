@@ -1,0 +1,12 @@
+{
+  "op": "var_threshold",
+  "note": "docs/ops/2d/segmentation/var_threshold.md",
+  "note_sha256_16": "04be6bbeb5cf7527",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:26:13",
+  "c_path": "impl2/c/qwen2.5-14b/var_threshold.c",
+  "prompt_sha256_16": "9b3a3732ca550233",
+  "gen_seconds": 8.8,
+  "status": "compile_error",
+  "compile_error": "gevolve\\impl2\\c\\qwen2.5-14b\\var_threshold.c:2:1: note: include '<string.h>' or provide a declaration of 'memset'\n    1 | #include <math.h>\n  +++ |+#include <string.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\var_threshold.c:13:5: warning: incompatible implicit declaration of built-in function 'memset' [-Wbuiltin-declaration-mismatch]\n   13 |     memset(padded_in, 0, padded_h * padded_w * sizeof(double));\n      |     ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\var_threshold.c:13:5: note: include '<string.h>' or provide a declaration of 'memset'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\var_threshold.c:56:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   56 |     free(padded_in);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\var_threshold.c:56:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\var_threshold.c:56:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\var_threshold.c:56:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

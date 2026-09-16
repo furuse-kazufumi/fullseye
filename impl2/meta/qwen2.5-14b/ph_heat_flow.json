@@ -1,0 +1,12 @@
+{
+  "op": "ph_heat_flow",
+  "note": "docs/ops/2d/physics/ph_heat_flow.md",
+  "note_sha256_16": "a8d0e04d506cc16f",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:36:52",
+  "c_path": "impl2/c/qwen2.5-14b/ph_heat_flow.c",
+  "prompt_sha256_16": "cae2f4578bba444e",
+  "gen_seconds": 20.3,
+  "status": "compile_error",
+  "compile_error": "ng '#include <stddef.h>'\n  +++ |+#include <stddef.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_heat_flow.c:7:17: note: each undeclared identifier is reported only once for each function it appears in\n    7 |     if (temp == NULL) {\n      |                 ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_heat_flow.c:37:19: error: assignment of read-only location '*(in + (sizetype)((long long unsigned int)i * 8))'\n   37 |             in[i] = out[i];\n      |                   ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_heat_flow.c:42:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   42 |     free(temp);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_heat_flow.c:42:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_heat_flow.c:42:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\ph_heat_flow.c:42:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

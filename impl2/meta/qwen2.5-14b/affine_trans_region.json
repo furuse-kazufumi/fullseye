@@ -1,0 +1,12 @@
+{
+  "op": "affine_trans_region",
+  "note": "docs/ops/2d/geometry/affine_trans_region.md",
+  "note_sha256_16": "2e455b0b94db67ed",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:06:20",
+  "c_path": "impl2/c/qwen2.5-14b/affine_trans_region.c",
+  "prompt_sha256_16": "002511d8373a62f7",
+  "gen_seconds": 15.9,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\affine_trans_region.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\affine_trans_region.c:5:39: error: 'M_PI' undeclared (first use in this function)\n    5 |     double angle = (a - 0.5) * 40.0 * M_PI / 180.0; // 回転角をラジアンに変換\n      |                                       ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\affine_trans_region.c:5:39: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

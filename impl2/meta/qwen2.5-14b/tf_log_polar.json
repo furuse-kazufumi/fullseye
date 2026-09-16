@@ -1,0 +1,12 @@
+{
+  "op": "tf_log_polar",
+  "note": "docs/ops/2d/geometry/tf_log_polar.md",
+  "note_sha256_16": "5f6c1285026eccd4",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:55:07",
+  "c_path": "impl2/c/qwen2.5-14b/tf_log_polar.c",
+  "prompt_sha256_16": "d15f40499aa3a8f9",
+  "gen_seconds": 9.8,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_log_polar.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_log_polar.c:20:34: error: 'M_PI' undeclared (first use in this function)\n   20 |             angle = fmod(angle + M_PI, 2 * M_PI) - M_PI;\n      |                                  ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_log_polar.c:20:34: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

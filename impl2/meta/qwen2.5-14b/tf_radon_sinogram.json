@@ -1,0 +1,12 @@
+{
+  "op": "tf_radon_sinogram",
+  "note": "docs/ops/2d/transform/tf_radon_sinogram.md",
+  "note_sha256_16": "2ac11d02cccd7039",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:05:09",
+  "c_path": "impl2/c/qwen2.5-14b/tf_radon_sinogram.c",
+  "prompt_sha256_16": "fb31423bb5471246",
+  "gen_seconds": 16.9,
+  "status": "compile_error",
+  "compile_error": "t w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_radon_sinogram.c:23:59: warning: incompatible implicit declaration of built-in function 'tan' [-Wbuiltin-declaration-mismatch]\n   23 |                 double x_proj = x + (y - (h - 1) / 2.0) * tan(theta);\n      |                                                           ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_radon_sinogram.c:23:59: note: include '<math.h>' or provide a declaration of 'tan'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_radon_sinogram.c:24:34: error: implicit declaration of function 'round' [-Wimplicit-function-declaration]\n   24 |                 int x_idx = (int)round(x_proj);\n      |                                  ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_radon_sinogram.c:24:34: note: include '<math.h>' or provide a declaration of 'round'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_radon_sinogram.c:24:34: warning: incompatible implicit declaration of built-in function 'round' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_radon_sinogram.c:24:34: note: include '<math.h>' or provide a declaration of 'round'\n"
+}

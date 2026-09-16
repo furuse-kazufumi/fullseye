@@ -1,0 +1,11 @@
+{
+  "op": "cv_gradient",
+  "note": "docs/ops/2d/morphology/cv_gradient.md",
+  "note_sha256_16": "6bcd7fc06d718d81",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:24:52",
+  "c_path": "impl2/c/qwen2.5-14b/cv_gradient.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_gradient.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_gradient.c:19:30: error: 'DBL_MAX' undeclared (first use in this function)\n   19 |             double erosion = DBL_MAX;\n      |                              ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_gradient.c:2:1: note: 'DBL_MAX' is defined in header '<float.h>'; this is probably fixable by adding '#include <float.h>'\n    1 | #include <math.h>\n  +++ |+#include <float.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\cv_gradient.c:19:30: note: each undeclared identifier is reported only once for each function it appears in\n   19 |             double erosion = DBL_MAX;\n      |                              ^~~~~~~\n"
+}

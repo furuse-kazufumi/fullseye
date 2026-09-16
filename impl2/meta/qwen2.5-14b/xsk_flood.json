@@ -1,0 +1,12 @@
+{
+  "op": "xsk_flood",
+  "note": "docs/ops/2d/segmentation/xsk_flood.md",
+  "note_sha256_16": "fa2e55f06cc5cb96",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:21:19",
+  "c_path": "impl2/c/qwen2.5-14b/xsk_flood.c",
+  "prompt_sha256_16": "ec6e61a83b8c46f6",
+  "gen_seconds": 12.1,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk_flood.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk_flood.c:16:5: error: implicit declaration of function 'flood_fill' [-Wimplicit-function-declaration]\n   16 |     flood_fill(in, h, w, center_x, center_y, center_value, tolerance, out);\n      |     ^~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk_flood.c: At top level:\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk_flood.c:26:6: warning: conflicting types for 'flood_fill'; have 'void(const double *, int,  int,  double,  double,  double,  double,  double *)'\n   26 | void flood_fill(const double* in, int h, int w, double cx, double cy, double cv, double tol, double* out) {\n      |      ^~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsk_flood.c:16:5: note: previous implicit declaration of 'flood_fill' with type 'void(const double *, int,  int,  double,  double,  double,  double,  double *)'\n   16 |     flood_fill(in, h, w, center_x, center_y, center_value, tolerance, out);\n      |     ^~~~~~~~~~\n"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "tac_height_from_shading",
+  "note": "docs/ops/2d/tactile/tac_height_from_shading.md",
+  "note_sha256_16": "5450486420452d9d",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:43:15",
+  "c_path": "impl2/c/qwen2.5-14b/tac_height_from_shading.c",
+  "prompt_sha256_16": "661e5ccdbc876f16",
+  "gen_seconds": 27.5,
+  "status": "compile_error",
+  "compile_error": ", int w, double a, double b, double* out) {\n      |                                  ~~~~^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tac_height_from_shading.c:31:42: error: 'M_PI' undeclared (first use in this function)\n   31 |             lap[y * w + x] = 2 * cos(2 * M_PI * x / w) + 2 * cos(2 * M_PI * y / h) - 4;\n      |                                          ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tac_height_from_shading.c:31:42: note: each undeclared identifier is reported only once for each function it appears in\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tac_height_from_shading.c:65:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   65 |     free(gx);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tac_height_from_shading.c:65:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tac_height_from_shading.c:65:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tac_height_from_shading.c:65:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

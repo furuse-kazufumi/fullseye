@@ -1,0 +1,12 @@
+{
+  "op": "tm_sart_reconstruct",
+  "note": "docs/ops/2d/tomography/tm_sart_reconstruct.md",
+  "note_sha256_16": "f1f525da8a049847",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:05:43",
+  "c_path": "impl2/c/qwen2.5-14b/tm_sart_reconstruct.c",
+  "prompt_sha256_16": "a6e95ef77ccd3914",
+  "gen_seconds": 25.9,
+  "status": "compile_error",
+  "compile_error": "a declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tm_sart_reconstruct.c:16:39: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n   16 |         double* projection = (double*)malloc(h * w * sizeof(double));\n      |                                       ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tm_sart_reconstruct.c:16:39: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tm_sart_reconstruct.c:41:9: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   41 |         free(projection);\n      |         ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tm_sart_reconstruct.c:41:9: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tm_sart_reconstruct.c:41:9: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tm_sart_reconstruct.c:41:9: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

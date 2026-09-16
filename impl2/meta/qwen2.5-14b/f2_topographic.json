@@ -1,0 +1,12 @@
+{
+  "op": "f2_topographic",
+  "note": "docs/ops/2d/edges/f2_topographic.md",
+  "note_sha256_16": "e1e8cd7f18e544d9",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:25:26",
+  "c_path": "impl2/c/qwen2.5-14b/f2_topographic.c",
+  "prompt_sha256_16": "fe470adfb7cb9433",
+  "gen_seconds": 24.8,
+  "status": "compile_error",
+  "compile_error": "e\\impl2\\c\\qwen2.5-14b\\f2_topographic.c:46:37: error: array subscript is not an integer\n   46 |                     gx += dx[i] * in[(y + dy[j]) * w + (x + dx[i])];\n      |                                     ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\f2_topographic.c:47:37: error: array subscript is not an integer\n   47 |                     gy += dy[j] * in[(y + dy[j]) * w + (x + dx[i])];\n      |                                     ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\f2_topographic.c:55:46: error: array subscript is not an integer\n   55 |                     dxx_val += dxx[i][j] * in[(y + dy[j]) * w + (x + dx[i])];\n      |                                              ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\f2_topographic.c:56:46: error: array subscript is not an integer\n   56 |                     dxy_val += dxy[i][j] * in[(y + dy[j]) * w + (x + dx[i])];\n      |                                              ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\f2_topographic.c:57:46: error: array subscript is not an integer\n   57 |                     dyy_val += dyy[i][j] * in[(y + dy[j]) * w + (x + dx[i])];\n      |                                              ^\n"
+}

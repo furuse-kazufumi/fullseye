@@ -1,0 +1,11 @@
+{
+  "op": "bilateral_filter",
+  "note": "docs/ops/2d/smoothing/bilateral_filter.md",
+  "note_sha256_16": "b3def585f7f0c00a",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:24:27",
+  "c_path": "impl2/c/qwen2.5-14b/bilateral_filter.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "use in this function)\n   15 |     if (padded_in == NULL) {\n      |                      ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\bilateral_filter.c:2:1: note: 'NULL' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'\n    1 | #include <math.h>\n  +++ |+#include <stddef.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\bilateral_filter.c:15:22: note: each undeclared identifier is reported only once for each function it appears in\n   15 |     if (padded_in == NULL) {\n      |                      ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\bilateral_filter.c:55:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   55 |     free(padded_in);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\bilateral_filter.c:55:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\bilateral_filter.c:55:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\bilateral_filter.c:55:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

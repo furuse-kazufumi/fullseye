@@ -1,0 +1,12 @@
+{
+  "op": "log",
+  "note": "docs/ops/2d/edges/log.md",
+  "note_sha256_16": "d0f206ce87728cf1",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:34:53",
+  "c_path": "impl2/c/qwen2.5-14b/log.c",
+  "prompt_sha256_16": "5c8a4e9adf6bf0e0",
+  "gen_seconds": 9.7,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\log.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\log.c:20:124: error: 'M_PI' undeclared (first use in this function)\n   20 |             laplace_kernel[idx] = (x * x + y * y - 2 * sigma * sigma) * exp(-(x * x + y * y) / (2 * sigma * sigma)) / (2 * M_PI * sigma * sigma * sigma * sigma);\n      |                                                                                                                            ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\log.c:20:124: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

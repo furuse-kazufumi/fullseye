@@ -1,0 +1,11 @@
+{
+  "op": "power_real",
+  "note": "docs/ops/2d/frequency/power_real.md",
+  "note_sha256_16": "07e6bbc5ee77123f",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:38:34",
+  "c_path": "impl2/c/qwen2.5-14b/power_real.c",
+  "prompt_sha256_16": "f5566d29ead5ef92",
+  "status": "model_error",
+  "reason": "timed out"
+}

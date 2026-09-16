@@ -1,0 +1,12 @@
+{
+  "op": "hx_histo_to_thresh",
+  "note": "docs/ops/2d/halcon_ext/hx_histo_to_thresh.md",
+  "note_sha256_16": "db5ede33d826998e",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:20:30",
+  "c_path": "impl2/c/qwen2.5-14b/hx_histo_to_thresh.c",
+  "prompt_sha256_16": "106f661210b49a97",
+  "gen_seconds": 15.7,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_histo_to_thresh.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_histo_to_thresh.c:7:5: error: implicit declaration of function 'memset' [-Wimplicit-function-declaration]\n    7 |     memset(hist, 0, sizeof(hist));\n      |     ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_histo_to_thresh.c:2:1: note: include '<string.h>' or provide a declaration of 'memset'\n    1 | #include <math.h>\n  +++ |+#include <string.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_histo_to_thresh.c:7:5: warning: incompatible implicit declaration of built-in function 'memset' [-Wbuiltin-declaration-mismatch]\n    7 |     memset(hist, 0, sizeof(hist));\n      |     ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_histo_to_thresh.c:7:5: note: include '<string.h>' or provide a declaration of 'memset'\n"
+}

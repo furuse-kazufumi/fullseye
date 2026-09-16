@@ -1,0 +1,12 @@
+{
+  "op": "tf_steerable_filter",
+  "note": "docs/ops/2d/edges/tf_steerable_filter.md",
+  "note_sha256_16": "0cf288907837e212",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:44:53",
+  "c_path": "impl2/c/qwen2.5-14b/tf_steerable_filter.c",
+  "prompt_sha256_16": "96dd9fc01455db7c",
+  "gen_seconds": 31.4,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_steerable_filter.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_steerable_filter.c:9:24: error: 'M_PI' undeclared (first use in this function)\n    9 |     double theta = a * M_PI; // a は角度を設定 (0 から pi の範囲)\n      |                        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_steerable_filter.c:9:24: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

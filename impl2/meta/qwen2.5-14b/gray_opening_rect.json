@@ -1,0 +1,12 @@
+{
+  "op": "gray_opening_rect",
+  "note": "docs/ops/2d/morphology/gray_opening_rect.md",
+  "note_sha256_16": "4c43ea5753d4e30f",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:28:15",
+  "c_path": "impl2/c/qwen2.5-14b/gray_opening_rect.c",
+  "prompt_sha256_16": "520e228b909214f9",
+  "gen_seconds": 8.8,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_opening_rect.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_opening_rect.c:47:44: error: implicit declaration of function 'fmax' [-Wimplicit-function-declaration]\n   47 |                         out[ny * w + nx] = fmax(out[ny * w + nx], min_val);\n      |                                            ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_opening_rect.c:1:1: note: include '<math.h>' or provide a declaration of 'fmax'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_opening_rect.c:47:44: warning: incompatible implicit declaration of built-in function 'fmax' [-Wbuiltin-declaration-mismatch]\n   47 |                         out[ny * w + nx] = fmax(out[ny * w + nx], min_val);\n      |                                            ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\gray_opening_rect.c:47:44: note: include '<math.h>' or provide a declaration of 'fmax'\n"
+}

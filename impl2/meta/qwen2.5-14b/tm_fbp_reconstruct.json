@@ -1,0 +1,12 @@
+{
+  "op": "tm_fbp_reconstruct",
+  "note": "docs/ops/2d/tomography/tm_fbp_reconstruct.md",
+  "note_sha256_16": "83d7a022280ea852",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:55:34",
+  "c_path": "impl2/c/qwen2.5-14b/tm_fbp_reconstruct.c",
+  "prompt_sha256_16": "2f936dd6e565f305",
+  "gen_seconds": 22.3,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tm_fbp_reconstruct.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tm_fbp_reconstruct.c:29:38: error: 'M_PI' undeclared (first use in this function)\n   29 |                 double rad = angle * M_PI / 180.0;\n      |                                      ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tm_fbp_reconstruct.c:29:38: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

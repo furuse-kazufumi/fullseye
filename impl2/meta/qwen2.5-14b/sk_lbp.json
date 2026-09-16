@@ -1,0 +1,12 @@
+{
+  "op": "sk_lbp",
+  "note": "docs/ops/2d/texture/sk_lbp.md",
+  "note_sha256_16": "a8cdbd2e1d74fd2a",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:01:39",
+  "c_path": "impl2/c/qwen2.5-14b/sk_lbp.c",
+  "prompt_sha256_16": "4b95a792eb2d03c1",
+  "gen_seconds": 29.5,
+  "status": "compile_error",
+  "compile_error": "))) {\n      |                                                      ^ ~~~~~~~~~~~~~~~~~~\n      |                                                           |\n      |                                                           int\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_lbp.c:58:17: error: pointers are not permitted as case values\n   58 |                 case \"nri_uniform\":\n      |                 ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_lbp.c:62:34: error: invalid operands to binary & (have 'double' and 'int')\n   62 |                         if ((lbp & (1 << i)) && (lbp & (1 << (i + 1) % P))) {\n      |                                  ^ ~~~~~~~~\n      |                                       |\n      |                                       int\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_lbp.c:62:54: error: invalid operands to binary & (have 'double' and 'int')\n   62 |                         if ((lbp & (1 << i)) && (lbp & (1 << (i + 1) % P))) {\n      |                                                      ^ ~~~~~~~~~~~~~~~~~~\n      |                                                           |\n      |                                                           int\n"
+}

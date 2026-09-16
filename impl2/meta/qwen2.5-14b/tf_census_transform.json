@@ -1,0 +1,12 @@
+{
+  "op": "tf_census_transform",
+  "note": "docs/ops/2d/texture/tf_census_transform.md",
+  "note_sha256_16": "493e538cc74bb539",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:44:08",
+  "c_path": "impl2/c/qwen2.5-14b/tf_census_transform.c",
+  "prompt_sha256_16": "7433faa0359eada7",
+  "gen_seconds": 17.9,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_census_transform.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_census_transform.c:28:47: error: implicit declaration of function 'abs' [-Wimplicit-function-declaration]\n   28 |                         census_value |= 1 << (abs(dx) * 2 + abs(dy) - 1);\n      |                                               ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tf_census_transform.c:1:1: note: include '<stdlib.h>' or provide a declaration of 'abs'\n  +++ |+#include <stdlib.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\n"
+}

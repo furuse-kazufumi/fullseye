@@ -1,0 +1,11 @@
+{
+  "op": "dc_homomorphic",
+  "note": "docs/ops/2d/decomposition/dc_homomorphic.md",
+  "note_sha256_16": "6ca032a1fd802e06",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:24:29",
+  "c_path": "impl2/c/qwen2.5-14b/dc_homomorphic.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "5-14b\\dc_homomorphic.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\dc_homomorphic.c:8:29: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n    8 |     double* temp = (double*)malloc(h * w * sizeof(double));\n      |                             ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\dc_homomorphic.c:8:29: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\dc_homomorphic.c:39:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   39 |     free(temp);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\dc_homomorphic.c:39:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\dc_homomorphic.c:39:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\dc_homomorphic.c:39:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

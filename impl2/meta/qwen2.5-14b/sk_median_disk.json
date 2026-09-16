@@ -1,0 +1,12 @@
+{
+  "op": "sk_median_disk",
+  "note": "docs/ops/2d/rank/sk_median_disk.md",
+  "note_sha256_16": "d32fca0d18e3837b",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:52:22",
+  "c_path": "impl2/c/qwen2.5-14b/sk_median_disk.c",
+  "prompt_sha256_16": "fd5eef521f73fb37",
+  "gen_seconds": 19.8,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_median_disk.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_median_disk.c:48:87: error: 'compare' undeclared (first use in this function)\n   48 |             qsort(values, count, sizeof(double), (int (*)(const void *, const void *))compare);\n      |                                                                                       ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_median_disk.c:48:87: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

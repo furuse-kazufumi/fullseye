@@ -1,0 +1,12 @@
+{
+  "op": "hx_gen_ellipse_sector",
+  "note": "docs/ops/2d/halcon_ext/hx_gen_ellipse_sector.md",
+  "note_sha256_16": "bdd160e60b7199e8",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:11:32",
+  "c_path": "impl2/c/qwen2.5-14b/hx_gen_ellipse_sector.c",
+  "prompt_sha256_16": "aca5a12707d7e330",
+  "gen_seconds": 19.0,
+  "status": "compile_error",
+  "compile_error": " h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_ellipse_sector.c:29:28: warning: incompatible implicit declaration of built-in function 'atan2' [-Wbuiltin-declaration-mismatch]\n   29 |             double angle = atan2(norm_y, norm_x);\n      |                            ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_ellipse_sector.c:29:28: note: include '<math.h>' or provide a declaration of 'atan2'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_ellipse_sector.c:30:31: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]\n   30 |             double distance = sqrt(norm_x * norm_x + norm_y * norm_y);\n      |                               ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_ellipse_sector.c:30:31: note: include '<math.h>' or provide a declaration of 'sqrt'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_ellipse_sector.c:30:31: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_gen_ellipse_sector.c:30:31: note: include '<math.h>' or provide a declaration of 'sqrt'\n"
+}

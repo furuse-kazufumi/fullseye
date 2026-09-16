@@ -1,0 +1,12 @@
+{
+  "op": "tm_radon_forward",
+  "note": "docs/ops/2d/tomography/tm_radon_forward.md",
+  "note_sha256_16": "8b664fe2380ec42c",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:45:25",
+  "c_path": "impl2/c/qwen2.5-14b/tm_radon_forward.c",
+  "prompt_sha256_16": "0d60b04a7fc6bb04",
+  "gen_seconds": 12.5,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tm_radon_forward.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tm_radon_forward.c:24:40: error: 'M_PI' undeclared (first use in this function)\n   24 |         double sin_theta = sin(angle * M_PI / 180.0);\n      |                                        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\tm_radon_forward.c:24:40: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

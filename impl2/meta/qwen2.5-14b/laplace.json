@@ -1,0 +1,12 @@
+{
+  "op": "laplace",
+  "note": "docs/ops/2d/edges/laplace.md",
+  "note_sha256_16": "c0e24b2860c19a70",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:33:10",
+  "c_path": "impl2/c/qwen2.5-14b/laplace.c",
+  "prompt_sha256_16": "3026ecb16d7ae2b2",
+  "gen_seconds": 20.4,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\laplace.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\laplace.c:28:30: error: implicit declaration of function 'fabs' [-Wimplicit-function-declaration]\n   28 |             out[y * w + x] = fabs(sum);\n      |                              ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\laplace.c:1:1: note: include '<math.h>' or provide a declaration of 'fabs'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\laplace.c:28:30: warning: incompatible implicit declaration of built-in function 'fabs' [-Wbuiltin-declaration-mismatch]\n   28 |             out[y * w + x] = fabs(sum);\n      |                              ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\laplace.c:28:30: note: include '<math.h>' or provide a declaration of 'fabs'\n"
+}

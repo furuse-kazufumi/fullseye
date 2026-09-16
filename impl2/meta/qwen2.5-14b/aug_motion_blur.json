@@ -3,10 +3,9 @@
   "note": "docs/ops/2d/augmentation/aug_motion_blur.md",
   "note_sha256_16": "ff8f8bb26a8a73a4",
   "model": "qwen2.5:14b",
-  "generated_at": "2026-09-16T09:57:04",
+  "generated_at": "2026-09-16T10:24:26",
   "c_path": "impl2/c/qwen2.5-14b/aug_motion_blur.c",
-  "prompt_sha256_16": "19ae0e9c0933ff26",
-  "gen_seconds": 7.6,
+  "reused_existing_c": true,
   "status": "compile_error",
   "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\aug_motion_blur.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\aug_motion_blur.c:10:24: error: 'M_PI' undeclared (first use in this function)\n   10 |     double angle = b * M_PI; // ぼかしの角度 (ラジアン)\n      |                        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\aug_motion_blur.c:10:24: note: each undeclared identifier is reported only once for each function it appears in\n"
 }

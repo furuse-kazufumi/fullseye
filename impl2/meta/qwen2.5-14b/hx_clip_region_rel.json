@@ -1,0 +1,12 @@
+{
+  "op": "hx_clip_region_rel",
+  "note": "docs/ops/2d/halcon_ext/hx_clip_region_rel.md",
+  "note_sha256_16": "8a29817ed2711726",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:18:58",
+  "c_path": "impl2/c/qwen2.5-14b/hx_clip_region_rel.c",
+  "prompt_sha256_16": "faac4dd9aade53c0",
+  "gen_seconds": 20.7,
+  "status": "compile_error",
+  "compile_error": "e a declaration of 'memset'\n  +++ |+#include <string.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_clip_region_rel.c:13:5: warning: incompatible implicit declaration of built-in function 'memset' [-Wbuiltin-declaration-mismatch]\n   13 |     memset(padded_in, 0, padded_h * padded_w * sizeof(double));\n      |     ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_clip_region_rel.c:13:5: note: include '<string.h>' or provide a declaration of 'memset'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_clip_region_rel.c:49:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   49 |     free(padded_in);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_clip_region_rel.c:49:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_clip_region_rel.c:49:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_clip_region_rel.c:49:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

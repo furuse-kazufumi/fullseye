@@ -1,0 +1,12 @@
+{
+  "op": "power_ln",
+  "note": "docs/ops/2d/frequency/power_ln.md",
+  "note_sha256_16": "24762bdc27b159a3",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:48:30",
+  "c_path": "impl2/c/qwen2.5-14b/power_ln.c",
+  "prompt_sha256_16": "fd435a058fdc5613",
+  "gen_seconds": 10.8,
+  "status": "compile_error",
+  "compile_error": "\\impl2\\c\\qwen2.5-14b\\power_ln.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\power_ln.c:9:34: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n    9 |     double* padded_in = (double*)malloc((h + 2) * (w + 2) * sizeof(double));\n      |                                  ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\power_ln.c:9:34: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\power_ln.c:42:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   42 |     free(padded_in);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\power_ln.c:42:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\power_ln.c:42:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\power_ln.c:42:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

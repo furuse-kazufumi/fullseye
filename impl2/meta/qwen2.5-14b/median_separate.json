@@ -1,0 +1,12 @@
+{
+  "op": "median_separate",
+  "note": "docs/ops/2d/rank/median_separate.md",
+  "note_sha256_16": "178bbd38b5cf1137",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:34:35",
+  "c_path": "impl2/c/qwen2.5-14b/median_separate.c",
+  "prompt_sha256_16": "73d1f8ee0e552823",
+  "gen_seconds": 20.0,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\median_separate.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\median_separate.c:45:70: error: 'compare' undeclared (first use in this function)\n   45 |             qsort(window, window_size * window_size, sizeof(double), compare);\n      |                                                                      ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\median_separate.c:45:70: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

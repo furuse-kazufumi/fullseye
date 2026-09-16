@@ -1,0 +1,12 @@
+{
+  "op": "hx_plateaus_center",
+  "note": "docs/ops/2d/halcon_ext/hx_plateaus_center.md",
+  "note_sha256_16": "33166611f8d7f3d5",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:12:20",
+  "c_path": "impl2/c/qwen2.5-14b/hx_plateaus_center.c",
+  "prompt_sha256_16": "95abfd43e2078e18",
+  "gen_seconds": 27.5,
+  "status": "compile_error",
+  "compile_error": "identifier is reported only once for each function it appears in\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_plateaus_center.c:45:39: error: 'false' undeclared (first use in this function)\n   45 |                             is_flat = false;\n      |                                       ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_plateaus_center.c:45:39: note: 'false' is defined in header '<stdbool.h>'; this is probably fixable by adding '#include <stdbool.h>'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_plateaus_center.c:63:36: error: implicit declaration of function 'round' [-Wimplicit-function-declaration]\n   63 |                     int center_x = round(sum_x / count);\n      |                                    ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_plateaus_center.c:63:36: note: include '<math.h>' or provide a declaration of 'round'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_plateaus_center.c:63:36: warning: incompatible implicit declaration of built-in function 'round' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\hx_plateaus_center.c:63:36: note: include '<math.h>' or provide a declaration of 'round'\n"
+}

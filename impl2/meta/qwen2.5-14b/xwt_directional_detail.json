@@ -1,0 +1,12 @@
+{
+  "op": "xwt_directional_detail",
+  "note": "docs/ops/2d/edges/xwt_directional_detail.md",
+  "note_sha256_16": "56026cbc2e05c887",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:06:05",
+  "c_path": "impl2/c/qwen2.5-14b/xwt_directional_detail.c",
+  "prompt_sha256_16": "b51631b90512f856",
+  "gen_seconds": 23.4,
+  "status": "compile_error",
+  "compile_error": ".h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xwt_directional_detail.c:50:32: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n   50 |     double* subband = (double*)malloc(oh * ow * sizeof(double));\n      |                                ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xwt_directional_detail.c:50:32: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xwt_directional_detail.c:81:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   81 |     free(subband);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xwt_directional_detail.c:81:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xwt_directional_detail.c:81:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xwt_directional_detail.c:81:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

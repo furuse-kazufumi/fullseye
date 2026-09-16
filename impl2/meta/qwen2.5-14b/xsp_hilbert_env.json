@@ -1,0 +1,12 @@
+{
+  "op": "xsp_hilbert_env",
+  "note": "docs/ops/2d/texture/xsp_hilbert_env.md",
+  "note_sha256_16": "dcc2e948f62e8c0c",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:13:37",
+  "c_path": "impl2/c/qwen2.5-14b/xsp_hilbert_env.c",
+  "prompt_sha256_16": "4d0f931a1b3ffa52",
+  "gen_seconds": 15.0,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_hilbert_env.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_hilbert_env.c:23:50: error: 'M_PI' undeclared (first use in this function)\n   23 |                 sum += hilbert_result[idx] * sin(M_PI * k / w);\n      |                                                  ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_hilbert_env.c:23:50: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

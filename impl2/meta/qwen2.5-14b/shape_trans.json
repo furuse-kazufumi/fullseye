@@ -1,0 +1,12 @@
+{
+  "op": "shape_trans",
+  "note": "docs/ops/2d/region/shape_trans.md",
+  "note_sha256_16": "c53d4796824506d4",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:24:32",
+  "c_path": "impl2/c/qwen2.5-14b/shape_trans.c",
+  "prompt_sha256_16": "bb72d95b2adef482",
+  "gen_seconds": 8.3,
+  "status": "compile_error",
+  "compile_error": " use in this function)\n    8 |     if (work == NULL) {\n      |                 ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\shape_trans.c:1:1: note: 'NULL' is defined in header '<stddef.h>'; this is probably fixable by adding '#include <stddef.h>'\n  +++ |+#include <stddef.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\shape_trans.c:8:17: note: each undeclared identifier is reported only once for each function it appears in\n    8 |     if (work == NULL) {\n      |                 ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\shape_trans.c:38:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   38 |     free(work);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\shape_trans.c:38:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\shape_trans.c:38:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\shape_trans.c:38:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

@@ -1,0 +1,12 @@
+{
+  "op": "xsitk_huang_thresh",
+  "note": "docs/ops/2d/extra/xsitk_huang_thresh.md",
+  "note_sha256_16": "6720acc9a32b833b",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:22:47",
+  "c_path": "impl2/c/qwen2.5-14b/xsitk_huang_thresh.c",
+  "prompt_sha256_16": "9655466d9f3a9ba9",
+  "gen_seconds": 13.4,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_huang_thresh.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_huang_thresh.c:25:26: error: 'DBL_MAX' undeclared (first use in this function)\n   25 |     double min_entropy = DBL_MAX;\n      |                          ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_huang_thresh.c:4:1: note: 'DBL_MAX' is defined in header '<float.h>'; this is probably fixable by adding '#include <float.h>'\n    3 | #include <string.h>\n  +++ |+#include <float.h>\n    4 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsitk_huang_thresh.c:25:26: note: each undeclared identifier is reported only once for each function it appears in\n   25 |     double min_entropy = DBL_MAX;\n      |                          ^~~~~~~\n"
+}

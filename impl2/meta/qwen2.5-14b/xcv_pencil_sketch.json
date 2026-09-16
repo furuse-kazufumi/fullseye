@@ -1,0 +1,12 @@
+{
+  "op": "xcv_pencil_sketch",
+  "note": "docs/ops/2d/artistic/xcv_pencil_sketch.md",
+  "note_sha256_16": "b9cb332973dd54db",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:57:28",
+  "c_path": "impl2/c/qwen2.5-14b/xcv_pencil_sketch.c",
+  "prompt_sha256_16": "28494314dd452f8c",
+  "gen_seconds": 25.1,
+  "status": "compile_error",
+  "compile_error": ": include '<stdlib.h>' or provide a declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xcv_pencil_sketch.c:11:33: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n   11 |     double* smoothed = (double*)malloc(h * w * sizeof(double));\n      |                                 ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xcv_pencil_sketch.c:11:33: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xcv_pencil_sketch.c:51:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   51 |     free(smoothed);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xcv_pencil_sketch.c:51:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xcv_pencil_sketch.c:51:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xcv_pencil_sketch.c:51:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

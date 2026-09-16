@@ -1,0 +1,12 @@
+{
+  "op": "xsp_cspline_smooth",
+  "note": "docs/ops/2d/smoothing/xsp_cspline_smooth.md",
+  "note_sha256_16": "35354fbf3770b0eb",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:13:12",
+  "c_path": "impl2/c/qwen2.5-14b/xsp_cspline_smooth.c",
+  "prompt_sha256_16": "af47a614adffd90e",
+  "gen_seconds": 14.2,
+  "status": "compile_error",
+  "compile_error": "or provide a declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_cspline_smooth.c:10:34: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n   10 |     double* in_padded = (double*)malloc(h_padded * w_padded * sizeof(double));\n      |                                  ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_cspline_smooth.c:10:34: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_cspline_smooth.c:44:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   44 |     free(in_padded);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_cspline_smooth.c:44:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_cspline_smooth.c:44:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_cspline_smooth.c:44:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

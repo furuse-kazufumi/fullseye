@@ -1,0 +1,12 @@
+{
+  "op": "sk_adjust_log",
+  "note": "docs/ops/2d/gray/sk_adjust_log.md",
+  "note_sha256_16": "65e7b5f5a5b1c870",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:39:54",
+  "c_path": "impl2/c/qwen2.5-14b/sk_adjust_log.c",
+  "prompt_sha256_16": "c38aecd47001abdb",
+  "gen_seconds": 5.7,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_adjust_log.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_adjust_log.c:13:36: error: implicit declaration of function 'log' [-Wimplicit-function-declaration]\n   13 |             double output = gain * log(1 + input);\n      |                                    ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_adjust_log.c:1:1: note: include '<math.h>' or provide a declaration of 'log'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_adjust_log.c:13:36: warning: incompatible implicit declaration of built-in function 'log' [-Wbuiltin-declaration-mismatch]\n   13 |             double output = gain * log(1 + input);\n      |                                    ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sk_adjust_log.c:13:36: note: include '<math.h>' or provide a declaration of 'log'\n"
+}

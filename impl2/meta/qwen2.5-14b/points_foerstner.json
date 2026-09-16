@@ -1,0 +1,12 @@
+{
+  "op": "points_foerstner",
+  "note": "docs/ops/2d/edges/points_foerstner.md",
+  "note_sha256_16": "22990e0436751c7a",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:36:04",
+  "c_path": "impl2/c/qwen2.5-14b/points_foerstner.c",
+  "prompt_sha256_16": "245e924e4aaf3a50",
+  "gen_seconds": 43.5,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\points_foerstner.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\points_foerstner.c:62:16: error: array subscript is not an integer\n   62 |             out[y * w + x] = w * q;\n      |                ^\n"
+}

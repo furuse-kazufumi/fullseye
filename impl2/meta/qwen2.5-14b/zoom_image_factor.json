@@ -1,0 +1,12 @@
+{
+  "op": "zoom_image_factor",
+  "note": "docs/ops/2d/geometry/zoom_image_factor.md",
+  "note_sha256_16": "ca51a4e9f59862e9",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:05:59",
+  "c_path": "impl2/c/qwen2.5-14b/zoom_image_factor.c",
+  "prompt_sha256_16": "80aae6409369daa0",
+  "gen_seconds": 20.8,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zoom_image_factor.c: In function 'interpolate':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zoom_image_factor.c:13:23: error: implicit declaration of function 'floor' [-Wimplicit-function-declaration]\n   13 |         int y0 = (int)floor(y);\n      |                       ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zoom_image_factor.c:1:1: note: include '<math.h>' or provide a declaration of 'floor'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zoom_image_factor.c:13:23: warning: incompatible implicit declaration of built-in function 'floor' [-Wbuiltin-declaration-mismatch]\n   13 |         int y0 = (int)floor(y);\n      |                       ^~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\zoom_image_factor.c:13:23: note: include '<math.h>' or provide a declaration of 'floor'\n"
+}

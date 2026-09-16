@@ -1,0 +1,12 @@
+{
+  "op": "xsp_dct_lowpass",
+  "note": "docs/ops/2d/frequency/xsp_dct_lowpass.md",
+  "note_sha256_16": "e27a59ce6351fc53",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:13:26",
+  "c_path": "impl2/c/qwen2.5-14b/xsp_dct_lowpass.c",
+  "prompt_sha256_16": "fd7194691210ea5b",
+  "gen_seconds": 10.2,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_dct_lowpass.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_dct_lowpass.c:6:16: error: implicit declaration of function 'MAX' [-Wimplicit-function-declaration]\n    6 |     int keep = MAX(2, (int)round((0.15 + 0.6 * a) * MIN(h, w)));\n      |                ^~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\xsp_dct_lowpass.c:6:53: error: implicit declaration of function 'MIN' [-Wimplicit-function-declaration]\n    6 |     int keep = MAX(2, (int)round((0.15 + 0.6 * a) * MIN(h, w)));\n      |                                                     ^~~\n"
+}

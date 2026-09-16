@@ -1,0 +1,12 @@
+{
+  "op": "sg_gmm_segment",
+  "note": "docs/ops/2d/segment/sg_gmm_segment.md",
+  "note_sha256_16": "0355f705ca788ed4",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:24:11",
+  "c_path": "impl2/c/qwen2.5-14b/sg_gmm_segment.c",
+  "prompt_sha256_16": "24adece2789d12a8",
+  "gen_seconds": 12.7,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_gmm_segment.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_gmm_segment.c:14:79: error: 'compare' undeclared (first use in this function)\n   14 |     qsort(sorted, h * w, sizeof(double), (int (*)(const void *, const void *))compare);\n      |                                                                               ^~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_gmm_segment.c:14:79: note: each undeclared identifier is reported only once for each function it appears in\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\sg_gmm_segment.c:40:101: error: 'M_PI' undeclared (first use in this function)\n   40 |                 double p1 = pi1 * exp(-(px - mu1) * (px - mu1) / (2 * sigma1 * sigma1)) / (sqrt(2 * M_PI) * sigma1);\n      |                                                                                                     ^~~~\n"
+}

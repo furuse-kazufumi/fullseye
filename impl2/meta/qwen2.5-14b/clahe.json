@@ -1,0 +1,11 @@
+{
+  "op": "clahe",
+  "note": "docs/ops/2d/gray/clahe.md",
+  "note_sha256_16": "50e1360e48a7ca59",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T10:24:27",
+  "c_path": "impl2/c/qwen2.5-14b/clahe.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": " |             max_count = fmax(max_count, histograms[tile_index][bin]);\n      |                         ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\clahe.c:38:25: note: include '<math.h>' or provide a declaration of 'fmax'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\clahe.c:38:25: warning: incompatible implicit declaration of built-in function 'fmax' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\clahe.c:38:25: note: include '<math.h>' or provide a declaration of 'fmax'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\clahe.c:42:37: error: implicit declaration of function 'fmin' [-Wimplicit-function-declaration]\n   42 |             cdfs[tile_index][bin] = fmin(cdfs[tile_index][bin], clip_limit);\n      |                                     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\clahe.c:42:37: note: include '<math.h>' or provide a declaration of 'fmin'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\clahe.c:42:37: warning: incompatible implicit declaration of built-in function 'fmin' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\clahe.c:42:37: note: include '<math.h>' or provide a declaration of 'fmin'\n"
+}

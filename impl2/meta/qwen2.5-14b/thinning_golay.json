@@ -1,0 +1,12 @@
+{
+  "op": "thinning_golay",
+  "note": "docs/ops/2d/region/thinning_golay.md",
+  "note_sha256_16": "f903a4d5d62b4352",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T11:18:27",
+  "c_path": "impl2/c/qwen2.5-14b/thinning_golay.c",
+  "prompt_sha256_16": "5b4a00a102b42cce",
+  "gen_seconds": 36.0,
+  "status": "compile_error",
+  "compile_error": "\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\thinning_golay.c:44:38: note: in expansion of macro 'NEIGHBOR_OFFSETS'\n   44 |                         int ny = y + NEIGHBOR_OFFSETS[i];\n      |                                      ^~~~~~~~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\thinning_golay.c:44:54: error: expected expression before '[' token\n   44 |                         int ny = y + NEIGHBOR_OFFSETS[i];\n      |                                                      ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\thinning_golay.c:24:26: error: expected expression before '{' token\n   24 | #define NEIGHBOR_OFFSETS {-1, 0, 1, -w, 1, -w-1, -w, -w, -w}\n      |                          ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\thinning_golay.c:45:38: note: in expansion of macro 'NEIGHBOR_OFFSETS'\n   45 |                         int nx = x + NEIGHBOR_OFFSETS[i + 1];\n      |                                      ^~~~~~~~~~~~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\thinning_golay.c:45:54: error: expected expression before '[' token\n   45 |                         int nx = x + NEIGHBOR_OFFSETS[i + 1];\n      |                                                      ^\n"
+}
