@@ -3,59 +3,51 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-16 08:28:43
+- **最終更新**: 2026-09-16 09:16:23
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+155231a2b 89 op が「画像間で比較できない値」を返していて、1 本も書いていなかった
+7bc1d6e6d region 層の端の規約も実測してノートへ(37/38 が「外側は背景」で一貫、例外は 1 本)
+815f206c4 差分の振り分けを機械化した —— triage が律速だと先行研究が実測しているので
+fd96bbacc つまみを実測して 56 枚に書き戻した —— そして探針 1 枚でバグをでっち上げる寸前だった
+a3a4b0640 実測した端の規約がノートから黙って消えないように門を立てた
+21223f3ed 差分が指した 2 つの沈黙点を実測で確定し、契約に書いた(fill_holes の連結性 / boundary の縁)
+cd5237b9f region 層へ網を広げ、連結性の沈黙を 1 件見つけて台帳全体で数えた
 9a459edd9 端の規約を image->image の全 378 op で実測し、確定した 106 本を 97 枚のノートへ書き戻した
 d6992d99a 外部 AI を第 2 実装者に立て、端の規約をカーネル非依存に実測して書き戻し始めた
 8c86884c6 第 2 実装との突き合わせ 7 op: 仕様の穴を 4 件見つけ、同クラスを台帳全体で数えた
-0ac83453e 第 2 実装の差分検査を op 単位で回す道具を入れ、1 op 目で仕様の穴を 1 件見つけた
-c0f9c0d07 門の赤 3 件を直す: ノート枚数のドリフト(6 言語)と、来歴の門が第三者 venv を裁いていた件
-624b11a5a ops3d: skeleton_graph3d を medial 台帳に登録し、例と生成物を更新
-be0e56b2b medial: 3D 骨格をノードと枝のグラフに組み立てる skeleton_graph3d を追加
-37c72ca6e 展示館記事の投稿台帳を 0.2.0 の版ニュース反映後の実物に更新
-144ac6744 展示館記事に 0.2.0 の版ニュースを足す —— 前の版で書いた 2 つを訂正する
-e73df07b2 ハエ記事に #18c(発生の梯子・本番)と #24(11 体の重ね合わせ)を追記し、CITATION に 0.2.0 の版 DOI を入れる
 ```
 
 ## 現在の git status
 
 ```
-M tools/impl2/pilot.py
-?? impl2/c/qwen2.5-coder-32b/abs_image.c
-?? impl2/c/qwen2.5-coder-32b/acos_image.c
-?? impl2/c/qwen2.5-coder-32b/add_noise_distribution.c
-?? impl2/c/qwen2.5-coder-32b/add_noise_white.c
-?? impl2/c/qwen2.5-coder-32b/affine_trans_image.c
-?? impl2/c/qwen2.5-coder-32b/affine_trans_image_size.c
-?? impl2/c/qwen2.5-coder-32b/affine_warp.c
-?? impl2/c/qwen2.5-coder-32b/alife_curvature_flow.c
-?? impl2/c/qwen2.5-coder-32b/alife_cyclic_ca.c
-?? impl2/meta/qwen2.5-coder-32b/abs_image.json
+?? impl2/c/qwen2.5-coder-32b/cv_nlmeans.c
+?? impl2/c/qwen2.5-coder-32b/hx_closing.c
+?? impl2/meta/qwen2.5-coder-32b/hx_closing.json
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-08:28 impl2/c/qwen2.5-coder-32b/alife_cyclic_ca.c
-08:28 impl2/_work/qwen2.5-coder-32b/alife_cyclic_ca/driver.c
-08:27 impl2/c/qwen2.5-coder-32b/alife_curvature_flow.c
-08:27 impl2/_work/qwen2.5-coder-32b/alife_curvature_flow/driver.c
-08:26 impl2/_work/qwen2.5-coder-32b/affine_warp/driver.c
-08:26 impl2/c/qwen2.5-coder-32b/affine_warp.c
-08:26 impl2/_work/qwen2.5-coder-32b/affine_trans_image_size/driver.c
-08:26 impl2/c/qwen2.5-coder-32b/affine_trans_image_size.c
-08:25 impl2/c/qwen2.5-coder-32b/affine_trans_image.c
-08:25 impl2/_work/qwen2.5-coder-32b/affine_trans_image/driver.c
-08:24 impl2/_work/qwen2.5-coder-32b/add_noise_white/driver.c
-08:24 impl2/c/qwen2.5-coder-32b/add_noise_white.c
-08:24 impl2/_work/qwen2.5-coder-32b/add_noise_distribution/driver.c
-08:24 impl2/c/qwen2.5-coder-32b/add_noise_distribution.c
-08:23 impl2/_work/qwen2.5-coder-32b/acos_image/driver.c
+09:16 impl2/_work/fullsuite.log
+09:16 impl2/meta/qwen2.5-coder-32b/hx_closing.json
+09:16 impl2/_work/qwen2.5-coder-32b/hx_closing/out.bin
+09:16 impl2/_work/qwen2.5-coder-32b/hx_closing/in.bin
+09:15 impl2/_work/qwen2.5-coder-32b/hx_closing/impl2.exe
+09:15 impl2/_work/qwen2.5-coder-32b/hx_closing/driver.c
+09:15 impl2/c/qwen2.5-coder-32b/hx_closing.c
+09:15 impl2/_work/qwen2.5-coder-32b/cv_nlmeans/driver.c
+09:15 impl2/c/qwen2.5-coder-32b/cv_nlmeans.c
+09:15 impl2/FINDINGS.md
+09:15 tests/test_op_normalisation_documented.py
+09:14 impl2/meta/qwen2.5-coder-32b/hx_clip_region_rel.json
+09:14 impl2/_work/qwen2.5-coder-32b/hx_clip_region_rel/out.bin
+09:14 impl2/_work/qwen2.5-coder-32b/hx_clip_region_rel/in.bin
+09:14 impl2/_work/qwen2.5-coder-32b/hx_clip_region_rel/impl2.exe
 ```
 
 ---

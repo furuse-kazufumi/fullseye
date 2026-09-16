@@ -1485,7 +1485,7 @@ SEED: list[tuple] = [
     ("fill_up", "region", REG, REG, "region_trans", {"kind": "fill_up"},
      '領域内部の穴(背景に完全に囲まれた領域)を埋める\n(``ndimage.binary_fill_holes``)。外周とつながっていない背景の孔だけが\n埋まり、外周とつながった凹みは埋まらない。HALCON の ``fill_up``（Fill up\nholes in regions.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("boundary", "region", REG, REG, "region_trans", {"kind": "boundary"},
-     '領域からその 1 画素収縮版を引くことで外周境界線(輪郭の内側 1 画素の\nリング)を取り出す。塗りつぶされた領域を輪郭線に変換する。HALCON の\n``boundary``（Reduce a region to its boundary.）に相当。\n\n``a``, ``b`` は未使用。\n\n**画像の縁**: 領域が画像の端に接する場合、**縁の側も境界に含まれる**(外側を背景とみなして収縮するため)。全面が領域の入力では、出力は画像の外周 1 画素の枠になる(8x8 で 28 画素。実測)。'),
+     '領域からその 1 画素収縮版を引くことで外周境界線(輪郭の内側 1 画素の\nリング)を取り出す。塗りつぶされた領域を輪郭線に変換する。HALCON の\n``boundary``（Reduce a region to its boundary.）に相当。\n\n``a``, ``b`` は未使用。\n\n**穴のある領域**: 外周だけでなく**穴の輪郭も返る**（「領域 − 収縮版」は定義上、外側からも穴の側からも 1 画素を残す。実測で確認）。\n\n**画像の縁**: 領域が画像の端に接する場合、**縁の側も境界に含まれる**(外側を背景とみなして収縮するため)。全面が領域の入力では、出力は画像の外周 1 画素の枠になる(8x8 で 28 画素。実測)。'),
     ("skeleton", "region", REG, REG, "region_trans", {"kind": "skeleton"},
      '位相を保ったまま領域を 1 画素幅の骨格線に細める\n(``skimage.morphology.skeletonize``)。分岐や端点の位置は保存されるため、\n枝分かれした形状の解析(指の本数を数える等)によく使われる。HALCON の\n``skeleton``（Compute the skeleton of a region.）に相当。\n\n``a``, ``b`` は未使用。skimage が無い環境ではこの分岐は呼べない。'),
     ("thinning", "region", REG, REG, "region_trans", {"kind": "thin"},

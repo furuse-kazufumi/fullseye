@@ -520,7 +520,7 @@ def _dist_transform(v, a, b):
 def _region_boundary(v, a, b):
     """領域の輪郭（境界リング）を抽出する。HALCON の ``boundary``（Reduce a region to its boundary.）に相当。
 
-``a``, ``b`` は未使用。二値化した領域から、1 回侵食した領域を差し引くことで、幅 1 画素の外周だけを残す。出力は region（0/1）のまま。"""
+``a``, ``b`` は未使用。二値化した領域から、1 回侵食した領域を差し引くことで、幅 1 画素の輪郭を残す。**穴のある領域では穴の輪郭も返る**（「領域 − 収縮版」は定義上、外側からも穴の側からも 1 画素を残す。実測で確認）。出力は region（0/1）のまま。"""
     return (_bin(v).astype(np.float64) - ndimage.binary_erosion(_bin(v)).astype(np.float64)).clip(0, 1)
 
 
