@@ -130,6 +130,23 @@ def _norm(x):
     return x / mx if mx > 1e-8 else x
 
 
+#: **LoG は零和作用素なのに、離散化すると直流が漏れる。**
+#: ``scipy.ndimage.gaussian_laplace`` はガウシアンを 4σ で打ち切るので、離散カーネルの
+#: 総和が厳密には 0 にならない。結果、**一様な面に対して ``-1.92e-4 x c`` という系統的な
+#: 応答**が出る(丸め屑ではない。c に比例する)。そのあと画像ごとに正規化すると、
+#: その偏りが**唯一の値**なので全面フルスケールに化ける —— 実測 2026-09-16:
+#: `log`(絶対値→正規化)は一様画像で**全画素 1.0**、`laplace_of_gauss`(符号つき)は
+#: **全画素 0**(最大の負)を返した。
+#: 実害は空フレームだけではない。**明るさを一律に足しただけで応答が変わる**
+#: (+0.5 で最大 9.6e-5、ゼロ交差の位置もずれる)—— 二階微分がそうなってはいけない。
+#: 平均を引いてから掛ければ直流成分が消え、厳密に不変になる(残差 1.7e-17 を実測)。
+#: ``ndimage.laplace`` の 5 点カーネルは総和がちょうど 0 なので、この処置は要らない。
+def _log_dc_free(x, sigma):
+    """直流を抜いてから LoG を掛ける。``x`` の平均は零和作用素の出力に寄与しない。"""
+    x = np.asarray(x, np.float64)
+    return ndimage.gaussian_laplace(x - float(np.mean(x)), sigma)
+
+
 def _shift_edge(x, dy, dx):
     """Shift like ``np.roll`` but REPLICATE the border instead of wrapping around.
 
@@ -515,7 +532,7 @@ def _log(v, a, b):
     """ラプラシアン・オブ・ガウシアン（LoG）フィルタ。HALCON の ``laplace_of_gauss``（LoG-Operator (Laplace of Gaussian).）に相当。
 
 ``a`` がガウシアンの標準偏差 σ を ``0.5〜3.0`` に振る。``b`` は未使用。``scipy.ndimage.gaussian_laplace`` の絶対値を ``_norm`` で正規化する（符号を捨てているため、暗背景上の明斑点と明背景上の暗斑点を区別できない）。ブロブ（斑点状構造）検出やエッジ検出に使う。"""
-    return _norm(np.abs(ndimage.gaussian_laplace(v, sigma=0.5 + 2.5 * a)))
+    return _norm(np.abs(_log_dc_free(v, 0.5 + 2.5 * a)))
 
 
 # --- more image -> region ---------------------------------------------------- #

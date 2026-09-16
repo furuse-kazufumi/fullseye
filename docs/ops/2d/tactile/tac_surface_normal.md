@@ -44,6 +44,8 @@ indentation walls tend to 0, so the map is already a valid [0,1] encoding.
 ``b`` = pre-smoothing sigma of the image (0..3) to tame sensor noise.
 Constant input -> all-ones (perfectly flat gel).
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく全画素が前景(1)**になる。照明が飛んだ・遮られた・被写体が無いフレームは「**欠陥 100%**」として返るので、上流で「一様かどうか」を判定して弾くこと。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

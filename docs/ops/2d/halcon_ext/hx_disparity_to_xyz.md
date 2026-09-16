@@ -55,6 +55,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 **つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。4 種類の入力で確認)。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_halcon_ext ファミリ ガイド](../guides/gallery2d_halcon_ext.md)

@@ -37,6 +37,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の ``bin_threshold``（複数の自動しきい値決定アルゴリズムから選んで二値化する演算、既定は最大分離度=大津法相当）に相当する近似で、大津法のみをサポートし他のアルゴリズム選択肢は無い。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_segmentation ファミリ ガイド](../guides/gallery2d_segmentation.md)

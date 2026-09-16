@@ -37,6 +37,8 @@ Yen の最大相関基準(maximum correlation criterion)による大域しきい
 
 HALCON の `binary_threshold` に相当(近似)。実装は ``v > filters.threshold_yen(v)`` —— a, b は未使用。同じ画像に大津/Li/Yen を並べて試し、しきい値が安定する方を選ぶ用途を想定。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく全画素が前景(1)**になる。照明が飛んだ・遮られた・被写体が無いフレームは「**欠陥 100%**」として返るので、上流で「一様かどうか」を判定して弾くこと。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_segmentation ファミリ ガイド](../guides/gallery2d_segmentation.md)

@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の ``pouring``（水を注ぐように画素値の低い場所から領域を満たしていく古典的な pouring アルゴリズムで分割する演算）に相当する近似 —— アルゴリズムの詳細は異なるが、低輝度領域を起点に領域を広げるという発想は共通。``watersheds``/``watersheds_threshold`` と実装を共有する。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_segmentation ファミリ ガイド](../guides/gallery2d_segmentation.md)

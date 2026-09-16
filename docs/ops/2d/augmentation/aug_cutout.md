@@ -42,6 +42,8 @@ one salient blob. ``b`` selects the (deterministic, seeded-from-b) patch
 position AND the fill value: b <= 0.5 -> black (0.0), b > 0.5 -> mid-gray
 (0.5). The patch is always fully inside the frame.
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_color_artistic ファミリ ガイド](../guides/gallery2d_color_artistic.md)

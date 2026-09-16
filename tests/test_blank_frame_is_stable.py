@@ -45,8 +45,21 @@ LEVELS = [round(0.01 * i, 2) for i in range(101)]
 MUST_BE_EMPTY = [
     "dyn_threshold", "adaptive_gauss_thresh", "local_threshold",
     "std_filter", "deviation_image", "texture_laws",
-    "xkor_laplacian", "xkor_dog",
+    "xkor_laplacian", "xkor_dog", "log",
+    # **書かれている動作を実装が達成できていなかった 2 本**。`hx_lowlands` の docstring は
+    # 「画像全体が平坦だと ``v < mean`` を満たす画素が無く空になる」と明記していたが、
+    # 定数配列の ``mean()`` は積算の丸めで 1 ULP 大きくなることがあり、そのとき
+    # **全画素が窪地**になった(一様 0.06 で 576/576、一様 0.04 では 0/576)。
+    "hx_lowlands", "hx_char_threshold",
 ]
+
+#: **零和作用素**(二階微分)は、画像全体の明るさを一律に足しても答えを変えてはいけない。
+#: 直したのはこの性質のほうで、空フレームはその一番極端な場合にすぎない ——
+#: `scipy.ndimage.gaussian_laplace` はガウシアンを 4σ で打ち切るので離散カーネルの
+#: 総和が 0 にならず、一様面に `-1.92e-4 x c` の応答が出ていた(丸め屑ではなく c に
+#: 比例する系統的な偏り)。実測 2026-09-16: `log` は明るさを +0.2 しただけで
+#: 最大 2.9e-3 変わり、一様画像では**全画素 1.0** を返していた。
+DC_INVARIANT = ["log", "laplace_of_gauss", "laplace"]
 
 #: 屑として許す上限。実信号(16-bit の量子化幅 1.5e-5)よりはるかに下、
 #: float32 の丸め屑(1e-7)よりわずかに上。
@@ -90,8 +103,12 @@ def test_the_fix_did_not_make_the_op_blind(op):
         _apply(op, np.full((24, 24), 0.5))
     except Exception as e:
         pytest.skip(f"{op} を呼べない: {type(e).__name__}")
-    img = np.full((48, 48), 0.30)
-    img[16:32, 16:32] = 0.75                    # はっきりした明るい塊
+    # **明暗の両方**を置く。明るい塊しか無い画像だと、暗い側を取る op
+    # (`hx_char_threshold` は「暗い文字」を取る)が何も返さず、直したせいで盲目に
+    # なったのか元からそうなのか区別できない —— 実際この門はそれで一度落ちた。
+    img = np.full((48, 48), 0.50)
+    img[8:20, 8:20] = 0.85                      # はっきりした明るい塊
+    img[28:40, 28:40] = 0.12                    # はっきりした暗い塊
     out = _apply(op, img)
     assert float(np.max(out)) > 0.1, (
         f"{op}: はっきりした塊があるのに最大 {float(np.max(out)):.3g} —— "
@@ -153,3 +170,24 @@ def test_the_gate_would_have_caught_the_old_formulas():
             caught_dyn = True
             break
     assert caught_dyn, "旧 dyn_threshold の式を再現できていない"
+
+
+@pytest.mark.parametrize("op", DC_INVARIANT)
+def test_a_second_derivative_ignores_the_overall_brightness(op):
+    """**零和作用素は直流に応じてはいけない。** 明るさを一律に足して答えが変わらないこと。
+
+    空フレームの門(上)だけでは足りない —— 一様面で 0 を返しても、実画像では明るさに
+    応じた偏りが残りうる。ゼロ交差の位置までずれるので、これは検出結果そのものを歪める。
+    """
+    rng = np.random.default_rng(5)
+    x = np.clip(rng.random((32, 32)) * 0.3 + 0.15, 0, 1)
+    try:
+        base = _apply(op, x)
+    except Exception as e:
+        pytest.skip(f"{op} を呼べない: {type(e).__name__}")
+    for k in (0.1, 0.2, 0.5):
+        shifted = _apply(op, x + k)
+        d = float(np.max(np.abs(shifted - base)))
+        assert d <= 1e-9, (
+            f"{op}: 明るさを一律 +{k} しただけで答えが最大 {d:.3g} 変わった。"
+            f"二階微分は直流に応じてはいけない(離散カーネルの総和が 0 でない疑い)")

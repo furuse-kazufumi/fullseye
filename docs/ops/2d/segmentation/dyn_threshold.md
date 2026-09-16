@@ -45,6 +45,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 ``a`` が局所平均の窓サイズを、``b`` がオフセット(しきい値を上下に振る量)
 を振る。両方が使われる。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_segmentation ファミリ ガイド](../guides/gallery2d_segmentation.md)

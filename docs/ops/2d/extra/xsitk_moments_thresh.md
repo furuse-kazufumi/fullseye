@@ -37,6 +37,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a`` はヒストグラムのビン数(64〜256)を振る。``b`` は未使用。xsitk_maxentropy_thresh・xsitk_huang_thresh とは閾値選択の基準が異なるだけで、同じ入出力形。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく全画素が前景(1)**になる。照明が飛んだ・遮られた・被写体が無いフレームは「**欠陥 100%**」として返るので、上流で「一様かどうか」を判定して弾くこと。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_color_artistic ファミリ ガイド](../guides/gallery2d_color_artistic.md)

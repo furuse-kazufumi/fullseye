@@ -51,6 +51,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 膨張し直す。入力は image(エッジ振幅)で出力も image sort だが中身は二値。``hx_nonmax_dir`` や ``sobel_amp`` の
 後に置き、つながったエッジは ``hx_region_to_label`` や ``hx_detect_edge_segments`` へ渡す。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_halcon_ext ファミリ ガイド](../guides/gallery2d_halcon_ext.md)

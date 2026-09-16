@@ -37,6 +37,8 @@ Felzenszwalb のグラフベース領域分割。画素をノードとする最�
 
 HALCON に直接対応するものは無い。実装は ``segmentation.find_boundaries(segmentation.felzenszwalb(v, scale=20+200*a, channel_axis=None))`` —— a は scale(観測レベル。大きいほどセグメントが少なく大きくなる)を 20〜220 に振る。sigma(前処理の平滑化)・min_size は既定値(0.8, 20)のまま固定。b は未使用。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_segmentation ファミリ ガイド](../guides/gallery2d_segmentation.md)

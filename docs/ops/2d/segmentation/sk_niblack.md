@@ -39,6 +39,8 @@ Niblack の局所適応しきい値。Sauvola と同じく局所平均・標準�
 
 HALCON の `var_threshold` に相当(近似)。実装は ``v > filters.threshold_niblack(v, window_size=2*int(a*6)+3)`` —— a は局所窓サイズを 3〜15(奇数)に振る。b は未使用。sk_sauvola と同じ入力・同じ a の振り方で並べ、結果を見比べる用途を想定。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_segmentation ファミリ ガイド](../guides/gallery2d_segmentation.md)

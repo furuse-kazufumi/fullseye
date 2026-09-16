@@ -47,6 +47,8 @@ orientation. ``a`` = tensor integration sigma (0.6..4.6), ``b`` = output gain
 (0.5..2.5). Output clipped to [0,1], HxW; a constant frame has zero gradient
 energy and yields an all-zero shear field.
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

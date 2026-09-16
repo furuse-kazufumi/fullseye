@@ -50,6 +50,13 @@ CONNECT_PROBES = {"checkerboard8", "corner_touch2", "corner_touch_blocks",
 #: 端でも連結性でも説明できない「どこでも効く」入力。ここで分かれたら意味の取り違え。
 INTERIOR_PROBES = {"constant_half", "zeros", "all_zeros", "ramp_x", "ramp_y",
                    "single_pixel_on", "horizontal_line", "vertical_line"}
+#: **縮退した入力**。ヒストグラムが 1 点に潰れる / 前景が 1 画素しかない —— この上では
+#: 自動しきい値もラベル付けも「正解」が定義されない。ここ**だけ**で分かれたら、
+#: 争点は意味の取り違えではなく「縮退した入力での規約」である。
+#: 2026-09-16、codex の `auto_threshold` がまさにこの形で分かれ(他 11 種は厳密一致)、
+#: 追ったら Fullseye は「全部背景」、cv2 由来の `cv_otsu` は「全部前景」を返していた。
+DEGENERATE_PROBES = {"constant_half", "zeros", "all_zeros", "all_ones",
+                     "single_pixel", "single_pixel_on"}
 
 
 #: 振り分けた穴が **もう塞がっているか** をノートで確かめる。掃き出し
@@ -60,6 +67,8 @@ _FACT_PATTERNS = {
     "spec_gap_border": re.compile(r"端の扱い|画像の縁|BORDER_|パディング"),
     "spec_gap_connectivity": re.compile(r"連結|connectivity|4 連結|8 連結"),
     "spec_gap_normalisation": re.compile(r"値の比較可能性|画像ごと|最大値で割"),
+    "spec_gap_quantisation": re.compile(r"uint8|8 ?bit|8-bit|256 段|1/255|量子化"),
+    "spec_gap_degenerate": re.compile(r"縮退|一様な画像|定数画像|全画素が同じ"),
 }
 
 
@@ -69,6 +78,15 @@ _FACT_PATTERNS = {
 #: Fullseye 側が正規化していると測れている op に限って、その穴だと言う。
 _NORM_JSON = ROOT / "docs" / "op_normalisation.json"
 _NORM_SET = None
+
+#: **内部で 8 bit に落としていると実測済みの op**(`docs/op_quantisation.json`)。
+#: 第 2 実装は float で書くので、差はきっかり 1/255 の整数倍になる —— 2026-09-16 の
+#: `cv_median` がそれだった。この台帳と差の大きさが噛み合ったときだけ量子化だと言う。
+_QUANT_JSON = ROOT / "docs" / "op_quantisation.json"
+_QUANT_SET = None
+#: 1/255 の何倍までを「量子化で説明が付く差」とみなすか。
+_QUANT_STEP = 1.0 / 255.0
+_QUANT_TOL = 2.5 * _QUANT_STEP
 
 
 def _normalised_ops() -> set:
@@ -80,6 +98,17 @@ def _normalised_ops() -> set:
                 if r.get("per_image_normalised"):
                     _NORM_SET.add(r["op"])
     return _NORM_SET
+
+
+def _quantising_ops() -> set:
+    global _QUANT_SET
+    if _QUANT_SET is None:
+        _QUANT_SET = set()
+        if _QUANT_JSON.exists():
+            for r in json.loads(_QUANT_JSON.read_text(encoding="utf-8")):
+                if r.get("quantises_to_8bit"):
+                    _QUANT_SET.add(r["op"])
+    return _QUANT_SET
 
 
 def _note_text(op: str) -> str:
@@ -154,6 +183,20 @@ def classify(rec: dict) -> dict:
                 "note": f"差が値域を大きく超える(最大 {max_out:.3g})が、Fullseye 側は"
                         f"正規化していない —— 第 2 実装の値が壊れている疑い",
                 "probes_bad": sorted(bad)[:8]}
+    # **8 bit 量子化**: 差が 1/255 の数倍に収まり、かつ Fullseye 側が落としていると
+    # 実測済みなら、争点は「精度が書かれていないこと」。台帳を見ずに差の大きさだけで
+    # 言うと、たまたま小さい差の壊れた実装まで拾ってしまう。
+    if op in _quantising_ops() and 0 < max_out <= _QUANT_TOL:
+        return {"op": op, "verdict": "spec_gap_quantisation",
+                "note": f"差が 1/255 の {max_out / _QUANT_STEP:.1f} 倍に収まる。Fullseye は"
+                        f"内部で 8 bit に落としていると実測済みで、第 2 実装は float のまま",
+                "probes_bad": sorted(bad)}
+    # **縮退した入力でだけ分かれる**: 正解が定義されない入力での規約が未記載。
+    if bad and bad <= DEGENERATE_PROBES and good:
+        return {"op": op, "verdict": "spec_gap_degenerate",
+                "note": "ヒストグラムが潰れた / 前景が 1 画素の入力でだけ分かれる。"
+                        "縮退した入力での規約が未記載",
+                "probes_bad": sorted(bad)}
     if border_only and good:
         return {"op": op, "verdict": "spec_gap_border",
                 "note": "端に触れる探針でだけ分かれ、内部では一致。端の規約が未記載",
@@ -194,7 +237,7 @@ def main() -> int:
         print(f"  {k:26s} {v}")
 
     for kind in ("spec_gap_border", "spec_gap_connectivity", "spec_gap_normalisation",
-                 "needs_human"):
+                 "spec_gap_quantisation", "spec_gap_degenerate", "needs_human"):
         rows = [r for r in out if r["verdict"] == kind]
         if not rows:
             continue

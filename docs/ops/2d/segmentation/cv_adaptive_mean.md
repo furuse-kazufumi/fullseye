@@ -41,6 +41,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の `dyn_threshold`(Segment an image using a local threshold.)に相当。実装は ``cv2.adaptiveThreshold(_u8(v), 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, blockSize=2*int(a*6)+3, C=int(b*10))`` —— a は局所窓のサイズ(blockSize)を 3〜15(奇数)に、b は局所平均から引く定数 C を 0〜10 に振る(C が大きいほど前景と判定される画素が減る)。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく全画素が前景(1)**になる。照明が飛んだ・遮られた・被写体が無いフレームは「**欠陥 100%**」として返るので、上流で「一様かどうか」を判定して弾くこと。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_segmentation ファミリ ガイド](../guides/gallery2d_segmentation.md)

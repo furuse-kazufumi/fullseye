@@ -45,6 +45,8 @@ ravine / saddle / flat / hillside and emit the class as a gray code.
 tolerance. Codes: flat=0.0, pit=0.14, ravine=0.30, saddle=0.45,
 hillside=0.55, ridge=0.75, peak=1.0.
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_edges ファミリ ガイド](../guides/gallery2d_edges.md)

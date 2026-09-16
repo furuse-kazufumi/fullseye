@@ -43,6 +43,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 用途は「今の定義域を region として取り出し、他の region 演算の初期値にする」こと。ROI を絞った region が
 欲しいときは ``hx_rectangle1_domain``(中央矩形)か ``threshold`` で作る。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく全画素が前景(1)**になる。照明が飛んだ・遮られた・被写体が無いフレームは「**欠陥 100%**」として返るので、上流で「一様かどうか」を判定して弾くこと。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_halcon_ext ファミリ ガイド](../guides/gallery2d_halcon_ext.md)

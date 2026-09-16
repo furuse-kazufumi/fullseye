@@ -45,6 +45,8 @@ morphological cleanup strength. Returns a BINARY 0/1 float64 region of the
 input HxW; a perfectly flat (constant) frame has zero deviation everywhere
 and therefore yields an EMPTY mask.
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

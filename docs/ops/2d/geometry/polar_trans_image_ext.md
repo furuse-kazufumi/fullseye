@@ -37,6 +37,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の ``polar_trans_image_ext``（中心・半径範囲・角度範囲などを個別指定できる、環状の一部だけを切り出して極座標変換する拡張版演算）とは異なり、この実装は画像全体を固定パラメータで変換する簡略近似 —— 環状領域や角度範囲の指定はできない。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_geometry ファミリ ガイド](../guides/gallery2d_geometry.md)

@@ -41,6 +41,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の `entropy_image`(Calculate the entropy of gray values within a rectangular window.)に相当(近似。窓形状は矩形でなく円盤)。実装は ``filters.rank.entropy(_u8s(v), disk(1+int(a*3)))`` を正規化したもの —— a は円盤半径を 1〜4 に振る。b は未使用。入力は内部で 8 bit 化されるため、元画像の微妙な階調差は失われる。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

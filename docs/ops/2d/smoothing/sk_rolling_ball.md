@@ -37,6 +37,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON に直接対応するものは無い。実装は ``v - restoration.rolling_ball(v, radius=5+int(a*20))`` を ``[0,1]`` へ clip したもの —— a は球の半径を 5〜25 に振る(大きいほど緩やかな照明ムラしか背景とみなさず、細かい構造は残る)。b は未使用。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

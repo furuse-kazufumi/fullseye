@@ -150,6 +150,12 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--ops")
     ap.add_argument("--all-image", action="store_true")
+    #: **二値を返す op こそ本命**。「空フレームは全部前景か全部背景か」は、image->image の
+    #: 連続値より遥かに直接的に現場へ効く —— 検査で真っ白なフレームが来たとき欠陥 0% と
+    #: 出るか 100% と出るかが決まる。最初 `--all-image` だけで掃いて、**しきい値 op
+    #: (image->region)を丸ごと取りこぼしていた**。
+    ap.add_argument("--all-region-out", action="store_true",
+                    help="image -> region の op も掃く(しきい値・領域抽出)")
     ap.add_argument("--json")
     a = ap.parse_args()
 
@@ -159,6 +165,11 @@ def main() -> int:
         names += [o["name"] for o in idx["ops"]
                   if o["tier"] in ("registry", "color")
                   and o["in_sort"] == "image" and o["out_sort"] == "image"]
+    if a.all_region_out:
+        idx = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
+        names += [o["name"] for o in idx["ops"]
+                  if o["tier"] in ("registry", "color")
+                  and o["in_sort"] == "image" and o["out_sort"] == "region"]
     names = list(dict.fromkeys(names))
     if not names:
         print("op を指定してください(--ops か --all-image)"); return 2

@@ -41,6 +41,8 @@ values. ``b`` is ignored.
 
 **端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_morphology ファミリ ガイド](../guides/gallery2d_morphology.md)

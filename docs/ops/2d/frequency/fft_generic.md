@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の ``fft_generic``（順変換・逆変換・実数/複素数など多数のモードを持つ汎用 FFT 演算）のうち、順方向の振幅スペクトル表示だけを実装した近似 —— 逆変換や位相成分などの他モードは別 op（``fft_image_inv``、``phase_deg`` など）が個別に担う。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

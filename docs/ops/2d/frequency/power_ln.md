@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の ``power_ln``（複素画像のパワースペクトルを返す演算、通常は fft_generic 等が出力した複素画像を入力に取る）とは異なり、この実装は複素入力を受け取らず実画像から自前で FFT を計算する簡略近似。fft_generic とは実装上区別がない。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

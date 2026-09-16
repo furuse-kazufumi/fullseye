@@ -35,6 +35,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a``, ``b`` は凍結済みで未使用。edge 課題（F1）でロック済みホールドアウト0.91、手作りベースライン 0.77 を上回る。出力は image ではなく region（二値マスク）。HALCON に対応する単一オペレータは無い。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく全画素が前景(1)**になる。照明が飛んだ・遮られた・被写体が無いフレームは「**欠陥 100%**」として返るので、上流で「一様かどうか」を判定して弾くこと。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

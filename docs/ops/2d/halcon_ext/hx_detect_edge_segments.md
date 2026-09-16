@@ -51,6 +51,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 下がって落とされやすい。連結成分単位なので、交差した線は 1 つの成分として比が下がる。後段で線分ごとに扱うなら
 ``hx_region_to_label`` や ``hough_line_trans``。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_halcon_ext ファミリ ガイド](../guides/gallery2d_halcon_ext.md)

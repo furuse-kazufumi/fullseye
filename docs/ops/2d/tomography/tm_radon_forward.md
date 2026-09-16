@@ -46,6 +46,8 @@ assume, so the natural chain forward -> inverse round-trips at default knobs).
 Uses ``skimage.transform.radon`` when available, else the NumPy
 rotate-and-sum Radon transform.
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

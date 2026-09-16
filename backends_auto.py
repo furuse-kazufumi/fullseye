@@ -71,6 +71,23 @@ def _norm(x):
     return x / mx if mx > 1e-8 else x
 
 
+#: **LoG は零和作用素なのに、離散化すると直流が漏れる。**
+#: ``scipy.ndimage.gaussian_laplace`` はガウシアンを 4σ で打ち切るので、離散カーネルの
+#: 総和が厳密には 0 にならない。結果、**一様な面に対して ``-1.92e-4 x c`` という系統的な
+#: 応答**が出る(丸め屑ではない。c に比例する)。そのあと画像ごとに正規化すると、
+#: その偏りが**唯一の値**なので全面フルスケールに化ける —— 実測 2026-09-16:
+#: `log`(絶対値→正規化)は一様画像で**全画素 1.0**、`laplace_of_gauss`(符号つき)は
+#: **全画素 0**(最大の負)を返した。
+#: 実害は空フレームだけではない。**明るさを一律に足しただけで応答が変わる**
+#: (+0.5 で最大 9.6e-5、ゼロ交差の位置もずれる)—— 二階微分がそうなってはいけない。
+#: 平均を引いてから掛ければ直流成分が消え、厳密に不変になる(残差 1.7e-17 を実測)。
+#: ``ndimage.laplace`` の 5 点カーネルは総和がちょうど 0 なので、この処置は要らない。
+def _log_dc_free(x, sigma):
+    """直流を抜いてから LoG を掛ける。``x`` の平均は零和作用素の出力に寄与しない。"""
+    x = np.asarray(x, np.float64)
+    return ndimage.gaussian_laplace(x - float(np.mean(x)), sigma)
+
+
 def _shift_edge(x, dy, dx):
     """Shift like ``np.roll`` but REPLICATE the border instead of wrapping around
     (``np.roll`` is circular, so the last row/col would leak into the first)."""
@@ -219,7 +236,7 @@ def _sh_linfilter(p):
             return _norm(np.hypot(ndimage.gaussian_filter(x, s, order=(1, 0)),
                                   ndimage.gaussian_filter(x, s, order=(0, 1))))
         if kind == "laplace_gauss":
-            return signed01(ndimage.gaussian_laplace(x, 0.5 + 2.5 * a))
+            return signed01(_log_dc_free(x, 0.5 + 2.5 * a))
         if kind == "dog":
             return _norm(np.abs(ndimage.gaussian_filter(x, 0.5 + 2 * a)
                                 - ndimage.gaussian_filter(x, 1 + 4 * b)))
@@ -769,7 +786,7 @@ def _sh_segment(p):
                 out[pts[:, 1], pts[:, 0]] = 1.0
             return skseg.find_boundaries(out > 0.5).astype(np.float64) if _HAS_SK else out
         if kind == "zero_crossing":                  # Laplacian sign-changes (zero_crossing)
-            lap = ndimage.gaussian_laplace(x, 0.5 + 2.0 * a)
+            lap = _log_dc_free(x, 0.5 + 2.0 * a)
             s = np.sign(lap)
             zc = np.zeros_like(x, bool)
             zc[:-1, :] |= np.abs(np.diff(s, axis=0)) > 0
@@ -1123,7 +1140,7 @@ def _sh_xld(p):
             return {"shape": x.shape, "cs": cs}
         if kind == "zero_crossing_sub_pix" and _HAS_SK:  # Laplacian zero crossings as contours
             x = np.asarray(v, np.float64)
-            lap = ndimage.gaussian_laplace(x, 0.5 + 2.0 * a)
+            lap = _log_dc_free(x, 0.5 + 2.0 * a)
             cs = [c for c in skmeasure.find_contours(lap, 0.0) if len(c) >= 3]
             return {"shape": x.shape, "cs": cs}
         # contour -> contour / region / feature

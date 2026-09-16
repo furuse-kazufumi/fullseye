@@ -618,6 +618,48 @@ def _with_normalisation(name: str, doc: str) -> str:
 #: そのまま出てくると思う**が、実際には 255 段に潰れる —— 16-bit カメラの階調は
 #: 意味を失い、1/255 より小さい差しか無い欠陥は消える。実測した 29 本のうち
 #: **21 本(72%)が黙っていた**。
+#: **何も写っていないフレームを入れたときの答え**の実測(`tools/impl2/blank_probe.py`)。
+#: 一様な画像は、検査の現場では日常的に来る(照明が飛んだ・遮られた・被写体が無い)。
+#: そこで op が何を返すかは書かれていないことが多く、実測すると**族の中で割れていた**
+#: —— `auto_threshold` は「全部背景」、`cv_otsu` は「全部前景」を返す。461 本を測って
+#: 一定の答えを返す 168 本のうち **166 本(99%)が黙っていた**。
+#: 全部前景になる op は「空フレーム = 欠陥 100%」と読まれるので、特に強く書く。
+_BLANK_JSON = os.path.join(_ROOT, "docs", "op_blank_frame.json")
+_BLANK_CACHE = None
+_SAYS_BLANK = re.compile(r"一様な画像|定数画像|何も写っていない|空フレーム|全体が平坦")
+
+
+def _blank_map() -> dict:
+    global _BLANK_CACHE
+    if _BLANK_CACHE is None:
+        _BLANK_CACHE = {}
+        if os.path.exists(_BLANK_JSON):
+            with open(_BLANK_JSON, encoding="utf-8") as _f:
+                for r in json.load(_f):
+                    # **二値の答えが出たものだけ**。連続値の op に「一様なら v を返す」と
+                    # 書いても中身が無いし、跳ぶ op に一つの答えを書くのは嘘になる。
+                    if r.get("constant_in_c") and r.get("value") in (0.0, 1.0):
+                        _BLANK_CACHE[r["op"]] = r["value"]
+    return _BLANK_CACHE
+
+
+def _with_blank_frame(name: str, doc: str) -> str:
+    """何も写っていないフレームでの答えを明示する。**現場で必ず来る入力**である。"""
+    v = _blank_map().get(name)
+    if v is None or (doc and _SAYS_BLANK.search(doc)):
+        return doc
+    if v == 1.0:
+        line = ("**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、"
+                "**明るさに関係なく全画素が前景(1)**になる。照明が飛んだ・遮られた・"
+                "被写体が無いフレームは「**欠陥 100%**」として返るので、"
+                "上流で「一様かどうか」を判定して弾くこと。")
+    else:
+        line = ("**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、"
+                "**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも"
+                "同じで、明るさそのものでは何も検出しない。")
+    return (doc + chr(10) + chr(10) + line) if doc else line
+
+
 _QUANT_JSON = os.path.join(_ROOT, "docs", "op_quantisation.json")
 _QUANT_CACHE = None
 _SAYS_8BIT = re.compile(r"uint8|8 ?bit|8-bit|256 段|1/255|量子化")
@@ -738,9 +780,9 @@ def _records():
             # cleandoc: 関数 docstring の 2 行目以降には定義位置ぶんの字下げが
             # 付いていて、そのまま出すと Markdown が**コードブロックと読む**
             # (3-D / ledger 側は最初からこれを通していた)。
-            "doc": _with_quantisation(o.name, _with_normalisation(o.name, _with_knob(o.name, _with_border(
+            "doc": _with_blank_frame(o.name, _with_quantisation(o.name, _with_normalisation(o.name, _with_knob(o.name, _with_border(
                 o.name, _defuse_pseudolinks(
-                    inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip()))))),
+                    inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip())))))),
             "module": "ops", "sig": sig,
             "examples": sorted(idx2d.get(o.name, [])),
             "family": op_fam.get(o.name),

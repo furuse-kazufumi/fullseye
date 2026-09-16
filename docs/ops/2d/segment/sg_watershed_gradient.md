@@ -37,6 +37,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 Sobel 勾配の大きさを正規化し、深さ ``h = 0.02 + a*0.3`` の h-minima 変換で生き残った領域極小をマーカーとして（``a`` が大きいほどマーカーが少なく・粗い分割になる）、その勾配画像に対するウォーターシェッドを計算する。``b`` は未使用。戻り値は集水域（catchment basin/物体）を分けるダムライン（境界）を表す region。
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_segmentation ファミリ ガイド](../guides/gallery2d_segmentation.md)

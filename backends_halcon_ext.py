@@ -378,7 +378,18 @@ def _char_threshold(v, a, b):
     """
     k = 0.2 + 1.8 * a
     thr = float(v.mean()) - k * float(v.std())
-    return (v < thr).astype(np.float64)
+    return (v < thr - _FLAT_TOL).astype(np.float64)
+
+
+#: **「平均より暗い」を厳密不等号で書くと、平坦な面が丸ごと引っかかる。**
+#: 定数配列の ``mean()`` は積算の丸めで元の値より 1 ULP 大きくなることがあり、そのとき
+#: ``v < mean`` が **全画素で真**になる(実測 2026-09-16: 一様 0.06 で 576/576、
+#: 一様 0.04 では 0/576)。`hx_lowlands` の docstring は「画像全体が平坦だと ``v < mean``
+#: を満たす画素が無く空になる」と書いており、**書かれている動作を実装が達成できて
+#: いなかった**。平坦な面に「窪地」や「文字」を見つけてはいけない。
+#: 1e-9 は 16-bit 画像の量子化幅(1.5e-5)より 4 桁小さく実信号を削らず、丸め屑
+#: (1e-17)より 8 桁大きい。
+_FLAT_TOL = 1e-9
 
 
 def _histo_to_thresh(v, a, b):
@@ -873,7 +884,7 @@ def _lowlands(v, a, b):
     """
     size = 3 + int(a * 6)
     mn = ndimage.minimum_filter(v, size=size, mode="reflect")
-    return ((v <= mn + 1e-6) & (v < float(v.mean()))).astype(np.float64)
+    return ((v <= mn + 1e-6) & (v < float(v.mean()) - _FLAT_TOL)).astype(np.float64)
 
 
 def _plateaus_center(v, a, b):

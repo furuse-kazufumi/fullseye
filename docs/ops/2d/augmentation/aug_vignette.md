@@ -42,6 +42,8 @@ the falloff radius, the transmission is
 blends it in: ``out = v * (1 - a + a*falloff)``, so a=0 is a no-op and a=1 is
 full vignetting. Centre stays brightest; strictly darkening, never amplifying.
 
+**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_color_artistic ファミリ ガイド](../guides/gallery2d_color_artistic.md)
