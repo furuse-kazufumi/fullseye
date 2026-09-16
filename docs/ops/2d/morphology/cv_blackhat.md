@@ -41,6 +41,8 @@ HALCON の `gray_bothat`(Perform a gray value bottom hat transformation on an im
 
 **端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
 
+**値の比較可能性(実測)**: 出力を**その画像の最大値で正規化**している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって**画像をまたいで値を比較できない** —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_morphology ファミリ ガイド](../guides/gallery2d_morphology.md)

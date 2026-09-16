@@ -579,6 +579,39 @@ def _border_map() -> dict:
 #: 「``a`` が窓を 3,5,7,9 に振る」と書いてあっても**どこで切り替わるか**は書かれて
 #: いないことが多く、``a`` が実測で効かないのにそう書いていない op もあった。
 #: 測った事実だけを、**ノートが黙っている場合に限って**差し込む。
+#: **画像ごとの正規化**の実測(`tools/impl2/norm_probe.py`)。
+#: 出力の最大が常にちょうど 1.0 で、かつ入力を定数倍しても出力が変わらない op は、
+#: その画像の最大値で割っている。**値が画像間で比較できない**という、測る道具に
+#: とって致命的になりうる性質なのに、実測した 89 本のうち **1 本も書いていなかった**。
+_NORM_JSON = os.path.join(_ROOT, "docs", "op_normalisation.json")
+_NORM_CACHE = None
+_SAYS_PER_IMAGE = re.compile(r"画像ごと|各画像|最大値で割|max で割|フレームごと|画像内の最大")
+
+
+def _norm_set() -> set:
+    global _NORM_CACHE
+    if _NORM_CACHE is None:
+        _NORM_CACHE = set()
+        if os.path.exists(_NORM_JSON):
+            with open(_NORM_JSON, encoding="utf-8") as _f:
+                for r in json.load(_f):
+                    if r.get("per_image_normalised"):
+                        _NORM_CACHE.add(r["op"])
+    return _NORM_CACHE
+
+
+def _with_normalisation(name: str, doc: str) -> str:
+    """画像ごとの正規化を明示する。**測る道具では、これを黙っていると誤用される**。"""
+    if name not in _norm_set() or (doc and _SAYS_PER_IMAGE.search(doc)):
+        return doc
+    line = ("**値の比較可能性(実測)**: 出力を**その画像の最大値で正規化**している"
+            "(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって"
+            "**画像をまたいで値を比較できない** —— 同じ強さの特徴でも、その画像の中で"
+            "最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで"
+            "持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。")
+    return (doc + chr(10) + chr(10) + line) if doc else line
+
+
 _KNOB_JSON = os.path.join(_ROOT, "docs", "op_knob.json")
 _KNOB_CACHE = None
 _SAYS_A_UNUSED = re.compile(r"``a``, ``b`` は未使用|``a`` は未使用|a は未使用|a, b は未使用|つまみは未使用")
@@ -669,8 +702,9 @@ def _records():
             # cleandoc: 関数 docstring の 2 行目以降には定義位置ぶんの字下げが
             # 付いていて、そのまま出すと Markdown が**コードブロックと読む**
             # (3-D / ledger 側は最初からこれを通していた)。
-            "doc": _with_knob(o.name, _with_border(o.name, _defuse_pseudolinks(
-                inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip()))),
+            "doc": _with_normalisation(o.name, _with_knob(o.name, _with_border(
+                o.name, _defuse_pseudolinks(
+                    inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip())))),
             "module": "ops", "sig": sig,
             "examples": sorted(idx2d.get(o.name, [])),
             "family": op_fam.get(o.name),

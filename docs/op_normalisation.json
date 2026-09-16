@@ -1,0 +1,4538 @@
+[
+  {
+    "op": "abs_image",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "acos_image",
+    "out_max_per_input": [
+      0.473724551256,
+      0.494664042829,
+      0.498132361779
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "add_noise_distribution",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "add_noise_white",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "affine_trans_image",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "affine_trans_image_size",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "affine_warp",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "alife_curvature_flow",
+    "out_max_per_input": [
+      0.979734765466,
+      0.906136389081,
+      0.53645798654
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "alife_cyclic_ca",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "alife_dla",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "alife_gray_scott",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "alife_langton_ant",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "alife_lenia",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "alife_life_step",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "alife_perona_malik",
+    "out_max_per_input": [
+      0.939932551192,
+      0.855496166027,
+      0.849730678017
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "alife_reaction_bz",
+    "out_max_per_input": [
+      0.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "alife_sandpile",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "alife_turing",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "alife_wolfram1d",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "anisotropic_diffusion",
+    "out_max_per_input": [
+      0.957017986849,
+      0.8804331592,
+      0.999967302303
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "asin_image",
+    "out_max_per_input": [
+      1.0,
+      0.813656425961,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "atan_image",
+    "out_max_per_input": [
+      0.5,
+      0.486169013957,
+      0.5
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "aug_barrel",
+    "out_max_per_input": [
+      0.994731469447,
+      0.877001709047,
+      0.923647713783
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "aug_chromatic",
+    "out_max_per_input": [
+      1.0,
+      0.970657567854,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "aug_cutout",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "aug_fixed_pattern",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "aug_jpeg_blocks",
+    "out_max_per_input": [
+      0.993918660267,
+      0.935418754608,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "aug_motion_blur",
+    "out_max_per_input": [
+      0.946164547201,
+      0.82211841785,
+      0.597602023201
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "aug_read_noise",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "aug_rolling_shutter",
+    "out_max_per_input": [
+      1.0,
+      0.93865593865,
+      0.945932928684
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "aug_shot_noise",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "aug_vignette",
+    "out_max_per_input": [
+      0.807012018137,
+      0.664070643287,
+      0.881062503852
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "bandpass_image",
+    "out_max_per_input": [
+      0.948964845282,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "bilateral",
+    "out_max_per_input": [
+      0.985392668552,
+      0.895624012268,
+      0.827503582197
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "bilateral_filter",
+    "out_max_per_input": [
+      0.983816862106,
+      0.890303134918,
+      0.860720455647
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "binomial_filter",
+    "out_max_per_input": [
+      0.980282674509,
+      0.892146961974,
+      0.602988390663
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "bit_not",
+    "out_max_per_input": [
+      0.917546956469,
+      0.983237381259,
+      0.99413267515
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "bothat",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "clahe",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "coherence_enhancing_diff",
+    "out_max_per_input": [
+      0.957017986849,
+      0.8804331592,
+      0.999967302303
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "corner_response",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "cos_image",
+    "out_max_per_input": [
+      1.0,
+      0.997229348013,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "cv_bilateral",
+    "out_max_per_input": [
+      0.983816862106,
+      0.890303134918,
+      0.860720455647
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "cv_blackhat",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "cv_box",
+    "out_max_per_input": [
+      0.972844270907,
+      0.8738524497,
+      0.556549171551
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "cv_clahe",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "cv_close",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "cv_corner_harris",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "cv_dilate",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "cv_erode",
+    "out_max_per_input": [
+      0.928384735027,
+      0.85024738504,
+      0.408278000983
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "cv_gaussian",
+    "out_max_per_input": [
+      0.960537500669,
+      0.865662855182,
+      0.536086273253
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "cv_gradient",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "cv_laplacian",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "cv_median",
+    "out_max_per_input": [
+      1.0,
+      0.898039215686,
+      0.607843137255
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "cv_min_eigen",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "cv_nlmeans",
+    "out_max_per_input": [
+      0.96862745098,
+      0.878431372549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "cv_open",
+    "out_max_per_input": [
+      0.928384735027,
+      0.85024738504,
+      0.408278000983
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "cv_precorner",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "cv_scharr",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "cv_sharpen",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "cv_tophat",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "cv_trunc",
+    "out_max_per_input": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "dc_homomorphic",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "dc_local_contrast_norm",
+    "out_max_per_input": [
+      0.691054266091,
+      0.677953710177,
+      0.97395837141
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "dc_retinex",
+    "out_max_per_input": [
+      0.573216057059,
+      0.546731092273,
+      0.653180611296
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "dc_rpca_lowrank",
+    "out_max_per_input": [
+      1.0,
+      0.919845928939,
+      0.805301147215
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "dc_rpca_sparse",
+    "out_max_per_input": [
+      0.64088130542,
+      0.569150406134,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "dc_structure_texture",
+    "out_max_per_input": [
+      0.905666971299,
+      0.827898418198,
+      0.603151780504
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "dc_texture_residual",
+    "out_max_per_input": [
+      0.658232194772,
+      0.634151508002,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "deform_ffd",
+    "out_max_per_input": [
+      0.998370103558,
+      0.938782647533,
+      0.973204365591
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "deform_mls",
+    "out_max_per_input": [
+      1.0,
+      0.936726774881,
+      0.791708116208
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "deform_tps",
+    "out_max_per_input": [
+      0.999999406455,
+      0.954986173324,
+      0.95637847645
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "derivate_gauss",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "deviation_image",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "diff_of_gauss",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "dl_aniso_diffusion",
+    "out_max_per_input": [
+      0.95684581995,
+      0.863866508007,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "dl_guided_filter",
+    "out_max_per_input": [
+      0.935384750366,
+      0.842608332634,
+      0.795458555222
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "dog",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "dots_image",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      0.941768765804
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "dual_rank",
+    "out_max_per_input": [
+      0.973948715147,
+      0.875282591749,
+      0.494779242667
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "eliminate_min_max",
+    "out_max_per_input": [
+      0.973948715147,
+      0.875282591749,
+      0.494779242667
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "eliminate_sp",
+    "out_max_per_input": [
+      0.965317482198,
+      0.867176398081,
+      0.474540719797
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "entropy_image",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "equ_histo_image",
+    "out_max_per_input": [
+      1.0,
+      0.999325194022,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "equ_histo_image_rect",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "equalize",
+    "out_max_per_input": [
+      1.0,
+      0.999325194022,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "exp_image",
+    "out_max_per_input": [
+      1.0,
+      0.934123230714,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "f2_bit_slice",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "f2_expand_domain",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "f2_gauss_pyramid",
+    "out_max_per_input": [
+      0.874531621021,
+      0.648090125533,
+      0.450640076333
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "f2_gray_inside",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "f2_gray_skeleton",
+    "out_max_per_input": [
+      1.0,
+      0.739203674946,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "f2_lut_trans",
+    "out_max_per_input": [
+      1.0,
+      0.989454424794,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "f2_shock",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "f2_symmetry",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "f2_topographic",
+    "out_max_per_input": [
+      0.75,
+      0.75,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "fft_generic",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "fft_image",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "fft_image_inv",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "frei_amp",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "frei_dir",
+    "out_max_per_input": [
+      0.998348807194,
+      0.947818719296,
+      0.998888769971
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gabor",
+    "out_max_per_input": [
+      0.029528633514,
+      0.025230615823,
+      0.108740569019
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gamma",
+    "out_max_per_input": [
+      1.0,
+      0.947118317549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gamma_image",
+    "out_max_per_input": [
+      1.0,
+      0.934848537036,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gauss_filter",
+    "out_max_per_input": [
+      0.969597387191,
+      0.880366959907,
+      0.554004908303
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gauss_image",
+    "out_max_per_input": [
+      0.969597387191,
+      0.880366959907,
+      0.554004908303
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gaussian",
+    "out_max_per_input": [
+      0.969597387191,
+      0.880366959907,
+      0.554004908303
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gclose",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gdilate",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gen_gabor",
+    "out_max_per_input": [
+      0.029528633514,
+      0.025230615823,
+      0.108740569019
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gerode",
+    "out_max_per_input": [
+      0.803166977732,
+      0.781817071804,
+      0.156967988036
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gopen",
+    "out_max_per_input": [
+      0.803166977732,
+      0.781817071804,
+      0.156967988036
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "grad_dir",
+    "out_max_per_input": [
+      0.999678560128,
+      0.984812871471,
+      0.998546117562
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gray_bothat",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "gray_closing",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gray_closing_rect",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gray_closing_shape",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gray_dilation",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gray_dilation_rect",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gray_dilation_shape",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gray_erosion",
+    "out_max_per_input": [
+      0.803166977732,
+      0.781817071804,
+      0.156967988036
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gray_erosion_rect",
+    "out_max_per_input": [
+      0.803166977732,
+      0.781817071804,
+      0.156967988036
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gray_erosion_shape",
+    "out_max_per_input": [
+      0.946255113146,
+      0.870105080196,
+      0.428700745395
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gray_opening",
+    "out_max_per_input": [
+      0.803166977732,
+      0.781817071804,
+      0.156967988036
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gray_opening_rect",
+    "out_max_per_input": [
+      0.803166977732,
+      0.781817071804,
+      0.156967988036
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gray_opening_shape",
+    "out_max_per_input": [
+      0.946255113146,
+      0.870105080196,
+      0.428700745395
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "gray_range_rect",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "gray_tophat",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "guided_filter",
+    "out_max_per_input": [
+      0.983816862106,
+      0.890303134918,
+      0.860720455647
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "highpass",
+    "out_max_per_input": [
+      0.961030122427,
+      0.982331539731,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "highpass_image",
+    "out_max_per_input": [
+      0.961030122427,
+      0.982331539731,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "hough_circle_trans",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "hough_line_trans",
+    "out_max_per_input": [
+      0.916903409091,
+      0.712946428571,
+      0.5925
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "hx_close_edges",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "hx_close_edges_length",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "hx_disparity_to_xyz",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "hx_fill_interlace",
+    "out_max_per_input": [
+      1.0,
+      0.917147110151,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "hx_fit_surface1",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "hx_fit_surface2",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "hx_gabor",
+    "out_max_per_input": [
+      0.027687789289,
+      0.019286341748,
+      0.087823004505
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "hx_gen_bandfilter",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "hx_gen_bandpass",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "hx_gen_derivative_filter",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "hx_gen_highpass",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "hx_gen_image_proto",
+    "out_max_per_input": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "hx_gen_lowpass",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "hx_mean_shape",
+    "out_max_per_input": [
+      0.972847749244,
+      0.882508635158,
+      0.554021832261
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "hx_nonmax_dir",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "hx_plane_deviation",
+    "out_max_per_input": [
+      0.439752292452,
+      0.099951343123,
+      0.606921719748
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "hx_region_to_label",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "hx_region_to_mean",
+    "out_max_per_input": [
+      0.700453997891,
+      0.707898298322,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "hx_shade_height_field",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "illuminate",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "invert",
+    "out_max_per_input": [
+      0.917546956469,
+      0.983237381259,
+      0.99413267515
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "invert_image",
+    "out_max_per_input": [
+      0.917546956469,
+      0.983237381259,
+      0.99413267515
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "isotropic_diffusion",
+    "out_max_per_input": [
+      0.966915083304,
+      0.877336105378,
+      0.543620783739
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "it_add_image_border",
+    "out_max_per_input": [
+      0.999633131442,
+      0.921467486964,
+      0.8897967572
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "it_bit_lshift",
+    "out_max_per_input": [
+      0.941176470588,
+      0.941176470588,
+      0.941176470588
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "it_bit_mask",
+    "out_max_per_input": [
+      0.501960784314,
+      0.501960784314,
+      0.501960784314
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "it_bit_rshift",
+    "out_max_per_input": [
+      0.058823529412,
+      0.058823529412,
+      0.058823529412
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "it_change_format",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "it_convert_image_type",
+    "out_max_per_input": [
+      1.0,
+      0.9609375,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "it_crop_domain",
+    "out_max_per_input": [
+      0.895339170268,
+      0.739203674946,
+      0.935707797919
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "it_crop_part",
+    "out_max_per_input": [
+      0.885737421236,
+      0.73210530678,
+      0.880105614804
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "it_crop_rectangle1",
+    "out_max_per_input": [
+      0.714329309787,
+      0.557141496472,
+      0.651673205625
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "it_full_domain",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "it_region_to_bin",
+    "out_max_per_input": [
+      0.75,
+      0.75,
+      0.75
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "iv_backproject_superres",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "iv_gradient_inpaint",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "iv_motion_deblur",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "iv_richardson_lucy",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "iv_unsharp_deblur",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "iv_wiener_deconv_spatial",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      0.917221645332
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "kirsch_amp",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "kirsch_dir",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "laplace",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "laplace_of_gauss",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      0.941768765804
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "log",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "log_image",
+    "out_max_per_input": [
+      1.0,
+      0.968987294357,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "lowpass",
+    "out_max_per_input": [
+      1.0,
+      0.961084495466,
+      0.742620316687
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "macro_binarize",
+    "out_max_per_input": [
+      0.949062650724,
+      0.81206733966,
+      0.482153993155
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "macro_denoise",
+    "out_max_per_input": [
+      0.962119422278,
+      0.873308053653,
+      0.62872781382
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "max_filter",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "mean_box",
+    "out_max_per_input": [
+      0.965317482198,
+      0.867176398081,
+      0.516434417447
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "mean_curvature_flow",
+    "out_max_per_input": [
+      0.982116159453,
+      0.893588423048,
+      0.614579925528
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "mean_image",
+    "out_max_per_input": [
+      0.965317482198,
+      0.867176398081,
+      0.516434417447
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "mean_sp",
+    "out_max_per_input": [
+      0.968671960577,
+      0.870735053125,
+      0.543866563449
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "median",
+    "out_max_per_input": [
+      0.973948715147,
+      0.875282591749,
+      0.494779242667
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "median_image",
+    "out_max_per_input": [
+      0.973948715147,
+      0.875282591749,
+      0.494779242667
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "median_rect",
+    "out_max_per_input": [
+      0.973948715147,
+      0.875282591749,
+      0.494779242667
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "median_separate",
+    "out_max_per_input": [
+      0.973948715147,
+      0.875282591749,
+      0.494779242667
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "median_weighted",
+    "out_max_per_input": [
+      0.973948715147,
+      0.875282591749,
+      0.494779242667
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "min_filter",
+    "out_max_per_input": [
+      0.803166977732,
+      0.781817071804,
+      0.156967988036
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "mirror_image",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "monotony",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "morph_grad",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "percentile",
+    "out_max_per_input": [
+      0.973948715147,
+      0.875282591749,
+      0.494779242667
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "ph_coherence_enhancing_diffusion",
+    "out_max_per_input": [
+      1.0,
+      0.957401512843,
+      0.998980572754
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "ph_heat_flow",
+    "out_max_per_input": [
+      0.934541346371,
+      0.843702314721,
+      0.480758462372
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "ph_mean_curvature_motion",
+    "out_max_per_input": [
+      0.909808506379,
+      0.884013308062,
+      0.476870252598
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "ph_perona_malik",
+    "out_max_per_input": [
+      0.946350316034,
+      0.854154441867,
+      0.515993595749
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "ph_reaction_diffusion",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "ph_total_variation_flow",
+    "out_max_per_input": [
+      0.96026453239,
+      0.8252398774,
+      0.735634360987
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "phase_deg",
+    "out_max_per_input": [
+      0.998875264211,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "phase_rad",
+    "out_max_per_input": [
+      0.998875264211,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "points_foerstner",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "points_harris_binomial",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "polar_trans_image",
+    "out_max_per_input": [
+      1.0,
+      0.913423895836,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "polar_trans_image_ext",
+    "out_max_per_input": [
+      1.0,
+      0.913423895836,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "polar_trans_image_inv",
+    "out_max_per_input": [
+      1.0,
+      0.957466065884,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "pow_image",
+    "out_max_per_input": [
+      1.0,
+      0.934848537036,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "power_byte",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "power_ln",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "power_real",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "prewitt_amp",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "prewitt_dir",
+    "out_max_per_input": [
+      0.998162562965,
+      0.949210095761,
+      0.998251959657
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "prewitt_mag",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "projective_trans_image",
+    "out_max_per_input": [
+      1.0,
+      0.943927824497,
+      0.757794737816
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "projective_trans_image_size",
+    "out_max_per_input": [
+      1.0,
+      0.943927824497,
+      0.757794737816
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "rank_image",
+    "out_max_per_input": [
+      0.973948715147,
+      0.875282591749,
+      0.494779242667
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "rank_rect",
+    "out_max_per_input": [
+      0.973948715147,
+      0.875282591749,
+      0.494779242667
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "rescale_img",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "rft_generic",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "roberts",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "roberts_mag",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "robinson_amp",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "robinson_dir",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "rotate_image",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "rotate_img",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "scale_clip",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "scale_image",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "scale_image_max",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "sigma_image",
+    "out_max_per_input": [
+      0.965317482198,
+      0.867176398081,
+      0.474540719797
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sigmoid",
+    "out_max_per_input": [
+      0.993307149076,
+      0.98979540969,
+      0.993307149076
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "simulate_defocus",
+    "out_max_per_input": [
+      0.965317482198,
+      0.867176398081,
+      0.516434417447
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "simulate_motion",
+    "out_max_per_input": [
+      0.962547327623,
+      0.851799457428,
+      0.626627663145
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sin_image",
+    "out_max_per_input": [
+      0.999997591074,
+      0.999989514185,
+      0.999994127824
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_adapthist",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "sk_adjust_log",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_area_opening",
+    "out_max_per_input": [
+      0.833636995267,
+      0.833901691206,
+      0.395808884809
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_autolevel",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_butterworth",
+    "out_max_per_input": [
+      0.152570888728,
+      0.291608027208,
+      0.513217909954
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_corner_harris",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "sk_dog",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "sk_enhance_contrast",
+    "out_max_per_input": [
+      1.0,
+      0.956862745098,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_entropy",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_farid",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "sk_frangi",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "sk_gabor",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "sk_hessian",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_hessian_det",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "sk_lbp",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "sk_median_disk",
+    "out_max_per_input": [
+      1.0,
+      0.914760313905,
+      0.659052841539
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_meijering",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "sk_nlm",
+    "out_max_per_input": [
+      0.899345664559,
+      0.813129320046,
+      0.671698094652
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_rolling_ball",
+    "out_max_per_input": [
+      0.283670223886,
+      0.134964459567,
+      0.898704505849
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_scharr",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "sk_shape_index",
+    "out_max_per_input": [
+      1.0,
+      0.977423697863,
+      0.982715711519
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_swirl",
+    "out_max_per_input": [
+      0.997992547102,
+      0.936478140383,
+      0.886916698452
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_tv",
+    "out_max_per_input": [
+      0.961127239546,
+      0.852125453229,
+      0.57855579038
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_tv_bregman",
+    "out_max_per_input": [
+      0.962909470626,
+      0.897507672354,
+      0.652920129937
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sk_wavelet",
+    "out_max_per_input": [
+      0.987870408301,
+      0.928077885188,
+      0.649397819296
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "smooth_image",
+    "out_max_per_input": [
+      0.973515613333,
+      0.884791791562,
+      0.571096837789
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sobel_amp",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "sobel_dir",
+    "out_max_per_input": [
+      0.999678560128,
+      0.984812871471,
+      0.998546117562
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "sobel_mag",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "sqrt_image",
+    "out_max_per_input": [
+      1.0,
+      0.978501947647,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "std_filter",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "tac_height_from_shading",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "tac_pressure_proxy",
+    "out_max_per_input": [
+      0.567308118441,
+      0.283042120626,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "tac_shear_field",
+    "out_max_per_input": [
+      0.700313747938,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "tac_surface_normal",
+    "out_max_per_input": [
+      0.998500679086,
+      0.983371050573,
+      0.999989215126
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "tan_image",
+    "out_max_per_input": [
+      1.0,
+      0.864223516831,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "texture_laws",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "tf_census_transform",
+    "out_max_per_input": [
+      0.901960784314,
+      0.062745098039,
+      0.992156862745
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "tf_gradient_domain_reintegrate",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "tf_log_polar",
+    "out_max_per_input": [
+      0.942037383276,
+      0.78554690991,
+      0.77519756742
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "tf_phase_congruency",
+    "out_max_per_input": [
+      0.732216075601,
+      0.800376439045,
+      0.795437965794
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "tf_radon_sinogram",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "tf_rank_transform",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "tf_steerable_filter",
+    "out_max_per_input": [
+      0.877849652807,
+      1.0,
+      0.810041023075
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "tm_backproject_unfiltered",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "tm_fbp_reconstruct",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "tm_radon_forward",
+    "out_max_per_input": [
+      0.964737956892,
+      0.900595394747,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "tm_sart_reconstruct",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "tm_sinogram_denoise",
+    "out_max_per_input": [
+      0.983497329414,
+      0.88830103253,
+      0.563481761691
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "tophat",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "trimmed_mean",
+    "out_max_per_input": [
+      0.968671960577,
+      0.870735053125,
+      0.543866563449
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "unsharp",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xcv2_meanshift",
+    "out_max_per_input": [
+      0.952941176471,
+      0.870588235294,
+      0.96862745098
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xcv2_warp_logpolar",
+    "out_max_per_input": [
+      0.988810122013,
+      0.873514354229,
+      0.802918016911
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xcv3_denoise_tvl1",
+    "out_max_per_input": [
+      0.996078431373,
+      0.921568627451,
+      0.890196078431
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xcv3_inpaint_ns",
+    "out_max_per_input": [
+      0.921568627451,
+      0.917647058824,
+      0.898039215686
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xcv3_pyr_laplacian",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xcv_detail_enhance",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xcv_edge_preserving",
+    "out_max_per_input": [
+      0.956862745098,
+      0.890196078431,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xcv_inpaint",
+    "out_max_per_input": [
+      0.921568627451,
+      0.917647058824,
+      0.898039215686
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xcv_pencil_sketch",
+    "out_max_per_input": [
+      0.501960784314,
+      0.6,
+      0.349019607843
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xcv_stylization",
+    "out_max_per_input": [
+      0.921568627451,
+      0.850980392157,
+      0.678431372549
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xkor_bilateral",
+    "out_max_per_input": [
+      0.973470687866,
+      0.876183271408,
+      0.80073171854
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xkor_clahe",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xkor_dog",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xkor_gaussian",
+    "out_max_per_input": [
+      0.973567962646,
+      0.878391206264,
+      0.57808816433
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xkor_gftt",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xkor_harris",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xkor_hessian",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xkor_laplacian",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xkor_median",
+    "out_max_per_input": [
+      0.937343895435,
+      0.804885685444,
+      0.473222613335
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xkor_motion_blur",
+    "out_max_per_input": [
+      0.966015398502,
+      0.908273696899,
+      0.550833702087
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xkor_unsharp",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xmh_daubechies",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xmh_haar",
+    "out_max_per_input": [
+      1.0,
+      0.999999999999,
+      0.999999999999
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xmh_selfmatch",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xmh_soft",
+    "out_max_per_input": [
+      0.75,
+      0.707466061549,
+      0.75
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xpil_autocontrast",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xpil_contour",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xpil_contrast",
+    "out_max_per_input": [
+      1.0,
+      0.956862745098,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xpil_detail",
+    "out_max_per_input": [
+      1.0,
+      0.956862745098,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xpil_edge_enhance",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xpil_emboss",
+    "out_max_per_input": [
+      1.0,
+      0.956862745098,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xpil_find_edges",
+    "out_max_per_input": [
+      1.0,
+      0.956862745098,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xpil_mode_filter",
+    "out_max_per_input": [
+      1.0,
+      0.956862745098,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xpil_offset",
+    "out_max_per_input": [
+      1.0,
+      0.956862745098,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xpil_posterize",
+    "out_max_per_input": [
+      0.941176470588,
+      0.941176470588,
+      0.941176470588
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xpil_smooth_more",
+    "out_max_per_input": [
+      1.0,
+      0.956862745098,
+      0.972549019608
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xpil_solarize",
+    "out_max_per_input": [
+      0.560784313725,
+      0.560784313725,
+      0.560784313725
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xpil_unsharp_mask",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsitk_closing_by_recon",
+    "out_max_per_input": [
+      1.0,
+      0.957466065884,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsitk_curv_aniso_diff",
+    "out_max_per_input": [
+      0.993983566761,
+      0.904062092304,
+      0.648329854012
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsitk_curvature_flow",
+    "out_max_per_input": [
+      0.999630560264,
+      0.925882785859,
+      0.755555808742
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsitk_grayscale_fillhole",
+    "out_max_per_input": [
+      1.0,
+      0.957466065884,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsitk_grayscale_grindpeak",
+    "out_max_per_input": [
+      1.0,
+      0.957466065884,
+      0.973204374313
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsitk_laplacian_sharpen",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xsitk_minmax_curv_flow",
+    "out_max_per_input": [
+      1.0,
+      0.951672613621,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsitk_opening_by_recon",
+    "out_max_per_input": [
+      0.889318466187,
+      0.788920104504,
+      0.177521660924
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk2_corner_kr",
+    "out_max_per_input": [
+      0.603065937204,
+      0.568005021026,
+      0.814477890666
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk2_diameter_opening",
+    "out_max_per_input": [
+      0.790354148519,
+      0.875489476156,
+      0.383459631778
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk2_hog",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xsk2_inv_gauss_grad",
+    "out_max_per_input": [
+      0.891762633295,
+      0.57304082142,
+      0.987678118873
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk2_multiotsu",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xsk2_radon",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xsk2_rank_geomean",
+    "out_max_per_input": [
+      0.980392156863,
+      0.890196078431,
+      0.603921568627
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk2_reconstruction",
+    "out_max_per_input": [
+      0.825,
+      0.782466061549,
+      0.825
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk2_wiener",
+    "out_max_per_input": [
+      0.999632321678,
+      0.964006304599,
+      0.667512768303
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk3_area_closing",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk3_corner_fast",
+    "out_max_per_input": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk3_corner_moravec",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xsk3_diameter_closing",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk3_integral_image",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xsk3_rank_equalize",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk3_rank_mean_bilateral",
+    "out_max_per_input": [
+      0.952941176471,
+      0.878431372549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk3_rank_subtract_mean",
+    "out_max_per_input": [
+      0.58431372549,
+      0.545098039216,
+      0.803921568627
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk_hessian_eig",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xsk_inpaint",
+    "out_max_per_input": [
+      0.919846892701,
+      0.91984581575,
+      0.899489307099
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk_meijering",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xsk_richardson_lucy",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk_sato",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xsk_struct_coherence",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsk_unwrap_phase",
+    "out_max_per_input": [
+      1.0,
+      0.973334720461,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsp_cspline_smooth",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsp_dct",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsp_dct_denoise",
+    "out_max_per_input": [
+      1.0,
+      0.838817029656,
+      0.401508525906
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsp_dct_lowpass",
+    "out_max_per_input": [
+      1.0,
+      0.911491332872,
+      0.745424429687
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsp_detrend_flatten",
+    "out_max_per_input": [
+      0.962652978273,
+      0.906321472988,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsp_gauss_grad_mag",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xsp_hilbert_env",
+    "out_max_per_input": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsp_morph_laplace",
+    "out_max_per_input": [
+      0.990358567906,
+      1.0,
+      0.998352340758
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsp_savgol",
+    "out_max_per_input": [
+      0.985710818739,
+      0.915098877715,
+      0.624063982495
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xsp_wiener",
+    "out_max_per_input": [
+      0.953517467794,
+      0.898319388183,
+      0.71118297669
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xwt_directional_detail",
+    "out_max_per_input": [
+      0.883710495785,
+      0.99999999999,
+      0.999999999998
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xwt_firm_denoise",
+    "out_max_per_input": [
+      0.986002726571,
+      0.901699187833,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xwt_hf_reconstruct",
+    "out_max_per_input": [
+      0.999999999997,
+      0.999999999995,
+      0.999999999999
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xwt_lf_reconstruct",
+    "out_max_per_input": [
+      0.991075173069,
+      0.881401748213,
+      0.641480573
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "xwt_mra_component",
+    "out_max_per_input": [
+      0.999999999995,
+      0.999999999997,
+      0.999999999998
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xwt_subband_tile",
+    "out_max_per_input": [
+      1.0,
+      0.999999999999,
+      0.999999999999
+    ],
+    "scale_invariant": true,
+    "out_max_always_one": true,
+    "status": "determined",
+    "per_image_normalised": true
+  },
+  {
+    "op": "xwt_visushrink",
+    "out_max_per_input": [
+      0.987790684735,
+      0.898158353201,
+      0.64026950333
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "zoom_image_factor",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  },
+  {
+    "op": "zoom_image_size",
+    "out_max_per_input": [
+      1.0,
+      0.957466061549,
+      1.0
+    ],
+    "scale_invariant": false,
+    "out_max_always_one": false,
+    "status": "determined",
+    "per_image_normalised": false
+  }
+]
