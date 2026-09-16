@@ -63,6 +63,25 @@ _FACT_PATTERNS = {
 }
 
 
+#: **画像ごとに正規化していると実測済みの op**(`docs/op_normalisation.json`)。
+#: 「出力が値域を大きく超える」だけでは正規化の穴と言えない —— **壊れた第 2 実装でも
+#: 巨大な値は出る**。実際、箱平均の `cv_box` が「正規化の穴」に分類された。
+#: Fullseye 側が正規化していると測れている op に限って、その穴だと言う。
+_NORM_JSON = ROOT / "docs" / "op_normalisation.json"
+_NORM_SET = None
+
+
+def _normalised_ops() -> set:
+    global _NORM_SET
+    if _NORM_SET is None:
+        _NORM_SET = set()
+        if _NORM_JSON.exists():
+            for r in json.loads(_NORM_JSON.read_text(encoding="utf-8")):
+                if r.get("per_image_normalised"):
+                    _NORM_SET.add(r["op"])
+    return _NORM_SET
+
+
 def _note_text(op: str) -> str:
     base = Path(__file__).resolve().parents[2] / "docs" / "ops"
     for dirpath, _d, filenames in os.walk(base):
@@ -126,9 +145,15 @@ def classify(rec: dict) -> dict:
     connect_only = bad and bad <= CONNECT_PROBES
 
     if max_out > 2.0:
-        return {"op": op, "verdict": "spec_gap_normalisation",
-                "note": f"出力が値域を大きく超える(最大 {max_out:.3g})。正規化の定義が書かれていない疑い",
-                "probes_bad": sorted(bad)}
+        if op in _normalised_ops():
+            return {"op": op, "verdict": "spec_gap_normalisation",
+                    "note": f"Fullseye は画像ごとに正規化していると実測済みで、第 2 実装は"
+                            f"していない(差 最大 {max_out:.3g})。正規化の定義が書かれていない",
+                    "probes_bad": sorted(bad)}
+        return {"op": op, "verdict": "impl2_defect",
+                "note": f"差が値域を大きく超える(最大 {max_out:.3g})が、Fullseye 側は"
+                        f"正規化していない —— 第 2 実装の値が壊れている疑い",
+                "probes_bad": sorted(bad)[:8]}
     if border_only and good:
         return {"op": op, "verdict": "spec_gap_border",
                 "note": "端に触れる探針でだけ分かれ、内部では一致。端の規約が未記載",
