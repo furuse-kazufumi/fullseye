@@ -1,0 +1,615 @@
+[
+  {
+    "op": "affine_trans_region",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "boundary",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "closing_circle",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "closing_golay",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "closing_rectangle1",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "convex_fill",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "dilation_circle",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "dilation_golay",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "dilation_rectangle1",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "dilation_seq",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "em_skeleton",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "erosion_circle",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "erosion_golay",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "erosion_rectangle1",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "erosion_seq",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "fill_holes",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "fill_up",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "fill_up_shape",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "get_region_contour",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "get_region_convex",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "hx_clip_region_rel",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "hx_closing",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "hx_dilation1",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "hx_dilation2",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "hx_erosion1",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "hx_expand_region",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "hx_move_region",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "hx_opening",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "hx_split_skeleton_region",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "invert_region",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "junctions_skeleton",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "mirror_region",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "morph_skeleton",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "opening_circle",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "opening_golay",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "opening_rectangle1",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "polar_trans_region_inv",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 1.0,
+    "bridged_vs_separate": 1.0,
+    "status": "determined",
+    "connectivity": 8
+  },
+  {
+    "op": "projective_trans_region",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "pruning",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r2_endpoints_skeleton",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r2_inner_circle",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 1.0,
+    "bridged_vs_separate": 1.0,
+    "status": "determined",
+    "connectivity": 8
+  },
+  {
+    "op": "r2_inner_rectangle1",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r2_partition_rectangle",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r2_smallest_circle",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r2_smallest_rectangle1",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r2_smallest_rectangle2",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r2_sort_region",
+    "diff_vs_bridged": 1.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 1.0,
+    "status": "determined",
+    "connectivity": 4
+  },
+  {
+    "op": "r2_split_skeleton_lines",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r2_union1",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r3_background_seg",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r3_clip_region",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r3_eliminate_runs",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r3_label_to_region",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r3_partition_dynamic",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r3_polar_trans_region",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r3_rank_region",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "r3_select_region_point",
+    "diff_vs_bridged": 1.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 1.0,
+    "status": "determined",
+    "connectivity": 4
+  },
+  {
+    "op": "reg_close",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "reg_dilate",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "reg_erode",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "reg_open",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "region_boundary",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "remove_noise_region",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "remove_small",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "select_largest",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "select_shape",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "select_shape_std",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "shape_trans",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "sk_clear_border",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "sk_convex",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "sk_find_boundaries",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "sk_medial",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "sk_remove_holes",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "sk_skeleton",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "sk_thin",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "skeleton",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "smallest_rectangle1",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "thinning",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "thinning_golay",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "thinning_seq",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "transpose_region",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "xcv2_hitmiss",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "xmh_bwperim",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "xmh_majority",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "xsk2_isotropic_close",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "xsk3_rank_majority",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  },
+  {
+    "op": "zoom_region",
+    "diff_vs_bridged": 0.0,
+    "diff_vs_separate": 0.0,
+    "bridged_vs_separate": 0.0,
+    "status": "not_connectivity_dependent"
+  }
+]

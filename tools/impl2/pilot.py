@@ -421,6 +421,9 @@ def main() -> int:
                     help="そのエンジンの C が既にある op は生成をやり直さない(長時間の無人実行用)")
     ap.add_argument("--all-image", action="store_true",
                     help="registry/color の image->image op を全部回す")
+    ap.add_argument("--reverse", action="store_true",
+                    help="op を逆順に回す。**同じモデルで 2 本目**を走らせ両端から詰めるため"
+                         "(モデルを変えると ollama が載せ替えるので並走が逆効果になる)")
     ap.add_argument("--all-region", action="store_true",
                     help="region を食う/返す op(image->region / region->region)を全部回す")
     a = ap.parse_args()
@@ -444,6 +447,8 @@ def main() -> int:
                   if o["tier"] in ("registry", "color") and o["out_sort"] == "region"
                   and o["in_sort"] in ("image", "region")]
     names = list(dict.fromkeys(names))
+    if a.reverse:
+        names.reverse()
 
     results = []
     for op in names:
