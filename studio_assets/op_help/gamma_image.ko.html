@@ -14,7 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>감마 보정 `<code style="color:#22d3bf">x ** (0.3 + 2.5*a)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">가 0에 가까울수록 지수는 0.3에 가까워져 어두운 부분을 끌어올리고, </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">가 1에 가까울수록 지수는 2.8에 가까워져 어두운 부분을 뭉개어 대비를 강화한다. HALCON의 </code><code style="color:#22d3bf">gamma_image</code>`(Perform a gamma encoding or decoding of an image.)의 대역.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はガンマ指数を 0.3〜2.8 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。HALCON の実装は</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はガンマ指数を 0.3〜2.8 の範囲で**線形に**振る（既定の </code><code style="color:#22d3bf">a=0.5</code><code style="color:#22d3bf"> は γ=1.55 であって素通しではない。γ=1 が要るなら </code><code style="color:#22d3bf">a=0.28</code><code style="color:#22d3bf">）。</code><code style="color:#22d3bf">b</code>` は未使用。HALCON の実装は</p>
 <p>Encode/Decode の切替や AmpFactor など複数パラメータを持つが、ここでは</p>
 <p>単純なべき乗写像 1 本に単純化している(近似)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

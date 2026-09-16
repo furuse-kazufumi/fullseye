@@ -14,6 +14,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Niblack の局所適応しきい値。Sauvola と同じく局所平均・標準偏差からしきい値を決めるが、係数の与え方がより単純(古典的)で、Sauvola より前景を広めに(=ノイズを拾いやすく)判定する傾向がある。</p>
 <p>HALCON の <code style="color:#22d3bf">var_threshold</code> に相当(近似)。実装は `<code style="color:#22d3bf">v &gt; filters.threshold_niblack(v, window_size=2*int(a*6)+3)</code>` —— a は局所窓サイズを 3〜15(奇数)に振る。b は未使用。sk_sauvola と同じ入力・同じ a の振り方で並べ、結果を見比べる用途を想定。</p>
+<p><b>端の扱い</b>: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の `<code style="color:#22d3bf">BORDER_REFLECT_101</code><code style="color:#22d3bf">)(実測。</code>tools/impl2/border_probe.py`)。</p>
+<p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

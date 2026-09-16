@@ -41,6 +41,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 セルサイズを ``a`` で ``min(h, w)`` の 5%〜25% の範囲に振り、
 ``(row//cell + col//cell)`` が偶数のセルを前景(1)とする。``b`` は未使用。
 
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.37、0.59、0.79、0.99(実測。刻み 0.02 の掃きで測った位置)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_halcon_ext ファミリ ガイド](../guides/gallery2d_halcon_ext.md)

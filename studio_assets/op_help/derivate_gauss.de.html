@@ -17,6 +17,9 @@
 <p>`<code style="color:#22d3bf">a</code>` がガウス核のシグマを 0.5〜3.0 の範囲で振る(平滑化の強さとエッジの</p>
 <p>太さがトレードオフ)。`<code style="color:#22d3bf">b</code>` は未使用。方向別成分(dx, dy)ではなく振幅のみを</p>
 <p>返す点に注意。</p>
+<p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (gemessen; </code>tools/impl2/border_probe.py`).</p>
+<p><b>Vergleichbarkeit der Werte (gemessen)</b>: Die Ausgabe wird <b>auf das Maximum des jeweiligen Bildes normiert</b> (das Ausgabemaximum ist stets 1.0, und eine Skalierung der Eingabe lässt die Ausgabe unverändert). Werte sind daher <b>nicht bildübergreifend vergleichbar</b> — ein Merkmal gleicher Stärke erhält je nach dem stärksten Merkmal im Bild einen anderen Wert, und in einem Bild mit nur schwachen Merkmalen wird das Rauschen auf 1.0 angehoben. Für einen Vergleich über Bilder hinweg auf eine gemeinsame Referenz umskalieren.</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

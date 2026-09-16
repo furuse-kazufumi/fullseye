@@ -14,7 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>擷取 region 的輪廓（邊界環）。相當於 HALCON 的 `<code style="color:#22d3bf">boundary</code>`（Reduce a region to its boundary.）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。二値化した領域から、1 回侵食した領域を差し引くことで、幅 1 画素の外周だけを残す。出力は region（0/1）のまま。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。二値化した領域から、1 回侵食した領域を差し引くことで、幅 1 画素の輪郭を残す。<b>穴のある領域では穴の輪郭も返る</b>（「領域 − 収縮版」は定義上、外側からも穴の側からも 1 画素を残す。実測で確認）。出力は region（0/1）のまま。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

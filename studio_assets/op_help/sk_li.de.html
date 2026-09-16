@@ -14,6 +14,7 @@
 <p>Globale Schwellenwert-Binarisierung nach Lis Methode der minimalen Kreuzentropie (Minimum Cross Entropy). Bestimmt den Schwellenwert durch iterative Minimierung der Kreuzentropie zwischen den Vordergrund-/Hintergrundverteilungen -- ein automatisches Schwellenwertverfahren aus einer anderen Familie als die Otsu-Methode.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の <code style="color:#22d3bf">binary_threshold</code> に相当(近似。アルゴリズムは別物)。実装は `<code style="color:#22d3bf">v &gt; filters.threshold_li(v)</code>` —— a, b は未使用。大津法よりノイズや裾の重いヒストグラムに強いとされる場面がある。</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

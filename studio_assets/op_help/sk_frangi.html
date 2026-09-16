@@ -16,6 +16,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Frangi の管状構造検出フィルタ(vesselness filter)。血管・しわ・川のような細長い管状構造を、Hessian 行列の固有値比から検出する。</p>
 <p>HALCON の <code style="color:#22d3bf">lines_gauss</code>(Detect lines and their width.)に相当(近似。線の幅や XLD 輪郭は返さず、応答強度の画像のみを返す)。2026-08-30 に a, b を配線した: a はスケール範囲(`<code style="color:#22d3bf">sigmas=range(1, 2+round(a*4))</code><code style="color:#22d3bf"> —— 最大 σ を 1〜5 に振る。a=0.5 で旧来の固定範囲 </code><code style="color:#22d3bf">range(1,4)</code><code style="color:#22d3bf"> とビット一致)、b は Frangi の blobness 感度 β を 0.15〜0.85 に振る(b=0.5 で skimage 既定の 0.5 と一致し、既定出力は変わらない)。既定で </code><code style="color:#22d3bf">black_ridges=True</code>`(明るい背景上の暗い管を検出する)ため、白い背景に黒い線が乗った画像でないと応答が弱く出る点に注意。</p>
+<p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
+<p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -15,6 +15,7 @@
 <p>Watershed segmentation. Treats the gradient image as terrain, uses dark regions (`<code style="color:#22d3bf">x &lt; 0.2+0.3*a</code><code style="color:#22d3bf">) as markers to find the watershed lines, and returns those boundary lines. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">watersheds</code>` (Extract watersheds and basins from an image).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がマーカーを決める暗さのしきい値を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

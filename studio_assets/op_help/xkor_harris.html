@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Harris コーナー応答。`<code style="color:#22d3bf">kornia.feature.harris_response</code><code style="color:#22d3bf"> を呼び、符号付き応答を </code><code style="color:#22d3bf">signed01</code>` で [0,1] に写像する（コーナーは正、エッジは負に出るHarris 応答の符号情報を保ったまま可視化域に収める）。</p>
 <p>a が Harris のスコア係数 k（`<code style="color:#22d3bf">0.04 + 0.02 * a</code>`、経験的に 0.04〜0.06 の範囲で使われる値）を振る。b は未使用。</p>
+<p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

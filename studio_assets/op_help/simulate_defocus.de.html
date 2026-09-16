@@ -15,6 +15,7 @@
 <p>Glättung, die eine gleichmäßige Unschärfe (Defokussierung) simuliert. Implementiert als Mittelwertfilter mit rechteckigem Fenster (Box-Filter, `<code style="color:#22d3bf">ndimage.uniform_filter</code><code style="color:#22d3bf">), das mit einem quadratischen Fenster annähert, statt die tatsächliche Unschärfeform einer kreisförmigen Blende (Zerstreuungskreis, circle-of-confusion) abzubilden. a stellt die Fensterbreite auf eine von vier Stufen (3/5/7/9) ein (</code><code style="color:#22d3bf">_k(a)</code>`), b wird nicht verwendet.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の `<code style="color:#22d3bf">simulate_defocus</code>`（一様なピンボケをシミュレートする演算）に相当するが、光学的に正しい円形ボケではなく矩形平均という粗い近似である点に注意。</p>
+<p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (gemessen; </code>tools/impl2/border_probe.py`).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

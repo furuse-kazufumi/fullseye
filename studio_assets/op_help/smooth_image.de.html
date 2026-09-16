@@ -15,6 +15,7 @@
 <p>Allgemeine Glättung, angenähert durch eine einzelne Gauß-Weichzeichnung (Sigma `<code style="color:#22d3bf">0.5+2.0*a</code><code style="color:#22d3bf">). HALCONs </code><code style="color:#22d3bf">smooth_image</code>` (Smooth an image using various filters.) ist ein vielseitiger Operator, der die Wahl zwischen mehreren Filtertypen wie Deriche/Gauss/Mean erlaubt, hier jedoch auf einen einzigen Gauß-Typ vereinfacht wird (eine Grenze dieser Näherung).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がシグマを 0.5〜2.5 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (gemessen; </code>tools/impl2/border_probe.py`).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

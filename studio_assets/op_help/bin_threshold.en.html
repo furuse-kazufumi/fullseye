@@ -14,6 +14,7 @@
 <p>Automatic threshold binarization using Otsu&#x27;s method. Shares the `<code style="color:#22d3bf">otsu</code><code style="color:#22d3bf"> branch of </code><code style="color:#22d3bf">_sh_threshold</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">binary_threshold</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">auto_threshold</code>`; a and b are unused. Pixels brighter than the threshold become the foreground (1). In environments without skimage, it falls back to using the image mean as the threshold.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の `<code style="color:#22d3bf">bin_threshold</code>`（複数の自動しきい値決定アルゴリズムから選んで二値化する演算、既定は最大分離度=大津法相当）に相当する近似で、大津法のみをサポートし他のアルゴリズム選択肢は無い。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -15,6 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>シグマフィルタ（sigma filter, Lee 型）によるノイズ抑制。窓内平均値との差が閾値（0.05〜0.4、b で振る）未満の画素だけを使って再平均化し、極端に外れた画素（ソルト&amp;ペッパー雑音など）の影響を除く。該当画素が窓内に無ければ元の値をそのまま返す。a が窓サイズを 3/5/7/9 に振る。</p>
 <p>HALCON の `<code style="color:#22d3bf">eliminate_sp</code>`（閾値外の値を周辺の平均値で置き換えてソルト&amp;ペッパーノイズを除去する演算）に相当する近似実装。</p>
+<p><b>端の扱い</b>: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)(実測。</code>tools/impl2/border_probe.py`)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

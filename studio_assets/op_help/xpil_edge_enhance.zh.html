@@ -13,6 +13,7 @@
 <p>Pillow 的边缘增强滤镜（增强版）。使用 `<code style="color:#22d3bf">PIL.ImageFilter.EDGE_ENHANCE_MORE</code><code style="color:#22d3bf"> 的固定卷积核提升边缘附近的对比度（比 </code><code style="color:#22d3bf">EDGE_ENHANCE</code>` 更强的版本）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>a, b は未使用（固定カーネル）。</p>
+<p><b>精度（实测）</b>：内部<b>量子化为 8 bit（256 级）</b>——输出恰好落在 k/255 的栅格上。即使以 float64 传入，<b>该精度也不会被保留</b>：16-bit 相机的级差（约 1.5e-5）被舍入到 1/255 ≈ 3.9e-3，相差小于 1/255 的两幅图会返回相同结果。在测量微小灰度差、或将输出继续送入微分与回归时，量子化台阶会显现——请选用不经过 8 bit 的 op。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

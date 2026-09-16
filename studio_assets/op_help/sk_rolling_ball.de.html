@@ -14,6 +14,7 @@
 <p>Hintergrundsubtraktion nach der Rolling-Ball-Methode. Betrachtet die Bildhelligkeit als Relief, rollt eine Kugel mit angegebenem Radius darunter hindurch, schätzt die resultierende Hüllfläche als Hintergrund und subtrahiert sie vom Originalbild -- dient zur Beseitigung ungleichmäßiger Beleuchtung (allmähliche Helligkeitsgradienten).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">v - restoration.rolling_ball(v, radius=5+int(a*20))</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">[0,1]</code>` へ clip したもの —— a は球の半径を 5〜25 に振る(大きいほど緩やかな照明ムラしか背景とみなさず、細かい構造は残る)。b は未使用。</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

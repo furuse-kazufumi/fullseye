@@ -14,6 +14,7 @@
 <p>Area opening. Whereas ordinary morphological opening removes small bright regions based on the shape of the structuring element, this judges by area alone (number of connected pixels) and removes bright connected components smaller than a specified area -- letting you drop &quot;small&quot; things regardless of shape.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">morphology.area_opening(v, area_threshold=int(16+a*100))</code>` —— a は面積しきい値を 16〜116 画素に振る。b は未使用。connectivity は既定の 1(4 近傍)のまま。</p>
+<p><b>Border handling</b>: treat everything outside the image as background (0) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

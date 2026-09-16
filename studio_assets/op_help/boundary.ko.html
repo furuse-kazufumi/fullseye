@@ -15,6 +15,8 @@
 <p>영역에서 1픽셀 침식시킨 버전을 빼서 외곽 경계선(윤곽 안쪽 1픽셀 폭의 고리)을 추출한다. 채워진 영역을 윤곽선으로 변환한다. HALCON의 `<code style="color:#22d3bf">boundary</code>`(Reduce a region to its boundary.)에 해당.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>穴のある領域</b>: 外周だけでなく<b>穴の輪郭も返る</b>（「領域 − 収縮版」は定義上、外側からも穴の側からも 1 画素を残す。実測で確認）。</p>
+<p><b>画像の縁</b>: 領域が画像の端に接する場合、<b>縁の側も境界に含まれる</b>(外側を背景とみなして収縮するため)。全面が領域の入力では、出力は画像の外周 1 画素の枠になる(8x8 で 28 画素。実測)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

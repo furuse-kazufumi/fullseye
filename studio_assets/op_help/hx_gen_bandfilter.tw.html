@@ -23,6 +23,7 @@
 <p>大きい b)では DC を含む円板になり、実質ローパスになる。</p>
 <p>`<code style="color:#22d3bf">hx_gen_bandpass</code>` が「内半径と幅」なのに対し、こちらは「中心と半幅」で同じ円環を指定する。特定の空間周波数</p>
 <p>(縞の周期 `<code style="color:#22d3bf">1/c</code><code style="color:#22d3bf"> 画素)だけを抜き出すマスクを作り、</code><code style="color:#22d3bf">fft_generic</code>` などの中心=DC スペクトルと画素積で使う。</p>
+<p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

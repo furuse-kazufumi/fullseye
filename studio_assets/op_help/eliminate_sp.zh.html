@@ -16,6 +16,7 @@
 <p>通过西格玛滤波器（sigma filter，Lee 型）抑制噪声。仅使用窗口内与窗口均值之差低于阈值（0.05〜0.4，由 b 调节）的像素重新求平均，从而消除极端离群像素（如椒盐噪声）的影响。若窗口内没有符合条件的像素，则原样返回原值。a 将窗口大小分为 3/5/7/9。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の `<code style="color:#22d3bf">eliminate_sp</code>`（閾値外の値を周辺の平均値で置き換えてソルト&amp;ペッパーノイズを除去する演算）に相当する近似実装。</p>
+<p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（实测。</code>tools/impl2/border_probe.py`）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

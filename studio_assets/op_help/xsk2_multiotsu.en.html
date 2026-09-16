@@ -20,6 +20,7 @@
 <p>だけで実行が止まって見えるほど遅い（画像サイズにはほぼ依らない）。</p>
 <p>4 クラスなら 0.025 秒に収まる。b は未使用。しきい値で量子化した後</p>
 <p>`<code style="color:#22d3bf">(cls-1)</code>` で割って [0,1] に正規化する。</p>
+<p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -40,7 +40,7 @@ b >= 0.5 -> Shepp-Logan. ``a`` is unused (the filter is the meaningful knob).
 Uses ``skimage.transform.iradon`` when available, else the NumPy
 FFT-ramp-filtered back-projection. Output refit to HxW.
 
-**つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。4 種類の入力で確認)。
+**つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。5 種類の入力で確認)。
 
 **値の比較可能性(実測)**: 出力を**その画像の最大値で正規化**している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって**画像をまたいで値を比較できない** —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。
 

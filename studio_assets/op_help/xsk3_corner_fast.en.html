@@ -16,6 +16,7 @@
 <p>FAST corner detection (skimage `<code style="color:#22d3bf">feature.corner_fast</code>`). A fast technique that compares against the pixels on a circle around the center pixel and detects as corners locations where a run of consecutively brighter/darker pixels continues for at least a certain count. The result is a response map normalized by its maximum absolute value.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は連続画素数のしきい値 </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">9+int(a*3)</code><code style="color:#22d3bf"> で 9〜12)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は輝度差のしきい値(</code><code style="color:#22d3bf">0.05+0.2*b</code>` で 0.05〜0.25)を振る。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

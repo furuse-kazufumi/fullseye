@@ -16,6 +16,8 @@
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がガウス平滑化のシグマを振る。</code><code style="color:#22d3bf">b</code>` は未使用。上下・左右いずれかの</p>
 <p>方向で符号が変わればゼロ交差とみなす(斜め方向は直接見ていない)。</p>
+<p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (measured; </code>tools/impl2/border_probe.py`).</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

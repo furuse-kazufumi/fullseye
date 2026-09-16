@@ -15,6 +15,7 @@
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>入力と同じ形状の全 1 の region(=画像全面)を返すだけの op。ROI を絞る他の</p>
 <p>op と対で使い、定義域をリセットするために使う。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness makes <b>every pixel foreground (1), regardless of the brightness</b>. A frame that is blown out, occluded, or simply has no subject comes back as “<b>100 % defective</b>”, so test for uniformity upstream and reject such frames.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

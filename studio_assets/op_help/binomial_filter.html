@@ -18,6 +18,7 @@
 <p>binomial filter.）が使う核と同じ発想の実装。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が核サイズを </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> の 4 段階(</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">)で振る。</code><code style="color:#22d3bf">b</code>` は</p>
 <p>未使用。ガウシアンぼかしより計算が軽く、リンギングも出にくい。</p>
+<p><b>端の扱い</b>: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)(実測。</code>tools/impl2/border_probe.py`)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

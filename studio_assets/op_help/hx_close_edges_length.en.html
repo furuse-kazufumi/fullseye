@@ -23,6 +23,7 @@
 <p>注意: クロージングの構造要素は固定 3×3 で、`<code style="color:#22d3bf">hx_close_edges</code>` のような幅の調整は無い。ラベリングが 4 近傍のため</p>
 <p>斜めにつながる 1 画素幅の線は別成分に分かれ、「長さ」が短く数えられて消えやすい。`<code style="color:#22d3bf">binary_closing</code>` は画像外を</p>
 <p>0 と扱うので端 1 画素の帯は常に 0 になる。「長さ」は成分の画素数であり幾何学的な線長ではない(塊も長いと数える)。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

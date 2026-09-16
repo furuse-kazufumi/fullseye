@@ -16,6 +16,8 @@
 <p>a でカーネルサイズを 3/5/7/9 の 4 段階から選ぶ</p>
 <p>（`<code style="color:#22d3bf">(3,5,7,9)[min(3, int(a*4))]</code>`）。b は未使用。ごま塩ノイズなど</p>
 <p>外れ値ノイズに強く、ガウシアンぼかしよりエッジを保ちやすい。</p>
+<p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
+<p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

@@ -16,6 +16,7 @@
 <p>使用圆盘形结构元素的二值开运算(先侵蚀后膨胀)。在去除微小突起或细连接部的同时,保留大致的形状。相当于HALCON的`<code style="color:#22d3bf">opening_circle</code>`(Open a region with a circular structuring element.)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が構造要素の半径を 1〜4 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

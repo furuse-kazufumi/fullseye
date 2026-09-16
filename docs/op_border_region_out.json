@@ -1,0 +1,1466 @@
+[
+  {
+    "op": "adaptive_gauss_thresh",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "symmetric",
+    "border_ja": "端画素を重複させて折り返す (d c b a | a b c d)",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "auto_threshold",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "symmetric"
+  },
+  {
+    "op": "bin_threshold",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "symmetric"
+  },
+  {
+    "op": "binary_threshold",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "symmetric"
+  },
+  {
+    "op": "canny",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "cv_adaptive_gauss",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 0.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "edge",
+    "border_ja": "端の画素を複製する(最近傍)",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "cv_adaptive_mean",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 0.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "edge",
+    "border_ja": "端の画素を複製する(最近傍)",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "cv_canny",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "cv_otsu",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "symmetric"
+  },
+  {
+    "op": "dual_threshold",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "dyn_threshold",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "symmetric",
+    "border_ja": "端画素を重複させて折り返す (d c b a | a b c d)",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "edges_image",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "fast_threshold",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "h_threshold",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "hx_char_threshold",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "symmetric"
+  },
+  {
+    "op": "hx_detect_edge_segments",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "hx_full_domain",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "hx_gen_checker_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "hx_gen_circle",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "hx_gen_circle_sector",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "hx_gen_disc_se",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "hx_gen_ellipse",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "hx_gen_ellipse_sector",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "hx_gen_empty_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "hx_gen_grid_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "hx_gen_rectangle2",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "hx_get_domain",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "hx_histo_to_thresh",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "symmetric"
+  },
+  {
+    "op": "hx_lowlands",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "edge",
+      "reflect",
+      "symmetric"
+    ],
+    "best_guess": "edge"
+  },
+  {
+    "op": "hx_plateaus_center",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "hx_rectangle1_domain",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "hysteresis_threshold",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "local_max",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "local_min",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "edge",
+      "reflect",
+      "symmetric"
+    ],
+    "best_guess": "edge"
+  },
+  {
+    "op": "local_threshold",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "symmetric",
+    "border_ja": "端画素を重複させて折り返す (d c b a | a b c d)",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "macro_edge",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "nonmax_suppression_amp",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "otsu",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "symmetric"
+  },
+  {
+    "op": "pouring",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "regiongrowing",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "regiongrowing_mean",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "segment_image_mser",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "sg_felzenszwalb",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "sg_gmm_segment",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "symmetric",
+    "border_ja": "端画素を重複させて折り返す (d c b a | a b c d)",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "sg_kmeans_intensity",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "symmetric"
+  },
+  {
+    "op": "sg_normalized_cut_2",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "sg_region_growing_seeded",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "sg_slic_superpixels",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "sg_watershed_gradient",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "sk_canny",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "sk_chan_vese",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "sk_felzenszwalb",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "sk_hysteresis",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "sk_li",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "reflect"
+  },
+  {
+    "op": "sk_local_maxima",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "sk_niblack",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 0.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "reflect",
+    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "sk_otsu",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "symmetric"
+  },
+  {
+    "op": "sk_sauvola",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 0.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "reflect",
+    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "sk_slic",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "sk_yen",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "symmetric"
+  },
+  {
+    "op": "tac_contact_mask",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "threshold",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "var_threshold",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 0.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "reflect",
+    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "watersheds",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "watersheds_threshold",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "xcv_grabcut",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "edge"
+  },
+  {
+    "op": "xcv_watershed_markers",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "xkor_canny",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "xmh_bernsen",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "edge",
+      "reflect",
+      "symmetric"
+    ],
+    "best_guess": "edge"
+  },
+  {
+    "op": "xmh_regmin",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "xsitk_confidence_connected",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 0.0
+    },
+    "status": "determined",
+    "border": "wrap",
+    "border_ja": "反対側へ巻き付ける(周期)",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "xsitk_connected_threshold",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "xsitk_huang_thresh",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "symmetric"
+  },
+  {
+    "op": "xsitk_maxentropy_thresh",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "reflect"
+  },
+  {
+    "op": "xsitk_moments_thresh",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "reflect"
+  },
+  {
+    "op": "xsk2_h_maxima",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "xsk3_h_minima",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "edge",
+      "reflect",
+      "symmetric"
+    ],
+    "best_guess": "edge"
+  },
+  {
+    "op": "xsk3_peak_local_max",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "xsk3_rank_otsu",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "xsk3_threshold_local_median",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "symmetric",
+    "border_ja": "端画素を重複させて折り返す (d c b a | a b c d)",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "xsk_flood",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ],
+    "best_guess": "constant0"
+  },
+  {
+    "op": "xsk_random_walker",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "zero_crossing",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "symmetric",
+    "border_ja": "端画素を重複させて折り返す (d c b a | a b c d)",
+    "second_best_diff": 1.0
+  }
+]

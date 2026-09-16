@@ -13,6 +13,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Scharr 勾配の大きさ。skimage の `<code style="color:#22d3bf">filters.scharr</code>` をそのまま呼び、水平/垂直それぞれの Scharr カーネル(3x3)の応答を合成した勾配強度を返す。</p>
 <p>HALCON の <code style="color:#22d3bf">edges_image</code>(Extract edges using Deriche, Lanser, Shen, or Canny filters.)に相当(近似。アルゴリズムは異なる)。Sobel より回転対称性(方向によらず応答が均一)が良いとされるカーネル。a, b は未使用 —— スケールや閾値の調整点が無く、常に固定カーネルで一発計算する軽量なエッジ検出。</p>
+<p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
+<p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -15,6 +15,7 @@
 <p>分區塊直方圖等化。將影像分割為 `<code style="color:#22d3bf">nb x nb</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">nb=2+4*a</code><code style="color:#22d3bf">)個區塊,並對每個區塊獨立進行(64 分箱的)直方圖等化——相較於一次處理整張影像的 </code><code style="color:#22d3bf">equ_histo_image</code><code style="color:#22d3bf">,對局部光照不均更為穩健,但區塊邊界處可能出現階梯(區塊偽影)。相當於 HALCON 的 </code><code style="color:#22d3bf">equ_histo_image_rect</code>`(Histogram linearization within a rectangular mask.)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がブロック分割数を 2〜6 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>旋鈕（實測）</b>：`<code style="color:#22d3bf">a</code>` 以<b>離散檔位</b>生效，切換點在 a ≈ 0.25、0.49、0.75、0.99（以步長 0.02 掃描實測）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

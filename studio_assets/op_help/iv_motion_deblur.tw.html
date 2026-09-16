@@ -13,6 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>針對假設的線性運動模糊進行維納反卷積。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 設定模糊長度 L = 3 + round(a*10)（3..13 px）；</code><code style="color:#22d3bf">b</code>` 設定模糊角度 theta = b*180 度（b=0 -&gt; 水平方向）。此 op 建立該運動 PSF 並對其求逆，使沿運動方向被拖散的條紋變窄。</p>
+<p><b>邊界處理</b>：環繞到對側（週期）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

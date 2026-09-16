@@ -13,6 +13,7 @@
 <p>灰階削峰（SimpleITK `<code style="color:#22d3bf">GrayscaleGrindPeak</code>`，xsitk_grayscale_fillhole的對偶）。透過形態學重建，將比周圍亮的局部峰值削低到周圍高度。用於去除高光尖峰。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>パラメータは無く、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。出力は [0,1] にクリップ。</p>
+<p><b>邊界處理</b>：複製邊緣像素（最近鄰）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

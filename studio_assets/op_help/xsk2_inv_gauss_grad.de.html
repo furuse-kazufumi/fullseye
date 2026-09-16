@@ -14,6 +14,8 @@
 <p>Inverses Gauß-Gradientenbild (die Edge-Stopping-Funktion für Active Contour / GAC). Ruft `<code style="color:#22d3bf">skimage.segmentation.inverse_gaussian_gradient</code>` auf.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>a がエッジ感度 alpha（`<code style="color:#22d3bf">50 + 150*a</code>`、範囲 50〜200。大きいほど弱いエッジでも停止関数の値が下がる＝止まりやすくなる）を振る。b は未使用。値はエッジで小さく（0 に近く）平坦部で 1 に近い——geodesic activecontour 系のセグメンテーションでエッジ停止項として使うことを想定した出力で、そのまま見た目のエッジ画像として使うと通常のエッジ検出とは明暗が逆に見える。</p>
+<p><b>Randbehandlung</b>: das Randpixel replizieren (nächster Nachbar) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit macht <b>unabhängig von der Helligkeit jedes Pixel zum Vordergrund (1)</b>. Ein überbelichtetes, verdecktes oder motivloses Bild kommt als „<b>100 % defekt</b>“ zurück; prüfe daher vorgelagert auf Gleichmäßigkeit und verwirf solche Bilder.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

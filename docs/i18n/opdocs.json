@@ -491,6 +491,90 @@
    "tw": "4. 行為不確定時,執行該說明中**可執行的範例**,用真值輸出核對。",
    "ko": "4. 동작이 불확실하면 그 노트의 **실행 가능한 예제**를 돌려 GT 출력으로 확인합니다.",
    "de": "4. Wenn das Verhalten unklar ist, führen Sie das **lauffähige Beispiel** der Notiz aus und prüfen Sie es gegen die Ground-Truth-Ausgabe."
+  },
+  "**端の扱い**: {a0}(実測。`tools/impl2/border_probe.py`)。": {
+   "en": "**Border handling**: {a0} (measured; `tools/impl2/border_probe.py`).",
+   "zh": "**边界处理**：{a0}（实测。`tools/impl2/border_probe.py`）。",
+   "tw": "**邊界處理**：{a0}（實測。`tools/impl2/border_probe.py`）。",
+   "ko": "**가장자리 처리**: {a0}(실측. `tools/impl2/border_probe.py`).",
+   "de": "**Randbehandlung**: {a0} (gemessen; `tools/impl2/border_probe.py`)."
+  },
+  "画像の外側は背景(0)とみなす": {
+   "en": "treat everything outside the image as background (0)",
+   "zh": "将图像外部视为背景（0）",
+   "tw": "將影像外部視為背景（0）",
+   "ko": "이미지 바깥은 배경(0)으로 간주한다",
+   "de": "alles außerhalb des Bildes als Hintergrund (0) behandeln"
+  },
+  "端の画素を複製する(最近傍)": {
+   "en": "replicate the edge pixel (nearest neighbour)",
+   "zh": "复制边缘像素（最近邻）",
+   "tw": "複製邊緣像素（最近鄰）",
+   "ko": "가장자리 화소를 복제한다(최근접)",
+   "de": "das Randpixel replizieren (nächster Nachbar)"
+  },
+  "反対側へ巻き付ける(周期)": {
+   "en": "wrap around to the opposite side (periodic)",
+   "zh": "环绕到对侧（周期）",
+   "tw": "環繞到對側（週期）",
+   "ko": "반대쪽으로 감싼다(주기적)",
+   "de": "auf die gegenüberliegende Seite umlaufen (periodisch)"
+  },
+  "端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)": {
+   "en": "mirror without repeating the edge pixel (d c b | a b c d — OpenCV's ``BORDER_REFLECT_101``)",
+   "zh": "不重复端点的镜像折返 (d c b | a b c d，OpenCV 的 ``BORDER_REFLECT_101``)",
+   "tw": "不重複端點的鏡像折返 (d c b | a b c d，OpenCV 的 ``BORDER_REFLECT_101``)",
+   "ko": "가장자리 화소를 중복하지 않고 접는다 (d c b | a b c d, OpenCV의 ``BORDER_REFLECT_101``)",
+   "de": "ohne Wiederholung des Randpixels spiegeln (d c b | a b c d — OpenCVs ``BORDER_REFLECT_101``)"
+  },
+  "端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)": {
+   "en": "mirror repeating the edge pixel (d c b a | a b c d — scipy's default ``reflect``)",
+   "zh": "含端点的镜像折返 (d c b a | a b c d，scipy 默认的 ``reflect``)",
+   "tw": "含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 ``reflect``)",
+   "ko": "가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 ``reflect``)",
+   "de": "mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard ``reflect``)"
+  },
+  "**つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。5 種類の入力で確認)。": {
+   "en": "**Knobs (measured)**: sweeping ``a`` from 0 to 1 **does not change the output** (measured on five different inputs).",
+   "zh": "**旋钮（实测）**：将 ``a`` 从 0 扫到 1 **输出不变**（以 5 种输入实测）。",
+   "tw": "**旋鈕（實測）**：將 ``a`` 從 0 掃到 1 **輸出不變**（以 5 種輸入實測）。",
+   "ko": "**노브(실측)**: ``a``를 0에서 1까지 변화시켜도 **출력이 바뀌지 않는다**(5가지 입력으로 실측).",
+   "de": "**Regler (gemessen)**: ``a`` von 0 bis 1 zu variieren **ändert die Ausgabe nicht** (an fünf verschiedenen Eingaben gemessen)."
+  },
+  "**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ {a0}(実測。刻み {a1} の掃きで測った位置)。": {
+   "en": "**Knobs (measured)**: ``a`` acts in **discrete steps**; it switches at a ≈ {a0} (measured on a sweep of step {a1}).",
+   "zh": "**旋钮（实测）**：``a`` 以**离散档位**生效，切换点在 a ≈ {a0}（以步长 {a1} 扫描实测）。",
+   "tw": "**旋鈕（實測）**：``a`` 以**離散檔位**生效，切換點在 a ≈ {a0}（以步長 {a1} 掃描實測）。",
+   "ko": "**노브(실측)**: ``a``는 **단계적으로** 작용하며 전환점은 a ≈ {a0}(간격 {a1} 스윕으로 실측).",
+   "de": "**Regler (gemessen)**: ``a`` wirkt **stufenweise**; die Umschaltpunkte liegen bei a ≈ {a0} (gemessen mit Schrittweite {a1})."
+  },
+  "**値の比較可能性(実測)**: 出力を**その画像の最大値で正規化**している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって**画像をまたいで値を比較できない** —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。": {
+   "en": "**Value comparability (measured)**: the output is **normalised by that image's own maximum** (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore **cannot be compared across images** — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.",
+   "zh": "**数值可比性（实测）**：输出按**该图自身的最大值归一化**（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此**不能跨图比较数值**——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。",
+   "tw": "**數值可比性（實測）**：輸出以**該影像自身的最大值正規化**（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此**不能跨影像比較數值**——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。",
+   "ko": "**값의 비교 가능성(실측)**: 출력을 **그 이미지 자신의 최댓값으로 정규화**한다(출력 최댓값이 항상 1.0이고, 입력을 상수배해도 출력이 바뀌지 않는다). 따라서 **이미지 사이에서 값을 비교할 수 없다** —— 같은 세기의 특징이라도 그 이미지에서 가장 강한 특징이 무엇인지에 따라 값이 달라지며, 약한 특징만 있는 이미지에서는 잡음이 1.0까지 올라간다. 이미지 간 비교가 필요하면 공통 기준으로 다시 나눌 것.",
+   "de": "**Vergleichbarkeit der Werte (gemessen)**: Die Ausgabe wird **auf das Maximum des jeweiligen Bildes normiert** (das Ausgabemaximum ist stets 1.0, und eine Skalierung der Eingabe lässt die Ausgabe unverändert). Werte sind daher **nicht bildübergreifend vergleichbar** — ein Merkmal gleicher Stärke erhält je nach dem stärksten Merkmal im Bild einen anderen Wert, und in einem Bild mit nur schwachen Merkmalen wird das Rauschen auf 1.0 angehoben. Für einen Vergleich über Bilder hinweg auf eine gemeinsame Referenz umskalieren."
+  },
+  "**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。": {
+   "en": "**Blank frame (measured)**: feeding an image of uniform brightness gives **an empty result — every pixel is background (0) — regardless of the brightness**. Pure white and pure black behave alike; brightness by itself detects nothing.",
+   "zh": "**空帧（实测）**：输入亮度均匀的图像时，**无论亮度如何，结果都为空（全部像素为背景 0）**。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。",
+   "tw": "**空影格（實測）**：輸入亮度均勻的影像時，**無論亮度為何，結果都為空（全部像素為背景 0）**。純白與純黑表現相同；僅憑亮度偵測不到任何東西。",
+   "ko": "**아무것도 찍히지 않은 프레임(실측)**: 밝기가 균일한 이미지를 넣으면 **밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)**. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.",
+   "de": "**Leeres Bild (gemessen)**: Ein Bild gleichmäßiger Helligkeit liefert **unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)**. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts."
+  },
+  "**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、**明るさに関係なく全画素が前景(1)**になる。照明が飛んだ・遮られた・被写体が無いフレームは「**欠陥 100%**」として返るので、上流で「一様かどうか」を判定して弾くこと。": {
+   "en": "**Blank frame (measured)**: feeding an image of uniform brightness makes **every pixel foreground (1), regardless of the brightness**. A frame that is blown out, occluded, or simply has no subject comes back as “**100 % defective**”, so test for uniformity upstream and reject such frames.",
+   "zh": "**空帧（实测）**：输入亮度均匀的图像时，**无论亮度如何，全部像素都成为前景（1）**。过曝、被遮挡或没有被摄物的帧会被报为「**缺陷 100%**」，因此应在上游判定是否均匀并加以剔除。",
+   "tw": "**空影格（實測）**：輸入亮度均勻的影像時，**無論亮度為何，全部像素都成為前景（1）**。過曝、被遮擋或沒有被攝物的影格會被報為「**缺陷 100%**」，因此應在上游判定是否均勻並加以剔除。",
+   "ko": "**아무것도 찍히지 않은 프레임(실측)**: 밝기가 균일한 이미지를 넣으면 **밝기와 무관하게 모든 화소가 전경(1)**이 된다. 조명이 날아갔거나 가려졌거나 피사체가 없는 프레임이 “**결함 100%**”로 돌아오므로, 상류에서 균일한지 판정해 걸러낼 것.",
+   "de": "**Leeres Bild (gemessen)**: Ein Bild gleichmäßiger Helligkeit macht **unabhängig von der Helligkeit jedes Pixel zum Vordergrund (1)**. Ein überbelichtetes, verdecktes oder motivloses Bild kommt als „**100 % defekt**“ zurück; prüfe daher vorgelagert auf Gleichmäßigkeit und verwirf solche Bilder."
+  },
+  "**精度(実測)**: 内部で **8 bit(256 段)に量子化**している(出力が k/255 の格子にちょうど載る)。float64 で渡しても**その精度は保たれない** —— 16-bit カメラの階調(約 1.5e-5)は 1/255 =約 3.9e-3 に丸められ、1/255 より小さい差しか無い 2 枚は同じ答えを返す。微小な濃淡差を測る用途や、出力をさらに微分・回帰に渡す用途では量子化の段差が出るので、8 bit を経由しない op を選ぶこと。": {
+   "en": "**Precision (measured)**: internally quantised to **8 bit (256 levels)** — the output lands exactly on the k/255 grid. Passing float64 **does not preserve that precision**: a 16-bit camera's step (about 1.5e-5) is rounded to 1/255 = about 3.9e-3, and two images that differ by less than 1/255 return the same answer. Where faint intensity differences are being measured, or the output is fed on to differentiation or regression, the quantisation steps become visible — choose an op that does not pass through 8 bit.",
+   "zh": "**精度（实测）**：内部**量子化为 8 bit（256 级）**——输出恰好落在 k/255 的栅格上。即使以 float64 传入，**该精度也不会被保留**：16-bit 相机的级差（约 1.5e-5）被舍入到 1/255 ≈ 3.9e-3，相差小于 1/255 的两幅图会返回相同结果。在测量微小灰度差、或将输出继续送入微分与回归时，量子化台阶会显现——请选用不经过 8 bit 的 op。",
+   "tw": "**精度（實測）**：內部**量化為 8 bit（256 階）**——輸出恰好落在 k/255 的格點上。即使以 float64 傳入，**該精度也不會被保留**：16-bit 相機的階差（約 1.5e-5）被捨入到 1/255 ≈ 3.9e-3，相差小於 1/255 的兩張影像會回傳相同結果。在量測微小灰階差、或將輸出繼續送入微分與迴歸時，量化台階會顯現——請選用不經過 8 bit 的 op。",
+   "ko": "**정밀도(실측)**: 내부에서 **8 bit(256단계)로 양자화**한다(출력이 k/255 격자에 정확히 올라온다). float64로 넘겨도 **그 정밀도는 유지되지 않는다** —— 16-bit 카메라의 계조(약 1.5e-5)는 1/255 ≈ 3.9e-3로 반올림되고, 1/255보다 작은 차이만 있는 두 장은 같은 답을 돌려준다. 미세한 농담 차를 재는 용도나 출력을 다시 미분·회귀에 넘기는 용도에서는 양자화 계단이 드러나므로, 8 bit를 거치지 않는 op를 고를 것.",
+   "de": "**Genauigkeit (gemessen)**: intern auf **8 Bit (256 Stufen) quantisiert** — die Ausgabe liegt exakt auf dem Raster k/255. Eine Übergabe als float64 **erhält diese Genauigkeit nicht**: die Stufung einer 16-Bit-Kamera (etwa 1,5e-5) wird auf 1/255 ≈ 3,9e-3 gerundet, und zwei Bilder, die sich um weniger als 1/255 unterscheiden, liefern dieselbe Antwort. Wo feine Helligkeitsunterschiede gemessen werden oder die Ausgabe in Ableitung oder Regression weiterläuft, werden die Quantisierungsstufen sichtbar — dann einen Operator wählen, der nicht über 8 Bit geht."
   }
  }
 }

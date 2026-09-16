@@ -15,6 +15,7 @@
 <p>實作是單純的高斯模糊(`<code style="color:#22d3bf">gaussian_filter</code><code style="color:#22d3bf">,sigma為</code><code style="color:#22d3bf">0.5+2.5*a</code><code style="color:#22d3bf">)。由於等向性擴散方程式的解在數學上等價於高斯核卷積,此近似在理論上也成立(不具備各向異性擴散那樣的保邊效果,而是無論方向為何都均勻平滑)。相當於HALCON的</code><code style="color:#22d3bf">isotropic_diffusion</code>`(Perform an isotropic diffusion of an image.)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がシグマ(拡散時間に相当)を 0.5〜3.0 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（實測。</code>tools/impl2/border_probe.py`）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

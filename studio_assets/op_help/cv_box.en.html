@@ -15,6 +15,7 @@
 <p>Simple averaging filter (box filter, OpenCV implementation). The most basic smoothing method, simply taking the average within a square neighborhood -- computationally lighter than Gaussian smoothing, but more prone to ring-shaped artifacts.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の <code style="color:#22d3bf">mean_image</code>(Smooth by averaging.)に相当。実装は `<code style="color:#22d3bf">cv2.blur(v, (k,k))</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">k=3+2*int(a*3)</code>` —— a はカーネルサイズを 3, 5, 7, 9 に振る。b は未使用。</p>
+<p><b>Border handling</b>: mirror without repeating the edge pixel (d c b | a b c d — OpenCV&#x27;s `<code style="color:#22d3bf">BORDER_REFLECT_101</code><code style="color:#22d3bf">) (measured; </code>tools/impl2/border_probe.py`).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

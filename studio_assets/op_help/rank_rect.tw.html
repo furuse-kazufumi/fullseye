@@ -16,6 +16,8 @@
 <p>實作與 `<code style="color:#22d3bf">rank_image</code><code style="color:#22d3bf"> 完全相同(</code><code style="color:#22d3bf">kind: &quot;rank&quot;</code><code style="color:#22d3bf">,方形視窗的百分位濾波器)。在 HALCON 中,</code><code style="color:#22d3bf">rank_image</code><code style="color:#22d3bf">(任意遮罩)與 </code><code style="color:#22d3bf">rank_rect</code><code style="color:#22d3bf">(僅限矩形遮罩)是不同的運算子,但此替代實作兩者皆指向同一個方形視窗實作。是 HALCON 的 </code><code style="color:#22d3bf">rank_rect</code>`(Compute a rank filter with rectangular masks.)的替代實作。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺、</code><code style="color:#22d3bf">b</code>` がパーセンタイル(5〜95%)を振る。両方が使われる。</p>
+<p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（實測。</code>tools/impl2/border_probe.py`）。</p>
+<p><b>旋鈕（實測）</b>：`<code style="color:#22d3bf">a</code>` 以<b>離散檔位</b>生效，切換點在 a ≈ 0.25、0.49、0.75（以步長 0.02 掃描實測）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

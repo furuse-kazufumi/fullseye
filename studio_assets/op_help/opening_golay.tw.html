@@ -16,6 +16,7 @@
 <p>使用圓形結構元素（disk，半徑 `<code style="color:#22d3bf">_rad(a)</code>`=1〜4）進行二值斷開運算（opening，先侵蝕後膨脹）。用於去除小突起和孤立點。b 未使用。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の `<code style="color:#22d3bf">opening_golay</code>`（Golay アルファベットから選んだ要素でオープニングする演算）とは異なり、この実装は Golay アルファベットの特定要素ではなく単純な円板構造要素で近似する。</p>
+<p><b>邊界處理</b>：將影像外部視為背景（0）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

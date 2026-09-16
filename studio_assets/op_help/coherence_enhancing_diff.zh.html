@@ -17,6 +17,7 @@
 <p>实现与`<code style="color:#22d3bf">anisotropic_diffusion</code><code style="color:#22d3bf">完全相同(</code><code style="color:#22d3bf">kind: &quot;anisotropic&quot;</code><code style="color:#22d3bf">)。真正的coherence-enhancing diffusion是沿结构张量特征向量方向控制扩散方向的方法(用于连接线状结构),但此替代实现并未进行结构张量计算,而是以简单的Perona-Malik各向异性扩散代替(近似的局限——无法重现线状结构的连接效果)。是HALCON</code><code style="color:#22d3bf">coherence_enhancing_diff</code>`(Perform a coherence enhancing diffusion of an image.)的代用。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が反復回数、</code><code style="color:#22d3bf">b</code>` が伝導度閾値 K を振る。両方が使われる。</p>
+<p><b>边界处理</b>：环绕到对侧（周期）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

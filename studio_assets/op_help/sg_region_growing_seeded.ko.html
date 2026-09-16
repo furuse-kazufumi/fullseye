@@ -14,6 +14,7 @@
 <p>이미지 중심을 씨앗(seed)으로 하여 밝기가 비슷한 픽셀들을 연결해 나가는 씨앗 영역 확장(region growing)(HALCON `<code style="color:#22d3bf">regiongrowing</code><code style="color:#22d3bf">은 이미 다른 op에서 다루고 있으므로, 중복 보고를 피하기 위해 여기서는 </code><code style="color:#22d3bf">halcon=&quot;&quot;</code>`로 설정함).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>種は画像中心の 1 画素。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）が同質性の許容差（種の輝度 ±a 以内なら繋がる）、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が連結性を切り替える（</code><code style="color:#22d3bf">b &gt; 0.5</code>` で 8 連結、それ以外は 4 連結）。結果は種を含む連結成分のみ。</p>
+<p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 모든 화소가 전경(1)</b>이 된다. 조명이 날아갔거나 가려졌거나 피사체가 없는 프레임이 “<b>결함 100%</b>”로 돌아오므로, 상류에서 균일한지 판정해 걸러낼 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

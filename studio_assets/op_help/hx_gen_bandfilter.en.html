@@ -23,6 +23,7 @@
 <p>大きい b)では DC を含む円板になり、実質ローパスになる。</p>
 <p>`<code style="color:#22d3bf">hx_gen_bandpass</code>` が「内半径と幅」なのに対し、こちらは「中心と半幅」で同じ円環を指定する。特定の空間周波数</p>
 <p>(縞の周期 `<code style="color:#22d3bf">1/c</code><code style="color:#22d3bf"> 画素)だけを抜き出すマスクを作り、</code><code style="color:#22d3bf">fft_generic</code>` などの中心=DC スペクトルと画素積で使う。</p>
+<p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -28,6 +28,8 @@
 <p>`<code style="color:#22d3bf">skeleton</code>` を検討する。</p>
 <p>`<code style="color:#22d3bf">sobel_amp</code><code style="color:#22d3bf"> のような振幅画像ではなく元の gray 画像を渡す(内部で微分する)。後段は </code><code style="color:#22d3bf">hx_close_edges</code>` /</p>
 <p>`<code style="color:#22d3bf">hx_detect_edge_segments</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">threshold</code>`。</p>
+<p><b>Vergleichbarkeit der Werte (gemessen)</b>: Die Ausgabe wird <b>auf das Maximum des jeweiligen Bildes normiert</b> (das Ausgabemaximum ist stets 1.0, und eine Skalierung der Eingabe lässt die Ausgabe unverändert). Werte sind daher <b>nicht bildübergreifend vergleichbar</b> — ein Merkmal gleicher Stärke erhält je nach dem stärksten Merkmal im Bild einen anderen Wert, und in einem Bild mit nur schwachen Merkmalen wird das Rauschen auf 1.0 angehoben. Für einen Vergleich über Bilder hinweg auf eine gemeinsame Referenz umskalieren.</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

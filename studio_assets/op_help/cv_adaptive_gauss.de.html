@@ -16,6 +16,7 @@
 <p>Schwellenwertbildung basierend auf einem lokal gaußgewichteten Mittelwert (adaptive threshold, Gaussian-Variante, OpenCV-Implementierung). Dasselbe Grundgerüst wie cv_adaptive_mean, jedoch wird der lokale Mittelwert nicht als einfacher, sondern als gaußgewichteter Mittelwert gebildet, sodass abrupte Änderungen nahe der Fenstergrenze seltener auftreten.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の <code style="color:#22d3bf">local_threshold</code>(Segment an image using local thresholding.)に相当。実装は `<code style="color:#22d3bf">cv2.adaptiveThreshold(_u8(v), 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, blockSize=2*int(a*6)+3, C=int(b*10))</code>` —— a は blockSize を 3〜15(奇数)に、b は定数 C を 0〜10 に振る。</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit macht <b>unabhängig von der Helligkeit jedes Pixel zum Vordergrund (1)</b>. Ein überbelichtetes, verdecktes oder motivloses Bild kommt als „<b>100 % defekt</b>“ zurück; prüfe daher vorgelagert auf Gleichmäßigkeit und verwirf solche Bilder.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

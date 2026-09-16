@@ -27,14 +27,19 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 #: image->image と region->region の 2 本。**片方だけ見る門は、もう片方の差し込みが
 #: 剥がれても緑のまま**になる。
+#: 3 本ある。**型ごとに別々に測る**ので、1 本でも忘れると、その型の差し込みが
+#: 剥がれても緑のままになる。image->region(しきい値・領域抽出)の 83 本は
+#: 2026-09-16 まで**丸ごと測っていなかった** —— `local_max` / `dyn_threshold` の
+#: 争点を追って初めて気づいた。
 BORDER_JSONS = (os.path.join(ROOT, "docs", "op_border.json"),
-                os.path.join(ROOT, "docs", "op_border_region.json"))
+                os.path.join(ROOT, "docs", "op_border_region.json"),
+                os.path.join(ROOT, "docs", "op_border_region_out.json"))
 OPS_DIR = os.path.join(ROOT, "docs", "ops")
 
 #: 2026-09-16 の実測値。**下振れしたら知らせる**ための床であって、上げるのは自由。
 #: (op を足して確定数が増えるのは歓迎。減るのは「測れなくなった」か「台帳が壊れた」)
-MEASURED_DETERMINED = 144   # image->image 106 + region->region 38
-FLOOR = 120
+MEASURED_DETERMINED = 156   # image->image 106 + region->region 38 + image->region 12
+FLOOR = 130
 
 _MENTIONS_BORDER = re.compile(r"端の扱い|境界|端は|BORDER_|パディング")
 
@@ -97,6 +102,20 @@ def test_every_determined_op_says_its_border_in_the_note():
     assert not missing, (
         "実測した端の規約がノートから消えている(生成器の差し込みが効いていない):\n"
         + "\n".join(missing[:20]))
+
+
+def test_no_unconfirmed_record_carries_a_border_key():
+    """**確定していない記録に ``border`` を持たせない。**
+
+    曖昧(``ambiguous``)な記録にも最有力候補が入っていて、鍵の名前が確定値と同じ
+    ``border`` だった。status を見ない消費側はそれを確定値として読む ——
+    2026-09-16、**この道具自身の集計表がその罠を踏んだ**(確定 12 / 曖昧 37 なのに
+    「symmetric 17, edge 7 ...」= 49 本確定したように見えた)。推測は ``best_guess``
+    という別の鍵に移し、取り違えを型で防ぐ。
+    """
+    bad = [r["op"] for r in _rows() if r.get("status") != "determined" and "border" in r]
+    assert not bad, (
+        f"確定していないのに border を持つ記録がある(推測が確定値として読まれる): {bad[:10]}")
 
 
 def test_undetermined_ops_are_not_given_a_guessed_border():

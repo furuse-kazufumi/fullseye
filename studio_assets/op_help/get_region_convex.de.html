@@ -15,6 +15,7 @@
 <p>Gibt die konvexe Hülle (convex hull) der Region als gefüllte Region zurück (`<code style="color:#22d3bf">skimage.morphology.convex_hull_image</code><code style="color:#22d3bf">). a und b werden nicht verwendet. Gleiche Implementierung wie </code><code style="color:#22d3bf">shape_trans</code>` (der Seed-Op zur Umwandlung der Form in ihre konvexe Hülle).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の `<code style="color:#22d3bf">get_region_convex</code>`（領域の凸包を XLD 輪郭として取得する演算）とは出力形式が異なる近似 —— 輪郭の座標列ではなく塗りつぶした region を返す。</p>
+<p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

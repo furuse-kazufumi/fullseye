@@ -15,6 +15,7 @@
 <p>Verdünnt eine Region unter Erhaltung der Topologie zu einem 1 Pixel breiten Skelett (`<code style="color:#22d3bf">skimage.morphology.skeletonize</code><code style="color:#22d3bf">). Verzweigungs- und Endpunkte bleiben in ihrer Position erhalten, weshalb es häufig zur Analyse verzweigter Formen (z. B. zum Zählen der Anzahl von Fingern) verwendet wird. Entspricht HALCONs </code><code style="color:#22d3bf">skeleton</code>` (Compute the skeleton of a region.).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

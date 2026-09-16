@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>円盤(disk)形の footprint によるメディアンフィルタ。通常の正方形カーネルと違い、円形に近い等方的な平滑化になる。</p>
 <p>HALCON の <code style="color:#22d3bf">median_image</code>(Compute a median filter with various masks.)に相当。実装は `<code style="color:#22d3bf">filters.median(v, footprint=disk(1+int(a*3)))</code>` —— a は円盤の半径を 1〜4 に振る(半径が大きいほど強く滑らかになるが細部も消える)。b は未使用。</p>
+<p><b>端の扱い</b>: 端の画素を複製する(最近傍)(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

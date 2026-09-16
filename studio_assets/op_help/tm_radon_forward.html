@@ -22,6 +22,7 @@
 <p>assume, so the natural chain forward -&gt; inverse round-trips at default knobs).</p>
 <p>Uses `<code style="color:#22d3bf">skimage.transform.radon</code>` when available, else the NumPy</p>
 <p>rotate-and-sum Radon transform.</p>
+<p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

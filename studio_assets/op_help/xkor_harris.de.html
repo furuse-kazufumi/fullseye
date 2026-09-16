@@ -15,6 +15,7 @@
 <p>Harris-Eckenantwort. Ruft `<code style="color:#22d3bf">kornia.feature.harris_response</code><code style="color:#22d3bf"> auf und bildet die vorzeichenbehaftete Antwort mit </code><code style="color:#22d3bf">signed01</code>` auf [0,1] ab (dabei bleibt die Vorzeicheninformation der Harris-Antwort erhalten — positiv bei Ecken, negativ bei Kanten — während sie in einen visualisierbaren Bereich gebracht wird).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>a が Harris のスコア係数 k（`<code style="color:#22d3bf">0.04 + 0.02 * a</code>`、経験的に 0.04〜0.06 の範囲で使われる値）を振る。b は未使用。</p>
+<p><b>Vergleichbarkeit der Werte (gemessen)</b>: Die Ausgabe wird <b>auf das Maximum des jeweiligen Bildes normiert</b> (das Ausgabemaximum ist stets 1.0, und eine Skalierung der Eingabe lässt die Ausgabe unverändert). Werte sind daher <b>nicht bildübergreifend vergleichbar</b> — ein Merkmal gleicher Stärke erhält je nach dem stärksten Merkmal im Bild einen anderen Wert, und in einem Bild mit nur schwachen Merkmalen wird das Rauschen auf 1.0 angehoben. Für einen Vergleich über Bilder hinweg auf eine gemeinsame Referenz umskalieren.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

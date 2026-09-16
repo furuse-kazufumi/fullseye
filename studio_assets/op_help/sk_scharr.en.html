@@ -14,6 +14,8 @@
 <p>Scharr gradient magnitude. Directly calls skimage&#x27;s `<code style="color:#22d3bf">filters.scharr</code>`, returning the gradient magnitude obtained by combining the responses of the horizontal and vertical Scharr kernels (3x3).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の <code style="color:#22d3bf">edges_image</code>(Extract edges using Deriche, Lanser, Shen, or Canny filters.)に相当(近似。アルゴリズムは異なる)。Sobel より回転対称性(方向によらず応答が均一)が良いとされるカーネル。a, b は未使用 —— スケールや閾値の調整点が無く、常に固定カーネルで一発計算する軽量なエッジ検出。</p>
+<p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

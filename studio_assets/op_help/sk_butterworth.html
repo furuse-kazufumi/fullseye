@@ -13,6 +13,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Butterworth フィルタ(周波数領域)。画像を FFT した上で、指定したカットオフ周波数より高い成分だけを通すハイパスフィルタとして働く(既定 `<code style="color:#22d3bf">high_pass=True</code>` のまま呼んでいる)。輪郭やテクスチャの高周波成分を強調する。</p>
 <p>HALCON に直接対応するものは無い(空欄)。実装は `<code style="color:#22d3bf">filters.butterworth(v, cutoff_frequency_ratio=0.05+0.3*a)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">[0,1]</code>` に clip しただけ —— a はカットオフ比を 0.05〜0.35 に振る(小さいほど低周波まで削られ、応答が強く/広く出る)。b は未使用。ハイパスなので低コントラストな平坦領域は 0 付近に落ち、直流成分(平均輝度)の情報は失われる。</p>
+<p><b>端の扱い</b>: 反対側へ巻き付ける(周期)(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
+<p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

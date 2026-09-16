@@ -15,6 +15,7 @@
 <p>基于拉普拉斯金字塔的锐化。一种反锐化蒙版，先用 `<code style="color:#22d3bf">pyrDown</code><code style="color:#22d3bf"> 缩小再用 </code><code style="color:#22d3bf">pyrUp</code>` 还原得到低频成分图像，将其从原图中减去得到差分(相当于拉普拉斯金字塔的一层、带通成分)，再将该差分加回原图以增强图像。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は強調係数(</code><code style="color:#22d3bf">0.5+2.5*a</code><code style="color:#22d3bf"> で 0.5〜3.0)を振る —— 大きいほど強くシャープになる(オーバーシュートも増える)。</code><code style="color:#22d3bf">b</code>` は未使用。結果は [0,1] にクリップ。</p>
+<p><b>边界处理</b>：不重复端点的镜像折返 (d c b | a b c d，OpenCV 的 `<code style="color:#22d3bf">BORDER_REFLECT_101</code><code style="color:#22d3bf">)（实测。</code>tools/impl2/border_probe.py`）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

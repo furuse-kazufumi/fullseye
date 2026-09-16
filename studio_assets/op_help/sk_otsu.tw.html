@@ -14,6 +14,7 @@
 <p>基於大津判別分析法(Otsu&#x27;s method)的全域閾值二值化。自動選擇使類別間變異數最大化的閾值,將整張影像二分為前景/背景。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">binary_threshold</code>(Segment an image using binary thresholding.)に相当。実装は `<code style="color:#22d3bf">v &gt; filters.threshold_otsu(v)</code>` —— a, b は未使用(しきい値は完全自動)。双峰性(2 山)のヒストグラムを持つ画像で最もうまく働き、コントラストが低い/単峰の画像では境界がずれやすい。</p>
+<p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

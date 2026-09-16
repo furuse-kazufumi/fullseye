@@ -15,6 +15,7 @@
 <p>連通閾值區域成長（SimpleITK `<code style="color:#22d3bf">ConnectedThreshold</code>`，region growing）。以影像中心像素為種子（seed），僅將落在以該像素值為中心的強度區間內、且與中心相連通的像素擴展為區域。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は下限マージン(</code><code style="color:#22d3bf">0.1+0.3*a</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は上限マージン(</code><code style="color:#22d3bf">0.1+0.3*b</code>`)を振る —— 区間は [中心値-下限, 中心値+上限]。画像中心付近に対象があることを前提とした op。</p>
+<p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，全部像素都成為前景（1）</b>。過曝、被遮擋或沒有被攝物的影格會被報為「<b>缺陷 100%</b>」，因此應在上游判定是否均勻並加以剔除。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

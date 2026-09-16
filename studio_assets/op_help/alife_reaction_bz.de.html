@@ -23,6 +23,8 @@
 <p>initial state (&gt;2/3 excited, 1/3..2/3 refractory, else rest). `<code style="color:#22d3bf">a</code>` sets the</p>
 <p>excitation threshold thr = 1 + int(3a) neighbours, `<code style="color:#22d3bf">b</code>` the step count</p>
 <p>1 + int(20b). Returns state/2.</p>
+<p><b>Randbehandlung</b>: auf die gegenüberliegende Seite umlaufen (periodisch) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

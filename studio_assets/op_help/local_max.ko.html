@@ -16,6 +16,7 @@
 <p>국소 극대점 검출. `<code style="color:#22d3bf">x</code><code style="color:#22d3bf">가 창 내 최댓값(</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">)과 일치하고, 또한 </code><code style="color:#22d3bf">x &gt; 0.3+0.4*b</code><code style="color:#22d3bf">를 만족하는 화소만을 전경으로 한다 —— 평탄한 고원 형태의 영역에서는 여러 인접 화소가 동시에 &quot;극대&quot;로 남을 수 있다는 점에 주의한다(진정한 고립점 피크만 남는다는 보장은 없다). HALCON의 </code><code style="color:#22d3bf">local_max</code>`(Detect all local maxima in an image.)에 해당한다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓サイズを、</code><code style="color:#22d3bf">b</code>` が輝度の下限しきい値を振る。両方が使われる。</p>
+<p><b>노브(실측)</b>: `<code style="color:#22d3bf">a</code>`는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.25、0.49、0.75(간격 0.02 스윕으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

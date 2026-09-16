@@ -16,6 +16,7 @@
 <p>`<code style="color:#22d3bf">gen_checker_region</code>`(チェッカー領域を生成する)に相当。</p>
 <p>セルサイズを `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">min(h, w)</code>` の 5%〜25% の範囲に振り、</p>
 <p>`<code style="color:#22d3bf">(row//cell + col//cell)</code><code style="color:#22d3bf"> が偶数のセルを前景(1)とする。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>つまみ(実測)</b>: `<code style="color:#22d3bf">a</code>` は<b>段階的</b>に効き、切り替わるのは a ≈ 0.37、0.59、0.79、0.99(実測。刻み 0.02 の掃きで測った位置)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

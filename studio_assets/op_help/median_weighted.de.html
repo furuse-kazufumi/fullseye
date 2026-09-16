@@ -15,6 +15,8 @@
 <p>Ein Medianfilter (median filter). Die Implementierung teilt sich den `<code style="color:#22d3bf">median</code><code style="color:#22d3bf">-Zweig von </code><code style="color:#22d3bf">_sh_rank</code>` mit eliminate_min_max/median_image; es erfolgt keine Gewichtung nach Maskenform (Kreis, Achteck usw.), sondern es wird schlicht der Median eines quadratischen Fensters zurückgegeben. a stellt die Fenstergröße auf 3/5/7/9 ein, b wird nicht verwendet.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の `<code style="color:#22d3bf">median_weighted</code>`（円・矩形・八角形など複数のマスクで重み付き中央値フィルタを行う演算）の代役だが、実装は重みなしの通常の中央値フィルタで、マスク形状の違いは再現しない。</p>
+<p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (gemessen; </code>tools/impl2/border_probe.py`).</p>
+<p><b>Regler (gemessen)</b>: `<code style="color:#22d3bf">a</code>` wirkt <b>stufenweise</b>; die Umschaltpunkte liegen bei a ≈ 0.25、0.49、0.75 (gemessen mit Schrittweite 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

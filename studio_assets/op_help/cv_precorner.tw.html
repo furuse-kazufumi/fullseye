@@ -15,6 +15,9 @@
 <p>角點候選偵測（preCornerDetect，OpenCV 實作）。用結合一階與二階微分的特殊公式，將角點程度打成帶符號的分數 —— 原本是作為 `<code style="color:#22d3bf">cv2.cornerSubPix</code>` 次像素精細化前置候選偵測的函數。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">corner_response</code>(Searching corners in images.)に相当(近似)。実装は `<code style="color:#22d3bf">|cv2.preCornerDetect(v, ksize=3)|</code>` を正規化したもの。a, b は未使用 —— ksize(Sobel 開口)は 3 に固定。</p>
+<p><b>邊界處理</b>：不重複端點的鏡像折返 (d c b | a b c d，OpenCV 的 `<code style="color:#22d3bf">BORDER_REFLECT_101</code><code style="color:#22d3bf">)（實測。</code>tools/impl2/border_probe.py`）。</p>
+<p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
+<p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

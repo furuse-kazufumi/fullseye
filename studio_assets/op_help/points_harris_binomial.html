@@ -21,6 +21,7 @@
 <p>binomial approximation of the Harris operator.）に相当。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が Harris 応答自体のシグマ(0.5〜2.5)を、</code><code style="color:#22d3bf">b</code>` が前段の平滑化シグマ</p>
 <p>(0.5〜2.0)を振る。両方が使われる。</p>
+<p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

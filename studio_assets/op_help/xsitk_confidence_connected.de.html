@@ -15,6 +15,7 @@
 <p>Confidence-Connected-Regionenwachstum (SimpleITK `<code style="color:#22d3bf">ConfidenceConnected</code>`). Verwendet die Bildmitte als Saatpunkt, bildet aus Mittelwert und Standardabweichung des aktuellen Bereichs ein Intervall &#x27;Mittelwert +/- Multiplikator * Standardabweichung&#x27; und erweitert den zusammenhängenden Bereich, während dieses Intervall iterativ aktualisiert wird (eine statistischere Art der Schwellenwertbestimmung als bei xsitk_connected_threshold).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は反復回数(</code><code style="color:#22d3bf">1+int(a*5)</code><code style="color:#22d3bf"> で 1〜6)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は標準偏差の倍率(</code><code style="color:#22d3bf">1.0+3.0*b</code>` で 1〜4)を振る。初期近傍半径は 2 固定。画像中心付近に対象があることを前提とした op。</p>
+<p><b>Randbehandlung</b>: auf die gegenüberliegende Seite umlaufen (periodisch) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

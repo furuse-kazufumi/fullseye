@@ -15,6 +15,8 @@
 <p>DoG（Difference of Gaussians，高斯差分）濾波器。取兩個不同 σ 模糊後影像的差值，以低成本取得接近 LoG（Laplacian of Gaussian）的帶通響應（僅強調特定空間頻率帶的邊緣/斑點偵測）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">diff_of_gauss</code>(Approximate the LoG operator.)に相当。実装は `<code style="color:#22d3bf">filters.difference_of_gaussians(v, 1.0, 1.0+3.0*a)</code>` の絶対値を正規化したもの —— 小さい方の σ は 1.0 に固定し、a は大きい方の σ を 1.0〜4.0 に振る(σ の比が広がるほど検出する構造のスケール帯が広がる)。b は未使用。</p>
+<p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
+<p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

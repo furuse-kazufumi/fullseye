@@ -14,6 +14,8 @@
 <p>自相似图（使用`<code style="color:#22d3bf">mahotas.template_match</code>`进行自模板匹配）。将从图像中心裁出的小图块对整幅图像做模板匹配，并归一化，使越相似于该图块的位置数值越接近1。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はパッチの半径(3+8 px 相当)を振る —— 大きくするほど広い範囲の類似度になる。</code><code style="color:#22d3bf">b</code>` は未使用。周期的なテクスチャや繰り返しパターンの検出に使える。</p>
+<p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
+<p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，全部像素都成为前景（1）</b>。过曝、被遮挡或没有被摄物的帧会被报为「<b>缺陷 100%</b>」，因此应在上游判定是否均匀并加以剔除。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

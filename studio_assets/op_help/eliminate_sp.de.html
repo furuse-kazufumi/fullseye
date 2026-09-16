@@ -16,6 +16,7 @@
 <p>Rauschunterdrückung durch einen Sigmafilter (sigma filter, Lee-Typ). Es wird erneut gemittelt, wobei nur Pixel im Fenster verwendet werden, deren Abweichung vom Fenstermittelwert unter einem Schwellenwert liegt (0,05-0,4, eingestellt durch b), wodurch der Einfluss extremer Ausreißerpixel (z. B. Salt-and-Pepper-Rauschen) entfernt wird. Gibt es im Fenster kein passendes Pixel, wird der ursprüngliche Wert unverändert zurückgegeben. a stellt die Fenstergröße auf 3/5/7/9 ein.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の `<code style="color:#22d3bf">eliminate_sp</code>`（閾値外の値を周辺の平均値で置き換えてソルト&amp;ペッパーノイズを除去する演算）に相当する近似実装。</p>
+<p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (gemessen; </code>tools/impl2/border_probe.py`).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

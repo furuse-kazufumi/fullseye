@@ -13,6 +13,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Cutout / Random-Erasing-Verdeckung (DeVries &amp; Taylor 2017; Zhong et al. 2020): Ein quadratischer Fleck mit Seitenlänge `<code style="color:#22d3bf">max(1, a*min(H,W))</code><code style="color:#22d3bf"> wird aus dem Bild gelöscht, sodass eine Pipeline eine teilweise Verdeckung überstehen muss, statt sich auf einen einzelnen markanten Fleck zu verlassen. </code><code style="color:#22d3bf">b</code>` bestimmt sowohl die (deterministische, aus b abgeleitete) Position des Flecks als auch den Füllwert: b &lt;= 0.5 -&gt; schwarz (0.0), b &gt; 0.5 -&gt; mittleres Grau (0.5). Der Fleck liegt stets vollständig innerhalb des Bildes.</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -18,6 +18,7 @@
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。入力の gray 値も見ない。</p>
 <p>用途は「今の定義域を region として取り出し、他の region 演算の初期値にする」こと。ROI を絞った region が</p>
 <p>欲しいときは `<code style="color:#22d3bf">hx_rectangle1_domain</code><code style="color:#22d3bf">(中央矩形)か </code><code style="color:#22d3bf">threshold</code>` で作る。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness makes <b>every pixel foreground (1), regardless of the brightness</b>. A frame that is blown out, occluded, or simply has no subject comes back as “<b>100 % defective</b>”, so test for uniformity upstream and reject such frames.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

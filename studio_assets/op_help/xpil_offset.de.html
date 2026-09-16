@@ -15,6 +15,7 @@
 <p>Verschiebt das Bild toroidal (umlaufend, wrap-around). Ruft `<code style="color:#22d3bf">PIL.ImageChops.offset</code>` auf -- eine zyklische Verschiebung, bei der Pixel, die über einen Rand hinausgeschoben werden, am gegenüberliegenden Rand wieder erscheinen, sodass die Bildränder anders als bei einer gewöhnlichen Verschiebung nicht schwarz werden.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>a が横方向のシフト量（画像幅に対する比率）、b が縦方向のシフト量（画像高さに対する比率）を振る。内容の連続性は崩れるため、タイル状のテクスチャ生成などに向く。</p>
+<p><b>Genauigkeit (gemessen)</b>: intern auf <b>8 Bit (256 Stufen) quantisiert</b> — die Ausgabe liegt exakt auf dem Raster k/255. Eine Übergabe als float64 <b>erhält diese Genauigkeit nicht</b>: die Stufung einer 16-Bit-Kamera (etwa 1,5e-5) wird auf 1/255 ≈ 3,9e-3 gerundet, und zwei Bilder, die sich um weniger als 1/255 unterscheiden, liefern dieselbe Antwort. Wo feine Helligkeitsunterschiede gemessen werden oder die Ausgabe in Ableitung oder Regression weiterläuft, werden die Quantisierungsstufen sichtbar — dann einen Operator wählen, der nicht über 8 Bit geht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

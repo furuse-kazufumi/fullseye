@@ -16,6 +16,7 @@
 <p>透過 sigma 濾波器（sigma filter，Lee 型）抑制雜訊。僅使用視窗內與視窗均值之差低於閾值（0.05〜0.4，由 b 調整）的像素重新取平均，藉此消除極端離群像素（如胡椒鹽雜訊）的影響。若視窗內沒有符合條件的像素，則原樣回傳原值。a 將視窗大小分為 3/5/7/9。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の `<code style="color:#22d3bf">eliminate_sp</code>`（閾値外の値を周辺の平均値で置き換えてソルト&amp;ペッパーノイズを除去する演算）に相当する近似実装。</p>
+<p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（實測。</code>tools/impl2/border_probe.py`）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

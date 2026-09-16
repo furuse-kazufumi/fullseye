@@ -20,6 +20,7 @@
 <p>「平面より明るい/暗い」は区別しない。区別が要るなら `<code style="color:#22d3bf">hx_fit_surface1</code>` の結果と元画像を別途引く。</p>
 <p>1 次面なので緩やかに曲がった背景は残差に出る。その場合は `<code style="color:#22d3bf">hx_fit_surface2</code>` 側で背景を推定する。</p>
 <p>後段は `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> で欠陥 region 化、あるいは </code><code style="color:#22d3bf">hx_char_threshold</code>` の前処理として背景差し引き代わりに使える。</p>
+<p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -14,6 +14,7 @@
 <p>Local contrast enhancement. Judges whether each pixel is closer to the local neighborhood&#x27;s maximum or minimum, and replaces it with whichever is closer -- pixels with intermediate values get pushed toward the two extremes, raising the apparent contrast (sometimes producing an effect close to binarization).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">filters.rank.enhance_contrast(_u8s(v), disk(1+int(a*3)))</code>` を 255 で割ったもの —— a は円盤半径を 1〜4 に振る。b は未使用。</p>
+<p><b>Precision (measured)</b>: internally quantised to <b>8 bit (256 levels)</b> — the output lands exactly on the k/255 grid. Passing float64 <b>does not preserve that precision</b>: a 16-bit camera&#x27;s step (about 1.5e-5) is rounded to 1/255 = about 3.9e-3, and two images that differ by less than 1/255 return the same answer. Where faint intensity differences are being measured, or the output is fed on to differentiation or regression, the quantisation steps become visible — choose an op that does not pass through 8 bit.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

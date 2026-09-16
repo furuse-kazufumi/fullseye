@@ -13,6 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>最大エントロピー法による二値化(SimpleITK `<code style="color:#22d3bf">MaximumEntropyThreshold</code>`、Kapur の方法)。ヒストグラムを前景/背景の 2 クラスに分けたときのエントロピー和が最大になる閾値を選ぶ大域二値化。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はヒストグラムのビン数(</code><code style="color:#22d3bf">int(64+192*a)</code><code style="color:#22d3bf"> で 64〜256)を振る —— 粗いほど閾値が安定するが微妙な階調差は無視される。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく全画素が前景(1)</b>になる。照明が飛んだ・遮られた・被写体が無いフレームは「<b>欠陥 100%</b>」として返るので、上流で「一様かどうか」を判定して弾くこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

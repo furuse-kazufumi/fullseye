@@ -17,6 +17,7 @@
 <p>Die Implementierung ist identisch mit `<code style="color:#22d3bf">anisotropic_diffusion</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">kind: &quot;anisotropic&quot;</code><code style="color:#22d3bf">). Echte coherence-enhancing diffusion steuert die Diffusionsrichtung entlang der Eigenvektoren des Strukturtensors (um linienförmige Strukturen zu verbinden), aber dieser Ersatz berechnet keinen Strukturtensor und verwendet stattdessen die einfache anisotrope Perona-Malik-Diffusion (eine Grenze der Annäherung -- der Verbindungseffekt linienförmiger Strukturen wird nicht reproduziert). Ein Platzhalter für HALCONs </code><code style="color:#22d3bf">coherence_enhancing_diff</code>` (Perform a coherence enhancing diffusion of an image.).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が反復回数、</code><code style="color:#22d3bf">b</code>` が伝導度閾値 K を振る。両方が使われる。</p>
+<p><b>Randbehandlung</b>: auf die gegenüberliegende Seite umlaufen (periodisch) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -14,6 +14,9 @@
 <p>Daubechies小波變換（`<code style="color:#22d3bf">mahotas.daubechies</code>`）。與xmh_haar採用相同的排列方式（單層，將係數塞入原始影像尺寸的陣列後做min-max正規化），只是把基底換成了Daubechies系。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はウェーブレットの種類を </code><code style="color:#22d3bf">D2</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">D4</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">D6</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">D8</code><code style="color:#22d3bf"> の 4 択で切り替える(タップ数が増えるほど滑らかで長いフィルタになる)。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>旋鈕（實測）</b>：`<code style="color:#22d3bf">a</code>` 以<b>離散檔位</b>生效，切換點在 a ≈ 0.25、0.51、0.75（以步長 0.02 掃描實測）。</p>
+<p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
+<p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

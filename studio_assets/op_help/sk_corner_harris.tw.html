@@ -16,6 +16,7 @@
 <p>Harris 角點響應(skimage 實作)。這是一種經典的角點偵測器,根據梯度的結構張量計算出用於區分平坦區域/邊緣/角點的帶符號分數。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">points_harris</code>(Detect points of interest using the Harris operator.)に相当(近似。座標点ではなく応答画像を返す)。実装は `<code style="color:#22d3bf">feature.corner_harris(v, sigma=0.5+2.0*a)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">signed01</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">[0,1]</code>` へ写した値 —— a は微分に使うガウス σ を 0.5〜2.5 に振る。b は未使用。Harris の自由パラメータ k は skimage の既定値(0.05)のまま固定。OpenCV 版のcv_corner_harris とはパラメータの振り方が異なるので同一結果にはならない。</p>
+<p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

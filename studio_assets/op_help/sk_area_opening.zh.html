@@ -14,6 +14,7 @@
 <p>面积开运算(area opening)。普通的形态学开运算是根据结构元素的形状来削去小的亮部,而此运算仅根据面积(连通像素数)进行判定,消除面积小于指定值的亮连通分量 —— 可以不受形状限制地去除「小」的目标。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">morphology.area_opening(v, area_threshold=int(16+a*100))</code>` —— a は面積しきい値を 16〜116 画素に振る。b は未使用。connectivity は既定の 1(4 近傍)のまま。</p>
+<p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

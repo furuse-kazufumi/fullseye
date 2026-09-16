@@ -12,7 +12,7 @@
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_contour.inputs.jpg">get_region_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Extrahiert die Kontur (Grenzlinie, 1 Pixel breit) der Region. Zieht eine einmal binär erodierte Version der Region von der Region selbst ab, sodass nur der Außenrand übrig bleibt. a und b werden nicht verwendet. Gleiche Implementierung wie der `<code style="color:#22d3bf">boundary</code>`-Seed-Op.</p>
+<p>Extrahiert die Kontur (Grenzlinie, 1 Pixel breit) der Region. Zieht eine einmal binär erodierte Version der Region ab, um die Kontur zu erhalten. <b>Bei einer Region mit Löchern werden auch die Lochkonturen zurückgegeben, nicht nur die äußere</b> (gemessen am 2026-09-16: bei einem 8x8-Rahmen mit einem 4x4-Loch ergeben 16 der 20 an das Loch angrenzenden Vordergrundpixel eine Kontur). „Region minus Erosion&quot; lässt definitionsgemäß außen wie auch an der Lochseite je ein Pixel stehen; wer nur die äußere Grenze will, füllt die Löcher zuerst. a und b werden nicht verwendet. Gleiche Implementierung wie der `<code style="color:#22d3bf">boundary</code>`-Seed-Op.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の `<code style="color:#22d3bf">get_region_contour</code>`（領域の輪郭を取得する演算、本来は XLD 輪郭として座標列を返す）とは出力形式が異なる近似 —— この backend は輪郭を region（画素マスク）として返し、XLD の座標点列にはしていない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

@@ -14,6 +14,8 @@
 <p>Farid-Simoncelli 梯度大小。直接呼叫 skimage 的 `<code style="color:#22d3bf">filters.farid</code>`。這是透過經最佳化的 5 抽頭微分核得到的梯度強度，據稱其旋轉對稱性（方向誤差）比 Sobel/Scharr 更小。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">edges_image</code> に相当(近似)。a, b は未使用。sk_scharr と同系統の「まず試すエッジ検出」だが、こちらは 5x5 相当のより大きなサポートを使う分ノイズにやや強い。</p>
+<p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
+<p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

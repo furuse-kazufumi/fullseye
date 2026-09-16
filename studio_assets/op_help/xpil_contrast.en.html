@@ -14,6 +14,7 @@
 <p>Contrast adjustment (linear stretch centered on the image&#x27;s mean brightness). Calls `<code style="color:#22d3bf">PIL.ImageEnhance.Contrast</code>`.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>a が強調係数（`<code style="color:#22d3bf">factor = 2*a</code>`、範囲 0〜2）を振る。a=0.5 で係数 1.0（元画像のまま）、a=0 に近づくほど平均輝度一色のグレーに潰れ、a=1 に近づくほどコントラストが 2 倍まで強調される。b は未使用。</p>
+<p><b>Precision (measured)</b>: internally quantised to <b>8 bit (256 levels)</b> — the output lands exactly on the k/255 grid. Passing float64 <b>does not preserve that precision</b>: a 16-bit camera&#x27;s step (about 1.5e-5) is rounded to 1/255 = about 3.9e-3, and two images that differ by less than 1/255 return the same answer. Where faint intensity differences are being measured, or the output is fed on to differentiation or regression, the quantisation steps become visible — choose an op that does not pass through 8 bit.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -13,6 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以迭代反锐化蒙版（unsharp masking）作为近似去模糊方法。每一遍处理都会把按比例缩放的高通分量（图像减去其高斯模糊）加回图像。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 设定迭代次数 n = 1 + round(a*5)（1..6）；</code><code style="color:#22d3bf">b</code>` 设定每遍的强度 amt = 0.4 + b（0.4..1.4）。迭代次数越多／强度越大，锐化效果越强。</p>
+<p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（实测。</code>tools/impl2/border_probe.py`）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

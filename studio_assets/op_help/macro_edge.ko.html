@@ -13,6 +13,8 @@
 <p>진화 탐색이 발견한 고정 파이프라인: `<code style="color:#22d3bf">gamma(a=0.39,b=0.94)</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">bilateral(a=0.22,b=0.08)</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">sobel_mag(a=0.81,b=0.80)</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">scale_clip(a=1.00,b=0.90)</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">otsu(a=0.78,b=0.93)</code>`(5단계: 감마 보정 → 평활화 → 그레이디언트 크기 → 스케일링 → 오츠의 판별분석법(Otsu&#x27;s method)에 의한 이진화).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は凍結済みで未使用。edge 課題（F1）でロック済みホールドアウト0.91、手作りベースライン 0.77 を上回る。出力は image ではなく region（二値マスク）。HALCON に対応する単一オペレータは無い。</p>
+<p><b>노브(실측)</b>: `<code style="color:#22d3bf">a</code>`를 0에서 1까지 변화시켜도 <b>출력이 바뀌지 않는다</b>(5가지 입력으로 실측).</p>
+<p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 모든 화소가 전경(1)</b>이 된다. 조명이 날아갔거나 가려졌거나 피사체가 없는 프레임이 “<b>결함 100%</b>”로 돌아오므로, 상류에서 균일한지 판정해 걸러낼 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

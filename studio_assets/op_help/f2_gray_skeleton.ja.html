@@ -13,6 +13,8 @@
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>グレースケール画像の細線化（thinning）: 明るい領域（しきい値は `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で設定）を骨格化（skeletonise）し、1 画素幅の中心稜線を元のグレー値に戻して持ち上げる。</code><code style="color:#22d3bf">b</code>` は無視される。</p>
+<p><b>端の扱い</b>: 画像の外側は背景(0)とみなす(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
+<p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

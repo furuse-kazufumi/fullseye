@@ -14,6 +14,7 @@
 <p>영역 극소점 추출(`<code style="color:#22d3bf">mahotas.regmin</code>`). 가우시안으로 평활화한 이미지에서 국소적으로 가장 어두운 골짜기를 영역으로 표시한다. 워터셰드(watershed) 분할의 마커 생성에 쓰이는 전형적인 전처리다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は平滑化の強さ(σ、0.15〜3.15)を振る —— 大きくするほど微小なノイズ谷が消え、大きな谷だけが残る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 모든 화소가 전경(1)</b>이 된다. 조명이 날아갔거나 가려졌거나 피사체가 없는 프레임이 “<b>결함 100%</b>”로 돌아오므로, 상류에서 균일한지 판정해 걸러낼 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

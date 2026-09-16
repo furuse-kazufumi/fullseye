@@ -15,6 +15,8 @@
 <p>穩健平滑濾波器。回傳視窗內 20 百分位與 80 百分位的平均值（截尾平均，trimmed mean），藉此抑制極端明暗離群值（如胡椒鹽雜訊）的影響。a 將視窗大小分為 3/5/7/9（`<code style="color:#22d3bf">_k(a)</code>`）。b 未使用。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の `<code style="color:#22d3bf">mean_sp</code>`（ソルト&amp;ペッパーノイズを抑制する平均化演算）に相当する近似 —— 上下 20% を除いた範囲の中点をとる点で単純平均よりノイズに強いが、HALCON 固有のアルゴリズムとは実装が異なる。</p>
+<p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（實測。</code>tools/impl2/border_probe.py`）。</p>
+<p><b>旋鈕（實測）</b>：`<code style="color:#22d3bf">a</code>` 以<b>離散檔位</b>生效，切換點在 a ≈ 0.25、0.49、0.75（以步長 0.02 掃描實測）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

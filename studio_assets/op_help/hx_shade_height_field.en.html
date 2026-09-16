@@ -24,6 +24,7 @@
 <p>注意: 高さのスケール係数が無く、[0,1] の値を数百画素にわたって微分するため勾配はごく小さい。そのままでは</p>
 <p>陰影の差がほとんど無いが、最後の min-max 正規化で見える化している。したがって出力の絶対的な明るさに意味は</p>
 <p>無く、入力が平坦だと全画素 0 になる。深度画像や `<code style="color:#22d3bf">hx_fit_surface2</code>` で推定した背景面の凹凸を目で確かめる用途向け。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -16,6 +16,7 @@
 <p>局部極小點（區域極小）偵測。把滿足 `<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> 等於窗口內最小值（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）且同時滿足 </code><code style="color:#22d3bf">x &lt; 0.7-0.4*b</code><code style="color:#22d3bf"> 的像素判定為前景——是 </code><code style="color:#22d3bf">local_max</code><code style="color:#22d3bf"> 的暗部版本。相當於 HALCON 的 </code><code style="color:#22d3bf">local_min</code>`（Detect all local minima in an image.）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓サイズを、</code><code style="color:#22d3bf">b</code>` が輝度の上限しきい値を振る。両方が使われる。</p>
+<p><b>旋鈕（實測）</b>：`<code style="color:#22d3bf">a</code>` 以<b>離散檔位</b>生效，切換點在 a ≈ 0.25、0.49、0.75（以步長 0.02 掃描實測）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

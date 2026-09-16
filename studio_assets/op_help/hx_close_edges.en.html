@@ -24,6 +24,7 @@
 <p>(全面 1 の 20×20 に it=1 を掛けると残るのは 18×18)。端に接するエッジを扱うときは前に余白を付けるか、結果を</p>
 <p>膨張し直す。入力は image(エッジ振幅)で出力も image sort だが中身は二値。`<code style="color:#22d3bf">hx_nonmax_dir</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">sobel_amp</code>` の</p>
 <p>後に置き、つながったエッジは `<code style="color:#22d3bf">hx_region_to_label</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">hx_detect_edge_segments</code>` へ渡す。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

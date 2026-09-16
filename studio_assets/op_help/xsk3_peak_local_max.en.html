@@ -14,6 +14,7 @@
 <p>Local maxima map (skimage `<code style="color:#22d3bf">feature.peak_local_max</code><code style="color:#22d3bf">). Detects the coordinates of local brightness maxima that are at least </code><code style="color:#22d3bf">min_distance</code>` pixels apart from each other, and returns a sparse binary image where only those coordinates are set to 1 (single-pixel points, not regions as areas).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は最小距離(</code><code style="color:#22d3bf">2+int(a*8)</code><code style="color:#22d3bf"> で 2〜10)を振る —— 大きくするほど検出される点が減り、より支配的なピークだけが残る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

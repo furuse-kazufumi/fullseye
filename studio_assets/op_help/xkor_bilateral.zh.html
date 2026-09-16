@@ -17,6 +17,7 @@
 <p>a は空間方向のシグマ（`<code style="color:#22d3bf">1.0 + 3.0 * a</code>`、範囲 1.0〜4.0）、b は明度方向の</p>
 <p>シグマ（`<code style="color:#22d3bf">0.05 + 0.4 * b</code>`、範囲 0.05〜0.45）を振る。値が近い画素だけを</p>
 <p>混ぜるため、平滑化しつつエッジは保たれる。</p>
+<p><b>边界处理</b>：不重复端点的镜像折返 (d c b | a b c d，OpenCV 的 `<code style="color:#22d3bf">BORDER_REFLECT_101</code><code style="color:#22d3bf">)（实测。</code>tools/impl2/border_probe.py`）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

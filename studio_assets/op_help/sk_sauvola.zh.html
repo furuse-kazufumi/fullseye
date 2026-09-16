@@ -15,6 +15,7 @@
 <p>Sauvola 局部自适应阈值法。根据每个像素周围的局部均值与标准差来局部地确定阈值,专为存在照明不均的文档图像二值化(文字提取)而设计。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の <code style="color:#22d3bf">var_threshold</code>(Threshold an image by local mean and standard deviation analysis.)に相当。実装は `<code style="color:#22d3bf">v &gt; filters.threshold_sauvola(v, window_size=2*int(a*6)+3)</code>` —— a は局所窓のサイズを 3〜15(奇数)に振る(小さいほど照明ムラに強いが計算が細かくノイズにも敏感)。b は未使用。k, r パラメータは skimage の既定値のまま。</p>
+<p><b>边界处理</b>：不重复端点的镜像折返 (d c b | a b c d，OpenCV 的 `<code style="color:#22d3bf">BORDER_REFLECT_101</code><code style="color:#22d3bf">)（实测。</code>tools/impl2/border_probe.py`）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

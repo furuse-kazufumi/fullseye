@@ -24,6 +24,7 @@
 <p>エッジをほとんど細線化しない(`<code style="color:#22d3bf">hx_nonmax_dir</code>` の注記参照)ため、斜めのエッジは幅を持った塊になり固有値比が</p>
 <p>下がって落とされやすい。連結成分単位なので、交差した線は 1 つの成分として比が下がる。後段で線分ごとに扱うなら</p>
 <p>`<code style="color:#22d3bf">hx_region_to_label</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">hough_line_trans</code>`。</p>
+<p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

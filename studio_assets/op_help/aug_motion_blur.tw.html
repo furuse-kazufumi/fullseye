@@ -13,6 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>線性運動模糊：與正規化的直線（盒狀）核心卷積，即曝光期間等速相機／場景平移所對應的點擴散函數。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 設定拖曳長度 </code><code style="color:#22d3bf">L = 3 + 20*a</code><code style="color:#22d3bf"> px（強制為奇數，並經過限制使核心尺寸不超過影像）；</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 設定拖曳角度 </code><code style="color:#22d3bf">b*180</code><code style="color:#22d3bf"> 度。邊界處理方式為 </code><code style="color:#22d3bf">reflect</code>`，因此畫面邊緣不會變暗。能量守恆（核心總和為 1）。</p>
+<p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（實測。</code>tools/impl2/border_probe.py`）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

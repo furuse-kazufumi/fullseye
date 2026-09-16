@@ -16,6 +16,8 @@
 <p>Thresholding via local Gaussian smoothing plus an offset (the threshold is `<code style="color:#22d3bf">gaussian_filter(x, 1+3*a)</code><code style="color:#22d3bf"> plus offset </code><code style="color:#22d3bf">(b-0.5)*0.3</code><code style="color:#22d3bf">). A similar idea to </code><code style="color:#22d3bf">dyn_threshold</code><code style="color:#22d3bf">, but differs in that the local mean is computed with a Gaussian instead of a rectangular window. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">local_threshold</code>` (Segment an image using local thresholding).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が平滑化のシグマを、</code><code style="color:#22d3bf">b</code>` がオフセットを振る。両方が使われる。</p>
+<p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (measured; </code>tools/impl2/border_probe.py`).</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

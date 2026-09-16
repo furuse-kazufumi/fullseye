@@ -14,6 +14,7 @@
 <p>基于 Yen 的最大相关准则(maximum correlation criterion)的全局阈值二值化。通过最大化基于直方图熵的评价量来选择阈值,是不同于大津法、Li 法的又一种自动阈值法。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の <code style="color:#22d3bf">binary_threshold</code> に相当(近似)。実装は `<code style="color:#22d3bf">v &gt; filters.threshold_yen(v)</code>` —— a, b は未使用。同じ画像に大津/Li/Yen を並べて試し、しきい値が安定する方を選ぶ用途を想定。</p>
+<p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，全部像素都成为前景（1）</b>。过曝、被遮挡或没有被摄物的帧会被报为「<b>缺陷 100%</b>」，因此应在上游判定是否均匀并加以剔除。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

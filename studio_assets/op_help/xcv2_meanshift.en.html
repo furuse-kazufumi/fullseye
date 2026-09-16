@@ -19,6 +19,7 @@
 <p>画像を内部で 3ch BGR に複製してから処理し、結果を再びグレースケールへ</p>
 <p>戻す。エッジを保ったまま平坦な領域を単色化する前処理（減色・セグメンテー</p>
 <p>ション前処理）に向く。</p>
+<p><b>Precision (measured)</b>: internally quantised to <b>8 bit (256 levels)</b> — the output lands exactly on the k/255 grid. Passing float64 <b>does not preserve that precision</b>: a 16-bit camera&#x27;s step (about 1.5e-5) is rounded to 1/255 = about 3.9e-3, and two images that differ by less than 1/255 return the same answer. Where faint intensity differences are being measured, or the output is fed on to differentiation or regression, the quantisation steps become visible — choose an op that does not pass through 8 bit.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

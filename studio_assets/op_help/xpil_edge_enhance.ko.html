@@ -13,6 +13,7 @@
 <p>Pillow의 에지 강조 필터(강한 버전). `<code style="color:#22d3bf">PIL.ImageFilter.EDGE_ENHANCE_MORE</code><code style="color:#22d3bf">의 고정 커널로 에지 부근의 대비를 높인다(</code><code style="color:#22d3bf">EDGE_ENHANCE</code>`보다 강한 버전).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>a, b は未使用（固定カーネル）。</p>
+<p><b>정밀도(실측)</b>: 내부에서 <b>8 bit(256단계)로 양자화</b>한다(출력이 k/255 격자에 정확히 올라온다). float64로 넘겨도 <b>그 정밀도는 유지되지 않는다</b> —— 16-bit 카메라의 계조(약 1.5e-5)는 1/255 ≈ 3.9e-3로 반올림되고, 1/255보다 작은 차이만 있는 두 장은 같은 답을 돌려준다. 미세한 농담 차를 재는 용도나 출력을 다시 미분·회귀에 넘기는 용도에서는 양자화 계단이 드러나므로, 8 bit를 거치지 않는 op를 고를 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

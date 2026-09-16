@@ -16,6 +16,8 @@
 <p>リング)を取り出す。塗りつぶされた領域を輪郭線に変換する。HALCON の</p>
 <p>`<code style="color:#22d3bf">boundary</code>`（Reduce a region to its boundary.）に相当。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>穴のある領域</b>: 外周だけでなく<b>穴の輪郭も返る</b>（「領域 − 収縮版」は定義上、外側からも穴の側からも 1 画素を残す。実測で確認）。</p>
+<p><b>画像の縁</b>: 領域が画像の端に接する場合、<b>縁の側も境界に含まれる</b>(外側を背景とみなして収縮するため)。全面が領域の入力では、出力は画像の外周 1 画素の枠になる(8x8 で 28 画素。実測)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

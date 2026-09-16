@@ -13,6 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>局所コントラスト強調。各画素を、局所近傍の最大値と最小値のどちらに近いかで判定し、近い方の値へ置き換える —— 中間的な値を持つ画素が両極端に押し出され、見かけ上のコントラストが上がる(2 値化に近い効果が出ることもある)。</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">filters.rank.enhance_contrast(_u8s(v), disk(1+int(a*3)))</code>` を 255 で割ったもの —— a は円盤半径を 1〜4 に振る。b は未使用。</p>
+<p><b>精度(実測)</b>: 内部で <b>8 bit(256 段)に量子化</b>している(出力が k/255 の格子にちょうど載る)。float64 で渡しても<b>その精度は保たれない</b> —— 16-bit カメラの階調(約 1.5e-5)は 1/255 =約 3.9e-3 に丸められ、1/255 より小さい差しか無い 2 枚は同じ答えを返す。微小な濃淡差を測る用途や、出力をさらに微分・回帰に渡す用途では量子化の段差が出るので、8 bit を経由しない op を選ぶこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

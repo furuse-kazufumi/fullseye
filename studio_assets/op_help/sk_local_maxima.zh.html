@@ -14,6 +14,7 @@
 <p>局部极大点检测。返回真正大于所有邻域像素(允许平台=数值相同的连通区域)的像素集合作为区域 —— 是峰值检测、特征点提取的前处理步骤。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の <code style="color:#22d3bf">local_max</code>(Detect all local maxima in an image.)に相当。実装は `<code style="color:#22d3bf">morphology.local_maxima(v)</code>`。a, b は未使用 —— footprint は既定値(全方向 1 近傍)のまま。</p>
+<p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

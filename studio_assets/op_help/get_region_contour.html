@@ -12,7 +12,7 @@
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_contour.inputs.jpg">get_region_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>領域の輪郭（境界線、1 画素幅）を抽出する。領域からその収縮版（1 回の二値収縮）を引くことで外周だけを残す。a, b は未使用。`<code style="color:#22d3bf">boundary</code>` seed op と同じ実装。</p>
+<p>領域の輪郭（境界線、1 画素幅）を抽出する。領域からその収縮版（1 回の二値収縮）を引いて輪郭を残す。<b>穴のある領域では外周だけでなく穴の輪郭も返る</b>（実測 2026-09-16: 8x8 の枠に 4x4 の穴を開けた入力で、穴に隣接する前景 20 画素のうち 16 画素が輪郭として立つ）。「領域 − 収縮版」は定義上、外側からも穴の側からも 1 画素を残すので、外周だけが欲しいなら穴を先に埋めること。a, b は未使用。`<code style="color:#22d3bf">boundary</code>` seed op と同じ実装。</p>
 <p>HALCON の `<code style="color:#22d3bf">get_region_contour</code>`（領域の輪郭を取得する演算、本来は XLD 輪郭として座標列を返す）とは出力形式が異なる近似 —— この backend は輪郭を region（画素マスク）として返し、XLD の座標点列にはしていない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region ファミリ ガイド</a></p>

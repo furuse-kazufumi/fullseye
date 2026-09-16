@@ -13,6 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Yen の最大相関基準(maximum correlation criterion)による大域しきい値二値化。ヒストグラムのエントロピーベースの評価量を最大化してしきい値を選ぶ、大津法・Li 法とはまた別の自動しきい値法。</p>
 <p>HALCON の <code style="color:#22d3bf">binary_threshold</code> に相当(近似)。実装は `<code style="color:#22d3bf">v &gt; filters.threshold_yen(v)</code>` —— a, b は未使用。同じ画像に大津/Li/Yen を並べて試し、しきい値が安定する方を選ぶ用途を想定。</p>
+<p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく全画素が前景(1)</b>になる。照明が飛んだ・遮られた・被写体が無いフレームは「<b>欠陥 100%</b>」として返るので、上流で「一様かどうか」を判定して弾くこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

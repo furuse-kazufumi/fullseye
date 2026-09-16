@@ -22,6 +22,8 @@
 <p>log-Gabor filters carry no DC, the result is invariant to affine illumination</p>
 <p>change. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> is a noise threshold (fraction of mean energy); </code><code style="color:#22d3bf">b</code>` scales the</p>
 <p>base wavelength. Peaks at edges/lines where the phases align.</p>
+<p><b>边界处理</b>：环绕到对侧（周期）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
+<p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

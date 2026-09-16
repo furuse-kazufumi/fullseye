@@ -23,6 +23,7 @@
 <p>注意: クロージングの構造要素は固定 3×3 で、`<code style="color:#22d3bf">hx_close_edges</code>` のような幅の調整は無い。ラベリングが 4 近傍のため</p>
 <p>斜めにつながる 1 画素幅の線は別成分に分かれ、「長さ」が短く数えられて消えやすい。`<code style="color:#22d3bf">binary_closing</code>` は画像外を</p>
 <p>0 と扱うので端 1 画素の帯は常に 0 になる。「長さ」は成分の画素数であり幾何学的な線長ではない(塊も長いと数える)。</p>
+<p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

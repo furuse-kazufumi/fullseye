@@ -17,6 +17,8 @@
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で、</code><code style="color:#22d3bf">b</code>` がパーセンタイルを 5〜95% の</p>
 <p>範囲で振る。両方が使われる。</p>
+<p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（实测。</code>tools/impl2/border_probe.py`）。</p>
+<p><b>旋钮（实测）</b>：`<code style="color:#22d3bf">a</code>` 以<b>离散档位</b>生效，切换点在 a ≈ 0.25、0.49、0.75（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

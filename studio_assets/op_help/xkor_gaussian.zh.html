@@ -16,6 +16,7 @@
 <p>a はシグマを 0.3〜3.0 の範囲で振る（`<code style="color:#22d3bf">0.3 + 2.7 * a</code>`）。b は未使用。</p>
 <p>CPU 実行では scipy 版と比べて速くはならない（GPU・バッチ実行時に効く</p>
 <p>実装。`<code style="color:#22d3bf">IMGEVOLVE_KORNIA_DEVICE=cuda</code>` で GPU に乗る）。</p>
+<p><b>边界处理</b>：不重复端点的镜像折返 (d c b | a b c d，OpenCV 的 `<code style="color:#22d3bf">BORDER_REFLECT_101</code><code style="color:#22d3bf">)（实测。</code>tools/impl2/border_probe.py`）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

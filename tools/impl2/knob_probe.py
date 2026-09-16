@@ -42,6 +42,18 @@ JUMP = 1e-6
 EFFECT = 1e-9
 
 
+#: region -> region の op を測るときは **入力を二値マスクにする**。灰色の画像を渡すと
+#: op 側が内部で ``v > 0.5`` して潰すので、つまみを振っても何も動かず「未使用」と
+#: 誤判定する —— 探針が対象を励起できていないだけなのに
+#: ([[feedback_one_probe_input_is_not_coverage]])。
+_REGION_MODE = False
+
+
+def _binarise(imgs: list[np.ndarray]) -> list[np.ndarray]:
+    """灰色の探針を二値マスクに直す。塊と穴が残るよう 0.5 で切る。"""
+    return [(im > 0.5).astype(np.float64) for im in imgs]
+
+
 def _probe_images(n: int = 24) -> list[np.ndarray]:
     """**構造の違う入力を複数枚**。1 枚では足りない。
 
@@ -78,7 +90,17 @@ def _probe_images(n: int = 24) -> list[np.ndarray]:
     hi = ((x + y) % 2).astype(np.float64) * 0.6 + 0.2   # 最高周波
     out.append(hi)
 
-    return out
+    # **低コントラスト**(最大 0.55)。ここまでの 4 枚はどれもピークが 1.0 近くなので、
+    # ``v > 0.3 + 0.4*b`` のような **絶対値のしきい値を振るつまみ**は永久に励起できず、
+    # 「b は未使用」と誤判定する —— 2026-09-16、`local_max` がまさにそれだった
+    # (低コントラスト画像なら b=1.0 で前景が 14 -> 0 になる)。
+    # 探針 1 枚で誤ったのと同じ型を、1 段深いところで繰り返していた
+    # ([[feedback_one_probe_input_is_not_coverage]])。
+    low = np.clip(rng.random((n, n)) * 0.25 + 0.30, 0, 1)
+    low[n // 4:n // 2, n // 4:n // 2] += 0.12               # 弱い塊
+    out.append(np.clip(low, 0, 1))
+
+    return _binarise(out) if _REGION_MODE else out
 
 
 def _run(fs, op: str, img: np.ndarray, a: float, b: float):
@@ -163,6 +185,16 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--ops")
     ap.add_argument("--all-image", action="store_true")
+    #: **入力は画像、出力は二値**の op(しきい値・領域抽出)。5 つの台帳のうち 4 つが
+    #: この 83 本を丸ごと落としていた —— 2026-09-16、`local_max` / `dyn_threshold` の
+    #: 争点を追ったら「窓が何段か」がどこにも書かれておらず、原因は測っていなかった
+    #: ことだった。入力が画像なので、測り方は image->image と同じでよい。
+    ap.add_argument("--all-region-out", action="store_true",
+                    help="image -> region の op も測る(しきい値・領域抽出)")
+    #: region -> region の op(形態学)。つまみは反復回数や構造要素の大きさを振るので
+    #: ここも測る意味がある。入力は二値マスクにする。
+    ap.add_argument("--all-region", action="store_true",
+                    help="region -> region の op も測る(入力は二値マスク)")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--json")
     a = ap.parse_args()
@@ -173,6 +205,17 @@ def main() -> int:
         names += [o["name"] for o in idx["ops"]
                   if o["tier"] in ("registry", "color")
                   and o["in_sort"] == "image" and o["out_sort"] == "image"]
+    if a.all_region_out:
+        idx = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
+        names += [o["name"] for o in idx["ops"]
+                  if o["tier"] in ("registry", "color")
+                  and o["in_sort"] == "image" and o["out_sort"] == "region"]
+    if a.all_region:
+        idx = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
+        names += [o["name"] for o in idx["ops"]
+                  if o["tier"] in ("registry", "color")
+                  and o["in_sort"] == "region" and o["out_sort"] == "region"]
+        globals()["_REGION_MODE"] = True
     names = list(dict.fromkeys(names))
     if a.limit:
         names = names[:a.limit]

@@ -14,6 +14,8 @@
 <p>CLAHE(대비 제한 적응 히스토그램 균등화, OpenCV 구현). sk_adapthist와 같은 개념의 국소 대비 강조이지만, OpenCV의 구현과 타일 분할 방식을 사용한다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">cv2.createCLAHE(clipLimit=1.0+4.0*a).apply(_u8(v))</code>` を 255 で割ったもの —— a は clipLimit(コントラスト制限の強さ)を 1.0〜5.0 に振る。タイルグリッドサイズは既定の 8x8 のまま。b は未使用。</p>
+<p><b>노브(실측)</b>: `<code style="color:#22d3bf">a</code>`를 0에서 1까지 변화시켜도 <b>출력이 바뀌지 않는다</b>(5가지 입력으로 실측).</p>
+<p><b>정밀도(실측)</b>: 내부에서 <b>8 bit(256단계)로 양자화</b>한다(출력이 k/255 격자에 정확히 올라온다). float64로 넘겨도 <b>그 정밀도는 유지되지 않는다</b> —— 16-bit 카메라의 계조(약 1.5e-5)는 1/255 ≈ 3.9e-3로 반올림되고, 1/255보다 작은 차이만 있는 두 장은 같은 답을 돌려준다. 미세한 농담 차를 재는 용도나 출력을 다시 미분·회귀에 넘기는 용도에서는 양자화 계단이 드러나므로, 8 bit를 거치지 않는 op를 고를 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

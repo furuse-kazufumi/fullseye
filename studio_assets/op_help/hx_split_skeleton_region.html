@@ -20,6 +20,7 @@
 <p>ほぼ全部が消える。分岐点そのものは出力に含まれない(分岐の位置が要るなら `<code style="color:#22d3bf">junctions_skeleton</code>`)。</p>
 <p>分かれた枝を個別に扱うには後段で `<code style="color:#22d3bf">hx_region_to_label</code>` を掛ける。分岐点の隣接画素は除かないので、</p>
 <p>多方向が集まる太めの交差では 1 画素の残骸がつながったまま残ることがある。同系の op に `<code style="color:#22d3bf">r2_split_skeleton_lines</code>`。</p>
+<p><b>端の扱い</b>: 画像の外側は背景(0)とみなす(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

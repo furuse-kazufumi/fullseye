@@ -14,6 +14,7 @@
 <p>非局部平均去雜訊（Non-local means，OpenCV 實作，灰階版本）。以 OpenCV 的高速實作方式，採用與 sk_nlm 相同的概念（在整張影像中尋找相似的區塊並取平均）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">cv2.fastNlMeansDenoising(_u8(v), h=3+20*a, templateWindowSize=7, searchWindowSize=21)</code>` を 255 で割ったもの —— a はフィルタ強度 h を 3〜23 に振る(大きいほど強く除去されディテールも失われる)。パッチ/探索窓は既定サイズに固定。b は未使用。</p>
+<p><b>精度（實測）</b>：內部<b>量化為 8 bit（256 階）</b>——輸出恰好落在 k/255 的格點上。即使以 float64 傳入，<b>該精度也不會被保留</b>：16-bit 相機的階差（約 1.5e-5）被捨入到 1/255 ≈ 3.9e-3，相差小於 1/255 的兩張影像會回傳相同結果。在量測微小灰階差、或將輸出繼續送入微分與迴歸時，量化台階會顯現——請選用不經過 8 bit 的 op。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

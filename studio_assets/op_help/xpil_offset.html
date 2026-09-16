@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画像をトロイダル（周回・wrap-around）にシフトする。`<code style="color:#22d3bf">PIL.ImageChops.offset</code>` を呼ぶ——画面端からはみ出た画素が反対側の端に現れる循環シフトで、通常の平行移動と違って画像端が黒くならない。</p>
 <p>a が横方向のシフト量（画像幅に対する比率）、b が縦方向のシフト量（画像高さに対する比率）を振る。内容の連続性は崩れるため、タイル状のテクスチャ生成などに向く。</p>
+<p><b>精度(実測)</b>: 内部で <b>8 bit(256 段)に量子化</b>している(出力が k/255 の格子にちょうど載る)。float64 で渡しても<b>その精度は保たれない</b> —— 16-bit カメラの階調(約 1.5e-5)は 1/255 =約 3.9e-3 に丸められ、1/255 より小さい差しか無い 2 枚は同じ答えを返す。微小な濃淡差を測る用途や、出力をさらに微分・回帰に渡す用途では量子化の段差が出るので、8 bit を経由しない op を選ぶこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

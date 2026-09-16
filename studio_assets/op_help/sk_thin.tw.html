@@ -15,6 +15,7 @@
 <p>形態學細化(thinning)。與 sk_skeleton 一樣都是變成 1 像素寬,但演算法不同,基於擊中或擊不中變換(hit-or-miss transform),較不容易產生骨架分支(毛刺)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON の <code style="color:#22d3bf">thinning</code>(Remove the result of a hit-or-miss operation from a region.)に相当。実装は `<code style="color:#22d3bf">morphology.thin(binm(v))</code>`。a, b は未使用。sk_skeleton / sk_medial と 3 通りの細線化を並べ、対象形状に合うものを選べるようにしてある。</p>
+<p><b>邊界處理</b>：將影像外部視為背景（0）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

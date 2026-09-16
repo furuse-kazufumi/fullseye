@@ -13,6 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>傳回影像高斯金字塔的其中一層:先以 2 的 `<code style="color:#22d3bf">level</code><code style="color:#22d3bf"> 次方降取樣(模糊+抽取),再放大回原始 HxW,得到解析度降低的頻寬受限(低通)版本。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 選擇層級(1..4);</code><code style="color:#22d3bf">b</code>` 被忽略。</p>
+<p><b>旋鈕（實測）</b>：`<code style="color:#22d3bf">a</code>` 以<b>離散檔位</b>生效，切換點在 a ≈ 0.17、0.49、0.83（以步長 0.02 掃描實測）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

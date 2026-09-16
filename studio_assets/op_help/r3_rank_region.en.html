@@ -17,6 +17,7 @@
 <p>Morphological rank operator on a region (HALCON&#x27;s genuine `<code style="color:#22d3bf">rank_region</code>`: a generalisation that is neither pure erosion nor pure dilation).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">sz x sz</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">sz</code><code style="color:#22d3bf"> は 3, 5, 7 のいずれかを </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で選ぶ）の窓の中で、領域に属する画素が </code><code style="color:#22d3bf">number</code><code style="color:#22d3bf"> 個以上あれば出力を立てる。</code><code style="color:#22d3bf">number</code><code style="color:#22d3bf"> は</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">（0〜1）を窓面積に対する割合として決める（</code><code style="color:#22d3bf">number = sz*sz</code><code style="color:#22d3bf"> で収縮相当、</code><code style="color:#22d3bf">number = 1</code>` で膨張相当、中間ではランク/メディアンフィルタ相当の挙動になる）。</p>
+<p><b>Border handling</b>: treat everything outside the image as background (0) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

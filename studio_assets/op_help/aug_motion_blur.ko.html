@@ -13,6 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선형 모션 블러: 정규화된 직선(박스) 커널과의 컨볼루션으로, 노출 중 등속 카메라/장면 팬(pan)의 점 확산 함수에 해당한다. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">는 번짐 길이 </code><code style="color:#22d3bf">L = 3 + 20*a</code><code style="color:#22d3bf"> px를 설정하며(홀수로 강제되고 커널이 이미지를 넘지 않도록 제한됨), </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">는 번짐 각도 </code><code style="color:#22d3bf">b*180</code><code style="color:#22d3bf">도를 설정한다. 경계 처리는 </code><code style="color:#22d3bf">reflect</code>`이므로 프레임 가장자리가 어두워지지 않는다. 에너지 보존(커널의 합이 1).</p>
+<p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)(실측. </code>tools/impl2/border_probe.py`).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

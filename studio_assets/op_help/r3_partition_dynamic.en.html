@@ -16,6 +16,7 @@
 <p>Splits the region horizontally at columns where the vertical extent narrows (a &#x27;neck&#x27;) (equivalent to HALCON `<code style="color:#22d3bf">partition_dynamic</code>`).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>各列の前景画素数（密度）を数え、`<code style="color:#22d3bf">0 &lt; 密度 &lt;= a * 最大密度</code><code style="color:#22d3bf"> を満たす列（くびれ）をゼロに潰して領域を分断する。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）がくびれと判定するしきい値の割合。</code><code style="color:#22d3bf">b</code>` は未使用。密度が一様な領域には分断対象の列が無く、そのまま返る。</p>
+<p><b>Border handling</b>: treat everything outside the image as background (0) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

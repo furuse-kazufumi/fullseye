@@ -15,6 +15,7 @@
 <p>用单一高斯模糊(sigma 为 `<code style="color:#22d3bf">0.5+2.0*a</code><code style="color:#22d3bf">)近似的通用平滑处理。HALCON 的 </code><code style="color:#22d3bf">smooth_image</code>`(Smooth an image using various filters.)是可在 Deriche/Gauss/Mean 等多种滤波器类型中选择的万能算子,但这里简化为仅高斯一种(此近似的局限)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がシグマを 0.5〜2.5 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（实测。</code>tools/impl2/border_probe.py`）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

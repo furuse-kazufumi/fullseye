@@ -26,6 +26,7 @@
 <p>「最大成分」を確実に取りたいだけなら `<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">select_largest</code>` を使う。</p>
 <p>斜め接続だけでつながった画素は別成分として数えられる(4 連結)。前段に</p>
 <p>`<code style="color:#22d3bf">opening_circle</code>` でくびれを切っておくと成分単位の選択が安定する。</p>
+<p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

@@ -15,6 +15,7 @@
 <p>Medianfilter mit einer scheibenförmigen (disk) Footprint. Im Unterschied zu einem gewöhnlichen quadratischen Kernel ergibt sich eine isotrope Glättung, die einer Kreisform näher kommt.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の <code style="color:#22d3bf">median_image</code>(Compute a median filter with various masks.)に相当。実装は `<code style="color:#22d3bf">filters.median(v, footprint=disk(1+int(a*3)))</code>` —— a は円盤の半径を 1〜4 に振る(半径が大きいほど強く滑らかになるが細部も消える)。b は未使用。</p>
+<p><b>Randbehandlung</b>: das Randpixel replizieren (nächster Nachbar) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

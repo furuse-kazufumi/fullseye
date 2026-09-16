@@ -22,6 +22,9 @@
 <p>zero. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = gradient gain (0.25..4.25x), </code><code style="color:#22d3bf">b</code>` = pre-smoothing sigma of the</p>
 <p>gradient field (0..3). Output is min-max normalised to [0,1] and refit to</p>
 <p>HxW; a constant frame integrates to a flat (all-zero) relief.</p>
+<p><b>つまみ(実測)</b>: `<code style="color:#22d3bf">a</code>` を 0 から 1 まで振っても<b>出力は変わらない</b>(実測。5 種類の入力で確認)。</p>
+<p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
+<p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

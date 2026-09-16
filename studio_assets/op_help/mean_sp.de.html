@@ -15,6 +15,8 @@
 <p>Ein robuster Glättungsfilter. Gibt den Mittelwert des 20.- und 80.-Perzentils innerhalb des Fensters zurück (getrimmter Mittelwert, trimmed mean) und unterdrückt so den Einfluss extremer heller/dunkler Ausreißer (etwa Salt-and-Pepper-Rauschen). a stellt die Fenstergröße auf 3/5/7/9 ein (`<code style="color:#22d3bf">_k(a)</code>`). b wird nicht verwendet.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の `<code style="color:#22d3bf">mean_sp</code>`（ソルト&amp;ペッパーノイズを抑制する平均化演算）に相当する近似 —— 上下 20% を除いた範囲の中点をとる点で単純平均よりノイズに強いが、HALCON 固有のアルゴリズムとは実装が異なる。</p>
+<p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (gemessen; </code>tools/impl2/border_probe.py`).</p>
+<p><b>Regler (gemessen)</b>: `<code style="color:#22d3bf">a</code>` wirkt <b>stufenweise</b>; die Umschaltpunkte liegen bei a ≈ 0.25、0.49、0.75 (gemessen mit Schrittweite 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

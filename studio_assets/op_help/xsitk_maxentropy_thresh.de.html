@@ -14,6 +14,7 @@
 <p>Binarisierung nach der Maximum-Entropie-Methode (SimpleITK `<code style="color:#22d3bf">MaximumEntropyThreshold</code>`, Kapur-Verfahren). Ein globales Schwellenwertverfahren, das den Schwellenwert wählt, der die Summe der Entropien maximiert, wenn das Histogramm in Vordergrund-/Hintergrundklassen aufgeteilt wird.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はヒストグラムのビン数(</code><code style="color:#22d3bf">int(64+192*a)</code><code style="color:#22d3bf"> で 64〜256)を振る —— 粗いほど閾値が安定するが微妙な階調差は無視される。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit macht <b>unabhängig von der Helligkeit jedes Pixel zum Vordergrund (1)</b>. Ein überbelichtetes, verdecktes oder motivloses Bild kommt als „<b>100 % defekt</b>“ zurück; prüfe daher vorgelagert auf Gleichmäßigkeit und verwirf solche Bilder.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

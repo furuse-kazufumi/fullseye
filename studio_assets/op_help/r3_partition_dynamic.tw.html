@@ -16,6 +16,7 @@
 <p>在垂直方向寬度變窄的欄(縮頸處)將區域水平分割(相當於 HALCON `<code style="color:#22d3bf">partition_dynamic</code>`)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>各列の前景画素数（密度）を数え、`<code style="color:#22d3bf">0 &lt; 密度 &lt;= a * 最大密度</code><code style="color:#22d3bf"> を満たす列（くびれ）をゼロに潰して領域を分断する。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）がくびれと判定するしきい値の割合。</code><code style="color:#22d3bf">b</code>` は未使用。密度が一様な領域には分断対象の列が無く、そのまま返る。</p>
+<p><b>邊界處理</b>：將影像外部視為背景（0）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

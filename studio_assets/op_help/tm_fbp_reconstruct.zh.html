@@ -12,6 +12,9 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>滤波反投影（FBP）：将 `<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> 视为正弦图（行 = 角度，列 = 探测器，假定角度在 [0,180) 上均匀分布）并重建切片。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 选择重建滤波器 —— b &lt; 0.5 -&gt; Ram-Lak（斜坡滤波器），b &gt;= 0.5 -&gt; Shepp-Logan。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 未被使用（滤波器才是有意义的旋钮）。若可用则使用 </code><code style="color:#22d3bf">skimage.transform.iradon</code>`，否则使用 NumPy 的 FFT 斜坡滤波反投影。输出重新拟合为 HxW。</p>
+<p><b>旋钮（实测）</b>：将 `<code style="color:#22d3bf">a</code>` 从 0 扫到 1 <b>输出不变</b>（以 5 种输入实测）。</p>
+<p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
+<p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

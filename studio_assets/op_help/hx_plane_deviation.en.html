@@ -21,6 +21,7 @@
 <p>「平面より明るい/暗い」は区別しない。区別が要るなら `<code style="color:#22d3bf">hx_fit_surface1</code>` の結果と元画像を別途引く。</p>
 <p>1 次面なので緩やかに曲がった背景は残差に出る。その場合は `<code style="color:#22d3bf">hx_fit_surface2</code>` 側で背景を推定する。</p>
 <p>後段は `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> で欠陥 region 化、あるいは </code><code style="color:#22d3bf">hx_char_threshold</code>` の前処理として背景差し引き代わりに使える。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

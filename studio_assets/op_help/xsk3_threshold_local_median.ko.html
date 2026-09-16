@@ -14,6 +14,8 @@
 <p>국소 중앙값 적응적 이진화(skimage `<code style="color:#22d3bf">filters.threshold_local</code><code style="color:#22d3bf">의 </code><code style="color:#22d3bf">method=&#x27;median&#x27;</code>`). 블록별 중앙값을 국소 임계값으로 삼아 화소값이 이를 넘는지로 이진화한다. 국소 평균을 사용하는 버전보다 이상값(노이즈 화소)에 강하다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はブロックサイズ(</code><code style="color:#22d3bf">2*int(a*6)+3</code><code style="color:#22d3bf"> で 3〜15 の奇数)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)(실측. </code>tools/impl2/border_probe.py`).</p>
+<p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -2,10 +2,11 @@
   {
     "op": "abs_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -19,10 +20,11 @@
   {
     "op": "acos_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -36,16 +38,17 @@
   {
     "op": "add_noise_distribution",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.3347805551114516,
     "b_used": true,
     "a_effect_per_image": [
       26.130838,
       26.868538,
       21.166056,
-      25.351747
+      25.351747,
+      27.783046
     ],
-    "a_effect": 26.868537663794097,
+    "a_effect": 27.783046481689833,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"
@@ -53,16 +56,17 @@
   {
     "op": "add_noise_white",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.3347805551114516,
     "b_used": true,
     "a_effect_per_image": [
       26.130838,
       26.868538,
       21.166056,
-      25.351747
+      25.351747,
+      27.783046
     ],
-    "a_effect": 26.868537663794097,
+    "a_effect": 27.783046481689833,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"
@@ -70,14 +74,15 @@
   {
     "op": "affine_trans_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       9.590617,
       2.192625,
       7.295052,
-      10.371113
+      10.371113,
+      2.730861
     ],
     "a_effect": 10.371113097643018,
     "a_kind": "continuous",
@@ -87,14 +92,15 @@
   {
     "op": "affine_trans_image_size",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       9.590617,
       2.192625,
       7.295052,
-      10.371113
+      10.371113,
+      2.730861
     ],
     "a_effect": 10.371113097643018,
     "a_kind": "continuous",
@@ -104,14 +110,15 @@
   {
     "op": "affine_warp",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       9.590617,
       2.192625,
       7.295052,
-      10.371113
+      10.371113,
+      2.730861
     ],
     "a_effect": 10.371113097643018,
     "a_kind": "continuous",
@@ -121,14 +128,15 @@
   {
     "op": "alife_curvature_flow",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.4389675034479164,
     "b_used": true,
     "a_effect_per_image": [
       1.306519,
       0.240757,
       1.22603,
-      0.0
+      0.0,
+      0.225704
     ],
     "a_effect": 1.3065189254881169,
     "a_kind": "continuous",
@@ -138,14 +146,15 @@
   {
     "op": "alife_cyclic_ca",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.8333333333333334,
     "b_used": true,
     "a_effect_per_image": [
       4.001768,
       2.768615,
       2.075108,
-      1.479293
+      1.479293,
+      1.44513
     ],
     "a_effect": 4.001767676767677,
     "a_kind": "continuous",
@@ -155,14 +164,15 @@
   {
     "op": "alife_dla",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       9.0,
       11.0,
       11.0,
-      4.0
+      4.0,
+      11.0
     ],
     "a_effect": 11.0,
     "a_kind": "continuous",
@@ -172,14 +182,15 @@
   {
     "op": "alife_gray_scott",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.2827678177301408,
     "b_used": true,
     "a_effect_per_image": [
       0.702561,
       0.446735,
       2.18088,
-      20.0
+      20.0,
+      0.958262
     ],
     "a_effect": 20.0,
     "a_kind": "continuous",
@@ -189,10 +200,11 @@
   {
     "op": "alife_langton_ant",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
+      50.0,
       50.0,
       50.0,
       50.0,
@@ -206,14 +218,15 @@
   {
     "op": "alife_lenia",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       6.146339,
       13.892044,
       10.031193,
-      1.251505
+      1.251505,
+      10.664371
     ],
     "a_effect": 13.89204365643726,
     "a_kind": "continuous",
@@ -223,14 +236,15 @@
   {
     "op": "alife_life_step",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       3.0,
       3.0,
       2.0,
-      2.0
+      2.0,
+      3.0
     ],
     "a_effect": 3.0,
     "a_kind": "discrete",
@@ -245,14 +259,15 @@
   {
     "op": "alife_perona_malik",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.19581530109670797,
     "b_used": true,
     "a_effect_per_image": [
       0.546566,
       0.292148,
       0.162001,
-      0.342753
+      0.342753,
+      0.209589
     ],
     "a_effect": 0.5465664806373797,
     "a_kind": "continuous",
@@ -262,12 +277,13 @@
   {
     "op": "alife_reaction_bz",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       2.0,
       1.0,
+      0.0,
       0.0,
       0.0
     ],
@@ -283,14 +299,15 @@
   {
     "op": "alife_sandpile",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       7.8192,
       8.078025,
       9.746212,
-      8.90873
+      8.90873,
+      9.230772
     ],
     "a_effect": 9.746212121212121,
     "a_kind": "continuous",
@@ -300,14 +317,15 @@
   {
     "op": "alife_turing",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.05907697242580312,
     "b_used": true,
     "a_effect_per_image": [
       0.001062,
       0.000556,
       0.000864,
-      0.0
+      0.0,
+      0.000453
     ],
     "a_effect": 0.0010617551606864062,
     "a_kind": "continuous",
@@ -317,12 +335,13 @@
   {
     "op": "alife_wolfram1d",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       11.0,
       5.0,
+      11.0,
       11.0,
       11.0
     ],
@@ -334,14 +353,15 @@
   {
     "op": "anisotropic_diffusion",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.2626325859602171,
     "b_used": true,
     "a_effect_per_image": [
       0.158356,
       0.124004,
       0.015652,
-      3e-05
+      3e-05,
+      0.090881
     ],
     "a_effect": 0.15835610124265836,
     "a_kind": "continuous",
@@ -351,10 +371,11 @@
   {
     "op": "asin_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -368,10 +389,11 @@
   {
     "op": "atan_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -385,14 +407,15 @@
   {
     "op": "aug_barrel",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9995113401119912,
     "b_used": true,
     "a_effect_per_image": [
       4.903068,
       1.233936,
       5.856508,
-      4.688331
+      4.688331,
+      1.430872
     ],
     "a_effect": 5.856508040614562,
     "a_kind": "continuous",
@@ -402,14 +425,15 @@
   {
     "op": "aug_chromatic",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.22694282936378007,
     "b_used": true,
     "a_effect_per_image": [
       1.371879,
       0.415135,
       1.394566,
-      1.345606
+      1.345606,
+      0.502122
     ],
     "a_effect": 1.3945656739274914,
     "a_kind": "discrete",
@@ -425,14 +449,15 @@
   {
     "op": "aug_cutout",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       20.952174,
       19.013106,
       10.125117,
-      18.4
+      18.4,
+      12.853918
     ],
     "a_effect": 20.952173913043477,
     "a_kind": "continuous",
@@ -442,14 +467,15 @@
   {
     "op": "aug_fixed_pattern",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.4693599209133277,
     "b_used": true,
     "a_effect_per_image": [
       0.508235,
       0.50288,
       0.497368,
-      0.501844
+      0.501844,
+      0.505619
     ],
     "a_effect": 0.5082352835252235,
     "a_kind": "continuous",
@@ -459,14 +485,15 @@
   {
     "op": "aug_jpeg_blocks",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.5688511282068971,
     "b_used": true,
     "a_effect_per_image": [
       4.997758,
       2.808307,
       4.285125,
-      7.235709
+      7.235709,
+      3.561827
     ],
     "a_effect": 7.2357088571898585,
     "a_kind": "continuous",
@@ -476,14 +503,15 @@
   {
     "op": "aug_motion_blur",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.723076923076923,
     "b_used": true,
     "a_effect_per_image": [
       1.091301,
       0.382479,
       1.259594,
-      0.621568
+      0.621568,
+      0.331039
     ],
     "a_effect": 1.259593655806099,
     "a_kind": "continuous",
@@ -493,16 +521,17 @@
   {
     "op": "aug_read_noise",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.4538366609570057,
     "b_used": true,
     "a_effect_per_image": [
       17.555671,
       18.544179,
       14.294531,
-      17.784081
+      17.784081,
+      19.020734
     ],
-    "a_effect": 18.54417884448211,
+    "a_effect": 19.02073412630798,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"
@@ -510,14 +539,15 @@
   {
     "op": "aug_rolling_shutter",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9993636756276207,
     "b_used": true,
     "a_effect_per_image": [
       2.274669,
       0.62794,
       2.207801,
-      1.793739
+      1.793739,
+      0.680297
     ],
     "a_effect": 2.274669187145562,
     "a_kind": "continuous",
@@ -527,14 +557,15 @@
   {
     "op": "aug_shot_noise",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.4076923076923077,
     "b_used": true,
     "a_effect_per_image": [
       18.943432,
       18.621855,
       15.448711,
-      19.49538
+      19.49538,
+      17.932144
     ],
     "a_effect": 19.495380192053105,
     "a_kind": "continuous",
@@ -544,14 +575,15 @@
   {
     "op": "aug_vignette",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.26083020348453323,
     "b_used": true,
     "a_effect_per_image": [
       0.748019,
       0.662462,
       0.627515,
-      0.629911
+      0.629911,
+      0.416721
     ],
     "a_effect": 0.7480191914632408,
     "a_kind": "continuous",
@@ -561,14 +593,15 @@
   {
     "op": "bandpass_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.5923552145058848,
     "b_used": true,
     "a_effect_per_image": [
       0.86739,
       1.407551,
       0.932597,
-      0.0
+      0.0,
+      0.715502
     ],
     "a_effect": 1.4075510677869638,
     "a_kind": "continuous",
@@ -578,14 +611,15 @@
   {
     "op": "bilateral",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.4048381256234893,
     "b_used": true,
     "a_effect_per_image": [
       0.094974,
       0.034168,
       0.013823,
-      0.00713
+      0.00713,
+      0.046574
     ],
     "a_effect": 0.09497407133858396,
     "a_kind": "continuous",
@@ -595,14 +629,15 @@
   {
     "op": "bilateral_filter",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.2469279170036316,
     "b_used": true,
     "a_effect_per_image": [
       0.037201,
       0.026519,
       0.010778,
-      0.010598
+      0.010598,
+      0.035543
     ],
     "a_effect": 0.037200868129730225,
     "a_kind": "continuous",
@@ -612,14 +647,15 @@
   {
     "op": "binomial_filter",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.250423,
       0.059775,
       0.371242,
-      0.05257
+      0.05257,
+      0.058913
     ],
     "a_effect": 0.37124154074967775,
     "a_kind": "discrete",
@@ -634,10 +670,11 @@
   {
     "op": "bit_not",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -651,14 +688,15 @@
   {
     "op": "bothat",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.849866,
       1.676972,
       2.685127,
-      0.0
+      0.0,
+      1.085751
     ],
     "a_effect": 2.6851267790153655,
     "a_kind": "discrete",
@@ -673,14 +711,15 @@
   {
     "op": "clahe",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.5937093667977592,
     "b_used": true,
     "a_effect_per_image": [
       0.277439,
       1.003294,
       0.488717,
-      0.0
+      0.0,
+      0.822134
     ],
     "a_effect": 1.003294280911394,
     "a_kind": "discrete",
@@ -695,14 +734,15 @@
   {
     "op": "coherence_enhancing_diff",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.2626325859602171,
     "b_used": true,
     "a_effect_per_image": [
       0.158356,
       0.124004,
       0.015652,
-      3e-05
+      3e-05,
+      0.090881
     ],
     "a_effect": 0.15835610124265836,
     "a_kind": "continuous",
@@ -712,16 +752,17 @@
   {
     "op": "corner_response",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.960109,
       0.927642,
       0.859025,
-      0.390889
+      0.390889,
+      1.011397
     ],
-    "a_effect": 0.9601093200826332,
+    "a_effect": 1.0113973252026098,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"
@@ -729,10 +770,11 @@
   {
     "op": "cos_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -746,14 +788,15 @@
   {
     "op": "cv_bilateral",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.2469279170036316,
     "b_used": true,
     "a_effect_per_image": [
       0.037201,
       0.026519,
       0.010778,
-      0.010598
+      0.010598,
+      0.035543
     ],
     "a_effect": 0.037200868129730225,
     "a_kind": "continuous",
@@ -763,14 +806,15 @@
   {
     "op": "cv_blackhat",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.80523,
       1.348482,
       2.881205,
-      0.0
+      0.0,
+      1.451643
     ],
     "a_effect": 2.881204648018008,
     "a_kind": "discrete",
@@ -785,14 +829,15 @@
   {
     "op": "cv_box",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.649739,
       0.155483,
       1.111524,
-      0.02963
+      0.02963,
+      0.147909
     ],
     "a_effect": 1.1115238302937285,
     "a_kind": "discrete",
@@ -807,10 +852,11 @@
   {
     "op": "cv_clahe",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -824,14 +870,15 @@
   {
     "op": "cv_close",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.215217,
       0.423007,
       2.721157,
-      0.0
+      0.0,
+      0.344886
     ],
     "a_effect": 2.7211573657204964,
     "a_kind": "discrete",
@@ -846,10 +893,11 @@
   {
     "op": "cv_corner_harris",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -863,14 +911,15 @@
   {
     "op": "cv_dilate",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.232609,
       0.735263,
       2.990939,
-      0.0
+      0.0,
+      0.409086
     ],
     "a_effect": 2.9909389242300493,
     "a_kind": "discrete",
@@ -885,14 +934,15 @@
   {
     "op": "cv_erode",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.415217,
       0.58891,
       1.92309,
-      0.0
+      0.0,
+      0.463695
     ],
     "a_effect": 1.923090444751795,
     "a_kind": "discrete",
@@ -907,14 +957,15 @@
   {
     "op": "cv_gaussian",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.929246,
       0.282461,
       1.09338,
-      0.290864
+      0.290864,
+      0.246044
     ],
     "a_effect": 1.0933803437257728,
     "a_kind": "continuous",
@@ -924,14 +975,15 @@
   {
     "op": "cv_gradient",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.659003,
       1.491515,
       2.990939,
-      0.0
+      0.0,
+      1.612568
     ],
     "a_effect": 2.9909389242300493,
     "a_kind": "discrete",
@@ -946,10 +998,11 @@
   {
     "op": "cv_laplacian",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -963,14 +1016,15 @@
   {
     "op": "cv_median",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.427451,
       0.203922,
       2.537255,
-      1.8
+      1.8,
+      0.235294
     ],
     "a_effect": 2.537254901960784,
     "a_kind": "discrete",
@@ -985,14 +1039,15 @@
   {
     "op": "cv_min_eigen",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.1045,
       1.195115,
       0.982225,
-      0.0
+      0.0,
+      1.003108
     ],
     "a_effect": 1.1951153576374054,
     "a_kind": "discrete",
@@ -1006,16 +1061,17 @@
   {
     "op": "cv_nlmeans",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.313725,
       0.305882,
       0.121569,
-      0.0
+      0.0,
+      0.396078
     ],
-    "a_effect": 0.3137254901960801,
+    "a_effect": 0.3960784313725504,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"
@@ -1023,14 +1079,15 @@
   {
     "op": "cv_open",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.286957,
       0.311776,
       1.899104,
-      0.0
+      0.0,
+      0.367586
     ],
     "a_effect": 1.8991040595835014,
     "a_kind": "discrete",
@@ -1045,10 +1102,11 @@
   {
     "op": "cv_precorner",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -1062,10 +1120,11 @@
   {
     "op": "cv_scharr",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -1079,14 +1138,15 @@
   {
     "op": "cv_sharpen",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.851,
       0.740964,
       0.546921,
-      0.2
+      0.2,
+      0.701112
     ],
     "a_effect": 0.8510000000000015,
     "a_kind": "continuous",
@@ -1096,14 +1156,15 @@
   {
     "op": "cv_tophat",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.557264,
       1.484499,
       1.903763,
-      0.0
+      0.0,
+      1.378552
     ],
     "a_effect": 1.9037626056600714,
     "a_kind": "discrete",
@@ -1118,14 +1179,15 @@
   {
     "op": "cv_trunc",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.0,
       1.0,
       1.0,
-      0.8
+      0.8,
+      0.668118
     ],
     "a_effect": 1.0,
     "a_kind": "continuous",
@@ -1135,14 +1197,15 @@
   {
     "op": "dc_homomorphic",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.1885866850163841,
     "b_used": true,
     "a_effect_per_image": [
       1.285722,
       1.19963,
       1.459702,
-      0.0
+      0.0,
+      0.444898
     ],
     "a_effect": 1.4597019150807165,
     "a_kind": "continuous",
@@ -1152,14 +1215,15 @@
   {
     "op": "dc_local_contrast_norm",
     "steps": 51,
-    "n_probe_images": 4,
-    "b_effect": 0.21520358027533248,
+    "n_probe_images": 5,
+    "b_effect": 0.21970801457013234,
     "b_used": true,
     "a_effect_per_image": [
       0.694728,
       0.304472,
       0.869053,
-      0.053878
+      0.053878,
+      0.237075
     ],
     "a_effect": 0.8690534493393187,
     "a_kind": "discrete",
@@ -1177,14 +1241,15 @@
   {
     "op": "dc_retinex",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.3328296606697735,
     "b_used": true,
     "a_effect_per_image": [
       0.261346,
       0.252884,
       1.547015,
-      0.016654
+      0.016654,
+      0.047098
     ],
     "a_effect": 1.5470153212777737,
     "a_kind": "continuous",
@@ -1194,14 +1259,15 @@
   {
     "op": "dc_rpca_lowrank",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.361231,
       0.450562,
       1.579744,
-      0.0
+      0.0,
+      0.590542
     ],
     "a_effect": 1.5797435832903886,
     "a_kind": "continuous",
@@ -1211,14 +1277,15 @@
   {
     "op": "dc_rpca_sparse",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.341531,
       0.450562,
       1.322587,
-      0.0
+      0.0,
+      0.590542
     ],
     "a_effect": 1.341530861656613,
     "a_kind": "continuous",
@@ -1228,14 +1295,15 @@
   {
     "op": "dc_structure_texture",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.640745,
       0.216441,
       0.384297,
-      0.41945
+      0.41945,
+      0.169468
     ],
     "a_effect": 0.6407449953704075,
     "a_kind": "continuous",
@@ -1245,14 +1313,15 @@
   {
     "op": "dc_texture_residual",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.632618,
       0.216441,
       0.384297,
-      0.41945
+      0.41945,
+      0.169468
     ],
     "a_effect": 0.6326183426453293,
     "a_kind": "continuous",
@@ -1262,14 +1331,15 @@
   {
     "op": "deform_ffd",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.7853967517702063,
     "b_used": true,
     "a_effect_per_image": [
       1.47772,
       0.449902,
       1.685843,
-      1.264496
+      1.264496,
+      0.455548
     ],
     "a_effect": 1.6858433514104003,
     "a_kind": "continuous",
@@ -1279,14 +1349,15 @@
   {
     "op": "deform_mls",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.5693903962782967,
     "b_used": true,
     "a_effect_per_image": [
       3.013494,
       0.863827,
       2.933375,
-      3.249105
+      3.249105,
+      0.884694
     ],
     "a_effect": 3.24910492896129,
     "a_kind": "continuous",
@@ -1296,14 +1367,15 @@
   {
     "op": "deform_tps",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9962987469798843,
     "b_used": true,
     "a_effect_per_image": [
       3.021636,
       0.935815,
       3.758719,
-      3.278838
+      3.278838,
+      0.975053
     ],
     "a_effect": 3.7587193600104962,
     "a_kind": "continuous",
@@ -1313,14 +1385,15 @@
   {
     "op": "derivate_gauss",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.925595,
       1.348879,
       1.820792,
-      2.493579
+      2.493579,
+      1.898694
     ],
     "a_effect": 2.4935789570466946,
     "a_kind": "continuous",
@@ -1330,16 +1403,17 @@
   {
     "op": "deviation_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.784815,
       0.90507,
       2.076788,
-      0.0
+      0.0,
+      1.003284
     ],
-    "a_effect": 2.076787966508964,
+    "a_effect": 2.0767879665089546,
     "a_kind": "discrete",
     "breakpoints": [
       0.25,
@@ -1352,14 +1426,15 @@
   {
     "op": "diff_of_gauss",
     "steps": 51,
-    "n_probe_images": 4,
-    "b_effect": 0.6458183297243182,
+    "n_probe_images": 5,
+    "b_effect": 0.7541751931765309,
     "b_used": true,
     "a_effect_per_image": [
       1.272777,
       0.909167,
       1.538241,
-      1.69584
+      1.69584,
+      1.633499
     ],
     "a_effect": 1.695839512305047,
     "a_kind": "continuous",
@@ -1369,14 +1444,15 @@
   {
     "op": "dl_aniso_diffusion",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.10418814420700073,
     "b_used": true,
     "a_effect_per_image": [
       0.702374,
       0.966072,
       0.074453,
-      0.003659
+      0.003659,
+      0.797893
     ],
     "a_effect": 0.9660722389817238,
     "a_kind": "continuous",
@@ -1386,14 +1462,15 @@
   {
     "op": "dl_guided_filter",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.1503005027770996,
     "b_used": true,
     "a_effect_per_image": [
       0.121086,
       0.140452,
       0.131531,
-      0.000187
+      0.000187,
+      0.074663
     ],
     "a_effect": 0.14045214653015137,
     "a_kind": "discrete",
@@ -1409,14 +1486,15 @@
   {
     "op": "dog",
     "steps": 51,
-    "n_probe_images": 4,
-    "b_effect": 0.6458183297243182,
+    "n_probe_images": 5,
+    "b_effect": 0.7541751931765309,
     "b_used": true,
     "a_effect_per_image": [
       1.272777,
       0.909167,
       1.538241,
-      1.69584
+      1.69584,
+      1.633499
     ],
     "a_effect": 1.695839512305047,
     "a_kind": "continuous",
@@ -1426,16 +1504,17 @@
   {
     "op": "dots_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
-      1.252451,
-      1.487973,
-      1.928837,
-      1.685747
+      1.19461,
+      1.302448,
+      1.900242,
+      1.37827,
+      1.537949
     ],
-    "a_effect": 1.9288367444325445,
+    "a_effect": 1.9002418291500214,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"
@@ -1443,14 +1522,15 @@
   {
     "op": "dual_rank",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       1.330435,
       0.217684,
       2.538208,
-      1.8
+      1.8,
+      0.23009
     ],
     "a_effect": 2.538208093316575,
     "a_kind": "discrete",
@@ -1465,14 +1545,15 @@
   {
     "op": "eliminate_min_max",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.330435,
       0.217684,
       2.538208,
-      1.8
+      1.8,
+      0.23009
     ],
     "a_effect": 2.538208093316575,
     "a_kind": "discrete",
@@ -1487,14 +1568,15 @@
   {
     "op": "eliminate_sp",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9949555714138189,
     "b_used": true,
     "a_effect_per_image": [
       1.177851,
       0.148758,
       2.335218,
-      0.0
+      0.0,
+      0.128141
     ],
     "a_effect": 2.335217657552135,
     "a_kind": "discrete",
@@ -1509,14 +1591,15 @@
   {
     "op": "entropy_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.018386,
       0.820827,
       1.188152,
-      0.283801
+      0.283801,
+      0.483847
     ],
     "a_effect": 1.1881519431101015,
     "a_kind": "discrete",
@@ -1531,10 +1614,11 @@
   {
     "op": "equ_histo_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -1548,14 +1632,15 @@
   {
     "op": "equ_histo_image_rect",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.466508,
       3.014245,
       2.451067,
-      0.6
+      0.6,
+      1.721146
     ],
     "a_effect": 3.014245290040312,
     "a_kind": "discrete",
@@ -1571,10 +1656,11 @@
   {
     "op": "equalize",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -1588,10 +1674,11 @@
   {
     "op": "exp_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -1605,14 +1692,15 @@
   {
     "op": "f2_bit_slice",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       7.0,
       7.0,
       7.0,
-      3.0
+      3.0,
+      7.0
     ],
     "a_effect": 7.0,
     "a_kind": "continuous",
@@ -1622,13 +1710,14 @@
   {
     "op": "f2_expand_domain",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.0,
       0.0,
       0.024039,
+      0.0,
       0.0
     ],
     "a_effect": 0.024038762189849874,
@@ -1643,14 +1732,15 @@
   {
     "op": "f2_gauss_pyramid",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.548751,
       0.480342,
       0.829504,
-      0.042922
+      0.042922,
+      0.129823
     ],
     "a_effect": 0.8295035319690232,
     "a_kind": "discrete",
@@ -1665,14 +1755,15 @@
   {
     "op": "f2_gray_inside",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.04087,
       0.075757,
       0.77411,
-      0.0
+      0.0,
+      0.094975
     ],
     "a_effect": 0.7741102669389417,
     "a_kind": "continuous",
@@ -1682,14 +1773,15 @@
   {
     "op": "f2_gray_skeleton",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       12.1,
       42.624444,
       5.0,
-      0.8
+      0.8,
+      17.652936
     ],
     "a_effect": 42.62444418746066,
     "a_kind": "continuous",
@@ -1699,14 +1791,15 @@
   {
     "op": "f2_lut_trans",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.49157567390192924,
     "b_used": true,
     "a_effect_per_image": [
       0.244332,
       0.245269,
       0.211075,
-      0.177658
+      0.177658,
+      0.240174
     ],
     "a_effect": 0.2452686117423778,
     "a_kind": "continuous",
@@ -1716,14 +1809,15 @@
   {
     "op": "f2_shock",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       4.86087,
       2.10417,
       2.598966,
-      0.0
+      0.0,
+      1.65999
     ],
     "a_effect": 4.860869565217392,
     "a_kind": "continuous",
@@ -1733,14 +1827,15 @@
   {
     "op": "f2_symmetry",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.82511,
       0.963791,
       0.790981,
-      1.17663
+      1.17663,
+      0.971897
     ],
     "a_effect": 1.1766304347826089,
     "a_kind": "discrete",
@@ -1757,14 +1852,15 @@
   {
     "op": "f2_topographic",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.25,
     "b_used": true,
     "a_effect_per_image": [
       22.0,
       20.5,
       19.0,
-      30.15
+      30.15,
+      22.3
     ],
     "a_effect": 30.15,
     "a_kind": "continuous",
@@ -1774,10 +1870,11 @@
   {
     "op": "fft_generic",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -1791,10 +1888,11 @@
   {
     "op": "fft_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -1808,10 +1906,11 @@
   {
     "op": "fft_image_inv",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -1825,10 +1924,11 @@
   {
     "op": "frei_amp",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -1842,10 +1942,11 @@
   {
     "op": "frei_dir",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -1859,14 +1960,15 @@
   {
     "op": "gabor",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.2886382928595977,
     "b_used": true,
     "a_effect_per_image": [
       1.14683,
       0.207336,
       1.275182,
-      0.168872
+      0.168872,
+      0.259075
     ],
     "a_effect": 1.2751824123325788,
     "a_kind": "continuous",
@@ -1876,14 +1978,15 @@
   {
     "op": "gamma",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.509434,
       0.509961,
       0.461557,
-      0.433911
+      0.433911,
+      0.50306
     ],
     "a_effect": 0.5099611512104014,
     "a_kind": "continuous",
@@ -1893,14 +1996,15 @@
   {
     "op": "gamma_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.819042,
       0.820199,
       0.761001,
-      0.708298
+      0.708298,
+      0.77567
     ],
     "a_effect": 0.8201991852823305,
     "a_kind": "continuous",
@@ -1910,14 +2014,15 @@
   {
     "op": "gauss_filter",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.9426,
       0.278177,
       1.09372,
-      0.392934
+      0.392934,
+      0.245641
     ],
     "a_effect": 1.0937199090744483,
     "a_kind": "continuous",
@@ -1927,14 +2032,15 @@
   {
     "op": "gauss_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.9426,
       0.278177,
       1.09372,
-      0.392934
+      0.392934,
+      0.245641
     ],
     "a_effect": 1.0937199090744483,
     "a_kind": "continuous",
@@ -1944,14 +2050,15 @@
   {
     "op": "gaussian",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.9426,
       0.278177,
       1.09372,
-      0.392934
+      0.392934,
+      0.245641
     ],
     "a_effect": 1.0937199090744483,
     "a_kind": "continuous",
@@ -1961,14 +2068,15 @@
   {
     "op": "gclose",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.5,
       0.509243,
       2.52875,
-      0.0
+      0.0,
+      0.260816
     ],
     "a_effect": 2.528749769204006,
     "a_kind": "discrete",
@@ -1983,14 +2091,15 @@
   {
     "op": "gdilate",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.6,
       0.709685,
       2.957412,
-      0.0
+      0.0,
+      0.401734
     ],
     "a_effect": 2.9574117498338572,
     "a_kind": "discrete",
@@ -2005,14 +2114,15 @@
   {
     "op": "gen_gabor",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.2886382928595977,
     "b_used": true,
     "a_effect_per_image": [
       1.14683,
       0.207336,
       1.275182,
-      0.168872
+      0.168872,
+      0.259075
     ],
     "a_effect": 1.2751824123325788,
     "a_kind": "continuous",
@@ -2022,14 +2132,15 @@
   {
     "op": "gerode",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.415217,
       0.65652,
       1.723825,
-      0.0
+      0.0,
+      0.340953
     ],
     "a_effect": 1.7238246742439487,
     "a_kind": "discrete",
@@ -2044,14 +2155,15 @@
   {
     "op": "gopen",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.286957,
       0.385572,
       0.970932,
-      0.0
+      0.0,
+      0.29634
     ],
     "a_effect": 1.2869565217391303,
     "a_kind": "discrete",
@@ -2065,10 +2177,11 @@
   {
     "op": "grad_dir",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -2082,14 +2195,15 @@
   {
     "op": "gray_bothat",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.849866,
       1.676972,
       2.685127,
-      0.0
+      0.0,
+      1.085751
     ],
     "a_effect": 2.6851267790153655,
     "a_kind": "discrete",
@@ -2104,14 +2218,15 @@
   {
     "op": "gray_closing",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.5,
       0.509243,
       2.52875,
-      0.0
+      0.0,
+      0.260816
     ],
     "a_effect": 2.528749769204006,
     "a_kind": "discrete",
@@ -2126,14 +2241,15 @@
   {
     "op": "gray_closing_rect",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.5,
       0.509243,
       2.52875,
-      0.0
+      0.0,
+      0.260816
     ],
     "a_effect": 2.528749769204006,
     "a_kind": "discrete",
@@ -2148,14 +2264,15 @@
   {
     "op": "gray_closing_shape",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.215217,
       0.350166,
       2.678885,
-      0.0
+      0.0,
+      0.327305
     ],
     "a_effect": 2.678884948428606,
     "a_kind": "discrete",
@@ -2170,14 +2287,15 @@
   {
     "op": "gray_dilation",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.6,
       0.709685,
       2.957412,
-      0.0
+      0.0,
+      0.401734
     ],
     "a_effect": 2.9574117498338572,
     "a_kind": "discrete",
@@ -2192,14 +2310,15 @@
   {
     "op": "gray_dilation_rect",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.6,
       0.709685,
       2.957412,
-      0.0
+      0.0,
+      0.401734
     ],
     "a_effect": 2.9574117498338572,
     "a_kind": "discrete",
@@ -2214,14 +2333,15 @@
   {
     "op": "gray_dilation_shape",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.232609,
       0.707639,
       2.991581,
-      0.0
+      0.0,
+      0.409086
     ],
     "a_effect": 2.991580893501574,
     "a_kind": "discrete",
@@ -2236,14 +2356,15 @@
   {
     "op": "gray_erosion",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.415217,
       0.65652,
       1.723825,
-      0.0
+      0.0,
+      0.340953
     ],
     "a_effect": 1.7238246742439487,
     "a_kind": "discrete",
@@ -2258,14 +2379,15 @@
   {
     "op": "gray_erosion_rect",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.415217,
       0.65652,
       1.723825,
-      0.0
+      0.0,
+      0.340953
     ],
     "a_effect": 1.7238246742439487,
     "a_kind": "discrete",
@@ -2280,14 +2402,15 @@
   {
     "op": "gray_erosion_shape",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.454348,
       0.584154,
       1.929586,
-      0.0
+      0.0,
+      0.465518
     ],
     "a_effect": 1.9295860221014502,
     "a_kind": "discrete",
@@ -2302,14 +2425,15 @@
   {
     "op": "gray_opening",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.286957,
       0.385572,
       0.970932,
-      0.0
+      0.0,
+      0.29634
     ],
     "a_effect": 1.2869565217391303,
     "a_kind": "discrete",
@@ -2323,14 +2447,15 @@
   {
     "op": "gray_opening_rect",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.286957,
       0.385572,
       0.970932,
-      0.0
+      0.0,
+      0.29634
     ],
     "a_effect": 1.2869565217391303,
     "a_kind": "discrete",
@@ -2344,14 +2469,15 @@
   {
     "op": "gray_opening_shape",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.326087,
       0.288851,
       1.911189,
-      0.0
+      0.0,
+      0.328509
     ],
     "a_effect": 1.9111893801090194,
     "a_kind": "discrete",
@@ -2366,14 +2492,15 @@
   {
     "op": "gray_range_rect",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.973277,
       1.294339,
       2.957412,
-      0.0
+      0.0,
+      1.278302
     ],
     "a_effect": 2.9574117498338572,
     "a_kind": "discrete",
@@ -2388,14 +2515,15 @@
   {
     "op": "gray_tophat",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.557264,
       1.373465,
       1.120132,
-      0.0
+      0.0,
+      1.053051
     ],
     "a_effect": 1.557263632810625,
     "a_kind": "discrete",
@@ -2409,14 +2537,15 @@
   {
     "op": "guided_filter",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.2469279170036316,
     "b_used": true,
     "a_effect_per_image": [
       0.037201,
       0.026519,
       0.010778,
-      0.010598
+      0.010598,
+      0.035543
     ],
     "a_effect": 0.037200868129730225,
     "a_kind": "continuous",
@@ -2426,14 +2555,15 @@
   {
     "op": "highpass",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.767987,
       2.172479,
       2.437857,
-      0.0
+      0.0,
+      1.826405
     ],
     "a_effect": 2.4378574005364593,
     "a_kind": "continuous",
@@ -2443,14 +2573,15 @@
   {
     "op": "highpass_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.767987,
       2.172479,
       2.437857,
-      0.0
+      0.0,
+      1.826405
     ],
     "a_effect": 2.4378574005364593,
     "a_kind": "continuous",
@@ -2460,14 +2591,15 @@
   {
     "op": "hough_circle_trans",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.6666666666666666,
     "b_used": true,
     "a_effect_per_image": [
       3.024495,
       8.702684,
       0.833333,
-      0.0
+      0.0,
+      7.229163
     ],
     "a_effect": 8.702684148436953,
     "a_kind": "continuous",
@@ -2477,14 +2609,15 @@
   {
     "op": "hough_line_trans",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.023613,
       4.474142,
       0.451637,
-      0.0
+      0.0,
+      4.090438
     ],
     "a_effect": 4.4741424881529435,
     "a_kind": "continuous",
@@ -2494,14 +2627,15 @@
   {
     "op": "hx_close_edges",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       19.0,
       36.0,
       8.0,
-      1.0
+      1.0,
+      12.0
     ],
     "a_effect": 36.0,
     "a_kind": "continuous",
@@ -2511,14 +2645,15 @@
   {
     "op": "hx_close_edges_length",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       20.0,
       42.0,
       7.0,
-      1.0
+      1.0,
+      10.0
     ],
     "a_effect": 42.0,
     "a_kind": "continuous",
@@ -2528,16 +2663,17 @@
   {
     "op": "hx_disparity_to_xyz",
     "steps": 51,
-    "n_probe_images": 4,
-    "b_effect": 2.220446049250313e-16,
+    "n_probe_images": 5,
+    "b_effect": 4.440892098500626e-16,
     "b_used": false,
     "a_effect_per_image": [
       0.0,
       0.0,
       0.0,
+      0.0,
       0.0
     ],
-    "a_effect": 9.325873406851315e-15,
+    "a_effect": 1.7513768213461844e-14,
     "status": "determined",
     "a_kind": "unused",
     "breakpoints": []
@@ -2545,10 +2681,11 @@
   {
     "op": "hx_fill_interlace",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -2562,10 +2699,11 @@
   {
     "op": "hx_fit_surface1",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -2579,10 +2717,11 @@
   {
     "op": "hx_fit_surface2",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -2596,14 +2735,15 @@
   {
     "op": "hx_gabor",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.22813222461366187,
     "b_used": true,
     "a_effect_per_image": [
       1.115949,
       0.221907,
       1.222044,
-      0.167187
+      0.167187,
+      0.279145
     ],
     "a_effect": 1.2220439265432717,
     "a_kind": "continuous",
@@ -2613,10 +2753,11 @@
   {
     "op": "hx_gen_bandfilter",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
+      42.0,
       42.0,
       42.0,
       42.0,
@@ -2630,10 +2771,11 @@
   {
     "op": "hx_gen_bandpass",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
+      48.0,
       48.0,
       48.0,
       48.0,
@@ -2647,10 +2789,11 @@
   {
     "op": "hx_gen_derivative_filter",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.5946035575013605,
     "b_used": true,
     "a_effect_per_image": [
+      0.254974,
       0.254974,
       0.254974,
       0.254974,
@@ -2664,10 +2807,11 @@
   {
     "op": "hx_gen_highpass",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      43.0,
       43.0,
       43.0,
       43.0,
@@ -2681,10 +2825,11 @@
   {
     "op": "hx_gen_image_proto",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      1.0,
       1.0,
       1.0,
       1.0,
@@ -2698,10 +2843,11 @@
   {
     "op": "hx_gen_lowpass",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      43.0,
       43.0,
       43.0,
       43.0,
@@ -2715,14 +2861,15 @@
   {
     "op": "hx_mean_shape",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.680665,
       0.188145,
       0.948012,
-      0.523254
+      0.523254,
+      0.1983
     ],
     "a_effect": 0.948011826263723,
     "a_kind": "discrete",
@@ -2738,14 +2885,15 @@
   {
     "op": "hx_nonmax_dir",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.785865,
       2.426407,
       0.704574,
-      0.0
+      0.0,
+      1.652801
     ],
     "a_effect": 2.4264065090197016,
     "a_kind": "continuous",
@@ -2755,10 +2903,11 @@
   {
     "op": "hx_plane_deviation",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -2772,14 +2921,15 @@
   {
     "op": "hx_region_to_label",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       12.5,
       39.333333,
       13.02381,
-      2.0
+      2.0,
+      16.661064
     ],
     "a_effect": 39.333333333333336,
     "a_kind": "continuous",
@@ -2789,14 +2939,15 @@
   {
     "op": "hx_region_to_mean",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       10.32993,
       18.144337,
       12.126911,
-      0.6
+      0.6,
+      2.802071
     ],
     "a_effect": 18.144337202653368,
     "a_kind": "continuous",
@@ -2806,14 +2957,15 @@
   {
     "op": "hx_shade_height_field",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.4699568115424487,
     "b_used": true,
     "a_effect_per_image": [
       3.618608,
       3.921511,
       3.89808,
-      3.909381
+      3.909381,
+      3.68337
     ],
     "a_effect": 3.92151057070107,
     "a_kind": "continuous",
@@ -2823,14 +2975,15 @@
   {
     "op": "illuminate",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.12538384163256355,
     "b_used": true,
     "a_effect_per_image": [
       0.165329,
       0.228276,
       0.221562,
-      0.00342
+      0.00342,
+      0.034015
     ],
     "a_effect": 0.22827575015968182,
     "a_kind": "continuous",
@@ -2840,10 +2993,11 @@
   {
     "op": "invert",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -2857,10 +3011,11 @@
   {
     "op": "invert_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -2874,14 +3029,15 @@
   {
     "op": "isotropic_diffusion",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.718169,
       0.211589,
       0.899627,
-      0.200572
+      0.200572,
+      0.175192
     ],
     "a_effect": 0.8996267985908641,
     "a_kind": "continuous",
@@ -2891,14 +3047,15 @@
   {
     "op": "it_add_image_border",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       4.665974,
       1.097807,
       4.640237,
-      2.66087
+      2.66087,
+      1.136706
     ],
     "a_effect": 4.665973534971647,
     "a_kind": "discrete",
@@ -2916,14 +3073,15 @@
   {
     "op": "it_bit_lshift",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       3.45098,
       3.513725,
       3.121569,
-      2.227451
+      2.227451,
+      3.411765
     ],
     "a_effect": 3.5137254901960784,
     "a_kind": "continuous",
@@ -2933,14 +3091,15 @@
   {
     "op": "it_bit_mask",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.984314,
       3.007843,
       2.592157,
-      1.984314
+      1.984314,
+      2.913725
     ],
     "a_effect": 3.0078431372549024,
     "a_kind": "continuous",
@@ -2950,14 +3109,15 @@
   {
     "op": "it_bit_rshift",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.996078,
       0.996078,
       0.996078,
-      0.796078
+      0.796078,
+      0.662745
     ],
     "a_effect": 0.996078431372549,
     "a_kind": "continuous",
@@ -2967,10 +3127,11 @@
   {
     "op": "it_change_format",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -2984,14 +3145,15 @@
   {
     "op": "it_convert_image_type",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.067192,
       1.222611,
       1.027566,
-      0.216882
+      0.216882,
+      1.200045
     ],
     "a_effect": 1.222611301805809,
     "a_kind": "continuous",
@@ -3001,14 +3163,15 @@
   {
     "op": "it_crop_domain",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       21.008696,
       18.750486,
       12.243287,
-      18.6
+      18.6,
+      13.429188
     ],
     "a_effect": 21.008695652173913,
     "a_kind": "continuous",
@@ -3018,14 +3181,15 @@
   {
     "op": "it_crop_part",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       13.520971,
       3.827638,
       14.635369,
-      13.2
+      13.2,
+      4.403131
     ],
     "a_effect": 14.635369400732397,
     "a_kind": "continuous",
@@ -3035,14 +3199,15 @@
   {
     "op": "it_crop_rectangle1",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       7.805104,
       2.000192,
       8.271691,
-      5.06087
+      5.06087,
+      2.216023
     ],
     "a_effect": 8.27169112426081,
     "a_kind": "continuous",
@@ -3052,10 +3217,11 @@
   {
     "op": "it_full_domain",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3069,14 +3235,15 @@
   {
     "op": "it_region_to_bin",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.25,
     "b_used": true,
     "a_effect_per_image": [
       11.5,
       23.0,
       8.0,
-      1.0
+      1.0,
+      9.0
     ],
     "a_effect": 23.0,
     "a_kind": "continuous",
@@ -3086,14 +3253,15 @@
   {
     "op": "iv_backproject_superres",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.17862285541150894,
     "b_used": true,
     "a_effect_per_image": [
       0.321886,
       0.155818,
       0.34065,
-      0.440516
+      0.440516,
+      0.189882
     ],
     "a_effect": 0.44051638846960167,
     "a_kind": "discrete",
@@ -3109,14 +3277,15 @@
   {
     "op": "iv_gradient_inpaint",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       4.152389,
       1.161103,
       3.473315,
-      3.922367
+      3.922367,
+      1.366752
     ],
     "a_effect": 4.15238853263361,
     "a_kind": "continuous",
@@ -3126,14 +3295,15 @@
   {
     "op": "iv_motion_deblur",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       9.058821,
       5.834423,
       8.985739,
-      1.514851
+      1.514851,
+      6.832953
     ],
     "a_effect": 9.058821232854736,
     "a_kind": "continuous",
@@ -3143,14 +3313,15 @@
   {
     "op": "iv_richardson_lucy",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.442886,
       0.147822,
       0.944044,
-      0.124953
+      0.124953,
+      0.223848
     ],
     "a_effect": 0.9440435178533959,
     "a_kind": "continuous",
@@ -3160,14 +3331,15 @@
   {
     "op": "iv_unsharp_deblur",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.48549203672746055,
     "b_used": true,
     "a_effect_per_image": [
       1.395589,
       1.627676,
       0.991784,
-      0.0
+      0.0,
+      1.314552
     ],
     "a_effect": 1.6276758140251295,
     "a_kind": "discrete",
@@ -3184,14 +3356,15 @@
   {
     "op": "iv_wiener_deconv_spatial",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       2.161081,
       0.64,
       2.216329,
-      0.700821
+      0.700821,
+      0.648354
     ],
     "a_effect": 2.2163291613146376,
     "a_kind": "continuous",
@@ -3201,10 +3374,11 @@
   {
     "op": "kirsch_amp",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3218,10 +3392,11 @@
   {
     "op": "kirsch_dir",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3235,10 +3410,11 @@
   {
     "op": "laplace",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3252,16 +3428,17 @@
   {
     "op": "laplace_of_gauss",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
-      1.252451,
-      1.487973,
-      1.928837,
-      1.685747
+      1.19461,
+      1.302448,
+      1.900242,
+      1.37827,
+      1.537949
     ],
-    "a_effect": 1.9288367444325445,
+    "a_effect": 1.9002418291500214,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"
@@ -3269,16 +3446,17 @@
   {
     "op": "log",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
-      2.502608,
-      2.929315,
-      3.821689,
-      3.351337
+      2.388144,
+      2.593748,
+      3.764518,
+      2.731666,
+      3.074415
     ],
-    "a_effect": 3.821688672951736,
+    "a_effect": 3.7645178082223025,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"
@@ -3286,10 +3464,11 @@
   {
     "op": "log_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3303,14 +3482,15 @@
   {
     "op": "lowpass",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.570354,
       0.800612,
       3.106636,
-      0.0
+      0.0,
+      0.883251
     ],
     "a_effect": 3.1066362447701388,
     "a_kind": "continuous",
@@ -3320,10 +3500,11 @@
   {
     "op": "macro_binarize",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3337,10 +3518,11 @@
   {
     "op": "macro_denoise",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3354,14 +3536,15 @@
   {
     "op": "max_filter",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.6,
       0.709685,
       2.957412,
-      0.0
+      0.0,
+      0.401734
     ],
     "a_effect": 2.9574117498338572,
     "a_kind": "discrete",
@@ -3376,14 +3559,15 @@
   {
     "op": "mean_box",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.599826,
       0.148758,
       1.039998,
-      0.073282
+      0.073282,
+      0.128141
     ],
     "a_effect": 1.039998199495633,
     "a_kind": "discrete",
@@ -3398,14 +3582,15 @@
   {
     "op": "mean_curvature_flow",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.373989,
       0.095695,
       0.43582,
-      0.112408
+      0.112408,
+      0.089078
     ],
     "a_effect": 0.4358203180932484,
     "a_kind": "discrete",
@@ -3423,14 +3608,15 @@
   {
     "op": "mean_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.599826,
       0.148758,
       1.039998,
-      0.073282
+      0.073282,
+      0.128141
     ],
     "a_effect": 1.039998199495633,
     "a_kind": "discrete",
@@ -3445,14 +3631,15 @@
   {
     "op": "mean_sp",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.11087,
       0.213629,
       1.450132,
-      0.0
+      0.0,
+      0.157712
     ],
     "a_effect": 1.4501317633076014,
     "a_kind": "discrete",
@@ -3467,14 +3654,15 @@
   {
     "op": "median",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.330435,
       0.217684,
       2.538208,
-      1.8
+      1.8,
+      0.23009
     ],
     "a_effect": 2.538208093316575,
     "a_kind": "discrete",
@@ -3489,14 +3677,15 @@
   {
     "op": "median_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.330435,
       0.217684,
       2.538208,
-      1.8
+      1.8,
+      0.23009
     ],
     "a_effect": 2.538208093316575,
     "a_kind": "discrete",
@@ -3511,14 +3700,15 @@
   {
     "op": "median_rect",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9535232862282371,
     "b_used": true,
     "a_effect_per_image": [
       1.230435,
       0.180904,
       2.324763,
-      1.8
+      1.8,
+      0.184646
     ],
     "a_effect": 2.3247625594443697,
     "a_kind": "discrete",
@@ -3533,14 +3723,15 @@
   {
     "op": "median_separate",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.330435,
       0.217684,
       2.538208,
-      1.8
+      1.8,
+      0.23009
     ],
     "a_effect": 2.538208093316575,
     "a_kind": "discrete",
@@ -3555,14 +3746,15 @@
   {
     "op": "median_weighted",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.330435,
       0.217684,
       2.538208,
-      1.8
+      1.8,
+      0.23009
     ],
     "a_effect": 2.538208093316575,
     "a_kind": "discrete",
@@ -3577,14 +3769,15 @@
   {
     "op": "min_filter",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.415217,
       0.65652,
       1.723825,
-      0.0
+      0.0,
+      0.340953
     ],
     "a_effect": 1.7238246742439487,
     "a_kind": "discrete",
@@ -3599,14 +3792,15 @@
   {
     "op": "mirror_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.71087,
       1.55101,
       2.0,
-      0.6
+      0.6,
+      0.61329
     ],
     "a_effect": 2.0,
     "a_kind": "discrete",
@@ -3620,10 +3814,11 @@
   {
     "op": "monotony",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3637,14 +3832,15 @@
   {
     "op": "morph_grad",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.973277,
       1.294339,
       2.957412,
-      0.0
+      0.0,
+      1.278302
     ],
     "a_effect": 2.9574117498338572,
     "a_kind": "discrete",
@@ -3659,14 +3855,15 @@
   {
     "op": "percentile",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       1.330435,
       0.217684,
       2.538208,
-      1.8
+      1.8,
+      0.23009
     ],
     "a_effect": 2.538208093316575,
     "a_kind": "discrete",
@@ -3681,14 +3878,15 @@
   {
     "op": "ph_coherence_enhancing_diffusion",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.25214917323995967,
     "b_used": true,
     "a_effect_per_image": [
       0.439732,
       0.000661,
       0.3817,
-      0.001141
+      0.001141,
+      0.000807
     ],
     "a_effect": 0.4397320472168147,
     "a_kind": "continuous",
@@ -3698,14 +3896,15 @@
   {
     "op": "ph_heat_flow",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.611319,
       0.257562,
       0.9077,
-      0.724409
+      0.724409,
+      0.188826
     ],
     "a_effect": 0.9077004606077418,
     "a_kind": "continuous",
@@ -3715,14 +3914,15 @@
   {
     "op": "ph_mean_curvature_motion",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.55775,
       0.418265,
       2.175258,
-      1.497348
+      1.497348,
+      0.290553
     ],
     "a_effect": 2.175258487543254,
     "a_kind": "continuous",
@@ -3732,14 +3932,15 @@
   {
     "op": "ph_perona_malik",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.48976667703855226,
     "b_used": true,
     "a_effect_per_image": [
       1.026428,
       0.223924,
       0.524887,
-      0.440832
+      0.440832,
+      0.178703
     ],
     "a_effect": 1.026427631240608,
     "a_kind": "continuous",
@@ -3749,14 +3950,15 @@
   {
     "op": "ph_reaction_diffusion",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.7417530728957262,
     "b_used": true,
     "a_effect_per_image": [
       1.72117,
       1.736219,
       1.062651,
-      0.222881
+      0.222881,
+      0.3396
     ],
     "a_effect": 1.7362194162584252,
     "a_kind": "continuous",
@@ -3766,14 +3968,15 @@
   {
     "op": "ph_total_variation_flow",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.006612438416270572,
     "b_used": true,
     "a_effect_per_image": [
       0.947289,
       0.30657,
       0.718883,
-      0.55937
+      0.55937,
+      0.229921
     ],
     "a_effect": 0.9472885213298352,
     "a_kind": "continuous",
@@ -3783,10 +3986,11 @@
   {
     "op": "phase_deg",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3800,10 +4004,11 @@
   {
     "op": "phase_rad",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3817,16 +4022,17 @@
   {
     "op": "points_foerstner",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.582403,
       1.632936,
       1.538008,
-      1.470393
+      1.470393,
+      1.660589
     ],
-    "a_effect": 1.6329359843685014,
+    "a_effect": 1.6605889400690086,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"
@@ -3834,14 +4040,15 @@
   {
     "op": "points_harris_binomial",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.34201456427940047,
     "b_used": true,
     "a_effect_per_image": [
       1.028878,
       1.146753,
       1.359679,
-      1.080831
+      1.080831,
+      1.073687
     ],
     "a_effect": 1.3596794981473144,
     "a_kind": "continuous",
@@ -3851,10 +4058,11 @@
   {
     "op": "polar_trans_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3868,10 +4076,11 @@
   {
     "op": "polar_trans_image_ext",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3885,10 +4094,11 @@
   {
     "op": "polar_trans_image_inv",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3902,14 +4112,15 @@
   {
     "op": "pow_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.819042,
       0.820199,
       0.761001,
-      0.708298
+      0.708298,
+      0.77567
     ],
     "a_effect": 0.8201991852823305,
     "a_kind": "continuous",
@@ -3919,10 +4130,11 @@
   {
     "op": "power_byte",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3936,10 +4148,11 @@
   {
     "op": "power_ln",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3953,10 +4166,11 @@
   {
     "op": "power_real",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3970,10 +4184,11 @@
   {
     "op": "prewitt_amp",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -3987,10 +4202,11 @@
   {
     "op": "prewitt_dir",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4004,10 +4220,11 @@
   {
     "op": "prewitt_mag",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4021,14 +4238,15 @@
   {
     "op": "projective_trans_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9999639987945557,
     "b_used": true,
     "a_effect_per_image": [
       5.660695,
       1.091053,
       5.072852,
-      4.547633
+      4.547633,
+      1.4397
     ],
     "a_effect": 5.660695344209671,
     "a_kind": "continuous",
@@ -4038,14 +4256,15 @@
   {
     "op": "projective_trans_image_size",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9999639987945557,
     "b_used": true,
     "a_effect_per_image": [
       5.660695,
       1.091053,
       5.072852,
-      4.547633
+      4.547633,
+      1.4397
     ],
     "a_effect": 5.660695344209671,
     "a_kind": "continuous",
@@ -4055,14 +4274,15 @@
   {
     "op": "rank_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       1.330435,
       0.217684,
       2.538208,
-      1.8
+      1.8,
+      0.23009
     ],
     "a_effect": 2.538208093316575,
     "a_kind": "discrete",
@@ -4077,14 +4297,15 @@
   {
     "op": "rank_rect",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       1.330435,
       0.217684,
       2.538208,
-      1.8
+      1.8,
+      0.23009
     ],
     "a_effect": 2.538208093316575,
     "a_kind": "discrete",
@@ -4099,14 +4320,15 @@
   {
     "op": "rescale_img",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 9.992007221626409e-16,
     "b_used": false,
     "a_effect_per_image": [
       7.407952,
       1.926818,
       8.351269,
-      7.946059
+      7.946059,
+      2.522308
     ],
     "a_effect": 8.351268894614247,
     "a_kind": "continuous",
@@ -4116,10 +4338,11 @@
   {
     "op": "rft_generic",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4133,10 +4356,11 @@
   {
     "op": "roberts",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4150,10 +4374,11 @@
   {
     "op": "roberts_mag",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4167,10 +4392,11 @@
   {
     "op": "robinson_amp",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4184,10 +4410,11 @@
   {
     "op": "robinson_dir",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4201,14 +4428,15 @@
   {
     "op": "rotate_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       21.535616,
       4.814689,
       17.101611,
-      22.189792
+      22.189792,
+      5.901987
     ],
     "a_effect": 22.189792182581225,
     "a_kind": "continuous",
@@ -4218,14 +4446,15 @@
   {
     "op": "rotate_img",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       21.535616,
       4.814689,
       17.101611,
-      22.189792
+      22.189792,
+      5.901987
     ],
     "a_effect": 22.189792182581225,
     "a_kind": "continuous",
@@ -4235,14 +4464,15 @@
   {
     "op": "scale_clip",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.5,
     "b_used": true,
     "a_effect_per_image": [
       1.159826,
       1.184042,
       0.929632,
-      0.75
+      0.75,
+      0.950077
     ],
     "a_effect": 1.1840419363281156,
     "a_kind": "continuous",
@@ -4252,14 +4482,15 @@
   {
     "op": "scale_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.5,
     "b_used": true,
     "a_effect_per_image": [
       1.159826,
       1.184042,
       0.929632,
-      0.75
+      0.75,
+      0.950077
     ],
     "a_effect": 1.1840419363281156,
     "a_kind": "continuous",
@@ -4269,10 +4500,11 @@
   {
     "op": "scale_image_max",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4286,14 +4518,15 @@
   {
     "op": "sigma_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9949555714138189,
     "b_used": true,
     "a_effect_per_image": [
       1.177851,
       0.148758,
       2.335218,
-      0.0
+      0.0,
+      0.128141
     ],
     "a_effect": 2.335217657552135,
     "a_kind": "discrete",
@@ -4308,14 +4541,15 @@
   {
     "op": "sigmoid",
     "steps": 51,
-    "n_probe_images": 4,
-    "b_effect": 0.6351435389265763,
+    "n_probe_images": 5,
+    "b_effect": 0.6351476407136245,
     "b_used": true,
     "a_effect_per_image": [
       0.309204,
       0.310323,
       0.255346,
-      0.223313
+      0.223313,
+      0.297082
     ],
     "a_effect": 0.31032282531886135,
     "a_kind": "continuous",
@@ -4325,14 +4559,15 @@
   {
     "op": "simulate_defocus",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.599826,
       0.148758,
       1.039998,
-      0.073282
+      0.073282,
+      0.128141
     ],
     "a_effect": 1.039998199495633,
     "a_kind": "discrete",
@@ -4347,14 +4582,15 @@
   {
     "op": "simulate_motion",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9891593141462328,
     "b_used": true,
     "a_effect_per_image": [
       5.921431,
       1.32051,
       6.776116,
-      3.82
+      3.82,
+      1.582194
     ],
     "a_effect": 6.776116402707194,
     "a_kind": "continuous",
@@ -4364,10 +4600,11 @@
   {
     "op": "sin_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4381,10 +4618,11 @@
   {
     "op": "sk_adapthist",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4398,14 +4636,15 @@
   {
     "op": "sk_adjust_log",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.165509,
       1.184555,
       0.942163,
-      0.789059
+      0.789059,
+      1.014983
     ],
     "a_effect": 1.1845552650239644,
     "a_kind": "continuous",
@@ -4415,14 +4654,15 @@
   {
     "op": "sk_area_opening",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.465217,
       0.272204,
       1.73488,
-      0.0
+      0.0,
+      0.162875
     ],
     "a_effect": 1.7348804880112887,
     "a_kind": "continuous",
@@ -4432,14 +4672,15 @@
   {
     "op": "sk_autolevel",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.65098,
       1.792157,
       2.945098,
-      0.0
+      0.0,
+      1.47451
     ],
     "a_effect": 2.9450980392156865,
     "a_kind": "discrete",
@@ -4454,14 +4695,15 @@
   {
     "op": "sk_butterworth",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.748132,
       0.292297,
       1.026195,
-      0.01698
+      0.01698,
+      0.17139
     ],
     "a_effect": 1.026195276227074,
     "a_kind": "continuous",
@@ -4471,14 +4713,15 @@
   {
     "op": "sk_corner_harris",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.881226,
       1.132854,
       0.941105,
-      1.089676
+      1.089676,
+      0.996354
     ],
     "a_effect": 1.1328540032554366,
     "a_kind": "continuous",
@@ -4488,14 +4731,15 @@
   {
     "op": "sk_dog",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.837495,
       1.996681,
       2.369831,
-      2.132412
+      2.132412,
+      2.201667
     ],
     "a_effect": 2.3698313217792832,
     "a_kind": "continuous",
@@ -4505,14 +4749,15 @@
   {
     "op": "sk_enhance_contrast",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.247059,
       1.094118,
       0.419608,
-      0.0
+      0.0,
+      0.811765
     ],
     "a_effect": 2.2470588235294118,
     "a_kind": "discrete",
@@ -4527,14 +4772,15 @@
   {
     "op": "sk_entropy",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.018386,
       0.820827,
       1.188152,
-      0.283801
+      0.283801,
+      0.483847
     ],
     "a_effect": 1.1881519431101015,
     "a_kind": "discrete",
@@ -4549,10 +4795,11 @@
   {
     "op": "sk_farid",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4566,14 +4813,15 @@
   {
     "op": "sk_frangi",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.7982415914994329,
     "b_used": true,
     "a_effect_per_image": [
       0.026193,
       0.098696,
       0.049331,
-      0.001462
+      0.001462,
+      0.030596
     ],
     "a_effect": 0.09869581550419583,
     "a_kind": "discrete",
@@ -4589,14 +4837,15 @@
   {
     "op": "sk_gabor",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       3.419952,
       3.562059,
       4.297314,
-      4.171533
+      4.171533,
+      4.12128
     ],
     "a_effect": 4.297313963400831,
     "a_kind": "continuous",
@@ -4606,10 +4855,11 @@
   {
     "op": "sk_hessian",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4623,14 +4873,15 @@
   {
     "op": "sk_hessian_det",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       3.372032,
       3.385129,
       2.706796,
-      3.190785
+      3.190785,
+      2.940675
     ],
     "a_effect": 3.3851287902244267,
     "a_kind": "continuous",
@@ -4640,14 +4891,15 @@
   {
     "op": "sk_lbp",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9803921568627451,
     "b_used": true,
     "a_effect_per_image": [
       2.403922,
       2.752941,
       2.839216,
-      2.203922
+      2.203922,
+      2.760784
     ],
     "a_effect": 2.8392156862745095,
     "a_kind": "discrete",
@@ -4662,14 +4914,15 @@
   {
     "op": "sk_median_disk",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.058696,
       0.268004,
       2.700605,
-      1.8
+      1.8,
+      0.278651
     ],
     "a_effect": 2.70060476708319,
     "a_kind": "discrete",
@@ -4684,10 +4937,11 @@
   {
     "op": "sk_meijering",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4701,14 +4955,15 @@
   {
     "op": "sk_nlm",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.044502,
       0.464321,
       2.248759,
-      0.005123
+      0.005123,
+      0.332225
     ],
     "a_effect": 2.248759031186974,
     "a_kind": "continuous",
@@ -4718,14 +4973,15 @@
   {
     "op": "sk_rolling_ball",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.62042,
       0.334297,
       0.690663,
-      0.081013
+      0.081013,
+      0.247837
     ],
     "a_effect": 0.6906628563312056,
     "a_kind": "continuous",
@@ -4735,10 +4991,11 @@
   {
     "op": "sk_scharr",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4752,14 +5009,15 @@
   {
     "op": "sk_shape_index",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       4.957623,
       6.672021,
       7.249768,
-      36.820689
+      36.820689,
+      6.449387
     ],
     "a_effect": 36.82068901278466,
     "a_kind": "continuous",
@@ -4769,14 +5027,15 @@
   {
     "op": "sk_swirl",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       4.141573,
       1.118894,
       5.214387,
-      4.000979
+      4.000979,
+      1.328717
     ],
     "a_effect": 5.214387384987287,
     "a_kind": "continuous",
@@ -4786,14 +5045,15 @@
   {
     "op": "sk_tv",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.213023,
       0.408055,
       0.870134,
-      0.469037
+      0.469037,
+      0.23155
     ],
     "a_effect": 1.2130233383938376,
     "a_kind": "continuous",
@@ -4803,14 +5063,15 @@
   {
     "op": "sk_tv_bregman",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.433829,
       0.089133,
       0.420217,
-      0.132649
+      0.132649,
+      0.079707
     ],
     "a_effect": 0.4338285588867914,
     "a_kind": "continuous",
@@ -4820,10 +5081,11 @@
   {
     "op": "sk_wavelet",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4837,14 +5099,15 @@
   {
     "op": "smooth_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.674372,
       0.184114,
       0.803049,
-      0.198571
+      0.198571,
+      0.161183
     ],
     "a_effect": 0.8030488483170215,
     "a_kind": "continuous",
@@ -4854,10 +5117,11 @@
   {
     "op": "sobel_amp",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4871,10 +5135,11 @@
   {
     "op": "sobel_dir",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4888,10 +5153,11 @@
   {
     "op": "sobel_mag",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4905,10 +5171,11 @@
   {
     "op": "sqrt_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4922,16 +5189,17 @@
   {
     "op": "std_filter",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.784815,
       0.90507,
       2.076788,
-      0.0
+      0.0,
+      1.003284
     ],
-    "a_effect": 2.076787966508964,
+    "a_effect": 2.0767879665089546,
     "a_kind": "discrete",
     "breakpoints": [
       0.25,
@@ -4944,10 +5212,11 @@
   {
     "op": "tac_height_from_shading",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.8555385810167229,
     "b_used": true,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -4961,14 +5230,15 @@
   {
     "op": "tac_pressure_proxy",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9717994694105043,
     "b_used": true,
     "a_effect_per_image": [
       1.826927,
       0.927054,
       1.973719,
-      0.76462
+      0.76462,
+      0.634708
     ],
     "a_effect": 1.9737190340561468,
     "a_kind": "continuous",
@@ -4978,14 +5248,15 @@
   {
     "op": "tac_shear_field",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.5767233835807695,
     "b_used": true,
     "a_effect_per_image": [
       1.490395,
       1.012492,
       1.759561,
-      0.673412
+      0.673412,
+      0.993037
     ],
     "a_effect": 1.7595608510478524,
     "a_kind": "continuous",
@@ -4995,14 +5266,15 @@
   {
     "op": "tac_surface_normal",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.8501946199645521,
     "b_used": true,
     "a_effect_per_image": [
       0.793983,
       0.405858,
       0.810436,
-      0.353493
+      0.353493,
+      0.191018
     ],
     "a_effect": 0.8104361428441428,
     "a_kind": "continuous",
@@ -5012,10 +5284,11 @@
   {
     "op": "tan_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5029,16 +5302,17 @@
   {
     "op": "texture_laws",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.813712,
       1.370565,
       1.79938,
-      0.0
+      0.0,
+      1.438223
     ],
-    "a_effect": 1.813712312844061,
+    "a_effect": 1.8137123128440615,
     "a_kind": "discrete",
     "breakpoints": [
       0.25,
@@ -5051,14 +5325,15 @@
   {
     "op": "tf_census_transform",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       14.176471,
       20.227451,
       24.984314,
-      0.352941
+      0.352941,
+      15.121569
     ],
     "a_effect": 24.9843137254902,
     "a_kind": "continuous",
@@ -5068,16 +5343,17 @@
   {
     "op": "tf_gradient_domain_reintegrate",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       6.619972,
       6.843661,
       2.952799,
-      0.0
+      0.0,
+      10.345458
     ],
-    "a_effect": 6.843660541059677,
+    "a_effect": 10.34545820235326,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"
@@ -5085,14 +5361,15 @@
   {
     "op": "tf_log_polar",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9983146412808724,
     "b_used": true,
     "a_effect_per_image": [
       6.633837,
       2.937805,
       5.35142,
-      5.102796
+      5.102796,
+      2.227675
     ],
     "a_effect": 6.633836512264388,
     "a_kind": "continuous",
@@ -5102,14 +5379,15 @@
   {
     "op": "tf_phase_congruency",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.4211176602745933,
     "b_used": true,
     "a_effect_per_image": [
       1.506123,
       2.032535,
       1.618535,
-      1.0
+      1.0,
+      1.777796
     ],
     "a_effect": 2.0325352941640586,
     "a_kind": "continuous",
@@ -5119,14 +5397,15 @@
   {
     "op": "tf_radon_sinogram",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       6.058819,
       6.190469,
       7.027598,
-      10.649528
+      10.649528,
+      8.077632
     ],
     "a_effect": 10.649528392049978,
     "a_kind": "continuous",
@@ -5136,14 +5415,15 @@
   {
     "op": "tf_rank_transform",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.833333,
       0.6875,
       0.770833,
-      0.0
+      0.0,
+      0.729167
     ],
     "a_effect": 0.8333333333333334,
     "a_kind": "discrete",
@@ -5157,14 +5437,15 @@
   {
     "op": "tf_steerable_filter",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.5933003960728469,
     "b_used": true,
     "a_effect_per_image": [
       1.563294,
       1.8151,
       1.598527,
-      2.0
+      2.0,
+      1.604981
     ],
     "a_effect": 2.000000000000001,
     "a_kind": "continuous",
@@ -5174,10 +5455,11 @@
   {
     "op": "tm_backproject_unfiltered",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5191,10 +5473,11 @@
   {
     "op": "tm_fbp_reconstruct",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.10047004181114305,
     "b_used": true,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5208,16 +5491,17 @@
   {
     "op": "tm_radon_forward",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9778912574048572,
     "b_used": true,
     "a_effect_per_image": [
       3.324088,
       3.216696,
       2.807979,
-      5.095731
+      5.095731,
+      5.648348
     ],
-    "a_effect": 5.095730643970791,
+    "a_effect": 5.648348171358878,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"
@@ -5225,14 +5509,15 @@
   {
     "op": "tm_sart_reconstruct",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.3177274971185943,
     "b_used": true,
     "a_effect_per_image": [
       0.269035,
       0.316276,
       0.256036,
-      0.390827
+      0.390827,
+      0.3191
     ],
     "a_effect": 0.3908272588333054,
     "a_kind": "discrete",
@@ -5248,14 +5533,15 @@
   {
     "op": "tm_sinogram_denoise",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.34588770502709953,
     "b_used": true,
     "a_effect_per_image": [
       0.776374,
       0.168531,
       0.827682,
-      0.250135
+      0.250135,
+      0.171468
     ],
     "a_effect": 0.8276821001686593,
     "a_kind": "continuous",
@@ -5265,14 +5551,15 @@
   {
     "op": "tophat",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.557264,
       1.373465,
       1.120132,
-      0.0
+      0.0,
+      1.053051
     ],
     "a_effect": 1.557263632810625,
     "a_kind": "discrete",
@@ -5286,14 +5573,15 @@
   {
     "op": "trimmed_mean",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.11087,
       0.213629,
       1.450132,
-      0.0
+      0.0,
+      0.157712
     ],
     "a_effect": 1.4501317633076014,
     "a_kind": "discrete",
@@ -5308,14 +5596,15 @@
   {
     "op": "unsharp",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.20519242015313538,
     "b_used": true,
     "a_effect_per_image": [
       0.453278,
       0.224643,
       0.437876,
-      0.228919
+      0.228919,
+      0.242402
     ],
     "a_effect": 0.45327801298856385,
     "a_kind": "continuous",
@@ -5325,14 +5614,15 @@
   {
     "op": "xcv2_meanshift",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.607843137254902,
     "b_used": true,
     "a_effect_per_image": [
       0.858824,
       1.286275,
       0.129412,
-      0.0
+      0.0,
+      0.67451
     ],
     "a_effect": 1.2862745098039217,
     "a_kind": "continuous",
@@ -5342,10 +5632,11 @@
   {
     "op": "xcv2_warp_logpolar",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5359,14 +5650,15 @@
   {
     "op": "xcv3_denoise_tvl1",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.4274509803921569,
     "b_used": true,
     "a_effect_per_image": [
       2.560784,
       1.027451,
       1.611765,
-      1.972549
+      1.972549,
+      1.596078
     ],
     "a_effect": 2.5607843137254904,
     "a_kind": "continuous",
@@ -5376,10 +5668,11 @@
   {
     "op": "xcv3_inpaint_ns",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5393,14 +5686,15 @@
   {
     "op": "xcv3_pyr_laplacian",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.506224,
       0.384995,
       0.354492,
-      0.05
+      0.05,
+      0.383896
     ],
     "a_effect": 0.5062243519658629,
     "a_kind": "continuous",
@@ -5410,14 +5704,15 @@
   {
     "op": "xcv_detail_enhance",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.3137254901960784,
     "b_used": true,
     "a_effect_per_image": [
       0.239216,
       0.290196,
       0.105882,
-      0.0
+      0.0,
+      0.196078
     ],
     "a_effect": 0.29019607843137596,
     "a_kind": "continuous",
@@ -5427,16 +5722,17 @@
   {
     "op": "xcv_edge_preserving",
     "steps": 51,
-    "n_probe_images": 4,
-    "b_effect": 0.07450980392156858,
+    "n_probe_images": 5,
+    "b_effect": 0.0901960784313725,
     "b_used": true,
     "a_effect_per_image": [
       0.164706,
       0.172549,
       0.07451,
-      0.0
+      0.0,
+      0.184314
     ],
-    "a_effect": 0.17254901960784463,
+    "a_effect": 0.18431372549019737,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"
@@ -5444,10 +5740,11 @@
   {
     "op": "xcv_inpaint",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5461,14 +5758,15 @@
   {
     "op": "xcv_pencil_sketch",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9607843137254902,
     "b_used": true,
     "a_effect_per_image": [
       0.305882,
       0.05098,
       1.521569,
-      0.0
+      0.0,
+      0.101961
     ],
     "a_effect": 1.521568627450981,
     "a_kind": "continuous",
@@ -5478,14 +5776,15 @@
   {
     "op": "xcv_stylization",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.796078431372549,
     "b_used": true,
     "a_effect_per_image": [
       0.0,
       1.015686,
       0.811765,
-      0.0
+      0.0,
+      0.654902
     ],
     "a_effect": 1.0156862745098039,
     "a_kind": "continuous",
@@ -5495,14 +5794,15 @@
   {
     "op": "xkor_bilateral",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.360836386680603,
     "b_used": true,
     "a_effect_per_image": [
       0.094974,
       0.039341,
       0.013823,
-      0.001795
+      0.001795,
+      0.049781
     ],
     "a_effect": 0.09497404098510742,
     "a_kind": "continuous",
@@ -5512,10 +5812,11 @@
   {
     "op": "xkor_clahe",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5529,10 +5830,11 @@
   {
     "op": "xkor_dog",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5546,14 +5848,15 @@
   {
     "op": "xkor_gaussian",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.755219,
       0.197646,
       0.817541,
-      0.298077
+      0.298077,
+      0.215089
     ],
     "a_effect": 0.8175413310527802,
     "a_kind": "continuous",
@@ -5563,10 +5866,11 @@
   {
     "op": "xkor_gftt",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5580,14 +5884,15 @@
   {
     "op": "xkor_harris",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.139188,
       0.063176,
       0.083986,
-      0.0
+      0.0,
+      0.054208
     ],
     "a_effect": 0.13918797884004513,
     "a_kind": "continuous",
@@ -5597,10 +5902,11 @@
   {
     "op": "xkor_hessian",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5614,14 +5920,15 @@
   {
     "op": "xkor_laplacian",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.969109,
       0.702889,
       1.591172,
-      1e-06
+      1e-06,
+      0.88205
     ],
     "a_effect": 1.5911715147548176,
     "a_kind": "discrete",
@@ -5636,14 +5943,15 @@
   {
     "op": "xkor_median",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.236956,
       2.219491,
       2.538208,
-      1.8
+      1.8,
+      1.094233
     ],
     "a_effect": 2.5382081028074026,
     "a_kind": "discrete",
@@ -5658,14 +5966,15 @@
   {
     "op": "xkor_motion_blur",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.2716009318828583,
     "b_used": true,
     "a_effect_per_image": [
       9.323639,
       6.317963,
       8.870197,
-      7.868096
+      7.868096,
+      4.316414
     ],
     "a_effect": 9.323638543486595,
     "a_kind": "continuous",
@@ -5675,10 +5984,11 @@
   {
     "op": "xkor_unsharp",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.20421607792377472,
     "b_used": true,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5692,14 +6002,15 @@
   {
     "op": "xmh_daubechies",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.544522,
       1.522345,
       2.342082,
-      1.838735
+      1.838735,
+      1.784074
     ],
     "a_effect": 2.3420823524183265,
     "a_kind": "discrete",
@@ -5714,10 +6025,11 @@
   {
     "op": "xmh_haar",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5731,14 +6043,15 @@
   {
     "op": "xmh_selfmatch",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.416734,
       0.961113,
       1.637457,
-      1.013605
+      1.013605,
+      1.147172
     ],
     "a_effect": 1.6374573338133067,
     "a_kind": "continuous",
@@ -5748,10 +6061,11 @@
   {
     "op": "xmh_soft",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.5,
       0.5,
       0.5,
       0.5,
@@ -5765,16 +6079,17 @@
   {
     "op": "xpil_autocontrast",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.168627,
       0.282353,
       0.235294,
-      0.0
+      0.0,
+      0.505882
     ],
-    "a_effect": 0.2823529411764708,
+    "a_effect": 0.5058823529411767,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"
@@ -5782,10 +6097,11 @@
   {
     "op": "xpil_contour",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5799,14 +6115,15 @@
   {
     "op": "xpil_contrast",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.831373,
       0.894118,
       1.211765,
-      0.513725
+      0.513725,
+      0.501961
     ],
     "a_effect": 1.2117647058823546,
     "a_kind": "continuous",
@@ -5816,10 +6133,11 @@
   {
     "op": "xpil_detail",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5833,10 +6151,11 @@
   {
     "op": "xpil_edge_enhance",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5850,10 +6169,11 @@
   {
     "op": "xpil_emboss",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5867,10 +6187,11 @@
   {
     "op": "xpil_find_edges",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5884,14 +6205,15 @@
   {
     "op": "xpil_mode_filter",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.552941,
       0.733333,
       3.0,
-      1.8
+      1.8,
+      0.694118
     ],
     "a_effect": 3.0,
     "a_kind": "discrete",
@@ -5906,14 +6228,15 @@
   {
     "op": "xpil_offset",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       20.423529,
       6.4,
       24.0,
-      14.4
+      14.4,
+      5.835294
     ],
     "a_effect": 24.0,
     "a_kind": "continuous",
@@ -5923,10 +6246,11 @@
   {
     "op": "xpil_posterize",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.494118,
       0.494118,
       0.494118,
       0.494118,
@@ -5948,10 +6272,11 @@
   {
     "op": "xpil_smooth_more",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -5965,14 +6290,15 @@
   {
     "op": "xpil_solarize",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       4.027451,
       16.67451,
       4.309804,
-      0.6
+      0.6,
+      5.294118
     ],
     "a_effect": 16.674509803921566,
     "a_kind": "continuous",
@@ -5982,14 +6308,15 @@
   {
     "op": "xpil_unsharp_mask",
     "steps": 51,
-    "n_probe_images": 4,
-    "b_effect": 0.18823529411764706,
+    "n_probe_images": 5,
+    "b_effect": 0.19215686274509802,
     "b_used": true,
     "a_effect_per_image": [
       0.666667,
       0.568627,
       0.807843,
-      0.0
+      0.0,
+      0.470588
     ],
     "a_effect": 0.807843137254902,
     "a_kind": "continuous",
@@ -5999,14 +6326,15 @@
   {
     "op": "xsitk_closing_by_recon",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.75,
       0.326448,
       0.738713,
-      0.0
+      0.0,
+      0.158281
     ],
     "a_effect": 0.7499999701976776,
     "a_kind": "discrete",
@@ -6019,14 +6347,15 @@
   {
     "op": "xsitk_curv_aniso_diff",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.3321438729763031,
     "b_used": true,
     "a_effect_per_image": [
       2.387814,
       0.2681,
       1.054515,
-      0.493588
+      0.493588,
+      0.365117
     ],
     "a_effect": 2.387813553214073,
     "a_kind": "continuous",
@@ -6036,14 +6365,15 @@
   {
     "op": "xsitk_curvature_flow",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.538889,
       0.094127,
       0.375068,
-      0.6
+      0.6,
+      0.108306
     ],
     "a_effect": 0.6000000089406967,
     "a_kind": "continuous",
@@ -6053,10 +6383,11 @@
   {
     "op": "xsitk_grayscale_fillhole",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6070,10 +6401,11 @@
   {
     "op": "xsitk_grayscale_grindpeak",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6087,10 +6419,11 @@
   {
     "op": "xsitk_laplacian_sharpen",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6104,14 +6437,15 @@
   {
     "op": "xsitk_minmax_curv_flow",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.27594393491744995,
     "b_used": true,
     "a_effect_per_image": [
       0.176194,
       0.037256,
       0.135373,
-      0.103797
+      0.103797,
+      0.05105
     ],
     "a_effect": 0.17619448900222778,
     "a_kind": "continuous",
@@ -6121,14 +6455,15 @@
   {
     "op": "xsitk_opening_by_recon",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.286956,
       0.176726,
       0.968056,
-      0.0
+      0.0,
+      0.217837
     ],
     "a_effect": 1.2869564890861511,
     "a_kind": "discrete",
@@ -6142,10 +6477,11 @@
   {
     "op": "xsk2_corner_kr",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6159,14 +6495,15 @@
   {
     "op": "xsk2_diameter_opening",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.615217,
       1.092162,
       1.77751,
-      0.2
+      0.2,
+      0.663044
     ],
     "a_effect": 1.7775095582095937,
     "a_kind": "continuous",
@@ -6176,16 +6513,17 @@
   {
     "op": "xsk2_hog",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.966034,
       2.926693,
       2.71684,
-      0.0
+      0.0,
+      2.974978
     ],
-    "a_effect": 2.966034374222305,
+    "a_effect": 2.974978150703408,
     "a_kind": "discrete",
     "breakpoints": [
       0.33,
@@ -6198,14 +6536,15 @@
   {
     "op": "xsk2_inv_gauss_grad",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.266214,
       0.266787,
       0.265622,
-      0.26002
+      0.26002,
+      0.214695
     ],
     "a_effect": 0.2667872103299713,
     "a_kind": "continuous",
@@ -6215,14 +6554,15 @@
   {
     "op": "xsk2_multiotsu",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.333333,
       0.333333,
       0.333333,
-      0.0
+      0.0,
+      0.333333
     ],
     "a_effect": 0.33333333333333337,
     "a_kind": "discrete",
@@ -6235,10 +6575,11 @@
   {
     "op": "xsk2_radon",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6252,14 +6593,15 @@
   {
     "op": "xsk2_rank_geomean",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.662745,
       0.164706,
       1.345098,
-      0.505882
+      0.505882,
+      0.176471
     ],
     "a_effect": 1.3450980392156864,
     "a_kind": "discrete",
@@ -6274,10 +6616,11 @@
   {
     "op": "xsk2_reconstruction",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.25,
       0.25,
       0.25,
       0.25,
@@ -6291,14 +6634,15 @@
   {
     "op": "xsk2_wiener",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.6138442565894453,
     "b_used": true,
     "a_effect_per_image": [
       0.280112,
       0.083995,
       0.512505,
-      0.005307
+      0.005307,
+      0.053692
     ],
     "a_effect": 0.512505348765856,
     "a_kind": "continuous",
@@ -6308,14 +6652,15 @@
   {
     "op": "xsk3_area_closing",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.778261,
       0.373391,
       0.029675,
-      0.0
+      0.0,
+      0.192403
     ],
     "a_effect": 0.7782608695652173,
     "a_kind": "discrete",
@@ -6331,13 +6676,14 @@
   {
     "op": "xsk3_corner_fast",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       2.202977,
       1.0,
       2.771816,
+      0.0,
       0.0
     ],
     "a_effect": 2.7718155837294756,
@@ -6353,14 +6699,15 @@
   {
     "op": "xsk3_corner_moravec",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.0,
       1.967268,
       1.974149,
-      0.0
+      0.0,
+      2.0
     ],
     "a_effect": 2.0,
     "a_kind": "discrete",
@@ -6374,14 +6721,15 @@
   {
     "op": "xsk3_diameter_closing",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.91087,
       0.997194,
       1.038058,
-      0.2
+      0.2,
+      0.92687
     ],
     "a_effect": 1.0380582456650576,
     "a_kind": "continuous",
@@ -6391,10 +6739,11 @@
   {
     "op": "xsk3_integral_image",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6408,14 +6757,15 @@
   {
     "op": "xsk3_rank_equalize",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.082353,
       1.152941,
       1.360784,
-      0.662745
+      0.662745,
+      1.164706
     ],
     "a_effect": 1.3607843137254902,
     "a_kind": "continuous",
@@ -6425,14 +6775,15 @@
   {
     "op": "xsk3_rank_mean_bilateral",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.15294117647058825,
     "b_used": true,
     "a_effect_per_image": [
       0.647059,
       0.72549,
       0.172549,
-      0.0
+      0.0,
+      0.603922
     ],
     "a_effect": 0.7254901960784318,
     "a_kind": "continuous",
@@ -6442,14 +6793,15 @@
   {
     "op": "xsk3_rank_subtract_mean",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.34902,
       0.101961,
       0.478431,
-      0.27451
+      0.27451,
+      0.101961
     ],
     "a_effect": 0.4784313725490196,
     "a_kind": "discrete",
@@ -6465,14 +6817,15 @@
   {
     "op": "xsk_hessian_eig",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.596403,
       2.158551,
       2.272557,
-      2.433634
+      2.433634,
+      2.439583
     ],
     "a_effect": 2.596402971993369,
     "a_kind": "continuous",
@@ -6482,10 +6835,11 @@
   {
     "op": "xsk_inpaint",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6499,10 +6853,11 @@
   {
     "op": "xsk_meijering",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6516,14 +6871,15 @@
   {
     "op": "xsk_richardson_lucy",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.131423,
       1.061247,
       1.104468,
-      0.872659
+      0.872659,
+      1.063458
     ],
     "a_effect": 1.1314225452360205,
     "a_kind": "continuous",
@@ -6533,10 +6889,11 @@
   {
     "op": "xsk_sato",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6550,14 +6907,15 @@
   {
     "op": "xsk_struct_coherence",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.189133,
       2.60101,
       6.170967,
-      9.073287
+      9.073287,
+      2.90589
     ],
     "a_effect": 9.073287387516078,
     "a_kind": "continuous",
@@ -6567,10 +6925,11 @@
   {
     "op": "xsk_unwrap_phase",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6584,14 +6943,15 @@
   {
     "op": "xsp_cspline_smooth",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.224106,
       0.600646,
       2.159781,
-      1.147788
+      1.147788,
+      0.584032
     ],
     "a_effect": 2.2241059448886977,
     "a_kind": "continuous",
@@ -6601,10 +6961,11 @@
   {
     "op": "xsp_dct",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6618,14 +6979,15 @@
   {
     "op": "xsp_dct_denoise",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.479815,
       0.52524,
       2.610821,
-      1.364881
+      1.364881,
+      0.365785
     ],
     "a_effect": 2.6108214905813645,
     "a_kind": "continuous",
@@ -6635,14 +6997,15 @@
   {
     "op": "xsp_dct_lowpass",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       2.119425,
       0.570268,
       2.710833,
-      0.175673
+      0.175673,
+      0.74826
     ],
     "a_effect": 2.710832931630113,
     "a_kind": "continuous",
@@ -6652,10 +7015,11 @@
   {
     "op": "xsp_detrend_flatten",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6669,14 +7033,15 @@
   {
     "op": "xsp_gauss_grad_mag",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.925595,
       1.348879,
       1.820792,
-      2.493579
+      2.493579,
+      1.898694
     ],
     "a_effect": 2.4935789570466946,
     "a_kind": "continuous",
@@ -6686,10 +7051,11 @@
   {
     "op": "xsp_hilbert_env",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6703,14 +7069,15 @@
   {
     "op": "xsp_morph_laplace",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.0,
       0.844982,
       1.478706,
-      0.0
+      0.0,
+      0.59145
     ],
     "a_effect": 1.4787058749169284,
     "a_kind": "discrete",
@@ -6725,14 +7092,15 @@
   {
     "op": "xsp_savgol",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.886198,
       0.173301,
       1.295407,
-      0.280558
+      0.280558,
+      0.246775
     ],
     "a_effect": 1.2954071453766,
     "a_kind": "discrete",
@@ -6748,14 +7116,15 @@
   {
     "op": "xsp_wiener",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.869378,
       0.354382,
       0.815745,
-      0.428161
+      0.428161,
+      0.31123
     ],
     "a_effect": 0.86937831224724,
     "a_kind": "discrete",
@@ -6770,10 +7139,11 @@
   {
     "op": "xwt_directional_detail",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.9999999999988683,
     "b_used": true,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6787,14 +7157,15 @@
   {
     "op": "xwt_firm_denoise",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.1692327081013728,
     "b_used": true,
     "a_effect_per_image": [
       0.376664,
       0.241499,
       0.371269,
-      0.186471
+      0.186471,
+      0.30886
     ],
     "a_effect": 0.37666372678105936,
     "a_kind": "continuous",
@@ -6804,10 +7175,11 @@
   {
     "op": "xwt_hf_reconstruct",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6821,14 +7193,15 @@
   {
     "op": "xwt_lf_reconstruct",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.863153,
       0.445114,
       1.879313,
-      0.119007
+      0.119007,
+      0.322495
     ],
     "a_effect": 1.8793126328742833,
     "a_kind": "discrete",
@@ -6843,14 +7216,15 @@
   {
     "op": "xwt_mra_component",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       1.539758,
       1.296317,
       1.383063,
-      1.0
+      1.0,
+      1.436984
     ],
     "a_effect": 1.5397576868321603,
     "a_kind": "discrete",
@@ -6864,10 +7238,11 @@
   {
     "op": "xwt_subband_tile",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
+      0.0,
       0.0,
       0.0,
       0.0,
@@ -6881,14 +7256,15 @@
   {
     "op": "xwt_visushrink",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 0.0,
     "b_used": false,
     "a_effect_per_image": [
       0.677392,
       0.127931,
       0.69448,
-      0.495389
+      0.495389,
+      0.167898
     ],
     "a_effect": 0.694480226281567,
     "a_kind": "continuous",
@@ -6898,14 +7274,15 @@
   {
     "op": "zoom_image_factor",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       6.438208,
       1.741974,
       6.718076,
-      5.823259
+      5.823259,
+      2.032569
     ],
     "a_effect": 6.718076338558711,
     "a_kind": "continuous",
@@ -6915,16 +7292,1623 @@
   {
     "op": "zoom_image_size",
     "steps": 51,
-    "n_probe_images": 4,
+    "n_probe_images": 5,
     "b_effect": 1.0,
     "b_used": true,
     "a_effect_per_image": [
       16.847849,
       9.99824,
       12.465315,
-      12.297468
+      12.297468,
+      7.865384
     ],
     "a_effect": 16.847849400890627,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "adaptive_gauss_thresh",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      25.0,
+      49.0,
+      41.0,
+      0.0,
+      34.0
+    ],
+    "a_effect": 49.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "auto_threshold",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "bin_threshold",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "binary_threshold",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "canny",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      47.0,
+      42.0,
+      29.0,
+      8.0,
+      50.0
+    ],
+    "a_effect": 50.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "cv_adaptive_gauss",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      6.0,
+      6.0,
+      6.0,
+      0.0,
+      6.0
+    ],
+    "a_effect": 6.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.17,
+      0.33,
+      0.49,
+      0.67,
+      0.83,
+      0.99
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "cv_adaptive_mean",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      6.0,
+      6.0,
+      6.0,
+      0.0,
+      6.0
+    ],
+    "a_effect": 6.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.17,
+      0.33,
+      0.49,
+      0.67,
+      0.83,
+      0.99
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "cv_canny",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      3.0,
+      32.0,
+      0.0,
+      0.0,
+      33.0
+    ],
+    "a_effect": 33.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "cv_otsu",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "dual_threshold",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      11.0,
+      50.0,
+      13.0,
+      1.0,
+      15.0
+    ],
+    "a_effect": 50.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "dyn_threshold",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      3.0,
+      3.0,
+      3.0,
+      0.0,
+      3.0
+    ],
+    "a_effect": 3.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.25,
+      0.49,
+      0.75
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "edges_image",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      46.0,
+      50.0,
+      26.0,
+      0.0,
+      26.0
+    ],
+    "a_effect": 50.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "fast_threshold",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      25.0,
+      50.0,
+      17.0,
+      3.0,
+      18.0
+    ],
+    "a_effect": 50.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "h_threshold",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      25.0,
+      50.0,
+      17.0,
+      3.0,
+      18.0
+    ],
+    "a_effect": 50.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "hx_char_threshold",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      10.0,
+      50.0,
+      7.0,
+      1.0,
+      42.0
+    ],
+    "a_effect": 50.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "hx_detect_edge_segments",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      3.0,
+      0.0,
+      3.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 3.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.63,
+      0.77,
+      0.91
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "hx_full_domain",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "hx_gen_checker_region",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0
+    ],
+    "a_effect": 4.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.37,
+      0.59,
+      0.79,
+      0.99
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "hx_gen_circle",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      38.0,
+      38.0,
+      38.0,
+      38.0,
+      38.0
+    ],
+    "a_effect": 38.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "hx_gen_circle_sector",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      50.0,
+      50.0,
+      50.0,
+      50.0,
+      50.0
+    ],
+    "a_effect": 50.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "hx_gen_disc_se",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      30.0,
+      30.0,
+      30.0,
+      30.0,
+      30.0
+    ],
+    "a_effect": 30.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "hx_gen_ellipse",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      12.0,
+      12.0,
+      12.0,
+      12.0,
+      12.0
+    ],
+    "a_effect": 12.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "hx_gen_ellipse_sector",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      50.0,
+      50.0,
+      50.0,
+      50.0,
+      50.0
+    ],
+    "a_effect": 50.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "hx_gen_empty_region",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "hx_gen_grid_region",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      4.0,
+      4.0,
+      4.0,
+      4.0,
+      4.0
+    ],
+    "a_effect": 4.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.37,
+      0.59,
+      0.79,
+      0.99
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "hx_gen_rectangle2",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0
+    ],
+    "a_effect": 7.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "hx_get_domain",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "hx_histo_to_thresh",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "hx_lowlands",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      1.0,
+      4.0,
+      1.0,
+      0.0,
+      6.0
+    ],
+    "a_effect": 6.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.17,
+      0.33,
+      0.49,
+      0.67,
+      0.83,
+      0.99
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "hx_plateaus_center",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      8.0,
+      24.0,
+      6.0,
+      0.0,
+      20.0
+    ],
+    "a_effect": 24.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "hx_rectangle1_domain",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      17.0,
+      17.0,
+      17.0,
+      17.0,
+      17.0
+    ],
+    "a_effect": 17.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "hysteresis_threshold",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      7.0,
+      46.0,
+      4.0,
+      0.0,
+      32.0
+    ],
+    "a_effect": 46.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "local_max",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      3.0,
+      2.0,
+      2.0,
+      0.0,
+      3.0
+    ],
+    "a_effect": 3.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.25,
+      0.49,
+      0.75
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "local_min",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      0.0,
+      3.0,
+      2.0,
+      0.0,
+      3.0
+    ],
+    "a_effect": 3.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.25,
+      0.49,
+      0.75
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "local_threshold",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      25.0,
+      49.0,
+      41.0,
+      0.0,
+      34.0
+    ],
+    "a_effect": 49.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "macro_edge",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "nonmax_suppression_amp",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      3.0,
+      2.0,
+      2.0,
+      0.0,
+      3.0
+    ],
+    "a_effect": 3.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.25,
+      0.49,
+      0.75
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "otsu",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "pouring",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      4.0,
+      40.0,
+      2.0,
+      1.0,
+      33.0
+    ],
+    "a_effect": 40.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "regiongrowing",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      1.0,
+      40.0,
+      3.0,
+      1.0,
+      15.0
+    ],
+    "a_effect": 40.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "regiongrowing_mean",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      1.0,
+      40.0,
+      3.0,
+      1.0,
+      15.0
+    ],
+    "a_effect": 40.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "segment_image_mser",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      8.0,
+      0.0,
+      0.0,
+      3.0
+    ],
+    "a_effect": 8.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "sg_felzenszwalb",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      0.0,
+      4.0,
+      0.0,
+      2.0,
+      2.0
+    ],
+    "a_effect": 4.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.01,
+      0.03,
+      0.05,
+      0.11
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "sg_gmm_segment",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      1.0,
+      50.0,
+      0.0,
+      0.0,
+      36.0
+    ],
+    "a_effect": 50.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "sg_kmeans_intensity",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      4.0,
+      4.0,
+      0.0,
+      1.0,
+      4.0
+    ],
+    "a_effect": 4.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.13,
+      0.37,
+      0.63,
+      0.87
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "sg_normalized_cut_2",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      1.0,
+      17.0,
+      27.0,
+      0.0,
+      19.0
+    ],
+    "a_effect": 27.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "sg_region_growing_seeded",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      8.0,
+      27.0,
+      11.0,
+      1.0,
+      8.0
+    ],
+    "a_effect": 27.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "sg_slic_superpixels",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      48.0,
+      50.0,
+      38.0,
+      5.0,
+      39.0
+    ],
+    "a_effect": 50.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "sg_watershed_gradient",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      7.0,
+      29.0,
+      2.0,
+      1.0,
+      37.0
+    ],
+    "a_effect": 37.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "sk_canny",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      46.0,
+      50.0,
+      26.0,
+      0.0,
+      26.0
+    ],
+    "a_effect": 50.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "sk_chan_vese",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      40.0,
+      22.0,
+      18.0,
+      41.0,
+      35.0
+    ],
+    "a_effect": 41.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "sk_felzenszwalb",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      11.0,
+      8.0,
+      7.0,
+      1.0,
+      4.0
+    ],
+    "a_effect": 11.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "sk_hysteresis",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      7.0,
+      46.0,
+      4.0,
+      0.0,
+      32.0
+    ],
+    "a_effect": 46.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "sk_li",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "sk_local_maxima",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "sk_niblack",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      6.0,
+      6.0,
+      6.0,
+      0.0,
+      6.0
+    ],
+    "a_effect": 6.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.17,
+      0.33,
+      0.49,
+      0.67,
+      0.83,
+      0.99
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "sk_otsu",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "sk_sauvola",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      6.0,
+      6.0,
+      6.0,
+      0.0,
+      6.0
+    ],
+    "a_effect": 6.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.17,
+      0.33,
+      0.49,
+      0.67,
+      0.83,
+      0.99
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "sk_slic",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      7.0,
+      7.0,
+      7.0,
+      7.0,
+      7.0
+    ],
+    "a_effect": 7.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "sk_yen",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "tac_contact_mask",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      38.0,
+      7.0,
+      40.0,
+      0.0,
+      6.0
+    ],
+    "a_effect": 40.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "threshold",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      23.0,
+      46.0,
+      16.0,
+      2.0,
+      18.0
+    ],
+    "a_effect": 46.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "var_threshold",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      6.0,
+      6.0,
+      6.0,
+      0.0,
+      6.0
+    ],
+    "a_effect": 6.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.17,
+      0.33,
+      0.49,
+      0.67,
+      0.83,
+      0.99
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "watersheds",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      4.0,
+      40.0,
+      2.0,
+      1.0,
+      33.0
+    ],
+    "a_effect": 40.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "watersheds_threshold",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      4.0,
+      40.0,
+      2.0,
+      1.0,
+      33.0
+    ],
+    "a_effect": 40.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xcv_grabcut",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 0.0,
+    "status": "determined",
+    "a_kind": "unused",
+    "breakpoints": []
+  },
+  {
+    "op": "xcv_watershed_markers",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      2.0,
+      7.0,
+      2.0,
+      0.0,
+      2.0
+    ],
+    "a_effect": 7.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xkor_canny",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      4.0,
+      11.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 11.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xmh_bernsen",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      12.0,
+      12.0,
+      9.0,
+      0.0,
+      2.0
+    ],
+    "a_effect": 12.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xmh_regmin",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      34.0,
+      14.0,
+      38.0,
+      9.0,
+      38.0
+    ],
+    "a_effect": 38.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xsitk_confidence_connected",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      0.0,
+      4.0,
+      5.0,
+      0.0,
+      0.0
+    ],
+    "a_effect": 5.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.19,
+      0.39,
+      0.59,
+      0.79,
+      0.99
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "xsitk_connected_threshold",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      4.0,
+      40.0,
+      0.0,
+      0.0,
+      6.0
+    ],
+    "a_effect": 40.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xsitk_huang_thresh",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      34.0,
+      48.0,
+      23.0,
+      23.0,
+      43.0
+    ],
+    "a_effect": 48.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xsitk_maxentropy_thresh",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      19.0,
+      48.0,
+      37.0,
+      0.0,
+      46.0
+    ],
+    "a_effect": 48.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xsitk_moments_thresh",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      19.0,
+      28.0,
+      18.0,
+      0.0,
+      47.0
+    ],
+    "a_effect": 47.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xsk2_h_maxima",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      1.0,
+      8.0,
+      1.0,
+      0.0,
+      14.0
+    ],
+    "a_effect": 14.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xsk3_h_minima",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      1.0,
+      5.0,
+      0.0,
+      0.0,
+      12.0
+    ],
+    "a_effect": 12.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xsk3_peak_local_max",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      5.0,
+      2.0,
+      5.0,
+      8.0,
+      4.0
+    ],
+    "a_effect": 8.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xsk3_rank_otsu",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      5.0,
+      8.0,
+      8.0,
+      0.0,
+      8.0
+    ],
+    "a_effect": 8.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xsk3_threshold_local_median",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      6.0,
+      6.0,
+      6.0,
+      6.0,
+      6.0
+    ],
+    "a_effect": 6.0,
+    "a_kind": "discrete",
+    "breakpoints": [
+      0.17,
+      0.33,
+      0.49,
+      0.67,
+      0.83,
+      0.99
+    ],
+    "breakpoint_resolution": 0.02,
+    "status": "determined"
+  },
+  {
+    "op": "xsk_flood",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      3.0,
+      50.0,
+      1.0,
+      0.0,
+      23.0
+    ],
+    "a_effect": 50.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "xsk_random_walker",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 1.0,
+    "b_used": true,
+    "a_effect_per_image": [
+      1.0,
+      46.0,
+      0.0,
+      0.0,
+      23.0
+    ],
+    "a_effect": 46.0,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
+    "op": "zero_crossing",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.0,
+    "b_used": false,
+    "a_effect_per_image": [
+      50.0,
+      47.0,
+      48.0,
+      16.0,
+      50.0
+    ],
+    "a_effect": 50.0,
     "a_kind": "continuous",
     "breakpoints": [],
     "status": "determined"

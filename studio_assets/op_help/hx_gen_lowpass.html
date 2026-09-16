@@ -22,6 +22,7 @@
 <p>スペクトル画像と画素どうしで掛け合わせる用途に合う。自前で `<code style="color:#22d3bf">np.fft.fft2</code>` の結果に掛けるときは</p>
 <p>`<code style="color:#22d3bf">ifftshift</code><code style="color:#22d3bf"> で戻してから使う。兄弟 op に </code><code style="color:#22d3bf">hx_gen_highpass</code><code style="color:#22d3bf">(補集合)/ </code><code style="color:#22d3bf">hx_gen_bandpass</code>` /</p>
 <p>`<code style="color:#22d3bf">hx_gen_bandfilter</code>`(円環)。</p>
+<p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

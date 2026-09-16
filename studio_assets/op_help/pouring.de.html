@@ -15,6 +15,7 @@
 <p>Randextraktion mittels Wasserscheiden-Segmentierung (watershed). Betrachtet ein Gradientenbild (Sobel-Amplitude) als Relief, berechnet die Wasserscheide mit dunklen Bereichen (`<code style="color:#22d3bf">x &lt; 0.2+0.3a</code><code style="color:#22d3bf">) als Saatpunkte (Marker) und gibt die Ränder mit </code><code style="color:#22d3bf">skimage.segmentation.find_boundaries</code>` als Vordergrund zurück. b wird nicht verwendet.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の `<code style="color:#22d3bf">pouring</code><code style="color:#22d3bf">（水を注ぐように画素値の低い場所から領域を満たしていく古典的な pouring アルゴリズムで分割する演算）に相当する近似 —— アルゴリズムの詳細は異なるが、低輝度領域を起点に領域を広げるという発想は共通。</code><code style="color:#22d3bf">watersheds</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">watersheds_threshold</code>` と実装を共有する。</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

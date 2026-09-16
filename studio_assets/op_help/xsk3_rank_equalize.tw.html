@@ -14,6 +14,8 @@
 <p>局部直方圖等化(skimage `<code style="color:#22d3bf">filters.rank.equalize</code><code style="color:#22d3bf">)。對每個圓盤鄰域分別進行直方圖等化的自適應對比度強化，相較於全域的 </code><code style="color:#22d3bf">equalize</code>` op，對局部明暗不均更具穩健性。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は円盤半径(</code><code style="color:#22d3bf">2+int(a*8)</code><code style="color:#22d3bf"> で 2〜10)を振る —— 大きいほど大域的な均等化に近づく。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>精度（實測）</b>：內部<b>量化為 8 bit（256 階）</b>——輸出恰好落在 k/255 的格點上。即使以 float64 傳入，<b>該精度也不會被保留</b>：16-bit 相機的階差（約 1.5e-5）被捨入到 1/255 ≈ 3.9e-3，相差小於 1/255 的兩張影像會回傳相同結果。在量測微小灰階差、或將輸出繼續送入微分與迴歸時，量化台階會顯現——請選用不經過 8 bit 的 op。</p>
+<p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，全部像素都成為前景（1）</b>。過曝、被遮擋或沒有被攝物的影格會被報為「<b>缺陷 100%</b>」，因此應在上游判定是否均勻並加以剔除。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

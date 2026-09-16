@@ -15,6 +15,7 @@
 <p>Medianfilter (OpenCV-Implementierung). Ein Standardverfahren zur Rauschunterdrückung, das jedes Pixel durch den Median seiner quadratischen Umgebung ersetzt (besonders wirksam gegen Salt-and-Pepper-Rauschen und relativ kantenerhaltend).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の <code style="color:#22d3bf">median_image</code> に相当。実装は `<code style="color:#22d3bf">cv2.medianBlur(_u8(v), ksize=3+2*int(a*3))</code>` —— a はカーネルサイズを 3, 5, 7, 9(奇数)に振る。b は未使用。8 bit に量子化してから処理するため、元画像の微妙な階調は失われる。sk_median_disk と違い正方形カーネル。</p>
+<p><b>Randbehandlung</b>: das Randpixel replizieren (nächster Nachbar) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

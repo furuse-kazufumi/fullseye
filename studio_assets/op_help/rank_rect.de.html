@@ -16,6 +16,8 @@
 <p>Die Implementierung ist identisch mit `<code style="color:#22d3bf">rank_image</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">kind: &quot;rank&quot;</code><code style="color:#22d3bf">, ein Perzentilfilter über ein quadratisches Fenster). In HALCON sind </code><code style="color:#22d3bf">rank_image</code><code style="color:#22d3bf"> (beliebige Maske) und </code><code style="color:#22d3bf">rank_rect</code><code style="color:#22d3bf"> (auf rechteckige Masken beschränkt) getrennte Operatoren, aber in diesem Ersatz verweisen beide auf dieselbe Implementierung mit quadratischem Fenster. Ein Ersatz für HALCONs </code><code style="color:#22d3bf">rank_rect</code>` (Compute a rank filter with rectangular masks.).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺、</code><code style="color:#22d3bf">b</code>` がパーセンタイル(5〜95%)を振る。両方が使われる。</p>
+<p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (gemessen; </code>tools/impl2/border_probe.py`).</p>
+<p><b>Regler (gemessen)</b>: `<code style="color:#22d3bf">a</code>` wirkt <b>stufenweise</b>; die Umschaltpunkte liegen bei a ≈ 0.25、0.49、0.75 (gemessen mit Schrittweite 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

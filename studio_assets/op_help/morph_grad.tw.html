@@ -15,6 +15,9 @@
 <p>形態學梯度（膨脹 − 侵蝕）。相當於 HALCON 的 `<code style="color:#22d3bf">gray_range_rect</code>`（Determine the gray value range within a rectangle.）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が構造要素の一辺を </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。窓内の最大値と最小値の差を返すため、エッジ検出フィルタ（Sobel 等）に似た働きをするが方向を持たない。結果は </code><code style="color:#22d3bf">_norm</code>` で正規化される。</p>
+<p><b>旋鈕（實測）</b>：`<code style="color:#22d3bf">a</code>` 以<b>離散檔位</b>生效，切換點在 a ≈ 0.25、0.49、0.75（以步長 0.02 掃描實測）。</p>
+<p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
+<p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

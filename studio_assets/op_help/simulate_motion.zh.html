@@ -16,6 +16,7 @@
 <p>模拟线性运动模糊。在角度 `<code style="color:#22d3bf">π*a</code><code style="color:#22d3bf">(0〜180°)方向上生成长度为 </code><code style="color:#22d3bf">5+10*b</code><code style="color:#22d3bf"> 像素的线段核并进行卷积。相当于 HALCON 的 </code><code style="color:#22d3bf">simulate_motion</code>`(Simulation of (linearly) motion blur.)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がぶれの方向角を、</code><code style="color:#22d3bf">b</code>` がぶれの長さを振る。両方が使われる。</p>
+<p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（实测。</code>tools/impl2/border_probe.py`）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

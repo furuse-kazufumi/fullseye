@@ -13,6 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>针对假设的小型高斯 PSF 进行的自包含空间域维纳（Wiener）反卷积。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 设定要反演的假设模糊 sigma，范围在 (0, </code><code style="color:#22d3bf">WIENER_SIGMA_MAX</code><code style="color:#22d3bf">]（a 越大锐化越强）；</code><code style="color:#22d3bf">b</code>` 设定噪声信号比 nsr = 1e-3 + b*0.15（b 越大恢复越温和、正则化程度越高）。</p>
+<p><b>边界处理</b>：环绕到对侧（周期）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

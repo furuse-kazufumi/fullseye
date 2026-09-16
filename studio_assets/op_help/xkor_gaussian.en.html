@@ -16,6 +16,7 @@
 <p>a はシグマを 0.3〜3.0 の範囲で振る（`<code style="color:#22d3bf">0.3 + 2.7 * a</code>`）。b は未使用。</p>
 <p>CPU 実行では scipy 版と比べて速くはならない（GPU・バッチ実行時に効く</p>
 <p>実装。`<code style="color:#22d3bf">IMGEVOLVE_KORNIA_DEVICE=cuda</code>` で GPU に乗る）。</p>
+<p><b>Border handling</b>: mirror without repeating the edge pixel (d c b | a b c d — OpenCV&#x27;s `<code style="color:#22d3bf">BORDER_REFLECT_101</code><code style="color:#22d3bf">) (measured; </code>tools/impl2/border_probe.py`).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

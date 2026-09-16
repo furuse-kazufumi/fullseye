@@ -13,6 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Smooth the input sinogram along the ANGLE direction (rows). Neighbouring projection angles view almost the same object, so angle-direction smoothing is a genuine consistency prior that suppresses per-angle detector noise while preserving the sinusoidal traces. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the angle-axis Gaussian sigma (</code><code style="color:#22d3bf">a*4</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> adds a gentle detector-axis sigma (</code><code style="color:#22d3bf">b*1.5</code>`). Output stays a same-shape sinogram in [0,1].</p>
+<p><b>Border handling</b>: replicate the edge pixel (nearest neighbour) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

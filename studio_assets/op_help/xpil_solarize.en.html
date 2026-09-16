@@ -14,6 +14,7 @@
 <p>Solarization (the mid-tone inversion effect from film development). Calls `<code style="color:#22d3bf">PIL.ImageOps.solarize</code>` to invert pixel values that exceed a threshold.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>a がしきい値（`<code style="color:#22d3bf">threshold = int(64 + 160*a)</code>`、範囲 64〜224）を振る。b は未使用。しきい値が低いほど反転される範囲が広がる。</p>
+<p><b>Precision (measured)</b>: internally quantised to <b>8 bit (256 levels)</b> — the output lands exactly on the k/255 grid. Passing float64 <b>does not preserve that precision</b>: a 16-bit camera&#x27;s step (about 1.5e-5) is rounded to 1/255 = about 3.9e-3, and two images that differ by less than 1/255 return the same answer. Where faint intensity differences are being measured, or the output is fed on to differentiation or regression, the quantisation steps become visible — choose an op that does not pass through 8 bit.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

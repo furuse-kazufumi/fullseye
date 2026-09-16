@@ -11,8 +11,6 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
@@ -20,7 +18,8 @@
       "reflect",
       "symmetric",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "boundary",
@@ -110,15 +109,14 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "edge",
       "reflect",
       "symmetric"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "dilation_golay",
@@ -132,15 +130,14 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "edge",
       "reflect",
       "symmetric"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "dilation_rectangle1",
@@ -154,15 +151,14 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "edge",
       "reflect",
       "symmetric"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "dilation_seq",
@@ -176,15 +172,14 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "edge",
       "reflect",
       "symmetric"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "em_skeleton",
@@ -246,13 +241,12 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "erosion_seq",
@@ -282,13 +276,12 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "edge"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "fill_up",
@@ -302,13 +295,12 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "edge"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "fill_up_shape",
@@ -322,14 +314,13 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "reflect",
-    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
     "second_best_diff": 0.0,
     "candidates": [
       "reflect",
       "symmetric",
       "wrap"
-    ]
+    ],
+    "best_guess": "reflect"
   },
   {
     "op": "get_region_contour",
@@ -406,15 +397,14 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "edge",
       "reflect",
       "symmetric"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "hx_dilation2",
@@ -428,15 +418,14 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "edge",
       "reflect",
       "symmetric"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "hx_erosion1",
@@ -450,13 +439,12 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "hx_expand_region",
@@ -470,15 +458,14 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "edge",
       "reflect",
       "symmetric"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "hx_move_region",
@@ -492,8 +479,6 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
@@ -501,7 +486,8 @@
       "reflect",
       "symmetric",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "hx_opening",
@@ -515,13 +501,12 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "hx_split_skeleton_region",
@@ -551,8 +536,6 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
@@ -560,7 +543,8 @@
       "reflect",
       "symmetric",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "junctions_skeleton",
@@ -590,8 +574,6 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
@@ -599,7 +581,8 @@
       "reflect",
       "symmetric",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "morph_skeleton",
@@ -661,13 +644,12 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "polar_trans_region_inv",
@@ -806,13 +788,12 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "edge"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "r2_smallest_rectangle2",
@@ -874,8 +855,6 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
@@ -883,7 +862,8 @@
       "reflect",
       "symmetric",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "r3_background_seg",
@@ -897,13 +877,12 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "reflect",
-    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
     "second_best_diff": 0.0,
     "candidates": [
       "reflect",
       "wrap"
-    ]
+    ],
+    "best_guess": "reflect"
   },
   {
     "op": "r3_clip_region",
@@ -932,13 +911,12 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "r3_label_to_region",
@@ -952,8 +930,6 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
@@ -961,7 +937,8 @@
       "reflect",
       "symmetric",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "r3_partition_dynamic",
@@ -1022,8 +999,6 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
@@ -1031,7 +1006,8 @@
       "reflect",
       "symmetric",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "reg_close",
@@ -1060,15 +1036,14 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "edge",
       "reflect",
       "symmetric"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "reg_erode",
@@ -1146,14 +1121,13 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "reflect",
-    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
     "second_best_diff": 0.0,
     "candidates": [
       "reflect",
       "symmetric",
       "wrap"
-    ]
+    ],
+    "best_guess": "reflect"
   },
   {
     "op": "select_largest",
@@ -1183,13 +1157,12 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "select_shape_std",
@@ -1267,14 +1240,13 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "edge",
-    "border_ja": "端の画素を複製する(最近傍)",
     "second_best_diff": 0.0,
     "candidates": [
       "edge",
       "reflect",
       "symmetric"
-    ]
+    ],
+    "best_guess": "edge"
   },
   {
     "op": "sk_medial",
@@ -1303,14 +1275,13 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "reflect",
-    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
     "second_best_diff": 0.0,
     "candidates": [
       "reflect",
       "symmetric",
       "wrap"
-    ]
+    ],
+    "best_guess": "reflect"
   },
   {
     "op": "sk_skeleton",
@@ -1372,13 +1343,12 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
       "edge"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "thinning",
@@ -1440,8 +1410,6 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
@@ -1449,7 +1417,8 @@
       "reflect",
       "symmetric",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   },
   {
     "op": "xcv2_hitmiss",
@@ -1463,13 +1432,12 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "reflect",
-    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
     "second_best_diff": 0.0,
     "candidates": [
       "reflect",
       "wrap"
-    ]
+    ],
+    "best_guess": "reflect"
   },
   {
     "op": "xmh_bwperim",
@@ -1483,14 +1451,13 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "edge",
-    "border_ja": "端の画素を複製する(最近傍)",
     "second_best_diff": 0.0,
     "candidates": [
       "edge",
       "reflect",
       "symmetric"
-    ]
+    ],
+    "best_guess": "edge"
   },
   {
     "op": "xmh_majority",
@@ -1534,13 +1501,12 @@
       "wrap": 1.0
     },
     "status": "ambiguous",
-    "border": "edge",
-    "border_ja": "端の画素を複製する(最近傍)",
     "second_best_diff": 0.0,
     "candidates": [
       "edge",
       "reflect"
-    ]
+    ],
+    "best_guess": "edge"
   },
   {
     "op": "zoom_region",
@@ -1554,8 +1520,6 @@
       "wrap": 0.0
     },
     "status": "ambiguous",
-    "border": "constant0",
-    "border_ja": "外側は 0 とみなす",
     "second_best_diff": 0.0,
     "candidates": [
       "constant0",
@@ -1563,6 +1527,7 @@
       "reflect",
       "symmetric",
       "wrap"
-    ]
+    ],
+    "best_guess": "constant0"
   }
 ]

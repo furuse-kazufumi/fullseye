@@ -23,6 +23,7 @@
 <p>orientation. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = tensor integration sigma (0.6..4.6), </code><code style="color:#22d3bf">b</code>` = output gain</p>
 <p>(0.5..2.5). Output clipped to [0,1], HxW; a constant frame has zero gradient</p>
 <p>energy and yields an all-zero shear field.</p>
+<p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

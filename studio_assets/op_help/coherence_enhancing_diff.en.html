@@ -17,6 +17,7 @@
 <p>The implementation is identical to `<code style="color:#22d3bf">anisotropic_diffusion</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">kind: &quot;anisotropic&quot;</code><code style="color:#22d3bf">). True coherence-enhancing diffusion is a method that controls the diffusion direction along the eigenvectors of the structure tensor (connecting linear structures), but this substitute does not compute the structure tensor and instead uses plain Perona-Malik anisotropic diffusion (a limitation of the approximation -- the effect of connecting linear structures is not reproduced). A stand-in for HALCON&#x27;s </code><code style="color:#22d3bf">coherence_enhancing_diff</code>` (Perform a coherence enhancing diffusion of an image).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が反復回数、</code><code style="color:#22d3bf">b</code>` が伝導度閾値 K を振る。両方が使われる。</p>
+<p><b>Border handling</b>: wrap around to the opposite side (periodic) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

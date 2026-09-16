@@ -20,6 +20,7 @@
 <p>ビット不変**だが、<code style="color:#22d3bf">fullseye.apply</code> を単発で呼ぶ経路だけは生値が出ていて、</p>
 <p><code style="color:#22d3bf">image</code> の [0,1] 契約を破ったまま保存すると黒/白に潰れていた。GPU 側</p>
 <p>(<code style="color:#22d3bf">accel._unsharp</code>)も同じ clip を持つ。</p>
+<p><b>端の扱い</b>: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 `<code style="color:#22d3bf">reflect</code>`)(2026-09-16 に実測して記録)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

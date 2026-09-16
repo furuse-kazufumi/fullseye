@@ -15,6 +15,7 @@
 <p>通过分水岭法（watershed）进行区域分割的边界提取。将梯度图像（Sobel 振幅）视为地形，以暗区（`<code style="color:#22d3bf">x &lt; 0.2+0.3a</code><code style="color:#22d3bf">）作为种子（标记）计算分水岭，并用 </code><code style="color:#22d3bf">skimage.segmentation.find_boundaries</code>` 将边界作为前景返回。b 未使用。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の `<code style="color:#22d3bf">pouring</code><code style="color:#22d3bf">（水を注ぐように画素値の低い場所から領域を満たしていく古典的な pouring アルゴリズムで分割する演算）に相当する近似 —— アルゴリズムの詳細は異なるが、低輝度領域を起点に領域を広げるという発想は共通。</code><code style="color:#22d3bf">watersheds</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">watersheds_threshold</code>` と実装を共有する。</p>
+<p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

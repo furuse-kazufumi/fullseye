@@ -14,6 +14,7 @@
 <p>Automatic threshold binarization using Otsu&#x27;s method (`<code style="color:#22d3bf">skimage.filters.threshold_otsu</code><code style="color:#22d3bf">, falling back to the mean value if unavailable). Automatically determines the threshold that maximizes between-class variance from the image histogram. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">binary_threshold</code>` (Segment an image using binary thresholding) -- HALCON allows selecting among several algorithms besides Otsu, but here Otsu is fixed.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― ヒストグラムから自動決定されるため調整点は無い。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

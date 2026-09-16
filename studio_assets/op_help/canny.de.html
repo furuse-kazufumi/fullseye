@@ -16,6 +16,7 @@
 <p>Vereinfachte Canny-artige Kantenerkennung (gibt eine Region zurück). Ist HALCONs `<code style="color:#22d3bf">edges_image</code>` (Extract edges using Deriche, Lanser, Shen, or Canny filters.) zugeordnet, jedoch eine vereinfachte Version (Approximation), die weder Non-Maximum-Suppression noch Hysterese-Schwellenwertbildung durchführt.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が事前平滑化のガウシアン σ を </code><code style="color:#22d3bf">0.5〜2.0</code><code style="color:#22d3bf"> に、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> がしきい値を </code><code style="color:#22d3bf">0.1〜0.6</code><code style="color:#22d3bf"> に振る。ガウシアンでぼかした画像に Sobel 勾配強度を掛け、正規化した値を </code><code style="color:#22d3bf">b</code>` で二値化するだけ——本家 Canny の細線化（1画素幅への収束）は無いため、エッジは本来の Canny より太く、複数画素にまたがって残る。</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

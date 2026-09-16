@@ -13,6 +13,8 @@
 <p>Pillows Kantenerkennungsfilter. Verstärkt Kanten mit dem festen Kernel (Laplace-artig) von `<code style="color:#22d3bf">PIL.ImageFilter.FIND_EDGES</code>`.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>a, b は未使用（固定カーネル）。`<code style="color:#22d3bf">xpil_contour</code>` と似た系統だが係数が異なり、輪郭より生のエッジ強度に近い出力になる。</p>
+<p><b>Genauigkeit (gemessen)</b>: intern auf <b>8 Bit (256 Stufen) quantisiert</b> — die Ausgabe liegt exakt auf dem Raster k/255. Eine Übergabe als float64 <b>erhält diese Genauigkeit nicht</b>: die Stufung einer 16-Bit-Kamera (etwa 1,5e-5) wird auf 1/255 ≈ 3,9e-3 gerundet, und zwei Bilder, die sich um weniger als 1/255 unterscheiden, liefern dieselbe Antwort. Wo feine Helligkeitsunterschiede gemessen werden oder die Ausgabe in Ableitung oder Regression weiterläuft, werden die Quantisierungsstufen sichtbar — dann einen Operator wählen, der nicht über 8 Bit geht.</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

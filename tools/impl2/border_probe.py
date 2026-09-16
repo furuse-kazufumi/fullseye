@@ -111,8 +111,13 @@ def detect(op: str, pad: int = 12, tol: float = 1e-9) -> dict:
         rec["second_best_diff"] = None if not rest or rest[0] == float("inf") else rest[0]
         if rest and rest[0] < tol:
             # 複数が一致 = この入力では規約が分かれない(例: 大域正規化で差が消える)
+            # **曖昧なら ``border`` を残さない。** 残すと、status を見ない消費側が
+            # 最有力候補を確定値として読む —— この道具自身の集計表がその罠を踏んだ。
+            # 鍵の名前を変えて、取り違えを型で防ぐ。
             rec["status"] = "ambiguous"
             rec["candidates"] = [k for k, v in scores.items() if v < tol]
+            rec["best_guess"] = rec.pop("border")
+            rec.pop("border_ja", None)
     else:
         rec["status"] = "undetermined"
         rec["closest"] = best
@@ -128,6 +133,12 @@ def main() -> int:
                     help="registry/color の image->image op を全部測る")
     ap.add_argument("--all-region", action="store_true",
                     help="region->region op を全部測る(入力は二値マスク)")
+    #: **入力は画像、出力は二値**の op(しきい値・領域抽出)。5 つの台帳のうち 4 つが
+    #: この 83 本を丸ごと落としていた —— 2026-09-16、`local_max` / `dyn_threshold` の
+    #: 争点を追ったら「窓が何段か」がどこにも書かれておらず、原因は測っていなかった
+    #: ことだった。入力が画像なので、測り方は image->image と同じでよい。
+    ap.add_argument("--all-region-out", action="store_true",
+                    help="image -> region の op も測る(しきい値・領域抽出)")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--json", help="結果をこのファイルに書く")
     a = ap.parse_args()
@@ -145,6 +156,11 @@ def main() -> int:
         names += [o["name"] for o in idx["ops"]
                   if o["tier"] in ("registry", "color")
                   and o["in_sort"] == "image" and o["out_sort"] == "image"]
+    if a.all_region_out:
+        idx = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
+        names += [o["name"] for o in idx["ops"]
+                  if o["tier"] in ("registry", "color")
+                  and o["in_sort"] == "image" and o["out_sort"] == "region"]
     if a.all_region:
         idx = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
         names += [o["name"] for o in idx["ops"]
@@ -161,7 +177,11 @@ def main() -> int:
     for op in names:
         r = detect(op)
         out.append(r)
-        key = r.get("border") or r["status"]
+        # **確定したものだけ規約名で数える。** 曖昧な記録にも最有力候補が入っている
+        # ので、``r.get("border")`` を鍵にすると「確定 12 / 曖昧 37」が集計表では
+        # 「symmetric 17, edge 7 ...」= 49 本確定したように見える(2026-09-16 実測。
+        # 自分で読み違えた)。**推測を確定と同じ棚に並べない。**
+        key = r["border"] if r["status"] == "determined" else r["status"]
         tally[key] = tally.get(key, 0) + 1
         line = f"[{r['status']:14s}] {op:24s}"
         if r["status"] == "determined":

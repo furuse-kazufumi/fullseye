@@ -21,6 +21,7 @@
 <p>「平面より明るい/暗い」は区別しない。区別が要るなら `<code style="color:#22d3bf">hx_fit_surface1</code>` の結果と元画像を別途引く。</p>
 <p>1 次面なので緩やかに曲がった背景は残差に出る。その場合は `<code style="color:#22d3bf">hx_fit_surface2</code>` 側で背景を推定する。</p>
 <p>後段は `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> で欠陥 region 化、あるいは </code><code style="color:#22d3bf">hx_char_threshold</code>` の前処理として背景差し引き代わりに使える。</p>
+<p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

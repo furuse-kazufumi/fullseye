@@ -25,6 +25,8 @@
 <p>反応しないはずの縦縞検出器 (a=0) が 0.58434 と <b>高く</b>出ていた(弱い応答ほど</p>
 <p>引き伸ばし率が大きいため)。`<code style="color:#22d3bf">|v| &lt;= 1</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">|v * g| &lt;= sum|g|</code>` なので</p>
 <p>L1 で割れば [0,1] を保ったまま向き・画像を跨いで比較できる。</p>
+<p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (gemessen; </code>tools/impl2/border_probe.py`).</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

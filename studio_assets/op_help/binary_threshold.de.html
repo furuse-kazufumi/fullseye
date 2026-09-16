@@ -14,6 +14,7 @@
 <p>Automatische Schwellenwert-Binarisierung mittels Otsu-Methode (`<code style="color:#22d3bf">skimage.filters.threshold_otsu</code><code style="color:#22d3bf">, ersatzweise der Mittelwert, falls nicht verfügbar). Bestimmt automatisch den Schwellenwert, der die Varianz zwischen den Klassen aus dem Bildhistogramm maximiert. Entspricht HALCONs </code><code style="color:#22d3bf">binary_threshold</code>` (Segment an image using binary thresholding.) -- HALCON erlaubt die Auswahl mehrerer Algorithmen neben Otsu, hier ist jedoch Otsu fest vorgegeben.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用 ―― ヒストグラムから自動決定されるため調整点は無い。</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -45,6 +45,8 @@ HALCON の式は係数が異なる ―― 同一の数値結果にはならな�
 ``a`` が局所窓のサイズを振る。``b`` は未使用(Sauvola の k, r は skimage の
 既定値に固定)。
 
+**端の扱い**: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_segmentation ファミリ ガイド](../guides/gallery2d_segmentation.md)

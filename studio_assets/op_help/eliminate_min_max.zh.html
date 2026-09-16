@@ -15,6 +15,7 @@
 <p>通过中值滤波器（median filter）实现平滑。实现与 `<code style="color:#22d3bf">median_image</code><code style="color:#22d3bf"> 等共享 </code><code style="color:#22d3bf">_sh_rank</code><code style="color:#22d3bf"> 中的 median 分支，只是将窗口内像素替换为其中值。a 将窗口大小分为 3/5/7/9 四档（</code><code style="color:#22d3bf">_k(a)</code>`）。b 未使用。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の `<code style="color:#22d3bf">eliminate_min_max</code>`（最小値・最大値の画素だけを周辺の平均値等で置き換えてノイズを抑える演算）とは異なり、この実装は最小・最大画素を選別せず窓全体を単純な中央値フィルタにかけているだけの近似（本来の「外れ値だけを直す」性質は再現しない）。</p>
+<p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（实测。</code>tools/impl2/border_probe.py`）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

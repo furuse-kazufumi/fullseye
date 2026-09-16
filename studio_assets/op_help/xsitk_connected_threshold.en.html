@@ -15,6 +15,7 @@
 <p>Connected threshold region growing (SimpleITK `<code style="color:#22d3bf">ConnectedThreshold</code>`, region growing). Uses the pixel at the image center as a seed and grows the region to include only pixels connected to the center that fall within an intensity interval centered on that pixel&#x27;s value.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は下限マージン(</code><code style="color:#22d3bf">0.1+0.3*a</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は上限マージン(</code><code style="color:#22d3bf">0.1+0.3*b</code>`)を振る —— 区間は [中心値-下限, 中心値+上限]。画像中心付近に対象があることを前提とした op。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness makes <b>every pixel foreground (1), regardless of the brightness</b>. A frame that is blown out, occluded, or simply has no subject comes back as “<b>100 % defective</b>”, so test for uniformity upstream and reject such frames.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

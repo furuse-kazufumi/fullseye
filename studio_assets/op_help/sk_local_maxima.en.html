@@ -14,6 +14,7 @@
 <p>Local maxima detection. Returns, as a region, the set of pixels that are strictly greater than every neighboring pixel (plateaus -- connected regions of equal value -- are also allowed) -- a preprocessing step for peak detection and feature-point extraction.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の <code style="color:#22d3bf">local_max</code>(Detect all local maxima in an image.)に相当。実装は `<code style="color:#22d3bf">morphology.local_maxima(v)</code>`。a, b は未使用 —— footprint は既定値(全方向 1 近傍)のまま。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

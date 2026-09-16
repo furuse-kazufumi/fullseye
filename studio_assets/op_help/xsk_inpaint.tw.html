@@ -18,6 +18,8 @@
 <p>マスクが無ければ(欠損が見当たらなければ)入力をそのまま返す。`<code style="color:#22d3bf">a</code>`,</p>
 <p>`<code style="color:#22d3bf">b</code>` は未使用。しきい値が固定なので、本来ハイライト/シャドウとして</p>
 <p>意味のある画素まで「欠損」扱いされ埋められてしまう場合がある。</p>
+<p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（實測。</code>tools/impl2/border_probe.py`）。</p>
+<p><b>旋鈕（實測）</b>：將 `<code style="color:#22d3bf">a</code>` 從 0 掃到 1 <b>輸出不變</b>（以 5 種輸入實測）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

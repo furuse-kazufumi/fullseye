@@ -16,6 +16,9 @@
 <p>实现为局部方差(`<code style="color:#22d3bf">deviation_image</code><code style="color:#22d3bf">的方差版本,即窗口内的</code><code style="color:#22d3bf">E[x^2]-E[x]^2</code><code style="color:#22d3bf">)。真正的Laws纹理滤波器是由L5/E5/S5/W5/R5等一维核对组成的25种卷积组(捕捉能量/边缘/波状/斑点/波纹),但此替代实现并非使用全部卷积组,而是以单一的局部方差代替(近似的局限——方向别、频率别的信息会丢失)。是HALCON</code><code style="color:#22d3bf">texture_laws</code>`(Filter an image using a Laws texture filter.)的代用。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">{3,5,7,9}</code><code style="color:#22d3bf"> で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>旋钮（实测）</b>：`<code style="color:#22d3bf">a</code>` 以<b>离散档位</b>生效，切换点在 a ≈ 0.25、0.49、0.75（以步长 0.02 扫描实测）。</p>
+<p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
+<p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

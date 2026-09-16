@@ -18,6 +18,7 @@
 <p>画素を 1 とする(`<code style="color:#22d3bf">cutoff = 0.05 + 0.45*a</code><code style="color:#22d3bf">)。兄弟 op </code><code style="color:#22d3bf">hx_gen_lowpass</code>` /</p>
 <p>`<code style="color:#22d3bf">hx_gen_bandpass</code><code style="color:#22d3bf"> と半径の計算式を共有する。</code><code style="color:#22d3bf">b</code>` は未使用。返り値は</p>
 <p>フィルタそのもの(周波数領域のマスク画像)で、画像に畳み込む前段にあたる。</p>
+<p><b>Vergleichbarkeit der Werte (gemessen)</b>: Die Ausgabe wird <b>auf das Maximum des jeweiligen Bildes normiert</b> (das Ausgabemaximum ist stets 1.0, und eine Skalierung der Eingabe lässt die Ausgabe unverändert). Werte sind daher <b>nicht bildübergreifend vergleichbar</b> — ein Merkmal gleicher Stärke erhält je nach dem stärksten Merkmal im Bild einen anderen Wert, und in einem Bild mit nur schwachen Merkmalen wird das Rauschen auf 1.0 angehoben. Für einen Vergleich über Bilder hinweg auf eine gemeinsame Referenz umskalieren.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

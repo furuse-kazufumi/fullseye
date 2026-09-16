@@ -13,6 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>crop_domain:将图像定义域限制在居中的 `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 窗口内,窗口外的所有像素置零(定义域之外的像素未定义 -&gt; 0)。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 设置保留窗口的比例;</code><code style="color:#22d3bf">b</code>` 被忽略。</p>
+<p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

@@ -14,6 +14,8 @@
 <p>Fits a 2-class Gaussian mixture model (EM algorithm) to the intensity values and returns the brighter cluster as the region (a self-contained EM implementation independent of `<code style="color:#22d3bf">skimage</code>`; no corresponding HALCON operator).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>25/75 パーセンタイルで初期化した決定論的 EM で 1 次元 2 成分ガウス混合をフィットし、平均が高い方を「明るいクラス」とする。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）は事後確率のしきい値 </code><code style="color:#22d3bf">t = 0.25 + 0.5*a</code><code style="color:#22d3bf"> を振り、大きいほど「確実に明るい」と判定された画素だけを拾うようになる。</code><code style="color:#22d3bf">b</code>` は未使用。乱数を使わないので再現性がある。</p>
+<p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (measured; </code>tools/impl2/border_probe.py`).</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -16,6 +16,7 @@
 <p>Thresholding based on a locally Gaussian-weighted average (adaptive threshold, Gaussian variant, OpenCV implementation). Same framework as cv_adaptive_mean, but since the local average is taken as a Gaussian-weighted average rather than a simple average, abrupt changes near the window boundary are less likely to appear.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の <code style="color:#22d3bf">local_threshold</code>(Segment an image using local thresholding.)に相当。実装は `<code style="color:#22d3bf">cv2.adaptiveThreshold(_u8(v), 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, blockSize=2*int(a*6)+3, C=int(b*10))</code>` —— a は blockSize を 3〜15(奇数)に、b は定数 C を 0〜10 に振る。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness makes <b>every pixel foreground (1), regardless of the brightness</b>. A frame that is blown out, occluded, or simply has no subject comes back as “<b>100 % defective</b>”, so test for uniformity upstream and reject such frames.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

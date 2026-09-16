@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a`` は反復回数(``1+int(a*5)`` で 1〜6)、``b`` は標準偏差の倍率(``1.0+3.0*b`` で 1〜4)を振る。初期近傍半径は 2 固定。画像中心付近に対象があることを前提とした op。
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_color_artistic ファミリ ガイド](../guides/gallery2d_color_artistic.md)

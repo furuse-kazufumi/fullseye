@@ -18,6 +18,7 @@
 <p>内部を滑らかにする。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が空間方向の平滑化範囲 </code><code style="color:#22d3bf">sigma_s</code><code style="color:#22d3bf"> を 20〜120 で振る。</code><code style="color:#22d3bf">b</code>` が</p>
 <p>色差の許容範囲 `<code style="color:#22d3bf">sigma_r</code>` を 0.1〜0.6 で振る(大きいほど強く均す)。</p>
+<p><b>精度（實測）</b>：內部<b>量化為 8 bit（256 階）</b>——輸出恰好落在 k/255 的格點上。即使以 float64 傳入，<b>該精度也不會被保留</b>：16-bit 相機的階差（約 1.5e-5）被捨入到 1/255 ≈ 3.9e-3，相差小於 1/255 的兩張影像會回傳相同結果。在量測微小灰階差、或將輸出繼續送入微分與迴歸時，量化台階會顯現——請選用不經過 8 bit 的 op。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

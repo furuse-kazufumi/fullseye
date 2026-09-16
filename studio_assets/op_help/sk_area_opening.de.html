@@ -14,6 +14,7 @@
 <p>Flächenöffnung (area opening). Während die gewöhnliche morphologische Öffnung kleine helle Bereiche anhand der Form des Strukturelements entfernt, beurteilt dieses Verfahren allein die Fläche (Anzahl zusammenhängender Pixel) und entfernt helle zusammenhängende Komponenten unterhalb einer angegebenen Fläche -- so lassen sich &quot;kleine&quot; Objekte unabhängig von ihrer Form entfernen.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">morphology.area_opening(v, area_threshold=int(16+a*100))</code>` —— a は面積しきい値を 16〜116 画素に振る。b は未使用。connectivity は既定の 1(4 近傍)のまま。</p>
+<p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">Leitfaden zur Familie gallery2d_morphology</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

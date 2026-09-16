@@ -16,6 +16,8 @@
 <p>A percentile (order-statistic) filter. Sorts the pixels in the window in ascending order and returns the value at the percentile specified by b (5-95%, sharing the `<code style="color:#22d3bf">rank</code><code style="color:#22d3bf"> branch of </code><code style="color:#22d3bf">_sh_rank</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">rank_image</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">rank_rect</code>`). a sets the window size to 3/5/7/9.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の `<code style="color:#22d3bf">dual_rank</code>`（円形または矩形マスクでオープニング・中央値・クロージングを組み合わせて行う演算）とは異なり、この実装は単一の順位フィルタのみで、開閉処理の組み合わせは再現しない簡略近似。</p>
+<p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (measured; </code>tools/impl2/border_probe.py`).</p>
+<p><b>Knobs (measured)</b>: `<code style="color:#22d3bf">a</code>` acts in <b>discrete steps</b>; it switches at a ≈ 0.25、0.49、0.75 (measured on a sweep of step 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

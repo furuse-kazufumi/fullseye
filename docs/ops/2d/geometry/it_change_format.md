@@ -38,7 +38,7 @@ dimension by cropping/padding at the origin (NO resampling, exactly as
 HALCON change_format does). A square image is returned unchanged; a
 non-square image is zero-expanded to the square. ``a``/``b`` are ignored.
 
-**つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。4 種類の入力で確認)。
+**つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。5 種類の入力で確認)。
 
 ## 詳しい使い方ガイド
 

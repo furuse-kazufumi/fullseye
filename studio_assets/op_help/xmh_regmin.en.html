@@ -14,6 +14,7 @@
 <p>Regional minima extraction (`<code style="color:#22d3bf">mahotas.regmin</code>`). On a Gaussian-smoothed image, marks the locally darkest valleys as regions. A typical preprocessing step for generating markers for watershed segmentation.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は平滑化の強さ(σ、0.15〜3.15)を振る —— 大きくするほど微小なノイズ谷が消え、大きな谷だけが残る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness makes <b>every pixel foreground (1), regardless of the brightness</b>. A frame that is blown out, occluded, or simply has no subject comes back as “<b>100 % defective</b>”, so test for uniformity upstream and reject such frames.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

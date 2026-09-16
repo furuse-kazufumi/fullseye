@@ -14,6 +14,7 @@
 <p>Auto-contrast (clips both ends of the histogram and stretches it to the full range). Calls `<code style="color:#22d3bf">PIL.ImageOps.autocontrast</code>`.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>a がカットオフ率（`<code style="color:#22d3bf">cutoff = int(a*10)</code>`、範囲 0〜10%。ヒストグラムの最暗・最明側からそれぞれ何 % を外れ値として無視するか）を振る。b は未使用。外れ値の影響を抑えつつコントラストを最大限に引き伸ばせる。</p>
+<p><b>Precision (measured)</b>: internally quantised to <b>8 bit (256 levels)</b> — the output lands exactly on the k/255 grid. Passing float64 <b>does not preserve that precision</b>: a 16-bit camera&#x27;s step (about 1.5e-5) is rounded to 1/255 = about 3.9e-3, and two images that differ by less than 1/255 return the same answer. Where faint intensity differences are being measured, or the output is fed on to differentiation or regression, the quantisation steps become visible — choose an op that does not pass through 8 bit.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

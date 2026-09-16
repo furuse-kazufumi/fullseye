@@ -14,6 +14,8 @@
 <p>Lokale, medianbasierte adaptive Binarisierung (skimage `<code style="color:#22d3bf">filters.threshold_local</code><code style="color:#22d3bf"> mit </code><code style="color:#22d3bf">method=&#x27;median&#x27;</code>`). Verwendet den Median jedes Blocks als lokalen Schwellenwert und binarisiert danach, ob der Pixelwert ihn übersteigt. Robuster gegenüber Ausreißern (Rauschpixeln) als die Version mit lokalem Mittelwert.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はブロックサイズ(</code><code style="color:#22d3bf">2*int(a*6)+3</code><code style="color:#22d3bf"> で 3〜15 の奇数)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (gemessen; </code>tools/impl2/border_probe.py`).</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

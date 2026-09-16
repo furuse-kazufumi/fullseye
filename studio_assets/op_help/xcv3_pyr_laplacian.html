@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ラプラシアンピラミッドによる鮮鋭化。`<code style="color:#22d3bf">pyrDown</code><code style="color:#22d3bf"> で縮小してから </code><code style="color:#22d3bf">pyrUp</code>` で戻した画像(低周波成分)を元画像から引いた差分(ラプラシアンピラミッドの 1 層、バンドパス成分に相当)を、元画像に加算して強調するアンシャープマスクの一種。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は強調係数(</code><code style="color:#22d3bf">0.5+2.5*a</code><code style="color:#22d3bf"> で 0.5〜3.0)を振る —— 大きいほど強くシャープになる(オーバーシュートも増える)。</code><code style="color:#22d3bf">b</code>` は未使用。結果は [0,1] にクリップ。</p>
+<p><b>端の扱い</b>: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の `<code style="color:#22d3bf">BORDER_REFLECT_101</code><code style="color:#22d3bf">)(実測。</code>tools/impl2/border_probe.py`)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

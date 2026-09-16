@@ -13,6 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>局所極大点マップ(skimage `<code style="color:#22d3bf">feature.peak_local_max</code><code style="color:#22d3bf">)。互いに </code><code style="color:#22d3bf">min_distance</code>` 画素以上離れた局所輝度極大の座標を検出し、その座標だけを 1 にした疎な二値画像(1 画素ずつの点で、面としての領域ではない)を返す。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は最小距離(</code><code style="color:#22d3bf">2+int(a*8)</code><code style="color:#22d3bf"> で 2〜10)を振る —— 大きくするほど検出される点が減り、より支配的なピークだけが残る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

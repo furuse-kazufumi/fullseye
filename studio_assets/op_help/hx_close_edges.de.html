@@ -24,6 +24,7 @@
 <p>(全面 1 の 20×20 に it=1 を掛けると残るのは 18×18)。端に接するエッジを扱うときは前に余白を付けるか、結果を</p>
 <p>膨張し直す。入力は image(エッジ振幅)で出力も image sort だが中身は二値。`<code style="color:#22d3bf">hx_nonmax_dir</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">sobel_amp</code>` の</p>
 <p>後に置き、つながったエッジは `<code style="color:#22d3bf">hx_region_to_label</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">hx_detect_edge_segments</code>` へ渡す。</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -20,6 +20,8 @@
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が空間方向の平滑化範囲 </code><code style="color:#22d3bf">sigma_s</code>` を 20〜120 で振る(大きいほど</p>
 <p>広い範囲を均す)。`<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が色(輝度)差の許容範囲 </code><code style="color:#22d3bf">sigma_r</code>` を 0.1〜0.5</p>
 <p>で振る(大きいほどエッジをまたいで均しやすくなり、平坦化が強まる)。</p>
+<p><b>Precision (measured)</b>: internally quantised to <b>8 bit (256 levels)</b> — the output lands exactly on the k/255 grid. Passing float64 <b>does not preserve that precision</b>: a 16-bit camera&#x27;s step (about 1.5e-5) is rounded to 1/255 = about 3.9e-3, and two images that differ by less than 1/255 return the same answer. Where faint intensity differences are being measured, or the output is fed on to differentiation or regression, the quantisation steps become visible — choose an op that does not pass through 8 bit.</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

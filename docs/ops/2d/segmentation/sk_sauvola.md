@@ -39,6 +39,8 @@ Sauvola の局所適応しきい値。各ピクセル周辺の局所平均・標
 
 HALCON の `var_threshold`(Threshold an image by local mean and standard deviation analysis.)に相当。実装は ``v > filters.threshold_sauvola(v, window_size=2*int(a*6)+3)`` —— a は局所窓のサイズを 3〜15(奇数)に振る(小さいほど照明ムラに強いが計算が細かくノイズにも敏感)。b は未使用。k, r パラメータは skimage の既定値のまま。
 
+**端の扱い**: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_segmentation ファミリ ガイド](../guides/gallery2d_segmentation.md)

@@ -14,6 +14,8 @@
 <p>Inverse Gaussian gradient image (the edge-stopping function for Active Contour / GAC). Calls `<code style="color:#22d3bf">skimage.segmentation.inverse_gaussian_gradient</code>`.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>a がエッジ感度 alpha（`<code style="color:#22d3bf">50 + 150*a</code>`、範囲 50〜200。大きいほど弱いエッジでも停止関数の値が下がる＝止まりやすくなる）を振る。b は未使用。値はエッジで小さく（0 に近く）平坦部で 1 に近い——geodesic activecontour 系のセグメンテーションでエッジ停止項として使うことを想定した出力で、そのまま見た目のエッジ画像として使うと通常のエッジ検出とは明暗が逆に見える。</p>
+<p><b>Border handling</b>: replicate the edge pixel (nearest neighbour) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness makes <b>every pixel foreground (1), regardless of the brightness</b>. A frame that is blown out, occluded, or simply has no subject comes back as “<b>100 % defective</b>”, so test for uniformity upstream and reject such frames.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

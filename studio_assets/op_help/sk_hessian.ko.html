@@ -15,6 +15,7 @@
 <p>Hybrid Hessian 필터. Frangi와 거의 동일한 관형 구조 검출이지만, 평활화 방법이 다르다(근사적으로 Frangi의 대체로 사용할 수 있다).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の <code style="color:#22d3bf">lines_gauss</code> に相当(近似)。a, b は未使用 —— スケールは `<code style="color:#22d3bf">sigmas=range(1, 4)</code>` に固定。sk_frangi / sk_meijering と 3 兄弟で、同じ入力に対する応答の違いを見比べる目的で並べてある。</p>
+<p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 모든 화소가 전경(1)</b>이 된다. 조명이 날아갔거나 가려졌거나 피사체가 없는 프레임이 “<b>결함 100%</b>”로 돌아오므로, 상류에서 균일한지 판정해 걸러낼 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

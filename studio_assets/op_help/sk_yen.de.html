@@ -14,6 +14,7 @@
 <p>Globale Schwellenwert-Binarisierung nach Yens Kriterium der maximalen Korrelation (maximum correlation criterion). Wählt den Schwellenwert durch Maximierung eines entropiebasierten Maßes des Histogramms -- ein weiteres automatisches Schwellenwertverfahren, das sich von der Otsu- und der Li-Methode unterscheidet.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON の <code style="color:#22d3bf">binary_threshold</code> に相当(近似)。実装は `<code style="color:#22d3bf">v &gt; filters.threshold_yen(v)</code>` —— a, b は未使用。同じ画像に大津/Li/Yen を並べて試し、しきい値が安定する方を選ぶ用途を想定。</p>
+<p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit macht <b>unabhängig von der Helligkeit jedes Pixel zum Vordergrund (1)</b>. Ein überbelichtetes, verdecktes oder motivloses Bild kommt als „<b>100 % defekt</b>“ zurück; prüfe daher vorgelagert auf Gleichmäßigkeit und verwirf solche Bilder.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

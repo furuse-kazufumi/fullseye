@@ -15,6 +15,7 @@
 <p>Sharpening via a Laplacian pyramid. A kind of unsharp masking that enhances the image by adding back the difference (one level of a Laplacian pyramid, corresponding to a band-pass component) obtained by subtracting, from the original image, the image restored via `<code style="color:#22d3bf">pyrUp</code><code style="color:#22d3bf"> after being shrunk with </code><code style="color:#22d3bf">pyrDown</code>` (the low-frequency component).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は強調係数(</code><code style="color:#22d3bf">0.5+2.5*a</code><code style="color:#22d3bf"> で 0.5〜3.0)を振る —— 大きいほど強くシャープになる(オーバーシュートも増える)。</code><code style="color:#22d3bf">b</code>` は未使用。結果は [0,1] にクリップ。</p>
+<p><b>Border handling</b>: mirror without repeating the edge pixel (d c b | a b c d — OpenCV&#x27;s `<code style="color:#22d3bf">BORDER_REFLECT_101</code><code style="color:#22d3bf">) (measured; </code>tools/impl2/border_probe.py`).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -14,6 +14,7 @@
 <p>Converts the entire image into a polar (radius, angle) representation (`<code style="color:#22d3bf">cv2.warpPolar</code><code style="color:#22d3bf">, forward direction, linear interpolation). The center is fixed at the image center, and the maximum radius is </code><code style="color:#22d3bf">min(h,w)/2</code><code style="color:#22d3bf">. a and b are unused (shares the </code><code style="color:#22d3bf">polar</code><code style="color:#22d3bf"> branch of </code><code style="color:#22d3bf">_sh_geom</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">polar_trans_image</code>`).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON の `<code style="color:#22d3bf">polar_trans_image_ext</code>`（中心・半径範囲・角度範囲などを個別指定できる、環状の一部だけを切り出して極座標変換する拡張版演算）とは異なり、この実装は画像全体を固定パラメータで変換する簡略近似 —— 環状領域や角度範囲の指定はできない。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -14,6 +14,7 @@
 <p>Modus-Filter. Ersetzt mit `<code style="color:#22d3bf">PIL.ImageFilter.ModeFilter</code>` jedes Pixel durch den häufigsten Wert im Fenster (unterscheidet sich vom Medianfilter dadurch, dass der Modus statt des Medians genommen wird).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>a が窓サイズを 3/5/7/9 の 4 段階（`<code style="color:#22d3bf">3 + 2*int(a*3)</code>`）で振る。b は未使用。単色の塗りつぶし領域が多い画像（ラベル画像・漫画調画像）のノイズ除去に向き、階調が滑らかな自然画像では効果が薄い。</p>
+<p><b>Genauigkeit (gemessen)</b>: intern auf <b>8 Bit (256 Stufen) quantisiert</b> — die Ausgabe liegt exakt auf dem Raster k/255. Eine Übergabe als float64 <b>erhält diese Genauigkeit nicht</b>: die Stufung einer 16-Bit-Kamera (etwa 1,5e-5) wird auf 1/255 ≈ 3,9e-3 gerundet, und zwei Bilder, die sich um weniger als 1/255 unterscheiden, liefern dieselbe Antwort. Wo feine Helligkeitsunterschiede gemessen werden oder die Ausgabe in Ableitung oder Regression weiterläuft, werden die Quantisierungsstufen sichtbar — dann einen Operator wählen, der nicht über 8 Bit geht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

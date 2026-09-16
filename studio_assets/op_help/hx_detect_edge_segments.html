@@ -23,6 +23,7 @@
 <p>エッジをほとんど細線化しない(`<code style="color:#22d3bf">hx_nonmax_dir</code>` の注記参照)ため、斜めのエッジは幅を持った塊になり固有値比が</p>
 <p>下がって落とされやすい。連結成分単位なので、交差した線は 1 つの成分として比が下がる。後段で線分ごとに扱うなら</p>
 <p>`<code style="color:#22d3bf">hx_region_to_label</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">hough_line_trans</code>`。</p>
+<p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -12,7 +12,7 @@
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_contour.inputs.jpg">get_region_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>영역의 윤곽(경계선, 1픽셀 폭)을 추출한다. 영역에서 그 침식판(1회 이진 침식)을 빼서 외곽만 남긴다. a, b는 사용되지 않는다. `<code style="color:#22d3bf">boundary</code>` seed op와 동일한 구현이다.</p>
+<p>영역의 윤곽(경계선, 1픽셀 폭)을 추출한다. 영역에서 그 침식판(1회 이진 침식)을 빼서 윤곽을 남긴다. <b>구멍이 있는 영역에서는 외곽뿐 아니라 구멍의 윤곽도 함께 반환된다</b>(실측 2026-09-16: 8x8 틀에 4x4 구멍을 낸 입력에서, 구멍에 인접한 전경 20픽셀 중 16픽셀이 윤곽으로 나온다). 「영역 − 침식판」은 정의상 바깥쪽과 구멍 쪽 모두에 1픽셀을 남기므로, 외곽만 필요하면 먼저 구멍을 채울 것. a, b는 사용되지 않는다. `<code style="color:#22d3bf">boundary</code>` seed op와 동일한 구현이다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>HALCON の `<code style="color:#22d3bf">get_region_contour</code>`（領域の輪郭を取得する演算、本来は XLD 輪郭として座標列を返す）とは出力形式が異なる近似 —— この backend は輪郭を region（画素マスク）として返し、XLD の座標点列にはしていない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

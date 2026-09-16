@@ -14,6 +14,7 @@
 <p>Entfernung von Komponenten, die den Bildrand berühren. Setzt alle zusammenhängenden Komponenten der Vordergrundregion, die den äußeren Bildrand berühren, auf Hintergrund zurück -- eine Standard-Vorverarbeitung, um am Rand des Sichtfelds abgeschnittene (nicht vollständig erfasste) Objekte von der Analyse auszuschließen.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">segmentation.clear_border(binm(v))</code>`。a, b は未使用 —— 除去判定に使う縁の幅(buffer_size)は既定の 0(画像端そのものに触れている成分のみ対象)。</p>
+<p><b>Randbehandlung</b>: das Randpixel replizieren (nächster Nachbar) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

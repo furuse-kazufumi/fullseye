@@ -20,6 +20,7 @@
 <p>だけで実行が止まって見えるほど遅い（画像サイズにはほぼ依らない）。</p>
 <p>4 クラスなら 0.025 秒に収まる。b は未使用。しきい値で量子化した後</p>
 <p>`<code style="color:#22d3bf">(cls-1)</code>` で割って [0,1] に正規化する。</p>
+<p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

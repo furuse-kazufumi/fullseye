@@ -21,6 +21,8 @@
 <p>log-Gabor filters carry no DC, the result is invariant to affine illumination</p>
 <p>change. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> is a noise threshold (fraction of mean energy); </code><code style="color:#22d3bf">b</code>` scales the</p>
 <p>base wavelength. Peaks at edges/lines where the phases align.</p>
+<p><b>Border handling</b>: wrap around to the opposite side (periodic) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -15,6 +15,7 @@
 <p>Bernsen local thresholding (`<code style="color:#22d3bf">mahotas.thresholding.bernsen</code>`). Uses the midpoint between the local maximum and minimum brightness as the local threshold, falling back to a global threshold only in low-contrast regions.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は近傍半径(3〜15 px)、</code><code style="color:#22d3bf">b</code>` はコントラスト閾値(5〜55。これを下回る低コントラスト域はグローバル閾値 128 で代用)を振る。濃淡ムラのある照明下でのエッジ二値化に向く。</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

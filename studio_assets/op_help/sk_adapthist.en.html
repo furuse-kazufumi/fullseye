@@ -14,6 +14,9 @@
 <p>CLAHE (Contrast Limited Adaptive Histogram Equalization). Divides the image into small tiles and equalizes the histogram locally within each, boosting local contrast even in images with large light-dark differences.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">exposure.equalize_adapthist(clip(v,0,1), clip_limit=0.01+0.05*a)</code>` —— a は clip_limit(コントラスト制限の強さ)を 0.01〜0.06 に振る(大きいほど強くコントラストが上がりノイズも増幅されやすい)。b は未使用。タイル分割数はskimage の既定値(8x8)のまま。</p>
+<p><b>Knobs (measured)</b>: sweeping `<code style="color:#22d3bf">a</code>` from 0 to 1 <b>does not change the output</b> (measured on five different inputs).</p>
+<p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
+<p><b>Blank frame (measured)</b>: feeding an image of uniform brightness makes <b>every pixel foreground (1), regardless of the brightness</b>. A frame that is blown out, occluded, or simply has no subject comes back as “<b>100 % defective</b>”, so test for uniformity upstream and reject such frames.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

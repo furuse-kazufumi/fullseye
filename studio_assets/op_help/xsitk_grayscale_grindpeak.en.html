@@ -13,6 +13,7 @@
 <p>Grayscale grind peak (SimpleITK `<code style="color:#22d3bf">GrayscaleGrindPeak</code>`, the dual of xsitk_grayscale_fillhole). Uses morphological reconstruction to grind down local peaks brighter than their surroundings to the surrounding height. Used to remove highlight spikes.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>パラメータは無く、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。出力は [0,1] にクリップ。</p>
+<p><b>Border handling</b>: replicate the edge pixel (nearest neighbour) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

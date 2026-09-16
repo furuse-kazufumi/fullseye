@@ -12,7 +12,7 @@
 <p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_contour.inputs.jpg">get_region_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>提取区域的轮廓（边界线，1 像素宽）。通过从区域中减去其一次二值腐蚀版本，只保留外周。a、b 未使用。与 `<code style="color:#22d3bf">boundary</code>` seed op 实现相同。</p>
+<p>提取区域的轮廓（边界线，1 像素宽）。通过从区域中减去其一次二值腐蚀版本来保留轮廓。<b>对于带孔的区域，除外周之外也会返回孔的轮廓</b>（实测 2026-09-16：在 8x8 的框上开 4x4 的孔，与孔相邻的 20 个前景像素中有 16 个成为轮廓）。「区域 − 腐蚀版」按定义会在外侧和孔侧各留下 1 个像素，因此若只需要外周，请先填孔。a、b 未使用。与 `<code style="color:#22d3bf">boundary</code>` seed op 实现相同。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON の `<code style="color:#22d3bf">get_region_contour</code>`（領域の輪郭を取得する演算、本来は XLD 輪郭として座標列を返す）とは出力形式が異なる近似 —— この backend は輪郭を region（画素マスク）として返し、XLD の座標点列にはしていない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

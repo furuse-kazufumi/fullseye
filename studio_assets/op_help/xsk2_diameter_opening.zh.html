@@ -14,6 +14,7 @@
 <p>直径开运算（面积开运算的直径版本，用于去除微小的亮结构）。调用 `<code style="color:#22d3bf">skimage.morphology.diameter_opening</code>`。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>a が直径しきい値（`<code style="color:#22d3bf">4 + int(a*30)</code>`、範囲 4〜34）を振る。この直径未満の明るい連結成分を潰す。b は未使用。</p>
+<p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

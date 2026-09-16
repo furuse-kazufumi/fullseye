@@ -14,6 +14,8 @@
 <p>使用 Robinson 罗盘算子的边缘方向图。在 8 个方向（每 45° 旋转一次的 `<code style="color:#22d3bf">_ROBINSON[0]</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">_ROBINSON[1]</code>` 核，共 8 个）的卷积响应中选出最大者，并将该核的编号归一化到 0〜1 返回。a、b 未使用。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">frei_dir</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">sobel_dir</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">arctan2</code><code style="color:#22d3bf"> による連続角度なのに対し、こちらは 8 方向のうち最も強く反応したカーネルの**インデックス**を返す離散近似である点に注意（8 段階の量子化角度）。HALCON の </code><code style="color:#22d3bf">robinson_dir</code><code style="color:#22d3bf">（Robinson 演算子でエッジの振幅と方向を検出する演算）の方向成分に相当。振幅は </code><code style="color:#22d3bf">robinson_amp</code>` が担当する。</p>
+<p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
+<p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

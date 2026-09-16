@@ -14,6 +14,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>モルフォロジー勾配(OpenCV 実装)。「膨張結果 − 収縮結果」で、領域の輪郭(縁取り)だけを取り出す —— 通常の微分ベースのエッジ検出とは別系統の輪郭抽出。</p>
 <p>HALCON の <code style="color:#22d3bf">gray_range_rect</code>(Determine the gray value range within a rectangle.)に相当(近似。矩形窓内の最大-最小レンジを取る点は同じ発想)。実装は `<code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_GRADIENT, se)</code><code style="color:#22d3bf"> を正規化したもの、se は楕円形でサイズ </code><code style="color:#22d3bf">3+2*int(a*3)</code>` —— a は構造要素サイズを 3〜9 に振る。b は未使用。</p>
+<p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
+<p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

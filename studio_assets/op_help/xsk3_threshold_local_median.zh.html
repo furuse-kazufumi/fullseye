@@ -14,6 +14,8 @@
 <p>局部中位数自适应二值化(skimage `<code style="color:#22d3bf">filters.threshold_local</code><code style="color:#22d3bf"> 的 </code><code style="color:#22d3bf">method=&#x27;median&#x27;</code>`)。以每个区块的中位数作为局部阈值，按像素值是否超过该阈值进行二值化。相比使用局部均值的版本，对离群值(噪声像素)更具鲁棒性。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はブロックサイズ(</code><code style="color:#22d3bf">2*int(a*6)+3</code><code style="color:#22d3bf"> で 3〜15 の奇数)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（实测。</code>tools/impl2/border_probe.py`）。</p>
+<p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

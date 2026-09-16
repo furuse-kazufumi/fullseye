@@ -21,6 +21,7 @@
 <p>is what makes the edges sharpen rather than merely survive. `<code style="color:#22d3bf">a</code>` sets the</p>
 <p>edge scale kappa = 0.02 + 0.2a, `<code style="color:#22d3bf">b</code>` the iteration count 1 + int(15b);</p>
 <p>lambda is fixed at 0.2 (&lt;= 0.25, the explicit-scheme stability bound).</p>
+<p><b>Border handling</b>: wrap around to the opposite side (periodic) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

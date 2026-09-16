@@ -16,6 +16,7 @@
 <p>임의 백분위수(percentile)의 순위 필터(rank filter). HALCON의 `<code style="color:#22d3bf">rank_image</code>`(Compute a rank filter with arbitrary masks.)에 해당한다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓サイズを </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が抽出するパーセンタイルを </code><code style="color:#22d3bf">5〜95%</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">int(5+90b)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が 0 に近いほど </code><code style="color:#22d3bf">_min_filter</code><code style="color:#22d3bf">、1 に近いほど </code><code style="color:#22d3bf">_max_filter</code><code style="color:#22d3bf">、中間で </code><code style="color:#22d3bf">_median</code>` に近づく——3 op を 1 つに統合した一般形。</p>
+<p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)(실측. </code>tools/impl2/border_probe.py`).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

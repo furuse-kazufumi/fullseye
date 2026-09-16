@@ -13,6 +13,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>CLAHE(コントラスト制限付き適応ヒストグラム均等化、OpenCV 実装)。sk_adapthist と同じ考え方の局所コントラスト強調だが、OpenCV の実装・タイル分割方式を使う。</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">cv2.createCLAHE(clipLimit=1.0+4.0*a).apply(_u8(v))</code>` を 255 で割ったもの —— a は clipLimit(コントラスト制限の強さ)を 1.0〜5.0 に振る。タイルグリッドサイズは既定の 8x8 のまま。b は未使用。</p>
+<p><b>つまみ(実測)</b>: `<code style="color:#22d3bf">a</code>` を 0 から 1 まで振っても<b>出力は変わらない</b>(実測。5 種類の入力で確認)。</p>
+<p><b>精度(実測)</b>: 内部で <b>8 bit(256 段)に量子化</b>している(出力が k/255 の格子にちょうど載る)。float64 で渡しても<b>その精度は保たれない</b> —— 16-bit カメラの階調(約 1.5e-5)は 1/255 =約 3.9e-3 に丸められ、1/255 より小さい差しか無い 2 枚は同じ答えを返す。微小な濃淡差を測る用途や、出力をさらに微分・回帰に渡す用途では量子化の段差が出るので、8 bit を経由しない op を選ぶこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

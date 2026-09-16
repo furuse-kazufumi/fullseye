@@ -14,6 +14,8 @@
 <p>CLAHE（對比度受限自適應直方圖等化，OpenCV 實作）。與 sk_adapthist 概念相同的局部對比度強化，但使用 OpenCV 的實作方式與分塊（tile）方案。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">cv2.createCLAHE(clipLimit=1.0+4.0*a).apply(_u8(v))</code>` を 255 で割ったもの —— a は clipLimit(コントラスト制限の強さ)を 1.0〜5.0 に振る。タイルグリッドサイズは既定の 8x8 のまま。b は未使用。</p>
+<p><b>旋鈕（實測）</b>：將 `<code style="color:#22d3bf">a</code>` 從 0 掃到 1 <b>輸出不變</b>（以 5 種輸入實測）。</p>
+<p><b>精度（實測）</b>：內部<b>量化為 8 bit（256 階）</b>——輸出恰好落在 k/255 的格點上。即使以 float64 傳入，<b>該精度也不會被保留</b>：16-bit 相機的階差（約 1.5e-5）被捨入到 1/255 ≈ 3.9e-3，相差小於 1/255 的兩張影像會回傳相同結果。在量測微小灰階差、或將輸出繼續送入微分與迴歸時，量化台階會顯現——請選用不經過 8 bit 的 op。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

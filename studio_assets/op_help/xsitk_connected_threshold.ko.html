@@ -15,6 +15,7 @@
 <p>연결 임계값 영역 확장(SimpleITK `<code style="color:#22d3bf">ConnectedThreshold</code>`, region growing). 이미지 중심 화소를 씨앗(seed)으로 삼아, 그 화소값을 중심으로 한 강도 구간 안에 있으면서 중심과 연결된 화소만 영역으로 확장한다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は下限マージン(</code><code style="color:#22d3bf">0.1+0.3*a</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は上限マージン(</code><code style="color:#22d3bf">0.1+0.3*b</code>`)を振る —— 区間は [中心値-下限, 中心値+上限]。画像中心付近に対象があることを前提とした op。</p>
+<p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 모든 화소가 전경(1)</b>이 된다. 조명이 날아갔거나 가려졌거나 피사체가 없는 프레임이 “<b>결함 100%</b>”로 돌아오므로, 상류에서 균일한지 판정해 걸러낼 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -547,8 +547,11 @@ _PSEUDOLINK = re.compile(r"\]\((?P<t>[^)\n]*)\)")
 #: 値域の 2 割動かす(`impl2/FINDINGS.md`)。**推測では書かない**ので、測って
 #: 確定したものだけをここから差し込む。判定できなかった op には何も足さない。
 #: image->image と region->region の 2 本。region 側は入力が二値マスクなので探針が違う。
+#: **型ごとに 3 本**。image->region(しきい値・領域抽出)の 83 本は 2026-09-16 まで
+#: 測っていなかった —— 台帳を足しても**ここに繋がなければノートには出ない**。
 _BORDER_JSONS = (os.path.join(_ROOT, "docs", "op_border.json"),
-                 os.path.join(_ROOT, "docs", "op_border_region.json"))
+                 os.path.join(_ROOT, "docs", "op_border_region.json"),
+                 os.path.join(_ROOT, "docs", "op_border_region_out.json"))
 _BORDER_JSON = _BORDER_JSONS[0]
 _BORDER_JA = {
     "constant0": "画像の外側は背景(0)とみなす",
@@ -600,16 +603,15 @@ def _norm_set() -> set:
     return _NORM_CACHE
 
 
-def _with_normalisation(name: str, doc: str) -> str:
-    """画像ごとの正規化を明示する。**測る道具では、これを黙っていると誤用される**。"""
+def _fact_normalisation(name: str, doc: str):
+    """画像ごとの正規化。**測る道具では、これを黙っていると誤用される**。"""
     if name not in _norm_set() or (doc and _SAYS_PER_IMAGE.search(doc)):
-        return doc
-    line = ("**値の比較可能性(実測)**: 出力を**その画像の最大値で正規化**している"
+        return None
+    return ("**値の比較可能性(実測)**: 出力を**その画像の最大値で正規化**している"
             "(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって"
             "**画像をまたいで値を比較できない** —— 同じ強さの特徴でも、その画像の中で"
             "最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで"
-            "持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。")
-    return (doc + chr(10) + chr(10) + line) if doc else line
+            "持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。", {})
 
 
 #: **内部で 8 bit に落としている op** の実測(`tools/impl2/quant_probe.py`)。
@@ -643,21 +645,44 @@ def _blank_map() -> dict:
     return _BLANK_CACHE
 
 
-def _with_blank_frame(name: str, doc: str) -> str:
-    """何も写っていないフレームでの答えを明示する。**現場で必ず来る入力**である。"""
+def _fact_blank_frame(name: str, doc: str):
+    """何も写っていないフレームでの答え。**現場で必ず来る入力**である。"""
     v = _blank_map().get(name)
     if v is None or (doc and _SAYS_BLANK.search(doc)):
-        return doc
+        return None
     if v == 1.0:
-        line = ("**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、"
+        return ("**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、"
                 "**明るさに関係なく全画素が前景(1)**になる。照明が飛んだ・遮られた・"
                 "被写体が無いフレームは「**欠陥 100%**」として返るので、"
-                "上流で「一様かどうか」を判定して弾くこと。")
-    else:
-        line = ("**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、"
-                "**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも"
-                "同じで、明るさそのものでは何も検出しない。")
-    return (doc + chr(10) + chr(10) + line) if doc else line
+                "上流で「一様かどうか」を判定して弾くこと。", {})
+    return ("**何も写っていないフレーム(実測)**: 明るさが一様な画像を入れると、"
+            "**明るさに関係なく空(全画素が背景 0)**になる。真っ白でも真っ黒でも"
+            "同じで、明るさそのものでは何も検出しない。", {})
+
+
+#: 実測で確定した事実は、**op 本来の docstring とは別に持つ**。
+#: 連結すると「docstring が読み手の言語で書かれているか」の判定に巻き込まれ、もともと
+#: 本文が無かった op が「訳が届いていないページ」に落ちる(2026-09-16 実測: 23 ページ)。
+#: 生成された定型句なので :func:`T` を通して読み手の言語で出す。
+def measured_facts(name: str, doc: str) -> list:
+    out = []
+    for f in (_fact_border, _fact_knob, _fact_normalisation,
+              _fact_quantisation, _fact_blank_frame):
+        r = f(name, doc)
+        if r:
+            out.append(r)
+    return out
+
+
+def render_facts(facts, lang) -> list:
+    """事実の行を読み手の言語で組み立てる。引数も訳が要るものは ``("__border__", key)``。"""
+    lines = []
+    for tpl, params in facts or ():
+        kw = {}
+        for k, v in params.items():
+            kw[k] = T(_BORDER_JA[v[1]], lang) if isinstance(v, tuple) else v
+        lines.append(T(tpl, lang).format(**kw) if kw else T(tpl, lang))
+    return lines
 
 
 _QUANT_JSON = os.path.join(_ROOT, "docs", "op_quantisation.json")
@@ -677,17 +702,16 @@ def _quant_set() -> set:
     return _QUANT_CACHE
 
 
-def _with_quantisation(name: str, doc: str) -> str:
-    """8 bit への量子化を明示する。**測る道具では、精度の黙った目減りは誤用を生む**。"""
+def _fact_quantisation(name: str, doc: str):
+    """8 bit への量子化。**測る道具では、精度の黙った目減りは誤用を生む**。"""
     if name not in _quant_set() or (doc and _SAYS_8BIT.search(doc)):
-        return doc
-    line = ("**精度(実測)**: 内部で **8 bit(256 段)に量子化**している"
+        return None
+    return ("**精度(実測)**: 内部で **8 bit(256 段)に量子化**している"
             "(出力が k/255 の格子にちょうど載る)。float64 で渡しても"
             "**その精度は保たれない** —— 16-bit カメラの階調(約 1.5e-5)は 1/255 ="
             "約 3.9e-3 に丸められ、1/255 より小さい差しか無い 2 枚は同じ答えを返す。"
             "微小な濃淡差を測る用途や、出力をさらに微分・回帰に渡す用途では"
-            "量子化の段差が出るので、8 bit を経由しない op を選ぶこと。")
-    return (doc + chr(10) + chr(10) + line) if doc else line
+            "量子化の段差が出るので、8 bit を経由しない op を選ぶこと。", {})
 
 
 _KNOB_JSON = os.path.join(_ROOT, "docs", "op_knob.json")
@@ -708,34 +732,32 @@ def _knob_map() -> dict:
     return _KNOB_CACHE
 
 
-def _with_knob(name: str, doc: str) -> str:
-    """実測したつまみの挙動を足す。**ノートが既に言っていることは繰り返さない**。"""
+def _fact_knob(name: str, doc: str):
+    """実測したつまみの挙動。**ノートが既に言っていることは繰り返さない**。"""
     r = _knob_map().get(name)
     if not r:
-        return doc
-    bits = []
+        return None
     if r.get("a_kind") == "unused" and not _SAYS_A_UNUSED.search(doc or ""):
-        bits.append("``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。4 種類の入力で確認)")
-    elif r.get("a_kind") == "discrete" and r.get("breakpoints") and not _SAYS_STEPS.search(doc or ""):
-        pts = "、".join("%.2f" % x for x in r["breakpoints"])
-        bits.append("``a`` は**段階的**に効き、切り替わるのは a ≈ %s(実測。刻み %.2f の掃きで測った位置)"
-                    % (pts, r.get("breakpoint_resolution", 0.02)))
-    if not bits:
-        return doc
-    line = "**つまみ(実測)**: " + "。".join(bits) + "。"
-    return (doc + chr(10) + chr(10) + line) if doc else line
+        return ("**つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**"
+                "(実測。5 種類の入力で確認)。", {})
+    if r.get("a_kind") == "discrete" and r.get("breakpoints") and not _SAYS_STEPS.search(doc or ""):
+        return ("**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ {a0}"
+                "(実測。刻み {a1} の掃きで測った位置)。",
+                {"a0": "、".join("%.2f" % x for x in r["breakpoints"]),
+                 "a1": "%.2f" % r.get("breakpoint_resolution", 0.02)})
+    return None
 
 
 _BORDER_ALREADY = re.compile(r"境界|端の扱い|端は|BORDER_|パディング")
 
 
-def _with_border(name: str, doc: str) -> str:
-    """実測した端の規約を本文に足す。**既に書いてある op には触らない**。"""
+def _fact_border(name: str, doc: str):
+    """実測した端の規約。**既に書いてある op には触らない**。"""
     mode = _border_map().get(name)
     if not mode or (doc and _BORDER_ALREADY.search(doc)):
-        return doc
-    line = f"**端の扱い**: {_BORDER_JA[mode]}(実測。`tools/impl2/border_probe.py`)。"
-    return (doc + chr(10) + chr(10) + line) if doc else line
+        return None
+    return ("**端の扱い**: {a0}(実測。`tools/impl2/border_probe.py`)。",
+            {"a0": ("__border__", mode)})
 
 
 def _defuse_pseudolinks(doc: str) -> str:
@@ -780,13 +802,13 @@ def _records():
             # cleandoc: 関数 docstring の 2 行目以降には定義位置ぶんの字下げが
             # 付いていて、そのまま出すと Markdown が**コードブロックと読む**
             # (3-D / ledger 側は最初からこれを通していた)。
-            "doc": _with_blank_frame(o.name, _with_quantisation(o.name, _with_normalisation(o.name, _with_knob(o.name, _with_border(
-                o.name, _defuse_pseudolinks(
-                    inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip())))))),
+            "doc": _defuse_pseudolinks(
+                inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip()),
             "module": "ops", "sig": sig,
             "examples": sorted(idx2d.get(o.name, [])),
             "family": op_fam.get(o.name),
         })
+        recs[-1]["measured"] = measured_facts(o.name, recs[-1]["doc"])
     # ★n-ary(多入力)層。2026-09-09 まで **17 op がノートを 1 枚も持っていなかった**
     # (`add_image` `sub_image` `bit_and` `reduce_domain` `union2` …)。`OP_INDEX.json`
     # には tier=`nary` で載るのに `docs/ops/` に無いので、**RAG コーパスからは
@@ -1140,6 +1162,11 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
             lines.append(T("> この op の説明はまだ訳がありません。原文をそのまま載せます。", lang))
             lines.append("")
             lines.append(rec["doc"])
+        # **実測で確定した事実**は docstring と別枠で、読み手の言語で出す。
+        # docstring に混ぜると「原文のままです」の断りに巻き込まれる。
+        for _fl in render_facts(rec.get("measured"), lang):
+            lines.append("")
+            lines.append(_fl)
     else:
         lines.append(T('型契約は `{a0} → {a1}`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。', lang).format(a0=ins, a1=out))
     lines.append("")

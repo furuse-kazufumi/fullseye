@@ -15,6 +15,7 @@
 <p>曲率流平滑（SimpleITK `<code style="color:#22d3bf">CurvatureFlow</code>`）。一種以等高線曲率成比例的速度模糊影像的非線性擴散，直線狀邊緣容易被保留，彎曲的細節則會先消失。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は反復回数(</code><code style="color:#22d3bf">1+int(a*8)</code><code style="color:#22d3bf"> で 1〜9 回)を振る —— 増やすほど強く平滑化される。時間刻みは 0.0625 固定。</code><code style="color:#22d3bf">b</code>` は未使用。出力は [0,1] にクリップ。</p>
+<p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（實測。</code>tools/impl2/border_probe.py`）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
