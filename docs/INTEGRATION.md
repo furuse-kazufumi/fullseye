@@ -59,10 +59,13 @@ be reorganised. Everything a consumer needs is re-exported from `fullseye`.
 ## From an LLM (MCP server, 0.1.11 PoC)
 
 `py -3.11 -m fullseye.mcp` is a stdio Model Context Protocol server (protocol
-`2025-06-18`). It exposes **8 tools, not 1,942**: search the catalog, read an operator's
+`2025-06-18`). It exposes **9 tools, not 1,942**: search the catalog, read an operator's
 knowledge-layer note (with its pre-rendered, gate-verified figures as `resource_link`s),
 load a sample or a sandboxed image into a handle, apply one operator or a pipeline, and
-inspect a handle. Images travel as `fullseye://img/<sha16>` handles; every result carries
+inspect a handle, and fix the text inside an image against the string it should read
+(`fullseye_fix_text`: repair only the flagged glyphs or redraw the whole line; the report
+says `typo` or `unrelated` when the original text has nothing to do with the intended one).
+Images travel as `fullseye://img/<sha16>` handles; every result carries
 raw statistics **and** a verdict (`ok / constant / flat / saturated / nonfinite /
 out_of_range / empty`), and a small input-vs-output figure is attached automatically only
 when the verdict is not `ok`. The default is strict (`on_error="raise"`): a degraded

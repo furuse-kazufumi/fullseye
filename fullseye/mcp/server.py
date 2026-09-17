@@ -28,6 +28,8 @@ import pathlib
 import sys
 from typing import Any
 
+import numpy as np
+
 from .catalog import Catalog, CatalogError, SOURCES
 from .diagnose import side_by_side, stats_of, verdict_of
 from .handles import HandleError, HandleStore
@@ -168,6 +170,44 @@ TOOLS: dict[str, dict] = {
             "additionalProperties": False,
         },
     },
+    "fullseye_fix_text": {
+        "description": (
+            "画像の中の文字を「本当はこう書いてあるべき文字列」に合わせて直す(生成 AI が出した"
+            "レポート用画像・看板の誤字を再生成せずに直す用途)。ハンドルは color(HxWx3)。"
+            "items は行ごとに {text, bbox:[x,y,w,h]}。mode=repair_flagged(既定)は床を超えた字だけ"
+            "置き換え正しい字に触らない / mode=rewrite_line は bbox の行を同じ書体で丸ごと描き直す"
+            "(見逃し・字数違いも直るが書体は変わる)。返り値: 直した画像のハンドル + 全解像度 PNG の"
+            " resource_link + 行ごとの status(ok/replaced/failed_verification/skipped/rewritten)、"
+            "skipped の reason_code、mismatch(typo=誤字 / unrelated=元の字が指示と無関係な疑い)。"
+            "直せなかった行はそのまま残し、検証を通らない置換は元に戻す —— 黙って壊した絵は返さない。"),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "handle": _HANDLE,
+                "items": {
+                    "type": "array", "minItems": 1, "maxItems": 64,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "text": {"type": "string", "maxLength": 200,
+                                     "description": "その行に本当に書いてあるべき文字列"},
+                            "bbox": {"type": "array", "minItems": 4, "maxItems": 4,
+                                     "items": {"type": "number"},
+                                     "description": "[x, y, w, h] 画素。行に密着した箱"},
+                        },
+                        "required": ["text", "bbox"],
+                        "additionalProperties": False,
+                    },
+                },
+                "mode": {"type": "string", "enum": ["repair_flagged", "rewrite_line"]},
+                "threshold": {"type": "number", "minimum": 0.0, "maximum": 10.0,
+                              "description": "省略すれば環境の書体の散らばりから床を測る(推奨)"},
+                "vision": _VISION,
+            },
+            "required": ["handle", "items"],
+            "additionalProperties": False,
+        },
+    },
 }
 
 
@@ -217,6 +257,10 @@ def _validate(schema: dict, args: Any) -> dict:
                         _validate(items, it)
                     except ArgError as exc:
                         raise ArgError("%s[%d]: %s" % (k, i, exc)) from exc
+            elif items and items.get("type") == "number":
+                for i, it in enumerate(v):
+                    if not isinstance(it, (int, float)) or isinstance(it, bool) or it != it:
+                        raise ArgError("%s[%d] は数でなければならない(%r)" % (k, i, it))
             continue
         if "enum" in p and v not in p["enum"]:
             raise ArgError("%s は %s のどれか(%r)" % (k, p["enum"], v))
@@ -557,6 +601,63 @@ def _pipeline(a: dict, cat: Catalog, store: HandleStore) -> dict:
     return tool_result("\n".join(lines), structured, links=links)
 
 
+def _fix_text(a: dict, store: HandleStore) -> dict:
+    """:func:`glyphops.correct_spec` を MCP から。**color ハンドル以外は拒否**し、
+    直した画像はハンドルと全解像度 PNG(resource_link)の両方で返す —— 呼ぶ側(LLM)は
+    画素を見られないので、ファイルとして受け取れる形が要る。"""
+    import glyphops
+    meta, arr = store.get(a["handle"])
+    if meta["sort"] != "color":
+        raise ArgError("fix_text は color(HxWx3)のハンドルを取る(いま %s)。"
+                       "load_image を color=true で読み直す" % meta["sort"])
+    policy: dict = {"mode": a.get("mode", "repair_flagged")}
+    if "threshold" in a:
+        policy["threshold"] = float(a["threshold"])
+    spec = {"items": [{"text": it["text"], "bbox": [float(v) for v in it["bbox"]]}
+                      for it in a["items"]], "policy": policy}
+    rgb = np.asarray(arr, np.float64)
+    if rgb.max() > 1.0:
+        rgb = rgb / 255.0
+    try:
+        out, rep = glyphops.correct_spec(rgb, spec)
+    except (RuntimeError, ValueError, FileNotFoundError) as exc:
+        return _tool_error("fix_text: %s" % exc, {"error": str(exc)})
+    prov = list(meta["provenance"]) + [{"fix_text": {
+        "mode": rep["mode"], "items": len(spec["items"]),
+        "threshold": rep["threshold"], "floor_source": rep["floor_source"]}}]
+    om = store.put(out, sort="color", provenance=prov)
+    full = store.write_thumb(om["handle"], out, "fixed")
+    links = [_file_link(full, os.path.basename(full), "image/png",
+                        "直した画像そのもの(全解像度、縮小していない)")]
+    fine = ("ok", "replaced", "rewritten")
+    bad = [it for it in rep["items"] if it["status"] not in fine]
+    suspicious = any(it.get("mismatch") == "unrelated" for it in rep["items"])
+    vision = a.get("vision", "auto")
+    if vision == "thumb" or (vision == "auto" and (bad or suspicious)):
+        sbs = side_by_side(rgb, out, out_is_quantity=False)
+        if sbs is not None:
+            pth = store.write_thumb(om["handle"], sbs, "before_after")
+            links.append(_file_link(pth, os.path.basename(pth), "image/png",
+                                    "前後の対比(左が入力・右が出力)"))
+    marks = {"ok": "・", "replaced": "◆", "rewritten": "◆", "failed_verification": "×",
+             "skipped": "?"}
+    lines = ["fix_text(mode=%s, 床=%.4f from %s, 書体 %d 本) → %s" % (
+        rep["mode"], rep["threshold"], rep["floor_source"], rep["fonts"], om["handle"])]
+    for it in rep["items"]:
+        cells = "".join(marks.get(c.get("status", ""), "?") for c in it.get("cells", ()))
+        extra = ""
+        if it.get("reason"):
+            extra += "  %s[%s]" % (it["reason"], it.get("reason_code", ""))
+        if it.get("mismatch") in ("typo", "unrelated"):
+            extra += "  mismatch=%s(%.2f 倍)" % (it["mismatch"], it.get("mismatch_ratio", 0.0))
+        lines.append("- %-19s %-16s %s%s" % (it["status"], it["text"], cells, extra))
+    lines.append("記号: ・無事 ◆直した ×検証不通過(元に戻した) ?直せない。"
+                 "unrelated は「元の字が指示と無関係」の疑い —— 指示か画像のどちらかを確かめる")
+    structured = {"handle": om["handle"], "sort": "color", "shape": om["shape"],
+                  "provenance": prov, "report": rep, "fixed_png": full}
+    return tool_result("\n".join(lines), structured, links=links)
+
+
 def _inspect(a: dict, store: HandleStore) -> dict:
     meta, arr = store.get(a["handle"])
     last_op = next((p["apply"] for p in reversed(meta["provenance"]) if "apply" in p), None)
@@ -634,6 +735,8 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             return _inspect(a, store)
         if name == "fullseye_pipeline":
             return _pipeline(a, cat, store)
+        if name == "fullseye_fix_text":
+            return _fix_text(a, store)
     except HandleError as exc:
         raise ArgError(str(exc)) from exc
     raise ArgError("未実装の tool: %r" % name)                 # TOOLS に足して本体を忘れた

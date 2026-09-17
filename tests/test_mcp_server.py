@@ -191,7 +191,7 @@ def test_every_declared_tool_has_a_body(cat):
     store = HandleStore()
     order = ["fullseye_search_ops", "fullseye_op_help", "fullseye_catalog_coverage",
              "fullseye_list_samples", "fullseye_load_image", "fullseye_apply", "fullseye_inspect",
-             "fullseye_pipeline"]
+             "fullseye_pipeline", "fullseye_fix_text"]
     assert set(order) == set(TOOLS), "tool を足したらこの表にも足すこと: %s" % (set(TOOLS) ^ set(order))
     ctx: dict = {}
     for n in order:
@@ -207,6 +207,17 @@ def test_every_declared_tool_has_a_body(cat):
             a = {"handle": ctx["handle_out"], "vision": "none"}
         elif n == "fullseye_pipeline":
             a = {"handle": ctx["handle"], "stages": [{"op": "gaussian"}, {"op": "otsu"}], "vision": "none"}
+        elif n == "fullseye_fix_text":
+            # 文字入りの color 画像が要る。同梱サンプルに無いので書体で描く(書体が無い
+            # 環境では、その旨を言って拒む道が通ることだけ確かめる)。
+            import glyphops
+            if not glyphops.available_fonts():
+                res = call_tool(n, {"handle": _color_sign(store, None)[0],
+                                    "items": [{"text": "電気", "bbox": [0, 0, 64, 32]}]}, cat, store)
+                assert res["isError"] is True and "書体" in res["content"][0]["text"]
+                continue
+            h, bbox = _color_sign(store, glyphops.available_fonts()[0])
+            a = {"handle": h, "items": [{"text": "電気設備", "bbox": bbox}], "vision": "none"}
         else:
             a = {}
         res = call_tool(n, a, cat, store)
@@ -431,3 +442,97 @@ def test_the_validator_actually_checks_each_rule():
         with pytest.raises(ArgError) as ei:
             _validate(s, bad)
         assert why in str(ei.value), (bad, str(ei.value))
+
+
+# --------------------------------------------------------------------------- #
+# fix_text(文字の修正)                                                          #
+# --------------------------------------------------------------------------- #
+def _color_sign(store, font, text="電気設備", wrong_at=2, wrong="誤"):
+    """書体で 1 行の掲示を描いて color ハンドルにする。返り ``(handle, bbox)``。
+    書体が無ければ無地を返す(拒否経路の確認用)。"""
+    import numpy as np
+    if font is None:
+        m = store.put(np.full((64, 256, 3), 0.9), sort="color", provenance=[{"test": "blank"}])
+        return m["handle"], [0, 0, 64, 32]
+    from PIL import Image, ImageDraw, ImageFont
+    size, pad = 96, 24
+    shown = list(text)
+    shown[wrong_at] = wrong
+    f = ImageFont.truetype(font, size)
+    im = Image.new("RGB", (pad * 2 + size * len(text), pad * 2 + size), (235, 235, 230))
+    d = ImageDraw.Draw(im)
+    for i, c in enumerate(shown):
+        d.text((pad + i * size, pad), c, font=f, fill=(20, 20, 20))
+    rgb = np.asarray(im, np.float64) / 255.0
+    ys, xs = np.nonzero(rgb.mean(axis=-1) < 0.5)
+    bbox = [int(xs.min()), int(ys.min()), int(xs.max() + 1 - xs.min()), int(ys.max() + 1 - ys.min())]
+    m = store.put(rgb, sort="color", provenance=[{"test": "sign"}])
+    return m["handle"], bbox
+
+
+@pytest.fixture
+def fonts2():
+    import glyphops
+    fs = glyphops.available_fonts()
+    if len(fs) < 2:
+        pytest.skip("CJK フォントが %d 本(床は書体の散らばりなので 2 本要る)" % len(fs))
+    return fs
+
+
+def test_fix_text_replaces_the_wrong_character_and_hands_back_a_full_size_png(cat, fonts2):
+    """★入口の本体。壊れた 1 字だけ replaced、直した画像は**ハンドルと全解像度 PNG の両方**で
+    返る(LLM は画素を見られないので、ファイルとして受け取れる形が要る)。"""
+    from fullseye.mcp.handles import HandleStore
+    store = HandleStore()
+    h, bbox = _color_sign(store, fonts2[0])
+    res = call_tool("fullseye_fix_text", {"handle": h, "items": [{"text": "電気設備", "bbox": bbox}],
+                                          "vision": "none"}, cat, store)
+    assert res["isError"] is False, res["content"][0]["text"]
+    sc = res["structuredContent"]
+    it = sc["report"]["items"][0]
+    assert [c["status"] for c in it["cells"]] == ["ok", "ok", "replaced", "ok"], it
+    assert it["mismatch"] == "typo", it
+    assert sc["handle"] != h and sc["handle"].startswith("fullseye://img/")
+    links = [c for c in res["content"] if c["type"] == "resource_link"]
+    assert len(links) == 1 and links[0]["mimeType"] == "image/png"
+    assert os.path.exists(sc["fixed_png"]) and os.path.getsize(sc["fixed_png"]) > 1000
+    _, out = store.get(sc["handle"])
+    assert out.shape == store.get(h)[1].shape
+    assert sc["provenance"][-1]["fix_text"]["mode"] == "repair_flagged"
+    assert "◆" in res["content"][0]["text"]
+
+
+def test_fix_text_refuses_a_grey_handle_and_a_bad_bbox_at_the_door(cat, fonts2):
+    from fullseye.mcp.handles import HandleStore
+    import numpy as np
+    store = HandleStore()
+    g = store.put(np.zeros((64, 64)), sort="image", provenance=[])
+    with pytest.raises(ArgError, match="color"):
+        call_tool("fullseye_fix_text", {"handle": g["handle"],
+                                        "items": [{"text": "電", "bbox": [0, 0, 8, 8]}]}, cat, store)
+    h, bbox = _color_sign(store, fonts2[0])
+    with pytest.raises(ArgError, match="bbox"):
+        call_tool("fullseye_fix_text", {"handle": h, "items": [{"text": "電", "bbox": [0, 0, 8]}]},
+                  cat, store)
+    with pytest.raises(ArgError, match="数"):
+        call_tool("fullseye_fix_text", {"handle": h, "items": [{"text": "電", "bbox": [0, 0, 8, "x"]}]},
+                  cat, store)
+    with pytest.raises(ArgError, match="mode"):
+        call_tool("fullseye_fix_text", {"handle": h, "items": [{"text": "電", "bbox": bbox}],
+                                        "mode": "repaint"}, cat, store)
+
+
+def test_fix_text_rewrite_line_flags_an_unrelated_string_and_attaches_the_comparison(cat, fonts2):
+    """板に「本日休業」、指示は「電気設備」。描き直しは成功するが mismatch=unrelated を
+    返し、vision=auto でも前後の対比が付く(疑いは見せる)。"""
+    from fullseye.mcp.handles import HandleStore
+    store = HandleStore()
+    h, bbox = _color_sign(store, fonts2[0], text="本日休業", wrong_at=0, wrong="本")
+    res = call_tool("fullseye_fix_text", {"handle": h, "items": [{"text": "電気設備", "bbox": bbox}],
+                                          "mode": "rewrite_line"}, cat, store)
+    assert res["isError"] is False, res["content"][0]["text"]
+    it = res["structuredContent"]["report"]["items"][0]
+    assert it["status"] == "rewritten" and it["mismatch"] == "unrelated", it
+    links = [c for c in res["content"] if c["type"] == "resource_link"]
+    assert len(links) == 2, [c["name"] for c in links]
+    assert "unrelated" in res["content"][0]["text"]

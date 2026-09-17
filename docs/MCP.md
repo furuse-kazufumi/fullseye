@@ -41,7 +41,7 @@ claude mcp add fullseye -- py -3.11 -m fullseye.mcp
 set FULLSEYE_MCP_ROOT=C:\path\to\images;D:\more   (PowerShell: $env:FULLSEYE_MCP_ROOT = "...")
 ```
 
-## tool は 8 つ(op は 1,942 あるが tool にはしない)
+## tool は 9 つ(op は 1,942 あるが tool にはしない)
 
 op はデータで、tool は「探す・読む・読み込む・走らせる・観察する」の数個だけ。
 tool を 1,942 個並べると LLM の文脈を食い潰す(TheMCPCompany の実測: 18,000 tool は
@@ -57,6 +57,7 @@ retrieval 無しでは使えない)。
 | `fullseye_apply` | ハンドルに op を 1 つ。出力ハンドル + 数値統計 + 判定 + 劣化台帳 |
 | `fullseye_pipeline` | op を順に。段ごとに記録、型連鎖は走らせる前に検査、strict は失敗段で停止 |
 | `fullseye_inspect` | ハンドルの数値統計 + 判定(+ 小図) |
+| `fullseye_fix_text` | 画像の中の文字を「本当はこう書いてあるべき文字列」に合わせて直す。行ごとに `{text, bbox}`、`mode=repair_flagged`(床を超えた字だけ置換、正しい字に触らない)/ `rewrite_line`(行を丸ごと同じ書体で描き直す)。直した画像はハンドル + 全解像度 PNG、報告に `status` / `reason_code` / `mismatch`(typo か unrelated = 元の字が指示と無関係な疑い)。検証を通らない置換は元に戻す |
 
 ## 画像は「在らず、必要なときだけ在る」
 

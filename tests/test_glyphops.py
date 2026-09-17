@@ -461,3 +461,61 @@ def test_rewrite_line_refuses_multimodal_colours_instead_of_smearing(fonts):
     it = rep["items"][0]
     assert it["status"] == "skipped" and "単峰" in it["reason"], it
     assert np.array_equal(out, rgb), "断ったのに画像を変えた"
+
+
+# --------------------------------------------------------------------------- #
+# 誤字か別物か / 理由の語彙                                                      #
+# --------------------------------------------------------------------------- #
+def test_a_single_wrong_character_is_a_typo_and_an_unrelated_string_is_not(fonts):
+    """★「元の字が指示と全く関係ない」を報告で区別する(2026-09-18、ユーザー指摘)。
+
+    1 字だけ違う掲示は ``typo``、意図した文字列と無関係な 4 字が書かれた掲示は
+    ``unrelated``。境は :data:`MISMATCH_RATIO`(壊れたマスの距離の中央値 ÷ 床)。
+    描き直しはどちらも成功するので、この枝が無いと呼ぶ側は気づけない。
+    """
+    rgb, spec = _sign(fonts)                          # 電気設「誤」備 → 1 字だけ違う
+    _, rep = glyphops.correct_spec(rgb, spec)
+    it = rep["items"][0]
+    assert it["mismatch"] == "typo", (it["mismatch"], it.get("mismatch_ratio"))
+    assert 1.0 <= it["mismatch_ratio"] < glyphops.MISMATCH_RATIO, it["mismatch_ratio"]
+
+    # 板には「本日休業」、指示は「電気設備」—— 4 字とも無関係。
+    rgb2, spec2 = _sign(fonts, text="本日休業", broken_at=0, wrong="本")
+    spec2["items"][0]["text"] = "電気設備"
+    spec2["policy"] = {"mode": "rewrite_line"}
+    _, rep2 = glyphops.correct_spec(rgb2, spec2)
+    it2 = rep2["items"][0]
+    assert it2["status"] == "rewritten"               # 描き直し自体は成功する
+    assert it2["mismatch"] == "unrelated", (it2["mismatch"], it2.get("mismatch_ratio"))
+    assert it2["mismatch_ratio"] >= glyphops.MISMATCH_RATIO, it2["mismatch_ratio"]
+
+    # 全部無事なら none。
+    rgb3, spec3 = _sign(fonts, broken_at=0, wrong="電")
+    _, rep3 = glyphops.correct_spec(rgb3, spec3)
+    assert rep3["items"][0]["mismatch"] == "none"
+
+
+def test_every_refusal_carries_a_code_from_the_vocabulary(fonts):
+    """``reason`` は人向けの文、``reason_code`` は機械向けの鍵。鍵は :data:`REASON_CODES`
+    の中からしか出ない(外部 AI レビューの指摘: 語彙が無いと呼ぶ側が分岐できない)。"""
+    rgb, spec = _sign(fonts)
+    spec["items"].append({"text": "点検中"})                       # bbox 無し
+    spec["items"].append({"text": "点検中", "bbox": [0, 0, 4, 4]})  # 小さすぎ
+    _, rep = glyphops.correct_spec(rgb, spec)
+    codes = [it.get("reason_code") for it in rep["items"][1:]]
+    assert codes == ["missing_text_or_bbox", "bbox_too_small"], codes
+    for it in rep["items"]:
+        for holder in [it] + it.get("cells", []):
+            if holder.get("status") == "skipped":
+                assert holder["reason_code"] in glyphops.REASON_CODES, holder
+                assert holder["reason"], holder
+
+    # rewrite_line の拒否も同じ語彙。
+    _, info = glyphops.rewrite_line(rgb, "", fonts[0])
+    assert info == {"ok": False, "code": "empty_text",
+                    "reason": glyphops.REASON_CODES["empty_text"]}
+    _, info = glyphops.rewrite_line(np.ones_like(rgb), "電気", fonts[0])
+    assert info["code"] == "no_ink"
+    assert glyphops._code_of("色が単峰でない(前景 0.10 / 背景 0.50 / 縁 0.300) —— x") == "multimodal_colour"
+    assert glyphops._code_of("マスが空(インクが 20 画素未満)") == "empty_cell"
+    assert glyphops._code_of("何か別の理由") == "cannot_replace"

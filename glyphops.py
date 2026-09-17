@@ -44,7 +44,37 @@ __all__ = [
     # ★2026-09-18: ここまで __all__ に無かった(api 側は名前で import していたので
     #   気づけなかった)。一次情報は __all__ なので、公開するものは全部書く。
     "split_cells", "correct_spec", "find_plate", "rewrite_line",
+    "REASON_CODES", "MISMATCH_RATIO",
 ]
+
+#: ``reason`` の機械可読な語彙(2026-09-18、外部 AI レビューの指摘で導入)。
+#: 人向けの ``reason`` は日本語の説明文で、呼ぶ側(LLM・スクリプト)が分岐に使うのは
+#: こちら。**ここに無い code は出さない**(足すときは表とテストを同時に)。
+REASON_CODES: dict = {
+    "missing_text_or_bbox": "text か bbox が無い",
+    "bbox_too_small":       "bbox が小さすぎる",
+    "empty_text":           "text が空",
+    "no_font":              "CJK を描ける書体が無い",
+    "no_ink":               "行にインクが無い",
+    "empty_cell":           "マスが空(インクが 20 画素未満)",
+    "multimodal_colour":    "色が単峰でない(縁取り・影・グラデの疑い)",
+    "cannot_replace":       "置き換えられない",
+}
+
+#: 「誤字」と「別物」の境。壊れたマスの ``distance_before`` の中央値 ÷ 床 がこれ未満なら
+#: 誤字(1 字だけ違う・部首が違う)、以上なら**意図した文字列と無関係な字**が書かれている
+#: 疑い。実測(2026-09-18、生成画像 26 枚): 誤字は 1.8〜1.9、別物は 2.15〜2.86。
+#: 標本が少ないので境は目安で、報告には比そのものも載せる(``mismatch_ratio``)。
+MISMATCH_RATIO: float = 2.0
+
+
+def _code_of(text: str) -> str:
+    """理由文 → code。:func:`replace_glyph` は数値入りの文を返すので先頭一致で引く。"""
+    for code, head in REASON_CODES.items():
+        if text.startswith(head.split("(")[0]):
+            return code
+    return "cannot_replace"
+
 
 #: :mod:`annotate` と同じ探索順(CJK を持つものが先)。
 FONT_CANDIDATES = annotate.FONT_CANDIDATES
@@ -757,17 +787,18 @@ def rewrite_line(rgb: np.ndarray, text: str, font_path=None, size: int = 256) ->
         raise ValueError("rewrite_line は RGB 画像を取る(HxWx3)")
     chars = [c for c in str(text) if not c.isspace()]
     if not chars:
-        return rgb.copy(), {"ok": False, "reason": "text が空"}
+        return rgb.copy(), {"ok": False, "code": "empty_text", "reason": REASON_CODES["empty_text"]}
     font = font_path or (available_fonts() or [None])[0]
     if font is None:
-        return rgb.copy(), {"ok": False, "reason": "CJK を描ける書体が無い"}
+        return rgb.copy(), {"ok": False, "code": "no_font", "reason": REASON_CODES["no_font"]}
     gray = rgb.mean(axis=-1)
     ink = _ink_mask(gray)
     if ink.sum() < 20:
-        return rgb.copy(), {"ok": False, "reason": "行にインクが無い"}
+        return rgb.copy(), {"ok": False, "code": "no_ink", "reason": REASON_CODES["no_ink"]}
     col = ink_colors(rgb, ink)
     if not col.get("unimodal", True):
-        return rgb.copy(), {"ok": False, "reason": "色が単峰でない(縁取り・影・グラデの疑い)"}
+        return rgb.copy(), {"ok": False, "code": "multimodal_colour",
+                            "reason": REASON_CODES["multimodal_colour"]}
     H, W = gray.shape
     out = rgb.copy()
     # (1) 消す。周囲の雑音を乗せて継ぎ目を弱める(replace_glyph と同じ考え方)。
@@ -847,6 +878,13 @@ def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
     ``rewritten``
         (``rewrite_line`` のみ)bbox の行を意図した文字列で丸ごと描き直した。
 
+    行ごとに ``mismatch`` も返す: ``none``(壊れたマス無し)/ ``typo``(誤字: 壊れた
+    マスの距離の中央値が床の :data:`MISMATCH_RATIO` 倍未満)/ ``unrelated``(意図した
+    文字列と無関係な字が書かれていた疑い)/ ``unknown``(距離が測れていない)。
+    ``rewrite_line`` は別物でも描き直せてしまうので、**指示か画像のどちらかが違う**
+    可能性を呼ぶ側へ返す。``skipped`` には人向けの ``reason`` と機械向けの
+    ``reason_code``(:data:`REASON_CODES` の鍵)を併記する。
+
     ★**「直せなかった」を返せることが設計の中心**。黙って壊れた絵を返さない。
     ``failed_verification`` で元に戻すのは、数値で確かめられない置換を残すと
     「直った」と誤解されるため —— 検証を通らない修正は修正ではない。
@@ -914,14 +952,16 @@ def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
         report["items"].append(entry)
         if not text or not bbox or len(bbox) != 4:
             entry["status"] = "skipped"
-            entry["reason"] = "text か bbox が無い"
+            entry["reason_code"] = "missing_text_or_bbox"
+            entry["reason"] = REASON_CODES["missing_text_or_bbox"]
             continue
         x, y, w, h = (int(round(v)) for v in bbox)
         y0, y1 = max(0, y), min(out.shape[0], y + h)
         x0, x1 = max(0, x), min(out.shape[1], x + w)
         if y1 - y0 < 8 or x1 - x0 < 8 * len(text):
             entry["status"] = "skipped"
-            entry["reason"] = "bbox が小さすぎる"
+            entry["reason_code"] = "bbox_too_small"
+            entry["reason"] = REASON_CODES["bbox_too_small"]
             continue
         crop = out[y0:y1, x0:x1]
         gray = crop.mean(axis=-1)
@@ -941,7 +981,8 @@ def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
             fixed, info = rewrite_line(crop, text, fonts[0])
             if not info.get("ok"):
                 entry["status"] = "skipped"
-                entry["reason"] = info.get("reason", "描き直せない")
+                entry["reason_code"] = info.get("code", "cannot_replace")
+                entry["reason"] = info.get("reason", REASON_CODES["cannot_replace"])
                 for rec in entry["cells"]:
                     rec["status"] = "skipped"
                 continue
@@ -949,6 +990,7 @@ def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
             entry["status"] = "rewritten"
             for rec in entry["cells"]:
                 rec["status"] = "rewritten"
+            _judge_mismatch(entry, thr)
             continue
         statuses = []
         for k, ch in enumerate(text):
@@ -958,7 +1000,8 @@ def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
             entry["cells"].append(rec)
             if cell.sum() < 20:
                 rec["status"] = "skipped"
-                rec["reason"] = "マスにインクが無い"
+                rec["reason_code"] = "empty_cell"
+                rec["reason"] = REASON_CODES["empty_cell"]
                 statuses.append("skipped")
                 continue
             before = min(glyph_distance(cell.astype(np.float64),
@@ -996,6 +1039,7 @@ def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
                                        target_thickness=stroke_thickness(ink))
             if fixed is None:
                 rec["status"] = "skipped"
+                rec["reason_code"] = _code_of(why)
                 rec["reason"] = why
                 statuses.append("skipped")
                 continue
@@ -1018,4 +1062,31 @@ def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
                 break
         else:
             entry["status"] = "skipped"
+        _judge_mismatch(entry, thr)
     return out, report
+
+
+def _judge_mismatch(entry: dict, thr: float) -> None:
+    """行の報告に ``mismatch``(誤字か別物か)と ``mismatch_ratio`` を書き足す。
+
+    壊れたマス(``distance_before`` > 床)の距離の中央値を床で割る。誤字(部首の違い・
+    1 字の置換)は床の 2 倍未満、意図した文字列と**無関係な字**が書かれていると 2 倍を
+    超える(実測は :data:`MISMATCH_RATIO` の注)。「本日休業」と指示されたのに元の板に
+    まったく別の語があった —— そういう場合、描き直しは成功しても**指示か画像のどちらかが
+    間違っている**可能性があるので、呼ぶ側が気づけるように別枝で報告する
+    (2026-09-18、ユーザー指摘「元の文字が本日休業と全く関係ないのが気にはなる」)。
+
+    値: ``none`` = 壊れたマスが無い / ``typo`` / ``unrelated`` / ``unknown`` = 距離が測れて
+    いない(マスが空など)。
+    """
+    ds = [c["distance_before"] for c in entry.get("cells", ()) if "distance_before" in c]
+    if not ds:
+        entry["mismatch"] = "unknown"
+        return
+    broken = [d for d in ds if d > thr]
+    if not broken:
+        entry["mismatch"] = "none"
+        return
+    ratio = float(np.median(broken)) / float(thr) if thr > 0 else float("inf")
+    entry["mismatch_ratio"] = round(ratio, 3)
+    entry["mismatch"] = "unrelated" if ratio >= MISMATCH_RATIO else "typo"
