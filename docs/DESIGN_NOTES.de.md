@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 720. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 725. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -24,8 +24,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `api.py`
 
-- **L591** — ★``annotate.overlay_mask`` wird **bewusst nicht auf oberster Ebene exponiert**. Das gleichnamige ``imgio.overlay_mask`` ist bereits als ``fs.overlay_mask`` öffentlich, und Argumente wie Bedeutung unterscheiden sich (imgio = rohes RGB, mask>0.5, fill/margin / annotate = Rollenname-Farbe, Gewichte [0,1] erlaubt, lehnt Form-Fehlanpassung ab). Legt man dem gleichen Namen ein anderes Versprechen auf, erhält der Aufrufer keine Ausnahme, sondern **ein plausibel anderes Bild**. Breaking Changes an der öffentlichen API machen wir nicht im Alleingang, daher die rollentragende Variante über ``fs.annotate.overlay_mask`` beziehen.
-- **L1353** — ★ **Für Farbbilder gibt es derzeit keinen korrekten Aufruf**: Übergibt man sie gemeinsam, vermischen sich die Farben, und ruft man pro Kanal dreimal auf, teilt ein selbstnormalisierender op jeden Kanal durch sein eigenes Maximum und zerstört die Verhältnisse zwischen den Kanälen (der Winkelfehler der Grey-Edge-Methode steigt von 1.03 Grad mit unserem eigenen Sobel -> 4.17 Grad pro Bild -> 27.86 Grad pro Kanal, 29.14 Grad am Nullpunkt). Wohin man sich neigt, ist eine **Vertragsentscheidung**, deshalb ändern wir hier keinen einzigen Standardwert, verweigern nur bei `on_error="raise"` und protokollieren es standardmäßig im Register, damit es sichtbar bleibt. Details und Optionen in docs/KNOWN_ISSUES.md.
+- **L546** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
+- **L608** — ★``annotate.overlay_mask`` wird **bewusst nicht auf oberster Ebene exponiert**. Das gleichnamige ``imgio.overlay_mask`` ist bereits als ``fs.overlay_mask`` öffentlich, und Argumente wie Bedeutung unterscheiden sich (imgio = rohes RGB, mask>0.5, fill/margin / annotate = Rollenname-Farbe, Gewichte [0,1] erlaubt, lehnt Form-Fehlanpassung ab). Legt man dem gleichen Namen ein anderes Versprechen auf, erhält der Aufrufer keine Ausnahme, sondern **ein plausibel anderes Bild**. Breaking Changes an der öffentlichen API machen wir nicht im Alleingang, daher die rollentragende Variante über ``fs.annotate.overlay_mask`` beziehen.
+- **L1370** — ★ **Für Farbbilder gibt es derzeit keinen korrekten Aufruf**: Übergibt man sie gemeinsam, vermischen sich die Farben, und ruft man pro Kanal dreimal auf, teilt ein selbstnormalisierender op jeden Kanal durch sein eigenes Maximum und zerstört die Verhältnisse zwischen den Kanälen (der Winkelfehler der Grey-Edge-Methode steigt von 1.03 Grad mit unserem eigenen Sobel -> 4.17 Grad pro Bild -> 27.86 Grad pro Kanal, 29.14 Grad am Nullpunkt). Wohin man sich neigt, ist eine **Vertragsentscheidung**, deshalb ändern wir hier keinen einzigen Standardwert, verweigern nur bei `on_error="raise"` und protokollieren es standardmäßig im Register, damit es sichtbar bleibt. Details und Optionen in docs/KNOWN_ISSUES.md.
 
 ## `astrostack.py`
 
@@ -406,12 +407,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_glyph_typo_detection.py`
 
-- **L63** _(ja)_ — ★枠は「大きな外接箱なのに中身が薄い」成分として出る(実測: 331x697 の箱に 面積 27509 = 充填率 0.12)。**外すだけ**にして、枠の内側に限定はしない —— 限定すると、枠が二重に見える看板で内側の枠を掴み、その外にある 1 行目を まるごと落とした(実測 kikenn_butsu: 2 行のうち 1 行が消えた)。
-- **L72** _(ja)_ — 行は**水平投影の帯**で取る。★成分をまとめる方法はやめた —— 漢字は部品に 分かれて出る(``電`` は 3 つ)ので、重なりや中心距離で束ねると行間の狭い 看板で 2 行が 1 行に融け、逆に離れた部品が 3 行目になった(実測で 6/12 枚が 「行の数が合わない」)。投影はその両方に強い。
-- **L93** _(ja)_ — ★欧文の副題を落とす。**帯の高さ**で切る(実測: 漢字 80 px に対し英字 28 px)。
-- **L97** _(ja)_ — ★行間が詰まった看板では 2 行が 1 つの帯に融ける(投影が 0 まで落ちない)。 **期待する行数**は呼び出し側が知っている(直す文字列を持っているのだから) ので、足りない分だけ**一番深い谷**で割る。字数と同じく、入力から来る情報を 使うだけで、画像を「読んで」はいない。
-- **L155** _(ja)_ — ★判定の前に**版面が正しいか**を確かめる。CJK の掲示はほぼ等幅・ほぼ正方な ので、「マスの幅 ÷ 行の高さ」が 1 から大きく外れていたら、行の切り方か 字数の対応が間違っている。ここを見ないと、切り方を間違えたまま全部の字を 「壊れている」と報告する(実測: 無事な字 45 本のうち 37 本を誤って咎めた)。 **字が壊れているのか、切り方が外れているのか**を取り違えないための門。
-- **L175** _(ja)_ — ★書体は分からないので、**手元の書体のうち一番近いもの**を採る。 看板の太いゴシックは手元のどれとも違うので、固定すると床が足りない。
+- **L40** _(ja)_ — 壊す位置(行, 列)。★真値はここで決まる。
+- **L123** _(ja)_ — 行は**水平投影の帯**で取る。★成分をまとめる方法は使えない —— 漢字は部品に 分かれて出る(``電`` は 3 つ)ので、重なりや中心距離で束ねると行間の狭い 看板で 2 行が 1 行に融け、逆に離れた部品が 3 行目になった(実測 6/12 枚)。
+- **L203** _(ja)_ — ★統計は**画像の全マスをまとめて**取る —— 閾値をその形で導いたから。 行ごとに取ると、4 字の行では四分位が粗すぎて 0.48〜0.59 に跳ね、 正しい版面を自分で断ってしまう(実測)。**導出と適用で統計を変えない**。
+- **L255** _(ja)_ — ★マスを**少し広げて**切り出し、その中で「このマスに属する成分」 だけをマスクにする。隣の字がマスの縁からはみ出していると、 マスちょうどで切ったときにその分が消し残り、置換後に **旧字の切れ端**が浮いて見える(実測)。
+- **L389** _(ja)_ — ★合成に対する主張を固定する(真値は自分で植えたので厳密に測れる)。 ここが割れたら、穴が塞がったか本当に壊れたかのどちらかで、 assert を消して通すのはどちらでもない。
 
 ## `examples/poc_interferometry_step.py`
 
@@ -879,8 +879,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `fullseye/__init__.py`
 
-- **L355** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L539** — ★Der Adapter, der sich an den deklarierten out-Typ haelt, **verwirft alles ab dem 2. Element** eines op, der ein Tupel zurueckgibt (``wht`` von ``drizzle_resample``, ``info`` von ``piv_cross_correlate``). Wird die verworfene Seite benoetigt, war sie ueber den Eingang des ledger nicht erreichbar. Am 2026-09-06 schrieb ein Superaufloesungs-PoC ``flow, info = fs.ledger.piv_cross_correlate(...)``, entpackte das (2,R,C) entlang der 1. Achse, nutzte die 2. Zeile von dy als dx und machte die Verschiebungsschaetzung von 0.12 -> 0.74 px (ohne Ausnahme). Mit ``.raw`` erreicht man die rohe Rueckgabe: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
+- **L359** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L543** — ★Der Adapter, der sich an den deklarierten out-Typ haelt, **verwirft alles ab dem 2. Element** eines op, der ein Tupel zurueckgibt (``wht`` von ``drizzle_resample``, ``info`` von ``piv_cross_correlate``). Wird die verworfene Seite benoetigt, war sie ueber den Eingang des ledger nicht erreichbar. Am 2026-09-06 schrieb ein Superaufloesungs-PoC ``flow, info = fs.ledger.piv_cross_correlate(...)``, entpackte das (2,R,C) entlang der 1. Achse, nutzte die 2. Zeile von dy als dx und machte die Verschiebungsschaetzung von 0.12 -> 0.74 px (ohne Ausnahme). Mit ``.raw`` erreicht man die rohe Rueckgabe: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
 
 ## `fullseye/mcp/catalog.py`
 
@@ -903,7 +903,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `glyphops.py`
 
-- **L224** _(ja)_ — ★縁取りは**最頻色の占有率では捕まらない** —— 縁が太ければ字のすぐ外は「縁の色一色」で 立派に単峰になる(実測で赤い縁取りを単峰と 判定した)。**近いリングと遠いリングの色が 違うか**で見る。違えば背景は 1 色では書けない。
+- **L208** _(ja)_ — ★リングの**内径**は字のにじみの外に置く。にじみ(アンチエイリアスやぼけ)の 中を背景として数えると、地色と文字色の中間が混ざって多峰に見える —— 実測で、ぼけ σ=1.2 の合成看板が背景の集中度 0.52〜0.60 になり、 平坦な単色の地なのに「置換できない」と断った。内径は呼び出し側が ``edge_transition_width`` から決められる。
+- **L224** _(ja)_ — ★「同じ量子化ビンに入った割合」で集中度を測ってはいけない —— 実写では 最頻色がビンの境目にまたがって割合が半分になり、平坦な看板の地色まで 多峰と判定した(実測で前景の占有率 0.31〜0.64、閾値 0.5 では全滅)。 **最頻色からの距離が許容幅に入る割合**で測る。同じ実写で 0.87〜1.00、 合成した赤い縁取りでは 0.63 と、はっきり分かれる。
+- **L242** _(ja)_ — ★縁取りは**最頻色の占有率では捕まらない** —— 縁が太ければ字のすぐ外は「縁の色一色」で 立派に単峰になる(実測で赤い縁取りを単峰と 判定した)。**近いリングと遠いリングの色が 違うか**で見る。違えば背景は 1 色では書けない。
+- **L356** _(ja)_ — ★消す範囲も**にじみの幅から**決める。2 値マスクは字の芯しか覆わないので、 固定の 1 画素だけ広げて塗ると、旧字の灰色の縁が**幽霊**として残る (実測: 置換した字の周りに旧字の輪郭がうっすら見えた)。
+- **L362** _(ja)_ — ★平均色で塗るだけでは**継ぎ目が見える**。地にはノイズと量子化のざらつきが あり、塗った面だけが滑らかだと矩形が浮く(実測: 置換した字の周りに はっきりした四角が出た)。地の**ばらつきも測って合わせる**。
+- **L375** _(ja)_ — ★**触る必要のある画素だけ**に限る。塗った面の外は入力のまま残す —— でないと、消去した矩形の縁が地のざらつきと食い違って**四角い継ぎ目**が 見える(実測: 置換した字の周りにはっきりした枠が出た)。 境目は少しぼかして、切り替わりを見えなくする。
 
 ## `honest_summary.py`
 

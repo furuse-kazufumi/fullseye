@@ -541,6 +541,23 @@ from fssystem import (  # noqa: E402,F401
     set_system, get_system, query_system, system, reset_system, system_snapshot,
 )
 from fsthreads import blas_threads  # noqa: E402,F401
+import glyphops  # noqa: E402  (glyph verification: is this cell the character I asked for?)
+from glyphops import (  # noqa: E402,F401
+    # ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている
+    #   repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
+    available_fonts as glyph_fonts,
+    render_glyph as glyph_render,
+    render_text as glyph_render_text,
+    normalise_glyph as glyph_normalise,
+    skeleton_chamfer as glyph_skeleton_chamfer,
+    glyph_distance,
+    typeface_noise_floor as glyph_typeface_noise_floor,
+    ink_colors as glyph_ink_colors,
+    stroke_thickness as glyph_stroke_thickness,
+    match_stroke_weight as glyph_match_stroke_weight,
+    edge_transition_width as glyph_edge_transition_width,
+    replace_glyph as glyph_replace,
+)
 import annotate  # noqa: E402  (text plates, arrows, legends, colour bars, axes)
 import opsannotate  # noqa: E402  (the annotate op ledger)
 from annotate import (  # noqa: E402,F401

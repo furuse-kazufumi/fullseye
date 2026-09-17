@@ -396,8 +396,8 @@ def main() -> int:
     assert float(np.median(a)) < float(np.median(b)), "置換しても指定の字に近づいていない"
     assert int((a <= floor).sum()) == len(a), "置換後に床を下回らない位置がある"
 
-    print("
-PASS: 合成の掲示で "
+    print()
+    print("PASS: 合成の掲示で "
           f"壊した {len(broken)} 字を全部検出(誤検出 0)、全部置換して "
           f"距離が {np.median(b):.4f} → {np.median(a):.4f}(床 {floor:.4f})まで下がった")
     if figs.errors():
