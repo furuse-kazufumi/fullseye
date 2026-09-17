@@ -632,8 +632,9 @@ def find_plate(rgb: np.ndarray, max_frac: float = 0.60,
     変わらない。呼ぶ側は受理されるまで候補を順に試すため)。この並べ替えは
     「最初に正しい板を見る」ための速さの話で、正しさの話ではない。
 
-    **四隅**は平滑領域の外接箱ではなく**縁の直線 4 本の交点**で取る。実測で
-    誤検出が 20/33 → 11/28 に減り、看板 12 枚での正解率が 75.0 → 82.4 % に上がった。
+    **四隅**は平滑領域の外接箱ではなく**縁の直線 4 本の交点**で取る。内部評価(repo 外の
+    生成画像 12 枚、第三者は再現できない)で誤検出が 20/33 → 11/28 に減り、正解率が
+    75.0 → 82.4 % に上がった。数字は目安であって保証ではない。
 
     ★**縁の強さで断ってはいけない**(実測で無効): 四辺の勾配で閾値を掃いても
     結果は平坦で、**いちばん縁が強い板がいちばん誤検出を出した**(信頼度 19.05 の
@@ -731,13 +732,15 @@ def rewrite_line(rgb: np.ndarray, text: str, font_path=None, size: int = 256) ->
     """1 行ぶんの画像を、**意図した文字列で丸ごと描き直す**。返り ``(画像, 報告)``。
 
     「壊れた字だけ直す」(:func:`replace_glyph`)だと、検出の見逃し・誤検出が結果に
-    残る。正しい字も含めて書体の変更を許すなら、行を丸ごと描き直せば**見逃しは
-    構造的に起きない**(2026-09-18、ユーザー提案)。字数が違う生成結果(1 字の
+    残る。正しい字も含めて書体の変更を許すなら、行を丸ごと描き直せば**その行の中では
+    見逃しが構造的に起きない**(2026-09-18、ユーザー提案)。行の位置(bbox)を外した
+    ときは別で、それは呼ぶ側が与える。字数が違う生成結果(1 字の
     挿入・欠落)も、位置合わせをしないので自然に直る。
 
     手順: (1) 行のインクを背景色で消す(縁のアンチエイリアス分だけ膨らませる)
-    (2) 各字を**元のマスのインク幅・行のインク高さ**に等方で収めて 1 枚のアルファに
-    並べる —— 箱いっぱいに収めると描画の余白ぶん小さく見える(実測)
+    (2) 各字を**行で 1 つの大きさ**(一辺 = min(行のインク高さ, マス幅の中央値))に
+    等方で収めて 1 枚のアルファに並べる —— マスごとに元の字へ合わせると壊れた字の
+    広い/狭いを引き継いでばらつく(実測)。箱いっぱいだと描画の余白ぶん小さく見える
     (3) 太さは**行全体に 1 回だけ**合わせる —— 字ごとだと密な字が太りすぎる(実測「賞」)
     (4) 前景色で合成。色は :func:`ink_colors` で行全体から 1 回測る。
 
@@ -783,17 +786,19 @@ def rewrite_line(rgb: np.ndarray, text: str, font_path=None, size: int = 256) ->
     gh = int(ys_ink.max() - ys_ink.min() + 1) if ys_ink.size else H
     top = int(ys_ink.min()) if ys_ink.size else 0
     line_alpha = np.zeros((H, W))
+    # ★大きさは**行で 1 つ**に揃える。マスごとに元の字のインク幅へ合わせると、壊れた字の
+    #   広い/狭いをそのまま引き継いで字の大きさがばらつく(2026-09-18、縦書きの試作で
+    #   ユーザー指摘)。CJK は正方なので、一辺 = min(行のインク高さ, マス幅の中央値)。
+    side = int(max(1, min(gh, np.median([c1 - c0 for c0, c1 in spans]))))
     for ch, (cx0, cx1) in zip(chars, spans):
         a = render_glyph(ch, font, size)
         nz = np.where(a > 0.05)
         if nz[0].size:
             a = a[nz[0].min():nz[0].max() + 1, nz[1].min():nz[1].max() + 1]
-        xs_ink = np.where(ink[:, cx0:cx1].any(axis=0))[0]
-        gw = int(xs_ink.max() - xs_ink.min() + 1) if xs_ink.size else (cx1 - cx0)
-        gw = max(1, min(gw, cx1 - cx0))
-        fitted = _fit_alpha(a, gh, gw)
-        ox = cx0 + ((cx1 - cx0) - gw) // 2
-        tgt = line_alpha[top:top + gh, ox:ox + gw]
+        fitted = _fit_alpha(a, side, side)
+        oy = max(0, min(top + (gh - side) // 2, H - side))
+        ox = max(0, min(cx0 + ((cx1 - cx0) - side) // 2, W - side))
+        tgt = line_alpha[oy:oy + side, ox:ox + side]
         tgt[...] = np.maximum(tgt, fitted[:tgt.shape[0], :tgt.shape[1]])
     # (3) 太さを行で 1 回。
     line_alpha = match_stroke_weight(line_alpha, stroke_thickness(ink))
@@ -828,7 +833,8 @@ def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
         生成 AI がレポート・資料用に出した画像の誤字を、再生成せずに直す用途向け。
         各マスの ``distance_before`` は情報として残す(何が壊れていたかの報告)。
 
-    返り値は ``(直した画像, 報告)``。報告の ``status`` は 4 値:
+    返り値は ``(直した画像, 報告)``。報告の ``status`` は **5 値**(``repair_flagged``
+    では最初の 4 つ、``rewrite_line`` では ``rewritten`` か ``skipped``):
 
     ``ok``
         床より近い。直す必要が無い。
@@ -838,6 +844,8 @@ def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
         置き換えたが床より近くならなかった。**その字は元に戻す。**
     ``skipped``
         置き換えられない(色が多峰 = 縁取り・影・グラデ、マスが空、等)。
+    ``rewritten``
+        (``rewrite_line`` のみ)bbox の行を意図した文字列で丸ごと描き直した。
 
     ★**「直せなかった」を返せることが設計の中心**。黙って壊れた絵を返さない。
     ``failed_verification`` で元に戻すのは、数値で確かめられない置換を残すと
