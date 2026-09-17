@@ -136,7 +136,10 @@ jobs:
           # 2026-09-05 実測: `fc-list :lang=ja` が空で DejaVuSans しか無く、annotate の
           # 日本語ラベルが全部同じ豆腐(.notdef)になっていた —— それでもテストは緑だった。
           # これを入れるだけで test_annotate.py の Linux 失敗 10 件が 0 件になる(実測)。
-          sudo apt-get install -y -q fonts-noto-cjk
+          # ★CJK を **2 本**入れる。1 本だと「同じ字を別の書体で描いたときの
+          #   距離」= 判定の床が測れず、glyph 系の PoC が丸ごと skip して
+          #   落ちた(2026-09-17、run 35170653847)。ipafont は軽い。
+          sudo apt-get install -y -q fonts-noto-cjk fonts-ipafont-gothic
       # ★hypothesis / pytest-timeout は**テストを走らせるのに必須**。入れ忘れると
       # `tests/test_op_contract_property.py` の import が collection error になり、
       # pytest は残りを 1 件も走らせずに中断する —— 2026-09-05 に実際に踏んだ
@@ -230,7 +233,10 @@ jobs:
           # 2026-09-05 実測: `fc-list :lang=ja` が空で DejaVuSans しか無く、annotate の
           # 日本語ラベルが全部同じ豆腐(.notdef)になっていた —— それでもテストは緑だった。
           # これを入れるだけで test_annotate.py の Linux 失敗 10 件が 0 件になる(実測)。
-          sudo apt-get install -y -q fonts-noto-cjk
+          # ★CJK を **2 本**入れる。1 本だと「同じ字を別の書体で描いたときの
+          #   距離」= 判定の床が測れず、glyph 系の PoC が丸ごと skip して
+          #   落ちた(2026-09-17、run 35170653847)。ipafont は軽い。
+          sudo apt-get install -y -q fonts-noto-cjk fonts-ipafont-gothic
       - name: Install with optional backends (no torch)
         run: >
           pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd]"

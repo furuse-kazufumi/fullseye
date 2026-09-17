@@ -323,18 +323,29 @@ def _real_images(floor, fonts):
 
 def main() -> int:
     fonts = glyphops.available_fonts()
-    if len(fonts) < 2:
-        print(f"[skip] CJK フォントが {len(fonts)} 本しかない —— 床は書体の散らばりな"
-              "ので 2 本要る(Debian/Ubuntu: apt-get install fonts-noto-cjk)")
+    if not fonts:
+        print("[skip] CJK を描けるフォントがこの環境に無い"
+              "(Debian/Ubuntu: apt-get install fonts-noto-cjk)")
         return 0
 
-    nf = glyphops.typeface_noise_floor("電気設備点検中立入禁止検横土士未末日曰大犬",
-                                       fonts, size=160, out=160)
+    chars = "電気設備点検中立入禁止検横土士未末日曰大犬"
+    # ★床は「同じ字なのに絵が違う」量。書体が 2 本以上あるならその散らばりで測るのが
+    #   実態に近いが、**素の Linux には CJK が 1 本しか入らない**ことがある
+    #   (実測: CI は fonts-noto-cjk だけで、この PoC が丸ごと skip して落ちた)。
+    #   1 本しか無いときは、ぼけ・線幅・わずかな回転・再標本化という**既知の妨害**で
+    #   同じ字を揺らして床を作る。測っているものが違うので、名前も表示も分ける。
+    if len(fonts) >= 2:
+        nf = glyphops.typeface_noise_floor(chars, fonts, size=160, out=160)
+        why = "同じ字を**別の書体**で描いたときの距離"
+    else:
+        nf = glyphops.rendering_noise_floor(chars, fonts[0], size=160, out=160)
+        why = "同じ字に**既知の妨害**(ぼけ・線幅・回転・再標本化)を掛けたときの距離"
     floor = nf["floor"]
     print("= 閾値の由来 =")
-    print(f"書体雑音の床 {floor:.4f}(中央 {nf['median']:.4f} / 最大 {nf['max']:.4f}、"
-          f"書体 {nf['n_fonts']} 本・{nf['n_pairs']} 対)")
-    print("  勘で置いた値ではなく、**同じ字を別の書体で描いたときの距離**の 95 % 点。\n")
+    print(f"雑音の床 {floor:.4f}(中央 {nf['median']:.4f} / 最大 {nf['max']:.4f}、"
+          f"書体 {nf['n_fonts']} 本・{nf['n_pairs']} 対、由来 "
+          f"{nf.get('source', 'typeface')})")
+    print(f"  勘で置いた値ではなく、{why}の 95 % 点。\n")
 
     rgb, lines, broken = make_sign(fonts[0])
     print(f"= 合成した掲示({' / '.join(lines)}、{sum(len(s) for s in lines)} 字)=")
