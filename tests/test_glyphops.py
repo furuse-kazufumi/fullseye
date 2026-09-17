@@ -494,6 +494,21 @@ def test_a_single_wrong_character_is_a_typo_and_an_unrelated_string_is_not(fonts
     _, rep3 = glyphops.correct_spec(rgb3, spec3)
     assert rep3["items"][0]["mismatch"] == "none"
 
+    # 縁取りで断った行は距離が膨らんでいる(縁がインクに入る)ので unknown。
+    # ここを守らないと、無事な 4 字が「別物」に化ける(実測 2.5 倍)。
+    from PIL import Image, ImageDraw, ImageFont
+    f = ImageFont.truetype(fonts[0], 96)
+    im = Image.new("RGB", (24 * 2 + 96 * 4, 24 * 2 + 96), (235, 235, 230))
+    d = ImageDraw.Draw(im)
+    for i, c in enumerate("電気設備"):
+        d.text((24 + i * 96, 24), c, font=f, fill=(20, 20, 20), stroke_width=5, stroke_fill=(200, 30, 30))
+    rgb4 = np.asarray(im, np.float64) / 255.0
+    ys, xs = np.nonzero(rgb4.mean(axis=-1) < 0.6)
+    bbox = [int(xs.min()), int(ys.min()), int(xs.max() + 1 - xs.min()), int(ys.max() + 1 - ys.min())]
+    _, rep4 = glyphops.correct_spec(rgb4, {"items": [{"text": "電気設備", "bbox": bbox}]})
+    it4 = rep4["items"][0]
+    assert it4["status"] == "skipped" and it4["mismatch"] == "unknown", it4
+
 
 def test_every_refusal_carries_a_code_from_the_vocabulary(fonts):
     """``reason`` は人向けの文、``reason_code`` は機械向けの鍵。鍵は :data:`REASON_CODES`

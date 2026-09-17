@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 16 capabilities**
+**Currently 17 capabilities**
 
 ## Measure (4)
 
@@ -53,7 +53,7 @@ Operators: `mesh_volume`, `vol_rle_volume`, `interp_scattered`, `dem_slope`
 
 Runnable: `poc_stockpile_volume`, `poc_lidar_terrain_change`
 
-## Detect (2)
+## Detect (3)
 
 ### [Segment regions, select them, and count](capabilities/blob-and-region.md)
 
@@ -62,6 +62,14 @@ Label connected components, select them by area, shape or position, and count th
 Operators: `blob_label`, `blob_select`, `blob_count`, `watersheds`
 
 Runnable: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`
+
+### [Fix the text inside an image against the string it should read](capabilities/fix-text-in-images.md)
+
+Fix the text inside an image against the string it should read, without regenerating the image: pass `{"items": [{"text": "...", "bbox": [x, y, w, h]}]}` to `glyph_correct_spec` (Python) or `fullseye_fix_text` (MCP). Nothing is recognised — the intended string is given, so each cell is verified one-to-one against one character, and the threshold comes from the typeface noise floor measured on the fonts of the environment. `repair_flagged` replaces only the glyphs above the floor and rolls back any replacement that does not verify; `rewrite_line` redraws the whole line in one typeface. The report carries a per-line `status`, a machine-readable `reason_code` for refusals, and `mismatch` (`typo` / `unrelated`) so that a caller notices when the original text has nothing to do with the intended one.
+
+Operators: `glyph_correct_spec`, `glyph_rewrite_line`, `glyph_find_plate`, `glyph_typeface_noise_floor`, `glyph_rendering_noise_floor`, `glyph_distance`, `glyph_replace`, `glyph_split_cells`, `glyph_fonts`
+
+Runnable: `fix_text_in_image`, `poc_glyph_typo_detection`
 
 ### [Find small point-like targets and locate them below the pixel](capabilities/point-target-detection.md)
 

@@ -59,6 +59,37 @@ retrieval 無しでは使えない)。
 | `fullseye_inspect` | ハンドルの数値統計 + 判定(+ 小図) |
 | `fullseye_fix_text` | 画像の中の文字を「本当はこう書いてあるべき文字列」に合わせて直す。行ごとに `{text, bbox}`、`mode=repair_flagged`(床を超えた字だけ置換、正しい字に触らない)/ `rewrite_line`(行を丸ごと同じ書体で描き直す)。直した画像はハンドル + 全解像度 PNG、報告に `status` / `reason_code` / `mismatch`(typo か unrelated = 元の字が指示と無関係な疑い)。検証を通らない置換は元に戻す |
 
+## 文字を直す(`fullseye_fix_text`)の呼び出し例
+
+画像は `fullseye_load_image` を `color=true` で読んでハンドルにし、行ごとに「本当はこう
+書いてあるべき文字列」と行に密着した bbox を渡す。Python の `fullseye.glyph_correct_spec`
+と**同じ items**(能力ノート [`fix-text-in-images`](capabilities/fix-text-in-images.md)、
+例 [`examples/fix_text_in_image.py`](../examples/fix_text_in_image.py))。
+
+```json
+{"method": "tools/call", "params": {"name": "fullseye_fix_text", "arguments": {
+  "handle": "fullseye://img/2c1e7a90b3d4f5e6",
+  "items": [{"text": "電気設備", "bbox": [24, 40, 384, 96]}],
+  "mode": "repair_flagged"}}}
+```
+
+返り値(本文の抜粋。`structuredContent.report` に行ごと・マスごとの全記録、`fixed_png` に
+**全解像度の PNG のパス**、`resource_link` にも同じファイル):
+
+```
+fix_text(mode=repair_flagged, 床=0.0505 from typeface, 書体 3 本) → fullseye://img/9f0c…
+- replaced            電気設備         ・・◆・  mismatch=typo(1.90 倍)
+記号: ・無事 ◆直した ×検証不通過(元に戻した) ?直せない。unrelated は「元の字が指示と無関係」の疑い
+```
+
+* `mode="rewrite_line"` は行を丸ごと同じ書体で描き直す(見逃し・字数違いも直るが書体は変わる)。
+* 直せない行は `skipped` + `reason_code`(`missing_text_or_bbox / bbox_too_small / empty_text /
+  no_font / no_ink / empty_cell / multimodal_colour / cannot_replace`)。縁取り・影の文字は
+  `multimodal_colour` で断り、画像は触らない。
+* `mismatch=unrelated`(壊れたマスの距離の中央値が床の 2 倍以上)のときは、描き直しが成功して
+  いても**指示か画像のどちらかが違う**疑いなので、前後対比の小図を自動で付ける(`vision=auto`)。
+* 灰色のハンドル、bbox の長さ違い、数でない要素、未知の `mode` は `-32602` で入口で拒む。
+
 ## 画像は「在らず、必要なときだけ在る」
 
 画像は `fullseye://img/<sha16>` の**ハンドル**でやり取りし、LLM はバイト列を見ない

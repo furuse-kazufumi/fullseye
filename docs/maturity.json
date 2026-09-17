@@ -174,6 +174,43 @@
    ]
   },
   {
+   "id": "fix-text-in-images",
+   "title": "画像の中の文字を、正しい文字列に合わせて直す",
+   "title_en": "Fix the text inside an image against the string it should read",
+   "category": "見つける",
+   "note": "docs/capabilities/fix-text-in-images.md",
+   "status": "verified-synthetic",
+   "ops_total": 9,
+   "ops_named_in_tests": 1,
+   "ops_not_named_in_tests": [
+    "glyph_correct_spec",
+    "glyph_find_plate",
+    "glyph_fonts",
+    "glyph_rendering_noise_floor",
+    "glyph_replace",
+    "glyph_rewrite_line",
+    "glyph_split_cells",
+    "glyph_typeface_noise_floor"
+   ],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "fix_text_in_image",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_glyph_typo_detection",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "geodetic-frames",
    "title": "地球規模の座標に載せる(ECEF と測地座標)",
    "title_en": "Put measurements on the Earth (ECEF and geodetic)",
@@ -473,9 +510,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 205,
+  "examples2d_total": 206,
   "run_by_the_poc_gate": 122,
-  "run_by_the_example_gate": 83,
+  "run_by_the_example_gate": 84,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

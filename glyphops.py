@@ -1079,8 +1079,14 @@ def _judge_mismatch(entry: dict, thr: float) -> None:
     値: ``none`` = 壊れたマスが無い / ``typo`` / ``unrelated`` / ``unknown`` = 距離が測れて
     いない(マスが空など)。
     """
-    ds = [c["distance_before"] for c in entry.get("cells", ()) if "distance_before" in c]
-    if not ds:
+    cells = entry.get("cells", ())
+    # ★色が多峰(縁取り・影)で断ったマスがあると、インクのマスクに縁まで入って距離が
+    #   膨らむ(実測: 5 px の縁取りで無事な 4 字が全部「床の 2.5 倍」に出て unrelated に
+    #   化けた)。測れていない距離で誤字/別物を言わない。
+    tainted = entry.get("reason_code") == "multimodal_colour" or any(
+        c.get("reason_code") == "multimodal_colour" for c in cells)
+    ds = [c["distance_before"] for c in cells if "distance_before" in c]
+    if not ds or tainted:
         entry["mismatch"] = "unknown"
         return
     broken = [d for d in ds if d > thr]

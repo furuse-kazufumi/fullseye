@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 16 項目**
+**収録 17 項目**
 
 ## 測る (4)
 
@@ -52,7 +52,7 @@
 
 動く例: `poc_stockpile_volume`, `poc_lidar_terrain_change`
 
-## 見つける (2)
+## 見つける (3)
 
 ### [領域を切り出して、選んで、数える](capabilities/blob-and-region.md)
 
@@ -61,6 +61,14 @@
 使う op: `blob_label`, `blob_select`, `blob_count`, `watersheds`
 
 動く例: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`
+
+### [画像の中の文字を、正しい文字列に合わせて直す](capabilities/fix-text-in-images.md)
+
+生成 AI が出したレポート用の画像や看板の文字が 1 字だけ壊れている —— そういうとき、画像を作り直さずに、**本当はこう書いてあるべき文字列**を渡して直せます。入口は JSON 一枚(`spec = {"items": [{"text": "電気設備", "bbox": [x, y, w, h]}]}`)で、Python の `glyph_correct_spec` からも MCP の `fullseye_fix_text` からも同じ形で呼べます。文字を**認識はしません**: 正しい文字列が与えられるので、各マスを指定の 1 字と 1 対 1 で照合するだけで済み、6,000 字の分類器は要りません。閾値は勘で置かず、その環境の書体で同じ字を描き分けた距離の 95 % 点(書体雑音の床)から導きます。
+
+使う op: `glyph_correct_spec`, `glyph_rewrite_line`, `glyph_find_plate`, `glyph_typeface_noise_floor`, `glyph_rendering_noise_floor`, `glyph_distance`, `glyph_replace`, `glyph_split_cells`, `glyph_fonts`
+
+動く例: `fix_text_in_image`, `poc_glyph_typo_detection`
 
 ### [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md)
 

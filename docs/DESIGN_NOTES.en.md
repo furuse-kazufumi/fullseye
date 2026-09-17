@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 751. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 752. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -925,6 +925,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L820** _(ja)_ — ★大きさは**行で 1 つ**に揃える。マスごとに元の字のインク幅へ合わせると、壊れた字の 広い/狭いをそのまま引き継いで字の大きさがばらつく(2026-09-18、縦書きの試作で ユーザー指摘)。CJK は正方なので、一辺 = min(行のインク高さ, マス幅の中央値)。
 - **L1014** _(ja)_ — ★マスを**少し広げて**切り出し、その中で「このマスに属する成分」だけを マスクにする。マスちょうどで切ると、外周リングが**隣の字のインク**を 拾って「色が多峰」と誤判定し、直せるものまで断ってしまう (実測 2026-09-17: 壊れた 4 字のうち 3 字がこれで断られた)。 また隣の字のはみ出しが消し残り、置換後に旧字の切れ端が浮く。
 - **L1019** _(ja)_ — ★**上下左右に余白を付けて**切り出し、その中で「このマスに属する成分」だけを マスクにする。bbox ちょうどで切ると、背景色を測る外周リングが 隣の字のインクと字の縁を拾い、「色が多峰」と誤判定して **直せるものまで断る**(実測 2026-09-17: 壊れた 4 字のうち 3 字が これで断られ、背景色の占有率が 0.49〜0.57 に落ちていた)。 余白は画像そのものから取る —— 行の bbox は字に密着しているので、 bbox の中だけでは純粋な背景が手に入らない。
+- **L1083** _(ja)_ — ★色が多峰(縁取り・影)で断ったマスがあると、インクのマスクに縁まで入って距離が 膨らむ(実測: 5 px の縁取りで無事な 4 字が全部「床の 2.5 倍」に出て unrelated に 化けた)。測れていない距離で誤字/別物を言わない。
 
 ## `honest_summary.py`
 
