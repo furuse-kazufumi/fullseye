@@ -227,6 +227,7 @@ with warnings.catch_warnings():
         glyph_skeleton_chamfer, glyph_distance, glyph_typeface_noise_floor,
         glyph_ink_colors, glyph_stroke_thickness, glyph_match_stroke_weight,
         glyph_edge_transition_width, glyph_replace,
+        glyph_rendering_noise_floor, glyph_split_cells, glyph_correct_spec,
         annotate, opsannotate, measure_text, text_box, arrow, leader_line,
         label_points, crosshair, legend_box, color_bar, scale_bar,
         axes_transform, data_to_pixel, nice_ticks, axes_frame, grid_lines,
@@ -897,4 +898,12 @@ __all__ = [
     "lensimage", "psf_from_opd", "psf_field_grid", "distortion_map",
     "render_through_lens", "defect_dataset", "calibration_views",
     "vision", "vision_ops", "Image", "Pipeline", "pipeline",
+    # ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので
+    #   ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+    "glyphops", "glyph_fonts", "glyph_render", "glyph_render_text",
+    "glyph_normalise", "glyph_skeleton_chamfer", "glyph_distance",
+    "glyph_typeface_noise_floor", "glyph_rendering_noise_floor",
+    "glyph_ink_colors", "glyph_stroke_thickness", "glyph_match_stroke_weight",
+    "glyph_edge_transition_width", "glyph_replace", "glyph_split_cells",
+    "glyph_correct_spec",
 ]

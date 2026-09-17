@@ -231,3 +231,111 @@ def test_one_font_can_still_give_a_floor_but_a_narrower_one(fonts):
     d = glyphops.glyph_distance(glyphops.render_glyph("検", fonts[0], 160),
                                 glyphops.render_glyph("横", fonts[0], 160), 160)
     assert d > nf1["floor"]
+
+
+# --------------------------------------------------------------------------- #
+# JSON 一枚で受ける入口(correct_spec)                                          #
+# --------------------------------------------------------------------------- #
+def _sign(fonts, text="電気設備", broken_at=2, wrong="誤"):
+    """1 行の掲示を作り、``broken_at`` の字を別の字に差し替える。"""
+    from PIL import Image, ImageDraw, ImageFont
+    size, pad = 96, 24
+    chars = list(text)
+    shown = list(chars)
+    shown[broken_at] = wrong
+    f = ImageFont.truetype(fonts[0], size)
+    W = pad * 2 + size * len(chars)
+    H = pad * 2 + size
+    im = Image.new("RGB", (W, H), (235, 235, 230))
+    d = ImageDraw.Draw(im)
+    for i, c in enumerate(shown):
+        d.text((pad + i * size, pad), c, font=f, fill=(20, 20, 20))
+    rgb = np.asarray(im, np.float64) / 255.0
+    # ★bbox は**描いた後のインクから**取る。PIL の text() は書体の ascent 分だけ
+    #   下げて描くので、指定した座標をそのまま bbox にすると字が縦にはみ出し、
+    #   無事な字まで「遠い」と出る(実測 0.058〜0.110、床 0.058)。
+    g = rgb.mean(axis=-1)
+    ys, xs = np.nonzero(g < 0.5)
+    y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+    spec = {"items": [{"text": text, "bbox": [int(x0), int(y0),
+                                              int(x1 - x0), int(y1 - y0)]}]}
+    return rgb, spec
+
+
+def test_the_json_entry_point_finds_and_replaces_only_the_wrong_character(fonts):
+    """★入口の本体 —— 壊れた 1 字だけが replaced、残りは ok。
+
+    これが割れたら、入口が「全部直したつもりで無事な字も塗り替えている」か
+    「壊れた字を見落としている」のどちらかで、どちらも黙って壊す。
+    """
+    rgb, spec = _sign(fonts)
+    out, rep = glyphops.correct_spec(rgb, spec)
+    cells = rep["items"][0]["cells"]
+    assert [c["status"] for c in cells] == ["ok", "ok", "replaced", "ok"], \
+        [(c["char"], c["status"], c.get("distance_before")) for c in cells]
+    fixed = cells[2]
+    assert fixed["distance_after"] < fixed["distance_before"], fixed
+    assert fixed["distance_after"] <= rep["threshold"], fixed
+    assert not np.array_equal(out, rgb), "置換したのに画像が変わっていない"
+
+
+def test_a_replacement_that_does_not_verify_is_rolled_back(fonts):
+    """★検証を通らない修正は**残さない**。
+
+    閾値を 0 にすると、どの置換も「まだ遠い」と判定される。そのとき画像は
+    **1 画素も変わってはいけない** —— 通らなかった修正を残すと、
+    使う側は「直った」と誤解する。
+    """
+    rgb, spec = _sign(fonts)
+    spec = dict(spec, policy={"threshold": 0.0})
+    out, rep = glyphops.correct_spec(rgb, spec)
+    kinds = {c["status"] for c in rep["items"][0]["cells"]}
+    assert "failed_verification" in kinds, kinds
+    assert np.array_equal(out, rgb), "検証を通らなかった置換が画像に残っている"
+
+
+def test_codepoints_that_disagree_with_the_text_are_refused_at_the_door(fonts):
+    """★指示書の食い違いは入口で止める。片方だけ直された指示が回ってくると、
+    静かに違う字へ置き換わる —— 例外にして気づかせる。"""
+    rgb, spec = _sign(fonts)
+    spec["items"][0]["codepoints"] = ["U+96FB", "U+6C34", "U+8A2D", "U+5099"]  # 気 -> 水
+    with pytest.raises(ValueError, match="codepoints"):
+        glyphops.correct_spec(rgb, spec)
+
+
+def test_the_report_says_where_the_threshold_came_from(fonts):
+    """床の由来(書体の散らばり / 既知の妨害 / 指定)を報告に書く。
+    測っているものが違うので、同じ数字として扱ってはいけない。"""
+    rgb, spec = _sign(fonts)
+    _, rep = glyphops.correct_spec(rgb, spec)
+    assert rep["floor_source"] in ("typeface", "rendering"), rep
+    _, rep2 = glyphops.correct_spec(rgb, dict(spec, policy={"threshold": 0.05}))
+    assert rep2["floor_source"] == "policy" and rep2["threshold"] == 0.05
+
+
+def test_ink_polarity_is_decided_by_the_border_not_by_majority(fonts):
+    """★インクが多数派でも白黒を反転させない。
+
+    行に密着した帯では字が 57 % を占めることがある(実測)。「インクは少数派」と
+    決め打つと帯ごと反転し、距離が 0.025 -> 0.121 に跳ねた。**外周は背景**で決める。
+    """
+    g = np.zeros((40, 100))          # 黒が 60 %、外周は黒(= 背景が黒)
+    g[:, :60] = 0.0
+    g[:, 60:] = 1.0
+    m = glyphops._ink_mask(g)
+    assert m[:, 60:].mean() > 0.9 and m[:, :60].mean() < 0.1, \
+        "外周(黒)を背景と読めていない"
+    assert m.mean() < 0.5
+
+
+def test_cells_snap_to_the_valleys_between_characters(fonts):
+    """等分だけだと切れ目が字に食い込む。谷に吸着していることを固定する。"""
+    ink = np.zeros((20, 100), bool)
+    for x0 in (2, 40, 72):           # 不等間隔に 3 つ置く
+        ink[5:15, x0:x0 + 20] = True
+    spans = glyphops.split_cells(ink, 3)
+    assert len(spans) == 3
+    prof = ink.sum(axis=0)
+    for a, b in spans[:-1]:
+        assert prof[b - 1] == 0 or prof[min(b, 99)] == 0, \
+            f"切れ目 {b} がインクの上にある(prof={prof[max(0, b - 2):b + 2]})"

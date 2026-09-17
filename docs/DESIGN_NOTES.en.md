@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 731. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 737. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -25,8 +25,9 @@ This repository records *why* things are the way they are in **comments in the s
 ## `api.py`
 
 - **L546** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
-- **L608** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
-- **L1370** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
+- **L562** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
+- **L613** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
+- **L1375** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
 
 ## `astrostack.py`
 
@@ -883,8 +884,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `fullseye/__init__.py`
 
-- **L359** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L543** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
+- **L360** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L544** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
+- **L901** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -913,6 +915,9 @@ This repository records *why* things are the way they are in **comments in the s
 - **L407** _(ja)_ — ★消す範囲も**にじみの幅から**決める。2 値マスクは字の芯しか覆わないので、 固定の 1 画素だけ広げて塗ると、旧字の灰色の縁が**幽霊**として残る (実測: 置換した字の周りに旧字の輪郭がうっすら見えた)。
 - **L413** _(ja)_ — ★平均色で塗るだけでは**継ぎ目が見える**。地にはノイズと量子化のざらつきが あり、塗った面だけが滑らかだと矩形が浮く(実測: 置換した字の周りに はっきりした四角が出た)。地の**ばらつきも測って合わせる**。
 - **L426** _(ja)_ — ★**触る必要のある画素だけ**に限る。塗った面の外は入力のまま残す —— でないと、消去した矩形の縁が地のざらつきと食い違って**四角い継ぎ目**が 見える(実測: 置換した字の周りにはっきりした枠が出た)。 境目は少しぼかして、切り替わりを見えなくする。
+- **L452** _(ja)_ — ★極性は**多数決で決めてはいけない**。行に密着した帯では字が 57 % を占める ことがあり(実測 2026-09-17、合成の掲示の 1 行目)、「インクは少数派」と すると白黒が丸ごと反転して距離が 0.025 -> 0.121 に跳ねた。 **外周は背景**という事実で決める —— 字は縁まで届かない。
+- **L601** _(ja)_ — ★マスを**少し広げて**切り出し、その中で「このマスに属する成分」だけを マスクにする。マスちょうどで切ると、外周リングが**隣の字のインク**を 拾って「色が多峰」と誤判定し、直せるものまで断ってしまう (実測 2026-09-17: 壊れた 4 字のうち 3 字がこれで断られた)。 また隣の字のはみ出しが消し残り、置換後に旧字の切れ端が浮く。
+- **L606** _(ja)_ — ★**上下左右に余白を付けて**切り出し、その中で「このマスに属する成分」だけを マスクにする。bbox ちょうどで切ると、背景色を測る外周リングが 隣の字のインクと字の縁を拾い、「色が多峰」と誤判定して **直せるものまで断る**(実測 2026-09-17: 壊れた 4 字のうち 3 字が これで断られ、背景色の占有率が 0.49〜0.57 に落ちていた)。 余白は画像そのものから取る —— 行の bbox は字に密着しているので、 bbox の中だけでは純粋な背景が手に入らない。
 
 ## `honest_summary.py`
 
@@ -1216,6 +1221,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L91** — ★It was counterintuitive: thinking "copper is redder than gold", I wrote cu[2] < au[2] and it failed. Even by published values, against Au's R(450 nm) ≈ 0.40, Cu ≈ 0.56, so **copper has more blue** (= gold is the more saturated yellow). It was this preconception, not the table, that was wrong.
 - **L175** — ★The reason wavelength was made the first argument (the ledger's "data comes first" convention). Passing an array to the apex angle used to raise a bare TypeError.
+
+## `tests/test_glyphops.py`
+
+- **L254** _(ja)_ — ★bbox は**描いた後のインクから**取る。PIL の text() は書体の ascent 分だけ 下げて描くので、指定した座標をそのまま bbox にすると字が縦にはみ出し、 無事な字まで「遠い」と出る(実測 0.058〜0.110、床 0.058)。
 
 ## `tests/test_honest_summary_arithmetic.py`
 

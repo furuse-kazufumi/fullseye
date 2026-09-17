@@ -557,6 +557,11 @@ from glyphops import (  # noqa: E402,F401
     match_stroke_weight as glyph_match_stroke_weight,
     edge_transition_width as glyph_edge_transition_width,
     replace_glyph as glyph_replace,
+    rendering_noise_floor as glyph_rendering_noise_floor,
+    split_cells as glyph_split_cells,
+    # ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は
+    #   (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
+    correct_spec as glyph_correct_spec,
 )
 import annotate  # noqa: E402  (text plates, arrows, legends, colour bars, axes)
 import opsannotate  # noqa: E402  (the annotate op ledger)

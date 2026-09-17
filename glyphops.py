@@ -433,3 +433,219 @@ def replace_glyph(rgb: np.ndarray, mask: np.ndarray, ch: str, font_path=None,
     s3 = soft[..., None] if rgb.ndim == 3 else soft
     out = rgb * (1.0 - s3) + out * s3
     return np.clip(out, 0.0, 1.0), None
+
+
+def _ink_mask(gray: np.ndarray) -> np.ndarray:
+    """濃淡から**字のインク**を取る。閾値は大津法で画像に決めさせる。
+
+    ★中央値から標準偏差を引く式にしてはいけない。白地に黒文字だと中央値が
+    ほぼ 1.0、標準偏差が 0.35 なので閾値が 0.825 まで上がり、**アンチエイリアスの
+    縁と背景の雑音まで拾う** —— その状態で背景色を測ると多峰と判定され、
+    直せる字まで断られる(実測 2026-09-17: 壊れた 4 字のうち 3 字)。
+    固定値(0.35 等)も駄目 —— 照明や明暗の極性で外れる。
+    """
+    from skimage.filters import threshold_otsu
+    g = np.asarray(gray, np.float64)
+    if float(np.ptp(g)) < 1e-6:
+        return np.zeros(g.shape, bool)
+    t = float(threshold_otsu(g))
+    # ★極性は**多数決で決めてはいけない**。行に密着した帯では字が 57 % を占める
+    #   ことがあり(実測 2026-09-17、合成の掲示の 1 行目)、「インクは少数派」と
+    #   すると白黒が丸ごと反転して距離が 0.025 -> 0.121 に跳ねた。
+    #   **外周は背景**という事実で決める —— 字は縁まで届かない。
+    border = np.concatenate([g[0], g[-1], g[:, 0], g[:, -1]])
+    return (g < t) if float(np.median(border)) >= t else (g > t)
+
+
+def split_cells(ink: np.ndarray, n: int, snap: float = 0.25) -> list:
+    """一行ぶんのインクを **n 等分**し、切れ目をインクの**谷**に吸着させる。
+
+    等幅を仮定できるのは CJK の掲示だからで、欧文では成り立たない。字数は
+    **与えられた文字列から**来る —— ここでも「読む」必要は無い。
+    ★等分だけだと、細い字と太い字が混ざったときに切れ目が字に食い込む
+    (実測: 素の等分だと無事な字まで咎めた)。谷に寄せると直る。
+    """
+    ink = np.asarray(ink, bool)
+    w = ink.shape[1] / float(max(n, 1))
+    cuts = [i * w for i in range(n + 1)]
+    if n > 1:
+        prof = ink.sum(axis=0).astype(float)
+        r = max(1, int(round(snap * w)))
+        for i in range(1, n):
+            c = int(round(cuts[i]))
+            lo, hi = max(0, c - r), min(len(prof), c + r + 1)
+            if hi > lo:
+                cuts[i] = lo + int(np.argmin(prof[lo:hi]))
+    return [(int(round(cuts[i])), int(round(cuts[i + 1]))) for i in range(n)]
+
+
+def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
+    """**画像 + 「本当はこう書いてあるべき文字列」を JSON 一枚で受けて直す入口。**
+
+    使う側が欲しいのは「op を 7 個つなぐ手順」ではなく、画像と正しい文字列を
+    渡すと直った画像が返ること。``spec`` は次の形(必要なのは ``items`` だけ)::
+
+        {"locale": "ja-JP",
+         "font": "<描くのに使う書体ファイル。省略すればこの環境のものを探す>",
+         "items": [{"text": "電気設備", "bbox": [x, y, w, h]},
+                   {"text": "点検中",   "bbox": [x, y, w, h],
+                    "codepoints": ["U+70B9", "U+691C", "U+4E2D"]}],
+         "policy": {"threshold": 0.0}}
+
+    返り値は ``(直した画像, 報告)``。報告の ``status`` は 4 値:
+
+    ``ok``
+        床より近い。直す必要が無い。
+    ``replaced``
+        床より遠かったので置き換え、置換後は床より近くなった。
+    ``failed_verification``
+        置き換えたが床より近くならなかった。**その字は元に戻す。**
+    ``skipped``
+        置き換えられない(色が多峰 = 縁取り・影・グラデ、マスが空、等)。
+
+    ★**「直せなかった」を返せることが設計の中心**。黙って壊れた絵を返さない。
+    ``failed_verification`` で元に戻すのは、数値で確かめられない置換を残すと
+    「直った」と誤解されるため —— 検証を通らない修正は修正ではない。
+
+    ★閾値は勘で置かない。``policy.threshold`` が無ければ、``items`` に出てくる
+    字を**その環境にある書体で描き分けた距離**の 95 % 点を使う
+    (:func:`typeface_noise_floor`。書体が 1 本しか無い環境では
+    :func:`rendering_noise_floor` に落ちる)。**測っているものが違うので、
+    報告の ``floor_source`` にどちらかを書く。**
+
+    ★``codepoints`` は ``text`` と食い違っていたら**例外にする**。片方だけ直した
+    指示書が回ってくると、静かに違う字に置き換わる —— 一致の検査は入口で行う。
+    """
+    rgb = np.asarray(rgb, np.float64)
+    if rgb.ndim != 3 or rgb.shape[2] != 3:
+        raise ValueError("correct_spec は RGB 画像を取る(HxWx3)")
+    items = spec.get("items")
+    if not isinstance(items, list) or not items:
+        raise ValueError("spec['items'] が要る(空でないリスト)")
+
+    fonts = available_fonts()
+    if spec.get("font"):
+        import os as _os
+        if not _os.path.exists(spec["font"]):
+            raise FileNotFoundError("spec['font'] が見つからない: %s" % spec["font"])
+        fonts = [spec["font"]] + [f for f in fonts if f != spec["font"]]
+    if not fonts:
+        raise RuntimeError("CJK を描ける書体がこの環境に無い")
+
+    for it in items:
+        cps = it.get("codepoints")
+        if cps is None:
+            continue
+        want = "".join(chr(int(str(c).upper().replace("U+", ""), 16)) for c in cps)
+        if want != it.get("text", ""):
+            raise ValueError("codepoints と text が食い違っている: %r と %r"
+                             % (want, it.get("text")))
+
+    chars = "".join(str(it.get("text", "")) for it in items)
+    chars = "".join(sorted(set(c for c in chars if not c.isspace())))
+    policy = spec.get("policy") or {}
+    thr = policy.get("threshold")
+    if thr is None:
+        if len(fonts) >= 2:
+            nf = typeface_noise_floor(chars, fonts, size=160, out=160)
+            source = "typeface"
+        else:
+            nf = rendering_noise_floor(chars, fonts[0], size=160, out=160)
+            source = "rendering"
+        thr = nf["floor"]
+    else:
+        thr, source = float(thr), "policy"
+
+    out = rgb.copy()
+    report = {"threshold": float(thr), "floor_source": source,
+              "fonts": len(fonts), "items": []}
+
+    for it in items:
+        text = "".join(c for c in str(it.get("text", "")) if not c.isspace())
+        bbox = it.get("bbox")
+        entry = {"text": it.get("text", ""), "cells": []}
+        report["items"].append(entry)
+        if not text or not bbox or len(bbox) != 4:
+            entry["status"] = "skipped"
+            entry["reason"] = "text か bbox が無い"
+            continue
+        x, y, w, h = (int(round(v)) for v in bbox)
+        y0, y1 = max(0, y), min(out.shape[0], y + h)
+        x0, x1 = max(0, x), min(out.shape[1], x + w)
+        if y1 - y0 < 8 or x1 - x0 < 8 * len(text):
+            entry["status"] = "skipped"
+            entry["reason"] = "bbox が小さすぎる"
+            continue
+        crop = out[y0:y1, x0:x1]
+        gray = crop.mean(axis=-1)
+        ink = _ink_mask(gray)
+        spans = split_cells(ink, len(text))
+        statuses = []
+        for k, ch in enumerate(text):
+            cx0, cx1 = spans[k]
+            cell = ink[:, cx0:cx1]
+            rec = {"char": ch}
+            entry["cells"].append(rec)
+            if cell.sum() < 20:
+                rec["status"] = "skipped"
+                rec["reason"] = "マスにインクが無い"
+                statuses.append("skipped")
+                continue
+            before = min(glyph_distance(cell.astype(np.float64),
+                                        render_glyph(ch, f, 160), 160) for f in fonts)
+            rec["distance_before"] = round(float(before), 4)
+            if before <= thr:
+                rec["status"] = "ok"
+                statuses.append("ok")
+                continue
+            # ★マスを**少し広げて**切り出し、その中で「このマスに属する成分」だけを
+            #   マスクにする。マスちょうどで切ると、外周リングが**隣の字のインク**を
+            #   拾って「色が多峰」と誤判定し、直せるものまで断ってしまう
+            #   (実測 2026-09-17: 壊れた 4 字のうち 3 字がこれで断られた)。
+            #   また隣の字のはみ出しが消し残り、置換後に旧字の切れ端が浮く。
+            # ★**上下左右に余白を付けて**切り出し、その中で「このマスに属する成分」だけを
+            #   マスクにする。bbox ちょうどで切ると、背景色を測る外周リングが
+            #   隣の字のインクと字の縁を拾い、「色が多峰」と誤判定して
+            #   **直せるものまで断る**(実測 2026-09-17: 壊れた 4 字のうち 3 字が
+            #   これで断られ、背景色の占有率が 0.49〜0.57 に落ちていた)。
+            #   余白は画像そのものから取る —— 行の bbox は字に密着しているので、
+            #   bbox の中だけでは純粋な背景が手に入らない。
+            pad = max(6, int(0.20 * (cx1 - cx0)))
+            ay0, ay1 = max(0, y0 - pad), min(out.shape[0], y1 + pad)
+            ax0, ax1 = max(0, x0 + cx0 - pad), min(out.shape[1], x0 + cx1 + pad)
+            wide_ink = _ink_mask(out[ay0:ay1, ax0:ax1].mean(axis=-1))
+            lab, nlab = ndimage.label(wide_ink)
+            keep_mask = np.zeros_like(wide_ink)
+            for m in range(1, nlab + 1):
+                _ys, _xs = np.nonzero(lab == m)
+                if cx0 <= (ax0 - x0) + _xs.mean() < cx1:
+                    keep_mask[lab == m] = True
+            sub = out[ay0:ay1, ax0:ax1]
+            keep = sub.copy()
+            fixed, why = replace_glyph(sub, keep_mask, ch, fonts[0],
+                                       target_thickness=stroke_thickness(ink))
+            if fixed is None:
+                rec["status"] = "skipped"
+                rec["reason"] = why
+                statuses.append("skipped")
+                continue
+            sub[...] = fixed
+            ink2 = _ink_mask(out[y0:y1, x0 + cx0:x0 + cx1].mean(axis=-1))
+            after = (min(glyph_distance(ink2.astype(np.float64),
+                                        render_glyph(ch, f, 160), 160) for f in fonts)
+                     if ink2.sum() >= 20 else float("inf"))
+            rec["distance_after"] = round(float(after), 4)
+            if after <= thr:
+                rec["status"] = "replaced"
+                statuses.append("replaced")
+            else:
+                sub[...] = keep                       # ★検証を通らない修正は残さない
+                rec["status"] = "failed_verification"
+                statuses.append("failed_verification")
+        for s in ("failed_verification", "skipped", "replaced", "ok"):
+            if s in statuses:
+                entry["status"] = s
+                break
+        else:
+            entry["status"] = "skipped"
+    return out, report
