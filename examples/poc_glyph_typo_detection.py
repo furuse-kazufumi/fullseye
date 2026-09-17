@@ -101,6 +101,11 @@ def find_text_lines(gray, n_lines=0, dark=0.35, min_area=200):
     枠の内側に限定はしない —— 限定すると、枠が二重に見える看板で内側の枠を掴み、
     その外にある 1 行目をまるごと落とす(実測)。
     """
+    # ★2026-09-18: ここを「大津 + 外周で極性」に替えて**退行した**(既存 12 枚で
+    #   見逃し 0 -> 6、誤検出 4/14 -> 9/22)。出荷済み ``_ink_mask`` と同じ規則でも、
+    #   **1 マスに当てるのと画像全体に当てるのでは別物** —— 全体の大津は壁や板の
+    #   明暗で閾値が動き、字の縁を取り込む。固定の暗さ閾値に戻す。白字の看板は
+    #   この経路では取れない(既知の穴として記録)。
     ink = np.asarray(gray) < dark
     lab, n = ndimage.label(ink)
     if n == 0:
@@ -142,6 +147,10 @@ def find_text_lines(gray, n_lines=0, dark=0.35, min_area=200):
     runs = [r for r in runs if (r[1] - r[0]) >= 0.6 * tall]
     # 行間が詰まっていると 2 行が 1 帯に融ける。**期待する行数**は呼び出し側が
     # 知っている(直す文字列を持っているのだから)ので、足りない分を谷で割る。
+    # 逆に行が**多い**とき(指定に無い日付行・注記)は、高い順に指定数だけ残す。
+    # 期待する行数は呼び出し側が知っている —— 少ないときに谷で割るのと同じ根拠。
+    if n_lines and len(runs) > n_lines:
+        runs = sorted(sorted(runs, key=lambda r: r[0] - r[1])[:n_lines])
     while n_lines and len(runs) < n_lines:
         k = max(range(len(runs)), key=lambda t: runs[t][1] - runs[t][0])
         y0, y1 = runs[k]

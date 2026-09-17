@@ -41,6 +41,9 @@ __all__ = [
     "typeface_noise_floor", "rendering_noise_floor", "ink_colors",
     "edge_transition_width",
     "stroke_thickness", "match_stroke_weight", "replace_glyph",
+    # ★2026-09-18: ここまで __all__ に無かった(api 側は名前で import していたので
+    #   気づけなかった)。一次情報は __all__ なので、公開するものは全部書く。
+    "split_cells", "correct_spec", "find_plate", "rewrite_line",
 ]
 
 #: :mod:`annotate` と同じ探索順(CJK を持つものが先)。
@@ -487,6 +490,321 @@ def split_cells(ink: np.ndarray, n: int, snap: float = 0.15) -> list:
     return [(int(round(cuts[i])), int(round(cuts[i + 1]))) for i in range(n)]
 
 
+# --------------------------------------------------------------------------- #
+# 実写の版面 —— 看板の板を見つけて正面に起こす                                #
+# --------------------------------------------------------------------------- #
+def _plate_components(small, quantiles=(0.25, 0.35, 0.5, 0.65)):
+    """平滑な領域の連結成分。順位づけはしない(選ぶのは :func:`find_plate`)。"""
+    k = 5
+    m = ndimage.uniform_filter(small, k)
+    v = ndimage.uniform_filter(small * small, k) - m * m
+    std = np.sqrt(np.clip(v, 0.0, None))
+    total = small.size
+    seen, out = set(), []
+    for q in quantiles:
+        mk = std <= float(np.quantile(std, q))
+        mk = ndimage.binary_closing(mk, np.ones((5, 5)))
+        mk = ndimage.binary_fill_holes(mk)
+        lab, n = ndimage.label(mk)
+        objs = ndimage.find_objects(lab)
+        for i in range(1, n + 1):
+            sl = objs[i - 1]
+            if sl is None:
+                continue
+            comp = lab == i
+            area = int(comp.sum())
+            frac = area / total
+            if not (0.02 <= frac <= 0.95):
+                continue
+            h = sl[0].stop - sl[0].start
+            w = sl[1].stop - sl[1].start
+            if area / max(h * w, 1) < 0.70:          # 穴だらけの塊は板ではない
+                continue
+            key = (sl[0].start // 2, sl[0].stop // 2, sl[1].start // 2, sl[1].stop // 2)
+            if key in seen:
+                continue
+            seen.add(key)
+            out.append((frac, comp, sl))
+    return out
+
+
+def _glyph_blobs(small, comp, sl):
+    """候補の内側の「字らしい塊」の個数と高さの中央値(小さい写しの画素)。"""
+    sub, msk = small[sl], comp[sl]
+    vals = sub[msk]
+    if vals.size < 64:
+        return 0, 0.0
+    from skimage.filters import threshold_otsu
+    t = float(threshold_otsu(vals))
+    ink = ((sub < t) if float(np.median(vals)) >= t else (sub > t)) & msk
+    lab, n = ndimage.label(ink)
+    if n == 0:
+        return 0, 0.0
+    ch = sl[0].stop - sl[0].start
+    hs = []
+    for o in ndimage.find_objects(lab):
+        if o is None:
+            continue
+        h = o[0].stop - o[0].start
+        w = o[1].stop - o[1].start
+        if not (0.08 * ch <= h <= 0.60 * ch):        # 埃でも枠でもない大きさ
+            continue
+        if not (0.25 <= w / max(h, 1) <= 4.0):       # 極端に細長い罫線は字でない
+            continue
+        hs.append(h)
+    return (len(hs), float(np.median(hs))) if hs else (0, 0.0)
+
+
+def _refine_quad(gray, box, margin=0.25):
+    """粗い箱の周りで**上下左右の縁に当たる直線**を 1 本ずつ探し、交点を四隅にする。
+
+    平滑領域の外接箱は、局所標準偏差のしきい値が文字の近くで板を削るので内側に
+    寄る。看板には暗い縁があり壁との境界も強いので、そちらに乗せ直す。
+    """
+    ys, xs = box
+    h, w = ys.stop - ys.start, xs.stop - xs.start
+    my, mx = int(h * margin), int(w * margin)
+    y0, y1 = max(0, ys.start - my), min(gray.shape[0], ys.stop + my)
+    x0, x1 = max(0, xs.start - mx), min(gray.shape[1], xs.stop + mx)
+    sub = gray[y0:y1, x0:x1]
+    if min(sub.shape) < 32:
+        return None
+    gy, gx = np.gradient(sub)
+    E = np.hypot(gy, gx)
+    H, W = sub.shape
+    yy, xx = np.mgrid[0:H, 0:W]
+    lines = []
+    for side in ("top", "bottom", "left", "right"):
+        horiz = side in ("top", "bottom")
+        best = (-1.0, None)
+        for a in np.deg2rad(np.linspace(-20, 20, 41)):
+            m = np.tan(a)
+            proj = (yy - m * xx) if horiz else (xx - m * yy)
+            lo, hi = proj.min(), proj.max()
+            bins = int(hi - lo) + 1
+            if bins < 8:
+                continue
+            idx = np.clip((proj - lo).astype(int), 0, bins - 1)
+            acc = np.bincount(idx.ravel(), weights=E.ravel(), minlength=bins)
+            k = max(4, bins // 4)
+            seg, off = (acc[:k], 0) if side in ("top", "left") else (acc[-k:], bins - k)
+            j = int(np.argmax(seg))
+            if float(seg[j]) > best[0]:
+                best = (float(seg[j]), (m, lo + off + j, horiz))
+        if best[1] is None:
+            return None
+        lines.append(best[1])
+
+    def inter(l1, l2):
+        m1, b1, h1 = l1
+        m2, b2, h2 = l2
+        if h1 == h2 or abs(1.0 - m1 * m2) < 1e-9:
+            return None
+        if h1:
+            x = (m2 * b1 + b2) / (1.0 - m1 * m2)
+            return (x + x0, m1 * x + b1 + y0)
+        y = (m2 * b1 + b2) / (1.0 - m1 * m2)
+        return (m1 * y + b1 + x0, y + y0)
+
+    top, bot, left, right = lines
+    pts = [inter(top, left), inter(top, right), inter(bot, right), inter(bot, left)]
+    if any(p is None for p in pts):
+        return None
+    return np.asarray(pts, np.float64)
+
+
+def find_plate(rgb: np.ndarray, max_frac: float = 0.60,
+               min_glyphs: int = 2) -> tuple:
+    """写真の中の**看板の板を 1 枚見つけて正面に起こす**。返り ``(起こした画像 or None, 報告)``。
+
+    実写の文字は、板が斜めから写っているだけで判定が壊れる。この関数は板の四隅を
+    取って射影変換で正面に直し、**直せなければ ``None`` を返す**(黙って歪んだ絵を
+    返さない)。報告の ``status`` は:
+
+    ``found``              板が見つかり起こした。
+    ``no_candidate``       看板らしい候補が無い(平滑な塊が無い / 字らしい塊が足りない)。
+    ``no_quad``            候補はあるが四隅が取れない(縁が弱い)。
+
+    **候補の選び方**(面積順ではない): ``max_frac`` を超える塊は地とみなして捨て、
+    内側に**字らしい塊が ``min_glyphs`` 個以上**あるものだけを残し、**縁の強さ**
+    (輪郭上の勾配の中央値 ÷ 画像全体の中央値)で並べる。
+    ★**順位そのものは効かない**(2026-09-17 実測: 面積順に戻しても結果は 1 文字も
+    変わらない。呼ぶ側は受理されるまで候補を順に試すため)。この並べ替えは
+    「最初に正しい板を見る」ための速さの話で、正しさの話ではない。
+
+    **四隅**は平滑領域の外接箱ではなく**縁の直線 4 本の交点**で取る。実測で
+    誤検出が 20/33 → 11/28 に減り、看板 12 枚での正解率が 75.0 → 82.4 % に上がった。
+
+    ★**縁の強さで断ってはいけない**(実測で無効): 四辺の勾配で閾値を掃いても
+    結果は平坦で、**いちばん縁が強い板がいちばん誤検出を出した**(信頼度 19.05 の
+    板が誤検出あり、3.31 の板が誤検出 1)。効くのは**字の大きさ**のほうである。
+
+    **字の大きさで断るのは呼ぶ側の仕事**。実測の動作点は「**マスの幅の中央値
+    90 px**」で、そこでは見逃し 0 のまま壊れた字の検出が 31 → 36 本に増え、誤検出は
+    4 → 5 本の 1 本増だった。正解率(90.7 %)は板を使わない場合(91.1 %)をわずかに
+    下回るが、それは**受理する画像が増えて分母が育つ**ためで、既存の画像は 1 文字も
+    悪くなっていない。見逃しのほうが高くつく用途ではこの動作点を使うこと ——
+    マス幅は :func:`split_cells` で測れる(期待文字列を知っている側が測る)。
+
+    ★**この関数は大きさで断らない。** 期待文字数を知らずに測れる「字の塊の高さ」で
+    代用できるか測ったら、マス幅との比が **0.00〜10.21** まで暴れた(1 行だけの板では
+    行全体が 1 個の塊につながり、絞ると 1 個も残らない)。**同じつもりの量が 2 桁
+    違う**ので、その上に閾値は置けない。掃引したのはマス幅なので、閾値もマス幅の
+    上にだけ置く。報告の ``glyph_blobs`` は候補の選別に使った個数で、**大きさの
+    物差しではない**。
+
+    ★**小さい字は解像度を合わせても直らない**(実測): マス 42〜46 px の板では、
+    比べる解像度を 48 / 80 / 160 px のどれにしても「壊れた字のほうが遠い」が
+    58〜62 % しか成り立たない(当てずっぽうが 50 %)。引き伸ばしのぼけではなく、
+    **その写真では距離が信号を運んでいない**。だから直すのではなく断る。
+    """
+    from skimage import transform as _sktf
+
+    rgb = np.asarray(rgb, np.float64)
+    if rgb.ndim != 3 or rgb.shape[2] != 3:
+        raise ValueError("find_plate は RGB 画像を取る(HxWx3)")
+    gray = rgb.mean(axis=-1)
+    step = max(1, int(max(gray.shape) / 256))
+    small = gray[::step, ::step]
+    gy, gx = np.gradient(small)
+    e = np.hypot(gy, gx)
+    base = float(np.median(e))
+
+    scored = []
+    for frac, comp, sl in _plate_components(small):
+        if frac > max_frac:
+            continue
+        n_glyph, h_glyph = _glyph_blobs(small, comp, sl)
+        if n_glyph < min_glyphs:
+            continue
+        edge = comp ^ ndimage.binary_erosion(comp, np.ones((3, 3)))
+        strength = (float(np.median(e[edge])) / max(base, 1e-9)) if edge.sum() >= 16 else 0.0
+        scored.append((strength, frac, comp, sl, n_glyph, h_glyph))
+    if not scored:
+        return None, {"status": "no_candidate", "reason": "看板らしい候補が無い"}
+    scored.sort(key=lambda t: -t[0])
+
+    last = "no_quad"
+    for strength, frac, comp, sl, n_glyph, h_glyph in scored:
+        box = (slice(int(sl[0].start * step), int(min(gray.shape[0], sl[0].stop * step))),
+               slice(int(sl[1].start * step), int(min(gray.shape[1], sl[1].stop * step))))
+        quad = _refine_quad(gray, box)
+        if quad is None:
+            continue
+        ctr = quad.mean(axis=0)
+        q = ctr + (quad - ctr) * 1.04                    # 縁で切れないよう少し外へ
+        wa = np.linalg.norm(q[1] - q[0]); wb = np.linalg.norm(q[2] - q[3])
+        ha = np.linalg.norm(q[3] - q[0]); hb = np.linalg.norm(q[2] - q[1])
+        W, H = int(round(max(wa, wb))), int(round(max(ha, hb)))
+        if not (48 <= W <= 4000 and 24 <= H <= 4000):
+            continue
+        t = _sktf.ProjectiveTransform()
+        if not t.estimate(np.array([[0, 0], [W, 0], [W, H], [0, H]], np.float64), q):
+            continue
+        out = np.clip(_sktf.warp(rgb, t, output_shape=(H, W), order=1, mode="edge"),
+                      0.0, 1.0)
+        # 起こした後の実寸に直した字の高さ(小さい写しで測ったので step 倍、
+        # さらに起こしで伸び縮みするぶんを幅の比で補正する)。
+        return out, {"status": "found", "quad": q.tolist(),
+                     "area_frac": round(float(frac), 4),
+                     "border": round(float(strength), 3),
+                     "glyph_blobs": int(n_glyph), "size": [W, H]}
+    return None, {"status": last, "reason": "候補はあるが四隅が取れない(縁が弱い)"}
+
+
+def _fit_alpha(alpha: np.ndarray, h: int, w: int) -> np.ndarray:
+    """アルファ (a,b) を (h,w) に**等方**で収める(中央寄せ)。歪ませない。"""
+    from skimage.transform import resize
+    ah, aw = alpha.shape
+    if ah == 0 or aw == 0 or h <= 0 or w <= 0:
+        return np.zeros((max(h, 0), max(w, 0)))
+    s = min(h / ah, w / aw)
+    nh, nw = max(1, int(round(ah * s))), max(1, int(round(aw * s)))
+    small = resize(alpha, (nh, nw), order=1, anti_aliasing=True, preserve_range=True)
+    out = np.zeros((h, w))
+    y0, x0 = (h - nh) // 2, (w - nw) // 2
+    out[y0:y0 + nh, x0:x0 + nw] = small
+    return out
+
+
+def rewrite_line(rgb: np.ndarray, text: str, font_path=None, size: int = 256) -> tuple:
+    """1 行ぶんの画像を、**意図した文字列で丸ごと描き直す**。返り ``(画像, 報告)``。
+
+    「壊れた字だけ直す」(:func:`replace_glyph`)だと、検出の見逃し・誤検出が結果に
+    残る。正しい字も含めて書体の変更を許すなら、行を丸ごと描き直せば**見逃しは
+    構造的に起きない**(2026-09-18、ユーザー提案)。字数が違う生成結果(1 字の
+    挿入・欠落)も、位置合わせをしないので自然に直る。
+
+    手順: (1) 行のインクを背景色で消す(縁のアンチエイリアス分だけ膨らませる)
+    (2) 各字を**元のマスのインク幅・行のインク高さ**に等方で収めて 1 枚のアルファに
+    並べる —— 箱いっぱいに収めると描画の余白ぶん小さく見える(実測)
+    (3) 太さは**行全体に 1 回だけ**合わせる —— 字ごとだと密な字が太りすぎる(実測「賞」)
+    (4) 前景色で合成。色は :func:`ink_colors` で行全体から 1 回測る。
+
+    ★色が単峰でなければ描かない(縁取り・影・グラデ)。``ok=False`` と理由を返す。
+    ★書体は 1 本を渡す。同じ画像の複数行は**同じ書体**で呼ぶこと(行ごとに違うと不自然)。
+
+    **検証について**: 描いた字は分かっているので距離は正しさの門にならない。
+    実測では、比較に使った書体そのもので描いた字を画像から取り直しても距離が
+    0.037〜0.081 出る(抽出経路自体の雑音 ≒ 0.05、床と同程度)。確かめるべきは
+    **マスの位置**であり、それは呼ぶ側が bbox で与える。
+    """
+    rgb = np.asarray(rgb, np.float64)
+    if rgb.ndim != 3 or rgb.shape[2] != 3:
+        raise ValueError("rewrite_line は RGB 画像を取る(HxWx3)")
+    chars = [c for c in str(text) if not c.isspace()]
+    if not chars:
+        return rgb.copy(), {"ok": False, "reason": "text が空"}
+    font = font_path or (available_fonts() or [None])[0]
+    if font is None:
+        return rgb.copy(), {"ok": False, "reason": "CJK を描ける書体が無い"}
+    gray = rgb.mean(axis=-1)
+    ink = _ink_mask(gray)
+    if ink.sum() < 20:
+        return rgb.copy(), {"ok": False, "reason": "行にインクが無い"}
+    col = ink_colors(rgb, ink)
+    if not col.get("unimodal", True):
+        return rgb.copy(), {"ok": False, "reason": "色が単峰でない(縁取り・影・グラデの疑い)"}
+    H, W = gray.shape
+    out = rgb.copy()
+    # (1) 消す。周囲の雑音を乗せて継ぎ目を弱める(replace_glyph と同じ考え方)。
+    wipe = ndimage.binary_dilation(ink, iterations=2)
+    ring = ndimage.binary_dilation(wipe, iterations=6) & ~wipe
+    bg = np.asarray(col["bg"], np.float64)
+    out[wipe] = bg
+    if ring.sum() > 16:
+        sigma = float(np.std(rgb[ring], axis=0).mean())
+        if sigma > 0:
+            rng = np.random.default_rng(20260918)
+            out[wipe] = np.clip(out[wipe] + rng.normal(0.0, sigma, out[wipe].shape), 0.0, 1.0)
+    # (2) 並べる。
+    spans = split_cells(ink, len(chars))
+    ys_ink = np.where(ink.any(axis=1))[0]
+    gh = int(ys_ink.max() - ys_ink.min() + 1) if ys_ink.size else H
+    top = int(ys_ink.min()) if ys_ink.size else 0
+    line_alpha = np.zeros((H, W))
+    for ch, (cx0, cx1) in zip(chars, spans):
+        a = render_glyph(ch, font, size)
+        nz = np.where(a > 0.05)
+        if nz[0].size:
+            a = a[nz[0].min():nz[0].max() + 1, nz[1].min():nz[1].max() + 1]
+        xs_ink = np.where(ink[:, cx0:cx1].any(axis=0))[0]
+        gw = int(xs_ink.max() - xs_ink.min() + 1) if xs_ink.size else (cx1 - cx0)
+        gw = max(1, min(gw, cx1 - cx0))
+        fitted = _fit_alpha(a, gh, gw)
+        ox = cx0 + ((cx1 - cx0) - gw) // 2
+        tgt = line_alpha[top:top + gh, ox:ox + gw]
+        tgt[...] = np.maximum(tgt, fitted[:tgt.shape[0], :tgt.shape[1]])
+    # (3) 太さを行で 1 回。
+    line_alpha = match_stroke_weight(line_alpha, stroke_thickness(ink))
+    # (4) 合成。
+    a3 = line_alpha[..., None]
+    out = np.clip(out * (1.0 - a3) + np.asarray(col["fg"], np.float64) * a3, 0.0, 1.0)
+    return out, {"ok": True, "chars": len(chars),
+                 "fg": [round(float(v), 3) for v in np.atleast_1d(col["fg"])],
+                 "bg": [round(float(v), 3) for v in np.atleast_1d(col["bg"])]}
+
+
 def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
     """**画像 + 「本当はこう書いてあるべき文字列」を JSON 一枚で受けて直す入口。**
 
@@ -498,7 +816,17 @@ def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
          "items": [{"text": "電気設備", "bbox": [x, y, w, h]},
                    {"text": "点検中",   "bbox": [x, y, w, h],
                     "codepoints": ["U+70B9", "U+691C", "U+4E2D"]}],
-         "policy": {"threshold": 0.0}}
+         "policy": {"threshold": 0.0, "mode": "repair_flagged"}}
+
+    ``policy.mode`` は 2 値:
+
+    ``repair_flagged``(既定)
+        床を超えた字だけ置き換える。**正しい字には触らない**(原本保全向け)。
+    ``rewrite_line``
+        bbox の行を**意図した文字列で丸ごと描き直す**(:func:`rewrite_line`)。
+        検出の見逃し・誤検出が結果に残らず、字数の違い(挿入・欠落)も直る。
+        生成 AI がレポート・資料用に出した画像の誤字を、再生成せずに直す用途向け。
+        各マスの ``distance_before`` は情報として残す(何が壊れていたかの報告)。
 
     返り値は ``(直した画像, 報告)``。報告の ``status`` は 4 値:
 
@@ -564,9 +892,12 @@ def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
     else:
         thr, source = float(thr), "policy"
 
+    mode = str(policy.get("mode", "repair_flagged"))
+    if mode not in ("repair_flagged", "rewrite_line"):
+        raise ValueError("policy.mode は repair_flagged か rewrite_line: %r" % mode)
     out = rgb.copy()
     report = {"threshold": float(thr), "floor_source": source,
-              "fonts": len(fonts), "items": []}
+              "fonts": len(fonts), "mode": mode, "items": []}
 
     for it in items:
         text = "".join(c for c in str(it.get("text", "")) if not c.isspace())
@@ -588,6 +919,29 @@ def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
         gray = crop.mean(axis=-1)
         ink = _ink_mask(gray)
         spans = split_cells(ink, len(text))
+        if mode == "rewrite_line":
+            # 何が壊れていたかは情報として残す(門には使わない)。
+            for k, ch in enumerate(text):
+                cx0, cx1 = spans[k]
+                cell = ink[:, cx0:cx1]
+                rec = {"char": ch}
+                if cell.sum() >= 20:
+                    rec["distance_before"] = round(float(min(
+                        glyph_distance(cell.astype(np.float64), render_glyph(ch, f, 160), 160)
+                        for f in fonts)), 4)
+                entry["cells"].append(rec)
+            fixed, info = rewrite_line(crop, text, fonts[0])
+            if not info.get("ok"):
+                entry["status"] = "skipped"
+                entry["reason"] = info.get("reason", "描き直せない")
+                for rec in entry["cells"]:
+                    rec["status"] = "skipped"
+                continue
+            out[y0:y1, x0:x1] = fixed
+            entry["status"] = "rewritten"
+            for rec in entry["cells"]:
+                rec["status"] = "rewritten"
+            continue
         statuses = []
         for k, ch in enumerate(text):
             cx0, cx1 = spans[k]

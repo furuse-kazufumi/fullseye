@@ -339,3 +339,125 @@ def test_cells_snap_to_the_valleys_between_characters(fonts):
     for a, b in spans[:-1]:
         assert prof[b - 1] == 0 or prof[min(b, 99)] == 0, \
             f"切れ目 {b} がインクの上にある(prof={prof[max(0, b - 2):b + 2]})"
+
+# --------------------------------------------------------------------------- #
+# 実写の版面 —— 板を見つけて起こす(find_plate)                                #
+# --------------------------------------------------------------------------- #
+# ★ここで検査するのは **閉形式で言い切れること** だけにしてある。
+#   端から端まで(受理率・誤検出)の証拠は repo の外の実写 12 枚で取った
+#   (`C:/dev/data/glyph_poc/`、正本 = glyph コーパスの curated/140)。
+#   合成の場面を 1 枚こしらえて「動いた」と言うのは**やめた** —— 候補の生成は
+#   局所標準偏差の分位点で切るので背景が**ざらついている**ことを要求し、四隅の
+#   精密化は背景の勾配が**小さい**ことを要求する。実写はその両方を満たすが、
+#   素朴な合成(一様乱数の背景)はどちらか片方しか満たせず、合成で緑にすると
+#   「合成に合わせた実装」になってしまう。
+
+
+def _bordered_quad(n=360, shift=22.0):
+    """平らな地に、**既知の四隅**の暗い縁を描いた四辺形。返り (画像, 四隅)。"""
+    from skimage.draw import polygon, polygon_perimeter
+    img = np.full((n, n), 0.90)
+    truth = np.array([[70.0, 60.0 + shift], [290.0, 60.0], [290.0 - shift, 300.0],
+                      [70.0 + shift * 0.4, 300.0 - shift * 0.4]], np.float64)
+    rr, cc = polygon(truth[:, 1], truth[:, 0], img.shape)
+    img[rr, cc] = 0.97
+    for d in range(5):
+        q = truth + (truth.mean(axis=0) - truth) * (d * 0.004)
+        rr, cc = polygon_perimeter(q[:, 1], q[:, 0], img.shape, clip=True)
+        img[rr, cc] = 0.06
+    return img, truth
+
+
+def test_the_plate_corners_snap_to_the_dark_border():
+    """粗い箱をわざと内側に縮めて渡しても、四隅は**縁に乗る**。
+
+    平滑領域の外接箱は、局所標準偏差のしきい値が文字の近くで板を削るので内側に
+    寄る。だから四隅は箱ではなく**縁の直線 4 本の交点**で取る。ここでは真の四隅が
+    分かっている図形で、縮めた箱から出発して戻ってこられるかを測る(実測 3.9 px)。
+    """
+    img, truth = _bordered_quad()
+    quad = glyphops._refine_quad(img, (slice(95, 285), slice(95, 275)))
+    assert quad is not None, "縁がはっきりしている図形で四隅が取れない"
+    err = min(float(np.max(np.linalg.norm(np.roll(quad, k, axis=0) - truth, axis=1)))
+              for k in range(4))
+    assert err < 8.0, "四隅が縁に乗っていない(最大ずれ %.1f px)" % err
+
+
+def test_a_picture_without_a_plate_is_refused_with_a_reason():
+    """板が無ければ ``None`` と理由を返す。**黙って何かを返さない。**"""
+    rng = np.random.default_rng(3)
+    for name, v in (("一様乱数", np.stack([rng.random((200, 200))] * 3, axis=-1)),
+                    ("空フレーム", np.full((160, 160, 3), 0.5))):
+        plate, report = glyphops.find_plate(v)
+        assert plate is None, "%s から板を取ってしまった" % name
+        assert report["status"] in ("no_candidate", "no_quad"), report
+        assert report.get("reason"), "断ったのに理由が無い(%s)" % name
+
+
+def test_find_plate_takes_rgb_only_and_is_deterministic():
+    img, _ = _bordered_quad()
+    rgb = np.stack([img] * 3, axis=-1)
+    with pytest.raises(ValueError):
+        glyphops.find_plate(img)                      # 2-D は入口で拒否
+    a, ra = glyphops.find_plate(rgb)
+    b, rb = glyphops.find_plate(rgb)
+    assert ra == rb, "報告が実行ごとに変わる"
+    if a is None:
+        assert b is None
+    else:
+        assert np.array_equal(a, b), "同じ入力で起こした絵が変わる"
+
+
+# --------------------------------------------------------------------------- #
+# 行ごと描き直す(policy.mode = "rewrite_line")                                 #
+# --------------------------------------------------------------------------- #
+def test_rewrite_line_redraws_every_cell_and_touches_nothing_outside_the_bbox(fonts):
+    """意図した文字列で行を丸ごと描き直す。bbox の外は 1 画素も変えない。"""
+    rgb, spec = _sign(fonts)                            # 「設」を「誤」にした掲示
+    bbox = spec["items"][0]["bbox"]
+    spec["policy"] = {"mode": "rewrite_line"}
+    out, rep = glyphops.correct_spec(rgb, spec)
+    assert rep["mode"] == "rewrite_line"
+    it = rep["items"][0]
+    assert it["status"] == "rewritten", it
+    assert [c["status"] for c in it["cells"]] == ["rewritten"] * 4
+    # 壊れていた字の distance_before は無事な字より大きい(情報として残る)
+    d = [c.get("distance_before", 0.0) for c in it["cells"]]
+    assert d[2] > max(d[0], d[1], d[3]), d
+    # bbox の外は不変
+    x, y, w, h = bbox
+    mask = np.ones(rgb.shape[:2], bool)
+    mask[y:y + h, x:x + w] = False
+    assert np.array_equal(out[mask], rgb[mask]), "bbox の外を変えた"
+    # 描き直した行を取り直すと、壊れていた「設」が参照に近づいている
+    ink = glyphops._ink_mask(out[y:y + h, x:x + w].mean(axis=-1))
+    spans = glyphops.split_cells(ink, 4)
+    after = min(glyphops.glyph_distance(ink[:, spans[2][0]:spans[2][1]].astype(float),
+                                        glyphops.render_glyph("設", f, 160), 160) for f in fonts)
+    assert after < d[2], "描き直しても「設」が参照に近づかない (%.4f -> %.4f)" % (d[2], after)
+
+
+def test_rewrite_line_default_mode_is_repair_flagged_and_bad_mode_is_refused(fonts):
+    rgb, spec = _sign(fonts)
+    _, rep = glyphops.correct_spec(rgb, spec)
+    assert rep["mode"] == "repair_flagged"
+    spec["policy"] = {"mode": "repaint_everything"}
+    with pytest.raises(ValueError):
+        glyphops.correct_spec(rgb, spec)
+
+
+def test_rewrite_line_refuses_multimodal_colours_instead_of_smearing(fonts):
+    """縁取り(2 色の字)は描かずに断る。黙って汚さない。"""
+    from scipy import ndimage
+    rgb, spec = _sign(fonts, wrong="設")                # 壊れていない掲示
+    x, y, w, h = spec["items"][0]["bbox"]
+    crop = rgb[y:y + h, x:x + w]
+    ink = glyphops._ink_mask(crop.mean(axis=-1))
+    # 字の縁 5 画素を赤く塗って縁取りにする(2 画素では細すぎて単峰と読まれる)
+    edge = ndimage.binary_dilation(ink, iterations=5) & ~ink
+    crop[edge] = (0.9, 0.1, 0.1)
+    spec["policy"] = {"mode": "rewrite_line"}
+    out, rep = glyphops.correct_spec(rgb, spec)
+    it = rep["items"][0]
+    assert it["status"] == "skipped" and "単峰" in it["reason"], it
+    assert np.array_equal(out, rgb), "断ったのに画像を変えた"

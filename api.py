@@ -562,6 +562,8 @@ from glyphops import (  # noqa: E402,F401
     # ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は
     #   (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
     correct_spec as glyph_correct_spec,
+    find_plate as glyph_find_plate,
+    rewrite_line as glyph_rewrite_line,
 )
 import annotate  # noqa: E402  (text plates, arrows, legends, colour bars, axes)
 import opsannotate  # noqa: E402  (the annotate op ledger)
