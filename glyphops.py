@@ -38,7 +38,8 @@ import annotate
 __all__ = [
     "FONT_CANDIDATES", "available_fonts", "render_glyph", "render_text",
     "normalise_glyph", "skeleton_chamfer", "glyph_distance",
-    "typeface_noise_floor", "ink_colors", "edge_transition_width",
+    "typeface_noise_floor", "rendering_noise_floor", "ink_colors",
+    "edge_transition_width",
     "stroke_thickness", "match_stroke_weight", "replace_glyph",
 ]
 
@@ -186,6 +187,56 @@ def typeface_noise_floor(chars: str, fonts=None, size: int = 128,
     return {"floor": float(np.quantile(d, quantile)), "median": float(np.median(d)),
             "max": float(d.max()), "n_pairs": int(d.size), "n_fonts": len(fonts),
             "quantile": float(quantile), "fonts": list(fonts)}
+
+
+def rendering_noise_floor(chars: str, font_path=None, size: int = 128,
+                          quantile: float = 0.95, out: int = _NORM,
+                          distance_quantile: float = 0.99, index: int = 0) -> dict:
+    """書体が **1 本しか無い**環境でも床を測る —— 既知の妨害で同じ字を揺らす。
+
+    ★``typeface_noise_floor`` は書体 2 本以上が要るが、素の Linux には CJK が
+    **1 本しか入らない**ことがある(実測: CI が ``fonts-noto-cjk`` だけで、
+    PoC が丸ごと skip して落ちた)。「同じ字なのに絵が違う」を作れるのは書体だけ
+    ではない —— ぼけ・線幅・わずかな回転・再標本化でも同じことが起きる。
+
+    測るものが違うので**名前を分けてある**。返り値の ``source`` が ``"nuisance"``
+    なのはそのため。書体が 2 本以上あるなら :func:`typeface_noise_floor` のほうが
+    実態に近い(書体差は妨害より大きい)。
+    """
+    from PIL import Image
+    fonts = available_fonts()
+    if font_path is None:
+        if not fonts:
+            raise RuntimeError("no font on this machine can draw CJK")
+        font_path = fonts[0]
+    d = []
+    for ch in chars:
+        if ch.isspace():
+            continue
+        g = render_glyph(ch, font_path, size, index)
+        base = normalise_glyph(g, out)
+        for var in _nuisance_variants(g, Image):
+            d.append(skeleton_chamfer(base, normalise_glyph(var, out),
+                                      distance_quantile) / out)
+    d = np.asarray(d, np.float64)
+    return {"floor": float(np.quantile(d, quantile)), "median": float(np.median(d)),
+            "max": float(d.max()), "n_pairs": int(d.size), "n_fonts": 1,
+            "quantile": float(quantile), "fonts": [font_path], "source": "nuisance"}
+
+
+def _nuisance_variants(alpha: np.ndarray, Image):
+    """同じ字の「別の描かれ方」。★字を変えない妨害だけを並べる。"""
+    out = [ndimage.gaussian_filter(alpha, 1.5),          # ぼけ
+           ndimage.grey_dilation(alpha, size=3),         # 太らせ
+           ndimage.grey_erosion(alpha, size=3),          # 細らせ
+           ndimage.rotate(alpha, 2.0, reshape=False, order=1),    # わずかな回転
+           ndimage.rotate(alpha, -2.0, reshape=False, order=1)]
+    h, w = alpha.shape                                   # 再標本化(解像度の往復)
+    small = np.asarray(Image.fromarray((np.clip(alpha, 0, 1) * 255).astype(np.uint8))
+                       .resize((max(8, w // 4), max(8, h // 4)), Image.BILINEAR)
+                       .resize((w, h), Image.BILINEAR), np.float64) / 255.0
+    out.append(small)
+    return out
 
 
 def ink_colors(rgb: np.ndarray, mask: np.ndarray, erode: int = 2, ring: int = 4,

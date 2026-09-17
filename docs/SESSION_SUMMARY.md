@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-17 09:53:07
+- **最終更新**: 2026-09-17 10:41:13
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+a59281c39 画像の誤字を認識せずに見つけて直す基盤を足す(glyphops + PoC + 門)
 a474a3cb8 auto: poc_glyph_typo_detection.py 編集前 (2026-09-17 09:06)
 d9e7e0912 2 つ目のノブに端の扱いと構造要素の形を持たせ、死んでいた b を 8 op で生かす
 bbd762b18 1-D 版を 3 本足して族の次元をそろえ、名前衝突の危険を門で固定する
@@ -19,60 +20,32 @@ bbd762b18 1-D 版を 3 本足して族の次元をそろえ、名前衝突の危
 fb656cf11 local_std を足し、サンプルデータの利用条件を人が読める所まで出す
 57dbcc5e4 実測した事実の差し込みを 6 言語で出す —— docstring に連結していたのが設計の誤りだった
 acc21258e CI だけが赤だった原因 —— 門が次元をまたぐ同名ノートを、環境ごとに違う側から掴んでいた
-d04d2ddf3 空フレームの掃きが image->region を落としていた —— 直したら「欠陥 100%」になる op が 20 本出た
 ```
 
 ## 現在の git status
 
 ```
-M api.py
- M docs/DESIGN_NOTES.de.md
- M docs/DESIGN_NOTES.en.md
- M docs/DESIGN_NOTES.ko.md
- M docs/DESIGN_NOTES.md
- M docs/DESIGN_NOTES.tw.md
- M docs/DESIGN_NOTES.zh.md
- M docs/MATURITY.md
- M docs/OP_CATALOG.md
- M docs/README.de.md
- M docs/README.en.md
- M docs/README.ko.md
- M docs/README.md
- M docs/README.tw.md
- M docs/README.zh.md
- M docs/SESSION_SUMMARY.md
- M docs/articles/exhibits/wingpoc.en.md
- M docs/articles/exhibits/wingpoc.ja.md
- M docs/articles/fullseye_poc_museum_qiita_en.md
- M docs/articles/fullseye_poc_museum_qiita_ja.md
- M docs/design_notes.json
- M docs/maturity.json
- M examples/README.md
- M examples/poc_glyph_typo_detection.py
- M fullseye/OP_CATALOG.md
- M fullseye/__init__.py
-?? docs/articles/assets/poc/poc_glyph_typo_detection/01_sign_before_after_720.jpg
-?? docs/articles/assets/poc/poc_glyph_typo_detection/02_cell_distance_720.jpg
+M docs/SESSION_SUMMARY.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-09:53 docs/README.tw.md
-09:52 docs/README.zh.md
-09:52 docs/README.en.md
-09:52 docs/README.md
-09:51 examples/README.md
-09:51 docs/maturity.json
-09:51 docs/MATURITY.md
-09:51 docs/HARDENING.md
-09:51 docs/HARDENING.en.md
-09:51 docs/CAPABILITIES.md
-09:51 docs/CAPABILITIES.en.md
-09:51 fullseye/OP_CATALOG.md
-09:51 docs/OP_CATALOG.md
-09:51 studio_assets/op_help/fig/zoom_region.png
-09:51 studio_assets/op_help/fig/zoom_image_size.png
+10:28 docs/SESSION_SUMMARY.md
+10:27 .pytest_cache/v/cache/nodeids
+10:06 data/auto_functional_gate.json
+09:54 .hypothesis/constants/e8a06472376ae407
+09:54 .hypothesis/constants/70acf15c04f45a47
+09:53 docs/design_notes.json
+09:53 docs/DESIGN_NOTES.de.md
+09:53 docs/DESIGN_NOTES.ko.md
+09:53 docs/DESIGN_NOTES.zh.md
+09:53 docs/DESIGN_NOTES.tw.md
+09:53 docs/DESIGN_NOTES.en.md
+09:53 docs/DESIGN_NOTES.md
+09:53 fullseye/data/OP_NOTES.json
+09:53 fullseye/data/OP_INDEX.json
+09:53 docs/OP_INDEX.json
 ```
 
 ---
