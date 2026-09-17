@@ -5,7 +5,7 @@ category: features
 in: region
 out: feature
 halcon: circularity
-examples: [draw_annotate, gallery2d_features, poc_cell_counting, poc_particle_sizing, poc_real_coin_metrology, poc_rotation_invariance_audit]
+examples: [gallery2d_features, poc_cell_counting, poc_particle_sizing, poc_rotation_invariance_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -59,11 +59,9 @@ circularity 0.50 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [draw_annotate](../../../../examples/draw_annotate.py) — `py -3.11 examples/draw_annotate.py`
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
 - [poc_cell_counting](../../../../examples/poc_cell_counting.py) — `py -3.11 examples/poc_cell_counting.py`
 - [poc_particle_sizing](../../../../examples/poc_particle_sizing.py) — `py -3.11 examples/poc_particle_sizing.py`
-- [poc_real_coin_metrology](../../../../examples/poc_real_coin_metrology.py) — `py -3.11 examples/poc_real_coin_metrology.py`
 - [poc_rotation_invariance_audit](../../../../examples/poc_rotation_invariance_audit.py) — `py -3.11 examples/poc_rotation_invariance_audit.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)

@@ -4,7 +4,7 @@ dim: 3d
 category: registration_metrics
 in: points × points
 out: measurement
-examples: [pose_estimation, ransac_prim, reg_eval]
+examples: [reg_eval]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -30,8 +30,6 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [pose_estimation](../../../../examples_3d/pose_estimation.py) — `py -3.11 examples_3d/pose_estimation.py`
-- [ransac_prim](../../../../examples_3d/ransac_prim.py) — `py -3.11 examples_3d/ransac_prim.py`
 - [reg_eval](../../../../examples_3d/reg_eval.py) — `py -3.11 examples_3d/reg_eval.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)

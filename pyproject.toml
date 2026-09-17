@@ -198,6 +198,9 @@ py-modules = [
   # 設計側(optics/visiondesign)と処理側(sceneflow)はあったが、複眼の視覚処理経路が
   # 無かった(2026-09-13 追加)。opsflyvision がレジストリ台帳。
   "flyvision", "opsflyvision", "spc", "opsspc", "cadmap", "opscadmap", "volcolor", "opsvolcolor", "tomography", "opstomography", "palette", "annotate", "opsannotate", "reprconv", "opsreprconv", "imgmetrics", "opsimgmetrics", "colortransport", "opscolortransport", "imgforensics", "opsimgforensics", "astrostack", "opsastrostack", "meshres", "videostream", "opsvideostream", "annotate3d", "contours_xld", "metriccontract", "fssystem",
+  # グリフ照合(指定の字と合っているかを測り、誤字を置き換える)。annotate の
+  # フォント解決と豆腐検出を使い回す。2026-09-17 追加。
+  "glyphops",
   "recipes", "measure", "studio", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",

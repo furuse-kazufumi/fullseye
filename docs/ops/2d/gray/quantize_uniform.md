@@ -4,7 +4,7 @@ dim: 2d
 category: gray
 in: image
 out: image
-examples: [gallery2d_features, gallery2d_gray_arith]
+examples: [gallery2d_gray_arith]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -72,7 +72,6 @@ quantize_uniform 0.50 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
 - [gallery2d_gray_arith](../../../../examples/gallery2d_gray_arith.py) — `py -3.11 examples/gallery2d_gray_arith.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

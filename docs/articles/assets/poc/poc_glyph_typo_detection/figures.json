@@ -1,0 +1,22 @@
+[
+ {
+  "file": "01_sign_before_after.png",
+  "name": "sign_before_after",
+  "caption": "壊した 4 字を検出して置き換えた。閾値は書体雑音の 95 % 点 0.0581。",
+  "shape": [
+   386,
+   1506,
+   3
+  ]
+ },
+ {
+  "file": "02_cell_distance.png",
+  "name": "cell_distance",
+  "caption": "床を超えたマスが誤字。壊した位置は 2, 3, 5, 7。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 713. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 720. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -403,6 +403,15 @@ This repository records *why* things are the way they are in **comments in the s
 - **L584** — ★Prediction (closed form): the downhill direction turns by more than 90 degrees ⇔ ∇H·(∇H+∇N) < 0 ⇔ |∇H|^2 + ∇H·∇N < 0. Compute the rate before measuring.
 - **L644** — ★The second (and the real) closed form. Since the line of sight is drawn through h at both ends, the **linear part** of N rides equally on both the line of sight and the ground and cancels. What remains is the amount N departs from the chord = |N''| d^2 / 8. Here N'' is 2C(cos^2θ - sin^2θ), so |N''| <= 2C.
 - **L1106** — ★Only for ``vertical`` does op_find return 5 hits. **Not one of them is relevant** (stem matches like ``boundary_vertices``) —— never claim it 'exists' from the count.
+
+## `examples/poc_glyph_typo_detection.py`
+
+- **L63** _(ja)_ — ★枠は「大きな外接箱なのに中身が薄い」成分として出る(実測: 331x697 の箱に 面積 27509 = 充填率 0.12)。**外すだけ**にして、枠の内側に限定はしない —— 限定すると、枠が二重に見える看板で内側の枠を掴み、その外にある 1 行目を まるごと落とした(実測 kikenn_butsu: 2 行のうち 1 行が消えた)。
+- **L72** _(ja)_ — 行は**水平投影の帯**で取る。★成分をまとめる方法はやめた —— 漢字は部品に 分かれて出る(``電`` は 3 つ)ので、重なりや中心距離で束ねると行間の狭い 看板で 2 行が 1 行に融け、逆に離れた部品が 3 行目になった(実測で 6/12 枚が 「行の数が合わない」)。投影はその両方に強い。
+- **L93** _(ja)_ — ★欧文の副題を落とす。**帯の高さ**で切る(実測: 漢字 80 px に対し英字 28 px)。
+- **L97** _(ja)_ — ★行間が詰まった看板では 2 行が 1 つの帯に融ける(投影が 0 まで落ちない)。 **期待する行数**は呼び出し側が知っている(直す文字列を持っているのだから) ので、足りない分だけ**一番深い谷**で割る。字数と同じく、入力から来る情報を 使うだけで、画像を「読んで」はいない。
+- **L155** _(ja)_ — ★判定の前に**版面が正しいか**を確かめる。CJK の掲示はほぼ等幅・ほぼ正方な ので、「マスの幅 ÷ 行の高さ」が 1 から大きく外れていたら、行の切り方か 字数の対応が間違っている。ここを見ないと、切り方を間違えたまま全部の字を 「壊れている」と報告する(実測: 無事な字 45 本のうち 37 本を誤って咎めた)。 **字が壊れているのか、切り方が外れているのか**を取り違えないための門。
+- **L175** _(ja)_ — ★書体は分からないので、**手元の書体のうち一番近いもの**を採る。 看板の太いゴシックは手元のどれとも違うので、固定すると床が足りない。
 
 ## `examples/poc_interferometry_step.py`
 
@@ -891,6 +900,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L33** — ★Do not bake a local absolute path into the distribution (in the 2026-09-05 audit, a private sibling project name was riding in the PyPI wheel). Give the default via an environment variable. The scene XML of the Unitree G1. Points to MuJoCo Menagerie's `unitree_g1/scene.xml`.
 - **L61** — ★Security boundary. `pickle` can call an arbitrary callable during load, so passing `find_class` through means **just opening a checkpoint runs code**. An RL checkpoint is an artifact meant to be received from others, so this is a realistic threat. (Measured 2026-09-05: the pass-through version returned `os.system` / `subprocess.Popen` / `builtins.eval` directly and could actually create a file during `load()`.) Only the numeric classes actually referenced by a brax PPO checkpoint are listed here. When something is missing, **add it to this list** (the exception message prints the module name).
+
+## `glyphops.py`
+
+- **L224** _(ja)_ — ★縁取りは**最頻色の占有率では捕まらない** —— 縁が太ければ字のすぐ外は「縁の色一色」で 立派に単峰になる(実測で赤い縁取りを単峰と 判定した)。**近いリングと遠いリングの色が 違うか**で見る。違えば背景は 1 色では書けない。
 
 ## `honest_summary.py`
 

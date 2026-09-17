@@ -200,9 +200,28 @@ def _called(name: str, src: str) -> bool:
     # `render_volume_projection` を hasattr で確認して有無を印字するだけなのに、
     # 索引が「例あり」と数え、**例ゼロの op が 100% カバレッジの中に隠れていた**。
     for m in re.finditer(r"""['"]""" + esc + r"""['"]""", src):
-        if not _is_presence_check(src, m.start()):
+        if not _is_presence_check(src, m.start()) and not _is_dict_subscript(src, m.start()):
             return True
     return False
+
+
+def _is_dict_subscript(src: str, pos: int) -> bool:
+    """``src[pos]`` の引用符が **辞書の添字** ``x["name"]`` かどうか。
+
+    ★振り分けの一覧(``OPS = ["median", ...]``)は拾い続けたいので、``[`` の
+    **直前が識別子か閉じ括弧**のときだけ添字と見なす。リテラルのリストは
+    ``=`` ``(`` ``,`` か空白の後に ``[`` が来るので区別がつく。
+
+    2026-09-17 実測: ``examples/poc_glyph_typo_detection.py`` が
+    ``nf['median']``(距離分布の中央値)と書いていただけで、カタログが
+    「この例は ``median`` op を使っている」と**嘘の帰属**を載せた。
+    数え過ぎる側に倒す方針は保ちつつ、添字だけを外す。
+    """
+    head = src[:pos].rstrip()
+    if not head.endswith("["):
+        return False
+    before = head[:-1].rstrip()
+    return bool(before) and (before[-1].isalnum() or before[-1] in "_)]")
 
 
 #: ``<受け手>.<op 名>(`` の受け手がこれなら fullseye の op ではない。

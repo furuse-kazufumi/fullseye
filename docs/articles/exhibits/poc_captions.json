@@ -1569,6 +1569,17 @@
       "caption_ja": "点源から広がる波面の到達時刻面を (x, y, t) 体積の等値面として取り出した図。ゼロ点(初めて超えたフレーム番号)の偏りは Δt/2 で枚数では消えず、線形補間で 27 倍(0.0209 ms)。放物線補間は線形に負け、しきい値がガウス波形の変曲点 θ = 0.6065 にあるとき線形が最良(3.8 倍差)。",
       "caption_en": "The arrival-time surface of wavefronts spreading from point sources, extracted as an isosurface of the (x, y, t) volume. The null (first frame above threshold) is biased by Δt/2, which more frames cannot remove; linear sub-frame interpolation is 27x better (0.0209 ms). Parabolic interpolation loses to linear, and linear is at its best (a 3.8x margin) when the threshold sits at the Gaussian's inflection point θ = 0.6065.",
       "run": "py -3.11 examples/poc_xyt_event_surface.py"
+    },
+    {
+      "id": "poc_glyph_typo_detection",
+      "wing": "wing_industrial",
+      "added": "2026-09-17",
+      "numbers_source": "log",
+      "title_ja": "画像の誤字を認識せずに見つけて直す ―― 閾値は書体の違いから導く",
+      "title_en": "Finding and Fixing Wrong Characters Without Recognising Them — the Threshold Comes from Typeface Spread",
+      "caption_ja": "正しい文字列を入力で貰えるので、6000 通りの多クラス分類は要らず、各マスを指定の 1 字と比べるだけで済む。閾値は勘で置かず、同じ字を別の書体で描いたときの距離の 95 % 点(0.058)から導いた。距離は平均でなく 99 パーセンタイル ―― 取り違えは部首を共有したまま一部だけ入れ替わるので、平均では 検 と 横 の距離が 0.0171 と書体雑音の床より下に沈み、原理的に検出できない。合成した掲示では壊した 4 字を全部検出して誤検出ゼロ、置換後の距離は 0.0805 から 0.0258 に下がり 4 字とも床を下回った。",
+      "caption_en": "Because the intended string is given as input, no 6000-way classification is needed: each cell is compared against one specified character. The threshold is not guessed but derived from the 95th percentile of the distance between the same character in different typefaces (0.058). The distance is the 99th percentile rather than the mean — a substitution usually keeps one radical and swaps the rest, so the mean sinks the 検/横 pair to 0.0171, below the typeface floor, making it undetectable in principle. On a synthetic sign all four planted errors are found with no false alarms, and after replacement the distance drops from 0.0805 to 0.0258, below the floor for all four.",
+      "run": "py -3.11 examples/poc_glyph_typo_detection.py"
     }
   ]
 }

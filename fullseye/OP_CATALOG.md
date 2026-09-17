@@ -859,7 +859,7 @@ _計 363 ops / 66 categories。_
 - `vol_region_props` (`labels → table`) — Per-component quantitative descriptors from a label volume. · 例: `vessel_metrology`
 
 ### registration_metrics(4)
-- `inlier_ratio` (`points, points → measurement`) — 対応集合の inlier 率 = ‖T·source[i] − target[i]‖ < thresh の割合。→ [0,1]。 · 例: `pose_estimation`, `ransac_prim`, `reg_eval`
+- `inlier_ratio` (`points, points → measurement`) — 対応集合の inlier 率 = ‖T·source[i] − target[i]‖ < thresh の割合。→ [0,1]。 · 例: `reg_eval`
 - `rmse_inliers` (`points, points → measurement`) — inlier 対応(残差 < thresh)上の RMSE と inlier 数。→ (rmse, n_inliers)。 · 例: `reg_eval`
 - `registration_recall` (`points, points → measurement`) — 3DMatch 流の per-pair 登録成否 = 1.0(成功)/ 0.0(失敗)。 · 例: `reg_eval`
 - `rotation_translation_error` (`pose, pose → measurement`) — 2 つの 4×4 変換間の相対回転誤差(測地角[度], RRE)と相対並進誤差(RTE)。 · 例: `reg_eval`
@@ -1255,17 +1255,17 @@ _計 920 ops / 48 categories。_
 - `cv_good_features` `image → feature` · 例: `gallery2d_features`
 - `area_center` (halcon: `area_center`) `region → match` · 例: `gallery2d_features`
 - `count_obj` (halcon: `count_obj`) `region → feature` · 例: `gallery2d_features`
-- `circularity` (halcon: `circularity`) `region → feature` · 例: `draw_annotate`, `gallery2d_features`, `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`, `poc_rotation_invariance_audit`
+- `circularity` (halcon: `circularity`) `region → feature` · 例: `gallery2d_features`, `poc_cell_counting`, `poc_particle_sizing`, `poc_rotation_invariance_audit`
 - `compactness` (halcon: `compactness`) `region → feature` · 例: `gallery2d_features`
 - `convexity` (halcon: `convexity`) `region → feature` · 例: `gallery2d_features`
 - `rectangularity` (halcon: `rectangularity`) `region → feature` · 例: `gallery2d_features`
 - `eccentricity` (halcon: `eccentricity`) `region → feature` · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
 - `orientation_region` (halcon: `orientation_region`) `region → feature` · 例: `gallery2d_features`
-- `roundness` (halcon: `roundness`) `region → feature` · 例: `astro_stacking`, `gallery2d_features`
+- `roundness` (halcon: `roundness`) `region → feature` · 例: `gallery2d_features`
 - `diameter_region` (halcon: `diameter_region`) `region → feature` · 例: `gallery2d_features`
 - `euler_number` (halcon: `euler_number`) `region → feature` · 例: `gallery2d_features`
 - `min_max_gray` (halcon: `min_max_gray`) `image → feature` · 例: `gallery2d_features`
-- `intensity` (halcon: `intensity`) `image → feature` · 例: `gallery2d_features`, `optics_imaging`, `poc_solder_fillet_aoi`
+- `intensity` (halcon: `intensity`) `image → feature` · 例: `gallery2d_features`, `poc_solder_fillet_aoi`
 - `gray_histo_abs` (halcon: `gray_histo_abs`) `image → feature` · 例: `gallery2d_features`
 - `entropy_gray` (halcon: `entropy_gray`) `image → feature` · 例: `gallery2d_features`
 - `length_xld` (halcon: `length_xld`) `contour → feature` · 例: `gallery2d_features`
@@ -1323,7 +1323,7 @@ _計 920 ops / 48 categories。_
 - `fft_image` (halcon: `fft_image`) `image → image` · 例: `gallery2d_texture_freq`, `poc_moire_screen`
 - `power_real` (halcon: `power_real`) `image → image` · 例: `gallery2d_texture_freq`
 - `power_byte` (halcon: `power_byte`) `image → image` · 例: `gallery2d_texture_freq`
-- `phase_rad` (halcon: `phase_rad`) `image → image` · 例: `acoustic_condition_monitoring`, `gallery2d_texture_freq`, `poc_leak_localization`
+- `phase_rad` (halcon: `phase_rad`) `image → image` · 例: `gallery2d_texture_freq`
 - `highpass_image` (halcon: `highpass_image`) `image → image` · 例: `gallery2d_texture_freq`, `poc_river_surface_velocity`
 - `bandpass_image` (halcon: `bandpass_image`) `image → image` · 例: `gallery2d_texture_freq`
 - `fft_image_inv` (halcon: `fft_image_inv`) `image → image` · 例: `gallery2d_texture_freq`
@@ -1369,7 +1369,7 @@ _計 920 ops / 48 categories。_
 
 ### gray(48)
 - `gamma` (halcon: `pow_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `quantize_uniform` `image → image` · 例: `gallery2d_features`, `gallery2d_gray_arith`
+- `quantize_uniform` `image → image` · 例: `gallery2d_gray_arith`
 - `quantize_lloyd_max` `image → image` · 例: `gallery2d_gray_arith`
 - `quantization_error` `image → image` · 例: `gallery2d_gray_arith`
 - `dither_ordered` `image → image` · 例: `gallery2d_gray_arith`

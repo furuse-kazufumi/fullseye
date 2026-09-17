@@ -1,0 +1,384 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
+"""グリフ照合 —— 画像に書かれた字が、**指定した字と合っているか**を測る。
+
+★設計の要は「**認識をしない**」こと。画像生成 AI が壊した字を直す場面では、
+**本当はこう書いてあるべき文字列**を人が持っている。だから 6000 通りの多クラス
+分類(OCR)は要らず、各マスについて「この 1 字と合っているか」の 1 対 1 照合で済む。
+分類器も学習も要らず、外れたときに**なぜ外れたか**を追える。
+
+この方針の実測的な裏づけ(2026-09-17、Meiryo / MS ゴシック / 游ゴシック、26 字、
+距離は骨格 chamfer の 99 パーセンタイル):
+
+===============================  ======  ==========  ==========
+量                               中央     95 %        最大
+===============================  ======  ==========  ==========
+書体雑音(同じ字・別書体)         0.0451   0.0668      0.0846
+別字信号(別の字・同書体)         0.1542   ―           0.0734(最小)
+===============================  ======  ==========  ==========
+
+別字 378 対のうち**床(0.0668)を下回るものは 0 %**。閾値は勘で置かず、
+:func:`typeface_noise_floor` が**書体雑音から導く**。
+
+もう 1 つの要は **地域(日本/簡体/繁体)を推定しないこと**。同一設計の地域違い
+(Noto Sans JP ↔ SC)で測ると、地域信号が書体雑音の 2 倍を超える字は常用漢字 93 字中
+**ゼロ**で、``黄`` ``温`` ``戸`` などは**同一グリフ**を持つ(Unicode 統合の結果、
+フォント側に区別が無い)。だから地域は**入力で受け取る**。検出側に地域推定は要らない
+—— 「間違っているか」は指定ロケールの正しい描画と比べれば済む。
+
+Pillow が要る(optional extra ``pil``)。フォントの解決と**豆腐(.notdef)の検出**は
+:mod:`annotate` の実績のある実装を使い回す(私用領域 2 点で判定、追加依存なし)。
+"""
+from __future__ import annotations
+
+import numpy as np
+from scipy import ndimage
+
+import annotate
+
+__all__ = [
+    "FONT_CANDIDATES", "available_fonts", "render_glyph", "render_text",
+    "normalise_glyph", "skeleton_chamfer", "glyph_distance",
+    "typeface_noise_floor", "ink_colors", "edge_transition_width",
+    "stroke_thickness", "match_stroke_weight", "replace_glyph",
+]
+
+#: :mod:`annotate` と同じ探索順(CJK を持つものが先)。
+FONT_CANDIDATES = annotate.FONT_CANDIDATES
+
+#: 正規化したグリフの一辺。距離はこの一辺で割って返すので、値は解像度に依らない。
+_NORM = 96
+
+
+def available_fonts(paths=None) -> list:
+    """実際に開けて **CJK が描ける**フォントだけを返す。
+
+    ★「開けた」は「描ける」ではない —— 欠字は例外を出さず ``.notdef``(豆腐)を
+    返す。実測では ``mingliub.ttc`` が index 0 で全部の漢字を豆腐にしており、
+    それに気づいたのは 2 つの字の統計が**完全に一致**したからだった。
+    """
+    from PIL import ImageFont
+    out = []
+    for p in (FONT_CANDIDATES if paths is None else tuple(paths)):
+        try:
+            font = ImageFont.truetype(p, 48)
+        except OSError:
+            continue
+        if not annotate._missing_glyphs(font, "山直電"):
+            out.append(p)
+    return out
+
+
+def render_glyph(ch: str, font_path=None, size: int = 128, index: int = 0,
+                 pad: float = 0.12) -> np.ndarray:
+    """1 字を alpha (0..1, float64) で描く。中央合わせ。
+
+    描けない字は**豆腐を返さず例外**にする(:func:`annotate._require_glyphs` と
+    同じ方針)。黙って □ を返すと、下流の距離が「それらしい値」になって嘘をつく。
+    """
+    from PIL import Image, ImageDraw, ImageFont
+    if len(ch) != 1:
+        raise ValueError(f"render_glyph takes exactly one character (got {ch!r})")
+    if font_path is None:
+        cands = available_fonts()
+        if not cands:
+            raise RuntimeError(
+                "no font on this machine can draw CJK — install one "
+                "(Debian/Ubuntu: apt-get install fonts-noto-cjk) or pass font_path=")
+        font_path = cands[0]
+    font = ImageFont.truetype(font_path, int(size), index=int(index))
+    annotate._require_glyphs(font, ch, font_path=font_path)
+    canvas = int(size * (1.0 + 2.0 * pad))
+    img = Image.new("L", (canvas, canvas), 0)
+    ImageDraw.Draw(img).text((canvas / 2, canvas / 2), ch, fill=255, font=font, anchor="mm")
+    return np.asarray(img, dtype=np.float64) / 255.0
+
+
+def render_text(text: str, font_path=None, size: int = 128, index: int = 0) -> list:
+    """文字列を**1 字 1 枚**で描く。空白は飛ばす(マスを持たないため)。"""
+    return [render_glyph(c, font_path, size, index) for c in text if not c.isspace()]
+
+
+def normalise_glyph(alpha: np.ndarray, out: int = _NORM, thresh: float = 0.5) -> np.ndarray:
+    """外接箱で切り出し、**縦横比を保ったまま** ``out`` 角の中央に置く。
+
+    ★比を潰してはいけない —— 潰すと「細長い字」と「正方の字」が同じ形になる。
+    """
+    from PIL import Image
+    ink = np.asarray(alpha, np.float64) > thresh
+    if not ink.any():
+        return np.zeros((out, out), bool)
+    ys, xs = np.where(ink)
+    crop = np.asarray(alpha, np.float64)[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+    h, w = crop.shape
+    s = (out * 0.86) / max(h, w)
+    im = Image.fromarray((np.clip(crop, 0, 1) * 255).astype(np.uint8)).resize(
+        (max(1, int(round(w * s))), max(1, int(round(h * s)))), Image.BILINEAR)
+    a = np.asarray(im, np.float64) / 255.0
+    canvas = np.zeros((out, out), np.float64)
+    y0, x0 = (out - a.shape[0]) // 2, (out - a.shape[1]) // 2
+    canvas[y0:y0 + a.shape[0], x0:x0 + a.shape[1]] = a
+    return canvas > thresh
+
+
+def skeleton_chamfer(a: np.ndarray, b: np.ndarray, quantile: float = 0.99) -> float:
+    """骨格どうしの**対称** chamfer 距離(画素単位)。
+
+    ★生の IoU や相関は**線の太さに支配される**。書体間でインク率が 0.053〜0.157
+    (約 3 倍)違うため、太さ込みで比べると「同一地域の書体差 > 同一書体の地域差」
+    という**結論の反転**が起きた(2026-09-17 実測)。必ず骨格で比べる。
+
+    片方向だけだと「部分集合」を距離 0 と言ってしまう(``口`` は ``回`` の部分)。
+    両方向の**分位点**を取る。
+
+    ★``quantile`` を**平均にしてはいけない**。生成 AI の取り違えは
+    **部首を共有したまま一部だけ入れ替わる**(``検``→``横``、``設``→``登``、
+    ``備``→``偣``)ので、違いは骨格の**一部**に集中する。平均はそれを薄めてしまい、
+    実測では ``検`` と ``横`` の距離が 0.0171 = **書体雑音の床 0.0245 より下**に
+    なった(= 原理的に検出できない)。99 パーセンタイルにすると 0.083 対 床 0.0668
+    で 1.24 倍の余裕が出る。「どこかが大きく違う」を測るのであって、
+    「全体としてどれくらい違う」を測るのではない。
+    """
+    from skimage.morphology import skeletonize
+    sa, sb = skeletonize(np.asarray(a, bool)), skeletonize(np.asarray(b, bool))
+    if not sa.any() or not sb.any():
+        return float("inf")
+    da = ndimage.distance_transform_edt(~sa)
+    db = ndimage.distance_transform_edt(~sb)
+    q = float(np.clip(quantile, 0.0, 1.0))
+    return float(0.5 * (np.quantile(db[sa], q) + np.quantile(da[sb], q)))
+
+
+def glyph_distance(a_alpha: np.ndarray, b_alpha: np.ndarray, out: int = _NORM,
+                   quantile: float = 0.99) -> float:
+    """2 枚のグリフの距離。大きさ・位置・太さを揃えてから比べ、一辺で割って返す。
+
+    同じ字なら 0 近く、別の字なら :func:`typeface_noise_floor` が返す床より大きい。
+    既定が 99 パーセンタイルなのは :func:`skeleton_chamfer` の理由による。
+    """
+    return skeleton_chamfer(normalise_glyph(a_alpha, out),
+                            normalise_glyph(b_alpha, out), quantile) / out
+
+
+def typeface_noise_floor(chars: str, fonts=None, size: int = 128,
+                         quantile: float = 0.95, out: int = _NORM,
+                         distance_quantile: float = 0.99) -> dict:
+    """**閾値を勘で置かない**ための道具 —— 書体の違いだけで出る距離を測る。
+
+    「同じ字を別の書体で描いたときの距離」の分布が、判定の**雑音の床**になる。
+    これより大きい距離だけを「別の字」と呼ぶ。返り値には床だけでなく
+    ``n_fonts`` と分布の要約も入れる —— 床が 1 つの数字で独り歩きすると、
+    **何本の書体で測ったのか**が失われるため(書体が 2 本の床は狭すぎる)。
+    """
+    fonts = available_fonts() if fonts is None else [f for f in fonts if f]
+    if len(fonts) < 2:
+        raise RuntimeError(
+            f"typeface_noise_floor needs at least 2 usable fonts (found {len(fonts)}) — "
+            "the floor is the spread ACROSS typefaces, so one typeface cannot show it")
+    d = []
+    for ch in chars:
+        if ch.isspace():
+            continue
+        gs = [render_glyph(ch, f, size) for f in fonts]
+        for i in range(len(gs)):
+            for j in range(i + 1, len(gs)):
+                d.append(glyph_distance(gs[i], gs[j], out, distance_quantile))
+    d = np.asarray(d, np.float64)
+    return {"floor": float(np.quantile(d, quantile)), "median": float(np.median(d)),
+            "max": float(d.max()), "n_pairs": int(d.size), "n_fonts": len(fonts),
+            "quantile": float(quantile), "fonts": list(fonts)}
+
+
+def ink_colors(rgb: np.ndarray, mask: np.ndarray, erode: int = 2, ring: int = 4,
+               levels: int = 16, min_share: float = 0.75, far: int = 10,
+               halo_tol: float = 0.08, tol: float = 0.06,
+               inner: int = 1) -> dict:
+    """前景色 = マスクの**芯**の最頻色、背景色 = **外周リング**の最頻色。
+
+    ★``unimodal`` が False のときは**置換してはいけない**。縁取り・影・グラデ・
+    半透明では色が多峰になり、平均や単一色で塗ると**確実に汚す**。
+    「できない」と返せることが、黙って壊すより価値が高い。
+    """
+    rgb = np.asarray(rgb, np.float64)
+    if rgb.ndim == 2:
+        rgb = rgb[..., None]
+    mask = np.asarray(mask, bool)
+    core = ndimage.binary_erosion(mask, np.ones((erode * 2 + 1,) * 2))
+    if not core.any():
+        core = mask
+    # ★リングの**内径**は字のにじみの外に置く。にじみ(アンチエイリアスやぼけ)の
+    #   中を背景として数えると、地色と文字色の中間が混ざって多峰に見える ——
+    #   実測で、ぼけ σ=1.2 の合成看板が背景の集中度 0.52〜0.60 になり、
+    #   平坦な単色の地なのに「置換できない」と断った。内径は呼び出し側が
+    #   ``edge_transition_width`` から決められる。
+    inner = max(1, int(inner))
+    out = (ndimage.binary_dilation(mask, np.ones((ring * 2 + 1,) * 2))
+           & ~ndimage.binary_dilation(mask, np.ones((inner * 2 + 1,) * 2)))
+
+    def _mode(sel):
+        px = rgb[sel]
+        if px.size == 0:
+            return np.zeros(rgb.shape[-1]), 0.0
+        q = np.round(px * levels).astype(int)
+        keys, counts = np.unique(q, axis=0, return_counts=True)
+        top = keys[counts.argmax()] / float(levels)
+        # ★「同じ量子化ビンに入った割合」で集中度を測ってはいけない —— 実写では
+        #   最頻色がビンの境目にまたがって割合が半分になり、平坦な看板の地色まで
+        #   多峰と判定した(実測で前景の占有率 0.31〜0.64、閾値 0.5 では全滅)。
+        #   **最頻色からの距離が許容幅に入る割合**で測る。同じ実写で 0.87〜1.00、
+        #   合成した赤い縁取りでは 0.63 と、はっきり分かれる。
+        within = np.abs(px - top).max(axis=1) <= tol
+        if not within.any():
+            return px.mean(0), 0.0
+        return px[within].mean(0), float(within.mean())
+
+    far_ring = (ndimage.binary_dilation(mask, np.ones((far * 2 + 1,) * 2))
+                & ~ndimage.binary_dilation(mask, np.ones((ring * 2 + 1,) * 2)))
+    if not out.any():                              # 内径を広げ過ぎたら元に戻す
+        out = (ndimage.binary_dilation(mask, np.ones((ring * 2 + 1,) * 2))
+               & ~ndimage.binary_dilation(mask, np.ones((3, 3))))
+    fg, fg_share = _mode(core)
+    bg, bg_share = _mode(out)
+    far_c, far_share = _mode(far_ring)
+    # ★縁取りは**最頻色の占有率では捕まらない** ——
+    #   縁が太ければ字のすぐ外は「縁の色一色」で
+    #   立派に単峰になる(実測で赤い縁取りを単峰と
+    #   判定した)。**近いリングと遠いリングの色が
+    #   違うか**で見る。違えば背景は 1 色では書けない。
+    halo = float(np.abs(np.asarray(bg) - np.asarray(far_c)).max()) if far_ring.any() else 0.0
+    return {"fg": fg, "bg": bg, "far": far_c, "halo": halo,
+            "fg_share": fg_share, "bg_share": bg_share, "far_share": far_share,
+            "unimodal": bool(fg_share >= min_share and bg_share >= min_share
+                             and halo <= halo_tol)}
+
+
+def stroke_thickness(mask) -> float:
+    """線の太さ(画素)。骨格の上での距離変換の中央値 x 2 = 最大内接円の直径。"""
+    from skimage.morphology import skeletonize
+    m = np.asarray(mask, bool)
+    if not m.any():
+        return 0.0
+    v = ndimage.distance_transform_edt(m)[skeletonize(m)]
+    return float(2.0 * np.median(v)) if v.size else 0.0
+
+
+def match_stroke_weight(alpha: np.ndarray, target: float) -> np.ndarray:
+    """描いた字を、周囲と**同じ線幅**まで太らせる。
+
+    ★書体は選べないが、太さは合わせられる。合わせないと直した字だけ細くて
+    一目で浮く(実測: 看板の太いゴシックに Meiryo Regular を貼った状態)。
+    細くする方向には**やらない** —— 収縮は画をちぎるので、足りないときは諦める。
+    """
+    a = np.asarray(alpha, np.float64)
+    t = stroke_thickness(a > 0.5)
+    if t <= 0 or target <= t + 0.5:
+        return a
+    r = int(round((target - t) / 2.0))
+    return ndimage.grey_dilation(a, size=2 * r + 1) if r >= 1 else a
+
+
+def edge_transition_width(v: np.ndarray, window: int = 7, rel_floor: float = 1e-3,
+                          abs_floor: float = 1e-6) -> np.ndarray:
+    """局所の**エッジ遷移幅**(= 実効 PSF の広がり)を画素単位で返す。
+
+    幅 ≒ 局所の振幅 ÷ 局所の最大勾配。合成した字を周囲と同じだけ鈍らせるために要る
+    —— これをしないと数値は合っているのに「貼った感」が出る。
+
+    ★床を相対量で置く**だけでは足りない**。基準を画像自身の振幅に取ると、
+    一様な画像では基準まで丸め屑になり、屑どうしの比が構造に化ける —— 実測で、
+    0.5 一色に 1e-12 の雑音を乗せただけの画像が幅 3.49 を返した。
+    **振幅そのものが ``abs_floor`` に届かない画像には端が無い**と言い切る。
+    """
+    x = np.asarray(v, np.float64)
+    gy, gx = np.gradient(x)
+    grad = np.hypot(gy, gx)
+    k = int(window) | 1
+    amp = ndimage.maximum_filter(x, size=k) - ndimage.minimum_filter(x, size=k)
+    gmax = ndimage.maximum_filter(grad, size=k)
+    scale = float(np.ptp(x))                       # 画像全体の振幅が基準
+    if scale < abs_floor:                          # 平坦な画像に端は無い
+        return np.zeros_like(x)
+    floor = rel_floor * scale
+    w = np.where(gmax > floor, amp / np.maximum(gmax, floor), 0.0)
+    return np.clip(w, 0.0, float(k))
+
+
+def replace_glyph(rgb: np.ndarray, mask: np.ndarray, ch: str, font_path=None,
+                  target_thickness: float = 0.0, index: int = 0,
+                  grow: int = 1, ideal_edge: float = 2.0, seed: int = 20260917):
+    """1 マスの誤字を正しい字に**実際に置き換える**。
+
+    返り値は ``(置換後の画素, None)`` か ``(None, 断る理由)``。
+    **直せないときに直せないと返せる**ことが設計の中心で、黙って壊れた絵を返さない。
+
+    段取りは 4 つ:
+
+    1. **色を決める** —— 前景 = マスクの芯の最頻色、背景 = 外周リング。多峰なら断る。
+    2. **消す** —— 誤字のインクを少し膨らませて背景色で塗る。
+    3. **合わせる** —— 正しい字をマスクの外接箱に入れ、線幅を周囲に合わせ、
+       周囲の実効 PSF と同じだけ鈍らせる。★この 3 つ目をやらないと、
+       数値は合っているのに「貼った感」が出る。
+    4. **貼る** —— 前景色でアルファ合成。
+    """
+    from PIL import Image
+    rgb = np.asarray(rgb, np.float64)
+    mask = np.asarray(mask, bool)
+    if mask.sum() < 20:
+        return None, "マスが空(インクが 20 画素未満)"
+    gray0 = rgb.mean(axis=-1) if rgb.ndim == 3 else rgb
+    edge = float(np.median(edge_transition_width(gray0)[mask])) if mask.any() else 2.0
+    inner = max(1, int(np.ceil(edge)))             # にじみの外からリングを取る
+    ring = max(inner + 3, 4)
+    col = ink_colors(rgb, mask, ring=ring, far=ring + 6, inner=inner)
+    if not col["unimodal"]:
+        return None, ("色が単峰でない(前景 %.2f / 背景 %.2f / 縁 %.3f) —— "
+                      "縁取り・影・グラデの疑い"
+                      % (col["fg_share"], col["bg_share"], col["halo"]))
+    ys, xs = np.where(mask)
+    h, w = int(ys.max() - ys.min() + 1), int(xs.max() - xs.min() + 1)
+    glyph = render_glyph(ch, font_path, 256, index)
+    gy, gx = np.where(glyph > 0.5)
+    crop = glyph[gy.min():gy.max() + 1, gx.min():gx.max() + 1]
+    im = Image.fromarray((np.clip(crop, 0, 1) * 255).astype(np.uint8)).resize(
+        (w, h), Image.BILINEAR)
+    a = np.asarray(im, np.float64) / 255.0
+    a = match_stroke_weight(a, target_thickness or stroke_thickness(mask))
+
+    alpha = np.zeros(mask.shape, np.float64)
+    y0, x0 = int(ys.min()), int(xs.min())
+    a = a[:alpha.shape[0] - y0, :alpha.shape[1] - x0]
+    alpha[y0:y0 + a.shape[0], x0:x0 + a.shape[1]] = a
+
+    sigma = max(0.0, (edge - ideal_edge) / 2.0)
+    if sigma > 0:
+        alpha = ndimage.gaussian_filter(alpha, sigma)
+
+    out = rgb.copy()
+    # ★消す範囲も**にじみの幅から**決める。2 値マスクは字の芯しか覆わないので、
+    #   固定の 1 画素だけ広げて塗ると、旧字の灰色の縁が**幽霊**として残る
+    #   (実測: 置換した字の周りに旧字の輪郭がうっすら見えた)。
+    grow = max(int(grow), int(np.ceil(edge)))
+    fill = ndimage.binary_dilation(mask, np.ones((2 * grow + 1,) * 2))
+    out[fill] = col["bg"]
+    # ★平均色で塗るだけでは**継ぎ目が見える**。地にはノイズと量子化のざらつきが
+    #   あり、塗った面だけが滑らかだと矩形が浮く(実測: 置換した字の周りに
+    #   はっきりした四角が出た)。地の**ばらつきも測って合わせる**。
+    ring = (ndimage.binary_dilation(mask, np.ones((2 * (grow + 6) + 1,) * 2)) & ~fill)
+    if ring.any():
+        sigma_bg = float(np.std(rgb[ring], axis=0).mean()) if rgb.ndim == 3             else float(np.std(rgb[ring]))
+        if sigma_bg > 0:
+            rng = np.random.default_rng(seed)
+            out[fill] = np.clip(out[fill] + rng.normal(0.0, sigma_bg, out[fill].shape),
+                                0.0, 1.0)
+    a3 = alpha[..., None] if out.ndim == 3 else alpha
+    out = out * (1.0 - a3) + np.asarray(col["fg"]) * a3
+
+    # ★**触る必要のある画素だけ**に限る。塗った面の外は入力のまま残す ——
+    #   でないと、消去した矩形の縁が地のざらつきと食い違って**四角い継ぎ目**が
+    #   見える(実測: 置換した字の周りにはっきりした枠が出た)。
+    #   境目は少しぼかして、切り替わりを見えなくする。
+    touch = fill | (alpha > 0.05)
+    soft = ndimage.gaussian_filter(touch.astype(np.float64), 1.0)
+    soft = np.clip(soft / max(soft.max(), 1e-12), 0.0, 1.0)
+    s3 = soft[..., None] if rgb.ndim == 3 else soft
+    out = rgb * (1.0 - s3) + out * s3
+    return np.clip(out, 0.0, 1.0), None
