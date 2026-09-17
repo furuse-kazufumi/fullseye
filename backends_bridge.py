@@ -181,6 +181,51 @@ def img_to_signal(v, a, b):
     return _profile(_image2d(v), float(a), float(b))
 
 
+def img_to_projection_profile(v, a, b):
+    """画像を 1 方向へ潰した**射影プロファイル**を 1-D の signal にする ―― 版面解析の基本量。
+
+    ``img_to_signal`` が「1 本の行/列をそのまま読む」のに対し、こちらは**全行(全列)を
+    束ねて 1 本にまとめる**。文字列の切れ目・罫線・帯の境目は、1 本の走査線では雑音に
+    埋もれるが、潰すと谷として立ち上がる。
+
+    - ``b`` → 向き。``b < 0.5`` で**縦に潰して長さ W**(列ごとの代表値。横に並んだ字の
+      切れ目が谷になる)、``b >= 0.5`` で**横に潰して長さ H**(行ごと。行間が谷になる)。
+      ``img_to_signal`` と同じく ``b`` が向きを決めるが、``a`` の意味は違う。
+    - ``a`` → **上側トリム率**。潰す軸の値を大きい順に並べ、上位
+      ``m = max(1, round((1-a) * N))`` 個だけを平均する。``a=0`` は**ただの平均射影**
+      (古典的な projection profile そのもの)、``a=1`` は**最大値射影**(MIP)、
+      その間は「外れ値だけを残して均す」連続的な折衷になる。
+    - 返り値: 1-D float64。**正規化しない**(値域は入力のまま。[0,1] の画像なら [0,1])。
+      長さは向きで決まる(W または H)。空フレームは一定値の列になる。
+
+    **なぜノブがトリム率なのか**: 平均射影は雑音に強いが、細い線 1 本が背景に薄められて
+    消える。最大値射影は細い線を残すが、輝点 1 個で列全体が持ち上がる。どちらを選んでも
+    失うものがあるので、**どれだけ捨てるかをノブにして取引を明示した**。``a`` を上げると
+    細い構造が残り、下げると雑音が均される ―― 単調で、両端が古典的な 2 つの射影に一致する。
+
+    **暗い字には前段で反転を**。この op は**大きい方**を残すので、白地に黒字のまま渡すと
+    トリムが**背景**を拾う。``invert``(台帳)を挟めば、``a`` が「濃い字のところ」を残す。
+
+    **先行と対応**: 平均射影は文書解析の古典そのもの(Postl 1986 / Baird 1987 が傾き
+    推定に使った量)で、HALCON では ``gray_projections``(水平・垂直の濃淡射影)に
+    あたる —— 対応表で **`covered: false`** だった op を、これが埋める。上位トリムで
+    最大値射影へ連続に寄せる族は、蛍光顕微鏡の時間フレーム融合で使われる
+    **分位点射影**(上側 75 % 点を取る)と同じ発想だが、こちらは**上位 m 個の平均**
+    なので **両端が厳密に平均射影と最大値射影に一致し、その間が単調**になる。
+
+    使いどころ: 行の切り出し(横に潰して谷を探す)、字の切り出し(縦に潰す)、罫線検出、
+    帯の境目、``deskew`` が内部で使っている判定量の可視化。下流は 1-D 関数の族
+    (``tb_smooth_funct_1d_gauss`` / ``tb_local_min_funct_1d`` / ``tb_derivate_funct_1d``)。
+    """
+    img = _image2d(v)
+    axis = 0 if float(b) < 0.5 else 1
+    n = img.shape[axis]
+    m = max(1, int(round((1.0 - float(np.clip(a, 0.0, 1.0))) * n)))
+    top = np.sort(img, axis=axis)
+    top = top[n - m:, :] if axis == 0 else top[:, n - m:]
+    return np.asarray(top.mean(axis=axis), np.float64)
+
+
 def img_to_counts(v, a, b):
     """画像の 1 行(または 1 列)を光子の期待値として読み、Poisson 標本の 1-D カウント列にする。
 
@@ -444,6 +489,222 @@ def img_to_monogenic(v, a, b):
 
 
 # --------------------------------------------------------------------------- #
+# 戻りの橋 (新設 sort -> image)                                                 #
+# --------------------------------------------------------------------------- #
+#: 戻りの橋が描くキャンバスの一辺(画素)と描画域 (x, y, w, h)。
+#: 図の生成器の既定(``tools/gen_op_figures.SIZE`` = 128)に合わせてある。
+CANVAS = 128
+_RECT = (12, 8, CANVAS - 24, CANVAS - 20)
+
+
+def _blank_page():
+    return np.full((CANVAS, CANVAS), 1.0, np.float64)
+
+
+def _plot_1d(y, a, b, kinds=("scatter", "line", "bar")):
+    """1-D 列を 1 枚の白地の図にする。``a`` = 縦軸の余白、``b`` = 描き方。"""
+    import annotate as A                                 # 遅延 import(循環回避)
+
+    y = np.asarray(y, np.float64).ravel()
+    if y.size == 0:
+        return _blank_page()
+    lo, hi = float(np.min(y)), float(np.max(y))
+    span = hi - lo
+    pad = 0.30 * float(np.clip(a, 0.0, 1.0)) * (span if span > 1e-12 else 1.0)
+    lo, hi = lo - pad, hi + pad
+    if hi - lo < 1e-9:
+        # ★定数列で軸が潰れると ``axes_transform`` は ValueError を投げる(傾きが
+        #   無限大になるため、向こうの仕様)。潰れた軸だけここで開く —— 定数列は
+        #   「描けない」のではなく「真ん中に水平線 1 本」が正しい絵。
+        lo, hi = lo - 0.5, hi + 0.5
+    x = np.arange(y.size, dtype=np.float64)
+    ax = A.axes_transform(_RECT, (0.0, max(1.0, float(y.size - 1))), (lo, hi))
+    t = float(np.clip(b, 0.0, 1.0))
+    kind = kinds[0] if t < 1.0 / 3.0 else (kinds[1] if t < 2.0 / 3.0 else kinds[2])
+    img = np.asarray(A.plot_series(_blank_page(), ax, x, y, kind=kind), np.float64)
+    img = np.asarray(A.axes_frame(img, ax), np.float64)
+    return np.clip(img, 0.0, 1.0)
+
+
+def signal_to_img(v, a, b):
+    """1-D の signal を**折れ線の図**にして画像へ戻す —— 「作った列を見る」入口。
+
+    行きの橋(``img_to_signal`` / ``img_to_projection_profile``)で画像から列を
+    作れるようになったが、**その列を見る登録 op が無かった**。signal を画像に
+    落とせる op は ``spectrogram`` の 2 本だけで、どちらも描くのは**スペクトル**
+    であって列そのものではない。図の生成器は 1-D を折れ線で描いているが、
+    それは**道具の中の実装**で、``fullseye.apply`` からも Studio からも呼べない。
+    この op がその穴を埋める。
+
+    - ``a`` → 縦軸の**余白** ``pad = 0.30 * a * (データの幅)``(a=0 でぴったり、
+      a=1 で上下に 30 % の余白)。ぴったりだと端の点が枠に重なる。
+    - ``b`` → 描き方。``b < 1/3`` で**点**、``< 2/3`` で**折れ線**、それ以上で**棒**。
+      ★並びは「**既定のノブ 0.5 がその型に素直な描き方になる**」ように決めてある
+      —— 列は折れ線が素直なので真ん中が折れ線。
+    - 横軸は添字 ``0..N-1``、縦軸はデータの範囲(+ 余白)。**軸は閉形式**
+      (``annotate.axes_transform``)なので、値が画素のどこに来るかは計算できる。
+    - 返り値: ``(128, 128)`` float64、白地に濃い線([0,1])。★**定数列は潰れた軸を
+      ±0.5 開いて中央に水平線 1 本**を描く(``axes_transform`` は幅 0 の軸を
+      ValueError で拒否するので、ここで開く)。空の列は白紙。
+
+    使いどころ: 射影プロファイルの谷を目で確かめる、1-D 関数族
+    (``tb_smooth_funct_1d_gauss`` / ``tb_derivate_funct_1d``)の効果を見る、
+    図・記事にそのまま貼る。
+    """
+    return _plot_1d(v, a, b)
+
+
+def counts_to_img(v, a, b):
+    """非負整数の 1-D カウント列を**棒グラフ**にして画像へ戻す。
+
+    ``counts`` を画像に落とせる op は **1 本も無かった**(作る op は 13 本ある)。
+    既定を棒にしてあるのは、カウントが**整数の度数**だからで、折れ線で結ぶと
+    「間の値」が在るように見えてしまう。
+
+    - ``a`` → 縦軸の余白(``signal_to_img`` と同じ式)。
+    - ``b`` → 描き方。``b < 1/3`` で**折れ線**、``< 2/3`` で**棒**(既定)、それ以上で
+      **点**。``signal_to_img`` と**並びが違う**のは、既定のノブ 0.5 でその型に
+      素直な描き方になるようにしているから —— カウントは棒が素直。
+    - 返り値: ``(128, 128)`` float64。
+    """
+    return _plot_1d(v, a, b, kinds=("line", "bar", "scatter"))
+
+
+def matrix_to_img(v, a, b):
+    """行列を**見るための濃淡**にして画像へ戻す —— キャストではない。
+
+    行き(``img_to_matrix``)は値も形も変えない**純粋なキャスト**だと明記して
+    あるが、戻りを同じくキャストにすると嘘になる: 行列の値は [0,1] に収まらず、
+    最小値が黒・最大値が白に伸びるだけだと **0 がどこかが分からない**。
+    共分散・相関・擬似逆行列の符号は、そこが読めないと意味を持たない。
+
+    - ``a`` → **対数圧縮**の強さ。``k = 10**(3a) - 1`` として
+      ``y = sign(x) * log1p(k|x|) / log1p(k)``(a=0 は線形、a=1 で 1000 倍の圧縮)。
+      条件数のように桁が開く行列で、小さい成分が全部黒に潰れるのを防ぐ。
+    - ``b`` → 基準。``b < 0.5`` は**データの min–max を [0,1] に伸ばす**、
+      ``b >= 0.5`` は **0 を 0.5 に置いて ``|x|`` の最大で対称に**(符号つきの
+      行列向け。0.5 が中立、明るい = 正、暗い = 負)。
+    - 返り値: 入力と**同じ形**の float64、値域 [0,1]。全要素が等しい行列は一様な
+      0.5(min–max 側でも 0 除算にならないよう中立へ倒す)。
+    """
+    x = np.asarray(_image2d(v), np.float64)
+    k = 10.0 ** (3.0 * float(np.clip(a, 0.0, 1.0))) - 1.0
+    if k > 0:
+        x = np.sign(x) * np.log1p(k * np.abs(x)) / np.log1p(k)
+    if float(b) < 0.5:
+        lo, hi = float(np.min(x)), float(np.max(x))
+        if hi - lo < 1e-12:
+            return np.full(x.shape, 0.5, np.float64)
+        return (x - lo) / (hi - lo)
+    m = float(np.max(np.abs(x)))
+    if m < 1e-12:
+        return np.full(x.shape, 0.5, np.float64)
+    return np.clip(0.5 + 0.5 * x / m, 0.0, 1.0)
+
+
+def contour_to_img(v, a, b):
+    """XLD 輪郭を**その輪郭自身の座標系に描き戻す** —— 43 本の op が作るのに、
+    画像に落とせる op は 1 本も無かった。
+
+    図の生成器は輪郭を折れ線で描いているが、それは**道具の中の実装**で登録 op
+    からは呼べない(``fullseye.apply`` にも Studio にも出てこない)。
+
+    - ``a`` → 線の太さ ``1 + int(2a)``(1〜3 画素)。
+    - ``b`` → 濃さの付け方。``b < 0.5`` は**全部同じ濃さ**、``b >= 0.5`` は
+      **点数の多い輪郭ほど濃く**(順位で 0.15〜0.85 に割り振る)。どれが主要な
+      輪郭かが一目で分かる。
+    - 返り値: 輪郭が持つ ``shape``(元画像の大きさ)の float64、白地に暗い線。
+      ★輪郭が 1 本も無ければ**白紙**を返す(黒い板にしない)。
+    """
+    import imagedraw as D                                # 遅延 import(循環回避)
+
+    cs = list(v.get("cs") or []) if isinstance(v, dict) else []
+    shape = tuple(v.get("shape") or (CANVAS, CANVAS)) if isinstance(v, dict) else (CANVAS, CANVAS)
+    img = np.ones((int(shape[0]), int(shape[1])), np.float64)
+    if not cs:
+        return img
+    width = 1 + int(float(np.clip(a, 0.0, 1.0)) * 2.0)
+    order = np.argsort([-len(np.asarray(c)) for c in cs])
+    rank = {int(j): i for i, j in enumerate(order)}
+    n = max(1, len(cs) - 1)
+    for j, c in enumerate(cs):
+        arr = np.asarray(c, np.float64)
+        if arr.ndim != 2 or arr.shape[0] < 2:
+            continue
+        if float(b) < 0.5:
+            tone = 0.15
+        else:
+            tone = 0.15 + 0.70 * (rank[j] / n)
+        img = np.asarray(D.draw_polyline(img, arr[:, ::-1], color=float(tone),
+                                         width=width, closed=False), np.float64)
+    return np.clip(img, 0.0, 1.0)
+
+
+def feature_to_img(v, a, b):
+    """スカラの feature を**目盛りつきの帯**にして画像へ戻す —— 2-D 台帳で
+    **125 本の op が作るのに、画像に落とせる op が 1 本も無かった** sort。
+
+    ★**数字そのものは描かない。** 文字を焼くと絵が**環境に入っている書体**で
+    変わり、同じ入力で同じ画素という契約が壊れる。描くのは値の**位置**で、
+    目盛り(0・1/4・1/2・3/4・1)が読みの手掛かりになる。数値が要るなら
+    ``annotate_table`` / ``annotate_leader``(paper 族)に渡すこと。
+
+    - ``a`` → スケールの上限 ``hi = 10 ** (4a - 2)``(a=0 で 0.01、a=0.5 で **1.0**、
+      a=1 で 100)。特徴量は桁がまちまちなので、見たい桁をここで選ぶ。
+    - ``b`` → 目盛りの張り方。``b < 0.5`` は **片側** ``[0, hi]``(左端が 0)、
+      ``b >= 0.5`` は **両側** ``[-hi, +hi]``(**中央が 0**。相関・歪度など符号の
+      ある量向け)。
+    - 上限を超える値は**端で止める**(帯が振り切れた状態 = 「スケールが小さい」の
+      合図)。★NaN / Inf は**白紙**を返す(振り切れと区別する)。
+    - 返り値: ``(128, 128)`` float64、白地([0,1])。
+    """
+    try:
+        x = float(np.asarray(v, np.float64).ravel()[0])
+    except Exception:                                    # noqa: BLE001 - 形は guard が見る
+        return _blank_page()
+    img = _blank_page()
+    if not np.isfinite(x):
+        return img
+    hi = 10.0 ** (4.0 * float(np.clip(a, 0.0, 1.0)) - 2.0)
+    y0, y1 = CANVAS // 2 - 14, CANVAS // 2 + 14          # 帯の上下
+    x0, x1 = 12, CANVAS - 12                             # 帯の左右
+    img[y0:y1, x0] = 0.0
+    img[y0:y1, x1 - 1] = 0.0
+    img[y0, x0:x1] = 0.0
+    img[y1 - 1, x0:x1] = 0.0
+    span = x1 - 1 - x0
+    for q in (0.0, 0.25, 0.5, 0.75, 1.0):                # 目盛り
+        c = x0 + int(round(q * span))
+        img[y1:y1 + 6, min(c, x1 - 1)] = 0.0
+    if float(b) < 0.5:
+        frac = float(np.clip(x / hi, 0.0, 1.0))
+        w = int(round(frac * span))
+        if w > 0:
+            img[y0 + 2:y1 - 2, x0 + 1:x0 + 1 + w] = 0.25
+    else:
+        mid = x0 + span // 2
+        img[y0 - 4:y0, mid] = 0.0                        # 0 の位置を上に出す
+        frac = float(np.clip(x / hi, -1.0, 1.0))
+        w = int(round(abs(frac) * (span // 2)))
+        if w > 0:
+            if frac >= 0:
+                img[y0 + 2:y1 - 2, mid:mid + w] = 0.25
+            else:
+                img[y0 + 2:y1 - 2, mid - w:mid] = 0.25
+    return np.clip(img, 0.0, 1.0)
+
+
+#: (名前, in_sort, 実装)。``out_sort`` はすべて image。**戻りの橋**。
+RETURN_BRIDGES = (
+    ("signal_to_img", "signal", signal_to_img),
+    ("counts_to_img", "counts", counts_to_img),
+    ("matrix_to_img", "matrix", matrix_to_img),
+    ("contour_to_img", "contour", contour_to_img),
+    ("feature_to_img", "feature", feature_to_img),
+)
+
+
+# --------------------------------------------------------------------------- #
 # registration                                                                 #
 # --------------------------------------------------------------------------- #
 #: (名前, out_sort, 実装)。``in_sort`` はすべて image。
@@ -451,6 +712,7 @@ BRIDGES = (
     ("img_to_points", "points", img_to_points),
     ("img_to_keypoints", "keypoints", img_to_keypoints),
     ("img_to_signal", "signal", img_to_signal),
+    ("img_to_projection_profile", "signal", img_to_projection_profile),
     ("img_to_counts", "counts", img_to_counts),
     ("img_to_matrix", "matrix", img_to_matrix),
     ("img_to_video", "video", img_to_video),
@@ -470,6 +732,9 @@ CATEGORY = "bridge"
 #: ``backend_safe.fallback`` は新設 sort を知らないので、任せると **入力画像が
 #: そのまま返って sort の嘘になる**(実測 2026-09-07: points 宣言で (H,W) が返る)。
 _EMPTY_OF = {
+    # 戻りの橋(-> image)の fail-soft。中身の無い白紙ではなく **0 の板**にする
+    # のは、他の sort の空値(すべて零)と読み方を揃えるため。
+    "image": lambda: np.zeros((CANVAS, CANVAS), np.float64),
     "points": lambda: np.zeros((1, 3), np.float64),
     "keypoints": lambda: np.zeros((0, 2), np.float64),
     "signal": lambda: np.zeros(2, np.float64),
@@ -503,4 +768,12 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin):
                   on_fail=lambda v, _e=empty: _e(),
                   finish=_keep if out_sort in _COMPLEX_SORTS else None)
         out.append(Op(name, CATEGORY, "", IMAGE, out_sort, g))
+    # 戻りの橋(新設 sort -> image)。category は同じ ``bridge`` なので
+    # ``ops._candidates`` から除かれ、**進化のゲノム -> op の写像は変わらない**。
+    # ここを普通の category にすると signal/contour/matrix/counts/feature の
+    # 候補リストが伸び、それらを消費する既存 champion が黙って別の op に移る。
+    empty_img = _EMPTY_OF["image"]
+    for name, in_sort, fn in RETURN_BRIDGES:
+        g = guard(fn, "image", name=name, on_fail=lambda v, _e=empty_img: _e())
+        out.append(Op(name, CATEGORY, "", in_sort, IMAGE, g))
     return out

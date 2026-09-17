@@ -4,7 +4,7 @@ dim: 2d
 category: contour
 in: image
 out: contour
-examples: [gallery2d_contour_measure]
+examples: [gallery2d_bridge, gallery2d_contour_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -39,7 +39,7 @@ HALCON に直接対応するものは無い(空欄)。実装は ``measure.find_c
 
 ## 詳しい使い方ガイド
 
-- [gallery2d_contour_measure ファミリ ガイド](../guides/gallery2d_contour_measure.md)
+- [gallery2d_bridge ファミリ ガイド](../guides/gallery2d_bridge.md)
 
 ## 参考(サンプルデータ・文献)
 
@@ -57,6 +57,7 @@ sk_find_contours 0.50 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [gallery2d_bridge](../../../../examples/gallery2d_bridge.py) — `py -3.11 examples/gallery2d_bridge.py`
 - [gallery2d_contour_measure](../../../../examples/gallery2d_contour_measure.py) — `py -3.11 examples/gallery2d_contour_measure.py`
 
 ## 型が繋がる次の op(`contour` を入力に取れる)

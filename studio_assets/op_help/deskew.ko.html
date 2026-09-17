@@ -1,0 +1,68 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">deskew — 2D <code style="color:#22d3bf">geometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;deskew&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
+<p><img src="fig/deskew.png" alt="deskew: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deskew.a.jpg">deskew: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>노브 b 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deskew.b.jpg">deskew: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deskew.chain.jpg">deskew: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deskew.inputs.jpg">deskew: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p><b>傾きを測って起こす</b>(deskew)。角度をノブで与えるのではなく、画像から推定する。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が探索の範囲 </code><code style="color:#22d3bf">±(2 + 43a)°</code><code style="color:#22d3bf"> を振る(a=0 で ±2°、a=1 で ±45°)。</code><code style="color:#22d3bf">b</code>` が</p>
+<p>精緻化の刻み `<code style="color:#22d3bf">1/(1 + round(9b))°</code>` を振る(b=0 で 1° 刻み、b=1 で 0.1° 刻み。</p>
+<p>細かいほど遅い ―― ここが取引になっている)。</p>
+<p>判定量は<b>横方向の射影プロファイルの差分二乗和</b>。ある角度で回したときに行が</p>
+<p>揃うと、行方向に潰した濃度の折れ線が最も激しく上下する。1° 刻みで粗く探し、</p>
+<p>最良の ±1° を `<code style="color:#22d3bf">b</code>` の刻みで詰める。同点なら<b>角度の小さい方</b>を採るので、</p>
+<p>構造の無い画像・空フレームでは 0°(= 入力をそのまま返す)に落ちる。</p>
+<p style="margin:2px 0 2px 12px">• 探索は<b>長辺 256 画素に間引いた写し</b>で行う(角度は間引きで変わらない)。</p>
+<p>原寸で回すのは最後の 1 回だけ。512x512 で最も広い探索でも実測 121 ms。</p>
+<p style="margin:2px 0 2px 12px">• 点数は回転後の<b>中央の正方形</b>(一辺 = `<code style="color:#22d3bf">min(H,W)/sqrt(2)</code>`)だけで取る ――</p>
+<p>どの角度でも枠内に収まる範囲なので、角の埋めかたが点数に混ざらない。</p>
+<p style="margin:2px 0 2px 12px">• <b>枠外は縁の中央値で埋める</b>(`<code style="color:#22d3bf">mode=&quot;constant&quot;</code><code style="color:#22d3bf">)。既存の </code><code style="color:#22d3bf">rotate_image</code>` は</p>
+<p>鏡映で埋めるため、帳票を起こすと<b>四隅に鏡文字が写り込む</b>(向こうの docstring が</p>
+<p>自ら「枠外を背景色で埋めたい用途には向かない」と認めている)。起こしたものを</p>
+<p>そのまま OCR・切り出しへ渡せるのが、この op の足し前。</p>
+<p><b>実測の精度と限界</b>(行間 14 画素・幅 384 画素の合成頁): `<code style="color:#22d3bf">b=1</code>`(0.1° 刻み)で</p>
+<p>1 / 2 / 3.7 / 5 / 12 / 20° のいずれも<b>誤差 0.00°</b>。ただし **0.6° 未満の傾きは</p>
+<p>0 を返す** ―― 頁の幅いっぱいでも行のずれが 1 画素に届かず、射影の鋭さが補間の</p>
+<p>丸まりに埋もれるため。細かく測りたければ入力を大きくする(判定量は幅に比例する)。</p>
+<p><b>先行研究</b>: 射影プロファイルで傾きを測るのは古典で、Postl (1986) が<b>分散</b>を、</p>
+<p>Baird (1987) が<b>二乗和 + 粗密の角度探索</b>を判定量にした。この op は Baird の系譜で、</p>
+<p>新しいのは手法ではなく<b>縁の扱い</b>である(下記)。</p>
+<p>★<b>以前は差分基準が +3.0 度 ずれていた。その原因が確定した。</b> 2026-09-17 の事前測定で、</p>
+<p>真値 −7/−3/+3/+7 度 に対し分散基準は誤差 0.0 度、差分基準は 4 本すべて +3.0 度 ずれ、原因は</p>
+<p>`<code style="color:#22d3bf">ndimage.rotate</code><code style="color:#22d3bf"> が作る縁の人工物だろうが「</code><code style="color:#22d3bf">mode=&quot;constant&quot;</code>` で消えるかは未検証」と</p>
+<p>記録していた。<b>塗り方ではなく見る範囲が原因だった</b> —— 回転後の内接正方形だけで点を</p>
+<p>取ると、差分基準でも 1/2/3.7/5/12/20 度 のすべてで誤差 0.00 度 になる(実測)。</p>
+<p><b>値域は入力のまま</b>(線形補間と縁の中央値はどちらも値域を広げない)。★空フレーム</p>
+<p>(値域 1e-9 未満)と 8 画素未満の入力はそのまま返す。★<b>タイル分割してはいけない</b></p>
+<p>―― 角度は画像全体から 1 つ決まるもので、タイルごとに測ると各タイルが別々の角度で</p>
+<p>回る(`<code style="color:#22d3bf">scale.py</code>` に理由つきで登録済み)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio에서 시도하기</h3>
+<p>아래 프로그램은 실제로 실행됨을 확인했습니다(그림과 같은 입력). Studio 도움말에서는 이 블록이 버튼이 되어 즉시 불러와 실행할 수 있습니다.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">rotate_img 0.58 0.50
+deskew 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:rotate_img%200.58%200.50%0Adeskew%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:rotate_img%200.58%200.50%0Adeskew%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">image</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">geometry</code>)</h3>
+<p><a style="color:#22d3bf" href="op:rotate_img">rotate_img</a> · <a style="color:#22d3bf" href="op:rescale_img">rescale_img</a> · <a style="color:#22d3bf" href="op:affine_warp">affine_warp</a> · <a style="color:#22d3bf" href="op:sk_swirl">sk_swirl</a> · <a style="color:#22d3bf" href="op:mirror_image">mirror_image</a> · <a style="color:#22d3bf" href="op:transpose_region">transpose_region</a> · <a style="color:#22d3bf" href="op:rotate_image">rotate_image</a> · <a style="color:#22d3bf" href="op:zoom_image_factor">zoom_image_factor</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">matrix_to_img — 2D <code style="color:#22d3bf">bridge</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;matrix_to_img&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/matrix_to_img.png" alt="matrix_to_img: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/matrix_to_img.a.jpg">matrix_to_img: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>掃描旋鈕 b</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/matrix_to_img.b.jpg">matrix_to_img: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/matrix_to_img.chain.jpg">matrix_to_img: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/matrix_to_img.inputs.jpg">matrix_to_img: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>行列を<b>見るための濃淡</b>にして画像へ戻す —— キャストではない。</p>
+<p>行き(`<code style="color:#22d3bf">img_to_matrix</code>`)は値も形も変えない<b>純粋なキャスト</b>だと明記して</p>
+<p>あるが、戻りを同じくキャストにすると嘘になる: 行列の値は [0,1] に収まらず、</p>
+<p>最小値が黒・最大値が白に伸びるだけだと <b>0 がどこかが分からない</b>。</p>
+<p>共分散・相関・擬似逆行列の符号は、そこが読めないと意味を持たない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → **対数圧縮**の強さ。</code><code style="color:#22d3bf">k = 10**(3a) - 1</code>` として</p>
+<p>`<code style="color:#22d3bf">y = sign(x) * log1p(k|x|) / log1p(k)</code>`(a=0 は線形、a=1 で 1000 倍の圧縮)。</p>
+<p>条件数のように桁が開く行列で、小さい成分が全部黒に潰れるのを防ぐ。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 基準。</code><code style="color:#22d3bf">b &lt; 0.5</code>` は<b>データの min–max を [0,1] に伸ばす</b>、</p>
+<p>`<code style="color:#22d3bf">b &gt;= 0.5</code><code style="color:#22d3bf"> は **0 を 0.5 に置いて </code><code style="color:#22d3bf">|x|</code>` の最大で対称に**(符号つきの</p>
+<p>行列向け。0.5 が中立、明るい = 正、暗い = 負)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 入力と<b>同じ形</b>の float64、値域 [0,1]。全要素が等しい行列は一様な</p>
+<p>0.5(min–max 側でも 0 除算にならないよう中立へ倒す)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
+<p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_matrix 0.50 0.50
+matrix_to_img 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_matrix%200.50%200.50%0Amatrix_to_img%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_matrix%200.50%200.50%0Amatrix_to_img%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_bridge">gallery2d_bridge</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_bridge.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">bridge</code>)</h3>
+<p><a style="color:#22d3bf" href="op:img_to_points">img_to_points</a> · <a style="color:#22d3bf" href="op:img_to_keypoints">img_to_keypoints</a> · <a style="color:#22d3bf" href="op:img_to_signal">img_to_signal</a> · <a style="color:#22d3bf" href="op:img_to_projection_profile">img_to_projection_profile</a> · <a style="color:#22d3bf" href="op:img_to_counts">img_to_counts</a> · <a style="color:#22d3bf" href="op:img_to_matrix">img_to_matrix</a> · <a style="color:#22d3bf" href="op:img_to_video">img_to_video</a> · <a style="color:#22d3bf" href="op:img_to_volume">img_to_volume</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

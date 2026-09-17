@@ -1,10 +1,10 @@
 {
- "n_ops": 1970,
+ "n_ops": 1978,
  "tiers": {
   "color": 12,
   "ledger": 1031,
   "nary": 17,
-  "registry": 910
+  "registry": 918
  },
  "sorts": [
   "angle",
@@ -14469,6 +14469,14 @@
    "tier": "registry"
   },
   {
+   "name": "contour_to_img",
+   "halcon": "",
+   "in_sort": "contour",
+   "out_sort": "image",
+   "category": "bridge",
+   "tier": "registry"
+  },
+  {
    "name": "contours_to_region",
    "halcon": "gen_region_contour_xld",
    "in_sort": "contour",
@@ -14538,6 +14546,14 @@
    "in_sort": "region",
    "out_sort": "feature",
    "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "counts_to_img",
+   "halcon": "",
+   "in_sort": "counts",
+   "out_sort": "image",
+   "category": "bridge",
    "tier": "registry"
   },
   {
@@ -14866,6 +14882,14 @@
    "in_sort": "image",
    "out_sort": "image",
    "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "deskew",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
    "tier": "registry"
   },
   {
@@ -15290,6 +15314,14 @@
    "in_sort": "image",
    "out_sort": "region",
    "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "feature_to_img",
+   "halcon": "",
+   "in_sort": "feature",
+   "out_sort": "image",
+   "category": "bridge",
    "tier": "registry"
   },
   {
@@ -16429,6 +16461,14 @@
    "tier": "registry"
   },
   {
+   "name": "img_to_projection_profile",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "signal",
+   "category": "bridge",
+   "tier": "registry"
+  },
+  {
    "name": "img_to_rgb",
    "halcon": "",
    "in_sort": "image",
@@ -16701,6 +16741,14 @@
    "tier": "registry"
   },
   {
+   "name": "local_bimodality",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
    "name": "local_max",
    "halcon": "local_max",
    "in_sort": "image",
@@ -16834,6 +16882,14 @@
    "in_sort": "volume",
    "out_sort": "volume",
    "category": "macro",
+   "tier": "registry"
+  },
+  {
+   "name": "matrix_to_img",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "image",
+   "category": "bridge",
    "tier": "registry"
   },
   {
@@ -17898,6 +17954,14 @@
    "in_sort": "image",
    "out_sort": "image",
    "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "signal_to_img",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "image",
+   "category": "bridge",
    "tier": "registry"
   },
   {

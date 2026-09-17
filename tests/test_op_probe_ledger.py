@@ -81,7 +81,12 @@ _KNOBS = ((0.5, 0.5), (0.15, 0.85))
 #: 実体は 3 本のベクトルを取る)が出た。
 _EXTRA_SORTS = ("contour", "points", "signal", "video", "qimage", "cimage",
                 "lightfield", "counts", "rgbimage", "matrix", "beatcube",
-                "keypoints", "any")
+                "keypoints", "any",
+                # ★2026-09-17: 戻りの橋 ``feature_to_img`` で feature が初めて
+                # **入力**になった(作る op は 125 本あったが受ける op がゼロ
+                # だった)。この門は「探針を作れず一度も走らせていない op」を
+                # 数えるので、sort を足したらここにも足す。
+                "feature")
 
 
 def _opb():

@@ -28,6 +28,10 @@
   * sp_local_max_sub_pix  単峰ガウスでは峰の位置を検出、平坦画像では 0 個(null)
   * xg_height_width_ratio 既知バウンディングボックスの縦横比を厳密再現
   * xg_area_center        既知正方形の面積(シューレース)を厳密再現
+  * deskew                傾きを**測って**起こす。合成頁(行間 14 px)を ±5〜12 度 傾けると
+                          本文の帯が融けて 1 本になり、起こすと 11 本に戻る(判定量とは
+                          独立な量で確かめている)。まっすぐな頁と空フレームは動かさない。
+                          Postl (1986) / Baird (1987) の射影プロファイル法の系譜
   * xg_orientation        対角線 → 45°(=0.25)、水平線 → 0°(=0.0)で識別
 族の全 op を実行し、契約(有限・型・決定性)と既知効果(GT)を検証する。
 """
@@ -37,6 +41,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # repo root first
 
 import numpy as np  # noqa: E402
+from scipy import ndimage  # noqa: E402
 import ops  # noqa: E402
 
 
@@ -83,7 +88,7 @@ def input_for(sort: str):
 # --------------------------------------------------------------------------- #
 OPS = [
     # geometry (image -> image / region -> region)
-    "rotate_img", "rescale_img", "affine_warp", "sk_swirl", "mirror_image",
+    "rotate_img", "deskew", "rescale_img", "affine_warp", "sk_swirl", "mirror_image",
     "transpose_region", "rotate_image", "zoom_image_factor", "zoom_image_size",
     "affine_trans_image", "polar_trans_image", "projective_trans_image",
     "projective_trans_image_size", "projective_trans_region", "polar_trans_image_inv",
@@ -241,6 +246,36 @@ def ground_truth_checks() -> int:
     o_horiz = float(BY["xg_orientation"].fn(horiz, 0.0, 0.0))
     assert abs(o_diag - 0.25) < 1e-6, f"xg_orientation(diagonal)={o_diag:.4f}, expected 0.25"
     assert abs(o_horiz - 0.0) < 1e-6, f"xg_orientation(horizontal)={o_horiz:.4f}, expected 0.0"
+    gt += 1
+
+    # (h) deskew: 傾きを**測って**起こす。判定量(射影の鋭さ)とは独立な量 ――
+    #     「本文の帯が何本に分かれて見えるか」―― で当たりを確かめる。
+    #     合成頁は行間 14 画素で 11 本の帯を持つ。5 度 以上傾けると帯は融けて 1 本に
+    #     なり(null)、起こすと 11 本に戻る。
+    def _page() -> np.ndarray:
+        pg = np.ones((192, 192))
+        prng = np.random.default_rng(7)
+        for r in range(18, 174, 14):
+            for c in range(18, 174, 9):
+                if prng.random() < 0.8:
+                    pg[r:r + 7, c:c + 6] = 0.1
+        return pg
+
+    def _bands(im: np.ndarray) -> int:
+        """中央部の行平均が 0.9 を下回る区間の本数(= 本文の帯の数)。"""
+        m = im[24:168, 24:168].mean(axis=1) < 0.9
+        return int(np.sum(m[1:] & ~m[:-1])) + int(m[0])
+
+    page = _page()
+    assert _bands(page) == 11, f"GT deskew: 合成頁の前提が崩れている(帯 {_bands(page)} 本)"
+    assert np.array_equal(BY["deskew"].fn(page.copy(), 1.0, 1.0), page),         "GT deskew: まっすぐな頁を動かしている(同点なら 0 度 を採る規約が壊れた)"
+    for skew in (-5.0, 8.0, 12.0):
+        tilted = ndimage.rotate(page, skew, reshape=False, order=1, mode="constant", cval=1.0)
+        assert _bands(tilted) < 11, f"GT deskew: {skew} 度 で帯が融けていない(null が強すぎる)"
+        fixed = BY["deskew"].fn(tilted.copy(), 1.0, 1.0)
+        assert _bands(fixed) == 11,             f"GT deskew: {skew} 度 を起こしても帯が {_bands(fixed)} 本 (11 本に戻らない)"
+    flat_pg = np.full((64, 64), 0.3)
+    assert np.array_equal(BY["deskew"].fn(flat_pg.copy(), 1.0, 1.0), flat_pg),         "GT deskew: 空フレームを回している"
     gt += 1
 
     return gt

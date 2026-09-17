@@ -1,5 +1,5 @@
 {
- "generated_for": 922,
+ "generated_for": 930,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -1630,6 +1630,31 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "contour_to_img": {
+   "color_ok": false,
+   "extra": {
+    "a": "contour_to_img.a.jpg",
+    "b": "contour_to_img.b.jpg",
+    "chain": "contour_to_img.chain.jpg",
+    "inputs": "contour_to_img.inputs.jpg"
+   },
+   "fig": "contour_to_img.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\ncontour_to_img 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "contours_to_region": {
    "color_ok": false,
    "extra": {
@@ -1811,6 +1836,31 @@
    ],
    "out_kind": "float",
    "program": "threshold 0.50 0.50\ncount_obj 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "counts_to_img": {
+   "color_ok": false,
+   "extra": {
+    "a": "counts_to_img.a.jpg",
+    "b": "counts_to_img.b.jpg",
+    "chain": "counts_to_img.chain.jpg",
+    "inputs": "counts_to_img.inputs.jpg"
+   },
+   "fig": "counts_to_img.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "img_to_counts 0.50 0.50\ncounts_to_img 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -2767,6 +2817,31 @@
    ],
    "out_kind": "ndarray",
    "program": "derivate_gauss 0.40 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "deskew": {
+   "color_ok": false,
+   "extra": {
+    "a": "deskew.a.jpg",
+    "b": "deskew.b.jpg",
+    "chain": "deskew.chain.jpg",
+    "inputs": "deskew.inputs.jpg"
+   },
+   "fig": "deskew.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "rotate_img 0.58 0.50\ndeskew 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -4027,6 +4102,31 @@
    ],
    "out_kind": "ndarray",
    "program": "fast_threshold 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "feature_to_img": {
+   "color_ok": false,
+   "extra": {
+    "a": "feature_to_img.a.jpg",
+    "b": "feature_to_img.b.jpg",
+    "chain": "feature_to_img.chain.jpg",
+    "inputs": "feature_to_img.inputs.jpg"
+   },
+   "fig": "feature_to_img.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "intensity 0.50 0.50\nfeature_to_img 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -7250,6 +7350,30 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "img_to_projection_profile": {
+   "color_ok": true,
+   "extra": {
+    "a": "img_to_projection_profile.a.jpg",
+    "b": "img_to_projection_profile.b.jpg",
+    "inputs": "img_to_projection_profile.inputs.jpg"
+   },
+   "fig": "img_to_projection_profile.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "img_to_projection_profile 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "img_to_rgb": {
    "color_ok": true,
    "extra": {
@@ -8122,6 +8246,30 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "local_bimodality": {
+   "color_ok": true,
+   "extra": {
+    "a": "local_bimodality.a.jpg",
+    "b": "local_bimodality.b.jpg",
+    "inputs": "local_bimodality.inputs.jpg"
+   },
+   "fig": "local_bimodality.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "local_bimodality 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "local_max": {
    "color_ok": true,
    "extra": {
@@ -8501,6 +8649,31 @@
    ],
    "out_kind": "ndarray",
    "program": "img_to_volume 0.50 0.50\nmacro_vol_denoise 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "matrix_to_img": {
+   "color_ok": false,
+   "extra": {
+    "a": "matrix_to_img.a.jpg",
+    "b": "matrix_to_img.b.jpg",
+    "chain": "matrix_to_img.chain.jpg",
+    "inputs": "matrix_to_img.inputs.jpg"
+   },
+   "fig": "matrix_to_img.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "img_to_matrix 0.50 0.50\nmatrix_to_img 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -11701,6 +11874,31 @@
    "knob_dead": [],
    "out_kind": "ndarray",
    "program": "sigmoid 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "signal_to_img": {
+   "color_ok": false,
+   "extra": {
+    "a": "signal_to_img.a.jpg",
+    "b": "signal_to_img.b.jpg",
+    "chain": "signal_to_img.chain.jpg",
+    "inputs": "signal_to_img.inputs.jpg"
+   },
+   "fig": "signal_to_img.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "img_to_signal 0.50 0.50\nsignal_to_img 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -21612,10 +21810,10 @@
   "domain": 3,
   "empty": 1,
   "failed": 0,
-  "ok": 918,
+  "ok": 926,
   "unreachable": 0,
-  "with_chain": 369,
+  "with_chain": 375,
   "with_gif": 40,
-  "with_sweep": 567
+  "with_sweep": 575
  }
 }

@@ -1030,7 +1030,7 @@ _計 363 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 922 ops / 48 categories。_
+_計 930 ops / 48 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1095,10 +1095,11 @@ _計 922 ops / 48 categories。_
 ### barcode(1)
 - `decode_barcode` (halcon: `find_bar_code`) `image → feature` · 例: `gallery2d_physics_alife_3d`, `poc_barcode_1d`
 
-### bridge(12)
+### bridge(18)
 - `img_to_points` `image → points` · 例: `gallery2d_bridge`
 - `img_to_keypoints` `image → keypoints` · 例: `gallery2d_bridge`
 - `img_to_signal` `image → signal` · 例: `gallery2d_bridge`
+- `img_to_projection_profile` `image → signal` · 例: `gallery2d_bridge`
 - `img_to_counts` `image → counts` · 例: `gallery2d_bridge`
 - `img_to_matrix` `image → matrix` · 例: `gallery2d_bridge`
 - `img_to_video` `image → video` · 例: `gallery2d_bridge`
@@ -1108,6 +1109,11 @@ _計 922 ops / 48 categories。_
 - `img_to_cimage` `image → cimage` · 例: `gallery2d_bridge`
 - `img_to_beatcube` `image → beatcube` · 例: `gallery2d_bridge`
 - `img_to_monogenic` `image → qimage` · 例: `gallery2d_bridge`
+- `signal_to_img` `signal → image` · 例: `gallery2d_bridge`
+- `counts_to_img` `counts → image` · 例: `gallery2d_bridge`
+- `matrix_to_img` `matrix → image` · 例: `gallery2d_bridge`
+- `contour_to_img` `contour → image` · 例: `gallery2d_bridge`
+- `feature_to_img` `feature → image` · 例: `gallery2d_bridge`
 
 ### classification(1)
 - `classify_shape` `region → feature` · 例: `gallery2d_features`
@@ -1127,7 +1133,7 @@ _計 922 ops / 48 categories。_
 - `smooth_contours` (halcon: `smooth_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
 - `fit_line_contours` (halcon: `fit_line_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`, `poc_screw_thread_metrology`
 - `contours_to_region` (halcon: `gen_region_contour_xld`) `contour → region` · 例: `gallery2d_contour_measure`, `quickstart`
-- `sk_find_contours` `image → contour` · 例: `gallery2d_contour_measure`
+- `sk_find_contours` `image → contour` · 例: `gallery2d_bridge`, `gallery2d_contour_measure`
 - `edges_sub_pix` (halcon: `edges_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`, `quickstart`
 - `lines_gauss` (halcon: `lines_gauss`) `image → contour` · 例: `gallery2d_contour_measure`, `poc_solar_el_inspection`, `poc_weld_bead_scan_angle`
 - `select_contours_xld` (halcon: `select_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
@@ -1269,7 +1275,7 @@ _計 922 ops / 48 categories。_
 - `diameter_region` (halcon: `diameter_region`) `region → feature` · 例: `gallery2d_features`
 - `euler_number` (halcon: `euler_number`) `region → feature` · 例: `gallery2d_features`
 - `min_max_gray` (halcon: `min_max_gray`) `image → feature` · 例: `gallery2d_features`
-- `intensity` (halcon: `intensity`) `image → feature` · 例: `gallery2d_features`, `poc_solder_fillet_aoi`
+- `intensity` (halcon: `intensity`) `image → feature` · 例: `gallery2d_bridge`, `gallery2d_features`, `poc_solder_fillet_aoi`
 - `gray_histo_abs` (halcon: `gray_histo_abs`) `image → feature` · 例: `gallery2d_features`
 - `entropy_gray` (halcon: `entropy_gray`) `image → feature` · 例: `gallery2d_features`
 - `length_xld` (halcon: `length_xld`) `contour → feature` · 例: `gallery2d_features`
@@ -1341,8 +1347,9 @@ _計 922 ops / 48 categories。_
 - `xwt_subband_tile` `image → image` · 例: `gallery2d_texture_freq`
 - `xwt_mra_component` `image → image` · 例: `gallery2d_texture_freq`
 
-### geometry(28)
+### geometry(29)
 - `rotate_img` (halcon: `rotate_image`) `image → image` · 例: `gallery2d_geometry`
+- `deskew` `image → image` · 例: `gallery2d_geometry`
 - `rescale_img` (halcon: `zoom_image_factor`) `image → image` · 例: `gallery2d_geometry`
 - `affine_warp` (halcon: `affine_trans_image`) `image → image` · 例: `gallery2d_geometry`
 - `sk_swirl` (halcon: `polar_trans_image`) `image → image` · 例: `gallery2d_geometry`
@@ -1838,8 +1845,9 @@ _計 922 ops / 48 categories。_
 - `tac_pressure_proxy` `image → image` · 例: `sim2real_and_alife`
 - `tac_shear_field` `image → image` · 例: `sim2real_and_alife`
 
-### texture(27)
+### texture(28)
 - `std_filter` (halcon: `deviation_image`) `image → image` · 例: `gallery2d_texture_freq`
+- `local_bimodality` `image → image` · 例: `gallery2d_texture_freq`
 - `local_std` `image → image` · 例: `gallery2d_texture_freq`
 - `scale_select_std` `image → image` · 例: `gallery2d_texture_freq`
 - `bootstrap_std_error` `image → image` · 例: `gallery2d_texture_freq`

@@ -1,0 +1,55 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">signal_to_img — 2D <code style="color:#22d3bf">bridge</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;signal_to_img&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/signal_to_img.png" alt="signal_to_img: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/signal_to_img.a.jpg">signal_to_img: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/signal_to_img.b.jpg">signal_to_img: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/signal_to_img.chain.jpg">signal_to_img: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/signal_to_img.inputs.jpg">signal_to_img: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>1-D の signal を<b>折れ線の図</b>にして画像へ戻す —— 「作った列を見る」入口。</p>
+<p>行きの橋(`<code style="color:#22d3bf">img_to_signal</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">img_to_projection_profile</code>`)で画像から列を</p>
+<p>作れるようになったが、<b>その列を見る登録 op が無かった</b>。signal を画像に</p>
+<p>落とせる op は `<code style="color:#22d3bf">spectrogram</code>` の 2 本だけで、どちらも描くのは<b>スペクトル</b></p>
+<p>であって列そのものではない。図の生成器は 1-D を折れ線で描いているが、</p>
+<p>それは<b>道具の中の実装</b>で、`<code style="color:#22d3bf">fullseye.apply</code>` からも Studio からも呼べない。</p>
+<p>この op がその穴を埋める。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 縦軸の**余白** </code><code style="color:#22d3bf">pad = 0.30 * a * (データの幅)</code>`(a=0 でぴったり、</p>
+<p>a=1 で上下に 30 % の余白)。ぴったりだと端の点が枠に重なる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 描き方。</code><code style="color:#22d3bf">b &lt; 1/3</code><code style="color:#22d3bf"> で**点**、</code><code style="color:#22d3bf">&lt; 2/3</code>` で<b>折れ線</b>、それ以上で<b>棒</b>。</p>
+<p>★並びは「<b>既定のノブ 0.5 がその型に素直な描き方になる</b>」ように決めてある</p>
+<p>—— 列は折れ線が素直なので真ん中が折れ線。</p>
+<p style="margin:2px 0 2px 12px">• 横軸は添字 `<code style="color:#22d3bf">0..N-1</code>`、縦軸はデータの範囲(+ 余白)。<b>軸は閉形式</b></p>
+<p>(`<code style="color:#22d3bf">annotate.axes_transform</code>`)なので、値が画素のどこに来るかは計算できる。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(128, 128)</code>` float64、白地に濃い線([0,1])。★**定数列は潰れた軸を</p>
+<p>±0.5 開いて中央に水平線 1 本**を描く(`<code style="color:#22d3bf">axes_transform</code>` は幅 0 の軸を</p>
+<p>ValueError で拒否するので、ここで開く)。空の列は白紙。</p>
+<p>使いどころ: 射影プロファイルの谷を目で確かめる、1-D 関数族</p>
+<p>(`<code style="color:#22d3bf">tb_smooth_funct_1d_gauss</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tb_derivate_funct_1d</code>`)の効果を見る、</p>
+<p>図・記事にそのまま貼る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
+<p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_signal 0.50 0.50
+signal_to_img 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_signal%200.50%200.50%0Asignal_to_img%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_signal%200.50%200.50%0Asignal_to_img%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_bridge">gallery2d_bridge</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_bridge.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">bridge</code>)</h3>
+<p><a style="color:#22d3bf" href="op:img_to_points">img_to_points</a> · <a style="color:#22d3bf" href="op:img_to_keypoints">img_to_keypoints</a> · <a style="color:#22d3bf" href="op:img_to_signal">img_to_signal</a> · <a style="color:#22d3bf" href="op:img_to_projection_profile">img_to_projection_profile</a> · <a style="color:#22d3bf" href="op:img_to_counts">img_to_counts</a> · <a style="color:#22d3bf" href="op:img_to_matrix">img_to_matrix</a> · <a style="color:#22d3bf" href="op:img_to_video">img_to_video</a> · <a style="color:#22d3bf" href="op:img_to_volume">img_to_volume</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

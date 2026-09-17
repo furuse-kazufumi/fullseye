@@ -85,6 +85,9 @@ _NOT_TILE_SAFE = frozenset({
     # ★2026-09-17: 走査長平滑化は隙間を最大 65 画素まで埋めるので、
     #   標準タイラーの halo より広い。60/12 のタイルで 0.2613 ずれた(実測)。
     'runlength_smear',
+    # ★2026-09-17: 局所の二峰性は窓が最大 41 画素、傾き補正は角度を画像全体から
+    #   1 つ決める。どちらもタイルごとに測ると別の答えになる(実測 1.0000)。
+    'local_bimodality', 'deskew',
 })
 
 # class + reason for a measured non-tileable op, from its (optimistic) category.
@@ -94,6 +97,18 @@ _NOT_TILE_SAFE = frozenset({
 #: から割れる。床は一様面で arctan2 が丸め屑を増幅するのを止めるためのもので、
 #: タイルごとに取り直すと、真っ平らなタイルでは屑そのものが最大値になって床が効かない。
 _NOT_TILE_SAFE_OP_REASON = {
+    "deskew": (
+        "global",
+        "the skew angle is estimated ONCE from the whole image (the projection-profile "
+        "criterion needs the full text block); per-tile estimation gives every tile its "
+        "own angle and the page tears at the seams. Measured drift 1.0000. Not a halo "
+        "problem - no halo fixes it. Deskew the full image, then tile the result."),
+    "local_bimodality": (
+        "halo",
+        "the bimodality window is up to 41 px across, so the receptive field is wider "
+        "than the standard tiler's halo and the contrast floor is taken from the whole "
+        "image's range. Measured drift 1.0000. Run it on the full image, or tile with a "
+        "halo wider than the window."),
     "runlength_smear": (
         "halo",
         "run-length smoothing closes gaps up to 65 px along a line, so the receptive "
@@ -162,6 +177,14 @@ def scale_class(op) -> dict:
     """
     name = getattr(op, "name", op if isinstance(op, str) else "")
     cat = getattr(op, "category", "")
+    # ★名前つきの理由は**カテゴリの分岐より先に**引く。category が先に返してしまうと、
+    #   幾何カテゴリの op はすべて「cv2 の座標上限」と説明されてしまい、実際の理由
+    #   (deskew なら「角度は画像全体から 1 つ決まる」)に辿り着けない。この辞書に
+    #   載っているのは実測で非タイル可と分かった op だけなので、載せた op 以外の
+    #   分類は 1 件も変わらない(2026-09-17 に 925 op 全数で確認)。
+    named = _NOT_TILE_SAFE_OP_REASON.get(name)
+    if named is not None:
+        return {"class": named[0], "tile_safe": False, "reason": named[1]}
     if any(h in name for h in _CV2_LIMITED_HINTS) or "geometry" in cat:
         return {"class": "cv2_limited", "tile_safe": False,
                 "reason": "cv2 warp/geometry: coordinate limit ~32767 px; downscale or use skimage"}

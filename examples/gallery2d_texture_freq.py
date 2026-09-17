@@ -22,6 +22,11 @@ homomorphic、局所コントラスト正規化 …)に属する **すべて** �
   - lowpass    : 高周波エネルギ(ラプラシアン分散)が半減以下 = ぼかしが高周波を落とす
   - highpass   : ステップエッジ上のディテール応答 >> 平坦部応答(エッジ検出)
   - std_filter : 平坦部の局所標準偏差 ≈ 0、テクスチャ部で大(> 0.1)
+  - local_bimodality : 二峰性係数 BC=(歪度²+1)/尖度。**閾値を 1 つも選ばずに**「ここは
+    2 つの値に分かれるか」を返す。参照値は解析解で決まる —— 2 点分布 1.0 / 一様 5/9 /
+    正規 1/3(実測 1.0000 / 0.5598 / 0.3306)。★一峰でも 0 にはならず、**歪んだ単峰は
+    偽陽性**(Pfister et al. 2013: 単峰 0.73 > 二峰 0.67 の逆転例)。床が無いと一様面の
+    丸め屑が構造に化ける(相対床だけの版は BC 最大 1.0000 になった)
   - rank_transform : 正のゲイン倍で出力ビット一致(順序不変=照明ゲイン頑健)、
                      コントラスト反転では変化(検査が非自明であることの裏取り)
   - entropy_image  : 定数画像はエントロピ ≈ 0、ノイズ/テクスチャで高い
@@ -93,7 +98,7 @@ def image_battery(n: int = 48):
 # Written as explicit string literals so each op name appears in the source
 # (needed for the op -> example index). Length MUST equal the registry count.
 OPS = [
-    "lowpass", "highpass", "std_filter", "gabor", "sk_frangi", "sk_meijering",
+    "lowpass", "highpass", "std_filter", "local_bimodality", "gabor", "sk_frangi", "sk_meijering",
     "sk_hessian", "sk_gabor", "sk_butterworth", "sk_lbp", "sk_entropy",
     "sk_shape_index", "fft_image", "power_real", "power_byte", "phase_rad",
     "highpass_image", "bandpass_image", "deviation_image", "texture_laws",
@@ -327,6 +332,30 @@ def run_ground_truth() -> int:
     dl = BY["xsp_dct_lowpass"].fn(img.copy(), 0.5, 0.5)
     assert _lapvar(dl) < 0.5 * _lapvar(img), \
         f"xsp_dct_lowpass did not attenuate high-freq energy: {_lapvar(img):.4g} -> {_lapvar(dl):.4g}"
+    checks += 1
+
+    # GT7: local_bimodality は**解析解のある量**を返す。二峰性係数
+    #      BC = (歪度^2 + 1) / 尖度 は分布の形だけで決まるので、参照値は環境に依らない:
+    #      2 点分布 1.0 / 一様分布 5/9 / 正規分布 1/3。床(b)が丸め屑を止めることも
+    #      同時に確かめる —— ここを外すと一様面が模様に化ける。
+    lb = BY["local_bimodality"].fn
+    rng_bm = np.random.default_rng(20260917)
+    gauss = 0.5 + 0.1 * rng_bm.standard_normal((160, 160))
+    unif = rng_bm.random((160, 160))
+    med_g = float(np.median(lb(gauss.copy(), 1.0, 0.0)[41:-41, 41:-41]))
+    med_u = float(np.median(lb(unif.copy(), 1.0, 0.0)[41:-41, 41:-41]))
+    assert abs(med_g - 1.0 / 3.0) < 0.05, f"local_bimodality: 正規雑音が 1/3 から離れた ({med_g:.4f})"
+    assert abs(med_u - 5.0 / 9.0) < 0.05, f"local_bimodality: 一様雑音が 5/9 から離れた ({med_u:.4f})"
+    assert med_u > med_g, "local_bimodality: 一様と正規の順序が逆(二峰性の向きが壊れている)"
+    step_bm = np.zeros((64, 64)); step_bm[:, 32:] = 1.0
+    o_bm = lb(step_bm.copy(), 0.5, 0.0)
+    assert abs(float(o_bm[32, 32]) - 1.0) < 1e-6,         f"local_bimodality: 半々の 2 値で 1.0 にならない ({float(o_bm[32, 32]):.6f})"
+    assert float(o_bm[32, 5]) == 0.0, "local_bimodality: 一様な内部が 0 でない(床が効いていない)"
+    assert float(lb(np.full((48, 48), 0.4), 0.5, 0.5).max()) == 0.0,         "local_bimodality: 空フレームに二峰性を見ている"
+    dust_bm = np.full((64, 64), 0.5) + rng_bm.standard_normal((64, 64)) * 1e-9
+    assert float(lb(dust_bm, 0.5, 0.0).max()) == 0.0,         "local_bimodality: 丸め屑が構造に化けた(絶対床 1e-5 が効いていない)"
+    nz = [int((lb(unif.copy(), 0.5, b) > 0).sum()) for b in (0.0, 0.5, 1.0)]
+    assert nz[0] >= nz[1] >= nz[2], f"local_bimodality: 床を上げても残る画素が減らない {nz}"
     checks += 1
 
     return checks

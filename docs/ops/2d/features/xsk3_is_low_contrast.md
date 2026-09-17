@@ -53,7 +53,7 @@ xsk3_is_low_contrast 0.50 0.50
 
 ## 型が繋がる次の op(`feature` を入力に取れる)
 
-[identity](../misc/identity.md)
+[identity](../misc/identity.md) · [feature_to_img](../bridge/feature_to_img.md)
 
 ## 同カテゴリ(`features`)
 

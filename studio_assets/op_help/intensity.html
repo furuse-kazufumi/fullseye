@@ -14,7 +14,7 @@
 <p>`<code style="color:#22d3bf">gray_histo_abs</code>`(標準偏差 std を返す)を併用する)。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
@@ -23,10 +23,11 @@
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">intensity 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:intensity%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:intensity%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_bridge">gallery2d_bridge</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_bridge.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_solder_fillet_aoi">poc_solder_fillet_aoi</a> — <code style="color:#22d3bf">py -3.11 examples/poc_solder_fillet_aoi.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">feature</code> を入力に取れる)</h3>
-<p><a style="color:#22d3bf" href="op:identity">identity</a></p>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">features</code>)</h3>
 <p><a style="color:#22d3bf" href="op:effective_bit_depth">effective_bit_depth</a> · <a style="color:#22d3bf" href="op:blob_count">blob_count</a> · <a style="color:#22d3bf" href="op:area_frac">area_frac</a> · <a style="color:#22d3bf" href="op:count_contours">count_contours</a> · <a style="color:#22d3bf" href="op:total_length">total_length</a> · <a style="color:#22d3bf" href="op:vol_count">vol_count</a> · <a style="color:#22d3bf" href="op:sk_euler">sk_euler</a> · <a style="color:#22d3bf" href="op:sk_entropy_feat">sk_entropy_feat</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

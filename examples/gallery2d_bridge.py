@@ -38,6 +38,22 @@ Studio / 図)にだけ見える。
   - ``img_to_keypoints``: 返った点はすべて局所極大で、しきい値以上
   - ``img_to_monogenic``: w 成分 0、振幅 ≥ 0
   - ``img_to_matrix``   : 入力とビット一致(キャスト)
+  - ``img_to_projection_profile``: a=0 は平均射影、a=1 は最大値射影、その間は上位トリム平均で単調。b が向き(長さ W / H)
+
+★2026-09-17 に **戻りの橋**(新設 sort → image)を足した。行きの橋(``img_to_*``)で
+画像から型を作れるようになった一方、**作った値を見る登録 op が無かった** ——
+signal を画像に落とせるのは ``tb_spectrogram`` だけ(描くのはスペクトルで列そのもの
+ではない)、counts / matrix / contour / feature は **1 本も無かった**(contour は 43 本、
+feature は 125 本の op が作る)。図の生成器は 1-D も輪郭も自前で描いていたが、それは
+**道具の中の実装**で ``fullseye.apply`` からも Studio からも呼べない。
+  - ``signal_to_img``  : 定数列は中央に水平線 1 本、空の列は白紙。a が縦軸の余白、b が 点/折れ線(既定)/棒
+  - ``counts_to_img``  : 同じ機械で既定が**棒**(カウントは整数の度数なので折れ線で結ぶと嘘になる)
+  - ``matrix_to_img``  : b≥0.5 の対称スケールは **0 をちょうど 0.5** に置く。一様な行列は全面 0.5。a が対数圧縮
+  - ``contour_to_img`` : 輪郭が 0 本なら**白紙**(黒い板にしない)。b≥0.5 で点数の多い輪郭ほど濃く
+  - ``feature_to_img`` : スカラを目盛りつきの帯に。片側は単調非減少で上限で止まり、両側は左右対称。非有限は白紙。
+    ★**数字そのものは描かない** —— 文字を焼くと絵が環境の書体で変わり、同じ入力で同じ画素という契約が壊れる
+いずれも category は ``bridge`` なので ``ops._candidates`` から除かれ、**進化のゲノム →
+op の写像は 1 ビットも変わらない**(``tests/test_wave0.py`` が固定)。
 
 ★EXTEND: ``_image()`` を自分の画像(``fullseye.read_image``)に差し替えれば、同じ検証が
 そのまま走る。閉形式の検算のうち画像の中身に依存するもの(ビート立方体の距離ビン)は
@@ -122,6 +138,16 @@ def run() -> dict:
     r = int(round(a * (h - 1)))
     checks["signal"] = (np.array_equal(fs.apply(img, "img_to_signal", a, 0.0, on_error="raise"), img[r, :])
                         and np.array_equal(fs.apply(img, "img_to_signal", a, 1.0, on_error="raise"), img[:, r]))
+    # projection_profile: 両端が閉形式(a=0 は平均射影、a=1 は最大値射影)、
+    #   b が向きを決める。上側トリム率なので a について単調非減少。
+    _pp = lambda aa, bb: fs.apply(img, "img_to_projection_profile", aa, bb, on_error="raise")
+    _means = [float(_pp(aa, 0.0).mean()) for aa in (0.0, 0.25, 0.5, 0.75, 1.0)]
+    checks["projection_profile"] = bool(
+        np.allclose(_pp(0.0, 0.0), img.mean(axis=0))
+        and np.allclose(_pp(1.0, 0.0), img.max(axis=0))
+        and np.allclose(_pp(0.0, 1.0), img.mean(axis=1))
+        and _pp(0.0, 0.0).shape == (w,) and _pp(0.0, 1.0).shape == (h,)
+        and all(x <= y + 1e-12 for x, y in zip(_means, _means[1:])))
     # counts: 期待値 0 → 0、平均が期待値に近い(n_max=1000 で相対 5 % 以内)
     z = img.copy(); z[r, :8] = 0.0
     c = fs.apply(z, "img_to_counts", a, 0.49, on_error="raise")     # b<0.5: 行、n_max = 10**(1+0.98)
@@ -179,8 +205,80 @@ def run() -> dict:
     # matrix: キャスト
     checks["matrix"] = np.array_equal(fs.apply(img, "img_to_matrix", a, b, on_error="raise"), img)
 
+    # ---- (5) 戻りの橋(新設 sort -> image)------------------------------------ #
+    # 行きの橋で作った値を、そのまま戻りの橋に通す。往復が 1 本の鎖で閉じる。
+    ret_in = {
+        "signal": fs.apply(img, "img_to_signal", 0.5, 0.0, on_error="raise"),
+        "counts": fs.apply(img, "img_to_counts", 0.5, 0.0, on_error="raise"),
+        "matrix": fs.apply(img, "img_to_matrix", 0.5, 0.5, on_error="raise"),
+        "contour": fs.apply((img > 0.5).astype(float), "sk_find_contours", 0.5, 0.5,
+                            on_error="raise"),
+        "feature": float(fs.apply(img, "intensity", 0.5, 0.5, on_error="raise")),
+    }
+    for name, in_sort, _fn in BB.RETURN_BRIDGES:
+        results["n_ops"] += 1
+        v = ret_in[in_sort]
+        o1 = fs.apply(v, name, 0.5, 0.5, on_error="raise")
+        o2 = fs.apply(v, name, 0.5, 0.5, on_error="raise")
+        a1 = np.asarray(o1)
+        ok = a1.ndim == 2 and a1.dtype.kind == "f"
+        fin = bool(np.isfinite(a1).all())
+        rng_ok = bool(a1.min() >= -1e-9 and a1.max() <= 1.0 + 1e-9)
+        det = np.array_equal(o1, o2)
+        alt = np.asarray(fs.apply(v, name, 0.9, 0.1, on_error="raise"))
+        knob = alt.shape != a1.shape or not np.array_equal(alt, a1)
+        if ok and fin and det and knob and rng_ok:
+            results["contract_ok"] += 1
+        else:
+            results["failed"].append((name, "contract", ok, fin, det, knob, rng_ok))
+        print("  %-18s %-11s %-16s type=%s finite=%s [0,1]=%s deterministic=%s knobs=%s"
+              % (name, in_sort + "->image", a1.shape, ok, fin, rng_ok, det, knob))
+
+    # 戻りの橋の閉形式(解析解があるものだけ)
+    # signal: 定数列は**中央に水平線 1 本** / 空の列は白紙
+    flat = np.asarray(fs.apply(np.full(20, 0.7), "signal_to_img", 0.5, 0.5, on_error="raise"))
+    rows = np.unique(np.nonzero(flat < 0.5)[0])
+    checks["signal_to_img"] = bool(
+        flat.shape == (BB.CANVAS, BB.CANVAS)
+        and 0 < rows.size <= 4 and abs(float(rows.mean()) - (BB.CANVAS - 12) / 2.0) < 6.0
+        and np.all(np.asarray(fs.apply(np.zeros(0), "signal_to_img", 0.5, 0.5,
+                                       on_error="raise")) == 1.0))
+    # matrix: 対称スケール(b>=0.5)は **0 をちょうど 0.5** に置く。一様な行列は全面 0.5。
+    M = np.array([[-2.0, 0.0], [0.0, 2.0]])
+    sym = np.asarray(fs.apply(M, "matrix_to_img", 0.0, 1.0, on_error="raise"))
+    checks["matrix_to_img"] = bool(
+        abs(sym[0, 1] - 0.5) < 1e-12 and abs(sym[0, 0] - 0.0) < 1e-12
+        and abs(sym[1, 1] - 1.0) < 1e-12
+        and np.allclose(np.asarray(fs.apply(np.full((4, 4), 7.0), "matrix_to_img", 0.5, 0.0,
+                                            on_error="raise")), 0.5))
+    # counts: 既定(b=0.5)は**棒**。整数の度数なので、折れ線より棒が素直。
+    #   3 つの描き方が互いに違う絵になることと、空の列が白紙になることを見る。
+    cnt = np.array([3, 1, 4, 1, 5, 9, 2, 6], np.int64)
+    drawn = [int((np.asarray(fs.apply(cnt, "counts_to_img", 0.2, bb,
+                                      on_error="raise")) < 0.9).sum())
+             for bb in (0.0, 0.5, 1.0)]
+    checks["counts_to_img"] = bool(
+        len(set(drawn)) == 3 and min(drawn) > 0
+        and np.all(np.asarray(fs.apply(np.zeros(0, np.int64), "counts_to_img", 0.5, 0.5,
+                                       on_error="raise")) == 1.0))
+    # contour: 輪郭ゼロは**白紙**(黒い板にしない)。形は輪郭が持つ shape。
+    empty = np.asarray(fs.apply({"shape": (32, 32), "cs": []}, "contour_to_img", 0.5, 0.5,
+                                on_error="raise"))
+    checks["contour_to_img"] = bool(empty.shape == (32, 32) and np.all(empty == 1.0))
+    # feature: 片側スケールは **単調非減少で上限で止まる**、両側は左右対称、非有限は白紙。
+    def _fill(x, b):
+        return int((np.asarray(fs.apply(float(x), "feature_to_img", 0.5, b,
+                                        on_error="raise")) == 0.25).sum())
+    one = [_fill(x, 0.0) for x in (0.0, 0.25, 0.5, 0.75, 1.0, 2.0)]
+    two = [_fill(x, 1.0) for x in (-1.0, -0.5, 0.5, 1.0)]
+    checks["feature_to_img"] = bool(
+        one[0] == 0 and all(p <= q for p, q in zip(one, one[1:])) and one[-1] == one[-2]
+        and two[0] == two[3] and two[1] == two[2]
+        and np.all(np.asarray(fs.apply(float("nan"), "feature_to_img", 0.5, 0.5,
+                                       on_error="raise")) == 1.0))
+
     for k, v in checks.items():
-        print("  closed-form %-11s %s" % (k, "OK" if v else "NG"))
+        print("  closed-form %-16s %s" % (k, "OK" if v else "NG"))
         if v:
             results["closed_form_ok"] += 1
         else:

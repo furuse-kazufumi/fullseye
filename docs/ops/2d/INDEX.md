@@ -1,4 +1,4 @@
-# 2D operator help — 939 ops in 49 categories
+# 2D operator help — 947 ops in 49 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/2d/<category>/<op>.md` を走査。
 
@@ -50,9 +50,9 @@
 
 [decode_barcode](barcode/decode_barcode.md)
 
-### bridge (12)
+### bridge (18)
 
-[img_to_beatcube](bridge/img_to_beatcube.md) · [img_to_cimage](bridge/img_to_cimage.md) · [img_to_counts](bridge/img_to_counts.md) · [img_to_keypoints](bridge/img_to_keypoints.md) · [img_to_lightfield](bridge/img_to_lightfield.md) · [img_to_matrix](bridge/img_to_matrix.md) · [img_to_monogenic](bridge/img_to_monogenic.md) · [img_to_points](bridge/img_to_points.md) · [img_to_rgb](bridge/img_to_rgb.md) · [img_to_signal](bridge/img_to_signal.md) · [img_to_video](bridge/img_to_video.md) · [img_to_volume](bridge/img_to_volume.md)
+[contour_to_img](bridge/contour_to_img.md) · [counts_to_img](bridge/counts_to_img.md) · [feature_to_img](bridge/feature_to_img.md) · [img_to_beatcube](bridge/img_to_beatcube.md) · [img_to_cimage](bridge/img_to_cimage.md) · [img_to_counts](bridge/img_to_counts.md) · [img_to_keypoints](bridge/img_to_keypoints.md) · [img_to_lightfield](bridge/img_to_lightfield.md) · [img_to_matrix](bridge/img_to_matrix.md) · [img_to_monogenic](bridge/img_to_monogenic.md) · [img_to_points](bridge/img_to_points.md) · [img_to_projection_profile](bridge/img_to_projection_profile.md) · [img_to_rgb](bridge/img_to_rgb.md) · [img_to_signal](bridge/img_to_signal.md) · [img_to_video](bridge/img_to_video.md) · [img_to_volume](bridge/img_to_volume.md) · [matrix_to_img](bridge/matrix_to_img.md) · [signal_to_img](bridge/signal_to_img.md)
 
 ### classification (1)
 
@@ -98,9 +98,9 @@
 
 [bandpass_image](frequency/bandpass_image.md) · [fft_generic](frequency/fft_generic.md) · [fft_image](frequency/fft_image.md) · [fft_image_inv](frequency/fft_image_inv.md) · [highpass](frequency/highpass.md) · [highpass_image](frequency/highpass_image.md) · [lowpass](frequency/lowpass.md) · [phase_deg](frequency/phase_deg.md) · [phase_rad](frequency/phase_rad.md) · [power_byte](frequency/power_byte.md) · [power_ln](frequency/power_ln.md) · [power_real](frequency/power_real.md) · [rft_generic](frequency/rft_generic.md) · [sk_butterworth](frequency/sk_butterworth.md) · [xsk2_radon](frequency/xsk2_radon.md) · [xsp_dct](frequency/xsp_dct.md) · [xsp_dct_lowpass](frequency/xsp_dct_lowpass.md) · [xwt_mra_component](frequency/xwt_mra_component.md) · [xwt_subband_tile](frequency/xwt_subband_tile.md)
 
-### geometry (28)
+### geometry (29)
 
-[affine_trans_image](geometry/affine_trans_image.md) · [affine_trans_image_size](geometry/affine_trans_image_size.md) · [affine_trans_region](geometry/affine_trans_region.md) · [affine_warp](geometry/affine_warp.md) · [it_add_image_border](geometry/it_add_image_border.md) · [it_change_format](geometry/it_change_format.md) · [it_crop_part](geometry/it_crop_part.md) · [it_crop_rectangle1](geometry/it_crop_rectangle1.md) · [mirror_image](geometry/mirror_image.md) · [mirror_region](geometry/mirror_region.md) · [polar_trans_image](geometry/polar_trans_image.md) · [polar_trans_image_ext](geometry/polar_trans_image_ext.md) · [polar_trans_image_inv](geometry/polar_trans_image_inv.md) · [polar_trans_region_inv](geometry/polar_trans_region_inv.md) · [projective_trans_image](geometry/projective_trans_image.md) · [projective_trans_image_size](geometry/projective_trans_image_size.md) · [projective_trans_region](geometry/projective_trans_region.md) · [rescale_img](geometry/rescale_img.md) · [rotate_image](geometry/rotate_image.md) · [rotate_img](geometry/rotate_img.md) · [sk_swirl](geometry/sk_swirl.md) · [tf_log_polar](geometry/tf_log_polar.md) · [transpose_region](geometry/transpose_region.md) · [xcv2_warp_logpolar](geometry/xcv2_warp_logpolar.md) · [xpil_offset](geometry/xpil_offset.md) · [zoom_image_factor](geometry/zoom_image_factor.md) · [zoom_image_size](geometry/zoom_image_size.md) · [zoom_region](geometry/zoom_region.md)
+[affine_trans_image](geometry/affine_trans_image.md) · [affine_trans_image_size](geometry/affine_trans_image_size.md) · [affine_trans_region](geometry/affine_trans_region.md) · [affine_warp](geometry/affine_warp.md) · [deskew](geometry/deskew.md) · [it_add_image_border](geometry/it_add_image_border.md) · [it_change_format](geometry/it_change_format.md) · [it_crop_part](geometry/it_crop_part.md) · [it_crop_rectangle1](geometry/it_crop_rectangle1.md) · [mirror_image](geometry/mirror_image.md) · [mirror_region](geometry/mirror_region.md) · [polar_trans_image](geometry/polar_trans_image.md) · [polar_trans_image_ext](geometry/polar_trans_image_ext.md) · [polar_trans_image_inv](geometry/polar_trans_image_inv.md) · [polar_trans_region_inv](geometry/polar_trans_region_inv.md) · [projective_trans_image](geometry/projective_trans_image.md) · [projective_trans_image_size](geometry/projective_trans_image_size.md) · [projective_trans_region](geometry/projective_trans_region.md) · [rescale_img](geometry/rescale_img.md) · [rotate_image](geometry/rotate_image.md) · [rotate_img](geometry/rotate_img.md) · [sk_swirl](geometry/sk_swirl.md) · [tf_log_polar](geometry/tf_log_polar.md) · [transpose_region](geometry/transpose_region.md) · [xcv2_warp_logpolar](geometry/xcv2_warp_logpolar.md) · [xpil_offset](geometry/xpil_offset.md) · [zoom_image_factor](geometry/zoom_image_factor.md) · [zoom_image_size](geometry/zoom_image_size.md) · [zoom_region](geometry/zoom_region.md)
 
 ### gray (48)
 
@@ -194,9 +194,9 @@
 
 [tac_contact_mask](tactile/tac_contact_mask.md) · [tac_height_from_shading](tactile/tac_height_from_shading.md) · [tac_pressure_proxy](tactile/tac_pressure_proxy.md) · [tac_shear_field](tactile/tac_shear_field.md) · [tac_surface_normal](tactile/tac_surface_normal.md)
 
-### texture (27)
+### texture (28)
 
-[bootstrap_std_error](texture/bootstrap_std_error.md) · [cooc_feature_matrix](texture/cooc_feature_matrix.md) · [deviation_image](texture/deviation_image.md) · [entropy_image](texture/entropy_image.md) · [f2_symmetry](texture/f2_symmetry.md) · [gabor](texture/gabor.md) · [gen_gabor](texture/gen_gabor.md) · [local_std](texture/local_std.md) · [scale_select_std](texture/scale_select_std.md) · [sk_entropy](texture/sk_entropy.md) · [sk_frangi](texture/sk_frangi.md) · [sk_gabor](texture/sk_gabor.md) · [sk_hessian](texture/sk_hessian.md) · [sk_lbp](texture/sk_lbp.md) · [sk_meijering](texture/sk_meijering.md) · [sk_shape_index](texture/sk_shape_index.md) · [std_filter](texture/std_filter.md) · [structure_tensor_coherence](texture/structure_tensor_coherence.md) · [structure_tensor_orientation](texture/structure_tensor_orientation.md) · [texture_laws](texture/texture_laws.md) · [tf_census_transform](texture/tf_census_transform.md) · [tf_rank_transform](texture/tf_rank_transform.md) · [xsk2_hog](texture/xsk2_hog.md) · [xsk_meijering](texture/xsk_meijering.md) · [xsk_sato](texture/xsk_sato.md) · [xsk_struct_coherence](texture/xsk_struct_coherence.md) · [xsp_hilbert_env](texture/xsp_hilbert_env.md)
+[bootstrap_std_error](texture/bootstrap_std_error.md) · [cooc_feature_matrix](texture/cooc_feature_matrix.md) · [deviation_image](texture/deviation_image.md) · [entropy_image](texture/entropy_image.md) · [f2_symmetry](texture/f2_symmetry.md) · [gabor](texture/gabor.md) · [gen_gabor](texture/gen_gabor.md) · [local_bimodality](texture/local_bimodality.md) · [local_std](texture/local_std.md) · [scale_select_std](texture/scale_select_std.md) · [sk_entropy](texture/sk_entropy.md) · [sk_frangi](texture/sk_frangi.md) · [sk_gabor](texture/sk_gabor.md) · [sk_hessian](texture/sk_hessian.md) · [sk_lbp](texture/sk_lbp.md) · [sk_meijering](texture/sk_meijering.md) · [sk_shape_index](texture/sk_shape_index.md) · [std_filter](texture/std_filter.md) · [structure_tensor_coherence](texture/structure_tensor_coherence.md) · [structure_tensor_orientation](texture/structure_tensor_orientation.md) · [texture_laws](texture/texture_laws.md) · [tf_census_transform](texture/tf_census_transform.md) · [tf_rank_transform](texture/tf_rank_transform.md) · [xsk2_hog](texture/xsk2_hog.md) · [xsk_meijering](texture/xsk_meijering.md) · [xsk_sato](texture/xsk_sato.md) · [xsk_struct_coherence](texture/xsk_struct_coherence.md) · [xsp_hilbert_env](texture/xsp_hilbert_env.md)
 
 ### texture_feature (1)
 

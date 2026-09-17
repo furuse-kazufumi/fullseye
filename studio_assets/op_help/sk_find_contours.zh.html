@@ -15,7 +15,7 @@
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>HALCON に直接対応するものは無い(空欄)。実装は `<code style="color:#22d3bf">measure.find_contours(v, level=0.2+0.5*a)</code><code style="color:#22d3bf"> のうち頂点数 3 未満の断片を捨てたもの —— a は等高線のレベル(しきい値)を 0.2〜0.7 に振る。b は未使用。戻り値は画像形状と輪郭座標配列のリストを持つ辞書(</code><code style="color:#22d3bf">contour</code>` 型)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
@@ -24,6 +24,7 @@
 <p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">sk_find_contours 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:sk_find_contours%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:sk_find_contours%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_bridge">gallery2d_bridge</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_bridge.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_contour_measure">gallery2d_contour_measure</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_contour_measure.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">contour</code> 作为输入)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:select_contours">select_contours</a> · <a style="color:#22d3bf" href="op:smooth_contours">smooth_contours</a> · <a style="color:#22d3bf" href="op:fit_line_contours">fit_line_contours</a> · <a style="color:#22d3bf" href="op:contours_to_region">contours_to_region</a> · <a style="color:#22d3bf" href="op:count_contours">count_contours</a> · <a style="color:#22d3bf" href="op:total_length">total_length</a> · <a style="color:#22d3bf" href="op:select_contours_xld">select_contours_xld</a></p>

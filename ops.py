@@ -425,6 +425,77 @@ def _bilateral(v, a, b):
     return out / np.maximum(wsum, 1e-8)
 
 
+def _local_bimodality(v, a, b):
+    """**局所の二峰性**(bimodality coefficient)。閾値を 1 つも選ばずに「ここは 2 つの
+値に分かれているか」だけを 0〜1 の地図で返す。
+
+``a`` が窓の一辺を ``9, 15, 25, 41`` に振る(大きいほど推定は安定するが、細い構造は
+周りに溶ける)。``b`` が**コントラストの床**を ``max(1e-5, 0.25b x 画像の値域)`` に
+振る ―― 窓の標準偏差がこれ未満なら 0 を返す(b=0 でも 1e-5 の絶対床は残る)。
+
+``BC = (歪度^2 + 1) / 尖度`` で、窓の 1〜4 次モーメント(箱型平均 4 回)だけから
+閉形式に出る。**平行移動にもスケールにも不変**なので、薄い模様でも濃い模様でも
+同じ値になる。参照値は解析解で決まっていて、実測もそこへ収束する(窓 41):
+
+* **2 点分布(半々の 2 値)= 1.0**(尖度 1 が下限)―― 段差の真上で実測 1.0000
+* **一様分布 = 5/9 = 0.5556** ―― 一様乱数で実測 0.5598
+* **正規分布 = 1/3 = 0.3333** ―― 正規乱数で実測 0.3306
+
+``> 5/9`` が「一様より尖った 2 山」の古典的な目安。★**一峰でも 0 にはならない**
+―― 正規分布の床は 1/3 であって 0 ではないので、使えるのは 0.33〜1.0 の帯である。
+
+**出典と、引き継いでいる限界**(Pfister, Schwarz, Janczyk, Dale & Freeman 2013,
+*Frontiers in Psychology* 4:700)。★**歪んだ単峰分布が偽陽性を出す**: 論文の図では
+**明らかに単峰の分布が BC = 0.73**、**本当に二峰の分布が BC = 0.67** で、順位が
+逆転している。歪度が絶対値で大きいほど、山の数と無関係に BC が上がるため。
+**この op も同じ性質を持つ** —— 片側に尾を引く窓(暗い地に明るい点が少しだけ、など)は
+高く出る。二峰性の判定を 1 本で決めず、``local_std`` や ``otsu`` の分離度と併せること。
+なお論文の式は標本補正つき ``(m3^2+1)/(m4 + 3(n-1)^2/((n-2)(n-3)))`` で、この op は
+**母集団版**を使う(窓は 81〜1,681 標本あり補正は無視できる。上の参照値 1/3・5/9・1.0 は
+母集団版で厳密に成り立つ)。
+
+**閾値を選ぶ側の一般化との関係**: Barron (2020) の Generalized Histogram Thresholding
+(arXiv:2007.07350)は Otsu・Minimum Error Thresholding・重み付きパーセンタイル閾値を
+特殊ケースとして包含し、**どの閾値にするか**を連続に補間する。この op は対になる側で、
+**そもそも閾値が在るか**を測る。
+
+**なぜ閾値を選ぶ op(``otsu`` / ``threshold``)の前に要るか**: 二値化はどんな画像
+でも答えを返すが、山が 1 つしか無い窓では**意味の無い位置で切る**(``otsu`` の
+docstring が自ら認めている限界)。この op は切る前に「そもそも分かれるのか」を
+返すので、「分かれない場所は切らない」と決められる。文字のマスが 1 色の地に 1 色の
+字か、板が均一に照っているか、傷が本当に地と別の階調かの判定に使う。
+
+★**床は必須**。一様な面では分散が丸め屑になり、屑どうしの 3 次・4 次の比が構造に
+化ける ―― 床を画像の値域に対する相対量だけで置いた版は、0.5 一色に振幅 1e-12〜1e-8
+の屑を乗せただけの画像で **BC の最大が 1.0000** になった(値域そのものが屑なので
+相対床が効かない)。絶対床 1e-5 を併せて初めて 0 に落ちる(実測)。
+
+**正規化しない**(値は BC そのもの)ので、**画像間で比較できる**。縁は反射
+(``mode="reflect"``)。空フレームは全 0。★窓が広いので**タイル分割してはいけない**
+(``scale.py`` に理由つきで登録済み)。
+"""
+    x = np.asarray(v, np.float64)
+    win = (9, 15, 25, 41)[min(3, int(float(np.clip(a, 0.0, 1.0)) * 4))]
+    size = (win, win)
+    m1 = ndimage.uniform_filter(x, size=size, mode="reflect")
+    m2 = ndimage.uniform_filter(x * x, size=size, mode="reflect")
+    m3 = ndimage.uniform_filter(x ** 3, size=size, mode="reflect")
+    m4 = ndimage.uniform_filter(x ** 4, size=size, mode="reflect")
+    var = np.maximum(m2 - m1 * m1, 0.0)
+    mu3 = m3 - 3.0 * m1 * m2 + 2.0 * m1 ** 3
+    mu4 = m4 - 4.0 * m1 * m3 + 6.0 * m1 * m1 * m2 - 3.0 * m1 ** 4
+    scale = float(np.ptp(x))
+    # ★相対床だけでは足りない: 一様面 + 丸め屑では**値域そのものが屑**なので、
+    #   相対床も屑まで下がってしまう。絶対床 1e-5(画像は [0,1] 契約)を併せる。
+    sd = max(1e-5, 0.25 * float(np.clip(b, 0.0, 1.0)) * scale)
+    ok = (var > sd * sd) & (mu4 > 0.0)
+    safe = np.where(ok, var, 1.0)
+    skew2 = np.where(ok, mu3 * mu3 / safe ** 3, 0.0)
+    kurt = np.where(ok, mu4 / (safe * safe), 1.0)
+    out = np.where(ok, (skew2 + 1.0) / np.maximum(kurt, 1e-12), 0.0)
+    return np.clip(out, 0.0, 1.0)
+
+
 def _std_filter(v, a, b):
     """局所窓内の標準偏差（テクスチャの粗さの指標）。HALCON の ``deviation_image``（Calculate the standard deviation of gray values within rectangular windows.）に相当。
 
@@ -1514,6 +1585,89 @@ def _ncc_locate(v, a, b):
 
 
 # --- geometry (image -> image; calibration/rectification building blocks) ----- #
+def _deskew(v, a, b):
+    """**傾きを測って起こす**(deskew)。角度をノブで与えるのではなく、画像から推定する。
+
+``a`` が探索の範囲 ``±(2 + 43a)°`` を振る(a=0 で ±2°、a=1 で ±45°)。``b`` が
+精緻化の刻み ``1/(1 + round(9b))°`` を振る(b=0 で 1° 刻み、b=1 で 0.1° 刻み。
+細かいほど遅い ―― ここが取引になっている)。
+
+判定量は**横方向の射影プロファイルの差分二乗和**。ある角度で回したときに行が
+揃うと、行方向に潰した濃度の折れ線が最も激しく上下する。1° 刻みで粗く探し、
+最良の ±1° を ``b`` の刻みで詰める。同点なら**角度の小さい方**を採るので、
+構造の無い画像・空フレームでは 0°(= 入力をそのまま返す)に落ちる。
+
+* 探索は**長辺 256 画素に間引いた写し**で行う(角度は間引きで変わらない)。
+  原寸で回すのは最後の 1 回だけ。512x512 で最も広い探索でも実測 121 ms。
+* 点数は回転後の**中央の正方形**(一辺 = ``min(H,W)/sqrt(2)``)だけで取る ――
+  どの角度でも枠内に収まる範囲なので、角の埋めかたが点数に混ざらない。
+* **枠外は縁の中央値で埋める**(``mode="constant"``)。既存の ``rotate_image`` は
+  鏡映で埋めるため、帳票を起こすと**四隅に鏡文字が写り込む**(向こうの docstring が
+  自ら「枠外を背景色で埋めたい用途には向かない」と認めている)。起こしたものを
+  そのまま OCR・切り出しへ渡せるのが、この op の足し前。
+
+**実測の精度と限界**(行間 14 画素・幅 384 画素の合成頁): ``b=1``(0.1° 刻み)で
+1 / 2 / 3.7 / 5 / 12 / 20° のいずれも**誤差 0.00°**。ただし **0.6° 未満の傾きは
+0 を返す** ―― 頁の幅いっぱいでも行のずれが 1 画素に届かず、射影の鋭さが補間の
+丸まりに埋もれるため。細かく測りたければ入力を大きくする(判定量は幅に比例する)。
+
+**先行研究**: 射影プロファイルで傾きを測るのは古典で、Postl (1986) が**分散**を、
+Baird (1987) が**二乗和 + 粗密の角度探索**を判定量にした。この op は Baird の系譜で、
+新しいのは手法ではなく**縁の扱い**である(下記)。
+
+★**以前は差分基準が +3.0 度 ずれていた。その原因が確定した。** 2026-09-17 の事前測定で、
+真値 −7/−3/+3/+7 度 に対し分散基準は誤差 0.0 度、差分基準は 4 本すべて +3.0 度 ずれ、原因は
+``ndimage.rotate`` が作る縁の人工物だろうが「``mode="constant"`` で消えるかは未検証」と
+記録していた。**塗り方ではなく見る範囲が原因だった** —— 回転後の内接正方形だけで点を
+取ると、差分基準でも 1/2/3.7/5/12/20 度 のすべてで誤差 0.00 度 になる(実測)。
+
+**値域は入力のまま**(線形補間と縁の中央値はどちらも値域を広げない)。★空フレーム
+(値域 1e-9 未満)と 8 画素未満の入力はそのまま返す。★**タイル分割してはいけない**
+―― 角度は画像全体から 1 つ決まるもので、タイルごとに測ると各タイルが別々の角度で
+回る(``scale.py`` に理由つきで登録済み)。
+"""
+    x = np.asarray(v, np.float64)
+    h, w = x.shape[:2]
+    if h < 8 or w < 8 or float(np.ptp(x)) < 1e-9:
+        return x.copy()
+    stride = max(1, int(np.ceil(max(h, w) / 256.0)))
+    small = x[::stride, ::stride]
+    side = int(min(small.shape) / np.sqrt(2.0))
+    if side < 4:
+        return x.copy()
+
+    def score(ang: float) -> float:
+        r = small if ang == 0.0 else ndimage.rotate(
+            small, ang, reshape=False, order=1, mode="nearest")
+        r0 = (r.shape[0] - side) // 2
+        c0 = (r.shape[1] - side) // 2
+        d = np.diff(r[r0:r0 + side, c0:c0 + side].sum(axis=1))
+        return float(np.dot(d, d))
+
+    t_max = 2.0 + 43.0 * float(np.clip(a, 0.0, 1.0))
+    fine = 1.0 / (1 + int(round(float(np.clip(b, 0.0, 1.0)) * 9)))
+    half = np.arange(0.0, t_max + 1e-9, 1.0)
+    best, best_s = 0.0, -np.inf
+    # 同点なら 0° 側を残すため、|角度| の小さい順に見て**厳密に**上回ったときだけ更新。
+    for ang in sorted(np.unique(np.concatenate([half, -half, [t_max, -t_max]])),
+                      key=lambda t: (abs(t), t)):
+        s = score(float(ang))
+        if s > best_s:
+            best_s, best = s, float(ang)
+    lo, hi = max(-t_max, best - 1.0), min(t_max, best + 1.0)
+    for ang in sorted(np.unique(np.concatenate([np.arange(lo, hi + 1e-9, fine),
+                                                [best, 0.0]])),
+                      key=lambda t: (abs(t - best), t)):
+        s = score(float(ang))
+        if s > best_s:
+            best_s, best = s, float(ang)
+    if abs(best) < 1e-9:
+        return x.copy()
+    border = np.concatenate([x[0, :], x[-1, :], x[:, 0], x[:, -1]])
+    return ndimage.rotate(x, best, reshape=False, order=1, mode="constant",
+                          cval=float(np.median(border)))
+
+
 def _rotate_img(v, a, b):
     """Rotate about the image centre by ``-45° + 90°·a`` (a=0.5 → 0°). ``b`` unused.
 
@@ -1965,6 +2119,7 @@ _DEFS = [
     ("lowpass", "frequency", "", IMAGE, IMAGE, _lowpass),
     ("highpass", "frequency", "highpass_image", IMAGE, IMAGE, _highpass),
     ("std_filter", "texture", "deviation_image", IMAGE, IMAGE, _std_filter),
+    ("local_bimodality", "texture", None, IMAGE, IMAGE, _local_bimodality),
     ("local_std", "texture", None, IMAGE, IMAGE, _local_std),
     ("scale_select_std", "texture", None, IMAGE, IMAGE, _scale_select_std),
     ("bootstrap_std_error", "texture", None, IMAGE, IMAGE, _bootstrap_std_error),
@@ -2012,6 +2167,7 @@ _DEFS = [
     ("ncc_locate", "matching", "find_ncc_model", IMAGE, MATCH, _ncc_locate),
     # geometry (calibration/rectification basis)
     ("rotate_img", "geometry", "rotate_image", IMAGE, IMAGE, _rotate_img),
+    ("deskew", "geometry", None, IMAGE, IMAGE, _deskew),
     # halcon 名は zoom_image_size → zoom_image_factor へ訂正(2026-09-02): この op は
     # 目標サイズではなく **倍率** で駆動する。目標サイズ版は backends_auto の
     # `zoom_image_size` が本当に実装している。

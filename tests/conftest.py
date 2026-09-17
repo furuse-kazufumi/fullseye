@@ -254,6 +254,25 @@ def counts_bank(m: int = 64) -> dict[str, np.ndarray]:
     }
 
 
+def feature_bank(n: int = 6) -> dict[str, float]:
+    """スカラの feature。**素の float**(``backends_typed._sort_ok`` の契約)。
+
+    ★2026-09-17 に足した。それまで 2-D 台帳に **feature を入力に取る op が 1 本も
+    無かった**ので探針も要らなかったが、戻りの橋 ``feature_to_img`` が入って要る
+    ようになった。0・負・極端な桁・非有限を必ず置く —— 特徴量は「面積」「長さ」の
+    ような正の量から「相関」「歪度」のような符号つきまで混ざる sort で、
+    片側だけの探針では符号の扱いを一度も試さないことになる。
+    """
+    return {
+        "zero": 0.0,
+        "unit": 1.0,
+        "small": 1e-6,
+        "negative": -1.5,
+        "large": 1.0e4,
+        "nonfinite": float("inf"),
+    }
+
+
 def matrix_bank(n: int = 6) -> dict[str, np.ndarray]:
     """一般の 2-D 数値行列。**特異・不良条件を必ず入れる**(擬似逆行列や条件数の
     op は、そこで初めて壊れるか壊れないかが分かれる)。"""
@@ -386,6 +405,10 @@ BANKS = {
     "signal": signal_bank,          # 27 op
     "counts": counts_bank,          #  8 op
     "matrix": matrix_bank,          #  4 op
+    # ★第 3 段(2026-09-17): 戻りの橋 ``feature_to_img`` が入るまで、feature を
+    # **入力**に取る op は 1 本も無かった(作る op は 125 本ある)。門が「探針の
+    # 無い op が 1 本に増えた」と正しく落ちて教えた。
+    "feature": feature_bank,        #  1 op
     "keypoints": keypoints_bank,    #  2 op
     "rgbimage": rgbimage_bank,      #  6 op
     # 第 2 段(同日): 複素・4-D の 5 sort = 48 op。これで探針なしはゼロになる。

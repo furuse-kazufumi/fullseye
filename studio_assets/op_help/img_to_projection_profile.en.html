@@ -1,0 +1,61 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">img_to_projection_profile — 2D <code style="color:#22d3bf">bridge</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;img_to_projection_profile&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/img_to_projection_profile.png" alt="img_to_projection_profile: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_projection_profile.a.jpg">img_to_projection_profile: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_projection_profile.b.jpg">img_to_projection_profile: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_projection_profile.inputs.jpg">img_to_projection_profile: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>画像を 1 方向へ潰した<b>射影プロファイル</b>を 1-D の signal にする ―― 版面解析の基本量。</p>
+<p>`<code style="color:#22d3bf">img_to_signal</code>` が「1 本の行/列をそのまま読む」のに対し、こちらは**全行(全列)を</p>
+<p>束ねて 1 本にまとめる**。文字列の切れ目・罫線・帯の境目は、1 本の走査線では雑音に</p>
+<p>埋もれるが、潰すと谷として立ち上がる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 向き。</code><code style="color:#22d3bf">b &lt; 0.5</code>` で<b>縦に潰して長さ W</b>(列ごとの代表値。横に並んだ字の</p>
+<p>切れ目が谷になる)、`<code style="color:#22d3bf">b &gt;= 0.5</code>` で<b>横に潰して長さ H</b>(行ごと。行間が谷になる)。</p>
+<p>`<code style="color:#22d3bf">img_to_signal</code><code style="color:#22d3bf"> と同じく </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が向きを決めるが、</code><code style="color:#22d3bf">a</code>` の意味は違う。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code>` → <b>上側トリム率</b>。潰す軸の値を大きい順に並べ、上位</p>
+<p>`<code style="color:#22d3bf">m = max(1, round((1-a) * N))</code><code style="color:#22d3bf"> 個だけを平均する。</code><code style="color:#22d3bf">a=0</code>` は<b>ただの平均射影</b></p>
+<p>(古典的な projection profile そのもの)、`<code style="color:#22d3bf">a=1</code>` は<b>最大値射影</b>(MIP)、</p>
+<p>その間は「外れ値だけを残して均す」連続的な折衷になる。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 1-D float64。<b>正規化しない</b>(値域は入力のまま。[0,1] の画像なら [0,1])。</p>
+<p>長さは向きで決まる(W または H)。空フレームは一定値の列になる。</p>
+<p><b>なぜノブがトリム率なのか</b>: 平均射影は雑音に強いが、細い線 1 本が背景に薄められて</p>
+<p>消える。最大値射影は細い線を残すが、輝点 1 個で列全体が持ち上がる。どちらを選んでも</p>
+<p>失うものがあるので、<b>どれだけ捨てるかをノブにして取引を明示した</b>。`<code style="color:#22d3bf">a</code>` を上げると</p>
+<p>細い構造が残り、下げると雑音が均される ―― 単調で、両端が古典的な 2 つの射影に一致する。</p>
+<p><b>暗い字には前段で反転を</b>。この op は<b>大きい方</b>を残すので、白地に黒字のまま渡すと</p>
+<p>トリムが<b>背景</b>を拾う。`<code style="color:#22d3bf">invert</code><code style="color:#22d3bf">(台帳)を挟めば、</code><code style="color:#22d3bf">a</code>` が「濃い字のところ」を残す。</p>
+<p><b>先行と対応</b>: 平均射影は文書解析の古典そのもの(Postl 1986 / Baird 1987 が傾き</p>
+<p>推定に使った量)で、HALCON では `<code style="color:#22d3bf">gray_projections</code>`(水平・垂直の濃淡射影)に</p>
+<p>あたる —— 対応表で **<code style="color:#22d3bf">covered: false</code>** だった op を、これが埋める。上位トリムで</p>
+<p>最大値射影へ連続に寄せる族は、蛍光顕微鏡の時間フレーム融合で使われる</p>
+<p><b>分位点射影</b>(上側 75 % 点を取る)と同じ発想だが、こちらは<b>上位 m 個の平均</b></p>
+<p>なので <b>両端が厳密に平均射影と最大値射影に一致し、その間が単調</b>になる。</p>
+<p>使いどころ: 行の切り出し(横に潰して谷を探す)、字の切り出し(縦に潰す)、罫線検出、</p>
+<p>帯の境目、`<code style="color:#22d3bf">deskew</code>` が内部で使っている判定量の可視化。下流は 1-D 関数の族</p>
+<p>(`<code style="color:#22d3bf">tb_smooth_funct_1d_gauss</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tb_local_min_funct_1d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tb_derivate_funct_1d</code>`)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_projection_profile 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_projection_profile%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_projection_profile%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_bridge">gallery2d_bridge</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_bridge.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">signal</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_create_funct_1d_array">tb_create_funct_1d_array</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_gauss">tb_smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_mean">tb_smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="op:tb_derivate_funct_1d">tb_derivate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_integrate_funct_1d">tb_integrate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_zero_crossings_funct_1d">tb_zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_abs_funct_1d">tb_abs_funct_1d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">bridge</code>)</h3>
+<p><a style="color:#22d3bf" href="op:img_to_points">img_to_points</a> · <a style="color:#22d3bf" href="op:img_to_keypoints">img_to_keypoints</a> · <a style="color:#22d3bf" href="op:img_to_signal">img_to_signal</a> · <a style="color:#22d3bf" href="op:img_to_counts">img_to_counts</a> · <a style="color:#22d3bf" href="op:img_to_matrix">img_to_matrix</a> · <a style="color:#22d3bf" href="op:img_to_video">img_to_video</a> · <a style="color:#22d3bf" href="op:img_to_volume">img_to_volume</a> · <a style="color:#22d3bf" href="op:img_to_lightfield">img_to_lightfield</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

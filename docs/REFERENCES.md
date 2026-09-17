@@ -160,6 +160,21 @@ Seminal references for the 153 operators (families collapse many variants). The 
 
 **Provenance coverage: 98/153 operators cite a seminal paper.**
 
+## 2026-09-17 additions — measured against the primary sources
+
+The local RAD corpus returned **zero** papers for document skew estimation, projection
+profiles and the bimodality coefficient (113 corpora, 57,858 docs; it holds almost no
+pre-2020 document-analysis literature). These were checked against the primary sources
+directly, so the provenance below is not "not found in our corpus" — it is *found, and
+the operator is a member of that family*.
+
+| op | category | seminal reference |
+|---|---|---|
+| `deskew` | geometry | Postl, W. (1986). Detection of linear oblique structures and skew scan in digitized documents. ICPR — **projection-profile variance criterion**. Baird, H. S. (1987). The skew angle of printed documents. SPSE — **sum-of-squares objective with coarse-to-fine angular search**, which is the family this op belongs to. |
+| `local_bimodality` | texture | Pfister, R., Schwarz, K. A., Janczyk, M., Dale, R., & Freeman, J. B. (2013). Good things peak in pairs: a note on the bimodality coefficient. *Frontiers in Psychology*, 4, 700. doi:10.3389/fpsyg.2013.00700 — BC = (m3^2+1)/kurtosis, BCcrit = 5/9, **and the skewed-unimodal false positive this op inherits**. Adjacent: Barron, J. T. (2020). A Generalization of Otsu's Method and Minimum Error Thresholding. arXiv:2007.07350 — GHT generalises *which* threshold to pick; `local_bimodality` measures *whether one exists*. |
+| `img_to_projection_profile` | bridge | The plain (mean) projection profile is the classic document-analysis primitive used by Postl/Baird above; HALCON packages it as `gray_projections`. The upper-trimmed-mean family that interpolates to maximum-intensity projection follows the quantile-projection idea used for temporal fusion in fluorescence microscopy (arXiv:2601.10392). |
+| `signal_to_img` · `counts_to_img` · `matrix_to_img` · `contour_to_img` · `feature_to_img` | bridge | No literature claim — these are **return bridges** that give non-image sorts a typed path back to an image. They reuse this repo's own closed-form plotting layer (`annotate.axes_transform` / `plot_series`) and `imagedraw`. |
+
 ## Mining new operators from research (RAD)
 - RAD image / diffusion / deep_learning corpora (thousands of papers) = the source for operators beyond the classics: modern denoisers (BM3D, DnCNN), learned edges (HED), superpixels (SLIC), diffusion priors, foundation segmenters (SAM).
 - Workflow: mine a paper -> add a typed Op (fn + sort + analogs + this reference) -> evolution/codegen/catalog pick it up automatically.

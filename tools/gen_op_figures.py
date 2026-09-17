@@ -87,11 +87,21 @@ PREFIX = {
     "beatcube": [("img_to_beatcube", 0.5, 0.5)],
     # qimage は rgbimage を経由(rgb → 純四元数の埋め込みは既存の橋渡し op)。
     "qimage": [("img_to_rgb", 0.5, 0.5), ("tb_rgb_to_quaternion", 0.5, 0.5)],
+    # ★2026-09-17: 戻りの橋 ``feature_to_img`` で feature が初めて**入力**に
+    #   なった。1 段で image -> feature を作れる op(``intensity`` = 平均輝度)を
+    #   前置きにする。これが無いと図が「型が届かない」に落ちる。
+    "feature": [("intensity", 0.5, 0.5)],
 }
 
 #: op ごとの前置きの上書き。sort は同じでも **その op が受け付ける値の作り方が
 #: 違う** とき(qimage: 色の四元数 vs モノジェニック信号)。
 PREFIX_OP = {
+    # ★2026-09-17: `deskew` は「傾いていないものは動かさない」op なので、合成の
+    #   標準入力(canonical_image)に掛けると **in と out が同じ絵**になり、図が
+    #   何も語らなくなっていた(実測: 標準入力 8 枚のうち 5 枚で恒等、図は恒等の
+    #   方)。走ったことと意味のある出力が出たことは別 —— 先に 7.0 度 傾けてから
+    #   渡す(rotate_img の角度は -45 + 90a なので a=0.5778 が +7.0 度)。
+    "deskew": [("rotate_img", 0.5778, 0.5)],
     "tb_monogenic_amplitude": [("img_to_monogenic", 0.5, 0.5)],
     "tb_monogenic_phase": [("img_to_monogenic", 0.5, 0.5)],
     "tb_monogenic_orientation": [("img_to_monogenic", 0.5, 0.5)],

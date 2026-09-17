@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1970,
- "n_notes": 1976,
+ "n_ops": 1978,
+ "n_notes": 1984,
  "notes": {
   "vol_dilate": [
    {
@@ -504,6 +504,36 @@
     "path": "docs/ops/2d/barcode/decode_barcode.md"
    }
   ],
+  "contour_to_img": [
+   {
+    "op": "contour_to_img",
+    "dim": "2d",
+    "category": "bridge",
+    "in": "contour",
+    "out": "image",
+    "path": "docs/ops/2d/bridge/contour_to_img.md"
+   }
+  ],
+  "counts_to_img": [
+   {
+    "op": "counts_to_img",
+    "dim": "2d",
+    "category": "bridge",
+    "in": "counts",
+    "out": "image",
+    "path": "docs/ops/2d/bridge/counts_to_img.md"
+   }
+  ],
+  "feature_to_img": [
+   {
+    "op": "feature_to_img",
+    "dim": "2d",
+    "category": "bridge",
+    "in": "feature",
+    "out": "image",
+    "path": "docs/ops/2d/bridge/feature_to_img.md"
+   }
+  ],
   "img_to_beatcube": [
    {
     "op": "img_to_beatcube",
@@ -584,6 +614,16 @@
     "path": "docs/ops/2d/bridge/img_to_points.md"
    }
   ],
+  "img_to_projection_profile": [
+   {
+    "op": "img_to_projection_profile",
+    "dim": "2d",
+    "category": "bridge",
+    "in": "image",
+    "out": "signal",
+    "path": "docs/ops/2d/bridge/img_to_projection_profile.md"
+   }
+  ],
   "img_to_rgb": [
    {
     "op": "img_to_rgb",
@@ -622,6 +662,26 @@
     "in": "image",
     "out": "volume",
     "path": "docs/ops/2d/bridge/img_to_volume.md"
+   }
+  ],
+  "matrix_to_img": [
+   {
+    "op": "matrix_to_img",
+    "dim": "2d",
+    "category": "bridge",
+    "in": "matrix",
+    "out": "image",
+    "path": "docs/ops/2d/bridge/matrix_to_img.md"
+   }
+  ],
+  "signal_to_img": [
+   {
+    "op": "signal_to_img",
+    "dim": "2d",
+    "category": "bridge",
+    "in": "signal",
+    "out": "image",
+    "path": "docs/ops/2d/bridge/signal_to_img.md"
    }
   ],
   "classify_shape": [
@@ -2915,6 +2975,16 @@
     "out": "image",
     "halcon": "affine_trans_image",
     "path": "docs/ops/2d/geometry/affine_warp.md"
+   }
+  ],
+  "deskew": [
+   {
+    "op": "deskew",
+    "dim": "2d",
+    "category": "geometry",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/geometry/deskew.md"
    }
   ],
   "it_add_image_border": [
@@ -7988,6 +8058,16 @@
     "out": "image",
     "halcon": "gen_gabor",
     "path": "docs/ops/2d/texture/gen_gabor.md"
+   }
+  ],
+  "local_bimodality": [
+   {
+    "op": "local_bimodality",
+    "dim": "2d",
+    "category": "texture",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/texture/local_bimodality.md"
    }
   ],
   "local_std": [

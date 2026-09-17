@@ -1,0 +1,71 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">local_bimodality — 2D <code style="color:#22d3bf">texture</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;local_bimodality&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/local_bimodality.png" alt="local_bimodality: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_bimodality.a.jpg">local_bimodality: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_bimodality.b.jpg">local_bimodality: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_bimodality.inputs.jpg">local_bimodality: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p><b>局所の二峰性</b>(bimodality coefficient)。閾値を 1 つも選ばずに「ここは 2 つの</p>
+<p>値に分かれているか」だけを 0〜1 の地図で返す。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓の一辺を </code><code style="color:#22d3bf">9, 15, 25, 41</code>` に振る(大きいほど推定は安定するが、細い構造は</p>
+<p>周りに溶ける)。`<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が**コントラストの床**を </code><code style="color:#22d3bf">max(1e-5, 0.25b x 画像の値域)</code>` に</p>
+<p>振る ―― 窓の標準偏差がこれ未満なら 0 を返す(b=0 でも 1e-5 の絶対床は残る)。</p>
+<p>`<code style="color:#22d3bf">BC = (歪度^2 + 1) / 尖度</code>` で、窓の 1〜4 次モーメント(箱型平均 4 回)だけから</p>
+<p>閉形式に出る。<b>平行移動にもスケールにも不変</b>なので、薄い模様でも濃い模様でも</p>
+<p>同じ値になる。参照値は解析解で決まっていて、実測もそこへ収束する(窓 41):</p>
+<p style="margin:2px 0 2px 12px">• <b>2 点分布(半々の 2 値)= 1.0</b>(尖度 1 が下限)―― 段差の真上で実測 1.0000</p>
+<p style="margin:2px 0 2px 12px">• <b>一様分布 = 5/9 = 0.5556</b> ―― 一様乱数で実測 0.5598</p>
+<p style="margin:2px 0 2px 12px">• <b>正規分布 = 1/3 = 0.3333</b> ―― 正規乱数で実測 0.3306</p>
+<p>`<code style="color:#22d3bf">&gt; 5/9</code>` が「一様より尖った 2 山」の古典的な目安。★<b>一峰でも 0 にはならない</b></p>
+<p>―― 正規分布の床は 1/3 であって 0 ではないので、使えるのは 0.33〜1.0 の帯である。</p>
+<p><b>出典と、引き継いでいる限界</b>(Pfister, Schwarz, Janczyk, Dale &amp; Freeman 2013,</p>
+<p>*Frontiers in Psychology* 4:700)。★<b>歪んだ単峰分布が偽陽性を出す</b>: 論文の図では</p>
+<p><b>明らかに単峰の分布が BC = 0.73</b>、<b>本当に二峰の分布が BC = 0.67</b> で、順位が</p>
+<p>逆転している。歪度が絶対値で大きいほど、山の数と無関係に BC が上がるため。</p>
+<p><b>この op も同じ性質を持つ</b> —— 片側に尾を引く窓(暗い地に明るい点が少しだけ、など)は</p>
+<p>高く出る。二峰性の判定を 1 本で決めず、`<code style="color:#22d3bf">local_std</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">otsu</code>` の分離度と併せること。</p>
+<p>なお論文の式は標本補正つき `<code style="color:#22d3bf">(m3^2+1)/(m4 + 3(n-1)^2/((n-2)(n-3)))</code>` で、この op は</p>
+<p><b>母集団版</b>を使う(窓は 81〜1,681 標本あり補正は無視できる。上の参照値 1/3・5/9・1.0 は</p>
+<p>母集団版で厳密に成り立つ)。</p>
+<p><b>閾値を選ぶ側の一般化との関係</b>: Barron (2020) の Generalized Histogram Thresholding</p>
+<p>(arXiv:2007.07350)は Otsu・Minimum Error Thresholding・重み付きパーセンタイル閾値を</p>
+<p>特殊ケースとして包含し、<b>どの閾値にするか</b>を連続に補間する。この op は対になる側で、</p>
+<p><b>そもそも閾値が在るか</b>を測る。</p>
+<p>**なぜ閾値を選ぶ op(`<code style="color:#22d3bf">otsu</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">threshold</code>`)の前に要るか**: 二値化はどんな画像</p>
+<p>でも答えを返すが、山が 1 つしか無い窓では<b>意味の無い位置で切る</b>(`<code style="color:#22d3bf">otsu</code>` の</p>
+<p>docstring が自ら認めている限界)。この op は切る前に「そもそも分かれるのか」を</p>
+<p>返すので、「分かれない場所は切らない」と決められる。文字のマスが 1 色の地に 1 色の</p>
+<p>字か、板が均一に照っているか、傷が本当に地と別の階調かの判定に使う。</p>
+<p>★<b>床は必須</b>。一様な面では分散が丸め屑になり、屑どうしの 3 次・4 次の比が構造に</p>
+<p>化ける ―― 床を画像の値域に対する相対量だけで置いた版は、0.5 一色に振幅 1e-12〜1e-8</p>
+<p>の屑を乗せただけの画像で <b>BC の最大が 1.0000</b> になった(値域そのものが屑なので</p>
+<p>相対床が効かない)。絶対床 1e-5 を併せて初めて 0 に落ちる(実測)。</p>
+<p><b>正規化しない</b>(値は BC そのもの)ので、<b>画像間で比較できる</b>。縁は反射</p>
+<p>(`<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>`)。空フレームは全 0。★窓が広いので<b>タイル分割してはいけない</b></p>
+<p>(`<code style="color:#22d3bf">scale.py</code>` に理由つきで登録済み)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
+<p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">local_bimodality 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:local_bimodality%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:local_bimodality%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">texture</code>)</h3>
+<p><a style="color:#22d3bf" href="op:std_filter">std_filter</a> · <a style="color:#22d3bf" href="op:local_std">local_std</a> · <a style="color:#22d3bf" href="op:scale_select_std">scale_select_std</a> · <a style="color:#22d3bf" href="op:bootstrap_std_error">bootstrap_std_error</a> · <a style="color:#22d3bf" href="op:structure_tensor_orientation">structure_tensor_orientation</a> · <a style="color:#22d3bf" href="op:structure_tensor_coherence">structure_tensor_coherence</a> · <a style="color:#22d3bf" href="op:gabor">gabor</a> · <a style="color:#22d3bf" href="op:sk_frangi">sk_frangi</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 737. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 747. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -58,6 +58,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L1275** — conversely worsens (0.30 -> 0.56). ★The root cause is that extending the distance collapses the resolution itself, 0.0328 -> 0.0122.
 - **L1482** — ★2026-09-02: these two shared `{"kind": "zoom"}` and were therefore a **completely identical implementation**, and neither used b (measured: max difference 0.0 for the same input, difference 0.0 between b=0 and b=1). In HALCON the factor version takes two scale factors and the size version takes a target size, which are **different things**, so we split the kind to match the reality to the names.
 - **L1555** — ★2026-09-02: the old spec was out_sort=feature / metric="area", but the reality was `np.mean(mask)` = the **area ratio occupied in the image**. Since HALCON's `area_center` is an op that returns (Area, Row, Column), there was a double discrepancy: (1) it does not return the centre, (2) the area is a ratio rather than a pixel count (= resolution-dependent). A single scalar cannot satisfy the name, so we make it the **1-D vector of the match sort**, the same as `ncc_locate`, and return (area ratio, row, column). Both match and feature are terminal sorts (candidates are identity only), so the genome->op mapping does not move.
+
+## `backends_bridge.py`
+
+- **L516** _(ja)_ — ★定数列で軸が潰れると ``axes_transform`` は ValueError を投げる(傾きが 無限大になるため、向こうの仕様)。潰れた軸だけここで開く —— 定数列は 「描けない」のではなく「真ん中に水平線 1 本」が正しい絵。
 
 ## `backends_decomp.py`
 
@@ -174,7 +178,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/gallery2d_texture_freq.py`
 
-- **L300** _(ja)_ — ★窓は `_k(a)` が決める —— `a=0.5` は **7x7**(5x5 ではない)。ここを取り違えると 閉形式の定数がずれて、正しい実装が落ちる(実際に一度落とした)。
+- **L305** _(ja)_ — ★窓は `_k(a)` が決める —— `a=0.5` は **7x7**(5x5 ではない)。ここを取り違えると 閉形式の定数がずれて、正しい実装が落ちる(実際に一度落とした)。
 
 ## `examples/piv_flow_from_particles.py`
 
@@ -957,6 +961,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L223** — ★2026-09-07: Made ``res`` accept **per-axis** values (length 3 allowed too). Restricted to cubic, a flat volume like a bird's-eye grid (thin z x wide xy) is forced to use the same spacing even on the unneeded axis (`poc_bev_sensor_fusion` measured: of 4.096 million voxels only 8.1 % are used). The same-family `grid_coords` had accepted per-axis res from the start -- the mismatch where **the contract's breadth differs at the entrance and the exit** was aligned. Existing callers passing a scalar are unaffected.
 - **L317** — ★2026-09-07: Made ``res`` accept **per-axis** values (length 3 allowed too). Previously ``int(res)`` allowed only a cubic grid, and while ``esdf`` accepts a length-3 anisotropic ``voxel_size``, this side -- which subtracts its output in world coordinates -- was restricted to cubic, a **contract narrow on only one side**. It jams outright on a grid like CT's thin junction layer (30,180,180) (measured in `poc_ct_void_morphology`). Existing callers passing a scalar are unaffected.
 
+## `op_probe.py`
+
+- **L42** _(ja)_ — ★2026-09-17: ``feature`` を足した。戻りの橋 ``feature_to_img`` が入るまで、 2-D 台帳に **feature を入力に取る op が 1 本も無かった**ので代表値も要らな かった。門(knob_liveness / probe_ledger / op_contracts)は 3 本とも 「測れない op が居る」と正しく落ちてこの穴を教えた。
+
 ## `opassist.py`
 
 - **L50** — ★2026-09-08: ops1d (dsp 16 + funct1d 23) was registered yet appeared neither in docs nor in op_run / op_assist / op_find -- 'registered' and 'reachable' are different. Adding them to opdocs made this gate ring on the unreachable side.
@@ -972,15 +980,16 @@ This repository records *why* things are the way they are in **comments in the s
 ## `ops.py`
 
 - **L305** _(ja)_ — ★勾配は**片側差分の大きい方**で取る。``np.gradient`` の中心差分は 1 画素で 立ち上がる段差を 2 画素に広げてしまい(段差の頂点で 0.5 しか出ない)、 理想の段差が幅 2.00 と報告される —— 測る道具が理想ケースで 2 倍を返す。 片側差分なら段差で 1.0、傾斜 m の斜面でも m となり、どちらも正しい。
-- **L493** _(ja)_ — ★一様な面では勾配が丸め屑しか残らず、``arctan2`` はその屑の符号で**任意の角度**を 返す —— 明るさを 0.01 変えただけで向きが一斉に変わる。絶対値の床では画像の 明るさに依存してしまうので、必ず**相対量**で切る。
-- **L597** _(ja)_ — ★膨張は前景をはみ出す。連続の世界では半径 r の円は収まっているが、**離散の 円板**で膨らませると境界の外の画素まで塗る —— 実測で前景 197 画素の円に 対し外へ 48 画素(24%)漏れ、そのせいで粒度分布の生存率が 1.0 を超えた。 太さは前景の量なので、必ず前景で切る。
-- **L790** _(ja)_ — ★各画素には「入った時点で属していた山」の persistence を入れる。 ここで find(i)(= 最終的な根)を引くと、全画素が最後に残った 1 つの山の値に なってしまう —— 実測で高さ 1.0 / 0.6 / 0.3 の 3 つの山が全部 1.000 になった。
-- **L797** _(ja)_ — ★画像の最小値そのものの台地(たいていは背景)は 0 にする。そこは最後に 処理されて全体最大の山に吸収されるので、放っておくと**背景一面が最大値**に なって地図が読めない(実測で背景が 1.000 になった)。閾値を新たに選ぶのでは なく「最小値ちょうど」だけを落とすので、閾値フリーの性質は保たれる。
-- **L889** _(ja)_ — ★``m / n**2`` ではなく ``(m + 0.5) / n**2``。前者は値が {0, 1/4, 1/2, 3/4} と なって平均が 0.375 にしかならず、ディザ全体が暗い側へ偏る(1 ビットの傾斜で 平均が 0.031 ずれるのを実測した)。閾値は刻みの**真ん中**に並べる。
-- **L1078** _(ja)_ — ★**歴史的な挙動を ``b <= 0.5`` の帯に置く**。これらの op の ``b`` は 2026-09-17 まで 「未使用」で、保存済みの進化プログラムが持つ ``b`` の値は事実上ばらばらに散って いる。新しい選択肢を上半分だけに割り当てれば、**およそ半数の既存プログラムは 1 ビットも結果が変わらない**(全域に割り当てると全部変わる)。 `b <= 0.5` が旧実装とビット一致することは tests/test_knob_b_options.py が固定する。 --------------------------------------------------------------------------- #
-- **L1092** _(ja)_ — ★境目は **0.5 を含めて**歴史側に置く。0.5 は「まん中」として既定値に使われて いて(api.apply の既定、studio の中央、保存済みプログラムの初期値)、ここを 新しい側に入れると**既定のまま呼んだだけで答えが変わる**。実測で gaussian と その HALCON 別名の一致検査まで割れた。
-- **L1401** — ★Pad the edges **with the edge value**. Previously it was ``np.convolve(x, k, "same")``, which averages the w points at both ends **with zero** -- the start and end of a contour got dragged toward the origin (0,0) by up to 50 px or more, producing a figure where the red streaks of 140 contours converged to the upper left (found 2026-09-06 when per-op figures were first made; in numerical tests the mean deviation was 0.3 px and it was invisible).
-- **L2288** — ★**A ledger of ops that crash the whole process on the native side with a degenerate input** (2026-09-05). `guard` can only catch Python exceptions. Once something is written out of bounds inside C/C++, it is over there, and the user's whole pipeline vanishes -- the worst way for fail-soft to break. There is no recourse but to reject at the entrance, so **list it here with a reason and set a barrier at registration time**. **Behaviour differs by platform** -- that is the reason this ledger exists. The 3 below crash on Linux (Ubuntu 24.04 / Python 3.12 / PyPI wheel), but **on Windows not one reproduced with the same input**. A different native build means the boundary breaks differently, so a fine line of 'this kind of input is fine' cannot be trusted -- **reject degenerate inputs wholesale**. Not 'remove it once fixed' but **remove it once the upstream can be confirmed fixed** (this is not our own code, so the removal condition differs).
+- **L488** _(ja)_ — ★相対床だけでは足りない: 一様面 + 丸め屑では**値域そのものが屑**なので、 相対床も屑まで下がってしまう。絶対床 1e-5(画像は [0,1] 契約)を併せる。
+- **L564** _(ja)_ — ★一様な面では勾配が丸め屑しか残らず、``arctan2`` はその屑の符号で**任意の角度**を 返す —— 明るさを 0.01 変えただけで向きが一斉に変わる。絶対値の床では画像の 明るさに依存してしまうので、必ず**相対量**で切る。
+- **L668** _(ja)_ — ★膨張は前景をはみ出す。連続の世界では半径 r の円は収まっているが、**離散の 円板**で膨らませると境界の外の画素まで塗る —— 実測で前景 197 画素の円に 対し外へ 48 画素(24%)漏れ、そのせいで粒度分布の生存率が 1.0 を超えた。 太さは前景の量なので、必ず前景で切る。
+- **L861** _(ja)_ — ★各画素には「入った時点で属していた山」の persistence を入れる。 ここで find(i)(= 最終的な根)を引くと、全画素が最後に残った 1 つの山の値に なってしまう —— 実測で高さ 1.0 / 0.6 / 0.3 の 3 つの山が全部 1.000 になった。
+- **L868** _(ja)_ — ★画像の最小値そのものの台地(たいていは背景)は 0 にする。そこは最後に 処理されて全体最大の山に吸収されるので、放っておくと**背景一面が最大値**に なって地図が読めない(実測で背景が 1.000 になった)。閾値を新たに選ぶのでは なく「最小値ちょうど」だけを落とすので、閾値フリーの性質は保たれる。
+- **L960** _(ja)_ — ★``m / n**2`` ではなく ``(m + 0.5) / n**2``。前者は値が {0, 1/4, 1/2, 3/4} と なって平均が 0.375 にしかならず、ディザ全体が暗い側へ偏る(1 ビットの傾斜で 平均が 0.031 ずれるのを実測した)。閾値は刻みの**真ん中**に並べる。
+- **L1149** _(ja)_ — ★**歴史的な挙動を ``b <= 0.5`` の帯に置く**。これらの op の ``b`` は 2026-09-17 まで 「未使用」で、保存済みの進化プログラムが持つ ``b`` の値は事実上ばらばらに散って いる。新しい選択肢を上半分だけに割り当てれば、**およそ半数の既存プログラムは 1 ビットも結果が変わらない**(全域に割り当てると全部変わる)。 `b <= 0.5` が旧実装とビット一致することは tests/test_knob_b_options.py が固定する。 --------------------------------------------------------------------------- #
+- **L1163** _(ja)_ — ★境目は **0.5 を含めて**歴史側に置く。0.5 は「まん中」として既定値に使われて いて(api.apply の既定、studio の中央、保存済みプログラムの初期値)、ここを 新しい側に入れると**既定のまま呼んだだけで答えが変わる**。実測で gaussian と その HALCON 別名の一致検査まで割れた。
+- **L1472** — ★Pad the edges **with the edge value**. Previously it was ``np.convolve(x, k, "same")``, which averages the w points at both ends **with zero** -- the start and end of a contour got dragged toward the origin (0,0) by up to 50 px or more, producing a figure where the red streaks of 140 contours converged to the upper left (found 2026-09-06 when per-op figures were first made; in numerical tests the mean deviation was 0.3 px and it was invisible).
+- **L2444** — ★**A ledger of ops that crash the whole process on the native side with a degenerate input** (2026-09-05). `guard` can only catch Python exceptions. Once something is written out of bounds inside C/C++, it is over there, and the user's whole pipeline vanishes -- the worst way for fail-soft to break. There is no recourse but to reject at the entrance, so **list it here with a reason and set a barrier at registration time**. **Behaviour differs by platform** -- that is the reason this ledger exists. The 3 below crash on Linux (Ubuntu 24.04 / Python 3.12 / PyPI wheel), but **on Windows not one reproduced with the same input**. A different native build means the boundary breaks differently, so a fine line of 'this kind of input is fine' cannot be trusted -- **reject degenerate inputs wholesale**. Not 'remove it once fixed' but **remove it once the upstream can be confirmed fixed** (this is not our own code, so the removal condition differs).
 
 ## `ops3d.py`
 
@@ -1090,6 +1099,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L54** _(ja)_ — ★2026-09-17: 検査のタイル幅を 64/16 だけから 60/12 も見るように広げたら、 tile_safe と宣言されていた 168 本のうち 16 本が割れた。64 も 16 も 8 の 倍数なので、周期 8 の処理と、たまたま境界が穴に掛からない領域処理が すり抜けていた。以下はそのとき測って落ちたもの(誤差は 60/12 での実測)。
 - **L85** _(ja)_ — ★2026-09-17: 走査長平滑化は隙間を最大 65 画素まで埋めるので、 標準タイラーの halo より広い。60/12 のタイルで 0.2613 ずれた(実測)。
+- **L88** _(ja)_ — ★2026-09-17: 局所の二峰性は窓が最大 41 画素、傾き補正は角度を画像全体から 1 つ決める。どちらもタイルごとに測ると別の答えになる(実測 1.0000)。
+- **L180** _(ja)_ — ★名前つきの理由は**カテゴリの分岐より先に**引く。category が先に返してしまうと、 幾何カテゴリの op はすべて「cv2 の座標上限」と説明されてしまい、実際の理由 (deskew なら「角度は画像全体から 1 つ決まる」)に辿り着けない。この辞書に 載っているのは実測で非タイル可と分かった op だけなので、載せた op 以外の 分類は 1 件も変わらない(2026-09-17 に 925 op 全数で確認)。
 
 ## `scene_registry.py`
 
@@ -1116,8 +1127,9 @@ This repository records *why* things are the way they are in **comments in the s
 - **L44** — ★ Declaration of tests that need an optional backend. # --------------------------------------------------------------------------- # The CI note long said "do not install torch/kornia (**corresponding tests graceful skip**)", but a measurement on 2026-09-05 showed that was **not true** —— the target tests did not skip but failed with `ImportError: this operator needs the optional 'torch' backend` (14 of them). There was only a note, and no mechanism to verify it mechanically. Here we consolidate the declaration into a single entrance. The aim is **both directions**: * an environment without the backend -> skip (make the note true) * an environment where the backend **should be present** -> do not allow skip, make it fail (`FULLSEYE_REQUIRE_OPTIONAL=1`. The CI py3.11 job sets this) With only one direction, a genuine regression quietly turns into a skip (the same form as `feedback_failsoft_hides_permanently_dead_ops`).
 - **L192** _(ja)_ — ★2026-09-14 追加。ここまで探針バンクは 6 sort しか無く、**901 op のうち 151 本 (16.8 %)が契約ゲート 3 本(例外を投げない / 非有限を出さない / 決定的)を 一度も実行されていなかった** —— `PROBELESS_OPS_BUDGET = 151` というラチェットで 本数だけ凍結し、「本来の直しは BANKS を全 in_sort へ広げること」と自分で書いて あった。その本来の直しをここで入れる。 形の出どころは推測ではない: `backends_bridge._EMPTY_OF` が 12 sort すべての **正準の最小値**を宣言しており(そこが sort の定義そのもの)、`problems.py` の `_points_stack` / `_signal_stack` などが実データの作り方を持っている。 各バンクは既存の作法に合わせ、**普通の値・定数 0・定数 1・退化形**を混ぜる (定数と退化形が「走った」と「意味のある出力」を分ける —— [[feedback_ran_is_not_meaningful_output]])。 --------------------------------------------------------------------------- #
 - **L215** _(ja)_ — ★点群は**連結なものと非連結なものの両方**を置く。`tb_geodesic_distances` が 不達を `inf` で表すのは契約どおりで、`ops.NONFINITE_IS_MEANINGFUL` に 「1.0 に潰すと『届かない』が『近い』に化ける」と宣言済み。 ここで一度 `normal` をわざと連結にして有限性ゲートを緑にしかけたが、 それは**欠陥を隠す方向**だった —— 直すべきは門が台帳を見ていないこと。 `normal` は橋でつないだ現実的な形、`two_clusters` は非連結を撃つ探針。
-- **L263** _(ja)_ — ★**特異行列は必ず置く。** 一度ここから外しかけたが、それは誤りだった —— `tb_mat_cond` が特異行列で `inf` を返すのは**契約どおり**で、`ops.py` の `NONFINITE_IS_MEANINGFUL` に「厳密に特異な行列は s_min=0 なので inf が 正しい答え。有限に潰すと『十分に良条件』と読めてしまう」と**既に宣言済み** だった。落ちていたのは op ではなく、**有限性ゲートがその台帳を見ていない** こと。探針を削って緑にするのは、欠陥を隠す行為。 (同じ註に 2026-09-05 の教訓が書いてある ——「自分の probe では特異行列を 作っていなかったので tb_mat_cond を取りこぼした」。探針から外すのは その取りこぼしを**わざと再現する**ことになる。)
-- **L381** _(ja)_ — ★新規(2026-09-14): ここまで探針が無く、契約ゲートを一度も通っていなかった 5 sort = 101 op。残る 6 sort(video / qimage / cimage / lightfield / beatcube = 50 op)は形が複素・4-D で退化形の設計に手間が要るため、 **一度に全部入れて切り分け不能にしない**よう次の段で足す。
+- **L282** _(ja)_ — ★**特異行列は必ず置く。** 一度ここから外しかけたが、それは誤りだった —— `tb_mat_cond` が特異行列で `inf` を返すのは**契約どおり**で、`ops.py` の `NONFINITE_IS_MEANINGFUL` に「厳密に特異な行列は s_min=0 なので inf が 正しい答え。有限に潰すと『十分に良条件』と読めてしまう」と**既に宣言済み** だった。落ちていたのは op ではなく、**有限性ゲートがその台帳を見ていない** こと。探針を削って緑にするのは、欠陥を隠す行為。 (同じ註に 2026-09-05 の教訓が書いてある ——「自分の probe では特異行列を 作っていなかったので tb_mat_cond を取りこぼした」。探針から外すのは その取りこぼしを**わざと再現する**ことになる。)
+- **L400** _(ja)_ — ★新規(2026-09-14): ここまで探針が無く、契約ゲートを一度も通っていなかった 5 sort = 101 op。残る 6 sort(video / qimage / cimage / lightfield / beatcube = 50 op)は形が複素・4-D で退化形の設計に手間が要るため、 **一度に全部入れて切り分け不能にしない**よう次の段で足す。
+- **L408** _(ja)_ — ★第 3 段(2026-09-17): 戻りの橋 ``feature_to_img`` が入るまで、feature を **入力**に取る op は 1 本も無かった(作る op は 125 本ある)。門が「探針の 無い op が 1 本に増えた」と正しく落ちて教えた。
 
 ## `tests/test_abi_apply.py`
 
@@ -1165,8 +1177,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_degenerate_inputs.py`
 
-- **L260** — ★What makes this tricky is that **the defect this test guards against does not reproduce on Windows**. Measured 2026-09-05: on Linux (Ubuntu 24.04 / py3.12 / PyPI wheel) 3 ops SIGSEGV on degenerate input. Feeding the same input to Windows crashed none of them. So "local is green" is no evidence, and it must be kept in a form where you can verify **that the ledger is actually taking effect** on both environments. --------------------------------------------------------------------------- #
-- **L267** — ★The **counterpart** to ``ops.NATIVE_CRASHES_ON_DEGENERATE``. It must match the main table 1:1. Changing only one side fails —— removing from the main table, or adding to it, requires **rewriting here at the same time (= a human confirms the intent)**. Why a counterpart is needed: in gate mutation testing (2026-09-05), even after removing `cv_cc_count` from the main table, the test checking "every op in the ledger has a guard" **still passed**. An op removed from the ledger also drops out of the loop's targets, so the entire check path disappears with it. The SIGSEGV being guarded is Linux-only, and on Windows a decent value happens to come back, so the last line of defense also fails to work. Only **equivalence** with an independent source (this set) catches both directions even on Windows. Same shape as `test_the_two_nonfinite_ledgers_agree`.
+- **L77** _(ja)_ — ★スカラに「0 要素」は無い(2026-09-17、戻りの橋 ``feature_to_img`` で feature が初めて**入力**になったときに気づいた)。この門が探している のは 0/0 なので、空配列の代わりに**分母を 0 にする値** 0.0 を渡す。
+- **L265** — ★What makes this tricky is that **the defect this test guards against does not reproduce on Windows**. Measured 2026-09-05: on Linux (Ubuntu 24.04 / py3.12 / PyPI wheel) 3 ops SIGSEGV on degenerate input. Feeding the same input to Windows crashed none of them. So "local is green" is no evidence, and it must be kept in a form where you can verify **that the ledger is actually taking effect** on both environments. --------------------------------------------------------------------------- #
+- **L272** — ★The **counterpart** to ``ops.NATIVE_CRASHES_ON_DEGENERATE``. It must match the main table 1:1. Changing only one side fails —— removing from the main table, or adding to it, requires **rewriting here at the same time (= a human confirms the intent)**. Why a counterpart is needed: in gate mutation testing (2026-09-05), even after removing `cv_cc_count` from the main table, the test checking "every op in the ledger has a guard" **still passed**. An op removed from the ledger also drops out of the loop's targets, so the entire check path disappears with it. The SIGSEGV being guarded is Linux-only, and on Windows a decent value happens to come back, so the last line of defense also fails to work. Only **equivalence** with an independent source (this set) catches both directions even on Windows. Same shape as `test_the_two_nonfinite_ledgers_agree`.
 
 ## `tests/test_demops.py`
 
@@ -1278,7 +1291,8 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_op_probe_ledger.py`
 
 - **L76** — ★Added 2026-09-08. Until then this gate only built inputs for the 4 of image / region / color / volume, letting ``contour`` 65 / ``points`` 57 / ``signal`` 26 / ``video`` 16 … **217 ops (24 % of the 901-op registry) pass through as "uncallable"**. That "the gate stands in the right place" and that "the gate passes everything" are different —— on the first widening, it surfaced that ``tb_angle_3points`` can never run under the probe (registered as points->feature, but the actual entity takes 3 vectors).
-- **L192** — ★The 2026-09-08 CI (py3.10 / py3.12, no torch) went red here —— because widening the probe to all sorts first reached an op that needs torch (``tb_points_to_voxel``). **"Broken" and "absent in this environment" are different verdicts**, and mixing them turns an environmental difference into an implementation bug. In a full environment (``FULLSEYE_REQUIRE_OPTIONAL=1``), keep it as a failure as before.
+- **L85** _(ja)_ — ★2026-09-17: 戻りの橋 ``feature_to_img`` で feature が初めて **入力**になった(作る op は 125 本あったが受ける op がゼロ だった)。この門は「探針を作れず一度も走らせていない op」を 数えるので、sort を足したらここにも足す。
+- **L197** — ★The 2026-09-08 CI (py3.10 / py3.12, no torch) went red here —— because widening the probe to all sorts first reached an op that needs torch (``tb_points_to_voxel``). **"Broken" and "absent in this environment" are different verdicts**, and mixing them turns an environmental difference into an implementation bug. In a full environment (``FULLSEYE_REQUIRE_OPTIONAL=1``), keep it as a failure as before.
 
 ## `tests/test_opdocs.py`
 
@@ -1426,10 +1440,12 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tools/gen_op_figures.py`
 
-- **L105** — ★2026-09-08: `tb_angle_3points` and `tb_indices_to_labels`, which were in this table, were not "outside the figure's domain" but **op that must not be put on the bridge**. The former takes 3 vectors so it can't be called with a single point cloud, and the latter returns 1-D yet declares out as `labels` (→ volume = ndim 3). Both, while registered, had **never once run**, and fail-soft was returning plausible values. Moved to `backends_typed._OP_BRIDGE_SKIP` and removed from this table -- there was a record that no figure came out, yet nowhere a record of the inability to run itself (there were two gates, and only one had noticed).
-- **L115** _(ja)_ — ★2026-09-13: op が evolute 検証を得て厳格化。ECEF は地球表面(中心から ~6.4M m)の 座標を要るが、画像由来の合成点は原点付近で**必ず楕円体の evolute 内**に落ちるため 正しく拒否される(実データでは動く。合成入力では図を作れない恒久的な定義域ミスマッチ)。
-- **L127** — ★2026-09-07 (user instruction "there's no need to consolidate into one image; things that are stepwise or have multiple conditions should be split out", "for some things a pseudo-color is easier to understand", "complex ones may even be an animated GIF"). In addition to the main figure `<op>.png`: `<op>.a.jpg` / `<op>.b.jpg` — 3 images with the knob swept to 0.1 / 0.5 / 0.9 (**only when the output changes**; if it doesn't change, the reason goes in the manifest) `<op>.chain.jpg` — a stepwise figure for an op that has a preceding op (image → intermediate → output) `<op>.gif` — when the output is video / light field / volume, showing frames / viewpoints / slices in sequence (the still `<op>.png` is the finished form and the GIF is additional; Studio's QTextBrowser shows the first frame). Apply pseudo-color only to the output of a **field of quantity** (distance, phase, orientation, depth, curvature …), and write `(viridis)` in the caption. Filter types stay gray (don't present them as a color-changing op).
-- **L743** — ★"It ran" and "a meaningful output came out" are different (2026-09-07, user's remark "what's with the pure-black out?"). If an empty array is counted as "has a figure", a black slab becomes a figure. Record empty as empty and write the reason in the note.
+- **L90** _(ja)_ — ★2026-09-17: 戻りの橋 ``feature_to_img`` で feature が初めて**入力**に なった。1 段で image -> feature を作れる op(``intensity`` = 平均輝度)を 前置きにする。これが無いと図が「型が届かない」に落ちる。
+- **L99** _(ja)_ — ★2026-09-17: `deskew` は「傾いていないものは動かさない」op なので、合成の 標準入力(canonical_image)に掛けると **in と out が同じ絵**になり、図が 何も語らなくなっていた(実測: 標準入力 8 枚のうち 5 枚で恒等、図は恒等の 方)。走ったことと意味のある出力が出たことは別 —— 先に 7.0 度 傾けてから 渡す(rotate_img の角度は -45 + 90a なので a=0.5778 が +7.0 度)。
+- **L115** — ★2026-09-08: `tb_angle_3points` and `tb_indices_to_labels`, which were in this table, were not "outside the figure's domain" but **op that must not be put on the bridge**. The former takes 3 vectors so it can't be called with a single point cloud, and the latter returns 1-D yet declares out as `labels` (→ volume = ndim 3). Both, while registered, had **never once run**, and fail-soft was returning plausible values. Moved to `backends_typed._OP_BRIDGE_SKIP` and removed from this table -- there was a record that no figure came out, yet nowhere a record of the inability to run itself (there were two gates, and only one had noticed).
+- **L125** _(ja)_ — ★2026-09-13: op が evolute 検証を得て厳格化。ECEF は地球表面(中心から ~6.4M m)の 座標を要るが、画像由来の合成点は原点付近で**必ず楕円体の evolute 内**に落ちるため 正しく拒否される(実データでは動く。合成入力では図を作れない恒久的な定義域ミスマッチ)。
+- **L137** — ★2026-09-07 (user instruction "there's no need to consolidate into one image; things that are stepwise or have multiple conditions should be split out", "for some things a pseudo-color is easier to understand", "complex ones may even be an animated GIF"). In addition to the main figure `<op>.png`: `<op>.a.jpg` / `<op>.b.jpg` — 3 images with the knob swept to 0.1 / 0.5 / 0.9 (**only when the output changes**; if it doesn't change, the reason goes in the manifest) `<op>.chain.jpg` — a stepwise figure for an op that has a preceding op (image → intermediate → output) `<op>.gif` — when the output is video / light field / volume, showing frames / viewpoints / slices in sequence (the still `<op>.png` is the finished form and the GIF is additional; Studio's QTextBrowser shows the first frame). Apply pseudo-color only to the output of a **field of quantity** (distance, phase, orientation, depth, curvature …), and write `(viridis)` in the caption. Filter types stay gray (don't present them as a color-changing op).
+- **L753** — ★"It ran" and "a meaningful output came out" are different (2026-09-07, user's remark "what's with the pure-black out?"). If an empty array is counted as "has a figure", a black slab becomes a figure. Record empty as empty and write the reason in the note.
 
 ## `tools/gen_wing2d_gallery.py`
 

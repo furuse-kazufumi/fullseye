@@ -73,6 +73,11 @@ KNOWN_HANGS_ON_NONFINITE: dict = {}
 def _empty_for(sort):
     if sort == "contour":
         return {"shape": (0, 0), "cs": []}
+    if sort == "feature":
+        # ★スカラに「0 要素」は無い(2026-09-17、戻りの橋 ``feature_to_img`` で
+        #   feature が初めて**入力**になったときに気づいた)。この門が探している
+        #   のは 0/0 なので、空配列の代わりに**分母を 0 にする値** 0.0 を渡す。
+        return 0.0
     shp = EMPTY.get(sort)
     if shp is None:
         return None
@@ -110,7 +115,7 @@ def test_no_op_returns_a_non_finite_value_for_an_empty_input(registry):
             missing.append(op.in_sort)
             continue
         try:
-            out = op.fn(v.copy() if hasattr(v, "copy") else dict(v), 0.5, 0.5)
+            out = op.fn(v.copy() if hasattr(v, "copy") else v, 0.5, 0.5)
         except Exception:                                 # noqa: BLE001
             continue                                      # 例外は台帳に載る(契約内)
         if op.name in _meaningful_nonfinite():
@@ -136,7 +141,7 @@ def test_no_op_crashes_the_process_on_an_empty_input(registry):
         if v is None:
             continue
         try:
-            op.fn(v.copy() if hasattr(v, "copy") else dict(v), 0.5, 0.5)
+            op.fn(v.copy() if hasattr(v, "copy") else v, 0.5, 0.5)
         except Exception:                                 # noqa: BLE001
             pass
         n += 1
@@ -188,7 +193,7 @@ def test_zero_division_is_not_hidden_by_numpy_defaults(registry):
             warnings.simplefilter("ignore")
             try:
                 with np.errstate(divide="raise", invalid="raise"):
-                    out = op.fn(v.copy() if hasattr(v, "copy") else dict(v), 0.5, 0.5)
+                    out = op.fn(v.copy() if hasattr(v, "copy") else v, 0.5, 0.5)
             except FloatingPointError:
                 # 計算中に 0 除算はしたが、外に出ていなければ実害は無い。
                 # 出力側の契約は上のテストが見ているので、ここでは数えない。

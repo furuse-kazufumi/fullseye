@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">counts_to_img — 2D <code style="color:#22d3bf">bridge</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;counts_to_img&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/counts_to_img.png" alt="counts_to_img: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/counts_to_img.a.jpg">counts_to_img: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/counts_to_img.b.jpg">counts_to_img: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/counts_to_img.chain.jpg">counts_to_img: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/counts_to_img.inputs.jpg">counts_to_img: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>非負整数の 1-D カウント列を<b>棒グラフ</b>にして画像へ戻す。</p>
+<p>`<code style="color:#22d3bf">counts</code>` を画像に落とせる op は <b>1 本も無かった</b>(作る op は 13 本ある)。</p>
+<p>既定を棒にしてあるのは、カウントが<b>整数の度数</b>だからで、折れ線で結ぶと</p>
+<p>「間の値」が在るように見えてしまう。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 縦軸の余白(</code><code style="color:#22d3bf">signal_to_img</code>` と同じ式)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 描き方。</code><code style="color:#22d3bf">b &lt; 1/3</code><code style="color:#22d3bf"> で**折れ線**、</code><code style="color:#22d3bf">&lt; 2/3</code>` で<b>棒</b>(既定)、それ以上で</p>
+<p><b>点</b>。`<code style="color:#22d3bf">signal_to_img</code>` と<b>並びが違う</b>のは、既定のノブ 0.5 でその型に</p>
+<p>素直な描き方になるようにしているから —— カウントは棒が素直。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(128, 128)</code>` float64。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_counts 0.50 0.50
+counts_to_img 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_counts%200.50%200.50%0Acounts_to_img%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_counts%200.50%200.50%0Acounts_to_img%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_bridge">gallery2d_bridge</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_bridge.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">image</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">bridge</code>)</h3>
+<p><a style="color:#22d3bf" href="op:img_to_points">img_to_points</a> · <a style="color:#22d3bf" href="op:img_to_keypoints">img_to_keypoints</a> · <a style="color:#22d3bf" href="op:img_to_signal">img_to_signal</a> · <a style="color:#22d3bf" href="op:img_to_projection_profile">img_to_projection_profile</a> · <a style="color:#22d3bf" href="op:img_to_counts">img_to_counts</a> · <a style="color:#22d3bf" href="op:img_to_matrix">img_to_matrix</a> · <a style="color:#22d3bf" href="op:img_to_video">img_to_video</a> · <a style="color:#22d3bf" href="op:img_to_volume">img_to_volume</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

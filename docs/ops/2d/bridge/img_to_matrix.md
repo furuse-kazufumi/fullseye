@@ -66,11 +66,11 @@ img_to_matrix 0.50 0.50
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[identity](../misc/identity.md) · [tb_mat_pinv](../typed/tb_mat_pinv.md) · [tb_mat_cond](../typed/tb_mat_cond.md) · [tb_stat_covariance](../typed/tb_stat_covariance.md) · [tb_stat_correlation](../typed/tb_stat_correlation.md)
+[identity](../misc/identity.md) · [tb_mat_pinv](../typed/tb_mat_pinv.md) · [tb_mat_cond](../typed/tb_mat_cond.md) · [tb_stat_covariance](../typed/tb_stat_covariance.md) · [tb_stat_correlation](../typed/tb_stat_correlation.md) · [matrix_to_img](matrix_to_img.md)
 
 ## 同カテゴリ(`bridge`)
 
-[img_to_points](img_to_points.md) · [img_to_keypoints](img_to_keypoints.md) · [img_to_signal](img_to_signal.md) · [img_to_counts](img_to_counts.md) · [img_to_video](img_to_video.md) · [img_to_volume](img_to_volume.md) · [img_to_lightfield](img_to_lightfield.md) · [img_to_rgb](img_to_rgb.md)
+[img_to_points](img_to_points.md) · [img_to_keypoints](img_to_keypoints.md) · [img_to_signal](img_to_signal.md) · [img_to_projection_profile](img_to_projection_profile.md) · [img_to_counts](img_to_counts.md) · [img_to_video](img_to_video.md) · [img_to_volume](img_to_volume.md) · [img_to_lightfield](img_to_lightfield.md)
 
 ---
 *Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

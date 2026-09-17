@@ -39,7 +39,11 @@ SORT_TO_GENERATOR = {
 }
 
 #: ``chain_fuzz`` を通さず、ここで直接作る sort。
-LOCAL_SORTS = ("region", "contour", "color", "any")
+# ★2026-09-17: ``feature`` を足した。戻りの橋 ``feature_to_img`` が入るまで、
+#   2-D 台帳に **feature を入力に取る op が 1 本も無かった**ので代表値も要らな
+#   かった。門(knob_liveness / probe_ledger / op_contracts)は 3 本とも
+#   「測れない op が居る」と正しく落ちてこの穴を教えた。
+LOCAL_SORTS = ("region", "contour", "color", "any", "feature")
 
 _CONTOUR_CACHE: dict[bool, object] = {}
 
@@ -363,6 +367,11 @@ def sample_input(sort: str, rng=None, structured: bool = False):
         return structured_region() if structured else (rng.random((48, 48)) > 0.5).astype(float)
     if sort == "contour":
         return _contour(structured, rng)
+    if sort == "feature":
+        # feature は**素の float**(``backends_typed._sort_ok`` の契約)。
+        # 構造版は符号・桁・ゼロを 1 本で代表させず、乱数版と**必ず違う値**に
+        # する(同じ値を 2 本引くと op が死んで見える)。
+        return -1.5 if structured else float(rng.normal(0.0, 3.0))
     if sort in ("color", "rgbimage"):
         # 構造版 = chain_fuzz の**二色性レンダ**(既知の法線・アルベド・光源から
         # 描いた、分離の真値が分かる画像)。これは rng を使わず毎回同じ絵を返す

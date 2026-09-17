@@ -35,15 +35,22 @@ def _img(n=48):
 @pytest.fixture(scope="module")
 def bridges():
     out = [o for o in ops.REGISTRY if o.category == BB.CATEGORY]
-    assert len(out) == len(BB.BRIDGES), "登録数が BRIDGES と違う(backend の import 失敗?)"
+    assert len(out) == len(BB.BRIDGES) + len(BB.RETURN_BRIDGES), (
+        "登録数が BRIDGES + RETURN_BRIDGES と違う(backend の import 失敗?)")
     return out
 
 
 def test_bridges_are_registered_but_never_candidates(bridges):
     names = {o.name for o in bridges}
-    assert names == {n for n, _s, _f in BB.BRIDGES}
+    assert names == ({n for n, _s, _f in BB.BRIDGES}
+                     | {n for n, _s, _f in BB.RETURN_BRIDGES})
+    entry = {n for n, _s, _f in BB.BRIDGES}
     for o in bridges:
-        assert o.in_sort == ops.IMAGE
+        # 行きの橋は image 入力、戻りの橋は **新設 sort 入力 / image 出力**。
+        if o.name in entry:
+            assert o.in_sort == ops.IMAGE
+        else:
+            assert o.out_sort == ops.IMAGE and o.in_sort != ops.IMAGE
         assert ops._BY_NAME[o.name] is o
         assert ops.RT[o.name] is o.fn
     sorts = {o.in_sort for o in ops.REGISTRY} | {ops.ANY}
