@@ -418,8 +418,9 @@ def main() -> int:
 
     print()
     print("PASS: 合成の掲示で "
-          f"壊した {len(broken)} 字を全部検出(誤検出 0)、全部置換して "
-          f"距離が {np.median(b):.4f} → {np.median(a):.4f}(床 {floor:.4f})まで下がった")
+          f"壊した {len(broken)} 字を全部検出(誤検出 {fp})、全部置換して "
+          f"距離が {np.median(b):.4f} → {np.median(a):.4f}(床 {floor:.4f}、"
+          f"床を下回った位置 {int((a <= floor).sum())}/{len(a)})まで下がった")
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     return 0

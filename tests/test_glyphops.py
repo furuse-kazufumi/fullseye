@@ -209,3 +209,25 @@ def test_the_replaced_stroke_weight_follows_the_surroundings(fonts):
     assert glyphops.match_stroke_weight(bold.astype(float), t_thin) is not None
     assert np.array_equal(glyphops.match_stroke_weight(bold.astype(float), t_thin),
                           bold.astype(float))
+
+
+def test_one_font_can_still_give_a_floor_but_a_narrower_one(fonts):
+    """★書体 1 本の環境でも床は測れる —— ただし**狭い**ことを明示すること。
+
+    素の Linux には CJK が 1 本しか入らないことがある(2026-09-17、CI が
+    ``fonts-noto-cjk`` だけで PoC が丸ごと skip して落ちた)。そこでは
+    ぼけ・線幅・回転・再標本化という**既知の妨害**で同じ字を揺らして床を作る。
+    測っているものが違うので ``source`` で区別し、**書体の床より狭い**ことを
+    固定する —— 狭い床で「誤検出ゼロ」を主張すると嘘になる。
+    """
+    nf1 = glyphops.rendering_noise_floor(_CHARS, fonts[0], size=160, out=160)
+    assert nf1["source"] == "nuisance" and nf1["n_fonts"] == 1
+    assert 0.0 < nf1["median"] < nf1["floor"] <= nf1["max"]
+    nf2 = glyphops.typeface_noise_floor(_CHARS, fonts, size=160, out=160)
+    assert nf1["floor"] < nf2["floor"], (
+        f"妨害の床 {nf1['floor']:.4f} が書体の床 {nf2['floor']:.4f} 以上 —— "
+        "妨害が書体差より大きいなら、妨害の選び方を疑う")
+    # 別字はどちらの床も超えること(狭い床でも見逃しは増えない)
+    d = glyphops.glyph_distance(glyphops.render_glyph("検", fonts[0], 160),
+                                glyphops.render_glyph("横", fonts[0], 160), 160)
+    assert d > nf1["floor"]
