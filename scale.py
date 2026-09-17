@@ -82,6 +82,9 @@ _NOT_TILE_SAFE = frozenset({
     'xsk_hessian_eig', 'xsk_meijering', 'xsk_sato', 'xsp_chamfer_dist', 'xsp_cspline_smooth', 'xsp_dct_denoise',
     'xsp_detrend_flatten', 'xsp_gauss_grad_mag', 'xsp_hilbert_env', 'xsp_morph_laplace', 'xsp_wiener', 'xwt_directional_detail',
     'xwt_firm_denoise', 'xwt_hf_reconstruct', 'xwt_visushrink',
+    # ★2026-09-17: 走査長平滑化は隙間を最大 65 画素まで埋めるので、
+    #   標準タイラーの halo より広い。60/12 のタイルで 0.2613 ずれた(実測)。
+    'runlength_smear',
 })
 
 # class + reason for a measured non-tileable op, from its (optimistic) category.
@@ -91,6 +94,12 @@ _NOT_TILE_SAFE = frozenset({
 #: から割れる。床は一様面で arctan2 が丸め屑を増幅するのを止めるためのもので、
 #: タイルごとに取り直すと、真っ平らなタイルでは屑そのものが最大値になって床が効かない。
 _NOT_TILE_SAFE_OP_REASON = {
+    "runlength_smear": (
+        "halo",
+        "run-length smoothing closes gaps up to 65 px along a line, so the receptive "
+        "field is far wider than the standard tiler's halo; a tile boundary inside a "
+        "text line leaves the line broken there. Measured drift 0.2613 at 60/12 tiles. "
+        "Run it on the full image, or tile with a halo wider than the gap threshold."),
     "structure_tensor_orientation": (
         "global_reduce",
         "local derivatives, but the 'is there a direction at all' floor is relative to the "

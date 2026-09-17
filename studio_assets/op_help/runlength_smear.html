@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">runlength_smear — 2D <code style="color:#22d3bf">morphology</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;runlength_smear&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<p><img src="fig/runlength_smear.png" alt="runlength_smear: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/runlength_smear.a.jpg">runlength_smear: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/runlength_smear.b.jpg">runlength_smear: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/runlength_smear.inputs.jpg">runlength_smear: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p><b>走査長平滑化(RLSA)</b>。行内の字の隙間を埋めて、字を「行」の塊にまとめる。</p>
+<p>版面解析(どこが行で、どこが段か)の基本部品。`<code style="color:#22d3bf">a</code>` が<b>埋める隙間の長さ</b>を</p>
+<p>`<code style="color:#22d3bf">3,5,9,15,25,41,65</code><code style="color:#22d3bf"> 画素(</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> の向きに沿った線)に振り、</code><code style="color:#22d3bf">b</code>` が向きと</p>
+<p>合成を選ぶ: `<code style="color:#22d3bf">b &lt;= 0.5</code><code style="color:#22d3bf"> は**水平のみ**、</code><code style="color:#22d3bf">0.5 &lt; b &lt;= 0.75</code>` は<b>垂直のみ</b>、</p>
+<p>`<code style="color:#22d3bf">b &gt; 0.75</code>` は<b>水平と垂直の小さい方</b>(= 古典 RLSA の 2 パス AND 合成。</p>
+<p>両方向で埋まった所だけが残るので、行だけでなく<b>段組みの塊</b>が出る)。</p>
+<p>★**既存の `<code style="color:#22d3bf">gclose</code><code style="color:#22d3bf"> と一部重なる**。</code><code style="color:#22d3bf">gclose</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">b</code>` で水平線の構造要素を</p>
+<p>選べるので、水平 RLSA は原理的に書ける。ここが足すのは 2 つ ——</p>
+<p>(1) 隙間が <b>3〜9 画素でなく 65 画素まで</b>振れる(`<code style="color:#22d3bf">_k</code>` の上限では行がつながらない。</p>
+<p>文字の間隔は 96 px の字なら 10〜30 画素ある)、(2) <b>2 方向の AND 合成</b>は</p>
+<p>単一の構造要素による閉じでは書けない。片方だけなら `<code style="color:#22d3bf">gclose</code>` を使うほうが速い。</p>
+<p>濃淡画像にそのまま掛かる(内部で二値化しない)。灰色の閉じ演算なので、</p>
+<p><b>暗い隙間を埋める</b>方向に働く —— 字が明るく背景が暗い画像で使うこと。</p>
+<p>逆なら先に `<code style="color:#22d3bf">invert</code><code style="color:#22d3bf"> を通す。端の扱いは </code><code style="color:#22d3bf">scipy.ndimage</code><code style="color:#22d3bf"> の既定の </code><code style="color:#22d3bf">reflect</code>`。</p>
+<p>空フレーム(定数画像)は<b>そのまま返る</b>(埋めるべき隙間が無い)。値域は入力のまま</p>
+<p>[0,1] に収まり、画像ごとの正規化はしない(<b>値は画像間で比較できる</b>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
+<p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">runlength_smear 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:runlength_smear%200.35%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:runlength_smear%200.35%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_morphology">gallery2d_morphology</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_morphology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">morphology</code>)</h3>
+<p><a style="color:#22d3bf" href="op:gerode">gerode</a> · <a style="color:#22d3bf" href="op:gdilate">gdilate</a> · <a style="color:#22d3bf" href="op:gopen">gopen</a> · <a style="color:#22d3bf" href="op:gclose">gclose</a> · <a style="color:#22d3bf" href="op:tophat">tophat</a> · <a style="color:#22d3bf" href="op:bothat">bothat</a> · <a style="color:#22d3bf" href="op:morph_grad">morph_grad</a> · <a style="color:#22d3bf" href="op:persistence_map">persistence_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -46,6 +46,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # repo root first
 
 import numpy as np  # noqa: E402
+from scipy import ndimage  # noqa: E402
 import ops  # noqa: E402
 
 
@@ -89,6 +90,7 @@ def input_for(in_sort: str) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 OPS = [
     "sobel_mag", "laplace", "prewitt_mag", "roberts_mag", "dog", "grad_dir",
+    "edge_transition_width",
     "log", "corner_response", "sk_scharr", "sk_farid", "sk_dog", "sk_hessian_det",
     "sk_corner_harris", "cv_scharr", "cv_laplacian", "cv_corner_harris",
     "cv_min_eigen", "cv_precorner", "derivate_gauss", "laplace_of_gauss",
@@ -105,7 +107,7 @@ OPS = [
 
 # kornia backend 依存の任意 op (torch/kornia 不在なら registry に現れない)。
 KORNIA_OPTIONAL = ["xkor_laplacian", "xkor_harris", "xkor_gftt", "xkor_hessian", "xkor_dog"]
-BASE_OPS = [n for n in OPS if n not in KORNIA_OPTIONAL]  # 常設分 (= 52)
+BASE_OPS = [n for n in OPS if n not in KORNIA_OPTIONAL]  # 常設分 (= 53)
 
 _TOL = 1e-6  # 値域 [0,1] 判定の浮動小数許容。
 
@@ -170,6 +172,28 @@ def _ground_truth_checks(BY) -> int:
         assert float(oc.std()) < 1e-6, (
             f"GT {name}: 勾配ゼロの定数画像で応答が出ている (std={oc.std():.2e})")
         checks += 1
+
+    # エッジ遷移幅: **ぼかすほど幅が広がる**。ぼけを作る simulate_defocus の対で、
+    # こちらは測る側。理想の段差(σ=0)は 1 画素、σ でぼかせば約 2.507σ 画素になる
+    # (ガウシアンの最大傾き 1/(σ√(2π)) の逆数) —— これは解析解なので強い GT になる。
+    _etw = BY["edge_transition_width"].fn
+    _k9 = 9                                    # a=0.99 -> 窓 9
+    widths = []
+    for sigma in (0.0, 1.0, 2.0):
+        e = _step_edge(n) if sigma == 0 else ndimage.gaussian_filter(_step_edge(n), sigma)
+        o = _etw(e, 0.99, 0.5) * _k9
+        widths.append(float(o[:, n // 2 - 4:n // 2 + 5].max()))
+    assert widths[0] < 1.05, (
+        f"GT edge_transition_width: 理想の段差が 1 画素でない ({widths[0]:.3f}) — "
+        "中心差分に戻ると 2.0 になる")
+    assert widths[0] < widths[1] < widths[2], (
+        f"GT edge_transition_width: ぼかしても幅が単調に増えない {widths}")
+    assert abs(widths[1] - 2.507) < 0.35, (
+        f"GT edge_transition_width: σ=1 の解析解 2.507 から離れすぎ ({widths[1]:.3f})")
+    _flat = _etw(_constant(n), 0.99, 0.5)
+    assert float(np.abs(_flat).max()) == 0.0, (
+        f"GT edge_transition_width: 空フレームに端を見ている (max={_flat.max():.3e})")
+    checks += 1
 
     # 二次微分・帯域通過: 定数画像には応答せず (DC なし)、段差では明確に応答。
     for name in ("laplace", "dog"):

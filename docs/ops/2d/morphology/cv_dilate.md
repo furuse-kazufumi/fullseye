@@ -67,7 +67,7 @@ cv_dilate 0.35 0.50
 
 ## 同カテゴリ(`morphology`)
 
-[gerode](gerode.md) · [gdilate](gdilate.md) · [gopen](gopen.md) · [gclose](gclose.md) · [tophat](tophat.md) · [bothat](bothat.md) · [morph_grad](morph_grad.md) · [persistence_map](persistence_map.md)
+[gerode](gerode.md) · [gdilate](gdilate.md) · [gopen](gopen.md) · [gclose](gclose.md) · [runlength_smear](runlength_smear.md) · [tophat](tophat.md) · [bothat](bothat.md) · [morph_grad](morph_grad.md)
 
 ---
 *Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

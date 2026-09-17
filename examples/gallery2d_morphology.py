@@ -87,7 +87,8 @@ def _gt_image():
 # TARGET: category=='morphology' の全 op（string literal で明示 = op→example 索引用）。
 # --------------------------------------------------------------------------- #
 OPS = [
-    "gerode", "gdilate", "gopen", "gclose", "tophat", "bothat", "morph_grad",
+    "gerode", "gdilate", "gopen", "gclose", "runlength_smear",
+    "tophat", "bothat", "morph_grad",
     "sk_area_opening", "cv_open", "cv_close", "cv_tophat", "cv_gradient",
     "cv_blackhat", "cv_erode", "cv_dilate", "gray_erosion", "gray_dilation",
     "gray_opening", "gray_closing", "gray_opening_shape", "gray_closing_shape",
@@ -159,6 +160,32 @@ def main() -> int:
     assert (er <= op_ + EPS).all() and (op_ <= gt + EPS).all() \
         and (gt <= cl + EPS).all() and (cl <= di + EPS).all(), \
         "morphology 順序律違反: erosion<=opening<=in<=closing<=dilation が破れた"
+    gt_checks += 1
+
+    # 3b. 走査長平滑化(RLSA): **行内の字の隙間が埋まって 1 つの塊になる**。
+    #     真値が作れるので強い GT になる —— 4 字を 14 画素間隔で並べた行は、
+    #     隙間の閾値がその間隔を超えた時点で塊が 4 -> 1 に落ちる。
+    #     null を破る 3 つ: (a) 閾値が小さいうちは 4 のまま、(b) 閉じ演算なので
+    #     extensive(出力 >= 入力)、(c) AND 合成は片方向より必ず小さいか等しい。
+    rl = BY["runlength_smear"].fn
+    tx = np.zeros((64, 64))
+    for _row in (12, 40):
+        for _i in range(4):
+            tx[_row:_row + 10, 6 + _i * 14: 6 + _i * 14 + 8] = 1.0
+
+    def _runs(o, row):
+        m = np.asarray(o)[row] > 0.5
+        return int(np.sum(m[1:] & ~m[:-1]) + (1 if m[0] else 0))
+
+    assert _runs(tx, 16) == 4, "GT runlength_smear: 入力の前提(4 塊)が崩れている"
+    assert _runs(rl(tx.copy(), 0.0, 0.0), 16) == 4,         "GT runlength_smear: 隙間 3 画素で字がつながってしまった(閾値が効いていない)"
+    assert _runs(rl(tx.copy(), 0.5, 0.0), 16) == 1,         "GT runlength_smear: 隙間 15 画素でも行がつながらない(平滑化が効いていない)"
+    _h = np.asarray(rl(tx.copy(), 0.5, 0.0))
+    _v = np.asarray(rl(tx.copy(), 0.5, 0.6))
+    _and = np.asarray(rl(tx.copy(), 0.5, 0.9))
+    assert (_h >= tx - EPS).all() and (_v >= tx - EPS).all(),         "GT runlength_smear: 閉じ演算なのに extensive でない(出力 < 入力)"
+    assert (_and <= _h + EPS).all() and (_and <= _v + EPS).all(),         "GT runlength_smear: AND 合成が片方向より大きい(min になっていない)"
+    assert np.allclose(rl(np.full((32, 32), 0.4), 0.5, 0.9), 0.4),         "GT runlength_smear: 空フレームを変えている(埋める隙間は無いはず)"
     gt_checks += 1
 
     # 4. top-hat: SE より小さい明点を強く拾う(小明点領域 >> 平坦背景)

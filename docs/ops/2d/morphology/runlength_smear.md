@@ -1,0 +1,91 @@
+---
+op: runlength_smear
+dim: 2d
+category: morphology
+in: image
+out: image
+examples: [gallery2d_morphology]
+author: Kazufumi Furuse
+license: Apache-2.0
+version: 0.2.0  # fullseye lib version this note was generated for
+---
+
+# runlength_smear — 2D `morphology` op
+
+- **データ種**: `image` → `image`
+- **呼び出し**: `fullseye.apply(img, "runlength_smear", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+
+![runlength_smear: input → output](../../_fig/runlength_smear.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![runlength_smear: knob a sweep](../../_fig/runlength_smear.a.jpg)
+
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![runlength_smear: knob b sweep](../../_fig/runlength_smear.b.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![runlength_smear: other inputs](../../_fig/runlength_smear.inputs.jpg)
+
+*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*
+
+## 使い方
+
+**走査長平滑化(RLSA)**。行内の字の隙間を埋めて、字を「行」の塊にまとめる。
+
+版面解析(どこが行で、どこが段か)の基本部品。``a`` が**埋める隙間の長さ**を
+``3,5,9,15,25,41,65`` 画素(``b`` の向きに沿った線)に振り、``b`` が向きと
+合成を選ぶ: ``b <= 0.5`` は**水平のみ**、``0.5 < b <= 0.75`` は**垂直のみ**、
+``b > 0.75`` は**水平と垂直の小さい方**(= 古典 RLSA の 2 パス AND 合成。
+両方向で埋まった所だけが残るので、行だけでなく**段組みの塊**が出る)。
+
+★**既存の ``gclose`` と一部重なる**。``gclose`` は ``b`` で水平線の構造要素を
+選べるので、水平 RLSA は原理的に書ける。ここが足すのは 2 つ ——
+(1) 隙間が **3〜9 画素でなく 65 画素まで**振れる(``_k`` の上限では行がつながらない。
+文字の間隔は 96 px の字なら 10〜30 画素ある)、(2) **2 方向の AND 合成**は
+単一の構造要素による閉じでは書けない。片方だけなら ``gclose`` を使うほうが速い。
+
+濃淡画像にそのまま掛かる(内部で二値化しない)。灰色の閉じ演算なので、
+**暗い隙間を埋める**方向に働く —— 字が明るく背景が暗い画像で使うこと。
+逆なら先に ``invert`` を通す。端の扱いは ``scipy.ndimage`` の既定の ``reflect``。
+空フレーム(定数画像)は**そのまま返る**(埋めるべき隙間が無い)。値域は入力のまま
+[0,1] に収まり、画像ごとの正規化はしない(**値は画像間で比較できる**)。
+
+## 詳しい使い方ガイド
+
+- [gallery2d_morphology ファミリ ガイド](../guides/gallery2d_morphology.md)
+
+## 参考(サンプルデータ・文献)
+
+- [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
+- [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
+- アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+runlength_smear 0.35 0.50
+```
+
+## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
+
+- [gallery2d_morphology](../../../../examples/gallery2d_morphology.py) — `py -3.11 examples/gallery2d_morphology.py`
+
+## 型が繋がる次の op(`image` を入力に取れる)
+
+[identity](../misc/identity.md) · [gaussian](../smoothing/gaussian.md) · [mean_box](../smoothing/mean_box.md) · [bilateral](../smoothing/bilateral.md) · [unsharp](../smoothing/unsharp.md) · [median](../rank/median.md) · [min_filter](../rank/min_filter.md) · [max_filter](../rank/max_filter.md)
+
+## 同カテゴリ(`morphology`)
+
+[gerode](gerode.md) · [gdilate](gdilate.md) · [gopen](gopen.md) · [gclose](gclose.md) · [tophat](tophat.md) · [bothat](bothat.md) · [morph_grad](morph_grad.md) · [persistence_map](persistence_map.md)
+
+---
+*Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+
+© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

@@ -405,8 +405,44 @@ def main() -> int:
     assert done == len(broken), f"置換できたのは {done}/{len(broken)}"
     assert after is not None, "修復後の判定を断った"
     assert float(np.median(a)) < float(np.median(b)), "置換しても指定の字に近づいていない"
+
+    # ★**環境に依存する量を assert しない。** 床は「その環境に入っている書体の
+    #   散らばり」から作るので、**どの書体が入っているかで動く** —— 実測 2026-09-17:
+    #   手元(Meiryo / 游ゴシック / MS ゴシック)は 0.0581、CI(Noto 系 3 本)は
+    #   0.0462。本数は同じ 3 本で、違うのは**中身**(CI の 3 本は互いに似ていて
+    #   距離の中央が 0.0250 対 0.0437)。この差で `電` 1 字(距離 0.053)が
+    #   CI でだけ床を超え、`fp == 0` が**手元で緑・CI で赤**になった。
+    #
+    #   固定すべきなのは**順序**である —— 壊れた字の最小距離が、無事な字の最大距離を
+    #   上回ること。これは閾値の置き方と無関係に手法の良し悪しを測る(CI の実測:
+    #   無事な字の最大 0.053 < 壊れた字の最小 0.069 で、**両環境とも完全に分離**)。
+    #   その上で「床がその隙間に落ちたか」は環境の性質として**報告する**。
+    #   ★これは note 080 で退けた「順位で判定する」とは別物 —— 判定は今も床で行い、
+    #   ここで固定するのは**分離しているという性質**だけ。
+    d_ok = np.array([c["distance"] for c in res
+                     if c["i"] not in broken and np.isfinite(c["distance"])])
+    d_ng = np.array([c["distance"] for c in res
+                     if c["i"] in broken and np.isfinite(c["distance"])])
+    gap_lo, gap_hi = float(d_ok.max()), float(d_ng.min())
+    assert gap_hi > gap_lo, (
+        f"壊れた字と無事な字が距離で分離していない(無事の最大 {gap_lo:.4f} >= "
+        f"壊れの最小 {gap_hi:.4f})—— これは閾値でなく**手法**が壊れている")
+    in_gap = gap_lo < floor < gap_hi
+    print("= 分離 =")
+    print(f"  無事な字の最大 {gap_lo:.4f} < 壊れた字の最小 {gap_hi:.4f}(完全に分離)。"
+          f"床 {floor:.4f} は" + ("この隙間の中。" if in_gap else "隙間の外。"))
+    print()
+    assert fp == 0 or floor <= gap_lo, (
+        f"誤検出 {fp} 本が出たのに床 {floor:.4f} は隙間({gap_lo:.4f}〜{gap_hi:.4f})"
+        "の中にある —— 床の置き場所では説明がつかない")
+
     if strong:
-        assert fp == 0, f"無事な字を {fp} 本誤って咎めた"
+        if in_gap:
+            assert fp == 0, f"床が隙間の中なのに無事な字を {fp} 本誤って咎めた"
+        else:
+            print(f"  ※ この環境の書体では床 {floor:.4f} が隙間の下に落ちるので、"
+                  f"無事な字を {fp} 本咎める。**誤検出ゼロは主張しない** —— "
+                  "分離は保てているので手法ではなく閾値の置き場所の問題。")
         assert int((a <= floor).sum()) == len(a), "置換後に床を下回らない位置がある"
     else:
         # ★書体 1 本の環境では**主張を弱める**。妨害から作った床は書体の散らばりより

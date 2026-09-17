@@ -1,5 +1,5 @@
 {
- "generated_for": 920,
+ "generated_for": 922,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -3247,6 +3247,30 @@
    ],
    "out_kind": "float",
    "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\neccentricity_xld 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "edge_transition_width": {
+   "color_ok": true,
+   "extra": {
+    "a": "edge_transition_width.a.jpg",
+    "b": "edge_transition_width.b.jpg",
+    "inputs": "edge_transition_width.inputs.jpg"
+   },
+   "fig": "edge_transition_width.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "edge_transition_width 0.40 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -11090,6 +11114,30 @@
    ],
    "out_kind": "float",
    "program": "threshold 0.50 0.50\nroundness 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "runlength_smear": {
+   "color_ok": true,
+   "extra": {
+    "a": "runlength_smear.a.jpg",
+    "b": "runlength_smear.b.jpg",
+    "inputs": "runlength_smear.inputs.jpg"
+   },
+   "fig": "runlength_smear.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "runlength_smear 0.35 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -21564,10 +21612,10 @@
   "domain": 3,
   "empty": 1,
   "failed": 0,
-  "ok": 916,
+  "ok": 918,
   "unreachable": 0,
   "with_chain": 369,
   "with_gif": 40,
-  "with_sweep": 565
+  "with_sweep": 567
  }
 }

@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">edge_transition_width — 2D <code style="color:#22d3bf">edges</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;edge_transition_width&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/edge_transition_width.png" alt="edge_transition_width: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/edge_transition_width.a.jpg">edge_transition_width: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>掃描旋鈕 b</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/edge_transition_width.b.jpg">edge_transition_width: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/edge_transition_width.inputs.jpg">edge_transition_width: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p><b>エッジの遷移幅</b>(= その場の実効 PSF の広がり)を画素単位で測る。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が測定窓の一辺を </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">)に振る。</code><code style="color:#22d3bf">b</code>` が振幅と勾配の推定量を</p>
+<p>選ぶ: `<code style="color:#22d3bf">b &lt;= 0.5</code>` は窓内の<b>最大 − 最小</b>(素直・鋭いが外れ値に弱い)、</p>
+<p>`<code style="color:#22d3bf">b &gt; 0.5</code><code style="color:#22d3bf"> は**分位点**で、</code><code style="color:#22d3bf">b</code>` を上げるほど分位が 90/10 から 60/40 へ寄って</p>
+<p>雑音に鈍くなる(そのぶん段差も丸まる = 取引になっている)。</p>
+<p>幅 ≒ 局所の振幅 ÷ 局所の最大勾配。段差が 1 画素で立ち上がれば幅は 1 付近、</p>
+<p>ぼけて 5 画素かけて立ち上がれば 5 付近になる。ぼけを<b>作る</b> `<code style="color:#22d3bf">simulate_defocus</code>`</p>
+<p>の対で、こちらは<b>測る</b>側。合焦判定・モーションブラー量・解像限界・</p>
+<p>文字が読める大きさかの判定に使える。</p>
+<p><b>窓が遷移より狭いと過小評価になる</b>(窓の中に振幅の全部が入らないため)。</p>
+<p>出力が 0.7 を超えたら `<code style="color:#22d3bf">a</code>` を上げて測り直すのが実用則。</p>
+<p><b>正規化は画像ごとではない</b>(窓の一辺という定数で割るだけ)ので、**値は画像間で</p>
+<p>比較できる<b>。出力 1.0 は「遷移幅が窓と同じ = 窓より広いかもしれず</b>測り切れていない**」</p>
+<p>の意味で、`<code style="color:#22d3bf">a</code>` を上げて測り直す合図。平坦部やエッジの無い場所は 0。</p>
+<p>★<b>空フレームでは全 0 を返す</b>(「端が無い」)。床を画像自身の振幅に対する相対量</p>
+<p>だけで置くと、一様な画像では基準まで丸め屑になり、屑どうしの比が構造に化ける ——</p>
+<p>実測で 0.5 一色に 1e-12 の雑音を乗せただけの画像が幅 3.49(= 窓の半分)を返した。</p>
+<p><b>振幅そのものが絶対床 1e-6 に届かない画像には端が無い</b>と言い切る。</p>
+<p>端の扱いは `<code style="color:#22d3bf">scipy.ndimage</code><code style="color:#22d3bf"> の既定 </code><code style="color:#22d3bf">reflect</code>`。内部で 8 bit に落とす処理は無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
+<p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">edge_transition_width 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:edge_transition_width%200.40%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:edge_transition_width%200.40%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_edges">gallery2d_edges</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_edges.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">edges</code>)</h3>
+<p><a style="color:#22d3bf" href="op:sobel_mag">sobel_mag</a> · <a style="color:#22d3bf" href="op:prewitt_mag">prewitt_mag</a> · <a style="color:#22d3bf" href="op:roberts_mag">roberts_mag</a> · <a style="color:#22d3bf" href="op:dog">dog</a> · <a style="color:#22d3bf" href="op:grad_dir">grad_dir</a> · <a style="color:#22d3bf" href="op:log">log</a> · <a style="color:#22d3bf" href="op:corner_response">corner_response</a> · <a style="color:#22d3bf" href="op:sk_scharr">sk_scharr</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

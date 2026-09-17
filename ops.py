@@ -275,6 +275,92 @@ def _dog(v, a, b):
     return _norm(np.abs(ndimage.gaussian_filter(v, 0.5 + 2.0 * a) - ndimage.gaussian_filter(v, 1.0 + 4.0 * b)))
 
 
+def _edge_transition_width(v, a, b):
+    """**エッジの遷移幅**(= その場の実効 PSF の広がり)を画素単位で測る。
+
+``a`` が測定窓の一辺を ``3,5,7,9``(``_k(a)``)に振る。``b`` が振幅と勾配の推定量を
+選ぶ: ``b <= 0.5`` は窓内の**最大 − 最小**(素直・鋭いが外れ値に弱い)、
+``b > 0.5`` は**分位点**で、``b`` を上げるほど分位が 90/10 から 60/40 へ寄って
+雑音に鈍くなる(そのぶん段差も丸まる = 取引になっている)。
+
+幅 ≒ 局所の振幅 ÷ 局所の最大勾配。段差が 1 画素で立ち上がれば幅は 1 付近、
+ぼけて 5 画素かけて立ち上がれば 5 付近になる。ぼけを**作る** ``simulate_defocus``
+の対で、こちらは**測る**側。合焦判定・モーションブラー量・解像限界・
+文字が読める大きさかの判定に使える。
+
+**窓が遷移より狭いと過小評価になる**(窓の中に振幅の全部が入らないため)。
+出力が 0.7 を超えたら ``a`` を上げて測り直すのが実用則。
+
+**正規化は画像ごとではない**(窓の一辺という定数で割るだけ)ので、**値は画像間で
+比較できる**。出力 1.0 は「遷移幅が窓と同じ = 窓より広いかもしれず**測り切れていない**」
+の意味で、``a`` を上げて測り直す合図。平坦部やエッジの無い場所は 0。
+
+★**空フレームでは全 0 を返す**(「端が無い」)。床を画像自身の振幅に対する相対量
+だけで置くと、一様な画像では基準まで丸め屑になり、屑どうしの比が構造に化ける ——
+実測で 0.5 一色に 1e-12 の雑音を乗せただけの画像が幅 3.49(= 窓の半分)を返した。
+**振幅そのものが絶対床 1e-6 に届かない画像には端が無い**と言い切る。
+端の扱いは ``scipy.ndimage`` の既定 ``reflect``。内部で 8 bit に落とす処理は無い。"""
+    x = np.asarray(v, np.float64)
+    k = _k(a)
+    # ★勾配は**片側差分の大きい方**で取る。``np.gradient`` の中心差分は 1 画素で
+    #   立ち上がる段差を 2 画素に広げてしまい(段差の頂点で 0.5 しか出ない)、
+    #   理想の段差が幅 2.00 と報告される —— 測る道具が理想ケースで 2 倍を返す。
+    #   片側差分なら段差で 1.0、傾斜 m の斜面でも m となり、どちらも正しい。
+    gxf = np.diff(x, axis=1, append=x[:, -1:])
+    gxb = np.diff(x, axis=1, prepend=x[:, :1])
+    gyf = np.diff(x, axis=0, append=x[-1:, :])
+    gyb = np.diff(x, axis=0, prepend=x[:1, :])
+    grad = np.hypot(np.maximum(np.abs(gxf), np.abs(gxb)),
+                    np.maximum(np.abs(gyf), np.abs(gyb)))
+    scale = float(np.ptp(x))
+    if scale < 1e-6:                                   # 平坦な画像に端は無い
+        return np.zeros_like(x)
+    t = float(np.clip(b, 0.0, 1.0))
+    if t <= 0.5:
+        amp = ndimage.maximum_filter(x, size=k) - ndimage.minimum_filter(x, size=k)
+        gmax = ndimage.maximum_filter(grad, size=k)
+    else:                                              # 雑音に鈍い分位点版
+        hi = 90.0 - 30.0 * (t - 0.5) / 0.5             # 90 -> 60 パーセンタイル
+        amp = (ndimage.percentile_filter(x, hi, size=k)
+               - ndimage.percentile_filter(x, 100.0 - hi, size=k))
+        gmax = ndimage.percentile_filter(grad, hi, size=k)
+    floor = 1e-3 * scale                               # 相対床(屑の増幅を止める)
+    w = np.where(gmax > floor, amp / np.maximum(gmax, floor), 0.0)
+    return np.clip(w, 0.0, float(k)) / float(k)
+
+
+def _runlength_smear(v, a, b):
+    """**走査長平滑化(RLSA)**。行内の字の隙間を埋めて、字を「行」の塊にまとめる。
+
+版面解析(どこが行で、どこが段か)の基本部品。``a`` が**埋める隙間の長さ**を
+``3,5,9,15,25,41,65`` 画素(``b`` の向きに沿った線)に振り、``b`` が向きと
+合成を選ぶ: ``b <= 0.5`` は**水平のみ**、``0.5 < b <= 0.75`` は**垂直のみ**、
+``b > 0.75`` は**水平と垂直の小さい方**(= 古典 RLSA の 2 パス AND 合成。
+両方向で埋まった所だけが残るので、行だけでなく**段組みの塊**が出る)。
+
+★**既存の ``gclose`` と一部重なる**。``gclose`` は ``b`` で水平線の構造要素を
+選べるので、水平 RLSA は原理的に書ける。ここが足すのは 2 つ ——
+(1) 隙間が **3〜9 画素でなく 65 画素まで**振れる(``_k`` の上限では行がつながらない。
+文字の間隔は 96 px の字なら 10〜30 画素ある)、(2) **2 方向の AND 合成**は
+単一の構造要素による閉じでは書けない。片方だけなら ``gclose`` を使うほうが速い。
+
+濃淡画像にそのまま掛かる(内部で二値化しない)。灰色の閉じ演算なので、
+**暗い隙間を埋める**方向に働く —— 字が明るく背景が暗い画像で使うこと。
+逆なら先に ``invert`` を通す。端の扱いは ``scipy.ndimage`` の既定の ``reflect``。
+空フレーム(定数画像)は**そのまま返る**(埋めるべき隙間が無い)。値域は入力のまま
+[0,1] に収まり、画像ごとの正規化はしない(**値は画像間で比較できる**)。"""
+    x = np.asarray(v, np.float64)
+    gap = (3, 5, 9, 15, 25, 41, 65)[min(6, int(float(np.clip(a, 0.0, 1.0)) * 7))]
+    t = float(np.clip(b, 0.0, 1.0))
+    h = ndimage.grey_closing(x, size=(1, gap), mode="reflect")
+    if t <= 0.5:
+        return np.clip(h, 0.0, 1.0)
+    w = ndimage.grey_closing(x, size=(gap, 1), mode="reflect")
+    if t <= 0.75:
+        return np.clip(w, 0.0, 1.0)
+    return np.clip(np.minimum(h, w), 0.0, 1.0)          # 2 パス AND 合成
+
+
 def _gamma(v, a, b):
     """ガンマ補正（べき乗変換）。HALCON の ``pow_image``（Raise an image to a power.）に相当。
 
@@ -1853,6 +1939,7 @@ _DEFS = [
     ("gdilate", "morphology", "gray_dilation", IMAGE, IMAGE, _dilate_g),
     ("gopen", "morphology", "gray_opening", IMAGE, IMAGE, _open_g),
     ("gclose", "morphology", "gray_closing", IMAGE, IMAGE, _close_g),
+    ("runlength_smear", "morphology", None, IMAGE, IMAGE, _runlength_smear),
     ("tophat", "morphology", "gray_tophat", IMAGE, IMAGE, _tophat),
     ("bothat", "morphology", "gray_bothat", IMAGE, IMAGE, _bothat),
     ("morph_grad", "morphology", "gray_range_rect", IMAGE, IMAGE, _morph_grad),
@@ -1861,6 +1948,7 @@ _DEFS = [
     ("prewitt_mag", "edges", "prewitt_amp", IMAGE, IMAGE, _prewitt_mag),
     ("roberts_mag", "edges", "roberts", IMAGE, IMAGE, _roberts_mag),
     ("dog", "edges", "diff_of_gauss", IMAGE, IMAGE, _dog),
+    ("edge_transition_width", "edges", None, IMAGE, IMAGE, _edge_transition_width),
     ("gamma", "gray", "pow_image", IMAGE, IMAGE, _gamma),
     ("quantize_uniform", "gray", None, IMAGE, IMAGE, _quantize_uniform),
     ("quantize_lloyd_max", "gray", None, IMAGE, IMAGE, _quantize_lloyd_max),

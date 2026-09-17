@@ -1,10 +1,10 @@
 {
- "n_ops": 1968,
+ "n_ops": 1970,
  "tiers": {
   "color": 12,
   "ledger": 1031,
   "nary": 17,
-  "registry": 908
+  "registry": 910
  },
  "sorts": [
   "angle",
@@ -15037,6 +15037,14 @@
    "tier": "registry"
   },
   {
+   "name": "edge_transition_width",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
    "name": "edges_image",
    "halcon": "edges_image",
    "in_sort": "image",
@@ -17698,6 +17706,14 @@
    "in_sort": "region",
    "out_sort": "feature",
    "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "runlength_smear",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
    "tier": "registry"
   },
   {

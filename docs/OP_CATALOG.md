@@ -1030,7 +1030,7 @@ _計 363 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 920 ops / 48 categories。_
+_計 922 ops / 48 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1167,11 +1167,12 @@ _計 920 ops / 48 categories。_
 - `it_full_domain` `image → image` · 例: `gallery2d_gray_arith`
 - `it_crop_domain` (halcon: `crop_domain`) `image → image` · 例: `gallery2d_gray_arith`
 
-### edges(57)
+### edges(58)
 - `sobel_mag` (halcon: `sobel_amp`) `image → image` · 例: `gallery2d_edges`
 - `prewitt_mag` (halcon: `prewitt_amp`) `image → image` · 例: `gallery2d_edges`
 - `roberts_mag` (halcon: `roberts`) `image → image` · 例: `gallery2d_edges`
 - `dog` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
+- `edge_transition_width` `image → image` · 例: `gallery2d_edges`
 - `grad_dir` `image → image` · 例: `gallery2d_edges`
 - `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `poc_colormap_readability`, `poc_datacenter_thermal_field`
 - `corner_response` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`, `poc_document_scan`, `poc_matrix_code_reading`
@@ -1526,11 +1527,12 @@ _計 920 ops / 48 categories。_
 ### misc(1)
 - `identity` (halcon: `copy_image`) `any → any` · 例: なし
 
-### morphology(35)
+### morphology(36)
 - `gerode` (halcon: `gray_erosion`) `image → image` · 例: `gallery2d_morphology`
 - `gdilate` (halcon: `gray_dilation`) `image → image` · 例: `gallery2d_morphology`
 - `gopen` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
 - `gclose` (halcon: `gray_closing`) `image → image` · 例: `gallery2d_morphology`
+- `runlength_smear` `image → image` · 例: `gallery2d_morphology`
 - `tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`, `poc_search_sweep_width`
 - `bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`, `poc_metal_grain_size`
 - `morph_grad` (halcon: `gray_range_rect`) `image → image` · 例: `gallery2d_morphology`

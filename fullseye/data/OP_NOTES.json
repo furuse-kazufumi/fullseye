@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1968,
- "n_notes": 1974,
+ "n_ops": 1970,
+ "n_notes": 1976,
  "notes": {
   "vol_dilate": [
    {
@@ -1225,6 +1225,16 @@
     "out": "image",
     "halcon": "dots_image",
     "path": "docs/ops/2d/edges/dots_image.md"
+   }
+  ],
+  "edge_transition_width": [
+   {
+    "op": "edge_transition_width",
+    "dim": "2d",
+    "category": "edges",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/edges/edge_transition_width.md"
    }
   ],
   "edges_color": [
@@ -5025,6 +5035,16 @@
     "in": "image",
     "out": "image",
     "path": "docs/ops/2d/morphology/persistence_map.md"
+   }
+  ],
+  "runlength_smear": [
+   {
+    "op": "runlength_smear",
+    "dim": "2d",
+    "category": "morphology",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/morphology/runlength_smear.md"
    }
   ],
   "sk_area_opening": [
