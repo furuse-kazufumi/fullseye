@@ -78,7 +78,15 @@
 
 動く例: `poc_search_sweep_width`, `poc_astro_photometry`
 
-## 形にする (2)
+## 形にする (3)
+
+### [レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線)](capabilities/lens-distortion-correction.md)
+
+広角・魚眼寄りのレンズは直線を曲げます(たる型・糸巻き型)。`undistort_image(image, K, dist)` は Brown–Conrady モデル(`dist = [k1, k2, p1, p2(, k3)]`、OpenCV と同じ並び)で**画像を丸ごと補正**し、曲がった直線をまっすぐに戻します。`distort_image` はその逆で、理想画像から歪んだ画像を作ります(合成テストデータ・レンズの見えの確認)。
+
+使う op: `undistort_image`, `distort_image`, `distort_points`, `undistort_points`
+
+動く例: `lens_undistort`
 
 ### [投影から断面を再構成する(CT)](capabilities/tomography-reconstruction.md)
 
@@ -199,13 +207,3 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 使う op: `text_box`, `annotate_text_path`, `annotate_text_path_layout`, `annotate_table`, `annotate_table_layout`, `measure_text`
 
 動く例: `annotate_paper_tour`
-
-## 直す (1)
-
-### [レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線)](capabilities/lens-distortion-correction.md)
-
-広角・魚眼寄りのレンズは直線を曲げます(たる型・糸巻き型)。`undistort_image(image, K, dist)` は Brown–Conrady モデル(`dist = [k1, k2, p1, p2(, k3)]`、OpenCV と同じ並び)で**画像を丸ごと補正**し、曲がった直線をまっすぐに戻します。`distort_image` はその逆で、理想画像から歪んだ画像を作ります(合成テストデータ・レンズの見えの確認)。
-
-使う op: `undistort_image`, `distort_image`, `distort_points`, `undistort_points`
-
-動く例: `lens_undistort`

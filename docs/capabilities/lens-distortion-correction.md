@@ -2,7 +2,7 @@
 id: lens-distortion-correction
 title: レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線)
 title_en: Correct lens distortion over a whole image (barrel, pincushion, tangential)
-category: 直す
+category: 形にする
 ops: [undistort_image, distort_image, distort_points, undistort_points]
 examples: [lens_undistort]
 version: 0.2.1
