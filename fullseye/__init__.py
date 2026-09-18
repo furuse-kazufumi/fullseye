@@ -584,6 +584,7 @@ ledger = _LedgerNamespace()
 from fullseye.jsonio import (  # noqa: E402,F401
     JSON_SORTS, to_jsonable, to_json, from_jsonable, from_json,
     save_json, load_json, to_json_lines, from_json_lines,
+    is_envelope, as_value, apply_json,
 )
 # 同じ型付き結果を人が読む Markdown にし、JSON を埋め込んで戻す橋(fullseye/mdio.py)。
 from fullseye.mdio import (  # noqa: E402,F401
@@ -930,5 +931,6 @@ __all__ = [
     "glyph_find_text_lines", "glyph_make_spec",
     "JSON_SORTS", "to_jsonable", "to_json", "from_jsonable", "from_json",
     "save_json", "load_json", "to_json_lines", "from_json_lines",
+    "is_envelope", "as_value", "apply_json",
     "to_markdown", "json_block", "extract_json", "report",
 ]

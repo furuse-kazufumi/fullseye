@@ -191,7 +191,8 @@ def test_every_declared_tool_has_a_body(cat):
     store = HandleStore()
     order = ["fullseye_search_ops", "fullseye_op_help", "fullseye_catalog_coverage",
              "fullseye_list_samples", "fullseye_load_image", "fullseye_apply", "fullseye_inspect",
-             "fullseye_pipeline", "fullseye_fix_text"]
+             "fullseye_pipeline", "fullseye_fix_text",
+             "fullseye_import_json", "fullseye_export_json"]
     assert set(order) == set(TOOLS), "tool を足したらこの表にも足すこと: %s" % (set(TOOLS) ^ set(order))
     ctx: dict = {}
     for n in order:
@@ -218,6 +219,12 @@ def test_every_declared_tool_has_a_body(cat):
                 continue
             h, bbox = _color_sign(store, glyphops.available_fonts()[0])
             a = {"handle": h, "items": [{"text": "電気設備", "bbox": bbox}], "vision": "none"}
+        elif n == "fullseye_import_json":
+            import fullseye
+            a = {"envelope": fullseye.to_jsonable([[1.5, 2.0], [3.25, 4.0]], "points")}
+        elif n == "fullseye_export_json":
+            # import_json が作った小さいハンドルを使う(画像は上限で断られるため)。
+            a = {"handle": ctx["json_handle"]}
         else:
             a = {}
         res = call_tool(n, a, cat, store)
@@ -229,6 +236,8 @@ def test_every_declared_tool_has_a_body(cat):
             ctx["handle"] = sc["handle"]
         elif n == "fullseye_apply":
             ctx["handle_out"] = sc["handle"]
+        elif n == "fullseye_import_json":
+            ctx["json_handle"] = sc["handle"]
 
 
 # --------------------------------------------------------------------------- #

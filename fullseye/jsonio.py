@@ -57,7 +57,8 @@ import json
 import numpy as np
 
 __all__ = ["JSON_SORTS", "to_jsonable", "to_json", "from_jsonable", "from_json",
-           "save_json", "load_json", "to_json_lines", "from_json_lines"]
+           "save_json", "load_json", "to_json_lines", "from_json_lines",
+           "is_envelope", "as_value", "apply_json"]
 
 VERSION = 1
 
@@ -320,3 +321,55 @@ def from_json_lines(text):
         except ValueError as exc:
             raise ValueError("from_json_lines: line %d is not a valid envelope (%s)" % (i + 1, exc)) from None
     return items
+
+
+def is_envelope(x):
+    """True if *x* is (or parses to) a fullseye JSON envelope — a dict with a
+    ``fullseye_sort`` key, or a JSON string of one. A quick, allocation-light check
+    that never raises."""
+    if isinstance(x, dict):
+        return "fullseye_sort" in x
+    if isinstance(x, (bytes, str)):
+        s = x.decode("utf-8", "ignore") if isinstance(x, bytes) else x
+        head = s.lstrip()[:200]
+        if not head.startswith("{") or "fullseye_sort" not in head:
+            return False                                # cheap reject before json.loads
+        try:
+            obj = json.loads(s)
+        except ValueError:
+            return False
+        return isinstance(obj, dict) and "fullseye_sort" in obj
+    return False
+
+
+def as_value(x):
+    """Coerce an argument that may be a typed value **or its JSON envelope** into the
+    value. Pass anything through :func:`as_value` at a function boundary to let it
+    accept both: a fullseye envelope (a JSON string or a jsonable dict) is decoded to
+    its value (the sort is dropped); everything else — a NumPy array, a plain string,
+    a number — is returned unchanged. A string or dict that *looks* like a fullseye
+    envelope but is malformed fails closed (so a typo is an error, not a silent pass)."""
+    if is_envelope(x):
+        return (from_json(x) if isinstance(x, (bytes, str)) else from_jsonable(x))[0]
+    return x
+
+
+def apply_json(image, name, a=0.5, b=0.5, *, readable=False, indent=None, **kw):
+    """Run any op with JSON on both ends — the "JSON version" of :func:`fullseye.apply`.
+
+    *image* may be a typed value **or** a fullseye JSON envelope (a JSON string or a
+    jsonable dict, decoded via :func:`as_value`), so the whole call can be driven from
+    JSON. The op runs through :func:`fullseye.apply`, and the result is returned as a
+    JSON envelope string, its sort taken from the registry (``find_op(name).out_sort``).
+    Extra keyword args (``device``, ``on_error``, ``fast`` …) pass straight through.
+
+    Fail-closed: an unknown op is refused, and an out sort with no JSON bridge (e.g.
+    ``match``, or an opaque handle sort) raises — the result is not guessed into JSON.
+    Round-trips with :func:`from_json`."""
+    import api                                                   # lazy: avoid import cycle at package init
+
+    op = api.find_op(name)
+    if op is None:
+        raise ValueError("apply_json: unknown op %r" % (name,))
+    out = api.apply(as_value(image), name, a, b, **kw)
+    return to_json(out, op.out_sort, readable=readable, indent=indent)

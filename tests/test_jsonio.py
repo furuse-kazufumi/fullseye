@@ -164,3 +164,32 @@ def test_json_lines_skip_blanks_and_fail_closed():
         J.from_json_lines('{"not": "an envelope"}')
     with pytest.raises(ValueError, match="pair"):
         J.to_json_lines([np.zeros(3)])                      # not a (value, sort) pair
+
+
+def test_as_value_passes_plain_values_and_decodes_envelopes():
+    pts = np.array([[1.5, 2.0], [3.25, 4.0]])
+    assert J.as_value(pts) is pts                                # 値はそのまま(コピーしない)
+    assert J.as_value("gaussian") == "gaussian" and J.as_value(3.5) == 3.5
+    assert J.as_value({"k": 1}) == {"k": 1}                      # fullseye_sort が無い dict はそのまま
+    # 文字列/dict の封筒 → 値
+    v = J.as_value(J.to_json(pts, "points"))
+    assert np.array_equal(v.view(np.uint8), pts.view(np.uint8))
+    v2 = J.as_value(J.to_jsonable(pts, "points"))
+    assert np.array_equal(v2, pts)
+    assert J.is_envelope(J.to_json(pts, "points")) and not J.is_envelope("hello")
+    assert J.is_envelope(J.to_jsonable(pts, "points")) and not J.is_envelope({"k": 1})
+    # 封筒のふりをして壊れていれば fail-closed(黙って素通ししない)
+    with pytest.raises(ValueError, match="version"):
+        J.as_value('{"fullseye_sort": "image", "version": 99, "payload": {}}')
+
+
+def test_apply_json_runs_any_op_with_json_on_both_ends():
+    img = np.random.default_rng(0).random((16, 16))
+    out = J.apply_json(J.to_json(img, "image"), "gaussian", 1.0, 1.0)   # 入力は封筒
+    back, sort = J.from_json(out)
+    import api
+    assert sort == "image" and np.array_equal(back, api.apply(img, "gaussian", 1.0, 1.0))
+    # 値そのものでも渡せる。出力 sort はレジストリ由来(otsu → region)。
+    assert J.from_json(J.apply_json(img, "otsu"))[1] == "region"
+    with pytest.raises(ValueError, match="unknown op"):
+        J.apply_json(img, "no_such_op_xyz")

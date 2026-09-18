@@ -210,6 +210,45 @@ TOOLS: dict[str, dict] = {
             "additionalProperties": False,
         },
     },
+    "fullseye_import_json": {
+        "description": (
+            "型付きの値を JSON 封筒で受け取り、以後の op が使えるハンドルにする(引数で JSON を"
+            "渡す入口)。fullseye.to_json / to_jsonable が作る自己記述の封筒 "
+            "{fullseye_sort, version, payload} を、文字列なら json= に、オブジェクトなら envelope= に"
+            "渡す(どちらか一方)。image / color / region / points / matrix / signal … の配列 sort は"
+            "ハンドルにして返す(handle + sort + shape)。feature / contour / table は配列でないので"
+            "ハンドルにせず値を structuredContent に返す。壊れた封筒・未知 sort・形の不一致は"
+            "-32602 で断る(fail-closed、推測しない)。"),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "json": {"type": "string", "maxLength": MAX_STRUCTURED_BYTES,
+                         "description": "fullseye.to_json が作る JSON 文字列(封筒)"},
+                "envelope": {"type": "object",
+                             "description": "fullseye.to_jsonable が作る封筒(オブジェクト)。json とは排他"},
+            },
+            "additionalProperties": False,
+        },
+    },
+    "fullseye_export_json": {
+        "description": (
+            "ハンドルの中身(型付きの値)を JSON 封筒として取り出す(MCP の外へ値を持ち出す出口)。"
+            "structuredContent に fullseye.to_jsonable の封筒(fullseye.from_jsonable で bit そのまま"
+            "戻せる)、本文に fullseye.to_markdown の読める描画(表または 1 行要約)を返す。"
+            "readable=true なら封筒の数を base64 でなくリストにする(人が読める・往復は厳密)。"
+            "封筒が上限(%d バイト)を超える大きな画像は isError で断る —— 画像はハンドルか小図で"
+            "扱うこと。sort が JSON にできないハンドルも断る。" % MAX_STRUCTURED_BYTES),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "handle": _HANDLE,
+                "readable": {"type": "boolean",
+                             "description": "数を base64 でなくリストで出す(小さい値向け・往復は厳密)"},
+            },
+            "required": ["handle"],
+            "additionalProperties": False,
+        },
+    },
 }
 
 
@@ -717,6 +756,59 @@ def handle_tools_list(_params: dict) -> dict:
                       for n, t in sorted(TOOLS.items())]}
 
 
+def _import_json(a: dict, store: HandleStore) -> dict:
+    """JSON 封筒(引数)→ 配列 sort はハンドル、非配列は値。壊れた封筒は -32602。"""
+    import numpy as np
+    import fullseye
+
+    has_json = a.get("json") is not None
+    has_env = a.get("envelope") is not None
+    if has_json == has_env:
+        raise ArgError("json(文字列)か envelope(オブジェクト)のどちらか一方を渡すこと")
+    try:
+        value, sort = (fullseye.from_json(a["json"]) if has_json
+                       else fullseye.from_jsonable(a["envelope"]))
+    except ValueError as exc:                                    # 信頼境界: 封筒を再検証
+        raise ArgError("JSON 封筒が読めない: %s" % exc) from None
+    if isinstance(value, np.ndarray):
+        meta = store.put(value, sort=sort, provenance=[{"import_json": sort}])
+        text = "取り込んだ: %s  sort=%s  shape=%s%s" % (
+            meta["handle"], sort, meta["shape"], "  (既出=同じ内容)" if meta.get("dedup") else "")
+        return tool_result(text, {"handle": meta["handle"], "sort": sort,
+                                  "shape": meta["shape"], "dedup": bool(meta.get("dedup"))})
+    # feature / contour / table は配列でないのでハンドルにしない。値を返す。
+    env = fullseye.to_jsonable(value, sort)
+    text = (fullseye.to_markdown(value, sort)
+            + "\n\n(%s は配列でないのでハンドルにしない。値を structuredContent に返す)" % sort)
+    return tool_result(text, {"sort": sort, "handle": None, "value": env})
+
+
+def _export_json(a: dict, store: HandleStore, *, max_structured_bytes: int) -> dict:
+    """ハンドルの中身 → JSON 封筒(structuredContent)+ Markdown(本文)。上限超過は isError。"""
+    import json as _json
+    import fullseye
+
+    meta, arr = store.get(a["handle"])                           # 未知ハンドルは HandleError→ArgError
+    sort = meta["sort"]
+    if sort not in fullseye.JSON_SORTS:
+        return _tool_error(
+            "handle の sort=%r は JSON 橋が無い(JSON にできるのは %s)。"
+            % (sort, ", ".join(fullseye.JSON_SORTS)))
+    try:
+        env = fullseye.to_jsonable(arr, sort, readable=bool(a.get("readable", False)))
+    except ValueError as exc:
+        return _tool_error("JSON 化できない(%s): %s" % (sort, exc))
+    n = len(_json.dumps(env, ensure_ascii=False).encode("utf-8"))
+    if n > max_structured_bytes:
+        return _tool_error(
+            "この値の JSON は %d バイトで上限 %d を超える(sort=%s, shape=%s)。"
+            "大きな画像はハンドルのまま扱うか小図で見ること —— JSON では持ち出さない。"
+            % (n, max_structured_bytes, sort, meta["shape"]))
+    text = (fullseye.to_markdown(arr, sort, title="%s  sort=%s" % (meta["handle"], sort))
+            + "\n\n(structuredContent が JSON 封筒。fullseye.from_jsonable で bit そのまま戻せる)")
+    return tool_result(text, env, max_structured_bytes=max_structured_bytes)
+
+
 def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = None, *,
               max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     """tool 本体。引数違反は ArgError(= -32602)、実行の失敗は isError の結果。"""
@@ -759,6 +851,10 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             return _pipeline(a, cat, store)
         if name == "fullseye_fix_text":
             return _fix_text(a, store)
+        if name == "fullseye_import_json":
+            return _import_json(a, store)
+        if name == "fullseye_export_json":
+            return _export_json(a, store, max_structured_bytes=max_structured_bytes)
     except HandleError as exc:
         raise ArgError(str(exc)) from exc
     raise ArgError("未実装の tool: %r" % name)                 # TOOLS に足して本体を忘れた
@@ -864,6 +960,12 @@ def demo() -> int:
                     stages=[{"op": "gaussian", "a": 0.3}, {"op": "otsu"}, {"op": "count_obj"}])
         seg = pipe["structuredContent"]["handle"]
         tool("fullseye_inspect", handle=seg, vision="thumb")
+        # JSON で値を注入 → ハンドル → JSON で取り出す(引数で JSON / MCP でも使う)。
+        env = {"fullseye_sort": "points", "version": 1,
+               "payload": {"encoding": "list", "dtype": "float64",
+                           "shape": [2, 2], "data": [[1.5, 2.0], [3.25, 4.0]]}}
+        jh = tool("fullseye_import_json", envelope=env)["structuredContent"]["handle"]
+        tool("fullseye_export_json", handle=jh, readable=True)     # 封筒 + Markdown で返る
         tool("fullseye_apply", handle=h, op="count_obj")          # 型不一致 → 拒否される見本
     except RuntimeError as exc:
         print("(拒否の見本)", str(exc)[:300])

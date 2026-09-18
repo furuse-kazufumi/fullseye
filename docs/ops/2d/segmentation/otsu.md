@@ -5,7 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: binary_threshold
-examples: [ct_inspection, gallery2d_segmentation, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_solar_el_inspection, poc_vegetation_cover, quickstart, segment_and_classify]
+examples: [ct_inspection, gallery2d_segmentation, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_solar_el_inspection, poc_vegetation_cover, quickstart, segment_and_classify, typed_results_json]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -71,6 +71,7 @@ otsu 0.50 0.50
 - [poc_vegetation_cover](../../../../examples/poc_vegetation_cover.py) — `py -3.11 examples/poc_vegetation_cover.py`
 - [quickstart](../../../../examples/quickstart.py) — `py -3.11 examples/quickstart.py`
 - [segment_and_classify](../../../../examples/segment_and_classify.py) — `py -3.11 examples/segment_and_classify.py`
+- [typed_results_json](../../../../examples/typed_results_json.py) — `py -3.11 examples/typed_results_json.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 

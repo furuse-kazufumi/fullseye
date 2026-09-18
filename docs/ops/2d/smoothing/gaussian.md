@@ -5,7 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: gauss_filter
-examples: [coherence_scanning, color_transport, ct_inspection, gallery2d_smoothing_rank, photon_timeresolved, poc_bone_trabecular_thickness, poc_dtof_ranging, poc_interferometry_step, poc_leaf_disease_area, poc_nuclei_ploidy, poc_solar_el_inspection, poc_solar_limb_darkening, poc_star_astrometry, poc_wound_area_tracking, quickstart, video_streaming]
+examples: [coherence_scanning, color_transport, ct_inspection, gallery2d_smoothing_rank, photon_timeresolved, poc_bone_trabecular_thickness, poc_dtof_ranging, poc_interferometry_step, poc_leaf_disease_area, poc_nuclei_ploidy, poc_solar_el_inspection, poc_solar_limb_darkening, poc_star_astrometry, poc_wound_area_tracking, quickstart, typed_results_json, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -76,6 +76,7 @@ gaussian 0.35 0.50
 - [poc_star_astrometry](../../../../examples/poc_star_astrometry.py) — `py -3.11 examples/poc_star_astrometry.py`
 - [poc_wound_area_tracking](../../../../examples/poc_wound_area_tracking.py) — `py -3.11 examples/poc_wound_area_tracking.py`
 - [quickstart](../../../../examples/quickstart.py) — `py -3.11 examples/quickstart.py`
+- [typed_results_json](../../../../examples/typed_results_json.py) — `py -3.11 examples/typed_results_json.py`
 - [video_streaming](../../../../examples/video_streaming.py) — `py -3.11 examples/video_streaming.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

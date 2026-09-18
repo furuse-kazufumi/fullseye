@@ -76,6 +76,19 @@ def main() -> int:
     print("jsonl:    %d 行, 戻した sort = %s" % (jl.count("\n") + 1, [s for _, s in rows]))
     assert [s for _, s in rows] == ["points", "feature", "region"]
 
+    # 便利関数 3: 引数で JSON を渡す。as_value は値でも封筒でも受けて値を返す。
+    assert fs.as_value(samples["points"]) is samples["points"]        # 値はそのまま
+    v = fs.as_value(fs.to_json(samples["points"], "points"))          # 文字列の封筒 → 値
+    assert np.array_equal(v.view(np.uint8), samples["points"].view(np.uint8))
+    print("as_value: 値も JSON 封筒も同じ入口で受ける")
+
+    # 便利関数 4: どの op でも JSON 入力 → JSON 出力(apply_json)。出力 sort はレジストリ由来。
+    img_json = fs.to_json(img, "image")
+    out_json = fs.apply_json(img_json, "gaussian", 1.0, 1.0)          # 画像を封筒で渡す
+    out, out_sort = fs.from_json(out_json)
+    assert out_sort == "image" and np.array_equal(out, fs.apply(img, "gaussian", 1.0, 1.0))
+    print("apply_json: gaussian を JSON 入出力で。otsu →", fs.from_json(fs.apply_json(img, "otsu"))[1])
+
     # fail-closed: match は橋が無い(慣例が 2 つ混在するため)。
     try:
         fs.to_json(np.zeros(3), "match")

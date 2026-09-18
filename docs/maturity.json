@@ -482,8 +482,8 @@
    "category": "組み立てる",
    "note": "docs/capabilities/typed-results-as-json.md",
    "status": "verified-synthetic",
-   "ops_total": 8,
-   "ops_named_in_tests": 8,
+   "ops_total": 11,
+   "ops_named_in_tests": 11,
    "ops_not_named_in_tests": [],
    "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
