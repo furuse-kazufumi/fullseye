@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">raw_apply_gains — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × vector</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.raw_apply_gains(raw, gains, pattern=&#x27;RGGB&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import gfx2d; gfx2d.raw_apply_gains(raw, gains, pattern=&#x27;RGGB&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgfx2d.get(&quot;raw_apply_gains&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>Bayer 프레임에 채널별 이득을 곱한다(디모자이크 전 화이트 밸런스).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:raw_to_display_isp">raw_to_display_isp</a> — <code style="color:#22d3bf">py -3.11 examples/raw_to_display_isp.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">image2d</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:shadow_cast_2d">shadow_cast_2d</a> · <a style="color:#22d3bf" href="opgfx2d:dither">dither</a> · <a style="color:#22d3bf" href="opgfx2d:raw_black_level">raw_black_level</a> · <a style="color:#22d3bf" href="opgfx2d:raw_dead_pixel_mask">raw_dead_pixel_mask</a> · <a style="color:#22d3bf" href="opgfx2d:raw_dead_pixel_correct">raw_dead_pixel_correct</a> · <a style="color:#22d3bf" href="opgfx2d:lens_shading_gain">lens_shading_gain</a> · <a style="color:#22d3bf" href="opgfx2d:lens_shading_correct">lens_shading_correct</a> · <a style="color:#22d3bf" href="opgfx2d:raw_demosaic_bilinear">raw_demosaic_bilinear</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">isp</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:raw_black_level">raw_black_level</a> · <a style="color:#22d3bf" href="opgfx2d:raw_dead_pixel_mask">raw_dead_pixel_mask</a> · <a style="color:#22d3bf" href="opgfx2d:raw_dead_pixel_correct">raw_dead_pixel_correct</a> · <a style="color:#22d3bf" href="opgfx2d:lens_shading_gain">lens_shading_gain</a> · <a style="color:#22d3bf" href="opgfx2d:lens_shading_correct">lens_shading_correct</a> · <a style="color:#22d3bf" href="opgfx2d:awb_gains">awb_gains</a> · <a style="color:#22d3bf" href="opgfx2d:rgb_apply_gains">rgb_apply_gains</a> · <a style="color:#22d3bf" href="opgfx2d:raw_demosaic_bilinear">raw_demosaic_bilinear</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

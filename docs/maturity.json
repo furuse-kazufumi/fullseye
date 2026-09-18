@@ -346,6 +346,29 @@
    ]
   },
   {
+   "id": "raw-to-display-isp",
+   "title": "Bayer の生フレームを、段ごとに説明できる式で表示画像にする",
+   "title_en": "Turn a Bayer raw frame into a display image, one explainable stage at a time",
+   "category": "光と色",
+   "note": "docs/capabilities/raw-to-display-isp.md",
+   "status": "verified-synthetic",
+   "ops_total": 14,
+   "ops_named_in_tests": 13,
+   "ops_not_named_in_tests": [
+    "cfa_to_rgb"
+   ],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "raw_to_display_isp",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "subpixel-2d-metrology",
    "title": "画像から寸法をサブピクセルで測る",
    "title_en": "Measure dimensions from an image, below the pixel",
@@ -540,9 +563,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 207,
+  "examples2d_total": 208,
   "run_by_the_poc_gate": 122,
-  "run_by_the_example_gate": 85,
+  "run_by_the_example_gate": 86,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

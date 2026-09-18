@@ -867,7 +867,7 @@ def test_ledger_declares_every_public_op_and_nothing_else():
     public = {n for n in g.__all__ if n.islower()}
     assert set(opsgfx2d.OPSGFX2D) == public
     assert opsgfx2d.missing() == []
-    assert len(opsgfx2d.OPSGFX2D) == 32
+    assert len(opsgfx2d.OPSGFX2D) == 44     # 2026-09-18: ISP 12 op(32 -> 44)
 
 
 def test_ledger_sorts_have_a_producer_and_a_consumer():
@@ -888,4 +888,177 @@ def test_ledger_call_matches_get():
     assert np.array_equal(a, b)
     assert opsgfx2d.info("bloom")["category"] == "post"
     assert "bloom" in opsgfx2d.list_ops("post")
-    assert len(opsgfx2d.categories()) == 8
+    assert len(opsgfx2d.categories()) == 9  # 2026-09-18: + isp
+
+
+# --------------------------------------------------------------------------- #
+# ISP(2026-09-18): Bayer raw → 表示画像の閉形式段。真値は全部自分で植える。             #
+# --------------------------------------------------------------------------- #
+def _affine_rgb(h=24, w=32):
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
+    return np.stack([0.3 + 0.01 * xx + 0.005 * yy, 0.5 - 0.004 * xx + 0.008 * yy,
+                     0.2 + 0.006 * xx + 0.003 * yy], axis=-1)
+
+
+def _mosaic(rgb, pattern):
+    pos = g._bayer_offsets(pattern)
+    raw = np.zeros(rgb.shape[:2])
+    for ch, k in (("R", 0), ("G1", 1), ("G2", 1), ("B", 2)):
+        r, c = pos[ch]
+        raw[r::2, c::2] = rgb[r::2, c::2, k]
+    return raw
+
+
+@pytest.mark.parametrize("pattern", g.BAYER_PATTERNS)
+def test_isp_demosaic_bilinear_is_exact_on_affine_planes_for_every_pattern(pattern):
+    rgb = _affine_rgb()
+    out = g.raw_demosaic_bilinear(_mosaic(rgb, pattern), pattern)
+    assert out.shape == rgb.shape
+    assert np.allclose(out[2:-2, 2:-2], rgb[2:-2, 2:-2], atol=1e-12)
+    # 一様な場は縁まで厳密(鏡映で位相を保つ)。
+    flat = np.full((8, 8, 3), [0.2, 0.5, 0.7])
+    assert np.allclose(g.raw_demosaic_bilinear(_mosaic(flat, pattern), pattern), flat, atol=1e-12)
+
+
+def test_isp_black_level_is_the_exact_affine_map_and_refuses_offset_at_white():
+    rgb = _affine_rgb()
+    raw = _mosaic(rgb, "RGGB")
+    off = np.array([0.02, 0.03, 0.03, 0.04])
+    pedestal = np.zeros_like(raw)
+    for k, ch in enumerate(("R", "G1", "G2", "B")):
+        r, c = g._bayer_offsets("RGGB")[ch]
+        pedestal[r::2, c::2] = off[k]
+    dark = pedestal + 0.5 * raw
+    out = g.raw_black_level(dark, off, white=0.9, pattern="RGGB")
+    want = np.zeros_like(raw)
+    for k, ch in enumerate(("R", "G1", "G2", "B")):
+        r, c = g._bayer_offsets("RGGB")[ch]
+        want[r::2, c::2] = 0.5 * raw[r::2, c::2] / (0.9 - off[k])
+    assert np.allclose(out, want, atol=1e-15)
+    assert np.allclose(g.raw_black_level(pedestal, off), 0.0)          # 台座そのものは 0
+    with pytest.raises(ValueError, match="< white"):
+        g.raw_black_level(raw, 0.5, white=0.5)
+    with pytest.raises(ValueError, match="pattern"):
+        g.raw_black_level(raw, 0.0, pattern="RGBW")
+
+
+def test_isp_dead_pixels_are_found_exactly_and_edges_are_not_defects():
+    yy, xx = np.mgrid[0:32, 0:40].astype(np.float64)
+    raw = 0.3 + 0.004 * xx + 0.003 * yy                       # 滑らか
+    planted = [(5, 7), (5, 9), (20, 30), (31, 39)]           # 隣り合う 2 つ + 縁
+    bad = raw.copy()
+    for k, (r, c) in enumerate(planted):
+        bad[r, c] = 1.0 if k % 2 == 0 else 0.0
+    mask = g.raw_dead_pixel_mask(bad, 0.1)
+    assert sorted(zip(*np.nonzero(mask))) == sorted(planted)
+    fixed = g.raw_dead_pixel_correct(bad, 0.1)
+    untouched = mask < 0.5
+    assert np.array_equal(fixed[untouched], bad[untouched])
+    for r, c in planted:
+        assert abs(fixed[r, c] - raw[r, c]) < 0.03                # 中央値は滑らかな場に戻る
+    # 鋭いエッジは欠陥ではない(同色の隣が自分側にもある)。
+    edge = np.where(xx < 20, 0.2, 0.8)
+    assert g.raw_dead_pixel_mask(edge, 0.1).sum() == 0
+    with pytest.raises(ValueError, match="> 0"):
+        g.raw_dead_pixel_mask(raw, 0.0)
+
+
+def test_isp_lens_shading_gain_flattens_its_own_flat_per_channel():
+    yy, xx = np.mgrid[0:24, 0:32].astype(np.float64)
+    r2 = ((yy - 11.5) / 12.0) ** 2 + ((xx - 15.5) / 16.0) ** 2
+    flat = 0.9 * (1.0 - 0.4 * r2)                              # 滑らか、最小 0.54(切り詰め無し)
+    flat[1::2, 1::2] *= 0.8                                    # B 面だけ暗い(色ごとの減衰)
+    gain = g.lens_shading_gain(flat, pattern="RGGB")
+    out = g.lens_shading_correct(flat, gain)
+    for r, c in g._bayer_offsets("RGGB").values():
+        plane = out[r::2, c::2]
+        assert np.allclose(plane, plane.mean(), atol=1e-12)
+        assert abs(gain[r::2, c::2].mean() * 1.0 - (flat[r::2, c::2].mean() / flat[r::2, c::2]).mean()) < 1e-12
+    # 平滑化つきは利得がより滑らか(全変動が減る)で、正のまま。四隅の急な減光では
+    # 値そのものは動く(実測: 角で 0.6)ので、値の一致は主張しない。
+    gs = g.lens_shading_gain(flat, pattern="RGGB", smooth_sigma=1.0)
+    tv = lambda a: np.abs(np.diff(a, axis=0)).sum() + np.abs(np.diff(a, axis=1)).sum()
+    assert gs.min() > 0.0 and tv(gs[::2, ::2]) < tv(gain[::2, ::2])
+    assert np.array_equal(g.lens_shading_gain(flat, pattern="RGGB", smooth_sigma=0.0), gain)
+    with pytest.raises(ValueError, match="<= 0"):
+        g.lens_shading_gain(np.zeros((8, 8)))
+    with pytest.raises(ValueError, match="same shape"):
+        g.lens_shading_correct(flat, gain[:-2])
+
+
+def test_isp_awb_gray_world_equalises_means_and_white_patch_equalises_percentiles():
+    rng = np.random.default_rng(3)
+    rgb = np.clip(rng.random((40, 50, 3)) * np.array([0.9, 0.6, 0.4]), 0.0, 1.0)
+    gw = g.awb_gains(rgb, "gray_world")
+    assert gw[1] == 1.0
+    m = g.rgb_apply_gains(rgb, gw).reshape(-1, 3).mean(axis=0)
+    assert np.allclose(m, m[1], atol=1e-12)
+    wp = g.awb_gains(rgb, "white_patch", percentile=95.0)
+    p = np.percentile(g.rgb_apply_gains(rgb, wp).reshape(-1, 3), 95.0, axis=0)
+    assert np.allclose(p, p[1], atol=1e-9)
+    # モザイク側でも同じゲインが同じ画素に掛かる。
+    raw = _mosaic(rgb, "GBRG")
+    out = g.raw_apply_gains(raw, gw, "GBRG")
+    r, c = g._bayer_offsets("GBRG")["R"]
+    assert np.allclose(out[r::2, c::2], np.clip(raw[r::2, c::2] * gw[0], 0, 1))
+    with pytest.raises(ValueError, match="method"):
+        g.awb_gains(rgb, "auto")
+    with pytest.raises(ValueError, match="0"):
+        g.awb_gains(np.zeros((4, 4, 3)))
+
+
+def test_isp_ccm_identity_and_row_normalisation_keep_white_white():
+    rgb = _affine_rgb()
+    assert np.array_equal(g.color_correction_matrix(rgb, np.eye(3)), rgb)
+    ccm = np.array([[1.8, -0.4, -0.2], [-0.3, 1.7, -0.2], [0.1, -0.5, 1.6]])   # 行和 1.2
+    grey = np.full((4, 4, 3), 0.37)
+    assert np.allclose(g.color_correction_matrix(grey, ccm), grey, atol=1e-15)
+    raw_ccm = g.color_correction_matrix(grey, ccm, normalize_rows=False)
+    assert not np.allclose(raw_ccm, grey)                      # 正規化しなければ灰は動く
+    with pytest.raises(ValueError, match="3x3"):
+        g.color_correction_matrix(rgb, np.eye(4))
+    with pytest.raises(ValueError, match="sums to 0"):
+        g.color_correction_matrix(rgb, np.array([[1, -1, 0], [0, 1, 0], [0, 0, 1]]))
+
+
+def test_isp_hue_saturation_round_trips_and_zero_saturation_is_luma():
+    rgb = _affine_rgb()
+    assert np.allclose(g.hue_saturation(rgb), rgb, atol=1e-15)
+    back = g.hue_saturation(g.hue_saturation(rgb, 37.0), -37.0)
+    assert np.allclose(back, rgb, atol=1e-12)
+    grey = g.hue_saturation(rgb, 0.0, 0.0)
+    luma = rgb @ np.array([0.299, 0.587, 0.114])
+    assert np.allclose(grey, luma[..., None], atol=1e-12)
+    with pytest.raises(ValueError, match=">= 0"):
+        g.hue_saturation(rgb, 0.0, -0.1)
+
+
+def test_isp_brightness_contrast_pivots_on_mid_grey():
+    rgb = _affine_rgb()
+    assert np.array_equal(g.brightness_contrast(rgb), rgb)
+    mid = np.full((3, 3, 3), 0.5)
+    assert np.allclose(g.brightness_contrast(mid, 0.0, 3.0), 0.5)
+    assert np.allclose(g.brightness_contrast(mid, 0.2, 1.0), 0.7)
+    with pytest.raises(ValueError, match="<= 1"):
+        g.brightness_contrast(rgb, 1.5)
+
+
+def test_isp_pipeline_end_to_end_recovers_the_scene_it_was_built_from():
+    """植えた台座・減光・色かぶり・欠陥を順に外して、元の RGB に戻る(縁を除き 2e-2)。"""
+    rgb = _affine_rgb(32, 40)
+    gains_true = np.array([0.6, 1.0, 0.8])                     # 色かぶり(R と B が弱い)
+    raw = _mosaic(np.clip(rgb * gains_true, 0, 1), "RGGB")
+    yy, xx = np.mgrid[0:32, 0:40].astype(np.float64)
+    shade = 1.0 - 0.3 * (((yy - 15.5) / 16) ** 2 + ((xx - 19.5) / 20) ** 2)
+    raw = raw * shade * 0.85 + 0.05                            # 減光・露出・台座
+    raw[6, 8] = 1.0; raw[20, 21] = 0.0                         # 欠陥 2 つ
+    flat = np.full((32, 40), 0.7) * shade * 0.85 + 0.05
+    x = g.raw_black_level(raw, 0.05, white=0.9)
+    x = g.raw_dead_pixel_correct(x, 0.1)
+    x = g.lens_shading_correct(x, g.lens_shading_gain(g.raw_black_level(flat, 0.05, white=0.9), pattern="RGGB"))
+    demo = g.raw_demosaic_bilinear(x, "RGGB")
+    gains = g.awb_gains(demo, "gray_world")
+    out = g.rgb_apply_gains(demo, gains)
+    ref = rgb / rgb.reshape(-1, 3).mean(axis=0)[1] * out.reshape(-1, 3).mean(axis=0)[1]
+    ref = ref / ref.reshape(-1, 3).mean(axis=0) * out.reshape(-1, 3).mean(axis=0)
+    assert np.abs(out[3:-3, 3:-3] - ref[3:-3, 3:-3]).max() < 2e-2

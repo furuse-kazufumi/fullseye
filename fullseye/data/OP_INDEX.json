@@ -1,8 +1,8 @@
 {
- "n_ops": 1981,
+ "n_ops": 1993,
  "tiers": {
   "color": 12,
-  "ledger": 1034,
+  "ledger": 1046,
   "nary": 17,
   "registry": 918
  },
@@ -1132,6 +1132,19 @@
    ]
   },
   {
+   "name": "awb_gains",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "vector",
+   "category": "isp",
+   "tier": "ledger",
+   "ledger": "opsgfx2d",
+   "dim": "gfx2d",
+   "in_sorts": [
+    "rgb"
+   ]
+  },
+  {
    "name": "axes_frame",
    "halcon": "",
    "in_sort": "image2d",
@@ -1611,6 +1624,19 @@
    "in_sorts": []
   },
   {
+   "name": "brightness_contrast",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "rgb",
+   "category": "isp",
+   "tier": "ledger",
+   "ledger": "opsgfx2d",
+   "dim": "gfx2d",
+   "in_sorts": [
+    "rgb"
+   ]
+  },
+  {
    "name": "bump_normals_fbm",
    "halcon": "",
    "in_sort": "normalmap",
@@ -1928,6 +1954,20 @@
    "in_sorts": [
     "image2d",
     "lut"
+   ]
+  },
+  {
+   "name": "color_correction_matrix",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "rgb",
+   "category": "isp",
+   "tier": "ledger",
+   "ledger": "opsgfx2d",
+   "dim": "gfx2d",
+   "in_sorts": [
+    "rgb",
+    "matrix"
    ]
   },
   {
@@ -5001,6 +5041,19 @@
    ]
   },
   {
+   "name": "hue_saturation",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "rgb",
+   "category": "isp",
+   "tier": "ledger",
+   "ledger": "opsgfx2d",
+   "dim": "gfx2d",
+   "in_sorts": [
+    "rgb"
+   ]
+  },
+  {
    "name": "icp_point2plane",
    "halcon": "",
    "in_sort": "points",
@@ -5718,6 +5771,33 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "lens_shading_correct",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "isp",
+   "tier": "ledger",
+   "ledger": "opsgfx2d",
+   "dim": "gfx2d",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "lens_shading_gain",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "isp",
+   "tier": "ledger",
+   "ledger": "opsgfx2d",
+   "dim": "gfx2d",
+   "in_sorts": [
+    "image2d"
+   ]
   },
   {
    "name": "lens_spec",
@@ -9530,6 +9610,72 @@
    ]
   },
   {
+   "name": "raw_apply_gains",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "isp",
+   "tier": "ledger",
+   "ledger": "opsgfx2d",
+   "dim": "gfx2d",
+   "in_sorts": [
+    "image2d",
+    "vector"
+   ]
+  },
+  {
+   "name": "raw_black_level",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "isp",
+   "tier": "ledger",
+   "ledger": "opsgfx2d",
+   "dim": "gfx2d",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "raw_dead_pixel_correct",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "isp",
+   "tier": "ledger",
+   "ledger": "opsgfx2d",
+   "dim": "gfx2d",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "raw_dead_pixel_mask",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "isp",
+   "tier": "ledger",
+   "ledger": "opsgfx2d",
+   "dim": "gfx2d",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "raw_demosaic_bilinear",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "rgb",
+   "category": "isp",
+   "tier": "ledger",
+   "ledger": "opsgfx2d",
+   "dim": "gfx2d",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "ray_fan",
    "halcon": "",
    "in_sort": "table",
@@ -10055,6 +10201,20 @@
    "dim": "3d",
    "in_sorts": [
     "points"
+   ]
+  },
+  {
+   "name": "rgb_apply_gains",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "rgb",
+   "category": "isp",
+   "tier": "ledger",
+   "ledger": "opsgfx2d",
+   "dim": "gfx2d",
+   "in_sorts": [
+    "rgb",
+    "vector"
    ]
   },
   {

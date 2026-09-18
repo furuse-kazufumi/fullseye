@@ -168,6 +168,12 @@ __all__ = [
     "unpremultiply",
     "viewport",
     "vignette",
+    # ISP stages (2026-09-18): Bayer raw -> display image, closed forms
+    "BAYER_PATTERNS",
+    "raw_black_level", "raw_dead_pixel_mask", "raw_dead_pixel_correct",
+    "lens_shading_gain", "lens_shading_correct",
+    "awb_gains", "rgb_apply_gains", "raw_apply_gains", "raw_demosaic_bilinear",
+    "color_correction_matrix", "hue_saturation", "brightness_contrast",
 ]
 
 # --------------------------------------------------------------------------- #
@@ -1851,3 +1857,371 @@ def viewport(img, x, y, width, height, scale=1.0, interp="bilinear"):
         out[..., ch] = ndimage.map_coordinates(crop[..., ch], [gy, gx], order=order,
                                                mode="nearest", prefilter=order > 1)
     return np.clip(out, 0.0, 1.0)
+
+
+# --------------------------------------------------------------------------- #
+# ISP: the closed-form stages between a Bayer raw frame and a display image     #
+# --------------------------------------------------------------------------- #
+#: Bayer patterns by the colour of the top-left 2x2 block, read row-major.
+BAYER_PATTERNS = ("RGGB", "BGGR", "GRBG", "GBRG")
+
+
+def _bayer_offsets(pattern):
+    """``{"R": (r, c), "G1": (r, c), "G2": (r, c), "B": (r, c)}`` of the 2x2 block."""
+    if not isinstance(pattern, str) or pattern.upper() not in BAYER_PATTERNS:
+        raise ValueError("pattern must be one of %s, got %r" % (BAYER_PATTERNS, pattern))
+    p = pattern.upper()
+    pos = {(0, 0): p[0], (0, 1): p[1], (1, 0): p[2], (1, 1): p[3]}
+    out, g = {}, 0
+    for rc, ch in pos.items():
+        if ch == "G":
+            g += 1
+            out["G%d" % g] = rc
+        else:
+            out[ch] = rc
+    return out
+
+
+def _require_raw(img, name="raw"):
+    """A Bayer raw frame: ``(H, W)`` float64 in ``[0, 1]``, even height and width."""
+    arr = _as_array(img, name)
+    if arr.ndim != 2:
+        raise ValueError(f"{name}: expected a 2-D raw frame (H, W), got shape {arr.shape}")
+    if arr.shape[0] < 2 or arr.shape[1] < 2 or arr.shape[0] % 2 or arr.shape[1] % 2:
+        raise ValueError(f"{name}: a Bayer frame has a 2x2 block, so height and width must "
+                         f"be even and >= 2, got {arr.shape}")
+    if not np.isfinite(arr).all():
+        raise ValueError(f"{name}: contains non-finite values")
+    return np.ascontiguousarray(arr, dtype=np.float64)
+
+
+def _channel_values(values, name, allow_scalar=True):
+    """Per-channel numbers in R, G1, G2, B order from a scalar, 3 (R, G, B) or 4 values."""
+    if isinstance(values, (bool, np.bool_, str)):
+        raise ValueError(f"{name}: expected numbers, got {values!r}")
+    arr = np.asarray(values, dtype=np.float64)
+    if arr.ndim == 0:
+        if not allow_scalar:
+            raise ValueError(f"{name}: expected 3 or 4 values, got a scalar")
+        arr = np.full(4, float(arr))
+    elif arr.shape == (3,):
+        arr = np.array([arr[0], arr[1], arr[1], arr[2]])
+    elif arr.shape != (4,):
+        raise ValueError(f"{name}: expected a scalar, 3 (R, G, B) or 4 (R, G1, G2, B) values, "
+                         f"got shape {arr.shape}")
+    if not np.isfinite(arr).all():
+        raise ValueError(f"{name}: must be finite, got {arr.tolist()}")
+    return arr
+
+
+def raw_black_level(raw, offsets, white=1.0, pattern="RGGB"):
+    """Black-level compensation on a Bayer frame: ``(raw - offset) / (white - offset)``
+    per colour channel, clipped to ``[0, 1]``.
+
+    A sensor's dark output is not zero (pedestal + dark current); every later
+    stage that multiplies (gains, CCM) would scale that pedestal into a colour
+    cast, so this runs **first**. *offsets* is a scalar, 3 values ``(R, G, B)``
+    or 4 values ``(R, G1, G2, B)`` in the same ``[0, 1]`` units as *raw*; *white*
+    is the saturation level, so a pixel at *white* maps to exactly 1.
+
+    Ground truth: a frame built as ``offset + k * signal`` comes back as
+    ``k * signal / (white - offset)`` to 1e-15; a pixel at the offset maps to 0.
+    **Raises** ``ValueError``: non-finite input, an offset ``>= white``, or an
+    unknown *pattern*.
+    """
+    img = _require_raw(raw)
+    off = _channel_values(offsets, "offsets")
+    wh = _scalar(white, "white")
+    if np.any(off >= wh):
+        raise ValueError("raw_black_level: every offset must be < white (%g); got %s"
+                         % (wh, off.tolist()))
+    pos = _bayer_offsets(pattern)
+    out = np.empty_like(img)
+    for k, ch in enumerate(("R", "G1", "G2", "B")):
+        r, c = pos[ch]
+        out[r::2, c::2] = (img[r::2, c::2] - off[k]) / (wh - off[k])
+    return np.clip(out, 0.0, 1.0)
+
+
+def _same_colour_neighbours(img, pad=2):
+    """The 8 same-colour neighbours of every pixel (distance 2 on the mosaic),
+    stacked as ``(8, H, W)``. Edges are mirrored two pixels out with a
+    non-duplicating reflection, which keeps the 2x2 phase."""
+    p = np.pad(img, pad, mode="reflect")
+    h, w = img.shape
+    out = []
+    for dr in (-2, 0, 2):
+        for dc in (-2, 0, 2):
+            if dr == 0 and dc == 0:
+                continue
+            out.append(p[pad + dr:pad + dr + h, pad + dc:pad + dc + w])
+    return np.stack(out)
+
+
+def raw_dead_pixel_mask(raw, threshold=0.1):
+    """Where the dead (stuck / hot) pixels are: ``1.0`` at a pixel that differs
+    from **every one** of its 8 same-colour neighbours by more than *threshold*
+    in the same direction, ``0.0`` elsewhere. ``(H, W)`` float64.
+
+    "Every neighbour, same sign" is what separates a defect from an edge: at an
+    edge some same-colour neighbours are on the pixel's own side. The rule is
+    the one openISP documents for its DPC stage; here it is pattern-free
+    because same-colour neighbours are simply the pixels two steps away.
+
+    Ground truth: dead pixels planted in a smooth frame are recovered exactly
+    (no misses, no false alarms) while a hard edge produces none.
+    **Raises** ``ValueError``: bad *raw* or a *threshold* outside ``(0, 1]``.
+    """
+    img = _require_raw(raw)
+    th = _scalar(threshold, "threshold", 0.0, 1.0)
+    if th <= 0.0:
+        raise ValueError("raw_dead_pixel_mask: threshold must be > 0")
+    nb = _same_colour_neighbours(img)
+    d = img[None] - nb
+    dead = np.all(d > th, axis=0) | np.all(d < -th, axis=0)
+    return dead.astype(np.float64)
+
+
+def raw_dead_pixel_correct(raw, threshold=0.1):
+    """Replace every dead pixel (:func:`raw_dead_pixel_mask`) by the **median of
+    its 8 same-colour neighbours**; every other pixel is returned bit-for-bit.
+
+    The median rather than the mean so that two adjacent defects do not pull
+    each other's replacement. Ground truth: in a smooth frame with planted
+    defects the corrected values are within the neighbours' range and the
+    untouched pixels are identical to the input.
+    """
+    img = _require_raw(raw)
+    mask = raw_dead_pixel_mask(img, threshold) > 0.5
+    if not mask.any():
+        return img.copy()
+    med = np.median(_same_colour_neighbours(img), axis=0)
+    out = img.copy()
+    out[mask] = med[mask]
+    return out
+
+
+def lens_shading_gain(flat, pattern=None, smooth_sigma=0.0):
+    """The gain map that flattens a **flat-field** frame: ``gain = mean / flat``
+    per colour channel (or for the whole frame when *pattern* is ``None``).
+
+    Shoot a uniform white target; vignetting and the micro-lens fall-off make
+    the corners darker. Multiplying any later frame by this map undoes that.
+    *smooth_sigma* > 0 Gaussian-smooths the flat first (per channel) so sensor
+    noise and dust do not become gain speckle. The gain is normalised so the
+    channel **mean** stays 1 — the map corrects shape, not exposure.
+
+    Ground truth: ``lens_shading_correct(flat, lens_shading_gain(flat))`` is a
+    constant frame (each channel equal to its own mean) to 1e-12.
+    **Raises** ``ValueError``: non-finite input, a zero or negative pixel in
+    the flat (no gain can be defined there), or a negative *smooth_sigma*.
+    """
+    img = _require_raw(flat, "flat") if pattern is not None else _as_array(flat, "flat")
+    if img.ndim != 2:
+        raise ValueError("lens_shading_gain: flat must be 2-D, got shape %r" % (img.shape,))
+    if not np.isfinite(img).all():
+        raise ValueError("lens_shading_gain: flat contains non-finite values")
+    sig = _scalar(smooth_sigma, "smooth_sigma", 0.0)
+    img = np.asarray(img, dtype=np.float64)
+    gain = np.empty_like(img)
+    planes = [(slice(None), slice(None))]
+    if pattern is not None:
+        planes = [(slice(r, None, 2), slice(c, None, 2)) for r, c in _bayer_offsets(pattern).values()]
+    for sl in planes:
+        f = img[sl]
+        if sig > 0.0:
+            from scipy import ndimage as _ndi
+            f = _ndi.gaussian_filter(f, sig, mode="nearest")
+        if f.min() <= 0.0:
+            raise ValueError("lens_shading_gain: the flat has a pixel <= 0 (%g); no gain can "
+                             "flatten a black pixel" % f.min())
+        gain[sl] = f.mean() / f
+    return gain
+
+
+def lens_shading_correct(raw, gain):
+    """Multiply a frame by a lens-shading gain map and clip to ``[0, 1]``.
+    *raw* and *gain* must have the same shape; the gain must be finite and > 0.
+    """
+    img = _as_array(raw, "raw")
+    g = _as_array(gain, "gain")
+    if img.ndim != 2 or g.shape != img.shape:
+        raise ValueError("lens_shading_correct: raw (2-D) and gain must have the same shape, "
+                         "got %r and %r" % (img.shape, g.shape))
+    if not (np.isfinite(img).all() and np.isfinite(g).all()):
+        raise ValueError("lens_shading_correct: non-finite input")
+    if g.min() <= 0.0:
+        raise ValueError("lens_shading_correct: gain must be > 0 everywhere (min %g)" % g.min())
+    return np.clip(np.asarray(img, np.float64) * np.asarray(g, np.float64), 0.0, 1.0)
+
+
+def awb_gains(rgb, method="gray_world", percentile=99.0):
+    """Estimate white-balance gains ``(g_R, g_G, g_B)`` with ``g_G = 1``.
+
+    ``method="gray_world"``: the scene averages to grey, so ``g_c = mean_G /
+    mean_c`` (Buchsbaum, 1980). ``method="white_patch"``: the brightest
+    surfaces are white, so ``g_c = P_G / P_c`` with ``P`` the *percentile*
+    (default 99, i.e. not the single hottest pixel) of each channel. Both are
+    closed forms; neither is right for every scene (a red wall breaks
+    gray-world, a coloured light breaks white-patch) and the docstring says so
+    rather than picking one silently. Apply with :func:`rgb_apply_gains` or,
+    on the mosaic, :func:`raw_apply_gains`.
+
+    Ground truth: after applying gray-world gains the three channel means are
+    equal to 1e-12; after white-patch gains the three percentiles are equal.
+    **Raises** ``ValueError``: unknown *method*, a channel whose statistic is 0
+    (no gain can be defined), or a *percentile* outside ``(0, 100]``.
+    """
+    img = _require_rgb(rgb)
+    if method not in ("gray_world", "white_patch"):
+        raise ValueError("awb_gains: method must be 'gray_world' or 'white_patch', got %r"
+                         % (method,))
+    pct = _scalar(percentile, "percentile", 0.0, 100.0)
+    if pct <= 0.0:
+        raise ValueError("awb_gains: percentile must be > 0")
+    if method == "gray_world":
+        stat = img.reshape(-1, 3).mean(axis=0)
+    else:
+        stat = np.percentile(img.reshape(-1, 3), pct, axis=0)
+    if np.any(stat <= 0.0):
+        raise ValueError("awb_gains: a channel statistic is 0 (%s) — no gain can be defined"
+                         % stat.tolist())
+    return np.ascontiguousarray(stat[1] / stat, dtype=np.float64)
+
+
+def rgb_apply_gains(rgb, gains):
+    """Multiply the R, G, B channels by ``gains`` (3 values) and clip to ``[0, 1]``."""
+    img = _require_rgb(rgb)
+    g = _channel_values(gains, "gains", allow_scalar=False)
+    g3 = np.array([g[0], g[1], g[3]])
+    if np.any(g3 <= 0.0):
+        raise ValueError("rgb_apply_gains: gains must be > 0, got %s" % g3.tolist())
+    return np.clip(img * g3[None, None, :], 0.0, 1.0)
+
+
+def raw_apply_gains(raw, gains, pattern="RGGB"):
+    """Multiply a Bayer frame by per-channel gains (3 values ``R, G, B`` or 4
+    values ``R, G1, G2, B``) and clip to ``[0, 1]`` — white balance applied
+    **before** demosaicing, which is where a real ISP does it (interpolating
+    unbalanced channels smears the cast across colours)."""
+    img = _require_raw(raw)
+    g = _channel_values(gains, "gains", allow_scalar=False)
+    if np.any(g <= 0.0):
+        raise ValueError("raw_apply_gains: gains must be > 0, got %s" % g.tolist())
+    pos = _bayer_offsets(pattern)
+    out = np.empty_like(img)
+    for k, ch in enumerate(("R", "G1", "G2", "B")):
+        r, c = pos[ch]
+        out[r::2, c::2] = img[r::2, c::2] * g[k]
+    return np.clip(out, 0.0, 1.0)
+
+
+_BILINEAR_QUARTER = np.array([[1.0, 2.0, 1.0], [2.0, 4.0, 2.0], [1.0, 2.0, 1.0]]) / 4.0
+_BILINEAR_HALF = np.array([[0.0, 1.0, 0.0], [1.0, 4.0, 1.0], [0.0, 1.0, 0.0]]) / 4.0
+
+
+def raw_demosaic_bilinear(raw, pattern="RGGB"):
+    """Bayer mosaic → ``(H, W, 3)`` RGB by bilinear interpolation, in NumPy.
+
+    Red and blue occupy one pixel in four, so a missing value is the mean of
+    the measured neighbours (``[[1,2,1],[2,4,2],[1,2,1]]/4`` on the masked
+    plane); green occupies two in four (``[[0,1,0],[1,4,1],[0,1,0]]/4``). The
+    border mirrors the **mosaic** two pixels out with a non-duplicating
+    reflection, which keeps the 2x2 phase, so a uniform field is exact up to the
+    edge. This is the same estimate the OpenCV bridge ``cfa_to_rgb`` makes with
+    ``cv2.COLOR_Bayer*2RGB``, without the 8-bit round trip and without OpenCV.
+
+    Ground truth: three affine planes mosaicked and demosaicked come back to
+    1e-12 away from the border (a bilinear estimate of an affine field is the
+    field). Bilinear is the textbook baseline: it blurs colour edges into
+    zipper artefacts; edge-directed methods are not provided here.
+    **Raises** ``ValueError``: bad *raw* or *pattern*.
+    """
+    img = _require_raw(raw)
+    pos = _bayer_offsets(pattern)
+    from scipy import ndimage as _ndi
+    pad = np.pad(img, 2, mode="reflect")
+    out = np.empty(img.shape + (3,), dtype=np.float64)
+    for k, chans in enumerate((("R",), ("G1", "G2"), ("B",))):
+        plane = np.zeros_like(pad)
+        for ch in chans:
+            r, c = pos[ch]
+            plane[r::2, c::2] = pad[r::2, c::2]
+        kern = _BILINEAR_HALF if len(chans) == 2 else _BILINEAR_QUARTER
+        out[..., k] = _ndi.convolve(plane, kern, mode="nearest")[2:-2, 2:-2]
+    return np.clip(out, 0.0, 1.0)
+
+
+def color_correction_matrix(rgb, ccm, normalize_rows=True):
+    """Apply a 3x3 colour-correction matrix: ``out = rgb @ ccm.T`` per pixel,
+    clipped to ``[0, 1]``.
+
+    The CCM maps the sensor's spectral response onto the display primaries. With
+    *normalize_rows* (default) every row is divided by its sum so that **white
+    stays white** (``[1, 1, 1] -> [1, 1, 1]``) — the constraint most calibration
+    procedures impose; pass ``False`` to apply the matrix as given.
+
+    Ground truth: the identity matrix is the exact identity; a normalised matrix
+    maps every grey ``[v, v, v]`` to itself to 1e-15.
+    **Raises** ``ValueError``: *ccm* is not a finite 3x3, or a row sums to 0
+    when normalising.
+    """
+    img = _require_rgb(rgb)
+    m = _as_array(ccm, "ccm")
+    if m.shape != (3, 3) or not np.isfinite(m).all():
+        raise ValueError("color_correction_matrix: ccm must be a finite 3x3 matrix, got shape %r"
+                         % (m.shape,))
+    m = np.asarray(m, dtype=np.float64)
+    if normalize_rows:
+        s = m.sum(axis=1)
+        if np.any(np.abs(s) < 1e-12):
+            raise ValueError("color_correction_matrix: a row of ccm sums to 0, cannot normalise")
+        m = m / s[:, None]
+    return np.clip(img @ m.T, 0.0, 1.0)
+
+
+#: BT.601 full-range RGB <-> YCbCr, used by hue_saturation (chroma rotation).
+_YCBCR = np.array([[0.299, 0.587, 0.114],
+                   [-0.168736, -0.331264, 0.5],
+                   [0.5, -0.418688, -0.081312]])
+_YCBCR_INV = np.linalg.inv(_YCBCR)
+
+
+def hue_saturation(rgb, hue_deg=0.0, saturation=1.0):
+    """Rotate the hue by *hue_deg* and scale the saturation by *saturation*,
+    in BT.601 YCbCr: luma is kept, the chroma vector ``(Cb, Cr)`` is rotated and
+    scaled. Output clipped to ``[0, 1]``.
+
+    Ground truth: ``hue_deg=0, saturation=1`` is the identity to 1e-15;
+    rotating by ``+t`` then ``-t`` returns the input; ``saturation=0`` gives a
+    grey image whose value is the BT.601 luma of the input. A hue rotation is
+    **not** a channel permutation (120 degrees does not swap R->G->B exactly),
+    because the RGB cube is not a cylinder around the grey axis — said here so
+    nobody tests for it.
+    **Raises** ``ValueError``: non-finite *hue_deg*, or *saturation* < 0.
+    """
+    img = _require_rgb(rgb)
+    t = np.radians(_scalar(hue_deg, "hue_deg"))
+    s = _scalar(saturation, "saturation", 0.0)
+    ycc = img @ _YCBCR.T
+    c, sn = np.cos(t), np.sin(t)
+    cb, cr = ycc[..., 1].copy(), ycc[..., 2].copy()
+    ycc[..., 1] = s * (c * cb - sn * cr)
+    ycc[..., 2] = s * (sn * cb + c * cr)
+    return np.clip(ycc @ _YCBCR_INV.T, 0.0, 1.0)
+
+
+def brightness_contrast(rgb, brightness=0.0, contrast=1.0):
+    """``out = (rgb - 0.5) * contrast + 0.5 + brightness``, clipped to ``[0, 1]``.
+
+    Contrast pivots about mid-grey so ``contrast=2`` doubles the distance from
+    0.5 and leaves 0.5 alone; brightness is an additive offset. Ground truth:
+    ``(0, 1)`` is the exact identity; mid-grey is invariant to any contrast.
+    **Raises** ``ValueError``: *brightness* outside ``[-1, 1]`` or *contrast* < 0.
+    """
+    img = _require_rgb(rgb)
+    b = _scalar(brightness, "brightness", -1.0, 1.0)
+    c = _scalar(contrast, "contrast", 0.0)
+    if b == 0.0 and c == 1.0:
+        return img.copy()                     # exact identity, not a rounding-perturbed one
+    return np.clip((img - 0.5) * c + 0.5 + b, 0.0, 1.0)

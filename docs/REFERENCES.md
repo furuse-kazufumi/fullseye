@@ -183,6 +183,14 @@ the operator is a member of that family*.
 | `mueller_from_intensities` | optics / polarization | Chipman, R. A., *Polarimetry*, Handbook of Optics vol. II ch. 15 — `I_i = a_i^T M g_i` is linear in vec(M) with observation rows `outer(a_i, g_i)`. Polanalyser's `calcMueller` is the pseudo-inverse form of the same system; ours adds an explicit rank check (linear polarisers only → rank 9, refused). |
 | `mueller_checks` | optics / polarization | Cloude, S. R. (1986). Group theory and polarisation algebra. *Optik* 75, 26–36 (coherency matrix ≥ 0 ⇔ physical); Gil, J. J. (2007). Polarimetric characterization of light and media. *Eur. Phys. J. Appl. Phys.* 40, 1–47; Gil, J. J. & Bernabeu, E. (1986). Depolarization and polarization indices of an optical system. *Optica Acta* 33, 185–189. The check set mirrors what **py-pol** (del Hoyo & Sánchez Brea, MIT) exposes; re-implemented. |
 
+## 2026-09-18 additions — ISP stages (gfx2d `isp`, closed forms re-implemented from the definitions)
+
+| op | category | seminal reference |
+|---|---|---|
+| `raw_black_level` · `raw_dead_pixel_mask` · `raw_dead_pixel_correct` · `lens_shading_gain` · `lens_shading_correct` · `raw_apply_gains` · `rgb_apply_gains` · `color_correction_matrix` · `hue_saturation` · `brightness_contrast` | gfx2d / isp | The stage set and the dead-pixel rule (a pixel departing from all eight same-colour neighbours in the same direction) follow the pipeline documented by **openISP** (cruxopen, MIT, github.com/cruxopen/openISP); each stage is the textbook closed form (Ramanath et al., *Color image processing pipeline*, IEEE SPM 22(1), 2005). YCbCr per ITU-R BT.601. No code copied. |
+| `awb_gains` | gfx2d / isp | Buchsbaum, G. (1980). A spatial processor model for object colour perception. *J. Franklin Inst.* 310, 1–26 (gray-world); Land, E. H. (1977) *The retinex theory of color vision* (white-patch). |
+| `raw_demosaic_bilinear` | gfx2d / isp | Bilinear CFA interpolation — the baseline in Gunturk et al. (2005), *Demosaicking: color filter array interpolation*, IEEE SPM 22(1), 44–54. Same estimate as OpenCV's `COLOR_Bayer*2RGB` without the 8-bit round trip. |
+
 ## Mining new operators from research (RAD)
 - RAD image / diffusion / deep_learning corpora (thousands of papers) = the source for operators beyond the classics: modern denoisers (BM3D, DnCNN), learned edges (HED), superpixels (SLIC), diffusion priors, foundation segmenters (SAM).
 - Workflow: mine a paper -> add a typed Op (fn + sort + analogs + this reference) -> evolution/codegen/catalog pick it up automatically.

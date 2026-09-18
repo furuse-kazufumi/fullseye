@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">raw_demosaic_bilinear — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">rgb</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.raw_demosaic_bilinear(raw, pattern=&#x27;RGGB&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.raw_demosaic_bilinear(raw, pattern=&#x27;RGGB&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;raw_demosaic_bilinear&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Bayer モザイクを NumPy だけの双線形補間で (H, W, 3) RGB にする。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Red and blue occupy one pixel in four, so a missing value is the mean of</p>
+<p>the measured neighbours (`<code style="color:#22d3bf">[[1,2,1],[2,4,2],[1,2,1]]/4</code>` on the masked</p>
+<p>plane); green occupies two in four (`<code style="color:#22d3bf">[[0,1,0],[1,4,1],[0,1,0]]/4</code>`). The</p>
+<p>border mirrors the <b>mosaic</b> two pixels out with a non-duplicating</p>
+<p>reflection, which keeps the 2x2 phase, so a uniform field is exact up to the</p>
+<p>edge. This is the same estimate the OpenCV bridge `<code style="color:#22d3bf">cfa_to_rgb</code>` makes with</p>
+<p>`<code style="color:#22d3bf">cv2.COLOR_Bayer*2RGB</code>`, without the 8-bit round trip and without OpenCV.</p>
+<p>Ground truth: three affine planes mosaicked and demosaicked come back to</p>
+<p>1e-12 away from the border (a bilinear estimate of an affine field is the</p>
+<p>field). Bilinear is the textbook baseline: it blurs colour edges into</p>
+<p>zipper artefacts; edge-directed methods are not provided here.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: bad *raw* or *pattern*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:raw_to_display_isp">raw_to_display_isp</a> — <code style="color:#22d3bf">py -3.11 examples/raw_to_display_isp.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgb</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:srgb_to_linear">srgb_to_linear</a> · <a style="color:#22d3bf" href="opgfx2d:linear_to_srgb">linear_to_srgb</a> · <a style="color:#22d3bf" href="opgfx2d:blend_mode">blend_mode</a> · <a style="color:#22d3bf" href="opgfx2d:light_mask">light_mask</a> · <a style="color:#22d3bf" href="opgfx2d:normal_map_decode">normal_map_decode</a> · <a style="color:#22d3bf" href="opgfx2d:bloom">bloom</a> · <a style="color:#22d3bf" href="opgfx2d:vignette">vignette</a> · <a style="color:#22d3bf" href="opgfx2d:chromatic_aberration">chromatic_aberration</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">isp</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:raw_black_level">raw_black_level</a> · <a style="color:#22d3bf" href="opgfx2d:raw_dead_pixel_mask">raw_dead_pixel_mask</a> · <a style="color:#22d3bf" href="opgfx2d:raw_dead_pixel_correct">raw_dead_pixel_correct</a> · <a style="color:#22d3bf" href="opgfx2d:lens_shading_gain">lens_shading_gain</a> · <a style="color:#22d3bf" href="opgfx2d:lens_shading_correct">lens_shading_correct</a> · <a style="color:#22d3bf" href="opgfx2d:awb_gains">awb_gains</a> · <a style="color:#22d3bf" href="opgfx2d:rgb_apply_gains">rgb_apply_gains</a> · <a style="color:#22d3bf" href="opgfx2d:raw_apply_gains">raw_apply_gains</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

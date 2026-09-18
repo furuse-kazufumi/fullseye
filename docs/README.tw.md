@@ -64,11 +64,11 @@
 
 ## 尋找運算子
 
-共有 **1,987 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **49 篇族群指南**。依維度的入口:
+共有 **1,999 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **49 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 930/930、型別台帳 1036/1048、單行門面 `fullseye.<名稱>` 555/1155 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 930/930、型別台帳 1048/1060、單行門面 `fullseye.<名稱>` 567/1168 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 1992 篇中，附有可執行範例的 **1950** 篇(42 篇沒有)，用法說明 120 字以上的 **1973** 篇(19 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)1992 篇全有。
+**內容實測**: 2004 篇中，附有可執行範例的 **1961** 篇(43 篇沒有)，用法說明 120 字以上的 **1984** 篇(20 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)2004 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
@@ -76,9 +76,9 @@
 | `3d` | 363 | [INDEX](ops/3d/INDEX.md) |
 | `optics` | 130 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
+| `gfx2d` | 44 | [INDEX](ops/gfx2d/INDEX.md) |
 | `oned` | 42 | [INDEX](ops/oned/INDEX.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
-| `gfx2d` | 32 | [INDEX](ops/gfx2d/INDEX.md) |
 | `math` | 27 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `piv` | 26 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `imgmetrics` | 24 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
@@ -203,9 +203,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文件地圖 — 共 162 篇
+## 文件地圖 — 共 163 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 1,987 篇運算子說明與 49 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 1,999 篇運算子說明與 49 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 
@@ -329,7 +329,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(90)
+**Other**(91)
 
 | 文件 | 內容 |
 |---|---|
@@ -408,6 +408,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/optics-and-materials.md`](capabilities/optics-and-materials.md) | id: optics-and-materials |
 | [`capabilities/point-target-detection.md`](capabilities/point-target-detection.md) | id: point-target-detection |
 | [`capabilities/polarization-imaging.md`](capabilities/polarization-imaging.md) | id: polarization-imaging |
+| [`capabilities/raw-to-display-isp.md`](capabilities/raw-to-display-isp.md) | id: raw-to-display-isp |
 | [`capabilities/subpixel-2d-metrology.md`](capabilities/subpixel-2d-metrology.md) | id: subpixel-2d-metrology |
 | [`capabilities/terrain-and-visibility.md`](capabilities/terrain-and-visibility.md) | id: terrain-and-visibility |
 | [`capabilities/text-and-tables-on-images.md`](capabilities/text-and-tables-on-images.md) | id: text-and-tables-on-images |

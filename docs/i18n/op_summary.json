@@ -14223,6 +14223,102 @@
    "tw": "判斷 4x4 矩陣是否為物理可實現的 Mueller 矩陣,以及退偏程度。",
    "ko": "4x4 행렬이 물리적으로 실현 가능한 Mueller 행렬인지와 얼마나 탈편광하는지를 반환합니다.",
    "de": "Sagt, ob eine 4x4-Matrix eine physikalisch realisierbare Mueller-Matrix ist und wie stark sie depolarisiert."
+  },
+  "gfx2d/raw_black_level": {
+   "fp": "153e2bd883f7",
+   "ja": "Bayer フレームの黒レベル補正: 色ごとに (raw − offset) / (white − offset)。",
+   "zh": "Bayer 帧的黑电平校正:逐通道 (raw − offset) / (white − offset)。",
+   "tw": "Bayer 幀的黑電平校正:逐通道 (raw − offset) / (white − offset)。",
+   "ko": "Bayer 프레임의 블랙 레벨 보정: 채널별 (raw − offset) / (white − offset).",
+   "de": "Schwarzwertkorrektur eines Bayer-Bildes: je Farbkanal (raw − offset) / (white − offset)."
+  },
+  "gfx2d/raw_dead_pixel_mask": {
+   "fp": "b67a2e129298",
+   "ja": "欠陥画素の地図: 同色 8 近傍の全部から同じ向きに閾値以上ずれた画素。",
+   "zh": "坏点图:与全部 8 个同色邻域朝同一方向偏离超过阈值的像素。",
+   "tw": "壞點圖:與全部 8 個同色鄰域朝同一方向偏離超過閾值的像素。",
+   "ko": "불량 화소 지도: 같은 색 8근방 전부에서 같은 방향으로 임계값 이상 벗어난 화소.",
+   "de": "Karte der defekten Pixel: Pixel, die von allen acht gleichfarbigen Nachbarn in dieselbe Richtung um mehr als die Schwelle abweichen."
+  },
+  "gfx2d/raw_dead_pixel_correct": {
+   "fp": "d9f26e45908e",
+   "ja": "欠陥画素を同色 8 近傍の中央値で置き換える。他の画素はそのまま。",
+   "zh": "用同色 8 邻域的中位数替换坏点,其余像素原样保留。",
+   "tw": "用同色 8 鄰域的中位數替換壞點,其餘像素原樣保留。",
+   "ko": "불량 화소를 같은 색 8근방의 중앙값으로 치환한다. 다른 화소는 그대로.",
+   "de": "Ersetzt defekte Pixel durch den Median der acht gleichfarbigen Nachbarn; alle anderen Pixel bleiben unverändert."
+  },
+  "gfx2d/lens_shading_gain": {
+   "fp": "4c66edec5e7a",
+   "ja": "flat(白い板)から周辺減光を打ち消す利得地図を作る: 色ごとに mean / flat。",
+   "zh": "由平场(白板)生成抵消暗角的增益图:逐通道 mean / flat。",
+   "tw": "由平場(白板)產生抵消暗角的增益圖:逐通道 mean / flat。",
+   "ko": "플랫(흰 판)에서 주변 감광을 상쇄하는 이득 지도를 만든다: 채널별 mean / flat.",
+   "de": "Erzeugt aus einem Flatfield (weiße Tafel) die Verstärkungskarte gegen die Vignettierung: je Kanal mean / flat."
+  },
+  "gfx2d/lens_shading_correct": {
+   "fp": "d8bc250c0b31",
+   "ja": "フレームに周辺減光の利得地図を掛けて [0, 1] に切り詰める。",
+   "zh": "将增益图乘到帧上并裁剪到 [0, 1]。",
+   "tw": "將增益圖乘到幀上並裁剪到 [0, 1]。",
+   "ko": "프레임에 이득 지도를 곱하고 [0, 1]로 자른다.",
+   "de": "Multipliziert ein Bild mit der Vignettierungs-Verstärkungskarte und beschneidet auf [0, 1]."
+  },
+  "gfx2d/awb_gains": {
+   "fp": "33fed5c3d3b5",
+   "ja": "ホワイトバランスの利得 (g_R, g_G, g_B) を推定する(gray-world / white-patch、g_G = 1)。",
+   "zh": "估计白平衡增益 (g_R, g_G, g_B)(gray-world / white-patch,g_G = 1)。",
+   "tw": "估計白平衡增益 (g_R, g_G, g_B)(gray-world / white-patch,g_G = 1)。",
+   "ko": "화이트 밸런스 이득 (g_R, g_G, g_B)을 추정한다(gray-world / white-patch, g_G = 1).",
+   "de": "Schätzt Weißabgleich-Verstärkungen (g_R, g_G, g_B) (Gray-World / White-Patch, g_G = 1)."
+  },
+  "gfx2d/rgb_apply_gains": {
+   "fp": "1101fc4c581f",
+   "ja": "R, G, B の各チャネルに利得を掛けて [0, 1] に切り詰める。",
+   "zh": "对 R、G、B 各通道乘以增益并裁剪到 [0, 1]。",
+   "tw": "對 R、G、B 各通道乘以增益並裁剪到 [0, 1]。",
+   "ko": "R, G, B 채널에 이득을 곱하고 [0, 1]로 자른다.",
+   "de": "Multipliziert die Kanäle R, G, B mit Verstärkungen und beschneidet auf [0, 1]."
+  },
+  "gfx2d/raw_apply_gains": {
+   "fp": "709ef5911dda",
+   "ja": "Bayer フレームに色ごとの利得を掛ける(デモザイク前のホワイトバランス)。",
+   "zh": "对 Bayer 帧逐通道乘以增益(去马赛克前的白平衡)。",
+   "tw": "對 Bayer 幀逐通道乘以增益(去馬賽克前的白平衡)。",
+   "ko": "Bayer 프레임에 채널별 이득을 곱한다(디모자이크 전 화이트 밸런스).",
+   "de": "Multipliziert ein Bayer-Bild je Farbkanal mit Verstärkungen (Weißabgleich vor dem Demosaicing)."
+  },
+  "gfx2d/raw_demosaic_bilinear": {
+   "fp": "bc8de6bc80fc",
+   "ja": "Bayer モザイクを NumPy だけの双線形補間で (H, W, 3) RGB にする。",
+   "zh": "用纯 NumPy 的双线性插值把 Bayer 马赛克变成 (H, W, 3) RGB。",
+   "tw": "用純 NumPy 的雙線性內插把 Bayer 馬賽克變成 (H, W, 3) RGB。",
+   "ko": "Bayer 모자이크를 NumPy만의 쌍선형 보간으로 (H, W, 3) RGB로 만든다.",
+   "de": "Bayer-Mosaik → (H, W, 3) RGB durch bilineare Interpolation, nur mit NumPy."
+  },
+  "gfx2d/color_correction_matrix": {
+   "fp": "e87a51440913",
+   "ja": "3x3 の色補正行列を画素ごとに掛ける(既定で行和 1 に正規化し、白を白のまま)。",
+   "zh": "逐像素应用 3x3 色彩校正矩阵(默认行归一化为 1,白保持白)。",
+   "tw": "逐像素套用 3x3 色彩校正矩陣(預設行正規化為 1,白保持白)。",
+   "ko": "3x3 색 보정 행렬을 화소마다 적용한다(기본으로 행합 1로 정규화하여 흰색을 유지).",
+   "de": "Wendet eine 3x3-Farbkorrekturmatrix pixelweise an (standardmäßig zeilennormiert, Weiß bleibt Weiß)."
+  },
+  "gfx2d/hue_saturation": {
+   "fp": "950b3c64fd53",
+   "ja": "色相を回し彩度を伸縮する(BT.601 YCbCr、輝度は保つ)。",
+   "zh": "旋转色相并缩放饱和度(BT.601 YCbCr,保持亮度)。",
+   "tw": "旋轉色相並縮放飽和度(BT.601 YCbCr,保持亮度)。",
+   "ko": "색상을 회전하고 채도를 조절한다(BT.601 YCbCr, 휘도는 유지).",
+   "de": "Dreht den Farbton und skaliert die Sättigung (BT.601 YCbCr, Luma bleibt erhalten)."
+  },
+  "gfx2d/brightness_contrast": {
+   "fp": "ff3c9cab1752",
+   "ja": "out = (rgb − 0.5) · contrast + 0.5 + brightness を [0, 1] に切り詰める。",
+   "zh": "out = (rgb − 0.5) · contrast + 0.5 + brightness,裁剪到 [0, 1]。",
+   "tw": "out = (rgb − 0.5) · contrast + 0.5 + brightness,裁剪到 [0, 1]。",
+   "ko": "out = (rgb − 0.5) · contrast + 0.5 + brightness 를 [0, 1]로 자른다.",
+   "de": "out = (rgb − 0.5) · contrast + 0.5 + brightness, beschnitten auf [0, 1]."
   }
  }
 }

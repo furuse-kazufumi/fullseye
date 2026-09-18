@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1981,
- "n_notes": 1987,
+ "n_ops": 1993,
+ "n_notes": 1999,
  "notes": {
   "vol_dilate": [
    {
@@ -15097,6 +15097,126 @@
     "in": "rgba_premul",
     "out": "rgba",
     "path": "docs/ops/gfx2d/composite/unpremultiply.md"
+   }
+  ],
+  "awb_gains": [
+   {
+    "op": "awb_gains",
+    "dim": "gfx2d",
+    "category": "isp",
+    "in": "rgb",
+    "out": "vector",
+    "path": "docs/ops/gfx2d/isp/awb_gains.md"
+   }
+  ],
+  "brightness_contrast": [
+   {
+    "op": "brightness_contrast",
+    "dim": "gfx2d",
+    "category": "isp",
+    "in": "rgb",
+    "out": "rgb",
+    "path": "docs/ops/gfx2d/isp/brightness_contrast.md"
+   }
+  ],
+  "color_correction_matrix": [
+   {
+    "op": "color_correction_matrix",
+    "dim": "gfx2d",
+    "category": "isp",
+    "in": "rgb × matrix",
+    "out": "rgb",
+    "path": "docs/ops/gfx2d/isp/color_correction_matrix.md"
+   }
+  ],
+  "hue_saturation": [
+   {
+    "op": "hue_saturation",
+    "dim": "gfx2d",
+    "category": "isp",
+    "in": "rgb",
+    "out": "rgb",
+    "path": "docs/ops/gfx2d/isp/hue_saturation.md"
+   }
+  ],
+  "lens_shading_correct": [
+   {
+    "op": "lens_shading_correct",
+    "dim": "gfx2d",
+    "category": "isp",
+    "in": "image2d × image2d",
+    "out": "image2d",
+    "path": "docs/ops/gfx2d/isp/lens_shading_correct.md"
+   }
+  ],
+  "lens_shading_gain": [
+   {
+    "op": "lens_shading_gain",
+    "dim": "gfx2d",
+    "category": "isp",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/gfx2d/isp/lens_shading_gain.md"
+   }
+  ],
+  "raw_apply_gains": [
+   {
+    "op": "raw_apply_gains",
+    "dim": "gfx2d",
+    "category": "isp",
+    "in": "image2d × vector",
+    "out": "image2d",
+    "path": "docs/ops/gfx2d/isp/raw_apply_gains.md"
+   }
+  ],
+  "raw_black_level": [
+   {
+    "op": "raw_black_level",
+    "dim": "gfx2d",
+    "category": "isp",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/gfx2d/isp/raw_black_level.md"
+   }
+  ],
+  "raw_dead_pixel_correct": [
+   {
+    "op": "raw_dead_pixel_correct",
+    "dim": "gfx2d",
+    "category": "isp",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/gfx2d/isp/raw_dead_pixel_correct.md"
+   }
+  ],
+  "raw_dead_pixel_mask": [
+   {
+    "op": "raw_dead_pixel_mask",
+    "dim": "gfx2d",
+    "category": "isp",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/gfx2d/isp/raw_dead_pixel_mask.md"
+   }
+  ],
+  "raw_demosaic_bilinear": [
+   {
+    "op": "raw_demosaic_bilinear",
+    "dim": "gfx2d",
+    "category": "isp",
+    "in": "image2d",
+    "out": "rgb",
+    "path": "docs/ops/gfx2d/isp/raw_demosaic_bilinear.md"
+   }
+  ],
+  "rgb_apply_gains": [
+   {
+    "op": "rgb_apply_gains",
+    "dim": "gfx2d",
+    "category": "isp",
+    "in": "rgb × vector",
+    "out": "rgb",
+    "path": "docs/ops/gfx2d/isp/rgb_apply_gains.md"
    }
   ],
   "light_mask": [

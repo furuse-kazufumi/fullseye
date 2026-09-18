@@ -140,6 +140,22 @@ _CATALOG = {
     "camera": [
         ("viewport", "gfx2d", ["rgb"], "rgb"),
     ],
+    # 2026-09-18: ISP の閉形式段(openISP の段の顔ぶれを一次情報で確認し、定義から再実装)。
+    #   Bayer raw(image2d)→ 補正 → デモザイク(rgb)→ 色 → 表示。
+    "isp": [
+        ("raw_black_level", "gfx2d", ["image2d"], "image2d"),
+        ("raw_dead_pixel_mask", "gfx2d", ["image2d"], "image2d"),
+        ("raw_dead_pixel_correct", "gfx2d", ["image2d"], "image2d"),
+        ("lens_shading_gain", "gfx2d", ["image2d"], "image2d"),
+        ("lens_shading_correct", "gfx2d", ["image2d", "image2d"], "image2d"),
+        ("awb_gains", "gfx2d", ["rgb"], "vector"),
+        ("rgb_apply_gains", "gfx2d", ["rgb", "vector"], "rgb"),
+        ("raw_apply_gains", "gfx2d", ["image2d", "vector"], "image2d"),
+        ("raw_demosaic_bilinear", "gfx2d", ["image2d"], "rgb"),
+        ("color_correction_matrix", "gfx2d", ["rgb", "matrix"], "rgb"),
+        ("hue_saturation", "gfx2d", ["rgb"], "rgb"),
+        ("brightness_contrast", "gfx2d", ["rgb"], "rgb"),
+    ],
 }
 
 

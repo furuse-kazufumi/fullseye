@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">color_correction_matrix — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgb × matrix</code> → <code style="color:#22d3bf">rgb</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_correction_matrix(rgb, ccm, normalize_rows=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import gfx2d; gfx2d.color_correction_matrix(rgb, ccm, normalize_rows=True)</code>; aus dem Register: <code style="color:#22d3bf">opsgfx2d.get(&quot;color_correction_matrix&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Wendet eine 3x3-Farbkorrekturmatrix pixelweise an (standardmäßig zeilennormiert, Weiß bleibt Weiß).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>The CCM maps the sensor&#x27;s spectral response onto the display primaries. With</p>
+<p>*normalize_rows* (default) every row is divided by its sum so that **white</p>
+<p>stays white** (`<code style="color:#22d3bf">[1, 1, 1] -&gt; [1, 1, 1]</code>`) — the constraint most calibration</p>
+<p>procedures impose; pass `<code style="color:#22d3bf">False</code>` to apply the matrix as given.</p>
+<p>Ground truth: the identity matrix is the exact identity; a normalised matrix</p>
+<p>maps every grey `<code style="color:#22d3bf">[v, v, v]</code>` to itself to 1e-15.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *ccm* is not a finite 3x3, or a row sums to 0</p>
+<p>when normalising.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:raw_to_display_isp">raw_to_display_isp</a> — <code style="color:#22d3bf">py -3.11 examples/raw_to_display_isp.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">rgb</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:srgb_to_linear">srgb_to_linear</a> · <a style="color:#22d3bf" href="opgfx2d:linear_to_srgb">linear_to_srgb</a> · <a style="color:#22d3bf" href="opgfx2d:blend_mode">blend_mode</a> · <a style="color:#22d3bf" href="opgfx2d:light_mask">light_mask</a> · <a style="color:#22d3bf" href="opgfx2d:normal_map_decode">normal_map_decode</a> · <a style="color:#22d3bf" href="opgfx2d:bloom">bloom</a> · <a style="color:#22d3bf" href="opgfx2d:vignette">vignette</a> · <a style="color:#22d3bf" href="opgfx2d:chromatic_aberration">chromatic_aberration</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">isp</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:raw_black_level">raw_black_level</a> · <a style="color:#22d3bf" href="opgfx2d:raw_dead_pixel_mask">raw_dead_pixel_mask</a> · <a style="color:#22d3bf" href="opgfx2d:raw_dead_pixel_correct">raw_dead_pixel_correct</a> · <a style="color:#22d3bf" href="opgfx2d:lens_shading_gain">lens_shading_gain</a> · <a style="color:#22d3bf" href="opgfx2d:lens_shading_correct">lens_shading_correct</a> · <a style="color:#22d3bf" href="opgfx2d:awb_gains">awb_gains</a> · <a style="color:#22d3bf" href="opgfx2d:rgb_apply_gains">rgb_apply_gains</a> · <a style="color:#22d3bf" href="opgfx2d:raw_apply_gains">raw_apply_gains</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

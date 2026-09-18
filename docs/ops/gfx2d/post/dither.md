@@ -56,7 +56,7 @@ Output values lie on the lattice ``k / (levels - 1)``.
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[shadow_cast_2d](../light/shadow_cast_2d.md)
+[shadow_cast_2d](../light/shadow_cast_2d.md) · [raw_black_level](../isp/raw_black_level.md) · [raw_dead_pixel_mask](../isp/raw_dead_pixel_mask.md) · [raw_dead_pixel_correct](../isp/raw_dead_pixel_correct.md) · [lens_shading_gain](../isp/lens_shading_gain.md) · [lens_shading_correct](../isp/lens_shading_correct.md) · [raw_apply_gains](../isp/raw_apply_gains.md) · [raw_demosaic_bilinear](../isp/raw_demosaic_bilinear.md)
 
 ## 同カテゴリ(`post`)
 

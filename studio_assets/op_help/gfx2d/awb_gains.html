@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">awb_gains — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">vector</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.awb_gains(rgb, method=&#x27;gray_world&#x27;, percentile=99.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.awb_gains(rgb, method=&#x27;gray_world&#x27;, percentile=99.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;awb_gains&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Estimate white-balance gains `<code style="color:#22d3bf">(g_R, g_G, g_B)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">g_G = 1</code>`.</p>
+<p>`<code style="color:#22d3bf">method=&quot;gray_world&quot;</code><code style="color:#22d3bf">: the scene averages to grey, so </code>`g_c = mean_G /</p>
+<p>mean_c`<code style="color:#22d3bf"> (Buchsbaum, 1980). </code><code style="color:#22d3bf">method=&quot;white_patch&quot;</code>`: the brightest</p>
+<p>surfaces are white, so `<code style="color:#22d3bf">g_c = P_G / P_c</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">P</code>` the *percentile*</p>
+<p>(default 99, i.e. not the single hottest pixel) of each channel. Both are</p>
+<p>closed forms; neither is right for every scene (a red wall breaks</p>
+<p>gray-world, a coloured light breaks white-patch) and the docstring says so</p>
+<p>rather than picking one silently. Apply with :func:<code style="color:#22d3bf">rgb_apply_gains</code> or,</p>
+<p>on the mosaic, :func:<code style="color:#22d3bf">raw_apply_gains</code>.</p>
+<p>Ground truth: after applying gray-world gains the three channel means are</p>
+<p>equal to 1e-12; after white-patch gains the three percentiles are equal.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: unknown *method*, a channel whose statistic is 0</p>
+<p>(no gain can be defined), or a *percentile* outside `<code style="color:#22d3bf">(0, 100]</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:raw_to_display_isp">raw_to_display_isp</a> — <code style="color:#22d3bf">py -3.11 examples/raw_to_display_isp.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">vector</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:rgb_apply_gains">rgb_apply_gains</a> · <a style="color:#22d3bf" href="opgfx2d:raw_apply_gains">raw_apply_gains</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">isp</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:raw_black_level">raw_black_level</a> · <a style="color:#22d3bf" href="opgfx2d:raw_dead_pixel_mask">raw_dead_pixel_mask</a> · <a style="color:#22d3bf" href="opgfx2d:raw_dead_pixel_correct">raw_dead_pixel_correct</a> · <a style="color:#22d3bf" href="opgfx2d:lens_shading_gain">lens_shading_gain</a> · <a style="color:#22d3bf" href="opgfx2d:lens_shading_correct">lens_shading_correct</a> · <a style="color:#22d3bf" href="opgfx2d:rgb_apply_gains">rgb_apply_gains</a> · <a style="color:#22d3bf" href="opgfx2d:raw_apply_gains">raw_apply_gains</a> · <a style="color:#22d3bf" href="opgfx2d:raw_demosaic_bilinear">raw_demosaic_bilinear</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

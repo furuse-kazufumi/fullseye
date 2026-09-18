@@ -704,6 +704,8 @@ from gfx2d import (  # noqa: E402,F401
     sprite_blit, sprite_sheet_slice, sprite_synthesize, sprite_transform,
     srgb_to_linear, tilemap_render, unpremultiply, vignette, viewport,
     BLEND_MODES,
+    raw_black_level, raw_dead_pixel_mask, raw_dead_pixel_correct, lens_shading_gain, lens_shading_correct, awb_gains,
+    rgb_apply_gains, raw_apply_gains, raw_demosaic_bilinear, color_correction_matrix, hue_saturation, brightness_contrast, BAYER_PATTERNS,
 )
 from specularity import (  # noqa: E402,F401
     specular_diffuse_split, specular_free_transform,
@@ -900,6 +902,9 @@ __all__ = [
     "sprite_sheet_slice", "sprite_synthesize", "sprite_transform",
     "srgb_to_linear", "tilemap_render", "unpremultiply", "vignette",
     "viewport", "BLEND_MODES",
+    "raw_black_level", "raw_dead_pixel_mask", "raw_dead_pixel_correct", "lens_shading_gain", "lens_shading_correct",
+    "awb_gains", "rgb_apply_gains", "raw_apply_gains", "raw_demosaic_bilinear", "color_correction_matrix",
+    "hue_saturation", "brightness_contrast", "BAYER_PATTERNS",
     "cadmap", "cad_pixel_to_surface", "cad_surface_to_pixel",
     "cad_defect_to_cad", "cad_visible_faces",
     "palette", "semantic_palette", "role_color", "role_rgb8", "diverging_lut", "assert_not_red_green_pair", "ROLES", "ROLE_MARKERS", "SCHEMES",
