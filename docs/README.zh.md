@@ -64,17 +64,17 @@
 
 ## 查找算子
 
-共有 **1,999 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **49 篇族指南**。按维度的入口:
+共有 **2,000 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **49 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 930/930、类型化台账 1048/1060、单行门面 `fullseye.<名称>` 567/1168 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 930/930、类型化台账 1049/1061、单行门面 `fullseye.<名称>` 568/1169 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 2004 篇中，附有可运行示例的 **1961** 篇(43 篇没有)，用法说明 120 字以上的 **1984** 篇(20 篇仅一行)。结构(调用形式、类型、可衔接算子)2004 篇全有。
+**内容实测**: 2005 篇中，附有可运行示例的 **1962** 篇(43 篇没有)，用法说明 120 字以上的 **1985** 篇(20 篇仅一行)。结构(调用形式、类型、可衔接算子)2005 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
 | `2d` | 947 | [INDEX](ops/2d/INDEX.md) |
 | `3d` | 363 | [INDEX](ops/3d/INDEX.md) |
-| `optics` | 130 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
+| `optics` | 131 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
 | `gfx2d` | 44 | [INDEX](ops/gfx2d/INDEX.md) |
 | `oned` | 42 | [INDEX](ops/oned/INDEX.md) |
@@ -205,7 +205,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 163 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 1,999 篇算子说明与 49 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,000 篇算子说明与 49 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 

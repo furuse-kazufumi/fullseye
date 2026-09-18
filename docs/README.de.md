@@ -64,17 +64,17 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**1,999 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **49 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**2,000 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **49 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 930/930, typisiertes Ledger 1048/1060, Fassade `fullseye.<name>` 567/1168 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 930/930, typisiertes Ledger 1049/1061, Fassade `fullseye.<name>` 568/1169 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 2004 Notizen verweisen **1961** auf mindestens ein lauffähiges Beispiel (43 ohne), **1984** haben einen Nutzungsabschnitt ab 120 Zeichen (20 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 2004.
+**Gemessener Inhalt**: von 2005 Notizen verweisen **1962** auf mindestens ein lauffähiges Beispiel (43 ohne), **1985** haben einen Nutzungsabschnitt ab 120 Zeichen (20 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 2005.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
 | `2d` | 947 | [INDEX](ops/2d/INDEX.md) |
 | `3d` | 363 | [INDEX](ops/3d/INDEX.md) |
-| `optics` | 130 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
+| `optics` | 131 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
 | `gfx2d` | 44 | [INDEX](ops/gfx2d/INDEX.md) |
 | `oned` | 42 | [INDEX](ops/oned/INDEX.md) |
@@ -205,7 +205,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Dokumentkarte — alle 163
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 1,999 Operator-Notizen und 49 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 2,000 Operator-Notizen und 49 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 

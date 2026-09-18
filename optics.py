@@ -137,7 +137,7 @@ __all__ = [
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
-    "polarization_demosaic", "mueller_from_intensities", "mueller_checks",
+    "polarization_demosaic", "polarization_demosaic_color", "mueller_from_intensities", "mueller_checks",
     "POLARIZATION_MOSAIC_LAYOUT", "POLARIZATION_SWEEP_ANGLES",
     "OPTICS", "MAX_GRID", "MAX_FIELD_ELEMENTS", "MAX_SYSTEM_ELEMENTS",
     "MAX_ZERNIKE_TERMS", "MAX_ZERNIKE_ORDER", "MAX_ZERNIKE_BASIS",
@@ -154,7 +154,7 @@ OPTICS = [
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
-    "polarization_demosaic", "mueller_from_intensities", "mueller_checks",
+    "polarization_demosaic", "polarization_demosaic_color", "mueller_from_intensities", "mueller_checks",
 ]
 
 #: Largest side length for a *generated* grid (Airy pattern, sampled curves).
@@ -1910,7 +1910,8 @@ def polarization_demosaic(raw, layout=POLARIZATION_MOSAIC_LAYOUT):
     the mosaic follow Polanalyser (Maeda, MIT); the interpolation is the
     classic bilinear Bayer demosaic. This is a re-implementation from that
     description, not copied code, and it does not depend on OpenCV. Colour
-    polarisation sensors (IMX250MYR, a 4x4 block) are **not** handled here.
+    polarisation sensors (IMX250MYR, a 4x4 block) are handled by
+    :func:`polarization_demosaic_color`.
     """
     a = np.asarray(raw, dtype=np.float64)
     if a.ndim != 2:
@@ -2078,3 +2079,46 @@ def mueller_checks(mueller, tol=1e-9):
             "depolarization_index": min(pdelta, 1.0) if pdelta <= 1.0 + 1e-9 else pdelta,
             "transmittance_max": m00 + d, "transmittance_min": max(0.0, m00 - d),
             "passive": bool(m00 + d <= 1.0 + tol)}
+
+
+def polarization_demosaic_color(raw, layout=POLARIZATION_MOSAIC_LAYOUT, bayer="RGGB"):
+    """Split a **colour** polarisation-sensor mosaic (Sony IMX250MYR family, a
+    4x4 block = a 2x2 Bayer block whose every colour site is itself a 2x2 block
+    of polarisers) into four RGB images: ``(4, H, W, 3)`` in
+    :data:`POLARIZATION_SWEEP_ANGLES` order, each channel interpolated to full
+    resolution. The ``rgbvolume`` sort carries it (four "slices" of RGB).
+
+    Two closed forms composed, no new estimate: (1) the pixels at each of the
+    four polariser positions form a plain Bayer mosaic at half resolution, so
+    each is demosaicked with :func:`gfx2d.raw_demosaic_bilinear` and written
+    back to its positions — after which every pixel has RGB and the
+    polarisation mosaic is still interleaved; (2) each RGB channel is then a
+    monochrome polarisation mosaic, handled by :func:`polarization_demosaic`.
+    This is the decomposition Polanalyser documents for that sensor; *bayer*
+    is the pattern of the half-resolution Bayer grid (``RGGB`` for the
+    IMX250MYR as read row-major from the top-left site) and *layout* the
+    polariser angles inside a site.
+
+    Ground truth: twelve affine planes (4 angles x RGB) mosaicked and split come
+    back to 1e-12 away from the border (bilinear is exact on affine fields, and
+    the composition of two exact steps is exact).
+
+    **Raises** ``ValueError``: *raw* is not 2-D, has a height or width that is
+    not a multiple of 4, is non-finite, or *layout* / *bayer* is invalid.
+    """
+    a = np.asarray(raw, dtype=np.float64)
+    if a.ndim != 2:
+        raise ValueError("polarization_demosaic_color: raw must be a 2-D mosaic, got shape %r"
+                         % (a.shape,))
+    if a.shape[0] % 4 or a.shape[1] % 4 or a.shape[0] < 4 or a.shape[1] < 4:
+        raise ValueError("polarization_demosaic_color: the colour-polarisation block is 4x4, so "
+                         "height and width must be multiples of 4 (got %dx%d)" % a.shape)
+    if not np.isfinite(a).all():
+        raise ValueError("polarization_demosaic_color: raw contains non-finite values")
+    import gfx2d as _g
+    rgb_mosaic = np.zeros(a.shape + (3,), dtype=np.float64)
+    for j in range(2):
+        for i in range(2):
+            rgb_mosaic[j::2, i::2] = _g.raw_demosaic_bilinear(a[j::2, i::2], bayer)
+    return np.ascontiguousarray(np.stack(
+        [polarization_demosaic(rgb_mosaic[..., c], layout) for c in range(3)], axis=-1))

@@ -35,7 +35,8 @@
 <p>the mosaic follow Polanalyser (Maeda, MIT); the interpolation is the</p>
 <p>classic bilinear Bayer demosaic. This is a re-implementation from that</p>
 <p>description, not copied code, and it does not depend on OpenCV. Colour</p>
-<p>polarisation sensors (IMX250MYR, a 4x4 block) are <b>not</b> handled here.</p>
+<p>polarisation sensors (IMX250MYR, a 4x4 block) are handled by</p>
+<p>:func:<code style="color:#22d3bf">polarization_demosaic_color</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
@@ -56,7 +57,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">polsweep</code> を入力に取れる)</h3>
 <p>—</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">polarization</code>)</h3>
-<p><a style="color:#22d3bf" href="opoptics:jones_element">jones_element</a> · <a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_from_jones">stokes_from_jones</a> · <a style="color:#22d3bf" href="opoptics:mueller_element">mueller_element</a> · <a style="color:#22d3bf" href="opoptics:mueller_apply">mueller_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_analyze">stokes_analyze</a> · <a style="color:#22d3bf" href="opoptics:mueller_from_intensities">mueller_from_intensities</a> · <a style="color:#22d3bf" href="opoptics:mueller_checks">mueller_checks</a></p>
+<p><a style="color:#22d3bf" href="opoptics:jones_element">jones_element</a> · <a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_from_jones">stokes_from_jones</a> · <a style="color:#22d3bf" href="opoptics:mueller_element">mueller_element</a> · <a style="color:#22d3bf" href="opoptics:mueller_apply">mueller_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_analyze">stokes_analyze</a> · <a style="color:#22d3bf" href="opoptics:polarization_demosaic_color">polarization_demosaic_color</a> · <a style="color:#22d3bf" href="opoptics:mueller_from_intensities">mueller_from_intensities</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <p>*Provenance: optics.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

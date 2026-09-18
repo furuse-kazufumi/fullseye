@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1993,
- "n_notes": 1999,
+ "n_ops": 1994,
+ "n_notes": 2000,
  "notes": {
   "vol_dilate": [
    {
@@ -17668,6 +17668,16 @@
     "in": "image2d",
     "out": "polsweep",
     "path": "docs/ops/optics/polarization/polarization_demosaic.md"
+   }
+  ],
+  "polarization_demosaic_color": [
+   {
+    "op": "polarization_demosaic_color",
+    "dim": "optics",
+    "category": "polarization",
+    "in": "image2d",
+    "out": "rgbvolume",
+    "path": "docs/ops/optics/polarization/polarization_demosaic_color.md"
    }
   ],
   "stokes_analyze": [

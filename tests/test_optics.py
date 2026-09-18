@@ -858,6 +858,7 @@ def _ledger_args():
                           np.array([1.0, 0.0, 0.0, 0.0])),
         "stokes_analyze": (np.array([1.0, 1.0, 0.0, 0.0]),),
         "polarization_demosaic": (np.linspace(0.2, 0.8, 16 * 16).reshape(16, 16),),
+        "polarization_demosaic_color": (np.linspace(0.2, 0.8, 16 * 16).reshape(16, 16),),
         "mueller_from_intensities": _mueller_fit_args(),
         "mueller_checks": (O.mueller_element("quarter_wave", 15.0),),
     }
@@ -874,7 +875,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # pupil_blur)を追加(124 → 127)。
     # 2026-09-18: optics "polarization" に偏光カメラの 3 op(polarization_demosaic /
     # mueller_from_intensities / mueller_checks)を追加(127 → 130)。
-    assert len(opsoptics.OPSOPTICS) == 130
+    assert len(opsoptics.OPSOPTICS) == 131   # + polarization_demosaic_color
     assert len(opsoptics.list_ops("wave")) == 7
     # 2026-09-04: 見え方の 5 族(33 op)を追加 —— matappear "appearance" 7 /
     # glassmirror "interface" 4・"mirror" 2・"glassbody" 4 / metalfinish "finish" 5 /
@@ -900,7 +901,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # half lives in raytrace (its own ledger checks are in tests/test_raytrace.py)
     from_optics = {n for n, m in opsoptics.OPSOPTICS.items() if m["module"] == "optics"}
     assert from_optics == set(O.OPTICS) == set(O.__all__) & set(O.OPTICS)
-    assert len(from_optics) == 24                       # 18 + 3 pupil-shape (2026-09-15) + 3 polarisation camera (2026-09-18)
+    assert len(from_optics) == 25                       # 18 + 3 pupil-shape (2026-09-15) + 4 polarisation camera (2026-09-18)
     assert all(m["module"] == "raytrace" for n, m in opsoptics.OPSOPTICS.items()
                if m["category"] == "design")
     assert all(m["module"] == "lensimage" for n, m in opsoptics.OPSOPTICS.items()
@@ -1240,3 +1241,32 @@ def test_mueller_checks_refuses_the_unphysical_and_flags_gain():
     psg, psa = _design(True)
     inten = np.einsum("nj,jk,nk->n", psa[:, 0, :], m_true, psg[:, :, 0])
     assert O.mueller_checks(O.mueller_from_intensities(inten, psg, psa), tol=1e-8)["physical"]
+
+
+def test_polarization_demosaic_color_is_exact_on_affine_planes_for_all_angles_and_channels():
+    """★4x4 ブロック(Bayer の各色サイトが 2x2 の偏光子)。12 枚の 1 次平面を畳んで戻す。"""
+    import gfx2d as G
+    h, w = 32, 48
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
+    fields = {}
+    for k, ang in enumerate(O.POLARIZATION_SWEEP_ANGLES):
+        fields[ang] = np.stack([0.2 + 0.003 * xx + 0.004 * yy + 0.05 * k,
+                                0.4 - 0.002 * xx + 0.003 * yy + 0.03 * k,
+                                0.3 + 0.004 * xx - 0.001 * yy + 0.02 * k], axis=-1)
+    lay = O.POLARIZATION_MOSAIC_LAYOUT
+    pos = G._bayer_offsets("RGGB")
+    raw = np.zeros((h, w))
+    for r in range(2):
+        for c in range(2):
+            ang = lay[r][c]
+            for ch, k in (("R", 0), ("G1", 1), ("G2", 1), ("B", 2)):
+                br, bc = pos[ch]
+                raw[r + 2 * br::4, c + 2 * bc::4] = fields[ang][r + 2 * br::4, c + 2 * bc::4, k]
+    out = O.polarization_demosaic_color(raw)
+    assert out.shape == (4, h, w, 3)
+    for k, ang in enumerate(O.POLARIZATION_SWEEP_ANGLES):
+        assert np.allclose(out[k][4:-4, 4:-4], fields[ang][4:-4, 4:-4], atol=1e-12), ang
+    with pytest.raises(ValueError, match="multiples of 4"):
+        O.polarization_demosaic_color(np.zeros((30, 48)))
+    with pytest.raises(ValueError, match="pattern"):
+        O.polarization_demosaic_color(raw, bayer="RGBW")

@@ -14319,6 +14319,14 @@
    "tw": "out = (rgb − 0.5) · contrast + 0.5 + brightness,裁剪到 [0, 1]。",
    "ko": "out = (rgb − 0.5) · contrast + 0.5 + brightness 를 [0, 1]로 자른다.",
    "de": "out = (rgb − 0.5) · contrast + 0.5 + brightness, beschnitten auf [0, 1]."
+  },
+  "optics/polarization_demosaic_color": {
+   "fp": "a93c73e58b83",
+   "ja": "カラー偏光センサ(IMX250MYR 系、4x4 ブロック)のモザイクを 4 枚の RGB 画像 (4, H, W, 3) に分ける。",
+   "zh": "将彩色偏振传感器(IMX250MYR 系,4x4 块)的马赛克拆成四张 RGB 图像 (4, H, W, 3)。",
+   "tw": "將彩色偏振感測器(IMX250MYR 系,4x4 區塊)的馬賽克拆成四張 RGB 影像 (4, H, W, 3)。",
+   "ko": "컬러 편광 센서(IMX250MYR 계열, 4x4 블록)의 모자이크를 네 장의 RGB 영상 (4, H, W, 3)으로 나눕니다.",
+   "de": "Zerlegt das Mosaik eines Farb-Polarisationssensors (IMX250MYR-Familie, 4x4-Block) in vier RGB-Bilder (4, H, W, 3)."
   }
  }
 }

@@ -15,6 +15,8 @@
 4. ``mueller_checks`` で取り戻した行列が**物理的**か(Cloude の coherency 行列が半正定値)、
    純粋か、どれだけ脱偏光しているか(Gil–Bernabeu 指数)を確かめる。
 
+5. ``polarization_demosaic_color`` でカラー偏光センサ(4x4 ブロック)を 4 角度 x RGB に戻す。
+
 【真値】全部合成。Stokes 場を決めて Malus の式で 4 枚を作り、モザイクに畳む。Mueller は
 既知の素子の積。だから「戻った値 − 真値」がそのまま誤差になる(assert で落とす)。
 
@@ -108,6 +110,23 @@ def main() -> int:
             ["%.3f" % v for v in c["coherency_eigenvalues"]]))
     assert fs.mueller_checks(m, tol=1e-3)["physical"]
     assert not fs.mueller_checks(np.diag([1.0, 1.5, 1.0, 1.0]))["physical"]
+
+    # 5. カラー偏光センサ(4x4 ブロック): 同じ場を RGB で畳み、4 角度 x RGB に戻す。
+    pos = fs.gfx2d._bayer_offsets("RGGB")
+    rgb_fields = {a: np.stack([truth[a] * 1.0, truth[a] * 0.8, truth[a] * 0.6], axis=-1)
+                  for a in fs.POLARIZATION_SWEEP_ANGLES}
+    craw = np.zeros_like(raw)
+    for r in range(2):
+        for c in range(2):
+            ang = fs.POLARIZATION_MOSAIC_LAYOUT[r][c]
+            for ch, k in (("R", 0), ("G1", 1), ("G2", 1), ("B", 2)):
+                br, bc = pos[ch]
+                craw[r + 2 * br::4, c + 2 * bc::4] = rgb_fields[ang][r + 2 * br::4, c + 2 * bc::4, k]
+    csweep = fs.polarization_demosaic_color(craw)
+    cerr = max(float(np.abs(csweep[k][4:-4, 4:-4] - rgb_fields[a][4:-4, 4:-4]).max())
+               for k, a in enumerate(fs.POLARIZATION_SWEEP_ANGLES))
+    print("5. カラー偏光(4x4): %s、真値との最大差 %.2e(縁 4 画素を除く)" % (csweep.shape, cerr))
+    assert cerr < 1e-2, cerr
 
     figs.save_grid("polarization_camera_pipeline",
                    [raw, sweep[0], sweep[2], d, dolp, np.degrees(aolp)],

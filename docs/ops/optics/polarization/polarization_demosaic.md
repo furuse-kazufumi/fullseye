@@ -54,7 +54,8 @@ Provenance: the layout convention and the "four Bayer planes" reading of
 the mosaic follow Polanalyser (Maeda, MIT); the interpolation is the
 classic bilinear Bayer demosaic. This is a re-implementation from that
 description, not copied code, and it does not depend on OpenCV. Colour
-polarisation sensors (IMX250MYR, a 4x4 block) are **not** handled here.
+polarisation sensors (IMX250MYR, a 4x4 block) are handled by
+:func:`polarization_demosaic_color`.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -88,7 +89,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`polarization`)
 
-[jones_element](jones_element.md) · [jones_apply](jones_apply.md) · [stokes_from_jones](stokes_from_jones.md) · [mueller_element](mueller_element.md) · [mueller_apply](mueller_apply.md) · [stokes_analyze](stokes_analyze.md) · [mueller_from_intensities](mueller_from_intensities.md) · [mueller_checks](mueller_checks.md)
+[jones_element](jones_element.md) · [jones_apply](jones_apply.md) · [stokes_from_jones](stokes_from_jones.md) · [mueller_element](mueller_element.md) · [mueller_apply](mueller_apply.md) · [stokes_analyze](stokes_analyze.md) · [polarization_demosaic_color](polarization_demosaic_color.md) · [mueller_from_intensities](mueller_from_intensities.md)
 
 ---
 *Provenance: optics.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -211,6 +211,7 @@ _CATALOG = {
         ("stokes_analyze", "optics", ["stokes"], "table"),
         # 2026-09-18: 偏光カメラの 3 本(Polanalyser / py-pol の一次情報から再実装)。
         ("polarization_demosaic", "optics", ["image2d"], "polsweep"),
+        ("polarization_demosaic_color", "optics", ["image2d"], "rgbvolume"),
         ("mueller_from_intensities", "optics", ["signal"], "matrix"),
         ("mueller_checks", "optics", ["matrix"], "table"),
     ],

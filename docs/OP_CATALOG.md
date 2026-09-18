@@ -2160,7 +2160,7 @@ _計 27 ops / 4 categories。_
 - `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
 
 ## Optics operators(opsoptics)by category
-_計 130 ops / 16 categories。_
+_計 131 ops / 16 categories。_
 
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
@@ -2254,7 +2254,7 @@ _計 130 ops / 16 categories。_
 - `merit_function` (`table → table`) — The DLS merit ``Σ residual²`` and its parts for one prescription (``table``).
 - `bend_singlet` (` → table`) — A thin singlet of given focal length at a Coddington shape factor (``table``).
 
-### polarization(9)
+### polarization(10)
 - `jones_element` (` → cimage`) — A 2x2 complex Jones matrix for one polarisation element.
 - `jones_apply` (`cimage, jones → jones`) — Push a Jones vector through a Jones matrix: ``[Ex', Ey'] = J @ [Ex, Ey]``.
 - `stokes_from_jones` (`jones → stokes`) — Jones vector -> Stokes vector (the four measurable intensities).
@@ -2262,6 +2262,7 @@ _計 130 ops / 16 categories。_
 - `mueller_apply` (`matrix, stokes → stokes`) — Push a Stokes vector through a Mueller matrix: ``S' = M @ S``.
 - `stokes_analyze` (`stokes → table`) — Read a Stokes vector: degree of polarisation, azimuth, ellipticity.
 - `polarization_demosaic` (`image2d → polsweep`) — Split a polarisation-sensor mosaic into the four analyser images.
+- `polarization_demosaic_color` (`image2d → rgbvolume`) — Split a **colour** polarisation-sensor mosaic (Sony IMX250MYR family, a
 - `mueller_from_intensities` (`signal → matrix`) — Recover a Mueller matrix from intensities measured through known
 - `mueller_checks` (`matrix → table`) — Say whether a 4x4 matrix is a physically realisable Mueller matrix, and
 

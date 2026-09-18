@@ -721,7 +721,7 @@ from optics import (  # noqa: E402,F401
     psf_to_mtf, mtf_diffraction, wavefront_stats,
     jones_element, jones_apply, stokes_from_jones,
     mueller_element, mueller_apply, stokes_analyze,
-    polarization_demosaic, mueller_from_intensities, mueller_checks,
+    polarization_demosaic, polarization_demosaic_color, mueller_from_intensities, mueller_checks,
     POLARIZATION_MOSAIC_LAYOUT, POLARIZATION_SWEEP_ANGLES,
 )
 from raytrace import (  # noqa: E402,F401  (lens design: real rays beyond the paraxial optics module)
@@ -1037,7 +1037,7 @@ __all__ = [
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
-    "polarization_demosaic", "mueller_from_intensities", "mueller_checks",
+    "polarization_demosaic", "polarization_demosaic_color", "mueller_from_intensities", "mueller_checks",
     "POLARIZATION_MOSAIC_LAYOUT", "POLARIZATION_SWEEP_ANGLES",
     "raytrace", "lens_system", "thick_lens", "glass", "refractive_index",
     "example_system", "paraxial_trace", "trace_rays", "ray_bundle",
