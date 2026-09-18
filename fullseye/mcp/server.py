@@ -665,7 +665,8 @@ def _fix_text(a: dict, store: HandleStore) -> dict:
         if it.get("reason"):
             extra += "  %s[%s]" % (it["reason"], it.get("reason_code", ""))
         if it.get("mismatch") in ("typo", "unrelated"):
-            extra += "  mismatch=%s(%.2f 倍)" % (it["mismatch"], it.get("mismatch_ratio", 0.0))
+            extra += "  mismatch=%s(壊れ %.0f %%, 距離 %.3f)" % (
+                it["mismatch"], 100 * it.get("mismatch_fraction", 0.0), it.get("mismatch_distance", 0.0))
         lines.append("- %-19s %-16s %s%s" % (it["status"], it["text"], cells, extra))
     lines.append("記号: ・無事 ◆直した ×検証不通過(元に戻した) ?直せない。"
                  "unrelated は「元の字が指示と無関係」の疑い —— 指示か画像のどちらかを確かめる")

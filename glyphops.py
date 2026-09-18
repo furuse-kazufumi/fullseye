@@ -44,7 +44,8 @@ __all__ = [
     # ★2026-09-18: ここまで __all__ に無かった(api 側は名前で import していたので
     #   気づけなかった)。一次情報は __all__ なので、公開するものは全部書く。
     "split_cells", "correct_spec", "find_plate", "rewrite_line",
-    "REASON_CODES", "MISMATCH_RATIO", "find_text_lines", "make_spec",
+    "REASON_CODES", "MISMATCH_RATIO", "MISMATCH_DISTANCE", "MISMATCH_FRACTION",
+    "find_text_lines", "make_spec",
 ]
 
 #: ``reason`` の機械可読な語彙(2026-09-18、外部 AI レビューの指摘で導入)。
@@ -63,10 +64,23 @@ REASON_CODES: dict = {
     "layout_implausible":   "版面が文字らしくない(切り方が外れている疑い)",
 }
 
-#: 「誤字」と「別物」の境。壊れたマスの ``distance_before`` の中央値 ÷ 床 がこれ未満なら
-#: 誤字(1 字だけ違う・部首が違う)、以上なら**意図した文字列と無関係な字**が書かれている
-#: 疑い。実測(2026-09-18、生成画像 26 枚): 誤字は 1.8〜1.9、別物は 2.15〜2.86。
-#: 標本が少ないので境は目安で、報告には比そのものも載せる(``mismatch_ratio``)。
+#: 「誤字」と「別物」の判定に使う 3 つの数。
+#:
+#: * ``MISMATCH_FRACTION``: 距離を測れたマスのうち**壊れたマスの割合**がこれ以上なら別物の候補。
+#:   誤字は 1 字か 2 字だけ壊れる(4 字なら 0.25〜0.5)、別物は全部壊れる(1.0)。
+#:   これが主の判定 —— **床に依らない**。
+#: * ``MISMATCH_DISTANCE``: 壊れたマスの距離の中央値がこれ以上でないと別物と言わない
+#:   (短い行で無事な字が偶然そろって誤検出になる保険。無事な字の誤検出は距離が床のすぐ上、
+#:   実測 0.05〜0.08 に集まる。誤字 0.099〜0.110、別物 0.125〜0.166)。
+#: * ``MISMATCH_RATIO``: 中央値 ÷ 床。**報告に載せるだけ**で判定には使わない。2026-09-18 の
+#:   最初の版はこれを境(2.0)にしていたが、床は書体集合で動く(Windows 3 本 0.0505 /
+#:   CI の noto-cjk 0.0404)ので、同じ誤字が Windows で 1.90、Linux で 2.45 と出て
+#:   「別物」に化けた。**環境で動く量を境にしない**。
+#: * 精度は目安の域: 参照の生成画像 15 枚(受理分、真値は台帳の壊れ字 2/3 以上を別物と仮置き)で
+#:   10/15(旧の比の境は 11/15、差は雑音)。生成画像の誤字は 1 行に 3〜6 字壊れるので割合でも
+#:   分けにくい。判定は「呼ぶ側に確認を促す枝」であって、正解を保証する門ではない。
+MISMATCH_FRACTION: float = 2.0 / 3.0
+MISMATCH_DISTANCE: float = 0.10
 MISMATCH_RATIO: float = 2.0
 
 
@@ -881,8 +895,9 @@ def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
         (``rewrite_line`` のみ)bbox の行を意図した文字列で丸ごと描き直した。
 
     行ごとに ``mismatch`` も返す: ``none``(壊れたマス無し)/ ``typo``(誤字: 壊れた
-    マスの距離の中央値が床の :data:`MISMATCH_RATIO` 倍未満)/ ``unrelated``(意図した
-    文字列と無関係な字が書かれていた疑い)/ ``unknown``(距離が測れていない)。
+    マスが一部)/ ``unrelated``(壊れたマスが :data:`MISMATCH_FRACTION` 以上で距離の中央値も
+    :data:`MISMATCH_DISTANCE` 以上 = 意図した文字列と無関係な字が書かれていた疑い)/
+    ``unknown``(距離が測れていない)。
     ``rewrite_line`` は別物でも描き直せてしまうので、**指示か画像のどちらかが違う**
     可能性を呼ぶ側へ返す。``skipped`` には人向けの ``reason`` と機械向けの
     ``reason_code``(:data:`REASON_CODES` の鍵)を併記する。
@@ -1071,15 +1086,16 @@ def correct_spec(rgb: np.ndarray, spec: dict) -> tuple:
 def _judge_mismatch(entry: dict, thr: float) -> None:
     """行の報告に ``mismatch``(誤字か別物か)と ``mismatch_ratio`` を書き足す。
 
-    壊れたマス(``distance_before`` > 床)の距離の中央値を床で割る。誤字(部首の違い・
-    1 字の置換)は床の 2 倍未満、意図した文字列と**無関係な字**が書かれていると 2 倍を
-    超える(実測は :data:`MISMATCH_RATIO` の注)。「本日休業」と指示されたのに元の板に
-    まったく別の語があった —— そういう場合、描き直しは成功しても**指示か画像のどちらかが
-    間違っている**可能性があるので、呼ぶ側が気づけるように別枝で報告する
+    主の判定は**壊れたマスの割合**(:data:`MISMATCH_FRACTION` 以上で別物の候補)、保険が
+    壊れたマスの距離の中央値(:data:`MISMATCH_DISTANCE` 以上)。誤字は 1 字か 2 字だけ壊れ、
+    意図した文字列と**無関係な字**が書かれていると全部壊れる。「本日休業」と指示されたのに
+    元の板にまったく別の語があった —— そういう場合、描き直しは成功しても**指示か画像の
+    どちらかが間違っている**可能性があるので、呼ぶ側が気づけるように別枝で報告する
     (2026-09-18、ユーザー指摘「元の文字が本日休業と全く関係ないのが気にはなる」)。
+    ``mismatch_ratio``(中央値 ÷ 床)は情報として残すが判定には使わない(床は環境で動く)。
 
     値: ``none`` = 壊れたマスが無い / ``typo`` / ``unrelated`` / ``unknown`` = 距離が測れて
-    いない(マスが空など)。
+    いない(マスが空・縁取りで断った)。
     """
     cells = entry.get("cells", ())
     # ★色が多峰(縁取り・影)で断ったマスがあると、インクのマスクに縁まで入って距離が
@@ -1095,9 +1111,12 @@ def _judge_mismatch(entry: dict, thr: float) -> None:
     if not broken:
         entry["mismatch"] = "none"
         return
-    ratio = float(np.median(broken)) / float(thr) if thr > 0 else float("inf")
-    entry["mismatch_ratio"] = round(ratio, 3)
-    entry["mismatch"] = "unrelated" if ratio >= MISMATCH_RATIO else "typo"
+    med = float(np.median(broken))
+    entry["mismatch_ratio"] = round(med / float(thr), 3) if thr > 0 else float("inf")
+    entry["mismatch_distance"] = round(med, 4)
+    entry["mismatch_fraction"] = round(len(broken) / float(len(ds)), 3)
+    unrelated = (len(broken) / float(len(ds)) >= MISMATCH_FRACTION and med >= MISMATCH_DISTANCE)
+    entry["mismatch"] = "unrelated" if unrelated else "typo"
 
 
 # --------------------------------------------------------------------------- #

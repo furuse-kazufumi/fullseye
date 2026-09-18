@@ -78,7 +78,7 @@ retrieval 無しでは使えない)。
 
 ```
 fix_text(mode=repair_flagged, 床=0.0505 from typeface, 書体 3 本) → fullseye://img/9f0c…
-- replaced            電気設備         ・・◆・  mismatch=typo(1.90 倍)
+- replaced            電気設備         ・・◆・  mismatch=typo(壊れ 25 %, 距離 0.099)
 記号: ・無事 ◆直した ×検証不通過(元に戻した) ?直せない。unrelated は「元の字が指示と無関係」の疑い
 ```
 
@@ -89,8 +89,8 @@ fix_text(mode=repair_flagged, 床=0.0505 from typeface, 書体 3 本) → fullse
 * 直せない行は `skipped` + `reason_code`(`missing_text_or_bbox / bbox_too_small / empty_text /
   no_font / no_ink / empty_cell / multimodal_colour / cannot_replace / no_lines / layout_implausible`)。縁取り・影の文字は
   `multimodal_colour` で断り、画像は触らない。
-* `mismatch=unrelated`(壊れたマスの距離の中央値が床の 2 倍以上)のときは、描き直しが成功して
-  いても**指示か画像のどちらかが違う**疑いなので、前後対比の小図を自動で付ける(`vision=auto`)。
+* `mismatch=unrelated`(壊れたマスが 2/3 以上で、距離の中央値も 0.10 以上)のときは、描き直しが
+  成功していても**指示か画像のどちらかが違う**疑いなので、前後対比の小図を自動で付ける(`vision=auto`)。
 * 灰色のハンドル、bbox の長さ違い、数でない要素、未知の `mode` は `-32602` で入口で拒む。
 
 ## 画像は「在らず、必要なときだけ在る」
