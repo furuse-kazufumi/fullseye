@@ -11,6 +11,10 @@
 <p>polarisation ellipse `<code style="color:#22d3bf">0.5*atan2(S2, S1)</code><code style="color:#22d3bf"> mapped into </code><code style="color:#22d3bf">[0, 180)</code>` ·</p>
 <p>`<code style="color:#22d3bf">ellipticity_deg</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">0.5*asin(S3/|S|)</code><code style="color:#22d3bf"> in </code><code style="color:#22d3bf">[-45, +45]</code>` ·</p>
 <p>`<code style="color:#22d3bf">handedness</code><code style="color:#22d3bf"> one of </code><code style="color:#22d3bf">&quot;right&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;left&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;linear&quot;</code>`.</p>
+<p>The ellipticity is that of the <b>polarised part</b> (`<code style="color:#22d3bf">S3</code>` over</p>
+<p>`<code style="color:#22d3bf">sqrt(S1^2+S2^2+S3^2)</code><code style="color:#22d3bf">); pypolar divides by </code><code style="color:#22d3bf">S0</code>` instead, which for</p>
+<p>partially polarised light mixes the unpolarised part into the ellipse —</p>
+<p>the two agree only for fully polarised light (measured 2026-09-18).</p>
 <p>**`<code style="color:#22d3bf">azimuth_deg</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">ellipticity_deg</code><code style="color:#22d3bf"> are </code><code style="color:#22d3bf">None</code>` when they are</p>
 <p>undefined** — azimuth when the linear part is exactly zero (circular or</p>
 <p>unpolarised light has no orientation), ellipticity when the polarised part</p>
@@ -45,11 +49,12 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:polarization_camera_pipeline">polarization_camera_pipeline</a> — <code style="color:#22d3bf">py -3.11 examples/polarization_camera_pipeline.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a> · <a style="color:#22d3bf" href="opoptics:spot_diagram">spot_diagram</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">polarization</code>)</h3>
-<p><a style="color:#22d3bf" href="opoptics:jones_element">jones_element</a> · <a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_from_jones">stokes_from_jones</a> · <a style="color:#22d3bf" href="opoptics:mueller_element">mueller_element</a> · <a style="color:#22d3bf" href="opoptics:mueller_apply">mueller_apply</a></p>
+<p><a style="color:#22d3bf" href="opoptics:jones_element">jones_element</a> · <a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_from_jones">stokes_from_jones</a> · <a style="color:#22d3bf" href="opoptics:mueller_element">mueller_element</a> · <a style="color:#22d3bf" href="opoptics:mueller_apply">mueller_apply</a> · <a style="color:#22d3bf" href="opoptics:polarization_demosaic">polarization_demosaic</a> · <a style="color:#22d3bf" href="opoptics:mueller_from_intensities">mueller_from_intensities</a> · <a style="color:#22d3bf" href="opoptics:mueller_checks">mueller_checks</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <p>*Provenance: optics.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

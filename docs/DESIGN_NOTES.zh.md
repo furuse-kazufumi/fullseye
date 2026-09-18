@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：610 / 756 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：610 / 758 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel_match.py`
@@ -27,7 +27,7 @@
 - **L546** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
 - **L562** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
 - **L617** — ★``annotate.overlay_mask`` **有意不暴露到顶层**。同名的 ``imgio.overlay_mask`` 已作为 ``fs.overlay_mask`` 公开，其参数与含义都不同(imgio = 原始 RGB、mask>0.5、fill/margin / annotate = 角色名的颜色、也可用权重 [0,1]、拒绝形状不匹配)。在同名上加载不同的约定，调用方收到的不是异常而是**看似合理却不同的图**。公开 API 的破坏性变更不擅自做，故带角色的那个用 ``fs.annotate.overlay_mask`` 取用。
-- **L1379** — ★ **目前对彩色图像没有正确的调用方式**:整批传入会混色,按通道调用 3 次会让自归一化的 op 把每个通道除以各自的最大值,破坏通道间的比值(灰度边缘法的角度误差从自建 Sobel 的 1.03 度 -> 每图 4.17 度 -> 每通道 27.86 度,零点 29.14 度)。倒向哪一边是**契约的决定**,所以这里不改动任何一个默认数值,仅在 `on_error="raise"` 时拒绝,默认则记入台账使其可见。详情与选项见 docs/KNOWN_ISSUES.md。
+- **L1383** — ★ **目前对彩色图像没有正确的调用方式**:整批传入会混色,按通道调用 3 次会让自归一化的 op 把每个通道除以各自的最大值,破坏通道间的比值(灰度边缘法的角度误差从自建 Sobel 的 1.03 度 -> 每图 4.17 度 -> 每通道 27.86 度,零点 29.14 度)。倒向哪一边是**契约的决定**,所以这里不改动任何一个默认数值,仅在 `on_error="raise"` 时拒绝,默认则记入台账使其可见。详情与选项见 docs/KNOWN_ISSUES.md。
 
 ## `astrostack.py`
 
@@ -790,6 +790,10 @@
 - **L999** — ★只有凸起（余高）偏离了预测。原因是趾部的蔓延（因为 τ 是绝对值阈值）。
 - **L1193** — ★沟槽随角度逐渐消失的样子（以自母材面的凹陷来看）
 
+## `examples/polarization_camera_pipeline.py`
+
+- **L101** _(ja)_ — ★雑音つきで回復した行列は coherency の最小固有値が僅かに負に出る(雑音 1e-4 → -1e-4 程度)。tol は雑音の水準で置く。tol を勘で小さくすると「非物理」に化ける。
+
 ## `examples/profile_shape_inspection.py`
 
 - **L25** — ★由于要 import repo 根目录下的模块（profileops），把 repo 根目录放在最前，使其从 checkout 直接运行也能通过。与其他示例做法相同。没有它，`py -3.11 examples/<name>.py` 会以 ModuleNotFoundError 失败（2026-09-09 实测：在没有运行门的 83 个中，失败的只有这种类型的 2 个）。
@@ -887,9 +891,9 @@
 
 ## `fullseye/__init__.py`
 
-- **L361** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L545** — ★与声明 out 类型对齐的 adapter，会**丢弃返回元组的 op 的第 2 项及以后**(``drizzle_resample`` 的 ``wht``、``piv_cross_correlate`` 的 ``info``)。当被丢弃的一侧需要用到时,从台账入口就够不着。2026-09-06,某超分辨率 PoC 写成 ``flow, info = fs.ledger.piv_cross_correlate(...)``,沿第 1 轴拆开 (2,R,C),把 dy 的第 2 行当作 dx 使用,使偏移估计从 0.12 -> 0.74 像素(不抛异常)。用 ``.raw`` 可够到原始返回:``fs.ledger.piv_cross_correlate.raw(a, b)``。
-- **L902** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L363** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L547** — ★与声明 out 类型对齐的 adapter，会**丢弃返回元组的 op 的第 2 项及以后**(``drizzle_resample`` 的 ``wht``、``piv_cross_correlate`` 的 ``info``)。当被丢弃的一侧需要用到时,从台账入口就够不着。2026-09-06,某超分辨率 PoC 写成 ``flow, info = fs.ledger.piv_cross_correlate(...)``,沿第 1 轴拆开 (2,R,C),把 dy 的第 2 行当作 dx 使用,使偏移估计从 0.12 -> 0.74 像素(不抛异常)。用 ``.raw`` 可够到原始返回:``fs.ledger.piv_cross_correlate.raw(a, b)``。
+- **L906** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1062,6 +1066,10 @@
 
 - **L63** — ★ 但既有的 `labels` 谓词为 ``ndim >= 1``，**2-D 的标签图像与 3-D 的标签体积同居**。本模块的 11 个 op 被传入 2-D 时全部抛 ValueError（fail-closed），故**弄错绝不会悄然通过**。危险在于相反面：在只有 2-D 种子的池中，会在一次也不执行的情况下看起来像“发现为零”—— 与 opsphoton 在 counts 上踩过的陷阱同形。配线侧务必注入 3-D 标签种子（参见下方“亲配线时”）。 * voxel —— ``vol_label_overlay`` 叠加的原灰度体积，以及 ``vol_label_color_flicker`` 接收的二值体积。二者都是 (D,H,W) 的既有 voxel 词汇本身，没有理由另造新词。 * rgbimage —— 断面与投影的返回 (H,W,3)。既有的 rgbimage 消费 op（镜面分离、色变换、保存）可保持语义地使用。**这里是 rgbvolume 词汇的出口**，故新词汇不成死胡同。 * matrix —— ``vol_label_palette`` 的返回 (n+1, 3)。就是 2-D 的实矩阵本身。 * table —— 形状统计 / 图例 / 闪烁测量 / 带色网格的集合。
 - **L77** — ★ 未为“带色网格的集合”另造新词，是**实测的结果**。最初打算加 `colormeshes`，但把既有的 table 消费 op 全部过一遍，将 ``vol_labels_to_meshes`` 的返回传入（2026-09-02 实测，横跨 ops3d / ops1d / opsmath / opsoptics / opslightfield / opsphoton / opsacoustics / opsinterferometry / opscadmap），能吃 table 的 op **只有 3 件（abcd_matrix / wavefront_stats / istft），且 3 件都以 ValueError fail-closed**。即不满足“混用会悄然出错”的条件。给不满足者添词，只会多出一个消费者为零的新词汇 = 多一个死胡同（``docs/OP_COMBINATION_MATRIX.md`` 的判断基准）。此外，若想把单个网格作为 ``mesh`` sort 流向下游，用 ``[(m["vertices"], m["faces"]) for m in result]`` 剥出 —— 因这是丢弃颜色的操作，故不在 adapter 中隐式进行。 -------------------------------------------------------------------------- 一个新词汇及其理由（基于实测） -------------------------------------------------------------------------- * rgbvolume —— **(D, H, W, 3) 的带色体积**。既有 `lightfield` 的谓词只是 ``ndim == 4``，故色体积**完全满足 lightfield**。实测（2026-09-02，将 ``(8, 16, 16, 3)`` 的色体积传给 lightfield 的 op）：- ``lf_refocus`` / ``lf_subaperture`` / ``lf_epi`` / ``lf_depth_from_focus`` 这 **4 个 op 既不出异常也不出 NaN**，返回有限的 (16, 3)（各自自称“重聚焦像”“部分开口像”“EPI”“深度”）。是把 z 轴读作角度轴 V、y 轴读作角度轴 U 而得的无意义有限值。- 只有 ``lf_all_in_focus`` 因参数不足给出 TypeError（不是类型问题）。反向（把光场传给 ``vol_label_slice_rgb``）会因 shape[3] != 3 而 fail-closed。**安全的只有一侧**，故不能依赖运行时检查。与将 zscan 从 video 分离同一判断。入口 = ``vol_colorize_labels`` (labels -> rgbvolume) 与 ``vol_label_overlay`` (voxel + labels -> rgbvolume)，出口 = ``vol_label_slice_rgb`` / ``vol_label_mpr_rgb`` (-> rgbimage)。产 2、吃 2，故不成死胡同。
+
+## `optics.py`
+
+- **L1935** _(ja)_ — ★縁は**モザイクのまま**鏡映で 2 画素広げてから抜く。広げ幅が偶数で ``reflect`` (縁の画素を重ねない鏡映)なら 2x2 の位相が保たれる。マスク後の面を伸ばすと 未計測の 0 が縁に写り、一様な場でも縁が暗くなった(実測 16 画素)。
 
 ## `pcseg.py`
 
@@ -1312,7 +1320,7 @@
 ## `tests/test_opdocs.py`
 
 - **L212** — ★2026-09-03：由于所有 backend 的 _safe 都汇聚到了 backend_safe.guard，所以按 guard 立起的结构化标记来判定，而不是按 qualname 的字符串匹配（guard 也会在 qualname 里留下 "_safe(...)"，但那是给显示用的）。
-- **L1178** — ★没找到的原因：`ops.REGISTRY`（899）与 2-D 笔记（899）一致，所以**只要从 registry 一侧计数就会看起来「零缺失」**。曾经这样下结论并搞错了。所以这个门从跨 tier 的索引一侧计数（memory: feedback_search_all_tiers_before_declaring_a_gap）。 --------------------------------------------------------------------------- #
+- **L1179** — ★没找到的原因：`ops.REGISTRY`（899）与 2-D 笔记（899）一致，所以**只要从 registry 一侧计数就会看起来「零缺失」**。曾经这样下结论并搞错了。所以这个门从跨 tier 的索引一侧计数（memory: feedback_search_all_tiers_before_declaring_a_gap）。 --------------------------------------------------------------------------- #
 
 ## `tests/test_packaging_foundation.py`
 

@@ -111,6 +111,12 @@ EXAMPLES = [
                 "またぐぶん漏れる(−0.221、el>2Δρ で 0)。対向比は速さを落とすので 1°/s の遠景の"
                 "流れも −0.612 に読む。LGMD η のピークは α·l/|v| 前で θ=24.0°(球の厳密な θ なら "
                 "24.6°、4 次式の根)、τ 球式は真値に厳密、円板式の誤用は cos²(θ/2) 倍、DSI 0.80。"},
+    {"id": "polarization_camera_pipeline", "task": "optics", "data": "synthetic",
+     "name": "偏光カメラの生フレームを Stokes・DoLP・Mueller に読む",
+     "summary": "IMX250MZR 系の 2x2 モザイクを 4 枚に戻し(双線形、1 次の場は厳密、縁はモザイクを鏡映)、"
+                "DoLP 地図と Stokes へ。既知の PSG/PSA 列の強度から Mueller を最小二乗で回復(144 測定・"
+                "雑音 1e-4 で誤差 5e-4)。★偏光板だけの設計は階数 9 で断る(擬似逆行列を返さない)。"
+                "回復した行列の物理性(Cloude 固有値)・純粋性・脱偏光指数・受動性を一度に確かめる。"},
     {"id": "poc_polarization_specular", "task": "separation", "data": "synthetic",
      "name": "偏光による鏡面分離(分けた「拡散」は本当に拡散か)",
      "summary": "拡散と鏡面を自分で決めて偏光子 4 枚を合成し、分離を測り返す。"

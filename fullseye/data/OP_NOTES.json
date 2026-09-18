@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1978,
- "n_notes": 1984,
+ "n_ops": 1981,
+ "n_notes": 1987,
  "notes": {
   "vol_dilate": [
    {
@@ -17511,6 +17511,16 @@
     "path": "docs/ops/optics/polarization/mueller_apply.md"
    }
   ],
+  "mueller_checks": [
+   {
+    "op": "mueller_checks",
+    "dim": "optics",
+    "category": "polarization",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/optics/polarization/mueller_checks.md"
+   }
+  ],
   "mueller_element": [
    {
     "op": "mueller_element",
@@ -17518,6 +17528,26 @@
     "category": "polarization",
     "out": "matrix",
     "path": "docs/ops/optics/polarization/mueller_element.md"
+   }
+  ],
+  "mueller_from_intensities": [
+   {
+    "op": "mueller_from_intensities",
+    "dim": "optics",
+    "category": "polarization",
+    "in": "signal",
+    "out": "matrix",
+    "path": "docs/ops/optics/polarization/mueller_from_intensities.md"
+   }
+  ],
+  "polarization_demosaic": [
+   {
+    "op": "polarization_demosaic",
+    "dim": "optics",
+    "category": "polarization",
+    "in": "image2d",
+    "out": "polsweep",
+    "path": "docs/ops/optics/polarization/polarization_demosaic.md"
    }
   ],
   "stokes_analyze": [

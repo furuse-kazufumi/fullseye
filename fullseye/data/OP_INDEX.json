@@ -1,8 +1,8 @@
 {
- "n_ops": 1978,
+ "n_ops": 1981,
  "tiers": {
   "color": 12,
-  "ledger": 1031,
+  "ledger": 1034,
   "nary": 17,
   "registry": 918
  },
@@ -7250,6 +7250,19 @@
    ]
   },
   {
+   "name": "mueller_checks",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "polarization",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "mueller_element",
    "halcon": "",
    "in_sort": null,
@@ -7259,6 +7272,19 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "mueller_from_intensities",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "matrix",
+   "category": "polarization",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "signal"
+   ]
   },
   {
    "name": "mutual_information",
@@ -8631,6 +8657,19 @@
    "tier": "ledger",
    "ledger": "ops3d",
    "dim": "3d",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "polarization_demosaic",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "polsweep",
+   "category": "polarization",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
    "in_sorts": [
     "image2d"
    ]

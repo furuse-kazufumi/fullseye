@@ -819,6 +819,21 @@ def test_polarisation_ops_refuse_unphysical_input():
 # --------------------------------------------------------------------------- #
 # ledger / facade wiring                                                       #
 # --------------------------------------------------------------------------- #
+def _mueller_fit_args():
+    """36 対(偏光板 6 角 × QWP あり/なし)の設計と、既知の M からの前向き強度。"""
+    angs = [0.0, 30.0, 60.0, 90.0, 120.0, 150.0]
+    gens, anas = [], []
+    for a in angs:
+        p = O.mueller_element("polarizer", a)
+        gens += [p, O.mueller_element("quarter_wave", a + 20.0) @ p]
+        anas += [p, p @ O.mueller_element("quarter_wave", a + 20.0)]
+    psg = np.array([g for g in gens for _ in anas])
+    psa = np.array([a for _ in gens for a in anas])
+    m_true = O.mueller_element("retarder", 30.0, 70.0)
+    inten = np.einsum("nj,jk,nk->n", psa[:, 0, :], m_true, psg[:, :, 0])
+    return (inten, psg, psa)
+
+
 def _ledger_args():
     """One valid call per registered op (also the fixture for the type check)."""
     field = _band_limited_field(16)
@@ -842,6 +857,9 @@ def _ledger_args():
         "mueller_apply": (O.mueller_element("polarizer"),
                           np.array([1.0, 0.0, 0.0, 0.0])),
         "stokes_analyze": (np.array([1.0, 1.0, 0.0, 0.0]),),
+        "polarization_demosaic": (np.linspace(0.2, 0.8, 16 * 16).reshape(16, 16),),
+        "mueller_from_intensities": _mueller_fit_args(),
+        "mueller_checks": (O.mueller_element("quarter_wave", 15.0),),
     }
 
 
@@ -854,7 +872,9 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # センサー/レンズ/光源/レイアウトの 4 オブジェクトもここに入る。
     # 2026-09-15: optics "wave" に瞳形状 PSF の 3 op(defocus_from_shift / pupil_psf /
     # pupil_blur)を追加(124 → 127)。
-    assert len(opsoptics.OPSOPTICS) == 127
+    # 2026-09-18: optics "polarization" に偏光カメラの 3 op(polarization_demosaic /
+    # mueller_from_intensities / mueller_checks)を追加(127 → 130)。
+    assert len(opsoptics.OPSOPTICS) == 130
     assert len(opsoptics.list_ops("wave")) == 7
     # 2026-09-04: 見え方の 5 族(33 op)を追加 —— matappear "appearance" 7 /
     # glassmirror "interface" 4・"mirror" 2・"glassbody" 4 / metalfinish "finish" 5 /
@@ -880,7 +900,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # half lives in raytrace (its own ledger checks are in tests/test_raytrace.py)
     from_optics = {n for n, m in opsoptics.OPSOPTICS.items() if m["module"] == "optics"}
     assert from_optics == set(O.OPTICS) == set(O.__all__) & set(O.OPTICS)
-    assert len(from_optics) == 21                       # 18 + the 3 pupil-shape ops (2026-09-15)
+    assert len(from_optics) == 24                       # 18 + 3 pupil-shape (2026-09-15) + 3 polarisation camera (2026-09-18)
     assert all(m["module"] == "raytrace" for n, m in opsoptics.OPSOPTICS.items()
                if m["category"] == "design")
     assert all(m["module"] == "lensimage" for n, m in opsoptics.OPSOPTICS.items()
@@ -1083,3 +1103,140 @@ def test_mueller_apply_field_rejects_shapes_that_do_not_broadcast():
     s[..., 0] = 1.0
     with pytest.raises(ValueError, match="broadcast"):
         O.mueller_apply(m, s)
+
+
+# --------------------------------------------------------------------------- #
+# 偏光カメラ: モザイク → 4 枚 / 強度 → Mueller / Mueller → 物理性(2026-09-18)     #
+# --------------------------------------------------------------------------- #
+def _affine_fields(h=24, w=32):
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
+    return [0.3 + 0.01 * xx + 0.02 * yy, 0.5 - 0.005 * xx + 0.01 * yy,
+            0.2 + 0.02 * xx - 0.004 * yy, 0.7 + 0.003 * xx + 0.003 * yy]
+
+
+def _mosaic(fields, layout=O.POLARIZATION_MOSAIC_LAYOUT):
+    h, w = fields[0].shape
+    raw = np.zeros((h, w))
+    for r in range(2):
+        for c in range(2):
+            k = O.POLARIZATION_SWEEP_ANGLES.index(layout[r][c] % 180.0)
+            raw[r::2, c::2] = fields[k][r::2, c::2]
+    return raw
+
+
+def test_polarization_demosaic_is_exact_on_affine_fields_and_keeps_the_angle_order():
+    """★双線形は 1 次の場を厳密に戻す。4 枚の順序が (0, 45, 90, 135) で、既定の
+    IMX250MZR 配列 [[90, 45], [135, 0]] を読み違えていれば別の場が返って割れる。"""
+    fields = _affine_fields()
+    out = O.polarization_demosaic(_mosaic(fields))
+    assert len(out) == 4 and all(o.shape == fields[0].shape for o in out)
+    for got, want in zip(out, fields):
+        assert np.allclose(got[1:-1, 1:-1], want[1:-1, 1:-1], atol=1e-12)
+    # 別の配列(0 が左上)を渡せば、その読みで元に戻る。
+    lay = ((0.0, 45.0), (135.0, 90.0))
+    out2 = O.polarization_demosaic(_mosaic(fields, lay), layout=lay)
+    for got, want in zip(out2, fields):
+        assert np.allclose(got[1:-1, 1:-1], want[1:-1, 1:-1], atol=1e-12)
+
+
+def test_polarization_demosaic_feeds_the_sweep_ops_without_an_argument():
+    """demosaic の 4 枚をそのまま polarization_dolp_map に渡せる(角度の既定が一致)。
+    一様に 30 度の直線偏光(DoLP 0.6)を Malus で 4 枚にしてモザイクにする。"""
+    import specularity as S
+    h, w = 16, 16
+    s0, dolp, aolp = 1.0, 0.6, np.radians(30.0)
+    fields = [0.5 * s0 * (1.0 + dolp * np.cos(2.0 * (np.radians(a) - aolp))) * np.ones((h, w))
+              for a in O.POLARIZATION_SWEEP_ANGLES]
+    d = S.polarization_dolp_map(O.polarization_demosaic(_mosaic(fields)))
+    assert np.allclose(d, dolp, atol=1e-9)
+
+
+def test_polarization_demosaic_refuses_bad_shapes_and_bad_layouts():
+    with pytest.raises(ValueError, match="2-D"):
+        O.polarization_demosaic(np.zeros((4, 4, 3)))
+    with pytest.raises(ValueError, match="even"):
+        O.polarization_demosaic(np.zeros((5, 4)))
+    with pytest.raises(ValueError, match="non-finite"):
+        O.polarization_demosaic(np.full((4, 4), np.nan))
+    with pytest.raises(ValueError, match="exactly once"):
+        O.polarization_demosaic(np.zeros((4, 4)), layout=((0, 0), (90, 135)))
+
+
+def _design(with_retarder=True):
+    """PSG / PSA の Mueller 行列の列。偏光板 6 角 × (QWP あり/なし) で 36 対。"""
+    angs = [0.0, 30.0, 60.0, 90.0, 120.0, 150.0]
+    gens, anas = [], []
+    for a in angs:
+        p = O.mueller_element("polarizer", a)
+        gens.append(p)
+        if with_retarder:
+            gens.append(O.mueller_element("quarter_wave", a + 20.0) @ p)
+    for a in angs:
+        p = O.mueller_element("polarizer", a)
+        anas.append(p)
+        if with_retarder:
+            anas.append(p @ O.mueller_element("quarter_wave", a + 20.0))
+    psg = np.array([g for g in gens for _ in anas])
+    psa = np.array([a for _ in gens for a in anas])
+    return psg, psa
+
+
+def test_mueller_from_intensities_recovers_a_known_matrix():
+    m_true = O.mueller_element("polarizer", 10.0) @ O.mueller_element("retarder", 30.0, 70.0)
+    psg, psa = _design(True)
+    inten = np.einsum("nj,jk,nk->n", psa[:, 0, :], m_true, psg[:, :, 0])
+    m = O.mueller_from_intensities(inten, psg, psa)
+    assert np.allclose(m, m_true, atol=1e-10), np.abs(m - m_true).max()
+    # 画像ごと(同じ系を画素ごとに解く): (N, 2, 3) → (4, 4, 2, 3)
+    stack = np.stack([inten * k for k in (1.0, 0.5, 2.0, 1.5, 0.25, 3.0)], axis=1).reshape(-1, 2, 3)
+    mm = O.mueller_from_intensities(stack, psg, psa)
+    assert mm.shape == (4, 4, 2, 3)
+    assert np.allclose(mm[..., 0, 0], m_true, atol=1e-10)
+    assert np.allclose(mm[..., 1, 2], 3.0 * m_true, atol=1e-9)
+
+
+def test_mueller_from_intensities_refuses_a_design_that_cannot_see_s3():
+    """★偏光板だけの設計は S3 の行と列が見えない(階数 9)。擬似逆行列で
+    それらしい答えを返さず、階数を言って断る。"""
+    m_true = O.mueller_element("quarter_wave", 30.0)
+    psg, psa = _design(False)
+    inten = np.einsum("nj,jk,nk->n", psa[:, 0, :], m_true, psg[:, :, 0])
+    with pytest.raises(ValueError, match="rank 9"):
+        O.mueller_from_intensities(inten, psg, psa)
+    with pytest.raises(ValueError, match="at least 16"):
+        O.mueller_from_intensities(inten[:10], psg[:10], psa[:10])
+    with pytest.raises(ValueError, match="agree on N"):
+        O.mueller_from_intensities(inten, psg[:-1], psa)
+
+
+@pytest.mark.parametrize("kind", O.MUELLER_KINDS)
+def test_mueller_checks_every_element_is_physical_and_passive(kind):
+    m = O.mueller_element(kind, 25.0, 60.0)
+    c = O.mueller_checks(m)
+    assert c["physical"] and c["passive"], c
+    if kind == "depolarizer":
+        assert not c["pure"] and abs(c["depolarization_index"]) < 1e-12, c
+    else:
+        assert c["pure"], c
+        ev = c["coherency_eigenvalues"]
+        assert abs(ev[0] - m[0, 0]) < 1e-12 and max(abs(v) for v in ev[1:]) < 1e-12, ev
+        assert abs(c["depolarization_index"] - 1.0) < 1e-12, c
+
+
+def test_mueller_checks_refuses_the_unphysical_and_flags_gain():
+    bad = np.eye(4); bad[1, 1] = 1.5                       # 入力より偏光した出力
+    c = O.mueller_checks(bad)
+    assert not c["physical"] and c["coherency_eigenvalues"][-1] < -1e-3, c
+    gain = 2.0 * np.eye(4)
+    c = O.mueller_checks(gain)
+    assert c["physical"] and c["pure"] and not c["passive"], c
+    assert c["transmittance_max"] == 2.0
+    with pytest.raises(ValueError, match="M\\[0, 0\\]"):
+        O.mueller_checks(np.zeros((4, 4)))
+    with pytest.raises(ValueError, match="4, 4"):
+        O.mueller_checks(np.eye(3))
+    # 回復した行列も物理的(最小二乗が丸めで壊していない)。
+    m_true = O.mueller_element("polarizer", 10.0) @ O.mueller_element("retarder", 30.0, 70.0)
+    psg, psa = _design(True)
+    inten = np.einsum("nj,jk,nk->n", psa[:, 0, :], m_true, psg[:, :, 0])
+    assert O.mueller_checks(O.mueller_from_intensities(inten, psg, psa), tol=1e-8)["physical"]

@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 756. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 758. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -27,7 +27,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L546** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
 - **L562** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
 - **L617** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
-- **L1379** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
+- **L1383** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
 
 ## `astrostack.py`
 
@@ -790,6 +790,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L999** — ★Only the convexity deviated from the prediction. The cause is the creep of the toe (because τ is an absolute-value threshold).
 - **L1193** — ★How the groove disappears with angle (viewed by the drop from the base-metal surface)
 
+## `examples/polarization_camera_pipeline.py`
+
+- **L101** _(ja)_ — ★雑音つきで回復した行列は coherency の最小固有値が僅かに負に出る(雑音 1e-4 → -1e-4 程度)。tol は雑音の水準で置く。tol を勘で小さくすると「非物理」に化ける。
+
 ## `examples/profile_shape_inspection.py`
 
 - **L25** — ★Since it imports a module directly under the repo (profileops), put the repo root at the front so it runs straight from a checkout. Same convention as the other examples. Without this, `py -3.11 examples/<name>.py` fails with ModuleNotFoundError (measured 2026-09-09: of the 83 that had no gate to run them, only 2 of this type failed).
@@ -887,9 +891,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `fullseye/__init__.py`
 
-- **L361** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L545** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
-- **L902** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L363** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L547** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
+- **L906** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1062,6 +1066,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L63** — ★ However, the existing `labels` predicate is ``ndim >= 1``, and **a 2-D label image and a 3-D label volume coexist**. The 11 ops of this module all raise ValueError (fail-closed) when passed 2-D, so **a mix-up never silently passes**. The danger is the reverse: in a pool with only 2-D seeds it looks like "zero findings" while never being executed —— the same form as the trap opsphoton stepped on with counts. Be sure to pour 3-D label seeds on the wiring side (see "when the parent wires" below). * voxel — the source grey volume that ``vol_label_overlay`` overlays, and the binary volume that ``vol_label_color_flicker`` receives. Both are the existing voxel vocabulary of (D,H,W) itself, so there is no reason to make a new term. * rgbimage — the return of cross-sections and projections (H,W,3). Existing rgbimage-consuming ops (specular separation, color conversion, save) can be used with meaning intact. **This is the exit of the rgbvolume vocabulary**, so the new vocabulary is not a dead end. * matrix — the return of ``vol_label_palette`` (n+1, 3). A 2-D real matrix itself. * table — a set of shape statistics / legend / flicker measurement / colored mesh.
 - **L77** — ★ Not making a new vocabulary for "a set of colored meshes" was **the result of measurement**. At first we intended to add `colormeshes`, but when we swept all existing table-consuming ops and passed the return of ``vol_labels_to_meshes`` (measured 2026-09-02, across ops3d / ops1d / opsmath / opsoptics / opslightfield / opsphoton / opsacoustics / opsinterferometry / opscadmap), the ops that consume table are **only 3 (abcd_matrix / wavefront_stats / istft), and all 3 fail-closed with ValueError**. That is, it does not meet the condition "mixing makes it silently wrong". Adding a vocabulary to something that does not meet it just adds one new consumer-zero vocabulary = one dead end (the decision criterion of ``docs/OP_COMBINATION_MATRIX.md``). Note that when you want to flow individual meshes downstream as the ``mesh`` sort, strip them with ``[(m["vertices"], m["faces"]) for m in result]`` —— since this discards color, do not do it implicitly in an adapter. -------------------------------------------------------------------------- One new vocabulary and its reason (measurement-based) -------------------------------------------------------------------------- * rgbvolume — **a (D, H, W, 3) colored volume**. The existing `lightfield` predicate is only ``ndim == 4``, so a color volume **fully satisfies lightfield**. Measured (2026-09-02, passing a ``(8, 16, 16, 3)`` color volume to lightfield ops): - ``lf_refocus`` / ``lf_subaperture`` / ``lf_epi`` / ``lf_depth_from_focus``, these **4 ops return a finite (16, 3) result with neither exception nor NaN** (each claiming "refocused image", "sub-aperture image", "EPI", "depth"). Meaningless finite values, read with the z-axis as angular axis V and the y-axis as angular axis U. - only ``lf_all_in_focus`` gives a TypeError from insufficient arguments (not a type matter). The reverse (a light field to ``vol_label_slice_rgb``) fails closed with shape[3] != 3. **Only one side is safe**, so runtime checks cannot be relied on. The same judgment as separating zscan from video. Entry = ``vol_colorize_labels`` (labels -> rgbvolume) and ``vol_label_overlay`` (voxel + labels -> rgbvolume), exit = ``vol_label_slice_rgb`` / ``vol_label_mpr_rgb`` (-> rgbimage). Produced 2, consumed 2, so no dead end.
+
+## `optics.py`
+
+- **L1935** _(ja)_ — ★縁は**モザイクのまま**鏡映で 2 画素広げてから抜く。広げ幅が偶数で ``reflect`` (縁の画素を重ねない鏡映)なら 2x2 の位相が保たれる。マスク後の面を伸ばすと 未計測の 0 が縁に写り、一様な場でも縁が暗くなった(実測 16 画素)。
 
 ## `pcseg.py`
 
@@ -1312,7 +1320,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_opdocs.py`
 
 - **L212** — ★2026-09-03: since every backend's _safe was consolidated into backend_safe.guard, judge by the structured marker the guard raises, not by string match on qualname (the guard also leaves "_safe(...)" in qualname, but that is for display).
-- **L1178** — ★Why it was not found: `ops.REGISTRY` (899) and the 2-D notes (899) agree, so **as long as you count from the registry side it looks like "zero missing"**. I once concluded that and was wrong. So this gate counts from the tier-spanning index side (memory: feedback_search_all_tiers_before_declaring_a_gap). --------------------------------------------------------------------------- #
+- **L1179** — ★Why it was not found: `ops.REGISTRY` (899) and the 2-D notes (899) agree, so **as long as you count from the registry side it looks like "zero missing"**. I once concluded that and was wrong. So this gate counts from the tier-spanning index side (memory: feedback_search_all_tiers_before_declaring_a_gap). --------------------------------------------------------------------------- #
 
 ## `tests/test_packaging_foundation.py`
 

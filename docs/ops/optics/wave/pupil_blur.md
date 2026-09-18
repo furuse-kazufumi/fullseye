@@ -77,7 +77,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[fraunhofer_pattern](fraunhofer_pattern.md) · [pupil_psf](pupil_psf.md) · [psf_to_mtf](../imaging/psf_to_mtf.md) · [illumination_uniformity](../illumination/illumination_uniformity.md) · [render_through_lens](../imaging_sim/render_through_lens.md) · [surface_defect](../scene/surface_defect.md) · [defocus_blur](../scene/defocus_blur.md)
+[fraunhofer_pattern](fraunhofer_pattern.md) · [pupil_psf](pupil_psf.md) · [psf_to_mtf](../imaging/psf_to_mtf.md) · [polarization_demosaic](../polarization/polarization_demosaic.md) · [illumination_uniformity](../illumination/illumination_uniformity.md) · [render_through_lens](../imaging_sim/render_through_lens.md) · [surface_defect](../scene/surface_defect.md) · [defocus_blur](../scene/defocus_blur.md)
 
 ## 同カテゴリ(`wave`)
 

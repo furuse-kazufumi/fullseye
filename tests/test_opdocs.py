@@ -377,7 +377,8 @@ def test_optics_registry_is_connected():
     # + metalfinish "finish" 5 + surfacelib "material" 6 / "surface" 5 = 33 → 計 124。
     # 2026-09-05: optscene "scene" 44 op を追加 → 計 124。
     # 2026-09-15: optics "wave" に瞳形状 PSF 3 op を追加 → 計 127。
-    assert len(_OPT_RECS) == 127
+    # 2026-09-18: optics "polarization" に偏光カメラ 3 op を追加 → 計 130。
+    assert len(_OPT_RECS) == 130
     assert {"geometric", "wave", "imaging", "polarization", "design", "imaging_sim",
             "optimization", "illumination", "appearance", "interface", "mirror",
             "glassbody", "finish", "material", "surface",

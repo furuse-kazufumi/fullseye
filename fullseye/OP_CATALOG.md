@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(206 例)
+### 2-D 画像/信号/幾何(207 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -105,6 +105,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **optics**
 - **ハエの複眼は光場センサ(神経重ね合わせで「重ねると頑健」を光学で測る)** — 個眼アレイをプレノプティック系として設計し、同一点を N 個眼で重ねたときのSNR 利得を測る。★小開口では √N がほぼ厳密(N=5 で 2.25 対 √5=2.24)、大開口では補間誤差が平均化されず**飽和する**(N=49 で 5.33 対 7.00)—— ハエの ~6 重ねは膝の手前。アレイでこそ距離画像が出ること、少数派の遮蔽者は median 重ねなら貫けることも実測する。 `py -3.11 examples/poc_compound_eye.py`
 - **ハエの視覚前段を op の連鎖で(合成の空を回る/前進すると何が読めて何が読めないか)** — 六角格子 721 個眼 → 受容野 → ラミナの DC 落とし → HR 相関器 → HS 対向和を繋ぎ、1/f の帯つき空を回ると自己回転の向きと波形が読める(相関 +0.785、膜 LP つき +0.880)。★ラミナ段(DC 落とし)を省くと相関器は DC × 高域通過の揺れを出して +0.504 に落ちる。前進は全視野だと回転に化け(偏り −0.689)、上半視野に限っても受容野が地平線をまたぐぶん漏れる(−0.221、el>2Δρ で 0)。対向比は速さを落とすので 1°/s の遠景の流れも −0.612 に読む。LGMD η のピークは α·l/|v| 前で θ=24.0°(球の厳密な θ なら 24.6°、4 次式の根)、τ 球式は真値に厳密、円板式の誤用は cos²(θ/2) 倍、DSI 0.80。 `py -3.11 examples/poc_fly_vision.py`
+- **偏光カメラの生フレームを Stokes・DoLP・Mueller に読む** — IMX250MZR 系の 2x2 モザイクを 4 枚に戻し(双線形、1 次の場は厳密、縁はモザイクを鏡映)、DoLP 地図と Stokes へ。既知の PSG/PSA 列の強度から Mueller を最小二乗で回復(144 測定・雑音 1e-4 で誤差 5e-4)。★偏光板だけの設計は階数 9 で断る(擬似逆行列を返さない)。回復した行列の物理性(Cloude 固有値)・純粋性・脱偏光指数・受動性を一度に確かめる。 `py -3.11 examples/polarization_camera_pipeline.py`
 - **検査セルの光学デジタルツインから学習画像を真値つきで生成** — 視野25.875mmと深度294.000mmが閉じた式に厳密一致、透過照明のシルエット19552画素=πr²と1%以内で部品は厳密に0。色を1画素も変えない凹凸だけの欠陥が拡散+3.41%対低角+93.46%=27倍、ラベルは照明によらず273画素。個体別bbox 4個の合計が合成マスクと一致。絞るほど高周波が残る。18,994枚/時。 `py -3.11 examples/virtual_machine_vision.py`
 - **ガラスと鏡面の光学を閉じた式で解く** — 垂直入射0.0422=((n1-n2)/(n1+n2))²、Brewster 56.6°でp偏光が1e-15未満、臨界角超は厳密1.0、平板0.9191=2n/(n²+1)、Beer-Lambertがexp(-1)、Snell残差1e-12未満で全反射は光線ごと、プリズム最小偏角F/d/C=39.14/38.65/38.43°。金の色(1.00,0.67,0.38)はn,kから出る。 `py -3.11 examples/glass_and_mirror_optics.py`
 
@@ -2158,7 +2159,7 @@ _計 27 ops / 4 categories。_
 - `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
 
 ## Optics operators(opsoptics)by category
-_計 127 ops / 16 categories。_
+_計 130 ops / 16 categories。_
 
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
@@ -2252,13 +2253,16 @@ _計 127 ops / 16 categories。_
 - `merit_function` (`table → table`) — The DLS merit ``Σ residual²`` and its parts for one prescription (``table``).
 - `bend_singlet` (` → table`) — A thin singlet of given focal length at a Coddington shape factor (``table``).
 
-### polarization(6)
+### polarization(9)
 - `jones_element` (` → cimage`) — A 2x2 complex Jones matrix for one polarisation element.
 - `jones_apply` (`cimage, jones → jones`) — Push a Jones vector through a Jones matrix: ``[Ex', Ey'] = J @ [Ex, Ey]``.
 - `stokes_from_jones` (`jones → stokes`) — Jones vector -> Stokes vector (the four measurable intensities).
 - `mueller_element` (` → matrix`) — A 4x4 real Mueller matrix for one polarisation element.
 - `mueller_apply` (`matrix, stokes → stokes`) — Push a Stokes vector through a Mueller matrix: ``S' = M @ S``.
 - `stokes_analyze` (`stokes → table`) — Read a Stokes vector: degree of polarisation, azimuth, ellipticity.
+- `polarization_demosaic` (`image2d → polsweep`) — Split a polarisation-sensor mosaic into the four analyser images.
+- `mueller_from_intensities` (`signal → matrix`) — Recover a Mueller matrix from intensities measured through known
+- `mueller_checks` (`matrix → table`) — Say whether a 4x4 matrix is a physically realisable Mueller matrix, and
 
 ### scene(44)
 - `scene_material` (` → table`) — 材質を 1 つ作る。``kind`` は lambert / conductor / dielectric の 3 種。

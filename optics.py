@@ -137,6 +137,8 @@ __all__ = [
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
+    "polarization_demosaic", "mueller_from_intensities", "mueller_checks",
+    "POLARIZATION_MOSAIC_LAYOUT", "POLARIZATION_SWEEP_ANGLES",
     "OPTICS", "MAX_GRID", "MAX_FIELD_ELEMENTS", "MAX_SYSTEM_ELEMENTS",
     "MAX_ZERNIKE_TERMS", "MAX_ZERNIKE_ORDER", "MAX_ZERNIKE_BASIS",
     "MAX_PUPIL_FFT", "MAX_WAVES_PER_SAMPLE",
@@ -152,6 +154,7 @@ OPTICS = [
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
+    "polarization_demosaic", "mueller_from_intensities", "mueller_checks",
 ]
 
 #: Largest side length for a *generated* grid (Airy pattern, sampled curves).
@@ -1497,6 +1500,13 @@ def jones_element(kind="polarizer", angle_deg=0.0, retardance_deg=90.0):
 
     The retarder is written symmetrically, ``diag(exp(-i*d/2), exp(+i*d/2))``
     before rotation, so it introduces no common phase — the fast axis leads.
+    (Cross-checked 2026-09-18: Jones phase and handedness conventions differ
+    per library — pypolar carries two and this matches neither away from
+    0 degrees — so the comparison is made in the Mueller domain: every kind,
+    pushed through :func:`stokes_from_jones`, equals pypolar's Mueller element
+    to 1e-15. The rotator turns the **state** by +angle, so pypolar
+    ``op_rotation`` / polanalyser ``rotator`` — coordinate rotations — equal
+    ours at ``-angle``. See ``tests/test_polarization_external_diff.py``.)
     Elements are built as ``R(+a) @ J0 @ R(-a)``.
 
     Returns a ``(2, 2)`` complex128 matrix acting on a Jones vector
@@ -1587,7 +1597,11 @@ def stokes_from_jones(state):
 
     In this convention (``exp(-i*omega*t)`` time dependence) ``S3 > 0`` is
     **right-circular**: the Jones vector ``[1, -i]/sqrt(2)`` maps to
-    ``[1, 0, 0, +1]``. The convention is pinned by a test rather than left to
+    ``[1, 0, 0, +1]``. (Cross-checked 2026-09-18: pypolar's ``jones_to_stokes``
+    gives the opposite S3 sign for the same vector — the other textbook
+    convention — while the Mueller matrices of every element agree with
+    pypolar, py-pol and polanalyser to 1e-16. See
+    ``tests/test_polarization_external_diff.py``.) The convention is pinned by a test rather than left to
     the reader, because every textbook picks a different one and a sign slip
     here is invisible in intensity measurements.
 
@@ -1795,6 +1809,10 @@ def stokes_analyze(stokes):
     polarisation ellipse ``0.5*atan2(S2, S1)`` mapped into ``[0, 180)`` ·
     ``ellipticity_deg`` ``0.5*asin(S3/|S|)`` in ``[-45, +45]`` ·
     ``handedness`` one of ``"right"`` / ``"left"`` / ``"linear"``.
+    The ellipticity is that of the **polarised part** (``S3`` over
+    ``sqrt(S1^2+S2^2+S3^2)``); pypolar divides by ``S0`` instead, which for
+    partially polarised light mixes the unpolarised part into the ellipse —
+    the two agree only for fully polarised light (measured 2026-09-18).
 
     **``azimuth_deg`` and ``ellipticity_deg`` are ``None`` when they are
     undefined** — azimuth when the linear part is exactly zero (circular or
@@ -1835,3 +1853,228 @@ def stokes_analyze(stokes):
             "dolp": float(min(lin / s0, 1.0)),
             "docp": float(min(abs(s[3]) / s0, 1.0)),
             "azimuth_deg": az, "ellipticity_deg": ell, "handedness": hand}
+
+
+# --------------------------------------------------------------------------- #
+# Polarisation camera: mosaic -> sweep, images -> Mueller, Mueller -> physics   #
+# --------------------------------------------------------------------------- #
+#: Angle at each position of the 2x2 super-pixel of a monochrome polarisation
+#: sensor (Sony IMX250MZR and the cameras built on it: FLIR BFS-U3-51S5P,
+#: LUCID TRI050S-P). ``[[90, 45], [135, 0]]`` = row 0 is 90 then 45, row 1 is
+#: 135 then 0 — the convention Polanalyser documents for that sensor and the
+#: one this module treats as the default. A different sensor is a different
+#: ``layout`` argument, not a different function.
+POLARIZATION_MOSAIC_LAYOUT = ((90.0, 45.0), (135.0, 0.0))
+
+#: Order of the images returned by :func:`polarization_demosaic` — the order
+#: :func:`specularity.polarization_stokes` / ``polarization_dolp_map`` expect
+#: by default, so the two chain without an argument.
+POLARIZATION_SWEEP_ANGLES = (0.0, 45.0, 90.0, 135.0)
+
+
+def polarization_demosaic(raw, layout=POLARIZATION_MOSAIC_LAYOUT):
+    """Split a polarisation-sensor mosaic into the four analyser images.
+
+    A polarisation camera puts four micro-polarisers on each 2x2 block of
+    pixels; the raw frame is one (H, W) array in which neighbouring pixels saw
+    the scene through different analysers. This returns a ``(4, H, W)`` array
+    of images ``[I_0, I_45, I_90, I_135]`` (the ``polsweep`` sort, in
+    :data:`POLARIZATION_SWEEP_ANGLES` order, so the result feeds
+    :func:`specularity.polarization_stokes` and ``polarization_dolp_map``
+    directly), each interpolated to full resolution.
+
+    Interpolation is **bilinear**, the same estimate a Bayer demosaic makes for
+    a colour plane that occupies one pixel in four: a missing pixel is the mean
+    of its measured 4-neighbours (edge-adjacent) or 4-neighbours (diagonal),
+    which is exactly the ``[[1, 2, 1], [2, 4, 2], [1, 2, 1]] / 4`` kernel applied
+    to the masked plane. Ground truth: on a plane that is **linear** in x and y
+    the interpolation is exact (a bilinear estimate of an affine field is the
+    field), so the test plants four affine fields, mosaics them, and demands
+    every returned image equal its field to 1e-12 away from the border. The
+    border is handled by mirroring the **mosaic** two pixels outward before
+    interpolating (an even, non-duplicating reflection keeps the 2x2 phase), so
+    a uniform field is exact up to the edge and a gradient is mirrored there —
+    a symmetric bias on the outermost row and column, and said so. Against
+    Polanalyser's OpenCV bilinear path the interior agrees to the 16-bit
+    quantisation (1.8e-5) and only the outer two pixels differ (2026-09-18).
+
+    *layout* is the angle at each 2x2 position, ``((a00, a01), (a10, a11))`` in
+    degrees; the default is the Sony IMX250MZR block. Every angle in
+    :data:`POLARIZATION_SWEEP_ANGLES` must appear exactly once.
+
+    **Raises** ``ValueError``: *raw* is not a 2-D array, has an odd height or
+    width (the block would be cut), contains non-finite values, or *layout* is
+    not a permutation of the four sweep angles.
+
+    Provenance: the layout convention and the "four Bayer planes" reading of
+    the mosaic follow Polanalyser (Maeda, MIT); the interpolation is the
+    classic bilinear Bayer demosaic. This is a re-implementation from that
+    description, not copied code, and it does not depend on OpenCV. Colour
+    polarisation sensors (IMX250MYR, a 4x4 block) are **not** handled here.
+    """
+    a = np.asarray(raw, dtype=np.float64)
+    if a.ndim != 2:
+        raise ValueError("polarization_demosaic: raw must be a 2-D mosaic, got shape %r"
+                         % (a.shape,))
+    if a.shape[0] % 2 or a.shape[1] % 2:
+        raise ValueError("polarization_demosaic: the mosaic has a 2x2 block, so height and "
+                         "width must be even (got %dx%d)" % a.shape)
+    if not np.isfinite(a).all():
+        raise ValueError("polarization_demosaic: raw contains non-finite values")
+    try:
+        lay = [[float(layout[r][c]) for c in range(2)] for r in range(2)]
+    except (TypeError, IndexError, ValueError):
+        raise ValueError("polarization_demosaic: layout must be ((a00, a01), (a10, a11)) in "
+                         "degrees, got %r" % (layout,)) from None
+    flat = sorted(v % 180.0 for row in lay for v in row)
+    if flat != sorted(POLARIZATION_SWEEP_ANGLES):
+        raise ValueError("polarization_demosaic: layout %r must contain each of %s exactly once"
+                         % (layout, POLARIZATION_SWEEP_ANGLES))
+    from scipy import ndimage as _ndi
+    kernel = np.array([[1.0, 2.0, 1.0], [2.0, 4.0, 2.0], [1.0, 2.0, 1.0]]) / 4.0
+    # ★縁は**モザイクのまま**鏡映で 2 画素広げてから抜く。広げ幅が偶数で ``reflect``
+    #   (縁の画素を重ねない鏡映)なら 2x2 の位相が保たれる。マスク後の面を伸ばすと
+    #   未計測の 0 が縁に写り、一様な場でも縁が暗くなった(実測 16 画素)。
+    pad = np.pad(a, 2, mode="reflect")
+    out = []
+    for ang in POLARIZATION_SWEEP_ANGLES:
+        r, c = next((r, c) for r in range(2) for c in range(2) if lay[r][c] % 180.0 == ang)
+        plane = np.zeros_like(pad)
+        plane[r::2, c::2] = pad[r::2, c::2]
+        out.append(_ndi.convolve(plane, kernel, mode="nearest")[2:-2, 2:-2])
+    return np.ascontiguousarray(np.stack(out), dtype=np.float64)
+
+
+def mueller_from_intensities(intensities, psg, psa, rank_tol=1e-9):
+    """Recover a Mueller matrix from intensities measured through known
+    generator / analyser states (polarimetric least squares).
+
+    Model: the detector behind a polarisation-state analyser sees
+    ``I_i = (A_i @ M @ G_i)[0, 0] = a_i^T M g_i`` where ``g_i = G_i[:, 0]`` is
+    the Stokes vector the generator emits from unpolarised light and
+    ``a_i = A_i[0, :]`` is the analyser's first row. That is **linear in the 16
+    entries of M**: ``I_i = w_i . vec(M)`` with ``w_i = outer(a_i, g_i).ravel()``.
+    Stacking the N measurements gives ``W (N x 16)``, solved by least squares.
+
+    *intensities* is ``(N,)`` (one detector) or ``(N, ...)`` (an image per
+    state: the same system solved per pixel, so the result is ``(4, 4, ...)``).
+    *psg* and *psa* are sequences of N Mueller matrices (4x4) — build them with
+    :func:`mueller_element` and matrix products.
+
+    **Fail-closed on an under-determined design**: if ``W`` has rank < 16 the
+    design cannot see every entry (the classic case — linear polarisers only,
+    no retarder — leaves the S3 row and column unobservable, rank 9) and the
+    function raises with the rank instead of returning a pseudo-inverse answer
+    that would look plausible and be wrong in the unobserved entries.
+
+    Ground truth in the tests: a known ``M`` (retarder then polariser),
+    36 generator/analyser pairs with quarter-wave plates, intensities computed
+    by the forward model → ``M`` recovered to 1e-10; the same with polarisers
+    only → rank 9, refused.
+
+    **Raises** ``ValueError``: shapes disagree, fewer than 16 measurements,
+    non-finite input, or rank < 16.
+
+    Provenance: the observation matrix ``outer(a, g)`` is the standard
+    formulation (Chipman, "Polarimetry", *Handbook of Optics* ch. 15); the
+    ``pinv`` variant is what Polanalyser's ``calcMueller`` does. Re-implemented
+    with an explicit rank check.
+    """
+    I = np.asarray(intensities, dtype=np.float64)
+    G = np.asarray(psg, dtype=np.float64)
+    A = np.asarray(psa, dtype=np.float64)
+    if I.ndim < 1 or G.shape != (I.shape[0], 4, 4) or A.shape != (I.shape[0], 4, 4):
+        raise ValueError("mueller_from_intensities: intensities (N, ...), psg (N, 4, 4) and "
+                         "psa (N, 4, 4) must agree on N; got %r / %r / %r"
+                         % (I.shape, G.shape, A.shape))
+    n = I.shape[0]
+    if n < 16:
+        raise ValueError("mueller_from_intensities: 16 unknowns need at least 16 measurements "
+                         "(got %d)" % n)
+    if not (np.isfinite(I).all() and np.isfinite(G).all() and np.isfinite(A).all()):
+        raise ValueError("mueller_from_intensities: non-finite input")
+    W = np.einsum("nj,nk->njk", A[:, 0, :], G[:, :, 0]).reshape(n, 16)
+    rank = int(np.linalg.matrix_rank(W, tol=rank_tol * max(1.0, float(np.abs(W).max()))))
+    if rank < 16:
+        raise ValueError("mueller_from_intensities: the generator/analyser design has rank %d "
+                         "< 16 — some entries of M are unobservable (linear polarisers only "
+                         "cannot see the S3 row/column: rank 9). Add a retarder to the design"
+                         % rank)
+    rhs = I.reshape(n, -1)
+    sol, *_ = np.linalg.lstsq(W, rhs, rcond=None)
+    m = sol.reshape((4, 4) + I.shape[1:])
+    return np.ascontiguousarray(m, dtype=np.float64)
+
+
+#: The four Pauli-like matrices that turn a Mueller matrix into its coherency
+#: (Cloude) matrix, in the order (identity, sigma_1, sigma_2, sigma_3).
+_PAULI = (np.eye(2, dtype=complex),
+          np.array([[1.0, 0.0], [0.0, -1.0]], dtype=complex),
+          np.array([[0.0, 1.0], [1.0, 0.0]], dtype=complex),
+          np.array([[0.0, -1.0j], [1.0j, 0.0]], dtype=complex))
+
+
+def mueller_checks(mueller, tol=1e-9):
+    """Say whether a 4x4 matrix is a physically realisable Mueller matrix, and
+    how depolarising it is.
+
+    Returns a dict:
+
+    ``physical``
+        ``True`` iff the coherency matrix ``H = 1/4 sum_ij M_ij (sigma_i (x) sigma_j^*)``
+        is positive semidefinite — Cloude's criterion (1986), the necessary and
+        sufficient condition for M to be a convex sum of pure (Mueller–Jones)
+        matrices (Gil, 2007). ``coherency_eigenvalues`` carries the four real
+        eigenvalues (descending) so the caller sees *how* far from physical.
+    ``pure``
+        one non-zero eigenvalue: M comes from a single Jones matrix (no
+        depolarisation). Every element from :func:`mueller_element` except the
+        depolariser is pure.
+    ``depolarization_index``
+        Gil–Bernabeu ``P_Delta = sqrt((sum_ij M_ij^2 - M_00^2) / (3 M_00^2))``:
+        1 for a pure matrix, 0 for the ideal depolariser.
+    ``passive``
+        the largest transmittance ``M_00 + sqrt(M_01^2 + M_02^2 + M_03^2)`` is
+        ``<= 1`` — a passive element cannot amplify.
+    ``transmittance_max`` / ``transmittance_min``
+        those two bounds of the transmitted intensity over all input states.
+
+    Ground truth in the tests: every :func:`mueller_element` kind is physical
+    and passive; the pure ones have eigenvalues ``(M_00, 0, 0, 0)`` to 1e-12 and
+    ``P_Delta = 1``; the ideal depolariser has ``P_Delta = 0``; a matrix with
+    ``M_11 > M_00`` (more polarised output than input) is refused as
+    non-physical; a gain matrix (``2 I``) is physical but not passive.
+
+    **Raises** ``ValueError``: not a real 4x4 matrix, non-finite, or
+    ``M_00 <= 0`` (no transmitted intensity — every ratio would be 0/0).
+
+    Provenance: Cloude, S. R. (1986), *Optik* 75, 26; Gil, J. J. & Bernabeu, E.
+    (1986), *Optica Acta* 33, 185 (depolarisation index); the check set mirrors
+    what py-pol (del Hoyo & Sánchez Brea, MIT) exposes as ``is_physical`` /
+    ``is_pure`` / ``is_transmissive``, re-implemented from the definitions.
+    """
+    m = np.asarray(mueller, dtype=np.float64)
+    if m.shape != (4, 4):
+        raise ValueError("mueller_checks: expected a (4, 4) matrix, got shape %r" % (m.shape,))
+    if not np.isfinite(m).all():
+        raise ValueError("mueller_checks: the matrix contains non-finite values")
+    m00 = float(m[0, 0])
+    if m00 <= 0.0:
+        raise ValueError("mueller_checks: M[0, 0] = %g — no transmitted intensity, the "
+                         "checks are 0/0" % m00)
+    h = np.zeros((4, 4), dtype=complex)
+    for i in range(4):
+        for j in range(4):
+            h += m[i, j] * np.kron(_PAULI[i], np.conj(_PAULI[j]))
+    h *= 0.25
+    ev = np.sort(np.linalg.eigvalsh(h))[::-1]
+    scale = max(m00, 1e-300)
+    physical = bool(ev[-1] >= -tol * scale)
+    pure = bool(physical and np.all(np.abs(ev[1:]) <= tol * scale))
+    pdelta = float(np.sqrt(max(0.0, (np.sum(m * m) - m00 * m00) / (3.0 * m00 * m00))))
+    d = float(np.sqrt(m[0, 1] ** 2 + m[0, 2] ** 2 + m[0, 3] ** 2))
+    return {"physical": physical, "pure": pure,
+            "coherency_eigenvalues": [float(v) for v in ev],
+            "depolarization_index": min(pdelta, 1.0) if pdelta <= 1.0 + 1e-9 else pdelta,
+            "transmittance_max": m00 + d, "transmittance_min": max(0.0, m00 - d),
+            "passive": bool(m00 + d <= 1.0 + tol)}

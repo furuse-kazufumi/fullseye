@@ -175,6 +175,14 @@ the operator is a member of that family*.
 | `img_to_projection_profile` | bridge | The plain (mean) projection profile is the classic document-analysis primitive used by Postl/Baird above; HALCON packages it as `gray_projections`. The upper-trimmed-mean family that interpolates to maximum-intensity projection follows the quantile-projection idea used for temporal fusion in fluorescence microscopy (arXiv:2601.10392). |
 | `signal_to_img` · `counts_to_img` · `matrix_to_img` · `contour_to_img` · `feature_to_img` | bridge | No literature claim — these are **return bridges** that give non-image sorts a typed path back to an image. They reuse this repo's own closed-form plotting layer (`annotate.axes_transform` / `plot_series`) and `imagedraw`. |
 
+## 2026-09-18 additions — polarisation camera (re-implemented from the primary definitions)
+
+| op | category | seminal reference |
+|---|---|---|
+| `polarization_demosaic` | optics / polarization | Mosaic convention `[[90, 45], [135, 0]]` of the Sony IMX250MZR block and the "four Bayer planes" reading as documented by **Polanalyser** (Maeda, R., github.com/elerac/polanalyser, MIT). Interpolation = the classic bilinear Bayer demosaic (`[[1,2,1],[2,4,2],[1,2,1]]/4` on the masked plane); the border mirrors the mosaic with an even, non-duplicating reflection to keep the 2x2 phase. No code copied; no OpenCV. |
+| `mueller_from_intensities` | optics / polarization | Chipman, R. A., *Polarimetry*, Handbook of Optics vol. II ch. 15 — `I_i = a_i^T M g_i` is linear in vec(M) with observation rows `outer(a_i, g_i)`. Polanalyser's `calcMueller` is the pseudo-inverse form of the same system; ours adds an explicit rank check (linear polarisers only → rank 9, refused). |
+| `mueller_checks` | optics / polarization | Cloude, S. R. (1986). Group theory and polarisation algebra. *Optik* 75, 26–36 (coherency matrix ≥ 0 ⇔ physical); Gil, J. J. (2007). Polarimetric characterization of light and media. *Eur. Phys. J. Appl. Phys.* 40, 1–47; Gil, J. J. & Bernabeu, E. (1986). Depolarization and polarization indices of an optical system. *Optica Acta* 33, 185–189. The check set mirrors what **py-pol** (del Hoyo & Sánchez Brea, MIT) exposes; re-implemented. |
+
 ## Mining new operators from research (RAD)
 - RAD image / diffusion / deep_learning corpora (thousands of papers) = the source for operators beyond the classics: modern denoisers (BM3D, DnCNN), learned edges (HED), superpixels (SLIC), diffusion priors, foundation segmenters (SAM).
 - Workflow: mine a paper -> add a typed Op (fn + sort + analogs + this reference) -> evolution/codegen/catalog pick it up automatically.

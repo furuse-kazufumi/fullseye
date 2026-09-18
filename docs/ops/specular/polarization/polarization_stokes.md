@@ -4,7 +4,7 @@ dim: specular
 category: polarization
 in: polsweep
 out: stokes
-examples: [poc_polarization_specular, specular_photometric]
+examples: [poc_polarization_specular, polarization_camera_pipeline, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -53,6 +53,7 @@ output without a further test.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_polarization_specular](../../../../examples/poc_polarization_specular.py) — `py -3.11 examples/poc_polarization_specular.py`
+- [polarization_camera_pipeline](../../../../examples/polarization_camera_pipeline.py) — `py -3.11 examples/polarization_camera_pipeline.py`
 - [specular_photometric](../../../../examples/specular_photometric.py) — `py -3.11 examples/specular_photometric.py`
 
 ## 型が繋がる次の op(`stokes` を入力に取れる)

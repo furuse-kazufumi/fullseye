@@ -14199,6 +14199,30 @@
    "tw": "按 3-D 特徵篩選成分(2-D 斑點篩選的 3-D 版)。",
    "ko": "3-D 특징으로 성분을 거릅니다(2-D 블롭 선별의 3-D 판).",
    "de": "Siebt Komponenten nach 3-D-Merkmalen (das 3-D-Gegenstück zur 2-D-Blob-Auswahl)."
+  },
+  "optics/polarization_demosaic": {
+   "fp": "4609f51d96b5",
+   "ja": "偏光センサのモザイクを 4 枚の検光子画像(0/45/90/135 度)に分ける。",
+   "zh": "将偏振传感器的马赛克拆成四张检偏器图像(0/45/90/135 度)。",
+   "tw": "將偏振感測器的馬賽克拆成四張檢偏器影像(0/45/90/135 度)。",
+   "ko": "편광 센서의 모자이크를 네 장의 검광자 영상(0/45/90/135도)으로 나눕니다.",
+   "de": "Zerlegt das Mosaik eines Polarisationssensors in die vier Analysatorbilder (0/45/90/135 Grad)."
+  },
+  "optics/mueller_from_intensities": {
+   "fp": "bec98dc0d53b",
+   "ja": "既知の生成器・検光子の状態で測った強度から Mueller 行列を取り戻す(偏光計測の最小二乗)。",
+   "zh": "从已知起偏器/检偏器状态下测得的强度恢复 Mueller 矩阵(偏振测量的最小二乘)。",
+   "tw": "從已知起偏器/檢偏器狀態下量得的強度恢復 Mueller 矩陣(偏振量測的最小平方)。",
+   "ko": "알려진 편광 생성기·검광기 상태로 측정한 강도에서 Mueller 행렬을 복원합니다(편광 계측 최소제곱).",
+   "de": "Gewinnt eine Mueller-Matrix aus Intensitäten zurück, die durch bekannte Generator-/Analysatorzustände gemessen wurden (polarimetrische kleinste Quadrate)."
+  },
+  "optics/mueller_checks": {
+   "fp": "0e0ad630e2f5",
+   "ja": "4x4 行列が物理的に実現可能な Mueller 行列かどうかと、どれだけ脱偏光するかを返す。",
+   "zh": "判断 4x4 矩阵是否为物理可实现的 Mueller 矩阵,以及退偏程度。",
+   "tw": "判斷 4x4 矩陣是否為物理可實現的 Mueller 矩陣,以及退偏程度。",
+   "ko": "4x4 행렬이 물리적으로 실현 가능한 Mueller 행렬인지와 얼마나 탈편광하는지를 반환합니다.",
+   "de": "Sagt, ob eine 4x4-Matrix eine physikalisch realisierbare Mueller-Matrix ist und wie stark sie depolarisiert."
   }
  }
 }

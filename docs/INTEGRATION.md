@@ -117,7 +117,7 @@ language wins, and the losses were SIMD losses; see `CHANGELOG.md` 0.1.11.
 **Every operator of the 2-D registry (901 single-input operators; the 918 2-D operators of the
 index minus the 17 n-ary ones; those whose backend is installed) is reachable through
 `fs_apply`; the five contract operators also have a native route. Look at `route`.** The typed
-ledgers (1,024 operators whose inputs are point clouds, signals, tables …) and the n-ary
+ledgers (1,049 operators whose inputs are point clouds, signals, tables …) and the n-ary
 operators cannot be carried by one image / region handle and are refused with a status code and
 a reason — a later stage, not a silent gap. `fs_apply(op, inputs, n_in, params_json, route_pref, outputs,
 out_cap, n_out, info)` names the operator as a string and takes its parameters as a JSON

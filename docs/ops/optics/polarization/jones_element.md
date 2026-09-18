@@ -31,6 +31,13 @@ wondering) · ``"rotator"`` optical rotator turning the polarisation by
 
 The retarder is written symmetrically, ``diag(exp(-i*d/2), exp(+i*d/2))``
 before rotation, so it introduces no common phase — the fast axis leads.
+(Cross-checked 2026-09-18: Jones phase and handedness conventions differ
+per library — pypolar carries two and this matches neither away from
+0 degrees — so the comparison is made in the Mueller domain: every kind,
+pushed through :func:`stokes_from_jones`, equals pypolar's Mueller element
+to 1e-15. The rotator turns the **state** by +angle, so pypolar
+``op_rotation`` / polanalyser ``rotator`` — coordinate rotations — equal
+ours at ``-angle``. See ``tests/test_polarization_external_diff.py``.)
 Elements are built as ``R(+a) @ J0 @ R(-a)``.
 
 Returns a ``(2, 2)`` complex128 matrix acting on a Jones vector
@@ -85,7 +92,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`polarization`)
 
-[jones_apply](jones_apply.md) · [stokes_from_jones](stokes_from_jones.md) · [mueller_element](mueller_element.md) · [mueller_apply](mueller_apply.md) · [stokes_analyze](stokes_analyze.md)
+[jones_apply](jones_apply.md) · [stokes_from_jones](stokes_from_jones.md) · [mueller_element](mueller_element.md) · [mueller_apply](mueller_apply.md) · [stokes_analyze](stokes_analyze.md) · [polarization_demosaic](polarization_demosaic.md) · [mueller_from_intensities](mueller_from_intensities.md) · [mueller_checks](mueller_checks.md)
 
 ---
 *Provenance: optics.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

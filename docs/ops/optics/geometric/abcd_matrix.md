@@ -79,7 +79,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[abcd_trace](abcd_trace.md) · [mueller_apply](../polarization/mueller_apply.md)
+[abcd_trace](abcd_trace.md) · [mueller_apply](../polarization/mueller_apply.md) · [mueller_checks](../polarization/mueller_checks.md)
 
 ## 同カテゴリ(`geometric`)
 

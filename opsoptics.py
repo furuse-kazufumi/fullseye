@@ -209,6 +209,10 @@ _CATALOG = {
         ("mueller_element", "optics", [], "matrix"),
         ("mueller_apply", "optics", ["matrix", "stokes"], "stokes"),
         ("stokes_analyze", "optics", ["stokes"], "table"),
+        # 2026-09-18: 偏光カメラの 3 本(Polanalyser / py-pol の一次情報から再実装)。
+        ("polarization_demosaic", "optics", ["image2d"], "polsweep"),
+        ("mueller_from_intensities", "optics", ["signal"], "matrix"),
+        ("mueller_checks", "optics", ["matrix"], "table"),
     ],
     # design(raytrace): 入口 3 op(処方 / 閉形式厚肉 / 硝材)+ 例 1 op は引数無しで
     # 呼べ、残り 8 op は lens_system の返り(table)を食う。table 以外(乱数の

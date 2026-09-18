@@ -4,7 +4,7 @@ dim: optics
 category: polarization
 in: stokes
 out: table
-examples: [optics_imaging, specular_photometric]
+examples: [optics_imaging, polarization_camera_pipeline, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -25,6 +25,10 @@ Returns a dict: ``intensity`` ``S0`` · ``dop`` degree of polarisation
 polarisation ellipse ``0.5*atan2(S2, S1)`` mapped into ``[0, 180)`` ·
 ``ellipticity_deg`` ``0.5*asin(S3/|S|)`` in ``[-45, +45]`` ·
 ``handedness`` one of ``"right"`` / ``"left"`` / ``"linear"``.
+The ellipticity is that of the **polarised part** (``S3`` over
+``sqrt(S1^2+S2^2+S3^2)``); pypolar divides by ``S0`` instead, which for
+partially polarised light mixes the unpolarised part into the ellipse —
+the two agree only for fully polarised light (measured 2026-09-18).
 
 **``azimuth_deg`` and ``ellipticity_deg`` are ``None`` when they are
 undefined** — azimuth when the linear part is exactly zero (circular or
@@ -71,6 +75,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
+- [polarization_camera_pipeline](../../../../examples/polarization_camera_pipeline.py) — `py -3.11 examples/polarization_camera_pipeline.py`
 - [specular_photometric](../../../../examples/specular_photometric.py) — `py -3.11 examples/specular_photometric.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
@@ -79,7 +84,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`polarization`)
 
-[jones_element](jones_element.md) · [jones_apply](jones_apply.md) · [stokes_from_jones](stokes_from_jones.md) · [mueller_element](mueller_element.md) · [mueller_apply](mueller_apply.md)
+[jones_element](jones_element.md) · [jones_apply](jones_apply.md) · [stokes_from_jones](stokes_from_jones.md) · [mueller_element](mueller_element.md) · [mueller_apply](mueller_apply.md) · [polarization_demosaic](polarization_demosaic.md) · [mueller_from_intensities](mueller_from_intensities.md) · [mueller_checks](mueller_checks.md)
 
 ---
 *Provenance: optics.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

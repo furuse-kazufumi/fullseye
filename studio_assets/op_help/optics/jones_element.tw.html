@@ -15,6 +15,13 @@
 <p>*angle_deg*.</p>
 <p>The retarder is written symmetrically, `<code style="color:#22d3bf">diag(exp(-i*d/2), exp(+i*d/2))</code>`</p>
 <p>before rotation, so it introduces no common phase — the fast axis leads.</p>
+<p>(Cross-checked 2026-09-18: Jones phase and handedness conventions differ</p>
+<p>per library — pypolar carries two and this matches neither away from</p>
+<p>0 degrees — so the comparison is made in the Mueller domain: every kind,</p>
+<p>pushed through :func:<code style="color:#22d3bf">stokes_from_jones</code>, equals pypolar&#x27;s Mueller element</p>
+<p>to 1e-15. The rotator turns the <b>state</b> by +angle, so pypolar</p>
+<p>`<code style="color:#22d3bf">op_rotation</code><code style="color:#22d3bf"> / polanalyser </code><code style="color:#22d3bf">rotator</code>` — coordinate rotations — equal</p>
+<p>ours at `<code style="color:#22d3bf">-angle</code><code style="color:#22d3bf">. See </code><code style="color:#22d3bf">tests/test_polarization_external_diff.py</code>`.)</p>
 <p>Elements are built as `<code style="color:#22d3bf">R(+a) @ J0 @ R(-a)</code>`.</p>
 <p>Returns a `<code style="color:#22d3bf">(2, 2)</code>` complex128 matrix acting on a Jones vector</p>
 <p>`<code style="color:#22d3bf">[Ex, Ey]</code><code style="color:#22d3bf">; compose a train with </code><code style="color:#22d3bf">J_total = J_last @ ... @ J_first</code>` and</p>
@@ -52,7 +59,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">cimage</code> 作為輸入)</h3>
 <p><a style="color:#22d3bf" href="opoptics:angular_spectrum_propagate">angular_spectrum_propagate</a> · <a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">polarization</code>)</h3>
-<p><a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_from_jones">stokes_from_jones</a> · <a style="color:#22d3bf" href="opoptics:mueller_element">mueller_element</a> · <a style="color:#22d3bf" href="opoptics:mueller_apply">mueller_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_analyze">stokes_analyze</a></p>
+<p><a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_from_jones">stokes_from_jones</a> · <a style="color:#22d3bf" href="opoptics:mueller_element">mueller_element</a> · <a style="color:#22d3bf" href="opoptics:mueller_apply">mueller_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_analyze">stokes_analyze</a> · <a style="color:#22d3bf" href="opoptics:polarization_demosaic">polarization_demosaic</a> · <a style="color:#22d3bf" href="opoptics:mueller_from_intensities">mueller_from_intensities</a> · <a style="color:#22d3bf" href="opoptics:mueller_checks">mueller_checks</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <p>*Provenance: optics.py — OPTICS 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

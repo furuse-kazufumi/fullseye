@@ -1,4 +1,4 @@
-# OPTICS operator help — 127 ops in 16 categories
+# OPTICS operator help — 130 ops in 16 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -66,9 +66,9 @@
 
 [bend_singlet](optimization/bend_singlet.md) · [merit_function](optimization/merit_function.md) · [optimize_lens](optimization/optimize_lens.md)
 
-### polarization (6)
+### polarization (9)
 
-[jones_apply](polarization/jones_apply.md) · [jones_element](polarization/jones_element.md) · [mueller_apply](polarization/mueller_apply.md) · [mueller_element](polarization/mueller_element.md) · [stokes_analyze](polarization/stokes_analyze.md) · [stokes_from_jones](polarization/stokes_from_jones.md)
+[jones_apply](polarization/jones_apply.md) · [jones_element](polarization/jones_element.md) · [mueller_apply](polarization/mueller_apply.md) · [mueller_checks](polarization/mueller_checks.md) · [mueller_element](polarization/mueller_element.md) · [mueller_from_intensities](polarization/mueller_from_intensities.md) · [polarization_demosaic](polarization/polarization_demosaic.md) · [stokes_analyze](polarization/stokes_analyze.md) · [stokes_from_jones](polarization/stokes_from_jones.md)
 
 ### scene (44)
 

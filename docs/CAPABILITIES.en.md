@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 17 capabilities**
+**Currently 18 capabilities**
 
 ## Measure (4)
 
@@ -97,7 +97,7 @@ Operators: `synthesize_silhouette`, `carve`, `visual_hull`, `carve_look_at`
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## Light and colour (2)
+## Light and colour (3)
 
 ### [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md)
 
@@ -114,6 +114,14 @@ Fresnel reflectance, thin-film interference colour, grating colour, and vector-f
 Operators: `fresnel_dielectric`, `thin_film_reflectance`, `grating_rgb`, `refract_rays`
 
 Runnable: `glass_and_mirror_optics`, `appearance_structural_colour`
+
+### [Read a polarisation camera's raw frame into Stokes, DoLP and Mueller](capabilities/polarization-imaging.md)
+
+Turn a polarisation camera's mosaic (a 2×2 block of 0/45/90/135° analysers, Sony IMX250MZR family) into four full-resolution images with `polarization_demosaic` (bilinear, exact on affine fields, phase-preserving mirrored border) that chain straight into `polarization_stokes` / `polarization_dolp_map`. Recover a sample's Mueller matrix from intensities measured through known generator/analyser states with `mueller_from_intensities` (linear least squares on `outer(a_i, g_i)`; refuses rank-deficient designs with the rank instead of returning a pseudo-inverse guess). Check any 4×4 matrix with `mueller_checks`: Cloude coherency eigenvalues (physical), purity, the Gil–Bernabeu depolarisation index and passivity.
+
+Operators: `polarization_demosaic`, `polarization_stokes`, `polarization_dolp_map`, `polarization_separate`, `stokes_analyze`, `mueller_from_intensities`, `mueller_checks`, `mueller_element`, `mueller_apply`
+
+Runnable: `polarization_camera_pipeline`, `poc_polarization_specular`
 
 ## Waves and signals (2)
 

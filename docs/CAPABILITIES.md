@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 17 項目**
+**収録 18 項目**
 
 ## 測る (4)
 
@@ -96,7 +96,7 @@
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (2)
+## 光と色 (3)
 
 ### [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md)
 
@@ -113,6 +113,14 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 使う op: `fresnel_dielectric`, `thin_film_reflectance`, `grating_rgb`, `refract_rays`
 
 動く例: `glass_and_mirror_optics`, `appearance_structural_colour`
+
+### [偏光カメラの生フレームを Stokes・DoLP・Mueller に読む](capabilities/polarization-imaging.md)
+
+偏光カメラ(Sony IMX250MZR 系: FLIR BFS-U3-51S5P、LUCID TRI050S-P など)は 2×2 の画素ブロックに 0/45/90/135 度の偏光子を並べた**モザイク**を 1 枚で出します。`polarization_demosaic` がそれを 4 枚(0/45/90/135)に戻し(双線形。1 次の場は厳密に戻り、縁はモザイクを鏡映して位相を保つ)、そのまま `polarization_stokes` / `polarization_dolp_map` / `polarization_separate` に渡せます(角度の既定が一致しているので引数無しで繋がる)。センサの配列が違えば `layout=((a00, a01), (a10, a11))` で渡します。
+
+使う op: `polarization_demosaic`, `polarization_stokes`, `polarization_dolp_map`, `polarization_separate`, `stokes_analyze`, `mueller_from_intensities`, `mueller_checks`, `mueller_element`, `mueller_apply`
+
+動く例: `polarization_camera_pipeline`, `poc_polarization_specular`
 
 ## 波と信号 (2)
 

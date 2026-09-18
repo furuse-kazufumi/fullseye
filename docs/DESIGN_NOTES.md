@@ -25,7 +25,7 @@
 - **L546** — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
 - **L562** — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
 - **L617** — ★ ``annotate.overlay_mask`` は **意図的にトップレベルへ出していない**。同名の ``imgio.overlay_mask`` が既に ``fs.overlay_mask`` として公開されており、引数も 意味も違う(imgio = 生 RGB・mask>0.5・fill/margin / annotate = 役割名の色・ 重み [0,1] も可・形の不一致を拒否)。同じ名前に別の約束を載せると、呼び手は 例外ではなく**もっともらしく違う絵**を受け取る。公開 API の破壊的変更は 独断でしないので、役割つきの方は ``fs.annotate.overlay_mask`` で引く。
-- **L1379** — ★ **いまのところカラー画像に対して正しい呼び方が存在しない**: まとめて渡すと 色が混ざり、チャネルごとに 3 回呼ぶと自己正規化する op が各チャネルを 自分の最大で割ってチャネル間の比を壊す(灰色エッジ法の角度誤差が 自前 Sobel 1.03 度 -> 画像ごと 4.17 度 -> ch ごと 27.86 度、ゼロ点 29.14 度)。 どちらに倒すかは**契約の決め**なので、ここでは既定の数値は 1 つも変えず、 `on_error="raise"` のときだけ拒否し、既定では台帳に記録して見えるようにする。 詳細と選択肢は docs/KNOWN_ISSUES.md。
+- **L1383** — ★ **いまのところカラー画像に対して正しい呼び方が存在しない**: まとめて渡すと 色が混ざり、チャネルごとに 3 回呼ぶと自己正規化する op が各チャネルを 自分の最大で割ってチャネル間の比を壊す(灰色エッジ法の角度誤差が 自前 Sobel 1.03 度 -> 画像ごと 4.17 度 -> ch ごと 27.86 度、ゼロ点 29.14 度)。 どちらに倒すかは**契約の決め**なので、ここでは既定の数値は 1 つも変えず、 `on_error="raise"` のときだけ拒否し、既定では台帳に記録して見えるようにする。 詳細と選択肢は docs/KNOWN_ISSUES.md。
 
 ## `astrostack.py`
 
@@ -788,6 +788,10 @@
 - **L999** — ★凸みだけ予測から外れた。原因はつま先の這い(τ が絶対値のしきい値だから)。
 - **L1193** — ★溝が角度とともに消えていく様子(母材面からの落ち込みで見る)
 
+## `examples/polarization_camera_pipeline.py`
+
+- **L101** — ★雑音つきで回復した行列は coherency の最小固有値が僅かに負に出る(雑音 1e-4 → -1e-4 程度)。tol は雑音の水準で置く。tol を勘で小さくすると「非物理」に化ける。
+
 ## `examples/profile_shape_inspection.py`
 
 - **L25** — ★repo 直下のモジュール(profileops)を import するので、チェックアウトから そのまま走らせても通るように repo 直下を先頭に置く。他の例と同じ作法。 これが無いと `py -3.11 examples/<name>.py` が ModuleNotFoundError で落ちる (2026-09-09 実測: 走らせる門が無かった 83 本のうち、落ちたのはこの型の 2 本だけ)。
@@ -885,9 +889,9 @@
 
 ## `fullseye/__init__.py`
 
-- **L361** — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L545** — ★ 宣言 out 型に合わせる adapter は、タプルを返す op の**2 番目以降を 捨てる**(``drizzle_resample`` の ``wht``、``piv_cross_correlate`` の ``info``)。捨てられた側が必要なとき、台帳の入口からは届かなかった。 2026-09-06、超解像の PoC が ``flow, info = fs.ledger.piv_cross_correlate(...)`` と書いて (2,R,C) を第 1 軸で開き、dy の 2 行目を dx として使い、 ずれ推定を 0.12 → 0.74 画素にした(例外は出ない)。 ``.raw`` で素の返りに届く: ``fs.ledger.piv_cross_correlate.raw(a, b)``。
-- **L902** — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L363** — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L547** — ★ 宣言 out 型に合わせる adapter は、タプルを返す op の**2 番目以降を 捨てる**(``drizzle_resample`` の ``wht``、``piv_cross_correlate`` の ``info``)。捨てられた側が必要なとき、台帳の入口からは届かなかった。 2026-09-06、超解像の PoC が ``flow, info = fs.ledger.piv_cross_correlate(...)`` と書いて (2,R,C) を第 1 軸で開き、dy の 2 行目を dx として使い、 ずれ推定を 0.12 → 0.74 画素にした(例外は出ない)。 ``.raw`` で素の返りに届く: ``fs.ledger.piv_cross_correlate.raw(a, b)``。
+- **L906** — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1060,6 +1064,10 @@
 
 - **L63** — ★ ただし既存 `labels` 述語は ``ndim >= 1`` で **2-D のラベル画像と 3-D の ラベルボリュームが同居している**。本モジュールの 11 op は 2-D を渡されると 全部 ValueError になる(fail-closed)ので、**取り違えが黙って通ることは 無い**。危険なのは逆で、2-D の種しか無いプールでは 1 度も実行されないまま 「発見ゼロ」に見える —— opsphoton が counts で踏んだ罠と同じ形である。 配線側で 3-D ラベル種を必ず注ぐこと(下の「親が配線するとき」参照)。 * voxel — ``vol_label_overlay`` が重ねる元のグレーボリューム、および ``vol_label_color_flicker`` が受ける 2 値ボリューム。どちらも (D,H,W) の 既存 voxel 語彙そのもので、新語を作る理由が無い。 * rgbimage — 断面と投影の返り (H,W,3)。既存の rgbimage 消費 op(鏡面分離・ 色変換・保存)がそのまま意味を持って使える。**ここが rgbvolume 語彙の出口** なので、新語彙が袋小路にならない。 * matrix — ``vol_label_palette`` の返り (n+1, 3)。2-D の実行列そのもの。 * table — 形状統計 / 凡例 / ちらつき測定 / 色付きメッシュの集合。
 - **L77** — ★ 「色付きメッシュの集合」に新語彙を作らなかったのは**実測の結果**である。 最初は `colormeshes` を足すつもりだったが、既存の table 消費 op を全部 洗って ``vol_labels_to_meshes`` の返りを渡したところ(2026-09-02 実測、 ops3d / ops1d / opsmath / opsoptics / opslightfield / opsphoton / opsacoustics / opsinterferometry / opscadmap を横断)、table を食う op は **3 件(abcd_matrix / wavefront_stats / istft)しかなく、3 件とも ValueError で fail-closed**だった。つまり「混ぜると黙って間違う」条件を 満たさない。満たさないものに語彙を足すと、消費者ゼロの新語彙 = 袋小路が 1 つ増えるだけである(``docs/OP_COMBINATION_MATRIX.md`` の判断基準)。 なお個々のメッシュを ``mesh`` sort として下流へ流したいときは ``[(m["vertices"], m["faces"]) for m in result]`` と剥がす —— 色を 捨てる操作なので、adapter で暗黙にはやらない。 -------------------------------------------------------------------------- 新語彙 1 つと、その理由(実測に基づく) -------------------------------------------------------------------------- * rgbvolume — **(D, H, W, 3) の色付きボリューム**。既存 `lightfield` の述語は ``ndim == 4`` だけなので、色ボリュームは **lightfield を完全に満たす**。 実測(2026-09-02、``(8, 16, 16, 3)`` の色ボリュームを lightfield の op へ): - ``lf_refocus`` / ``lf_subaperture`` / ``lf_epi`` / ``lf_depth_from_focus`` の **4 op が例外も NaN も出さず** (16, 3) の有限な結果を返す (それぞれ「再フォーカス像」「部分開口像」「EPI」「深度」を名乗る)。 z 軸を角度軸 V、y 軸を角度軸 U として読んだ、意味の無い有限値である。 - ``lf_all_in_focus`` だけは引数不足で TypeError(型の話ではない)。 逆向き(ライトフィールドを ``vol_label_slice_rgb`` へ)は shape[3] != 3 で fail-closed する。**安全なのは片側だけ**なので、実行時チェックには頼れない。 zscan を video から分けたのと同じ判断。 入口 = ``vol_colorize_labels`` (labels -> rgbvolume) と ``vol_label_overlay`` (voxel + labels -> rgbvolume)、出口 = ``vol_label_slice_rgb`` / ``vol_label_mpr_rgb`` (-> rgbimage)。産む 2・食う 2 で袋小路にならない。
+
+## `optics.py`
+
+- **L1935** — ★縁は**モザイクのまま**鏡映で 2 画素広げてから抜く。広げ幅が偶数で ``reflect`` (縁の画素を重ねない鏡映)なら 2x2 の位相が保たれる。マスク後の面を伸ばすと 未計測の 0 が縁に写り、一様な場でも縁が暗くなった(実測 16 画素)。
 
 ## `pcseg.py`
 
@@ -1310,7 +1318,7 @@
 ## `tests/test_opdocs.py`
 
 - **L212** — ★2026-09-03: 全 backend の _safe が backend_safe.guard に集約されたので、 qualname の文字列一致ではなく guard が立てる構造化マーカーで判定する (guard は qualname にも "_safe(...)" を残すが、そちらは表示用)。
-- **L1178** — ★見つからなかった理由: `ops.REGISTRY`(899)と 2-D ノート(899)は一致するので、 **レジストリ側から数える限り「欠落ゼロ」に見える**。一度そう結論して間違えた。 だからこの門は tier をまたぐ索引の側から数える (memory: feedback_search_all_tiers_before_declaring_a_gap)。 --------------------------------------------------------------------------- #
+- **L1179** — ★見つからなかった理由: `ops.REGISTRY`(899)と 2-D ノート(899)は一致するので、 **レジストリ側から数える限り「欠落ゼロ」に見える**。一度そう結論して間違えた。 だからこの門は tier をまたぐ索引の側から数える (memory: feedback_search_all_tiers_before_declaring_a_gap)。 --------------------------------------------------------------------------- #
 
 ## `tests/test_packaging_foundation.py`
 

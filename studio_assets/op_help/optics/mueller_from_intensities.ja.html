@@ -1,0 +1,56 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mueller_from_intensities — OPTICS <code style="color:#22d3bf">polarization</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mueller_from_intensities(intensities, psg, psa, rank_tol=1e-09)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optics; optics.mueller_from_intensities(intensities, psg, psa, rank_tol=1e-09)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;mueller_from_intensities&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>既知の生成器・検光子の状態で測った強度から Mueller 行列を取り戻す(偏光計測の最小二乗)。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Model: the detector behind a polarisation-state analyser sees</p>
+<p>`<code style="color:#22d3bf">I_i = (A_i @ M @ G_i)[0, 0] = a_i^T M g_i</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">g_i = G_i[:, 0]</code>` is</p>
+<p>the Stokes vector the generator emits from unpolarised light and</p>
+<p>`<code style="color:#22d3bf">a_i = A_i[0, :]</code>` is the analyser&#x27;s first row. That is **linear in the 16</p>
+<p>entries of M**: `<code style="color:#22d3bf">I_i = w_i . vec(M)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">w_i = outer(a_i, g_i).ravel()</code>`.</p>
+<p>Stacking the N measurements gives `<code style="color:#22d3bf">W (N x 16)</code>`, solved by least squares.</p>
+<p>*intensities* is `<code style="color:#22d3bf">(N,)</code><code style="color:#22d3bf"> (one detector) or </code><code style="color:#22d3bf">(N, ...)</code>` (an image per</p>
+<p>state: the same system solved per pixel, so the result is `<code style="color:#22d3bf">(4, 4, ...)</code>`).</p>
+<p>*psg* and *psa* are sequences of N Mueller matrices (4x4) — build them with</p>
+<p>:func:<code style="color:#22d3bf">mueller_element</code> and matrix products.</p>
+<p><b>Fail-closed on an under-determined design</b>: if `<code style="color:#22d3bf">W</code>` has rank &lt; 16 the</p>
+<p>design cannot see every entry (the classic case — linear polarisers only,</p>
+<p>no retarder — leaves the S3 row and column unobservable, rank 9) and the</p>
+<p>function raises with the rank instead of returning a pseudo-inverse answer</p>
+<p>that would look plausible and be wrong in the unobserved entries.</p>
+<p>Ground truth in the tests: a known `<code style="color:#22d3bf">M</code>` (retarder then polariser),</p>
+<p>36 generator/analyser pairs with quarter-wave plates, intensities computed</p>
+<p>by the forward model → `<code style="color:#22d3bf">M</code>` recovered to 1e-10; the same with polarisers</p>
+<p>only → rank 9, refused.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: shapes disagree, fewer than 16 measurements,</p>
+<p>non-finite input, or rank &lt; 16.</p>
+<p>Provenance: the observation matrix `<code style="color:#22d3bf">outer(a, g)</code>` is the standard</p>
+<p>formulation (Chipman, &quot;Polarimetry&quot;, *Handbook of Optics* ch. 15); the</p>
+<p>`<code style="color:#22d3bf">pinv</code><code style="color:#22d3bf"> variant is what Polanalyser&#x27;s </code><code style="color:#22d3bf">calcMueller</code>` does. Re-implemented</p>
+<p>with an explicit rank check.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
+<p style="margin:2px 0 2px 12px">• **文字列は <code style="color:#22d3bf">ValueError</code>** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> は成功してしまうため、未パースの設定値が長さとして通り抜ける(実測: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> がもっともらしい 66.667 mm を返していた)。bool も <code style="color:#22d3bf">True == 1</code> の暗黙昇格として拒否。</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked array は <code style="color:#22d3bf">ValueError</code><b>(実数枠のみ。虚部の無言切り捨て・マスク剥がしを拒否)。</b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**。</p>
+<p style="margin:2px 0 2px 12px">• <b>0 除算とその親戚を名指しで拒否</b>: 焦点距離 0・曲率半径 0・屈折率 &lt;= 0・不透明な開口(全 0 なので正規化が 0/0)・総和 &lt;= 0 の PSF・S0 = 0 の Stokes ベクトル・物体が前側焦点にある(像が無限遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>非有限を返すのは 2 op だけ、しかも契約として明記</b>: <code style="color:#22d3bf">depth_of_field</code> の過焦点距離以遠の <code style="color:#22d3bf">far_mm = inf</code>(それが過焦点距離の定義)と <code style="color:#22d3bf">gaussian_beam</code> のウエストでの <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波面の曲率半径)。どちらも有限の相棒(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)を併せて返す。**それ以外の無言 NaN/Inf は内部で検出して <code style="color:#22d3bf">ValueError</code>** —「float64 が溢れた」と「答えが無限大」は別の主張なので、後者の顔で前者を返さない。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 生成格子は <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)、供給された場/PSF/開口は <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24)、ABCD 素子列は <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024)、Zernike は <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。小さな引数から巨大な内部確保が起きる経路(実測: n_max=40 × 4096² で 108 GB)を fail-closed で塞ぐ。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理的に不可能な状態も拒否</b>: 偏光度 &gt; 1 の Stokes ベクトル、負の透過率、負の強度、n-|m| が奇数などの不正な Zernike 添字。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:polarization_camera_pipeline">polarization_camera_pipeline</a> — <code style="color:#22d3bf">py -3.11 examples/polarization_camera_pipeline.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">matrix</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opoptics:abcd_trace">abcd_trace</a> · <a style="color:#22d3bf" href="opoptics:mueller_apply">mueller_apply</a> · <a style="color:#22d3bf" href="opoptics:mueller_checks">mueller_checks</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">polarization</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:jones_element">jones_element</a> · <a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_from_jones">stokes_from_jones</a> · <a style="color:#22d3bf" href="opoptics:mueller_element">mueller_element</a> · <a style="color:#22d3bf" href="opoptics:mueller_apply">mueller_apply</a> · <a style="color:#22d3bf" href="opoptics:stokes_analyze">stokes_analyze</a> · <a style="color:#22d3bf" href="opoptics:polarization_demosaic">polarization_demosaic</a> · <a style="color:#22d3bf" href="opoptics:mueller_checks">mueller_checks</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: optics.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

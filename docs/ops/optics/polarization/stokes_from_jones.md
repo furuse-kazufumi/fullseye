@@ -24,7 +24,11 @@ Jones vector -> Stokes vector (the four measurable intensities).
 
 In this convention (``exp(-i*omega*t)`` time dependence) ``S3 > 0`` is
 **right-circular**: the Jones vector ``[1, -i]/sqrt(2)`` maps to
-``[1, 0, 0, +1]``. The convention is pinned by a test rather than left to
+``[1, 0, 0, +1]``. (Cross-checked 2026-09-18: pypolar's ``jones_to_stokes``
+gives the opposite S3 sign for the same vector — the other textbook
+convention — while the Mueller matrices of every element agree with
+pypolar, py-pol and polanalyser to 1e-16. See
+``tests/test_polarization_external_diff.py``.) The convention is pinned by a test rather than left to
 the reader, because every textbook picks a different one and a sign slip
 here is invisible in intensity measurements.
 
@@ -69,7 +73,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`polarization`)
 
-[jones_element](jones_element.md) · [jones_apply](jones_apply.md) · [mueller_element](mueller_element.md) · [mueller_apply](mueller_apply.md) · [stokes_analyze](stokes_analyze.md)
+[jones_element](jones_element.md) · [jones_apply](jones_apply.md) · [mueller_element](mueller_element.md) · [mueller_apply](mueller_apply.md) · [stokes_analyze](stokes_analyze.md) · [polarization_demosaic](polarization_demosaic.md) · [mueller_from_intensities](mueller_from_intensities.md) · [mueller_checks](mueller_checks.md)
 
 ---
 *Provenance: optics.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
