@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 20 項目**
+**収録 21 項目**
 
 ## 測る (4)
 
@@ -148,7 +148,7 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 
 動く例: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## 組み立てる (2)
+## 組み立てる (3)
 
 ### [位置を合わせて重ねる](capabilities/align-and-stack.md)
 
@@ -165,6 +165,14 @@ op の返り値は `image` / `region` / `points` / `contour` / `feature` / `matr
 使う op: `to_json`, `from_json`, `to_jsonable`, `from_jsonable`, `save_json`, `load_json`, `to_json_lines`, `from_json_lines`
 
 動く例: `typed_results_json`
+
+### [op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す](capabilities/typed-results-as-markdown.md)
+
+JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の中に貼る、数の表を「読ませる」、レビューに残す。[`typed-results-as-json`](typed-results-as-json.md) が機械に厳密な形を与えるのに対し、`fullseye/mdio.py` は**人が読む形**と、その**間の橋**を与えます。
+
+使う op: `to_markdown`, `json_block`, `extract_json`, `report`
+
+動く例: `typed_results_markdown`
 
 ## 見せる (3)
 

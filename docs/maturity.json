@@ -497,6 +497,27 @@
    ]
   },
   {
+   "id": "typed-results-as-markdown",
+   "title": "op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す",
+   "title_en": "Render typed op results as Markdown, with an exact JSON block to read back",
+   "category": "組み立てる",
+   "note": "docs/capabilities/typed-results-as-markdown.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "typed_results_markdown",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "vibration-and-acoustics",
    "title": "振動と音から異常を診断する",
    "title_en": "Diagnose faults from vibration and sound",
@@ -584,9 +605,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 209,
+  "examples2d_total": 210,
   "run_by_the_poc_gate": 122,
-  "run_by_the_example_gate": 87,
+  "run_by_the_example_gate": 88,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

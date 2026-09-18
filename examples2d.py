@@ -111,6 +111,11 @@ EXAMPLES = [
                 "またぐぶん漏れる(−0.221、el>2Δρ で 0)。対向比は速さを落とすので 1°/s の遠景の"
                 "流れも −0.612 に読む。LGMD η のピークは α·l/|v| 前で θ=24.0°(球の厳密な θ なら "
                 "24.6°、4 次式の根)、τ 球式は真値に厳密、円板式の誤用は cos²(θ/2) 倍、DSI 0.80。"},
+    {"id": "typed_results_markdown", "task": "workflow", "data": "synthetic",
+     "name": "op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す",
+     "summary": "table / points は本物の GFM 表、image / region は 1 行要約(画素は描かない)。json_block で厳密な "
+                "JSON を ```json フェンスに包み、extract_json で Markdown 文書から fullseye 封筒だけを bit 一致で回収。"
+                "report は『読める』と『機械で戻せる』を with_json で 1 文書に両立。異種フェンスは無視し未知 sort は断る。"},
     {"id": "typed_results_json", "task": "workflow", "data": "synthetic",
      "name": "op の返り値(型付き)を JSON に出して bit そのままで戻す",
      "summary": "image / region / points / contour / feature / matrix / table を sort ごとの一つの JSON 形に。"

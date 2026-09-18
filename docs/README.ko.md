@@ -66,7 +66,7 @@
 
 **2,000개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **49개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 930/930, 타입 台帳 1049/1061, 한 줄 파사드 `fullseye.<이름>` 568/1178 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 930/930, 타입 台帳 1049/1061, 한 줄 파사드 `fullseye.<이름>` 568/1182 — **파사드는 아직 절반**.
 
 **내용 실측**: 2005건 중 실행 가능한 예제가 붙은 것은 **1962**건(43건은 없음), 사용법이 120자 이상인 것은 **1985**건(20건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2005건 모두.
 
@@ -203,7 +203,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 문서 지도 — 전 164건
+## 문서 지도 — 전 165건
 
 **색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 2,000건과 패밀리 가이드 49건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
@@ -329,7 +329,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(92)
+**Other**(93)
 
 | 문서 | 내용 |
 |---|---|
@@ -414,6 +414,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/text-and-tables-on-images.md`](capabilities/text-and-tables-on-images.md) | id: text-and-tables-on-images |
 | [`capabilities/tomography-reconstruction.md`](capabilities/tomography-reconstruction.md) | id: tomography-reconstruction |
 | [`capabilities/typed-results-as-json.md`](capabilities/typed-results-as-json.md) | id: typed-results-as-json |
+| [`capabilities/typed-results-as-markdown.md`](capabilities/typed-results-as-markdown.md) | id: typed-results-as-markdown |
 | [`capabilities/vibration-and-acoustics.md`](capabilities/vibration-and-acoustics.md) | id: vibration-and-acoustics |
 | [`capabilities/visual-hull-from-silhouettes.md`](capabilities/visual-hull-from-silhouettes.md) | id: visual-hull-from-silhouettes |
 | [`capabilities/volume-from-3d-scan.md`](capabilities/volume-from-3d-scan.md) | id: volume-from-3d-scan |

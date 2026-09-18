@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 20 capabilities**
+**Currently 21 capabilities**
 
 ## Measure (4)
 
@@ -149,7 +149,7 @@ Operators: `signal_features`, `envelope_spectrum`, `bearing_defect_frequencies`,
 
 Runnable: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## Compose (2)
+## Compose (3)
 
 ### [Align and stack](capabilities/align-and-stack.md)
 
@@ -166,6 +166,14 @@ One JSON form per sort and one way back: a self-describing envelope, float array
 Operators: `to_json`, `from_json`, `to_jsonable`, `from_jsonable`, `save_json`, `load_json`, `to_json_lines`, `from_json_lines`
 
 Runnable: `typed_results_json`
+
+### [Render typed op results as Markdown, with an exact JSON block to read back](capabilities/typed-results-as-markdown.md)
+
+The Markdown companion of jsonio. `to_markdown` renders a typed value as GFM — real tables for tabular and small numeric sorts (capped, with a truncation note), a one-line summary for things that are not text (an image is its shape and range). `json_block` wraps the exact JSON envelope in a ```` ```json ```` fence so a value survives inside prose and round-trips bit-for-bit through `extract_json`, which pulls every fullseye envelope out of a Markdown string and ignores foreign fences. `report` folds a list of sections into one document that is both readable and, with `with_json=True`, machine-recoverable. Fail-closed on an unknown sort, exact wherever a machine reads it back.
+
+Operators: `to_markdown`, `json_block`, `extract_json`, `report`
+
+Runnable: `typed_results_markdown`
 
 ## Show (3)
 
