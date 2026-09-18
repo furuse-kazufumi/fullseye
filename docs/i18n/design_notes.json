@@ -4256,6 +4256,13 @@
    "tw": "1. 圖是有效的。★門檻為 +3 dB——半導體實拍影像大部分是平滑金屬(晶粒、引線)，這些區域單張就已合焦，因此 AIF 的提升不如全面高頻的合成圖樣那麼大(這是現場的真實情況；舊的全面紋理場景曾得到 +14 dB)。",
    "ko": "1. 그림은 효과가 있다. ★임계값은 +3 dB — 반도체 실제 영상은 대부분 매끄러운 금속(다이, 리드)이고, 그 부분은 한 프레임만으로도 초점이 맞아 있으므로, 전면이 고주파인 합성 패턴만큼 AIF 향상이 크지 않다(현장의 정직한 모습. 이전의 전면 텍스처 장면에서는 +14 dB 가 나왔다).",
    "de": "1. Das Bild wirkt. ★Die Schwelle liegt bei +3 dB — reale Halbleiterbilder bestehen größtenteils aus glattem Metall (Die, Leads), das schon in einem einzelnen Bild scharf ist; daher fällt der AIF-Gewinn kleiner aus als bei einem synthetischen Muster, das überall hochfrequent ist (das ehrliche Bild aus der Praxis; das alte vollflächige Texturfeld ergab +14 dB)."
+  },
+  "7. ★ 穴 (a)【解消済み 2026-09-19】: 内部パラメータ推定を facade に露出した。 以前は fs から見えず、この tripwire は「塞がったら docstring を更新せよ」と鳴らしていた。 いまは fs.camera_calibration で呼べる(能力ノート camera-intrinsics-calibration)。 ただし facade 関数であって op レジストリの op ではない((画像,a,b) 固定でないため)。": {
+   "en": "7. ★ Hole (a) [Resolved 2026-09-19]: intrinsic estimation is now exposed on the facade. It used to be invisible from `fs`, and this tripwire kept firing \"once it is closed, update the docstring\". Now it is callable as `fs.camera_calibration` (capability note `camera-intrinsics-calibration`). It is a facade function, though, not an op in the registry (it is not the fixed `(image, a, b)` form).",
+   "zh": "7. ★ 缺口 (a)（已解决 2026-09-19）：内部参数估计现已在门面（facade）上公开。以前从 `fs` 看不到，这根绊线（tripwire）一直提示“一旦补上就更新 docstring”。现在可通过 `fs.camera_calibration` 调用（能力笔记 `camera-intrinsics-calibration`）。不过它是门面函数，而非注册表中的 op（因为它不是固定的 `(图像, a, b)` 形式）。",
+   "tw": "7. ★ 缺口 (a)（已解決 2026-09-19）：內部參數估計現已在門面（facade）上公開。以前從 `fs` 看不到，這根絆線（tripwire）一直提示「一旦補上就更新 docstring」。現在可透過 `fs.camera_calibration` 呼叫（能力筆記 `camera-intrinsics-calibration`）。不過它是門面函式，而非登錄表中的 op（因為它不是固定的 `(影像, a, b)` 形式）。",
+   "de": "7. ★ Lücke (a) [Behoben 2026-09-19]: Die Schätzung der intrinsischen Parameter ist jetzt über die Fassade zugänglich. Früher war sie von `fs` aus unsichtbar, und dieser Stolperdraht meldete stets „sobald geschlossen, den Docstring aktualisieren“. Jetzt ist sie als `fs.camera_calibration` aufrufbar (Fähigkeitsnotiz `camera-intrinsics-calibration`). Sie ist allerdings eine Fassadenfunktion und kein Op in der Registry (da nicht in der festen Form `(Bild, a, b)`).",
+   "ko": "7. ★ 구멍 (a)【해결됨 2026-09-19】: 내부 파라미터 추정을 파사드(facade)에 노출했다. 이전에는 `fs`에서 보이지 않아 이 트립와이어(tripwire)가 “막히면 docstring을 갱신하라”고 계속 울렸다. 이제 `fs.camera_calibration`으로 호출할 수 있다(능력 노트 `camera-intrinsics-calibration`). 다만 파사드 함수이지 레지스트리의 op는 아니다(고정된 `(이미지, a, b)` 형태가 아니기 때문)."
   }
  }
 }

@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 618 of 758. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 758. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -261,7 +261,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L557** — ★ Gap (c): since the points are distorted, what stopped it was not the degeneracy gate but the later non-finite K gate. We even confirm that its message contains "tilt the board" (added 2026-09-06).
 - **L565** — 5b. ★ Gap (c3): the closed form is systematically off by the amount of distortion (initial-value only)
 - **L569** — 6. ★ Gap (b): reprojection_error does not know about distortion -> even passing the ground-truth values, it stays large
-- **L575** _(ja)_ — 7. ★ 穴 (a)【解消済み 2026-09-19】: 内部パラメータ推定を facade に露出した。 以前は fs から見えず、この tripwire は「塞がったら docstring を更新せよ」と鳴らしていた。 いまは fs.camera_calibration で呼べる(能力ノート camera-intrinsics-calibration)。 ただし facade 関数であって op レジストリの op ではない((画像,a,b) 固定でないため)。
+- **L575** — 7. ★ Hole (a) [Resolved 2026-09-19]: intrinsic estimation is now exposed on the facade. It used to be invisible from `fs`, and this tripwire kept firing "once it is closed, update the docstring". Now it is callable as `fs.camera_calibration` (capability note `camera-intrinsics-calibration`). It is a facade function, though, not an op in the registry (it is not the fixed `(image, a, b)` form).
 
 ## `examples/poc_cell_counting.py`
 

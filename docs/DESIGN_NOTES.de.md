@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 609 von 758. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 758. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -261,7 +261,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L557** — ★ Lücke (c): Da die Punkte verzerrt sind, hat es nicht das Degenerationsgatter gestoppt, sondern das nachgelagerte nicht-endliche K-Gatter. Wir prüfen sogar, dass dessen Meldung "neige die Platte" enthält (hinzugefügt 2026-09-06).
 - **L565** — 5b. ★ Lücke (c3): Die geschlossene Form weicht systematisch um den Betrag der Verzerrung ab (nur als Startwert)
 - **L569** — 6. ★ Lücke (b): reprojection_error kennt die Verzerrung nicht -> selbst wenn man die wahren Werte übergibt, bleibt er groß
-- **L575** _(ja)_ — 7. ★ 穴 (a)【解消済み 2026-09-19】: 内部パラメータ推定を facade に露出した。 以前は fs から見えず、この tripwire は「塞がったら docstring を更新せよ」と鳴らしていた。 いまは fs.camera_calibration で呼べる(能力ノート camera-intrinsics-calibration)。 ただし facade 関数であって op レジストリの op ではない((画像,a,b) 固定でないため)。
+- **L575** — 7. ★ Lücke (a) [Behoben 2026-09-19]: Die Schätzung der intrinsischen Parameter ist jetzt über die Fassade zugänglich. Früher war sie von `fs` aus unsichtbar, und dieser Stolperdraht meldete stets „sobald geschlossen, den Docstring aktualisieren“. Jetzt ist sie als `fs.camera_calibration` aufrufbar (Fähigkeitsnotiz `camera-intrinsics-calibration`). Sie ist allerdings eine Fassadenfunktion und kein Op in der Registry (da nicht in der festen Form `(Bild, a, b)`).
 
 ## `examples/poc_cell_counting.py`
 
