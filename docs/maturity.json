@@ -118,6 +118,27 @@
    ]
   },
   {
+   "id": "camera-intrinsics-calibration",
+   "title": "平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)",
+   "title_en": "Estimate the camera intrinsic matrix K from multiple planar views (Zhang)",
+   "category": "測る",
+   "note": "docs/capabilities/camera-intrinsics-calibration.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "camera_intrinsics_calibration",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "colour-and-delta-e",
    "title": "色を測る(XYZ / Lab / 色差)",
    "title_en": "Measure colour (XYZ / Lab / colour difference)",
@@ -647,9 +668,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 212,
+  "examples2d_total": 213,
   "run_by_the_poc_gate": 122,
-  "run_by_the_example_gate": 90,
+  "run_by_the_example_gate": 91,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

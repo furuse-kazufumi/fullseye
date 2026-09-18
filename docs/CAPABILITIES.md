@@ -16,9 +16,17 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 23 項目**
+**収録 24 項目**
 
-## 測る (5)
+## 測る (6)
+
+### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
+
+チェッカーボードのような平面ターゲットを角度を変えて何枚か撮り、その角点の対応だけからカメラの内部行列 `K`(焦点距離 fx,fy・主点 cx,cy・skew)を推定します。`camera_calibration(object_points, image_points_list)` は Zhang 法(平面ホモグラフィから内部拘束を 2 本ずつ集めて解く)で `K` を返します。回収した `K` は歪み係数の推定(能力ノート `estimate-lens-distortion`)や `undistort_image`、PnP・三角測量にそのまま渡せます。`object_points` は平面上の `(x, y)` 座標、`image_points_list` は各視点の `(row, col)` 画素対応です。
+
+使う op: `camera_calibration`, `estimate_distortion`, `intrinsic_matrix`, `decompose_intrinsics`
+
+動く例: `camera_intrinsics_calibration`
 
 ### [本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要)](capabilities/estimate-lens-distortion.md)
 

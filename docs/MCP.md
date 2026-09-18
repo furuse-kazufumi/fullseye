@@ -60,6 +60,7 @@ retrieval 無しでは使えない)。
 | `fullseye_fix_text` | 画像の中の文字を「本当はこう書いてあるべき文字列」に合わせて直す。行ごとに `{text, bbox}`、`mode=repair_flagged`(床を超えた字だけ置換、正しい字に触らない)/ `rewrite_line`(行を丸ごと同じ書体で描き直す)。直した画像はハンドル + 全解像度 PNG、報告に `status` / `reason_code` / `mismatch`(typo か unrelated = 元の字が指示と無関係な疑い)。検証を通らない置換は元に戻す |
 | `fullseye_import_json` | 型付きの値を **JSON 封筒で引数に受け取り**、以後の op が使えるハンドルにする。`json`(文字列)か `envelope`(オブジェクト)のどちらか一方。配列 sort(image / color / region / points / matrix …)はハンドルに、feature / contour / table は値を返す。壊れた封筒・未知 sort は `-32602` |
 | `fullseye_export_json` | ハンドルの中身を **JSON 封筒で持ち出す**。`structuredContent` に `fullseye.from_jsonable` で bit そのまま戻せる封筒、本文に `fullseye.to_markdown` の読める描画。`readable=true` で数をリストに。上限(512 KB)超の大きな画像は `isError` で断る(画像はハンドル/小図で扱う) |
+| `fullseye_estimate_distortion` | 本来まっすぐな**線群の点列**(`lines`=`[[x,y],…]` を並べた配列、2 本以上・各線 3 点以上)と 3x3 内部行列 `K` から Brown–Conrady 歪み係数 `dist=[k1,k2,p1,p2,k3]` を推定(plumb-line 法、チェッカー不要)。`radial`=1/2/3、`tangential` 真偽。返す `dist` は `undistort_image` にそのまま渡せる。`lines`/`K` は信頼境界で再検証し、形が違えば `-32602`、推定不能は `isError` |
 
 ## 文字を直す(`fullseye_fix_text`)の呼び出し例
 
@@ -123,6 +124,27 @@ fix_text(mode=repair_flagged, 床=0.0505 from typeface, 書体 3 本) → fullse
   ハンドルのまま `fullseye_apply` で回すか小図で見る。`sort` が JSON にできないハンドルも断る。
 * Python では同じ橋を `fullseye.apply_json(image, op, a, b)`(JSON 入力 → op → JSON 出力)や
   `fullseye.as_value(x)`(値でも封筒でも受ける引数入口)で使える。
+
+## 直線群から歪み係数を推定する(`fullseye_estimate_distortion`)の呼び出し例
+
+本来まっすぐな線(印刷線・建物のエッジ・定規)がレンズで曲がった**点列**だけから、Brown–Conrady
+歪み係数を推定する(チェッカーボードの対応点は不要。能力ノート
+[`estimate-lens-distortion`](capabilities/estimate-lens-distortion.md)、例
+[`examples/estimate_lens_distortion.py`](../examples/estimate_lens_distortion.py))。
+
+```json
+{"method": "tools/call", "params": {"name": "fullseye_estimate_distortion", "arguments": {
+  "lines": [[[12.0, 41.3], [40.0, 40.2], [100.0, 40.0], [188.0, 41.8]],
+            [[41.0, 12.4], [40.2, 100.0], [41.9, 188.0]]],
+  "K": [[190.0, 0.0, 99.5], [0.0, 190.0, 99.5], [0.0, 0.0, 1.0]],
+  "radial": 2, "tangential": false}}}
+```
+
+返り値の `structuredContent.dist` が `[k1, k2, p1, p2, k3]`。そのまま `undistort_image` に渡せる。
+
+* `lines`(各線 `[[x,y],…]`)と `K` は **untrusted として信頼境界で再検証**する —— `K` が 3x3 でない、
+  線が `(N,2)` でない、非有限が混ざる、線が 2 本未満は `-32602`。各線 3 点未満など道具側の拒否は `isError`。
+* 主点=歪み中心は `K` 固定(1 枚では中心と `p1,p2` が縮退)。向きの違う線を混ぜ、画面いっぱいに張るほど安定。
 
 ## 画像は「在らず、必要なときだけ在る」
 

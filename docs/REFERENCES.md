@@ -199,6 +199,12 @@ the operator is a member of that family*.
 | `undistort_image` · `distort_image` | camera / geometry | Radial-tangential model of Brown, D. C. (1971). *Close-range camera calibration.* Photogrammetric Engineering 37(8), 855–866 (Brown–Conrady). The whole-image form is the backward map (each corrected pixel samples the distorted input where its ideal ray landed) — hole-free per Wolberg, G. (1990), *Digital Image Warping*, IEEE CS Press, Sec. 3.5. The image-domain correction after coefficients are fitted follows **Discorpy** (Vo, N. T. et al., github.com/DiamondLightSource/discorpy, Apache-2.0; Vo et al. (2015), *Radial lens distortion correction with sub-pixel accuracy*, Optics Express 23(25), 32859). Composed here from this repo's own `distort_points` / `undistort_points` and `deformreg.warp_by_field`; no code copied, no OpenCV. |
 | `estimate_distortion` | camera / geometry | Plumb-line distortion estimation of Brown, D. C. (1971), *op. cit.* (Sec. on lines that are straight in object space): fit the coefficients that make imaged straight lines straight. The straight-line objective is that of Devernay, F. & Faugeras, O. (2001). *Straight lines have to be straight.* Machine Vision and Applications 13(1), 14–24. The line-pattern (board-free) framing follows **Discorpy** (Vo et al. 2015, *op. cit.*). Implemented as a `scipy.optimize.least_squares` fit of per-line perpendicular scatter over this repo's own `undistort_points`; no code copied, no OpenCV. |
 
+## 2026-09-19 additions — camera intrinsics on the facade (re-implemented from the method)
+
+| op | category | seminal reference |
+|---|---|---|
+| `camera_calibration` | camera / geometry | Zhang, Z. (2000). *A flexible new technique for camera calibration.* IEEE TPAMI 22(11), 1330–1334 — intrinsics from >= 3 views of a planar target via two per-view constraints on the image of the absolute conic, solved by SVD. Long present in `calib.py`; exposed on the facade here (the gap `poc_camera_calibration` flagged). Re-implemented from the method (plane-homography DLT + closed-form K), with a degeneracy refusal for untilted views; no code copied, no OpenCV. |
+
 ## Mining new operators from research (RAD)
 - RAD image / diffusion / deep_learning corpora (thousands of papers) = the source for operators beyond the classics: modern denoisers (BM3D, DnCNN), learned edges (HED), superpixels (SLIC), diffusion priors, foundation segmenters (SAM).
 - Workflow: mine a paper -> add a typed Op (fn + sort + analogs + this reference) -> evolution/codegen/catalog pick it up automatically.

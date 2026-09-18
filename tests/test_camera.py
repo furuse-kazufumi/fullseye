@@ -424,3 +424,39 @@ def test_estimate_distortion_fail_closed():
         camera.estimate_distortion([np.zeros((2, 2)), np.zeros((40, 2))], K)
     with pytest.raises(ValueError, match=r"radial must be"):
         camera.estimate_distortion([np.zeros((40, 2))] * 2, K, radial=4)
+
+
+def _project_plane(obj_xy, K, rvec, t):
+    R = camera.rodrigues(rvec)
+    Rt = np.column_stack([R[:, 0], R[:, 1], t])
+    hom = np.column_stack([obj_xy, np.ones(len(obj_xy))])
+    x = (K @ Rt @ hom.T).T
+    return (x[:, :2] / x[:, 2:3])[:, ::-1]                   # -> (row, col)
+
+
+def test_camera_calibration_recovers_K_via_facade():
+    import fullseye as fs
+    K_true = fs.intrinsic_matrix(600.0, 600.0, 320.0, 240.0)
+    gx, gy = np.meshgrid(np.arange(7), np.arange(6))
+    obj = np.column_stack([gx.ravel().astype(float), gy.ravel().astype(float)])
+    rng = np.random.default_rng(0)
+    views = [_project_plane(obj, K_true, rng.uniform(-0.4, 0.4, 3),
+                            [rng.uniform(-1, 1), rng.uniform(-1, 1), 8.0]) for _ in range(6)]
+    res = fs.camera_calibration(obj, views)
+    for key, tru in [("fx", 600.0), ("fy", 600.0), ("cx", 320.0), ("cy", 240.0)]:
+        assert abs(res[key] - tru) < 1.0
+    assert res["orientation_rank_ratio"] > 1e-8
+
+
+def test_camera_calibration_fail_closed_via_facade():
+    import fullseye as fs
+    K_true = fs.intrinsic_matrix(600.0, 600.0, 320.0, 240.0)
+    gx, gy = np.meshgrid(np.arange(7), np.arange(6))
+    obj = np.column_stack([gx.ravel().astype(float), gy.ravel().astype(float)])
+    rng = np.random.default_rng(1)
+    flat = [_project_plane(obj, K_true, [0.0, 0.0, rng.uniform(-0.02, 0.02)],
+                           [rng.uniform(-1, 1), rng.uniform(-1, 1), 8.0]) for _ in range(6)]
+    with pytest.raises(ValueError, match=r"degenerate|tilt"):
+        fs.camera_calibration(obj, flat)
+    with pytest.raises(ValueError, match=r">= 3 views"):
+        fs.camera_calibration(obj, flat[:2])

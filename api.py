@@ -191,6 +191,9 @@ from camera import (  # noqa: E402,F401
     decompose_essential, recover_pose, epipolar_lines,
     distort_points, undistort_points, distort_image, undistort_image, estimate_distortion, stereo_rectify,
 )
+from calib import (  # noqa: E402,F401
+    camera_calibration,
+)
 from odometry import (  # noqa: E402,F401
     rgbd_odometry, pnp_odometry, integrate_trajectory,
     umeyama_align, trajectory_error,
@@ -792,7 +795,7 @@ __all__ = [
     "triangulate", "reprojection_error", "solve_pnp", "rodrigues", "rotation_log",
     "fundamental_matrix", "essential_matrix", "essential_from_fundamental",
     "decompose_essential", "recover_pose", "epipolar_lines",
-    "distort_points", "undistort_points", "distort_image", "undistort_image", "estimate_distortion", "stereo_rectify",
+    "distort_points", "undistort_points", "distort_image", "undistort_image", "estimate_distortion", "stereo_rectify", "camera_calibration",
     "odometry", "rgbd_odometry", "pnp_odometry", "integrate_trajectory",
     "umeyama_align", "trajectory_error",
     "grasp", "Grasp", "sample_antipodal_grasps", "grasps_from_mesh", "force_closure",

@@ -27,6 +27,7 @@
 | [位置を合わせて重ねる](capabilities/align-and-stack.md) | Align and stack | 組み立てる | `verified-synthetic` | 4/4 | `poc_astro_photometry` synthetic → tests/test_poc_scripts_run.py<br>`poc_registration_basin` synthetic → tests/test_poc_scripts_run.py |
 | [配列で方向を測り、距離と速度を分ける](capabilities/beamforming-and-range-doppler.md) | Beamform for direction, separate range from velocity | 波と信号 | `verified-synthetic` | 4/4 | `poc_multibeam_bathymetry` synthetic → tests/test_poc_scripts_run.py<br>`poc_bev_sensor_fusion` synthetic → tests/test_poc_scripts_run.py |
 | [領域を切り出して、選んで、数える](capabilities/blob-and-region.md) | Segment regions, select them, and count | 見つける | `validated-public-real-data` | 3/4 | `poc_cell_counting` synthetic → tests/test_poc_scripts_run.py<br>`poc_particle_sizing` synthetic → tests/test_poc_scripts_run.py<br>`poc_real_coin_metrology` real → tests/test_poc_scripts_run.py |
+| [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md) | Estimate the camera intrinsic matrix K from multiple planar views (Zhang) | 測る | `verified-synthetic` | 4/4 | `camera_intrinsics_calibration` synthetic → tests/test_example_scripts_run.py |
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | Measure colour (XYZ / Lab / colour difference) | 光と色 | `verified-synthetic` | 4/4 | `poc_white_balance` synthetic → tests/test_poc_scripts_run.py<br>`poc_pigment_unmixing` synthetic → tests/test_poc_scripts_run.py |
 | [本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要)](capabilities/estimate-lens-distortion.md) | Estimate lens distortion coefficients from straight lines (plumb-line, no board) | 測る | `verified-synthetic` | 4/4 | `estimate_lens_distortion` synthetic → tests/test_example_scripts_run.py |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | Turn results into figures people can read | 見せる | `verified-synthetic` | 3/3 | `poc_colormap_readability` synthetic → tests/test_poc_scripts_run.py<br>`poc_dem_terrain` synthetic → tests/test_poc_scripts_run.py |
@@ -52,9 +53,9 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 212 |
+| 2-D 台帳の例 | 213 |
 | `tests/test_poc_scripts_run.py` が走らせる | 122 |
-| `tests/test_example_scripts_run.py` が走らせる | 90 |
+| `tests/test_example_scripts_run.py` が走らせる | 91 |
 | **どの門も走らせていない** | **0** |
 
 走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり

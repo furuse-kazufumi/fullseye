@@ -165,6 +165,12 @@ EXAMPLES = [
                 "**再投影 RMS は比 1.00 倍のまま fx の誤差が 281 倍**(0.026 % 対 7.33 %)。"
                 "区別できるのは sigma_fx(129 倍)。傾き 0 度の退化配置は閉形式が拒否するが"
                 "非線形最適化は正常な再投影誤差とともに 25 % 外れた答えを返す。"},
+    {"id": "camera_intrinsics_calibration", "task": "calibration", "data": "synthetic",
+     "name": "平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)",
+     "summary": "fs.camera_calibration を facade から呼ぶ最小例。傾けた 6 視点で K を厳密回収し"
+                "(fx,fy,cx,cy 誤差 < 1)、orientation_rank_ratio で配置の良し悪しを見る。板を"
+                "傾けない正面平行は退化して fail-closed、視点 3 未満も拒否。回収した K は"
+                "estimate_distortion / undistort_image / PnP に渡せる。来歴=Zhang 2000。"},
     {"id": "poc_forensics_roc", "task": "forensics", "data": "synthetic",
      "name": "画像改ざん検出の ROC(保存ボタン 1 回で何が消えるか)",
      "summary": "改ざんを自分で入れて画素ごとの ROC を出す。JPEG ゴーストの谷の深さで "

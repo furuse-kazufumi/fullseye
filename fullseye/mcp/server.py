@@ -249,6 +249,29 @@ TOOLS: dict[str, dict] = {
             "additionalProperties": False,
         },
     },
+    "fullseye_estimate_distortion": {
+        "description": (
+            "本来まっすぐな線群の点列から Brown–Conrady 歪み係数 dist=[k1,k2,p1,p2,k3] を推定する"
+            "(plumb-line 法、チェッカーボード不要)。lines は各線の点列 [[x,y],…](x=col,y=row)を"
+            "並べた配列(2 本以上・各線 3 点以上、向きの違う線を混ぜる)、K は 3x3 内部行列"
+            "(主点=歪み中心で固定)。radial=1/2/3 で放射次数、tangential で p1,p2 の有無。返す dist は"
+            "undistort_image / undistort_points にそのまま渡せる。lines/K は信頼境界で再検証し、"
+            "形が違えば -32602、推定不能は isError で断る(fail-closed、推測しない)。"),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "lines": {"type": "array", "minItems": 2,
+                          "description": "各線の点列 [[x,y],…](x=col,y=row)。2 本以上、各線 3 点以上"},
+                "K": {"type": "array", "minItems": 3, "maxItems": 3,
+                      "description": "3x3 内部行列(行の配列)。主点が歪み中心"},
+                "radial": {"type": "integer", "minimum": 1, "maximum": 3,
+                           "description": "放射次数(1=k1 / 2=k1,k2 / 3=k1,k2,k3)。既定 2"},
+                "tangential": {"type": "boolean", "description": "p1,p2 も推定するか。既定 true"},
+            },
+            "required": ["lines", "K"],
+            "additionalProperties": False,
+        },
+    },
 }
 
 
@@ -809,6 +832,41 @@ def _export_json(a: dict, store: HandleStore, *, max_structured_bytes: int) -> d
     return tool_result(text, env, max_structured_bytes=max_structured_bytes)
 
 
+def _estimate_distortion(a: dict) -> dict:
+    """直線群の点列(JSON)+ K → 歪み係数 dist。lines/K は信頼境界で再検証する。"""
+    import numpy as np
+    import fullseye
+
+    try:                                                         # 信頼境界: 生配列を再検証
+        K = np.asarray(a["K"], dtype=float)
+        if K.shape != (3, 3) or not np.all(np.isfinite(K)):
+            raise ValueError("K は有限値の 3x3 でなければならない")
+        lines = []
+        for i, ln in enumerate(a["lines"]):
+            arr = np.asarray(ln, dtype=float)
+            if arr.ndim != 2 or arr.shape[1] != 2:
+                raise ValueError("lines[%d] は (N, 2) の点列 [[x,y],…] でない" % i)
+            if not np.all(np.isfinite(arr)):
+                raise ValueError("lines[%d] に非有限値がある" % i)
+            lines.append(arr)
+    except (ValueError, TypeError) as exc:
+        raise ArgError("lines / K が読めない: %s" % exc) from None
+
+    radial = int(a.get("radial", 2))
+    tangential = bool(a.get("tangential", True))
+    try:
+        dist = fullseye.estimate_distortion(lines, K, radial=radial, tangential=tangential)
+    except ValueError as exc:                                    # 線 2 本未満・各線 3 点未満など
+        return _tool_error("歪み係数を推定できない: %s" % exc)
+    d = [float(x) for x in dist]
+    text = ("推定した歪み係数 dist = [k1, k2, p1, p2, k3]\n"
+            "  k1=%.6g  k2=%.6g  p1=%.6g  p2=%.6g  k3=%.6g\n"
+            "(undistort_image / undistort_points にそのまま渡せる。主点=歪み中心は K 固定、"
+            "線 %d 本から推定)" % (d[0], d[1], d[2], d[3], d[4], len(lines)))
+    return tool_result(text, {"dist": d, "radial": radial, "tangential": tangential,
+                              "n_lines": len(lines)})
+
+
 def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = None, *,
               max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     """tool 本体。引数違反は ArgError(= -32602)、実行の失敗は isError の結果。"""
@@ -855,6 +913,8 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             return _import_json(a, store)
         if name == "fullseye_export_json":
             return _export_json(a, store, max_structured_bytes=max_structured_bytes)
+        if name == "fullseye_estimate_distortion":
+            return _estimate_distortion(a)
     except HandleError as exc:
         raise ArgError(str(exc)) from exc
     raise ArgError("未実装の tool: %r" % name)                 # TOOLS に足して本体を忘れた
@@ -966,6 +1026,17 @@ def demo() -> int:
                            "shape": [2, 2], "data": [[1.5, 2.0], [3.25, 4.0]]}}
         jh = tool("fullseye_import_json", envelope=env)["structuredContent"]["handle"]
         tool("fullseye_export_json", handle=jh, readable=True)     # 封筒 + Markdown で返る
+        # 直線群から歪み係数を推定(lines/K を JSON で渡す)。既知の樽型を回収してみせる。
+        import numpy as _np
+        import fullseye as _fs
+        _K = _fs.intrinsic_matrix(0.95 * 200, 0.95 * 200, 99.5, 99.5)
+        _true = [-0.24, 0.06, 0.0, 0.0, 0.0]
+        _span = _np.linspace(12, 188, 30)
+        _lines = ([_fs.distort_points(_np.column_stack([_span, _np.full(30, y)]), _K, _true).tolist()
+                   for y in (40, 100, 160)]
+                  + [_fs.distort_points(_np.column_stack([_np.full(30, x), _span]), _K, _true).tolist()
+                     for x in (40, 100, 160)])
+        tool("fullseye_estimate_distortion", lines=_lines, K=_K.tolist(), radial=2, tangential=False)
         tool("fullseye_apply", handle=h, op="count_obj")          # 型不一致 → 拒否される見本
     except RuntimeError as exc:
         print("(拒否の見本)", str(exc)[:300])

@@ -192,7 +192,7 @@ def test_every_declared_tool_has_a_body(cat):
     order = ["fullseye_search_ops", "fullseye_op_help", "fullseye_catalog_coverage",
              "fullseye_list_samples", "fullseye_load_image", "fullseye_apply", "fullseye_inspect",
              "fullseye_pipeline", "fullseye_fix_text",
-             "fullseye_import_json", "fullseye_export_json"]
+             "fullseye_import_json", "fullseye_export_json", "fullseye_estimate_distortion"]
     assert set(order) == set(TOOLS), "tool を足したらこの表にも足すこと: %s" % (set(TOOLS) ^ set(order))
     ctx: dict = {}
     for n in order:
@@ -225,6 +225,18 @@ def test_every_declared_tool_has_a_body(cat):
         elif n == "fullseye_export_json":
             # import_json が作った小さいハンドルを使う(画像は上限で断られるため)。
             a = {"handle": ctx["json_handle"]}
+        elif n == "fullseye_estimate_distortion":
+            import fullseye
+            import numpy as np
+            K = fullseye.intrinsic_matrix(0.95 * 200, 0.95 * 200, 99.5, 99.5)
+            span = np.linspace(12, 188, 30)
+            lines = [fullseye.distort_points(np.column_stack([span, np.full(30, y)]),
+                                             K, [-0.24, 0.06, 0.0, 0.0, 0.0]).tolist()
+                     for y in (40, 100, 160)]
+            lines += [fullseye.distort_points(np.column_stack([np.full(30, x), span]),
+                                              K, [-0.24, 0.06, 0.0, 0.0, 0.0]).tolist()
+                      for x in (40, 100, 160)]
+            a = {"lines": lines, "K": K.tolist(), "radial": 2, "tangential": False}
         else:
             a = {}
         res = call_tool(n, a, cat, store)

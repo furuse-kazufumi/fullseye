@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 758. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 609 von 758. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -24,10 +24,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `api.py`
 
-- **L546** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
-- **L562** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
-- **L617** — ★``annotate.overlay_mask`` wird **bewusst nicht auf oberster Ebene exponiert**. Das gleichnamige ``imgio.overlay_mask`` ist bereits als ``fs.overlay_mask`` öffentlich, und Argumente wie Bedeutung unterscheiden sich (imgio = rohes RGB, mask>0.5, fill/margin / annotate = Rollenname-Farbe, Gewichte [0,1] erlaubt, lehnt Form-Fehlanpassung ab). Legt man dem gleichen Namen ein anderes Versprechen auf, erhält der Aufrufer keine Ausnahme, sondern **ein plausibel anderes Bild**. Breaking Changes an der öffentlichen API machen wir nicht im Alleingang, daher die rollentragende Variante über ``fs.annotate.overlay_mask`` beziehen.
-- **L1388** — ★ **Für Farbbilder gibt es derzeit keinen korrekten Aufruf**: Übergibt man sie gemeinsam, vermischen sich die Farben, und ruft man pro Kanal dreimal auf, teilt ein selbstnormalisierender op jeden Kanal durch sein eigenes Maximum und zerstört die Verhältnisse zwischen den Kanälen (der Winkelfehler der Grey-Edge-Methode steigt von 1.03 Grad mit unserem eigenen Sobel -> 4.17 Grad pro Bild -> 27.86 Grad pro Kanal, 29.14 Grad am Nullpunkt). Wohin man sich neigt, ist eine **Vertragsentscheidung**, deshalb ändern wir hier keinen einzigen Standardwert, verweigern nur bei `on_error="raise"` und protokollieren es standardmäßig im Register, damit es sichtbar bleibt. Details und Optionen in docs/KNOWN_ISSUES.md.
+- **L549** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
+- **L565** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
+- **L620** — ★``annotate.overlay_mask`` wird **bewusst nicht auf oberster Ebene exponiert**. Das gleichnamige ``imgio.overlay_mask`` ist bereits als ``fs.overlay_mask`` öffentlich, und Argumente wie Bedeutung unterscheiden sich (imgio = rohes RGB, mask>0.5, fill/margin / annotate = Rollenname-Farbe, Gewichte [0,1] erlaubt, lehnt Form-Fehlanpassung ab). Legt man dem gleichen Namen ein anderes Versprechen auf, erhält der Aufrufer keine Ausnahme, sondern **ein plausibel anderes Bild**. Breaking Changes an der öffentlichen API machen wir nicht im Alleingang, daher die rollentragende Variante über ``fs.annotate.overlay_mask`` beziehen.
+- **L1391** — ★ **Für Farbbilder gibt es derzeit keinen korrekten Aufruf**: Übergibt man sie gemeinsam, vermischen sich die Farben, und ruft man pro Kanal dreimal auf, teilt ein selbstnormalisierender op jeden Kanal durch sein eigenes Maximum und zerstört die Verhältnisse zwischen den Kanälen (der Winkelfehler der Grey-Edge-Methode steigt von 1.03 Grad mit unserem eigenen Sobel -> 4.17 Grad pro Bild -> 27.86 Grad pro Kanal, 29.14 Grad am Nullpunkt). Wohin man sich neigt, ist eine **Vertragsentscheidung**, deshalb ändern wir hier keinen einzigen Standardwert, verweigern nur bei `on_error="raise"` und protokollieren es standardmäßig im Register, damit es sichtbar bleibt. Details und Optionen in docs/KNOWN_ISSUES.md.
 
 ## `astrostack.py`
 
@@ -252,16 +252,16 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_camera_calibration.py`
 
-- **L150** — ── Kalibrierung (eine selbstgebaute minimale Bündelausgleichung. ★ Lücke (e)) ──────────────────────────────────── #
-- **L176** — ★ Lücke (d): Die Bildpunkte von camera_calibration sind (row, col). project_points sind (x, y).
-- **L304** — ★ Lücke (b): reprojection_error kennt die Verzerrung nicht. Selbst wenn man die wahren Werte übergibt, wird es nicht 0.
-- **L525** — 2. ★ Der Hauptpunkt: Der Reprojektions-RMS ist nahezu gleich, doch der fx-Fehler unterscheidet sich um mehr als eine Größenordnung
-- **L533** — 3. ★ Der Kompensationsmechanismus: Das Verhältnis von fx stimmt mit dem Verhältnis von Z überein
-- **L539** — 4b. ★ Eine ehrliche Aufzeichnung einer Niederlage: bei engem Sichtfeld + 0.30 px Rauschen ist der Nullpunkt B, der den Hauptpunkt auf die Bildmitte fixiert, korrekter als ihn zu schätzen (eine Bedingung, unter der man nicht besser sein kann, existiert wirklich)
-- **L555** — ★ Lücke (c): Da die Punkte verzerrt sind, hat es nicht das Degenerationsgatter gestoppt, sondern das nachgelagerte nicht-endliche K-Gatter. Wir prüfen sogar, dass dessen Meldung "neige die Platte" enthält (hinzugefügt 2026-09-06).
-- **L563** — 5b. ★ Lücke (c3): Die geschlossene Form weicht systematisch um den Betrag der Verzerrung ab (nur als Startwert)
-- **L567** — 6. ★ Lücke (b): reprojection_error kennt die Verzerrung nicht -> selbst wenn man die wahren Werte übergibt, bleibt er groß
-- **L573** — 7. ★ Lücke (a): Die Schätzung der intrinsischen Parameter ist von der Fassade aus nicht sichtbar
+- **L152** — ── Kalibrierung (eine selbstgebaute minimale Bündelausgleichung. ★ Lücke (e)) ──────────────────────────────────── #
+- **L178** — ★ Lücke (d): Die Bildpunkte von camera_calibration sind (row, col). project_points sind (x, y).
+- **L306** — ★ Lücke (b): reprojection_error kennt die Verzerrung nicht. Selbst wenn man die wahren Werte übergibt, wird es nicht 0.
+- **L527** — 2. ★ Der Hauptpunkt: Der Reprojektions-RMS ist nahezu gleich, doch der fx-Fehler unterscheidet sich um mehr als eine Größenordnung
+- **L535** — 3. ★ Der Kompensationsmechanismus: Das Verhältnis von fx stimmt mit dem Verhältnis von Z überein
+- **L541** — 4b. ★ Eine ehrliche Aufzeichnung einer Niederlage: bei engem Sichtfeld + 0.30 px Rauschen ist der Nullpunkt B, der den Hauptpunkt auf die Bildmitte fixiert, korrekter als ihn zu schätzen (eine Bedingung, unter der man nicht besser sein kann, existiert wirklich)
+- **L557** — ★ Lücke (c): Da die Punkte verzerrt sind, hat es nicht das Degenerationsgatter gestoppt, sondern das nachgelagerte nicht-endliche K-Gatter. Wir prüfen sogar, dass dessen Meldung "neige die Platte" enthält (hinzugefügt 2026-09-06).
+- **L565** — 5b. ★ Lücke (c3): Die geschlossene Form weicht systematisch um den Betrag der Verzerrung ab (nur als Startwert)
+- **L569** — 6. ★ Lücke (b): reprojection_error kennt die Verzerrung nicht -> selbst wenn man die wahren Werte übergibt, bleibt er groß
+- **L575** _(ja)_ — 7. ★ 穴 (a)【解消済み 2026-09-19】: 内部パラメータ推定を facade に露出した。 以前は fs から見えず、この tripwire は「塞がったら docstring を更新せよ」と鳴らしていた。 いまは fs.camera_calibration で呼べる(能力ノート camera-intrinsics-calibration)。 ただし facade 関数であって op レジストリの op ではない((画像,a,b) 固定でないため)。
 
 ## `examples/poc_cell_counting.py`
 
@@ -891,9 +891,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `fullseye/__init__.py`
 
-- **L365** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L549** — ★Der Adapter, der sich an den deklarierten out-Typ haelt, **verwirft alles ab dem 2. Element** eines op, der ein Tupel zurueckgibt (``wht`` von ``drizzle_resample``, ``info`` von ``piv_cross_correlate``). Wird die verworfene Seite benoetigt, war sie ueber den Eingang des ledger nicht erreichbar. Am 2026-09-06 schrieb ein Superaufloesungs-PoC ``flow, info = fs.ledger.piv_cross_correlate(...)``, entpackte das (2,R,C) entlang der 1. Achse, nutzte die 2. Zeile von dy als dx und machte die Verschiebungsschaetzung von 0.12 -> 0.74 px (ohne Ausnahme). Mit ``.raw`` erreicht man die rohe Rueckgabe: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
-- **L923** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L366** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L550** — ★Der Adapter, der sich an den deklarierten out-Typ haelt, **verwirft alles ab dem 2. Element** eines op, der ein Tupel zurueckgibt (``wht`` von ``drizzle_resample``, ``info`` von ``piv_cross_correlate``). Wird die verworfene Seite benoetigt, war sie ueber den Eingang des ledger nicht erreichbar. Am 2026-09-06 schrieb ein Superaufloesungs-PoC ``flow, info = fs.ledger.piv_cross_correlate(...)``, entpackte das (2,R,C) entlang der 1. Achse, nutzte die 2. Zeile von dy als dx und machte die Verschiebungsschaetzung von 0.12 -> 0.74 px (ohne Ausnahme). Mit ``.raw`` erreicht man die rohe Rueckgabe: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
+- **L924** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -911,7 +911,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `fullseye/mcp/server.py`
 
-- **L666** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
+- **L689** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
 
 ## `g1_policy_bridge.py`
 
@@ -1274,9 +1274,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L57** _(ja)_ — ★引数名を `name` にしていて `_call(4, "fullseye_op_help", name="gaussian")` が TypeError になり、**subprocess の実 stdio 往復が 1 度も走らないまま** 23 件が緑だった(2026-09-15)。走らなかった検査は無いのと同じ。
 - **L105** _(ja)_ — ★最初 `gaussian` が先頭と決めつけて落ちた。`gauss_filter` と `gaussian` は同じ HALCON 別名を共有する別 op で、`api.find_op` は `name == halcon` の正典を優先する。 検索もその規約に揃えたので、正典が先頭・`gaussian` が上位に居ることを見る。
-- **L269** _(ja)_ — ★以前の被験者は台帳経由で索引に入ったこと(= 索引が台帳を数えている)も見る
-- **L300** _(ja)_ — ★2026-09-17 に ``b`` は「未使用」から**端の扱いを選ぶつまみ**になった。 ノートがその意味と**歴史側の帯**を両方書いていることを固定する —— どちらか片方だけだと、保存済みプログラムを読む人が挙動を誤解する。
-- **L342** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
+- **L281** _(ja)_ — ★以前の被験者は台帳経由で索引に入ったこと(= 索引が台帳を数えている)も見る
+- **L312** _(ja)_ — ★2026-09-17 に ``b`` は「未使用」から**端の扱いを選ぶつまみ**になった。 ノートがその意味と**歴史側の帯**を両方書いていることを固定する —— どちらか片方だけだと、保存済みプログラムを読む人が挙動を誤解する。
+- **L354** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
 
 ## `tests/test_mcp_wheel.py`
 

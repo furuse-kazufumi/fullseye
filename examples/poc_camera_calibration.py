@@ -33,11 +33,13 @@
  7. 速度
 
 【★ この PoC が出した道具の穴】
-(a) **内部パラメータ推定がファサードから呼べない**。``calib.camera_calibration``
-    (Zhang 法)がリポジトリ唯一の内部行列推定だが、``import fullseye as fs`` の
-    公開名にも op レジストリ 882 個にも**入っていない**。この PoC は
-    ``import calib`` で裸のモジュールを直接叩いている。ファサードだけを見る
-    利用者にとって「fullseye はカメラ校正ができないライブラリ」に見える。
+(a) **【解消済み 2026-09-19】内部パラメータ推定がファサードから呼べなかった**。
+    ``calib.camera_calibration``(Zhang 法)がリポジトリ唯一の内部行列推定だが、
+    以前は ``import fullseye as fs`` の公開名に入っておらず、この PoC は
+    ``import calib`` で裸のモジュールを直接叩いていた。現在は ``fs.camera_calibration``
+    として facade に露出し(能力ノート ``camera-intrinsics-calibration``、最小例
+    ``examples/camera_intrinsics_calibration.py``)、下の ``import calib`` は
+    この PoC の教材的な直呼びとして残している(挙動の比較のため)。
 (b) **``fs.reprojection_error`` に歪み引数が無い**。歪んだ実画像の観測に対して
     真の K・真の姿勢を渡しても、返るのは「歪み分の誤差」であって 0 ではない
     (第 1 章の実測で 9.42 px)。歪みのあるレンズで使うと**正しい答えを
@@ -85,7 +87,7 @@ import numpy as np
 from scipy.optimize import least_squares
 
 import fullseye as fs
-import calib                      # ★ 穴 (a): fs ファサードに出ていない
+import calib                      # ★ 穴 (a)【解消済み】: 現在は fs.camera_calibration で公開。ここは教材的直呼び
 import examplefig as figs         # ★fullseye を先に import しないと解決しない
 
 # ── 真値(私が決める)────────────────────────────────────────────────────────── #
@@ -570,9 +572,12 @@ def main():
     e_ud = float(np.sqrt(np.mean(fs.reprojection_error(
         obj, fs.undistort_points(obs0[0], K_TRUE, TRUE_DIST, iters=30), K_TRUE, *good[0]) ** 2)))
     assert e_ud < 1e-3, "undistort を通しても誤差が残る"
-    # 7. ★ 穴 (a): 内部パラメータ推定はファサードから見えない
-    assert not hasattr(fs, "camera_calibration"), "穴 (a) が塞がった —— docstring を更新せよ"
-    assert fs.find_op("camera_calibration") is None, "op レジストリに載った —— docstring を更新せよ"
+    # 7. ★ 穴 (a)【解消済み 2026-09-19】: 内部パラメータ推定を facade に露出した。
+    #    以前は fs から見えず、この tripwire は「塞がったら docstring を更新せよ」と鳴らしていた。
+    #    いまは fs.camera_calibration で呼べる(能力ノート camera-intrinsics-calibration)。
+    #    ただし facade 関数であって op レジストリの op ではない((画像,a,b) 固定でないため)。
+    assert hasattr(fs, "camera_calibration"), "穴 (a) を塞いだはず —— facade 露出が外れた"
+    assert fs.find_op("camera_calibration") is None, "op ではなく facade 関数(レジストリには載せない)"
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

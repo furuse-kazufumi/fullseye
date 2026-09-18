@@ -96,3 +96,53 @@ def test_export_readable_is_exact_and_human_listed(cat):
     assert r["structuredContent"]["payload"]["encoding"] == "list"
     back, _ = fullseye.from_jsonable(r["structuredContent"])
     assert np.array_equal(back, np.array([[0.5, 1.5], [2.5, 3.5]]))
+
+
+# --- fullseye_estimate_distortion(直線群 + K の JSON → 歪み係数)------------------ #
+def _distorted_grid_lines(K, dist):
+    span = np.linspace(12, 188, 30)
+    lines = [fullseye.distort_points(np.column_stack([span, np.full(30, y)]), K, dist).tolist()
+             for y in (40, 100, 160)]
+    lines += [fullseye.distort_points(np.column_stack([np.full(30, x), span]), K, dist).tolist()
+              for x in (40, 100, 160)]
+    return lines
+
+
+def test_estimate_distortion_recovers_coefficients(cat):
+    K = fullseye.intrinsic_matrix(0.95 * 200, 0.95 * 200, 99.5, 99.5)
+    true = [-0.24, 0.06, 0.0, 0.0, 0.0]
+    r = call_tool("fullseye_estimate_distortion",
+                  {"lines": _distorted_grid_lines(K, true), "K": K.tolist(),
+                   "radial": 2, "tangential": False}, cat)
+    assert not r.get("isError")
+    d = r["structuredContent"]["dist"]
+    assert len(d) == 5 and abs(d[0] - true[0]) < 1e-4 and abs(d[1] - true[1]) < 1e-4
+    assert r["structuredContent"]["n_lines"] == 6
+
+
+def test_estimate_distortion_revalidates_untrusted_lines_and_K(cat):
+    K = fullseye.intrinsic_matrix(180.0, 180.0, 99.5, 99.5)
+    good = _distorted_grid_lines(K, [-0.2, 0.05, 0.0, 0.0, 0.0])
+    # K が 3x3 でない → -32602(ArgError、信頼境界の再検証)
+    with pytest.raises(ArgError):
+        call_tool("fullseye_estimate_distortion", {"lines": good, "K": [[1, 0], [0, 1]]}, cat)
+    # 線が (N,2) でない → -32602
+    with pytest.raises(ArgError):
+        call_tool("fullseye_estimate_distortion",
+                  {"lines": [[[1, 2, 3]] * 4, good[0]], "K": K.tolist()}, cat)
+    # 非有限 → -32602
+    with pytest.raises(ArgError):
+        call_tool("fullseye_estimate_distortion",
+                  {"lines": [[[1.0, float("inf")]] * 4] + good[:1], "K": K.tolist()}, cat)
+    # 線が 1 本(スキーマ minItems=2)→ -32602
+    with pytest.raises(ArgError):
+        call_tool("fullseye_estimate_distortion", {"lines": good[:1], "K": K.tolist()}, cat)
+
+
+def test_estimate_distortion_fail_closed_on_short_line(cat):
+    K = fullseye.intrinsic_matrix(180.0, 180.0, 99.5, 99.5)
+    good = _distorted_grid_lines(K, [-0.2, 0.05, 0.0, 0.0, 0.0])
+    # 各線 3 点未満は estimate_distortion が拒否 → isError(ArgError でなく道具の拒否)
+    r = call_tool("fullseye_estimate_distortion",
+                  {"lines": [[[1.0, 2.0], [3.0, 4.0]], good[0]], "K": K.tolist()}, cat)
+    assert r.get("isError")
