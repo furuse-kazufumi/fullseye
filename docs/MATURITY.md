@@ -40,6 +40,7 @@
 | [地形の傾き・水の流れ・見通しを測る](capabilities/terrain-and-visibility.md) | Slope, flow and line of sight on a terrain | 測る | `verified-synthetic` | 4/4 | `poc_dem_terrain` synthetic → tests/test_poc_scripts_run.py<br>`dem_terrain_analysis_tour` synthetic → tests/test_example_scripts_run.py |
 | [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md) | Put text and tables exactly where you want them on an image | 見せる | `verified-synthetic` | 6/6 | `annotate_paper_tour` synthetic → tests/test_example_scripts_run.py |
 | [投影から断面を再構成する(CT)](capabilities/tomography-reconstruction.md) | Reconstruct slices from projections (CT) | 形にする | `verified-synthetic` | 3/4 | `poc_ct_fidelity` synthetic → tests/test_poc_scripts_run.py<br>`poc_ct_void_morphology` synthetic → tests/test_poc_scripts_run.py |
+| [op の返り値(型付き)を JSON に出し、bit そのままで戻す](capabilities/typed-results-as-json.md) | Write typed op results as JSON and read them back bit-for-bit | 組み立てる | `verified-synthetic` | 8/8 | `typed_results_json` synthetic → tests/test_example_scripts_run.py |
 | [振動と音から異常を診断する](capabilities/vibration-and-acoustics.md) | Diagnose faults from vibration and sound | 波と信号 | `verified-synthetic` | 5/5 | `poc_bearing_diagnosis` synthetic → tests/test_poc_scripts_run.py<br>`poc_rail_corrugation` synthetic → tests/test_poc_scripts_run.py |
 | [シルエットから立体を彫り出す(視体積交差)](capabilities/visual-hull-from-silhouettes.md) | Carve a solid out of silhouettes (visual hull) | 形にする | `verified-synthetic` | 4/4 | `space_carving` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_livestock_body_volume` synthetic → tests/test_poc_scripts_run.py |
 | [3-D スキャンから体積・土量を出す](capabilities/volume-from-3d-scan.md) | Turn a 3-D scan into a volume | 測る | `verified-synthetic` | 3/4 | `poc_stockpile_volume` synthetic → tests/test_poc_scripts_run.py<br>`poc_lidar_terrain_change` synthetic → tests/test_poc_scripts_run.py |
@@ -48,9 +49,9 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 208 |
+| 2-D 台帳の例 | 209 |
 | `tests/test_poc_scripts_run.py` が走らせる | 122 |
-| `tests/test_example_scripts_run.py` が走らせる | 86 |
+| `tests/test_example_scripts_run.py` が走らせる | 87 |
 | **どの門も走らせていない** | **0** |
 
 走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり

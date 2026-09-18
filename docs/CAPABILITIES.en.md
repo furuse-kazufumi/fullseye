@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 19 capabilities**
+**Currently 20 capabilities**
 
 ## Measure (4)
 
@@ -149,7 +149,7 @@ Operators: `signal_features`, `envelope_spectrum`, `bearing_defect_frequencies`,
 
 Runnable: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## Compose (1)
+## Compose (2)
 
 ### [Align and stack](capabilities/align-and-stack.md)
 
@@ -158,6 +158,14 @@ Align a sequence by voting for the translation, resample sub-pixel, and stack. P
 Operators: `frame_align`, `drizzle_resample`, `icp_point2point_3d`, `interp_scattered`
 
 Runnable: `poc_astro_photometry`, `poc_registration_basin`
+
+### [Write typed op results as JSON and read them back bit-for-bit](capabilities/typed-results-as-json.md)
+
+One JSON form per sort and one way back: a self-describing envelope, float arrays as base64 little-endian float64 (bit-exact round trips, tested with the same probes the op gates use), run-length regions, contours as shape plus point lists, tables as plain JSON. Thin conveniences ride along — `save_json` / `load_json` for a file, `to_json_lines` / `from_json_lines` for a growing ledger as JSON Lines. Unknown sorts, shapes that do not fit the sort and wrong envelope versions are refused — nothing is guessed from an array's shape.
+
+Operators: `to_json`, `from_json`, `to_jsonable`, `from_jsonable`, `save_json`, `load_json`, `to_json_lines`, `from_json_lines`
+
+Runnable: `typed_results_json`
 
 ## Show (3)
 

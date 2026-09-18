@@ -66,7 +66,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 **2,000 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **49 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 930/930, typisiertes Ledger 1049/1061, Fassade `fullseye.<name>` 568/1169 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 930/930, typisiertes Ledger 1049/1061, Fassade `fullseye.<name>` 568/1178 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
 **Gemessener Inhalt**: von 2005 Notizen verweisen **1962** auf mindestens ein lauffähiges Beispiel (43 ohne), **1985** haben einen Nutzungsabschnitt ab 120 Zeichen (20 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 2005.
 
@@ -203,7 +203,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 163
+## Dokumentkarte — alle 164
 
 Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 2,000 Operator-Notizen und 49 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
@@ -329,7 +329,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(91)
+**Other**(92)
 
 | Dokument | Inhalt |
 |---|---|
@@ -413,6 +413,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`capabilities/terrain-and-visibility.md`](capabilities/terrain-and-visibility.md) | id: terrain-and-visibility |
 | [`capabilities/text-and-tables-on-images.md`](capabilities/text-and-tables-on-images.md) | id: text-and-tables-on-images |
 | [`capabilities/tomography-reconstruction.md`](capabilities/tomography-reconstruction.md) | id: tomography-reconstruction |
+| [`capabilities/typed-results-as-json.md`](capabilities/typed-results-as-json.md) | id: typed-results-as-json |
 | [`capabilities/vibration-and-acoustics.md`](capabilities/vibration-and-acoustics.md) | id: vibration-and-acoustics |
 | [`capabilities/visual-hull-from-silhouettes.md`](capabilities/visual-hull-from-silhouettes.md) | id: visual-hull-from-silhouettes |
 | [`capabilities/volume-from-3d-scan.md`](capabilities/volume-from-3d-scan.md) | id: volume-from-3d-scan |

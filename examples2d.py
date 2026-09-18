@@ -111,6 +111,12 @@ EXAMPLES = [
                 "またぐぶん漏れる(−0.221、el>2Δρ で 0)。対向比は速さを落とすので 1°/s の遠景の"
                 "流れも −0.612 に読む。LGMD η のピークは α·l/|v| 前で θ=24.0°(球の厳密な θ なら "
                 "24.6°、4 次式の根)、τ 球式は真値に厳密、円板式の誤用は cos²(θ/2) 倍、DSI 0.80。"},
+    {"id": "typed_results_json", "task": "workflow", "data": "synthetic",
+     "name": "op の返り値(型付き)を JSON に出して bit そのままで戻す",
+     "summary": "image / region / points / contour / feature / matrix / table を sort ごとの一つの JSON 形に。"
+                "浮動小数は base64 の float64 で往復 bit 一致、region は run-length、非有限値は封筒に印を立てて運ぶ。"
+                "save_json / load_json でファイル一往復、to_json_lines / from_json_lines で JSONL 台帳。"
+                "★match は慣例が 2 つ混在するので橋を作らず断る(fail-closed)。"},
     {"id": "raw_to_display_isp", "task": "color", "data": "synthetic",
      "name": "Bayer の生フレームを段ごとに説明できる式で表示画像にする(ISP 8 段)",
      "summary": "黒レベル → 欠陥画素 → 周辺減光 → AWB(RAW 側)→ 双線形デモザイク → CCM → 色相彩度 → 明暗を"

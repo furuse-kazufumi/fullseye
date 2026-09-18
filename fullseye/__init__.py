@@ -579,6 +579,13 @@ class _LedgerNamespace:
 #: 型つき台帳 op の属性アクセス入口(:class:`_LedgerNamespace`)。
 ledger = _LedgerNamespace()
 
+# op の返り値(型つき)を JSON に出し、bit そのままで戻す橋(fullseye/jsonio.py)。
+# 台帳 op ではなく facade の入出力ユーティリティ(sort ごとに 1 つの JSON 形)。
+from fullseye.jsonio import (  # noqa: E402,F401
+    JSON_SORTS, to_jsonable, to_json, from_jsonable, from_json,
+    save_json, load_json, to_json_lines, from_json_lines,
+)
+
 __all__ = [
     "op", "ledger",
     "orient2d", "orient3d", "incircle", "insphere",
@@ -917,4 +924,6 @@ __all__ = [
     "glyph_edge_transition_width", "glyph_replace", "glyph_split_cells",
     "glyph_correct_spec", "glyph_find_plate", "glyph_rewrite_line",
     "glyph_find_text_lines", "glyph_make_spec",
+    "JSON_SORTS", "to_jsonable", "to_json", "from_jsonable", "from_json",
+    "save_json", "load_json", "to_json_lines", "from_json_lines",
 ]

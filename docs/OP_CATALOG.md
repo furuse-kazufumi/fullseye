@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(208 例)
+### 2-D 画像/信号/幾何(209 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -111,6 +111,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **imgmetrics**
 - **統計的工程管理を op の連鎖で(検査計測が管理下か・能力があるか)** — マシンビジョンの計測列に Xbar-R 管理図 / CUSUM / 工程能力 Cp-Cpk / 多変量 Hotelling T² を掛ける。+4σ の逸脱は管理図が即座に、+0.8σ の持続ドリフトは CUSUM が Shewhart 3σ(0 件)より早く捕らえ、中心が仕様中点なら Cpk=Cp、多変量 T² は相関する計測の同時ドリフトを 1 判定にまとめる。どれも標準・教科書の閉じた式で、ISO 8258 定数・CUSUM の傾き d−k・T² 平均行 0 を厳密に検査する。 `py -3.11 examples/poc_spc.py`
+
+**workflow**
+- **op の返り値(型付き)を JSON に出して bit そのままで戻す** — image / region / points / contour / feature / matrix / table を sort ごとの一つの JSON 形に。浮動小数は base64 の float64 で往復 bit 一致、region は run-length、非有限値は封筒に印を立てて運ぶ。save_json / load_json でファイル一往復、to_json_lines / from_json_lines で JSONL 台帳。★match は慣例が 2 つ混在するので橋を作らず断る(fail-closed)。 `py -3.11 examples/typed_results_json.py`
+- **精度ユニオン型ストレージ(PrecisionUnion)を N-D の実データ様式で使う** — ラベルボリューム(無損失)と深度ボリューム(atol 量子化)をタイル別最小ビット深さで保持し、メモリ比・save/load のファイル比・遅延アフィン連鎖の一致を数値で確かめる。高エントロピー画像では勝たないことも同じ場で示す(honest な境界)。 `py -3.11 examples/precision_union_volume.py`
+- **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 
 **color**
 - **Bayer の生フレームを段ごとに説明できる式で表示画像にする(ISP 8 段)** — 黒レベル → 欠陥画素 → 周辺減光 → AWB(RAW 側)→ 双線形デモザイク → CCM → 色相彩度 → 明暗を全部閉じた式で。植えた台座・減光・かぶり・欠陥 12 画素を順に外し、デモザイク後の誤差は 95 % 点で 5e-4(最大は円の縁のジッパー 6e-2 を隠さず印字)。★gray-world は場面の平均が灰でないと真の照明の逆にならない —— 一致しない数字を並べて段の限界を見せる。 `py -3.11 examples/raw_to_display_isp.py`
@@ -240,10 +245,6 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **HALCON 拡充 tier(hx_ 一族)を総なめ** — HALCON 互換の拡充 op(``hx_`` prefix, category=halcon_ext)の全 op を GT 検証。 `py -3.11 examples/gallery2d_halcon_ext.py`
 - **物理PDE・人工生命・トモグラフィ・3Dボリューム op 族を総なめ** — 拡散/反応拡散/CA/tomography/volume など物理・人工生命・3D 族の全 op を GT 検証。 `py -3.11 examples/gallery2d_physics_alife_3d.py`
 - **入口 op(img_to_*、category=bridge)を総なめ** — 1 枚の画像から点群・1-D 信号・動画・体積・ライトフィールド・複素場・光子列・ビート立方体・行列・キーポイント・モノジェニック信号を作る 12 op を、型契約・有限性・決定性・ノブの効きに加え op ごとの閉形式(z = 値×10×s、フレームの変位、距離ビン …)で検証する。 `py -3.11 examples/gallery2d_bridge.py`
-
-**workflow**
-- **精度ユニオン型ストレージ(PrecisionUnion)を N-D の実データ様式で使う** — ラベルボリューム(無損失)と深度ボリューム(atol 量子化)をタイル別最小ビット深さで保持し、メモリ比・save/load のファイル比・遅延アフィン連鎖の一致を数値で確かめる。高エントロピー画像では勝たないことも同じ場で示す(honest な境界)。 `py -3.11 examples/precision_union_volume.py`
-- **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 
 **optics_sensing**
 - **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`

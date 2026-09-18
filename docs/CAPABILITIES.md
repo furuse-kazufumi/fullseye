@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 19 項目**
+**収録 20 項目**
 
 ## 測る (4)
 
@@ -148,7 +148,7 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 
 動く例: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## 組み立てる (1)
+## 組み立てる (2)
 
 ### [位置を合わせて重ねる](capabilities/align-and-stack.md)
 
@@ -157,6 +157,14 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 使う op: `frame_align`, `drizzle_resample`, `icp_point2point_3d`, `interp_scattered`
 
 動く例: `poc_astro_photometry`, `poc_registration_basin`
+
+### [op の返り値(型付き)を JSON に出し、bit そのままで戻す](capabilities/typed-results-as-json.md)
+
+op の返り値は `image` / `region` / `points` / `contour` / `feature` / `matrix` / `signal` … の**型(sort)**を持つ NumPy 配列や小さな dict で、次の op に渡すには良くても、ファイル・ログ・LLM・別プロセスには渡せません。`to_json(value, sort)` が sort ごとに**一つ**の JSON 形を与え、`from_json(text)` が `(value, sort)` に戻します。封筒は自己記述(`{"fullseye_sort": "points", "version": 1, "payload": …}`)で、戻すときに型の指定は要りません。
+
+使う op: `to_json`, `from_json`, `to_jsonable`, `from_jsonable`, `save_json`, `load_json`, `to_json_lines`, `from_json_lines`
+
+動く例: `typed_results_json`
 
 ## 見せる (3)
 
