@@ -174,7 +174,7 @@ TOOLS: dict[str, dict] = {
         "description": (
             "画像の中の文字を「本当はこう書いてあるべき文字列」に合わせて直す(生成 AI が出した"
             "レポート用画像・看板の誤字を再生成せずに直す用途)。ハンドルは color(HxWx3)。"
-            "items は行ごとに {text, bbox:[x,y,w,h]}。mode=repair_flagged(既定)は床を超えた字だけ"
+            "items は行ごとに {text, bbox:[x,y,w,h]}(bbox は省略可: 行を自動検出)。mode=repair_flagged(既定)は床を超えた字だけ"
             "置き換え正しい字に触らない / mode=rewrite_line は bbox の行を同じ書体で丸ごと描き直す"
             "(見逃し・字数違いも直るが書体は変わる)。返り値: 直した画像のハンドル + 全解像度 PNG の"
             " resource_link + 行ごとの status(ok/replaced/failed_verification/skipped/rewritten)、"
@@ -193,9 +193,11 @@ TOOLS: dict[str, dict] = {
                                      "description": "その行に本当に書いてあるべき文字列"},
                             "bbox": {"type": "array", "minItems": 4, "maxItems": 4,
                                      "items": {"type": "number"},
-                                     "description": "[x, y, w, h] 画素。行に密着した箱"},
+                                     "description": "[x, y, w, h] 画素。行に密着した箱。省くと暗い字の"
+                                                    "行を上から検出して items の順に当てる(全行そろえて"
+                                                    "付けるか省く)。版面が取れなければ isError で断る"},
                         },
-                        "required": ["text", "bbox"],
+                        "required": ["text"],
                         "additionalProperties": False,
                     },
                 },
@@ -613,11 +615,25 @@ def _fix_text(a: dict, store: HandleStore) -> dict:
     policy: dict = {"mode": a.get("mode", "repair_flagged")}
     if "threshold" in a:
         policy["threshold"] = float(a["threshold"])
-    spec = {"items": [{"text": it["text"], "bbox": [float(v) for v in it["bbox"]]}
-                      for it in a["items"]], "policy": policy}
     rgb = np.asarray(arr, np.float64)
     if rgb.max() > 1.0:
         rgb = rgb / 255.0
+    has = [("bbox" in it) for it in a["items"]]
+    if any(has) and not all(has):
+        raise ArgError("bbox は全部の行に付けるか、全部省く(混在は不可: 検出した行と与えた箱の"
+                       "対応が決まらない)")
+    layout = None
+    if not any(has):
+        # ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が
+        #   入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
+        spec = glyphops.make_spec(rgb, [it["text"] for it in a["items"]], policy)
+        layout = spec["layout"]
+        if layout["status"] != "ok":
+            return _tool_error("fix_text: 行の位置が取れない —— %s。bbox を与えて呼び直す"
+                               % layout["reason"], {"layout": layout})
+    else:
+        spec = {"items": [{"text": it["text"], "bbox": [float(v) for v in it["bbox"]]}
+                          for it in a["items"]], "policy": policy}
     try:
         out, rep = glyphops.correct_spec(rgb, spec)
     except (RuntimeError, ValueError, FileNotFoundError) as exc:
@@ -654,7 +670,12 @@ def _fix_text(a: dict, store: HandleStore) -> dict:
     lines.append("記号: ・無事 ◆直した ×検証不通過(元に戻した) ?直せない。"
                  "unrelated は「元の字が指示と無関係」の疑い —— 指示か画像のどちらかを確かめる")
     structured = {"handle": om["handle"], "sort": "color", "shape": om["shape"],
-                  "provenance": prov, "report": rep, "fixed_png": full}
+                  "provenance": prov, "report": rep, "fixed_png": full,
+                  "items": spec["items"]}                      # 使った bbox(自動検出なら検出値)
+    if layout is not None:
+        structured["layout"] = layout
+        lines.insert(1, "bbox は自動検出(%d 行): %s" % (
+            layout["n_lines"], ", ".join(str(it["bbox"]) for it in spec["items"])))
     return tool_result("\n".join(lines), structured, links=links)
 
 

@@ -212,7 +212,12 @@ def test_mcp_serves_the_catalog_from_the_wheel_outside_the_repo(wheel_python, ou
     assert b"[fullseye-mcp] ready" in p.stderr, "起動ログが stderr に出ていない"
 
     tools = {t["name"] for t in msgs[1]["result"]["tools"]}
-    assert len(tools) == 8 and all(t.startswith("fullseye_") for t in tools), tools
+    # ★数を直書きしない。9 本目(fullseye_fix_text)を足したとき、この門は CI の core
+    #   ジョブでしか走らず、手元のスイートは緑のまま CI だけ赤になった(2026-09-18)。
+    #   正本は checkout の TOOLS —— wheel が同じ集合を名乗ることを見る。
+    from fullseye.mcp import TOOLS as _TOOLS
+    assert tools == set(_TOOLS), (sorted(tools ^ set(_TOOLS)))
+    assert all(t.startswith("fullseye_") for t in tools), tools
 
     # 検索: 2-D レジストリの op と、台帳(optics)の op の両方が索引の層から出る
     s = msgs[2]["result"]["structuredContent"]

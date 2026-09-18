@@ -19,6 +19,8 @@ Python(``fullseye.glyph_correct_spec``)からも MCP(``fullseye_fix_text``)か�
    しまうので、「指示か画像のどちらかが違う」を別枝で返す。
 4. 直せないときは ``skipped`` と、人向けの ``reason`` + 機械向けの ``reason_code``
    (``fullseye.glyphops.REASON_CODES`` の鍵)。縁取り文字は色が多峰なので断る。
+5. ``glyph_make_spec``: 行の位置(bbox)を人が測らず、暗い字の行を上から検出して指示書に
+   する。版面が取れなければ ``layout.status`` で断り、items に bbox を入れない。
 
 【真値】掲示は自分で描く(正しい字を描き、1 字を似た字に差し替える)。どの位置を壊したか
 分かっているので、報告の ``status`` 列と突き合わせて印字する。
@@ -31,7 +33,8 @@ CJK を描ける書体がこの環境に無ければ ``[skip]`` を印字して 
                    "items": [{"text": "電気設備", "bbox": [24, 40, 384, 96]}],
                    "mode": "repair_flagged"}}
 
-EXTEND: 行が複数あるなら ``items`` を増やす。翻訳版を作るなら ``text`` に訳文を入れる
+EXTEND: bbox を省くなら ``glyph_make_spec(rgb, texts)``(MCP は items の bbox を省くだけ)。
+行が複数あるなら ``items`` を増やす。翻訳版を作るなら ``text`` に訳文を入れる
 (長い訳文は行に収まる大きさで描かれる)。閾値を固定したいなら ``policy.threshold``。
 """
 from __future__ import annotations
@@ -73,6 +76,25 @@ def draw_sign(font: str, text: str, wrong_at: int | None = None, wrong: str = "�
     ys, xs = np.nonzero(rgb.mean(axis=-1) < 0.6)
     bbox = [int(xs.min()), int(ys.min()), int(xs.max() + 1 - xs.min()), int(ys.max() + 1 - ys.min())]
     return rgb, bbox
+
+
+def draw_two_lines(font: str, lines, wrong_at=None, wrong: str = "誤") -> np.ndarray:
+    """2 行の掲示(行間 40 px)。``wrong_at=(行, 字)`` を差し替える。bbox は返さない ——
+    それを測るのが ``glyph_make_spec`` の仕事だから。"""
+    from PIL import Image, ImageDraw, ImageFont
+    size, pad, gap = 96, 24, 40
+    f = ImageFont.truetype(font, size)
+    W = pad * 2 + size * max(len(s) for s in lines)
+    H = pad * 2 + size * len(lines) + gap * (len(lines) - 1)
+    im = Image.new("RGB", (W, H), (235, 235, 230))
+    d = ImageDraw.Draw(im)
+    for r, s in enumerate(lines):
+        shown = list(s)
+        if wrong_at and wrong_at[0] == r:
+            shown[wrong_at[1]] = wrong
+        for i, c in enumerate(shown):
+            d.text((pad + i * size, pad + r * (size + gap)), c, font=f, fill=(20, 20, 20))
+    return np.asarray(im, np.float64) / 255.0
 
 
 def show(title: str, report: dict) -> None:
@@ -129,11 +151,24 @@ def main() -> int:
     assert np.array_equal(out4, rgb4), "断ったのに画像を変えた"
     assert rep4["items"][0]["mismatch"] == "unknown", rep4["items"][0]   # 測れない距離で別物を言わない
 
+    # 5. bbox を人が測らない: 2 行の掲示から指示書(JSON)を自動で作り、そのまま直す。
+    #    MCP では items の bbox を省くだけで同じ道を通る。
+    rgb5 = draw_two_lines(font, ("電気設備", "点検中"), wrong_at=(0, 2))
+    spec5 = fs.glyph_make_spec(rgb5, ["電気設備", "点検中"])
+    print("5. make_spec(bbox を自動で): layout=%s  bbox=%s" % (
+        spec5["layout"]["status"], [it.get("bbox") for it in spec5["items"]]))
+    assert spec5["layout"]["status"] == "ok", spec5["layout"]
+    out5, rep5 = fs.glyph_correct_spec(rgb5, spec5)
+    show("   → correct_spec", rep5)
+    assert rep5["items"][0]["cells"][2]["status"] == "replaced", rep5["items"][0]
+    assert all(it["status"] in ("ok", "replaced") for it in rep5["items"]), rep5["items"]
+
     # 図(FULLSEYE_FIGURE_DIR があるときだけ)。
     figs.save_grid("fix_text_before_after",
-                   [rgb, fixed, rewritten, rgb3, out3],
-                   ["入力(設→誤)", "repair_flagged", "rewrite_line", "本日休業(指示は電気設備)", "描き直し(unrelated)"],
-                   ncols=3, caption="壊れた字だけ直す / 行ごと描き直す / 別物の疑いを返す")
+                   [rgb, fixed, rewritten, rgb3, out3, rgb5, out5],
+                   ["入力(設→誤)", "repair_flagged", "rewrite_line", "本日休業(指示は電気設備)",
+                    "描き直し(unrelated)", "2 行(bbox 無し)", "make_spec → 直した"],
+                   ncols=3, caption="壊れた字だけ直す / 行ごと描き直す / 別物の疑いを返す / bbox を自動で")
     print("PASS")
     return 0
 

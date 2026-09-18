@@ -536,3 +536,30 @@ def test_fix_text_rewrite_line_flags_an_unrelated_string_and_attaches_the_compar
     links = [c for c in res["content"] if c["type"] == "resource_link"]
     assert len(links) == 2, [c["name"] for c in links]
     assert "unrelated" in res["content"][0]["text"]
+
+
+def test_fix_text_can_find_the_lines_itself_when_no_bbox_is_given(cat, fonts2):
+    """bbox を省くと行を自動検出し、使った bbox と layout を返す。混在は入口で拒む。
+    版面が取れない画像は isError で断る(黙って外れた箱で直さない)。"""
+    from fullseye.mcp.handles import HandleStore
+    import numpy as np
+    store = HandleStore()
+    h, bbox = _color_sign(store, fonts2[0])
+    res = call_tool("fullseye_fix_text", {"handle": h, "items": [{"text": "電気設備"}],
+                                          "vision": "none"}, cat, store)
+    assert res["isError"] is False, res["content"][0]["text"]
+    sc = res["structuredContent"]
+    assert sc["layout"]["status"] == "ok" and len(sc["items"]) == 1
+    auto = sc["items"][0]["bbox"]
+    assert all(abs(a - b) <= 2 for a, b in zip(auto, bbox)), (auto, bbox)
+    assert [c["status"] for c in sc["report"]["items"][0]["cells"]] == ["ok", "ok", "replaced", "ok"]
+    assert "自動検出" in res["content"][0]["text"]
+    with pytest.raises(ArgError, match="混在"):
+        call_tool("fullseye_fix_text", {"handle": h, "items": [{"text": "電気設備"},
+                                                              {"text": "点検中", "bbox": bbox}]},
+                  cat, store)
+    blank = store.put(np.full((64, 256, 3), 0.9), sort="color", provenance=[])
+    res = call_tool("fullseye_fix_text", {"handle": blank["handle"], "items": [{"text": "電気"}]},
+                    cat, store)
+    assert res["isError"] is True and "行の位置" in res["content"][0]["text"]
+    assert res["structuredContent"]["layout"]["status"] == "no_lines"

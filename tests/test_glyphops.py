@@ -11,6 +11,8 @@
 """
 from __future__ import annotations
 
+import os
+
 import numpy as np
 import pytest
 
@@ -534,3 +536,78 @@ def test_every_refusal_carries_a_code_from_the_vocabulary(fonts):
     assert glyphops._code_of("色が単峰でない(前景 0.10 / 背景 0.50 / 縁 0.300) —— x") == "multimodal_colour"
     assert glyphops._code_of("マスが空(インクが 20 画素未満)") == "empty_cell"
     assert glyphops._code_of("何か別の理由") == "cannot_replace"
+
+
+# --------------------------------------------------------------------------- #
+# 指示書の自動生成(bbox を人が測らない)                                          #
+# --------------------------------------------------------------------------- #
+def _two_line_sign(fonts, lines=("電気設備", "点検中"), broken=(0, 2), wrong="誤"):
+    """2 行の掲示。``broken=(行, 字)`` を差し替える。返り ``(rgb, 行ごとのインク bbox)``。"""
+    from PIL import Image, ImageDraw, ImageFont
+    size, pad, gap = 96, 24, 40
+    f = ImageFont.truetype(fonts[0], size)
+    W = pad * 2 + size * max(len(s) for s in lines)
+    H = pad * 2 + size * len(lines) + gap * (len(lines) - 1)
+    im = Image.new("RGB", (W, H), (235, 235, 230))
+    d = ImageDraw.Draw(im)
+    for r, s in enumerate(lines):
+        shown = list(s)
+        if broken and broken[0] == r:
+            shown[broken[1]] = wrong
+        for i, c in enumerate(shown):
+            d.text((pad + i * size, pad + r * (size + gap)), c, font=f, fill=(20, 20, 20))
+    return np.asarray(im, np.float64) / 255.0
+
+
+def test_make_spec_finds_the_lines_and_the_spec_drives_the_repair(fonts):
+    """★bbox を人が測らずに、行を上から検出して指示書にし、そのまま直す。"""
+    rgb = _two_line_sign(fonts)
+    spec = glyphops.make_spec(rgb, ["電気設備", "点検中"])
+    assert spec["layout"]["status"] == "ok" and spec["layout"]["n_lines"] == 2, spec["layout"]
+    b0, b1 = spec["items"][0]["bbox"], spec["items"][1]["bbox"]
+    assert b0[1] + b0[3] <= b1[1], "行が上から順でない"
+    assert b0[2] > b1[2], "4 字の行の方が 3 字の行より広いはず"
+    _, rep = glyphops.correct_spec(rgb, spec)
+    st = [[c["status"] for c in it["cells"]] for it in rep["items"]]
+    assert st[0][2] == "replaced", st                     # 植えた誤字は直る
+    # 無事な字が replaced になるのは既知の誤検出(抽出経路の雑音 ≒ 床、約 3 割)で、
+    # 同じ字を同じ書体で置き直すだけなので絵は壊れない。ここで見たいのは
+    # 「外れた箱で切って failed_verification / skipped が出ない」こと。
+    assert all(s in ("ok", "replaced") for row in st for s in row), st
+
+
+def test_make_spec_refuses_when_there_are_no_lines_and_correct_spec_then_touches_nothing(fonts):
+    """版面が取れなければ items に bbox を入れない。その指示書を渡しても画像は 1 画素も
+    変わらない(外れた箱で直すことが構造的に起きない)。"""
+    blank = np.full((80, 320, 3), 0.9)
+    spec = glyphops.make_spec(blank, ["電気設備"])
+    assert spec["layout"]["status"] == "no_lines"
+    assert spec["layout"]["reason_code"] in glyphops.REASON_CODES
+    assert "bbox" not in spec["items"][0]
+    out, rep = glyphops.correct_spec(blank, spec)
+    assert np.array_equal(out, blank)
+    assert rep["items"][0]["reason_code"] == "missing_text_or_bbox"
+    # 行数が合わなければ implausible(2 行の絵に 1 行の指示)。
+    rgb = _two_line_sign(fonts)
+    spec = glyphops.make_spec(rgb, ["電気設備"])
+    assert spec["layout"]["status"] in ("implausible", "ok")   # 1 行に潰せた場合は ok もありうる
+    if spec["layout"]["status"] == "ok":
+        pytest.skip("2 行が 1 帯に融けて 1 行として通った(この描き方では起きないはず)")
+    assert spec["layout"]["reason_code"] == "layout_implausible"
+    with pytest.raises(ValueError):
+        glyphops.make_spec(rgb, [])
+
+
+def test_the_poc_line_detector_is_the_shipped_one(fonts):
+    """PoC の find_text_lines は出荷の関数を呼ぶ殻 —— 2 つ目の実装を残さない。"""
+    import importlib.util
+    p = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                     "examples", "poc_glyph_typo_detection.py")
+    s = importlib.util.spec_from_file_location("poc_glyph", p)
+    m = importlib.util.module_from_spec(s)
+    s.loader.exec_module(m)
+    rgb = _two_line_sign(fonts)
+    g = rgb.mean(axis=-1)
+    a, ink_a = m.find_text_lines(g, 2)
+    b, ink_b = glyphops.find_text_lines(g, 2)
+    assert a == b and np.array_equal(ink_a, ink_b)

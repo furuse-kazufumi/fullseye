@@ -564,6 +564,8 @@ from glyphops import (  # noqa: E402,F401
     correct_spec as glyph_correct_spec,
     find_plate as glyph_find_plate,
     rewrite_line as glyph_rewrite_line,
+    find_text_lines as glyph_find_text_lines,
+    make_spec as glyph_make_spec,
 )
 import annotate  # noqa: E402  (text plates, arrows, legends, colour bars, axes)
 import opsannotate  # noqa: E402  (the annotate op ledger)

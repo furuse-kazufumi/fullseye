@@ -44,7 +44,7 @@ __all__ = [
     # ★2026-09-18: ここまで __all__ に無かった(api 側は名前で import していたので
     #   気づけなかった)。一次情報は __all__ なので、公開するものは全部書く。
     "split_cells", "correct_spec", "find_plate", "rewrite_line",
-    "REASON_CODES", "MISMATCH_RATIO",
+    "REASON_CODES", "MISMATCH_RATIO", "find_text_lines", "make_spec",
 ]
 
 #: ``reason`` の機械可読な語彙(2026-09-18、外部 AI レビューの指摘で導入)。
@@ -59,6 +59,8 @@ REASON_CODES: dict = {
     "empty_cell":           "マスが空(インクが 20 画素未満)",
     "multimodal_colour":    "色が単峰でない(縁取り・影・グラデの疑い)",
     "cannot_replace":       "置き換えられない",
+    "no_lines":             "行が取れなかった(暗い字が無い)",
+    "layout_implausible":   "版面が文字らしくない(切り方が外れている疑い)",
 }
 
 #: 「誤字」と「別物」の境。壊れたマスの ``distance_before`` の中央値 ÷ 床 がこれ未満なら
@@ -1096,3 +1098,174 @@ def _judge_mismatch(entry: dict, thr: float) -> None:
     ratio = float(np.median(broken)) / float(thr) if thr > 0 else float("inf")
     entry["mismatch_ratio"] = round(ratio, 3)
     entry["mismatch"] = "unrelated" if ratio >= MISMATCH_RATIO else "typo"
+
+
+# --------------------------------------------------------------------------- #
+# 行の検出と、指示書(JSON)の自動生成                                             #
+# --------------------------------------------------------------------------- #
+def find_text_lines(gray, n_lines: int = 0, dark: float = 0.35, min_area: int = 200) -> tuple:
+    """字のインクだけを残し、**行**の外接箱 ``[(yslice, xslice), ...]`` を上から順に返す。
+    返り ``(boxes, ink)``。``gray`` は (H,W) か (H,W,3)(3 なら平均で灰にする)。
+
+    PoC(``examples/poc_glyph_typo_detection.py``)で 12 + 14 枚の生成画像に掛けて
+    育てたものを 2026-09-18 に出荷へ移した。**アルゴリズムはそのまま**(PoC は
+    この関数を呼ぶ殻になった)。
+
+    * 看板の枠は「大きな外接箱なのに中身が薄い」成分として出るので外す。枠の内側に
+      限定はしない —— 限定すると枠が二重の看板で内側を掴み、外の 1 行目を落とす(実測)。
+    * 行は**水平投影の帯**で取る。成分を束ねる方法は使えない —— 漢字は部品に分かれて
+      出る(``電`` は 3 つ)ので、行間の狭い看板で 2 行が融ける(実測 6/12 枚)。
+    * 欧文の副題は**帯の高さ**で落とす(漢字 80 px に対し英字 28 px)。
+    * ``n_lines``(呼ぶ側は直す文字列を持っているので行数を知っている): 足りなければ
+      最も高い帯を谷で割り、多ければ高い順に ``n_lines`` 本残す。
+
+    ★限界: **暗い字 / 明るい地**だけ(``dark`` は固定の暗さ閾値)。白抜き文字は取れない
+    (既知の穴)。大津 + 外周で極性を決める版は退行した(見逃し 0 → 6)ので戻した ——
+    1 マスに当てるのと画像全体に当てるのでは別物で、全体の大津は壁や板の明暗で動く。
+    """
+    g = np.asarray(gray, np.float64)
+    if g.ndim == 3:
+        g = g.mean(axis=-1)
+    # ★2026-09-18: ここを「大津 + 外周で極性」に替えて**退行した**(既存 12 枚で
+    #   見逃し 0 -> 6、誤検出 4/14 -> 9/22)。出荷済み ``_ink_mask`` と同じ規則でも、
+    #   **1 マスに当てるのと画像全体に当てるのでは別物** —— 全体の大津は壁や板の
+    #   明暗で閾値が動き、字の縁を取り込む。固定の暗さ閾値に戻す。白字の看板は
+    #   この経路では取れない(既知の穴として記録)。
+    ink = g < dark
+    lab, n = ndimage.label(ink)
+    if n == 0:
+        return [], None
+    boxes = []
+    for i, sl in enumerate(ndimage.find_objects(lab), start=1):
+        h, w = sl[0].stop - sl[0].start, sl[1].stop - sl[1].start
+        area = int((lab[sl] == i).sum())
+        if area >= min_area:
+            boxes.append({"id": i, "sl": sl, "h": h, "w": w, "area": area,
+                          "fill": area / float(h * w)})
+    # ★枠 = 中身が薄く、大きく、**他の成分(字)の外接箱よりずっと大きい**成分。3 つ目の
+    #   条件は 2026-09-18 に足した: 無いと、小さな画像(280x432)で 96 px の「中」(外接箱
+    #   9216 px > 画像の 2 %、中身 0.3)が枠と見なされ、行が丸ごと消えた。PoC を育てた
+    #   1,000 px 級の画像では字が 2 % を超えないので見えなかった尺度依存。「画像の半分以上に
+    #   渡る」で切ると生成ポスター 10 枚で誤検出 5/8 → 7/8 に退行した(半分に届かない枠の
+    #   切れ端が残る)ので、字の大きさ(成分の外接箱の中央値)を物差しにする。
+    med_box = float(np.median([b["h"] * b["w"] for b in boxes]))
+    boxes = [b for b in boxes
+             if not (b["fill"] < 0.35 and b["h"] * b["w"] > 0.02 * ink.size
+                     and b["h"] * b["w"] > 4.0 * med_box)]
+    if not boxes:
+        return [], None
+    keep = np.zeros_like(ink)
+    for b in boxes:
+        keep[b["sl"]] |= (lab[b["sl"]] == b["id"])
+
+    # 行は**水平投影の帯**で取る。★成分をまとめる方法は使えない —— 漢字は部品に
+    # 分かれて出る(``電`` は 3 つ)ので、重なりや中心距離で束ねると行間の狭い
+    # 看板で 2 行が 1 行に融け、逆に離れた部品が 3 行目になった(実測 6/12 枚)。
+    prof = keep.sum(axis=1).astype(float)
+    on = prof > max(1.0, 0.02 * prof.max())
+    runs, i = [], 0
+    while i < len(on):
+        if on[i]:
+            j = i
+            while j + 1 < len(on) and on[j + 1]:
+                j += 1
+            runs.append((i, j + 1))
+            i = j + 1
+        else:
+            i += 1
+    if not runs:
+        return [], None
+    # 欧文の副題を落とす。**帯の高さ**で切る(実測: 漢字 80 px に対し英字 28 px)。
+    tall = max(y1 - y0 for y0, y1 in runs)
+    runs = [r for r in runs if (r[1] - r[0]) >= 0.6 * tall]
+    # 行間が詰まっていると 2 行が 1 帯に融ける。**期待する行数**は呼び出し側が
+    # 知っている(直す文字列を持っているのだから)ので、足りない分を谷で割る。
+    # 逆に行が**多い**とき(指定に無い日付行・注記)は、高い順に指定数だけ残す。
+    # 期待する行数は呼び出し側が知っている —— 少ないときに谷で割るのと同じ根拠。
+    if n_lines and len(runs) > n_lines:
+        runs = sorted(sorted(runs, key=lambda r: r[0] - r[1])[:n_lines])
+    while n_lines and len(runs) < n_lines:
+        k = max(range(len(runs)), key=lambda t: runs[t][1] - runs[t][0])
+        y0, y1 = runs[k]
+        m0, m1 = y0 + int(0.25 * (y1 - y0)), y0 + int(0.75 * (y1 - y0))
+        if m1 - m0 < 2:
+            break
+        cut = m0 + int(np.argmin(prof[m0:m1]))
+        runs[k:k + 1] = [(y0, cut), (cut, y1)]
+    out = []
+    for y0, y1 in runs:
+        cols = np.where(keep[y0:y1].any(axis=0))[0]
+        if cols.size:
+            out.append((slice(y0, y1), slice(int(cols.min()), int(cols.max()) + 1)))
+    out.sort(key=lambda bx: bx[0].start)
+    return out, ink
+
+
+def _layout_is_plausible(boxes, texts, ink) -> str | None:
+    """版面が正しいかを**判定の前に**確かめる。外れているなら理由を返す。
+
+    ★これが無いと、切り方を間違えたまま全部の字を「壊れている」と報告する(PoC 実測:
+    無事な字 45 本のうち 37 本を誤って咎めた)。字が壊れているのか切り方が外れて
+    いるのかを取り違えないための門。統計は**画像の全マスをまとめて**取る(閾値を
+    その形で導いたから。行ごとだと 4 字の行で四分位が粗すぎて正しい版面を断る)。
+    """
+    if len(boxes) != len(texts):
+        return "行の数が合わない(画像 %d / 指定 %d)" % (len(boxes), len(texts))
+    fr = []
+    for (ys, xs), want in zip(boxes, texts):
+        n = len([c for c in want if not c.isspace()])
+        if n == 0:
+            return "空の行がある"
+        h = ys.stop - ys.start
+        w = (xs.stop - xs.start) / float(max(n, 1))
+        if not (0.6 <= w / max(h, 1) <= 1.7):
+            return "マスが正方でない(幅/高さ %.2f)" % (w / max(h, 1))
+        sub = ink[ys, xs]
+        fr += [float(sub[:, c0:c1].mean()) for c0, c1 in split_cells(sub, n)]
+    fr = np.asarray(fr, float)
+    med = float(np.median(fr))
+    iqr = float(np.quantile(fr, 0.75) - np.quantile(fr, 0.25))
+    if fr.min() < 0.15 or (med > 0 and iqr / med > 0.45):
+        return ("マスのインク量が文字らしくない(最小 %.3f / ばらつき %.2f)"
+                % (fr.min(), iqr / max(med, 1e-9)))
+    return None
+
+
+def make_spec(rgb: np.ndarray, texts, policy: dict | None = None) -> dict:
+    """画像と**行ごとの正しい文字列**から、:func:`correct_spec` / MCP ``fullseye_fix_text``
+    に渡す指示書(JSON 一枚)を作る。**bbox を人が測らなくてよい**のがこの関数の足し前。
+
+    行は :func:`find_text_lines` で上から順に取り、``texts`` の順に当てる(行数は
+    ``texts`` の数で決める)。返り::
+
+        {"items": [{"text": "電気設備", "bbox": [x, y, w, h]}, ...],
+         "policy": {...},
+         "layout": {"status": "ok" | "no_lines" | "implausible",
+                    "n_lines": 2, "reason": ..., "reason_code": ...}}
+
+    ★版面が取れない・文字らしくないときは **items に bbox を入れない**で
+    ``layout.status`` で断る。:func:`correct_spec` はその items を
+    ``skipped``(``missing_text_or_bbox``)にするので、**外れた箱で直してしまう**ことは
+    構造的に起きない。呼ぶ側は ``layout`` を見て bbox を与え直す。
+    ★限界は :func:`find_text_lines` と同じ(暗い字 / 明るい地、CJK の等幅)。
+    """
+    rgb = np.asarray(rgb, np.float64)
+    gray = rgb.mean(axis=-1) if rgb.ndim == 3 else rgb
+    texts = [str(t) for t in texts]
+    if not texts:
+        raise ValueError("texts が空(行ごとの正しい文字列が要る)")
+    boxes, ink = find_text_lines(gray, len(texts))
+    spec: dict = {"items": [{"text": t} for t in texts], "policy": dict(policy or {}),
+                  "layout": {"n_lines": len(boxes)}}
+    if not boxes:
+        spec["layout"].update(status="no_lines", reason_code="no_lines",
+                              reason=REASON_CODES["no_lines"])
+        return spec
+    why = _layout_is_plausible(boxes, texts, ink)
+    if why:
+        spec["layout"].update(status="implausible", reason_code="layout_implausible", reason=why)
+        return spec
+    for it, (ys, xs) in zip(spec["items"], boxes):
+        it["bbox"] = [int(xs.start), int(ys.start), int(xs.stop - xs.start), int(ys.stop - ys.start)]
+    spec["layout"]["status"] = "ok"
+    return spec

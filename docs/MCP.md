@@ -83,8 +83,11 @@ fix_text(mode=repair_flagged, 床=0.0505 from typeface, 書体 3 本) → fullse
 ```
 
 * `mode="rewrite_line"` は行を丸ごと同じ書体で描き直す(見逃し・字数違いも直るが書体は変わる)。
+* `bbox` は省ける(全行そろえて)。暗い字の行を上から検出して items の順に当て、使った bbox と
+  `layout` を返す。版面が取れなければ `isError` で断る(黙って外れた箱で直さない)。
+  Python では `fullseye.glyph_make_spec(rgb, texts)` が同じ指示書を返す。
 * 直せない行は `skipped` + `reason_code`(`missing_text_or_bbox / bbox_too_small / empty_text /
-  no_font / no_ink / empty_cell / multimodal_colour / cannot_replace`)。縁取り・影の文字は
+  no_font / no_ink / empty_cell / multimodal_colour / cannot_replace / no_lines / layout_implausible`)。縁取り・影の文字は
   `multimodal_colour` で断り、画像は触らない。
 * `mismatch=unrelated`(壊れたマスの距離の中央値が床の 2 倍以上)のときは、描き直しが成功して
   いても**指示か画像のどちらかが違う**疑いなので、前後対比の小図を自動で付ける(`vision=auto`)。

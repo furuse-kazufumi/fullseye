@@ -228,7 +228,7 @@ with warnings.catch_warnings():
         glyph_ink_colors, glyph_stroke_thickness, glyph_match_stroke_weight,
         glyph_edge_transition_width, glyph_replace,
         glyph_rendering_noise_floor, glyph_split_cells, glyph_correct_spec,
-        glyph_find_plate, glyph_rewrite_line,
+        glyph_find_plate, glyph_rewrite_line, glyph_find_text_lines, glyph_make_spec,
         annotate, opsannotate, measure_text, text_box, arrow, leader_line,
         label_points, crosshair, legend_box, color_bar, scale_bar,
         axes_transform, data_to_pixel, nice_ticks, axes_frame, grid_lines,
@@ -907,4 +907,5 @@ __all__ = [
     "glyph_ink_colors", "glyph_stroke_thickness", "glyph_match_stroke_weight",
     "glyph_edge_transition_width", "glyph_replace", "glyph_split_cells",
     "glyph_correct_spec", "glyph_find_plate", "glyph_rewrite_line",
+    "glyph_find_text_lines", "glyph_make_spec",
 ]

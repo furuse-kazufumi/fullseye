@@ -101,71 +101,9 @@ def find_text_lines(gray, n_lines=0, dark=0.35, min_area=200):
     枠の内側に限定はしない —— 限定すると、枠が二重に見える看板で内側の枠を掴み、
     その外にある 1 行目をまるごと落とす(実測)。
     """
-    # ★2026-09-18: ここを「大津 + 外周で極性」に替えて**退行した**(既存 12 枚で
-    #   見逃し 0 -> 6、誤検出 4/14 -> 9/22)。出荷済み ``_ink_mask`` と同じ規則でも、
-    #   **1 マスに当てるのと画像全体に当てるのでは別物** —— 全体の大津は壁や板の
-    #   明暗で閾値が動き、字の縁を取り込む。固定の暗さ閾値に戻す。白字の看板は
-    #   この経路では取れない(既知の穴として記録)。
-    ink = np.asarray(gray) < dark
-    lab, n = ndimage.label(ink)
-    if n == 0:
-        return [], None
-    boxes = []
-    for i, sl in enumerate(ndimage.find_objects(lab), start=1):
-        h, w = sl[0].stop - sl[0].start, sl[1].stop - sl[1].start
-        area = int((lab[sl] == i).sum())
-        if area >= min_area:
-            boxes.append({"id": i, "sl": sl, "h": h, "w": w, "area": area,
-                          "fill": area / float(h * w)})
-    boxes = [b for b in boxes
-             if not (b["fill"] < 0.35 and b["h"] * b["w"] > 0.02 * ink.size)]
-    if not boxes:
-        return [], None
-    keep = np.zeros_like(ink)
-    for b in boxes:
-        keep[b["sl"]] |= (lab[b["sl"]] == b["id"])
-
-    # 行は**水平投影の帯**で取る。★成分をまとめる方法は使えない —— 漢字は部品に
-    # 分かれて出る(``電`` は 3 つ)ので、重なりや中心距離で束ねると行間の狭い
-    # 看板で 2 行が 1 行に融け、逆に離れた部品が 3 行目になった(実測 6/12 枚)。
-    prof = keep.sum(axis=1).astype(float)
-    on = prof > max(1.0, 0.02 * prof.max())
-    runs, i = [], 0
-    while i < len(on):
-        if on[i]:
-            j = i
-            while j + 1 < len(on) and on[j + 1]:
-                j += 1
-            runs.append((i, j + 1))
-            i = j + 1
-        else:
-            i += 1
-    if not runs:
-        return [], None
-    # 欧文の副題を落とす。**帯の高さ**で切る(実測: 漢字 80 px に対し英字 28 px)。
-    tall = max(y1 - y0 for y0, y1 in runs)
-    runs = [r for r in runs if (r[1] - r[0]) >= 0.6 * tall]
-    # 行間が詰まっていると 2 行が 1 帯に融ける。**期待する行数**は呼び出し側が
-    # 知っている(直す文字列を持っているのだから)ので、足りない分を谷で割る。
-    # 逆に行が**多い**とき(指定に無い日付行・注記)は、高い順に指定数だけ残す。
-    # 期待する行数は呼び出し側が知っている —— 少ないときに谷で割るのと同じ根拠。
-    if n_lines and len(runs) > n_lines:
-        runs = sorted(sorted(runs, key=lambda r: r[0] - r[1])[:n_lines])
-    while n_lines and len(runs) < n_lines:
-        k = max(range(len(runs)), key=lambda t: runs[t][1] - runs[t][0])
-        y0, y1 = runs[k]
-        m0, m1 = y0 + int(0.25 * (y1 - y0)), y0 + int(0.75 * (y1 - y0))
-        if m1 - m0 < 2:
-            break
-        cut = m0 + int(np.argmin(prof[m0:m1]))
-        runs[k:k + 1] = [(y0, cut), (cut, y1)]
-    out = []
-    for y0, y1 in runs:
-        cols = np.where(keep[y0:y1].any(axis=0))[0]
-        if cols.size:
-            out.append((slice(y0, y1), slice(int(cols.min()), int(cols.max()) + 1)))
-    out.sort(key=lambda bx: bx[0].start)
-    return out, ink
+    # 本体は 2026-09-18 に出荷(``glyphops.find_text_lines``)へ移した。ここは同じ関数を
+    # 呼ぶだけ —— 2 つ目の実装を残すと片方だけ直る。
+    return glyphops.find_text_lines(gray, n_lines, dark=dark, min_area=min_area)
 
 
 def split_cells(box, n, ink=None, snap=0.15):
