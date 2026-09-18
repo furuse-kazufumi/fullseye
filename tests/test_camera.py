@@ -334,3 +334,93 @@ def test_stereo_rectify_row_aligns_general_pair():
     r2 = warp(s["uv2"], H2)
     # corresponding points share the same rectified row (horizontal epipolar lines)
     assert np.abs(r1[:, 1] - r2[:, 1]).max() < 1e-6
+
+
+def _straight_line_grid(K, dist, extent=(30, 482), n_lines=7, pts_per_line=40):
+    """本来まっすぐな水平・垂直線を格子状に作り distort_points で歪ませて返す。
+    extent は線を張る画素範囲(estimate と像の geometry を揃えるため可変)。"""
+    lo, hi = extent
+    span = np.linspace(lo, hi, pts_per_line)
+    at = np.linspace(lo + (hi - lo) * 0.08, hi - (hi - lo) * 0.08, n_lines)
+    lines = []
+    for yy in at:
+        lines.append(camera.distort_points(np.column_stack([span, np.full_like(span, yy)]), K, dist))
+    for xx in at:
+        lines.append(camera.distort_points(np.column_stack([np.full_like(span, xx), span]), K, dist))
+    return lines
+
+
+def _straightness_rms(lines, K, dist):
+    s, n = 0.0, 0
+    for p in lines:
+        u = camera.undistort_points(p, K, dist)
+        d = u - u.mean(0)
+        _, sv, _ = np.linalg.svd(d, full_matrices=False)
+        s += sv[1] ** 2
+        n += len(p)
+    return (s / n) ** 0.5
+
+
+@pytest.mark.parametrize("dist", [
+    [-0.28, 0.09, 0.0, 0.0, 0.0],                            # barrel
+    [0.15, -0.04, 0.0, 0.0, 0.0],                            # pincushion
+])
+def test_estimate_distortion_recovers_radial_from_straight_lines(dist):
+    w = h = 512
+    K = camera.intrinsic_matrix(0.9 * w, 0.9 * w, (w - 1) / 2, (h - 1) / 2)
+    lines = _straight_line_grid(K, dist)
+    est = camera.estimate_distortion(lines, K, radial=2, tangential=False)
+    # clean synthetic lines: the exact inverse straightens them, so recovery is
+    # to machine precision (this is a self-consistency check, not a field-accuracy claim).
+    assert np.allclose(est[:2], dist[:2], atol=1e-6)
+    assert np.allclose(est[2:], 0.0, atol=1e-9)
+    # and the estimate collapses the bend that dist=0 leaves behind
+    assert _straightness_rms(lines, K, est) < 1e-6 < _straightness_rms(lines, K, np.zeros(5))
+
+
+def test_estimate_distortion_recovers_tangential():
+    w = h = 512
+    K = camera.intrinsic_matrix(0.9 * w, 0.9 * w, (w - 1) / 2, (h - 1) / 2)
+    dist = [-0.2, 0.05, 0.002, -0.0015, 0.0]
+    lines = _straight_line_grid(K, dist)
+    est = camera.estimate_distortion(lines, K, radial=2, tangential=True)
+    assert np.allclose(est, dist, atol=1e-5)
+
+
+def test_estimate_distortion_chains_into_undistort_image():
+    # the whole point: the estimated dist is what undistort_image consumes.
+    w = h = 160
+    K = camera.intrinsic_matrix(150.0, 150.0, (w - 1) / 2, (h - 1) / 2)
+    true_dist = [-0.18, 0.03, 0.0, 0.0, 0.0]
+    lines = _straight_line_grid(K, true_dist, extent=(10, w - 10))
+    est = camera.estimate_distortion(lines, K, radial=2, tangential=False)
+    # a smooth scene (as the round-trip test uses): random noise does not survive
+    # a double bilinear resample, so the interior residual would be meaningless there.
+    yy, xx = np.mgrid[0:h, 0:w]
+    img = 0.5 + 0.5 * np.sin(xx / 25.0) * np.cos(yy / 30.0)
+    # distort then undistort with the *estimated* coefficients recovers the interior
+    distorted = camera.distort_image(img, K, true_dist)
+    back = camera.undistort_image(distorted, K, est)
+    inner = (slice(40, h - 40), slice(40, w - 40))
+    assert np.abs(back[inner] - img[inner]).mean() < 5e-3
+
+
+def test_estimate_distortion_degrades_gracefully_with_noise():
+    w = h = 512
+    K = camera.intrinsic_matrix(0.9 * w, 0.9 * w, (w - 1) / 2, (h - 1) / 2)
+    dist = [-0.28, 0.09, 0.0, 0.0, 0.0]
+    rng = np.random.default_rng(1)
+    lines = [ln + rng.normal(0, 0.3, ln.shape) for ln in _straight_line_grid(K, dist)]
+    est = camera.estimate_distortion(lines, K, radial=2, tangential=False)
+    # 0.3 px point noise: k1 stays within a few percent (k2, higher order, is looser)
+    assert abs(est[0] - dist[0]) / abs(dist[0]) < 0.05
+
+
+def test_estimate_distortion_fail_closed():
+    K = camera.intrinsic_matrix(500.0, 500.0, 256.0, 256.0)
+    with pytest.raises(ValueError, match=r">= 2 lines"):
+        camera.estimate_distortion([np.zeros((40, 2))], K)
+    with pytest.raises(ValueError, match=r">= 3"):
+        camera.estimate_distortion([np.zeros((2, 2)), np.zeros((40, 2))], K)
+    with pytest.raises(ValueError, match=r"radial must be"):
+        camera.estimate_distortion([np.zeros((40, 2))] * 2, K, radial=4)

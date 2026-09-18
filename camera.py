@@ -777,6 +777,73 @@ def distort_image(image, K, dist):
     return warp_by_field(a, fx, fy)
 
 
+def estimate_distortion(lines, K, *, radial=2, tangential=True, iters=200):
+    """Estimate Brown-Conrady distortion coefficients from lines that are straight
+    in the world (the plumb-line method: Brown 1971; Devernay-Faugeras 2001).
+
+    Each element of ``lines`` is an ``(N_i, 2)`` array of pixels ``(x=col, y=row)``
+    sampled along something that is straight in the scene (a printed line, a
+    building edge, a rule) but appears curved through the lens. **No correspondences,
+    no calibration board, no known spacing** are needed -- only that each line is
+    straight (the line-pattern idea Discorpy uses, here in this repo's own
+    ``(x, y)`` convention). ``K`` is the 3x3 intrinsics; its principal point is the
+    distortion centre and is held fixed (this method cannot separate the centre
+    from ``p1, p2``). Returns ``dist = [k1, k2, p1, p2, k3]`` (OpenCV order), ready
+    to hand straight to :func:`undistort_image` / :func:`undistort_points`.
+
+    It minimizes, over the coefficients, the summed perpendicular scatter of the
+    *undistorted* lines: a line that is straight in the world becomes straight once
+    the distortion is removed, so its points collapse onto their best-fit line. The
+    forward/inverse model is :func:`undistort_points` itself (one implementation of
+    Brown-Conrady in this module, not a second copy). ``radial`` in ``{1, 2, 3}``
+    frees ``k1``; ``k1, k2``; or ``k1, k2, k3``. ``tangential`` frees ``p1, p2``.
+
+    fail-closed: needs >= 2 lines (one line cannot tell a bend from a tilt), each
+    with >= 3 points; raises ``ValueError`` otherwise. Requires SciPy (as the other
+    calibration refiners in this package do)."""
+    from scipy.optimize import least_squares                     # lazy: as caltab does
+
+    K = _K3(K)
+    pts_list = [_pts2(p) for p in lines]
+    if len(pts_list) < 2:
+        raise ValueError("estimate_distortion needs >= 2 lines (a single line cannot "
+                         "distinguish lens bending from a tilt); got %d" % len(pts_list))
+    for i, p in enumerate(pts_list):
+        if len(p) < 3:
+            raise ValueError("line %d has %d points; each line needs >= 3" % (i, len(p)))
+    r = int(radial)
+    if r not in (1, 2, 3):
+        raise ValueError("radial must be 1, 2 or 3 (got %r)" % (radial,))
+    # free-parameter slots into dist = [k1, k2, p1, p2, k3]
+    free = [0]                                                   # k1 always
+    if r >= 2:
+        free.append(1)                                          # k2
+    if r >= 3:
+        free.append(4)                                          # k3
+    if tangential:
+        free += [2, 3]                                          # p1, p2
+
+    def perp_residuals(params):
+        dist = np.zeros(5)
+        dist[free] = params
+        res = []
+        for p in pts_list:
+            u = undistort_points(p, K, dist)
+            d = u - u.mean(0)
+            # normal of the best-fit line = 2nd right singular vector; the signed
+            # projection onto it is each point's perpendicular distance to the line.
+            _, _, Vt = np.linalg.svd(d, full_matrices=False)
+            res.append(d @ Vt[1])
+        return np.concatenate(res)
+
+    x0 = np.zeros(len(free))
+    sol = least_squares(perp_residuals, x0, method="lm",
+                        xtol=1e-12, ftol=1e-12, max_nfev=int(iters))
+    dist = np.zeros(5)
+    dist[free] = sol.x
+    return dist
+
+
 # --- calibrated stereo rectification (Fusiello et al. 2000) ----------------- #
 def stereo_rectify(K1, K2, R, t):
     """Compute rectifying rotations for a calibrated stereo pair (Fusiello 2000).

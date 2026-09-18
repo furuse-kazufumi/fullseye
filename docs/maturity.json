@@ -146,6 +146,27 @@
    ]
   },
   {
+   "id": "estimate-lens-distortion",
+   "title": "本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要)",
+   "title_en": "Estimate lens distortion coefficients from straight lines (plumb-line, no board)",
+   "category": "測る",
+   "note": "docs/capabilities/estimate-lens-distortion.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "estimate_lens_distortion",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "figures-and-annotation",
    "title": "結果を人が読める図にする",
    "title_en": "Turn results into figures people can read",
@@ -626,9 +647,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 211,
+  "examples2d_total": 212,
   "run_by_the_poc_gate": 122,
-  "run_by_the_example_gate": 89,
+  "run_by_the_example_gate": 90,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

@@ -152,6 +152,13 @@ EXAMPLES = [
                 "『理想の光線が落ちた場所』を拾う後方マップ(穴が開かない)。直線の弓なりが桁で減り、"
                 "滑らか像の往復は内部で数値一致、remap 場は distort_points と厳密一致。★係数の推定はしない"
                 "(与えられた前提)。既存の点モデル + warp_by_field の合成、来歴=Brown 1971 / Discorpy。"},
+    {"id": "estimate_lens_distortion", "task": "calibration", "data": "synthetic",
+     "name": "本来まっすぐな線群から歪み係数を推定する(plumb-line 法)",
+     "summary": "undistort_image の上流 —— 係数を『測る』側。まっすぐな線を歪ませた点列だけから"
+                "estimate_distortion が k1,k2(必要なら p1,p2)を回収し、推定係数をそのまま"
+                "undistort_image に渡すと弓なりが直る。チェッカーボードの対応点は不要、線が"
+                "まっすぐと分かればよい(Discorpy 流)。中心=主点は固定。雑音では素直に劣化する"
+                "(過信しない章あり)。来歴=Brown 1971 / Devernay-Faugeras 2001 / Discorpy。"},
     {"id": "poc_camera_calibration", "task": "calibration", "data": "synthetic",
      "name": "カメラ校正の再投影誤差は何を保証しないか",
      "summary": "内部パラメータと姿勢を自分で決めて推定し返す。板の傾きだけを変えると"

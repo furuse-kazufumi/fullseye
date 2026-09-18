@@ -16,9 +16,17 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 22 項目**
+**収録 23 項目**
 
-## 測る (4)
+## 測る (5)
+
+### [本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要)](capabilities/estimate-lens-distortion.md)
+
+`undistort_image(image, K, dist)` は歪み係数 `dist` が**与えられている**前提でした。`estimate_distortion(lines, K)` はその上流 —— 係数を**測る**側です。本来まっすぐな線(印刷された直線・建物のエッジ・定規)がレンズで曲がった点列だけから、Brown–Conrady 係数 `[k1, k2, p1, p2, k3]` を推定します。**対応点もチェッカーボードも既知の間隔も要りません** —— 各線がまっすぐだと分かっていればよい(Discorpy が使う線パターンの考え方を、このライブラリの `(x, y)` 規約で)。推定した `dist` は `undistort_image` にそのまま渡せます。
+
+使う op: `estimate_distortion`, `undistort_image`, `distort_points`, `undistort_points`
+
+動く例: `estimate_lens_distortion`
 
 ### [地球規模の座標に載せる(ECEF と測地座標)](capabilities/geodetic-frames.md)
 
