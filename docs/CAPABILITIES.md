@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 21 項目**
+**収録 22 項目**
 
 ## 測る (4)
 
@@ -168,7 +168,7 @@ op の返り値は `image` / `region` / `points` / `contour` / `feature` / `matr
 
 ### [op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す](capabilities/typed-results-as-markdown.md)
 
-JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の中に貼る、数の表を「読ませる」、レビューに残す。[`typed-results-as-json`](typed-results-as-json.md) が機械に厳密な形を与えるのに対し、`fullseye/mdio.py` は**人が読む形**と、その**間の橋**を与えます。
+JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の中に貼る、数の表を「読ませる」、レビューに残す。機械に厳密な JSON 形(能力ノート `typed-results-as-json`)に対し、`fullseye/mdio.py` は**人が読む形**と、その**間の橋**を与えます。
 
 使う op: `to_markdown`, `json_block`, `extract_json`, `report`
 
@@ -199,3 +199,13 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 使う op: `text_box`, `annotate_text_path`, `annotate_text_path_layout`, `annotate_table`, `annotate_table_layout`, `measure_text`
 
 動く例: `annotate_paper_tour`
+
+## 直す (1)
+
+### [レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線)](capabilities/lens-distortion-correction.md)
+
+広角・魚眼寄りのレンズは直線を曲げます(たる型・糸巻き型)。`undistort_image(image, K, dist)` は Brown–Conrady モデル(`dist = [k1, k2, p1, p2(, k3)]`、OpenCV と同じ並び)で**画像を丸ごと補正**し、曲がった直線をまっすぐに戻します。`distort_image` はその逆で、理想画像から歪んだ画像を作ります(合成テストデータ・レンズの見えの確認)。
+
+使う op: `undistort_image`, `distort_image`, `distort_points`, `undistort_points`
+
+動く例: `lens_undistort`

@@ -146,6 +146,12 @@ EXAMPLES = [
                 "(実測/期待 = 1.00000000)。だが**測るなら拡大は要らない** —— 生映像の"
                 "位相相関と誤差比 1.14 で引き分ける。崩れるのは拡大率ではなく入力振幅で、"
                 "境界は位相の巻きではなく J0 の第 1 零点 3.0619 px。"},
+    {"id": "lens_undistort", "task": "rectification", "data": "synthetic",
+     "name": "レンズの歪みを画像ごと補正する(たる型/糸巻き型/接線)",
+     "summary": "Brown-Conrady モデルで画像を丸ごと undistort/distort。補正後の各画素が歪んだ入力の"
+                "『理想の光線が落ちた場所』を拾う後方マップ(穴が開かない)。直線の弓なりが桁で減り、"
+                "滑らか像の往復は内部で数値一致、remap 場は distort_points と厳密一致。★係数の推定はしない"
+                "(与えられた前提)。既存の点モデル + warp_by_field の合成、来歴=Brown 1971 / Discorpy。"},
     {"id": "poc_camera_calibration", "task": "calibration", "data": "synthetic",
      "name": "カメラ校正の再投影誤差は何を保証しないか",
      "summary": "内部パラメータと姿勢を自分で決めて推定し返す。板の傾きだけを変えると"

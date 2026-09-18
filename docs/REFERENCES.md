@@ -192,6 +192,12 @@ the operator is a member of that family*.
 | `awb_gains` | gfx2d / isp | Buchsbaum, G. (1980). A spatial processor model for object colour perception. *J. Franklin Inst.* 310, 1–26 (gray-world); Land, E. H. (1977) *The retinex theory of color vision* (white-patch). |
 | `raw_demosaic_bilinear` | gfx2d / isp | Bilinear CFA interpolation — the baseline in Gunturk et al. (2005), *Demosaicking: color filter array interpolation*, IEEE SPM 22(1), 44–54. Same estimate as OpenCV's `COLOR_Bayer*2RGB` without the 8-bit round trip. |
 
+## 2026-09-18 additions — lens distortion (image domain, re-implemented from the model)
+
+| op | category | seminal reference |
+|---|---|---|
+| `undistort_image` · `distort_image` | camera / geometry | Radial-tangential model of Brown, D. C. (1971). *Close-range camera calibration.* Photogrammetric Engineering 37(8), 855–866 (Brown–Conrady). The whole-image form is the backward map (each corrected pixel samples the distorted input where its ideal ray landed) — hole-free per Wolberg, G. (1990), *Digital Image Warping*, IEEE CS Press, Sec. 3.5. The image-domain correction after coefficients are fitted follows **Discorpy** (Vo, N. T. et al., github.com/DiamondLightSource/discorpy, Apache-2.0; Vo et al. (2015), *Radial lens distortion correction with sub-pixel accuracy*, Optics Express 23(25), 32859). Composed here from this repo's own `distort_points` / `undistort_points` and `deformreg.warp_by_field`; no code copied, no OpenCV. |
+
 ## Mining new operators from research (RAD)
 - RAD image / diffusion / deep_learning corpora (thousands of papers) = the source for operators beyond the classics: modern denoisers (BM3D, DnCNN), learned edges (HED), superpixels (SLIC), diffusion priors, foundation segmenters (SAM).
 - Workflow: mine a paper -> add a typed Op (fn + sort + analogs + this reference) -> evolution/codegen/catalog pick it up automatically.

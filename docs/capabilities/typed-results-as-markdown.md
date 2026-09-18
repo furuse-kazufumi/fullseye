@@ -12,7 +12,7 @@ version: 0.2.1
 
 ## できること
 
-JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の中に貼る、数の表を「読ませる」、レビューに残す。[`typed-results-as-json`](typed-results-as-json.md) が機械に厳密な形を与えるのに対し、`fullseye/mdio.py` は**人が読む形**と、その**間の橋**を与えます。
+JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の中に貼る、数の表を「読ませる」、レビューに残す。機械に厳密な JSON 形(能力ノート `typed-results-as-json`)に対し、`fullseye/mdio.py` は**人が読む形**と、その**間の橋**を与えます。
 
 - `to_markdown(value, sort)` は型付きの値を GitHub 風 Markdown にします。`table` / `points` / `matrix` / `signal` は本物の表(`max_rows` × `max_cols` で頭打ち、切ったら注記)、文字にできないもの(`image` は形・dtype・値域、`region` は被覆率と外接矩形)は 1 行の要約。**画素を絵に描いたふりはしません**。
 - `json_block(value, sort)` は**厳密な** JSON 封筒を ```` ```json ```` フェンスに包みます。Markdown 文書の中に値を置いても bit 一致で戻せます(`readable=True` が既定なので差分に優しい)。

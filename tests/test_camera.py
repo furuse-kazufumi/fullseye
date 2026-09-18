@@ -265,6 +265,50 @@ def test_distort_undistort_roundtrip(dist):
     assert np.allclose(back, uv, atol=1e-3)
 
 
+@pytest.mark.parametrize("dist", [
+    [0.20, 0.05, 0.0, 0.0, 0.0],       # barrel
+    [-0.15, 0.02, 0.0, 0.0, 0.0],      # pincushion
+    [0.10, 0.0, 0.010, 0.008, 0.0],    # tangential
+])
+def test_undistort_image_inverts_distort_image_on_a_smooth_scene(dist):
+    """画像ドメインの往復: 滑らかな像を歪ませて戻すと、内部は元に一致する
+    (縁は remap の外挿で崩れるので内側で見る。二重双線形のボケだけが残差)。"""
+    h, w = 160, 160
+    yy, xx = np.mgrid[0:h, 0:w]
+    img = 0.5 + 0.5 * np.sin(xx / 25.0) * np.cos(yy / 30.0)
+    K = camera.intrinsic_matrix(150.0, 150.0, (w - 1) / 2, (h - 1) / 2)
+    d = camera.distort_image(img, K, dist)
+    back = camera.undistort_image(d, K, dist)
+    assert d.shape == img.shape and back.shape == img.shape
+    c = (slice(25, h - 25), slice(25, w - 25))
+    assert np.abs(back[c] - img[c]).mean() < 1e-3            # 内部は厳密に近い(残差は二重双線形のボケ)
+    assert np.abs(d[c] - img[c]).mean() > 2e-3               # 歪みは実際に効いている
+
+
+def test_undistort_image_field_matches_the_point_model_exactly():
+    """画像の remap 場は距離ごとに distort_points と厳密一致(絵にする前の数式が正しい)。"""
+    h, w = 80, 100
+    K = camera.intrinsic_matrix(90.0, 90.0, (w - 1) / 2, (h - 1) / 2)
+    dist = [0.2, 0.05, 0.001, 0.0, 0.0]
+    fx, fy = camera._distortion_field((h, w), K, dist, forward=False)
+    for (x, y) in [(70, 60), (10, 5), (50, 40)]:             # 格子の整数座標(index と一致)
+        src = camera.distort_points(np.array([[float(x), float(y)]]), K, dist)[0]
+        assert abs((x - fx[y, x]) - src[0]) < 1e-9
+        assert abs((y - fy[y, x]) - src[1]) < 1e-9
+
+
+def test_undistort_image_handles_colour_and_leaves_a_zero_distortion_image_unchanged():
+    h, w = 48, 64
+    rng = np.random.default_rng(0)
+    img = rng.random((h, w, 3))
+    K = camera.intrinsic_matrix(70.0, 70.0, (w - 1) / 2, (h - 1) / 2)
+    out = camera.undistort_image(img, K, [0.1, 0.02, 0.0, 0.0, 0.0])
+    assert out.shape == img.shape
+    # 歪み係数がゼロなら恒等(縁も含めほぼ元のまま)
+    same = camera.undistort_image(img, K, [0.0, 0.0, 0.0, 0.0, 0.0])
+    assert np.abs(same - img).max() < 1e-6
+
+
 def test_stereo_rectify_identity_for_rectified_pair():
     K = camera.intrinsic_matrix(600.0, 600.0, 320.0, 240.0)
     R = np.eye(3)

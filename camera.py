@@ -731,6 +731,52 @@ def undistort_points(uv, K, dist, iters: int = 10) -> np.ndarray:
     return np.stack([fx * best_x + cx, fy * best_y + cy], 1)
 
 
+def _distortion_field(shape, K, dist, *, forward):
+    """The ``(fx, fy)`` displacement field for :func:`deformreg.warp_by_field` so the
+    output samples the input at the mapped location. ``forward=False`` -> undistort
+    (each ideal output pixel samples the distorted input at ``distort_points`` of it);
+    ``forward=True`` -> distort (each distorted output pixel samples the ideal input at
+    ``undistort_points`` of it). ``warp_by_field`` uses ``out[y,x]=img[y-fy,x-fx]``, so
+    the field is ``grid - mapped``."""
+    h, w = int(shape[0]), int(shape[1])
+    ys, xs = np.mgrid[0:h, 0:w]
+    grid = np.stack([xs.ravel(), ys.ravel()], 1).astype(np.float64)
+    mapped = undistort_points(grid, K, dist) if forward else distort_points(grid, K, dist)
+    fx = (grid[:, 0] - mapped[:, 0]).reshape(h, w)
+    fy = (grid[:, 1] - mapped[:, 1]).reshape(h, w)
+    return fx, fy
+
+
+def undistort_image(image, K, dist):
+    """Remove radial-tangential lens distortion from a whole IMAGE (Brown 1971).
+
+    For each pixel of the corrected (ideal pinhole) output, samples the distorted
+    *image* where that ideal ray actually landed — the backward map that keeps the
+    result hole-free (Wolberg 1990; the image-domain form Discorpy applies after it
+    has fitted the coefficients). ``K`` is the 3x3 intrinsics (its principal point is
+    the distortion centre), ``dist = [k1, k2, p1, p2(, k3)]`` (OpenCV order). Inverse
+    of :func:`distort_image`. Bilinear, edge-clamped; grey ``(H, W)`` or colour
+    ``(H, W, 3)`` in ``[0, 1]``."""
+    from deformreg import warp_by_field                          # lazy: heavy import
+
+    a = np.asarray(image, dtype=np.float64)
+    fx, fy = _distortion_field(a.shape, K, dist, forward=False)
+    return warp_by_field(a, fx, fy)
+
+
+def distort_image(image, K, dist):
+    """Apply radial-tangential lens distortion to a whole IMAGE (Brown 1971) — make a
+    distorted picture from an ideal one (e.g. synthetic test data, or to preview a
+    lens). Inverse of :func:`undistort_image`: each distorted output pixel samples the
+    ideal *image* at :func:`undistort_points` of its location. Same conventions and
+    coefficient order as :func:`undistort_image`."""
+    from deformreg import warp_by_field                          # lazy: heavy import
+
+    a = np.asarray(image, dtype=np.float64)
+    fx, fy = _distortion_field(a.shape, K, dist, forward=True)
+    return warp_by_field(a, fx, fy)
+
+
 # --- calibrated stereo rectification (Fusiello et al. 2000) ----------------- #
 def stereo_rectify(K1, K2, R, t):
     """Compute rectifying rotations for a calibrated stereo pair (Fusiello 2000).
