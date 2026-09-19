@@ -67,9 +67,9 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 **2,002 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **49 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 931/931, typed ledger 1050/1062, one-line facade `fullseye.<name>` 568/1200 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 931/931, typed ledger 1050/1062, one-line facade `fullseye.<name>` 568/1201 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 2007 notes, **1964** link at least one runnable example (43 have none) and **1987** have a usage section of 120+ characters (20 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2007.
+**Measured substance**: of 2007 notes, **1966** link at least one runnable example (41 have none) and **1987** have a usage section of 120+ characters (20 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2007.
 
 | dimension | ops | entry |
 |---|---:|---|
@@ -204,7 +204,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 183
+## Document map — all 185
 
 The complete map, so that **no document is unreachable from this index** (the 2,002 per-op notes and 49 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
@@ -330,7 +330,7 @@ The complete map, so that **no document is unreachable from this index** (the 2,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(111)
+**Other**(113)
 
 | document | what it covers |
 |---|---|
@@ -434,7 +434,9 @@ The complete map, so that **no document is unreachable from this index** (the 2,
 | [`hardening/empty-name-resolved-and-narrow-floats-not-upcast.md`](hardening/empty-name-resolved-and-narrow-floats-not-upcast.md) | id: empty-name-resolved-and-narrow-floats-not-upcast |
 | [`hardening/engine-load-on-an-instance-was-silently-ignored.md`](hardening/engine-load-on-an-instance-was-silently-ignored.md) | id: engine-load-on-an-instance-was-silently-ignored |
 | [`hardening/frame-align-inlier-ratio-is-not-confidence.md`](hardening/frame-align-inlier-ratio-is-not-confidence.md) | id: frame-align-inlier-ratio-is-not-confidence |
+| [`hardening/image-io-dropped-write-failures-and-crushed-16-bit.md`](hardening/image-io-dropped-write-failures-and-crushed-16-bit.md) | id: image-io-dropped-write-failures-and-crushed-16-bit |
 | [`hardening/inputs-without-a-conversion-were-not-refused.md`](hardening/inputs-without-a-conversion-were-not-refused.md) | id: inputs-without-a-conversion-were-not-refused |
+| [`hardening/ledger-lookups-returned-empty-for-unknown-names.md`](hardening/ledger-lookups-returned-empty-for-unknown-names.md) | id: ledger-lookups-returned-empty-for-unknown-names |
 | [`hardening/moment-invariants-two-families-same-name.md`](hardening/moment-invariants-two-families-same-name.md) | id: moment-invariants-two-families-same-name |
 | [`hardening/nary-ops-unlisted-and-knobs-unstated.md`](hardening/nary-ops-unlisted-and-knobs-unstated.md) | id: nary-ops-unlisted-and-knobs-unstated |
 | [`hardening/noise-sigma-mad-collapses-on-quantised-data.md`](hardening/noise-sigma-mad-collapses-on-quantised-data.md) | id: noise-sigma-mad-collapses-on-quantised-data |

@@ -4,7 +4,7 @@ dim: 2d
 category: extra
 in: image
 out: image
-examples: [gallery2d_color_artistic]
+examples: [gallery2d_color_artistic, genspark_external_review]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -62,6 +62,7 @@ xsitk_minmax_curv_flow 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_color_artistic](../../../../examples/gallery2d_color_artistic.py) — `py -3.11 examples/gallery2d_color_artistic.py`
+- [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

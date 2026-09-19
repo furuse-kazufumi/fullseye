@@ -14,13 +14,13 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**19 件(うち直したもの 19 件)。見つけた PoC は 10 本。**
+**21 件(うち直したもの 21 件)。見つけた PoC は 10 本。**
 
 ## 種別ごと
 
 | 種別 | 件数 | 直した |
 |---|---:|---:|
-| 静かに間違う(例外が出ない) | 7 | 7 |
+| 静かに間違う(例外が出ない) | 9 | 9 |
 | 実装の誤り | 4 | 4 |
 | 門が事故の起きる場所に立っていなかった | 2 | 2 |
 | 在るのに引けない | 5 | 5 |
@@ -30,7 +30,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 
 | PoC | 件数 |
 |---|---:|
-| [`genspark_external_review`](../examples/genspark_external_review.py) | 9 |
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 11 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
@@ -86,6 +86,18 @@ GenSpark 第 15 報(境界値・型不一致の総当たり)。
 GenSpark 第 16 報(N37 / N39 / N40 / N41)。
 
 見つけた PoC: `genspark_external_review` / 直した所: `engine.py`, `imgevolve.py` / 門: `test_load_on_an_instance_loads_into_it`, `test_dict_stages_are_understood_and_bad_stage_types_are_refused`, `test_upto_is_an_inclusive_stage_index_and_out_of_range_is_refused`, `test_to_python_carries_the_ops_string_and_a_coding_line` / 状態: fixed
+
+#### [write_image が書けなかった事実を捨てて無言で戻り、uint16 が 8 bit に潰れ、読めない理由が全部「無い」だった](hardening/image-io-dropped-write-failures-and-crushed-16-bit.md)
+
+GenSpark 第 18・19 報(N75 / N76 / N77 / N78 / N79、N72 の同族、N81 の音声分)。全部 master で再現した。
+
+見つけた PoC: `genspark_external_review` / 直した所: `api.py`, `imgio.py`, `ops.py`, `dsp.py` / 門: `test_write_refuses_a_missing_directory_instead_of_pretending`, `test_write_refuses_an_unwritable_extension_naming_the_writable_ones`, `test_ppm_takes_a_grey_image_and_reads_back`, `test_read_errors_say_which_kind_of_failure`, `test_uint16_is_written_as_16_bit_and_float_depth_options_are_lossless`, `test_float_default_is_8_bit_as_documented_and_depth_needs_a_capable_extension` / 状態: fixed
+
+#### [台帳の引き方が未知の名前に黙って空を返し、write_wav の path が台帳でデータ扱いされていた](hardening/ledger-lookups-returned-empty-for-unknown-names.md)
+
+GenSpark 第 15〜27 報(N67 / N68 / N69 / N71、N84 / N85 / N87、N92 / N94 / N95 / N97、および N72 / N73 / N74 / N80 / N88 / N89 / N90 / N91 / N93 / N96 / N99 / N100)。
+
+見つけた PoC: `genspark_external_review` / 直した所: `opassist.py`, `dsp.py`, `api.py` / 門: `test_producers_and_consumers_refuse_unknown_sorts_and_op_names`, `test_presets_refuse_unknown_ops_and_are_empty_for_known_ops_without_presets`, `test_write_wav_path_is_not_a_data_input_in_the_ledger`, `test_no_ignored_exception_leaks_to_stderr_when_write_wav_is_misused`, `test_list_ops_rows_expose_the_native_guard`, `test_empty_input_contract_is_uniform_across_ops`, `test_every_shared_alias_resolves_by_rule_not_by_registration_order`, `test_list_ops_rows_name_their_alias_peers`, `test_list_ops_sort_and_search_fold_case_and_accents`, `test_op_run_refuses_to_call_with_a_none_sample_and_names_the_sort`, `test_non_array_images_are_type_errors_regardless_of_policy`, `test_data_range_of_without_arrays_is_a_contract_error`, `test_lazy_torch_import_error_says_whether_torch_is_installed`, `test_list_ops_unknown_sort_is_refused_and_lists_the_known_ones` / 状態: fixed
 
 ### 実装の誤り
 

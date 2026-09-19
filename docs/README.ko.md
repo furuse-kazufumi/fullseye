@@ -67,9 +67,9 @@
 
 **2,002개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **49개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 931/931, 타입 台帳 1050/1062, 한 줄 파사드 `fullseye.<이름>` 568/1200 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 931/931, 타입 台帳 1050/1062, 한 줄 파사드 `fullseye.<이름>` 568/1201 — **파사드는 아직 절반**.
 
-**내용 실측**: 2007건 중 실행 가능한 예제가 붙은 것은 **1964**건(43건은 없음), 사용법이 120자 이상인 것은 **1987**건(20건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2007건 모두.
+**내용 실측**: 2007건 중 실행 가능한 예제가 붙은 것은 **1966**건(41건은 없음), 사용법이 120자 이상인 것은 **1987**건(20건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2007건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -204,7 +204,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 문서 지도 — 전 183건
+## 문서 지도 — 전 185건
 
 **색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 2,002건과 패밀리 가이드 49건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
@@ -330,7 +330,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(111)
+**Other**(113)
 
 | 문서 | 내용 |
 |---|---|
@@ -434,7 +434,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`hardening/empty-name-resolved-and-narrow-floats-not-upcast.md`](hardening/empty-name-resolved-and-narrow-floats-not-upcast.md) | id: empty-name-resolved-and-narrow-floats-not-upcast |
 | [`hardening/engine-load-on-an-instance-was-silently-ignored.md`](hardening/engine-load-on-an-instance-was-silently-ignored.md) | id: engine-load-on-an-instance-was-silently-ignored |
 | [`hardening/frame-align-inlier-ratio-is-not-confidence.md`](hardening/frame-align-inlier-ratio-is-not-confidence.md) | id: frame-align-inlier-ratio-is-not-confidence |
+| [`hardening/image-io-dropped-write-failures-and-crushed-16-bit.md`](hardening/image-io-dropped-write-failures-and-crushed-16-bit.md) | id: image-io-dropped-write-failures-and-crushed-16-bit |
 | [`hardening/inputs-without-a-conversion-were-not-refused.md`](hardening/inputs-without-a-conversion-were-not-refused.md) | id: inputs-without-a-conversion-were-not-refused |
+| [`hardening/ledger-lookups-returned-empty-for-unknown-names.md`](hardening/ledger-lookups-returned-empty-for-unknown-names.md) | id: ledger-lookups-returned-empty-for-unknown-names |
 | [`hardening/moment-invariants-two-families-same-name.md`](hardening/moment-invariants-two-families-same-name.md) | id: moment-invariants-two-families-same-name |
 | [`hardening/nary-ops-unlisted-and-knobs-unstated.md`](hardening/nary-ops-unlisted-and-knobs-unstated.md) | id: nary-ops-unlisted-and-knobs-unstated |
 | [`hardening/noise-sigma-mad-collapses-on-quantised-data.md`](hardening/noise-sigma-mad-collapses-on-quantised-data.md) | id: noise-sigma-mad-collapses-on-quantised-data |

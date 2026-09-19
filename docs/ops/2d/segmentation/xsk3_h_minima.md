@@ -4,7 +4,7 @@ dim: 2d
 category: segmentation
 in: image
 out: region
-examples: [gallery2d_segmentation]
+examples: [gallery2d_segmentation, genspark_external_review]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -60,6 +60,7 @@ xsk3_h_minima 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
+- [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 

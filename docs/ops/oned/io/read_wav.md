@@ -4,7 +4,7 @@ dim: oned
 category: io
 in: file
 out: signal
-examples: []
+examples: [genspark_external_review]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -28,7 +28,7 @@ averaged to mono. Handles 8/16/32-bit PCM.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
