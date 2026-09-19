@@ -1,10 +1,10 @@
 {
- "n_ops": 1995,
+ "n_ops": 1996,
  "tiers": {
   "color": 12,
   "ledger": 1048,
   "nary": 17,
-  "registry": 918
+  "registry": 919
  },
  "sorts": [
   "angle",
@@ -15603,6 +15603,14 @@
    "in_sort": "contour",
    "out_sort": "contour",
    "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "fractal_dimension",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
    "tier": "registry"
   },
   {

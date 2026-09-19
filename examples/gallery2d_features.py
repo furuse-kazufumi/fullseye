@@ -70,6 +70,7 @@ OPS = [
     "xwt_detail_energy", "xwt_packet_entropy", "xsk3_is_low_contrast", "xsk3_estimate_sigma",
     "xcv3_gray_hu1", "xcv3_sift_count", "xcv3_brisk_count", "xcv3_agast_count",
     "xcv3_lsd_count",
+    "fractal_dimension",
 ]
 
 BY = {o.name: o for o in ops.REGISTRY}
@@ -221,6 +222,24 @@ def main() -> int:
 
     # (f) count_channels: an HxWx3 color image has exactly 3 channels
     assert _feat("count_channels", input_for("color")) == 3.0, "count_channels must be 3"
+    gt += 1
+
+    # (f2) fractal_dimension: a Sierpinski triangle has the analytic box-counting
+    #      dimension log3/log2 = 1.585; a straight line ~1, a filled area is higher.
+    sp = np.zeros((256, 256))
+    yy, xx = np.mgrid[0:256, 0:256]
+    sp[(xx & yy) == 0] = 1.0                             # Sierpinski via the AND rule
+    d_sp = _feat("fractal_dimension", sp)
+    d_line = _feat("fractal_dimension", (np.arange(256)[None, :] * 0 + 0.0).repeat(256, 0))  # empty→0
+    line = np.zeros((256, 256))
+    line[128, 16:240] = 1.0
+    d_ln = _feat("fractal_dimension", line)
+    filled = np.zeros((256, 256))
+    filled[32:224, 32:224] = 1.0
+    d_fill = _feat("fractal_dimension", filled)
+    assert abs(d_sp - np.log(3) / np.log(2)) < 0.03, f"Sierpinski D {d_sp} vs 1.585"
+    assert 0.9 < d_ln < 1.1 < d_fill, f"line {d_ln} should be ~1 and below filled {d_fill}"
+    assert d_line == 0.0, "empty image must read 0 fractal dimension"
     gt += 1
 
     # (g) total_length: a full circle contour has perimeter ~= 2*pi*R (shape family)

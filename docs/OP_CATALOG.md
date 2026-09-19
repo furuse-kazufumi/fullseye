@@ -1038,7 +1038,7 @@ _計 363 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 930 ops / 48 categories。_
+_計 931 ops / 48 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1257,7 +1257,7 @@ _計 930 ops / 48 categories。_
 - `xsitk_moments_thresh` `image → region` · 例: `gallery2d_color_artistic`
 - `xsitk_huang_thresh` `image → region` · 例: `gallery2d_color_artistic`
 
-### features(72)
+### features(73)
 - `effective_bit_depth` `image → feature` · 例: `gallery2d_features`
 - `blob_count` (halcon: `count_obj`) `region → feature` · 例: `gallery2d_features`, `poc_real_coin_metrology`, `quickstart`
 - `area_frac` (halcon: `area_center`) `region → feature` · 例: `gallery2d_features`
@@ -1330,6 +1330,7 @@ _計 930 ops / 48 categories。_
 - `xcv3_brisk_count` `image → feature` · 例: `gallery2d_features`
 - `xcv3_agast_count` `image → feature` · 例: `gallery2d_features`
 - `xcv3_lsd_count` `image → feature` · 例: `gallery2d_features`
+- `fractal_dimension` `image → feature` · 例: `gallery2d_features`
 
 ### filtering(1)
 - `tf_gradient_domain_reintegrate` `image → image` · 例: `gallery2d_smoothing_rank`

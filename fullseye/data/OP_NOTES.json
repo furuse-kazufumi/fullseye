@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1995,
- "n_notes": 2001,
+ "n_ops": 1996,
+ "n_notes": 2002,
  "notes": {
   "vol_dilate": [
    {
@@ -2259,6 +2259,16 @@
     "out": "feature",
     "halcon": "euler_number",
     "path": "docs/ops/2d/features/euler_number.md"
+   }
+  ],
+  "fractal_dimension": [
+   {
+    "op": "fractal_dimension",
+    "dim": "2d",
+    "category": "features",
+    "in": "image",
+    "out": "feature",
+    "path": "docs/ops/2d/features/fractal_dimension.md"
    }
   ],
   "get_region_thickness": [

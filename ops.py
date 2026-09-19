@@ -2228,7 +2228,7 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
                  # Physical-AI / evolution op wave (all halcon="", new capabilities):
                  # sim2real sensor corruption (aug_), artificial-life / cellular automata
                  # (alife_), and tactile / contact-from-shading (tac_).
-                 "backends_aug", "backends_alife", "backends_tactile",
+                 "backends_aug", "backends_alife", "backends_tactile", "backends_texture",
                  # more cellular-automata / artificial-life (Langton / Wolfram-1D /
                  # Lenia / Abelian sandpile) and control-point deformable warps
                  # (thin-plate spline / B-spline FFD / moving least squares). All

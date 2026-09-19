@@ -169,7 +169,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/gallery2d_features.py`
 
-- **L251** _(ja)_ — ★返り値は bits/16 なので 16 倍して読む。上限は**画素数**で決まる —— 連続値の 画像では最小の刻みが ~1/N になるので推定は log2(N) 付近で頭打ちになり、 16 には届かない(256x256 = 65536 画素で 16 前後、128x128 では 13.7 と実測)。 「測れない線」を画素数から先に引いておくための注意書きで、門もそう書く。
+- **L270** _(ja)_ — ★返り値は bits/16 なので 16 倍して読む。上限は**画素数**で決まる —— 連続値の 画像では最小の刻みが ~1/N になるので推定は log2(N) 付近で頭打ちになり、 16 には届かない(256x256 = 65536 画素で 16 前後、128x128 では 13.7 と実測)。 「測れない線」を画素数から先に引いておくための注意書きで、門もそう書く。
 
 ## `examples/gallery2d_morphology.py`
 
@@ -911,7 +911,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `fullseye/mcp/server.py`
 
-- **L689** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
+- **L733** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
 
 ## `g1_policy_bridge.py`
 

@@ -1,0 +1,57 @@
+---
+op: fractal_dimension
+dim: 2d
+category: features
+in: image
+out: feature
+examples: [gallery2d_features]
+author: Kazufumi Furuse
+license: Apache-2.0
+version: 0.2.0  # fullseye lib version this note was generated for
+---
+
+# fractal_dimension — 2D `features` op
+
+- **データ種**: `image` → `feature`
+- **呼び出し**: `fullseye.apply(img, "fractal_dimension", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+
+## 使い方
+
+テクスチャの複雑さを測る Minkowski-Bouligand(ボックスカウント)フラクタル次元。
+
+閾値 ``a``(既定 0.5)で二値化し、箱サイズ ``s = 1, 2, 4, …`` について「構造を
+含む s×s 箱」の数 ``N(s)`` を数え、``log N(s)`` を ``log(1/s)`` に最小二乗回帰した
+傾きを返す(Mandelbrot 1982)。直線状の構造は ~1、平面を埋める領域は ~2、自己
+相似な縁は中間の非整数(Sierpinski 三角形なら ``log 3 / log 2 ≈ 1.585``)。表面
+粗さ・組織テクスチャ・地形・破面などの安価な複雑さ特徴に使える。
+
+有限解像度のため塗り潰し領域は 2 をやや下回る(粗いスケールで箱が飽和する既知の
+過小評価)。``a`` が二値化の閾値、``b`` は未使用。構造が無い/1 スケールしか取れない
+ときは 0 を返す。
+
+## 詳しい使い方ガイド
+
+- [gallery2d_features ファミリ ガイド](../guides/gallery2d_features.md)
+
+## 参考(サンプルデータ・文献)
+
+- [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
+- [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
+- アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
+
+- [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
+
+## 型が繋がる次の op(`feature` を入力に取れる)
+
+[identity](../misc/identity.md) · [feature_to_img](../bridge/feature_to_img.md)
+
+## 同カテゴリ(`features`)
+
+[effective_bit_depth](effective_bit_depth.md) · [blob_count](blob_count.md) · [area_frac](area_frac.md) · [count_contours](count_contours.md) · [total_length](total_length.md) · [vol_count](vol_count.md) · [sk_euler](sk_euler.md) · [sk_entropy_feat](sk_entropy_feat.md)
+
+---
+*Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+
+© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.
