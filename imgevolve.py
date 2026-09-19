@@ -266,8 +266,11 @@ def cmd_coverage(a):
 
 def _prog() -> str:
     """呼ばれ方に合わせた CLI 名: console_script なら ``fullseye``、checkout なら ``py -3.11 imgevolve.py``。"""
+    import re as _re
     import sys as _s
-    base = os.path.basename(_s.argv[0] or "").lower()
+    # ★os.path.basename は実行 OS の区切りしか知らない —— Linux では ``C:\\...\\fullseye.exe`` が丸ごと 1 要素になり
+    # 「fullseye で始まらない」と判定された(手元 Windows 緑・CI Linux 赤)。両方の区切りで最後の要素を取る。
+    base = _re.split(r"[\\/]", _s.argv[0] or "")[-1].lower()
     return "fullseye" if base.startswith("fullseye") else "py -3.11 imgevolve.py"
 
 
