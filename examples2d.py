@@ -116,6 +116,11 @@ EXAMPLES = [
      "summary": "table / points は本物の GFM 表、image / region は 1 行要約(画素は描かない)。json_block で厳密な "
                 "JSON を ```json フェンスに包み、extract_json で Markdown 文書から fullseye 封筒だけを bit 一致で回収。"
                 "report は『読める』と『機械で戻せる』を with_json で 1 文書に両立。異種フェンスは無視し未知 sort は断る。"},
+    {"id": "golden_compare", "task": "workflow", "data": "synthetic",
+     "name": "基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する",
+     "summary": "compare_to_golden = 位相相関で整数並進を合わせ→差分→閾値→連結成分→計測 dict(shift/ssim/psnr/欠陥面積・個数)。"
+                "同一→欠陥 0、3px ずれた良品→合わせれば 0、異物 48px→1 個、6px 大ずれは max_shift 超えで align_ok=0→ng。"
+                "golden_measure/golden_spec で inspect_batch に差し込み 6 枚のロットで 2 枚だけ ng を assert。"},
     {"id": "inspection_workflow", "task": "workflow", "data": "synthetic",
      "name": "フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す",
      "summary": "合成画像フォルダ(良品 5・欠陥 1・壊れたファイル 1)を inspect_batch で 前処理→計測→judge→集計。"

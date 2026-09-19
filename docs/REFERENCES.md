@@ -204,6 +204,7 @@ the operator is a member of that family*.
 | op | category | seminal reference |
 |---|---|---|
 | `save_xlsx_report` | reporting / IO | Excel (.xlsx) 出力は **openpyxl**(MIT、openpyxl.readthedocs.io)を optional 依存(`fullseye[xlsx]`)として用いる。OOXML SpreadsheetML の書き出しライブラリで、セル値と画像アンカーを扱う。アルゴリズムでなく IO 層 —— `sections` の設計は mdio.report と共通、fullseye 側はコード非移植(ライブラリ API を呼ぶだけ)。 |
+| `compare_to_golden` | inspection / workflow | ゴールデン比較の配線(新アルゴリズム無し)。並進推定は既存 `phase_correlation_fft` = Kuglin, C. D. & Hines, D. C. (1975). *The phase correlation image alignment method.* Proc. IEEE Int. Conf. Cybernetics and Society, 163–165 (正規化クロスパワースペクトルの逆 FFT のピーク)。構造類似は既存 `imgmetrics.ssim` = Wang, Z., Bovik, A. C., Sheikh, H. R. & Simoncelli, E. P. (2004). *Image quality assessment: from error visibility to structural similarity.* IEEE TIP 13(4), 600–612。連結成分は scipy.ndimage.label。定義からの再実装のみ、コード非移植。 |
 | `camera_calibration` | camera / geometry | Zhang, Z. (2000). *A flexible new technique for camera calibration.* IEEE TPAMI 22(11), 1330–1334 — intrinsics from >= 3 views of a planar target via two per-view constraints on the image of the absolute conic, solved by SVD. Long present in `calib.py`; exposed on the facade here (the gap `poc_camera_calibration` flagged). Re-implemented from the method (plane-homography DLT + closed-form K), with a degeneracy refusal for untilted views; no code copied, no OpenCV. |
 
 ## Mining new operators from research (RAD)

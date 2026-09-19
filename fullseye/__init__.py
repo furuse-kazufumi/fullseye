@@ -605,6 +605,10 @@ from fullseye.judge import (  # noqa: E402,F401
 from fullseye.inspect_batch import (  # noqa: E402,F401
     inspect_batch, as_verdict,
 )
+# #3 ゴールデン比較: 基準画像と位置合わせ→差分→連結成分→計測 dict(judge / inspect_batch へ)。
+from fullseye.golden import (  # noqa: E402,F401
+    compare_to_golden, golden_measure, golden_spec,
+)
 
 __all__ = [
     "op", "ledger",
@@ -950,4 +954,5 @@ __all__ = [
     "to_markdown", "json_block", "extract_json", "report",
     "save_xlsx_report",
     "judge", "inspect_batch", "as_verdict",
+    "compare_to_golden", "golden_measure", "golden_spec",
 ]
