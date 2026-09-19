@@ -8,7 +8,7 @@ halcon: circularity
 examples: [gallery2d_features, poc_cell_counting, poc_particle_sizing, poc_rotation_invariance_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.0  # fullseye lib version this note was generated for
+version: 0.2.1  # fullseye lib version this note was generated for
 ---
 
 # circularity — 2D `features` op

@@ -5,6 +5,63 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
+## 0.2.1 — 2026-09-20
+
+**要旨**: 第三者 AI(GenSpark)に 0.2.0 を core / all の 2 環境で使い込ませ、36 通の報告(指摘 130 件弱)を
+**1 件ずつ master で再現**してから直した回。新しい op は無い。直したのは「黙って別物を返す」「失敗を捨てる」
+「案内文が別の場所を指す」の 3 種で、全部にテスト・走る example(`examples/genspark_external_review.py`
+第 1〜10 節)・堅牢性ノート(`docs/hardening/`、#9〜#22 の 14 本)が付く。設計として変えなかった点(既定の
+`on_error="fallback"`、警告は op ごとに 1 度、ノブ a/b は [0,1]、整数 dtype の変換規則 …)はノートの表に
+理由つきで残した。GenSpark 自身が撤回した指摘(N55 / N57 / N60 / N80 / N88 / N99 …)も同じ表にある。
+型付き契約の語彙(sort 名)は変えていないので patch 版。
+
+- ★**「無い」と「入っていない」を分ける**: optional backend が入っていない op は `MissingBackendError`
+  (`KeyError` の派生)が module・不足依存・`pip install "fullseye[<extra>]"` を言う。本当に無い名前は
+  `fullseye has` と `op_find` を案内。台帳 op の名前を `apply` に渡すと `op_run` を案内(索引が tier を知っている)。
+  `find_op` は空・空白の名前を「無い」にし(以前は `""` が halcon 別名の空に一致して `lowpass` が走った)、
+  大小文字とハイフン違いは 1 度だけ引き直す。
+- ★**変換の無い入力は方針に依らず止める**: 文字列・object・複素配列、素の str / dict / スカラー
+  (以前は既定の fallback で `apply("abc", "gaussian") == "abc"`)は TypeError。float16 / float32 は float64 に
+  無損失昇格(以前は scipy が float16 を拒んで入力のコピーが返っていた)。0 要素の入力は入口で 1 文
+  (以前は 271 op が scipy / numpy の生の文)。極小画像で op の中から出る例外には op 名と形を注記。
+  非有限の出力は台帳に `non_finite_output` を記録し `raise` では止める。
+- ★**画像 I/O**: `write_image` が cv2 の失敗(False)を捨てて無言だった(ppm・親ディレクトリ不在・書けない拡張子)
+  → `imgio.save` に委譲し、書く前に 1 文で止める。`read_image` は無い / ディレクトリ / 読めないを別の例外で言う。
+  `uint16` は 16 bit のまま書き(以前は 8 bit に潰した)、float は既定 8 bit と文書化して `depth=16` / `"float"`
+  が無損失、`.pfm` の既定は float(以前は 0..255 を float 形式に書いて往復が合わなかった)、8 bit の量子化は
+  四捨五入(往復誤差 1/255 → 1/510)。`colorize_labels` は float 画像を全 0 のラベルにせず ValueError。
+- ★**台帳(opassist)の引き方は fail-closed**: `op_producers` / `op_consumers` は未知の型と op 名を
+  ValueError(`op_sorts()` が型名の一覧)、`op_presets` は未知の op を ValueError。`op_run` は種を作れない型に
+  None を渡さず「pass the input explicitly」、自動の数値サンプルが合わない引数はそう言う。`write_wav(path, x)`
+  の `path` を台帳でデータ扱いしない(以前は配列をファイル名にして stdlib の `Wave_write` が「Exception ignored」を吐いた)。
+- **`list_ops()` の行が増えた**: `knobs`(a / b の効き方、実測 461 op、未計測は None。正本 `docs/op_knob.json`
+  を `fullseye/data/op_knob.json` として同梱)、`native_guard`(退化入力でネイティブ側が落ちる 4 op の入口の
+  関門の理由)、`halcon_peers`(同じ HALCON 別名を名乗る他の op。解決規則は完全一致 → 明示表で、登録順では
+  決まらないことを門で固定)。`sort` / `search` は大小とアクセントを畳み、未知の `sort` は ValueError。
+  `op_names(include_nary=True)` で n-ary 17 本を含む一覧(既定は不変)。`knob_summary(name)` を公開。
+- **run_pipeline / engine**: 段の書き方 5 形(`"a,b"` / 名前 / タプル / `(name, {"a": ..})` / dict)が同じ結果で、
+  外した形は原因を指す TypeError。`FullseyeEngine.load` / `from_dict` / `from_ops` はインスタンスに対して呼ぶと
+  そのインスタンスに読み込む(以前は新しいエンジンが返って捨てられ、空エンジンが入力をそのまま返した)。
+  `from_ops` はリストも受け、`from_dict({"stages": None})` は ValueError、`upto` の範囲外は ValueError、
+  `to_python` の先頭に coding 行と `--ops` 文字列。
+- **CLI**: `--version`、help の例文が呼ばれ方(`fullseye` / `py -3.11 imgevolve.py`)に追従、`parity` の argv
+  衝突、`samples` の action 省略、`coverage` は同梱しないデータを 1 文で案内、`apply --input2` で n-ary を
+  2 入力で、`index` の内訳を registry / nary / ledger / color の順で名前つきに、`_prog()` は Windows 形の
+  パスを Linux でも切る(CI が赤になった 1 件)。
+- **Studio**: F5 / Ctrl+R は未適用の編集を先に適用してから実行、1 op 実行が fallback したらタイトルに FALLBACK。
+- **GPU / 高速路**: GPU の無い環境の `device="cuda"` は「device='cuda' requested but CUDA is not available here」
+  を台帳に残して CPU で続ける(`raise` では止まる。以前は torch の生文)。`fullseye accel` の判定語は
+  `match(<0.005)` / `close(<0.05)` / `differ` と閾値つき(以前は 0.0002 の差にも "exact")。
+- **pose / 3-D**: `pose_to_hom_mat3d` 系の helper が 6/7 ベクトル・3×3・4×4 を受ける(自分の出力を自分に戻せなかった)。
+- **文書**: README 冒頭の op 数を索引の実数(1,996 = 931 単入力 + 17 n-ary + 1,048 台帳)に揃え、門で固定。
+  `torch_lazy` の ImportError は「installed but importing it failed: …」か「not installed」を添える。
+  概要記事 ja/en に 2026-09-20 の節。
+- **分かっているが 0.2.1 では直していない**(`docs/KNOWN_ISSUES.md` / 堅牢性ノートの表): OP_NOTES の `dim` が
+  docs の族名(次元ではない)、台帳の引数 `doc` が 83 % 空、`run_pipeline` の先頭段だけ n-ary を受ける案、
+  read_* の例外の流儀統一、符号付き整数の image を方針に依らず拒否する案、`fullseye mcp` サブコマンド、
+  `engine.diagnose_stages` と `Pipeline` が dict の段を op 名扱いする件(段の正規化を 1 本にする、0.2.2 の先頭)、
+  MCP カタログの facade ソースに facade 表に無い名前が混ざる件、`docs/OPERATORS.md` の古い件数。
+
 ## 0.2.0 — 2026-09-15
 
 **要旨**: (1) C ABI に汎用入口 **`fs_apply`** —— op 名 + JSON で **2-D レジストリの全 op**(単入力の

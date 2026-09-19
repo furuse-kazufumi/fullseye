@@ -4,10 +4,10 @@ dim: gfx2d
 category: post
 in: 
 out: lut
-examples: [gfx2d_scene]
+examples: [genspark_external_review, gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.0  # fullseye lib version this note was generated for
+version: 0.2.1  # fullseye lib version this note was generated for
 ---
 
 # color_lut — GFX2D `post` op
@@ -35,6 +35,7 @@ itself is right before testing any grade.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
 - [gfx2d_scene](../../../../examples/gfx2d_scene.py) — `py -3.11 examples/gfx2d_scene.py`
 
 ## 型が繋がる次の op(`lut` を入力に取れる)

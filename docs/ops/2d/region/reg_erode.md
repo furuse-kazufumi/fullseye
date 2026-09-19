@@ -8,7 +8,7 @@ halcon: erosion_circle
 examples: [degenerate_inputs, gallery2d_region, poc_colocalization_crosstalk, poc_leaf_disease_area]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.0  # fullseye lib version this note was generated for
+version: 0.2.1  # fullseye lib version this note was generated for
 ---
 
 # reg_erode — 2D `region` op

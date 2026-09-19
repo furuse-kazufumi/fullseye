@@ -9,8 +9,8 @@ license: Apache-2.0
 repository-code: "https://github.com/furuse-kazufumi/fullseye"
 url: "https://furuse.work/"
 repository-artifact: "https://pypi.org/project/fullseye/"
-version: 0.2.0
-date-released: "2026-09-15"
+version: 0.2.1
+date-released: "2026-09-20"
 doi: 10.5281/zenodo.22761195
 identifiers:
   - type: doi

@@ -14,13 +14,13 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**21 件(うち直したもの 21 件)。見つけた PoC は 10 本。**
+**22 件(うち直したもの 22 件)。見つけた PoC は 10 本。**
 
 ## 種別ごと
 
 | 種別 | 件数 | 直した |
 |---|---:|---:|
-| 静かに間違う(例外が出ない) | 9 | 9 |
+| 静かに間違う(例外が出ない) | 10 | 10 |
 | 実装の誤り | 4 | 4 |
 | 門が事故の起きる場所に立っていなかった | 2 | 2 |
 | 在るのに引けない | 5 | 5 |
@@ -30,7 +30,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 
 | PoC | 件数 |
 |---|---:|
-| [`genspark_external_review`](../examples/genspark_external_review.py) | 11 |
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 12 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
@@ -98,6 +98,12 @@ GenSpark 第 18・19 報(N75 / N76 / N77 / N78 / N79、N72 の同族、N81 の�
 GenSpark 第 15〜27 報(N67 / N68 / N69 / N71、N84 / N85 / N87、N92 / N94 / N95 / N97、および N72 / N73 / N74 / N80 / N88 / N89 / N90 / N91 / N93 / N96 / N99 / N100)。
 
 見つけた PoC: `genspark_external_review` / 直した所: `opassist.py`, `dsp.py`, `api.py` / 門: `test_producers_and_consumers_refuse_unknown_sorts_and_op_names`, `test_presets_refuse_unknown_ops_and_are_empty_for_known_ops_without_presets`, `test_write_wav_path_is_not_a_data_input_in_the_ledger`, `test_no_ignored_exception_leaks_to_stderr_when_write_wav_is_misused`, `test_list_ops_rows_expose_the_native_guard`, `test_empty_input_contract_is_uniform_across_ops`, `test_every_shared_alias_resolves_by_rule_not_by_registration_order`, `test_list_ops_rows_name_their_alias_peers`, `test_list_ops_sort_and_search_fold_case_and_accents`, `test_op_run_refuses_to_call_with_a_none_sample_and_names_the_sort`, `test_non_array_images_are_type_errors_regardless_of_policy`, `test_data_range_of_without_arrays_is_a_contract_error`, `test_lazy_torch_import_error_says_whether_torch_is_installed`, `test_list_ops_unknown_sort_is_refused_and_lists_the_known_ones` / 状態: fixed
+
+#### [PFM の既定が 8 bit 値を float 形式に書き、壊れた pipeline 設定が「成功」し、無い GPU が生の torch 文で報告されていた](hardening/pfm-default-wrote-8-bit-values-into-a-float-format.md)
+
+GenSpark 第 28〜35 報(0.2.1 の仕上げに回した分)。
+
+見つけた PoC: `genspark_external_review` / 直した所: `imgio.py`, `engine.py`, `api.py`, `accel.py`, `imgevolve.py`, `README.md` / 門: `test_pfm_default_write_is_float_and_round_trips`, `test_from_dict_refuses_none_and_scalar_stages_but_keeps_the_documented_forms`, `test_device_cuda_without_a_gpu_is_explained_and_recorded`, `test_apply_with_a_ledger_op_name_points_to_op_run`, `test_accel_parity_label_carries_its_threshold`, `test_readme_intro_counts_match_the_shipped_index`, `test_has_knows_the_ledger_and_algorithm_tiers`, `test_ops_search_folds_case_and_accents`, `test_pipeline_with_an_empty_ops_string_is_refused_with_a_sentence` / 状態: fixed
 
 ### 実装の誤り
 

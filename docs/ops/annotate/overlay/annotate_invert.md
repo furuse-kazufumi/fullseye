@@ -7,7 +7,7 @@ out: image2d
 examples: [annotate_paper_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.0  # fullseye lib version this note was generated for
+version: 0.2.1  # fullseye lib version this note was generated for
 ---
 
 # annotate_invert — ANNOTATE `overlay` op

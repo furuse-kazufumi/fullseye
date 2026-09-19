@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fullseye"
-version = "0.2.0"
+version = "0.2.1"
 description = "Numpy-native operator library for vision, 3-D and measurement (1,942 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.10"

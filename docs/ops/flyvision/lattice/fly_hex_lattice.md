@@ -7,7 +7,7 @@ out: table
 examples: [poc_fly_vision, poc_print_registration]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.0  # fullseye lib version this note was generated for
+version: 0.2.1  # fullseye lib version this note was generated for
 ---
 
 # fly_hex_lattice — FLYVISION `lattice` op
