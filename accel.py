@@ -802,6 +802,21 @@ def _interior_max(ref, got, m=3):
 
 # parity の (a, b) スイープ点。旧版は (0.5, 0.4) の 1 点だけで、a>=0.75 のとき
 # _k(a)=9(半径 4px)が固定 3px マージンに食い込む穴があった(2026-08-31 修正)。
+#: interior 差の判定閾値。★2026-09-20(GenSpark 第 32・33 報 N116): 0.0002 の差に "exact" と出て、
+#: 語が実測と矛盾していた —— 判定は閾値で決まるので、語に閾値を添える。
+PARITY_TOL = 5e-3
+PARITY_CLOSE = 5e-2
+
+
+def parity_flag(inter: float) -> str:
+    """Label for an interior max-difference: ``match(<5e-3)`` / ``close(<5e-2)`` / ``differ(>=5e-2)``."""
+    if inter < PARITY_TOL:
+        return "match(<%g)" % PARITY_TOL
+    if inter < PARITY_CLOSE:
+        return "close(<%g)" % PARITY_CLOSE
+    return "differ(>=%g)" % PARITY_CLOSE
+
+
 PARITY_AB = ((0.5, 0.4), (0.25, 0.75), (0.8, 0.2), (0.0, 0.5), (1.0, 0.9))
 
 
@@ -866,11 +881,10 @@ def main() -> int:
         print("[accel] CUDA not available here; falling back to CPU (run on the RTX 5090 for GPU).")
     print("accel ops: %d  | device=%s | torch=%s" % (len(ACCEL), dev, torch.__version__))
     rows = parity(dev)
-    ok = sum(1 for _, _, _, inter in rows if inter < 5e-3)
+    ok = sum(1 for _, _, _, inter in rows if inter < PARITY_TOL)
     print("parity vs core registry op  (full = incl. borders, interior = 3px-inset):")
     for name, halcon, full, inter in sorted(rows, key=lambda r: -r[3]):
-        flag = "exact" if inter < 5e-3 else ("close" if inter < 5e-2 else "differ")
-        print("  %-20s (%-18s)  full=%.4f interior=%.4f  %s" % (name, halcon, full, inter, flag))
+        print("  %-20s (%-18s)  full=%.4f interior=%.4f  %s" % (name, halcon or "-", full, inter, parity_flag(inter)))
     print("interior-faithful (<5e-3): %d / %d  — borders differ only by reflect/pool convention"
           % (ok, len(rows)))
     return 0

@@ -160,7 +160,16 @@ class FullseyeEngine:
         loads INTO that instance and returns it."""
         if not isinstance(d, dict) or "stages" not in d:
             raise ValueError("not a Fullseye pipeline dict (missing 'stages')")
-        built = cls(d.get("stages", []), name=d.get("name", name))
+        if d["stages"] is None or isinstance(d["stages"], (int, float, bool)):
+            # ★2026-09-20(GenSpark 第 30 報 N107): {"stages": None} が 0 段のエンジンになり、run が入力をそのまま
+            # 返していた(壊れた設定が「成功」)。[] は文書どおり恒等、None / 数値は設定の壊れ。
+            raise ValueError("not a Fullseye pipeline dict: 'stages' must be a list of stages (or an ops string), got %r"
+                             % (d["stages"],))
+        stages = d["stages"]
+        if isinstance(stages, str):
+            # ★2026-09-20(GenSpark 第 30 報 N107 の 'x' の行): 文字列は 1 文字ずつ段になっていた。from_ops と同じ ops 文字列。
+            stages = [t.strip() for t in stages.split(",") if t.strip()]
+        built = cls(stages, name=d.get("name", name))
         return self._adopt(built) if self is not None else built
 
     @_hybridmethod

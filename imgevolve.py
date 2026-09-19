@@ -96,17 +96,18 @@ def _imwrite(path, v):
 # ---- subcommands ----------------------------------------------------------- #
 def cmd_ops(a):
     rows = _all_ops()
-    kw = (a.search or "").lower()
+    import api as _api
+    kw = _api._fold(a.search or "")                      # 大小とアクセントを畳む(GenSpark N85 / N132)
     for r in sorted(rows, key=lambda r: (r["tier"], r["in_sort"], r["name"])):
-        if a.sort and r["in_sort"] != a.sort:
+        if a.sort and _api._fold(r["in_sort"]) != _api._fold(a.sort):
             continue
-        if kw and kw not in (r["name"] + " " + (r["halcon"] or "") + " " + r["category"]).lower():
+        if kw and kw not in _api._fold(r["name"] + " " + (r["halcon"] or "") + " " + r["category"]):
             continue
         print("%-26s %-8s->%-8s  halcon=%-24s [%s/%s]"
               % (r["name"], r["in_sort"], r["out_sort"], r["halcon"] or "-", r["tier"], r["category"]))
     print("--- %d ops match ---" % sum(
-        1 for r in rows if (not a.sort or r["in_sort"] == a.sort)
-        and (not kw or kw in (r["name"] + " " + (r["halcon"] or "") + " " + r["category"]).lower())))
+        1 for r in rows if (not a.sort or _api._fold(r["in_sort"]) == _api._fold(a.sort))
+        and (not kw or kw in _api._fold(r["name"] + " " + (r["halcon"] or "") + " " + r["category"]))))
     return 0
 
 
@@ -122,6 +123,27 @@ def cmd_has(a):
     q = a.op.lower()
     hits = [r for r in rows if q in (r["name"].lower(), (r["halcon"] or "").lower())]
     if not hits:
+        # ★2026-09-20(GenSpark 第 37 報 N131): 台帳 op(`color_lut`)と汎用アルゴリズム(`quicksort`)は索引に
+        # 載っているのに `has` が「unknown」と答えていた —— 発見面(索引)と判定面(registry + nary)が別だった。
+        # 索引(同梱複製)の台帳行と algo 層をここで引く。
+        import api as _api
+        row = _api._shipped_index().get(a.op) or {}
+        if row.get("tier") == "ledger":
+            print("IMPLEMENTED (typed ledger): name=%s  %s->%s  ledger=%s  module=%s  tier=ledger"
+                  % (a.op, row.get("in_sort") or "?", row.get("out_sort") or "?", row.get("ledger"), row.get("module")))
+            print("  call: python: fullseye.op_run(%r, <inputs>)   — fullseye.op_assist(%r) shows inputs and parameters"
+                  % (a.op, a.op))
+            return 0
+        try:
+            import algo as _algo
+            aop = _algo.find_algo(a.op)
+        except Exception:                                # noqa: BLE001 - algo tier optional
+            aop = None
+        if aop is not None:
+            print("IMPLEMENTED (general-algorithm tier): name=%s  %s->%s  tier=algo" % (aop.name, aop.in_sort, aop.out_sort))
+            print("  call: %s algo run %s --seq 3,1,2   (python: fullseye.list_ops(include_algo=True); not an image op)"
+                  % (_prog(), aop.name))
+            return 0
         # Every one of the 2313 real ops still gets a truthful response.
         d = _disposition(a.op)
         if d:
@@ -215,6 +237,8 @@ def cmd_apply(a):
 def cmd_pipeline(a):
     ops = _load_registry()
     names = [s.strip() for s in a.ops.split(",") if s.strip()]
+    if not names:
+        raise SystemExit("--ops must name at least one op (comma-separated), got %r" % a.ops)   # GenSpark N146: 生の IndexError だった
     resolved = []
     for nm in names:
         op = _find_op(ops, nm)

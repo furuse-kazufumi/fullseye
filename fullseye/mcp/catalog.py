@@ -56,7 +56,10 @@ PKG_INDEX = "OP_INDEX.json"
 PKG_NOTES = "OP_NOTES.json"
 PKG_KNOBS = "op_knob.json"       # 実測したつまみの表(api.knob_summary が読む)
 
-#: ノートの frontmatter のうち MCP が読む項目(これだけを package-data に写す)
+#: ノートの frontmatter のうち MCP が読む項目(これだけを package-data に写す)。
+#: ★``dim`` は **docs/ops の族ディレクトリ名**(``2d`` / ``3d`` / ``oned`` のほか ``optics`` / ``annotate`` …
+#: 31 種)で、厳密な次元ではない —— volume を取る registry op は ``2d/3d/`` の下にあり ``dim: 2d``。
+#: 次元は ``in`` / ``out`` の sort から読む(2026-09-20、GenSpark 第 31 報 N109。族と次元の分離は 0.2.2)。
 NOTE_KEYS = ("op", "dim", "category", "in", "out", "halcon")
 
 

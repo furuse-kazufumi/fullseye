@@ -1011,7 +1011,9 @@ def run_stdio_server(stdin=None, stdout=None, *, catalog: Catalog | None = None,
     stdout = stdout if stdout is not None else sys.stdout.buffer
     cat = catalog if catalog is not None else Catalog.load()
     store = store if store is not None else HandleStore()
-    _log("ready: %d names, %d sorts, roots=%s" % (len(cat.entries), len(cat.sorts), store.roots))
+    # ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
+    _log("ready: %d catalog names (op names + HALCON aliases; ops = fullseye_catalog_coverage), %d sorts, roots=%s"
+         % (len(cat.entries), len(cat.sorts), store.roots))
     while True:
         try:
             msg = read_message(stdin)

@@ -1235,6 +1235,14 @@ def _resolve(name: str):
         hint = _explain_unregistered(name)
         if hint is not None:
             raise MissingBackendError(hint)
+        row = _shipped_index().get(name) or {}
+        if row.get("tier") == "ledger":
+            # ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、
+            # op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
+            raise KeyError(
+                "%r is a typed-ledger operator (ledger %r, module %r), not a single-image op: run it with "
+                "fullseye.op_run(%r, <inputs>) — fullseye.op_assist(%r) shows its inputs and parameters"
+                % (name, row.get("ledger"), row.get("module"), name, name))
         raise KeyError(
             "unknown operator %r — try the op name or its HALCON alias; search with "
             "fullseye.op_find('<words>'), list with fullseye.op_names(); "
@@ -1991,11 +1999,30 @@ def _try_accel(op, v, a, b, device):
     try:
         return accel.run_batch(accel_name, [v], a, b, device)[0]
     except Exception as e:               # noqa: BLE001
+        e = _explain_gpu_failure(device, e)
         if _bs.is_strict():
-            raise
+            raise e
         _GPU_OPEN.add(op.name)           # breaker opens: no more GPU attempts until reset_gpu()
         _bs.record(op.name, e, op.out_sort, source="gpu")
         return _NOACCEL
+
+
+def _explain_gpu_failure(device, e):
+    """★2026-09-20(GenSpark 第 33 報 N117): CUDA の無い環境で device="cuda" を渡すと torch の生文
+    「Torch not compiled with CUDA enabled」が台帳に載り(raise 方針ではそのまま例外)、何が起きたか読めなかった。
+    要求した device と検出結果を 1 文で添える —— 元の例外文は残す(故障の注入テストと診断のため)。"""
+    if str(device) in ("cpu", "None"):
+        return e
+    try:
+        import torch
+        available = bool(torch.cuda.is_available())
+        why = "torch %s: torch.cuda.is_available() is False" % torch.__version__
+    except Exception as exc:             # noqa: BLE001 - torch absent / broken: same answer, different reason
+        available, why = False, "torch could not be imported: %s: %s" % (type(exc).__name__, str(exc)[:120])
+    if available:
+        return e
+    return RuntimeError("device=%r requested but CUDA is not available here (%s) — %s: %s — the op ran on the CPU"
+                        % (device, why, type(e).__name__, str(e)[:200]))
 
 
 def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,

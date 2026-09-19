@@ -196,6 +196,13 @@ def normalize(x, vmin=None, vmax=None):
 
 
 def ensure_gray(x):
+    """Collapse an ``(H, W, 3)`` RGB array to one channel (Rec.601 weights); anything else passes through.
+
+    **Channels only — no rescaling**: a ``uint8`` image comes back as float64 in 0..255, a ``uint16``
+    one in 0..65535. Bring the *values* onto [0, 1] with :func:`to_float01` (dtype-aware) or
+    :func:`normalize` (min/max) — the two are different contracts on purpose (2026-09-20,
+    GenSpark 第 34 報 N121: the three names looked interchangeable and were not).
+    """
     a = np.asarray(x, np.float64)
     if a.ndim == 3 and a.shape[-1] == 3:
         return a @ np.array([0.299, 0.587, 0.114])
@@ -698,7 +705,10 @@ def save(path: str, arr, depth=None) -> None:
     _check_write_target(path, ext)
     a0 = np.asarray(arr)
     if depth is None:
-        depth = 16 if a0.dtype == np.uint16 else 8
+        # ★2026-09-20(GenSpark 第 34 報 N120): PFM は float 専用の形式なのに、既定の 8 bit 経路が 0..255 の
+        # 値を float32 として書き、読むと 0..1 に clip されて別画像になっていた(往復 max|Δ| 0.98)。
+        # PFM の既定は float(無損失)。
+        depth = "float" if ext == ".pfm" else (16 if a0.dtype == np.uint16 else 8)
     if depth not in (8, 16, "float"):
         raise ValueError("save: depth must be 8, 16 or 'float', got %r" % (depth,))
     if depth == 16 and ext not in _EXT_16BIT:
