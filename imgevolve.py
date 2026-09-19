@@ -44,8 +44,14 @@ def _load_registry():
 def _all_ops():
     """Every operator across the three tiers, as uniform dicts."""
     ops = _load_registry()
+    # ★module / requires(2026-09-19): 「unknown operator」が backend 不足を隠していた
+    # (外部レビュー #1)。索引が出自と optional 依存を持てば、core 環境の
+    # ``api._resolve`` が同梱の複製(fullseye/data/OP_INDEX.json)から不足 extra を
+    # 案内できる。requires は AST で静的に読むので、生成環境に依らず同じ値。
     rows = [{"name": o.name, "halcon": o.halcon, "in_sort": o.in_sort,
-             "out_sort": o.out_sort, "category": o.category, "tier": "registry"}
+             "out_sort": o.out_sort, "category": o.category, "tier": "registry",
+             "module": ops.OP_MODULE.get(o.name, "ops"),
+             "requires": ops.module_requirements(ops.OP_MODULE.get(o.name, "ops"))}
             for o in ops.REGISTRY]
     # ★握り潰さない(2026-09-06 の敵対的レビュー)。`imgops_nary` は numpy と
     # scipy しか要らない一次モジュールなので、import に失敗するのは「壊れた

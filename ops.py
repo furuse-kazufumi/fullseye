@@ -1241,8 +1241,13 @@ def _threshold(v, a, b):
 def _otsu(v, a, b):
     """大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。
 
-``a``, ``b`` は未使用（しきい値は入力から自動で決まる）。値が ``[0,1]`` に収まっていればその範囲を、はみ出していれば**入力の実際の範囲**を 256 ビンのヒストグラムに分け、クラス間分散 ``ω(1-ω)`` を最大化するしきい値を全探索して選び、それより大きい画素を前景とする。前景・背景 2 クラスの分離を仮定するため、ヒストグラムが単峰（1 山）の画像では意図しない位置で切れることがある。"""
+``a``, ``b`` は未使用（しきい値は入力から自動で決まる）。値が ``[0,1]`` に収まっていればその範囲を、はみ出していれば**入力の実際の範囲**を 256 ビンのヒストグラムに分け、クラス間分散 ``ω(1-ω)`` を最大化するしきい値を全探索して選び、それより大きい画素を前景とする。前景・背景 2 クラスの分離を仮定するため、ヒストグラムが単峰（1 山）の画像では意図しない位置で切れることがある。
+
+**判別できない入力の扱い**（2026-09-19 の外部レビュー #7 / #8 で明文化）: 有限の画素が 1 つも無い入力（全 NaN / inf）はしきい値が定義できないので ``ValueError`` を投げる（``fullseye.apply`` の既定の方針では台帳に記録して region の既定値へ落ち、``on_error="raise"`` でそのまま止まる。以前は numpy の RuntimeWarning を出しつつ黙って全 0 を返していた）。空白フレーム（定数画像）は山が 1 つも無いので、値が 0 なら全画素が背景、0 より大きければ**全画素が前景**になる（``docs/op_blank_frame.json`` に測定あり）。定数かどうかは呼ぶ側で ``np.ptp`` 等で先に弾くこと。"""
     x = np.asarray(v, np.float64)
+    if x.size and not np.isfinite(x).any():
+        raise ValueError("otsu: no finite pixel in the input (all NaN/inf) — a threshold is undefined; "
+                         "mask or fill the NaN first (e.g. np.nan_to_num) or check np.isfinite(img).any()")
     lo = float(np.nanmin(x)) if x.size else 0.0
     hi = float(np.nanmax(x)) if x.size else 1.0
     # [0,1] の外を clip すると**判別の対象そのものが潰れる**。0..255 の float
@@ -2064,6 +2069,24 @@ class Op:
     #: 読む側(``tools/opdocs.py`` / Studio ヘルプ)は ``fn.__doc__ or op.doc``。
     doc: str = ""
 
+    def __reduce__(self):
+        # ★pickle は**名前で**(2026-09-19 外部レビュー N5): ``fn`` は ``backend_safe._safe``
+        # のクロージャで pickle できず、Op を丸ごと multiprocessing / joblib に渡すと
+        # PicklingError で止まっていた(``Pipeline`` は名前を持つので通る、という非対称)。
+        # 復元先は**復元する側の環境の登録**: backend が入っていない環境で戻すと
+        # KeyError(不足 extra の案内つき)になり、黙って別の実装にはならない。
+        return (_op_from_name, (self.name,))
+
+
+def _op_from_name(name: str) -> "Op":
+    """pickle の復元先(``Op.__reduce__``)。名前をこの環境の登録で引く。"""
+    op = _BY_NAME.get(name)
+    if op is None:
+        raise KeyError("operator %r is not registered in this environment (unpickling an Op resolves "
+                       "by name; install the backend extra it needs — fullseye.apply(img, %r) explains which)"
+                       % (name, name))
+    return op
+
 
 def _c(name):
     return {
@@ -2213,6 +2236,76 @@ GENOME_LEN = N_SLOTS * 3
 # always-deterministic numpy/scipy core. Adding backends only widens per-sort
 # candidate sets — GENOME_LEN is unchanged.
 import os as _os  # noqa: E402
+import io as _io  # noqa: E402  (module_requirements がソースを読む)
+
+#: op 名 → それを登録したモジュール名("ops" = このファイルのコア定義、他は backends_*)。
+#: ★2026-09-19 の外部レビュー(#1): scikit-image 無しの環境で ``sk_canny`` を呼ぶと
+#: 「unknown operator」になり、**存在しない**のか **backend が入っていない**のかを
+#: 区別できなかった。fn は ``backend_safe._safe`` に包まれて ``__module__`` を失う
+#: ので、登録の側で出自を残す(後勝ち = ``REGISTRY`` の重複解消と同じ規則)。
+#: ``imgevolve.py index`` がこれを ``module`` / ``requires`` として索引に書き、
+#: ``api._resolve`` が未登録の名前を引かれたときに索引から不足 extra を案内する。
+OP_MODULE: dict[str, str] = {op.name: "ops" for op in REGISTRY}
+
+#: optional 依存の import 名 → (pip 配布名, ``pyproject.toml`` の extra 名)。
+#: ★pyproject の optional-dependencies と食い違うと案内が嘘になるので
+#: ``tests/test_usability_review_2026_09_19.py`` が突き合わせる。
+OPTIONAL_DEPS: dict[str, tuple[str, str]] = {
+    "skimage": ("scikit-image", "skimage"),
+    "cv2": ("opencv-python", "opencv"),
+    "PIL": ("Pillow", "pil"),
+    "pywt": ("PyWavelets", "wavelets"),
+    "torch": ("torch", "gpu"),
+    "kornia": ("kornia", "gpu"),
+    "mahotas": ("mahotas", "extra"),
+    "SimpleITK": ("SimpleITK", "extra"),
+    "mitsuba": ("mitsuba", "gi"),
+    "imageio": ("imageio", "video"),
+    "tifffile": ("tifffile", "volume"),
+    "matplotlib": ("matplotlib", "polygon"),
+    "mediapipe": ("mediapipe", "handpose"),
+}
+
+#: ``fullseye[all]`` に入っている import 名(pyproject の ``all`` と test が突き合わせる)。
+#: 案内文が「(or fullseye[all])」と言えるのは不足がこの集合に収まるときだけ。
+OPTIONAL_IN_ALL: frozenset = frozenset({"skimage", "cv2", "PIL", "pywt", "torch", "kornia",
+                                        "mahotas", "SimpleITK", "imageio", "tifffile"})
+
+_MODULE_REQUIREMENTS_CACHE: dict[str, list[str]] = {}
+
+
+def module_requirements(mod: str) -> list[str]:
+    """モジュール *mod* のソースが import する optional 依存(import 名、整列)。
+
+    実行せず **AST で静的に読む**ので、依存が入っていない環境でも同じ答えになる
+    (索引は full 環境で生成し、core 環境で読む —— 両方で一致しなければならない)。
+    関数の中の遅延 import も拾う。粒度はモジュール単位: ``backends`` のように
+    1 モジュールが skimage と cv2 を別々の build で使う場合、その op は両方を
+    「使う」と出る —— 案内文は「このモジュールが使う」「その中で入っていないもの」
+    を分けて書き、op 単位の必要十分は主張しない。ソースが読めなければ ``[]``。
+    """
+    if mod in _MODULE_REQUIREMENTS_CACHE:
+        return _MODULE_REQUIREMENTS_CACHE[mod]
+    import ast
+    import importlib.util
+    found: set[str] = set()
+    try:
+        spec = importlib.util.find_spec(mod)
+        src = _io.open(spec.origin, encoding="utf-8").read() if spec and spec.origin else ""
+        tree = ast.parse(src) if src else None
+    except Exception:  # noqa: BLE001 - ソースが無い/読めない: 案内を諦めるだけで登録は壊さない
+        tree = None
+    if tree is not None:
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for a in node.names:
+                    found.add(a.name.split(".")[0])
+            elif isinstance(node, ast.ImportFrom) and node.module and node.level == 0:
+                found.add(node.module.split(".")[0])
+    req = sorted(n for n in found if n in OPTIONAL_DEPS)
+    _MODULE_REQUIREMENTS_CACHE[mod] = req
+    return req
+
 
 if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
     _extra = []
@@ -2267,6 +2360,8 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
                 if not _op.doc:
                     _op.doc = (_docs.get(_op.name) or "").strip()
             _extra += _new
+            for _op in _new:
+                OP_MODULE[_op.name] = _mod        # 後勝ち(REGISTRY の重複解消と同じ)
         except Exception as _e:  # noqa: BLE001 - optional backend; recorded, never silent
             # A backend that fails to import used to VANISH: every op it defines
             # silently missing from the registry, evolution / coverage none the

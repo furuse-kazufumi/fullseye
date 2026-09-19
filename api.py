@@ -1221,11 +1221,107 @@ def _resolve(name: str):
                 "fullseye.apply([%s], %r, a, b) with a list of inputs"
                 % (name, nop.arity, list(nop.in_sorts),
                    ", ".join("x%d" % i for i in range(nop.arity)), name))
+        hint = _explain_unregistered(name)
+        if hint is not None:
+            raise MissingBackendError(hint)
         raise KeyError(
-            "unknown operator %r — try op name or HALCON alias; "
-            "list with fullseye.op_names() or `imgevolve.py has %s`" % (name, name)
+            "unknown operator %r — try the op name or its HALCON alias; search with "
+            "fullseye.op_find('<words>'), list with fullseye.op_names(); "
+            "CLI: `fullseye has %s` (in a checkout: `py -3.11 imgevolve.py has %s`)"
+            % (name, name, name)
         )
     return op
+
+
+class MissingBackendError(KeyError):
+    """The operator exists in the shipped index, but is not registered in this environment.
+
+    Raised by :func:`apply` / :func:`run_pipeline` instead of a bare "unknown operator"
+    ``KeyError`` when the name is known to the shipped index (``fullseye/data/OP_INDEX.json``)
+    but its providing module registered nothing here — almost always because an optional
+    extra is not installed. The message names the module, the optional imports it uses,
+    the ones missing here and the ``pip install "fullseye[<extra>]"`` line.
+
+    Subclass of :class:`KeyError`, so existing ``except KeyError`` handlers still catch it::
+
+        try:
+            fullseye.apply(img, "sk_canny")
+        except fullseye.MissingBackendError as e:
+            print(e)      # operator 'sk_canny' exists but ... pip install "fullseye[skimage]"
+
+    ★2026-09-19 の外部レビュー #1 / #2: core install で ``sk_canny`` が「存在しない」と
+    案内され、しかも存在しない CLI(``imgevolve.py``)を勧めていた。
+    """
+
+
+_SHIPPED_INDEX_CACHE: dict | None = None
+
+
+def _shipped_index() -> dict:
+    """``fullseye/data/OP_INDEX.json``(wheel に同梱の複製)を name → 行 で返す。
+
+    無ければ checkout の ``docs/OP_INDEX.json``、それも無ければ ``{}``(案内を諦める
+    だけで、KeyError の経路は残る)。読むのは未登録の名前を引かれた時だけ。
+    """
+    global _SHIPPED_INDEX_CACHE
+    if _SHIPPED_INDEX_CACHE is not None:
+        return _SHIPPED_INDEX_CACHE
+    import json
+    here = os.path.dirname(os.path.abspath(__file__))
+    candidates = [os.path.join(here, "fullseye", "data", "OP_INDEX.json"),
+                  os.path.join(here, "docs", "OP_INDEX.json")]
+    try:
+        from importlib import resources as _res
+        candidates.insert(0, str(_res.files("fullseye").joinpath("data", "OP_INDEX.json")))
+    except Exception:  # noqa: BLE001 - resources unavailable: fall back to path guesses
+        pass
+    table: dict = {}
+    for p in candidates:
+        try:
+            with open(p, encoding="utf-8") as f:
+                rows = json.load(f).get("ops") or []
+            table = {r["name"]: r for r in rows if isinstance(r, dict) and "name" in r}
+            if table:
+                break
+        except Exception:  # noqa: BLE001 - missing/corrupt copy: try the next candidate
+            continue
+    _SHIPPED_INDEX_CACHE = table
+    return table
+
+
+def _explain_unregistered(name: str) -> str | None:
+    """*name* が索引に在るのに登録されていない理由を 1 文で。索引に無ければ None。"""
+    row = _shipped_index().get(name)
+    if row is None:
+        return None
+    import importlib.util
+    mod = row.get("module") or "?"
+    req = list(row.get("requires") or [])
+    missing = [m for m in req if importlib.util.find_spec(m) is None]
+    deps = _ops.OPTIONAL_DEPS
+    if missing:
+        pips = ", ".join(deps.get(m, (m, None))[0] for m in missing)
+        extras = sorted({deps[m][1] for m in missing if m in deps})
+        lines = ['pip install "fullseye[%s]"' % e for e in extras]
+        lines += ["pip install %s" % m for m in missing if m not in deps]   # 語彙に無い依存も置き去りにしない
+        pip_line = " or ".join(lines)
+        if all(m in _ops.OPTIONAL_IN_ALL for m in missing):
+            pip_line += ' (or "fullseye[all]")'
+        uses = ", ".join(deps.get(m, (m, None))[0] for m in req)
+        return ("operator %r exists but is not available here: it is provided by module %r, which uses "
+                "%s; not installed in this environment: %s (import name %s). Install with %s "
+                "— see fullseye.FAILED_BACKENDS for backends that failed to load."
+                % (name, mod, uses, pips, ", ".join(missing), pip_line))
+    fb = getattr(_ops, "FAILED_BACKENDS", [])
+    failed = dict(fb) if isinstance(fb, list) else {}
+    if mod in failed:
+        return ("operator %r is provided by module %r, which failed to load here: %s "
+                "(fullseye.FAILED_BACKENDS)" % (name, mod, failed[mod]))
+    if row.get("tier") and row.get("tier") != "registry":
+        return None                 # nary / ledger / color は別経路(_resolve の呼び手が案内する)
+    return ("operator %r is in the shipped index (module %r) but not registered in this build — "
+            "its dependencies import, so the backend registered nothing: check "
+            "fullseye.FAILED_BACKENDS and fullseye.op_names()" % (name, mod))
 
 
 # Region ops that read the gray VALUES of their input as labels rather than as a
@@ -1594,6 +1690,42 @@ def _pu_contract(pu, op, policy, *, in_sort=None, name=None):
     return pu.scale_shift(1.0 / s, 0.0)
 
 
+#: 実数のラスタしか受けない sort。複素は cimage の op が受ける(fullseye.op_find("complex"))。
+_REAL_RASTER_SORTS = frozenset({"image", "region", "volume", "color"})
+
+
+def _reject_untyped(v, op_or_sort) -> None:
+    """数値として読めない配列と、実数 sort への複素配列を **方針に依らず** TypeError で止める。
+
+    ``on_error`` の 3 方針は「op が失敗したとき、sort として妥当な値へ落とすか止めるか」の
+    選択で、**変換の定義が無い入力**には落とし先が無い —— 文字列配列を「全 0 の画像」に
+    するのは fallback ではなく嘘になる。uint8 → /255 のように**定義された変換**がある
+    dtype だけが ``_contract_dtype`` の方針の対象。
+
+    ★2026-09-19 の外部レビュー: (N3) 文字列配列が 0.2.0 では無警告の全 0、いまの木では
+    ``np.clip`` の生の UFuncTypeError —— どちらも原因が読めない。(#11) 複素配列は numpy の
+    ComplexWarning だけで**虚部が捨てられ**、実部だけの結果が下流へ流れていた(``on_error=
+    "raise"`` でも止まらない)。|z| / Re / arg のどれを取るかは呼ぶ側の判断なので、ここでは
+    選ばずに止める。
+    """
+    a = v if isinstance(v, np.ndarray) else None
+    if a is None:
+        return
+    sort = op_or_sort if isinstance(op_or_sort, str) else op_or_sort.in_sort
+    name = "" if isinstance(op_or_sort, str) else " %r" % op_or_sort.name
+    if a.dtype.kind in "USOVMm":          # str / bytes / object / void / datetime / timedelta
+        raise TypeError(
+            "op%s expects a numeric %s array, got dtype %s — strings, objects and dates have no "
+            "image meaning; convert to float64 in [0,1] first (e.g. arr.astype(np.float64) / 255.0)"
+            % (name, sort, a.dtype))
+    if a.dtype.kind == "c" and sort in _REAL_RASTER_SORTS:
+        raise TypeError(
+            "op%s expects a real %s (float64 in [0,1]), got complex dtype %s. numpy would silently "
+            "discard the imaginary part; choose explicitly — np.abs(z) (magnitude), z.real, or "
+            "np.angle(z) — or use the complex-field ops (in_sort 'cimage': fullseye.op_find('complex'))"
+            % (name, sort, a.dtype))
+
+
 def _contract_dtype(v, op, policy):
     """Bring an integer/bool image onto the float64 [0,1] contract, or refuse it.
 
@@ -1890,11 +2022,29 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
                 if all(p is not None for p in pus):
                     return lazy(pus[0], pus[1], a, b)
             image = [x.to_dense() if isinstance(x, PrecisionUnion) else x for x in image]
+        for x, srt in zip(image, nop.in_sorts):
+            _reject_untyped(x, srt)
         inputs = [(_coerce_sort(x, srt) if coerce else np.asarray(x))
                   for x, srt in zip(image, nop.in_sorts)]
         # the n-ary functions carry no guard of their own: give them the same recorded,
         # sanitised fail-soft as every backend op (strict mode re-raises inside guard)
-        w = _bs.guard(lambda v0, aa, bb: nop.fn(inputs, aa, bb), nop.out_sort, name=name)
+        def body(v0, aa, bb):
+            return nop.fn(inputs, aa, bb)
+        # ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の
+        # 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が
+        # そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には
+        # 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+        shapes = [x.shape for x in inputs if isinstance(x, np.ndarray)]
+        if (len(shapes) == len(inputs) and len(set(shapes)) > 1
+                and all(s in _REAL_RASTER_SORTS for s in nop.in_sorts)):
+            err = ValueError("%r: its %d raster inputs must share one shape, got %s — crop, pad or "
+                             "resize explicitly first (e.g. fullseye.apply(x, 'crop_rectangle1') or "
+                             "'zoom_image_size'); under on_error='fallback' the first input is returned unchanged"
+                             % (name, len(inputs), shapes))
+
+            def body(v0, aa, bb, _e=err):   # noqa: F811 - the mismatch replaces the op body on purpose
+                raise _e
+        w = _bs.guard(body, nop.out_sort, name=name)
         out = _run_guarded(name, lambda: w(inputs[0], a, b), policy, nop.out_sort, inputs[0])
         if nop.out_sort == "feature":
             return float(np.asarray(out).reshape(-1)[0])
@@ -1920,6 +2070,7 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
         image = image.to_dense()
 
     op = _resolve(name)
+    _reject_untyped(image, op)
     v = _coerce_input(image, op) if coerce else image
     v = _contract_dtype(v, op, policy)
     _guard_input(v, op, policy)
@@ -1940,6 +2091,75 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
     if op.out_sort == "feature":
         return float(np.asarray(out).reshape(-1)[0])
     return out
+
+
+_NUMBER = (int, float, np.integer, np.floating)
+
+
+def _normalise_stages(image, stages, a, b) -> list:
+    """*stages* を ``[(name, a, b), ...]`` に揃え、外した書き方は**原因を指す** TypeError にする。
+
+    受ける形(全部同じ意味に落ちる):
+
+    * ``"gaussian,sobel_amp,otsu"`` —— CLI ``fullseye pipeline`` と同じカンマ区切り
+    * ``["gaussian", "sobel_amp"]`` —— 共通の ``a`` / ``b``
+    * ``[("gaussian",), ("sobel_amp", 0.3), ("otsu", 0.4, 0.5)]`` —— 段ごとの位置引数
+    * ``[("gaussian", {"a": 0.3}), ("otsu", {"a": 0.4, "b": 0.5})]`` —— 段ごとの dict
+    * ``[{"op": "gaussian", "a": 0.3}]`` —— Studio の保存形式と同じ dict(``op`` か ``name``)
+
+    ★2026-09-19 の外部レビュー #4 / #5 / #6: ``(name, {})`` が ``float(dict)`` の TypeError、
+    文字列は 1 文字ずつ op 名として引かれ ``unknown operator 'g'``、引数を逆に渡すと
+    numpy の「truth value is ambiguous」—— どれも原因が読めなかった。
+    """
+    if isinstance(stages, np.ndarray) or isinstance(image, str) or (
+            isinstance(image, (list, tuple)) and image
+            and all(isinstance(s, (str, tuple, list, dict)) for s in image)
+            and not isinstance(stages, str)):
+        raise TypeError(
+            "run_pipeline(image, stages): the first argument is the image array and the second "
+            "the stages — they look swapped (got image=%s, stages=%s)"
+            % (type(image).__name__, type(stages).__name__))
+    if isinstance(stages, str):
+        stages = [s.strip() for s in stages.split(",") if s.strip()]
+    norm = []
+    for i, st in enumerate(stages):
+        if isinstance(st, str):
+            name, sa, sb = st, a, b
+        elif isinstance(st, dict):
+            name = st.get("op", st.get("name"))
+            if not isinstance(name, str):
+                raise TypeError("stage %d: a dict stage needs 'op' (or 'name'), got keys %s"
+                                % (i, sorted(st)))
+            bad = set(st) - {"op", "name", "a", "b"}
+            if bad:
+                raise TypeError("stage %d (%r): unknown key(s) %s — ops take only the knobs a and b"
+                                % (i, name, sorted(bad)))
+            sa, sb = st.get("a", a), st.get("b", b)
+        elif isinstance(st, (tuple, list)):
+            if not st or not isinstance(st[0], str):
+                raise TypeError("stage %d: a tuple stage starts with the op name, got %r" % (i, st))
+            name, rest = st[0], list(st[1:])
+            if len(rest) == 1 and isinstance(rest[0], dict):
+                bad = set(rest[0]) - {"a", "b"}
+                if bad:
+                    raise TypeError("stage %d (%r): unknown knob(s) %s — ops take only a and b"
+                                    % (i, name, sorted(bad)))
+                sa, sb = rest[0].get("a", a), rest[0].get("b", b)
+            elif len(rest) <= 2 and all(isinstance(x, _NUMBER) and not isinstance(x, bool) for x in rest):
+                sa, sb = (rest + [a, b])[:2]
+            else:
+                raise TypeError(
+                    "stage %d (%r): expected (name), (name, a), (name, a, b) or (name, {'a': .., 'b': ..}), got %r"
+                    % (i, name, st))
+        else:
+            raise TypeError("stage %d: expected an op name, a (name, a, b) tuple or a dict, got %s"
+                            % (i, type(st).__name__))
+        try:
+            norm.append((name, float(sa), float(sb)))
+        except (TypeError, ValueError):
+            raise TypeError("stage %d (%r): knobs a and b must be numbers, got a=%r b=%r"
+                            % (i, name, sa, sb)) from None
+    return norm
 
 
 def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
@@ -1972,13 +2192,7 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     ``on_error``: as in :func:`apply`; fallbacks are attributed per stage.
     """
     policy = _policy(on_error)
-    norm = []
-    for st in stages:
-        if isinstance(st, (tuple, list)):
-            name, sa, sb = (list(st) + [a, b])[:3]
-        else:
-            name, sa, sb = st, a, b
-        norm.append((name, float(sa), float(sb)))
+    norm = _normalise_stages(image, stages, a, b)
 
     if isinstance(image, PrecisionUnion) and device != "cpu":
         image = image.to_dense()      # the lazy union path is CPU-only; the GPU bridge needs a dense array
@@ -1989,6 +2203,7 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
             _bridge = None
         if _bridge is not None:
             first_op = _resolve(norm[0][0])
+            _reject_untyped(image, first_op)
             v0 = _coerce_input(image, first_op) if coerce else image
             v0 = _contract_dtype(v0, first_op, policy)
             _guard_input(v0, first_op, policy)
@@ -2024,6 +2239,7 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
             v = v.to_dense()
         op = _resolve(name)
         if first:
+            _reject_untyped(v, op)
             v = _coerce_input(v, op) if coerce else v
             v = _contract_dtype(v, op, policy)
             _guard_input(v, op, policy)
