@@ -75,7 +75,7 @@ One experiment = one question. **This article is appended to every time an exper
 | Does shuffling the wiring cost performance? | **Not measurable.** Two shuffles differ from each other 3× more | appendix |
 | Does a staged curriculum produce direction selectivity? | Yes (0/8 → **5/8**) — and the final behavioural stage destroys it (→ 1/8) | appendix |
 | Can we freeze the optic-lobe front end and cache every cell type's activity? | Yes (45,669 nodes × 12 places × 350 frames) — but **41–73 % of the T4/T5 signal comes from the 90 border columns** (a boundary artefact) | appendix |
-| Does the male whole-CNS connectome have left/right gaps? | Not in cell counts (96 % of 11,229 types within ±1 cell). The only significant asymmetry is **one type, Kenyon cell KCab-s** — a subtype-boundary difference. Completion shrinks it by 20–30 % but does not remove it | appendix |
+| Does the male whole-CNS connectome have left/right gaps? | Not in cell counts (96 % of 11,229 types within ±1 cell). The only significant asymmetry is **one type, Kenyon cell KCab-s** — a subtype-boundary difference. Completion shrinks it by 20–30 % but does not remove it. A second implementation with the public tool coconatfly agrees (s connectivity cluster L 201 / R 352) | appendix |
 
 ## Glossary (worth reading first)
 
@@ -572,12 +572,14 @@ The optic-lobe model in this PoC is one right eye. Before stacking left and righ
 
 There are no left/right gaps at the level of cell counts; the one significant asymmetry sits at the **boundary between the Kenyon-cell subtypes KCab-s / m / c** (KCab totals 885 / 925, all KC types 2,018 / 2,045 — symmetric). Four completion methods: (1) averaging the counts — fills the numbers but says nothing about *which* cells; (2) a classifier trained on one side applied to the other — 0.78 within-side accuracy, 0.48–0.61 agreement across; (3) side-agnostic consensus labels trained on both — \|L−R\| shrinks s 189→151 / m 84→64 / c 66→46 but remains; (4) nearest neighbours across sides by cosine similarity of connectivity profiles (the idea behind the public tool coconatfly) — 0.55 agreement. Reading: **the connectivity fingerprints themselves lean towards s on the right**; whether that is a real difference in this individual or a confound from partner-type labels cannot be decided from this data alone. Recorded as a subtype asymmetry, not a gap.
 
+**Same-day addendum (second implementation)**: the same 1,810 KCab cells were re-clustered with the public tool **coconatfly** (R, natverse: the cosine matrix from `cf_cosine_plot`, then ward.D into 4 clusters). Agreement with the published labels is L 0.88 / R 0.84 (higher than the home-grown classifier's 0.72 / 0.76); agreement with the home-grown consensus labels is 0.72, and the disagreements sit at the c / m boundary. **The s connectivity cluster is L 201 / R 352 — about 150 more on the right, independent of the implementation.** One step further in the reading: the left/right difference of s in connectivity space is real, while the c / m boundary moves with the method (part of the subtype asymmetry is where the line is drawn). Two implementations agreeing may still mean the same hole seen twice, so the third fingerprint will be morphology, not connectivity.
+
 ### What we measure next
 
 When a result lands, it gains a row in "Experiments so far" and loses its line here.
 
 - [ ] **Replace the hand-written readout with an evolving (DNA-decoded) head (F1)** — the front-end cache is done; input = the 631 interior columns, zero point = the 4-feature linear regression (hold-out 0.98–0.99).
-- [ ] **Re-derive the KCab subtypes with coconatfly and compare with the home-grown fingerprints** — a second implementation of the same spec, to find whichever one has the hole.
+- [ ] **Re-derive the KCab subtypes from morphology (dendrite positions in the public SWC skeletons)** — a third fingerprint, independent of connectivity, for the s asymmetry that both connectivity implementations agree on.
 - [ ] **Re-run the developmental ladder with DSI** —— the non-finite values were flyvis's NaN padding of the stimulus; the gate is fixed (addendum above). 34 conditions × 6 speeds, about 3.5 hours.
 
 ### About the author
