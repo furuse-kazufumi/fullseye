@@ -4134,7 +4134,7 @@ op は **931**(レジストリ実測)まで来ましたが、この回で増や�
 
 ## 2026-09-20 の拡張 ―― 第三者 AI に使い込ませて、指摘を 1 件ずつ検証した回
 
-この回は op を足していません。代わりに、外部の AI(GenSpark)に **0.2.0 を core(`pip install fullseye`)と all(`fullseye[all]`)の 2 環境で使い込ませ**、実行出力つきの報告を 20 通(指摘 60 件強)受け取りました。やったことは単純で、**1 件ずつ現 master で再現し、バグ側は直してテスト・example・堅牢性ノートを同じ commit に、設計側は「変えない理由」を表に残す**。報告の中には後から本人が撤回したもの(「87 op が恒等になる」は入力の種類違いの fallback、「Insert ボタンが無い」は見落とし)もあり、**第三者の指摘は探針であって判定ではない** ―― 再現してから採る、が全部です。
+この回は op を足していません。代わりに、外部の AI(GenSpark)に **0.2.0 を core(`pip install fullseye`)と all(`fullseye[all]`)の 2 環境で使い込ませ**、実行出力つきの報告を 29 通(指摘 100 件弱)受け取りました。やったことは単純で、**1 件ずつ現 master で再現し、バグ側は直してテスト・example・堅牢性ノートを同じ commit に、設計側は「変えない理由」を表に残す**。報告の中には後から本人が撤回したもの(「87 op が恒等になる」は入力の種類違いの fallback、「Insert ボタンが無い」は見落とし)もあり、**第三者の指摘は探針であって判定ではない** ―― 再現してから採る、が全部です。
 
 | 何を直したか | 直す前 | 直した後 |
 |---|---|---|
@@ -4149,8 +4149,12 @@ op は **931**(レジストリ実測)まで来ましたが、この回で増や�
 | **空の op 名・狭い float** | `apply(img, "")` が `lowpass` に解決して走る(halcon 別名 `""` に一致)。float16 / float32 が契約の float64 に昇格されず、scipy が float16 を拒んで入力のコピーが返る | 空名は unknown。float16 / float32 は **無損失で float64 に昇格**(記録しない) |
 | **pose helper に行列** | `pose_to_hom_mat3d` の出力(4×4)を自分に戻せない | 6/7 ベクトル・3×3・4×4 を受ける |
 | **n-ary の一覧とつまみ** | `add_image` 等 17 本は呼べるのに `op_names()` に無い。`a` / `b` が効くかは文でしか分からない。CLI から 2 入力の op を呼べない | `op_names(include_nary=True)`(既定は不変)、`list_ops()` の各行に `knobs`(実測 461 op、未計測は None)、`fullseye apply add_image a.png out.png --input2 b.png` |
+| **台帳の引き方**(第 15〜22 報) | `op_producers("gaussian")` が黙って空、`op_presets("no_such")` が `{}`、`op_run("write_wav")` が配列をファイル名にして stdlib の `Wave_write` が「Exception ignored」を吐く、種を作れない型に None を渡して IndexError | 未知の型・op 名・op は **ValueError**(`op_sorts()` が型名の一覧)、パス引数は台帳でデータ扱いしない、`op_run` は「no built-in sample for input sort 'lab' — pass it explicitly」と言う |
+| **画像 I/O**(第 18・19 報) | `write_image` が cv2 の False を捨てて **ファイルが無いのに無言**(ppm・親ディレクトリ不在・書けない拡張子)、`read_image` は何でも FileNotFoundError、`uint16` を書くと 8 bit に潰れる(読みは 16 bit を保つのに) | facade は `imgio` に委譲。書けない先は 1 文で止める、読めない理由を分ける(ディレクトリは IsADirectoryError)、`uint16` は 16 bit のまま、float は既定 8 bit と文書化し `depth=16` / `"float"` で無損失、8 bit の量子化は四捨五入(誤差 1/255 → 1/510) |
+| **配列でない画像**(第 26 報) | `apply("abc", "gaussian")` が既定の fallback 方針で **"abc" をそのまま返す**(str / dict / スカラーは ndarray でないので検査を素通り) | raster を取る op には配列にしてから同じ検査、0 次元は方針に依らず TypeError |
+| **名前解決の可視性**(第 20 報) | 同じ HALCON 別名を複数 op が名乗り(387 別名中 68)、どれが走るかが行から見えない。`list_ops(sort="IMAGE")` が 0 行 | 規則は元から一つ(完全一致 → 明示表)。行に `halcon_peers`、正規 op の無い衝突は明示表を必須にする門、sort / search は大小とアクセントを畳み、未知の sort は ValueError |
 
-**変えなかった設計**(理由つきで残したもの、14 件): 既定の `on_error="fallback"`(産業ラインでは 1 枚の失敗でバッチを止めない。厳格にするなら `FULLSEYE_ON_ERROR=raise`)/ 警告は op ごとに 1 度(台帳 `fullseye.fallbacks()` が全件)/ ノブ `a`,`b` は [0,1](進化のゲノム表現。範囲外は記録して clamp)/ 3-D 入力を 2-D op が受ける件は既知の課題として台帳に / 索引の段の合算(登録 931 + n-ary 17 + 台帳 1048)/ `op_names()` の既定に n-ary を混ぜない / `apply2` を足さない ―― など。
+**変えなかった設計**(理由つきで残したもの、20 件超): 既定の `on_error="fallback"`(産業ラインでは 1 枚の失敗でバッチを止めない。厳格にするなら `FULLSEYE_ON_ERROR=raise`)/ 警告は op ごとに 1 度(台帳 `fullseye.fallbacks()` が全件)/ ノブ `a`,`b` は [0,1](進化のゲノム表現。範囲外は記録して clamp)/ 3-D 入力を 2-D op が受ける件は既知の課題として台帳に / 索引の段の合算(登録 931 + n-ary 17 + 台帳 1048)/ `op_names()` の既定に n-ary を混ぜない / `apply2` を足さない ―― など。
 
 落とし穴を 1 つ。手元(Windows)で全部緑にして push した最初の CI が Linux で赤になりました。原因は `os.path.basename` が **実行 OS の区切りしか知らない**こと ―― テストに書いた Windows 形のパス(`...\Scripts\fullseye.exe`) が Linux では丸ごと 1 要素になり、「fullseye で始まらない」と判定された。**OS が解釈する文字列(区切り・大小文字)をテストに埋めるときは、その解釈が両 OS で同じかを push 前に問う**、が教訓です。
 
