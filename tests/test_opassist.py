@@ -163,7 +163,8 @@ def test_producers_and_consumers_follow_the_ledger():
     assert "tangent_field" in prod and "micro_normals" in prod
     cons = A.consumers("normalmap")
     assert "grating_rgb" in cons and "finish_shade" in cons
-    assert A.producers("no_such_sort") == []
+    with pytest.raises(ValueError, match="unknown sort"):      # 2026-09-20: 黙って [] を返さない(N68)
+        A.producers("no_such_sort")
     with pytest.raises(ValueError):
         A.producers("")
 

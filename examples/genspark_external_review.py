@@ -19,6 +19,13 @@
 7. n-ary op は ``op_names(include_nary=True)`` で一覧でき(既定は 1 入力の一覧のまま)、``list_ops`` の各行に
    ``knobs``(``a`` の効き方 continuous / discrete / unused、``b`` を使うか、実測の無い op は None)が乗り、
    CLI は ``fullseye apply add_image a.png out.png --input2 b.png`` で 2 入力の op を呼べる(第 18〜20 報 N60 / I1)
+8. 台帳の引き方は fail-closed —— ``op_producers`` / ``op_consumers`` は未知の型(と op 名)を ValueError で断り
+   (``op_sorts()`` が型名の一覧)、``op_presets`` は未知の op を断る。``write_wav`` の ``path`` は台帳でデータ扱いされず、
+   配列や None を渡すと 1 文の TypeError(stdlib の Wave_write が「Exception ignored」を吐かない)。
+   入口の関門を持つ 4 op は ``list_ops()`` の ``native_guard`` に理由が載る(第 15・16 報 N67 / N68 / N69 / N71)
+9. 画像 I/O は失敗を捨てない —— ``write_image`` は親ディレクトリ不在・書けない拡張子で 1 文の例外(以前は cv2 の False を
+   捨てて無言)、``read_image`` は無い / ディレクトリ / 読めないを別の例外で言う。uint16 は 16 bit のまま書け、float は
+   既定 8 bit(文書化)で ``depth=16`` / ``depth="float"`` が無損失(第 18 報 N75〜N79)
 
 を assert で確かめる。設計として変えなかった点(既定 ``on_error="fallback"``、警告は op ごとに 1 度、
 float32 の昇格は記録しない)も最後に実演する。
@@ -112,6 +119,14 @@ def main() -> int:
                 last = str(e)
         print("3b. %-9s: TypeError under every policy —" % arr.dtype, last[:70], "...")
 
+    for bad in ("abc", 5, {"a": 1}):                             # 第 26 報 N97: 素の str / スカラー / dict
+        try:
+            fs.apply(bad, "sobel_amp")
+            raise AssertionError("配列でない image %r が通った" % (bad,))
+        except TypeError as e:
+            assert "sobel_amp" in str(e)
+    print("3c. scalar/str/dict: TypeError regardless of policy (used to come back unchanged under the default fallback)")
+
     # 4. n-ary の形状不一致
     try:
         fs.apply([img, img[:, :16]], "add_image", on_error="raise")
@@ -154,6 +169,68 @@ def main() -> int:
     print("7.  nary/knobs: op_names() %d, with nary %d (+%d: %s ...); knobs measured for %d ops, None for the rest"
           % (len(names), len(both), len(nary), ", ".join(nary[:3]), n_meas))
     print("    CLI       : fullseye apply add_image a.png out.png --input2 b.png   (2 inputs; 1-input ops refuse --input2)")
+
+    # 8. 台帳の引き方は fail-closed、write_wav の path、入口の関門の可視性(第 15・16 報)
+    sorts = fs.op_sorts()
+    assert "normalmap" in sorts and "signal" in sorts and fs.op_producers("normalmap")
+    for bad, why in (("no_such_sort", "unknown sort"), ("gaussian", "op name")):
+        try:
+            fs.op_producers(bad)
+            raise AssertionError("op_producers(%r) が通った" % bad)
+        except ValueError as e:
+            assert why in str(e), str(e)
+    try:
+        fs.op_presets("no_such_op_xyz")
+        raise AssertionError("未知の op の op_presets が通った")
+    except ValueError as e:
+        assert "not in any ledger" in str(e)
+    assert fs.op_presets("read_wav") == {}                       # 台帳にある op の {} は「意図して無し」
+    import dsp
+    sig = np.linspace(-0.5, 0.5, 64)
+    try:
+        dsp.write_wav(sig, sig)                                  # 引数の取り違え
+        raise AssertionError("配列を path に渡した write_wav が通った")
+    except TypeError as e:
+        assert "second argument" in str(e), str(e)
+    spec = {p["name"]: p for p in fs.op_assist("write_wav")["params"]} if "params" in fs.op_assist("write_wav") else \
+        {p["name"]: p for p in __import__("opassist").param_spec("write_wav")}
+    assert spec["path"]["kind"] != "data" and spec["x"]["kind"] == "data" and spec["x"]["sort"] == "signal"
+    guarded = {r["name"]: r["native_guard"] for r in rows.values() if r.get("native_guard")}
+    assert {"cv_cc_count", "xsitk_minmax_curv_flow", "xsk3_h_minima", "xsk_random_walker"} <= set(guarded)
+    print("8.  ledger    : %d sorts; unknown sort / op name / unknown op are ValueError; write_wav(path, x) refuses a non-path;"
+          " %d ops carry native_guard" % (len(sorts), len(guarded)))
+
+    # 9. 画像 I/O は失敗を捨てない(第 18 報 N75〜N79)
+    try:
+        import cv2  # noqa: F401
+    except ImportError:
+        print("9.  image io  : skipped (opencv-python not installed)")
+    else:
+        import tempfile
+        d = tempfile.mkdtemp()
+        x = np.random.default_rng(1).random((24, 24))
+        for path, why in ((os.path.join(d, "no_dir", "x.png"), "directory does not exist"), (os.path.join(d, "x.qqq"), "not a writable")):
+            try:
+                fs.write_image(path, x)
+                raise AssertionError("write_image(%r) が無言で通った" % path)
+            except (OSError, ValueError) as e:
+                assert why in str(e), str(e)
+        fs.write_image(os.path.join(d, "g.ppm"), x)                       # ppm は灰を 3 ch に複製
+        assert fs.read_image(os.path.join(d, "g.ppm")).shape == (24, 24)
+        fs.write_image(os.path.join(d, "u16.png"), np.round(x * 65535).astype(np.uint16))
+        fs.write_image(os.path.join(d, "f16.png"), x, depth=16)
+        fs.write_image(os.path.join(d, "f32.pfm"), x, depth="float")
+        fs.write_image(os.path.join(d, "f8.png"), x)
+        err = {n: float(np.abs(fs.read_image(os.path.join(d, n)) - x).max()) for n in ("u16.png", "f16.png", "f32.pfm", "f8.png")}
+        assert err["u16.png"] < 1e-4 and err["f16.png"] < 1e-4 and err["f32.pfm"] < 1e-6 and 1e-3 < err["f8.png"] <= 1 / 510 + 1e-9, err
+        for bad, exc in ((os.path.join(d, "nope.png"), FileNotFoundError), (d, IsADirectoryError)):
+            try:
+                fs.read_image(bad)
+                raise AssertionError("read_image(%r) が通った" % bad)
+            except exc:
+                pass
+        print("9.  image io  : write refuses missing dir / bad ext; ppm ok; round-trip error u16 %.1e, depth=16 %.1e, float %.1e, default 8-bit %.1e"
+              % (err["u16.png"], err["f16.png"], err["f32.pfm"], err["f8.png"]))
     print("PASS")
     return 0
 

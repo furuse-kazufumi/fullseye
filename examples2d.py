@@ -131,7 +131,9 @@ EXAMPLES = [
      "summary": "「無い」と「入っていない」を分ける MissingBackendError(索引の module/requires から不足 extra を案内)、"
                 "run_pipeline の 5 形が同じ結果で外した形は原因を指す TypeError、全 NaN の otsu は明示エラー、"
                 "文字列・複素配列は方針に依らず TypeError、n-ary の形状不一致は要るものを文で言う、Op は名前で pickle、"
-                "op_names(include_nary=True) と list_ops の knobs 欄、CLI apply --input2。"
+                "op_names(include_nary=True) と list_ops の knobs 欄、CLI apply --input2、"
+                "台帳の引き方(producers / consumers / presets)の fail-closed と write_wav の path、native_guard、"
+                "画像 I/O(書けない先は 1 文で止める、uint16 / depth=16 / float は無損失)。"
                 "変えなかった設計(既定 fallback / 警告は op ごとに 1 度 / float32 は記録しない)も実演。"},
     {"id": "golden_compare", "task": "workflow", "data": "synthetic",
      "name": "基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する",

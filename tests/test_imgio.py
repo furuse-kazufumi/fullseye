@@ -16,7 +16,7 @@ def test_to_float01_dtype_scaling():
 
 def test_to_uint8_roundtrip():
     a = np.array([[0.0, 0.5, 1.0]])
-    assert imgio.to_uint8(a).tolist() == [[0, 127, 255]]
+    assert imgio.to_uint8(a).tolist() == [[0, 128, 255]]
 
 
 def test_apply_cmap_shape_range_and_invalid_black():
@@ -168,7 +168,7 @@ def test_save_rgba_keeps_channel_order_and_alpha(tmp_path, backend):
     im = Image.open(p)
     assert im.mode == "RGBA"
     a = np.asarray(im)
-    assert a[0, 0].tolist() == [255, 0, 0, 127]
+    assert a[0, 0].tolist() == [255, 0, 0, 128]
     assert a[0, 1].tolist() == [0, 0, 255, 255]
     assert a[1, 2].tolist() == [0, 255, 0, 0]
     assert np.array_equal(a, imgio.to_uint8(rgba))            # pixel-exact round trip
