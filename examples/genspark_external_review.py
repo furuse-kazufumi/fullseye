@@ -26,6 +26,9 @@
 9. 画像 I/O は失敗を捨てない —— ``write_image`` は親ディレクトリ不在・書けない拡張子で 1 文の例外(以前は cv2 の False を
    捨てて無言)、``read_image`` は無い / ディレクトリ / 読めないを別の例外で言う。uint16 は 16 bit のまま書け、float は
    既定 8 bit(文書化)で ``depth=16`` / ``depth="float"`` が無損失(第 18 報 N75〜N79)
+10. 0.2.1 の仕上げ —— PFM は既定で float(第 34 報 N120)、``from_dict({"stages": None})`` は ValueError(第 30 報 N107)、
+   台帳 op の名前を ``apply`` に渡すと ``op_run`` を案内(第 35 報 N124)、GPU の無い環境の ``device="cuda"`` は
+   台帳に「CUDA is not available here」と残して CPU で続く(第 33 報 N117)
 
 を assert で確かめる。設計として変えなかった点(既定 ``on_error="fallback"``、警告は op ごとに 1 度、
 float32 の昇格は記録しない)も最後に実演する。
@@ -231,6 +234,29 @@ def main() -> int:
                 pass
         print("9.  image io  : write refuses missing dir / bad ext; ppm ok; round-trip error u16 %.1e, depth=16 %.1e, float %.1e, default 8-bit %.1e"
               % (err["u16.png"], err["f16.png"], err["f32.pfm"], err["f8.png"]))
+        fs.write_image(os.path.join(d, "default.pfm"), x)                # 第 34 報 N120: PFM の既定は float
+        assert np.abs(fs.read_image(os.path.join(d, "default.pfm")) - x).max() < 1e-6
+
+    # 10. 0.2.1 の仕上げ(第 30・33・35 報)
+    import engine
+    try:
+        engine.FullseyeEngine.from_dict({"stages": None})
+        raise AssertionError("stages=None が通った")
+    except ValueError as e:
+        assert "must be a list" in str(e)
+    try:
+        fs.apply(img, "color_lut")
+        raise AssertionError("台帳 op 名の apply が通った")
+    except KeyError as e:
+        assert "op_run" in str(e) and "typed-ledger" in str(e)
+    fs.clear_fallbacks()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        out = fs.apply(img, "gaussian", device="cuda")               # GPU が無ければ台帳に理由、CPU で続く
+    gpu = [e["error"] for e in fs.fallbacks() if e["name"] == "gaussian" and e.get("source") == "gpu"]
+    assert out.shape == img.shape and (not gpu or "CUDA is not available" in gpu[0] or "requested" in gpu[0]), gpu
+    print("10. 0.2.1     : pfm default float; from_dict(None) refused; ledger name -> op_run hint; device=cuda %s"
+          % ("recorded: " + gpu[0][:60] if gpu else "ran on the GPU"))
     print("PASS")
     return 0
 
