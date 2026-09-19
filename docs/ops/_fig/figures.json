@@ -1,5 +1,5 @@
 {
- "generated_for": 930,
+ "generated_for": 931,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -4306,6 +4306,19 @@
    ],
    "out_kind": "dict",
    "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nfit_line_contours 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "fractal_dimension": {
+   "extra": {
+    "a": "fractal_dimension.a.jpg"
+   },
+   "fig": "fractal_dimension.png",
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "float",
+   "program": "fractal_dimension 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -21810,10 +21823,10 @@
   "domain": 3,
   "empty": 1,
   "failed": 0,
-  "ok": 926,
+  "ok": 927,
   "unreachable": 0,
   "with_chain": 375,
   "with_gif": 40,
-  "with_sweep": 575
+  "with_sweep": 576
  }
 }

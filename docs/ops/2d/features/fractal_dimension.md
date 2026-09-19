@@ -15,6 +15,16 @@ version: 0.2.0  # fullseye lib version this note was generated for
 - **データ種**: `image` → `feature`
 - **呼び出し**: `fullseye.apply(img, "fractal_dimension", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
+![fractal_dimension: input → output](../../_fig/fractal_dimension.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![fractal_dimension: knob a sweep](../../_fig/fractal_dimension.a.jpg)
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
 ## 使い方
 
 テクスチャの複雑さを測る Minkowski-Bouligand(ボックスカウント)フラクタル次元。
@@ -38,6 +48,14 @@ version: 0.2.0  # fullseye lib version this note was generated for
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
 - アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+fractal_dimension 0.50 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

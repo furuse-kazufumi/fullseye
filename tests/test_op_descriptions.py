@@ -163,7 +163,7 @@ _DOC_TABLE_MODULES = (
     "backends", "backends_pil", "backends_color", "backends_kornia",
     "backends_ski2", "backends_scipy", "backends_extra", "backends_r3",
     "backends_regions3", "backends_segment2", "backends_subpix",
-    "backends_measure1d", "backends_macro",
+    "backends_measure1d", "backends_macro", "backends_texture",
 )
 
 
