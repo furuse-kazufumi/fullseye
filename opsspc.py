@@ -49,6 +49,7 @@ _CATALOG = {
     ],
     "change": [
         ("spc_cusum", "spc", ["signal"], "table"),
+        ("spc_ewma", "spc", ["signal"], "table"),
     ],
     "capability": [
         ("spc_capability", "spc", ["signal"], "table"),

@@ -1,4 +1,4 @@
-# SPC operator help — 4 ops in 4 categories
+# SPC operator help — 5 ops in 4 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/spc/<category>/<op>.md` を走査。
 
@@ -8,9 +8,9 @@
 
 [spc_capability](capability/spc_capability.md)
 
-### change (1)
+### change (2)
 
-[spc_cusum](change/spc_cusum.md)
+[spc_cusum](change/spc_cusum.md) · [spc_ewma](change/spc_ewma.md)
 
 ### chart (1)
 

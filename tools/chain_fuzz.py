@@ -1162,6 +1162,10 @@ def _b_spc_cusum(pool, rng):
     return (rng.normal(0.0, 1.0, size=50),), {"target": 0.0, "k": 0.5, "h": 5.0}
 
 
+def _b_spc_ewma(pool, rng):
+    return (rng.normal(0.0, 1.0, size=50),), {"target": 0.0, "lam": 0.2, "L": 3.0, "sigma": 1.0}
+
+
 def _b_spc_capability(pool, rng):
     return (rng.normal(10.0, 1.0, size=200),), {"lsl": 6.0, "usl": 14.0}
 
@@ -1181,6 +1185,7 @@ OP_ARG_BUILDERS = {
     # --- SPC(統計的工程管理)の 4 op(形の噛み合う入力を組む) --------------- #
     "spc_xbar_r": _b_spc_xbar_r,
     "spc_cusum": _b_spc_cusum,
+    "spc_ewma": _b_spc_ewma,
     "spc_capability": _b_spc_capability,
     "spc_hotelling_t2": _b_spc_hotelling_t2,
     # --- 描画: 32x32 では物理的に収まらない 13 op ---------------------------- #

@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spc_ewma — SPC <code style="color:#22d3bf">change</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_ewma(signal, target, lam=0.2, L=3.0, sigma=None)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.spc_ewma(signal, target, lam=0.2, L=3.0, sigma=None)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;spc_ewma&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>EWMA control chart for individual measurements (Roberts 1959).</p>
+<p>`<code style="color:#22d3bf">signal</code>` is a 1-D series of individual measurements. With a reference value</p>
+<p>`<code style="color:#22d3bf">target</code><code style="color:#22d3bf"> (the in-control mean), a smoothing constant </code><code style="color:#22d3bf">lam</code><code style="color:#22d3bf"> in </code><code style="color:#22d3bf">(0, 1]</code>` and</p>
+<p>a control-limit width `<code style="color:#22d3bf">L</code>` (in sigmas), the exponentially weighted moving</p>
+<p>average and its time-varying limits are::</p>
+<p>z_i  = lam * x_i + (1 - lam) * z_{i-1},          z_0 = target</p>
+<p>var_i = sigma^2 * (lam / (2 - lam)) * (1 - (1 - lam) ** (2 (i + 1)))</p>
+<p>UCL_i / LCL_i = target +/- L * sqrt(var_i)</p>
+<p>`<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> is the process standard deviation; if </code><code style="color:#22d3bf">None</code>` it is estimated from the</p>
+<p>series as the sample std (`<code style="color:#22d3bf">ddof=1</code>`). The limits widen from the first sample to</p>
+<p>the asymptote `<code style="color:#22d3bf">target +/- L * sigma * sqrt(lam / (2 - lam))</code>`. EWMA, like CUSUM,</p>
+<p>catches small sustained shifts that a single-point Shewhart chart misses; `<code style="color:#22d3bf">lam</code>`</p>
+<p>trades memory (small = long memory, sensitive to small shifts) against speed.</p>
+<p>Returns a dict with the `<code style="color:#22d3bf">z</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">ucl</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">lcl</code><code style="color:#22d3bf"> arrays, the integer </code><code style="color:#22d3bf">alarms</code>`</p>
+<p>indices (`<code style="color:#22d3bf">z_i</code><code style="color:#22d3bf"> outside its limits), the first alarm index (or </code><code style="color:#22d3bf">-1</code>`), the</p>
+<p>asymptotic `<code style="color:#22d3bf">ucl_inf</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">lcl_inf</code><code style="color:#22d3bf">, and the echoed </code><code style="color:#22d3bf">target</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">lam</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">L</code>`</p>
+<p>/ `<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">in_control</code>`.</p>
+<p>Ground truth (pinned in the tests): a series constant at `<code style="color:#22d3bf">target</code>` keeps</p>
+<p>`<code style="color:#22d3bf">z == target</code><code style="color:#22d3bf"> with no alarm; </code><code style="color:#22d3bf">z</code><code style="color:#22d3bf"> is exactly the recursion above; </code><code style="color:#22d3bf">ucl</code>`</p>
+<p>increases monotonically toward `<code style="color:#22d3bf">ucl_inf</code><code style="color:#22d3bf">; with </code><code style="color:#22d3bf">lam = 1</code>` the chart reduces to</p>
+<p>a Shewhart individuals chart (`<code style="color:#22d3bf">z == x</code><code style="color:#22d3bf">, limits constant at </code>`target +/- L</p>
+<p>sigma``).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty *signal*, a non-finite</p>
+<p>*target* / *lam* / *L*, `<code style="color:#22d3bf">lam</code><code style="color:#22d3bf"> outside </code><code style="color:#22d3bf">(0, 1]</code>`, a non-positive *L*, a</p>
+<p>non-finite or non-positive *sigma*, or (when estimating) a constant series whose</p>
+<p>sample std is zero.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">change</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:spc_cusum">spc_cusum</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

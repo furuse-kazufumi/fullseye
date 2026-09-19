@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1994,
- "n_notes": 2000,
+ "n_ops": 1995,
+ "n_notes": 2001,
  "notes": {
   "vol_dilate": [
    {
@@ -19826,6 +19826,16 @@
     "in": "signal",
     "out": "table",
     "path": "docs/ops/spc/change/spc_cusum.md"
+   }
+  ],
+  "spc_ewma": [
+   {
+    "op": "spc_ewma",
+    "dim": "spc",
+    "category": "change",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/spc/change/spc_ewma.md"
    }
   ],
   "spc_xbar_r": [

@@ -82,6 +82,64 @@ def test_cusum_rejects_bad_params(kw):
         spc.spc_cusum(np.arange(10.0), **base)
 
 
+# ---- EWMA -----------------------------------------------------------------
+def test_ewma_constant_at_target_stays_flat():
+    r = spc.spc_ewma(np.full(30, 7.0), target=7.0, sigma=1.0)
+    assert np.allclose(r["z"], 7.0)
+    assert r["in_control"] and r["first_alarm"] == -1
+
+
+def test_ewma_matches_the_recursion_exactly():
+    rng = np.random.default_rng(3)
+    x = rng.normal(0.0, 1.0, 40)
+    lam = 0.25
+    r = spc.spc_ewma(x, target=0.0, lam=lam, sigma=1.0)
+    z = np.empty_like(x)
+    prev = 0.0
+    for i in range(x.size):
+        prev = lam * x[i] + (1.0 - lam) * prev
+        z[i] = prev
+    assert np.allclose(r["z"], z)
+
+
+def test_ewma_limits_widen_toward_the_asymptote():
+    r = spc.spc_ewma(np.zeros(60), target=0.0, lam=0.2, L=3.0, sigma=1.0)
+    assert np.all(np.diff(r["ucl"]) >= -1e-12)          # monotone non-decreasing
+    assert r["ucl"][-1] == pytest.approx(r["ucl_inf"], abs=1e-3)
+    assert r["ucl"][0] == pytest.approx(3.0 * np.sqrt((0.2 / 1.8) * (1 - 0.8 ** 2)), rel=1e-9)  # i=1 closed form
+
+
+def test_ewma_lambda_one_reduces_to_shewhart_individuals():
+    x = np.array([5.0, 8.0, 3.0, 6.0, 5.0])
+    r = spc.spc_ewma(x, target=5.0, lam=1.0, L=3.0, sigma=1.0)
+    assert np.allclose(r["z"], x)                       # no smoothing
+    assert np.allclose(r["ucl"], 8.0) and np.allclose(r["lcl"], 2.0)  # constant target±L*sigma
+
+
+def test_ewma_catches_small_sustained_shift_that_shewhart_misses():
+    rng = np.random.default_rng(0)
+    base = rng.normal(0.0, 1.0, 60)
+    base[20:] += 0.8                                     # +0.8 sigma sustained drift
+    r = spc.spc_ewma(base, target=0.0, lam=0.2, L=3.0, sigma=1.0)
+    assert r["first_alarm"] != -1                        # EWMA alarms
+    assert not np.any(np.abs(base) > 3.0)                # a 3-sigma Shewhart chart would not
+
+
+@pytest.mark.parametrize("kw", [{"lam": 0.0}, {"lam": 1.5}, {"L": 0.0},
+                                {"sigma": -1.0}, {"target": np.inf}])
+def test_ewma_rejects_bad_params(kw):
+    base = {"target": 0.0, "lam": 0.2, "L": 3.0, "sigma": 1.0}
+    base.update(kw)
+    with pytest.raises(ValueError):
+        spc.spc_ewma(np.arange(10.0), **base)
+
+
+def test_ewma_registered_in_opsspc_change_category():
+    import opsspc
+    assert "spc_ewma" in opsspc.list_ops("change")
+    assert opsspc.get("spc_ewma") is spc.spc_ewma
+
+
 # ---- 工程能力 -------------------------------------------------------------
 def test_capability_centred_gives_cpk_equals_cp():
     x = np.array([9.0, 10.0, 11.0, 10.0, 9.0, 11.0, 10.0] * 6)

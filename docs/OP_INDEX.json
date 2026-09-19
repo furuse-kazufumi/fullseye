@@ -1,8 +1,8 @@
 {
- "n_ops": 1994,
+ "n_ops": 1995,
  "tiers": {
   "color": 12,
-  "ledger": 1047,
+  "ledger": 1048,
   "nary": 17,
   "registry": 918
  },
@@ -11514,6 +11514,19 @@
   },
   {
    "name": "spc_cusum",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "change",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "spc_ewma",
    "halcon": "",
    "in_sort": "signal",
    "out_sort": "table",

@@ -64,11 +64,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**2,000 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **49 family guides**. Entry points by dimension:
+**2,001 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **49 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 930/930, typed ledger 1049/1061, one-line facade `fullseye.<name>` 568/1189 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 930/930, typed ledger 1050/1062, one-line facade `fullseye.<name>` 568/1189 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 2005 notes, **1962** link at least one runnable example (43 have none) and **1985** have a usage section of 120+ characters (20 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2005.
+**Measured substance**: of 2006 notes, **1963** link at least one runnable example (43 have none) and **1986** have a usage section of 120+ characters (20 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2006.
 
 | dimension | ops | entry |
 |---|---:|---|
@@ -104,8 +104,8 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `flyvision` | 8 | [INDEX](ops/flyvision/INDEX.md) |
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
+| `spc` | 5 | [INDEX](ops/spc/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
-| `spc` | 4 | [INDEX](ops/spc/INDEX.md) |
 
 Search by name with `py -3.11 imgevolve.py ops --search edge`; the full cross-library table is [OP_CATALOG.md](OP_CATALOG.md) and the cross-dimension entry point is [ops/INDEX.md](ops/INDEX.md).
 
@@ -205,7 +205,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Document map — all 168
 
-The complete map, so that **no document is unreachable from this index** (the 2,000 per-op notes and 49 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 2,001 per-op notes and 49 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 

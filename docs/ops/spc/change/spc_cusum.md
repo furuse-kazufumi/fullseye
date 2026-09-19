@@ -54,7 +54,7 @@ grows at exactly ``d - k`` per sample.
 
 ## 同カテゴリ(`change`)
 
-—
+[spc_ewma](spc_ewma.md)
 
 ---
 *Provenance: spc.py — SPC operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

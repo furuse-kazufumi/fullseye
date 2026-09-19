@@ -64,11 +64,11 @@
 
 ## 查找算子
 
-共有 **2,000 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **49 篇族指南**。按维度的入口:
+共有 **2,001 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **49 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 930/930、类型化台账 1049/1061、单行门面 `fullseye.<名称>` 568/1189 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 930/930、类型化台账 1050/1062、单行门面 `fullseye.<名称>` 568/1189 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 2005 篇中，附有可运行示例的 **1962** 篇(43 篇没有)，用法说明 120 字以上的 **1985** 篇(20 篇仅一行)。结构(调用形式、类型、可衔接算子)2005 篇全有。
+**内容实测**: 2006 篇中，附有可运行示例的 **1963** 篇(43 篇没有)，用法说明 120 字以上的 **1986** 篇(20 篇仅一行)。结构(调用形式、类型、可衔接算子)2006 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -104,8 +104,8 @@
 | `flyvision` | 8 | [INDEX](ops/flyvision/INDEX.md) |
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
+| `spc` | 5 | [INDEX](ops/spc/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
-| `spc` | 4 | [INDEX](ops/spc/INDEX.md) |
 
 按名称检索用 `py -3.11 imgevolve.py ops --search edge`;全部算子的对照表见 [OP_CATALOG.md](OP_CATALOG.md)，跨维度入口见 [ops/INDEX.md](ops/INDEX.md)。
 
@@ -205,7 +205,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 168 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,000 篇算子说明与 49 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,001 篇算子说明与 49 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 

@@ -66,6 +66,9 @@ def main() -> None:
     step = np.concatenate([np.zeros(5), np.full(15, 2.0)])
     cu_step = spc.spc_cusum(step, target=0.0, k=0.5, h=1e9)
     slope = float(cu_step["c_plus"][-1] - cu_step["c_plus"][-2])
+    # 同じドリフト系列を EWMA(λ=0.2、CUSUM と対の小シフト検出)でも見る。λ=1 は Shewhart 個別値に一致。
+    ew = spc.spc_ewma(drift, target=0.0, lam=0.2, L=3.0, sigma=1.0)
+    ew_shewhart = spc.spc_ewma(drift, target=0.0, lam=1.0, L=3.0, sigma=1.0)
 
     # 第3章: 工程能力。中心が仕様中点なら Cpk == Cp、ずらすと Cpk < Cp。
     lsl, usl = 6.0, 14.0
@@ -93,6 +96,8 @@ def main() -> None:
     assert cu["first_alarm"] >= n0, "CUSUM がドリフト前に誤警報した"
     assert shewhart_hits == 0, "この系列は Shewhart 3σ では捕らえられない設定のはず"
     assert abs(slope - 1.5) < 1e-9, "CUSUM ステップの傾きが d-k=1.5 でない"
+    assert not ew["in_control"] and ew["first_alarm"] >= n0, "EWMA が +0.8σ ドリフトを捕らえない/誤警報"
+    assert np.allclose(ew_shewhart["z"], drift), "λ=1 の EWMA が Shewhart 個別値(z==x)にならない"
     assert abs(cap_c["cpk"] - cap_c["cp"]) < 1e-9, "中心が仕様中点なのに Cpk != Cp"
     assert cap_o["cpk"] < cap_o["cp"] - 1e-6, "中心をずらしたのに Cpk < Cp にならない"
     assert abs(float(t2_mu)) < 1e-9, "T² の平均行が 0 でない"
@@ -118,15 +123,22 @@ def main() -> None:
         xlabel="計測 #", ylabel="累積和", title="CUSUM(前半 0σ → 後半 +0.8σ の持続ドリフト)",
         caption="Shewhart 3σ は 0 件、CUSUM は #%d(ドリフト開始の直後)で h=%.0f を超えて警報。"
                 % (cu["first_alarm"] + 1, cu["h"]))
+    je = np.arange(1, ew["z"].size + 1, dtype=float)
+    figs.save_plot(
+        "spc_ewma_chart",
+        [("EWMA z", je, ew["z"]), ("UCL", je, ew["ucl"]), ("LCL", je, ew["lcl"])],
+        xlabel="計測 #", ylabel="EWMA 統計量 z", title="EWMA(λ=0.2、前半 0σ → 後半 +0.8σ)",
+        caption="EWMA も #%d で管理限界を越えて警報 —— Shewhart 3σ が見逃す小シフトを CUSUM と同様に捕らえる"
+                "(限界は最初の数点で漸近値へ広がる)。" % (ew["first_alarm"] + 1))
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
 
     print("\nPASS: Xbar-R n=5 定数 %.3f/%.3f/%.3f、+4σ で逸脱 %d 群、"
-          "CUSUM 初警報 %d(Shewhart 3σ ヒット %d)、CUSUM ステップ傾き %.3f、"
+          "CUSUM 初警報 %d(Shewhart 3σ ヒット %d)、EWMA 初警報 %d、CUSUM ステップ傾き %.3f、"
           "Cpk 中心=%.3f(=Cp)/ずらし=%.3f(<Cp %.3f)、T² 平均行 %.1e / UCL %.2f —— "
           "マシンビジョンの計測列は閉じた式で検査できる SPC op の連鎖で読めた。"
           % (chart["a2"], chart["d3"], chart["d4"], len(chart_bad["out_of_control"]),
-             cu["first_alarm"], shewhart_hits, slope,
+             cu["first_alarm"], shewhart_hits, ew["first_alarm"], slope,
              cap_c["cpk"], cap_o["cpk"], cap_o["cp"], float(t2_mu), ht["ucl"]))
 
 

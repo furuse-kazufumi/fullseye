@@ -218,6 +218,83 @@ def spc_cusum(signal, target, k=0.5, h=5.0):
             "h": float(h), "in_control": bool(alarms.size == 0)}
 
 
+def spc_ewma(signal, target, lam=0.2, L=3.0, sigma=None):
+    """EWMA control chart for individual measurements (Roberts 1959).
+
+    ``signal`` is a 1-D series of individual measurements. With a reference value
+    ``target`` (the in-control mean), a smoothing constant ``lam`` in ``(0, 1]`` and
+    a control-limit width ``L`` (in sigmas), the exponentially weighted moving
+    average and its time-varying limits are::
+
+        z_i  = lam * x_i + (1 - lam) * z_{i-1},          z_0 = target
+        var_i = sigma^2 * (lam / (2 - lam)) * (1 - (1 - lam) ** (2 (i + 1)))
+        UCL_i / LCL_i = target +/- L * sqrt(var_i)
+
+    ``sigma`` is the process standard deviation; if ``None`` it is estimated from the
+    series as the sample std (``ddof=1``). The limits widen from the first sample to
+    the asymptote ``target +/- L * sigma * sqrt(lam / (2 - lam))``. EWMA, like CUSUM,
+    catches small sustained shifts that a single-point Shewhart chart misses; ``lam``
+    trades memory (small = long memory, sensitive to small shifts) against speed.
+
+    Returns a dict with the ``z`` / ``ucl`` / ``lcl`` arrays, the integer ``alarms``
+    indices (``z_i`` outside its limits), the first alarm index (or ``-1``), the
+    asymptotic ``ucl_inf`` / ``lcl_inf``, and the echoed ``target`` / ``lam`` / ``L``
+    / ``sigma`` / ``in_control``.
+
+    Ground truth (pinned in the tests): a series constant at ``target`` keeps
+    ``z == target`` with no alarm; ``z`` is exactly the recursion above; ``ucl``
+    increases monotonically toward ``ucl_inf``; with ``lam = 1`` the chart reduces to
+    a Shewhart individuals chart (``z == x``, limits constant at ``target +/- L
+    sigma``).
+
+    **Raises** ``ValueError``: a non-1-D / empty *signal*, a non-finite
+    *target* / *lam* / *L*, ``lam`` outside ``(0, 1]``, a non-positive *L*, a
+    non-finite or non-positive *sigma*, or (when estimating) a constant series whose
+    sample std is zero.
+    """
+    op = "spc_ewma"
+    x = _as_1d(signal, "signal", op)
+    for nm, v in (("target", target), ("lam", lam), ("L", L)):
+        if not np.isfinite(v):
+            raise ValueError("%s: %s must be finite, got %r" % (op, nm, v))
+    if not (0.0 < lam <= 1.0):
+        raise ValueError("%s: lam (smoothing) must be in (0, 1], got %r" % (op, lam))
+    if L <= 0:
+        raise ValueError("%s: L (limit width) must be > 0, got %r" % (op, L))
+    if sigma is None:
+        if x.size < 2:
+            raise ValueError("%s: need at least 2 measurements to estimate sigma, got "
+                             "%d (or pass sigma explicitly)" % (op, x.size))
+        sd = float(x.std(ddof=1))
+        if sd <= 0:
+            raise ValueError("%s: estimated sigma is %r — a constant series has no "
+                             "spread; pass sigma explicitly" % (op, sd))
+    else:
+        if not np.isfinite(sigma):
+            raise ValueError("%s: sigma must be finite, got %r" % (op, sigma))
+        sd = float(sigma)
+        if sd <= 0:
+            raise ValueError("%s: sigma must be > 0, got %r" % (op, sd))
+    tgt = float(target)
+    z = np.empty(x.size, dtype=np.float64)
+    prev = tgt
+    for i in range(x.size):
+        prev = lam * x[i] + (1.0 - lam) * prev
+        z[i] = prev
+    i1 = np.arange(1, x.size + 1, dtype=np.float64)
+    var = sd * sd * (lam / (2.0 - lam)) * (1.0 - (1.0 - lam) ** (2.0 * i1))
+    half = L * np.sqrt(var)
+    ucl = tgt + half
+    lcl = tgt - half
+    alarms = np.nonzero((z > ucl) | (z < lcl))[0]
+    first = int(alarms[0]) if alarms.size else -1
+    inf = L * sd * np.sqrt(lam / (2.0 - lam))
+    return {"z": z, "ucl": ucl, "lcl": lcl, "alarms": alarms.tolist(),
+            "first_alarm": first, "target": tgt, "lam": float(lam), "L": float(L),
+            "sigma": sd, "ucl_inf": tgt + inf, "lcl_inf": tgt - inf,
+            "in_control": bool(alarms.size == 0)}
+
+
 def spc_capability(signal, lsl, usl, sigma=None):
     """Process capability indices Cp and Cpk from measurements and spec limits.
 
