@@ -121,6 +121,12 @@ EXAMPLES = [
      "summary": "inspection_fixture(good, bad, recipe, measure, spec) = 良品が全部 ok かつ不良品が全部 ng なら passed、"
                 "見逃し(escapes)・過検出(false_rejects)・error を行で返し、spec_margins が仕様キーごとに良品の限界までの余裕を出す。"
                 "合成の良品 6・不良品 4 で passed、仕様を締めると過検出が出て failed になることを assert。"},
+    {"id": "genspark_external_review", "task": "workflow", "data": "synthetic",
+     "name": "第三者レビュー(GenSpark、0.2.0)が見つけた初見の摩擦を、直したあとの形で 1 本ずつ確かめる",
+     "summary": "「無い」と「入っていない」を分ける MissingBackendError(索引の module/requires から不足 extra を案内)、"
+                "run_pipeline の 5 形が同じ結果で外した形は原因を指す TypeError、全 NaN の otsu は明示エラー、"
+                "文字列・複素配列は方針に依らず TypeError、n-ary の形状不一致は要るものを文で言う、Op は名前で pickle。"
+                "変えなかった設計(既定 fallback / 警告は op ごとに 1 度 / float32 は記録しない)も実演。"},
     {"id": "golden_compare", "task": "workflow", "data": "synthetic",
      "name": "基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する",
      "summary": "compare_to_golden = 位相相関で整数並進を合わせ→差分→閾値→連結成分→計測 dict(shift/ssim/psnr/欠陥面積・個数)。"
