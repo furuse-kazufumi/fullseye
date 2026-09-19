@@ -14,15 +14,15 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**12 件(うち直したもの 12 件)。見つけた PoC は 10 本。**
+**15 件(うち直したもの 15 件)。見つけた PoC は 10 本。**
 
 ## 種別ごと
 
 | 種別 | 件数 | 直した |
 |---|---:|---:|
-| 静かに間違う(例外が出ない) | 4 | 4 |
-| 実装の誤り | 2 | 2 |
-| 門が事故の起きる場所に立っていなかった | 1 | 1 |
+| 静かに間違う(例外が出ない) | 5 | 5 |
+| 実装の誤り | 3 | 3 |
+| 門が事故の起きる場所に立っていなかった | 2 | 2 |
 | 在るのに引けない | 4 | 4 |
 | 説明の穴(片道の参照・古い数字) | 1 | 1 |
 
@@ -30,8 +30,8 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 
 | PoC | 件数 |
 |---|---:|
-| [`genspark_external_review`](../examples/genspark_external_review.py) | 3 |
-| [`degenerate_inputs`](../examples/degenerate_inputs.py) | 1 |
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 5 |
+| [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
 | [`poc_multibeam_bathymetry`](../examples/poc_multibeam_bathymetry.py) | 1 |
@@ -69,6 +69,12 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 
 見つけた PoC: `genspark_external_review` / 直した所: `api.py`, `ops.py` / 門: `test_non_numeric_arrays_are_refused_under_every_policy`, `test_complex_input_to_a_real_op_is_refused_not_silently_realised`, `test_otsu_all_nan_is_an_explicit_error_not_a_numpy_runtime_warning`, `test_nary_shape_mismatch_says_what_is_needed`, `test_op_objects_pickle_by_name` / 状態: fixed
 
+#### [NaN を含む画像がフィルタを通ると、NaN が黙って消えて有限の画像になっていた](hardening/nonfinite-output-was-sanitized-silently.md)
+
+GenSpark の第 3 報(#14)。中央 1 画素だけ NaN の 9×9 画像を `gaussian` / `median_image` / `mean_image` / `sobel_amp` に通すと、**出力は全画素が有限**で、警告も `fullseye.fallbacks()` の記録も無い。`on_error="raise"` でも止まらない。scipy の `gaussian_filter` は NaN を伝播させるので、消しているのは fullseye。
+
+見つけた PoC: `degenerate_inputs` / 直した所: `backend_safe.py`, `opassist.py`, `api.py` / 門: `test_partial_nan_input_is_recorded_as_a_nonfinite_output_under_the_default_policy`, `test_partial_nan_input_stops_under_raise`, `test_nary_ops_are_found_by_op_find_and_explained_as_list_calls` / 状態: fixed
+
 ### 実装の誤り
 
 #### [可視領域が、目線より高いセルを軒並み「見えない」と返していた](hardening/dem-viewshed-self-occlusion.md)
@@ -83,7 +89,19 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 
 見つけた PoC: `genspark_external_review` / 直した所: `api.py` / 門: `test_run_pipeline_accepts_dict_knobs_comma_string_and_dict_stages`, `test_run_pipeline_bad_forms_say_why` / 状態: fixed
 
+#### [Studio の実行キーが、Program に書いたばかりの編集を無視して古いパイプラインを走らせていた](hardening/studio-run-key-ignored-unapplied-edits.md)
+
+GenSpark 第 8 報。Xvfb 上で Studio を起動し xdotool で操作、前後のスクリーンショットを画像解析で比べた実測: Program エディタに `gaussian (0.4, 0.5)` を打つとステータスが「● unapplied edits — Apply to run, or Reset to discard」に変わる(s8)。そこで実行キーを押しても **画面は 1 bit も変わらず**、ステータスもそのまま(s9 = s8)。報告では Ctrl+R を押していたが、Studio の実行キーは HDevelop 流の **F5 / Ctrl+Return** で、Ctrl+R は未割り当てだった —— ただし F5 を押しても同じ結果になる(下)。
+
+見つけた PoC: `genspark_external_review` / 直した所: `studio.py` / 門: `test_run_all_applies_unapplied_program_edits_first`, `test_run_all_does_not_run_the_old_pipeline_when_the_edit_does_not_parse`, `test_ctrl_r_is_an_alias_of_the_run_key` / 状態: fixed
+
 ### 門が事故の起きる場所に立っていなかった
+
+#### [配布物の CLI で、help が別の入口を案内し、3 つのサブコマンドが使えなかった](hardening/cli-help-and-subcommands-broke-in-the-wheel.md)
+
+GenSpark 第 6・7 報(0.2.0 を `pip install` した Linux で `fullseye` を叩いた実測)。
+
+見つけた PoC: `genspark_external_review` / 直した所: `imgevolve.py`, `honest_summary.py`, `backends_color.py`, `backends_r3.py`, `backends_auto.py`, `studio.py` / 門: `test_help_examples_use_the_installed_cli_name_when_run_as_fullseye`, `test_parity_subcommand_resets_argv_before_delegating`, `test_coverage_explains_the_missing_reference_data_instead_of_crashing`, `test_color_backend_name_check_is_fail_closed_without_the_json`, `test_registry_does_not_shrink_when_warnings_are_errors` / 状態: fixed
 
 #### [空・極小の入力が、op ごとにばらばらな生エラーで落ちていた](hardening/empty-and-tiny-inputs-raised-raw-library-errors.md)
 

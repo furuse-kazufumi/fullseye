@@ -5,7 +5,7 @@
 
 이 저장소는 「왜 그렇게 되어 있는가」를 **소스의 주석**에 적는다. 그중 `★` 가 붙은 것이 실제로 효과가 있는 지식 — 재어 보고 알아낸 것, 밟은 실패, 그렇게 만든 이유. 이 페이지는 그것을 기계적으로 모은 생성물이며, 정본은 소스 쪽에 있으므로 둘이 어긋나지 않는다.
 
-**번역 상황**: 610 / 764 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
+**번역 상황**: 610 / 773 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
 
 
 ## `accel_match.py`
@@ -42,7 +42,8 @@
 
 ## `backend_safe.py`
 
-- **L436** — ★feature op 는 ndarray 가 아니라 numpy **스칼라**를 반환하므로 위 분기는 한 번도 그것을 보지 못했다: NaN/Inf 측정값(예를 들어 퇴화 프레임에 대한 sk_blur_effect 내부의 0/0)이 api.apply 에서 그대로 흘러나갔다. 비유한 스칼라도 sort 폴백으로 씻어내어, 선언한 "유한·sort 로 유효" 보증이 feature/contour 스칼라에도 실제로 성립하도록 한다.
+- **L411** _(ja)_ — ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、 レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の docstring に「NaN を返す理由」が書いてあることを確かめること。
+- **L482** — ★feature op 는 ndarray 가 아니라 numpy **스칼라**를 반환하므로 위 분기는 한 번도 그것을 보지 못했다: NaN/Inf 측정값(예를 들어 퇴화 프레임에 대한 sk_blur_effect 내부의 0/0)이 api.apply 에서 그대로 흘러나갔다. 비유한 스칼라도 sort 폴백으로 씻어내어, 선언한 "유한·sort 로 유효" 보증이 feature/contour 스칼라에도 실제로 성립하도록 한다.
 
 ## `backends.py`
 
@@ -75,6 +76,7 @@
 ## `backends_r3.py`
 
 - **L46** — ★2026-09-05 까지 ``except Exception: out = None`` 으로 **묵살하고 있었다**. 등록 시 바깥쪽에 ``backend_safe.guard`` 가 걸리지만, 안쪽에서 예외를 지우면 바깥쪽은 아무것도 보지 못한다 —— strict mode 에서도 예외가 나지 않고 대장에도 남지 않는다. 이는 2026-09-02 의 「24 족 중 1 족만 대장에 도달했다」 감사의 **누락**이다(Fable 의 적대적 리뷰가 5 번째 족으로 지적). 예외는 그대로 밖으로 내보낸다: 바깥쪽 guard 가 기록하고, sort 에 맞는 값으로 떨어뜨리며, strict 면 재송출한다.
+- **L438** _(ja)_ — ★探針は 32 px(2026-09-19、GenSpark 第 7 報 N12): 24 px だと db4 / sym4 の level=2 に足りず (必要 (8-1)·2² = 28 px)、import のたびに pywt の「Level value of 2 is too high」が漏れていた。 さらに `python -W error::UserWarning` では警告が例外になり、この try/except が **xwt_visushrink / xwt_firm_denoise を黙って落として**いた(931 → 929 op、FAILED_BACKENDS にも残らない)。 探針は機能の門であって警告の門ではないので、探針の中の警告は数えない。
 
 ## `backends_scipy.py`
 
@@ -943,13 +945,16 @@
 
 ## `honest_summary.py`
 
-- **L58** — ★기능 게이트에 **떨어진** auto op 를 간판 수치에서 제외한다 —— 이전에는 [warn] 으로 출력되기만 하고 수에는 들어가, 게이트가 거부하는 op 로 "기능 게이트 통과" parity 수를 부풀리고 있었다.
-- **L77** — ★2026-09-08: 이 줄은 이렇게 쓰여 있었다 -- "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." 실측하면 **979 + 17 = 979**, 즉 n-ary 의 17 개는 ``reg_counted`` 의 **부분집합**(``nary_names - reg_counted`` 은 비어 있음). 제목의 979 는 맞는데, 내역 줄만 '덧셈'처럼 보여 독자가 더하면 996 이 된다. 숫자가 맞아도 **설명이 거짓말을 하는** 형태이므로 고쳤다. 내역이 합으로 성립하는지는 ``tests/test_honest_summary_arithmetic.py`` 가 매번 본다.
+- **L34** _(ja)_ — ★wheel には data/halcon_operators.json を**同梱しない**(MVTec のリファレンスの説明文を含むため。 名前だけは halcon_names_data として出荷している)。`fullseye coverage` が FileNotFoundError で落ちていた (GenSpark 第 6 報 N5)ので、無いなら何が要るかと数字の在処を言って終える。
+- **L68** — ★기능 게이트에 **떨어진** auto op 를 간판 수치에서 제외한다 —— 이전에는 [warn] 으로 출력되기만 하고 수에는 들어가, 게이트가 거부하는 op 로 "기능 게이트 통과" parity 수를 부풀리고 있었다.
+- **L87** — ★2026-09-08: 이 줄은 이렇게 쓰여 있었다 -- "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." 실측하면 **979 + 17 = 979**, 즉 n-ary 의 17 개는 ``reg_counted`` 의 **부분집합**(``nary_names - reg_counted`` 은 비어 있음). 제목의 979 는 맞는데, 내역 줄만 '덧셈'처럼 보여 독자가 더하면 996 이 된다. 숫자가 맞아도 **설명이 거짓말을 하는** 형태이므로 고쳤다. 내역이 합으로 성립하는지는 ``tests/test_honest_summary_arithmetic.py`` 가 매번 본다.
 
 ## `imgevolve.py`
 
 - **L47** _(ja)_ — ★module / requires(2026-09-19): 「unknown operator」が backend 不足を隠していた (外部レビュー #1)。索引が出自と optional 依存を持てば、core 環境の ``api._resolve`` が同梱の複製(fullseye/data/OP_INDEX.json)から不足 extra を 案内できる。requires は AST で静的に読むので、生成環境に依らず同じ値。
 - **L56** — ★뭉개지 않는다(2026-09-06 의 적대적 리뷰). `imgops_nary` 는 numpy 와 scipy 만 필요한 일차 모듈이므로, import 실패는 '망가진 checkout' 이지 '그 환경에 없는 기능'이 아니다. 이전에는 `except Exception: pass` 였고, **이 함수가 생성기와 검사기를 겸하고 있기** 때문에, 17 op 가 통째로 사라진 색인을 CI 가 초록인 채로 공개할 수 있었다.
+- **L274** _(ja)_ — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
+- **L511** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
 
 ## `imgio.py`
 
@@ -995,6 +1000,7 @@
 - **L783** — 어간 일치로 간주하는 공통 접두사의 길이. ★4 로 하면 "median"/"medial" 이나 "contrast"/"contour" 가 이어져 버리고, 5 로 자르면 "correlation"/"correlate"(8)·"segmentation"/"segment"(7)·"rotation"/"rotate"(5)·"gaussian"/"gauss"(5) 는 잡히고 위의 2 쌍은 잡지 않는다.
 - **L793** — 공통 접두사 **뒤에 허용하는 어미**. ★접두사 길이만으로 판정하면 "median"/"medial" 이 이어진다(공통 "media" 가 5 글자 있다). 어미가 굴절 어미다운지를 보면, "correlation"/"correlate"(ion / e)는 통과하고, "median"/"medial"(n / l)과 "corner"/"cornea"(r / a)는 떨어진다.
 - **L889** — ★바닥. 없으면 "zzz-nothing-matches" 가 `histogram_match` 를 반환한다("matches" 가 `match_*` 에 어간 일치하기 때문). 맞은 단어의 가중치가 쿼리 전체의 15 % 에 못 미치면 '맞지 않음'으로 간주한다. 실측: "digital image correlation" 은 0.19(통과), "zzz-nothing-matches" 는 0.10(탈락).
+- **L1002** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
 
 ## `ops.py`
 
@@ -1144,8 +1150,11 @@
 ## `studio.py`
 
 - **L273** — ★ 도판 자체를 우클릭(사용자 2026-09-06: "도판으로 표시한 것을 우클릭해서 클립보드에 복사할 수 있으면 좋겠다"). 이 repo의 Studio UI 규약 —— **표시계는 우클릭에서도 한 벌을 할 수 있을 것**. 아래 버튼 열과 같은 것을 할 수 있다(어느 한쪽만으로 하지 않는다).
-- **L6119** — ★ 도판의 받침. 예제는 `examplefig`를 거쳐 여기에 PNG를 쓴다. 환경 변수를 넘기지 않는 실행(CLI)에서는 한 장도 쓰이지 않으므로, 갤러리에서 돌렸을 때만 그림이 나온다(예제의 수치와 속도는 변하지 않는다).
-- **L6275** — ★ 도판의 받침. 예제는 `examplefig`를 거쳐 여기에 PNG를 쓴다. 환경 변수를 넘기지 않는 실행(CLI)에서는 한 장도 쓰이지 않으므로, 갤러리에서 돌렸을 때만 그림이 나온다(예제의 수치와 속도는 변하지 않는다).
+- **L4325** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L5316** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L6142** — ★ 도판의 받침. 예제는 `examplefig`를 거쳐 여기에 PNG를 쓴다. 환경 변수를 넘기지 않는 실행(CLI)에서는 한 장도 쓰이지 않으므로, 갤러리에서 돌렸을 때만 그림이 나온다(예제의 수치와 속도는 변하지 않는다).
+- **L6298** — ★ 도판의 받침. 예제는 `examplefig`를 거쳐 여기에 PNG를 쓴다. 환경 변수를 넘기지 않는 실행(CLI)에서는 한 장도 쓰이지 않으므로, 갤러리에서 돌렸을 때만 그림이 나온다(예제의 수치와 속도는 변하지 않는다).
+- **L6808** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
 
 ## `tests/conftest.py`
 

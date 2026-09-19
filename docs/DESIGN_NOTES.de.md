@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 764. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 773. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -42,7 +42,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `backend_safe.py`
 
-- **L436** — ★Ein feature-Op gibt einen numpy-**Skalar** zurück, kein ndarray, daher sah der Zweig oben ihn nie: eine NaN/Inf-Messung (z. B. ein 0/0 in sk_blur_effect auf einem degenerierten Frame) floss früher direkt aus api.apply heraus. Nicht-endliche Skalare werden ebenfalls auf den sort-Fallback geschrubbt, damit die deklarierte Garantie „endlich, sort-gültig“ auch für feature/contour-Skalare tatsächlich gilt.
+- **L411** _(ja)_ — ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、 レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の docstring に「NaN を返す理由」が書いてあることを確かめること。
+- **L482** — ★Ein feature-Op gibt einen numpy-**Skalar** zurück, kein ndarray, daher sah der Zweig oben ihn nie: eine NaN/Inf-Messung (z. B. ein 0/0 in sk_blur_effect auf einem degenerierten Frame) floss früher direkt aus api.apply heraus. Nicht-endliche Skalare werden ebenfalls auf den sort-Fallback geschrubbt, damit die deklarierte Garantie „endlich, sort-gültig“ auch für feature/contour-Skalare tatsächlich gilt.
 
 ## `backends.py`
 
@@ -75,6 +76,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `backends_r3.py`
 
 - **L46** — ★Bis 2026-09-05 wurden Ausnahmen mit ``except Exception: out = None`` **verschluckt**. Bei der Registrierung wird außen ein ``backend_safe.guard`` angewandt, aber wenn die Ausnahme innen gelöscht wird, sieht das Äußere nichts —— selbst im strict mode wird keine Ausnahme geworfen und nichts bleibt im Register. Dies war ein **Versäumnis** des Audits vom 2026-09-02 "nur 1 von 24 Familien erreichte das Register" (Fables adversariale Review meldete es als 5. Familie). Lass die Ausnahme unverändert nach außen: der äußere guard protokolliert sie, senkt sie auf einen zum sort passenden Wert und wirft im strict-Fall erneut.
+- **L438** _(ja)_ — ★探針は 32 px(2026-09-19、GenSpark 第 7 報 N12): 24 px だと db4 / sym4 の level=2 に足りず (必要 (8-1)·2² = 28 px)、import のたびに pywt の「Level value of 2 is too high」が漏れていた。 さらに `python -W error::UserWarning` では警告が例外になり、この try/except が **xwt_visushrink / xwt_firm_denoise を黙って落として**いた(931 → 929 op、FAILED_BACKENDS にも残らない)。 探針は機能の門であって警告の門ではないので、探針の中の警告は数えない。
 
 ## `backends_scipy.py`
 
@@ -943,13 +945,16 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `honest_summary.py`
 
-- **L58** — ★Auto-Ops, die das Funktions-Gate **nicht bestanden** haben, aus der Schlagzeile ausschließen — zuvor wurden sie nur per [warn] ausgegeben, aber weiter mitgezählt, was die „funktional gegatterte“ Paritätszahl mit Ops aufblähte, die das Gate ablehnt.
-- **L77** — ★2026-09-08: Diese Zeile lautete -- "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." Gemessen: **979 + 17 = 979**, d. h. die 17 n-ary-ops sind eine **Teilmenge** von ``reg_counted`` (``nary_names - reg_counted`` ist leer). Die 979 der Ueberschrift stimmt, doch allein die Aufschluesselungszeile sieht nach 'Addition' aus, und wer sie addiert, erhaelt 996. Die Zahlen stimmen, aber **die Erklaerung luegt**, daher wurde es korrigiert. Ob die Aufschluesselung als Summe aufgeht, prueft jedes Mal ``tests/test_honest_summary_arithmetic.py``.
+- **L34** _(ja)_ — ★wheel には data/halcon_operators.json を**同梱しない**(MVTec のリファレンスの説明文を含むため。 名前だけは halcon_names_data として出荷している)。`fullseye coverage` が FileNotFoundError で落ちていた (GenSpark 第 6 報 N5)ので、無いなら何が要るかと数字の在処を言って終える。
+- **L68** — ★Auto-Ops, die das Funktions-Gate **nicht bestanden** haben, aus der Schlagzeile ausschließen — zuvor wurden sie nur per [warn] ausgegeben, aber weiter mitgezählt, was die „funktional gegatterte“ Paritätszahl mit Ops aufblähte, die das Gate ablehnt.
+- **L87** — ★2026-09-08: Diese Zeile lautete -- "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." Gemessen: **979 + 17 = 979**, d. h. die 17 n-ary-ops sind eine **Teilmenge** von ``reg_counted`` (``nary_names - reg_counted`` ist leer). Die 979 der Ueberschrift stimmt, doch allein die Aufschluesselungszeile sieht nach 'Addition' aus, und wer sie addiert, erhaelt 996. Die Zahlen stimmen, aber **die Erklaerung luegt**, daher wurde es korrigiert. Ob die Aufschluesselung als Summe aufgeht, prueft jedes Mal ``tests/test_honest_summary_arithmetic.py``.
 
 ## `imgevolve.py`
 
 - **L47** _(ja)_ — ★module / requires(2026-09-19): 「unknown operator」が backend 不足を隠していた (外部レビュー #1)。索引が出自と optional 依存を持てば、core 環境の ``api._resolve`` が同梱の複製(fullseye/data/OP_INDEX.json)から不足 extra を 案内できる。requires は AST で静的に読むので、生成環境に依らず同じ値。
 - **L56** — ★Nicht verschlucken (adversariales Review 2026-09-06). `imgops_nary` ist ein primaeres Modul, das nur numpy und scipy braucht, daher bedeutet ein fehlgeschlagener Import einen 'kaputten checkout', nicht 'eine in dieser Umgebung fehlende Funktion'. Zuvor war es `except Exception: pass`, und weil **diese Funktion zugleich Generator und Pruefer ist**, konnte CI einen Index mit komplett verschwundenen 17 ops gruen veroeffentlichen.
+- **L274** _(ja)_ — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
+- **L511** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
 
 ## `imgio.py`
 
@@ -995,6 +1000,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L783** — Die als Stamm-Uebereinstimmung geltende gemeinsame Praefixlaenge. ★Bei 4 werden "median"/"medial" und "contrast"/"contour" verknuepft; schneidet man bei 5, werden "correlation"/"correlate" (8), "segmentation"/"segment" (7), "rotation"/"rotate" (5) und "gaussian"/"gauss" (5) erfasst, die beiden obigen Paare hingegen nicht.
 - **L793** — Die **nach dem gemeinsamen Praefix erlaubte Endung**. ★Entscheidet man allein nach der Praefixlaenge, werden "median"/"medial" verknuepft (sie teilen ein 5-Zeichen-"media"). Prueft man, ob die Endung nach einer Flexionsendung aussieht, kommt "correlation"/"correlate" (ion / e) durch, waehrend "median"/"medial" (n / l) und "corner"/"cornea" (r / a) herausfallen.
 - **L889** — ★Untergrenze. Ohne sie gibt "zzz-nothing-matches" `histogram_match` zurueck (weil "matches" mit `match_*` stamm-uebereinstimmt). Liegt das Gewicht der getroffenen Woerter unter 15 % der gesamten Anfrage, gilt es als 'kein Treffer'. Gemessen: "digital image correlation" ist 0.19 (besteht), "zzz-nothing-matches" ist 0.10 (verworfen).
+- **L1002** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
 
 ## `ops.py`
 
@@ -1144,8 +1150,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `studio.py`
 
 - **L273** — ★ Rechtsklick auf die Abbildung selbst (Benutzer 2026-09-06: "es wäre schön, das als Abbildung Angezeigte per Rechtsklick in die Zwischenablage kopieren zu können"). Eine Studio-UI-Konvention dieses Repos —— **die Anzeigeseite muss auch per Rechtsklick alles ermöglichen**. Es kann dasselbe wie die Buttonreihe unten (mach es nicht zu einem Entweder-oder).
-- **L6119** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
-- **L6275** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
+- **L4325** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L5316** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L6142** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
+- **L6298** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
+- **L6808** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
 
 ## `tests/conftest.py`
 

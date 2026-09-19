@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 764. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 773. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -42,7 +42,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `backend_safe.py`
 
-- **L436** — ★A feature op returns a numpy SCALAR, not an ndarray, so the branch above never saw it: a NaN/Inf measurement (e.g. a 0/0 inside sk_blur_effect on a degenerate frame) used to flow straight out of api.apply. Scrub non-finite scalars to the sort fallback so the declared "finite, sort-valid" guarantee actually holds for feature/contour scalars too.
+- **L411** _(ja)_ — ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、 レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の docstring に「NaN を返す理由」が書いてあることを確かめること。
+- **L482** — ★A feature op returns a numpy SCALAR, not an ndarray, so the branch above never saw it: a NaN/Inf measurement (e.g. a 0/0 inside sk_blur_effect on a degenerate frame) used to flow straight out of api.apply. Scrub non-finite scalars to the sort fallback so the declared "finite, sort-valid" guarantee actually holds for feature/contour scalars too.
 
 ## `backends.py`
 
@@ -75,6 +76,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `backends_r3.py`
 
 - **L46** — ★Until 2026-09-05 it was **swallowing** exceptions with ``except Exception: out = None``. At registration an outer ``backend_safe.guard`` is applied, but if the exception is erased inside, the outer sees nothing —— even in strict mode no exception is raised and nothing remains in the ledger. This was a **miss** of the 2026-09-02 audit of "only 1 of 24 families reached the ledger" (Fable's adversarial review flagged it as the 5th family). Let the exception out as is: the outer guard records it, coerces it to a value matching the sort, and re-raises if strict.
+- **L438** _(ja)_ — ★探針は 32 px(2026-09-19、GenSpark 第 7 報 N12): 24 px だと db4 / sym4 の level=2 に足りず (必要 (8-1)·2² = 28 px)、import のたびに pywt の「Level value of 2 is too high」が漏れていた。 さらに `python -W error::UserWarning` では警告が例外になり、この try/except が **xwt_visushrink / xwt_firm_denoise を黙って落として**いた(931 → 929 op、FAILED_BACKENDS にも残らない)。 探針は機能の門であって警告の門ではないので、探針の中の警告は数えない。
 
 ## `backends_scipy.py`
 
@@ -943,13 +945,16 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `honest_summary.py`
 
-- **L58** — ★Exclude auto ops that FAILED the functional gate from the headline — they were previously only [warn]-printed while still counted, inflating the "functionally gated" parity number with ops the gate rejects.
-- **L77** — ★2026-09-08: This line read -- "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." Measured, **979 + 17 = 979**, i.e. the 17 n-ary ops are a **subset** of ``reg_counted`` (``nary_names - reg_counted`` is empty). The heading's 979 is correct, but the breakdown line alone looks like 'addition', and a reader adding it gets 996. The numbers agree yet **the explanation lies**, so it was fixed. Whether the breakdown holds as a sum is checked every time by ``tests/test_honest_summary_arithmetic.py``.
+- **L34** _(ja)_ — ★wheel には data/halcon_operators.json を**同梱しない**(MVTec のリファレンスの説明文を含むため。 名前だけは halcon_names_data として出荷している)。`fullseye coverage` が FileNotFoundError で落ちていた (GenSpark 第 6 報 N5)ので、無いなら何が要るかと数字の在処を言って終える。
+- **L68** — ★Exclude auto ops that FAILED the functional gate from the headline — they were previously only [warn]-printed while still counted, inflating the "functionally gated" parity number with ops the gate rejects.
+- **L87** — ★2026-09-08: This line read -- "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." Measured, **979 + 17 = 979**, i.e. the 17 n-ary ops are a **subset** of ``reg_counted`` (``nary_names - reg_counted`` is empty). The heading's 979 is correct, but the breakdown line alone looks like 'addition', and a reader adding it gets 996. The numbers agree yet **the explanation lies**, so it was fixed. Whether the breakdown holds as a sum is checked every time by ``tests/test_honest_summary_arithmetic.py``.
 
 ## `imgevolve.py`
 
 - **L47** _(ja)_ — ★module / requires(2026-09-19): 「unknown operator」が backend 不足を隠していた (外部レビュー #1)。索引が出自と optional 依存を持てば、core 環境の ``api._resolve`` が同梱の複製(fullseye/data/OP_INDEX.json)から不足 extra を 案内できる。requires は AST で静的に読むので、生成環境に依らず同じ値。
 - **L56** — ★Do not swallow it (adversarial review 2026-09-06). `imgops_nary` is a primary module needing only numpy and scipy, so a failed import means a 'broken checkout', not 'a feature absent in that environment'. Previously it was `except Exception: pass`, and because **this function serves as both generator and checker**, CI could publish an index with all 17 ops vanished while staying green.
+- **L274** _(ja)_ — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
+- **L511** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
 
 ## `imgio.py`
 
@@ -995,6 +1000,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L783** — The common-prefix length treated as a stem match. ★At 4, "median"/"medial" and "contrast"/"contour" get linked; cutting at 5, "correlation"/"correlate" (8), "segmentation"/"segment" (7), "rotation"/"rotate" (5), and "gaussian"/"gauss" (5) are picked up while the two pairs above are not.
 - **L793** — The **suffix allowed after** the common prefix. ★Deciding by prefix length alone links "median"/"medial" (they share a 5-character "media"). Judging whether the suffix looks like an inflectional ending, "correlation"/"correlate" (ion / e) passes, while "median"/"medial" (n / l) and "corner"/"cornea" (r / a) fall out.
 - **L889** — ★Floor. Without it, "zzz-nothing-matches" returns `histogram_match` (because "matches" stem-matches `match_*`). If the weight of the matched words is under 15 % of the whole query, it is treated as 'no match'. Measured: "digital image correlation" is 0.19 (passes), "zzz-nothing-matches" is 0.10 (dropped).
+- **L1002** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
 
 ## `ops.py`
 
@@ -1144,8 +1150,11 @@ This repository records *why* things are the way they are in **comments in the s
 ## `studio.py`
 
 - **L273** — ★ Right-click on the figure itself (user 2026-09-06: "it would be nice to be able to right-click what is shown as a figure and copy it to the clipboard"). A Studio UI convention of this repo —— **the display side must let you do everything from a right-click too**. It can do the same as the button row below (do not make it one or the other).
-- **L6119** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
-- **L6275** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L4325** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L5316** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L6142** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L6298** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L6808** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
 
 ## `tests/conftest.py`
 

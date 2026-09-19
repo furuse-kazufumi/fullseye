@@ -52,3 +52,6 @@ CLI 名は `imgevolve.py` → `fullseye` に console_scripts を切った 0.1 �
 | import に約 1 秒 | 931 op の登録と backend の import。torch は `torch_lazy` で遅延済み。さらに削るなら backend の遅延登録が要り、`REGISTRY` を読む側(進化・索引)の契約が変わる。0.3 の候補 |
 | `a` / `b` が自己説明的でない | 全 op が同じ 2 ノブ [0,1] を持つのは**進化(遺伝子 = op 索引 + a + b)の要件**。op ごとの意味は `docs/op_knob.json` と op ノートに表がある |
 | `Op` が pickle できない | 直した(名前で復元、別ノート) |
+| `median_image` / `mean_image` が scipy と一致しない、`a=1` が恒等でない、負の `a` が 0 と同じ(第 3・4 報 #15 / #16 / N4) | **`a` はカーネルサイズでなく [0,1] のノブ**(進化の遺伝子と同じ語彙)。`a=3` や `a=-2` は範囲外で、**台帳に記録して端に丸め、`raise` では `ValueError`**(`fullseye.apply('gaussian'): a=-2.0 is outside 0..1`)。「無警告で無効化」は once-per-op の警告を見落としたもの。scipy との差は窓・端の規約でなくノブの写像(`docs/op_knob.json`、各 op ノート) |
+| 2-D op が (H,W,3) を受けてチャネル間で混ざる(N1) | `docs/KNOWN_ISSUES.md` #32-4。色軸を 3 本目の空間軸として扱う op 78 + 11 本は入口で**記録し `raise` では止まる**(日本語の説明つき)。要素ごとの op(otsu 等)は 3-D を意図して通す。全面的に ndim==2 を要求するには 3-D を意図して受ける op の一覧が要る(未着手) |
+| `sqrt_image(-0.25)` / `acos_image(1.5)` が無警告で 0 / 1(N3) | 入力の契約 [0,1] の外。値域の門は **`fssystem` の `extra_checks='on'` で fail-closed**、既定では見ない(単位つきの量を意図して渡す呼び手を壊さないため、2026-09-08)。定義域外は契約違反の一種で、op ごとの判定は持たない |

@@ -15,15 +15,15 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**12 findings (12 fixed), from 10 PoCs.**
+**15 findings (15 fixed), from 10 PoCs.**
 
 ## By kind
 
 | Kind | Findings | Fixed |
 |---|---:|---:|
-| Silently wrong (no exception) | 4 | 4 |
-| Implementation defect | 2 | 2 |
-| The gate did not stand where the accident happens | 1 | 1 |
+| Silently wrong (no exception) | 5 | 5 |
+| Implementation defect | 3 | 3 |
+| The gate did not stand where the accident happens | 2 | 2 |
 | Present but unreachable | 4 | 4 |
 | Documentation hole (one-way reference, stale number) | 1 | 1 |
 
@@ -31,8 +31,8 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 
 | PoC | Findings |
 |---|---:|
-| [`genspark_external_review`](../examples/genspark_external_review.py) | 3 |
-| [`degenerate_inputs`](../examples/degenerate_inputs.py) | 1 |
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 5 |
+| [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
 | [`poc_multibeam_bathymetry`](../examples/poc_multibeam_bathymetry.py) | 1 |
@@ -70,6 +70,12 @@ Found by: `poc_thermal_radiometry` / Changed: `astrostack.py` / Gate: `test_mad_
 
 Found by: `genspark_external_review` / Changed: `api.py`, `ops.py` / Gate: `test_non_numeric_arrays_are_refused_under_every_policy`, `test_complex_input_to_a_real_op_is_refused_not_silently_realised`, `test_otsu_all_nan_is_an_explicit_error_not_a_numpy_runtime_warning`, `test_nary_shape_mismatch_says_what_is_needed`, `test_op_objects_pickle_by_name` / Status: fixed
 
+#### [NaN を含む画像がフィルタを通ると、NaN が黙って消えて有限の画像になっていた](hardening/nonfinite-output-was-sanitized-silently.md) _(ja)_
+
+GenSpark の第 3 報(#14)。中央 1 画素だけ NaN の 9×9 画像を `gaussian` / `median_image` / `mean_image` / `sobel_amp` に通すと、**出力は全画素が有限**で、警告も `fullseye.fallbacks()` の記録も無い。`on_error="raise"` でも止まらない。scipy の `gaussian_filter` は NaN を伝播させるので、消しているのは fullseye。 _(ja)_
+
+Found by: `degenerate_inputs` / Changed: `backend_safe.py`, `opassist.py`, `api.py` / Gate: `test_partial_nan_input_is_recorded_as_a_nonfinite_output_under_the_default_policy`, `test_partial_nan_input_stops_under_raise`, `test_nary_ops_are_found_by_op_find_and_explained_as_list_calls` / Status: fixed
+
 ### Implementation defect
 
 #### [可視領域が、目線より高いセルを軒並み「見えない」と返していた](hardening/dem-viewshed-self-occlusion.md) _(ja)_
@@ -84,7 +90,19 @@ Found by: `poc_stockpile_volume` / Changed: `demops.py` / Gate: `test_a_hill_tal
 
 Found by: `genspark_external_review` / Changed: `api.py` / Gate: `test_run_pipeline_accepts_dict_knobs_comma_string_and_dict_stages`, `test_run_pipeline_bad_forms_say_why` / Status: fixed
 
+#### [Studio の実行キーが、Program に書いたばかりの編集を無視して古いパイプラインを走らせていた](hardening/studio-run-key-ignored-unapplied-edits.md) _(ja)_
+
+GenSpark 第 8 報。Xvfb 上で Studio を起動し xdotool で操作、前後のスクリーンショットを画像解析で比べた実測: Program エディタに `gaussian (0.4, 0.5)` を打つとステータスが「● unapplied edits — Apply to run, or Reset to discard」に変わる(s8)。そこで実行キーを押しても **画面は 1 bit も変わらず**、ステータスもそのまま(s9 = s8)。報告では Ctrl+R を押していたが、Studio の実行キーは HDevelop 流の **F5 / Ctrl+Return** で、Ctrl+R は未割り当てだった —— ただし F5 を押しても同じ結果になる(下)。 _(ja)_
+
+Found by: `genspark_external_review` / Changed: `studio.py` / Gate: `test_run_all_applies_unapplied_program_edits_first`, `test_run_all_does_not_run_the_old_pipeline_when_the_edit_does_not_parse`, `test_ctrl_r_is_an_alias_of_the_run_key` / Status: fixed
+
 ### The gate did not stand where the accident happens
+
+#### [配布物の CLI で、help が別の入口を案内し、3 つのサブコマンドが使えなかった](hardening/cli-help-and-subcommands-broke-in-the-wheel.md) _(ja)_
+
+GenSpark 第 6・7 報(0.2.0 を `pip install` した Linux で `fullseye` を叩いた実測)。 _(ja)_
+
+Found by: `genspark_external_review` / Changed: `imgevolve.py`, `honest_summary.py`, `backends_color.py`, `backends_r3.py`, `backends_auto.py`, `studio.py` / Gate: `test_help_examples_use_the_installed_cli_name_when_run_as_fullseye`, `test_parity_subcommand_resets_argv_before_delegating`, `test_coverage_explains_the_missing_reference_data_instead_of_crashing`, `test_color_backend_name_check_is_fail_closed_without_the_json`, `test_registry_does_not_shrink_when_warnings_are_errors` / Status: fixed
 
 #### [空・極小の入力が、op ごとにばらばらな生エラーで落ちていた](hardening/empty-and-tiny-inputs-raised-raw-library-errors.md) _(ja)_
 

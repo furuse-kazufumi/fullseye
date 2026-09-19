@@ -17,7 +17,10 @@
 <p>Returns a 1-D float64 array of the time-to-contact per sample, seconds.</p>
 <p>Non-expanding samples (`<code style="color:#22d3bf">theta&#x27; &lt;= 0</code><code style="color:#22d3bf">) return </code><code style="color:#22d3bf">NaN</code>` — a documented</p>
 <p>non-finite, because a contracting or static angle has no time-to-contact and</p>
-<p>inventing one would be a plausible-wrong number.</p>
+<p>inventing one would be a plausible-wrong number. (The registry op</p>
+<p>`<code style="color:#22d3bf">tb_fly_tau_from_expansion</code>` must return a finite signal, so it replaces those</p>
+<p>NaN by the signal fallback without recording a fallback event —</p>
+<p>`<code style="color:#22d3bf">backend_safe.NONFINITE_BY_DESIGN</code>`; call this function directly to keep the NaN.)</p>
 <p>Ground truth: for the model&#x27;s own object geometry (`<code style="color:#22d3bf">theta = 2 asin(l/d)</code>` for a</p>
 <p>sphere, `<code style="color:#22d3bf">theta = 2 atan(l/d)</code><code style="color:#22d3bf"> for a disk) approaching at speed </code><code style="color:#22d3bf">|v|</code>`, the</p>
 <p>returned tau equals the true distance-over-speed `<code style="color:#22d3bf">d/|v|</code>` (pinned in the</p>

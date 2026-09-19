@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：610 / 764 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：610 / 773 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel_match.py`
@@ -42,7 +42,8 @@
 
 ## `backend_safe.py`
 
-- **L436** — ★feature op 返回的是 numpy **标量**而非 ndarray，所以上面的分支从未见到它：NaN/Inf 的测量值(例如对退化帧调用 sk_blur_effect 内部的 0/0)会直接从 api.apply 流出。把非有限标量也洗到 sort 回退，使所声明的"有限、sort 有效"保证对 feature/contour 标量也真正成立。
+- **L411** _(ja)_ — ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、 レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の docstring に「NaN を返す理由」が書いてあることを確かめること。
+- **L482** — ★feature op 返回的是 numpy **标量**而非 ndarray，所以上面的分支从未见到它：NaN/Inf 的测量值(例如对退化帧调用 sk_blur_effect 内部的 0/0)会直接从 api.apply 流出。把非有限标量也洗到 sort 回退，使所声明的"有限、sort 有效"保证对 feature/contour 标量也真正成立。
 
 ## `backends.py`
 
@@ -75,6 +76,7 @@
 ## `backends_r3.py`
 
 - **L46** — ★在 2026-09-05 之前用 ``except Exception: out = None`` **吞掉了**异常。注册时外层施加了 ``backend_safe.guard``,但在内层消除异常后外层什么都看不到 —— 即使 strict mode 也不抛异常,台账里也不留痕。这是 2026-09-02「24 族中只有 1 族到达台账」审计的**漏网**(Fable 的对抗评审作为第 5 族指出)。让异常原样向外抛出:外层 guard 记录它,落到符合 sort 的值,strict 则重新抛出。
+- **L438** _(ja)_ — ★探針は 32 px(2026-09-19、GenSpark 第 7 報 N12): 24 px だと db4 / sym4 の level=2 に足りず (必要 (8-1)·2² = 28 px)、import のたびに pywt の「Level value of 2 is too high」が漏れていた。 さらに `python -W error::UserWarning` では警告が例外になり、この try/except が **xwt_visushrink / xwt_firm_denoise を黙って落として**いた(931 → 929 op、FAILED_BACKENDS にも残らない)。 探針は機能の門であって警告の門ではないので、探針の中の警告は数えない。
 
 ## `backends_scipy.py`
 
@@ -943,13 +945,16 @@
 
 ## `honest_summary.py`
 
-- **L58** — ★把**未通过**功能门的 auto op 从招牌数字中排除——此前它们只是被 [warn] 打印却仍被计入，用门所拒绝的 op 虚增了"已过功能门"的 parity 数。
-- **L77** — ★2026-09-08：这一行原本写着 -- "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." 实测为 **979 + 17 = 979**，即 n-ary 的 17 个是 ``reg_counted`` 的**子集**(``nary_names - reg_counted`` 为空)。标题的 979 是正确的,但唯独这条明细行看起来像「加法」,读者一加就成了 996。数字虽对,但形式上**说明在撒谎**,故已修正。明细能否作为和成立,由 ``tests/test_honest_summary_arithmetic.py`` 每次检查。
+- **L34** _(ja)_ — ★wheel には data/halcon_operators.json を**同梱しない**(MVTec のリファレンスの説明文を含むため。 名前だけは halcon_names_data として出荷している)。`fullseye coverage` が FileNotFoundError で落ちていた (GenSpark 第 6 報 N5)ので、無いなら何が要るかと数字の在処を言って終える。
+- **L68** — ★把**未通过**功能门的 auto op 从招牌数字中排除——此前它们只是被 [warn] 打印却仍被计入，用门所拒绝的 op 虚增了"已过功能门"的 parity 数。
+- **L87** — ★2026-09-08：这一行原本写着 -- "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." 实测为 **979 + 17 = 979**，即 n-ary 的 17 个是 ``reg_counted`` 的**子集**(``nary_names - reg_counted`` 为空)。标题的 979 是正确的,但唯独这条明细行看起来像「加法」,读者一加就成了 996。数字虽对,但形式上**说明在撒谎**,故已修正。明细能否作为和成立,由 ``tests/test_honest_summary_arithmetic.py`` 每次检查。
 
 ## `imgevolve.py`
 
 - **L47** _(ja)_ — ★module / requires(2026-09-19): 「unknown operator」が backend 不足を隠していた (外部レビュー #1)。索引が出自と optional 依存を持てば、core 環境の ``api._resolve`` が同梱の複製(fullseye/data/OP_INDEX.json)から不足 extra を 案内できる。requires は AST で静的に読むので、生成環境に依らず同じ値。
 - **L56** — ★不要吞掉它(2026-09-06 的对抗性评审)。`imgops_nary` 是只需 numpy 和 scipy 的一级 module，因此 import 失败意味着「损坏的 checkout」,而非「该环境没有的功能」。以前是 `except Exception: pass`，又因为**这个函数同时兼任生成器和检查器**，CI 可以在保持绿色的情况下发布一个整整消失了 17 个 op 的索引。
+- **L274** _(ja)_ — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
+- **L511** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
 
 ## `imgio.py`
 
@@ -995,6 +1000,7 @@
 - **L783** — 视为词干一致的公共前缀长度。★取 4 会把 "median"/"medial" 及 "contrast"/"contour" 连到一起;切在 5,则 "correlation"/"correlate"(8)、"segmentation"/"segment"(7)、"rotation"/"rotate"(5)、"gaussian"/"gauss"(5) 能被拾取,而上述两组不会。
 - **L793** — 公共前缀**之后允许的词尾**。★仅凭前缀长度判定会把 "median"/"medial" 连起来(共有 5 个字符的 "media")。看词尾是否像屈折词尾,则 "correlation"/"correlate"(ion / e)通过,而 "median"/"medial"(n / l)与 "corner"/"cornea"(r / a)落选。
 - **L889** — ★下限。没有它时,"zzz-nothing-matches" 会返回 `histogram_match`(因为 "matches" 与 `match_*` 词干一致)。若命中词的权重不足整条查询的 15 %,则视为「未命中」。实测:"digital image correlation" 为 0.19(通过),"zzz-nothing-matches" 为 0.10(丢弃)。
+- **L1002** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
 
 ## `ops.py`
 
@@ -1144,8 +1150,11 @@
 ## `studio.py`
 
 - **L273** — ★ 直接右键点击图本身（用户 2026-09-06：“若能右键把作为图显示的东西复制到剪贴板就好了”）。这是本 repo 的 Studio UI 规约——**显示系也须能从右键完成一整套**。可与下方按钮列做同样的事（不要二者取其一）。
-- **L6119** — ★ 图的承接盘。示例经 `examplefig` 往此处写 PNG。不传环境变量的运行（CLI）中一张都不写，故只有从画廊运行时才出图（示例的数值与速度不变）。
-- **L6275** — ★ 图的承接盘。示例经 `examplefig` 往此处写 PNG。不传环境变量的运行（CLI）中一张都不写，故只有从画廊运行时才出图（示例的数值与速度不变）。
+- **L4325** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L5316** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L6142** — ★ 图的承接盘。示例经 `examplefig` 往此处写 PNG。不传环境变量的运行（CLI）中一张都不写，故只有从画廊运行时才出图（示例的数值与速度不变）。
+- **L6298** — ★ 图的承接盘。示例经 `examplefig` 往此处写 PNG。不传环境变量的运行（CLI）中一张都不写，故只有从画廊运行时才出图（示例的数值与速度不变）。
+- **L6808** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
 
 ## `tests/conftest.py`
 
