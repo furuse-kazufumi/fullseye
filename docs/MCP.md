@@ -146,6 +146,16 @@ fix_text(mode=repair_flagged, 床=0.0505 from typeface, 書体 3 本) → fullse
   線が `(N,2)` でない、非有限が混ざる、線が 2 本未満は `-32602`。各線 3 点未満など道具側の拒否は `isError`。
 * 主点=歪み中心は `K` 固定(1 枚では中心と `p1,p2` が縮退)。向きの違う線を混ぜ、画面いっぱいに張るほど安定。
 
+## 型付き結果に JSON 封筒 + Markdown が自動で付く(`fullseye_apply` / `fullseye_pipeline` / `fullseye_inspect`)
+
+`apply` / `pipeline` / `inspect` の結果が**小さい型付きの値**(scalar / feature / table / points / matrix /
+signal / vector / keypoints / counts / contour)のとき、`structuredContent.json` に `fullseye.from_jsonable`
+で **bit そのまま戻せる封筒**が、本文に `fullseye.to_markdown` の**読める描画**(表または 1 行要約)が
+自動で付く。画素・場・ボリューム系(image / volume / region / color …)や上限(512 KB)超は**付けない**
+—— 大きい画像はハンドル/小図で扱う(`fullseye_export_json` と同じ判断)。追加情報なので既存の返り
+(`handle` / `value` / `stats` …)はそのまま。例: `count_obj` で終わるパイプラインは `structuredContent.json`
+に `{"fullseye_sort":"scalar",…}` が入り、`from_jsonable` で数値を厳密に回収できる。
+
 ## 画像は「在らず、必要なときだけ在る」
 
 画像は `fullseye://img/<sha16>` の**ハンドル**でやり取りし、LLM はバイト列を見ない

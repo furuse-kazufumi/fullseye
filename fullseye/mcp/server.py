@@ -599,21 +599,58 @@ def _stage_text(rec: dict) -> str:
     return text
 
 
-def _apply(a: dict, cat: Catalog, store: HandleStore) -> dict:
+#: JSON 添付を**しない** sort。画素・場・ボリューム系は大きく、ハンドル/小図で扱う
+#: (export_json と同じ判断)。ここに無い小さい型(scalar/feature/table/points/matrix/
+#: signal/vector/keypoints/counts/contour)だけ、結果に封筒 + Markdown を添える。
+_BULKY_SORTS = frozenset({"image", "image2d", "rgb", "rgbimage", "color", "mask",
+                          "region", "volume", "rgbvolume", "stokes", "polsweep"})
+
+
+def _typed_json_addon(arr, sort, max_bytes):
+    """小さい型付き結果なら ``(envelope, markdown)`` を返す。大きい画素/場や JSON 化
+    できないものは ``None``(添付しない)。純粋に追加情報 —— 既存の結果は変えない。"""
+    import json as _json
+
+    import fullseye
+    if sort not in fullseye.JSON_SORTS or sort in _BULKY_SORTS:
+        return None
+    try:
+        env = fullseye.to_jsonable(arr, sort, readable=True)
+    except Exception:                                           # noqa: BLE001 (添付は best-effort)
+        return None
+    if len(_json.dumps(env, ensure_ascii=False).encode("utf-8")) > max_bytes:
+        return None                                            # 上限超過は添付しない(export_json 同様)
+    try:
+        md = fullseye.to_markdown(arr, sort)
+    except Exception:                                           # noqa: BLE001
+        md = None
+    return env, md
+
+
+def _apply(a: dict, cat: Catalog, store: HandleStore, *,
+           max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     op = _resolve_op(a["op"], cat)
     meta, arr = store.get(a["handle"])
     _check_sort(op, meta["sort"], prev="ハンドル %s" % meta["handle"])
     ka, kb = float(a.get("a", 0.5)), float(a.get("b", 0.5))
     allow = bool(a.get("allow_degraded", False))
-    rec, links, _, _ = _stage(store, meta, arr, op, ka, kb, allow, vision=a.get("vision", "auto"),
-                              thumb_allowed=True, tag=op.name)
+    rec, links, _, out = _stage(store, meta, arr, op, ka, kb, allow, vision=a.get("vision", "auto"),
+                                thumb_allowed=True, tag=op.name)
     if "error" in rec:
         text = _stage_text(rec) + "\n(allow_degraded=true で fail-soft を許せるが、劣化は degraded に載る)"
         return _tool_error(text, rec)
-    return tool_result(_stage_text(rec), rec, links=links)
+    text = _stage_text(rec)
+    addon = _typed_json_addon(out, op.out_sort, max_structured_bytes)
+    if addon is not None:
+        env, md = addon
+        rec["json"] = env                                       # 追加: bit そのまま戻せる封筒
+        if md:
+            text += "\n\n" + md                                # 追加: 人が読める Markdown
+    return tool_result(text, rec, links=links, max_structured_bytes=max_structured_bytes)
 
 
-def _pipeline(a: dict, cat: Catalog, store: HandleStore) -> dict:
+def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
+              max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     """段を順に。**走らせる前に**型連鎖を検査し、strict は失敗した段で止まる。"""
     stages = a["stages"]
     ops_ = [_resolve_op(s["op"], cat, stage=i) for i, s in enumerate(stages, 1)]
@@ -662,7 +699,14 @@ def _pipeline(a: dict, cat: Catalog, store: HandleStore) -> dict:
         len(recs), final_handle or ("value=%s" % final_value))]
     for r in recs:
         lines.append("[段 %d] " % r["stage"] + _stage_text(r).replace("\n", "\n        "))
-    return tool_result("\n".join(lines), structured, links=links)
+    addon = _typed_json_addon(cur_val, ops_[-1].out_sort, max_structured_bytes)   # 最終段の型付き結果
+    if addon is not None:
+        env, md = addon
+        structured["json"] = env                                # 追加: 最終出力の封筒(bit 一致)
+        if md:
+            lines.append("\n" + md)                             # 追加: 最終出力の Markdown
+    return tool_result("\n".join(lines), structured, links=links,
+                       max_structured_bytes=max_structured_bytes)
 
 
 def _fix_text(a: dict, store: HandleStore) -> dict:
@@ -742,7 +786,8 @@ def _fix_text(a: dict, store: HandleStore) -> dict:
     return tool_result("\n".join(lines), structured, links=links)
 
 
-def _inspect(a: dict, store: HandleStore) -> dict:
+def _inspect(a: dict, store: HandleStore, *,
+             max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     meta, arr = store.get(a["handle"])
     last_op = next((p["apply"] for p in reversed(meta["provenance"]) if "apply" in p), None)
     st, vd = _describe(meta, arr, op_name=last_op)
@@ -754,7 +799,13 @@ def _inspect(a: dict, store: HandleStore) -> dict:
     text = "%s  sort=%s  来歴=%s\n%s" % (meta["handle"], meta["sort"],
                                           json.dumps(meta["provenance"], ensure_ascii=False)[:200],
                                           _stats_line(st, vd))
-    return tool_result(text, structured, links=links)
+    addon = _typed_json_addon(arr, meta["sort"], max_structured_bytes)   # 小さい型付きなら封筒 + Markdown
+    if addon is not None:
+        env, md = addon
+        structured["json"] = env
+        if md:
+            text += "\n\n" + md
+    return tool_result(text, structured, links=links, max_structured_bytes=max_structured_bytes)
 
 
 # --------------------------------------------------------------------------- #
@@ -902,11 +953,11 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         if name == "fullseye_load_image":
             return _load_image(a, store)
         if name == "fullseye_apply":
-            return _apply(a, cat, store)
+            return _apply(a, cat, store, max_structured_bytes=max_structured_bytes)
         if name == "fullseye_inspect":
-            return _inspect(a, store)
+            return _inspect(a, store, max_structured_bytes=max_structured_bytes)
         if name == "fullseye_pipeline":
-            return _pipeline(a, cat, store)
+            return _pipeline(a, cat, store, max_structured_bytes=max_structured_bytes)
         if name == "fullseye_fix_text":
             return _fix_text(a, store)
         if name == "fullseye_import_json":

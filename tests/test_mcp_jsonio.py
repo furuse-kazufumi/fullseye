@@ -146,3 +146,50 @@ def test_estimate_distortion_fail_closed_on_short_line(cat):
     r = call_tool("fullseye_estimate_distortion",
                   {"lines": [[[1.0, 2.0], [3.0, 4.0]], good[0]], "K": K.tolist()}, cat)
     assert r.get("isError")
+
+
+# --- apply/pipeline/inspect が小さい型付き結果に jsonio 封筒 + mdio を添える -------- #
+def _img_handle(cat, store):
+    img = np.zeros((64, 64))
+    img[16:48, 16:48] = 1.0
+    env = fullseye.to_jsonable(img, "image")
+    return call_tool("fullseye_import_json", {"envelope": env}, cat, store)["structuredContent"]["handle"]
+
+
+def test_pipeline_attaches_json_for_a_small_typed_result(cat):
+    store = HandleStore()
+    h = _img_handle(cat, store)
+    r = call_tool("fullseye_pipeline",
+                  {"handle": h, "stages": [{"op": "gaussian"}, {"op": "otsu"}, {"op": "count_obj"}],
+                   "vision": "none"}, cat, store)
+    sc = r["structuredContent"]
+    assert "json" in sc, "小さい型付き最終結果に封筒が添付されていない"
+    val, sort = fullseye.from_jsonable(sc["json"])               # bit そのまま戻せる
+    assert float(val) == float(sc["value"])                      # 封筒 == 返り値
+
+
+def test_inspect_attaches_json_for_points_but_not_for_an_image(cat):
+    store = HandleStore()
+    pts = np.array([[1.5, 2.0], [1.0 / 3.0, np.pi]])
+    ph = call_tool("fullseye_import_json",
+                   {"envelope": fullseye.to_jsonable(pts, "points")}, cat, store)["structuredContent"]["handle"]
+    ins = call_tool("fullseye_inspect", {"handle": ph, "vision": "none"}, cat, store)
+    assert "json" in ins["structuredContent"]
+    back, _ = fullseye.from_jsonable(ins["structuredContent"]["json"])
+    assert np.array_equal(back, pts)                             # 厳密往復
+    # 画像は大きいので添付しない(ハンドル/小図で扱う)
+    ih = _img_handle(cat, store)
+    ins_img = call_tool("fullseye_inspect", {"handle": ih, "vision": "none"}, cat, store)
+    assert "json" not in ins_img["structuredContent"]
+
+
+def test_apply_attaches_markdown_in_the_text_for_a_typed_result(cat):
+    store = HandleStore()
+    pts = np.array([[1.0, 2.0], [3.0, 4.0]])
+    ph = call_tool("fullseye_import_json",
+                   {"envelope": fullseye.to_jsonable(pts, "points")}, cat, store)["structuredContent"]["handle"]
+    # points に恒等的な op は無いので inspect の text で Markdown 添付を見る
+    ins = call_tool("fullseye_inspect", {"handle": ph, "vision": "none"}, cat, store)
+    assert "json" in ins["structuredContent"]
+    # to_markdown の描画(表 or 要約)が本文に入っている
+    assert fullseye.to_markdown(pts, "points").splitlines()[0] in ins["content"][0]["text"]
