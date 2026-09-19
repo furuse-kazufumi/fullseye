@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 24 capabilities**
+**Currently 25 capabilities**
 
 ## Measure (6)
 
@@ -173,7 +173,7 @@ Operators: `signal_features`, `envelope_spectrum`, `bearing_defect_frequencies`,
 
 Runnable: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## Compose (3)
+## Compose (4)
 
 ### [Align and stack](capabilities/align-and-stack.md)
 
@@ -198,6 +198,14 @@ The Markdown companion of jsonio. `to_markdown` renders a typed value as GFM —
 Operators: `to_markdown`, `json_block`, `extract_json`, `report`
 
 Runnable: `typed_results_markdown`
+
+### [Write typed inspection results to an Excel (.xlsx) report](capabilities/xlsx-report.md)
+
+`save_xlsx_report(sections, path)` writes the same `(heading, value, sort)` sections that `mdio.report` renders as Markdown, but as a real Excel workbook: tabular sorts (`table`, `points`, `matrix`, `signal`, `vector`, `keypoints`, `counts`) become spreadsheet cells, `feature` / `scalar` a single cell, and image-like sorts (`image`, `color`, `region` …) an embedded thumbnail. jsonio is the machine-exact JSON, mdio the human-readable Markdown, and xlsxio the shop-floor Excel — the same one `sections` list feeds all three, only the destination differs. It uses openpyxl (the optional `xlsx` extra) and raises a clear `ImportError` when it is missing rather than silently degrading; an image that cannot be embedded falls back to a one-line shape/range cell so a thumbnail never breaks the report (fail-soft). Unknown sorts raise `ValueError`.
+
+Operators: `save_xlsx_report`, `report`, `to_markdown`, `save_json`
+
+Runnable: `xlsx_report`
 
 ## Show (3)
 

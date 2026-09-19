@@ -152,7 +152,7 @@ jobs:
         # Python; gltf/lidar/pcd extras: small pure-python readers with real
         # format tests. torch/mujoco stay out (their tests skip honestly).
         run: >
-          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd]"
+          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx]"
           pytest pytest-cov matplotlib sympy ziglang hypothesis pytest-timeout
       # ★py3.11 **だけ** optional backend を実際に入れる。
       #

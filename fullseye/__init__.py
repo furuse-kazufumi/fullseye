@@ -591,6 +591,11 @@ from fullseye.jsonio import (  # noqa: E402,F401
 from fullseye.mdio import (  # noqa: E402,F401
     to_markdown, json_block, extract_json, report,
 )
+# 同じ材料(sections)を現場が使う Excel(.xlsx)レポートに書き出す(fullseye/xlsxio.py、
+# openpyxl optional)。jsonio=機械 / mdio=読む / xlsxio=配る、の 3 系統。
+from fullseye.xlsxio import (  # noqa: E402,F401
+    save_xlsx_report,
+)
 
 __all__ = [
     "op", "ledger",
@@ -934,4 +939,5 @@ __all__ = [
     "save_json", "load_json", "to_json_lines", "from_json_lines",
     "is_envelope", "as_value", "apply_json",
     "to_markdown", "json_block", "extract_json", "report",
+    "save_xlsx_report",
 ]

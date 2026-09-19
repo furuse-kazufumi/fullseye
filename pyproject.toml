@@ -68,6 +68,7 @@ raster = ["imageio>=2.28", "tifffile>=2023.1"]    # bit-depth-preserving raster 
 gltf = ["pygltflib>=1.16"]                        # glTF 2.0 / GLB object import
 lidar = ["laspy>=2.5", "lazrs>=0.5"]              # LAS / LAZ LiDAR point clouds
 pcd = ["pypcd4>=1.4"]                             # PCD binary / binary_compressed point clouds
+xlsx = ["openpyxl>=3.1"]                           # Excel (.xlsx) レポート出力(fullseye.save_xlsx_report、測定表+画像)
 # 2026-09-05: deptry(依存の宣言漏れ検査)で見つけた —— 出荷モジュール
 # contours_xld / regions_gen が `matplotlib.path.Path` を**関数内で遅延 import**
 # しており、どの extra にも宣言が無かった。import は通るので clean install の

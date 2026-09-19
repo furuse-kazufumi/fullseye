@@ -48,14 +48,15 @@
 | [振動と音から異常を診断する](capabilities/vibration-and-acoustics.md) | Diagnose faults from vibration and sound | 波と信号 | `verified-synthetic` | 5/5 | `poc_bearing_diagnosis` synthetic → tests/test_poc_scripts_run.py<br>`poc_rail_corrugation` synthetic → tests/test_poc_scripts_run.py |
 | [シルエットから立体を彫り出す(視体積交差)](capabilities/visual-hull-from-silhouettes.md) | Carve a solid out of silhouettes (visual hull) | 形にする | `verified-synthetic` | 4/4 | `space_carving` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_livestock_body_volume` synthetic → tests/test_poc_scripts_run.py |
 | [3-D スキャンから体積・土量を出す](capabilities/volume-from-3d-scan.md) | Turn a 3-D scan into a volume | 測る | `verified-synthetic` | 3/4 | `poc_stockpile_volume` synthetic → tests/test_poc_scripts_run.py<br>`poc_lidar_terrain_change` synthetic → tests/test_poc_scripts_run.py |
+| [型付きの検査結果を Excel(.xlsx)レポートに書き出す](capabilities/xlsx-report.md) | Write typed inspection results to an Excel (.xlsx) report | 組み立てる | `verified-synthetic` | 4/4 | `xlsx_report` synthetic → tests/test_example_scripts_run.py |
 
 ## 例が実際に走っているか
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 213 |
+| 2-D 台帳の例 | 214 |
 | `tests/test_poc_scripts_run.py` が走らせる | 122 |
-| `tests/test_example_scripts_run.py` が走らせる | 91 |
+| `tests/test_example_scripts_run.py` が走らせる | 92 |
 | **どの門も走らせていない** | **0** |
 
 走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり

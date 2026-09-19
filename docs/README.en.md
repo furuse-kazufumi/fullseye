@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: eab6eb2880f4 -->
 # Fullseye Documentation Index
 
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
@@ -9,7 +10,7 @@
 
 *Six acts, all real operator output: edge orientation, blob selection, sub-pixel calipers, SDF to mesh, LiDAR clustering, lens defocus.*
 
-**Fullseye** (working name: imgevolve) is a HALCON/HDevelop-class production tool. It combines a numpy-native library of image-processing operators with an HDevelop-style visual pipeline design environment (Fullseye Studio) and an execution runtime (FullseyeEngine). It carries roughly **930** operators (as counted in the registry), provides genuine implementations of **979/2313** actual HALCON operators, and spans 48 categories.
+**Fullseye** (working name: imgevolve) is a HALCON/HDevelop-class production tool. It combines a numpy-native library of image-processing operators with an HDevelop-style visual pipeline design environment (Fullseye Studio) and an execution runtime (FullseyeEngine). It carries roughly **931** operators (as counted in the registry), provides genuine implementations of **979/2313** actual HALCON operators, and spans 48 categories.
 
 ★ **Rare for an image-processing library, Fullseye also includes virtual optical design** — thin/thick lenses, ray tracing, Seidel aberrations and PSF/MTF, plus damped-least-squares (Levenberg–Marquardt) optimisation of the lens prescription itself (`optimize_lens`). You can **design the imaging system and then inspect its image with the operators above, end to end** — a differentiator that matters for semiconductor and precision metrology.
 
@@ -66,7 +67,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 **2,002 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **49 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 931/931, typed ledger 1050/1062, one-line facade `fullseye.<name>` 568/1189 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 931/931, typed ledger 1050/1062, one-line facade `fullseye.<name>` 568/1190 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
 **Measured substance**: of 2007 notes, **1964** link at least one runnable example (43 have none) and **1987** have a usage section of 120+ characters (20 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2007.
 
@@ -203,7 +204,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 168
+## Document map — all 169
 
 The complete map, so that **no document is unreachable from this index** (the 2,002 per-op notes and 49 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
@@ -329,7 +330,7 @@ The complete map, so that **no document is unreachable from this index** (the 2,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(96)
+**Other**(97)
 
 | document | what it covers |
 |---|---|
@@ -421,6 +422,7 @@ The complete map, so that **no document is unreachable from this index** (the 2,
 | [`capabilities/vibration-and-acoustics.md`](capabilities/vibration-and-acoustics.md) | id: vibration-and-acoustics |
 | [`capabilities/visual-hull-from-silhouettes.md`](capabilities/visual-hull-from-silhouettes.md) | id: visual-hull-from-silhouettes |
 | [`capabilities/volume-from-3d-scan.md`](capabilities/volume-from-3d-scan.md) | id: volume-from-3d-scan |
+| [`capabilities/xlsx-report.md`](capabilities/xlsx-report.md) | id: xlsx-report |
 | [`hardening/carve-look-at-unreachable-and-silent.md`](hardening/carve-look-at-unreachable-and-silent.md) | id: carve-look-at-unreachable-and-silent |
 | [`hardening/dem-viewshed-self-occlusion.md`](hardening/dem-viewshed-self-occlusion.md) | id: dem-viewshed-self-occlusion |
 | [`hardening/ecef-to-geodetic-returned-latitude-180.md`](hardening/ecef-to-geodetic-returned-latitude-180.md) | id: ecef-to-geodetic-returned-latitude-180 |

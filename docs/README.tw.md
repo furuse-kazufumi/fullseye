@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: eab6eb2880f4 -->
 # Fullseye 文件索引
 
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
@@ -9,7 +10,7 @@
 
 *六幕，全部是真實的運算子輸出：邊緣方向 / 連通域篩選 / 次像素量測 / SDF 轉網格 / 點雲分群 / 鏡頭離焦。*
 
-**Fullseye**（開發代號 imgevolve）是一套 HALCON/HDevelop 等級的實用軟體：由 numpy 原生的影像處理運算子函式庫、HDevelop 風格的視覺化管線設計環境（Fullseye Studio），以及負責執行的 runtime（FullseyeEngine）三者組成。運算子約 **930** 個（以 registry 計），其中 **979/2313** 個真實的 HALCON 運算子做到 genuine（真正等效）的實作，涵蓋 48 個類別。
+**Fullseye**（開發代號 imgevolve）是一套 HALCON/HDevelop 等級的實用軟體：由 numpy 原生的影像處理運算子函式庫、HDevelop 風格的視覺化管線設計環境（Fullseye Studio），以及負責執行的 runtime（FullseyeEngine）三者組成。運算子約 **931** 個（以 registry 計），其中 **979/2313** 個真實的 HALCON 運算子做到 genuine（真正等效）的實作，涵蓋 48 個類別。
 
 ★ **在影像處理函式庫中少見，Fullseye 還內建「虛擬光學設計」** —— 薄/厚透鏡、光線追蹤、Seidel 像差與 PSF/MTF，並以阻尼最小二乘（Levenberg–Marquardt）最佳化透鏡處方本身（`optimize_lens`）。可從**設計成像系統，到用上述運算子檢查其成像，一氣呵成** —— 在半導體與精密計量中是明確的差異化。
 
@@ -66,7 +67,7 @@
 
 共有 **2,002 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **49 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 931/931、型別台帳 1050/1062、單行門面 `fullseye.<名稱>` 568/1189 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 931/931、型別台帳 1050/1062、單行門面 `fullseye.<名稱>` 568/1190 —— **門面側僅涵蓋一半**。
 
 **內容實測**: 2007 篇中，附有可執行範例的 **1964** 篇(43 篇沒有)，用法說明 120 字以上的 **1987** 篇(20 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)2007 篇全有。
 
@@ -203,7 +204,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文件地圖 — 共 168 篇
+## 文件地圖 — 共 169 篇
 
 完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 2,002 篇運算子說明與 49 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
@@ -329,7 +330,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(96)
+**Other**(97)
 
 | 文件 | 內容 |
 |---|---|
@@ -421,6 +422,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/vibration-and-acoustics.md`](capabilities/vibration-and-acoustics.md) | id: vibration-and-acoustics |
 | [`capabilities/visual-hull-from-silhouettes.md`](capabilities/visual-hull-from-silhouettes.md) | id: visual-hull-from-silhouettes |
 | [`capabilities/volume-from-3d-scan.md`](capabilities/volume-from-3d-scan.md) | id: volume-from-3d-scan |
+| [`capabilities/xlsx-report.md`](capabilities/xlsx-report.md) | id: xlsx-report |
 | [`hardening/carve-look-at-unreachable-and-silent.md`](hardening/carve-look-at-unreachable-and-silent.md) | id: carve-look-at-unreachable-and-silent |
 | [`hardening/dem-viewshed-self-occlusion.md`](hardening/dem-viewshed-self-occlusion.md) | id: dem-viewshed-self-occlusion |
 | [`hardening/ecef-to-geodetic-returned-latitude-180.md`](hardening/ecef-to-geodetic-returned-latitude-180.md) | id: ecef-to-geodetic-returned-latitude-180 |

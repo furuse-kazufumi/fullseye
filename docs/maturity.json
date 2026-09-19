@@ -665,12 +665,33 @@
      "registry": "examples2d"
     }
    ]
+  },
+  {
+   "id": "xlsx-report",
+   "title": "型付きの検査結果を Excel(.xlsx)レポートに書き出す",
+   "title_en": "Write typed inspection results to an Excel (.xlsx) report",
+   "category": "組み立てる",
+   "note": "docs/capabilities/xlsx-report.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "xlsx_report",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
   }
  ],
  "example_execution": {
-  "examples2d_total": 213,
+  "examples2d_total": 214,
   "run_by_the_poc_gate": 122,
-  "run_by_the_example_gate": 91,
+  "run_by_the_example_gate": 92,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

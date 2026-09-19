@@ -116,6 +116,11 @@ EXAMPLES = [
      "summary": "table / points は本物の GFM 表、image / region は 1 行要約(画素は描かない)。json_block で厳密な "
                 "JSON を ```json フェンスに包み、extract_json で Markdown 文書から fullseye 封筒だけを bit 一致で回収。"
                 "report は『読める』と『機械で戻せる』を with_json で 1 文書に両立。異種フェンスは無視し未知 sort は断る。"},
+    {"id": "xlsx_report", "task": "workflow", "data": "synthetic",
+     "name": "型付きの検査結果を Excel(.xlsx)レポートに書き出す",
+     "summary": "mdio.report と同じ (見出し, value, sort) の列から現場が使う .xlsx を作る。測定表・点群・"
+                "スカラはセルに、画像はサムネイルを 1 枚埋め込む(openpyxl、optional)。書いて openpyxl で開き直し "
+                "セル値と埋め込み画像数を assert。jsonio=機械 / mdio=読む / xlsxio=配る の第 3 系統。未知 sort は断る。"},
     {"id": "typed_results_json", "task": "workflow", "data": "synthetic",
      "name": "op の返り値(型付き)を JSON に出して bit そのままで戻す",
      "summary": "image / region / points / contour / feature / matrix / table を sort ごとの一つの JSON 形に。"

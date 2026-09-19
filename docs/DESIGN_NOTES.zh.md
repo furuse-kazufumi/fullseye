@@ -893,7 +893,7 @@
 
 - **L366** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
 - **L550** — ★与声明 out 类型对齐的 adapter，会**丢弃返回元组的 op 的第 2 项及以后**(``drizzle_resample`` 的 ``wht``、``piv_cross_correlate`` 的 ``info``)。当被丢弃的一侧需要用到时,从台账入口就够不着。2026-09-06,某超分辨率 PoC 写成 ``flow, info = fs.ledger.piv_cross_correlate(...)``,沿第 1 轴拆开 (2,R,C),把 dy 的第 2 行当作 dx 使用,使偏移估计从 0.12 -> 0.74 像素(不抛异常)。用 ``.raw`` 可够到原始返回:``fs.ledger.piv_cross_correlate.raw(a, b)``。
-- **L924** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L929** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
 
 ## `fullseye/mcp/catalog.py`
 

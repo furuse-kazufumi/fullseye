@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 24 項目**
+**収録 25 項目**
 
 ## 測る (6)
 
@@ -172,7 +172,7 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 
 動く例: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## 組み立てる (3)
+## 組み立てる (4)
 
 ### [位置を合わせて重ねる](capabilities/align-and-stack.md)
 
@@ -197,6 +197,14 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 使う op: `to_markdown`, `json_block`, `extract_json`, `report`
 
 動く例: `typed_results_markdown`
+
+### [型付きの検査結果を Excel(.xlsx)レポートに書き出す](capabilities/xlsx-report.md)
+
+検査の結果は現場では Excel で回ることが多い —— 測定表を貼る、良否を並べる、プレビュー画像を添える。`fullseye/xlsxio.py` の `save_xlsx_report(sections, path)` は、能力ノート `typed-results-as-markdown` の `report` と**同じ材料**(`(見出し, value, sort)` の列)から、そのまま `.xlsx` を作ります。`table` / `points` / `matrix` / `signal` / `vector` / `keypoints` / `counts` は本物のセルの表に、`feature` / `scalar` は 1 セルに、画像系(`image` / `color` / `region` …)はサムネイルを 1 枚埋め込みます。jsonio が「機械が bit で戻せる JSON」、mdio が「人が読む Markdown」なのに対し、xlsxio は「**現場が配る Excel**」—— 出力先が違うだけで、同じ 1 つの `sections` から 3 系統すべてを出せます。
+
+使う op: `save_xlsx_report`, `report`, `to_markdown`, `save_json`
+
+動く例: `xlsx_report`
 
 ## 見せる (3)
 

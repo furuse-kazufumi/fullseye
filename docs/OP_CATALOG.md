@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(213 例)
+### 2-D 画像/信号/幾何(214 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -114,6 +114,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **workflow**
 - **op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す** — table / points は本物の GFM 表、image / region は 1 行要約(画素は描かない)。json_block で厳密な JSON を ```json フェンスに包み、extract_json で Markdown 文書から fullseye 封筒だけを bit 一致で回収。report は『読める』と『機械で戻せる』を with_json で 1 文書に両立。異種フェンスは無視し未知 sort は断る。 `py -3.11 examples/typed_results_markdown.py`
+- **型付きの検査結果を Excel(.xlsx)レポートに書き出す** — mdio.report と同じ (見出し, value, sort) の列から現場が使う .xlsx を作る。測定表・点群・スカラはセルに、画像はサムネイルを 1 枚埋め込む(openpyxl、optional)。書いて openpyxl で開き直し セル値と埋め込み画像数を assert。jsonio=機械 / mdio=読む / xlsxio=配る の第 3 系統。未知 sort は断る。 `py -3.11 examples/xlsx_report.py`
 - **op の返り値(型付き)を JSON に出して bit そのままで戻す** — image / region / points / contour / feature / matrix / table を sort ごとの一つの JSON 形に。浮動小数は base64 の float64 で往復 bit 一致、region は run-length、非有限値は封筒に印を立てて運ぶ。save_json / load_json でファイル一往復、to_json_lines / from_json_lines で JSONL 台帳。★match は慣例が 2 つ混在するので橋を作らず断る(fail-closed)。 `py -3.11 examples/typed_results_json.py`
 - **精度ユニオン型ストレージ(PrecisionUnion)を N-D の実データ様式で使う** — ラベルボリューム(無損失)と深度ボリューム(atol 量子化)をタイル別最小ビット深さで保持し、メモリ比・save/load のファイル比・遅延アフィン連鎖の一致を数値で確かめる。高エントロピー画像では勝たないことも同じ場で示す(honest な境界)。 `py -3.11 examples/precision_union_volume.py`
 - **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`

@@ -12,7 +12,7 @@
 
 *実際のオペレータ出力だけで作った 6 幕(エッジと方位 / 連結成分の選別 / サブピクセル計測 / SDF からのメッシュ化 / 点群クラスタリング / レンズのデフォーカス)。*
 
-**Fullseye**（作業名 imgevolve）は、numpy-native な画像処理オペレータ・ライブラリと、HDevelop 風のビジュアル・パイプライン設計環境（Fullseye Studio）+ 実行ランタイム（FullseyeEngine）を備えた、HALCON/HDevelop 級の実用ツールです。オペレータは約 **930**（レジストリ）、実 HALCON オペレータ **979/2313** を genuine 実装、48 カテゴリをカバーします。
+**Fullseye**（作業名 imgevolve）は、numpy-native な画像処理オペレータ・ライブラリと、HDevelop 風のビジュアル・パイプライン設計環境（Fullseye Studio）+ 実行ランタイム（FullseyeEngine）を備えた、HALCON/HDevelop 級の実用ツールです。オペレータは約 **931**（レジストリ）、実 HALCON オペレータ **979/2313** を genuine 実装、48 カテゴリをカバーします。
 
 ★ **画像処理ライブラリでは珍しく「仮想の光学設計」まで内蔵** —— 薄肉/厚肉レンズ・光線追跡・Seidel 収差・PSF/MTF に加え、damped-least-squares（Levenberg–Marquardt）でレンズ処方そのものを最適化（`optimize_lens`）。**撮像系を設計して、その像を上のオペレータで検査するまでを一気通貫**でできる（半導体・精密計測で効く差別化）。
 
@@ -69,7 +69,7 @@
 
 **2,002 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **49 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 931/931、型つき台帳 1050/1062、1 行ファサード `fullseye.<名前>` 568/1189。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 931/931、型つき台帳 1050/1062、1 行ファサード `fullseye.<名前>` 568/1190。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
 **ノートの中身の実測**: 2007 本のうち、実行できる例が付いているのは **1964 本**(43 本は例ゼロ)、使い方の説明が 120 字以上あるのは **1987 本**(20 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 2007 本すべてにある。
 
@@ -206,7 +206,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 168 本
+## ドキュメント地図 — 全 169 本
 
 **索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 2,002 本と族ガイド 49 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
@@ -332,7 +332,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(96)
+**そのほか**(97)
 
 | 文書 | 内容 |
 |---|---|
@@ -424,6 +424,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/vibration-and-acoustics.md`](capabilities/vibration-and-acoustics.md) | id: vibration-and-acoustics |
 | [`capabilities/visual-hull-from-silhouettes.md`](capabilities/visual-hull-from-silhouettes.md) | id: visual-hull-from-silhouettes |
 | [`capabilities/volume-from-3d-scan.md`](capabilities/volume-from-3d-scan.md) | id: volume-from-3d-scan |
+| [`capabilities/xlsx-report.md`](capabilities/xlsx-report.md) | id: xlsx-report |
 | [`hardening/carve-look-at-unreachable-and-silent.md`](hardening/carve-look-at-unreachable-and-silent.md) | id: carve-look-at-unreachable-and-silent |
 | [`hardening/dem-viewshed-self-occlusion.md`](hardening/dem-viewshed-self-occlusion.md) | id: dem-viewshed-self-occlusion |
 | [`hardening/ecef-to-geodetic-returned-latitude-180.md`](hardening/ecef-to-geodetic-returned-latitude-180.md) | id: ecef-to-geodetic-returned-latitude-180 |

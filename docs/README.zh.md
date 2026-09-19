@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: eab6eb2880f4 -->
 # Fullseye 文档索引
 
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
@@ -9,7 +10,7 @@
 
 *六幕，全部是真实算子输出：边缘方向 / 连通域筛选 / 亚像素测量 / SDF 转网格 / 点云聚类 / 镜头离焦。*
 
-**Fullseye**（工作代号 imgevolve）是一套 HALCON/HDevelop 级别的实用工具：由 numpy 原生的图像处理算子库、HDevelop 风格的可视化流水线设计环境（Fullseye Studio）以及执行运行时（FullseyeEngine）三者组成。算子约 **930** 个（以注册表计数），其中 **979/2313** 个真实 HALCON 算子做到了 genuine（真正等效）实现，覆盖 48 个类别。
+**Fullseye**（工作代号 imgevolve）是一套 HALCON/HDevelop 级别的实用工具：由 numpy 原生的图像处理算子库、HDevelop 风格的可视化流水线设计环境（Fullseye Studio）以及执行运行时（FullseyeEngine）三者组成。算子约 **931** 个（以注册表计数），其中 **979/2313** 个真实 HALCON 算子做到了 genuine（真正等效）实现，覆盖 48 个类别。
 
 ★ **在图像处理库中少见，Fullseye 还内置「虚拟光学设计」** —— 薄/厚透镜、光线追迹、Seidel 像差与 PSF/MTF，并以阻尼最小二乘（Levenberg–Marquardt）优化透镜处方本身（`optimize_lens`）。可从**设计成像系统，到用上述算子检查其成像，一气呵成** —— 在半导体与精密计量中是明确的差异化。
 
@@ -66,7 +67,7 @@
 
 共有 **2,002 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **49 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 931/931、类型化台账 1050/1062、单行门面 `fullseye.<名称>` 568/1189 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 931/931、类型化台账 1050/1062、单行门面 `fullseye.<名称>` 568/1190 —— **门面侧仅覆盖一半**。
 
 **内容实测**: 2007 篇中，附有可运行示例的 **1964** 篇(43 篇没有)，用法说明 120 字以上的 **1987** 篇(20 篇仅一行)。结构(调用形式、类型、可衔接算子)2007 篇全有。
 
@@ -203,7 +204,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文档地图 — 共 168 篇
+## 文档地图 — 共 169 篇
 
 完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,002 篇算子说明与 49 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
@@ -329,7 +330,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(96)
+**Other**(97)
 
 | 文档 | 内容 |
 |---|---|
@@ -421,6 +422,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/vibration-and-acoustics.md`](capabilities/vibration-and-acoustics.md) | id: vibration-and-acoustics |
 | [`capabilities/visual-hull-from-silhouettes.md`](capabilities/visual-hull-from-silhouettes.md) | id: visual-hull-from-silhouettes |
 | [`capabilities/volume-from-3d-scan.md`](capabilities/volume-from-3d-scan.md) | id: volume-from-3d-scan |
+| [`capabilities/xlsx-report.md`](capabilities/xlsx-report.md) | id: xlsx-report |
 | [`hardening/carve-look-at-unreachable-and-silent.md`](hardening/carve-look-at-unreachable-and-silent.md) | id: carve-look-at-unreachable-and-silent |
 | [`hardening/dem-viewshed-self-occlusion.md`](hardening/dem-viewshed-self-occlusion.md) | id: dem-viewshed-self-occlusion |
 | [`hardening/ecef-to-geodetic-returned-latitude-180.md`](hardening/ecef-to-geodetic-returned-latitude-180.md) | id: ecef-to-geodetic-returned-latitude-180 |
