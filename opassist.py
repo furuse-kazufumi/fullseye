@@ -998,8 +998,45 @@ def find(query: str, limit: int = 20) -> list[dict]:
         hits.append({"op": op.name, "ledger": _REGISTRY_LEDGER, "module": "ops",
                      "category": op.category, "doc": doc,
                      "call": "apply", "score": score})
+    # n-ary 層(``imgops_nary``、17 op: add_image / sub_image / mult_image / div_image …)。
+    # ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、
+    # ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、
+    # op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
+    for nop in _nary_ops():
+        if nop.name in seen:
+            continue
+        doc = str(getattr(nop, "desc", "") or "")
+        hay_name = nop.name.lower()
+        if hay_name == q:
+            score = 99
+        elif q in hay_name:
+            score = 59 + max(0, 20 - len(hay_name))
+        elif q in doc.lower():
+            score = 29
+        elif q in str(getattr(nop, "halcon", "") or "").lower():
+            score = 19
+        else:
+            fr = _stem_fraction(q_tokens, hay_name)
+            score = int(round(44 * fr)) if fr else 0
+            if not score:
+                fr = _stem_fraction(q_tokens, doc)
+                score = int(round(21 * fr)) if fr else 0
+            if not score:
+                continue
+        hits.append({"op": nop.name, "ledger": "nary", "module": "imgops_nary",
+                     "category": "nary", "doc": doc,
+                     "call": "apply([%s], name)" % ", ".join("x%d" % i for i in range(int(nop.arity))),
+                     "score": score})
     hits.sort(key=lambda h: (-h["score"], h["op"]))
     return hits[: max(int(limit), 1)]
+
+
+def _nary_ops():
+    """``imgops_nary.build_nary()`` を遅延で読む(読めなければ空 —— 検索だけ痩せる)。"""
+    try:
+        return importlib.import_module("imgops_nary").build_nary()
+    except Exception:                                    # noqa: BLE001
+        return ()
 
 
 def _registry_ops():

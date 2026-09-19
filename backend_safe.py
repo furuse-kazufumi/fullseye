@@ -241,6 +241,9 @@ def guard(fn, out_sort=None, *, name=None, on_fail=None, finish=None):
             return on_fail(v)
         if finish is not None:
             return finish(out, v)
+        if out is not None:                 # 例外の経路は既に記録済み
+            _note_nonfinite(out, v, out_sort,
+                            name or getattr(_TL, "op", None) or getattr(fn, "__qualname__", repr(fn)))
         return sanitize(out, v, out_sort)
     w.__wrapped__ = fn
     w.__name__ = getattr(fn, "__name__", "op")
@@ -402,6 +405,49 @@ def region01(out):
     if out.dtype.kind == "f" and np.all((r == 0) | (r == 1)):
         return out                              # already {0,1} float -> unchanged
     return (r > 0.5).astype(np.float64)
+
+
+#: 出力の NaN を**仕様として文書化している** op。``_note_nonfinite`` はこれらを記録しない。
+#: ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は
+#: 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、
+#: レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。
+#: 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の
+#: docstring に「NaN を返す理由」が書いてあることを確かめること。
+NONFINITE_BY_DESIGN: frozenset = frozenset({"tb_fly_tau_from_expansion"})
+
+
+def _note_nonfinite(out, v, out_sort, name) -> None:
+    """``sanitize`` が NaN/Inf を置き換える**前に**、その事実を台帳に残す(strict では例外)。
+
+    ★2026-09-19(GenSpark #14): 中央 1 画素だけ NaN の画像を gaussian / median_image / mean_image /
+    sobel_amp に通すと、出力は**全画素が有限**で、警告も台帳の記録も無かった。``_finite`` が
+    非有限の画素を sort の既定値で埋めて返していたから —— 「有限で sort として妥当」の約束は
+    守っていたが、**「記録し、黙らない」の約束を破っていた**(``on_error="raise"`` でも止まらない)。
+    センサ欠損・0 除算・マスク由来の NaN が「正常な有限値」に化けるのは、検査では見逃しに直結する。
+    ここでは値を変えず(置き換えは従来どおり ``sanitize``)、件数を数えて記録するだけ。
+    """
+    bad = None
+    if isinstance(out, np.ndarray) and out.size and out.dtype.kind in "fc":
+        real = out.real if out.dtype.kind == "c" else out
+        finite = np.isfinite(real)
+        if not finite.all():
+            bad = (int(real.size - np.count_nonzero(finite)), int(real.size))
+    elif isinstance(out, (float, int, np.floating, np.integer, np.complexfloating, complex)):
+        if not np.isfinite(float(np.real(out))):
+            bad = (1, 1)
+    if bad is None or name in NONFINITE_BY_DESIGN:
+        return
+    vin = v if isinstance(v, np.ndarray) else None
+    nin = 0
+    if vin is not None and vin.dtype.kind in "fc" and vin.size:
+        nin = int(vin.size - np.count_nonzero(np.isfinite(vin.real if vin.dtype.kind == "c" else vin)))
+    err = ValueError(
+        "non_finite_output: %d of %d values are NaN/Inf%s; they are replaced by the sort fallback — the "
+        "contract is finite float64 in [0,1]. Mask or fill non-finite input first (np.isfinite / np.nan_to_num)"
+        % (bad[0], bad[1], " (the input itself has %d non-finite values)" % nin if nin else ""))
+    if is_strict():
+        raise err
+    record(name, err, out_sort, source="output")
 
 
 def sanitize(out, v, out_sort=None):

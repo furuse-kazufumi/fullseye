@@ -2362,7 +2362,13 @@ def list_ops(sort: str | None = None, search: str | None = None,
 
 
 def op_names() -> list[str]:
-    """Sorted list of every registry op name (the identifiers :func:`apply` takes)."""
+    """Sorted list of every registry op name (the identifiers :func:`apply` takes with ONE input).
+
+    ★n-ary ops — ``add_image`` / ``sub_image`` / ``mult_image`` / ``div_image`` … (17) — are **not**
+    in this list: they take a LIST of inputs (``fullseye.apply([x0, x1], "add_image")``) and live in
+    the ``"nary"`` tier of :func:`list_ops`; :func:`op_find` searches them too (2026-09-19, GenSpark N2:
+    "callable but unlisted").
+    """
     return sorted(o.name for o in _ops.REGISTRY)
 
 

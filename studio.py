@@ -4172,6 +4172,7 @@ def build_window(model=None):
 
     # ---- branded toolbar (icon-only; tooltips carry the meaning) ------------- #
     tb = QtWidgets.QToolBar(); tb.setMovable(False); tb.setFloatable(False)
+    tb.setObjectName("main_tools")      # ★無名だと QMainWindow.saveState() が警告し、配置の保存・復元から漏れる
     tb.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
     tb.setIconSize(QtCore.QSize(18, 18))
     win.addToolBar(tb)
@@ -4300,6 +4301,7 @@ def build_window(model=None):
     def refill_ops():
         kw = search.text().lower(); c = cat.currentText()
         op_list.clear()
+        ranked = []
         for r in all_ops:
             if c != "all categories" and r["category"] != c:
                 continue
@@ -4320,6 +4322,16 @@ def build_window(model=None):
                      doc]).lower()
             if kw and kw not in hay:
                 continue
+            # ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が
+            # 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む →
+            # HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+            nm = r["name"].lower()
+            hal = (r.get("halcon") or "").lower()
+            rank = (0 if not kw or nm == kw else 1 if nm.startswith(kw) else 2 if kw in nm
+                    else 3 if kw in hal else 4)
+            ranked.append((rank, r))
+        ranked.sort(key=lambda t: t[0])
+        for _rank, r in ranked:
             it = QtWidgets.QListWidgetItem(f"{r['name']}   [{r['in_sort']} → {r['out_sort']}]")
             it.setData(QtCore.Qt.UserRole, r["name"])
             it.setToolTip(op_tooltip(r))
@@ -5295,12 +5307,19 @@ def build_window(model=None):
             flash("load an image first (File ▸ Open image / Synthetic demo)")
             return
         a, b = op_a_spin.value(), op_b_spin.value()
+        mark = api._bs.mark()
         try:
             out = api.apply(base, name, a, b)
         except Exception as e:
             report_error("Run once", e)
             return
+        # ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を
+        # Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか
+        # 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+        fell = api._bs.events_since(mark)
         title = "%s (a=%.2f, b=%.2f)" % (name, a, b)
+        if fell:
+            title += " — FALLBACK"
         pm = None
         if isinstance(out, np.ndarray) and out.ndim in (2, 3):
             qi = _to_qimage(apply_display(out, display.currentText()), QtGui)
@@ -5311,7 +5330,11 @@ def build_window(model=None):
                 # default (current = the resident main window): open a fresh scratch
                 # window so the single-shot preview never clobbers the pipeline result
                 new_graphics_window(pm, title)
-                flash("ran %s once — result in a new graphics window (pipeline unchanged)" % name)
+                if fell:
+                    flash("⚠ ran %s once but it FELL BACK (%s) — the window shows the sort fallback, not a result"
+                          % (name, fell[-1]["error"][:110]))
+                else:
+                    flash("ran %s once — result in a new graphics window (pipeline unchanged)" % name)
             else:
                 # a secondary window is current: reuse it (HDevelop dev_display) so
                 # repeated Run-once tuning doesn't spawn a new window every time
@@ -6782,6 +6805,15 @@ def build_window(model=None):
         step_to(min(selected_index() + 1, len(model.stages) - 1))
 
     def _do_run_all():
+        # ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報
+        # N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は
+        # 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。
+        # 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+        prog = getattr(win, "_program", None)
+        if state.get("code_dirty") and prog:
+            prog["apply"]()
+            if state.get("code_dirty"):
+                return
         step_to(len(model.stages) - 1)
     win._do_step = _do_step; win._do_run_all = _do_run_all; win._do_reset = reset_to_raw
     b_reset.clicked.connect(reset_to_raw)
@@ -6814,7 +6846,10 @@ def build_window(model=None):
     # with typing, so these are WindowShortcut — press F6 to step from any panel,
     # F5 to run all, Shift+F5 to reset, exactly like a debugger (same _do_* handlers).
 
-    act_dbg_run = _act("Run all (F5)", "F5", "Run the whole pipeline to the final result (debugger Run)")
+    act_dbg_run = _act("Run all (F5 / Ctrl+R)", "F5",
+                       "Run the whole pipeline to the final result (debugger Run). Applies unapplied Program edits first")
+    # Ctrl+R = 「実行」の一般的な慣習(GenSpark 第 8 報)。HDevelop 流の F5 はそのまま、別名として足す。
+    act_dbg_run.setShortcuts([QtGui.QKeySequence("F5"), QtGui.QKeySequence("Ctrl+R")])
     act_dbg_step = _act("Step (F6)", "F6", "Advance one pipeline stage (debugger Step) — works from any panel")
     act_dbg_reset = _act("Reset to start (Shift+F5)", "Shift+F5", "Show the raw image — restart the step-through")
     win._menus["run"].addSeparator()

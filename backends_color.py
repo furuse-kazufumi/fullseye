@@ -272,6 +272,18 @@ _DEFS = [
 
 
 def _real_ops() -> set:
+    """実在する HALCON 名。出荷される ``halcon_names_data`` を先に、checkout の JSON を次に読む。
+
+    ★2026-09-19: JSON しか読んでおらず、wheel(data/ 無し)では空集合 → ``build`` の
+    ``if real and n not in real`` が**全部通す no-op** になっていた(backends_auto が 0.1 系で潰した
+    fail-open と同じ形)。名前の門は配布物側でも立っていなければならない。
+    """
+    try:
+        from halcon_names_data import HALCON_NAMES
+        if HALCON_NAMES:
+            return set(HALCON_NAMES)
+    except Exception:  # noqa: BLE001 - 生成物が無い checkout: JSON へ
+        pass
     p = os.path.join(HERE, "data", "halcon_operators.json")
     if not os.path.exists(p):
         return set()

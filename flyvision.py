@@ -795,7 +795,10 @@ def fly_tau_from_expansion(theta_signal, dt_s, shape="sphere"):
     Returns a 1-D float64 array of the time-to-contact per sample, seconds.
     Non-expanding samples (``theta' <= 0``) return ``NaN`` — a documented
     non-finite, because a contracting or static angle has no time-to-contact and
-    inventing one would be a plausible-wrong number.
+    inventing one would be a plausible-wrong number. (The registry op
+    ``tb_fly_tau_from_expansion`` must return a finite signal, so it replaces those
+    NaN by the signal fallback without recording a fallback event —
+    ``backend_safe.NONFINITE_BY_DESIGN``; call this function directly to keep the NaN.)
 
     Ground truth: for the model's own object geometry (``theta = 2 asin(l/d)`` for a
     sphere, ``theta = 2 atan(l/d)`` for a disk) approaching at speed ``|v|``, the

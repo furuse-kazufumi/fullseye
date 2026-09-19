@@ -435,20 +435,28 @@ def _gate(fn, in_sort, out_sort, raw=None):
     配列という「sort としては妥当な値」を返すため、**必ず合格する**。
     生レシピを先に叩いて初めて「そもそも動かない」を判定できる。
     """
-    n = 24
+    # ★探針は 32 px(2026-09-19、GenSpark 第 7 報 N12): 24 px だと db4 / sym4 の level=2 に足りず
+    # (必要 (8-1)·2² = 28 px)、import のたびに pywt の「Level value of 2 is too high」が漏れていた。
+    # さらに `python -W error::UserWarning` では警告が例外になり、この try/except が **xwt_visushrink /
+    # xwt_firm_denoise を黙って落として**いた(931 → 929 op、FAILED_BACKENDS にも残らない)。
+    # 探針は機能の門であって警告の門ではないので、探針の中の警告は数えない。
+    n = 32
     yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
     img = np.clip(xx / n * 0.6 + 0.2, 0, 1)
-    img[(yy - 8) ** 2 + (xx - 8) ** 2 < 12] = 0.9
+    img[(yy - 10) ** 2 + (xx - 10) ** 2 < 16] = 0.9
     base = img if in_sort == "image" else (img > 0.5).astype(np.float64)
-    if raw is not None:
+    import warnings as _w
+    with _w.catch_warnings():
+        _w.simplefilter("ignore")
+        if raw is not None:
+            try:
+                raw(base.copy(), 0.5, 0.4)
+            except Exception:
+                return False                 # レシピ自体が動かない(環境依存も含む)
         try:
-            raw(base.copy(), 0.5, 0.4)
+            o = fn(base.copy(), 0.5, 0.4)
         except Exception:
-            return False                 # レシピ自体が動かない(環境依存も含む)
-    try:
-        o = fn(base.copy(), 0.5, 0.4)
-    except Exception:
-        return False
+            return False
     if out_sort == "feature":
         return np.size(o) > 0 and np.isfinite(float(np.asarray(o).reshape(-1)[0]))
     if not (isinstance(o, np.ndarray) and o.ndim == 2 and np.all(np.isfinite(o))):

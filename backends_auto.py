@@ -1758,8 +1758,9 @@ def load_specs() -> list[tuple]:
         for fn in sorted(os.listdir(d)):
             if fn.endswith(".json"):
                 try:
-                    for s in json.load(open(os.path.join(d, fn), encoding="utf-8")):
-                        specs.append(s)
+                    with open(os.path.join(d, fn), encoding="utf-8") as fh:
+                        for s in json.load(fh):
+                            specs.append(s)
                     loaded = True
                 except Exception:
                     pass

@@ -263,7 +263,18 @@ def cmd_coverage(a):
     return honest_summary.main()
 
 
+def _prog() -> str:
+    """呼ばれ方に合わせた CLI 名: console_script なら ``fullseye``、checkout なら ``py -3.11 imgevolve.py``。"""
+    import sys as _s
+    base = os.path.basename(_s.argv[0] or "").lower()
+    return "fullseye" if base.startswith("fullseye") else "py -3.11 imgevolve.py"
+
+
 def cmd_parity(a):
+    # ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると
+    # 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
+    import sys as _s
+    _s.argv = ["parity.py"]
     import parity
     return parity.main()
 
@@ -497,8 +508,11 @@ def cmd_samples(a):
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    # ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、
+    # `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
+    ap = argparse.ArgumentParser(description=__doc__.replace("py -3.11 imgevolve.py", _prog()),
+                                 formatter_class=argparse.RawDescriptionHelpFormatter,
+                                 epilog="(installed: `fullseye <cmd>`; in a checkout: `py -3.11 imgevolve.py <cmd>`)")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p = sub.add_parser("ops", help="list/search implemented operators")
@@ -568,7 +582,7 @@ def main() -> int:
 
     p = sub.add_parser("samples",
                        help="opt-in sample datasets (not bundled): list URLs / open folder / fetch")
-    p.add_argument("action", choices=["list", "open", "where", "download", "verify"],
+    p.add_argument("action", nargs="?", default="list", choices=["list", "open", "where", "download", "verify"],
                    help="list: show datasets+URLs; open: open the save folder; "
                         "download/verify: optional convenience")
     p.add_argument("id", nargs="?", default=None, help="a sample id (see `samples list`)")

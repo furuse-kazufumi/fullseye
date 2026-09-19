@@ -29,7 +29,17 @@ def main() -> int:
     import verify_auto as VA
     import imgops_nary as NA
 
-    data = HC.load_operators(os.path.join(HERE, "data", "halcon_operators.json"))
+    ops_json = os.path.join(HERE, "data", "halcon_operators.json")
+    if not os.path.exists(ops_json):
+        # ★wheel には data/halcon_operators.json を**同梱しない**(MVTec のリファレンスの説明文を含むため。
+        # 名前だけは halcon_names_data として出荷している)。`fullseye coverage` が FileNotFoundError で落ちていた
+        # (GenSpark 第 6 報 N5)ので、無いなら何が要るかと数字の在処を言って終える。
+        print("coverage: this command needs the checkout's data/halcon_operators.json (the HALCON reference "
+              "list with chapters and descriptions), which is not shipped in the wheel. The current numbers are "
+              "in docs/HALCON_PARITY.md of the repository (https://github.com/furuse-kazufumi/fullseye); "
+              "the shipped name list alone is halcon_names_data.HALCON_NAMES.")
+        return 1
+    data = HC.load_operators(ops_json)
     vers = HC.load_versions(os.path.join(HERE, "data", "halcon_versions.json"))
     a = HC.analyze(data, R.REGISTRY, vers)
     reg_covered = set(a["covered"])
