@@ -16,7 +16,7 @@
  "measured": "2026-09-19",
  "tolerance_note": "実測が記録の 1.25 倍を超えたら、この台帳を更新する(増えたことを記録に残すため)。",
  "sizes": {
-  "examples2d.EXAMPLES": 217,
+  "examples2d.EXAMPLES": 218,
   "examples_poc_files": 118,
   "ops3d.OPS3D": 357,
   "examples3d.gallery": 117,
@@ -25,6 +25,6 @@
   "comm.protocols": 23,
   "poc_exhibits": 117,
   "capabilities": 28,
-  "hardening_findings": 8
+  "hardening_findings": 11
  }
 }

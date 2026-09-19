@@ -5,7 +5,7 @@ category: rank
 in: image
 out: image
 halcon: median_image
-examples: [gallery2d_smoothing_rank, poc_prnu_camera_fingerprint]
+examples: [gallery2d_smoothing_rank, genspark_external_review, poc_prnu_camera_fingerprint]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -68,6 +68,7 @@ median_image 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
+- [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
 - [poc_prnu_camera_fingerprint](../../../../examples/poc_prnu_camera_fingerprint.py) — `py -3.11 examples/poc_prnu_camera_fingerprint.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

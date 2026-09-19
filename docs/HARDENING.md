@@ -14,21 +14,22 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**8 件(うち直したもの 8 件)。見つけた PoC は 8 本。**
+**11 件(うち直したもの 11 件)。見つけた PoC は 9 本。**
 
 ## 種別ごと
 
 | 種別 | 件数 | 直した |
 |---|---:|---:|
-| 静かに間違う(例外が出ない) | 3 | 3 |
-| 実装の誤り | 1 | 1 |
-| 在るのに引けない | 3 | 3 |
+| 静かに間違う(例外が出ない) | 4 | 4 |
+| 実装の誤り | 2 | 2 |
+| 在るのに引けない | 4 | 4 |
 | 説明の穴(片道の参照・古い数字) | 1 | 1 |
 
 ## 見つけた PoC ごと
 
 | PoC | 件数 |
 |---|---:|
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 3 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
 | [`poc_multibeam_bathymetry`](../examples/poc_multibeam_bathymetry.py) | 1 |
@@ -60,6 +61,12 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 
 見つけた PoC: `poc_thermal_radiometry` / 直した所: `astrostack.py` / 門: `test_mad_warns_when_quantisation_collapses_it_to_zero`, `test_star_detect_refuses_instead_of_silently_finding_nothing` / 状態: fixed
 
+#### [変換の定義が無い入力が、黙って「それらしい」出力になっていた](hardening/inputs-without-a-conversion-were-not-refused.md)
+
+第三者レビュー(GenSpark、0.2.0、core / all の 2 環境)が dtype と形を網羅して見つけた 4 件。共通点は**例外にならず、値が返る**こと。
+
+見つけた PoC: `genspark_external_review` / 直した所: `api.py`, `ops.py` / 門: `test_non_numeric_arrays_are_refused_under_every_policy`, `test_complex_input_to_a_real_op_is_refused_not_silently_realised`, `test_otsu_all_nan_is_an_explicit_error_not_a_numpy_runtime_warning`, `test_nary_shape_mismatch_says_what_is_needed`, `test_op_objects_pickle_by_name` / 状態: fixed
+
 ### 実装の誤り
 
 #### [可視領域が、目線より高いセルを軒並み「見えない」と返していた](hardening/dem-viewshed-self-occlusion.md)
@@ -67,6 +74,12 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 平地に置いた円錐の**頂点**が、60 m 先・目線 2.0 m の開けた平地から可視 0.0。目線より高い 1541 セルの可視は **0 個**、底面の遮蔽率 0.8863(閉形式 0.5710)。独立に最小再現: 平地に高さ 10 m の柱を立てると可視 0.0、目線より低い 1 m の柱は 可視 1.0。**凸な立体の最高点は外から必ず見える**ので、幾何として誤り。
 
 見つけた PoC: `poc_stockpile_volume` / 直した所: `demops.py` / 門: `test_a_hill_taller_than_the_eye_is_visible_from_the_open`, `test_the_wall_itself_is_visible_even_though_its_far_side_is_not`, `test_a_hill_is_hidden_only_when_the_sight_line_passes_below_the_wall` / 状態: fixed
+
+#### [run_pipeline の「外した書き方」が原因の読めない例外になっていた](hardening/run-pipeline-stage-forms-fail-obscurely.md)
+
+`run_pipeline(image, stages)` は `["gaussian", "otsu"]` と `[("gaussian", 0.3, 0.5), ...]` を受ける。第三者レビュー(GenSpark)が自然に書いた 3 つの形は、どれも**原因を指さない例外**で落ちた。
+
+見つけた PoC: `genspark_external_review` / 直した所: `api.py` / 門: `test_run_pipeline_accepts_dict_knobs_comma_string_and_dict_stages`, `test_run_pipeline_bad_forms_say_why` / 状態: fixed
 
 ### 在るのに引けない
 
@@ -87,6 +100,12 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 回転不変性を監査する PoC を書くとき、「回転不変なモーメント」を探して `moment_invariants` を見つけ、`(H,W)` の二値領域を渡した。返ってきたのは
 
 見つけた PoC: `poc_rotation_invariance_audit` / 直した所: `moments3d.py` / 門: `test_the_three_d_moment_op_points_at_the_two_d_region_family` / 状態: fixed
+
+#### [「unknown operator」が backend 不足を隠し、存在しない CLI を案内していた](hardening/unknown-operator-hides-missing-backend.md)
+
+第三者(GenSpark)が 0.2.0 を **core**(`pip install fullseye`、693 op)と **all**(`fullseye[all]`、899 op)の 2 環境で使い込んだ。core で `fullseye.apply(img, "sk_canny")` を呼ぶと
+
+見つけた PoC: `genspark_external_review` / 直した所: `api.py`, `ops.py`, `imgevolve.py`, `fullseye/data/OP_INDEX.json` / 門: `test_missing_backend_error_is_a_keyerror_and_names_the_missing_extra`, `test_unknown_operator_message_names_a_real_cli_and_op_find`, `test_op_index_rows_carry_module_and_requires`, `test_optional_deps_table_matches_pyproject_extras` / 状態: fixed
 
 ### 説明の穴(片道の参照・古い数字)
 

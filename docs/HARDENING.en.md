@@ -15,21 +15,22 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**8 findings (8 fixed), from 8 PoCs.**
+**11 findings (11 fixed), from 9 PoCs.**
 
 ## By kind
 
 | Kind | Findings | Fixed |
 |---|---:|---:|
-| Silently wrong (no exception) | 3 | 3 |
-| Implementation defect | 1 | 1 |
-| Present but unreachable | 3 | 3 |
+| Silently wrong (no exception) | 4 | 4 |
+| Implementation defect | 2 | 2 |
+| Present but unreachable | 4 | 4 |
 | Documentation hole (one-way reference, stale number) | 1 | 1 |
 
 ## By the PoC that found it
 
 | PoC | Findings |
 |---|---:|
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 3 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
 | [`poc_multibeam_bathymetry`](../examples/poc_multibeam_bathymetry.py) | 1 |
@@ -61,6 +62,12 @@ Found by: `poc_print_registration` / Changed: `astrostack.py` / Gate: `test_inli
 
 Found by: `poc_thermal_radiometry` / Changed: `astrostack.py` / Gate: `test_mad_warns_when_quantisation_collapses_it_to_zero`, `test_star_detect_refuses_instead_of_silently_finding_nothing` / Status: fixed
 
+#### [変換の定義が無い入力が、黙って「それらしい」出力になっていた](hardening/inputs-without-a-conversion-were-not-refused.md) _(ja)_
+
+第三者レビュー(GenSpark、0.2.0、core / all の 2 環境)が dtype と形を網羅して見つけた 4 件。共通点は**例外にならず、値が返る**こと。 _(ja)_
+
+Found by: `genspark_external_review` / Changed: `api.py`, `ops.py` / Gate: `test_non_numeric_arrays_are_refused_under_every_policy`, `test_complex_input_to_a_real_op_is_refused_not_silently_realised`, `test_otsu_all_nan_is_an_explicit_error_not_a_numpy_runtime_warning`, `test_nary_shape_mismatch_says_what_is_needed`, `test_op_objects_pickle_by_name` / Status: fixed
+
 ### Implementation defect
 
 #### [可視領域が、目線より高いセルを軒並み「見えない」と返していた](hardening/dem-viewshed-self-occlusion.md) _(ja)_
@@ -68,6 +75,12 @@ Found by: `poc_thermal_radiometry` / Changed: `astrostack.py` / Gate: `test_mad_
 平地に置いた円錐の**頂点**が、60 m 先・目線 2.0 m の開けた平地から可視 0.0。目線より高い 1541 セルの可視は **0 個**、底面の遮蔽率 0.8863(閉形式 0.5710)。独立に最小再現: 平地に高さ 10 m の柱を立てると可視 0.0、目線より低い 1 m の柱は 可視 1.0。**凸な立体の最高点は外から必ず見える**ので、幾何として誤り。 _(ja)_
 
 Found by: `poc_stockpile_volume` / Changed: `demops.py` / Gate: `test_a_hill_taller_than_the_eye_is_visible_from_the_open`, `test_the_wall_itself_is_visible_even_though_its_far_side_is_not`, `test_a_hill_is_hidden_only_when_the_sight_line_passes_below_the_wall` / Status: fixed
+
+#### [run_pipeline の「外した書き方」が原因の読めない例外になっていた](hardening/run-pipeline-stage-forms-fail-obscurely.md) _(ja)_
+
+`run_pipeline(image, stages)` は `["gaussian", "otsu"]` と `[("gaussian", 0.3, 0.5), ...]` を受ける。第三者レビュー(GenSpark)が自然に書いた 3 つの形は、どれも**原因を指さない例外**で落ちた。 _(ja)_
+
+Found by: `genspark_external_review` / Changed: `api.py` / Gate: `test_run_pipeline_accepts_dict_knobs_comma_string_and_dict_stages`, `test_run_pipeline_bad_forms_say_why` / Status: fixed
 
 ### Present but unreachable
 
@@ -88,6 +101,12 @@ Found by: `poc_search_sweep_width` / Changed: `opassist.py`, `astrostack.py` / G
 回転不変性を監査する PoC を書くとき、「回転不変なモーメント」を探して `moment_invariants` を見つけ、`(H,W)` の二値領域を渡した。返ってきたのは _(ja)_
 
 Found by: `poc_rotation_invariance_audit` / Changed: `moments3d.py` / Gate: `test_the_three_d_moment_op_points_at_the_two_d_region_family` / Status: fixed
+
+#### [「unknown operator」が backend 不足を隠し、存在しない CLI を案内していた](hardening/unknown-operator-hides-missing-backend.md) _(ja)_
+
+第三者(GenSpark)が 0.2.0 を **core**(`pip install fullseye`、693 op)と **all**(`fullseye[all]`、899 op)の 2 環境で使い込んだ。core で `fullseye.apply(img, "sk_canny")` を呼ぶと _(ja)_
+
+Found by: `genspark_external_review` / Changed: `api.py`, `ops.py`, `imgevolve.py`, `fullseye/data/OP_INDEX.json` / Gate: `test_missing_backend_error_is_a_keyerror_and_names_the_missing_extra`, `test_unknown_operator_message_names_a_real_cli_and_op_find`, `test_op_index_rows_carry_module_and_requires`, `test_optional_deps_table_matches_pyproject_extras` / Status: fixed
 
 ### Documentation hole (one-way reference, stale number)
 
