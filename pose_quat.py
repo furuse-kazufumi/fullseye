@@ -116,7 +116,33 @@ def _mat_to_quat(R):
 
 
 # ── pose = [tx,ty,tz, rx,ry,rz] ────────────────────────────────────────────── #
+def _as_pose(pose, fn="pose"):
+    """pose を 6/7 要素ベクトル ``(tx, ty, tz, rx, ry, rz[, type])`` に揃える。
+
+    ★2026-09-19(GenSpark 第 14 報 D-1): ``pose_to_hom_mat3d_local`` が返す 4×4 を ``pose_to_quat`` に
+    戻すと ``_pose_to_R`` の ``pose[4]`` で IndexError(4×4 の 5 行目を引く)—— **自分の出力を自分で
+    受けられず**、文は深い位置の添字エラーで原因が読めなかった。4×4 / 3×3 は行列として受け(回転部と
+    並進を ``hom_mat3d_to_pose_local`` で戻す)、それ以外の形は何が要るかを言って断る。
+    """
+    try:
+        p = np.asarray(pose, dtype=float)
+    except (TypeError, ValueError):
+        raise ValueError("%s: pose must be a 6/7-vector (tx, ty, tz, rx, ry, rz[, type]) or a 3x3 / 4x4 matrix, "
+                         "got %s" % (fn, type(pose).__name__)) from None
+    if p.shape == (4, 4):
+        return hom_mat3d_to_pose_local(p)
+    if p.shape == (3, 3):
+        H = np.eye(4)
+        H[:3, :3] = p
+        return hom_mat3d_to_pose_local(H)
+    if p.ndim == 1 and p.size in (6, 7):
+        return p
+    raise ValueError("%s: pose must be a 6/7-vector (tx, ty, tz, rx, ry, rz[, type]) or a 3x3 / 4x4 matrix, "
+                     "got shape %s" % (fn, p.shape))
+
+
 def _pose_to_R(pose):
+    pose = _as_pose(pose, "_pose_to_R")
     rx, ry, rz = pose[3], pose[4], pose[5]
     cx, sx = np.cos(rx), np.sin(rx)
     cy, sy = np.cos(ry), np.sin(ry)
@@ -139,6 +165,9 @@ def create_pose(tx=0.0, ty=0.0, tz=0.0, rx=0.0, ry=0.0, rz=0.0):
 
 
 def pose_to_hom_mat3d_local(pose):
+    """HALCON 流の pose ``(tx, ty, tz, rx, ry, rz[, type])`` を 4×4 同次行列に(``Rz·Ry·Rx``、角はラジアン)。
+    4×4 / 3×3 を渡すとそのまま行列として通る(``_as_pose``)。"""
+    pose = _as_pose(pose, "pose_to_hom_mat3d_local")
     H = np.eye(4)
     H[:3, :3] = _pose_to_R(pose)
     H[:3, 3] = pose[:3]
@@ -160,6 +189,7 @@ def pose_invert(p):
 
 
 def pose_to_quat(pose):
+    """pose(6/7 ベクトル、または 3×3 / 4×4 行列)の回転部を単位四元数 ``(w, x, y, z)`` に。"""
     return _mat_to_quat(_pose_to_R(pose))
 
 
@@ -202,6 +232,8 @@ def convert_point_3d_spher_to_cart(r, lon, lat):
 
 # ── 二重四元数 ─────────────────────────────────────────────────────────────── #
 def pose_to_dual_quat(pose):
+    """pose(6/7 ベクトル、または 3×3 / 4×4 行列)を双対四元数 ``(qr[4], qd[4])`` に(qd = ½·t·qr)。"""
+    pose = _as_pose(pose, "pose_to_dual_quat")
     qr = pose_to_quat(pose)
     t = np.concatenate([[0.0], np.asarray(pose[:3], float)])
     qd = 0.5 * quat_compose(t, qr)

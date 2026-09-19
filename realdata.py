@@ -64,24 +64,31 @@ SAMPLE_PHOTOS = {
 }
 
 
+class RealDataError(RuntimeError):
+    """実写サンプルが引けない(未登録名 / scikit-image 不在 / 同梱されていない)。
+
+    ★2026-09-19(GenSpark 第 13 報): ここは以前 ``raise SystemExit(1)`` だった。PoC スクリプトの都合
+    (理由を印字して rc 1)だが、``fullseye.sample_photo`` は**公開 API** なので、未登録名を渡した
+    呼び手のプロセス(GUI・サービス・テストハーネス)ごと落としていた —— 第三者のスモークでは
+    「ワーカープロセスが消滅 = ネイティブクラッシュ」と観測された。fail-closed は例外で守る。
+    """
+
+
 def _data():
     try:
         import skimage.data as _d
     except Exception as exc:                                    # pragma: no cover
-        print("実データが引けない: scikit-image が入っていない (%s)。"
-              % type(exc).__name__)
-        print("  pip install -e \".[skimage]\" で入る。")
-        print("この PoC は実写でしか意味が無いので、黙って通さずここで止める。")
-        raise SystemExit(1)
+        raise RealDataError(
+            "実データが引けない: scikit-image が入っていない (%s)。pip install \"fullseye[skimage]\" で入る。"
+            "この PoC は実写でしか意味が無いので、黙って通さずここで止める。" % type(exc).__name__) from exc
     return _d
 
 
 def sample_photo_raw(name: str):
     """実写を 1 つ返す。無ければ**理由を印字して落ちる**(fail-closed)。"""
     if name not in SAMPLE_PHOTOS:
-        print("未登録の実データ名: %r (登録済み: %s)"
-              % (name, ", ".join(sorted(SAMPLE_PHOTOS))))
-        raise SystemExit(1)
+        raise RealDataError("未登録の実データ名: %r (登録済み: %s)"
+                            % (name, ", ".join(sorted(SAMPLE_PHOTOS))))
     fn = SAMPLE_PHOTOS[name][0]
     d = _data()
     try:
@@ -91,9 +98,8 @@ def sample_photo_raw(name: str):
         #   pooch で取りに行く。取りに行けないものは**この repo では使わない**
         #   (PoC が回線に依存すると、落ちた理由が実装かネットワークか
         #   分からなくなる)。
-        print("実データ %r を読めなかった: %s: %s" % (name, type(exc).__name__, exc))
-        print("  同梱されていない (pooch のダウンロードが要る) 可能性が高い。")
-        raise SystemExit(1)
+        raise RealDataError("実データ %r を読めなかった: %s: %s — 同梱されていない (pooch のダウンロードが要る) "
+                            "可能性が高い" % (name, type(exc).__name__, exc)) from exc
 
 
 def sample_photo(name: str) -> np.ndarray:

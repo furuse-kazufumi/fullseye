@@ -1150,6 +1150,11 @@ _ALIAS_CANONICAL = {
 
 
 def find_op(name: str):
+    # ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、
+    # `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると
+    # 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
+    if not isinstance(name, str) or not name.strip():
+        return None
     """Return the :class:`ops.Op` for *name*, or ``None``.
 
     Exact op name wins; only then the HALCON alias, preferring the canonical op
@@ -1163,6 +1168,12 @@ def find_op(name: str):
             return o
     hits = [o for o in _ops.REGISTRY if o.halcon == name]
     if not hits:
+        # ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは
+        # GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。
+        # 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
+        norm = name.strip().lower().replace("-", "_")
+        if norm != name:
+            return find_op(norm)
         return None
     for o in hits:
         if o.name == o.halcon:
@@ -1463,7 +1474,8 @@ def _fast_on(flag) -> bool:
 def _policy(on_error):
     p = on_error if on_error is not None else os.environ.get("FULLSEYE_ON_ERROR", "fallback")
     if p not in _ON_ERROR_CHOICES:
-        raise ValueError("on_error must be one of %s, got %r" % (_ON_ERROR_CHOICES, p))
+        raise ValueError("on_error must be one of %s, or None (= FULLSEYE_ON_ERROR, default 'fallback'); got %r"
+                         % (_ON_ERROR_CHOICES, p))
     return p
 
 
@@ -1778,8 +1790,13 @@ def _contract_dtype(v, op, policy):
     if op.in_sort not in _DTYPE_CONTRACT_SORTS:
         return v
     a = v if isinstance(v, np.ndarray) else None
+    if a is not None and a.dtype.kind == "f" and a.dtype.itemsize < 8:
+        # ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、
+        # GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が
+        # 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+        return a.astype(np.float64)
     if a is None or a.dtype.kind not in "bui":
-        return v                                     # float / complex / non-array: unchanged
+        return v                                     # float64 / complex / non-array: unchanged
     if policy == "raise":
         raise ValueError(
             "op %r expects a %s of float64 in [0,1] (the fullseye contract), got dtype %s. "

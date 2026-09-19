@@ -101,6 +101,24 @@ def diagnose_stages(stages) -> list[dict]:
     return problems
 
 
+class _hybridmethod:
+    """classmethod としてもインスタンスメソッドとしても呼べる ``load`` / ``from_dict`` / ``from_ops``。
+
+    ★2026-09-20(GenSpark 第 16 報 N37 / N39): ``e = FullseyeEngine(); e.load(path)`` と書くと、classmethod の
+    ``load`` は**新しい**エンジンを返して捨てられ、``e`` は空のまま —— ``e.run(img)`` は入力をそのまま返し、
+    ``e.describe()`` は ``[]``、``e.validate()`` も ``[]``。第三者はこれを「JSON を検証せず黙って結果を返す」と
+    観測した。自然な書き方なので、インスタンスに対して呼ばれたら**そのインスタンスに読み込んで self を返す**。
+    """
+
+    def __init__(self, f):
+        self.f = f
+        self.__doc__ = f.__doc__
+
+    def __get__(self, obj, cls):
+        import functools
+        return functools.partial(self.f, cls, obj)
+
+
 class FullseyeEngine:
     """Load a Fullseye pipeline and execute it programmatically.
 
@@ -111,8 +129,11 @@ class FullseyeEngine:
     def __init__(self, stages: Iterable | None = None, name: str = "pipeline"):
         self.name = str(name)
         self.stages: list[list] = []
-        for st in (stages or []):
-            if isinstance(st, (tuple, list)):
+        for i, st in enumerate(stages or []):
+            if isinstance(st, dict):                 # Studio / run_pipeline と同じ {"op"|"name", "a", "b"}
+                op = st.get("op", st.get("name"))
+                a, b = st.get("a", 0.5), st.get("b", 0.5)
+            elif isinstance(st, (tuple, list)):
                 if len(st) == 0:
                     continue                         # skip an empty/malformed stage entry
                 op = st[0]
@@ -120,29 +141,48 @@ class FullseyeEngine:
                 b = st[2] if len(st) > 2 else 0.5
             else:
                 op, a, b = st, 0.5, 0.5
-            self.stages.append([str(op), float(a), float(b)])
+            # ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、
+            # {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。
+            if not isinstance(op, str) or not op.strip():
+                raise ValueError("stage %d: the op must be a non-empty name, got %r (a stage is 'name', "
+                                 "(name, a, b) or {'op': name, 'a': .., 'b': ..})" % (i, st))
+            self.stages.append([op, float(a), float(b)])
 
     # ------------------------------------------------------------------ load --
-    @classmethod
-    def from_dict(cls, d: dict, name: str = "pipeline") -> "FullseyeEngine":
+    def _adopt(self, other: "FullseyeEngine") -> "FullseyeEngine":
+        """*other* の中身をこのインスタンスに移す(インスタンスに対する load / from_* 用)。"""
+        self.name, self.stages = other.name, list(other.stages)
+        return self
+
+    @_hybridmethod
+    def from_dict(cls, self, d: dict, name: str = "pipeline") -> "FullseyeEngine":
+        """Build from ``{"stages": [...], "name": ...}`` (what :meth:`to_dict` returns). On an instance,
+        loads INTO that instance and returns it."""
         if not isinstance(d, dict) or "stages" not in d:
             raise ValueError("not a Fullseye pipeline dict (missing 'stages')")
-        return cls(d.get("stages", []), name=d.get("name", name))
+        built = cls(d.get("stages", []), name=d.get("name", name))
+        return self._adopt(built) if self is not None else built
 
-    @classmethod
-    def load(cls, path: str) -> "FullseyeEngine":
-        """Load a pipeline from the JSON that Studio's "Save pipeline" writes."""
+    @_hybridmethod
+    def load(cls, self, path: str) -> "FullseyeEngine":
+        """Load a pipeline from the JSON that Studio's "Save pipeline" writes.
+        ``FullseyeEngine.load(path)`` returns a new engine; ``engine.load(path)`` loads into ``engine``."""
         path = os.fspath(path)
         with open(path, encoding="utf-8") as f:
             d = json.load(f)
-        return cls.from_dict(d, name=os.path.splitext(os.path.basename(path))[0])
+        built = cls.from_dict(d, name=os.path.splitext(os.path.basename(path))[0])
+        return self._adopt(built) if self is not None else built
 
-    @classmethod
-    def from_ops(cls, ops: str, a: float = 0.5, b: float = 0.5,
+    @_hybridmethod
+    def from_ops(cls, self, ops, a: float = 0.5, b: float = 0.5,
                  name: str = "pipeline") -> "FullseyeEngine":
-        """Build from a comma-separated ``--ops`` string (shared knobs)."""
-        names = [s.strip() for s in str(ops).split(",") if s.strip()]
-        return cls([(n, a, b) for n in names], name=name)
+        """Build from a comma-separated ``--ops`` string, or a list of names (shared knobs)."""
+        if isinstance(ops, (list, tuple)):
+            names = [str(s).strip() for s in ops if str(s).strip()]
+        else:
+            names = [s.strip() for s in str(ops).split(",") if s.strip()]
+        built = cls([(n, a, b) for n in names], name=name)
+        return self._adopt(built) if self is not None else built
 
     # --------------------------------------------------------- introspection --
     def __len__(self):
@@ -206,8 +246,13 @@ class FullseyeEngine:
 
     # -------------------------------------------------------------- execution --
     def _stage_tuples(self, upto=None):
-        n = len(self.stages) if upto is None else max(0, min(int(upto) + 1, len(self.stages)))
-        return [tuple(s) for s in self.stages[:n]]
+        if upto is None:
+            return [tuple(s) for s in self.stages]
+        # ★範囲外は断る(2026-09-20、GenSpark N40): --upto 9 / -1 が黙って全段 / 0 段になっていた
+        if not isinstance(upto, (int,)) or isinstance(upto, bool) or not (0 <= int(upto) < len(self.stages)):
+            raise ValueError("upto=%r: must be a stage index 0..%d (inclusive; 'run stages 0..upto')"
+                             % (upto, len(self.stages) - 1))
+        return [tuple(s) for s in self.stages[: int(upto) + 1]]
 
     def run(self, image, upto: int | None = None, coerce: bool = True):
         """Execute the pipeline on *image* (numpy in, result out).
@@ -261,7 +306,11 @@ class FullseyeEngine:
 
     def to_python(self) -> str:
         """The pipeline as a standalone Python function (same as Studio export)."""
-        lines = ["import fullseye, numpy as np", "", "# pipeline %r - %d stage(s); rows run top to bottom, each op reads the "
+        lines = ["# -*- coding: utf-8 -*-",
+                 '# --ops "%s"   (the same pipeline as a CLI string: fullseye run "<ops>" in.png --out out.png)'
+                 % ",".join(str(s[0]) for s in self.stages),
+                 "import fullseye, numpy as np", "",
+                 "# pipeline %r - %d stage(s); rows run top to bottom, each op reads the "
                  "previous op's output (a/b = that op's two knobs)" % (
                      self.name, len(self.stages)),
                  "def %s(frame):" % _py_ident(self.name),
@@ -280,7 +329,7 @@ class FullseyeEngine:
         can branch BETWEEN stages (the two-tier interface rule: every sample exists
         both as a one-liner and as a staged form)."""
         fn = _py_ident(self.name)
-        lines = ["import fullseye, numpy as np", "",
+        lines = ["# -*- coding: utf-8 -*-", "import fullseye, numpy as np", "",
                  "# pipeline %r - STAGED form: x is the running signal; copy any single" % self.name,
                  "# stage on its own, or insert your own if/for between stages.",
                  "def %s_staged(frame):" % fn,

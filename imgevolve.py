@@ -129,7 +129,8 @@ def cmd_has(a):
             print("  reason: %s  [chapter=%s, arity=%d]" % (d["reason"], d["chapter"], d["arity"]))
             return 0
         near = [r for r in rows if q in r["name"].lower() or q in (r["halcon"] or "").lower()]
-        print("unknown op: %s (not in the HALCON reference)" % a.op)
+        print("unknown op: %s — neither an op name, a HALCON alias, nor a HALCON reference operator "
+              "(search: %s ops --search <word>, or fullseye.op_find('<words>'))" % (a.op, _prog()))
         if near:
             print("  near:", ", ".join(sorted({r["halcon"] or r["name"] for r in near}))[:400])
         return 1
@@ -167,7 +168,7 @@ def cmd_apply(a):
     ops = _load_registry()
     op = _find_op(ops, a.op)
     if op is None:
-        raise SystemExit("unknown op %r (try: imgevolve.py has %s)" % (a.op, a.op))
+        raise SystemExit("unknown op %r (try: %s has %s)" % (a.op, _prog(), a.op))
     v = _imread(a.inp, op.in_sort)
     out = ops.RT[op.name](v, a.a, a.b)
     if op.out_sort == "feature":
@@ -400,14 +401,14 @@ def cmd_algo(a):
         return 0
     if a.action == "run":
         if a.op is None or algo.find_algo(a.op) is None:
-            raise SystemExit("run needs a known op (try: imgevolve.py algo list)")
+            raise SystemExit("run needs a known op (try: %s algo list)" % _prog())
         seq = [float(x) for x in a.seq.split(",") if x.strip()]
         print(algo.run_algo(a.op, seq))
         return 0
     if a.action in ("emit-c", "emit-py"):
         import algo_codegen
         if a.op is None or algo.find_algo(a.op) is None:
-            raise SystemExit("%s needs a known op (try: imgevolve.py algo list)" % a.action)
+            raise SystemExit("%s needs a known op (try: %s algo list)" % (a.action, _prog()))
         op = algo.ALGO_BY_NAME[a.op]
         print(algo_codegen.emit_c(op) if a.action == "emit-c" else algo_codegen.emit_python(op))
         return 0
@@ -418,7 +419,7 @@ def cmd_algo(a):
         rc = 0
         for nm in names:
             if algo.find_algo(nm) is None:
-                raise SystemExit("unknown algo op: %r (try: imgevolve.py algo list)" % nm)
+                raise SystemExit("unknown algo op: %r (try: %s algo list)" % (nm, _prog()))
             r = algo_difftest.difftest(nm, a.workdir, cc=cc)
             cb = r["c_backend"]
             extra = (" bit_identical=%s" % cb.get("c_vs_python_bit_identical")) if cb.get("status") == "ran" else ""
@@ -513,6 +514,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.replace("py -3.11 imgevolve.py", _prog()),
                                  formatter_class=argparse.RawDescriptionHelpFormatter,
                                  epilog="(installed: `fullseye <cmd>`; in a checkout: `py -3.11 imgevolve.py <cmd>`)")
+    import api as _api
+    ap.add_argument("--version", action="version", version="fullseye %s" % _api.__version__)   # N19: 無かった
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p = sub.add_parser("ops", help="list/search implemented operators")
