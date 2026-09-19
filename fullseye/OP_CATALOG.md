@@ -116,7 +116,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す** — table / points は本物の GFM 表、image / region は 1 行要約(画素は描かない)。json_block で厳密な JSON を ```json フェンスに包み、extract_json で Markdown 文書から fullseye 封筒だけを bit 一致で回収。report は『読める』と『機械で戻せる』を with_json で 1 文書に両立。異種フェンスは無視し未知 sort は断る。 `py -3.11 examples/typed_results_markdown.py`
 - **既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕(margin)を測る** — inspection_fixture(good, bad, recipe, measure, spec) = 良品が全部 ok かつ不良品が全部 ng なら passed、見逃し(escapes)・過検出(false_rejects)・error を行で返し、spec_margins が仕様キーごとに良品の限界までの余裕を出す。合成の良品 6・不良品 4 で passed、仕様を締めると過検出が出て failed になることを assert。 `py -3.11 examples/inspection_fixture.py`
 - **空・極小・1-D・RGB の退化入力で、どの op でも同じ文が返ることを確かめる** — 空配列 (0,0) は 271 op が 49 種の生エラーで落ちていた → 門が 1 文(上流の read/crop を疑え)で断る。極小画像で op の中から出る生の例外には op 名と入力の形を注記(型も文も変えない)。1-D と RGB (H,W,3) の 2-D op への入力は既存の門で断ることも併せて実演。 `py -3.11 examples/degenerate_inputs.py`
-- **第三者レビュー(GenSpark、0.2.0)が見つけた初見の摩擦を、直したあとの形で 1 本ずつ確かめる** — 「無い」と「入っていない」を分ける MissingBackendError(索引の module/requires から不足 extra を案内)、run_pipeline の 5 形が同じ結果で外した形は原因を指す TypeError、全 NaN の otsu は明示エラー、文字列・複素配列は方針に依らず TypeError、n-ary の形状不一致は要るものを文で言う、Op は名前で pickle。変えなかった設計(既定 fallback / 警告は op ごとに 1 度 / float32 は記録しない)も実演。 `py -3.11 examples/genspark_external_review.py`
+- **第三者レビュー(GenSpark、0.2.0)が見つけた初見の摩擦を、直したあとの形で 1 本ずつ確かめる** — 「無い」と「入っていない」を分ける MissingBackendError(索引の module/requires から不足 extra を案内)、run_pipeline の 5 形が同じ結果で外した形は原因を指す TypeError、全 NaN の otsu は明示エラー、文字列・複素配列は方針に依らず TypeError、n-ary の形状不一致は要るものを文で言う、Op は名前で pickle、op_names(include_nary=True) と list_ops の knobs 欄、CLI apply --input2。変えなかった設計(既定 fallback / 警告は op ごとに 1 度 / float32 は記録しない)も実演。 `py -3.11 examples/genspark_external_review.py`
 - **基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する** — compare_to_golden = 位相相関で整数並進を合わせ→差分→閾値→連結成分→計測 dict(shift/ssim/psnr/欠陥面積・個数)。同一→欠陥 0、3px ずれた良品→合わせれば 0、異物 48px→1 個、6px 大ずれは max_shift 超えで align_ok=0→ng。golden_measure/golden_spec で inspect_batch に差し込み 6 枚のロットで 2 枚だけ ng を assert。 `py -3.11 examples/golden_compare.py`
 - **フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す** — 合成画像フォルダ(良品 5・欠陥 1・壊れたファイル 1)を inspect_batch で 前処理→計測→judge→集計。各行に入力 sha256・計測・根拠つき Verdict、数値列は EWMA で工程管理、.md/.jsonl(+.xlsx)に 書き分け、監査ログに追記。欠陥だけ ng・壊れた 1 枚は error で止まらないことを assert。 `py -3.11 examples/inspection_workflow.py`
 - **型付きの検査結果を Excel(.xlsx)レポートに書き出す** — mdio.report と同じ (見出し, value, sort) の列から現場が使う .xlsx を作る。測定表・点群・スカラはセルに、画像はサムネイルを 1 枚埋め込む(openpyxl、optional)。書いて openpyxl で開き直し セル値と埋め込み画像数を assert。jsonio=機械 / mdio=読む / xlsxio=配る の第 3 系統。未知 sort は断る。 `py -3.11 examples/xlsx_report.py`
@@ -1064,7 +1064,7 @@ _計 931 ops / 48 categories。_
 - `vol_slice` `volume → image` · 例: `gallery2d_physics_alife_3d`
 
 ### arithmetic(10)
-- `abs_image` (halcon: `abs_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `abs_image` (halcon: `abs_image`) `image → image` · 例: `gallery2d_gray_arith`, `genspark_external_review`
 - `sqrt_image` (halcon: `sqrt_image`) `image → image` · 例: `gallery2d_gray_arith`
 - `exp_image` (halcon: `exp_image`) `image → image` · 例: `gallery2d_gray_arith`
 - `log_image` (halcon: `log_image`) `image → image` · 例: `gallery2d_gray_arith`, `poc_weld_radiograph_porosity`

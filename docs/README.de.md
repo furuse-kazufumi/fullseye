@@ -67,7 +67,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 **2,002 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **49 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 931/931, typisiertes Ledger 1050/1062, Fassade `fullseye.<name>` 568/1199 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 931/931, typisiertes Ledger 1050/1062, Fassade `fullseye.<name>` 568/1200 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
 **Gemessener Inhalt**: von 2007 Notizen verweisen **1964** auf mindestens ein lauffähiges Beispiel (43 ohne), **1987** haben einen Nutzungsabschnitt ab 120 Zeichen (20 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 2007.
 
@@ -204,7 +204,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 182
+## Dokumentkarte — alle 183
 
 Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 2,002 Operator-Notizen und 49 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
@@ -330,7 +330,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(110)
+**Other**(111)
 
 | Dokument | Inhalt |
 |---|---|
@@ -436,6 +436,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`hardening/frame-align-inlier-ratio-is-not-confidence.md`](hardening/frame-align-inlier-ratio-is-not-confidence.md) | id: frame-align-inlier-ratio-is-not-confidence |
 | [`hardening/inputs-without-a-conversion-were-not-refused.md`](hardening/inputs-without-a-conversion-were-not-refused.md) | id: inputs-without-a-conversion-were-not-refused |
 | [`hardening/moment-invariants-two-families-same-name.md`](hardening/moment-invariants-two-families-same-name.md) | id: moment-invariants-two-families-same-name |
+| [`hardening/nary-ops-unlisted-and-knobs-unstated.md`](hardening/nary-ops-unlisted-and-knobs-unstated.md) | id: nary-ops-unlisted-and-knobs-unstated |
 | [`hardening/noise-sigma-mad-collapses-on-quantised-data.md`](hardening/noise-sigma-mad-collapses-on-quantised-data.md) | id: noise-sigma-mad-collapses-on-quantised-data |
 | [`hardening/nonfinite-output-was-sanitized-silently.md`](hardening/nonfinite-output-was-sanitized-silently.md) | id: nonfinite-output-was-sanitized-silently |
 | [`hardening/op-find-blind-to-japanese-queries.md`](hardening/op-find-blind-to-japanese-queries.md) | id: op-find-blind-to-japanese-queries |

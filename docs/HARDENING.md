@@ -14,7 +14,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**18 件(うち直したもの 18 件)。見つけた PoC は 10 本。**
+**19 件(うち直したもの 19 件)。見つけた PoC は 10 本。**
 
 ## 種別ごと
 
@@ -23,14 +23,14 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 | 静かに間違う(例外が出ない) | 7 | 7 |
 | 実装の誤り | 4 | 4 |
 | 門が事故の起きる場所に立っていなかった | 2 | 2 |
-| 在るのに引けない | 4 | 4 |
+| 在るのに引けない | 5 | 5 |
 | 説明の穴(片道の参照・古い数字) | 1 | 1 |
 
 ## 見つけた PoC ごと
 
 | PoC | 件数 |
 |---|---:|
-| [`genspark_external_review`](../examples/genspark_external_review.py) | 8 |
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 9 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
@@ -152,6 +152,12 @@ GenSpark のレビュー(別ノート 3 本)を直したあと、同じ族が他
 第三者(GenSpark)が 0.2.0 を **core**(`pip install fullseye`、693 op)と **all**(`fullseye[all]`、899 op)の 2 環境で使い込んだ。core で `fullseye.apply(img, "sk_canny")` を呼ぶと
 
 見つけた PoC: `genspark_external_review` / 直した所: `api.py`, `ops.py`, `imgevolve.py`, `fullseye/data/OP_INDEX.json` / 門: `test_missing_backend_error_is_a_keyerror_and_names_the_missing_extra`, `test_unknown_operator_message_names_a_real_cli_and_op_find`, `test_op_index_rows_carry_module_and_requires`, `test_optional_deps_table_matches_pyproject_extras` / 状態: fixed
+
+#### [n-ary op は呼べるのに一覧に無く、つまみ a / b が効くかは文でしか分からず、CLI からは 2 入力の op を呼べなかった](hardening/nary-ops-unlisted-and-knobs-unstated.md)
+
+GenSpark 第 18〜20 報の統合チケット(N60 + I1)。
+
+見つけた PoC: `genspark_external_review` / 直した所: `api.py`, `imgevolve.py`, `tools/gen_mcp_data.py`, `pyproject.toml` / 門: `test_op_names_include_nary_adds_exactly_the_nary_tier`, `test_every_list_ops_row_carries_a_knobs_summary`, `test_the_shipped_knob_table_equals_the_docs_copy`, `test_cli_apply_input2_runs_an_nary_op`, `test_cli_index_prints_the_four_tiers` / 状態: fixed
 
 ### 説明の穴(片道の参照・古い数字)
 

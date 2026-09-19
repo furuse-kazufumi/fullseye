@@ -29,9 +29,9 @@
 - **L620** — ★``annotate.overlay_mask`` **有意不暴露到頂層**。同名的 ``imgio.overlay_mask`` 已作為 ``fs.overlay_mask`` 公開，其參數與含義都不同(imgio = 原始 RGB、mask>0.5、fill/margin / annotate = 角色名的顏色、也可用權重 [0,1]、拒絕形狀不匹配)。在同名上載入不同的約定，呼叫方收到的不是例外而是**看似合理卻不同的圖**。公開 API 的破壞性變更不擅自做，故帶角色的那個用 ``fs.annotate.overlay_mask`` 取用。
 - **L1153** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
 - **L1171** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
-- **L1499** — ★ **目前對彩色影像沒有正確的呼叫方式**:整批傳入會混色,按通道呼叫 3 次會讓自正規化的 op 把每個通道除以各自的最大值,破壞通道間的比值(灰階邊緣法的角度誤差從自建 Sobel 的 1.03 度 -> 每圖 4.17 度 -> 每通道 27.86 度,零點 29.14 度)。倒向哪一邊是**合約的決定**,所以這裡不改動任何一個預設數值,僅在 `on_error="raise"` 時拒絕,預設則記入台帳使其可見。詳情與選項見 docs/KNOWN_ISSUES.md。
-- **L1794** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L2096** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L1551** — ★ **目前對彩色影像沒有正確的呼叫方式**:整批傳入會混色,按通道呼叫 3 次會讓自正規化的 op 把每個通道除以各自的最大值,破壞通道間的比值(灰階邊緣法的角度誤差從自建 Sobel 的 1.03 度 -> 每圖 4.17 度 -> 每通道 27.86 度,零點 29.14 度)。倒向哪一邊是**合約的決定**,所以這裡不改動任何一個預設數值,僅在 `on_error="raise"` 時拒絕,預設則記入台帳使其可見。詳情與選項見 docs/KNOWN_ISSUES.md。
+- **L1846** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L2148** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
 
 ## `astrostack.py`
 
@@ -909,8 +909,8 @@
 
 ## `fullseye/mcp/catalog.py`
 
-- **L104** _(ja)_ — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
-- **L318** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
+- **L106** _(ja)_ — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
+- **L320** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
 
 ## `fullseye/mcp/diagnose.py`
 
@@ -956,11 +956,11 @@
 
 ## `imgevolve.py`
 
-- **L47** _(ja)_ — ★module / requires(2026-09-19): 「unknown operator」が backend 不足を隠していた (外部レビュー #1)。索引が出自と optional 依存を持てば、core 環境の ``api._resolve`` が同梱の複製(fullseye/data/OP_INDEX.json)から不足 extra を 案内できる。requires は AST で静的に読むので、生成環境に依らず同じ値。
-- **L56** — ★不要吞掉它(2026-09-06 的對抗性評審)。`imgops_nary` 是只需 numpy 和 scipy 的一級 module，因此 import 失敗意味著「損壞的 checkout」,而非「該環境沒有的功能」。以前是 `except Exception: pass`，又因為**這個函數同時兼任生成器和檢查器**，CI 可以在保持綠色的情況下發布一個整整消失了 17 個 op 的索引。
-- **L271** _(ja)_ — ★os.path.basename は実行 OS の区切りしか知らない —— Linux では ``C:\\...\\fullseye.exe`` が丸ごと 1 要素になり 「fullseye で始まらない」と判定された(手元 Windows 緑・CI Linux 赤)。両方の区切りで最後の要素を取る。
-- **L278** _(ja)_ — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
-- **L515** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
+- **L48** _(ja)_ — ★module / requires(2026-09-19): 「unknown operator」が backend 不足を隠していた (外部レビュー #1)。索引が出自と optional 依存を持てば、core 環境の ``api._resolve`` が同梱の複製(fullseye/data/OP_INDEX.json)から不足 extra を 案内できる。requires は AST で静的に読むので、生成環境に依らず同じ値。
+- **L57** — ★不要吞掉它(2026-09-06 的對抗性評審)。`imgops_nary` 是只需 numpy 和 scipy 的一級 module，因此 import 失敗意味著「損壞的 checkout」,而非「該環境沒有的功能」。以前是 `except Exception: pass`，又因為**這個函數同時兼任生成器和檢查器**，CI 可以在保持綠色的情況下發布一個整整消失了 17 個 op 的索引。
+- **L295** _(ja)_ — ★os.path.basename は実行 OS の区切りしか知らない —— Linux では ``C:\\...\\fullseye.exe`` が丸ごと 1 要素になり 「fullseye で始まらない」と判定された(手元 Windows 緑・CI Linux 赤)。両方の区切りで最後の要素を取る。
+- **L302** _(ja)_ — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
+- **L543** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
 
 ## `imgio.py`
 

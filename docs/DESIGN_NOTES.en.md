@@ -29,9 +29,9 @@ This repository records *why* things are the way they are in **comments in the s
 - **L620** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
 - **L1153** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
 - **L1171** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
-- **L1499** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
-- **L1794** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L2096** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L1551** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
+- **L1846** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L2148** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
 
 ## `astrostack.py`
 
@@ -909,8 +909,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `fullseye/mcp/catalog.py`
 
-- **L104** _(ja)_ — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
-- **L318** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
+- **L106** _(ja)_ — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
+- **L320** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
 
 ## `fullseye/mcp/diagnose.py`
 
@@ -956,11 +956,11 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `imgevolve.py`
 
-- **L47** _(ja)_ — ★module / requires(2026-09-19): 「unknown operator」が backend 不足を隠していた (外部レビュー #1)。索引が出自と optional 依存を持てば、core 環境の ``api._resolve`` が同梱の複製(fullseye/data/OP_INDEX.json)から不足 extra を 案内できる。requires は AST で静的に読むので、生成環境に依らず同じ値。
-- **L56** — ★Do not swallow it (adversarial review 2026-09-06). `imgops_nary` is a primary module needing only numpy and scipy, so a failed import means a 'broken checkout', not 'a feature absent in that environment'. Previously it was `except Exception: pass`, and because **this function serves as both generator and checker**, CI could publish an index with all 17 ops vanished while staying green.
-- **L271** _(ja)_ — ★os.path.basename は実行 OS の区切りしか知らない —— Linux では ``C:\\...\\fullseye.exe`` が丸ごと 1 要素になり 「fullseye で始まらない」と判定された(手元 Windows 緑・CI Linux 赤)。両方の区切りで最後の要素を取る。
-- **L278** _(ja)_ — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
-- **L515** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
+- **L48** _(ja)_ — ★module / requires(2026-09-19): 「unknown operator」が backend 不足を隠していた (外部レビュー #1)。索引が出自と optional 依存を持てば、core 環境の ``api._resolve`` が同梱の複製(fullseye/data/OP_INDEX.json)から不足 extra を 案内できる。requires は AST で静的に読むので、生成環境に依らず同じ値。
+- **L57** — ★Do not swallow it (adversarial review 2026-09-06). `imgops_nary` is a primary module needing only numpy and scipy, so a failed import means a 'broken checkout', not 'a feature absent in that environment'. Previously it was `except Exception: pass`, and because **this function serves as both generator and checker**, CI could publish an index with all 17 ops vanished while staying green.
+- **L295** _(ja)_ — ★os.path.basename は実行 OS の区切りしか知らない —— Linux では ``C:\\...\\fullseye.exe`` が丸ごと 1 要素になり 「fullseye で始まらない」と判定された(手元 Windows 緑・CI Linux 赤)。両方の区切りで最後の要素を取る。
+- **L302** _(ja)_ — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
+- **L543** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
 
 ## `imgio.py`
 
