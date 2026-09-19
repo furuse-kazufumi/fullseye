@@ -4132,6 +4132,28 @@ op は **931**(レジストリ実測)まで来ましたが、この回で増や�
 
 この回に踏んだ落とし穴も残しておきます。op やモジュールを 1 本足すたびに、隠れた門(日本語ヘルプ・RAG ガイドのノート枚数・README の op 数・翻訳の指紋・wheel の py-modules・DOCS 表の一覧・図の台帳)が **8 種以上**あり、部分集合の検査では必ず取りこぼしました。結論は単純で、**足す回は push 前にローカルで全部回す(約 45 分)**。CI が長い(約 90 分)ので、少し実装しては push して待つのをやめ、**複数機能を機能別 commit で溜めて 1 回で押す**運用に変えました。
 
+## 2026-09-20 の拡張 ―― 第三者 AI に使い込ませて、指摘を 1 件ずつ検証した回
+
+この回は op を足していません。代わりに、外部の AI(GenSpark)に **0.2.0 を core(`pip install fullseye`)と all(`fullseye[all]`)の 2 環境で使い込ませ**、実行出力つきの報告を 20 通(指摘 60 件強)受け取りました。やったことは単純で、**1 件ずつ現 master で再現し、バグ側は直してテスト・example・堅牢性ノートを同じ commit に、設計側は「変えない理由」を表に残す**。報告の中には後から本人が撤回したもの(「87 op が恒等になる」は入力の種類違いの fallback、「Insert ボタンが無い」は見落とし)もあり、**第三者の指摘は探針であって判定ではない** ―― 再現してから採る、が全部です。
+
+| 何を直したか | 直す前 | 直した後 |
+|---|---|---|
+| **「無い」と「入っていない」** | backend の optional 依存が入っていない op も、綴り違いの op も同じ `KeyError: unknown operator` | 同梱の索引(module / requires)から `MissingBackendError`(`KeyError` の派生)が **不足 extra と `pip install "fullseye[...]"` を言う**。本当に無い名前は `fullseye has` と `op_find` を案内 |
+| **`run_pipeline` の書き方** | タプル・dict・文字列の混在で分かりにくい TypeError | 5 形(`"a,b"` / 名前 / タプル / `(name, {"a":..})` / dict)が同じ結果、外した形は **原因を指す** TypeError(引数の順が逆、未知のノブ、段が名前で始まらない) |
+| **変換の無い入力** | 文字列配列・複素配列が fallback 方針では「全 0」で通る | **方針に依らず** TypeError。落とし先の無い入力を 0 にするのは fallback でなく嘘 |
+| **空・極小の入力** | 271 op が scipy / numpy の生の例外(`axis 1 is out of bounds`)で落ちる | 0 要素は門で 1 文に。極小画像で op の中から出る例外には **op 名と入力の形を注記**(型も文も変えない) |
+| **非有限の出力** | NaN / inf の出力を黙って有限化 | 台帳に `non_finite_output: N of M` を記録、`on_error="raise"` では停止。設計で NaN を返す op(`tb_fly_tau_from_expansion`)だけ免除台帳 |
+| **CLI** | `--version` が無い、help の例が checkout の綴り、`parity` が argparse 衝突、`samples` の action 必須、`coverage` が wheel で FileNotFoundError | 全部直し。**呼ばれ方(`fullseye` / `py -3.11 imgevolve.py`)に合わせて help の例文が変わる** |
+| **Studio の実行キー** | Ctrl+R 非対応、F5 は未適用の編集を無視して古い pipeline を走らせる | F5 / Ctrl+R で **未適用の編集を先に適用**してから実行。1 op 実行が fallback したらタイトルに「FALLBACK」 |
+| **`engine.load` をインスタンスで** | `e = FullseyeEngine(); e.load(p)` が classmethod の戻り値を捨て、空エンジンが入力をそのまま返す | インスタンスに読み込む(`from_dict` / `from_ops` も)。dict 段を受理、不正な段・範囲外の `upto` は `ValueError`、`to_python` に coding 行と `--ops` 文字列 |
+| **空の op 名・狭い float** | `apply(img, "")` が `lowpass` に解決して走る(halcon 別名 `""` に一致)。float16 / float32 が契約の float64 に昇格されず、scipy が float16 を拒んで入力のコピーが返る | 空名は unknown。float16 / float32 は **無損失で float64 に昇格**(記録しない) |
+| **pose helper に行列** | `pose_to_hom_mat3d` の出力(4×4)を自分に戻せない | 6/7 ベクトル・3×3・4×4 を受ける |
+| **n-ary の一覧とつまみ** | `add_image` 等 17 本は呼べるのに `op_names()` に無い。`a` / `b` が効くかは文でしか分からない。CLI から 2 入力の op を呼べない | `op_names(include_nary=True)`(既定は不変)、`list_ops()` の各行に `knobs`(実測 461 op、未計測は None)、`fullseye apply add_image a.png out.png --input2 b.png` |
+
+**変えなかった設計**(理由つきで残したもの、14 件): 既定の `on_error="fallback"`(産業ラインでは 1 枚の失敗でバッチを止めない。厳格にするなら `FULLSEYE_ON_ERROR=raise`)/ 警告は op ごとに 1 度(台帳 `fullseye.fallbacks()` が全件)/ ノブ `a`,`b` は [0,1](進化のゲノム表現。範囲外は記録して clamp)/ 3-D 入力を 2-D op が受ける件は既知の課題として台帳に / 索引の段の合算(登録 931 + n-ary 17 + 台帳 1048)/ `op_names()` の既定に n-ary を混ぜない / `apply2` を足さない ―― など。
+
+落とし穴を 1 つ。手元(Windows)で全部緑にして push した最初の CI が Linux で赤になりました。原因は `os.path.basename` が **実行 OS の区切りしか知らない**こと ―― テストに書いた Windows 形のパス(`...\Scripts\fullseye.exe`) が Linux では丸ごと 1 要素になり、「fullseye で始まらない」と判定された。**OS が解釈する文字列(区切り・大小文字)をテストに埋めるときは、その解釈が両 OS で同じかを push 前に問う**、が教訓です。
+
 ## まとめ
 
 **Fullseye** は、**説明できる古典ビジョンのアルゴリズムを「スキル」として約1000個持ち歩き**、それを
