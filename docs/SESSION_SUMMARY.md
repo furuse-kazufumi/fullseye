@@ -3,57 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-18 05:51:07
+- **最終更新**: 2026-09-19 13:56:16
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-3d079e39d 看板の板を見つけて起こす find_plate と、行を丸ごと描き直す rewrite_line を足す
-56eb68e5d 戻りの橋を 5 本架け、文字の仕事から汎用 op を 3 本切り出す(922 -> 930)
-e3ca2243a マスの切れ目が字に食い込んでいた —— 吸着幅を 0.25 から 0.15 に絞る
-774fa9a82 画像と文字列を JSON 一枚で受けて直す入口を足す(glyph_correct_spec)
-0dac29aa6 文字の仕事から汎用 op を 2 本切り出し、PoC の環境依存の主張を順序で置き換える
-53ef47f0d 書体 1 本の環境でも床を測れるようにし、CI に CJK を 2 本入れる
-4a432a6b6 auto: poc_glyph_typo_detection.py 編集前 (2026-09-17 12:00)
-deae50640 auto: poc_glyph_typo_detection.py 編集前 (2026-09-17 12:00)
-80a6ea5ba auto: poc_glyph_typo_detection.py 編集前 (2026-09-17 11:59)
-a59281c39 画像の誤字を認識せずに見つけて直す基盤を足す(glyphops + PoC + 門)
+c8d076652 fix: backends_texture を _DOC_TABLE_MODULES に / fractal_dimension を figure manifest に(残り 2 ゲート)
+71a55fea1 packaging: backends_texture を py-modules に追加(wheel から fractal_dimension が落ちていた)
+c868da1ed xlsxio: save_xlsx_report — 型付き結果を Excel(.xlsx)レポートに書き出す + README op 数 930→931
+ffd48f588 texture: fractal_dimension op — ボックスカウント(Minkowski–Bouligand)フラクタル次元
+5de4f84cf mcp: apply/pipeline/inspect の小さい型付き結果に jsonio 封筒 + mdio Markdown を自動添付(候補2)
+c3a0cb601 spc: spc_ewma — EWMA 管理図(Roberts 1959)を SPC op 族に追加(CUSUM と対の小シフト検出)
+a0955f4b2 docs(i18n): design_notes の訳を復帰(poc の ★ 本文変更で外れた 1 件)
+68d2d4d85 facade+mcp: camera_calibration を facade 露出 / estimate_distortion を MCP tool 化(候補1+3)
+a4c7fd6ba camera: estimate_distortion — 直線群から Brown–Conrady 歪み係数を推定(plumb-line、チェッカー不要)
+23477533c lens 能力ノートのカテゴリを新設の「直す」から既存の「形にするに直す(英語版の日本語漏れ)
 ```
 
 ## 現在の git status
 
 ```
-M docs/DESIGN_NOTES.de.md
- M docs/DESIGN_NOTES.en.md
- M docs/DESIGN_NOTES.ko.md
- M docs/DESIGN_NOTES.md
- M docs/DESIGN_NOTES.tw.md
- M docs/DESIGN_NOTES.zh.md
- M docs/SESSION_SUMMARY.md
- M docs/design_notes.json
- M glyphops.py
+M docs/SESSION_SUMMARY.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-05:38 data/auto_functional_gate.json
-05:26 docs/SESSION_SUMMARY.md
-05:23 .hypothesis/constants/c598ca2cd9fb747d
-05:23 docs/design_notes.json
-05:23 docs/DESIGN_NOTES.de.md
-05:23 docs/DESIGN_NOTES.zh.md
-05:23 docs/DESIGN_NOTES.tw.md
-05:23 docs/DESIGN_NOTES.md
-05:23 docs/DESIGN_NOTES.ko.md
-05:23 docs/DESIGN_NOTES.en.md
-05:23 fullseye/data/OP_NOTES.json
-05:23 fullseye/data/OP_INDEX.json
-05:23 docs/OP_INDEX.json
-05:23 fullseye/SENSOR_PLAYBOOK.md
-05:23 docs/SENSOR_PLAYBOOK.md
+13:50 docs/SESSION_SUMMARY.md
+13:29 data/auto_functional_gate.json
+13:16 .hypothesis/constants/0d850424b1346d16
+13:16 .hypothesis/constants/23565fdb4054b6d3
+13:16 .hypothesis/constants/2c7e256b99041d26
+13:16 .hypothesis/constants/e1ee5196f7d15acd
+13:16 .hypothesis/constants/ce67fc29fbe95ca6
+13:16 .hypothesis/constants/07d0ea6e35cc32a2
+13:16 .hypothesis/constants/df85c019bec28074
+13:16 .hypothesis/constants/8e7e376ce4386a52
+13:16 .hypothesis/constants/23c3723461f4ad9e
+13:16 .hypothesis/constants/42eb5f98b7b7fa1c
+13:16 .hypothesis/constants/2c9c082cc3f5395d
+13:16 .hypothesis/constants/4fda3a279c17ece4
+13:16 .hypothesis/constants/85c5ddad88c06465
 ```
 
 ---
