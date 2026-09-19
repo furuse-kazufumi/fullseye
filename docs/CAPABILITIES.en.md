@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 27 capabilities**
+**Currently 28 capabilities**
 
 ## Measure (6)
 
@@ -173,7 +173,7 @@ Operators: `signal_features`, `envelope_spectrum`, `bearing_defect_frequencies`,
 
 Runnable: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## Compose (6)
+## Compose (7)
 
 ### [Align and stack](capabilities/align-and-stack.md)
 
@@ -190,6 +190,14 @@ Runnable: `poc_astro_photometry`, `poc_registration_basin`
 Operators: `compare_to_golden`, `golden_measure`, `golden_spec`, `inspect_batch`, `judge`, `ssim`, `psnr`
 
 Runnable: `golden_compare`
+
+### [Validate a recipe and spec on known good/bad sets before deployment, and measure the margins](capabilities/inspection-fixture.md)
+
+`inspection_fixture(good, bad, recipe, measure=..., spec=...)` runs the known-good and known-bad sets through `inspect_batch` and returns `passed=True` only when every good part is `ok` and every bad part is `ng`. It lists the confusion counts, the escaped bad parts (`escapes`), the falsely rejected good parts (`false_rejects`) and unreadable rows (`errors`), and `spec_margins` reports per spec key how close the good measurements come to the limits (`min_margin` in spec units, negative when exceeded; `min_margin_norm` normalised by the tolerance or half the min–max width, so 1.0 means one limit-width of headroom). An empty set raises `ValueError`, an unreadable file becomes an `error` that fails the fixture, and a misspelled spec raises. With `report_path` the two sets are written to separate `_good` / `_bad` reports.
+
+Operators: `inspection_fixture`, `spec_margins`, `inspect_batch`, `judge`
+
+Runnable: `inspection_fixture`
 
 ### [Inspect a folder in one call — batch, judge against a spec, aggregate, SPC, report, audit log](capabilities/inspection-workflow.md)
 

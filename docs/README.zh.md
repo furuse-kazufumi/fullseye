@@ -67,7 +67,7 @@
 
 共有 **2,002 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **49 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 931/931、类型化台账 1050/1062、单行门面 `fullseye.<名称>` 568/1196 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 931/931、类型化台账 1050/1062、单行门面 `fullseye.<名称>` 568/1198 —— **门面侧仅覆盖一半**。
 
 **内容实测**: 2007 篇中，附有可运行示例的 **1964** 篇(43 篇没有)，用法说明 120 字以上的 **1987** 篇(20 篇仅一行)。结构(调用形式、类型、可衔接算子)2007 篇全有。
 
@@ -204,7 +204,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文档地图 — 共 171 篇
+## 文档地图 — 共 172 篇
 
 完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,002 篇算子说明与 49 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
@@ -330,7 +330,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(99)
+**Other**(100)
 
 | 文档 | 内容 |
 |---|---|
@@ -408,6 +408,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/fix-text-in-images.md`](capabilities/fix-text-in-images.md) | id: fix-text-in-images |
 | [`capabilities/geodetic-frames.md`](capabilities/geodetic-frames.md) | id: geodetic-frames |
 | [`capabilities/golden-compare.md`](capabilities/golden-compare.md) | id: golden-compare |
+| [`capabilities/inspection-fixture.md`](capabilities/inspection-fixture.md) | id: inspection-fixture |
 | [`capabilities/inspection-workflow.md`](capabilities/inspection-workflow.md) | id: inspection-workflow |
 | [`capabilities/inverted-colour-overlays.md`](capabilities/inverted-colour-overlays.md) | id: inverted-colour-overlays |
 | [`capabilities/lens-distortion-correction.md`](capabilities/lens-distortion-correction.md) | id: lens-distortion-correction |

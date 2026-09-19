@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(216 例)
+### 2-D 画像/信号/幾何(217 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -114,6 +114,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **workflow**
 - **op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す** — table / points は本物の GFM 表、image / region は 1 行要約(画素は描かない)。json_block で厳密な JSON を ```json フェンスに包み、extract_json で Markdown 文書から fullseye 封筒だけを bit 一致で回収。report は『読める』と『機械で戻せる』を with_json で 1 文書に両立。異種フェンスは無視し未知 sort は断る。 `py -3.11 examples/typed_results_markdown.py`
+- **既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕(margin)を測る** — inspection_fixture(good, bad, recipe, measure, spec) = 良品が全部 ok かつ不良品が全部 ng なら passed、見逃し(escapes)・過検出(false_rejects)・error を行で返し、spec_margins が仕様キーごとに良品の限界までの余裕を出す。合成の良品 6・不良品 4 で passed、仕様を締めると過検出が出て failed になることを assert。 `py -3.11 examples/inspection_fixture.py`
 - **基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する** — compare_to_golden = 位相相関で整数並進を合わせ→差分→閾値→連結成分→計測 dict(shift/ssim/psnr/欠陥面積・個数)。同一→欠陥 0、3px ずれた良品→合わせれば 0、異物 48px→1 個、6px 大ずれは max_shift 超えで align_ok=0→ng。golden_measure/golden_spec で inspect_batch に差し込み 6 枚のロットで 2 枚だけ ng を assert。 `py -3.11 examples/golden_compare.py`
 - **フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す** — 合成画像フォルダ(良品 5・欠陥 1・壊れたファイル 1)を inspect_batch で 前処理→計測→judge→集計。各行に入力 sha256・計測・根拠つき Verdict、数値列は EWMA で工程管理、.md/.jsonl(+.xlsx)に 書き分け、監査ログに追記。欠陥だけ ng・壊れた 1 枚は error で止まらないことを assert。 `py -3.11 examples/inspection_workflow.py`
 - **型付きの検査結果を Excel(.xlsx)レポートに書き出す** — mdio.report と同じ (見出し, value, sort) の列から現場が使う .xlsx を作る。測定表・点群・スカラはセルに、画像はサムネイルを 1 枚埋め込む(openpyxl、optional)。書いて openpyxl で開き直し セル値と埋め込み画像数を assert。jsonio=機械 / mdio=読む / xlsxio=配る の第 3 系統。未知 sort は断る。 `py -3.11 examples/xlsx_report.py`

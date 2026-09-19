@@ -34,6 +34,7 @@
 | [画像の中の文字を、正しい文字列に合わせて直す](capabilities/fix-text-in-images.md) | Fix the text inside an image against the string it should read | 見つける | `verified-synthetic` | 1/11 | `fix_text_in_image` synthetic → tests/test_example_scripts_run.py<br>`poc_glyph_typo_detection` synthetic → tests/test_poc_scripts_run.py |
 | [地球規模の座標に載せる(ECEF と測地座標)](capabilities/geodetic-frames.md) | Put measurements on the Earth (ECEF and geodetic) | 測る | `verified-synthetic` | 2/2 | `poc_geodetic_height_frames` synthetic → tests/test_poc_scripts_run.py<br>`dem_geodesy_tour` synthetic → tests/test_example_scripts_run.py |
 | [基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する](capabilities/golden-compare.md) | Compare against a golden image — align, diff, count defects, judge the lot | 組み立てる | `verified-synthetic` | 7/7 | `golden_compare` synthetic → tests/test_example_scripts_run.py |
+| [既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕を測る](capabilities/inspection-fixture.md) | Validate a recipe and spec on known good/bad sets before deployment, and measure the margins | 組み立てる | `verified-synthetic` | 4/4 | `inspection_fixture` synthetic → tests/test_example_scripts_run.py |
 | [フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す](capabilities/inspection-workflow.md) | Inspect a folder in one call — batch, judge against a spec, aggregate, SPC, report, audit log | 組み立てる | `verified-synthetic` | 8/8 | `inspection_workflow` synthetic → tests/test_example_scripts_run.py |
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | Draw lines and regions without knowing the background colour | 見せる | `verified-synthetic` | 3/3 | `annotate_paper_tour` synthetic → tests/test_example_scripts_run.py |
 | [レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線)](capabilities/lens-distortion-correction.md) | Correct lens distortion over a whole image (barrel, pincushion, tangential) | 形にする | `verified-synthetic` | 4/4 | `lens_undistort` synthetic → tests/test_example_scripts_run.py |
@@ -56,9 +57,9 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 216 |
+| 2-D 台帳の例 | 217 |
 | `tests/test_poc_scripts_run.py` が走らせる | 122 |
-| `tests/test_example_scripts_run.py` が走らせる | 94 |
+| `tests/test_example_scripts_run.py` が走らせる | 95 |
 | **どの門も走らせていない** | **0** |
 
 走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり

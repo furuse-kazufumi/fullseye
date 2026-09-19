@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 27 項目**
+**収録 28 項目**
 
 ## 測る (6)
 
@@ -172,7 +172,7 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 
 動く例: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## 組み立てる (6)
+## 組み立てる (7)
 
 ### [位置を合わせて重ねる](capabilities/align-and-stack.md)
 
@@ -189,6 +189,14 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 使う op: `compare_to_golden`, `golden_measure`, `golden_spec`, `inspect_batch`, `judge`, `ssim`, `psnr`
 
 動く例: `golden_compare`
+
+### [既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕を測る](capabilities/inspection-fixture.md)
+
+レシピ(前処理)と計測と仕様を決めたあと、現場が最初に聞くのは「良品は全部通り、不良品は全部止まるのか」と「どれくらい余裕があるのか」です。`fullseye/fixture.py` の `inspection_fixture(good, bad, recipe, measure=..., spec=...)` は、既知の良品セットと不良品セット(フォルダまたはパス列)をそれぞれ `inspect_batch` で回し、**良品が全部 `ok` かつ不良品が全部 `ng` のときだけ `passed=True`** を返します。混同表 `confusion`、見逃した不良品の行 `escapes`、過検出した良品の行 `false_rejects`、読めなかった行 `errors` を並べ、`spec_margins` が仕様キーごとに**良品の計測が限界にどれだけ近いか**(`min_margin`、負なら超過。`tol` や max−min で正規化した `min_margin_norm` は 1.0 が限界幅ぶんの余裕)を出します。`detail` は「passed: good 6/6 ok, bad 4/4 ng; tightest margin bright_px=1.00 of limit width」のような 1 行です。
+
+使う op: `inspection_fixture`, `spec_margins`, `inspect_batch`, `judge`
+
+動く例: `inspection_fixture`
 
 ### [フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す](capabilities/inspection-workflow.md)
 

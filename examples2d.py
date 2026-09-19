@@ -116,6 +116,11 @@ EXAMPLES = [
      "summary": "table / points は本物の GFM 表、image / region は 1 行要約(画素は描かない)。json_block で厳密な "
                 "JSON を ```json フェンスに包み、extract_json で Markdown 文書から fullseye 封筒だけを bit 一致で回収。"
                 "report は『読める』と『機械で戻せる』を with_json で 1 文書に両立。異種フェンスは無視し未知 sort は断る。"},
+    {"id": "inspection_fixture", "task": "workflow", "data": "synthetic",
+     "name": "既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕(margin)を測る",
+     "summary": "inspection_fixture(good, bad, recipe, measure, spec) = 良品が全部 ok かつ不良品が全部 ng なら passed、"
+                "見逃し(escapes)・過検出(false_rejects)・error を行で返し、spec_margins が仕様キーごとに良品の限界までの余裕を出す。"
+                "合成の良品 6・不良品 4 で passed、仕様を締めると過検出が出て failed になることを assert。"},
     {"id": "golden_compare", "task": "workflow", "data": "synthetic",
      "name": "基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する",
      "summary": "compare_to_golden = 位相相関で整数並進を合わせ→差分→閾値→連結成分→計測 dict(shift/ssim/psnr/欠陥面積・個数)。"

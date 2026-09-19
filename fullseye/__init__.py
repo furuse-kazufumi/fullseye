@@ -609,6 +609,10 @@ from fullseye.inspect_batch import (  # noqa: E402,F401
 from fullseye.golden import (  # noqa: E402,F401
     compare_to_golden, golden_measure, golden_spec,
 )
+# #4 フィクスチャ: 既知の良品/不良品セットで recipe + spec を配備前に検定し、仕様の余裕(margin)を出す。
+from fullseye.fixture import (  # noqa: E402,F401
+    inspection_fixture, spec_margins,
+)
 
 __all__ = [
     "op", "ledger",
@@ -955,4 +959,5 @@ __all__ = [
     "save_xlsx_report",
     "judge", "inspect_batch", "as_verdict",
     "compare_to_golden", "golden_measure", "golden_spec",
+    "inspection_fixture", "spec_margins",
 ]
