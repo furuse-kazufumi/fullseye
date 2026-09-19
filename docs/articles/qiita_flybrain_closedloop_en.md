@@ -74,6 +74,8 @@ One experiment = one question. **This article is appended to every time an exper
 | Does enlarging the eye break it? | No — and the first conclusion here was retracted | §8 |
 | Does shuffling the wiring cost performance? | **Not measurable.** Two shuffles differ from each other 3× more | appendix |
 | Does a staged curriculum produce direction selectivity? | Yes (0/8 → **5/8**) — and the final behavioural stage destroys it (→ 1/8) | appendix |
+| Can we freeze the optic-lobe front end and cache every cell type's activity? | Yes (45,669 nodes × 12 places × 350 frames) — but **41–73 % of the T4/T5 signal comes from the 90 border columns** (a boundary artefact) | appendix |
+| Does the male whole-CNS connectome have left/right gaps? | Not in cell counts (96 % of 11,229 types within ±1 cell). The only significant asymmetry is **one type, Kenyon cell KCab-s** — a subtype-boundary difference. Completion shrinks it by 20–30 % but does not remove it | appendix |
 
 ## Glossary (worth reading first)
 
@@ -533,10 +535,49 @@ The cost is explicit. Each evaluation measures every stage, so the final stage t
 
 Deceleration does not interfere with the memory update. **Deceleration hides nothing: it writes the error accumulated in memory straight into the stopping position** — and since the constant-speed "closest approach" was an optimistic number (the track happened to pass near the nest), deceleration is the more honest metric. The experiment ran four times and three of its pre-registered predictions failed; the record is kept in the script's docstring.
 
+### Freezing the front end and caching every cell type — half the signal was the border (2026-09-19)
+
+As the first step towards replacing the hand-written readout (`ratio_relu_up` in §2) with an *evolving head*, I froze the optic-lobe model and cached it: the walking-while-turning stimuli of 12 places × 350 frames go through the trained model 000 once, and **every node's activity** is stored — 45,669 nodes (63 types × 721 columns plus Lawf1 / Lawf2 × 123 columns; "65 types × 721 columns", as I had been writing, was an approximation that the gate caught on the first run), 688 MB, 94 s. From here on, evolving or distilling the head is pure array arithmetic. The hand-written readout computed from the cache matches the original evaluation (a gate); held-out correlations are C 0.976 / D 0.977.
+
+![activity raster of 65 cell types](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/f1_type_raster_C.png)
+
+*↑ Activity of the 65 optic-lobe cell types while walking and turning at place C (rectified mean per type, z-scored); the top trace is the true rotation. The photoreceptors R1–8 move together with brightness, and T4a / T4b light up alternately with the sign of rotation. Labels in the figure are Japanese.*
+
+![column activity while walking](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/f1_hex_walk_C.gif)
+
+*↑ The 721 columns (hexagonal coordinates) over the same interval: input R1 → the convergence point Mi1 → the opposing motion detectors T4a / T4b. Brighter = stronger (a still frame is `f1_hex_walk_C_static.png`).*
+
+Drawing the figure revealed something the numbers had hidden. T4 / T5 activity looked confined to the **rim of the hexagon**, so I counted: the **90 border columns (12 % of 721) carry 41–73 % of the rectified sum (up to 81 % above the horizon)**, with mean activity 8–20× that of the interior (Mi1: 13 %, i.e. normal). Border columns lack lateral input — a boundary artefact. Dropping the border, the hand-written readout's correlation goes A 0.900→0.880 / B 0.941→0.944 / C 0.976→0.970 / D 0.977→0.952, so the **function survives**, but more than half of what §2 called "the sum of motion detectors over the whole field" was the boundary. Not a retraction — a caveat that stays — and the head's input and the distillation teacher will use the 631 interior columns.
+
+![hex maps of T4/T5](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/f1_hex_t4t5_C.png)
+
+*↑ T4a–d / T5a–d at the frame of maximum rotation. With the colour scale set by the interior 99th percentile the interior stripes become visible; the 90 border columns saturate (yellow).*
+
+The zero points were set on the same cache. A linear regression on the 4 hand-written ingredients reaches held-out C 0.980 / D 0.990; 122 per-type features give D 0.961; 366 type × side features give D 0.948 — **more features, worse hold-out** (§4's "fold the degrees of freedom by structural unit", again). The evolving head must beat 0.98–0.99, or else compete on *what it preserves*.
+
+### Counting "left/right gaps" in the male whole-CNS connectome — only a mushroom-body subtype (2026-09-19)
+
+The optic-lobe model in this PoC is one right eye. Before stacking left and right as mirror images, I asked how symmetric a real brain is and whether anything is missing, using the freshly released **MaleCNS v1.0** (Janelia FlyEM × Google Research, **male**, brain plus ventral nerve cord, over 166,000 neurons, CC-BY 4.0). The annotation table (211,577 bodies) and the connectivity table (150 M rows) were downloaded and aggregated locally (the data is not in the repository).
+
+| Quantity | Value |
+|---|---|
+| Neuron-like bodies | 166,283 |
+| Soma side L / R / M | 73,999 / 74,223 / 392 |
+| Of 11,229 types with somata on either side, \|L−R\| ≤ 1 | 10,789 (96 %) |
+| Significant asymmetry (binomial test, Bonferroni) | **exactly one type, KCab-s** (L 234 / R 423) |
+
+![left/right counts of KCab](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/malecns_kcab_lr.png)
+
+*↑ Left: published labels. Right: labels re-drawn jointly from both sides using connectivity fingerprints. The gap shrinks but does not vanish. Data: MaleCNS v1.0 (CC-BY 4.0). Labels in the figure are Japanese.*
+
+There are no left/right gaps at the level of cell counts; the one significant asymmetry sits at the **boundary between the Kenyon-cell subtypes KCab-s / m / c** (KCab totals 885 / 925, all KC types 2,018 / 2,045 — symmetric). Four completion methods: (1) averaging the counts — fills the numbers but says nothing about *which* cells; (2) a classifier trained on one side applied to the other — 0.78 within-side accuracy, 0.48–0.61 agreement across; (3) side-agnostic consensus labels trained on both — \|L−R\| shrinks s 189→151 / m 84→64 / c 66→46 but remains; (4) nearest neighbours across sides by cosine similarity of connectivity profiles (the idea behind the public tool coconatfly) — 0.55 agreement. Reading: **the connectivity fingerprints themselves lean towards s on the right**; whether that is a real difference in this individual or a confound from partner-type labels cannot be decided from this data alone. Recorded as a subtype asymmetry, not a gap.
+
 ### What we measure next
 
 When a result lands, it gains a row in "Experiments so far" and loses its line here.
 
+- [ ] **Replace the hand-written readout with an evolving (DNA-decoded) head (F1)** — the front-end cache is done; input = the 631 interior columns, zero point = the 4-feature linear regression (hold-out 0.98–0.99).
+- [ ] **Re-derive the KCab subtypes with coconatfly and compare with the home-grown fingerprints** — a second implementation of the same spec, to find whichever one has the hole.
 - [ ] **Re-run the developmental ladder with DSI** —— the non-finite values were flyvis's NaN padding of the stimulus; the gate is fixed (addendum above). 34 conditions × 6 speeds, about 3.5 hours.
 
 ### About the author
