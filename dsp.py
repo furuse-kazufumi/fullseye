@@ -20,6 +20,7 @@ specops) instead of quietly turning every downstream feature into NaN.
 """
 from __future__ import annotations
 
+import os
 import wave
 
 import numpy as np
@@ -47,6 +48,8 @@ def _require_finite(x, name: str = "signal") -> np.ndarray:
     shape from CSV loaders) which is flattened. Any other multi-dimensional input
     raises ``ValueError`` — before 2026-09-02 an ``(N,1)`` column went through
     ``rfft`` row by row and silently produced a "spectrum" of per-sample |x|."""
+    if x is None:
+        raise TypeError("%s is None — pass a 1-D array of samples" % name)
     a = np.asarray(x, np.float64)
     if a.ndim > 1:
         if sum(1 for s in a.shape if s != 1) > 1:
@@ -64,10 +67,34 @@ def _require_finite(x, name: str = "signal") -> np.ndarray:
 # --------------------------------------------------------------------------- #
 # I/O
 # --------------------------------------------------------------------------- #
+def _require_path(path, fn: str):
+    """``path`` は str / os.PathLike。None や配列を ``str()`` してファイル名にしない。
+
+    ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(<signal>, ...)`` と引数を取り違えると
+    ``wave.open(str(array))`` が失敗し、stdlib の ``Wave_write.__del__`` が「Exception ignored …
+    no attribute '_file'」を標準エラーに 1 呼び出しごとに吐いていた(本当の原因が裏に隠れる)。
+    ``read_wav(None)`` も ``'None'`` というファイル名を探していた。
+    """
+    if path is None:
+        raise TypeError("%s: path is None — pass a file path" % fn)
+    if not isinstance(path, (str, os.PathLike)):
+        raise TypeError("%s: path must be a str or os.PathLike, got %s%s"
+                        % (fn, type(path).__name__,
+                           " — the signal is the second argument: write_wav(path, x, rate)"
+                           if fn == "write_wav" else ""))
+    path = os.fspath(path)
+    if fn.startswith("read") and not os.path.exists(path):
+        raise FileNotFoundError("%s: no such file: %r" % (fn, path))
+    if fn.startswith("read") and os.path.isdir(path):
+        raise IsADirectoryError("%s: %r is a directory" % (fn, path))
+    return path
+
+
 def read_wav(path):
     """Read a WAV file (stdlib) -> ``(x float64 [-1,1], rate)``. Multi-channel is
     averaged to mono. Handles 8/16/32-bit PCM."""
-    with wave.open(str(path), "rb") as w:
+    path = _require_path(path, "read_wav")
+    with wave.open(path, "rb") as w:
         rate = w.getframerate()
         n = w.getnframes()
         ch = w.getnchannels()
@@ -89,9 +116,12 @@ def read_wav(path):
 def write_wav(path, x, rate=44100):
     """Write a float ``[-1,1]`` mono signal to a 16-bit PCM WAV (stdlib).
     Non-finite samples raise (they would become garbage PCM)."""
+    path = _require_path(path, "write_wav")
     a = np.clip(_require_finite(x), -1.0, 1.0)
     pcm = np.round(a * 32767.0).astype(np.int16)
-    with wave.open(str(path), "wb") as w:
+    # ファイルは自分で開く: wave.open(str) は open に失敗すると半端な Wave_write が残り、
+    # その __del__ が「Exception ignored」を吐く。開けなければ OSError がそのまま出る。
+    with open(path, "wb") as f, wave.open(f, "wb") as w:
         w.setnchannels(1)
         w.setsampwidth(2)
         w.setframerate(int(rate))
@@ -101,9 +131,10 @@ def write_wav(path, x, rate=44100):
 def read_audio(path):
     """Read any audio format -> ``(x, rate)``. Uses ``soundfile`` if available
     (mp3/flac/ogg/…), else falls back to the stdlib WAV reader."""
+    path = _require_path(path, "read_audio")
     try:
         import soundfile as sf
-        x, rate = sf.read(str(path), always_2d=False)
+        x, rate = sf.read(path, always_2d=False)
         x = np.asarray(x, np.float64)
         if x.ndim > 1:
             x = x.mean(axis=1)

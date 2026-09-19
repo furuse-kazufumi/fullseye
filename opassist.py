@@ -399,6 +399,14 @@ def _choices_for(op_name: str, param: str):
         return None
 
 
+#: パス名を取る引数の名前。宣言 sort が "file" のとき(読む側)だけデータ入力として扱う。
+_PATH_PARAMS = frozenset({"path", "filename", "fname", "file", "out_path", "outpath"})
+
+
+#: パス名を取る引数の名前。宣言 sort が "file" のとき(読む側)だけデータ入力として扱う。
+_PATH_PARAMS = frozenset({"path", "filename", "fname", "file", "out_path", "outpath"})
+
+
 def param_spec(op_name: str) -> list[dict]:
     """台帳 op の**実引数**の仕様を返す(UI がフォームを組める形)。
 
@@ -423,20 +431,30 @@ def param_spec(op_name: str) -> list[dict]:
     except (TypeError, ValueError):
         params = []
     out = []
-    for i, p in enumerate(params):
+    di = 0                                           # 次に割り当てる宣言 in 型の番号
+    for p in params:
         if p.kind in (p.VAR_POSITIONAL, p.VAR_KEYWORD):
             continue
         spec = {"name": p.name, "doc": _doc_line(doc, p.name), "unit": _unit_for(p.name)}
-        if i < len(ins):
-            spec.update(kind="data", sort=ins[i], required=True, default=None,
-                        container=dict(SCALAR_CONTAINER, form="data", role=ins[i]))
+        # ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、
+        # 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として
+        # 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、
+        # それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
+        is_path = (p.name in _PATH_PARAMS and entry.get("out") == "file"
+                   and not (di < len(ins) and ins[di] == "file"))
+        if di < len(ins) and not is_path:
+            spec.update(kind="data", sort=ins[di], required=True, default=None,
+                        container=dict(SCALAR_CONTAINER, form="data", role=ins[di]))
             out.append(spec)
+            di += 1
             continue
         default = None if p.default is inspect.Parameter.empty else p.default
         spec["default"] = default
         spec["required"] = p.default is inspect.Parameter.empty
         choices = _choices_for(op_name, p.name)
-        if choices is not None:
+        if is_path:
+            spec["kind"] = "text"                      # 書き先のパス名(サンプルは発明しない)
+        elif choices is not None:
             spec.update(kind="choice", choices=choices)
         elif isinstance(default, bool):
             spec["kind"] = "bool"
@@ -474,18 +492,68 @@ def presets(op_name: str) -> dict:
 
     数値を知らなくても「CD」「陶器の釉薬」「窓ガラス 3 mm」で試せるようにするための表。
     値の出どころは各 op の docstring(実在の規格値・実硝材・実材質)。
+
+    ★2026-09-20(GenSpark 第 15 報 N69): 未知の op 名にも ``{}`` を返していた —— 「プリセットが無い op」と
+    「存在しない op」が同じ答えになる。台帳に無い名前は :func:`assist` と同じ ``ValueError``。
+    プリセットは実在の規格値・材質が意味を持つ op にだけ用意した表(2026-09-20 時点 13 op)なので、
+    台帳にある op の ``{}`` は「意図して無し」を意味する。
     """
+    if _ledger_entry(op_name)[1] is None:
+        raise ValueError(f"opassist: unknown op {op_name!r} (not in any ledger)")
     return {k: dict(v) for k, v in PRESETS.get(op_name, {}).items()}
+
+
+def known_sorts() -> list[str]:
+    """台帳のどれかが in か out に持つ型(sort)名の一覧(:func:`producers` / :func:`consumers` の引数)。"""
+    sorts: set[str] = set()
+    for mod_name, table in _LEDGERS:
+        try:
+            mod = importlib.import_module(mod_name)
+        except Exception:                            # noqa: BLE001
+            continue
+        entries = getattr(mod, table, None)
+        if not isinstance(entries, dict):
+            continue
+        for info in entries.values():
+            sorts.update(info.get("in") or [])
+            if info.get("out"):
+                sorts.add(info["out"])
+    return sorted(sorts)
+
+
+def _require_known_sort(fn: str, sort) -> None:
+    """★2026-09-20(GenSpark 第 15 報 N68): ``op_producers("gaussian")`` が黙って ``[]`` を返していた。
+    引数は型名(sort)であって op 名ではないが、空は「そういう型は無い」とも「産む op が無い」とも
+    読めてしまう。未知の型は :func:`assist` と同じく **ValueError** —— op 名を渡された時はそう言う。
+    """
+    if not isinstance(sort, str) or not sort:
+        raise ValueError("opassist.%s: sort must be a non-empty string" % fn)
+    sorts = known_sorts()
+    if sort in sorts:
+        return
+    if _ledger_entry(sort)[1] is not None or _is_registry_op(sort):
+        raise ValueError(
+            "opassist.%s: %r is an op name, not a sort (type) — %s takes a type such as 'normalmap' or 'signal'; "
+            "an op's own types are op_assist(%r)['in'] / ['out']" % (fn, sort, fn, sort))
+    raise ValueError("opassist.%s: unknown sort %r; known sorts: %s" % (fn, sort, ", ".join(sorts)))
+
+
+def _is_registry_op(name: str) -> bool:
+    try:
+        import ops as _ops
+        return any(o.name == name for o in _ops.REGISTRY)
+    except Exception:                                # noqa: BLE001 - registry unavailable: not an op we can name
+        return False
 
 
 def producers(sort: str) -> list[str]:
     """その型(sort)を**産む** op の一覧。「この入力はどう作る?」への答え。
 
     型で繋ぐライブラリなので、UI で一番効く導線がこれ ―― 「normalmap が要る」と
-    言われた利用者が、次にどの op を押せばよいかが分かる。
+    言われた利用者が、次にどの op を押せばよいかが分かる。引数は :func:`known_sorts` の
+    型名。未知の型・op 名は ``ValueError``(黙って空を返さない)。
     """
-    if not isinstance(sort, str) or not sort:
-        raise ValueError("opassist.producers: sort must be a non-empty string")
+    _require_known_sort("producers", sort)
     found = []
     for mod_name, table in _LEDGERS:
         try:
@@ -502,9 +570,8 @@ def producers(sort: str) -> list[str]:
 
 
 def consumers(sort: str) -> list[str]:
-    """その型を**受け取れる** op の一覧(産んだ後にどこへ繋げるか)。"""
-    if not isinstance(sort, str) or not sort:
-        raise ValueError("opassist.consumers: sort must be a non-empty string")
+    """その型を**受け取れる** op の一覧(産んだ後にどこへ繋げるか)。未知の型・op 名は ``ValueError``。"""
+    _require_known_sort("consumers", sort)
     found = []
     for mod_name, table in _LEDGERS:
         try:
@@ -593,6 +660,7 @@ def sample_input(op_name: str):
     import numpy as np
 
     specs = param_spec(op_name)
+    writes_file = (_ledger_entry(op_name)[1] or {}).get("out") == "file"
     seeds = {
         "image2d": lambda: np.linspace(0.0, 1.0, 64 * 64).reshape(64, 64),
         "depth": lambda: 500.0 + 30.0 * np.random.default_rng(0).random((64, 64)),
@@ -627,7 +695,8 @@ def sample_input(op_name: str):
                 maker = seeds.get(spec.get("sort"))
             args.append(maker() if maker is not None else None)
         elif spec["required"]:
-            kwargs[spec["name"]] = _sample_value(spec)
+            # 書き先のパス名は発明しない —— None を渡し、op が「path is None — pass a file path」と言う。
+            kwargs[spec["name"]] = None if (writes_file and spec["name"] in _PATH_PARAMS) else _sample_value(spec)
     return args, kwargs
 
 
@@ -1075,14 +1144,44 @@ def run(op_name: str, *data, preset=None, strict: bool = False, **kwargs):
     args = list(data)
     if not args:
         args, auto_kw = sample_input(op_name)
+        # ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま
+        # 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。
+        # 呼ばずに、どの入力を渡せばよいかを言う。
+        missing = [sp["sort"] for sp, a in zip([x for x in param_spec(op_name) if x["kind"] == "data"], args) if a is None]
+        if missing:
+            raise ValueError("opassist.run(%r): no built-in sample for input sort(s) %s — pass the input(s) "
+                             "explicitly: op_run(%r, <%s>)" % (op_name, ", ".join(repr(m) for m in missing), op_name,
+                                                              ">, <".join(sp["sort"] for sp in param_spec(op_name) if sp["kind"] == "data")))
         for k, v in auto_kw.items():
             kw.setdefault(k, v)
+        auto_keys = {k for k, v in auto_kw.items() if k not in kwargs and v is not None}   # None = 発明しなかった値
+    else:
+        auto_keys = set()
+    # ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと
+    # 配列が path に入る。データ引数の名前は param_spec が知っている。
+    data_names = [sp["name"] for sp in param_spec(op_name) if sp["kind"] == "data"]
+    try:
+        leading = [q.name for q in inspect.signature(entry["func"]).parameters.values()][:len(args)]
+    except (TypeError, ValueError):
+        leading = data_names[:len(args)]
+    if args and leading != data_names[:len(args)] and len(data_names) >= len(args):
+        kw.update(zip(data_names, args))
+        args = []
     notes = preflight(op_name, kw)
     if notes and strict:
         raise ValueError("opassist.run: preflight: " + " / ".join(notes))
     mod = importlib.import_module(mod_name)
     caller = getattr(mod, "call", None)
-    result = caller(op_name, *args, **kw) if caller else entry["func"](*args, **kw)
+    try:
+        result = caller(op_name, *args, **kw) if caller else entry["func"](*args, **kw)
+    except (IndexError, AttributeError, TypeError) as e:
+        # ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の
+        # IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
+        if auto_keys:
+            raise ValueError("opassist.run(%r): the built-in sample values for %s do not fit this op "
+                             "(%s: %s) — pass them explicitly, e.g. op_run(%r, **{...})"
+                             % (op_name, sorted(auto_keys), type(e).__name__, str(e)[:80], op_name)) from e
+        raise
     return result, notes
 
 
@@ -1177,3 +1276,5 @@ op_presets = presets
 op_producers = producers
 op_consumers = consumers
 op_accepts = accepted_sorts
+op_sorts = known_sorts
+op_sorts = known_sorts

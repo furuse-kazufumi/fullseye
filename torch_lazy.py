@@ -66,7 +66,11 @@ class _LazyModule:
             try:
                 mod = importlib.import_module(self._name)
             except Exception as exc:  # not installed, or a broken build
-                raise ImportError(_MSG) from exc
+                # ★2026-09-20(GenSpark 第 24・25 報 N94): torch が入っているのに「install with」だけが出て、
+                # 導入すれば直ると誤って案内していた。入っているのに import で落ちたなら、その理由を言う。
+                why = ("%r is installed but importing it failed: %s: %s" % (self._name, type(exc).__name__, str(exc)[:200])
+                       if _installed(self._name) else "%r is not installed" % self._name)
+                raise ImportError("%s (%s)" % (_MSG, why)) from exc
             self._mod = mod
         return mod
 

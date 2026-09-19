@@ -146,6 +146,10 @@ def data_range_of(*arrays, data_range=None):
         return dr
 
     arrays = [np.asarray(a) for a in arrays]
+    if not arrays:
+        # ★2026-09-20(GenSpark 第 23 報 N92): 配列なしで呼ぶと空集合の pop(KeyError)/ 0-d の float()
+        # (TypeError)という内部の文が出ていた。
+        raise MetricContractError("data_range_of needs at least one array (or data_range= explicitly)")
     dts = {a.dtype for a in arrays}
     if len(dts) > 1:
         raise MetricContractError(

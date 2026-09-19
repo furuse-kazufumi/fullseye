@@ -169,8 +169,12 @@ def to_float01(x):
 
 
 def to_uint8(x):
-    """Clip a [0, 1] array to uint8 [0, 255]."""
-    return np.clip(np.asarray(x, np.float64) * 255.0, 0, 255).astype(np.uint8)
+    """Clip a [0, 1] array to uint8 [0, 255], **rounding** to the nearest level.
+
+    ★2026-09-20(GenSpark 第 18 報 N75): ``astype`` は切り捨てなので 0.999 が 254 になり、往復誤差が
+    1/255 だった。四捨五入で 1/510 に(0.5 は偶数へ = numpy の round)。
+    """
+    return np.clip(np.round(np.asarray(x, np.float64) * 255.0), 0, 255).astype(np.uint8)
 
 
 def normalize(x, vmin=None, vmax=None):
@@ -575,8 +579,21 @@ def colorize_flow(u, v, max_mag=None):
 
 
 def colorize_labels(labels, seed: int = 0):
-    """Distinct random colour per positive label; label 0 (background) -> black."""
-    lab = np.asarray(labels).astype(int)
+    """Distinct random colour per positive label; label 0 (background) -> black.
+
+    *labels* must hold integers (an integer dtype, or a float array of whole numbers — the
+    fullseye label contract). ★2026-09-20 (GenSpark 第 27 報 N100): a float image in [0, 1] was
+    silently truncated to all-zero labels and came back as a black image; now ``ValueError``.
+    """
+    lab0 = np.asarray(labels)
+    if lab0.dtype.kind == "f":
+        if lab0.size and (not np.isfinite(lab0).all() or not np.array_equal(lab0, np.round(lab0))):
+            raise ValueError("colorize_labels: labels must be whole numbers (a label map), got float values "
+                             "in [%.3g, %.3g] — threshold or label the image first (e.g. connection / label)"
+                             % (float(np.nanmin(lab0)), float(np.nanmax(lab0))))
+    elif lab0.dtype.kind not in "iub":
+        raise ValueError("colorize_labels: labels must be an integer array, got dtype %s" % lab0.dtype)
+    lab = lab0.astype(int)
     n = int(lab.max())
     rng = np.random.default_rng(seed)
     cols = rng.random((n + 1, 3))
@@ -610,8 +627,50 @@ def _cv2():
         return None
 
 
-def save(path: str, arr) -> None:
+#: cv2 が書ける拡張子の候補(実際に書けるかは ``cv2.haveImageWriter`` で確かめる)。
+_WRITE_EXT_CANDIDATES = (".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp", ".pfm", ".ppm", ".pgm", ".pbm", ".hdr", ".exr")
+#: 16 bit / float を無損失に持てる拡張子。
+_EXT_16BIT = (".png", ".tif", ".tiff")
+_EXT_FLOAT = (".pfm", ".tif", ".tiff")
+
+
+def writable_extensions() -> list[str]:
+    """この環境の OpenCV が書ける画像拡張子(``save`` のエラー文が案内する一覧)。"""
+    cv2 = _cv2()
+    if cv2 is None or not hasattr(cv2, "haveImageWriter"):
+        return list(_WRITE_EXT_CANDIDATES)
+    return [e for e in _WRITE_EXT_CANDIDATES if cv2.haveImageWriter("x" + e)]
+
+
+def _check_write_target(path, ext: str) -> None:
+    """★2026-09-20(GenSpark 第 18 報 N77 / N79): 未対応の拡張子は OpenCV の内部パスと errno が
+    そのまま出て、親ディレクトリが無い書き先は cv2.imwrite が False を返すだけで **ファイルが無いのに
+    成功に見えた**(facade 側)。書く前に 1 文で止める。"""
+    import os
+    if not isinstance(path, (str, os.PathLike)) or not os.fspath(path):
+        raise TypeError("save: path must be a non-empty str or os.PathLike, got %s" % type(path).__name__)
+    if not ext:
+        raise ValueError("save: %r has no extension — the image format is chosen by the extension; "
+                         "writable here: %s" % (os.fspath(path), ", ".join(writable_extensions())))
+    cv2 = _cv2()
+    if cv2 is not None and hasattr(cv2, "haveImageWriter") and not cv2.haveImageWriter("x" + ext.lower()):
+        raise OSError("save: %r is not a writable image extension; writable here: %s"
+                      % (ext, ", ".join(writable_extensions())))
+    parent = os.path.dirname(os.fspath(path)) or "."
+    if not os.path.isdir(parent):
+        raise FileNotFoundError("save: directory does not exist: %r (save does not create directories — "
+                                "os.makedirs it first)" % parent)
+
+
+def save(path: str, arr, depth=None) -> None:
     """Save an image/region/color array (or a colourised scalar field) to *path*.
+
+    **Bit depth** (``depth``, 2026-09-20, GenSpark 第 18 報 N75): ``None`` honours the input dtype —
+    ``uint16`` is written as 16-bit (PNG / TIFF; it used to be crushed to 8 bits although :func:`load`
+    reads 16-bit losslessly), everything else as 8-bit. A ``float`` array in [0, 1] is therefore
+    **quantised to 256 levels by default** (max round-trip error 1/510 ≈ 0.002); pass ``depth=16``
+    (PNG / TIFF, error 1/131070) or ``depth="float"`` (PFM / TIFF, float32, lossless to ~1e-7) to
+    keep more. Any other extension with 16 / "float" raises ``ValueError`` naming the ones that can.
 
     The input **dtype is honoured first**: bool -> 0/1 and unsigned integers are
     scaled by their dtype max (uint8 -> /255, uint16 -> /65535, via
@@ -629,11 +688,23 @@ def save(path: str, arr) -> None:
 
     Non-ASCII paths (a Japanese file name on Windows) work: the image is encoded
     in memory (``cv2.imencode``) and the bytes are written by numpy, so the
-    ``cv2.imwrite`` code-page limitation never applies. Unwritable paths and
-    unknown extensions both raise ``OSError``.
+    ``cv2.imwrite`` code-page limitation never applies. An unwritable extension raises ``OSError``
+    naming the writable ones, a missing parent directory raises ``FileNotFoundError`` (directories are
+    never created silently), and ``.ppm`` (a colour format) replicates a grey image to three channels
+    instead of failing inside OpenCV.
     """
     import os
+    ext = os.path.splitext(os.fspath(path) if isinstance(path, (str, os.PathLike)) else "")[1].lower()
+    _check_write_target(path, ext)
     a0 = np.asarray(arr)
+    if depth is None:
+        depth = 16 if a0.dtype == np.uint16 else 8
+    if depth not in (8, 16, "float"):
+        raise ValueError("save: depth must be 8, 16 or 'float', got %r" % (depth,))
+    if depth == 16 and ext not in _EXT_16BIT:
+        raise ValueError("save: 16-bit output needs %s, got %r" % (" / ".join(_EXT_16BIT), ext))
+    if depth == "float" and ext not in _EXT_FLOAT:
+        raise ValueError("save: float output needs %s, got %r" % (" / ".join(_EXT_FLOAT), ext))
     if a0.dtype == bool or a0.dtype.kind == "u":
         a = to_float01(a0)                      # dtype-aware: uint8 stays grey/RGB
     else:
@@ -645,7 +716,16 @@ def save(path: str, arr) -> None:
     if a.ndim not in (2, 3) or (a.ndim == 3 and a.shape[-1] not in (3, 4)):
         raise ValueError("save expects (H, W), (H, W, 1), (H, W, 3) or (H, W, 4), got "
                          "shape %r" % (a.shape,))
-    u8 = to_uint8(a)
+    if depth == 16:
+        u8 = np.round(np.clip(np.asarray(a, np.float64), 0.0, 1.0) * 65535.0).astype(np.uint16)
+    elif depth == "float":
+        u8 = np.asarray(a, np.float32)
+    else:
+        u8 = to_uint8(a)
+    if ext == ".ppm" and u8.ndim == 2:
+        u8 = np.stack([u8] * 3, axis=-1)            # ppm は色の形式: 灰は 3 ch に複製
+    if ext in (".pgm", ".pbm") and u8.ndim == 3:
+        raise ValueError("save: %r is a grey format; pass a 2-D image or use .ppm / .png" % ext)
     cv2 = _cv2()
     if cv2 is not None:
         if u8.ndim == 3:
@@ -654,23 +734,24 @@ def save(path: str, arr) -> None:
             bgr = np.ascontiguousarray(u8[:, :, order])
         else:
             bgr = np.ascontiguousarray(u8)
-        ext = os.path.splitext(path)[1]
         # cv2.imencode RAISES cv2.error on an unknown extension (or returns False);
         # tofile raises OSError on an unwritable path. Normalise ALL of them to a
         # clean OSError so a caller's try/except sees one exception type.
         try:
             ok, buf = cv2.imencode(ext, bgr)
         except cv2.error as e:
-            raise OSError("could not write image to %r (unknown extension %r?): %s"
-                          % (path, ext, e))
+            raise OSError("could not encode image for %r (%s, dtype %s): %s"
+                          % (os.fspath(path), ext, bgr.dtype, str(e).strip().splitlines()[-1][:160]))
         if not ok:
-            raise OSError("could not encode image for %r (unknown extension %r?)"
-                          % (path, ext))
+            raise OSError("could not encode image for %r (%s does not take dtype %s / %d channel(s))"
+                          % (os.fspath(path), ext, bgr.dtype, 1 if bgr.ndim == 2 else bgr.shape[-1]))
         try:
             np.asarray(buf, np.uint8).ravel().tofile(path)
         except OSError as e:
             raise OSError("could not write image to %r (unwritable path?): %s" % (path, e))
         return
+    if depth != 8:
+        raise RuntimeError("save: 16-bit / float output needs opencv-python")
     try:
         from PIL import Image
         Image.fromarray(u8).save(path)
@@ -803,8 +884,14 @@ def load(path: str, color: bool = False):
     branches use ``ImageOps.exif_transpose``).
     """
     import os
+    # ★2026-09-20(GenSpark 第 18 報 N78): 無い・ディレクトリ・読めない、が全部同じ文だった。
+    if not isinstance(path, (str, os.PathLike)) or not os.fspath(path):
+        raise TypeError("load: path must be a non-empty str or os.PathLike, got %r" % (path,))
+    path = os.fspath(path)
+    if os.path.isdir(path):
+        raise IsADirectoryError("load: %r is a directory, not an image file" % path)
     if not os.path.exists(path):
-        raise FileNotFoundError(path)
+        raise FileNotFoundError("load: no such image file: %r" % path)
     _check_jpeg_complete(path)                  # before ANY backend touches it
     cv2 = _cv2()
     if cv2 is not None:

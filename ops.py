@@ -126,6 +126,8 @@ def _it(a: float) -> int:
 
 
 def _norm(x):
+    if np.size(x) == 0:                        # ★2026-09-20: 0 要素で np.max が生の numpy 文を出す(入口の門の同族)
+        return x
     mx = float(np.max(np.abs(x)))
     return x / mx if mx > 1e-8 else x
 

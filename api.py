@@ -137,7 +137,7 @@ from surfacelib import (material_catalog, oren_nayar, clearcoat_shade,  # noqa: 
 # op 別の入力補助(探す / すぐ動かす / 型を繋ぐ)。台帳 op ではなく利用の入口。
 import opassist  # noqa: E402,F401
 from opassist import (op_find, op_run, op_path, op_assist,  # noqa: E402,F401
-                      op_presets, op_producers, op_consumers, op_accepts)
+                      op_presets, op_producers, op_consumers, op_accepts, op_sorts)
 # 3-D metrology fits — the (depth, row, col) analogue of the 2-D fits above.
 # numpy-only (no torch), so always available; the torch-backed op registry below is guarded.
 from measure3d import (  # noqa: E402,F401
@@ -1814,11 +1814,23 @@ def _reject_untyped(v, op_or_sort) -> None:
     "raise"`` でも止まらない)。|z| / Re / arg のどれを取るかは呼ぶ側の判断なので、ここでは
     選ばずに止める。
     """
-    a = v if isinstance(v, np.ndarray) else None
-    if a is None:
-        return
     sort = op_or_sort if isinstance(op_or_sort, str) else op_or_sort.in_sort
     name = "" if isinstance(op_or_sort, str) else " %r" % op_or_sort.name
+    if isinstance(v, np.ndarray):
+        a = v
+    elif sort in _REAL_RASTER_SORTS and not isinstance(v, (list, tuple)):
+        # ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、
+        # 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。
+        # raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
+        try:
+            a = np.asarray(v)
+        except Exception:  # noqa: BLE001 - cannot even become an array
+            raise TypeError("op%s expects a numeric %s array, got %s" % (name, sort, type(v).__name__)) from None
+    else:
+        return
+    if sort in _REAL_RASTER_SORTS and a.ndim == 0:
+        raise TypeError("op%s expects a %s array with at least one dimension, got a scalar %s (%r)"
+                        % (name, sort, type(v).__name__, v if isinstance(v, (str, bytes, int, float)) else "..."))
     if a.dtype.kind in "USOVMm":          # str / bytes / object / void / datetime / timedelta
         raise TypeError(
             "op%s expects a numeric %s array, got dtype %s — strings, objects and dates have no "
@@ -2382,9 +2394,21 @@ FAILED_BACKENDS = _ops.FAILED_BACKENDS
 
 # ---- discovery ------------------------------------------------------------- #
 def _rows():
+    # ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は
+    # 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。
+    # 行に載せる(None = 関門なし。理由の文がそのまま値)。
+    guards = getattr(_ops, "NATIVE_CRASHES_ON_DEGENERATE", {})
+    # ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と
+    # コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で
+    # 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+    peers: dict = {}
+    for o in _ops.REGISTRY:
+        if o.halcon:
+            peers.setdefault(o.halcon, []).append(o.name)
     rows = [{"name": o.name, "halcon": o.halcon, "in_sort": o.in_sort,
              "out_sort": o.out_sort, "category": o.category, "tier": "registry",
-             "knobs": knob_summary(o.name)}
+             "knobs": knob_summary(o.name), "native_guard": guards.get(o.name),
+             "halcon_peers": sorted(n for n in peers.get(o.halcon, []) if n != o.name) if o.halcon else []}
             for o in _ops.REGISTRY]
     rows += [{"name": o.name, "halcon": o.halcon, "in_sort": o.in_sorts[0],
               "out_sort": o.out_sort, "category": "nary", "tier": "nary",
@@ -2413,6 +2437,12 @@ def algo_rows() -> list[dict]:
             for op in algo.ALGO_REGISTRY]
 
 
+def _fold(text: str) -> str:
+    """Case- and accent-insensitive key for name matching (NFKD, combining marks dropped, casefold)."""
+    import unicodedata
+    return "".join(ch for ch in unicodedata.normalize("NFKD", str(text)) if not unicodedata.combining(ch)).casefold()
+
+
 def list_ops(sort: str | None = None, search: str | None = None,
              include_algo: bool = False) -> list[dict]:
     """Every operator as a uniform dict. Filter by input *sort* and/or *search*
@@ -2421,14 +2451,29 @@ def list_ops(sort: str | None = None, search: str | None = None,
 
     Each row carries ``"knobs"`` = :func:`knob_summary` (what ``a`` / ``b`` do, as measured;
     ``None`` when the op has not been measured) and, for the ``"nary"`` tier, ``"arity"`` and
-    ``"in_sorts"`` (call those with ``apply([x0, x1], name)``)."""
-    kw = (search or "").lower()
+    ``"in_sorts"`` (call those with ``apply([x0, x1], name)``). Registry rows also carry
+    ``"native_guard"``: the reason text when the op's native backend is known to crash or hang on
+    degenerate input and an entry gate refuses such input first (``ops.NATIVE_CRASHES_ON_DEGENERATE``),
+    ``None`` otherwise, and ``"halcon_peers"``: the other registry ops that claim the same HALCON
+    alias (``[]`` when the alias is unique) — :func:`find_op` resolves an alias to the op whose own
+    name equals it, else to the explicit ``_ALIAS_CANONICAL`` row, so the choice is fixed, not the
+    first hit.
+
+    *sort* and *search* are both case-insensitive, and *search* ignores accents
+    (``"ötsu"`` finds ``otsu``; 2026-09-20, GenSpark N85 — ``sort="IMAGE"`` used to match nothing)."""
+    kw = _fold(search or "")
+    sort_key = _fold(sort or "")
     rows = _rows() + (algo_rows() if include_algo else [])
+    if sort_key:
+        known = sorted({r["in_sort"] for r in rows})
+        if sort_key not in {_fold(k) for k in known}:
+            # ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+            raise ValueError("list_ops: unknown sort %r; choose from: %s" % (sort, ", ".join(known)))
     out = []
     for r in rows:
-        if sort and r["in_sort"] != sort:
+        if sort_key and _fold(r["in_sort"]) != sort_key:
             continue
-        hay = (r["name"] + " " + (r["halcon"] or "") + " " + r["category"]).lower()
+        hay = _fold(r["name"] + " " + (r["halcon"] or "") + " " + r["category"])
         if kw and kw not in hay:
             continue
         out.append(r)
@@ -2457,44 +2502,40 @@ def categories() -> list[str]:
 
 # ---- optional file helpers (cv2) ------------------------------------------- #
 def read_image(path: str, sort: str = "image"):
-    """Load *path* as a float64 array matching *sort* (needs opencv-python)."""
-    import cv2
-    if sort == "color":
-        im = cv2.imread(path, cv2.IMREAD_COLOR)
-        if im is None:
-            raise FileNotFoundError(path)
-        return im[:, :, ::-1].astype(np.float64) / 255.0
-    im = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-    if im is None:
-        raise FileNotFoundError(path)
-    g = im.astype(np.float64) / 255.0
-    return (g > 0.5).astype(np.float64) if sort == "region" else g
+    """Load *path* as a float64 array matching *sort* (``"image"`` grey [0,1], ``"color"`` RGB (H,W,3),
+    ``"region"`` = grey > 0.5). Goes through :func:`imgio.load` (needs opencv-python or Pillow):
+    a missing file is ``FileNotFoundError``, a directory ``IsADirectoryError``, an undecodable file
+    ``ValueError``; 16-bit rasters keep their depth (divided by 65535).
+
+    ★2026-09-20(GenSpark 第 18 報 N78): 以前は cv2.imread の None を全部 FileNotFoundError にしていた
+    (ディレクトリも壊れたファイルも「無い」と言っていた)。
+    """
+    import imgio
+    g = imgio.load(path, color=(sort == "color"))
+    if sort == "region":
+        return (np.asarray(g, np.float64) > 0.5).astype(np.float64)
+    return np.asarray(g, np.float64)
 
 
-def write_image(path: str, v) -> None:
-    """Save an image/region array to *path* (needs opencv-python).
+def write_image(path: str, v, depth=None) -> None:
+    """Save an image/region array to *path* through :func:`imgio.save`.
 
-    float は **[0,1]** として 255 倍する。整数型(``uint8`` / ``uint16``)は
-    **そのまま画素値**として扱う。
+    float は **[0,1]** として書く(既定 8 bit = 256 段階、``depth=16`` で PNG / TIFF に 16 bit、
+    ``depth="float"`` で PFM / TIFF に float32)。整数型はそのまま画素値: ``uint8`` は 8 bit、
+    ``uint16`` は **16 bit のまま**(以前は上位 8 bit に潰していた)。
 
     ★2026-09-06 に踏んだ不具合: 以前は型を見ずに ``v * 255`` していたので、
     **``uint8`` を渡すと numpy の弱いスカラー昇格(NEP 50)で ``uint8`` のまま
     掛け算が回り、255 を超えた値が折り返して真っ黒に近い絵**が保存されていた。
-    例外も警告も出ないので、書いた本人が画像を開くまで気づけない。
+    ★2026-09-20(GenSpark 第 18 報 N76 / N77 / N79): ``cv2.imwrite`` の False を捨てていたので、
+    親ディレクトリが無い・拡張子が書けない・ppm に灰、のどれも **ファイルが無いのに無言**だった。
+    いまは imgio.save が書く前に 1 文で止める(ディレクトリは作らない)。
     """
-    import cv2
+    import imgio
     v = np.asarray(v)
-    if v.dtype == np.uint8:
-        out = v
-    elif v.dtype == np.uint16:
-        out = (v >> 8).astype(np.uint8)
-    elif np.issubdtype(v.dtype, np.integer):
-        out = np.clip(v, 0, 255).astype(np.uint8)
-    else:
-        out = np.clip(np.asarray(v, np.float64) * 255, 0, 255).astype(np.uint8)
-    if out.ndim == 3 and out.shape[-1] == 3:
-        out = out[:, :, ::-1]
-    cv2.imwrite(path, out)
+    if np.issubdtype(v.dtype, np.integer) and v.dtype not in (np.uint8, np.uint16):
+        v = np.clip(v, 0, 255).astype(np.uint8)
+    imgio.save(path, v, depth=depth)
 
 
 # convenience re-exports
