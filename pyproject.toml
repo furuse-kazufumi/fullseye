@@ -279,7 +279,10 @@ py-modules = [
               # MCP サーバ(fullseye.mcp)が wheel から読むカタログ: 索引の複製と
               # ノートの frontmatter(tools/gen_mcp_data.py が書く)。0.1.11 は docs/ を
               # リポジトリ相対で読んでいて pip install からは CatalogError で止まった。
-              "data/OP_INDEX.json", "data/OP_NOTES.json"]
+              "data/OP_INDEX.json", "data/OP_NOTES.json",
+              # 実測したつまみの表(docs/op_knob.json の複製)。api.knob_summary / list_ops の
+              # knobs 欄が読む(2026-09-20、GenSpark 第 18〜20 報 I1)。
+              "data/op_knob.json"]
 # Studio runtime assets shipped inside the `studio_assets` package so an installed
 # wheel has localisation, per-operator help, and the bundled sample images (the
 # Studio degrades to English-only / no-help / no-samples without them).

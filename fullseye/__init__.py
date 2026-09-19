@@ -26,7 +26,7 @@ if _ROOT not in sys.path:
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     from api import (  # noqa: E402,F401
-        apply, run_pipeline, find_op, list_ops, op_names, categories,
+        apply, run_pipeline, find_op, list_ops, op_names, categories, knob_summary,
         fallbacks, fallback_counts, clear_fallbacks, FullseyeFallbackWarning, strict_mode,
         set_match_template, FAILED_BACKENDS, ambiguous_aliases, reset_gpu, gpu_open_ops,
         reset_fast, fast_open_ops, MissingBackendError,
@@ -633,7 +633,7 @@ __all__ = [
     "subsurface_approx", "rough_transmission",
     "op_find", "op_run", "op_path", "op_assist", "op_presets", "op_producers",
     "op_consumers", "op_accepts",
-    "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories",
+    "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories", "knob_summary",
     "fallbacks", "fallback_counts", "clear_fallbacks", "FullseyeFallbackWarning",
     "strict_mode", "set_match_template", "FAILED_BACKENDS", "ambiguous_aliases", "reset_gpu", "gpu_open_ops",
     "reset_fast", "fast_open_ops", "MissingBackendError",

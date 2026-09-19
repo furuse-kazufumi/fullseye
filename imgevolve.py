@@ -8,6 +8,7 @@ without re-reading the source. Discover and invoke everything from here:
     py -3.11 imgevolve.py ops --sort region      # filter by input sort
     py -3.11 imgevolve.py has gauss_filter       # is a HALCON op implemented? how to call it
     py -3.11 imgevolve.py apply gauss_filter in.png out.png --a 0.6
+    py -3.11 imgevolve.py apply add_image a.png out.png --input2 b.png   # n-ary op (two inputs)
     py -3.11 imgevolve.py pipeline in.png out.png --ops "gauss_filter,sobel_amp,otsu"
     py -3.11 imgevolve.py coverage               # honest coverage numbers
     py -3.11 imgevolve.py index                  # (re)write docs/OP_INDEX.json (machine-readable)
@@ -164,11 +165,34 @@ def _find_op(ops, key):
     return halcon_hits[0]
 
 
+def _apply_nary(a, nop):
+    """``apply <nary op> A OUT --input2 B``: the n-ary tier from the CLI (GenSpark N60, 2026-09-20)."""
+    import api as _api
+    if not a.input2:
+        raise SystemExit("%r takes %d inputs (%s): pass the second image with --input2 PATH, e.g.\n  %s apply %s %s %s --input2 <second.png>"
+                         % (nop.name, nop.arity, " + ".join(nop.in_sorts), _prog(), nop.name, a.inp, a.out))
+    if nop.arity != 2:
+        raise SystemExit("%r takes %d inputs; the CLI carries two (--input2). Use fullseye.apply([...], %r) in Python."
+                         % (nop.name, nop.arity, nop.name))
+    xs = [_imread(a.inp, nop.in_sorts[0]), _imread(a.input2, nop.in_sorts[1])]
+    out = _api.apply(xs, nop.name, a.a, a.b, on_error="raise")
+    _imwrite(a.out, out)
+    print("applied %s (%s -> %s) -> %s" % (nop.name, " + ".join(nop.in_sorts), nop.out_sort, a.out))
+    return 0
+
+
 def cmd_apply(a):
     ops = _load_registry()
     op = _find_op(ops, a.op)
     if op is None:
+        import api as _api
+        nop = _api._nary_by_name().get(a.op)
+        if nop is not None:
+            return _apply_nary(a, nop)
         raise SystemExit("unknown op %r (try: %s has %s)" % (a.op, _prog(), a.op))
+    if a.input2:
+        raise SystemExit("%r takes one input; --input2 is for the n-ary ops (see: %s ops --search nary)"
+                         % (op.name, _prog()))
     v = _imread(a.inp, op.in_sort)
     out = ops.RT[op.name](v, a.a, a.b)
     if op.out_sort == "feature":
@@ -385,7 +409,11 @@ def cmd_index(a):
     p = a.out or os.path.join(HERE, "docs", "OP_INDEX.json")
     os.makedirs(os.path.dirname(p), exist_ok=True)
     json.dump(out, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print("[index] %d ops (%s) -> %s" % (len(rows), out["tiers"], p))
+    order = ["registry", "nary", "ledger", "color"]
+    tiers = out["tiers"]
+    shown = " / ".join("%s %d" % (t, tiers[t]) for t in order if t in tiers)
+    shown += "".join(" / %s %d" % (t, n) for t, n in tiers.items() if t not in order)
+    print("[index] %d ops (%s) -> %s" % (len(rows), shown, p))
     return 0
 
 
@@ -530,9 +558,11 @@ def main() -> int:
     p.add_argument("op")
     p.set_defaults(fn=cmd_has)
 
-    p = sub.add_parser("apply", help="apply one operator to an image")
+    p = sub.add_parser("apply", help="apply one operator to an image (n-ary ops such as add_image: add --input2)")
     p.add_argument("op"); p.add_argument("inp"); p.add_argument("out")
     p.add_argument("--a", type=float, default=0.5); p.add_argument("--b", type=float, default=0.5)
+    p.add_argument("--input2", default="", metavar="PATH",
+                   help="second input for an n-ary op: apply add_image a.png out.png --input2 b.png")
     p.set_defaults(fn=cmd_apply)
 
     p = sub.add_parser("pipeline", help="apply a comma-separated op sequence")

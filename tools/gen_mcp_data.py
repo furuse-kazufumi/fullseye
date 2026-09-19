@@ -9,6 +9,8 @@
 * ``fullseye/data/OP_INDEX.json`` —— ``docs/OP_INDEX.json`` の**同一内容の複製**
   (正本は docs 側。``imgevolve.py index`` の後にこれを回す。順序は ``tools/regen_all.py``)。
 * ``fullseye/data/OP_NOTES.json`` —— ``docs/ops/**/*.md`` の frontmatter のうち MCP が
+* ``fullseye/data/op_knob.json`` —— ``docs/op_knob.json``(実測したつまみの表)の同一内容の複製。
+  ``api.knob_summary`` / ``list_ops`` の ``knobs`` 欄が wheel から読む(2026-09-20)
   読む項目(``fullseye.mcp.catalog.NOTE_KEYS``: op / dim / category / in / out / halcon)
   + ノートの相対パス。**本文は入れない**(140 MB。本文は同梱の Studio help HTML が代わる)。
 
@@ -29,7 +31,7 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 
-from fullseye.mcp.catalog import NOTE_KEYS, OP_INDEX, OPS_DOCS, PKG_INDEX, PKG_NOTES, scan_notes  # noqa: E402
+from fullseye.mcp.catalog import NOTE_KEYS, OP_INDEX, OP_KNOB, OPS_DOCS, PKG_INDEX, PKG_KNOBS, PKG_NOTES, scan_notes  # noqa: E402
 
 DATA_DIR = os.path.join(_ROOT, "fullseye", "data")
 
@@ -54,7 +56,18 @@ def build_index() -> dict:
     return idx
 
 
-def _dump(obj: dict) -> str:
+def build_knobs() -> list:
+    """``docs/op_knob.json``(tools/impl2/knob_probe.py の実測)の同一内容の複製。空なら複製しない。"""
+    if not os.path.exists(OP_KNOB):
+        raise SystemExit("docs/op_knob.json が無い(tools/impl2/knob_probe.py の実測が正本)")
+    with open(OP_KNOB, encoding="utf-8") as f:
+        rows = json.load(f)
+    if not isinstance(rows, list) or not rows:
+        raise SystemExit("docs/op_knob.json が空 —— 複製しない")
+    return rows
+
+
+def _dump(obj) -> str:
     return json.dumps(obj, ensure_ascii=False, indent=1) + "\n"
 
 
@@ -62,7 +75,8 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--check", action="store_true", help="書かずに一致を確かめる(不一致で exit 1)")
     a = ap.parse_args(argv)
-    targets = {PKG_INDEX: _dump(build_index()), PKG_NOTES: _dump(build_notes())}
+    targets = {PKG_INDEX: _dump(build_index()), PKG_NOTES: _dump(build_notes()),
+               PKG_KNOBS: _dump(build_knobs())}
     os.makedirs(DATA_DIR, exist_ok=True)
     rc = 0
     for name, text in targets.items():
@@ -78,7 +92,9 @@ def main(argv=None) -> int:
         print("[gen_mcp_data] %s (%.0f KB)" % (os.path.relpath(path, _ROOT), len(text.encode("utf-8")) / 1024))
     if not a.check:
         idx, notes = json.loads(targets[PKG_INDEX]), json.loads(targets[PKG_NOTES])
-        print("[gen_mcp_data] index %d op / notes %d op (%d 枚)" % (idx["n_ops"], notes["n_ops"], notes["n_notes"]))
+        knobs = json.loads(targets[PKG_KNOBS])
+        print("[gen_mcp_data] index %d op / notes %d op (%d 枚) / knobs %d op"
+              % (idx["n_ops"], notes["n_ops"], notes["n_notes"], len(knobs)))
     return rc
 
 

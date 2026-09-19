@@ -46,6 +46,7 @@ DOCS = os.path.join(ROOT, "docs")
 OPS_DOCS = os.path.join(DOCS, "ops")
 FIG_DIR = os.path.join(OPS_DOCS, "_fig")
 OP_INDEX = os.path.join(DOCS, "OP_INDEX.json")
+OP_KNOB = os.path.join(DOCS, "op_knob.json")
 STUDIO_HELP = os.path.join(ROOT, "studio_assets", "op_help")
 #: wheel に同梱する図(2-D op の「入力 → 出力」だけ。docs/ops/_fig の掃引図は入らない)
 STUDIO_FIG = os.path.join(STUDIO_HELP, "fig")
@@ -53,6 +54,7 @@ STUDIO_FIG = os.path.join(STUDIO_HELP, "fig")
 #: package-data の名前(``fullseye/data/`` 直下。生成は ``tools/gen_mcp_data.py``)
 PKG_INDEX = "OP_INDEX.json"
 PKG_NOTES = "OP_NOTES.json"
+PKG_KNOBS = "op_knob.json"       # 実測したつまみの表(api.knob_summary が読む)
 
 #: ノートの frontmatter のうち MCP が読む項目(これだけを package-data に写す)
 NOTE_KEYS = ("op", "dim", "category", "in", "out", "halcon")

@@ -1268,6 +1268,7 @@ class MissingBackendError(KeyError):
 _SHIPPED_INDEX_CACHE: dict | None = None
 
 
+_SHIPPED_KNOBS_CACHE = None      # fullseye/data/op_knob.json (実測したつまみの表、name → 行)
 def _shipped_index() -> dict:
     """``fullseye/data/OP_INDEX.json``(wheel に同梱の複製)を name → 行 で返す。
 
@@ -1298,6 +1299,57 @@ def _shipped_index() -> dict:
             continue
     _SHIPPED_INDEX_CACHE = table
     return table
+
+
+def _shipped_knobs() -> dict:
+    """``fullseye/data/op_knob.json``(``docs/op_knob.json`` の wheel 同梱複製)を op 名 → 行 で返す。
+
+    正本は ``tools/impl2/knob_probe.py`` の実測(構造の違う探針画像 × a / b の掃引)。無ければ checkout の
+    ``docs/op_knob.json``、それも無ければ ``{}``。★2026-09-20(GenSpark 第 18〜20 報 I1): ノブが効くかは
+    op ノートの文にしか無く、機械可読な形が公開層に無かった —— :func:`list_ops` の各行に ``knobs`` として乗せる。
+    実測は登録 op の一部(2026-09-20 時点 461 / 931)なので、**未計測は None** で「効かない」とは言わない。
+    """
+    global _SHIPPED_KNOBS_CACHE
+    if _SHIPPED_KNOBS_CACHE is not None:
+        return _SHIPPED_KNOBS_CACHE
+    import json
+    here = os.path.dirname(os.path.abspath(__file__))
+    candidates = [os.path.join(here, "fullseye", "data", "op_knob.json"),
+                  os.path.join(here, "docs", "op_knob.json")]
+    try:
+        from importlib import resources as _res
+        candidates.insert(0, str(_res.files("fullseye").joinpath("data", "op_knob.json")))
+    except Exception:  # noqa: BLE001 - resources unavailable: fall back to path guesses
+        pass
+    table: dict = {}
+    for p in candidates:
+        try:
+            with open(p, encoding="utf-8") as f:
+                rows = json.load(f)
+            table = {r["op"]: r for r in rows
+                     if isinstance(r, dict) and r.get("op") and r.get("status") == "determined"}
+            if table:
+                break
+        except Exception:  # noqa: BLE001 - missing/corrupt copy: try the next candidate
+            continue
+    _SHIPPED_KNOBS_CACHE = table
+    return table
+
+
+def knob_summary(name: str) -> dict | None:
+    """What the ``a`` / ``b`` knobs of *name* do, as measured —— or ``None`` when not measured.
+
+    ``{"a": "continuous" | "discrete" | "unused", "b": bool, "breakpoints": [a0, ...]}``:
+    ``a`` is the kind of effect sweeping ``a`` has (``discrete`` = the output changes only at the
+    listed ``breakpoints``), ``b`` says whether ``b`` changes the output at all. Source =
+    ``docs/op_knob.json`` (``tools/impl2/knob_probe.py``), shipped in the wheel as
+    ``fullseye/data/op_knob.json``. Rows of :func:`list_ops` carry this under ``"knobs"``.
+    """
+    r = _shipped_knobs().get(name)
+    if r is None:
+        return None
+    return {"a": r.get("a_kind"), "b": bool(r.get("b_used")),
+            "breakpoints": [float(x) for x in (r.get("breakpoints") or [])]}
 
 
 def _explain_unregistered(name: str) -> str | None:
@@ -2331,11 +2383,12 @@ FAILED_BACKENDS = _ops.FAILED_BACKENDS
 # ---- discovery ------------------------------------------------------------- #
 def _rows():
     rows = [{"name": o.name, "halcon": o.halcon, "in_sort": o.in_sort,
-             "out_sort": o.out_sort, "category": o.category, "tier": "registry"}
+             "out_sort": o.out_sort, "category": o.category, "tier": "registry",
+             "knobs": knob_summary(o.name)}
             for o in _ops.REGISTRY]
     rows += [{"name": o.name, "halcon": o.halcon, "in_sort": o.in_sorts[0],
               "out_sort": o.out_sort, "category": "nary", "tier": "nary",
-              "arity": o.arity, "in_sorts": list(o.in_sorts)}
+              "arity": o.arity, "in_sorts": list(o.in_sorts), "knobs": knob_summary(o.name)}
              for o in {id(o): o for o in _nary_by_name().values()}.values()]
     return rows
 
@@ -2364,7 +2417,11 @@ def list_ops(sort: str | None = None, search: str | None = None,
              include_algo: bool = False) -> list[dict]:
     """Every operator as a uniform dict. Filter by input *sort* and/or *search*
     (substring over name/halcon/category). *include_algo* (default False, so the image
-    focus is unchanged for every existing caller) appends the general-algorithm tier."""
+    focus is unchanged for every existing caller) appends the general-algorithm tier.
+
+    Each row carries ``"knobs"`` = :func:`knob_summary` (what ``a`` / ``b`` do, as measured;
+    ``None`` when the op has not been measured) and, for the ``"nary"`` tier, ``"arity"`` and
+    ``"in_sorts"`` (call those with ``apply([x0, x1], name)``)."""
     kw = (search or "").lower()
     rows = _rows() + (algo_rows() if include_algo else [])
     out = []
@@ -2378,15 +2435,20 @@ def list_ops(sort: str | None = None, search: str | None = None,
     return sorted(out, key=lambda r: (r["tier"], r["in_sort"], r["name"]))
 
 
-def op_names() -> list[str]:
+def op_names(include_nary: bool = False) -> list[str]:
     """Sorted list of every registry op name (the identifiers :func:`apply` takes with ONE input).
 
     ★n-ary ops — ``add_image`` / ``sub_image`` / ``mult_image`` / ``div_image`` … (17) — are **not**
-    in this list: they take a LIST of inputs (``fullseye.apply([x0, x1], "add_image")``) and live in
-    the ``"nary"`` tier of :func:`list_ops`; :func:`op_find` searches them too (2026-09-19, GenSpark N2:
-    "callable but unlisted").
+    in this list by default: they take a LIST of inputs (``fullseye.apply([x0, x1], "add_image")``)
+    and live in the ``"nary"`` tier of :func:`list_ops`; :func:`op_find` searches them too
+    (2026-09-19, GenSpark N2: "callable but unlisted"). ★The default stays the one-input list on
+    purpose (its length is the documented registry count and the pipeline / evolution vocabulary);
+    pass *include_nary=True* to get both tiers in one sorted list (2026-09-20, GenSpark N60).
     """
-    return sorted(o.name for o in _ops.REGISTRY)
+    names = [o.name for o in _ops.REGISTRY]
+    if include_nary:
+        names += list({o.name for o in _nary_by_name().values()})
+    return sorted(names)
 
 
 def categories() -> list[str]:
