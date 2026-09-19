@@ -90,6 +90,28 @@ def main() -> int:
     except ValueError as e:
         assert "expects a image" in str(e)
         print("3. 1-D   :", str(e)[:90])
+    # 4. 部分 NaN: 出力は有限に「なる」が、黙ってはならない(台帳に output 起源の記録 / raise では停止)
+    x = np.random.default_rng(0).random((9, 9))
+    x[4, 4] = np.nan
+    fs.clear_fallbacks()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        out = fs.apply(x, "gaussian")
+    recs = [e for e in fs.fallbacks() if e["source"] == "output" and "non_finite_output" in e["error"]]
+    assert np.isfinite(out).all() and recs, recs
+    print("4. NaN in :", "finite output, recorded:", recs[0]["error"][:90], "...")
+    try:
+        fs.apply(x, "gaussian", on_error="raise")
+        raise AssertionError("部分 NaN が raise で通った")
+    except ValueError as e:
+        assert "non_finite_output" in str(e)
+        print("   raise  :", str(e)[:80], "...")
+
+    # 5. n-ary op は op_find から見える(op_names には 1 入力の op しか無い)
+    hits = [h["op"] for h in fs.op_find("add_image")]
+    assert "add_image" in hits[:3], hits[:5]
+    assert "add_image" not in fs.op_names()
+    print("5. op_find :", hits[:3], "| call:", next(h["call"] for h in fs.op_find("add_image") if h["op"] == "add_image"))
     print("PASS")
     return 0
 
