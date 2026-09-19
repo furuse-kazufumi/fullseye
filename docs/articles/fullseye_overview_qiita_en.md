@@ -4088,6 +4088,26 @@ One reading rule matters most: **operations that close union→union win.** An o
 
 The next material extensions (ray-traced mirrors and glass, CD-like diffraction rainbows, thin-film interference, brushed metal) are not started yet. When they land, they will be added here — making-of included.
 
+## What Grew on 2026-09-19 — the Inspection Workflow Layer, and What Feeds It
+
+The registry now counts **931** ops, but what this round added is not ops so much as **the shape a line operator reaches for first**. You could call any single op, yet nothing let you *point at a folder, pick a preprocessing recipe and a measurement, judge against a spec, and get the summary and the report*. Everything below is **glue over existing ops — not one new algorithm**. Numbers come from the tests and examples.
+
+| What grew | What it is | Measured |
+|---|---|---|
+| **Measurements → spec → evidence-carrying verdict** `judge` | A measurement dict and a spec dict (`min/max`, `nominal±tol`, `eq`, `in`) become a `Verdict` in PLC vocabulary (`ok/ng/error`). Missing keys, NaN and non-numeric values are `error`; a misspelled rule raises `ValueError` (a typo that "checks nothing" would pass everything forever) | Tests pin that it feeds `signal_verdict` (one-hot PLC coils) unchanged. 20 tests |
+| **Batch inspection of a folder** `inspect_batch` | Deterministic listing → recipe (`run_pipeline`) → `measure` (your bundle of measurement ops) → `judge`. Each row carries the input's sha256, the measurements, the verdict and the elapsed time; numeric columns get an EWMA chart; reports go to `.xlsx/.md/.jsonl`, an audit log (JSON Lines) is appended; one broken image becomes an `error` row without stopping the batch | An empty batch raises (inspecting zero parts and reporting "all ok" is not a report). 16 tests |
+| **Golden comparison** `compare_to_golden` | Phase-correlation integer alignment (estimates beyond `max_shift` are not applied, `align_ok=0`) → difference → threshold → connected components → measurement dict; wrapped-in borders are never counted. `golden_measure` / `golden_spec` plug it into the two above | In a lot of 6, only the foreign-object part and the badly shifted part are ng. 14 tests |
+| **Pre-deployment validation** `inspection_fixture` | Proves on known good/bad sets that every good part is ok *and* every bad part is ng; `spec_margins` reports per spec key how much headroom the good parts have (negative = exceeded); escapes, false rejects and errors come back as rows | Too tight → 6 false rejects; too loose → 4 escapes; one broken file → failed. 8 tests |
+| **Excel reports** `save_xlsx_report` | The same `(heading, value, sort)` sections as `report` (Markdown) and `save_json`, written as `.xlsx` (tables/points/scalars as cells, images as thumbnails). openpyxl is optional | jsonio = machine / mdio = human / xlsxio = shop floor |
+| **Typed results over MCP** | Small typed results of `fullseye_apply` / `pipeline` / `inspect` carry a JSON envelope plus Markdown automatically (large arrays are not attached) | Bit-exact round trip through MCP |
+| **Lens distortion estimation** `estimate_distortion` | Radial k1..k3 and tangential p1,p2 by least squares from straight-line (plumb-line) patterns — no calibration board. `camera_calibration` (Zhang) is now on the facade too | Recovers the coefficients from a synthetically distorted grid (round trip pinned by tests) |
+| **A fifth SPC chart** `spc_ewma` | Roberts (1959) EWMA with closed-form time-varying limits | Flows straight from the batch inspection series |
+| **Fractal dimension** `fractal_dimension` | Box counting (Minkowski–Bouligand); the Sierpinski carpet gives log3/log2 ≈ 1.585 | One number for surface roughness / granularity |
+
+One thing changed in how to read the library: **the entry (`judge`) and the exit (`signal_verdict`) now share a vocabulary, so "measure → judge → drive the PLC → keep the audit trail" closes in one line**. Responsibility stays attached to every row — which input bytes, which spec, why ng.
+
+The pitfalls of this round are worth keeping too. Every added op or module has to pass **eight or more hidden gates** (Japanese help, the RAG guide's note count, the README's op count, translation fingerprints, the wheel's py-modules, the DOCS-table list, the figure manifest), and any subset of checks missed one. The conclusion is plain: **a round that adds things runs the whole local suite before pushing (~45 min)**. With CI at ~90 minutes, implementing a little and waiting after every push stopped making sense — several features are now batched as separate commits and pushed once.
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to
