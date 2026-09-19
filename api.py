@@ -1602,8 +1602,50 @@ def _fssys():
     return fssystem
 
 
+def _check_input_empty(v, op):
+    """0 サイズのラスタ入力を 1 文で断る(None なら問題なし)。
+
+    ★2026-09-19 の全 op 走査(scratchpad probe_degenerate、image/region 入力 681 op × 7 種の退化入力):
+    空配列 (0,0) は **271 op が 49 種類のばらばらな生エラー**(numpy の reduction / OpenCV の assert /
+    FFT の data points 0 / ZeroDivisionError / NoneType.astype …)で落ち、410 op は空や定数を黙って返した。
+    空のフレームは「読めなかった」「ROI が画像の外」の下流症状なので、どの op でも同じ文で上流を指す。
+    方針は他の入力検査と同じ(raise で止まり、fallback / warn では記録して sort の既定値)。
+    """
+    if op.in_sort not in _REAL_RASTER_SORTS:
+        return None
+    arr = v if isinstance(v, np.ndarray) else None
+    if arr is not None and arr.size == 0:
+        return ValueError(
+            "op %r: empty input (shape %s) — nothing to process. An empty frame usually means a failed "
+            "read or an ROI that lies off the image; check the step upstream (read_image / crop)"
+            % (op.name, arr.shape))
+    return None
+
+
+def _annotate_raw(e, name, v) -> None:
+    """op の中から出た生の例外に、**型も文も変えず** op 名と入力の形を注記する(Python 3.11+ の add_note)。
+
+    ★2026-09-19 の全 op 走査: 1×1 / 2×2 の入力で kornia の「Padding size should be less than the
+    corresponding input」、numpy の「Shape of array too small to calculate a numerical gradient」、skimage の
+    「invalid entry in coordinates array」など、**どの op が・どんな入力で**投げたかが文に無い例外が 9〜19 群
+    あった。``on_error="raise"`` の約束は「op の本当の例外をそのまま」なので包み直さず、注記だけ足す。
+    """
+    add = getattr(e, "add_note", None)
+    if add is None or name in str(e):
+        return
+    arr = v if isinstance(v, np.ndarray) else None
+    shape = arr.shape if arr is not None else type(v).__name__
+    dt = str(arr.dtype) if arr is not None else "-"
+    try:
+        add("fullseye: raised inside op %r on input shape %s dtype %s — a raw library error here usually "
+            "means the input is too small, empty or outside the op's domain (the op note lists its "
+            "constraints: fullseye.op_find(%r))" % (name, shape, dt, name))
+    except Exception:  # noqa: BLE001 - a note must never replace the original error
+        pass
+
+
 def _guard_input(v, op, policy):
-    err = (_check_input_sort(v, op) or _check_channel_axis(v, op)
+    err = (_check_input_empty(v, op) or _check_input_sort(v, op) or _check_channel_axis(v, op)
            or _check_input_range(v, op))
     if err is None:
         return
@@ -1771,7 +1813,11 @@ def _run_guarded(name, fn, policy, out_sort=None, v=None):
     with _bs.current_op(name):
         if policy == "raise":
             with _bs.strict_mode(True):
-                return fn()
+                try:
+                    return fn()
+                except Exception as e:      # noqa: BLE001 - annotate (op name + input shape), never swallow
+                    _annotate_raw(e, name, v)
+                    raise
         try:
             if policy == "warn":
                 with _bs.quiet_warnings():

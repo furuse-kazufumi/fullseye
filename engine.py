@@ -79,8 +79,10 @@ def diagnose_stages(stages) -> list[dict]:
         name = st[0] if isinstance(st, (tuple, list)) else st
         op = api.find_op(name)
         if op is None:
+            # ★backend が入っていないだけの名前は「unknown」でなく不足 extra を言う(api._resolve と同じ門、2026-09-19)
+            hint = api._explain_unregistered(name) if isinstance(name, str) else None
             problems.append({"index": i, "op": name, "severity": "error",
-                             "message": "unknown operator %r" % name})
+                             "message": hint or "unknown operator %r" % name})
             prev_out = _ANY            # don't cascade sort warnings past an unknown op
             prev_name = name
             prev_index = i

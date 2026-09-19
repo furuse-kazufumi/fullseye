@@ -137,7 +137,10 @@ def cmd_has(a):
         print("IMPLEMENTED: halcon=%s  name=%s  %s->%s  tier=%s"
               % (r["halcon"], r["name"], r["in_sort"], r["out_sort"], r["tier"]))
         if r["tier"] == "registry":
-            print("  call: py -3.11 imgevolve.py apply %s <in> <out> --a A --b B" % (r["halcon"] or r["name"]))
+            nm = r["halcon"] or r["name"]
+            print("  call: fullseye apply %s <in> <out> --a A --b B   (installed CLI; in a checkout: py -3.11 imgevolve.py apply %s ...)"
+                  % (nm, nm))
+            print("        python: fullseye.apply(img, %r, a, b)" % r["name"])
         else:
             print("  n-ary (%d inputs) — use imgops_nary.build_nary() programmatically" % r.get("arity", 2))
     return 0
