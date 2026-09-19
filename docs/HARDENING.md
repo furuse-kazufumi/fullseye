@@ -14,7 +14,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**11 件(うち直したもの 11 件)。見つけた PoC は 9 本。**
+**12 件(うち直したもの 12 件)。見つけた PoC は 10 本。**
 
 ## 種別ごと
 
@@ -22,6 +22,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 |---|---:|---:|
 | 静かに間違う(例外が出ない) | 4 | 4 |
 | 実装の誤り | 2 | 2 |
+| 門が事故の起きる場所に立っていなかった | 1 | 1 |
 | 在るのに引けない | 4 | 4 |
 | 説明の穴(片道の参照・古い数字) | 1 | 1 |
 
@@ -30,6 +31,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 | PoC | 件数 |
 |---|---:|
 | [`genspark_external_review`](../examples/genspark_external_review.py) | 3 |
+| [`degenerate_inputs`](../examples/degenerate_inputs.py) | 1 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
 | [`poc_multibeam_bathymetry`](../examples/poc_multibeam_bathymetry.py) | 1 |
@@ -80,6 +82,14 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 `run_pipeline(image, stages)` は `["gaussian", "otsu"]` と `[("gaussian", 0.3, 0.5), ...]` を受ける。第三者レビュー(GenSpark)が自然に書いた 3 つの形は、どれも**原因を指さない例外**で落ちた。
 
 見つけた PoC: `genspark_external_review` / 直した所: `api.py` / 門: `test_run_pipeline_accepts_dict_knobs_comma_string_and_dict_stages`, `test_run_pipeline_bad_forms_say_why` / 状態: fixed
+
+### 門が事故の起きる場所に立っていなかった
+
+#### [空・極小の入力が、op ごとにばらばらな生エラーで落ちていた](hardening/empty-and-tiny-inputs-raised-raw-library-errors.md)
+
+GenSpark のレビュー(別ノート 3 本)を直したあと、同じ族が他に無いかを**全 op で数えた**。image / region 入力の 681 op に 7 種の退化入力 —— 空 (0,0)・1×1・2×2・1-D・inf・範囲外・RGB (H,W,3) —— を `on_error="raise"` で渡し、例外を「文に op 名か fullseye の語がある(clean)/ 無い(raw)」で分類した(走査 3 秒)。
+
+見つけた PoC: `degenerate_inputs` / 直した所: `api.py`, `engine.py`, `imgevolve.py` / 門: `test_empty_input_is_one_clean_sentence_under_raise`, `test_empty_input_is_recorded_and_falls_back_under_the_default_policy`, `test_raw_error_from_inside_an_op_gets_an_op_and_shape_note`, `test_pipeline_validate_explains_a_missing_backend` / 状態: fixed
 
 ### 在るのに引けない
 

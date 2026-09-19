@@ -5,7 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: gauss_filter
-examples: [coherence_scanning, color_transport, ct_inspection, gallery2d_smoothing_rank, genspark_external_review, inspection_workflow, photon_timeresolved, poc_bone_trabecular_thickness, poc_dtof_ranging, poc_interferometry_step, poc_leaf_disease_area, poc_nuclei_ploidy, poc_solar_el_inspection, poc_solar_limb_darkening, poc_star_astrometry, poc_wound_area_tracking, quickstart, typed_results_json, video_streaming]
+examples: [coherence_scanning, color_transport, ct_inspection, degenerate_inputs, gallery2d_smoothing_rank, genspark_external_review, inspection_workflow, photon_timeresolved, poc_bone_trabecular_thickness, poc_dtof_ranging, poc_interferometry_step, poc_leaf_disease_area, poc_nuclei_ploidy, poc_solar_el_inspection, poc_solar_limb_darkening, poc_star_astrometry, poc_wound_area_tracking, quickstart, typed_results_json, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -64,6 +64,7 @@ gaussian 0.35 0.50
 - [coherence_scanning](../../../../examples/coherence_scanning.py) — `py -3.11 examples/coherence_scanning.py`
 - [color_transport](../../../../examples/color_transport.py) — `py -3.11 examples/color_transport.py`
 - [ct_inspection](../../../../examples/ct_inspection.py) — `py -3.11 examples/ct_inspection.py`
+- [degenerate_inputs](../../../../examples/degenerate_inputs.py) — `py -3.11 examples/degenerate_inputs.py`
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
 - [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
 - [inspection_workflow](../../../../examples/inspection_workflow.py) — `py -3.11 examples/inspection_workflow.py`

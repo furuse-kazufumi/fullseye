@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(218 例)
+### 2-D 画像/信号/幾何(219 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -115,6 +115,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **workflow**
 - **op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す** — table / points は本物の GFM 表、image / region は 1 行要約(画素は描かない)。json_block で厳密な JSON を ```json フェンスに包み、extract_json で Markdown 文書から fullseye 封筒だけを bit 一致で回収。report は『読める』と『機械で戻せる』を with_json で 1 文書に両立。異種フェンスは無視し未知 sort は断る。 `py -3.11 examples/typed_results_markdown.py`
 - **既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕(margin)を測る** — inspection_fixture(good, bad, recipe, measure, spec) = 良品が全部 ok かつ不良品が全部 ng なら passed、見逃し(escapes)・過検出(false_rejects)・error を行で返し、spec_margins が仕様キーごとに良品の限界までの余裕を出す。合成の良品 6・不良品 4 で passed、仕様を締めると過検出が出て failed になることを assert。 `py -3.11 examples/inspection_fixture.py`
+- **空・極小・1-D・RGB の退化入力で、どの op でも同じ文が返ることを確かめる** — 空配列 (0,0) は 271 op が 49 種の生エラーで落ちていた → 門が 1 文(上流の read/crop を疑え)で断る。極小画像で op の中から出る生の例外には op 名と入力の形を注記(型も文も変えない)。1-D と RGB (H,W,3) の 2-D op への入力は既存の門で断ることも併せて実演。 `py -3.11 examples/degenerate_inputs.py`
 - **第三者レビュー(GenSpark、0.2.0)が見つけた初見の摩擦を、直したあとの形で 1 本ずつ確かめる** — 「無い」と「入っていない」を分ける MissingBackendError(索引の module/requires から不足 extra を案内)、run_pipeline の 5 形が同じ結果で外した形は原因を指す TypeError、全 NaN の otsu は明示エラー、文字列・複素配列は方針に依らず TypeError、n-ary の形状不一致は要るものを文で言う、Op は名前で pickle。変えなかった設計(既定 fallback / 警告は op ごとに 1 度 / float32 は記録しない)も実演。 `py -3.11 examples/genspark_external_review.py`
 - **基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する** — compare_to_golden = 位相相関で整数並進を合わせ→差分→閾値→連結成分→計測 dict(shift/ssim/psnr/欠陥面積・個数)。同一→欠陥 0、3px ずれた良品→合わせれば 0、異物 48px→1 個、6px 大ずれは max_shift 超えで align_ok=0→ng。golden_measure/golden_spec で inspect_batch に差し込み 6 枚のロットで 2 枚だけ ng を assert。 `py -3.11 examples/golden_compare.py`
 - **フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す** — 合成画像フォルダ(良品 5・欠陥 1・壊れたファイル 1)を inspect_batch で 前処理→計測→judge→集計。各行に入力 sha256・計測・根拠つき Verdict、数値列は EWMA で工程管理、.md/.jsonl(+.xlsx)に 書き分け、監査ログに追記。欠陥だけ ng・壊れた 1 枚は error で止まらないことを assert。 `py -3.11 examples/inspection_workflow.py`
@@ -1208,7 +1209,7 @@ _計 931 ops / 48 categories。_
 - `derivate_gauss` (halcon: `derivate_gauss`) `image → image` · 例: `gallery2d_edges`
 - `laplace_of_gauss` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `poc_real_defect_floor`
 - `diff_of_gauss` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
-- `sobel_amp` (halcon: `sobel_amp`) `image → image` · 例: `gallery2d_edges`, `genspark_external_review`, `poc_fiber_orientation`, `poc_focus_stacking`, `poc_real_coin_metrology`, `poc_white_balance`
+- `sobel_amp` (halcon: `sobel_amp`) `image → image` · 例: `degenerate_inputs`, `gallery2d_edges`, `genspark_external_review`, `poc_fiber_orientation`, `poc_focus_stacking`, `poc_real_coin_metrology`, `poc_white_balance`
 - `sobel_dir` (halcon: `sobel_dir`) `image → image` · 例: `gallery2d_edges`, `poc_document_scan`, `poc_fiber_orientation`
 - `prewitt_amp` (halcon: `prewitt_amp`) `image → image` · 例: `gallery2d_edges`, `poc_white_balance`
 - `prewitt_dir` (halcon: `prewitt_dir`) `image → image` · 例: `gallery2d_edges`
@@ -1341,10 +1342,10 @@ _計 931 ops / 48 categories。_
 - `tf_gradient_domain_reintegrate` `image → image` · 例: `gallery2d_smoothing_rank`
 
 ### frequency(19)
-- `lowpass` `image → image` · 例: `gallery2d_texture_freq`, `signal_filter`
+- `lowpass` `image → image` · 例: `degenerate_inputs`, `gallery2d_texture_freq`, `signal_filter`
 - `highpass` (halcon: `highpass_image`) `image → image` · 例: `gallery2d_texture_freq`, `signal_filter`
 - `sk_butterworth` `image → image` · 例: `gallery2d_texture_freq`
-- `fft_image` (halcon: `fft_image`) `image → image` · 例: `gallery2d_texture_freq`, `poc_moire_screen`
+- `fft_image` (halcon: `fft_image`) `image → image` · 例: `degenerate_inputs`, `gallery2d_texture_freq`, `poc_moire_screen`
 - `power_real` (halcon: `power_real`) `image → image` · 例: `gallery2d_texture_freq`
 - `power_byte` (halcon: `power_byte`) `image → image` · 例: `gallery2d_texture_freq`
 - `phase_rad` (halcon: `phase_rad`) `image → image` · 例: `gallery2d_texture_freq`
@@ -1554,7 +1555,7 @@ _計 931 ops / 48 categories。_
 - `gopen` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
 - `gclose` (halcon: `gray_closing`) `image → image` · 例: `gallery2d_morphology`
 - `runlength_smear` `image → image` · 例: `gallery2d_morphology`
-- `tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`, `poc_search_sweep_width`
+- `tophat` (halcon: `gray_tophat`) `image → image` · 例: `degenerate_inputs`, `gallery2d_morphology`, `poc_search_sweep_width`
 - `bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`, `poc_metal_grain_size`
 - `morph_grad` (halcon: `gray_range_rect`) `image → image` · 例: `gallery2d_morphology`
 - `persistence_map` `image → image` · 例: `gallery2d_morphology`
@@ -1608,7 +1609,7 @@ _計 931 ops / 48 categories。_
 - `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_colormap_readability`
 - `sk_median_disk` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `cv_median` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `median_image` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `genspark_external_review`, `poc_prnu_camera_fingerprint`
+- `median_image` (halcon: `median_image`) `image → image` · 例: `degenerate_inputs`, `gallery2d_smoothing_rank`, `genspark_external_review`, `poc_prnu_camera_fingerprint`
 - `median_rect` (halcon: `median_rect`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_tree_ring_dendro`, `poc_weld_radiograph_porosity`
 - `median_separate` (halcon: `median_separate`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `gray_erosion_rect` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1627,7 +1628,7 @@ _計 931 ops / 48 categories。_
 - `xkor_median` `image → image` · 例: `gallery2d_smoothing_rank`
 
 ### region(78)
-- `reg_erode` (halcon: `erosion_circle`) `region → region` · 例: `gallery2d_region`, `poc_colocalization_crosstalk`, `poc_leaf_disease_area`
+- `reg_erode` (halcon: `erosion_circle`) `region → region` · 例: `degenerate_inputs`, `gallery2d_region`, `poc_colocalization_crosstalk`, `poc_leaf_disease_area`
 - `reg_dilate` (halcon: `dilation_circle`) `region → region` · 例: `gallery2d_region`
 - `reg_open` (halcon: `opening_circle`) `region → region` · 例: `gallery2d_region`
 - `reg_close` (halcon: `closing_circle`) `region → region` · 例: `gallery2d_region`, `poc_leaf_disease_area`
@@ -1737,7 +1738,7 @@ _計 931 ops / 48 categories。_
 
 ### segmentation(54)
 - `threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_traffic_counting`, `poc_water_level`, `video_streaming`
-- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `gallery2d_segmentation`, `genspark_external_review`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`, `typed_results_json`
+- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `degenerate_inputs`, `gallery2d_segmentation`, `genspark_external_review`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`, `typed_results_json`
 - `canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`, `poc_real_coin_metrology`
 - `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`
 - `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_cell_counting`, `poc_fresco_craquelure`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_vegetation_cover`
@@ -1795,7 +1796,7 @@ _計 931 ops / 48 categories。_
 - `xmh_selfmatch` `image → image` · 例: `gallery2d_features`
 
 ### smoothing(48)
-- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_dtof_ranging`, `poc_interferometry_step`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
+- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_dtof_ranging`, `poc_interferometry_step`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
 - `mean_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `quickstart`
 - `unsharp` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_camera_shake_deblur`, `poc_real_deblur_honesty`, `poc_superresolution_limits`
@@ -1865,7 +1866,7 @@ _計 931 ops / 48 categories。_
 - `local_std` `image → image` · 例: `gallery2d_texture_freq`
 - `scale_select_std` `image → image` · 例: `gallery2d_texture_freq`
 - `bootstrap_std_error` `image → image` · 例: `gallery2d_texture_freq`
-- `structure_tensor_orientation` `image → image` · 例: `gallery2d_texture_freq`
+- `structure_tensor_orientation` `image → image` · 例: `degenerate_inputs`, `gallery2d_texture_freq`
 - `structure_tensor_coherence` `image → image` · 例: `gallery2d_texture_freq`
 - `gabor` (halcon: `gen_gabor`) `image → image` · 例: `gallery2d_texture_freq`
 - `sk_frangi` (halcon: `lines_gauss`) `image → image` · 例: `gallery2d_texture_freq`, `poc_fresco_craquelure`, `poc_solar_el_inspection`

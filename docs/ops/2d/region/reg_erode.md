@@ -5,7 +5,7 @@ category: region
 in: region
 out: region
 halcon: erosion_circle
-examples: [gallery2d_region, poc_colocalization_crosstalk, poc_leaf_disease_area]
+examples: [degenerate_inputs, gallery2d_region, poc_colocalization_crosstalk, poc_leaf_disease_area]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -64,6 +64,7 @@ reg_erode 0.50 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [degenerate_inputs](../../../../examples/degenerate_inputs.py) — `py -3.11 examples/degenerate_inputs.py`
 - [gallery2d_region](../../../../examples/gallery2d_region.py) — `py -3.11 examples/gallery2d_region.py`
 - [poc_colocalization_crosstalk](../../../../examples/poc_colocalization_crosstalk.py) — `py -3.11 examples/poc_colocalization_crosstalk.py`
 - [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`

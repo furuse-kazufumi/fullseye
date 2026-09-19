@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 763. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 764. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -28,7 +28,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L565** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
 - **L620** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
 - **L1487** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
-- **L2033** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L2079** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
 
 ## `astrostack.py`
 
@@ -113,6 +113,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L686** — ★Fixed 2026-09-08 (found by `poc_stockpile_volume`). When a line-of-sight sample rounds via ``np.rint`` to the **target cell itself**, that cell's height gets compared against itself as "intervening terrain". Since t < 1 the denominator dist*t is small, and ``(z-eye)/(dist*t) > (z-eye)/dist`` is always true when z > eye —— so **cells higher than eye level were self-occluding across the board**. Measured (before fix): a 10 m column on flat ground was returned as "not visible" from 25 m away at eye 2 m, and only a 1 m column below eye level was "visible". The highest point of a convex solid is always visible from outside, so this is geometrically wrong. We do not count the iterations where the sample landed on the target cell.
 - **L746** — ★The ledger declares ``points`` = (N, 3). Passing a scalar yields (3,), which conflicts with the declaration, so we always fold to (N, 3) (surfaced by the fuzzer's TYPEMISS on 2026-09-06; the fuzzer had not been run after adding the 6 geocentric-coordinate ops). When you want (H, W, 3) as a grid, use :func:`dem_geocentric_grid`.
 - **L795** — ★Inside the evolute the geodetic latitude is not unique -> instead of silently returning an out-of-range latitude, refuse. The evolute of the ellipse x²/a² + z²/b² = 1 is (a·x)^(2/3) + (b·z)^(2/3) = (a²-b²)^(2/3). Only outside the equality is the region where "the normal is uniquely determined" (since the 2/3 power is non-negative, the sign is |z|).
+
+## `engine.py`
+
+- **L82** _(ja)_ — ★backend が入っていないだけの名前は「unknown」でなく不足 extra を言う(api._resolve と同じ門、2026-09-19)
 
 ## `evis_fullseye_bridge.py`
 

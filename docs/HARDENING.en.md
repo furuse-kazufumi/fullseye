@@ -15,7 +15,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**11 findings (11 fixed), from 9 PoCs.**
+**12 findings (12 fixed), from 10 PoCs.**
 
 ## By kind
 
@@ -23,6 +23,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 |---|---:|---:|
 | Silently wrong (no exception) | 4 | 4 |
 | Implementation defect | 2 | 2 |
+| The gate did not stand where the accident happens | 1 | 1 |
 | Present but unreachable | 4 | 4 |
 | Documentation hole (one-way reference, stale number) | 1 | 1 |
 
@@ -31,6 +32,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 | PoC | Findings |
 |---|---:|
 | [`genspark_external_review`](../examples/genspark_external_review.py) | 3 |
+| [`degenerate_inputs`](../examples/degenerate_inputs.py) | 1 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
 | [`poc_multibeam_bathymetry`](../examples/poc_multibeam_bathymetry.py) | 1 |
@@ -81,6 +83,14 @@ Found by: `poc_stockpile_volume` / Changed: `demops.py` / Gate: `test_a_hill_tal
 `run_pipeline(image, stages)` は `["gaussian", "otsu"]` と `[("gaussian", 0.3, 0.5), ...]` を受ける。第三者レビュー(GenSpark)が自然に書いた 3 つの形は、どれも**原因を指さない例外**で落ちた。 _(ja)_
 
 Found by: `genspark_external_review` / Changed: `api.py` / Gate: `test_run_pipeline_accepts_dict_knobs_comma_string_and_dict_stages`, `test_run_pipeline_bad_forms_say_why` / Status: fixed
+
+### The gate did not stand where the accident happens
+
+#### [空・極小の入力が、op ごとにばらばらな生エラーで落ちていた](hardening/empty-and-tiny-inputs-raised-raw-library-errors.md) _(ja)_
+
+GenSpark のレビュー(別ノート 3 本)を直したあと、同じ族が他に無いかを**全 op で数えた**。image / region 入力の 681 op に 7 種の退化入力 —— 空 (0,0)・1×1・2×2・1-D・inf・範囲外・RGB (H,W,3) —— を `on_error="raise"` で渡し、例外を「文に op 名か fullseye の語がある(clean)/ 無い(raw)」で分類した(走査 3 秒)。 _(ja)_
+
+Found by: `degenerate_inputs` / Changed: `api.py`, `engine.py`, `imgevolve.py` / Gate: `test_empty_input_is_one_clean_sentence_under_raise`, `test_empty_input_is_recorded_and_falls_back_under_the_default_policy`, `test_raw_error_from_inside_an_op_gets_an_op_and_shape_note`, `test_pipeline_validate_explains_a_missing_backend` / Status: fixed
 
 ### Present but unreachable
 

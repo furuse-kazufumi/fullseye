@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 763. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 764. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -28,7 +28,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L565** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
 - **L620** — ★``annotate.overlay_mask`` wird **bewusst nicht auf oberster Ebene exponiert**. Das gleichnamige ``imgio.overlay_mask`` ist bereits als ``fs.overlay_mask`` öffentlich, und Argumente wie Bedeutung unterscheiden sich (imgio = rohes RGB, mask>0.5, fill/margin / annotate = Rollenname-Farbe, Gewichte [0,1] erlaubt, lehnt Form-Fehlanpassung ab). Legt man dem gleichen Namen ein anderes Versprechen auf, erhält der Aufrufer keine Ausnahme, sondern **ein plausibel anderes Bild**. Breaking Changes an der öffentlichen API machen wir nicht im Alleingang, daher die rollentragende Variante über ``fs.annotate.overlay_mask`` beziehen.
 - **L1487** — ★ **Für Farbbilder gibt es derzeit keinen korrekten Aufruf**: Übergibt man sie gemeinsam, vermischen sich die Farben, und ruft man pro Kanal dreimal auf, teilt ein selbstnormalisierender op jeden Kanal durch sein eigenes Maximum und zerstört die Verhältnisse zwischen den Kanälen (der Winkelfehler der Grey-Edge-Methode steigt von 1.03 Grad mit unserem eigenen Sobel -> 4.17 Grad pro Bild -> 27.86 Grad pro Kanal, 29.14 Grad am Nullpunkt). Wohin man sich neigt, ist eine **Vertragsentscheidung**, deshalb ändern wir hier keinen einzigen Standardwert, verweigern nur bei `on_error="raise"` und protokollieren es standardmäßig im Register, damit es sichtbar bleibt. Details und Optionen in docs/KNOWN_ISSUES.md.
-- **L2033** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L2079** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
 
 ## `astrostack.py`
 
@@ -113,6 +113,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L686** — ★Behoben 2026-09-08 (gefunden von `poc_stockpile_volume`). Wenn eine Sichtlinien-Stichprobe per ``np.rint`` auf die **Zielzelle selbst** rundet, wird die Höhe dieser Zelle als "dazwischenliegendes Gelände" mit sich selbst verglichen. Da t < 1 ist, ist der Nenner dist*t klein, und ``(z-eye)/(dist*t) > (z-eye)/dist`` ist bei z > eye immer wahr —— so **verdeckten sich Zellen oberhalb der Augenhöhe durchweg selbst**. Gemessen (vor der Korrektur): eine 10 m hohe Säule auf ebenem Boden wurde aus 25 m Entfernung bei Augenhöhe 2 m als "nicht sichtbar" zurückgegeben, und nur eine 1 m hohe Säule unterhalb der Augenhöhe war "sichtbar". Der höchste Punkt eines konvexen Körpers ist von außen immer sichtbar, also ist das geometrisch falsch. Die Durchläufe, bei denen die Stichprobe auf der Zielzelle landete, zählen wir nicht.
 - **L746** — ★Das Register deklariert ``points`` = (N, 3). Ein Skalar ergibt (3,), was mit der Deklaration kollidiert, deshalb falten wir stets auf (N, 3) (aufgedeckt durch den TYPEMISS des Fuzzers am 2026-09-06; der Fuzzer war nach dem Hinzufügen der 6 geozentrischen Koordinaten-ops nicht gelaufen). Wenn du (H, W, 3) als Gitter willst, verwende :func:`dem_geocentric_grid`.
 - **L795** — ★Innerhalb der Evolute ist die geodätische Breite nicht eindeutig -> statt still eine Breite außerhalb des Bereichs zurückzugeben, verweigern wir. Die Evolute der Ellipse x²/a² + z²/b² = 1 ist (a·x)^(2/3) + (b·z)^(2/3) = (a²-b²)^(2/3). Nur außerhalb der Gleichheit liegt der Bereich, in dem "die Normale eindeutig bestimmt ist" (da die 2/3-Potenz nicht negativ ist, ist das Vorzeichen |z|).
+
+## `engine.py`
+
+- **L82** _(ja)_ — ★backend が入っていないだけの名前は「unknown」でなく不足 extra を言う(api._resolve と同じ門、2026-09-19)
 
 ## `evis_fullseye_bridge.py`
 

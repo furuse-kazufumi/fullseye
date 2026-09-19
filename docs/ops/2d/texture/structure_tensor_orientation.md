@@ -4,7 +4,7 @@ dim: 2d
 category: texture
 in: image
 out: image
-examples: [gallery2d_texture_freq]
+examples: [degenerate_inputs, gallery2d_texture_freq]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -75,6 +75,7 @@ structure_tensor_orientation 0.50 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [degenerate_inputs](../../../../examples/degenerate_inputs.py) — `py -3.11 examples/degenerate_inputs.py`
 - [gallery2d_texture_freq](../../../../examples/gallery2d_texture_freq.py) — `py -3.11 examples/gallery2d_texture_freq.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

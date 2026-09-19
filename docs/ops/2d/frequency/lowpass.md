@@ -4,7 +4,7 @@ dim: 2d
 category: frequency
 in: image
 out: image
-examples: [gallery2d_texture_freq, signal_filter]
+examples: [degenerate_inputs, gallery2d_texture_freq, signal_filter]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -57,6 +57,7 @@ lowpass 0.40 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [degenerate_inputs](../../../../examples/degenerate_inputs.py) — `py -3.11 examples/degenerate_inputs.py`
 - [gallery2d_texture_freq](../../../../examples/gallery2d_texture_freq.py) — `py -3.11 examples/gallery2d_texture_freq.py`
 - [signal_filter](../../../../examples/signal_filter.py) — `py -3.11 examples/signal_filter.py`
 

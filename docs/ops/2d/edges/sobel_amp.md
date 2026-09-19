@@ -5,7 +5,7 @@ category: edges
 in: image
 out: image
 halcon: sobel_amp
-examples: [gallery2d_edges, genspark_external_review, poc_fiber_orientation, poc_focus_stacking, poc_real_coin_metrology, poc_white_balance]
+examples: [degenerate_inputs, gallery2d_edges, genspark_external_review, poc_fiber_orientation, poc_focus_stacking, poc_real_coin_metrology, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -67,6 +67,7 @@ sobel_amp 0.40 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [degenerate_inputs](../../../../examples/degenerate_inputs.py) — `py -3.11 examples/degenerate_inputs.py`
 - [gallery2d_edges](../../../../examples/gallery2d_edges.py) — `py -3.11 examples/gallery2d_edges.py`
 - [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
 - [poc_fiber_orientation](../../../../examples/poc_fiber_orientation.py) — `py -3.11 examples/poc_fiber_orientation.py`
