@@ -121,6 +121,11 @@ EXAMPLES = [
      "summary": "inspection_fixture(good, bad, recipe, measure, spec) = 良品が全部 ok かつ不良品が全部 ng なら passed、"
                 "見逃し(escapes)・過検出(false_rejects)・error を行で返し、spec_margins が仕様キーごとに良品の限界までの余裕を出す。"
                 "合成の良品 6・不良品 4 で passed、仕様を締めると過検出が出て failed になることを assert。"},
+    {"id": "degenerate_inputs", "task": "workflow", "data": "synthetic",
+     "name": "空・極小・1-D・RGB の退化入力で、どの op でも同じ文が返ることを確かめる",
+     "summary": "空配列 (0,0) は 271 op が 49 種の生エラーで落ちていた → 門が 1 文(上流の read/crop を疑え)で断る。"
+                "極小画像で op の中から出る生の例外には op 名と入力の形を注記(型も文も変えない)。"
+                "1-D と RGB (H,W,3) の 2-D op への入力は既存の門で断ることも併せて実演。"},
     {"id": "genspark_external_review", "task": "workflow", "data": "synthetic",
      "name": "第三者レビュー(GenSpark、0.2.0)が見つけた初見の摩擦を、直したあとの形で 1 本ずつ確かめる",
      "summary": "「無い」と「入っていない」を分ける MissingBackendError(索引の module/requires から不足 extra を案内)、"
