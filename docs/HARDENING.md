@@ -14,14 +14,14 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**15 件(うち直したもの 15 件)。見つけた PoC は 10 本。**
+**18 件(うち直したもの 18 件)。見つけた PoC は 10 本。**
 
 ## 種別ごと
 
 | 種別 | 件数 | 直した |
 |---|---:|---:|
-| 静かに間違う(例外が出ない) | 5 | 5 |
-| 実装の誤り | 3 | 3 |
+| 静かに間違う(例外が出ない) | 7 | 7 |
+| 実装の誤り | 4 | 4 |
 | 門が事故の起きる場所に立っていなかった | 2 | 2 |
 | 在るのに引けない | 4 | 4 |
 | 説明の穴(片道の参照・古い数字) | 1 | 1 |
@@ -30,7 +30,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 
 | PoC | 件数 |
 |---|---:|
-| [`genspark_external_review`](../examples/genspark_external_review.py) | 5 |
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 8 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
@@ -75,6 +75,18 @@ GenSpark の第 3 報(#14)。中央 1 画素だけ NaN の 9×9 画像を `gauss
 
 見つけた PoC: `degenerate_inputs` / 直した所: `backend_safe.py`, `opassist.py`, `api.py` / 門: `test_partial_nan_input_is_recorded_as_a_nonfinite_output_under_the_default_policy`, `test_partial_nan_input_stops_under_raise`, `test_nary_ops_are_found_by_op_find_and_explained_as_list_calls` / 状態: fixed
 
+#### [空の op 名が lowpass に解決し、float16 / float32 が契約の float64 に昇格されていなかった](hardening/empty-name-resolved-and-narrow-floats-not-upcast.md)
+
+GenSpark 第 15 報(境界値・型不一致の総当たり)。
+
+見つけた PoC: `genspark_external_review` / 直した所: `api.py` / 門: `test_empty_operator_name_is_unknown_not_lowpass`, `test_narrow_floats_are_upcast_to_the_float64_contract`, `test_on_error_message_names_the_default_none` / 状態: fixed
+
+#### [`engine.load(path)` がインスタンスでは何もせず、空のエンジンが入力をそのまま返していた](hardening/engine-load-on-an-instance-was-silently-ignored.md)
+
+GenSpark 第 16 報(N37 / N39 / N40 / N41)。
+
+見つけた PoC: `genspark_external_review` / 直した所: `engine.py`, `imgevolve.py` / 門: `test_load_on_an_instance_loads_into_it`, `test_dict_stages_are_understood_and_bad_stage_types_are_refused`, `test_upto_is_an_inclusive_stage_index_and_out_of_range_is_refused`, `test_to_python_carries_the_ops_string_and_a_coding_line` / 状態: fixed
+
 ### 実装の誤り
 
 #### [可視領域が、目線より高いセルを軒並み「見えない」と返していた](hardening/dem-viewshed-self-occlusion.md)
@@ -94,6 +106,12 @@ GenSpark の第 3 報(#14)。中央 1 画素だけ NaN の 9×9 画像を `gauss
 GenSpark 第 8 報。Xvfb 上で Studio を起動し xdotool で操作、前後のスクリーンショットを画像解析で比べた実測: Program エディタに `gaussian (0.4, 0.5)` を打つとステータスが「● unapplied edits — Apply to run, or Reset to discard」に変わる(s8)。そこで実行キーを押しても **画面は 1 bit も変わらず**、ステータスもそのまま(s9 = s8)。報告では Ctrl+R を押していたが、Studio の実行キーは HDevelop 流の **F5 / Ctrl+Return** で、Ctrl+R は未割り当てだった —— ただし F5 を押しても同じ結果になる(下)。
 
 見つけた PoC: `genspark_external_review` / 直した所: `studio.py` / 門: `test_run_all_applies_unapplied_program_edits_first`, `test_run_all_does_not_run_the_old_pipeline_when_the_edit_does_not_parse`, `test_ctrl_r_is_an_alias_of_the_run_key` / 状態: fixed
+
+#### [pose ヘルパが、自分の出力(4×4 同次行列)を受け取れなかった](hardening/pose-helpers-could-not-take-their-own-matrix.md)
+
+GenSpark 第 14 報(公開 API 955 本の一括スモークを有効引数で再検証した回)。ライブラリ自身の往復で落ちる:
+
+見つけた PoC: `genspark_external_review` / 直した所: `pose_quat.py` / 門: `test_pose_helpers_accept_their_own_homogeneous_matrix`, `test_other_shapes_say_what_a_pose_is` / 状態: fixed
 
 ### 門が事故の起きる場所に立っていなかった
 

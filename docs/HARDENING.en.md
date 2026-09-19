@@ -15,14 +15,14 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**15 findings (15 fixed), from 10 PoCs.**
+**18 findings (18 fixed), from 10 PoCs.**
 
 ## By kind
 
 | Kind | Findings | Fixed |
 |---|---:|---:|
-| Silently wrong (no exception) | 5 | 5 |
-| Implementation defect | 3 | 3 |
+| Silently wrong (no exception) | 7 | 7 |
+| Implementation defect | 4 | 4 |
 | The gate did not stand where the accident happens | 2 | 2 |
 | Present but unreachable | 4 | 4 |
 | Documentation hole (one-way reference, stale number) | 1 | 1 |
@@ -31,7 +31,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 
 | PoC | Findings |
 |---|---:|
-| [`genspark_external_review`](../examples/genspark_external_review.py) | 5 |
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 8 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
@@ -76,6 +76,18 @@ GenSpark の第 3 報(#14)。中央 1 画素だけ NaN の 9×9 画像を `gauss
 
 Found by: `degenerate_inputs` / Changed: `backend_safe.py`, `opassist.py`, `api.py` / Gate: `test_partial_nan_input_is_recorded_as_a_nonfinite_output_under_the_default_policy`, `test_partial_nan_input_stops_under_raise`, `test_nary_ops_are_found_by_op_find_and_explained_as_list_calls` / Status: fixed
 
+#### [空の op 名が lowpass に解決し、float16 / float32 が契約の float64 に昇格されていなかった](hardening/empty-name-resolved-and-narrow-floats-not-upcast.md) _(ja)_
+
+GenSpark 第 15 報(境界値・型不一致の総当たり)。 _(ja)_
+
+Found by: `genspark_external_review` / Changed: `api.py` / Gate: `test_empty_operator_name_is_unknown_not_lowpass`, `test_narrow_floats_are_upcast_to_the_float64_contract`, `test_on_error_message_names_the_default_none` / Status: fixed
+
+#### [`engine.load(path)` がインスタンスでは何もせず、空のエンジンが入力をそのまま返していた](hardening/engine-load-on-an-instance-was-silently-ignored.md) _(ja)_
+
+GenSpark 第 16 報(N37 / N39 / N40 / N41)。 _(ja)_
+
+Found by: `genspark_external_review` / Changed: `engine.py`, `imgevolve.py` / Gate: `test_load_on_an_instance_loads_into_it`, `test_dict_stages_are_understood_and_bad_stage_types_are_refused`, `test_upto_is_an_inclusive_stage_index_and_out_of_range_is_refused`, `test_to_python_carries_the_ops_string_and_a_coding_line` / Status: fixed
+
 ### Implementation defect
 
 #### [可視領域が、目線より高いセルを軒並み「見えない」と返していた](hardening/dem-viewshed-self-occlusion.md) _(ja)_
@@ -95,6 +107,12 @@ Found by: `genspark_external_review` / Changed: `api.py` / Gate: `test_run_pipel
 GenSpark 第 8 報。Xvfb 上で Studio を起動し xdotool で操作、前後のスクリーンショットを画像解析で比べた実測: Program エディタに `gaussian (0.4, 0.5)` を打つとステータスが「● unapplied edits — Apply to run, or Reset to discard」に変わる(s8)。そこで実行キーを押しても **画面は 1 bit も変わらず**、ステータスもそのまま(s9 = s8)。報告では Ctrl+R を押していたが、Studio の実行キーは HDevelop 流の **F5 / Ctrl+Return** で、Ctrl+R は未割り当てだった —— ただし F5 を押しても同じ結果になる(下)。 _(ja)_
 
 Found by: `genspark_external_review` / Changed: `studio.py` / Gate: `test_run_all_applies_unapplied_program_edits_first`, `test_run_all_does_not_run_the_old_pipeline_when_the_edit_does_not_parse`, `test_ctrl_r_is_an_alias_of_the_run_key` / Status: fixed
+
+#### [pose ヘルパが、自分の出力(4×4 同次行列)を受け取れなかった](hardening/pose-helpers-could-not-take-their-own-matrix.md) _(ja)_
+
+GenSpark 第 14 報(公開 API 955 本の一括スモークを有効引数で再検証した回)。ライブラリ自身の往復で落ちる: _(ja)_
+
+Found by: `genspark_external_review` / Changed: `pose_quat.py` / Gate: `test_pose_helpers_accept_their_own_homogeneous_matrix`, `test_other_shapes_say_what_a_pose_is` / Status: fixed
 
 ### The gate did not stand where the accident happens
 
