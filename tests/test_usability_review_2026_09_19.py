@@ -235,3 +235,13 @@ def test_op_objects_pickle_by_name():
     assert pickle.loads(pickle.dumps(op)) is op
     with pytest.raises(KeyError, match="not registered"):
         ops._op_from_name("no_such_op_xyz")
+
+
+def test_aliases_resolve_regardless_of_case_and_hyphens():
+    # GenSpark N50: HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれる
+    assert api.find_op("GAUSS_FILTER") is api.find_op("gauss_filter")
+    assert api.find_op("Gauss-Filter") is api.find_op("gauss_filter")
+    assert api.find_op("  Gaussian ") is api.find_op("gaussian")
+    assert api.find_op("NO_SUCH_OP_XYZ") is None
+    out = fs.apply(IMG, "GAUSS_FILTER")
+    assert np.allclose(out, fs.apply(IMG, "gaussian"))

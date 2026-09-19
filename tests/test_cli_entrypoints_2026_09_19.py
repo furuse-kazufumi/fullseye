@@ -122,3 +122,74 @@ def test_color_backend_name_check_is_fail_closed_without_the_json(monkeypatch, t
     real = C._real_ops()
     assert real and real == set(HALCON_NAMES)
     assert all(d[0] in real for d in C._DEFS)                       # 色 op は全部実在名(門は通す)
+
+
+def test_version_flag_prints_the_version_and_exits_zero(monkeypatch, capsys):
+    import api
+    monkeypatch.setattr(sys, "argv", ["fullseye", "--version"])
+    with pytest.raises(SystemExit) as ei:
+        imgevolve.main()
+    assert ei.value.code == 0
+    assert api.__version__ in capsys.readouterr().out
+
+
+def test_runtime_messages_name_the_installed_cli(monkeypatch, capsys):
+    monkeypatch.setattr(sys, "argv", ["fullseye", "algo", "run", "no_such_algo_xyz", "--seq", "1,2"])
+    with pytest.raises(SystemExit) as ei:
+        imgevolve.main()
+    assert "fullseye algo list" in str(ei.value) and "imgevolve.py" not in str(ei.value)
+    monkeypatch.setattr(sys, "argv", ["fullseye", "has", "nosuchop_xyz"])
+    rc = imgevolve.main()
+    out = capsys.readouterr().out
+    assert rc == 1 and "neither an op name" in out and "op_find" in out
+
+
+def test_empty_operator_name_is_unknown_not_lowpass():
+    import numpy as np
+    import api
+    import fullseye as fs
+    assert api.find_op("") is None and api.find_op("   ") is None and api.find_op(None) is None
+    img = np.random.default_rng(2).random((8, 8))
+    for bad in ("", " ", "\t"):
+        with pytest.raises(KeyError, match="unknown operator"):
+            fs.apply(img, bad)
+        with pytest.raises(KeyError, match="unknown operator"):
+            fs.run_pipeline(img, [bad])
+
+
+def test_narrow_floats_are_upcast_to_the_float64_contract():
+    import numpy as np
+    import fullseye as fs
+    img = np.random.default_rng(2).random((16, 16))
+    fs.clear_fallbacks()
+    o16 = fs.apply(img.astype(np.float16), "gaussian", on_error="raise")
+    o32 = fs.apply(img.astype(np.float32), "gaussian", on_error="raise")
+    o64 = fs.apply(img, "gaussian", on_error="raise")
+    assert o16.dtype == o32.dtype == np.float64 and o64.dtype == np.float64
+    assert np.allclose(o32, o64, atol=1e-6) and np.allclose(o16, o64, atol=2e-3)   # 昇格は無損失、差は入力の量子化だけ
+    assert not fs.fallbacks()                                                      # 記録もしない
+
+
+def test_on_error_message_names_the_default_none():
+    import numpy as np
+    import fullseye as fs
+    with pytest.raises(ValueError, match="or None"):
+        fs.apply(np.zeros((4, 4)), "gaussian", on_error="ignore")
+
+
+def test_generated_python_declares_utf8_because_comments_carry_japanese_op_docs():
+    import engine
+    eng = engine.FullseyeEngine.from_ops("gaussian,otsu") if hasattr(engine.FullseyeEngine, "from_ops") \
+        else engine.FullseyeEngine.from_dict({"name": "p", "stages": [["gaussian", 0.5, 0.5], ["otsu", 0.5, 0.5]]})
+    for src in (eng.to_python(), eng.to_python_staged()):
+        assert src.splitlines()[0] == "# -*- coding: utf-8 -*-", src.splitlines()[:2]
+        compile(src, "<generated>", "exec")
+
+
+def test_sample_photo_unknown_name_raises_instead_of_killing_the_process():
+    import realdata
+    import fullseye as fs
+    with pytest.raises(realdata.RealDataError, match="未登録"):
+        fs.sample_photo("no_such_photo_xyz")
+    assert not issubclass(realdata.RealDataError, SystemExit)
+    assert "sample_photo" in fs.__all__
