@@ -16,6 +16,9 @@
    **方針に依らず** TypeError(落とし先が無い入力を「全 0」にするのは fallback でなく嘘)
 4. n-ary の形状不一致は「同じ形で / crop・pad・resize を先に」を文で言う
 5. ``Op`` は名前で pickle できる(multiprocessing / joblib に渡せる)
+7. n-ary op は ``op_names(include_nary=True)`` で一覧でき(既定は 1 入力の一覧のまま)、``list_ops`` の各行に
+   ``knobs``(``a`` の効き方 continuous / discrete / unused、``b`` を使うか、実測の無い op は None)が乗り、
+   CLI は ``fullseye apply add_image a.png out.png --input2 b.png`` で 2 入力の op を呼べる(第 18〜20 報 N60 / I1)
 
 を assert で確かめる。設計として変えなかった点(既定 ``on_error="fallback"``、警告は op ごとに 1 度、
 float32 の昇格は記録しない)も最後に実演する。
@@ -134,6 +137,23 @@ def main() -> int:
     print("6.  design   : %d conversions recorded %s, %d warning(s) (once per op); float32 is an exact upcast, not recorded"
           % (len(kinds), kinds, sum(isinstance(x.message, fs.FullseyeFallbackWarning) for x in w)))
     assert len(kinds) == 3
+
+    # 7. n-ary の一覧と、つまみの機械可読な説明(第 18〜20 報 N60 / I1)
+    import api
+    names = fs.op_names()
+    both = fs.op_names(include_nary=True)
+    nary = sorted(set(both) - set(names))
+    assert "add_image" not in names and "add_image" in both
+    assert nary == sorted({o.name for o in api._nary_by_name().values()}) and both == sorted(both)
+    rows = {r["name"]: r for r in fs.list_ops()}
+    assert all("knobs" in r for r in rows.values())
+    k = rows["add_noise_distribution"]["knobs"]
+    assert k["a"] == "continuous" and k["b"] is True, k
+    assert rows["abs_image"]["knobs"]["a"] == "unused" and fs.knob_summary("abs_image") == rows["abs_image"]["knobs"]
+    n_meas = sum(1 for r in rows.values() if r["knobs"] is not None)
+    print("7.  nary/knobs: op_names() %d, with nary %d (+%d: %s ...); knobs measured for %d ops, None for the rest"
+          % (len(names), len(both), len(nary), ", ".join(nary[:3]), n_meas))
+    print("    CLI       : fullseye apply add_image a.png out.png --input2 b.png   (2 inputs; 1-input ops refuse --input2)")
     print("PASS")
     return 0
 
