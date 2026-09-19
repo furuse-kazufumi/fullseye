@@ -139,6 +139,8 @@ def _row_record(row: dict) -> dict:
     rec = {"path": os.path.basename(row["path"]), "hash": row["hash"],
            "status": row["verdict"]["status"] if row["verdict"] else "unjudged"}
     for k, v in row["measurements"].items():
+        if k in ("path", "hash", "status", "detail", "elapsed_ms", "error"):
+            k = "m_" + k                                     # 予約列と衝突する計測名は退避
         rec[k] = float(v) if _is_number(v) else (v if isinstance(v, (str, bool)) or v is None else str(v))
     rec["detail"] = row["verdict"]["detail"] if row["verdict"] else ""
     rec["elapsed_ms"] = float(row["elapsed_ms"])

@@ -596,6 +596,15 @@ from fullseye.mdio import (  # noqa: E402,F401
 from fullseye.xlsxio import (  # noqa: E402,F401
     save_xlsx_report,
 )
+# 検査ワークフロー層(2026-09-19): 計測 dict → 仕様照合 → 根拠つき Verdict(judge)、
+# フォルダ → 一括 前処理・計測・判定 → 集計・SPC・レポート・監査ログ(inspect_batch)。
+# どちらも op ではない facade(新アルゴリズム無し、既存 op/3 系統レポートの glue)。
+from fullseye.judge import (  # noqa: E402,F401
+    judge,
+)
+from fullseye.inspect_batch import (  # noqa: E402,F401
+    inspect_batch, as_verdict,
+)
 
 __all__ = [
     "op", "ledger",
@@ -940,4 +949,5 @@ __all__ = [
     "is_envelope", "as_value", "apply_json",
     "to_markdown", "json_block", "extract_json", "report",
     "save_xlsx_report",
+    "judge", "inspect_batch", "as_verdict",
 ]

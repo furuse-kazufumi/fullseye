@@ -283,6 +283,27 @@
    ]
   },
   {
+   "id": "inspection-workflow",
+   "title": "フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す",
+   "title_en": "Inspect a folder in one call — batch, judge against a spec, aggregate, SPC, report, audit log",
+   "category": "組み立てる",
+   "note": "docs/capabilities/inspection-workflow.md",
+   "status": "verified-synthetic",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "inspection_workflow",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "inverted-colour-overlays",
    "title": "地の色を知らずに線と領域を描く(反転色)",
    "title_en": "Draw lines and regions without knowing the background colour",
@@ -689,9 +710,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 214,
+  "examples2d_total": 215,
   "run_by_the_poc_gate": 122,
-  "run_by_the_example_gate": 92,
+  "run_by_the_example_gate": 93,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",
