@@ -36,7 +36,7 @@ W をスペクトル半径が rho になるように定数倍した conn_graph(e
 
 ## 型が繋がる次の op(`conn_graph` を入力に取れる)
 
-[graph_degree_preserving_shuffle](../build/graph_degree_preserving_shuffle.md) · [graph_binarize](../build/graph_binarize.md) · [graph_degree_table](../stats/graph_degree_table.md) · [graph_clustering_coefficient](../stats/graph_clustering_coefficient.md) · [graph_betweenness](../stats/graph_betweenness.md) · [graph_laplacian_spectrum](../stats/graph_laplacian_spectrum.md) · [graph_spectral_radius](../stats/graph_spectral_radius.md) · [graph_components](../stats/graph_components.md)
+[graph_degree_preserving_shuffle](../construct/graph_degree_preserving_shuffle.md) · [graph_binarize](../construct/graph_binarize.md) · [graph_degree_table](../stats/graph_degree_table.md) · [graph_clustering_coefficient](../stats/graph_clustering_coefficient.md) · [graph_betweenness](../stats/graph_betweenness.md) · [graph_laplacian_spectrum](../stats/graph_laplacian_spectrum.md) · [graph_spectral_radius](../stats/graph_spectral_radius.md) · [graph_components](../stats/graph_components.md)
 
 ## 同カテゴリ(`reservoir`)
 

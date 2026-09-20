@@ -14798,30 +14798,30 @@
    {
     "op": "graph_binarize",
     "dim": "conngraph",
-    "category": "build",
+    "category": "construct",
     "in": "conn_graph",
     "out": "conn_graph",
-    "path": "docs/ops/conngraph/build/graph_binarize.md"
+    "path": "docs/ops/conngraph/construct/graph_binarize.md"
    }
   ],
   "graph_degree_preserving_shuffle": [
    {
     "op": "graph_degree_preserving_shuffle",
     "dim": "conngraph",
-    "category": "build",
+    "category": "construct",
     "in": "conn_graph",
     "out": "conn_graph",
-    "path": "docs/ops/conngraph/build/graph_degree_preserving_shuffle.md"
+    "path": "docs/ops/conngraph/construct/graph_degree_preserving_shuffle.md"
    }
   ],
   "graph_from_synapses": [
    {
     "op": "graph_from_synapses",
     "dim": "conngraph",
-    "category": "build",
+    "category": "construct",
     "in": "synapse_table",
     "out": "conn_graph",
-    "path": "docs/ops/conngraph/build/graph_from_synapses.md"
+    "path": "docs/ops/conngraph/construct/graph_from_synapses.md"
    }
   ],
   "reservoir_encode": [

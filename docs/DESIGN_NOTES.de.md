@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 813. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 815. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -120,7 +120,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `conngraph.py`
 
-- **L646** _(ja)_ — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
+- **L669** _(ja)_ — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
 
 ## `deform3d.py`
 
@@ -460,7 +460,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_larval_connectome_reservoir.py`
 
-- **L197** _(ja)_ — 5. 図(FULLSEYE_FIGURE_DIR があるときだけ)。★2,952² の隣接行列をそのまま描くと 1.3 % の点で一色になり、 Fiedler 配置は重い裾の次数分布で 1 点に潰れる(2026-09-20 に実際にそうなった)。升に集約し、対照と並べる。
+- **L43** _(ja)_ — ★CI(2 コア)では full の設定が 600 秒の枠を超えて -1(timeout)になった(2026-09-20、run 35501201432)。 FULLSEYE_POC_BUDGET=reduced(CI では既定)で標本・格子・seed を減らす。展示の数字は full の実測で、 reduced は「同じ経路が走る」ことの証拠に留める(先頭に BUDGET: を印字)。
+- **L207** _(ja)_ — 5. 図(FULLSEYE_FIGURE_DIR があるときだけ)。★2,952² の隣接行列をそのまま描くと 1.3 % の点で一色になり、 Fiedler 配置は重い裾の次数分布で 1 点に潰れる(2026-09-20 に実際にそうなった)。升に集約し、対照と並べる。
 
 ## `examples/poc_leak_localization.py`
 
@@ -1081,6 +1082,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L85** — ★ Stattdessen **weisen wir ein rohes (N,H,W) ndarray ausdrücklich zurück**. Ein 3-D-Array besteht dieselbe Strukturprüfung, egal ob es video (T,H,W) / voxel (D,H,W) / histcube (H,W,T) / zscan ist, sodass eine Verwechslung keine Ausnahme auslöst und ein "plausibel falsches Kompositresultat" zurückgibt —— dies ist **genau dieselbe Gefahr** wie beim Trennen von histcube von voxel durch die photon-Familie. Hier jedoch erreichen wir dieselbe Absicherung nicht durch Hinzufügen eines Typs, sondern indem wir verlangen, dass es "eine list ist". Sobald man list(volume) schreibt, hat der Aufrufer erklärt, dass "die führende Achse die Frame-Achse ist". * image2d —— Kompositresultat, drizzle-Ausgabe, Einzelframe. Alle sind 2-D float64, sodass bestehende 2-D-Ops (Filter, Schwellenwert, morphology, psf_to_mtf) mit erhaltener Bedeutung nutzbar sind. Es ist **nicht einmal nichtnegativ** (Residuen der κ-σ-Kombination und negative Ränder der Spline-Interpolation treten auf), sodass es counts zu nennen stattdessen eine Lüge wäre. * keypoints —— die Rückgabe von ``star_detect`` ist (N, 2) als (row, col). Die keypoints in TYPE_CHECKS ist "(N,3) oder ein beliebiges 2-D-Array", also trifft es direkt zu und wird von ``psf_fit`` / ``aperture_photometry`` konsumiert.
 - **L101** — ★ Dies ist kein pairs: der Kanon von pairs ist das "(x, y)-Paar", das von den 6 Ops auf der reprconv-Seite festgelegt wird, während dies (row, col) in Bildkoordinaten ist und derselben Konvention wie fit_transform / mosaic folgt. Ein Mischen vertauscht Zeilen und Spalten (dieselbe Form wie die in diesem Repo bekannte Falle, bei der features.match_keypoints (x,y) zurückgibt, während fit_transform (row,col) verlangt). Es keypoints zu nennen teilt zumindest das Versprechen "ein Punkt auf dem Bild". * indices —— die Indizes (1-D int) der übernommenen Frames, die ``lucky_select`` zurückgibt. Genau das bestehende Vokabular. ``[frames[i] for i in idx]`` führt zu images zurück. * measurement —— ``noise_sigma`` ist ein einzelner reeller Skalar. * matrix —— die (3,3) homogene Transformation von ``frame_align``. Es ist dasselbe, was transforms / fit_transform / mosaic behandeln, also gibt es keinen Grund, einen eigenen Begriff zu erfinden. * table —— dict / list of dict (Qualität, PSF-Anpassung, Photometrie). Die table in TYPE_CHECKS ist list|dict, also trifft beides zu. Der Preis des Nicht-Trennens (honest): wenn eine nicht-astronomische Bildsequenz in den ``images``-Pool gelangt, findet ``frame_align`` keine Sterne und hält mit ValueError an. Da dies fail-closed ist, ist es keine "null Funde", sondern "erreicht und korrekt zurückgewiesen", doch aus Sicht eines verketteten Fuzzers können die 2 align-Ops zu nichts als CONTRACT werden. Da dasselbe Symptom auftreten kann wie der Grund, warum die photon-Familie counts trennte (7/17 werden nie ausgeführt), **wenn die Messung dies zeigt**, ist dann die Entscheidung gerechtfertigt, "Bildsequenzen mit Punktbildern" in einen separaten Pool zu legen —— wir fügen nicht vorsorglich einen Typ hinzu (in diesem Repo lautet die Reihenfolge: einen Typ erst hinzufügen, nachdem Belege aufgetaucht sind, dass "Mischen es zur Lüge macht").
+
+## `opsconngraph.py`
+
+- **L66** _(ja)_ — 作る —— シナプス表から隣接行列へ、帰無モデル、二値化。★カテゴリ名は docs/ops/conngraph/<category>/ に なる: "build" は .gitignore の build/ に当たり、ノート 3 枚が commit されず CI だけ赤になった(2026-09-20)
 
 ## `opsdem.py`
 

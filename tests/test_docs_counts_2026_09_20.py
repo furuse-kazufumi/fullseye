@@ -74,3 +74,25 @@ def test_external_review_report_count_agrees_across_documents():
     n = m.group(1)
     assert "報告を %s 通" % n in _read(os.path.join("docs", "articles", "fullseye_overview_qiita_ja.md"))
     assert "sent back %s reports" % n in _read(os.path.join("docs", "articles", "fullseye_overview_qiita_en.md"))
+
+
+def test_no_note_path_is_gitignored():
+    """docs/ops の下のディレクトリ・ノートが 1 つも .gitignore に当たらないこと。
+
+    ★2026-09-20: conngraph のカテゴリ ``build`` が packaging 用の ``build/`` 規則に当たり、
+    ノート 3 枚が**手元には在るのに commit されず**、CI だけで 10 件の失敗に連鎖した
+    (ノート欠落 → 索引のリンク切れ → MCP 複製の不一致 → コーパス地図の drift)。
+    手元の「ノートが在る」門は tracked かどうかを見ていなかった —— 門は事故の起きる場所に。
+    """
+    import subprocess
+    paths = sorted(glob.glob(os.path.join(ROOT, "docs", "ops", "*", "*")) +
+                   glob.glob(os.path.join(ROOT, "docs", "ops", "*", "*", "*.md")))
+    rel = [os.path.relpath(p, ROOT).replace(os.sep, "/") for p in paths]
+    try:
+        r = subprocess.run(["git", "check-ignore", "--stdin"], input="\n".join(rel), capture_output=True,
+                           text=True, cwd=ROOT, encoding="utf-8", timeout=120)
+    except (OSError, subprocess.TimeoutExpired) as exc:        # git が無い環境は判定できない
+        import pytest
+        pytest.skip("git が使えない: %s" % exc)
+    ignored = [ln for ln in r.stdout.splitlines() if ln.strip()]
+    assert not ignored, "docs/ops の下で .gitignore に当たるものがある(commit されずに CI だけ赤になる):\n" + "\n".join(ignored[:20])

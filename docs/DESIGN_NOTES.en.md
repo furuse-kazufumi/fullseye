@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 813. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 815. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -120,7 +120,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `conngraph.py`
 
-- **L646** _(ja)_ — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
+- **L669** _(ja)_ — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
 
 ## `deform3d.py`
 
@@ -460,7 +460,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_larval_connectome_reservoir.py`
 
-- **L197** _(ja)_ — 5. 図(FULLSEYE_FIGURE_DIR があるときだけ)。★2,952² の隣接行列をそのまま描くと 1.3 % の点で一色になり、 Fiedler 配置は重い裾の次数分布で 1 点に潰れる(2026-09-20 に実際にそうなった)。升に集約し、対照と並べる。
+- **L43** _(ja)_ — ★CI(2 コア)では full の設定が 600 秒の枠を超えて -1(timeout)になった(2026-09-20、run 35501201432)。 FULLSEYE_POC_BUDGET=reduced(CI では既定)で標本・格子・seed を減らす。展示の数字は full の実測で、 reduced は「同じ経路が走る」ことの証拠に留める(先頭に BUDGET: を印字)。
+- **L207** _(ja)_ — 5. 図(FULLSEYE_FIGURE_DIR があるときだけ)。★2,952² の隣接行列をそのまま描くと 1.3 % の点で一色になり、 Fiedler 配置は重い裾の次数分布で 1 点に潰れる(2026-09-20 に実際にそうなった)。升に集約し、対照と並べる。
 
 ## `examples/poc_leak_localization.py`
 
@@ -1081,6 +1082,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L85** — ★ Instead, we **explicitly reject a raw (N,H,W) ndarray**. A 3-D array passes the same structural check whether it is video (T,H,W) / voxel (D,H,W) / histcube (H,W,T) / zscan, so a mix-up raises no exception and returns a "plausibly wrong composite" —— this is **exactly the same danger** as the photon family separating histcube from voxel. Here, however, we obtained the same defense not by adding a type but by requiring that it "be a list". The moment you write list(volume), the caller has declared that "the leading axis is the frame axis". * image2d —— composite, drizzle output, single frame. All are 2-D float64, so existing 2-D ops (filter, threshold, morphology, psf_to_mtf) can be used with their meaning intact. It is **not even non-negative** (residuals of κ-σ combining and negative fringes of spline interpolation appear), so calling it counts would instead be a lie. * keypoints —— the return of ``star_detect`` is (N, 2) as (row, col). The keypoints in TYPE_CHECKS is "(N,3) or any 2-D array", so it applies directly and is consumed by ``psf_fit`` / ``aperture_photometry``.
 - **L101** — ★ This is not pairs: the canon of pairs is the "(x, y) pair" fixed by the 6 ops on the reprconv side, whereas this is (row, col) in image coordinates, following the same convention as fit_transform / mosaic. Mixing them swaps rows and columns (the same shape as this repo's known trap where features.match_keypoints returns (x,y) while fit_transform requires (row,col)). Calling it keypoints at least shares the promise of "a point on the image". * indices —— the indices (1-D int) of the adopted frames returned by ``lucky_select``. Exactly the existing vocabulary. ``[frames[i] for i in idx]`` returns to images. * measurement —— ``noise_sigma`` is a single real scalar. * matrix —— the (3,3) homogeneous transform from ``frame_align``. It is the same thing that transforms / fit_transform / mosaic handle, so there is no reason to invent a dedicated term. * table —— dict / list of dict (quality, PSF fit, photometry). The table in TYPE_CHECKS is list|dict, so both apply. The cost of not separating (honest): if a non-astronomical image sequence enters the ``images`` pool, ``frame_align`` finds no stars and halts with ValueError. Since this is fail-closed, it is not "zero findings" but "reached and correctly rejected", yet from a chained fuzzer's view the 2 align ops may end up being nothing but CONTRACT. Since the same symptom can appear as the reason the photon family separated counts (7/17 are never executed), **if measurement shows this to be the case**, then the decision to put "image sequences containing point images" in a separate pool is justified —— we do not preemptively add a type (in this repo the order is: add a type only after evidence emerges that "mixing makes it a lie").
+
+## `opsconngraph.py`
+
+- **L66** _(ja)_ — 作る —— シナプス表から隣接行列へ、帰無モデル、二値化。★カテゴリ名は docs/ops/conngraph/<category>/ に なる: "build" は .gitignore の build/ に当たり、ノート 3 枚が commit されず CI だけ赤になった(2026-09-20)
 
 ## `opsdem.py`
 

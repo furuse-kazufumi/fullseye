@@ -471,3 +471,28 @@ def test_activity_video_shape_scale_and_placement():
             C.points_activity_video(P, X, **bad)
     with pytest.raises(ValueError, match="points_activity_video.*cap"):
         C.points_activity_video(P, X, size=4096, aspect=1.0, substeps=200)
+
+
+def test_spectral_radius_sparse_path_matches_dense():
+    """n > 400 は ARPACK の経路(2026-09-20、PoC が CI の枠を超えた)。密の eigvals と同じ値を返すこと。"""
+    rng = np.random.default_rng(3)
+    n = 600
+    W = (rng.random((n, n)) < 0.02) * rng.integers(1, 9, (n, n)).astype(np.float64)
+    np.fill_diagonal(W, 0.0)
+    dense = float(np.max(np.abs(np.linalg.eigvals(W))))
+    assert C.graph_spectral_radius(W) == pytest.approx(dense, rel=1e-8)
+    R = C.reservoir_from_graph(W, rho=0.9)
+    assert float(np.max(np.abs(np.linalg.eigvals(R)))) == pytest.approx(0.9, rel=1e-8)
+    # 小さいグラフは密のまま(閉形式の真値: 完全グラフ n−1)
+    assert C.graph_spectral_radius(_complete(5)) == pytest.approx(4.0)
+    # 符号つきの乱数行列(固有値が円状)は ARPACK が最大絶対値に届かない → 密の経路(実測で起きた誤り)
+    G = rng.standard_normal((n, n)) * (rng.random((n, n)) < 0.02)
+    dense_g = float(np.max(np.abs(np.linalg.eigvals(G))))
+    assert C.graph_spectral_radius(G) == pytest.approx(dense_g, rel=1e-8)
+    assert float(np.max(np.abs(np.linalg.eigvals(C.reservoir_from_graph(G, rho=0.9))))) == pytest.approx(0.9, rel=1e-8)
+    # 非負でも 2 成分(可約)・周期的(2 部)な構造で密と一致すること
+    B = np.zeros((n, n)); half = n // 2
+    B[:half, :half] = W[:half, :half]; B[half:, half:] = 3.0 * W[half:, half:]
+    assert C.graph_spectral_radius(B) == pytest.approx(float(np.max(np.abs(np.linalg.eigvals(B)))), rel=1e-8)
+    Bp = np.zeros((n, n)); Bp[:half, half:] = W[:half, half:]; Bp[half:, :half] = W[half:, :half]
+    assert C.graph_spectral_radius(Bp) == pytest.approx(float(np.max(np.abs(np.linalg.eigvals(Bp)))), rel=1e-8)

@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：610 / 813 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：610 / 815 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel.py`
@@ -120,7 +120,7 @@
 
 ## `conngraph.py`
 
-- **L646** _(ja)_ — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
+- **L669** _(ja)_ — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
 
 ## `deform3d.py`
 
@@ -460,7 +460,8 @@
 
 ## `examples/poc_larval_connectome_reservoir.py`
 
-- **L197** _(ja)_ — 5. 図(FULLSEYE_FIGURE_DIR があるときだけ)。★2,952² の隣接行列をそのまま描くと 1.3 % の点で一色になり、 Fiedler 配置は重い裾の次数分布で 1 点に潰れる(2026-09-20 に実際にそうなった)。升に集約し、対照と並べる。
+- **L43** _(ja)_ — ★CI(2 コア)では full の設定が 600 秒の枠を超えて -1(timeout)になった(2026-09-20、run 35501201432)。 FULLSEYE_POC_BUDGET=reduced(CI では既定)で標本・格子・seed を減らす。展示の数字は full の実測で、 reduced は「同じ経路が走る」ことの証拠に留める(先頭に BUDGET: を印字)。
+- **L207** _(ja)_ — 5. 図(FULLSEYE_FIGURE_DIR があるときだけ)。★2,952² の隣接行列をそのまま描くと 1.3 % の点で一色になり、 Fiedler 配置は重い裾の次数分布で 1 点に潰れる(2026-09-20 に実際にそうなった)。升に集約し、対照と並べる。
 
 ## `examples/poc_leak_localization.py`
 
@@ -1081,6 +1082,10 @@
 
 - **L85** — ★ 作为替代，我们**明确拒绝原始的 (N,H,W) ndarray**。无论是 video (T,H,W) / voxel (D,H,W) / histcube (H,W,T) / zscan，3-D 数组都能通过同一结构检查，即使弄错也不会抛异常，而是返回一个“看似合理却错误的合成结果”——这与 photon 族将 histcube 从 voxel 中分离是**完全相同的危险**。但这里并非增加类型，而是通过要求它“必须是 list”来获得同样的防御。一旦写成 list(volume)，调用方就声明了“首轴是帧轴”。 * image2d —— 合成结果、drizzle 输出、单帧。均为 2-D 的 float64，现有的 2-D op（滤波、阈值、morphology、psf_to_mtf）可保持语义不变地使用。它**甚至并非非负**（会出现 κ-σ 合成的残差以及样条插值的负值边缘），所以自称为 counts 反而是谎言。 * keypoints —— ``star_detect`` 的返回是 (N, 2) 的 (row, col)。TYPE_CHECKS 中的 keypoints 是“(N,3) 或任意 2-D 数组”，故直接适用，并由 ``psf_fit`` / ``aperture_photometry`` 消费。
 - **L101** — ★ 这里不是 pairs：pairs 的正典是 reprconv 侧的 6 个 op 所确定的“(x, y) 对”，而这里是图像坐标的 (row, col)，与 fit_transform / mosaic 是同一规约。混用会导致行与列互换（与本 repo 已知的陷阱同形：features.match_keypoints 返回 (x,y)，而 fit_transform 要求 (row,col)）。自称 keypoints 至少能共享“图像上的点”这一约定。 * indices —— ``lucky_select`` 返回的采用帧的下标（1-D int）。就是既有词汇本身。``[frames[i] for i in idx]`` 即可还原为 images。 * measurement —— ``noise_sigma`` 是单个实标量。 * matrix —— ``frame_align`` 的 (3,3) 齐次变换。与 transforms / fit_transform / mosaic 所处理的是同一物，没有理由另造专用词。 * table —— dict / list of dict（质量、PSF 拟合、测光）。TYPE_CHECKS 中的 table 为 list|dict，故两者都适用。不分离的代价（honest）：若非天体图像序列进入 ``images`` 池，``frame_align`` 找不到星，会以 ValueError 停止。由于这是 fail-closed，所以不是“发现为零”，而是“到达了但被正确拒绝”，但从链式 fuzzer 的角度看，align 系的 2 个 op 可能只沦为 CONTRACT。由于会出现与 photon 族分离 counts 的原因相同的症状（7/17 从未被执行），**若实测确实如此**，那时将“含点像的图像序列”另立一池的判断才被正当化——不预先增加类型（在本 repo，顺序是：只有在出现“混用会变成谎言”的证据之后才增加类型）。
+
+## `opsconngraph.py`
+
+- **L66** _(ja)_ — 作る —— シナプス表から隣接行列へ、帰無モデル、二値化。★カテゴリ名は docs/ops/conngraph/<category>/ に なる: "build" は .gitignore の build/ に当たり、ノート 3 枚が commit されず CI だけ赤になった(2026-09-20)
 
 ## `opsdem.py`
 

@@ -12,9 +12,9 @@
 
 [graph_activation_latency](activity/graph_activation_latency.md) · [graph_activity_spread](activity/graph_activity_spread.md) · [points_activity_video](activity/points_activity_video.md)
 
-### build (3)
+### construct (3)
 
-[graph_binarize](build/graph_binarize.md) · [graph_degree_preserving_shuffle](build/graph_degree_preserving_shuffle.md) · [graph_from_synapses](build/graph_from_synapses.md)
+[graph_binarize](construct/graph_binarize.md) · [graph_degree_preserving_shuffle](construct/graph_degree_preserving_shuffle.md) · [graph_from_synapses](construct/graph_from_synapses.md)
 
 ### reservoir (5)
 

@@ -63,8 +63,9 @@ _MOD = {"conngraph": conngraph}
 #
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
-    # 作る —— シナプス表から隣接行列へ、帰無モデル、二値化
-    "build": [
+    # 作る —— シナプス表から隣接行列へ、帰無モデル、二値化。★カテゴリ名は docs/ops/conngraph/<category>/ に
+    #   なる: "build" は .gitignore の build/ に当たり、ノート 3 枚が commit されず CI だけ赤になった(2026-09-20)
+    "construct": [
         ("graph_from_synapses", "conngraph", ["synapse_table"], "conn_graph"),
         ("graph_degree_preserving_shuffle", "conngraph", ["conn_graph"], "conn_graph"),
         ("graph_binarize", "conngraph", ["conn_graph"], "conn_graph"),

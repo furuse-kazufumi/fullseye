@@ -40,6 +40,13 @@ SEED = 20260920
 S1_URL = "https://raw.githubusercontent.com/brain-networks/larval-drosophila-connectome/main/Supplementary-Data-S1.zip"
 MNIST_URL = "https://ossci-datasets.s3.amazonaws.com/mnist/"
 N_TRAIN, N_VAL, N_TEST = 3000, 1000, 1000
+#: ★CI(2 コア)では full の設定が 600 秒の枠を超えて -1(timeout)になった(2026-09-20、run 35501201432)。
+#:   FULLSEYE_POC_BUDGET=reduced(CI では既定)で標本・格子・seed を減らす。展示の数字は full の実測で、
+#:   reduced は「同じ経路が走る」ことの証拠に留める(先頭に BUDGET: を印字)。
+REDUCED = (os.environ.get("FULLSEYE_POC_BUDGET") or ("reduced" if os.environ.get("CI") else "full")) == "reduced"
+if REDUCED:
+    N_TRAIN, N_VAL, N_TEST = 1000, 500, 500
+SEEDS = (0, 1) if REDUCED else (0, 1, 2)
 
 
 def _cache_dir() -> str:
@@ -132,6 +139,8 @@ def fit_eval(F_tr, y_tr, F_te, y_te, alpha: float) -> float:
 
 def main() -> int:
     t0 = time.time()
+    if REDUCED:
+        print("BUDGET: reduced (%d train / %d val / %d test, %d seeds) — the exhibit numbers come from the full run" % (N_TRAIN, N_VAL, N_TEST, len(SEEDS)))
     W, prov_w = load_connectome()
     Xall, yall, Xte, yte, prov_x = load_digits()
     synthetic = "synthetic" in prov_w or "synthetic" in prov_x
@@ -166,7 +175,7 @@ def main() -> int:
         scaled.append((label, Ares))
 
     # 2. 設定はコネクトームの検証分割で 1 度だけ選び、全対照に同じ設定を使う(公平)
-    grid = [(s, a) for s in (0.02, 0.05, 0.1) for a in (1e-2, 1.0)]
+    grid = [(0.1, 1.0), (0.05, 1.0)] if REDUCED else [(s, a) for s in (0.02, 0.05, 0.1) for a in (1e-2, 1.0)]
     best, best_acc = None, -1.0
     for in_scale, alpha in grid:
         acc = fit_eval(encode(scaled[0][1], Xtr, in_scale, 0), ytr, encode(scaled[0][1], Xva, in_scale, 0), yva, alpha)
@@ -181,7 +190,7 @@ def main() -> int:
     results = {"no reservoir (ridge on pixels)": (base, 0.0)}
     print("%-34s %.3f" % ("no reservoir (ridge on pixels)", base))
     for label, Ares in scaled:
-        accs = [fit_eval(encode(Ares, Xfit, in_scale, s), yfit, encode(Ares, Xte, in_scale, s), yte, alpha) for s in (0, 1, 2)]
+        accs = [fit_eval(encode(Ares, Xfit, in_scale, s), yfit, encode(Ares, Xte, in_scale, s), yte, alpha) for s in SEEDS]
         results[label] = (float(np.mean(accs)), float(np.std(accs)))
         print("%-34s %.3f ± %.3f" % (label, np.mean(accs), np.std(accs)))
 
@@ -191,8 +200,9 @@ def main() -> int:
         assert acc > 0.5, "%s が偶然(0.1)に近い: %.3f" % (label, acc)
     if not synthetic:
         gap = conn - shuf
-        print("finding: connectome − shuffle = %+.3f (3 seeds; |gap| < 0.03 means the wiring is not what the readout uses)" % gap)
-        assert abs(gap) < 0.03, "配線固有の効果が出た(良い変化 — この節と docstring を書き換えること): %+.3f" % gap
+        print("finding: connectome − shuffle = %+.3f (%d seeds; |gap| < %.2f means the wiring is not what the readout uses)"
+              % (gap, len(SEEDS), 0.05 if REDUCED else 0.03))
+        assert abs(gap) < (0.05 if REDUCED else 0.03), "配線固有の効果が出た(良い変化 — この節と docstring を書き換えること): %+.3f" % gap
 
     # 5. 図(FULLSEYE_FIGURE_DIR があるときだけ)。★2,952² の隣接行列をそのまま描くと 1.3 % の点で一色になり、
     #   Fiedler 配置は重い裾の次数分布で 1 点に潰れる(2026-09-20 に実際にそうなった)。升に集約し、対照と並べる。

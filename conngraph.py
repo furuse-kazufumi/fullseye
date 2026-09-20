@@ -336,10 +336,33 @@ def graph_laplacian_spectrum(W: Any) -> np.ndarray:
     return np.sort(np.linalg.eigvalsh(L))
 
 
+def _spectral_radius(W: np.ndarray) -> float:
+    """max |λ|。**非負**で n > 400 なら疎行列の ARPACK(最大絶対値の固有値 1 本)、それ以外は密の eigvals。
+
+    ★2026-09-20: 2,952 ノードの密 eigvals は 7 秒で、幼虫 PoC が CI(2 コア)の 600 秒枠を超えた
+    (9 回呼んで 66 秒 / 92 秒)。ARPACK は 0.02 秒。ただし**符号つきの乱数行列では最大絶対値に
+    収束しない**(固有値が円状に並び、隣の固有値を返す —— ガウス乱数 reservoir で実測、
+    reservoir_from_graph が黙って違う半径に縮めた)。非負行列なら Perron–Frobenius で最大固有値は
+    実・非負で絶対値最大なので ARPACK が確実に届く。その条件の外は密のまま(遅いが正確)。
+    """
+    n = W.shape[0]
+    if n > 400 and np.count_nonzero(W) > 0 and bool((W >= 0.0).all()):
+        try:
+            import scipy.sparse as sp
+            import scipy.sparse.linalg as spl
+            v = spl.eigs(sp.csr_matrix(W), k=1, which="LM", return_eigenvectors=False, tol=1e-10, maxiter=20000)
+            r = float(np.abs(v).max())
+            if np.isfinite(r):
+                return r
+        except Exception:                                  # noqa: BLE001 - 未収束 / scipy 無し → 密で正確に
+            pass
+    return float(np.max(np.abs(np.linalg.eigvals(W))))
+
+
 def graph_spectral_radius(W: Any) -> float:
     """重みつき隣接行列 W の固有値の最大絶対値(スペクトル半径)。"""
     W = _as_graph(W, "graph_spectral_radius")
-    return float(np.max(np.abs(np.linalg.eigvals(W))))
+    return _spectral_radius(W)
 
 
 def graph_components(W: Any) -> np.ndarray:
@@ -452,7 +475,7 @@ def reservoir_from_graph(W: Any, rho: float = 0.9) -> np.ndarray:
     rho = float(rho)
     if not np.isfinite(rho) or rho <= 0.0:
         raise ValueError(f"{op}: rho must be a positive finite number, got {rho}")
-    r = float(np.max(np.abs(np.linalg.eigvals(W))))
+    r = _spectral_radius(W)
     if r <= 0.0:
         raise ValueError(f"{op}: W has spectral radius 0 (nilpotent or empty) — it cannot be rescaled to {rho}")
     return W * (rho / r)

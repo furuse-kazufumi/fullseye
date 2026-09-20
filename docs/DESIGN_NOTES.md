@@ -118,7 +118,7 @@
 
 ## `conngraph.py`
 
-- **L646** — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
+- **L669** — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
 
 ## `deform3d.py`
 
@@ -458,7 +458,8 @@
 
 ## `examples/poc_larval_connectome_reservoir.py`
 
-- **L197** — 5. 図(FULLSEYE_FIGURE_DIR があるときだけ)。★2,952² の隣接行列をそのまま描くと 1.3 % の点で一色になり、 Fiedler 配置は重い裾の次数分布で 1 点に潰れる(2026-09-20 に実際にそうなった)。升に集約し、対照と並べる。
+- **L43** — ★CI(2 コア)では full の設定が 600 秒の枠を超えて -1(timeout)になった(2026-09-20、run 35501201432)。 FULLSEYE_POC_BUDGET=reduced(CI では既定)で標本・格子・seed を減らす。展示の数字は full の実測で、 reduced は「同じ経路が走る」ことの証拠に留める(先頭に BUDGET: を印字)。
+- **L207** — 5. 図(FULLSEYE_FIGURE_DIR があるときだけ)。★2,952² の隣接行列をそのまま描くと 1.3 % の点で一色になり、 Fiedler 配置は重い裾の次数分布で 1 点に潰れる(2026-09-20 に実際にそうなった)。升に集約し、対照と並べる。
 
 ## `examples/poc_leak_localization.py`
 
@@ -1079,6 +1080,10 @@
 
 - **L85** — ★ 代わりに **生の (N,H,W) ndarray を明示的に拒否**した。3-D 配列は video (T,H,W) / voxel (D,H,W) / histcube (H,W,T) / zscan のどれもが 同じ構造検査を通り、取り違えても例外にならず「もっともらしく間違った 合成結果」が返る —— photon 族が histcube を voxel から分けたのと **まったく同じ危険**である。ただしここでは型を増やすのではなく 「list であること」を要求することで同じ防御を得た。list(volume) と 書いた時点で、呼ぶ側が「先頭軸はフレーム軸だ」と宣言したことになる。 * image2d —— 合成結果、drizzle の出力、単一フレーム。どれも 2-D の float64 で、既存の 2-D op(フィルタ・閾値・morphology・psf_to_mtf)が 意味を保ったまま使える。**非負でもない**(κ-σ 合成の残差やスプライン 補間の負の縁が出る)ので counts を名乗るのは逆に嘘になる。 * keypoints —— ``star_detect`` の返りは (N, 2) の (row, col)。 TYPE_CHECKS の keypoints は「(N,3) または任意の 2-D 配列」なので そのまま該当し、``psf_fit`` / ``aperture_photometry`` が食う。
 - **L101** — ★ ここは pairs ではない: pairs の正典は reprconv 側の 6 op が決めた 「(x, y) の対」で、こちらは画像座標の (row, col) であり fit_transform / mosaic と同じ規約。混ぜると行と列が入れ替わる (features.match_keypoints が (x,y) を返すのに fit_transform が (row,col) を要求する、というこの repo 既知の罠と同じ形)。 keypoints を名乗れば、少なくとも「画像上の点」という約束は共有される。 * indices —— ``lucky_select`` が返す採用フレームの添字(1-D int)。 既存語彙そのもの。``[frames[i] for i in idx]`` で images に戻る。 * measurement —— ``noise_sigma`` は実スカラ 1 つ。 * matrix —— ``frame_align`` の (3,3) 同次変換。transforms / fit_transform / mosaic が扱っているのと同じ物で、専用語を作る理由が無い。 * table —— dict / list of dict(品質、PSF 当てはめ、測光)。 TYPE_CHECKS の table は list|dict なのでどちらも該当。 分けなかったことの代償(honest): ``images`` プールに天体でない画像列が 入ると、``frame_align`` は星が見つからず ValueError で止まる。これは fail-closed なので「発見ゼロ」ではなく「到達したが正しく拒否した」だが、 連鎖ファザーから見ると align 系 2 op が CONTRACT にしかならない可能性がある。 photon 族が counts を分けた理由(7/17 が一度も実行されない)と同じ症状が 出うるので、**もし実測でそうなったら**、そのときは「点像を含む画像列」を 別プールにする判断が正当化される —— 先回りして型を増やすことはしない (型は「混ぜると嘘になる」証拠が出てから増やす、が本 repo の順序)。
+
+## `opsconngraph.py`
+
+- **L66** — 作る —— シナプス表から隣接行列へ、帰無モデル、二値化。★カテゴリ名は docs/ops/conngraph/<category>/ に なる: "build" は .gitignore の build/ に当たり、ノート 3 枚が commit されず CI だけ赤になった(2026-09-20)
 
 ## `opsdem.py`
 
