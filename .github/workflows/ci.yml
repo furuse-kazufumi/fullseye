@@ -232,9 +232,11 @@ jobs:
           pip install coverage
           ls -la .coverage.shard* || { echo "no shard data (a py3.11 shard failed before uploading)"; exit 1; }
           coverage combine .coverage.shard*
-          coverage xml
+          # -i: テストが .md のコード片を exec した記録(blob_analysis.md[1] など)は source が無く、
+          #     初回の結合ジョブ(run 35491712871)がそこで止まった。pytest-cov の経路は同じ記録を黙って捨てていた。
+          coverage xml -i
           echo '## Coverage (4 shards combined, py3.11)' >> "$GITHUB_STEP_SUMMARY"
-          coverage report --format=markdown --skip-covered --sort=cover | tail -40 >> "$GITHUB_STEP_SUMMARY"
+          coverage report -i --format=markdown --skip-covered --sort=cover | tail -40 >> "$GITHUB_STEP_SUMMARY"
       - name: Upload coverage artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
         with:
