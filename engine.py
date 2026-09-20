@@ -28,7 +28,7 @@ import numpy as np
 
 import api
 
-__all__ = ["FullseyeEngine", "diagnose_stages"]
+__all__ = ["FullseyeEngine", "diagnose_stages", "stage_name"]
 
 # Sorts that thread cleanly into one another; "any" pairs with everything.
 _ANY = "any"
@@ -50,6 +50,39 @@ def _thread_sort(cur, op) -> str:
     if op.out_sort == _ANY and cur is not None:
         return cur
     return op.out_sort
+
+
+_STAGE_FORMS = "'name', (name, a, b), (name, {'a': .., 'b': ..}) or {'op': name, 'a': .., 'b': ..}"
+
+
+def stage_name(stage) -> str:
+    """段の書き方 5 形から **op 名だけ** を取り出す。engine / :func:`diagnose_stages` / ``unified.Pipeline``
+    が共有する唯一の入口 —— 名前の取り出し方が 3 箇所で別々だと、同じ段が場所によって別の意味になる。
+
+    受ける形: ``"gaussian"`` / ``("gaussian", 0.3, 0.5)`` / ``("gaussian", {"a": 0.3})`` /
+    ``{"op": "gaussian", "a": 0.3}``(``op`` か ``name``)。ノブの読み方は呼ぶ側の仕事(engine は a / b、
+    unified は kwargs)で、ここは名前の規則だけを持つ。
+
+    ★2026-09-20(GenSpark 第 53 報 N179 / N181、設計パターン提案 ②): ``diagnose_stages`` は dict 段を
+    ``st[0] if tuple else st`` で読んで **dict そのものを op 名にし**「unknown operator {'op': 'otsu'}」と
+    答えていた(Studio が保存する形なのに)。``unified.Pipeline`` は dict / list 段を registry の鍵にして
+    ``unhashable type: 'dict'`` で落ちた。engine の ``__init__`` と ``api._normalise_stages`` だけが正しく、
+    3 本目・4 本目が別の規則で読んでいた —— 同型の入口は数えて 1 本に寄せる。
+    """
+    if isinstance(stage, str):
+        name = stage
+    elif isinstance(stage, dict):
+        name = stage.get("op", stage.get("name"))
+        if name is None:
+            raise TypeError("a dict stage needs 'op' (or 'name'), got keys %s" % sorted(stage))
+    elif isinstance(stage, (tuple, list)) and len(stage) > 0:
+        name = stage[0]
+    else:
+        name = None
+    if not isinstance(name, str) or not name.strip():
+        raise TypeError("the op must be a non-empty name: a stage is %s, got %r" % (_STAGE_FORMS, stage))
+    return name.strip()
+
 
 
 def diagnose_stages(stages) -> list[dict]:
@@ -76,7 +109,13 @@ def diagnose_stages(stages) -> list[dict]:
     prev_name = None
     prev_index = None
     for i, st in enumerate(stages):
-        name = st[0] if isinstance(st, (tuple, list)) else st
+        try:
+            name = stage_name(st)
+        except TypeError as e:
+            # 壊れた段は検証器の答え(error 行)であって例外ではない —— Studio の Problems 欄に出す
+            problems.append({"index": i, "op": repr(st), "severity": "error", "message": "stage %d: %s" % (i + 1, e)})
+            prev_out, prev_name, prev_index = _ANY, repr(st), i
+            continue
         op = api.find_op(name)
         if op is None:
             # ★backend が入っていないだけの名前は「unknown」でなく不足 extra を言う(api._resolve と同じ門、2026-09-19)
@@ -130,22 +169,24 @@ class FullseyeEngine:
         self.name = str(name)
         self.stages: list[list] = []
         for i, st in enumerate(stages or []):
+            if isinstance(st, (tuple, list)) and len(st) == 0:
+                continue                             # skip an empty/malformed stage entry
+            # ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、
+            # {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。
+            # 名前の規則は stage_name の 1 本(diagnose_stages / unified.Pipeline と共有)。
+            try:
+                op = stage_name(st)
+            except TypeError as e:
+                raise ValueError("stage %d: %s" % (i, e)) from None
             if isinstance(st, dict):                 # Studio / run_pipeline と同じ {"op"|"name", "a", "b"}
-                op = st.get("op", st.get("name"))
                 a, b = st.get("a", 0.5), st.get("b", 0.5)
+            elif isinstance(st, (tuple, list)) and len(st) == 2 and isinstance(st[1], dict):
+                a, b = st[1].get("a", 0.5), st[1].get("b", 0.5)   # (name, {"a": .., "b": ..}) —— run_pipeline と同じ形
             elif isinstance(st, (tuple, list)):
-                if len(st) == 0:
-                    continue                         # skip an empty/malformed stage entry
-                op = st[0]
                 a = st[1] if len(st) > 1 else 0.5
                 b = st[2] if len(st) > 2 else 0.5
             else:
-                op, a, b = st, 0.5, 0.5
-            # ★op 名は文字列でなければならない(2026-09-20): 以前は str() で何でも名前にしていたので、
-            # {"op": "gaussian"} が "{'op': 'gaussian'}" という op 名になり、run で unknown operator になっていた。
-            if not isinstance(op, str) or not op.strip():
-                raise ValueError("stage %d: the op must be a non-empty name, got %r (a stage is 'name', "
-                                 "(name, a, b) or {'op': name, 'a': .., 'b': ..})" % (i, st))
+                a, b = 0.5, 0.5
             self.stages.append([op, float(a), float(b)])
 
     # ------------------------------------------------------------------ load --

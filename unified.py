@@ -556,6 +556,10 @@ def _resolve_op(op) -> "UnifiedOp":
     """op を UnifiedOp に解決: UnifiedOp / registry の op 名 / 生 callable を受ける。"""
     if isinstance(op, UnifiedOp):
         return op
+    if not isinstance(op, str) and not callable(op):
+        # ★2026-09-20(GenSpark 第 53 報 N181): dict / list を registry の鍵にして unhashable で落ちていた
+        raise TypeError("pipeline: a stage op must be an op name, a UnifiedOp or a callable, got %s %r"
+                        % (type(op).__name__, op))
     if callable(op) and not isinstance(op, str):
         return UnifiedOp(
             name=getattr(op, "__name__", "callable"), func=op,
@@ -576,9 +580,19 @@ class Pipeline:
 
     def __init__(self, stages=None) -> None:
         self._stages: list = []          # [(UnifiedOp, kwargs), ...]
-        for s in (stages or []):
-            if isinstance(s, tuple):
-                self.then(s[0], **(s[1] if len(s) > 1 else {}))
+        for i, s in enumerate(stages or []):
+            # 段の形は engine.stage_name と同じ規則(op 名の取り出しは 1 本)。ノブはここでは kwargs。
+            #   "median" / ("slope_map", {"cell": 0.03}) / ["slope_map", {"cell": 0.03}](JSON 由来)
+            #   / {"op": "slope_map", "cell": 0.03}({"name": ...} も可)
+            if isinstance(s, (tuple, list)):
+                if len(s) > 2 or (len(s) == 2 and not isinstance(s[1], dict)):
+                    raise TypeError("pipeline: stage %d must be (op, {kwargs}), got %r" % (i, s))
+                from engine import stage_name
+                self.then(stage_name(s), **(s[1] if len(s) > 1 else {}))
+            elif isinstance(s, dict):
+                from engine import stage_name
+                name = stage_name(s)
+                self.then(name, **{k: v for k, v in s.items() if k not in ("op", "name")})
             else:
                 self.then(s)
 

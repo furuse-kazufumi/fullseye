@@ -34,6 +34,7 @@ wheel に同梱される ``studio_assets/op_help/<op>.html`` に落ちる。**�
 from __future__ import annotations
 
 import glob
+import inspect
 import json
 import os
 import re
@@ -277,7 +278,14 @@ class Catalog:
         if with_facade:
             import fullseye
             for n in getattr(fullseye, "__all__", ()):
-                if callable(getattr(fullseye, n, None)):
+                # ★2026-09-20(GenSpark 第 41 報 N141): 「callable なら op」でクラス 41 個(Image / Pipeline /
+                #   MissingBackendError / TcpChannel …)が facade 層に op として混ざり、`fullseye_search_ops`
+                #   の検索面を汚していた。クラスとモジュールは型・器であって op ではない。関数(生 / builtin /
+                #   functools.partial)だけを op として数える。同じ報の「facade 表に無い 474 件」は
+                #   halcon_facade_map.json(HALCON 対応表、鍵は `camera.xxx` の名前空間つき)との比較で、
+                #   残る 460 件は `import fullseye` で呼べる実関数 —— 表の目的が違うので設計のまま。
+                obj = getattr(fullseye, n, None)
+                if callable(obj) and not inspect.isclass(obj) and not inspect.ismodule(obj):
                     ent(n).sources.add("facade")
             led = getattr(fullseye, "ledger", None)
             if led is not None:
