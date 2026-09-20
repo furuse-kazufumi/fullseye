@@ -194,6 +194,10 @@ PARAM_HINTS = {
 
 
 OP_PARAM_HINTS = {
+    # conngraph(2026-09-20)。`graph_rich_club` の `k` に既定は無い(次数の閾値は
+    # グラフの大きさで意味が変わる)。束縛しないとファザーからは永久に未実行。
+    # 種(12 ノード 2 クリーク)の総次数は 10 前後なので、部分グラフが残る 2 にする。
+    ("graph_rich_club", "k"): lambda rng: 2,
     # dic.strain_from_displacement は **window と method に既定を置かない**
     # (置くと 2 度の剛体回転で 600 µε の嘘が黙って出る。`dic.py` の注記)。
     # 束縛しないとファザーからは永久に未実行になるので、ここで名指しする。
@@ -817,6 +821,11 @@ def catalog():
         # mask を blob_features に渡すと 2 個の細胞が 1 物体として測られ
         # 「2 つの中心のあいだ」に重心が出る = 静かに嘘をつく側。
         ("opsblob", "OPSBLOB", "blob"),
+        # 2026-09-20: 結合グラフ(connectome)解析。新語 conn_graph(n×n の重みつき
+        # 有向隣接行列)と synapse_table((m, 3) の pre/post/count)。どちらも既存の
+        # matrix / points の述語に当たるが、一般行列を媒介中心性に、点群の座標を
+        # id に読ませても例外が出ず「もっともらしいグラフ統計」が返る側。
+        ("opsconngraph", "OPSCONNGRAPH", "conngraph"),
     ):
         _m = __import__(_mod)
         for n, m in getattr(_m, _tbl).items():

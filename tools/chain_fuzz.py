@@ -243,9 +243,37 @@ def _stokes_vec(rng):
     return np.concatenate([[1.0], d * float(rng.uniform(0.0, 1.0))])
 
 
+def _conn_graph(rng):
+    """conn_graph(2026-09-20、conngraph 族): 12 ノード 2 クリークの重みつき有向グラフ。
+
+    ★一様乱数の行列にしない —— 成分数・モジュラリティ・rich club・モチーフは
+    構造の無い入力では「どのノブでも同じ数」を返し、口が動いているかを測れない。
+    内側は全結合(重み 1..5)、クリーク間は橋 2 本(重み 0.5)。橋の重みだけ乱数。
+    """
+    W = np.zeros((12, 12))
+    for base in (0, 6):
+        for i in range(6):
+            for j in range(6):
+                if i != j:
+                    W[base + i, base + j] = 1.0 + (i * 7 + j * 3) % 5
+    W[5, 6] = float(rng.uniform(0.2, 0.8))
+    W[11, 0] = float(rng.uniform(0.2, 0.8))
+    return W
+
+
+def _synapse_table(rng):
+    """synapse_table: `_conn_graph` の非零要素を (pre, post, count) の行にした表(count は整数)。"""
+    W = _conn_graph(rng)
+    pre, post = np.nonzero(W)
+    return np.stack([pre, post, np.ceil(W[pre, post])], axis=1).astype(np.float64)
+
+
 def make_generators():
     return {
         "voxel": _ball_vol,
+        # conngraph(2026-09-20): 新語 2 つの種
+        "conn_graph": _conn_graph,
+        "synapse_table": _synapse_table,
         "points": _points,
         "image2d": lambda rng: rng.random((32, 32)),
         "depth": lambda rng: 1.0 + rng.random((32, 32)),
@@ -1500,6 +1528,21 @@ TYPE_CHECKS = {
                           and v.dtype != bool
                           and np.issubdtype(v.dtype, np.integer)
                           and v.size > 0 and int(v.min()) >= 0,
+    # conn_graph(2026-09-20、conngraph 族): 正方・実数・有限の n×n 隣接行列。
+    # matrix の述語には当たるが、こちらは**正方と有限**を要求する —— 非正方や
+    # NaN 入りを「グラフ」と名乗る op を TYPEMISS にするための型。
+    "conn_graph": lambda v: isinstance(v, np.ndarray) and v.ndim == 2
+                            and v.shape[0] == v.shape[1] and v.size > 0
+                            and np.issubdtype(v.dtype, np.floating)
+                            and bool(np.isfinite(v).all()),
+    # synapse_table: (m, 3) の (pre_id, post_id, count)。points と同形なので、
+    # id 列が**整数値かつ非負**であることまで見る(座標を id と読ませない)。
+    "synapse_table": lambda v: isinstance(v, np.ndarray) and v.ndim == 2
+                               and v.shape[1] == 3 and v.size > 0
+                               and np.issubdtype(v.dtype, np.floating)
+                               and bool(np.isfinite(v).all())
+                               and bool(np.all(v[:, :2] == np.round(v[:, :2])))
+                               and float(v[:, :2].min()) >= 0.0,
     # 実測でキーは mu / sigma / w(最初 "mean" と推測して書いたら
     # points_to_gaussians が TYPEMISS になった —— op ではなく述語が誤り)
     "gaussians": lambda v: isinstance(v, dict) and {"mu", "sigma", "w"} <= set(v),

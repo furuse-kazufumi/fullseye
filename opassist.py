@@ -54,6 +54,8 @@ _LEDGERS = (
     #   「引ける」は別。opdocs に足したら、この門が引けない側を鳴らした。
     ("ops1d", "OPS1D"),
     ("opsblob", "OPSBLOB"),
+    # 2026-09-20: 結合グラフ(connectome)解析。新語 conn_graph / synapse_table。
+    ("opsconngraph", "OPSCONNGRAPH"),
 )
 
 #: 進化する 2-D op のレジストリ(``ops.REGISTRY``、882 op)。**台帳ではない** ——
@@ -85,6 +87,11 @@ _CHOICE_SOURCES = {
     ("roughness_field", "kind"): ("metalfinish", "FINISHES"),
     ("micro_normals", "kind"): ("metalfinish", "FINISHES"),
     ("prism_min_deviation_deg", "glass"): ("raytrace", "GLASS_NAMES"),
+    # conngraph(2026-09-20): 列挙はモジュール定数から(docstring の写しではなく)
+    ("graph_motif_count", "motif"): ("conngraph", "MOTIFS"),
+    ("reservoir_states", "nonlinearity"): ("conngraph", "NONLINEARITIES"),
+    ("reservoir_encode", "nonlinearity"): ("conngraph", "NONLINEARITIES"),
+    ("graph_adjacency_image", "order"): ("conngraph", "ADJACENCY_ORDERS"),
 }
 
 #: **手書きの列挙**(モジュール定数が無いもの)。docstring に列挙されている値を写した。
@@ -675,6 +682,11 @@ def sample_input(op_name: str):
         "sdf": lambda: np.random.default_rng(0).normal(size=(16, 16, 16)),
         "coordgrid": lambda: __import__("sdf_ops").grid_coords(((0.0, 10.0),) * 3, 16)[0],
         "images": lambda: [np.random.default_rng(k).random((32, 32)) for k in range(4)],
+        # conngraph(2026-09-20): 12 ノードの 2 クリーク有向グラフと、それを産むシナプス表。
+        # ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと
+        #   「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
+        "conn_graph": _sample_conn_graph,
+        "synapse_table": _sample_synapse_table,
     }
     #: 単位に合う種(汎用の 0..1 では意味を持たない量がある)。
     #: ★ 実測で判明: `prism_min_deviation_deg` の波長入力に 0..1 の汎用 signal を渡すと
@@ -700,6 +712,28 @@ def sample_input(op_name: str):
             # 書き先のパス名は発明しない —— None を渡し、op が「path is None — pass a file path」と言う。
             kwargs[spec["name"]] = None if (writes_file and spec["name"] in _PATH_PARAMS) else _sample_value(spec)
     return args, kwargs
+
+
+def _sample_conn_graph():
+    """12 ノード = 6 個ずつの 2 クリーク(内側は全結合・重み 1..5)+ 橋 2 本(重み 0.5)。"""
+    import numpy as np
+    W = np.zeros((12, 12))
+    for base in (0, 6):
+        for i in range(6):
+            for j in range(6):
+                if i != j:
+                    W[base + i, base + j] = 1.0 + (i * 7 + j * 3) % 5
+    W[5, 6] = 0.5
+    W[11, 0] = 0.5
+    return W
+
+
+def _sample_synapse_table():
+    """`_sample_conn_graph` と同じグラフのシナプス表 (m, 3) = (pre, post, count)。"""
+    import numpy as np
+    W = _sample_conn_graph()
+    pre, post = np.nonzero(W)
+    return np.stack([pre, post, np.ceil(W[pre, post])], axis=1).astype(np.float64)
 
 
 def _sample_normalmap():
@@ -731,6 +765,8 @@ def _probe_seeds():
         "voxel": rng.random((12, 12, 12)),
         "sdf": rng.normal(size=(12, 12, 12)),
         "images": [rng.random((24, 24)) for _ in range(4)],
+        "conn_graph": _sample_conn_graph(),
+        "synapse_table": _sample_synapse_table(),
     }
 
 

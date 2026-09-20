@@ -150,6 +150,11 @@ LEDGER_DIMS = {
     # 依存は無く、入力は既存の `depth` 種をそのまま使う。
     "dem": {"registry": "opsdem", "table": "OPSDEM",
             "module": "demops", "family": "dem_terrain_analysis"},
+    # 2026-09-20: 結合グラフ(connectome)解析。閉形式のグラフ統計 + 次数保存の
+    # 帰無モデル + reservoir 計算 + Studio で見られる出口。新語は conn_graph と
+    # synapse_table の 2 つ(理由は opsconngraph.py の docstring)。
+    "conngraph": {"registry": "opsconngraph", "table": "OPSCONNGRAPH",
+                  "module": "conngraph", "family": "conngraph"},
 }
 
 
