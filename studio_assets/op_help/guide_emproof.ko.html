@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">이 가이드는 일본어만 있습니다(사람이 쓴 산문이라 기계적으로 치환하지 않았습니다).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">EM 連結体校正のセカンドオピニオン(膜はラベルの境界にしか無いはず) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>電子顕微鏡(EM)の連続断面からニューロンを切り出した自動分割には、<b>融合</b>(別々の 2 細胞が 1 つの id)と<b>分断</b>(1 細胞が途中で 2 つの id)が残ります。校正(proofreading)は人がそれを探して直す作業で、先行研究(MergeNet 2017、Zung 2017、Dmitriev 2018、ConnectomeBench 2025)はどれも深層学習で候補を出します。この族は <b>学習なし・閉形式・ノブつき</b> で同じ 2 種類の疑いを数え、深層学習の第 1 意見に原理の違う第 2 意見を並べます。前提はひとつ —— <b>細胞膜(暗い稜線)は本来ラベルの境界にしか無い</b>。</p>
+<p>7 op / 4 カテゴリ(numpy + scipy.ndimage のみ。台帳は <code style="color:#22d3bf">opsemproof.py</code>、実体は <code style="color:#22d3bf">emproof.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>response(1)</b> — <code style="color:#22d3bf">seg_membrane_response</code>: 生 EM → 膜応答(ガウス平滑した Hessian の固有値 λ1 − |λ2|、Steger の線検出の閉形式)。暗い塊(ミトコンドリア内部)は打ち消し合って 0 に近い。断面ごとに 99.5 percentile で正規化。scikit-image があるならレジストリの <code style="color:#22d3bf">sk_frangi</code> も同じ席に入る。</p>
+<p style="margin:2px 0 2px 12px">• <b>suspect(2)</b> — <code style="color:#22d3bf">seg_membrane_chord_score</code>(融合の疑い: ラベルの<b>内部</b>を横切る膜の弦の長さ / ラベルの径。穴を持つ膜成分 = 閉じた輪は除く)/ <code style="color:#22d3bf">seg_boundary_membrane_gap</code>(分断の疑い: 隣接ラベルの境界画素のうち膜応答が閾値未満の割合)。</p>
+<p style="margin:2px 0 2px 12px">• <b>inject(3)</b> — <code style="color:#22d3bf">seg_inject_merge</code> / <code style="color:#22d3bf">seg_inject_split</code> / <code style="color:#22d3bf">seg_label_changes</code>: 評価用に正解ラベルへ人工の融合・分断を仕込み、2 枚のラベルの差を対として取り出す。</p>
+<p style="margin:2px 0 2px 12px">• <b>evaluate(1)</b> — <code style="color:#22d3bf">holdout_threshold</code>: 閾値を訓練側のスコアで選び(負例の偽陽性率 ≤ target_fpr)、評価は別の側で AUC / TPR / FPR を返す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">連鎖</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    raw[EM 断面 image2d] --&gt; R[seg_membrane_response]
+    truth[正解ラベル labels2d] --&gt; IM[seg_inject_merge] --&gt; IS[seg_inject_split] --&gt; cut[評価用ラベル]
+    truth --&gt; CH[seg_label_changes]
+    cut --&gt; CH
+    R --&gt; C[seg_membrane_chord_score]
+    R --&gt; G[seg_boundary_membrane_gap]
+    cut --&gt; C
+    cut --&gt; G
+    C --&gt; H[holdout_threshold]
+    G --&gt; H
+    CH --&gt; H</pre>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
+L = fs.ledger
+
+M = L.seg_membrane_response(raw, sigma=2.0)                       # 4 nm/px なら膜の半幅 ≈ 2 px
+cut = L.seg_inject_split(L.seg_inject_merge(labels, n=1, seed=0), n=1, seed=0)
+truth = L.seg_label_changes(labels, cut)                          # 仕込んだ対(答え)
+chord = L.seg_membrane_chord_score(cut, M, tau=0.2, band=4)       # 融合の疑い(score 降順)
+gap = L.seg_boundary_membrane_gap(cut, M, tau=0.2, min_len=60)    # 分断の疑い(gap_fraction 降順)
+r = L.holdout_threshold(train_pos, train_neg, test_pos, test_neg, target_fpr=0.05)
+print(r[&quot;tau&quot;], r[&quot;test_auc&quot;], r[&quot;test_tpr&quot;], r[&quot;test_fpr&quot;])</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実測(CREMI sample A、512² 断面 12 枚、閾値は前半 6 枚で選び後半 6 枚で測る)</h3>
+<p>| 検出器 | 評価 AUC | 乱数 | 大きさだけ |</p>
+<p>|---|---|---|---|</p>
+<p>| 分断 = 膜の無い境界 | <b>1.00</b>(TPR 1.00 / FPR 0.11) | 0.65 | 0.54 |</p>
+<p>| 融合 = 内部の膜の弦(面積で揃えた負例) | 0.83(TPR 0.12 / FPR 0.01) | 0.53 | 0.70 |</p>
+<p>分断は膜の有無だけでほぼ確実に指せます。融合は弱い —— 内部に膜の多い細胞(ミトコンドリアが詰まった太い軸索、細胞体)が弦と同じ形で高く出るのが偽陽性の主因で、閉じた輪は穴で除けても切れた弧は除けません。人工の融合は「大きな 2 ラベルの和」なので<b>面積で揃えずに測ると「大きいラベル = 怪しい」だけで AUC 0.87 が出てしまう</b>(揃えると 0.70)。評価側の数字だけを主張に使うのが <code style="color:#22d3bf">holdout_threshold</code> を op にした理由です。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型の話</h3>
+<p>新しい型は作りません。断面のラベルは blob 族の <code style="color:#22d3bf">labels2d</code>(2-D 整数)、膜応答と生 EM は <code style="color:#22d3bf">image2d</code>、疑いの表と差分と評価は <code style="color:#22d3bf">table</code>(列名 → 配列 / 名前 → スカラ)。<code style="color:#22d3bf">holdout_threshold</code> は 4 本の <code style="color:#22d3bf">signal</code>。生データ(CREMI)は repo に入れず、集計と図だけを置きます(<code style="color:#22d3bf">examples/poc_em_second_opinion.py</code>、手元に無ければ合成の代替で同じ経路)。</p>

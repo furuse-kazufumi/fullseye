@@ -10,6 +10,8 @@
 <p>`<code style="color:#22d3bf">q = 2(n²−1)/(n+2)</code>` (Coddington) — the closed form</p>
 <p>:func:<code style="color:#22d3bf">optimize_lens</code> is checked against. Returns the prescription plus</p>
 <p>`<code style="color:#22d3bf">shape_factor</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">R1</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">R2</code>` and the RMS spot on axis.</p>
+<p>`<code style="color:#22d3bf">system[&quot;object_mm&quot;]</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">inf</code>` for the default object at infinity (the</p>
+<p>lens_system convention); `<code style="color:#22d3bf">R1</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">R2</code><code style="color:#22d3bf"> are </code><code style="color:#22d3bf">inf</code>` for a flat side (q = ±1).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

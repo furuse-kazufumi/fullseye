@@ -28,8 +28,8 @@ version: 0.2.1  # fullseye lib version this note was generated for
 (``x`` は ``[-1, 1]`` に正規化した位置、端が 2σ)で、和が 1 になるよう正規化。
 ``bw <= 0``(レーザー)または ``k == 1`` なら ``λ`` 1 本・重み 1。
 
-- ``light``: ``light_spec`` の結果。キーが無ければ既定値で進み、例外は出さない
-  (検証はしない)。
+- ``light``: ``light_spec`` の結果(dict)。キーが無ければ既定値で進む(dict でなければ
+  ``ValueError``。sort ``table`` の行リストが流れ込むのを止める)。
 - ``samples``: 本数。既定 5。1 未満は 1 に丸める。奇数にすると中心波長が入る。
 - 返り値: ``(wavelengths (k,), weights (k,))`` の 2 本の float64 配列。
   スペクトルの実形状(LED の非対称、ハロゲンの黒体分布)は模さない近似。

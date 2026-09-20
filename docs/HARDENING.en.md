@@ -15,7 +15,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**27 findings (27 fixed), from 10 PoCs.**
+**28 findings (28 fixed), from 11 PoCs.**
 
 ## By kind
 
@@ -23,7 +23,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 |---|---:|---:|
 | Silently wrong (no exception) | 12 | 12 |
 | Implementation defect | 5 | 5 |
-| The gate did not stand where the accident happens | 2 | 2 |
+| The gate did not stand where the accident happens | 3 | 3 |
 | Present but unreachable | 7 | 7 |
 | Documentation hole (one-way reference, stale number) | 1 | 1 |
 
@@ -41,6 +41,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 | [`poc_search_sweep_width`](../examples/poc_search_sweep_width.py) | 1 |
 | [`poc_stockpile_volume`](../examples/poc_stockpile_volume.py) | 1 |
 | [`poc_thermal_radiometry`](../examples/poc_thermal_radiometry.py) | 1 |
+| [`tools/chain_fuzz.py`](../examples/tools/chain_fuzz.py.py) | 1 |
 
 ## The findings
 
@@ -163,6 +164,12 @@ Found by: `genspark_external_review` / Changed: `imgevolve.py`, `honest_summary.
 GenSpark のレビュー(別ノート 3 本)を直したあと、同じ族が他に無いかを**全 op で数えた**。image / region 入力の 681 op に 7 種の退化入力 —— 空 (0,0)・1×1・2×2・1-D・inf・範囲外・RGB (H,W,3) —— を `on_error="raise"` で渡し、例外を「文に op 名か fullseye の語がある(clean)/ 無い(raw)」で分類した(走査 3 秒)。 _(ja)_
 
 Found by: `degenerate_inputs` / Changed: `api.py`, `engine.py`, `imgevolve.py` / Gate: `test_empty_input_is_one_clean_sentence_under_raise`, `test_empty_input_is_recorded_and_falls_back_under_the_default_policy`, `test_raw_error_from_inside_an_op_gets_an_op_and_shape_note`, `test_pipeline_validate_explains_a_missing_backend` / Status: fixed
+
+#### [sort `table` が「行のリスト」と「諸元 dict」の両方を指し、消費 op が口ごもって落ちた](hardening/table-sort-mixes-rows-and-spec-dicts.md) _(ja)_
+
+連鎖ファザー(`tools/chain_fuzz.py --cover-all`、300 連鎖)の分類 164 件のうち、SUSPECT(契約の穴)8 件が同じ形だった: `vol_edge_probe` の返り(**行のリスト**)が pool の `table` に入り、次の op が `optical_camera` / `lens_spec` / `light_spec` の**dict**を待つ席に受け取る。`camera["K"]` は `TypeError: list indices must be integers or slices, not str`、`lens.get(...)` は `AttributeError: 'list' object has no attribute 'get'` —— 例外は出るが、どの op がどの入力を拒んだのかを言わない。型語彙 `table` は台帳全体で 207 か所に使われ、産む側は list-of-rows(`vol_edge_probe` / `region_props` / `glass_catalog` / `defect_dataset` / `copy_move_regions`)と dict(諸元・統計・設計)の両方がある。 _(ja)_
+
+Found by: `tools/chain_fuzz.py` / Changed: `optscene.py`, `fourierdesc.py`, `tools/chain_fuzz.py`, `ops1d.py`, `opsoptics.py` / Gate: `test_table_consumers_refuse_a_list_of_rows_with_the_op_name`, `test_a_wrong_kind_of_spec_is_refused_too`, `test_peak_subbin_and_register_light_ledger_out_match_what_they_return`, `test_nonfinite_allowlist_additions_are_documented_and_really_nonfinite`, `test_the_eight_suspect_replays_are_white_now` / Status: fixed
 
 ### Present but unreachable
 

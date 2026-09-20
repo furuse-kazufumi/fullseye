@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">seg_inject_split — EMPROOF <code style="color:#22d3bf">inject</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_inject_split(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 4000, axis: &#x27;str&#x27; = &#x27;row&#x27;, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import emproof; emproof.seg_inject_split(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 4000, axis: &#x27;str&#x27; = &#x27;row&#x27;, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsemproof.get(&quot;seg_inject_split&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>評価用に<b>分断</b>を仕込む: 大きなラベルを `<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> 個選び、画素の中央値の行(</code><code style="color:#22d3bf">axis=&quot;row&quot;</code>`)か</p>
+<p>列(`<code style="color:#22d3bf">&quot;col&quot;</code>`)で 2 つに切って、片側に新しい id(既存最大 + 1, +2, …)を付ける。</p>
+<p>切り口は直線 = 膜の無い境界で、`<code style="color:#22d3bf">seg_boundary_membrane_gap</code>` が拾うべき形。両側が</p>
+<p>`<code style="color:#22d3bf">min_area / 4</code><code style="color:#22d3bf"> px 以上残るラベルだけ候補にする。</code><code style="color:#22d3bf">n</code>` 個取れなければ ValueError。</p>
+<p>仕込んだ対は `<code style="color:#22d3bf">seg_label_changes(labels, out)[&quot;split_before&quot;]</code>` で取り出せる。</p>
+<p>&gt;&gt;&gt; cut = seg_inject_split(labels, n=1, seed=0, axis=&quot;row&quot;)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">Leitfaden zur Familie emproof</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_em_second_opinion">poc_em_second_opinion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_em_second_opinion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">labels2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_membrane_chord_score">seg_membrane_chord_score</a> · <a style="color:#22d3bf" href="opemproof:seg_boundary_membrane_gap">seg_boundary_membrane_gap</a> · <a style="color:#22d3bf" href="opemproof:seg_inject_merge">seg_inject_merge</a> · <a style="color:#22d3bf" href="opemproof:seg_label_changes">seg_label_changes</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">inject</code>)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_inject_merge">seg_inject_merge</a> · <a style="color:#22d3bf" href="opemproof:seg_label_changes">seg_label_changes</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: emproof.py — EMPROOF Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

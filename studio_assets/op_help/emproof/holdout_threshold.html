@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">holdout_threshold — EMPROOF <code style="color:#22d3bf">evaluate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.holdout_threshold(train_pos, train_neg, test_pos, test_neg, target_fpr: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import emproof; emproof.holdout_threshold(train_pos, train_neg, test_pos, test_neg, target_fpr: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsemproof.get(&quot;holdout_threshold&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>閾値を<b>訓練側で選び、評価は別の側で</b>測る(score が高いほど「疑わしい」)。</p>
+<p>`<code style="color:#22d3bf">tau</code><code style="color:#22d3bf"> = 訓練の負例(仕込んでいない成分・対)の偽陽性率が </code><code style="color:#22d3bf">target_fpr</code>` 以下になる最小の閾値</p>
+<p>(負例スコアの上位 `<code style="color:#22d3bf">target_fpr</code><code style="color:#22d3bf"> 分位)。返すのは </code><code style="color:#22d3bf">tau</code>` と、訓練・評価それぞれの AUC・TPR・FPR、件数。</p>
+<p>評価側の数字だけを主張に使う ―― 閾値を選んだ側で測った TPR は必ず楽観する(evolve の holdout 規律を</p>
+<p>op に切り出したもの)。AUC は Mann–Whitney(同点 0.5)。</p>
+<p>&gt;&gt;&gt; r = holdout_threshold(tr_pos, tr_neg, te_pos, te_neg, target_fpr=0.05)</p>
+<p>&gt;&gt;&gt; r[&quot;tau&quot;], r[&quot;test_auc&quot;], r[&quot;test_tpr&quot;], r[&quot;test_fpr&quot;]</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_em_second_opinion">poc_em_second_opinion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_em_second_opinion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">evaluate</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: emproof.py — EMPROOF operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

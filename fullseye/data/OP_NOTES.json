@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2020,
- "n_notes": 2026,
+ "n_ops": 2027,
+ "n_notes": 2033,
  "notes": {
   "vol_dilate": [
    {
@@ -15171,6 +15171,76 @@
     "path": "docs/ops/dem/visibility/dem_viewshed.md"
    }
   ],
+  "holdout_threshold": [
+   {
+    "op": "holdout_threshold",
+    "dim": "emproof",
+    "category": "evaluate",
+    "in": "signal × signal × signal × signal",
+    "out": "table",
+    "path": "docs/ops/emproof/evaluate/holdout_threshold.md"
+   }
+  ],
+  "seg_inject_merge": [
+   {
+    "op": "seg_inject_merge",
+    "dim": "emproof",
+    "category": "inject",
+    "in": "labels2d",
+    "out": "labels2d",
+    "path": "docs/ops/emproof/inject/seg_inject_merge.md"
+   }
+  ],
+  "seg_inject_split": [
+   {
+    "op": "seg_inject_split",
+    "dim": "emproof",
+    "category": "inject",
+    "in": "labels2d",
+    "out": "labels2d",
+    "path": "docs/ops/emproof/inject/seg_inject_split.md"
+   }
+  ],
+  "seg_label_changes": [
+   {
+    "op": "seg_label_changes",
+    "dim": "emproof",
+    "category": "inject",
+    "in": "labels2d × labels2d",
+    "out": "table",
+    "path": "docs/ops/emproof/inject/seg_label_changes.md"
+   }
+  ],
+  "seg_membrane_response": [
+   {
+    "op": "seg_membrane_response",
+    "dim": "emproof",
+    "category": "response",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/emproof/response/seg_membrane_response.md"
+   }
+  ],
+  "seg_boundary_membrane_gap": [
+   {
+    "op": "seg_boundary_membrane_gap",
+    "dim": "emproof",
+    "category": "suspect",
+    "in": "labels2d × image2d",
+    "out": "table",
+    "path": "docs/ops/emproof/suspect/seg_boundary_membrane_gap.md"
+   }
+  ],
+  "seg_membrane_chord_score": [
+   {
+    "op": "seg_membrane_chord_score",
+    "dim": "emproof",
+    "category": "suspect",
+    "in": "labels2d × image2d",
+    "out": "table",
+    "path": "docs/ops/emproof/suspect/seg_membrane_chord_score.md"
+   }
+  ],
   "fly_hs_readout": [
    {
     "op": "fly_hs_readout",
@@ -17140,7 +17210,7 @@
     "dim": "oned",
     "category": "signal",
     "in": "signal × indices",
-    "out": "measurement",
+    "out": "signal",
     "path": "docs/ops/oned/signal/peak_subbin.md"
    }
   ],
@@ -18217,7 +18287,7 @@
     "op": "register_light",
     "dim": "optics",
     "category": "scene",
-    "out": "table",
+    "out": "text",
     "path": "docs/ops/optics/scene/register_light.md"
    }
   ],

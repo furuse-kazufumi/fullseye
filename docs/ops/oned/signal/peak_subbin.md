@@ -3,7 +3,7 @@ op: peak_subbin
 dim: oned
 category: signal
 in: signal × indices
-out: measurement
+out: signal
 examples: [poc_multibeam_bathymetry, poc_print_registration, poc_web_roll_periodicity]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.2.1  # fullseye lib version this note was generated for
 
 # peak_subbin — ONED `signal` op
 
-- **データ種**: `signal × indices` → `measurement`
+- **データ種**: `signal × indices` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.peak_subbin(x, idx=None, mode='parabola')` (実装を直接呼ぶなら `import dsp; dsp.peak_subbin(x, idx=None, mode='parabola')`、台帳から引くなら `ops1d.get("peak_subbin")`)
 
 ## 使い方
@@ -92,9 +92,9 @@ find_peaks : which indices to refine.
 - [poc_print_registration](../../../../examples/poc_print_registration.py) — `py -3.11 examples/poc_print_registration.py`
 - [poc_web_roll_periodicity](../../../../examples/poc_web_roll_periodicity.py) — `py -3.11 examples/poc_web_roll_periodicity.py`
 
-## 型が繋がる次の op(`measurement` を入力に取れる)
+## 型が繋がる次の op(`signal` を入力に取れる)
 
-—
+[create_funct_1d_array](../function/create_funct_1d_array.md) · [create_funct_1d_pairs](../function/create_funct_1d_pairs.md) · [smooth_funct_1d_gauss](../function/smooth_funct_1d_gauss.md) · [smooth_funct_1d_mean](../function/smooth_funct_1d_mean.md) · [derivate_funct_1d](../function/derivate_funct_1d.md) · [integrate_funct_1d](../function/integrate_funct_1d.md) · [zero_crossings_funct_1d](../function/zero_crossings_funct_1d.md) · [local_min_max_funct_1d](../function/local_min_max_funct_1d.md)
 
 ## 同カテゴリ(`signal`)
 

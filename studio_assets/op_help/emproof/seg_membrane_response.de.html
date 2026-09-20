@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">seg_membrane_response — EMPROOF <code style="color:#22d3bf">response</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_membrane_response(image, sigma: &#x27;float&#x27; = 1.5, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import emproof; emproof.seg_membrane_response(image, sigma: &#x27;float&#x27; = 1.5, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsemproof.get(&quot;seg_membrane_response&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>EM 断面の<b>暗い線</b>(細胞膜)の応答 [0, ∞)。ガウス平滑した Hessian の固有値 λ1 ≥ λ2 から</p>
+<p>`<code style="color:#22d3bf">max(λ1 − |λ2|, 0)</code>` (Steger の線検出の閉形式、σ² で尺度正規化)。</p>
+<p>暗い線の上では横断方向の 2 階微分が大きく正(λ1)、線に沿う方向は 0(λ2)なので λ1 − |λ2| が立つ。</p>
+<p>暗い<b>塊</b>(ミトコンドリア内部・シナプス小胞)は λ1 ≈ λ2 &gt; 0 で打ち消し合って 0 に近い ―― 膜だけを</p>
+<p>拾う。`<code style="color:#22d3bf">normalize=True</code><code style="color:#22d3bf"> で断面の 99.5 percentile を 1 にする(</code><code style="color:#22d3bf">seg_*</code>` の閾値はその尺度で書く)。</p>
+<p>scikit-image があるならレジストリの `<code style="color:#22d3bf">sk_frangi</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">fs.apply(img, &quot;sk_frangi&quot;, a=0.5, b=0.5)</code>`)も</p>
+<p>同じ席に使える(試作はそちらで AUC を測った)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>image : (H, W) float</p>
+<p>生 EM(明るい = 細胞質、暗い = 膜)。範囲は問わない(勾配の比だけを見る)。</p>
+<p>sigma : float</p>
+<p>平滑の σ [px]。膜の太さの半分程度(CREMI 4 nm/px なら 1.5〜2.5)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">Leitfaden zur Familie emproof</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_em_second_opinion">poc_em_second_opinion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_em_second_opinion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_membrane_chord_score">seg_membrane_chord_score</a> · <a style="color:#22d3bf" href="opemproof:seg_boundary_membrane_gap">seg_boundary_membrane_gap</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">response</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: emproof.py — EMPROOF Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

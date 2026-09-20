@@ -3,7 +3,7 @@ op: register_light
 dim: optics
 category: scene
 in: 
-out: table
+out: text
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.2.1  # fullseye lib version this note was generated for
 
 # register_light — OPTICS `scene` op
 
-- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
+- **データ種**: `なし` → `text`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import fullseye as fs; fs.ledger.register_light(maker: 'str', model: 'str', kind: 'str' = 'ring', radius_mm: 'float' = 60.0, height_mm: 'float' = 100.0, size_mm: 'float' = 25.0, source: 'str' = 'led', wavelength_nm: 'float' = 630.0, bandwidth_nm: 'float' = 25.0, oem_of: 'str' = None) -> 'str'` (実装を直接呼ぶなら `import optscene; optscene.register_light(maker: 'str', model: 'str', kind: 'str' = 'ring', radius_mm: 'float' = 60.0, height_mm: 'float' = 100.0, size_mm: 'float' = 25.0, source: 'str' = 'led', wavelength_nm: 'float' = 630.0, bandwidth_nm: 'float' = 25.0, oem_of: 'str' = None) -> 'str'`、台帳から引くなら `opsoptics.get("register_light")`)
 
 ## 使い方
@@ -70,9 +70,9 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [vision_layout_from_catalog](../../../../examples/vision_layout_from_catalog.py) — `py -3.11 examples/vision_layout_from_catalog.py`
 
-## 型が繋がる次の op(`table` を入力に取れる)
+## 型が繋がる次の op(`text` を入力に取れる)
 
-[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [paraxial_trace](../design/paraxial_trace.md) · [seidel_coefficients](../design/seidel_coefficients.md) · [spot_stats](../design/spot_stats.md) · [tolerance_analysis](../design/tolerance_analysis.md) · [wavefront_from_opd](../design/wavefront_from_opd.md) · [spot_diagram](../design/spot_diagram.md)
+—
 
 ## 同カテゴリ(`scene`)
 

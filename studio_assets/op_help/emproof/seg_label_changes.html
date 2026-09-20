@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">seg_label_changes — EMPROOF <code style="color:#22d3bf">inject</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import emproof; emproof.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsemproof.get(&quot;seg_label_changes&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>2 枚のラベル画像の差を<b>融合と分断の対</b>として返す(校正の前後、または仕込んだ誤りの答え合わせ)。</p>
+<p>`<code style="color:#22d3bf">before</code><code style="color:#22d3bf"> のラベル b と </code><code style="color:#22d3bf">after</code><code style="color:#22d3bf"> のラベル a が同じ画素を </code><code style="color:#22d3bf">min_pixels</code>` 以上共有する対を数え、</p>
+<p style="margin:2px 0 2px 12px">• 融合 = after の 1 ラベルが before の 2 ラベル以上を覆う → `<code style="color:#22d3bf">merge_after</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">merge_before</code>`(対ごとに 1 行。</p>
+<p>吸った側の id 自身も before の 1 つとして並ぶ)</p>
+<p style="margin:2px 0 2px 12px">• 分断 = before の 1 ラベルが after の 2 ラベル以上に割れる → `<code style="color:#22d3bf">split_before</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">split_after</code>`(同様に</p>
+<p>残った側の id も並ぶ)</p>
+<p>`<code style="color:#22d3bf">n_merged</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_split</code>` は誤りの数(after 側・before 側の id で数える)。id の一致は見ない</p>
+<p>(ラベルを振り直した 2 枚でも使える)。</p>
+<p>&gt;&gt;&gt; ch = seg_label_changes(truth, seg_inject_merge(truth))</p>
+<p>&gt;&gt;&gt; int(ch[&quot;n_merged&quot;])</p>
+<p>1</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_em_second_opinion">poc_em_second_opinion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_em_second_opinion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">inject</code>)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_inject_merge">seg_inject_merge</a> · <a style="color:#22d3bf" href="opemproof:seg_inject_split">seg_inject_split</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: emproof.py — EMPROOF operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

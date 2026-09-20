@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">register_light — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">text</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_light(maker: &#x27;str&#x27;, model: &#x27;str&#x27;, kind: &#x27;str&#x27; = &#x27;ring&#x27;, radius_mm: &#x27;float&#x27; = 60.0, height_mm: &#x27;float&#x27; = 100.0, size_mm: &#x27;float&#x27; = 25.0, source: &#x27;str&#x27; = &#x27;led&#x27;, wavelength_nm: &#x27;float&#x27; = 630.0, bandwidth_nm: &#x27;float&#x27; = 25.0, oem_of: &#x27;str&#x27; = None) -&gt; &#x27;str&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optscene; optscene.register_light(maker: &#x27;str&#x27;, model: &#x27;str&#x27;, kind: &#x27;str&#x27; = &#x27;ring&#x27;, radius_mm: &#x27;float&#x27; = 60.0, height_mm: &#x27;float&#x27; = 100.0, size_mm: &#x27;float&#x27; = 25.0, source: &#x27;str&#x27; = &#x27;led&#x27;, wavelength_nm: &#x27;float&#x27; = 630.0, bandwidth_nm: &#x27;float&#x27; = 25.0, oem_of: &#x27;str&#x27; = None) -&gt; &#x27;str&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;register_light&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>手元の照明をカタログに登録する(データシートの値をそのまま入れる)。</p>
@@ -41,8 +41,8 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:vision_layout_from_catalog">vision_layout_from_catalog</a> — <code style="color:#22d3bf">py -3.11 examples/vision_layout_from_catalog.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
-<p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a> · <a style="color:#22d3bf" href="opoptics:spot_diagram">spot_diagram</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">text</code> を入力に取れる)</h3>
+<p>—</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">scene</code>)</h3>
 <p><a style="color:#22d3bf" href="opoptics:scene_material">scene_material</a> · <a style="color:#22d3bf" href="opoptics:scene_plane">scene_plane</a> · <a style="color:#22d3bf" href="opoptics:scene_sphere">scene_sphere</a> · <a style="color:#22d3bf" href="opoptics:scene_box">scene_box</a> · <a style="color:#22d3bf" href="opoptics:scene_cylinder">scene_cylinder</a> · <a style="color:#22d3bf" href="opoptics:surface_defect">surface_defect</a> · <a style="color:#22d3bf" href="opoptics:surface_finish">surface_finish</a> · <a style="color:#22d3bf" href="opoptics:random_defects">random_defects</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

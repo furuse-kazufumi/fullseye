@@ -1,8 +1,8 @@
 {
- "n_ops": 2020,
+ "n_ops": 2027,
  "tiers": {
   "color": 12,
-  "ledger": 1072,
+  "ledger": 1079,
   "nary": 17,
   "registry": 919
  },
@@ -5304,6 +5304,22 @@
    ]
   },
   {
+   "name": "holdout_threshold",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "evaluate",
+   "tier": "ledger",
+   "ledger": "opsemproof",
+   "dim": "emproof",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "signal",
+    "signal"
+   ]
+  },
+  {
    "name": "hough_plane_3d",
    "halcon": "",
    "in_sort": "voxel",
@@ -8389,7 +8405,7 @@
    "name": "peak_subbin",
    "halcon": "",
    "in_sort": "signal",
-   "out_sort": "measurement",
+   "out_sort": "signal",
    "category": "signal",
    "tier": "ledger",
    "ledger": "ops1d",
@@ -10270,7 +10286,7 @@
    "name": "register_light",
    "halcon": "",
    "in_sort": null,
-   "out_sort": "table",
+   "out_sort": "text",
    "category": "scene",
    "tier": "ledger",
    "ledger": "opsoptics",
@@ -11161,6 +11177,87 @@
    "in_sorts": [
     "sdf",
     "sdf"
+   ]
+  },
+  {
+   "name": "seg_boundary_membrane_gap",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "suspect",
+   "tier": "ledger",
+   "ledger": "opsemproof",
+   "dim": "emproof",
+   "in_sorts": [
+    "labels2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "seg_inject_merge",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "labels2d",
+   "category": "inject",
+   "tier": "ledger",
+   "ledger": "opsemproof",
+   "dim": "emproof",
+   "in_sorts": [
+    "labels2d"
+   ]
+  },
+  {
+   "name": "seg_inject_split",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "labels2d",
+   "category": "inject",
+   "tier": "ledger",
+   "ledger": "opsemproof",
+   "dim": "emproof",
+   "in_sorts": [
+    "labels2d"
+   ]
+  },
+  {
+   "name": "seg_label_changes",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "inject",
+   "tier": "ledger",
+   "ledger": "opsemproof",
+   "dim": "emproof",
+   "in_sorts": [
+    "labels2d",
+    "labels2d"
+   ]
+  },
+  {
+   "name": "seg_membrane_chord_score",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "suspect",
+   "tier": "ledger",
+   "ledger": "opsemproof",
+   "dim": "emproof",
+   "in_sorts": [
+    "labels2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "seg_membrane_response",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "response",
+   "tier": "ledger",
+   "ledger": "opsemproof",
+   "dim": "emproof",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {

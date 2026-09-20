@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">seg_membrane_chord_score — EMPROOF <code style="color:#22d3bf">suspect</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_membrane_chord_score(labels, membrane, tau: &#x27;float&#x27; = 0.2, band: &#x27;int&#x27; = 4, min_area: &#x27;int&#x27; = 1500, min_segment: &#x27;int&#x27; = 20, normalize: &#x27;bool&#x27; = True, ignore_zero: &#x27;bool&#x27; = True, max_points: &#x27;int&#x27; = 400, min_hole: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import emproof; emproof.seg_membrane_chord_score(labels, membrane, tau: &#x27;float&#x27; = 0.2, band: &#x27;int&#x27; = 4, min_area: &#x27;int&#x27; = 1500, min_segment: &#x27;int&#x27; = 20, normalize: &#x27;bool&#x27; = True, ignore_zero: &#x27;bool&#x27; = True, max_points: &#x27;int&#x27; = 400, min_hole: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsemproof.get(&quot;seg_membrane_chord_score&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p><b>融合の疑い</b>: ラベルの内部を横切る膜の「弦」の長さ / ラベルの径。ラベル(連結成分)ごとに 1 行。</p>
+<p>手順: 成分の内側(境界から `<code style="color:#22d3bf">band</code><code style="color:#22d3bf"> px より内)で膜応答 &gt; </code><code style="color:#22d3bf">tau</code>` の画素を 8 連結の成分にし、</p>
+<p>`<code style="color:#22d3bf">min_segment</code><code style="color:#22d3bf"> px 以上の膜成分ごとに、3 px 太らせて境界帯(</code><code style="color:#22d3bf">band</code><code style="color:#22d3bf"> &lt; 距離 ≤ </code><code style="color:#22d3bf">band</code>` + 3)に</p>
+<p>触れる画素の<b>最遠 2 点間距離</b>を弦長とする。score = max 弦長 / sqrt(面積)。境界の 2 か所を結ぶ膜</p>
+<p>(= 貼り付いた 2 細胞の境目)は score ≈ 1、境界に触れない断片は 0 か小さい。<b>穴を持つ膜成分</b></p>
+<p>(`<code style="color:#22d3bf">min_hole</code>` px 以上の穴 = 閉じた輪 = ミトコンドリア・小胞)は弦の候補から外す ―― 境界の 2 点に</p>
+<p>接する輪は弦と同じ「遠い 2 点」を持つので、穴の有無で先に分ける。輪が切れて弧になった膜は</p>
+<p>外せない(実データで AUC が 1 にならない主因)。</p>
+<p>CREMI sample A(512² 断面 12 枚、試作)で人工融合の成分 vs 他: AUC 0.83(tau 0.2)。</p>
+<p>列: `<code style="color:#22d3bf">label</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">component</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">area</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">score</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">chord_px</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_segments</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cy</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cx</code>`</p>
+<p>(score 降順)。`<code style="color:#22d3bf">min_area</code>` 未満の成分は数えない(小さな断片の弦は径と同程度で常に高く出る)。</p>
+<p>&gt;&gt;&gt; table = seg_membrane_chord_score(labels, seg_membrane_response(raw))</p>
+<p>&gt;&gt;&gt; table[&quot;label&quot;][:5], table[&quot;score&quot;][:5]          # 疑いの強い順</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_em_second_opinion">poc_em_second_opinion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_em_second_opinion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">suspect</code>)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_boundary_membrane_gap">seg_boundary_membrane_gap</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: emproof.py — EMPROOF operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

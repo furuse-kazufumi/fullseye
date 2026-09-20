@@ -12,8 +12,8 @@
 <p>本を `<code style="color:#22d3bf">λ ± bw/2</code><code style="color:#22d3bf"> に等間隔で置く。重みはガウス型 </code><code style="color:#22d3bf">exp(-0.5 (2x)^2)</code>`</p>
 <p>(`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">[-1, 1]</code>` に正規化した位置、端が 2σ)で、和が 1 になるよう正規化。</p>
 <p>`<code style="color:#22d3bf">bw &lt;= 0</code><code style="color:#22d3bf">(レーザー)または </code><code style="color:#22d3bf">k == 1</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">λ</code>` 1 本・重み 1。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">light</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">light_spec</code>` の結果。キーが無ければ既定値で進み、例外は出さない</p>
-<p>(検証はしない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">light</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">light_spec</code>` の結果(dict)。キーが無ければ既定値で進む(dict でなければ</p>
+<p>`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。sort </code><code style="color:#22d3bf">table</code>` の行リストが流れ込むのを止める)。</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">samples</code>`: 本数。既定 5。1 未満は 1 に丸める。奇数にすると中心波長が入る。</p>
 <p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(wavelengths (k,), weights (k,))</code>` の 2 本の float64 配列。</p>
 <p>スペクトルの実形状(LED の非対称、ハロゲンの黒体分布)は模さない近似。</p>

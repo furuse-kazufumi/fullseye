@@ -25,6 +25,8 @@ the third-order minimum-spherical bending for a distant object,
 ``q = 2(n²−1)/(n+2)`` (Coddington) — the closed form
 :func:`optimize_lens` is checked against. Returns the prescription plus
 ``shape_factor``, ``R1``, ``R2`` and the RMS spot on axis.
+``system["object_mm"]`` is ``inf`` for the default object at infinity (the
+lens_system convention); ``R1`` / ``R2`` are ``inf`` for a flat side (q = ±1).
 
 ## ファミリ共通の入力契約(fail-closed)
 

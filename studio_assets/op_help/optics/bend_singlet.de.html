@@ -11,6 +11,8 @@
 <p>`<code style="color:#22d3bf">q = 2(n²−1)/(n+2)</code>` (Coddington) — the closed form</p>
 <p>:func:<code style="color:#22d3bf">optimize_lens</code> is checked against. Returns the prescription plus</p>
 <p>`<code style="color:#22d3bf">shape_factor</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">R1</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">R2</code>` and the RMS spot on axis.</p>
+<p>`<code style="color:#22d3bf">system[&quot;object_mm&quot;]</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">inf</code>` for the default object at infinity (the</p>
+<p>lens_system convention); `<code style="color:#22d3bf">R1</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">R2</code><code style="color:#22d3bf"> are </code><code style="color:#22d3bf">inf</code>` for a flat side (q = ±1).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>
