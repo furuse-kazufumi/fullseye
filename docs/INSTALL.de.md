@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: fb18d30eac9c -->
+<!-- i18n-source-sha: b5eeee92dc95 -->
 # Installations- und Einrichtungshandbuch
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · **Deutsch**
@@ -26,7 +26,7 @@ Die editierbare Installation (editable install) erfolgt im Wurzelverzeichnis des
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .            # nur der Kern (numpy + scipy, rund 885 Operatoren)
+py -3.11 -m pip install -e .            # nur der Kern (numpy + scipy; alle Ops sind sichtbar, ein Op mit optionalem Backend nennt beim Aufruf das fehlende Extra)
 ```
 
 Zusätzliche Backends werden über **Extras** ausgewählt (definiert unter `[project.optional-dependencies]` in `pyproject.toml`).

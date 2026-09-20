@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: fb18d30eac9c -->
+<!-- i18n-source-sha: b5eeee92dc95 -->
 # 安裝 / 環境建置完整指南
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · **繁體中文** · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md)
@@ -26,7 +26,7 @@ Fullseye 的設計方針是 **「僅靠 numpy + scipy 即可運作的核心」+�
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .            # 僅核心(numpy + scipy，約 885 個運算子)
+py -3.11 -m pip install -e .            # 僅核心（numpy + scipy。所有 op 都看得到，需要 optional backend 的 op 呼叫時會指出缺少的 extra）
 ```
 
 額外的後端透過 **extras** 選擇(實際定義在 `pyproject.toml` 的 `[project.optional-dependencies]` 中)。

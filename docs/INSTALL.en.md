@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: fb18d30eac9c -->
+<!-- i18n-source-sha: b5eeee92dc95 -->
 # Installation / Environment Setup — Complete Guide
 
 [日本語](./INSTALL.md) · **English** · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md)
@@ -30,7 +30,7 @@ Do an editable install from the repository root.
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .            # core only (numpy + scipy, ~885 operators)
+py -3.11 -m pip install -e .            # core only (numpy + scipy; every op is listed, and an op that needs an optional backend names the missing extra when called)
 ```
 
 Additional backends are selected through **extras** (defined in `pyproject.toml`'s

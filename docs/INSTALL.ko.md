@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: fb18d30eac9c -->
+<!-- i18n-source-sha: b5eeee92dc95 -->
 # 설치 / 환경 구축 완전 가이드
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · **한국어** · [Deutsch](./INSTALL.de.md)
@@ -26,7 +26,7 @@ Fullseye의 설계 방침은 **"numpy + scipy만으로 동작하는 코어" + "�
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .            # 코어만(numpy + scipy, 약 885개 오퍼레이터)
+py -3.11 -m pip install -e .            # 코어만(numpy + scipy. 모든 op가 보이고, optional backend가 필요한 op는 호출 시 부족한 extra를 알려 줌)
 ```
 
 추가 백엔드는 **extras**로 선택합니다(`pyproject.toml`의 `[project.optional-dependencies]`가 실체입니다).

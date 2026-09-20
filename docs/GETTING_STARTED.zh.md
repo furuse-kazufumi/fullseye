@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: d72686b2f766 -->
+<!-- i18n-source-sha: c70ba3c329f3 -->
 # 快速上手（5 分钟运行起来）
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · **简体中文** · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md)
@@ -32,7 +32,7 @@ Fullseye 是一个**以 numpy 数组为输入输出的图像处理算子库**，
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # 只装 numpy + scipy 的核心（约 885 个算子）
+py -3.11 -m pip install -e .          # 仅核心（numpy + scipy。所有 op 都可见，需要 optional backend 的 op 调用时会指出缺少的 extra）
 ```
 
 核心**只靠 numpy 和 scipy** 就能运行。OpenCV / scikit-image / Pillow 等额外后端都是可选的，即使没有安装，也只是该后端特有的算子被禁用而已（优雅降级）。实际使用中至少需要 OpenCV 或 Pillow 来读写图像文件，所以建议追加安装以下之一。

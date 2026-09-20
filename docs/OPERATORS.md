@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-885 operators across 47 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+931 operators across 48 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -17,6 +17,7 @@
 | `gdilate` | image | morphology | gray_dilation | dilate | morphology.dilation | imdilate |
 | `gopen` | image | morphology | gray_opening | morphologyEx(OPEN) | morphology.opening | imopen |
 | `gclose` | image | morphology | gray_closing | morphologyEx(CLOSE) | morphology.closing | imclose |
+| `runlength_smear` | image | morphology | None | - | - | - |
 | `tophat` | image | morphology | gray_tophat | morphologyEx(TOPHAT) | morphology.white_tophat | imtophat |
 | `bothat` | image | morphology | gray_bothat | morphologyEx(BLACKHAT) | morphology.black_tophat | imbothat |
 | `morph_grad` | image | morphology | gray_range_rect | morphologyEx(GRADIENT) | - | - |
@@ -24,7 +25,16 @@
 | `prewitt_mag` | image | edges | prewitt_amp | - | filters.prewitt | edge(...,'prewitt') |
 | `roberts_mag` | image | edges | roberts | - | filters.roberts | edge(...,'roberts') |
 | `dog` | image | edges | diff_of_gauss | - | filters.difference_of_gaussians | - |
+| `edge_transition_width` | image | edges | None | - | - | - |
 | `gamma` | image | gray | pow_image | LUT | exposure.adjust_gamma | imadjust |
+| `quantize_uniform` | image | gray | None | - | - | - |
+| `quantize_lloyd_max` | image | gray | None | - | - | - |
+| `quantization_error` | image | gray | None | - | - | - |
+| `dither_ordered` | image | gray | None | - | - | - |
+| `dither_floyd_steinberg` | image | gray | None | - | - | - |
+| `companding_mu_law` | image | gray | None | - | - | - |
+| `banding_map` | image | gray | None | - | - | - |
+| `effective_bit_depth` | image->feature | features | None | - | - | - |
 | `invert` | image | gray | invert_image | bitwise_not | util.invert | imcomplement |
 | `scale_clip` | image | gray | scale_image | convertScaleAbs | exposure.rescale_intensity | imadjust |
 | `equalize` | image | gray | equ_histo_image | equalizeHist | exposure.equalize_hist | histeq |
@@ -32,6 +42,14 @@
 | `lowpass` | image | frequency |  | dft+mask | fft+mask | fft2+mask |
 | `highpass` | image | frequency | highpass_image | dft+mask | fft+mask | fft2+mask |
 | `std_filter` | image | texture | deviation_image | - | filters.rank (std) | stdfilt |
+| `local_bimodality` | image | texture | None | - | - | - |
+| `local_std` | image | texture | None | - | - | - |
+| `scale_select_std` | image | texture | None | - | - | - |
+| `bootstrap_std_error` | image | texture | None | - | - | - |
+| `persistence_map` | image | morphology | None | - | - | - |
+| `structure_tensor_orientation` | image | texture | None | - | - | - |
+| `structure_tensor_coherence` | image | texture | None | - | - | - |
+| `local_thickness` | image | morphology | None | - | - | - |
 | `threshold` | image->region | segmentation | threshold | threshold | img>t | imbinarize |
 | `otsu` | image->region | segmentation | binary_threshold | threshold(OTSU) | filters.threshold_otsu | otsuthresh/graythresh |
 | `reg_erode` | region | region | erosion_circle | erode | morphology.binary_erosion | imerode |
@@ -58,6 +76,7 @@
 | `total_length` | contour->feature | features | length_xld | arcLength | - | - |
 | `ncc_locate` | image->match | matching | find_ncc_model | matchTemplate | feature.match_template | normxcorr2 |
 | `rotate_img` | image | geometry | rotate_image | warpAffine(rot) | transform.rotate | imrotate |
+| `deskew` | image | geometry | None | - | - | - |
 | `rescale_img` | image | geometry | zoom_image_factor | resize | transform.rescale | imresize |
 | `affine_warp` | image | geometry | affine_trans_image | warpAffine | transform.warp(Affine) | imwarp |
 | `gabor` | image | texture | gen_gabor | getGaborKernel+filter2D | filters.gabor | imgaborfilt |
@@ -527,6 +546,7 @@
 | `xkor_hessian` | image | edges |  | - | - | - |
 | `xkor_dog` | image | edges |  | - | - | - |
 | `f2_shock` | image | edges | shock_filter | - | - | - |
+| `f2_shock_diffuse` | image | edges | None | - | - | - |
 | `f2_gray_skeleton` | image | morphology | gray_skeleton | - | - | - |
 | `f2_lut_trans` | image | gray | lut_trans | - | - | - |
 | `f2_topographic` | image | edges | topographic_sketch | - | - | - |
@@ -650,6 +670,7 @@
 | `tac_surface_normal` | image | tactile |  | - | - | - |
 | `tac_pressure_proxy` | image | tactile |  | - | - | - |
 | `tac_shear_field` | image | tactile |  | - | - | - |
+| `fractal_dimension` | image->feature | features |  | - | - | - |
 | `alife_wolfram1d` | image | artificial-life |  | - | - | - |
 | `alife_langton_ant` | image | artificial-life |  | - | - | - |
 | `alife_lenia` | image | artificial-life |  | - | - | - |
@@ -745,7 +766,6 @@
 | `tb_points_to_voxel` | points->volume | typed |  | - | - | - |
 | `tb_estimate_point_normals` | points | typed |  | - | - | - |
 | `tb_iss_keypoints` | points->signal | typed |  | - | - | - |
-| `tb_angle_3points` | points->feature | typed |  | - | - | - |
 | `tb_project_points` | points->keypoints | typed |  | - | - | - |
 | `tb_render_point_depth` | points->image | typed |  | - | - | - |
 | `tb_statistical_outlier_removal` | points | typed |  | - | - | - |
@@ -766,7 +786,7 @@
 | `tb_synthesize_silhouette` | points->image | typed |  | - | - | - |
 | `tb_inside_outside` | points->signal | typed |  | - | - | - |
 | `tb_superquadric_residual` | points->feature | typed |  | - | - | - |
-| `tb_project` | points->image | typed |  | - | - | - |
+| `tb_project` | points->keypoints | typed |  | - | - | - |
 | `tb_jitter` | points | typed |  | - | - | - |
 | `tb_random_rotation` | points | typed |  | - | - | - |
 | `tb_random_scale` | points | typed |  | - | - | - |
@@ -784,6 +804,10 @@
 | `tb_project_cylindrical` | points->image | typed |  | - | - | - |
 | `tb_sphere_sdf` | points->volume | typed |  | - | - | - |
 | `tb_box_sdf` | points->volume | typed |  | - | - | - |
+| `tb_plane_sdf` | points->volume | typed |  | - | - | - |
+| `tb_cylinder_sdf` | points->volume | typed |  | - | - | - |
+| `tb_torus_sdf` | points->volume | typed |  | - | - | - |
+| `tb_capsule_sdf` | points->volume | typed |  | - | - | - |
 | `tb_pc_poisson_disk` | points | typed |  | - | - | - |
 | `tb_pc_fill_sparse` | points | typed |  | - | - | - |
 | `tb_pc_density_equalize` | points | typed |  | - | - | - |
@@ -804,6 +828,9 @@
 | `tb_bandpass` | signal | typed |  | - | - | - |
 | `tb_envelope` | signal | typed |  | - | - | - |
 | `tb_rms` | signal->feature | typed |  | - | - | - |
+| `tb_local_std` | signal | typed |  | - | - | - |
+| `tb_quantize` | signal | typed |  | - | - | - |
+| `tb_companding_mu_law` | signal | typed |  | - | - | - |
 | `tb_resample` | signal | typed |  | - | - | - |
 | `tb_spectrogram` | signal->image | typed |  | - | - | - |
 | `tb_zero_crossing_rate` | signal->feature | typed |  | - | - | - |
@@ -864,11 +891,12 @@
 | `tb_weighting_response` | signal | typed |  | - | - | - |
 | `tb_apply_weighting` | signal | typed |  | - | - | - |
 | `tb_equivalent_level` | signal->feature | typed |  | - | - | - |
+| `tb_fly_lgmd_eta` | signal | typed |  | - | - | - |
+| `tb_fly_tau_from_expansion` | signal | typed |  | - | - | - |
 | `tb_normals_to_egi` | points->image | typed |  | - | - | - |
 | `tb_keypoints_uv_to_points` | keypoints->points | typed |  | - | - | - |
 | `tb_points_zyx_to_keypoints_uv` | points->keypoints | typed |  | - | - | - |
 | `tb_keypoints_to_image2d` | keypoints->image | typed |  | - | - | - |
-| `tb_indices_to_labels` | signal->volume | typed |  | - | - | - |
 | `tb_countrate_to_counts` | counts | typed |  | - | - | - |
 | `tb_counts_to_countrate` | counts | typed |  | - | - | - |
 | `tb_temporal_median_window` | video | typed |  | - | - | - |
@@ -889,11 +917,29 @@
 | `tb_mirror_plane_from_pairs` | points->matrix | typed |  | - | - | - |
 | `tb_landmark_asymmetry` | points->signal | typed |  | - | - | - |
 | `tb_dem_ecef_to_geodetic` | points | typed |  | - | - | - |
+| `img_to_points` | image->points | bridge |  | - | - | - |
+| `img_to_keypoints` | image->keypoints | bridge |  | - | - | - |
+| `img_to_signal` | image->signal | bridge |  | - | - | - |
+| `img_to_projection_profile` | image->signal | bridge |  | - | - | - |
+| `img_to_counts` | image->counts | bridge |  | - | - | - |
+| `img_to_matrix` | image->matrix | bridge |  | - | - | - |
+| `img_to_video` | image->video | bridge |  | - | - | - |
+| `img_to_volume` | image->volume | bridge |  | - | - | - |
+| `img_to_lightfield` | image->lightfield | bridge |  | - | - | - |
+| `img_to_rgb` | image->rgbimage | bridge |  | - | - | - |
+| `img_to_cimage` | image->cimage | bridge |  | - | - | - |
+| `img_to_beatcube` | image->beatcube | bridge |  | - | - | - |
+| `img_to_monogenic` | image->qimage | bridge |  | - | - | - |
+| `signal_to_img` | signal->image | bridge |  | - | - | - |
+| `counts_to_img` | counts->image | bridge |  | - | - | - |
+| `matrix_to_img` | matrix->image | bridge |  | - | - | - |
+| `contour_to_img` | contour->image | bridge |  | - | - | - |
+| `feature_to_img` | feature->image | bridge |  | - | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 310/885
-- skimage: 383/885
-- matlab: 259/885
+- opencv: 310/931
+- skimage: 383/931
+- matlab: 259/931
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

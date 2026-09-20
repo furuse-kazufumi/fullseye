@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 798. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 799. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -1572,8 +1572,9 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tools/regen_all.py`
 
 - **L54** — ★The only generated artifact outside `tools/`. That is exactly why it was missed — as long as you look for generators under `tools/*.py`, this one is never found.
-- **L77** — * ★ And dangerous: an article right after generation writes images with **relative paths**. The published version has them changed to absolute URLs on `raw.githubusercontent.com` (with a relative path Qiita does not show images —— memory `feedback_qiita_svg_path_and_cache`). Running only the generator rolls those absolute URLs back by 42 lines. **If you run it, carry it all the way through the article's publishing steps.** Write exclusions **by file name**. Summarizing them in prose ("the 10 of wing*_gallery") cannot be matched by machine, and the `unclassified()` below stops working.
-- **L173** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
+- **L57** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
+- **L81** — * ★ And dangerous: an article right after generation writes images with **relative paths**. The published version has them changed to absolute URLs on `raw.githubusercontent.com` (with a relative path Qiita does not show images —— memory `feedback_qiita_svg_path_and_cache`). Running only the generator rolls those absolute URLs back by 42 lines. **If you run it, carry it all the way through the article's publishing steps.** Write exclusions **by file name**. Summarizing them in prose ("the 10 of wing*_gallery") cannot be matched by machine, and the `unclassified()` below stops working.
+- **L177** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
 
 ## `torch_lazy.py`
 

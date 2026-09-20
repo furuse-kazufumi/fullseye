@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: d72686b2f766 -->
+<!-- i18n-source-sha: c70ba3c329f3 -->
 # 시작하기 (5분 만에 실행하기)
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · **한국어** · [Deutsch](./GETTING_STARTED.de.md)
@@ -38,7 +38,7 @@ Fullseye는 **numpy 배열을 입력·출력으로 하는 이미지 처리 연�
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # numpy + scipy 코어만(약 885개 연산자)
+py -3.11 -m pip install -e .          # 코어만(numpy + scipy. 모든 op가 보이고, optional backend가 필요한 op는 호출 시 부족한 extra를 알려 줌)
 ```
 
 코어는 **numpy와 scipy만으로** 동작합니다. OpenCV / scikit-image / Pillow 등 추가 백엔드는 선택 사항이며, 설치되어

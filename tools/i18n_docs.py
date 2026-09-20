@@ -43,6 +43,7 @@ GENERATED = {
     "README", "CAPABILITIES", "HARDENING", "DESIGN_NOTES",
     "OP_CATALOG", "EXAMPLES_3D",
     "MATURITY", "SENSOR_PLAYBOOK", "CONVERSION_MATRIX",
+    "OPERATORS",
 }
 
 _SHA_RE = re.compile(r"<!--\s*i18n-source-sha:\s*([0-9a-f]{12})\s*-->")

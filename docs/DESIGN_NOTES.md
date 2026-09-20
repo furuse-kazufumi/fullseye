@@ -1570,8 +1570,9 @@
 ## `tools/regen_all.py`
 
 - **L54** — ★`tools/` の外にある唯一の生成物。だから取りこぼしていた —— 生成器を `tools/*.py` で探す限り、これは永久に見つからない。
-- **L77** — * ★そして危険: 生成直後の記事は画像を**相対パス**で書く。公開版は `raw.githubusercontent.com` の絶対 URL に直したもの(Qiita は相対パスだと 画像が出ない —— memory `feedback_qiita_svg_path_and_cache`)。生成器だけを 回すと、その絶対 URL が 42 行ぶん巻き戻る。**回すなら記事の公開手順まで 通しでやること。** 除外は**ファイル名で**書く。散文でまとめると(「wing*_gallery の 10 本」) 機械で照合できず、下の `unclassified()` が働かない。
-- **L173** — ★`tools/` の外にある生成物。`tools/*.py` を歩くだけでは**永久に見つからない** 位置にあり、実際 `docs/OP_INDEX.json` を取りこぼしていた。
+- **L57** — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
+- **L81** — * ★そして危険: 生成直後の記事は画像を**相対パス**で書く。公開版は `raw.githubusercontent.com` の絶対 URL に直したもの(Qiita は相対パスだと 画像が出ない —— memory `feedback_qiita_svg_path_and_cache`)。生成器だけを 回すと、その絶対 URL が 42 行ぶん巻き戻る。**回すなら記事の公開手順まで 通しでやること。** 除外は**ファイル名で**書く。散文でまとめると(「wing*_gallery の 10 本」) 機械で照合できず、下の `unclassified()` が働かない。
+- **L177** — ★`tools/` の外にある生成物。`tools/*.py` を歩くだけでは**永久に見つからない** 位置にあり、実際 `docs/OP_INDEX.json` を取りこぼしていた。
 
 ## `torch_lazy.py`
 

@@ -23,7 +23,7 @@ Fullseye の設計方針は **「numpy + scipy だけで動くコア」+「重�
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .            # コアのみ（numpy + scipy、約 885 オペレータ）
+py -3.11 -m pip install -e .            # コアのみ（numpy + scipy。全 op が見え、optional backend の要る op は呼ぶと不足の extra を言う）
 ```
 
 追加バックエンドは **extras** で選びます（`pyproject.toml` の `[project.optional-dependencies]` が実体）。

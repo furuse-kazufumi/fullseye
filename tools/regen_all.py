@@ -54,6 +54,10 @@ CHAIN = [
     # ★`tools/` の外にある唯一の生成物。だから取りこぼしていた ——
     # 生成器を `tools/*.py` で探す限り、これは永久に見つからない。
     (["imgevolve.py", "index"], "docs/OP_INDEX.json(レジストリの機械可読索引)"),
+    # ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が
+    #   885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と
+    #   ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
+    (["catalog.py"], "docs/OPERATORS.md(4 ライブラリの対応表と被覆率)"),
     # 索引の後(複製するので)。ノートは opdocs の後なら何番目でもよい。
     (["tools/gen_mcp_data.py"], "fullseye/data/OP_INDEX.json + OP_NOTES.json(MCP が wheel から読む複製)"),
     (["tools/conversion_matrix.py"], "docs/CONVERSION_MATRIX.md(表現の変換表)"),

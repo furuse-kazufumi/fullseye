@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: d72686b2f766 -->
+<!-- i18n-source-sha: c70ba3c329f3 -->
 # Getting started (running in 5 minutes)
 
 [日本語](./GETTING_STARTED.md) · **English** · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md)
@@ -41,7 +41,7 @@ Prerequisite: **Python 3.11** (`py -3.11` on Windows, `python3.11` on Linux).
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # numpy + scipy core only (~885 operators)
+py -3.11 -m pip install -e .          # core only (numpy + scipy; every op is listed, and an op that needs an optional backend names the missing extra when called)
 ```
 
 The core runs on **numpy and scipy alone**. Extra backends such as OpenCV / scikit-image / Pillow

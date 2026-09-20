@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 798. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 799. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -1572,8 +1572,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tools/regen_all.py`
 
 - **L54** — ★Das einzige generierte Artefakt außerhalb von `tools/`. Genau deshalb wurde es übersehen — wer Generatoren unter `tools/*.py` sucht, findet dieses nie.
-- **L77** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
-- **L173** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
+- **L57** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
+- **L81** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
+- **L177** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
 
 ## `torch_lazy.py`
 

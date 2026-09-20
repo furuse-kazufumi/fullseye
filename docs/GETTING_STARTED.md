@@ -29,7 +29,7 @@ Fullseye は **numpy 配列を入力・出力とする画像処理オペレー�
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # numpy + scipy のコアだけ（約 885 オペレータ）
+py -3.11 -m pip install -e .          # コアのみ（numpy + scipy。全 op が見え、optional backend の要る op は呼ぶと不足の extra を言う）
 ```
 
 コアは **numpy と scipy だけ**で動きます。OpenCV / scikit-image / Pillow などの追加バックエンドは任意で、入っていなくても、そのバックエンド固有のオペレータだけが無効になるだけです（graceful degradation）。実務では最低でも画像ファイルの読み書きに OpenCV か Pillow が要るので、次のどちらかを足しておくと快適です。

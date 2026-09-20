@@ -5,9 +5,13 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
+## 0.2.2 — 未リリース
+
+- **文書の不備**(2026-09-20、利用者の指摘): `docs/OPERATORS.md` が 885 op / 47 分類の古い表のままだった —— 生成器 `catalog.py` が `tools/` の外にあり `tools/regen_all.py` の鎖に無かった。鎖に入れて再生成(931 op / 48 分類、OpenCV / scikit-image / MATLAB の対応表と被覆率)。INSTALL / GETTING_STARTED の 6 言語にあった「約 885 オペレータ」は数を消して「全 op が見え、optional backend の要る op は呼ぶと不足の extra を言う」に。`docs/INTEGRATION.md` の 1,942 / 1,049 を索引の実数に揃え、門 `tests/test_docs_counts_2026_09_20.py` で固定。概要記事と 0.2.1 の要旨にあった「報告 29 / 36 通」は受け取った実数 54 通(指摘 N1〜N197)に訂正。
+
 ## 0.2.1 — 2026-09-20
 
-**要旨**: 第三者 AI(GenSpark)に 0.2.0 を core / all の 2 環境で使い込ませ、36 通の報告(指摘 130 件弱)を
+**要旨**: 第三者 AI(GenSpark)に 0.2.0 を core / all の 2 環境で使い込ませ、54 通の報告(指摘 197 件、N1〜N197)を
 **1 件ずつ master で再現**してから直した回。新しい op は無い。直したのは「黙って別物を返す」「失敗を捨てる」
 「案内文が別の場所を指す」の 3 種で、全部にテスト・走る example(`examples/genspark_external_review.py`
 第 1〜10 節)・堅牢性ノート(`docs/hardening/`、#9〜#22 の 14 本)が付く。設計として変えなかった点(既定の

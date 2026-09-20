@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: d72686b2f766 -->
+<!-- i18n-source-sha: c70ba3c329f3 -->
 # Erste Schritte (in 5 Minuten startklar)
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · **Deutsch**
@@ -41,7 +41,7 @@ Voraussetzung: **Python 3.11** (unter Windows `py -3.11`, unter Linux `python3.1
 
 ```powershell
 cd <path-to-fullseye>
-py -3.11 -m pip install -e .          # nur der Kern aus numpy + scipy (rund 885 Operatoren)
+py -3.11 -m pip install -e .          # nur der Kern (numpy + scipy; alle Ops sind sichtbar, ein Op mit optionalem Backend nennt beim Aufruf das fehlende Extra)
 ```
 
 Der Kern läuft **allein mit numpy und scipy**. Zusätzliche Backends wie OpenCV / scikit-image / Pillow sind optional;
