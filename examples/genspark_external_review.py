@@ -292,6 +292,42 @@ def main() -> int:
     assert not any(hasattr(fs, n) for n in ("os", "sys", "warnings", "annotations"))
     print("13. ledger    : ring keeps %d newest, fallback_overflow() says 3 were evicted; facade namespace clean"
           % backend_safe._EVENT_MAX)
+
+    # 14. 第 55 報(0.2.1 の再測定): strict_mode は全経路で止める / op_run の案内 / python -m fullseye / index の差
+    import subprocess
+    fs.clear_fallbacks()
+    try:
+        with fs.strict_mode():
+            fs.apply(img, "access_channel")                          # gray を color op に —— 以前は台帳に記録して素通り
+        raise AssertionError("strict_mode が入力型の fallback を通した")
+    except ValueError as e:
+        assert "expects a color" in str(e)
+    for args, exc, key in (((img, "gaussian"), TypeError, "first argument is the op name"),
+                           (("gaussian", img), ValueError, "fullseye.apply(img, 'gaussian')")):
+        try:
+            fs.op_run(*args)
+            raise AssertionError("op_run%r が通った" % (args,))
+        except exc as e:
+            assert key in str(e), str(e)
+    r = subprocess.run([sys.executable, "-m", "fullseye", "--version"], capture_output=True, text=True, encoding="utf-8",
+                       env=dict(os.environ, PYTHONUTF8="1"), cwd=os.path.dirname(os.path.abspath(__file__)) + os.sep + "..")
+    assert r.returncode == 0 and r.stdout.startswith("fullseye "), (r.returncode, r.stdout, r.stderr[-120:])
+    print("14. strict    : strict_mode stops the input-sort fallback; op_run explains order and registry ops; %s"
+          % r.stdout.strip())
+
+    # 15. 第 4 陣(残り候補の再現): Image の器 / 台帳 op の入力不足 / op_find の doc / FullseyeGraph.add の既定
+    import graphengine
+    assert np.allclose(fs.apply(fs.Image(img), "gaussian"), fs.apply(img, "gaussian"))
+    rgb = np.random.default_rng(1).random((16, 16, 3))
+    try:
+        fs.op_run("blend_mode", rgb)                                     # top が無い
+        raise AssertionError("入力不足の op_run が通った")
+    except ValueError as e:
+        assert "missing input(s) top (rgb)" in str(e), str(e)
+    assert fs.op_find("gaussian")[0]["doc"], "op_find の doc が空"
+    g = graphengine.FullseyeGraph().add("n1", "gaussian")               # inputs 省略 = "$in"
+    assert np.allclose(g.run(img)["n1"], fs.apply(img, "gaussian"))
+    print("15. wrappers  : Image unwrapped; op_run names missing inputs; op_find doc = %r" % fs.op_find("gaussian")[0]["doc"][:40])
     print("PASS")
     return 0
 
