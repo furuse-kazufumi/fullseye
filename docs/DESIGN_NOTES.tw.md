@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：610 / 816 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：610 / 818 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `accel.py`
@@ -397,6 +397,10 @@
 ## `examples/poc_document_scan.py`
 
 - **L271** — ★直接把 sobel_dir 作用於二值遮罩，會把梯度方向量化到 0/90 度，一點一票的帶方向 Hough 就會坍縮到那兩條線上（實測：4 條線中有 2 條正好是 0.00 / 90.00 度）。先模糊再測方向。
+
+## `examples/poc_eye_to_brain.py`
+
+- **L59** _(ja)_ — ★背側から見るだけだと、像の左右(方位角)は soma の y 軸 = 奥行きに写り、応答の移動が見えない (2026-09-20 に実測: 縞を動かしても同じ場所が光って見えた)。背側と側面の 2 方向を並べる。
 
 ## `examples/poc_fabric_defect.py`
 
@@ -896,6 +900,10 @@
 
 - **L122** — ★ 座標系陷阱：`look_at` 以 gluLookAt 約定(相機朝向 -Z，+Y 向上)建構位姿，但 `render_mesh` 先把該 Vc 改寫為 (x, -y, -z) 再乘以 K(= 與 depth_to_points / K 相同的 CV 約定，depth 為 +Z 朝前)。三角測量是在 CV 約定這一側閉合的，所以位姿也要先施加 FLIP 再合成。跳過這一步，投影器就會朝向相機背後，而 depth 會保持在「看似合理的量級」卻全部錯誤(第一次執行正是如此：RMSE 78 mm = 與零點無法區分)。
 
+## `eyebrain.py`
+
+- **L242** _(ja)_ — ★fly_hex_resample と同じ向き: 画面の x = 方位角 az(右が正)、y = 仰角 el(上が正)。uv から組むと 像と眼の絵の左右が食い違う(2026-09-20 に実測: 縞を右へ動かすと柱の u が減った)。
+
 ## `fast.py`
 
 - **L254** — ★**不要**發布 uint8 的 gaussian。``cv2.GaussianBlur`` 的 8U 路徑使用 8 bit 定點內核，因此與 float64 core 的差異為 **1.174/255**(實測，本 module 的 6 張門圖 x PARITY_AB 5 點的最大值),不滿足「一致到 1/255」。box 為 0.494/255，median / 形態學為 0.000/255，故只發布這些。若需要快速的 uint8 gaussian，請以「到 2/255」的另一契約明確地追加。
@@ -1207,12 +1215,12 @@
 ## `studio.py`
 
 - **L273** — ★ 直接右鍵點擊圖本身（使用者 2026-09-06：「若能右鍵把作為圖顯示的東西複製到剪貼簿就好了」）。這是本 repo 的 Studio UI 規約——**顯示系也須能從右鍵完成一整套**。可與下方按鈕列做同樣的事（不要二者取其一）。
-- **L4325** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L5316** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L6142** — ★ 圖的承接盤。範例經 `examplefig` 往此處寫 PNG。不傳環境變數的執行（CLI）中一張都不寫，故只有從畫廊執行時才出圖（範例的數值與速度不變）。
-- **L6298** — ★ 圖的承接盤。範例經 `examplefig` 往此處寫 PNG。不傳環境變數的執行（CLI）中一張都不寫，故只有從畫廊執行時才出圖（範例的數值與速度不變）。
-- **L6808** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L9316** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L4331** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L5322** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L6148** — ★ 圖的承接盤。範例經 `examplefig` 往此處寫 PNG。不傳環境變數的執行（CLI）中一張都不寫，故只有從畫廊執行時才出圖（範例的數值與速度不變）。
+- **L6304** — ★ 圖的承接盤。範例經 `examplefig` 往此處寫 PNG。不傳環境變數的執行（CLI）中一張都不寫，故只有從畫廊執行時才出圖（範例的數值與速度不變）。
+- **L6814** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L9439** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `tests/conftest.py`
 
@@ -1445,8 +1453,8 @@
 
 ## `tests/test_studio.py`
 
-- **L920** — ★`setDefaultFormat` 只對無參建構函式生效，而 Studio 的 `QSettings("Fullseye", "Studio")` 固定指向 registry —— 這個 fixture 什麼都沒隔離（2026-09-05，registry 裡殘留了 pytest 的路徑）。用環境變數把本體一側的入口 `studio._settings()` 指向 ini。
-- **L2029** — ★直接建構 `QSettings("Fullseye", "Studio")` 會繞過隔離，寫入**使用者的登錄檔**（2026-09-05 的稽核確認了實際危害）。設定入口保持為一個。
+- **L945** — ★`setDefaultFormat` 只對無參建構函式生效，而 Studio 的 `QSettings("Fullseye", "Studio")` 固定指向 registry —— 這個 fixture 什麼都沒隔離（2026-09-05，registry 裡殘留了 pytest 的路徑）。用環境變數把本體一側的入口 `studio._settings()` 指向 ini。
+- **L2054** — ★直接建構 `QSettings("Fullseye", "Studio")` 會繞過隔離，寫入**使用者的登錄檔**（2026-09-05 的稽核確認了實際危害）。設定入口保持為一個。
 
 ## `tests/test_studio_logic.py`
 

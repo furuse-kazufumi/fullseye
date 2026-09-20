@@ -4187,6 +4187,18 @@ op は **931**(レジストリ実測)まで来ましたが、この回で増や�
 
 このために足した op が 3 つ(`graph_activation_latency` / `graph_activity_spread` / `points_activity_video`)と、`reservoir_states` に **明示の入力行列 `W_in`**(決まったニューロン群に刺激を入れる)。尺度は 3 op とも全体で 1 つ —— ノードごとに伸ばすと動かないノードの丸め屑が「点いた」になり、コマごとに伸ばすと動いていないものがちらつく。生データ(1 GB の feather)は repo に入れず、手元にあれば部分グラフを作ってキャッシュ、無ければ距離依存の合成の代替で同じ経路を走らせて `DATA: synthetic surrogate` と印字します(展示館の生物ウィングに 2 点)。
 
+### 個眼を指でなぞると、応答が配線を伝わる
+
+次に解像度を上げました。MaleCNS の注釈には視葉ニューロンごとに**六角柱**(網膜の個眼 1 つに対応する柱)が付いています。右眼の 892 柱それぞれの視葉ニューロン(柱ごとに上位 3 体)と中枢・下行のハブ 1,400 体で部分グラフ(4,076 体・150,487 辺)を作り、**個眼 1 つ分**の刺激を入れる。刺激する柱を眼の一行に沿って動かすと、応答が視葉の中を同じ向きに動きます。
+
+![刺激する個眼の柱を眼の一行に沿って動かす ―― 左: 複眼(黄 = 刺激した柱)、右: 脳(背側 | 側面、上段コネクトーム、下段 shuffle)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/01_eye_sweep.gif)
+
+数字にすると、刺激した柱の座標と応答重心の相関は **コネクトームで −0.92、次数保存 shuffle(同じ入力行列)で +0.01**。網膜部位対応(retinotopy)は配線にあって、次数には無い。像も通せます: 縦縞が視野を横切る像を `fly_hex_resample` で個眼に落とし、個眼の明るさをそのまま柱の刺激にすると、応答が縞を追う。
+
+![縦縞が視野を横切る像を複眼に通す ―― 左: 複眼が見る像、右: 脳の応答(背側 | 側面)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/02_image_through_the_eye.gif)
+
+Studio では **Tools ▸ Compound eye → brain** が同じ部品で対話的に動きます: マウスが指す個眼の柱を刺激し、ドラッグで視点を変え、Studio に開いている画像を眼に通し、shuffle と切り替える(新モジュール `eyebrain`。柱と個眼の対応は六角座標の正規化による近似で、生データも部分グラフも repo には入れません)。「サンプルを動かした人がびっくりする体験」を全 PoC の合格線にする、と決めた最初の 1 本です。
+
 ## まとめ
 
 **Fullseye** は、**説明できる古典ビジョンのアルゴリズムを「スキル」として約1000個持ち歩き**、それを

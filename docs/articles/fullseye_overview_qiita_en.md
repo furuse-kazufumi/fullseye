@@ -4163,6 +4163,18 @@ In numbers (`graph_activity_spread` / `graph_activation_latency`): in the connec
 
 Three ops were added for this (`graph_activation_latency` / `graph_activity_spread` / `points_activity_video`) plus an **explicit input matrix `W_in`** for `reservoir_states` (a pulse into a chosen set of neurons). All three use one global scale — per-node scaling turns rounding dust into "lit", per-frame scaling makes still things flicker. The raw data (1 GB of feather files) is never committed: with the files present the subgraph is built and cached locally, without them a distance-wired synthetic surrogate runs the same path and prints `DATA: synthetic surrogate` (two exhibits in the museum's biology wing).
 
+### Trace an Ommatidium, and the Response Travels the Wiring
+
+Then the resolution went up. The MaleCNS annotations give every optic-lobe neuron a **hexagonal column** (the column that belongs to one ommatidium of the retina). The 892 right-eye columns (top 3 neurons each) plus 1,400 central and descending hubs form a subgraph of 4,076 neurons and 150,487 edges, and the stimulus goes in **one ommatidium at a time**. As the stimulated column moves along a row of the eye, the response moves the same way inside the optic lobe.
+
+![The stimulated eye column moves along a row of the eye — left: compound eye (yellow = stimulated column), right: brain (dorsal | lateral; connectome on top, shuffle below)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/01_eye_sweep.gif)
+
+In numbers, the correlation between the stimulated column and the response centroid is **−0.92 for the connectome and +0.01 for the degree-preserving shuffle** with the same input matrix. Retinotopy lives in the wiring, not in the degrees. Images pass through too: a bar crossing the visual field is resampled onto the ommatidial lattice with `fly_hex_resample`, each ommatidium's brightness drives its column, and the response follows the bar.
+
+![A bar crossing the visual field, seen through the compound eye — left: what the eye sees, right: the brain's response (dorsal | lateral)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/02_image_through_the_eye.gif)
+
+In Studio, **Tools ▸ Compound eye → brain** runs the same parts interactively: hover to stimulate the column under the mouse, drag to orbit, feed the image open in Studio through the eye, switch to the shuffle (new module `eyebrain`; the column-to-ommatidium mapping is an approximation by normalised hexagonal coordinates, and neither the raw data nor the subgraph is committed). It is the first sample built to the bar we set that day: someone who runs it should be surprised.
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to

@@ -121,7 +121,7 @@ V3 = fs.points_activity_video(P, X, colors=side_rgb, views=((0, 0), (90, 0), (0,
 「点いた」になり、コマごとに伸ばすと動いていないものがちらつく。対照(`graph_degree_preserving_shuffle`)
 を**同じ刺激・同じ W_in** で回して隣に並べるのが作法 —— MaleCNS の soma 座標で右視葉に刺激を入れると、
 コネクトームでは活動が視葉 → 中枢 → 下行と順に進み(平均距離 88 → 230 µm を 17 步かけて、上位 3,000 体・36 步では VNC に届かない)、
-次数保存 shuffle では 3 步で全体に散る(88 → 300 µm、遠い 1/4 のノードの 93 % が点く)。`examples/poc_malecns_activity_wave.py`。
+次数保存 shuffle では 3 步で全体に散る(88 → 300 µm、遠い 1/4 のノードの 93 % が点く)。`examples/poc_malecns_activity_wave.py`。個眼 1 つ分の刺激(`eyebrain`、Studio の Tools ▸ Compound eye → brain)では刺激柱と応答重心の相関がコネクトーム −0.92 / shuffle +0.01: `examples/poc_eye_to_brain.py`。
 
 ## 真値で確かめてある性質(`tests/test_conngraph.py`)
 
