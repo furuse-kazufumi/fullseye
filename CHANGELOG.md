@@ -12,7 +12,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - **台帳の取りこぼしを数える**(第 44 報 N158): `fallback_overflow()` が環状バッファ(256 件)から捨てた件数を返し、`sum(fallback_counts().values()) == len(fallbacks()) + fallback_overflow()` が恒等式。
 - **`fullseye-studio --help` / `--version`**(第 43 報 N154): Qt を起こさず答える(以前は表示の無い Linux で SIGABRT)。表示が無ければ「set QT_QPA_PLATFORM=offscreen」の 1 文で rc 2。
 - **facade の名前空間**(第 50 報 N175 / N176): `fullseye.os` / `sys` / `warnings` / `annotations` を消した。
-- **文書の不備**(2026-09-20、利用者の指摘): `docs/OPERATORS.md` が 885 op / 47 分類の古い表のままだった —— 生成器 `catalog.py` が `tools/` の外にあり `tools/regen_all.py` の鎖に無かった。鎖に入れて再生成(931 op / 48 分類、OpenCV / scikit-image / MATLAB の対応表と被覆率)。INSTALL / GETTING_STARTED の 6 言語にあった「約 885 オペレータ」は数を消して「全 op が見え、optional backend の要る op は呼ぶと不足の extra を言う」に。`docs/INTEGRATION.md` の 1,942 / 1,049 を索引の実数に揃え、門 `tests/test_docs_counts_2026_09_20.py` で固定。概要記事と 0.2.1 の要旨にあった「報告 29 / 36 通」は受け取った実数 54 通(指摘 N1〜N197)に訂正。
+- **文書の不備**(2026-09-20、利用者の指摘): `docs/OPERATORS.md` が 885 op / 47 分類の古い表のままだった —— 生成器 `catalog.py` が `tools/` の外にあり `tools/regen_all.py` の鎖に無かった。鎖に入れて再生成(931 op / 48 分類、OpenCV / scikit-image / MATLAB の対応表と被覆率)。INSTALL / GETTING_STARTED の 6 言語にあった「約 885 オペレータ」は数を消して「全 op が見え、optional backend の要る op は呼ぶと不足の extra を言う」に。`docs/INTEGRATION.md` の 1,942 / 1,049 を索引の実数に揃え、門 `tests/test_docs_counts_2026_09_20.py` で固定(OPERATORS.md の門は同梱索引と比べる —— 生きた registry と比べた最初の版は torch の無い CI で赤になった)。概要記事と 0.2.1 の要旨にあった「報告 29 / 36 通」は受け取った実数 54 通(指摘 N1〜N197)に訂正。
 
 ## 0.2.1 — 2026-09-20
 

@@ -29,16 +29,24 @@ def _index():
     return json.loads(_read(os.path.join("docs", "OP_INDEX.json")))
 
 
-def test_operators_catalog_is_in_the_chain_and_counts_the_live_registry():
-    import ops
+def test_operators_catalog_is_in_the_chain_and_counts_the_shipped_index():
+    """★比べる相手は**同梱索引**(生成環境 = 全 backend)であって、この環境の生きた registry ではない。
+    2026-09-20 の CI(run 35482450634)で py3.12 が赤: torch / kornia の無い環境では ops.REGISTRY が 905 で、
+    OPERATORS.md の 931(= 索引の registry 919 + color 12)と食い違う。生成物は py3.11(全 backend)の regen 検査が
+    守るので、他の環境の門は「生成物が索引と一致する」ことを問う([[feedback_os_walk_order_makes_gates_environment_dependent]])。"""
     sys.path.insert(0, os.path.join(ROOT, "tools"))
     import regen_all
     assert any(cmd[0] == "catalog.py" for cmd, _ in regen_all.CHAIN), "catalog.py が regen_all の鎖に無い"
+    idx = _index()
+    rows = [r for r in idx["ops"] if r["tier"] in ("registry", "color")]      # ops.REGISTRY に載る 2 層
     md = _read(os.path.join("docs", "OPERATORS.md"))
     m = re.search(r"^(\d+) operators across (\d+) categories", md, re.M)
     assert m, "docs/OPERATORS.md の見出しに『N operators across M categories』が無い"
-    assert int(m.group(1)) == len(ops.REGISTRY), "OPERATORS.md の op 数 %s がレジストリ %d と違う(regen_all を回す)" % (m.group(1), len(ops.REGISTRY))
-    assert int(m.group(2)) == len({op.category for op in ops.REGISTRY})
+    assert int(m.group(1)) == len(rows), "OPERATORS.md の op 数 %s が索引の registry + color %d と違う(regen_all を回す)" % (m.group(1), len(rows))
+    assert int(m.group(2)) == len({r["category"] for r in rows})
+    import ops
+    if len(ops.REGISTRY) == len(rows):                                        # 全 backend の環境でだけ生きた registry とも照合
+        assert {op.name for op in ops.REGISTRY} == {r["name"] for r in rows}
 
 
 def test_integration_doc_counts_match_the_shipped_index():
