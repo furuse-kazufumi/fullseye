@@ -14,23 +14,23 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**25 件(うち直したもの 25 件)。見つけた PoC は 10 本。**
+**27 件(うち直したもの 27 件)。見つけた PoC は 10 本。**
 
 ## 種別ごと
 
 | 種別 | 件数 | 直した |
 |---|---:|---:|
-| 静かに間違う(例外が出ない) | 11 | 11 |
+| 静かに間違う(例外が出ない) | 12 | 12 |
 | 実装の誤り | 5 | 5 |
 | 門が事故の起きる場所に立っていなかった | 2 | 2 |
-| 在るのに引けない | 6 | 6 |
+| 在るのに引けない | 7 | 7 |
 | 説明の穴(片道の参照・古い数字) | 1 | 1 |
 
 ## 見つけた PoC ごと
 
 | PoC | 件数 |
 |---|---:|
-| [`genspark_external_review`](../examples/genspark_external_review.py) | 15 |
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 17 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
@@ -110,6 +110,12 @@ GenSpark 第 41 報(2026-09-20)N141: 「facade ソースに facade 表に無い�
 GenSpark 第 28〜35 報(0.2.1 の仕上げに回した分)。
 
 見つけた PoC: `genspark_external_review` / 直した所: `imgio.py`, `engine.py`, `api.py`, `accel.py`, `imgevolve.py`, `README.md` / 門: `test_pfm_default_write_is_float_and_round_trips`, `test_from_dict_refuses_none_and_scalar_stages_but_keeps_the_documented_forms`, `test_device_cuda_without_a_gpu_is_explained_and_recorded`, `test_apply_with_a_ledger_op_name_points_to_op_run`, `test_accel_parity_label_carries_its_threshold`, `test_readme_intro_counts_match_the_shipped_index`, `test_has_knows_the_ledger_and_algorithm_tiers`, `test_ops_search_folds_case_and_accents`, `test_pipeline_with_an_empty_ops_string_is_refused_with_a_sentence` / 状態: fixed
+
+#### [`strict_mode()` が経路の一部しか厳密にしていなかった(+ 0.2.1 再測定の 4 件)](hardening/strict-mode-only-covered-some-of-the-guards.md)
+
+GenSpark 第 55 報(0.2.1 を入れ直しての再測定、2026-09-20)。修正確認 8 件のあと、残存 8 件・新規 4 件。
+
+見つけた PoC: `genspark_external_review` / 直した所: `api.py`, `opassist.py`, `imgevolve.py`, `fullseye/__main__.py`, `unified.py` / 門: `test_strict_mode_makes_every_guard_raise`, `test_op_run_explains_the_argument_order_and_registry_ops`, `test_python_dash_m_fullseye_is_the_cli`, `test_index_names_the_difference_from_the_shipped_copy`, `test_index_default_output_never_lands_inside_an_installed_package`, `test_unified_pipeline_points_knob_tuples_to_run_pipeline` / 状態: fixed
 
 ### 実装の誤り
 
@@ -194,6 +200,12 @@ GenSpark 第 43・44・50 報(2026-09-20)。
 GenSpark 第 18〜20 報の統合チケット(N60 + I1)。
 
 見つけた PoC: `genspark_external_review` / 直した所: `api.py`, `imgevolve.py`, `tools/gen_mcp_data.py`, `pyproject.toml` / 門: `test_op_names_include_nary_adds_exactly_the_nary_tier`, `test_every_list_ops_row_carries_a_knobs_summary`, `test_the_shipped_knob_table_equals_the_docs_copy`, `test_cli_apply_input2_runs_an_nary_op`, `test_cli_index_prints_the_four_tiers` / 状態: fixed
+
+#### [`Image` が 0 次元のスカラーになり、入力不足が生の TypeError で、`op_find` の doc が空だった](hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md)
+
+GenSpark 第 33〜55 報の残り候補 10 件を現 master で再現(2026-09-20)。本物 3 件・改善 3 件・非再現 2 件。
+
+見つけた PoC: `genspark_external_review` / 直した所: `api.py`, `fullseye/jsonio.py`, `opassist.py`, `imgevolve.py`, `graphengine.py`, `metriccontract.py` / 門: `test_apply_and_run_pipeline_and_to_json_unwrap_the_image_wrapper`, `test_op_run_names_the_missing_input_instead_of_a_raw_type_error`, `test_algo_run_without_seq_is_refused_with_the_example`, `test_op_find_doc_is_filled_from_the_op_note`, `test_graph_add_defaults_to_the_external_input_and_empty_graph_is_identity` / 状態: fixed
 
 ### 説明の穴(片道の参照・古い数字)
 

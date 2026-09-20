@@ -1140,7 +1140,7 @@ _計 931 ops / 48 categories。_
 - `principal_comp` (halcon: `principal_comp`) `color → color` · 例: `gallery2d_color_artistic`
 - `rgb1_to_gray` (halcon: `rgb1_to_gray`) `color → image` · 例: `gallery2d_color_artistic`
 - `rgb3_to_gray` (halcon: `rgb3_to_gray`) `color → image` · 例: `gallery2d_color_artistic`
-- `access_channel` (halcon: `access_channel`) `color → image` · 例: `gallery2d_color_artistic`, `poc_leaf_disease_area`, `poc_solder_fillet_aoi`
+- `access_channel` (halcon: `access_channel`) `color → image` · 例: `gallery2d_color_artistic`, `genspark_external_review`, `poc_leaf_disease_area`, `poc_solder_fillet_aoi`
 
 ### contour(25)
 - `select_contours` (halcon: `select_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`, `quickstart`

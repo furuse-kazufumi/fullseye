@@ -12,6 +12,16 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - **台帳の取りこぼしを数える**(第 44 報 N158): `fallback_overflow()` が環状バッファ(256 件)から捨てた件数を返し、`sum(fallback_counts().values()) == len(fallbacks()) + fallback_overflow()` が恒等式。
 - **`fullseye-studio --help` / `--version`**(第 43 報 N154): Qt を起こさず答える(以前は表示の無い Linux で SIGABRT)。表示が無ければ「set QT_QPA_PLATFORM=offscreen」の 1 文で rc 2。
 - **facade の名前空間**(第 50 報 N175 / N176): `fullseye.os` / `sys` / `warnings` / `annotations` を消した。
+- ★**`strict_mode()` は全経路で止める**(第 55 報 N199): 入力型の門と非有限出力の門が `on_error` しか見ておらず、`with strict_mode(): apply(gray, "access_channel")` が台帳に記録して素通りしていた。strict は `on_error=None` のとき `"raise"` と同じ(明示の `on_error` は文脈より強い)。
+- **`op_run` の案内**(第 55 報 N200): `op_run(img, name)` は引数順を、台帳に無い registry op は `fullseye.apply(img, name)` を言う。
+- **`python -m fullseye`**(第 42・55 報 N150): CLI と同じ入口。
+- **`fullseye index` の差の説明**(第 32・55 報 N115 / N198): 出力に同梱索引との差(欠けた op と要る backend、pip の行)を添え、wheel の中(site-packages)には書かない(`docs/` の無い場所では cwd)。
+- `fullseye.Pipeline` の 3 要素タプルは `run_pipeline` / `FullseyeEngine` を案内(第 55 報 N201)。
+- **`Image` の器を剥がす**(第 49・54 報 N171 / N188): `apply` / `run_pipeline` / `to_json` に `fullseye.Image` を渡すと「scalar Image」で止まっていた → `.array` に剥がして走る。
+- **台帳 op の入力不足は 1 文**(第 34 報 N122): `op_run("blend_mode", rgb)` の生の TypeError → 「missing input(s) top (rgb) — this op takes base, top」。
+- **`fullseye algo run` は `--seq` 無しを拒む**(第 53 報 N187、以前は空列をソートして `[]` で rc 0)。
+- **`op_find` の `doc` をノートで埋める**(第 33・48・53 報 N119 / N162 / N178): registry の docstring が無い op(931 中 509)はノートの最初の散文 1 行。
+- `FullseyeGraph.add(inputs="$in")` を既定に(第 48・53 報 N167 / N180)、`attempt_all` の docstring(N184)、`bench` の help に必要メモリの目安(N165)。非再現: N183 `blend_mode` の検証順(型 → 形 → モード、docstring どおり)、N152 の非推奨警告(0 件)。
 - **文書の不備**(2026-09-20、利用者の指摘): `docs/OPERATORS.md` が 885 op / 47 分類の古い表のままだった —— 生成器 `catalog.py` が `tools/` の外にあり `tools/regen_all.py` の鎖に無かった。鎖に入れて再生成(931 op / 48 分類、OpenCV / scikit-image / MATLAB の対応表と被覆率)。INSTALL / GETTING_STARTED の 6 言語にあった「約 885 オペレータ」は数を消して「全 op が見え、optional backend の要る op は呼ぶと不足の extra を言う」に。`docs/INTEGRATION.md` の 1,942 / 1,049 を索引の実数に揃え、門 `tests/test_docs_counts_2026_09_20.py` で固定(OPERATORS.md の門は同梱索引と比べる —— 生きた registry と比べた最初の版は torch の無い CI で赤になった)。概要記事と 0.2.1 の要旨にあった「報告 29 / 36 通」は受け取った実数 54 通(指摘 N1〜N197)に訂正。
 
 ## 0.2.1 — 2026-09-20

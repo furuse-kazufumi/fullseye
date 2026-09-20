@@ -4,7 +4,7 @@ dim: gfx2d
 category: composite
 in: rgb × rgb
 out: rgb
-examples: [gfx2d_scene]
+examples: [genspark_external_review, gfx2d_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ Raises ValueError: unknown mode, mismatched shapes, opacity outside
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
 - [gfx2d_scene](../../../../examples/gfx2d_scene.py) — `py -3.11 examples/gfx2d_scene.py`
 
 ## 型が繋がる次の op(`rgb` を入力に取れる)

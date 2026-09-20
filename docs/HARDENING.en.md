@@ -15,23 +15,23 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**25 findings (25 fixed), from 10 PoCs.**
+**27 findings (27 fixed), from 10 PoCs.**
 
 ## By kind
 
 | Kind | Findings | Fixed |
 |---|---:|---:|
-| Silently wrong (no exception) | 11 | 11 |
+| Silently wrong (no exception) | 12 | 12 |
 | Implementation defect | 5 | 5 |
 | The gate did not stand where the accident happens | 2 | 2 |
-| Present but unreachable | 6 | 6 |
+| Present but unreachable | 7 | 7 |
 | Documentation hole (one-way reference, stale number) | 1 | 1 |
 
 ## By the PoC that found it
 
 | PoC | Findings |
 |---|---:|
-| [`genspark_external_review`](../examples/genspark_external_review.py) | 15 |
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 17 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
@@ -111,6 +111,12 @@ Found by: `genspark_external_review` / Changed: `fullseye/mcp/catalog.py` / Gate
 GenSpark 第 28〜35 報(0.2.1 の仕上げに回した分)。 _(ja)_
 
 Found by: `genspark_external_review` / Changed: `imgio.py`, `engine.py`, `api.py`, `accel.py`, `imgevolve.py`, `README.md` / Gate: `test_pfm_default_write_is_float_and_round_trips`, `test_from_dict_refuses_none_and_scalar_stages_but_keeps_the_documented_forms`, `test_device_cuda_without_a_gpu_is_explained_and_recorded`, `test_apply_with_a_ledger_op_name_points_to_op_run`, `test_accel_parity_label_carries_its_threshold`, `test_readme_intro_counts_match_the_shipped_index`, `test_has_knows_the_ledger_and_algorithm_tiers`, `test_ops_search_folds_case_and_accents`, `test_pipeline_with_an_empty_ops_string_is_refused_with_a_sentence` / Status: fixed
+
+#### [`strict_mode()` が経路の一部しか厳密にしていなかった(+ 0.2.1 再測定の 4 件)](hardening/strict-mode-only-covered-some-of-the-guards.md) _(ja)_
+
+GenSpark 第 55 報(0.2.1 を入れ直しての再測定、2026-09-20)。修正確認 8 件のあと、残存 8 件・新規 4 件。 _(ja)_
+
+Found by: `genspark_external_review` / Changed: `api.py`, `opassist.py`, `imgevolve.py`, `fullseye/__main__.py`, `unified.py` / Gate: `test_strict_mode_makes_every_guard_raise`, `test_op_run_explains_the_argument_order_and_registry_ops`, `test_python_dash_m_fullseye_is_the_cli`, `test_index_names_the_difference_from_the_shipped_copy`, `test_index_default_output_never_lands_inside_an_installed_package`, `test_unified_pipeline_points_knob_tuples_to_run_pipeline` / Status: fixed
 
 ### Implementation defect
 
@@ -195,6 +201,12 @@ Found by: `genspark_external_review` / Changed: `backend_safe.py`, `api.py`, `st
 GenSpark 第 18〜20 報の統合チケット(N60 + I1)。 _(ja)_
 
 Found by: `genspark_external_review` / Changed: `api.py`, `imgevolve.py`, `tools/gen_mcp_data.py`, `pyproject.toml` / Gate: `test_op_names_include_nary_adds_exactly_the_nary_tier`, `test_every_list_ops_row_carries_a_knobs_summary`, `test_the_shipped_knob_table_equals_the_docs_copy`, `test_cli_apply_input2_runs_an_nary_op`, `test_cli_index_prints_the_four_tiers` / Status: fixed
+
+#### [`Image` が 0 次元のスカラーになり、入力不足が生の TypeError で、`op_find` の doc が空だった](hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md) _(ja)_
+
+GenSpark 第 33〜55 報の残り候補 10 件を現 master で再現(2026-09-20)。本物 3 件・改善 3 件・非再現 2 件。 _(ja)_
+
+Found by: `genspark_external_review` / Changed: `api.py`, `fullseye/jsonio.py`, `opassist.py`, `imgevolve.py`, `graphengine.py`, `metriccontract.py` / Gate: `test_apply_and_run_pipeline_and_to_json_unwrap_the_image_wrapper`, `test_op_run_names_the_missing_input_instead_of_a_raw_type_error`, `test_algo_run_without_seq_is_refused_with_the_example`, `test_op_find_doc_is_filled_from_the_op_note`, `test_graph_add_defaults_to_the_external_input_and_empty_graph_is_identity` / Status: fixed
 
 ### Documentation hole (one-way reference, stale number)
 
