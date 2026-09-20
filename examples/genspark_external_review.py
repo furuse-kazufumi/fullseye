@@ -278,6 +278,20 @@ def main() -> int:
     assert not leaked and "Pipeline" not in cat.entries and "census_transform" in cat.entries, leaked[:5]
     print("12. mcp facade: %d callable functions, %d classes listed as ops (Image / Pipeline / ... used to be 41)"
           % (len(facade), len(leaked)))
+
+    # 13. 第 2 陣(第 43・44・50 報、0.2.2): 台帳の取りこぼしを数える / facade に import の道具が漏れない
+    import backend_safe
+    fs.clear_fallbacks()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        for i in range(backend_safe._EVENT_MAX + 3):
+            backend_safe.record("ring_probe", RuntimeError("x"), "image", source="example")
+    assert len(fs.fallbacks()) == backend_safe._EVENT_MAX and fs.fallback_overflow() == 3
+    assert sum(fs.fallback_counts().values()) == len(fs.fallbacks()) + fs.fallback_overflow()
+    fs.clear_fallbacks()
+    assert not any(hasattr(fs, n) for n in ("os", "sys", "warnings", "annotations"))
+    print("13. ledger    : ring keeps %d newest, fallback_overflow() says 3 were evicted; facade namespace clean"
+          % backend_safe._EVENT_MAX)
     print("PASS")
     return 0
 
