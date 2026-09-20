@@ -1402,7 +1402,7 @@ _計 931 ops / 48 categories。_
 - `dither_floyd_steinberg` `image → image` · 例: `gallery2d_gray_arith`
 - `companding_mu_law` `image → image` · 例: `gallery2d_gray_arith`
 - `banding_map` `image → image` · 例: `gallery2d_gray_arith`
-- `invert` (halcon: `invert_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `invert` (halcon: `invert_image`) `image → image` · 例: `gallery2d_gray_arith`, `genspark_external_review`
 - `scale_clip` (halcon: `scale_image`) `image → image` · 例: `gallery2d_gray_arith`
 - `equalize` (halcon: `equ_histo_image`) `image → image` · 例: `gallery2d_gray_arith`, `poc_dehazing`
 - `sigmoid` (halcon: `scale_image_max`) `image → image` · 例: `gallery2d_gray_arith`
@@ -1603,7 +1603,7 @@ _計 931 ops / 48 categories。_
 - `ph_total_variation_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### rank(23)
-- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_compound_eye`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
+- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `genspark_external_review`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_compound_eye`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_colormap_readability`

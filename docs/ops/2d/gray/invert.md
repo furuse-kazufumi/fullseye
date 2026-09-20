@@ -5,7 +5,7 @@ category: gray
 in: image
 out: image
 halcon: invert_image
-examples: [gallery2d_gray_arith]
+examples: [gallery2d_gray_arith, genspark_external_review]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -63,6 +63,7 @@ invert 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_gray_arith](../../../../examples/gallery2d_gray_arith.py) — `py -3.11 examples/gallery2d_gray_arith.py`
+- [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

@@ -5,7 +5,7 @@ category: rank
 in: image
 out: image
 halcon: median_image
-examples: [astro_stacking, blas_thread_budget, ct_reconstruction, gallery2d_smoothing_rank, lightfield_depth, photon_timeresolved, piv_flow_from_particles, poc_astro_photometry, poc_compound_eye, poc_dtof_ranging, poc_geodetic_height_frames, poc_lidar_terrain_change, poc_nuclei_ploidy, poc_pv_thermal_survey, poc_river_surface_velocity, poc_web_roll_periodicity, poc_weld_bead_profile, quickstart, specular_photometric]
+examples: [astro_stacking, blas_thread_budget, ct_reconstruction, gallery2d_smoothing_rank, genspark_external_review, lightfield_depth, photon_timeresolved, piv_flow_from_particles, poc_astro_photometry, poc_compound_eye, poc_dtof_ranging, poc_geodetic_height_frames, poc_lidar_terrain_change, poc_nuclei_ploidy, poc_pv_thermal_survey, poc_river_surface_velocity, poc_web_roll_periodicity, poc_weld_bead_profile, quickstart, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -67,6 +67,7 @@ median 0.50 0.50
 - [blas_thread_budget](../../../../examples/blas_thread_budget.py) — `py -3.11 examples/blas_thread_budget.py`
 - [ct_reconstruction](../../../../examples/ct_reconstruction.py) — `py -3.11 examples/ct_reconstruction.py`
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
+- [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
 - [lightfield_depth](../../../../examples/lightfield_depth.py) — `py -3.11 examples/lightfield_depth.py`
 - [photon_timeresolved](../../../../examples/photon_timeresolved.py) — `py -3.11 examples/photon_timeresolved.py`
 - [piv_flow_from_particles](../../../../examples/piv_flow_from_particles.py) — `py -3.11 examples/piv_flow_from_particles.py`

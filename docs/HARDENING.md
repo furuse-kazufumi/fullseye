@@ -14,14 +14,14 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**22 件(うち直したもの 22 件)。見つけた PoC は 10 本。**
+**24 件(うち直したもの 24 件)。見つけた PoC は 10 本。**
 
 ## 種別ごと
 
 | 種別 | 件数 | 直した |
 |---|---:|---:|
-| 静かに間違う(例外が出ない) | 10 | 10 |
-| 実装の誤り | 4 | 4 |
+| 静かに間違う(例外が出ない) | 11 | 11 |
+| 実装の誤り | 5 | 5 |
 | 門が事故の起きる場所に立っていなかった | 2 | 2 |
 | 在るのに引けない | 5 | 5 |
 | 説明の穴(片道の参照・古い数字) | 1 | 1 |
@@ -30,7 +30,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 
 | PoC | 件数 |
 |---|---:|
-| [`genspark_external_review`](../examples/genspark_external_review.py) | 12 |
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 14 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
@@ -99,6 +99,12 @@ GenSpark 第 15〜27 報(N67 / N68 / N69 / N71、N84 / N85 / N87、N92 / N94 / N
 
 見つけた PoC: `genspark_external_review` / 直した所: `opassist.py`, `dsp.py`, `api.py` / 門: `test_producers_and_consumers_refuse_unknown_sorts_and_op_names`, `test_presets_refuse_unknown_ops_and_are_empty_for_known_ops_without_presets`, `test_write_wav_path_is_not_a_data_input_in_the_ledger`, `test_no_ignored_exception_leaks_to_stderr_when_write_wav_is_misused`, `test_list_ops_rows_expose_the_native_guard`, `test_empty_input_contract_is_uniform_across_ops`, `test_every_shared_alias_resolves_by_rule_not_by_registration_order`, `test_list_ops_rows_name_their_alias_peers`, `test_list_ops_sort_and_search_fold_case_and_accents`, `test_op_run_refuses_to_call_with_a_none_sample_and_names_the_sort`, `test_non_array_images_are_type_errors_regardless_of_policy`, `test_data_range_of_without_arrays_is_a_contract_error`, `test_lazy_torch_import_error_says_whether_torch_is_installed`, `test_list_ops_unknown_sort_is_refused_and_lists_the_known_ones` / 状態: fixed
 
+#### [MCP カタログの facade 層がクラス 41 個を op として並べていた](hardening/mcp-facade-layer-listed-classes-as-ops.md)
+
+GenSpark 第 41 報(2026-09-20)N141: 「facade ソースに facade 表に無い名前が 474 件、Python のクラス名を含む」。 master で再現 —— `Catalog.load()` の 2,497 項目のうち facade だけの項目 501 件に、`Image` / `Pipeline` / `FullseyeEngine` / `VideoPipeline` / `MissingBackendError` / `TcpChannel` / `ModbusTcpServer` などクラス **41 個**が op として入っていた。`fullseye_search_ops("Pipeline")` がクラスを「op」として返し、LLM の検索面を汚す。
+
+見つけた PoC: `genspark_external_review` / 直した所: `fullseye/mcp/catalog.py` / 門: `test_facade_layer_lists_functions_only`, `test_search_surface_carries_no_class_names`, `test_real_facade_functions_stay_searchable` / 状態: fixed
+
 #### [PFM の既定が 8 bit 値を float 形式に書き、壊れた pipeline 設定が「成功」し、無い GPU が生の torch 文で報告されていた](hardening/pfm-default-wrote-8-bit-values-into-a-float-format.md)
 
 GenSpark 第 28〜35 報(0.2.1 の仕上げに回した分)。
@@ -130,6 +136,12 @@ GenSpark 第 8 報。Xvfb 上で Studio を起動し xdotool で操作、前後�
 GenSpark 第 14 報(公開 API 955 本の一括スモークを有効引数で再検証した回)。ライブラリ自身の往復で落ちる:
 
 見つけた PoC: `genspark_external_review` / 直した所: `pose_quat.py` / 門: `test_pose_helpers_accept_their_own_homogeneous_matrix`, `test_other_shapes_say_what_a_pose_is` / 状態: fixed
+
+#### [同じ段を 4 つの入口が別々に読んでいた](hardening/stage-forms-read-differently-by-four-entry-points.md)
+
+GenSpark 第 53 報(0.2.0 の clone 調査、2026-09-20)。0.2.1 でも再現。
+
+見つけた PoC: `genspark_external_review` / 直した所: `engine.py`, `unified.py` / 門: `test_four_entry_points_read_the_same_stage_names`, `test_diagnose_stages_reports_a_broken_stage_instead_of_raising`, `test_engine_rejects_a_malformed_stage_with_the_shared_sentence`, `test_unified_pipeline_accepts_list_and_dict_stages` / 状態: fixed
 
 ### 門が事故の起きる場所に立っていなかった
 

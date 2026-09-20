@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## 0.2.2 — 未リリース
 
+- ★**段の正規化は 1 本**(GenSpark 第 53 報 N179 / N181、設計パターン提案 ②): 同じ段 `{"op": "otsu"}` が `run_pipeline` と `FullseyeEngine` では走るのに、`diagnose_stages` は「unknown operator {'op': 'otsu'}」、`fullseye.Pipeline` は `unhashable type: 'dict'` だった。op 名の取り出しを `engine.stage_name` の 1 本にし、4 つの入口が同じ段を同じ名前に読む(門で固定)。`diagnose_stages` は壊れた段を例外でなく error 行に、`Pipeline` は JSON 由来の list 段と `{"op": name, **kwargs}` を受ける。
+- ★**MCP カタログの facade 層は関数だけ**(第 41 報 N141): 「callable なら op」でクラス 41 個(`Image` / `Pipeline` / `MissingBackendError` / `TcpChannel` …)が `fullseye_search_ops` に op として出ていた。クラスとモジュールを除く(facade 1,069 → 1,028、実関数は 1 本も減らない)。「facade 表に無い 474 件」は HALCON 対応表との比較で、残る 460 件は `import fullseye` で呼べる実関数(設計のまま)。
 - **文書の不備**(2026-09-20、利用者の指摘): `docs/OPERATORS.md` が 885 op / 47 分類の古い表のままだった —— 生成器 `catalog.py` が `tools/` の外にあり `tools/regen_all.py` の鎖に無かった。鎖に入れて再生成(931 op / 48 分類、OpenCV / scikit-image / MATLAB の対応表と被覆率)。INSTALL / GETTING_STARTED の 6 言語にあった「約 885 オペレータ」は数を消して「全 op が見え、optional backend の要る op は呼ぶと不足の extra を言う」に。`docs/INTEGRATION.md` の 1,942 / 1,049 を索引の実数に揃え、門 `tests/test_docs_counts_2026_09_20.py` で固定。概要記事と 0.2.1 の要旨にあった「報告 29 / 36 通」は受け取った実数 54 通(指摘 N1〜N197)に訂正。
 
 ## 0.2.1 — 2026-09-20

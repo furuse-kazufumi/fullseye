@@ -15,14 +15,14 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**22 findings (22 fixed), from 10 PoCs.**
+**24 findings (24 fixed), from 10 PoCs.**
 
 ## By kind
 
 | Kind | Findings | Fixed |
 |---|---:|---:|
-| Silently wrong (no exception) | 10 | 10 |
-| Implementation defect | 4 | 4 |
+| Silently wrong (no exception) | 11 | 11 |
+| Implementation defect | 5 | 5 |
 | The gate did not stand where the accident happens | 2 | 2 |
 | Present but unreachable | 5 | 5 |
 | Documentation hole (one-way reference, stale number) | 1 | 1 |
@@ -31,7 +31,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 
 | PoC | Findings |
 |---|---:|
-| [`genspark_external_review`](../examples/genspark_external_review.py) | 12 |
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 14 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
@@ -100,6 +100,12 @@ GenSpark 第 15〜27 報(N67 / N68 / N69 / N71、N84 / N85 / N87、N92 / N94 / N
 
 Found by: `genspark_external_review` / Changed: `opassist.py`, `dsp.py`, `api.py` / Gate: `test_producers_and_consumers_refuse_unknown_sorts_and_op_names`, `test_presets_refuse_unknown_ops_and_are_empty_for_known_ops_without_presets`, `test_write_wav_path_is_not_a_data_input_in_the_ledger`, `test_no_ignored_exception_leaks_to_stderr_when_write_wav_is_misused`, `test_list_ops_rows_expose_the_native_guard`, `test_empty_input_contract_is_uniform_across_ops`, `test_every_shared_alias_resolves_by_rule_not_by_registration_order`, `test_list_ops_rows_name_their_alias_peers`, `test_list_ops_sort_and_search_fold_case_and_accents`, `test_op_run_refuses_to_call_with_a_none_sample_and_names_the_sort`, `test_non_array_images_are_type_errors_regardless_of_policy`, `test_data_range_of_without_arrays_is_a_contract_error`, `test_lazy_torch_import_error_says_whether_torch_is_installed`, `test_list_ops_unknown_sort_is_refused_and_lists_the_known_ones` / Status: fixed
 
+#### [MCP カタログの facade 層がクラス 41 個を op として並べていた](hardening/mcp-facade-layer-listed-classes-as-ops.md) _(ja)_
+
+GenSpark 第 41 報(2026-09-20)N141: 「facade ソースに facade 表に無い名前が 474 件、Python のクラス名を含む」。 master で再現 —— `Catalog.load()` の 2,497 項目のうち facade だけの項目 501 件に、`Image` / `Pipeline` / `FullseyeEngine` / `VideoPipeline` / `MissingBackendError` / `TcpChannel` / `ModbusTcpServer` などクラス **41 個**が op として入っていた。`fullseye_search_ops("Pipeline")` がクラスを「op」として返し、LLM の検索面を汚す。 _(ja)_
+
+Found by: `genspark_external_review` / Changed: `fullseye/mcp/catalog.py` / Gate: `test_facade_layer_lists_functions_only`, `test_search_surface_carries_no_class_names`, `test_real_facade_functions_stay_searchable` / Status: fixed
+
 #### [PFM の既定が 8 bit 値を float 形式に書き、壊れた pipeline 設定が「成功」し、無い GPU が生の torch 文で報告されていた](hardening/pfm-default-wrote-8-bit-values-into-a-float-format.md) _(ja)_
 
 GenSpark 第 28〜35 報(0.2.1 の仕上げに回した分)。 _(ja)_
@@ -131,6 +137,12 @@ Found by: `genspark_external_review` / Changed: `studio.py` / Gate: `test_run_al
 GenSpark 第 14 報(公開 API 955 本の一括スモークを有効引数で再検証した回)。ライブラリ自身の往復で落ちる: _(ja)_
 
 Found by: `genspark_external_review` / Changed: `pose_quat.py` / Gate: `test_pose_helpers_accept_their_own_homogeneous_matrix`, `test_other_shapes_say_what_a_pose_is` / Status: fixed
+
+#### [同じ段を 4 つの入口が別々に読んでいた](hardening/stage-forms-read-differently-by-four-entry-points.md) _(ja)_
+
+GenSpark 第 53 報(0.2.0 の clone 調査、2026-09-20)。0.2.1 でも再現。 _(ja)_
+
+Found by: `genspark_external_review` / Changed: `engine.py`, `unified.py` / Gate: `test_four_entry_points_read_the_same_stage_names`, `test_diagnose_stages_reports_a_broken_stage_instead_of_raising`, `test_engine_rejects_a_malformed_stage_with_the_shared_sentence`, `test_unified_pipeline_accepts_list_and_dict_stages` / Status: fixed
 
 ### The gate did not stand where the accident happens
 
