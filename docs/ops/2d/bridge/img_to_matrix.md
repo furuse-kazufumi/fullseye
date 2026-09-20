@@ -66,7 +66,7 @@ img_to_matrix 0.50 0.50
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[identity](../misc/identity.md) · [tb_mat_pinv](../typed/tb_mat_pinv.md) · [tb_mat_cond](../typed/tb_mat_cond.md) · [tb_stat_covariance](../typed/tb_stat_covariance.md) · [tb_stat_correlation](../typed/tb_stat_correlation.md) · [tb_graph_activation_latency](../typed/tb_graph_activation_latency.md) · [matrix_to_img](matrix_to_img.md)
+[identity](../misc/identity.md) · [tb_mat_pinv](../typed/tb_mat_pinv.md) · [tb_mat_cond](../typed/tb_mat_cond.md) · [tb_stat_covariance](../typed/tb_stat_covariance.md) · [tb_stat_correlation](../typed/tb_stat_correlation.md) · [matrix_to_img](matrix_to_img.md)
 
 ## 同カテゴリ(`bridge`)
 

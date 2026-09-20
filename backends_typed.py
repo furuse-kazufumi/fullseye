@@ -161,6 +161,10 @@ _OP_BRIDGE_SKIP = {
     # 全 sort 掃引で同類は他に無かった(宣言 out と実際の形が食い違う橋 op は
     # レジストリ 901 本中この 1 件だけ)。
     "indices_to_labels",
+    # 2026-09-20: conngraph の状態列 (T, n) → 潜時 (n,)。matrix→labels の写像で自動的に橋が架かり、
+    #   画像を「状態列」と読んで (8,) を volume と宣言する退化した op(tb_graph_activation_latency)が
+    #   生まれた(全体スイートで 4 門が赤)。状態列は画像ではないので橋を架けない。
+    "graph_activation_latency",
 }
 
 

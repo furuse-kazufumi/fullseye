@@ -66,15 +66,15 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**2,026 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **50 family guides**. Entry points by dimension:
+**2,025 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **50 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 932/932, typed ledger 1073/1085, one-line facade `fullseye.<name>` 568/1202 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 931/931, typed ledger 1073/1085, one-line facade `fullseye.<name>` 568/1202 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 2031 notes, **1978** link at least one runnable example (53 have none) and **2002** have a usage section of 120+ characters (29 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2031.
+**Measured substance**: of 2030 notes, **1977** link at least one runnable example (53 have none) and **2001** have a usage section of 120+ characters (29 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2030.
 
 | dimension | ops | entry |
 |---|---:|---|
-| `2d` | 949 | [INDEX](ops/2d/INDEX.md) |
+| `2d` | 948 | [INDEX](ops/2d/INDEX.md) |
 | `3d` | 363 | [INDEX](ops/3d/INDEX.md) |
 | `optics` | 131 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
@@ -208,7 +208,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Document map — all 191
 
-The complete map, so that **no document is unreachable from this index** (the 2,026 per-op notes and 50 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 2,025 per-op notes and 50 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 

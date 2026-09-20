@@ -1,10 +1,10 @@
 {
- "n_ops": 2020,
+ "n_ops": 2019,
  "tiers": {
   "color": 12,
   "ledger": 1071,
   "nary": 17,
-  "registry": 920
+  "registry": 919
  },
  "sorts": [
   "angle",
@@ -21743,16 +21743,6 @@
    "halcon": "",
    "in_sort": "signal",
    "out_sort": "feature",
-   "category": "typed",
-   "tier": "registry",
-   "module": "backends_typed",
-   "requires": []
-  },
-  {
-   "name": "tb_graph_activation_latency",
-   "halcon": "",
-   "in_sort": "matrix",
-   "out_sort": "volume",
    "category": "typed",
    "tier": "registry",
    "module": "backends_typed",

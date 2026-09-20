@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2020,
- "n_notes": 2026,
+ "n_ops": 2019,
+ "n_notes": 2025,
  "notes": {
   "vol_dilate": [
    {
@@ -8903,16 +8903,6 @@
     "in": "signal",
     "out": "feature",
     "path": "docs/ops/2d/typed/tb_get_y_value_funct_1d.md"
-   }
-  ],
-  "tb_graph_activation_latency": [
-   {
-    "op": "tb_graph_activation_latency",
-    "dim": "2d",
-    "category": "typed",
-    "in": "matrix",
-    "out": "volume",
-    "path": "docs/ops/2d/typed/tb_graph_activation_latency.md"
    }
   ],
   "tb_highpass": [

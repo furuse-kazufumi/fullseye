@@ -71,7 +71,7 @@ tb_mat_pinv 0.50 0.50
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[identity](../misc/identity.md) · [tb_mat_cond](tb_mat_cond.md) · [tb_stat_covariance](tb_stat_covariance.md) · [tb_stat_correlation](tb_stat_correlation.md) · [tb_graph_activation_latency](tb_graph_activation_latency.md) · [matrix_to_img](../bridge/matrix_to_img.md)
+[identity](../misc/identity.md) · [tb_mat_cond](tb_mat_cond.md) · [tb_stat_covariance](tb_stat_covariance.md) · [tb_stat_correlation](tb_stat_correlation.md) · [matrix_to_img](../bridge/matrix_to_img.md)
 
 ## 同カテゴリ(`typed`)
 
