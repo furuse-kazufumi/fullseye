@@ -1,0 +1,40 @@
+[
+ {
+  "file": "01_eye_sweep.gif",
+  "name": "eye_sweep",
+  "caption": "a stimulus of one eye column (+ its 6 neighbours) moves along a row of the right eye; yellow = stimulated neurons, orange/blue = response (scale = response peak); the connectome answers retinotopically, the shuffle does not",
+  "shape": [
+   648,
+   762,
+   3
+  ],
+  "animated": true,
+  "frames": 120,
+  "frames_written": 120,
+  "fps": 10.0
+ },
+ {
+  "file": "02_image_through_the_eye.gif",
+  "name": "image_through_the_eye",
+  "caption": "a bar crossing the visual field, resampled onto the ommatidial lattice (fly_hex_resample) and fed into the wiring as per-column stimulus; the response follows the bar",
+  "shape": [
+   340,
+   762,
+   3
+  ],
+  "animated": true,
+  "frames": 16,
+  "frames_written": 16,
+  "fps": 6.0
+ },
+ {
+  "file": "03_retinotopy_scatter.png",
+  "name": "retinotopy_scatter",
+  "caption": "|x|-weighted centroid of the responding optic-lobe neurons vs the stimulated column",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

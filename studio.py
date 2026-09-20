@@ -4151,7 +4151,13 @@ def build_window(model=None):
     act_physical_ai.setToolTip("Play the GPU-learned evis walk as Fullseye perceives it "
                                "(RGB · depth · DVS events)")
     act_physical_ai.triggered.connect(lambda: win._open_physical_ai_viewer())
+    act_eye_brain = QtGui.QAction("Compound eye → brain (connectome wave)…", win)
+    act_eye_brain.setToolTip("Stimulate the eye column under the mouse and watch the response travel the wiring "
+                             "(MaleCNS right eye + hubs; synthetic surrogate without the cache)")
+    act_eye_brain.triggered.connect(lambda: win._open_eye_brain_panel())
+    win._act_eye_brain = act_eye_brain
     menu_tools.addAction(act_physical_ai)
+    menu_tools.addAction(act_eye_brain)                        # compound eye → connectome wave (2026-09-20)
     win._act_physical_ai = act_physical_ai
     menu_tools.addSeparator()
     lang_menu = _menu(menu_tools, "Language / 言語 / 语言", "language")  # UI/help language = a preference, not Help
@@ -8620,6 +8626,123 @@ def build_window(model=None):
         return dlg
     win._open_physical_ai_viewer = open_physical_ai_viewer
     win._latest_evis_perception = _latest_evis_perception
+
+    # ------------------------------------------------------------------ Compound eye → brain(2026-09-20)
+    def open_eye_brain_panel():
+        """Tools ▸ Compound eye → brain: 左 = 複眼が見る像(個眼格子)、右 = 脳の立体(Viewer3D、ドラッグで視点)。
+        マウスが指す個眼の柱(MaleCNS の assignedOlHex)に属する視葉ニューロンへパルスを入れ、応答の波を右に流す。
+        「image」モードは Studio の現在の画像を複眼に落とし、個眼の明るさをそのまま刺激にする。対照 = 次数保存 shuffle。
+        データはキャッシュ(~/.cache/fullseye/poc_malecns_eye)、無ければ合成の代替(題に synthetic surrogate と出る)。"""
+        import eyebrain
+        prev = getattr(win, "_eye_brain_dialog", None)
+        if prev is not None:
+            try:
+                prev.close(); prev.deleteLater()
+            except RuntimeError:
+                pass
+        eb = eyebrain.load()
+        synthetic = eb.provenance.startswith("synthetic")
+        dlg = QtWidgets.QDialog(win)
+        dlg.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        dlg.setWindowTitle("Compound eye → brain — %s" % ("synthetic surrogate" if synthetic else "MaleCNS right eye + hubs"))
+        tag_dialog(dlg, "viewer", backend="conngraph reservoir (numpy)")
+        lay = QtWidgets.QVBoxLayout(dlg)
+        cap = QtWidgets.QLabel("Move the mouse over the eye: the column under the cursor is stimulated and the response "
+                               "travels the wiring on the right (drag to orbit, wheel to zoom). %d neurons, %d eye columns, "
+                               "%d ommatidia. Yellow = stimulated, orange = right, blue = left; brightness scale = response peak."
+                               % (eb.n, len(eb.columns), len(eb.lattice["uv"])))
+        cap.setWordWrap(True); cap.setProperty("hint", True); lay.addWidget(cap)
+        row = QtWidgets.QHBoxLayout(); lay.addLayout(row)
+        SIZE = 320
+
+        class EyeLabel(QtWidgets.QLabel):
+            moved = QtCore.Signal(int)
+
+            def mouseMoveEvent(self, e):
+                pos = e.position() if hasattr(e, "position") else e.pos()
+                self.moved.emit(eb.column_at(float(pos.x()), float(pos.y()), SIZE))
+
+        eye = EyeLabel(); eye.setFixedSize(SIZE, SIZE); eye.setMouseTracking(True); row.addWidget(eye)
+        v3 = Viewer3D(); v3.setMinimumSize(480, 480); row.addWidget(v3, 1)
+        ctl = QtWidgets.QHBoxLayout(); lay.addLayout(ctl)
+        mode = QtWidgets.QComboBox()
+        mode.addItems(["cursor: stimulate the column under the mouse", "image: feed the current Studio image through the eye"])
+        ctl.addWidget(mode)
+        shuffle = QtWidgets.QCheckBox("degree-preserving shuffle (control)"); ctl.addWidget(shuffle)
+        radius = QtWidgets.QSpinBox(); radius.setRange(0, 4); radius.setValue(1); radius.setPrefix("neighbourhood r = "); ctl.addWidget(radius)
+        status = QtWidgets.QLabel("hover over the eye"); status.setProperty("hint", True); lay.addWidget(status)
+        # 背景 = 全 soma(間引き)、前景 = 部分グラフ。脳を上にする(z を反転)
+        flip = lambda Q: np.column_stack([Q[:, 0], Q[:, 1], -Q[:, 2]])          # noqa: E731
+        bg = eb.P_all[:: max(1, eb.P_all.shape[0] // 40000)]
+        P_show = np.vstack([flip(bg), flip(eb.P)])
+        dim = np.full((bg.shape[0], 3), 0.18)
+        state = {"X": None, "stim": None, "peak": 0.0, "k": 0, "signal": None, "col": -1, "busy": False}
+        v3.set_points(P_show, colors=np.vstack([dim, eb.colors * 0.35]))
+        v3._yaw, v3._pitch = 0.0, 15.0
+        timer = QtCore.QTimer(dlg); timer.setInterval(60)
+
+        def redraw_eye():
+            hl = eb.column_neighbourhood(state["col"], radius.value()) if state["col"] >= 0 else None
+            img = eb.eye_view(state["signal"], SIZE, highlight=hl)
+            eye.setPixmap(QtGui.QPixmap.fromImage(_to_qimage(img, QtGui)))
+
+        def run(stim):
+            state["stim"] = stim
+            state["X"] = eb.run_wave(stim, shuffle=shuffle.isChecked())
+            state["peak"] = eb.response_peak(state["X"], stim)
+            state["k"] = 0
+            timer.start()
+            status.setText("stimulated %d neurons · response peak %.4f · %s · step 0" % (
+                int((stim > 0).sum()), state["peak"], "shuffle" if shuffle.isChecked() else "connectome"))
+
+        def tick():
+            X = state["X"]
+            if X is None:
+                timer.stop(); return
+            k = state["k"]
+            cols = eb.frame_colors(X[k], state["stim"], state["peak"])
+            v3.set_points(P_show, colors=np.vstack([dim, cols]))
+            status.setText(status.text().rsplit("· step", 1)[0] + "· step %d / %d" % (k, X.shape[0]))
+            state["k"] = k + 1
+            if state["k"] >= X.shape[0]:
+                timer.stop()
+
+        def on_move(col):
+            if mode.currentIndex() != 0 or col == state["col"]:
+                return
+            state["col"] = col
+            redraw_eye()
+            run(eb.stimulus_for_column(col, radius.value()))
+
+        def on_mode(_i=None):
+            if mode.currentIndex() == 1:
+                img = model.image
+                if img is None:
+                    status.setText("no image in Studio"); return
+                g = img if img.ndim == 2 else img[..., :3].mean(axis=2)
+                state["signal"] = eb.eye_signal(g)
+                state["col"] = -1
+                redraw_eye()
+                run(eb.stimulus_from_signal(state["signal"]))
+            else:
+                state["signal"] = None
+                redraw_eye()
+
+        timer.timeout.connect(tick)
+        eye.moved.connect(on_move)
+        mode.currentIndexChanged.connect(on_mode)
+        shuffle.toggled.connect(lambda _c: run(state["stim"]) if state["stim"] is not None else None)
+        radius.valueChanged.connect(lambda _v: on_move(state["col"]) if state["col"] >= 0 else None)
+        dlg.finished.connect(timer.stop)
+        redraw_eye()
+        dlg._eyebrain = eb                       # for headless tests
+        dlg._run = run; dlg._on_move = on_move; dlg._on_mode = on_mode; dlg._tick = tick
+        dlg._state = state; dlg._viewer = v3; dlg._mode = mode; dlg._shuffle = shuffle
+        win._eye_brain_dialog = dlg
+        dlg.resize(900, 560)
+        dlg.show()
+        return dlg
+    win._open_eye_brain_panel = open_eye_brain_panel
 
     # restore persisted system settings. QSettings is NOT in-memory under offscreen —
     # it always hits the real user store; the test suite redirects QSettings to a

@@ -155,6 +155,31 @@ def test_physical_ai_viewer_action_and_open():
     assert dlg.windowTitle().startswith("Physical AI")
 
 
+def test_eye_brain_panel_opens_and_responds_headless(tmp_path, monkeypatch):
+    """Tools ▸ Compound eye → brain: キャッシュが無くても合成の代替で開き、柱を指すと波が走って色が変わる
+    (2026-09-20)。データディレクトリは tmp に向ける(手元の MaleCNS キャッシュに依存しない)。"""
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    monkeypatch.setenv("FULLSEYE_DATA_DIR", str(tmp_path))
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+    win, _model = studio.build_window()
+    assert hasattr(win, "_act_eye_brain") and "eye" in win._act_eye_brain.text().lower()
+    dlg = win._open_eye_brain_panel()
+    assert "synthetic surrogate" in dlg.windowTitle()
+    eb = dlg._eyebrain
+    before = dlg._viewer._colors.copy()
+    dlg._on_move(5)                                    # 柱 5 を指す → 波が走る
+    assert dlg._state["X"] is not None and dlg._state["X"].shape[1] == eb.n
+    assert dlg._state["peak"] > 0.0
+    dlg._tick(); dlg._tick()                           # イベントループ無しで 2 コマ進める
+    assert dlg._state["k"] == 2
+    assert not np.allclose(dlg._viewer._colors, before)          # 応答で色が動いた
+    dlg._mode.setCurrentIndex(1)                       # image モード: Studio の現在の画像を眼に通す(combo → on_mode)
+    assert dlg._state["signal"] is not None and dlg._state["signal"].shape == (len(eb.lattice["uv"]),)
+    dlg.close()
+
+
 def test_op_detail_and_tooltip():
     row = {"name": "gaussian", "halcon": "gauss_filter", "category": "filter",
            "in_sort": "image", "out_sort": "image"}
