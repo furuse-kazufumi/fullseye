@@ -40,7 +40,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 | [`poc_search_sweep_width`](../examples/poc_search_sweep_width.py) | 1 |
 | [`poc_stockpile_volume`](../examples/poc_stockpile_volume.py) | 1 |
 | [`poc_thermal_radiometry`](../examples/poc_thermal_radiometry.py) | 1 |
-| [`tools/chain_fuzz.py`](../examples/tools/chain_fuzz.py.py) | 1 |
+| [`tools/chain_fuzz.py`](../tools/chain_fuzz.py) | 1 |
 
 ## 記録
 

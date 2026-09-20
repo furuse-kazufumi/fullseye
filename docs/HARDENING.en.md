@@ -41,7 +41,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 | [`poc_search_sweep_width`](../examples/poc_search_sweep_width.py) | 1 |
 | [`poc_stockpile_volume`](../examples/poc_stockpile_volume.py) | 1 |
 | [`poc_thermal_radiometry`](../examples/poc_thermal_radiometry.py) | 1 |
-| [`tools/chain_fuzz.py`](../examples/tools/chain_fuzz.py.py) | 1 |
+| [`tools/chain_fuzz.py`](../tools/chain_fuzz.py) | 1 |
 
 ## The findings
 

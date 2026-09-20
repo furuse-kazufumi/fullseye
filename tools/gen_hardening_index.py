@@ -181,7 +181,9 @@ def _render(rows: list[dict], lang: str) -> str:
     L += ["## %s" % ("見つけた PoC ごと" if ja else "By the PoC that found it"), "",
           "| %s | %s |" % (("PoC", "件数") if ja else ("PoC", "Findings")), "|---|---:|"]
     for poc, n in sorted(by_poc.items(), key=lambda kv: (-kv[1], kv[0])):
-        L.append("| [`%s`](../examples/%s.py) | %d |" % (poc, poc, n))
+        # found_by は examples/<PoC> か、拡張子つきの相対パス(tools/chain_fuzz.py のような道具)
+        href = "../%s" % poc if poc.endswith(".py") else "../examples/%s.py" % poc
+        L.append("| [`%s`](%s) | %d |" % (poc, href, n))
     L += [""]
 
     L += ["## %s" % ("記録" if ja else "The findings"), ""]
