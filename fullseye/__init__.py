@@ -27,7 +27,7 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     from api import (  # noqa: E402,F401
         apply, run_pipeline, find_op, list_ops, op_names, categories, knob_summary,
-        fallbacks, fallback_counts, clear_fallbacks, FullseyeFallbackWarning, strict_mode,
+        fallbacks, fallback_counts, fallback_overflow, clear_fallbacks, FullseyeFallbackWarning, strict_mode,
         set_match_template, FAILED_BACKENDS, ambiguous_aliases, reset_gpu, gpu_open_ops,
         reset_fast, fast_open_ops, MissingBackendError,
         read_image, write_image, RT, REGISTRY, __version__, version,
@@ -634,7 +634,7 @@ __all__ = [
     "op_find", "op_run", "op_path", "op_assist", "op_presets", "op_producers",
     "op_consumers", "op_accepts", "op_sorts",
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories", "knob_summary",
-    "fallbacks", "fallback_counts", "clear_fallbacks", "FullseyeFallbackWarning",
+    "fallbacks", "fallback_counts", "fallback_overflow", "clear_fallbacks", "FullseyeFallbackWarning",
     "strict_mode", "set_match_template", "FAILED_BACKENDS", "ambiguous_aliases", "reset_gpu", "gpu_open_ops",
     "reset_fast", "fast_open_ops", "MissingBackendError",
     "read_image", "write_image", "RT", "REGISTRY", "__version__", "version",
@@ -961,3 +961,7 @@ __all__ = [
     "compare_to_golden", "golden_measure", "golden_spec",
     "inspection_fixture", "spec_margins",
 ]
+
+# ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った
+#   道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+del os, sys, warnings, annotations

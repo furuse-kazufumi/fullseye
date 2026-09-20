@@ -9304,7 +9304,32 @@ def build_window(model=None):
     return win, model
 
 
-def main() -> int:
+_USAGE = """usage: fullseye-studio [-h] [--version]
+
+Fullseye Studio - an HDevelop-style IDE for the operator library (PySide6).
+Runs the GUI; there are no other options. On a machine without a display set
+QT_QPA_PLATFORM=offscreen (headless smoke) or use the CLI: fullseye --help.
+"""
+
+
+def main(argv=None) -> int:
+    # ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication
+    #   を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if any(a in ("-h", "--help") for a in argv):
+        print(_USAGE, end="")
+        return 0
+    if "--version" in argv:
+        print("fullseye-studio %s" % api.__version__)
+        return 0
+    if argv:
+        print(_USAGE + "fullseye-studio: unknown argument(s): %s" % " ".join(argv), file=sys.stderr)
+        return 2
+    if (sys.platform.startswith("linux") and not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY")
+            and not os.environ.get("QT_QPA_PLATFORM")):
+        print("fullseye-studio: no display (DISPLAY / WAYLAND_DISPLAY unset) - Qt would abort. "
+              "Set QT_QPA_PLATFORM=offscreen for a headless run, or use the CLI (fullseye --help).", file=sys.stderr)
+        return 2
     import faulthandler
     import traceback
     from PySide6 import QtWidgets

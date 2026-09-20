@@ -2413,6 +2413,7 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
 # ---- fallback ledger (re-exported from backend_safe) ------------------------ #
 fallbacks = _bs.fallbacks
 fallback_counts = _bs.fallback_counts
+fallback_overflow = _bs.fallback_overflow
 clear_fallbacks = _bs.clear_fallbacks
 strict_mode = _bs.strict_mode
 set_match_template = _ops.set_match_template

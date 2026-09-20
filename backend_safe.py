@@ -63,6 +63,7 @@ _EVENTS = deque(maxlen=_EVENT_MAX)  # bounded ring, oldest first (O(1) append, d
 _COUNTS: dict = {}                  # name -> number of fallbacks since clear
 _WARNED: set = set()                # names that already emitted their one warning
 _SEQ = 0                            # monotonically increasing event counter (never reset)
+_DROPPED = 0                        # events evicted from the ring since the last clear (N158)
 _TL = threading.local()             # .op = name the facade is currently running
 
 
@@ -155,6 +156,11 @@ def record(name, exc, out_sort=None, source: str = "op") -> dict:
     with _LEDGER_LOCK:
         _SEQ += 1
         ev["seq"] = _SEQ
+        # ★2026-09-20(GenSpark 第 44 報 N158): 環状バッファは黙って古い方を捨てる。捨てた数を数えないと、
+        #   `fallbacks()` が 256 件しか返さない理由が利用者から見えない(counts と件数が合わない)。
+        global _DROPPED
+        if len(_EVENTS) == _EVENT_MAX:
+            _DROPPED += 1
         _EVENTS.append(ev)
         _COUNTS[key] = _COUNTS.get(key, 0) + 1
         first = key not in _WARNED
@@ -174,6 +180,18 @@ def fallbacks() -> list:
         return [dict(e) for e in _EVENTS]
 
 
+def fallback_overflow() -> int:
+    """How many fallback events the bounded ring (256 newest) has evicted since the last
+    :func:`clear_fallbacks`. ``fallbacks()`` returns only the newest 256 events; when this is
+    non-zero, ``sum(fallback_counts().values()) == len(fallbacks()) + fallback_overflow()``.
+
+    >>> fullseye.clear_fallbacks(); ...; fullseye.fallback_overflow()
+    0
+    """
+    with _LEDGER_LOCK:
+        return _DROPPED
+
+
 def fallback_counts() -> dict:
     """``{name: n}`` - how many times each op fell back since the last ``clear_fallbacks``."""
     with _LEDGER_LOCK:
@@ -189,9 +207,11 @@ def last_fallback():
 def clear_fallbacks(reset_warnings: bool = False) -> None:
     """Drop the ledger (call before a probe run). ``reset_warnings=True`` also lets
     every op warn again once."""
+    global _DROPPED
     with _LEDGER_LOCK:
         _EVENTS.clear()
         _COUNTS.clear()
+        _DROPPED = 0
         if reset_warnings:
             _WARNED.clear()
 
