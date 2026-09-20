@@ -56,7 +56,7 @@ which is zero at ``lambda = 2 dphi`` (``psi = pi``) and maximal at
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
-[fly_lgmd_eta](../looming/fly_lgmd_eta.md) · [fly_tau_from_expansion](../looming/fly_tau_from_expansion.md) · [fly_dsi](../tuning/fly_dsi.md)
+[fly_hex_quantize](../sample/fly_hex_quantize.md) · [fly_lgmd_eta](../looming/fly_lgmd_eta.md) · [fly_tau_from_expansion](../looming/fly_tau_from_expansion.md) · [fly_dsi](../tuning/fly_dsi.md)
 
 ## 同カテゴリ(`motion`)
 

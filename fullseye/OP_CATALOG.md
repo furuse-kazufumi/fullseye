@@ -1049,7 +1049,7 @@ _計 363 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 931 ops / 48 categories。_
+_計 932 ops / 48 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1199,7 +1199,7 @@ _計 931 ops / 48 categories。_
 - `dog` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
 - `edge_transition_width` `image → image` · 例: `gallery2d_edges`
 - `grad_dir` `image → image` · 例: `gallery2d_edges`
-- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `poc_colormap_readability`, `poc_datacenter_thermal_field`
+- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `poc_colormap_readability`, `poc_datacenter_thermal_field`, `poc_eye_to_brain`
 - `corner_response` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`, `poc_document_scan`, `poc_matrix_code_reading`
 - `sk_scharr` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
 - `sk_farid` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
@@ -1913,7 +1913,7 @@ _計 931 ops / 48 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(154)
+### typed(155)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
@@ -2042,6 +2042,7 @@ _計 931 ops / 48 categories。_
 - `tb_weighting_response` `signal → signal` · 例: なし
 - `tb_apply_weighting` `signal → signal` · 例: なし
 - `tb_equivalent_level` `signal → feature` · 例: なし
+- `tb_fly_hex_quantize` `signal → signal` · 例: なし
 - `tb_fly_lgmd_eta` `signal → signal` · 例: なし
 - `tb_fly_tau_from_expansion` `signal → signal` · 例: なし
 - `tb_normals_to_egi` `points → image` · 例: なし

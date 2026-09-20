@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 818. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 820. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -151,11 +151,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examplefig.py`
 
-- **L139** — ★`colorize_depth` gibt **float [0,1]** zurück. Empfängt man es mit `np.asarray(..., np.uint8)`, wird jedes 0.x auf 0 abgeschnitten und pechschwarz (getroffen am 2026-09-06).
-- **L171** — ★Lass den Textkörper des Beispiels nicht weg. Schade, dass die Abbildung nicht erscheint, aber die Zahlen müssen gezeigt werden.
-- **L210** — ★Reiche hier nicht einfach an :func:`_to_rgb8` weiter. Das übergibt (H,W) an `colorize_depth`, aber **darin wird jeder Frame einzeln normalisiert**, sodass ein Frame, der ganz 0 ist, und einer, der ganz 1 ist, in derselben Farbe herauskommen (von einem Test am 2026-09-09 gefangen). Erst durch die explizite Übergabe des Wertebereichs wird der Maßstab zu einem einzigen.
-- **L275** — ★Pillow **faltet einen mit dem vorherigen identischen Frame zu einem einzigen** (diese Zeit wird zur Anzeigezeit des vorherigen Frames addiert, sodass sich die Bewegungsgeschwindigkeit nicht ändert). Wir zählen nach dem Schreiben und halten, wenn es von der übergebenen Zahl abweicht, **beide** im Register fest —— um nicht still ein "72-Frame-GIF" durchgehen zu lassen, dessen Inhalt 40 Frames hat.
-- **L339** — ★2026-09-08: Ist das Panel klein, passt der Titel nicht, und ``annotate_figure_grid`` verweigert (korrekt), sodass **eine Abbildung still verschwand**. Ein 29×19-core-Gitter oder eine 24×24-verkleinerte Karte erscheint in PoCs routinemäßig, doch der Fehler sagt "kürze den Titel" —— die tatsächliche Behebung ist "vergrößere das Panel". Zwei Zuständige fielen unabhängig in dasselbe Loch (es gibt einen Fall, in dem eine scene-Abbildung auf dem Schild verschwand), deshalb lassen wir nicht jeden Aufrufer die Vergrößerung schreiben, sondern vergrößern hier einmal per Nächster-Nachbar. Wir nehmen Nächster-Nachbar, um beim Vergrößern **keine Werte zu erzeugen** (Interpolation würde auf der Abbildung nicht existierende Zwischenwerte erzeugen, und die Pseudofarbe würde lügen).
+- **L180** — ★`colorize_depth` gibt **float [0,1]** zurück. Empfängt man es mit `np.asarray(..., np.uint8)`, wird jedes 0.x auf 0 abgeschnitten und pechschwarz (getroffen am 2026-09-06).
+- **L212** — ★Lass den Textkörper des Beispiels nicht weg. Schade, dass die Abbildung nicht erscheint, aber die Zahlen müssen gezeigt werden.
+- **L251** — ★Reiche hier nicht einfach an :func:`_to_rgb8` weiter. Das übergibt (H,W) an `colorize_depth`, aber **darin wird jeder Frame einzeln normalisiert**, sodass ein Frame, der ganz 0 ist, und einer, der ganz 1 ist, in derselben Farbe herauskommen (von einem Test am 2026-09-09 gefangen). Erst durch die explizite Übergabe des Wertebereichs wird der Maßstab zu einem einzigen.
+- **L316** — ★Pillow **faltet einen mit dem vorherigen identischen Frame zu einem einzigen** (diese Zeit wird zur Anzeigezeit des vorherigen Frames addiert, sodass sich die Bewegungsgeschwindigkeit nicht ändert). Wir zählen nach dem Schreiben und halten, wenn es von der übergebenen Zahl abweicht, **beide** im Register fest —— um nicht still ein "72-Frame-GIF" durchgehen zu lassen, dessen Inhalt 40 Frames hat.
+- **L380** — ★2026-09-08: Ist das Panel klein, passt der Titel nicht, und ``annotate_figure_grid`` verweigert (korrekt), sodass **eine Abbildung still verschwand**. Ein 29×19-core-Gitter oder eine 24×24-verkleinerte Karte erscheint in PoCs routinemäßig, doch der Fehler sagt "kürze den Titel" —— die tatsächliche Behebung ist "vergrößere das Panel". Zwei Zuständige fielen unabhängig in dasselbe Loch (es gibt einen Fall, in dem eine scene-Abbildung auf dem Schild verschwand), deshalb lassen wir nicht jeden Aufrufer die Vergrößerung schreiben, sondern vergrößern hier einmal per Nächster-Nachbar. Wir nehmen Nächster-Nachbar, um beim Vergrößern **keine Werte zu erzeugen** (Interpolation würde auf der Abbildung nicht existierende Zwischenwerte erzeugen, und die Pseudofarbe würde lügen).
 
 ## `examples/acoustic_condition_monitoring.py`
 
@@ -400,7 +400,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_eye_to_brain.py`
 
-- **L59** _(ja)_ — ★背側から見るだけだと、像の左右(方位角)は soma の y 軸 = 奥行きに写り、応答の移動が見えない (2026-09-20 に実測: 縞を動かしても同じ場所が光って見えた)。背側と側面の 2 方向を並べる。
+- **L60** _(ja)_ — ★背側から見るだけだと、像の左右(方位角)は soma の y 軸 = 奥行きに写り、応答の移動が見えない (2026-09-20 に実測: 縞を動かしても同じ場所が光って見えた)。背側と側面の 2 方向を並べる。
+- **L139** _(ja)_ — ★2 値の縞では 1 ビットでも相関 0.99 で量子化の効き目が測れない(実測)。背景 0.5 に +0.3 の 滑らかな縞(σ = 6 px)= 低コントラストの像で、ビット数が信号を潰す条件にする。
+- **L162** _(ja)_ — ★実測(2026-09-20): 効いているのはビット数ではなく「背景を引く」適応。背景 0.5 の像を適応なしで入れると 全柱が刺激され重心が動かない(実データで 0.63)。適応した連続値と 8 ビットは同じ(0.99)。
 
 ## `examples/poc_fabric_defect.py`
 
@@ -1418,9 +1420,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L57** — ★2026-09-08: die feste 6 aufgeben und **an die CPU-Zahl anpassen**. Auf gemeinsam genutzten Runnern (2–4 vCPU) verlangsamt 6-fache Parallelität nur jeden Einzelnen, ohne die Gesamtzeit zu verkürzen, und als die PoCs auf 84 wuchsen, **traf jeder Job pytests 900-Sekunden-timeout** (py3.10 / 3.12). Lokal (12 Kerne) läuft es wie bisher mit 6 oder mehr.
 - **L73** — ★``PYTHONPATH`` **nicht übergeben** (2026-09-09). Lange wurde ``PYTHONPATH=<repo>`` übergeben, doch das ist eine Einstellung, die Nutzer nicht vornehmen, und es bedeutete, dass das Gate einen Schritt neben dem Ort stand, an dem der Unfall geschieht —— durch denselben blinden Fleck blieben `examples/piv_flow_from_particles.py` und andere als "ModuleNotFoundError beim direkten Ausführen aus einem Checkout" (jene Seite hatte nicht einmal ein Gate, das sie ausführt, daher blieb es unbemerkt. `test_example_scripts_run.py`). Auf der PoC-Seite fügen 108 von 116 den repo-Wurzelpfad selbst zu ``sys.path`` hinzu, und die übrigen 8 importieren nur ``fullseye``, sodass alle auch nach dem Entfernen bestehen (gemessen).
-- **L91** — ★Bei Fehlschlag auch das Ende von stdout zurückgeben. Ein PoC druckt seine Befunde und "welche Prüfung fehlschlug" nach stdout vor SystemExit(1), sodass man mit stderr allein **nur "exit 1" und sonst nichts erfährt** (2026-09-07 CI, py3.10 poc_ct_fidelity).
-- **L100** — ★2026-09-07: dies **gab lange 0 zurück** und ging so glatt durch das `assert code == 0` weiter unten —— ein Gate, das sein Urteil gleich nach dem Berechnen verwirft (gemessen: 3 PoCs drucken nie PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). -2 zurückgeben, damit es fehlschlägt.
-- **L122** — ★Dieses Gate führt die 84 PoCs **in einem Durchgang** aus (session fixture). Diese Zeit wird dem ersten Test angerechnet, sodass pyprojects Standard-timeout (900 Sekunden) auf gemeinsam genutzten Runnern fehlschlägt. Nur hier erweitern —— den Standard zu lockern würde auch die Hänger-Erkennung anderer Tests abstumpfen.
+- **L92** — ★Bei Fehlschlag auch das Ende von stdout zurückgeben. Ein PoC druckt seine Befunde und "welche Prüfung fehlschlug" nach stdout vor SystemExit(1), sodass man mit stderr allein **nur "exit 1" und sonst nichts erfährt** (2026-09-07 CI, py3.10 poc_ct_fidelity).
+- **L101** — ★2026-09-07: dies **gab lange 0 zurück** und ging so glatt durch das `assert code == 0` weiter unten —— ein Gate, das sein Urteil gleich nach dem Berechnen verwirft (gemessen: 3 PoCs drucken nie PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). -2 zurückgeben, damit es fehlschlägt.
+- **L123** — ★Dieses Gate führt die 84 PoCs **in einem Durchgang** aus (session fixture). Diese Zeit wird dem ersten Test angerechnet, sodass pyprojects Standard-timeout (900 Sekunden) auf gemeinsam genutzten Runnern fehlschlägt. Nur hier erweitern —— den Standard zu lockern würde auch die Hänger-Erkennung anderer Tests abstumpfen.
 
 ## `tests/test_public_reachability.py`
 

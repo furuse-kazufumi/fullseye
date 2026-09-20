@@ -63,11 +63,11 @@ farther than ``dphi_rad/2`` away (the eye is looking outside the image).
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
-[fly_emd_response](../motion/fly_emd_response.md) · [fly_lgmd_eta](../looming/fly_lgmd_eta.md) · [fly_tau_from_expansion](../looming/fly_tau_from_expansion.md) · [fly_dsi](../tuning/fly_dsi.md)
+[fly_hex_quantize](fly_hex_quantize.md) · [fly_emd_response](../motion/fly_emd_response.md) · [fly_lgmd_eta](../looming/fly_lgmd_eta.md) · [fly_tau_from_expansion](../looming/fly_tau_from_expansion.md) · [fly_dsi](../tuning/fly_dsi.md)
 
 ## 同カテゴリ(`sample`)
 
-—
+[fly_hex_quantize](fly_hex_quantize.md)
 
 ---
 *Provenance: flyvision.py — FLYVISION operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

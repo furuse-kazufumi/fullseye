@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_hex_quantize — FLYVISION <code style="color:#22d3bf">sample</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code> (die Implementierung direkt: <code style="color:#22d3bf">import flyvision; flyvision.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>; aus dem Register: <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_quantize&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Quantize an ommatidial signal the way the eye does: log-compress, then n bits per ommatidium.</p>
+<p>A compound eye is a quantizer by construction: ~800 ommatidia per eye at 4.6 deg spacing,</p>
+<p>photoreceptors that log-compress intensity and adapt to the mean, and lamina cells (L1/L2)</p>
+<p>that split the deviation into ON and OFF channels. This op reproduces that budget so a</p>
+<p>downstream model (reservoir, retinotopy test) can be asked how many bits it really needs.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>signal : (n,) float</p>
+<p>Per-ommatidium intensities &gt;= 0 (`<code style="color:#22d3bf">fly_hex_resample</code>` output).</p>
+<p>bits : int</p>
+<p>1..8 levels = 2**bits (`<code style="color:#22d3bf">mode=&quot;onoff&quot;</code>` ignores it: the output is the signed pair below).</p>
+<p>mode : str</p>
+<p>`<code style="color:#22d3bf">&quot;log&quot;</code>`: log1p-compress relative to the mean, shift the darkest ommatidium to 0, then</p>
+<p>uniform levels over the compressed range; `<code style="color:#22d3bf">&quot;linear&quot;</code><code style="color:#22d3bf">: uniform levels over [0, max]; </code><code style="color:#22d3bf">&quot;onoff&quot;</code>`: deviation from the mean</p>
+<p>relative to `<code style="color:#22d3bf">contrast</code><code style="color:#22d3bf"> clipped to [-1, 1] and returned as </code><code style="color:#22d3bf">2 * n</code><code style="color:#22d3bf"> values </code><code style="color:#22d3bf">[ON..., OFF...]</code>`</p>
+<p>(ON = positive part, OFF = negative part), each &gt;= 0.</p>
+<p>contrast : float</p>
+<p>Michelson-style contrast that saturates the ON/OFF channels (`<code style="color:#22d3bf">mode=&quot;onoff&quot;</code>` only).</p>
+<p>Returns</p>
+<p>-------</p>
+<p>(n,) float in [0, 1] (levels / (2**bits - 1)); for `<code style="color:#22d3bf">&quot;onoff&quot;</code>` (2n,) in [0, 1].</p>
+<p>Notes</p>
+<p>-----</p>
+<p>Non-finite or negative inputs are refused. A constant signal quantizes to all-zeros</p>
+<p>(`<code style="color:#22d3bf">&quot;log&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;onoff&quot;</code>`) — there is no contrast to encode.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_eye_to_brain">poc_eye_to_brain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_eye_to_brain.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">signal</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_emd_response">fly_emd_response</a> · <a style="color:#22d3bf" href="opflyvision:fly_lgmd_eta">fly_lgmd_eta</a> · <a style="color:#22d3bf" href="opflyvision:fly_tau_from_expansion">fly_tau_from_expansion</a> · <a style="color:#22d3bf" href="opflyvision:fly_dsi">fly_dsi</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">sample</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_hex_resample">fly_hex_resample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

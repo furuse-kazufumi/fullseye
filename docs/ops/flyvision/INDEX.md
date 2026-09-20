@@ -1,4 +1,4 @@
-# FLYVISION operator help — 8 ops in 7 categories
+# FLYVISION operator help — 9 ops in 7 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/flyvision/<category>/<op>.md` を走査。
 
@@ -20,9 +20,9 @@
 
 [fly_emd_response](motion/fly_emd_response.md)
 
-### sample (1)
+### sample (2)
 
-[fly_hex_resample](sample/fly_hex_resample.md)
+[fly_hex_quantize](sample/fly_hex_quantize.md) · [fly_hex_resample](sample/fly_hex_resample.md)
 
 ### stimulus (1)
 

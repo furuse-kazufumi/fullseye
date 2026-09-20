@@ -1,10 +1,10 @@
 {
- "n_ops": 2019,
+ "n_ops": 2021,
  "tiers": {
   "color": 12,
-  "ledger": 1071,
+  "ledger": 1072,
   "nary": 17,
-  "registry": 919
+  "registry": 920
  },
  "sorts": [
   "angle",
@@ -4395,6 +4395,19 @@
    "ledger": "opsflyvision",
    "dim": "flyvision",
    "in_sorts": []
+  },
+  {
+   "name": "fly_hex_quantize",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "sample",
+   "tier": "ledger",
+   "ledger": "opsflyvision",
+   "dim": "flyvision",
+   "in_sorts": [
+    "signal"
+   ]
   },
   {
    "name": "fly_hex_resample",
@@ -21663,6 +21676,16 @@
    "halcon": "",
    "in_sort": "points",
    "out_sort": "points",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
+   "name": "tb_fly_hex_quantize",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
    "category": "typed",
    "tier": "registry",
    "module": "backends_typed",

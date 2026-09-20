@@ -64,7 +64,7 @@ documented ``NaN`` return above.
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
-[fly_emd_response](../motion/fly_emd_response.md) · [fly_lgmd_eta](fly_lgmd_eta.md) · [fly_dsi](../tuning/fly_dsi.md)
+[fly_hex_quantize](../sample/fly_hex_quantize.md) · [fly_emd_response](../motion/fly_emd_response.md) · [fly_lgmd_eta](fly_lgmd_eta.md) · [fly_dsi](../tuning/fly_dsi.md)
 
 ## 同カテゴリ(`looming`)
 

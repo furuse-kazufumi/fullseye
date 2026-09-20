@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 818. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 820. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -151,11 +151,11 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examplefig.py`
 
-- **L139** — ★`colorize_depth` returns **float [0,1]**. Receiving it with `np.asarray(..., np.uint8)` truncates every 0.x to 0 and turns it pitch black (hit on 2026-09-06).
-- **L171** — ★Do not drop the body of the example. It is a pity that the figure does not appear, but the numbers must be shown.
-- **L210** — ★Do not just hand off to :func:`_to_rgb8` here. That passes (H,W) to `colorize_depth`, but **inside it each frame is normalized individually**, so a frame that is all 0 and a frame that is all 1 come out the same colour (caught by a test on 2026-09-09). Only by passing the value range explicitly does the scale become a single one.
-- **L275** — ★Pillow **folds a frame identical to the previous one into a single frame** (that time is added to the previous frame's display time, so the speed of motion does not change). We count after writing and, if it differs from the number passed, record **both** in the ledger —— so as not to silently pass off "a 72-frame GIF" whose content is 40 frames.
-- **L339** — ★2026-09-08: when the panel is small the title does not fit, and ``annotate_figure_grid`` (correctly) refuses, so **one figure was silently disappearing**. A 29×19 core grid or a 24×24 reduced map appears routinely in PoCs, yet the error says "shorten the title" —— the actual fix is "enlarge the panel". Two people fell into the same hole independently (there is a case where one scene figure on the signboard disappeared), so instead of making each caller write the enlargement, we do a nearest-neighbour enlargement once here. We use nearest neighbour so as **not to create values** by enlarging (interpolation would create intermediate values that do not exist on the figure, and the pseudo-colour would lie).
+- **L180** — ★`colorize_depth` returns **float [0,1]**. Receiving it with `np.asarray(..., np.uint8)` truncates every 0.x to 0 and turns it pitch black (hit on 2026-09-06).
+- **L212** — ★Do not drop the body of the example. It is a pity that the figure does not appear, but the numbers must be shown.
+- **L251** — ★Do not just hand off to :func:`_to_rgb8` here. That passes (H,W) to `colorize_depth`, but **inside it each frame is normalized individually**, so a frame that is all 0 and a frame that is all 1 come out the same colour (caught by a test on 2026-09-09). Only by passing the value range explicitly does the scale become a single one.
+- **L316** — ★Pillow **folds a frame identical to the previous one into a single frame** (that time is added to the previous frame's display time, so the speed of motion does not change). We count after writing and, if it differs from the number passed, record **both** in the ledger —— so as not to silently pass off "a 72-frame GIF" whose content is 40 frames.
+- **L380** — ★2026-09-08: when the panel is small the title does not fit, and ``annotate_figure_grid`` (correctly) refuses, so **one figure was silently disappearing**. A 29×19 core grid or a 24×24 reduced map appears routinely in PoCs, yet the error says "shorten the title" —— the actual fix is "enlarge the panel". Two people fell into the same hole independently (there is a case where one scene figure on the signboard disappeared), so instead of making each caller write the enlargement, we do a nearest-neighbour enlargement once here. We use nearest neighbour so as **not to create values** by enlarging (interpolation would create intermediate values that do not exist on the figure, and the pseudo-colour would lie).
 
 ## `examples/acoustic_condition_monitoring.py`
 
@@ -400,7 +400,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_eye_to_brain.py`
 
-- **L59** _(ja)_ — ★背側から見るだけだと、像の左右(方位角)は soma の y 軸 = 奥行きに写り、応答の移動が見えない (2026-09-20 に実測: 縞を動かしても同じ場所が光って見えた)。背側と側面の 2 方向を並べる。
+- **L60** _(ja)_ — ★背側から見るだけだと、像の左右(方位角)は soma の y 軸 = 奥行きに写り、応答の移動が見えない (2026-09-20 に実測: 縞を動かしても同じ場所が光って見えた)。背側と側面の 2 方向を並べる。
+- **L139** _(ja)_ — ★2 値の縞では 1 ビットでも相関 0.99 で量子化の効き目が測れない(実測)。背景 0.5 に +0.3 の 滑らかな縞(σ = 6 px)= 低コントラストの像で、ビット数が信号を潰す条件にする。
+- **L162** _(ja)_ — ★実測(2026-09-20): 効いているのはビット数ではなく「背景を引く」適応。背景 0.5 の像を適応なしで入れると 全柱が刺激され重心が動かない(実データで 0.63)。適応した連続値と 8 ビットは同じ(0.99)。
 
 ## `examples/poc_fabric_defect.py`
 
@@ -1418,9 +1420,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L57** — ★2026-09-08: drop the fixed 6 and **match the CPU count**. On shared runners (2–4 vCPU) 6-way parallelism only slows each one, without shrinking the total time, and once the PoCs grew to 84, **each job hit pytest's 900-second timeout** (py3.10 / 3.12). Locally (12 cores) it runs as before at 6 or more.
 - **L73** — ★**Do not pass** ``PYTHONPATH`` (2026-09-09). For a long time ``PYTHONPATH=<repo>`` was passed, but that is a setting users do not make, and it meant the gate stood one step away from where the accident happens —— by the same blind spot, `examples/piv_flow_from_particles.py` and others stayed as "ModuleNotFoundError when run straight from a checkout" (that side did not even have a gate that runs it, so it went unnoticed. `test_example_scripts_run.py`). On the PoC side, 108 of 116 add the repo root to ``sys.path`` themselves, and the remaining 8 only import ``fullseye``, so all pass even after removing it (measured).
-- **L91** — ★On failure, also return the tail of stdout. A PoC prints its findings and "which check failed" to stdout before SystemExit(1), so with stderr alone you **only learn "exit 1" with nothing else** (2026-09-07 CI, py3.10 poc_ct_fidelity).
-- **L100** — ★2026-09-07: this long **returned 0**, passing straight through the `assert code == 0` below —— a gate that discards its verdict right after computing it (measured: 3 PoCs never print PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). Return -2 so it fails.
-- **L122** — ★This gate runs the 84 PoCs **in one batch** (session fixture). That time is charged to the first test, so pyproject's default timeout (900 seconds) fails on shared runners. Widen only here —— relaxing the default would also dull hang detection for other tests.
+- **L92** — ★On failure, also return the tail of stdout. A PoC prints its findings and "which check failed" to stdout before SystemExit(1), so with stderr alone you **only learn "exit 1" with nothing else** (2026-09-07 CI, py3.10 poc_ct_fidelity).
+- **L101** — ★2026-09-07: this long **returned 0**, passing straight through the `assert code == 0` below —— a gate that discards its verdict right after computing it (measured: 3 PoCs never print PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). Return -2 so it fails.
+- **L123** — ★This gate runs the 84 PoCs **in one batch** (session fixture). That time is charged to the first test, so pyproject's default timeout (900 seconds) fails on shared runners. Widen only here —— relaxing the default would also dull hang detection for other tests.
 
 ## `tests/test_public_reachability.py`
 
