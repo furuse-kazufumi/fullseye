@@ -1284,7 +1284,7 @@ def section9_tool_gaps():
     for kw in ("halftone", "screen", "rosette", "misregist", "lpi", "moire",
                "trapping", "lattice"):
         hit = sorted(n for n in allnames if kw in n.lower() and n not in allowed_names.get(kw, set()))
-        found = [f for f in fs.op_find(kw) if f.get("ledger") != allowed_ledger.get(kw)]
+        found = [f for f in fs.op_find(kw) if f.get("ledger") != allowed_ledger.get(kw) and f.get("match") != "doc"]
         missing[kw] = (hit, found)
         assert not hit, (kw, hit)
         assert not found, (kw, found)

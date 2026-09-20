@@ -526,7 +526,7 @@ def section7_gaps():
     #   した副作用で、**投影モデルとは無関係**。語が同じだけで穴は埋まっていない
     #   ので、「投影の族に無いこと」を見る形に直した(語の一致で判定しない)。
     hits = fs.op_find("fisheye") + fs.op_find("equidistant")
-    proj = [h for h in hits if h.get("ledger") != "ops1d"]
+    proj = [h for h in hits if h.get("ledger") != "ops1d" and h.get("match") != "doc"]   # 説明文の語では「在る」と言わない
     assert not proj, "魚眼・等距離投影の op が生えた(この節を書き換えること): %s" % proj
     # (a) Brown 歪みは 90 度を表せない —— 実測で固定する
     k = np.array([[F_PX, 0, CTR], [0, F_PX, CTR], [0, 0, 1.0]])

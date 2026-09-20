@@ -63,6 +63,9 @@ def test_op_find_doc_is_filled_from_the_op_note():
     assert top["op"] == "gaussian" and top["doc"], top
     empty = [h["op"] for h in fs.op_find("gauss") if h.get("call") == "apply" and not h["doc"]]   # registry 側だけ(台帳の doc は別件 N89)
     assert not empty, "doc が空の op: %s" % empty[:5]
+    assert top["match"] == "exact"
+    assert all(h["match"] == "doc" for h in fs.op_find("equidistant")), "説明文だけの当たりは doc と名乗る"
+    assert {h["match"] for h in hits} <= {"exact", "name", "stem", "doc"}
 
 
 def test_graph_add_defaults_to_the_external_input_and_empty_graph_is_identity():

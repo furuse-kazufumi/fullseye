@@ -20,7 +20,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - **`Image` の器を剥がす**(第 49・54 報 N171 / N188): `apply` / `run_pipeline` / `to_json` に `fullseye.Image` を渡すと「scalar Image」で止まっていた → `.array` に剥がして走る。
 - **台帳 op の入力不足は 1 文**(第 34 報 N122): `op_run("blend_mode", rgb)` の生の TypeError → 「missing input(s) top (rgb) — this op takes base, top」。
 - **`fullseye algo run` は `--seq` 無しを拒む**(第 53 報 N187、以前は空列をソートして `[]` で rc 0)。
-- **`op_find` の `doc` をノートで埋める**(第 33・48・53 報 N119 / N162 / N178): registry の docstring が無い op(931 中 509)はノートの最初の散文 1 行。
+- **`op_find` の `doc` をノートで埋める**(第 33・48・53 報 N119 / N162 / N178): registry の docstring が無い op(931 中 509)はノートの「使い方」の最初の散文 1 行。各ヒットに `match`(exact / name / stem / doc)を付け、「op が在るか」を問うときは doc を除けるようにした(PoC 3 本の穴の検査がそれで落ちた)。
 - `FullseyeGraph.add(inputs="$in")` を既定に(第 48・53 報 N167 / N180)、`attempt_all` の docstring(N184)、`bench` の help に必要メモリの目安(N165)。非再現: N183 `blend_mode` の検証順(型 → 形 → モード、docstring どおり)、N152 の非推奨警告(0 件)。
 - **文書の不備**(2026-09-20、利用者の指摘): `docs/OPERATORS.md` が 885 op / 47 分類の古い表のままだった —— 生成器 `catalog.py` が `tools/` の外にあり `tools/regen_all.py` の鎖に無かった。鎖に入れて再生成(931 op / 48 分類、OpenCV / scikit-image / MATLAB の対応表と被覆率)。INSTALL / GETTING_STARTED の 6 言語にあった「約 885 オペレータ」は数を消して「全 op が見え、optional backend の要る op は呼ぶと不足の extra を言う」に。`docs/INTEGRATION.md` の 1,942 / 1,049 を索引の実数に揃え、門 `tests/test_docs_counts_2026_09_20.py` で固定(OPERATORS.md の門は同梱索引と比べる —— 生きた registry と比べた最初の版は torch の無い CI で赤になった)。概要記事と 0.2.1 の要旨にあった「報告 29 / 36 通」は受け取った実数 54 通(指摘 N1〜N197)に訂正。
 

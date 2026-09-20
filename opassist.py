@@ -1029,7 +1029,8 @@ def find(query: str, limit: int = 20) -> list[dict]:
     """自由語で op を探す(名前・説明・カテゴリ・モジュールを横断)。
 
     「虹」「rust」「fresnel」「旋盤」のように**やりたいこと**で引ける入口。
-    完全一致 > 名前の部分一致 > 説明の一致 の順に並べる。
+    完全一致 > 名前の部分一致 > 説明の一致 の順に並べる。各ヒットの ``match`` が何で当たったか
+    (``exact`` / ``name`` / ``stem`` / ``doc``)を言う —— 「op が在るか」を問うなら ``doc`` を除くこと。
 
     ## 語幹と複数語(2026-09-06 追加)
 
@@ -1158,6 +1159,12 @@ def find(query: str, limit: int = 20) -> list[dict]:
                      "category": "nary", "doc": doc,
                      "call": "apply([%s], name)" % ", ".join("x%d" % i for i in range(int(nop.arity))),
                      "score": score})
+    # ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
+  #   doc = 説明・カテゴリの語)。doc をノートで埋めた(N119)途端、PoC の「op が無い」検査が説明文の語で当たって
+  #   落ちた —— 件数で「在る」と言わず、name 以上の当たりだけを見るための鍵。GenSpark 第 33 報の exact もこれで読める。
+    for h in hits:
+        sc = h["score"]
+        h["match"] = "exact" if sc >= 99 else "name" if sc >= 59 else "stem" if sc >= 40 else "doc"
     hits.sort(key=lambda h: (-h["score"], h["op"]))
     return hits[: max(int(limit), 1)]
 
