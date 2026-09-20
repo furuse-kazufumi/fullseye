@@ -4,7 +4,7 @@ dim: conngraph
 category: reservoir
 in: conn_graph
 out: conn_graph
-examples: [poc_larval_connectome_reservoir]
+examples: [poc_larval_connectome_reservoir, poc_malecns_activity_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -32,6 +32,7 @@ W をスペクトル半径が rho になるように定数倍した conn_graph(e
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_larval_connectome_reservoir](../../../../examples/poc_larval_connectome_reservoir.py) — `py -3.11 examples/poc_larval_connectome_reservoir.py`
+- [poc_malecns_activity_wave](../../../../examples/poc_malecns_activity_wave.py) — `py -3.11 examples/poc_malecns_activity_wave.py`
 
 ## 型が繋がる次の op(`conn_graph` を入力に取れる)
 

@@ -39,7 +39,7 @@ version: 0.2.1  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 
-[graph_edges_as_lines](graph_edges_as_lines.md)
+[graph_edges_as_lines](graph_edges_as_lines.md) · [graph_activity_spread](../activity/graph_activity_spread.md) · [points_activity_video](../activity/points_activity_video.md)
 
 ## 同カテゴリ(`view`)
 

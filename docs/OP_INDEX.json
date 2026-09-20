@@ -1,10 +1,10 @@
 {
- "n_ops": 2016,
+ "n_ops": 2020,
  "tiers": {
   "color": 12,
-  "ledger": 1068,
+  "ledger": 1071,
   "nary": 17,
-  "registry": 919
+  "registry": 920
  },
  "sorts": [
   "angle",
@@ -76,6 +76,7 @@
   "rgba",
   "rgba_premul",
   "rgbimage",
+  "rgbvideo",
   "rgbvolume",
   "rle_region",
   "roots",
@@ -4935,6 +4936,34 @@
    ]
   },
   {
+   "name": "graph_activation_latency",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "labels",
+   "category": "activity",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "graph_activity_spread",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "activity",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "matrix",
+    "points",
+    "labels"
+   ]
+  },
+  {
    "name": "graph_adjacency_image",
    "halcon": "",
    "in_sort": "conn_graph",
@@ -8880,6 +8909,20 @@
    "dim": "oned",
    "in_sorts": [
     "positions"
+   ]
+  },
+  {
+   "name": "points_activity_video",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "rgbvideo",
+   "category": "activity",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "points",
+    "matrix"
    ]
   },
   {
@@ -21700,6 +21743,16 @@
    "halcon": "",
    "in_sort": "signal",
    "out_sort": "feature",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
+   "name": "tb_graph_activation_latency",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "volume",
    "category": "typed",
    "tier": "registry",
    "module": "backends_typed",

@@ -76,6 +76,20 @@ pred = fs.ledger.ridge_predict(X[:-1], Wout)
 P = fs.ledger.graph_layout_spectral(W)                 # points (12, 3)、各軸 [0, 1]
 lines = fs.ledger.graph_edges_as_lines(W, P)           # 辺ごとの x0 y0 z0 x1 y1 z1 weight
 img = fs.ledger.graph_adjacency_image(W, order=&quot;degree&quot;)   # (12, 12) の [0, 1]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">活動を「いつ・どこで」に読む(activity、2026-09-20)</h3>
+<p>reservoir の状態列 (T, n) は数字の表のままでは何も見えない。座標(soma の位置、または</p>
+<p><code style="color:#22d3bf">graph_layout_spectral</code> の配置)があれば、<b>刺激の波が配線を伝わる様子</b>にできる:</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">w_in = np.zeros((n, 1)); w_in[stim, 0] = 2.0            # 刺激するノードの指示子(列 = 入力チャネル)
+U = np.zeros((36, 1)); U[0:3, 0] = 1.0                    # t = 0..2 にパルス
+X = fs.reservoir_states(fs.reservoir_from_graph(W, rho=1.0), U, leak=0.6, W_in=w_in)
+lat = fs.graph_activation_latency(X)                      # 各ノードが初めて点いたステップ(−1 = 点かない)
+tab = fs.graph_activity_spread(X, P, stim.astype(int))    # step / mean_distance / active_fraction / source_fraction
+V = fs.points_activity_video(P, X, colors=side_rgb, substeps=2, background=P_all)   # (F, H, W, 3) 回る動画</pre>
+<p>尺度は 3 op とも <b>1 つ</b>(全体の最大値)。ノードごとに伸ばすと動かないノードの丸め屑が</p>
+<p>「点いた」になり、コマごとに伸ばすと動いていないものがちらつく。対照(<code style="color:#22d3bf">graph_degree_preserving_shuffle</code>)</p>
+<p>を<b>同じ刺激・同じ W_in</b> で回して隣に並べるのが作法 —— MaleCNS の soma 座標で右視葉に刺激を入れると、</p>
+<p>コネクトームでは活動が視葉 → 中枢 → 下行と順に進み(平均距離 88 → 230 µm を 17 步かけて、上位 3,000 体・36 步では VNC に届かない)、</p>
+<p>次数保存 shuffle では 3 步で全体に散る(88 → 300 µm、遠い 1/4 のノードの 93 % が点く)。<code style="color:#22d3bf">examples/poc_malecns_activity_wave.py</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">真値で確かめてある性質(<code style="color:#22d3bf">tests/test_conngraph.py</code>)</h3>
 <p>| グラフ | op | 厳密な値 |</p>
 <p>|---|---|---|</p>
@@ -86,6 +100,8 @@ img = fs.ledger.graph_adjacency_image(W, order=&quot;degree&quot;)   # (12, 12) 
 <p>| FFL 1 個 + 3 巡回 1 個 | <code style="color:#22d3bf">graph_motif_count</code> | ffl 1 / cycle3 1 |</p>
 <p>| 線形 reservoir | <code style="color:#22d3bf">reservoir_states</code> / <code style="color:#22d3bf">reservoir_encode</code> | 手で書いた再帰 / X W_inᵀ(steps 1)に一致 |</p>
 <p>| Y = XB + 1 | <code style="color:#22d3bf">ridge_readout</code> → <code style="color:#22d3bf">ridge_predict</code> | α = 1e-8 で 1e-6 以内に復元 |</p>
+<p>| 有向の鎖 0→1→2→3 + 孤立 | <code style="color:#22d3bf">graph_activation_latency</code> / <code style="color:#22d3bf">graph_activity_spread</code> | 潜時 [0,1,2,3,−1] / 平均距離 [0,2,4,6] |</p>
+<p>| 同上を x 軸に置く | <code style="color:#22d3bf">points_activity_video</code> | 点いたノードの側が明るい、状態を 10 倍しても同じ絵 |</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">罠</h3>
 <p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">graph_modularity</code> の重みは非負**。抑制性を負で入れた行列(<code style="color:#22d3bf">graph_from_synapses(..., sign=-1)</code>)はそのまま渡せない —— <code style="color:#22d3bf">graph_binarize</code> か <code style="color:#22d3bf">abs</code> を先に。</p>
 <p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">graph_degree_preserving_shuffle</code> が保つのは二値の次数列**。重みは辺に付いて動くので strength は変わる。保ちたいのが strength なら別の帰無モデル(未実装)。</p>

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2016,
- "n_notes": 2022,
+ "n_ops": 2020,
+ "n_notes": 2026,
  "notes": {
   "vol_dilate": [
    {
@@ -8905,6 +8905,16 @@
     "path": "docs/ops/2d/typed/tb_get_y_value_funct_1d.md"
    }
   ],
+  "tb_graph_activation_latency": [
+   {
+    "op": "tb_graph_activation_latency",
+    "dim": "2d",
+    "category": "typed",
+    "in": "matrix",
+    "out": "volume",
+    "path": "docs/ops/2d/typed/tb_graph_activation_latency.md"
+   }
+  ],
   "tb_highpass": [
    {
     "op": "tb_highpass",
@@ -14752,6 +14762,36 @@
     "in": "signal × signal",
     "out": "scalar",
     "path": "docs/ops/colortransport/transport/wasserstein_1d.md"
+   }
+  ],
+  "graph_activation_latency": [
+   {
+    "op": "graph_activation_latency",
+    "dim": "conngraph",
+    "category": "activity",
+    "in": "matrix",
+    "out": "labels",
+    "path": "docs/ops/conngraph/activity/graph_activation_latency.md"
+   }
+  ],
+  "graph_activity_spread": [
+   {
+    "op": "graph_activity_spread",
+    "dim": "conngraph",
+    "category": "activity",
+    "in": "matrix × points × labels",
+    "out": "table",
+    "path": "docs/ops/conngraph/activity/graph_activity_spread.md"
+   }
+  ],
+  "points_activity_video": [
+   {
+    "op": "points_activity_video",
+    "dim": "conngraph",
+    "category": "activity",
+    "in": "points × matrix",
+    "out": "rgbvideo",
+    "path": "docs/ops/conngraph/activity/points_activity_video.md"
    }
   ],
   "graph_binarize": [

@@ -4165,6 +4165,24 @@ op は **931**(レジストリ実測)まで来ましたが、この回で増や�
 
 落とし穴を 1 つ。手元(Windows)で全部緑にして push した最初の CI が Linux で赤になりました。原因は `os.path.basename` が **実行 OS の区切りしか知らない**こと ―― テストに書いた Windows 形のパス(`...\Scripts\fullseye.exe`) が Linux では丸ごと 1 要素になり、「fullseye で始まらない」と判定された。**OS が解釈する文字列(区切り・大小文字)をテストに埋めるときは、その解釈が両 OS で同じかを push 前に問う**、が教訓です。
 
+## 2026-09-20 の拡張(その 2)―― コネクトームを「数えて・揺らして・回して・見る」族
+
+バグの回を閉じたあと、次の版の方向として **コネクトーム(神経の結合表)の開発基盤** を足し始めました。結合表は重みつき有向グラフで、この道具箱の画像・点群・信号のどの族にも収まらない。そこで新しい型語彙を 2 つ(`conn_graph` = n×n の重みつき有向隣接行列、`synapse_table` = (m, 3) の pre / post / count)だけ足し、族 `conngraph` に 23 op を置きました(numpy だけ、networkx / scipy.sparse に依存しない)。シナプス表 → 隣接行列、**次数を保ったまま辺を繋ぎ替える帰無モデル**、次数表・クラスタ係数・媒介中心性・Laplacian スペクトル・成分・モジュラリティ・rich club・3 点モチーフ、そして結合行列をそのまま **reservoir(echo state network)** にして閉形式の ridge で読み出す計算。真値はリング・スター・完全グラフ・2 クリークの閉形式で門にしてあります。
+
+最初の PoC は正直な「効いていない」で終わりました。幼虫の完全コネクトーム(Winding 2023、2,952 ニューロン)を固定の reservoir にして MNIST の部分集合を読むと 91.9 %(生画素の ridge は 77.6 %)—— ここまでは先行研究のとおり。ただし先行研究に無かった対照を置くと、**次数を保って辺を繋ぎ替えたグラフで 91.6 %、同じ密度の乱数で 91.9 %**。読み出しが使っているのは reservoir という仕組みで、進化が決めた配線ではない。
+
+それでも配線に構造が無いわけではない —— 精度という 1 つの数では見えないだけです。そこで同じ reservoir を **見る** ことに使いました。MaleCNS(雄の全中枢神経系)で soma の座標を持つニューロンのうちシナプス総数の上位 3,000 体の部分グラフ(344,719 辺)に、右の視葉だけへ刺激を入れ、活動が伝わる様子を脳と VNC の立体を回しながら描く。隣は次数保存 shuffle に **同じ刺激・同じ入力行列**。
+
+![右視葉への刺激が配線を伝わる様子 ―― 左: コネクトーム、右: 次数保存 shuffle(灰 = 全 141,781 soma、橙 = 右、青 = 左、輝度の尺度は全コマで 1 つ)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/01_activity_wave_connectome_vs_shuffle.gif)
+
+*↑ 左では活動が視葉に留まりながら中枢へにじみ、右では 1 步で脳も VNC も点く。*
+
+![各ニューロンが初めて点いたステップ(黄 = 0、橙 = 3、青 = 6 以降、灰 = 36 步で点かない): 左コネクトーム、右 shuffle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/02_activation_latency_map_connectome_vs_shuffle.png)
+
+数字で言うと(`graph_activity_spread` / `graph_activation_latency`): コネクトームでは刺激の重心からの活動の平均距離が **88 → 230 µm を 17 步かけて** 伸び、点く順は視葉(潜時 0)→ 中枢(2)→ 下行(2)で、36 步では VNC に届かない。shuffle は **3 步で 300 µm** に散り、遠い 1/4 のニューロンの 93 % が最初の周期内に点く(コネクトームは 0 %)。読み出し精度では見えなかった配線の空間構造が、動きでは見える。
+
+このために足した op が 3 つ(`graph_activation_latency` / `graph_activity_spread` / `points_activity_video`)と、`reservoir_states` に **明示の入力行列 `W_in`**(決まったニューロン群に刺激を入れる)。尺度は 3 op とも全体で 1 つ —— ノードごとに伸ばすと動かないノードの丸め屑が「点いた」になり、コマごとに伸ばすと動いていないものがちらつく。生データ(1 GB の feather)は repo に入れず、手元にあれば部分グラフを作ってキャッシュ、無ければ距離依存の合成の代替で同じ経路を走らせて `DATA: synthetic surrogate` と印字します(展示館の生物ウィングに 2 点)。
+
 ## まとめ
 
 **Fullseye** は、**説明できる古典ビジョンのアルゴリズムを「スキル」として約1000個持ち歩き**、それを

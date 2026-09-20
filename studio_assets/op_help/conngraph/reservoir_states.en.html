@@ -1,13 +1,15 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">reservoir_states — CONNGRAPH <code style="color:#22d3bf">reservoir</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">conn_graph × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reservoir_states(W: &#x27;Any&#x27;, U: &#x27;Any&#x27;, in_scale: &#x27;float&#x27; = 1.0, leak: &#x27;float&#x27; = 1.0, nonlinearity: &#x27;str&#x27; = &#x27;tanh&#x27;, seed: &#x27;int&#x27; = 0, washout: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import conngraph; conngraph.reservoir_states(W: &#x27;Any&#x27;, U: &#x27;Any&#x27;, in_scale: &#x27;float&#x27; = 1.0, leak: &#x27;float&#x27; = 1.0, nonlinearity: &#x27;str&#x27; = &#x27;tanh&#x27;, seed: &#x27;int&#x27; = 0, washout: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsconngraph.get(&quot;reservoir_states&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reservoir_states(W: &#x27;Any&#x27;, U: &#x27;Any&#x27;, in_scale: &#x27;float&#x27; = 1.0, leak: &#x27;float&#x27; = 1.0, nonlinearity: &#x27;str&#x27; = &#x27;tanh&#x27;, seed: &#x27;int&#x27; = 0, washout: &#x27;int&#x27; = 0, W_in: &#x27;Any&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import conngraph; conngraph.reservoir_states(W: &#x27;Any&#x27;, U: &#x27;Any&#x27;, in_scale: &#x27;float&#x27; = 1.0, leak: &#x27;float&#x27; = 1.0, nonlinearity: &#x27;str&#x27; = &#x27;tanh&#x27;, seed: &#x27;int&#x27; = 0, washout: &#x27;int&#x27; = 0, W_in: &#x27;Any&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsconngraph.get(&quot;reservoir_states&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>reservoir の状態列: x_{t+1} = (1−leak) x_t + leak · f(Wᵀ x_t + W_in u_t)。返りは (T − washout, n)。</p>
 <p>`<code style="color:#22d3bf">U</code><code style="color:#22d3bf"> は (T, d) の入力列(1-D は (T, 1))。</code><code style="color:#22d3bf">W_in</code>` は seed で決まる一様 (−in_scale, in_scale)</p>
 <p>の (n, d) 行列。`<code style="color:#22d3bf">nonlinearity</code>` は tanh / linear。x_0 = 0 から始め、各ステップの更新後の</p>
 <p>状態を並べる。`<code style="color:#22d3bf">washout</code>` 行を先頭から捨てる(T 以上は拒否)。</p>
+<p>`<code style="color:#22d3bf">W_in</code><code style="color:#22d3bf"> を渡すと乱数の代わりにその (n, d) 行列を使う(</code><code style="color:#22d3bf">in_scale</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">seed</code>` は無視)——</p>
+<p>決まったノード群に刺激を入れる(列 = 刺激するノードの指示子)のはこちら。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
@@ -15,9 +17,9 @@
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
 <p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
-<p style="margin:2px 0 2px 12px">• (none yet)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_malecns_activity_wave">poc_malecns_activity_wave</a> — <code style="color:#22d3bf">py -3.11 examples/poc_malecns_activity_wave.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">matrix</code> as input)</h3>
-<p><a style="color:#22d3bf" href="opconngraph:reservoir_encode">reservoir_encode</a> · <a style="color:#22d3bf" href="opconngraph:ridge_readout">ridge_readout</a> · <a style="color:#22d3bf" href="opconngraph:ridge_predict">ridge_predict</a></p>
+<p><a style="color:#22d3bf" href="opconngraph:reservoir_encode">reservoir_encode</a> · <a style="color:#22d3bf" href="opconngraph:ridge_readout">ridge_readout</a> · <a style="color:#22d3bf" href="opconngraph:ridge_predict">ridge_predict</a> · <a style="color:#22d3bf" href="opconngraph:graph_activation_latency">graph_activation_latency</a> · <a style="color:#22d3bf" href="opconngraph:graph_activity_spread">graph_activity_spread</a> · <a style="color:#22d3bf" href="opconngraph:points_activity_video">points_activity_video</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">reservoir</code>)</h3>
 <p><a style="color:#22d3bf" href="opconngraph:reservoir_from_graph">reservoir_from_graph</a> · <a style="color:#22d3bf" href="opconngraph:reservoir_encode">reservoir_encode</a> · <a style="color:#22d3bf" href="opconngraph:ridge_readout">ridge_readout</a> · <a style="color:#22d3bf" href="opconngraph:ridge_predict">ridge_predict</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

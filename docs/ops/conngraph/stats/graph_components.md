@@ -35,7 +35,7 @@ version: 0.2.1  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`labels` を入力に取れる)
 
-[graph_modularity](graph_modularity.md)
+[graph_modularity](graph_modularity.md) · [graph_activity_spread](../activity/graph_activity_spread.md)
 
 ## 同カテゴリ(`stats`)
 

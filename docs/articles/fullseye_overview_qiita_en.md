@@ -4141,6 +4141,24 @@ The fixes shipped as **0.2.1** (`pip install -U fullseye`, [Release v0.2.1](http
 
 One pitfall. The first push, all green on Windows, went red on Linux CI. `os.path.basename` **only knows the separator of the OS it runs on** — the the Windows-style path (`...\Scripts\fullseye.exe`) written into a test stayed one element on Linux and "did not start with fullseye". The lesson: **when a test embeds a string the OS interprets (separators, case), ask before pushing whether both OSes interpret it the same way**.
 
+## What Grew on 2026-09-20 (part 2) — a Family That Counts, Shuffles, Runs and *Shows* a Connectome
+
+With the bug round closed, the next version started growing a **development platform for connectomes** (neural wiring tables). A wiring table is a weighted directed graph, which fits none of the toolbox's image / point-cloud / signal families. So exactly two new type words were added (`conn_graph` = an n×n weighted directed adjacency matrix, `synapse_table` = (m, 3) rows of pre / post / count) and a family `conngraph` of 23 ops (numpy only, no networkx / scipy.sparse): synapse table → adjacency, a **null model that rewires the edges while preserving every degree**, degree table, clustering coefficient, betweenness, Laplacian spectrum, components, modularity, rich club, 3-node motifs, and the wiring matrix used directly as a **reservoir (echo state network)** read out by closed-form ridge regression. The gates use exact values on rings, stars, complete graphs and two cliques.
+
+The first PoC ended with an honest "it does not matter". The complete larval connectome (Winding 2023, 2,952 neurons) as a fixed reservoir reads an MNIST subset at 91.9 % (ridge on raw pixels: 77.6 %) — that much matches prior work. But with the control prior work did not run, **a degree-preserving rewiring reaches 91.6 % and a random graph of the same density 91.9 %**. What the readout uses is the reservoir as a mechanism, not the wiring evolution chose.
+
+That does not mean the wiring has no structure — only that one accuracy number cannot see it. So the same reservoir was used to *look*. The 3,000 somatic neurons of the MaleCNS (the male central nervous system) with the most synapses form a subgraph of 344,719 edges; a pulse goes into the right optic lobe only, and the activity is drawn on the rotating 3-D brain and VNC. Next to it, the degree-preserving shuffle gets **the same pulse through the same input matrix**.
+
+![A pulse into the right optic lobe travelling the wiring — left: connectome, right: degree-preserving shuffle (grey = all 141,781 somata, orange = right, blue = left; one brightness scale for every frame)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/01_activity_wave_connectome_vs_shuffle.gif)
+
+*↑ On the left the activity lingers in the optic lobe and seeps into the central brain; on the right the brain and the VNC light up within a step.*
+
+![The step at which each neuron first lights (yellow = 0, orange = 3, blue = 6 or later, grey = never within 36 steps): connectome left, shuffle right](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/02_activation_latency_map_connectome_vs_shuffle.png)
+
+In numbers (`graph_activity_spread` / `graph_activation_latency`): in the connectome the |x|-weighted mean distance from the stimulus grows **88 → 230 µm over 17 steps**, neurons light in the order optic (latency 0) → central (2) → descending (2), and the VNC is never reached within 36 steps. The shuffle scatters to **300 µm in 3 steps** and 93 % of the farthest quarter of the neurons light within the first period (connectome: 0 %). The spatial structure of the wiring that accuracy could not see is visible in motion.
+
+Three ops were added for this (`graph_activation_latency` / `graph_activity_spread` / `points_activity_video`) plus an **explicit input matrix `W_in`** for `reservoir_states` (a pulse into a chosen set of neurons). All three use one global scale — per-node scaling turns rounding dust into "lit", per-frame scaling makes still things flicker. The raw data (1 GB of feather files) is never committed: with the files present the subgraph is built and cached locally, without them a distance-wired synthetic surrogate runs the same path and prints `DATA: synthetic surrogate` (two exhibits in the museum's biology wing).
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to

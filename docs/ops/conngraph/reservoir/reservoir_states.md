@@ -4,7 +4,7 @@ dim: conngraph
 category: reservoir
 in: conn_graph × matrix
 out: matrix
-examples: []
+examples: [poc_malecns_activity_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.2.1  # fullseye lib version this note was generated for
 # reservoir_states — CONNGRAPH `reservoir` op
 
 - **データ種**: `conn_graph × matrix` → `matrix`
-- **呼び出し**: `import fullseye as fs; fs.ledger.reservoir_states(W: 'Any', U: 'Any', in_scale: 'float' = 1.0, leak: 'float' = 1.0, nonlinearity: 'str' = 'tanh', seed: 'int' = 0, washout: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import conngraph; conngraph.reservoir_states(W: 'Any', U: 'Any', in_scale: 'float' = 1.0, leak: 'float' = 1.0, nonlinearity: 'str' = 'tanh', seed: 'int' = 0, washout: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `opsconngraph.get("reservoir_states")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.reservoir_states(W: 'Any', U: 'Any', in_scale: 'float' = 1.0, leak: 'float' = 1.0, nonlinearity: 'str' = 'tanh', seed: 'int' = 0, washout: 'int' = 0, W_in: 'Any' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import conngraph; conngraph.reservoir_states(W: 'Any', U: 'Any', in_scale: 'float' = 1.0, leak: 'float' = 1.0, nonlinearity: 'str' = 'tanh', seed: 'int' = 0, washout: 'int' = 0, W_in: 'Any' = None) -> 'np.ndarray'`、台帳から引くなら `opsconngraph.get("reservoir_states")`)
 
 ## 使い方
 
@@ -22,6 +22,9 @@ reservoir の状態列: x_{t+1} = (1−leak) x_t + leak · f(Wᵀ x_t + W_in u_t
 ``U`` は (T, d) の入力列(1-D は (T, 1))。``W_in`` は seed で決まる一様 (−in_scale, in_scale)
 の (n, d) 行列。``nonlinearity`` は tanh / linear。x_0 = 0 から始め、各ステップの更新後の
 状態を並べる。``washout`` 行を先頭から捨てる(T 以上は拒否)。
+
+``W_in`` を渡すと乱数の代わりにその (n, d) 行列を使う(``in_scale`` / ``seed`` は無視)——
+決まったノード群に刺激を入れる(列 = 刺激するノードの指示子)のはこちら。
 
 ## 詳しい使い方ガイド
 
@@ -35,11 +38,11 @@ reservoir の状態列: x_{t+1} = (1−leak) x_t + leak · f(Wᵀ x_t + W_in u_t
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_malecns_activity_wave](../../../../examples/poc_malecns_activity_wave.py) — `py -3.11 examples/poc_malecns_activity_wave.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[reservoir_encode](reservoir_encode.md) · [ridge_readout](ridge_readout.md) · [ridge_predict](ridge_predict.md)
+[reservoir_encode](reservoir_encode.md) · [ridge_readout](ridge_readout.md) · [ridge_predict](ridge_predict.md) · [graph_activation_latency](../activity/graph_activation_latency.md) · [graph_activity_spread](../activity/graph_activity_spread.md) · [points_activity_video](../activity/points_activity_video.md)
 
 ## 同カテゴリ(`reservoir`)
 
