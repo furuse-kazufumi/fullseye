@@ -114,12 +114,17 @@ jobs:
           pip-audit --progress-spinner=off || true
 
   test:
-    name: full suite (py${{ matrix.python-version }})
+    # ★4 分割(2026-09-20): 1 本 90 分の直列だった full suite を pytest-split で 4 片に割る。
+    #   壁時計は「いちばん遅い片」(25 分前後)になり、進捗と赤の場所がジョブ単位で見える。
+    #   片の中は従来どおり直列(並列化ではない。並列の順序依存は nightly の order-shuffle が担当)。
+    #   `.test_durations`(repo 直下、任意)があれば実測時間で均し、無ければ件数で割る。
+    name: full suite (py${{ matrix.python-version }}, shard ${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
+        shard: [1, 2, 3, 4]
     env:
       QT_QPA_PLATFORM: offscreen
       PYTHONUTF8: "1"
@@ -153,7 +158,7 @@ jobs:
         # format tests. torch/mujoco stay out (their tests skip honestly).
         run: >
           pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx]"
-          pytest pytest-cov matplotlib sympy ziglang hypothesis pytest-timeout
+          pytest pytest-cov pytest-split matplotlib sympy ziglang hypothesis pytest-timeout
       # ★py3.11 **だけ** optional backend を実際に入れる。
       #
       # 2026-09-05 まで、この workflow の注記には「torch/kornia は入れない
@@ -178,29 +183,59 @@ jobs:
           pip uninstall -y opencv-python
           pip install "opencv-contrib-python>=4.6"
           python -c "import torch, kornia, mahotas, cv2; print(torch.__version__, cv2.__version__); assert hasattr(cv2, 'xfeatures2d')"
-      - name: Run tests with coverage
+      - name: Run tests with coverage (shard ${{ matrix.shard }}/4)
         env:
           # py3.11 は全 backend を持っている前提。`requires_backend` の skip は
           # 「不変条件が実行されなかった」ことなので、ここでは**失敗**にする。
           FULLSEYE_REQUIRE_OPTIONAL: ${{ matrix.python-version == '3.11' && '1' || '0' }}
+          # 片ごとの coverage データ。結合ジョブが `coverage combine` で 1 つにする。
+          COVERAGE_FILE: .coverage.shard${{ matrix.shard }}
         # `-ra` = 合格以外を全部要約に出す。`-rs`(skip だけ)だと**どのテストが
         # 失敗したのか要約に出ず**、生ログを掘る羽目になる(2026-09-05 に実際に踏んだ)。
-        run: pytest -q -ra --cov --cov-report=xml --cov-report=term
+        run: >
+          pytest -q -ra --cov
+          --splits 4 --group ${{ matrix.shard }} --splitting-algorithm least_duration
+          --durations-path .test_durations
+      - name: Upload coverage data (py3.11, this shard)
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
+        with:
+          name: coverage-data-shard${{ matrix.shard }}
+          path: .coverage.shard${{ matrix.shard }}
+          include-hidden-files: true
+          if-no-files-found: error
       # 生成物の回し忘れは、これまで**人が手で `--check` を回すかどうか**に
       # かかっていた —— つまり門はあっても経路が通っていなかった。実測でも
       # `docs/EXAMPLES_3D.md` が `ops3d = 347 op` のまま古びていた(実際は 357)。
       # 全部作り直したあと作業ツリーがきれいであること、を CI で問う。
       - name: 生成物の回し忘れ (regen_all --check)
-        if: matrix.python-version == '3.11'
+        if: matrix.python-version == '3.11' && matrix.shard == 1
         run: python tools/regen_all.py --check
-      - name: Coverage summary (job summary page)
-        if: matrix.python-version == '3.11'
+
+  # 4 片の coverage を 1 つに(py3.11 = 全 backend の片だけ)。summary と coverage.xml はここから出る。
+  coverage:
+    name: coverage (combine 4 shards)
+    runs-on: ubuntu-latest
+    needs: test
+    if: always() && needs.test.result != 'cancelled'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
+        with:
+          python-version: "3.11"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4
+        with:
+          pattern: coverage-data-shard*
+          merge-multiple: true
+      - name: Combine and report
         run: |
           pip install coverage
-          echo '## Coverage' >> "$GITHUB_STEP_SUMMARY"
+          ls -la .coverage.shard* || { echo "no shard data (a py3.11 shard failed before uploading)"; exit 1; }
+          coverage combine .coverage.shard*
+          coverage xml
+          echo '## Coverage (4 shards combined, py3.11)' >> "$GITHUB_STEP_SUMMARY"
           coverage report --format=markdown --skip-covered --sort=cover | tail -40 >> "$GITHUB_STEP_SUMMARY"
       - name: Upload coverage artifact
-        if: matrix.python-version == '3.11'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
         with:
           name: coverage-xml
