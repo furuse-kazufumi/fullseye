@@ -14,7 +14,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**24 件(うち直したもの 24 件)。見つけた PoC は 10 本。**
+**25 件(うち直したもの 25 件)。見つけた PoC は 10 本。**
 
 ## 種別ごと
 
@@ -23,14 +23,14 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 | 静かに間違う(例外が出ない) | 11 | 11 |
 | 実装の誤り | 5 | 5 |
 | 門が事故の起きる場所に立っていなかった | 2 | 2 |
-| 在るのに引けない | 5 | 5 |
+| 在るのに引けない | 6 | 6 |
 | 説明の穴(片道の参照・古い数字) | 1 | 1 |
 
 ## 見つけた PoC ごと
 
 | PoC | 件数 |
 |---|---:|
-| [`genspark_external_review`](../examples/genspark_external_review.py) | 14 |
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 15 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
@@ -182,6 +182,12 @@ GenSpark のレビュー(別ノート 3 本)を直したあと、同じ族が他
 第三者(GenSpark)が 0.2.0 を **core**(`pip install fullseye`、693 op)と **all**(`fullseye[all]`、899 op)の 2 環境で使い込んだ。core で `fullseye.apply(img, "sk_canny")` を呼ぶと
 
 見つけた PoC: `genspark_external_review` / 直した所: `api.py`, `ops.py`, `imgevolve.py`, `fullseye/data/OP_INDEX.json` / 門: `test_missing_backend_error_is_a_keyerror_and_names_the_missing_extra`, `test_unknown_operator_message_names_a_real_cli_and_op_find`, `test_op_index_rows_carry_module_and_requires`, `test_optional_deps_table_matches_pyproject_extras` / 状態: fixed
+
+#### [台帳が黙って古い事象を捨て、studio の `--help` が abort し、facade に import の道具が漏れていた](hardening/ledger-evicted-silently-and-studio-help-aborted.md)
+
+GenSpark 第 43・44・50 報(2026-09-20)。
+
+見つけた PoC: `genspark_external_review` / 直した所: `backend_safe.py`, `api.py`, `studio.py`, `fullseye/__init__.py` / 門: `test_fallback_ring_counts_what_it_evicts`, `test_studio_help_and_version_answer_without_qt`, `test_studio_without_a_display_stops_with_a_sentence_not_an_abort`, `test_facade_namespace_has_no_import_tools` / 状態: fixed
 
 #### [n-ary op は呼べるのに一覧に無く、つまみ a / b が効くかは文でしか分からず、CLI からは 2 入力の op を呼べなかった](hardening/nary-ops-unlisted-and-knobs-unstated.md)
 

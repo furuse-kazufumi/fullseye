@@ -15,7 +15,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**24 findings (24 fixed), from 10 PoCs.**
+**25 findings (25 fixed), from 10 PoCs.**
 
 ## By kind
 
@@ -24,14 +24,14 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 | Silently wrong (no exception) | 11 | 11 |
 | Implementation defect | 5 | 5 |
 | The gate did not stand where the accident happens | 2 | 2 |
-| Present but unreachable | 5 | 5 |
+| Present but unreachable | 6 | 6 |
 | Documentation hole (one-way reference, stale number) | 1 | 1 |
 
 ## By the PoC that found it
 
 | PoC | Findings |
 |---|---:|
-| [`genspark_external_review`](../examples/genspark_external_review.py) | 14 |
+| [`genspark_external_review`](../examples/genspark_external_review.py) | 15 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
@@ -183,6 +183,12 @@ Found by: `poc_rotation_invariance_audit` / Changed: `moments3d.py` / Gate: `tes
 第三者(GenSpark)が 0.2.0 を **core**(`pip install fullseye`、693 op)と **all**(`fullseye[all]`、899 op)の 2 環境で使い込んだ。core で `fullseye.apply(img, "sk_canny")` を呼ぶと _(ja)_
 
 Found by: `genspark_external_review` / Changed: `api.py`, `ops.py`, `imgevolve.py`, `fullseye/data/OP_INDEX.json` / Gate: `test_missing_backend_error_is_a_keyerror_and_names_the_missing_extra`, `test_unknown_operator_message_names_a_real_cli_and_op_find`, `test_op_index_rows_carry_module_and_requires`, `test_optional_deps_table_matches_pyproject_extras` / Status: fixed
+
+#### [台帳が黙って古い事象を捨て、studio の `--help` が abort し、facade に import の道具が漏れていた](hardening/ledger-evicted-silently-and-studio-help-aborted.md) _(ja)_
+
+GenSpark 第 43・44・50 報(2026-09-20)。 _(ja)_
+
+Found by: `genspark_external_review` / Changed: `backend_safe.py`, `api.py`, `studio.py`, `fullseye/__init__.py` / Gate: `test_fallback_ring_counts_what_it_evicts`, `test_studio_help_and_version_answer_without_qt`, `test_studio_without_a_display_stops_with_a_sentence_not_an_abort`, `test_facade_namespace_has_no_import_tools` / Status: fixed
 
 #### [n-ary op は呼べるのに一覧に無く、つまみ a / b が効くかは文でしか分からず、CLI からは 2 入力の op を呼べなかった](hardening/nary-ops-unlisted-and-knobs-unstated.md) _(ja)_
 
