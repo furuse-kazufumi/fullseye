@@ -257,6 +257,27 @@ def main() -> int:
     assert out.shape == img.shape and (not gpu or "CUDA is not available" in gpu[0] or "requested" in gpu[0]), gpu
     print("10. 0.2.1     : pfm default float; from_dict(None) refused; ledger name -> op_run hint; device=cuda %s"
           % ("recorded: " + gpu[0][:60] if gpu else "ran on the GPU"))
+
+    # 11. 段の正規化は 1 本(第 53 報 N179 / N181、0.2.2): 同じ段を 4 つの入口が同じ名前に読む
+    forms = ["gaussian", ("sobel_amp", 0.3), ("median", {"a": 0.4}), {"op": "otsu"}]
+    names = [engine.stage_name(s) for s in forms]
+    assert engine.FullseyeEngine(forms).op_names() == names and engine.diagnose_stages(forms) == []
+    assert fs.run_pipeline(img, forms).shape == img.shape
+    assert fs.Pipeline([["median", {}], {"op": "invert"}]).steps == [("median", {}), ("invert", {})]
+    broken = engine.diagnose_stages([{"a": 0.3}])                    # 壊れた段は例外でなく error 行
+    assert broken and broken[0]["severity"] == "error" and "'op'" in broken[0]["message"]
+    print("11. stages    : %s read alike by engine / diagnose / run_pipeline / Pipeline; broken stage -> %s"
+          % (names, broken[0]["message"][:50]))
+
+    # 12. MCP カタログの facade 層は関数だけ(第 41 報 N141、0.2.2): クラス 41 個が op として検索に出ていた
+    import inspect
+    from fullseye.mcp import catalog as _cat
+    cat = _cat.Catalog.load()
+    facade = [n for n, e in cat.entries.items() if "facade" in e.sources]
+    leaked = [n for n in facade if inspect.isclass(getattr(fs, n, None))]
+    assert not leaked and "Pipeline" not in cat.entries and "census_transform" in cat.entries, leaked[:5]
+    print("12. mcp facade: %d callable functions, %d classes listed as ops (Image / Pipeline / ... used to be 41)"
+          % (len(facade), len(leaked)))
     print("PASS")
     return 0
 
