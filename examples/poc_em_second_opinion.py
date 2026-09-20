@@ -21,8 +21,8 @@ Zung 2017、Dmitriev 2018、ConnectomeBench 2025)はすべて深層学習で候�
 3. ``holdout_roc``: 評価断面の ROC(融合・分断の検出器と乱数)。
 4. ``holdout_numbers``: 閾値・訓練/評価の AUC・TPR・FPR を検出器と基準(乱数・大きさ)で並べた表。
 
-データ: 手元の CREMI sample A(adult *Drosophila* FAFB、``C:/dev/data/cremi/sample_A_20160501.hdf`` か
-``FULLSEYE_CREMI``、h5py が要る)。**生データは commit しない**(集計と図だけ)。無ければ合成の代替
+データ: 手元の CREMI sample A(adult *Drosophila* FAFB、``FULLSEYE_CREMI`` か
+``<FULLSEYE_DATA_DIR か ~/.cache/fullseye>/cremi/sample_A_20160501.hdf``、h5py が要る)。**生データは commit しない**(集計と図だけ)。無ければ合成の代替
 (z でゆっくり動くボロノイ細胞 + 境界の膜 + 閉じた輪のミトコンドリア + 雑音)で同じ経路を走らせ
 ``DATA: synthetic surrogate`` と印字する。
 
@@ -42,7 +42,9 @@ import fullseye as fs  # noqa: E402
 import examplefig as figs  # noqa: E402
 import emproof as E  # noqa: E402
 
-CREMI = os.environ.get("FULLSEYE_CREMI", r"C:/dev/data/cremi/sample_A_20160501.hdf")
+CREMI = os.environ.get("FULLSEYE_CREMI") or os.path.join(
+    os.environ.get("FULLSEYE_DATA_DIR", os.path.join(os.path.expanduser("~"), ".cache", "fullseye")),
+    "cremi", "sample_A_20160501.hdf")
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET", "reduced" if os.environ.get("CI") else "full") == "reduced"
 MAGENTA, CYAN, YELLOW = (1.0, 0.25, 0.9), (0.2, 0.9, 1.0), (1.0, 0.9, 0.2)
 

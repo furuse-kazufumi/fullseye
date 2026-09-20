@@ -400,7 +400,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_em_second_opinion.py`
 
-- **L113** _(ja)_ — ★面積で揃える: 仕込んだ融合は「min_area 以上の 2 ラベルの和」なので必ず大きい。負例をそのまま 使うと「大きいラベル = 怪しい」だけで AUC が出てしまう(最初の実測: 弦 0.86 に対し面積だけで 0.87)。 負例は正例と同じ下限(2 × merge_area)以上の成分に限り、基準の「面積だけ」も同じ集合で測る。
+- **L115** _(ja)_ — ★面積で揃える: 仕込んだ融合は「min_area 以上の 2 ラベルの和」なので必ず大きい。負例をそのまま 使うと「大きいラベル = 怪しい」だけで AUC が出てしまう(最初の実測: 弦 0.86 に対し面積だけで 0.87)。 負例は正例と同じ下限(2 × merge_area)以上の成分に限り、基準の「面積だけ」も同じ集合で測る。
 
 ## `examples/poc_eye_to_brain.py`
 
@@ -1536,7 +1536,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tools/gen_hardening_index.py`
 
 - **L94** — ★Don't let through status=fixed with no gate -- so that this ledger itself doesn't create a state where only the record of having fixed it remains while recurrence can't be stopped.
-- **L194** — ★The link targets (`docs/hardening/*.md`) are written in Japanese. Replacing them with an English title would be a lie, so emit the title as-is and attach `(ja)` -- what a non-Japanese-version reader needs is not a "translated title" but the fact "this is unreadable". Fix the marker to the form that `tools/i18n_status.py` counts.
+- **L196** — ★The link targets (`docs/hardening/*.md`) are written in Japanese. Replacing them with an English title would be a lie, so emit the title as-is and attach `(ja)` -- what a non-Japanese-version reader needs is not a "translated title" but the fact "this is unreadable". Fix the marker to the form that `tools/i18n_status.py` counts.
 
 ## `tools/gen_hero_ct.py`
 
