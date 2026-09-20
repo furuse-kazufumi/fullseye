@@ -1,0 +1,36 @@
+[
+ {
+  "file": "01_activity_wave_connectome_vs_shuffle.gif",
+  "name": "activity_wave_connectome_vs_shuffle",
+  "caption": "a pulse into the right optic lobe (orange = right, blue = left somata; grey = all 141781 somata) propagates through the real wiring (left) and through the same degrees rewired at random (right); 3000 neurons, 344719 edges, 36 steps, one brightness scale for every frame",
+  "shape": [
+   520,
+   728,
+   3
+  ],
+  "animated": true,
+  "frames": 72,
+  "frames_written": 72,
+  "fps": 12.0
+ },
+ {
+  "file": "02_activation_latency_map_connectome_vs_shuffle.png",
+  "name": "activation_latency_map_connectome_vs_shuffle",
+  "caption": "when each neuron first lights up (yellow = step 0, orange = step 3, blue = step 6 or later, grey = never within 36 steps): connectome | shuffle",
+  "shape": [
+   520,
+   728,
+   3
+  ]
+ },
+ {
+  "file": "03_activity_spread_mean_distance.png",
+  "name": "activity_spread_mean_distance",
+  "caption": "graph_activity_spread: |x|-weighted mean distance from the stimulated somata",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
