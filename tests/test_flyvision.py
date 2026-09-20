@@ -352,7 +352,7 @@ class TestKnownLimits:
 class TestLedger:
     def test_every_op_has_an_implementation(self):
         assert opsflyvision.missing() == []
-        assert len(opsflyvision.OPSFLYVISION) == len(fv.FLYVISION) == 8
+        assert len(opsflyvision.OPSFLYVISION) == len(fv.FLYVISION) == 9
 
     def test_declared_out_types_are_what_the_ops_return(self):
         lat = fv.fly_hex_lattice(radius=3)
@@ -374,3 +374,43 @@ class TestLedger:
 
 if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-q"])
+
+
+# --------------------------------------------------------------------------- #
+# fly_hex_quantize —— 複眼は量子化器(2026-09-20)                                 #
+# --------------------------------------------------------------------------- #
+def test_hex_quantize_levels_modes_and_refusals():
+    import flyvision as fv
+
+    x = np.array([0.0, 0.1, 0.5, 1.0, 2.0, 4.0])
+    for bits in (1, 3, 8):
+        q = fv.fly_hex_quantize(x, bits=bits, mode="log")
+        levels = 2 ** bits - 1
+        assert q.shape == x.shape and q.min() >= 0.0 and q.max() <= 1.0
+        assert np.allclose(q * levels, np.round(q * levels))               # 格子に乗っている
+        assert np.all(np.diff(q) >= 0)                                      # 単調
+    lin = fv.fly_hex_quantize(x, bits=2, mode="linear")
+    assert lin[-1] == 1.0 and lin[0] == 0.0 and len(np.unique(lin)) <= 4
+    oo = fv.fly_hex_quantize(x, mode="onoff", contrast=0.5)
+    n = len(x)
+    assert oo.shape == (2 * n,) and oo.min() >= 0.0 and oo.max() <= 1.0
+    assert (oo[:n] * oo[n:] == 0).all()                                     # ON と OFF は排他
+    assert oo[n + 0] > 0 and oo[n - 1] > 0                                  # 暗い個眼は OFF、明るい個眼は ON
+    assert np.all(fv.fly_hex_quantize(np.full(5, 0.7), mode="log") == 0.0)   # 定数 = コントラスト無し
+    assert np.all(fv.fly_hex_quantize(np.full(5, 0.7), mode="onoff") == 0.0)
+    for bad in (dict(bits=0), dict(bits=9), dict(mode="pcm"), dict(contrast=0.0)):
+        with pytest.raises(ValueError, match="fly_hex_quantize"):
+            fv.fly_hex_quantize(x, **bad)
+    with pytest.raises(ValueError, match="fly_hex_quantize"):
+        fv.fly_hex_quantize(np.array([1.0, -0.1]))
+    with pytest.raises(ValueError, match="fly_hex_quantize"):
+        fv.fly_hex_quantize(np.ones((3, 3)))
+
+
+def test_hex_quantize_is_registered_and_runs_through_op_run():
+    import fullseye as fs
+    import opsflyvision
+
+    assert "fly_hex_quantize" in opsflyvision.OPSFLYVISION
+    out, _ = fs.op_run("fly_hex_quantize", np.linspace(0.0, 1.0, 16), bits=2)
+    assert np.asarray(out).shape == (16,)

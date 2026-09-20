@@ -36,5 +36,15 @@
    560,
    3
   ]
+ },
+ {
+  "file": "04_retinotopy_vs_bits.png",
+  "name": "retinotopy_vs_bits",
+  "caption": "fly_hex_quantize(mode=log): a low-contrast soft bar (0.5 + 0.3, sigma 6 px) crossing the visual field is quantized to n bits per ommatidium before entering the wiring",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]

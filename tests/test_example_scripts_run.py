@@ -89,6 +89,7 @@ def _run_one(path: Path) -> tuple[str, int, str]:
     env.pop("PYTHONPATH", None)
     # 図は書かせない —— 図の配線は `test_example_figures.py` が別に見る。
     env.pop("FULLSEYE_FIGURE_DIR", None)
+    env["FULLSEYE_FIGURES"] = "off"                 # 既定の out/figures にも書かせない(2026-09-20)
     try:
         r = subprocess.run([sys.executable, str(path)], env=env, cwd=str(ROOT),
                            capture_output=True, timeout=PER_SCRIPT_TIMEOUT)

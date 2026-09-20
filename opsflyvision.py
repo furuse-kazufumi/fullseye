@@ -73,6 +73,7 @@ _CATALOG = {
     ],
     "sample": [
         ("fly_hex_resample", "flyvision", ["image2d", "table"], "signal"),
+        ("fly_hex_quantize", "flyvision", ["signal"], "signal"),
     ],
     "motion": [
         ("fly_emd_response", "flyvision", ["signal", "signal"], "signal"),

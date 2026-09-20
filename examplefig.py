@@ -42,6 +42,8 @@ from __future__ import annotations
 import atexit
 import json
 import os
+import re
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -68,6 +70,45 @@ def target_dir() -> Path | None:
     except OSError as exc:
         _errors.append("%s を作れない: %s" % (d, exc))
         return None
+
+
+ENV_SWITCH = "FULLSEYE_FIGURES"
+
+
+def _auto_default() -> None:
+    """素で ``py examples/poc_x.py`` と走らせた人にも図が見えるように、PoC の既定出力先を決める。
+
+    ★2026-09-20(ユーザー「サンプルを動かした人がびっくりする体験を」): 図は ``FULLSEYE_FIGURE_DIR`` を
+    立てたときだけ出ていたので、素で走らせた人には文字しか見えなかった。``examples/poc_*.py`` として
+    起動され、環境変数が無ければ ``<repo>/out/figures/<PoC 名>/``(gitignore 済み)に書き、置き場所を
+    先頭で印字する。``FULLSEYE_FIGURES=off`` で止める(テストの走行はこちら)。pytest の中(sys.argv が
+    pytest)では何もしない —— 手動の ``target_dir()`` の約束(未設定 = 出さない)は変えない。
+    """
+    if os.environ.get(ENV_DIR, "").strip():
+        return
+    if os.environ.get(ENV_SWITCH, "").strip().lower() in ("off", "0", "none", "false"):
+        return
+    main = sys.argv[0] if sys.argv else ""
+    if not main:
+        return
+    mp = Path(main)
+    if not (mp.stem.startswith("poc_") and mp.suffix == ".py" and mp.parent.name == "examples"):
+        return
+    d = mp.resolve().parent.parent / "out" / "figures" / mp.stem
+    # 既定の置き場は PoC 自身の出力しか無いので、前回の図(番号つき)と台帳を先に消す —— 2 回走らせると
+    # 01_a.png と 01_b.png が混ざり、台帳と食い違う(2026-09-20 に実測)。
+    if d.is_dir():
+        for f in d.iterdir():
+            if f.is_file() and (re.match(r"^\d\d_.*\.(png|gif|jpg|jpeg)$", f.name) or f.name == "figures.json"):
+                try:
+                    f.unlink()
+                except OSError:
+                    pass
+    os.environ[ENV_DIR] = str(d)
+    print("[examplefig] figures -> %s   (set %s to choose a place, %s=off to disable)" % (d, ENV_DIR, ENV_SWITCH))
+
+
+_auto_default()
 
 
 def enabled() -> bool:

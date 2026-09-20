@@ -148,18 +148,18 @@ import functools
 import numpy as np
 
 __all__ = [
-    "fly_hex_lattice", "fly_hex_resample",
+    "fly_hex_lattice", "fly_hex_resample", "fly_hex_quantize",
     "fly_emd_response",
     "fly_lgmd_eta", "fly_tau_from_expansion",
     "fly_hs_readout", "fly_sky_1f", "fly_dsi",
-    "FLYVISION", "GEOMETRIES", "LN2",
+    "FLYVISION", "GEOMETRIES", "LN2", "QUANTIZE_MODES",
     "MAX_LATTICE_RADIUS", "MAX_IMAGE_DIM", "MAX_SIGNAL_POINTS",
     "MAX_RESAMPLE_ELEMENTS",
 ]
 
 #: The public operators, by name (introspection / facade wiring).
 FLYVISION = [
-    "fly_hex_lattice", "fly_hex_resample",
+    "fly_hex_lattice", "fly_hex_resample", "fly_hex_quantize",
     "fly_emd_response",
     "fly_lgmd_eta", "fly_tau_from_expansion",
     "fly_hs_readout", "fly_sky_1f", "fly_dsi",
@@ -665,6 +665,70 @@ def _lowpass_first_order(x: np.ndarray, tau_s: float, dt_s: float) -> np.ndarray
         acc = acc + alpha * (x[i] - acc)
         y[i] = acc
     return y
+
+
+QUANTIZE_MODES = ("log", "linear", "onoff")
+
+
+def fly_hex_quantize(signal, bits=3, mode="log", contrast=0.2):
+    """Quantize an ommatidial signal the way the eye does: log-compress, then n bits per ommatidium.
+
+    A compound eye is a quantizer by construction: ~800 ommatidia per eye at 4.6 deg spacing,
+    photoreceptors that log-compress intensity and adapt to the mean, and lamina cells (L1/L2)
+    that split the deviation into ON and OFF channels. This op reproduces that budget so a
+    downstream model (reservoir, retinotopy test) can be asked how many bits it really needs.
+
+    Parameters
+    ----------
+    signal : (n,) float
+        Per-ommatidium intensities >= 0 (``fly_hex_resample`` output).
+    bits : int
+        1..8 levels = 2**bits (``mode="onoff"`` ignores it: the output is the signed pair below).
+    mode : str
+        ``"log"``: log1p-compress relative to the mean, shift the darkest ommatidium to 0, then
+        uniform levels over the compressed range; ``"linear"``: uniform levels over [0, max]; ``"onoff"``: deviation from the mean
+        relative to ``contrast`` clipped to [-1, 1] and returned as ``2 * n`` values ``[ON..., OFF...]``
+        (ON = positive part, OFF = negative part), each >= 0.
+    contrast : float
+        Michelson-style contrast that saturates the ON/OFF channels (``mode="onoff"`` only).
+
+    Returns
+    -------
+    (n,) float in [0, 1] (levels / (2**bits - 1)); for ``"onoff"`` (2n,) in [0, 1].
+
+    Notes
+    -----
+    Non-finite or negative inputs are refused. A constant signal quantizes to all-zeros
+    (``"log"`` / ``"onoff"``) — there is no contrast to encode.
+    """
+    op = "fly_hex_quantize"
+    x = np.asarray(signal, dtype=np.float64)
+    if x.ndim != 1 or x.size == 0:
+        raise ValueError(f"{op}: signal must be a non-empty 1-D array (one value per ommatidium), got shape {x.shape}")
+    if not np.isfinite(x).all() or (x < 0).any():
+        raise ValueError(f"{op}: signal must be finite and >= 0 (intensities)")
+    _one_of(mode, "mode", QUANTIZE_MODES, op)
+    bits = int(bits)
+    if not (1 <= bits <= 8):
+        raise ValueError(f"{op}: bits must be in 1..8, got {bits}")
+    contrast = float(contrast)
+    if not np.isfinite(contrast) or contrast <= 0.0:
+        raise ValueError(f"{op}: contrast must be a positive number, got {contrast}")
+    levels = float(2 ** bits - 1)
+    mean = float(x.mean())
+    if mode == "onoff":
+        dev = (x - mean) / max(mean * contrast, 1e-12)
+        dev = np.clip(dev, -1.0, 1.0)
+        return np.concatenate([np.maximum(dev, 0.0), np.maximum(-dev, 0.0)])
+    if mode == "linear":
+        peak = float(x.max())
+        y = x / peak if peak > 0.0 else np.zeros_like(x)
+    else:
+        y = np.log1p(x / max(mean, 1e-12))
+        y = y - float(y.min())                                   # 最も暗い個眼を 0 に(定数 → 全部 0)
+        span = float(y.max())
+        y = y / span if span > 0.0 else np.zeros_like(y)
+    return np.round(y * levels) / levels
 
 
 def fly_emd_response(signal_a, signal_b, tau_s=0.05, dt_s=0.001):

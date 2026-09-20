@@ -102,3 +102,34 @@ def test_it_does_nothing_without_a_target_dir(monkeypatch):
     figs.reset()
     assert figs.save_gif("nowhere", [np.zeros((4, 4))]) is None
     assert figs.errors() == []                   # 設定が無いのはエラーではない
+
+
+def test_poc_scripts_get_a_default_figure_dir_when_run_directly(monkeypatch, tmp_path):
+    """素で examples/poc_x.py を走らせた人にも図が出る(2026-09-20): 環境変数が無ければ
+    <repo>/out/figures/<PoC 名> を既定にし、FULLSEYE_FIGURES=off で止まり、pytest の中では何もしない。"""
+    import sys
+    import examplefig
+
+    monkeypatch.delenv(examplefig.ENV_DIR, raising=False)
+    monkeypatch.delenv(examplefig.ENV_SWITCH, raising=False)
+    fake = tmp_path / "repo" / "examples" / "poc_fake.py"
+    fake.parent.mkdir(parents=True)
+    fake.write_text("", encoding="utf-8")
+    stale = tmp_path / "repo" / "out" / "figures" / "poc_fake"
+    stale.mkdir(parents=True)
+    (stale / "01_old.png").write_bytes(b"x"); (stale / "figures.json").write_text("[]"); (stale / "notes.txt").write_text("keep")
+    monkeypatch.setattr(sys, "argv", [str(fake)])
+    examplefig._auto_default()
+    assert os.environ[examplefig.ENV_DIR] == str(stale)
+    assert sorted(f.name for f in stale.iterdir()) == ["notes.txt"]          # 前回の番号つき図と台帳は消える、他は残る
+    monkeypatch.delenv(examplefig.ENV_DIR, raising=False)
+    monkeypatch.setenv(examplefig.ENV_SWITCH, "off")
+    examplefig._auto_default()
+    assert examplefig.ENV_DIR not in os.environ
+    monkeypatch.delenv(examplefig.ENV_SWITCH, raising=False)
+    monkeypatch.setattr(sys, "argv", ["pytest"])                 # テストの中では発動しない
+    examplefig._auto_default()
+    assert examplefig.ENV_DIR not in os.environ
+    monkeypatch.setattr(sys, "argv", [str(tmp_path / "repo" / "examples" / "demo_not_poc.py")])
+    examplefig._auto_default()
+    assert examplefig.ENV_DIR not in os.environ

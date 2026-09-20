@@ -16,6 +16,7 @@ MaleCNS の注釈には視葉ニューロンごとに六角柱(``assignedOlHex1/
 2. ``image_through_the_eye``: 縦縞が視野を横切る像を ``fly_hex_resample`` で個眼に落とし、個眼の明るさをそのまま
    刺激にして脳に入れる GIF。左 = 複眼が見る像、右 = 応答。
 3. ``retinotopy_scatter``: 刺激した柱の横座標 vs 応答重心の横座標(コネクトーム / shuffle)。
+4. ``retinotopy_vs_bits``: 個眼信号を ``fly_hex_quantize`` で 1〜8 ビットに落としたときの網膜部位対応(複眼は量子化器)。
 
 Studio では Tools ▸ 「Compound eye → brain」が同じ部品で対話的に動く(マウスで刺激位置、ドラッグで視点)。
 データ: 手元の MaleCNS から部分グラフを作ってキャッシュ(生データも部分グラフも commit しない)。無ければ合成の
@@ -130,6 +131,40 @@ def main() -> int:
     sig_mid = eb.eye_signal(mid)
     print("image mode (bar at the centre): %d ommatidia > 0.5, %d stimulated neurons" % (int((sig_mid > 0.5).sum()), int((eb.stimulus_from_signal(sig_mid) > 0).sum())))
 
+    # --- 3. 複眼は量子化器: 個眼信号を n ビットに落としても網膜部位対応は残るか(ユーザー 2026-09-20「複眼は量子化しやすそう」)
+    def retinotopy_from_images(bits):
+        xs_b, cx_b = [], []
+        xx = np.arange(W_IMG, dtype=float)
+        for lo in np.linspace(12, W_IMG - 12, 10):
+            # ★2 値の縞では 1 ビットでも相関 0.99 で量子化の効き目が測れない(実測)。背景 0.5 に +0.3 の
+            #   滑らかな縞(σ = 6 px)= 低コントラストの像で、ビット数が信号を潰す条件にする。
+            img = np.tile(0.5 + 0.3 * np.exp(-0.5 * ((xx - lo) / 6.0) ** 2), (W_IMG, 1))
+            sig = eb.eye_signal(img)
+            if bits == "raw":                                                       # 適応なし(背景も刺激になる)
+                pass
+            elif bits is None:                                                      # 適応あり・連続値 = 量子化なしの同じ対数圧縮
+                y = np.log1p(sig / max(float(sig.mean()), 1e-12)); y = y - y.min()
+                sig = y / max(float(y.max()), 1e-9)
+            else:
+                sig = np.asarray(fs.op_run("fly_hex_quantize", sig, bits=bits, mode="log")[0])
+            stim = eb.stimulus_from_signal(sig)
+            if not (stim > 0).any():
+                continue
+            X = eb.run_wave(stim, steps=6)
+            xs_b.append(lo); cx_b.append(response_centroid(eb, X, stim)[1])       # 像の左右は soma の y に写る
+        return float(abs(np.corrcoef(xs_b, cx_b)[0, 1])) if len(xs_b) >= 3 else float("nan")
+    bits_list = [1, 2, 3, 4, 6, 8]
+    corr_bits = [retinotopy_from_images(b) for b in bits_list]
+    corr_full = retinotopy_from_images(None)
+    corr_raw = retinotopy_from_images("raw")
+    print("bits -> |corr(bar x, response centroid)|: " + "  ".join("%d:%.2f" % (b, c) for b, c in zip(bits_list, corr_bits))
+          + "  float(adapted):%.2f  float(raw, no adaptation):%.2f" % (corr_full, corr_raw))
+    # ★実測(2026-09-20): 効いているのはビット数ではなく「背景を引く」適応。背景 0.5 の像を適応なしで入れると
+    #   全柱が刺激され重心が動かない(実データで 0.63)。適応した連続値と 8 ビットは同じ(0.99)。
+    assert abs(corr_bits[-1] - corr_full) < 0.15, "8 ビットが適応済みの連続値と違う: %.2f vs %.2f" % (corr_bits[-1], corr_full)
+    if not synthetic:
+        assert corr_full > corr_raw + 0.2, "適応(背景を引く)の効き目が見えない: %.2f vs %.2f" % (corr_full, corr_raw)
+
     # --- 図
     h = header(frames[0].shape[1], "cursor column → response, dorsal | lateral  (top: connectome / bottom: shuffle)")
     figs.save_gif("eye_sweep", [np.vstack([h, f]) for f in frames], fps=10.0,
@@ -143,6 +178,12 @@ def main() -> int:
                    xlabel="stimulated column (hex x)", ylabel="response centroid x (soma coordinate)",
                    title="retinotopy: corr %+.2f vs %+.2f" % (corr["connectome"], corr["shuffle"]),
                    caption="|x|-weighted centroid of the responding optic-lobe neurons vs the stimulated column")
+    figs.save_plot("retinotopy_vs_bits", [("log-quantized eye signal", np.asarray(bits_list, float), np.asarray(corr_bits)),
+                                          ("float, adapted", np.asarray([1.0, 8.0]), np.asarray([corr_full, corr_full])),
+                                          ("float, raw (no adaptation)", np.asarray([1.0, 8.0]), np.asarray([corr_raw, corr_raw]))],
+                   xlabel="bits per ommatidium", ylabel="|corr| (bar position vs response centroid)",
+                   title="how many bits does the wiring need? adaptation matters more than bits",
+                   caption="fly_hex_quantize(mode=log): a low-contrast soft bar (0.5 + 0.3, sigma 6 px) crossing the visual field is quantized to n bits per ommatidium before entering the wiring")
     assert not figs.errors(), figs.errors()
     print("elapsed %.0fs" % (time.time() - t0))
     print("\nPASS")
