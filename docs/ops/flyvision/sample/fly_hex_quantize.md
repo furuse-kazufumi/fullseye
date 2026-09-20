@@ -17,7 +17,11 @@ version: 0.2.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Quantize an ommatidial signal the way the eye does: log-compress, then n bits per ommatidium.
+個眼信号を眼と同じやり方で量子化する: 対数圧縮してから個眼あたり n ビット(``mode="onoff"`` は ON / OFF の 2 チャネル)。
+
+複眼は生まれつき量子化器で、片眼およそ 800 個眼(間隔 4.6°)、光受容器は強度を対数圧縮して平均に適応し、
+ラミナの L1 / L2 が平均からの偏差を ON と OFF に分ける。この op はその予算を再現し、下流のモデル
+(reservoir・網膜部位対応の検査)に「本当に何ビット要るか」を問えるようにする。
 
 A compound eye is a quantizer by construction: ~800 ommatidia per eye at 4.6 deg spacing,
 photoreceptors that log-compress intensity and adapt to the mean, and lamina cells (L1/L2)

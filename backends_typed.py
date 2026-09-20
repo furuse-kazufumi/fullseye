@@ -165,6 +165,10 @@ _OP_BRIDGE_SKIP = {
     #   画像を「状態列」と読んで (8,) を volume と宣言する退化した op(tb_graph_activation_latency)が
     #   生まれた(全体スイートで 4 門が赤)。状態列は画像ではないので橋を架けない。
     "graph_activation_latency",
+    # 2026-09-20: 個眼信号(強度 >= 0)の量子化。signal→signal で自動的に橋が架かるが、橋の探針は正弦(負値)で
+    #   拒否され、knob a/b は bits/mode に写らず「効かないノブ」、既定では素通し(pass-through)と判定された。
+    #   画像の op ではないので橋を架けない。
+    "fly_hex_quantize",
 }
 
 

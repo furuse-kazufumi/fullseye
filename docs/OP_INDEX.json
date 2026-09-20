@@ -1,10 +1,10 @@
 {
- "n_ops": 2021,
+ "n_ops": 2020,
  "tiers": {
   "color": 12,
   "ledger": 1072,
   "nary": 17,
-  "registry": 920
+  "registry": 919
  },
  "sorts": [
   "angle",
@@ -21676,16 +21676,6 @@
    "halcon": "",
    "in_sort": "points",
    "out_sort": "points",
-   "category": "typed",
-   "tier": "registry",
-   "module": "backends_typed",
-   "requires": []
-  },
-  {
-   "name": "tb_fly_hex_quantize",
-   "halcon": "",
-   "in_sort": "signal",
-   "out_sort": "signal",
    "category": "typed",
    "tier": "registry",
    "module": "backends_typed",

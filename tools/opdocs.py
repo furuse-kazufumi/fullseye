@@ -2090,4 +2090,9 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    raise SystemExit(main(sys.argv))
+    # ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の
+    #   shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。
+    #   出力は全部書き終えているので、flush してから os._exit で確定させる。
+    _rc = main(sys.argv)
+    sys.stdout.flush(); sys.stderr.flush()
+    os._exit(int(_rc or 0))

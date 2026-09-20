@@ -3,7 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_quantize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Quantize an ommatidial signal the way the eye does: log-compress, then n bits per ommatidium.</p>
+<p>個眼信号を眼と同じやり方で量子化する: 対数圧縮してから個眼あたり n ビット(`<code style="color:#22d3bf">mode=&quot;onoff&quot;</code>` は ON / OFF の 2 チャネル)。</p>
+<p>複眼は生まれつき量子化器で、片眼およそ 800 個眼(間隔 4.6°)、光受容器は強度を対数圧縮して平均に適応し、</p>
+<p>ラミナの L1 / L2 が平均からの偏差を ON と OFF に分ける。この op はその予算を再現し、下流のモデル</p>
+<p>(reservoir・網膜部位対応の検査)に「本当に何ビット要るか」を問えるようにする。</p>
 <p>A compound eye is a quantizer by construction: ~800 ommatidia per eye at 4.6 deg spacing,</p>
 <p>photoreceptors that log-compress intensity and adapt to the mean, and lamina cells (L1/L2)</p>
 <p>that split the deviation into ON and OFF channels. This op reproduces that budget so a</p>

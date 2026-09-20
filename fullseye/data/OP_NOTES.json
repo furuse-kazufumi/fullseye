@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2021,
- "n_notes": 2027,
+ "n_ops": 2020,
+ "n_notes": 2026,
  "notes": {
   "vol_dilate": [
    {
@@ -8823,16 +8823,6 @@
     "in": "points",
     "out": "points",
     "path": "docs/ops/2d/typed/tb_fit_spline_curve.md"
-   }
-  ],
-  "tb_fly_hex_quantize": [
-   {
-    "op": "tb_fly_hex_quantize",
-    "dim": "2d",
-    "category": "typed",
-    "in": "signal",
-    "out": "signal",
-    "path": "docs/ops/2d/typed/tb_fly_hex_quantize.md"
    }
   ],
   "tb_fly_lgmd_eta": [
