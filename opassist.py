@@ -25,6 +25,8 @@ from __future__ import annotations
 
 import importlib
 import inspect
+import io
+import os
 import re
 from typing import Any
 
@@ -963,6 +965,66 @@ def _stem_fraction(q_tokens: list[str], hay: str) -> float:
     return frac if frac >= _STEM_FLOOR else 0.0
 
 
+_NOTE_LINES: dict | None = None
+
+
+def _note_first_line(name: str) -> str:
+    """op ノート(docs/ops/**/<name>.md、無ければ wheel 同梱の studio_assets/op_help/<name>.html)の最初の散文 1 行。
+
+    ★2026-09-20(GenSpark 第 33・48・53 報 N119 / N162 / N178): `op_find("gaussian")` の ``doc`` が空だった ——
+    registry の ``Op.doc`` は 931 op 中 422 にしか無く、正本はノートなのに find はノートを見ていなかった。
+    ノートは全 op にある(門で固定)ので、そこから 1 行取れば doc の空欄は消える。
+    """
+    global _NOTE_LINES
+    if _NOTE_LINES is None:
+        import glob as _glob
+        import html as _html
+        import re as _re
+        table: dict = {}
+        here = os.path.dirname(os.path.abspath(__file__))
+        for p in _glob.glob(os.path.join(here, "docs", "ops", "**", "*.md"), recursive=True):
+            stem = os.path.basename(p)[:-3]
+            if stem in table or stem.startswith("INDEX"):
+                continue
+            try:
+                body = io.open(p, encoding="utf-8").read()
+            except OSError:
+                continue
+            if body.startswith("---"):
+                parts = body.split("---", 2)
+                body = parts[2] if len(parts) == 3 else body
+            # 「## 使い方」(無ければ Usage / What it does)の節の最初の散文を採る。冒頭は図と注(「*図は…*」)で、
+            # そこを取ると doc が図の説明文になる(2026-09-20 に実際にそうなった)。
+            lines = body.splitlines()
+            start = 0
+            for k, ln in enumerate(lines):
+                if ln.startswith("## ") and any(w in ln for w in ("使い方", "Usage", "What it does", "How to use")):
+                    start = k + 1
+                    break
+            for ln in lines[start:]:
+                t = ln.strip()
+                if not t or t.startswith(("#", "|", "<", "!", "```", "- ", "* ", "*", "[")):
+                    if t.startswith("## ") and start:      # 次の節に入った: 使い方の節に散文が無かった
+                        break
+                    continue
+                table[stem] = _re.sub(r"[`*]", "", t)[:200]          # _ は残す(gauss_filter を gaussfilter にしない)
+                break
+        if not table:                                    # wheel: ノートの本文は無く、help HTML だけがある
+            for p in _glob.glob(os.path.join(here, "studio_assets", "op_help", "*.html")):
+                stem = os.path.basename(p).split(".")[0]
+                if stem in table:
+                    continue
+                try:
+                    txt = _re.sub(r"<[^>]+>", " ", io.open(p, encoding="utf-8").read())
+                except OSError:
+                    continue
+                txt = _html.unescape(_re.sub(r"\s+", " ", txt)).strip()
+                if txt:
+                    table[stem] = txt[:200]
+        _NOTE_LINES = table
+    return _NOTE_LINES.get(name, "")
+
+
 def find(query: str, limit: int = 20) -> list[dict]:
     """自由語で op を探す(名前・説明・カテゴリ・モジュールを横断)。
 
@@ -1042,7 +1104,7 @@ def find(query: str, limit: int = 20) -> list[dict]:
     for op in _registry_ops():
         if op.name in seen:
             continue
-        doc = str(op.doc or "")
+        doc = str(op.doc or "") or _note_first_line(op.name)
         hay_name = op.name.lower()
         if hay_name == q:
             score = 99
@@ -1116,6 +1178,19 @@ def _registry_ops():
         return ()
 
 
+def _registry_hint(op_name: str) -> str:
+    """台帳に無い名前が単入力 registry の op なら、走らせ方(apply)を 1 文で(op_run は台帳の入口)。"""
+    try:
+        import api as _api
+        op = _api.find_op(op_name)
+    except Exception:  # noqa: BLE001 - a hint must never replace the original error
+        return ""
+    if op is None:
+        return ""
+    return (" — %r is a single-image registry op, not a ledger op: run it with fullseye.apply(img, %r) "
+            "(op_run is the entry for the typed ledgers; fullseye.op_find(%r) tells the tier)" % (op_name, op_name, op_name))
+
+
 def run(op_name: str, *data, preset=None, strict: bool = False, **kwargs):
     """op を**1 行で**動かす(プリセット解決 → 前提チェック → 宣言型で返す)。
 
@@ -1129,9 +1204,14 @@ def run(op_name: str, *data, preset=None, strict: bool = False, **kwargs):
     返り値: ``(result, notes)``。result は**台帳の宣言 out 型**(adapter 適用後)なので、
     そのまま次の op へ渡せる ―― 素の関数のタプル返しを呼び手が剥がす必要が無い。
     """
+    # ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、
+    #   op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
+    if not isinstance(op_name, str):
+        raise TypeError("opassist.run(name, *inputs): the first argument is the op name, got %s — the order is "
+                        "op_run(name, <input>, ...), not op_run(<input>, name)" % type(op_name).__name__)
     mod_name, entry = _ledger_entry(op_name)
     if entry is None:
-        raise ValueError(f"opassist: unknown op {op_name!r} (not in any ledger)")
+        raise ValueError(f"opassist: unknown op {op_name!r} (not in any ledger){_registry_hint(op_name)}")
     kw = {}
     if preset is not None:
         table = presets(op_name)
@@ -1167,6 +1247,16 @@ def run(op_name: str, *data, preset=None, strict: bool = False, **kwargs):
     if args and leading != data_names[:len(args)] and len(data_names) >= len(args):
         kw.update(zip(data_names, args))
         args = []
+    # ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の
+    #   「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは
+    #   検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
+    req = [sp for sp in param_spec(op_name) if sp["kind"] == "data" and sp.get("required")]
+    given = set(kw) | set(data_names[:len(args)])
+    lacking = [sp for sp in req if sp["name"] not in given]
+    if lacking and (args or kwargs):
+        raise ValueError("opassist.run(%r): missing input(s) %s — this op takes %s: op_run(%r, <%s>)"
+                         % (op_name, ", ".join("%s (%s)" % (sp["name"], sp["sort"]) for sp in lacking),
+                            ", ".join(sp["name"] for sp in req), op_name, ">, <".join(sp["sort"] for sp in req)))
     notes = preflight(op_name, kw)
     if notes and strict:
         raise ValueError("opassist.run: preflight: " + " / ".join(notes))

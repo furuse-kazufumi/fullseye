@@ -230,7 +230,12 @@ def attempt(fn, *args, metric=None, **kwargs):
 
 
 def attempt_all(fn, pairs, metric=None, **kwargs):
-    """同じ op を複数の組に当てる。**1 つ落ちても残りは測る**(掃引向け)。"""
+    """同じ op を複数の組に当てる。**1 つ落ちても残りは測る**(掃引向け)。
+
+    ``pairs`` は :func:`attempt` に渡す位置引数のタプルの iterable(``[(img_a, img_b), ...]``)。返り値は
+    ``attempt`` の返す :class:`Attempt` のリスト(同じ順)で、落ちた組は ``ok=False`` と例外文を持つ。
+    ``metric`` / ``**kwargs`` は全組に共通。
+    """
     return [attempt(fn, *p, metric=metric, **kwargs) for p in pairs]
 
 

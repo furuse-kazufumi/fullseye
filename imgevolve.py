@@ -427,17 +427,72 @@ def _ledger_rows(taken):
     return rows
 
 
+def _index_default_out() -> str:
+    """既定の書き先。checkout では ``docs/OP_INDEX.json``(生成物の正本)、``docs/`` の無い場所 —— wheel の
+    site-packages —— では **カレントディレクトリ**。
+
+    ★2026-09-20(GenSpark 第 32 報 N115 / 第 55 報 N198): wheel から ``fullseye index`` を叩くと site-packages の
+    中に ``docs/OP_INDEX.json`` を作り、同梱の ``fullseye/data/OP_INDEX.json`` と別の値(その環境の生きた
+    registry)を持つ「3 つ目の索引」が生まれていた。インストール先に書かない。
+    """
+    docs = os.path.join(HERE, "docs")
+    return os.path.join(docs, "OP_INDEX.json") if os.path.isdir(docs) else os.path.join(os.getcwd(), "OP_INDEX.json")
+
+
+def _index_vs_shipped(rows) -> list:
+    """生きた registry の索引と同梱索引の差を、理由(入っていない optional backend)つきの行にする。
+
+    数が違うのは正常(同梱 = ビルド環境、CLI = この環境)だが、**違う理由を言わない数字は 3 系統目の真実に
+    見える**(第 55 報 N198)。差集合と、その op が要る backend のうちこの環境に無いものを出す。
+    """
+    import api as _api_
+    import ops as _ops_
+    shipped = _api_._shipped_index()
+    if not shipped:
+        return ["[index] no shipped index found to compare against"]
+    live = {r["name"] for r in rows}
+    missing = sorted(n for n in shipped if n not in live)
+    extra = sorted(n for n in live if n not in shipped)
+    lines = []
+    if not missing and not extra:
+        return ["[index] this environment matches the shipped index (%d ops)" % len(shipped)]
+    lines.append("[index] this environment vs the shipped index (fullseye/data/OP_INDEX.json, %d ops): "
+                 "%d op(s) missing here, %d only here" % (len(shipped), len(missing), len(extra)))
+    if missing:
+        import importlib.util
+        need: dict = {}
+        for n in missing:
+            for m in shipped[n].get("requires") or []:
+                if importlib.util.find_spec(m) is None:
+                    need.setdefault(m, []).append(n)
+        lines.append("[index]   missing: %s%s" % (", ".join(missing[:10]), " …" if len(missing) > 10 else ""))
+        deps = _ops_.OPTIONAL_DEPS
+        for m, names in sorted(need.items()):
+            pip, extra_name = deps.get(m, (m, None))
+            lines.append("[index]   %d of them need %r (not installed here): pip install %s"
+                         % (len(names), m, ('"fullseye[%s]"' % extra_name) if extra_name else pip))
+        unexplained = [n for n in missing if not any(importlib.util.find_spec(m) is None for m in (shipped[n].get("requires") or []))]
+        if unexplained:
+            lines.append("[index]   %d missing for another reason (fullseye.FAILED_BACKENDS / fullseye has <name>): %s"
+                         % (len(unexplained), ", ".join(unexplained[:10])))
+    if extra:
+        lines.append("[index]   only here (newer than the shipped copy): %s%s" % (", ".join(extra[:10]), " …" if len(extra) > 10 else ""))
+    return lines
+
+
 def cmd_index(a):
     out = _build_op_index()
     rows = out["ops"]
-    p = a.out or os.path.join(HERE, "docs", "OP_INDEX.json")
-    os.makedirs(os.path.dirname(p), exist_ok=True)
+    p = a.out or _index_default_out()
+    os.makedirs(os.path.dirname(os.path.abspath(p)), exist_ok=True)
     json.dump(out, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     order = ["registry", "nary", "ledger", "color"]
     tiers = out["tiers"]
     shown = " / ".join("%s %d" % (t, tiers[t]) for t in order if t in tiers)
     shown += "".join(" / %s %d" % (t, n) for t, n in tiers.items() if t not in order)
     print("[index] %d ops (%s) -> %s" % (len(rows), shown, p))
+    for line in _index_vs_shipped(rows):
+        print(line)
     return 0
 
 
@@ -457,6 +512,9 @@ def cmd_algo(a):
     if a.action == "run":
         if a.op is None or algo.find_algo(a.op) is None:
             raise SystemExit("run needs a known op (try: %s algo list)" % _prog())
+        if not a.seq.strip():
+            # ★2026-09-20(GenSpark 第 53 報 N187、再現): --seq 無しは空列を「ソートして」[] を印字し rc 0 だった。
+            raise SystemExit("run needs --seq (comma-separated numbers), e.g. %s algo run %s --seq 3,1,2" % (_prog(), a.op))
         seq = [float(x) for x in a.seq.split(",") if x.strip()]
         print(algo.run_algo(a.op, seq))
         return 0
@@ -619,9 +677,9 @@ def main() -> int:
     p.add_argument("--device", default="cpu")
     p.set_defaults(fn=cmd_accel)
 
-    p = sub.add_parser("bench", help="throughput: CPU baseline vs batch (add --device cuda on a GPU)")
-    p.add_argument("--n", type=int, default=200)
-    p.add_argument("--size", type=int, default=256)
+    p = sub.add_parser("bench", help="throughput: CPU baseline vs batch (add --device cuda on a GPU); memory ~ 2 x n x size^2 x 8 bytes (default 200 x 256^2 = ~210 MB), use --n 50 --size 128 in a small container")
+    p.add_argument("--n", type=int, default=200, help="images per batch (default 200)")
+    p.add_argument("--size", type=int, default=256, help="image side in pixels (default 256)")
     p.add_argument("--device", default="cpu")
     p.set_defaults(fn=cmd_bench)
 

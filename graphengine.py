@@ -30,9 +30,10 @@ class FullseyeGraph:
         self._order: list = []         # insertion order (tie-break for topo sort)
 
     # -- construction -------------------------------------------------------- #
-    def add(self, node_id: str, op: str, inputs, a: float = 0.5, b: float = 0.5):
+    def add(self, node_id: str, op: str, inputs="$in", a: float = 0.5, b: float = 0.5):
         """Add a node ``op`` consuming ``inputs`` (node ids and/or external input
-        names, e.g. ``"$in"``). A single-input REGISTRY op uses ``inputs[0]``; a
+        names, e.g. ``"$in"``; default ``"$in"`` = the array handed to :meth:`run`, so a
+        first single-input node is ``add("n1", "gaussian")``). A single-input REGISTRY op uses ``inputs[0]``; a
         2-input :mod:`imgops_nary` op (``add_image``/``abs_diff_image``/``union2``…)
         consumes all inputs. Returns self for chaining."""
         node_id = str(node_id)
@@ -122,7 +123,8 @@ class FullseyeGraph:
         """Evaluate the graph. ``inputs`` is a single array (bound to ``"$in"``) or a
         ``{name: array}`` dict. Returns a ``{node_id: array}`` cache, or — when
         *terminal* is given — that single node's output. Raises ``ValueError`` if a
-        required external input is missing."""
+        required external input is missing. An empty graph returns the inputs cache
+        unchanged (``{"$in": array}``) — nothing ran, nothing was invented."""
         import numpy as np
         RT, nary = self._tables()
         if isinstance(inputs, dict):

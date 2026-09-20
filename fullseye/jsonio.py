@@ -179,6 +179,8 @@ def to_jsonable(value, sort, readable=False):
     """The JSON-native envelope (a dict) for *value* of *sort*. See module doc."""
     if sort not in JSON_SORTS:
         raise ValueError("to_jsonable: sort %r has no JSON bridge (have %s)" % (sort, JSON_SORTS))
+    if not isinstance(value, np.ndarray) and type(value).__name__ == "Image" and hasattr(value, "array"):
+        value = value.array          # fullseye.Image は配列の器(2026-09-20、GenSpark 第 49 報 N171)
     env = {"fullseye_sort": sort, "version": VERSION}
     if sort in _ARRAY_SORTS:
         _, ndim, last = _ARRAY_SORTS[sort]

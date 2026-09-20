@@ -1532,6 +1532,13 @@ def _fast_on(flag) -> bool:
 
 
 def _policy(on_error):
+    # ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、
+    #   入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、
+    #   `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。
+    #   strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の
+    #   on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
+    if on_error is None and _bs.is_strict():
+        return "raise"
     p = on_error if on_error is not None else os.environ.get("FULLSEYE_ON_ERROR", "fallback")
     if p not in _ON_ERROR_CHOICES:
         raise ValueError("on_error must be one of %s, or None (= FULLSEYE_ON_ERROR, default 'fallback'); got %r"
@@ -1806,6 +1813,19 @@ def _pu_contract(pu, op, policy, *, in_sort=None, name=None):
 
 #: 実数のラスタしか受けない sort。複素は cimage の op が受ける(fullseye.op_find("complex"))。
 _REAL_RASTER_SORTS = frozenset({"image", "region", "volume", "color"})
+
+
+def _unwrap_image(v):
+    """``fullseye.Image``(unified の画像チェーン)が来たら中の配列に剥がす。それ以外はそのまま。
+
+    ★2026-09-20(GenSpark 第 54・55 報 N188、再現): ``apply(fullseye.Image(img), "gaussian")`` が
+    「expects a image array with at least one dimension, got a scalar Image」—— ``np.asarray(Image)`` が 0 次元の
+    object 配列になるため。Image は「配列を持つ器」で、剥がし方は一意(``.array``)なので、ここで剥がす。
+    型名で判定するのは unified を api から import しないため(unified が api を import する側)。
+    """
+    if not isinstance(v, np.ndarray) and type(v).__name__ == "Image" and hasattr(v, "array"):
+        return v.array
+    return v
 
 
 def _reject_untyped(v, op_or_sort) -> None:
@@ -2224,6 +2244,7 @@ def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
         image = image.to_dense()
 
     op = _resolve(name)
+    image = _unwrap_image(image)
     _reject_untyped(image, op)
     v = _coerce_input(image, op) if coerce else image
     v = _contract_dtype(v, op, policy)
@@ -2346,6 +2367,7 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     ``on_error``: as in :func:`apply`; fallbacks are attributed per stage.
     """
     policy = _policy(on_error)
+    image = _unwrap_image(image)
     norm = _normalise_stages(image, stages, a, b)
 
     if isinstance(image, PrecisionUnion) and device != "cpu":

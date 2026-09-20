@@ -586,7 +586,8 @@ class Pipeline:
             #   / {"op": "slope_map", "cell": 0.03}({"name": ...} も可)
             if isinstance(s, (tuple, list)):
                 if len(s) > 2 or (len(s) == 2 and not isinstance(s[1], dict)):
-                    raise TypeError("pipeline: stage %d must be (op, {kwargs}), got %r" % (i, s))
+                    raise TypeError("pipeline: stage %d must be (op, {kwargs}), got %r — knob stages (name, a, b) "
+                                    "belong to fullseye.run_pipeline / FullseyeEngine" % (i, s))
                 from engine import stage_name
                 self.then(stage_name(s), **(s[1] if len(s) > 1 else {}))
             elif isinstance(s, dict):
