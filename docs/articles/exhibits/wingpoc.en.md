@@ -980,13 +980,13 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## 54. A Larval Connectome as a Reservoir Reads Digits — and the Wiring Is Not What Does It
 
-[![A Larval Connectome as a Reservoir Reads Digits — and the Wiring Is Not What Does It](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_larval_connectome_reservoir/01_adjacency_degree_ordered_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_larval_connectome_reservoir/01_adjacency_degree_ordered.png)
+[![A Larval Connectome as a Reservoir Reads Digits — and the Wiring Is Not What Does It](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_larval_connectome_reservoir/01_adjacency_binned_connectome_vs_shuffle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_larval_connectome_reservoir/01_adjacency_binned_connectome_vs_shuffle.png)
 
 *↑ **A Larval Connectome as a Reservoir Reads Digits — and the Wiring Is Not What Does It** ―― The complete larval Drosophila connectome (Winding 2023: 2,952 neurons, 110,677 edges) used as a fixed recurrent network with only a closed-form ridge readout reads an MNIST subset (4,000 train, 1,000 test) at 91.9 % (ridge on raw pixels: 77.6 %). Prior work stops there; this exhibit adds the controls: a graph with every neuron's in- and out-degree preserved but the edges rewired reaches 91.6 %, a random graph of the same density 91.9 %, a Gaussian random reservoir 91.5 %. The gap is +0.3 points over 3 seeds. What the readout uses is the reservoir as a mechanism, not the wiring evolution chose. The setting (input scale and regularisation) is chosen once on the connectome's validation split and reused for every control.*
 
-[![degree-preserving shuffle: same degrees, different wiring](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_larval_connectome_reservoir/02_adjacency_shuffled_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_larval_connectome_reservoir/02_adjacency_shuffled.png)
+[![|state| of the 300 highest-degree neurons over 6 steps for one test digit: connectome | shuffle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_larval_connectome_reservoir/02_activity_raster_connectome_vs_shuffle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_larval_connectome_reservoir/02_activity_raster_connectome_vs_shuffle.png)
 
-*↑ The measurement ―― degree-preserving shuffle: same degrees, different wiring (figure labels are in Japanese; the numbers are the same)*
+*↑ The measurement ―― |state| of the 300 highest-degree neurons over 6 steps for one test digit: connectome | shuffle (figure labels are in Japanese; the numbers are the same)*
 
 ```
 py -3.11 examples/poc_larval_connectome_reservoir.py
@@ -994,7 +994,7 @@ py -3.11 examples/poc_larval_connectome_reservoir.py
 
 Source: [examples/poc_larval_connectome_reservoir.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_larval_connectome_reservoir.py)
 
-Ops used (notes): [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`graph_adjacency_image`](https://furuse.work/ops/conngraph/view/graph_adjacency_image.html) · [`graph_degree_preserving_shuffle`](https://furuse.work/ops/conngraph/build/graph_degree_preserving_shuffle.html) · [`graph_degree_table`](https://furuse.work/ops/conngraph/stats/graph_degree_table.html) · [`graph_layout_spectral`](https://furuse.work/ops/conngraph/view/graph_layout_spectral.html) · [`graph_spectral_radius`](https://furuse.work/ops/conngraph/stats/graph_spectral_radius.html) · [`reservoir_encode`](https://furuse.work/ops/conngraph/reservoir/reservoir_encode.html) · [`reservoir_from_graph`](https://furuse.work/ops/conngraph/reservoir/reservoir_from_graph.html) · [`ridge_predict`](https://furuse.work/ops/conngraph/reservoir/ridge_predict.html) · [`ridge_readout`](https://furuse.work/ops/conngraph/reservoir/ridge_readout.html)
+Ops used (notes): [`graph_degree_preserving_shuffle`](https://furuse.work/ops/conngraph/build/graph_degree_preserving_shuffle.html) · [`graph_degree_table`](https://furuse.work/ops/conngraph/stats/graph_degree_table.html) · [`graph_spectral_radius`](https://furuse.work/ops/conngraph/stats/graph_spectral_radius.html) · [`reservoir_encode`](https://furuse.work/ops/conngraph/reservoir/reservoir_encode.html) · [`reservoir_from_graph`](https://furuse.work/ops/conngraph/reservoir/reservoir_from_graph.html) · [`ridge_predict`](https://furuse.work/ops/conngraph/reservoir/ridge_predict.html) · [`ridge_readout`](https://furuse.work/ops/conngraph/reservoir/ridge_readout.html)
 
 ### The Astronomy and Environment Wing — Biased by Position, Flipped by the Definition of Truth
 

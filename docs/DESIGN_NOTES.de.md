@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 811. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 813. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -315,6 +315,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_colocalization_crosstalk.py`
 
 - **L355** — ★Vorhersage des Ausläuferverlusts: der Ausläufer der Gaussian unterhalb des Schwellenwerts T tritt nicht in die Region ein. Von einem Punkt mit Peak p beträgt die Fluoreszenz innerhalb der Region 1 − (T − Sockel)/p (die geschlossene Form für das Volumen einer 2-D-Gaussian). Sockel = Zytoplasma + Hintergrund (+ der Einstreuanteil), und p wird durch die PSF um den Faktor σ_ves²/(σ_ves²+σ_psf²) gestaucht.
+- **L657** _(ja)_ — ★2026-09-20: `graph_degree_preserving_shuffle`(結合グラフの辺の繋ぎ替え = null model)が台帳に入った。ここで探している 「画像ブロックの並べ替え検定」とは別物なので、graph_ の族は穴の判定から除く(語が同じだけ)。
 
 ## `examples/poc_colormap_readability.py`
 
@@ -456,6 +457,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L202** — 4) ★Vergleich mit dem Nullpunkt (die maximale Probe der Einhüllenden) # ------------------------------------------------------------------ #
 - **L274** — 6) ★Rausch-Sweep — wo die Messung zusammenbricht # ------------------------------------------------------------------ #
 - **L314** — ★Eine kleine Streuung ist kein Beleg für Korrektheit
+
+## `examples/poc_larval_connectome_reservoir.py`
+
+- **L197** _(ja)_ — 5. 図(FULLSEYE_FIGURE_DIR があるときだけ)。★2,952² の隣接行列をそのまま描くと 1.3 % の点で一色になり、 Fiedler 配置は重い裾の次数分布で 1 点に潰れる(2026-09-20 に実際にそうなった)。升に集約し、対照と並べる。
 
 ## `examples/poc_leak_localization.py`
 

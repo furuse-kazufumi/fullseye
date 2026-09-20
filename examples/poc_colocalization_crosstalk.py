@@ -654,8 +654,10 @@ def section_tool_gaps() -> None:
     print("9) 道具の穴(公開経路に無かった処理)")
     print("=" * 78)
     names = [n.lower() for n in list(fs.op_names()) + dir(fs.ledger)]
+    # ★2026-09-20: `graph_degree_preserving_shuffle`(結合グラフの辺の繋ぎ替え = null model)が台帳に入った。ここで探している
+    #   「画像ブロックの並べ替え検定」とは別物なので、graph_ の族は穴の判定から除く(語が同じだけ)。
     for key in ("manders", "costes", "coloc", "unmix", "shuffle"):
-        assert not [n for n in names if key in n], key
+        assert not [n for n in names if key in n and not n.startswith("graph_")], key
     print("  (a) Manders 係数 / Costes 自動しきい値 / ブロック並べ替え検定は公開経路に無い"
           "(この PoC は自前)。stat_correlation・mat_lstsq・mat_solve・otsu・gauss_image・"
           "photon_sample・noise_sigma で残りは組めた。")

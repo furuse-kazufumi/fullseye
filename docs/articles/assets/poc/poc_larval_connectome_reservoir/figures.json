@@ -1,35 +1,26 @@
 [
  {
-  "file": "01_adjacency_degree_ordered.png",
-  "name": "adjacency_degree_ordered",
-  "caption": "connectome adjacency, nodes sorted by degree (log scale)",
+  "file": "01_adjacency_binned_connectome_vs_shuffle.png",
+  "name": "adjacency_binned_connectome_vs_shuffle",
+  "caption": "adjacency summed into 96x96 bins, nodes sorted by degree (hubs top-left): connectome | degree-preserving shuffle",
   "shape": [
-   2952,
-   2952
+   384,
+   792
   ]
  },
  {
-  "file": "02_adjacency_shuffled.png",
-  "name": "adjacency_shuffled",
-  "caption": "degree-preserving shuffle: same degrees, different wiring",
+  "file": "02_activity_raster_connectome_vs_shuffle.png",
+  "name": "activity_raster_connectome_vs_shuffle",
+  "caption": "|state| of the 300 highest-degree neurons over 6 steps for one test digit: connectome | shuffle",
   "shape": [
-   2952,
-   2952
+   300,
+   492
   ]
  },
  {
-  "file": "03_spectral_layout_top400.png",
-  "name": "spectral_layout_top400",
-  "caption": "spectral layout of the 400 highest-degree neurons",
-  "shape": [
-   512,
-   512
-  ]
- },
- {
-  "file": "04_accuracy_bars.png",
+  "file": "03_accuracy_bars.png",
   "name": "accuracy_bars",
-  "caption": "test accuracy per reservoir variant (top: no reservoir)",
+  "caption": "test accuracy per reservoir variant (rows: no reservoir, connectome, shuffle, ER, Gaussian)",
   "shape": [
    120,
    400

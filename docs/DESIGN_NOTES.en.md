@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 811. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 813. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -315,6 +315,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_colocalization_crosstalk.py`
 
 - **L355** — ★Prediction of tail loss: the tail of the Gaussian below the threshold T does not enter the region. Of a peak-p point, the in-region fluorescence is 1 − (T − pedestal)/p (the closed form for the volume of a 2-D Gaussian). Pedestal = cytoplasm + background (+ the bleed-in), and p is squashed by the PSF by a factor of σ_ves²/(σ_ves²+σ_psf²).
+- **L657** _(ja)_ — ★2026-09-20: `graph_degree_preserving_shuffle`(結合グラフの辺の繋ぎ替え = null model)が台帳に入った。ここで探している 「画像ブロックの並べ替え検定」とは別物なので、graph_ の族は穴の判定から除く(語が同じだけ)。
 
 ## `examples/poc_colormap_readability.py`
 
@@ -456,6 +457,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L202** — 4) ★Comparison with the zero point (the max sample of the envelope) # ------------------------------------------------------------------ #
 - **L274** — 6) ★Noise sweep — where measurement breaks down # ------------------------------------------------------------------ #
 - **L314** — ★A small spread is no evidence of correctness
+
+## `examples/poc_larval_connectome_reservoir.py`
+
+- **L197** _(ja)_ — 5. 図(FULLSEYE_FIGURE_DIR があるときだけ)。★2,952² の隣接行列をそのまま描くと 1.3 % の点で一色になり、 Fiedler 配置は重い裾の次数分布で 1 点に潰れる(2026-09-20 に実際にそうなった)。升に集約し、対照と並べる。
 
 ## `examples/poc_leak_localization.py`
 

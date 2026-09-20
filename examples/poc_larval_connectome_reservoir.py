@@ -194,23 +194,34 @@ def main() -> int:
         print("finding: connectome − shuffle = %+.3f (3 seeds; |gap| < 0.03 means the wiring is not what the readout uses)" % gap)
         assert abs(gap) < 0.03, "配線固有の効果が出た(良い変化 — この節と docstring を書き換えること): %+.3f" % gap
 
-    # 5. 図(FULLSEYE_FIGURE_DIR があるときだけ)
-    img, _ = fs.op_run("graph_adjacency_image", W, order="degree")
-    figs.save("adjacency_degree_ordered", np.asarray(img), "connectome adjacency, nodes sorted by degree (log scale)")
-    imgsh, _ = fs.op_run("graph_adjacency_image", Wsh, order="degree")
-    figs.save("adjacency_shuffled", np.asarray(imgsh), "degree-preserving shuffle: same degrees, different wiring")
-    sub = np.argsort(-deg.sum(1))[:400]
-    P, _ = fs.op_run("graph_layout_spectral", W[np.ix_(sub, sub)], dim=2)
-    P = np.asarray(P)
-    canvas = np.zeros((512, 512))
-    ij = np.clip((P[:, :2] * 511).astype(int), 0, 511)
-    canvas[ij[:, 1], ij[:, 0]] = 1.0
-    canvas = np.asarray(fs.apply(canvas, "gaussian", a=0.15))
-    figs.save("spectral_layout_top400", canvas / max(canvas.max(), 1e-9), "spectral layout of the 400 highest-degree neurons")
+    # 5. 図(FULLSEYE_FIGURE_DIR があるときだけ)。★2,952² の隣接行列をそのまま描くと 1.3 % の点で一色になり、
+    #   Fiedler 配置は重い裾の次数分布で 1 点に潰れる(2026-09-20 に実際にそうなった)。升に集約し、対照と並べる。
+    def binned(A, order, k=96):
+        B = A[np.ix_(order, order)]
+        e = np.linspace(0, len(order), k + 1).astype(int)
+        return np.array([[B[e[i]:e[i + 1], e[j]:e[j + 1]].sum() for j in range(k)] for i in range(k)])
+
+    order = np.argsort(-deg.sum(1))                                  # 次数の高い順(ハブが左上)
+    tiles = [np.log1p(binned(A, order)) for A in (W, Wsh)]
+    top = max(t.max() for t in tiles)
+    gap = np.zeros((96, 6))
+    figs.save("adjacency_binned_connectome_vs_shuffle", np.kron(np.hstack([tiles[0] / top, gap, tiles[1] / top]), np.ones((4, 4))),
+              "adjacency summed into 96x96 bins, nodes sorted by degree (hubs top-left): connectome | degree-preserving shuffle")
+    sub = order[:300]
+    x0 = np.asarray(Xte[:1])
+    rasters = []
+    for _, Ares in scaled[:2]:
+        cols = [np.asarray(fs.op_run("reservoir_encode", Ares, x0, steps=k, in_scale=in_scale, leak=0.3, seed=0)[0])[0, sub]
+                for k in range(1, 7)]
+        R = np.abs(np.stack(cols, 1))                                 # 300 neurons x 6 steps
+        rasters.append(np.repeat(R / max(R.max(), 1e-9), 40, axis=1))
+    figs.save("activity_raster_connectome_vs_shuffle", np.hstack([rasters[0], np.zeros((300, 12)), rasters[1]]),
+              "|state| of the 300 highest-degree neurons over 6 steps for one test digit: connectome | shuffle")
     bars = np.zeros((len(results) * 24, 400))
     for k, (label, (acc, _)) in enumerate(results.items()):
         bars[k * 24 + 4:k * 24 + 20, :int(acc * 399)] = 1.0
-    figs.save("accuracy_bars", bars, "test accuracy per reservoir variant (top: no reservoir)")
+    figs.save("accuracy_bars", bars, "test accuracy per reservoir variant (rows: no reservoir, connectome, shuffle, ER, Gaussian)")
+    assert not figs.errors(), figs.errors()                             # 図の失敗を黙って捨てない
     print("elapsed %.0fs" % (time.time() - t0))
     print("\nPASS")
     return 0
