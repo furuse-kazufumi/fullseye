@@ -114,6 +114,7 @@ X = fs.reservoir_states(fs.reservoir_from_graph(W, rho=1.0), U, leak=0.6, W_in=w
 lat = fs.graph_activation_latency(X)                      # 各ノードが初めて点いたステップ(−1 = 点かない)
 tab = fs.graph_activity_spread(X, P, stim.astype(int))    # step / mean_distance / active_fraction / source_fraction
 V = fs.points_activity_video(P, X, colors=side_rgb, substeps=2, background=P_all)   # (F, H, W, 3) 回る動画
+V3 = fs.points_activity_video(P, X, colors=side_rgb, views=((0, 0), (90, 0), (0, 90)))   # 背側・側面・体軸方向を横に並べる
 ```
 
 尺度は 3 op とも **1 つ**(全体の最大値)。ノードごとに伸ばすと動かないノードの丸め屑が

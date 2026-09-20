@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 815. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 816. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -495,6 +495,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L202** — ★As hot as the bearings. The only difference is the **spread** (both bearings + whole machine).
 - **L1028** — ★2026-09-08: here we had hand-written numpy's rfft —— because we read it as 'no entry for a one-sided amplitude spectrum in the ledger', but `fs.spectrum` **was there all along** (it just did not show in the ledger). This is a case of deciding 'it does not exist' after looking at only one tier, so rewrite it to use the op.
 - **L1162** — ★2026-09-08: here we had written 'no spectrum in the ledger', but **`fs.spectrum` was there from the start** (dsp's 1-D tier). What was missing was only 'showing in the ledger (`fs.ledger`)' and 'the per-op notes'; this PoC pulled from only one tier, decided 'it does not exist', and hand-wrote numpy's rfft. Now that ops1d is wired into the ledger, both can be looked up.
+
+## `examples/poc_malecns_activity_wave.py`
+
+- **L241** _(ja)_ — ★同じ瞬間を 3 方向から(2026-09-20、ユーザー「いくつかの方向から発火状態を見れると良い」): 上段コネクトーム、下段 shuffle
 
 ## `examples/poc_mesh_quality_repair.py`
 

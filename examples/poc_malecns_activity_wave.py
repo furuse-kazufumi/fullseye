@@ -238,6 +238,16 @@ def main() -> int:
                   caption="a pulse into the right optic lobe (orange = right, blue = left somata; grey = all %d somata) "
                           "propagates through the real wiring (left) and through the same degrees rewired at random (right); "
                           "%d neurons, %d edges, %d steps, one brightness scale for every frame" % (len(P_all), n, m, T_STEPS))
+    # ★同じ瞬間を 3 方向から(2026-09-20、ユーザー「いくつかの方向から発火状態を見れると良い」): 上段コネクトーム、下段 shuffle
+    VIEWS = ((0.0, 0.0), (90.0, 0.0), (0.0, 90.0))
+    kw3 = dict(size=300, aspect=0.75, substeps=2, point_px=2, gain=200.0, background=flip(P_all), views=VIEWS)
+    V3c = np.asarray(fs.op_run("points_activity_video", flip(P), Xc, colors=colors, **kw3)[0])
+    V3s = np.asarray(fs.op_run("points_activity_video", flip(P), Xs, colors=colors, **kw3)[0])
+    h3 = header(V3c.shape[2], "dorsal | lateral | along the body axis     (top: connectome, bottom: degree-preserving shuffle)")
+    frames3 = [np.vstack([h3, V3c[k], np.full((6, V3c.shape[2], 3), 0.02), V3s[k]]) for k in range(V3c.shape[0])]
+    figs.save_gif("activity_wave_three_views", frames3, fps=12.0,
+                  caption="the same pulse seen from three fixed directions at once (dorsal, lateral, along the body axis): "
+                          "connectome on top, degree-preserving shuffle below; same colours and brightness scale as the rotating view")
     lmax = 6                                 # 色の尺度は 0..6 步(実測の潜時は 0〜3 に集まる。それより遅いものは最も遅い色)
     panels = []
     for label in ("connectome", "shuffle"):

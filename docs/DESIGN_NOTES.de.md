@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 815. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 816. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -495,6 +495,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L202** — ★So heiss wie die Lager. Der einzige Unterschied ist die **Ausbreitung** (beide Lager + Gesamtmaschine).
 - **L1028** — ★2026-09-08: hier hatten wir numpys rfft selbst geschrieben —— weil wir es als 'kein Eintrag für ein einseitiges Amplitudenspektrum im Register' gelesen hatten, aber `fs.spectrum` **war von Anfang an da** (es tauchte nur nicht im Register auf). Das ist ein Fall, in dem 'existiert nicht' entschieden wurde, nachdem nur eine Schicht betrachtet wurde, also auf die op-Nutzung umschreiben.
 - **L1162** — ★2026-09-08: hier stand geschrieben 'kein spectrum im Register', aber **`fs.spectrum` war von Anfang an da** (die 1-D-Schicht von dsp). Es fehlte nur 'das Erscheinen im Register (`fs.ledger`)' und 'die Notizen je op'; dieses PoC zog nur aus einer Schicht, entschied 'existiert nicht' und schrieb numpys rfft selbst. Da ops1d nun ins Register eingebunden ist, lässt es sich jetzt aus beiden nachschlagen.
+
+## `examples/poc_malecns_activity_wave.py`
+
+- **L241** _(ja)_ — ★同じ瞬間を 3 方向から(2026-09-20、ユーザー「いくつかの方向から発火状態を見れると良い」): 上段コネクトーム、下段 shuffle
 
 ## `examples/poc_mesh_quality_repair.py`
 

@@ -836,8 +836,12 @@ def _splat(img: np.ndarray, pts: np.ndarray, cols: np.ndarray, cam: np.ndarray,
 def points_activity_video(P: Any, X: Any, colors: Any = None, size: int = 480, aspect: float = 0.75,
                           pitch: float = 15.0, yaw_start: float = 0.0, yaw_span: float = 360.0,
                           substeps: int = 1, point_px: int = 2, gain: float = 100.0,
-                          background: Any = None) -> np.ndarray:
+                          background: Any = None, views: Any = None) -> np.ndarray:
     """点群に活動を載せて回す色動画 (F, H, W, 3)、値 [0, 1]。F = T × substeps、H = size、W = size × aspect。
+
+    ``views`` に (yaw, pitch) の並び(度)を渡すと**回さずに**、その方向から見たコマを横に並べる
+    (W = views 数 × size × aspect + 4 px の隙間、yaw_start / yaw_span は使わない)。同じ瞬間を
+    複数の方向から見比べる用(例: 背側 (0, 0) / 側面 (90, 0) / 体軸方向 (0, 90))。
 
     ``P`` = (n, 3) の座標、``X`` = (T, n) の状態列(reservoir_states)。コマ k は時刻 k / substeps の
     状態(隣り合うステップの線形補間)を、yaw = yaw_start + yaw_span × k / F のカメラで正射影する。
@@ -871,9 +875,19 @@ def points_activity_video(P: Any, X: Any, colors: Any = None, size: int = 480, a
             raise ValueError(f"{op}: {nm} must be finite, got {v!r}")
     Wd = max(8, int(round(size * aspect)))
     F = T * substeps
-    if F * size * Wd * 3 > MAX_VIDEO_ELEMENTS:
-        raise ValueError(f"{op}: {F} frames of {size}x{Wd} would be {F * size * Wd * 3} elements, over the "
-                         f"{MAX_VIDEO_ELEMENTS} cap — fewer steps / substeps or a smaller size")
+    if views is not None:
+        vw = np.asarray(views, dtype=np.float64)
+        if vw.ndim != 2 or vw.shape[1] != 2 or vw.shape[0] < 1 or not np.isfinite(vw).all():
+            raise ValueError(f"{op}: views must be a non-empty list of finite (yaw, pitch) pairs in degrees, got {views!r}")
+        cams = [_orbit_camera(y, pt) for y, pt in vw]
+        GAP = 4
+        Wtot = len(cams) * Wd + GAP * (len(cams) - 1)
+    else:
+        cams = None
+        Wtot = Wd
+    if F * size * Wtot * 3 > MAX_VIDEO_ELEMENTS:
+        raise ValueError(f"{op}: {F} frames of {size}x{Wtot} would be {F * size * Wtot * 3} elements, over the "
+                         f"{MAX_VIDEO_ELEMENTS} cap — fewer steps / substeps / views or a smaller size")
     if colors is None:
         base = np.full((n, 3), 0.92)
     else:
@@ -889,15 +903,9 @@ def points_activity_video(P: Any, X: Any, colors: Any = None, size: int = 480, a
     peak = float(np.abs(X).max())
     BG = np.array([0.06, 0.07, 0.10])
     DIM = np.array([0.17, 0.18, 0.22])
-    out = np.empty((F, size, Wd, 3), dtype=np.float64)
-    for k in range(F):
-        t_f = k / substeps
-        t0 = int(np.floor(t_f))
-        a = t_f - t0
-        x = X[t0] if a == 0.0 else (1.0 - a) * X[t0] + a * X[min(t0 + 1, T - 1)]
-        b = np.log1p(gain * np.abs(x) / peak) / np.log1p(gain) if peak > 0.0 else np.zeros(n)
-        cam = _orbit_camera(yaw_start + yaw_span * k / F, pitch)
-        img = out[k]
+    out = np.empty((F, size, Wtot, 3), dtype=np.float64)
+
+    def paint(img, cam, b):
         img[:] = BG
         if bg_pts is not None:
             _splat(img, bg_pts, np.broadcast_to(DIM, (bg_pts.shape[0], 3)), cam, center, radius, 1)
@@ -906,4 +914,18 @@ def points_activity_video(P: Any, X: Any, colors: Any = None, size: int = 480, a
         hot = b > 0.5
         if hot.any():
             _splat(img, pts[hot], np.minimum(cols[hot] * 1.3, 1.0), cam, center, radius, point_px + 2)
+
+    for k in range(F):
+        t_f = k / substeps
+        t0 = int(np.floor(t_f))
+        a = t_f - t0
+        x = X[t0] if a == 0.0 else (1.0 - a) * X[t0] + a * X[min(t0 + 1, T - 1)]
+        b = np.log1p(gain * np.abs(x) / peak) / np.log1p(gain) if peak > 0.0 else np.zeros(n)
+        if cams is None:
+            paint(out[k], _orbit_camera(yaw_start + yaw_span * k / F, pitch), b)
+        else:
+            out[k] = 0.02
+            for j, cam in enumerate(cams):
+                x0 = j * (Wd + GAP)
+                paint(out[k, :, x0:x0 + Wd], cam, b)
     return out

@@ -14,7 +14,21 @@
   "fps": 12.0
  },
  {
-  "file": "02_activation_latency_map_connectome_vs_shuffle.png",
+  "file": "02_activity_wave_three_views.gif",
+  "name": "activity_wave_three_views",
+  "caption": "the same pulse seen from three fixed directions at once (dorsal, lateral, along the body axis): connectome on top, degree-preserving shuffle below; same colours and brightness scale as the rotating view",
+  "shape": [
+   646,
+   683,
+   3
+  ],
+  "animated": true,
+  "frames": 72,
+  "frames_written": 71,
+  "fps": 12.0
+ },
+ {
+  "file": "03_activation_latency_map_connectome_vs_shuffle.png",
   "name": "activation_latency_map_connectome_vs_shuffle",
   "caption": "when each neuron first lights up (yellow = step 0, orange = step 3, blue = step 6 or later, grey = never within 36 steps): connectome | shuffle",
   "shape": [
@@ -24,7 +38,7 @@
   ]
  },
  {
-  "file": "03_activity_spread_mean_distance.png",
+  "file": "04_activity_spread_mean_distance.png",
   "name": "activity_spread_mean_distance",
   "caption": "graph_activity_spread: |x|-weighted mean distance from the stimulated somata",
   "shape": [

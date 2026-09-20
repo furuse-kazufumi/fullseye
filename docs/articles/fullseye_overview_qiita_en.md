@@ -4153,7 +4153,11 @@ That does not mean the wiring has no structure — only that one accuracy number
 
 *↑ On the left the activity lingers in the optic lobe and seeps into the central brain; on the right the brain and the VNC light up within a step.*
 
-![The step at which each neuron first lights (yellow = 0, orange = 3, blue = 6 or later, grey = never within 36 steps): connectome left, shuffle right](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/02_activation_latency_map_connectome_vs_shuffle.png)
+![The same instant from three fixed directions at once, dorsal, lateral and along the body axis (connectome on top, shuffle below)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/02_activity_wave_three_views.gif)
+
+*↑ The rotating view gives depth; three fixed views compare the spread at the same instant (`points_activity_video(views=...)`).*
+
+![The step at which each neuron first lights (yellow = 0, orange = 3, blue = 6 or later, grey = never within 36 steps): connectome left, shuffle right](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/03_activation_latency_map_connectome_vs_shuffle.png)
 
 In numbers (`graph_activity_spread` / `graph_activation_latency`): in the connectome the |x|-weighted mean distance from the stimulus grows **88 → 230 µm over 17 steps**, neurons light in the order optic (latency 0) → central (2) → descending (2), and the VNC is never reached within 36 steps. The shuffle scatters to **300 µm in 3 steps** and 93 % of the farthest quarter of the neurons light within the first period (connectome: 0 %). The spatial structure of the wiring that accuracy could not see is visible in motion.
 

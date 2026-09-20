@@ -496,3 +496,23 @@ def test_spectral_radius_sparse_path_matches_dense():
     assert C.graph_spectral_radius(B) == pytest.approx(float(np.max(np.abs(np.linalg.eigvals(B)))), rel=1e-8)
     Bp = np.zeros((n, n)); Bp[:half, half:] = W[:half, half:]; Bp[half:, :half] = W[half:, :half]
     assert C.graph_spectral_radius(Bp) == pytest.approx(float(np.max(np.abs(np.linalg.eigvals(Bp)))), rel=1e-8)
+
+
+def test_activity_video_views_side_by_side():
+    """views=((yaw, pitch), …) は回さずに方向ごとのコマを横に並べる(1 方向目は yaw_span=0 の絵と同じ)。"""
+    W, X, n = _chain_states(n_extra=0)
+    P = np.zeros((n, 3))
+    P[:, 0] = np.linspace(-1.0, 1.0, n)
+    single = C.points_activity_video(P, X, size=48, aspect=1.0, yaw_start=0.0, yaw_span=0.0, pitch=0.0)
+    multi = C.points_activity_video(P, X, size=48, aspect=1.0, views=((0.0, 0.0), (90.0, 0.0), (0.0, 90.0)))
+    assert multi.shape == (6, 48, 3 * 48 + 2 * 4, 3)
+    assert np.allclose(multi[:, :, :48], single)
+    assert np.allclose(multi[:, :, 48:52], 0.02)                    # 隙間
+    # 側面(yaw 90)では x 軸に並ぶ鎖が奥行きになり、点は 1 列に重なる(横の広がりが消える)
+    lum = multi[0].sum(axis=2)
+    cols_front = np.nonzero(lum[:, :48].max(axis=0) > 0.3)[0]
+    cols_side = np.nonzero(lum[:, 52:100].max(axis=0) > 0.3)[0]
+    assert np.ptp(cols_front) > np.ptp(cols_side)
+    for bad in (dict(views=()), dict(views=((0.0,),)), dict(views=((np.nan, 0.0),))):
+        with pytest.raises(ValueError, match="points_activity_video.*views"):
+            C.points_activity_video(P, X, size=48, aspect=1.0, **bad)

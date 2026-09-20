@@ -13,11 +13,15 @@ version: 0.2.1  # fullseye lib version this note was generated for
 # points_activity_video — CONNGRAPH `activity` op
 
 - **データ種**: `points × matrix` → `rgbvideo`
-- **呼び出し**: `import fullseye as fs; fs.ledger.points_activity_video(P: 'Any', X: 'Any', colors: 'Any' = None, size: 'int' = 480, aspect: 'float' = 0.75, pitch: 'float' = 15.0, yaw_start: 'float' = 0.0, yaw_span: 'float' = 360.0, substeps: 'int' = 1, point_px: 'int' = 2, gain: 'float' = 100.0, background: 'Any' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import conngraph; conngraph.points_activity_video(P: 'Any', X: 'Any', colors: 'Any' = None, size: 'int' = 480, aspect: 'float' = 0.75, pitch: 'float' = 15.0, yaw_start: 'float' = 0.0, yaw_span: 'float' = 360.0, substeps: 'int' = 1, point_px: 'int' = 2, gain: 'float' = 100.0, background: 'Any' = None) -> 'np.ndarray'`、台帳から引くなら `opsconngraph.get("points_activity_video")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.points_activity_video(P: 'Any', X: 'Any', colors: 'Any' = None, size: 'int' = 480, aspect: 'float' = 0.75, pitch: 'float' = 15.0, yaw_start: 'float' = 0.0, yaw_span: 'float' = 360.0, substeps: 'int' = 1, point_px: 'int' = 2, gain: 'float' = 100.0, background: 'Any' = None, views: 'Any' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import conngraph; conngraph.points_activity_video(P: 'Any', X: 'Any', colors: 'Any' = None, size: 'int' = 480, aspect: 'float' = 0.75, pitch: 'float' = 15.0, yaw_start: 'float' = 0.0, yaw_span: 'float' = 360.0, substeps: 'int' = 1, point_px: 'int' = 2, gain: 'float' = 100.0, background: 'Any' = None, views: 'Any' = None) -> 'np.ndarray'`、台帳から引くなら `opsconngraph.get("points_activity_video")`)
 
 ## 使い方
 
 点群に活動を載せて回す色動画 (F, H, W, 3)、値 [0, 1]。F = T × substeps、H = size、W = size × aspect。
+
+``views`` に (yaw, pitch) の並び(度)を渡すと**回さずに**、その方向から見たコマを横に並べる
+(W = views 数 × size × aspect + 4 px の隙間、yaw_start / yaw_span は使わない)。同じ瞬間を
+複数の方向から見比べる用(例: 背側 (0, 0) / 側面 (90, 0) / 体軸方向 (0, 90))。
 
 ``P`` = (n, 3) の座標、``X`` = (T, n) の状態列(reservoir_states)。コマ k は時刻 k / substeps の
 状態(隣り合うステップの線形補間)を、yaw = yaw_start + yaw_span × k / F のカメラで正射影する。

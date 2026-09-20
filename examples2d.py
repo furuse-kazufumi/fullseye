@@ -373,7 +373,7 @@ EXAMPLES = [
                 "活動が伝わる様子を脳と VNC の立体(灰 = 全 141,781 soma、橙 = 右、青 = 左)を回しながら GIF に。隣は次数保存 shuffle に**同じ刺激・同じ入力行列**。"
                 "実測: コネクトームは刺激からの平均距離 88 → 230 µm を 17 步かけて伸び、視葉 → 中枢 → 下行の順に点いて 36 步では VNC に届かない。"
                 "shuffle は 3 步で 300 µm に散り遠い 1/4 の 93 % が点く(コネクトーム 0 %)。精度で見えなかった配線の空間構造が動きで見える。"
-                "新 op: reservoir_states(W_in=)、graph_activation_latency、graph_activity_spread、points_activity_video(尺度は全コマで 1 つ)。生データは commit しない。"},
+                "新 op: reservoir_states(W_in=)、graph_activation_latency、graph_activity_spread、points_activity_video(尺度は全コマで 1 つ、views= で背側・側面・体軸方向の 3 方向を同時に)。生データは commit しない。"},
     {"id": "poc_barcode_1d", "task": "decoding", "data": "synthetic",
      "name": "1 次元バーコードが読めなくなる境界(誤読と読み取り不能を分けて数える)",
      "summary": "自作 4-run 符号なので真値は数字そのもの。★**無傷では 6 つの読み方が全部 24/24 で差が出ない** —— 道具の良し悪しは壊してからしか分からない。★★「読めな"

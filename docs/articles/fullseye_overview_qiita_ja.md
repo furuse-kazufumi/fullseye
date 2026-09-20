@@ -4177,7 +4177,11 @@ op は **931**(レジストリ実測)まで来ましたが、この回で増や�
 
 *↑ 左では活動が視葉に留まりながら中枢へにじみ、右では 1 步で脳も VNC も点く。*
 
-![各ニューロンが初めて点いたステップ(黄 = 0、橙 = 3、青 = 6 以降、灰 = 36 步で点かない): 左コネクトーム、右 shuffle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/02_activation_latency_map_connectome_vs_shuffle.png)
+![同じ瞬間を背側・側面・体軸方向の 3 方向から同時に(上段コネクトーム、下段 shuffle)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/02_activity_wave_three_views.gif)
+
+*↑ 回すと奥行きが分かり、3 方向を並べると同じ瞬間の広がりを比べられる(`points_activity_video(views=...)`)。*
+
+![各ニューロンが初めて点いたステップ(黄 = 0、橙 = 3、青 = 6 以降、灰 = 36 步で点かない): 左コネクトーム、右 shuffle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/03_activation_latency_map_connectome_vs_shuffle.png)
 
 数字で言うと(`graph_activity_spread` / `graph_activation_latency`): コネクトームでは刺激の重心からの活動の平均距離が **88 → 230 µm を 17 步かけて** 伸び、点く順は視葉(潜時 0)→ 中枢(2)→ 下行(2)で、36 步では VNC に届かない。shuffle は **3 步で 300 µm** に散り、遠い 1/4 のニューロンの 93 % が最初の周期内に点く(コネクトームは 0 %)。読み出し精度では見えなかった配線の空間構造が、動きでは見える。
 
