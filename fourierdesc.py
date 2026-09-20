@@ -61,6 +61,11 @@ def from_xld(contour, i=0):
     返るのは XLD と同じ **(row, col)** 順の (N,2)。``imagemorph`` へ渡すときは
     ``[:, ::-1]`` で (x, y) に入れ替えること(モジュール冒頭の「座標順の落とし穴」)。
     """
+    if not isinstance(contour, dict) or "cs" not in contour:
+        raise ValueError("from_xld: contour must be an XLD contour dict with key "
+                         f"'cs', got {type(contour).__name__} (a list-of-rows table is not a contour)")
+    if isinstance(i, bool) or not isinstance(i, (int, np.integer)) or not (0 <= int(i) < len(contour["cs"])):
+        raise ValueError(f"from_xld: i must be an int in [0, {len(contour['cs'])}), got {i!r}")
     return np.asarray(contour["cs"][i], dtype=np.float64).reshape(-1, 2)
 
 

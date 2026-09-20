@@ -74,7 +74,7 @@ _CATALOG = {
         ("spectrogram", "dsp", ["signal"], "image2d"),
         ("zero_crossing_rate", "dsp", ["signal"], "measurement"),
         ("find_peaks", "dsp", ["signal"], "indices"),
-        ("peak_subbin", "dsp", ["signal", "indices"], "measurement"),
+        ("peak_subbin", "dsp", ["signal", "indices"], "signal"),   # indices (k,) → 位置 (k,) float(scalar in scalar out だが台帳は配列経路。fuzz TYPEMISS 2026-09-20)
         ("point_spectrum", "dsp", ["positions"], "table"),
         ("signal_features", "dsp", ["signal"], "table"),
     ],

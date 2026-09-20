@@ -318,6 +318,7 @@ def camera_rays(camera: dict) -> tuple:
     ``reshape(height, width, 3)`` で像に戻せる。K の逆写像で作っているため、
     交点を K で再投影すると元の画素に**厳密に**戻る(往復誤差 < 1e-9)。
     """
+    _check_camera(camera, "camera_rays")
     K, R = camera["K"], camera["R"]
     w, h = camera["width"], camera["height"]
     vv, uu = np.mgrid[0:h, 0:w].astype(np.float64)
@@ -351,6 +352,54 @@ def reflect_rays(directions, normals):
     if d.shape != n.shape:
         d, n = np.broadcast_arrays(d, n)
     return _safe_unit(d - 2.0 * (d * n).sum(-1, keepdims=True) * n)
+
+
+_CAMERA_KEYS = ("K", "R", "eye", "forward", "width", "height", "pixel_mm", "focal_mm",
+                "working_distance_mm")
+_PRIMITIVE_KINDS = ("plane", "sphere", "box", "cylinder", "difference")
+
+
+def _check_camera(camera, op):
+    """``optical_camera()`` の結果か。sort ``table`` は dict も list-of-rows も通すので、
+    ``vol_edge_probe`` の行リストが camera に流れ込むと ``camera["K"]`` が
+    ``TypeError: list indices must be integers`` で落ちていた(chain_fuzz 2026-09-20、
+    8 op)。op 名入りの ValueError で止める。"""
+    if not isinstance(camera, dict):
+        raise ValueError(f"{op}: camera must be the dict returned by optical_camera(), got "
+                         f"{type(camera).__name__} (a list-of-rows table is not a camera)")
+    missing = [k for k in _CAMERA_KEYS if k not in camera]
+    if missing:
+        raise ValueError(f"{op}: camera is missing key(s) {missing}; build it with optical_camera()")
+    return camera
+
+
+def _check_spec(obj, want, name, op):
+    """``sensor_spec`` / ``lens_spec`` の結果か(``kind`` で見分ける)。"""
+    if not isinstance(obj, dict):
+        raise ValueError(f"{op}: {name} must be the dict returned by {want}_spec(), got "
+                         f"{type(obj).__name__}")
+    if obj.get("kind") != want:
+        raise ValueError(f"{op}: {name} must be a {want}_spec() result (kind={want!r}), got "
+                         f"kind={obj.get('kind')!r}")
+    return obj
+
+
+def _check_light_dict(light, op):
+    """``light_spec`` の結果(dict)か。キーの有無は各 op の既定値で吸収するが、dict 以外は
+    ``.get`` が AttributeError で落ちる前に止める。"""
+    if not isinstance(light, dict):
+        raise ValueError(f"{op}: light must be the dict returned by light_spec(), got "
+                         f"{type(light).__name__}")
+    return light
+
+
+def _check_primitive(primitive, op):
+    """scene_plane / scene_sphere / scene_box / scene_cylinder / scene_difference の 1 個か。"""
+    if not isinstance(primitive, dict) or primitive.get("kind") not in _PRIMITIVE_KINDS:
+        got = primitive.get("kind") if isinstance(primitive, dict) else type(primitive).__name__
+        raise ValueError(f"{op}: primitive must be one scene_* primitive dict (kind in "
+                         f"{_PRIMITIVE_KINDS}), got {got!r}")
+    return primitive
 
 
 # --------------------------------------------------------------------------- #
@@ -608,6 +657,7 @@ def surface_defect(primitive: dict, field, mask=None, uv_size_mm=(20.0, 20.0),
 
     返り値は defect を付けた**新しい**プリミティブ(元は書き換えない)。
     """
+    _check_primitive(primitive, "surface_defect")
     f = _arr(field, "field")
     if f.ndim != 2:
         raise ValueError(f"field must be a 2-D image, got shape {f.shape}")
@@ -653,6 +703,7 @@ def surface_finish(primitive: dict, kind: str = "turned", pitch_um: float = 120.
 
     返り値は加工目を付けた**新しい**プリミティブ(元は書き換えない)。
     """
+    _check_primitive(primitive, "surface_finish")
     if kind not in _FINISHES_3D:
         raise ValueError(f"kind must be one of {_FINISHES_3D}, got {kind!r}")
     uv = _arr(uv_size_mm, "uv_size_mm", 2)
@@ -1408,6 +1459,7 @@ def render_optscene(scene, camera, lights, ambient: float = 0.0,
     周辺光量・センサ雑音を足すには ``lensimage.render_through_lens`` を後段に、
     量子化と読み出し雑音だけなら ``sensor_capture`` を後段に掛ける。
     """
+    _check_camera(camera, "render_optscene")
     scene = _check_scene(scene)
     lights = [lights] if isinstance(lights, dict) else list(lights)
     if not lights:
@@ -1479,6 +1531,7 @@ def optscene_depth(scene, camera, supersample: int = 1) -> np.ndarray:
 
     当たらない画素は NaN。0 で埋めない ―― 「距離 0 の面」と区別できなくなる。
     """
+    _check_camera(camera, "optscene_depth")
     ss = int(supersample)
     if ss > 1:                                      # 真値も画像と同じ細かさで取れるように
         fine = optscene_depth(scene, _supersampled(camera, ss))
@@ -1509,6 +1562,7 @@ def optscene_mask(scene, camera, index: int) -> np.ndarray:
     深度の真値は ``optscene_depth``、欠陥の真値は ``optscene_defect_mask``、
     部品ごとのインスタンス列は ``optscene_instances``。
     """
+    _check_camera(camera, "optscene_mask")
     scene = _check_scene(scene)
     i = int(index)
     if not (0 <= i < len(scene)):
@@ -1526,6 +1580,7 @@ def optscene_defect_mask(scene, camera, index: int = None) -> np.ndarray:
     **その照明で見えるかどうかとは無関係**に真値を返す ―― 見えないのに正解が
     あるのが外観検査の難しさで、そこを隠すと「検出ゼロ = 頑健」と誤読される。
     """
+    _check_camera(camera, "optscene_defect_mask")
     scene = _check_scene(scene)
     o, d = camera_rays(camera)
     hit = trace_rays(scene, o, d)
@@ -1570,6 +1625,7 @@ def inspection_dataset(scene, camera, lights, n: int = 8, seed: int = 0,
     ``seed`` を固定すれば決定的。**同じ欠陥でも照明を変えると見え方が変わる**
     ことがこの生成器の要点で、だから照明を振った枚数が効く。
     """
+    _check_camera(camera, "inspection_dataset")
     scene = _check_scene(scene)
     lights = [lights] if isinstance(lights, dict) else list(lights)
     if not lights:
@@ -1748,6 +1804,7 @@ def random_defects(primitive: dict, count: int = 2, kinds=_ALL_KINDS, seed: int 
     返り値 dict: ``part``(欠陥を貼った部品)/ ``objects``(異物のプリミティブ、
     シーンにそのまま足す)/ ``labels``(1 件ごとの種類・位置 [mm]・大きさ)。
     """
+    _check_primitive(primitive, "random_defects")
     for k in kinds:
         if k not in _ALL_KINDS:
             raise ValueError(f"kinds must be a subset of {_ALL_KINDS}, got {k!r}")
@@ -1968,6 +2025,7 @@ def render_studio(scene, camera, depth: int = 3, samples: int = 16,
     滑らか・遅い)。``environment`` に自前の関数((...,3) 方向 -> (...,) 明るさ)を
     渡せば別の環境にできる。表示するにはガンマを自分で掛ける。
     """
+    _check_camera(camera, "render_studio")
     scene = _check_scene(scene)
     if int(depth) < 1:
         raise ValueError(f"depth must be >= 1, got {depth!r}")
@@ -2004,6 +2062,7 @@ def defocus_blur(image, depth_mm, camera, f_number: float = 5.6,
 
     ``focus_mm`` を省くと ``camera`` の作動距離に合わせる。返り値は入力と同じ形。
     """
+    _check_camera(camera, "defocus_blur")
     img = np.asarray(image, dtype=np.float64)
     z = np.asarray(depth_mm, dtype=np.float64)
     if img.shape[:2] != z.shape:
@@ -2087,6 +2146,7 @@ def diffraction_blur(image, camera, f_number: float = 5.6,
     (σ ≈ 0.42 · 1.22λN)で近似する。厳密な PSF が要るなら
     ``lensimage.psf_from_opd``(実収差瞳の回折 PSF)を使う。
     """
+    _check_camera(camera, "diffraction_blur")
     img = np.asarray(image, dtype=np.float64)
     r_um = airy_radius_um(f_number, wavelength_nm)
     sigma_px = 0.42 * r_um * 1e-3 / camera["pixel_mm"]
@@ -2106,6 +2166,7 @@ def optscene_instances(scene, camera, min_area_px: int = 1) -> list:
     ``bbox``(x0, y0, x1, y1 の画素座標、右下は含む)/ ``area_px`` / ``source``
     (surface = 面に貼った欠陥 / object = 置かれた異物)。
     """
+    _check_camera(camera, "optscene_instances")
     scene = _check_scene(scene)
     o, d = camera_rays(camera)
     hit = trace_rays(scene, o, d)
@@ -2426,6 +2487,8 @@ def covers_sensor(lens: dict, sensor: dict) -> dict:
     形式名で言っているだけなので、実寸で比べたほうが確実 ―― とくにラインセンサは
     長さがそのまま効く(16k x 7 µm = 115 mm)ので、エリア用レンズでは全く足りない。
     """
+    _check_spec(sensor, "sensor", "sensor", "covers_sensor")
+    _check_spec(lens, "lens", "lens", "covers_sensor")
     circle = float(lens.get("image_circle_mm", 0.0))
     if circle <= 0.0:
         raise ValueError("lens has no image_circle_mm; build it with lens_spec(model=...) "
@@ -2643,8 +2706,8 @@ def light_wavelengths(light: dict, samples: int = 5):
     (``x`` は ``[-1, 1]`` に正規化した位置、端が 2σ)で、和が 1 になるよう正規化。
     ``bw <= 0``(レーザー)または ``k == 1`` なら ``λ`` 1 本・重み 1。
 
-    - ``light``: ``light_spec`` の結果。キーが無ければ既定値で進み、例外は出さない
-      (検証はしない)。
+    - ``light``: ``light_spec`` の結果(dict)。キーが無ければ既定値で進む(dict でなければ
+      ``ValueError``。sort ``table`` の行リストが流れ込むのを止める)。
     - ``samples``: 本数。既定 5。1 未満は 1 に丸める。奇数にすると中心波長が入る。
     - 返り値: ``(wavelengths (k,), weights (k,))`` の 2 本の float64 配列。
       スペクトルの実形状(LED の非対称、ハロゲンの黒体分布)は模さない近似。
@@ -2652,6 +2715,7 @@ def light_wavelengths(light: dict, samples: int = 5):
     ``layout_capture`` が ``spectral_samples`` 本でこれを呼び、波長ごとの結果を
     この重みで足し合わせる。
     """
+    _check_light_dict(light, "light_wavelengths")
     lam = float(light.get("wavelength_nm", 550.0))
     bw = float(light.get("bandwidth_nm", 0.0))
     k = max(int(samples), 1)
@@ -2782,6 +2846,7 @@ def linescan_capture(scene, camera, lights, velocity_mm_s: float = 100.0,
     ``part_mask`` / ``defect_mask`` / ``pixel_mm_scan``(走査方向の画素実寸)/
     ``pixel_mm_cross``(横方向)/ ``aspect``(縦横比。1.0 が正方画素)。
     """
+    _check_camera(camera, "linescan_capture")
     scene = _check_scene(scene)
     lights = [lights] if isinstance(lights, dict) else list(lights)
     if not lights:

@@ -1919,6 +1919,26 @@ TYPE_CHECKS = {
 #:     数えて** recover_pose の候補選択を歪めていた(``inf > 0`` は True)。
 #:     NaN に直したので比較が False になり数えられない ―― NaN であること自体が
 #:     契約なのでここに載せる。
+#: 文書化済みの非有限を返す op(レンズ処方)。``lens_system`` の docstring が
+#: 「*object_mm*: … ``inf`` for an object at infinity」と契約している通り、処方 dict の
+#: ``object_mm`` は**無限遠が既定値**(平行光で近軸量を定義する)。有限に丸めると
+#: 主点・焦点距離の意味が変わるので丸めない。``example_system`` は lens_system の
+#: 処方をそのまま、``bend_singlet`` は ``system`` キーに同じ処方を返す(fuzz 2026-09-20 の
+#: 3 件はすべてこの 1 つの inf、replay で確認)。
+NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_singlet"}
+
+#: 文書化済みの非有限を返す op(計測の「測れなかった」)。
+#:   * triangulate_column — 「NaN = 未確定画素(出力も NaN)」「交点が後方(Z<=0)や視線が
+#:     平面と平行な画素は NaN」(docstring)。0 にすると「距離 0 の面」と混ざる。
+#:   * m3c2_distance — 「片側に min_points だけ点が無い core は nan」(docstring)。
+#:     「0 を返して変化なし」にしないのが設計。
+#:   * piv_cross_correlate — 「相関の峰が立たない窓(テクスチャが無い・全面一様)は nan」で、
+#:     何割が nan かを ``info["valid_fraction"]`` で併せて返す(fuzz では shadow_raycast の
+#:     全画素 1 の影マップが b 側に入り全窓 nan)。
+#: いずれも「非有限が契約」なので載せるが、**これ以外の非有限は見逃さない**(集合を
+#: 広げすぎると本物の NaN バグが黙って通る — cadmap の注記と同じ)。
+NONFINITE_BY_CONTRACT_MEASURE = {"triangulate_column", "m3c2_distance", "piv_cross_correlate"}
+
 NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "sdf_union", "sdf_intersect", "sdf_subtract",
                          "sdf_smooth_union", "sdf_offset", "mat_cond",
@@ -1926,7 +1946,8 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          } | NONFINITE_BY_CONTRACT_METRICS \
                          | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
                          | NONFINITE_BY_CONTRACT_OPTICS \
-    | NONFINITE_BY_CONTRACT_CADMAP | NONFINITE_BY_CONTRACT_SPECULAR
+    | NONFINITE_BY_CONTRACT_CADMAP | NONFINITE_BY_CONTRACT_SPECULAR \
+    | NONFINITE_BY_CONTRACT_PRESCRIPTION | NONFINITE_BY_CONTRACT_MEASURE
 
 #: pool へ入れる 1 産物の上限バイト数。拡大系 op(upsample/uncrop/resize)の連鎖で
 #: 体積が指数増殖し、後段の全 op が実質ハングする(wave-4 実測: ~34GB の voxel に

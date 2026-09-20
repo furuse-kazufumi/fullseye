@@ -318,7 +318,7 @@ _CATALOG = {
         ("covers_sensor", "optscene", ["table", "table"], "table"),
         ("lens_spec", "optscene", [], "table"),
         ("light_catalog", "optscene", [], "table"),
-        ("register_light", "optscene", [], "table"),
+        ("register_light", "optscene", [], "text"),        # 返り値は登録した鍵の文字列(fuzz TYPEMISS 候補 2026-09-20)
         ("light_spec", "optscene", [], "table"),
         ("light_wavelengths", "optscene", ["table"], "pairs"),
         ("vision_layout", "optscene", ["table", "table", "table"], "table"),

@@ -426,6 +426,8 @@ def bend_singlet(focal_mm=100.0, index=1.5168, thickness_mm=3.0, semi_aperture_m
     ``q = 2(n²−1)/(n+2)`` (Coddington) — the closed form
     :func:`optimize_lens` is checked against. Returns the prescription plus
     ``shape_factor``, ``R1``, ``R2`` and the RMS spot on axis.
+    ``system["object_mm"]`` is ``inf`` for the default object at infinity (the
+    lens_system convention); ``R1`` / ``R2`` are ``inf`` for a flat side (q = ±1).
     """
     f = RT._finite(focal_mm, "focal_mm")
     if f == 0.0:
