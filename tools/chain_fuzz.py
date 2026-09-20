@@ -1684,6 +1684,11 @@ TYPE_CHECKS = {
     # 返る(実測確認済み)。型は入れ物の形でなく意味の約束
     "rgbimage": lambda v: isinstance(v, np.ndarray) and v.ndim == 3
     and v.shape[2] == 3,
+    # rgbvideo = (F,H,W,3) の色動画(2026-09-20、conngraph の points_activity_video が産む)。
+    # video (T,H,W) は灰色 1 チャネルで videops が ndim == 3 を要求するので混ぜない —— 載せると
+    # 時間フィルタが最後の軸を幅と読んで例外なしに「処理した動画」を返す
+    "rgbvideo": lambda v: isinstance(v, np.ndarray) and v.ndim == 4
+    and v.shape[3] == 3 and v.dtype.kind == "f" and v.shape[0] >= 1,
     # score = ピークを持つ相関 volume。voxel と同じ 3-D だが、意味は「マッチの
     # 良さ」でありサブボクセル精緻化の入力になる
     "score": lambda v: isinstance(v, np.ndarray) and v.ndim == 3,

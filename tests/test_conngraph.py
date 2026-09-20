@@ -261,6 +261,8 @@ def test_every_op_refuses_nan_and_names_itself(name):
         "ridge_readout": (np.ones((5, 2)),),
         "ridge_predict": (np.ones((4, 2)),),
         "graph_edges_as_lines": (np.zeros((4, 3)),),
+        "graph_activity_spread": (np.zeros((4, 3)), np.array([1, 0, 0, 0])),
+        "points_activity_video": (np.ones((3, 4)),),
     }.get(name, ())
     with pytest.raises(ValueError, match=name):
         fn(_first_arg_with_nan(name), *extra)
@@ -283,7 +285,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
 
     assert opsconngraph.missing() == []
     assert set(opsconngraph.OPSCONNGRAPH) == set(_OPS)
-    assert len(opsconngraph.OPSCONNGRAPH) == 20
+    assert len(opsconngraph.OPSCONNGRAPH) == 23
     for meta in opsconngraph.OPSCONNGRAPH.values():
         assert isinstance(meta["in"], list) and isinstance(meta["out"], str)
 
@@ -303,7 +305,7 @@ def test_the_typed_catalog_declares_the_family():
     rows = [r for r in tc.catalog() if r[1] == "conngraph"]
     assert {r[0] for r in rows} == set(_OPS)
     assert {r[3] for r in rows} == {"conn_graph", "table", "measurement", "signal", "labels",
-                                    "matrix", "points", "image2d"}
+                                    "matrix", "points", "image2d", "rgbvideo"}
 
 
 def test_the_fuzzer_knows_the_new_types_and_can_seed_them():
@@ -336,6 +338,8 @@ def test_op_run_works_through_the_default_seed_for_every_op():
     two_input = {
         "graph_modularity", "reservoir_states", "reservoir_encode",
         "ridge_readout", "ridge_predict", "graph_edges_as_lines",
+        "graph_activity_spread", "points_activity_video",
+        "graph_activation_latency",              # matrix には既定の種が無い(明示で下に検査)
     }
     for name in opsconngraph.OPSCONNGRAPH:
         if name in two_input:
@@ -359,6 +363,11 @@ def test_op_run_works_through_the_default_seed_for_every_op():
     assert run("ridge_predict", X, Wout).shape == (8, 2)
     P = run("graph_layout_spectral")
     assert run("graph_edges_as_lines", W, P)["weight"].shape[0] == int((W != 0).sum())
+    lat = run("graph_activation_latency", X)
+    assert lat.shape == (12,) and lat.dtype.kind == "i"
+    src = np.zeros(12, dtype=int); src[0] = 1
+    assert set(run("graph_activity_spread", X, P, src)) == {"step", "mean_distance", "active_fraction", "source_fraction"}
+    assert run("points_activity_video", P, X, size=32, aspect=1.0).shape == (8, 32, 32, 3)
 
 
 def test_the_family_guide_exists_and_names_the_new_sorts():
@@ -367,3 +376,98 @@ def test_the_family_guide_exists_and_names_the_new_sorts():
     md = p.read_text(encoding="utf-8")
     assert "conn_graph" in md and "synapse_table" in md and "```mermaid" in md
     assert os.path.isdir(ROOT / "docs" / "ops" / "conngraph")
+
+
+# --------------------------------------------------------------------------- #
+# 7. activity —— 潜時・広がり・動画(2026-09-20、真値は有向の鎖)                    #
+# --------------------------------------------------------------------------- #
+def _chain_states(n_extra=1):
+    """0 → 1 → 2 → 3 の鎖 + 孤立ノード n_extra 個。線形 reservoir に、ノード 0 だけへ t = 0 の
+    パルスを W_in で入れると、活動は 1 ステップに 1 ノードずつ進む(真値 = 単位行列の帯)。"""
+    n = 4 + n_extra
+    W = np.zeros((n, n))
+    for i in range(3):
+        W[i, i + 1] = 1.0
+    U = np.zeros((6, 1))
+    U[0, 0] = 1.0
+    w_in = np.zeros((n, 1))
+    w_in[0, 0] = 1.0
+    X = C.reservoir_states(W, U, leak=1.0, nonlinearity="linear", W_in=w_in)
+    return W, X, n
+
+
+def test_reservoir_states_takes_an_explicit_input_matrix():
+    W, X, n = _chain_states()
+    expect = np.zeros((6, n))
+    for t in range(4):
+        expect[t, t] = 1.0                       # t = 0: ノード 0、t = 1: ノード 1 …
+    assert np.allclose(X, expect)
+    # 既定(乱数の W_in)と、その乱数を明示的に渡したものは同じ
+    U = np.random.default_rng(0).random((5, 2))
+    R = C.reservoir_from_graph(_ring(6))
+    a = C.reservoir_states(R, U, in_scale=0.3, seed=7)
+    b = C.reservoir_states(R, U, W_in=C._input_weights(6, 2, 0.3, 7))
+    assert np.allclose(a, b)
+    with pytest.raises(ValueError, match="reservoir_states.*W_in"):
+        C.reservoir_states(R, U, W_in=np.ones((6, 3)))
+
+
+def test_activation_latency_counts_hops_and_marks_the_unreached():
+    W, X, n = _chain_states(n_extra=2)
+    assert np.array_equal(C.graph_activation_latency(X), [0, 1, 2, 3, -1, -1])
+    assert np.array_equal(C.graph_activation_latency(np.zeros((3, 4))), [-1] * 4)
+    # 尺度は 1 つ: 弱いノードは thresh 次第で「点かない」
+    X2 = X.copy()
+    X2[1, 1] = 0.05
+    assert C.graph_activation_latency(X2, thresh=0.1)[1] == -1
+    assert C.graph_activation_latency(X2, thresh=0.01)[1] == 1
+    with pytest.raises(ValueError, match="graph_activation_latency.*thresh"):
+        C.graph_activation_latency(X, thresh=0.0)
+
+
+def test_activity_spread_measures_distance_from_the_source():
+    W, X, n = _chain_states(n_extra=1)
+    P = np.zeros((n, 3))
+    P[:, 0] = np.arange(n) * 2.0                 # 鎖を x 軸に 2 刻みで置く
+    src = np.array([1, 0, 0, 0, 0])
+    t = C.graph_activity_spread(X, P, src)
+    assert np.array_equal(t["step"], np.arange(6))
+    assert np.allclose(t["mean_distance"], [0.0, 2.0, 4.0, 6.0, 0.0, 0.0])
+    assert np.allclose(t["source_fraction"], [1.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    assert np.allclose(t["active_fraction"], [0.2, 0.2, 0.2, 0.2, 0.0, 0.0])
+    with pytest.raises(ValueError, match="graph_activity_spread.*source"):
+        C.graph_activity_spread(X, P, np.zeros(n, dtype=int))
+    with pytest.raises(ValueError, match="graph_activity_spread.*P"):
+        C.graph_activity_spread(X, P[:3], src)
+
+
+def test_activity_video_shape_scale_and_placement():
+    W, X, n = _chain_states(n_extra=0)
+    P = np.zeros((n, 3))
+    P[:, 0] = np.linspace(-1.0, 1.0, n)
+    V = C.points_activity_video(P, X, size=64, aspect=1.0, substeps=2, yaw_span=0.0, pitch=0.0)
+    assert V.shape == (12, 64, 64, 3) and V.dtype == np.float64
+    assert 0.0 <= V.min() and V.max() <= 1.0
+    # 尺度は全コマで 1 つ: 状態を 10 倍しても同じ絵
+    assert np.allclose(V, C.points_activity_video(P, 10.0 * X, size=64, aspect=1.0, substeps=2, yaw_span=0.0, pitch=0.0))
+    # yaw = pitch = 0 は +y を見る正射影: 画面の x は世界の x。点いたノードほど明るい
+    lum = V[..., :].sum(axis=3)
+    frame0 = lum[0]
+    cols = frame0.max(axis=0)
+    left, right = cols[:32].max(), cols[32:].max()
+    assert left > right                          # t = 0 に点くのはノード 0(x = −1、画面左)
+    frame6 = lum[6]                              # 時刻 3: ノード 3(x = +1、画面右)
+    assert frame6[:, 32:].max() > frame6[:, :32].max()
+    # 背景の点は薄い灰で敷かれ、画角に入る
+    Vb = C.points_activity_video(P, X, size=64, aspect=1.0, yaw_span=0.0, pitch=0.0, background=np.array([[0.0, 0.0, 3.0]]))
+    assert Vb.shape == (6, 64, 64, 3)
+    # 色は (n, 3) の [0,1]
+    cols_rgb = np.tile([[1.0, 0.0, 0.0]], (n, 1))
+    Vc = C.points_activity_video(P, X, colors=cols_rgb, size=64, aspect=1.0, yaw_span=0.0, pitch=0.0)
+    assert Vc[0, ..., 0].max() > Vc[0, ..., 1].max()
+    for bad in (dict(size=4), dict(substeps=0), dict(gain=0.0), dict(aspect=0.0), dict(point_px=0),
+                dict(colors=np.ones((n, 2))), dict(colors=2.0 * np.ones((n, 3)))):
+        with pytest.raises(ValueError, match="points_activity_video"):
+            C.points_activity_video(P, X, **bad)
+    with pytest.raises(ValueError, match="points_activity_video.*cap"):
+        C.points_activity_video(P, X, size=4096, aspect=1.0, substeps=200)

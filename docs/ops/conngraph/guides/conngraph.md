@@ -102,6 +102,26 @@ lines = fs.ledger.graph_edges_as_lines(W, P)           # 辺ごとの x0 y0 z0 x
 img = fs.ledger.graph_adjacency_image(W, order="degree")   # (12, 12) の [0, 1]
 ```
 
+## 活動を「いつ・どこで」に読む(activity、2026-09-20)
+
+reservoir の状態列 (T, n) は数字の表のままでは何も見えない。座標(soma の位置、または
+`graph_layout_spectral` の配置)があれば、**刺激の波が配線を伝わる様子**にできる:
+
+```python
+w_in = np.zeros((n, 1)); w_in[stim, 0] = 2.0            # 刺激するノードの指示子(列 = 入力チャネル)
+U = np.zeros((36, 1)); U[0:3, 0] = 1.0                    # t = 0..2 にパルス
+X = fs.reservoir_states(fs.reservoir_from_graph(W, rho=1.0), U, leak=0.6, W_in=w_in)
+lat = fs.graph_activation_latency(X)                      # 各ノードが初めて点いたステップ(−1 = 点かない)
+tab = fs.graph_activity_spread(X, P, stim.astype(int))    # step / mean_distance / active_fraction / source_fraction
+V = fs.points_activity_video(P, X, colors=side_rgb, substeps=2, background=P_all)   # (F, H, W, 3) 回る動画
+```
+
+尺度は 3 op とも **1 つ**(全体の最大値)。ノードごとに伸ばすと動かないノードの丸め屑が
+「点いた」になり、コマごとに伸ばすと動いていないものがちらつく。対照(`graph_degree_preserving_shuffle`)
+を**同じ刺激・同じ W_in** で回して隣に並べるのが作法 —— MaleCNS の soma 座標で右視葉に刺激を入れると、
+コネクトームでは活動が視葉 → 中枢 → 下行と順に進み(平均距離 88 → 230 µm を 17 步かけて、上位 3,000 体・36 步では VNC に届かない)、
+次数保存 shuffle では 3 步で全体に散る(88 → 300 µm、遠い 1/4 のノードの 93 % が点く)。`examples/poc_malecns_activity_wave.py`。
+
 ## 真値で確かめてある性質(`tests/test_conngraph.py`)
 
 | グラフ | op | 厳密な値 |
@@ -113,6 +133,8 @@ img = fs.ledger.graph_adjacency_image(W, order="degree")   # (12, 12) の [0, 1]
 | FFL 1 個 + 3 巡回 1 個 | `graph_motif_count` | ffl 1 / cycle3 1 |
 | 線形 reservoir | `reservoir_states` / `reservoir_encode` | 手で書いた再帰 / X W_inᵀ(steps 1)に一致 |
 | Y = XB + 1 | `ridge_readout` → `ridge_predict` | α = 1e-8 で 1e-6 以内に復元 |
+| 有向の鎖 0→1→2→3 + 孤立 | `graph_activation_latency` / `graph_activity_spread` | 潜時 [0,1,2,3,−1] / 平均距離 [0,2,4,6] |
+| 同上を x 軸に置く | `points_activity_video` | 点いたノードの側が明るい、状態を 10 倍しても同じ絵 |
 
 ## 罠
 

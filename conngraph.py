@@ -15,8 +15,10 @@
 * **reservoir** … 結合行列を reservoir にして時系列の状態列 / 静的入力の一括符号化を作り、
   リッジ回帰で読み出す(echo state network の閉形式)
 * **view** … スペクトル配置(点群)・辺の線分表・隣接行列の画像(Studio で見る出口)
+* **activity** … 状態列の到達潜時・活動の空間的な広がり・座標に活動を載せて回す色動画
+  (2026-09-20、MaleCNS の soma 座標に刺激の波を描く PoC から)
 
-の 20 op / 4 カテゴリ。実装は numpy のみ(``networkx`` / ``scipy.sparse`` に
+の 23 op / 5 カテゴリ。実装は numpy のみ(``networkx`` / ``scipy.sparse`` に
 依存しない)。すべて教科書の閉形式で、``tests/test_conngraph.py`` が
 リング・スター・完全グラフ・2 クリークの厳密な真値と突き合わせる。
 
@@ -57,6 +59,8 @@ __all__ = [
     "reservoir_from_graph", "reservoir_states", "reservoir_encode", "ridge_readout", "ridge_predict",
     # view
     "graph_layout_spectral", "graph_edges_as_lines", "graph_adjacency_image",
+    # activity
+    "graph_activation_latency", "graph_activity_spread", "points_activity_video",
     # constants
     "MOTIFS", "NONLINEARITIES", "ADJACENCY_ORDERS", "MAX_NODES",
 ]
@@ -455,12 +459,16 @@ def reservoir_from_graph(W: Any, rho: float = 0.9) -> np.ndarray:
 
 
 def reservoir_states(W: Any, U: Any, in_scale: float = 1.0, leak: float = 1.0,
-                     nonlinearity: str = "tanh", seed: int = 0, washout: int = 0) -> np.ndarray:
+                     nonlinearity: str = "tanh", seed: int = 0, washout: int = 0,
+                     W_in: Any = None) -> np.ndarray:
     """reservoir の状態列: x_{t+1} = (1−leak) x_t + leak · f(Wᵀ x_t + W_in u_t)。返りは (T − washout, n)。
 
     ``U`` は (T, d) の入力列(1-D は (T, 1))。``W_in`` は seed で決まる一様 (−in_scale, in_scale)
     の (n, d) 行列。``nonlinearity`` は tanh / linear。x_0 = 0 から始め、各ステップの更新後の
     状態を並べる。``washout`` 行を先頭から捨てる(T 以上は拒否)。
+
+    ``W_in`` を渡すと乱数の代わりにその (n, d) 行列を使う(``in_scale`` / ``seed`` は無視)——
+    決まったノード群に刺激を入れる(列 = 刺激するノードの指示子)のはこちら。
     """
     op = "reservoir_states"
     W = _as_graph(W, op)
@@ -478,7 +486,13 @@ def reservoir_states(W: Any, U: Any, in_scale: float = 1.0, leak: float = 1.0,
     washout = int(washout)
     if washout < 0 or washout >= T:
         raise ValueError(f"{op}: washout must be in 0..T-1 (T={T}), got {washout}")
-    W_in = _input_weights(n, d, in_scale, seed)
+    if W_in is None:
+        W_in = _input_weights(n, d, in_scale, seed)
+    else:
+        W_in = _as_matrix(W_in, op, "W_in")
+        if W_in.shape != (n, d):
+            raise ValueError(f"{op}: W_in must be (n, d) = ({n}, {d}) for {n} nodes and {d} input channels, "
+                             f"got shape {W_in.shape}")
     f = _nonlinearity(nonlinearity)
     Wt = W.T
     x = np.zeros(n, dtype=np.float64)
@@ -688,3 +702,185 @@ def graph_adjacency_image(W: Any, order: str = "none", log: bool = True) -> np.n
         img = np.log1p(img)
     peak = float(img.max())
     return img / peak if peak > 0.0 else np.zeros_like(img)
+
+
+# --------------------------------------------------------------------------- #
+# activity —— 状態列 (T, n) を「いつ・どこで点いたか」に読む(2026-09-20)           #
+# --------------------------------------------------------------------------- #
+#: points_activity_video の出力の上限(要素数、F×H×W×3)。1 GB の float64 を超えない。
+MAX_VIDEO_ELEMENTS = 2 ** 27
+
+
+def _as_points(P: Any, op: str, n: int | None = None, name: str = "P") -> np.ndarray:
+    """(n, 3) の座標(``points``)。(n, 2) は z = 0 を足す。``n`` を渡せば行数を照合する。"""
+    pts = _as_finite_float(P, op, name)
+    if pts.ndim != 2 or pts.shape[1] not in (2, 3):
+        raise ValueError(f"{op}: {name} must be (n, 3) or (n, 2) coordinates, got shape {pts.shape}")
+    if n is not None and pts.shape[0] != n:
+        raise ValueError(f"{op}: {name} has {pts.shape[0]} rows but the states have {n} nodes")
+    if pts.shape[1] == 2:
+        pts = np.hstack([pts, np.zeros((pts.shape[0], 1))])
+    return pts
+
+
+def _activity(X: np.ndarray, thresh: float, op: str) -> tuple[np.ndarray, float]:
+    """|X| と、点いた/点かないを分ける**1 つの**尺度(全体の最大値 × thresh)。"""
+    thresh = float(thresh)
+    if not (0.0 < thresh <= 1.0):
+        raise ValueError(f"{op}: thresh must be in (0, 1], got {thresh}")
+    A = np.abs(X)
+    return A, thresh * float(A.max())
+
+
+def graph_activation_latency(X: Any, thresh: float = 0.1) -> np.ndarray:
+    """各ノードが初めて「点いた」ステップ(0 始まり)の列 (n,)、整数。点かなかったノードは −1。
+
+    ``X`` は reservoir_states の (T, n)。「点いた」= |x| ≥ **全体の最大値** × thresh(thresh は
+    (0, 1])。尺度はノードごとでなく 1 つ —— ノードごとに伸ばすと、ほとんど動かないノードの
+    丸め屑も「点いた」になる。全零の X はすべて −1。
+    """
+    op = "graph_activation_latency"
+    X = _as_matrix(X, op, "X")
+    A, level = _activity(X, thresh, op)
+    lat = np.full(X.shape[1], -1, dtype=np.int64)
+    if level <= 0.0:
+        return lat
+    on = A >= level
+    hit = on.any(axis=0)
+    lat[hit] = on.argmax(axis=0)[hit]
+    return lat
+
+
+def graph_activity_spread(X: Any, P: Any, source: Any, thresh: float = 0.1) -> dict[str, np.ndarray]:
+    """活動がどこまで広がったかの時系列の表: 列 step / mean_distance / active_fraction / source_fraction。
+
+    ``X`` = (T, n) の状態列、``P`` = (n, 3) の座標、``source`` = 刺激したノードの指示子(長さ n の
+    整数、非零 = 刺激。1 つ以上)。
+    mean_distance[t] = Σ|x_i(t)| ‖P_i − c‖ / Σ|x_i(t)|(c = 刺激ノードの重心、|x| で重みづけた
+    活動の平均距離、単位は P と同じ。活動が全零のステップは 0)。
+    active_fraction[t] = |x_i(t)| ≥ 全体最大 × thresh のノードの割合。
+    source_fraction[t] = 活動のうち刺激ノードにある分 Σ_source |x| / Σ|x|(全零なら 0)。
+    """
+    op = "graph_activity_spread"
+    X = _as_matrix(X, op, "X")
+    T, n = X.shape
+    pts = _as_points(P, op, n)
+    src = _as_labels(source, op, n, "source") != 0
+    if not src.any():
+        raise ValueError(f"{op}: source marks no node (all zero) — mark the stimulated nodes with a non-zero label")
+    A, level = _activity(X, thresh, op)
+    c = pts[src].mean(axis=0)
+    dist = np.linalg.norm(pts - c, axis=1)
+    tot = A.sum(axis=1)
+    ok = tot > 0.0
+    mean_distance = np.zeros(T)
+    source_fraction = np.zeros(T)
+    mean_distance[ok] = (A[ok] @ dist) / tot[ok]
+    source_fraction[ok] = A[ok][:, src].sum(axis=1) / tot[ok]
+    active_fraction = (A >= level).mean(axis=1) if level > 0.0 else np.zeros(T)
+    return {"step": np.arange(T, dtype=np.int64), "mean_distance": mean_distance,
+            "active_fraction": active_fraction, "source_fraction": source_fraction}
+
+
+def _orbit_camera(yaw_deg: float, pitch_deg: float) -> np.ndarray:
+    """回転台のカメラ(world → view の 3×3): yaw は世界の z 軸まわり、pitch はそこへ傾ける。
+    行 = 画面の右・画面の下・奥(値が大きいほど遠い)。yaw = pitch = 0 で +y を見て +z が上。"""
+    ya, pa = np.radians(float(yaw_deg)), np.radians(float(pitch_deg))
+    cy, sy, cp, sp = np.cos(ya), np.sin(ya), np.cos(pa), np.sin(pa)
+    rz = np.array([[cy, -sy, 0.0], [sy, cy, 0.0], [0.0, 0.0, 1.0]])
+    rx = np.array([[1.0, 0.0, 0.0], [0.0, sp, -cp], [0.0, cp, sp]])
+    return rx @ rz
+
+
+def _splat(img: np.ndarray, pts: np.ndarray, cols: np.ndarray, cam: np.ndarray,
+           center: np.ndarray, radius: float, px: int) -> None:
+    """正射影して奥から順に px×px の点を塗る(画家のアルゴリズム: 手前が勝つ)。"""
+    H, Wd = img.shape[:2]
+    V = (pts - center) @ cam.T
+    sc = 0.48 * H / radius
+    xy = V[:, :2] * sc + np.array([Wd / 2.0, H / 2.0])
+    order = np.argsort(V[:, 2])[::-1]
+    xi = np.floor(xy[order, 0]).astype(np.int64) - px // 2
+    yi = np.floor(xy[order, 1]).astype(np.int64) - px // 2
+    Co = cols[order]
+    for dy in range(px):
+        for dx in range(px):
+            xs, ys = xi + dx, yi + dy
+            ok = (xs >= 0) & (xs < Wd) & (ys >= 0) & (ys < H)
+            img[ys[ok], xs[ok]] = Co[ok]
+
+
+def points_activity_video(P: Any, X: Any, colors: Any = None, size: int = 480, aspect: float = 0.75,
+                          pitch: float = 15.0, yaw_start: float = 0.0, yaw_span: float = 360.0,
+                          substeps: int = 1, point_px: int = 2, gain: float = 100.0,
+                          background: Any = None) -> np.ndarray:
+    """点群に活動を載せて回す色動画 (F, H, W, 3)、値 [0, 1]。F = T × substeps、H = size、W = size × aspect。
+
+    ``P`` = (n, 3) の座標、``X`` = (T, n) の状態列(reservoir_states)。コマ k は時刻 k / substeps の
+    状態(隣り合うステップの線形補間)を、yaw = yaw_start + yaw_span × k / F のカメラで正射影する。
+    明るさ b = log1p(gain · |x| / max|X|) / log1p(gain) —— **尺度は全コマで 1 つ**(コマごとに伸ばすと
+    動いていないものがちらつく)。ノードの色 = ``colors``((n, 3)、[0, 1]、None なら白)× (0.2 + 0.8 b)、
+    b > 0.5 のノードは一回り大きく明るく塗る。``background`` は (m, 3) の点群を薄い灰で先に敷く
+    (脳の全 soma の上に選んだノードを載せる、など)。画角は P と background を合わせた箱で決める。
+    出力は F×H×W×3 ≤ MAX_VIDEO_ELEMENTS(2^27)に制限する。
+    """
+    op = "points_activity_video"
+    X = _as_matrix(X, op, "X")
+    T, n = X.shape
+    pts = _as_points(P, op, n)
+    size = int(size)
+    aspect = float(aspect)
+    substeps = int(substeps)
+    point_px = int(point_px)
+    gain = float(gain)
+    if size < 8:
+        raise ValueError(f"{op}: size must be >= 8 pixels, got {size}")
+    if not np.isfinite(aspect) or aspect <= 0.0:
+        raise ValueError(f"{op}: aspect must be a positive number, got {aspect}")
+    if substeps < 1:
+        raise ValueError(f"{op}: substeps must be >= 1, got {substeps}")
+    if point_px < 1:
+        raise ValueError(f"{op}: point_px must be >= 1, got {point_px}")
+    if not np.isfinite(gain) or gain <= 0.0:
+        raise ValueError(f"{op}: gain must be a positive number, got {gain}")
+    for nm, v in (("pitch", pitch), ("yaw_start", yaw_start), ("yaw_span", yaw_span)):
+        if not np.isfinite(float(v)):
+            raise ValueError(f"{op}: {nm} must be finite, got {v!r}")
+    Wd = max(8, int(round(size * aspect)))
+    F = T * substeps
+    if F * size * Wd * 3 > MAX_VIDEO_ELEMENTS:
+        raise ValueError(f"{op}: {F} frames of {size}x{Wd} would be {F * size * Wd * 3} elements, over the "
+                         f"{MAX_VIDEO_ELEMENTS} cap — fewer steps / substeps or a smaller size")
+    if colors is None:
+        base = np.full((n, 3), 0.92)
+    else:
+        base = _as_finite_float(colors, op, "colors")
+        if base.shape != (n, 3):
+            raise ValueError(f"{op}: colors must be (n, 3) = ({n}, 3) RGB in [0, 1], got shape {base.shape}")
+        if base.min() < 0.0 or base.max() > 1.0:
+            raise ValueError(f"{op}: colors must lie in [0, 1], got [{base.min()}, {base.max()}]")
+    bg_pts = None if background is None else _as_points(background, op, None, "background")
+    allp = pts if bg_pts is None else np.vstack([pts, bg_pts])
+    center = 0.5 * (allp.min(axis=0) + allp.max(axis=0))
+    radius = float(np.linalg.norm(allp - center, axis=1).max()) or 1.0
+    peak = float(np.abs(X).max())
+    BG = np.array([0.06, 0.07, 0.10])
+    DIM = np.array([0.17, 0.18, 0.22])
+    out = np.empty((F, size, Wd, 3), dtype=np.float64)
+    for k in range(F):
+        t_f = k / substeps
+        t0 = int(np.floor(t_f))
+        a = t_f - t0
+        x = X[t0] if a == 0.0 else (1.0 - a) * X[t0] + a * X[min(t0 + 1, T - 1)]
+        b = np.log1p(gain * np.abs(x) / peak) / np.log1p(gain) if peak > 0.0 else np.zeros(n)
+        cam = _orbit_camera(yaw_start + yaw_span * k / F, pitch)
+        img = out[k]
+        img[:] = BG
+        if bg_pts is not None:
+            _splat(img, bg_pts, np.broadcast_to(DIM, (bg_pts.shape[0], 3)), cam, center, radius, 1)
+        cols = base * (0.2 + 0.8 * b[:, None])
+        _splat(img, pts, cols, cam, center, radius, point_px)
+        hot = b > 0.5
+        if hot.any():
+            _splat(img, pts[hot], np.minimum(cols[hot] * 1.3, 1.0), cam, center, radius, point_px + 2)
+    return out

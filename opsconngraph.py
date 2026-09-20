@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsconngraph —— 結合グラフ(connectome)解析 op の統一レジストリ。
 
-実体は ``conngraph.py``(20 op / 4 カテゴリ)。台帳の役目は 3 つ:
+実体は ``conngraph.py``(23 op / 5 カテゴリ)。台帳の役目は 3 つ:
 docs/ops へノートを出す・連鎖ファザーに食わせる・宣言型と素の返りを橋渡しする。
 
 使い方::
@@ -44,6 +44,11 @@ docs/ops へノートを出す・連鎖ファザーに食わせる・宣言型�
   スカラは ``measurement``、reservoir の入出力は ``matrix``、配置は ``points``、
   隣接行列の絵は ``image2d`` —— いずれも既存の述語どおりで、混ぜても
   「型として正しい」ものはそのまま既存語彙に載せる。
+* ``rgbvideo``(2026-09-20、activity カテゴリで 1 語追加)= float の (F, H, W, 3) 色動画。
+  既存の ``video`` は (T, H, W) の灰色 1 チャネルで、``videops`` / ``motionmag`` が
+  ndim == 3 を要求する。(F, H, W, 3) を ``video`` に載せると、時間フィルタが最後の軸を
+  幅と読んで例外なしに「処理した動画」を返す側なので分ける。産むのは
+  ``points_activity_video`` だけ、受ける op は無い(展示と Studio へ渡す出口)。
 """
 import conngraph
 
@@ -90,6 +95,12 @@ _CATALOG = {
         ("graph_edges_as_lines", "conngraph", ["conn_graph", "points"], "table"),
         ("graph_adjacency_image", "conngraph", ["conn_graph"], "image2d"),
     ],
+    # 活動 —— 状態列 (T, n) を「いつ・どこで点いたか」に読み、座標に載せて回す(2026-09-20)
+    "activity": [
+        ("graph_activation_latency", "conngraph", ["matrix"], "labels"),
+        ("graph_activity_spread", "conngraph", ["matrix", "points", "labels"], "table"),
+        ("points_activity_video", "conngraph", ["points", "matrix"], "rgbvideo"),
+    ],
 }
 
 
@@ -120,7 +131,7 @@ def categories():
     return list(_CATALOG.keys())
 
 
-#: 宣言 out 型と素の返りの橋渡し。**空 — 意図的に**。20 op はすべて宣言型どおり
+#: 宣言 out 型と素の返りの橋渡し。**空 — 意図的に**。23 op はすべて宣言型どおり
 #: (ndarray / dict / float)を素で返すので、adapter を挟まないほうが連鎖ファザーの
 #: 検証が最も厳しい(素の返りをそのまま宣言と突き合わせる)。
 RESULT_ADAPTERS = {}
