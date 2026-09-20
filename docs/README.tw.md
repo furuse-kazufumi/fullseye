@@ -22,7 +22,7 @@
 
 <!-- poc-index:start -->
 
-## PoC 系列 — 帶真值求解的 122 個實際問題
+## PoC 系列 — 帶真值求解的 123 個實際問題
 
 每一個都具有閉式或合成的真值，並必定附上零點(什麼都不做)。失敗方式分開計數，原因以對照組區分。完整列表: [examples/README.md](../examples/README.md)。
 
@@ -51,13 +51,13 @@
 | ranging (2) | [`poc_dtof_ranging`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dtof_ranging.py) Ranging by Counting Photons — How Many for How Many Millimetres?<br>[`poc_leak_localization`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_leak_localization.py) Digging Where the Sound Says — A Clean Correlation Still Digs in the Wrong Place |
 | shape_descriptors (2) | [`poc_real_texture_invariance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_texture_invariance.py) Rotating Real Textures — Rotation Invariance Holds Only Where It Is Not Needed<br>[`poc_rotation_invariance_audit`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rotation_invariance_audit.py) Which Quantities Really Survive a Rotation — Auditing Invariance on a Real Coin |
 | signal_processing (2) | [`poc_rail_corrugation`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py) Measuring Rail with a Chord — At the Wavelengths Where the Transfer Function Is Zero, Any Amplitude Reads Zero<br>[`poc_web_roll_periodicity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_web_roll_periodicity.py) Naming the Damaged Roller from a Period — You Run Out of Evidence Before You Reach the Cliff |
+| verification (2) | [`poc_glyph_typo_detection`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py) Finding and Fixing Wrong Characters Without Recognising Them — the Threshold Comes from Typeface Spread<br>[`poc_larval_connectome_reservoir`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_larval_connectome_reservoir.py) A Larval Connectome as a Reservoir Reads Digits — and the Wiring Is Not What Does It |
 | vibration (2) | [`poc_beam_modal_video`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beam_modal_video.py) Modal identification from video — frequency survives to the end, damping lies first<br>[`poc_motion_magnification`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_motion_magnification.py) Micro-Vibration of a Structure From Video — Does Motion Magnification Help You Measure? |
 | colour (1) | [`poc_white_balance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) Colour Constancy (White Balance) — No Method Works, Only Conditions Do |
 | imgmetrics (1) | [`poc_spc`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_spc.py) Is the Process in Control, and Is It Capable? — Statistical Process Control from Closed-Form Alone |
 | rectification (1) | [`poc_document_scan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py) Straightening a Hand-Held Document Photo — Keystone Correction and Shadow Removal Against Ground Truth |
 | tomography (1) | [`poc_ct_fidelity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) Where CT Reconstruction Starts to Break as Projections Are Removed |
 | super-resolution (1) | [`poc_superresolution_limits`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_superresolution_limits.py) Does Super-Resolution Add Information? Downsample With the Truth in Hand, Restore, Count |
-| verification (1) | [`poc_glyph_typo_detection`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py) Finding and Fixing Wrong Characters Without Recognising Them — the Threshold Comes from Typeface Spread |
 
 <!-- poc-index:end -->
 
@@ -65,11 +65,11 @@
 
 ## 尋找運算子
 
-共有 **2,002 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **49 篇族群指南**。依維度的入口:
+共有 **2,022 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **50 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 931/931、型別台帳 1050/1062、單行門面 `fullseye.<名稱>` 568/1202 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 931/931、型別台帳 1070/1082、單行門面 `fullseye.<名稱>` 568/1202 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 2007 篇中，附有可執行範例的 **1966** 篇(41 篇沒有)，用法說明 120 字以上的 **1987** 篇(20 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)2007 篇全有。
+**內容實測**: 2027 篇中，附有可執行範例的 **1975** 篇(52 篇沒有)，用法說明 120 字以上的 **1998** 篇(29 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)2027 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
@@ -84,6 +84,7 @@
 | `piv` | 26 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `imgmetrics` | 24 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `acoustics` | 20 | [INDEX](ops/acoustics/INDEX.md) · [guide](ops/acoustics/guides/acoustic_condition_monitoring.md) |
+| `conngraph` | 20 | [INDEX](ops/conngraph/INDEX.md) · [guide](ops/conngraph/guides/conngraph.md) |
 | `dem` | 19 | [INDEX](ops/dem/INDEX.md) · [guide](ops/dem/guides/dem_terrain_analysis.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `lightfield` | 17 | [INDEX](ops/lightfield/INDEX.md) · [guide](ops/lightfield/guides/lightfield_depth.md) |
@@ -206,7 +207,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文件地圖 — 共 191 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 2,002 篇運算子說明與 49 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 2,022 篇運算子說明與 50 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 

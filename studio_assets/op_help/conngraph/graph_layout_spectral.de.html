@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_layout_spectral — CONNGRAPH <code style="color:#22d3bf">view</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_layout_spectral(W: &#x27;Any&#x27;, dim: &#x27;int&#x27; = 2, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.graph_layout_spectral(W: &#x27;Any&#x27;, dim: &#x27;int&#x27; = 2, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;graph_layout_spectral&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>スペクトル配置: 向きを畳んだ Laplacian の Fiedler ベクトル(第 2..dim+1 固有ベクトル)を座標にした点群 (n, 3)、各軸 [0, 1]。</p>
+<p>`<code style="color:#22d3bf">dim</code>` は 2 か 3(2 なら z = 0)。連結成分ごとに配置してから格子に並べる —— 非連結の</p>
+<p>グラフでは零固有空間が縮退して Fiedler ベクトルが成分を分けるとは限らないので、</p>
+<p>成分は明示的に分ける(成分内は箱の 0.3 倍、成分間は 1 の間隔)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">Leitfaden zur Familie conngraph</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_larval_connectome_reservoir">poc_larval_connectome_reservoir</a> — <code style="color:#22d3bf">py -3.11 examples/poc_larval_connectome_reservoir.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">points</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:graph_edges_as_lines">graph_edges_as_lines</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">view</code>)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:graph_edges_as_lines">graph_edges_as_lines</a> · <a style="color:#22d3bf" href="opconngraph:graph_adjacency_image">graph_adjacency_image</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: conngraph.py — CONNGRAPH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

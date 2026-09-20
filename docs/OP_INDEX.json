@@ -1,8 +1,8 @@
 {
- "n_ops": 1996,
+ "n_ops": 2016,
  "tiers": {
   "color": 12,
-  "ledger": 1048,
+  "ledger": 1068,
   "nary": 17,
   "registry": 919
  },
@@ -15,6 +15,7 @@
   "bspline_surface",
   "cimage",
   "color",
+  "conn_graph",
   "contour",
   "coordgrid",
   "countrate",
@@ -91,6 +92,7 @@
   "sprites",
   "stokes",
   "sweep",
+  "synapse_table",
   "table",
   "text",
   "transport_plan",
@@ -4930,6 +4932,203 @@
    "dim": "3d",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "graph_adjacency_image",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "image2d",
+   "category": "view",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_betweenness",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "signal",
+   "category": "stats",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_binarize",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "conn_graph",
+   "category": "build",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_clustering_coefficient",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "measurement",
+   "category": "stats",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_components",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "labels",
+   "category": "stats",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_degree_preserving_shuffle",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "conn_graph",
+   "category": "build",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_degree_table",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "table",
+   "category": "stats",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_edges_as_lines",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "table",
+   "category": "view",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph",
+    "points"
+   ]
+  },
+  {
+   "name": "graph_from_synapses",
+   "halcon": "",
+   "in_sort": "synapse_table",
+   "out_sort": "conn_graph",
+   "category": "build",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "synapse_table"
+   ]
+  },
+  {
+   "name": "graph_laplacian_spectrum",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "signal",
+   "category": "stats",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_layout_spectral",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "points",
+   "category": "view",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_modularity",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "measurement",
+   "category": "stats",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph",
+    "labels"
+   ]
+  },
+  {
+   "name": "graph_motif_count",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "measurement",
+   "category": "stats",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_rich_club",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "measurement",
+   "category": "stats",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_spectral_radius",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "measurement",
+   "category": "stats",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph"
    ]
   },
   {
@@ -10265,6 +10464,47 @@
    ]
   },
   {
+   "name": "reservoir_encode",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "matrix",
+   "category": "reservoir",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph",
+    "matrix"
+   ]
+  },
+  {
+   "name": "reservoir_from_graph",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "conn_graph",
+   "category": "reservoir",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph"
+   ]
+  },
+  {
+   "name": "reservoir_states",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "matrix",
+   "category": "reservoir",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph",
+    "matrix"
+   ]
+  },
+  {
    "name": "rgb_apply_gains",
    "halcon": "",
    "in_sort": "rgb",
@@ -10315,6 +10555,34 @@
    "dim": "imgmetrics",
    "in_sorts": [
     "rgbimage"
+   ]
+  },
+  {
+   "name": "ridge_predict",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "reservoir",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
+   "name": "ridge_readout",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "reservoir",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "matrix",
+    "matrix"
    ]
   },
   {

@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_modularity — CONNGRAPH <code style="color:#22d3bf">stats</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">conn_graph × labels</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_modularity(W: &#x27;Any&#x27;, labels: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.graph_modularity(W: &#x27;Any&#x27;, labels: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;graph_modularity&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>有向・重みつきモジュラリティ Q(Leicht–Newman 2008)。</p>
+<p>Q = (1/m) Σ_ij (W_ij − k_i^out k_j^in / m) δ(c_i, c_j)、m = Σ W。全ノードが</p>
+<p>1 つの群なら厳密に 0。対角(自己結合)は落とす。重みは非負であること。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">Leitfaden zur Familie conngraph</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">measurement</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">stats</code>)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:graph_degree_table">graph_degree_table</a> · <a style="color:#22d3bf" href="opconngraph:graph_clustering_coefficient">graph_clustering_coefficient</a> · <a style="color:#22d3bf" href="opconngraph:graph_betweenness">graph_betweenness</a> · <a style="color:#22d3bf" href="opconngraph:graph_laplacian_spectrum">graph_laplacian_spectrum</a> · <a style="color:#22d3bf" href="opconngraph:graph_spectral_radius">graph_spectral_radius</a> · <a style="color:#22d3bf" href="opconngraph:graph_components">graph_components</a> · <a style="color:#22d3bf" href="opconngraph:graph_rich_club">graph_rich_club</a> · <a style="color:#22d3bf" href="opconngraph:graph_motif_count">graph_motif_count</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: conngraph.py — CONNGRAPH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ridge_readout — CONNGRAPH <code style="color:#22d3bf">reservoir</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ridge_readout(X: &#x27;Any&#x27;, Y: &#x27;Any&#x27;, alpha: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.ridge_readout(X: &#x27;Any&#x27;, Y: &#x27;Any&#x27;, alpha: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;ridge_readout&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>リッジ回帰の読み出し重み (d+1, k) = (X̃ᵀX̃ + αI)⁻¹ X̃ᵀY、X̃ = [X, 1] (バイアス列を付ける)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">Leitfaden zur Familie conngraph</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_larval_connectome_reservoir">poc_larval_connectome_reservoir</a> — <code style="color:#22d3bf">py -3.11 examples/poc_larval_connectome_reservoir.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">matrix</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:reservoir_states">reservoir_states</a> · <a style="color:#22d3bf" href="opconngraph:reservoir_encode">reservoir_encode</a> · <a style="color:#22d3bf" href="opconngraph:ridge_predict">ridge_predict</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">reservoir</code>)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:reservoir_from_graph">reservoir_from_graph</a> · <a style="color:#22d3bf" href="opconngraph:reservoir_states">reservoir_states</a> · <a style="color:#22d3bf" href="opconngraph:reservoir_encode">reservoir_encode</a> · <a style="color:#22d3bf" href="opconngraph:ridge_predict">ridge_predict</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: conngraph.py — CONNGRAPH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_motif_count — CONNGRAPH <code style="color:#22d3bf">stats</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_motif_count(W: &#x27;Any&#x27;, motif: &#x27;str&#x27; = &#x27;ffl&#x27;) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import conngraph; conngraph.graph_motif_count(W: &#x27;Any&#x27;, motif: &#x27;str&#x27; = &#x27;ffl&#x27;) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_motif_count&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>3 点モチーフの個数(二値有向、対角は除く): reciprocal / ffl / cycle3。</p>
+<p>reciprocal = 相互結合の対の数 (Σ A∧Aᵀ)/2、ffl = Σ_ac (A²)_ac A_ac</p>
+<p>(a→b, b→c, a→c)、cycle3 = tr(A³)/3。各インスタンスを 1 回だけ数える。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">measurement</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">stats</code>)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:graph_degree_table">graph_degree_table</a> · <a style="color:#22d3bf" href="opconngraph:graph_clustering_coefficient">graph_clustering_coefficient</a> · <a style="color:#22d3bf" href="opconngraph:graph_betweenness">graph_betweenness</a> · <a style="color:#22d3bf" href="opconngraph:graph_laplacian_spectrum">graph_laplacian_spectrum</a> · <a style="color:#22d3bf" href="opconngraph:graph_spectral_radius">graph_spectral_radius</a> · <a style="color:#22d3bf" href="opconngraph:graph_components">graph_components</a> · <a style="color:#22d3bf" href="opconngraph:graph_modularity">graph_modularity</a> · <a style="color:#22d3bf" href="opconngraph:graph_rich_club">graph_rich_club</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: conngraph.py — CONNGRAPH 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_degree_preserving_shuffle — CONNGRAPH <code style="color:#22d3bf">build</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">conn_graph</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_preserving_shuffle(W: &#x27;Any&#x27;, n_swaps: &#x27;int | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import conngraph; conngraph.graph_degree_preserving_shuffle(W: &#x27;Any&#x27;, n_swaps: &#x27;int | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsconngraph.get(&quot;graph_degree_preserving_shuffle&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>次数保存シャッフル(帰無モデル): 各ノードの入次数・出次数と重みの多重集合を保って辺を繋ぎ替える。</p>
+<p>有向 double-edge swap(Maslov &amp; Sneppen 2002): 辺 (a→b, w1) と (c→d, w2) を</p>
+<p>(a→d, w1) と (c→b, w2) に替える。自己結合と重複辺を作る組は捨てる。</p>
+<p>`<code style="color:#22d3bf">n_swaps</code>` の既定は 10 × 辺数。<b>二値構造の次数</b>を保つ(重みは辺に付いて</p>
+<p>移動するので strength は変わりうる)。対角(自己結合)は動かさずそのまま残す。</p>
+<p>辺が 2 本未満なら複製を返す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_larval_connectome_reservoir">poc_larval_connectome_reservoir</a> — <code style="color:#22d3bf">py -3.11 examples/poc_larval_connectome_reservoir.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">conn_graph</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:graph_binarize">graph_binarize</a> · <a style="color:#22d3bf" href="opconngraph:graph_degree_table">graph_degree_table</a> · <a style="color:#22d3bf" href="opconngraph:graph_clustering_coefficient">graph_clustering_coefficient</a> · <a style="color:#22d3bf" href="opconngraph:graph_betweenness">graph_betweenness</a> · <a style="color:#22d3bf" href="opconngraph:graph_laplacian_spectrum">graph_laplacian_spectrum</a> · <a style="color:#22d3bf" href="opconngraph:graph_spectral_radius">graph_spectral_radius</a> · <a style="color:#22d3bf" href="opconngraph:graph_components">graph_components</a> · <a style="color:#22d3bf" href="opconngraph:graph_modularity">graph_modularity</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">build</code>)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:graph_from_synapses">graph_from_synapses</a> · <a style="color:#22d3bf" href="opconngraph:graph_binarize">graph_binarize</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: conngraph.py — CONNGRAPH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

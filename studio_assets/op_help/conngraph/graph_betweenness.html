@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_betweenness — CONNGRAPH <code style="color:#22d3bf">stats</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import conngraph; conngraph.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsconngraph.get(&quot;graph_betweenness&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>媒介中心性(Brandes 2001、二値有向、正規化なし)。ノードごとの長さ n の配列。</p>
+<p>ノード v の値 = Σ_{s≠v≠t} σ_st(v) / σ_st(最短路の本数比)。二値構造が対称</p>
+<p>(すべての辺が相互)なら無向グラフとして (s, t) と (t, s) を 1 対と数え 2 で割る</p>
+<p>—— 無向スター(n 個)の中心が (n−1)(n−2)/2、葉が 0 になる教科書の値。</p>
+<p>有向(非対称)なら順序対のまま数える。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">stats</code>)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:graph_degree_table">graph_degree_table</a> · <a style="color:#22d3bf" href="opconngraph:graph_clustering_coefficient">graph_clustering_coefficient</a> · <a style="color:#22d3bf" href="opconngraph:graph_laplacian_spectrum">graph_laplacian_spectrum</a> · <a style="color:#22d3bf" href="opconngraph:graph_spectral_radius">graph_spectral_radius</a> · <a style="color:#22d3bf" href="opconngraph:graph_components">graph_components</a> · <a style="color:#22d3bf" href="opconngraph:graph_modularity">graph_modularity</a> · <a style="color:#22d3bf" href="opconngraph:graph_rich_club">graph_rich_club</a> · <a style="color:#22d3bf" href="opconngraph:graph_motif_count">graph_motif_count</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: conngraph.py — CONNGRAPH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,94 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">이 가이드는 일본어만 있습니다(사람이 쓴 산문이라 기계적으로 치환하지 않았습니다).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">結合グラフ解析(コネクトームを数えて揺らして回す) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>重みつき有向グラフを「結合表」として扱う</b>層です。入力は n×n の隣接行列 <code style="color:#22d3bf">conn_graph</code>(<code style="color:#22d3bf">W[i, j]</code> = i → j の重み、NaN 禁止)か、シナプス表 <code style="color:#22d3bf">synapse_table</code>(<code style="color:#22d3bf">(pre_id, post_id, count)</code> の m×3)。出力は<b>ノードごとの列</b>(次数・媒介中心性・成分ラベル)、<b>グラフ 1 つのスカラ</b>(クラスタ係数・モジュラリティ・モチーフ数)、そして <b>Studio で見られる出口</b>(点群の配置・線分の表・隣接行列の画像)です。</p>
+<p>コネクトーム解析の定番の連鎖 —— *シナプス表を隣接行列にする → 次数と中心性を測る → 次数を保ったまま辺を繋ぎ替えた帰無モデルと比べる → 結合行列を reservoir として信号を回し、リッジ回帰で読み出す* —— がこの族です。</p>
+<p>20 op / 4 カテゴリ(numpy のみ。台帳は <code style="color:#22d3bf">opsconngraph.py</code>、実体は <code style="color:#22d3bf">conngraph.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>build(3)</b> — <code style="color:#22d3bf">graph_from_synapses</code> / <code style="color:#22d3bf">graph_degree_preserving_shuffle</code> / <code style="color:#22d3bf">graph_binarize</code>: 表 → 行列、<b>次数保存シャッフル(帰無モデル)</b>、二値化。</p>
+<p style="margin:2px 0 2px 12px">• <b>stats(9)</b> — <code style="color:#22d3bf">graph_degree_table</code> / <code style="color:#22d3bf">graph_clustering_coefficient</code> / <code style="color:#22d3bf">graph_betweenness</code> / <code style="color:#22d3bf">graph_laplacian_spectrum</code> / <code style="color:#22d3bf">graph_spectral_radius</code> / <code style="color:#22d3bf">graph_components</code> / <code style="color:#22d3bf">graph_modularity</code> / <code style="color:#22d3bf">graph_rich_club</code> / <code style="color:#22d3bf">graph_motif_count</code>: 教科書の閉形式だけ(Brandes の媒介中心性、Watts–Strogatz のクラスタ係数、Leicht–Newman の有向モジュラリティ、Milo のモチーフ)。</p>
+<p style="margin:2px 0 2px 12px">• <b>reservoir(5)</b> — <code style="color:#22d3bf">reservoir_from_graph</code> / <code style="color:#22d3bf">reservoir_states</code> / <code style="color:#22d3bf">reservoir_encode</code> / <code style="color:#22d3bf">ridge_readout</code> / <code style="color:#22d3bf">ridge_predict</code>: 結合行列をスペクトル半径 ρ に揃え、時系列の状態列か静的入力の一括符号化を作り、<code style="color:#22d3bf">(XᵀX + αI)⁻¹XᵀY</code> で読み出す(echo state network の閉形式)。</p>
+<p style="margin:2px 0 2px 12px">• <b>view(3)</b> — <code style="color:#22d3bf">graph_layout_spectral</code> / <code style="color:#22d3bf">graph_edges_as_lines</code> / <code style="color:#22d3bf">graph_adjacency_image</code>: Fiedler ベクトルの配置(<code style="color:#22d3bf">points</code>)、辺の線分表(<code style="color:#22d3bf">table</code>)、隣接行列の絵(<code style="color:#22d3bf">image2d</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">二値と重み —— どの op がどちらを見るか</h3>
+<p><b>構造</b>を見る op(次数・媒介中心性・成分・rich club・モチーフ・シャッフル・配置)は <code style="color:#22d3bf">W != 0</code> の二値構造を使い、<b>対角(自己結合)は無視</b>します。重みを使うのは strength(<code style="color:#22d3bf">graph_degree_table</code> の 2 列)・<code style="color:#22d3bf">graph_modularity</code>・<code style="color:#22d3bf">graph_spectral_radius</code>・reservoir 系・<code style="color:#22d3bf">graph_adjacency_image</code> だけ。「重みつきの媒介中心性」は距離の定義(重み = 強さか長さか)で答えが反転するので、この第 1 陣には入れていません。</p>
+<p>NaN は<b>入口で拒否</b>します。隣接行列の NaN は「辺が無い」とも「未計測」とも読めるので、黙って 0 に潰すと次数もモジュラリティももっともらしく間違うからです。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+    SYN[&quot;synapse_table (m, 3)&lt;br/&gt;pre_id / post_id / count&quot;]
+    SYN --&gt; B[&quot;graph_from_synapses&quot;]
+    B --&gt; W[&quot;conn_graph (n, n)&lt;br/&gt;W[i, j] = i → j の重み&quot;]
+    W --&gt; DT[&quot;graph_degree_table&lt;br/&gt;in/out degree・strength&quot;]
+    W --&gt; BC[&quot;graph_betweenness&lt;br/&gt;Brandes(二値有向)&quot;]
+    W --&gt; CC[&quot;graph_clustering_coefficient&quot;]
+    W --&gt; CP[&quot;graph_components&quot;]
+    CP --&gt; LB[&quot;labels (n,)&quot;]
+    LB --&gt; Q[&quot;graph_modularity&lt;br/&gt;Leicht–Newman Q&quot;]
+    W --&gt; Q
+    W --&gt; MO[&quot;graph_motif_count&lt;br/&gt;reciprocal / ffl / cycle3&quot;]
+    W --&gt; SH[&quot;graph_degree_preserving_shuffle&lt;br/&gt;帰無モデル(次数保存)&quot;]
+    SH --&gt; W2[&quot;conn_graph(同じ次数列)&quot;]
+    W2 --&gt; MO
+    W --&gt; RS[&quot;reservoir_from_graph&lt;br/&gt;ρ を揃える&quot;]
+    RS --&gt; ST[&quot;reservoir_states&lt;br/&gt;x_{t+1} = (1−a)x_t + a·f(Wᵀx_t + W_in u_t)&quot;]
+    RS --&gt; EN[&quot;reservoir_encode&lt;br/&gt;静的入力を一括符号化&quot;]
+    ST --&gt; RR[&quot;ridge_readout&quot;]
+    RR --&gt; RP[&quot;ridge_predict&quot;]
+    W --&gt; LY[&quot;graph_layout_spectral&quot;]
+    LY --&gt; P[&quot;points (n, 3)&quot;]
+    P --&gt; EL[&quot;graph_edges_as_lines&quot;]
+    W --&gt; EL
+    W --&gt; IM[&quot;graph_adjacency_image&quot;]
+    IM --&gt; I[&quot;image2d (n, n)&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使う順序</h3>
+<p>op は <code style="color:#22d3bf">fullseye.ledger.&lt;名前&gt;</code> から呼べます(この族の公開経路。実体を直に触るなら <code style="color:#22d3bf">import conngraph</code>)。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye as fs
+
+# 実データの代わりに、2 つの集団(各 6 個)が内側で密に結合し、集団間は 2 本だけの結合表
+rows = []
+for base in (0, 6):
+    for i in range(6):
+        for j in range(6):
+            if i != j:
+                rows.append((base + i, base + j, 1 + (i * 7 + j * 3) % 5))   # シナプス数
+rows += [(5, 6, 1), (11, 0, 1)]                                            # 集団をつなぐ 2 本
+syn = np.array(rows, dtype=np.float64)
+
+W = fs.ledger.graph_from_synapses(syn)                 # 1) 表 → 隣接行列 (12, 12)
+deg = fs.ledger.graph_degree_table(W)                  # 2) 次数と strength
+bc = fs.ledger.graph_betweenness(W)                    #    媒介中心性(橋の 4 個が高い)
+lab = fs.ledger.graph_components(W)                    # 3) 弱連結成分(ここでは 1 つ)
+q = fs.ledger.graph_modularity(W, np.arange(12) // 6)  #    真の分割で Q &gt; 0.4
+
+# 4) 帰無モデル: 次数を保ったまま辺を繋ぎ替え、モチーフ数を比べる
+ffl = fs.ledger.graph_motif_count(W, motif=&quot;ffl&quot;)
+null = [fs.ledger.graph_motif_count(fs.ledger.graph_degree_preserving_shuffle(W, seed=s), motif=&quot;ffl&quot;)
+        for s in range(20)]
+z = (ffl - np.mean(null)) / max(np.std(null), 1e-12)   # 観測の FFL 数が帰無より多いか
+
+# 5) reservoir: 結合行列で信号を回し、1 ステップ先を読み出す
+R = fs.ledger.reservoir_from_graph(W, rho=0.9)
+u = np.sin(np.linspace(0, 12 * np.pi, 400))[:, None]
+X = fs.ledger.reservoir_states(R, u, in_scale=0.5, leak=0.3, washout=50)
+Wout = fs.ledger.ridge_readout(X[:-1], u[51:], alpha=1e-3)
+pred = fs.ledger.ridge_predict(X[:-1], Wout)
+
+# 6) 見る: 配置 → 線分 → 隣接行列の絵(Studio に渡す型)
+P = fs.ledger.graph_layout_spectral(W)                 # points (12, 3)、各軸 [0, 1]
+lines = fs.ledger.graph_edges_as_lines(W, P)           # 辺ごとの x0 y0 z0 x1 y1 z1 weight
+img = fs.ledger.graph_adjacency_image(W, order=&quot;degree&quot;)   # (12, 12) の [0, 1]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">真値で確かめてある性質(<code style="color:#22d3bf">tests/test_conngraph.py</code>)</h3>
+<p>| グラフ | op | 厳密な値 |</p>
+<p>|---|---|---|</p>
+<p>| リング(n = 8) | <code style="color:#22d3bf">graph_laplacian_spectrum</code> | 2 − 2cos(2πk/n) |</p>
+<p>| スター(n = 7) | <code style="color:#22d3bf">graph_betweenness</code> | 中心 (n−1)(n−2)/2 = 15、葉 0 |</p>
+<p>| 完全グラフ(n = 5) | <code style="color:#22d3bf">graph_clustering_coefficient</code> / <code style="color:#22d3bf">graph_spectral_radius</code> / <code style="color:#22d3bf">graph_rich_club(k=1)</code> | 1 / n−1 = 4 / 1 |</p>
+<p>| 2 つの 4 クリーク | <code style="color:#22d3bf">graph_components</code> / <code style="color:#22d3bf">graph_modularity</code> | [0,0,0,0,1,1,1,1] / 真の分割で 0.5、1 群で 0 |</p>
+<p>| FFL 1 個 + 3 巡回 1 個 | <code style="color:#22d3bf">graph_motif_count</code> | ffl 1 / cycle3 1 |</p>
+<p>| 線形 reservoir | <code style="color:#22d3bf">reservoir_states</code> / <code style="color:#22d3bf">reservoir_encode</code> | 手で書いた再帰 / X W_inᵀ(steps 1)に一致 |</p>
+<p>| Y = XB + 1 | <code style="color:#22d3bf">ridge_readout</code> → <code style="color:#22d3bf">ridge_predict</code> | α = 1e-8 で 1e-6 以内に復元 |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">罠</h3>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">graph_modularity</code> の重みは非負**。抑制性を負で入れた行列(<code style="color:#22d3bf">graph_from_synapses(..., sign=-1)</code>)はそのまま渡せない —— <code style="color:#22d3bf">graph_binarize</code> か <code style="color:#22d3bf">abs</code> を先に。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">graph_degree_preserving_shuffle</code> が保つのは二値の次数列**。重みは辺に付いて動くので strength は変わる。保ちたいのが strength なら別の帰無モデル(未実装)。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">reservoir_from_graph</code> はスペクトル半径 0 を拒否**する(DAG や空グラフは何倍しても 0)。</p>
+<p style="margin:2px 0 2px 12px">• <b>配置は成分ごと</b>。非連結グラフでは零固有空間が縮退して Fiedler ベクトルが成分を分けるとは限らないので、成分を明示的に分けて格子に並べる。</p>

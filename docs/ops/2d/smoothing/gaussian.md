@@ -5,7 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: gauss_filter
-examples: [coherence_scanning, color_transport, ct_inspection, degenerate_inputs, gallery2d_smoothing_rank, genspark_external_review, inspection_workflow, photon_timeresolved, poc_bone_trabecular_thickness, poc_dtof_ranging, poc_interferometry_step, poc_leaf_disease_area, poc_nuclei_ploidy, poc_solar_el_inspection, poc_solar_limb_darkening, poc_star_astrometry, poc_wound_area_tracking, quickstart, typed_results_json, video_streaming]
+examples: [coherence_scanning, color_transport, ct_inspection, degenerate_inputs, gallery2d_smoothing_rank, genspark_external_review, inspection_workflow, photon_timeresolved, poc_bone_trabecular_thickness, poc_dtof_ranging, poc_interferometry_step, poc_larval_connectome_reservoir, poc_leaf_disease_area, poc_nuclei_ploidy, poc_solar_el_inspection, poc_solar_limb_darkening, poc_star_astrometry, poc_wound_area_tracking, quickstart, typed_results_json, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -72,6 +72,7 @@ gaussian 0.35 0.50
 - [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
 - [poc_dtof_ranging](../../../../examples/poc_dtof_ranging.py) — `py -3.11 examples/poc_dtof_ranging.py`
 - [poc_interferometry_step](../../../../examples/poc_interferometry_step.py) — `py -3.11 examples/poc_interferometry_step.py`
+- [poc_larval_connectome_reservoir](../../../../examples/poc_larval_connectome_reservoir.py) — `py -3.11 examples/poc_larval_connectome_reservoir.py`
 - [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`
 - [poc_nuclei_ploidy](../../../../examples/poc_nuclei_ploidy.py) — `py -3.11 examples/poc_nuclei_ploidy.py`
 - [poc_solar_el_inspection](../../../../examples/poc_solar_el_inspection.py) — `py -3.11 examples/poc_solar_el_inspection.py`

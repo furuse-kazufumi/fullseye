@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_motif_count — CONNGRAPH <code style="color:#22d3bf">stats</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_motif_count(W: &#x27;Any&#x27;, motif: &#x27;str&#x27; = &#x27;ffl&#x27;) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.graph_motif_count(W: &#x27;Any&#x27;, motif: &#x27;str&#x27; = &#x27;ffl&#x27;) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;graph_motif_count&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>3 点モチーフの個数(二値有向、対角は除く): reciprocal / ffl / cycle3。</p>
+<p>reciprocal = 相互結合の対の数 (Σ A∧Aᵀ)/2、ffl = Σ_ac (A²)_ac A_ac</p>
+<p>(a→b, b→c, a→c)、cycle3 = tr(A³)/3。各インスタンスを 1 回だけ数える。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">Leitfaden zur Familie conngraph</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">measurement</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">stats</code>)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:graph_degree_table">graph_degree_table</a> · <a style="color:#22d3bf" href="opconngraph:graph_clustering_coefficient">graph_clustering_coefficient</a> · <a style="color:#22d3bf" href="opconngraph:graph_betweenness">graph_betweenness</a> · <a style="color:#22d3bf" href="opconngraph:graph_laplacian_spectrum">graph_laplacian_spectrum</a> · <a style="color:#22d3bf" href="opconngraph:graph_spectral_radius">graph_spectral_radius</a> · <a style="color:#22d3bf" href="opconngraph:graph_components">graph_components</a> · <a style="color:#22d3bf" href="opconngraph:graph_modularity">graph_modularity</a> · <a style="color:#22d3bf" href="opconngraph:graph_rich_club">graph_rich_club</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: conngraph.py — CONNGRAPH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

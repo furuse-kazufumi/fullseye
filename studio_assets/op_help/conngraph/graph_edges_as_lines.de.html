@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_edges_as_lines — CONNGRAPH <code style="color:#22d3bf">view</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">conn_graph × points</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_edges_as_lines(W: &#x27;Any&#x27;, P: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.graph_edges_as_lines(W: &#x27;Any&#x27;, P: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;graph_edges_as_lines&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>辺を線分の表にする(Studio で点群に重ねる出口): 列 pre / post / x0 y0 z0 / x1 y1 z1 / weight。</p>
+<p>`<code style="color:#22d3bf">P</code>` は graph_layout_spectral の (n, 3)(または (n, 2)、z = 0 を足す)。</p>
+<p>|W| &gt; thresh の辺だけ、対角(自己結合)は長さ 0 なので出さない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">Leitfaden zur Familie conngraph</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">view</code>)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:graph_layout_spectral">graph_layout_spectral</a> · <a style="color:#22d3bf" href="opconngraph:graph_adjacency_image">graph_adjacency_image</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: conngraph.py — CONNGRAPH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

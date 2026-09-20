@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(219 例)
+### 2-D 画像/信号/幾何(220 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -195,6 +195,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **verification**
 - **画像の中の文字を正しい文字列に合わせて直す(JSON 一枚の入口、MCP と同じ形)** — 生成 AI が出した画像の誤字を再生成せずに直す。repair_flagged は床を超えた字だけ置き換え正しい字に触らず、検証を通らない置換は元に戻す。rewrite_line は行を丸ごと同じ書体で描き直す。報告の mismatch が typo(誤字)か unrelated(元の字が指示と無関係)かを分け、直せないときは reason_code(固定語彙)で断る。縁取り文字は色が多峰なので断る例つき。 `py -3.11 examples/fix_text_in_image.py`
 - **画像の誤字を認識せずに見つけて直す(正しい文字列を入力で貰う)** — 正しい文字列は入力で貰えるので 6000 通りの分類は要らず、各マスを指定の 1 字と比べるだけで済む。★閾値は勘でなく**書体雑音の 95 % 点**(0.058)から導く。★★距離は平均でなく **99 パーセンタイル** —— 取り違えは部首を共有したまま一部だけ入れ替わるので、平均だと 検/横 が 0.0171 で床 0.0245 の**下**に沈み原理的に検出できない。合成では 4/4 検出・誤検出 0、置換で距離 0.0805→0.0258 と全部が床を下回る。版面が怪しい画像は**断る**(字が壊れているのか切り方が外れているのかを取り違えない門)。 `py -3.11 examples/poc_glyph_typo_detection.py`
+- **幼虫コネクトームを reservoir にして数字を読む(配線は効いていない)** — ショウジョウバエ幼虫の完全コネクトーム(Winding 2023、2,952 ニューロン・110,677 辺)を固定の再帰網にし、読み出しだけ閉形式の ridge で学習すると MNIST の部分集合で 91.9 %(生画素の ridge は 77.6 %)。★先行研究に無い対照を置く: **次数を保って辺を繋ぎ替えた** グラフ 91.6 %、同密度の乱数 91.9 %、ガウス乱数 91.5 % —— 差は +0.3 ポイント。読み出しが使っているのは reservoir という仕組みで、進化が決めた配線ではない。設定はコネクトームの検証分割で 1 度だけ選び全対照に同じ値。データは実行時に取得して手元にキャッシュ(repo には集計と図だけ)、取れなければ合成の代替で経路だけ走らせ、その旨を印字する。 `py -3.11 examples/poc_larval_connectome_reservoir.py`
 
 **imaging_quality**
 - **パネル検査のモアレは「本物のムラ」と区別できるか(打ち消しと窓長)** — うなりの周期は 2 つの周期から閉形式で出る(予測 20.00/6.67/4.00 px 対 実測 19.69/6.65/4.00)。★★低域通過でならすと σ=8 px で**合計誤差 +0.9 %** —— 完璧に見えるが内訳は**漏れ +8.3 % / 減衰 -7.4 %**。対照群 2 本(縞だけ / ムラだけ)を置かないと見えない。★★素のノッチは **δ·L が整数のときだけ**効く(+0.7 % 対 +39.1 %)—— 原因はスペクトルリーケージで、**撮り直しではなく解析窓長という software 側の問題**。 `py -3.11 examples/poc_moire_screen.py`
@@ -1796,7 +1797,7 @@ _計 931 ops / 48 categories。_
 - `xmh_selfmatch` `image → image` · 例: `gallery2d_features`
 
 ### smoothing(48)
-- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_dtof_ranging`, `poc_interferometry_step`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
+- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `degenerate_inputs`, `gallery2d_smoothing_rank`, `genspark_external_review`, `inspection_workflow`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_dtof_ranging`, `poc_interferometry_step`, `poc_larval_connectome_reservoir`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `typed_results_json`, `video_streaming`
 - `mean_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `quickstart`
 - `unsharp` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_camera_shake_deblur`, `poc_real_deblur_honesty`, `poc_superresolution_limits`

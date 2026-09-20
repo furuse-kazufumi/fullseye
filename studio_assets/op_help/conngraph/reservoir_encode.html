@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">reservoir_encode — CONNGRAPH <code style="color:#22d3bf">reservoir</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">conn_graph × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reservoir_encode(W: &#x27;Any&#x27;, X: &#x27;Any&#x27;, steps: &#x27;int&#x27; = 6, in_scale: &#x27;float&#x27; = 0.1, leak: &#x27;float&#x27; = 0.3, nonlinearity: &#x27;str&#x27; = &#x27;tanh&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import conngraph; conngraph.reservoir_encode(W: &#x27;Any&#x27;, X: &#x27;Any&#x27;, steps: &#x27;int&#x27; = 6, in_scale: &#x27;float&#x27; = 0.1, leak: &#x27;float&#x27; = 0.3, nonlinearity: &#x27;str&#x27; = &#x27;tanh&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsconngraph.get(&quot;reservoir_encode&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>静的入力の一括 reservoir 符号化(分類用): X の各行を零状態から steps 回回した最終状態 (N, n)。</p>
+<p>行 x ごとに x_{t+1} = (1−leak) x_t + leak · f(Wᵀ x_t + W_in x) を steps 回。</p>
+<p>`<code style="color:#22d3bf">W_in</code>` は reservoir_states と同じ seed 付き一様 (−in_scale, in_scale) の (n, d)。</p>
+<p>行のループは書かず、1 ステップ = (N, n) @ (n, n) の行列積 1 回で全行を同時に進める。</p>
+<p>linear・leak 1・steps 1 なら X W_inᵀ、steps 2 なら (X W_inᵀ) W + X W_inᵀ に厳密一致。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_larval_connectome_reservoir">poc_larval_connectome_reservoir</a> — <code style="color:#22d3bf">py -3.11 examples/poc_larval_connectome_reservoir.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">matrix</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:reservoir_states">reservoir_states</a> · <a style="color:#22d3bf" href="opconngraph:ridge_readout">ridge_readout</a> · <a style="color:#22d3bf" href="opconngraph:ridge_predict">ridge_predict</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">reservoir</code>)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:reservoir_from_graph">reservoir_from_graph</a> · <a style="color:#22d3bf" href="opconngraph:reservoir_states">reservoir_states</a> · <a style="color:#22d3bf" href="opconngraph:ridge_readout">ridge_readout</a> · <a style="color:#22d3bf" href="opconngraph:ridge_predict">ridge_predict</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: conngraph.py — CONNGRAPH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

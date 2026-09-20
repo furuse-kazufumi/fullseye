@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1996,
- "n_notes": 2002,
+ "n_ops": 2016,
+ "n_notes": 2022,
  "notes": {
   "vol_dilate": [
    {
@@ -14752,6 +14752,206 @@
     "in": "signal × signal",
     "out": "scalar",
     "path": "docs/ops/colortransport/transport/wasserstein_1d.md"
+   }
+  ],
+  "graph_binarize": [
+   {
+    "op": "graph_binarize",
+    "dim": "conngraph",
+    "category": "build",
+    "in": "conn_graph",
+    "out": "conn_graph",
+    "path": "docs/ops/conngraph/build/graph_binarize.md"
+   }
+  ],
+  "graph_degree_preserving_shuffle": [
+   {
+    "op": "graph_degree_preserving_shuffle",
+    "dim": "conngraph",
+    "category": "build",
+    "in": "conn_graph",
+    "out": "conn_graph",
+    "path": "docs/ops/conngraph/build/graph_degree_preserving_shuffle.md"
+   }
+  ],
+  "graph_from_synapses": [
+   {
+    "op": "graph_from_synapses",
+    "dim": "conngraph",
+    "category": "build",
+    "in": "synapse_table",
+    "out": "conn_graph",
+    "path": "docs/ops/conngraph/build/graph_from_synapses.md"
+   }
+  ],
+  "reservoir_encode": [
+   {
+    "op": "reservoir_encode",
+    "dim": "conngraph",
+    "category": "reservoir",
+    "in": "conn_graph × matrix",
+    "out": "matrix",
+    "path": "docs/ops/conngraph/reservoir/reservoir_encode.md"
+   }
+  ],
+  "reservoir_from_graph": [
+   {
+    "op": "reservoir_from_graph",
+    "dim": "conngraph",
+    "category": "reservoir",
+    "in": "conn_graph",
+    "out": "conn_graph",
+    "path": "docs/ops/conngraph/reservoir/reservoir_from_graph.md"
+   }
+  ],
+  "reservoir_states": [
+   {
+    "op": "reservoir_states",
+    "dim": "conngraph",
+    "category": "reservoir",
+    "in": "conn_graph × matrix",
+    "out": "matrix",
+    "path": "docs/ops/conngraph/reservoir/reservoir_states.md"
+   }
+  ],
+  "ridge_predict": [
+   {
+    "op": "ridge_predict",
+    "dim": "conngraph",
+    "category": "reservoir",
+    "in": "matrix × matrix",
+    "out": "matrix",
+    "path": "docs/ops/conngraph/reservoir/ridge_predict.md"
+   }
+  ],
+  "ridge_readout": [
+   {
+    "op": "ridge_readout",
+    "dim": "conngraph",
+    "category": "reservoir",
+    "in": "matrix × matrix",
+    "out": "matrix",
+    "path": "docs/ops/conngraph/reservoir/ridge_readout.md"
+   }
+  ],
+  "graph_betweenness": [
+   {
+    "op": "graph_betweenness",
+    "dim": "conngraph",
+    "category": "stats",
+    "in": "conn_graph",
+    "out": "signal",
+    "path": "docs/ops/conngraph/stats/graph_betweenness.md"
+   }
+  ],
+  "graph_clustering_coefficient": [
+   {
+    "op": "graph_clustering_coefficient",
+    "dim": "conngraph",
+    "category": "stats",
+    "in": "conn_graph",
+    "out": "measurement",
+    "path": "docs/ops/conngraph/stats/graph_clustering_coefficient.md"
+   }
+  ],
+  "graph_components": [
+   {
+    "op": "graph_components",
+    "dim": "conngraph",
+    "category": "stats",
+    "in": "conn_graph",
+    "out": "labels",
+    "path": "docs/ops/conngraph/stats/graph_components.md"
+   }
+  ],
+  "graph_degree_table": [
+   {
+    "op": "graph_degree_table",
+    "dim": "conngraph",
+    "category": "stats",
+    "in": "conn_graph",
+    "out": "table",
+    "path": "docs/ops/conngraph/stats/graph_degree_table.md"
+   }
+  ],
+  "graph_laplacian_spectrum": [
+   {
+    "op": "graph_laplacian_spectrum",
+    "dim": "conngraph",
+    "category": "stats",
+    "in": "conn_graph",
+    "out": "signal",
+    "path": "docs/ops/conngraph/stats/graph_laplacian_spectrum.md"
+   }
+  ],
+  "graph_modularity": [
+   {
+    "op": "graph_modularity",
+    "dim": "conngraph",
+    "category": "stats",
+    "in": "conn_graph × labels",
+    "out": "measurement",
+    "path": "docs/ops/conngraph/stats/graph_modularity.md"
+   }
+  ],
+  "graph_motif_count": [
+   {
+    "op": "graph_motif_count",
+    "dim": "conngraph",
+    "category": "stats",
+    "in": "conn_graph",
+    "out": "measurement",
+    "path": "docs/ops/conngraph/stats/graph_motif_count.md"
+   }
+  ],
+  "graph_rich_club": [
+   {
+    "op": "graph_rich_club",
+    "dim": "conngraph",
+    "category": "stats",
+    "in": "conn_graph",
+    "out": "measurement",
+    "path": "docs/ops/conngraph/stats/graph_rich_club.md"
+   }
+  ],
+  "graph_spectral_radius": [
+   {
+    "op": "graph_spectral_radius",
+    "dim": "conngraph",
+    "category": "stats",
+    "in": "conn_graph",
+    "out": "measurement",
+    "path": "docs/ops/conngraph/stats/graph_spectral_radius.md"
+   }
+  ],
+  "graph_adjacency_image": [
+   {
+    "op": "graph_adjacency_image",
+    "dim": "conngraph",
+    "category": "view",
+    "in": "conn_graph",
+    "out": "image2d",
+    "path": "docs/ops/conngraph/view/graph_adjacency_image.md"
+   }
+  ],
+  "graph_edges_as_lines": [
+   {
+    "op": "graph_edges_as_lines",
+    "dim": "conngraph",
+    "category": "view",
+    "in": "conn_graph × points",
+    "out": "table",
+    "path": "docs/ops/conngraph/view/graph_edges_as_lines.md"
+   }
+  ],
+  "graph_layout_spectral": [
+   {
+    "op": "graph_layout_spectral",
+    "dim": "conngraph",
+    "category": "view",
+    "in": "conn_graph",
+    "out": "points",
+    "path": "docs/ops/conngraph/view/graph_layout_spectral.md"
    }
   ],
   "dem_cell_size_webmercator": [
