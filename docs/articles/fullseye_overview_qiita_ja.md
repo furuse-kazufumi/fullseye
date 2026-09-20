@@ -4136,6 +4136,8 @@ op は **931**(レジストリ実測)まで来ましたが、この回で増や�
 
 この回は op を足していません。代わりに、外部の AI(GenSpark)に **0.2.0 を core(`pip install fullseye`)と all(`fullseye[all]`)の 2 環境で使い込ませ**、実行出力つきの報告を 29 通(指摘 100 件弱)受け取りました。やったことは単純で、**1 件ずつ現 master で再現し、バグ側は直してテスト・example・堅牢性ノートを同じ commit に、設計側は「変えない理由」を表に残す**。報告の中には後から本人が撤回したもの(「87 op が恒等になる」は入力の種類違いの fallback、「Insert ボタンが無い」は見落とし)もあり、**第三者の指摘は探針であって判定ではない** ―― 再現してから採る、が全部です。
 
+この回の直しは **0.2.1** として出しました(`pip install -U fullseye`、[Release v0.2.1](https://github.com/furuse-kazufumi/fullseye/releases/tag/v0.2.1)、Zenodo の版 DOI [10.5281/zenodo.22851588](https://doi.org/10.5281/zenodo.22851588))。新しい op は無く、型付き契約の語彙も変えていないので patch 版です。
+
 | 何を直したか | 直す前 | 直した後 |
 |---|---|---|
 | **「無い」と「入っていない」** | backend の optional 依存が入っていない op も、綴り違いの op も同じ `KeyError: unknown operator` | 同梱の索引(module / requires)から `MissingBackendError`(`KeyError` の派生)が **不足 extra と `pip install "fullseye[...]"` を言う**。本当に無い名前は `fullseye has` と `op_find` を案内 |

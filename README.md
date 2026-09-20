@@ -231,8 +231,8 @@ held-out discipline above. If you use it in academic work, please cite via
 
 **Archival status, stated plainly:** archived on Zenodo from v0.1.11 onwards.
 Concept DOI (always resolves to the newest version):
-[10.5281/zenodo.22761195](https://doi.org/10.5281/zenodo.22761195); the v0.1.11
-version DOI is 10.5281/zenodo.22761196. Each GitHub Release mints a new version
+[10.5281/zenodo.22761195](https://doi.org/10.5281/zenodo.22761195); the v0.2.1
+version DOI is 10.5281/zenodo.22851588 (v0.2.0: 10.5281/zenodo.22772164). Each GitHub Release mints a new version
 DOI (`.zenodo.json` describes the record and is kept in step with `CITATION.cff`
 and `pyproject.toml` by a CI gate — see "Zenodo" in `CONTRIBUTING.md`). Versions
 before 0.1.11 exist only as git tags and on PyPI, not as Zenodo records.
