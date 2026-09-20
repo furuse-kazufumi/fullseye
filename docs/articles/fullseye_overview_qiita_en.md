@@ -4175,6 +4175,16 @@ In numbers, the correlation between the stimulated column and the response centr
 
 In Studio, **Tools ▸ Compound eye → brain** runs the same parts interactively: hover to stimulate the column under the mouse, drag to orbit, feed the image open in Studio through the eye, switch to the shuffle (new module `eyebrain`; the column-to-ommatidium mapping is an approximation by normalised hexagonal coordinates, and neither the raw data nor the subgraph is committed). It is the first sample built to the bar we set that day: someone who runs it should be surprised.
 
+### Membranes Belong Only on Label Boundaries — a Second Opinion for EM Proofreading
+
+Upstream of every connectome sits the automatic segmentation of serial EM sections, and the merges (two cells under one id) and splits (one cell under two ids) it leaves behind are found and fixed by people — the most labour-intensive step of building a connectome. Every prior detector is a deep network. Fullseye adds a family, `emproof` (7 ops), that counts the same two errors without learning, from one premise: **a cell membrane (dark ridge) belongs only on label boundaries**. A membrane chord crossing the inside of a label is a merge suspect (closed rings, i.e. mitochondria, are excluded by their hole); a boundary without membrane is a split suspect.
+
+![One evaluation slice: raw EM | membrane response | overlay (white = label boundary, magenta = merge suspect, cyan = split suspect, yellow = injected truth)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/01_second_opinion_slice.png)
+
+Injecting artificial merges and splits into the ground-truth labels of CREMI sample A, choosing thresholds on the first 6 slices and measuring on the last 6, splits reach **AUC 1.00** and merges **0.83** against area-matched negatives (random 0.53, area only 0.70). Merge detection is weak, and we say so: membrane-rich cells score like chords. The more important finding was a trap in the evaluation itself — an injected merge is the union of two large labels, so without area matching, **"big label = suspicious" alone scores 0.87**. That is why `holdout_threshold`, which keeps the slices that choose the threshold apart from the slices that are measured, became an operator.
+
+![Suspects on the stacked cube, rotating (magenta = merge, cyan = split, brightness = score, grey = all boundaries)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/02_suspects_on_the_cube.gif)
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to

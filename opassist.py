@@ -56,6 +56,7 @@ _LEDGERS = (
     ("opsblob", "OPSBLOB"),
     # 2026-09-20: 結合グラフ(connectome)解析。新語 conn_graph / synapse_table。
     ("opsconngraph", "OPSCONNGRAPH"),
+    ("opsemproof", "OPSEMPROOF"),          # 2026-09-21: EM 校正のセカンドオピニオン(labels2d / image2d / table)
 )
 
 #: 進化する 2-D op のレジストリ(``ops.REGISTRY``、882 op)。**台帳ではない** ——

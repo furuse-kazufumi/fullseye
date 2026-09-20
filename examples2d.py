@@ -374,6 +374,12 @@ EXAMPLES = [
                 "実測: コネクトームは刺激からの平均距離 88 → 230 µm を 17 步かけて伸び、視葉 → 中枢 → 下行の順に点いて 36 步では VNC に届かない。"
                 "shuffle は 3 步で 300 µm に散り遠い 1/4 の 93 % が点く(コネクトーム 0 %)。精度で見えなかった配線の空間構造が動きで見える。"
                 "新 op: reservoir_states(W_in=)、graph_activation_latency、graph_activity_spread、points_activity_video(尺度は全コマで 1 つ、views= で背側・側面・体軸方向の 3 方向を同時に)。生データは commit しない。"},
+    {"id": "poc_em_second_opinion", "task": "inspection", "data": "real",
+     "name": "EM 連結体校正のセカンドオピニオン(膜はラベルの境界にしか無いはず)",
+     "summary": "EM 断面の自動分割が残す融合と分断を学習なしで数える: 内部を横切る膜の弦 = 融合の疑い(閉じた輪は穴で除く)、"
+                "膜の無い境界 = 分断の疑い。CREMI sample A の正解ラベルに人工誤りを仕込み、閾値を前半の断面で選んで後半で測る"
+                "(holdout_threshold): 分断 AUC 1.00、融合 0.83(面積で揃えた負例、乱数 0.53・面積だけ 0.70)。揃えないと面積だけで 0.87 が"
+                "出る = 評価の罠を op で封じる。疑わしい箇所を立方体の上で回す GIF。新族 emproof 7 op。生データは commit しない。"},
     {"id": "poc_eye_to_brain", "task": "visualization", "data": "real",
      "name": "複眼が見る像と、脳のどこが反応するかを並べる(個眼をなぞると応答が配線を伝わる)",
      "summary": "MaleCNS の視葉ニューロンに付いた六角柱(個眼の柱)を使い、右眼 892 柱の視葉ニューロン + 中枢のハブ 1,400 体(4,076 体・150,487 辺)に"

@@ -826,6 +826,8 @@ def catalog():
         # matrix / points の述語に当たるが、一般行列を媒介中心性に、点群の座標を
         # id に読ませても例外が出ず「もっともらしいグラフ統計」が返る側。
         ("opsconngraph", "OPSCONNGRAPH", "conngraph"),
+        # 2026-09-21: EM 校正のセカンドオピニオン。新語は作らない(labels2d / image2d / table / signal)。
+        ("opsemproof", "OPSEMPROOF", "emproof"),
     ):
         _m = __import__(_mod)
         for n, m in getattr(_m, _tbl).items():

@@ -1,0 +1,48 @@
+[
+ {
+  "file": "01_second_opinion_slice.png",
+  "name": "second_opinion_slice",
+  "caption": "one evaluation slice: the injected merge is the membrane crossing a label (magenta), the injected split is the boundary without membrane (cyan)",
+  "shape": [
+   1076,
+   3112,
+   3
+  ]
+ },
+ {
+  "file": "02_suspects_on_the_cube.gif",
+  "name": "suspects_on_the_cube",
+  "caption": "suspects on the stacked cube: magenta = merge suspects (membrane chords), cyan = split suspects (membrane-free boundaries), brightness = score, grey = all label boundaries",
+  "shape": [
+   360,
+   360,
+   3
+  ],
+  "animated": true,
+  "frames": 36,
+  "frames_written": 36,
+  "fps": 12.0
+ },
+ {
+  "file": "03_holdout_roc.png",
+  "name": "holdout_roc",
+  "caption": "ROC on the held-out slices; thresholds were chosen on the other half",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_holdout_numbers.png",
+  "name": "holdout_numbers",
+  "caption": "tau = smallest threshold with train FPR <= 5 %; every number in the test columns comes from slices the threshold never saw",
+  "shape": [
+   224,
+   674,
+   3
+  ],
+  "csv": "04_holdout_numbers.csv",
+  "tsv": "04_holdout_numbers.tsv"
+ }
+]

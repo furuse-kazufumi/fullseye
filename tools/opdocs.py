@@ -155,6 +155,10 @@ LEDGER_DIMS = {
     # synapse_table の 2 つ(理由は opsconngraph.py の docstring)。
     "conngraph": {"registry": "opsconngraph", "table": "OPSCONNGRAPH",
                   "module": "conngraph", "family": "conngraph"},
+    # 2026-09-21: EM 連結体校正の古典 CV セカンドオピニオン(融合 = 内部の膜の弦、分断 = 膜の無い
+    # 境界、人工誤りとホールドアウト評価)。新語は無し(labels2d / image2d / table / signal)。
+    "emproof": {"registry": "opsemproof", "table": "OPSEMPROOF",
+                "module": "emproof", "family": "emproof"},
 }
 
 

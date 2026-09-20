@@ -169,6 +169,9 @@ _OP_BRIDGE_SKIP = {
     #   拒否され、knob a/b は bits/mode に写らず「効かないノブ」、既定では素通し(pass-through)と判定された。
     #   画像の op ではないので橋を架けない。
     "fly_hex_quantize",
+    # 2026-09-21: EM 断面の膜応答(image2d → image2d)。台帳(fullseye.ledger.seg_membrane_response)から
+    #   sigma つきで使う op で、橋の knob a/b は sigma に写らず「効かないノブ」になる。橋は架けない。
+    "seg_membrane_response",
 }
 
 
