@@ -1,0 +1,38 @@
+[
+ {
+  "file": "01_adjacency_degree_ordered.png",
+  "name": "adjacency_degree_ordered",
+  "caption": "connectome adjacency, nodes sorted by degree (log scale)",
+  "shape": [
+   2952,
+   2952
+  ]
+ },
+ {
+  "file": "02_adjacency_shuffled.png",
+  "name": "adjacency_shuffled",
+  "caption": "degree-preserving shuffle: same degrees, different wiring",
+  "shape": [
+   2952,
+   2952
+  ]
+ },
+ {
+  "file": "03_spectral_layout_top400.png",
+  "name": "spectral_layout_top400",
+  "caption": "spectral layout of the 400 highest-degree neurons",
+  "shape": [
+   512,
+   512
+  ]
+ },
+ {
+  "file": "04_accuracy_bars.png",
+  "name": "accuracy_bars",
+  "caption": "test accuracy per reservoir variant (top: no reservoir)",
+  "shape": [
+   120,
+   400
+  ]
+ }
+]
