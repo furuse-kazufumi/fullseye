@@ -409,6 +409,12 @@ EXAMPLES = [
                 "膜の無い境界 = 分断の疑い。CREMI sample A の正解ラベルに人工誤りを仕込み、閾値を前半の断面で選んで後半で測る"
                 "(holdout_threshold): 分断 AUC 1.00、融合 0.83(面積で揃えた負例、乱数 0.53・面積だけ 0.70)。揃えないと面積だけで 0.87 が"
                 "出る = 評価の罠を op で封じる。疑わしい箇所を立方体の上で回す GIF。新族 emproof 7 op。生データは commit しない。"},
+    {"id": "poc_em_branch_territory", "task": "analysis", "data": "synthetic",
+     "name": "枝の縄張り(骨格が「どこ」かだけでなく「どの枝が近いか」を体積に配ると、枝ごとの体積と半径が測れる)",
+     "summary": "3D 距離変換の「向き」op の使いどころ。真値の枝ラベルつき合成樹状突起(半径の違う 5 枝 + 分断片 + ごみ 6)を vol_rle_components(片ごとに持って"
+                "体積で選ぶ)→ skeletonize_vol → skeleton_branches3d → vol_nearest_label(枝 id を空間の全 voxel へ配るボロノイ分割)で枝の縄張りにすると "
+                "voxel 一致率 0.978・枝ごとの体積誤差 2.9 % 以内。半径は vol_nearest_seed_vector の変位長 + 0.5 で 0.24 voxel 以内(骨格上の距離変換の古典と同精度、"
+                "こちらは表面の全 voxel に付く)。値だけの古典(接合点を球で削って連結成分)は球が小さいと分かれず大きいと体積を捨てる(0.78、22 % 未割当)。"},
     {"id": "poc_eye_to_brain", "task": "visualization", "data": "real",
      "name": "複眼が見る像と、脳のどこが反応するかを並べる(個眼をなぞると応答が配線を伝わる)",
      "summary": "MaleCNS の視葉ニューロンに付いた六角柱(個眼の柱)を使い、右眼 892 柱の視葉ニューロン + 中枢のハブ 1,400 体(4,076 体・150,487 辺)に"

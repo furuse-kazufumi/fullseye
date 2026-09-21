@@ -5,7 +5,7 @@ category: region
 in: region
 out: region
 halcon: skeleton
-examples: [gallery2d_region, poc_crack_width, poc_fresco_craquelure, poc_vessel_network]
+examples: [gallery2d_region, poc_crack_width, poc_em_branch_territory, poc_fresco_craquelure, poc_vessel_network]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -67,6 +67,7 @@ skeleton 0.50 0.50
 
 - [gallery2d_region](../../../../examples/gallery2d_region.py) — `py -3.11 examples/gallery2d_region.py`
 - [poc_crack_width](../../../../examples/poc_crack_width.py) — `py -3.11 examples/poc_crack_width.py`
+- [poc_em_branch_territory](../../../../examples/poc_em_branch_territory.py) — `py -3.11 examples/poc_em_branch_territory.py`
 - [poc_fresco_craquelure](../../../../examples/poc_fresco_craquelure.py) — `py -3.11 examples/poc_fresco_craquelure.py`
 - [poc_vessel_network](../../../../examples/poc_vessel_network.py) — `py -3.11 examples/poc_vessel_network.py`
 

@@ -1,0 +1,11 @@
+branch	true r	r (surface->skel + 0.5)	r (edt on skel)	true voxels	assigned voxels	volume error
+branch 1	4.0	4.05	4.12	4398	4437	+0.9 %
+branch 2	2.5	2.72	2.34	768	768	+0.0 %
+branch 3	2.0	2.24	1.86	435	438	+0.7 %
+branch 4	3.0	3.14	2.77	1289	1251	-2.9 %
+branch 5	1.5	1.74	1.48	279	275	-1.4 %
+branch 6 (detached piece)	2.0	2.05	1.84	431	431	+0.0 %
+junction cut, ball r=0	-	-	-	-	2 pieces	agree 0.635, unassigned 0.0 %
+junction cut, ball r=2	-	-	-	-	2 pieces	agree 0.625, unassigned 2.1 %
+junction cut, ball r=4	-	-	-	-	5 pieces	agree 0.652, unassigned 11.6 %
+junction cut, ball r=6	-	-	-	-	9 pieces	agree 0.778, unassigned 22.2 %

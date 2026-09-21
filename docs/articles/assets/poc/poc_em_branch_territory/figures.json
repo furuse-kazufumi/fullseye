@@ -1,0 +1,48 @@
+[
+ {
+  "file": "01_territories.png",
+  "name": "territories",
+  "caption": "z projection of the synthetic dendrite: every voxel gets the branch whose skeleton is nearest, so the branch volumes can be counted; cutting balls around the junctions instead either fails to separate the branches or throws volume away",
+  "shape": [
+   1150,
+   1374,
+   3
+  ]
+ },
+ {
+  "file": "02_territory_turning.gif",
+  "name": "territory_turning",
+  "caption": "the surface voxels coloured by branch territory (vol_nearest_label on the labelled skeleton), turning; grey = the 6 debris blobs that vol_rle_components dropped by volume",
+  "shape": [
+   320,
+   320,
+   3
+  ],
+  "animated": true,
+  "frames": 48,
+  "frames_written": 48,
+  "fps": 12.0
+ },
+ {
+  "file": "03_radius_recovery.png",
+  "name": "radius_recovery",
+  "caption": "both readings recover the radius of every branch to within half a voxel (the surface voxel centre sits half a voxel inside the boundary, hence the +0.5); the displacement gives a radius at every surface voxel, the classic only on the skeleton",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_branch_numbers.png",
+  "name": "branch_numbers",
+  "caption": "volume per branch comes from the territory; the junction-cut rows show that no ball radius separates the branches without throwing volume away",
+  "shape": [
+   320,
+   881,
+   3
+  ],
+  "csv": "04_branch_numbers.csv",
+  "tsv": "04_branch_numbers.tsv"
+ }
+]

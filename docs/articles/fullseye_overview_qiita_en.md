@@ -4233,6 +4233,18 @@ Like-to-like reproduces: signal correlation is **connected 0.071 > touching 0.04
 
 The "wave on the wiring" — the 148 measured responses driven through the conngraph reservoir — correlates with the measured target responses one frame later at 0.085, above all 20 degree-preserving shuffles (mean 0.048, max 0.053) and with the same order at 0.3× and 3× gain, but that is an **honestly faint** number: a one-hop graph with 1.8 inputs per target from 148 proofread axons, and the spread of the wave (mean distance from the axons 316 um) equals the control. Spatial locality is already in the candidate set (ADP), not in who gets chosen. One implementation trap: the reservoir advances one hop per step, so the target states must be compared **one frame later** or the correlation is near zero (recorded in the family guide).
 
+### Branch Territories — Handing Every Voxel Its Nearest Branch, Not Just Its Distance
+
+A neuron cut out of serial EM sections becomes a graph of branches once skeletonised, but the **per-branch volume and radius** that morphometry needs (the compartment parameters of cable theory) can only be counted after every voxel is told which branch it belongs to. A distance transform returns how far the nearest skeleton is (a value) and discards which skeleton voxel is nearest (a direction) — `vol_nearest_label` and `vol_nearest_seed_vector` fill that gap.
+
+![True branch labels | skeleton branches (white = junctions) | vol_nearest_label territories (agreement 0.978) | the classic junction cut (grey = volume thrown away)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/01_territories.png)
+
+On a synthetic dendrite with 5 branches of different radius, one detached piece and 6 debris blobs, the pieces are held per component by `vol_rle_components` and selected by volume (8 components, 2 kept), the branch ids of the skeleton are handed to every voxel by `vol_nearest_label` and cut to the piece: the territories agree with the true nearest axis on **0.978** of the voxels and the per-branch volumes are within 2.9 %. The radius from the surface-to-skeleton displacement plus 0.5 (the surface voxel centre sits half a voxel inside the boundary) is within 0.24 voxel for every branch — the same accuracy as the classic distance transform on the skeleton, but **with a radius at every surface voxel**.
+
+![Surface voxels coloured by branch territory, turning (grey = the debris dropped by volume)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/02_territory_turning.gif)
+
+The value-only classic (carve balls around the junctions, then connected components) either fails to separate the branches when the ball is small (agreement 0.63–0.65) or throws volume away when it is large (0.78 with 22 % unassigned). Honest breakdown: skeleton branches end at every junction, so the trunk becomes three branch ids (9 ids onto 6 true branches, matched by majority overlap), and the +0.5 on the radius is a known discretisation bias added explicitly.
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to

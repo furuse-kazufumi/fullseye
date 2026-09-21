@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(228 例)
+### 2-D 画像/信号/幾何(229 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -206,6 +206,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **analysis**
 - **MICrONS の脳の波 ―― 1 mm³ の視覚野で、配線は実測の応答をどこまで説明するか** — 同じニューロンの EM 配線と 2 光子応答を持つ MICrONS(Ding ら 2025)の公開表 12,894 体 × 120 コマと 1.69 M 対を、生データを commit せずに読む。実測応答を points_activity_video で 1 mm³ の波として回し、like-to-like を再現(結合 0.071 > 触れている 0.045 > 同領域 0.025、軸索ごとの置換帰無で 15 SD)、配線は近接以上を足す(相手平均との相関: 結合 0.24 > 触れている 0.18 > 同領域 0.12、対で 73 %)、conngraph の reservoir に実測を流した波は次数保存シャッフル 20 本の全部より高い(0.085 vs 0.048)が正直に薄い(標的 1 体に入力 1.8 本、広がりは対照と同じ)。reservoir は 1 段 1 ステップなので post は 1 コマずらして比べる。 `py -3.11 examples/poc_microns_brain_wave.py`
 - **動きの量子化 ―― 脳から筋へ、命令の次元はどこで落ちるか(MaleCNS の首と RL の関節を同じ物差しで)** — MaleCNS の 脳 → 下行ニューロン(首)→ 腹髄 → 運動ニューロン の部分グラフに乱数刺激 400 通りを前向きに通し、各層の実効次元(participation ratio)を読む: 282 > 61 > 8.7 > 2.4。層の大きさを揃えても脳は 249、送り手だけ混ぜた対照は MN 22 ——腹髄 → 筋の圧縮は配線の特異性、首は収束そのもの。向きだけの次元(単位ノルム)でも実配線 25 vs 対照 54。同じ数式で G1 のRL 歩行は 2.4〜4.1、ダンス 9、格闘 12、evis の筋活動 6〜9(桁の比較)。conngraph に 4 op を追加。 `py -3.11 examples/poc_connectome_motor_bottleneck.py`
+- **枝の縄張り(骨格が「どこ」かだけでなく「どの枝が近いか」を体積に配ると、枝ごとの体積と半径が測れる)** — 3D 距離変換の「向き」op の使いどころ。真値の枝ラベルつき合成樹状突起(半径の違う 5 枝 + 分断片 + ごみ 6)を vol_rle_components(片ごとに持って体積で選ぶ)→ skeletonize_vol → skeleton_branches3d → vol_nearest_label(枝 id を空間の全 voxel へ配るボロノイ分割)で枝の縄張りにすると voxel 一致率 0.978・枝ごとの体積誤差 2.9 % 以内。半径は vol_nearest_seed_vector の変位長 + 0.5 で 0.24 voxel 以内(骨格上の距離変換の古典と同精度、こちらは表面の全 voxel に付く)。値だけの古典(接合点を球で削って連結成分)は球が小さいと分かれず大きいと体積を捨てる(0.78、22 % 未割当)。 `py -3.11 examples/poc_em_branch_territory.py`
 
 **inspection**
 - **3D プリンタの層検査(形 → 層 → 経路 → 画像 の往復を自分で閉じ、仕込んだ欠陥を数字で捕まえる)** — 新族 printpath(11 op、numpy + 標準ライブラリ): G-code の読み書き・体積・時間・層ラスタ、メッシュのスライス(輪郭と層マスク)、3MF の読み書き、層画像の符号つき欠陥図。層の面積は閉形式と一致、押し出し量は周長 × 線幅 × 層厚 / 断面積と厳密一致、注入した欠陥 12 か所を許容 3 px で再現率 0.96・偽陽性 0、カメラ 0.2 mm ずれで再現率 0.90(正直に曲線で)。 `py -3.11 examples/poc_print_layer_inspection.py`
@@ -1676,7 +1677,7 @@ _計 931 ops / 48 categories。_
 - `closing_rectangle1` (halcon: `closing_rectangle1`) `region → region` · 例: `gallery2d_region`
 - `fill_up` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`, `poc_bev_sensor_fusion`
 - `boundary` (halcon: `boundary`) `region → region` · 例: `gallery2d_region`, `voxel_labels_color`
-- `skeleton` (halcon: `skeleton`) `region → region` · 例: `gallery2d_region`, `poc_crack_width`, `poc_fresco_craquelure`, `poc_vessel_network`
+- `skeleton` (halcon: `skeleton`) `region → region` · 例: `gallery2d_region`, `poc_crack_width`, `poc_em_branch_territory`, `poc_fresco_craquelure`, `poc_vessel_network`
 - `thinning` (halcon: `thinning`) `region → region` · 例: `gallery2d_region`, `poc_crack_width`, `poc_vessel_network`
 - `shape_trans` (halcon: `shape_trans`) `region → region` · 例: `gallery2d_region`
 - `select_shape_std` (halcon: `select_shape_std`) `region → region` · 例: `gallery2d_region`
