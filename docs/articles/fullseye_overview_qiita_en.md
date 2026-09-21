@@ -4185,6 +4185,18 @@ Injecting artificial merges and splits into the ground-truth labels of CREMI sam
 
 ![Suspects on the stacked cube, rotating (magenta = merge, cyan = split, brightness = score, grey = all boundaries)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/02_suspects_on_the_cube.gif)
 
+### A Clip as a Space-Time Cube — the Same Operators for Fly-Brain Sections
+
+Video Summagator (Nguyen, Niu and Liu, ACM CHI 2012) turned a clip into an (x, y, t) cube, drew the static background faintly and the moving objects densely, and let you cut and rotate the cube to jump to a scene. Fullseye re-implements it as a new family, `videocube` (6 ops, numpy + scipy only): frame-difference magnitude becomes opacity, front-to-back alpha compositing paints the trails in the **colour of time** (blue = start, red = end), and in a cut (the x-t slit scan) the first row of a streak is the onset and its slope is the speed.
+
+![The cube of a synthetic surveillance clip, rotating (three objects = three trails, colour = time, grey = static background)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/02_cube_orbit.gif)
+
+On a synthetic clip with ground truth (three objects of known row, onset and speed), the onsets and speeds read from the slit scans match the truth exactly (±0 frames), and the keyframes (`video_summary_keyframes`) catch all three onsets (a random choice of 4 frames catches 0.21 on average). Feed the **same operators** a z-stack of fly-brain EM sections (CREMI sample A) and, reading the leading axis as depth instead of time, membranes become depth-coloured tubes with neurites running through the sections.
+
+![32 EM sections of a fly brain stacked as a cube (membranes opaque, colour = depth) | one section | the x-z re-slice](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/06_em_stack_cube.png)
+
+The rotation goes straight to an animated GIF with `video_write_gif` (the reusable exit). In Studio, **Tools ▸ Video cube** runs it interactively: drag to orbit, slide the cut plane, click the slit scan to jump to that frame, and open .npy / GIF / video / .hdf stacks.
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to

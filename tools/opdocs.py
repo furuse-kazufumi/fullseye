@@ -159,6 +159,9 @@ LEDGER_DIMS = {
     # 境界、人工誤りとホールドアウト評価)。新語は無し(labels2d / image2d / table / signal)。
     "emproof": {"registry": "opsemproof", "table": "OPSEMPROOF",
                 "module": "emproof", "family": "emproof"},
+    # 2026-09-21: 動画を空間×時間の立方体として見る(Video Summagator、CHI 2012 の再実装)。新語なし。
+    "videocube": {"registry": "opsvideocube", "table": "OPSVIDEOCUBE",
+                  "module": "videocube", "family": "videocube"},
 }
 
 

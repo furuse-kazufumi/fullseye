@@ -379,6 +379,9 @@ def make_generators():
         # 違いで、種は「既知の振幅・周波数でサブピクセル並進させた格子」=
         # 増幅と変位推定の真値が閉形式で分かるクリップにする
         "video": _motion_clip,
+        # rgbvideo(2026-09-21): これまで産む op(points_activity_video)だけで受ける op が無かった。
+        # videocube.video_write_gif が受けるので種を置く(小さな色動画、[0, 1])。
+        "rgbvideo": lambda rng: np.clip(rng.random((3, 12, 12, 3)), 0.0, 1.0),
         # score = ピークを持つ 3-D 相関/スコア volume。**カタログのどの op も
         # score を出力しない**ので、種を置かないと `refine_peak_newton` が
         # 構造的に到達不能なまま「発見ゼロ」に数えられる(型到達可能性の

@@ -194,6 +194,9 @@ PARAM_HINTS = {
 
 
 OP_PARAM_HINTS = {
+    # videocube(2026-09-21)。GIF の書き出し先は必須引数なので、fuzz では一時ディレクトリの 1 ファイルに書く
+    # (無いと束縛に失敗して op が永久にスキップされる)。
+    ("video_write_gif", "path"): lambda rng: __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_video_cube.gif"),
     # conngraph(2026-09-20)。`graph_rich_club` の `k` に既定は無い(次数の閾値は
     # グラフの大きさで意味が変わる)。束縛しないとファザーからは永久に未実行。
     # 種(12 ノード 2 クリーク)の総次数は 10 前後なので、部分グラフが残る 2 にする。
@@ -828,6 +831,8 @@ def catalog():
         ("opsconngraph", "OPSCONNGRAPH", "conngraph"),
         # 2026-09-21: EM 校正のセカンドオピニオン。新語は作らない(labels2d / image2d / table / signal)。
         ("opsemproof", "OPSEMPROOF", "emproof"),
+        # 2026-09-21: 動画の空間×時間の立方体。新語なし(video / voxel / rgb / rgbvideo / image2d / indices)。
+        ("opsvideocube", "OPSVIDEOCUBE", "videocube"),
     ):
         _m = __import__(_mod)
         for n, m in getattr(_m, _tbl).items():

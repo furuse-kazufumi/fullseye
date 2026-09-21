@@ -3785,3 +3785,32 @@ def test_volume_to_shell_points_reports_original_shape_for_list_input():
     _P, _C, info = studio.volume_to_shell_points(vol.tolist(), max_points=10)
     assert info["downsampled_by"] >= 2                 # decimation genuinely ran
     assert info["shape"] == (32, 32, 32)               # original, not downsampled
+
+
+def test_video_cube_panel_opens_and_responds_headless(tmp_path, monkeypatch):
+    """Tools ▸ Video cube: デモのクリップで立方体が描かれ、ドラッグで視点が変わり、断面のクリックでフレームが飛ぶ。"""
+    import numpy as np
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+    win, _model = studio.build_window()
+    assert hasattr(win, "_act_video_cube") and "cube" in win._act_video_cube.text().lower()
+    dlg = win._open_video_cube_panel()
+    st = dlg._state
+    assert st["clip"].shape == (48, 96, 128) and st["A"].shape == st["clip"].shape
+    assert st["A"].max() == 1.0
+    yaw0 = st["yaw"]
+    dlg._on_drag(40.0, -10.0)
+    assert st["yaw"] != yaw0 and 0.0 <= st["pitch"] <= 89.0
+    dlg._show_frame(17)
+    assert st["t"] == 17
+    dlg._plane.setCurrentIndex(0); dlg._pos.setValue(25)
+    assert st["cut"].shape == (48, 128)
+    dlg._mode.setCurrentIndex(1)                                   # dark = z-stack reading of the same clip
+    assert st["A"].shape == st["clip"].shape
+    p = tmp_path / "clip.npy"
+    np.save(p, np.random.default_rng(0).random((6, 20, 24)))
+    clip, name = dlg._load_file(str(p))
+    assert clip.shape == (6, 20, 24) and name == "clip.npy"
+    dlg.close()

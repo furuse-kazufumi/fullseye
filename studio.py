@@ -4157,7 +4157,13 @@ def build_window(model=None):
     act_eye_brain.triggered.connect(lambda: win._open_eye_brain_panel())
     win._act_eye_brain = act_eye_brain
     menu_tools.addAction(act_physical_ai)
+    act_video_cube = QtGui.QAction("Video cube (space × time volume)…", win)
+    act_video_cube.setToolTip("See a clip or a z-stack as a cube: drag to orbit, slide the cut plane, click the slit scan to jump to "
+                              "that frame (Video Summagator, CHI 2012, re-implemented with numpy)")
+    act_video_cube.triggered.connect(lambda: win._open_video_cube_panel())
+    win._act_video_cube = act_video_cube
     menu_tools.addAction(act_eye_brain)                        # compound eye → connectome wave (2026-09-20)
+    menu_tools.addAction(act_video_cube)                       # space × time cube (2026-09-21)
     win._act_physical_ai = act_physical_ai
     menu_tools.addSeparator()
     lang_menu = _menu(menu_tools, "Language / 言語 / 语言", "language")  # UI/help language = a preference, not Help
@@ -8743,6 +8749,218 @@ def build_window(model=None):
         dlg.show()
         return dlg
     win._open_eye_brain_panel = open_eye_brain_panel
+
+    def open_video_cube_panel():
+        """Tools ▸ Video cube: 動画(か z スタック)を空間 × 時間の立方体として見る(Video Summagator の再実装)。
+        左 = 立方体(ドラッグで回転)、右上 = 断面(x–t スリットスキャン / y–t / x–y、スライダで位置、クリックでその
+        フレームへ)、右下 = そのフレーム。入力は合成のデモ、.npy の (T, H, W)、GIF / 動画(imageio か video.read_frames)、
+        .hdf の EM スタック(h5py、dataset volumes/raw)。「Save GIF…」で回転を video_write_gif に書く。"""
+        import videocube
+        prev = getattr(win, "_video_cube_dialog", None)
+        if prev is not None:
+            try:
+                prev.close(); prev.deleteLater()
+            except RuntimeError:
+                pass
+        dlg = QtWidgets.QDialog(win)
+        dlg.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        dlg.setWindowTitle("Video cube — space × time volume")
+        tag_dialog(dlg, "viewer", backend="videocube (numpy + scipy)")
+        lay = QtWidgets.QVBoxLayout(dlg)
+        cap = QtWidgets.QLabel("Drag on the cube to orbit. Trails are coloured by time (blue = start, red = end); the static "
+                               "background is a faint grey. Slide the cut plane and click the slit scan to jump to that frame.")
+        cap.setWordWrap(True); cap.setProperty("hint", True); lay.addWidget(cap)
+        row = QtWidgets.QHBoxLayout(); lay.addLayout(row)
+        SIZE = 380
+
+        class CubeLabel(QtWidgets.QLabel):
+            dragged = QtCore.Signal(float, float)
+
+            def __init__(self):
+                super().__init__(); self._last = None
+
+            def mousePressEvent(self, e):
+                pos = e.position() if hasattr(e, "position") else e.pos()
+                self._last = (float(pos.x()), float(pos.y()))
+
+            def mouseMoveEvent(self, e):
+                if self._last is None:
+                    return
+                pos = e.position() if hasattr(e, "position") else e.pos()
+                dx, dy = float(pos.x()) - self._last[0], float(pos.y()) - self._last[1]
+                self._last = (float(pos.x()), float(pos.y()))
+                self.dragged.emit(dx, dy)
+
+            def mouseReleaseEvent(self, e):
+                self._last = None
+
+        class CutLabel(QtWidgets.QLabel):
+            clicked = QtCore.Signal(float, float)
+
+            def mousePressEvent(self, e):
+                pos = e.position() if hasattr(e, "position") else e.pos()
+                self.clicked.emit(float(pos.x()), float(pos.y()))
+
+        cube = CubeLabel(); cube.setFixedSize(SIZE, SIZE); row.addWidget(cube)
+        right = QtWidgets.QVBoxLayout(); row.addLayout(right, 1)
+        cut = CutLabel(); cut.setMinimumSize(300, 180); cut.setAlignment(QtCore.Qt.AlignCenter); right.addWidget(cut, 1)
+        frame_lbl = QtWidgets.QLabel(); frame_lbl.setMinimumSize(300, 180); frame_lbl.setAlignment(QtCore.Qt.AlignCenter); right.addWidget(frame_lbl, 1)
+        ctl = QtWidgets.QHBoxLayout(); lay.addLayout(ctl)
+        source = QtWidgets.QComboBox(); source.addItems(["demo clip (three objects crossing)", "open a clip or stack…"]); ctl.addWidget(source)
+        mode = QtWidgets.QComboBox(); mode.addItems(["motion (clip)", "dark (EM stack: membranes)", "bright (fluorescence)"]); ctl.addWidget(mode)
+        plane = QtWidgets.QComboBox(); plane.addItems(["xt slit scan", "yt slit scan", "xy frame"]); ctl.addWidget(plane)
+        pos = QtWidgets.QSlider(QtCore.Qt.Horizontal); pos.setRange(0, 100); pos.setValue(50); ctl.addWidget(pos, 1)
+        save_btn = QtWidgets.QPushButton("Save GIF…"); ctl.addWidget(save_btn)
+        status = QtWidgets.QLabel("loading the demo clip"); status.setProperty("hint", True); lay.addWidget(status)
+        state = {"clip": None, "A": None, "C": None, "yaw": 35.0, "pitch": 22.0, "t": 0, "cut": None, "name": ""}
+        MODES = ("motion", "dark", "bright")
+        PLANES = ("xt", "yt", "xy")
+
+        def demo_clip():
+            rng = np.random.default_rng(0)
+            T, H, W = 48, 96, 128
+            yy, xx = np.mgrid[0:H, 0:W]
+            bg = 0.45 + 0.08 * np.sin(xx / 7.0) * np.cos(yy / 9.0)
+            out = np.empty((T, H, W))
+            for t in range(T):
+                f = bg.copy()
+                for rw, t0, vx, r in ((24, 4, 2.0, 5), (52, 18, -1.5, 6), (76, 30, 1.0, 4)):
+                    if t >= t0:
+                        x = (W - 5 if vx < 0 else 4) + (t - t0) * vx
+                        f[np.hypot(yy - rw, xx - x) < r] = 0.95 if vx > 0 else 0.05
+                out[t] = f + 0.015 * rng.standard_normal((H, W))
+            return np.clip(out, 0.0, 1.0), "demo clip"
+
+        def load_file(path):
+            low = path.lower()
+            if low.endswith(".npy"):
+                arr = np.load(path)
+            elif low.endswith((".hdf", ".h5", ".hdf5")):
+                import h5py
+                with h5py.File(path, "r") as f:
+                    ds = f["volumes/raw"] if "volumes/raw" in f else f[list(f.keys())[0]]
+                    arr = ds[: min(64, ds.shape[0]), : min(512, ds.shape[1]), : min(512, ds.shape[2])]
+            else:
+                try:
+                    import imageio.v3 as iio
+                    arr = iio.imread(path)
+                except Exception:                                                     # noqa: BLE001
+                    import video as _v
+                    arr = np.stack(list(_v.read_frames(path, gray=True)))
+            arr = np.asarray(arr, dtype=np.float64)
+            if arr.ndim == 4:
+                arr = arr[..., :3].mean(axis=-1)
+            if arr.ndim != 3:
+                raise ValueError("need (T, H, W) frames, got shape %r" % (arr.shape,))
+            if arr.max() > 1.0:
+                arr = arr / 255.0
+            step = max(1, max(arr.shape[1:]) // 256)
+            return arr[:128, ::step, ::step], os.path.basename(path)
+
+        def rebuild():
+            clip = state["clip"]
+            if clip is None:
+                return
+            m = MODES[mode.currentIndex()]
+            state["A"] = videocube.video_spacetime_cube(clip, m, sigma=1.0, floor=0.35 if m != "motion" else 0.15)
+            state["C"] = videocube.video_spacetime_cube(clip, "intensity")
+            render(); redraw_cut(); show_frame(state["t"])
+
+        def render():
+            if state["A"] is None:
+                return
+            m = MODES[mode.currentIndex()]
+            img = videocube.vol_render_transfer(state["A"], state["C"] if m != "motion" else None, yaw=state["yaw"], pitch=state["pitch"],
+                                                size=SIZE, static_alpha=0.12 if m == "motion" else 0.0,
+                                                alpha_gain=1.0 if m == "motion" else 0.35, depth_samples=64)
+            cube.setPixmap(QtGui.QPixmap.fromImage(_to_qimage(img, QtGui)))
+            status.setText("%s · %s · yaw %.0f° pitch %.0f° · frame %d / %d" % (
+                state["name"], m, state["yaw"], state["pitch"], state["t"], state["clip"].shape[0]))
+
+        def redraw_cut():
+            if state["clip"] is None:
+                return
+            pl = PLANES[plane.currentIndex()]
+            img = videocube.video_cube_cut(state["clip"], pl, position=pos.value() / 100.0)
+            state["cut"] = img
+            g = np.clip((img - img.min()) / max(float(np.ptp(img)), 1e-9), 0, 1)
+            rgb = np.repeat(g[..., None], 3, axis=-1)
+            if pl != "xy":
+                tt = int(round(state["t"]))
+                if 0 <= tt < rgb.shape[0]:
+                    rgb[tt] = np.array([1.0, 0.85, 0.2])                                   # 現在のフレーム(黄の線)
+            cut.setPixmap(QtGui.QPixmap.fromImage(_to_qimage(rgb, QtGui)).scaled(cut.size(), QtCore.Qt.KeepAspectRatio))
+
+        def show_frame(t):
+            clip = state["clip"]
+            if clip is None:
+                return
+            t = int(min(max(t, 0), clip.shape[0] - 1))
+            state["t"] = t
+            g = np.repeat(np.clip(clip[t], 0, 1)[..., None], 3, axis=-1)
+            frame_lbl.setPixmap(QtGui.QPixmap.fromImage(_to_qimage(g, QtGui)).scaled(frame_lbl.size(), QtCore.Qt.KeepAspectRatio))
+            status.setText(status.text().rsplit("· frame", 1)[0] + "· frame %d / %d" % (t, clip.shape[0]))
+
+        def on_drag(dx, dy):
+            state["yaw"] = (state["yaw"] + dx * 0.5) % 360.0
+            state["pitch"] = float(min(max(state["pitch"] + dy * 0.5, -89.0), 89.0))
+            render()
+
+        def on_cut_click(x, y):
+            if state["cut"] is None or PLANES[plane.currentIndex()] == "xy":
+                return
+            pm = cut.pixmap()
+            if pm is None or pm.height() == 0:
+                return
+            off_y = (cut.height() - pm.height()) / 2.0
+            t = (y - off_y) / pm.height() * state["cut"].shape[0]
+            show_frame(t); redraw_cut()
+
+        def on_source(_i=None):
+            if source.currentIndex() == 0:
+                state["clip"], state["name"] = demo_clip()
+            else:
+                path, _f = QtWidgets.QFileDialog.getOpenFileName(dlg, "Open a clip or a stack", "",
+                                                                 "Clips and stacks (*.npy *.gif *.mp4 *.avi *.hdf *.h5 *.hdf5);;All files (*)")
+                if not path:
+                    source.setCurrentIndex(0); return
+                try:
+                    state["clip"], state["name"] = load_file(path)
+                except Exception as e:                                                     # noqa: BLE001
+                    status.setText("could not read %s: %s" % (os.path.basename(path), e)); return
+            state["t"] = 0
+            rebuild()
+
+        def on_save():
+            if state["clip"] is None:
+                return
+            path, _f = QtWidgets.QFileDialog.getSaveFileName(dlg, "Save the orbit as GIF", "video_cube.gif", "GIF (*.gif)")
+            if not path:
+                return
+            m = MODES[mode.currentIndex()]
+            frames = videocube.video_cube_orbit(state["clip"], n_frames=24, pitch=state["pitch"], yaw_start=state["yaw"], size=320,
+                                                mode=m, color="time" if m == "motion" else "intensity",
+                                                static_alpha=0.12 if m == "motion" else 0.0, alpha_gain=1.0 if m == "motion" else 0.35,
+                                                depth_samples=64)
+            status.setText("wrote " + videocube.video_write_gif(frames, path, fps=10.0))
+
+        cube.dragged.connect(on_drag)
+        cut.clicked.connect(on_cut_click)
+        source.currentIndexChanged.connect(on_source)
+        mode.currentIndexChanged.connect(lambda _i: rebuild())
+        plane.currentIndexChanged.connect(lambda _i: redraw_cut())
+        pos.valueChanged.connect(lambda _v: redraw_cut())
+        save_btn.clicked.connect(on_save)
+        state["clip"], state["name"] = demo_clip()
+        rebuild()
+        dlg._state = state; dlg._render = render; dlg._on_drag = on_drag; dlg._on_cut_click = on_cut_click   # for headless tests
+        dlg._rebuild = rebuild; dlg._show_frame = show_frame; dlg._mode = mode; dlg._plane = plane; dlg._pos = pos
+        dlg._load_file = load_file
+        win._video_cube_dialog = dlg
+        dlg.resize(980, 620)
+        dlg.show()
+        return dlg
+    win._open_video_cube_panel = open_video_cube_panel
 
     # restore persisted system settings. QSettings is NOT in-memory under offscreen —
     # it always hits the real user store; the test suite redirects QSettings to a

@@ -4209,6 +4209,18 @@ CREMI sample A の正解ラベルに人工の融合・分断を仕込み、閾�
 
 ![断面を z に積んだ立方体の上で疑わしい箇所を回す(マゼンタ = 融合、シアン = 分断、明るさ = スコア、灰 = 全境界)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/02_suspects_on_the_cube.gif)
 
+### 動画を空間 × 時間の立方体として見る ―― ハエの脳の断面も同じ op で
+
+Video Summagator(Nguyen・Niu・Liu、ACM CHI 2012)は、動画を (x, y, t) の立方体にして、動かない背景を薄く・動く物体を濃く描き、切ったり回したりして場面へ飛ぶ道具でした。Fullseye は同じことを新族 `videocube`(6 op、numpy + scipy のみ)で再実装しました。時間差分の大きさを不透明度に、前から後ろへの α 合成で軌跡を**時刻の色**(青 = 始め → 赤 = 終わり)に塗る。断面(x–t のスリットスキャン)では、筋の最初の行が出現時刻、傾きが速度です。
+
+![監視カメラ風の合成クリップの立方体を回す(3 つの物体 = 3 本の軌跡、色 = 時刻、灰 = 静止した背景)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/02_cube_orbit.gif)
+
+真値のある合成クリップ(通過の行・時刻・速度が既知の 3 物体)で、スリットスキャンから読んだ出現時刻と速度は真値と一致し(±0 フレーム)、代表フレーム(`video_summary_keyframes`)は 3 物体すべての出現直後を捉えます(乱数で 4 枚選ぶと平均 0.21 物体)。**同じ op** にハエの脳の EM 連続断面(CREMI sample A)を入れると、先頭軸を時刻でなく奥行きと読むだけで、膜が奥行きの色で塗られた管になって神経突起が断面を貫いて走ります。
+
+![ハエの脳の EM 断面 32 枚を積んだ立方体(膜 = 不透明、色 = 奥行き)| 1 断面 | x–z の切り直し](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/06_em_stack_cube.png)
+
+回転は `video_write_gif` でそのまま GIF に書けます(使い回しの出口)。Studio では **Tools ▸ Video cube** がドラッグで回転、断面のスライダ、断面をクリックでそのフレームへ、と対話的に動き、.npy / GIF / 動画 / .hdf のスタックを開けます。
+
 ## まとめ
 
 **Fullseye** は、**説明できる古典ビジョンのアルゴリズムを「スキル」として約1000個持ち歩き**、それを

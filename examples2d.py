@@ -374,6 +374,12 @@ EXAMPLES = [
                 "実測: コネクトームは刺激からの平均距離 88 → 230 µm を 17 步かけて伸び、視葉 → 中枢 → 下行の順に点いて 36 步では VNC に届かない。"
                 "shuffle は 3 步で 300 µm に散り遠い 1/4 の 93 % が点く(コネクトーム 0 %)。精度で見えなかった配線の空間構造が動きで見える。"
                 "新 op: reservoir_states(W_in=)、graph_activation_latency、graph_activity_spread、points_activity_video(尺度は全コマで 1 つ、views= で背側・側面・体軸方向の 3 方向を同時に)。生データは commit しない。"},
+    {"id": "poc_video_cube", "task": "visualization", "data": "synthetic",
+     "name": "動画を空間 × 時間の立方体として見る(Video Summagator の再実装、ハエの脳の断面も同じ op で)",
+     "summary": "動画 (T, H, W) を (x, y, t) の立方体にし、動かない背景を薄く・動く物体を濃く、軌跡を時刻の色で描く(新族 videocube 6 op、"
+                "numpy + scipy)。合成の監視クリップでスリットスキャンの筋から読んだ出現時刻と速度が真値と一致、代表フレームが 3 物体の出現を全部捉える。"
+                "同じ op でハエの脳の EM 連続断面(CREMI、生データは commit しない)を立方体にすると膜が奥行き色の管になる。video_write_gif で"
+                "GIF に書き出す(使い回しの出口)。Studio の Tools ▸ Video cube で対話的に動く。"},
     {"id": "poc_em_second_opinion", "task": "inspection", "data": "real",
      "name": "EM 連結体校正のセカンドオピニオン(膜はラベルの境界にしか無いはず)",
      "summary": "EM 断面の自動分割が残す融合と分断を学習なしで数える: 内部を横切る膜の弦 = 融合の疑い(閉じた輪は穴で除く)、"

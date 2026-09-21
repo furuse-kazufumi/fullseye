@@ -1,0 +1,80 @@
+[
+ {
+  "file": "01_cube_time_coloured.png",
+  "name": "cube_time_coloured",
+  "caption": "the clip as a space-time cube (time = depth to the right): moving objects leave trails coloured by time (blue = start, red = end); the static background is a faint grey",
+  "shape": [
+   400,
+   400,
+   3
+  ]
+ },
+ {
+  "file": "02_cube_orbit.gif",
+  "name": "cube_orbit",
+  "caption": "the same cube rotating: three objects, three trails, direction and timing readable from colour and slope",
+  "shape": [
+   400,
+   400,
+   3
+  ],
+  "animated": true,
+  "frames": 30,
+  "frames_written": 30,
+  "fps": 10.0
+ },
+ {
+  "file": "03_slit_scans.png",
+  "name": "slit_scans",
+  "caption": "x-t slit scans of the three rows: a streak's first row is the onset, its slope is the speed (yellow line = injected onset)",
+  "shape": [
+   436,
+   2920,
+   3
+  ]
+ },
+ {
+  "file": "04_keyframes.png",
+  "name": "keyframes",
+  "caption": "video_summary_keyframes picks the frames right after each object appears; the head-on cube is the whole clip in one image",
+  "shape": [
+   2494,
+   3640,
+   3
+  ]
+ },
+ {
+  "file": "05_turntable_cube.png",
+  "name": "turntable_cube",
+  "caption": "a real clip from this repo (a turntable GIF, 40 frames of 160x160): a rotating object becomes a helix in the space-time cube",
+  "shape": [
+   400,
+   400,
+   3
+  ]
+ },
+ {
+  "file": "06_em_stack_cube.png",
+  "name": "em_stack_cube",
+  "caption": "the same cube operators on a z-stack of EM sections (CREMI sample A, 32 sections of 256^2 (adult Drosophila FAFB)): membranes become tubes running through the stack, and the x-z re-slice shows neurites crossing the sections",
+  "shape": [
+   1652,
+   4840,
+   3
+  ]
+ },
+ {
+  "file": "07_em_stack_orbit.gif",
+  "name": "em_stack_orbit",
+  "caption": "the EM stack rotating: neurites are the tubes, coloured by depth; the same operator that rotated the surveillance clip",
+  "shape": [
+   400,
+   400,
+   3
+  ],
+  "animated": true,
+  "frames": 24,
+  "frames_written": 24,
+  "fps": 8.0
+ }
+]
