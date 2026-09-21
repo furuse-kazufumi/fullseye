@@ -230,7 +230,8 @@ def _ops_line(poc_id: str, lang: str) -> str:
 
 
 def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
-                second: dict | None = None, thumb2: str | None = None) -> str:
+                second: dict | None = None, thumb2: str | None = None,
+                extras: list | None = None) -> str:
     title = ex["title_" + lang]
     cap = ex["caption_" + lang]
     full = RAW + ex["id"] + "/" + pick["file"]
@@ -257,6 +258,17 @@ def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
             tail = "(figure labels are in Japanese; the numbers are the same)"
             cap_line = ("*↑ The measurement ―― %s %s*" % (sub, tail)) if sub else ("*↑ The measurement %s*" % tail)
         lines += ["[![%s](%s)](%s)" % (alt, th2, full2), "", cap_line, ""]
+    # 看板にも 2 枚目にも入らなかった**動く図**は全部出す —— GIF を落とすと「クリックしないと
+    # 動かない絵」になり、動きが主題の展示ではそれで意味が消える(2026-09-21、GIF 2 本の展示で気づいた)。
+    for fig in (extras or []):
+        full3 = RAW + ex["id"] + "/" + fig["file"]
+        sub = (fig.get("caption") or "").strip()
+        alt = (sub[:120] if sub else ("動く図" if lang == "ja" else "animation")).replace("]", ")")
+        if lang == "ja":
+            cap_line = ("*↑ 動く図 ―― %s*" % sub) if sub else "*↑ 動く図*"
+        else:
+            cap_line = ("*↑ The animation ―― %s*" % sub) if sub else "*↑ The animation*"
+        lines += ["[![%s](%s)](%s)" % (alt, full3, full3), "", cap_line, ""]
     # 生成の内幕(サムネ URL・FULLSEYE_FIGURE_DIR・数字の出所)は記事に出さない
     # (ユーザー指示 2026-09-07「読者の ROI と関係ない独自ルールは書かない」)。
     lines += [
@@ -288,10 +300,12 @@ def build(lang: str, cap: dict, byid: dict) -> tuple[str, str]:
         wing_parts.append("")
         for ex in exs:
             n += 1
-            pick, _figs, second = _figure_for(ex)
+            pick, figs, second = _figure_for(ex)
             thumb = _thumb(ex["id"], pick["file"])
             thumb2 = _thumb(ex["id"], second["file"]) if second is not None else None
-            wing_parts.append(_exhibit_md(n, ex, lang, pick, thumb, byid, second, thumb2))
+            extras = [g for g in figs if g.get("animated") and g is not pick and g is not second
+                      and os.path.exists(os.path.join(ASSETS, ex["id"], g["file"]))]
+            wing_parts.append(_exhibit_md(n, ex, lang, pick, thumb, byid, second, thumb2, extras))
     total = n
     head = "<!-- generated -->"   # 生成物の印だけ(手順は tools/gen_wingpoc_gallery.py の docstring に書く)
     wing_md = head + "\n\n" + "\n".join(wing_parts)

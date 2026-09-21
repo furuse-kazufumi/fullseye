@@ -103,7 +103,7 @@ plain C ABI there are no per-language bindings to maintain: Python (`ctypes`,
 toolchains were actually run (clang, gcc/MinGW, MSVC, .NET SDK 9, LuaJIT 2.1, CPython 3.11
 as of 2026-09-15) rather than which ones exist.
 
-What this is **not**: it is not the Python library (2,036 operators in the machine-readable
+What this is **not**: it is not the Python library (2,033 operators in the machine-readable
 index) in another language. Its
 purpose is to be a *second implementation* of a small contract, so that a differential
 fuzzer and a header-including C caller can find specification bugs the Python tests cannot

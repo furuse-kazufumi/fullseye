@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 40520ce5c181 -->
+<!-- i18n-source-sha: 14023776078e -->
 # Fullseye 文档索引
 
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
@@ -10,7 +10,7 @@
 
 *六幕，全部是真实算子输出：边缘方向 / 连通域筛选 / 亚像素测量 / SDF 转网格 / 点云聚类 / 镜头离焦。*
 
-**Fullseye**（工作代号 imgevolve）是一套 HALCON/HDevelop 级别的实用工具：由 numpy 原生的图像处理算子库、HDevelop 风格的可视化流水线设计环境（Fullseye Studio）以及执行运行时（FullseyeEngine）三者组成。算子约 **934** 个（以注册表计数），其中 **979/2313** 个真实 HALCON 算子做到了 genuine（真正等效）实现，覆盖 48 个类别。
+**Fullseye**（工作代号 imgevolve）是一套 HALCON/HDevelop 级别的实用工具：由 numpy 原生的图像处理算子库、HDevelop 风格的可视化流水线设计环境（Fullseye Studio）以及执行运行时（FullseyeEngine）三者组成。算子约 **931** 个（以注册表计数），其中 **979/2313** 个真实 HALCON 算子做到了 genuine（真正等效）实现，覆盖 48 个类别。
 
 ★ **在图像处理库中少见，Fullseye 还内置「虚拟光学设计」** —— 薄/厚透镜、光线追迹、Seidel 像差与 PSF/MTF，并以阻尼最小二乘（Levenberg–Marquardt）优化透镜处方本身（`optimize_lens`）。可从**设计成像系统，到用上述算子检查其成像，一气呵成** —— 在半导体与精密计量中是明确的差异化。
 
@@ -67,15 +67,15 @@
 
 ## 查找算子
 
-共有 **2,042 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **52 篇族指南**。按维度的入口:
+共有 **2,039 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **52 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 934/934、类型化台账 1087/1099、单行门面 `fullseye.<名称>` 568/1202 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 931/931、类型化台账 1087/1099、单行门面 `fullseye.<名称>` 568/1202 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 2047 篇中，附有可运行示例的 **1994** 篇(53 篇没有)，用法说明 120 字以上的 **2018** 篇(29 篇仅一行)。结构(调用形式、类型、可衔接算子)2047 篇全有。
+**内容实测**: 2044 篇中，附有可运行示例的 **1991** 篇(53 篇没有)，用法说明 120 字以上的 **2015** 篇(29 篇仅一行)。结构(调用形式、类型、可衔接算子)2044 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
-| `2d` | 951 | [INDEX](ops/2d/INDEX.md) |
+| `2d` | 948 | [INDEX](ops/2d/INDEX.md) |
 | `3d` | 363 | [INDEX](ops/3d/INDEX.md) |
 | `optics` | 131 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
@@ -211,7 +211,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 192 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,042 篇算子说明与 52 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,039 篇算子说明与 52 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 

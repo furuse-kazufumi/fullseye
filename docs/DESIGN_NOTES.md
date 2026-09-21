@@ -96,7 +96,7 @@
 
 ## `backends_typed.py`
 
-- **L516** — ★2026-09-05 まで ``tools/chain_fuzz``(非同梱)を sys.path 操作で読んでいた。 wheel では失敗し、下の build() が黙って [] を返すので tb_* 143 op が消えていた。
+- **L523** — ★2026-09-05 まで ``tools/chain_fuzz``(非同梱)を sys.path 操作で読んでいた。 wheel では失敗し、下の build() が黙って [] を返すので tb_* 143 op が消えていた。
 
 ## `blob2d.py`
 

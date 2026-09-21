@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2036,
- "n_notes": 2042,
+ "n_ops": 2033,
+ "n_notes": 2039,
  "notes": {
   "vol_dilate": [
    {
@@ -9883,36 +9883,6 @@
     "in": "points",
     "out": "volume",
     "path": "docs/ops/2d/typed/tb_torus_sdf.md"
-   }
-  ],
-  "tb_video_cube_cut": [
-   {
-    "op": "tb_video_cube_cut",
-    "dim": "2d",
-    "category": "typed",
-    "in": "video",
-    "out": "image",
-    "path": "docs/ops/2d/typed/tb_video_cube_cut.md"
-   }
-  ],
-  "tb_video_spacetime_cube": [
-   {
-    "op": "tb_video_spacetime_cube",
-    "dim": "2d",
-    "category": "typed",
-    "in": "video",
-    "out": "volume",
-    "path": "docs/ops/2d/typed/tb_video_spacetime_cube.md"
-   }
-  ],
-  "tb_video_summary_keyframes": [
-   {
-    "op": "tb_video_summary_keyframes",
-    "dim": "2d",
-    "category": "typed",
-    "in": "video",
-    "out": "signal",
-    "path": "docs/ops/2d/typed/tb_video_summary_keyframes.md"
    }
   ],
   "tb_voxel_grid_downsample": [

@@ -1,10 +1,10 @@
 {
- "n_ops": 2036,
+ "n_ops": 2033,
  "tiers": {
   "color": 12,
   "ledger": 1085,
   "nary": 17,
-  "registry": 922
+  "registry": 919
  },
  "sorts": [
   "angle",
@@ -22911,36 +22911,6 @@
    "halcon": "",
    "in_sort": "points",
    "out_sort": "volume",
-   "category": "typed",
-   "tier": "registry",
-   "module": "backends_typed",
-   "requires": []
-  },
-  {
-   "name": "tb_video_cube_cut",
-   "halcon": "",
-   "in_sort": "video",
-   "out_sort": "image",
-   "category": "typed",
-   "tier": "registry",
-   "module": "backends_typed",
-   "requires": []
-  },
-  {
-   "name": "tb_video_spacetime_cube",
-   "halcon": "",
-   "in_sort": "video",
-   "out_sort": "volume",
-   "category": "typed",
-   "tier": "registry",
-   "module": "backends_typed",
-   "requires": []
-  },
-  {
-   "name": "tb_video_summary_keyframes",
-   "halcon": "",
-   "in_sort": "video",
-   "out_sort": "signal",
    "category": "typed",
    "tier": "registry",
    "module": "backends_typed",

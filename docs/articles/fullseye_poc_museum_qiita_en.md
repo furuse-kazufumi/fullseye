@@ -1860,13 +1860,17 @@ Ops used (notes): [`vertex_normals`](https://furuse.work/ops/3d/mesh_process/ver
 
 ## 98. A Clip as a Space-Time Cube — What Passed Where, and When, in One Solid
 
-[![A Clip as a Space-Time Cube — What Passed Where, and When, in One Solid](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/04_keyframes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/04_keyframes.png)
+[![A Clip as a Space-Time Cube — What Passed Where, and When, in One Solid](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/02_cube_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/02_cube_orbit.gif)
 
 *↑ **A Clip as a Space-Time Cube — What Passed Where, and When, in One Solid** ―― Video Summagator (Nguyen, Niu and Liu, ACM CHI 2012) turns a clip into an (x, y, t) cube, renders the static background faintly and moving objects densely, and lets you cut and rotate the cube to jump to a scene. The new family videocube re-implements it in 6 ops (numpy + scipy only, no new types): frame-difference magnitude as opacity (video_spacetime_cube), front-to-back alpha compositing from any viewpoint with trails coloured by time (blue = start, red = end; vol_render_transfer), cuts (video_cube_cut: x-t slit scans), orbits (video_cube_orbit), keyframes (video_summary_keyframes) and animated GIF export (video_write_gif, the reusable exit). On a synthetic surveillance clip with three objects of known row, onset and speed, the onset read from the first row of each slit-scan streak and the speed read from its slope match the truth exactly (±0 frames; +2.00 / −1.50 / +1.00 px/frame), and the keyframes catch all three onsets (a random choice of 4 frames catches 0.21 on average). The same operators applied to a z-stack of fly-brain EM sections (CREMI sample A, 32 sections, raw data never committed) turn membranes into depth-coloured tubes with neurites running through the stack. In Studio, Tools ▸ Video cube runs it interactively (drag to orbit, slide the cut plane, click the slit scan to jump to that frame, open .npy / GIF / video / .hdf stacks, Save GIF).*
 
 [![the clip as a space-time cube (time = depth to the right): moving objects leave trails coloured by time (blue = start, r](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/01_cube_time_coloured_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/01_cube_time_coloured.png)
 
 *↑ The measurement ―― the clip as a space-time cube (time = depth to the right): moving objects leave trails coloured by time (blue = start, red = end); the static background is a faint grey (figure labels are in Japanese; the numbers are the same)*
+
+[![the EM stack rotating: neurites are the tubes, coloured by depth; the same operator that rotated the surveillance clip](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/07_em_stack_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/07_em_stack_orbit.gif)
+
+*↑ The animation ―― the EM stack rotating: neurites are the tubes, coloured by depth; the same operator that rotated the surveillance clip*
 
 ```
 py -3.11 examples/poc_video_cube.py

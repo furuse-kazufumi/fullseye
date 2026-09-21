@@ -151,6 +151,13 @@ _OP_BRIDGE_SKIP = {
     # 「out に sort がある」というだけの理由でこの 1 本だけが橋に載っていた。
     # 台帳(`fullseye.ledger.angle_3points`)からは今までどおり 3 点を渡して使える。
     "angle_3points",
+    # 2026-09-21: videocube の 3 本。`video` は TYPE_TO_SORT で 3-D に畳まれるので橋が
+    # 架かるが、橋が渡す「動画」は 2-D 画像 1 枚を積んだ**静止クリップ**であり、動き
+    # の立方体は全面 0、スリットスキャンは縞、代表フレームは全部同じ —— 走るが意味の
+    # ある出力が出ない(「走った」≠「意味のある出力」)。加えて探針の a/b が
+    # percentile を 111.9 に押し上げて ValueError、vibration_map の既存最良も汚した。
+    # 台帳(`fullseye.ledger.video_*`)からは本物の動画を渡して使える。
+    "video_spacetime_cube", "video_cube_cut", "video_summary_keyframes",
     # 2026-09-08、同じ回に摘発。`indices_to_labels` は **1-D の選択マスク**
     # (長さ = 最大添字 + 1)を返すが、宣言型 `labels` は TYPE_TO_SORT で
     # `volume`(ndim == 3 の契約)に畳まれるので、橋は毎回
