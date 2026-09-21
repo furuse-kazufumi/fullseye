@@ -1,8 +1,8 @@
 {
- "n_ops": 2062,
+ "n_ops": 2065,
  "tiers": {
   "color": 12,
-  "ledger": 1114,
+  "ledger": 1117,
   "nary": 17,
   "registry": 919
  },
@@ -3512,6 +3512,19 @@
    "halcon": "",
    "in_sort": "voxel",
    "out_sort": "sdf",
+   "category": "feature",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "voxel"
+   ]
+  },
+  {
+   "name": "edt_jfa_vector",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "flow_dense",
    "category": "feature",
    "tier": "ledger",
    "ledger": "ops3d",
@@ -14009,6 +14022,32 @@
    "in_sort": "voxel",
    "out_sort": "voxel",
    "category": "feature",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "voxel"
+   ]
+  },
+  {
+   "name": "vol_nearest_label",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "voxel",
+   "category": "medial",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "voxel"
+   ]
+  },
+  {
+   "name": "vol_nearest_seed_vector",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "flow_dense",
+   "category": "medial",
    "tier": "ledger",
    "ledger": "ops3d",
    "dim": "3d",

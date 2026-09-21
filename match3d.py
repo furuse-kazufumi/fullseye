@@ -667,6 +667,12 @@ def edt_jfa(seed_bool, device="cpu"):
     用途: ``signed_distance_field``(両側)、``match_chamfer_3d(edt="jfa")``。CPU 版は
     ``scipy.ndimage.distance_transform_edt(~seed)`` と同じ値。
     """
+    coord, pos = _jfa_nearest(seed_bool, device)
+    return torch.sqrt(((coord - pos) ** 2).sum(0)).clamp_max(1e6)
+
+
+def _jfa_nearest(seed_bool, device):
+    """JFA 本体: 各 voxel の**最近 seed の座標** ``coord`` (3,D,H,W) と自分の座標 ``pos``。seed 無しは coord = −1e9。"""
     _INF = 1e9
     s = torch.as_tensor(np.asarray(seed_bool, bool), device=device)
     D, H, W = s.shape
@@ -696,7 +702,23 @@ def edt_jfa(seed_bool, device="cpu"):
             best_d2 = torch.where(upd, d2, best_d2)
             best = torch.where(upd[None].expand(3, -1, -1, -1), cand, best)
         coord = best
-    return torch.sqrt(((coord - pos) ** 2).sum(0)).clamp_max(1e6)
+    return coord, pos
+
+
+def edt_jfa_vector(seed_bool, device="cpu"):
+    """各 voxel から最近 seed への変位 ``(3, D, H, W)``(``flow_dense``、dz, dy, dx [voxel])を **GPU の JFA** で。
+
+    ``edt_jfa`` は距離の値だけを返すが、JFA は内部で最近 seed の座標を運んでいる —— それをそのまま出す(追加コストほぼ 0)。
+    CPU / scipy 経路は ``vol_nearest_seed_vector``(同じ値、N≤160 で厳密一致を実測)。seed が無ければ ValueError
+    (``edt_jfa`` は 1e6 に飽和させるが、向きに「無限遠」は無い)。返りは torch float32(台帳経由では numpy)。
+    """
+    a = np.asarray(seed_bool, bool)
+    if a.ndim != 3:
+        raise ValueError(f"edt_jfa_vector: seed_bool must be (D, H, W), got shape {a.shape}")
+    if not a.any():
+        raise ValueError("edt_jfa_vector: no seed voxel — every vector would point to infinity")
+    coord, pos = _jfa_nearest(a, device)
+    return coord - pos
 
 
 # ═══════════════════════════════════════════════════════════════════════════

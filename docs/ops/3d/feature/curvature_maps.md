@@ -47,7 +47,7 @@ curvedness が 1/32 倍・mc が生 sobel3d 単位だった(shape index S は比
 
 ## 同カテゴリ(`feature`)
 
-[sobel3d](sobel3d.md) · [hessian3d](hessian3d.md) · [edt_jfa](edt_jfa.md) · [vol_frangi](vol_frangi.md) · [vol_local_std](vol_local_std.md) · [vol_local_thickness](vol_local_thickness.md) · [vol_orientation_coherence](vol_orientation_coherence.md) · [vol_euler_number](vol_euler_number.md)
+[sobel3d](sobel3d.md) · [hessian3d](hessian3d.md) · [edt_jfa](edt_jfa.md) · [edt_jfa_vector](edt_jfa_vector.md) · [vol_frangi](vol_frangi.md) · [vol_local_std](vol_local_std.md) · [vol_local_thickness](vol_local_thickness.md) · [vol_orientation_coherence](vol_orientation_coherence.md)
 
 ---
 *Provenance: match3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

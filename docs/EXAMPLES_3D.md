@@ -1,6 +1,6 @@
 # Fullseye 3-D ビジョン — 事例ギャラリー(EXAMPLES_3D)
 
-Fullseye の 3-D オペレータ群(`ops3d` = 363 の型付き op)を、**実問題を解く実行可能な事例**（全 118 件）で示します。
+Fullseye の 3-D オペレータ群(`ops3d` = 366 の型付き op)を、**実問題を解く実行可能な事例**（全 119 件）で示します。
 各事例は自己完結・自己検証のスクリプト(`examples_3d/<id>.py`)で、データを読み・op を呼び・**ground truth を print して assert** します。
 一覧は `examples3d.py` レジストリが正本で、`examples3d.validate()` が全件を実行して**動くものだけ**を掲示します。
 
@@ -21,7 +21,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 ## 実データ源
 
-- **合成データ(制御GT)** — 90 事例
+- **合成データ(制御GT)** — 91 事例
 - **手続き生成(GTは幾何/解析)** — 14 事例
 - **骨格CT(MS-Human-700 実解剖骨)** — 4 事例
 - **小惑星イトカワ(Gaskell形状モデル/JAXA)** — 6 事例
@@ -85,6 +85,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 ### 形状解析
 
 - **CT の管・粒・肉厚を Hessian 特徴と物理量で計測** (`vessel_metrology`, synthetic) — vol_frangi/sato(管状度)と vol_hessian_blobness(粒状度)が相互否定対照で逆転、vol_local_maxima がピーク座標一致、vol_label の 26/6 連結規約、vol_region_props/vol_distance_transform が spacing 物理量(mm^3/mm)で手計算一致。
+- **距離変換の「向き」— 最近の seed への変位で半径・肉厚・ラベルの縄張りを測る** (`nearest_seed_partition`, synthetic) — vol_nearest_seed_vector(円柱の表面 → 骨格への変位の長さ = 半径 r を厳密再現)、vol_nearest_label(2 つの球のラベルを零 voxel に配ると分割面が垂直二等分面に一致)、異方 spacing で最近傍が入れ替わる、torch があれば edt_jfa_vector が scipy 経路と厳密一致。
 - **中軸骨格と位相署名で形状を区別** (`medial_topology`, synthetic) — 中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。skeleton_graph3d でノードと枝のグラフに組み(半径の違う枝を区別、輪はオイラー式で検査、異方 spacing、成分は繋がない)。
 - **曲面上の測地距離と最遠点サンプリング** (`geodesic_distance`, synthetic) — 球面点群で kNN グラフ上の geodesic_distances が大円距離と一致(誤差1.7%)、farthest_point_sampling で均等な代表点。直線ユークリッド距離は曲面上で系統的に過小。
 - **3D空間曲線の微分幾何(曲率κ・捩率τ・弧長・Frenet標構)** (`space_curve`, synthetic) — 順序付き点列からκ/τ/弧長とFrenet標構を求め、ヘリックスの解析解と相対誤差<0.01%で一致。直線(κ=0)・平面円(τ=0)の零点を判別的に上回り、変速でもGram-Schmidt射影の正しさを確認。

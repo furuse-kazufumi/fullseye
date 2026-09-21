@@ -1028,12 +1028,12 @@
 ## `match3d.py`
 
 - **L297** — ★2026-09-07: numpy 의 FFT 로 교체했다. 식은 동일(float32 의 fftn -> 위상만 -> ifftn 의 실수부 -> argmax)하고, torch 로 할 필요가 어디에도 없었다. torch 를 넣지 않은 CI(py3.10 / 3.12)에서는 이 op 가 ImportError 가 되어 PoC 가 떨어졌다.
-- **L1633** — ★2026-09-07: 본체를 numpy 로 다시 썼다. 이 ICP 는 **최근접 탐색이 cKDTree, 자세 갱신이 3x3 의 SVD** 로, torch 로 할 일이 하나도 없는데도 torch 를 필수로 하고 있었다. torch 를 넣지 않은 CI(py3.10 / 3.12)에서 PoC 4 개가 `ImportError: this operator needs the optional 'torch' backend` 로 떨어져 발각(수중에는 torch 가 있어 알아차리지 못했다 -- '문은 사고가 일어나는 곳에 세운다'의 실례). 수치는 float64 의 같은 식이므로 **환경에 따라 결과가 변하지 않는다**. 반환 타입은 호환을 위해 그대로: torch 가 있으면 torch.Tensor, 없으면 numpy.ndarray(값은 동일). device 로 "cpu" 이외를 요청받으면 fail-closed.
-- **L1848** — ★2026-09-07: 본체를 numpy 로 다시 썼다. 최근접 탐색·6x6 의 정규방정식·Rodrigues 어느 것도 CPU 의 작은 선형대수라 torch 가 필요 없는데도 필수로 되어 있었다. torch 를 넣지 않은 CI(py3.10 / 3.12)에서 PoC 가 ImportError 로 떨어져 발각. 식은 같은 float64 이므로 결과는 변하지 않는다(torch 버전과의 차이는 R/t 에서 0, RMSE 에서 0 을 실측).
-- **L2810** — ★2026-09-07: **고리가 이미지 밖에 있으면 fail-closed**. ``r_in``/``r_out`` 은 픽셀 단위이므로, mm 그대로 넘기면 시야 밖을 읽어 예외 없이 **전부 0** 이 반환된다(`poc_pipe_wall_loss` 가 새까만 그림을 한 장 내놓아 발각). 중심에서 이미지의 네 모서리까지의 최대 거리보다 안쪽인 반지름이 하나도 없으면, 반환되는 것은 빈 것 외에는 있을 수 없다.
-- **L2821** — ★2026-09-07: grid_sample(bilinear, align_corners=True, zeros padding)를 scipy 의 map_coordinates(order=1, mode="constant", cval=0)로 교체했다 -- 같은 이중선형 보간이며, torch 를 넣지 않은 CI(py3.10 / 3.12)에서도 돈다. 실측 차이는 최대 6.0e-06(값역 0..1 의 난수 이미지. float32 와 float64 의 반올림 차이).
-- **L2866** — ★2026-09-07: polar_unwrap 과 같은 이유로 map_coordinates 로 교체(이중선형·범위 밖 0). torch 가 없어도 돈다. 실측 차이는 최대 7.6e-06.
-- **L3117** — ★2026-09-07: affine_grid + grid_sample(align_corners=False, zeros padding)를 numpy 의 좌표 계산 + scipy 의 map_coordinates(order=1)로 교체했다. torch 는 이중선형 재표본화에만 쓰였고, torch 를 넣지 않은 환경(CI 의 py3.10 / 3.12)에서 이 op 가 ImportError 가 되어 있었다. 규약은 그대로 옮겼다: 출력 복셀 (d,h,w) 의 정규화 좌표는 ((i+0.5)/N)*2-1, 회전 후에 (g+1)/2*N-0.5 로 입력의 픽셀 좌표로 되돌린다(align_corners=False 의 정의). grid 의 마지막 축은 (x, y, z) = (W, H, D) 순. torch 버전과의 실측 차이는 최대 7.6e-06.
+- **L1655** — ★2026-09-07: 본체를 numpy 로 다시 썼다. 이 ICP 는 **최근접 탐색이 cKDTree, 자세 갱신이 3x3 의 SVD** 로, torch 로 할 일이 하나도 없는데도 torch 를 필수로 하고 있었다. torch 를 넣지 않은 CI(py3.10 / 3.12)에서 PoC 4 개가 `ImportError: this operator needs the optional 'torch' backend` 로 떨어져 발각(수중에는 torch 가 있어 알아차리지 못했다 -- '문은 사고가 일어나는 곳에 세운다'의 실례). 수치는 float64 의 같은 식이므로 **환경에 따라 결과가 변하지 않는다**. 반환 타입은 호환을 위해 그대로: torch 가 있으면 torch.Tensor, 없으면 numpy.ndarray(값은 동일). device 로 "cpu" 이외를 요청받으면 fail-closed.
+- **L1870** — ★2026-09-07: 본체를 numpy 로 다시 썼다. 최근접 탐색·6x6 의 정규방정식·Rodrigues 어느 것도 CPU 의 작은 선형대수라 torch 가 필요 없는데도 필수로 되어 있었다. torch 를 넣지 않은 CI(py3.10 / 3.12)에서 PoC 가 ImportError 로 떨어져 발각. 식은 같은 float64 이므로 결과는 변하지 않는다(torch 버전과의 차이는 R/t 에서 0, RMSE 에서 0 을 실측).
+- **L2832** — ★2026-09-07: **고리가 이미지 밖에 있으면 fail-closed**. ``r_in``/``r_out`` 은 픽셀 단위이므로, mm 그대로 넘기면 시야 밖을 읽어 예외 없이 **전부 0** 이 반환된다(`poc_pipe_wall_loss` 가 새까만 그림을 한 장 내놓아 발각). 중심에서 이미지의 네 모서리까지의 최대 거리보다 안쪽인 반지름이 하나도 없으면, 반환되는 것은 빈 것 외에는 있을 수 없다.
+- **L2843** — ★2026-09-07: grid_sample(bilinear, align_corners=True, zeros padding)를 scipy 의 map_coordinates(order=1, mode="constant", cval=0)로 교체했다 -- 같은 이중선형 보간이며, torch 를 넣지 않은 CI(py3.10 / 3.12)에서도 돈다. 실측 차이는 최대 6.0e-06(값역 0..1 의 난수 이미지. float32 와 float64 의 반올림 차이).
+- **L2888** — ★2026-09-07: polar_unwrap 과 같은 이유로 map_coordinates 로 교체(이중선형·범위 밖 0). torch 가 없어도 돈다. 실측 차이는 최대 7.6e-06.
+- **L3139** — ★2026-09-07: affine_grid + grid_sample(align_corners=False, zeros padding)를 numpy 의 좌표 계산 + scipy 의 map_coordinates(order=1)로 교체했다. torch 는 이중선형 재표본화에만 쓰였고, torch 를 넣지 않은 환경(CI 의 py3.10 / 3.12)에서 이 op 가 ImportError 가 되어 있었다. 규약은 그대로 옮겼다: 출력 복셀 (d,h,w) 의 정규화 좌표는 ((i+0.5)/N)*2-1, 회전 후에 (g+1)/2*N-0.5 로 입력의 픽셀 좌표로 되돌린다(align_corners=False 의 정의). grid 의 마지막 축은 (x, y, z) = (W, H, D) 순. torch 버전과의 실측 차이는 최대 7.6e-06.
 
 ## `medial.py`
 
@@ -1088,13 +1088,13 @@
 
 ## `ops3d.py`
 
-- **L383** — ★out 은 image2d 가 아니라 **rgbimage**(2026-09-02 실측). docstring 도 구현도 'RGB (size, size, 3) float [0,1]' 인데, 이 줄만 2-D 의 휘도 이미지를 자처하고 있었다. mesh 의 씨앗을 넣고 나서야 이 op 가 실행되어, 타입 술어가 TYPEMISS 「declared 'image2d' but returned ndarray(512,512,3)」로 드러냈다(그전까지는 (V,F) 를 2 개의 위치 인자로 나누는 형태 탓에 **한 번도 실행되지 않았다**). 다른 render_* 3 op(ambient_occlusion / cast_shadow / supersample_mesh)는 실측대로 2-D 이므로 image2d 그대로 두어도 된다 -- 거짓이었던 것은 이 한 줄뿐.
-- **L473** _(ja)_ — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
-- **L624** — ★2026-09-08 추가. 그전까지 조각용 자세 헬퍼(visualhull.look_at)는 어느 공개 층에서도 조회할 수 없었고, 같은 이름의 render3d.look_at(gluLookAt·-Z 전방)을 잡으면 **예외 없이 빈 hull** 이 되었다(poc_livestock_body_volume).
-- **L645** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
-- **L735** — ★보류했던 이유 (a)「points 후보 리스트가 짧아져 기존 champion 을 조용히 덮어쓴다」는, backends_typed.TYPE_TO_SORT 로 coordgrid -> points 로 접음으로써 사라졌다: 2-D 다리인 tb_sphere_sdf / tb_box_sdf 에는 INPUT_ADAPTERS._points_to_grid 가 붙어 있어 **점군에서 좌표장을 실제로 만들고 있으므로**, 그쪽의 "points" 선언은 거짓이 아니다(실측: (64,3) 을 넘기면 (16,16,16) 이 반환된다 = 살아 있다). 거짓이었던 것은 3-D 대장 쪽뿐이었다.
-- **L895** — ★axis=1. `pairs` 의 정전은 **(N,2)**(실측: 소비 쪽 6 op 가 (2,N) 을 명시적으로 거부한다). 술어가 `lambda v: True` 였던 동안, 여기는 (2,n) 을 만들고 있어 '어떤 소비 쪽도 받을 수 없는 형태'를 선언 타입으로 자처하고 있었다
-- **L933** — ★position 의 정전은 **[z, y, x] 의 3 성분**. 다수결이 아니라 **소비 쪽을 실행하여** 정했다: refine_translation_lk / refine_lm 은 4 성분을 넘기면 "init_pos must have exactly 3 components [z, y, x] (got 4)" 로 fail-closed 한다(실측). 생성기도 (8.0, 8.0, 8.0) 의 3 성분. 그런데 match_* 계열은 docstring 대로 **[score, d, h, w] 의 4 성분**을 반환하고 있어, 선언 out 이 "position" 인 채로 흘리면 후단의 정밀화 op 가 전멸한다 = 타입의 거짓말. score 자체는 정직한 정보이므로 **함수 쪽은 깎지 않고**(get() 은 4 성분 그대로), 대장의 타입을 자처하는 call() 쪽에서 좌표만 꺼낸다(project_points 와 같은 취급).
+- **L384** — ★out 은 image2d 가 아니라 **rgbimage**(2026-09-02 실측). docstring 도 구현도 'RGB (size, size, 3) float [0,1]' 인데, 이 줄만 2-D 의 휘도 이미지를 자처하고 있었다. mesh 의 씨앗을 넣고 나서야 이 op 가 실행되어, 타입 술어가 TYPEMISS 「declared 'image2d' but returned ndarray(512,512,3)」로 드러냈다(그전까지는 (V,F) 를 2 개의 위치 인자로 나누는 형태 탓에 **한 번도 실행되지 않았다**). 다른 render_* 3 op(ambient_occlusion / cast_shadow / supersample_mesh)는 실측대로 2-D 이므로 image2d 그대로 두어도 된다 -- 거짓이었던 것은 이 한 줄뿐.
+- **L474** _(ja)_ — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
+- **L629** — ★2026-09-08 추가. 그전까지 조각용 자세 헬퍼(visualhull.look_at)는 어느 공개 층에서도 조회할 수 없었고, 같은 이름의 render3d.look_at(gluLookAt·-Z 전방)을 잡으면 **예외 없이 빈 hull** 이 되었다(poc_livestock_body_volume).
+- **L650** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
+- **L740** — ★보류했던 이유 (a)「points 후보 리스트가 짧아져 기존 champion 을 조용히 덮어쓴다」는, backends_typed.TYPE_TO_SORT 로 coordgrid -> points 로 접음으로써 사라졌다: 2-D 다리인 tb_sphere_sdf / tb_box_sdf 에는 INPUT_ADAPTERS._points_to_grid 가 붙어 있어 **점군에서 좌표장을 실제로 만들고 있으므로**, 그쪽의 "points" 선언은 거짓이 아니다(실측: (64,3) 을 넘기면 (16,16,16) 이 반환된다 = 살아 있다). 거짓이었던 것은 3-D 대장 쪽뿐이었다.
+- **L901** — ★axis=1. `pairs` 의 정전은 **(N,2)**(실측: 소비 쪽 6 op 가 (2,N) 을 명시적으로 거부한다). 술어가 `lambda v: True` 였던 동안, 여기는 (2,n) 을 만들고 있어 '어떤 소비 쪽도 받을 수 없는 형태'를 선언 타입으로 자처하고 있었다
+- **L939** — ★position 의 정전은 **[z, y, x] 의 3 성분**. 다수결이 아니라 **소비 쪽을 실행하여** 정했다: refine_translation_lk / refine_lm 은 4 성분을 넘기면 "init_pos must have exactly 3 components [z, y, x] (got 4)" 로 fail-closed 한다(실측). 생성기도 (8.0, 8.0, 8.0) 의 3 성분. 그런데 match_* 계열은 docstring 대로 **[score, d, h, w] 의 4 성분**을 반환하고 있어, 선언 out 이 "position" 인 채로 흘리면 후단의 정밀화 op 가 전멸한다 = 타입의 거짓말. score 자체는 정직한 정보이므로 **함수 쪽은 깎지 않고**(get() 은 4 성분 그대로), 대장의 타입을 자처하는 call() 쪽에서 좌표만 꺼낸다(project_points 와 같은 취급).
 
 ## `opsastrostack.py`
 
@@ -1643,10 +1643,10 @@
 
 ## `volops.py`
 
-- **L1083** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
-- **L1096** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
-- **L1189** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
-- **L1209** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
+- **L1137** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
+- **L1150** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
+- **L1243** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
+- **L1263** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
 
 ## `world_render.py`
 

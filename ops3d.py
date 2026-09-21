@@ -154,6 +154,7 @@ _CATALOG = {
         ("hessian3d", "match3d", ["voxel"], "hessian", True),
         ("curvature_maps", "match3d", ["voxel"], "curvature", True),
         ("edt_jfa", "match3d", ["voxel"], "sdf", True),
+        ("edt_jfa_vector", "match3d", ["voxel"], "flow_dense", True),   # JFA が運ぶ最近 seed 座標をそのまま(2026-09-21)
         # volops の Hessian 固有値ベース特徴(2026-08-31 登録。実装は既存・api 公開済み
         # だったが _CATALOG に無く発見不能だった)。医用 CT の血管/気道・産業 CT の欠陥
         ("vol_frangi", "volops", ["voxel"], "voxel", False),
@@ -477,6 +478,10 @@ _CATALOG = {
         ("skeleton_graph3d", "medial", ["voxel"], "table", False),
         # spacing 対応の物理距離 EDT(edt_jfa は torch 必須の SDF、こちらは scipy 経路)
         ("vol_distance_transform", "volops", ["voxel"], "voxel", False),
+        # 2026-09-21: 距離の「値」だけでなく**向き**(最近 seed への変位)。骨格からの半径・膜までの肉厚・
+        # ラベルのボロノイ分割に要る(外部 AI の指摘を実コードで確かめた穴: edt_jfa / esdf / distance_ridge は全部値のみ)
+        ("vol_nearest_seed_vector", "volops", ["voxel"], "flow_dense", False),
+        ("vol_nearest_label", "volops", ["voxel"], "voxel", False),
     ],
     "metrics": [  # 評価メトリクス(進化探索の fitness 土台 = 一致度を数値化)
         ("chamfer_distance", "metrics3d", ["points", "points"], "measurement", False),
@@ -891,6 +896,7 @@ RESULT_ADAPTERS = {
     if hasattr(r, "shape") and getattr(r, "ndim", 0) == 3 else r,
     # torch Tensor を返す GPU op → numpy(catalog は配列型を宣言している)
     "edt_jfa": lambda r: r.detach().cpu().numpy() if hasattr(r, "detach") else r,
+    "edt_jfa_vector": lambda r: r.detach().cpu().numpy() if hasattr(r, "detach") else r,
     # probe: (t_mm, values) → (2, n) pairs / list[float] → 1-D signal
     # ★ axis=1。`pairs` の正典は **(N,2)**(消費側 6 op が (2,N) を名指しで
     # 拒否することを実測)。述語が `lambda v: True` だった間、ここは (2,n) を

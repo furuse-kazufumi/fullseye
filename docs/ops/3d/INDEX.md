@@ -1,4 +1,4 @@
-# 3D operator help — 363 ops in 66 categories
+# 3D operator help — 366 ops in 66 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -65,9 +65,9 @@
 
 [canny3d](edges/canny3d.md) · [edge_points](edges/edge_points.md) · [gradient3d](edges/gradient3d.md) · [link_edges](edges/link_edges.md) · [log_zero_crossings](edges/log_zero_crossings.md)
 
-### feature (14)
+### feature (15)
 
-[curvature_maps](feature/curvature_maps.md) · [edt_jfa](feature/edt_jfa.md) · [hessian3d](feature/hessian3d.md) · [sobel3d](feature/sobel3d.md) · [vol_euler_number](feature/vol_euler_number.md) · [vol_frangi](feature/vol_frangi.md) · [vol_gradient_magnitude](feature/vol_gradient_magnitude.md) · [vol_granulometry](feature/vol_granulometry.md) · [vol_hessian_blobness](feature/vol_hessian_blobness.md) · [vol_local_maxima](feature/vol_local_maxima.md) · [vol_local_std](feature/vol_local_std.md) · [vol_local_thickness](feature/vol_local_thickness.md) · [vol_orientation_coherence](feature/vol_orientation_coherence.md) · [vol_sato](feature/vol_sato.md)
+[curvature_maps](feature/curvature_maps.md) · [edt_jfa](feature/edt_jfa.md) · [edt_jfa_vector](feature/edt_jfa_vector.md) · [hessian3d](feature/hessian3d.md) · [sobel3d](feature/sobel3d.md) · [vol_euler_number](feature/vol_euler_number.md) · [vol_frangi](feature/vol_frangi.md) · [vol_gradient_magnitude](feature/vol_gradient_magnitude.md) · [vol_granulometry](feature/vol_granulometry.md) · [vol_hessian_blobness](feature/vol_hessian_blobness.md) · [vol_local_maxima](feature/vol_local_maxima.md) · [vol_local_std](feature/vol_local_std.md) · [vol_local_thickness](feature/vol_local_thickness.md) · [vol_orientation_coherence](feature/vol_orientation_coherence.md) · [vol_sato](feature/vol_sato.md)
 
 ### feature_register (7)
 
@@ -117,9 +117,9 @@
 
 [match_logpolar_z](match_pose/match_logpolar_z.md) · [match_pca](match_pose/match_pca.md) · [match_phase_3d](match_pose/match_phase_3d.md) · [moment_axes](match_pose/moment_axes.md)
 
-### medial (11)
+### medial (13)
 
-[distance_ridge](medial/distance_ridge.md) · [medial_axis_points](medial/medial_axis_points.md) · [medial_match](medial/medial_match.md) · [skeleton_branches3d](medial/skeleton_branches3d.md) · [skeleton_endpoints3d](medial/skeleton_endpoints3d.md) · [skeleton_graph3d](medial/skeleton_graph3d.md) · [skeleton_junctions3d](medial/skeleton_junctions3d.md) · [skeleton_prune3d](medial/skeleton_prune3d.md) · [skeletonize_vol](medial/skeletonize_vol.md) · [topology_signature](medial/topology_signature.md) · [vol_distance_transform](medial/vol_distance_transform.md)
+[distance_ridge](medial/distance_ridge.md) · [medial_axis_points](medial/medial_axis_points.md) · [medial_match](medial/medial_match.md) · [skeleton_branches3d](medial/skeleton_branches3d.md) · [skeleton_endpoints3d](medial/skeleton_endpoints3d.md) · [skeleton_graph3d](medial/skeleton_graph3d.md) · [skeleton_junctions3d](medial/skeleton_junctions3d.md) · [skeleton_prune3d](medial/skeleton_prune3d.md) · [skeletonize_vol](medial/skeletonize_vol.md) · [topology_signature](medial/topology_signature.md) · [vol_distance_transform](medial/vol_distance_transform.md) · [vol_nearest_label](medial/vol_nearest_label.md) · [vol_nearest_seed_vector](medial/vol_nearest_seed_vector.md)
 
 ### mesh_process (10)
 

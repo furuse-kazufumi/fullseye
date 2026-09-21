@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2062,
- "n_notes": 2068,
+ "n_ops": 2065,
+ "n_notes": 2071,
  "notes": {
   "vol_dilate": [
    {
@@ -10612,6 +10612,16 @@
     "path": "docs/ops/3d/feature/edt_jfa.md"
    }
   ],
+  "edt_jfa_vector": [
+   {
+    "op": "edt_jfa_vector",
+    "dim": "3d",
+    "category": "feature",
+    "in": "voxel",
+    "out": "flow_dense",
+    "path": "docs/ops/3d/feature/edt_jfa_vector.md"
+   }
+  ],
   "hessian3d": [
    {
     "op": "hessian3d",
@@ -11510,6 +11520,26 @@
     "in": "voxel",
     "out": "voxel",
     "path": "docs/ops/3d/medial/vol_distance_transform.md"
+   }
+  ],
+  "vol_nearest_label": [
+   {
+    "op": "vol_nearest_label",
+    "dim": "3d",
+    "category": "medial",
+    "in": "voxel",
+    "out": "voxel",
+    "path": "docs/ops/3d/medial/vol_nearest_label.md"
+   }
+  ],
+  "vol_nearest_seed_vector": [
+   {
+    "op": "vol_nearest_seed_vector",
+    "dim": "3d",
+    "category": "medial",
+    "in": "voxel",
+    "out": "flow_dense",
+    "path": "docs/ops/3d/medial/vol_nearest_seed_vector.md"
    }
   ],
   "boundary_vertices": [

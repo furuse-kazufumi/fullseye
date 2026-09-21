@@ -100,7 +100,7 @@ __all__ = [
     # 形態計測(ステレオロジー)—— HALCON はボクセル型を持たないので全部こちら側
     "vol_local_std", "vol_local_thickness", "vol_euler_number",
     "vol_granulometry", "vol_orientation_coherence",
-    "vol_distance_transform", "vol_label", "vol_region_props",
+    "vol_distance_transform", "vol_nearest_seed_vector", "vol_nearest_label", "vol_label", "vol_region_props",
     "vol_gradient_magnitude", "vol_local_maxima", "vol_watershed",
     "volume_downsample",
     "vol_reduce_domain", "vol_bounding_box", "vol_crop_domain", "vol_uncrop",
@@ -418,6 +418,60 @@ def vol_distance_transform(vol_binary, spacing=None):
     sp = _spacing_tuple(spacing)
     dt = ndimage.distance_transform_edt(m, sampling=sp)
     return np.ascontiguousarray(dt, dtype=np.float64)
+
+
+def vol_nearest_seed_vector(vol_binary, spacing=None):
+    """各 voxel から**最近の seed voxel への変位ベクトル** ``(3, D, H, W)``(``flow_dense``、成分 dz, dy, dx [voxel])。
+
+    seed = 非零 voxel(``> 0.5`` で二値化)。seed の上では 0。``vol_distance_transform`` が返すのは距離の**値**だけで、
+    「どの voxel が最近か」は落ちる —— 骨格からの半径(表面 → 骨格の変位)、膜までの肉厚、ESDF の勾配、
+    ラベルのボロノイ分割はこの**向き**が要る(2026-09-21、コネクトーム基盤の穴)。``spacing`` ``(sz, sy, sx)`` を渡すと
+    最近傍の判定は物理距離で行う(返す変位は voxel 単位のまま —— ``|v * spacing|`` が物理距離)。
+    厳密解: Maurer, Qi & Raghavan (IEEE TPAMI 2003) の線形時間 EDT(``scipy.ndimage.distance_transform_edt(return_indices=True)``)。
+    同距離の seed が複数あるときはその実装の順序で 1 つ(順序に意味を持たせないこと)。seed が 1 つも無いと
+    ValueError(全 voxel が無限遠 —— 黙って 0 を返さない)。
+
+    >>> v = np.zeros((5, 5, 5)); v[2, 2, 0] = 1
+    >>> d = vol_nearest_seed_vector(v); d.shape, tuple(d[:, 2, 2, 4])
+    ((3, 5, 5, 5), (0.0, 0.0, -4.0))
+    """
+    m = _as_binary(vol_binary)
+    _check_voxels(m, MAX_VOXELS, "vol_nearest_seed_vector", "MAX_VOXELS")
+    if not m.any():
+        raise ValueError("vol_nearest_seed_vector: the volume has no seed (non-zero) voxel — every voxel would be at infinity")
+    sp = _spacing_tuple(spacing)
+    idx = ndimage.distance_transform_edt(~m, sampling=sp, return_distances=False, return_indices=True)
+    grid = np.indices(m.shape, dtype=np.int64)
+    return np.ascontiguousarray(idx.astype(np.int64) - grid, dtype=np.float64)
+
+
+def vol_nearest_label(vol_labels, spacing=None):
+    """零 voxel に**最近の非零ラベル**を配ったラベル体積 ``(D, H, W)``(ラベルのボロノイ分割、``voxel``)。
+
+    入力は整数ラベル(``vol_label`` / ``vol_rle_components`` の出力、0 = 未割当)。各 0 voxel は物理距離(``spacing``)で
+    最も近い非零 voxel のラベルを受け取り、非零 voxel はそのまま。EM の分割片や骨格の枝ラベルから「その枝が支配する
+    体積」を切り出す(枝ごとの体積・肉厚)のに使う。非整数のラベルは拒否(丸めて別のラベルにしない)、非零が 1 つも
+    無ければ ValueError。返りは int64。
+
+    >>> L = np.zeros((1, 1, 7)); L[0, 0, 0] = 1; L[0, 0, 6] = 2
+    >>> vol_nearest_label(L)[0, 0].tolist()
+    [1, 1, 1, 1, 2, 2, 2]
+    """
+    a = np.asarray(vol_labels)
+    if a.ndim != 3:
+        raise ValueError(f"vol_nearest_label: vol_labels must be (D, H, W), got shape {a.shape}")
+    if not np.isfinite(a).all():
+        raise ValueError("vol_nearest_label: vol_labels contains NaN / inf")
+    if not np.all(a == np.round(a)) or a.min() < 0:
+        raise ValueError("vol_nearest_label: labels must be whole numbers >= 0 (0 = unassigned) — not rounding silently")
+    lab = a.astype(np.int64)
+    _check_voxels(lab, MAX_VOXELS, "vol_nearest_label", "MAX_VOXELS")
+    seed = lab != 0
+    if not seed.any():
+        raise ValueError("vol_nearest_label: no non-zero label to spread from")
+    sp = _spacing_tuple(spacing)
+    idx = ndimage.distance_transform_edt(~seed, sampling=sp, return_distances=False, return_indices=True)
+    return np.ascontiguousarray(lab[tuple(idx)], dtype=np.int64)
 
 
 def vol_label(vol_binary, connectivity=26):

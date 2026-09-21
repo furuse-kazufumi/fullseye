@@ -1028,12 +1028,12 @@
 ## `match3d.py`
 
 - **L297** — ★2026-09-07：改用 numpy 的 FFT。式子相同(float32 的 fftn -> 仅相位 -> ifftn 的实部 -> argmax),没有任何地方需要用 torch。在不装 torch 的 CI(py3.10 / 3.12)上,这个 op 会变成 ImportError,PoC 随之失败。
-- **L1633** — ★2026-09-07：把主体改写为 numpy。这个 ICP 是**最近邻搜索用 cKDTree、位姿更新用 3x3 的 SVD**,没有一件事需要 torch,却把 torch 设为必需。在不装 torch 的 CI(py3.10 / 3.12)上,4 个 PoC 以 `ImportError: this operator needs the optional 'torch' backend` 落败而暴露(本地有 torch 所以没能察觉 -- 「门要立在事故发生的地方」的实例)。数值是相同的 float64 式,因此**结果不因环境而变**。返回类型为兼容而保留:有 torch 则 torch.Tensor,没有则 numpy.ndarray(数值相同)。若请求 "cpu" 以外的 device 则 fail-closed。
-- **L1848** — ★2026-09-07：把主体改写为 numpy。最近邻搜索、6x6 的正规方程、Rodrigues 都是 CPU 上的小型线性代数,本无需 torch,却被设为必需。在不装 torch 的 CI(py3.10 / 3.12)上,PoC 以 ImportError 落败而暴露。式子是相同的 float64,故结果不变(实测与 torch 版之差在 R/t 上为 0、RMSE 上为 0)。
-- **L2810** — ★2026-09-07：**若环在图像之外则 fail-closed**。``r_in``/``r_out`` 以像素为单位,故若按 mm 传入,会读到视野之外,并无异常地返回**全部 0**(在 `poc_pipe_wall_loss` 输出一张漆黑的图后暴露)。若没有一个半径小于从中心到图像四角的最大距离,则返回值只可能为空。
-- **L2821** — ★2026-09-07：把 grid_sample(bilinear, align_corners=True, zeros padding)替换为 scipy 的 map_coordinates(order=1, mode="constant", cval=0) -- 同样的双线性插值,在不装 torch 的 CI(py3.10 / 3.12)上也能跑。实测差异最大为 6.0e-06(值域 0..1 的随机图像;float32 与 float64 的舍入之差)。
-- **L2866** — ★2026-09-07：出于与 polar_unwrap 相同的理由,替换为 map_coordinates(双线性、范围外 0)。无 torch 也能跑。实测差异最大为 7.6e-06。
-- **L3117** — ★2026-09-07：把 affine_grid + grid_sample(align_corners=False, zeros padding)替换为 numpy 的坐标计算 + scipy 的 map_coordinates(order=1)。torch 仅用于双线性重采样,在不装 torch 的环境(CI 的 py3.10 / 3.12)中这个 op 会变成 ImportError。约定原样照抄:输出体素 (d,h,w) 的归一化坐标为 ((i+0.5)/N)*2-1,旋转后用 (g+1)/2*N-0.5 换回输入的像素坐标(align_corners=False 的定义)。grid 的最末轴为 (x, y, z) = (W, H, D) 的顺序。与 torch 版的实测差异最大为 7.6e-06。
+- **L1655** — ★2026-09-07：把主体改写为 numpy。这个 ICP 是**最近邻搜索用 cKDTree、位姿更新用 3x3 的 SVD**,没有一件事需要 torch,却把 torch 设为必需。在不装 torch 的 CI(py3.10 / 3.12)上,4 个 PoC 以 `ImportError: this operator needs the optional 'torch' backend` 落败而暴露(本地有 torch 所以没能察觉 -- 「门要立在事故发生的地方」的实例)。数值是相同的 float64 式,因此**结果不因环境而变**。返回类型为兼容而保留:有 torch 则 torch.Tensor,没有则 numpy.ndarray(数值相同)。若请求 "cpu" 以外的 device 则 fail-closed。
+- **L1870** — ★2026-09-07：把主体改写为 numpy。最近邻搜索、6x6 的正规方程、Rodrigues 都是 CPU 上的小型线性代数,本无需 torch,却被设为必需。在不装 torch 的 CI(py3.10 / 3.12)上,PoC 以 ImportError 落败而暴露。式子是相同的 float64,故结果不变(实测与 torch 版之差在 R/t 上为 0、RMSE 上为 0)。
+- **L2832** — ★2026-09-07：**若环在图像之外则 fail-closed**。``r_in``/``r_out`` 以像素为单位,故若按 mm 传入,会读到视野之外,并无异常地返回**全部 0**(在 `poc_pipe_wall_loss` 输出一张漆黑的图后暴露)。若没有一个半径小于从中心到图像四角的最大距离,则返回值只可能为空。
+- **L2843** — ★2026-09-07：把 grid_sample(bilinear, align_corners=True, zeros padding)替换为 scipy 的 map_coordinates(order=1, mode="constant", cval=0) -- 同样的双线性插值,在不装 torch 的 CI(py3.10 / 3.12)上也能跑。实测差异最大为 6.0e-06(值域 0..1 的随机图像;float32 与 float64 的舍入之差)。
+- **L2888** — ★2026-09-07：出于与 polar_unwrap 相同的理由,替换为 map_coordinates(双线性、范围外 0)。无 torch 也能跑。实测差异最大为 7.6e-06。
+- **L3139** — ★2026-09-07：把 affine_grid + grid_sample(align_corners=False, zeros padding)替换为 numpy 的坐标计算 + scipy 的 map_coordinates(order=1)。torch 仅用于双线性重采样,在不装 torch 的环境(CI 的 py3.10 / 3.12)中这个 op 会变成 ImportError。约定原样照抄:输出体素 (d,h,w) 的归一化坐标为 ((i+0.5)/N)*2-1,旋转后用 (g+1)/2*N-0.5 换回输入的像素坐标(align_corners=False 的定义)。grid 的最末轴为 (x, y, z) = (W, H, D) 的顺序。与 torch 版的实测差异最大为 7.6e-06。
 
 ## `medial.py`
 
@@ -1088,13 +1088,13 @@
 
 ## `ops3d.py`
 
-- **L383** — ★out 不是 image2d 而是 **rgbimage**(2026-09-02 实测)。docstring 与实现都是「RGB (size, size, 3) float [0,1]」,唯独这一行自称是 2-D 的亮度图。直到放入 mesh 的种子,这个 op 才被执行,类型谓词以 TYPEMISS「declared 'image2d' but returned ndarray(512,512,3)」将其暴露(在此之前,因把 (V,F) 拆成 2 个位置参数的形式,它**一次都没被执行过**)。其余 3 个 render_* op(ambient_occlusion / cast_shadow / supersample_mesh)如实测为 2-D,故保持 image2d 即可 -- 撒谎的仅此一行。
-- **L473** _(ja)_ — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
-- **L624** — ★2026-09-08 追加。此前用于雕刻的位姿辅助(visualhull.look_at)从任何公开层都引不到,而抓到同名的 render3d.look_at(gluLookAt、-Z 朝前)就会**无一例外地得到空的 hull**(poc_livestock_body_volume)。
-- **L645** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
-- **L735** — ★曾搁置的理由(a)「points 候选列表变短而悄悄改写既有 champion」,已随 backends_typed.TYPE_TO_SORT 把 coordgrid -> points 折叠而消失:2-D 桥的 tb_sphere_sdf / tb_box_sdf 带有 INPUT_ADAPTERS._points_to_grid,**确实会从点云生成坐标场**,所以那边的 "points" 声明并非谎言(实测:传入 (64,3) 会返回 (16,16,16) = 是活的)。撒谎的只是 3-D 台账那一侧。
-- **L895** — ★axis=1。`pairs` 的正典是 **(N,2)**(实测:消费侧 6 个 op 明确拒绝 (2,N))。当谓词还是 `lambda v: True` 时,这里生成的是 (2,n),把「任何消费侧都无法接收的形状」当作声明类型来自称
-- **L933** — ★position 的正典是 **[z, y, x] 的 3 个分量**。不是靠多数表决,而是**运行消费侧**来定的:refine_translation_lk / refine_lm 在传入 4 个分量时,会以 "init_pos must have exactly 3 components [z, y, x] (got 4)" fail-closed(实测)。生成器也是 (8.0, 8.0, 8.0) 的 3 分量。然而 match_* 系列按 docstring 返回 **[score, d, h, w] 的 4 个分量**,若声明 out 仍为 "position" 就放行,后段的精化 op 会全军覆没 = 类型的谎言。由于 score 本身是诚实信息,**函数一侧不删**(get() 保持 4 分量),而在自称台账类型的 call() 一侧只取出坐标(与 project_points 同样处理)。
+- **L384** — ★out 不是 image2d 而是 **rgbimage**(2026-09-02 实测)。docstring 与实现都是「RGB (size, size, 3) float [0,1]」,唯独这一行自称是 2-D 的亮度图。直到放入 mesh 的种子,这个 op 才被执行,类型谓词以 TYPEMISS「declared 'image2d' but returned ndarray(512,512,3)」将其暴露(在此之前,因把 (V,F) 拆成 2 个位置参数的形式,它**一次都没被执行过**)。其余 3 个 render_* op(ambient_occlusion / cast_shadow / supersample_mesh)如实测为 2-D,故保持 image2d 即可 -- 撒谎的仅此一行。
+- **L474** _(ja)_ — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
+- **L629** — ★2026-09-08 追加。此前用于雕刻的位姿辅助(visualhull.look_at)从任何公开层都引不到,而抓到同名的 render3d.look_at(gluLookAt、-Z 朝前)就会**无一例外地得到空的 hull**(poc_livestock_body_volume)。
+- **L650** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
+- **L740** — ★曾搁置的理由(a)「points 候选列表变短而悄悄改写既有 champion」,已随 backends_typed.TYPE_TO_SORT 把 coordgrid -> points 折叠而消失:2-D 桥的 tb_sphere_sdf / tb_box_sdf 带有 INPUT_ADAPTERS._points_to_grid,**确实会从点云生成坐标场**,所以那边的 "points" 声明并非谎言(实测:传入 (64,3) 会返回 (16,16,16) = 是活的)。撒谎的只是 3-D 台账那一侧。
+- **L901** — ★axis=1。`pairs` 的正典是 **(N,2)**(实测:消费侧 6 个 op 明确拒绝 (2,N))。当谓词还是 `lambda v: True` 时,这里生成的是 (2,n),把「任何消费侧都无法接收的形状」当作声明类型来自称
+- **L939** — ★position 的正典是 **[z, y, x] 的 3 个分量**。不是靠多数表决,而是**运行消费侧**来定的:refine_translation_lk / refine_lm 在传入 4 个分量时,会以 "init_pos must have exactly 3 components [z, y, x] (got 4)" fail-closed(实测)。生成器也是 (8.0, 8.0, 8.0) 的 3 分量。然而 match_* 系列按 docstring 返回 **[score, d, h, w] 的 4 个分量**,若声明 out 仍为 "position" 就放行,后段的精化 op 会全军覆没 = 类型的谎言。由于 score 本身是诚实信息,**函数一侧不删**(get() 保持 4 分量),而在自称台账类型的 call() 一侧只取出坐标(与 project_points 同样处理)。
 
 ## `opsastrostack.py`
 
@@ -1643,10 +1643,10 @@
 
 ## `volops.py`
 
-- **L1083** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
-- **L1096** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
-- **L1189** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
-- **L1209** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
+- **L1137** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
+- **L1150** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
+- **L1243** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
+- **L1263** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
 
 ## `world_render.py`
 

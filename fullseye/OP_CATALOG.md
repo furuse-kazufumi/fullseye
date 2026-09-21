@@ -333,7 +333,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **薄い欠陥はどこまで見えるか(実写の地に真値を仕込んで検出限界を測る)** — 「どこまで薄い傷が見えるか」は普通、平らな地に白色雑音を載せた合成画像で見積もる。その見積もりがどれだけ甘いかを、CC0 実写テクスチャ(brick / grass / gravel)に**位置・大きさ・振幅が既知のガウシアン欠陥を仕込んで**測る。比較相手は**検出器が実際に見る残差 σ を実写に揃えた**合成の地 —— 雑音の量を同じにしてから構造の効果だけを取り出す。★★雑音を揃えても実写の限界は 2.03〜3.47 倍高い: **限界を決めているのは雑音ではなく地の構造**。★背景窓 3 通り × 欠陥 σ 2 通り × 地 3 種の 18 通り全部で 比は 1 を超え(1.72〜4.56)、整合フィルタと `laplace_of_gauss` という独立な 2 検出器でも残る。★外した予測: 「欠陥が大きいほど差が開く」は**振幅の刻みが作った差**だった(34 段では σ=1.5 と σ=3.0 が別の格子点に丸まる。60 段にすると両方 3.30 倍で差が消える)。★★「実写だから場所で変わる」も誤り —— 場所による散らばりは brick 16.8 倍に対し grass 2.4 / gravel 3.3 で、**合成の 3.3 倍と区別がつかない**。散らばりを生むのは目地という**構造**であって「実写であること」ではない。★★ゼロ点(背景を引かず生の画素の最大点)は、**当てるだけなら整合フィルタより 0.65〜0.90 倍良い**(整合フィルタは地の構造も増幅するので損をする)。無欠陥面の空振りも brick では 0 対 0 の引き分け。分かれるのは**照明が 2 % ずれた瞬間**で、ゼロ点は 1 万画素あたり 10.3 回鳴り整合フィルタは 0.0 回 —— 生の画素の閾値は明るさの絶対値だから。**当てる力・空振り・ずれへの強さを別々に数えないと、役に立たない検出器を勝たせられる。** `py -3.11 examples/poc_real_defect_floor.py`
 - **捜索救難の走査幅(画像から測った 1 本の数字が計画を決める)** — 空撮画像から**横距離曲線**(機体直下からの横方向距離ごとの検出確率)を測り、その面積 W = ∫p dx を**走査幅**として捜索計画へ渡す。画像処理と意思決定を 1 本の数字でつなぐ展示。★走査幅の定義そのものを実証: 形の違う 4 本の曲線(実測 p / 幅 W の矩形 / 底辺 2W の三角形 / 二峰形)を同じ面積 256.2 m に揃えると、検出割合は 0.2559 / 0.2563 / 0.2556 / 0.2566 —— **4 つとも予測 0.2562 の 0.8σ 以内**。**形は消え、面積だけが残る**。★崖は C = W v t / A = 1。閉形式を先に印字して min(1,C) = 1.0000 / 1-exp(-C) = 0.6321、矩形の対照で実測 1.0000 / 0.6348(+0.005 は航跡が有限本 n=64 のためで、厳密 1-(1-W/Wd)^64 = 0.6350)。★★予測を外した 1: 実測の p を入れると平行捜索は **0.8464** で 1.000 に届かない。min(1,C) は p が幅 W の**矩形**であること(定値域則)に依存していて、裾を引く実曲線では隣の航跡と裾が重なる。★★予測を外した 2: 「平らな曲線のほうが矩形に近く平行捜索に強い」と予測したが**逆**(0.7705 対 0.8464)。矩形に近いとは『平ら』ではなく『W の内側に立ち、外へ裾を引かない』こと(支持域/W が 2.40 対 2.25)。同条件でも**ランダム捜索では 2 本が一致する**(面積しか見ない)。★★予測を外した 3: 「端は解像度が落ちる」—— ナディア向き中心投影では**地上分解能は端まで一定**(相対ばらつき 0.0e+00)。落ちるのは cos^4・大気・軸外ぼけのほうで、f-theta なら 2.132 倍粗くなる。★★予測を外した 4: 「背景を引けば良くなる」—— 画像全体の中央値と σ で割るのは**アフィン変換で順位が変わらない**(174.4 → 172.0 m)。効くのは**場所ごと**に引いたときだけ(239.6 m)。★最適高度は内点(220 m で W = 258.1 ± 4.0 m)。ただし 220 m と 300 m は標準誤差内で**測り分けられていない**と明記。掃引速度 W·v で見ると、v ∝ min(1,h/600) の機体では最適が 420 m へ動く。★見張り役: **誤検出は端ではなく直下に集中**(0-32 m 帯 113 件 / 最外帯 0 件)—— 目標も白波も同じ cos^4 で暗くなるので、いちばんよく見える所がいちばん吠える。閾値だけで W は 406 → 170 m 動くので、**『走査幅 400 m』は誤検出率と対でなければ何も言っていない**。★素材側の穴も 1 つ: 点源を画素中心 1 点標本で描くと総フラックス誤差 4.6e-07 なのに**ピークが σ=0.9 px で 10.6 % 過大**になり、σ が横距離で変わるので横距離曲線そのものが傾く。erf で画素を厳密積分するよう直した。★★道具の穴を 4 つ見つけ、うち 1 つはその場で埋めた: op_find の語の切り出しが ASCII 限定で、**和文の複数語クエリは構造的に必ず 0 件**だった(採点する doc も docstring の 1 行目だけ)。CJK の段を足し、star_detect の docstring に分野中立の説明語を書いた。 `py -3.11 examples/poc_search_sweep_width.py`
 
-### 3-D 点群/体積/曲面(118 例)
+### 3-D 点群/体積/曲面(119 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -441,6 +441,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **shape_analysis**
 - **CT の管・粒・肉厚を Hessian 特徴と物理量で計測** — vol_frangi/sato(管状度)と vol_hessian_blobness(粒状度)が相互否定対照で逆転、vol_local_maxima がピーク座標一致、vol_label の 26/6 連結規約、vol_region_props/vol_distance_transform が spacing 物理量(mm^3/mm)で手計算一致。 `py -3.11 examples_3d/vessel_metrology.py`
+- **距離変換の「向き」— 最近の seed への変位で半径・肉厚・ラベルの縄張りを測る** — vol_nearest_seed_vector(円柱の表面 → 骨格への変位の長さ = 半径 r を厳密再現)、vol_nearest_label(2 つの球のラベルを零 voxel に配ると分割面が垂直二等分面に一致)、異方 spacing で最近傍が入れ替わる、torch があれば edt_jfa_vector が scipy 経路と厳密一致。 `py -3.11 examples_3d/nearest_seed_partition.py`
 - **中軸骨格と位相署名で形状を区別** — 中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。skeleton_graph3d でノードと枝のグラフに組み(半径の違う枝を区別、輪はオイラー式で検査、異方 spacing、成分は繋がない)。 `py -3.11 examples_3d/medial_topology.py`
 - **曲面上の測地距離と最遠点サンプリング** — 球面点群で kNN グラフ上の geodesic_distances が大円距離と一致(誤差1.7%)、farthest_point_sampling で均等な代表点。直線ユークリッド距離は曲面上で系統的に過小。 `py -3.11 examples_3d/geodesic_distance.py`
 - **3D空間曲線の微分幾何(曲率κ・捩率τ・弧長・Frenet標構)** — 順序付き点列からκ/τ/弧長とFrenet標構を求め、ヘリックスの解析解と相対誤差<0.01%で一致。直線(κ=0)・平面円(τ=0)の零点を判別的に上回り、変速でもGram-Schmidt射影の正しさを確認。 `py -3.11 examples_3d/space_curve.py`
@@ -560,7 +561,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 363 ops / 66 categories。_
+_計 366 ops / 66 categories。_
 
 
 ### annotate3d(7)
@@ -647,11 +648,12 @@ _計 363 ops / 66 categories。_
 - `link_edges` (`voxel → voxel`) — エッジ mask を 26 近傍で連結成分ラベリングする。 · 例: `sensor_seg`
 - `edge_points` (`voxel → points`) — エッジ mask を (M,3) の座標点群にする(下流の chamfer / Hough 用)。 · 例: `edges_3d`
 
-### feature(14)
+### feature(15)
 - `sobel3d` (`voxel → gradient`) — 3D 勾配 (gz,gy,gx)。導関数[-1,0,1]×平滑[1,2,1] の分離 conv3d。 · 例: `diff_features`
 - `hessian3d` (`voxel → hessian`) — 3D Hessian の 6 独立成分 (fzz,fyy,fxx,fzy,fzx,fyx)。分離 conv3d(2 階/1 階×平滑)。 · 例: `diff_features`
 - `curvature_maps` (`voxel → curvature`) — level-set の主曲率 → shape index S(Koenderink)と curvedness。閉形式(Kindlmann 2003)。 · 例: `diff_features`
 - `edt_jfa` (`voxel → sdf`) — 3D ユークリッド距離変換 = Jump Flooding Algorithm(GPU)。各 voxel → 最近 seed 距離。 · 例: `diff_features`
+- `edt_jfa_vector` (`voxel → flow_dense`) — 各 voxel から最近 seed への変位 ``(3, D, H, W)``(``flow_dense``、dz, dy, dx [voxel])を **GPU の JFA** で。 · 例: `nearest_seed_partition`
 - `vol_frangi` (`voxel → voxel`) — 3-D Frangi vesselness — multiscale tubular-structure enhancement. · 例: `vessel_metrology`, `volume_downsampling`
 - `vol_local_std` (`voxel → voxel`) — Unbiased local standard deviation inside a cubic window. · 例: `ct_porosity_and_fibre_morphometry`
 - `vol_local_thickness` (`voxel → voxel`) — Local thickness map: the diameter of the largest ball that covers each voxel. · 例: `ct_porosity_and_fibre_morphometry`
@@ -754,7 +756,7 @@ _計 363 ops / 66 categories。_
 - `moment_axes` (`points → axes`) — 点群/重み付き点の **重心 + 主軸**(慣性テンソルの固有ベクトル)。姿勢推定の基礎。 · 例: `itokawa_pose_canonical`
 - `match_logpolar_z` (`voxel, voxel → rot_scale`) — log-polar × 位相相関(Fourier-Mellin)で **z 軸回転 + 等方スケール**を復元。 · 例: `shape_desc_pose`
 
-### medial(11)
+### medial(13)
 - `distance_ridge` (`voxel → voxel`) — EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。 · 例: `pcl_geodesic`
 - `skeletonize_vol` (`voxel → voxel`) — 3D バイナリ voxel を細線化して 1 voxel 幅の骨格に。skimage の Lee(1994)法ラッパ。 · 例: `medial_topology`
 - `medial_axis_points` (`voxel → points`) — medial voxel の座標と局所半径(= その点の EDT 値)を点群化。返り値 (points, radius)。 · 例: `medial_topology`
@@ -765,7 +767,9 @@ _計 363 ops / 66 categories。_
 - `skeleton_prune3d` (`voxel → voxel`) — 3D 骨格のヒゲ(短い枝)を刈る。端点除去を length 回反復 = 枝長 <=length を除去。 · 例: `medial_topology`
 - `skeleton_branches3d` (`voxel → voxel`) — 3D 骨格を分岐点で切って枝(線分)に分割する。2D の `r2_split_skeleton_lines` の 3D 版。 · 例: `medial_topology`
 - `skeleton_graph3d` (`voxel → table`) — 3D 骨格を **ノード(接合点・端点)と枝(長さ・半径)のグラフ**に組み立てる。 · 例: `medial_topology`
-- `vol_distance_transform` (`voxel → voxel`) — Exact Euclidean distance transform of a binary volume. · 例: `medial_topology`, `molecule_atom_count`, `vessel_metrology`
+- `vol_distance_transform` (`voxel → voxel`) — Exact Euclidean distance transform of a binary volume. · 例: `medial_topology`, `molecule_atom_count`, `nearest_seed_partition`, `vessel_metrology`
+- `vol_nearest_seed_vector` (`voxel → flow_dense`) — 各 voxel から**最近の seed voxel への変位ベクトル** ``(3, D, H, W)``(``flow_dense``、成分 dz, dy, dx [voxel])。 · 例: `nearest_seed_partition`
+- `vol_nearest_label` (`voxel → voxel`) — 零 voxel に**最近の非零ラベル**を配ったラベル体積 ``(D, H, W)``(ラベルのボロノイ分割、``voxel``)。 · 例: `nearest_seed_partition`
 
 ### mesh_process(10)
 - `laplacian_smooth` (`mesh → mesh`) — umbrella Laplacian による三角形メッシュ平滑化。→ (verts, faces)。 · 例: `mesh_smooth`
