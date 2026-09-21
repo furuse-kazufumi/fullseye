@@ -1,4 +1,4 @@
-# CONNGRAPH operator help — 23 ops in 5 categories
+# CONNGRAPH operator help — 27 ops in 6 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/conngraph/<category>/<op>.md` を走査。
 
@@ -15,6 +15,10 @@
 ### construct (3)
 
 [graph_binarize](construct/graph_binarize.md) · [graph_degree_preserving_shuffle](construct/graph_degree_preserving_shuffle.md) · [graph_from_synapses](construct/graph_from_synapses.md)
+
+### dimension (4)
+
+[graph_block_shuffle](dimension/graph_block_shuffle.md) · [graph_layer_propagate](dimension/graph_layer_propagate.md) · [states_layer_dimension](dimension/states_layer_dimension.md) · [states_participation_ratio](dimension/states_participation_ratio.md)
 
 ### reservoir (5)
 

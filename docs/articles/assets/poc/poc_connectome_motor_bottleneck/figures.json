@@ -1,0 +1,68 @@
+[
+ {
+  "file": "01_funnel.png",
+  "name": "funnel",
+  "caption": "effective dimension of the states each layer takes under 400 random sparse stimuli of the brain layer: real wiring vs a control that keeps every receiver's input weights but shuffles who sends them; the neck (DN) compresses by convergence alone, the VNC -> MN stage compresses by the specific wiring",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_funnel_direction.png",
+  "name": "funnel_direction",
+  "caption": "the same funnel after every stimulus response is scaled to unit norm (magnitude removed, direction kept): the real wiring still leaves fewer MN directions than the shuffled control, so the collapse is not only a few strong responses",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_activity_flow.gif",
+  "name": "activity_flow",
+  "caption": "one stimulus flowing brain (blue) -> DN (yellow) -> VNC (green) -> MN (red) over the soma positions; MaleCNS v1.0 (Janelia, CC BY 4.0), subgraph brain 1000 / DN 1314 / VNC 1000 / MN 708",
+  "shape": [
+   360,
+   270,
+   3
+  ],
+  "animated": true,
+  "frames": 8,
+  "frames_written": 8,
+  "fps": 2.0
+ },
+ {
+  "file": "04_command_space.png",
+  "name": "command_space",
+  "caption": "the 400 stimuli projected on the first two principal components of the MN states: real wiring folds them onto a few directions, the shuffled control spreads them",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_physical_ai.png",
+  "name": "physical_ai",
+  "caption": "participation ratio of joint-angle trajectories (G1 humanoid, RL policies and mocap retargets) and of muscle activations (evis), next to the fly's MN command dimension under random brain input",
+  "shape": [
+   400,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "06_numbers.png",
+  "name": "numbers",
+  "caption": "every number, with the bar it had to clear",
+  "shape": [
+   560,
+   727,
+   3
+  ],
+  "csv": "06_numbers.csv",
+  "tsv": "06_numbers.tsv"
+ }
+]

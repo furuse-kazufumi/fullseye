@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">states_participation_ratio — CONNGRAPH <code style="color:#22d3bf">dimension</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.states_participation_ratio(X: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import conngraph; conngraph.states_participation_ratio(X: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsconngraph.get(&quot;states_participation_ratio&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>状態列 `<code style="color:#22d3bf">X</code><code style="color:#22d3bf"> (N, n) の**実効次元** = participation ratio </code><code style="color:#22d3bf">PR = (Σλ)² / Σλ²</code>`(λ は共分散の固有値、</p>
+<p>Gao et al. 2017)。全列が独立で同じ分散なら n、1 本の方向に乗っていれば 1。</p>
+<p>標本数 N に依存する(N が小さいと PR ≤ N に頭打ち)ので、比べるときは N を揃える。定数(分散 0)なら 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_connectome_motor_bottleneck">poc_connectome_motor_bottleneck</a> — <code style="color:#22d3bf">py -3.11 examples/poc_connectome_motor_bottleneck.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">measurement</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">dimension</code>)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:graph_block_shuffle">graph_block_shuffle</a> · <a style="color:#22d3bf" href="opconngraph:graph_layer_propagate">graph_layer_propagate</a> · <a style="color:#22d3bf" href="opconngraph:states_layer_dimension">states_layer_dimension</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: conngraph.py — CONNGRAPH 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

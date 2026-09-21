@@ -102,6 +102,13 @@ _CATALOG = {
         ("graph_activity_spread", "conngraph", ["matrix", "points", "labels"], "table"),
         ("points_activity_video", "conngraph", ["points", "matrix"], "rgbvideo"),
     ],
+    # 次元(2026-09-21、動きの量子化 PoC): 層状の配線に刺激を前向きに通し、層ごとの実効次元を数える
+    "dimension": [
+        ("graph_block_shuffle", "conngraph", ["conn_graph", "labels"], "conn_graph"),
+        ("graph_layer_propagate", "conngraph", ["conn_graph", "labels", "matrix"], "matrix"),
+        ("states_participation_ratio", "conngraph", ["matrix"], "measurement"),
+        ("states_layer_dimension", "conngraph", ["matrix", "labels"], "table"),
+    ],
 }
 
 

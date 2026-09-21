@@ -263,6 +263,10 @@ def test_every_op_refuses_nan_and_names_itself(name):
         "graph_edges_as_lines": (np.zeros((4, 3)),),
         "graph_activity_spread": (np.zeros((4, 3)), np.array([1, 0, 0, 0])),
         "points_activity_video": (np.ones((3, 4)),),
+        # dimension(2026-09-21)
+        "graph_block_shuffle": (np.zeros(4, dtype=int),),
+        "graph_layer_propagate": (np.zeros(4, dtype=int), np.ones((3, 4))),
+        "states_layer_dimension": (np.zeros(4, dtype=int),),
     }.get(name, ())
     with pytest.raises(ValueError, match=name):
         fn(_first_arg_with_nan(name), *extra)
@@ -285,7 +289,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
 
     assert opsconngraph.missing() == []
     assert set(opsconngraph.OPSCONNGRAPH) == set(_OPS)
-    assert len(opsconngraph.OPSCONNGRAPH) == 23
+    assert len(opsconngraph.OPSCONNGRAPH) == 27
     for meta in opsconngraph.OPSCONNGRAPH.values():
         assert isinstance(meta["in"], list) and isinstance(meta["out"], str)
 
@@ -340,6 +344,8 @@ def test_op_run_works_through_the_default_seed_for_every_op():
         "ridge_readout", "ridge_predict", "graph_edges_as_lines",
         "graph_activity_spread", "points_activity_video",
         "graph_activation_latency",              # matrix には既定の種が無い(明示で下に検査)
+        "graph_block_shuffle", "graph_layer_propagate", "states_layer_dimension",   # labels / U は明示(test_conngraph_dims)
+        "states_participation_ratio",            # matrix
     }
     for name in opsconngraph.OPSCONNGRAPH:
         if name in two_input:

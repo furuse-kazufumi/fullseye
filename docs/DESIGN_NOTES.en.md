@@ -98,7 +98,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `backends_typed.py`
 
-- **L525** — ★Until 2026-09-05 it read ``tools/chain_fuzz`` (not shipped) via sys.path manipulation. It failed in the wheel, and since the build() below silently returned [], the tb_* 143 ops were disappearing.
+- **L528** — ★Until 2026-09-05 it read ``tools/chain_fuzz`` (not shipped) via sys.path manipulation. It failed in the wheel, and since the build() below silently returned [], the tb_* 143 ops were disappearing.
 
 ## `blob2d.py`
 
@@ -120,7 +120,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `conngraph.py`
 
-- **L669** _(ja)_ — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
+- **L671** _(ja)_ — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
 
 ## `deform3d.py`
 
@@ -1625,9 +1625,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `typed_catalog.py`
 
-- **L242** — ★ The case where the default itself is heavy is handled separately —— we wrote a cost table in the docstring and left it in docs/KNOWN_ISSUES.md as "unsolved." Making it lighter here is to pass the check, not to hide the slowness. The keep of fourier_smooth(points, keep) is a required argument with no default. If it cannot be bound, it is skipped forever as "cannot assemble arguments" and appears in the coverage table only as unreached (in the first measurement on 2026-09-06, only this one of 13 ops fell out). Surface roughness. Constraints are 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel measurement. The measurement-line generation op takes no input, so every argument needs a hint.
-- **L296** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
-- **L484** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
+- **L249** — ★ The case where the default itself is heavy is handled separately —— we wrote a cost table in the docstring and left it in docs/KNOWN_ISSUES.md as "unsolved." Making it lighter here is to pass the check, not to hide the slowness. The keep of fourier_smooth(points, keep) is a required argument with no default. If it cannot be bound, it is skipped forever as "cannot assemble arguments" and appears in the coverage table only as unreached (in the first measurement on 2026-09-06, only this one of 13 ops fell out). Surface roughness. Constraints are 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel measurement. The measurement-line generation op takes no input, so every argument needs a hint.
+- **L303** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
+- **L491** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
 
 ## `unified.py`
 

@@ -61,8 +61,10 @@ __all__ = [
     "graph_layout_spectral", "graph_edges_as_lines", "graph_adjacency_image",
     # activity
     "graph_activation_latency", "graph_activity_spread", "points_activity_video",
+    # dimension(2026-09-21): 層を通す・次元を数える
+    "graph_block_shuffle", "graph_layer_propagate", "states_participation_ratio", "states_layer_dimension",
     # constants
-    "MOTIFS", "NONLINEARITIES", "ADJACENCY_ORDERS", "MAX_NODES",
+    "MOTIFS", "NONLINEARITIES", "ADJACENCY_ORDERS", "MAX_NODES", "ACTIVATIONS",
 ]
 
 #: 数えられる 3 点モチーフ。reciprocal = 相互結合の対、ffl = feed-forward loop
@@ -929,3 +931,138 @@ def points_activity_video(P: Any, X: Any, colors: Any = None, size: int = 480, a
                 x0 = j * (Wd + GAP)
                 paint(out[k, :, x0:x0 + Wd], cam, b)
     return out
+
+
+# --------------------------------------------------------------------------- #
+# 層を通す・次元を数える(2026-09-21、動きの量子化 PoC)                            #
+# --------------------------------------------------------------------------- #
+#: ``graph_layer_propagate`` の活性化。linear は閉形式の検算用、tanh は飽和する連続値、
+#: kwta は「上位 active_frac だけ発火」(疎な符号 —— 発火する組み合わせの空間を見る)。
+ACTIVATIONS: tuple[str, ...] = ("linear", "tanh", "kwta")
+
+
+def _as_layer_labels(labels: Any, n: int, op: str) -> np.ndarray:
+    lab = np.asarray(labels)
+    if lab.ndim != 1 or lab.shape[0] != n:
+        raise ValueError(f"{op}: labels must be one integer per node (length {n}), got shape {lab.shape}")
+    if lab.dtype.kind == "b" or not np.issubdtype(lab.dtype, np.integer):
+        if lab.dtype.kind == "f" and np.all(np.isfinite(lab)) and np.all(lab == np.rint(lab)):
+            lab = lab.astype(np.int64)
+        else:
+            raise ValueError(f"{op}: labels must be integers (layer ids 0..L-1), got dtype {lab.dtype}")
+    lab = lab.astype(np.int64)
+    if lab.min() < 0:
+        raise ValueError(f"{op}: labels must be >= 0, got min {lab.min()}")
+    L = int(lab.max()) + 1
+    missing = [k for k in range(L) if not np.any(lab == k)]
+    if missing:
+        raise ValueError(f"{op}: layer ids must be consecutive 0..{L - 1}; empty layers {missing}")
+    return lab
+
+
+def graph_block_shuffle(W: Any, labels: Any, seed: int = 0) -> np.ndarray:
+    """層(ラベル)のブロックごとに**送り手を混ぜた**対照の ``conn_graph``: 各受け手が受ける重みの多重集合と
+    層間の総結線量は保ったまま、「誰から」だけを壊す。
+
+    ``graph_degree_preserving_shuffle`` が全体の次数列を保つのに対し、こちらは**層構造を保つ**(脳 → 首 → 腹髄 →
+    筋 のブロックは動かさず、ブロックの中で行を並べ替える)。層の大きさと収束(fan-in)の効果を残して
+    「配線の特異性」だけを消した対照として使う。同じ ``seed`` で再現。
+    """
+    op = "graph_block_shuffle"
+    A = _as_graph(W, op)
+    lab = _as_layer_labels(labels, A.shape[0], op)
+    rng = np.random.default_rng(int(seed))
+    out = np.zeros_like(A)
+    L = int(lab.max()) + 1
+    for a in range(L):
+        src = np.nonzero(lab == a)[0]
+        perm = rng.permutation(len(src))
+        for c in range(L):
+            dst = np.nonzero(lab == c)[0]
+            out[np.ix_(src, dst)] = A[np.ix_(src[perm], dst)]
+    return out
+
+
+def graph_layer_propagate(W: Any, labels: Any, U: Any, activation: str = "kwta", active_frac: float = 0.1,
+                          gain: float = 1.0) -> np.ndarray:
+    """層 0 の状態 ``U`` (N, n_0) を、ブロック ``W[layer a → layer a+1]`` で**前向きに一段ずつ**通した全層の状態
+    ``(N, n)``(``matrix``、列はノード順で層 0 の列は ``U`` そのもの)。
+
+    受け手ごとに入力重みの和を 1 に正規化してから重みつき和を取り(層の大きさに依らない)、``activation`` で
+    活性化する: ``"linear"`` はそのまま(平均絶対値を ``gain`` に)、``"tanh"`` は飽和、``"kwta"`` は各刺激で
+    入力が上位 ``active_frac`` の受け手だけが(閾値上の余剰で)発火し、平均が 1 になるよう正規化する。
+    層をまたぐ結線(層 a → a+2)と層内の再帰は**使わない**(前向きの一段ごとの写像だけを見る道具)。
+    """
+    op = "graph_layer_propagate"
+    A = _as_graph(W, op)
+    n = A.shape[0]
+    lab = _as_layer_labels(labels, n, op)
+    X0 = _as_matrix(U, op, "U")
+    if activation not in ACTIVATIONS:
+        raise ValueError(f"{op}: activation must be one of {ACTIVATIONS}, got {activation!r}")
+    fr = float(active_frac)
+    if not np.isfinite(fr) or not 0.0 < fr <= 1.0:
+        raise ValueError(f"{op}: active_frac must be in (0, 1], got {active_frac!r}")
+    g = float(gain)
+    if not np.isfinite(g) or g <= 0.0:
+        raise ValueError(f"{op}: gain must be a positive finite number, got {gain!r}")
+    L = int(lab.max()) + 1
+    n0 = int((lab == 0).sum())
+    if X0.shape[1] != n0:
+        raise ValueError(f"{op}: U must have one column per layer-0 node ({n0}), got {X0.shape[1]}")
+    out = np.zeros((X0.shape[0], n))
+    out[:, lab == 0] = X0
+    x = X0
+    for a in range(L - 1):
+        src = lab == a
+        dst = lab == a + 1
+        B = A[src][:, dst]
+        col = B.sum(axis=0)
+        B = B / np.maximum(col, 1e-300)[None, :]
+        u = x @ B
+        if activation == "linear":
+            x = u / max(float(np.abs(u).mean()), 1e-300) * g
+        elif activation == "tanh":
+            x = np.tanh(u / max(float(np.abs(u).mean()), 1e-300) * g)
+        else:
+            thr = np.quantile(u, 1.0 - fr, axis=1, keepdims=True)
+            x = np.where(u >= thr, u - thr, 0.0)
+            x = x / max(float(x.mean()), 1e-300) * g
+        out[:, dst] = x
+    return out
+
+
+def states_participation_ratio(X: Any) -> float:
+    """状態列 ``X`` (N, n) の**実効次元** = participation ratio ``PR = (Σλ)² / Σλ²``(λ は共分散の固有値、
+    Gao et al. 2017)。全列が独立で同じ分散なら n、1 本の方向に乗っていれば 1。
+
+    標本数 N に依存する(N が小さいと PR ≤ N に頭打ち)ので、比べるときは N を揃える。定数(分散 0)なら 0。
+    """
+    op = "states_participation_ratio"
+    A = _as_matrix(X, op, "X")
+    Xc = A - A.mean(axis=0, keepdims=True)
+    G = Xc @ Xc.T if Xc.shape[0] < Xc.shape[1] else Xc.T @ Xc
+    lam = np.clip(np.linalg.eigvalsh(G), 0.0, None)
+    s = float(lam.sum())
+    return float(s * s / float((lam ** 2).sum())) if s > 0.0 else 0.0
+
+
+def states_layer_dimension(X: Any, labels: Any) -> dict[str, np.ndarray]:
+    """層ごとの実効次元の表: 列 layer / n / participation_ratio / ratio(= PR / n)。
+
+    ``X`` = ``graph_layer_propagate`` の返り (N, n)、``labels`` = ノードの層 id。「脳 → 首 → 腹髄 → 筋」で
+    次元がどこで落ちるか(動きの量子化)を 1 つの数式で読む。
+    """
+    op = "states_layer_dimension"
+    A = _as_matrix(X, op, "X")
+    lab = _as_layer_labels(labels, A.shape[1], op)
+    L = int(lab.max()) + 1
+    ns, prs = [], []
+    for a in range(L):
+        cols = lab == a
+        ns.append(int(cols.sum()))
+        prs.append(states_participation_ratio(A[:, cols]))
+    ns_arr = np.asarray(ns, dtype=np.int64)
+    pr_arr = np.asarray(prs, dtype=np.float64)
+    return {"layer": np.arange(L, dtype=np.int64), "n": ns_arr, "participation_ratio": pr_arr,
+            "ratio": pr_arr / ns_arr}

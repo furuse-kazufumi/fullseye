@@ -160,6 +160,9 @@ _OP_BRIDGE_SKIP = {
     "video_spacetime_cube", "video_cube_cut", "video_summary_keyframes",
     # 2026-09-21: live4d。同じ理由(橋の動画は静止クリップ、補間しても同じフレームが増えるだけ)。
     "video_interpolate_flow",
+    # 2026-09-21: conngraph の states_participation_ratio(matrix → measurement)。画像を行列として実効次数を
+    # 出すのは特徴として意味はあるが、橋 1 本のために op 図の全数再描画(50 分)を回す価値が無い。台帳から使う。
+    "states_participation_ratio",
     # 2026-09-08、同じ回に摘発。`indices_to_labels` は **1-D の選択マスク**
     # (長さ = 最大添字 + 1)を返すが、宣言型 `labels` は TYPE_TO_SORT で
     # `volume`(ndim == 3 の契約)に畳まれるので、橋は毎回

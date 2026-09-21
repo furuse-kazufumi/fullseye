@@ -194,6 +194,13 @@ PARAM_HINTS = {
 
 
 OP_PARAM_HINTS = {
+    # conngraph の次元 op(2026-09-21): 層 id は 0..L-1 が連続で、U は層 0 の列数に合わせる。種の conn_graph は
+    # 12 ノードなので 3 層 × 4 ノード、U は (N=8, 4)。全体既定の labels(領域ラベル)では層が飛ぶ。
+    ("graph_block_shuffle", "labels"): lambda rng: np.repeat(np.arange(3), 4),
+    ("graph_layer_propagate", "labels"): lambda rng: np.repeat(np.arange(3), 4),
+    ("graph_layer_propagate", "U"): lambda rng: rng.random((8, 4)),
+    ("states_layer_dimension", "labels"): lambda rng: np.repeat(np.arange(3), 4),
+    ("states_layer_dimension", "X"): lambda rng: rng.random((8, 12)),
     # live4d(2026-09-21)。shape の全体既定 (32, 32) は 2-D なので 3 整数に。fps / f_lo / f_hi の全体既定
     # (32 / 3 / 5 Hz)は 8 フレームの種では帯域に FFT bin が 1 つも入らず、増幅 op が永久に CONTRACT になる。
     ("volseq_synth_beating", "shape"): lambda rng: (8, 12, 12),

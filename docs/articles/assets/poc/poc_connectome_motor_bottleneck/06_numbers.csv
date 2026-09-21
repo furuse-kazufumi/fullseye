@@ -1,0 +1,21 @@
+﻿quantity,value,bar
+PR brain (n=1000): real kWTA / shuffled / linear,281.8 / 281.8 / 281.8,-
+PR DN (n=1314): real kWTA / shuffled / linear,60.9 / 62.0 / 76.3,-
+PR VNC (n=1000): real kWTA / shuffled / linear,8.7 / 35.1 / 21.8,-
+PR MN (n=708): real kWTA / shuffled / linear,2.4 / 21.9 / 4.3,-
+size-matched: brain with 708 columns,249.2,> 3 x PR(DN)
+direction-only PR MN: real kWTA / shuffled kWTA / real linear / shuffled linear,25.2 / 53.6 / 7.1 / 41.6,"shuffled > 1.5x (kWTA), > 3x (linear)"
+MN response norm across stimuli: median / max,79.4 / 1333.2,heavy tail
+locomotion (G1 walk / run) PR median,3.20,MN 2.4
+PR G1 g1_100m_best,2.39,-
+PR G1 g1_jump1_22M,4.56,-
+PR G1 g1_jump1_final,6.22,-
+PR G1 g1_lafan_dance1,9.27,-
+PR G1 g1_lafan_fight1,11.94,-
+PR G1 g1_lafan_jumps1_s1,8.07,-
+PR G1 g1_lafan_jumps1_s2,8.33,-
+PR G1 g1_lafan_jumps1_s5,6.26,-
+PR G1 g1_lafan_walk1_s1,3.63,-
+PR G1 g1_run1,2.61,-
+PR G1 g1_run2_100m,2.41,-
+PR G1 g1_run2,2.42,-

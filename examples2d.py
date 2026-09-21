@@ -374,6 +374,12 @@ EXAMPLES = [
                 "実測: コネクトームは刺激からの平均距離 88 → 230 µm を 17 步かけて伸び、視葉 → 中枢 → 下行の順に点いて 36 步では VNC に届かない。"
                 "shuffle は 3 步で 300 µm に散り遠い 1/4 の 93 % が点く(コネクトーム 0 %)。精度で見えなかった配線の空間構造が動きで見える。"
                 "新 op: reservoir_states(W_in=)、graph_activation_latency、graph_activity_spread、points_activity_video(尺度は全コマで 1 つ、views= で背側・側面・体軸方向の 3 方向を同時に)。生データは commit しない。"},
+    {"id": "poc_connectome_motor_bottleneck", "task": "analysis", "data": "real",
+     "name": "動きの量子化 ―― 脳から筋へ、命令の次元はどこで落ちるか(MaleCNS の首と RL の関節を同じ物差しで)",
+     "summary": "MaleCNS の 脳 → 下行ニューロン(首)→ 腹髄 → 運動ニューロン の部分グラフに乱数刺激 400 通りを前向きに通し、各層の"
+                "実効次元(participation ratio)を読む: 282 > 61 > 8.7 > 2.4。層の大きさを揃えても脳は 249、送り手だけ混ぜた対照は MN 22 ——"
+                "腹髄 → 筋の圧縮は配線の特異性、首は収束そのもの。向きだけの次元(単位ノルム)でも実配線 25 vs 対照 54。同じ数式で G1 の"
+                "RL 歩行は 2.4〜4.1、ダンス 9、格闘 12、evis の筋活動 6〜9(桁の比較)。conngraph に 4 op を追加。"},
     {"id": "poc_live4d", "task": "visualization", "data": "synthetic",
      "name": "生きている組織の 3D+t を古典手法だけで短い 3D 動画像に(増幅・流れ・補間・高さ場、全部に真値)",
      "summary": "新族 live4d(14 op、numpy + scipy、新語は volseq = 体積の時系列だけ)。目に見えない 0.1 voxel の拍動を Eulerian の"

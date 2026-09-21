@@ -1,8 +1,8 @@
 {
- "n_ops": 2047,
+ "n_ops": 2051,
  "tiers": {
   "color": 12,
-  "ledger": 1099,
+  "ledger": 1103,
   "nary": 17,
   "registry": 919
  },
@@ -5043,6 +5043,20 @@
    ]
   },
   {
+   "name": "graph_block_shuffle",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "conn_graph",
+   "category": "dimension",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph",
+    "labels"
+   ]
+  },
+  {
    "name": "graph_clustering_coefficient",
    "halcon": "",
    "in_sort": "conn_graph",
@@ -5132,6 +5146,21 @@
    "dim": "conngraph",
    "in_sorts": [
     "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_layer_propagate",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "matrix",
+   "category": "dimension",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph",
+    "labels",
+    "matrix"
    ]
   },
   {
@@ -12371,6 +12400,33 @@
    "dim": "math",
    "in_sorts": [
     "signal"
+   ]
+  },
+  {
+   "name": "states_layer_dimension",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "dimension",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "matrix",
+    "labels"
+   ]
+  },
+  {
+   "name": "states_participation_ratio",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "measurement",
+   "category": "dimension",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "matrix"
    ]
   },
   {

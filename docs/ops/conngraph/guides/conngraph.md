@@ -15,7 +15,7 @@ version: 0.1.0
 
 コネクトーム解析の定番の連鎖 —— *シナプス表を隣接行列にする → 次数と中心性を測る → 次数を保ったまま辺を繋ぎ替えた帰無モデルと比べる → 結合行列を reservoir として信号を回し、リッジ回帰で読み出す* —— がこの族です。
 
-20 op / 4 カテゴリ(numpy のみ。台帳は `opsconngraph.py`、実体は `conngraph.py`):
+27 op / 6 カテゴリ(numpy のみ。台帳は `opsconngraph.py`、実体は `conngraph.py`):
 
 - **build(3)** — `graph_from_synapses` / `graph_degree_preserving_shuffle` / `graph_binarize`: 表 → 行列、**次数保存シャッフル(帰無モデル)**、二値化。
 - **stats(9)** — `graph_degree_table` / `graph_clustering_coefficient` / `graph_betweenness` / `graph_laplacian_spectrum` / `graph_spectral_radius` / `graph_components` / `graph_modularity` / `graph_rich_club` / `graph_motif_count`: 教科書の閉形式だけ(Brandes の媒介中心性、Watts–Strogatz のクラスタ係数、Leicht–Newman の有向モジュラリティ、Milo のモチーフ)。
@@ -122,6 +122,17 @@ V3 = fs.points_activity_video(P, X, colors=side_rgb, views=((0, 0), (90, 0), (0,
 を**同じ刺激・同じ W_in** で回して隣に並べるのが作法 —— MaleCNS の soma 座標で右視葉に刺激を入れると、
 コネクトームでは活動が視葉 → 中枢 → 下行と順に進み(平均距離 88 → 230 µm を 17 步かけて、上位 3,000 体・36 步では VNC に届かない)、
 次数保存 shuffle では 3 步で全体に散る(88 → 300 µm、遠い 1/4 のノードの 93 % が点く)。`examples/poc_malecns_activity_wave.py`。個眼 1 つ分の刺激(`eyebrain`、Studio の Tools ▸ Compound eye → brain)では刺激柱と応答重心の相関がコネクトーム −0.92 / shuffle +0.01: `examples/poc_eye_to_brain.py`。
+
+## 層を通して次元を数える(dimension、2026-09-21)
+
+「脳 → 首 → 腹髄 → 筋」のように**層状に切った配線**へ刺激を前向きに通し、各層の状態の実効次元がどこで落ちるかを 1 つの数式で読む道具(PoC `examples/poc_connectome_motor_bottleneck.py`)。
+
+- `graph_layer_propagate(W, labels, U, activation="kwta", active_frac=0.1)` — 層 0 の状態 `U` (N, n₀) をブロック `W[層 a → 層 a+1]` で一段ずつ通した全層の状態 (N, n)(`matrix`)。受け手ごとに入力重みの和を 1 に正規化。`"linear"` は検算用、`"tanh"` は飽和、`"kwta"` は各刺激で上位 `active_frac` の受け手だけが発火(疎な符号)。層内の再帰と層をまたぐ結線は使わない。
+- `graph_block_shuffle(W, labels, seed)` — 各受け手が受ける重みの多重集合と層間の総結線量を保ち、**送り手だけを混ぜた**対照(`conn_graph`)。層の大きさと収束の効果を残して配線の特異性だけを消す。
+- `states_participation_ratio(X)` — 状態列 (N, n) の実効次元 PR = (Σλ)² / Σλ²(共分散の固有値、Gao ら 2017)。標本数 N に頭打ちされるので比べるときは N を揃える。
+- `states_layer_dimension(X, labels)` — 層ごとの表(layer / n / participation_ratio / ratio)。
+
+罠: 生の PR は**少数の強い応答(裾の重さ)にも引かれる**。向きだけを比べたいときは各刺激の状態を単位ノルムに揃えてから当てる(PoC は両方を出す)。
 
 ## 真値で確かめてある性質(`tests/test_conngraph.py`)
 

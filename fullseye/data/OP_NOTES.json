@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2047,
- "n_notes": 2053,
+ "n_ops": 2051,
+ "n_notes": 2057,
  "notes": {
   "vol_dilate": [
    {
@@ -14812,6 +14812,46 @@
     "in": "synapse_table",
     "out": "conn_graph",
     "path": "docs/ops/conngraph/construct/graph_from_synapses.md"
+   }
+  ],
+  "graph_block_shuffle": [
+   {
+    "op": "graph_block_shuffle",
+    "dim": "conngraph",
+    "category": "dimension",
+    "in": "conn_graph × labels",
+    "out": "conn_graph",
+    "path": "docs/ops/conngraph/dimension/graph_block_shuffle.md"
+   }
+  ],
+  "graph_layer_propagate": [
+   {
+    "op": "graph_layer_propagate",
+    "dim": "conngraph",
+    "category": "dimension",
+    "in": "conn_graph × labels × matrix",
+    "out": "matrix",
+    "path": "docs/ops/conngraph/dimension/graph_layer_propagate.md"
+   }
+  ],
+  "states_layer_dimension": [
+   {
+    "op": "states_layer_dimension",
+    "dim": "conngraph",
+    "category": "dimension",
+    "in": "matrix × labels",
+    "out": "table",
+    "path": "docs/ops/conngraph/dimension/states_layer_dimension.md"
+   }
+  ],
+  "states_participation_ratio": [
+   {
+    "op": "states_participation_ratio",
+    "dim": "conngraph",
+    "category": "dimension",
+    "in": "matrix",
+    "out": "measurement",
+    "path": "docs/ops/conngraph/dimension/states_participation_ratio.md"
    }
   ],
   "reservoir_encode": [

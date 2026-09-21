@@ -4205,6 +4205,14 @@ A video generator invents plausible motion. The new family `live4d` (14 ops, num
 
 Interpolation (`volseq_interpolate_flow`) was judged by making a series at twice the rate, halving it, refilling it and comparing against the removed frames. When the motion per step is twice the blob size it wins outright (RMSE 0.0016 vs 0.0207 for a linear blend); below about 0.8 sigma per step the blend is as good and the warp's resampling costs a little — both regimes are plotted as they are. Interpolation fills the gaps between measurements; it does not invent what was never seen. Live cells in 3D+t from the Cell Tracking Challenge run through the same path (raw data never committed).
 
+### Motor Quantisation — Where the Command Dimension Collapses Between Brain and Muscle
+
+You do not think about individual muscles when you raise an arm: the tens of thousands of brain states must be folded into **a few commands** somewhere, and in the fly that somewhere is visible in the wiring — MaleCNS v1.0: 32,164 central-brain interneurons → the **narrow neck of 1,314 descending neurons** (DN) → 13,161 nerve-cord interneurons → 708 motor neurons (MN). With four ops added to conngraph (`graph_layer_propagate` / `graph_block_shuffle` / `states_participation_ratio` / `states_layer_dimension`) the subgraph is driven by 400 random sparse stimuli and the effective dimension of each layer's states (participation ratio) is read.
+
+![One stimulus flowing brain (blue) → descending neurons (yellow) → nerve cord (green) → motor neurons (red) over the soma positions](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/03_activity_flow.gif)
+
+With sparse firing it falls **282 > 61 > 8.7 > 2.4**; picking 708 columns of the brain states still gives 249, so the fall is not the layer size. A control that keeps every receiver's input weights but shuffles who sends them leaves the MN at 22 — **the nerve-cord → muscle stage compresses by the specific wiring**, while the neck (DN) matches the control and compresses **by convergence alone**. As an honest breakdown, the raw PR is also pulled by a heavy tail of strong responses, so the direction-only dimension (every response scaled to unit norm) was measured too: real wiring 25 vs control 54. The same formula on Physical AI: joint trajectories of the G1 humanoid's RL walking and running score 2.4–4.1, dance 9, fight 12, and 73 evis muscle activations 6–9 — an order-of-magnitude comparison, not a claim of identity.
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to

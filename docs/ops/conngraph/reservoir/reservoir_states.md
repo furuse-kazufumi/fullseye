@@ -42,7 +42,7 @@ reservoir の状態列: x_{t+1} = (1−leak) x_t + leak · f(Wᵀ x_t + W_in u_t
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[reservoir_encode](reservoir_encode.md) · [ridge_readout](ridge_readout.md) · [ridge_predict](ridge_predict.md) · [graph_activation_latency](../activity/graph_activation_latency.md) · [graph_activity_spread](../activity/graph_activity_spread.md) · [points_activity_video](../activity/points_activity_video.md)
+[reservoir_encode](reservoir_encode.md) · [ridge_readout](ridge_readout.md) · [ridge_predict](ridge_predict.md) · [graph_activation_latency](../activity/graph_activation_latency.md) · [graph_activity_spread](../activity/graph_activity_spread.md) · [points_activity_video](../activity/points_activity_video.md) · [graph_layer_propagate](../dimension/graph_layer_propagate.md) · [states_participation_ratio](../dimension/states_participation_ratio.md)
 
 ## 同カテゴリ(`reservoir`)
 

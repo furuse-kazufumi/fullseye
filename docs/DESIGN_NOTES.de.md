@@ -98,7 +98,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `backends_typed.py`
 
-- **L525** — ★Bis 2026-09-05 wurde ``tools/chain_fuzz`` (nicht mitgeliefert) per sys.path-Manipulation geladen. Im wheel schlug es fehl, und da das build() darunter still [] zurückgab, verschwanden die tb_*-143-ops.
+- **L528** — ★Bis 2026-09-05 wurde ``tools/chain_fuzz`` (nicht mitgeliefert) per sys.path-Manipulation geladen. Im wheel schlug es fehl, und da das build() darunter still [] zurückgab, verschwanden die tb_*-143-ops.
 
 ## `blob2d.py`
 
@@ -120,7 +120,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `conngraph.py`
 
-- **L669** _(ja)_ — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
+- **L671** _(ja)_ — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
 
 ## `deform3d.py`
 
@@ -1625,9 +1625,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `typed_catalog.py`
 
-- **L242** — ★ Der Fall, in dem der Standardwert selbst schwer ist, wird gesondert behandelt —— wir schrieben eine Kostentabelle in den Docstring und beließen ihn in docs/KNOWN_ISSUES.md als "ungelöst". Es hier leichter zu machen dient dazu, die Prüfung zu bestehen, nicht dazu, die Langsamkeit zu verbergen. Das keep von fourier_smooth(points, keep) ist ein Pflichtargument ohne Standardwert. Kann es nicht gebunden werden, wird es für immer als "Argumente nicht zusammensetzbar" übersprungen und erscheint in der Coverage-Tabelle nur als nicht erreicht (bei der ersten Messung am 2026-09-06 fiel von 13 ops nur dieses eine heraus). Oberflächenrauheit. Die Einschränkungen sind 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel-Messung. Der op zur Erzeugung der Messlinie nimmt keine Eingabe, daher braucht jedes Argument einen Hinweis.
-- **L296** — ★ Ohne dies wird surface_params jedes Mal fail-closed abgelehnt, und an der einen Coverage-Zahl sieht es "aufrufbar" aus, während es in Wirklichkeit nie ausgeführt wird.
-- **L484** — ★ **Mache die Normale nicht achsenparallel**. Ist sie achsenparallel, variiert das Distanzfeld nur entlang einer Achse, und das "GIF aus gestapelten Schnitten", das der Abbildungsgenerator erzeugt, kollabiert zu einem einzigen Frame (gemessen 2026-09-08). Bei einer geneigten Normale ändert sich jeder Schnitt. Die Länge hat keine Wirkung (der op normiert), also übergib einen nicht normierten Vektor, um auch diese Spezifikation zu zeigen.
+- **L249** — ★ Der Fall, in dem der Standardwert selbst schwer ist, wird gesondert behandelt —— wir schrieben eine Kostentabelle in den Docstring und beließen ihn in docs/KNOWN_ISSUES.md als "ungelöst". Es hier leichter zu machen dient dazu, die Prüfung zu bestehen, nicht dazu, die Langsamkeit zu verbergen. Das keep von fourier_smooth(points, keep) ist ein Pflichtargument ohne Standardwert. Kann es nicht gebunden werden, wird es für immer als "Argumente nicht zusammensetzbar" übersprungen und erscheint in der Coverage-Tabelle nur als nicht erreicht (bei der ersten Messung am 2026-09-06 fiel von 13 ops nur dieses eine heraus). Oberflächenrauheit. Die Einschränkungen sind 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel-Messung. Der op zur Erzeugung der Messlinie nimmt keine Eingabe, daher braucht jedes Argument einen Hinweis.
+- **L303** — ★ Ohne dies wird surface_params jedes Mal fail-closed abgelehnt, und an der einen Coverage-Zahl sieht es "aufrufbar" aus, während es in Wirklichkeit nie ausgeführt wird.
+- **L491** — ★ **Mache die Normale nicht achsenparallel**. Ist sie achsenparallel, variiert das Distanzfeld nur entlang einer Achse, und das "GIF aus gestapelten Schnitten", das der Abbildungsgenerator erzeugt, kollabiert zu einem einzigen Frame (gemessen 2026-09-08). Bei einer geneigten Normale ändert sich jeder Schnitt. Die Länge hat keine Wirkung (der op normiert), also übergib einen nicht normierten Vektor, um auch diese Spezifikation zu zeigen.
 
 ## `unified.py`
 

@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_layer_propagate — CONNGRAPH <code style="color:#22d3bf">dimension</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">conn_graph × labels × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_layer_propagate(W: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, U: &#x27;Any&#x27;, activation: &#x27;str&#x27; = &#x27;kwta&#x27;, active_frac: &#x27;float&#x27; = 0.1, gain: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.graph_layer_propagate(W: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, U: &#x27;Any&#x27;, activation: &#x27;str&#x27; = &#x27;kwta&#x27;, active_frac: &#x27;float&#x27; = 0.1, gain: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;graph_layer_propagate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>層 0 の状態 `<code style="color:#22d3bf">U</code><code style="color:#22d3bf"> (N, n_0) を、ブロック </code><code style="color:#22d3bf">W[layer a → layer a+1]</code>` で<b>前向きに一段ずつ</b>通した全層の状態</p>
+<p>`<code style="color:#22d3bf">(N, n)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">matrix</code><code style="color:#22d3bf">、列はノード順で層 0 の列は </code><code style="color:#22d3bf">U</code>` そのもの)。</p>
+<p>受け手ごとに入力重みの和を 1 に正規化してから重みつき和を取り(層の大きさに依らない)、`<code style="color:#22d3bf">activation</code>` で</p>
+<p>活性化する: `<code style="color:#22d3bf">&quot;linear&quot;</code><code style="color:#22d3bf"> はそのまま(平均絶対値を </code><code style="color:#22d3bf">gain</code><code style="color:#22d3bf"> に)、</code><code style="color:#22d3bf">&quot;tanh&quot;</code><code style="color:#22d3bf"> は飽和、</code><code style="color:#22d3bf">&quot;kwta&quot;</code>` は各刺激で</p>
+<p>入力が上位 `<code style="color:#22d3bf">active_frac</code>` の受け手だけが(閾値上の余剰で)発火し、平均が 1 になるよう正規化する。</p>
+<p>層をまたぐ結線(層 a → a+2)と層内の再帰は<b>使わない</b>(前向きの一段ごとの写像だけを見る道具)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">Leitfaden zur Familie conngraph</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_connectome_motor_bottleneck">poc_connectome_motor_bottleneck</a> — <code style="color:#22d3bf">py -3.11 examples/poc_connectome_motor_bottleneck.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">matrix</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:reservoir_states">reservoir_states</a> · <a style="color:#22d3bf" href="opconngraph:reservoir_encode">reservoir_encode</a> · <a style="color:#22d3bf" href="opconngraph:ridge_readout">ridge_readout</a> · <a style="color:#22d3bf" href="opconngraph:ridge_predict">ridge_predict</a> · <a style="color:#22d3bf" href="opconngraph:graph_activation_latency">graph_activation_latency</a> · <a style="color:#22d3bf" href="opconngraph:graph_activity_spread">graph_activity_spread</a> · <a style="color:#22d3bf" href="opconngraph:points_activity_video">points_activity_video</a> · <a style="color:#22d3bf" href="opconngraph:states_participation_ratio">states_participation_ratio</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">dimension</code>)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:graph_block_shuffle">graph_block_shuffle</a> · <a style="color:#22d3bf" href="opconngraph:states_participation_ratio">states_participation_ratio</a> · <a style="color:#22d3bf" href="opconngraph:states_layer_dimension">states_layer_dimension</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: conngraph.py — CONNGRAPH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

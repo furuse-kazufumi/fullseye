@@ -40,7 +40,7 @@ linear・leak 1・steps 1 なら X W_inᵀ、steps 2 なら (X W_inᵀ) W + X W_
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[reservoir_states](reservoir_states.md) · [ridge_readout](ridge_readout.md) · [ridge_predict](ridge_predict.md) · [graph_activation_latency](../activity/graph_activation_latency.md) · [graph_activity_spread](../activity/graph_activity_spread.md) · [points_activity_video](../activity/points_activity_video.md)
+[reservoir_states](reservoir_states.md) · [ridge_readout](ridge_readout.md) · [ridge_predict](ridge_predict.md) · [graph_activation_latency](../activity/graph_activation_latency.md) · [graph_activity_spread](../activity/graph_activity_spread.md) · [points_activity_video](../activity/points_activity_video.md) · [graph_layer_propagate](../dimension/graph_layer_propagate.md) · [states_participation_ratio](../dimension/states_participation_ratio.md)
 
 ## 同カテゴリ(`reservoir`)
 
