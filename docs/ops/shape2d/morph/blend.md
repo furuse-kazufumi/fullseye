@@ -4,7 +4,7 @@ dim: shape2d
 category: morph
 in: image2d × image2d
 out: image2d
-examples: [image_morph]
+examples: [image_morph, poc_live4d]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -45,6 +45,7 @@ version: 0.2.1  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [image_morph](../../../../examples/image_morph.py) — `py -3.11 examples/image_morph.py`
+- [poc_live4d](../../../../examples/poc_live4d.py) — `py -3.11 examples/poc_live4d.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

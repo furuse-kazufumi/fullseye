@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2033,
- "n_notes": 2039,
+ "n_ops": 2047,
+ "n_notes": 2053,
  "notes": {
   "vol_dilate": [
    {
@@ -16417,6 +16417,144 @@
     "in": "lightfield",
     "out": "images",
     "path": "docs/ops/lightfield/views/lf_views.md"
+   }
+  ],
+  "vol_flow_3d": [
+   {
+    "op": "vol_flow_3d",
+    "dim": "live4d",
+    "category": "flow",
+    "in": "voxel × voxel",
+    "out": "flow_dense",
+    "path": "docs/ops/live4d/flow/vol_flow_3d.md"
+   }
+  ],
+  "volseq_pathline_orbit": [
+   {
+    "op": "volseq_pathline_orbit",
+    "dim": "live4d",
+    "category": "flow",
+    "in": "volseq",
+    "out": "rgbvideo",
+    "path": "docs/ops/live4d/flow/volseq_pathline_orbit.md"
+   }
+  ],
+  "volseq_pathline_render": [
+   {
+    "op": "volseq_pathline_render",
+    "dim": "live4d",
+    "category": "flow",
+    "in": "volseq",
+    "out": "rgb",
+    "path": "docs/ops/live4d/flow/volseq_pathline_render.md"
+   }
+  ],
+  "volseq_speed": [
+   {
+    "op": "volseq_speed",
+    "dim": "live4d",
+    "category": "flow",
+    "in": "volseq",
+    "out": "volseq",
+    "path": "docs/ops/live4d/flow/volseq_speed.md"
+   }
+  ],
+  "focus_sweep_height_video": [
+   {
+    "op": "focus_sweep_height_video",
+    "dim": "live4d",
+    "category": "render",
+    "in": "volseq",
+    "out": "video",
+    "path": "docs/ops/live4d/render/focus_sweep_height_video.md"
+   }
+  ],
+  "focus_sweep_surface_video": [
+   {
+    "op": "focus_sweep_surface_video",
+    "dim": "live4d",
+    "category": "render",
+    "in": "volseq",
+    "out": "rgbvideo",
+    "path": "docs/ops/live4d/render/focus_sweep_surface_video.md"
+   }
+  ],
+  "volseq_render_orbit": [
+   {
+    "op": "volseq_render_orbit",
+    "dim": "live4d",
+    "category": "render",
+    "in": "volseq",
+    "out": "rgbvideo",
+    "path": "docs/ops/live4d/render/volseq_render_orbit.md"
+   }
+  ],
+  "volseq_cut_video": [
+   {
+    "op": "volseq_cut_video",
+    "dim": "live4d",
+    "category": "series",
+    "in": "volseq",
+    "out": "video",
+    "path": "docs/ops/live4d/series/volseq_cut_video.md"
+   }
+  ],
+  "volseq_mip_video": [
+   {
+    "op": "volseq_mip_video",
+    "dim": "live4d",
+    "category": "series",
+    "in": "volseq",
+    "out": "video",
+    "path": "docs/ops/live4d/series/volseq_mip_video.md"
+   }
+  ],
+  "volseq_synth_beating": [
+   {
+    "op": "volseq_synth_beating",
+    "dim": "live4d",
+    "category": "synth",
+    "out": "volseq",
+    "path": "docs/ops/live4d/synth/volseq_synth_beating.md"
+   }
+  ],
+  "volseq_synth_dividing": [
+   {
+    "op": "volseq_synth_dividing",
+    "dim": "live4d",
+    "category": "synth",
+    "out": "volseq",
+    "path": "docs/ops/live4d/synth/volseq_synth_dividing.md"
+   }
+  ],
+  "video_interpolate_flow": [
+   {
+    "op": "video_interpolate_flow",
+    "dim": "live4d",
+    "category": "time",
+    "in": "video",
+    "out": "video",
+    "path": "docs/ops/live4d/time/video_interpolate_flow.md"
+   }
+  ],
+  "volseq_interpolate_flow": [
+   {
+    "op": "volseq_interpolate_flow",
+    "dim": "live4d",
+    "category": "time",
+    "in": "volseq",
+    "out": "volseq",
+    "path": "docs/ops/live4d/time/volseq_interpolate_flow.md"
+   }
+  ],
+  "volseq_magnify_motion": [
+   {
+    "op": "volseq_magnify_motion",
+    "dim": "live4d",
+    "category": "time",
+    "in": "volseq",
+    "out": "volseq",
+    "path": "docs/ops/live4d/time/volseq_magnify_motion.md"
    }
   ],
   "cplx_argument_principle": [

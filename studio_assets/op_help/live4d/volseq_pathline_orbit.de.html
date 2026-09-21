@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">volseq_pathline_orbit — LIVE4D <code style="color:#22d3bf">flow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">volseq</code> → <code style="color:#22d3bf">rgbvideo</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_pathline_orbit(volseq, n_frames: &#x27;int&#x27; = 36, n_seeds: &#x27;int&#x27; = 200, pitch: &#x27;float&#x27; = 25.0, size: &#x27;int&#x27; = 256, yaw_start: &#x27;float&#x27; = 0.0, yaw_span: &#x27;float&#x27; = 360.0, static_alpha: &#x27;float&#x27; = 0.03, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001, seed: &#x27;int&#x27; = 0, trail_sigma: &#x27;float&#x27; = 0.7, min_speed: &#x27;float&#x27; = 0.1, min_intensity: &#x27;float&#x27; = 0.3) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import live4d; live4d.volseq_pathline_orbit(volseq, n_frames: &#x27;int&#x27; = 36, n_seeds: &#x27;int&#x27; = 200, pitch: &#x27;float&#x27; = 25.0, size: &#x27;int&#x27; = 256, yaw_start: &#x27;float&#x27; = 0.0, yaw_span: &#x27;float&#x27; = 360.0, static_alpha: &#x27;float&#x27; = 0.03, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001, seed: &#x27;int&#x27; = 0, trail_sigma: &#x27;float&#x27; = 0.7, min_speed: &#x27;float&#x27; = 0.1, min_intensity: &#x27;float&#x27; = 0.3) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opslive4d.get(&quot;volseq_pathline_orbit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>`<code style="color:#22d3bf">volseq_pathline_render</code><code style="color:#22d3bf"> の軌跡の立体を回して見る </code><code style="color:#22d3bf">(n_frames, size, size, 3)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">rgbvideo</code>`)。</p>
+<p>流れと軌跡は 1 回だけ計算し、視点だけを `<code style="color:#22d3bf">yaw_start</code><code style="color:#22d3bf"> から </code><code style="color:#22d3bf">yaw_span</code><code style="color:#22d3bf"> 度ぶん回す。</code><code style="color:#22d3bf">video_write_gif</code>` で</p>
+<p>そのまま GIF に書ける。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">Leitfaden zur Familie live4d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_live4d">poc_live4d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_live4d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">rgbvideo</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">flow</code>)</h3>
+<p><a style="color:#22d3bf" href="oplive4d:vol_flow_3d">vol_flow_3d</a> · <a style="color:#22d3bf" href="oplive4d:volseq_speed">volseq_speed</a> · <a style="color:#22d3bf" href="oplive4d:volseq_pathline_render">volseq_pathline_render</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: live4d.py — LIVE4D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

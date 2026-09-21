@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_flow_3d — LIVE4D <code style="color:#22d3bf">flow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">flow_dense</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_flow_3d(vol_a, vol_b, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import live4d; live4d.vol_flow_3d(vol_a, vol_b, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opslive4d.get(&quot;vol_flow_3d&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>2 つの体積の間の密な変位場 `<code style="color:#22d3bf">(3, Z, Y, X)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">flow_dense</code>`、成分 dz, dy, dx [voxel])。</p>
+<p>`<code style="color:#22d3bf">vol_b(x) ≈ vol_a(x − d)</code><code style="color:#22d3bf">、つまり </code><code style="color:#22d3bf">vol_a</code><code style="color:#22d3bf"> の構造が </code><code style="color:#22d3bf">+d</code><code style="color:#22d3bf"> 動いて </code><code style="color:#22d3bf">vol_b</code>` になる(torch 版</p>
+<p>`<code style="color:#22d3bf">scene_flow_lk</code><code style="color:#22d3bf"> と同じ約束)。Lucas–Kanade の 3 次元版を numpy + scipy だけで: </code><code style="color:#22d3bf">win</code>` は窓の半幅</p>
+<p>(窓は一辺 2·win + 1)、`<code style="color:#22d3bf">pyr_levels</code><code style="color:#22d3bf"> はピラミッド段数(大変位ほど増やす、各段 1/2)、</code><code style="color:#22d3bf">iters</code>` は各段の</p>
+<p>warp 反復、`<code style="color:#22d3bf">reg</code>` は構造テンソル対角の正則化(平坦部の 0 除算回避。大きいほど平坦部の流れが 0 に寄る)。</p>
+<p>テクスチャの無い平坦部では流れは決まらない(開口問題)—— 信じるのは勾配のある場所だけ。</p>
+<p>&gt;&gt;&gt; a = volseq_synth_dividing((16, 24, 24), n_frames=4, split_frame=0, speed=1.0)</p>
+<p>&gt;&gt;&gt; d = vol_flow_3d(a[1], a[2]); d.shape</p>
+<p>(3, 16, 24, 24)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">Leitfaden zur Familie live4d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_live4d">poc_live4d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_live4d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">flow_dense</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">flow</code>)</h3>
+<p><a style="color:#22d3bf" href="oplive4d:volseq_speed">volseq_speed</a> · <a style="color:#22d3bf" href="oplive4d:volseq_pathline_render">volseq_pathline_render</a> · <a style="color:#22d3bf" href="oplive4d:volseq_pathline_orbit">volseq_pathline_orbit</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: live4d.py — LIVE4D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

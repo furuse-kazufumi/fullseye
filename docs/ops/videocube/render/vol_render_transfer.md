@@ -13,14 +13,17 @@ version: 0.2.1  # fullseye lib version this note was generated for
 # vol_render_transfer — VIDEOCUBE `render` op
 
 - **データ種**: `voxel` → `rgb`
-- **呼び出し**: `import fullseye as fs; fs.ledger.vol_render_transfer(vol, color=None, yaw: 'float' = 35.0, pitch: 'float' = 25.0, size: 'int' = 256, alpha_gain: 'float' = 1.0, static_alpha: 'float' = 0.0, background=(0.04, 0.04, 0.06), frame: 'bool' = True, depth_samples: 'int | None' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import videocube; videocube.vol_render_transfer(vol, color=None, yaw: 'float' = 35.0, pitch: 'float' = 25.0, size: 'int' = 256, alpha_gain: 'float' = 1.0, static_alpha: 'float' = 0.0, background=(0.04, 0.04, 0.06), frame: 'bool' = True, depth_samples: 'int | None' = None) -> 'np.ndarray'`、台帳から引くなら `opsvideocube.get("vol_render_transfer")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_render_transfer(vol, color=None, yaw: 'float' = 35.0, pitch: 'float' = 25.0, size: 'int' = 256, alpha_gain: 'float' = 1.0, static_alpha: 'float' = 0.0, background=(0.04, 0.04, 0.06), frame: 'bool' = True, depth_samples: 'int | None' = None, static_color=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import videocube; videocube.vol_render_transfer(vol, color=None, yaw: 'float' = 35.0, pitch: 'float' = 25.0, size: 'int' = 256, alpha_gain: 'float' = 1.0, static_alpha: 'float' = 0.0, background=(0.04, 0.04, 0.06), frame: 'bool' = True, depth_samples: 'int | None' = None, static_color=None) -> 'np.ndarray'`、台帳から引くなら `opsvideocube.get("vol_render_transfer")`)
 
 ## 使い方
 
 立方体を任意の視点から**前から後ろへの α 合成**で描く ``(size, size, 3)`` float [0, 1] (``rgb``)。
 
 ``vol`` (T, H, W) は不透明度 [0, 1] (``video_spacetime_cube(mode="motion")``)。色は ``color`` を渡せば
-その値(同じ形、[0, 1] に正規化される)のグレー、渡さなければ**時刻の色**(青 = 始め → 赤 = 終わり)。
+その値(同じ形、[0, 1] に正規化される)のグレー、``(T, H, W, 3)`` の RGB 立方体([0, 1])ならその色、
+渡さなければ**時刻の色**(青 = 始め → 赤 = 終わり)。``static_color``(同じ形のグレー)を渡すと
+静止した背景の明るさをそれにする(2026-09-21、live4d の軌跡描画が「軌跡は時刻の色・背景は最初の
+フレームの灰」を 1 回の合成で描くために)。
 軌跡を時刻で塗ると「どちらへ動いたか」が 1 枚で読める。``static_alpha`` > 0 なら静止した背景(``color`` の
 明るさ、無ければ灰)を薄く重ねる —— 値は**立方体の最長辺の長さを貫いたときの合計の不透明度**(0.15 なら
 最長辺ぶん奥まで見て 15 %、短い辺の向きならそれより薄い)で、サンプル数には依らない(Summagator の「静的な内容」)。正射影、視線に沿って ``depth_samples`` 点

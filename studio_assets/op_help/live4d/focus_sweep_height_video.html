@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">focus_sweep_height_video — LIVE4D <code style="color:#22d3bf">render</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">volseq</code> → <code style="color:#22d3bf">video</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.focus_sweep_height_video(volseq, window: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import live4d; live4d.focus_sweep_height_video(volseq, window: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opslive4d.get(&quot;focus_sweep_height_video&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>焦点掃引(各フレームが z の合焦スタック)の時系列から<b>高さ場の動画</b> `<code style="color:#22d3bf">(T, Y, X)</code><code style="color:#22d3bf"> を起こす(</code><code style="color:#22d3bf">video</code>`、</p>
+<p>単位は z の枚数)。</p>
+<p>合焦度は局所ラプラシアン絶対値の平均(`<code style="color:#22d3bf">window</code>`、Sum-Modified-Laplacian)、各画素の高さは合焦度が</p>
+<p>最大の z を放物線で副ボクセル精度にしたもの(`<code style="color:#22d3bf">depth_from_focus</code>` の時系列版)。数値が欲しいときはこちら、</p>
+<p>絵が欲しいときは `<code style="color:#22d3bf">focus_sweep_surface_video</code>`。テクスチャの無い画素は合焦度が平らで高さが決まらない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_live4d">poc_live4d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_live4d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">video</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="oplive4d:video_interpolate_flow">video_interpolate_flow</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">render</code>)</h3>
+<p><a style="color:#22d3bf" href="oplive4d:volseq_render_orbit">volseq_render_orbit</a> · <a style="color:#22d3bf" href="oplive4d:focus_sweep_surface_video">focus_sweep_surface_video</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: live4d.py — LIVE4D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

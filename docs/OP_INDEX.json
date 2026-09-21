@@ -1,8 +1,8 @@
 {
- "n_ops": 2033,
+ "n_ops": 2047,
  "tiers": {
   "color": 12,
-  "ledger": 1085,
+  "ledger": 1099,
   "nary": 17,
   "registry": 919
  },
@@ -99,6 +99,7 @@
   "transport_plan",
   "vector",
   "video",
+  "volseq",
   "volume",
   "voxel",
   "zscan"
@@ -4520,6 +4521,32 @@
    "dim": "rangedoppler",
    "in_sorts": [
     "beatcube"
+   ]
+  },
+  {
+   "name": "focus_sweep_height_video",
+   "halcon": "",
+   "in_sort": "volseq",
+   "out_sort": "video",
+   "category": "render",
+   "tier": "ledger",
+   "ledger": "opslive4d",
+   "dim": "live4d",
+   "in_sorts": [
+    "volseq"
+   ]
+  },
+  {
+   "name": "focus_sweep_surface_video",
+   "halcon": "",
+   "in_sort": "volseq",
+   "out_sort": "rgbvideo",
+   "category": "render",
+   "tier": "ledger",
+   "ledger": "opslive4d",
+   "dim": "live4d",
+   "in_sorts": [
+    "volseq"
    ]
   },
   {
@@ -13267,6 +13294,19 @@
    ]
   },
   {
+   "name": "video_interpolate_flow",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "video",
+   "category": "time",
+   "tier": "ledger",
+   "ledger": "opslive4d",
+   "dim": "live4d",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
    "name": "video_spacetime_cube",
    "halcon": "",
    "in_sort": "video",
@@ -13525,6 +13565,20 @@
    "ledger": "ops3d",
    "dim": "3d",
    "in_sorts": [
+    "voxel"
+   ]
+  },
+  {
+   "name": "vol_flow_3d",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "flow_dense",
+   "category": "flow",
+   "tier": "ledger",
+   "ledger": "opslive4d",
+   "dim": "live4d",
+   "in_sorts": [
+    "voxel",
     "voxel"
    ]
   },
@@ -14103,6 +14157,132 @@
    "in_sorts": [
     "voxel"
    ]
+  },
+  {
+   "name": "volseq_cut_video",
+   "halcon": "",
+   "in_sort": "volseq",
+   "out_sort": "video",
+   "category": "series",
+   "tier": "ledger",
+   "ledger": "opslive4d",
+   "dim": "live4d",
+   "in_sorts": [
+    "volseq"
+   ]
+  },
+  {
+   "name": "volseq_interpolate_flow",
+   "halcon": "",
+   "in_sort": "volseq",
+   "out_sort": "volseq",
+   "category": "time",
+   "tier": "ledger",
+   "ledger": "opslive4d",
+   "dim": "live4d",
+   "in_sorts": [
+    "volseq"
+   ]
+  },
+  {
+   "name": "volseq_magnify_motion",
+   "halcon": "",
+   "in_sort": "volseq",
+   "out_sort": "volseq",
+   "category": "time",
+   "tier": "ledger",
+   "ledger": "opslive4d",
+   "dim": "live4d",
+   "in_sorts": [
+    "volseq"
+   ]
+  },
+  {
+   "name": "volseq_mip_video",
+   "halcon": "",
+   "in_sort": "volseq",
+   "out_sort": "video",
+   "category": "series",
+   "tier": "ledger",
+   "ledger": "opslive4d",
+   "dim": "live4d",
+   "in_sorts": [
+    "volseq"
+   ]
+  },
+  {
+   "name": "volseq_pathline_orbit",
+   "halcon": "",
+   "in_sort": "volseq",
+   "out_sort": "rgbvideo",
+   "category": "flow",
+   "tier": "ledger",
+   "ledger": "opslive4d",
+   "dim": "live4d",
+   "in_sorts": [
+    "volseq"
+   ]
+  },
+  {
+   "name": "volseq_pathline_render",
+   "halcon": "",
+   "in_sort": "volseq",
+   "out_sort": "rgb",
+   "category": "flow",
+   "tier": "ledger",
+   "ledger": "opslive4d",
+   "dim": "live4d",
+   "in_sorts": [
+    "volseq"
+   ]
+  },
+  {
+   "name": "volseq_render_orbit",
+   "halcon": "",
+   "in_sort": "volseq",
+   "out_sort": "rgbvideo",
+   "category": "render",
+   "tier": "ledger",
+   "ledger": "opslive4d",
+   "dim": "live4d",
+   "in_sorts": [
+    "volseq"
+   ]
+  },
+  {
+   "name": "volseq_speed",
+   "halcon": "",
+   "in_sort": "volseq",
+   "out_sort": "volseq",
+   "category": "flow",
+   "tier": "ledger",
+   "ledger": "opslive4d",
+   "dim": "live4d",
+   "in_sorts": [
+    "volseq"
+   ]
+  },
+  {
+   "name": "volseq_synth_beating",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "volseq",
+   "category": "synth",
+   "tier": "ledger",
+   "ledger": "opslive4d",
+   "dim": "live4d",
+   "in_sorts": []
+  },
+  {
+   "name": "volseq_synth_dividing",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "volseq",
+   "category": "synth",
+   "tier": "ledger",
+   "ledger": "opslive4d",
+   "dim": "live4d",
+   "in_sorts": []
   },
   {
    "name": "volume_downsample",

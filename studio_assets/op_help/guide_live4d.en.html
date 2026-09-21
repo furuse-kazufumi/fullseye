@@ -1,0 +1,61 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">This guide is available in Japanese only (it is human-written prose, so nothing here is machine-substituted).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">生きている組織の 3D+t を古典手法だけで「短い 3D 動画像」にする — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>動画生成 AI は「もっともらしい動き」を発明します。この族は内容を発明しない代わりに、<b>実在する動きを見える形にする</b> 4 つの道を numpy + scipy だけで用意します。どれも説明可能で、真値つきの合成系列(この族が自分で作る)で数値検証できます。</p>
+<p style="margin:2px 0 2px 12px">• <b>増幅</b> — 目に見えない微小な動き(半径 0.1 voxel の拍動)を α 倍にする(Eulerian の線形拡大、Wu et al. SIGGRAPH 2012 の 3 次元版)。</p>
+<p style="margin:2px 0 2px 12px">• <b>流れ</b> — 体積と体積の間の密な変位場(3 次元 Lucas–Kanade)。粒子を流して<b>軌跡を時刻の色</b>で 1 枚の立体にする。</p>
+<p style="margin:2px 0 2px 12px">• <b>補間</b> — 短い実測(ライトシートの z-stack は時間方向が粗い)の間を、前後の流れで合成した中間フレームで埋める。遮蔽は往復の一致で検出。</p>
+<p style="margin:2px 0 2px 12px">• <b>高さ場</b> — 焦点掃引の時系列から、合焦度の最大(放物線で副ボクセル)で高さ場の動画を起こす。</p>
+<p>14 op / 5 カテゴリ(台帳は <code style="color:#22d3bf">opslive4d.py</code>、実体は <code style="color:#22d3bf">live4d.py</code>)。型は 1 語だけ足します: <code style="color:#22d3bf">volseq</code> = 体積の時系列 <code style="color:#22d3bf">(T, Z, Y, X)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>synth(2)</b> — <code style="color:#22d3bf">volseq_synth_beating</code>(既知の半径則で拍動する殻)/ <code style="color:#22d3bf">volseq_synth_dividing</code>(既知の速さで分かれる塊)。真値つきの入力、テストと PoC とファザーの種。</p>
+<p style="margin:2px 0 2px 12px">• <b>series(2)</b> — <code style="color:#22d3bf">volseq_mip_video</code>(最大値投影で <code style="color:#22d3bf">video</code> に)/ <code style="color:#22d3bf">volseq_cut_video</code>(1 断面で <code style="color:#22d3bf">video</code> に)。ここから先は videocube(空間 × 時間の立方体)や <code style="color:#22d3bf">motion_magnify</code> にそのまま流れる。</p>
+<p style="margin:2px 0 2px 12px">• <b>flow(4)</b> — <code style="color:#22d3bf">vol_flow_3d</code>(2 体積の変位場 <code style="color:#22d3bf">flow_dense</code>、torch 版 <code style="color:#22d3bf">scene_flow_lk</code> の numpy 対応物)/ <code style="color:#22d3bf">volseq_speed</code>(隣り合うフレーム間の速さ)/ <code style="color:#22d3bf">volseq_pathline_render</code>(軌跡の立体 <code style="color:#22d3bf">rgb</code>)/ <code style="color:#22d3bf">volseq_pathline_orbit</code>(それを回す <code style="color:#22d3bf">rgbvideo</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <b>time(3)</b> — <code style="color:#22d3bf">video_interpolate_flow</code> / <code style="color:#22d3bf">volseq_interpolate_flow</code>(流れで中間フレーム)/ <code style="color:#22d3bf">volseq_magnify_motion</code>(帯域内の動きを α 倍)。</p>
+<p style="margin:2px 0 2px 12px">• <b>render(3)</b> — <code style="color:#22d3bf">volseq_render_orbit</code>(時間を進めながら回す <code style="color:#22d3bf">rgbvideo</code>、<code style="color:#22d3bf">mode=&quot;speed&quot;</code> で速さの色)/ <code style="color:#22d3bf">focus_sweep_height_video</code>(高さ場 <code style="color:#22d3bf">video</code>)/ <code style="color:#22d3bf">focus_sweep_surface_video</code>(陰影つきの高さ場 <code style="color:#22d3bf">rgbvideo</code>)。</p>
+<p>回した動画は videocube の <code style="color:#22d3bf">video_write_gif</code> でそのまま GIF になります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">連鎖</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    S[volseq_synth_beating / dividing] --&gt; M[volseq_magnify_motion]
+    R[実測の z-stack 時系列 volseq] --&gt; M
+    R --&gt; I[volseq_interpolate_flow]
+    M --&gt; O[volseq_render_orbit]
+    I --&gt; O
+    R --&gt; F[vol_flow_3d] --&gt; P[volseq_pathline_render / orbit]
+    R --&gt; V[volseq_mip_video] --&gt; C[video_spacetime_cube / motion_magnify]
+    Fo[焦点掃引の時系列] --&gt; H[focus_sweep_height_video] --&gt; Sf[focus_sweep_surface_video]
+    O --&gt; G[video_write_gif]
+    P --&gt; G
+    Sf --&gt; G</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">最短の使い方</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
+L = fs.ledger
+
+# 真値つきの合成: 半径が 0.1 voxel だけ拍動する殻(目には見えない)
+shell = L.volseq_synth_beating((28, 40, 40), n_frames=24, period=8.0, amplitude=0.1, radius=8.4)
+
+# 帯域 [0.06, 0.19] Hz(fps = 1 なら周期 8 の基本波を含み倍音を含まない)の動きを 8 倍に
+big = L.volseq_magnify_motion(shell, alpha=8.0, f_lo=0.5 / 8, f_hi=1.5 / 8, fps=1.0, sigma=0.0)
+
+# 時間を進めながら回して GIF に(1 周で 2 拍)
+frames = L.volseq_render_orbit(big, n_frames=36, loops=2, size=256)
+L.video_write_gif(frames, &quot;beating.gif&quot;, fps=8.0)
+
+# 分かれる塊の流れと軌跡
+div = L.volseq_synth_dividing((28, 40, 40), n_frames=24, split_frame=8, speed=0.75)
+d = L.vol_flow_3d(div[20], div[21])          # (3, Z, Y, X)、成分 dz, dy, dx [voxel]
+img = L.volseq_pathline_render(div, n_seeds=400, size=256)   # 軌跡は時刻の色(青 = 始め → 赤 = 終わり)
+
+# 粗い時系列を 2 倍に
+smooth = L.volseq_interpolate_flow(div[::2], factor=2)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">読み方と限界(正直に)</h3>
+<p style="margin:2px 0 2px 12px">• <b>増幅の倍率が成り立つのは小さな動きだけ</b>: 目安は <code style="color:#22d3bf">alpha · δ &lt; λ / 8</code>(λ は空間の波長)。超えると像が壊れます(増幅でなく歪み)。雑音も同じ倍率で増幅されます(SNR は良くならない)。<code style="color:#22d3bf">sigma</code> &gt; 0 で空間を平滑化すると、その尺度より細かい構造の倍率は α より小さくなります(既定 0.5)。</p>
+<p style="margin:2px 0 2px 12px">• <b>流れはテクスチャのある場所でだけ信じる</b>: 平坦部の流れは決まらず(開口問題)、ピラミッドの粗い段の推定がそのまま残ります。速さを読むときは勾配で重みづける(PoC はそうしている)。2 つの塊が重なっている間の流れは曖昧(実測 +18 %)。</p>
+<p style="margin:2px 0 2px 12px">• <b>補間が線形ブレンドに勝つのは、1 コマの動きが対象の大きさ(σ)を越える領域だけ</b>: 実測で約 0.8 σ が分かれ目。小さな動きではブレンドで足り、warp の再標本化が少し損をします。新しく現れる物や追えない大変位は補間できず二重像になります —— 補間は実測の間を埋める道具で、無いものを発明する道具ではありません。</p>
+<p style="margin:2px 0 2px 12px">• <b>高さ場はテクスチャの無い画素で決まらない</b>(合焦度が平ら)。掃引の途中で対象が動くと層の整合が崩れ、その時刻の高さが跳びます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実データ</h3>
+<p>Cell Tracking Challenge の 3D+t(Fluo-N3DH-CHO は training で 98 MB、Fluo-N3DH-CE は線虫胚、Fluo-N3DL-DRO はショウジョウバエ胚のライトシート)を <code style="color:#22d3bf">FULLSEYE_CTC_DIR</code> に置けば、PoC <code style="color:#22d3bf">examples/poc_live4d.py</code> が同じ経路で通します。生データは commit しません。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">videocube</code>(空間 × 時間の立方体、<code style="color:#22d3bf">vol_render_transfer</code> / <code style="color:#22d3bf">video_write_gif</code> を共有)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">motionmag</code>(2D+t の位相ベース動き拡大 <code style="color:#22d3bf">motion_magnify</code> / <code style="color:#22d3bf">riesz_motion_magnify</code>)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">match3d.scene_flow_lk</code>(torch 版の 3 次元シーンフロー)、<code style="color:#22d3bf">reconstruction.depth_from_focus</code>(1 枚ぶんの焦点からの深度)</p>

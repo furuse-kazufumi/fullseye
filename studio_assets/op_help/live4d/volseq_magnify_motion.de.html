@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">volseq_magnify_motion — LIVE4D <code style="color:#22d3bf">time</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">volseq</code> → <code style="color:#22d3bf">volseq</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_magnify_motion(volseq, alpha: &#x27;float&#x27; = 10.0, f_lo: &#x27;float&#x27; = 0.05, f_hi: &#x27;float&#x27; = 0.4, fps: &#x27;float&#x27; = 1.0, sigma: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import live4d; live4d.volseq_magnify_motion(volseq, alpha: &#x27;float&#x27; = 10.0, f_lo: &#x27;float&#x27; = 0.05, f_hi: &#x27;float&#x27; = 0.4, fps: &#x27;float&#x27; = 1.0, sigma: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opslive4d.get(&quot;volseq_magnify_motion&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>体積時系列の<b>帯域内の微小な動きを alpha 倍</b>にする(`<code style="color:#22d3bf">volseq</code>`、Eulerian の線形拡大の 3 次元版)。</p>
+<p>Wu et al.(SIGGRAPH 2012)の線形 Eulerian: 各体積を空間ガウス(`<code style="color:#22d3bf">sigma</code>`)で平滑化した層を、時間方向に</p>
+<p>帯域通過(`<code style="color:#22d3bf">[f_lo, f_hi]</code><code style="color:#22d3bf"> Hz、</code><code style="color:#22d3bf">fps</code><code style="color:#22d3bf"> は体積のフレームレート、FFT の理想帯域)して </code><code style="color:#22d3bf">alpha − 1</code>` 倍を</p>
+<p>元に足し戻す。並進 δ の像 `<code style="color:#22d3bf">I(x − δ(t))</code><code style="color:#22d3bf"> を 1 次で展開すると帯域内の時間変化は </code><code style="color:#22d3bf">−δ · ∇I</code>` なので、</p>
+<p>足し戻した結果の変位は `<code style="color:#22d3bf">alpha · δ</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">alpha</code>` は変位の倍率: 1 で恒等、0 で帯域内の動きを消す)。</p>
+<p>成り立つのは <b>小さな動き</b>だけ —— 目安は `<code style="color:#22d3bf">alpha · δ &lt; λ / 8</code>`(λ は平滑化後の空間波長 ≈ 4·sigma)。</p>
+<p>それを超えると像が壊れる(増幅でなく歪み)。雑音も同じ倍率で増幅される(SNR は良くならない)。</p>
+<p>&gt;&gt;&gt; s = volseq_synth_beating((16, 24, 24), n_frames=24, period=8.0, amplitude=0.1)</p>
+<p>&gt;&gt;&gt; volseq_magnify_motion(s, alpha=8.0, f_lo=0.08, f_hi=0.2, fps=1.0).shape</p>
+<p>(24, 16, 24, 24)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">Leitfaden zur Familie live4d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_live4d">poc_live4d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_live4d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">volseq</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="oplive4d:volseq_mip_video">volseq_mip_video</a> · <a style="color:#22d3bf" href="oplive4d:volseq_cut_video">volseq_cut_video</a> · <a style="color:#22d3bf" href="oplive4d:volseq_speed">volseq_speed</a> · <a style="color:#22d3bf" href="oplive4d:volseq_pathline_render">volseq_pathline_render</a> · <a style="color:#22d3bf" href="oplive4d:volseq_pathline_orbit">volseq_pathline_orbit</a> · <a style="color:#22d3bf" href="oplive4d:volseq_interpolate_flow">volseq_interpolate_flow</a> · <a style="color:#22d3bf" href="oplive4d:volseq_render_orbit">volseq_render_orbit</a> · <a style="color:#22d3bf" href="oplive4d:focus_sweep_height_video">focus_sweep_height_video</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">time</code>)</h3>
+<p><a style="color:#22d3bf" href="oplive4d:video_interpolate_flow">video_interpolate_flow</a> · <a style="color:#22d3bf" href="oplive4d:volseq_interpolate_flow">volseq_interpolate_flow</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: live4d.py — LIVE4D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

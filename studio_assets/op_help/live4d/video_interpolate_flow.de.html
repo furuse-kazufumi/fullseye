@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">video_interpolate_flow — LIVE4D <code style="color:#22d3bf">time</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_interpolate_flow(video, factor: &#x27;int&#x27; = 2, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 3, reg: &#x27;float&#x27; = 0.001, occlusion_tau: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import live4d; live4d.video_interpolate_flow(video, factor: &#x27;int&#x27; = 2, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 3, reg: &#x27;float&#x27; = 0.001, occlusion_tau: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opslive4d.get(&quot;video_interpolate_flow&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>動画 `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> を流れで補間して </code><code style="color:#22d3bf">(T + (T − 1)(factor − 1), H, W)</code><code style="color:#22d3bf"> に(</code><code style="color:#22d3bf">video</code>`、時間の超解像)。</p>
+<p>隣り合うフレーム a, b の間に `<code style="color:#22d3bf">factor − 1</code>` 枚を、前向きの流れ(a → b)と後ろ向きの流れ(b → a)で</p>
+<p>それぞれ引き戻した像の重みつき平均で作る(流れは<b>出力画素の位置で</b>引く近似 —— 場が一様でない所では</p>
+<p>始点で定義された変位を終点で読むずれが出る。厳密には逆写像を解く必要があり、ここではしない)。重みは時刻の近さ × 往復一致(a → b → a で戻る誤差</p>
+<p>`<code style="color:#22d3bf">e</code><code style="color:#22d3bf"> に対し </code><code style="color:#22d3bf">exp(−e / occlusion_tau)</code>`)—— 遮蔽や推定失敗で戻らない場所は、その側の像を信じない。</p>
+<p>大きすぎる変位(ピラミッドで追えない)や新しく現れる物体は補間できず、二重像になる —— 補間は</p>
+<p>「実測の間を埋める」道具で、無いものを発明する道具ではない。真値つきの検証は、2 倍のフレームレートで</p>
+<p>合成 → 半分に間引く → 補間 → 抜いたフレームと比べる(`<code style="color:#22d3bf">examples/poc_live4d.py</code>`)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">Leitfaden zur Familie live4d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">video</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">time</code>)</h3>
+<p><a style="color:#22d3bf" href="oplive4d:volseq_interpolate_flow">volseq_interpolate_flow</a> · <a style="color:#22d3bf" href="oplive4d:volseq_magnify_motion">volseq_magnify_motion</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: live4d.py — LIVE4D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
