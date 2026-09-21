@@ -134,6 +134,16 @@ V3 = fs.points_activity_video(P, X, colors=side_rgb, views=((0, 0), (90, 0), (0,
 
 罠: 生の PR は**少数の強い応答(裾の重さ)にも引かれる**。向きだけを比べたいときは各刺激の状態を単位ノルムに揃えてから当てる(PoC は両方を出す)。
 
+## 実測の活動を配線で説明する(MICrONS、2026-09-21)
+
+配線と活動が**同じニューロンで**揃った MICrONS(マウス視覚野 1 mm³、Ding ら 2025)を、この族の既存 op だけで読む型(PoC `examples/poc_microns_brain_wave.py`)。
+
+- 実測の応答 (T, n) は `points_activity_video(P, X)` にそのまま載る(各細胞を自分の上位 1/4 で 0 → 1 に正規化してから。中央値基準だと定義上いつも半分が点く)。
+- 配線が活動を説明するかは、`graph_from_synapses` → `reservoir_states(W, U, W_in=指示子)` で**実測の pre 応答を入力に**流し、post の状態を実測と比べる。reservoir は 1 ステップで 1 段進むので、post の状態 x[t] は u[t−1] から来る —— **1 コマずらして**比べないと一段のグラフでは相関がほぼ 0 になる。
+- 帰無は `graph_degree_preserving_shuffle`。空間の広がりは `graph_activity_spread` の mean_distance(実配線とシャッフルで同じなら、局所性は候補集合の側にある)。
+
+罠: 校正済みの軸索が少ない(148 本)公開表では post 1 体あたりの入力が 2 本弱で、波は正直に薄い(相関 0.09 vs 対照 0.05)。「配線 > 近接 > 無作為」の順序は出るが、絶対値を配線の説明力と読まないこと。
+
 ## 真値で確かめてある性質(`tests/test_conngraph.py`)
 
 | グラフ | op | 厳密な値 |

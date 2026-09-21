@@ -4,7 +4,7 @@ dim: conngraph
 category: reservoir
 in: conn_graph × matrix
 out: matrix
-examples: [poc_malecns_activity_wave]
+examples: [poc_malecns_activity_wave, poc_microns_brain_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -39,6 +39,7 @@ reservoir の状態列: x_{t+1} = (1−leak) x_t + leak · f(Wᵀ x_t + W_in u_t
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_malecns_activity_wave](../../../../examples/poc_malecns_activity_wave.py) — `py -3.11 examples/poc_malecns_activity_wave.py`
+- [poc_microns_brain_wave](../../../../examples/poc_microns_brain_wave.py) — `py -3.11 examples/poc_microns_brain_wave.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 

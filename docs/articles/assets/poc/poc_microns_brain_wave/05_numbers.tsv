@@ -1,0 +1,10 @@
+quantity	value	bar
+signal corr mean: C / ADP / Same	0.0711 / 0.0446 / 0.0249	C > A > S
+C - ADP vs per-axon shuffle null	0.0265 vs -0.0008 +- 0.0018 (15 sd)	> 5 sd (real)
+axon vs partner-mean corr: C / weighted / ADP / Same	0.239 / 0.243 / 0.180 / 0.118	C > A > S
+axons where C beats ADP / Same	73% / 76%	> 60% (real)
+soma distance (um): C / ADP / Same	295 / 289 / 441	ADP ~ Connected
+wave corr: real / shuffled mean +- sd (n)	0.0851 / 0.0478 +- 0.0021 (20)	real > every shuffle
+wave gain sensitivity: real / shuffled	g0.3 0.085 / 0.048; g3.0 0.085 / 0.048	order kept
+wave mean distance (um): real / shuffled	316 / 316	same (honest)
+inputs per target in the subgraph	1.80	why the wave is faint

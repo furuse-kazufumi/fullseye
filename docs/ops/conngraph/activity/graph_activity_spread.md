@@ -4,7 +4,7 @@ dim: conngraph
 category: activity
 in: matrix × points × labels
 out: table
-examples: [poc_malecns_activity_wave]
+examples: [poc_malecns_activity_wave, poc_microns_brain_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -39,6 +39,7 @@ source_fraction[t] = 活動のうち刺激ノードにある分 Σ_source |x| / 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_malecns_activity_wave](../../../../examples/poc_malecns_activity_wave.py) — `py -3.11 examples/poc_malecns_activity_wave.py`
+- [poc_microns_brain_wave](../../../../examples/poc_microns_brain_wave.py) — `py -3.11 examples/poc_microns_brain_wave.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

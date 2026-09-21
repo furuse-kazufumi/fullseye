@@ -99,6 +99,12 @@ V3 = fs.points_activity_video(P, X, colors=side_rgb, views=((0, 0), (90, 0), (0,
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">states_participation_ratio(X)</code> — 状態列 (N, n) の実効次元 PR = (Σλ)² / Σλ²(共分散の固有値、Gao ら 2017)。標本数 N に頭打ちされるので比べるときは N を揃える。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">states_layer_dimension(X, labels)</code> — 層ごとの表(layer / n / participation_ratio / ratio)。</p>
 <p>罠: 生の PR は<b>少数の強い応答(裾の重さ)にも引かれる</b>。向きだけを比べたいときは各刺激の状態を単位ノルムに揃えてから当てる(PoC は両方を出す)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実測の活動を配線で説明する(MICrONS、2026-09-21)</h3>
+<p>配線と活動が<b>同じニューロンで</b>揃った MICrONS(マウス視覚野 1 mm³、Ding ら 2025)を、この族の既存 op だけで読む型(PoC <code style="color:#22d3bf">examples/poc_microns_brain_wave.py</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 実測の応答 (T, n) は <code style="color:#22d3bf">points_activity_video(P, X)</code> にそのまま載る(各細胞を自分の上位 1/4 で 0 → 1 に正規化してから。中央値基準だと定義上いつも半分が点く)。</p>
+<p style="margin:2px 0 2px 12px">• 配線が活動を説明するかは、<code style="color:#22d3bf">graph_from_synapses</code> → <code style="color:#22d3bf">reservoir_states(W, U, W_in=指示子)</code> で<b>実測の pre 応答を入力に</b>流し、post の状態を実測と比べる。reservoir は 1 ステップで 1 段進むので、post の状態 x[t] は u[t−1] から来る —— <b>1 コマずらして</b>比べないと一段のグラフでは相関がほぼ 0 になる。</p>
+<p style="margin:2px 0 2px 12px">• 帰無は <code style="color:#22d3bf">graph_degree_preserving_shuffle</code>。空間の広がりは <code style="color:#22d3bf">graph_activity_spread</code> の mean_distance(実配線とシャッフルで同じなら、局所性は候補集合の側にある)。</p>
+<p>罠: 校正済みの軸索が少ない(148 本)公開表では post 1 体あたりの入力が 2 本弱で、波は正直に薄い(相関 0.09 vs 対照 0.05)。「配線 &gt; 近接 &gt; 無作為」の順序は出るが、絶対値を配線の説明力と読まないこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">真値で確かめてある性質(<code style="color:#22d3bf">tests/test_conngraph.py</code>)</h3>
 <p>| グラフ | op | 厳密な値 |</p>
 <p>|---|---|---|</p>

@@ -4,7 +4,7 @@ dim: conngraph
 category: construct
 in: conn_graph
 out: conn_graph
-examples: [poc_larval_connectome_reservoir, poc_malecns_activity_wave]
+examples: [poc_larval_connectome_reservoir, poc_malecns_activity_wave, poc_microns_brain_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -39,6 +39,7 @@ version: 0.2.1  # fullseye lib version this note was generated for
 
 - [poc_larval_connectome_reservoir](../../../../examples/poc_larval_connectome_reservoir.py) — `py -3.11 examples/poc_larval_connectome_reservoir.py`
 - [poc_malecns_activity_wave](../../../../examples/poc_malecns_activity_wave.py) — `py -3.11 examples/poc_malecns_activity_wave.py`
+- [poc_microns_brain_wave](../../../../examples/poc_microns_brain_wave.py) — `py -3.11 examples/poc_microns_brain_wave.py`
 
 ## 型が繋がる次の op(`conn_graph` を入力に取れる)
 

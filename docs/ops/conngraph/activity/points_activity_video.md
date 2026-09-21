@@ -4,7 +4,7 @@ dim: conngraph
 category: activity
 in: points × matrix
 out: rgbvideo
-examples: [poc_connectome_motor_bottleneck, poc_em_second_opinion, poc_eye_to_brain, poc_malecns_activity_wave]
+examples: [poc_connectome_motor_bottleneck, poc_em_second_opinion, poc_eye_to_brain, poc_malecns_activity_wave, poc_microns_brain_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -47,6 +47,7 @@ b > 0.5 のノードは一回り大きく明るく塗る。``background`` は (m
 - [poc_em_second_opinion](../../../../examples/poc_em_second_opinion.py) — `py -3.11 examples/poc_em_second_opinion.py`
 - [poc_eye_to_brain](../../../../examples/poc_eye_to_brain.py) — `py -3.11 examples/poc_eye_to_brain.py`
 - [poc_malecns_activity_wave](../../../../examples/poc_malecns_activity_wave.py) — `py -3.11 examples/poc_malecns_activity_wave.py`
+- [poc_microns_brain_wave](../../../../examples/poc_microns_brain_wave.py) — `py -3.11 examples/poc_microns_brain_wave.py`
 
 ## 型が繋がる次の op(`rgbvideo` を入力に取れる)
 

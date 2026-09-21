@@ -374,6 +374,12 @@ EXAMPLES = [
                 "実測: コネクトームは刺激からの平均距離 88 → 230 µm を 17 步かけて伸び、視葉 → 中枢 → 下行の順に点いて 36 步では VNC に届かない。"
                 "shuffle は 3 步で 300 µm に散り遠い 1/4 の 93 % が点く(コネクトーム 0 %)。精度で見えなかった配線の空間構造が動きで見える。"
                 "新 op: reservoir_states(W_in=)、graph_activation_latency、graph_activity_spread、points_activity_video(尺度は全コマで 1 つ、views= で背側・側面・体軸方向の 3 方向を同時に)。生データは commit しない。"},
+    {"id": "poc_microns_brain_wave", "task": "analysis", "data": "real",
+     "name": "MICrONS の脳の波 ―― 1 mm³ の視覚野で、配線は実測の応答をどこまで説明するか",
+     "summary": "同じニューロンの EM 配線と 2 光子応答を持つ MICrONS(Ding ら 2025)の公開表 12,894 体 × 120 コマと 1.69 M 対を、生データを commit せずに読む。"
+                "実測応答を points_activity_video で 1 mm³ の波として回し、like-to-like を再現(結合 0.071 > 触れている 0.045 > 同領域 0.025、軸索ごとの置換帰無で 15 SD)、"
+                "配線は近接以上を足す(相手平均との相関: 結合 0.24 > 触れている 0.18 > 同領域 0.12、対で 73 %)、conngraph の reservoir に実測を流した波は"
+                "次数保存シャッフル 20 本の全部より高い(0.085 vs 0.048)が正直に薄い(標的 1 体に入力 1.8 本、広がりは対照と同じ)。reservoir は 1 段 1 ステップなので post は 1 コマずらして比べる。"},
     {"id": "poc_print_layer_inspection", "task": "inspection", "data": "synthetic",
      "name": "3D プリンタの層検査(形 → 層 → 経路 → 画像 の往復を自分で閉じ、仕込んだ欠陥を数字で捕まえる)",
      "summary": "新族 printpath(11 op、numpy + 標準ライブラリ): G-code の読み書き・体積・時間・層ラスタ、メッシュのスライス(輪郭と層マスク)、"

@@ -1,0 +1,62 @@
+[
+ {
+  "file": "01_brain_wave.gif",
+  "name": "brain_wave",
+  "caption": "the measured brain wave: 12894 neurons at their soma positions in the 1 mm^3 volume, a cell lights when its trial-averaged response to the natural movie is in its own top quartile (scaled from its 75th to its 99th percentile), 120 frames while the volume turns; colours = V1 blue, RL yellow, AL green, LM red; MICrONS functional connectomics v1 (Ding et al. 2025, Nature)",
+  "shape": [
+   320,
+   240,
+   3
+  ],
+  "animated": true,
+  "frames": 120,
+  "frames_written": 120,
+  "fps": 10.0
+ },
+ {
+  "file": "02_like_to_like.png",
+  "name": "like_to_like",
+  "caption": "signal correlation of the in vivo responses: pairs in the same region binned by soma distance (curve), against the means of the connected pairs and of the ADP pairs whose axon and dendrite touch without a synapse; the per-axon permutation null of Connected - ADP has sd 0.0018",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_wiring_vs_proximity.png",
+  "name": "wiring_vs_proximity",
+  "caption": "each axon's response predicted from the mean response of its connected partners (y) versus the same number of touching-but-unconnected partners (x): above the diagonal the wiring beats proximity (73% of axons)",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_wave_on_wiring.gif",
+  "name": "wave_on_wiring",
+  "caption": "the measured responses of the 148 proofread axons (pale yellow) driven through the reservoir of the 4096-node connected subgraph over all somata (grey): a target lights when the drive it receives through its real synapses is in its own top quartile; correlation of the reservoir states with the measured responses 0.085 vs 0.048 for a degree-preserving shuffle",
+  "shape": [
+   320,
+   240,
+   3
+  ],
+  "animated": true,
+  "frames": 60,
+  "frames_written": 60,
+  "fps": 8.0
+ },
+ {
+  "file": "05_numbers.png",
+  "name": "numbers",
+  "caption": "every number, with the bar it had to clear",
+  "shape": [
+   296,
+   723,
+   3
+  ],
+  "csv": "05_numbers.csv",
+  "tsv": "05_numbers.tsv"
+ }
+]

@@ -4221,6 +4221,18 @@ With sparse firing it falls **282 > 61 > 8.7 > 2.4**; picking 708 columns of the
 
 For inspection, `print_layer_defect_map` compares the expected raster from `gcode_layer_image` with the observed image: six planted gaps and six blobs (1–4 mm) are caught with recall 0.96 and zero false positives at a 3 px (0.3 mm) tolerance. A 0.2 mm camera shift drops recall to 0.90 and precision to 0.95 because the tolerance eats the defect edges, so the curve over tolerance is shown as it is.
 
+### The MICrONS Brain Wave — How Much of the Measured Response Does the Wiring Explain in 1 mm^3 of Visual Cortex
+
+MICrONS (about 1 mm^3 of mouse V1 plus higher visual areas) is the rare dataset that holds **both the electron-microscopy wiring and the two-photon activity of the same neurons**. The public tables of Ding et al. 2025 (Nature) — 12,894 neurons with soma position and a 120-frame trial-averaged response to a natural movie, and 1.69 M pairs from 148 proofread axons (connected 8,128 / ADP = axon and dendrite touch without a synapse 287 k / same region 1.40 M) — are read without committing the raw data.
+
+![The measured brain wave: 12,894 somata carrying their responses to the natural movie, a cell lit only when it is in its own top quartile, the 1 mm^3 turning (V1 blue / RL yellow / AL green)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/01_brain_wave.gif)
+
+Like-to-like reproduces: signal correlation is **connected 0.071 > touching 0.045 > same region 0.025**, 15 sd against a permutation null that shuffles the labels within each axon. Touching and connected pairs have the same soma distance (289 vs 295 um), so this is a distance-matched comparison. Wiring adds to proximity: the correlation of each axon's response with the mean response of its partners (a similarity on the same 120 frames, not a held-out prediction) is 0.24 for the connected ones, 0.18 for the same number of touching-but-unconnected ones and 0.12 for the same number of same-region ones, and per axon the connected partners win 73 % of the time.
+
+![Per axon: predicted from its connected partners vs from its touching partners (above the diagonal = wiring wins)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/03_wiring_vs_proximity.png)
+
+The "wave on the wiring" — the 148 measured responses driven through the conngraph reservoir — correlates with the measured target responses one frame later at 0.085, above all 20 degree-preserving shuffles (mean 0.048, max 0.053) and with the same order at 0.3× and 3× gain, but that is an **honestly faint** number: a one-hop graph with 1.8 inputs per target from 148 proofread axons, and the spread of the wave (mean distance from the axons 316 um) equals the control. Spatial locality is already in the candidate set (ADP), not in who gets chosen. One implementation trap: the reservoir advances one hop per step, so the target states must be compared **one frame later** or the correlation is near zero (recorded in the family guide).
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to
