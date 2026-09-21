@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">render_skyline_view — GEOCAM <code style="color:#22d3bf">skyline</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>(要直接呼叫實作,<code style="color:#22d3bf">import geocam; geocam.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>;從台帳取用則 <code style="color:#22d3bf">opsgeocam.get(&quot;render_skyline_view&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>スカイライン table と姿勢から、その向きのカメラが見る<b>空のマスク</b>(H, W)を描く → image2d(0/1)。</p>
+<p>各画素の光線を世界へ回し、その方位のスカイライン仰角より上なら空(1)、下なら地形(0)。</p>
+<p>合成の写真づくり(PoC)と、推定した姿勢を写真に重ねて目で確かめる図に使う。</p>
+<p>`<code style="color:#22d3bf">camera_orientation_from_skyline</code>` の予測と同じ幾何なので、<b>描いて → 抜いて → 当てる</b>の</p>
+<p>往復が閉じる(テストの真値)。</p>
+<p>Args:</p>
+<p>sky_table: `<code style="color:#22d3bf">dem_skyline</code><code style="color:#22d3bf"> の出力(</code><code style="color:#22d3bf">azimuth_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">elevation_deg</code>`)。</p>
+<p>K: (fx, fy, cx, cy)。shape: (H, W)。</p>
+<p>yaw_deg, pitch_deg, roll_deg: 姿勢(モジュール冒頭の規約)。</p>
+<p>Returns:</p>
+<p>image2d (H, W) float {0, 1}: 1 = 空。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading">poc_public_camera_heading</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:sun_pixel_position">sun_pixel_position</a> · <a style="color:#22d3bf" href="opgeocam:skyline_extract">skyline_extract</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">skyline</code>)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:dem_skyline">dem_skyline</a> · <a style="color:#22d3bf" href="opgeocam:skyline_extract">skyline_extract</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: geocam.py — GEOCAM 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

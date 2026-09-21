@@ -1,0 +1,54 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">Dieser Leitfaden liegt nur auf Japanisch vor (es ist von Menschen geschriebene Prosa, hier wird nichts maschinell ersetzt).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">固定カメラの向きを写真から決める(太陽とスカイライン) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>位置は分かっているが向きが分からない固定カメラ</b>(道路・気象・観光の公共カメラ、工場の定点カメラ)の (yaw, pitch, roll) を、<b>写真そのものから、学習なしで</b>決める層です。向きが決まると、写真を地図・DEM・3D 都市に置ける(逆に、向きが無いと置けない —— 公開されているカメラ一覧の多くは位置だけで、向きは道路の増減方向や手校正しかありません)。</p>
+<p>手掛かりは 2 つで、どちらも閉形式に近い:</p>
+<p style="margin:2px 0 2px 12px">• <b>太陽</b>: 太陽の見かけの位置は時刻と場所の関数(NOAA の太陽計算、Meeus 1998)。時刻つきの写真で太陽の画素を 2 点以上拾えば、回転は Wahba 問題の SVD 解(Kabsch 1976)で一意に決まる。先行 = Lalonde・Narasimhan・Efros, IJCV 2010(webcam 22 台で 3° 以内)、Jacobs ら WACV 2008。</p>
+<p style="margin:2px 0 2px 12px">• <b>スカイライン</b>: カメラ位置から DEM で描いた 360° の稜線と、写真から動的計画法(Lie・Lin・Hsu 2005)で抜いた空と地形の境界を照合する。先行 = Baatz・Saurer・Köser・Pollefeys, ECCV 2012(位置未知の大規模版)。この族は<b>位置既知・1 台</b>に絞り、代わりに<b>曖昧さ(yaw の谷が複数)を返す</b>。</p>
+<p>7 op / 3 カテゴリ(numpy + scipy。台帳は <code style="color:#22d3bf">opsgeocam.py</code>、実体は <code style="color:#22d3bf">geocam.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>sun(3)</b> — <code style="color:#22d3bf">sun_position</code> / <code style="color:#22d3bf">sun_pixel_position</code> / <code style="color:#22d3bf">camera_orientation_from_sun</code>: 時刻 → 太陽の方位・仰角(屈折込み)、写真 → 太陽の画素、太陽の画素 ≥ 2 点 → 姿勢。</p>
+<p style="margin:2px 0 2px 12px">• <b>skyline(3)</b> — <code style="color:#22d3bf">dem_skyline</code> / <code style="color:#22d3bf">skyline_extract</code> / <code style="color:#22d3bf">render_skyline_view</code>: DEM の 1 点 × 全方位の地平線仰角、写真 → 列ごとの境界の行、姿勢 → その向きの空のマスク(重ね描き・合成)。</p>
+<p style="margin:2px 0 2px 12px">• <b>orientation(1)</b> — <code style="color:#22d3bf">camera_orientation_from_skyline</code>: 境界 + DEM スカイライン → 姿勢 + yaw の残差曲線 + 曖昧さ。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">規約(ここが姿勢の定義)</h3>
+<p>世界 = ENU(東・北・上)、方位は北 0° 時計回り、仰角は水平 0°。カメラ = OpenCV(右・下・前)、K = (fx, fy, cx, cy)。<b>yaw</b> = 光軸の方位、<b>pitch</b> = 光軸の仰角(上が正)、<b>roll</b> = 光軸まわり(正でカメラが右に傾く)。<code style="color:#22d3bf">R_wc = Rz(−yaw)·Rx(pitch)·Ry(roll)·B</code>。DEM は行 0 が北端。太陽の方位・仰角も同じ規約なので、2 経路の答えはそのまま比べられます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">パイプライン</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    T[時刻 + 緯度経度] --&gt; SP[sun_position]
+    I[写真] --&gt; SPX[sun_pixel_position]
+    SPX --&gt; OS[camera_orientation_from_sun]
+    SP --&gt; OS
+    D[DEM] --&gt; DS[dem_skyline]
+    I --&gt; SE[skyline_extract]
+    DS --&gt; OK[camera_orientation_from_skyline]
+    SE --&gt; OK
+    OK --&gt; RV[render_skyline_view]
+    OS --&gt; RV
+    RV --&gt; OV[写真に重ねて目で確かめる]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">走る例</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye as fs
+
+dem = ...                                   # (H, W) 標高 [m]、行 0 が北端
+K = (280.0, 280.0, 160.0, 120.0)            # fx, fy, cx, cy
+sky = fs.ledger.dem_skyline(dem, 30.0, (150, 150), eye_height=5.0, az_step_deg=0.5)
+rows = fs.ledger.skyline_extract(photo)     # (W,) 列ごとの空と地形の境界の行
+est = fs.ledger.camera_orientation_from_skyline(rows, K, sky)
+print(est[&quot;yaw_deg&quot;], est[&quot;pitch_deg&quot;], est[&quot;roll_deg&quot;], est[&quot;ambiguous&quot;], est[&quot;margin_deg&quot;])
+
+# 同じカメラを太陽で検算(同じ日の朝と夕の 2 枚があれば足りる)
+uv = np.vstack([fs.ledger.sun_pixel_position(morning), fs.ledger.sun_pixel_position(evening)])
+est2 = fs.ledger.camera_orientation_from_sun(uv, [t_morning, t_evening], lat, lon, K)
+sky_mask = fs.ledger.render_skyline_view(sky, K, photo.shape, est[&quot;yaw_deg&quot;], est[&quot;pitch_deg&quot;], est[&quot;roll_deg&quot;])</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">真値で確かめてある性質(tests/test_geocam.py)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sun_position</code>: 春分の正午に仰角 = 90 − |緯度|、夏至の正午に赤道で 90 − 23.44°、方位が東 → 南 → 西と単調、赤緯は ±23.44° 以内。</p>
+<p style="margin:2px 0 2px 12px">• 姿勢の往復: <code style="color:#22d3bf">_rotation</code> → <code style="color:#22d3bf">_pose_from_rotation</code> が 1e−9 で戻る。画面の上の画素は仰角が高く、yaw 90° で光軸は東。</p>
+<p style="margin:2px 0 2px 12px">• <b>描いて → 抜いて → 当てる</b>: 合成 DEM で <code style="color:#22d3bf">render_skyline_view</code> した空のマスクに雑音を足し、<code style="color:#22d3bf">skyline_extract</code> → <code style="color:#22d3bf">camera_orientation_from_skyline</code> で yaw / pitch / roll が 0.1° 以内に戻る。</p>
+<p style="margin:2px 0 2px 12px">• 太陽: 真の姿勢で投影した太陽の画素(0.5 px の雑音)から <code style="color:#22d3bf">camera_orientation_from_sun</code> が 0.05° 以内に戻る。1 点・共線(同じ時刻)は ValueError。</p>
+<p style="margin:2px 0 2px 12px">• 平地の DEM ではスカイラインが全方位で同じ → <code style="color:#22d3bf">ambiguous=True</code>(黙って 1 つを返さない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">罠(honest)</h3>
+<p style="margin:2px 0 2px 12px">• <b>スカイラインは山があってこそ</b>。平地・海・都市の建物(DEM に無い)では谷が複数、margin が小さい。<code style="color:#22d3bf">ambiguous</code> を必ず読む。</p>
+<p style="margin:2px 0 2px 12px">• <b>太陽は写っていてこそ</b>。曇天・夜・太陽が画角外の向きでは <code style="color:#22d3bf">sun_pixel_position</code> が ValueError。太陽より明るい人工光源がある夜景では使えない。</p>
+<p style="margin:2px 0 2px 12px">• DEM の分解能より細かい稜線は描けない(30 m DEM で仰角 ≈ 0.1° の粗さ)。遠い山は地球の丸みと屈折で沈む(<code style="color:#22d3bf">earth_curvature=True</code> が既定)。</p>
+<p style="margin:2px 0 2px 12px">• 内部行列 K は要る(EXIF の焦点距離か、既知の画角から <code style="color:#22d3bf">fx = W / (2 tan(fov/2))</code>)。K の誤りは pitch と roll に化ける。</p>
+<p style="margin:2px 0 2px 12px">• 生の公開カメラ画像は repo に入れない(ライセンスと人物・車両)。この族は幾何だけを扱い、写っているものの認識はしない。</p>

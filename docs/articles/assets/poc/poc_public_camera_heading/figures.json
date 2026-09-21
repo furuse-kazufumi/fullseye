@@ -1,0 +1,58 @@
+[
+ {
+  "file": "01_skyline_lock.png",
+  "name": "skyline_lock",
+  "caption": "the DEM ridge drawn at the estimated yaw / pitch / roll lies on the extracted skyline; errors 0.06 / 0.03 / 0.01 deg",
+  "shape": [
+   772,
+   2920,
+   3
+  ]
+ },
+ {
+  "file": "02_yaw_sweep.gif",
+  "name": "yaw_sweep",
+  "caption": "the DEM ridge (magenta) swept through every yaw over the photograph; the yellow meter is the fit and it peaks where the ridge locks onto the extracted skyline (cyan), at yaw 149.9",
+  "shape": [
+   240,
+   320,
+   3
+  ],
+  "animated": true,
+  "frames": 84,
+  "frames_written": 71,
+  "fps": 8.0
+ },
+ {
+  "file": "03_yaw_profile.png",
+  "name": "yaw_profile",
+  "caption": "the op returns the whole residual curve so that the ambiguity is visible: a runner-up valley at 15 deg is 1.28 deg worse; the flat DEM curve is level",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_sun_track.png",
+  "name": "sun_track",
+  "caption": "the sun's path over the day where it is above the ridge (yellow, projected with the pose estimated from the sun) and the 5 sun discs picked by sun_pixel_position (magenta); two of them are enough",
+  "shape": [
+   240,
+   320,
+   3
+  ]
+ },
+ {
+  "file": "05_numbers.png",
+  "name": "numbers",
+  "caption": "both routes recover the pose to well under a degree and agree with each other; the public-metadata prior is off by ten degrees and the flat-ground case is flagged rather than guessed",
+  "shape": [
+   224,
+   870,
+   3
+  ],
+  "csv": "05_numbers.csv",
+  "tsv": "05_numbers.tsv"
+ }
+]

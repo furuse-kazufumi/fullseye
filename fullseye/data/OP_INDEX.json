@@ -1,8 +1,8 @@
 {
- "n_ops": 2065,
+ "n_ops": 2072,
  "tiers": {
   "color": 12,
-  "ledger": 1117,
+  "ledger": 1124,
   "nary": 17,
   "registry": 919
  },
@@ -1785,6 +1785,34 @@
    ]
   },
   {
+   "name": "camera_orientation_from_skyline",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "orientation",
+   "tier": "ledger",
+   "ledger": "opsgeocam",
+   "dim": "geocam",
+   "in_sorts": [
+    "signal",
+    "table"
+   ]
+  },
+  {
+   "name": "camera_orientation_from_sun",
+   "halcon": "",
+   "in_sort": "keypoints",
+   "out_sort": "table",
+   "category": "sun",
+   "tier": "ledger",
+   "ledger": "opsgeocam",
+   "dim": "geocam",
+   "in_sorts": [
+    "keypoints",
+    "signal"
+   ]
+  },
+  {
    "name": "camera_rays",
    "halcon": "",
    "in_sort": "table",
@@ -3070,6 +3098,19 @@
    "tier": "ledger",
    "ledger": "opsdem",
    "dim": "dem",
+   "in_sorts": [
+    "depth"
+   ]
+  },
+  {
+   "name": "dem_skyline",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "table",
+   "category": "skyline",
+   "tier": "ledger",
+   "ledger": "opsgeocam",
+   "dim": "geocam",
    "in_sorts": [
     "depth"
    ]
@@ -10656,6 +10697,19 @@
    ]
   },
   {
+   "name": "render_skyline_view",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "skyline",
+   "tier": "ledger",
+   "ledger": "opsgeocam",
+   "dim": "geocam",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "render_studio",
    "halcon": "",
    "in_sort": "table",
@@ -12026,6 +12080,19 @@
    ]
   },
   {
+   "name": "skyline_extract",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "signal",
+   "category": "skyline",
+   "tier": "ledger",
+   "ledger": "opsgeocam",
+   "dim": "geocam",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "slab_transmittance",
    "halcon": "",
    "in_sort": "signal",
@@ -12662,6 +12729,32 @@
    "dim": "optics",
    "in_sorts": [
     "normalmap"
+   ]
+  },
+  {
+   "name": "sun_pixel_position",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "keypoints",
+   "category": "sun",
+   "tier": "ledger",
+   "ledger": "opsgeocam",
+   "dim": "geocam",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "sun_position",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "sun",
+   "tier": "ledger",
+   "ledger": "opsgeocam",
+   "dim": "geocam",
+   "in_sorts": [
+    "signal"
    ]
   },
   {

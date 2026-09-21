@@ -4245,6 +4245,18 @@ On a synthetic dendrite with 5 branches of different radius, one detached piece 
 
 The value-only classic (carve balls around the junctions, then connected components) either fails to separate the branches when the ball is small (agreement 0.63–0.65) or throws volume away when it is large (0.78 with 22 % unassigned). Honest breakdown: skeleton branches end at every junction, so the trunk becomes three branch ids (9 ids onto 6 true branches, matched by majority overlap), and the +0.5 on the radius is a known discretisation bias added explicitly.
 
+### Where Is the Public Camera Looking — A Fixed Camera's Orientation from the Picture Itself
+
+Public fixed cameras (road, weather, tourism) publish their **position** but not their **orientation**, or only a coarse one (a road direction code, an id hash, a manual gizmo); without it a frame cannot be placed on a map, a DEM or a 3-D city. The new geocam family (7 ops) recovers the (yaw, pitch, roll) of a camera at a known position **from the picture itself, with no learning**, from two independent cues that check each other.
+
+![The DEM ridge (magenta) swept through every yaw over the photograph; the yellow meter is the fit and peaks where the ridge locks onto the extracted skyline (cyan)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/02_yaw_sweep.gif)
+
+The skyline route matches the 360-degree ridge rendered from the DEM at the camera position against the sky/terrain boundary extracted by dynamic programming, and returns the **whole residual curve over yaw** together with the margin to the runner-up valley. The sun route uses the fact that the apparent sun position is a closed form of time and place (NOAA): two or more saturated sun discs picked from time-stamped frames fix the rotation exactly as the SVD solution of Wahba's problem. On a synthetic camera with a known pose the skyline route errs by **0.11 deg**, the sun route by **0.02 deg** (0.004 deg from the morning and evening frame alone), and the two routes agree to 0.09 deg.
+
+![Residual over yaw: one valley in the mountains (the truth line), a level curve on a flat DEM = the op returns ambiguous](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/03_yaw_profile.png)
+
+The controls are honest: a road-direction prior of the kind public metadata gives is off by 7.5 deg, and on a flat DEM the ridge is the same in every direction, so the op returns **ambiguous** instead of being silently 137 deg wrong. Synthetic only for now; real data (Fintraffic weather cameras + NLS elevation in Finland, Statens vegvesen + Kartverket DTM10 in Norway, all under open licences) is the next step. The intrinsics are required, skylines need mountains, and the sun has to be in the picture.
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to

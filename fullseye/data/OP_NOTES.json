@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2065,
- "n_notes": 2071,
+ "n_ops": 2072,
+ "n_notes": 2078,
  "notes": {
   "vol_dilate": [
    {
@@ -15397,6 +15397,76 @@
     "in": "signal",
     "out": "table",
     "path": "docs/ops/flyvision/tuning/fly_dsi.md"
+   }
+  ],
+  "camera_orientation_from_skyline": [
+   {
+    "op": "camera_orientation_from_skyline",
+    "dim": "geocam",
+    "category": "orientation",
+    "in": "signal × table",
+    "out": "table",
+    "path": "docs/ops/geocam/orientation/camera_orientation_from_skyline.md"
+   }
+  ],
+  "dem_skyline": [
+   {
+    "op": "dem_skyline",
+    "dim": "geocam",
+    "category": "skyline",
+    "in": "depth",
+    "out": "table",
+    "path": "docs/ops/geocam/skyline/dem_skyline.md"
+   }
+  ],
+  "render_skyline_view": [
+   {
+    "op": "render_skyline_view",
+    "dim": "geocam",
+    "category": "skyline",
+    "in": "table",
+    "out": "image2d",
+    "path": "docs/ops/geocam/skyline/render_skyline_view.md"
+   }
+  ],
+  "skyline_extract": [
+   {
+    "op": "skyline_extract",
+    "dim": "geocam",
+    "category": "skyline",
+    "in": "image2d",
+    "out": "signal",
+    "path": "docs/ops/geocam/skyline/skyline_extract.md"
+   }
+  ],
+  "camera_orientation_from_sun": [
+   {
+    "op": "camera_orientation_from_sun",
+    "dim": "geocam",
+    "category": "sun",
+    "in": "keypoints × signal",
+    "out": "table",
+    "path": "docs/ops/geocam/sun/camera_orientation_from_sun.md"
+   }
+  ],
+  "sun_pixel_position": [
+   {
+    "op": "sun_pixel_position",
+    "dim": "geocam",
+    "category": "sun",
+    "in": "image2d",
+    "out": "keypoints",
+    "path": "docs/ops/geocam/sun/sun_pixel_position.md"
+   }
+  ],
+  "sun_position": [
+   {
+    "op": "sun_position",
+    "dim": "geocam",
+    "category": "sun",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/geocam/sun/sun_position.md"
    }
   ],
   "viewport": [

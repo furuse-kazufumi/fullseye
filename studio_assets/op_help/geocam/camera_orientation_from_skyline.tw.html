@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">camera_orientation_from_skyline — GEOCAM <code style="color:#22d3bf">orientation</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)</code>(要直接呼叫實作,<code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)</code>;從台帳取用則 <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_skyline&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>写真のスカイライン(列ごとの行)と DEM のスカイラインから (yaw, pitch, roll) を決める → table。</p>
+<p>写真の境界画素 (u, v) をカメラ光線にし、仮の姿勢で世界へ回すと、各列は (方位, 仰角) の点になる。</p>
+<p>その仰角と、DEM のスカイラインをその方位で引いた仰角の差の RMS が姿勢のコスト。yaw を</p>
+<p>`<code style="color:#22d3bf">yaw_step_deg</code><code style="color:#22d3bf"> 刻みで一周、pitch・roll を </code><code style="color:#22d3bf">coarse_step_deg</code>` 刻みで格子探索し、最小の点から</p>
+<p>Nelder–Mead で連続値に詰める(scipy)。Baatz ら 2012 のスカイライン照合を、位置既知・</p>
+<p>1 台のカメラに絞った形。</p>
+<p><b>曖昧さを返す</b>: yaw ごとの最良コストの曲線(`<code style="color:#22d3bf">yaw_profile_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">yaw_profile_residual_deg</code>`)</p>
+<p>と、最良と 2 番目の谷の差 `<code style="color:#22d3bf">margin_deg</code>`(2 番目の谷 = 最良から 20° 以上離れた最小)。平地・</p>
+<p>対称な尾根・半円しか写らない写真では谷が複数あり、margin が小さい。**margin が</p>
+<p>`<code style="color:#22d3bf">coarse</code><code style="color:#22d3bf"> の残差程度なら向きは決まっていない**と読む(黙って 1 つを返さない: </code><code style="color:#22d3bf">ambiguous</code>`)。</p>
+<p>Args:</p>
+<p>skyline_rows: (W,) `<code style="color:#22d3bf">skyline_extract</code>` の出力(列ごとの行)。</p>
+<p>K: (fx, fy, cx, cy)。</p>
+<p>sky_table: `<code style="color:#22d3bf">dem_skyline</code>` の出力。</p>
+<p>yaw_step_deg / coarse_step_deg: 粗い格子の刻み。pitch_range / roll_range: 探索範囲 [度]。</p>
+<p>Returns:</p>
+<p>table: `<code style="color:#22d3bf">yaw_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">pitch_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">roll_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">residual_deg</code>`(仰角残差 RMS)/</p>
+<p>`<code style="color:#22d3bf">margin_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">runner_up_yaw_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">ambiguous</code><code style="color:#22d3bf">(bool)/ </code><code style="color:#22d3bf">yaw_profile_deg</code>` (M,) /</p>
+<p>`<code style="color:#22d3bf">yaw_profile_residual_deg</code><code style="color:#22d3bf"> (M,) / </code><code style="color:#22d3bf">n_columns</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading">poc_public_camera_heading</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:render_skyline_view">render_skyline_view</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">orientation</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: geocam.py — GEOCAM 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">render_skyline_view — GEOCAM <code style="color:#22d3bf">skyline</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code> (die Implementierung direkt: <code style="color:#22d3bf">import geocam; geocam.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>; aus dem Register: <code style="color:#22d3bf">opsgeocam.get(&quot;render_skyline_view&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>スカイライン table と姿勢から、その向きのカメラが見る<b>空のマスク</b>(H, W)を描く → image2d(0/1)。</p>
+<p>各画素の光線を世界へ回し、その方位のスカイライン仰角より上なら空(1)、下なら地形(0)。</p>
+<p>合成の写真づくり(PoC)と、推定した姿勢を写真に重ねて目で確かめる図に使う。</p>
+<p>`<code style="color:#22d3bf">camera_orientation_from_skyline</code>` の予測と同じ幾何なので、<b>描いて → 抜いて → 当てる</b>の</p>
+<p>往復が閉じる(テストの真値)。</p>
+<p>Args:</p>
+<p>sky_table: `<code style="color:#22d3bf">dem_skyline</code><code style="color:#22d3bf"> の出力(</code><code style="color:#22d3bf">azimuth_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">elevation_deg</code>`)。</p>
+<p>K: (fx, fy, cx, cy)。shape: (H, W)。</p>
+<p>yaw_deg, pitch_deg, roll_deg: 姿勢(モジュール冒頭の規約)。</p>
+<p>Returns:</p>
+<p>image2d (H, W) float {0, 1}: 1 = 空。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">Leitfaden zur Familie geocam</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading">poc_public_camera_heading</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:sun_pixel_position">sun_pixel_position</a> · <a style="color:#22d3bf" href="opgeocam:skyline_extract">skyline_extract</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">skyline</code>)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:dem_skyline">dem_skyline</a> · <a style="color:#22d3bf" href="opgeocam:skyline_extract">skyline_extract</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: geocam.py — GEOCAM Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

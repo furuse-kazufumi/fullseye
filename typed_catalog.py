@@ -879,6 +879,8 @@ def catalog():
         ("opslive4d", "OPSLIVE4D", "live4d"),
         # 2026-09-21: 3D プリンタ。新語なし(table / mesh / text / image2d / voxel / measurement)。
         ("opsprintpath", "OPSPRINTPATH", "printpath"),
+        # 2026-09-21: 固定カメラの向き(太陽・スカイライン)。新語なし(signal / depth / image2d / keypoints / table)。
+        ("opsgeocam", "OPSGEOCAM", "geocam"),
     ):
         _m = __import__(_mod)
         for n, m in getattr(_m, _tbl).items():

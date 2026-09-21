@@ -1,0 +1,7 @@
+route	yaw	pitch	roll	yaw err	pitch err	roll err	note
+truth	150.00	-3.00	2.00				synthetic camera
+skyline (DEM ridge vs extracted)	149.94	-3.03	2.01	0.058	0.030	0.006	residual 0.095, margin 1.28
+sun (5 frames, Wahba/SVD)	150.00	-3.00	2.01	0.002	0.001	0.009	residual 0.050
+sun (2 frames)	150.00	-3.05	2.17	0.001			first + last
+road-direction prior				7.5			truth +/- 15 deg, as public metadata gives
+skyline on flat DEM	0.0			150.0			ambiguous = True (refused, not silently wrong)

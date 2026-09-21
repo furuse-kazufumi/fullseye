@@ -409,6 +409,12 @@ EXAMPLES = [
                 "膜の無い境界 = 分断の疑い。CREMI sample A の正解ラベルに人工誤りを仕込み、閾値を前半の断面で選んで後半で測る"
                 "(holdout_threshold): 分断 AUC 1.00、融合 0.83(面積で揃えた負例、乱数 0.53・面積だけ 0.70)。揃えないと面積だけで 0.87 が"
                 "出る = 評価の罠を op で封じる。疑わしい箇所を立方体の上で回す GIF。新族 emproof 7 op。生データは commit しない。"},
+    {"id": "poc_public_camera_heading", "task": "calibration", "data": "synthetic",
+     "name": "公共カメラはどこを向いているか(位置しか公開されない固定カメラの向きを、写真そのものから決める)",
+     "summary": "新族 geocam(7 op、numpy + scipy)。位置既知の固定カメラの (yaw, pitch, roll) を学習なしで 2 つの独立な手掛かりから決めて互いに検算: "
+                "DEM で描いた 360° の稜線 vs 動的計画法で抜いた空と地形の境界(yaw を一周した残差曲線と曖昧さ margin を返す)、"
+                "時刻つきの太陽の画素 ≥ 2 点 → Wahba 問題の SVD 解(太陽位置は NOAA の閉形式)。真値つき合成カメラでスカイライン 0.11°・太陽 0.02°・2 経路の一致 0.09°、"
+                "対照の「道路方向の事前知識」は 7.5°、平地の DEM は ambiguous(黙って間違えない)。GIF は yaw を一周させて稜線が境界に噛み合う瞬間。"},
     {"id": "poc_em_branch_territory", "task": "analysis", "data": "synthetic",
      "name": "枝の縄張り(骨格が「どこ」かだけでなく「どの枝が近いか」を体積に配ると、枝ごとの体積と半径が測れる)",
      "summary": "3D 距離変換の「向き」op の使いどころ。真値の枝ラベルつき合成樹状突起(半径の違う 5 枝 + 分断片 + ごみ 6)を vol_rle_components(片ごとに持って"

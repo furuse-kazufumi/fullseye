@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(229 例)
+### 2-D 画像/信号/幾何(230 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -148,6 +148,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **本来まっすぐな線群から歪み係数を推定する(plumb-line 法)** — undistort_image の上流 —— 係数を『測る』側。まっすぐな線を歪ませた点列だけからestimate_distortion が k1,k2(必要なら p1,p2)を回収し、推定係数をそのままundistort_image に渡すと弓なりが直る。チェッカーボードの対応点は不要、線がまっすぐと分かればよい(Discorpy 流)。中心=主点は固定。雑音では素直に劣化する(過信しない章あり)。来歴=Brown 1971 / Devernay-Faugeras 2001 / Discorpy。 `py -3.11 examples/estimate_lens_distortion.py`
 - **カメラ校正の再投影誤差は何を保証しないか** — 内部パラメータと姿勢を自分で決めて推定し返す。板の傾きだけを変えると**再投影 RMS は比 1.00 倍のまま fx の誤差が 281 倍**(0.026 % 対 7.33 %)。区別できるのは sigma_fx(129 倍)。傾き 0 度の退化配置は閉形式が拒否するが非線形最適化は正常な再投影誤差とともに 25 % 外れた答えを返す。 `py -3.11 examples/poc_camera_calibration.py`
 - **平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)** — fs.camera_calibration を facade から呼ぶ最小例。傾けた 6 視点で K を厳密回収し(fx,fy,cx,cy 誤差 < 1)、orientation_rank_ratio で配置の良し悪しを見る。板を傾けない正面平行は退化して fail-closed、視点 3 未満も拒否。回収した K はestimate_distortion / undistort_image / PnP に渡せる。来歴=Zhang 2000。 `py -3.11 examples/camera_intrinsics_calibration.py`
+- **公共カメラはどこを向いているか(位置しか公開されない固定カメラの向きを、写真そのものから決める)** — 新族 geocam(7 op、numpy + scipy)。位置既知の固定カメラの (yaw, pitch, roll) を学習なしで 2 つの独立な手掛かりから決めて互いに検算: DEM で描いた 360° の稜線 vs 動的計画法で抜いた空と地形の境界(yaw を一周した残差曲線と曖昧さ margin を返す)、時刻つきの太陽の画素 ≥ 2 点 → Wahba 問題の SVD 解(太陽位置は NOAA の閉形式)。真値つき合成カメラでスカイライン 0.11°・太陽 0.02°・2 経路の一致 0.09°、対照の「道路方向の事前知識」は 7.5°、平地の DEM は ambiguous(黙って間違えない)。GIF は yaw を一周させて稜線が境界に噛み合う瞬間。 `py -3.11 examples/poc_public_camera_heading.py`
 - **カメラの熱ドリフトが寸法計測に効く量(分離できるのは歪みがあるから)** — ★★**予想が逆だった** —— 歪みが無ければ主点ドリフトは寸法に**厳密に 0**、焦点距離ドリフトは位置に依らない一定の倍率誤差で、位置を振っても何も分離できない。歪み k1=-0.12 を入れて初めて主点ドリフトが半径に比例する誤差を作る。1 次式 err(R)=a+b·R に当てはめると a=+224.5 ppm(対照条件 +225.3、差 0.4 %)、b=+0.2388 ppm/px(主点のみ 0.2190 + f のみ 0.0197 = 0.2387)。★対照群で誤差の床を先に測ると 1 枚 117 ppm。**ドリフトが床を超えるのは ΔT=1.6 K から**。 `py -3.11 examples/poc_thermal_drift_metrology.py`
 
 **forensics**

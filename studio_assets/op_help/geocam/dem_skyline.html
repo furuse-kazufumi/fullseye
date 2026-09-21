@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dem_skyline — GEOCAM <code style="color:#22d3bf">skyline</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_skyline(dem, cell_size, observer_rc, eye_height=1.5, az_step_deg=1.0, max_distance=None, earth_curvature=True)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import geocam; geocam.dem_skyline(dem, cell_size, observer_rc, eye_height=1.5, az_step_deg=1.0, max_distance=None, earth_curvature=True)</code>、台帳から引くなら <code style="color:#22d3bf">opsgeocam.get(&quot;dem_skyline&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>DEM の 1 点から見た<b>全方位のスカイライン</b>(方位ごとの地平線仰角)→ table。</p>
+<p>`<code style="color:#22d3bf">dem_horizon_angle</code>` は「全セル × 1 方位」、これは「1 点 × 全方位」—— 固定カメラの向きを</p>
+<p>決めるのに要るのは後者。各方位へ `<code style="color:#22d3bf">cell_size / 2</code>` 刻みで視線を進め(標高は双一次補間)、</p>
+<p>`<code style="color:#22d3bf">atan((z_j − z_0 − drop(d)) / d)</code><code style="color:#22d3bf"> の最大値をその方位の仰角にする。</code><code style="color:#22d3bf">drop(d) = d² / (2 R_eff)</code>`</p>
+<p>は地球の丸みと大気屈折(有効半径 R / (1 − 0.13))で遠くの山が沈む分。視線が DEM の外に</p>
+<p>出たらそこで止める(`<code style="color:#22d3bf">max_distance</code>` でも止まる)。<b>DEM の外側</b>は「DEM の最低標高の平面が</p>
+<p>地平線まで続く」と仮定し、仰角の下限を地平線の沈み `<code style="color:#22d3bf">−sqrt(2 h / R_eff)</code>`(h = 観測点の</p>
+<p>最低標高からの高さ)にする —— 有限の DEM の端でたまたま低い点を見て、実際には地球の丸みで</p>
+<p>見えない −7° のような「穴」を空にしないため(`<code style="color:#22d3bf">horizon_dip_deg</code>` に返す)。</p>
+<p>Args:</p>
+<p>dem: (H, W) 標高 [m]。行 0 が北端。</p>
+<p>cell_size: [m/セル]。</p>
+<p>observer_rc: 観測点 (row, col)。float 可(セルの中に立てる)。</p>
+<p>eye_height: 地面からのカメラ高さ [m]。</p>
+<p>az_step_deg: 方位の刻み [度]。</p>
+<p>max_distance: 視線の最大距離 [m] (None = DEM の端まで)。</p>
+<p>earth_curvature: False なら平らな地球。</p>
+<p>Returns:</p>
+<p>table: `<code style="color:#22d3bf">azimuth_deg</code><code style="color:#22d3bf"> (M,) / </code><code style="color:#22d3bf">elevation_deg</code><code style="color:#22d3bf"> (M,) / </code><code style="color:#22d3bf">distance_m</code>` (M,)(仰角を決めた</p>
+<p>地点までの距離)/ `<code style="color:#22d3bf">observer_elevation_m</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">horizon_dip_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n</code>`。方位は 0 以上</p>
+<p>360 未満、昇順。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading">poc_public_camera_heading</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:render_skyline_view">render_skyline_view</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_skyline">camera_orientation_from_skyline</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">skyline</code>)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:skyline_extract">skyline_extract</a> · <a style="color:#22d3bf" href="opgeocam:render_skyline_view">render_skyline_view</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: geocam.py — GEOCAM operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

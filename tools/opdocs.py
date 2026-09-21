@@ -168,6 +168,10 @@ LEDGER_DIMS = {
     # 2026-09-21: 3D プリンタのデータ(G-code / 3MF / スライス / 層画像の検査)。新語なし。
     "printpath": {"registry": "opsprintpath", "table": "OPSPRINTPATH",
                   "module": "printpath", "family": "printpath"},
+    # 2026-09-21: 位置既知の固定カメラの向きを写真から(太陽位置の閉形式 + DEM スカイライン照合)。
+    # 新語なし(signal / depth / image2d / keypoints / table)。
+    "geocam": {"registry": "opsgeocam", "table": "OPSGEOCAM",
+               "module": "geocam", "family": "geocam"},
 }
 
 

@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">camera_orientation_from_sun — GEOCAM <code style="color:#22d3bf">sun</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">keypoints × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_sun&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>時刻つきの太陽の画素位置 ≥ 2 点 → カメラの (yaw, pitch, roll)(Wahba 問題の SVD 解 = Kabsch)。</p>
+<p>各観測で、画素 → カメラ座標の光線 d_c(K から)、時刻 → 世界の太陽方向 s_w(`<code style="color:#22d3bf">sun_position</code>`、</p>
+<p><b>屈折込み</b>の仰角を使う: カメラが見るのは見かけの太陽)。`<code style="color:#22d3bf">R = argmin Σ |R d_c − s_w|²</code>` を</p>
+<p>SVD で閉形式に解き(Kabsch 1976 / Markley 1988)、`<code style="color:#22d3bf">(yaw, pitch, roll)</code>` に分解する。</p>
+<p>2 点で一意に決まる(2 本の方向が張る面が要る)。観測が 1 点、または全部が同じ方向(共線)なら</p>
+<p>ValueError —— 例えば同じ時刻の 2 枚、あるいは正午だけを何日も。太陽は 1 日で方位が大きく</p>
+<p>動くので、<b>同じ日の朝と夕の 2 枚</b>があれば足りる。</p>
+<p>Args:</p>
+<p>sun_pixels: (N, 2) の (u, v)。`<code style="color:#22d3bf">sun_pixel_position</code>` の出力を積んだもの。</p>
+<p>unix_times: (N,) UNIX 秒(UTC)。</p>
+<p>lat_deg, lon_deg: カメラの位置。</p>
+<p>K: (fx, fy, cx, cy)。</p>
+<p>Returns:</p>
+<p>table: `<code style="color:#22d3bf">yaw_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">pitch_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">roll_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">residual_deg</code>`(光線と太陽方向の</p>
+<p>角度残差の RMS)/ `<code style="color:#22d3bf">max_residual_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">condition</code>`(観測方向の張る面の広さ =</p>
+<p>2 番目の特異値、0 に近いほど不定)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading">poc_public_camera_heading</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:render_skyline_view">render_skyline_view</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_skyline">camera_orientation_from_skyline</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">sun</code>)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:sun_position">sun_position</a> · <a style="color:#22d3bf" href="opgeocam:sun_pixel_position">sun_pixel_position</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: geocam.py — GEOCAM 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
