@@ -1,10 +1,10 @@
 {
- "n_ops": 2027,
+ "n_ops": 2036,
  "tiers": {
   "color": 12,
-  "ledger": 1079,
+  "ledger": 1085,
   "nary": 17,
-  "registry": 919
+  "registry": 922
  },
  "sorts": [
   "angle",
@@ -13241,6 +13241,71 @@
    ]
   },
   {
+   "name": "video_cube_cut",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "image2d",
+   "category": "cube",
+   "tier": "ledger",
+   "ledger": "opsvideocube",
+   "dim": "videocube",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "video_cube_orbit",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "rgbvideo",
+   "category": "render",
+   "tier": "ledger",
+   "ledger": "opsvideocube",
+   "dim": "videocube",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "video_spacetime_cube",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "voxel",
+   "category": "cube",
+   "tier": "ledger",
+   "ledger": "opsvideocube",
+   "dim": "videocube",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "video_summary_keyframes",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "indices",
+   "category": "summary",
+   "tier": "ledger",
+   "ledger": "opsvideocube",
+   "dim": "videocube",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "video_write_gif",
+   "halcon": "",
+   "in_sort": "rgbvideo",
+   "out_sort": "text",
+   "category": "export",
+   "tier": "ledger",
+   "ledger": "opsvideocube",
+   "dim": "videocube",
+   "in_sorts": [
+    "rgbvideo"
+   ]
+  },
+  {
    "name": "viewport",
    "halcon": "",
    "in_sort": "rgb",
@@ -13760,6 +13825,19 @@
    "dim": "3d",
    "in_sorts": [
     "labels"
+   ]
+  },
+  {
+   "name": "vol_render_transfer",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "rgb",
+   "category": "render",
+   "tier": "ledger",
+   "ledger": "opsvideocube",
+   "dim": "videocube",
+   "in_sorts": [
+    "voxel"
    ]
   },
   {
@@ -22833,6 +22911,36 @@
    "halcon": "",
    "in_sort": "points",
    "out_sort": "volume",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
+   "name": "tb_video_cube_cut",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "image",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
+   "name": "tb_video_spacetime_cube",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "volume",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
+   "name": "tb_video_summary_keyframes",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "signal",
    "category": "typed",
    "tier": "registry",
    "module": "backends_typed",

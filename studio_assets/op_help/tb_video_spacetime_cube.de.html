@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_video_spacetime_cube — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">volume</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_video_spacetime_cube&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>動画 (T, H, W) を空間 × 時間の立方体 `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> float [0, 1] にする(</code><code style="color:#22d3bf">voxel</code>`)。</p>
+<p>`<code style="color:#22d3bf">mode=&quot;motion&quot;</code><code style="color:#22d3bf">: 隣り合うフレームの差の大きさ |I_t − I_{t−1}| を空間で σ = </code><code style="color:#22d3bf">sigma</code>` のガウスで平滑し、</p>
+<p>`<code style="color:#22d3bf">percentile</code><code style="color:#22d3bf"> 分位で 1 に正規化、</code><code style="color:#22d3bf">floor</code>` 未満を 0 に落として [0, 1] に伸ばす(先頭フレームは 0。</p>
+<p>センサ雑音の差分は床の下に沈む)。動く物体だけが立つので、`<code style="color:#22d3bf">vol_render_transfer</code>` の<b>不透明度</b>になる ——</p>
+<p>静止した背景は透けて、軌跡が浮かぶ(Summagator の伝達関数)。</p>
+<p>`<code style="color:#22d3bf">mode=&quot;intensity&quot;</code>`: 明るさを [0, 1] に正規化(色の元、または背景を薄く敷く用)。</p>
+<p>`<code style="color:#22d3bf">mode=&quot;dark&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;bright&quot;</code><code style="color:#22d3bf">: 暗い / 明るい所を不透明にする(σ で平滑、</code><code style="color:#22d3bf">floor</code>` 未満は 0)。動画でなく</p>
+<p><b>z スタック</b>(EM の連続断面: 膜は暗い、蛍光: 細胞は明るい)を同じ立方体として見るため —— 先頭軸を</p>
+<p>時間でなく奥行きと読むだけで、断面(`<code style="color:#22d3bf">video_cube_cut</code><code style="color:#22d3bf">)も回転(</code><code style="color:#22d3bf">video_cube_orbit</code>`)も同じ op で動く。</p>
+<p>&gt;&gt;&gt; alpha = video_spacetime_cube(clip, &quot;motion&quot;)</p>
+<p>&gt;&gt;&gt; color = video_spacetime_cube(clip, &quot;intensity&quot;)</p>
+<p>&gt;&gt;&gt; rgb = vol_render_transfer(alpha, color, yaw=35.0, pitch=25.0)</p>
+<p>&gt;&gt;&gt; membranes = video_spacetime_cube(em_stack, &quot;dark&quot;, sigma=1.0)      # ハエの脳の断面を積んだ立方体</p>
+<p>2-D 進化レジストリへ橋渡しした videocube の op `<code style="color:#22d3bf">video_spacetime_cube</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">sigma</code><code style="color:#22d3bf">(既定 1)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">percentile</code>`(既定 99.5)を振る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">video_spacetime_cube</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_video_cube">poc_video_cube</a> — <code style="color:#22d3bf">py -3.11 examples/poc_video_cube.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">volume</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:vol_gaussian">vol_gaussian</a> · <a style="color:#22d3bf" href="op:vol_median">vol_median</a> · <a style="color:#22d3bf" href="op:vol_erode">vol_erode</a> · <a style="color:#22d3bf" href="op:vol_dilate">vol_dilate</a> · <a style="color:#22d3bf" href="op:vol_threshold">vol_threshold</a> · <a style="color:#22d3bf" href="op:vol_reg_dilate">vol_reg_dilate</a> · <a style="color:#22d3bf" href="op:vol_reg_erode">vol_reg_erode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_voxel_grid_downsample">tb_voxel_grid_downsample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

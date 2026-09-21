@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(223 例)
+### 2-D 画像/信号/幾何(224 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -199,6 +199,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **visualization**
 - **ハエの脳の立体の上で刺激の波が配線を伝わるのを見る(コネクトーム vs 次数保存 shuffle)** — MaleCNS で soma の座標を持つニューロンのうちシナプス総数上位 3,000 体の部分グラフ(344,719 辺)に右の視葉だけへ刺激を入れ、活動が伝わる様子を脳と VNC の立体(灰 = 全 141,781 soma、橙 = 右、青 = 左)を回しながら GIF に。隣は次数保存 shuffle に**同じ刺激・同じ入力行列**。実測: コネクトームは刺激からの平均距離 88 → 230 µm を 17 步かけて伸び、視葉 → 中枢 → 下行の順に点いて 36 步では VNC に届かない。shuffle は 3 步で 300 µm に散り遠い 1/4 の 93 % が点く(コネクトーム 0 %)。精度で見えなかった配線の空間構造が動きで見える。新 op: reservoir_states(W_in=)、graph_activation_latency、graph_activity_spread、points_activity_video(尺度は全コマで 1 つ、views= で背側・側面・体軸方向の 3 方向を同時に)。生データは commit しない。 `py -3.11 examples/poc_malecns_activity_wave.py`
+- **動画を空間 × 時間の立方体として見る(Video Summagator の再実装、ハエの脳の断面も同じ op で)** — 動画 (T, H, W) を (x, y, t) の立方体にし、動かない背景を薄く・動く物体を濃く、軌跡を時刻の色で描く(新族 videocube 6 op、numpy + scipy)。合成の監視クリップでスリットスキャンの筋から読んだ出現時刻と速度が真値と一致、代表フレームが 3 物体の出現を全部捉える。同じ op でハエの脳の EM 連続断面(CREMI、生データは commit しない)を立方体にすると膜が奥行き色の管になる。video_write_gif でGIF に書き出す(使い回しの出口)。Studio の Tools ▸ Video cube で対話的に動く。 `py -3.11 examples/poc_video_cube.py`
 - **複眼が見る像と、脳のどこが反応するかを並べる(個眼をなぞると応答が配線を伝わる)** — MaleCNS の視葉ニューロンに付いた六角柱(個眼の柱)を使い、右眼 892 柱の視葉ニューロン + 中枢のハブ 1,400 体(4,076 体・150,487 辺)に個眼 1 つ分の刺激を入れる。刺激柱を眼の一行に沿って動かすと応答が視葉の中を同じ向きに動く: 柱座標と応答重心の相関はコネクトーム −0.92、次数保存 shuffle +0.01(網膜部位対応は配線にある)。縦縞の像を fly_hex_resample で個眼に落として入れると応答が縞を追う。Studio の Tools ▸ Compound eye → brain で同じ部品が対話的に動く(マウスで刺激位置、ドラッグで視点、画像を眼に通す、shuffle 切替)。新モジュール eyebrain(データ・柱↔個眼の対応・刺激・波・眼の絵)。生データも部分グラフも commit しない。 `py -3.11 examples/poc_eye_to_brain.py`
 
 **inspection**
@@ -1052,7 +1053,7 @@ _計 363 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 931 ops / 48 categories。_
+_計 934 ops / 48 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1297,7 +1298,7 @@ _計 931 ops / 48 categories。_
 - `diameter_region` (halcon: `diameter_region`) `region → feature` · 例: `gallery2d_features`
 - `euler_number` (halcon: `euler_number`) `region → feature` · 例: `gallery2d_features`
 - `min_max_gray` (halcon: `min_max_gray`) `image → feature` · 例: `gallery2d_features`
-- `intensity` (halcon: `intensity`) `image → feature` · 例: `gallery2d_bridge`, `gallery2d_features`, `poc_solder_fillet_aoi`
+- `intensity` (halcon: `intensity`) `image → feature` · 例: `gallery2d_bridge`, `gallery2d_features`, `poc_solder_fillet_aoi`, `poc_video_cube`
 - `gray_histo_abs` (halcon: `gray_histo_abs`) `image → feature` · 例: `gallery2d_features`
 - `entropy_gray` (halcon: `entropy_gray`) `image → feature` · 例: `gallery2d_features`
 - `length_xld` (halcon: `length_xld`) `contour → feature` · 例: `gallery2d_features`
@@ -1916,7 +1917,7 @@ _計 931 ops / 48 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(154)
+### typed(157)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
@@ -2071,6 +2072,9 @@ _計 931 ops / 48 categories。_
 - `tb_mirror_plane_from_pairs` `points → matrix` · 例: なし
 - `tb_landmark_asymmetry` `points → signal` · 例: なし
 - `tb_dem_ecef_to_geodetic` `points → points` · 例: なし
+- `tb_video_spacetime_cube` `video → volume` · 例: なし
+- `tb_video_cube_cut` `video → image` · 例: なし
+- `tb_video_summary_keyframes` `video → signal` · 例: なし
 
 ### xldgeom(10)
 - `xg_moments` (halcon: `moments_points_xld`) `contour → feature` · 例: `gallery2d_geometry`

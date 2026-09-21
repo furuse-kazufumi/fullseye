@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">이 가이드는 일본어만 있습니다(사람이 쓴 산문이라 기계적으로 치환하지 않았습니다).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">動画を空間 × 時間の立方体として見る(Video Summagator の再実装) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>Nguyen・Niu・Liu「Video Summagator: An Interface for Video Summarization and Navigation」(ACM CHI 2012)は、動画 (T, H, W) を (x, y, t) の立方体にし、<b>動かない背景を薄く・動く物体を濃く</b>するボリュームレンダリングで「何が・どこを・いつ通ったか」を 1 枚の立体に見せ、切ったり回したりして目当ての場面へ飛ぶ道具でした。深層学習は使いません。この族はそれを numpy + scipy.ndimage だけで再実装したものです(公開コードは無いので、論文の考えからの再実装)。</p>
+<p>6 op / 4 カテゴリ(台帳は <code style="color:#22d3bf">opsvideocube.py</code>、実体は <code style="color:#22d3bf">videocube.py</code>、新しい型は作らない):</p>
+<p style="margin:2px 0 2px 12px">• <b>cube(2)</b> — <code style="color:#22d3bf">video_spacetime_cube</code>(動画 → 立方体 <code style="color:#22d3bf">voxel</code>。<code style="color:#22d3bf">mode=&quot;motion&quot;</code> は時間差分の大きさ = 不透明度の元、<code style="color:#22d3bf">&quot;dark&quot;</code> / <code style="color:#22d3bf">&quot;bright&quot;</code> は暗い / 明るい所 = <b>z スタック</b>(EM の連続断面の膜、蛍光の細胞)を同じ立方体として見るため、<code style="color:#22d3bf">&quot;intensity&quot;</code> は明るさ = 色の元)/ <code style="color:#22d3bf">video_cube_cut</code>(断面 <code style="color:#22d3bf">image2d</code>: <code style="color:#22d3bf">&quot;xt&quot;</code> = スリットスキャン、<code style="color:#22d3bf">&quot;yt&quot;</code>、<code style="color:#22d3bf">&quot;xy&quot;</code> = 1 フレーム)。</p>
+<p style="margin:2px 0 2px 12px">• <b>render(2)</b> — <code style="color:#22d3bf">vol_render_transfer</code>(任意視点の<b>前から後ろへの α 合成</b> <code style="color:#22d3bf">rgb</code>。軌跡は時刻の色(青 = 始め → 赤 = 終わり)、<code style="color:#22d3bf">static_alpha</code> で静止した背景を薄く重ねる)/ <code style="color:#22d3bf">video_cube_orbit</code>(立方体を回す <code style="color:#22d3bf">rgbvideo</code>、<code style="color:#22d3bf">mode</code> で動画 / z スタックを選ぶ)。</p>
+<p style="margin:2px 0 2px 12px">• <b>summary(1)</b> — <code style="color:#22d3bf">video_summary_keyframes</code>(動きの量 + 場面の変化から代表フレームの添字 <code style="color:#22d3bf">indices</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <b>export(1)</b> — <code style="color:#22d3bf">video_write_gif</code>(<code style="color:#22d3bf">rgbvideo</code> か灰の <code style="color:#22d3bf">video</code> をアニメーション GIF に。全フレームを保存し、書いた後に枚数を読み戻す。使い回しの出口)。</p>
+<p>ハエの脳の EM 断面を積んだスタックも、先頭軸を時刻でなく奥行きと読むだけで同じ道具で見えます(<code style="color:#22d3bf">mode=&quot;dark&quot;</code>、PoC の図 6)。</p>
+<p>既存の <code style="color:#22d3bf">render_volume_projection</code>(X 線 / MIP)では背景と動きを分けられず、<code style="color:#22d3bf">videostream</code> の時間フィルタは 1 フレームずつしか返さないので、その間を埋めます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">連鎖</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    clip[動画 video T,H,W] --&gt; A[video_spacetime_cube mode=motion] --&gt; R[vol_render_transfer] --&gt; rgb[立体の絵 rgb]
+    clip --&gt; C[video_spacetime_cube mode=intensity] --&gt; R
+    clip --&gt; O[video_cube_orbit] --&gt; gif[回す動画 rgbvideo]
+    clip --&gt; X[video_cube_cut plane=xt] --&gt; slit[スリットスキャン image2d]
+    clip --&gt; K[video_summary_keyframes] --&gt; idx[代表フレーム indices]</pre>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
+L = fs.ledger
+
+alpha = L.video_spacetime_cube(clip, &quot;motion&quot;)                 # 動く物体だけが立つ [0, 1]
+color = L.video_spacetime_cube(clip, &quot;intensity&quot;)
+rgb = L.vol_render_transfer(alpha, color=None, yaw=35, pitch=22, static_alpha=0.12)   # 軌跡 = 時刻の色
+frames = L.video_cube_orbit(clip, n_frames=36, size=320)        # 回す
+slit = L.video_cube_cut(clip, &quot;xt&quot;, position=0.4)               # 4 割目の行を「いつ何が横切ったか」
+idx = L.video_summary_keyframes(clip, k=4)                      # 何かが起きたフレーム</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">読み方</h3>
+<p style="margin:2px 0 2px 12px">• <b>x–t 断面(スリットスキャン)</b>: 右へ動く物体は右下がりの筋、止まっている物体は縦の帯。筋の最初の行が出現時刻、<b>傾きが速度</b>(px/frame)。PoC では既知の 3 物体の出現時刻が ±1 フレーム、速度が真値に合うことを確かめています。</p>
+<p style="margin:2px 0 2px 12px">• <b>時刻の色</b>: 青 → 緑 → 黄 → 赤の順序で、良否ではなく時間を言います。正面(yaw = 0)から見ると全フレームの軌跡が 1 枚に重なり、側面(yaw = 90)から見ると時間軸に沿って伸びます。</p>
+<p style="margin:2px 0 2px 12px">• <b>static_alpha</b>: 立方体の最長辺を貫いたときの合計の不透明度で、サンプル数や視線の向きに依りません。0.1〜0.2 で背景がうっすら透け、軌跡の位置が読めます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型の話</h3>
+<p>動画は既存の <code style="color:#22d3bf">video</code>(T, H, W)、立方体は既存の <code style="color:#22d3bf">voxel</code>(3-D 配列)。時間軸が先頭にあるだけで、3-D の op(<code style="color:#22d3bf">vol_mip</code> など)に渡しても意味のある投影が出るので分けません。絵は <code style="color:#22d3bf">rgb</code>、回す動画は <code style="color:#22d3bf">rgbvideo</code>(conngraph の <code style="color:#22d3bf">points_activity_video</code> と同じ出口)、断面は <code style="color:#22d3bf">image2d</code>、添字は <code style="color:#22d3bf">indices</code>。Studio では Tools ▸ Video cube が同じ部品で対話的に動きます(ドラッグで回転、断面の位置をスライダ、断面をクリックでそのフレームへ)。</p>

@@ -5,7 +5,7 @@ category: features
 in: image
 out: feature
 halcon: intensity
-examples: [gallery2d_bridge, gallery2d_features, poc_solder_fillet_aoi]
+examples: [gallery2d_bridge, gallery2d_features, poc_solder_fillet_aoi, poc_video_cube]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -57,6 +57,7 @@ intensity 0.50 0.50
 - [gallery2d_bridge](../../../../examples/gallery2d_bridge.py) — `py -3.11 examples/gallery2d_bridge.py`
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
 - [poc_solder_fillet_aoi](../../../../examples/poc_solder_fillet_aoi.py) — `py -3.11 examples/poc_solder_fillet_aoi.py`
+- [poc_video_cube](../../../../examples/poc_video_cube.py) — `py -3.11 examples/poc_video_cube.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)
 

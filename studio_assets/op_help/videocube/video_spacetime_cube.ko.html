@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">video_spacetime_cube — VIDEOCUBE <code style="color:#22d3bf">cube</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_spacetime_cube(video, mode: &#x27;str&#x27; = &#x27;motion&#x27;, sigma: &#x27;float&#x27; = 1.0, percentile: &#x27;float&#x27; = 99.5, floor: &#x27;float&#x27; = 0.15) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import videocube; videocube.video_spacetime_cube(video, mode: &#x27;str&#x27; = &#x27;motion&#x27;, sigma: &#x27;float&#x27; = 1.0, percentile: &#x27;float&#x27; = 99.5, floor: &#x27;float&#x27; = 0.15) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvideocube.get(&quot;video_spacetime_cube&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>動画 (T, H, W) を空間 × 時間の立方体 `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> float [0, 1] にする(</code><code style="color:#22d3bf">voxel</code>`)。</p>
+<p>`<code style="color:#22d3bf">mode=&quot;motion&quot;</code><code style="color:#22d3bf">: 隣り合うフレームの差の大きさ |I_t − I_{t−1}| を空間で σ = </code><code style="color:#22d3bf">sigma</code>` のガウスで平滑し、</p>
+<p>`<code style="color:#22d3bf">percentile</code><code style="color:#22d3bf"> 分位で 1 に正規化、</code><code style="color:#22d3bf">floor</code>` 未満を 0 に落として [0, 1] に伸ばす(先頭フレームは 0。</p>
+<p>センサ雑音の差分は床の下に沈む)。動く物体だけが立つので、`<code style="color:#22d3bf">vol_render_transfer</code>` の<b>不透明度</b>になる ——</p>
+<p>静止した背景は透けて、軌跡が浮かぶ(Summagator の伝達関数)。</p>
+<p>`<code style="color:#22d3bf">mode=&quot;intensity&quot;</code>`: 明るさを [0, 1] に正規化(色の元、または背景を薄く敷く用)。</p>
+<p>`<code style="color:#22d3bf">mode=&quot;dark&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;bright&quot;</code><code style="color:#22d3bf">: 暗い / 明るい所を不透明にする(σ で平滑、</code><code style="color:#22d3bf">floor</code>` 未満は 0)。動画でなく</p>
+<p><b>z スタック</b>(EM の連続断面: 膜は暗い、蛍光: 細胞は明るい)を同じ立方体として見るため —— 先頭軸を</p>
+<p>時間でなく奥行きと読むだけで、断面(`<code style="color:#22d3bf">video_cube_cut</code><code style="color:#22d3bf">)も回転(</code><code style="color:#22d3bf">video_cube_orbit</code>`)も同じ op で動く。</p>
+<p>&gt;&gt;&gt; alpha = video_spacetime_cube(clip, &quot;motion&quot;)</p>
+<p>&gt;&gt;&gt; color = video_spacetime_cube(clip, &quot;intensity&quot;)</p>
+<p>&gt;&gt;&gt; rgb = vol_render_transfer(alpha, color, yaw=35.0, pitch=25.0)</p>
+<p>&gt;&gt;&gt; membranes = video_spacetime_cube(em_stack, &quot;dark&quot;, sigma=1.0)      # ハエの脳の断面を積んだ立方体</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideocube:videocube">videocube 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_video_cube">poc_video_cube</a> — <code style="color:#22d3bf">py -3.11 examples/poc_video_cube.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">voxel</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opvideocube:vol_render_transfer">vol_render_transfer</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">cube</code>)</h3>
+<p><a style="color:#22d3bf" href="opvideocube:video_cube_cut">video_cube_cut</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: videocube.py — VIDEOCUBE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

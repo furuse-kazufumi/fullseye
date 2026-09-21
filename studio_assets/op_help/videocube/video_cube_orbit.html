@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">video_cube_orbit — VIDEOCUBE <code style="color:#22d3bf">render</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">rgbvideo</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_cube_orbit(video, n_frames: &#x27;int&#x27; = 36, pitch: &#x27;float&#x27; = 25.0, yaw_start: &#x27;float&#x27; = 0.0, yaw_span: &#x27;float&#x27; = 360.0, size: &#x27;int&#x27; = 256, sigma: &#x27;float&#x27; = 1.0, alpha_gain: &#x27;float&#x27; = 1.0, static_alpha: &#x27;float&#x27; = 0.02, color: &#x27;str&#x27; = &#x27;time&#x27;, mode: &#x27;str&#x27; = &#x27;motion&#x27;, depth_samples: &#x27;int | None&#x27; = None, floor: &#x27;float&#x27; = 0.15) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import videocube; videocube.video_cube_orbit(video, n_frames: &#x27;int&#x27; = 36, pitch: &#x27;float&#x27; = 25.0, yaw_start: &#x27;float&#x27; = 0.0, yaw_span: &#x27;float&#x27; = 360.0, size: &#x27;int&#x27; = 256, sigma: &#x27;float&#x27; = 1.0, alpha_gain: &#x27;float&#x27; = 1.0, static_alpha: &#x27;float&#x27; = 0.02, color: &#x27;str&#x27; = &#x27;time&#x27;, mode: &#x27;str&#x27; = &#x27;motion&#x27;, depth_samples: &#x27;int | None&#x27; = None, floor: &#x27;float&#x27; = 0.15) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsvideocube.get(&quot;video_cube_orbit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>立方体を回す色動画 `<code style="color:#22d3bf">(n_frames, size, size, 3)</code><code style="color:#22d3bf"> float [0, 1] (</code><code style="color:#22d3bf">rgbvideo</code>`)。</p>
+<p>`<code style="color:#22d3bf">video_spacetime_cube(mode)</code><code style="color:#22d3bf"> を不透明度に(</code><code style="color:#22d3bf">&quot;motion&quot;</code><code style="color:#22d3bf"> = 動画の軌跡、</code><code style="color:#22d3bf">&quot;dark&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;bright&quot;</code>` = z スタックの膜や</p>
+<p>細胞)、`<code style="color:#22d3bf">color=&quot;time&quot;</code><code style="color:#22d3bf"> なら先頭軸(時刻 / 奥行き)の色、</code><code style="color:#22d3bf">&quot;intensity&quot;</code><code style="color:#22d3bf"> なら明るさで塗り、yaw を </code><code style="color:#22d3bf">yaw_start</code>` から</p>
+<p>`<code style="color:#22d3bf">yaw_span</code><code style="color:#22d3bf"> 度ぶん等分に回す(pitch 固定)。展示と Studio の出口。</code><code style="color:#22d3bf">video_write_gif</code>` でそのまま GIF にできる。</p>
+<p>&gt;&gt;&gt; frames = video_cube_orbit(clip, n_frames=24, size=200)</p>
+<p>&gt;&gt;&gt; video_write_gif(frames, &quot;cube.gif&quot;, fps=10)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideocube:videocube">videocube ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_video_cube">poc_video_cube</a> — <code style="color:#22d3bf">py -3.11 examples/poc_video_cube.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgbvideo</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opvideocube:video_write_gif">video_write_gif</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">render</code>)</h3>
+<p><a style="color:#22d3bf" href="opvideocube:vol_render_transfer">vol_render_transfer</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: videocube.py — VIDEOCUBE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

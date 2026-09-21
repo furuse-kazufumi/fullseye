@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2027,
- "n_notes": 2033,
+ "n_ops": 2036,
+ "n_notes": 2042,
  "notes": {
   "vol_dilate": [
    {
@@ -9883,6 +9883,36 @@
     "in": "points",
     "out": "volume",
     "path": "docs/ops/2d/typed/tb_torus_sdf.md"
+   }
+  ],
+  "tb_video_cube_cut": [
+   {
+    "op": "tb_video_cube_cut",
+    "dim": "2d",
+    "category": "typed",
+    "in": "video",
+    "out": "image",
+    "path": "docs/ops/2d/typed/tb_video_cube_cut.md"
+   }
+  ],
+  "tb_video_spacetime_cube": [
+   {
+    "op": "tb_video_spacetime_cube",
+    "dim": "2d",
+    "category": "typed",
+    "in": "video",
+    "out": "volume",
+    "path": "docs/ops/2d/typed/tb_video_spacetime_cube.md"
+   }
+  ],
+  "tb_video_summary_keyframes": [
+   {
+    "op": "tb_video_summary_keyframes",
+    "dim": "2d",
+    "category": "typed",
+    "in": "video",
+    "out": "signal",
+    "path": "docs/ops/2d/typed/tb_video_summary_keyframes.md"
    }
   ],
   "tb_voxel_grid_downsample": [
@@ -20472,6 +20502,66 @@
     "in": "voxel",
     "out": "sinostack",
     "path": "docs/ops/tomography/volume/radon_volume.md"
+   }
+  ],
+  "video_cube_cut": [
+   {
+    "op": "video_cube_cut",
+    "dim": "videocube",
+    "category": "cube",
+    "in": "video",
+    "out": "image2d",
+    "path": "docs/ops/videocube/cube/video_cube_cut.md"
+   }
+  ],
+  "video_spacetime_cube": [
+   {
+    "op": "video_spacetime_cube",
+    "dim": "videocube",
+    "category": "cube",
+    "in": "video",
+    "out": "voxel",
+    "path": "docs/ops/videocube/cube/video_spacetime_cube.md"
+   }
+  ],
+  "video_write_gif": [
+   {
+    "op": "video_write_gif",
+    "dim": "videocube",
+    "category": "export",
+    "in": "rgbvideo",
+    "out": "text",
+    "path": "docs/ops/videocube/export/video_write_gif.md"
+   }
+  ],
+  "video_cube_orbit": [
+   {
+    "op": "video_cube_orbit",
+    "dim": "videocube",
+    "category": "render",
+    "in": "video",
+    "out": "rgbvideo",
+    "path": "docs/ops/videocube/render/video_cube_orbit.md"
+   }
+  ],
+  "vol_render_transfer": [
+   {
+    "op": "vol_render_transfer",
+    "dim": "videocube",
+    "category": "render",
+    "in": "voxel",
+    "out": "rgb",
+    "path": "docs/ops/videocube/render/vol_render_transfer.md"
+   }
+  ],
+  "video_summary_keyframes": [
+   {
+    "op": "video_summary_keyframes",
+    "dim": "videocube",
+    "category": "summary",
+    "in": "video",
+    "out": "indices",
+    "path": "docs/ops/videocube/summary/video_summary_keyframes.md"
    }
   ],
   "scene_cut_detection": [

@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">video_write_gif — VIDEOCUBE <code style="color:#22d3bf">export</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgbvideo</code> → <code style="color:#22d3bf">text</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_write_gif(frames, path: &#x27;str&#x27;, fps: &#x27;float&#x27; = 10.0) -&gt; &#x27;str&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import videocube; videocube.video_write_gif(frames, path: &#x27;str&#x27;, fps: &#x27;float&#x27; = 10.0) -&gt; &#x27;str&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsvideocube.get(&quot;video_write_gif&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>フレーム列をアニメーション GIF に書く(`<code style="color:#22d3bf">text</code>` = 書いたパス)。使い回しの出口。</p>
+<p>`<code style="color:#22d3bf">frames</code><code style="color:#22d3bf"> は灰の </code><code style="color:#22d3bf">video</code><code style="color:#22d3bf"> (T, H, W) か色の </code><code style="color:#22d3bf">rgbvideo</code>` (F, H, W, 3)。float は [0, 1] を 0..255 に、</p>
+<p>整数はそのまま uint8 に(範囲外は切る)。<b>全フレームを保存する</b>(Pillow は前と同じ絵を 1 コマに</p>
+<p>畳んで数を減らすので、`<code style="color:#22d3bf">video.write_video</code>` の全コマ保存経路を使い、書いた後に枚数を読み戻して確かめる)。</p>
+<p>Pillow が無ければ ImportError(optional 依存)。`<code style="color:#22d3bf">path</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">.gif</code>` で終わること。</p>
+<p>&gt;&gt;&gt; video_write_gif(video_cube_orbit(clip, n_frames=24), &quot;out/cube.gif&quot;, fps=12)</p>
+<p>&#x27;out/cube.gif&#x27;</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideocube:videocube">Leitfaden zur Familie videocube</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_video_cube">poc_video_cube</a> — <code style="color:#22d3bf">py -3.11 examples/poc_video_cube.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">text</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">export</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: videocube.py — VIDEOCUBE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

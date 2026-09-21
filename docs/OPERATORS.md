@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-931 operators across 48 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+934 operators across 48 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -917,6 +917,9 @@
 | `tb_mirror_plane_from_pairs` | points->matrix | typed |  | - | - | - |
 | `tb_landmark_asymmetry` | points->signal | typed |  | - | - | - |
 | `tb_dem_ecef_to_geodetic` | points | typed |  | - | - | - |
+| `tb_video_spacetime_cube` | video->volume | typed |  | - | - | - |
+| `tb_video_cube_cut` | video->image | typed |  | - | - | - |
+| `tb_video_summary_keyframes` | video->signal | typed |  | - | - | - |
 | `img_to_points` | image->points | bridge |  | - | - | - |
 | `img_to_keypoints` | image->keypoints | bridge |  | - | - | - |
 | `img_to_signal` | image->signal | bridge |  | - | - | - |
@@ -937,9 +940,9 @@
 | `feature_to_img` | feature->image | bridge |  | - | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 310/931
-- skimage: 383/931
-- matlab: 259/931
+- opencv: 310/934
+- skimage: 383/934
+- matlab: 259/934
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.
