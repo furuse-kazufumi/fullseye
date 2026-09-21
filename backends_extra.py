@@ -355,6 +355,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             mask = np.zeros((h, w), np.uint8)
             rect = (int(w * 0.15), int(h * 0.15), int(w * 0.7), int(h * 0.7))
             bg, fg = np.zeros((1, 65), np.float64), np.zeros((1, 65), np.float64)
+            # GMM の初期化(k-means)は cv2 のグローバル乱数を使うので、呼ぶたびに固定する ——
+            # でないと同じ入力で出力が揺れ、「未使用の b が効く」ように見える(CI の opencv-contrib 4.x で実測)
+            if hasattr(cv2, "setRNGSeed"):
+                cv2.setRNGSeed(0)
             cv2.grabCut(img, mask, rect, bg, fg, 2 + int(a * 3), cv2.GC_INIT_WITH_RECT)
             return ((mask == 1) | (mask == 3)).astype(np.float64)
 

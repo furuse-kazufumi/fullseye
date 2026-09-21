@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gcode_layer_image — PRINTPATH <code style="color:#22d3bf">gcode</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcode_layer_image(table: &#x27;Any&#x27;, layer: &#x27;int&#x27;, px_per_mm: &#x27;float&#x27; = 10.0, line_width_mm: &#x27;float&#x27; = 0.4, bounds=None, travel: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import printpath; printpath.gcode_layer_image(table: &#x27;Any&#x27;, layer: &#x27;int&#x27;, px_per_mm: &#x27;float&#x27; = 10.0, line_width_mm: &#x27;float&#x27; = 0.4, bounds=None, travel: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsprintpath.get(&quot;gcode_layer_image&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>1 層の経路を<b>線幅つきのラスタ</b> `<code style="color:#22d3bf">image2d</code>`(0 / 1、y 下向き = 行)に描く。</p>
+<p>押し出しのある線分だけを `<code style="color:#22d3bf">line_width_mm</code><code style="color:#22d3bf"> の太さで塗る(</code><code style="color:#22d3bf">travel=True</code><code style="color:#22d3bf"> なら移動も細線で)。画素は </code><code style="color:#22d3bf">px_per_mm</code>`、</p>
+<p>範囲は `<code style="color:#22d3bf">bounds=(xmin, ymin, xmax, ymax)</code>` mm(無ければ表全体 + 2 mm の余白 —— 層をまたいで同じ範囲にしたければ</p>
+<p>渡す)。これが「この層はこう見えるはず」の期待像で、カメラの層画像と `<code style="color:#22d3bf">print_layer_defect_map</code>` で比べる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_layer_inspection">poc_print_layer_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_layer_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:print_layer_defect_map">print_layer_defect_map</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">gcode</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:gcode_read">gcode_read</a> · <a style="color:#22d3bf" href="opprintpath:gcode_write">gcode_write</a> · <a style="color:#22d3bf" href="opprintpath:gcode_extrusion_volume">gcode_extrusion_volume</a> · <a style="color:#22d3bf" href="opprintpath:gcode_time_estimate">gcode_time_estimate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

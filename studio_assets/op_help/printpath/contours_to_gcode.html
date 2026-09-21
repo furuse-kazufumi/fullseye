@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">contours_to_gcode — PRINTPATH <code style="color:#22d3bf">slice</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contours_to_gcode(contours: &#x27;Any&#x27;, z: &#x27;float&#x27;, layer: &#x27;int&#x27; = 0, layer_mm: &#x27;float&#x27; = 0.2, line_width_mm: &#x27;float&#x27; = 0.4, filament_mm: &#x27;float&#x27; = 1.75, feed_mm_min: &#x27;float&#x27; = 1800.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import printpath; printpath.contours_to_gcode(contours: &#x27;Any&#x27;, z: &#x27;float&#x27;, layer: &#x27;int&#x27; = 0, layer_mm: &#x27;float&#x27; = 0.2, line_width_mm: &#x27;float&#x27; = 0.4, filament_mm: &#x27;float&#x27; = 1.75, feed_mm_min: &#x27;float&#x27; = 1800.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsprintpath.get(&quot;contours_to_gcode&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>輪郭(`<code style="color:#22d3bf">mesh_slice_contours</code><code style="color:#22d3bf"> の表)を**周回する経路の表**に(</code><code style="color:#22d3bf">gcode_read</code>` と同じ列)。</p>
+<p>最小のスライサ: 各輪を順に一周し、押し出し量は `<code style="color:#22d3bf">線分長 × 線幅 × 層厚 / フィラメント断面積</code>`。輪と輪の間は</p>
+<p>移動(e = 0)。真値つきの合成 G-code を作るための道具で、インフィルやリトラクトは持たない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_layer_inspection">poc_print_layer_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_layer_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:gcode_write">gcode_write</a> · <a style="color:#22d3bf" href="opprintpath:gcode_extrusion_volume">gcode_extrusion_volume</a> · <a style="color:#22d3bf" href="opprintpath:gcode_time_estimate">gcode_time_estimate</a> · <a style="color:#22d3bf" href="opprintpath:gcode_layer_image">gcode_layer_image</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">slice</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:mesh_slice_contours">mesh_slice_contours</a> · <a style="color:#22d3bf" href="opprintpath:mesh_slice_stack">mesh_slice_stack</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

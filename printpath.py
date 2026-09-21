@@ -1,0 +1,650 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
+"""printpath —— 3D プリンタのデータ(G-code / 3MF / スライス / 層画像の検査)を扱う op 族。numpy + 標準ライブラリのみ。
+
+「形 → 層 → 経路 → 画像」の往復が全部 Fullseye の既存語彙で閉じる:
+
+* **G-code**(RepRap / Marlin 系): ``gcode_read`` が G0/G1 の移動を**線分の表**(``table``: x0 y0 z0 x1 y1 z1 e f layer)
+  に読む(G90/G91 の絶対・相対、M82/M83 の E の絶対・相対、G92 のリセット、G20/G21 の単位、``;`` コメント、
+  ``;LAYER:`` の層番号か Z の増加で層を切る)。``gcode_write`` は表を G1 に書き戻す。``gcode_extrusion_volume`` は
+  E [mm] × フィラメント断面積、``gcode_time_estimate`` は距離 / 送り(加速度を無視した下限)。
+* **スライス**: ``mesh_slice_contours`` は三角形メッシュ(``mesh`` = (V, F))を平面 z で切って輪郭(``table``: ring x y)、
+  ``mesh_slice_stack`` は層ごとの塗りつぶしマスクを ``voxel`` に、``contours_to_gcode`` は輪郭を周回する経路の表に
+  (押し出し量は線幅 × 層厚 / 断面積)。
+* **3MF**: ``read_3mf`` / ``write_3mf``(zip + XML の最小構成、依存なし)。
+* **検査**: ``gcode_layer_image`` が経路を層のラスタ(``image2d``、線幅つき)に描き、``print_layer_defect_map`` が
+  観測した層画像と期待の層画像を比べて「無いはずの所にある / あるはずの所に無い」を符号つきの図にする。
+
+真値は自分で仕込める(輪郭 → 経路 → 画像 → 欠陥注入)ので、検出率を数字で言える(``examples/poc_print_layer_inspection.py``)。
+入力は fail-closed(方言や欠けた座標は黙って補わず ValueError)。
+"""
+from __future__ import annotations
+
+import io
+import math
+import os
+import re
+import zipfile
+from typing import Any
+from xml.etree import ElementTree as ET
+
+import numpy as np
+from scipy import ndimage as ndi
+
+__all__ = [
+    "MAX_GCODE_SEGMENTS", "MAX_LAYER_PIXELS",
+    "gcode_read", "gcode_write", "gcode_extrusion_volume", "gcode_time_estimate", "gcode_layer_image",
+    "mesh_slice_contours", "mesh_slice_stack", "contours_to_gcode",
+    "read_3mf", "write_3mf",
+    "print_layer_defect_map",
+]
+
+#: 読む線分の上限(1 行 1 線分、これを超えたら ValueError —— 黙って間引かない)。
+MAX_GCODE_SEGMENTS = 5_000_000
+#: 層ラスタの上限画素数。
+MAX_LAYER_PIXELS = 2 ** 26
+_SEG_COLS = ("x0", "y0", "z0", "x1", "y1", "z1", "e", "f", "layer")
+_WORD = re.compile(r"([A-Za-z])\s*([-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?)")
+_LAYER_TAG = re.compile(r";\s*LAYER\s*[:=]?\s*(\d+)", re.IGNORECASE)
+
+
+# --------------------------------------------------------------------------- #
+# 検査                                                                          #
+# --------------------------------------------------------------------------- #
+def _finite(x: Any, op: str, name: str, lo=None, hi=None) -> float:
+    if isinstance(x, (bool, np.bool_, str)) or x is None:
+        raise ValueError(f"{op}: {name} must be a number, got {x!r}")
+    v = float(x)
+    if not np.isfinite(v):
+        raise ValueError(f"{op}: {name} must be finite, got {v}")
+    if lo is not None and v < lo:
+        raise ValueError(f"{op}: {name} must be >= {lo}, got {v}")
+    if hi is not None and v > hi:
+        raise ValueError(f"{op}: {name} must be <= {hi}, got {v}")
+    return v
+
+
+def _count(x: Any, op: str, name: str, lo: int, hi: int | None = None) -> int:
+    if isinstance(x, (bool, np.bool_)) or not isinstance(x, (int, np.integer)):
+        raise ValueError(f"{op}: {name} must be an integer, got {x!r}")
+    v = int(x)
+    if v < lo or (hi is not None and v > hi):
+        raise ValueError(f"{op}: {name} must be in [{lo}, {hi if hi is not None else 'inf'}], got {v}")
+    return v
+
+
+def _path(p: Any, op: str, must_exist: bool) -> str:
+    if not isinstance(p, str) or not p:
+        raise ValueError(f"{op}: path must be a non-empty string, got {p!r}")
+    if must_exist and not os.path.isfile(p):
+        raise ValueError(f"{op}: file not found: {p}")
+    return p
+
+
+def _segments(table: Any, op: str) -> dict[str, np.ndarray]:
+    """``gcode_read`` の表として受ける(列 x0 y0 z0 x1 y1 z1 e f layer、同じ長さ、有限)。"""
+    if not isinstance(table, dict):
+        raise ValueError(f"{op}: expected the segment table from gcode_read (a dict of columns), got {type(table).__name__}")
+    missing = [c for c in _SEG_COLS if c not in table]
+    if missing:
+        raise ValueError(f"{op}: segment table lacks columns {missing}")
+    out = {}
+    n = None
+    for c in _SEG_COLS:
+        a = np.asarray(table[c], dtype=np.float64 if c != "layer" else np.int64).reshape(-1)
+        if n is None:
+            n = a.shape[0]
+        elif a.shape[0] != n:
+            raise ValueError(f"{op}: column {c} has {a.shape[0]} rows, expected {n}")
+        if c != "layer" and not np.isfinite(a).all():
+            raise ValueError(f"{op}: column {c} must be finite")
+        out[c] = a
+    if n == 0:
+        raise ValueError(f"{op}: the segment table is empty")
+    return out
+
+
+def _mesh(mesh: Any, op: str) -> tuple[np.ndarray, np.ndarray]:
+    if not isinstance(mesh, (tuple, list)) or len(mesh) != 2:
+        raise ValueError(f"{op}: mesh must be a (V, F) pair, got {type(mesh).__name__}")
+    V = np.asarray(mesh[0], dtype=np.float64)
+    F = np.asarray(mesh[1])
+    if V.ndim != 2 or V.shape[1] != 3 or V.shape[0] < 3 or not np.isfinite(V).all():
+        raise ValueError(f"{op}: V must be finite (nv, 3) with nv >= 3, got shape {V.shape}")
+    if F.ndim != 2 or F.shape[1] != 3 or F.shape[0] < 1 or not np.issubdtype(F.dtype, np.integer):
+        raise ValueError(f"{op}: F must be integer (nf, 3) with nf >= 1, got shape {F.shape} dtype {F.dtype}")
+    if F.min() < 0 or F.max() >= V.shape[0]:
+        raise ValueError(f"{op}: F indexes vertices outside 0..{V.shape[0] - 1}")
+    return V, F.astype(np.int64)
+
+
+def _contours(table: Any, op: str) -> dict[str, np.ndarray]:
+    if not isinstance(table, dict) or any(c not in table for c in ("ring", "x", "y")):
+        raise ValueError(f"{op}: expected a contour table with columns ring / x / y (from mesh_slice_contours)")
+    ring = np.asarray(table["ring"], dtype=np.int64).reshape(-1)
+    x = np.asarray(table["x"], dtype=np.float64).reshape(-1)
+    y = np.asarray(table["y"], dtype=np.float64).reshape(-1)
+    if not (ring.shape == x.shape == y.shape) or ring.shape[0] == 0:
+        raise ValueError(f"{op}: contour columns must be non-empty and the same length")
+    if not (np.isfinite(x).all() and np.isfinite(y).all()):
+        raise ValueError(f"{op}: contour coordinates must be finite")
+    return {"ring": ring, "x": x, "y": y}
+
+
+# --------------------------------------------------------------------------- #
+# G-code                                                                        #
+# --------------------------------------------------------------------------- #
+def gcode_read(path: str, layer_from: str = "auto") -> dict[str, np.ndarray]:
+    """G-code(RepRap / Marlin 系)を**線分の表** ``table`` に読む: 列 ``x0 y0 z0 x1 y1 z1``(mm)、``e``(その線分で
+    押し出したフィラメント長 mm、移動だけなら 0)、``f``(送り mm/min)、``layer``(層番号)。
+
+    解釈するのは G0 / G1(直線移動)、G90 / G91(座標の絶対 / 相対)、M82 / M83(E の絶対 / 相対)、G92(座標の
+    リセット)、G20 / G21(インチ / mm)、``;`` コメント。円弧 G2 / G3 は**扱わない**(黙って直線にせず ValueError ——
+    スライサで直線に展開して出力すること)。層は ``layer_from="tag"`` なら ``;LAYER:n`` のコメント、``"z"`` なら押し出し
+    を伴う Z の増加で切る。``"auto"`` はタグがあればタグ、無ければ Z。座標が一度も与えられないまま押し出す行は
+    ValueError(方言の穴を黙って 0 で埋めない)。
+
+    >>> t = gcode_read("part.gcode")
+    >>> t["e"].sum()                                       # 押し出したフィラメントの総長 [mm]
+    """
+    op = "gcode_read"
+    p = _path(path, op, must_exist=True)
+    if layer_from not in ("auto", "tag", "z"):
+        raise ValueError(f"{op}: layer_from must be 'auto', 'tag' or 'z', got {layer_from!r}")
+    with io.open(p, "r", encoding="utf-8", errors="replace") as f:
+        lines = f.read().splitlines()
+    cols = {c: [] for c in _SEG_COLS}
+    pos = {"X": None, "Y": None, "Z": None, "E": 0.0}
+    absolute, e_absolute, scale = True, True, 1.0
+    feed = None
+    tag_layer = None
+    have_tag = any(_LAYER_TAG.search(ln) for ln in lines[:5000]) or any(_LAYER_TAG.search(ln) for ln in lines)
+    use_tag = layer_from == "tag" or (layer_from == "auto" and have_tag)
+    z_layer, last_z_extrude = -1, None
+    for ln_no, raw in enumerate(lines, 1):
+        m = _LAYER_TAG.search(raw)
+        if m:
+            tag_layer = int(m.group(1))
+        code = raw.split(";", 1)[0].strip()
+        if not code:
+            continue
+        words = _WORD.findall(code)
+        if not words:
+            continue
+        letter, num = words[0][0].upper(), words[0][1]
+        cmd = "%s%d" % (letter, int(float(num)))
+        params = {k.upper(): float(v) for k, v in words[1:]}
+        if cmd in ("G20", "G21"):
+            scale = 25.4 if cmd == "G20" else 1.0
+        elif cmd in ("G90", "G91"):
+            absolute = cmd == "G90"
+        elif cmd in ("M82", "M83"):
+            e_absolute = cmd == "M82"
+        elif cmd == "G92":
+            for k in ("X", "Y", "Z", "E"):
+                if k in params:
+                    pos[k] = params[k] * (scale if k != "E" else 1.0)
+        elif cmd in ("G2", "G3"):
+            raise ValueError(f"{op}: line {ln_no}: arc moves (G2/G3) are not supported — export with arcs expanded to lines")
+        elif cmd in ("G0", "G1"):
+            if "F" in params:
+                feed = params["F"] * scale
+            new = dict(pos)
+            for k in ("X", "Y", "Z"):
+                if k in params:
+                    v = params[k] * scale
+                    new[k] = v if (absolute or pos[k] is None) else pos[k] + v
+            de = 0.0
+            if "E" in params:
+                ev = params["E"]
+                de = (ev - pos["E"]) if e_absolute else ev
+                new["E"] = ev if e_absolute else pos["E"] + ev
+            moved = any(new[k] != pos[k] for k in ("X", "Y", "Z"))
+            if moved or de != 0.0:
+                if any(new[k] is None for k in ("X", "Y", "Z")):
+                    missing = [k for k in ("X", "Y", "Z") if new[k] is None]
+                    raise ValueError(f"{op}: line {ln_no}: a move before {missing} were ever set (dialect gap; not filled with 0)")
+                if any(pos[k] is None for k in ("X", "Y", "Z")):
+                    # 始点が未定義(最初の位置決め): 線分にはならない。押し出していたら方言の穴
+                    if de > 0.0:
+                        raise ValueError(f"{op}: line {ln_no}: extrusion before the start position was ever set")
+                    pos = new
+                    continue
+                if de < 0.0:
+                    de = 0.0                                              # リトラクトは押し出しに数えない
+                if use_tag:
+                    layer = tag_layer if tag_layer is not None else 0
+                else:
+                    if de > 0.0 and (last_z_extrude is None or new["Z"] > last_z_extrude + 1e-9):
+                        z_layer += 1
+                        last_z_extrude = new["Z"]
+                    layer = max(z_layer, 0)
+                if feed is None and moved:
+                    raise ValueError(f"{op}: line {ln_no}: a move before any feed rate (F) was set")
+                x0 = pos["X"] if pos["X"] is not None else new["X"]
+                y0 = pos["Y"] if pos["Y"] is not None else new["Y"]
+                z0 = pos["Z"] if pos["Z"] is not None else new["Z"]
+                for c, v in zip(_SEG_COLS, (x0, y0, z0, new["X"], new["Y"], new["Z"], de, feed or 0.0, layer)):
+                    cols[c].append(v)
+                if len(cols["e"]) > MAX_GCODE_SEGMENTS:
+                    raise ValueError(f"{op}: more than MAX_GCODE_SEGMENTS={MAX_GCODE_SEGMENTS} moves")
+            pos = new
+    if not cols["e"]:
+        raise ValueError(f"{op}: no moves found in {p}")
+    out = {c: np.asarray(cols[c], dtype=np.float64) for c in _SEG_COLS if c != "layer"}
+    out["layer"] = np.asarray(cols["layer"], dtype=np.int64)
+    return out
+
+
+def gcode_write(table: Any, path: str, layer_tags: bool = True) -> str:
+    """線分の表を G-code(G21 / G90 / M82、G1 の絶対座標と絶対 E)に書く。返りは書いたパス(``text``)。
+
+    ``gcode_read`` と往復できる(層は ``;LAYER:n`` で書く)。移動だけの線分は E を進めない。
+    """
+    op = "gcode_write"
+    seg = _segments(table, op)
+    p = _path(path, op, must_exist=False)
+    if not isinstance(layer_tags, (bool, np.bool_)):
+        raise ValueError(f"{op}: layer_tags must be a bool")
+    lines = ["; written by fullseye.printpath.gcode_write", "G21 ; mm", "G90 ; absolute coordinates", "M82 ; absolute E", "G92 E0"]
+    e_abs = 0.0
+    cur_layer = None
+    first = True
+    for i in range(seg["e"].shape[0]):
+        if layer_tags and int(seg["layer"][i]) != cur_layer:
+            cur_layer = int(seg["layer"][i])
+            lines.append(";LAYER:%d" % cur_layer)
+        if first or (seg["x0"][i], seg["y0"][i], seg["z0"][i]) != (seg["x1"][i - 1], seg["y1"][i - 1], seg["z1"][i - 1]):
+            lines.append("G0 X%.5f Y%.5f Z%.5f F%.0f" % (seg["x0"][i], seg["y0"][i], seg["z0"][i], max(seg["f"][i], 1.0)))
+            first = False
+        e_abs += float(seg["e"][i])
+        lines.append("G1 X%.5f Y%.5f Z%.5f E%.7f F%.0f" % (seg["x1"][i], seg["y1"][i], seg["z1"][i], e_abs, max(seg["f"][i], 1.0)))
+    with io.open(p, "w", encoding="utf-8", newline="\n") as f:
+        f.write("\n".join(lines) + "\n")
+    return p
+
+
+def gcode_extrusion_volume(table: Any, filament_mm: float = 1.75) -> float:
+    """押し出したフィラメントの体積 [mm³] = Σe × π (d / 2)²(``measurement``)。重さは密度 × 体積(PLA ≈ 1.24 g/cm³)。"""
+    op = "gcode_extrusion_volume"
+    seg = _segments(table, op)
+    d = _finite(filament_mm, op, "filament_mm", lo=1e-6)
+    return float(seg["e"].sum() * math.pi * (d / 2.0) ** 2)
+
+
+def gcode_time_estimate(table: Any) -> float:
+    """所要時間の下限 [s] = Σ(線分の長さ / 送り)(加速度・ジャークを無視、``measurement``)。送り 0 の線分は数えない。"""
+    op = "gcode_time_estimate"
+    seg = _segments(table, op)
+    L = np.sqrt((seg["x1"] - seg["x0"]) ** 2 + (seg["y1"] - seg["y0"]) ** 2 + (seg["z1"] - seg["z0"]) ** 2)
+    f = seg["f"]
+    ok = f > 0.0
+    return float((L[ok] / (f[ok] / 60.0)).sum())
+
+
+def _raster_geometry(op, seg_or_pts_x, seg_or_pts_y, px_per_mm, bounds):
+    if bounds is None:
+        xmin, xmax = float(np.min(seg_or_pts_x)), float(np.max(seg_or_pts_x))
+        ymin, ymax = float(np.min(seg_or_pts_y)), float(np.max(seg_or_pts_y))
+        pad = 2.0
+        xmin, xmax, ymin, ymax = xmin - pad, xmax + pad, ymin - pad, ymax + pad
+    else:
+        try:
+            xmin, ymin, xmax, ymax = (float(v) for v in bounds)
+        except (TypeError, ValueError):
+            raise ValueError(f"{op}: bounds must be (xmin, ymin, xmax, ymax) in mm, got {bounds!r}") from None
+        if not (xmax > xmin and ymax > ymin):
+            raise ValueError(f"{op}: bounds must have xmax > xmin and ymax > ymin, got {bounds!r}")
+    W = int(math.ceil((xmax - xmin) * px_per_mm))
+    H = int(math.ceil((ymax - ymin) * px_per_mm))
+    if W < 1 or H < 1 or W * H > MAX_LAYER_PIXELS:
+        raise ValueError(f"{op}: raster of {H} x {W} px is empty or exceeds MAX_LAYER_PIXELS={MAX_LAYER_PIXELS}")
+    return xmin, ymin, W, H
+
+
+def gcode_layer_image(table: Any, layer: int, px_per_mm: float = 10.0, line_width_mm: float = 0.4,
+                      bounds=None, travel: bool = False) -> np.ndarray:
+    """1 層の経路を**線幅つきのラスタ** ``image2d``(0 / 1、y 下向き = 行)に描く。
+
+    押し出しのある線分だけを ``line_width_mm`` の太さで塗る(``travel=True`` なら移動も細線で)。画素は ``px_per_mm``、
+    範囲は ``bounds=(xmin, ymin, xmax, ymax)`` mm(無ければ表全体 + 2 mm の余白 —— 層をまたいで同じ範囲にしたければ
+    渡す)。これが「この層はこう見えるはず」の期待像で、カメラの層画像と ``print_layer_defect_map`` で比べる。
+    """
+    op = "gcode_layer_image"
+    seg = _segments(table, op)
+    ly = _count(layer, op, "layer", 0)
+    ppm = _finite(px_per_mm, op, "px_per_mm", lo=1e-6)
+    lw = _finite(line_width_mm, op, "line_width_mm", lo=0.0)
+    if not isinstance(travel, (bool, np.bool_)):
+        raise ValueError(f"{op}: travel must be a bool")
+    xmin, ymin, W, H = _raster_geometry(op, np.concatenate([seg["x0"], seg["x1"]]), np.concatenate([seg["y0"], seg["y1"]]), ppm, bounds)
+    sel = seg["layer"] == ly
+    if not sel.any():
+        raise ValueError(f"{op}: layer {ly} has no moves (layers present: {np.unique(seg['layer']).tolist()[:10]}...)")
+    img = np.zeros((H, W), dtype=np.float64)
+    ext = sel & (seg["e"] > 0.0)
+    _paint_segments(img, seg["x0"][ext], seg["y0"][ext], seg["x1"][ext], seg["y1"][ext], xmin, ymin, ppm, lw)
+    if travel:
+        trv = sel & (seg["e"] <= 0.0)
+        _paint_segments(img, seg["x0"][trv], seg["y0"][trv], seg["x1"][trv], seg["y1"][trv], xmin, ymin, ppm, 0.0, value=0.5)
+    return img
+
+
+def _paint_segments(img, x0, y0, x1, y1, xmin, ymin, ppm, width_mm, value=1.0):
+    """線分を画素へ(中心線を刻んで点を落とし、幅は距離変換で膨らませる)。"""
+    if x0.shape[0] == 0:
+        return
+    H, W = img.shape
+    core = np.zeros((H, W), dtype=bool)
+    for a, b, c, d in zip(x0, y0, x1, y1):
+        n = int(math.ceil(math.hypot(c - a, d - b) * ppm)) + 1
+        t = np.linspace(0.0, 1.0, n)
+        xs = np.clip(np.rint((a + (c - a) * t - xmin) * ppm).astype(int), 0, W - 1)
+        ys = np.clip(np.rint((b + (d - b) * t - ymin) * ppm).astype(int), 0, H - 1)
+        core[ys, xs] = True
+    if width_mm > 0.0:
+        r = width_mm * ppm / 2.0
+        dist = ndi.distance_transform_edt(~core)
+        img[dist <= r] = np.maximum(img[dist <= r], value)
+    else:
+        img[core] = np.maximum(img[core], value)
+
+
+# --------------------------------------------------------------------------- #
+# スライス                                                                      #
+# --------------------------------------------------------------------------- #
+def mesh_slice_contours(mesh: Any, z: float, tol: float = 1e-6) -> dict[str, np.ndarray]:
+    """三角形メッシュを平面 ``z`` で切った**輪郭の表** ``table``: 列 ``ring``(輪の番号)、``x``、``y``(mm)。
+
+    各三角形と平面の交差を線分にし、三角形の法線で向きを付けて(外輪郭は反時計回り、穴は時計回り)、端点を
+    突き合わせて閉じた輪(閉じなければ開いた鎖)に繋ぐ(古典のスライサ)。輪の符号つき面積で中身と穴が分かる。
+    頂点がちょうど平面に乗るときは ``tol`` だけ持ち上げて退化を避ける。平面が形に触れなければ ValueError
+    (空の層は「無い」と言う)。
+    """
+    op = "mesh_slice_contours"
+    V, F = _mesh(mesh, op)
+    zc = _finite(z, op, "z")
+    tl = _finite(tol, op, "tol", lo=0.0)
+    zs = V[:, 2].copy()
+    zs[np.abs(zs - zc) <= tl] += 2.0 * tl + 1e-12
+    segs = []
+    for tri in F:
+        p = V[tri]
+        h = zs[tri] - zc
+        above = h > 0
+        if above.all() or (~above).all():
+            continue
+        pts = []
+        for i in range(3):
+            j = (i + 1) % 3
+            if above[i] != above[j]:
+                t = h[i] / (h[i] - h[j])
+                pts.append(p[i, :2] + t * (p[j, :2] - p[i, :2]))
+        if len(pts) == 2:
+            # 向き: 三角形の法線 n(頂点順の右手系)に対し n × ez の向きへ進む —— 外向き法線の立体は
+            # 上から見て外輪郭が反時計回り、穴(内向き法線)は時計回りになる(符号つき面積で区別できる)
+            nrm = np.cross(p[1] - p[0], p[2] - p[0])
+            d = pts[1] - pts[0]
+            if nrm[0] * d[1] - nrm[1] * d[0] < 0.0:                       # dot(d, ez × n) = d·(−ny, nx)
+                pts = [pts[1], pts[0]]
+            segs.append((pts[0], pts[1]))
+    if not segs:
+        raise ValueError(f"{op}: the plane z={zc} does not intersect the mesh (z range {V[:, 2].min():.4g}..{V[:, 2].max():.4g})")
+    return _link_segments(np.asarray(segs, dtype=np.float64))
+
+
+def _link_segments(S: np.ndarray, snap: float = 1e-6) -> dict[str, np.ndarray]:
+    """有向の線分 (n, 2, 2) を「終点 → 次の始点」で繋いで輪にする(向きは保つ)。"""
+    n = S.shape[0]
+    key = np.round(S.reshape(-1, 2) / snap).astype(np.int64)
+    _uniq, inv = np.unique(key, axis=0, return_inverse=True)
+    inv = inv.reshape(n, 2)
+    adj: dict[int, list[int]] = {}
+    for s in range(n):
+        adj.setdefault(int(inv[s, 0]), []).append(s)
+    used = np.zeros(n, dtype=bool)
+    rings, xs, ys = [], [], []
+    ring_id = 0
+    for start in range(n):
+        if used[start]:
+            continue
+        used[start] = True
+        chain = [S[start, 0], S[start, 1]]
+        node = int(inv[start, 1])
+        while True:
+            nxt = None
+            for s in adj.get(node, []):
+                if not used[s]:
+                    nxt = s
+                    break
+            if nxt is None:
+                break
+            used[nxt] = True
+            chain.append(S[nxt, 1])
+            node = int(inv[nxt, 1])
+            if node == int(inv[start, 0]):
+                break
+        pts = np.asarray(chain)
+        if len(pts) >= 2 and np.allclose(pts[0], pts[-1], atol=snap * 10):
+            pts = pts[:-1]
+        rings.append(np.full(len(pts), ring_id, dtype=np.int64))
+        xs.append(pts[:, 0])
+        ys.append(pts[:, 1])
+        ring_id += 1
+    return {"ring": np.concatenate(rings), "x": np.concatenate(xs), "y": np.concatenate(ys)}
+
+
+def _fill_rings(ring, x, y, xmin, ymin, W, H, ppm) -> np.ndarray:
+    """輪郭の内側を **nonzero winding** で塗る(走査線): 反時計回りの輪は +1、時計回りの輪(穴)は −1 を
+    積み、正の所が中身。向きは ``mesh_slice_contours`` が三角形の法線から付ける。"""
+    acc = np.zeros((H, W), dtype=np.int32)
+    for rid in np.unique(ring):
+        px = (x[ring == rid] - xmin) * ppm
+        py = (y[ring == rid] - ymin) * ppm
+        if len(px) < 3:
+            continue
+        area = 0.5 * float(np.sum(px * np.roll(py, -1) - np.roll(px, -1) * py))
+        sign = 1 if area > 0.0 else -1
+        for row in range(int(max(0, math.floor(py.min()))), int(min(H - 1, math.ceil(py.max()))) + 1):
+            yc = row + 0.5
+            xs = []
+            for i in range(len(px)):
+                j = (i + 1) % len(px)
+                y0, y1 = py[i], py[j]
+                if (y0 <= yc) != (y1 <= yc):
+                    xs.append(px[i] + (yc - y0) / (y1 - y0) * (px[j] - px[i]))
+            xs.sort()
+            for a, b in zip(xs[0::2], xs[1::2]):
+                lo, hi = int(math.ceil(a - 0.5)), int(math.floor(b - 0.5))
+                if hi >= lo:
+                    acc[row, max(lo, 0):min(hi, W - 1) + 1] += sign
+    return acc > 0
+
+
+def mesh_slice_stack(mesh: Any, layer_mm: float = 0.2, px_per_mm: float = 10.0, bounds=None) -> np.ndarray:
+    """メッシュを ``layer_mm`` 刻みで切った**層マスクの積み** ``voxel`` (Z, Y, X)(0 / 1、Z は下から)。
+
+    各層は ``mesh_slice_contours`` の輪郭を **nonzero winding** で塗る(外向き法線の輪は中身、内向き法線 = 穴の輪は
+    引く。穴だけが残る層は空)。メッシュの面の向きが揃っていることが前提(STL / 3MF の規約)。``bounds`` は x–y の
+    範囲(mm)、無ければメッシュ全体 + 2 mm。形に触れない層(上下の端)は 0 のまま。
+    """
+    op = "mesh_slice_stack"
+    V, F = _mesh(mesh, op)
+    dz = _finite(layer_mm, op, "layer_mm", lo=1e-6)
+    ppm = _finite(px_per_mm, op, "px_per_mm", lo=1e-6)
+    xmin, ymin, W, H = _raster_geometry(op, V[:, 0], V[:, 1], ppm, bounds)
+    z0, z1 = float(V[:, 2].min()), float(V[:, 2].max())
+    nz = int(math.ceil((z1 - z0) / dz))
+    if nz < 1 or nz * H * W > MAX_LAYER_PIXELS * 4:
+        raise ValueError(f"{op}: {nz} layers of {H} x {W} px is empty or too large")
+    out = np.zeros((nz, H, W), dtype=np.float64)
+    for k in range(nz):
+        zc = z0 + (k + 0.5) * dz
+        try:
+            c = mesh_slice_contours((V, F), zc)
+        except ValueError:
+            continue
+        out[k] = _fill_rings(c["ring"], c["x"], c["y"], xmin, ymin, W, H, ppm)
+    return out
+
+
+def contours_to_gcode(contours: Any, z: float, layer: int = 0, layer_mm: float = 0.2, line_width_mm: float = 0.4,
+                      filament_mm: float = 1.75, feed_mm_min: float = 1800.0) -> dict[str, np.ndarray]:
+    """輪郭(``mesh_slice_contours`` の表)を**周回する経路の表**に(``gcode_read`` と同じ列)。
+
+    最小のスライサ: 各輪を順に一周し、押し出し量は ``線分長 × 線幅 × 層厚 / フィラメント断面積``。輪と輪の間は
+    移動(e = 0)。真値つきの合成 G-code を作るための道具で、インフィルやリトラクトは持たない。
+    """
+    op = "contours_to_gcode"
+    c = _contours(contours, op)
+    zc = _finite(z, op, "z")
+    ly = _count(layer, op, "layer", 0)
+    h = _finite(layer_mm, op, "layer_mm", lo=1e-6)
+    w = _finite(line_width_mm, op, "line_width_mm", lo=1e-6)
+    d = _finite(filament_mm, op, "filament_mm", lo=1e-6)
+    f = _finite(feed_mm_min, op, "feed_mm_min", lo=1e-6)
+    area = math.pi * (d / 2.0) ** 2
+    cols = {k: [] for k in _SEG_COLS}
+    prev = None
+    for rid in np.unique(c["ring"]):
+        px, py = c["x"][c["ring"] == rid], c["y"][c["ring"] == rid]
+        if len(px) < 2:
+            continue
+        pts = np.column_stack([px, py])
+        pts = np.vstack([pts, pts[:1]])                                 # 閉じる
+        if prev is not None:
+            for k, v in zip(_SEG_COLS, (prev[0], prev[1], zc, pts[0, 0], pts[0, 1], zc, 0.0, f, ly)):
+                cols[k].append(v)
+        for i in range(len(pts) - 1):
+            L = float(np.hypot(pts[i + 1, 0] - pts[i, 0], pts[i + 1, 1] - pts[i, 1]))
+            for k, v in zip(_SEG_COLS, (pts[i, 0], pts[i, 1], zc, pts[i + 1, 0], pts[i + 1, 1], zc, L * w * h / area, f, ly)):
+                cols[k].append(v)
+        prev = pts[-1]
+    if not cols["e"]:
+        raise ValueError(f"{op}: no ring with 2 or more points")
+    out = {k: np.asarray(cols[k], dtype=np.float64) for k in _SEG_COLS if k != "layer"}
+    out["layer"] = np.asarray(cols["layer"], dtype=np.int64)
+    return out
+
+
+# --------------------------------------------------------------------------- #
+# 3MF                                                                          #
+# --------------------------------------------------------------------------- #
+_NS = "http://schemas.microsoft.com/3dmanufacturing/core/2015/02"
+
+
+def read_3mf(path: str) -> tuple[np.ndarray, np.ndarray]:
+    """3MF(zip の中の ``3D/3dmodel.model``、3MF Core Specification)を三角形メッシュ ``mesh`` = (V, F) に読む。
+
+    複数の ``<object>`` は頂点を連結して 1 つのメッシュに(``<build>`` の変換行列は 3×4 の ``transform`` を適用)。
+    単位は ``<model unit>``(既定 millimeter、inch / centimeter / meter / micron は mm に換算)。
+    """
+    op = "read_3mf"
+    p = _path(path, op, must_exist=True)
+    try:
+        with zipfile.ZipFile(p) as zf:
+            names = zf.namelist()
+            model = next((n for n in names if n.lower().endswith(".model")), None)
+            if model is None:
+                raise ValueError(f"{op}: no .model part in {p}")
+            root = ET.fromstring(zf.read(model))
+    except zipfile.BadZipFile:
+        raise ValueError(f"{op}: not a zip container: {p}") from None
+    except ET.ParseError as e:
+        raise ValueError(f"{op}: malformed XML in the model part: {e}") from None
+    unit = {"millimeter": 1.0, "inch": 25.4, "centimeter": 10.0, "meter": 1000.0, "micron": 1e-3, "foot": 304.8}
+    scale = unit.get(root.get("unit", "millimeter"))
+    if scale is None:
+        raise ValueError(f"{op}: unknown unit {root.get('unit')!r}")
+    ns = {"m": _NS}
+    objs = {}
+    for obj in root.findall(".//m:resources/m:object", ns):
+        mesh_el = obj.find("m:mesh", ns)
+        if mesh_el is None:
+            continue
+        V = np.array([[float(v.get("x")), float(v.get("y")), float(v.get("z"))] for v in mesh_el.findall("m:vertices/m:vertex", ns)], dtype=np.float64)
+        F = np.array([[int(t.get("v1")), int(t.get("v2")), int(t.get("v3"))] for t in mesh_el.findall("m:triangles/m:triangle", ns)], dtype=np.int64)
+        if V.size and F.size:
+            objs[obj.get("id")] = (V.reshape(-1, 3), F.reshape(-1, 3))
+    if not objs:
+        raise ValueError(f"{op}: no mesh object in {p}")
+    Vs, Fs, off = [], [], 0
+    items = root.findall(".//m:build/m:item", ns) or [None]
+    for it in items:
+        if it is None:
+            chosen = list(objs.values())
+            T = None
+        else:
+            if it.get("objectid") not in objs:
+                continue
+            chosen = [objs[it.get("objectid")]]
+            T = it.get("transform")
+        for V, F in chosen:
+            V = V * scale
+            if T:
+                m = np.array([float(v) for v in T.split()], dtype=np.float64)
+                if m.shape[0] != 12:
+                    raise ValueError(f"{op}: transform must have 12 numbers, got {m.shape[0]}")
+                M = m.reshape(4, 3)
+                V = V @ M[:3] + M[3]
+            Vs.append(V)
+            Fs.append(F + off)
+            off += V.shape[0]
+    if not Vs:
+        raise ValueError(f"{op}: build items reference no mesh object")
+    return np.vstack(Vs), np.vstack(Fs)
+
+
+def write_3mf(path: str, mesh: Any) -> str:
+    """三角形メッシュを 3MF(最小構成: ``[Content_Types].xml`` / ``_rels/.rels`` / ``3D/3dmodel.model``、単位 mm)に書く。返りはパス(``text``)。"""
+    op = "write_3mf"
+    p = _path(path, op, must_exist=False)
+    V, F = _mesh(mesh, op)
+    verts = "".join('<vertex x="%.6g" y="%.6g" z="%.6g"/>' % tuple(v) for v in V)
+    tris = "".join('<triangle v1="%d" v2="%d" v3="%d"/>' % tuple(t) for t in F)
+    model = ('<?xml version="1.0" encoding="UTF-8"?>'
+             '<model unit="millimeter" xml:lang="en-US" xmlns="%s">'
+             '<resources><object id="1" type="model"><mesh><vertices>%s</vertices><triangles>%s</triangles></mesh></object></resources>'
+             '<build><item objectid="1"/></build></model>' % (_NS, verts, tris))
+    ctypes = ('<?xml version="1.0" encoding="UTF-8"?>'
+              '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+              '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+              '<Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/></Types>')
+    rels = ('<?xml version="1.0" encoding="UTF-8"?>'
+            '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+            '<Relationship Target="/3D/3dmodel.model" Id="rel0" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>')
+    with zipfile.ZipFile(p, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("[Content_Types].xml", ctypes)
+        zf.writestr("_rels/.rels", rels)
+        zf.writestr("3D/3dmodel.model", model)
+    return p
+
+
+# --------------------------------------------------------------------------- #
+# 検査                                                                          #
+# --------------------------------------------------------------------------- #
+def print_layer_defect_map(observed: Any, expected: Any, tolerance_px: int = 2, threshold: float = 0.5) -> np.ndarray:
+    """観測した層画像と期待の層画像(``gcode_layer_image``)を比べた**符号つきの欠陥図** ``image2d``:
+    +1 = あるはずの所に無い(欠け・詰まり)、−1 = 無いはずの所にある(糸引き・はみ出し・spaghetti)、0 = 一致。
+
+    両方を ``threshold`` で二値化し、``tolerance_px`` だけ膨らませた相手に含まれない画素だけを欠陥にする(位置ずれと
+    線幅の揺れを許す)。位置合わせはしない —— カメラ像は先に ``gcode_layer_image`` と同じ画素格子へ写しておく。
+    """
+    op = "print_layer_defect_map"
+    A = np.asarray(observed, dtype=np.float64)
+    B = np.asarray(expected, dtype=np.float64)
+    if A.ndim != 2 or A.shape != B.shape or A.size == 0:
+        raise ValueError(f"{op}: observed and expected must be the same non-empty 2-D shape, got {A.shape} vs {B.shape}")
+    if not (np.isfinite(A).all() and np.isfinite(B).all()):
+        raise ValueError(f"{op}: images must be finite")
+    tp = _count(tolerance_px, op, "tolerance_px", 0, 1000)
+    th = _finite(threshold, op, "threshold")
+    a, b = A >= th, B >= th
+    if tp > 0:
+        da = ndi.binary_dilation(a, iterations=tp)
+        db = ndi.binary_dilation(b, iterations=tp)
+    else:
+        da, db = a, b
+    out = np.zeros(A.shape, dtype=np.float64)
+    out[b & ~da] = 1.0
+    out[a & ~db] = -1.0
+    return out

@@ -194,6 +194,23 @@ PARAM_HINTS = {
 
 
 OP_PARAM_HINTS = {
+    # printpath(2026-09-21)。読む op のパスは、その場で書いた小さな本物のファイルにする(無いパスは CONTRACT で
+    # 永久に走らない)。書く op のパスは一時ディレクトリ。z は種の mesh(単位立方体あたり)に当たる高さ。
+    ("gcode_read", "path"): lambda rng: __import__("printpath").gcode_write(
+        __import__("printpath").contours_to_gcode({"ring": __import__("numpy").zeros(4, int),
+                                                   "x": __import__("numpy").array([0.0, 4.0, 4.0, 0.0]),
+                                                   "y": __import__("numpy").array([0.0, 0.0, 3.0, 3.0])}, 0.2),
+        __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_printpath.gcode")),
+    ("gcode_write", "path"): lambda rng: __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_printpath_w.gcode"),
+    ("write_3mf", "path"): lambda rng: __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_printpath.3mf"),
+    ("read_3mf", "path"): lambda rng: __import__("printpath").write_3mf(
+        __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_printpath_r.3mf"),
+        (__import__("numpy").array([[0.0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]), __import__("numpy").array([[0, 2, 1], [0, 1, 3], [1, 2, 3], [0, 3, 2]]))),
+    ("mesh_slice_contours", "z"): lambda rng: 0.5,
+    ("contours_to_gcode", "z"): lambda rng: 0.2,
+    ("gcode_layer_image", "layer"): lambda rng: 0,
+    ("mesh_slice_stack", "layer_mm"): lambda rng: 0.25,
+    ("mesh_slice_stack", "px_per_mm"): lambda rng: 4.0,
     # conngraph の次元 op(2026-09-21): 層 id は 0..L-1 が連続で、U は層 0 の列数に合わせる。種の conn_graph は
     # 12 ノードなので 3 層 × 4 ノード、U は (N=8, 4)。全体既定の labels(領域ラベル)では層が飛ぶ。
     ("graph_block_shuffle", "labels"): lambda rng: np.repeat(np.arange(3), 4),
@@ -860,6 +877,8 @@ def catalog():
         ("opsvideocube", "OPSVIDEOCUBE", "videocube"),
         # 2026-09-21: 生きている組織の 3D+t。新語 volseq(体積の時系列 (T, Z, Y, X))。
         ("opslive4d", "OPSLIVE4D", "live4d"),
+        # 2026-09-21: 3D プリンタ。新語なし(table / mesh / text / image2d / voxel / measurement)。
+        ("opsprintpath", "OPSPRINTPATH", "printpath"),
     ):
         _m = __import__(_mod)
         for n, m in getattr(_m, _tbl).items():

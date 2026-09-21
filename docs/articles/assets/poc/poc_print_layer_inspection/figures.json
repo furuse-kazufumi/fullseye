@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_slice_stack.png",
+  "name": "slice_stack",
+  "caption": "gear-like boss with a round hole sliced at 0.2 mm into 30 layer masks (mesh_slice_stack) and rendered as a solid, grey = height",
+  "shape": [
+   320,
+   320,
+   3
+  ]
+ },
+ {
+  "file": "02_layers.png",
+  "name": "layers",
+  "caption": "one layer of the gear-like part: the expected raster from the G-code, the observed image with injected defects, and the signed defect map",
+  "shape": [
+   492,
+   1360,
+   3
+  ]
+ },
+ {
+  "file": "03_tolerance_curve.png",
+  "name": "tolerance_curve",
+  "caption": "precision and recall of the defect map against the injected truth as the tolerance grows, without and with a 0.2 mm camera shift: a small tolerance absorbs the shift without hiding millimetre-size defects",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_numbers.png",
+  "name": "numbers",
+  "caption": "every number with the bar it had to clear",
+  "shape": [
+   224,
+   621,
+   3
+  ],
+  "csv": "04_numbers.csv",
+  "tsv": "04_numbers.tsv"
+ }
+]

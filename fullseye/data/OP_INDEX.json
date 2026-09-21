@@ -1,8 +1,8 @@
 {
- "n_ops": 2051,
+ "n_ops": 2062,
  "tiers": {
   "color": 12,
-  "ledger": 1103,
+  "ledger": 1114,
   "nary": 17,
   "registry": 919
  },
@@ -2154,6 +2154,19 @@
    "in_sorts": [
     "points",
     "normals"
+   ]
+  },
+  {
+   "name": "contours_to_gcode",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "slice",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -4840,6 +4853,72 @@
    ]
   },
   {
+   "name": "gcode_extrusion_volume",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "measurement",
+   "category": "gcode",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "gcode_layer_image",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "gcode",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "gcode_read",
+   "halcon": "",
+   "in_sort": "text",
+   "out_sort": "table",
+   "category": "gcode",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "text"
+   ]
+  },
+  {
+   "name": "gcode_time_estimate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "measurement",
+   "category": "gcode",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "gcode_write",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "text",
+   "category": "gcode",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "table",
+    "text"
+   ]
+  },
+  {
    "name": "gen_measure_arc",
    "halcon": "",
    "in_sort": null,
@@ -7207,6 +7286,32 @@
    ]
   },
   {
+   "name": "mesh_slice_contours",
+   "halcon": "",
+   "in_sort": "mesh",
+   "out_sort": "table",
+   "category": "slice",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "mesh"
+   ]
+  },
+  {
+   "name": "mesh_slice_stack",
+   "halcon": "",
+   "in_sort": "mesh",
+   "out_sort": "voxel",
+   "category": "slice",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "mesh"
+   ]
+  },
+  {
    "name": "mesh_split_long_edges",
    "halcon": "",
    "in_sort": "mesh",
@@ -9303,6 +9408,20 @@
    ]
   },
   {
+   "name": "print_layer_defect_map",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "inspect",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
    "name": "prism_min_deviation_deg",
    "halcon": "",
    "in_sort": "signal",
@@ -10074,6 +10193,19 @@
    "dim": "optics",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "read_3mf",
+   "halcon": "",
+   "in_sort": "text",
+   "out_sort": "mesh",
+   "category": "format",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "text"
    ]
   },
   {
@@ -14602,6 +14734,20 @@
    "dim": "3d",
    "in_sorts": [
     "images"
+   ]
+  },
+  {
+   "name": "write_3mf",
+   "halcon": "",
+   "in_sort": "text",
+   "out_sort": "text",
+   "category": "format",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "text",
+    "mesh"
    ]
   },
   {

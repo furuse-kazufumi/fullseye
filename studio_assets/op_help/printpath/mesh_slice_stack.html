@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mesh_slice_stack — PRINTPATH <code style="color:#22d3bf">slice</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_slice_stack(mesh: &#x27;Any&#x27;, layer_mm: &#x27;float&#x27; = 0.2, px_per_mm: &#x27;float&#x27; = 10.0, bounds=None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import printpath; printpath.mesh_slice_stack(mesh: &#x27;Any&#x27;, layer_mm: &#x27;float&#x27; = 0.2, px_per_mm: &#x27;float&#x27; = 10.0, bounds=None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsprintpath.get(&quot;mesh_slice_stack&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>メッシュを `<code style="color:#22d3bf">layer_mm</code><code style="color:#22d3bf"> 刻みで切った**層マスクの積み** </code><code style="color:#22d3bf">voxel</code>` (Z, Y, X)(0 / 1、Z は下から)。</p>
+<p>各層は `<code style="color:#22d3bf">mesh_slice_contours</code>` の輪郭を <b>nonzero winding</b> で塗る(外向き法線の輪は中身、内向き法線 = 穴の輪は</p>
+<p>引く。穴だけが残る層は空)。メッシュの面の向きが揃っていることが前提(STL / 3MF の規約)。`<code style="color:#22d3bf">bounds</code>` は x–y の</p>
+<p>範囲(mm)、無ければメッシュ全体 + 2 mm。形に触れない層(上下の端)は 0 のまま。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_layer_inspection">poc_print_layer_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_layer_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">voxel</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">slice</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:mesh_slice_contours">mesh_slice_contours</a> · <a style="color:#22d3bf" href="opprintpath:contours_to_gcode">contours_to_gcode</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

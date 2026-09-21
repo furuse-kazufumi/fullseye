@@ -4213,6 +4213,14 @@ You do not think about individual muscles when you raise an arm: the tens of tho
 
 With sparse firing it falls **282 > 61 > 8.7 > 2.4**; picking 708 columns of the brain states still gives 249, so the fall is not the layer size. A control that keeps every receiver's input weights but shuffles who sends them leaves the MN at 22 — **the nerve-cord → muscle stage compresses by the specific wiring**, while the neck (DN) matches the control and compresses **by convergence alone**. As an honest breakdown, the raw PR is also pulled by a heavy tail of strong responses, so the direction-only dimension (every response scaled to unit norm) was measured too: real wiring 25 vs control 54. The same formula on Physical AI: joint trajectories of the G1 humanoid's RL walking and running score 2.4–4.1, dance 9, fight 12, and 73 evis muscle activations 6–9 — an order-of-magnitude comparison, not a claim of identity.
 
+### Print Layer Inspection — Closing the Shape → Layer → Path → Image Loop Yourself
+
+3D-printer data flows shape (mesh) → layers (slices) → path (G-code) → the layer images taken during printing. The new family `printpath` (11 ops, numpy + stdlib) closes that loop with the existing vocabulary (mesh / voxel / table / image2d), so **the truth can be planted by hand**. A box with a square hole and a gear-like boss sliced at 0.2 mm give layer areas matching the closed form (a hole-only layer is empty), the extrusion of a path walking the contours equals perimeter × width × height / filament area exactly, and G-code (relative coordinates, relative E, retracts, G92, inches) and 3MF round-trip through write and read.
+
+![Expected layer raster / observed with planted defects / signed defect map (+ = missing, − = extra)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_layer_inspection/02_layers.png)
+
+For inspection, `print_layer_defect_map` compares the expected raster from `gcode_layer_image` with the observed image: six planted gaps and six blobs (1–4 mm) are caught with recall 0.96 and zero false positives at a 3 px (0.3 mm) tolerance. A 0.2 mm camera shift drops recall to 0.90 and precision to 0.95 because the tolerance eats the defect edges, so the curve over tolerance is shown as it is.
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to

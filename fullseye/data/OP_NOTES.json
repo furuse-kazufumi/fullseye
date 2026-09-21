@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2051,
- "n_notes": 2057,
+ "n_ops": 2062,
+ "n_notes": 2068,
  "notes": {
   "vol_dilate": [
    {
@@ -19159,6 +19159,116 @@
     "in": "flow2d",
     "out": "image2d",
     "path": "docs/ops/piv/visualise/piv_line_integral_convolution.md"
+   }
+  ],
+  "read_3mf": [
+   {
+    "op": "read_3mf",
+    "dim": "printpath",
+    "category": "format",
+    "in": "text",
+    "out": "mesh",
+    "path": "docs/ops/printpath/format/read_3mf.md"
+   }
+  ],
+  "write_3mf": [
+   {
+    "op": "write_3mf",
+    "dim": "printpath",
+    "category": "format",
+    "in": "text × mesh",
+    "out": "text",
+    "path": "docs/ops/printpath/format/write_3mf.md"
+   }
+  ],
+  "gcode_extrusion_volume": [
+   {
+    "op": "gcode_extrusion_volume",
+    "dim": "printpath",
+    "category": "gcode",
+    "in": "table",
+    "out": "measurement",
+    "path": "docs/ops/printpath/gcode/gcode_extrusion_volume.md"
+   }
+  ],
+  "gcode_layer_image": [
+   {
+    "op": "gcode_layer_image",
+    "dim": "printpath",
+    "category": "gcode",
+    "in": "table",
+    "out": "image2d",
+    "path": "docs/ops/printpath/gcode/gcode_layer_image.md"
+   }
+  ],
+  "gcode_read": [
+   {
+    "op": "gcode_read",
+    "dim": "printpath",
+    "category": "gcode",
+    "in": "text",
+    "out": "table",
+    "path": "docs/ops/printpath/gcode/gcode_read.md"
+   }
+  ],
+  "gcode_time_estimate": [
+   {
+    "op": "gcode_time_estimate",
+    "dim": "printpath",
+    "category": "gcode",
+    "in": "table",
+    "out": "measurement",
+    "path": "docs/ops/printpath/gcode/gcode_time_estimate.md"
+   }
+  ],
+  "gcode_write": [
+   {
+    "op": "gcode_write",
+    "dim": "printpath",
+    "category": "gcode",
+    "in": "table × text",
+    "out": "text",
+    "path": "docs/ops/printpath/gcode/gcode_write.md"
+   }
+  ],
+  "print_layer_defect_map": [
+   {
+    "op": "print_layer_defect_map",
+    "dim": "printpath",
+    "category": "inspect",
+    "in": "image2d × image2d",
+    "out": "image2d",
+    "path": "docs/ops/printpath/inspect/print_layer_defect_map.md"
+   }
+  ],
+  "contours_to_gcode": [
+   {
+    "op": "contours_to_gcode",
+    "dim": "printpath",
+    "category": "slice",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/printpath/slice/contours_to_gcode.md"
+   }
+  ],
+  "mesh_slice_contours": [
+   {
+    "op": "mesh_slice_contours",
+    "dim": "printpath",
+    "category": "slice",
+    "in": "mesh",
+    "out": "table",
+    "path": "docs/ops/printpath/slice/mesh_slice_contours.md"
+   }
+  ],
+  "mesh_slice_stack": [
+   {
+    "op": "mesh_slice_stack",
+    "dim": "printpath",
+    "category": "slice",
+    "in": "mesh",
+    "out": "voxel",
+    "path": "docs/ops/printpath/slice/mesh_slice_stack.md"
    }
   ],
   "profile_align": [

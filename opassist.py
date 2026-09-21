@@ -58,7 +58,8 @@ _LEDGERS = (
     ("opsconngraph", "OPSCONNGRAPH"),
     ("opsemproof", "OPSEMPROOF"),
     ("opsvideocube", "OPSVIDEOCUBE"),
-    ("opslive4d", "OPSLIVE4D"),            # 2026-09-21: 生きている組織の 3D+t(増幅・流れ・補間・高さ場)      # 2026-09-21: 動画の空間×時間の立方体(Video Summagator の再実装)          # 2026-09-21: EM 校正のセカンドオピニオン(labels2d / image2d / table)
+    ("opslive4d", "OPSLIVE4D"),
+    ("opsprintpath", "OPSPRINTPATH"),      # 2026-09-21: 3D プリンタ(G-code / 3MF / スライス / 層画像の検査)            # 2026-09-21: 生きている組織の 3D+t(増幅・流れ・補間・高さ場)      # 2026-09-21: 動画の空間×時間の立方体(Video Summagator の再実装)          # 2026-09-21: EM 校正のセカンドオピニオン(labels2d / image2d / table)
 )
 
 #: 進化する 2-D op のレジストリ(``ops.REGISTRY``、882 op)。**台帳ではない** ——

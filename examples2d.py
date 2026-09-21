@@ -374,6 +374,11 @@ EXAMPLES = [
                 "実測: コネクトームは刺激からの平均距離 88 → 230 µm を 17 步かけて伸び、視葉 → 中枢 → 下行の順に点いて 36 步では VNC に届かない。"
                 "shuffle は 3 步で 300 µm に散り遠い 1/4 の 93 % が点く(コネクトーム 0 %)。精度で見えなかった配線の空間構造が動きで見える。"
                 "新 op: reservoir_states(W_in=)、graph_activation_latency、graph_activity_spread、points_activity_video(尺度は全コマで 1 つ、views= で背側・側面・体軸方向の 3 方向を同時に)。生データは commit しない。"},
+    {"id": "poc_print_layer_inspection", "task": "inspection", "data": "synthetic",
+     "name": "3D プリンタの層検査(形 → 層 → 経路 → 画像 の往復を自分で閉じ、仕込んだ欠陥を数字で捕まえる)",
+     "summary": "新族 printpath(11 op、numpy + 標準ライブラリ): G-code の読み書き・体積・時間・層ラスタ、メッシュのスライス(輪郭と層マスク)、"
+                "3MF の読み書き、層画像の符号つき欠陥図。層の面積は閉形式と一致、押し出し量は周長 × 線幅 × 層厚 / 断面積と厳密一致、"
+                "注入した欠陥 12 か所を許容 3 px で再現率 0.96・偽陽性 0、カメラ 0.2 mm ずれで再現率 0.90(正直に曲線で)。"},
     {"id": "poc_connectome_motor_bottleneck", "task": "analysis", "data": "real",
      "name": "動きの量子化 ―― 脳から筋へ、命令の次元はどこで落ちるか(MaleCNS の首と RL の関節を同じ物差しで)",
      "summary": "MaleCNS の 脳 → 下行ニューロン(首)→ 腹髄 → 運動ニューロン の部分グラフに乱数刺激 400 通りを前向きに通し、各層の"

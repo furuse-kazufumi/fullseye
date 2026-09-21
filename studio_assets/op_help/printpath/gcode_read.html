@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gcode_read — PRINTPATH <code style="color:#22d3bf">gcode</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcode_read(path: &#x27;str&#x27;, layer_from: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import printpath; printpath.gcode_read(path: &#x27;str&#x27;, layer_from: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsprintpath.get(&quot;gcode_read&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>G-code(RepRap / Marlin 系)を<b>線分の表</b> `<code style="color:#22d3bf">table</code><code style="color:#22d3bf"> に読む: 列 </code><code style="color:#22d3bf">x0 y0 z0 x1 y1 z1</code><code style="color:#22d3bf">(mm)、</code><code style="color:#22d3bf">e</code>`(その線分で</p>
+<p>押し出したフィラメント長 mm、移動だけなら 0)、`<code style="color:#22d3bf">f</code><code style="color:#22d3bf">(送り mm/min)、</code><code style="color:#22d3bf">layer</code>`(層番号)。</p>
+<p>解釈するのは G0 / G1(直線移動)、G90 / G91(座標の絶対 / 相対)、M82 / M83(E の絶対 / 相対)、G92(座標の</p>
+<p>リセット)、G20 / G21(インチ / mm)、`<code style="color:#22d3bf">;</code>` コメント。円弧 G2 / G3 は<b>扱わない</b>(黙って直線にせず ValueError ——</p>
+<p>スライサで直線に展開して出力すること)。層は `<code style="color:#22d3bf">layer_from=&quot;tag&quot;</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">;LAYER:n</code><code style="color:#22d3bf"> のコメント、</code><code style="color:#22d3bf">&quot;z&quot;</code>` なら押し出し</p>
+<p>を伴う Z の増加で切る。`<code style="color:#22d3bf">&quot;auto&quot;</code>` はタグがあればタグ、無ければ Z。座標が一度も与えられないまま押し出す行は</p>
+<p>ValueError(方言の穴を黙って 0 で埋めない)。</p>
+<p>&gt;&gt;&gt; t = gcode_read(&quot;part.gcode&quot;)</p>
+<p>&gt;&gt;&gt; t[&quot;e&quot;].sum()                                       # 押し出したフィラメントの総長 [mm]</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_layer_inspection">poc_print_layer_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_layer_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:gcode_write">gcode_write</a> · <a style="color:#22d3bf" href="opprintpath:gcode_extrusion_volume">gcode_extrusion_volume</a> · <a style="color:#22d3bf" href="opprintpath:gcode_time_estimate">gcode_time_estimate</a> · <a style="color:#22d3bf" href="opprintpath:gcode_layer_image">gcode_layer_image</a> · <a style="color:#22d3bf" href="opprintpath:contours_to_gcode">contours_to_gcode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">gcode</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:gcode_write">gcode_write</a> · <a style="color:#22d3bf" href="opprintpath:gcode_extrusion_volume">gcode_extrusion_volume</a> · <a style="color:#22d3bf" href="opprintpath:gcode_time_estimate">gcode_time_estimate</a> · <a style="color:#22d3bf" href="opprintpath:gcode_layer_image">gcode_layer_image</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

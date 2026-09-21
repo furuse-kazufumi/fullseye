@@ -1,0 +1,7 @@
+quantity	value	bar
+slice area, box with a square hole (mm²)	184.00	184.00 (< 1 %)
+G-code box: moves / volume mm³ / time s	629 / 195.2 / 94	-
+slice area, gear-like boss with a round hole (mm²)	185.48	185.61 (< 1 %)
+G-code gear-like: moves / volume mm³ / time s	4849 / 147.7 / 70	-
+defect detection at 3 px: precision / recall	1.000 / 0.959	recall >= 0.95, FP < 5 %
+same with a 0.2 mm camera shift: precision / recall	0.946 / 0.895	FP < 10 %, recall >= 0.85

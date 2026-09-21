@@ -1,0 +1,49 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">Dieser Leitfaden liegt nur auf Japanisch vor (es ist von Menschen geschriebene Prosa, hier wird nichts maschinell ersetzt).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">3D プリンタのデータ(G-code / 3MF / スライス / 層画像の検査) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>3D プリンタのデータは「形(メッシュ)→ 層(スライス)→ 経路(G-code)→ 印刷中の層画像」と流れます。この族はその往復を、Fullseye の既存語彙(<code style="color:#22d3bf">mesh</code> / <code style="color:#22d3bf">voxel</code> / <code style="color:#22d3bf">table</code> / <code style="color:#22d3bf">image2d</code> / <code style="color:#22d3bf">measurement</code> / <code style="color:#22d3bf">text</code>)だけで、numpy + 標準ライブラリで閉じます。新しい型は作りません。</p>
+<p>11 op / 4 カテゴリ(台帳は <code style="color:#22d3bf">opsprintpath.py</code>、実体は <code style="color:#22d3bf">printpath.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>gcode(5)</b> — <code style="color:#22d3bf">gcode_read</code>(G0/G1 を線分の表 <code style="color:#22d3bf">table</code> に: x0 y0 z0 x1 y1 z1 e f layer。G90/G91、M82/M83、G92、G20/G21、<code style="color:#22d3bf">;</code> コメント、層は <code style="color:#22d3bf">;LAYER:n</code> か Z の増加。円弧 G2/G3 は拒む)/ <code style="color:#22d3bf">gcode_write</code>(表を G1 に書き戻す)/ <code style="color:#22d3bf">gcode_extrusion_volume</code>(Σe × フィラメント断面積 [mm³])/ <code style="color:#22d3bf">gcode_time_estimate</code>(Σ 距離 / 送り、加速度を無視した下限 [s])/ <code style="color:#22d3bf">gcode_layer_image</code>(1 層の経路を線幅つきのラスタに = 期待の層画像)。</p>
+<p style="margin:2px 0 2px 12px">• <b>slice(3)</b> — <code style="color:#22d3bf">mesh_slice_contours</code>(平面 z で切った輪郭 <code style="color:#22d3bf">table</code>: ring x y。三角形の法線で向きを付け、外輪郭は反時計回り・穴は時計回り)/ <code style="color:#22d3bf">mesh_slice_stack</code>(層ごとの塗りつぶしマスク <code style="color:#22d3bf">voxel</code>、nonzero winding で穴は穴のまま)/ <code style="color:#22d3bf">contours_to_gcode</code>(輪郭を周回する経路の表、押し出し量 = 線分長 × 線幅 × 層厚 / 断面積)。</p>
+<p style="margin:2px 0 2px 12px">• <b>format(2)</b> — <code style="color:#22d3bf">read_3mf</code> / <code style="color:#22d3bf">write_3mf</code>(zip + XML の最小構成、単位換算、<code style="color:#22d3bf">&lt;build&gt;</code> の変換行列)。</p>
+<p style="margin:2px 0 2px 12px">• <b>inspect(1)</b> — <code style="color:#22d3bf">print_layer_defect_map</code>(観測の層画像と期待の層画像を比べ、+1 = あるはずの所に無い(欠け)、−1 = 無いはずの所にある(はみ出し・糸引き)、<code style="color:#22d3bf">tolerance_px</code> で位置ずれと線幅の揺れを許す)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    M[mesh: read_mesh / read_3mf] --&gt; S[mesh_slice_contours]
+    M --&gt; V[mesh_slice_stack]
+    S --&gt; G[contours_to_gcode] --&gt; W[gcode_write]
+    W --&gt; R[gcode_read] --&gt; E[gcode_extrusion_volume / gcode_time_estimate]
+    R --&gt; I[gcode_layer_image]
+    C[カメラの層画像] --&gt; D[print_layer_defect_map]
+    I --&gt; D
+    V --&gt; X[vol_render_transfer で立体に]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">最短の使い方</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
+L = fs.ledger
+
+V, F = fs.read_mesh(&quot;part.stl&quot;)                       # STL / OBJ / PLY / OFF、または L.read_3mf(&quot;part.3mf&quot;)
+stack = L.mesh_slice_stack((V, F), layer_mm=0.2, px_per_mm=10.0)     # (Z, Y, X) の層マスク
+c = L.mesh_slice_contours((V, F), z=3.1)              # 1 層の輪郭
+g = L.contours_to_gcode(c, z=3.1, layer=15)            # 周回の経路(最小のスライサ)
+path = L.gcode_write(g, &quot;part.gcode&quot;)
+
+t = L.gcode_read(&quot;part.gcode&quot;)                        # どのスライサの出力でも(円弧は展開しておく)
+print(L.gcode_extrusion_volume(t), &quot;mm^3&quot;, L.gcode_time_estimate(t), &quot;s (lower bound)&quot;)
+expected = L.gcode_layer_image(t, layer=15, px_per_mm=10.0, bounds=(0, 0, 60, 40))
+defects = L.print_layer_defect_map(camera_layer_15, expected, tolerance_px=3)   # +1 欠け / −1 はみ出し</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">真値で確かめてある性質(<code style="color:#22d3bf">tests/test_printpath.py</code>、<code style="color:#22d3bf">examples/poc_print_layer_inspection.py</code>)</h3>
+<p style="margin:2px 0 2px 12px">• 角穴つきの箱を切った層の面積 = 200 − 16 mm² と厳密一致、穴だけが残る層は空(nonzero winding)。歯車状の柱と円い穴は 0.1 % 以内。</p>
+<p style="margin:2px 0 2px 12px">• 輪郭を周回する経路の押し出し量 = 周長 × 線幅 × 層厚 / フィラメント断面積(閉形式)、G-code の書き読みで往復(E の総和 1e-5 mm 以内)。</p>
+<p style="margin:2px 0 2px 12px">• 相対座標(G91)・相対 E(M83)・リトラクト・G92・インチ(G20)を正しく読む。円弧と座標の欠けは ValueError。</p>
+<p style="margin:2px 0 2px 12px">• 3MF は書いて読んで頂点・面が一致、単位 inch は 25.4 倍。</p>
+<p style="margin:2px 0 2px 12px">• 注入した欠陥(欠け 6・はみ出し 6、1〜4 mm)を許容 3 px(0.3 mm)で再現率 0.96・偽陽性 0。カメラを 0.2 mm ずらすと再現率は約 0.9 に落ちる(ずれの分だけ縁を食われる)、偽陽性は 5 %。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">罠</h3>
+<p style="margin:2px 0 2px 12px">• <b>円弧 G2/G3 は扱わない</b>(黙って直線にすると押し出し体積を過小評価する)。スライサ側で直線に展開して出力すること。</p>
+<p style="margin:2px 0 2px 12px">• <b>層の切り方は方言がある</b>: Cura は <code style="color:#22d3bf">;LAYER:n</code>、PrusaSlicer は <code style="color:#22d3bf">;LAYER_CHANGE</code>。タグが無ければ「押し出しを伴う Z の増加」で切る(<code style="color:#22d3bf">layer_from=&quot;z&quot;</code> で強制)。</p>
+<p style="margin:2px 0 2px 12px">• <b>時間の見積もりは下限</b>: 加速度・ジャーク・リトラクトを無視するので、細かいインフィルほど実機より短く出る。</p>
+<p style="margin:2px 0 2px 12px">• <b>スライスは面の向きが揃っている前提</b>(STL / 3MF の規約)。向きが壊れたメッシュは穴が埋まる。<code style="color:#22d3bf">mesh_orientation_consistent</code> で先に直す。</p>
+<p style="margin:2px 0 2px 12px">• <b>位置合わせはしない</b>: カメラ像は先に <code style="color:#22d3bf">gcode_layer_image</code> と同じ画素格子(<code style="color:#22d3bf">bounds</code> / <code style="color:#22d3bf">px_per_mm</code>)へ写す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mesh</code>(STL / OBJ / PLY / OFF の読み書き、<code style="color:#22d3bf">mesh_*</code> 族)、<code style="color:#22d3bf">videocube.vol_render_transfer</code>(層の積みを立体に)</p>
+<p style="margin:2px 0 2px 12px">• 検査ワークフロー層(計測 → 仕様照合 → 根拠つきの判定)に載せる先: <code style="color:#22d3bf">print_layer_defect_map</code> の +/− の面積を仕様と比べる</p>

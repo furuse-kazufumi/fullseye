@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">read_3mf — PRINTPATH <code style="color:#22d3bf">format</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">mesh</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_3mf(path: &#x27;str&#x27;) -&gt; &#x27;tuple[np.ndarray, np.ndarray]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import printpath; printpath.read_3mf(path: &#x27;str&#x27;) -&gt; &#x27;tuple[np.ndarray, np.ndarray]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsprintpath.get(&quot;read_3mf&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>3MF(zip の中の `<code style="color:#22d3bf">3D/3dmodel.model</code><code style="color:#22d3bf">、3MF Core Specification)を三角形メッシュ </code><code style="color:#22d3bf">mesh</code>` = (V, F) に読む。</p>
+<p>複数の `<code style="color:#22d3bf">&lt;object&gt;</code><code style="color:#22d3bf"> は頂点を連結して 1 つのメッシュに(</code><code style="color:#22d3bf">&lt;build&gt;</code><code style="color:#22d3bf"> の変換行列は 3×4 の </code><code style="color:#22d3bf">transform</code>` を適用)。</p>
+<p>単位は `<code style="color:#22d3bf">&lt;model unit&gt;</code>`(既定 millimeter、inch / centimeter / meter / micron は mm に換算)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">Leitfaden zur Familie printpath</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_layer_inspection">poc_print_layer_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_layer_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">mesh</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:mesh_slice_contours">mesh_slice_contours</a> · <a style="color:#22d3bf" href="opprintpath:mesh_slice_stack">mesh_slice_stack</a> · <a style="color:#22d3bf" href="opprintpath:write_3mf">write_3mf</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">format</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:write_3mf">write_3mf</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

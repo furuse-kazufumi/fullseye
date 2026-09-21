@@ -165,6 +165,9 @@ LEDGER_DIMS = {
     # 2026-09-21: 生きている組織の 3D+t を古典手法だけで短い 3D 動画像に。新語 volseq (T, Z, Y, X)。
     "live4d": {"registry": "opslive4d", "table": "OPSLIVE4D",
                "module": "live4d", "family": "live4d"},
+    # 2026-09-21: 3D プリンタのデータ(G-code / 3MF / スライス / 層画像の検査)。新語なし。
+    "printpath": {"registry": "opsprintpath", "table": "OPSPRINTPATH",
+                  "module": "printpath", "family": "printpath"},
 }
 
 

@@ -24,7 +24,7 @@
 
 <!-- poc-index:start -->
 
-## PoC シリーズ — 真値つきで実問題を解いた 129 本
+## PoC シリーズ — 真値つきで実問題を解いた 130 本
 
 どれも**真値を閉形式か合成で厳密に持ち、ゼロ点(何もしない場合)を必ず併記**します。壊れ方は 1 つの指標に畳まず別々に数え、原因は対照群で分けます。全文と実行手順は [examples/README.md](../examples/README.md)。
 
@@ -48,6 +48,7 @@
 | 読み取り (2) | [`poc_barcode_1d`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_barcode_1d.py) 1 次元バーコードが読めなくなる境界(誤読と読み取り不能を分けて数える)<br>[`poc_matrix_code_reading`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) 2 値マトリクスコードの読取限界(何画素あれば読めるか) |
 | detection (2) | [`poc_real_defect_floor`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_defect_floor.py) 薄い欠陥はどこまで見えるか(実写の地に真値を仕込んで検出限界を測る)<br>[`poc_search_sweep_width`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) 捜索救難の走査幅(画像から測った 1 本の数字が計画を決める) |
 | 改ざん検出 (2) | [`poc_forensics_roc`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_forensics_roc.py) 画像改ざん検出の ROC(保存ボタン 1 回で何が消えるか)<br>[`poc_fresco_craquelure`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fresco_craquelure.py) 絵画のひび割れ網(壊れるのは分岐次数だけ) |
+| inspection (2) | [`poc_em_second_opinion`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_em_second_opinion.py) EM 連結体校正のセカンドオピニオン(膜はラベルの境界にしか無いはず)<br>[`poc_print_layer_inspection`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_print_layer_inspection.py) 3D プリンタの層検査(形 → 層 → 経路 → 画像 の往復を自分で閉じ、仕込んだ欠陥を数字で捕まえる) |
 | 形態 (2) | [`poc_bilateral_asymmetry`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bilateral_asymmetry.py) 左右非対称性の定量(対称面そのものが変形に引きずられる)<br>[`poc_vessel_network`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_vessel_network.py) 血管網を抜いて分岐を測る(ヒゲ、分岐近傍の径の過大、指数の脆さ) |
 | optics (2) | [`poc_compound_eye`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_compound_eye.py) ハエの複眼は光場センサ(神経重ね合わせで「重ねると頑健」を光学で測る)<br>[`poc_fly_vision`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fly_vision.py) ハエの視覚前段を op の連鎖で(合成の空を回る/前進すると何が読めて何が読めないか) |
 | perception_templates (2) | [`poc_bev_sensor_fusion`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py) 鳥瞰図への多センサ融合(px で合格の校正が、遠くでは長さになる)<br>[`poc_safety_clearance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_safety_clearance.py) 人と機械の安全距離(「近い」を測る点を置き換えると危険が消える) |
@@ -59,7 +60,6 @@
 | analysis (1) | [`poc_connectome_motor_bottleneck`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_connectome_motor_bottleneck.py) 動きの量子化 ―― 脳から筋へ、命令の次元はどこで落ちるか(MaleCNS の首と RL の関節を同じ物差しで) |
 | 色 (1) | [`poc_white_balance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) 色恒常性(どの手法にも「効く条件」があり、勝ち続ける手法は無い) |
 | imgmetrics (1) | [`poc_spc`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_spc.py) 統計的工程管理を op の連鎖で(検査計測が管理下か・能力があるか) |
-| inspection (1) | [`poc_em_second_opinion`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_em_second_opinion.py) EM 連結体校正のセカンドオピニオン(膜はラベルの境界にしか無いはず) |
 | 正対化 (1) | [`poc_document_scan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py) 書類スキャンの台形補正と影除去(良いところ取りは無い) |
 | 断層 (1) | [`poc_ct_fidelity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) CT 再構成の忠実度(投影数を減らすとどこで壊れるか) |
 | 超解像 (1) | [`poc_superresolution_limits`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_superresolution_limits.py) 超解像は情報を増やすか(単一画像では増えない) |
@@ -70,11 +70,11 @@
 
 ## オペレータを探す
 
-**2,057 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **53 本の族ガイド**があります。次元ごとの入口:
+**2,068 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **54 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 931/931、型つき台帳 1105/1117、1 行ファサード `fullseye.<名前>` 568/1202。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 931/931、型つき台帳 1116/1128、1 行ファサード `fullseye.<名前>` 568/1202。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 2062 本のうち、実行できる例が付いているのは **2005 本**(57 本は例ゼロ)、使い方の説明が 120 字以上あるのは **2033 本**(29 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 2062 本すべてにある。
+**ノートの中身の実測**: 2073 本のうち、実行できる例が付いているのは **2016 本**(57 本は例ゼロ)、使い方の説明が 120 字以上あるのは **2041 本**(32 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 2073 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -105,6 +105,7 @@
 | `specular` — 鏡面分離 | 13 | [INDEX](ops/specular/INDEX.md) · [ガイド](ops/specular/guides/specular_photometric.md) |
 | `profile` — 断面形状 | 12 | [INDEX](ops/profile/INDEX.md) · [ガイド](ops/profile/guides/profile_metrology.md) |
 | `colortransport` — 色の輸送 | 11 | [INDEX](ops/colortransport/INDEX.md) |
+| `printpath` | 11 | [INDEX](ops/printpath/INDEX.md) · [ガイド](ops/printpath/guides/printpath.md) |
 | `volcolor` — 体積の色 | 11 | [INDEX](ops/volcolor/INDEX.md) |
 | `blob` — 2-D の連結成分解析 | 10 | [INDEX](ops/blob/INDEX.md) · [ガイド](ops/blob/guides/blob_analysis.md) |
 | `flyvision` | 9 | [INDEX](ops/flyvision/INDEX.md) |
@@ -215,7 +216,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## ドキュメント地図 — 全 192 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 2,057 本と族ガイド 53 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 2,068 本と族ガイド 54 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 
