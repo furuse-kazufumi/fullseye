@@ -63,8 +63,11 @@ __all__ = [
     "graph_activation_latency", "graph_activity_spread", "points_activity_video",
     # dimension(2026-09-21): 層を通す・次元を数える
     "graph_block_shuffle", "graph_layer_propagate", "states_participation_ratio", "states_layer_dimension",
+    # 回路(2026-09-22): 配線をそのままコンダクタンス回路として回す(学習なし)
+    "graph_conductance_states",
     # constants
     "MOTIFS", "NONLINEARITIES", "ADJACENCY_ORDERS", "MAX_NODES", "ACTIVATIONS",
+    "RELEASES",
 ]
 
 #: 数えられる 3 点モチーフ。reciprocal = 相互結合の対、ffl = feed-forward loop
@@ -74,6 +77,9 @@ MOTIFS: tuple[str, ...] = ("reciprocal", "ffl", "cycle3")
 NONLINEARITIES: tuple[str, ...] = ("tanh", "linear")
 #: 隣接行列画像の並べ替え。
 ADJACENCY_ORDERS: tuple[str, ...] = ("none", "degree", "component")
+#: ``graph_conductance_states`` の前シナプス放出。どちらも**非負**で、負のコンダクタンス
+#: (物理的に存在しない)を作らない —— 状態の有界性はここに掛かっている。
+RELEASES: tuple[str, ...] = ("relu", "sigmoid")
 #: 受け付ける最大ノード数。媒介中心性は O(n·m)、固有分解は O(n³) で、これを超える
 #: 密行列は float64 で 128 MB を超える —— 黙って何十分も回すより入口で断る。
 MAX_NODES = 4096
@@ -1066,3 +1072,102 @@ def states_layer_dimension(X: Any, labels: Any) -> dict[str, np.ndarray]:
     pr_arr = np.asarray(prs, dtype=np.float64)
     return {"layer": np.arange(L, dtype=np.int64), "n": ns_arr, "participation_ratio": pr_arr,
             "ratio": pr_arr / ns_arr}
+
+
+# --------------------------------------------------------------------------- #
+# 回路 —— コンダクタンスで動く段階電位ニューロンを、配線そのものの上で回す         #
+# --------------------------------------------------------------------------- #
+def graph_conductance_states(W: Any, drive: Any, dt_s: float = 0.001, tau_s: float = 0.02,
+                             e_rest: float = 0.0, e_exc: float = 1.0, e_inh: float = -1.0,
+                             release: str = "relu", v_half: float = 0.5, slope: float = 4.0,
+                             gain: float = 1.0, v0: Any = None) -> np.ndarray:
+    """配線 ``W`` を**そのまま回路として回した**膜電位の時系列 ``(T, n)``(``matrix``、学習なし)。
+
+    ハエの視葉で「掛け算」に見えていた非線形の正体は、樹状突起のコンダクタンス比だった
+    (Groschner ら 2022: 定常では ``Vm = Σgᵢ Eᵢ / Σgᵢ``)。同じ形の式が、コネクトームを
+    配線として固定した全脳モデルの標準形でもある(Lappalainen ら 2024:
+    ``τᵢ V̇ᵢ = −Vᵢ + Σ sᵢⱼ + V_rest``)。この op はその**動的な版**を、``conn_graph``
+    1 枚と外部入力 1 枚だけで回す:
+
+        τ dVᵢ/dt = −(Vᵢ − e_rest) + g⁺ᵢ (e_exc − Vᵢ) + g⁻ᵢ (e_inh − Vᵢ)
+
+    ``g⁺`` は ``W`` の**正の重み**、``g⁻`` は**負の重み**の絶対値を、前シナプス側の
+    放出 ``f(V)`` で重みづけて足したもの(``drive`` の正負も同じ向きに足す)。重みは
+    与えられたまま使う —— **学習も当てはめも一切しない**。時定数が入力で縮む
+    (実効 τ = ``τ/(1+g⁺+g⁻)``)ので、これは liquid time-constant 型の力学そのものだが、
+    パラメータは配線と定数だけで、勾配で決めた数は 1 つも無い。
+
+    W: ``(n, n)`` の重みつき隣接行列(``W[pre, post]``、正 = 興奮性、負 = 抑制性)。
+    drive: ``(T, n)`` の外部入力。正はそのノードを ``e_exc`` へ、負は ``e_inh`` へ引く
+      コンダクタンスとして入る(電流ではない —— 電流だと下の有界性が壊れる)。
+    dt_s / tau_s: 刻みと膜時定数[秒]。e_rest / e_exc / e_inh: 静止電位と 2 つの反転電位。
+    release: 前シナプス放出 ``f(V)``。``"relu"`` は ``gain·max(V, 0)``、``"sigmoid"`` は
+      ``gain/(1+exp(−slope(V−v_half)))``。**どちらも非負**で、負のコンダクタンス
+      (物理的に存在しない)を作らない —— それが下の有界性の前提。
+    v_half / slope: シグモイドの半値と傾き。gain: 放出の利得(非負)。
+    v0: 初期状態 ``(n,)``。既定は全ノード ``e_rest``。
+
+    各段は**コンダクタンスを固定した厳密解**で進める(``V ← V∞ + (V − V∞)e^{−dt·g_tot/τ}``)
+    ので、刻みを粗くしても発散しない。
+
+    閉じた式で検査できること:
+
+    * **有界性**: 放出が非負である限り、``V∞`` は 3 つの反転電位の**凸結合**なので
+      ``[min(e_rest, e_exc, e_inh), max(...)]`` の中にある。各段は ``V`` をその
+      ``V∞`` へ指数で寄せるだけなので、**箱の中から始めれば必ず箱の中に留まり、
+      箱の外から始めても外へは行かず箱へ向かう**。どんな配線・どんな入力でも
+      発散しない、が構造で保証される(``v0`` の既定は ``e_rest`` = 箱の中)。
+    * **減衰**: 入力も結合も無ければ ``V(t) = e_rest + (V₀ − e_rest)e^{−t/τ}`` ちょうど。
+    * **定常**: 一定の入力 ``d > 0`` を 1 ノードに入れると ``V∞ = (e_rest + d·e_exc)/(1 + d)``、
+      そこへ向かう実効時定数は ``τ/(1 + d)`` ちょうど(入力で時定数が縮む、の数値)。
+
+    **ValueError**: 正方でない / 非有限の ``W``、``(T, n)`` でない ``drive``、
+    非正の ``dt_s`` / ``tau_s``、負の ``gain``、未知の ``release``、長さの合わない ``v0``。
+    """
+    op = "graph_conductance_states"
+    A = _as_graph(W, op)
+    n = A.shape[0]
+    D = _as_matrix(drive, op, "drive")
+    if D.shape[1] != n:
+        raise ValueError(f"{op}: drive has {D.shape[1]} column(s) but the graph has {n} nodes — "
+                         "one column per node is required (rows are time)")
+    if D.shape[0] < 1:
+        raise ValueError(f"{op}: drive has no rows (no time samples)")
+    dt = float(dt_s)
+    tau = float(tau_s)
+    if not np.isfinite(dt) or dt <= 0.0:
+        raise ValueError(f"{op}: dt_s must be a positive finite number, got {dt_s!r}")
+    if not np.isfinite(tau) or tau <= 0.0:
+        raise ValueError(f"{op}: tau_s must be a positive finite number, got {tau_s!r}")
+    if release not in RELEASES:
+        raise ValueError(f"{op}: release must be one of {RELEASES}, got {release!r}")
+    g0 = float(gain)
+    if not np.isfinite(g0) or g0 < 0.0:
+        raise ValueError(f"{op}: gain must be a non-negative finite number, got {gain!r}")
+    for nm, v in (("e_rest", e_rest), ("e_exc", e_exc), ("e_inh", e_inh),
+                  ("v_half", v_half), ("slope", slope)):
+        if not np.isfinite(float(v)):
+            raise ValueError(f"{op}: {nm} must be finite, got {v!r}")
+    er, ee, ei = float(e_rest), float(e_exc), float(e_inh)
+    if v0 is None:
+        V = np.full(n, er, dtype=np.float64)
+    else:
+        V = _as_finite_float(v0, op, "v0").ravel()
+        if V.size != n:
+            raise ValueError(f"{op}: v0 has {V.size} entries but the graph has {n} nodes")
+        V = V.astype(np.float64, copy=True)
+    Wp = np.maximum(A, 0.0)
+    Wn = np.maximum(-A, 0.0)
+    out = np.empty((D.shape[0], n), dtype=np.float64)
+    for t in range(D.shape[0]):
+        if release == "relu":
+            s = g0 * np.maximum(V, 0.0)
+        else:
+            s = g0 / (1.0 + np.exp(-float(slope) * (V - float(v_half))))
+        ge = s @ Wp + np.maximum(D[t], 0.0)
+        gi = s @ Wn + np.maximum(-D[t], 0.0)
+        gt = 1.0 + ge + gi
+        vinf = (er + ge * ee + gi * ei) / gt
+        V = vinf + (V - vinf) * np.exp(-dt * gt / tau)
+        out[t] = V
+    return out

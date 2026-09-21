@@ -1,0 +1,54 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_matched_filter — FLYVISION <code style="color:#22d3bf">selfmotion</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_matched_filter(lattice, axis=(0.0, 0.0, 1.0), motion=&#x27;rotation&#x27;, depth_m=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_matched_filter(lattice, axis=(0.0, 0.0, 1.0), motion=&#x27;rotation&#x27;, depth_m=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_matched_filter&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>The flow field one unit of self-motion writes on the eye — the template a</p>
+<p>wide-field neuron is matched to.</p>
+<p>Krapp &amp; Hengstenberg measured the local motion sensitivity of single</p>
+<p>lobula-plate tangential cells across the whole visual field and found a</p>
+<p>structured vector field, one that looks like the optic flow of a particular</p>
+<p>rotation of the fly (*Nature* 384:463, 1996). Reading self-motion out of such</p>
+<p>a cell is then a matched filter (Franz &amp; Krapp, *Biol. Cybern.* 83:185, 2000):</p>
+<p>correlate the measured flow against the template of the motion you are asking</p>
+<p>about. This op builds the template, for the isotropic world model — every</p>
+<p>point at the same distance — which is the case in which the rotation template</p>
+<p>is exactly the geometry and nothing is assumed about the scene:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">motion=&quot;rotation&quot;</code>`: one radian per second about the unit vector *axis*</p>
+<p>moves the viewing direction `<code style="color:#22d3bf">d</code><code style="color:#22d3bf"> at </code><code style="color:#22d3bf">-axis x d</code>`, which is already</p>
+<p>tangent to the sphere. Its length is `<code style="color:#22d3bf">sin</code>` of the angle between the axis</p>
+<p>and the line of sight, so the template is zero on the axis itself.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">motion=&quot;translation&quot;</code>`: one metre per second along *axis*, with every</p>
+<p>point at *depth_m* metres, moves it at `<code style="color:#22d3bf">-(v - (v.d) d)/Z</code>`. The depth is</p>
+<p>an input, not a measurement — translation flow and distance are the same</p>
+<p>unknown and no eye can separate them from one frame pair.</p>
+<p>lattice: a :func:<code style="color:#22d3bf">fly_hex_lattice</code> result. axis: the rotation axis or</p>
+<p>translation direction in body coordinates (x forward, y left, z up); it is</p>
+<p>normalised, and a zero vector is refused. depth_m: the uniform distance,</p>
+<p>`<code style="color:#22d3bf">motion=&quot;translation&quot;</code>` only.</p>
+<p>Returns `<code style="color:#22d3bf">(n, 2)</code>` float64 — the azimuth and elevation components of the flow</p>
+<p>at each ommatidium, in radians per second, the same layout</p>
+<p>:func:<code style="color:#22d3bf">fly_flow_from_directions</code> returns.</p>
+<p>Ground truth: for a rotation, `<code style="color:#22d3bf">|f| = sin(angle(axis, d))</code>` exactly, so it is</p>
+<p>0 where the line of sight is along the axis and 1 where it is perpendicular;</p>
+<p>and the flow is perpendicular to both the axis and the line of sight. For a</p>
+<p>translation, `<code style="color:#22d3bf">|f| = sin(angle)/depth</code>` and the flow points away from the</p>
+<p>direction of travel (the focus of expansion is where the template vanishes).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a malformed *lattice*, an *axis* that is not three</p>
+<p>finite numbers or is zero-length, an unknown *motion*, and a non-positive</p>
+<p>*depth_m*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fly_optomotor_steering">poc_fly_optomotor_steering</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fly_optomotor_steering.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">matrix</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_lamina_filter">fly_lamina_filter</a> · <a style="color:#22d3bf" href="opflyvision:fly_onoff_split">fly_onoff_split</a> · <a style="color:#22d3bf" href="opflyvision:fly_t4t5_field">fly_t4t5_field</a> · <a style="color:#22d3bf" href="opflyvision:fly_flow_from_directions">fly_flow_from_directions</a> · <a style="color:#22d3bf" href="opflyvision:fly_egomotion_from_flow">fly_egomotion_from_flow</a> · <a style="color:#22d3bf" href="opflyvision:fly_hs_readout">fly_hs_readout</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">selfmotion</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_egomotion_from_flow">fly_egomotion_from_flow</a> · <a style="color:#22d3bf" href="opflyvision:fly_eye_merge">fly_eye_merge</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

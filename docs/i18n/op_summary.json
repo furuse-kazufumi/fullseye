@@ -10748,9 +10748,21 @@
    "fp": "58870fdff4cc",
    "ja": "刺激方向ごとの応答から方向選択性指数と好み方向(円周上のベクトル和)。"
   },
+  "flyvision/fly_egomotion_from_flow": {
+   "fp": "a832e559683f",
+   "ja": "フロー場から眼の回転を線形最小二乗で求め、識別できたかを条件数で返す。"
+  },
   "flyvision/fly_emd_response": {
    "fp": "ef47e0e0ff07",
    "ja": "隣り合う個眼信号間の Hassenstein–Reichardt 相関(初等運動検出器)。"
+  },
+  "flyvision/fly_eye_merge": {
+   "fp": "403083a9560d",
+   "ja": "複数の格子を 1 つの広い眼として束ねる(視線方向をそのまま連結する)。"
+  },
+  "flyvision/fly_flow_from_directions": {
+   "fp": "d15449775f30",
+   "ja": "個眼ごとの 6 方向の応答を、接平面上の 1 本の局所フローベクトルにまとめる。"
   },
   "flyvision/fly_hex_lattice": {
    "fp": "6ebc935312b8",
@@ -10764,13 +10776,29 @@
    "fp": "4d9904070315",
    "ja": "水平系の広視野読み出し —— 上半視野での好み方向 対 反対方向の opponent 和。"
   },
+  "flyvision/fly_lamina_filter": {
+   "fp": "61762a34b4f5",
+   "ja": "光受容器の順応とラミナの帯域通過 —— 明るさを捨てて対比だけを下流へ渡す(Weber)。"
+  },
   "flyvision/fly_lgmd_eta": {
    "fp": "5a06e38ccd39",
    "ja": "膨張する見込み角からの LGMD looming 応答 —— 角速度に exp(−αθ) を掛ける。"
   },
+  "flyvision/fly_matched_filter": {
+   "fp": "cadf52734758",
+   "ja": "単位の自己運動が視野に書くフロー場 —— 広視野ニューロンが整合している雛形。"
+  },
+  "flyvision/fly_onoff_split": {
+   "fp": "3a3a9008c7a9",
+   "ja": "対比の動画を、メデュラが運ぶ ON(Mi1/Tm3)と OFF(Tm1/Tm2)の 2 チャネルに分ける。"
+  },
   "flyvision/fly_sky_1f": {
    "fp": "cfdb20d5eaa3",
    "ja": "帯状の 1/f 方位テクスチャを持つ合成等距円筒の空パノラマ。"
+  },
+  "flyvision/fly_t4t5_field": {
+   "fp": "e08a3d50a0a7",
+   "ja": "六角格子の 6 方向すべてで方向選択(Haag らの三腕・増強だけ・抑制だけ・相関器を選べる)。"
   },
   "flyvision/fly_tau_from_expansion": {
    "fp": "e9a202014496",
@@ -10792,6 +10820,14 @@
    "ko": "곱해진 알파에서의 Porter–Duff **over**: ``src + dst*(1 - src.a)``.",
    "de": "Porter–Duff-**over** auf vormultiplizierter Farbe: ``src + dst*(1 - src.a)``."
   },
+  "gfx2d/awb_gains": {
+   "fp": "33fed5c3d3b5",
+   "ja": "ホワイトバランスの利得 (g_R, g_G, g_B) を推定する(gray-world / white-patch、g_G = 1)。",
+   "zh": "估计白平衡增益 (g_R, g_G, g_B)(gray-world / white-patch,g_G = 1)。",
+   "tw": "估計白平衡增益 (g_R, g_G, g_B)(gray-world / white-patch,g_G = 1)。",
+   "ko": "화이트 밸런스 이득 (g_R, g_G, g_B)을 추정한다(gray-world / white-patch, g_G = 1).",
+   "de": "Schätzt Weißabgleich-Verstärkungen (g_R, g_G, g_B) (Gray-World / White-Patch, g_G = 1)."
+  },
   "gfx2d/blend_mode": {
    "fp": "43988e193708",
    "ja": "不透明な ``rgb`` 2 枚を名前付きの合成モードで混ぜる(W3C Level 1)。",
@@ -10808,6 +10844,14 @@
    "ko": "이미지의 밝은 부분을 주위로 번지게 합니다.",
    "de": "Lässt die hellen Teile eines Bildes in ihre Umgebung ausbluten."
   },
+  "gfx2d/brightness_contrast": {
+   "fp": "ff3c9cab1752",
+   "ja": "out = (rgb − 0.5) · contrast + 0.5 + brightness を [0, 1] に切り詰める。",
+   "zh": "out = (rgb − 0.5) · contrast + 0.5 + brightness,裁剪到 [0, 1]。",
+   "tw": "out = (rgb − 0.5) · contrast + 0.5 + brightness,裁剪到 [0, 1]。",
+   "ko": "out = (rgb − 0.5) · contrast + 0.5 + brightness 를 [0, 1]로 자른다.",
+   "de": "out = (rgb − 0.5) · contrast + 0.5 + brightness, beschnitten auf [0, 1]."
+  },
   "gfx2d/chromatic_aberration": {
    "fp": "ae2d4bea4da6",
    "ja": "画像中心を基準に赤と青のチャネルだけ倍率を変える(緑は固定)。",
@@ -10815,6 +10859,14 @@
    "tw": "以影像中心為基準縮放紅、藍通道,綠通道保持不變。",
    "ko": "이미지 중심을 기준으로 빨강·파랑 채널만 배율을 바꾸고 초록은 고정합니다.",
    "de": "Skaliert Rot- und Blaukanal um die Bildmitte, Grün bleibt fest."
+  },
+  "gfx2d/color_correction_matrix": {
+   "fp": "e87a51440913",
+   "ja": "3x3 の色補正行列を画素ごとに掛ける(既定で行和 1 に正規化し、白を白のまま)。",
+   "zh": "逐像素应用 3x3 色彩校正矩阵(默认行归一化为 1,白保持白)。",
+   "tw": "逐像素套用 3x3 色彩校正矩陣(預設行正規化為 1,白保持白)。",
+   "ko": "3x3 색 보정 행렬을 화소마다 적용한다(기본으로 행합 1로 정규화하여 흰색을 유지).",
+   "de": "Wendet eine 3x3-Farbkorrekturmatrix pixelweise an (standardmäßig zeilennormiert, Weiß bleibt Weiß)."
   },
   "gfx2d/color_grade": {
    "fp": "972db79ccd7b",
@@ -10848,6 +10900,14 @@
    "ko": "평균 0 의 가우스 그레인을 더합니다. ``seed`` 로부터 결정적으로.",
    "de": "Fügt mittelwertfreies gaußsches Korn hinzu, deterministisch aus ``seed``."
   },
+  "gfx2d/hue_saturation": {
+   "fp": "950b3c64fd53",
+   "ja": "色相を回し彩度を伸縮する(BT.601 YCbCr、輝度は保つ)。",
+   "zh": "旋转色相并缩放饱和度(BT.601 YCbCr,保持亮度)。",
+   "tw": "旋轉色相並縮放飽和度(BT.601 YCbCr,保持亮度)。",
+   "ko": "색상을 회전하고 채도를 조절한다(BT.601 YCbCr, 휘도는 유지).",
+   "de": "Dreht den Farbton und skaliert die Sättigung (BT.601 YCbCr, Luma bleibt erhalten)."
+  },
   "gfx2d/layer_stack": {
    "fp": "2a90de6e860c",
    "ja": "z 順に並んだ ``rgba`` レイヤ列を下から合成する。",
@@ -10855,6 +10915,22 @@
    "tw": "按 z 序合成一列 ``rgba`` 圖層,自下而上。",
    "ko": "z 순으로 늘어선 ``rgba`` 레이어 목록을 아래부터 합성합니다.",
    "de": "Komponiert eine z-geordnete Liste von ``rgba``-Ebenen, von unten beginnend."
+  },
+  "gfx2d/lens_shading_correct": {
+   "fp": "d8bc250c0b31",
+   "ja": "フレームに周辺減光の利得地図を掛けて [0, 1] に切り詰める。",
+   "zh": "将增益图乘到帧上并裁剪到 [0, 1]。",
+   "tw": "將增益圖乘到幀上並裁剪到 [0, 1]。",
+   "ko": "프레임에 이득 지도를 곱하고 [0, 1]로 자른다.",
+   "de": "Multipliziert ein Bild mit der Vignettierungs-Verstärkungskarte und beschneidet auf [0, 1]."
+  },
+  "gfx2d/lens_shading_gain": {
+   "fp": "4c66edec5e7a",
+   "ja": "flat(白い板)から周辺減光を打ち消す利得地図を作る: 色ごとに mean / flat。",
+   "zh": "由平场(白板)生成抵消暗角的增益图:逐通道 mean / flat。",
+   "tw": "由平場(白板)產生抵消暗角的增益圖:逐通道 mean / flat。",
+   "ko": "플랫(흰 판)에서 주변 감광을 상쇄하는 이득 지도를 만든다: 채널별 mean / flat.",
+   "de": "Erzeugt aus einem Flatfield (weiße Tafel) die Verstärkungskarte gegen die Vignettierung: je Kanal mean / flat."
   },
   "gfx2d/light_mask": {
    "fp": "81eba0bb9fa6",
@@ -10951,6 +11027,54 @@
    "tw": "以 ``(x, y)`` 為中心的放射狀光照圖 ``rgb`` ``(H, W, 3)``。",
    "ko": "``(x, y)`` 를 중심으로 하는 방사형 라이트 맵 ``rgb`` ``(H, W, 3)``.",
    "de": "Eine radiale Lichtkarte, ``rgb`` ``(H, W, 3)``, zentriert auf ``(x, y)``."
+  },
+  "gfx2d/raw_apply_gains": {
+   "fp": "709ef5911dda",
+   "ja": "Bayer フレームに色ごとの利得を掛ける(デモザイク前のホワイトバランス)。",
+   "zh": "对 Bayer 帧逐通道乘以增益(去马赛克前的白平衡)。",
+   "tw": "對 Bayer 幀逐通道乘以增益(去馬賽克前的白平衡)。",
+   "ko": "Bayer 프레임에 채널별 이득을 곱한다(디모자이크 전 화이트 밸런스).",
+   "de": "Multipliziert ein Bayer-Bild je Farbkanal mit Verstärkungen (Weißabgleich vor dem Demosaicing)."
+  },
+  "gfx2d/raw_black_level": {
+   "fp": "153e2bd883f7",
+   "ja": "Bayer フレームの黒レベル補正: 色ごとに (raw − offset) / (white − offset)。",
+   "zh": "Bayer 帧的黑电平校正:逐通道 (raw − offset) / (white − offset)。",
+   "tw": "Bayer 幀的黑電平校正:逐通道 (raw − offset) / (white − offset)。",
+   "ko": "Bayer 프레임의 블랙 레벨 보정: 채널별 (raw − offset) / (white − offset).",
+   "de": "Schwarzwertkorrektur eines Bayer-Bildes: je Farbkanal (raw − offset) / (white − offset)."
+  },
+  "gfx2d/raw_dead_pixel_correct": {
+   "fp": "d9f26e45908e",
+   "ja": "欠陥画素を同色 8 近傍の中央値で置き換える。他の画素はそのまま。",
+   "zh": "用同色 8 邻域的中位数替换坏点,其余像素原样保留。",
+   "tw": "用同色 8 鄰域的中位數替換壞點,其餘像素原樣保留。",
+   "ko": "불량 화소를 같은 색 8근방의 중앙값으로 치환한다. 다른 화소는 그대로.",
+   "de": "Ersetzt defekte Pixel durch den Median der acht gleichfarbigen Nachbarn; alle anderen Pixel bleiben unverändert."
+  },
+  "gfx2d/raw_dead_pixel_mask": {
+   "fp": "b67a2e129298",
+   "ja": "欠陥画素の地図: 同色 8 近傍の全部から同じ向きに閾値以上ずれた画素。",
+   "zh": "坏点图:与全部 8 个同色邻域朝同一方向偏离超过阈值的像素。",
+   "tw": "壞點圖:與全部 8 個同色鄰域朝同一方向偏離超過閾值的像素。",
+   "ko": "불량 화소 지도: 같은 색 8근방 전부에서 같은 방향으로 임계값 이상 벗어난 화소.",
+   "de": "Karte der defekten Pixel: Pixel, die von allen acht gleichfarbigen Nachbarn in dieselbe Richtung um mehr als die Schwelle abweichen."
+  },
+  "gfx2d/raw_demosaic_bilinear": {
+   "fp": "bc8de6bc80fc",
+   "ja": "Bayer モザイクを NumPy だけの双線形補間で (H, W, 3) RGB にする。",
+   "zh": "用纯 NumPy 的双线性插值把 Bayer 马赛克变成 (H, W, 3) RGB。",
+   "tw": "用純 NumPy 的雙線性內插把 Bayer 馬賽克變成 (H, W, 3) RGB。",
+   "ko": "Bayer 모자이크를 NumPy만의 쌍선형 보간으로 (H, W, 3) RGB로 만든다.",
+   "de": "Bayer-Mosaik → (H, W, 3) RGB durch bilineare Interpolation, nur mit NumPy."
+  },
+  "gfx2d/rgb_apply_gains": {
+   "fp": "1101fc4c581f",
+   "ja": "R, G, B の各チャネルに利得を掛けて [0, 1] に切り詰める。",
+   "zh": "对 R、G、B 各通道乘以增益并裁剪到 [0, 1]。",
+   "tw": "對 R、G、B 各通道乘以增益並裁剪到 [0, 1]。",
+   "ko": "R, G, B 채널에 이득을 곱하고 [0, 1]로 자른다.",
+   "de": "Multipliziert die Kanäle R, G, B mit Verstärkungen und beschneidet auf [0, 1]."
   },
   "gfx2d/shadow_cast_2d": {
    "fp": "7f2dd5d1cc0d",
@@ -12536,6 +12660,14 @@
    "ko": "스토크스 벡터를 뮐러 행렬에 통과시킵니다: ``S' = M @ S``.",
    "de": "Schickt einen Stokes-Vektor durch eine Müller-Matrix: ``S' = M @ S``."
   },
+  "optics/mueller_checks": {
+   "fp": "0e0ad630e2f5",
+   "ja": "4x4 行列が物理的に実現可能な Mueller 行列かどうかと、どれだけ脱偏光するかを返す。",
+   "zh": "判断 4x4 矩阵是否为物理可实现的 Mueller 矩阵,以及退偏程度。",
+   "tw": "判斷 4x4 矩陣是否為物理可實現的 Mueller 矩陣,以及退偏程度。",
+   "ko": "4x4 행렬이 물리적으로 실현 가능한 Mueller 행렬인지와 얼마나 탈편광하는지를 반환합니다.",
+   "de": "Sagt, ob eine 4x4-Matrix eine physikalisch realisierbare Mueller-Matrix ist und wie stark sie depolarisiert."
+  },
   "optics/mueller_element": {
    "fp": "8fa79b87e919",
    "ja": "偏光素子 1 個ぶんの 4x4 実 Mueller 行列。",
@@ -12543,6 +12675,14 @@
    "tw": "單個偏振元件的 4x4 實 Mueller 矩陣。",
    "ko": "편광 소자 하나의 4x4 실수 뮐러 행렬.",
    "de": "Eine reelle 4x4-Müller-Matrix für ein Polarisationselement."
+  },
+  "optics/mueller_from_intensities": {
+   "fp": "bec98dc0d53b",
+   "ja": "既知の生成器・検光子の状態で測った強度から Mueller 行列を取り戻す(偏光計測の最小二乗)。",
+   "zh": "从已知起偏器/检偏器状态下测得的强度恢复 Mueller 矩阵(偏振测量的最小二乘)。",
+   "tw": "從已知起偏器/檢偏器狀態下量得的強度恢復 Mueller 矩陣(偏振量測的最小平方)。",
+   "ko": "알려진 편광 생성기·검광기 상태로 측정한 강도에서 Mueller 행렬을 복원합니다(편광 계측 최소제곱).",
+   "de": "Gewinnt eine Mueller-Matrix aus Intensitäten zurück, die durch bekannte Generator-/Analysatorzustände gemessen wurden (polarimetrische kleinste Quadrate)."
   },
   "optics/observe_surface": {
    "fp": "36254fd31fb0",
@@ -12631,6 +12771,22 @@
    "tw": "處方的一階量:焦距、光瞳、像。",
    "ko": "처방의 1 차량: 초점거리·동공·상.",
    "de": "Größen erster Ordnung der Vorschrift: Brennweiten, Pupillen, Bild."
+  },
+  "optics/polarization_demosaic": {
+   "fp": "4609f51d96b5",
+   "ja": "偏光センサのモザイクを 4 枚の検光子画像(0/45/90/135 度)に分ける。",
+   "zh": "将偏振传感器的马赛克拆成四张检偏器图像(0/45/90/135 度)。",
+   "tw": "將偏振感測器的馬賽克拆成四張檢偏器影像(0/45/90/135 度)。",
+   "ko": "편광 센서의 모자이크를 네 장의 검광자 영상(0/45/90/135도)으로 나눕니다.",
+   "de": "Zerlegt das Mosaik eines Polarisationssensors in die vier Analysatorbilder (0/45/90/135 Grad)."
+  },
+  "optics/polarization_demosaic_color": {
+   "fp": "a93c73e58b83",
+   "ja": "カラー偏光センサ(IMX250MYR 系、4x4 ブロック)のモザイクを 4 枚の RGB 画像 (4, H, W, 3) に分ける。",
+   "zh": "将彩色偏振传感器(IMX250MYR 系,4x4 块)的马赛克拆成四张 RGB 图像 (4, H, W, 3)。",
+   "tw": "將彩色偏振感測器(IMX250MYR 系,4x4 區塊)的馬賽克拆成四張 RGB 影像 (4, H, W, 3)。",
+   "ko": "컬러 편광 센서(IMX250MYR 계열, 4x4 블록)의 모자이크를 네 장의 RGB 영상 (4, H, W, 3)으로 나눕니다.",
+   "de": "Zerlegt das Mosaik eines Farb-Polarisationssensors (IMX250MYR-Familie, 4x4-Block) in vier RGB-Bilder (4, H, W, 3)."
   },
   "optics/prism_min_deviation_deg": {
    "fp": "7fb17432f34c",
@@ -13736,6 +13892,10 @@
    "fp": "815b50a0d9e5",
    "ja": "個別計測の表形式 CUSUM 管理図 —— 小さな持続ドリフトを Shewhart より早く捕らえる。"
   },
+  "spc/spc_ewma": {
+   "fp": "06bd664da265",
+   "ja": "個別計測の EWMA 管理図(Roberts 1959)—— λ で記憶の深さを調節し、CUSUM と同様に小さな持続シフトを Shewhart より早く捕らえる。"
+  },
   "spc/spc_hotelling_t2": {
    "fp": "9c8badfbf811",
    "ja": "Hotelling の T² による多変量 SPC(F 分布由来の管理限界で相関する計測を同時に判定)。"
@@ -14199,138 +14359,6 @@
    "tw": "按 3-D 特徵篩選成分(2-D 斑點篩選的 3-D 版)。",
    "ko": "3-D 특징으로 성분을 거릅니다(2-D 블롭 선별의 3-D 판).",
    "de": "Siebt Komponenten nach 3-D-Merkmalen (das 3-D-Gegenstück zur 2-D-Blob-Auswahl)."
-  },
-  "optics/polarization_demosaic": {
-   "fp": "4609f51d96b5",
-   "ja": "偏光センサのモザイクを 4 枚の検光子画像(0/45/90/135 度)に分ける。",
-   "zh": "将偏振传感器的马赛克拆成四张检偏器图像(0/45/90/135 度)。",
-   "tw": "將偏振感測器的馬賽克拆成四張檢偏器影像(0/45/90/135 度)。",
-   "ko": "편광 센서의 모자이크를 네 장의 검광자 영상(0/45/90/135도)으로 나눕니다.",
-   "de": "Zerlegt das Mosaik eines Polarisationssensors in die vier Analysatorbilder (0/45/90/135 Grad)."
-  },
-  "optics/mueller_from_intensities": {
-   "fp": "bec98dc0d53b",
-   "ja": "既知の生成器・検光子の状態で測った強度から Mueller 行列を取り戻す(偏光計測の最小二乗)。",
-   "zh": "从已知起偏器/检偏器状态下测得的强度恢复 Mueller 矩阵(偏振测量的最小二乘)。",
-   "tw": "從已知起偏器/檢偏器狀態下量得的強度恢復 Mueller 矩陣(偏振量測的最小平方)。",
-   "ko": "알려진 편광 생성기·검광기 상태로 측정한 강도에서 Mueller 행렬을 복원합니다(편광 계측 최소제곱).",
-   "de": "Gewinnt eine Mueller-Matrix aus Intensitäten zurück, die durch bekannte Generator-/Analysatorzustände gemessen wurden (polarimetrische kleinste Quadrate)."
-  },
-  "optics/mueller_checks": {
-   "fp": "0e0ad630e2f5",
-   "ja": "4x4 行列が物理的に実現可能な Mueller 行列かどうかと、どれだけ脱偏光するかを返す。",
-   "zh": "判断 4x4 矩阵是否为物理可实现的 Mueller 矩阵,以及退偏程度。",
-   "tw": "判斷 4x4 矩陣是否為物理可實現的 Mueller 矩陣,以及退偏程度。",
-   "ko": "4x4 행렬이 물리적으로 실현 가능한 Mueller 행렬인지와 얼마나 탈편광하는지를 반환합니다.",
-   "de": "Sagt, ob eine 4x4-Matrix eine physikalisch realisierbare Mueller-Matrix ist und wie stark sie depolarisiert."
-  },
-  "gfx2d/raw_black_level": {
-   "fp": "153e2bd883f7",
-   "ja": "Bayer フレームの黒レベル補正: 色ごとに (raw − offset) / (white − offset)。",
-   "zh": "Bayer 帧的黑电平校正:逐通道 (raw − offset) / (white − offset)。",
-   "tw": "Bayer 幀的黑電平校正:逐通道 (raw − offset) / (white − offset)。",
-   "ko": "Bayer 프레임의 블랙 레벨 보정: 채널별 (raw − offset) / (white − offset).",
-   "de": "Schwarzwertkorrektur eines Bayer-Bildes: je Farbkanal (raw − offset) / (white − offset)."
-  },
-  "gfx2d/raw_dead_pixel_mask": {
-   "fp": "b67a2e129298",
-   "ja": "欠陥画素の地図: 同色 8 近傍の全部から同じ向きに閾値以上ずれた画素。",
-   "zh": "坏点图:与全部 8 个同色邻域朝同一方向偏离超过阈值的像素。",
-   "tw": "壞點圖:與全部 8 個同色鄰域朝同一方向偏離超過閾值的像素。",
-   "ko": "불량 화소 지도: 같은 색 8근방 전부에서 같은 방향으로 임계값 이상 벗어난 화소.",
-   "de": "Karte der defekten Pixel: Pixel, die von allen acht gleichfarbigen Nachbarn in dieselbe Richtung um mehr als die Schwelle abweichen."
-  },
-  "gfx2d/raw_dead_pixel_correct": {
-   "fp": "d9f26e45908e",
-   "ja": "欠陥画素を同色 8 近傍の中央値で置き換える。他の画素はそのまま。",
-   "zh": "用同色 8 邻域的中位数替换坏点,其余像素原样保留。",
-   "tw": "用同色 8 鄰域的中位數替換壞點,其餘像素原樣保留。",
-   "ko": "불량 화소를 같은 색 8근방의 중앙값으로 치환한다. 다른 화소는 그대로.",
-   "de": "Ersetzt defekte Pixel durch den Median der acht gleichfarbigen Nachbarn; alle anderen Pixel bleiben unverändert."
-  },
-  "gfx2d/lens_shading_gain": {
-   "fp": "4c66edec5e7a",
-   "ja": "flat(白い板)から周辺減光を打ち消す利得地図を作る: 色ごとに mean / flat。",
-   "zh": "由平场(白板)生成抵消暗角的增益图:逐通道 mean / flat。",
-   "tw": "由平場(白板)產生抵消暗角的增益圖:逐通道 mean / flat。",
-   "ko": "플랫(흰 판)에서 주변 감광을 상쇄하는 이득 지도를 만든다: 채널별 mean / flat.",
-   "de": "Erzeugt aus einem Flatfield (weiße Tafel) die Verstärkungskarte gegen die Vignettierung: je Kanal mean / flat."
-  },
-  "gfx2d/lens_shading_correct": {
-   "fp": "d8bc250c0b31",
-   "ja": "フレームに周辺減光の利得地図を掛けて [0, 1] に切り詰める。",
-   "zh": "将增益图乘到帧上并裁剪到 [0, 1]。",
-   "tw": "將增益圖乘到幀上並裁剪到 [0, 1]。",
-   "ko": "프레임에 이득 지도를 곱하고 [0, 1]로 자른다.",
-   "de": "Multipliziert ein Bild mit der Vignettierungs-Verstärkungskarte und beschneidet auf [0, 1]."
-  },
-  "gfx2d/awb_gains": {
-   "fp": "33fed5c3d3b5",
-   "ja": "ホワイトバランスの利得 (g_R, g_G, g_B) を推定する(gray-world / white-patch、g_G = 1)。",
-   "zh": "估计白平衡增益 (g_R, g_G, g_B)(gray-world / white-patch,g_G = 1)。",
-   "tw": "估計白平衡增益 (g_R, g_G, g_B)(gray-world / white-patch,g_G = 1)。",
-   "ko": "화이트 밸런스 이득 (g_R, g_G, g_B)을 추정한다(gray-world / white-patch, g_G = 1).",
-   "de": "Schätzt Weißabgleich-Verstärkungen (g_R, g_G, g_B) (Gray-World / White-Patch, g_G = 1)."
-  },
-  "gfx2d/rgb_apply_gains": {
-   "fp": "1101fc4c581f",
-   "ja": "R, G, B の各チャネルに利得を掛けて [0, 1] に切り詰める。",
-   "zh": "对 R、G、B 各通道乘以增益并裁剪到 [0, 1]。",
-   "tw": "對 R、G、B 各通道乘以增益並裁剪到 [0, 1]。",
-   "ko": "R, G, B 채널에 이득을 곱하고 [0, 1]로 자른다.",
-   "de": "Multipliziert die Kanäle R, G, B mit Verstärkungen und beschneidet auf [0, 1]."
-  },
-  "gfx2d/raw_apply_gains": {
-   "fp": "709ef5911dda",
-   "ja": "Bayer フレームに色ごとの利得を掛ける(デモザイク前のホワイトバランス)。",
-   "zh": "对 Bayer 帧逐通道乘以增益(去马赛克前的白平衡)。",
-   "tw": "對 Bayer 幀逐通道乘以增益(去馬賽克前的白平衡)。",
-   "ko": "Bayer 프레임에 채널별 이득을 곱한다(디모자이크 전 화이트 밸런스).",
-   "de": "Multipliziert ein Bayer-Bild je Farbkanal mit Verstärkungen (Weißabgleich vor dem Demosaicing)."
-  },
-  "gfx2d/raw_demosaic_bilinear": {
-   "fp": "bc8de6bc80fc",
-   "ja": "Bayer モザイクを NumPy だけの双線形補間で (H, W, 3) RGB にする。",
-   "zh": "用纯 NumPy 的双线性插值把 Bayer 马赛克变成 (H, W, 3) RGB。",
-   "tw": "用純 NumPy 的雙線性內插把 Bayer 馬賽克變成 (H, W, 3) RGB。",
-   "ko": "Bayer 모자이크를 NumPy만의 쌍선형 보간으로 (H, W, 3) RGB로 만든다.",
-   "de": "Bayer-Mosaik → (H, W, 3) RGB durch bilineare Interpolation, nur mit NumPy."
-  },
-  "gfx2d/color_correction_matrix": {
-   "fp": "e87a51440913",
-   "ja": "3x3 の色補正行列を画素ごとに掛ける(既定で行和 1 に正規化し、白を白のまま)。",
-   "zh": "逐像素应用 3x3 色彩校正矩阵(默认行归一化为 1,白保持白)。",
-   "tw": "逐像素套用 3x3 色彩校正矩陣(預設行正規化為 1,白保持白)。",
-   "ko": "3x3 색 보정 행렬을 화소마다 적용한다(기본으로 행합 1로 정규화하여 흰색을 유지).",
-   "de": "Wendet eine 3x3-Farbkorrekturmatrix pixelweise an (standardmäßig zeilennormiert, Weiß bleibt Weiß)."
-  },
-  "gfx2d/hue_saturation": {
-   "fp": "950b3c64fd53",
-   "ja": "色相を回し彩度を伸縮する(BT.601 YCbCr、輝度は保つ)。",
-   "zh": "旋转色相并缩放饱和度(BT.601 YCbCr,保持亮度)。",
-   "tw": "旋轉色相並縮放飽和度(BT.601 YCbCr,保持亮度)。",
-   "ko": "색상을 회전하고 채도를 조절한다(BT.601 YCbCr, 휘도는 유지).",
-   "de": "Dreht den Farbton und skaliert die Sättigung (BT.601 YCbCr, Luma bleibt erhalten)."
-  },
-  "gfx2d/brightness_contrast": {
-   "fp": "ff3c9cab1752",
-   "ja": "out = (rgb − 0.5) · contrast + 0.5 + brightness を [0, 1] に切り詰める。",
-   "zh": "out = (rgb − 0.5) · contrast + 0.5 + brightness,裁剪到 [0, 1]。",
-   "tw": "out = (rgb − 0.5) · contrast + 0.5 + brightness,裁剪到 [0, 1]。",
-   "ko": "out = (rgb − 0.5) · contrast + 0.5 + brightness 를 [0, 1]로 자른다.",
-   "de": "out = (rgb − 0.5) · contrast + 0.5 + brightness, beschnitten auf [0, 1]."
-  },
-  "optics/polarization_demosaic_color": {
-   "fp": "a93c73e58b83",
-   "ja": "カラー偏光センサ(IMX250MYR 系、4x4 ブロック)のモザイクを 4 枚の RGB 画像 (4, H, W, 3) に分ける。",
-   "zh": "将彩色偏振传感器(IMX250MYR 系,4x4 块)的马赛克拆成四张 RGB 图像 (4, H, W, 3)。",
-   "tw": "將彩色偏振感測器(IMX250MYR 系,4x4 區塊)的馬賽克拆成四張 RGB 影像 (4, H, W, 3)。",
-   "ko": "컬러 편광 센서(IMX250MYR 계열, 4x4 블록)의 모자이크를 네 장의 RGB 영상 (4, H, W, 3)으로 나눕니다.",
-   "de": "Zerlegt das Mosaik eines Farb-Polarisationssensors (IMX250MYR-Familie, 4x4-Block) in vier RGB-Bilder (4, H, W, 3)."
-  },
-  "spc/spc_ewma": {
-   "fp": "06bd664da265",
-   "ja": "個別計測の EWMA 管理図(Roberts 1959)—— λ で記憶の深さを調節し、CUSUM と同様に小さな持続シフトを Shewhart より早く捕らえる。"
   }
  }
 }

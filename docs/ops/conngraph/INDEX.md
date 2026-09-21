@@ -1,4 +1,4 @@
-# CONNGRAPH operator help — 27 ops in 6 categories
+# CONNGRAPH operator help — 28 ops in 7 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/conngraph/<category>/<op>.md` を走査。
 
@@ -11,6 +11,10 @@
 ### activity (3)
 
 [graph_activation_latency](activity/graph_activation_latency.md) · [graph_activity_spread](activity/graph_activity_spread.md) · [points_activity_video](activity/points_activity_video.md)
+
+### circuit (1)
+
+[graph_conductance_states](circuit/graph_conductance_states.md)
 
 ### construct (3)
 

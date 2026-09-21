@@ -1,0 +1,55 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_conductance_states — CONNGRAPH <code style="color:#22d3bf">circuit</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">conn_graph × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_conductance_states(W: &#x27;Any&#x27;, drive: &#x27;Any&#x27;, dt_s: &#x27;float&#x27; = 0.001, tau_s: &#x27;float&#x27; = 0.02, e_rest: &#x27;float&#x27; = 0.0, e_exc: &#x27;float&#x27; = 1.0, e_inh: &#x27;float&#x27; = -1.0, release: &#x27;str&#x27; = &#x27;relu&#x27;, v_half: &#x27;float&#x27; = 0.5, slope: &#x27;float&#x27; = 4.0, gain: &#x27;float&#x27; = 1.0, v0: &#x27;Any&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import conngraph; conngraph.graph_conductance_states(W: &#x27;Any&#x27;, drive: &#x27;Any&#x27;, dt_s: &#x27;float&#x27; = 0.001, tau_s: &#x27;float&#x27; = 0.02, e_rest: &#x27;float&#x27; = 0.0, e_exc: &#x27;float&#x27; = 1.0, e_inh: &#x27;float&#x27; = -1.0, release: &#x27;str&#x27; = &#x27;relu&#x27;, v_half: &#x27;float&#x27; = 0.5, slope: &#x27;float&#x27; = 4.0, gain: &#x27;float&#x27; = 1.0, v0: &#x27;Any&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsconngraph.get(&quot;graph_conductance_states&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>配線 `<code style="color:#22d3bf">W</code><code style="color:#22d3bf"> を**そのまま回路として回した**膜電位の時系列 </code><code style="color:#22d3bf">(T, n)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">matrix</code>`、学習なし)。</p>
+<p>ハエの視葉で「掛け算」に見えていた非線形の正体は、樹状突起のコンダクタンス比だった</p>
+<p>(Groschner ら 2022: 定常では `<code style="color:#22d3bf">Vm = Σgᵢ Eᵢ / Σgᵢ</code>`)。同じ形の式が、コネクトームを</p>
+<p>配線として固定した全脳モデルの標準形でもある(Lappalainen ら 2024:</p>
+<p>`<code style="color:#22d3bf">τᵢ V̇ᵢ = −Vᵢ + Σ sᵢⱼ + V_rest</code><code style="color:#22d3bf">)。この op はその**動的な版**を、</code><code style="color:#22d3bf">conn_graph</code>`</p>
+<p>1 枚と外部入力 1 枚だけで回す:</p>
+<p>τ dVᵢ/dt = −(Vᵢ − e_rest) + g⁺ᵢ (e_exc − Vᵢ) + g⁻ᵢ (e_inh − Vᵢ)</p>
+<p>`<code style="color:#22d3bf">g⁺</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">W</code><code style="color:#22d3bf"> の**正の重み**、</code><code style="color:#22d3bf">g⁻</code>` は<b>負の重み</b>の絶対値を、前シナプス側の</p>
+<p>放出 `<code style="color:#22d3bf">f(V)</code><code style="color:#22d3bf"> で重みづけて足したもの(</code><code style="color:#22d3bf">drive</code>` の正負も同じ向きに足す)。重みは</p>
+<p>与えられたまま使う —— <b>学習も当てはめも一切しない</b>。時定数が入力で縮む</p>
+<p>(実効 τ = `<code style="color:#22d3bf">τ/(1+g⁺+g⁻)</code>`)ので、これは liquid time-constant 型の力学そのものだが、</p>
+<p>パラメータは配線と定数だけで、勾配で決めた数は 1 つも無い。</p>
+<p>W: `<code style="color:#22d3bf">(n, n)</code><code style="color:#22d3bf"> の重みつき隣接行列(</code><code style="color:#22d3bf">W[pre, post]</code>`、正 = 興奮性、負 = 抑制性)。</p>
+<p>drive: `<code style="color:#22d3bf">(T, n)</code><code style="color:#22d3bf"> の外部入力。正はそのノードを </code><code style="color:#22d3bf">e_exc</code><code style="color:#22d3bf"> へ、負は </code><code style="color:#22d3bf">e_inh</code>` へ引く</p>
+<p>コンダクタンスとして入る(電流ではない —— 電流だと下の有界性が壊れる)。</p>
+<p>dt_s / tau_s: 刻みと膜時定数[秒]。e_rest / e_exc / e_inh: 静止電位と 2 つの反転電位。</p>
+<p>release: 前シナプス放出 `<code style="color:#22d3bf">f(V)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">&quot;relu&quot;</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">gain·max(V, 0)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">&quot;sigmoid&quot;</code>` は</p>
+<p>`<code style="color:#22d3bf">gain/(1+exp(−slope(V−v_half)))</code>`。<b>どちらも非負</b>で、負のコンダクタンス</p>
+<p>(物理的に存在しない)を作らない —— それが下の有界性の前提。</p>
+<p>v_half / slope: シグモイドの半値と傾き。gain: 放出の利得(非負)。</p>
+<p>v0: 初期状態 `<code style="color:#22d3bf">(n,)</code><code style="color:#22d3bf">。既定は全ノード </code><code style="color:#22d3bf">e_rest</code>`。</p>
+<p>各段は<b>コンダクタンスを固定した厳密解</b>で進める(`<code style="color:#22d3bf">V ← V∞ + (V − V∞)e^{−dt·g_tot/τ}</code>`)</p>
+<p>ので、刻みを粗くしても発散しない。</p>
+<p>閉じた式で検査できること:</p>
+<p style="margin:2px 0 2px 12px">• <b>有界性</b>: 放出が非負である限り、`<code style="color:#22d3bf">V∞</code>` は 3 つの反転電位の<b>凸結合</b>なので</p>
+<p>`<code style="color:#22d3bf">[min(e_rest, e_exc, e_inh), max(...)]</code><code style="color:#22d3bf"> の中にある。各段は </code><code style="color:#22d3bf">V</code>` をその</p>
+<p>`<code style="color:#22d3bf">V∞</code>` へ指数で寄せるだけなので、**箱の中から始めれば必ず箱の中に留まり、</p>
+<p>箱の外から始めても外へは行かず箱へ向かう**。どんな配線・どんな入力でも</p>
+<p>発散しない、が構造で保証される(`<code style="color:#22d3bf">v0</code><code style="color:#22d3bf"> の既定は </code><code style="color:#22d3bf">e_rest</code>` = 箱の中)。</p>
+<p style="margin:2px 0 2px 12px">• <b>減衰</b>: 入力も結合も無ければ `<code style="color:#22d3bf">V(t) = e_rest + (V₀ − e_rest)e^{−t/τ}</code>` ちょうど。</p>
+<p style="margin:2px 0 2px 12px">• <b>定常</b>: 一定の入力 `<code style="color:#22d3bf">d &gt; 0</code><code style="color:#22d3bf"> を 1 ノードに入れると </code><code style="color:#22d3bf">V∞ = (e_rest + d·e_exc)/(1 + d)</code>`、</p>
+<p>そこへ向かう実効時定数は `<code style="color:#22d3bf">τ/(1 + d)</code>` ちょうど(入力で時定数が縮む、の数値)。</p>
+<p><b>ValueError</b>: 正方でない / 非有限の `<code style="color:#22d3bf">W</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">(T, n)</code><code style="color:#22d3bf"> でない </code><code style="color:#22d3bf">drive</code>`、</p>
+<p>非正の `<code style="color:#22d3bf">dt_s</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tau_s</code><code style="color:#22d3bf">、負の </code><code style="color:#22d3bf">gain</code><code style="color:#22d3bf">、未知の </code><code style="color:#22d3bf">release</code><code style="color:#22d3bf">、長さの合わない </code><code style="color:#22d3bf">v0</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fly_optomotor_steering">poc_fly_optomotor_steering</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fly_optomotor_steering.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">matrix</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:reservoir_states">reservoir_states</a> · <a style="color:#22d3bf" href="opconngraph:reservoir_encode">reservoir_encode</a> · <a style="color:#22d3bf" href="opconngraph:ridge_readout">ridge_readout</a> · <a style="color:#22d3bf" href="opconngraph:ridge_predict">ridge_predict</a> · <a style="color:#22d3bf" href="opconngraph:graph_activation_latency">graph_activation_latency</a> · <a style="color:#22d3bf" href="opconngraph:graph_activity_spread">graph_activity_spread</a> · <a style="color:#22d3bf" href="opconngraph:points_activity_video">points_activity_video</a> · <a style="color:#22d3bf" href="opconngraph:graph_layer_propagate">graph_layer_propagate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">circuit</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: conngraph.py — CONNGRAPH operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

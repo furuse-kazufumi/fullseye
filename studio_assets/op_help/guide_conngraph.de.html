@@ -4,7 +4,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
 <p><b>重みつき有向グラフを「結合表」として扱う</b>層です。入力は n×n の隣接行列 <code style="color:#22d3bf">conn_graph</code>(<code style="color:#22d3bf">W[i, j]</code> = i → j の重み、NaN 禁止)か、シナプス表 <code style="color:#22d3bf">synapse_table</code>(<code style="color:#22d3bf">(pre_id, post_id, count)</code> の m×3)。出力は<b>ノードごとの列</b>(次数・媒介中心性・成分ラベル)、<b>グラフ 1 つのスカラ</b>(クラスタ係数・モジュラリティ・モチーフ数)、そして <b>Studio で見られる出口</b>(点群の配置・線分の表・隣接行列の画像)です。</p>
 <p>コネクトーム解析の定番の連鎖 —— *シナプス表を隣接行列にする → 次数と中心性を測る → 次数を保ったまま辺を繋ぎ替えた帰無モデルと比べる → 結合行列を reservoir として信号を回し、リッジ回帰で読み出す* —— がこの族です。</p>
-<p>27 op / 6 カテゴリ(numpy のみ。台帳は <code style="color:#22d3bf">opsconngraph.py</code>、実体は <code style="color:#22d3bf">conngraph.py</code>):</p>
+<p>28 op / 7 カテゴリ(numpy のみ。台帳は <code style="color:#22d3bf">opsconngraph.py</code>、実体は <code style="color:#22d3bf">conngraph.py</code>):</p>
 <p style="margin:2px 0 2px 12px">• <b>build(3)</b> — <code style="color:#22d3bf">graph_from_synapses</code> / <code style="color:#22d3bf">graph_degree_preserving_shuffle</code> / <code style="color:#22d3bf">graph_binarize</code>: 表 → 行列、<b>次数保存シャッフル(帰無モデル)</b>、二値化。</p>
 <p style="margin:2px 0 2px 12px">• <b>stats(9)</b> — <code style="color:#22d3bf">graph_degree_table</code> / <code style="color:#22d3bf">graph_clustering_coefficient</code> / <code style="color:#22d3bf">graph_betweenness</code> / <code style="color:#22d3bf">graph_laplacian_spectrum</code> / <code style="color:#22d3bf">graph_spectral_radius</code> / <code style="color:#22d3bf">graph_components</code> / <code style="color:#22d3bf">graph_modularity</code> / <code style="color:#22d3bf">graph_rich_club</code> / <code style="color:#22d3bf">graph_motif_count</code>: 教科書の閉形式だけ(Brandes の媒介中心性、Watts–Strogatz のクラスタ係数、Leicht–Newman の有向モジュラリティ、Milo のモチーフ)。</p>
 <p style="margin:2px 0 2px 12px">• <b>reservoir(5)</b> — <code style="color:#22d3bf">reservoir_from_graph</code> / <code style="color:#22d3bf">reservoir_states</code> / <code style="color:#22d3bf">reservoir_encode</code> / <code style="color:#22d3bf">ridge_readout</code> / <code style="color:#22d3bf">ridge_predict</code>: 結合行列をスペクトル半径 ρ に揃え、時系列の状態列か静的入力の一括符号化を作り、<code style="color:#22d3bf">(XᵀX + αI)⁻¹XᵀY</code> で読み出す(echo state network の閉形式)。</p>
@@ -122,3 +122,11 @@ V3 = fs.points_activity_video(P, X, colors=side_rgb, views=((0, 0), (90, 0), (0,
 <p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">graph_degree_preserving_shuffle</code> が保つのは二値の次数列**。重みは辺に付いて動くので strength は変わる。保ちたいのが strength なら別の帰無モデル(未実装)。</p>
 <p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">reservoir_from_graph</code> はスペクトル半径 0 を拒否**する(DAG や空グラフは何倍しても 0)。</p>
 <p style="margin:2px 0 2px 12px">• <b>配置は成分ごと</b>。非連結グラフでは零固有空間が縮退して Fiedler ベクトルが成分を分けるとは限らないので、成分を明示的に分けて格子に並べる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">回路として回す(2026-09-22)</h3>
+<p><code style="color:#22d3bf">conn_graph</code> は「測った配線」だが、測った配線は<b>回路でもある</b>。<code style="color:#22d3bf">graph_conductance_states</code> は</p>
+<p>シナプス表から作った行列をそのまま膜電位の式に入れて回す:</p>
+<p>τ dVᵢ/dt = −(Vᵢ − E_rest) + g⁺ᵢ (E_exc − Vᵢ) + g⁻ᵢ (E_inh − Vᵢ)</p>
+<p>正の重みが興奮性のコンダクタンス、負の重みが抑制性のコンダクタンスになる。<b>当てはめる数は 1 つも無い</b></p>
+<p>(<code style="color:#22d3bf">reservoir_states</code> → <code style="color:#22d3bf">ridge_readout</code> の経路は読み出しを学習するが、こちらは学習しない)。</p>
+<p>放出 <code style="color:#22d3bf">f(V)</code> を非負に限ってあるので、状態は必ず <code style="color:#22d3bf">[min(E), max(E)]</code> に留まる —— 反転電位の凸結合だからで、</p>
+<p>どんな配線・どんな入力でも発散しない。入力が来ると実効時定数が <code style="color:#22d3bf">τ/(1+g)</code> に縮む。</p>

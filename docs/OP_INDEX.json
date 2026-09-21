@@ -1,8 +1,8 @@
 {
- "n_ops": 2074,
+ "n_ops": 2082,
  "tiers": {
   "color": 12,
-  "ledger": 1126,
+  "ledger": 1134,
   "nary": 17,
   "registry": 919
  },
@@ -4455,6 +4455,20 @@
    ]
   },
   {
+   "name": "fly_egomotion_from_flow",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "selfmotion",
+   "tier": "ledger",
+   "ledger": "opsflyvision",
+   "dim": "flyvision",
+   "in_sorts": [
+    "matrix",
+    "table"
+   ]
+  },
+  {
    "name": "fly_emd_response",
    "halcon": "",
    "in_sort": "signal",
@@ -4466,6 +4480,34 @@
    "in_sorts": [
     "signal",
     "signal"
+   ]
+  },
+  {
+   "name": "fly_eye_merge",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "selfmotion",
+   "tier": "ledger",
+   "ledger": "opsflyvision",
+   "dim": "flyvision",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "fly_flow_from_directions",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "direction",
+   "tier": "ledger",
+   "ledger": "opsflyvision",
+   "dim": "flyvision",
+   "in_sorts": [
+    "matrix",
+    "table"
    ]
   },
   {
@@ -4521,6 +4563,19 @@
    ]
   },
   {
+   "name": "fly_lamina_filter",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "lamina",
+   "tier": "ledger",
+   "ledger": "opsflyvision",
+   "dim": "flyvision",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "fly_lgmd_eta",
    "halcon": "",
    "in_sort": "signal",
@@ -4534,6 +4589,32 @@
    ]
   },
   {
+   "name": "fly_matched_filter",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "matrix",
+   "category": "selfmotion",
+   "tier": "ledger",
+   "ledger": "opsflyvision",
+   "dim": "flyvision",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "fly_onoff_split",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "lamina",
+   "tier": "ledger",
+   "ledger": "opsflyvision",
+   "dim": "flyvision",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "fly_sky_1f",
    "halcon": "",
    "in_sort": null,
@@ -4543,6 +4624,20 @@
    "ledger": "opsflyvision",
    "dim": "flyvision",
    "in_sorts": []
+  },
+  {
+   "name": "fly_t4t5_field",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "direction",
+   "tier": "ledger",
+   "ledger": "opsflyvision",
+   "dim": "flyvision",
+   "in_sorts": [
+    "matrix",
+    "table"
+   ]
   },
   {
    "name": "fly_tau_from_expansion",
@@ -5228,6 +5323,20 @@
    "dim": "conngraph",
    "in_sorts": [
     "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_conductance_states",
+   "halcon": "",
+   "in_sort": "conn_graph",
+   "out_sort": "matrix",
+   "category": "circuit",
+   "tier": "ledger",
+   "ledger": "opsconngraph",
+   "dim": "conngraph",
+   "in_sorts": [
+    "conn_graph",
+    "matrix"
    ]
   },
   {

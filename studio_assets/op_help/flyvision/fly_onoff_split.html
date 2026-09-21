@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_onoff_split — FLYVISION <code style="color:#22d3bf">lamina</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_onoff_split(movie, dt_s, tau_on_s=0.02, tau_off_s=0.02, rectify=True)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_onoff_split(movie, dt_s, tau_on_s=0.02, tau_off_s=0.02, rectify=True)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_onoff_split&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Split a contrast movie into the ON and OFF channels the medulla carries.</p>
+<p>Beyond the lamina the fly stops carrying one signed signal and carries two:</p>
+<p>an ON channel (Mi1 / Tm3, brightening) and an OFF channel (Tm1 / Tm2,</p>
+<p>darkening), each with its own relay dynamics. This op is that split, and it</p>
+<p>keeps the rectification *optional* on purpose: the split was measured</p>
+<p>downstream, in the motion response (Joesch et al., *Nature* 468:300, 2010),</p>
+<p>while L1/L2 themselves respond linearly (Clark et al., *Neuron* 70:1165,</p>
+<p>2011), so a pathway that rectifies at the lamina is making a claim the</p>
+<p>recordings do not.</p>
+<p>movie: `<code style="color:#22d3bf">(T, n)</code>` contrast, rows = time (the return of</p>
+<p>:func:<code style="color:#22d3bf">fly_lamina_filter</code>). dt_s: sample interval, seconds.</p>
+<p>tau_on_s / tau_off_s: the low-pass time constant of each channel, seconds.</p>
+<p>rectify: `<code style="color:#22d3bf">True</code><code style="color:#22d3bf"> half-wave rectifies (</code><code style="color:#22d3bf">ON = max(c, 0)</code>`,</p>
+<p>`<code style="color:#22d3bf">OFF = max(-c, 0)</code><code style="color:#22d3bf">, both &gt;= 0); </code><code style="color:#22d3bf">False</code>` passes the signed contrast into</p>
+<p>the ON channel and its negation into the OFF channel, which is the linear</p>
+<p>L1/L2 case and lets the rectification happen downstream instead.</p>
+<p>Returns `<code style="color:#22d3bf">(T, 2n)</code><code style="color:#22d3bf"> float64: columns </code><code style="color:#22d3bf">0..n-1</code><code style="color:#22d3bf"> are ON, </code><code style="color:#22d3bf">n..2n-1</code>` are OFF,</p>
+<p>the same ommatidium order in each half.</p>
+<p>Ground truth (exact, with `<code style="color:#22d3bf">tau_on_s == tau_off_s</code>` so the two channels share</p>
+<p>one filter):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ON - OFF</code>` is the low-passed input, whichever *rectify* you chose;</p>
+<p style="margin:2px 0 2px 12px">• with `<code style="color:#22d3bf">rectify=True</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ON + OFF</code>` is the low-passed <b>absolute value</b>;</p>
+<p style="margin:2px 0 2px 12px">• a movie that never goes negative leaves the OFF channel identically zero</p>
+<p>(and vice versa) — the split does not invent a dark event.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-2-D / too-short / non-finite *movie*, a movie</p>
+<p>over :data:<code style="color:#22d3bf">MAX_MOVIE_ELEMENTS</code>, and a non-positive *dt_s* / *tau_on_s* /</p>
+<p>*tau_off_s*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fly_optomotor_steering">poc_fly_optomotor_steering</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fly_optomotor_steering.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">matrix</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_lamina_filter">fly_lamina_filter</a> · <a style="color:#22d3bf" href="opflyvision:fly_t4t5_field">fly_t4t5_field</a> · <a style="color:#22d3bf" href="opflyvision:fly_flow_from_directions">fly_flow_from_directions</a> · <a style="color:#22d3bf" href="opflyvision:fly_egomotion_from_flow">fly_egomotion_from_flow</a> · <a style="color:#22d3bf" href="opflyvision:fly_hs_readout">fly_hs_readout</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">lamina</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_lamina_filter">fly_lamina_filter</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

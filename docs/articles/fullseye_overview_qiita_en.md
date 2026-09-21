@@ -4269,6 +4269,33 @@ Two ops were added to geocam. `sun_bloom_fit` fits a circle to the **unclipped r
 
 The check is independent geometry: the **lane vanishing point**, turned into a world bearing with the same pose, is 272.7 deg against 275.3 deg for the E18 segment in OpenStreetMap - 2.5 deg apart. The weak degrees of freedom are not hidden either: under leave-one-out, yaw moves 1.3 deg but roll 10 deg and the focal length 2 % (the limit of a one-hour low-elevation arc). Raw frames are never committed; only the aggregate of times, circle fits, vanishing point and road bearing ships.
 
+### Holding a Course with a Fly's Optic Lobe Alone — From the Lamina to the Steering, Without Learning
+
+What happens to a vehicle whose heading drifts under a disturbance if it carries **nothing but a compound eye and closed-form circuitry** — no gyro, no magnetic compass, no GPS? It can still read how much it has turned out of the pictures alone and steer against it, and the drift falls. That is the fly's **optomotor response**. This round adds the downstream stages of the optic lobe as 7 operators (flyvision goes 9 → 16), wires the whole pathway out of closed forms with no learning anywhere, and measures it **next to a ground-truth gyro**.
+
+![The three eyes (left, front, right = 250 degrees of azimuth) and the yaw rate the circuit is steering against](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/06_follow.gif)
+
+The pathway: hexagonal sampling → the **lamina** (adaptation and band-pass, `fly_lamina_filter`) → the **ON/OFF split** (`fly_onoff_split`) → **T4/T5 in all six lattice directions** (`fly_t4t5_field`) → the **local flow** (`fly_flow_from_directions`) → a **linear fit against the matched filter** (`fly_matched_filter` / `fly_egomotion_from_flow`) → a yaw rate → a **six-neuron steering circuit** (`graph_conductance_states`) → the rudder. Not one number in it came from a gradient.
+
+![What the ommatidia see, the lamina's contrast, the ON and OFF channels, the direction-selective field](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/01_pathway.png)
+
+Every stage has an **exact identity**. Brightening the whole scene ten thousand times leaves the lamina output unchanged (Weber, 7e-16). The three-arm T4 model with Haag et al. 2016's verbatim constants (tau = 250 ms, k = 5/5/10) returns the paper's **24.9636 and 0.8195** on its two-column stimulus — and the paper's claim that the two mechanisms are *complementary* turns into a **product identity**: for any stimulus, `ratio(three-arm) = ratio(enhancement) * ratio(suppression)` holds to machine precision, and on the paper's stimulus that is 4.161 x 7.321 = 30.461.
+
+The limits are measured too. On the classical **striped drum** the estimate tracks a time-varying rotation at 0.976 correlation. In a **natural 1/f scene** it drops to 0.897 — and worse, the single calibration gain it needs is 2.64 on the drum against 6.76 and 7.88 in natural scenes: **3.0x between kinds of scene and 1.16x between two scenes of identical statistics**. A correlation detector reports contrast-weighted motion, not velocity, and this is what that costs.
+
+![Speed tuning on the drum and in natural scenes, each fitted with one gain](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/02_tuning.png)
+
+**The width of a compound eye is not decoration.** A single 80-degree eye measuring the same +0.5 rad/s across twelve different scenes scatters by 1.05 of its mean and **gets the sign of the rotation wrong in four of the twelve**. Merging three eyes into 250 degrees with `fly_eye_merge` drops the scatter to 0.44 and the sign errors to zero. A narrow eye is at the mercy of whichever few large features happen to be in front of it.
+
+![The same rotation measured in twelve scenes, with one eye and with the merged eye](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/03_wide_eye.png)
+
+The closed loop is **calibrated in scene A and flown in an unseen scene B**. With no steering the heading drifts 51 degrees; the visual reflex brings it to 33 and the ground-truth gyro to 23. A reflex has **no absolute heading**, so it cannot null the drift — that is where the central complex would come in, and it is outside this PoC.
+
+![Holding a course under a disturbance: open loop, optic lobe, circuit, ground-truth gyro](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/04_closed_loop.png)
+
+Finally the steering itself is written **on the connectome side**: six neurons and eight synapses (left and right HS → command → motor, with contralateral inhibition making it push-pull), wired by hand and run as conductances by `graph_conductance_states`. That operator is the graded-potential equation `tau V' = -(V - E_rest) + g+(E_exc - V) + g-(E_inh - V)` — the same conductance ratio that turned out to be what "multiplication" really is in a fly's dendrite. Without a single training step it produces the same 33 degrees. Because the release is non-negative, the membrane potential is a **convex combination** of the reversal potentials and cannot diverge whatever the input does.
+
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to

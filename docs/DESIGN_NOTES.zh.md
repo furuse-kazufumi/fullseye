@@ -98,7 +98,7 @@
 
 ## `backends_typed.py`
 
-- **L534** — ★在 2026-09-05 之前通过操作 sys.path 读取 ``tools/chain_fuzz``(未随附)。在 wheel 中会失败,而下面的 build() 悄悄返回 [],所以 tb_* 143 个 op 消失了。
+- **L541** — ★在 2026-09-05 之前通过操作 sys.path 读取 ``tools/chain_fuzz``(未随附)。在 wheel 中会失败,而下面的 build() 悄悄返回 [],所以 tb_* 143 个 op 消失了。
 
 ## `blob2d.py`
 
@@ -120,7 +120,7 @@
 
 ## `conngraph.py`
 
-- **L671** _(ja)_ — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
+- **L677** _(ja)_ — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
 
 ## `deform3d.py`
 
@@ -924,7 +924,7 @@
 
 ## `flyvision.py`
 
-- **L187** _(ja)_ — ★ The cap is on the *product*, not on either factor, because the accident it prevents is the cross term: a modest 900-ommatidium eye and a modest 512x512 image are each unremarkable and together are 236M float64 = 1.9 GB.
+- **L198** _(ja)_ — ★ The cap is on the *product*, not on either factor, because the accident it prevents is the cross term: a modest 900-ommatidium eye and a modest 512x512 image are each unremarkable and together are 236M float64 = 1.9 GB.
 
 ## `fscript.py`
 

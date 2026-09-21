@@ -43,6 +43,10 @@ al. Eq. 5), where the subtended angle is exactly ``2*atan(1/alpha)`` (Eq. 6;
 *theta_signal*, a signal over :data:`MAX_SIGNAL_POINTS`, a non-positive *dt_s*
 / *alpha*, and a negative *delay_s*.
 
+## 詳しい使い方ガイド
+
+- [fly_vision ファミリ ガイド](../guides/fly_vision.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

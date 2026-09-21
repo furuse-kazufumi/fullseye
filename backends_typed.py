@@ -169,6 +169,13 @@ _OP_BRIDGE_SKIP = {
     "sun_pixel_position", "skyline_extract",
     # 2026-09-21 実データ回の 2 本: 模様の探針には飽和塊も時刻つきの候補列も無い。
     "sun_bloom_fit", "camera_orientation_from_sun_candidates",
+    # 2026-09-22 視覚後段と回路: 入口は「行が時刻の個眼動画」「方向別応答」
+    # 「配線 + 駆動」で、2-D 画像を渡すと走りはするが意味が無い(探針の
+    # 1 枚は時系列ではない)。橋は架けない。
+    "fly_lamina_filter", "fly_onoff_split", "fly_t4t5_field",
+    "fly_flow_from_directions", "fly_matched_filter",
+    "fly_egomotion_from_flow", "fly_eye_merge",
+    "graph_conductance_states",
     # 2026-09-08、同じ回に摘発。`indices_to_labels` は **1-D の選択マスク**
     # (長さ = 最大添字 + 1)を返すが、宣言型 `labels` は TYPE_TO_SORT で
     # `volume`(ndim == 3 の契約)に畳まれるので、橋は毎回

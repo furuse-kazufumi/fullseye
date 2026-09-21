@@ -54,6 +54,10 @@ match the hand calculation); an ``el_min_deg`` above every ommatidium raises
 *n_pref* outside ``[1, k-1]``, a non-real *el_min_deg*, a non-bool *rectify*,
 and an *el_min_deg* above every ommatidium (no upper field to read).
 
+## 詳しい使い方ガイド
+
+- [fly_vision ファミリ ガイド](../guides/fly_vision.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

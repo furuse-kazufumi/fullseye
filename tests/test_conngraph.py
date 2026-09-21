@@ -267,6 +267,8 @@ def test_every_op_refuses_nan_and_names_itself(name):
         "graph_block_shuffle": (np.zeros(4, dtype=int),),
         "graph_layer_propagate": (np.zeros(4, dtype=int), np.ones((3, 4))),
         "states_layer_dimension": (np.zeros(4, dtype=int),),
+        # 回路(2026-09-22)
+        "graph_conductance_states": (np.ones((3, 4)),),
     }.get(name, ())
     with pytest.raises(ValueError, match=name):
         fn(_first_arg_with_nan(name), *extra)
@@ -289,7 +291,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
 
     assert opsconngraph.missing() == []
     assert set(opsconngraph.OPSCONNGRAPH) == set(_OPS)
-    assert len(opsconngraph.OPSCONNGRAPH) == 27
+    assert len(opsconngraph.OPSCONNGRAPH) == 28
     for meta in opsconngraph.OPSCONNGRAPH.values():
         assert isinstance(meta["in"], list) and isinstance(meta["out"], str)
 
@@ -346,6 +348,7 @@ def test_op_run_works_through_the_default_seed_for_every_op():
         "graph_activation_latency",              # matrix には既定の種が無い(明示で下に検査)
         "graph_block_shuffle", "graph_layer_propagate", "states_layer_dimension",   # labels / U は明示(test_conngraph_dims)
         "states_participation_ratio",            # matrix
+        "graph_conductance_states",              # drive を明示(下で検査)
     }
     for name in opsconngraph.OPSCONNGRAPH:
         if name in two_input:
@@ -522,3 +525,80 @@ def test_activity_video_views_side_by_side():
     for bad in (dict(views=()), dict(views=((0.0,),)), dict(views=((np.nan, 0.0),))):
         with pytest.raises(ValueError, match="points_activity_video.*views"):
             C.points_activity_video(P, X, size=48, aspect=1.0, **bad)
+
+
+# --------------------------------------------------------------------------- #
+# 8. 回路 —— コンダクタンスで回す(2026-09-22)                                     #
+# --------------------------------------------------------------------------- #
+def test_conductance_decays_to_rest_with_exactly_tau():
+    """結合も入力も無ければ V(t) = E_rest + (V0 − E_rest)e^{−t/τ} ちょうど。"""
+    V = C.graph_conductance_states(np.zeros((3, 3)), np.zeros((500, 3)),
+                                   dt_s=0.001, tau_s=0.05, v0=[1.0, -0.5, 0.0])
+    t = (np.arange(500) + 1) * 0.001
+    assert np.abs(V[:, 0] - np.exp(-t / 0.05)).max() < 1e-12
+    assert np.abs(V[:, 1] + 0.5 * np.exp(-t / 0.05)).max() < 1e-12
+    assert np.all(V[:, 2] == 0.0)
+
+
+def test_a_constant_drive_gives_the_closed_form_steady_state_and_shrinks_tau():
+    """定常 = 反転電位の重みつき平均、実効時定数 = τ/(1+g)。どちらも厳密。"""
+    for d in (0.5, 3.0, 10.0):
+        V = C.graph_conductance_states(np.zeros((1, 1)), np.full((2000, 1), d),
+                                       dt_s=0.001, tau_s=0.05)
+        assert V[-1, 0] == pytest.approx(d / (1.0 + d), rel=1e-9)
+        pred = (d / (1.0 + d)) * (1.0 - np.exp(-(np.arange(2000) + 1) * 0.001 * (1.0 + d) / 0.05))
+        assert np.abs(V[:, 0] - pred).max() < 1e-12
+    # 負の入力は抑制側の反転電位へ
+    V = C.graph_conductance_states(np.zeros((1, 1)), np.full((500, 1), -2.0), dt_s=0.001, tau_s=0.02)
+    assert V[-1, 0] == pytest.approx(-2.0 / 3.0, rel=1e-9)
+
+
+@pytest.mark.parametrize("release", ["relu", "sigmoid"])
+def test_the_state_never_leaves_the_reversal_potentials(release):
+    """放出が非負なら V は必ず [E_inh, E_exc] の中(凸結合)。20 本の乱数配線で。"""
+    rng = np.random.default_rng(0)
+    for _ in range(20):
+        W = rng.normal(size=(24, 24)) * (rng.random((24, 24)) < 0.25)
+        D = rng.normal(size=(200, 24)) * 5.0
+        V = C.graph_conductance_states(W, D, dt_s=0.002, tau_s=0.02, release=release, gain=3.0)
+        assert V.shape == (200, 24)
+        assert V.min() >= -1.0 - 1e-12 and V.max() <= 1.0 + 1e-12
+    # 反転電位を動かすと箱も動く
+    V = C.graph_conductance_states(W, D, dt_s=0.002, tau_s=0.02, e_exc=0.2, e_inh=-3.0, e_rest=-0.5)
+    assert V.min() >= -3.0 - 1e-12 and V.max() <= 0.2 + 1e-12
+
+
+def test_a_state_outside_the_box_walks_into_it_and_never_out():
+    """箱の外から始めても外へは行かない(各段は V∞ への指数寄せなので単調に近づく)。"""
+    W = np.zeros((2, 2))
+    V = C.graph_conductance_states(W, np.zeros((300, 2)), dt_s=0.001, tau_s=0.02,
+                                   v0=[5.0, -4.0])
+    assert np.all(np.diff(V[:, 0]) < 0.0) and np.all(np.diff(V[:, 1]) > 0.0)
+    assert V[-1, 0] == pytest.approx(5.0 * np.exp(-0.3 / 0.02), rel=1e-9)   # 厳密な指数減衰
+    assert V[-1, 1] == pytest.approx(-4.0 * np.exp(-0.3 / 0.02), rel=1e-9)
+    assert V[:, 0].max() <= 5.0 and V[:, 1].min() >= -4.0
+
+
+def test_the_sign_of_an_edge_decides_which_way_the_target_moves():
+    W = np.zeros((2, 2))
+    drive = np.zeros((400, 2))
+    drive[:, 0] = 2.0                                  # 0 番だけを興奮側へ押す
+    for w, expect in ((1.0, 1), (-1.0, -1)):
+        W[0, 1] = w
+        V = C.graph_conductance_states(W, drive, dt_s=0.001, tau_s=0.02, gain=2.0)
+        assert np.sign(V[-1, 1]) == expect, w
+    assert C.graph_conductance_states(np.zeros((2, 2)), drive, dt_s=0.001, tau_s=0.02)[-1, 1] == 0.0
+
+
+def test_conductance_refusals():
+    W = np.zeros((3, 3))
+    with pytest.raises(ValueError, match="graph_conductance_states.*column"):
+        C.graph_conductance_states(W, np.zeros((10, 4)))
+    with pytest.raises(ValueError, match="graph_conductance_states.*release"):
+        C.graph_conductance_states(W, np.zeros((10, 3)), release="tanh")
+    with pytest.raises(ValueError, match="graph_conductance_states.*gain"):
+        C.graph_conductance_states(W, np.zeros((10, 3)), gain=-1.0)
+    with pytest.raises(ValueError, match="graph_conductance_states.*tau_s"):
+        C.graph_conductance_states(W, np.zeros((10, 3)), tau_s=0.0)
+    with pytest.raises(ValueError, match="graph_conductance_states.*v0"):
+        C.graph_conductance_states(W, np.zeros((10, 3)), v0=np.zeros(4))

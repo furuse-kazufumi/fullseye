@@ -4,7 +4,7 @@ dim: flyvision
 category: stimulus
 in: 
 out: image2d
-examples: [poc_fly_vision]
+examples: [poc_fly_optomotor_steering, poc_fly_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -46,6 +46,10 @@ tests).
 string / bool parameter, a negative *amp*, a non-positive *edge_deg*, and a
 band that does not satisfy ``-90 <= band_lo_deg < band_hi_deg <= 90``.
 
+## 詳しい使い方ガイド
+
+- [fly_vision ファミリ ガイド](../guides/fly_vision.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
@@ -54,6 +58,7 @@ band that does not satisfy ``-90 <= band_lo_deg < band_hi_deg <= 90``.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_fly_optomotor_steering](../../../../examples/poc_fly_optomotor_steering.py) — `py -3.11 examples/poc_fly_optomotor_steering.py`
 - [poc_fly_vision](../../../../examples/poc_fly_vision.py) — `py -3.11 examples/poc_fly_vision.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

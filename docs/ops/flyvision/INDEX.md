@@ -1,12 +1,24 @@
-# FLYVISION operator help — 9 ops in 7 categories
+# FLYVISION operator help — 16 ops in 10 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/flyvision/<category>/<op>.md` を走査。
 
+## ファミリ使い方ガイド(用途→op の教材)
+
+- [fly_vision](guides/fly_vision.md) — ハエの視葉(複眼から「自分がどう回ったか」まで) — 使い方ガイド
+
 ## カテゴリ
+
+### direction (2)
+
+[fly_flow_from_directions](direction/fly_flow_from_directions.md) · [fly_t4t5_field](direction/fly_t4t5_field.md)
 
 ### integrate (1)
 
 [fly_hs_readout](integrate/fly_hs_readout.md)
+
+### lamina (2)
+
+[fly_lamina_filter](lamina/fly_lamina_filter.md) · [fly_onoff_split](lamina/fly_onoff_split.md)
 
 ### lattice (1)
 
@@ -23,6 +35,10 @@
 ### sample (2)
 
 [fly_hex_quantize](sample/fly_hex_quantize.md) · [fly_hex_resample](sample/fly_hex_resample.md)
+
+### selfmotion (3)
+
+[fly_egomotion_from_flow](selfmotion/fly_egomotion_from_flow.md) · [fly_eye_merge](selfmotion/fly_eye_merge.md) · [fly_matched_filter](selfmotion/fly_matched_filter.md)
 
 ### stimulus (1)
 

@@ -1,0 +1,83 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_t4t5_field — FLYVISION <code style="color:#22d3bf">direction</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_t4t5_field(movie, lattice, dt_s, tau_s=0.25, k_e=5.0, k_d=5.0, k_s=10.0, dc=1.0, model=&#x27;three_arm&#x27;, tau_hr_s=0.05, reduce=&#x27;mean&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import flyvision; flyvision.fly_t4t5_field(movie, lattice, dt_s, tau_s=0.25, k_e=5.0, k_d=5.0, k_s=10.0, dc=1.0, model=&#x27;three_arm&#x27;, tau_hr_s=0.05, reduce=&#x27;mean&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_t4t5_field&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Direction-selective response over the whole eye, in the six hexagonal directions.</p>
+<p>T4 (ON) and T5 (OFF) are the first direction-selective cells in the fly, and</p>
+<p>two mechanisms make them so: *preferred-direction enhancement*, which is the</p>
+<p>Hassenstein-Reichardt multiplication, and *null-direction suppression*, which</p>
+<p>is the Barlow-Levick division. Haag et al. measured both in one cell and wrote</p>
+<p>them as three arms reading three adjacent columns — an enhancing arm E one</p>
+<p>column *before* the centre, the direct arm D, and a suppressing arm S one</p>
+<p>column *after* it::</p>
+<p>R = (dc + k_e * LP[E]) * (dc + k_d * D) / (dc + k_s * LP[S])</p>
+<p>with first-order low-passes of time constant `<code style="color:#22d3bf">tau_s</code>` on E and S. This op</p>
+<p>runs that, or either mechanism alone, at every ommatidium and in all six</p>
+<p>lattice directions at once.</p>
+<p>movie: `<code style="color:#22d3bf">(T, n)</code>` one polarity channel — the ON or the OFF half of</p>
+<p>:func:<code style="color:#22d3bf">fly_onoff_split</code>, not both. lattice: a :func:<code style="color:#22d3bf">fly_hex_lattice</code> result</p>
+<p>(a :func:<code style="color:#22d3bf">fly_eye_merge</code> result is refused: its coordinates repeat, so a</p>
+<p>neighbour would be looked up in the wrong patch).</p>
+<p>dt_s: sample interval, seconds.</p>
+<p>model: one of four, the first three sharing the same resting value `<code style="color:#22d3bf">dc</code>` so</p>
+<p>that their responses are directly comparable —</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;three_arm&quot;</code>` — the whole model above (Haag et al., *eLife* 5:e17421,</p>
+<p>2016);</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;enhance&quot;</code><code style="color:#22d3bf"> — the numerator alone, </code><code style="color:#22d3bf">(dc + k_e LP[E])(dc + k_d D)/dc</code>`:</p>
+<p>preferred-direction *enhancement*, the Hassenstein-Reichardt</p>
+<p>multiplication with no veto;</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;suppress&quot;</code><code style="color:#22d3bf"> — the denominator alone, </code>`dc (dc + k_d D)/(dc + k_s</p>
+<p>LP[S])``: null-direction *suppression*, the Barlow-Levick division with</p>
+<p>no enhancement (Barlow &amp; Levick, *J. Physiol.* 178:477, 1965);</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;hr&quot;</code><code style="color:#22d3bf"> — the classical opponent correlator </code><code style="color:#22d3bf">LP[E]*D - E*LP[D]</code>` with</p>
+<p>its own time constant *tau_hr_s*, which is antisymmetric by construction</p>
+<p>and so is direction-selective without either of the two mechanisms above</p>
+<p>(Hassenstein &amp; Reichardt, *Z. Naturforsch.* 11b:513, 1956). It is</p>
+<p>:func:<code style="color:#22d3bf">fly_emd_response</code> run over the lattice instead of a pair.</p>
+<p>tau_s / k_e / k_d / k_s / dc: the three-arm parameters. The defaults are the</p>
+<p>paper&#x27;s (tau = 250 ms, k = 5/5/10, DC = 1.0). tau_hr_s: the correlator time</p>
+<p>constant, used by `<code style="color:#22d3bf">model=&quot;hr&quot;</code>` only.</p>
+<p>reduce: how the time course becomes one number per direction — `<code style="color:#22d3bf">&quot;mean&quot;</code>`</p>
+<p>(the wide-field integration a tangential cell performs), `<code style="color:#22d3bf">&quot;last&quot;</code>` (the</p>
+<p>value at the final sample, which is how a transient is read at a chosen</p>
+<p>instant) or `<code style="color:#22d3bf">&quot;max&quot;</code>`.</p>
+<p>Returns a `<code style="color:#22d3bf">(6, n)</code>` float64 matrix: row *k* is the response to motion in</p>
+<p>hexagonal direction *k* (counter-clockwise from +azimuth, see</p>
+<p>:data:<code style="color:#22d3bf">HEX_STEPS</code>), averaged over time, with the model&#x27;s resting value</p>
+<p>subtracted so that no stimulus reads exactly 0. It is the `<code style="color:#22d3bf">(k, n)</code>` shape</p>
+<p>:func:<code style="color:#22d3bf">fly_hs_readout</code> and :func:<code style="color:#22d3bf">fly_flow_from_directions</code> take.</p>
+<p>Ommatidia at the rim, which have no neighbour on one side, read exactly 0 in</p>
+<p>that direction: a detector missing an arm has no motion to report, and</p>
+<p>inventing one at the edge would put a ring of false flow around every eye.</p>
+<p>Ground truth, and it is the paper&#x27;s claim written as algebra: because the</p>
+<p>three arms multiply, **the direction selectivity of the whole model is the</p>
+<p>product of the selectivities of its two halves**. For any stimulus and any</p>
+<p>pair of opposite directions,</p>
+<p>ratio(&quot;three_arm&quot;) == ratio(&quot;enhance&quot;) * ratio(&quot;suppress&quot;)</p>
+<p>exactly, where `<code style="color:#22d3bf">ratio = R_preferred / R_null</code><code style="color:#22d3bf"> taken on </code><code style="color:#22d3bf">R + dc</code>`. Two</p>
+<p>columns lit in turn, a step of amplitude 1 held for `<code style="color:#22d3bf">tau</code>`, with the paper&#x27;s</p>
+<p>constants, give `<code style="color:#22d3bf">R + dc</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">(dc + k_e(1-1/e))(dc + k_d)/dc</code>` = <b>24.96</b></p>
+<p>preferred and `<code style="color:#22d3bf">dc(dc + k_d)/(dc + k_s(1-1/e))</code>` = <b>0.820</b> null: 4.16 from</p>
+<p>enhancement, 7.32 from suppression, 30.46 together. The tests measure all</p>
+<p>three and the identity between them.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-2-D / too-short / non-finite *movie*, a</p>
+<p>column count that is not the lattice&#x27;s ommatidium count, a non-positive</p>
+<p>*dt_s* / *tau_s* / *tau_hr_s* / *dc*, a negative gain, an unknown *model*,</p>
+<p>and any malformed *lattice*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fly_optomotor_steering">poc_fly_optomotor_steering</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fly_optomotor_steering.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">matrix</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_lamina_filter">fly_lamina_filter</a> · <a style="color:#22d3bf" href="opflyvision:fly_onoff_split">fly_onoff_split</a> · <a style="color:#22d3bf" href="opflyvision:fly_flow_from_directions">fly_flow_from_directions</a> · <a style="color:#22d3bf" href="opflyvision:fly_egomotion_from_flow">fly_egomotion_from_flow</a> · <a style="color:#22d3bf" href="opflyvision:fly_hs_readout">fly_hs_readout</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">direction</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_flow_from_directions">fly_flow_from_directions</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

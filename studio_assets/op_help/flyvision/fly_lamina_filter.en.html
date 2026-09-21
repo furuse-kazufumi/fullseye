@@ -1,0 +1,55 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_lamina_filter — FLYVISION <code style="color:#22d3bf">lamina</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_lamina_filter(movie, dt_s, tau_adapt_s=0.2, tau_lp_s=0.02, mode=&#x27;divisive&#x27;, floor=0.001)</code> (to call the implementation directly, <code style="color:#22d3bf">import flyvision; flyvision.fly_lamina_filter(movie, dt_s, tau_adapt_s=0.2, tau_lp_s=0.02, mode=&#x27;divisive&#x27;, floor=0.001)</code>; from the registry, <code style="color:#22d3bf">opsflyvision.get(&quot;fly_lamina_filter&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Photoreceptor adaptation + the lamina&#x27;s band-pass: intensities in, contrast out.</p>
+<p>The first thing the optic lobe does to a picture is throw away its brightness.</p>
+<p>A photoreceptor adapts to the running mean light level and the large monopolar</p>
+<p>cells (L1/L2) report the *deviation* from it, so the same scene at dawn and at</p>
+<p>noon arrives at the motion detectors as the same signal. Two closed-form</p>
+<p>stages, in that order:</p>
+<p>1. <b>adaptation</b> — a first-order low-pass of time constant *tau_adapt_s*</p>
+<p>per ommatidium is the adaptation state `<code style="color:#22d3bf">a(t)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">mode=&quot;divisive&quot;</code>`</p>
+<p>returns the Weber contrast `<code style="color:#22d3bf">(x - a)/(a + eps)</code><code style="color:#22d3bf"> (</code>`eps = floor *</p>
+<p>mean(x)``, so it scales with the picture and a dark ommatidium cannot</p>
+<p>divide by zero); `<code style="color:#22d3bf">mode=&quot;subtractive&quot;</code><code style="color:#22d3bf"> returns </code><code style="color:#22d3bf">x - a</code>`, which is the</p>
+<p>same high-pass without the gain control.</p>
+<p>2. <b>membrane</b> — a first-order low-pass of time constant *tau_lp_s*, the</p>
+<p>cell&#x27;s own bandwidth.</p>
+<p>movie: `<code style="color:#22d3bf">(T, n)</code><code style="color:#22d3bf"> intensities, rows = time. </code><code style="color:#22d3bf">mode=&quot;divisive&quot;</code>` refuses a</p>
+<p>negative entry (a negative light level is not a measurement) and an all-zero</p>
+<p>movie (its contrast is 0/0, which would be fabricated rather than measured).</p>
+<p>dt_s: sample interval, seconds. tau_adapt_s / tau_lp_s: the two time</p>
+<p>constants, seconds. floor: the divisive guard, relative to the mean intensity.</p>
+<p>Returns `<code style="color:#22d3bf">(T, n)</code>` float64 contrast.</p>
+<p>Ground truth, both exact rather than approximate:</p>
+<p style="margin:2px 0 2px 12px">• <b>Weber invariance.</b> In `<code style="color:#22d3bf">&quot;divisive&quot;</code>` mode, scaling the whole movie by</p>
+<p>any positive constant returns *the same array* — both `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">eps</code>`</p>
+<p>scale with it. That is the point of the stage and the tests pin it to</p>
+<p>machine precision.</p>
+<p style="margin:2px 0 2px 12px">• <b>The transfer is the product of the two first-order filters.</b> With</p>
+<p>`<code style="color:#22d3bf">A = 1 - exp(-dt/tau_adapt)</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">B = 1 - exp(-dt/tau_lp)</code>`, the</p>
+<p>steady-state gain at angular frequency `<code style="color:#22d3bf">w</code>` is</p>
+<p>`<code style="color:#22d3bf">|1 - H_A(w)| * |H_B(w)|</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">H(w) = C/(1 - (1-C) exp(-i w dt))</code>` —</p>
+<p>a band-pass that blocks DC exactly and is measured at four frequencies in</p>
+<p>the tests.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-2-D / too-short / non-finite *movie*, a movie</p>
+<p>over :data:<code style="color:#22d3bf">MAX_MOVIE_ELEMENTS</code>, a non-positive *dt_s* / *tau_adapt_s* /</p>
+<p>*tau_lp_s*, a non-positive *floor*, an unknown *mode*, and (divisive only) a</p>
+<p>negative or all-zero movie.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fly_optomotor_steering">poc_fly_optomotor_steering</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fly_optomotor_steering.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">matrix</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_onoff_split">fly_onoff_split</a> · <a style="color:#22d3bf" href="opflyvision:fly_t4t5_field">fly_t4t5_field</a> · <a style="color:#22d3bf" href="opflyvision:fly_flow_from_directions">fly_flow_from_directions</a> · <a style="color:#22d3bf" href="opflyvision:fly_egomotion_from_flow">fly_egomotion_from_flow</a> · <a style="color:#22d3bf" href="opflyvision:fly_hs_readout">fly_hs_readout</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">lamina</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_onoff_split">fly_onoff_split</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

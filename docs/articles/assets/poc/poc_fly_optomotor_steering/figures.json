@@ -1,0 +1,78 @@
+[
+ {
+  "file": "01_pathway.png",
+  "name": "pathway",
+  "caption": "left to right, top to bottom: what the ommatidia see, the lamina's contrast (brightness thrown away), the ON and OFF channels, and the direction-selective field read as a local flow. The eye is turning at 0.5 rad/s in a 1/f panorama; nothing here was trained.",
+  "shape": [
+   543,
+   745,
+   3
+  ]
+ },
+ {
+  "file": "02_tuning.png",
+  "name": "tuning",
+  "caption": "each scene is fitted with its own single gain; the striped drum is nearly linear, and a natural 1/f scene needs a gain 3.0x larger — a correlation detector reports contrast-weighted motion, not velocity",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_wide_eye.png",
+  "name": "wide_eye",
+  "caption": "a narrow eye is at the mercy of whichever few large features are in front of it: over eight scenes of identical statistics it scatters and gets the sign wrong 4 time(s) out of 12; the merged 250-degree eye gets it wrong 0 time(s), and its scatter is 58% smaller",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_closed_loop.png",
+  "name": "closed_loop",
+  "caption": "the disturbance has a steady bias, so the open loop drifts away; the optomotor reflex cuts the drift but cannot null it — a reflex has no absolute heading, which is where the central complex would come in",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_circuit.png",
+  "name": "circuit",
+  "caption": "the wiring is written by hand as a synapse table and run as a conductance circuit; the state is a convex combination of the reversal potentials, so it cannot diverge whatever the input does",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_follow.gif",
+  "name": "follow",
+  "caption": "the three eyes (left, front, right = 250 degrees of azimuth) during the closed-loop run, and under them the yaw rate the circuit is steering against (full width = 0.5 rad/s, the tick is zero). 48 frames, 100 ms apart",
+  "shape": [
+   133,
+   411,
+   3
+  ],
+  "animated": true,
+  "frames": 48,
+  "frames_written": 48,
+  "fps": 8.0
+ },
+ {
+  "file": "07_numbers.png",
+  "name": "numbers",
+  "caption": "rows 1-3 are the speed tuning per scene, rows 4-5 the width of the eye, rows 6-9 the closed loop (drift in degrees and the rms yaw rate)",
+  "shape": [
+   344,
+   571,
+   3
+  ],
+  "csv": "07_numbers.csv",
+  "tsv": "07_numbers.tsv"
+ }
+]

@@ -65,6 +65,30 @@ _MOD = {"flyvision": flyvision}
 #   それを画像と取り違えて黙って処理してしまう(zscan を video に渡すと通る、と
 #   同じ事故の型)。出さないことでこの取り違えを構造的に不可能にする。
 _CATALOG = {
+    # --------------------------------------------------------------------
+    # 2026-09-22: 眼と「自分がどう回ったか」のあいだの段。どれも学習なしの閉形式で、
+    # コネクトームで測られた配線(三腕・ON/OFF・六角の隣)をそのまま式にしている。
+    # --------------------------------------------------------------------
+    # ラミナ —— 明るさを捨てて対比にする。型は matrix(個眼動画 (T, n)。行が時刻、
+    #   列が個眼)。image2d には**しない**: 行が時刻で列が個眼の配列は 2-D 画像
+    #   ではなく、2-D の op に渡すと「走るが意味が無い」出力になる。
+    "lamina": [
+        ("fly_lamina_filter", "flyvision", ["matrix"], "matrix"),
+        ("fly_onoff_split", "flyvision", ["matrix"], "matrix"),
+    ],
+    # 方向 —— (6, n) の方向別応答と、そこから作る (n, 2) の局所フロー。どちらも
+    #   一般の 2-D 数値行列 = matrix(既存の fly_hs_readout が食う形と同じ)。
+    "direction": [
+        ("fly_t4t5_field", "flyvision", ["matrix", "table"], "matrix"),
+        ("fly_flow_from_directions", "flyvision", ["matrix", "table"], "matrix"),
+    ],
+    # 自己運動 —— 整合フィルタ(テンプレート)と、そこへの当てはめ。格子は table、
+    #   回転の見積もりは dict = table。
+    "selfmotion": [
+        ("fly_matched_filter", "flyvision", ["table"], "matrix"),
+        ("fly_egomotion_from_flow", "flyvision", ["matrix", "table"], "table"),
+        ("fly_eye_merge", "flyvision", ["table", "table"], "table"),
+    ],
     "lattice": [
         ("fly_hex_lattice", "flyvision", [], "table"),
     ],

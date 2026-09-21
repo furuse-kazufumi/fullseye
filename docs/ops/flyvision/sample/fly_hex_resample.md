@@ -4,7 +4,7 @@ dim: flyvision
 category: sample
 in: image2d × table
 out: signal
-examples: [poc_fly_vision]
+examples: [poc_fly_optomotor_steering, poc_fly_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -51,6 +51,10 @@ a non-positive *drho_deg* / *fov_deg*, a *fov_deg* not below 180, an unknown
 and — this is the field-of-view guard — any ommatidium whose nearest pixel is
 farther than ``dphi_rad/2`` away (the eye is looking outside the image).
 
+## 詳しい使い方ガイド
+
+- [fly_vision ファミリ ガイド](../guides/fly_vision.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
@@ -59,6 +63,7 @@ farther than ``dphi_rad/2`` away (the eye is looking outside the image).
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_fly_optomotor_steering](../../../../examples/poc_fly_optomotor_steering.py) — `py -3.11 examples/poc_fly_optomotor_steering.py`
 - [poc_fly_vision](../../../../examples/poc_fly_vision.py) — `py -3.11 examples/poc_fly_vision.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)

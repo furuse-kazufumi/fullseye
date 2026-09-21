@@ -1,0 +1,74 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南僅有日文版(它是人寫的散文,這裡不做機械替換)。</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">ハエの視葉(複眼から「自分がどう回ったか」まで) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>広い視野・低い解像度・少ないニューロンで、運動と衝突時間と進行方向を出す</b>ための層です。</p>
+<p>fullseye は視覚系の<b>設計</b>側(<code style="color:#22d3bf">optics</code> / <code style="color:#22d3bf">visiondesign</code>)と、点群・姿勢・シーンフローの<b>処理</b>側を</p>
+<p>持っていましたが、「複眼でものを見る側の処理経路」がありませんでした。この族がそれです。</p>
+<p>大事なのは、<b>どれも学習網ではなく閉じた式</b>だということ。一本ずつに、突き合わせる厳密な恒等式が</p>
+<p>あります(六角格子の個眼数、ガウス受容野の MTF、相関器の定常応答、η の最大時刻、Weber の不変性、</p>
+<p>三腕モデルの積の恒等式、整合フィルタの <code style="color:#22d3bf">sin</code>)。学習で決めた数は 1 つも入っていません。</p>
+<p>コネクトームを固定して残りを勾配で学習するモデル(flyvis 系)とは、そこが違います</p>
+<p>—— 2026 年になって、その手の学習モデルは**初期値を変えると別の解に落ち、課題誤差の最良と生理的な</p>
+<p>妥当さが一致しない**という報告が出ています。閉じた式には再現性の問題がありません。</p>
+<p>16 op / 10 カテゴリ(numpy + scipy のみ。台帳は <code style="color:#22d3bf">opsflyvision.py</code>、実体は <code style="color:#22d3bf">flyvision.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>lattice / stimulus / sample(4)</b> — <code style="color:#22d3bf">fly_hex_lattice</code>(眼の幾何。<code style="color:#22d3bf">n = 3r(r+1)+1</code> 個眼)/</p>
+<p><code style="color:#22d3bf">fly_sky_1f</code>(1/f の空)/ <code style="color:#22d3bf">fly_hex_resample</code>(ガウス受容野で像を個眼に落とす)/ <code style="color:#22d3bf">fly_hex_quantize</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>lamina(2)</b> — <code style="color:#22d3bf">fly_lamina_filter</code> / <code style="color:#22d3bf">fly_onoff_split</code>: 明るさを捨てて対比にし、ON と OFF に分ける。</p>
+<p style="margin:2px 0 2px 12px">• <b>motion / direction(3)</b> — <code style="color:#22d3bf">fly_emd_response</code>(2 個眼の相関器)/ <code style="color:#22d3bf">fly_t4t5_field</code>(六角の 6 方向すべてで</p>
+<p>方向選択)/ <code style="color:#22d3bf">fly_flow_from_directions</code>(6 方向 → 1 本のベクトル)。</p>
+<p style="margin:2px 0 2px 12px">• <b>looming(2)</b> — <code style="color:#22d3bf">fly_lgmd_eta</code> / <code style="color:#22d3bf">fly_tau_from_expansion</code>: 膨張する角度から衝突の時刻を読む。</p>
+<p style="margin:2px 0 2px 12px">• <b>integrate / tuning / selfmotion(5)</b> — <code style="color:#22d3bf">fly_hs_readout</code>(広視野の opponent 読み出し)/ <code style="color:#22d3bf">fly_dsi</code> /</p>
+<p><code style="color:#22d3bf">fly_matched_filter</code> / <code style="color:#22d3bf">fly_egomotion_from_flow</code> / <code style="color:#22d3bf">fly_eye_merge</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">光の流れ(この順に繋ぐ)</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+    IMG[&quot;image2d&lt;br/&gt;ピンホール像 or 1/f の空&quot;]
+    LAT[&quot;fly_hex_lattice&lt;br/&gt;個眼の向き (n, 3)&quot;]
+    IMG --&gt; RS[&quot;fly_hex_resample&quot;]
+    LAT --&gt; RS
+    RS --&gt; MOV[&quot;matrix (T, n)&lt;br/&gt;個眼動画(行 = 時刻)&quot;]
+    MOV --&gt; LAM[&quot;fly_lamina_filter&lt;br/&gt;順応 + 帯域通過&quot;]
+    LAM --&gt; OO[&quot;fly_onoff_split&lt;br/&gt;ON = Mi1/Tm3 · OFF = Tm1/Tm2&quot;]
+    OO --&gt; T4[&quot;fly_t4t5_field&lt;br/&gt;三腕 / 増強 / 抑制 / 相関器&quot;]
+    LAT --&gt; T4
+    T4 --&gt; R6[&quot;matrix (6, n)&lt;br/&gt;方向別の応答&quot;]
+    R6 --&gt; HS[&quot;fly_hs_readout&lt;br/&gt;広視野の opponent&quot;]
+    R6 --&gt; FL[&quot;fly_flow_from_directions&quot;]
+    FL --&gt; F2[&quot;matrix (n, 2)&lt;br/&gt;局所フロー&quot;]
+    F2 --&gt; EGO[&quot;fly_egomotion_from_flow&lt;br/&gt;回転の線形最小二乗&quot;]
+    MF[&quot;fly_matched_filter&lt;br/&gt;回転 1 rad/s のテンプレート&quot;] --&gt; EGO
+    MERGE[&quot;fly_eye_merge&lt;br/&gt;複数の眼 → 1 つの広い眼&quot;] --&gt; EGO</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使ってみる</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye as fs
+
+L = fs.ledger
+lat = L.fly_hex_lattice(radius=6, dphi_deg=5.0)          # 127 個眼、視野 ±30 度
+n = lat[&quot;dirs&quot;].shape[0]
+dt = 0.01
+
+# 方位に正弦の縞を流す(回転ドラムの中にいるハエ)
+az = np.asarray(lat[&quot;az_rad&quot;])
+t = np.arange(150) * dt
+movie = 1.0 + 0.3 * np.sin(2 * np.pi / np.deg2rad(30.0) * (az[None, :] - 0.4 * t[:, None]))
+
+contrast = L.fly_lamina_filter(movie, dt, tau_adapt_s=0.1, tau_lp_s=0.02)
+onoff = L.fly_onoff_split(contrast, dt)
+field = (L.fly_t4t5_field(onoff[:, :n], lat, dt, tau_s=0.05)
+         + L.fly_t4t5_field(onoff[:, n:], lat, dt, tau_s=0.05))
+flow = L.fly_flow_from_directions(field, lat)
+est = L.fly_egomotion_from_flow(flow, lat, axes=[[0.0, 0.0, 1.0]])
+print(est[&quot;yaw_rad_s&quot;], est[&quot;condition&quot;])                # 向きは合う。大きさは対比に依存する</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">読むときの注意(測ったこと)</h3>
+<p style="margin:2px 0 2px 12px">• <b>相関器は速度計ではない。</b> <code style="color:#22d3bf">fly_emd_response</code> も <code style="color:#22d3bf">fly_t4t5_field</code> も応答が対比の 2 乗に比例するので、</p>
+<p>「低対比で速い」と「高対比で遅い」が同じ値になります。<code style="color:#22d3bf">fly_egomotion_from_flow</code> が返すのは</p>
+<p><b>回転に比例する量</b>であって rad/s ではありません。単位が要るなら、既知の回転で利得を 1 つ較正して、</p>
+<p><b>別の場面で</b>使ってください。</p>
+<p style="margin:2px 0 2px 12px">• <b>狭い眼は自然な景色で符号を間違える。</b> 1/f の景色の対比は少数の大きな特徴が握っているので、</p>
+<p>視野 80° の 1 つの眼だと、同じ回転でも景色を変えると推定がばらつきます(PoC の実測: 同じ +0.5 rad/s を</p>
+<p>12 枚の別々の景色で測ると散らばり(標準偏差/平均)1.05、<b>12 枚中 4 枚は符号すら逆</b>)。</p>
+<p><code style="color:#22d3bf">fly_eye_merge</code> で 3 つの眼を 250° に束ねると 0.44 / 0 枚。<b>複眼が広いことは飾りではありません。</b></p>
+<p style="margin:2px 0 2px 12px">• <b>当てはまったことと識別できたことは別。</b> <code style="color:#22d3bf">fly_egomotion_from_flow</code> は条件数を必ず返します。</p>
+<p>狭い前向きの眼では 3 軸を分けられないので、<code style="color:#22d3bf">axes=[[0, 0, 1]]</code> のようにヨーだけを聞くのが正直な使い方です。</p>
+<p style="margin:2px 0 2px 12px">• <b>整流をどこでやるかは主張です。</b> L1/L2 自体は線形だという記録があるので、<code style="color:#22d3bf">fly_onoff_split</code> の</p>
+<p><code style="color:#22d3bf">rectify</code> は選べるようにしてあります。既定の <code style="color:#22d3bf">True</code> は「下流で整流される」という読みです。</p>

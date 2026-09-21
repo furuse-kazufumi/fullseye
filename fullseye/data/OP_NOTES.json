@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2074,
- "n_notes": 2080,
+ "n_ops": 2082,
+ "n_notes": 2088,
  "notes": {
   "vol_dilate": [
    {
@@ -14814,6 +14814,16 @@
     "path": "docs/ops/conngraph/activity/points_activity_video.md"
    }
   ],
+  "graph_conductance_states": [
+   {
+    "op": "graph_conductance_states",
+    "dim": "conngraph",
+    "category": "circuit",
+    "in": "conn_graph × matrix",
+    "out": "matrix",
+    "path": "docs/ops/conngraph/circuit/graph_conductance_states.md"
+   }
+  ],
   "graph_binarize": [
    {
     "op": "graph_binarize",
@@ -15311,6 +15321,26 @@
     "path": "docs/ops/emproof/suspect/seg_membrane_chord_score.md"
    }
   ],
+  "fly_flow_from_directions": [
+   {
+    "op": "fly_flow_from_directions",
+    "dim": "flyvision",
+    "category": "direction",
+    "in": "matrix × table",
+    "out": "matrix",
+    "path": "docs/ops/flyvision/direction/fly_flow_from_directions.md"
+   }
+  ],
+  "fly_t4t5_field": [
+   {
+    "op": "fly_t4t5_field",
+    "dim": "flyvision",
+    "category": "direction",
+    "in": "matrix × table",
+    "out": "matrix",
+    "path": "docs/ops/flyvision/direction/fly_t4t5_field.md"
+   }
+  ],
   "fly_hs_readout": [
    {
     "op": "fly_hs_readout",
@@ -15319,6 +15349,26 @@
     "in": "matrix × table",
     "out": "measurement",
     "path": "docs/ops/flyvision/integrate/fly_hs_readout.md"
+   }
+  ],
+  "fly_lamina_filter": [
+   {
+    "op": "fly_lamina_filter",
+    "dim": "flyvision",
+    "category": "lamina",
+    "in": "matrix",
+    "out": "matrix",
+    "path": "docs/ops/flyvision/lamina/fly_lamina_filter.md"
+   }
+  ],
+  "fly_onoff_split": [
+   {
+    "op": "fly_onoff_split",
+    "dim": "flyvision",
+    "category": "lamina",
+    "in": "matrix",
+    "out": "matrix",
+    "path": "docs/ops/flyvision/lamina/fly_onoff_split.md"
    }
   ],
   "fly_hex_lattice": [
@@ -15378,6 +15428,36 @@
     "in": "image2d × table",
     "out": "signal",
     "path": "docs/ops/flyvision/sample/fly_hex_resample.md"
+   }
+  ],
+  "fly_egomotion_from_flow": [
+   {
+    "op": "fly_egomotion_from_flow",
+    "dim": "flyvision",
+    "category": "selfmotion",
+    "in": "matrix × table",
+    "out": "table",
+    "path": "docs/ops/flyvision/selfmotion/fly_egomotion_from_flow.md"
+   }
+  ],
+  "fly_eye_merge": [
+   {
+    "op": "fly_eye_merge",
+    "dim": "flyvision",
+    "category": "selfmotion",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/flyvision/selfmotion/fly_eye_merge.md"
+   }
+  ],
+  "fly_matched_filter": [
+   {
+    "op": "fly_matched_filter",
+    "dim": "flyvision",
+    "category": "selfmotion",
+    "in": "table",
+    "out": "matrix",
+    "path": "docs/ops/flyvision/selfmotion/fly_matched_filter.md"
    }
   ],
   "fly_sky_1f": [

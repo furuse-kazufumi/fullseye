@@ -51,6 +51,10 @@ Notes
 Non-finite or negative inputs are refused. A constant signal quantizes to all-zeros
 (``"log"`` / ``"onoff"``) — there is no contrast to encode.
 
+## 詳しい使い方ガイド
+
+- [fly_vision ファミリ ガイド](../guides/fly_vision.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

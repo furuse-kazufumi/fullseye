@@ -29,11 +29,14 @@
 <p>*mode*, a `<code style="color:#22d3bf">n_ommatidia * n_pixels</code><code style="color:#22d3bf"> product over :data:</code>MAX_RESAMPLE_ELEMENTS`,</p>
 <p>and — this is the field-of-view guard — any ommatidium whose nearest pixel is</p>
 <p>farther than `<code style="color:#22d3bf">dphi_rad/2</code>` away (the eye is looking outside the image).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fly_optomotor_steering">poc_fly_optomotor_steering</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fly_optomotor_steering.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fly_vision">poc_fly_vision</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fly_vision.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opflyvision:fly_hex_quantize">fly_hex_quantize</a> · <a style="color:#22d3bf" href="opflyvision:fly_emd_response">fly_emd_response</a> · <a style="color:#22d3bf" href="opflyvision:fly_lgmd_eta">fly_lgmd_eta</a> · <a style="color:#22d3bf" href="opflyvision:fly_tau_from_expansion">fly_tau_from_expansion</a> · <a style="color:#22d3bf" href="opflyvision:fly_dsi">fly_dsi</a></p>

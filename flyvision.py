@@ -152,6 +152,14 @@ __all__ = [
     "fly_emd_response",
     "fly_lgmd_eta", "fly_tau_from_expansion",
     "fly_hs_readout", "fly_sky_1f", "fly_dsi",
+    # 2026-09-22 — the stages between the eye and the steering:
+    # lamina adaptation, the ON/OFF split, T4/T5 direction selectivity,
+    # and the matched filter that reads self-rotation out of the field.
+    "fly_lamina_filter", "fly_onoff_split", "fly_t4t5_field",
+    "fly_flow_from_directions", "fly_matched_filter",
+    "fly_egomotion_from_flow",
+    "LAMINA_MODES", "T4_MODELS", "T4_REDUCTIONS", "MOTION_KINDS", "HEX_STEPS",
+    "MAX_MOVIE_ELEMENTS",
     "FLYVISION", "GEOMETRIES", "LN2", "QUANTIZE_MODES",
     "MAX_LATTICE_RADIUS", "MAX_IMAGE_DIM", "MAX_SIGNAL_POINTS",
     "MAX_RESAMPLE_ELEMENTS",
@@ -163,6 +171,9 @@ FLYVISION = [
     "fly_emd_response",
     "fly_lgmd_eta", "fly_tau_from_expansion",
     "fly_hs_readout", "fly_sky_1f", "fly_dsi",
+    "fly_lamina_filter", "fly_onoff_split", "fly_t4t5_field",
+    "fly_flow_from_directions", "fly_matched_filter",
+    "fly_egomotion_from_flow", "fly_eye_merge",
 ]
 
 #: Lattice geometries accepted by :func:`fly_hex_lattice`.
@@ -188,6 +199,29 @@ MAX_SIGNAL_POINTS = 1 << 22
 #: prevents is the cross term: a modest 900-ommatidium eye and a modest 512x512
 #: image are each unremarkable and together are 236M float64 = 1.9 GB.
 MAX_RESAMPLE_ELEMENTS = 1 << 24
+
+
+#: Largest number of elements in an ommatidial movie ``(T, n)``. float64, so
+#: 2^24 elements is ~0.13 GB; a 721-ommatidium eye filling it is 23,000 samples,
+#: which at 1 kHz is 23 seconds of flight.
+MAX_MOVIE_ELEMENTS = 1 << 24
+
+#: Adaptation modes of :func:`fly_lamina_filter`.
+LAMINA_MODES = ("divisive", "subtractive")
+
+#: Direction-selectivity models of :func:`fly_t4t5_field`.
+T4_MODELS = ("three_arm", "enhance", "suppress", "hr")
+
+#: How :func:`fly_t4t5_field` reduces the response over time.
+T4_REDUCTIONS = ("mean", "last", "max")
+
+#: Self-motion kinds of :func:`fly_matched_filter`.
+MOTION_KINDS = ("rotation", "translation")
+
+#: The six neighbour steps of the hexagonal lattice in axial ``(u, v)``
+#: coordinates, counter-clockwise starting at +azimuth (regular geometry: the
+#: steps are then 0, 60, ... 300 degrees apart on the tangent plane).
+HEX_STEPS = ((0, 1), (1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1))
 
 
 # --------------------------------------------------------------------------- #
@@ -1026,6 +1060,671 @@ def fly_dsi(responses, angles_deg):
     pref = float(np.degrees(np.angle(vec)))
     return {"dsi": dsi, "pref_deg": pref}
 
+
+# --------------------------------------------------------------------------- #
+# 8. lamina — light adaptation and the contrast the next stage actually sees    #
+# --------------------------------------------------------------------------- #
+def _as_movie(a, name: str, op: str) -> np.ndarray:
+    """An ommatidial movie: ``(T, n)`` float64, T >= 2 samples, n >= 1 ommatidia.
+
+    Rows are time, columns are ommatidia — the same orientation as the response
+    matrix :func:`fly_hs_readout` already takes, so a pathway can be written
+    top to bottom without a transpose in the middle of it."""
+    arr = _as_float_array(a, name, MAX_MOVIE_ELEMENTS, op)
+    if arr.ndim != 2:
+        raise ValueError("%s: %s must be a (T, n) movie — T time samples down, n "
+                         "ommatidia across — got a %d-D array of shape %r"
+                         % (op, name, arr.ndim, arr.shape))
+    if arr.shape[0] < 2:
+        raise ValueError("%s: %s has %d time sample(s); a temporal filter needs "
+                         "at least 2" % (op, name, arr.shape[0]))
+    if arr.shape[1] < 1:
+        raise ValueError("%s: %s has no ommatidia (shape %r)" % (op, name, arr.shape))
+    return arr
+
+
+def _lowpass_columns(X: np.ndarray, tau_s: float, dt_s: float) -> np.ndarray:
+    """First-order low-pass down each column of ``(T, n)`` by exact exponential
+    smoothing, started at the first sample so there is no startup step."""
+    alpha = 1.0 - np.exp(-dt_s / tau_s)
+    out = np.empty_like(X)
+    acc = X[0].copy()
+    for t in range(X.shape[0]):
+        acc += alpha * (X[t] - acc)
+        out[t] = acc
+    return out
+
+
+def fly_lamina_filter(movie, dt_s, tau_adapt_s=0.2, tau_lp_s=0.02,
+                      mode="divisive", floor=1e-3):
+    """Photoreceptor adaptation + the lamina's band-pass: intensities in, contrast out.
+
+    The first thing the optic lobe does to a picture is throw away its brightness.
+    A photoreceptor adapts to the running mean light level and the large monopolar
+    cells (L1/L2) report the *deviation* from it, so the same scene at dawn and at
+    noon arrives at the motion detectors as the same signal. Two closed-form
+    stages, in that order:
+
+      1. **adaptation** — a first-order low-pass of time constant *tau_adapt_s*
+         per ommatidium is the adaptation state ``a(t)``. ``mode="divisive"``
+         returns the Weber contrast ``(x - a)/(a + eps)`` (``eps = floor *
+         mean(x)``, so it scales with the picture and a dark ommatidium cannot
+         divide by zero); ``mode="subtractive"`` returns ``x - a``, which is the
+         same high-pass without the gain control.
+      2. **membrane** — a first-order low-pass of time constant *tau_lp_s*, the
+         cell's own bandwidth.
+
+    movie: ``(T, n)`` intensities, rows = time. ``mode="divisive"`` refuses a
+    negative entry (a negative light level is not a measurement) and an all-zero
+    movie (its contrast is 0/0, which would be fabricated rather than measured).
+    dt_s: sample interval, seconds. tau_adapt_s / tau_lp_s: the two time
+    constants, seconds. floor: the divisive guard, relative to the mean intensity.
+
+    Returns ``(T, n)`` float64 contrast.
+
+    Ground truth, both exact rather than approximate:
+
+      * **Weber invariance.** In ``"divisive"`` mode, scaling the whole movie by
+        any positive constant returns *the same array* — both ``a`` and ``eps``
+        scale with it. That is the point of the stage and the tests pin it to
+        machine precision.
+      * **The transfer is the product of the two first-order filters.** With
+        ``A = 1 - exp(-dt/tau_adapt)`` and ``B = 1 - exp(-dt/tau_lp)``, the
+        steady-state gain at angular frequency ``w`` is
+        ``|1 - H_A(w)| * |H_B(w)|`` where ``H(w) = C/(1 - (1-C) exp(-i w dt))`` —
+        a band-pass that blocks DC exactly and is measured at four frequencies in
+        the tests.
+
+    **Raises** ``ValueError``: a non-2-D / too-short / non-finite *movie*, a movie
+    over :data:`MAX_MOVIE_ELEMENTS`, a non-positive *dt_s* / *tau_adapt_s* /
+    *tau_lp_s*, a non-positive *floor*, an unknown *mode*, and (divisive only) a
+    negative or all-zero movie.
+    """
+    op = "fly_lamina_filter"
+    x = _as_movie(movie, "movie", op)
+    dt = _positive(dt_s, "dt_s")
+    ta = _positive(tau_adapt_s, "tau_adapt_s")
+    tl = _positive(tau_lp_s, "tau_lp_s")
+    fl = _positive(floor, "floor")
+    md = _one_of(mode, "mode", LAMINA_MODES, op)
+    a = _lowpass_columns(x, ta, dt)
+    if md == "divisive":
+        if x.min() < 0.0:
+            raise ValueError(
+                "%s: movie has a negative entry (%.6g) and mode='divisive' reads "
+                "it as a light level — a negative intensity has no Weber contrast. "
+                "Use mode='subtractive' for a signed input." % (op, float(x.min())))
+        mean = float(x.mean())
+        if mean <= 0.0:
+            raise ValueError(
+                "%s: the movie is all zero, so the Weber contrast is 0/0 — there "
+                "is no adaptation state to divide by and any number returned here "
+                "would be fabricated" % (op,))
+        c = (x - a) / (a + fl * mean)
+    else:
+        c = x - a
+    return np.ascontiguousarray(_lowpass_columns(c, tl, dt))
+
+
+def fly_onoff_split(movie, dt_s, tau_on_s=0.02, tau_off_s=0.02, rectify=True):
+    """Split a contrast movie into the ON and OFF channels the medulla carries.
+
+    Beyond the lamina the fly stops carrying one signed signal and carries two:
+    an ON channel (Mi1 / Tm3, brightening) and an OFF channel (Tm1 / Tm2,
+    darkening), each with its own relay dynamics. This op is that split, and it
+    keeps the rectification *optional* on purpose: the split was measured
+    downstream, in the motion response (Joesch et al., *Nature* 468:300, 2010),
+    while L1/L2 themselves respond linearly (Clark et al., *Neuron* 70:1165,
+    2011), so a pathway that rectifies at the lamina is making a claim the
+    recordings do not.
+
+    movie: ``(T, n)`` contrast, rows = time (the return of
+    :func:`fly_lamina_filter`). dt_s: sample interval, seconds.
+    tau_on_s / tau_off_s: the low-pass time constant of each channel, seconds.
+    rectify: ``True`` half-wave rectifies (``ON = max(c, 0)``,
+    ``OFF = max(-c, 0)``, both >= 0); ``False`` passes the signed contrast into
+    the ON channel and its negation into the OFF channel, which is the linear
+    L1/L2 case and lets the rectification happen downstream instead.
+
+    Returns ``(T, 2n)`` float64: columns ``0..n-1`` are ON, ``n..2n-1`` are OFF,
+    the same ommatidium order in each half.
+
+    Ground truth (exact, with ``tau_on_s == tau_off_s`` so the two channels share
+    one filter):
+
+      * ``ON - OFF`` is the low-passed input, whichever *rectify* you chose;
+      * with ``rectify=True``, ``ON + OFF`` is the low-passed **absolute value**;
+      * a movie that never goes negative leaves the OFF channel identically zero
+        (and vice versa) — the split does not invent a dark event.
+
+    **Raises** ``ValueError``: a non-2-D / too-short / non-finite *movie*, a movie
+    over :data:`MAX_MOVIE_ELEMENTS`, and a non-positive *dt_s* / *tau_on_s* /
+    *tau_off_s*.
+    """
+    op = "fly_onoff_split"
+    c = _as_movie(movie, "movie", op)
+    dt = _positive(dt_s, "dt_s")
+    t_on = _positive(tau_on_s, "tau_on_s")
+    t_off = _positive(tau_off_s, "tau_off_s")
+    rect = _bool(rectify, "rectify")
+    if rect:
+        on, off = np.maximum(c, 0.0), np.maximum(-c, 0.0)
+    else:
+        on, off = c, -c
+    return np.ascontiguousarray(np.hstack([_lowpass_columns(on, t_on, dt),
+                                           _lowpass_columns(off, t_off, dt)]))
+
+
+# --------------------------------------------------------------------------- #
+# 9. direction — T4/T5 over the hexagonal lattice, three models in one op       #
+# --------------------------------------------------------------------------- #
+def _hex_index(lattice_uv) -> dict:
+    """``(u, v) -> row index`` for the lattice, so a neighbour is a dict lookup."""
+    uv = np.asarray(lattice_uv)
+    return {(int(u), int(v)): k for k, (u, v) in enumerate(uv)}
+
+
+def _neighbour_rows(uv, step):
+    """For every ommatidium, the row of its neighbour one *step* away in axial
+    coordinates, or ``-1`` where the lattice ends. Returns an ``(n,)`` int array."""
+    lut = _hex_index(uv)
+    du, dv = int(step[0]), int(step[1])
+    out = np.full(len(uv), -1, dtype=np.int64)
+    for k, (u, v) in enumerate(np.asarray(uv)):
+        out[k] = lut.get((int(u) + du, int(v) + dv), -1)
+    return out
+
+
+def _refuse_merged(lattice, op: str) -> None:
+    """Refuse a :func:`fly_eye_merge` result where a hexagonal neighbourhood is needed.
+
+    A merged eye is several patches stacked, so its ``(u, v)`` coordinates repeat:
+    looking a neighbour up by axial coordinate would silently find an ommatidium in
+    *another* patch, pointing somewhere else entirely, and the op would return a
+    plausible field measured against the wrong neighbours. Refusing is the only
+    honest answer — run the per-patch ops per patch, and merge afterwards for the
+    fit, which is the one step that needs nothing but viewing directions."""
+    if isinstance(lattice, dict) and "eye" in lattice:
+        raise ValueError(
+            "%s: this is a fly_eye_merge result (%d patches). Its (u, v) "
+            "coordinates repeat, so a hexagonal neighbour cannot be identified — "
+            "run this op on each patch's own lattice and merge afterwards, which "
+            "is what fly_egomotion_from_flow takes."
+            % (op, int(np.asarray(lattice["eye"]).max()) + 1))
+
+
+def fly_t4t5_field(movie, lattice, dt_s, tau_s=0.25, k_e=5.0, k_d=5.0,
+                   k_s=10.0, dc=1.0, model="three_arm", tau_hr_s=0.05,
+                   reduce="mean"):
+    """Direction-selective response over the whole eye, in the six hexagonal directions.
+
+    T4 (ON) and T5 (OFF) are the first direction-selective cells in the fly, and
+    two mechanisms make them so: *preferred-direction enhancement*, which is the
+    Hassenstein-Reichardt multiplication, and *null-direction suppression*, which
+    is the Barlow-Levick division. Haag et al. measured both in one cell and wrote
+    them as three arms reading three adjacent columns — an enhancing arm E one
+    column *before* the centre, the direct arm D, and a suppressing arm S one
+    column *after* it::
+
+        R = (dc + k_e * LP[E]) * (dc + k_d * D) / (dc + k_s * LP[S])
+
+    with first-order low-passes of time constant ``tau_s`` on E and S. This op
+    runs that, or either mechanism alone, at every ommatidium and in all six
+    lattice directions at once.
+
+    movie: ``(T, n)`` one polarity channel — the ON or the OFF half of
+    :func:`fly_onoff_split`, not both. lattice: a :func:`fly_hex_lattice` result
+    (a :func:`fly_eye_merge` result is refused: its coordinates repeat, so a
+    neighbour would be looked up in the wrong patch).
+    dt_s: sample interval, seconds.
+    model: one of four, the first three sharing the same resting value ``dc`` so
+    that their responses are directly comparable —
+
+      * ``"three_arm"`` — the whole model above (Haag et al., *eLife* 5:e17421,
+        2016);
+      * ``"enhance"`` — the numerator alone, ``(dc + k_e LP[E])(dc + k_d D)/dc``:
+        preferred-direction *enhancement*, the Hassenstein-Reichardt
+        multiplication with no veto;
+      * ``"suppress"`` — the denominator alone, ``dc (dc + k_d D)/(dc + k_s
+        LP[S])``: null-direction *suppression*, the Barlow-Levick division with
+        no enhancement (Barlow & Levick, *J. Physiol.* 178:477, 1965);
+      * ``"hr"`` — the classical opponent correlator ``LP[E]*D - E*LP[D]`` with
+        its own time constant *tau_hr_s*, which is antisymmetric by construction
+        and so is direction-selective without either of the two mechanisms above
+        (Hassenstein & Reichardt, *Z. Naturforsch.* 11b:513, 1956). It is
+        :func:`fly_emd_response` run over the lattice instead of a pair.
+    tau_s / k_e / k_d / k_s / dc: the three-arm parameters. The defaults are the
+    paper's (tau = 250 ms, k = 5/5/10, DC = 1.0). tau_hr_s: the correlator time
+    constant, used by ``model="hr"`` only.
+    reduce: how the time course becomes one number per direction — ``"mean"``
+    (the wide-field integration a tangential cell performs), ``"last"`` (the
+    value at the final sample, which is how a transient is read at a chosen
+    instant) or ``"max"``.
+
+    Returns a ``(6, n)`` float64 matrix: row *k* is the response to motion in
+    hexagonal direction *k* (counter-clockwise from +azimuth, see
+    :data:`HEX_STEPS`), averaged over time, with the model's resting value
+    subtracted so that no stimulus reads exactly 0. It is the ``(k, n)`` shape
+    :func:`fly_hs_readout` and :func:`fly_flow_from_directions` take.
+
+    Ommatidia at the rim, which have no neighbour on one side, read exactly 0 in
+    that direction: a detector missing an arm has no motion to report, and
+    inventing one at the edge would put a ring of false flow around every eye.
+
+    Ground truth, and it is the paper's claim written as algebra: because the
+    three arms multiply, **the direction selectivity of the whole model is the
+    product of the selectivities of its two halves**. For any stimulus and any
+    pair of opposite directions,
+
+        ratio("three_arm") == ratio("enhance") * ratio("suppress")
+
+    exactly, where ``ratio = R_preferred / R_null`` taken on ``R + dc``. Two
+    columns lit in turn, a step of amplitude 1 held for ``tau``, with the paper's
+    constants, give ``R + dc`` = ``(dc + k_e(1-1/e))(dc + k_d)/dc`` = **24.96**
+    preferred and ``dc(dc + k_d)/(dc + k_s(1-1/e))`` = **0.820** null: 4.16 from
+    enhancement, 7.32 from suppression, 30.46 together. The tests measure all
+    three and the identity between them.
+
+    **Raises** ``ValueError``: a non-2-D / too-short / non-finite *movie*, a
+    column count that is not the lattice's ommatidium count, a non-positive
+    *dt_s* / *tau_s* / *tau_hr_s* / *dc*, a negative gain, an unknown *model*,
+    and any malformed *lattice*.
+    """
+    op = "fly_t4t5_field"
+    _refuse_merged(lattice, op)
+    x = _as_movie(movie, "movie", op)
+    dirs, _el, _dphi, _axis = _as_lattice(lattice, op)
+    n = dirs.shape[0]
+    if x.shape[1] != n:
+        raise ValueError(
+            "%s: movie has %d column(s) but the lattice has %d ommatidia — one "
+            "column per ommatidium is required. A (T, 2n) ON/OFF pair from "
+            "fly_onoff_split must be split into its two halves first; this op "
+            "runs one polarity." % (op, x.shape[1], n))
+    dt = _positive(dt_s, "dt_s")
+    tau = _positive(tau_s, "tau_s")
+    tau_hr = _positive(tau_hr_s, "tau_hr_s")
+    d0 = _positive(dc, "dc")
+    ke = _nonneg(k_e, "k_e")
+    kd = _nonneg(k_d, "k_d")
+    ks = _nonneg(k_s, "k_s")
+    md = _one_of(model, "model", T4_MODELS, op)
+    rd = _one_of(reduce, "reduce", T4_REDUCTIONS, op)
+    if md != "hr" and x.min() < 0.0:
+        raise ValueError(
+            "%s: movie has a negative entry (%.6g) and model=%r reads it as "
+            "one polarity channel (the ON or the OFF half, both non-negative). "
+            "A signed contrast movie takes the suppressing arm's denominator "
+            "dc + k_s*LP[S] through zero, so the response would flip sign or "
+            "blow up at a value that depends only on the gain. Split it with "
+            "fly_onoff_split first, or use model='hr', which is signed by "
+            "construction." % (op, float(x.min()), md))
+    uv = np.asarray(lattice["uv"])
+    # 使う腕のフィルタだけ掛ける(閉ループでは毎制御周期に呼ばれる)
+    lp = _lowpass_columns(x, tau, dt) if md != "hr" else None
+    lp_hr = _lowpass_columns(x, tau_hr, dt) if md == "hr" else None
+    out = np.zeros((len(HEX_STEPS), n), dtype=np.float64)
+    for k, step in enumerate(HEX_STEPS):
+        back = _neighbour_rows(uv, (-step[0], -step[1]))       # position -1 (E)
+        fwd = _neighbour_rows(uv, step)                        # position +1 (S)
+        if md == "hr":
+            ok = back >= 0
+            if not ok.any():
+                continue
+            e, d = x[:, back[ok]], x[:, ok]
+            r = _lowpass_columns(e, tau_hr, dt) * d - e * lp_hr[:, ok]
+        elif md == "enhance":
+            ok = back >= 0
+            if not ok.any():
+                continue
+            r = ((d0 + ke * lp[:, back[ok]]) * (d0 + kd * x[:, ok]) / d0) - d0
+        elif md == "suppress":
+            ok = fwd >= 0
+            if not ok.any():
+                continue
+            r = (d0 * (d0 + kd * x[:, ok]) / (d0 + ks * lp[:, fwd[ok]])) - d0
+        else:
+            ok = (back >= 0) & (fwd >= 0)
+            if not ok.any():
+                continue
+            r = ((d0 + ke * lp[:, back[ok]]) * (d0 + kd * x[:, ok])
+                 / (d0 + ks * lp[:, fwd[ok]])) - d0
+        out[k, ok] = (r.mean(axis=0) if rd == "mean" else
+                      r[-1] if rd == "last" else r.max(axis=0))
+    return np.ascontiguousarray(out)
+
+
+def _tangent_basis(az: np.ndarray, el: np.ndarray):
+    """Unit azimuth / elevation vectors of the tangent plane at each direction."""
+    e_az = np.stack([-np.sin(az), np.cos(az), np.zeros_like(az)], axis=-1)
+    e_el = np.stack([-np.sin(el) * np.cos(az), -np.sin(el) * np.sin(az),
+                     np.cos(el)], axis=-1)
+    return e_az, e_el
+
+
+def fly_flow_from_directions(responses, lattice):
+    """Six directional responses per ommatidium in, one local flow vector out.
+
+    The lobula plate does not keep six numbers per point of the visual field; it
+    keeps the direction and strength of the motion there, split over four layers
+    of opposite preference. This op is that reduction, done as the vector sum on
+    the tangent plane that makes opposite hexagonal directions cancel exactly::
+
+        f_i = (2/6) * sum_k R[k, i] * (cos t_ik, sin t_ik)
+
+    where ``t_ik`` is the angle of the step to ommatidium *i*'s neighbour in
+    direction *k*, measured in the local tangent plane with azimuth scaled by
+    ``cos(elevation)`` so that it is an angle on the sphere rather than a
+    difference of coordinates. The ``2/6`` normalises the sum so that a
+    cosine-tuned set of responses of amplitude ``A`` returns a vector of length
+    ``A`` — with six directions the raw sum is ``3A``.
+
+    responses: ``(6, n)``, the return of :func:`fly_t4t5_field`.
+    lattice: the :func:`fly_hex_lattice` it was measured on (a merged eye is
+    refused — neighbours are local, the fit downstream is not).
+
+    Returns ``(n, 2)`` float64: for each ommatidium the flow component along the
+    local azimuth (left positive) and along the local elevation (up positive), in
+    the response's own units. This is the ``(n, 2)`` field
+    :func:`fly_egomotion_from_flow` and :func:`fly_matched_filter` speak.
+
+    Ommatidia at the rim, which do not have all six neighbours, return exactly
+    zero: a partial sum over the circle does not cancel, so keeping it would draw
+    a ring of inward flow around the eye and the fit downstream would read that
+    ring as a rotation.
+
+    Ground truth: for responses ``R[k] = A cos(theta_k - theta_0)`` the returned
+    vector has length ``A`` and angle ``theta_0`` exactly (regular geometry, where
+    the six steps are 60 degrees apart); opposite directions cancel, so a
+    symmetric flicker response of any size returns exactly zero.
+
+    **Raises** ``ValueError``: *responses* that is not ``(6, n)``, a column count
+    that is not the lattice's ommatidium count, non-finite entries, and any
+    malformed *lattice*.
+    """
+    op = "fly_flow_from_directions"
+    _refuse_merged(lattice, op)
+    r = _as_float_array(responses, "responses", MAX_MOVIE_ELEMENTS, op)
+    dirs, el, _dphi, _axis = _as_lattice(lattice, op)
+    n = dirs.shape[0]
+    if r.ndim != 2 or r.shape[0] != len(HEX_STEPS):
+        raise ValueError("%s: responses must be (6, n) — one row per hexagonal "
+                         "direction — got shape %r" % (op, r.shape))
+    if r.shape[1] != n:
+        raise ValueError("%s: responses has %d column(s) but the lattice has %d "
+                         "ommatidia" % (op, r.shape[1], n))
+    az = np.asarray(lattice["az_rad"], dtype=np.float64)
+    uv = np.asarray(lattice["uv"])
+    ce = np.cos(el)
+    flow = np.zeros((n, 2), dtype=np.float64)
+    complete = np.ones(n, dtype=bool)
+    for k, step in enumerate(HEX_STEPS):
+        nb = _neighbour_rows(uv, step)
+        ok = nb >= 0
+        complete &= ok
+        daz = np.zeros(n)
+        dele = np.zeros(n)
+        daz[ok] = (az[nb[ok]] - az[ok]) * ce[ok]
+        dele[ok] = el[nb[ok]] - el[ok]
+        norm = np.hypot(daz, dele)
+        good = norm > 0.0
+        u = np.zeros((n, 2))
+        u[good, 0] = daz[good] / norm[good]
+        u[good, 1] = dele[good] / norm[good]
+        flow += r[k][:, None] * u
+    # An ommatidium that is missing a neighbour has only part of the circle, and
+    # a partial vector sum does not cancel: a uniform flicker would come out as a
+    # ring of flow around the rim of the eye, pointing inwards, and the
+    # least-squares fit downstream would read that ring as a rotation. The rim
+    # reports nothing instead, which is the same rule fly_t4t5_field uses.
+    flow[~complete] = 0.0
+    return np.ascontiguousarray(flow * (2.0 / len(HEX_STEPS)))
+
+
+# --------------------------------------------------------------------------- #
+# 10. selfmotion — matched filters and the rotation they read out               #
+# --------------------------------------------------------------------------- #
+def fly_matched_filter(lattice, axis=(0.0, 0.0, 1.0), motion="rotation",
+                       depth_m=1.0):
+    """The flow field one unit of self-motion writes on the eye — the template a
+    wide-field neuron is matched to.
+
+    Krapp & Hengstenberg measured the local motion sensitivity of single
+    lobula-plate tangential cells across the whole visual field and found a
+    structured vector field, one that looks like the optic flow of a particular
+    rotation of the fly (*Nature* 384:463, 1996). Reading self-motion out of such
+    a cell is then a matched filter (Franz & Krapp, *Biol. Cybern.* 83:185, 2000):
+    correlate the measured flow against the template of the motion you are asking
+    about. This op builds the template, for the isotropic world model — every
+    point at the same distance — which is the case in which the rotation template
+    is exactly the geometry and nothing is assumed about the scene:
+
+      * ``motion="rotation"``: one radian per second about the unit vector *axis*
+        moves the viewing direction ``d`` at ``-axis x d``, which is already
+        tangent to the sphere. Its length is ``sin`` of the angle between the axis
+        and the line of sight, so the template is zero on the axis itself.
+      * ``motion="translation"``: one metre per second along *axis*, with every
+        point at *depth_m* metres, moves it at ``-(v - (v.d) d)/Z``. The depth is
+        an input, not a measurement — translation flow and distance are the same
+        unknown and no eye can separate them from one frame pair.
+
+    lattice: a :func:`fly_hex_lattice` result. axis: the rotation axis or
+    translation direction in body coordinates (x forward, y left, z up); it is
+    normalised, and a zero vector is refused. depth_m: the uniform distance,
+    ``motion="translation"`` only.
+
+    Returns ``(n, 2)`` float64 — the azimuth and elevation components of the flow
+    at each ommatidium, in radians per second, the same layout
+    :func:`fly_flow_from_directions` returns.
+
+    Ground truth: for a rotation, ``|f| = sin(angle(axis, d))`` exactly, so it is
+    0 where the line of sight is along the axis and 1 where it is perpendicular;
+    and the flow is perpendicular to both the axis and the line of sight. For a
+    translation, ``|f| = sin(angle)/depth`` and the flow points away from the
+    direction of travel (the focus of expansion is where the template vanishes).
+
+    **Raises** ``ValueError``: a malformed *lattice*, an *axis* that is not three
+    finite numbers or is zero-length, an unknown *motion*, and a non-positive
+    *depth_m*.
+    """
+    op = "fly_matched_filter"
+    dirs, el, _dphi, _axis = _as_lattice(lattice, op)
+    a = _as_float_array(axis, "axis", 3, op).ravel()
+    if a.size != 3:
+        raise ValueError("%s: axis must be 3 numbers (x forward, y left, z up), "
+                         "got %d" % (op, a.size))
+    nrm = float(np.linalg.norm(a))
+    if nrm <= 0.0:
+        raise ValueError("%s: axis is the zero vector — a rotation needs an axis "
+                         "and a translation needs a direction" % (op,))
+    a = a / nrm
+    mo = _one_of(motion, "motion", MOTION_KINDS, op)
+    z = _positive(depth_m, "depth_m")
+    az = np.asarray(lattice["az_rad"], dtype=np.float64)
+    e_az, e_el = _tangent_basis(az, el)
+    if mo == "rotation":
+        d_dot = -np.cross(np.broadcast_to(a, dirs.shape), dirs)
+    else:
+        v = np.broadcast_to(a, dirs.shape)
+        d_dot = -(v - (dirs * v).sum(axis=1)[:, None] * dirs) / z
+    return np.ascontiguousarray(np.stack([(d_dot * e_az).sum(axis=1),
+                                          (d_dot * e_el).sum(axis=1)], axis=1))
+
+
+def fly_egomotion_from_flow(flow, lattice, axes=None, weights=None):
+    """Least-squares rotation of the eye from its flow field — and how badly the
+    eye's own shape conditions the answer.
+
+    Given the flow ``f_i`` at known viewing directions ``d_i``, a pure rotation
+    ``w`` predicts ``f_i = -(w x d_i)``, which is **linear in w**: projecting on
+    the tangent basis gives ``f_az = -w . (d x e_az)`` and
+    ``f_el = -w . (d x e_el)``, so the estimate is one ``2n x 3`` least-squares
+    solve with no iteration and no starting guess (Franz et al.'s linear
+    egomotion estimate, *Biol. Cybern.* 2004).
+
+    The catch is not the algebra, it is the eye. A single patch of ommatidia sees
+    a small piece of the sphere, and over a small piece the flow of a yaw and the
+    flow of a sideways translation — or of a pitch — look nearly the same. This
+    op therefore returns the **condition number** of that solve next to the
+    answer, so that "the fit converged" and "the fit was identifiable" stay
+    separate claims.
+
+    flow: ``(n, 2)`` azimuth/elevation components per ommatidium
+    (:func:`fly_flow_from_directions` or :func:`fly_matched_filter`).
+    lattice: the eye they were measured on.
+    axes: ``None`` to solve for the full 3-D rotation, or a ``(k, 3)`` array of
+    axes to restrict the fit to (``[[0, 0, 1]]`` = yaw only, the well-conditioned
+    question a forward-looking eye can actually answer).
+    weights: ``None`` or ``(n,)`` non-negative per-ommatidium weights — a
+    confidence, e.g. the local contrast, or zeros to drop the rim.
+
+    Returns a dict::
+
+        {"omega_rad_s": (3,), "yaw_rad_s": float, "pitch_rad_s": float,
+         "roll_rad_s": float, "residual_rms": float, "flow_rms": float,
+         "explained": float, "condition": float, "n_ommatidia": int}
+
+    with yaw about +z (left positive), pitch about +y, roll about +x, and
+    ``explained = 1 - residual_rms/flow_rms`` (1.0 = the flow is exactly a
+    rotation, 0.0 = the fit explains none of it).
+
+    Ground truth: handed a :func:`fly_matched_filter` template scaled by a known
+    rate, it returns that rate to machine precision and ``explained = 1``; handed
+    a pure translation field it returns a small rate with a low ``explained``; and
+    the condition number of a narrow forward eye is large (the tests measure it)
+    while the yaw-only fit is near 1.
+
+    **Raises** ``ValueError``: a *flow* that is not ``(n, 2)`` for this lattice,
+    non-finite entries, a malformed *axes* / *weights*, all-zero weights, and a
+    lattice with fewer ommatidia than the fit has unknowns.
+    """
+    op = "fly_egomotion_from_flow"
+    f = _as_float_array(flow, "flow", MAX_MOVIE_ELEMENTS, op)
+    dirs, el, _dphi, _axis = _as_lattice(lattice, op)
+    n = dirs.shape[0]
+    if f.ndim != 2 or f.shape != (n, 2):
+        raise ValueError("%s: flow must be (n, 2) for the %d ommatidia of this "
+                         "lattice — azimuth and elevation components — got shape "
+                         "%r" % (op, n, f.shape))
+    if axes is None:
+        B = np.eye(3)
+    else:
+        B = _as_float_array(axes, "axes", 3 * 64, op)
+        if B.ndim == 1:
+            B = B[None, :]
+        if B.ndim != 2 or B.shape[1] != 3 or B.shape[0] < 1:
+            raise ValueError("%s: axes must be (k, 3) rotation axes, got shape %r"
+                             % (op, B.shape))
+        ln = np.linalg.norm(B, axis=1)
+        if (ln <= 0.0).any():
+            raise ValueError("%s: axes contains a zero vector" % (op,))
+        B = B / ln[:, None]
+    if weights is None:
+        w = np.ones(n)
+    else:
+        w = _as_float_array(weights, "weights", MAX_MOVIE_ELEMENTS, op).ravel()
+        if w.size != n:
+            raise ValueError("%s: weights has %d entries but the lattice has %d "
+                             "ommatidia" % (op, w.size, n))
+        if (w < 0.0).any():
+            raise ValueError("%s: weights has a negative entry — a confidence "
+                             "cannot be negative" % (op,))
+        if float(w.sum()) <= 0.0:
+            raise ValueError("%s: all weights are zero, so nothing votes" % (op,))
+    az = np.asarray(lattice["az_rad"], dtype=np.float64)
+    e_az, e_el = _tangent_basis(az, el)
+    # f = -(w x d) . e  =  -w . (d x e)
+    M = np.concatenate([-np.cross(dirs, e_az), -np.cross(dirs, e_el)], axis=0)
+    A = M @ B.T
+    b = np.concatenate([f[:, 0], f[:, 1]])
+    sw = np.sqrt(np.concatenate([w, w]))
+    A = A * sw[:, None]
+    b = b * sw
+    if A.shape[0] < A.shape[1]:
+        raise ValueError("%s: %d equations for %d unknown(s) — this eye has too "
+                         "few ommatidia to fit that many axes"
+                         % (op, A.shape[0], A.shape[1]))
+    coef, _res, _rank, sv = np.linalg.lstsq(A, b, rcond=None)
+    omega = B.T @ coef
+    pred = A @ coef
+    resid = float(np.sqrt(np.mean((b - pred) ** 2)))
+    fl = float(np.sqrt(np.mean(b ** 2)))
+    cond = float(sv[0] / sv[-1]) if sv.size and sv[-1] > 0.0 else float("inf")
+    return {"omega_rad_s": np.ascontiguousarray(omega),
+            "roll_rad_s": float(omega[0]), "pitch_rad_s": float(omega[1]),
+            "yaw_rad_s": float(omega[2]), "residual_rms": resid,
+            "flow_rms": fl, "explained": float(1.0 - resid / fl) if fl > 0.0 else 0.0,
+            "condition": cond, "n_ommatidia": int(n)}
+
+
+def fly_eye_merge(lattice_a, lattice_b, *more):
+    """Several lattices seen as one wide eye — the viewing directions of all of them.
+
+    :func:`fly_hex_resample` needs a lattice that fits inside one pinhole image,
+    which caps a single patch at well under a hemisphere. A fly is not so
+    limited: its two compound eyes together see almost the whole sphere, and the
+    wide-field cells that read self-motion out of them integrate over all of it.
+    This op is that integration made explicit — render each patch through its own
+    camera, run the pathway on each, then merge the *geometry* so that one
+    least-squares fit sees every ommatidium at once.
+
+    It matters more than it looks. In a naturalistic 1/f scene the response of a
+    correlation detector is contrast-weighted, so a narrow patch is at the mercy
+    of whichever few large features happen to be in it; widening the field is
+    what turns the estimate from a guess into a measurement (the PoC measures how
+    much).
+
+    lattice_a / lattice_b / *more: two or more :func:`fly_hex_lattice` results. They must
+    share the inter-ommatidial angle and the geometry (different spacings are
+    different eyes and the merged field would silently mix two sampling scales),
+    and no two ommatidia may look in exactly the same direction (merging a patch
+    with itself would double its vote without saying so).
+
+    Returns a lattice dict with the same keys plus ``"eye"``, the index of the
+    patch each ommatidium came from, in input order. The merged lattice is what
+    :func:`fly_matched_filter` and :func:`fly_egomotion_from_flow` take;
+    :func:`fly_hex_resample` and :func:`fly_flow_from_directions` stay per patch,
+    because a pinhole image and a hexagonal neighbourhood are both local.
+
+    **Raises** ``ValueError``: a malformed lattice (including a sequence handed
+    in where a lattice was expected), a mismatched ``dphi_rad`` or ``geometry``,
+    and a direction that appears twice.
+    """
+    op = "fly_eye_merge"
+    seq = [lattice_a, lattice_b] + list(more)
+    parts = [_as_lattice(lat, op) for lat in seq]
+    dphi0 = parts[0][2]
+    geom0 = seq[0]["geometry"]
+    for i, (_d, _e, dphi, _a) in enumerate(parts[1:], start=1):
+        if abs(dphi - dphi0) > 1e-12:
+            raise ValueError(
+                "%s: lattice 0 has an inter-ommatidial angle of %.6g rad and "
+                "lattice %d has %.6g — merging them would mix two sampling "
+                "scales into one field" % (op, dphi0, i, dphi))
+        if seq[i]["geometry"] != geom0:
+            raise ValueError("%s: lattice 0 is %r and lattice %d is %r — merge "
+                             "patches of the same eye" % (op, geom0, i,
+                                                          seq[i]["geometry"]))
+    dirs = np.vstack([p[0] for p in parts])
+    key = np.round(dirs, 12)
+    _u, counts = np.unique(key, axis=0, return_counts=True)
+    if int(counts.max()) > 1:
+        raise ValueError(
+            "%s: %d ommatidium/ommatidia look in exactly the same direction in "
+            "two of the patches — merging would count that part of the field "
+            "twice" % (op, int((counts > 1).sum())))
+    eye = np.concatenate([np.full(p[0].shape[0], i, dtype=np.int64)
+                          for i, p in enumerate(parts)])
+    return {
+        "uv": np.ascontiguousarray(np.vstack([np.asarray(l["uv"]) for l in seq])),
+        "az_rad": np.ascontiguousarray(np.concatenate(
+            [np.asarray(l["az_rad"], dtype=np.float64) for l in seq])),
+        "el_rad": np.ascontiguousarray(np.concatenate([p[1] for p in parts])),
+        "dirs": np.ascontiguousarray(dirs),
+        "dphi_rad": float(dphi0),
+        "geometry": geom0,
+        "eye": eye,
+    }
 
 if __name__ == "__main__":                                # pragma: no cover
     lat = fly_hex_lattice()

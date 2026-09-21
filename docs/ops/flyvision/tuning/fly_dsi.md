@@ -41,6 +41,10 @@ in the tests).
 *angles_deg*, mismatched lengths, an array over :data:`MAX_SIGNAL_POINTS`, and
 an all-zero *responses* (no direction tuning to report).
 
+## 詳しい使い方ガイド
+
+- [fly_vision ファミリ ガイド](../guides/fly_vision.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
@@ -53,7 +57,7 @@ an all-zero *responses* (no direction tuning to report).
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[fly_hex_resample](../sample/fly_hex_resample.md) · [fly_hs_readout](../integrate/fly_hs_readout.md)
+[fly_t4t5_field](../direction/fly_t4t5_field.md) · [fly_flow_from_directions](../direction/fly_flow_from_directions.md) · [fly_matched_filter](../selfmotion/fly_matched_filter.md) · [fly_egomotion_from_flow](../selfmotion/fly_egomotion_from_flow.md) · [fly_eye_merge](../selfmotion/fly_eye_merge.md) · [fly_hex_resample](../sample/fly_hex_resample.md) · [fly_hs_readout](../integrate/fly_hs_readout.md)
 
 ## 同カテゴリ(`tuning`)
 

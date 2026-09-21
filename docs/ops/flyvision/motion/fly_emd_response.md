@@ -44,6 +44,10 @@ which is zero at ``lambda = 2 dphi`` (``psi = pi``) and maximal at
 *signal_a* or *signal_b*, mismatched lengths, a signal over
 :data:`MAX_SIGNAL_POINTS`, and a non-positive *tau_s* / *dt_s*.
 
+## 詳しい使い方ガイド
+
+- [fly_vision ファミリ ガイド](../guides/fly_vision.md)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

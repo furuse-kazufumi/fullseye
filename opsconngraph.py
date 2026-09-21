@@ -109,6 +109,11 @@ _CATALOG = {
         ("states_participation_ratio", "conngraph", ["matrix"], "measurement"),
         ("states_layer_dimension", "conngraph", ["matrix", "labels"], "table"),
     ],
+    # 回路(2026-09-22): 配線をそのままコンダクタンス回路として回す(学習なし)。
+    #   状態列 (T, n) は matrix —— 画像ではない。
+    "circuit": [
+        ("graph_conductance_states", "conngraph", ["conn_graph", "matrix"], "matrix"),
+    ],
 }
 
 

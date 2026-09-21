@@ -15,7 +15,7 @@ version: 0.1.0
 
 コネクトーム解析の定番の連鎖 —— *シナプス表を隣接行列にする → 次数と中心性を測る → 次数を保ったまま辺を繋ぎ替えた帰無モデルと比べる → 結合行列を reservoir として信号を回し、リッジ回帰で読み出す* —— がこの族です。
 
-27 op / 6 カテゴリ(numpy のみ。台帳は `opsconngraph.py`、実体は `conngraph.py`):
+28 op / 7 カテゴリ(numpy のみ。台帳は `opsconngraph.py`、実体は `conngraph.py`):
 
 - **build(3)** — `graph_from_synapses` / `graph_degree_preserving_shuffle` / `graph_binarize`: 表 → 行列、**次数保存シャッフル(帰無モデル)**、二値化。
 - **stats(9)** — `graph_degree_table` / `graph_clustering_coefficient` / `graph_betweenness` / `graph_laplacian_spectrum` / `graph_spectral_radius` / `graph_components` / `graph_modularity` / `graph_rich_club` / `graph_motif_count`: 教科書の閉形式だけ(Brandes の媒介中心性、Watts–Strogatz のクラスタ係数、Leicht–Newman の有向モジュラリティ、Milo のモチーフ)。
@@ -164,3 +164,15 @@ V3 = fs.points_activity_video(P, X, colors=side_rgb, views=((0, 0), (90, 0), (0,
 - **`graph_degree_preserving_shuffle` が保つのは二値の次数列**。重みは辺に付いて動くので strength は変わる。保ちたいのが strength なら別の帰無モデル(未実装)。
 - **`reservoir_from_graph` はスペクトル半径 0 を拒否**する(DAG や空グラフは何倍しても 0)。
 - **配置は成分ごと**。非連結グラフでは零固有空間が縮退して Fiedler ベクトルが成分を分けるとは限らないので、成分を明示的に分けて格子に並べる。
+
+## 回路として回す(2026-09-22)
+
+`conn_graph` は「測った配線」だが、測った配線は**回路でもある**。`graph_conductance_states` は
+シナプス表から作った行列をそのまま膜電位の式に入れて回す:
+
+    τ dVᵢ/dt = −(Vᵢ − E_rest) + g⁺ᵢ (E_exc − Vᵢ) + g⁻ᵢ (E_inh − Vᵢ)
+
+正の重みが興奮性のコンダクタンス、負の重みが抑制性のコンダクタンスになる。**当てはめる数は 1 つも無い**
+(`reservoir_states` → `ridge_readout` の経路は読み出しを学習するが、こちらは学習しない)。
+放出 `f(V)` を非負に限ってあるので、状態は必ず `[min(E), max(E)]` に留まる —— 反転電位の凸結合だからで、
+どんな配線・どんな入力でも発散しない。入力が来ると実効時定数が `τ/(1+g)` に縮む。
