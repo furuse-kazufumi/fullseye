@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 43393a6ac35c -->
+<!-- i18n-source-sha: ec1ecf738251 -->
 # Fullseye als RAG eines KI-Assistenten nutzen (für Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · **Deutsch**
@@ -49,6 +49,20 @@ py -3.11 raptor_corpus2skill.py --source <fullseye>/docs/ops --name fullseye_ops
 ```
 
 Hinweis: Ein geclusterter Korpus ist eine **Momentaufnahme zum Zeitpunkt der Aufnahme**. Wird `docs/ops` aktualisiert, veraltet er, sofern man ihn nicht erneut einliest (Tier 0/1 veralten nie, da sie stets die aktuellen Notizen lesen).
+
+---
+
+## Tier 3 (mitgeliefert): die Literaturschicht — Fertigungswissen auf „welche Ops“ heruntergebrochen
+
+Eine Op-Notiz beantwortet „was tut dieser Op“, nicht „was messe ich in diesem Prozess, an diesem Teil“.
+[`docs/literature/`](literature/INDEX.md) schließt diese Lücke: externe Literaturkorpora (Maschinenbau-Konstruktion,
+Mechatronik-Bauteile, Fertigungsprozesse — etwa 7.000 OpenAlex-Metadatensätze), je Cluster zusammengefasst, mit **den in
+jedem Cluster zu verwendenden Ops** (eine handgeschriebene Thema → Op-Tabelle, deren Op-Namen beim Erzeugen gegen die
+ausgelieferten Notizen geprüft werden) und Titel / Jahr / DOI repräsentativer Arbeiten als Herkunft. Lesereihenfolge:
+Prozess oder Bauteil → Literatur-Cluster → Ops → Op-Notiz (Typvertrag, lauffähiges Beispiel) → Implementierung.
+Abstracts werden nicht kopiert, und Ops werden nie über Wortüberlappung gewählt (das brachte nachweislich unpassende Ops
+bei Allerweltswörtern und wurde verworfen). Da die Korpora außerhalb des Repos liegen, wird nur diese Schicht mit
+`tools/gen_literature_notes.py --rad-root <RAD>` neu erzeugt; `tests/test_literature_notes.py` sichert ihre Form.
 
 ---
 

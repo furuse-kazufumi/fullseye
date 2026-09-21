@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 43393a6ac35c -->
+<!-- i18n-source-sha: ec1ecf738251 -->
 # Fullseye를 AI 어시스턴트의 RAG로 사용하는 방법(Claude Code용)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · **한국어** · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -49,6 +49,18 @@ py -3.11 raptor_corpus2skill.py --source <fullseye>/docs/ops --name fullseye_ops
 ```
 
 주의: 클러스터링된 코퍼스는 **수집 시점의 스냅샷**입니다. `docs/ops`를 업데이트한 후 재수집하지 않으면 낡아집니다(Tier 0/1은 항상 원본 노트를 읽으므로 낡아지지 않습니다).
+
+---
+
+## Tier 3(동봉): 문헌층 — 제조 기술 지식을 「어떤 op를 쓸지」로 내리기
+
+op 노트는 「이 op가 무엇을 하는가」에는 답하지만 「이 공정·이 부품에서 무엇을 측정해야 하는가」에는 답하지 않습니다.
+[`docs/literature/`](literature/INDEX.md)가 그 틈을 메웁니다: 외부 문헌 코퍼스(기계 설계·메카트로닉스 부품·제조 공정, 약 7,000건의
+OpenAlex 메타데이터)를 클러스터별로 요약하고, **각 클러스터에서 쓸 op**(사람이 쓴 주제 → op 대응표, op 이름은 생성 시 출하 노트와
+대조해 실재를 보증)와 대표 논문의 제목·연도·DOI를 출처로 붙였습니다. 읽는 순서는 「공정·부품의 화제 → 문헌 클러스터 → 쓸 op →
+op 노트(타입 계약·실행 가능한 예)→ 구현」. 초록은 옮기지 않고, 단어 일치로 op를 고르지도 않습니다(일반어로 무관한 op가 나열되는
+것을 실측하고 버렸습니다). 코퍼스 본체는 저장소에 없으므로 이 층만 `tools/gen_literature_notes.py --rad-root <RAD>`로 다시 만들며,
+`tests/test_literature_notes.py`가 형태를 지킵니다.
 
 ---
 

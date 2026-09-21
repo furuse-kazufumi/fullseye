@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 43393a6ac35c -->
+<!-- i18n-source-sha: ec1ecf738251 -->
 # 将 Fullseye 用作 AI 助手 RAG 的方法（面向 Claude Code）
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · **简体中文** · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -49,6 +49,17 @@ py -3.11 raptor_corpus2skill.py --source <fullseye>/docs/ops --name fullseye_ops
 ```
 
 注意：聚类语料库是**导入时刻的快照**。更新 `docs/ops` 后如果不重新导入就会过时（Tier 0/1 始终读取原始笔记，因此不会过时）。
+
+---
+
+## Tier 3（内置）：文献层——把制造技术知识落到「该用哪些 op」
+
+op 笔记回答「这个 op 做什么」，却不回答「在这道工序、这个零件上该测什么」。
+[`docs/literature/`](literature/INDEX.md) 填补这个空隙：外部文献语料（机械设计、机电零部件、制造工艺，约 7,000 条 OpenAlex
+元数据）按聚类摘要，并附上**每个聚类要用的 op**（人工编写的主题 → op 对照表，生成时用出货笔记核对 op 名是否存在）以及代表
+论文的标题 / 年份 / DOI 作为来源。阅读顺序：工序或零件 → 文献聚类 → 要用的 op → op 笔记（类型契约、可运行示例）→ 实现。
+不复制摘要，也从不用词面重合来挑 op（实测会被通用词带出无关 op，已弃用）。语料本体不在仓库里，因此只有这一层用
+`tools/gen_literature_notes.py --rad-root <RAD>` 重建，`tests/test_literature_notes.py` 守住它的形状。
 
 ---
 

@@ -48,6 +48,21 @@ Fullseye ships **2068 operator notes** in **39 families** — one generated Mark
 
 <!-- opdocs:corpus-map end -->
 
+## Literature layer: from a manufacturing question to the ops (docs/literature)
+
+Op notes say what an op does; they do not say what to measure in a given process or
+part. `docs/literature/INDEX.md` bridges that: three external literature corpora
+(mechanical design, mechatronic parts, manufacturing processes) summarised per cluster,
+each cluster listing **the ops to use** (a hand-curated theme → op table; every op
+name is verified against the shipped notes when the layer is generated) plus
+representative papers (title / year / DOI only). Use it when the question is phrased
+in the domain's words ("weld bead", "springback", "chatter", "reflow", "wafer CMP"):
+open the matching cluster, take its ops, then read their notes. The layer never picks
+ops by word overlap, and clusters with no matching ops say so. Next to it,
+`docs/literature/OSS_LANDSCAPE.md` maps the existing OSS in each area (licence,
+last activity, verified against the project's API or site) and states where Fullseye
+overlaps, where it stops, and which file format or process boundary connects them.
+
 ## Retrieval recipes
 
 - **Start at `docs/ops/INDEX.md`.** It names every family with its size; pick the

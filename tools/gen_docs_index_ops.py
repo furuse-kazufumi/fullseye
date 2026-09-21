@@ -402,6 +402,9 @@ DOC_GROUPS = [
         "GENERAL_ALGORITHMS.md", "ADDING_OPS.md", "WAVE0_STABLE_SLOTS.md"]),
     ("rag", "AI から引く(RAG)", "Retrieval for AI assistants", [
         "AI_RAG_GUIDE.md"]),
+    ("literature", "文献層(製造技術の知識 → 使う op)", "Literature layer (manufacturing knowledge → ops)", [
+        "literature/INDEX.md", "literature/mech_design.md", "literature/mechatronics_parts.md",
+        "literature/manufacturing_processes.md", "literature/OSS_LANDSCAPE.md"]),
     ("perception", "知覚・センサ", "Perception and sensors", [
         "PERCEPTION.md", "PERCEPTION_PHYSICAL_AI.md", "PERCEPTION_REALDATA.md",
         "SENSOR_PLAYBOOK.md", "HIGHSPEED_VISION.md",
