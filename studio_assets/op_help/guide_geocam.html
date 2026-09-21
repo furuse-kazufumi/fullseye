@@ -51,3 +51,7 @@ sky_mask = fs.ledger.render_skyline_view(sky, K, photo.shape, est[&quot;yaw_deg&
 <p style="margin:2px 0 2px 12px">• DEM の分解能より細かい稜線は描けない(30 m DEM で仰角 ≈ 0.1° の粗さ)。遠い山は地球の丸みと屈折で沈む(<code style="color:#22d3bf">earth_curvature=True</code> が既定)。</p>
 <p style="margin:2px 0 2px 12px">• 内部行列 K は要る(EXIF の焦点距離か、既知の画角から <code style="color:#22d3bf">fx = W / (2 tan(fov/2))</code>)。K の誤りは pitch と roll に化ける。</p>
 <p style="margin:2px 0 2px 12px">• 生の公開カメラ画像は repo に入れない(ライセンスと人物・車両)。この族は幾何だけを扱い、写っているものの認識はしない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実写で分かったこと(2026-09-21、Fintraffic 天候カメラ)</h3>
+<p>合成では <code style="color:#22d3bf">sun_pixel_position</code> で足りたが、実写の道路カメラでは局名の白い文字・標識・白い車が飽和して<b>見た目では太陽と区別できない</b>(300 局の探針で 24/24 が誤検出)。太陽は円盤でなく大きな<b>ブルーム</b>で、画像の上端や文字の帯で切れる。そこで 2 op を足した:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sun_bloom_fit</code> —— 最大の飽和塊の<b>切れていない縁</b>に円を当てて中心を返す(重心は切れた側の反対へ偏る)。太陽とは決めない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">camera_orientation_from_sun_candidates</code> —— フレームごとの候補(太陽も車も混在)から、<b>時刻どおりに動く 1 本</b>を RANSAC で選び、道路カメラの事前知識で非物理な仮説を捨て、焦点距離も探索する。1 時間の低仰角の弧では yaw は強く決まり、roll と焦点距離は弱い(<code style="color:#22d3bf">loo_px</code> と <code style="color:#22d3bf">n_inliers</code> を見る)。</p>

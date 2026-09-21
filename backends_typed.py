@@ -167,6 +167,8 @@ _OP_BRIDGE_SKIP = {
     #   太陽の円盤も空と地形の境界も無いので、どちらも ValueError か意味の無い線になる(「走った」≠「意味のある出力」)。
     #   台帳(`fullseye.ledger.sun_pixel_position` / `skyline_extract`)からは写真を渡して使う。
     "sun_pixel_position", "skyline_extract",
+    # 2026-09-21 実データ回の 2 本: 模様の探針には飽和塊も時刻つきの候補列も無い。
+    "sun_bloom_fit", "camera_orientation_from_sun_candidates",
     # 2026-09-08、同じ回に摘発。`indices_to_labels` は **1-D の選択マスク**
     # (長さ = 最大添字 + 1)を返すが、宣言型 `labels` は TYPE_TO_SORT で
     # `volume`(ndim == 3 の契約)に畳まれるので、橋は毎回

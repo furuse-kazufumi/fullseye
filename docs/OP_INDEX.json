@@ -1,8 +1,8 @@
 {
- "n_ops": 2072,
+ "n_ops": 2074,
  "tiers": {
   "color": 12,
-  "ledger": 1124,
+  "ledger": 1126,
   "nary": 17,
   "registry": 919
  },
@@ -1809,6 +1809,21 @@
    "dim": "geocam",
    "in_sorts": [
     "keypoints",
+    "signal"
+   ]
+  },
+  {
+   "name": "camera_orientation_from_sun_candidates",
+   "halcon": "",
+   "in_sort": "keypoints",
+   "out_sort": "table",
+   "category": "sun",
+   "tier": "ledger",
+   "ledger": "opsgeocam",
+   "dim": "geocam",
+   "in_sorts": [
+    "keypoints",
+    "signal",
     "signal"
    ]
   },
@@ -12729,6 +12744,19 @@
    "dim": "optics",
    "in_sorts": [
     "normalmap"
+   ]
+  },
+  {
+   "name": "sun_bloom_fit",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "sun",
+   "tier": "ledger",
+   "ledger": "opsgeocam",
+   "dim": "geocam",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {

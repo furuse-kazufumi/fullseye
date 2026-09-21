@@ -54,6 +54,9 @@ _CATALOG = {
         ("sun_position", "geocam", ["signal"], "table"),
         ("sun_pixel_position", "geocam", ["image2d"], "keypoints"),
         ("camera_orientation_from_sun", "geocam", ["keypoints", "signal"], "table"),
+            # 2026-09-21 実データ(Fintraffic)で足した 2 本: 切れたブルームの円当て / 候補列から動きで太陽を選ぶ
+            ("sun_bloom_fit", "geocam", ["image2d"], "table"),
+            ("camera_orientation_from_sun_candidates", "geocam", ["keypoints", "signal", "signal"], "table"),
     ],
     "skyline": [
         ("dem_skyline", "geocam", ["depth"], "table"),

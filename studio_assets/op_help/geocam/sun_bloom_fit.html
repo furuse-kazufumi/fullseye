@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sun_bloom_fit — GEOCAM <code style="color:#22d3bf">sun</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_bloom_fit(image, threshold=0.97, ignore_top_rows=0, min_area=30, max_area_frac=0.15, min_rim_fraction=0.3)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import geocam; geocam.sun_bloom_fit(image, threshold=0.97, ignore_top_rows=0, min_area=30, max_area_frac=0.15, min_rim_fraction=0.3)</code>、台帳から引くなら <code style="color:#22d3bf">opsgeocam.get(&quot;sun_bloom_fit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>実写の太陽 = センサを飽和させる<b>ブルーム</b>(円盤より大きい、露出で大きさが変わる、画像の縁や文字の帯で切れる)。</p>
+<p>最大の飽和塊の<b>縁</b>に円を当てて中心を返す → table。重心は塊が切れると切れた側の反対へ偏る(実測 15 px)ので、</p>
+<p>切れた縁(画像の外周と `<code style="color:#22d3bf">ignore_top_rows</code>` の帯に触れる画素)を捨てた残りの弧に代数的最小二乗(Kåsa 1976)で円を当てる。</p>
+<p>`<code style="color:#22d3bf">sun_pixel_position</code>` は「詰まった小さな円盤」を前提にした合成向けの門で、実写の道路カメラでは局名の白い</p>
+<p>文字・標識・白い車を太陽と読む(Fintraffic 天候カメラで 24/24 が誤検出、2026-09-21)。この op は<b>太陽と決めない</b>:</p>
+<p>円の中心と半径・残差・切れの有無を返し、太陽かどうかは時刻どおりに動くかで決める</p>
+<p>(`<code style="color:#22d3bf">camera_orientation_from_sun_candidates</code>`)。</p>
+<p>Args:</p>
+<p>image: (H, W) float、0〜1。</p>
+<p>threshold: 飽和とみなす絶対値。</p>
+<p>ignore_top_rows: 上端の何行を無視するか(局名などの文字の帯)。</p>
+<p>min_area: 塊の最小画素数。</p>
+<p>max_area_frac: 塊の最大面積(画像に対する比)—— 空全体が飛んだ写真を拒む。</p>
+<p>min_rim_fraction: 切れていない縁が円周の何割以上要るか(これ未満は「切れすぎ」で ValueError)。</p>
+<p>Returns:</p>
+<p>table: `<code style="color:#22d3bf">u</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">v</code><code style="color:#22d3bf">(円の中心)/ </code><code style="color:#22d3bf">r</code><code style="color:#22d3bf">(半径 px)/ </code><code style="color:#22d3bf">rms_px</code><code style="color:#22d3bf">(縁の半径残差)/ </code><code style="color:#22d3bf">area</code>`(塊の画素数)/</p>
+<p>`<code style="color:#22d3bf">clipped</code><code style="color:#22d3bf">(1 = 縁のどこかが切れている)/ </code><code style="color:#22d3bf">rim_fraction</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">centroid_u</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">centroid_v</code>`(比較用の重心)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:render_skyline_view">render_skyline_view</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_skyline">camera_orientation_from_skyline</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">sun</code>)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:sun_position">sun_position</a> · <a style="color:#22d3bf" href="opgeocam:sun_pixel_position">sun_pixel_position</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_sun">camera_orientation_from_sun</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_sun_candidates">camera_orientation_from_sun_candidates</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: geocam.py — GEOCAM operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

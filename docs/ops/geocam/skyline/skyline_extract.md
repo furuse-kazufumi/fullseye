@@ -52,7 +52,7 @@ Returns:
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
-[sun_position](../sun/sun_position.md) · [camera_orientation_from_sun](../sun/camera_orientation_from_sun.md) · [camera_orientation_from_skyline](../orientation/camera_orientation_from_skyline.md)
+[sun_position](../sun/sun_position.md) · [camera_orientation_from_sun](../sun/camera_orientation_from_sun.md) · [camera_orientation_from_sun_candidates](../sun/camera_orientation_from_sun_candidates.md) · [camera_orientation_from_skyline](../orientation/camera_orientation_from_skyline.md)
 
 ## 同カテゴリ(`skyline`)
 

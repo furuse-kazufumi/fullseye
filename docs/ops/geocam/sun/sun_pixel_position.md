@@ -50,11 +50,11 @@ Returns:
 
 ## 型が繋がる次の op(`keypoints` を入力に取れる)
 
-[camera_orientation_from_sun](camera_orientation_from_sun.md)
+[camera_orientation_from_sun](camera_orientation_from_sun.md) · [camera_orientation_from_sun_candidates](camera_orientation_from_sun_candidates.md)
 
 ## 同カテゴリ(`sun`)
 
-[sun_position](sun_position.md) · [camera_orientation_from_sun](camera_orientation_from_sun.md)
+[sun_position](sun_position.md) · [camera_orientation_from_sun](camera_orientation_from_sun.md) · [sun_bloom_fit](sun_bloom_fit.md) · [camera_orientation_from_sun_candidates](camera_orientation_from_sun_candidates.md)
 
 ---
 *Provenance: geocam.py — GEOCAM operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

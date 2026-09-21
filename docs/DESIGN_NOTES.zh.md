@@ -98,7 +98,7 @@
 
 ## `backends_typed.py`
 
-- **L532** — ★在 2026-09-05 之前通过操作 sys.path 读取 ``tools/chain_fuzz``(未随附)。在 wheel 中会失败,而下面的 build() 悄悄返回 [],所以 tb_* 143 个 op 消失了。
+- **L534** — ★在 2026-09-05 之前通过操作 sys.path 读取 ``tools/chain_fuzz``(未随附)。在 wheel 中会失败,而下面的 build() 悄悄返回 [],所以 tb_* 143 个 op 消失了。
 
 ## `blob2d.py`
 

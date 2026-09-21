@@ -57,7 +57,7 @@ Returns:
 
 ## 同カテゴリ(`sun`)
 
-[sun_position](sun_position.md) · [sun_pixel_position](sun_pixel_position.md)
+[sun_position](sun_position.md) · [sun_pixel_position](sun_pixel_position.md) · [sun_bloom_fit](sun_bloom_fit.md) · [camera_orientation_from_sun_candidates](camera_orientation_from_sun_candidates.md)
 
 ---
 *Provenance: geocam.py — GEOCAM operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

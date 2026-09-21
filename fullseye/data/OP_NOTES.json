@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2072,
- "n_notes": 2078,
+ "n_ops": 2074,
+ "n_notes": 2080,
  "notes": {
   "vol_dilate": [
    {
@@ -15447,6 +15447,26 @@
     "in": "keypoints × signal",
     "out": "table",
     "path": "docs/ops/geocam/sun/camera_orientation_from_sun.md"
+   }
+  ],
+  "camera_orientation_from_sun_candidates": [
+   {
+    "op": "camera_orientation_from_sun_candidates",
+    "dim": "geocam",
+    "category": "sun",
+    "in": "keypoints × signal × signal",
+    "out": "table",
+    "path": "docs/ops/geocam/sun/camera_orientation_from_sun_candidates.md"
+   }
+  ],
+  "sun_bloom_fit": [
+   {
+    "op": "sun_bloom_fit",
+    "dim": "geocam",
+    "category": "sun",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/geocam/sun/sun_bloom_fit.md"
    }
   ],
   "sun_pixel_position": [

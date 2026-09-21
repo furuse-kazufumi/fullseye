@@ -1,0 +1,816 @@
+{
+ "fetched": "2026-09-21",
+ "license": "Fintraffic weathercam images CC BY 4.0 (https://www.digitraffic.fi/en/); OSM ODbL",
+ "cameras": [
+  {
+   "preset": "C0362200",
+   "station": "C03622",
+   "name": "vt7_Hamina_Helsmanni",
+   "names": {
+    "fi": "Tie 7 Hamina, Helsmanni",
+    "sv": "Väg 7 Fredrikshamn, Helsmanni",
+    "en": "Road 7 Hamina, Helsmanni"
+   },
+   "camera_type": "BOSCH",
+   "lat": 60.598194,
+   "lon": 27.236655,
+   "road_number": 7,
+   "presentation_name": "Tie 7",
+   "direction": "UNKNOWN",
+   "resolution": "1280x720",
+   "shape": [
+    720,
+    1280
+   ],
+   "overlay_rows": 48,
+   "frames": [
+    {
+     "t": 1789910505,
+     "bloom": null,
+     "why": "largest saturated blob has 2 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 1 pixels < min_area 4"
+    },
+    {
+     "t": 1789911105,
+     "bloom": null,
+     "why": "no saturated pixel (>= 0.97)",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789911705,
+     "bloom": null,
+     "why": "no saturated pixel (>= 0.97)",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789912305,
+     "bloom": null,
+     "why": "largest saturated blob has 2 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 1 pixels < min_area 4"
+    },
+    {
+     "t": 1789912905,
+     "bloom": null,
+     "why": "largest saturated blob has 3 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 1 pixels < min_area 4"
+    },
+    {
+     "t": 1789913505,
+     "bloom": null,
+     "why": "largest saturated blob has 3 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 1 pixels < min_area 4"
+    },
+    {
+     "t": 1789914105,
+     "bloom": null,
+     "why": "largest saturated blob has 2 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 1 pixels < min_area 4"
+    },
+    {
+     "t": 1789914705,
+     "bloom": null,
+     "why": "largest saturated blob has 2 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789915305,
+     "bloom": null,
+     "why": "no saturated pixel (>= 0.97)",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789915905,
+     "bloom": {
+      "u": 292.028,
+      "v": 46.89,
+      "r": 13.012,
+      "rms_px": 5.209,
+      "area": 175.0,
+      "clipped": 1.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 291.64,
+      "centroid_v": 50.08
+     },
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789916505,
+     "bloom": {
+      "u": 342.656,
+      "v": 28.972,
+      "r": 26.066,
+      "rms_px": 2.165,
+      "area": 230.0,
+      "clipped": 1.0,
+      "rim_fraction": 0.592,
+      "centroid_u": 343.161,
+      "centroid_v": 50.539
+     },
+     "naive": [
+      351.0,
+      21.8
+     ]
+    },
+    {
+     "t": 1789917105,
+     "bloom": {
+      "u": 406.797,
+      "v": 56.071,
+      "r": 44.286,
+      "rms_px": 13.923,
+      "area": 3255.0,
+      "clipped": 1.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 405.121,
+      "centroid_v": 66.269
+     },
+     "naive": [
+      405.6,
+      36.0
+     ]
+    },
+    {
+     "t": 1789917705,
+     "bloom": {
+      "u": 476.077,
+      "v": 59.499,
+      "r": 48.29,
+      "rms_px": 5.015,
+      "area": 4961.0,
+      "clipped": 1.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 476.196,
+      "centroid_v": 73.841
+     },
+     "naive": [
+      475.7,
+      57.5
+     ]
+    },
+    {
+     "t": 1789918305,
+     "bloom": {
+      "u": 536.526,
+      "v": 89.102,
+      "r": 38.046,
+      "rms_px": 4.529,
+      "area": 4394.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 536.932,
+      "centroid_v": 87.894
+     },
+     "naive": [
+      536.1,
+      89.6
+     ]
+    },
+    {
+     "t": 1789918905,
+     "bloom": {
+      "u": 587.366,
+      "v": 139.697,
+      "r": 21.994,
+      "rms_px": 7.587,
+      "area": 906.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 588.322,
+      "centroid_v": 135.254
+     },
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789919505,
+     "bloom": {
+      "u": 634.139,
+      "v": 186.825,
+      "r": 28.747,
+      "rms_px": 10.203,
+      "area": 1797.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 631.955,
+      "centroid_v": 182.672
+     },
+     "naive": [
+      631.2,
+      181.8
+     ]
+    },
+    {
+     "t": 1789920105,
+     "bloom": {
+      "u": 679.682,
+      "v": 207.567,
+      "r": 32.249,
+      "rms_px": 13.174,
+      "area": 826.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 675.92,
+      "centroid_v": 212.62
+     },
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789920705,
+     "bloom": {
+      "u": 718.059,
+      "v": 204.159,
+      "r": 32.161,
+      "rms_px": 11.302,
+      "area": 344.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 715.451,
+      "centroid_v": 219.18
+     },
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789963305,
+     "bloom": null,
+     "why": "no saturated pixel (>= 0.97)",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789963905,
+     "bloom": null,
+     "why": "no saturated pixel (>= 0.97)",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789964505,
+     "bloom": null,
+     "why": "no saturated pixel (>= 0.97)",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789965105,
+     "bloom": null,
+     "why": "largest saturated blob has 1 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789965705,
+     "bloom": null,
+     "why": "no saturated pixel (>= 0.97)",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789966305,
+     "bloom": null,
+     "why": "largest saturated blob has 1 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789966905,
+     "bloom": null,
+     "why": "no saturated pixel (>= 0.97)",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789967505,
+     "bloom": null,
+     "why": "largest saturated blob has 26 pixels < min_area 30",
+     "naive": [
+      1138.3,
+      5.0
+     ]
+    },
+    {
+     "t": 1789968105,
+     "bloom": null,
+     "why": "largest saturated blob has 2 pixels < min_area 30",
+     "naive": [
+      1143.0,
+      4.7
+     ]
+    },
+    {
+     "t": 1789968705,
+     "bloom": null,
+     "why": "largest saturated blob has 1 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 2 pixels < min_area 4"
+    },
+    {
+     "t": 1789969305,
+     "bloom": null,
+     "why": "largest saturated blob has 3 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789969905,
+     "bloom": {
+      "u": 251.589,
+      "v": 172.134,
+      "r": 7.282,
+      "rms_px": 3.283,
+      "area": 72.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 249.833,
+      "centroid_v": 172.903
+     },
+     "naive": [
+      247.1,
+      171.8
+     ]
+    },
+    {
+     "t": 1789970505,
+     "bloom": null,
+     "why": "largest saturated blob has 7 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 3 pixels < min_area 4"
+    },
+    {
+     "t": 1789971105,
+     "bloom": null,
+     "why": "largest saturated blob has 18 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789971705,
+     "bloom": null,
+     "why": "largest saturated blob has 6 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789972305,
+     "bloom": {
+      "u": 109.512,
+      "v": 133.094,
+      "r": 2.789,
+      "rms_px": 1.06,
+      "area": 30.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 109.533,
+      "centroid_v": 133.067
+     },
+     "naive": [
+      107.4,
+      133.8
+     ]
+    },
+    {
+     "t": 1789972905,
+     "bloom": {
+      "u": 112.936,
+      "v": 133.873,
+      "r": 5.007,
+      "rms_px": 1.952,
+      "area": 68.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 112.176,
+      "centroid_v": 133.353
+     },
+     "naive": [
+      111.0,
+      132.2
+     ]
+    },
+    {
+     "t": 1789973505,
+     "bloom": {
+      "u": 162.928,
+      "v": 130.566,
+      "r": 18.405,
+      "rms_px": 2.464,
+      "area": 96.0,
+      "clipped": 0.0,
+      "rim_fraction": 0.787,
+      "centroid_u": 161.99,
+      "centroid_v": 146.26
+     },
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789974105,
+     "bloom": {
+      "u": 189.832,
+      "v": 131.612,
+      "r": 26.54,
+      "rms_px": 13.19,
+      "area": 413.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 185.215,
+      "centroid_v": 132.312
+     },
+     "naive": [
+      88.3,
+      141.4
+     ]
+    },
+    {
+     "t": 1789974705,
+     "bloom": {
+      "u": 154.408,
+      "v": 114.988,
+      "r": 20.717,
+      "rms_px": 8.326,
+      "area": 873.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 160.071,
+      "centroid_v": 113.977
+     },
+     "naive": [
+      163.3,
+      121.6
+     ]
+    },
+    {
+     "t": 1789975305,
+     "bloom": {
+      "u": 181.526,
+      "v": 105.867,
+      "r": 9.421,
+      "rms_px": 4.327,
+      "area": 92.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 182.587,
+      "centroid_v": 107.87
+     },
+     "naive": [
+      188.6,
+      108.2
+     ]
+    },
+    {
+     "t": 1789975905,
+     "bloom": {
+      "u": 179.37,
+      "v": 90.263,
+      "r": 30.023,
+      "rms_px": 9.754,
+      "area": 413.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 185.041,
+      "centroid_v": 106.712
+     },
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789976505,
+     "bloom": null,
+     "why": "largest saturated blob has 9 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 2 pixels < min_area 4"
+    },
+    {
+     "t": 1789977105,
+     "bloom": null,
+     "why": "largest saturated blob has 1 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 1 pixels < min_area 4"
+    },
+    {
+     "t": 1789977705,
+     "bloom": null,
+     "why": "largest saturated blob has 3 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 1 pixels < min_area 4"
+    },
+    {
+     "t": 1789978305,
+     "bloom": null,
+     "why": "largest saturated blob has 3 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 1 pixels < min_area 4"
+    },
+    {
+     "t": 1789978905,
+     "bloom": null,
+     "why": "largest saturated blob has 6 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 3 pixels < min_area 4"
+    },
+    {
+     "t": 1789979505,
+     "bloom": null,
+     "why": "largest saturated blob has 13 pixels < min_area 30",
+     "naive": [
+      273.2,
+      194.8
+     ]
+    },
+    {
+     "t": 1789980105,
+     "bloom": {
+      "u": 226.869,
+      "v": 139.353,
+      "r": 6.717,
+      "rms_px": 2.967,
+      "area": 106.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 226.689,
+      "centroid_v": 138.943
+     },
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789980705,
+     "bloom": null,
+     "why": "largest saturated blob has 14 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 3 pixels < min_area 4"
+    },
+    {
+     "t": 1789981305,
+     "bloom": {
+      "u": 223.797,
+      "v": 146.081,
+      "r": 4.373,
+      "rms_px": 1.525,
+      "area": 58.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 224.103,
+      "centroid_v": 147.103
+     },
+     "naive": [
+      202.8,
+      161.3
+     ]
+    },
+    {
+     "t": 1789981905,
+     "bloom": null,
+     "why": "largest saturated blob has 17 pixels < min_area 30",
+     "naive": [
+      1048.4,
+      112.7
+     ]
+    },
+    {
+     "t": 1789982505,
+     "bloom": null,
+     "why": "largest saturated blob has 2 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 1 pixels < min_area 4"
+    },
+    {
+     "t": 1789983105,
+     "bloom": {
+      "u": 844.089,
+      "v": 89.953,
+      "r": 5.553,
+      "rms_px": 1.578,
+      "area": 105.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 844.133,
+      "centroid_v": 89.371
+     },
+     "naive": [
+      844.8,
+      87.4
+     ]
+    },
+    {
+     "t": 1789983705,
+     "bloom": null,
+     "why": "largest saturated blob has 5 pixels < min_area 30",
+     "naive": [
+      49.8,
+      2.0
+     ]
+    },
+    {
+     "t": 1789984305,
+     "bloom": null,
+     "why": "no saturated pixel (>= 0.97)",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789984905,
+     "bloom": null,
+     "why": "only 13% of the rim is unclipped (< 30%)",
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789985505,
+     "bloom": null,
+     "why": "only 16% of the rim is unclipped (< 30%)",
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789986105,
+     "bloom": null,
+     "why": "only 17% of the rim is unclipped (< 30%)",
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789986705,
+     "bloom": {
+      "u": 665.534,
+      "v": 167.211,
+      "r": 5.463,
+      "rms_px": 2.265,
+      "area": 70.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 667.757,
+      "centroid_v": 166.343
+     },
+     "naive": [
+      637.5,
+      170.8
+     ]
+    },
+    {
+     "t": 1789987305,
+     "bloom": {
+      "u": 924.162,
+      "v": 154.82,
+      "r": 7.047,
+      "rms_px": 2.29,
+      "area": 63.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 923.048,
+      "centroid_v": 151.778
+     },
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789987905,
+     "bloom": null,
+     "why": "largest saturated blob has 9 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 3 pixels < min_area 4"
+    },
+    {
+     "t": 1789988505,
+     "bloom": null,
+     "why": "largest saturated blob has 10 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 2 pixels < min_area 4"
+    },
+    {
+     "t": 1789989105,
+     "bloom": null,
+     "why": "largest saturated blob has 12 pixels < min_area 30",
+     "naive": [
+      1054.7,
+      98.8
+     ]
+    },
+    {
+     "t": 1789989705,
+     "bloom": null,
+     "why": "largest saturated blob has 8 pixels < min_area 30",
+     "naive": [
+      1030.0,
+      8.2
+     ]
+    },
+    {
+     "t": 1789990305,
+     "bloom": null,
+     "why": "largest saturated blob has 3 pixels < min_area 30",
+     "naive": [
+      704.2,
+      0.5
+     ]
+    },
+    {
+     "t": 1789990905,
+     "bloom": null,
+     "why": "largest saturated blob has 14 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    },
+    {
+     "t": 1789991505,
+     "bloom": null,
+     "why": "largest saturated blob has 2 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 1 pixels < min_area 4"
+    },
+    {
+     "t": 1789992105,
+     "bloom": null,
+     "why": "largest saturated blob has 2 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 2 pixels < min_area 4"
+    },
+    {
+     "t": 1789992705,
+     "bloom": null,
+     "why": "no saturated pixel (>= 0.97)",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789993305,
+     "bloom": null,
+     "why": "largest saturated blob has 2 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 1 pixels < min_area 4"
+    },
+    {
+     "t": 1789993905,
+     "bloom": null,
+     "why": "no saturated pixel (>= 0.97)",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789994505,
+     "bloom": null,
+     "why": "no saturated pixel (>= 0.97)",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789995105,
+     "bloom": null,
+     "why": "largest saturated blob has 1 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "no saturated pixel (>= 0.98)"
+    },
+    {
+     "t": 1789995705,
+     "bloom": null,
+     "why": "largest saturated blob has 13 pixels < min_area 30",
+     "naive": null,
+     "naive_why": "brightest blob has 3 pixels < min_area 4"
+    },
+    {
+     "t": 1789996305,
+     "bloom": {
+      "u": 696.237,
+      "v": 235.665,
+      "r": 8.506,
+      "rms_px": 3.971,
+      "area": 66.0,
+      "clipped": 0.0,
+      "rim_fraction": 1.0,
+      "centroid_u": 697.076,
+      "centroid_v": 233.545
+     },
+     "naive": null,
+     "naive_why": "largest saturated blob is not a compact disc (fill"
+    }
+   ],
+   "vanishing_point": {
+    "u": 762.1546805608144,
+    "v": 302.0785037380336,
+    "n_day_frames": 19,
+    "n_frames_with_vp": 5,
+    "n_agreeing": 3,
+    "spread_px": 10.698109221877763
+   },
+   "osm_road": {
+    "dist_m": 0.046,
+    "bearing": 275.259,
+    "ref": "7",
+    "highway": "motorway",
+    "name": "E18",
+    "oneway": "yes"
+   },
+   "source": "Fintraffic / Digitraffic weathercam history (CC BY 4.0), fetched 2026-09-21; OSM road geometry via Overpass (ODbL)"
+  }
+ ]
+}

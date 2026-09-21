@@ -98,7 +98,7 @@
 
 ## `backends_typed.py`
 
-- **L532** — ★2026-09-05 까지 ``tools/chain_fuzz``(비동봉)를 sys.path 조작으로 읽고 있었다. wheel 에서는 실패하고, 아래의 build() 가 조용히 [] 를 반환하므로 tb_* 143 op 가 사라져 있었다.
+- **L534** — ★2026-09-05 까지 ``tools/chain_fuzz``(비동봉)를 sys.path 조작으로 읽고 있었다. wheel 에서는 실패하고, 아래의 build() 가 조용히 [] 를 반환하므로 tb_* 143 op 가 사라져 있었다.
 
 ## `blob2d.py`
 

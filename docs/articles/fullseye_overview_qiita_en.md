@@ -4257,6 +4257,18 @@ The skyline route matches the 360-degree ridge rendered from the DEM at the came
 
 The controls are honest: a road-direction prior of the kind public metadata gives is off by 7.5 deg, and on a flat DEM the ridge is the same in every direction, so the op returns **ambiguous** instead of being silently 137 deg wrong. Synthetic only for now; real data (Fintraffic weather cameras + NLS elevation in Finland, Statens vegvesen + Kartverket DTM10 in Norway, all under open licences) is the next step. The intrinsics are required, skylines need mountains, and the sun has to be in the picture.
 
+### Where Is the Public Camera Looking, for Real — Hunting the Sun in 807 Road Cameras
+
+The synthetic section got away with "the sun is a small saturated disc". Real cameras did not. Probing 24 hours of Finland's Fintraffic weather cameras (807 stations, CC BY 4.0, no key) at sun elevations of 2-12 degrees, the look-alone gate called **station-name text, signs and white cars** the sun (24/24 wrong on the first probe), the sun turned out to be an exposure-dependent **bloom** clipped by the station-name band, and the cameras look down at the road with sky in the top third only.
+
+![Nine sunset frames: the magenta circle is where astronomy plus the fitted pose says the sun must be - it follows the real sun down to the horizon](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif)
+
+Two ops were added to geocam. `sun_bloom_fit` fits a circle to the **unclipped rim** of the largest saturated blob (the centroid sits 12 px off on average, away from the cut). `camera_orientation_from_sun_candidates` takes the per-frame candidates (sun and cars alike), picks by RANSAC the **one blob that moves at the sun's rate in a fixed camera**, rejects unphysical hypotheses with road-camera priors (|roll| <= 12 deg, pitch -40..0 deg, HFOV 25-120 deg) and searches the focal length at the same time. Over 807 stations x 24 hours exactly **one** sunset could be tracked (E18, Hamina; the official metadata says direction UNKNOWN): from 5 frames, yaw **267.9 deg**, pitch -4.6, roll 0.9, HFOV 48 deg.
+
+![The sunset frame with the sun's path drawn from the fitted pose (magenta) and the circle-fitted blooms (cyan)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/01_sunset_track.png)
+
+The check is independent geometry: the **lane vanishing point**, turned into a world bearing with the same pose, is 272.7 deg against 275.3 deg for the E18 segment in OpenStreetMap - 2.5 deg apart. The weak degrees of freedom are not hidden either: under leave-one-out, yaw moves 1.3 deg but roll 10 deg and the focal length 2 % (the limit of a one-hour low-elevation arc). Raw frames are never committed; only the aggregate of times, circle fits, vanishing point and road bearing ships.
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to

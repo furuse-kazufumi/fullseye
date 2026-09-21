@@ -4,7 +4,7 @@ dim: geocam
 category: sun
 in: signal
 out: table
-examples: [poc_public_camera_heading]
+examples: [poc_public_camera_heading, poc_public_camera_heading_real]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.1  # fullseye lib version this note was generated for
@@ -51,6 +51,7 @@ Returns:
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_public_camera_heading](../../../../examples/poc_public_camera_heading.py) — `py -3.11 examples/poc_public_camera_heading.py`
+- [poc_public_camera_heading_real](../../../../examples/poc_public_camera_heading_real.py) — `py -3.11 examples/poc_public_camera_heading_real.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
@@ -58,7 +59,7 @@ Returns:
 
 ## 同カテゴリ(`sun`)
 
-[sun_pixel_position](sun_pixel_position.md) · [camera_orientation_from_sun](camera_orientation_from_sun.md)
+[sun_pixel_position](sun_pixel_position.md) · [camera_orientation_from_sun](camera_orientation_from_sun.md) · [sun_bloom_fit](sun_bloom_fit.md) · [camera_orientation_from_sun_candidates](camera_orientation_from_sun_candidates.md)
 
 ---
 *Provenance: geocam.py — GEOCAM operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

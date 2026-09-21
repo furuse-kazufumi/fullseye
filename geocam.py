@@ -27,6 +27,8 @@ __all__ = [
     "sun_position",
     "sun_pixel_position",
     "camera_orientation_from_sun",
+    "sun_bloom_fit",
+    "camera_orientation_from_sun_candidates",
     "dem_skyline",
     "skyline_extract",
     "render_skyline_view",
@@ -287,6 +289,271 @@ def camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K):
     return {"yaw_deg": yaw, "pitch_deg": pitch, "roll_deg": roll,
             "residual_deg": float(np.sqrt(np.mean(res ** 2))), "max_residual_deg": float(res.max()),
             "n": int(len(uv)), "condition": float(S[1] / S[0])}
+
+
+def sun_bloom_fit(image, threshold=0.97, ignore_top_rows=0, min_area=30, max_area_frac=0.15, min_rim_fraction=0.3):
+    """実写の太陽 = センサを飽和させる**ブルーム**(円盤より大きい、露出で大きさが変わる、画像の縁や文字の帯で切れる)。
+    最大の飽和塊の**縁**に円を当てて中心を返す → table。重心は塊が切れると切れた側の反対へ偏る(実測 15 px)ので、
+    切れた縁(画像の外周と ``ignore_top_rows`` の帯に触れる画素)を捨てた残りの弧に代数的最小二乗(Kåsa 1976)で円を当てる。
+
+    ``sun_pixel_position`` は「詰まった小さな円盤」を前提にした合成向けの門で、実写の道路カメラでは局名の白い
+    文字・標識・白い車を太陽と読む(Fintraffic 天候カメラで 24/24 が誤検出、2026-09-21)。この op は**太陽と決めない**:
+    円の中心と半径・残差・切れの有無を返し、太陽かどうかは時刻どおりに動くかで決める
+    (``camera_orientation_from_sun_candidates``)。
+
+    Args:
+        image: (H, W) float、0〜1。
+        threshold: 飽和とみなす絶対値。
+        ignore_top_rows: 上端の何行を無視するか(局名などの文字の帯)。
+        min_area: 塊の最小画素数。
+        max_area_frac: 塊の最大面積(画像に対する比)—— 空全体が飛んだ写真を拒む。
+        min_rim_fraction: 切れていない縁が円周の何割以上要るか(これ未満は「切れすぎ」で ValueError)。
+    Returns:
+        table: ``u`` / ``v``(円の中心)/ ``r``(半径 px)/ ``rms_px``(縁の半径残差)/ ``area``(塊の画素数)/
+        ``clipped``(1 = 縁のどこかが切れている)/ ``rim_fraction`` / ``centroid_u`` / ``centroid_v``(比較用の重心)。
+    """
+    from scipy import ndimage
+
+    a = np.asarray(image, dtype=np.float64)
+    if a.ndim != 2 or a.size == 0 or not np.isfinite(a).all():
+        raise ValueError("image must be a finite 2-D array, got shape %r" % (a.shape,))
+    if float(a.min()) < 0.0 or float(a.max()) > 1.0:
+        raise ValueError("image must be in [0, 1] (saturation is an absolute level), got %.3g..%.3g" % (float(a.min()), float(a.max())))
+    thr = float(threshold)
+    if not (0.0 < thr <= 1.0):
+        raise ValueError("threshold must be in (0, 1], got %r" % (threshold,))
+    top = int(ignore_top_rows)
+    if top < 0 or top >= a.shape[0] - 2:
+        raise ValueError("ignore_top_rows must be in [0, H-2), got %r" % (ignore_top_rows,))
+    H, W = a.shape
+    mask = a >= thr
+    mask[:top, :] = False
+    lab, n = ndimage.label(mask, structure=np.ones((3, 3)))
+    if n == 0:
+        raise ValueError("no saturated pixel (>= %.2f) — no bloom in this image" % thr)
+    sizes = ndimage.sum(mask, lab, index=np.arange(1, n + 1))
+    k = int(np.argmax(sizes)) + 1
+    area = float(sizes[k - 1])
+    if area < int(min_area):
+        raise ValueError("largest saturated blob has %d pixels < min_area %d" % (int(area), int(min_area)))
+    if area > float(max_area_frac) * H * W:
+        raise ValueError("largest saturated blob covers %.1f%% of the image (> %.1f%%) — the sky is blown out, not a sun bloom"
+                         % (100.0 * area / (H * W), 100.0 * float(max_area_frac)))
+    blob = lab == k
+    rim = blob & ~ndimage.binary_erosion(blob, structure=np.ones((3, 3)), border_value=0)
+    vs, us = np.nonzero(rim)
+    on_cut = (vs <= top) | (vs >= H - 1) | (us <= 0) | (us >= W - 1)
+    clipped = bool(on_cut.any())
+    vs, us = vs[~on_cut].astype(np.float64), us[~on_cut].astype(np.float64)
+    if len(us) < 8:
+        raise ValueError("only %d rim pixels survive the cut lines — the bloom is almost entirely clipped" % len(us))
+    M = np.column_stack([us, vs, np.ones_like(us)])
+    rhs = -(us ** 2 + vs ** 2)
+    (ca, cb, cc), *_ = np.linalg.lstsq(M, rhs, rcond=None)
+    cu, cv = -ca / 2.0, -cb / 2.0
+    r2 = cu * cu + cv * cv - cc
+    if not np.isfinite(r2) or r2 <= 0.0:
+        raise ValueError("circle fit to the bloom rim is degenerate (the rim is a straight edge)")
+    r = float(np.sqrt(r2))
+    rms = float(np.std(np.hypot(us - cu, vs - cv) - r))
+    rim_fraction = float(min(1.0, len(us) / max(2.0 * np.pi * r, 1.0)))
+    if rim_fraction < float(min_rim_fraction):
+        raise ValueError("only %.0f%% of the rim is unclipped (< %.0f%%) — the centre is not constrained"
+                         % (100.0 * rim_fraction, 100.0 * float(min_rim_fraction)))
+    ys, xs = np.nonzero(blob)
+    return {"u": float(cu), "v": float(cv), "r": r, "rms_px": rms, "area": area, "clipped": float(clipped),
+            "rim_fraction": rim_fraction, "centroid_u": float(xs.mean()), "centroid_v": float(ys.mean())}
+
+
+def camera_orientation_from_sun_candidates(candidates, frame_index, unix_times, lat_deg, lon_deg, shape, K=None,
+                                           hfov_range_deg=(25.0, 120.0), tol_px=20.0, roll_max_deg=12.0,
+                                           pitch_range_deg=(-40.0, 0.0), min_dt=1800.0, max_pairs=600, seed=0):
+    """フレームごとに複数ある「明るい塊」の候補(太陽・白い車・標識・文字が混じる)から、**時刻どおりに動く 1 本**を
+    RANSAC で選び、(yaw, pitch, roll) と焦点距離を同時に決める → table。固定カメラでは太陽だけが太陽の速さで動く
+    ので、見た目で太陽を決めずに動きで決める(Fintraffic 天候カメラでは見た目の門が 24/24 誤検出だった、2026-09-21)。
+
+    仮説 = 時刻差 ≥ ``min_dt`` の 2 フレームから候補を 1 つずつ → ``camera_orientation_from_sun`` と同じ Wahba の
+    2 点解。**道路カメラの事前知識**(|roll| ≤ ``roll_max_deg``、pitch が ``pitch_range_deg``、水平画角が
+    ``hfov_range_deg``)を満たさない仮説は捨てる —— 自由度 4(回転 3 + 焦点距離)に対して候補が多いと、偶然の 3 点で
+    非物理な姿勢が通るため。票 = 予測位置から ``tol_px`` 以内に候補があるフレーム数(地平線下の時刻は投票しない)。実写のブルーム中心は 5〜13 px ぶれる(雲・露出)ので既定 20 px。最良仮説のインライアで焦点距離を
+    1 次元最適化し、回転を全点で引き直す(2 回)。
+
+    **濡れた路面に映った太陽の反射も太陽の速さで動く**(鏡像)ので、動きだけでは区別できない。反射は画像の下側(路面)に
+    あるから、それを太陽として当てはめると「カメラが上を向く」姿勢(pitch > 0)になる —— 既定の ``pitch_range_deg`` の上限 0 は
+    そのための門(道路カメラは上を向かない)。上を向くカメラなら広げること。独立な検算(車線の消失点の仰角 ≈ 0)も勧める。
+
+    ``K`` を渡せばそれを使う(焦点距離は探索しない)。``K=None`` なら主点は画像中心、``fx = fy = f`` を
+    ``hfov_range_deg`` の範囲で探索する —— 公開カメラは内部パラメータが無いのが普通。
+
+    Args:
+        candidates: (N, 2) の (u, v)。全フレームの候補を積んだもの(``sun_bloom_fit`` や ``sun_pixel_position`` の出力)。
+        frame_index: (N,) 各候補がどのフレームか(``unix_times`` の添字、整数値)。
+        unix_times: (F,) 各フレームの UNIX 秒(UTC)。
+        lat_deg, lon_deg: カメラの位置。
+        shape: (H, W)。
+        K: (fx, fy, cx, cy) か None。
+    Returns:
+        table: ``yaw_deg`` / ``pitch_deg`` / ``roll_deg`` / ``f_px`` / ``hfov_deg`` / ``K``(4,)/ ``inlier``(N,、1 = 採用)/
+        ``n_inliers`` / ``n_frames`` / ``n_frames_with_candidates`` / ``residual_deg``(採用点の角度残差 RMS)/
+        ``max_residual_deg`` / ``residual_px`` / ``loo_px``(1 点抜き予測誤差の平均)/ ``loo_max_px`` / ``span_h``
+        (採用点の時間幅)/ ``n_hypotheses``(事前知識を通った仮説の数)/ ``at_prior_bound``(1 = 答えが事前知識の縁に張り付いている: 信用しない)。
+    Raises:
+        ValueError: 候補が 2 フレーム未満、事前知識を通る仮説が無い、インライアが 3 未満。
+    """
+    uv = np.asarray(candidates, dtype=np.float64)
+    fi = np.atleast_1d(np.asarray(frame_index, dtype=np.float64)).ravel()
+    t = np.atleast_1d(np.asarray(unix_times, dtype=np.float64)).ravel()
+    if uv.ndim != 2 or uv.shape[1] < 2 or not np.isfinite(uv).all():
+        raise ValueError("candidates must be a finite (N, 2) array of (u, v), got shape %r" % (uv.shape,))
+    uv = uv[:, :2]
+    if len(fi) != len(uv):
+        raise ValueError("frame_index has %d entries but candidates has %d rows" % (len(fi), len(uv)))
+    if len(t) < 2 or not np.isfinite(t).all():
+        raise ValueError("unix_times must hold at least 2 finite frame times, got %d" % len(t))
+    if not np.isfinite(fi).all() or np.any(fi < 0) or np.any(fi >= len(t)) or np.any(fi != np.round(fi)):
+        raise ValueError("frame_index must be integers in [0, %d)" % len(t))
+    fi = fi.astype(int)
+    try:
+        H, W = int(shape[0]), int(shape[1])
+    except Exception:  # noqa: BLE001
+        raise ValueError("shape must be (H, W), got %r" % (shape,))
+    if H < 2 or W < 2:
+        raise ValueError("shape must be at least 2x2, got %r" % (shape,))
+    _check_latlon(lat_deg, lon_deg)
+    lo, hi = float(hfov_range_deg[0]), float(hfov_range_deg[1])
+    if not (0.0 < lo < hi < 180.0):
+        raise ValueError("hfov_range_deg must satisfy 0 < lo < hi < 180, got %r" % (hfov_range_deg,))
+    sun = sun_position(lat_deg, lon_deg, t)
+    s_w = _dir_from_az_el(sun["azimuth_deg"], sun["elevation_deg"])
+    F, N = len(t), len(uv)
+    per_frame = [np.nonzero(fi == k)[0] for k in range(F)]
+    # 地平線下(−3° 未満)の時刻の候補は投票させない —— カメラが見ているのは太陽ではない
+    have = [k for k in range(F) if len(per_frame[k]) and sun["elevation_true_deg"][k] >= -3.0]
+    if len(have) < 2:
+        raise ValueError("candidates are present in only %d frame(s) — at least 2 frames at different times are needed" % len(have))
+    if K is None:
+        f_hi = W / (2.0 * np.tan(np.radians(lo / 2.0)))
+        f_lo = W / (2.0 * np.tan(np.radians(hi / 2.0)))
+        f_grid = np.exp(np.linspace(np.log(f_lo), np.log(f_hi), 7))
+        Ks = [(float(f), float(f), W / 2.0, H / 2.0) for f in f_grid]
+    else:
+        fx, fy, cx, cy = _intrinsics(K)
+        Ks = [(fx, fy, cx, cy)]
+    tol = float(tol_px)
+    rmax, (pmin, pmax) = float(roll_max_deg), (float(pitch_range_deg[0]), float(pitch_range_deg[1]))
+
+    def _plausible(R, Kc):
+        yaw, pitch, roll = _pose_from_rotation(R)
+        hfov = 2.0 * np.degrees(np.arctan(W / (2.0 * Kc[0])))
+        return abs(roll) <= rmax and pmin <= pitch <= pmax and lo <= hfov <= hi
+
+    def _kabsch(d_c, sw):
+        Hm = d_c.T @ sw
+        U, S, Vt = np.linalg.svd(Hm)
+        if S[1] < 1e-3:
+            return None
+        D = np.diag([1.0, 1.0, np.sign(np.linalg.det(Vt.T @ U.T))])
+        return Vt.T @ D @ U.T
+
+    def _project(R, Kc):
+        c = s_w @ R                                                   # 世界 → カメラ
+        ok = c[:, 2] > 0.05
+        p = np.full((F, 2), np.nan)
+        p[ok, 0] = Kc[2] + Kc[0] * c[ok, 0] / c[ok, 2]
+        p[ok, 1] = Kc[3] + Kc[1] * c[ok, 1] / c[ok, 2]
+        return p
+
+    def _vote(R, Kc):
+        p = _project(R, Kc)
+        inl, err = [], 0.0
+        for k in have:
+            if np.isnan(p[k, 0]):
+                continue
+            idx = per_frame[k]
+            d = np.hypot(uv[idx, 0] - p[k, 0], uv[idx, 1] - p[k, 1])
+            m = int(np.argmin(d))
+            if d[m] <= tol:
+                inl.append(idx[m])
+                err += d[m]
+        return inl, err
+
+    rng = np.random.default_rng(int(seed))
+    pairs = [(i, j) for a, i in enumerate(have) for j in have[a + 1:] if abs(t[j] - t[i]) >= float(min_dt)]
+    if not pairs:
+        raise ValueError("no two frames with candidates are at least min_dt=%.0f s apart" % float(min_dt))
+    if len(pairs) > int(max_pairs):
+        pairs = [pairs[q] for q in rng.choice(len(pairs), int(max_pairs), replace=False)]
+    best, n_hyp = None, 0
+    for Kc in Ks:
+        for i, j in pairs:
+            for ia in per_frame[i]:
+                for ib in per_frame[j]:
+                    R = _kabsch(_pixel_rays(uv[[ia, ib]], Kc), s_w[[i, j]])
+                    if R is None or not _plausible(R, Kc):
+                        continue
+                    n_hyp += 1
+                    inl, err = _vote(R, Kc)
+                    score = (len(inl), -err)
+                    if best is None or score > best[0]:
+                        best = (score, Kc, inl)
+    if best is None:
+        raise ValueError("no two-point hypothesis satisfies the priors (|roll| <= %.0f, pitch in [%.0f, %.0f], hfov in [%.0f, %.0f])"
+                         % (rmax, pmin, pmax, lo, hi))
+    _, Kc, inl = best
+    if len(inl) < 3:
+        raise ValueError("best hypothesis has only %d supporting frames (< 3) — no consistent sun track among the candidates" % len(inl))
+
+    from scipy.optimize import minimize_scalar
+
+    f = Kc[0]
+    for _ in range(2):
+        idx = np.array(inl)
+        if K is None:
+            def _resid(ff):
+                Kt = (ff, ff, W / 2.0, H / 2.0)
+                R = _kabsch(_pixel_rays(uv[idx], Kt), s_w[fi[idx]])
+                if R is None:
+                    return 1e9
+                p = _project(R, Kt)[fi[idx]]
+                return float(np.mean(np.hypot(p[:, 0] - uv[idx, 0], p[:, 1] - uv[idx, 1])))
+            f = float(minimize_scalar(_resid, bounds=(0.6 * f, 1.7 * f), method="bounded").x)
+            Kc = (f, f, W / 2.0, H / 2.0)
+        R = _kabsch(_pixel_rays(uv[idx], Kc), s_w[fi[idx]])
+        if R is None:
+            raise ValueError("the supporting sun directions became collinear during refinement")
+        inl, _ = _vote(R, Kc)
+        if len(inl) < 3:
+            raise ValueError("fewer than 3 frames survive refinement — no consistent sun track among the candidates")
+    idx = np.array(inl)
+    fit = camera_orientation_from_sun(uv[idx], t[fi[idx]], lat_deg, lon_deg, Kc)
+    R = _rotation(fit["yaw_deg"], fit["pitch_deg"], fit["roll_deg"])
+    if not _plausible(R, Kc):
+        # 仮説は事前知識の中で選んだが、焦点距離の最適化と全点の当て直しで外へ出た = 候補列が太陽の軌跡ではない
+        raise ValueError("the refined pose leaves the priors (yaw %.1f, pitch %.1f, roll %.1f, hfov %.1f) — the supporting candidates "
+                         "are not a sun track (widen roll_max_deg / pitch_range_deg / hfov_range_deg only if the camera really is like that)"
+                         % (fit["yaw_deg"], fit["pitch_deg"], fit["roll_deg"], 2.0 * np.degrees(np.arctan(W / (2.0 * Kc[0])))))
+    p = _project(R, Kc)[fi[idx]]
+    px = np.hypot(p[:, 0] - uv[idx, 0], p[:, 1] - uv[idx, 1])
+    loo = []
+    for q in range(len(idx)):
+        keep = np.arange(len(idx)) != q
+        Rq = _kabsch(_pixel_rays(uv[idx[keep]], Kc), s_w[fi[idx[keep]]])
+        if Rq is None:
+            continue
+        pq = _project(Rq, Kc)[fi[idx[q]]]
+        loo.append(float(np.hypot(pq[0] - uv[idx[q], 0], pq[1] - uv[idx[q], 1])))
+    inlier = np.zeros(N)
+    inlier[idx] = 1.0
+    hfov = 2.0 * np.degrees(np.arctan(W / (2.0 * Kc[0])))
+    # 事前知識の縁に張り付いた答えは「縁が無ければもっと外へ行った」印 —— 偽の軌跡(両日の別々の塊など)がよくここへ来る
+    at_bound = (abs(abs(fit["roll_deg"]) - rmax) < 1.0 or abs(fit["pitch_deg"] - pmin) < 1.0 or abs(fit["pitch_deg"] - pmax) < 1.0
+                or (K is None and (abs(hfov - lo) < 2.0 or abs(hfov - hi) < 2.0)))
+    return {"yaw_deg": fit["yaw_deg"], "pitch_deg": fit["pitch_deg"], "roll_deg": fit["roll_deg"], "f_px": float(Kc[0]), "at_prior_bound": float(at_bound),
+            "hfov_deg": float(hfov), "K": np.array(Kc, dtype=np.float64), "inlier": inlier, "n_inliers": int(len(idx)),
+            "n_frames": int(F), "n_frames_with_candidates": int(len(have)), "residual_deg": fit["residual_deg"],
+            "max_residual_deg": fit["max_residual_deg"], "residual_px": float(px.mean()),
+            "loo_px": float(np.mean(loo)) if loo else float("nan"), "loo_max_px": float(np.max(loo)) if loo else float("nan"),
+            "span_h": float((t[fi[idx]].max() - t[fi[idx]].min()) / 3600.0), "n_hypotheses": int(n_hyp)}
 
 
 # --------------------------------------------------------------------------- #

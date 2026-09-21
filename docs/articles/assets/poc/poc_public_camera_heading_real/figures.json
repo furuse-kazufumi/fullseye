@@ -1,0 +1,68 @@
+[
+ {
+  "file": "01_sunset_track.png",
+  "name": "sunset_track",
+  "caption": "the sunset seen by C0362200 (E18, Hamina, Finland; metadata says direction UNKNOWN): the sun's path for the evening drawn from the fitted pose (magenta) and the 5 blooms fitted with a circle (cyan); yaw 267.9, pitch -4.6, roll 0.9, HFOV 48",
+  "shape": [
+   720,
+   1280,
+   3
+  ]
+ },
+ {
+  "file": "02_sunset_follow.gif",
+  "name": "sunset_follow",
+  "caption": "the same evening frame by frame: the magenta circle is where astronomy plus the fitted pose says the sun must be — it follows the real sun down to the horizon (8 frames, 10 min apart)",
+  "shape": [
+   360,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 8,
+  "frames_written": 8,
+  "fps": 1.5
+ },
+ {
+  "file": "03_naive_picks.png",
+  "name": "naive_picks",
+  "caption": "what the look-alone detector (sun_pixel_position, built for synthetic discs) called the sun in the same camera: 22 picks, 3 exactly the sun, 2 on the sun but off-centre, 17 something else — station text, signs, white cars",
+  "shape": [
+   654,
+   1480,
+   3
+  ]
+ },
+ {
+  "file": "04_jackknife.png",
+  "name": "jackknife",
+  "caption": "refit with each sun frame removed: yaw barely moves, roll and the focal length are the weak directions of a 1-hour low-elevation arc — this is why the PoC reports them with their spread instead of a single number",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_bloom_bias.png",
+  "name": "bloom_bias",
+  "caption": "for blooms cut by the station-name band the centroid sits 12.4 px (mean) away from the circle fitted to the unclipped rim; the fit uses the circle",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_numbers.png",
+  "name": "numbers",
+  "caption": "one camera out of 807 stations gave a sun track of 4 or more frames on 2026-09-20/21 (2 more had 3 frames and were left out); the vanishing point of its lanes, turned into a world bearing with the sun-derived pose, agrees with OpenStreetMap",
+  "shape": [
+   104,
+   734,
+   3
+  ],
+  "csv": "06_numbers.csv",
+  "tsv": "06_numbers.tsv"
+ }
+]

@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">camera_orientation_from_sun_candidates — GEOCAM <code style="color:#22d3bf">sun</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">keypoints × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_sun_candidates(candidates, frame_index, unix_times, lat_deg, lon_deg, shape, K=None, hfov_range_deg=(25.0, 120.0), tol_px=20.0, roll_max_deg=12.0, pitch_range_deg=(-40.0, 0.0), min_dt=1800.0, max_pairs=600, seed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_sun_candidates(candidates, frame_index, unix_times, lat_deg, lon_deg, shape, K=None, hfov_range_deg=(25.0, 120.0), tol_px=20.0, roll_max_deg=12.0, pitch_range_deg=(-40.0, 0.0), min_dt=1800.0, max_pairs=600, seed=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_sun_candidates&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>フレームごとに複数ある「明るい塊」の候補(太陽・白い車・標識・文字が混じる)から、<b>時刻どおりに動く 1 本</b>を</p>
+<p>RANSAC で選び、(yaw, pitch, roll) と焦点距離を同時に決める → table。固定カメラでは太陽だけが太陽の速さで動く</p>
+<p>ので、見た目で太陽を決めずに動きで決める(Fintraffic 天候カメラでは見た目の門が 24/24 誤検出だった、2026-09-21)。</p>
+<p>仮説 = 時刻差 ≥ `<code style="color:#22d3bf">min_dt</code><code style="color:#22d3bf"> の 2 フレームから候補を 1 つずつ → </code><code style="color:#22d3bf">camera_orientation_from_sun</code>` と同じ Wahba の</p>
+<p>2 点解。<b>道路カメラの事前知識</b>(|roll| ≤ `<code style="color:#22d3bf">roll_max_deg</code><code style="color:#22d3bf">、pitch が </code><code style="color:#22d3bf">pitch_range_deg</code>`、水平画角が</p>
+<p>`<code style="color:#22d3bf">hfov_range_deg</code>`)を満たさない仮説は捨てる —— 自由度 4(回転 3 + 焦点距離)に対して候補が多いと、偶然の 3 点で</p>
+<p>非物理な姿勢が通るため。票 = 予測位置から `<code style="color:#22d3bf">tol_px</code>` 以内に候補があるフレーム数(地平線下の時刻は投票しない)。実写のブルーム中心は 5〜13 px ぶれる(雲・露出)ので既定 20 px。最良仮説のインライアで焦点距離を</p>
+<p>1 次元最適化し、回転を全点で引き直す(2 回)。</p>
+<p><b>濡れた路面に映った太陽の反射も太陽の速さで動く</b>(鏡像)ので、動きだけでは区別できない。反射は画像の下側(路面)に</p>
+<p>あるから、それを太陽として当てはめると「カメラが上を向く」姿勢(pitch &gt; 0)になる —— 既定の `<code style="color:#22d3bf">pitch_range_deg</code>` の上限 0 は</p>
+<p>そのための門(道路カメラは上を向かない)。上を向くカメラなら広げること。独立な検算(車線の消失点の仰角 ≈ 0)も勧める。</p>
+<p>`<code style="color:#22d3bf">K</code><code style="color:#22d3bf"> を渡せばそれを使う(焦点距離は探索しない)。</code><code style="color:#22d3bf">K=None</code><code style="color:#22d3bf"> なら主点は画像中心、</code><code style="color:#22d3bf">fx = fy = f</code>` を</p>
+<p>`<code style="color:#22d3bf">hfov_range_deg</code>` の範囲で探索する —— 公開カメラは内部パラメータが無いのが普通。</p>
+<p>Args:</p>
+<p>candidates: (N, 2) の (u, v)。全フレームの候補を積んだもの(`<code style="color:#22d3bf">sun_bloom_fit</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">sun_pixel_position</code>` の出力)。</p>
+<p>frame_index: (N,) 各候補がどのフレームか(`<code style="color:#22d3bf">unix_times</code>` の添字、整数値)。</p>
+<p>unix_times: (F,) 各フレームの UNIX 秒(UTC)。</p>
+<p>lat_deg, lon_deg: カメラの位置。</p>
+<p>shape: (H, W)。</p>
+<p>K: (fx, fy, cx, cy) か None。</p>
+<p>Returns:</p>
+<p>table: `<code style="color:#22d3bf">yaw_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">pitch_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">roll_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">f_px</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">hfov_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">K</code><code style="color:#22d3bf">(4,)/ </code><code style="color:#22d3bf">inlier</code>`(N,、1 = 採用)/</p>
+<p>`<code style="color:#22d3bf">n_inliers</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_frames</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_frames_with_candidates</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">residual_deg</code>`(採用点の角度残差 RMS)/</p>
+<p>`<code style="color:#22d3bf">max_residual_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">residual_px</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">loo_px</code><code style="color:#22d3bf">(1 点抜き予測誤差の平均)/ </code><code style="color:#22d3bf">loo_max_px</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">span_h</code>`</p>
+<p>(採用点の時間幅)/ `<code style="color:#22d3bf">n_hypotheses</code><code style="color:#22d3bf">(事前知識を通った仮説の数)/ </code><code style="color:#22d3bf">at_prior_bound</code>`(1 = 答えが事前知識の縁に張り付いている: 信用しない)。</p>
+<p>Raises:</p>
+<p>ValueError: 候補が 2 フレーム未満、事前知識を通る仮説が無い、インライアが 3 未満。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading_real">poc_public_camera_heading_real</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading_real.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:render_skyline_view">render_skyline_view</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_skyline">camera_orientation_from_skyline</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">sun</code>)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:sun_position">sun_position</a> · <a style="color:#22d3bf" href="opgeocam:sun_pixel_position">sun_pixel_position</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_sun">camera_orientation_from_sun</a> · <a style="color:#22d3bf" href="opgeocam:sun_bloom_fit">sun_bloom_fit</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: geocam.py — GEOCAM operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

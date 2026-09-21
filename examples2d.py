@@ -409,6 +409,11 @@ EXAMPLES = [
                 "膜の無い境界 = 分断の疑い。CREMI sample A の正解ラベルに人工誤りを仕込み、閾値を前半の断面で選んで後半で測る"
                 "(holdout_threshold): 分断 AUC 1.00、融合 0.83(面積で揃えた負例、乱数 0.53・面積だけ 0.70)。揃えないと面積だけで 0.87 が"
                 "出る = 評価の罠を op で封じる。疑わしい箇所を立方体の上で回す GIF。新族 emproof 7 op。生データは commit しない。"},
+    {"id": "poc_public_camera_heading_real", "task": "calibration", "data": "real",
+     "name": "公共カメラはどこを向いているか・実写編(807 局の道路カメラで太陽を探し、日没 1 本から向きを決めて道路で検算する)",
+     "summary": "Fintraffic 天候カメラ(CC BY 4.0、鍵なし)807 局 × 24 h の実写。見た目の門は文字・標識・白い車を太陽と言い(24/24 誤検出)、太陽は切れたブルーム、空は上 1/3 —— "
+                "そこで足した 2 op(sun_bloom_fit = 切れていない縁に円を当てる / camera_orientation_from_sun_candidates = 時刻どおりに動く 1 本を RANSAC + 道路カメラの事前知識で選び f も探索)で、"
+                "追えた日没 1 本(E18 Hamina、メタデータの向き UNKNOWN)から yaw 267.9°。同じ姿勢で車線の消失点を世界方位にすると OSM の路線方位と 2.5° 差。1 枚抜きで yaw 1.3°・roll 10°・f 2 %(弱い自由度は隠さない)。生画像は commit せず集計だけ。"},
     {"id": "poc_public_camera_heading", "task": "calibration", "data": "synthetic",
      "name": "公共カメラはどこを向いているか(位置しか公開されない固定カメラの向きを、写真そのものから決める)",
      "summary": "新族 geocam(7 op、numpy + scipy)。位置既知の固定カメラの (yaw, pitch, roll) を学習なしで 2 つの独立な手掛かりから決めて互いに検算: "

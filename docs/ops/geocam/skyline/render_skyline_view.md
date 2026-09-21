@@ -47,7 +47,7 @@ Returns:
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[sun_pixel_position](../sun/sun_pixel_position.md) · [skyline_extract](skyline_extract.md)
+[sun_pixel_position](../sun/sun_pixel_position.md) · [sun_bloom_fit](../sun/sun_bloom_fit.md) · [skyline_extract](skyline_extract.md)
 
 ## 同カテゴリ(`skyline`)
 

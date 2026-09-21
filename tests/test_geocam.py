@@ -175,6 +175,88 @@ def test_sun_pixel_position_finds_the_disc_and_refuses_no_sun():
 
 
 # --------------------------------------------------------------------------- #
+# 4b. 実写が要求した 2 本(2026-09-21、Fintraffic 天候カメラ)                        #
+# --------------------------------------------------------------------------- #
+def test_sun_bloom_fit_recovers_the_centre_of_a_clipped_bloom():
+    img = np.full((200, 300), 0.3)
+    yy, xx = np.mgrid[0:200, 0:300]
+    img[(yy - 30) ** 2 + (xx - 120) ** 2 <= 40 ** 2] = 1.0                    # 中心 (120, 30)、上 20 行は文字の帯で隠れる
+    b = G.sun_bloom_fit(img, ignore_top_rows=20)
+    assert abs(b["u"] - 120.0) < 0.5 and abs(b["v"] - 30.0) < 0.5 and abs(b["r"] - 40.0) < 1.0
+    assert b["clipped"] == 1.0 and 0.6 < b["rim_fraction"] < 0.9
+    assert b["centroid_v"] - 30.0 > 8.0                                        # 重心は切れた側の反対へ偏る
+    full = np.full((200, 300), 0.3)
+    full[(yy - 100) ** 2 + (xx - 150) ** 2 <= 30 ** 2] = 1.0
+    b2 = G.sun_bloom_fit(full)
+    assert b2["clipped"] == 0.0 and abs(b2["u"] - 150.0) < 0.5 and abs(b2["v"] - 100.0) < 0.5
+    with pytest.raises(ValueError, match="no saturated"):
+        G.sun_bloom_fit(np.full((20, 20), 0.5))
+    with pytest.raises(ValueError, match="blown out"):
+        G.sun_bloom_fit(np.ones((20, 20)))
+    with pytest.raises(ValueError, match="rim"):
+        cut = np.full((60, 300), 0.3)
+        cut[:8, 100:200] = 1.0                                                # 上端に張り付いた帯
+        G.sun_bloom_fit(cut)
+
+
+def _sun_track_with_decoys(true, f_true, seed=3, n_static=2, n_random=3):
+    lat, lon, W, H = 60.2, 24.9, 1280, 720
+    K = (f_true, f_true, W / 2, H / 2)
+    ts = _utc(2026, 9, 20, 12, 0, 0) + np.arange(0, 5 * 3600, 600.0)
+    s = G.sun_position(lat, lon, ts)
+    c = G._dir_from_az_el(s["azimuth_deg"], s["elevation_deg"]) @ G._rotation(*true)
+    rng = np.random.default_rng(seed)
+    C, FI, n_true = [], [], 0
+    for k in range(len(ts)):
+        for p in [[300.0, 60.0], [900.0, 40.0]][:n_static] + [[rng.uniform(0, W), rng.uniform(0, H * 0.7)] for _ in range(n_random)]:
+            C.append(p)
+            FI.append(k)
+        if c[k, 2] > 0.05 and s["elevation_true_deg"][k] > 0:
+            u, v = K[2] + K[0] * c[k, 0] / c[k, 2], K[3] + K[1] * c[k, 1] / c[k, 2]
+            if 0 <= u < W and 0 <= v < H and rng.uniform() < 0.8:
+                C.append([u + rng.normal(0, 1.5), v + rng.normal(0, 1.5)])
+                FI.append(k)
+                n_true += 1
+    return np.array(C), np.array(FI, float), ts, lat, lon, (H, W), K, n_true
+
+
+def test_sun_candidates_pick_the_moving_track_among_decoys_and_find_the_focal_length():
+    true, f_true = (255.0, -8.0, 1.5), 950.0
+    C, FI, ts, lat, lon, shape, K, n_true = _sun_track_with_decoys(true, f_true)
+    r = G.camera_orientation_from_sun_candidates(C, FI, ts, lat, lon, shape)
+    assert abs(r["yaw_deg"] - true[0]) < 0.3 and abs(r["pitch_deg"] - true[1]) < 0.3 and abs(r["roll_deg"] - true[2]) < 1.0   # roll は短い弧の弱い自由度
+    assert abs(r["f_px"] - f_true) / f_true < 0.03 and r["n_inliers"] >= n_true - 1 and r["residual_deg"] < 0.3
+    assert r["inlier"].shape == (len(C),) and r["inlier"].sum() == r["n_inliers"] and r["loo_px"] < 5.0 and r["at_prior_bound"] == 0.0
+    r2 = G.camera_orientation_from_sun_candidates(C, FI, ts, lat, lon, shape, K=K)
+    assert abs(r2["yaw_deg"] - true[0]) < 0.3 and abs(r2["pitch_deg"] - true[1]) < 0.3 and r2["f_px"] == f_true   # 1.5 px の雑音 ≈ 0.1°
+
+
+def test_sun_candidates_refuse_static_blobs_and_too_few_frames():
+    C, FI, ts, lat, lon, shape, K, _ = _sun_track_with_decoys((255.0, -8.0, 1.5), 950.0)
+    with pytest.raises(ValueError, match="only 1 frame"):
+        G.camera_orientation_from_sun_candidates(C[:5], np.zeros(5), ts, lat, lon, shape)
+    static = np.array([[300.0, 60.0]] * len(ts))
+    with pytest.raises(ValueError):
+        G.camera_orientation_from_sun_candidates(static, np.arange(len(ts), dtype=float), ts, lat, lon, shape)
+    with pytest.raises(ValueError, match="frame_index"):
+        G.camera_orientation_from_sun_candidates(C, FI + 0.5, ts, lat, lon, shape)
+    with pytest.raises(ValueError, match="shape"):
+        G.camera_orientation_from_sun_candidates(C, FI, ts, lat, lon, (1,))
+
+
+def test_sun_candidates_do_not_let_night_frames_vote():
+    """地平線下の時刻に候補があっても投票しない(投票させると最終の再当てはめが「太陽が地平線下」で落ちる)。"""
+    true, f_true = (255.0, -8.0, 1.5), 950.0
+    C, FI, ts, lat, lon, shape, K, _ = _sun_track_with_decoys(true, f_true)
+    night = ts[-1] + 6 * 3600.0                                                # 夜
+    ts2 = np.append(ts, night)
+    C2 = np.vstack([C, [[640.0, 300.0], [700.0, 310.0]]])
+    FI2 = np.append(FI, [len(ts), len(ts)])
+    r = G.camera_orientation_from_sun_candidates(C2, FI2, ts2, lat, lon, shape)
+    assert abs(r["yaw_deg"] - true[0]) < 0.3 and r["inlier"][-2:].sum() == 0
+
+
+# --------------------------------------------------------------------------- #
 # 5. 台帳と公開経路                                                              #
 # --------------------------------------------------------------------------- #
 def test_the_ledger_lists_every_op_and_nothing_is_missing():
@@ -196,7 +278,7 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "geocam"]
-    assert len(rows) == 7
+    assert len(rows) == 9
     assert {r[3] for r in rows} == {"table", "keypoints", "signal", "image2d"}
 
 
