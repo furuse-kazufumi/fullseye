@@ -1,0 +1,8 @@
+quantity	read	truth / bar
+magnify: displacement gain (alpha = 8)	7.89	8
+flow: speed of the right / left blob (voxel/frame)	+0.776 / -0.776	+0.75 / -0.75
+interpolate at 5 voxel / step (2 sigma): RMSE flow / blend / repeat	0.0016 / 0.0207 / 0.0388	flow < 0.4 x blend
+interpolate at 0.5 voxel / step (0.2 sigma): RMSE flow / blend	0.0011 / 0.0002	blend is enough below ~1 sigma
+interpolate (beating shell): RMSE flow / blend	0.0351 / 0.0193	reported, not asserted
+focus sweep: height RMSE (planes)	0.306	< 0.5
+real data	Fluo-N3DH-CHO/01 (12 volumes of (5, 111, 128), y/x 1/4)	-

@@ -162,6 +162,9 @@ LEDGER_DIMS = {
     # 2026-09-21: 動画を空間×時間の立方体として見る(Video Summagator、CHI 2012 の再実装)。新語なし。
     "videocube": {"registry": "opsvideocube", "table": "OPSVIDEOCUBE",
                   "module": "videocube", "family": "videocube"},
+    # 2026-09-21: 生きている組織の 3D+t を古典手法だけで短い 3D 動画像に。新語 volseq (T, Z, Y, X)。
+    "live4d": {"registry": "opslive4d", "table": "OPSLIVE4D",
+               "module": "live4d", "family": "live4d"},
 }
 
 

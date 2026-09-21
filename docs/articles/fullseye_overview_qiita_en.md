@@ -4197,6 +4197,14 @@ On a synthetic clip with ground truth (three objects of known row, onset and spe
 
 The rotation goes straight to an animated GIF with `video_write_gif` (the reusable exit). In Studio, **Tools ▸ Video cube** runs it interactively: drag to orbit, slide the cut plane, click the slit scan to jump to that frame, and open .npy / GIF / video / .hdf stacks.
 
+### Living Tissue in 3D+t Without a Generator — Magnify, Flow, Interpolate, Height
+
+A video generator invents plausible motion. The new family `live4d` (14 ops, numpy + scipy only) invents nothing; instead it offers four ways to **make real motion visible**, each pinned to numbers on synthetic series with known truth. A shell beating by an invisible 0.1 voxel, magnified x8 by a 3-D version of Wu et al.'s linear Eulerian magnification (SIGGRAPH 2012), reads back 7.89 x; the 3-D Lucas–Kanade flow of two separating blobs reads +0.776 / −0.776 against a truth of ±0.75 voxel/frame; particle pathlines become one solid coloured by time; a focus-sweep series yields a height-field movie (error 0.31 planes).
+
+![A shell whose radius beats by 0.1 voxel, orbited while time advances: left = as measured (the beat is invisible), right = magnified x8 by volseq_magnify_motion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/01_beating_orbit.gif)
+
+Interpolation (`volseq_interpolate_flow`) was judged by making a series at twice the rate, halving it, refilling it and comparing against the removed frames. When the motion per step is twice the blob size it wins outright (RMSE 0.0016 vs 0.0207 for a linear blend); below about 0.8 sigma per step the blend is as good and the warp's resampling costs a little — both regimes are plotted as they are. Interpolation fills the gaps between measurements; it does not invent what was never seen. Live cells in 3D+t from the Cell Tracking Challenge run through the same path (raw data never committed).
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to

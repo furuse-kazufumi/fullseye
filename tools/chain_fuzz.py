@@ -379,6 +379,9 @@ def make_generators():
         # 違いで、種は「既知の振幅・周波数でサブピクセル並進させた格子」=
         # 増幅と変位推定の真値が閉形式で分かるクリップにする
         "video": _motion_clip,
+        # volseq(2026-09-21): live4d の 8 op が受ける。既知の半径則で拍動する小さな殻(真値つきの前方モデル)。
+        "volseq": lambda rng: __import__("live4d").volseq_synth_beating(
+            (8, 12, 12), n_frames=8, period=8.0, amplitude=float(rng.uniform(0.2, 0.8)), radius=3.5),
         # rgbvideo(2026-09-21): これまで産む op(points_activity_video)だけで受ける op が無かった。
         # videocube.video_write_gif が受けるので種を置く(小さな色動画、[0, 1])。
         "rgbvideo": lambda rng: np.clip(rng.random((3, 12, 12, 3)), 0.0, 1.0),
@@ -1679,6 +1682,9 @@ TYPE_CHECKS = {
     and np.isfinite(v).all() and (v >= 0.0).all(),
     # video = (T,H,W)。voxel と ndim は同じだが先頭が時間軸。共有すると例外も
     # NaN も無しに z を時間として読むので型を分ける(実測確認済み)
+    # volseq(2026-09-21、live4d)= 体積の時系列 (T, Z, Y, X)、T >= 2。rgbvideo (T, H, W, 3) と ndim が同じだが
+    # 述語は名前ごとに独立(宣言 out との突き合わせにしか使わない)。
+    "volseq": lambda v: isinstance(v, np.ndarray) and v.ndim == 4 and v.shape[0] >= 2,
     "video": lambda v: isinstance(v, np.ndarray) and v.ndim == 3
     and v.dtype.kind == "f" and v.shape[0] >= 2
     and v.shape[1] >= 4 and v.shape[2] >= 4,

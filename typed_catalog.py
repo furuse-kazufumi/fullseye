@@ -194,6 +194,24 @@ PARAM_HINTS = {
 
 
 OP_PARAM_HINTS = {
+    # live4d(2026-09-21)。shape の全体既定 (32, 32) は 2-D なので 3 整数に。fps / f_lo / f_hi の全体既定
+    # (32 / 3 / 5 Hz)は 8 フレームの種では帯域に FFT bin が 1 つも入らず、増幅 op が永久に CONTRACT になる。
+    ("volseq_synth_beating", "shape"): lambda rng: (8, 12, 12),
+    ("volseq_synth_dividing", "shape"): lambda rng: (8, 12, 12),
+    ("volseq_synth_beating", "n_frames"): lambda rng: 8,
+    ("volseq_synth_dividing", "n_frames"): lambda rng: 8,
+    ("volseq_magnify_motion", "fps"): lambda rng: 1.0,
+    ("volseq_magnify_motion", "f_lo"): lambda rng: 0.1,
+    ("volseq_magnify_motion", "f_hi"): lambda rng: 0.3,
+    ("volseq_magnify_motion", "alpha"): lambda rng: 3.0,
+    ("volseq_render_orbit", "n_frames"): lambda rng: 2,
+    ("volseq_render_orbit", "size"): lambda rng: 16,
+    ("volseq_render_orbit", "depth_samples"): lambda rng: 8,
+    ("volseq_pathline_orbit", "n_frames"): lambda rng: 2,
+    ("volseq_pathline_orbit", "size"): lambda rng: 16,
+    ("volseq_pathline_orbit", "n_seeds"): lambda rng: 10,
+    ("volseq_pathline_render", "size"): lambda rng: 16,
+    ("volseq_pathline_render", "n_seeds"): lambda rng: 10,
     # videocube(2026-09-21)。GIF の書き出し先は必須引数なので、fuzz では一時ディレクトリの 1 ファイルに書く
     # (無いと束縛に失敗して op が永久にスキップされる)。
     ("video_write_gif", "path"): lambda rng: __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_video_cube.gif"),
@@ -833,6 +851,8 @@ def catalog():
         ("opsemproof", "OPSEMPROOF", "emproof"),
         # 2026-09-21: 動画の空間×時間の立方体。新語なし(video / voxel / rgb / rgbvideo / image2d / indices)。
         ("opsvideocube", "OPSVIDEOCUBE", "videocube"),
+        # 2026-09-21: 生きている組織の 3D+t。新語 volseq(体積の時系列 (T, Z, Y, X))。
+        ("opslive4d", "OPSLIVE4D", "live4d"),
     ):
         _m = __import__(_mod)
         for n, m in getattr(_m, _tbl).items():

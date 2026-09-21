@@ -374,6 +374,12 @@ EXAMPLES = [
                 "実測: コネクトームは刺激からの平均距離 88 → 230 µm を 17 步かけて伸び、視葉 → 中枢 → 下行の順に点いて 36 步では VNC に届かない。"
                 "shuffle は 3 步で 300 µm に散り遠い 1/4 の 93 % が点く(コネクトーム 0 %)。精度で見えなかった配線の空間構造が動きで見える。"
                 "新 op: reservoir_states(W_in=)、graph_activation_latency、graph_activity_spread、points_activity_video(尺度は全コマで 1 つ、views= で背側・側面・体軸方向の 3 方向を同時に)。生データは commit しない。"},
+    {"id": "poc_live4d", "task": "visualization", "data": "synthetic",
+     "name": "生きている組織の 3D+t を古典手法だけで短い 3D 動画像に(増幅・流れ・補間・高さ場、全部に真値)",
+     "summary": "新族 live4d(14 op、numpy + scipy、新語は volseq = 体積の時系列だけ)。目に見えない 0.1 voxel の拍動を Eulerian の"
+                "線形拡大で 8 倍に(読み取り 7.89 倍)、分かれる塊の 3 次元 Lucas–Kanade の流れは真値 ±0.75 に対し +0.776 / −0.776、"
+                "粒子の軌跡は時刻の色で 1 枚の立体に、2 倍レートから間引いた系列の流れ補間は動きが大きい領域で線形ブレンドに"
+                "圧勝し小さい領域では負ける(正直に図示)、焦点掃引の時系列から高さ場の動画。Cell Tracking Challenge の生細胞も同じ経路。"},
     {"id": "poc_video_cube", "task": "visualization", "data": "synthetic",
      "name": "動画を空間 × 時間の立方体として見る(Video Summagator の再実装、ハエの脳の断面も同じ op で)",
      "summary": "動画 (T, H, W) を (x, y, t) の立方体にし、動かない背景を薄く・動く物体を濃く、軌跡を時刻の色で描く(新族 videocube 6 op、"

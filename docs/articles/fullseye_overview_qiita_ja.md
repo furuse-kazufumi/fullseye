@@ -4221,6 +4221,14 @@ Video Summagator(Nguyen・Niu・Liu、ACM CHI 2012)は、動画を (x, y, t) の
 
 回転は `video_write_gif` でそのまま GIF に書けます(使い回しの出口)。Studio では **Tools ▸ Video cube** がドラッグで回転、断面のスライダ、断面をクリックでそのフレームへ、と対話的に動き、.npy / GIF / 動画 / .hdf のスタックを開けます。
 
+### 生きている組織の 3D+t を古典手法だけで短い 3D 動画像に ―― 増幅・流れ・補間・高さ場
+
+動画生成 AI は「もっともらしい動き」を発明します。新族 `live4d`(14 op、numpy + scipy のみ)は内容を発明しない代わりに、**実在する動きを見える形にする** 4 つの道を用意し、どれも真値つきの合成系列で数字に固定しました。目に見えない 0.1 voxel の拍動を Eulerian の線形拡大(Wu ら、SIGGRAPH 2012 の 3 次元版)で 8 倍にすると読み取りは 7.89 倍、分かれる塊の 3 次元 Lucas–Kanade の流れは真値 ±0.75 voxel/frame に対し +0.776 / −0.776、粒子の軌跡は時刻の色で 1 枚の立体に、焦点掃引の時系列からは高さ場の動画(誤差 0.31 枚)。
+
+![半径が 0.1 voxel だけ拍動する殻を、時間を進めながら回す。左 = 実測のまま(拍動は見えない)、右 = volseq_magnify_motion で 8 倍に](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/01_beating_orbit.gif)
+
+補間(`volseq_interpolate_flow`)は 2 倍のレートで作った系列を半分に間引いて埋め、抜いた真のフレームと比べました。1 コマの動きが塊の大きさの 2 倍なら RMSE 0.0016(線形ブレンドは 0.0207)で圧勝ですが、動きが約 0.8 σ より小さいとブレンドで足り、warp の再標本化ぶんだけ負けます —— 勝つ領域と負ける領域をそのまま図にしてあります。補間は実測の間を埋める道具で、無いものを発明する道具ではありません。Cell Tracking Challenge の生きた細胞の 3D+t も同じ経路で回ります(生データは commit しません)。
+
 ## まとめ
 
 **Fullseye** は、**説明できる古典ビジョンのアルゴリズムを「スキル」として約1000個持ち歩き**、それを

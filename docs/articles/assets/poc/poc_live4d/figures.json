@@ -1,0 +1,120 @@
+[
+ {
+  "file": "01_beating_orbit.gif",
+  "name": "beating_orbit",
+  "caption": "a shell whose radius beats by 0.1 voxel, orbited while time advances (6 beats per turn): left = as measured (the beat is invisible), right = motion magnified x8 by volseq_magnify_motion",
+  "shape": [
+   256,
+   512,
+   3
+  ],
+  "animated": true,
+  "frames": 36,
+  "frames_written": 36,
+  "fps": 8.0
+ },
+ {
+  "file": "02_radius_trace.png",
+  "name": "radius_trace",
+  "caption": "radius of the shell read from each volume: the measured beat (0.10 voxel) is below one voxel; after magnification it follows alpha x truth",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_pathlines.png",
+  "name": "pathlines",
+  "caption": "pathlines of particles carried by the 3-D flow of the dividing blob, coloured by time (blue = start, red = end); the faint grey is the first volume",
+  "shape": [
+   256,
+   256,
+   3
+  ]
+ },
+ {
+  "file": "04_pathlines_orbit.gif",
+  "name": "pathlines_orbit",
+  "caption": "the same pathlines orbited: two straight bundles leaving the split point at +/-0.75 voxel/frame",
+  "shape": [
+   256,
+   256,
+   3
+  ],
+  "animated": true,
+  "frames": 36,
+  "frames_written": 36,
+  "fps": 8.0
+ },
+ {
+  "file": "05_interpolation.png",
+  "name": "interpolation",
+  "caption": "a frame removed from a 2x-rate series (motion 5 voxel = 2 sigma per step) re-created two ways (max projections): the linear blend shows two ghosts per blob, the flow interpolation one blob at the right place (RMSE 0.0016 vs 0.0207)",
+  "shape": [
+   148,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "06_interpolation_regimes.png",
+  "name": "interpolation_regimes",
+  "caption": "error of the re-created frames against the removed ones, as the motion per step grows: below about one blob width a linear blend is as good (the warp's resampling costs a little), above it the blend ghosts and the flow interpolation wins",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_focus_surface.gif",
+  "name": "focus_surface",
+  "caption": "height field recovered from a focus sweep series (a moving bump, 11 planes), shaded and coloured by height (blue = low, red = high); RMSE 0.31 planes",
+  "shape": [
+   40,
+   40,
+   3
+  ],
+  "animated": true,
+  "frames": 10,
+  "frames_written": 10,
+  "fps": 4.0
+ },
+ {
+  "file": "08_ctc_orbit.gif",
+  "name": "ctc_orbit",
+  "caption": "Fluo-N3DH-CHO/01 (12 volumes of (5, 111, 128), y/x 1/4): the live volumes orbited while time advances (intensity as opacity)",
+  "shape": [
+   256,
+   256,
+   3
+  ],
+  "animated": true,
+  "frames": 36,
+  "frames_written": 36,
+  "fps": 8.0
+ },
+ {
+  "file": "09_ctc_pathlines.png",
+  "name": "ctc_pathlines",
+  "caption": "Fluo-N3DH-CHO/01 (12 volumes of (5, 111, 128), y/x 1/4): pathlines of the 3-D flow between consecutive volumes, coloured by time",
+  "shape": [
+   256,
+   256,
+   3
+  ]
+ },
+ {
+  "file": "10_numbers.png",
+  "name": "numbers",
+  "caption": "every number above, next to its truth",
+  "shape": [
+   248,
+   865,
+   3
+  ],
+  "csv": "10_numbers.csv",
+  "tsv": "10_numbers.tsv"
+ }
+]

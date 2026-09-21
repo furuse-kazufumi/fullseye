@@ -202,11 +202,15 @@ def _draw_line(img: np.ndarray, p0, p1, color) -> None:
 
 def vol_render_transfer(vol, color=None, yaw: float = 35.0, pitch: float = 25.0, size: int = 256,
                         alpha_gain: float = 1.0, static_alpha: float = 0.0, background=(0.04, 0.04, 0.06),
-                        frame: bool = True, depth_samples: int | None = None) -> np.ndarray:
+                        frame: bool = True, depth_samples: int | None = None,
+                        static_color=None) -> np.ndarray:
     """立方体を任意の視点から**前から後ろへの α 合成**で描く ``(size, size, 3)`` float [0, 1](``rgb``)。
 
     ``vol`` (T, H, W) は不透明度 [0, 1](``video_spacetime_cube(mode="motion")``)。色は ``color`` を渡せば
-    その値(同じ形、[0, 1] に正規化される)のグレー、渡さなければ**時刻の色**(青 = 始め → 赤 = 終わり)。
+    その値(同じ形、[0, 1] に正規化される)のグレー、``(T, H, W, 3)`` の RGB 立方体([0, 1])ならその色、
+    渡さなければ**時刻の色**(青 = 始め → 赤 = 終わり)。``static_color``(同じ形のグレー)を渡すと
+    静止した背景の明るさをそれにする(2026-09-21、live4d の軌跡描画が「軌跡は時刻の色・背景は最初の
+    フレームの灰」を 1 回の合成で描くために)。
     軌跡を時刻で塗ると「どちらへ動いたか」が 1 枚で読める。``static_alpha`` > 0 なら静止した背景(``color`` の
     明るさ、無ければ灰)を薄く重ねる —— 値は**立方体の最長辺の長さを貫いたときの合計の不透明度**(0.15 なら
     最長辺ぶん奥まで見て 15 %、短い辺の向きならそれより薄い)で、サンプル数には依らない(Summagator の「静的な内容」)。正射影、視線に沿って ``depth_samples`` 点
@@ -223,7 +227,18 @@ def vol_render_transfer(vol, color=None, yaw: float = 35.0, pitch: float = 25.0,
     if A.min() < 0.0 or A.max() > 1.0:
         raise ValueError(f"{op}: vol must be opacities in [0, 1] (video_spacetime_cube output), got range "
                          f"[{A.min():.3g}, {A.max():.3g}]")
-    C = None if color is None else _unit(_cube(color, op, "color", A.shape))
+    C = CRGB = None
+    if color is not None:
+        carr = np.asarray(color, dtype=np.float64)
+        if carr.ndim == 4 and carr.shape[-1] == 3:
+            if carr.shape[:3] != A.shape:
+                raise ValueError(f"{op}: color (T, H, W, 3) must match vol shape {A.shape}, got {carr.shape}")
+            if not np.isfinite(carr).all() or carr.min() < 0.0 or carr.max() > 1.0:
+                raise ValueError(f"{op}: an RGB color cube must be finite and in [0, 1]")
+            CRGB = carr
+        else:
+            C = _unit(_cube(color, op, "color", A.shape))
+    SC = None if static_color is None else _unit(_cube(static_color, op, "static_color", A.shape))
     yw = _finite(yaw, op, "yaw")
     pt = _finite(pitch, op, "pitch")
     n = _count(size, op, "size", 8, 4096)
@@ -260,7 +275,12 @@ def vol_render_transfer(vol, color=None, yaw: float = 35.0, pitch: float = 25.0,
     a_static = (1.0 - (1.0 - sa) ** (step / float(dims.max()))) * inside if sa > 0.0 else np.zeros_like(a_motion)
     grey = (ndi.map_coordinates(C, coords, order=1, mode="constant", cval=0.0).reshape(nd, n, n)
             if C is not None else np.full((nd, n, n), 0.5))
-    if C is None:
+    grey_static = (ndi.map_coordinates(SC, coords, order=1, mode="constant", cval=0.0).reshape(nd, n, n)
+                   if SC is not None else grey)
+    if CRGB is not None:
+        c_motion = np.stack([ndi.map_coordinates(CRGB[..., i], coords, order=1, mode="constant", cval=0.0)
+                             for i in range(3)], axis=-1).reshape(nd, n, n, 3)
+    elif C is None:
         # 動きの色 = 時刻(t の線形補間。map_coordinates を 3 回回すより速い)
         tcol = _time_colors(T)
         ti = np.clip(coords[0], 0.0, T - 1)
@@ -270,7 +290,7 @@ def vol_render_transfer(vol, color=None, yaw: float = 35.0, pitch: float = 25.0,
         c_motion = (tcol[i0] * (1.0 - w) + tcol[i1] * w).reshape(nd, n, n, 3)
     else:
         c_motion = np.repeat(grey[..., None], 3, axis=-1)
-    c_static = np.repeat(grey[..., None], 3, axis=-1)
+    c_static = np.repeat(grey_static[..., None], 3, axis=-1)
     alpha = 1.0 - (1.0 - a_motion) * (1.0 - a_static)      # 2 つの層を同じサンプルで重ねる
     num = a_motion[..., None] * c_motion + a_static[..., None] * (1.0 - a_motion)[..., None] * c_static
     col = np.where(alpha[..., None] > 0.0, num / np.maximum(alpha, 1e-12)[..., None], 0.0)
