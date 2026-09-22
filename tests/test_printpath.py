@@ -450,3 +450,49 @@ def test_the_pen_width_is_a_continuous_knob_and_the_ink_follows_a_closed_form():
     solved = base["target_darkness"] * area / length
     tuned = P.stroke_tone_error(img, tour, pen_width=solved, blur_sigma=5.0)
     assert abs(tuned["bias"]) < 0.5 * abs(base["bias"]), (tuned["bias"], base["bias"])
+
+
+def test_the_stipple_is_unchanged_by_the_kd_tree_and_does_not_build_a_distance_matrix():
+    """★★回帰 + 速さ。総当たりの距離行列を KD 木に替えても**答えは 1 ビットも変わらない**。
+
+    以前は Lloyd の各反復で ``(画素 x 点)`` の距離行列をまるごと作っていた。
+    202x300 の絵に 9,000 点だと 60,600 x 9,000 = 5.5 億要素(4.4 GB 相当)を 18 回
+    組み直すことになり、手元で **101 秒**、共有ランナーでは PoC の実行門(1 本 600 秒)
+    に迫っていた。KD 木は**厳密に同じ最近傍**を返すので、種を固定すれば結果は同一。
+
+    実測: 101.4 秒 -> 0.4 秒(250 倍)、``stipple_energy`` も 0.02 秒。
+    ここでは小さい絵で**総当たりを手で回して突き合わせ**、厳密一致を固定する。
+    """
+    h, w, n, it = 40, 52, 300, 10
+    yy, xx = np.mgrid[0:h, 0:w]
+    img = np.clip(0.9 - 0.7 * np.exp(-(((yy - 16) / 10.) ** 2 + ((xx - 26) / 14.) ** 2))
+                  - 0.2 * (xx / w), 0, 1)
+    got = P.stipple_points_from_image(img, n, iterations=it, gamma=1.6, seed=1)
+
+    lo, hi = float(img.min()), float(img.max())
+    weight = np.maximum(((hi - img) / (hi - lo)) ** 1.6, 0.02)
+    rng = np.random.default_rng(1)
+    flat = weight.ravel() / weight.sum()
+    idx = rng.choice(flat.size, size=n, replace=True, p=flat)
+    pts = np.stack([(idx // w).astype(float) + rng.random(n),
+                    (idx % w).astype(float) + rng.random(n)], axis=1)
+    rr, cc = np.mgrid[0:h, 0:w]
+    rr = rr.astype(float).ravel()
+    cc = cc.astype(float).ravel()
+    wf = weight.ravel()
+    for _ in range(it):
+        d = (rr[:, None] - pts[None, :, 0]) ** 2 + (cc[:, None] - pts[None, :, 1]) ** 2
+        o = np.argmin(d, axis=1)
+        nr = np.bincount(o, weights=wf * rr, minlength=n)
+        nc = np.bincount(o, weights=wf * cc, minlength=n)
+        de = np.bincount(o, weights=wf, minlength=n)
+        m = de > 0
+        pts[m, 0] = nr[m] / de[m]
+        pts[m, 1] = nc[m] / de[m]
+
+    assert np.array_equal(got, pts), float(np.abs(got - pts).max())
+
+    # エネルギーも同じ式の別経路なので、総当たりと一致する
+    dm = (rr[:, None] - got[None, :, 0]) ** 2 + (cc[:, None] - got[None, :, 1]) ** 2
+    assert P.stipple_energy(img, got, gamma=1.6) == pytest.approx(
+        float((wf * dm.min(axis=1)).sum()), rel=1e-12)

@@ -76,6 +76,16 @@ _CATALOG = {
         ("cplx_joukowski", "mathops", ["cpoints"], "cpoints"),
         ("cplx_mobius", "mathops", ["cpoints"], "cpoints"),
         ("cplx_cr_residual", "mathops", ["cimage"], "measurement"),
+        # 複素平面を「面」で見る(2026-09-22)。曲線の層(上)に対する領域の層。
+        ("cplx_plane_grid", "mathops", [], "cimage"),
+        ("cplx_rational_field", "mathops", ["roots", "roots"], "cimage"),
+        ("cplx_domain_colour", "mathops", ["cimage"], "rgbimage"),
+        ("cplx_newton_basins", "mathops", ["signal"], "labels2d"),
+        ("cplx_escape_time", "mathops", [], "image2d"),
+        # ★閉形式の内部判定。脱出時間の図に「ここは絶対に出ない」を重ねられる。
+        ("mandelbrot_interior", "mathops", ["cimage"], "mask"),
+        ("potential_flow_joukowski", "mathops", [], "cimage"),
+        ("joukowski_circulation", "mathops", [], "measurement"),
     ],
 }
 

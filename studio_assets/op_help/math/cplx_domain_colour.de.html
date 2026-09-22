@@ -1,0 +1,60 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cplx_domain_colour — MATH <code style="color:#22d3bf">complex</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_domain_colour(field, gamma=1.0, bands=0.0, saturation=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.cplx_domain_colour(field, gamma=1.0, bands=0.0, saturation=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;cplx_domain_colour&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Domain Coloring — verwandelt ein komplexes Feld in ein lesbares RGB-Bild.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Hue carries `<code style="color:#22d3bf">arg(z)</code>` (one full turn of the colour wheel per turn of the</p>
+<p>argument, red at `<code style="color:#22d3bf">arg = 0</code><code style="color:#22d3bf">); value carries </code><code style="color:#22d3bf">|z|</code>` through the **strictly</p>
+<p>increasing** map `<code style="color:#22d3bf">t/(1+t)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">t = |z|**gamma</code>`, so a zero is exactly</p>
+<p>black, `<code style="color:#22d3bf">|z| = 1</code>` is half brightness and a large modulus saturates at full</p>
+<p>brightness. The saturation is <b>not</b> dropped far from the origin, so the</p>
+<p>hue — and with it the argument — stays readable everywhere; pass</p>
+<p>`<code style="color:#22d3bf">saturation = 0</code>` for a plain grey ramp of the modulus alone. With</p>
+<p>`<code style="color:#22d3bf">bands = 0</code>` (the default) the</p>
+<p>brightness is monotone in `<code style="color:#22d3bf">|z|</code>`, which means the picture is *invertible*:</p>
+<p>the argument comes back out of the hue and the modulus out of the value.</p>
+<p>★<b>The picture proves a theorem.</b> Walk a small circle around a zero of</p>
+<p>order *m* and the hue cycles through the colour wheel exactly *m* times;</p>
+<p>around a pole of order *m*, *m* times the other way. That is the argument</p>
+<p>principle, read off the image with no numbers — and this family&#x27;s</p>
+<p>`<code style="color:#22d3bf">cplx_winding_number</code>` counts the same integer from the field itself, so</p>
+<p>the drawing and the arithmetic check each other.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>field : complex 2-D array (`<code style="color:#22d3bf">cimage</code>`)</p>
+<p>Typically from :func:<code style="color:#22d3bf">cplx_rational_field</code>.</p>
+<p>gamma : float &gt; 0</p>
+<p>Compresses (`<code style="color:#22d3bf">&lt;1</code><code style="color:#22d3bf">) or stretches (</code><code style="color:#22d3bf">&gt;1</code>`) the modulus ramp.</p>
+<p>bands : float &gt;= 0</p>
+<p>Classic modulus contours: `<code style="color:#22d3bf">bands</code>` shading cycles per decade of</p>
+<p>`<code style="color:#22d3bf">|z|</code>`. <b>Non-zero breaks monotonicity</b> (that is the point — it draws</p>
+<p>level lines), so the inverse-mapping guarantee above holds only at 0.</p>
+<p>saturation : float in [0, 1]</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: not a 2-D complex array; non-finite samples</p>
+<p>(a pole sampled exactly — see :func:<code style="color:#22d3bf">cplx_rational_field</code>); `<code style="color:#22d3bf">gamma &lt;= 0</code>`;</p>
+<p>`<code style="color:#22d3bf">bands &lt; 0</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">saturation</code>` outside [0, 1].</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">Leitfaden zur Familie math_metrology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_complex_plane_fields">poc_complex_plane_fields</a> — <code style="color:#22d3bf">py -3.11 examples/poc_complex_plane_fields.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">rgbimage</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">complex</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_contour_circle">cplx_contour_circle</a> · <a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

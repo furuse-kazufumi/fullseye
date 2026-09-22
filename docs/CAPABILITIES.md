@@ -16,9 +16,9 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 29 項目**
+**収録 30 項目**
 
-## 測る (6)
+## 測る (7)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -27,6 +27,14 @@
 使う op: `camera_calibration`, `estimate_distortion`, `intrinsic_matrix`, `decompose_intrinsics`
 
 動く例: `camera_intrinsics_calibration`
+
+### [複素平面を「面」で見る(位相彩色・吸引域・脱出時間・翼まわりの流れ)](capabilities/complex-plane-fields.md)
+
+複素解析の図を描きます —— 有理関数の位相彩色、ニュートン法の吸引域、マンデルブロ/ジュリア集合の脱出時間、ジューコフスキー翼まわりのポテンシャル流。既存の複素解析 op が**閉曲線の上**(積分・巻き数・ローラン係数・等角写像)を扱うのに対して、この層は**領域の上**を扱います。
+
+使う op: `cplx_plane_grid`, `cplx_rational_field`, `cplx_domain_colour`, `cplx_newton_basins`, `cplx_escape_time`, `mandelbrot_interior`, `potential_flow_joukowski`, `joukowski_circulation`
+
+動く例: `poc_complex_plane_fields`
 
 ### [本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要)](capabilities/estimate-lens-distortion.md)
 

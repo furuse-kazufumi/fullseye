@@ -515,7 +515,7 @@ def test_histogram_bins_capped():
 # --------------------------------------------------------------------------- #
 def test_mathops_registry_names_resolve():
     # tier1 16 + tier2 complex 10 + interp_scattered(2026-09-08、散在点)
-    assert len(mathops.MATHOPS) == 27
+    assert len(mathops.MATHOPS) == 35   # 複素平面の面 8 op を足した
     for name in mathops.MATHOPS:
         assert callable(getattr(mathops, name)), name
         assert name in mathops.__all__
@@ -926,7 +926,7 @@ def test_complex_family_rejects_masked_and_nonfinite():
 def test_opsmath_complex_category_is_registered():
     import opsmath
     names = opsmath.list_ops("complex")
-    assert len(names) == 10
+    assert len(names) == 18   # 曲線の層 10 + 領域の層 8
     assert set(names) <= set(mathops.MATHOPS)
     assert opsmath.missing() == []
     # the declared output vocabulary is the one the chain fuzzer validates
@@ -999,3 +999,478 @@ def test_interp_scattered_is_fail_closed():
         mathops.interp_scattered(pts, val, np.zeros((4, 2)))
     with pytest.raises(ValueError, match="method must be"):
         mathops.interp_scattered(pts, val, pts, method="kriging")
+
+
+# -*- coding: utf-8 -*-
+
+
+# --------------------------------------------------------------------------- #
+# 複素平面を「面」で見る 5 op(2026-09-22)                                     #
+#   真値は「使った式」ではない: 偏角の原理(既存 op が数える)/ Cayley の定理   #
+#   (2 次は半平面という**厳密解**)/ 主カージオイドの閉形式内部判定 /          #
+#   c=0 のジュリア集合は単位円板 / コーシー・リーマン残差(既存 op)。          #
+# --------------------------------------------------------------------------- #
+def _ring(a, k):
+    """配列の外から k 番目の矩形リングを、反時計回りに 1 周ぶん並べて返す。
+
+    行 0 が**上**(虚部が大きい)なので、画像の上で時計回りに辿ると
+    複素平面では反時計回りになる。
+    """
+    h, w = a.shape[:2]
+    i0, i1, j0, j1 = k, h - 1 - k, k, w - 1 - k
+    idx = ([(i1, j) for j in range(j0, j1)]
+           + [(i, j1) for i in range(i1, i0, -1)]
+           + [(i0, j) for j in range(j1, j0, -1)]
+           + [(i, j0) for i in range(i0, i1)])
+    return np.array([a[i, j] for i, j in idx])
+
+
+def test_the_field_knows_how_many_zeros_and_poles_it_has():
+    """★偏角の原理 —— 既存 op(cplx_winding_number)が真値になる。
+
+    R の像が原点を回る回数 = 輪郭の内側の零点 − 極(重複込み)。この op が
+    作った場そのものを既存の op に数えさせるので、真値は**使った式ではない**。
+    """
+    cases = [
+        ([0.2 + 0.1j], [], 1),                                  # 零点 1
+        ([0.2 + 0.1j, -0.3 + 0.2j], [], 2),                     # 零点 2
+        ([0.2 + 0.1j] * 3, [], 3),                              # 3 位の零点
+        ([], [0.1 - 0.2j], -1),                                 # 極 1
+        ([0.2 + 0.1j, -0.3 + 0.2j], [0.1 - 0.2j], 1),           # 2 - 1
+        ([0.2 + 0.1j], [0.1 - 0.2j, 0.4 + 0.4j], -1),           # 1 - 2
+    ]
+    for zs, ps, want in cases:
+        f = mathops.cplx_rational_field(zs, ps, shape=(513, 513), half_width=2.0)
+        got = mathops.cplx_winding_number(_ring(f, 1), 0.0)
+        assert got == want, (zs, ps, got, want)
+
+
+def test_a_zero_outside_the_window_is_not_counted():
+    """対照群 —— 窓の外の零点は巻き数に効かない(効いたら窓の取り方が嘘)。"""
+    f = mathops.cplx_rational_field([5.0 + 0.0j], [], shape=(257, 257), half_width=1.0)
+    assert mathops.cplx_winding_number(_ring(f, 1), 0.0) == 0
+
+
+def test_the_field_refuses_a_pole_it_cannot_evaluate():
+    """★極が標本の上に乗ったら値は数でない —— 黙って inf を返さず拒む。"""
+    with pytest.raises(ValueError) as e:
+        mathops.cplx_rational_field([], [0.0 + 0.0j], shape=(65, 65), half_width=1.0)
+    assert "lands exactly on sample" in str(e.value)
+    # 半画素ずらせば通る(逃げ道を message が示している)
+    f = mathops.cplx_rational_field([], [0.0 + 0.0j], shape=(64, 64), half_width=1.0)
+    assert np.all(np.isfinite(f))
+
+
+def test_the_rational_field_is_holomorphic_and_the_row_order_decides_the_sign():
+    """★★既存 op(cplx_cr_residual)が真値。**行の向きが答えの符号を決める**。
+
+    この族の cplx_cr_residual は「行は虚部の**増える**向き」を要求する。
+    こちらの格子は画像の並び(行 0 が上)なので、そのまま渡すと **2**(共役)、
+    反転して渡すと 0。罠を門にしてある —— 両方を同時に検査する。
+
+    中心差分は 2 次多項式まで厳密なので、1 次・2 次は 1e-12 を切る。
+    """
+    hw, n = 2.0, 129
+    sp = 2.0 * hw / (n - 1)
+    lin = mathops.cplx_rational_field([0.3 + 0.2j], [], shape=(n, n), half_width=hw)
+    quad = mathops.cplx_rational_field([0.3 + 0.2j, -0.4 + 0.1j], [], shape=(n, n), half_width=hw)
+    assert mathops.cplx_cr_residual(lin[::-1], spacing=sp) < 1e-12
+    assert mathops.cplx_cr_residual(quad[::-1], spacing=sp) < 1e-12
+    # 反転しないと「共役の場」を測るので、厳密に 2 に行く
+    assert mathops.cplx_cr_residual(quad, spacing=sp) == pytest.approx(2.0, abs=1e-9)
+    # 3 次は O(h^2) で落ちる —— 格子を半分にすると残差は 4 分の 1(既存 op の
+    # docstring が主張する 2 次収束を、この op が作った場で再現する)
+    c3 = mathops.cplx_rational_field([0.3, 0.1j, -0.2], [], shape=(n, n), half_width=hw)
+    c3b = mathops.cplx_rational_field([0.3, 0.1j, -0.2], [], shape=(2 * n - 1, 2 * n - 1),
+                                half_width=hw)
+    r1 = mathops.cplx_cr_residual(c3[::-1], spacing=sp)
+    r2 = mathops.cplx_cr_residual(c3b[::-1], spacing=sp / 2.0)
+    assert r1 / r2 == pytest.approx(4.0, rel=0.05), (r1, r2)
+
+
+def test_the_picture_shows_the_order_of_the_zero():
+    """★★絵から定理が読める —— 零点のまわりで色相が回る回数 = 零点の位数。
+
+    位相彩色は飾りではない。小さな円をひと回りするあいだに色相が何周するかが、
+    そのまま偏角の原理の整数になる。**画素の色だけ**から数える(場の値は見ない)。
+    """
+    for order in (1, 2, 3):
+        f = mathops.cplx_rational_field([0.0 + 0.0j] * order, [], shape=(129, 129),
+                                  half_width=1.0)
+        rgb = mathops.cplx_domain_colour(f)
+        ring = _ring(rgb, 20)                       # (N, 3) の色の列
+        hue = _hue_of(ring)
+        turns = np.mod(np.diff(np.concatenate([hue, hue[:1]])) + 0.5, 1.0) - 0.5
+        assert int(round(turns.sum())) == order, (order, turns.sum())
+    # 極は逆向きに回る
+    # ★極は標本に乗れないので**偶数**格子で(零点と違って値が数にならない)
+    f = mathops.cplx_rational_field([], [0.0 + 0.0j] * 2, shape=(128, 128), half_width=1.0)
+    hue = _hue_of(_ring(mathops.cplx_domain_colour(f), 20))
+    turns = np.mod(np.diff(np.concatenate([hue, hue[:1]])) + 0.5, 1.0) - 0.5
+    assert int(round(turns.sum())) == -2
+
+
+def _hue_of(rgb):
+    """RGB -> 色相 [0,1)。絵から読み戻すための最小の逆変換。"""
+    mx = rgb.max(axis=-1)
+    mn = rgb.min(axis=-1)
+    d = mx - mn
+    r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+    h = np.zeros(mx.shape)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        h = np.where(d == 0, 0.0,
+                     np.where(mx == r, np.mod((g - b) / np.where(d == 0, 1, d), 6.0),
+                              np.where(mx == g, (b - r) / np.where(d == 0, 1, d) + 2.0,
+                                       (r - g) / np.where(d == 0, 1, d) + 4.0)))
+    return np.mod(h / 6.0, 1.0)
+
+
+def test_domain_colouring_is_invertible_when_it_promises_to_be():
+    """bands=0 なら明度は |z| に**厳密に単調** = 絵から偏角も絶対値も戻せる。
+
+    bands>0 は等高線を描くために単調性をわざと壊す —— 対照群として、
+    同じ検査が落ちることまで見る(「効く」と「効かない」を分ける)。
+    """
+    f = mathops.cplx_rational_field([0.2 + 0.3j], [-0.5 + 0.1j], shape=(97, 97), half_width=1.5)
+    rgb = mathops.cplx_domain_colour(f)
+    hue = _hue_of(rgb)
+    arg = np.mod(np.angle(f) / (2.0 * np.pi), 1.0)
+    dh = np.abs(np.mod(hue - arg + 0.5, 1.0) - 0.5)
+    assert dh.max() < 1e-6, dh.max()
+
+    val = rgb.max(axis=-1)                              # HSV の V
+    mod = np.abs(f)
+    o = np.argsort(mod.ravel())
+    v = val.ravel()[o]
+    assert np.all(np.diff(v) >= -1e-12)                 # 単調(bands=0)
+
+    banded = mathops.cplx_domain_colour(f, bands=3.0).max(axis=-1).ravel()[o]
+    assert np.diff(banded).min() < -1e-3                # 対照群: 単調でない
+
+
+def test_a_zero_is_black_and_a_large_modulus_is_fully_bright():
+    """★零点は**厳密に**黒(0,0,0)。大きい |z| は明度 1 の彩度つきの色。
+
+    「無限大は白」ではない —— 彩度は落とさないので、遠くでも色相(= 偏角)が
+    読める。白に寄せると偏角の情報がそこで消えるため、そうしていない。
+    """
+    f = mathops.cplx_rational_field([0.0 + 0.0j], [], shape=(65, 65), half_width=1.0)
+    rgb = mathops.cplx_domain_colour(f)
+    i, j = np.unravel_index(np.argmin(np.abs(f)), f.shape)
+    assert np.abs(f[i, j]) == 0.0 and rgb[i, j].max() == 0.0
+    big = mathops.cplx_domain_colour(np.full((8, 8), 1e6 + 0j))
+    assert big.max() > 0.999999
+    assert big[..., 0].min() > 0.999999          # arg = 0 なので赤が振り切れる
+    # 彩度を 0 にすれば灰色階調(偏角を捨てる代わりに絵は単純になる)
+    grey = mathops.cplx_domain_colour(np.full((8, 8), 1e6 + 0j), saturation=0.0)
+    assert float(grey.max() - grey.min()) < 1e-12
+
+
+def test_domain_colouring_refuses_what_it_cannot_draw():
+    with pytest.raises(ValueError):
+        mathops.cplx_domain_colour(np.array([[np.inf + 0j]] * 4))
+    with pytest.raises(ValueError):
+        mathops.cplx_domain_colour(np.zeros((4, 4), complex), gamma=0.0)
+    with pytest.raises(ValueError):
+        mathops.cplx_domain_colour(np.zeros((4, 4), complex), saturation=1.5)
+    with pytest.raises(ValueError):
+        mathops.cplx_domain_colour(np.zeros((4, 4, 4), complex))
+
+
+def test_cayley_gives_the_degree_two_basins_exactly():
+    """★★Cayley (1879): z**2 - 1 の吸引域は**2 つの半平面**、境界は虚軸。
+
+    2 次だけは閉形式の答えがあるので、この op は「もっともらしい」ではなく
+    **厳密に**検査できる。分数もフラクタルも無い —— 1 画素も外してはいけない。
+    """
+    lab = mathops.cplx_newton_basins([1, 0, -1], centre=0j, half_width=1.5,
+                               shape=(128, 128), max_iter=80)
+    z = mathops.cplx_plane_grid(0j, 1.5, (128, 128))
+    assert not np.any(z.real == 0.0)                    # 偶数格子なので虚軸に乗らない
+    want = np.where(z.real < 0, 1, 2).astype(np.int32)  # 根は (Re, Im) 順 = -1, +1
+    assert np.array_equal(lab, want)
+    assert int((lab == 0).sum()) == 0                   # 収束しない画素は 1 つも無い
+
+
+def test_degree_three_is_a_fractal_but_its_symmetry_is_exact():
+    """★3 次は Cayley が解けなかった側 —— 境界はフラクタル。
+
+    だから厳密解は使えないが、**対称性は厳密**に成り立つ: z**3 - 1 の係数は実数
+    なので、実軸に対称な窓では吸引域も共役対称。根は (Re, Im) 順に並ぶので、
+    行を反転すると根 1 と 2 だけが入れ替わる —— 1 画素の誤差も許さない。
+    """
+    lab = mathops.cplx_newton_basins([1, 0, 0, -1], centre=0j, half_width=1.6,
+                               shape=(129, 129), max_iter=60)
+    for k in (1, 2, 3):
+        assert int((lab == k).sum()) > 0, k
+    swapped = np.where(lab == 1, 2, np.where(lab == 2, 1, lab))
+    assert np.array_equal(lab[::-1], swapped)
+    # 根そのものは既存 op(poly_roots)と一致する
+    assert np.allclose(np.sort_complex(mathops.poly_roots(np.array([1.0, 0.0, 0.0, -1.0]))),
+                       np.sort_complex(np.roots([1, 0, 0, -1])))
+
+
+def test_newton_leaves_the_undecided_undecided():
+    """★収束しなかった画素は 0 のまま —— 「近いほうの根」に丸めない。
+
+    max_iter を切り詰めると 0 が増える(単調)。臨界点(p' = 0)では 0 のままで、
+    例外も出さず、しかし「どちらかの根」とも言わない。
+    """
+    prev = -1
+    for mi in (2, 4, 8, 30):
+        lab = mathops.cplx_newton_basins([1, 0, 0, -1], half_width=1.6, shape=(64, 64),
+                                   max_iter=mi)
+        n0 = int((lab == 0).sum())
+        if prev >= 0:
+            assert n0 <= prev, (mi, n0, prev)
+        prev = n0
+    with pytest.raises(ValueError):
+        mathops.cplx_newton_basins([3.0], shape=(16, 16))          # 0 でない定数 = 根が無い
+    with pytest.raises(ValueError):
+        mathops.cplx_newton_basins([0.0, 0.0], shape=(16, 16))     # 恒等的に 0
+    with pytest.raises(ValueError):
+        mathops.cplx_newton_basins([1, 0, -1], shape=(16, 16), max_iter=0)
+
+
+def test_the_main_cardioid_provably_never_escapes():
+    """★★閉形式の内部判定が門になる。
+
+    c が主カージオイドにあるのは、固定点 z* = (1 - sqrt(1-4c))/2 が吸引的
+    (|2 z*| < 1)であることと同値で、そのとき軌道は**決して**脱出しない。
+    だから該当画素は例外なく max_iter を返さなければならない —— 許容差は無い。
+    周期 2 球 |c+1| < 1/4 も同じ。
+    """
+    mi = 80
+    e = mathops.cplx_escape_time("mandelbrot", centre=-0.5 + 0j, half_width=1.6,
+                           shape=(180, 240), max_iter=mi)
+    g = mathops.cplx_plane_grid(-0.5 + 0j, 1.6, (180, 240))
+    inside = mathops.mandelbrot_interior(g)
+    assert inside.sum() > 1000
+    assert np.all(e[inside] == float(mi))
+    # 逆は言えない(小さい球や糸は覆われない)—— それが「下界」の意味
+    assert int((e == float(mi)).sum()) > int(inside.sum())
+    # |c| > 2 は 1 歩で出る
+    far = np.abs(g) > 2.0
+    assert np.all(e[far] <= 2.0)
+
+
+def test_the_escape_picture_is_exactly_mirror_symmetric():
+    """★共役対称は**厳密**(浮動小数の許容差すら要らない)。"""
+    e = mathops.cplx_escape_time("mandelbrot", centre=-0.5 + 0j, half_width=1.6,
+                           shape=(121, 161), max_iter=40)
+    assert np.array_equal(e, e[::-1])
+    j = mathops.cplx_escape_time("julia", param=-0.7269 + 0.1889j, half_width=1.6,
+                           shape=(121, 121), max_iter=40)
+    assert np.array_equal(j, j[::-1, ::-1])          # c 固定のジュリアは原点対称
+
+
+def test_the_julia_set_of_zero_is_the_unit_circle():
+    """★★c = 0 のジュリア集合は**単位円**、充填集合は閉単位円板 —— 厳密解。
+
+    z -> z**2 は |z| を 2 乗するだけなので、|z| < 1 は 0 へ、|z| > 1 は無限へ。
+    絵を見て納得するのではなく、半径で全数を走査する。
+    """
+    mi = 60
+    e = mathops.cplx_escape_time("julia", param=0j, half_width=2.0, shape=(201, 201),
+                           max_iter=mi)
+    g = mathops.cplx_plane_grid(0j, 2.0, (201, 201))
+    r = np.abs(g)
+    assert np.all(e[r < 0.995] == float(mi))
+    assert np.all(e[r > 1.005] < float(mi))
+
+
+def test_escape_time_refuses_what_it_cannot_answer():
+    with pytest.raises(ValueError):
+        mathops.cplx_escape_time("burning_ship", shape=(16, 16))
+    with pytest.raises(ValueError):
+        mathops.cplx_escape_time("julia", param=complex(np.nan, 0), shape=(16, 16))
+    with pytest.raises(ValueError):
+        mathops.cplx_escape_time(shape=(16, 16), max_iter=0)
+    with pytest.raises(ValueError):
+        mathops.cplx_escape_time(shape=(16, 16), escape_radius=0.0)
+    with pytest.raises(ValueError):
+        mathops.cplx_escape_time(shape=(2, 2))
+
+
+def _circulation(field, grid, k):
+    """外から k 番目のリングに沿った線積分 ∮ w dz。実部 = 循環、虚部 = 流束。"""
+    zs = _ring(grid, k)
+    ws = _ring(field, k)
+    dz = np.roll(zs, -1) - zs
+    return complex(np.sum(0.5 * (ws + np.roll(ws, -1)) * dz))
+
+
+def test_the_flow_field_is_holomorphic_outside_the_body():
+    """★★既存 op(cplx_cr_residual)が真値。乱数と共役が対照群。"""
+    n, hw = 200, 3.0
+    w = mathops.potential_flow_joukowski(alpha_deg=8.0, shape=(n, n), half_width=hw)
+    strip = w[10:70, 10:190]                       # 翼を含まない帯だけ
+    assert int((strip == 0).sum()) == 0
+    sp = 2.0 * hw / (n - 1)
+    assert mathops.cplx_cr_residual(strip[::-1], spacing=sp) < 5e-3
+    assert mathops.cplx_cr_residual(np.conj(strip[::-1]), spacing=sp) > 1.9   # 対照群
+
+
+def test_the_circulation_is_path_independent():
+    """★コーシー —— 大きい輪と小さい輪で循環が一致する(流束は 0)。
+
+    循環そのものはクッタ条件が決めた Γ(joukowski_circulation)に等しいが、
+    **経路に依らない**ことは式からは出てこない: 場が翼の外で正則で、
+    かつ湧き出しが無いことの帰結である。
+    """
+    n, hw = 200, 3.0
+    w = mathops.potential_flow_joukowski(alpha_deg=8.0, shape=(n, n), half_width=hw)
+    g = mathops.cplx_plane_grid(0j, hw, (n, n))
+    v1 = _circulation(w, g, 2)
+    v2 = _circulation(w, g, 25)
+    assert v1.real == pytest.approx(v2.real, rel=2e-3), (v1, v2)
+    assert abs(v1.imag) < 1e-2 and abs(v2.imag) < 1e-2          # 湧き出し無し
+    gamma = mathops.joukowski_circulation(alpha_deg=8.0)
+    assert v1.real == pytest.approx(-gamma, rel=2e-3), (v1.real, gamma)
+
+
+def test_zero_lift_is_exact_for_a_symmetric_section_at_zero_incidence():
+    """★対称翼を迎角 0 で置けば循環はちょうど 0(揚力ゼロ) —— 符号の門。
+
+    迎角を振ると符号が変わり、大きさは sin で増える。「正の迎角で正の揚力」
+    という向きの規約が壊れていれば、ここで落ちる。
+    """
+    sym = -0.1 + 0.0j
+    assert mathops.joukowski_circulation(0.0, centre_offset=sym) == pytest.approx(0.0, abs=1e-12)
+    assert mathops.joukowski_circulation(+5.0, centre_offset=sym) > 0
+    assert mathops.joukowski_circulation(-5.0, centre_offset=sym) < 0
+    w = mathops.potential_flow_joukowski(alpha_deg=0.0, centre_offset=sym, shape=(161, 161),
+                                   half_width=3.0)
+    assert np.allclose(w, np.conj(w[::-1]), atol=1e-9)          # 実軸に対称
+    # キャンバのある翼は迎角 0 でも揚力を持つ(対照群)
+    assert mathops.joukowski_circulation(0.0, centre_offset=-0.09 + 0.09j) > 0.1
+
+
+def test_the_kutta_condition_is_what_keeps_the_trailing_edge_finite():
+    """★★門に対照群がある —— 循環を外すと後縁で速度が発散する。
+
+    ジューコフスキー写像は zeta = ±b で dz/dzeta = 0 になる。後縁で速度が
+    有限なのは、クッタ条件が選んだ循環がちょうどそこで dW/dzeta を 0 に
+    するからで、**それ以外の循環では 1/sqrt(距離) で発散する**。
+    """
+    b, mu = 1.0, -0.09 + 0.09j
+    a = abs(b - mu)
+    beta = -np.angle(b - mu)
+    alpha = np.deg2rad(8.0)
+    gamma = 4.0 * np.pi * a * np.sin(alpha + beta)
+
+    def speed_at(eps, circ):
+        zeta = b + eps * np.exp(1j * np.linspace(0.0, 2.0 * np.pi, 64, endpoint=False))
+        zeta = zeta[np.abs(zeta - mu) > a]                      # 円の外だけ
+        d = zeta - mu
+        dwdz = (np.exp(-1j * alpha) - a * a * np.exp(1j * alpha) / (d * d)
+                + 1j * circ / (2.0 * np.pi * d))
+        return float(np.abs(dwdz / (1.0 - b * b / (zeta * zeta))).max())
+
+    kutta = [speed_at(e, gamma) for e in (1e-2, 1e-3, 1e-4, 1e-5)]
+    assert max(kutta) < 10.0, kutta                             # 有限にとどまる
+    wrong = [speed_at(e, 0.0) for e in (1e-2, 1e-3, 1e-4, 1e-5)]
+    assert wrong[-1] / wrong[0] > 20.0, wrong                   # 対照群: 発散する
+    # 場そのものも後縁の近くで暴れない
+    w = mathops.potential_flow_joukowski(alpha_deg=8.0, shape=(400, 400), half_width=2.5)
+    assert float(np.abs(w).max()) < 6.0
+
+
+def test_the_far_field_returns_to_the_free_stream_like_one_over_r():
+    """★遠方で自由流に戻り、ずれは 1/|z| で落ちる(速さは式に書いていない)。"""
+    free = np.exp(-1j * np.deg2rad(8.0))
+    errs = []
+    for hw in (10.0, 20.0, 40.0):
+        w = mathops.potential_flow_joukowski(alpha_deg=8.0, shape=(129, 129), half_width=hw)
+        g = mathops.cplx_plane_grid(0j, hw, (129, 129))
+        edge = np.abs(g) > 0.9 * hw
+        errs.append(float(np.abs(w[edge] - free).max()))
+    assert errs[0] / errs[1] == pytest.approx(2.0, rel=0.15), errs
+    assert errs[1] / errs[2] == pytest.approx(2.0, rel=0.15), errs
+
+
+def test_the_zeroed_region_is_the_aerofoil():
+    """★穴の面積は既存 op(cplx_joukowski)の輪郭から独立に出る。
+
+    場が 0 の画素は「翼の中」。その面積は、円を cplx_joukowski で写した輪郭に
+    靴紐公式を当てた面積と一致しなければならない(格子の離散化ぶんだけ違う)。
+    """
+    b, mu = 1.0, -0.09 + 0.09j
+    a = abs(b - mu)
+    t = np.linspace(0.0, 2.0 * np.pi, 4096, endpoint=False)
+    foil = mathops.cplx_joukowski(mu + a * np.exp(1j * t), b)
+    x, y = foil.real, foil.imag
+    area = abs(float(0.5 * np.sum(x * np.roll(y, -1) - np.roll(x, -1) * y)))
+
+    n, hw = 600, 2.5
+    w = mathops.potential_flow_joukowski(alpha_deg=8.0, chord_b=b, centre_offset=mu,
+                                   shape=(n, n), half_width=hw)
+    px = (2.0 * hw / (n - 1)) ** 2
+    assert int((w == 0).sum()) * px == pytest.approx(area, rel=0.03), \
+        (int((w == 0).sum()) * px, area)
+
+
+def test_the_flow_refuses_a_circle_that_is_not_an_aerofoil():
+    with pytest.raises(ValueError) as e:
+        mathops.potential_flow_joukowski(centre_offset=0.5 + 0.0j, shape=(32, 32))
+    assert "critical point" in str(e.value) or "chord_b" in str(e.value)
+    with pytest.raises(ValueError):
+        mathops.potential_flow_joukowski(centre_offset=1.5 + 0.0j, shape=(32, 32))
+    with pytest.raises(ValueError):
+        mathops.potential_flow_joukowski(speed=0.0, shape=(32, 32))
+    with pytest.raises(ValueError):
+        mathops.potential_flow_joukowski(chord_b=-1.0, shape=(32, 32))
+    with pytest.raises(ValueError):
+        mathops.potential_flow_joukowski(shape=(32, 32), half_width=0.0)
+
+
+def test_the_lift_exceeds_thin_aerofoil_theory_by_exactly_the_thickness_ratio():
+    """★★薄翼理論との比が**厳密に a/b** —— 厚みの効果が 1 つの数に落ちる。
+
+    クッタ・ジューコフスキーで ``L = rho * U * Gamma``、平板弦 ``c = 4b`` を使うと
+    ``CL = 2*Gamma/(U*c) = 2*pi*(a/b)*sin(alpha+beta)``。薄翼理論の
+    ``2*pi*sin(alpha+beta)`` との比は迎角にも速さにもよらず、**円の半径と写像の
+    特異点の距離の比 a/b だけ**で決まる。a -> b(厚みゼロ)で薄翼理論に戻る。
+
+    実測(alpha=8 度、centre_offset=-0.09+0.09j): CL = 1.513、薄翼 1.383、
+    比 1.0940 = a/b = 1.0937。
+    """
+    b = 1.0
+    for mu in (-0.09 + 0.09j, -0.2 + 0.0j, -0.05 + 0.15j):
+        a = abs(b - mu)
+        beta = -np.angle(b - mu)
+        for alpha_deg in (0.0, 4.0, 8.0, 12.0):
+            gamma = mathops.joukowski_circulation(alpha_deg, chord_b=b, centre_offset=mu)
+            cl = 2.0 * gamma / (1.0 * 4.0 * b)
+            thin = 2.0 * np.pi * np.sin(np.deg2rad(alpha_deg) + beta)
+            if abs(thin) < 1e-9:
+                assert abs(cl) < 1e-9
+                continue
+            assert cl / thin == pytest.approx(a / b, rel=1e-12), (mu, alpha_deg, cl, thin)
+    # 厚みを 0 に近づけると薄翼理論に戻る(極限が門になる)
+    ratios = []
+    for eps in (0.2, 0.05, 0.01, 0.001):
+        mu = -eps + 0.0j
+        g5 = mathops.joukowski_circulation(5.0, chord_b=b, centre_offset=mu)
+        ratios.append((2.0 * g5 / 4.0) / (2.0 * np.pi * np.sin(np.deg2rad(5.0))))
+    assert ratios[-1] == pytest.approx(1.0, abs=2e-3), ratios
+    assert all(ratios[i] > ratios[i + 1] for i in range(len(ratios) - 1)), ratios
+
+
+def test_the_closed_form_interior_is_a_lower_bound_with_no_counterexample():
+    """★閉形式の内部判定は**下界** —— 覆う画素は本物、しかし全部ではない。
+
+    実測(max_iter=200、600x800、中心 -0.5、半幅 1.6): 閉形式が『絶対に出ない』と
+    言える画素 85,624。反例 0 件。実際に残った画素は 95,078 なので、閉形式は
+    その 90.1 %。残りの 9.9 % は小さい球や糸で、この 2 つの式では覆えない ——
+    「覆えない」ことを数で言えるのが下界の使い道である。
+    """
+    mi = 120
+    e = mathops.cplx_escape_time("mandelbrot", centre=-0.5 + 0j, half_width=1.6,
+                           shape=(240, 320), max_iter=mi)
+    g = mathops.cplx_plane_grid(-0.5 + 0j, 1.6, (240, 320))
+    ins = mathops.mandelbrot_interior(g)
+    stay = (e == float(mi))
+    assert int((e[ins] != float(mi)).sum()) == 0            # 反例ゼロ
+    assert ins.sum() < stay.sum()                           # しかし全部ではない
+    assert 0.80 < ins.sum() / stay.sum() < 0.98

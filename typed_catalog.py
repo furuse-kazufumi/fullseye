@@ -207,6 +207,15 @@ PARAM_HINTS = {
 
 
 OP_PARAM_HINTS = {
+    # 複素平面の面(2026-09-22)。既定の 256x256 はファザーには重いので、
+    # op ごとに小さい窓を渡す(名前ヒントにすると他の族の "shape" を巻き込む)。
+    ("cplx_plane_grid", "shape"): lambda rng: (24, 24),
+    ("cplx_rational_field", "shape"): lambda rng: (24, 24),
+    ("cplx_newton_basins", "shape"): lambda rng: (24, 24),
+    ("cplx_newton_basins", "max_iter"): lambda rng: 12,
+    ("cplx_escape_time", "shape"): lambda rng: (24, 24),
+    ("cplx_escape_time", "max_iter"): lambda rng: 12,
+    ("potential_flow_joukowski", "shape"): lambda rng: (24, 24),
     # 一筆書きと振り子(2026-09-22)。名前ヒントにすると他の族の "phase" や
     # "n_points" を巻き込むので、op ごとに置く。
     ("stipple_points_from_image", "n_points"): lambda rng: 40,

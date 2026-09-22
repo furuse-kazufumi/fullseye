@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2097,
- "n_notes": 2103,
+ "n_ops": 2105,
+ "n_notes": 2111,
  "notes": {
   "vol_dilate": [
    {
@@ -16904,6 +16904,25 @@
     "path": "docs/ops/math/complex/cplx_cr_residual.md"
    }
   ],
+  "cplx_domain_colour": [
+   {
+    "op": "cplx_domain_colour",
+    "dim": "math",
+    "category": "complex",
+    "in": "cimage",
+    "out": "rgbimage",
+    "path": "docs/ops/math/complex/cplx_domain_colour.md"
+   }
+  ],
+  "cplx_escape_time": [
+   {
+    "op": "cplx_escape_time",
+    "dim": "math",
+    "category": "complex",
+    "out": "image2d",
+    "path": "docs/ops/math/complex/cplx_escape_time.md"
+   }
+  ],
   "cplx_joukowski": [
    {
     "op": "cplx_joukowski",
@@ -16934,6 +16953,25 @@
     "path": "docs/ops/math/complex/cplx_mobius.md"
    }
   ],
+  "cplx_newton_basins": [
+   {
+    "op": "cplx_newton_basins",
+    "dim": "math",
+    "category": "complex",
+    "in": "signal",
+    "out": "labels2d",
+    "path": "docs/ops/math/complex/cplx_newton_basins.md"
+   }
+  ],
+  "cplx_plane_grid": [
+   {
+    "op": "cplx_plane_grid",
+    "dim": "math",
+    "category": "complex",
+    "out": "cimage",
+    "path": "docs/ops/math/complex/cplx_plane_grid.md"
+   }
+  ],
   "cplx_poly_eval": [
    {
     "op": "cplx_poly_eval",
@@ -16944,6 +16982,16 @@
     "path": "docs/ops/math/complex/cplx_poly_eval.md"
    }
   ],
+  "cplx_rational_field": [
+   {
+    "op": "cplx_rational_field",
+    "dim": "math",
+    "category": "complex",
+    "in": "roots × roots",
+    "out": "cimage",
+    "path": "docs/ops/math/complex/cplx_rational_field.md"
+   }
+  ],
   "cplx_winding_number": [
    {
     "op": "cplx_winding_number",
@@ -16952,6 +17000,34 @@
     "in": "cpoints",
     "out": "measurement",
     "path": "docs/ops/math/complex/cplx_winding_number.md"
+   }
+  ],
+  "joukowski_circulation": [
+   {
+    "op": "joukowski_circulation",
+    "dim": "math",
+    "category": "complex",
+    "out": "measurement",
+    "path": "docs/ops/math/complex/joukowski_circulation.md"
+   }
+  ],
+  "mandelbrot_interior": [
+   {
+    "op": "mandelbrot_interior",
+    "dim": "math",
+    "category": "complex",
+    "in": "cimage",
+    "out": "mask",
+    "path": "docs/ops/math/complex/mandelbrot_interior.md"
+   }
+  ],
+  "potential_flow_joukowski": [
+   {
+    "op": "potential_flow_joukowski",
+    "dim": "math",
+    "category": "complex",
+    "out": "cimage",
+    "path": "docs/ops/math/complex/potential_flow_joukowski.md"
    }
   ],
   "interp_cubic": [

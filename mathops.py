@@ -102,6 +102,14 @@ __all__ = [
     "cplx_contour_circle", "cplx_poly_eval", "cplx_contour_integral",
     "cplx_winding_number", "cplx_cauchy_value", "cplx_argument_principle",
     "cplx_laurent_coeffs", "cplx_joukowski", "cplx_mobius", "cplx_cr_residual",
+    "cplx_plane_grid",
+    "cplx_rational_field",
+    "cplx_domain_colour",
+    "cplx_newton_basins",
+    "cplx_escape_time",
+    "mandelbrot_interior",
+    "potential_flow_joukowski",
+    "joukowski_circulation",
     "MATHOPS", "MAX_ELEMENTS", "POLY_COND_WARN", "MAX_CONTOUR_POINTS",
 ]
 
@@ -115,6 +123,14 @@ MATHOPS = [
     "cplx_contour_circle", "cplx_poly_eval", "cplx_contour_integral",
     "cplx_winding_number", "cplx_cauchy_value", "cplx_argument_principle",
     "cplx_laurent_coeffs", "cplx_joukowski", "cplx_mobius", "cplx_cr_residual",
+    "cplx_plane_grid",
+    "cplx_rational_field",
+    "cplx_domain_colour",
+    "cplx_newton_basins",
+    "cplx_escape_time",
+    "mandelbrot_interior",
+    "potential_flow_joukowski",
+    "joukowski_circulation",
 ]
 
 #: Refuse an array larger than this (~67M float64 = 512 MB) — the SVD/eigen
@@ -1651,3 +1667,569 @@ def cplx_cr_residual(f, spacing=1.0):
     if scale <= 0.0:
         return 0.0                      # constant field: holomorphic, residual 0
     return float(resid / scale)
+
+
+# --------------------------------------------------------------------------- #
+# 複素平面を「面」で見る(2026-09-22)—— tier2 は曲線の上の話しかしていない   #
+#   ★既存の cplx_* は閉曲線を点列で持つ層(積分・巻き数・ローラン・等角写像)。#
+#   ここで足すのは**領域**の層 —— 値の場・位相彩色・ニュートンの吸引域・      #
+#   脱出時間・翼まわりのポテンシャル流。新しい語は 1 つも作らない             #
+#   (cimage / rgbimage / labels2d / mask / roots / signal はすべて既存)。     #
+#   真値は「使った式」ではなく、偏角の原理・Cayley の定理・主カージオイドの   #
+#   閉形式内部判定・c=0 のジュリア集合(単位円板)・そして既存 op である       #
+#   cplx_winding_number / cplx_cr_residual / cplx_joukowski / poly_roots。     #
+# --------------------------------------------------------------------------- #
+_MAX_FIELD_PIXELS = 4_194_304          # 2048 x 2048。これ以上は拒む(暗黙に重くしない)
+_MIN_SIDE = 4
+
+
+# --------------------------------------------------------------------------- #
+# 共通 —— 面のとり方                                                           #
+# --------------------------------------------------------------------------- #
+def _require_field_shape(shape, op):
+    try:
+        h, w = (int(shape[0]), int(shape[1]))
+    except Exception:
+        raise ValueError("%s: shape must be a pair of ints, got %r" % (op, shape))
+    if h < _MIN_SIDE or w < _MIN_SIDE:
+        raise ValueError("%s: shape %dx%d is smaller than %dx%d — a field that small "
+                         "cannot resolve anything" % (op, h, w, _MIN_SIDE, _MIN_SIDE))
+    if h * w > _MAX_FIELD_PIXELS:
+        raise ValueError("%s: shape %dx%d = %d pixels exceeds the %d cap; ask for a "
+                         "smaller window rather than a bigger grid"
+                         % (op, h, w, h * w, _MAX_FIELD_PIXELS))
+    return h, w
+
+
+def _require_field_centre(centre, op):
+    try:
+        c = complex(centre)
+    except Exception:
+        raise ValueError("%s: centre must be a complex number, got %r" % (op, centre))
+    if not np.isfinite(c.real) or not np.isfinite(c.imag):
+        raise ValueError("%s: centre %r is not finite" % (op, c))
+    return c
+
+
+def _require_field_half_width(half_width, op):
+    hw = float(half_width)
+    if not np.isfinite(hw) or hw <= 0.0:
+        raise ValueError("%s: half_width must be finite and positive, got %r"
+                         % (op, half_width))
+    return hw
+
+
+def cplx_plane_grid(centre=0j, half_width=2.0, shape=(256, 256)):
+    """複素平面の矩形窓を格子にする(画像と同じ並び: 行 0 が上 = 虚部が大きい側)。
+
+    返すのは ``(h, w)`` の複素配列。実部は ``[-half_width, +half_width]`` を
+    ``w`` 点で等間隔、虚部は**アスペクト比を保って** ``h`` 点。窓が正方形でない
+    ときに円が楕円に潰れないようにするためで、``half_width`` は常に**横**半幅。
+    """
+    op = "cplx_plane_grid"
+    h, w = _require_field_shape(shape, op)
+    c = _require_field_centre(centre, op)
+    hw = _require_field_half_width(half_width, op)
+    hh = hw * (h / float(w))
+    re = np.linspace(c.real - hw, c.real + hw, w)
+    im = np.linspace(c.imag + hh, c.imag - hh, h)          # 行 0 が上
+    return re[None, :] + 1j * im[:, None]
+
+
+def _require_root_vector(r, name, op, allow_empty=True):
+    a = np.asarray(r)
+    if a.dtype.kind in "SU":
+        raise ValueError("%s: %s must be numbers, got text" % (op, name))
+    a = np.atleast_1d(np.asarray(a, dtype=np.complex128).ravel())
+    if a.size == 0:
+        if allow_empty:
+            return a
+        raise ValueError("%s: %s is empty" % (op, name))
+    if not np.all(np.isfinite(a)):
+        raise ValueError("%s: %s contains a non-finite value" % (op, name))
+    return a
+
+
+# --------------------------------------------------------------------------- #
+# 1. 有理関数の値の場                                                          #
+# --------------------------------------------------------------------------- #
+def cplx_rational_field(zeros, poles, gain=1.0, centre=0j, half_width=2.0,
+                        shape=(256, 256)):
+    """Sample a rational function ``R(z) = gain * prod(z - zeros) / prod(z - poles)``.
+
+    Returns the complex image ``R(z)`` over a rectangular window of the plane —
+    the *area* counterpart of this family's contour operators. The product is
+    formed in log space (``exp(sum(log(z - zk)) - sum(log(z - pm)))``) so a
+    degree-30 numerator does not overflow before the denominator can divide it
+    back down; the branch cuts of the individual logarithms cancel in the
+    exponential, so the result is the ordinary principal value of the quotient,
+    not a branch of it.
+
+    ★**Why this earns its place**: the field is not decoration. The argument
+    principle says that the winding number of ``R`` along a closed contour
+    equals *(zeros inside) - (poles inside)*, counted with multiplicity — so
+    this family's own ``cplx_argument_principle`` / ``cplx_winding_number``
+    are an independent oracle for every field this operator produces, and
+    :func:`cplx_domain_colour` makes that integer **visible** as the number of
+    times the hue cycles.
+
+    Parameters
+    ----------
+    zeros, poles : complex array-like
+        Roots of the numerator and denominator, repeated for multiplicity.
+        Either may be empty (a polynomial, or ``1/q``). ``poly_roots`` produces
+        exactly this ``roots`` vocabulary.
+    gain : complex
+        Leading coefficient.
+    centre, half_width, shape :
+        The window, as in :func:`cplx_plane_grid`.
+
+    **Raises** ``ValueError``: a pole (or zero) lands *exactly* on a sample, so
+    the value there is not a number — nudge ``centre`` by half a pixel or take
+    an odd ``shape`` (the message says which pole and where); non-finite input;
+    the window is degenerate; the result overflows to infinity anyway (the gain
+    and the window disagree by more than float64 can hold).
+
+    HALCON: no operator (HALCON has no complex-plane family).
+    """
+    op = "cplx_rational_field"
+    z = cplx_plane_grid(centre, half_width, shape)
+    zs = _require_root_vector(zeros, "zeros", op)
+    ps = _require_root_vector(poles, "poles", op)
+    g = complex(gain)
+    if not (np.isfinite(g.real) and np.isfinite(g.imag)):
+        raise ValueError("%s: gain %r is not finite" % (op, g))
+    if g == 0:
+        raise ValueError("%s: gain is 0 — the field would be identically zero, "
+                         "which says nothing about the zeros and poles you gave"
+                         % op)
+
+    for who, arr in (("pole", ps), ("zero", zs)):
+        for k, r in enumerate(arr):
+            hit = np.flatnonzero(z.ravel() == r)
+            if hit.size and who == "pole":
+                i = int(hit[0])
+                raise ValueError(
+                    "%s: %s #%d (%r) lands exactly on sample (row %d, col %d), where "
+                    "the field is infinite. Shift the window by half a pixel "
+                    "(centre += %r) or use an odd shape."
+                    % (op, who, k, r, i // z.shape[1], i % z.shape[1],
+                       complex(half_width / float(z.shape[1]), 0.0)))
+
+    acc = np.full(z.shape, np.log(g) if g != 1 else 0.0 + 0.0j, dtype=np.complex128)
+    for r in zs:
+        d = z - r
+        with np.errstate(divide="ignore", invalid="ignore"):
+            acc = acc + np.log(d)
+        acc = np.where(d == 0, -np.inf + 0j, acc)          # 零点は厳密に 0 にする
+    for r in ps:
+        acc = acc - np.log(z - r)
+    out = np.exp(acc)
+    out = np.where(np.isneginf(acc.real), 0.0 + 0.0j, out)
+
+    if not np.all(np.isfinite(out)):
+        n = int((~np.isfinite(out)).sum())
+        raise ValueError("%s: %d of %d samples overflowed to a non-finite value — "
+                         "the window and the gain disagree by more than float64 can "
+                         "hold. Shrink half_width or the gain." % (op, n, out.size))
+    return out
+
+
+# --------------------------------------------------------------------------- #
+# 2. 位相彩色                                                                  #
+# --------------------------------------------------------------------------- #
+def _cplx_hsv_to_rgb(h, s, v):
+    """(h, s, v) in [0,1] -> (..., 3) float RGB。numpy だけで書く(依存を足さない)。"""
+    h = np.mod(np.asarray(h, dtype=np.float64), 1.0) * 6.0
+    i = np.floor(h).astype(np.int64)
+    f = h - i
+    p = v * (1.0 - s)
+    q = v * (1.0 - s * f)
+    t = v * (1.0 - s * (1.0 - f))
+    i = np.mod(i, 6)
+    r = np.select([i == 0, i == 1, i == 2, i == 3, i == 4, i == 5], [v, q, p, p, t, v])
+    g = np.select([i == 0, i == 1, i == 2, i == 3, i == 4, i == 5], [t, v, v, q, p, p])
+    b = np.select([i == 0, i == 1, i == 2, i == 3, i == 4, i == 5], [p, p, t, v, v, q])
+    return np.stack([r, g, b], axis=-1)
+
+
+def cplx_domain_colour(field, gamma=1.0, bands=0.0, saturation=1.0):
+    """Domain colouring: turn a complex field into an RGB image you can read.
+
+    Hue carries ``arg(z)`` (one full turn of the colour wheel per turn of the
+    argument, red at ``arg = 0``); value carries ``|z|`` through the **strictly
+    increasing** map ``t/(1+t)`` with ``t = |z|**gamma``, so a zero is exactly
+    black, ``|z| = 1`` is half brightness and a large modulus saturates at full
+    brightness. The saturation is **not** dropped far from the origin, so the
+    hue — and with it the argument — stays readable everywhere; pass
+    ``saturation = 0`` for a plain grey ramp of the modulus alone. With
+    ``bands = 0`` (the default) the
+    brightness is monotone in ``|z|``, which means the picture is *invertible*:
+    the argument comes back out of the hue and the modulus out of the value.
+
+    ★**The picture proves a theorem.** Walk a small circle around a zero of
+    order *m* and the hue cycles through the colour wheel exactly *m* times;
+    around a pole of order *m*, *m* times the other way. That is the argument
+    principle, read off the image with no numbers — and this family's
+    ``cplx_winding_number`` counts the same integer from the field itself, so
+    the drawing and the arithmetic check each other.
+
+    Parameters
+    ----------
+    field : complex 2-D array (``cimage``)
+        Typically from :func:`cplx_rational_field`.
+    gamma : float > 0
+        Compresses (``<1``) or stretches (``>1``) the modulus ramp.
+    bands : float >= 0
+        Classic modulus contours: ``bands`` shading cycles per decade of
+        ``|z|``. **Non-zero breaks monotonicity** (that is the point — it draws
+        level lines), so the inverse-mapping guarantee above holds only at 0.
+    saturation : float in [0, 1]
+
+    **Raises** ``ValueError``: not a 2-D complex array; non-finite samples
+    (a pole sampled exactly — see :func:`cplx_rational_field`); ``gamma <= 0``;
+    ``bands < 0``; ``saturation`` outside [0, 1].
+
+    HALCON: no operator.
+    """
+    op = "cplx_domain_colour"
+    a = np.asarray(field)
+    if a.dtype.kind in "SU":
+        raise ValueError("%s: field must be numbers, got text" % op)
+    if a.ndim != 2:
+        raise ValueError("%s: field must be a 2-D complex image, got ndim=%d"
+                         % (op, a.ndim))
+    if a.dtype.kind != "c":
+        a = a.astype(np.complex128)
+    if a.size == 0:
+        raise ValueError("%s: field is empty" % op)
+    if not np.all(np.isfinite(a)):
+        n = int((~np.isfinite(a)).sum())
+        raise ValueError("%s: %d of %d samples are not finite — a pole was sampled "
+                         "exactly; shift the window by half a pixel"
+                         % (op, n, a.size))
+    g = float(gamma)
+    if not np.isfinite(g) or g <= 0.0:
+        raise ValueError("%s: gamma must be finite and positive, got %r" % (op, gamma))
+    bd = float(bands)
+    if not np.isfinite(bd) or bd < 0.0:
+        raise ValueError("%s: bands must be finite and >= 0, got %r" % (op, bands))
+    sat = float(saturation)
+    if not (0.0 <= sat <= 1.0):
+        raise ValueError("%s: saturation must lie in [0, 1], got %r" % (op, saturation))
+
+    mod = np.abs(a)
+    hue = np.mod(np.angle(a) / (2.0 * np.pi), 1.0)
+    t = mod ** g
+    val = t / (1.0 + t)                                     # 厳密に単調増加
+    if bd > 0.0:
+        with np.errstate(divide="ignore"):
+            dec = np.where(mod > 0.0, np.log10(np.maximum(mod, 1e-300)), -300.0)
+        saw = np.mod(dec * bd, 1.0)
+        val = np.clip(val * (0.75 + 0.25 * saw), 0.0, 1.0)
+    s = np.where(mod > 0.0, sat, 0.0)                       # 零点は無彩色の黒
+    return np.clip(_cplx_hsv_to_rgb(hue, s, val), 0.0, 1.0)
+
+
+# --------------------------------------------------------------------------- #
+# 3. ニュートン法の吸引域                                                      #
+# --------------------------------------------------------------------------- #
+def _cplx_canonical_roots(coeffs, op):
+    c = np.asarray(coeffs)
+    if c.dtype.kind in "SU":
+        raise ValueError("%s: coeffs must be numbers, got text" % op)
+    c = np.atleast_1d(np.asarray(c, dtype=np.complex128).ravel())
+    if not np.all(np.isfinite(c)):
+        raise ValueError("%s: coeffs contains a non-finite value" % op)
+    nz = np.flatnonzero(c != 0)
+    if nz.size == 0:
+        raise ValueError("%s: coeffs is identically zero — every point is a root "
+                         "and there is nothing to separate" % op)
+    c = c[nz[0]:]
+    if c.size < 2:
+        raise ValueError("%s: the polynomial is a non-zero constant — it has no "
+                         "roots and Newton's method never converges" % op)
+    r = np.roots(c)
+    order = np.lexsort((np.round(r.imag, 12), np.round(r.real, 12)))
+    return c, r[order]
+
+
+def cplx_newton_basins(coeffs, centre=0j, half_width=2.0, shape=(256, 256),
+                       max_iter=64, tol=1e-10):
+    """Which root of a polynomial does Newton's method fall into, from each point?
+
+    Labels the window ``1..len(roots)`` by the root reached, and ``0`` where the
+    iteration has not converged within ``max_iter`` (the Julia set and its
+    neighbourhood). Roots come from ``numpy.roots`` — the same routine behind
+    this family's ``poly_roots`` — and are sorted by ``(Re, Im)`` so the label
+    of a given root does not change between runs.
+
+    ★**Degree 2 has a closed-form answer, so the operator can be checked
+    exactly rather than plausibly.** Cayley (1879): for ``z**2 - 1`` the basins
+    are the two open half-planes ``Re z > 0`` and ``Re z < 0``, and the boundary
+    is the imaginary axis — no fractal. The famous fractal boundary appears at
+    degree 3, which Cayley could not settle; there the honest checks are
+    structural (every root's basin is non-empty; ``z**3 - 1`` is invariant under
+    rotation by ``2*pi/3``, and so is its labelling, up to the cyclic
+    relabelling of the roots).
+
+    ``coeffs`` is highest-degree-first, as ``numpy.roots`` and ``poly_roots``
+    take it.
+
+    **Raises** ``ValueError``: text, non-finite or all-zero coefficients; a
+    non-zero constant (no roots); ``max_iter < 1``; ``tol <= 0``; degenerate
+    window. Points where the derivative vanishes are left unconverged (label
+    ``0``) rather than divided by — a critical point is genuinely undecided.
+
+    HALCON: no operator.
+    """
+    op = "cplx_newton_basins"
+    c, roots = _cplx_canonical_roots(coeffs, op)
+    z = cplx_plane_grid(centre, half_width, shape)
+    mi = int(max_iter)
+    if mi < 1:
+        raise ValueError("%s: max_iter must be >= 1, got %r" % (op, max_iter))
+    tl = float(tol)
+    if not np.isfinite(tl) or tl <= 0.0:
+        raise ValueError("%s: tol must be finite and positive, got %r" % (op, tol))
+
+    d = c[:-1] * np.arange(c.size - 1, 0, -1)               # 導関数の係数
+    cur = z.astype(np.complex128).copy()
+    alive = np.ones(cur.shape, dtype=bool)
+    for _ in range(mi):
+        if not alive.any():
+            break
+        p = np.polyval(c, cur)
+        q = np.polyval(d, cur)
+        step = np.zeros_like(cur)
+        ok = alive & (q != 0) & np.isfinite(q) & np.isfinite(p)
+        step[ok] = p[ok] / q[ok]
+        cur = np.where(ok, cur - step, cur)
+        alive &= ok
+        alive &= np.isfinite(cur)
+        alive &= np.abs(step) > tl
+
+    lab = np.zeros(cur.shape, dtype=np.int32)
+    done = np.isfinite(cur) & ~alive
+    if done.any():
+        dist = np.abs(cur[done][:, None] - roots[None, :])
+        near = np.argmin(dist, axis=1)
+        good = dist[np.arange(near.size), near] <= max(1e-6, 1e3 * tl)
+        idx = np.flatnonzero(done.ravel())
+        flat = lab.ravel()
+        flat[idx[good]] = (near[good] + 1).astype(np.int32)
+        lab = flat.reshape(lab.shape)
+    return lab
+
+
+# --------------------------------------------------------------------------- #
+# 4. 脱出時間                                                                  #
+# --------------------------------------------------------------------------- #
+ESCAPE_KINDS = ("mandelbrot", "julia")
+
+
+def cplx_escape_time(kind="mandelbrot", param=0j, centre=0j, half_width=2.0,
+                     shape=(256, 256), max_iter=64, escape_radius=2.0):
+    """How many steps of ``z -> z**2 + c`` it takes to leave the escape disc.
+
+    ``kind="mandelbrot"`` varies ``c`` over the window from ``z = 0``;
+    ``kind="julia"`` fixes ``c = param`` and varies the starting ``z``. The
+    result is a float image of iteration counts; points that never escape carry
+    ``max_iter``.
+
+    ★**This one is gated by theorems, not by a reference picture.**
+      - *Escape radius*: once ``|z| > 2`` (with ``|c| <= 2``) the orbit diverges,
+        so ``escape_radius = 2`` is not a tuning knob but the exact threshold.
+      - *Main cardioid*: ``c`` lies in the main cardioid iff the fixed point
+        ``z* = (1 - sqrt(1 - 4c)) / 2`` is attracting, i.e. ``|2 z*| < 1``.
+        Every such ``c`` **provably never escapes**, so those pixels must read
+        exactly ``max_iter`` — a closed-form interior test for a set usually
+        drawn by iteration alone. The period-2 bulb ``|c + 1| < 1/4`` is the
+        same kind of statement.
+      - *Symmetry*: both families are invariant under conjugation, so the image
+        must be **exactly** mirror-symmetric about the real axis (bit for bit,
+        not to a tolerance) when the window is.
+
+    **Raises** ``ValueError``: unknown ``kind``; non-finite ``param``;
+    ``max_iter < 1``; ``escape_radius <= 0``; degenerate window.
+
+    HALCON: no operator.
+    """
+    op = "cplx_escape_time"
+    if kind not in ESCAPE_KINDS:
+        raise ValueError("%s: kind must be one of %r, got %r" % (op, ESCAPE_KINDS, kind))
+    grid = cplx_plane_grid(centre, half_width, shape)
+    mi = int(max_iter)
+    if mi < 1:
+        raise ValueError("%s: max_iter must be >= 1, got %r" % (op, max_iter))
+    rr = float(escape_radius)
+    if not np.isfinite(rr) or rr <= 0.0:
+        raise ValueError("%s: escape_radius must be finite and positive, got %r"
+                         % (op, escape_radius))
+    p = complex(param)
+    if not (np.isfinite(p.real) and np.isfinite(p.imag)):
+        raise ValueError("%s: param %r is not finite" % (op, p))
+
+    if kind == "mandelbrot":
+        c = grid
+        z = np.zeros_like(grid)
+    else:
+        c = np.full(grid.shape, p, dtype=np.complex128)
+        z = grid.astype(np.complex128).copy()
+
+    out = np.full(grid.shape, float(mi))
+    alive = np.ones(grid.shape, dtype=bool)
+    r2 = rr * rr
+    for n in range(mi):
+        z = np.where(alive, z * z + c, z)
+        gone = alive & ((z.real * z.real + z.imag * z.imag) > r2)
+        out[gone] = float(n + 1)
+        alive &= ~gone
+        if not alive.any():
+            break
+    return out
+
+
+def mandelbrot_interior(c):
+    """Closed-form interior test for the main cardioid and the period-2 bulb.
+
+    Returns a boolean array: ``True`` where ``c`` is **provably** in the
+    Mandelbrot set, because the period-1 fixed point is attracting
+    (``|1 - sqrt(1 - 4c)| < 1``) or ``c`` lies in the period-2 bulb
+    (``|c + 1| < 1/4``). ``False`` means "not proven by these two tests" — the
+    smaller bulbs and the filaments are not covered, so this is a **lower
+    bound** on the set, which is exactly what makes it usable as a gate:
+    :func:`cplx_escape_time` must return ``max_iter`` everywhere this is True,
+    and no tolerance is involved.
+    """
+    a = np.asarray(c, dtype=np.complex128)
+    card = np.abs(1.0 - np.sqrt(1.0 - 4.0 * a)) < 1.0
+    bulb = np.abs(a + 1.0) < 0.25
+    return card | bulb
+
+
+# --------------------------------------------------------------------------- #
+# 5. ジューコフスキー翼まわりのポテンシャル流                                  #
+# --------------------------------------------------------------------------- #
+def _joukowski_circle(op, chord_b, centre_offset):
+    b = float(chord_b)
+    if not np.isfinite(b) or b <= 0.0:
+        raise ValueError("%s: chord_b must be finite and positive, got %r"
+                         % (op, chord_b))
+    mu = complex(centre_offset)
+    if not (np.isfinite(mu.real) and np.isfinite(mu.imag)):
+        raise ValueError("%s: centre_offset %r is not finite" % (op, mu))
+    if mu.real >= b:
+        raise ValueError("%s: centre_offset has Re = %g >= chord_b = %g, so the "
+                         "circle does not enclose the leading-edge singularity at "
+                         "-chord_b and the image is not an aerofoil"
+                         % (op, mu.real, b))
+    a = abs(b - mu)                       # 円が後縁 zeta = +b を通るための半径
+    # ★もう一方の臨界点 -b は円の**内側**になければならない。外に出ると dz/dzeta = 0
+    #   が流れの領域に現れ、そこで速度が発散する(翼でなく尖りが 2 つある図形になる)。
+    if abs(-b - mu) >= a - 1e-12:
+        raise ValueError("%s: the circle |zeta - %r| = %g does not strictly contain "
+                         "the other critical point %g (distance %g), so dz/dzeta "
+                         "vanishes in the flow region and the velocity blows up "
+                         "there; keep Re(centre_offset) negative and small"
+                         % (op, mu, a, -b, abs(-b - mu)))
+    beta = -np.angle(b - mu)              # 有効キャンバ角(b - mu = a e^{-i beta})
+    return b, mu, a, beta
+
+
+def potential_flow_joukowski(alpha_deg=5.0, speed=1.0, chord_b=1.0,
+                             centre_offset=-0.09 + 0.09j, centre=0j,
+                             half_width=3.0, shape=(256, 256)):
+    """Inviscid flow past a Joukowski aerofoil, as a complex velocity field.
+
+    Returns the **complex velocity** ``w(z) = dW/dz = u - i*v`` sampled over a
+    window of the physical plane. Inside the solid body the field is set to
+    exactly ``0`` (there is no flow there), so ``field == 0`` is the body mask
+    and nothing is silently ``nan``.
+
+    The construction is the classical one: flow past a circle of radius
+    ``a = |chord_b - centre_offset|`` centred at ``centre_offset``, plus the
+    circulation the **Kutta condition** demands, pushed through the Joukowski
+    map ``z = zeta + chord_b**2 / zeta``. The window is inverted back to the
+    circle plane by choosing, of the two preimages, the one outside the circle.
+
+    ★**What makes this checkable rather than merely plotted**:
+      - The field is holomorphic outside the body, so this family's own
+        ``cplx_cr_residual`` must read ~0 on it — an existing operator is the
+        oracle, and it is not the formula used to build the field.
+      - The **Kutta condition** is the whole point: ``dW/dzeta`` vanishes at the
+        trailing edge exactly where ``dz/dzeta`` does, so the velocity there
+        stays finite. Perturb the circulation by any amount and the trailing-edge
+        velocity diverges — the gate has a control group.
+      - ``Re(closed integral of w dz)`` around the body is the circulation, and
+        it is **path independent** (Cauchy) — a big rectangle and a small one
+        must agree.
+      - Far from the body ``w -> speed * exp(-i*alpha)``, decaying like ``1/|z|``.
+      - The zeroed region is the aerofoil, whose area the shoelace formula on
+        ``cplx_joukowski`` of the circle gives independently.
+
+    Parameters
+    ----------
+    alpha_deg : float
+        Angle of attack in degrees.
+    speed : float > 0
+        Free-stream speed.
+    chord_b : float > 0
+        Half the flat-plate chord; the map is ``zeta + chord_b**2/zeta``.
+    centre_offset : complex
+        Circle centre. Negative real part thickens, positive imaginary part
+        cambers. The default is a thin cambered section.
+    centre, half_width, shape :
+        The window in the physical plane, as in :func:`cplx_plane_grid`.
+
+    **Raises** ``ValueError``: ``speed <= 0``; non-finite angle; a circle that
+    does not enclose ``-chord_b`` (the image would fold over itself) or whose
+    centre is at or beyond ``+chord_b``; degenerate window.
+
+    HALCON: no operator.
+    """
+    op = "potential_flow_joukowski"
+    b, mu, a, beta = _joukowski_circle(op, chord_b, centre_offset)
+    u = float(speed)
+    if not np.isfinite(u) or u <= 0.0:
+        raise ValueError("%s: speed must be finite and positive, got %r" % (op, speed))
+    ad = float(alpha_deg)
+    if not np.isfinite(ad):
+        raise ValueError("%s: alpha_deg %r is not finite" % (op, alpha_deg))
+    alpha = np.deg2rad(ad)
+    gamma = 4.0 * np.pi * a * u * np.sin(alpha + beta)      # クッタ条件
+
+    z = cplx_plane_grid(centre, half_width, shape)
+    root = np.sqrt(z * z - 4.0 * b * b)
+    z1 = 0.5 * (z + root)
+    z2 = 0.5 * (z - root)
+    take1 = np.abs(z1 - mu) >= np.abs(z2 - mu)
+    zeta = np.where(take1, z1, z2)
+
+    outside = np.abs(zeta - mu) >= a
+    d = zeta - mu
+    with np.errstate(divide="ignore", invalid="ignore"):
+        dwdz = (u * (np.exp(-1j * alpha) - a * a * np.exp(1j * alpha) / (d * d))
+                + 1j * gamma / (2.0 * np.pi * d))
+        dzdzeta = 1.0 - (b * b) / (zeta * zeta)
+        w = dwdz / dzdzeta
+    w = np.where(outside & np.isfinite(w), w, 0.0 + 0.0j)
+    return w
+
+
+def joukowski_circulation(alpha_deg=5.0, speed=1.0, chord_b=1.0,
+                          centre_offset=-0.09 + 0.09j):
+    """The Kutta circulation ``Gamma = 4*pi*a*U*sin(alpha + beta)`` for that section.
+
+    Provided so a caller can state the lift without re-deriving the geometry:
+    Kutta-Joukowski gives ``L = rho * U * Gamma`` per unit span, perpendicular to
+    the free stream. The sign convention matches
+    :func:`potential_flow_joukowski`, whose field integrates to ``-Gamma``
+    counter-clockwise around the body (clockwise circulation is what lifts).
+    """
+    op = "joukowski_circulation"
+    b, mu, a, beta = _joukowski_circle(op, chord_b, centre_offset)
+    u = float(speed)
+    if not np.isfinite(u) or u <= 0.0:
+        raise ValueError("%s: speed must be finite and positive, got %r" % (op, speed))
+    return float(4.0 * np.pi * a * u * np.sin(np.deg2rad(float(alpha_deg)) + beta))

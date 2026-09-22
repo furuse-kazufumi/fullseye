@@ -167,6 +167,27 @@
    ]
   },
   {
+   "id": "complex-plane-fields",
+   "title": "複素平面を「面」で見る(位相彩色・吸引域・脱出時間・翼まわりの流れ)",
+   "title_en": "Seeing the complex plane as an area (domain colouring, basins, escape time, flow)",
+   "category": "測る",
+   "note": "docs/capabilities/complex-plane-fields.md",
+   "status": "verified-synthetic",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_complex_plane_fields",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "estimate-lens-distortion",
    "title": "本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要)",
    "title_en": "Estimate lens distortion coefficients from straight lines (plumb-line, no board)",
@@ -780,8 +801,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 234,
-  "run_by_the_poc_gate": 137,
+  "examples2d_total": 235,
+  "run_by_the_poc_gate": 138,
   "run_by_the_example_gate": 97,
   "not_run_by_any_gate": 0,
   "gates": [

@@ -64,7 +64,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`roots` を入力に取れる)
 
-—
+[cplx_rational_field](../complex/cplx_rational_field.md)
 
 ## 同カテゴリ(`interp_poly`)
 

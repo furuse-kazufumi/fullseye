@@ -514,7 +514,13 @@ def main(argv=None):
                             % (worst, 64, k64)))
 
     stages = (1, 4, 16, 90, 600, 4000)
-    frames = epicycle_frames(spec, img.shape, stages, frames_per_stage=12, scale=2)
+    # ★図を出さない設定のときは**組む前に**やめる(examplefig.enabled はそのためにある)。
+    #   72 コマを描いてから捨てていたので、この PoC だけで 322 秒かかっていた ——
+    #   スイートは FULLSEYE_FIGURES=off で全 PoC を並列に走らせ、1 本 600 秒・
+    #   全体 5400 秒の上限があるので、共有ランナーで timeout に落ちる(CI py3.12)。
+    #   数値の門はフレームに依らないので、ここを飛ばしても採点は 1 つも減らない。
+    frames = (epicycle_frames(spec, img.shape, stages, frames_per_stage=12, scale=2)
+              if figs.enabled() else [])
     e_stage = [float(tab["energy_fraction"][orders.index(K)]) if K in orders else
                float(np.interp(K, orders, tab["energy_fraction"])) for K in stages]
     figs.save_gif("epicycles", frames, fps=9,
@@ -529,8 +535,9 @@ def main(argv=None):
         print("      %4d 本 -> %6.2f %%" % (K, 100 * e))
     ck("段を追うごとに残したエネルギーが増える",
        all(e_stage[i] <= e_stage[i + 1] + 1e-12 for i in range(len(e_stage) - 1)))
-    ck("GIF が実際に回る腕を描いている(円が入るので図が真っ白でない)",
-       float(np.asarray(frames[0]).min()) < 0.5 and len(frames) == 12 * len(stages))
+    if figs.enabled():
+        ck("GIF が実際に回る腕を描いている(円が入るので図が真っ白でない)",
+           float(np.asarray(frames[0]).min()) < 0.5 and len(frames) == 12 * len(stages))
 
     # ------------------------------------------------------------------ #
     # 6 章 紙の上へ                                                       #

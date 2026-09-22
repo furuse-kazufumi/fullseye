@@ -11724,6 +11724,22 @@
    "ko": "표본화된 복소장의 코시-리만 잔차 —— 「이 장은 정칙인가?」를 하나의 수로.",
    "de": "Cauchy-Riemann-Residuum eines abgetasteten komplexen Feldes — „ist dieses Feld holomorph?“ als Zahl."
   },
+  "math/cplx_domain_colour": {
+   "fp": "698beda651ba",
+   "ja": "領域彩色 —— 複素場を、読み取れる RGB 画像に変える。",
+   "zh": "定义域着色 —— 把复场变成可以读懂的 RGB 图像。",
+   "tw": "定義域著色 —— 把複場變成可以讀懂的 RGB 影像。",
+   "ko": "영역 채색 —— 복소장을 읽을 수 있는 RGB 이미지로 바꾼다.",
+   "de": "Domain Coloring — verwandelt ein komplexes Feld in ein lesbares RGB-Bild."
+  },
+  "math/cplx_escape_time": {
+   "fp": "aef56ba6cb79",
+   "ja": "``z -> z**2 + c`` を何歩まわすと脱出円板から出るか。",
+   "zh": "迭代 ``z -> z**2 + c`` 多少步才离开逃逸圆盘。",
+   "tw": "迭代 ``z -> z**2 + c`` 多少步才離開逃逸圓盤。",
+   "ko": "``z -> z**2 + c`` 를 몇 걸음 돌리면 탈출 원판을 벗어나는가.",
+   "de": "Wie viele Schritte von ``z -> z**2 + c`` nötig sind, um die Fluchtscheibe zu verlassen."
+  },
   "math/cplx_joukowski": {
    "fp": "cbd6b3394f0a",
    "ja": "Joukowski(Жуковский)等角写像 ``w = z + c^2 / z``。",
@@ -11748,6 +11764,22 @@
    "ko": "뫼비우스(일차분수) 변환 ``w = (a z + b) / (c z + d)``.",
    "de": "Möbius-Transformation (gebrochen lineare Abbildung) ``w = (a z + b) / (c z + d)``."
   },
+  "math/cplx_newton_basins": {
+   "fp": "34bd03d09d38",
+   "ja": "各点から出発したニュートン法は、多項式のどの根に落ちるか。",
+   "zh": "从每一点出发的牛顿法, 会落到多项式的哪一个根?",
+   "tw": "從每一點出發的牛頓法, 會落到多項式的哪一個根?",
+   "ko": "각 점에서 출발한 뉴턴법은 다항식의 어느 근으로 떨어지는가?",
+   "de": "In welche Wurzel eines Polynoms fällt das Newton-Verfahren von jedem Punkt aus?"
+  },
+  "math/cplx_plane_grid": {
+   "fp": "56a69be9adcf",
+   "en": "Turns a rectangular window of the complex plane into a grid (laid out like an image: row 0 is the top, i.e. the larger imaginary part).",
+   "zh": "把复平面的矩形窗口变成网格(排列与图像相同: 第 0 行在上, 即虚部较大的一侧)。",
+   "tw": "把複平面的矩形視窗變成網格(排列與影像相同: 第 0 列在上, 即虛部較大的一側)。",
+   "ko": "복소평면의 직사각형 창을 격자로 만든다(이미지와 같은 배열: 0 행이 위, 즉 허수부가 큰 쪽).",
+   "de": "Macht ein rechteckiges Fenster der komplexen Ebene zu einem Gitter (angeordnet wie ein Bild: Zeile 0 ist oben, also die Seite mit größerem Imaginärteil)."
+  },
   "math/cplx_poly_eval": {
    "fp": "5fe611a1b06d",
    "ja": "複素平面上で多項式を評価する(Horner 法、複素数対応)。",
@@ -11755,6 +11787,14 @@
    "tw": "在複平面上求多項式的值(Horner 法,支援複數)。",
    "ko": "복소평면에서 다항식을 계산합니다(호너 법, 복소수 대응).",
    "de": "Wertet ein Polynom in der komplexen Ebene aus (Horner-Schema, komplexfähig)."
+  },
+  "math/cplx_rational_field": {
+   "fp": "e849d0bd1f53",
+   "ja": "有理関数 ``R(z) = gain * prod(z - zeros) / prod(z - poles)`` を標本化する。",
+   "zh": "对有理函数 ``R(z) = gain * prod(z - zeros) / prod(z - poles)`` 采样。",
+   "tw": "對有理函數 ``R(z) = gain * prod(z - zeros) / prod(z - poles)`` 取樣。",
+   "ko": "유리함수 ``R(z) = gain * prod(z - zeros) / prod(z - poles)`` 를 표본화한다.",
+   "de": "Tastet eine rationale Funktion ``R(z) = gain * prod(z - zeros) / prod(z - poles)`` ab."
   },
   "math/cplx_winding_number": {
    "fp": "84cd61152cfe",
@@ -11783,6 +11823,22 @@
   "math/interp_scattered": {
    "fp": "d4b14e0217bb",
    "ja": "**散らばった**標本から *query* の位置の値を求める —— センサ網・ボーリング・気象。"
+  },
+  "math/joukowski_circulation": {
+   "fp": "ac76dcd53e4d",
+   "ja": "その翼型に対するクッタ循環 ``Gamma = 4*pi*a*U*sin(alpha + beta)``。",
+   "zh": "该翼型的库塔环量 ``Gamma = 4*pi*a*U*sin(alpha + beta)``。",
+   "tw": "該翼型的庫塔環量 ``Gamma = 4*pi*a*U*sin(alpha + beta)``。",
+   "ko": "그 익형에 대한 쿠타 순환 ``Gamma = 4*pi*a*U*sin(alpha + beta)``.",
+   "de": "Die Kutta-Zirkulation ``Gamma = 4*pi*a*U*sin(alpha + beta)`` für dieses Profil."
+  },
+  "math/mandelbrot_interior": {
+   "fp": "220b706da263",
+   "ja": "主カージオイドと周期 2 の球について、内部判定を閉形式で行う。",
+   "zh": "对主心形线与周期 2 圆盘的内部判定, 以闭形式给出。",
+   "tw": "對主心臟線與週期 2 圓盤的內部判定, 以閉形式給出。",
+   "ko": "주 카디오이드와 주기 2 구에 대한 내부 판정을 닫힌 형식으로.",
+   "de": "Geschlossener Innentest für die Hauptkardioide und die Periode-2-Knospe."
   },
   "math/mat_cond": {
    "fp": "23a52abfa3a6",
@@ -11855,6 +11911,14 @@
    "tw": "多項式的全部根(係數按最高次在前)—— 含複根。",
    "ko": "다항식의 모든 근(계수는 최고차항부터) —— 복소근 포함.",
    "de": "Alle Wurzeln eines Polynoms (Koeffizienten höchste Potenz zuerst) — komplexe eingeschlossen."
+  },
+  "math/potential_flow_joukowski": {
+   "fp": "4fc2347b7fe2",
+   "ja": "ジューコフスキー翼まわりの非粘性流を、複素速度場として返す。",
+   "zh": "儒可夫斯基翼型周围的无黏流, 以复速度场给出。",
+   "tw": "儒可夫斯基翼型周圍的無黏流, 以複速度場給出。",
+   "ko": "주코프스키 익형 주위의 비점성 흐름을 복소 속도장으로.",
+   "de": "Reibungsfreie Strömung um ein Joukowski-Profil als komplexes Geschwindigkeitsfeld."
   },
   "math/stat_correlation": {
    "fp": "bd33cd23f258",

@@ -139,6 +139,12 @@ TYPE_TO_SORT = {
 #: 単位に合う種を渡す仕組みができたら外してよい(その時は `opassist` の
 #: 単位ベース種と同じ考え方で `chain_fuzz` 側に種を足すのが筋)。
 _OP_BRIDGE_SKIP = {
+    # 面を**作る**側の op は画像を 1 枚受け取らない(窓の指定だけで描く)
+    "cplx_plane_grid",
+    "cplx_rational_field",
+    "cplx_escape_time",
+    "potential_flow_joukowski",
+    "joukowski_circulation",
     "fresnel_dielectric", "fresnel_conductor", "beer_lambert_transmittance",
     "slab_transmittance", "thin_film_reflectance", "prism_min_deviation_deg",
     "cie_xyz_from_wavelength", "spectrum_to_srgb",
@@ -160,6 +166,13 @@ _OP_BRIDGE_SKIP = {
     "video_spacetime_cube", "video_cube_cut", "video_summary_keyframes",
     # 2026-09-21: live4d。同じ理由(橋の動画は静止クリップ、補間しても同じフレームが増えるだけ)。
     "video_interpolate_flow",
+    # 2026-09-22: complex 第 2 陣の `cplx_domain_colour`。cimage を 1 枚取るので橋は
+    # 架かるが、橋が振る自由な a/b ノブが **[0, 1] に閉じた引数**(saturation)に
+    # 当たると必ず domain の外に出る(実測 [sincos a=0.5 b=0.5] で 1.125 → ValueError)。
+    # op は正しく fail-closed している —— 欠陥は「範囲つきのノブに無制限の探針を
+    # 当てる」側にある(videocube の percentile 111.9 と同じ型)。台帳
+    # (`fullseye.ledger.cplx_domain_colour`)からは今までどおり saturation を指定して使える。
+    "cplx_domain_colour",
     # 2026-09-21: conngraph の states_participation_ratio(matrix → measurement)。画像を行列として実効次数を
     # 出すのは特徴として意味はあるが、橋 1 本のために op 図の全数再描画(50 分)を回す価値が無い。台帳から使う。
     "states_participation_ratio",

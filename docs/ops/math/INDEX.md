@@ -1,4 +1,4 @@
-# MATH operator help — 27 ops in 4 categories
+# MATH operator help — 35 ops in 4 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/math/<category>/<op>.md` を走査。
 
@@ -13,9 +13,9 @@
 
 ## カテゴリ
 
-### complex (10)
+### complex (18)
 
-[cplx_argument_principle](complex/cplx_argument_principle.md) · [cplx_cauchy_value](complex/cplx_cauchy_value.md) · [cplx_contour_circle](complex/cplx_contour_circle.md) · [cplx_contour_integral](complex/cplx_contour_integral.md) · [cplx_cr_residual](complex/cplx_cr_residual.md) · [cplx_joukowski](complex/cplx_joukowski.md) · [cplx_laurent_coeffs](complex/cplx_laurent_coeffs.md) · [cplx_mobius](complex/cplx_mobius.md) · [cplx_poly_eval](complex/cplx_poly_eval.md) · [cplx_winding_number](complex/cplx_winding_number.md)
+[cplx_argument_principle](complex/cplx_argument_principle.md) · [cplx_cauchy_value](complex/cplx_cauchy_value.md) · [cplx_contour_circle](complex/cplx_contour_circle.md) · [cplx_contour_integral](complex/cplx_contour_integral.md) · [cplx_cr_residual](complex/cplx_cr_residual.md) · [cplx_domain_colour](complex/cplx_domain_colour.md) · [cplx_escape_time](complex/cplx_escape_time.md) · [cplx_joukowski](complex/cplx_joukowski.md) · [cplx_laurent_coeffs](complex/cplx_laurent_coeffs.md) · [cplx_mobius](complex/cplx_mobius.md) · [cplx_newton_basins](complex/cplx_newton_basins.md) · [cplx_plane_grid](complex/cplx_plane_grid.md) · [cplx_poly_eval](complex/cplx_poly_eval.md) · [cplx_rational_field](complex/cplx_rational_field.md) · [cplx_winding_number](complex/cplx_winding_number.md) · [joukowski_circulation](complex/joukowski_circulation.md) · [mandelbrot_interior](complex/mandelbrot_interior.md) · [potential_flow_joukowski](complex/potential_flow_joukowski.md)
 
 ### interp_poly (6)
 

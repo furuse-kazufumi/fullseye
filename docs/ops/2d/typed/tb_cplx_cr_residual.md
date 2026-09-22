@@ -85,6 +85,7 @@ tb_cplx_cr_residual 0.50 0.50
 
 次の例は元の台帳 op `cplx_cr_residual` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
 - [math_complex](../../../../examples/math_complex.py) — `py -3.11 examples/math_complex.py`
+- [poc_complex_plane_fields](../../../../examples/poc_complex_plane_fields.py) — `py -3.11 examples/poc_complex_plane_fields.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)
 

@@ -1,8 +1,8 @@
 {
- "n_ops": 2097,
+ "n_ops": 2105,
  "tiers": {
   "color": 12,
-  "ledger": 1149,
+  "ledger": 1157,
   "nary": 17,
   "registry": 919
  },
@@ -2450,6 +2450,30 @@
    ]
   },
   {
+   "name": "cplx_domain_colour",
+   "halcon": "",
+   "in_sort": "cimage",
+   "out_sort": "rgbimage",
+   "category": "complex",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "cimage"
+   ]
+  },
+  {
+   "name": "cplx_escape_time",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "image2d",
+   "category": "complex",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
+  },
+  {
    "name": "cplx_joukowski",
    "halcon": "",
    "in_sort": "cpoints",
@@ -2490,6 +2514,30 @@
    ]
   },
   {
+   "name": "cplx_newton_basins",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "labels2d",
+   "category": "complex",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "cplx_plane_grid",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "cimage",
+   "category": "complex",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
+  },
+  {
    "name": "cplx_poly_eval",
    "halcon": "",
    "in_sort": "signal",
@@ -2501,6 +2549,20 @@
    "in_sorts": [
     "signal",
     "cpoints"
+   ]
+  },
+  {
+   "name": "cplx_rational_field",
+   "halcon": "",
+   "in_sort": "roots",
+   "out_sort": "cimage",
+   "category": "complex",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "roots",
+    "roots"
    ]
   },
   {
@@ -6259,6 +6321,17 @@
    "in_sorts": []
   },
   {
+   "name": "joukowski_circulation",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "measurement",
+   "category": "complex",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
+  },
+  {
    "name": "jpeg_ghost_map",
    "halcon": "",
    "in_sort": "image2d",
@@ -6973,6 +7046,19 @@
    "in_sorts": [
     "points",
     "points"
+   ]
+  },
+  {
+   "name": "mandelbrot_interior",
+   "halcon": "",
+   "in_sort": "cimage",
+   "out_sort": "mask",
+   "category": "complex",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "cimage"
    ]
   },
   {
@@ -9674,6 +9760,17 @@
    "in_sorts": [
     "position"
    ]
+  },
+  {
+   "name": "potential_flow_joukowski",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "cimage",
+   "category": "complex",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
   },
   {
    "name": "premultiply",

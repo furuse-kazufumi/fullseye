@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 840. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 847. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -28,20 +28,20 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `api.py`
 
-- **L549** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
-- **L565** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
-- **L620** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
-- **L1153** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
-- **L1171** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
-- **L1240** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
-- **L1535** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
-- **L1566** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
-- **L1850** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
-- **L1886** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L2207** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L2447** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L2451** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L2520** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L553** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
+- **L569** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
+- **L624** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
+- **L1160** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
+- **L1178** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
+- **L1247** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
+- **L1542** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
+- **L1573** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
+- **L1857** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
+- **L1893** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L2214** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L2454** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L2458** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L2527** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
 
 ## `astrostack.py`
 
@@ -98,7 +98,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `backends_typed.py`
 
-- **L545** — ★Until 2026-09-05 it read ``tools/chain_fuzz`` (not shipped) via sys.path manipulation. It failed in the wheel, and since the build() below silently returned [], the tb_* 143 ops were disappearing.
+- **L558** — ★Until 2026-09-05 it read ``tools/chain_fuzz`` (not shipped) via sys.path manipulation. It failed in the wheel, and since the build() below silently returned [], the tb_* 143 ops were disappearing.
 
 ## `blob2d.py`
 
@@ -325,6 +325,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L657** — ★Exceeding the number of colors is rejected by default (this PoC pointed it out and it became fail-closed the same day). Here the goal is to measure "what happens if you cycle", so we set cycle=True **explicitly** —— forcing that explicitness is itself the countermeasure.
 - **L732** — ★Fixed the same day thanks to this PoC's note. The roster's criterion was only "monotonicity of lightness", so cividis—monotonic in lightness but coarse in color-difference steps—was calling itself "safe". Now uniformity of color difference is also part of the criterion, and cividis has moved to CVD_SAFE.
 
+## `examples/poc_complex_plane_fields.py`
+
+- **L289** _(ja)_ — ★「そのまま渡すと厳密に 2」が言えるのは **2 次以下の多項式**のときだけ (中心差分がそこまで厳密だから)。一般の正則場では 2 から**同じ床の分** だけ引かれる —— 実測 2 − 4.89e-05 に対し正則側の床は 2.06e-04 で同じ桁。 だから「2 に十分近い」ではなく「2 とのずれが床と同じ桁」を門にする。
+
 ## `examples/poc_compound_eye.py`
 
 - **L301** _(ja)_ — ★PoC の門(tests/test_poc_scripts_run.py)は exit 0 に加えて "PASS" の印字を 要求する(合否を計算したのに捨てる門を防ぐ規約)。以前は "OK:" と書いていて、 台帳に登録した瞬間に「exit 0 だが PASS を印字していない」で落ちた。
@@ -546,6 +550,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L412** _(ja)_ — ★この絵では既定のペン幅 1.0 px がたまたまほぼ当たっており(偏り -0.0031)、 解いた幅 0.900 px のほうが偏りは大きい(-0.0294)。**閉形式が当てるのは 偏りではなくインク率**なので、門はそちらに置く —— 偏りで門を作ると 「元から合っていた絵」で落ちる(実測でそうなった)。
 - **L416** _(ja)_ — ★偏りで門を作ると「元から合っていた絵」で落ちる(この絵では既定 1.0 px の 偏りが -0.0031 と既にほぼ 0 で、解いた 0.903 px のほうが偏りは大きい)。 閉形式が当てるのは**インク率**で、線が重なるぶん実測は必ず下回る —— 門はその向きと大きさに置く。
 - **L451** _(ja)_ — ★**ナイキストを満たしているか**を先に測る。等弧長の打ち直しは、標本間隔が 線分より粗いと角を切って線そのものが短くなる —— フーリエに載せる**前**の 段階で情報が落ちるので、ここを見ないと「予言が当たった」の土台が崩れる。
+- **L517** _(ja)_ — ★図を出さない設定のときは**組む前に**やめる(examplefig.enabled はそのためにある)。 72 コマを描いてから捨てていたので、この PoC だけで 322 秒かかっていた —— スイートは FULLSEYE_FIGURES=off で全 PoC を並列に走らせ、1 本 600 秒・ 全体 5400 秒の上限があるので、共有ランナーで timeout に落ちる(CI py3.12)。 数値の門はフレームに依らないので、ここを飛ばしても採点は 1 つも減らない。
 
 ## `examples/poc_pallet_load_utilization.py`
 
@@ -960,10 +965,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `fullseye/__init__.py`
 
-- **L366** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L550** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
-- **L946** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L965** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L370** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L554** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
+- **L953** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L972** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1050,6 +1055,11 @@ This repository records *why* things are the way they are in **comments in the s
 - **L2843** — ★2026-09-07: Replaced grid_sample (bilinear, align_corners=True, zeros padding) with scipy's map_coordinates(order=1, mode="constant", cval=0) -- the same bilinear interpolation, and it runs even on CI without torch (py3.10 / 3.12). The measured difference is at most 6.0e-06 (random image over the range 0..1; the rounding difference between float32 and float64).
 - **L2888** — ★2026-09-07: Replaced with map_coordinates for the same reason as polar_unwrap (bilinear, out-of-range 0). Runs even without torch. The measured difference is at most 7.6e-06.
 - **L3139** — ★2026-09-07: Replaced affine_grid + grid_sample (align_corners=False, zeros padding) with numpy coordinate computation + scipy's map_coordinates(order=1). torch was used only for the bilinear resampling, and in an environment without torch (CI py3.10 / 3.12) this op became an ImportError. The convention was carried over verbatim: the normalized coordinate of an output voxel (d,h,w) is ((i+0.5)/N)*2-1, and after rotation it is mapped back to input pixel coordinates by (g+1)/2*N-0.5 (the align_corners=False definition). The last axis of grid is in the order (x, y, z) = (W, H, D). The measured difference from the torch version is at most 7.6e-06.
+
+## `mathops.py`
+
+- **L1674** _(ja)_ — ★既存の cplx_* は閉曲線を点列で持つ層(積分・巻き数・ローラン・等角写像)。# ここで足すのは**領域**の層 —— 値の場・位相彩色・ニュートンの吸引域・ # 脱出時間・翼まわりのポテンシャル流。新しい語は 1 つも作らない # (cimage / rgbimage / labels2d / mask / roots / signal はすべて既存)。 # 真値は「使った式」ではなく、偏角の原理・Cayley の定理・主カージオイドの # 閉形式内部判定・c=0 のジュリア集合(単位円板)・そして既存 op である # cplx_winding_number / cplx_cr_residual / cplx_joukowski / poly_roots。 # --------------------------------------------------------------------------- #
+- **L2128** _(ja)_ — ★もう一方の臨界点 -b は円の**内側**になければならない。外に出ると dz/dzeta = 0 が流れの領域に現れ、そこで速度が発散する(翼でなく尖りが 2 つある図形になる)。
 
 ## `medial.py`
 
@@ -1142,6 +1152,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L96** — ★ Not piggybacking on the existing `signal` was **the result of measurement**. At first we judged "since csi_signal_simulate ([] -> signal) pours a genuine interference signal into the pool, it is reachable", but running the chained fuzzer with that wiring, **over 600 chains (300 x length 6 + 300 x length 8), csi_peak_position and chromatic_confocal_height were never executed once** (only 7 CONTRACT records). The cause is that the signal seed is a sinusoid with negative values, and the probability that the entry op is drawn earlier in the same chain is low. It is exactly the same trap that opsphoton stepped on with counts, and **as a result of fail-closed working perfectly, "zero findings" looks like robustness**. In a re-measurement under the same conditions with sweep as a dedicated pool, all 9 ops were executed. That mixing the 2 types does not silently pass a mix-up is **guaranteed by each having a dedicated discriminator** (both thresholds measured in closed form): - passing a spectrum to csi_peak_position -> `carrier_tolerance`. An interference signal has its carrier at 2/λ (Nyquist's 0.333), while a confocal peak is at 0.010. The same check catches even a 1000x unit error in measurement. - passing an interference signal to chromatic_confocal_height -> `max_carrier_fraction`. The AC component of the confocal response is low-frequency only (measured 0.010 / 0.010 / 0.015), while the interference signal is 0.333. Entry = `csi_signal_simulate` / `chromatic_confocal_simulate` (both produce with no arguments), exit = `csi_envelope` (-> signal) and the 2 measurement ops.
 
+## `opsmath.py`
+
+- **L85** _(ja)_ — ★閉形式の内部判定。脱出時間の図に「ここは絶対に出ない」を重ねられる。
+
 ## `opsoptics.py`
 
 - **L125** _(ja)_ — ★ pupil_blur は「画像 × カーネル」の一般畳み込み(filters_freq.convol_fft) ではない —— PSF の標本間隔 λN/oversample を検出器ピッチへ面積積分して から畳む、その単位合わせが本体。だから PSF を作る側に置く。
@@ -1188,7 +1202,8 @@ This repository records *why* things are the way they are in **comments in the s
 ## `printpath.py`
 
 - **L661** _(ja)_ — ★ペンプロッタの経路と 3D プリンタの経路は**同じ対象**(順に回る線分の列)で、 # 出口も同じ(contours_to_gcode → gcode_write / gcode_time_estimate)。 # だから族を新しく立てず、ここに stroke カテゴリとして足す。 # 参考: Kaplan & Bosch, "TSP Art", Computational Aesthetics 2005。 # --------------------------------------------------------------------------- # 点描の距離。"euclidean" 以外は将来。
-- **L969** _(ja)_ — ★被覆率で塗る。整数画素の円板で塗っていたときはペン幅が**階段**になり (0.5 / 1.0 / 1.5 px がインク率 0.1900 で一致し、2.0 で 0.4853 へ跳ねた)、 「目標の濃さに合うペン幅」を解くことができなかった。画素中心から標本までの 距離で被覆率を出すと、ペン幅が連続なノブになる。
+- **L762** _(ja)_ — ★画素ごとの最近傍を**KD 木**で引く。以前は各反復で (画素 x 点) の距離行列を まるごと作っていたので、202x300 の絵に 9,000 点を置くだけで 60,600 x 9,000 = 5.5 億要素(4.4 GB 相当)を 18 回組み直していた —— 手元で 101 秒、共有ランナーでは PoC の実行門(1 本 600 秒)に迫る。KD 木は**厳密に同じ最近傍**を返すので答えは 変わらない(同距離の並びだけは実装依存になるため、種を固定した回帰検査を置く)。
+- **L978** _(ja)_ — ★被覆率で塗る。整数画素の円板で塗っていたときはペン幅が**階段**になり (0.5 / 1.0 / 1.5 px がインク率 0.1900 で一致し、2.0 で 0.4853 へ跳ねた)、 「目標の濃さに合うペン幅」を解くことができなかった。画素中心から標本までの 距離で被覆率を出すと、ペン幅が連続なノブになる。
 
 ## `problems.py`
 
@@ -1377,6 +1392,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_knob_b_options.py`
 
 - **L41** _(ja)_ — 歴史側で試す点。★**0.5 を含める** —— 0.5 は「まん中」として既定値に使われて いる(``api.apply`` の既定、studio の中央、保存済みプログラムの初期値)ので、 ここが新しい側に落ちると**既定のまま呼んだだけで答えが変わる**。 最初 ``b < 0.5`` で切ったら、gaussian と HALCON 別名の一致検査まで割れた。
+
+## `tests/test_mathops.py`
+
+- **L1106** _(ja)_ — ★極は標本に乗れないので**偶数**格子で(零点と違って値が数にならない)
 
 ## `tests/test_mcp_images.py`
 
@@ -1654,10 +1673,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `typed_catalog.py`
 
-- **L213** _(ja)_ — ★打ち直しは**入力の頂点数より少ない標本を拒否する**(角を切って線が短くなり、 濃淡の再現が壊れるため)。探針より確実に多い数を渡す。
-- **L292** — ★ The case where the default itself is heavy is handled separately —— we wrote a cost table in the docstring and left it in docs/KNOWN_ISSUES.md as "unsolved." Making it lighter here is to pass the check, not to hide the slowness. The keep of fourier_smooth(points, keep) is a required argument with no default. If it cannot be bound, it is skipped forever as "cannot assemble arguments" and appears in the coverage table only as unreached (in the first measurement on 2026-09-06, only this one of 13 ops fell out). Surface roughness. Constraints are 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel measurement. The measurement-line generation op takes no input, so every argument needs a hint.
-- **L346** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
-- **L534** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
+- **L222** _(ja)_ — ★打ち直しは**入力の頂点数より少ない標本を拒否する**(角を切って線が短くなり、 濃淡の再現が壊れるため)。探針より確実に多い数を渡す。
+- **L301** — ★ The case where the default itself is heavy is handled separately —— we wrote a cost table in the docstring and left it in docs/KNOWN_ISSUES.md as "unsolved." Making it lighter here is to pass the check, not to hide the slowness. The keep of fourier_smooth(points, keep) is a required argument with no default. If it cannot be bound, it is skipped forever as "cannot assemble arguments" and appears in the coverage table only as unreached (in the first measurement on 2026-09-06, only this one of 13 ops fell out). Surface roughness. Constraints are 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel measurement. The measurement-line generation op takes no input, so every argument needs a hint.
+- **L355** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
+- **L543** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
 
 ## `unified.py`
 

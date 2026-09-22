@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cplx_plane_grid — MATH <code style="color:#22d3bf">complex</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">cimage</code> (an op determined by its arguments alone — it takes no image or data input)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_plane_grid(centre=0j, half_width=2.0, shape=(256, 256))</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.cplx_plane_grid(centre=0j, half_width=2.0, shape=(256, 256))</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;cplx_plane_grid&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Turns a rectangular window of the complex plane into a grid (laid out like an image: row 0 is the top, i.e. the larger imaginary part).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>返すのは `<code style="color:#22d3bf">(h, w)</code><code style="color:#22d3bf"> の複素配列。実部は </code><code style="color:#22d3bf">[-half_width, +half_width]</code>` を</p>
+<p>`<code style="color:#22d3bf">w</code><code style="color:#22d3bf"> 点で等間隔、虚部は**アスペクト比を保って** </code><code style="color:#22d3bf">h</code>` 点。窓が正方形でない</p>
+<p>ときに円が楕円に潰れないようにするためで、`<code style="color:#22d3bf">half_width</code>` は常に<b>横</b>半幅。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every mathops op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
+<p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_complex_plane_fields">poc_complex_plane_fields</a> — <code style="color:#22d3bf">py -3.11 examples/poc_complex_plane_fields.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">cimage</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_cr_residual">cplx_cr_residual</a> · <a style="color:#22d3bf" href="opmath:cplx_domain_colour">cplx_domain_colour</a> · <a style="color:#22d3bf" href="opmath:mandelbrot_interior">mandelbrot_interior</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">complex</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_contour_circle">cplx_contour_circle</a> · <a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

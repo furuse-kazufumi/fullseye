@@ -759,10 +759,16 @@ def stipple_points_from_image(image, n_points, iterations=30, gamma=1.0,
     rr = rr.astype(np.float64).ravel()
     cc = cc.astype(np.float64).ravel()
     wf = weight.ravel()
+    # ★画素ごとの最近傍を**KD 木**で引く。以前は各反復で (画素 x 点) の距離行列を
+    #   まるごと作っていたので、202x300 の絵に 9,000 点を置くだけで 60,600 x 9,000 =
+    #   5.5 億要素(4.4 GB 相当)を 18 回組み直していた —— 手元で 101 秒、共有ランナーでは
+    #   PoC の実行門(1 本 600 秒)に迫る。KD 木は**厳密に同じ最近傍**を返すので答えは
+    #   変わらない(同距離の並びだけは実装依存になるため、種を固定した回帰検査を置く)。
+    from scipy.spatial import cKDTree
+
+    pix = np.stack([rr, cc], axis=1)
     for _ in range(int(iterations)):
-        d = ((rr[:, None] - pts[None, :, 0]) ** 2
-             + (cc[:, None] - pts[None, :, 1]) ** 2)
-        owner = np.argmin(d, axis=1)
+        owner = cKDTree(pts).query(pix, k=1)[1].astype(np.int64)
         num_r = np.bincount(owner, weights=wf * rr, minlength=n)
         num_c = np.bincount(owner, weights=wf * cc, minlength=n)
         den = np.bincount(owner, weights=wf, minlength=n)
@@ -782,9 +788,12 @@ def stipple_energy(image, points, gamma=1.0, floor=0.02):
     dark = (hi - a) / (hi - lo) if hi > lo else np.zeros_like(a)
     weight = np.maximum(dark ** float(gamma), float(floor)).ravel()
     rr, cc = np.mgrid[0:h, 0:w]
-    d = ((rr.astype(np.float64).ravel()[:, None] - p[None, :, 0]) ** 2
-         + (cc.astype(np.float64).ravel()[:, None] - p[None, :, 1]) ** 2)
-    return float((weight * d.min(axis=1)).sum())
+    # 同じ理由で KD 木(距離行列を作らない)。返す値は変わらない。
+    from scipy.spatial import cKDTree
+
+    pix = np.stack([rr.astype(np.float64).ravel(), cc.astype(np.float64).ravel()], axis=1)
+    d2 = cKDTree(p).query(pix, k=1)[0] ** 2
+    return float((weight * d2).sum())
 
 
 def _stroke_tour_len(p, order):

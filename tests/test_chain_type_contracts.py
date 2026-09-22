@@ -150,6 +150,7 @@ def test_opsmath_call_returns_declared_types():
     (tier1 16 + tier2 complex 10)で宣言 out 型どおり返すことを TYPE_CHECKS で
     固定する。tier2 は cpoints/cscalar という新語彙を足したので、その語彙が
     ファザー側に登録されているか(= 未検査で素通りしないか)もここで担保する。"""
+    import mathops
     import opsmath
     rng = np.random.default_rng(0)
     A = rng.standard_normal((6, 4))
@@ -186,6 +187,21 @@ def test_opsmath_call_returns_declared_types():
         "cplx_joukowski": (zc,),
         "cplx_mobius": (zc, 1.0, -1j, 1.0, 1j),
         "cplx_cr_residual": ((gX + 1j * gY) ** 2,),
+    })
+    # tier2 complex の第 2 陣(2026-09-22)。ここで測るのは「宣言した型どおり返すか」
+    # だけなので窓は小さく取る —— 絵の解像度は要らないし、既定の 256x256 を 8 op 分
+    # 回すと門そのものが重くなる。
+    zw = mathops.cplx_plane_grid(0j, 2.0, (24, 24))
+    args.update({
+        "cplx_plane_grid": (0j, 2.0, (24, 24)),
+        "cplx_rational_field": (np.array([0.5 + 0j]), np.array([-0.5 + 0j]),
+                                1.0, 0j, 2.0, (24, 24)),
+        "cplx_domain_colour": (zw,),
+        "cplx_newton_basins": (np.array([1.0, 0.0, 0.0, -1.0]), 0j, 2.0, (24, 24)),
+        "cplx_escape_time": ("mandelbrot", 0j, 0j, 2.0, (24, 24), 16),
+        "mandelbrot_interior": (zw,),
+        "potential_flow_joukowski": (5.0, 1.0, 1.0, -0.09 + 0.09j, 0j, 3.0, (24, 24)),
+        "joukowski_circulation": (),
     })
     from tools.chain_fuzz import TYPE_CHECKS
     missing = [n for n in opsmath.OPSMATH if n not in args]

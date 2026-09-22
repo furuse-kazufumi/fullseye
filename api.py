@@ -333,6 +333,10 @@ from mathops import (  # noqa: E402,F401
     poly_fit, poly_eval, poly_roots,    cplx_contour_circle, cplx_poly_eval, cplx_contour_integral,
     cplx_winding_number, cplx_cauchy_value, cplx_argument_principle,
     cplx_laurent_coeffs, cplx_joukowski, cplx_mobius, cplx_cr_residual,
+    # 複素平面を「面」で見る(2026-09-22)—— 曲線の層に対する領域の層
+    cplx_plane_grid, cplx_rational_field, cplx_domain_colour,
+    cplx_newton_basins, cplx_escape_time, mandelbrot_interior,
+    potential_flow_joukowski, joukowski_circulation,
 )
 # 仮想マシンビジョン環境: 部品を買う前に「その構成で狙う欠陥が見つかるか」を
 # 閉形式の光学 + 数式で作った欠陥 + 撮像連鎖で先に確かめる層。
@@ -871,6 +875,9 @@ __all__ = [
     "cplx_contour_circle", "cplx_poly_eval", "cplx_contour_integral",
     "cplx_winding_number", "cplx_cauchy_value", "cplx_argument_principle",
     "cplx_laurent_coeffs", "cplx_joukowski", "cplx_mobius", "cplx_cr_residual",
+    "cplx_plane_grid", "cplx_rational_field", "cplx_domain_colour",
+    "cplx_newton_basins", "cplx_escape_time", "mandelbrot_interior",
+    "potential_flow_joukowski", "joukowski_circulation",
     "visiondesign", "system_geometry", "resolving_power", "system_feasibility",
     "image_formation", "detectability_limit",
     "defectgen", "defect_scratch", "defect_pits", "defect_crack", "defect_blob",

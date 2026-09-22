@@ -1,0 +1,59 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cplx_rational_field — MATH <code style="color:#22d3bf">complex</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">roots × roots</code> → <code style="color:#22d3bf">cimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_rational_field(zeros, poles, gain=1.0, centre=0j, half_width=2.0, shape=(256, 256))</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathops; mathops.cplx_rational_field(zeros, poles, gain=1.0, centre=0j, half_width=2.0, shape=(256, 256))</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;cplx_rational_field&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>유리함수 `<code style="color:#22d3bf">R(z) = gain * prod(z - zeros) / prod(z - poles)</code>` 를 표본화한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Returns the complex image `<code style="color:#22d3bf">R(z)</code>` over a rectangular window of the plane —</p>
+<p>the *area* counterpart of this family&#x27;s contour operators. The product is</p>
+<p>formed in log space (`<code style="color:#22d3bf">exp(sum(log(z - zk)) - sum(log(z - pm)))</code>`) so a</p>
+<p>degree-30 numerator does not overflow before the denominator can divide it</p>
+<p>back down; the branch cuts of the individual logarithms cancel in the</p>
+<p>exponential, so the result is the ordinary principal value of the quotient,</p>
+<p>not a branch of it.</p>
+<p>★<b>Why this earns its place</b>: the field is not decoration. The argument</p>
+<p>principle says that the winding number of `<code style="color:#22d3bf">R</code>` along a closed contour</p>
+<p>equals *(zeros inside) - (poles inside)*, counted with multiplicity — so</p>
+<p>this family&#x27;s own `<code style="color:#22d3bf">cplx_argument_principle</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cplx_winding_number</code>`</p>
+<p>are an independent oracle for every field this operator produces, and</p>
+<p>:func:<code style="color:#22d3bf">cplx_domain_colour</code> makes that integer <b>visible</b> as the number of</p>
+<p>times the hue cycles.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>zeros, poles : complex array-like</p>
+<p>Roots of the numerator and denominator, repeated for multiplicity.</p>
+<p>Either may be empty (a polynomial, or `<code style="color:#22d3bf">1/q</code><code style="color:#22d3bf">). </code><code style="color:#22d3bf">poly_roots</code>` produces</p>
+<p>exactly this `<code style="color:#22d3bf">roots</code>` vocabulary.</p>
+<p>gain : complex</p>
+<p>Leading coefficient.</p>
+<p>centre, half_width, shape :</p>
+<p>The window, as in :func:<code style="color:#22d3bf">cplx_plane_grid</code>.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a pole (or zero) lands *exactly* on a sample, so</p>
+<p>the value there is not a number — nudge `<code style="color:#22d3bf">centre</code>` by half a pixel or take</p>
+<p>an odd `<code style="color:#22d3bf">shape</code>` (the message says which pole and where); non-finite input;</p>
+<p>the window is degenerate; the result overflows to infinity anyway (the gain</p>
+<p>and the window disagree by more than float64 can hold).</p>
+<p>HALCON: no operator (HALCON has no complex-plane family).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
+<p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
+<p style="margin:2px 0 2px 12px">• **complex 입력은 <code style="color:#22d3bf">ValueError</code>** —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
+<p style="margin:2px 0 2px 12px">• **masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code>** —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
+<p style="margin:2px 0 2px 12px">• <b>형상은 엄격</b>: 1-D 와 2-D 를 암묵적으로 승격·브로드캐스트하지 않습니다(vector 슬롯에 matrix, matrix 슬롯에 vector 는 <code style="color:#22d3bf">ValueError</code>. reshape 를 명시하세요).</p>
+<p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 행렬을 받는 연산자와 <code style="color:#22d3bf">stat_histogram</code> 의 bins 는 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 만 요소)를 넘으면 <code style="color:#22d3bf">ValueError</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_complex_plane_fields">poc_complex_plane_fields</a> — <code style="color:#22d3bf">py -3.11 examples/poc_complex_plane_fields.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">cimage</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_cr_residual">cplx_cr_residual</a> · <a style="color:#22d3bf" href="opmath:cplx_domain_colour">cplx_domain_colour</a> · <a style="color:#22d3bf" href="opmath:mandelbrot_interior">mandelbrot_interior</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">complex</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_contour_circle">cplx_contour_circle</a> · <a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

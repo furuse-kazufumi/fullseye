@@ -29,6 +29,7 @@
 | [領域を切り出して、選んで、数える](capabilities/blob-and-region.md) | Segment regions, select them, and count | 見つける | `validated-public-real-data` | 3/4 | `poc_cell_counting` synthetic → tests/test_poc_scripts_run.py<br>`poc_particle_sizing` synthetic → tests/test_poc_scripts_run.py<br>`poc_real_coin_metrology` real → tests/test_poc_scripts_run.py |
 | [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md) | Estimate the camera intrinsic matrix K from multiple planar views (Zhang) | 測る | `verified-synthetic` | 4/4 | `camera_intrinsics_calibration` synthetic → tests/test_example_scripts_run.py |
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | Measure colour (XYZ / Lab / colour difference) | 光と色 | `verified-synthetic` | 4/4 | `poc_white_balance` synthetic → tests/test_poc_scripts_run.py<br>`poc_pigment_unmixing` synthetic → tests/test_poc_scripts_run.py |
+| [複素平面を「面」で見る(位相彩色・吸引域・脱出時間・翼まわりの流れ)](capabilities/complex-plane-fields.md) | Seeing the complex plane as an area (domain colouring, basins, escape time, flow) | 測る | `verified-synthetic` | 8/8 | `poc_complex_plane_fields` synthetic → tests/test_poc_scripts_run.py |
 | [本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要)](capabilities/estimate-lens-distortion.md) | Estimate lens distortion coefficients from straight lines (plumb-line, no board) | 測る | `verified-synthetic` | 4/4 | `estimate_lens_distortion` synthetic → tests/test_example_scripts_run.py |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | Turn results into figures people can read | 見せる | `verified-synthetic` | 3/3 | `poc_colormap_readability` synthetic → tests/test_poc_scripts_run.py<br>`poc_dem_terrain` synthetic → tests/test_poc_scripts_run.py |
 | [画像の中の文字を、正しい文字列に合わせて直す](capabilities/fix-text-in-images.md) | Fix the text inside an image against the string it should read | 見つける | `verified-synthetic` | 1/11 | `fix_text_in_image` synthetic → tests/test_example_scripts_run.py<br>`poc_glyph_typo_detection` synthetic → tests/test_poc_scripts_run.py |
@@ -58,8 +59,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 234 |
-| `tests/test_poc_scripts_run.py` が走らせる | 137 |
+| 2-D 台帳の例 | 235 |
+| `tests/test_poc_scripts_run.py` が走らせる | 138 |
 | `tests/test_example_scripts_run.py` が走らせる | 97 |
 | **どの門も走らせていない** | **0** |
 

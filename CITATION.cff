@@ -27,8 +27,8 @@ identifiers:
     description: "Version DOI for 0.2.0"
 abstract: >-
   Fullseye is a numpy-native library of typed classical image-processing and
-  geometric-vision operators (2-D and 3-D; 2,097 operators in the machine-readable index:
-  931 single-input 2-D operators, 17 n-ary and 1,149 in the typed ledgers), with an evolutionary pipeline-design mode
+  geometric-vision operators (2-D and 3-D; 2,105 operators in the machine-readable index:
+  931 single-input 2-D operators, 17 n-ary and 1,157 in the typed ledgers), with an evolutionary pipeline-design mode
   evaluated under honest held-out gates, a Physical-AI perception stack
   (stereo -> depth -> point cloud -> 6-DoF pose), and an HDevelop-style IDE
   (Fullseye Studio). Every operator carries a machine-readable Markdown note

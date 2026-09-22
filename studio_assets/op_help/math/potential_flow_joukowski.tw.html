@@ -1,0 +1,69 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">potential_flow_joukowski — MATH <code style="color:#22d3bf">complex</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">cimage</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.potential_flow_joukowski(alpha_deg=5.0, speed=1.0, chord_b=1.0, centre_offset=(-0.09+0.09j), centre=0j, half_width=3.0, shape=(256, 256))</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathops; mathops.potential_flow_joukowski(alpha_deg=5.0, speed=1.0, chord_b=1.0, centre_offset=(-0.09+0.09j), centre=0j, half_width=3.0, shape=(256, 256))</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;potential_flow_joukowski&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>儒可夫斯基翼型周圍的無黏流, 以複速度場給出。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Returns the <b>complex velocity</b> `<code style="color:#22d3bf">w(z) = dW/dz = u - i*v</code>` sampled over a</p>
+<p>window of the physical plane. Inside the solid body the field is set to</p>
+<p>exactly `<code style="color:#22d3bf">0</code><code style="color:#22d3bf"> (there is no flow there), so </code><code style="color:#22d3bf">field == 0</code>` is the body mask</p>
+<p>and nothing is silently `<code style="color:#22d3bf">nan</code>`.</p>
+<p>The construction is the classical one: flow past a circle of radius</p>
+<p>`<code style="color:#22d3bf">a = |chord_b - centre_offset|</code><code style="color:#22d3bf"> centred at </code><code style="color:#22d3bf">centre_offset</code>`, plus the</p>
+<p>circulation the <b>Kutta condition</b> demands, pushed through the Joukowski</p>
+<p>map `<code style="color:#22d3bf">z = zeta + chord_b**2 / zeta</code>`. The window is inverted back to the</p>
+<p>circle plane by choosing, of the two preimages, the one outside the circle.</p>
+<p>★<b>What makes this checkable rather than merely plotted</b>:</p>
+<p style="margin:2px 0 2px 12px">• The field is holomorphic outside the body, so this family&#x27;s own</p>
+<p>`<code style="color:#22d3bf">cplx_cr_residual</code>` must read ~0 on it — an existing operator is the</p>
+<p>oracle, and it is not the formula used to build the field.</p>
+<p style="margin:2px 0 2px 12px">• The <b>Kutta condition</b> is the whole point: `<code style="color:#22d3bf">dW/dzeta</code>` vanishes at the</p>
+<p>trailing edge exactly where `<code style="color:#22d3bf">dz/dzeta</code>` does, so the velocity there</p>
+<p>stays finite. Perturb the circulation by any amount and the trailing-edge</p>
+<p>velocity diverges — the gate has a control group.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">Re(closed integral of w dz)</code>` around the body is the circulation, and</p>
+<p>it is <b>path independent</b> (Cauchy) — a big rectangle and a small one</p>
+<p>must agree.</p>
+<p style="margin:2px 0 2px 12px">• Far from the body `<code style="color:#22d3bf">w -&gt; speed * exp(-i*alpha)</code><code style="color:#22d3bf">, decaying like </code><code style="color:#22d3bf">1/|z|</code>`.</p>
+<p style="margin:2px 0 2px 12px">• The zeroed region is the aerofoil, whose area the shoelace formula on</p>
+<p>`<code style="color:#22d3bf">cplx_joukowski</code>` of the circle gives independently.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>alpha_deg : float</p>
+<p>Angle of attack in degrees.</p>
+<p>speed : float &gt; 0</p>
+<p>Free-stream speed.</p>
+<p>chord_b : float &gt; 0</p>
+<p>Half the flat-plate chord; the map is `<code style="color:#22d3bf">zeta + chord_b**2/zeta</code>`.</p>
+<p>centre_offset : complex</p>
+<p>Circle centre. Negative real part thickens, positive imaginary part</p>
+<p>cambers. The default is a thin cambered section.</p>
+<p>centre, half_width, shape :</p>
+<p>The window in the physical plane, as in :func:<code style="color:#22d3bf">cplx_plane_grid</code>.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">speed &lt;= 0</code>`; non-finite angle; a circle that</p>
+<p>does not enclose `<code style="color:#22d3bf">-chord_b</code>` (the image would fold over itself) or whose</p>
+<p>centre is at or beyond `<code style="color:#22d3bf">+chord_b</code>`; degenerate window.</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• **complex 輸入一律 <code style="color:#22d3bf">ValueError</code>** —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• **含被遮罩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒絕「剝掉遮罩直接使用下面原值」的隱式轉換。請明確選擇填補還是丟棄。</p>
+<p style="margin:2px 0 2px 12px">• **所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明確給出個數後拒絕 —— 它會汙染整個結果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形狀嚴格</b>:不對 1-D 與 2-D 做隱式提升或廣播(向量槽位收到矩陣、矩陣槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;請明確 reshape)。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩陣的運算子與 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超過 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 萬個元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_complex_plane_fields">poc_complex_plane_fields</a> — <code style="color:#22d3bf">py -3.11 examples/poc_complex_plane_fields.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">cimage</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_cr_residual">cplx_cr_residual</a> · <a style="color:#22d3bf" href="opmath:cplx_domain_colour">cplx_domain_colour</a> · <a style="color:#22d3bf" href="opmath:mandelbrot_interior">mandelbrot_interior</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">complex</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_contour_circle">cplx_contour_circle</a> · <a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
