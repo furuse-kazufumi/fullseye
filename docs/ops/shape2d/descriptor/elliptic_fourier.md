@@ -52,7 +52,7 @@ version: 0.2.2  # fullseye lib version this note was generated for
 
 ## 同カテゴリ(`descriptor`)
 
-[reconstruct](reconstruct.md) · [invariants](invariants.md) · [normalize](normalize.md) · [descriptor_distance](descriptor_distance.md) · [fourier_smooth](fourier_smooth.md) · [from_xld](from_xld.md)
+[reconstruct](reconstruct.md) · [invariants](invariants.md) · [normalize](normalize.md) · [descriptor_distance](descriptor_distance.md) · [fourier_smooth](fourier_smooth.md) · [from_xld](from_xld.md) · [contour_fourier_complex](contour_fourier_complex.md) · [contour_epicycle_chain](contour_epicycle_chain.md)
 
 ---
 *Provenance: fourierdesc.py — SHAPE2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

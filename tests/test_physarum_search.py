@@ -105,17 +105,30 @@ def test_sparse_matches_dense_on_a_unique_shortest_path():
                     "ratio (measured 疎 1.8-3.2s vs dense 0.2-0.3s there); "
                     "performance is asserted on dedicated hardware only")
 def test_sparse_is_faster_than_dense_at_scale():
-    """疎版は dense O(n^3) より速い。倍率は機械依存なので緩めに 3x を下限に。"""
+    """疎版は dense O(n^3) より速い。倍率は機械依存なので緩めに 3x を下限に。
+
+    ★**1 発計時は門にならない**(2026-09-22)。この門は 1 回ずつ測って 3 倍を
+    要求していたため、同じ木・同じ機械で通ったり落ちたりした(実測: 疎 1175 ms
+    対 密 3251 ms = 2.77 倍で失敗、直前の実行では通過)。OS のスケジューラと
+    キャッシュの揺れがそのまま入るので、**各側を 3 回測って最小値を採る** ——
+    最小値は計時の雑音に対していちばん頑健な推定量で、1 回目が暖機を兼ねる
+    (この repo の「性能は熱定常で測る」規律)。閾値の 3 倍は緩めない。
+    """
     import time
     free = np.ones((21, 21), bool)
     g = P.maze_to_graph(free)
     s, t = P.node_at(g, 0, 0), P.node_at(g, 20, 20)
-    t0 = time.perf_counter()
-    P.solve_physarum(g, s, t, mu=2.0, dt=0.2, max_iters=1000, device="numpy_dense")
-    dense = time.perf_counter() - t0
-    t0 = time.perf_counter()
-    P.solve_physarum(g, s, t, mu=2.0, dt=0.2, max_iters=1000, device="numpy")
-    sparse = time.perf_counter() - t0
+
+    def best_of_three(device):
+        best = float("inf")
+        for _ in range(3):
+            t0 = time.perf_counter()
+            P.solve_physarum(g, s, t, mu=2.0, dt=0.2, max_iters=1000, device=device)
+            best = min(best, time.perf_counter() - t0)
+        return best
+
+    dense = best_of_three("numpy_dense")
+    sparse = best_of_three("numpy")
     assert sparse * 3 < dense, f"疎 {sparse*1000:.0f}ms vs dense {dense*1000:.0f}ms"
 
 

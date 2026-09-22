@@ -1,4 +1,4 @@
-# PRINTPATH operator help — 11 ops in 4 categories
+# PRINTPATH operator help — 17 ops in 5 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/printpath/<category>/<op>.md` を走査。
 
@@ -23,6 +23,10 @@
 ### slice (3)
 
 [contours_to_gcode](slice/contours_to_gcode.md) · [mesh_slice_contours](slice/mesh_slice_contours.md) · [mesh_slice_stack](slice/mesh_slice_stack.md)
+
+### stroke (6)
+
+[mst_length](stroke/mst_length.md) · [stipple_energy](stroke/stipple_energy.md) · [stipple_points_from_image](stroke/stipple_points_from_image.md) · [stroke_resample_closed](stroke/stroke_resample_closed.md) · [stroke_tone_error](stroke/stroke_tone_error.md) · [stroke_tour_closed](stroke/stroke_tour_closed.md)
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

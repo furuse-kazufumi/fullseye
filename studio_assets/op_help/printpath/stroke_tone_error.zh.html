@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stroke_tone_error — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import printpath; printpath.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tone_error&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>線を引いた結果の<b>濃淡</b>が目標とどれだけ違うか。→ `<code style="color:#22d3bf">table</code>`</p>
+<p>★これが一筆書きの<b>本当の目的関数</b>。「絵として似ている」を人の目に任せず、</p>
+<p>ペン幅で描いて目の尺度にぼかし、目標の暗さと比べて数で返す。</p>
+<p>返り値: dict</p>
+<p>&quot;rms&quot; / &quot;max_abs&quot; / &quot;bias&quot; —— 暗さの差(`<code style="color:#22d3bf">[0, 1]</code>` の尺度)</p>
+<p>&quot;corr&quot; —— 目標の暗さと描いた暗さの相関(1 に近いほど濃淡を追えている)</p>
+<p>&quot;ink_fraction&quot; —— 紙に乗ったインクの面積率</p>
+<p>&quot;target_darkness&quot; —— 目標の平均暗さ(インク率と釣り合うべき量)</p>
+<p>&quot;length_px&quot; —— 線の長さ[px]</p>
+<p>★<b>ペン幅は連続なノブ</b>(被覆率で塗る)。線が重ならない範囲では</p>
+<p>`<code style="color:#22d3bf">インク率 ≈ 線長 × ペン幅 / 画像の面積</code>` が成り立つので、目標の濃さに合う</p>
+<p>ペン幅を <b>閉形式で解いてから</b>確かめられる:</p>
+<p>`<code style="color:#22d3bf">pen_width ≈ target_darkness × area / length_px</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_one_stroke_epicycles">poc_one_stroke_epicycles</a> — <code style="color:#22d3bf">py -3.11 examples/poc_one_stroke_epicycles.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:gcode_write">gcode_write</a> · <a style="color:#22d3bf" href="opprintpath:gcode_extrusion_volume">gcode_extrusion_volume</a> · <a style="color:#22d3bf" href="opprintpath:gcode_time_estimate">gcode_time_estimate</a> · <a style="color:#22d3bf" href="opprintpath:gcode_layer_image">gcode_layer_image</a> · <a style="color:#22d3bf" href="opprintpath:contours_to_gcode">contours_to_gcode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">stroke</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:stipple_points_from_image">stipple_points_from_image</a> · <a style="color:#22d3bf" href="opprintpath:stipple_energy">stipple_energy</a> · <a style="color:#22d3bf" href="opprintpath:stroke_tour_closed">stroke_tour_closed</a> · <a style="color:#22d3bf" href="opprintpath:mst_length">mst_length</a> · <a style="color:#22d3bf" href="opprintpath:stroke_resample_closed">stroke_resample_closed</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

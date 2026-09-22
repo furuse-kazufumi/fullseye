@@ -12,13 +12,14 @@ version: 0.1.0
 ## この族は何をする道具箱か
 
 **閉じた輪郭を係数に畳んで比べる**層と、**対応点で画像を写す**層です。
-13 op / 2 カテゴリ(numpy と scipy のみ。台帳は `opsshape2d.py`、実体は
+16 op / 2 カテゴリ(numpy と scipy のみ。台帳は `opsshape2d.py`、実体は
 `fourierdesc.py` と `imagemorph.py`):
 
 - **descriptor(7)** — `elliptic_fourier` / `reconstruct` / `invariants` /
   `normalize` / `descriptor_distance` / `fourier_smooth` / `from_xld`:
   閉輪郭 → 楕円フーリエ係数 → 不変量 → 形どうしの距離。
 - **morph(6)** — `warp_tps_image` / `warp_piecewise_affine` / `morph` /
+- **descriptor に 3 op 追加(2026-09-22)** — `contour_fourier_complex` / `contour_epicycle_chain` / `contour_fourier_truncation_energy`: 既存の `elliptic_fourier` は Kuhl–Giardina の**実**係数(a, b, c, d)で楕円を 1 つずつ表しますが、こちらは同じ輪郭を**複素**係数 `c_k` で見ます —— `z(t) = Σ c_k exp(2πikt)` と書けるので、各項が**回る腕**そのものになり、輪郭を「回る円の連鎖」として描けます。★実用上の価値は絵ではなく**予言**です: パーセバルにより、次数 K で打ち切った再構成の二乗誤差は「|k| > K の係数の二乗和」に**厳密に等しい**ので、**描く前に「何個の円で何画素まで似るか」を言えます**。
   `morph_sequence` / `blend` / `add_frame_corners`:
   ランドマークの対応で画像を変形する。
 

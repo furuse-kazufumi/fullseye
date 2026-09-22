@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stipple_energy — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stipple_energy(image, points, gamma=1.0, floor=0.02)</code> (die Implementierung direkt: <code style="color:#22d3bf">import printpath; printpath.stipple_energy(image, points, gamma=1.0, floor=0.02)</code>; aus dem Register: <code style="color:#22d3bf">opsprintpath.get(&quot;stipple_energy&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>重みつき Lloyd のエネルギー `<code style="color:#22d3bf">Σ w(x) |x - c(x)|^2</code>`(単調減少の検査用)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">Leitfaden zur Familie printpath</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_one_stroke_epicycles">poc_one_stroke_epicycles</a> — <code style="color:#22d3bf">py -3.11 examples/poc_one_stroke_epicycles.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">measurement</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">stroke</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:stipple_points_from_image">stipple_points_from_image</a> · <a style="color:#22d3bf" href="opprintpath:stroke_tour_closed">stroke_tour_closed</a> · <a style="color:#22d3bf" href="opprintpath:mst_length">mst_length</a> · <a style="color:#22d3bf" href="opprintpath:stroke_resample_closed">stroke_resample_closed</a> · <a style="color:#22d3bf" href="opprintpath:stroke_tone_error">stroke_tone_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

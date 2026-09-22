@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 28 項目**
+**収録 29 項目**
 
 ## 測る (6)
 
@@ -255,3 +255,13 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 使う op: `text_box`, `annotate_text_path`, `annotate_text_path_layout`, `annotate_table`, `annotate_table_layout`, `measure_text`
 
 動く例: `annotate_paper_tour`
+
+## 描く (1)
+
+### [写真を 1 本の線にする(点描 → 巡回路 → 回る円)](capabilities/one-stroke-drawing.md)
+
+写真の**濃淡**を、紙から鉛筆を離さずに引ける**1 本の閉じた線**に変えます。濃いところで線が密になるので、離れて見ると元の絵の階調が戻ります。巡回路は閉じているので、そのまま**複素フーリエ級数**に載り、**回る円の連鎖**として描き直せます。出口は既存の G-code op なので、ペンプロッタで実際に引けます。自分の写真で走らせる口も付いています::
+
+使う op: `stipple_points_from_image`, `stipple_energy`, `stroke_tour_closed`, `mst_length`, `stroke_resample_closed`, `stroke_tone_error`, `contour_fourier_complex`, `contour_epicycle_chain`, `contour_fourier_truncation_energy`
+
+動く例: `poc_one_stroke_epicycles`

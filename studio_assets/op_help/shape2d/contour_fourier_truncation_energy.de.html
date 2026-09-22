@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">contour_fourier_truncation_energy — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_truncation_energy(spectrum, orders=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_truncation_energy(spectrum, orders=None)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_truncation_energy&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>打ち切り次数ごとの<b>予言される</b>誤差(`<code style="color:#22d3bf">table</code>`)—— パーセバルの厳密式。</p>
+<p>次数 `<code style="color:#22d3bf">K</code><code style="color:#22d3bf"> で打ち切った再構成 </code><code style="color:#22d3bf">z^K</code>` について、標本上の二乗平均誤差は</p>
+<p>`<code style="color:#22d3bf">mean|z - z^K|^2 = Σ_{|k| &gt; K} |c_k|^2</code>` に<b>厳密に等しい</b>。だから</p>
+<p>再構成を 1 度もせずに「何項あれば何画素まで似るか」を先に言える。</p>
+<p>★<b>予言が厳密なのは、係数列が完全なときだけ</b>である(`<code style="color:#22d3bf">contour_fourier_complex</code>`</p>
+<p>を `<code style="color:#22d3bf">n_harmonics=None</code>` で呼んだ場合)。打ち切った係数列を渡されると、</p>
+<p>捨てられた側のエネルギーは<b>知りようがない</b>ので、返る誤差は<b>下界</b>になる</p>
+<p>—— 過小に見える誤差を「厳密」と言わないために、ここに書いておく。</p>
+<p>返り値: dict(`<code style="color:#22d3bf">table</code>`)</p>
+<p>&quot;order&quot;: 打ち切り次数 `<code style="color:#22d3bf">K</code>` の 1-D</p>
+<p>&quot;rms_error&quot;: 予言される rms 誤差[入力の単位]</p>
+<p>&quot;energy_fraction&quot;: 残した項が担うエネルギーの割合(`<code style="color:#22d3bf">0..1</code>`、単調増加)</p>
+<p>&quot;total_energy&quot;: `<code style="color:#22d3bf">Σ_{k≠0} |c_k|^2</code><code style="color:#22d3bf">(位置 </code><code style="color:#22d3bf">c_0</code>` を除いた形のエネルギー)</p>
+<p>&quot;k_max&quot;: スペクトルが持つ最大次数</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">Leitfaden zur Familie shape_description_2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_one_stroke_epicycles">poc_one_stroke_epicycles</a> — <code style="color:#22d3bf">py -3.11 examples/poc_one_stroke_epicycles.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:from_xld">from_xld</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">descriptor</code>)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:elliptic_fourier">elliptic_fourier</a> · <a style="color:#22d3bf" href="opshape2d:reconstruct">reconstruct</a> · <a style="color:#22d3bf" href="opshape2d:invariants">invariants</a> · <a style="color:#22d3bf" href="opshape2d:normalize">normalize</a> · <a style="color:#22d3bf" href="opshape2d:descriptor_distance">descriptor_distance</a> · <a style="color:#22d3bf" href="opshape2d:fourier_smooth">fourier_smooth</a> · <a style="color:#22d3bf" href="opshape2d:from_xld">from_xld</a> · <a style="color:#22d3bf" href="opshape2d:contour_fourier_complex">contour_fourier_complex</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fourierdesc.py — SHAPE2D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -41,6 +41,16 @@ _CATALOG = {
         ("read_3mf", "printpath", ["text"], "mesh"),
         ("write_3mf", "printpath", ["text", "mesh"], "text"),
     ],
+    # 濃淡 → 1 本の閉じた線(2026-09-22)。点描 → 巡回路 → 打ち直し → 濃淡の検算。
+    # 巡回路は**閉じている**ので fourierdesc の複素フーリエ 3 op にそのまま載る。
+    "stroke": [
+        ("stipple_points_from_image", "printpath", ["image2d"], "pairs"),
+        ("stipple_energy", "printpath", ["image2d", "pairs"], "measurement"),
+        ("stroke_tour_closed", "printpath", ["pairs"], "pairs"),
+        ("mst_length", "printpath", ["pairs"], "measurement"),
+        ("stroke_resample_closed", "printpath", ["pairs"], "pairs"),
+        ("stroke_tone_error", "printpath", ["image2d", "pairs"], "table"),
+    ],
     # 検査 —— 観測した層と期待の層
     "inspect": [
         ("print_layer_defect_map", "printpath", ["image2d", "image2d"], "image2d"),

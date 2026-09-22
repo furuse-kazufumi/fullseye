@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stroke_tour_closed — PRINTPATH <code style="color:#22d3bf">stroke</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code>(要直接调用实现,<code style="color:#22d3bf">import printpath; printpath.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code>;从台账取用则 <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tour_closed&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>点を 1 回ずつ通って戻る<b>閉じた巡回路</b>に並べ替える。→ `<code style="color:#22d3bf">pairs</code>`</p>
+<p>返るのは入力と同じ点を並べ替えた `<code style="color:#22d3bf">(N, 2)</code>`。<b>最後の点から最初の点へ戻る</b></p>
+<p>ことで閉じる(末尾に先頭を重複させない)。</p>
+<p>★これは最適な巡回路ではない(TSP は NP 困難)。<b>下界と比べて質を言う</b>:</p>
+<p>閉じた巡回路は最小全域木より短くなれないので `<code style="color:#22d3bf">length / mst_length</code>` が</p>
+<p>1 に近いほど良い。一様な点なら Beardwood–Halton–Hammersley の</p>
+<p>`<code style="color:#22d3bf">0.7124 √(n A)</code>` も目安になる。<b>黄金ファイルは使わない。</b></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_one_stroke_epicycles">poc_one_stroke_epicycles</a> — <code style="color:#22d3bf">py -3.11 examples/poc_one_stroke_epicycles.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">pairs</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:stipple_energy">stipple_energy</a> · <a style="color:#22d3bf" href="opprintpath:mst_length">mst_length</a> · <a style="color:#22d3bf" href="opprintpath:stroke_resample_closed">stroke_resample_closed</a> · <a style="color:#22d3bf" href="opprintpath:stroke_tone_error">stroke_tone_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">stroke</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:stipple_points_from_image">stipple_points_from_image</a> · <a style="color:#22d3bf" href="opprintpath:stipple_energy">stipple_energy</a> · <a style="color:#22d3bf" href="opprintpath:mst_length">mst_length</a> · <a style="color:#22d3bf" href="opprintpath:stroke_resample_closed">stroke_resample_closed</a> · <a style="color:#22d3bf" href="opprintpath:stroke_tone_error">stroke_tone_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

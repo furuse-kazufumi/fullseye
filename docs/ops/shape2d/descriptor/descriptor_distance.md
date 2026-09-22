@@ -43,7 +43,7 @@ m1, m2 は :func:`elliptic_fourier` の出力 dict。
 
 ## 同カテゴリ(`descriptor`)
 
-[elliptic_fourier](elliptic_fourier.md) · [reconstruct](reconstruct.md) · [invariants](invariants.md) · [normalize](normalize.md) · [fourier_smooth](fourier_smooth.md) · [from_xld](from_xld.md)
+[elliptic_fourier](elliptic_fourier.md) · [reconstruct](reconstruct.md) · [invariants](invariants.md) · [normalize](normalize.md) · [fourier_smooth](fourier_smooth.md) · [from_xld](from_xld.md) · [contour_fourier_complex](contour_fourier_complex.md) · [contour_epicycle_chain](contour_epicycle_chain.md)
 
 ---
 *Provenance: fourierdesc.py — SHAPE2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

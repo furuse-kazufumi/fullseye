@@ -395,6 +395,27 @@
    ]
   },
   {
+   "id": "one-stroke-drawing",
+   "title": "写真を 1 本の線にする(点描 → 巡回路 → 回る円)",
+   "title_en": "Turn a photograph into a single line (stipple, tour, rotating circles)",
+   "category": "描く",
+   "note": "docs/capabilities/one-stroke-drawing.md",
+   "status": "validated-public-real-data",
+   "ops_total": 9,
+   "ops_named_in_tests": 9,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_one_stroke_epicycles",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "optics-and-materials",
    "title": "光の反射・屈折・干渉を計算する",
    "title_en": "Compute reflection, refraction and interference",
@@ -759,8 +780,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 233,
-  "run_by_the_poc_gate": 136,
+  "examples2d_total": 234,
+  "run_by_the_poc_gate": 137,
   "run_by_the_example_gate": 97,
   "not_run_by_any_gate": 0,
   "gates": [

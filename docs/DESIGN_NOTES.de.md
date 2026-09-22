@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 826. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 840. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -539,6 +539,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L686** — ★Es gibt tatsächlich Zeilen, in denen sich zwei entgegengesetzte Fehlschläge aufheben und sich als 'exakt der wahre Wert' tarnen
 
+## `examples/poc_one_stroke_epicycles.py`
+
+- **L209** _(ja)_ — ★線画なので**灰色のまま**出す。(H,W) を渡すと save_gif が疑似カラーに 塗って黄緑の絵になる(実測)—— 強度そのものを見せる図では色は邪魔。
+- **L246** _(ja)_ — ★env は examplefig が **呼ばれるたび**に読むので、ここで入れれば効く (import 時に固定されていたら --out が黙って無視される、の回避)。
+- **L412** _(ja)_ — ★この絵では既定のペン幅 1.0 px がたまたまほぼ当たっており(偏り -0.0031)、 解いた幅 0.900 px のほうが偏りは大きい(-0.0294)。**閉形式が当てるのは 偏りではなくインク率**なので、門はそちらに置く —— 偏りで門を作ると 「元から合っていた絵」で落ちる(実測でそうなった)。
+- **L416** _(ja)_ — ★偏りで門を作ると「元から合っていた絵」で落ちる(この絵では既定 1.0 px の 偏りが -0.0031 と既にほぼ 0 で、解いた 0.903 px のほうが偏りは大きい)。 閉形式が当てるのは**インク率**で、線が重なるぶん実測は必ず下回る —— 門はその向きと大きさに置く。
+- **L451** _(ja)_ — ★**ナイキストを満たしているか**を先に測る。等弧長の打ち直しは、標本間隔が 線分より粗いと角を切って線そのものが短くなる —— フーリエに載せる**前**の 段階で情報が落ちるので、ここを見ないと「予言が当たった」の土台が崩れる。
+
 ## `examples/poc_pallet_load_utilization.py`
 
 - **L232** — ★Deckpunkte steigen durch Rauschen bis +3σ auf, also mit einer Bodenschwelle abschneiden. Ohne sie erhält selbst eine Ladung mit null Überstand einen falschen "Überstand" von 0.006 m3.
@@ -929,6 +937,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L198** _(ja)_ — ★ The cap is on the *product*, not on either factor, because the accident it prevents is the cross term: a modest 900-ommatidium eye and a modest 512x512 image are each unremarkable and together are 236M float64 = 1.9 GB.
 
+## `fourierdesc.py`
+
+- **L282** _(ja)_ — ★この族の既存 op(elliptic_fourier)は Kuhl-Giardina の**実**係数(a,b,c,d) # で、楕円 1 つ 1 つを表す。こちらは同じ輪郭を**複素**係数 c_k で見る —— # z(t) = Σ c_k exp(2πikt) と書けるので、各項が「回る腕」そのものになり、 # パーセバルで**打ち切り誤差を描く前に予言できる**。用途が違うので両方置く。 # --------------------------------------------------------------------------- #
+- **L382** _(ja)_ — ★偶数点では添字 n/2 が **k = +n/2 と k = -n/2 の同じ 1 つの係数**である。 両方を並べるとエネルギーを 1 本ぶん多く数えて**パーセバルが破れる** (実測: n=8 で 1.17e-01、n=512 で 7.5e-03 ずれた)。numpy の ``fft.fftfreq`` に合わせて **k = -n/2 の側だけ**を出す。 最初の検査(正方形の輪郭)はこの係数がたまたま 0 に近くて通っていた —— 探針 1 枚では足りない、の実例。
+
 ## `fscript.py`
 
 - **L1269** _(ja)_ — ★2026-09-14: ここは `FsTypeError` だけを捕まえていた。逆さの区間と未知の feature を契約どおり `FsValueError`(= FS_E_INVALID_ARG)にした結果、 **fscript の利用者には Python の生の例外が漏れる**ようになっていた —— 例外の種類を増やしたら、それを言語境界で受けている場所を必ず一掃する ([[feedback_same_bug_class_recurs_check_siblings]])。
@@ -1171,6 +1184,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `ppf.py`
 
 - **L126** — ★ Rohe PCA-Normalen haben ein **beliebiges Vorzeichen** und kippen unter Rotation bei 40% der Punkte. Da PPF-Merkmale Winkel zwischen Normalen sind, ändert sich beim Kippen der Schlüssel. Gemessen (400 Punkte, um die z-Achse): mit rohen Normalen ist die Schlüssel-Übereinstimmungsrate bei 0/37/90/143 Grad 100 / 73.6 / 69.4 / 67.2 %, mit orientierten Normalen **alle 100 %**. Dasselbe Loch, in das ``pointcloud.fpfh`` getreten war, am selben Tag zusammen behoben.
+
+## `printpath.py`
+
+- **L661** _(ja)_ — ★ペンプロッタの経路と 3D プリンタの経路は**同じ対象**(順に回る線分の列)で、 # 出口も同じ(contours_to_gcode → gcode_write / gcode_time_estimate)。 # だから族を新しく立てず、ここに stroke カテゴリとして足す。 # 参考: Kaplan & Bosch, "TSP Art", Computational Aesthetics 2005。 # --------------------------------------------------------------------------- # 点描の距離。"euclidean" 以外は将来。
+- **L969** _(ja)_ — ★被覆率で塗る。整数画素の円板で塗っていたときはペン幅が**階段**になり (0.5 / 1.0 / 1.5 px がインク率 0.1900 で一致し、2.0 で 0.4853 へ跳ねた)、 「目標の濃さに合うペン幅」を解くことができなかった。画素中心から標本までの 距離で被覆率を出すと、ペン幅が連続なノブになる。
 
 ## `problems.py`
 
@@ -1432,6 +1450,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L101** — ★2026-09-07: dies **gab lange 0 zurück** und ging so glatt durch das `assert code == 0` weiter unten —— ein Gate, das sein Urteil gleich nach dem Berechnen verwirft (gemessen: 3 PoCs drucken nie PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). -2 zurückgeben, damit es fehlschlägt.
 - **L123** — ★Dieses Gate führt die 84 PoCs **in einem Durchgang** aus (session fixture). Diese Zeit wird dem ersten Test angerechnet, sodass pyprojects Standard-timeout (900 Sekunden) auf gemeinsam genutzten Runnern fehlschlägt. Nur hier erweitern —— den Standard zu lockern würde auch die Hänger-Erkennung anderer Tests abstumpfen.
 
+## `tests/test_printpath.py`
+
+- **L327** _(ja)_ — ★頂点より少ない標本は既定で拒否(長さが縮んで濃淡の再現が壊れる)
+- **L364** _(ja)_ — ★完全な係数列で呼ぶ(打ち切ると尾のエネルギーが分からず予言が下界になる)。 parametrisation は "index" —— stroke_resample_closed が**すでに弧長で** 打ち直しているので、ここで "arclength" を選ぶと op が内部でもう 1 度 打ち直して**別の輪郭の係数**になる(弧長の打ち直しは冪等でない)。
+- **L449** _(ja)_ — ★目標の濃さに合うペン幅を閉形式で解くと、偏りが桁で縮む
+
 ## `tests/test_public_reachability.py`
 
 - **L71** _(ja)_ — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.op.<名前>` 経由で届く。ここに残る 1〜6 本は各モジュールのデモ入口 (`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
@@ -1519,7 +1543,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tools/gen_capabilities_index.py`
 
-- **L37** — Englische Namen der Kategorien. ★Selbst in der englischen Version blieben nur die Ueberschriften auf Japanisch (gemessen 7 Zeilen) -- der Inhalt war mit `title_en` / `_summary_en` uebersetzt, aber die Ueberschriften wurden vergessen, ein Musterbeispiel fuer "umgeschaltet, aber Japanisch mischt sich ein". Hier nicht vorhandene Kategorien werden unveraendert ausgegeben (keine Uebersetzungen erfinden).
+- **L34** _(ja)_ — ★「描く」= 機械に線を引かせる層(2026-09-22 追加)。「見せる」が人に見せる ための絵なのに対して、こちらはペンプロッタ・レーザー・刺繍のように **線でしか描けない機械**への変換で、出口が G-code になる。
+- **L40** — Englische Namen der Kategorien. ★Selbst in der englischen Version blieben nur die Ueberschriften auf Japanisch (gemessen 7 Zeilen) -- der Inhalt war mit `title_en` / `_summary_en` uebersetzt, aber die Ueberschriften wurden vergessen, ein Musterbeispiel fuer "umgeschaltet, aber Japanisch mischt sich ein". Hier nicht vorhandene Kategorien werden unveraendert ausgegeben (keine Uebersetzungen erfinden).
 
 ## `tools/gen_design_notes.py`
 
@@ -1629,9 +1654,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `typed_catalog.py`
 
-- **L285** — ★ Der Fall, in dem der Standardwert selbst schwer ist, wird gesondert behandelt —— wir schrieben eine Kostentabelle in den Docstring und beließen ihn in docs/KNOWN_ISSUES.md als "ungelöst". Es hier leichter zu machen dient dazu, die Prüfung zu bestehen, nicht dazu, die Langsamkeit zu verbergen. Das keep von fourier_smooth(points, keep) ist ein Pflichtargument ohne Standardwert. Kann es nicht gebunden werden, wird es für immer als "Argumente nicht zusammensetzbar" übersprungen und erscheint in der Coverage-Tabelle nur als nicht erreicht (bei der ersten Messung am 2026-09-06 fiel von 13 ops nur dieses eine heraus). Oberflächenrauheit. Die Einschränkungen sind 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel-Messung. Der op zur Erzeugung der Messlinie nimmt keine Eingabe, daher braucht jedes Argument einen Hinweis.
-- **L339** — ★ Ohne dies wird surface_params jedes Mal fail-closed abgelehnt, und an der einen Coverage-Zahl sieht es "aufrufbar" aus, während es in Wirklichkeit nie ausgeführt wird.
-- **L527** — ★ **Mache die Normale nicht achsenparallel**. Ist sie achsenparallel, variiert das Distanzfeld nur entlang einer Achse, und das "GIF aus gestapelten Schnitten", das der Abbildungsgenerator erzeugt, kollabiert zu einem einzigen Frame (gemessen 2026-09-08). Bei einer geneigten Normale ändert sich jeder Schnitt. Die Länge hat keine Wirkung (der op normiert), also übergib einen nicht normierten Vektor, um auch diese Spezifikation zu zeigen.
+- **L213** _(ja)_ — ★打ち直しは**入力の頂点数より少ない標本を拒否する**(角を切って線が短くなり、 濃淡の再現が壊れるため)。探針より確実に多い数を渡す。
+- **L292** — ★ Der Fall, in dem der Standardwert selbst schwer ist, wird gesondert behandelt —— wir schrieben eine Kostentabelle in den Docstring und beließen ihn in docs/KNOWN_ISSUES.md als "ungelöst". Es hier leichter zu machen dient dazu, die Prüfung zu bestehen, nicht dazu, die Langsamkeit zu verbergen. Das keep von fourier_smooth(points, keep) ist ein Pflichtargument ohne Standardwert. Kann es nicht gebunden werden, wird es für immer als "Argumente nicht zusammensetzbar" übersprungen und erscheint in der Coverage-Tabelle nur als nicht erreicht (bei der ersten Messung am 2026-09-06 fiel von 13 ops nur dieses eine heraus). Oberflächenrauheit. Die Einschränkungen sind 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel-Messung. Der op zur Erzeugung der Messlinie nimmt keine Eingabe, daher braucht jedes Argument einen Hinweis.
+- **L346** — ★ Ohne dies wird surface_params jedes Mal fail-closed abgelehnt, und an der einen Coverage-Zahl sieht es "aufrufbar" aus, während es in Wirklichkeit nie ausgeführt wird.
+- **L534** — ★ **Mache die Normale nicht achsenparallel**. Ist sie achsenparallel, variiert das Distanzfeld nur entlang einer Achse, und das "GIF aus gestapelten Schnitten", das der Abbildungsgenerator erzeugt, kollabiert zu einem einzigen Frame (gemessen 2026-09-08). Bei einer geneigten Normale ändert sich jeder Schnitt. Die Länge hat keine Wirkung (der op normiert), also übergib einen nicht normierten Vektor, um auch diese Spezifikation zu zeigen.
 
 ## `unified.py`
 

@@ -38,6 +38,7 @@
 | [フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す](capabilities/inspection-workflow.md) | Inspect a folder in one call — batch, judge against a spec, aggregate, SPC, report, audit log | 組み立てる | `verified-synthetic` | 8/8 | `inspection_workflow` synthetic → tests/test_example_scripts_run.py |
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | Draw lines and regions without knowing the background colour | 見せる | `verified-synthetic` | 3/3 | `annotate_paper_tour` synthetic → tests/test_example_scripts_run.py |
 | [レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線)](capabilities/lens-distortion-correction.md) | Correct lens distortion over a whole image (barrel, pincushion, tangential) | 形にする | `verified-synthetic` | 4/4 | `lens_undistort` synthetic → tests/test_example_scripts_run.py |
+| [写真を 1 本の線にする(点描 → 巡回路 → 回る円)](capabilities/one-stroke-drawing.md) | Turn a photograph into a single line (stipple, tour, rotating circles) | 描く | `validated-public-real-data` | 9/9 | `poc_one_stroke_epicycles` real → tests/test_poc_scripts_run.py |
 | [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md) | Compute reflection, refraction and interference | 光と色 | `verified-synthetic` | 4/4 | `glass_and_mirror_optics` synthetic → tests/test_example_scripts_run.py<br>`appearance_structural_colour` synthetic → tests/test_example_scripts_run.py |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | Find small point-like targets and locate them below the pixel | 見つける | `verified-synthetic` | 4/4 | `poc_search_sweep_width` synthetic → tests/test_poc_scripts_run.py<br>`poc_astro_photometry` synthetic → tests/test_poc_scripts_run.py |
 | [偏光カメラの生フレームを Stokes・DoLP・Mueller に読む](capabilities/polarization-imaging.md) | Read a polarisation camera's raw frame into Stokes, DoLP and Mueller | 光と色 | `verified-synthetic` | 10/10 | `polarization_camera_pipeline` synthetic → tests/test_example_scripts_run.py<br>`poc_polarization_specular` synthetic → tests/test_poc_scripts_run.py |
@@ -57,8 +58,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 233 |
-| `tests/test_poc_scripts_run.py` が走らせる | 136 |
+| 2-D 台帳の例 | 234 |
+| `tests/test_poc_scripts_run.py` が走らせる | 137 |
 | `tests/test_example_scripts_run.py` が走らせる | 97 |
 | **どの門も走らせていない** | **0** |
 

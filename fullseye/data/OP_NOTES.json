@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2088,
- "n_notes": 2094,
+ "n_ops": 2097,
+ "n_notes": 2103,
  "notes": {
   "vol_dilate": [
    {
@@ -19529,6 +19529,66 @@
     "path": "docs/ops/printpath/slice/mesh_slice_stack.md"
    }
   ],
+  "mst_length": [
+   {
+    "op": "mst_length",
+    "dim": "printpath",
+    "category": "stroke",
+    "in": "pairs",
+    "out": "measurement",
+    "path": "docs/ops/printpath/stroke/mst_length.md"
+   }
+  ],
+  "stipple_energy": [
+   {
+    "op": "stipple_energy",
+    "dim": "printpath",
+    "category": "stroke",
+    "in": "image2d × pairs",
+    "out": "measurement",
+    "path": "docs/ops/printpath/stroke/stipple_energy.md"
+   }
+  ],
+  "stipple_points_from_image": [
+   {
+    "op": "stipple_points_from_image",
+    "dim": "printpath",
+    "category": "stroke",
+    "in": "image2d",
+    "out": "pairs",
+    "path": "docs/ops/printpath/stroke/stipple_points_from_image.md"
+   }
+  ],
+  "stroke_resample_closed": [
+   {
+    "op": "stroke_resample_closed",
+    "dim": "printpath",
+    "category": "stroke",
+    "in": "pairs",
+    "out": "pairs",
+    "path": "docs/ops/printpath/stroke/stroke_resample_closed.md"
+   }
+  ],
+  "stroke_tone_error": [
+   {
+    "op": "stroke_tone_error",
+    "dim": "printpath",
+    "category": "stroke",
+    "in": "image2d × pairs",
+    "out": "table",
+    "path": "docs/ops/printpath/stroke/stroke_tone_error.md"
+   }
+  ],
+  "stroke_tour_closed": [
+   {
+    "op": "stroke_tour_closed",
+    "dim": "printpath",
+    "category": "stroke",
+    "in": "pairs",
+    "out": "pairs",
+    "path": "docs/ops/printpath/stroke/stroke_tour_closed.md"
+   }
+  ],
   "profile_align": [
    {
     "op": "profile_align",
@@ -20383,6 +20443,36 @@
     "category": "synth",
     "out": "depth",
     "path": "docs/ops/roughness/synth/surface_synth_psd.md"
+   }
+  ],
+  "contour_epicycle_chain": [
+   {
+    "op": "contour_epicycle_chain",
+    "dim": "shape2d",
+    "category": "descriptor",
+    "in": "matrix",
+    "out": "pairs",
+    "path": "docs/ops/shape2d/descriptor/contour_epicycle_chain.md"
+   }
+  ],
+  "contour_fourier_complex": [
+   {
+    "op": "contour_fourier_complex",
+    "dim": "shape2d",
+    "category": "descriptor",
+    "in": "pairs",
+    "out": "matrix",
+    "path": "docs/ops/shape2d/descriptor/contour_fourier_complex.md"
+   }
+  ],
+  "contour_fourier_truncation_energy": [
+   {
+    "op": "contour_fourier_truncation_energy",
+    "dim": "shape2d",
+    "category": "descriptor",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/shape2d/descriptor/contour_fourier_truncation_energy.md"
    }
   ],
   "descriptor_distance": [

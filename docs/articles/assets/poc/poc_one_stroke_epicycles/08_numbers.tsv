@@ -1,0 +1,14 @@
+quantity	value	note
+photograph	202x300	Hokusai, Great Wave (Met CC0, DP130155)
+stipple points	9000	100.6 s
+density vs darkness (ramp)	0.9946	control: flat image cv 0.13
+tour length	18680 px	5.2 s
+tour / MST lower bound	1.146	coordinate order: 41.4
+tone correlation	0.984	random control: +0.013
+solved pen width	0.90 px	ink 0.890 of target; 11 % short = overlap
+density exponent (ramp)	0.61	squared weight 0.77 (Gersho: sqrt)
+resample points	32768	keeps 96.7 % of stroke; error ~ 1/N
+circles for 99 %	64	99.0 % of the energy
+prediction vs measurement	7e-15 px	Parseval, exact
+stroke on paper	15.57 m	sheet 250 mm
+plotter time (lower bound)	8.6 min	feed 1800 mm/min

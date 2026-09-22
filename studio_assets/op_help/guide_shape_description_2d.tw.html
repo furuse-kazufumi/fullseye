@@ -3,12 +3,13 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">2-D の形を記述して写す(EFD とランドマークワープ) — 使い方ガイド</h2>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
 <p><b>閉じた輪郭を係数に畳んで比べる</b>層と、<b>対応点で画像を写す</b>層です。</p>
-<p>13 op / 2 カテゴリ(numpy と scipy のみ。台帳は <code style="color:#22d3bf">opsshape2d.py</code>、実体は</p>
+<p>16 op / 2 カテゴリ(numpy と scipy のみ。台帳は <code style="color:#22d3bf">opsshape2d.py</code>、実体は</p>
 <p><code style="color:#22d3bf">fourierdesc.py</code> と <code style="color:#22d3bf">imagemorph.py</code>):</p>
 <p style="margin:2px 0 2px 12px">• <b>descriptor(7)</b> — <code style="color:#22d3bf">elliptic_fourier</code> / <code style="color:#22d3bf">reconstruct</code> / <code style="color:#22d3bf">invariants</code> /</p>
 <p><code style="color:#22d3bf">normalize</code> / <code style="color:#22d3bf">descriptor_distance</code> / <code style="color:#22d3bf">fourier_smooth</code> / <code style="color:#22d3bf">from_xld</code>:</p>
 <p>閉輪郭 → 楕円フーリエ係数 → 不変量 → 形どうしの距離。</p>
 <p style="margin:2px 0 2px 12px">• <b>morph(6)</b> — <code style="color:#22d3bf">warp_tps_image</code> / <code style="color:#22d3bf">warp_piecewise_affine</code> / <code style="color:#22d3bf">morph</code> /</p>
+<p style="margin:2px 0 2px 12px">• <b>descriptor に 3 op 追加(2026-09-22)</b> — <code style="color:#22d3bf">contour_fourier_complex</code> / <code style="color:#22d3bf">contour_epicycle_chain</code> / <code style="color:#22d3bf">contour_fourier_truncation_energy</code>: 既存の <code style="color:#22d3bf">elliptic_fourier</code> は Kuhl–Giardina の<b>実</b>係数(a, b, c, d)で楕円を 1 つずつ表しますが、こちらは同じ輪郭を<b>複素</b>係数 <code style="color:#22d3bf">c_k</code> で見ます —— <code style="color:#22d3bf">z(t) = Σ c_k exp(2πikt)</code> と書けるので、各項が<b>回る腕</b>そのものになり、輪郭を「回る円の連鎖」として描けます。★実用上の価値は絵ではなく<b>予言</b>です: パーセバルにより、次数 K で打ち切った再構成の二乗誤差は「|k| &gt; K の係数の二乗和」に<b>厳密に等しい</b>ので、<b>描く前に「何個の円で何画素まで似るか」を言えます</b>。</p>
 <p><code style="color:#22d3bf">morph_sequence</code> / <code style="color:#22d3bf">blend</code> / <code style="color:#22d3bf">add_frame_corners</code>:</p>
 <p>ランドマークの対応で画像を変形する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ台帳に載せたか —— 見えていなかったから</h3>

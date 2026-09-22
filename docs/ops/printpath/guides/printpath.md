@@ -13,7 +13,7 @@ version: 0.1.0
 
 3D プリンタのデータは「形(メッシュ)→ 層(スライス)→ 経路(G-code)→ 印刷中の層画像」と流れます。この族はその往復を、Fullseye の既存語彙(`mesh` / `voxel` / `table` / `image2d` / `measurement` / `text`)だけで、numpy + 標準ライブラリで閉じます。新しい型は作りません。
 
-11 op / 4 カテゴリ(台帳は `opsprintpath.py`、実体は `printpath.py`):
+17 op / 5 カテゴリ(台帳は `opsprintpath.py`、実体は `printpath.py`):
 
 - **gcode(5)** — `gcode_read`(G0/G1 を線分の表 `table` に: x0 y0 z0 x1 y1 z1 e f layer。G90/G91、M82/M83、G92、G20/G21、`;` コメント、層は `;LAYER:n` か Z の増加。円弧 G2/G3 は拒む)/ `gcode_write`(表を G1 に書き戻す)/ `gcode_extrusion_volume`(Σe × フィラメント断面積 [mm³])/ `gcode_time_estimate`(Σ 距離 / 送り、加速度を無視した下限 [s])/ `gcode_layer_image`(1 層の経路を線幅つきのラスタに = 期待の層画像)。
 - **slice(3)** — `mesh_slice_contours`(平面 z で切った輪郭 `table`: ring x y。三角形の法線で向きを付け、外輪郭は反時計回り・穴は時計回り)/ `mesh_slice_stack`(層ごとの塗りつぶしマスク `voxel`、nonzero winding で穴は穴のまま)/ `contours_to_gcode`(輪郭を周回する経路の表、押し出し量 = 線分長 × 線幅 × 層厚 / 断面積)。
@@ -67,6 +67,7 @@ defects = L.print_layer_defect_map(camera_layer_15, expected, tolerance_px=3)   
 - **時間の見積もりは下限**: 加速度・ジャーク・リトラクトを無視するので、細かいインフィルほど実機より短く出る。
 - **スライスは面の向きが揃っている前提**(STL / 3MF の規約)。向きが壊れたメッシュは穴が埋まる。`mesh_orientation_consistent` で先に直す。
 - **位置合わせはしない**: カメラ像は先に `gcode_layer_image` と同じ画素格子(`bounds` / `px_per_mm`)へ写す。
+- **stroke(6)** — `stipple_points_from_image` / `stipple_energy` / `stroke_tour_closed` / `mst_length` / `stroke_resample_closed` / `stroke_tone_error`: **写真の濃淡を 1 本の閉じた線にする**層(TSP art)。濃淡を点の密度に写し(重みつき Lloyd)、その点を 1 回ずつ通って戻る巡回路に並べ、等弧長に打ち直して、**描いた濃淡が目標とどれだけ違うか**を返します。ペンプロッタの経路と 3D プリンタの経路は同じ対象なので、出口は既存の `contours_to_gcode` → `gcode_time_estimate` をそのまま使えます(「この絵は 1 本の線で紙の上に何メートル、何分で描けるか」)。★質は**下界との比**で言います —— 閉じた巡回路は最小全域木より短くなれません。
 
 ## 関連
 

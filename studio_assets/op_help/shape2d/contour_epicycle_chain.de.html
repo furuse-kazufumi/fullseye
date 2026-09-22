@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">contour_epicycle_chain — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_epicycle_chain(spectrum, phase, order=&#x27;frequency&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_epicycle_chain(spectrum, phase, order=&#x27;frequency&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;contour_epicycle_chain&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>位相 `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> における**回る振り子の連鎖**を返す(</code><code style="color:#22d3bf">pairs</code>`)。</p>
+<p>引数:</p>
+<p>spectrum: :func:<code style="color:#22d3bf">contour_fourier_complex</code> の `<code style="color:#22d3bf">(2K+1, 3)</code>`。</p>
+<p>phase: `<code style="color:#22d3bf">t</code>`(1 周 = 1.0)。</p>
+<p>order: `<code style="color:#22d3bf">&quot;frequency&quot;</code>` = 低い周波数から積む(教科書の絵)/</p>
+<p>`<code style="color:#22d3bf">&quot;amplitude&quot;</code>` = 振幅の大きい順(少ない項で似せる)。</p>
+<p>返り値: `<code style="color:#22d3bf">(M+1, 2)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">pairs</code>`((row, col) 順)。行 0 が最初の腕の中心、</p>
+<p>行 `<code style="color:#22d3bf">m</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">m</code>` 番目の腕の先(= 次の腕の中心)、<b>最後の行が筆先</b>で、</p>
+<p>これが再構成された輪郭の点そのものになる。腕 `<code style="color:#22d3bf">m</code>` の長さは</p>
+<p>`<code style="color:#22d3bf">|c_k|</code><code style="color:#22d3bf">、角度は </code><code style="color:#22d3bf">2π k t + arg c_k</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">Leitfaden zur Familie shape_description_2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_one_stroke_epicycles">poc_one_stroke_epicycles</a> — <code style="color:#22d3bf">py -3.11 examples/poc_one_stroke_epicycles.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">pairs</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:elliptic_fourier">elliptic_fourier</a> · <a style="color:#22d3bf" href="opshape2d:fourier_smooth">fourier_smooth</a> · <a style="color:#22d3bf" href="opshape2d:contour_fourier_complex">contour_fourier_complex</a> · <a style="color:#22d3bf" href="opshape2d:add_frame_corners">add_frame_corners</a> · <a style="color:#22d3bf" href="opshape2d:warp_tps_image">warp_tps_image</a> · <a style="color:#22d3bf" href="opshape2d:warp_piecewise_affine">warp_piecewise_affine</a> · <a style="color:#22d3bf" href="opshape2d:morph">morph</a> · <a style="color:#22d3bf" href="opshape2d:morph_sequence">morph_sequence</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">descriptor</code>)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:elliptic_fourier">elliptic_fourier</a> · <a style="color:#22d3bf" href="opshape2d:reconstruct">reconstruct</a> · <a style="color:#22d3bf" href="opshape2d:invariants">invariants</a> · <a style="color:#22d3bf" href="opshape2d:normalize">normalize</a> · <a style="color:#22d3bf" href="opshape2d:descriptor_distance">descriptor_distance</a> · <a style="color:#22d3bf" href="opshape2d:fourier_smooth">fourier_smooth</a> · <a style="color:#22d3bf" href="opshape2d:from_xld">from_xld</a> · <a style="color:#22d3bf" href="opshape2d:contour_fourier_complex">contour_fourier_complex</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fourierdesc.py — SHAPE2D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

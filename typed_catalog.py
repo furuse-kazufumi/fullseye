@@ -207,6 +207,13 @@ PARAM_HINTS = {
 
 
 OP_PARAM_HINTS = {
+    # 一筆書きと振り子(2026-09-22)。名前ヒントにすると他の族の "phase" や
+    # "n_points" を巻き込むので、op ごとに置く。
+    ("stipple_points_from_image", "n_points"): lambda rng: 40,
+    # ★打ち直しは**入力の頂点数より少ない標本を拒否する**(角を切って線が短くなり、
+    #   濃淡の再現が壊れるため)。探針より確実に多い数を渡す。
+    ("stroke_resample_closed", "n_points"): lambda rng: 4096,
+    ("contour_epicycle_chain", "phase"): lambda rng: 0.25,
     # 局所 ENU(2026-09-22)。名前ヒントだけだと基準点と観測点が同じ緯経になり、
     # 東西成分が恒等的に 0 の**退化した探針**になる。基準点をずらして 3 成分を出す。
     ("dem_enu_from_geodetic", "lat0_deg"): lambda rng: 35.600,

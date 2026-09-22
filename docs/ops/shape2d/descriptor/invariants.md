@@ -39,11 +39,11 @@ version: 0.2.2  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[elliptic_fourier](elliptic_fourier.md) · [fourier_smooth](fourier_smooth.md) · [add_frame_corners](../morph/add_frame_corners.md) · [warp_tps_image](../morph/warp_tps_image.md) · [warp_piecewise_affine](../morph/warp_piecewise_affine.md) · [morph](../morph/morph.md) · [morph_sequence](../morph/morph_sequence.md)
+[elliptic_fourier](elliptic_fourier.md) · [fourier_smooth](fourier_smooth.md) · [contour_fourier_complex](contour_fourier_complex.md) · [add_frame_corners](../morph/add_frame_corners.md) · [warp_tps_image](../morph/warp_tps_image.md) · [warp_piecewise_affine](../morph/warp_piecewise_affine.md) · [morph](../morph/morph.md) · [morph_sequence](../morph/morph_sequence.md)
 
 ## 同カテゴリ(`descriptor`)
 
-[elliptic_fourier](elliptic_fourier.md) · [reconstruct](reconstruct.md) · [normalize](normalize.md) · [descriptor_distance](descriptor_distance.md) · [fourier_smooth](fourier_smooth.md) · [from_xld](from_xld.md)
+[elliptic_fourier](elliptic_fourier.md) · [reconstruct](reconstruct.md) · [normalize](normalize.md) · [descriptor_distance](descriptor_distance.md) · [fourier_smooth](fourier_smooth.md) · [from_xld](from_xld.md) · [contour_fourier_complex](contour_fourier_complex.md) · [contour_epicycle_chain](contour_epicycle_chain.md)
 
 ---
 *Provenance: fourierdesc.py — SHAPE2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

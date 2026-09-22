@@ -66,6 +66,11 @@ _CATALOG = {
         ("descriptor_distance", "fourierdesc", ["efdmodel", "efdmodel"], "measurement"),
         ("fourier_smooth", "fourierdesc", ["pairs"], "pairs"),
         ("from_xld", "fourierdesc", ["table"], "pairs"),
+        # 回る振り子の連鎖(2026-09-22)。複素係数は (2K+1, 3) の実行列 = matrix、
+        # 連鎖の頂点は pairs、打ち切り誤差の予言は table。新しい sort は作らない。
+        ("contour_fourier_complex", "fourierdesc", ["pairs"], "matrix"),
+        ("contour_epicycle_chain", "fourierdesc", ["matrix"], "pairs"),
+        ("contour_fourier_truncation_energy", "fourierdesc", ["matrix"], "table"),
     ],
     # 変形 —— 対応点で画像を写す。
     "morph": [

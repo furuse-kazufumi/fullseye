@@ -36,6 +36,12 @@ __all__ = [
     "mesh_slice_contours", "mesh_slice_stack", "contours_to_gcode",
     "read_3mf", "write_3mf",
     "print_layer_defect_map",
+    "stipple_points_from_image",
+    "stipple_energy",
+    "stroke_tour_closed",
+    "mst_length",
+    "stroke_resample_closed",
+    "stroke_tone_error",
 ]
 
 #: 読む線分の上限(1 行 1 線分、これを超えたら ValueError —— 黙って間引かない)。
@@ -647,4 +653,363 @@ def print_layer_defect_map(observed: Any, expected: Any, tolerance_px: int = 2, 
     out = np.zeros(A.shape, dtype=np.float64)
     out[b & ~da] = 1.0
     out[a & ~db] = -1.0
+    return out
+
+
+# --------------------------------------------------------------------------- #
+# 濃淡 → 1 本の閉じた線(2026-09-22)—— TSP art をこの族に置く理由               #
+#   ★ペンプロッタの経路と 3D プリンタの経路は**同じ対象**(順に回る線分の列)で、 #
+#   出口も同じ(contours_to_gcode → gcode_write / gcode_time_estimate)。        #
+#   だから族を新しく立てず、ここに stroke カテゴリとして足す。                   #
+#   参考: Kaplan & Bosch, "TSP Art", Computational Aesthetics 2005。           #
+# --------------------------------------------------------------------------- #
+#: 点描の距離。"euclidean" 以外は将来。
+STIPPLE_METRICS: tuple[str, ...] = ("euclidean",)
+
+#: 巡回路の初期解の作り方。
+TOUR_STARTS: tuple[str, ...] = ("nearest", "sorted", "given")
+
+
+def _stroke_gray(img, op):
+    a = np.asarray(img, dtype=np.float64)
+    if a.ndim == 3 and a.shape[2] in (3, 4):
+        a = a[..., :3] @ np.array([0.299, 0.587, 0.114])
+    if a.ndim != 2:
+        raise ValueError("%s: image must be 2-D grey or (H, W, 3/4) colour "
+                         "(received: %s)" % (op, (a.shape,)))
+    if a.shape[0] < 4 or a.shape[1] < 4:
+        raise ValueError("%s: image is %dx%d; at least 4x4 is needed to place "
+                         "points by density" % (op, a.shape[0], a.shape[1]))
+    if not np.all(np.isfinite(a)):
+        raise ValueError("%s: image contains non-finite values" % op)
+    return a
+
+
+def _stroke_points(points, op, name="points"):
+    p = np.asarray(points, dtype=np.float64)
+    if p.ndim != 2 or p.shape[1] != 2:
+        raise ValueError("%s: %s must be (N, 2) (received: %s)" % (op, name, (p.shape,)))
+    if p.shape[0] < 3:
+        raise ValueError("%s: %s needs at least 3 points (received: %d)"
+                         % (op, name, p.shape[0]))
+    if not np.all(np.isfinite(p)):
+        raise ValueError("%s: %s contains non-finite values" % (op, name))
+    return p
+
+
+def stipple_points_from_image(image, n_points, iterations=30, gamma=1.0,
+                              floor=0.02, seed=0, metric="euclidean"):
+    """濃淡を**点の密度**に写す(重みつき Lloyd = 重心ボロノイ)。→ ``pairs``
+
+    暗いところに点が密に集まる。返るのは ``(n_points, 2)`` の **(row, col)**。
+
+    引数:
+        image: 明るさ ``[0, 1]`` の 2-D(または色。輝度に落とす)。
+        n_points: 点の数。
+        iterations: Lloyd の反復回数。
+        gamma: 重みを ``darkness ** gamma`` にする(1 = 暗さそのまま)。
+        floor: 重みの下限。**0 にしない** —— 真っ白な領域の重みが厳密に 0 だと
+            そこへ入った点が動けず(重心が 0/0)、位置が入力に依らなくなる。
+        seed: 初期配置の乱数。
+        metric: いまは ``"euclidean"`` のみ。
+
+    返り値のほかに、収束の様子は :func:`stipple_points_from_image` を
+    ``iterations`` を変えて呼び比べれば測れる(Lloyd のエネルギーは単調減少する)。
+
+    ★**真っ白な画像でも点は等間隔に散る**(密度が一定なら重心ボロノイは均等)。
+    そこが「濃淡を読めている」ことの対照群になる。
+    """
+    op = "stipple_points_from_image"
+    if metric not in STIPPLE_METRICS:
+        raise ValueError("%s: metric must be one of %s (received: %r)"
+                         % (op, STIPPLE_METRICS, metric))
+    a = _stroke_gray(image, op)
+    if isinstance(n_points, bool) or not isinstance(n_points, (int, np.integer)):
+        raise ValueError("%s: n_points must be an int (received: %r)" % (op, n_points))
+    n = int(n_points)
+    if n < 3:
+        raise ValueError("%s: n_points must be at least 3 (received: %d)" % (op, n))
+    if a.size < n:
+        raise ValueError("%s: the image has %d pixels but %d points were asked for — "
+                         "more points than pixels cannot represent a density"
+                         % (op, a.size, n))
+    if not (0.0 < float(floor) <= 1.0):
+        raise ValueError("%s: floor must lie in (0, 1] (received: %r) — a floor of 0 "
+                         "leaves points in white regions with a 0/0 centroid, so their "
+                         "position stops depending on the input" % (op, floor))
+    if float(gamma) <= 0.0:
+        raise ValueError("%s: gamma must be positive (received: %r)" % (op, gamma))
+    if isinstance(iterations, bool) or not isinstance(iterations, (int, np.integer)) \
+            or int(iterations) < 0:
+        raise ValueError("%s: iterations must be a non-negative int (received: %r)"
+                         % (op, iterations))
+
+    h, w = a.shape
+    lo, hi = float(a.min()), float(a.max())
+    dark = (hi - a) / (hi - lo) if hi > lo else np.zeros_like(a)
+    weight = np.maximum(dark ** float(gamma), float(floor))
+
+    rng = np.random.default_rng(int(seed))
+    flat = weight.ravel() / weight.sum()
+    idx = rng.choice(flat.size, size=n, replace=True, p=flat)
+    pts = np.stack([(idx // w).astype(np.float64) + rng.random(n),
+                    (idx % w).astype(np.float64) + rng.random(n)], axis=1)
+
+    rr, cc = np.mgrid[0:h, 0:w]
+    rr = rr.astype(np.float64).ravel()
+    cc = cc.astype(np.float64).ravel()
+    wf = weight.ravel()
+    for _ in range(int(iterations)):
+        d = ((rr[:, None] - pts[None, :, 0]) ** 2
+             + (cc[:, None] - pts[None, :, 1]) ** 2)
+        owner = np.argmin(d, axis=1)
+        num_r = np.bincount(owner, weights=wf * rr, minlength=n)
+        num_c = np.bincount(owner, weights=wf * cc, minlength=n)
+        den = np.bincount(owner, weights=wf, minlength=n)
+        move = den > 0.0
+        pts[move, 0] = num_r[move] / den[move]
+        pts[move, 1] = num_c[move] / den[move]
+    return np.ascontiguousarray(pts)
+
+
+def stipple_energy(image, points, gamma=1.0, floor=0.02):
+    """重みつき Lloyd のエネルギー ``Σ w(x) |x - c(x)|^2``(単調減少の検査用)。"""
+    op = "stipple_energy"
+    a = _stroke_gray(image, op)
+    p = _stroke_points(points, op)
+    h, w = a.shape
+    lo, hi = float(a.min()), float(a.max())
+    dark = (hi - a) / (hi - lo) if hi > lo else np.zeros_like(a)
+    weight = np.maximum(dark ** float(gamma), float(floor)).ravel()
+    rr, cc = np.mgrid[0:h, 0:w]
+    d = ((rr.astype(np.float64).ravel()[:, None] - p[None, :, 0]) ** 2
+         + (cc.astype(np.float64).ravel()[:, None] - p[None, :, 1]) ** 2)
+    return float((weight * d.min(axis=1)).sum())
+
+
+def _stroke_tour_len(p, order):
+    q = p[order]
+    d = np.hypot(np.diff(q[:, 0], append=q[0, 0]), np.diff(q[:, 1], append=q[0, 1]))
+    return float(d.sum())
+
+
+def _stroke_nn_order(p):
+    n = p.shape[0]
+    unseen = np.ones(n, dtype=bool)
+    order = np.empty(n, dtype=np.int64)
+    cur = 0
+    order[0] = cur
+    unseen[cur] = False
+    for k in range(1, n):
+        d = (p[:, 0] - p[cur, 0]) ** 2 + (p[:, 1] - p[cur, 1]) ** 2
+        d[~unseen] = np.inf
+        cur = int(np.argmin(d))
+        order[k] = cur
+        unseen[cur] = False
+    return order
+
+
+def _stroke_two_opt(p, order, rounds):
+    """2-opt。長さが**減るときだけ**辺を張り替えるので、長さは単調非増加。"""
+    n = order.size
+    best = order.copy()
+    for _ in range(int(rounds)):
+        improved = False
+        q = p[best]
+        for i in range(n - 1):
+            a1, a2 = q[i], q[(i + 1) % n]
+            d_a = np.hypot(a1[0] - a2[0], a1[1] - a2[1])
+            j0 = i + 2
+            if j0 >= n:
+                break
+            b1 = q[j0:n]
+            b2 = q[(np.arange(j0, n) + 1) % n]
+            d_b = np.hypot(b1[:, 0] - b2[:, 0], b1[:, 1] - b2[:, 1])
+            n_a = np.hypot(a1[0] - b1[:, 0], a1[1] - b1[:, 1])
+            n_b = np.hypot(a2[0] - b2[:, 0], a2[1] - b2[:, 1])
+            gain = (d_a + d_b) - (n_a + n_b)
+            k = int(np.argmax(gain))
+            if gain[k] > 1e-12:
+                j = j0 + k
+                best[i + 1:j + 1] = best[i + 1:j + 1][::-1]
+                q = p[best]
+                improved = True
+        if not improved:
+            break
+    return best
+
+
+def mst_length(points):
+    """最小全域木の長さ(Prim)。**閉じた巡回路はこれより短くなれない**(下界)。"""
+    p = _stroke_points(points, "mst_length")
+    n = p.shape[0]
+    inside = np.zeros(n, dtype=bool)
+    inside[0] = True
+    best = np.hypot(p[:, 0] - p[0, 0], p[:, 1] - p[0, 1])
+    best[0] = np.inf
+    total = 0.0
+    for _ in range(n - 1):
+        j = int(np.argmin(np.where(inside, np.inf, best)))
+        total += float(best[j])
+        inside[j] = True
+        d = np.hypot(p[:, 0] - p[j, 0], p[:, 1] - p[j, 1])
+        best = np.minimum(best, d)
+    return total
+
+
+def stroke_tour_closed(points, start="nearest", two_opt_rounds=8, order=None):
+    """点を 1 回ずつ通って戻る**閉じた巡回路**に並べ替える。→ ``pairs``
+
+    返るのは入力と同じ点を並べ替えた ``(N, 2)``。**最後の点から最初の点へ戻る**
+    ことで閉じる(末尾に先頭を重複させない)。
+
+    ★これは最適な巡回路ではない(TSP は NP 困難)。**下界と比べて質を言う**:
+    閉じた巡回路は最小全域木より短くなれないので ``length / mst_length`` が
+    1 に近いほど良い。一様な点なら Beardwood–Halton–Hammersley の
+    ``0.7124 √(n A)`` も目安になる。**黄金ファイルは使わない。**
+    """
+    op = "stroke_tour_closed"
+    if start not in TOUR_STARTS:
+        raise ValueError("%s: start must be one of %s (received: %r)"
+                         % (op, TOUR_STARTS, start))
+    p = _stroke_points(points, op)
+    n = p.shape[0]
+    if start == "given":
+        if order is None:
+            raise ValueError("%s: start='given' needs an explicit order" % op)
+        o = np.asarray(order, dtype=np.int64).ravel()
+        if o.size != n or sorted(o.tolist()) != list(range(n)):
+            raise ValueError("%s: order must be a permutation of 0..%d" % (op, n - 1))
+    elif start == "sorted":
+        o = np.lexsort((p[:, 1], p[:, 0]))
+    else:
+        o = _stroke_nn_order(p)
+    if isinstance(two_opt_rounds, bool) or not isinstance(two_opt_rounds, (int, np.integer)) \
+            or int(two_opt_rounds) < 0:
+        raise ValueError("%s: two_opt_rounds must be a non-negative int (received: %r)"
+                         % (op, two_opt_rounds))
+    o = _stroke_two_opt(p, o, two_opt_rounds)
+    return np.ascontiguousarray(p[o])
+
+
+def stroke_resample_closed(points, n_points, allow_shortening=False):
+    """閉じた線を**等弧長**に打ち直す。→ ``pairs``
+
+    フーリエへ渡す前段。★媒介変数の取り方で係数が変わる(実測で最大 47 倍)ので、
+    ここは**弧長で等間隔**と明示する。弧長の間隔は機械精度で一定(実測 cv 1e-14)。
+
+    ★**ただし打ち直すと線は短くなる**: 標本と標本を結ぶのは弦なので、折れ点で角を
+    切る。実測(300 頂点の巡回路): 標本 4000 で長さ 99.1 %、1024 で 96.9 %、
+    300(頂点と同数)で 89.3 %、100 で 72.8 %、50 で **57.7 %**。長さが変われば
+    濃淡の再現も壊れるので、**入力の頂点数より少ない標本は既定で拒否する**
+    (意図してならば ``allow_shortening=True``)。
+    """
+    op = "stroke_resample_closed"
+    p = _stroke_points(points, op)
+    if isinstance(n_points, bool) or not isinstance(n_points, (int, np.integer)) \
+            or int(n_points) < 3:
+        raise ValueError("%s: n_points must be an int >= 3 (received: %r)" % (op, n_points))
+    if int(n_points) < p.shape[0] and not allow_shortening:
+        raise ValueError(
+            "%s: n_points=%d is fewer than the %d input vertices — resampling at "
+            "equal arc length joins the samples with chords, so the stroke gets "
+            "shorter by cutting corners (measured: 89%% of the length at one sample "
+            "per vertex, 58%% at one sixth). A shorter stroke no longer reproduces "
+            "the tone it was built for, so this is refused rather than done quietly; "
+            "pass allow_shortening=True if that is what you want."
+            % (op, int(n_points), p.shape[0]))
+    q = np.vstack([p, p[0]])
+    seg = np.hypot(np.diff(q[:, 0]), np.diff(q[:, 1]))
+    t = np.concatenate([[0.0], np.cumsum(seg)])
+    total = float(t[-1])
+    if total <= 0.0:
+        raise ValueError("%s: the stroke has zero length (all points coincide)" % op)
+    want = np.linspace(0.0, total, int(n_points), endpoint=False)
+    return np.ascontiguousarray(np.stack([np.interp(want, t, q[:, 0]),
+                                          np.interp(want, t, q[:, 1])], axis=1))
+
+
+def stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0):
+    """線を引いた結果の**濃淡**が目標とどれだけ違うか。→ ``table``
+
+    ★これが一筆書きの**本当の目的関数**。「絵として似ている」を人の目に任せず、
+    ペン幅で描いて目の尺度にぼかし、目標の暗さと比べて数で返す。
+
+    返り値: dict
+        "rms" / "max_abs" / "bias" —— 暗さの差(``[0, 1]`` の尺度)
+        "corr" —— 目標の暗さと描いた暗さの相関(1 に近いほど濃淡を追えている)
+        "ink_fraction" —— 紙に乗ったインクの面積率
+        "target_darkness" —— 目標の平均暗さ(インク率と釣り合うべき量)
+        "length_px" —— 線の長さ[px]
+
+    ★**ペン幅は連続なノブ**(被覆率で塗る)。線が重ならない範囲では
+    ``インク率 ≈ 線長 × ペン幅 / 画像の面積`` が成り立つので、目標の濃さに合う
+    ペン幅を **閉形式で解いてから**確かめられる:
+    ``pen_width ≈ target_darkness × area / length_px``。
+    """
+    op = "stroke_tone_error"
+    a = _stroke_gray(image, op)
+    p = _stroke_points(points, op)
+    if float(pen_width) <= 0.0:
+        raise ValueError("%s: pen_width must be positive (received: %r)" % (op, pen_width))
+    if float(blur_sigma) <= 0.0:
+        raise ValueError("%s: blur_sigma must be positive (received: %r) — the tone of a "
+                         "line drawing only exists at a scale coarser than the line"
+                         % (op, blur_sigma))
+    h, w = a.shape
+    ink = np.zeros((h, w), dtype=np.float64)
+    q = np.vstack([p, p[0]])
+    seg = np.hypot(np.diff(q[:, 0]), np.diff(q[:, 1]))
+    length = float(seg.sum())
+    steps = max(int(np.ceil(length * 2.0)), q.shape[0])
+    t = np.concatenate([[0.0], np.cumsum(seg)])
+    want = np.linspace(0.0, t[-1], steps, endpoint=False)
+    rr = np.interp(want, t, q[:, 0])
+    cc = np.interp(want, t, q[:, 1])
+    # ★被覆率で塗る。整数画素の円板で塗っていたときはペン幅が**階段**になり
+    #   (0.5 / 1.0 / 1.5 px がインク率 0.1900 で一致し、2.0 で 0.4853 へ跳ねた)、
+    #   「目標の濃さに合うペン幅」を解くことができなかった。画素中心から標本までの
+    #   距離で被覆率を出すと、ペン幅が連続なノブになる。
+    rad = float(pen_width) * 0.5
+    k = int(np.ceil(rad + 0.5))
+    br = np.floor(rr).astype(int)
+    bc = np.floor(cc).astype(int)
+    for dr in range(-k, k + 2):
+        for dc in range(-k, k + 2):
+            ri = br + dr
+            ci = bc + dc
+            ok = (ri >= 0) & (ri < h) & (ci >= 0) & (ci < w)
+            if not ok.any():
+                continue
+            dist = np.hypot(ri[ok] - rr[ok], ci[ok] - cc[ok])
+            cov = np.clip(rad - dist + 0.5, 0.0, 1.0)
+            np.maximum.at(ink, (ri[ok], ci[ok]), cov)
+
+    lo, hi = float(a.min()), float(a.max())
+    target = (hi - a) / (hi - lo) if hi > lo else np.zeros_like(a)
+    target = target ** float(gamma)
+    drawn = _stroke_gauss(ink, float(blur_sigma))
+    tgt = _stroke_gauss(target, float(blur_sigma))
+    d = drawn - tgt
+    sd, st = drawn - drawn.mean(), tgt - tgt.mean()
+    denom = float(np.sqrt((sd ** 2).sum() * (st ** 2).sum()))
+    return {"rms": float(np.sqrt((d ** 2).mean())),
+            "max_abs": float(np.abs(d).max()),
+            "bias": float(d.mean()),
+            "corr": (float((sd * st).sum() / denom) if denom > 0.0 else float("nan")),
+            "ink_fraction": float(ink.mean()),
+            "target_darkness": float(target.mean()),
+            "length_px": length}
+
+
+def _stroke_gauss(a, sigma):
+    """分離可能なガウスぼかし(端は反射)。scipy を呼ばない。"""
+    r = int(np.ceil(3.0 * sigma))
+    x = np.arange(-r, r + 1, dtype=np.float64)
+    k = np.exp(-0.5 * (x / sigma) ** 2)
+    k /= k.sum()
+    out = np.apply_along_axis(lambda v: np.convolve(
+        np.concatenate([v[r:0:-1], v, v[-2:-r - 2:-1]]), k, mode="valid"), 0, a)
+    out = np.apply_along_axis(lambda v: np.convolve(
+        np.concatenate([v[r:0:-1], v, v[-2:-r - 2:-1]]), k, mode="valid"), 1, out)
     return out

@@ -1,4 +1,4 @@
-# SHAPE2D operator help — 13 ops in 2 categories
+# SHAPE2D operator help — 16 ops in 2 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/shape2d/<category>/<op>.md` を走査。
 
@@ -8,9 +8,9 @@
 
 ## カテゴリ
 
-### descriptor (7)
+### descriptor (10)
 
-[descriptor_distance](descriptor/descriptor_distance.md) · [elliptic_fourier](descriptor/elliptic_fourier.md) · [fourier_smooth](descriptor/fourier_smooth.md) · [from_xld](descriptor/from_xld.md) · [invariants](descriptor/invariants.md) · [normalize](descriptor/normalize.md) · [reconstruct](descriptor/reconstruct.md)
+[contour_epicycle_chain](descriptor/contour_epicycle_chain.md) · [contour_fourier_complex](descriptor/contour_fourier_complex.md) · [contour_fourier_truncation_energy](descriptor/contour_fourier_truncation_energy.md) · [descriptor_distance](descriptor/descriptor_distance.md) · [elliptic_fourier](descriptor/elliptic_fourier.md) · [fourier_smooth](descriptor/fourier_smooth.md) · [from_xld](descriptor/from_xld.md) · [invariants](descriptor/invariants.md) · [normalize](descriptor/normalize.md) · [reconstruct](descriptor/reconstruct.md)
 
 ### morph (6)
 

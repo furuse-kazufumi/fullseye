@@ -4,7 +4,7 @@ dim: printpath
 category: slice
 in: table
 out: table
-examples: [poc_print_layer_inspection]
+examples: [poc_one_stroke_epicycles, poc_print_layer_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.2  # fullseye lib version this note was generated for
@@ -34,6 +34,7 @@ version: 0.2.2  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_one_stroke_epicycles](../../../../examples/poc_one_stroke_epicycles.py) — `py -3.11 examples/poc_one_stroke_epicycles.py`
 - [poc_print_layer_inspection](../../../../examples/poc_print_layer_inspection.py) — `py -3.11 examples/poc_print_layer_inspection.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

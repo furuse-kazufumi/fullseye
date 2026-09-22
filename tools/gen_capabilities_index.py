@@ -31,7 +31,10 @@ OUT_EN = os.path.join(_ROOT, "docs", "CAPABILITIES.en.md")
 
 #: 索引での並び順。ここに無いカテゴリは後ろに五十音で続く(落とさない)。
 CATEGORY_ORDER = [
-    "測る", "見つける", "形にする", "光と色", "波と信号", "組み立てる", "見せる",
+    # ★「描く」= 機械に線を引かせる層(2026-09-22 追加)。「見せる」が人に見せる
+    #   ための絵なのに対して、こちらはペンプロッタ・レーザー・刺繍のように
+    #   **線でしか描けない機械**への変換で、出口が G-code になる。
+    "測る", "見つける", "形にする", "光と色", "波と信号", "組み立てる", "見せる", "描く",
 ]
 
 #: 区分の英語名。★英語版でも見出しだけ日本語のままだった(実測 7 行)——
@@ -41,7 +44,7 @@ CATEGORY_ORDER = [
 CATEGORY_EN = {
     "測る": "Measure", "見つける": "Detect", "形にする": "Shape",
     "光と色": "Light and colour", "波と信号": "Waves and signals",
-    "組み立てる": "Compose", "見せる": "Show",
+    "組み立てる": "Compose", "見せる": "Show", "描く": "Draw",
 }
 
 REQUIRED_KEYS = ("id", "title", "title_en", "category", "ops", "examples", "version")

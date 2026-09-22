@@ -1,0 +1,100 @@
+[
+ {
+  "file": "01_stipple.png",
+  "name": "stipple",
+  "caption": "weighted Lloyd puts points where the picture is dark. The claim is measured, not looked at: on a ramp the count per band correlates 0.995 with darkness, and on a flat image the points spread evenly (nearest-neighbour cv 0.13 against 0.37 for the ramp)",
+  "shape": [
+   295,
+   630,
+   3
+  ]
+ },
+ {
+  "file": "02_lloyd.png",
+  "name": "lloyd",
+  "caption": "Lloyd's energy sum w|x-c(x)|^2 never goes up — that is a property of the algorithm that can be checked exactly, which is why it is the gate rather than the look of the dots",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_tour.png",
+  "name": "tour",
+  "caption": "both pictures visit exactly the same 9000 points exactly once; only the order differs. The tour is checked against a lower bound rather than a stored answer: a closed tour can never be shorter than the minimum spanning tree",
+  "shape": [
+   497,
+   1230,
+   3
+  ]
+ },
+ {
+  "file": "04_tone.png",
+  "name": "tone",
+  "caption": "the tone of a line drawing exists at a scale coarser than the line, so both pictures are compared after a Gaussian of sigma 6 px: correlation 0.984 against +0.013 for the same number of random points, and the mean tone is off by 0.029 once the pen width is solved from ink = length x width / area",
+  "shape": [
+   901,
+   2430,
+   3
+  ]
+ },
+ {
+  "file": "05_pen.png",
+  "name": "pen",
+  "caption": "while the strokes do not overlap the ink fraction is length x width / area, so the width that reproduces the mean tone is solved in closed form (0.90 px here). Once the line starts crossing itself the union is less than the sum and the measurement falls below the prediction — that gap is the overlap",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_harmonics.png",
+  "name": "harmonics",
+  "caption": "Parseval makes this a prediction, not a measurement: the squared error of the order-K reconstruction equals the energy of the coefficients above K, exactly. Checked against an actual reconstruction the two agree to 7e-15 px. 64 circles already carry 99.0 % of the drawing",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_epicycles.gif",
+  "name": "epicycles",
+  "caption": "the actual chain of rotating circles, not a sweep of truncations: each arm is one Fourier term, its length |c_k| and its speed k. The number of arms rises 1, 3, 8, 24, 80, 300 and the picture gives itself away — carrying 76.5% / 85.6% / 95.9% / 99.4% / 100.0% / 100.0% of the drawing's energy, every figure predicted before it was drawn.",
+  "shape": [
+   404,
+   600,
+   3
+  ],
+  "animated": true,
+  "frames": 72,
+  "frames_written": 72,
+  "fps": 9.0
+ },
+ {
+  "file": "08_numbers.png",
+  "name": "numbers",
+  "caption": "every row is measured by an operator in this run; the harmonic rows are predicted in closed form before the drawing is made",
+  "shape": [
+   392,
+   525,
+   3
+  ],
+  "csv": "08_numbers.csv",
+  "tsv": "08_numbers.tsv"
+ },
+ {
+  "file": "09_harmonic_table.png",
+  "name": "harmonic_table",
+  "caption": "Parseval: the error above is the energy that was left out, exactly",
+  "shape": [
+   320,
+   302,
+   3
+  ],
+  "csv": "09_harmonic_table.csv",
+  "tsv": "09_harmonic_table.tsv"
+ }
+]

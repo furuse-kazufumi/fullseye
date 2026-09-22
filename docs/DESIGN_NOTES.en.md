@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 826. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 840. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -539,6 +539,14 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L686** — ★There really exist rows where two opposing failures cancel and masquerade as 'exactly the true value'
 
+## `examples/poc_one_stroke_epicycles.py`
+
+- **L209** _(ja)_ — ★線画なので**灰色のまま**出す。(H,W) を渡すと save_gif が疑似カラーに 塗って黄緑の絵になる(実測)—— 強度そのものを見せる図では色は邪魔。
+- **L246** _(ja)_ — ★env は examplefig が **呼ばれるたび**に読むので、ここで入れれば効く (import 時に固定されていたら --out が黙って無視される、の回避)。
+- **L412** _(ja)_ — ★この絵では既定のペン幅 1.0 px がたまたまほぼ当たっており(偏り -0.0031)、 解いた幅 0.900 px のほうが偏りは大きい(-0.0294)。**閉形式が当てるのは 偏りではなくインク率**なので、門はそちらに置く —— 偏りで門を作ると 「元から合っていた絵」で落ちる(実測でそうなった)。
+- **L416** _(ja)_ — ★偏りで門を作ると「元から合っていた絵」で落ちる(この絵では既定 1.0 px の 偏りが -0.0031 と既にほぼ 0 で、解いた 0.903 px のほうが偏りは大きい)。 閉形式が当てるのは**インク率**で、線が重なるぶん実測は必ず下回る —— 門はその向きと大きさに置く。
+- **L451** _(ja)_ — ★**ナイキストを満たしているか**を先に測る。等弧長の打ち直しは、標本間隔が 線分より粗いと角を切って線そのものが短くなる —— フーリエに載せる**前**の 段階で情報が落ちるので、ここを見ないと「予言が当たった」の土台が崩れる。
+
 ## `examples/poc_pallet_load_utilization.py`
 
 - **L232** — ★Deck points float up to +3σ from noise, so cut them with a floor threshold. Without it, even a load with zero overhang gets a spurious 0.006 m3 of "overhang".
@@ -929,6 +937,11 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L198** — ★ The cap is on the *product*, not on either factor, because the accident it prevents is the cross term: a modest 900-ommatidium eye and a modest 512x512 image are each unremarkable and together are 236M float64 = 1.9 GB.
 
+## `fourierdesc.py`
+
+- **L282** _(ja)_ — ★この族の既存 op(elliptic_fourier)は Kuhl-Giardina の**実**係数(a,b,c,d) # で、楕円 1 つ 1 つを表す。こちらは同じ輪郭を**複素**係数 c_k で見る —— # z(t) = Σ c_k exp(2πikt) と書けるので、各項が「回る腕」そのものになり、 # パーセバルで**打ち切り誤差を描く前に予言できる**。用途が違うので両方置く。 # --------------------------------------------------------------------------- #
+- **L382** _(ja)_ — ★偶数点では添字 n/2 が **k = +n/2 と k = -n/2 の同じ 1 つの係数**である。 両方を並べるとエネルギーを 1 本ぶん多く数えて**パーセバルが破れる** (実測: n=8 で 1.17e-01、n=512 で 7.5e-03 ずれた)。numpy の ``fft.fftfreq`` に合わせて **k = -n/2 の側だけ**を出す。 最初の検査(正方形の輪郭)はこの係数がたまたま 0 に近くて通っていた —— 探針 1 枚では足りない、の実例。
+
 ## `fscript.py`
 
 - **L1269** _(ja)_ — ★2026-09-14: ここは `FsTypeError` だけを捕まえていた。逆さの区間と未知の feature を契約どおり `FsValueError`(= FS_E_INVALID_ARG)にした結果、 **fscript の利用者には Python の生の例外が漏れる**ようになっていた —— 例外の種類を増やしたら、それを言語境界で受けている場所を必ず一掃する ([[feedback_same_bug_class_recurs_check_siblings]])。
@@ -1171,6 +1184,11 @@ This repository records *why* things are the way they are in **comments in the s
 ## `ppf.py`
 
 - **L126** — ★ Raw PCA normals have an **arbitrary sign**, and under rotation flip on 40% of points. Since PPF features are angles between normals, if they flip the key changes. Measured (400 points, about the z-axis): with raw normals the key match rate at 0/37/90/143 degrees is 100 / 73.6 / 69.4 / 67.2 %, with oriented normals **all 100 %**. The same hole that ``pointcloud.fpfh`` had stepped on, fixed together the same day.
+
+## `printpath.py`
+
+- **L661** _(ja)_ — ★ペンプロッタの経路と 3D プリンタの経路は**同じ対象**(順に回る線分の列)で、 # 出口も同じ(contours_to_gcode → gcode_write / gcode_time_estimate)。 # だから族を新しく立てず、ここに stroke カテゴリとして足す。 # 参考: Kaplan & Bosch, "TSP Art", Computational Aesthetics 2005。 # --------------------------------------------------------------------------- # 点描の距離。"euclidean" 以外は将来。
+- **L969** _(ja)_ — ★被覆率で塗る。整数画素の円板で塗っていたときはペン幅が**階段**になり (0.5 / 1.0 / 1.5 px がインク率 0.1900 で一致し、2.0 で 0.4853 へ跳ねた)、 「目標の濃さに合うペン幅」を解くことができなかった。画素中心から標本までの 距離で被覆率を出すと、ペン幅が連続なノブになる。
 
 ## `problems.py`
 
@@ -1432,6 +1450,12 @@ This repository records *why* things are the way they are in **comments in the s
 - **L101** — ★2026-09-07: this long **returned 0**, passing straight through the `assert code == 0` below —— a gate that discards its verdict right after computing it (measured: 3 PoCs never print PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). Return -2 so it fails.
 - **L123** — ★This gate runs the 84 PoCs **in one batch** (session fixture). That time is charged to the first test, so pyproject's default timeout (900 seconds) fails on shared runners. Widen only here —— relaxing the default would also dull hang detection for other tests.
 
+## `tests/test_printpath.py`
+
+- **L327** _(ja)_ — ★頂点より少ない標本は既定で拒否(長さが縮んで濃淡の再現が壊れる)
+- **L364** _(ja)_ — ★完全な係数列で呼ぶ(打ち切ると尾のエネルギーが分からず予言が下界になる)。 parametrisation は "index" —— stroke_resample_closed が**すでに弧長で** 打ち直しているので、ここで "arclength" を選ぶと op が内部でもう 1 度 打ち直して**別の輪郭の係数**になる(弧長の打ち直しは冪等でない)。
+- **L449** _(ja)_ — ★目標の濃さに合うペン幅を閉形式で解くと、偏りが桁で縮む
+
 ## `tests/test_public_reachability.py`
 
 - **L71** _(ja)_ — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.op.<名前>` 経由で届く。ここに残る 1〜6 本は各モジュールのデモ入口 (`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
@@ -1519,7 +1543,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tools/gen_capabilities_index.py`
 
-- **L37** — English names of the categories. ★Even in the English version only the headings stayed in Japanese (measured 7 lines) -- the body was translated with `title_en` / `_summary_en`, but the headings were forgotten, making it a textbook "switched but Japanese is mixed in" case. Categories not present here are emitted as-is (don't invent translations).
+- **L34** _(ja)_ — ★「描く」= 機械に線を引かせる層(2026-09-22 追加)。「見せる」が人に見せる ための絵なのに対して、こちらはペンプロッタ・レーザー・刺繍のように **線でしか描けない機械**への変換で、出口が G-code になる。
+- **L40** — English names of the categories. ★Even in the English version only the headings stayed in Japanese (measured 7 lines) -- the body was translated with `title_en` / `_summary_en`, but the headings were forgotten, making it a textbook "switched but Japanese is mixed in" case. Categories not present here are emitted as-is (don't invent translations).
 
 ## `tools/gen_design_notes.py`
 
@@ -1629,9 +1654,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `typed_catalog.py`
 
-- **L285** — ★ The case where the default itself is heavy is handled separately —— we wrote a cost table in the docstring and left it in docs/KNOWN_ISSUES.md as "unsolved." Making it lighter here is to pass the check, not to hide the slowness. The keep of fourier_smooth(points, keep) is a required argument with no default. If it cannot be bound, it is skipped forever as "cannot assemble arguments" and appears in the coverage table only as unreached (in the first measurement on 2026-09-06, only this one of 13 ops fell out). Surface roughness. Constraints are 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel measurement. The measurement-line generation op takes no input, so every argument needs a hint.
-- **L339** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
-- **L527** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
+- **L213** _(ja)_ — ★打ち直しは**入力の頂点数より少ない標本を拒否する**(角を切って線が短くなり、 濃淡の再現が壊れるため)。探針より確実に多い数を渡す。
+- **L292** — ★ The case where the default itself is heavy is handled separately —— we wrote a cost table in the docstring and left it in docs/KNOWN_ISSUES.md as "unsolved." Making it lighter here is to pass the check, not to hide the slowness. The keep of fourier_smooth(points, keep) is a required argument with no default. If it cannot be bound, it is skipped forever as "cannot assemble arguments" and appears in the coverage table only as unreached (in the first measurement on 2026-09-06, only this one of 13 ops fell out). Surface roughness. Constraints are 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel measurement. The measurement-line generation op takes no input, so every argument needs a hint.
+- **L346** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
+- **L534** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
 
 ## `unified.py`
 

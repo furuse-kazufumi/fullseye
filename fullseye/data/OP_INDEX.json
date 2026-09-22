@@ -1,8 +1,8 @@
 {
- "n_ops": 2088,
+ "n_ops": 2097,
  "tiers": {
   "color": 12,
-  "ledger": 1140,
+  "ledger": 1149,
   "nary": 17,
   "registry": 919
  },
@@ -2197,6 +2197,45 @@
    "in_sorts": [
     "points",
     "normals"
+   ]
+  },
+  {
+   "name": "contour_epicycle_chain",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "pairs",
+   "category": "descriptor",
+   "tier": "ledger",
+   "ledger": "opsshape2d",
+   "dim": "shape2d",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "contour_fourier_complex",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "matrix",
+   "category": "descriptor",
+   "tier": "ledger",
+   "ledger": "opsshape2d",
+   "dim": "shape2d",
+   "in_sorts": [
+    "pairs"
+   ]
+  },
+  {
+   "name": "contour_fourier_truncation_energy",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "descriptor",
+   "tier": "ledger",
+   "ledger": "opsshape2d",
+   "dim": "shape2d",
+   "in_sorts": [
+    "matrix"
    ]
   },
   {
@@ -8026,6 +8065,19 @@
    ]
   },
   {
+   "name": "mst_length",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "measurement",
+   "category": "stroke",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "pairs"
+   ]
+  },
+  {
    "name": "mtf_diffraction",
    "halcon": "",
    "in_sort": null,
@@ -12880,6 +12932,33 @@
    "in_sorts": []
   },
   {
+   "name": "stipple_energy",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "measurement",
+   "category": "stroke",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "image2d",
+    "pairs"
+   ]
+  },
+  {
+   "name": "stipple_points_from_image",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "pairs",
+   "category": "stroke",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "stokes_analyze",
    "halcon": "",
    "in_sort": "stokes",
@@ -12917,6 +12996,46 @@
    "in_sorts": [
     "image2d",
     "image2d"
+   ]
+  },
+  {
+   "name": "stroke_resample_closed",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "pairs",
+   "category": "stroke",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "pairs"
+   ]
+  },
+  {
+   "name": "stroke_tone_error",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "stroke",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "image2d",
+    "pairs"
+   ]
+  },
+  {
+   "name": "stroke_tour_closed",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "pairs",
+   "category": "stroke",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "pairs"
    ]
   },
   {
