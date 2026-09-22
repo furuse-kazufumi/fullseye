@@ -8,7 +8,7 @@ halcon: gauss_filter
 examples: [coherence_scanning, color_transport, ct_inspection, degenerate_inputs, gallery2d_smoothing_rank, genspark_external_review, inspection_workflow, photon_timeresolved, poc_bone_trabecular_thickness, poc_dtof_ranging, poc_interferometry_step, poc_leaf_disease_area, poc_nuclei_ploidy, poc_solar_el_inspection, poc_solar_limb_darkening, poc_star_astrometry, poc_wound_area_tracking, quickstart, typed_results_json, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.1  # fullseye lib version this note was generated for
+version: 0.2.2  # fullseye lib version this note was generated for
 ---
 
 # gaussian — 2D `smoothing` op

@@ -7,7 +7,7 @@ out: rgb
 examples: [poc_print_layer_inspection, poc_video_cube]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.1  # fullseye lib version this note was generated for
+version: 0.2.2  # fullseye lib version this note was generated for
 ---
 
 # vol_render_transfer — VIDEOCUBE `render` op

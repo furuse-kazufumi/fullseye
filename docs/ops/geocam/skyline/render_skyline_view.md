@@ -7,7 +7,7 @@ out: image2d
 examples: [poc_public_camera_heading]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.1  # fullseye lib version this note was generated for
+version: 0.2.2  # fullseye lib version this note was generated for
 ---
 
 # render_skyline_view — GEOCAM `skyline` op

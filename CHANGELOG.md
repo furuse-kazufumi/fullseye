@@ -5,7 +5,7 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
-## 0.2.2 — 未リリース
+## 0.2.2 — 2026-09-22
 
 - ★**ハエの視葉の後段を 7 op(flyvision 9 → 16 op)**: 眼に届いた明るさから「自分がどう回ったか」までを、**学習を 1 回もせずに**閉じた式で繋ぐ段。`fly_lamina_filter`(順応で明るさを捨て対比にする —— 同じ景色を 10 倍明るくしても**出力は 1 ビットも変わらない**のが Weber の不変性で、機械精度で門にした)/ `fly_onoff_split`(ON = Mi1・Tm3、OFF = Tm1・Tm2。整流を**選べる**ようにしてある —— L1/L2 自体は線形だという記録があるので、ラミナで整流する実装は記録が言っていないことを主張している)/ `fly_t4t5_field`(六角格子の 6 方向すべてで方向選択。Haag ら 2016 の三腕 `(dc+k_E·LP[E])(dc+k_D·D)/(dc+k_S·LP[S])`、τ=250 ms・k=5/5/10 を逐語どおりに実装し、**増強だけ**と**抑制だけ**も同じ op のモードにした。論文の主張「2 つの仕組みは相補的」は**積の恒等式**になる —— どんな刺激でも `比(三腕) = 比(増強) × 比(抑制)` が機械精度で成り立ち、論文の 2 柱刺激では 24.96 / 0.820、4.16 × 7.32 = 30.46)/ `fly_flow_from_directions`(6 方向 → 接平面の 1 本のベクトル)/ `fly_matched_filter`(Krapp & Hengstenberg 1996 の整合フィルタ = 回転 1 rad/s が視野に書く流れ `-a × d`)/ `fly_egomotion_from_flow`(流れ場から回転を**線形最小二乗**で。収束したかと**識別できたか**を分けるため条件数を必ず返す)/ `fly_eye_merge`(複数の格子を 1 つの広い眼に束ねる)。
 - ★**conngraph に回路 1 op(27 → 28 op)**: `graph_conductance_states` —— `conn_graph` を**そのまま回路として回す**段階電位ニューロン `τV̇ = −(V−E_rest) + g⁺(E_exc−V) + g⁻(E_inh−V)`(Groschner ら 2022 の「掛け算の正体はコンダクタンス比」、Lappalainen ら 2024 の全脳モデルと同じ形)。**学習も当てはめもしない** —— 重みは配線そのもの。放出を非負に限ることで**状態が必ず反転電位の間に留まる**(凸結合)ことが構造で保証され、入力で実効時定数が `τ/(1+g)` に縮む(liquid time-constant 型の力学がコネクトームから出てくる)。

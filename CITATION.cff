@@ -9,8 +9,8 @@ license: Apache-2.0
 repository-code: "https://github.com/furuse-kazufumi/fullseye"
 url: "https://furuse.work/"
 repository-artifact: "https://pypi.org/project/fullseye/"
-version: 0.2.1
-date-released: "2026-09-20"
+version: 0.2.2
+date-released: "2026-09-22"
 doi: 10.5281/zenodo.22761195
 identifiers:
   - type: doi
@@ -18,10 +18,10 @@ identifiers:
     description: "Concept DOI (resolves to the newest archived version; each GitHub Release mints a version DOI)"
   - type: doi
     value: 10.5281/zenodo.22851588
-    description: "Version DOI for 0.2.1 (this release)"
+    description: "Version DOI for 0.2.1 (the previous release; the 0.2.2 version DOI is minted by Zenodo when the GitHub Release is published and is added here afterwards)"
   - type: doi
     value: 10.5281/zenodo.22772164
-    description: "Version DOI for 0.2.0 (the previous release)"
+    description: "Version DOI for 0.2.0"
 abstract: >-
   Fullseye is a numpy-native library of typed classical image-processing and
   geometric-vision operators (2-D and 3-D; 1,942 operators in the machine-readable index:

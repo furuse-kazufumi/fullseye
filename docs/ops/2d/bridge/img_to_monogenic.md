@@ -7,7 +7,7 @@ out: qimage
 examples: [gallery2d_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.1  # fullseye lib version this note was generated for
+version: 0.2.2  # fullseye lib version this note was generated for
 ---
 
 # img_to_monogenic — 2D `bridge` op

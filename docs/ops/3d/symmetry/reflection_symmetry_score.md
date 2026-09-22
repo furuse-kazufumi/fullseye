@@ -7,7 +7,7 @@ out: measurement
 examples: [dl_mesh_symmetry, reflection_symmetry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.1  # fullseye lib version this note was generated for
+version: 0.2.2  # fullseye lib version this note was generated for
 ---
 
 # reflection_symmetry_score — 3D `symmetry` op

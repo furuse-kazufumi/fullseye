@@ -7,7 +7,7 @@ out: measurement
 examples: [lens_design_demo, lightfield_depth, poc_battery_electrode_breathing, poc_bilateral_asymmetry, poc_bump_coplanarity, poc_cad_scan_deviation, poc_camera_calibration, poc_dimensional_inspection, poc_exoplanet_transit, poc_fabric_defect, poc_focus_stacking, poc_panorama_drift, poc_print_registration, poc_river_surface_velocity, poc_screw_thread_metrology, poc_solar_limb_darkening, poc_strain_history, poc_surface_roughness, poc_symmetry_restoration, poc_thermal_radiometry, profile_shape_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.1  # fullseye lib version this note was generated for
+version: 0.2.2  # fullseye lib version this note was generated for
 ---
 
 # rms — ONED `signal` op

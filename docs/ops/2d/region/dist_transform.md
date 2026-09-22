@@ -8,7 +8,7 @@ halcon: distance_transform
 examples: [gallery2d_region, poc_bone_trabecular_thickness]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.1  # fullseye lib version this note was generated for
+version: 0.2.2  # fullseye lib version this note was generated for
 ---
 
 # dist_transform — 2D `region` op

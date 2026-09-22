@@ -7,7 +7,7 @@ out: rgbvideo
 examples: [poc_connectome_motor_bottleneck, poc_em_branch_territory, poc_em_second_opinion, poc_eye_to_brain, poc_malecns_activity_wave, poc_microns_brain_wave]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.1  # fullseye lib version this note was generated for
+version: 0.2.2  # fullseye lib version this note was generated for
 ---
 
 # points_activity_video — CONNGRAPH `activity` op

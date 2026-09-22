@@ -7,7 +7,7 @@ out: sinogram
 examples: [ct_reconstruction, poc_ct_fidelity]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.1  # fullseye lib version this note was generated for
+version: 0.2.2  # fullseye lib version this note was generated for
 ---
 
 # radon_transform — TOMOGRAPHY `forward` op

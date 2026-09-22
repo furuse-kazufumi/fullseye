@@ -7,7 +7,7 @@ out: video
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.1  # fullseye lib version this note was generated for
+version: 0.2.2  # fullseye lib version this note was generated for
 ---
 
 # video_interpolate_flow — LIVE4D `time` op

@@ -7,7 +7,7 @@ out: table
 examples: [poc_public_camera_heading_real]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.1  # fullseye lib version this note was generated for
+version: 0.2.2  # fullseye lib version this note was generated for
 ---
 
 # camera_orientation_from_sun_candidates — GEOCAM `sun` op

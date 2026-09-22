@@ -7,7 +7,7 @@ out: table
 examples: [poc_dimensional_inspection, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.1  # fullseye lib version this note was generated for
+version: 0.2.2  # fullseye lib version this note was generated for
 ---
 
 # measure_pairs — MEASURE1D `caliper` op
