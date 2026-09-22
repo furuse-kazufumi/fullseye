@@ -9,6 +9,9 @@ data (embedded below), not untrusted input. Prefixes: xmh_/xwt_/xsitk_/xsk3_/xcv
 """
 from __future__ import annotations
 
+import io
+import os
+
 import numpy as np
 
 _NS = {"np": np}
@@ -900,17 +903,101 @@ DOCS = {
 }
 
 
+# --------------------------------------------------------------------------- #
+# 登録探針のキャッシュ(2026-09-23)
+# --------------------------------------------------------------------------- #
+#: 探針の判定は (レシピ本文, バックエンドの版, Python, プラットフォーム) だけで
+#: 決まる。実行のたびに変わらないものを毎回測り直していたので、その組を鍵にして
+#: 覚える。**版が 1 つでも変われば鍵が変わる**ので、cv2 5.0.0 で BRISK が移動した
+#: ような事故は次も捕まる(あれを捕まえたのがこの門である)。
+#:
+#: 実測(2026-09-23): `import fullseye` 861 ms のうち **316 ms** がこの探針だった。
+#: 環境ごとに違う答えなので repo には置かない。`FULLSEYE_CACHE_DIR` で移せる。
+_PROBE_LIBS = ("cv2", "SimpleITK", "mahotas", "pywt", "scipy", "skimage", "numpy")
+
+
+def _probe_cache_path():
+    base = (os.environ.get("FULLSEYE_CACHE_DIR")
+            or os.environ.get("LOCALAPPDATA")
+            or os.path.join(os.path.expanduser("~"), ".cache"))
+    return os.path.join(base, "fullseye", "backend_probe.json")
+
+
+def _probe_key():
+    """レシピと環境の指紋。ここが同じなら探針の答えも同じ。"""
+    import hashlib
+    import json as _json
+    import platform
+    import sys as _sys
+    vers = {}
+    for _m in _PROBE_LIBS:
+        try:
+            vers[_m] = getattr(__import__(_m), "__version__", "?")
+        except Exception:                                  # noqa: BLE001 - 不在も指紋の一部
+            vers[_m] = None
+    payload = _json.dumps({
+        "recipes": {k: v.get("recipe", "") for k, v in RECIPES.items()},
+        "sorts": {k: (v.get("in"), v.get("out")) for k, v in RECIPES.items()},
+        "versions": vers,
+        "python": _sys.version,
+        "platform": platform.platform(),
+    }, sort_keys=True, ensure_ascii=False)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:32]
+
+
+def _probe_cache_read(key):
+    """覚えている合格名の集合。無い/読めない/鍵違いなら None(= 探針を回す)。"""
+    if os.environ.get("FULLSEYE_BACKEND_PROBE", "").lower() == "always":
+        return None
+    try:
+        import json as _json
+        with io.open(_probe_cache_path(), encoding="utf-8") as fh:
+            doc = _json.load(fh)
+        if doc.get("key") != key:
+            return None
+        passed = doc.get("passed")
+        return set(passed) if isinstance(passed, list) else None
+    except Exception:                                      # noqa: BLE001 - キャッシュは任意
+        return None
+
+
+def _probe_cache_write(key, passed):
+    """壊れた書き込みを残さないよう、一時ファイルに書いてから差し替える。"""
+    try:
+        import json as _json
+        p = _probe_cache_path()
+        os.makedirs(os.path.dirname(p), exist_ok=True)
+        tmp = "%s.%d.tmp" % (p, os.getpid())
+        with io.open(tmp, "w", encoding="utf-8") as fh:
+            _json.dump({"key": key, "passed": sorted(passed)}, fh)
+        os.replace(tmp, p)
+    except Exception:                                      # noqa: BLE001 - 書けなくても動く
+        pass
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
-    out = []
+    key = _probe_key()
+    remembered = _probe_cache_read(key)
+    out, probed = [], False
     for name, r in RECIPES.items():
         try:
             fn = _make(r["recipe"], r.get("out"))
             raw = _make_raw(r["recipe"])
         except Exception:
             continue
-        if _gate(fn, r["in"], r["out"], raw):            # drop non-functional recipes (env-dependent)
+        if remembered is not None:
+            ok = name in remembered                      # 同じ環境で前回出した答え
+        else:
+            ok = _gate(fn, r["in"], r["out"], raw)       # drop non-functional recipes (env-dependent)
+            probed = True
+        if ok:
             out.append(Op(name, r.get("cat") or "extra", "", r["in"], r["out"], fn))
     build.dropped = [n for n in RECIPES if n not in {o.name for o in out}]
+    #: この回で探針を実際に回したか(門が「覚えた答え」で通っていないかを
+    #: テストから確かめられるようにする)。
+    build.probed = probed
+    if probed:
+        _probe_cache_write(key, {o.name for o in out})
     return out
 
 

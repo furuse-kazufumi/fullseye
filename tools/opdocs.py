@@ -797,8 +797,38 @@ def _defuse_pseudolinks(doc: str) -> str:
     return _PSEUDOLINK.sub(_fix, doc) if doc else doc
 
 
+#: `_records()` の記憶。**同じプロセスの中では同じ答え**なので 1 回だけ組む。
+#:
+#: ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が
+#: 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current`
+#: だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは
+#: `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。
+#:
+#: 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は
+#: `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを
+#: 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと
+#: (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、
+#:  ここに明記しておく)。
+_RECORDS_CACHE = None
+
+
+def _records_cache_clear():
+    """`_records()` の記憶を捨てる(ノートを書き換えた後に呼ぶ)。"""
+    global _RECORDS_CACHE
+    _RECORDS_CACHE = None
+
+
 def _records():
     """Uniform per-op records for both dims. Returns (list, idx2d, op_fam, fam_ops)."""
+    global _RECORDS_CACHE
+    if _RECORDS_CACHE is not None:
+        return _RECORDS_CACHE
+    _RECORDS_CACHE = _records_uncached()
+    return _RECORDS_CACHE
+
+
+def _records_uncached():
+    """記憶を使わずに組み直す(`_records` の実体)。"""
     import ops
     op_fam, fam_ops, idx2d = _family_map()
     try:

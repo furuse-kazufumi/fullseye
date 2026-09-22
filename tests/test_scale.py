@@ -102,8 +102,16 @@ def _probes():
 _TILINGS = ((64, 16), (60, 12), (50, 8))
 
 
-def _worst_tiling_error(op):
-    """Max tiling_error over the probes x two param settings x two tilings (-1.0 if it never ran)."""
+def _worst_tiling_error(op, stop_above=None):
+    """Max tiling_error over the probes x two param settings x two tilings (-1.0 if it never ran).
+
+    ★*stop_above* を渡すと、その値を**超えた時点で打ち切る**(2026-09-23)。
+    呼び出し側はどちらも「閾値を超えるか」という**真偽**しか見ないので、
+    打ち切っても判定は 1 件も変わらない —— 変わるのは「超えている op に
+    対して、超えたあとも全組み合わせを回し続けていた」ぶんだけ。
+    実測: `test_not_tile_safe_list_is_not_stale` は 166 op を全組み合わせで
+    回して **143 秒**、その大半が最初の探針で既に発散していた。
+    """
     mx, ran = 0.0, False
     for im in _probes():
         for a, b in ((0.5, 0.5), (0.3, 0.7)):
@@ -114,6 +122,8 @@ def _worst_tiling_error(op):
                     continue
                 if np.isfinite(e):
                     mx, ran = max(mx, e), True
+                    if stop_above is not None and mx > stop_above:
+                        return mx
     return mx if ran else -1.0
 
 
@@ -147,7 +157,7 @@ def test_not_tile_safe_list_is_not_stale():
         op = by.get(name)
         if op is None:
             continue                                         # optional backend absent
-        err = _worst_tiling_error(op)
+        err = _worst_tiling_error(op, stop_above=1e-9)
         if err >= 0.0 and err <= 1e-9:
             stale.append((name, err))
     assert not stale, ("_NOT_TILE_SAFE entries that are actually tileable now "

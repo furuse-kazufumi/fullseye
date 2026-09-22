@@ -580,3 +580,24 @@ def test_underscore_directories_are_served_by_pages():
     assert not missing, (
         "リンクされているのに Jekyll が配信しない `_` ディレクトリ: %s —— "
         "docs/_config.yml の include に足すこと" % missing)
+
+
+def test_the_records_cache_returns_the_same_records_as_a_fresh_scan():
+    """`opdocs._records()` の記憶が、組み直した結果と**一致**すること。
+
+    1 回 7〜11 秒かかるこの走査を `gen_docs_index_ops` が 6 言語 x 3 ブロックで
+    18 回呼んでおり、`test_the_generated_blocks_are_current` だけで 129 秒
+    使っていた(2026-09-23 実測)。記憶させたので、記憶と実物が同じことを固定する。
+    """
+    sys.path.insert(0, str(ROOT / "tools"))
+    import opdocs as OD
+
+    cached = OD._records()
+    fresh = OD._records_uncached()
+    assert len(cached[0]) == len(fresh[0])
+    assert [r["name"] for r in cached[0]] == [r["name"] for r in fresh[0]]
+    assert cached[0][0] == fresh[0][0]
+    # 捨てたら組み直すこと(書き換えた側が古い答えを掴まないための出口)
+    OD._records_cache_clear()
+    again = OD._records()
+    assert [r["name"] for r in again[0]] == [r["name"] for r in fresh[0]]
