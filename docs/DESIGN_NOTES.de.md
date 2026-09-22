@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 822. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 826. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -98,7 +98,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `backends_typed.py`
 
-- **L541** — ★Bis 2026-09-05 wurde ``tools/chain_fuzz`` (nicht mitgeliefert) per sys.path-Manipulation geladen. Im wheel schlug es fehl, und da das build() darunter still [] zurückgab, verschwanden die tb_*-143-ops.
+- **L545** — ★Bis 2026-09-05 wurde ``tools/chain_fuzz`` (nicht mitgeliefert) per sys.path-Manipulation geladen. Im wheel schlug es fehl, und da das build() darunter still [] zurückgab, verschwanden die tb_*-143-ops.
 
 ## `blob2d.py`
 
@@ -128,11 +128,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `demops.py`
 
-- **L97** — ★Wir bieten keine Option, mit dem Median o. Ä. zu **füllen**. Füllen erzeugt eine Ebene, die nicht existiert, und lässt Wasser durch, ohne eine Ausnahme zu werfen. Aber die Größe des Effekts halten wir ehrlich fest. Auf denselben realen Daten (Tokioter Buchtfront 1024x1024, 3.83% fehlend) verglichen über 3 Wege die maximale Einzugsgebiets-Zellzahl: Auslass 312.108 (29.8%) / Median-Füllung 338.188 (32.3%) / Wand 315.023 (30.0%). Das Füllen bläht um etwa 8% auf, aber **dass "eine Zelle 30% des Ganzen sammelt", ist selbst die Realität dieses Geländes** (ein flaches aufgeschüttetes Land konvergiert tatsächlich zu einer Stelle). Zuerst allein aus der Füllung "diese Zahl ist ein Produkt des Füllens" zu schreiben, war übertrieben; mit einer Kontrolle schrumpfte der Effekt. Wir bieten keine Füll-Option, weil **es unmöglich wird zu unterscheiden, wo das Gelände echt ist und wo Füllung**, nicht weil sich die Zahl um Größenordnungen ändert.
-- **L605** — ★Diese Langsamkeit fiel uns erst auf, als der Sky-View-Faktor für 513^2 im PoC (examples/poc_dem_terrain.py) 41.9 Sekunden brauchte. Die Tests nutzten nur kleine Gitter und bestätigten so, dass es "läuft", aber nicht, dass es "benutzbar" ist.
-- **L686** — ★Behoben 2026-09-08 (gefunden von `poc_stockpile_volume`). Wenn eine Sichtlinien-Stichprobe per ``np.rint`` auf die **Zielzelle selbst** rundet, wird die Höhe dieser Zelle als "dazwischenliegendes Gelände" mit sich selbst verglichen. Da t < 1 ist, ist der Nenner dist*t klein, und ``(z-eye)/(dist*t) > (z-eye)/dist`` ist bei z > eye immer wahr —— so **verdeckten sich Zellen oberhalb der Augenhöhe durchweg selbst**. Gemessen (vor der Korrektur): eine 10 m hohe Säule auf ebenem Boden wurde aus 25 m Entfernung bei Augenhöhe 2 m als "nicht sichtbar" zurückgegeben, und nur eine 1 m hohe Säule unterhalb der Augenhöhe war "sichtbar". Der höchste Punkt eines konvexen Körpers ist von außen immer sichtbar, also ist das geometrisch falsch. Die Durchläufe, bei denen die Stichprobe auf der Zielzelle landete, zählen wir nicht.
-- **L746** — ★Das Register deklariert ``points`` = (N, 3). Ein Skalar ergibt (3,), was mit der Deklaration kollidiert, deshalb falten wir stets auf (N, 3) (aufgedeckt durch den TYPEMISS des Fuzzers am 2026-09-06; der Fuzzer war nach dem Hinzufügen der 6 geozentrischen Koordinaten-ops nicht gelaufen). Wenn du (H, W, 3) als Gitter willst, verwende :func:`dem_geocentric_grid`.
-- **L795** — ★Innerhalb der Evolute ist die geodätische Breite nicht eindeutig -> statt still eine Breite außerhalb des Bereichs zurückzugeben, verweigern wir. Die Evolute der Ellipse x²/a² + z²/b² = 1 ist (a·x)^(2/3) + (b·z)^(2/3) = (a²-b²)^(2/3). Nur außerhalb der Gleichheit liegt der Bereich, in dem "die Normale eindeutig bestimmt ist" (da die 2/3-Potenz nicht negativ ist, ist das Vorzeichen |z|).
+- **L105** — ★Wir bieten keine Option, mit dem Median o. Ä. zu **füllen**. Füllen erzeugt eine Ebene, die nicht existiert, und lässt Wasser durch, ohne eine Ausnahme zu werfen. Aber die Größe des Effekts halten wir ehrlich fest. Auf denselben realen Daten (Tokioter Buchtfront 1024x1024, 3.83% fehlend) verglichen über 3 Wege die maximale Einzugsgebiets-Zellzahl: Auslass 312.108 (29.8%) / Median-Füllung 338.188 (32.3%) / Wand 315.023 (30.0%). Das Füllen bläht um etwa 8% auf, aber **dass "eine Zelle 30% des Ganzen sammelt", ist selbst die Realität dieses Geländes** (ein flaches aufgeschüttetes Land konvergiert tatsächlich zu einer Stelle). Zuerst allein aus der Füllung "diese Zahl ist ein Produkt des Füllens" zu schreiben, war übertrieben; mit einer Kontrolle schrumpfte der Effekt. Wir bieten keine Füll-Option, weil **es unmöglich wird zu unterscheiden, wo das Gelände echt ist und wo Füllung**, nicht weil sich die Zahl um Größenordnungen ändert.
+- **L613** — ★Diese Langsamkeit fiel uns erst auf, als der Sky-View-Faktor für 513^2 im PoC (examples/poc_dem_terrain.py) 41.9 Sekunden brauchte. Die Tests nutzten nur kleine Gitter und bestätigten so, dass es "läuft", aber nicht, dass es "benutzbar" ist.
+- **L694** — ★Behoben 2026-09-08 (gefunden von `poc_stockpile_volume`). Wenn eine Sichtlinien-Stichprobe per ``np.rint`` auf die **Zielzelle selbst** rundet, wird die Höhe dieser Zelle als "dazwischenliegendes Gelände" mit sich selbst verglichen. Da t < 1 ist, ist der Nenner dist*t klein, und ``(z-eye)/(dist*t) > (z-eye)/dist`` ist bei z > eye immer wahr —— so **verdeckten sich Zellen oberhalb der Augenhöhe durchweg selbst**. Gemessen (vor der Korrektur): eine 10 m hohe Säule auf ebenem Boden wurde aus 25 m Entfernung bei Augenhöhe 2 m als "nicht sichtbar" zurückgegeben, und nur eine 1 m hohe Säule unterhalb der Augenhöhe war "sichtbar". Der höchste Punkt eines konvexen Körpers ist von außen immer sichtbar, also ist das geometrisch falsch. Die Durchläufe, bei denen die Stichprobe auf der Zielzelle landete, zählen wir nicht.
+- **L754** — ★Das Register deklariert ``points`` = (N, 3). Ein Skalar ergibt (3,), was mit der Deklaration kollidiert, deshalb falten wir stets auf (N, 3) (aufgedeckt durch den TYPEMISS des Fuzzers am 2026-09-06; der Fuzzer war nach dem Hinzufügen der 6 geozentrischen Koordinaten-ops nicht gelaufen). Wenn du (H, W, 3) als Gitter willst, verwende :func:`dem_geocentric_grid`.
+- **L803** — ★Innerhalb der Evolute ist die geodätische Breite nicht eindeutig -> statt still eine Breite außerhalb des Bereichs zurückzugeben, verweigern wir. Die Evolute der Ellipse x²/a² + z²/b² = 1 ist (a·x)^(2/3) + (b·z)^(2/3) = (a²-b²)^(2/3). Nur außerhalb der Gleichheit liegt der Bereich, in dem "die Normale eindeutig bestimmt ist" (da die 2/3-Potenz nicht negativ ist, ist das Vorzeichen |z|).
+- **L984** _(ja)_ — ★ 鎖の残り。ECEF ↔ 測地座標 は在ったが、その先(ジオイド高・標高・datum・ENU) # が無く、能力ノート docs/capabilities/geodetic-frames.md に「どれも未実装。 # GNSS が返すのは楕円体高で地図が使うのは標高、取り違えると日本付近で 30〜40 m # 静かにずれる」と自分で書いてあった。ここを閉じる。 # --------------------------------------------------------------------------- # :func:`dem_height_frame_convert` が受ける高さの基準。
 
 ## `engine.py`
 
@@ -443,12 +444,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_geodetic_height_frames.py`
 
-- **L408** — ★Ein Hin- und Rücklauf kann "beide in dieselbe Richtung falsch" nicht ausschließen. Gegen eine unabhängige Implementierung abgleichen.
-- **L437** — ★Vorhersage (vor dem Messen gedruckt): Die Neigung ist atan|∇H|. Mit h wird es atan|∇H+∇N|.
-- **L464** — ★Trenne die maximale Differenz zwischen Vorhersage und Messung in 'Modellfehler' vs. 'Diskretisierung'. Verfeinere die Zellen.
-- **L584** — ★Vorhersage (geschlossene Form): die Abwärtsrichtung dreht sich um mehr als 90 Grad ⇔ ∇H·(∇H+∇N) < 0 ⇔ |∇H|^2 + ∇H·∇N < 0. Berechne die Rate vor der Messung.
-- **L644** — ★Die zweite (und eigentlich entscheidende) geschlossene Form. Da die Sichtlinie durch h an beiden Enden gezogen wird, liegt der **lineare Anteil** von N gleichermassen auf Sichtlinie und Boden und hebt sich auf. Es bleibt der Betrag, um den N von der Sehne abweicht = |N''| d^2 / 8. Hier ist N'' gleich 2C(cos^2θ - sin^2θ), also |N''| <= 2C.
-- **L1106** — ★Nur bei ``vertical`` liefert op_find 5 Treffer. **Kein einziger ist relevant** (Stamm-Übereinstimmungen wie ``boundary_vertices``) —— behaupte nie anhand der Anzahl, es 'existiere'.
+- **L411** — ★Ein Hin- und Rücklauf kann "beide in dieselbe Richtung falsch" nicht ausschließen. Gegen eine unabhängige Implementierung abgleichen.
+- **L440** — ★Vorhersage (vor dem Messen gedruckt): Die Neigung ist atan|∇H|. Mit h wird es atan|∇H+∇N|.
+- **L467** — ★Trenne die maximale Differenz zwischen Vorhersage und Messung in 'Modellfehler' vs. 'Diskretisierung'. Verfeinere die Zellen.
+- **L587** — ★Vorhersage (geschlossene Form): die Abwärtsrichtung dreht sich um mehr als 90 Grad ⇔ ∇H·(∇H+∇N) < 0 ⇔ |∇H|^2 + ∇H·∇N < 0. Berechne die Rate vor der Messung.
+- **L647** — ★Die zweite (und eigentlich entscheidende) geschlossene Form. Da die Sichtlinie durch h an beiden Enden gezogen wird, liegt der **lineare Anteil** von N gleichermassen auf Sichtlinie und Boden und hebt sich auf. Es bleibt der Betrag, um den N von der Sehne abweicht = |N''| d^2 / 8. Hier ist N'' gleich 2C(cos^2θ - sin^2θ), also |N''| <= 2C.
+- **L1120** _(ja)_ — §10 穴。★2026-09-08 にこの節は「geoid / enu / datum は 0 件」を門にした。 2026-09-22 にその門が鳴った(埋まったから)—— **門を消さずに、まだ空いている 語幹へ付け替える**。閉じた側は「何が閉じたか」を名前で固定する。
+- **L1133** _(ja)_ — ★``ortho`` は逆向きの教訓: op 名に ortho を含むものは 0 件のままだが、 能力は `dem_height_frame_convert`(frm/to に "orthometric")で**在る**。 件数で「在る」と言ってはいけないのと同じくらい、**名前で「無い」と言ってもいけない**。
+- **L1139** — ★Bei ``vertical`` liefert op_find durchaus Treffer, doch kein einziger ist relevant (Stamm-Übereinstimmungen wie ``boundary_vertices``) —— behaupte nie anhand der Anzahl, es 'existiere'.
 
 ## `examples/poc_glyph_typo_detection.py`
 
@@ -1291,6 +1294,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_demops.py`
 
 - **L440** — ★Die Rückgabe ist **immer (N, 3)**. Selbst das Übergeben eines Skalars ergibt (1, 3), nicht (3,) —— weil das Register points = (N, 3) deklariert (2026-09-06, der TYPEMISS des Fuzzers deckte die Diskrepanz auf und die Implementierung wurde an die Deklaration angeglichen).
+- **L755** _(ja)_ — ★ 旧日本測地系に近い 3 パラメータでは、同じ緯度経度が地上で数百 m 動く
 
 ## `tests/test_docs_index_numbers.py`
 
@@ -1625,9 +1629,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `typed_catalog.py`
 
-- **L266** — ★ Der Fall, in dem der Standardwert selbst schwer ist, wird gesondert behandelt —— wir schrieben eine Kostentabelle in den Docstring und beließen ihn in docs/KNOWN_ISSUES.md als "ungelöst". Es hier leichter zu machen dient dazu, die Prüfung zu bestehen, nicht dazu, die Langsamkeit zu verbergen. Das keep von fourier_smooth(points, keep) ist ein Pflichtargument ohne Standardwert. Kann es nicht gebunden werden, wird es für immer als "Argumente nicht zusammensetzbar" übersprungen und erscheint in der Coverage-Tabelle nur als nicht erreicht (bei der ersten Messung am 2026-09-06 fiel von 13 ops nur dieses eine heraus). Oberflächenrauheit. Die Einschränkungen sind 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel-Messung. Der op zur Erzeugung der Messlinie nimmt keine Eingabe, daher braucht jedes Argument einen Hinweis.
-- **L320** — ★ Ohne dies wird surface_params jedes Mal fail-closed abgelehnt, und an der einen Coverage-Zahl sieht es "aufrufbar" aus, während es in Wirklichkeit nie ausgeführt wird.
-- **L508** — ★ **Mache die Normale nicht achsenparallel**. Ist sie achsenparallel, variiert das Distanzfeld nur entlang einer Achse, und das "GIF aus gestapelten Schnitten", das der Abbildungsgenerator erzeugt, kollabiert zu einem einzigen Frame (gemessen 2026-09-08). Bei einer geneigten Normale ändert sich jeder Schnitt. Die Länge hat keine Wirkung (der op normiert), also übergib einen nicht normierten Vektor, um auch diese Spezifikation zu zeigen.
+- **L285** — ★ Der Fall, in dem der Standardwert selbst schwer ist, wird gesondert behandelt —— wir schrieben eine Kostentabelle in den Docstring und beließen ihn in docs/KNOWN_ISSUES.md als "ungelöst". Es hier leichter zu machen dient dazu, die Prüfung zu bestehen, nicht dazu, die Langsamkeit zu verbergen. Das keep von fourier_smooth(points, keep) ist ein Pflichtargument ohne Standardwert. Kann es nicht gebunden werden, wird es für immer als "Argumente nicht zusammensetzbar" übersprungen und erscheint in der Coverage-Tabelle nur als nicht erreicht (bei der ersten Messung am 2026-09-06 fiel von 13 ops nur dieses eine heraus). Oberflächenrauheit. Die Einschränkungen sind 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel-Messung. Der op zur Erzeugung der Messlinie nimmt keine Eingabe, daher braucht jedes Argument einen Hinweis.
+- **L339** — ★ Ohne dies wird surface_params jedes Mal fail-closed abgelehnt, und an der einen Coverage-Zahl sieht es "aufrufbar" aus, während es in Wirklichkeit nie ausgeführt wird.
+- **L527** — ★ **Mache die Normale nicht achsenparallel**. Ist sie achsenparallel, variiert das Distanzfeld nur entlang einer Achse, und das "GIF aus gestapelten Schnitten", das der Abbildungsgenerator erzeugt, kollabiert zu einem einzigen Frame (gemessen 2026-09-08). Bei einer geneigten Normale ändert sich jeder Schnitt. Die Länge hat keine Wirkung (der op normiert), also übergib einen nicht normierten Vektor, um auch diese Spezifikation zu zeigen.
 
 ## `unified.py`
 

@@ -607,3 +607,161 @@ def test_ecef_to_geodetic_never_returns_a_latitude_its_own_inverse_rejects():
     # 往復の床(docstring の数字と同じ標本・同じ量)
     assert np.abs(back[:, 0] - lat).max() < 1e-9, np.abs(back[:, 0] - lat).max()
     assert np.abs(back[:, 2] - h).max() < 1e-3, np.abs(back[:, 2] - h).max()
+
+
+# --------------------------------------------------------------------------- #
+# 高さの基準・測地成果・局所 ENU(2026-09-22)                                     #
+#   真値は全部こちらで作れる —— ジオイドを 1 次式で植えれば双一次補間は厳密、       #
+#   基準の変換は定義どおりの引き算、ENU は既存の ECEF op から別経路で組める。       #
+# --------------------------------------------------------------------------- #
+def _planted_geoid(a=30.0, b=0.7, c=1.3, lat0=30.0, lon0=128.0, d=0.25, nr=40, nc=48):
+    """N が緯度・経度の 1 次式であるジオイド格子(双一次補間が厳密になる)。"""
+    rr = lat0 + d * np.arange(nr)
+    cc = lon0 + d * np.arange(nc)
+    grid = a + b * (rr[:, None] - lat0) + c * (cc[None, :] - lon0)
+    return grid, (lat0, lon0, d, d), (a, b, c)
+
+
+def test_bilinear_is_exact_on_a_linear_geoid():
+    """1 次式の場は双一次補間で**厳密**に戻る(機械精度)。"""
+    grid, (lat0, lon0, dla, dlo), (a, b, c) = _planted_geoid()
+    rng = np.random.default_rng(0)
+    lat = rng.uniform(lat0, lat0 + dla * (grid.shape[0] - 1), 500)
+    lon = rng.uniform(lon0, lon0 + dlo * (grid.shape[1] - 1), 500)
+    got = D.dem_geoid_height(grid, lat, lon, lat0, lon0, dla, dlo)
+    want = a + b * (lat - lat0) + c * (lon - lon0)
+    assert got.shape == (500,)
+    assert np.abs(got - want).max() < 1e-12
+    # 格子点そのものは格子の値と一致する
+    assert D.dem_geoid_height(grid, [lat0], [lon0], lat0, lon0, dla, dlo)[0] == pytest.approx(grid[0, 0])
+
+
+def test_bilinear_error_on_a_quadratic_is_inside_the_closed_form_bound():
+    """2 次の場での誤差は ``|d2N| * d^2 / 8`` を超えない(補間の教科書の上界)。"""
+    lat0, lon0, d, nr, nc = 30.0, 128.0, 0.25, 30, 30
+    k = 3.0                                              # N = k * (lat - lat0)^2
+    rr = lat0 + d * np.arange(nr)
+    grid = (k * (rr[:, None] - lat0) ** 2) * np.ones((1, nc))
+    rng = np.random.default_rng(1)
+    lat = rng.uniform(lat0, lat0 + d * (nr - 1), 400)
+    lon = rng.uniform(lon0, lon0 + d * (nc - 1), 400)
+    got = D.dem_geoid_height(grid, lat, lon, lat0, lon0, d, d)
+    want = k * (lat - lat0) ** 2
+    assert np.abs(got - want).max() <= 2.0 * k * d * d / 8.0 + 1e-12
+
+
+def test_a_point_outside_the_grid_is_refused_not_clamped():
+    grid, (lat0, lon0, dla, dlo), _ = _planted_geoid()
+    for bad_lat, bad_lon in ((lat0 - 0.01, lon0), (lat0, lon0 - 0.01),
+                             (lat0 + dla * 100, lon0), (lat0, lon0 + dlo * 100)):
+        with pytest.raises(ValueError, match="dem_geoid_height.*outside the grid"):
+            D.dem_geoid_height(grid, [bad_lat], [bad_lon], lat0, lon0, dla, dlo)
+    with pytest.raises(ValueError, match="dem_geoid_height.*non-finite"):
+        bad = grid.copy()
+        bad[0, 0] = np.nan
+        D.dem_geoid_height(bad, [lat0 + 1.0], [lon0 + 1.0], lat0, lon0, dla, dlo)
+    with pytest.raises(ValueError, match="dem_geoid_height.*non-zero"):
+        D.dem_geoid_height(grid, [lat0], [lon0], lat0, lon0, 0.0, dlo)
+    with pytest.raises(ValueError, match="dem_geoid_height.*2-D grid"):
+        D.dem_geoid_height(grid[0], [lat0], [lon0], lat0, lon0, dla, dlo)
+
+
+def test_height_frames_convert_by_definition_and_come_back():
+    rng = np.random.default_rng(2)
+    h = rng.uniform(-100.0, 4000.0, 2000)
+    n = rng.uniform(-100.0, 100.0, 2000)
+    ortho = D.dem_height_frame_convert(h, n, "ellipsoidal", "orthometric")
+    assert np.abs(ortho - (h - n)).max() == 0.0                 # 定義そのもの
+    back = D.dem_height_frame_convert(ortho, n, "orthometric", "ellipsoidal")
+    assert np.abs(back - h).max() < 1e-9                        # 丸めの分だけ動く
+    same = D.dem_height_frame_convert(h, n, "ellipsoidal", "ellipsoidal")
+    assert np.array_equal(same, h)
+    # スカラの N は配られる
+    assert D.dem_height_frame_convert([100.0, 200.0], 36.0)[0] == pytest.approx(64.0)
+    for bad in (dict(frm="geoid"), dict(to="msl")):
+        with pytest.raises(ValueError, match="dem_height_frame_convert.*one of"):
+            D.dem_height_frame_convert(h, n, **bad)
+    with pytest.raises(ValueError, match="dem_height_frame_convert.*geoid_height_m"):
+        D.dem_height_frame_convert(h, n[:5])
+
+
+def test_the_residual_is_zero_when_consistent_and_minus_n_when_misused():
+    """★ 楕円体高をそのまま標高として使う事故は、残差が −N に張り付いて見える。"""
+    rng = np.random.default_rng(3)
+    n = rng.uniform(30.0, 42.0, 300)                    # 日本付近のジオイド高
+    h = rng.uniform(0.0, 1500.0, 300)
+    ortho = h - n
+    ok = D.dem_height_frame_residual(h, ortho, n)
+    assert ok["rms_m"] < 1e-9 and ok["n_over_tol"] == 0 and ok["n"] == 300
+    bad = D.dem_height_frame_residual(h, h, n)          # 標高の列に楕円体高を入れた
+    assert np.abs(bad["residual_m"] + n).max() < 1e-9
+    assert bad["median_m"] == pytest.approx(-float(np.median(n)), abs=1e-9)
+    assert bad["n_over_tol"] == 300 and bad["fraction_over_tol"] == 1.0
+    assert 30.0 < abs(bad["median_m"]) < 42.0           # 30〜40 m の「静かなずれ」
+    with pytest.raises(ValueError, match="dem_height_frame_residual.*tol_m"):
+        D.dem_height_frame_residual(h, ortho, n, tol_m=-1.0)
+
+
+def test_enu_is_zero_at_the_origin_and_round_trips():
+    lat0, lon0, h0 = 35.68, 139.77, 40.0
+    zero = D.dem_enu_from_geodetic([lat0], [lon0], [h0], lat0, lon0, h0)
+    assert zero.shape == (1, 3) and np.abs(zero).max() == 0.0
+    rng = np.random.default_rng(4)
+    lat = lat0 + rng.uniform(-0.5, 0.5, 300)
+    lon = lon0 + rng.uniform(-0.5, 0.5, 300)
+    h = rng.uniform(0.0, 1000.0, 300)
+    enu = D.dem_enu_from_geodetic(lat, lon, h, lat0, lon0, h0)
+    back = D.dem_geodetic_from_enu(enu, lat0, lon0, h0)
+    assert np.abs(back[:, 0] - lat).max() < 1e-11
+    assert np.abs(back[:, 1] - lon).max() < 1e-11
+    assert np.abs(back[:, 2] - h).max() < 1e-6
+    # 東へ動けば east だけが増える(北緯 35 度で経度 0.01 度 ≈ 905 m)
+    e1 = D.dem_enu_from_geodetic([lat0], [lon0 + 0.01], [h0], lat0, lon0, h0)[0]
+    assert e1[0] > 800.0 and abs(e1[1]) < 1.0
+
+
+def test_enu_matches_the_ecef_route_and_shows_the_curvature_drop():
+    """★ 別経路での検算: 既存の dem_geodetic_to_ecef から手で回した ENU と一致する。"""
+    lat0, lon0, h0 = 35.68, 139.77, 40.0
+    rng = np.random.default_rng(5)
+    lat = lat0 + rng.uniform(-0.3, 0.3, 200)
+    lon = lon0 + rng.uniform(-0.3, 0.3, 200)
+    h = rng.uniform(0.0, 500.0, 200)
+    enu = D.dem_enu_from_geodetic(lat, lon, h, lat0, lon0, h0)
+    xyz = np.asarray(D.dem_geodetic_to_ecef(lat, lon, h))
+    x0 = np.asarray(D.dem_geodetic_to_ecef(lat0, lon0, h0))[0]
+    p, l = np.radians(lat0), np.radians(lon0)
+    sp, cp, sl, cl = np.sin(p), np.cos(p), np.sin(l), np.cos(l)
+    R = np.array([[-sl, cl, 0.0], [-sp * cl, -sp * sl, cp], [cp * cl, cp * sl, sp]])
+    assert np.abs((xyz - x0) @ R.T - enu).max() < 1e-6
+    # 地球の丸みは up の負の落差として出る(10 km で約 −7.8 m、100 km で約 −783 m)
+    for dist_km, want in ((10.0, -7.8), (100.0, -783.0)):
+        dlat = np.degrees(dist_km * 1000.0 / 6371000.0)
+        up = D.dem_enu_from_geodetic([lat0 + dlat], [lon0], [h0], lat0, lon0, h0)[0, 2]
+        assert up == pytest.approx(want, rel=0.05)
+
+
+def test_a_datum_shift_of_zero_is_the_identity_and_a_real_one_moves_hundreds_of_metres():
+    rng = np.random.default_rng(6)
+    lat = 35.0 + rng.uniform(-1.0, 1.0, 50)
+    lon = 139.0 + rng.uniform(-1.0, 1.0, 50)
+    h = rng.uniform(0.0, 1000.0, 50)
+    same = D.dem_datum_shift_3param(lat, lon, h, 0.0, 0.0, 0.0,
+                                    D.WGS84_A, D.WGS84_F, D.WGS84_A, D.WGS84_F)
+    assert same.shape == (50, 3)
+    assert np.abs(same[:, 0] - lat).max() < 1e-12
+    assert np.abs(same[:, 1] - lon).max() < 1e-12
+    assert np.abs(same[:, 2] - h).max() < 1e-6
+    # ★ 旧日本測地系に近い 3 パラメータでは、同じ緯度経度が地上で数百 m 動く
+    moved = D.dem_datum_shift_3param([35.68], [139.77], [40.0],
+                                     -146.414, 507.337, 680.507,
+                                     6377397.155, 1.0 / 299.152813, D.WGS84_A, D.WGS84_F)
+    enu = D.dem_enu_from_geodetic(moved[:, 0], moved[:, 1], moved[:, 2],
+                                  35.68, 139.77, 40.0)[0]
+    assert 300.0 < float(np.hypot(enu[0], enu[1])) < 600.0
+    for bad in (dict(f_from=298.257), dict(a_to_m=0.0), dict(f_to=1.5)):
+        kw = dict(dx_m=0.0, dy_m=0.0, dz_m=0.0, a_from_m=D.WGS84_A, f_from=D.WGS84_F,
+                  a_to_m=D.WGS84_A, f_to=D.WGS84_F)
+        kw.update(bad)
+        with pytest.raises(ValueError, match="dem_datum_shift_3param"):
+            D.dem_datum_shift_3param(lat, lon, h, **kw)

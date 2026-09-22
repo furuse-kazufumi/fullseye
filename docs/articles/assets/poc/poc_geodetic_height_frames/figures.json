@@ -120,10 +120,10 @@
  {
   "file": "12_tool_gap.png",
   "name": "tool_gap",
-  "caption": "geoid / enu / datum / ortho / vertical / epoch / crs / utm は 4 層とも 0 件。ECEF の出入口だけが在る。",
+  "caption": "2026-09-08 にこの表が門にした穴のうち geoid / enu / datum は 2026-09-22 に閉じた(dem 族 19 -> 25 op)。まだ 0 件のままなのは epoch / crs / utm / msl / wgs84 / tokyo / jgd で、7 パラメータ Helmert と CRS の型も無い。",
   "shape": [
    416,
-   628,
+   647,
    3
   ],
   "csv": "12_tool_gap.csv",

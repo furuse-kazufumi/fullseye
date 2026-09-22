@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2082,
- "n_notes": 2088,
+ "n_ops": 2088,
+ "n_notes": 2094,
  "notes": {
   "vol_dilate": [
    {
@@ -15073,6 +15073,15 @@
     "path": "docs/ops/dem/geodesy/dem_cell_size_webmercator.md"
    }
   ],
+  "dem_datum_shift_3param": [
+   {
+    "op": "dem_datum_shift_3param",
+    "dim": "dem",
+    "category": "geodesy",
+    "out": "points",
+    "path": "docs/ops/dem/geodesy/dem_datum_shift_3param.md"
+   }
+  ],
   "dem_earth_curvature_drop": [
    {
     "op": "dem_earth_curvature_drop",
@@ -15092,6 +15101,15 @@
     "path": "docs/ops/dem/geodesy/dem_ecef_to_geodetic.md"
    }
   ],
+  "dem_enu_from_geodetic": [
+   {
+    "op": "dem_enu_from_geodetic",
+    "dim": "dem",
+    "category": "geodesy",
+    "out": "points",
+    "path": "docs/ops/dem/geodesy/dem_enu_from_geodetic.md"
+   }
+  ],
   "dem_geocentric_grid": [
    {
     "op": "dem_geocentric_grid",
@@ -15100,6 +15118,16 @@
     "in": "depth",
     "out": "pointmap",
     "path": "docs/ops/dem/geodesy/dem_geocentric_grid.md"
+   }
+  ],
+  "dem_geodetic_from_enu": [
+   {
+    "op": "dem_geodetic_from_enu",
+    "dim": "dem",
+    "category": "geodesy",
+    "in": "points",
+    "out": "points",
+    "path": "docs/ops/dem/geodesy/dem_geodetic_from_enu.md"
    }
   ],
   "dem_geodetic_slope": [
@@ -15119,6 +15147,36 @@
     "category": "geodesy",
     "out": "points",
     "path": "docs/ops/dem/geodesy/dem_geodetic_to_ecef.md"
+   }
+  ],
+  "dem_geoid_height": [
+   {
+    "op": "dem_geoid_height",
+    "dim": "dem",
+    "category": "geodesy",
+    "in": "depth",
+    "out": "signal",
+    "path": "docs/ops/dem/geodesy/dem_geoid_height.md"
+   }
+  ],
+  "dem_height_frame_convert": [
+   {
+    "op": "dem_height_frame_convert",
+    "dim": "dem",
+    "category": "geodesy",
+    "in": "signal × signal",
+    "out": "signal",
+    "path": "docs/ops/dem/geodesy/dem_height_frame_convert.md"
+   }
+  ],
+  "dem_height_frame_residual": [
+   {
+    "op": "dem_height_frame_residual",
+    "dim": "dem",
+    "category": "geodesy",
+    "in": "signal × signal × signal",
+    "out": "table",
+    "path": "docs/ops/dem/geodesy/dem_height_frame_residual.md"
    }
   ],
   "dem_fill_sinks": [

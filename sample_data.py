@@ -227,7 +227,10 @@ MANIFEST = [
         attribution="国土地理院 (Geospatial Information Authority of Japan)",
         doc=("DEM。**利用者登録が要る**ので自動 DL しない。楕円体高と標高、datum、"
              "軸順(lat/lon)—— fullseye は ECEF↔geodetic だけ在ってジオイド・ENU が無い"
-             "(2026-09-08 実測: op_find('geoid')=0, ('enu')=0, ('datum')=0)。"),
+             "(2026-09-08 実測では op_find('geoid')=0 / ('enu')=0 / ('datum')=0 だったが、"
+             "2026-09-22 に dem_geoid_height / dem_height_frame_convert / "
+             "dem_datum_shift_3param / dem_enu_from_geodetic ほか 6 op で閉じた。"
+             "epoch の移動と 7 パラメータ Helmert はまだ無い)。"),
     ),
     dict(
         id="dicom-test-data", name="DICOM Sample Data Sets (CT/MR/RTSTRUCT/multi-frame)",

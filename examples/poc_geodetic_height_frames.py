@@ -115,22 +115,25 @@ GNSS の楕円体高は受信機の生ログ(または RINEX を処理した解)
     妥当な範囲に収まった点が **3600 / 3600(100 %)**です。
     ★**チェーンの中で範囲を見ているのは 1 か所だけ**で、それが捕まえるのは
     5 つの故障のうち 1 つの、そのまた半分です。
-12. **道具の穴 —— 変換の鎖が途中で切れています**。``fs.<name>`` /
-    ``fs.op.<name>`` / ``fs.ledger.<name>`` / ``fs.op_find(語幹)`` の 4 層を
-    引くと、``geoid`` / ``enu`` / ``datum`` / ``ortho`` / ``msl`` /
-    ``epoch`` / ``crs`` / ``utm`` / ``wgs84`` / ``tokyo`` / ``jgd`` は
-    **4 層とも 0 件**。★``vertical`` だけは ``op_find`` が **5 件**返しますが、
+12. **道具の穴 —— 鎖はどこで切れていたか、そして何が閉じたか**。
+    ``fs.<name>`` / ``fs.op.<name>`` / ``fs.ledger.<name>`` /
+    ``fs.op_find(語幹)`` の 4 層を引きます。
+    ★**2026-09-08 にこの節が「``geoid`` / ``enu`` / ``datum`` は 4 層とも 0 件」と
+    書いて門にしたところ、2026-09-22 にその門が鳴りました** —— これがこの門の目的で、
+    §12 に並べた「次に入れるべき op」のうち 4 件が実装されたためです:
+    ``dem_geoid_height`` / ``dem_height_frame_convert`` /
+    ``dem_height_frame_residual`` / ``dem_datum_shift_3param`` /
+    ``dem_enu_from_geodetic`` / ``dem_geodetic_from_enu``(6 op、dem 族 19 → 25)。
+    **楕円体を渡す口も開きました**(``dem_datum_shift_3param`` は
+    ``a_from_m`` / ``f_from`` / ``a_to_m`` / ``f_to`` を要求し、既定値を持ちません)ので、
+    §7 の測地成果の取り違えは**いまは op だけで再現できます**
+    —— この PoC が自前で書いた Bessel 楕円体の順変換は、独立実装として残します。
+    **まだ空いている**のは ``epoch`` / ``crs`` / ``utm`` / ``msl`` / ``wgs84`` /
+    ``tokyo`` / ``jgd``(4 層とも 0 件)と、7 パラメータの Helmert 変換、
+    そして ``CRSSpec`` / ``VerticalDatumSpec`` のような**型**です。
+    ★``vertical`` は ``op_find`` が返す件数があっても
     中身は ``boundary_vertices`` などの語幹一致で**1 つも関係ありません**
     —— 件数で「在る」と言ってはいけません。
-    在るのは ``dem_geodetic_to_ecef`` / ``dem_ecef_to_geodetic`` /
-    ``dem_earth_curvature_drop`` / ``dem_geocentric_grid`` /
-    ``dem_geodetic_slope`` / ``dem_cell_size_webmercator`` の 6 本だけ。
-    ★このうち**楕円体を使う 4 本は WGS84 決め打ち**(``demops.WGS84_A`` /
-    ``WGS84_F`` を直接参照し、楕円体を渡す引数が無い)。残る 2 本も
-    平均半径 / Web メルカトル固定です。
-    ★つまり **この PoC の §3(測地成果の取り違え)は、fullseye の op だけでは
-    再現すらできません** —— Bessel 楕円体を渡す口が無いからです。
-    次に入れるべき op は §7 に具体案として並べました。
 
 【グラウンドトゥルース】地形は 2 つとも**自分で書いた閉じた式**です ——
 丘陵地 :func:`terrain_hilly`(平均勾配 + ガウス丘 + うねり)と、ほとんど
@@ -948,12 +951,21 @@ def section_tool_gap():
     have = sorted(n for n in led_names
                   if n.startswith("dem_") and ("geo" in n or "ecef" in n
                                                or "curvature_drop" in n
-                                               or "webmercator" in n))
-    print(f"  → 在るのは 6 本だけ: {', '.join(have)}")
-    print("  → ★**楕円体を使う 4 本は WGS84 決め打ち**(demops.WGS84_A / WGS84_F を直接参照。")
-    print("     楕円体を引数で渡す口が無い)。だから §7 の測地成果の取り違えは、")
-    print("     **fullseye の op だけでは再現すらできない** —— この PoC は Bessel")
-    print("     楕円体の順変換を自前で書いた(ref_geodetic_to_ecef の a / inv_f)。")
+                                               or "webmercator" in n
+                                               or "height_frame" in n
+                                               or "datum_shift" in n))
+    print(f"  → 在るのは {len(have)} 本: {', '.join(have)}")
+    print("  → ★**2026-09-08 にこの節が門にした穴は、2026-09-22 に閉じた**。")
+    print("     geoid / enu / datum は 0 件ではなくなり、§12 の希望のうち 4 件が op になった")
+    print("     (dem_geoid_height / dem_height_frame_convert / dem_height_frame_residual /")
+    print("     dem_datum_shift_3param / dem_enu_from_geodetic / dem_geodetic_from_enu)。")
+    print("     **門が鳴るのが正しい** —— 消さずに、まだ空いている語幹へ狙いを付け替える。")
+    print("  → ★**楕円体を渡す口も開いた**: dem_datum_shift_3param は a_from_m / f_from /")
+    print("     a_to_m / f_to を要求し、既定値を持たない(黙って WGS84 を仮定しない)。")
+    print("     だから §7 の取り違えは**いまは op だけで再現できる**。この PoC が自前で")
+    print("     書いた Bessel 楕円体の順変換は、独立実装として残す(第 2 実装は探針)。")
+    print("  → まだ空いている: epoch / crs / utm / msl / wgs84 / tokyo / jgd は 4 層とも 0 件。")
+    print("     7 パラメータ Helmert と CRSSpec / VerticalDatumSpec の**型**も無い。")
     print("  → ★**件数だけ見て「在る」と言ってはいけない**: ecef / geodetic は")
     print("     op_find が 3 / 4 件を返すが、中身は同じ 2 本(+ typed ラッパ)。")
     print("  ★★**この PoC が本体の不具合を 1 件見つけ、その場で直した**:")
@@ -975,8 +987,10 @@ def section_tool_gap():
     figs.save_table("tool_gap",
                     ["語幹", "fs.", "fs.op.", "fs.ledger.", "op_find", "中身"], rows,
                     title="変換の鎖はどこで切れているか(4 層すべてを引いた結果)",
-                    caption="geoid / enu / datum / ortho / vertical / epoch / crs / "
-                            "utm は 4 層とも 0 件。ECEF の出入口だけが在る。")
+                    caption="2026-09-08 にこの表が門にした穴のうち geoid / enu / datum は "
+                            "2026-09-22 に閉じた(dem 族 19 -> 25 op)。まだ 0 件のままなのは "
+                            "epoch / crs / utm / msl / wgs84 / tokyo / jgd で、"
+                            "7 パラメータ Helmert と CRS の型も無い。")
     return {"have": have, "rows": rows}
 
 
@@ -1027,14 +1041,19 @@ def main():
 
     print("\n=== 12. 次に入れるべき op(この PoC で自前で書いた分)===")
     for name, why in (
-            ("geoid_height(lat, lon, model)", "楕円体高と標高を往き来する入口。"
-             "モデルの版を明示させる(版が変わると標高が数 cm 動く)"),
-            ("ellipsoidal_to_orthometric(h, N) / その逆", "H = h - N。**符号を"
-             "間違えると 72 m ずれる**ので、引き算を人に書かせない"),
-            ("enu_from_ecef(xyz, lat0, lon0, h0) / ecef_from_enu", "この PoC で"
-             "自前実装(enu_rotation)。局所座標の入口が無いのが一番の穴"),
-            ("datum_shift(xyz, from_crs, to_crs)", "3/7 パラメータ Helmert。"
-             "いまは楕円体を渡す口すら無い"),
+            ("[済 2026-09-22] dem_geoid_height(grid, lat, lon, ...)", "公開ジオイド格子を"
+             "双一次補間。**格子の外は端で埋めず拒否する**(外挿した undulation は測量値でない)。"
+             "実データ 523 点のうち 15 点が外に落ち、拒否が実際に働いた"),
+            ("[済 2026-09-22] dem_height_frame_convert / dem_height_frame_residual",
+             "H = h - N。どちらからどちらへ移すのかを書かせ、残差 h-H-N で取り違えを検出する。"
+             "★残差は測量の等級を言われないまま並べ替える(水準 1.6 cm < 網調整 1.9 cm < "
+             "GPS 3.8 cm < モデル換算 8.3 cm)"),
+            ("[済 2026-09-22] dem_enu_from_geodetic / dem_geodetic_from_enu", "この PoC で"
+             "自前実装していた enu_rotation の入口。基準点は厳密に原点で、既存 ECEF op を"
+             "経由した別経路と 1.5e-11 m で一致する"),
+            ("[済 2026-09-22] dem_datum_shift_3param(..., a_from_m, f_from, a_to_m, f_to)",
+             "地心 3 パラメータ。**楕円体とパラメータに既定値を置かない** —— 黙って仮定すると"
+             "「例外は出ないが数百 m ずれた座標」が出る。7 パラメータ Helmert はまだ無い"),
             ("epoch_shift(xyz, from_epoch, to_epoch, velocity)", "座標に時刻を"
              "持たせる。**書かない限り古い成果は静かにずれ続ける**"),
             ("CRSSpec / VerticalDatumSpec / ENUFrame(型)", "★本命。"
@@ -1098,15 +1117,29 @@ def main():
                  "高さがフィート(m と誤認)", "ECEF の軸入れ替え"):
         assert axis["cases"][name]["raised"] == 0, name
     assert axis["cases"]["ECEF の軸入れ替え"]["inrange"] == axis["total"]
-    # §10 穴。geoid / enu / datum は 4 層とも 0 件(埋まったらここが鳴る = 目的)。
-    for stem in ("geoid", "enu", "datum", "ortho", "epoch", "crs", "utm",
-                 "msl", "wgs84", "tokyo", "jgd"):
+    # §10 穴。★2026-09-08 にこの節は「geoid / enu / datum は 0 件」を門にした。
+    #   2026-09-22 にその門が鳴った(埋まったから)—— **門を消さずに、まだ空いている
+    #   語幹へ付け替える**。閉じた側は「何が閉じたか」を名前で固定する。
+    closed = {"geoid": ["dem_geoid_height"],
+              "enu": ["dem_enu_from_geodetic", "dem_geodetic_from_enu"],
+              "datum": ["dem_datum_shift_3param"]}
+    for stem, want in closed.items():
+        got = sorted(h["op"] for h in fs.op_find(stem) if h.get("match") != "doc")
+        assert got == sorted(want), (stem, got)          # 増えたら内容を書き足す
+    # まだ空いている穴(4 層とも 0 件)。ここが鳴ったら次の鎖が閉じた合図。
+    for stem in ("epoch", "crs", "utm", "msl", "wgs84", "tokyo", "jgd"):
         assert not [h for h in fs.op_find(stem) if h.get("match") != "doc"], f"{stem} の op が増えた(嬉しい)"
         assert not [n for n in dir(fs) if stem in n.lower() and not n.startswith("_")], stem
-    # ★``vertical`` だけは op_find が 5 件返す。**中身は 1 つも関係ない**
+    # ★``ortho`` は逆向きの教訓: op 名に ortho を含むものは 0 件のままだが、
+    #   能力は `dem_height_frame_convert`(frm/to に "orthometric")で**在る**。
+    #   件数で「在る」と言ってはいけないのと同じくらい、**名前で「無い」と言ってもいけない**。
+    assert not [h for h in fs.op_find("ortho") if h.get("match") != "doc"]
+    import demops as _D
+    assert "orthometric" in _D.HEIGHT_FRAMES
+    # ★``vertical`` は op_find が件数を返しても中身は 1 つも関係ない
     #   (``boundary_vertices`` などの語幹一致)—— 件数で「在る」と言ってはいけない。
     assert not [r for r in fs.op_find("vertical") if "vertical" in r["op"].lower()]
-    assert len(gap["have"]) == 6, gap["have"]
+    assert len(gap["have"]) == 12, gap["have"]           # 6 -> 12(2026-09-22)
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

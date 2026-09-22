@@ -13,11 +13,12 @@ version: 0.1.0
 
 **高さの格子から、地形の性質を読み出す**層です。入力は `(H, W)` の実数配列(各セルの標高、単位メートル)とセルの大きさ(メートル)。出力は傾斜・方位・曲率・陰影・流れ・見通しといった、そのまま**リスク評価や適地判定に使える量**です。
 
-13 op / 4 カテゴリ(numpy のみ。台帳は `opsdem.py`、実体は `demops.py`):
+25 op / 5 カテゴリ(numpy のみ。台帳は `opsdem.py`、実体は `demops.py`):
 
 - **surface(5)** — `dem_slope` / `dem_aspect` / `dem_curvature` / `dem_roughness` / `dem_tpi`: 局所 3x3 で閉じる 1 次・2 次の微分量。傾斜[度]、斜面方位[度]、断面/平面/全曲率[1/m]、起伏指数 TRI[m]、地形位置指数 TPI[m]。
 - **shading(1)** — `dem_hillshade`: 光源方向を与えた反射[0,1]。地図の陰影であると同時に、日射の粗い目安になります。
 - **hydrology(4)** — `dem_fill_sinks` / `dem_flow_direction` / `dem_flow_accumulation` / `dem_stream_network`: 格子**全体**に及ぶ大域演算。窪地を埋め(優先度キュー)、最急降下 1 方向を決め、上流セル数を数え(トポロジカル順)、閾値で河道を切ります。
+- **geodesy(12)** — `dem_geodetic_to_ecef` / `dem_ecef_to_geodetic` / `dem_geocentric_grid` / `dem_earth_curvature_drop` / `dem_cell_size_webmercator` / `dem_geodetic_slope` / `dem_geoid_height` / `dem_height_frame_convert` / `dem_height_frame_residual` / `dem_datum_shift_3param` / `dem_enu_from_geodetic` / `dem_geodetic_from_enu`: 格子を**地球の上に置く**層。平面として扱える範囲を超えると見通しも傾斜も静かに間違うので、地球中心直交座標(ECEF)・局所 ENU・丸みの落差を同じ語彙で扱います。**高さの基準**(楕円体高 h ↔ 標高 H ↔ ジオイド高 N)はここに入っていて、`dem_height_frame_residual` は `h − H − N` が 0 から離れた点を数える**取り違えの検出器**です。
 - **visibility(3)** — `dem_horizon_angle` / `dem_sky_view_factor` / `dem_viewshed`: 視線が地形に遮られるか。日射・眺望・電波見通し・都市の放射冷却に効きます。
 
 **新しい依存は 1 つも要りません。** DEM は深度画像そのもの(メートルの高さ格子)なので、この repo にとって新しい対象ではなく、既存の `depth` と同じ格子を地形の語彙で扱っているだけです。

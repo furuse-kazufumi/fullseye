@@ -1,8 +1,8 @@
 {
- "n_ops": 2082,
+ "n_ops": 2088,
  "tiers": {
   "color": 12,
-  "ledger": 1134,
+  "ledger": 1140,
   "nary": 17,
   "registry": 919
  },
@@ -2966,6 +2966,17 @@
    ]
   },
   {
+   "name": "dem_datum_shift_3param",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "points",
+   "category": "geodesy",
+   "tier": "ledger",
+   "ledger": "opsdem",
+   "dim": "dem",
+   "in_sorts": []
+  },
+  {
    "name": "dem_earth_curvature_drop",
    "halcon": "",
    "in_sort": null,
@@ -2988,6 +2999,17 @@
    "in_sorts": [
     "points"
    ]
+  },
+  {
+   "name": "dem_enu_from_geodetic",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "points",
+   "category": "geodesy",
+   "tier": "ledger",
+   "ledger": "opsdem",
+   "dim": "dem",
+   "in_sorts": []
   },
   {
    "name": "dem_fill_sinks",
@@ -3042,6 +3064,19 @@
    ]
   },
   {
+   "name": "dem_geodetic_from_enu",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "points",
+   "category": "geodesy",
+   "tier": "ledger",
+   "ledger": "opsdem",
+   "dim": "dem",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
    "name": "dem_geodetic_slope",
    "halcon": "",
    "in_sort": "depth",
@@ -3064,6 +3099,48 @@
    "ledger": "opsdem",
    "dim": "dem",
    "in_sorts": []
+  },
+  {
+   "name": "dem_geoid_height",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "signal",
+   "category": "geodesy",
+   "tier": "ledger",
+   "ledger": "opsdem",
+   "dim": "dem",
+   "in_sorts": [
+    "depth"
+   ]
+  },
+  {
+   "name": "dem_height_frame_convert",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "geodesy",
+   "tier": "ledger",
+   "ledger": "opsdem",
+   "dim": "dem",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "dem_height_frame_residual",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "geodesy",
+   "tier": "ledger",
+   "ledger": "opsdem",
+   "dim": "dem",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "signal"
+   ]
   },
   {
    "name": "dem_hillshade",

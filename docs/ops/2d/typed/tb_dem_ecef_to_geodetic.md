@@ -61,6 +61,7 @@ ECEF → 測地座標。返りは ``(..., 3)`` の ``(緯度[度], 経度[度], 
 
 次の例は元の台帳 op `dem_ecef_to_geodetic` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
 - [dem_geodesy_tour](../../../../examples/dem_geodesy_tour.py) — `py -3.11 examples/dem_geodesy_tour.py`
+- [poc_geodetic_benchmarks_real](../../../../examples/poc_geodetic_benchmarks_real.py) — `py -3.11 examples/poc_geodetic_benchmarks_real.py`
 - [poc_geodetic_height_frames](../../../../examples/poc_geodetic_height_frames.py) — `py -3.11 examples/poc_geodetic_height_frames.py`
 
 ## 型が繋がる次の op(`points` を入力に取れる)

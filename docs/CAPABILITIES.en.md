@@ -37,13 +37,13 @@ Operators: `estimate_distortion`, `undistort_image`, `distort_points`, `undistor
 
 Runnable: `estimate_lens_distortion`
 
-### [Put measurements on the Earth (ECEF and geodetic)](capabilities/geodetic-frames.md)
+### [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md)
 
-Convert between geodetic (latitude, longitude, height) and Earth-centred Cartesian (ECEF) coordinates. The round-trip floor measures 6.4e-12 degrees in latitude and 8.5e-07 m in height (worst case over 4000 points).
+Convert geodetic coordinates to Earth-centred Cartesian (ECEF), to a local ENU frame, and between datums; convert between the two kinds of height (ellipsoidal h from GNSS and orthometric H used by maps) through a published geoid grid, and measure the residual `h - H - N` that exposes a height-frame mix-up. Checked against 523 published NGS survey marks: ECEF agrees with the published Cartesian coordinates to 0.5 mm rms, bilinear interpolation of a 0.25-degree GEOID18 grid lands within 11.1 cm rms of the published point values, and using h as if it were H shifts the answer by 16.75 m (median) in that region.
 
-Operators: `dem_geodetic_to_ecef`, `dem_ecef_to_geodetic`
+Operators: `dem_geodetic_to_ecef`, `dem_ecef_to_geodetic`, `dem_geoid_height`, `dem_height_frame_convert`, `dem_height_frame_residual`, `dem_datum_shift_3param`, `dem_enu_from_geodetic`, `dem_geodetic_from_enu`
 
-Runnable: `poc_geodetic_height_frames`, `dem_geodesy_tour`
+Runnable: `poc_geodetic_height_frames`, `poc_geodetic_benchmarks_real`, `dem_geodesy_tour`
 
 ### [Measure dimensions from an image, below the pixel](capabilities/subpixel-2d-metrology.md)
 

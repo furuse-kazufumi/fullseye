@@ -1,0 +1,21 @@
+﻿quantity,value,note
+marks with the full chain,523,"NGS datasheet, GEOID18"
+"published residual h-H-N, rms",0.1060 m,not zero: NAVD 88 vs GEOID18
+"published residual, median",-0.0040 m,centred
+over 0.1 m,74 / 523,mostly modelled conversions
+"h used as H, median",+16.753 m,"= -N, every point"
+marks outside the geoid grid,15,"refused, not clamped"
+"bilinear vs published N, rms",0.1109 m,0.25-degree grid
+"bilinear vs published N, max",0.4446 m,steep geoid
+GEOID18 - GEOID12B,-0.0098 m,range -0.098..+0.063
+"ECEF vs published, rms",0.511 mm,external check
+"ECEF vs published, max",0.828 mm,external check
+"ENU round trip, latitude",1.4e-14 deg,floor
+ENU vs ECEF route,1.5e-11 m,independent route
+3-parameter datum shift,919 m,mean ground movement
+  |residual| by ADJUSTED/RESET,0.0100 m,"n=5, max 0.024 m"
+  |residual| by ADJUSTED/LEVELING,0.0160 m,"n=7, max 0.110 m"
+  |residual| by ADJUSTED/ADJUSTED,0.0200 m,"n=173, max 0.293 m"
+  |residual| by NO CHECK/ADJUSTED,0.0265 m,"n=6, max 0.037 m"
+  |residual| by ADJUSTED/GPS OBS,0.0375 m,"n=308, max 0.297 m"
+  |residual| by ADJUSTED/VERTCON3,0.0830 m,"n=18, max 1.023 m"

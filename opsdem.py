@@ -97,6 +97,16 @@ _CATALOG = {
         ("dem_earth_curvature_drop", "demops", [], "measurement"),
         ("dem_cell_size_webmercator", "demops", [], "measurement"),
         ("dem_geodetic_slope", "demops", ["depth"], "image2d"),
+        # 高さの基準・測地成果・局所 ENU(2026-09-22)—— 能力ノートが「どれも未実装」と
+        #   名指ししていた鎖の残り。ジオイド高は緯経で引くので入力は格子 1 枚(depth)、
+        #   返りは点ごとの 1-D = signal。基準の変換も signal どうしで、残差は table。
+        #   datum と ENU は (n, 3) の points(既存の ECEF 系と同じ形)。
+        ("dem_geoid_height", "demops", ["depth"], "signal"),
+        ("dem_height_frame_convert", "demops", ["signal", "signal"], "signal"),
+        ("dem_height_frame_residual", "demops", ["signal", "signal", "signal"], "table"),
+        ("dem_datum_shift_3param", "demops", [], "points"),
+        ("dem_enu_from_geodetic", "demops", [], "points"),
+        ("dem_geodetic_from_enu", "demops", ["points"], "points"),
     ],
     # 可視性 —— 視線が地形に遮られるか。日射・眺望・電波見通しに効く。
     "visibility": [

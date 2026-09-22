@@ -256,19 +256,26 @@
   },
   {
    "id": "geodetic-frames",
-   "title": "地球規模の座標に載せる(ECEF と測地座標)",
-   "title_en": "Put measurements on the Earth (ECEF and geodetic)",
+   "title": "地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)",
+   "title_en": "Put measurements on the Earth (ECEF, height frames, local ENU)",
    "category": "測る",
    "note": "docs/capabilities/geodetic-frames.md",
-   "status": "verified-synthetic",
-   "ops_total": 2,
-   "ops_named_in_tests": 2,
+   "status": "validated-public-real-data",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
    "ops_not_named_in_tests": [],
    "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "poc_geodetic_height_frames",
      "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_geodetic_benchmarks_real",
+     "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
      "registry": "examples2d"
@@ -752,8 +759,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 232,
-  "run_by_the_poc_gate": 135,
+  "examples2d_total": 233,
+  "run_by_the_poc_gate": 136,
   "run_by_the_example_gate": 97,
   "not_run_by_any_gate": 0,
   "gates": [

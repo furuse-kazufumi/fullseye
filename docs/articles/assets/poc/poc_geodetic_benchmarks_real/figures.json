@@ -1,0 +1,92 @@
+[
+ {
+  "file": "01_residual_sorted.png",
+  "name": "residual_sorted",
+  "caption": "523 NGS marks, each publishing ellipsoidal height h (NAD 83), orthometric height H (NAVD 88) and geoid height N (GEOID18). The residual h - H - N is not exactly zero: NAVD 88 and GEOID18 were built from different measurements, and the mismatch shows up here at the centimetre level (rms 0.106 m, median -0.004 m). 74 of 523 marks exceed 0.1 m",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_by_provenance.png",
+  "name": "by_provenance",
+  "caption": "dem_height_frame_residual reads only the three height columns — never the metadata saying how each mark was measured. Sorting the classes by median |h - H - N| reproduces the survey hierarchy anyway: ADJUSTED/RESET < ADJUSTED/LEVELING < ADJUSTED/ADJUSTED < NO CHECK/ADJUSTED < ADJUSTED/GPS OBS < ADJUSTED/VERTCON3. VERTCON3 is a modelled datum conversion, not an observation, and it lands last (max 1.02 m)",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_misuse.png",
+  "name": "misuse",
+  "caption": "left cloud near zero: the published triples. The other cloud is the same marks with the ellipsoidal height put into the orthometric column — every point lands exactly on the line -N (median +16.75 m here). Nothing is out of range, nothing raises an exception; the whole table is simply 16.8 m too high",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_geoid_grid.png",
+  "name": "geoid_grid",
+  "caption": "the published GEOID18 undulation on a 0.25-degree grid over the Colorado Front Range (-19.40 to -11.15 m, 9x7 nodes). dem_geoid_height interpolates it bilinearly at each benchmark; 15 of 523 marks fall outside and are refused rather than clamped to the edge",
+  "shape": [
+   9,
+   7
+  ]
+ },
+ {
+  "file": "05_interp_error.png",
+  "name": "interp_error",
+  "caption": "each point is one benchmark inside the grid: the error of bilinear interpolation against the value published at that same point, against how steep the geoid is there. rms 0.111 m, worst 0.445 m — the cost is not random, it grows with curvature, which is why the closed-form bound |d2N| d^2 / 8 is the right way to state it",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_model_shift.png",
+  "name": "model_shift",
+  "caption": "GEOID18 minus GEOID12B on the same nodes: mean -0.010 m, range -0.098 to +0.063 m. Revising the geoid model by a generation moves the answer less than interpolating a 0.25-degree grid does (rms 0.111 m), so grid spacing is the first thing to fix",
+  "shape": [
+   9,
+   7
+  ]
+ },
+ {
+  "file": "07_ecef_mm.png",
+  "name": "ecef_mm",
+  "caption": "dem_geodetic_to_ecef run on the published latitude, longitude and ellipsoidal height of 523 NGS marks, compared with the Cartesian coordinates NGS publishes for the same marks: rms 0.51 mm, worst 0.83 mm. Until now this op was only checked against its own inverse, which tests consistency, not correctness",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_enu_map.png",
+  "name": "enu_map",
+  "caption": "523 marks placed in the east-north-up frame of one of them (AB3303). The reference mark is exactly the origin, the round trip back to latitude and longitude closes to 1e-14 degrees, and the frame agrees with the independent route through dem_geodetic_to_ecef to 1e-11 m. Points more than 20 km out sink an average of 372 m below the tangent plane — that is the curvature of the Earth, not an error",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_numbers.png",
+  "name": "numbers",
+  "caption": "every number here comes from NGS's own published values for 523 marks in the Colorado Front Range; nothing is synthetic",
+  "shape": [
+   560,
+   532,
+   3
+  ],
+  "csv": "09_numbers.csv",
+  "tsv": "09_numbers.tsv"
+ }
+]

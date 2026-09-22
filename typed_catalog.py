@@ -190,10 +190,29 @@ PARAM_HINTS = {
     "d_lon_deg": lambda rng: 1.0 / 3600.0,
     "distance_m": lambda rng: 5000.0,
     "zoom": lambda rng: 15,
+    # --- 高さの基準・測地成果(2026-09-22)--------------------------------
+    # これらの op は**わざと既定値を持たない**(黙って仮定すると「例外は出ないが
+    # 数百 m ずれた座標」が出る)。だから束縛の値はここに置く。
+    "h_m": lambda rng: 40.0,
+    "h0_m": lambda rng: 10.0,          # h_m と違える(でないと ENU が恒等的に 0)
+    # 旧日本測地系 → WGS84 の 3 パラメータと、ベッセル楕円体。
+    "dx_m": lambda rng: -146.414,
+    "dy_m": lambda rng: 507.337,
+    "dz_m": lambda rng: 680.507,
+    "a_from_m": lambda rng: 6377397.155,
+    "f_from": lambda rng: 1.0 / 299.152813,
+    "a_to_m": lambda rng: 6378137.0,
+    "f_to": lambda rng: 1.0 / 298.257223563,
 }
 
 
 OP_PARAM_HINTS = {
+    # 局所 ENU(2026-09-22)。名前ヒントだけだと基準点と観測点が同じ緯経になり、
+    # 東西成分が恒等的に 0 の**退化した探針**になる。基準点をずらして 3 成分を出す。
+    ("dem_enu_from_geodetic", "lat0_deg"): lambda rng: 35.600,
+    ("dem_enu_from_geodetic", "lon0_deg"): lambda rng: 139.600,
+    ("dem_geodetic_from_enu", "lat0_deg"): lambda rng: 35.600,
+    ("dem_geodetic_from_enu", "lon0_deg"): lambda rng: 139.600,
     # printpath(2026-09-21)。読む op のパスは、その場で書いた小さな本物のファイルにする(無いパスは CONTRACT で
     # 永久に走らない)。書く op のパスは一時ディレクトリ。z は種の mesh(単位立方体あたり)に当たる高さ。
     ("gcode_read", "path"): lambda rng: __import__("printpath").gcode_write(

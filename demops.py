@@ -78,6 +78,14 @@ __all__ = [
     "dem_geodetic_to_ecef", "dem_ecef_to_geodetic", "dem_geocentric_grid",
     "dem_earth_curvature_drop", "dem_cell_size_webmercator",
     "dem_geodetic_slope",
+    # --- 高さの基準・測地成果・局所 ENU(2026-09-22 追加)---
+    "HEIGHT_FRAMES",
+    "dem_geoid_height",
+    "dem_height_frame_convert",
+    "dem_height_frame_residual",
+    "dem_datum_shift_3param",
+    "dem_enu_from_geodetic",
+    "dem_geodetic_from_enu",
 ]
 
 #: 傾斜・方位の求め方。``horn`` が既定(雑音に強い)。
@@ -969,3 +977,366 @@ def _positive_deg(v, name):
     if not np.isfinite(x) or x <= 0:
         raise ValueError(f"{name} must be a finite positive number of degrees, got {v}")
     return x
+
+
+# --------------------------------------------------------------------------- #
+#  高さの基準・測地成果・局所 ENU(2026-09-22)                                    #
+#  ★ 鎖の残り。ECEF ↔ 測地座標 は在ったが、その先(ジオイド高・標高・datum・ENU)  #
+#    が無く、能力ノート docs/capabilities/geodetic-frames.md に「どれも未実装。    #
+#    GNSS が返すのは楕円体高で地図が使うのは標高、取り違えると日本付近で 30〜40 m  #
+#    静かにずれる」と自分で書いてあった。ここを閉じる。                            #
+# --------------------------------------------------------------------------- #
+#: :func:`dem_height_frame_convert` が受ける高さの基準。
+HEIGHT_FRAMES: tuple[str, ...] = ("ellipsoidal", "orthometric")
+
+
+def _as_deg_pair(lat_deg, lon_deg, op):
+    """緯度・経度を同じ形の float64 1-D にそろえる(有限・緯度は ±90 まで)。"""
+    lat = np.asarray(lat_deg, dtype=np.float64)
+    lon = np.asarray(lon_deg, dtype=np.float64)
+    if lat.shape != lon.shape:
+        lat, lon = np.broadcast_arrays(lat, lon)
+    lat = np.ascontiguousarray(lat).ravel()
+    lon = np.ascontiguousarray(lon).ravel()
+    if lat.size == 0:
+        raise ValueError(f"{op}: lat_deg / lon_deg are empty")
+    if not (np.all(np.isfinite(lat)) and np.all(np.isfinite(lon))):
+        raise ValueError(f"{op}: lat_deg / lon_deg must be finite")
+    if np.any(np.abs(lat) > 90.0):
+        raise ValueError(f"{op}: lat_deg must be within [-90, 90], got "
+                         f"{float(np.abs(lat).max()):.6g}")
+    return lat, lon
+
+
+def _as_heights(a, name, n, op):
+    """高さの列を (n,) の float64 に(スカラは配る)。"""
+    h = np.asarray(a, dtype=np.float64)
+    if h.ndim == 0:
+        h = np.full(n, float(h))
+    h = np.ascontiguousarray(h).ravel()
+    if h.size != n:
+        raise ValueError(f"{op}: {name} has {h.size} value(s) but {n} point(s) were given")
+    if not np.all(np.isfinite(h)):
+        raise ValueError(f"{op}: {name} must be finite")
+    return h
+
+
+def dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg,
+                     d_lat_deg, d_lon_deg):
+    """ジオイド高の格子を緯度・経度で**双一次補間**して ``N`` [m] を返す(``signal``)。
+
+    GNSS が返すのは楕円体高 ``h``、地図と設計図が使うのは標高 ``H``。その差が
+    ジオイド高 ``N``(``H = h - N``)で、日本付近では概ね **+30〜+40 m** ある。
+    この op は公開されているジオイドモデルの格子(GSIGEO / EGM 系のような
+    等間隔グリッド)を読む側の道具で、**モデルそのものは持たない** —— どの版を
+    使ったかは呼び手の責任であり、版が変われば標高は数 cm 動く。
+
+    Args:
+        geoid: ``(H, W)`` のジオイド高 [m]。``geoid[0, 0]`` が
+            ``(lat0_deg, lon0_deg)``、行が増えると緯度が ``d_lat_deg`` 増え、
+            列が増えると経度が ``d_lon_deg`` 増える(どちらの符号でもよい)。
+        lat_deg / lon_deg: 引きたい点の緯度・経度 [度]。配列可。
+        lat0_deg / lon0_deg: 格子の原点 [度]。
+        d_lat_deg / d_lon_deg: 格子の刻み [度]。0 は拒否する。
+    Returns:
+        ``(n,)`` のジオイド高 [m]。
+
+    閉じた式で検査できること: ``N`` が緯度・経度の **1 次式**であるような格子に
+    対しては、双一次補間は**厳密**(機械精度)。2 次の項があるときの誤差は
+    ``|∂²N| * d² / 8`` で上から押さえられる。
+
+    **ValueError**: 格子が 2-D でない / 2x2 未満 / 非有限、刻みが 0 か非有限、
+    緯度が ±90 を外れる、そして**格子の外の点**(海域や範囲外を黙って端の値で
+    埋めない —— 外挿したジオイド高は測量値ではない)。
+    """
+    op = "dem_geoid_height"
+    g = np.asarray(geoid, dtype=np.float64)
+    if g.ndim != 2 or g.shape[0] < 2 or g.shape[1] < 2:
+        raise ValueError(f"{op}: geoid must be a 2-D grid of at least 2x2, got shape {g.shape}")
+    if not np.all(np.isfinite(g)):
+        raise ValueError(f"{op}: geoid has non-finite cells — a no-data cell is neither "
+                         "'zero undulation' nor 'measured', so it is refused instead of "
+                         "being interpolated through. Mask or fill it explicitly.")
+    lat, lon = _as_deg_pair(lat_deg, lon_deg, op)
+    for nm, v in (("lat0_deg", lat0_deg), ("lon0_deg", lon0_deg),
+                  ("d_lat_deg", d_lat_deg), ("d_lon_deg", d_lon_deg)):
+        if not np.isfinite(float(v)):
+            raise ValueError(f"{op}: {nm} must be finite, got {v!r}")
+    dla, dlo = float(d_lat_deg), float(d_lon_deg)
+    if dla == 0.0 or dlo == 0.0:
+        raise ValueError(f"{op}: d_lat_deg / d_lon_deg must be non-zero, got {dla} / {dlo}")
+    r = (lat - float(lat0_deg)) / dla
+    c = (lon - float(lon0_deg)) / dlo
+    nr, nc = g.shape
+    out_of = (r < 0.0) | (r > nr - 1) | (c < 0.0) | (c > nc - 1)
+    if np.any(out_of):
+        k = int(np.argmax(out_of))
+        lat_lo, lat_hi = sorted((float(lat0_deg), float(lat0_deg) + dla * (nr - 1)))
+        lon_lo, lon_hi = sorted((float(lon0_deg), float(lon0_deg) + dlo * (nc - 1)))
+        raise ValueError(
+            f"{op}: {int(out_of.sum())} point(s) fall outside the grid — first is "
+            f"({lat[k]:.6f}, {lon[k]:.6f}), the grid covers lat {lat_lo:.6f}..{lat_hi:.6f} "
+            f"and lon {lon_lo:.6f}..{lon_hi:.6f}. Extrapolated undulation is not a "
+            "survey value, so it is refused rather than clamped to the edge.")
+    r0 = np.clip(np.floor(r).astype(np.int64), 0, nr - 2)
+    c0 = np.clip(np.floor(c).astype(np.int64), 0, nc - 2)
+    fr = r - r0
+    fc = c - c0
+    return np.ascontiguousarray(
+        g[r0, c0] * (1.0 - fr) * (1.0 - fc) + g[r0, c0 + 1] * (1.0 - fr) * fc
+        + g[r0 + 1, c0] * fr * (1.0 - fc) + g[r0 + 1, c0 + 1] * fr * fc)
+
+
+def dem_height_frame_convert(height_m, geoid_height_m, frm="ellipsoidal",
+                             to="orthometric"):
+    """高さの**基準**を移す: 楕円体高 ``h`` ↔ 標高 ``H``(``H = h - N``)。``signal``。
+
+    同じ「高さ」という語で 2 つの別物が流通していて、どちらも例外を出さずに
+    地図に載る。この op は**どちらからどちらへ移すのかを必ず書かせる** ——
+    既定はあるが、``frm`` と ``to`` は docstring でなくコードに残る。
+
+    Args:
+        height_m: 高さ [m]。配列可。
+        geoid_height_m: 同じ点のジオイド高 ``N`` [m] —— :func:`dem_geoid_height` で引いた値。
+            スカラでも配列でもよい。
+        frm / to: ``"ellipsoidal"``(楕円体高)か ``"orthometric"``(標高)。
+    Returns:
+        ``(n,)`` の変換後の高さ [m]。``frm == to`` なら値は変わらない。
+
+    閉じた式で検査できること: ``H = h - N`` は定義そのものなので真値は引き算で出る。
+    往復(h→H→h)の誤差は**実測で 5e-13 m 以下**(5,000 点、高さ −100〜4000 m・
+    ``N`` ±100 m)。ビット一致ではない —— ``(h - N) + N`` は丸めで 1 ulp 動くことが
+    あり、実測では 5,000 点中 273 点がそうなった。**「往復で元に戻る」を等号で
+    書かない**のはそのため。
+
+    **ValueError**: 未知の基準名、長さの食い違い、非有限。
+    """
+    op = "dem_height_frame_convert"
+    for nm, v in (("frm", frm), ("to", to)):
+        if v not in HEIGHT_FRAMES:
+            raise ValueError(f"{op}: {nm} must be one of {HEIGHT_FRAMES}, got {v!r} — "
+                             "the two are different heights at the same point and the "
+                             "conversion has a sign, so it is not guessed.")
+    h = np.asarray(height_m, dtype=np.float64).ravel()
+    if h.size == 0:
+        raise ValueError(f"{op}: height_m is empty")
+    if not np.all(np.isfinite(h)):
+        raise ValueError(f"{op}: height_m must be finite")
+    n = _as_heights(geoid_height_m, "geoid_height_m", h.size, op)
+    if frm == to:
+        return np.ascontiguousarray(h.copy())
+    if frm == "ellipsoidal":
+        return np.ascontiguousarray(h - n)
+    return np.ascontiguousarray(h + n)
+
+
+def dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m,
+                              tol_m=0.10):
+    """``h - H - N`` の残差 —— 高さの取り違えを**静かにさせない**検出器(``table``)。
+
+    楕円体高・標高・ジオイド高は 1 つの恒等式で結ばれている(``h = H + N``)。
+    3 つそろった点でその残差を測れば、**どれかが別の基準・別のモデル・別の版で
+    作られている**ことが数値で出る。測量成果どうしなら残差は cm 級に収まり、
+    楕円体高をそのまま標高として使っていれば残差は ``-N``(日本付近で −30〜−40 m)
+    に張り付く。
+
+    Args:
+        h_ellipsoidal_m: 楕円体高 [m](GNSS の返り)。配列可。
+        h_orthometric_m: 同じ点の標高 [m](地図・水準測量)。
+        geoid_height_m: 同じ点のジオイド高 [m]。
+        tol_m: 「合っている」とみなす閾値 [m]。既定 0.10 m。
+    Returns:
+        ``{"residual_m": (n,), "rms_m", "max_abs_m", "median_m", "n",
+        "n_over_tol", "tol_m", "fraction_over_tol"}``。
+
+    閉じた式で検査できること: 恒等式どおりに作った 3 つ組では残差は 0 になる
+    (実測 rms 1.2e-14 m。丸めの分だけ厳密な 0 ではない)。標高の列に楕円体高を
+    そのまま入れると残差は **−N** に張り付く —— 取り違えの量がそのまま出る。
+
+    **ValueError**: 長さの食い違い、非有限、負の *tol_m*。
+    """
+    op = "dem_height_frame_residual"
+    h = np.asarray(h_ellipsoidal_m, dtype=np.float64).ravel()
+    if h.size == 0:
+        raise ValueError(f"{op}: h_ellipsoidal_m is empty")
+    if not np.all(np.isfinite(h)):
+        raise ValueError(f"{op}: h_ellipsoidal_m must be finite")
+    ho = _as_heights(h_orthometric_m, "h_orthometric_m", h.size, op)
+    n = _as_heights(geoid_height_m, "geoid_height_m", h.size, op)
+    t = float(tol_m)
+    if not np.isfinite(t) or t < 0.0:
+        raise ValueError(f"{op}: tol_m must be a non-negative finite number, got {tol_m!r}")
+    res = h - ho - n
+    over = np.abs(res) > t
+    return {
+        "residual_m": np.ascontiguousarray(res),
+        "rms_m": float(np.sqrt(np.mean(res * res))),
+        "max_abs_m": float(np.max(np.abs(res))),
+        "median_m": float(np.median(res)),
+        "n": int(res.size),
+        "n_over_tol": int(over.sum()),
+        "fraction_over_tol": float(over.mean()),
+        "tol_m": t,
+    }
+
+
+def _geodetic_to_ecef_on(lat, lon, h, a, f):
+    """任意の楕円体 (a, f) での測地座標 → ECEF。"""
+    e2 = f * (2.0 - f)
+    phi, lam = np.radians(lat), np.radians(lon)
+    sp, cp = np.sin(phi), np.cos(phi)
+    n = a / np.sqrt(1.0 - e2 * sp * sp)
+    return ((n + h) * cp * np.cos(lam), (n + h) * cp * np.sin(lam),
+            (n * (1.0 - e2) + h) * sp)
+
+
+def _ecef_to_geodetic_on(x, y, z, a, f, iters=6):
+    """任意の楕円体 (a, f) での ECEF → 測地座標(Bowring の反復、6 回で 1e-11 度)。"""
+    e2 = f * (2.0 - f)
+    lam = np.arctan2(y, x)
+    p = np.hypot(x, y)
+    phi = np.arctan2(z, p * (1.0 - e2))
+    for _ in range(int(iters)):
+        sp = np.sin(phi)
+        n = a / np.sqrt(1.0 - e2 * sp * sp)
+        h = p / np.maximum(np.cos(phi), 1e-300) - n
+        phi = np.arctan2(z, p * (1.0 - e2 * n / (n + h)))
+    sp = np.sin(phi)
+    n = a / np.sqrt(1.0 - e2 * sp * sp)
+    h = p / np.maximum(np.cos(phi), 1e-300) - n
+    return np.degrees(phi), np.degrees(lam), h
+
+
+def dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m,
+                           a_from_m, f_from, a_to_m, f_to):
+    """測地成果(datum)の乗り換え —— 地心 3 パラメータの平行移動(``points``)。
+
+    同じ「北緯 35 度 41 分」でも、旧日本測地系と世界測地系では**地上で数百メートル**
+    離れた点を指す。この op はその乗り換えを、地心直交座標での平行移動
+    (``Molodensky-Badekas`` の回転・縮尺なしの場合)として行う::
+
+        ECEF(a_from, f_from) + (dx, dy, dz) -> 測地座標(a_to, f_to)
+
+    ★**パラメータに既定値を置かない**。どの成果からどの成果へ、どの平行移動量で
+    移すのかは国・地域・版で違い、黙って仮定すると「例外は出ないが数百メートル
+    ずれた座標」が出る —— それがこの op の存在理由なので、呼び手に必ず書かせる。
+
+    Args:
+        lat_deg / lon_deg: 元の成果での緯度・経度 [度]。配列可。
+        h_m: 元の成果での楕円体高 [m]。
+        dx_m / dy_m / dz_m: 地心の平行移動量 [m](元 → 先)。
+        a_from_m / f_from: 元の楕円体の長半径 [m] と扁平率。
+        a_to_m / f_to: 先の楕円体の長半径 [m] と扁平率。
+    Returns:
+        ``(n, 3)`` の ``(緯度[度], 経度[度], 楕円体高[m])``。
+
+    閉じた式で検査できること: 平行移動 0 かつ同じ楕円体なら**恒等変換**
+    (往復の床は ``dem_ecef_to_geodetic`` と同じ)。平行移動だけを与えたときの
+    地上の移動量は、その点の ECEF 基底で分解した成分と一致する。
+
+    **ValueError**: 非有限、緯度が ±90 を外れる、長半径が非正、扁平率が [0, 1) を外れる。
+    """
+    op = "dem_datum_shift_3param"
+    lat, lon = _as_deg_pair(lat_deg, lon_deg, op)
+    h = _as_heights(h_m, "h_m", lat.size, op)
+    vals = {"dx_m": dx_m, "dy_m": dy_m, "dz_m": dz_m, "a_from_m": a_from_m,
+            "f_from": f_from, "a_to_m": a_to_m, "f_to": f_to}
+    for nm, v in vals.items():
+        if not np.isfinite(float(v)):
+            raise ValueError(f"{op}: {nm} must be finite, got {v!r}")
+    for nm in ("a_from_m", "a_to_m"):
+        if float(vals[nm]) <= 0.0:
+            raise ValueError(f"{op}: {nm} must be positive, got {vals[nm]!r}")
+    for nm in ("f_from", "f_to"):
+        if not 0.0 <= float(vals[nm]) < 1.0:
+            raise ValueError(f"{op}: {nm} must be in [0, 1), got {vals[nm]!r} — the "
+                             "flattening of an ellipsoid, not its inverse (1/298.257... "
+                             "for WGS84, so pass 0.00335281, not 298.257).")
+    x, y, z = _geodetic_to_ecef_on(lat, lon, h, float(a_from_m), float(f_from))
+    la, lo, hh = _ecef_to_geodetic_on(x + float(dx_m), y + float(dy_m), z + float(dz_m),
+                                      float(a_to_m), float(f_to))
+    return np.ascontiguousarray(np.stack([la, lo, hh], axis=-1).reshape(-1, 3))
+
+
+def dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m):
+    """測地座標 → 基準点まわりの**局所 ENU**(東・北・上)[m](``points``)。
+
+    現場の図面・ロボットの地図・点群の多くは「原点からの東・北・上」で書かれる。
+    ECEF からの変換は基準点での回転 1 つで、``ENU = R(lat0, lon0) (X - X0)``。
+
+    ★ 平面直角座標(投影)**ではない**。ENU は基準点で接する平面への正射影に
+    相当し、距離が伸びるほど地球の丸みぶん高さ方向に落ちる —— 10 km で約 7.8 m、
+    100 km で約 780 m。広域を「平らな xy」として扱うのは、この落差を捨てること。
+
+    Args:
+        lat_deg / lon_deg: 点の緯度・経度 [度]。配列可。
+        h_m: 点の楕円体高 [m]。
+        lat0_deg / lon0_deg / h0_m: 基準点(原点)の測地座標。
+    Returns:
+        ``(n, 3)`` の ``(east, north, up)`` [m]。基準点そのものは厳密に ``(0, 0, 0)``。
+
+    閉じた式で検査できること: 基準点で ``(0, 0, 0)``、
+    :func:`dem_geodetic_from_enu` との往復が 1e-9 m 級、そして既存の
+    :func:`dem_geodetic_to_ecef` を経由して自分で回した結果と一致する
+    (**別経路での検算**)。
+
+    **ValueError**: 非有限、緯度が ±90 を外れる、長さの食い違い。
+    """
+    op = "dem_enu_from_geodetic"
+    lat, lon = _as_deg_pair(lat_deg, lon_deg, op)
+    h = _as_heights(h_m, "h_m", lat.size, op)
+    for nm, v in (("lat0_deg", lat0_deg), ("lon0_deg", lon0_deg), ("h0_m", h0_m)):
+        if not np.isfinite(float(v)):
+            raise ValueError(f"{op}: {nm} must be finite, got {v!r}")
+    if abs(float(lat0_deg)) > 90.0:
+        raise ValueError(f"{op}: lat0_deg must be within [-90, 90], got {lat0_deg!r}")
+    x, y, z = _geodetic_to_ecef_on(lat, lon, h, WGS84_A, WGS84_F)
+    x0, y0, z0 = _geodetic_to_ecef_on(np.asarray(float(lat0_deg)),
+                                      np.asarray(float(lon0_deg)),
+                                      np.asarray(float(h0_m)), WGS84_A, WGS84_F)
+    dx, dy, dz = x - x0, y - y0, z - z0
+    p, l = np.radians(float(lat0_deg)), np.radians(float(lon0_deg))
+    sp, cp, sl, cl = np.sin(p), np.cos(p), np.sin(l), np.cos(l)
+    east = -sl * dx + cl * dy
+    north = -sp * cl * dx - sp * sl * dy + cp * dz
+    up = cp * cl * dx + cp * sl * dy + sp * dz
+    return np.ascontiguousarray(np.stack([east, north, up], axis=-1).reshape(-1, 3))
+
+
+def dem_geodetic_from_enu(enu, lat0_deg, lon0_deg, h0_m):
+    """局所 ENU → 測地座標(:func:`dem_enu_from_geodetic` の逆)。``points``。
+
+    Args:
+        enu: ``(n, 3)`` の ``(east, north, up)`` [m]。
+        lat0_deg / lon0_deg / h0_m: 基準点の測地座標。
+    Returns:
+        ``(n, 3)`` の ``(緯度[度], 経度[度], 楕円体高[m])``。
+
+    閉じた式で検査できること: 往復が 1e-9 m 級、``(0, 0, 0)`` は基準点そのもの。
+
+    **ValueError**: ``(n, 3)`` でない、非有限、基準点が不正。
+    """
+    op = "dem_geodetic_from_enu"
+    e = np.asarray(enu, dtype=np.float64)
+    if e.ndim == 1 and e.size == 3:
+        e = e[None, :]
+    if e.ndim != 2 or e.shape[1] != 3 or e.shape[0] == 0:
+        raise ValueError(f"{op}: enu must be (n, 3) east/north/up metres, got shape {e.shape}")
+    if not np.all(np.isfinite(e)):
+        raise ValueError(f"{op}: enu must be finite")
+    for nm, v in (("lat0_deg", lat0_deg), ("lon0_deg", lon0_deg), ("h0_m", h0_m)):
+        if not np.isfinite(float(v)):
+            raise ValueError(f"{op}: {nm} must be finite, got {v!r}")
+    if abs(float(lat0_deg)) > 90.0:
+        raise ValueError(f"{op}: lat0_deg must be within [-90, 90], got {lat0_deg!r}")
+    p, l = np.radians(float(lat0_deg)), np.radians(float(lon0_deg))
+    sp, cp, sl, cl = np.sin(p), np.cos(p), np.sin(l), np.cos(l)
+    east, north, up = e[:, 0], e[:, 1], e[:, 2]
+    dx = -sl * east - sp * cl * north + cp * cl * up
+    dy = cl * east - sp * sl * north + cp * sl * up
+    dz = cp * north + sp * up
+    x0, y0, z0 = _geodetic_to_ecef_on(np.asarray(float(lat0_deg)),
+                                      np.asarray(float(lon0_deg)),
+                                      np.asarray(float(h0_m)), WGS84_A, WGS84_F)
+    la, lo, hh = _ecef_to_geodetic_on(dx + x0, dy + y0, dz + z0, WGS84_A, WGS84_F)
+    return np.ascontiguousarray(np.stack([la, lo, hh], axis=-1).reshape(-1, 3))

@@ -32,7 +32,7 @@
 | [本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要)](capabilities/estimate-lens-distortion.md) | Estimate lens distortion coefficients from straight lines (plumb-line, no board) | 測る | `verified-synthetic` | 4/4 | `estimate_lens_distortion` synthetic → tests/test_example_scripts_run.py |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | Turn results into figures people can read | 見せる | `verified-synthetic` | 3/3 | `poc_colormap_readability` synthetic → tests/test_poc_scripts_run.py<br>`poc_dem_terrain` synthetic → tests/test_poc_scripts_run.py |
 | [画像の中の文字を、正しい文字列に合わせて直す](capabilities/fix-text-in-images.md) | Fix the text inside an image against the string it should read | 見つける | `verified-synthetic` | 1/11 | `fix_text_in_image` synthetic → tests/test_example_scripts_run.py<br>`poc_glyph_typo_detection` synthetic → tests/test_poc_scripts_run.py |
-| [地球規模の座標に載せる(ECEF と測地座標)](capabilities/geodetic-frames.md) | Put measurements on the Earth (ECEF and geodetic) | 測る | `verified-synthetic` | 2/2 | `poc_geodetic_height_frames` synthetic → tests/test_poc_scripts_run.py<br>`dem_geodesy_tour` synthetic → tests/test_example_scripts_run.py |
+| [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | Put measurements on the Earth (ECEF, height frames, local ENU) | 測る | `validated-public-real-data` | 8/8 | `poc_geodetic_height_frames` synthetic → tests/test_poc_scripts_run.py<br>`poc_geodetic_benchmarks_real` real → tests/test_poc_scripts_run.py<br>`dem_geodesy_tour` synthetic → tests/test_example_scripts_run.py |
 | [基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する](capabilities/golden-compare.md) | Compare against a golden image — align, diff, count defects, judge the lot | 組み立てる | `verified-synthetic` | 7/7 | `golden_compare` synthetic → tests/test_example_scripts_run.py |
 | [既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕を測る](capabilities/inspection-fixture.md) | Validate a recipe and spec on known good/bad sets before deployment, and measure the margins | 組み立てる | `verified-synthetic` | 4/4 | `inspection_fixture` synthetic → tests/test_example_scripts_run.py |
 | [フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す](capabilities/inspection-workflow.md) | Inspect a folder in one call — batch, judge against a spec, aggregate, SPC, report, audit log | 組み立てる | `verified-synthetic` | 8/8 | `inspection_workflow` synthetic → tests/test_example_scripts_run.py |
@@ -57,8 +57,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 232 |
-| `tests/test_poc_scripts_run.py` が走らせる | 135 |
+| 2-D 台帳の例 | 233 |
+| `tests/test_poc_scripts_run.py` が走らせる | 136 |
 | `tests/test_example_scripts_run.py` が走らせる | 97 |
 | **どの門も走らせていない** | **0** |
 

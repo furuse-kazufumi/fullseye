@@ -4,7 +4,7 @@ dim: dem
 category: geodesy
 in: 
 out: points
-examples: [dem_geodesy_tour, poc_geodetic_height_frames]
+examples: [dem_geodesy_tour, poc_geodetic_benchmarks_real, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.2  # fullseye lib version this note was generated for
@@ -44,15 +44,16 @@ Returns:
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [dem_geodesy_tour](../../../../examples/dem_geodesy_tour.py) — `py -3.11 examples/dem_geodesy_tour.py`
+- [poc_geodetic_benchmarks_real](../../../../examples/poc_geodetic_benchmarks_real.py) — `py -3.11 examples/poc_geodetic_benchmarks_real.py`
 - [poc_geodetic_height_frames](../../../../examples/poc_geodetic_height_frames.py) — `py -3.11 examples/poc_geodetic_height_frames.py`
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 
-[dem_ecef_to_geodetic](dem_ecef_to_geodetic.md)
+[dem_ecef_to_geodetic](dem_ecef_to_geodetic.md) · [dem_geodetic_from_enu](dem_geodetic_from_enu.md)
 
 ## 同カテゴリ(`geodesy`)
 
-[dem_ecef_to_geodetic](dem_ecef_to_geodetic.md) · [dem_geocentric_grid](dem_geocentric_grid.md) · [dem_earth_curvature_drop](dem_earth_curvature_drop.md) · [dem_cell_size_webmercator](dem_cell_size_webmercator.md) · [dem_geodetic_slope](dem_geodetic_slope.md)
+[dem_ecef_to_geodetic](dem_ecef_to_geodetic.md) · [dem_geocentric_grid](dem_geocentric_grid.md) · [dem_earth_curvature_drop](dem_earth_curvature_drop.md) · [dem_cell_size_webmercator](dem_cell_size_webmercator.md) · [dem_geodetic_slope](dem_geodetic_slope.md) · [dem_geoid_height](dem_geoid_height.md) · [dem_height_frame_convert](dem_height_frame_convert.md) · [dem_height_frame_residual](dem_height_frame_residual.md)
 
 ---
 *Provenance: demops.py — DEM operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

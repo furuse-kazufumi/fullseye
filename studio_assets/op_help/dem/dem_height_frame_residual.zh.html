@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dem_height_frame_residual — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_residual&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>`<code style="color:#22d3bf">h - H - N</code><code style="color:#22d3bf"> の残差 —— 高さの取り違えを**静かにさせない**検出器(</code><code style="color:#22d3bf">table</code>`)。</p>
+<p>楕円体高・標高・ジオイド高は 1 つの恒等式で結ばれている(`<code style="color:#22d3bf">h = H + N</code>`)。</p>
+<p>3 つそろった点でその残差を測れば、**どれかが別の基準・別のモデル・別の版で</p>
+<p>作られている**ことが数値で出る。測量成果どうしなら残差は cm 級に収まり、</p>
+<p>楕円体高をそのまま標高として使っていれば残差は `<code style="color:#22d3bf">-N</code>`(日本付近で −30〜−40 m)</p>
+<p>に張り付く。</p>
+<p>Args:</p>
+<p>h_ellipsoidal_m: 楕円体高 [m] (GNSS の返り)。配列可。</p>
+<p>h_orthometric_m: 同じ点の標高 [m] (地図・水準測量)。</p>
+<p>geoid_height_m: 同じ点のジオイド高 [m]。</p>
+<p>tol_m: 「合っている」とみなす閾値 [m]。既定 0.10 m。</p>
+<p>Returns:</p>
+<p>``{&quot;residual_m&quot;: (n,), &quot;rms_m&quot;, &quot;max_abs_m&quot;, &quot;median_m&quot;, &quot;n&quot;,</p>
+<p>&quot;n_over_tol&quot;, &quot;tol_m&quot;, &quot;fraction_over_tol&quot;}``。</p>
+<p>閉じた式で検査できること: 恒等式どおりに作った 3 つ組では残差は 0 になる</p>
+<p>(実測 rms 1.2e-14 m。丸めの分だけ厳密な 0 ではない)。標高の列に楕円体高を</p>
+<p>そのまま入れると残差は <b>−N</b> に張り付く —— 取り違えの量がそのまま出る。</p>
+<p><b>ValueError</b>: 長さの食い違い、非有限、負の *tol_m*。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_geodetic_benchmarks_real">poc_geodetic_benchmarks_real</a> — <code style="color:#22d3bf">py -3.11 examples/poc_geodetic_benchmarks_real.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">geodesy</code>)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_geodetic_to_ecef">dem_geodetic_to_ecef</a> · <a style="color:#22d3bf" href="opdem:dem_ecef_to_geodetic">dem_ecef_to_geodetic</a> · <a style="color:#22d3bf" href="opdem:dem_geocentric_grid">dem_geocentric_grid</a> · <a style="color:#22d3bf" href="opdem:dem_earth_curvature_drop">dem_earth_curvature_drop</a> · <a style="color:#22d3bf" href="opdem:dem_cell_size_webmercator">dem_cell_size_webmercator</a> · <a style="color:#22d3bf" href="opdem:dem_geodetic_slope">dem_geodetic_slope</a> · <a style="color:#22d3bf" href="opdem:dem_geoid_height">dem_geoid_height</a> · <a style="color:#22d3bf" href="opdem:dem_height_frame_convert">dem_height_frame_convert</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: demops.py — DEM 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

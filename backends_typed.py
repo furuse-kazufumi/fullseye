@@ -176,6 +176,10 @@ _OP_BRIDGE_SKIP = {
     "fly_flow_from_directions", "fly_matched_filter",
     "fly_egomotion_from_flow", "fly_eye_merge",
     "graph_conductance_states",
+    # 2026-09-22 測地の鎖: 入口は「ジオイド高の格子と緯度経度」「高さの列」で、
+    # 2-D 画像を渡すと走りはするが意味が無い(探針の 1 枚は測地格子ではない)。
+    "dem_geoid_height", "dem_height_frame_convert", "dem_height_frame_residual",
+    "dem_datum_shift_3param", "dem_enu_from_geodetic", "dem_geodetic_from_enu",
     # 2026-09-08、同じ回に摘発。`indices_to_labels` は **1-D の選択マスク**
     # (長さ = 最大添字 + 1)を返すが、宣言型 `labels` は TYPE_TO_SORT で
     # `volume`(ndim == 3 の契約)に畳まれるので、橋は毎回

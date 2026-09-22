@@ -1,4 +1,4 @@
-# DEM operator help — 19 ops in 5 categories
+# DEM operator help — 25 ops in 5 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/dem/<category>/<op>.md` を走査。
 
@@ -8,9 +8,9 @@
 
 ## カテゴリ
 
-### geodesy (6)
+### geodesy (12)
 
-[dem_cell_size_webmercator](geodesy/dem_cell_size_webmercator.md) · [dem_earth_curvature_drop](geodesy/dem_earth_curvature_drop.md) · [dem_ecef_to_geodetic](geodesy/dem_ecef_to_geodetic.md) · [dem_geocentric_grid](geodesy/dem_geocentric_grid.md) · [dem_geodetic_slope](geodesy/dem_geodetic_slope.md) · [dem_geodetic_to_ecef](geodesy/dem_geodetic_to_ecef.md)
+[dem_cell_size_webmercator](geodesy/dem_cell_size_webmercator.md) · [dem_datum_shift_3param](geodesy/dem_datum_shift_3param.md) · [dem_earth_curvature_drop](geodesy/dem_earth_curvature_drop.md) · [dem_ecef_to_geodetic](geodesy/dem_ecef_to_geodetic.md) · [dem_enu_from_geodetic](geodesy/dem_enu_from_geodetic.md) · [dem_geocentric_grid](geodesy/dem_geocentric_grid.md) · [dem_geodetic_from_enu](geodesy/dem_geodetic_from_enu.md) · [dem_geodetic_slope](geodesy/dem_geodetic_slope.md) · [dem_geodetic_to_ecef](geodesy/dem_geodetic_to_ecef.md) · [dem_geoid_height](geodesy/dem_geoid_height.md) · [dem_height_frame_convert](geodesy/dem_height_frame_convert.md) · [dem_height_frame_residual](geodesy/dem_height_frame_residual.md)
 
 ### hydrology (4)
 

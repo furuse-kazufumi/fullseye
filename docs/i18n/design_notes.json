@@ -1002,13 +1002,6 @@
    "ko": "★두 번째(이쪽이 진짜 핵심인) 닫힌 형식. 시선은 양 끝의 h 로 긋기 때문에, N 의 **선형부**는 시선에도 지면에도 같은 만큼 실려 상쇄된다. 남는 것은 N 이 현에서 벗어나는 양 = |N''| d^2 / 8. 이 장의 N'' 은 2C(cos^2θ - sin^2θ) 이므로 |N''| <= 2C.",
    "de": "★Die zweite (und eigentlich entscheidende) geschlossene Form. Da die Sichtlinie durch h an beiden Enden gezogen wird, liegt der **lineare Anteil** von N gleichermassen auf Sichtlinie und Boden und hebt sich auf. Es bleibt der Betrag, um den N von der Sehne abweicht = |N''| d^2 / 8. Hier ist N'' gleich 2C(cos^2θ - sin^2θ), also |N''| <= 2C."
   },
-  "★``vertical`` だけは op_find が 5 件返す。**中身は 1 つも関係ない** (``boundary_vertices`` などの語幹一致)—— 件数で「在る」と言ってはいけない。": {
-   "en": "★Only for ``vertical`` does op_find return 5 hits. **Not one of them is relevant** (stem matches like ``boundary_vertices``) —— never claim it 'exists' from the count.",
-   "zh": "★只有 ``vertical`` 时 op_find 返回 5 条。**没有一条相关**(如 ``boundary_vertices`` 的词干匹配)—— 不能靠数量就说「存在」。",
-   "tw": "★只有 ``vertical`` 時 op_find 回傳 5 條。**沒有一條相關**(如 ``boundary_vertices`` 的詞幹匹配)—— 不能靠數量就說「存在」。",
-   "ko": "★``vertical`` 만은 op_find 가 5 건을 반환한다. **하나도 관계없다** (``boundary_vertices`` 같은 어간 일치) —— 건수로 '있다'고 말해서는 안 된다.",
-   "de": "★Nur bei ``vertical`` liefert op_find 5 Treffer. **Kein einziger ist relevant** (Stamm-Übereinstimmungen wie ``boundary_vertices``) —— behaupte nie anhand der Anzahl, es 'existiere'."
-  },
   "3) ★繰り返し測定 — 偏りと散らばりを分ける # ------------------------------------------------------------------ #": {
    "en": "3) ★Repeated measurement — separate bias from spread # ------------------------------------------------------------------ #",
    "zh": "3) ★重复测量 — 区分偏差与离散 # ------------------------------------------------------------------ #",
@@ -4263,6 +4256,13 @@
    "tw": "7. ★ 缺口 (a)（已解決 2026-09-19）：內部參數估計現已在門面（facade）上公開。以前從 `fs` 看不到，這根絆線（tripwire）一直提示「一旦補上就更新 docstring」。現在可透過 `fs.camera_calibration` 呼叫（能力筆記 `camera-intrinsics-calibration`）。不過它是門面函式，而非登錄表中的 op（因為它不是固定的 `(影像, a, b)` 形式）。",
    "de": "7. ★ Lücke (a) [Behoben 2026-09-19]: Die Schätzung der intrinsischen Parameter ist jetzt über die Fassade zugänglich. Früher war sie von `fs` aus unsichtbar, und dieser Stolperdraht meldete stets „sobald geschlossen, den Docstring aktualisieren“. Jetzt ist sie als `fs.camera_calibration` aufrufbar (Fähigkeitsnotiz `camera-intrinsics-calibration`). Sie ist allerdings eine Fassadenfunktion und kein Op in der Registry (da nicht in der festen Form `(Bild, a, b)`).",
    "ko": "7. ★ 구멍 (a)【해결됨 2026-09-19】: 내부 파라미터 추정을 파사드(facade)에 노출했다. 이전에는 `fs`에서 보이지 않아 이 트립와이어(tripwire)가 “막히면 docstring을 갱신하라”고 계속 울렸다. 이제 `fs.camera_calibration`으로 호출할 수 있다(능력 노트 `camera-intrinsics-calibration`). 다만 파사드 함수이지 레지스트리의 op는 아니다(고정된 `(이미지, a, b)` 형태가 아니기 때문)."
+  },
+  "★``vertical`` は op_find が件数を返しても中身は 1 つも関係ない (``boundary_vertices`` などの語幹一致)—— 件数で「在る」と言ってはいけない。": {
+   "en": "★For ``vertical`` op_find returns a count, yet not one of the hits is relevant (stem matches like ``boundary_vertices``) —— never claim it 'exists' from the count.",
+   "de": "★Bei ``vertical`` liefert op_find durchaus Treffer, doch kein einziger ist relevant (Stamm-Übereinstimmungen wie ``boundary_vertices``) —— behaupte nie anhand der Anzahl, es 'existiere'.",
+   "ko": "★``vertical`` 은 op_find 가 건수를 반환하더라도 내용은 하나도 관계없다 (``boundary_vertices`` 같은 어간 일치) —— 건수로 '있다'고 말해서는 안 된다.",
+   "tw": "★``vertical`` 即使 op_find 回傳了數量,內容也沒有一條相關(如 ``boundary_vertices`` 的詞幹匹配)—— 不能靠數量就說「存在」。",
+   "zh": "★``vertical`` 即使 op_find 返回了数量,内容也没有一条相关(如 ``boundary_vertices`` 的词干匹配)—— 不能靠数量就说「存在」。"
   }
  }
 }

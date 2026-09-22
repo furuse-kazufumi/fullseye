@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dem_enu_from_geodetic — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">points</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_enu_from_geodetic&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>測地座標 → 基準点まわりの<b>局所 ENU</b>(東・北・上)[m] (`<code style="color:#22d3bf">points</code>`)。</p>
+<p>現場の図面・ロボットの地図・点群の多くは「原点からの東・北・上」で書かれる。</p>
+<p>ECEF からの変換は基準点での回転 1 つで、`<code style="color:#22d3bf">ENU = R(lat0, lon0) (X - X0)</code>`。</p>
+<p>★ 平面直角座標(投影)<b>ではない</b>。ENU は基準点で接する平面への正射影に</p>
+<p>相当し、距離が伸びるほど地球の丸みぶん高さ方向に落ちる —— 10 km で約 7.8 m、</p>
+<p>100 km で約 780 m。広域を「平らな xy」として扱うのは、この落差を捨てること。</p>
+<p>Args:</p>
+<p>lat_deg / lon_deg: 点の緯度・経度 [度]。配列可。</p>
+<p>h_m: 点の楕円体高 [m]。</p>
+<p>lat0_deg / lon0_deg / h0_m: 基準点(原点)の測地座標。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">(n, 3)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">(east, north, up)</code><code style="color:#22d3bf"> [m]。基準点そのものは厳密に </code><code style="color:#22d3bf">(0, 0, 0)</code>`。</p>
+<p>閉じた式で検査できること: 基準点で `<code style="color:#22d3bf">(0, 0, 0)</code>`、</p>
+<p>:func:<code style="color:#22d3bf">dem_geodetic_from_enu</code> との往復が 1e-9 m 級、そして既存の</p>
+<p>:func:<code style="color:#22d3bf">dem_geodetic_to_ecef</code> を経由して自分で回した結果と一致する</p>
+<p>(<b>別経路での検算</b>)。</p>
+<p><b>ValueError</b>: 非有限、緯度が ±90 を外れる、長さの食い違い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_geodetic_benchmarks_real">poc_geodetic_benchmarks_real</a> — <code style="color:#22d3bf">py -3.11 examples/poc_geodetic_benchmarks_real.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_geodetic_height_frames">poc_geodetic_height_frames</a> — <code style="color:#22d3bf">py -3.11 examples/poc_geodetic_height_frames.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">points</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_ecef_to_geodetic">dem_ecef_to_geodetic</a> · <a style="color:#22d3bf" href="opdem:dem_geodetic_from_enu">dem_geodetic_from_enu</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">geodesy</code>)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_geodetic_to_ecef">dem_geodetic_to_ecef</a> · <a style="color:#22d3bf" href="opdem:dem_ecef_to_geodetic">dem_ecef_to_geodetic</a> · <a style="color:#22d3bf" href="opdem:dem_geocentric_grid">dem_geocentric_grid</a> · <a style="color:#22d3bf" href="opdem:dem_earth_curvature_drop">dem_earth_curvature_drop</a> · <a style="color:#22d3bf" href="opdem:dem_cell_size_webmercator">dem_cell_size_webmercator</a> · <a style="color:#22d3bf" href="opdem:dem_geodetic_slope">dem_geodetic_slope</a> · <a style="color:#22d3bf" href="opdem:dem_geoid_height">dem_geoid_height</a> · <a style="color:#22d3bf" href="opdem:dem_height_frame_convert">dem_height_frame_convert</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: demops.py — DEM Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

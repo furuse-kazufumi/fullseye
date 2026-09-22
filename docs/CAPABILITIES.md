@@ -36,13 +36,13 @@
 
 動く例: `estimate_lens_distortion`
 
-### [地球規模の座標に載せる(ECEF と測地座標)](capabilities/geodetic-frames.md)
+### [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md)
 
-緯度・経度・高さと地球中心直交座標(ECEF)を往復します。往復の誤差の床は実測で緯度 6.4e-12 度・高さ 8.5e-07 m(緯度 ±85 度・高さ -500〜9000 m の 4000 点、最大値)。
+緯度・経度・高さを、地球中心直交座標(ECEF)・局所 ENU・別の測地成果(datum)へ移します。**高さは 2 つある**(GNSS が返す楕円体高 h と、地図・設計図が使う標高 H)ので、どちらの基準の量なのかを op に書かせ、`h − H − N` の残差で取り違えを検出します。
 
-使う op: `dem_geodetic_to_ecef`, `dem_ecef_to_geodetic`
+使う op: `dem_geodetic_to_ecef`, `dem_ecef_to_geodetic`, `dem_geoid_height`, `dem_height_frame_convert`, `dem_height_frame_residual`, `dem_datum_shift_3param`, `dem_enu_from_geodetic`, `dem_geodetic_from_enu`
 
-動く例: `poc_geodetic_height_frames`, `dem_geodesy_tour`
+動く例: `poc_geodetic_height_frames`, `poc_geodetic_benchmarks_real`, `dem_geodesy_tour`
 
 ### [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md)
 

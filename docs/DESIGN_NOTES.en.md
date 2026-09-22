@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 822. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 826. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -98,7 +98,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `backends_typed.py`
 
-- **L541** — ★Until 2026-09-05 it read ``tools/chain_fuzz`` (not shipped) via sys.path manipulation. It failed in the wheel, and since the build() below silently returned [], the tb_* 143 ops were disappearing.
+- **L545** — ★Until 2026-09-05 it read ``tools/chain_fuzz`` (not shipped) via sys.path manipulation. It failed in the wheel, and since the build() below silently returned [], the tb_* 143 ops were disappearing.
 
 ## `blob2d.py`
 
@@ -128,11 +128,12 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `demops.py`
 
-- **L97** — ★We do not provide the option to **fill** with the median or the like. Filling creates a plain that does not exist and lets water through without raising an exception. But the size of the effect we record honestly. On the same real data (Tokyo bayfront 1024x1024, 3.83% missing), the max catchment cell count compared across 3 ways: outlet 312,108 (29.8%) / median fill 338,188 (32.3%) / wall 315,023 (30.0%). Filling inflates by about 8%, but **the fact that "one cell gathers 30% of the whole" is itself the reality of this terrain** (a flat reclaimed land really does converge to one spot). Writing at first, from looking only at the fill, "this figure is a product of filling" was an exaggeration; taking a control shrank the effect. We do not provide a fill option because **it becomes impossible to distinguish where the terrain is real and where it is fill**, not because the figure changes by orders of magnitude.
-- **L605** — ★We first noticed this slowness when the sky-view factor for 513^2 took 41.9 seconds in the PoC (examples/poc_dem_terrain.py). The tests used only small grids, so they confirmed it "works" but not that it is "usable".
-- **L686** — ★Fixed 2026-09-08 (found by `poc_stockpile_volume`). When a line-of-sight sample rounds via ``np.rint`` to the **target cell itself**, that cell's height gets compared against itself as "intervening terrain". Since t < 1 the denominator dist*t is small, and ``(z-eye)/(dist*t) > (z-eye)/dist`` is always true when z > eye —— so **cells higher than eye level were self-occluding across the board**. Measured (before fix): a 10 m column on flat ground was returned as "not visible" from 25 m away at eye 2 m, and only a 1 m column below eye level was "visible". The highest point of a convex solid is always visible from outside, so this is geometrically wrong. We do not count the iterations where the sample landed on the target cell.
-- **L746** — ★The ledger declares ``points`` = (N, 3). Passing a scalar yields (3,), which conflicts with the declaration, so we always fold to (N, 3) (surfaced by the fuzzer's TYPEMISS on 2026-09-06; the fuzzer had not been run after adding the 6 geocentric-coordinate ops). When you want (H, W, 3) as a grid, use :func:`dem_geocentric_grid`.
-- **L795** — ★Inside the evolute the geodetic latitude is not unique -> instead of silently returning an out-of-range latitude, refuse. The evolute of the ellipse x²/a² + z²/b² = 1 is (a·x)^(2/3) + (b·z)^(2/3) = (a²-b²)^(2/3). Only outside the equality is the region where "the normal is uniquely determined" (since the 2/3 power is non-negative, the sign is |z|).
+- **L105** — ★We do not provide the option to **fill** with the median or the like. Filling creates a plain that does not exist and lets water through without raising an exception. But the size of the effect we record honestly. On the same real data (Tokyo bayfront 1024x1024, 3.83% missing), the max catchment cell count compared across 3 ways: outlet 312,108 (29.8%) / median fill 338,188 (32.3%) / wall 315,023 (30.0%). Filling inflates by about 8%, but **the fact that "one cell gathers 30% of the whole" is itself the reality of this terrain** (a flat reclaimed land really does converge to one spot). Writing at first, from looking only at the fill, "this figure is a product of filling" was an exaggeration; taking a control shrank the effect. We do not provide a fill option because **it becomes impossible to distinguish where the terrain is real and where it is fill**, not because the figure changes by orders of magnitude.
+- **L613** — ★We first noticed this slowness when the sky-view factor for 513^2 took 41.9 seconds in the PoC (examples/poc_dem_terrain.py). The tests used only small grids, so they confirmed it "works" but not that it is "usable".
+- **L694** — ★Fixed 2026-09-08 (found by `poc_stockpile_volume`). When a line-of-sight sample rounds via ``np.rint`` to the **target cell itself**, that cell's height gets compared against itself as "intervening terrain". Since t < 1 the denominator dist*t is small, and ``(z-eye)/(dist*t) > (z-eye)/dist`` is always true when z > eye —— so **cells higher than eye level were self-occluding across the board**. Measured (before fix): a 10 m column on flat ground was returned as "not visible" from 25 m away at eye 2 m, and only a 1 m column below eye level was "visible". The highest point of a convex solid is always visible from outside, so this is geometrically wrong. We do not count the iterations where the sample landed on the target cell.
+- **L754** — ★The ledger declares ``points`` = (N, 3). Passing a scalar yields (3,), which conflicts with the declaration, so we always fold to (N, 3) (surfaced by the fuzzer's TYPEMISS on 2026-09-06; the fuzzer had not been run after adding the 6 geocentric-coordinate ops). When you want (H, W, 3) as a grid, use :func:`dem_geocentric_grid`.
+- **L803** — ★Inside the evolute the geodetic latitude is not unique -> instead of silently returning an out-of-range latitude, refuse. The evolute of the ellipse x²/a² + z²/b² = 1 is (a·x)^(2/3) + (b·z)^(2/3) = (a²-b²)^(2/3). Only outside the equality is the region where "the normal is uniquely determined" (since the 2/3 power is non-negative, the sign is |z|).
+- **L984** _(ja)_ — ★ 鎖の残り。ECEF ↔ 測地座標 は在ったが、その先(ジオイド高・標高・datum・ENU) # が無く、能力ノート docs/capabilities/geodetic-frames.md に「どれも未実装。 # GNSS が返すのは楕円体高で地図が使うのは標高、取り違えると日本付近で 30〜40 m # 静かにずれる」と自分で書いてあった。ここを閉じる。 # --------------------------------------------------------------------------- # :func:`dem_height_frame_convert` が受ける高さの基準。
 
 ## `engine.py`
 
@@ -443,12 +444,14 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_geodetic_height_frames.py`
 
-- **L408** — ★A round trip cannot rule out "both wrong in the same direction". Cross-check against an independent implementation.
-- **L437** — ★Prediction (printed before measuring): the slope is atan|∇H|. Using h it becomes atan|∇H+∇N|.
-- **L464** — ★Split the max difference between prediction and measurement into 'model error' vs 'discretisation'. Refine the cells.
-- **L584** — ★Prediction (closed form): the downhill direction turns by more than 90 degrees ⇔ ∇H·(∇H+∇N) < 0 ⇔ |∇H|^2 + ∇H·∇N < 0. Compute the rate before measuring.
-- **L644** — ★The second (and the real) closed form. Since the line of sight is drawn through h at both ends, the **linear part** of N rides equally on both the line of sight and the ground and cancels. What remains is the amount N departs from the chord = |N''| d^2 / 8. Here N'' is 2C(cos^2θ - sin^2θ), so |N''| <= 2C.
-- **L1106** — ★Only for ``vertical`` does op_find return 5 hits. **Not one of them is relevant** (stem matches like ``boundary_vertices``) —— never claim it 'exists' from the count.
+- **L411** — ★A round trip cannot rule out "both wrong in the same direction". Cross-check against an independent implementation.
+- **L440** — ★Prediction (printed before measuring): the slope is atan|∇H|. Using h it becomes atan|∇H+∇N|.
+- **L467** — ★Split the max difference between prediction and measurement into 'model error' vs 'discretisation'. Refine the cells.
+- **L587** — ★Prediction (closed form): the downhill direction turns by more than 90 degrees ⇔ ∇H·(∇H+∇N) < 0 ⇔ |∇H|^2 + ∇H·∇N < 0. Compute the rate before measuring.
+- **L647** — ★The second (and the real) closed form. Since the line of sight is drawn through h at both ends, the **linear part** of N rides equally on both the line of sight and the ground and cancels. What remains is the amount N departs from the chord = |N''| d^2 / 8. Here N'' is 2C(cos^2θ - sin^2θ), so |N''| <= 2C.
+- **L1120** _(ja)_ — §10 穴。★2026-09-08 にこの節は「geoid / enu / datum は 0 件」を門にした。 2026-09-22 にその門が鳴った(埋まったから)—— **門を消さずに、まだ空いている 語幹へ付け替える**。閉じた側は「何が閉じたか」を名前で固定する。
+- **L1133** _(ja)_ — ★``ortho`` は逆向きの教訓: op 名に ortho を含むものは 0 件のままだが、 能力は `dem_height_frame_convert`(frm/to に "orthometric")で**在る**。 件数で「在る」と言ってはいけないのと同じくらい、**名前で「無い」と言ってもいけない**。
+- **L1139** — ★For ``vertical`` op_find returns a count, yet not one of the hits is relevant (stem matches like ``boundary_vertices``) —— never claim it 'exists' from the count.
 
 ## `examples/poc_glyph_typo_detection.py`
 
@@ -1291,6 +1294,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_demops.py`
 
 - **L440** — ★The return is **always (N, 3)**. Even passing a scalar yields (1, 3), not (3,) —— because the ledger declares points = (N, 3) (2026-09-06; the fuzzer's TYPEMISS exposed the mismatch and the implementation was aligned to the declaration).
+- **L755** _(ja)_ — ★ 旧日本測地系に近い 3 パラメータでは、同じ緯度経度が地上で数百 m 動く
 
 ## `tests/test_docs_index_numbers.py`
 
@@ -1625,9 +1629,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `typed_catalog.py`
 
-- **L266** — ★ The case where the default itself is heavy is handled separately —— we wrote a cost table in the docstring and left it in docs/KNOWN_ISSUES.md as "unsolved." Making it lighter here is to pass the check, not to hide the slowness. The keep of fourier_smooth(points, keep) is a required argument with no default. If it cannot be bound, it is skipped forever as "cannot assemble arguments" and appears in the coverage table only as unreached (in the first measurement on 2026-09-06, only this one of 13 ops fell out). Surface roughness. Constraints are 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel measurement. The measurement-line generation op takes no input, so every argument needs a hint.
-- **L320** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
-- **L508** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
+- **L285** — ★ The case where the default itself is heavy is handled separately —— we wrote a cost table in the docstring and left it in docs/KNOWN_ISSUES.md as "unsolved." Making it lighter here is to pass the check, not to hide the slowness. The keep of fourier_smooth(points, keep) is a required argument with no default. If it cannot be bound, it is skipped forever as "cannot assemble arguments" and appears in the coverage table only as unreached (in the first measurement on 2026-09-06, only this one of 13 ops fell out). Surface roughness. Constraints are 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel measurement. The measurement-line generation op takes no input, so every argument needs a hint.
+- **L339** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
+- **L527** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
 
 ## `unified.py`
 
