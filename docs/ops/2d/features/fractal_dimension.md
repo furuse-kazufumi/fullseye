@@ -4,7 +4,7 @@ dim: 2d
 category: features
 in: image
 out: feature
-examples: [gallery2d_features, poc_theorems_as_pictures]
+examples: [gallery2d_features, poc_endless_zoom_and_turning_solids, poc_theorems_as_pictures]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -60,6 +60,7 @@ fractal_dimension 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
+- [poc_endless_zoom_and_turning_solids](../../../../examples/poc_endless_zoom_and_turning_solids.py) — `py -3.11 examples/poc_endless_zoom_and_turning_solids.py`
 - [poc_theorems_as_pictures](../../../../examples/poc_theorems_as_pictures.py) — `py -3.11 examples/poc_theorems_as_pictures.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)

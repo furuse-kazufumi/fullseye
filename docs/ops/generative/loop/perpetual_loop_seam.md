@@ -4,7 +4,7 @@ dim: generative
 category: loop
 in: rgbvideo
 out: table
-examples: [poc_illusions_and_perpetual_drawing, poc_periodic_video_boundary]
+examples: [poc_endless_zoom_and_turning_solids, poc_illusions_and_perpetual_drawing, poc_periodic_video_boundary]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -36,6 +36,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_endless_zoom_and_turning_solids](../../../../examples/poc_endless_zoom_and_turning_solids.py) — `py -3.11 examples/poc_endless_zoom_and_turning_solids.py`
 - [poc_illusions_and_perpetual_drawing](../../../../examples/poc_illusions_and_perpetual_drawing.py) — `py -3.11 examples/poc_illusions_and_perpetual_drawing.py`
 - [poc_periodic_video_boundary](../../../../examples/poc_periodic_video_boundary.py) — `py -3.11 examples/poc_periodic_video_boundary.py`
 
