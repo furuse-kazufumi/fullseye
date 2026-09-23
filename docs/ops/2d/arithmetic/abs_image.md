@@ -8,7 +8,7 @@ halcon: abs_image
 examples: [gallery2d_gray_arith, genspark_external_review]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.2  # fullseye lib version this note was generated for
+version: 0.2.3  # fullseye lib version this note was generated for
 ---
 
 # abs_image — 2D `arithmetic` op

@@ -7,7 +7,7 @@ out: image2d
 examples: [annotate_gallery, annotate_paper_tour, drawlist_deferred, poc_eye_to_brain, poc_leak_localization, poc_machine_condition_fusion, poc_malecns_activity_wave, poc_print_warpage_risk, poc_rotation_invariance_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.2  # fullseye lib version this note was generated for
+version: 0.2.3  # fullseye lib version this note was generated for
 ---
 
 # text_box — ANNOTATE `text` op

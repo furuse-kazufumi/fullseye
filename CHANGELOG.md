@@ -5,7 +5,7 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
-## 0.2.3 — 未リリース
+## 0.2.3 — 2026-09-23
 
 - ★★**うなり・力学系・様式化・極小曲面 23 op**(math 族に新カテゴリ `wave` 6 + `dynsys` 6 で 43 → 55 op、printpath に新カテゴリ `npr` 6 op で 17 → 23 op、3-D に新カテゴリ `surface` 5 op。合計 2,114 → 2,138)。**新しい型の語は 1 つも作っていない**(matrix / signal / mask / image2d / measurement / table / pairs / flow2d / mesh / voxel / points はすべて既存)。**新族を立てずに既存台帳の新カテゴリに入れた** —— 新族は登録面が 21 手順ぶん増え、時間の大半がそこに消えるため。
   - ★★**干渉縞と印刷のモアレは同じ数学である**。教科書では別の章に載っているが、どちらも「2 つの周期構造の周波数ベクトルの差」で式は 1 本しかない。光のほうは縞間隔 `λD/d` を**作った op とは別の op**(`wave_fringe_period`)に測り返させ(4 設定すべて比 0.998〜1.003)、印刷のほうは**描く前に**モアレの周期を言い当てて重ねた絵の FFT で測り返す(比 0.948〜0.986)。同じ線数なら周期は閉形式 `1/(2 f sin(Δ/2))` で 1e-6 未満まで一致し、同じスクリーン同士は `inf` を返さず拒む。
@@ -94,6 +94,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   - `dem_datum_shift_3param` —— 地心 3 パラメータの平行移動。**パラメータに既定値を置かない**(黙って仮定すると「例外は出ないが数百 m ずれた座標」が出る)。
   - `dem_enu_from_geodetic` + `dem_geodetic_from_enu` —— 局所 ENU の往復。基準点は厳密に原点、既存の `dem_geodetic_to_ecef` を経由した**別経路と一致**することを門にした。その既存 op 自身も、今回 NGS が公開している地心直交座標と**rms 0.5 mm・最大 0.8 mm**で一致することを実データで確かめた(これまでは自分との往復しか測っていなかった)。
   真値はどれもこちらで作れる: 1 次式のジオイドなら双一次補間は厳密、2 次なら誤差は `|∂²N|d²/8` の内側、ENU の往復は 1e-11 度 / 1e-6 m、地球の丸みは 10 km で −7.8 m・100 km で −783 m。
+- ★★**連鎖ファザーが repo 直下にファイルを書いていた**(9 本。うち **6 本は commit にも入っていた**)。`write_3mf` のパス引数は台帳で `text` 宣言なので、探針が作る `"ラベル 31"` が**相対パスとして成立**してしまい、op は素直に cwd(= repo 直下)へ 3MF を書く。気づきにくかった理由が 3 つ重なっていた —— `git ls-files` は非 ASCII を octal 引用するので `grep "ラベル"` が当たらず、tracked なので `git status` にも出ず、番号は種が固定なので**毎回同じ名前を上書き**して増えなかった。直しは op 名の除外表ではなく **`run_chain` の実行中だけ cwd を捨て場へ移す**こと(除外表は「パスを `text` で宣言する op」が増えるたびに伸びる)。門は事故の起きる場所に立てた: `write_3mf` を強制実行して**呼ばれたことを census で確かめ**、捨て場に**実物が落ちたことを確かめ**、その上で repo 直下が 1 つも増えていないことを見る(3 段のうち前 2 段が無いと「汚れない」は空の一致になる)。守りを外して鳴ることも確認済み。
+- ★`studio_crash.log`(0 バイト)が tracked だった —— studio.py が**実行時に追記する**ログで、兄弟の `studio_ui_crash.log` は `.gitignore` に在るのにこちらだけ漏れ、backup hook の `auto:` commit で入っていた。ignore に回して index から外した(`open(path, "a")` なので在らなくても動く)。同じ型の兄弟を見る規律がそのまま効いた例。
 ## 0.2.2 — 2026-09-22
 
 - ★**ハエの視葉の後段を 7 op(flyvision 9 → 16 op)**: 眼に届いた明るさから「自分がどう回ったか」までを、**学習を 1 回もせずに**閉じた式で繋ぐ段。`fly_lamina_filter`(順応で明るさを捨て対比にする —— 同じ景色を 10 倍明るくしても**出力は 1 ビットも変わらない**のが Weber の不変性で、機械精度で門にした)/ `fly_onoff_split`(ON = Mi1・Tm3、OFF = Tm1・Tm2。整流を**選べる**ようにしてある —— L1/L2 自体は線形だという記録があるので、ラミナで整流する実装は記録が言っていないことを主張している)/ `fly_t4t5_field`(六角格子の 6 方向すべてで方向選択。Haag ら 2016 の三腕 `(dc+k_E·LP[E])(dc+k_D·D)/(dc+k_S·LP[S])`、τ=250 ms・k=5/5/10 を逐語どおりに実装し、**増強だけ**と**抑制だけ**も同じ op のモードにした。論文の主張「2 つの仕組みは相補的」は**積の恒等式**になる —— どんな刺激でも `比(三腕) = 比(増強) × 比(抑制)` が機械精度で成り立ち、論文の 2 柱刺激では 24.96 / 0.820、4.16 × 7.32 = 30.46)/ `fly_flow_from_directions`(6 方向 → 接平面の 1 本のベクトル)/ `fly_matched_filter`(Krapp & Hengstenberg 1996 の整合フィルタ = 回転 1 rad/s が視野に書く流れ `-a × d`)/ `fly_egomotion_from_flow`(流れ場から回転を**線形最小二乗**で。収束したかと**識別できたか**を分けるため条件数を必ず返す)/ `fly_eye_merge`(複数の格子を 1 つの広い眼に束ねる)。

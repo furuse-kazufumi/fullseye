@@ -7,7 +7,7 @@ out: labels2d
 examples: [poc_gear_tooth_metrology, poc_solder_fillet_aoi, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.2  # fullseye lib version this note was generated for
+version: 0.2.3  # fullseye lib version this note was generated for
 ---
 
 # blob_select_largest — BLOB `select` op

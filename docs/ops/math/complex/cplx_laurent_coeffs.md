@@ -7,7 +7,7 @@ out: table
 examples: [math_complex]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.2  # fullseye lib version this note was generated for
+version: 0.2.3  # fullseye lib version this note was generated for
 ---
 
 # cplx_laurent_coeffs — MATH `complex` op

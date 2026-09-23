@@ -7,7 +7,7 @@ out: table
 examples: [defect_to_cad]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.2  # fullseye lib version this note was generated for
+version: 0.2.3  # fullseye lib version this note was generated for
 ---
 
 # cad_defect_to_cad — CADMAP `defect` op

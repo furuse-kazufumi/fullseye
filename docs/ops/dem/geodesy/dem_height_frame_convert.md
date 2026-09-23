@@ -7,7 +7,7 @@ out: signal
 examples: [poc_geodetic_benchmarks_real]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.2  # fullseye lib version this note was generated for
+version: 0.2.3  # fullseye lib version this note was generated for
 ---
 
 # dem_height_frame_convert — DEM `geodesy` op

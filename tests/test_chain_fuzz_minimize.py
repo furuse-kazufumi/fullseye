@@ -12,13 +12,16 @@ delta debugging を置いた(2026-09-01)。ここで固定する契約:
   4. 再現しない発見(seed 欠落・非決定的)には **False を返す**
      — 「短縮できた」と嘘をつくと推測パッチを誘発するため。
 """
+import os
+import pathlib
+
 import numpy as np
 import pytest
 
 pytest.importorskip("torch")   # catalog は torch 依存モジュールを束ねる
 
-from tools.chain_fuzz import (catalog, make_generators, minimize_finding,
-                              reproduces, run_chain, signature)
+from tools.chain_fuzz import (_SCRATCH, catalog, make_generators,
+                              minimize_finding, reproduces, run_chain, signature)
 
 
 @pytest.fixture(scope="module")
@@ -200,3 +203,49 @@ def test_targeted_diffusion_actually_steers_toward_its_target(env):
     # 寄せが効いていれば桁で上回る
     assert hits >= 12, ("目標 op に寄せられていない: 120 連鎖中 %d 回しか"
                         "目標を実行していない" % hits)
+
+
+# --------------------------------------------------------------------------- #
+# 5. ファザーは repo 直下にファイルを作らない(2026-09-23 の実測から)
+# --------------------------------------------------------------------------- #
+def test_the_fuzzer_writes_nothing_into_the_repo_root(env):
+    """★書き込み op に探針の ``text`` が渡っても repo 直下にファイルを作らない。
+
+    2026-09-23 に判明した実害: ``write_3mf`` のパス引数は台帳で ``text`` 宣言な
+    ので、探針が作る ``"ラベル 31"`` が**相対パスとして成立**してしまい、op は
+    素直に cwd(= repo 直下)へ 3MF を書いていた。**9 本生まれ、うち 6 本は
+    commit にも入っていた** —— `git ls-files` が octal 引用するので ``grep`` が
+    当たらず、tracked なので `git status` にも出ず、長く気づかなかった。
+
+    直しは op 名の除外表ではなく ``run_chain`` の実行中だけ cwd を捨て場へ移す
+    こと(守りは 1 箇所、対象は「相対パスに書く行為」)。この門はその守りを
+    **事故の起きる場所で数えて**固定する:
+
+      1. ``write_3mf`` を強制実行し、**実際に呼ばれたこと**を census で確かめる
+         (呼ばれていなければ「repo が汚れない」は空の一致にすぎない)。
+      2. 捨て場に**実物が落ちたこと**を確かめる(書き込み自体は起きている)。
+      3. その上で repo 直下の一覧が **1 つも増えていない**ことを確かめる。
+    """
+    ops, gens = env
+    root = pathlib.Path(__file__).resolve().parents[1]
+    scratch = pathlib.Path(os.path.join(__import__("tempfile").gettempdir(), _SCRATCH))
+    if scratch.is_dir():
+        for p in scratch.iterdir():          # 前の回の残りと区別できるようにする
+            if p.is_file():
+                p.unlink()
+
+    before = sorted(p.name for p in root.iterdir())
+    census = {"ran": set(), "bind_fail": set(), "no_input": set()}
+    log = []
+    run_chain(ops, gens, np.random.default_rng(7), 1, log, chain_seed=7,
+              script=["write_3mf"], census=census)
+    after = sorted(p.name for p in root.iterdir())
+
+    assert "write_3mf" in census["ran"], (
+        "write_3mf が一度も呼ばれていない —— この門は空を通している "
+        "(bind_fail=%s / no_input=%s)" % (sorted(census["bind_fail"]), sorted(census["no_input"])))
+    wrote = sorted(p.name for p in scratch.iterdir()) if scratch.is_dir() else []
+    assert wrote, "捨て場に何も落ちていない = 書き込みが起きていないので門が空"
+    assert after == before, (
+        "連鎖ファザーが repo 直下にファイルを作った: %s "
+        "(捨て場へ移す守りが外れている)" % sorted(set(after) - set(before)))

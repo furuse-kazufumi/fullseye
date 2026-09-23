@@ -7,7 +7,7 @@ out: measurement
 examples: [coherence_scanning]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.2  # fullseye lib version this note was generated for
+version: 0.2.3  # fullseye lib version this note was generated for
 ---
 
 # csi_peak_position — INTERFEROMETRY `locate` op

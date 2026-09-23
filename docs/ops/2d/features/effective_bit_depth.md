@@ -7,7 +7,7 @@ out: feature
 examples: [gallery2d_features]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.2  # fullseye lib version this note was generated for
+version: 0.2.3  # fullseye lib version this note was generated for
 ---
 
 # effective_bit_depth — 2D `features` op

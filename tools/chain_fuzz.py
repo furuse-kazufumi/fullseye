@@ -26,8 +26,10 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import os
+import tempfile
 import re
 import sys
 import time
@@ -2013,6 +2015,36 @@ def _step_rng(chain_seed, name, occurrence, fallback):
     return np.random.default_rng((int(chain_seed) & 0xFFFFFFFF, key, occurrence))
 
 
+#: 連鎖の実行中だけ cwd を移す先。``tempfile.gettempdir()`` の下に 1 つ作る。
+_SCRATCH = "fullseye_chain_fuzz_scratch"
+
+
+@contextlib.contextmanager
+def _scratch_cwd():
+    """連鎖の実行中だけ cwd を**捨て場**へ移す。
+
+    ★探針が作る ``text`` は ``"ラベル 31"`` のように**相対パスとして成立する**。
+    パス引数を台帳で ``text`` と宣言している書き込み op(``write_3mf`` など)に
+    それが渡ると、op は素直に cwd へ書く —— cwd は repo 直下なので、スイートを
+    回すたびに得体の知れないファイルが生まれる。2026-09-23 の実測で 9 本あり、
+    **6 本は commit にも入っていた**(`git ls-files` は octal 引用するので
+    ``grep`` が当たらず、`git status` にも出ないので長く気づかなかった)。
+
+    op 名で除外しないのは、除外台帳が「パスを text で宣言する op」が増えるたびに
+    伸びるため。守るべきは個々の op ではなく「**相対パスに書く行為**」なので、
+    実行の側に 1 箇所だけ置く。生成器も内側に入れてある(生成器がファイルを
+    作る型に変わっても同じ捨て場に落ちる)。
+    """
+    d = os.path.join(tempfile.gettempdir(), _SCRATCH)
+    os.makedirs(d, exist_ok=True)
+    prev = os.getcwd()
+    os.chdir(d)
+    try:
+        yield d
+    finally:
+        os.chdir(prev)
+
+
 def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None,
               explore=0.0, census=None):
     """1 連鎖 = 型付き pool を育てながら op を実行。発見は log に積む。
@@ -2031,128 +2063,129 @@ def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None,
     * ``bind_fail`` —— 必須引数が組めず **一度も呼んでいない**
     * ``no_input`` —— 入力型が pool に無く **一度も呼んでいない**
     """
-    pool = {}
-    for t, g in gens.items():
-        pool[t] = [g(rng)]
-    trace = []
-    occ = {}
-    by_name = {o[0]: o for o in ops} if script is not None else None
-    # この連鎖が狙う op(決定的: 連鎖固有 seed から引く)。script 再走のときは
-    # 狙いを持たない — 再現は与えられた op 列がすべてだから。
-    target = None
-    if script is None and explore > 0.0 and ops:
-        target = ops[int(np.random.default_rng(
-            zlib.crc32(b"target|%d" % (chain_seed or 0))).integers(len(ops)))]
-    for i in range(len(script) if script is not None else length):
-        if script is not None:
-            op = by_name.get(script[i])
-            if op is None:
-                continue
-            name, dim, ins, out, fn = op
-            if not all((t in pool and pool[t]) or t == "any" for t in ins):
+    with _scratch_cwd():
+        pool = {}
+        for t, g in gens.items():
+            pool[t] = [g(rng)]
+        trace = []
+        occ = {}
+        by_name = {o[0]: o for o in ops} if script is not None else None
+        # この連鎖が狙う op(決定的: 連鎖固有 seed から引く)。script 再走のときは
+        # 狙いを持たない — 再現は与えられた op 列がすべてだから。
+        target = None
+        if script is None and explore > 0.0 and ops:
+            target = ops[int(np.random.default_rng(
+                zlib.crc32(b"target|%d" % (chain_seed or 0))).integers(len(ops)))]
+        for i in range(len(script) if script is not None else length):
+            if script is not None:
+                op = by_name.get(script[i])
+                if op is None:
+                    continue
+                name, dim, ins, out, fn = op
+                if not all((t in pool and pool[t]) or t == "any" for t in ins):
+                    if census is not None:
+                        census["no_input"].add(name)
+                    continue          # 入力型が揃わない = この短縮では到達不能
+            else:
+                # pool にある型を食える op を候補化
+                cands = [o for o in ops
+                         if all((t in pool and pool[t]) or t == "any" for t in o[2])]
+                if not cands:
+                    break
+                # **狙いを持った拡散**。一様に引くと、候補が数百ある中から特定の op
+                # が長さ 6 の枠内で選ばれる確率は低く、実測では 1500 連鎖でも 112 op
+                # が「構造的には到達可能なのに一度も引かれない」ままだった。
+                #
+                # 最初は「まだプールに無い型を産む op を優先する」型空間バイアスを
+                # 試したが、**効かなかった**(321 → 322 op、1500 連鎖で +1)。プールは
+                # 最初から全生成器型で埋まっているので、優先対象がすぐ尽きるため。
+                #
+                # そこで **連鎖ごとに目標 op を 1 つ決め、そこへ寄せる**方式にした。
+                # 目標は連鎖固有 seed から決めるので chain_seed だけで再現でき、
+                # --minimize / --replay の前提を壊さない。1500 連鎖 / 434 op なら
+                # 1 op あたり平均 3.5 連鎖が狙ってくれる勘定になる。
+                if target is not None and rng.random() < explore:
+                    hit = [o for o in cands if o[0] == target[0]]
+                    if hit:
+                        cands = hit
+                    else:
+                        # 目標が食う型を**産む** op を優先 = 1 手ぶん近づく
+                        want = set(target[2])
+                        step = [o for o in cands if o[3] in want]
+                        if step:
+                            cands = step
+                name, dim, ins, out, fn = cands[rng.integers(len(cands))]
+            occ[name] = occ.get(name, 0) + 1
+            arng = _step_rng(chain_seed, name, occ[name], rng)
+            if name in OP_ARG_BUILDERS:
+                bound = OP_ARG_BUILDERS[name](pool, arng)
+                # builder が **list** を返したら「data 引数だけを組んだ」の意で、
+                # 残る必須引数の束縛は通常経路(op 固有 → 名前ヒント)に任せる。
+                # tuple を返す builder(従来のもの)は (args, kwargs) 完成形。
+                if isinstance(bound, list):
+                    bound = _bind_args(name, fn, bound, arng)
+            else:
+                data_args = []
+                for t in ins:
+                    src = pool[t] if t != "any" else pool[arng.choice(sorted(pool))]
+                    data_args.append(src[arng.integers(len(src))])
+                bound = _bind_args(name, fn, data_args, arng)
+            if bound is None:
+                # **必須引数を組めなかった** = fn は一度も呼ばれていない。成功列
+                # (trace)からも findings からも消えるので、これを数えないと
+                # 「頑健で発見ゼロ」と「引数が作れず未実行」が同じ顔になる。
                 if census is not None:
-                    census["no_input"].add(name)
-                continue          # 入力型が揃わない = この短縮では到達不能
-        else:
-            # pool にある型を食える op を候補化
-            cands = [o for o in ops
-                     if all((t in pool and pool[t]) or t == "any" for t in o[2])]
-            if not cands:
-                break
-            # **狙いを持った拡散**。一様に引くと、候補が数百ある中から特定の op
-            # が長さ 6 の枠内で選ばれる確率は低く、実測では 1500 連鎖でも 112 op
-            # が「構造的には到達可能なのに一度も引かれない」ままだった。
-            #
-            # 最初は「まだプールに無い型を産む op を優先する」型空間バイアスを
-            # 試したが、**効かなかった**(321 → 322 op、1500 連鎖で +1)。プールは
-            # 最初から全生成器型で埋まっているので、優先対象がすぐ尽きるため。
-            #
-            # そこで **連鎖ごとに目標 op を 1 つ決め、そこへ寄せる**方式にした。
-            # 目標は連鎖固有 seed から決めるので chain_seed だけで再現でき、
-            # --minimize / --replay の前提を壊さない。1500 連鎖 / 434 op なら
-            # 1 op あたり平均 3.5 連鎖が狙ってくれる勘定になる。
-            if target is not None and rng.random() < explore:
-                hit = [o for o in cands if o[0] == target[0]]
-                if hit:
-                    cands = hit
-                else:
-                    # 目標が食う型を**産む** op を優先 = 1 手ぶん近づく
-                    want = set(target[2])
-                    step = [o for o in cands if o[3] in want]
-                    if step:
-                        cands = step
-            name, dim, ins, out, fn = cands[rng.integers(len(cands))]
-        occ[name] = occ.get(name, 0) + 1
-        arng = _step_rng(chain_seed, name, occ[name], rng)
-        if name in OP_ARG_BUILDERS:
-            bound = OP_ARG_BUILDERS[name](pool, arng)
-            # builder が **list** を返したら「data 引数だけを組んだ」の意で、
-            # 残る必須引数の束縛は通常経路(op 固有 → 名前ヒント)に任せる。
-            # tuple を返す builder(従来のもの)は (args, kwargs) 完成形。
-            if isinstance(bound, list):
-                bound = _bind_args(name, fn, bound, arng)
-        else:
-            data_args = []
-            for t in ins:
-                src = pool[t] if t != "any" else pool[arng.choice(sorted(pool))]
-                data_args.append(src[arng.integers(len(src))])
-            bound = _bind_args(name, fn, data_args, arng)
-        if bound is None:
-            # **必須引数を組めなかった** = fn は一度も呼ばれていない。成功列
-            # (trace)からも findings からも消えるので、これを数えないと
-            # 「頑健で発見ゼロ」と「引数が作れず未実行」が同じ顔になる。
+                    census["bind_fail"].add(name)
+                continue
+            args, kwargs = bound
+            # ここから先は fn を必ず呼ぶ。**呼んだこと自体**を成否と別に記録する
+            # (拒否された op も「実行済み」— 実行されていない op とは意味が違う)。
             if census is not None:
-                census["bind_fail"].add(name)
-            continue
-        args, kwargs = bound
-        # ここから先は fn を必ず呼ぶ。**呼んだこと自体**を成否と別に記録する
-        # (拒否された op も「実行済み」— 実行されていない op とは意味が違う)。
-        if census is not None:
-            census["ran"].add(name)
-        big = sum(_nbytes(a) for a in args)
-        if big > 32 * 2 ** 20:
-            # 重い入力は実行前に予告(万一のストールでもログだけで犯人が判る)
-            print(f"  big-input: {name} ({big / 2**20:.0f} MB)", flush=True)
-        t0 = time.perf_counter()
-        try:
-            result = fn(*args, **kwargs)
-        except Exception as exc:  # noqa: BLE001 — ファザーの本懐
-            kind = _classify(exc)
-            if kind != "OPTIONAL":
-                log.append({"kind": kind, "op": name, "dim": dim,
-                            "exc": type(exc).__name__, "msg": str(exc)[:200],
-                            "trace": trace + [name], "seed": chain_seed,
-                            "tb": traceback.format_exc(limit=3)})
-            continue
-        dt = time.perf_counter() - t0
-        if dt > SLOW_S:
-            log.append({"kind": "SLOW", "op": name, "dim": dim, "sec": round(dt, 1),
-                        "trace": trace + [name], "seed": chain_seed})
-        if name in ADAPTERS:
-            result = ADAPTERS[name](result)
-        if result is None:
-            continue
-        if not _finite_ok(result) and name not in NONFINITE_BY_CONTRACT:
-            log.append({"kind": "NONFINITE", "op": name, "dim": dim,
-                        "trace": trace + [name], "seed": chain_seed})
-            continue                      # 毒は pool に入れない
-        nb = _nbytes(result)
-        if nb > MAX_POOL_BYTES:
-            log.append({"kind": "GROWTH", "op": name, "dim": dim,
-                        "mb": round(nb / 2 ** 20, 1),
-                        "trace": trace + [name], "seed": chain_seed})
-            continue                      # 巨大産物は pool に入れない(指数増殖防止)
-        check = TYPE_CHECKS.get(out)
-        if check is not None and not check(result):
-            log.append({"kind": "TYPEMISS", "op": name, "dim": dim,
-                        "exc": out, "msg": "declared %r but returned %s%s" % (
-                            out, type(result).__name__,
-                            getattr(result, "shape", "")),
-                        "trace": trace + [name], "seed": chain_seed})
-            continue                      # 型の嘘も pool に入れない
-        trace.append(name)
-        pool.setdefault(out, []).append(result)
-    return trace
+                census["ran"].add(name)
+            big = sum(_nbytes(a) for a in args)
+            if big > 32 * 2 ** 20:
+                # 重い入力は実行前に予告(万一のストールでもログだけで犯人が判る)
+                print(f"  big-input: {name} ({big / 2**20:.0f} MB)", flush=True)
+            t0 = time.perf_counter()
+            try:
+                result = fn(*args, **kwargs)
+            except Exception as exc:  # noqa: BLE001 — ファザーの本懐
+                kind = _classify(exc)
+                if kind != "OPTIONAL":
+                    log.append({"kind": kind, "op": name, "dim": dim,
+                                "exc": type(exc).__name__, "msg": str(exc)[:200],
+                                "trace": trace + [name], "seed": chain_seed,
+                                "tb": traceback.format_exc(limit=3)})
+                continue
+            dt = time.perf_counter() - t0
+            if dt > SLOW_S:
+                log.append({"kind": "SLOW", "op": name, "dim": dim, "sec": round(dt, 1),
+                            "trace": trace + [name], "seed": chain_seed})
+            if name in ADAPTERS:
+                result = ADAPTERS[name](result)
+            if result is None:
+                continue
+            if not _finite_ok(result) and name not in NONFINITE_BY_CONTRACT:
+                log.append({"kind": "NONFINITE", "op": name, "dim": dim,
+                            "trace": trace + [name], "seed": chain_seed})
+                continue                      # 毒は pool に入れない
+            nb = _nbytes(result)
+            if nb > MAX_POOL_BYTES:
+                log.append({"kind": "GROWTH", "op": name, "dim": dim,
+                            "mb": round(nb / 2 ** 20, 1),
+                            "trace": trace + [name], "seed": chain_seed})
+                continue                      # 巨大産物は pool に入れない(指数増殖防止)
+            check = TYPE_CHECKS.get(out)
+            if check is not None and not check(result):
+                log.append({"kind": "TYPEMISS", "op": name, "dim": dim,
+                            "exc": out, "msg": "declared %r but returned %s%s" % (
+                                out, type(result).__name__,
+                                getattr(result, "shape", "")),
+                            "trace": trace + [name], "seed": chain_seed})
+                continue                      # 型の嘘も pool に入れない
+            trace.append(name)
+            pool.setdefault(out, []).append(result)
+        return trace
 
 
 # --------------------------------------------------------------------------- #

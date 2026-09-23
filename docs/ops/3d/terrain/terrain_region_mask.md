@@ -7,7 +7,7 @@ out: signal
 examples: [itokawa_regolith_hero]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.2  # fullseye lib version this note was generated for
+version: 0.2.3  # fullseye lib version this note was generated for
 ---
 
 # terrain_region_mask — 3D `terrain` op
