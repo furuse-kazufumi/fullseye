@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gum_standard_uncertainty — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_standard_uncertainty(table, halfwidth=&#x27;halfwidth&#x27;, distribution=&#x27;distribution&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import spc; spc.gum_standard_uncertainty(table, halfwidth=&#x27;halfwidth&#x27;, distribution=&#x27;distribution&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspc.get(&quot;gum_standard_uncertainty&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p><b>분포의 형태</b>로부터 불확도 성분을 표준불확도로 환산 (`<code style="color:#22d3bf">table</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>校正証明書や規格が与えるのは「半幅 a」「95 % で ±U」のような形であって標準偏差</p>
+<p>ではない。伝播則が食えるのは標準不確かさだけなので、ここで揃える:</p>
+<p>矩形(一様)  u = a / sqrt(3)      三角      u = a / sqrt(6)</p>
+<p>U 字(逆正弦) u = a / sqrt(2)      normal_95 u = a / 1.959964</p>
+<p>★どれも分布の分散の定義から出る<b>厳密</b>な値で、モンテカルロで標本標準偏差を</p>
+<p>取れば同じ数に収束する(`<code style="color:#22d3bf">gum_monte_carlo</code>` が独立に確かめる)。</p>
+<p>★★<b>既定の分布を置かない</b>。一番よく使うからといって矩形を既定にすると、</p>
+<p>形を書き忘れた成分が黙って a/sqrt(3) になる —— 三角のつもりなら 1.41 倍、</p>
+<p>95 % 区間のつもりなら 1.13 倍ずれた不確かさが、例外を出さずに下流へ流れる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_measurement_system_analysis">poc_measurement_system_analysis</a> — <code style="color:#22d3bf">py -3.11 examples/poc_measurement_system_analysis.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a> · <a style="color:#22d3bf" href="opspc:gum_validate">gum_validate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">uncertainty</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a> · <a style="color:#22d3bf" href="opspc:gum_validate">gum_validate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

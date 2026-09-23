@@ -1210,7 +1210,98 @@ def _b_spc_hotelling_t2(pool, rng):
     return (rng.normal(0.0, 1.0, size=(50, 3)),), {}
 
 
+def _b_msa_table(pool, rng):
+    """部品 6 x 測定者 3 x 繰り返し 3 の**釣り合った**表(不釣り合いは op が拒む)。
+
+    ★成分ごとに違う大きさを与える —— すべて同じ散らばりの表だと、分散成分を
+    取り違えている実装でも数字が揃ってしまい、探針が何も言えなくなる。
+    """
+    p, o, r = 6, 3, 3
+    a = rng.normal(0.0, 1.0, p)          # 部品差(大)
+    b = rng.normal(0.0, 0.2, o)          # 測定者差(中)
+    part, oper, val = [], [], []
+    for i in range(p):
+        for j in range(o):
+            for _ in range(r):
+                part.append("P%d" % i)
+                oper.append("A%d" % j)
+                val.append(10.0 + a[i] + b[j] + rng.normal(0.0, 0.3))
+    return ({"part": np.array(part, dtype=object),
+             "operator": np.array(oper, dtype=object),
+             "value": np.array(val, dtype=np.float64)},), {}
+
+
+def _b_msa_bias(pool, rng):
+    """基準値を **5 水準 x 6 回**(1 水準だけだと傾きが推定できず op が拒む)。"""
+    ref = np.repeat(np.array([1.0, 2.0, 3.0, 4.0, 5.0]), 6)
+    return ({"reference": ref,
+             "measured": ref + 0.05 - 0.01 * ref + rng.normal(0.0, 0.02, ref.size)},), {}
+
+
+def _b_msa_attribute(pool, rng):
+    """検査員 3 人 x 部品 20 個。**1 人 1 部品 1 回**(重複は op が拒む)。"""
+    parts = ["q%02d" % i for i in range(20)]
+    truth = rng.random(20) < 0.75
+    app, prt, rat = [], [], []
+    for a in "ABC":
+        flip = rng.random(20) < 0.1                     # 検査員ごとに少しぶれる
+        for k, p_ in enumerate(parts):
+            app.append(a)
+            prt.append(p_)
+            rat.append("pass" if bool(truth[k] ^ flip[k]) else "fail")
+    return ({"appraiser": np.array(app, dtype=object),
+             "part": np.array(prt, dtype=object),
+             "rating": np.array(rat, dtype=object)},), {}
+
+
+def _b_gum_shape(pool, rng):
+    names = ["rectangular", "triangular", "u_shaped", "normal_95"]
+    return ({"halfwidth": rng.uniform(0.1, 2.0, 4),
+             "distribution": np.array(names, dtype=object)},), {}
+
+
+def _b_gum_budget(pool, rng):
+    """不確かさ予算。感度は**符号を混ぜる**(相関項の符号を探針が動かせるように)。"""
+    n = 4
+    return ({"u": rng.uniform(0.05, 1.0, n),
+             "sensitivity": rng.uniform(-2.0, 2.0, n),
+             "dof": rng.uniform(3.0, 60.0, n)},), {}
+
+
+def _b_gum_mc(pool, rng):
+    """モンテカルロ。n は探針では小さく(規格の下限 1000)。"""
+    n = 3
+    return ({"u": rng.uniform(0.05, 1.0, n),
+             "sensitivity": rng.uniform(-2.0, 2.0, n)},), {"n": 20_000, "seed": 0}
+
+
+def _b_gum_validate(pool, rng):
+    """**2 つの表**を突き合わせる op —— 伝播則の結果とモンテカルロの結果を自分で作る。
+
+    プールの任意の表を 2 つ渡しても列が合わないので、ここで実体を通して組む
+    (``gum_expanded`` は ``estimate`` を渡さないと区間を持たず、この op は拒む)。
+    """
+    import spc as _spc
+    n = 3
+    tab = {"u": rng.uniform(0.1, 1.0, n),
+           "sensitivity": rng.uniform(-2.0, 2.0, n),
+           "dof": np.full(n, np.inf)}
+    guf = _spc.gum_expanded(tab, estimate=0.0)
+    mcm = _spc.gum_monte_carlo(tab, n=20_000, seed=0)
+    return (guf, mcm), {"ndig": 1}
+
+
 OP_ARG_BUILDERS = {
+    # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
+    "msa_anova_table": _b_msa_table,
+    "msa_gauge_rr": _b_msa_table,
+    "msa_bias_linearity": _b_msa_bias,
+    "msa_attribute_agreement": _b_msa_attribute,
+    "gum_standard_uncertainty": _b_gum_shape,
+    "gum_propagate": _b_gum_budget,
+    "gum_expanded": _b_gum_budget,
+    "gum_monte_carlo": _b_gum_mc,
+    "gum_validate": _b_gum_validate,
     # --- flyvision(ハエ視葉)の消費 6 op(形の噛み合う入力を組む) ------------ #
     "fly_hex_resample": _b_fly_resample,
     "fly_emd_response": _b_fly_emd,
@@ -1950,6 +2041,12 @@ NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_sin
 #: 広げすぎると本物の NaN バグが黙って通る — cadmap の注記と同じ)。
 NONFINITE_BY_CONTRACT_MEASURE = {"triangulate_column", "m3c2_distance", "piv_cross_correlate"}
 
+#: 分散分析表は「検定できない行」を **nan で返す**のが契約(残差と全体の行には
+#: F も p も無く、``ms`` も全体行には無い。測定者が 1 人なら交互作用も検定できない)。
+#: そこを 0 で埋めると「F=0 = 完全に有意でない」と読めてしまう —— 無いものは無いと
+#: 書くほうが正しいので、非有限を契約として台帳に載せる(連鎖ファザーが実検出した)。
+NONFINITE_BY_CONTRACT_MSA = {"msa_anova_table"}
+
 NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "sdf_union", "sdf_intersect", "sdf_subtract",
                          "sdf_smooth_union", "sdf_offset", "mat_cond",
@@ -1958,7 +2055,8 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
                          | NONFINITE_BY_CONTRACT_OPTICS \
     | NONFINITE_BY_CONTRACT_CADMAP | NONFINITE_BY_CONTRACT_SPECULAR \
-    | NONFINITE_BY_CONTRACT_PRESCRIPTION | NONFINITE_BY_CONTRACT_MEASURE
+    | NONFINITE_BY_CONTRACT_PRESCRIPTION | NONFINITE_BY_CONTRACT_MEASURE \
+    | NONFINITE_BY_CONTRACT_MSA
 
 #: pool へ入れる 1 産物の上限バイト数。拡大系 op(upsample/uncrop/resize)の連鎖で
 #: 体積が指数増殖し、後段の全 op が実質ハングする(wave-4 実測: ~34GB の voxel に

@@ -57,6 +57,24 @@ _CATALOG = {
     "multivariate": [
         ("spc_hotelling_t2", "spc", ["matrix"], "table"),
     ],
+    # 測定システム解析。入力は「1 行 = 1 回の測定」の表(部品 / 測定者 / 値)で、
+    # 返りも表 —— 新しい型の語は 1 つも要らない。
+    "msa": [
+        ("msa_anova_table", "spc", ["table"], "table"),
+        ("msa_gauge_rr", "spc", ["table"], "table"),
+        ("msa_bias_linearity", "spc", ["table"], "table"),
+        ("msa_attribute_agreement", "spc", ["table"], "table"),
+    ],
+    # 測定の不確かさ(GUM)。成分の表 -> 合成不確かさ -> 拡張不確かさ、の 3 段と、
+    # その独立な検算になるモンテカルロ。
+    "uncertainty": [
+        ("gum_standard_uncertainty", "spc", ["table"], "table"),
+        ("gum_propagate", "spc", ["table"], "table"),
+        ("gum_expanded", "spc", ["table"], "table"),
+        ("gum_monte_carlo", "spc", ["table"], "table"),
+        # 検証は**2 つの表を突き合わせる** —— 伝播則の結果とモンテカルロの結果。
+        ("gum_validate", "spc", ["table", "table"], "table"),
+    ],
 }
 
 

@@ -4,7 +4,7 @@ dim: annotate
 category: plot
 in: image2d × axes
 out: image2d
-examples: [annotate_gallery]
+examples: [annotate_gallery, poc_measurement_system_analysis]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -43,6 +43,7 @@ ValueError
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
+- [poc_measurement_system_analysis](../../../../examples/poc_measurement_system_analysis.py) — `py -3.11 examples/poc_measurement_system_analysis.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

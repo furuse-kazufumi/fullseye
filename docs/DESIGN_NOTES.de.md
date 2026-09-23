@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 902. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 927. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -523,6 +523,19 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L241** _(ja)_ — ★同じ瞬間を 3 方向から(2026-09-20、ユーザー「いくつかの方向から発火状態を見れると良い」): 上段コネクトーム、下段 shuffle
 
+## `examples/poc_measurement_system_analysis.py`
+
+- **L155** _(ja)_ — ★★看板は**一目で読める**ものにする。濃淡の地図は情報としては正しいが 読者には「色のついた雑音」で、何の図か分からない。ゲージ R&R の古典的な 見せ方 —— 部品ごとに測定値を縦に並べる —— なら、10 個の塊が縦に離れて いるのが部品差、各塊の**太さ**が測る行為のばらつき、と目で読める。
+- **L220** _(ja)_ — ★2 点を結んだ直線では「7.3 % 違う」としか言えない。**交互作用の強さを 掃引**すると、いつモデル選択が効いていつ効かないのかが曲線で見える。
+- **L415** _(ja)_ — ★★規格の「t 表を引く直前に切り捨てる」は、滑らかな t(ν) に対する**階段**。 実装が踏んだ欠陥(切り捨てずに引いた)が、そのまま曲線と階段の差になる。
+- **L438** _(ja)_ — ★3 点の散布では「向きが逆」が読み取れない。**相関係数を掃引**すると、 2 本の曲線が無相関の水平線を**反対側で**横切るのが見える。
+- **L510** _(ja)_ — ★★その 150 は乱数ではなく**閉形式**で出る: X1²+X2² は u²χ²₂ = 平均 2u² の 指数分布なので、上側 95 % 点は 2u² ln 20。公表値と小数 1 桁まで合う。
+- **L525** _(ja)_ — ★★閉形式が絵になる場所。x1 = x2 = 0 では X1^2 + X2^2 は u^2 chi^2_2、 すなわち**平均 2u^2 の指数分布**。95 % 点は 2 u^2 ln 20 で閉形式。
+- **L591** _(ja)_ — ★★半幅を 3 本の水平線で並べても「なぜ違うのか」は見えない。**密度を 重ねる**と、正規近似の裾が実際より厚いことが絵で分かる。
+- **L603** _(ja)_ — ★区間は**水平の線分**で描く(plot_series は非有限を拒むので 「NaN で区切って 2 本の縦線」は使えない。読みやすくもある)
+- **L666** _(ja)_ — ★窓は**3 段階すべてが入る**ように取る。伝播則の下端が 0 を超えるのは x1 > 2 k u = 0.0196 なので、そこまで届かない窓だと「追いつく」が見えない。
+- **L676** _(ja)_ — ★各コマで最大値に正規化する。絶対密度のままだと、指数(原点で 2e4)と 後半の正規(1.6e3)で 1 桁違い、後半が平らに潰れて**形の変化が見えない**。
+
 ## `examples/poc_mesh_quality_repair.py`
 
 - **L602** — ★Zeige es gesättigt. Der reine Unterschied beträgt höchstens %.2f mm, und färbt man ihn unverändert, werden 99 %% der Pixel 0 und pechschwarz — eine Abbildung nach dem Motto 'lief, aber nichts ist zu sehen'.
@@ -756,6 +769,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L308** _(ja)_ — ★手前側の**辺**を集めて、ひとつの座標系で一度に焼く。三角形を 1 枚ずつ 焼くと、呼び出しごとに自分の外接矩形へ正規化されて図が壊れる。
 - **L423** _(ja)_ — ★判定は "is not a similarity" で行う。"similarit" だけで見ると **op 名 `ifs_similarity_dimension` そのものに当たって必ず通る** —— 最初それで書いており、しかも preset 名を間違えて("fern"、正しくは "barnsley_fern")未知 preset の拒否を見ていたのに OK が出ていた。
 - **L547** _(ja)_ — ★図の書き出しが失敗したら、ここで拾う。見ないと「検査は全部 OK・でも図は 1 枚も出ていない」が黙って通る(examplefig は fail-soft で貯める)。
+
+## `examples/poc_thermal_drift_metrology.py`
+
+- **L553** _(ja)_ — ★語で穴を固定すると、別の意味で同じ語を使う族が来た瞬間に鳴る。`gauge` は 測定システム解析(`msa_gauge_rr` = ゲージ R&R)が入った時点で当たるように なった —— この repo で 4 度目の偽陽性なので、意味の合う語だけに絞る。
 
 ## `examples/poc_thermal_radiometry.py`
 
@@ -1320,6 +1337,16 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L293** — ★ Grund des Hinzufügens, messungsbasiert: `poc_dfm_thickness_overhang` und `poc_cad_scan_deviation` berichteten, # "ein Maschinenteil besteht aus zylindrischen Bohrungen, Fasen und Verrundungen, aber da die Primitive nur Kugel und # Quader sind, lässt es sich nicht mit CSG zusammenbauen", und beide schrieben pro Fläche analytische Formeln selbst. Die 4 hier sind **alle geschlossen-form und exakt** (außen ist die # euklidische Distanz zur nächsten Oberfläche, innen der negative Wert zur nächsten Fläche), sodass ein synthetisches Teil mit # Grundwahrheit nun allein mit CSG zusammengebaut werden kann. # --------------------------------------------------------------------------- #
 
+## `spc.py`
+
+- **L428** _(ja)_ — ★管理図と工程能力は「工程のばらつき」を見るが、その数字は**測定のばらつきを 含んだまま**である。ゲージ R&R は総変動を「部品差」と「測る行為の差」に分け、 後者が前者を食っていないかを見る —— 工程能力の前に来るべき検査で、ここが 抜けていると「工程が暴れている」と読んだものが実は測定器だったという取り違えが 起きる。GUM は同じ問いを 1 回の測定について立て、成分ごとの不確かさを 合成する。どちらも閉形式で、照合できる恒等式を持つ。 =========================================================================== #
+- **L734** _(ja)_ — ★どのモデルで出した数字かを必ず載せる(黙って切り替えない)
+- **L1020** _(ja)_ — ★★**破綻は警告でなく構造で返す**。感度係数がすべて 0 になると、入力に 不確かさがあるのに合成不確かさが 0 になる —— 規格の比較損失の例 (``dY = X1^2 + X2^2`` を ``x_i = 0`` で評価)がまさにこれで、 ``c_i = 2 x_i = 0`` だから 1 次近似は「不確かさゼロ」と答える。数式としては 正しいが**測定の主張としては嘘**で、モンテカルロは同じ状況で ``u = 50e-6`` を返す。0 を返すこと自体は止めない(それが伝播則の答えなので)が、 ``guf_valid=False`` と ``invalid_reasons=["stationary_point"]`` を**結果に 同伴させる**。警告にすると握りつぶされ、呼んだ側は「測定が完璧だった」と読む。
+- **L1029** _(ja)_ — ★**この検出条件そのものは本実装の判断であって、規格が列挙したものではない**。 規格が定めるのは線形モデルの 3 条件(Welch-Satterthwaite の適用可否 / 有限自由度の入力が独立であること / 出力分布が正規または t で近似できること)と 非線形モデルの 5 条件(最良推定値の近傍で連続微分可能 / 適切な次数の全微分で 成立 / 高次項に関わる入力が独立 / その分布が正規 / 落とした高次項が無視できる) で、「感度が全部 0」「区間が定義域を出る」という**判定手順は書かれていない**。 ここで実装したのは、その条件が破れたときに**観測される形**のほうである —— 停留点は高次項が支配する特殊例、負側への張り出しは正規近似の破綻の現れ。
+- **L1044** _(ja)_ — ★破綻は**警告でなく構造**で返す(警告は握りつぶされる/ログに消える)
+- **L1086** _(ja)_ — ★規格は「nu_eff が整数でなければ**次に小さい整数へ切り捨ててから** t を引く」 ことを要求する(安全側に倒すため)。16.64 のまま引くと k = 2.1132、 切り捨てて 16 で引くと 2.1199 —— 公表例題の 2.12 は後者。0.3 % の差だが、 拡張不確かさは報告書に載る数字なので規格どおりに倒す。切り捨て前の値も ``dof_effective`` に残す(どこで丸めたかが見えないと追えない)。
+- **L1116** _(ja)_ — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
+
 ## `specops.py`
 
 - **L810** — ★ Dies ist ein Wert, der **sowohl von der Färbung als auch vom Bildgebungssystem abhängt** und keine universelle Konstante ist —— wenn du auf eigenen Objektträgern quantifizierst, nimm einen Einzelfärbungs-Objektträger auf und miss ihn mit :func:`stain_vectors_from_patches` neu.
@@ -1497,6 +1524,16 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L215** _(ja)_ — ★数を直書きしない。9 本目(fullseye_fix_text)を足したとき、この門は CI の core ジョブでしか走らず、手元のスイートは緑のまま CI だけ赤になった(2026-09-18)。 正本は checkout の TOOLS —— wheel が同じ集合を名乗ることを見る。
 
+## `tests/test_msa.py`
+
+- **L80** _(ja)_ — ★この恒等式は**交互作用を残すモデル**の性質なので、モデルを明示して問う。 既定の "auto" は規格の手順に従って交互作用を誤差へ畳むことがあり、そのとき EV^2 は「升目ごとの分散の平均」ではなく「畳んだあとの平均平方」になる。 (この門は実際にその切替を捕まえた —— 既定を変えた瞬間に落ちた)
+- **L91** _(ja)_ — ★★連鎖ファザーが ``msa_anova_table`` の NONFINITE を実検出した(2026-09-23)。 正しい対処は「この op の非有限を許す」ではなく「**どこに出るかを宣言する**」 こと —— 丸ごと許すと二度と鳴らない門になり、将来 0 除算や自由度計算の誤りで 部品行や測定者行に NaN が漏れても捕まえられなくなる。 残差の F / p —— F = MS/MS_error の**分母そのもの**なので検定できない 全体の F / p / ms —— 平方和の合計行で、検定対象の効果ではない 交互作用(測定者 1 人)—— df = (p-1)(o-1) が 0 で推定量が存在しない
+- **L525** _(ja)_ — ★表の脚注が「α = 0.05 で判定」と書いているので、**表の再現を名乗る門は その α を明示して**通す(既定 0.25 の妥当性とは別の話)。この例題では F = 0.434 がどちらの α でも非有意なので、結果はどちらでも同じ。
+- **L794** _(ja)_ — ★区間の端は**標本の分位点**なので 1/sqrt(n) で揺れる。実測(種 8 本): n=200,000 で標準偏差 10.0 / n=1,000,000 で 4.2。偏りではないので、n を 決めた上で揺れの 3 倍で採る(「小さい」ではなく「この n ならこの幅」)。
+- **L814** _(ja)_ — ★**境界を渡さなければ検査しない**(勝手に 0 を下限と仮定しない)
+- **L863** _(ja)_ — ★端点は位置の揺れを拾うので、**幅**でも別に見る(こちらは sd 0.0035)
+- **L887** _(ja)_ — ★許容は**測った揺れ**から取る。n=1,000,000 の半幅の標準偏差は種 12 本で 0.0035(位置は 0.0146)。1 本の種に 2 sigma を当てて落とすのは 3 度目の 同じ誤りなので、4 sigma = 0.014 で採る。
+
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
 - **L22** — ★`tomllib` gibt es ab Python 3.11. **Ein nackter import am Modulanfang bricht auf 3.10 die Sammlung ab, und kein einziger Test läuft** —— direkt nachdem ich am 2026-09-05 mit hypothesis in dieselbe Falle trat, habe ich es in dieser Prüfung reproduziert (CI py3.10 collection error). Import-Fehler immer auf skip herabstufen.
@@ -1618,8 +1655,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L45** — ★Fuer Katalog, Hints und Adapter ist das ausgelieferte Modul ``typed_catalog`` die Quelle der Wahrheit (2026-09-05). Frueher lebten sie hier, und backends_typed las sie, indem es tools/ zu sys.path hinzufuegte -- dadurch verschwanden im wheel tb_* 143 op stillschweigend. Die Richtung wurde umgekehrt.
 - **L286** — Ereignispositionen (Punktprozess) -- der Einstiegspunkt von point_spectrum. ★**Nicht nur gleichverteilten Zufall verwenden**: ohne eine periodische Komponente wird das sinnvolle Verhalten einer "op, die Perioden findet" kein einziges Mal ausgeuebt, daher als Keim **strukturierte Daten** verwenden, die 12 unabhaengige Ereignisse in eine Reihe mit Periode 17.0 mischen (die Disziplin dieses repo, dass rein zufaellige Tests strukturelle Defekte verbergen).
 - **L900** — ★Eine Punktwolke mit nicht-endlichen Werten **bringt die KD-Baum-Konstruktion selbst mit einem rohen ValueError zum Absturz** (scipy: "data must be finite"). Der Pool ist so ausgelegt, dass er NONFINITE protokolliert und die Werte behaelt, daher ist eine verunreinigte Punktwolke hier erwartbar -- die bauende Seite muss absichern. Am 2026-09-06 real getroffen: eine neue Familie kam hinzu, die Art, wie Ketten durchlaufen werden, aenderte sich, und bei seed 3_000_0xx wurde dieser Pfad getroffen und der fuzzer selbst hielt an (kein Defekt der op, sondern **ein Defekt des Werkzeugs**. Die Zusage ist, dass nicht bindbare Eingabe uebersprungen und nicht geworfen wird).
-- **L1613** — ★Bis 2026-09-02 war es ``lambda v: True`` = **da das Praedikat als "vorhanden" gezaehlt wird, ist es schlimmer als gar keins** (auch das Pruefskript zaehlt es als "hat ein Praedikat"). Gemessen liess es sogar None / 42 / einen String / ein dict durch. Der Kanon wurde festgelegt, indem alle 6 konsumierenden op (reprconvs pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar) **vollstaendig ausgefuehrt** wurden: alle 6 op akzeptieren nur die beiden obigen Formen, alles andere wird zu einem namentlichen fail-closed mit "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (gemessen). Da **(2,N) nicht akzeptiert wird**, wurden die 3 adapter, die ein 2-tuple mit np.stack zu (2,N) zusammendrueckten, auf axis=1 korrigiert. Zwei Arrays unterschiedlicher Laenge (histograms counts/edges) sind ebenfalls kein "Paar" und werden abgewiesen.
-- **L1731** — ★"Genau 2 Elemente" ist **absichtlich anders** als pose (das via `len >= 2` info erlaubt). Gemessen 2026-09-02: die 4 bestehenden consumer, die ein mesh als ein Argument nehmen (face_normals / vertex_normals / mesh_area / vertex_curvature), geben fuer ein 3-tuple "mesh must be a 2-element tuple (vertices, faces)" aus, und cadmaps `_mesh` und render3d._mesh_arrays akzeptieren ebenfalls nur 2 Elemente. Das heisst **der Kanon fuer den mesh sort dieses repo ist ein 2-tuple**, und ein zusaetzliches Element ist nicht "mehr Information", sondern eine Luege auf Typ-Ebene, die alles Nachgelagerte ausloescht. Die einzige Ausnahme `voxel_to_mesh` (die (v, f, n) zurueckgibt) laesst jetzt die kanonische Reihenfolge in ops3d.RESULT_ADAPTERS extrahieren (gleich behandelt wie gicp / vol_label).
+- **L1704** — ★Bis 2026-09-02 war es ``lambda v: True`` = **da das Praedikat als "vorhanden" gezaehlt wird, ist es schlimmer als gar keins** (auch das Pruefskript zaehlt es als "hat ein Praedikat"). Gemessen liess es sogar None / 42 / einen String / ein dict durch. Der Kanon wurde festgelegt, indem alle 6 konsumierenden op (reprconvs pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar) **vollstaendig ausgefuehrt** wurden: alle 6 op akzeptieren nur die beiden obigen Formen, alles andere wird zu einem namentlichen fail-closed mit "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (gemessen). Da **(2,N) nicht akzeptiert wird**, wurden die 3 adapter, die ein 2-tuple mit np.stack zu (2,N) zusammendrueckten, auf axis=1 korrigiert. Zwei Arrays unterschiedlicher Laenge (histograms counts/edges) sind ebenfalls kein "Paar" und werden abgewiesen.
+- **L1822** — ★"Genau 2 Elemente" ist **absichtlich anders** als pose (das via `len >= 2` info erlaubt). Gemessen 2026-09-02: die 4 bestehenden consumer, die ein mesh als ein Argument nehmen (face_normals / vertex_normals / mesh_area / vertex_curvature), geben fuer ein 3-tuple "mesh must be a 2-element tuple (vertices, faces)" aus, und cadmaps `_mesh` und render3d._mesh_arrays akzeptieren ebenfalls nur 2 Elemente. Das heisst **der Kanon fuer den mesh sort dieses repo ist ein 2-tuple**, und ein zusaetzliches Element ist nicht "mehr Information", sondern eine Luege auf Typ-Ebene, die alles Nachgelagerte ausloescht. Die einzige Ausnahme `voxel_to_mesh` (die (v, f, n) zurueckgibt) laesst jetzt die kanonische Reihenfolge in ops3d.RESULT_ADAPTERS extrahieren (gleich behandelt wie gicp / vol_label).
 
 ## `tools/ci_wheel_check.py`
 
@@ -1752,7 +1789,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tools/preflight_op_add.py`
 
 - **L20** _(ja)_ — # 選び方(★ここが肝)
-- **L53** _(ja)_ — ★`__all__` と `list_ops` は**入れない**。どの族のテストにも出てくる語なので 392 本中 107 本を選んでしまい、そのうえ肝心の探針の門(`test_op_probe_ledger`)は その語を持たないので**取り逃す**(2026-09-23 実測)。広く取れば安全、ではない —— 選ぶ語は「その帳簿を読んでいる」ことの証拠でなければならない。
+- **L55** _(ja)_ — ★`__all__` と `list_ops` は**入れない**。どの族のテストにも出てくる語なので 392 本中 107 本を選んでしまい、そのうえ肝心の探針の門(`test_op_probe_ledger`)は その語を持たないので**取り逃す**(2026-09-23 実測)。広く取れば安全、ではない —— 選ぶ語は「その帳簿を読んでいる」ことの証拠でなければならない。
 
 ## `tools/regen_all.py`
 

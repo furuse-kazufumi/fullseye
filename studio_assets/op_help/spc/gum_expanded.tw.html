@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gum_expanded — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_expanded(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, dof=&#x27;dof&#x27;, level=0.95, correlation=None, estimate=None, lower_bound=None, upper_bound=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import spc; spc.gum_expanded(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, dof=&#x27;dof&#x27;, level=0.95, correlation=None, estimate=None, lower_bound=None, upper_bound=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsspc.get(&quot;gum_expanded&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>Welch-Satterthwaite 有效自由度、包含因子 k 與擴展不確定度 U(`<code style="color:#22d3bf">table</code>`)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>nu_eff = u_c^4 / sum_i (c_i u_i)^4 / nu_i        U = k u_c,  k = t_{p}(nu_eff)</p>
+<p>★門にできる厳密な性質が 3 つある:</p>
+<p style="margin:2px 0 2px 12px">• 成分が 1 つだけなら `<code style="color:#22d3bf">nu_eff == nu</code>`(厳密)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">nu_eff &gt;= min_i nu_i</code>` が<b>常に</b>成り立つ。証明は</p>
+<p>`<code style="color:#22d3bf">sum u_i^4/nu_i &lt;= (1/nu_min) sum u_i^4 &lt;= (1/nu_min)(sum u_i^2)^2</code>`。</p>
+<p>有効自由度が最小の成分より小さくなったら計算が壊れている。</p>
+<p style="margin:2px 0 2px 12px">• すべての自由度が無限大なら `<code style="color:#22d3bf">k</code>` は正規分布の分位点へ収束する</p>
+<p>(95 % で 1.959964)。</p>
+<p>無限自由度(既知の定数など)は `<code style="color:#22d3bf">numpy.inf</code>` を入れる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_measurement_system_analysis">poc_measurement_system_analysis</a> — <code style="color:#22d3bf">py -3.11 examples/poc_measurement_system_analysis.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a> · <a style="color:#22d3bf" href="opspc:gum_validate">gum_validate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">uncertainty</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a> · <a style="color:#22d3bf" href="opspc:gum_validate">gum_validate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

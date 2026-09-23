@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">msa_bias_linearity — SPC <code style="color:#22d3bf">msa</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spc; spc.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;msa_bias_linearity&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>基準値に対する偏りと、その基準値依存(直線性)(`<code style="color:#22d3bf">table</code>`)。</p>
+<p>偏り `<code style="color:#22d3bf">bias = measured - reference</code>` を基準値に回帰する</p>
+<p>(`<code style="color:#22d3bf">bias = intercept + slope * reference</code>`)。傾きが 0 でなければ、測定系は</p>
+<p>測定範囲の<b>場所によって違う量だけずれている</b> = 直線性の問題。</p>
+<p>返りは基準値ごとの平均偏り(`<code style="color:#22d3bf">ref</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">bias_mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n</code>`)と、回帰の</p>
+<p>`<code style="color:#22d3bf">intercept</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">slope</code>` / それぞれの標準誤差・t 値・p 値、全体平均偏り。</p>
+<p>★門にできる厳密な性質: 雑音の無い `<code style="color:#22d3bf">bias = a + b*ref</code>` を渡すと最小二乗は</p>
+<p>a と b を<b>厳密に</b>返す(残差 0)。そのとき標準誤差は 0 なので t は `<code style="color:#22d3bf">inf</code>` /</p>
+<p>p は 0 —— これは欠陥ではなく完全適合の正しい報告なので、そのまま返す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_measurement_system_analysis">poc_measurement_system_analysis</a> — <code style="color:#22d3bf">py -3.11 examples/poc_measurement_system_analysis.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a> · <a style="color:#22d3bf" href="opspc:gum_validate">gum_validate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">msa</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

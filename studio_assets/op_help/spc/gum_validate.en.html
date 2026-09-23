@@ -1,0 +1,57 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gum_validate — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_validate(guf, mcm, ndig=2)</code> (to call the implementation directly, <code style="color:#22d3bf">import spc; spc.gum_validate(guf, mcm, ndig=2)</code>; from the registry, <code style="color:#22d3bf">opsspc.get(&quot;gum_validate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p><b>Validate</b> the propagation-law result against the Monte Carlo result (`<code style="color:#22d3bf">table</code>`).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>*guf* は `<code style="color:#22d3bf">gum_expanded</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">estimate</code>` を渡して区間を出したもの)、*mcm* は</p>
+<p>`<code style="color:#22d3bf">gum_monte_carlo</code>` の返り。手続きは規格 8.1.3 のとおり:</p>
+<p>1. `<code style="color:#22d3bf">u(y)</code><code style="color:#22d3bf"> に対応する**数値許容差** </code><code style="color:#22d3bf">delta</code><code style="color:#22d3bf"> を作る。</code><code style="color:#22d3bf">z</code>` を</p>
+<p>`<code style="color:#22d3bf">c x 10^l</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">c</code><code style="color:#22d3bf"> は *ndig* 桁の整数)の形に書いたとき </code><code style="color:#22d3bf">delta = 0.5 x 10^l</code>`。</p>
+<p>2. `<code style="color:#22d3bf">dlow = |y - U - y_low|</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">dhigh = |y + U - y_high|</code>` を求める</p>
+<p>—— 比べるのは<b>カバレッジ区間の端点</b>であって `<code style="color:#22d3bf">U</code>` そのものではない。</p>
+<p>3. 両方が `<code style="color:#22d3bf">delta</code>` 以下なら、そのインスタンスで伝播則は検証されたとする。</p>
+<p>★<b>「一致した」と「一致すべきだった」を混同しない</b>。この op が返すのは</p>
+<p>*ndig* 桁で見たときの一致であって、真偽ではない。*ndig* を上げれば同じ数字でも</p>
+<p>不一致になる —— 実測(加法モデル、矩形入力、端点差 0.04):</p>
+<p>ndig=1 -&gt; delta 0.5    一致</p>
+<p>ndig=2 -&gt; delta 0.05   一致(きわどい)</p>
+<p>ndig=3 -&gt; delta 0.005  <b>不一致</b></p>
+<p>つまり ndig は「どこまでの桁を主張するか」であり、**主張を強くすれば伝播則は</p>
+<p>検証に落ちる**。既定の 2 は規格が典型と述べる値(1 か 2)の上側。</p>
+<p>★★<b>出力が対称なとき</b>、端点で比べるのは幅で比べるより本質的に厳しい。最短区間の</p>
+<p>幅 `<code style="color:#22d3bf">W(a) = F(a+w) - F(a)</code><code style="color:#22d3bf"> は対称分布の中央で </code><code style="color:#22d3bf">W&#x27; = 0</code>` かつ曲率が小さい</p>
+<p><b>平らな谷</b>になるので、幅は精度よく決まるのに `<code style="color:#22d3bf">argmin</code>`(位置)が定まらない。</p>
+<p>4 成分の加法モデル(正規)で種 12 本ずつ測った実測:</p>
+<p>n           半幅の標準偏差      区間の中心の標準偏差   比</p>
+<p>200,000     0.0054              0.0284                 5.2</p>
+<p>1,000,000   0.0035              0.0146                 4.1</p>
+<p>5,000,000   0.0011              0.0114                10.0</p>
+<p>★<b>これは対称(または近対称)の出力に限った話</b>である。歪んだ出力では最適点が</p>
+<p>一意に強く決まるので位置も普通に `<code style="color:#22d3bf">1/sqrt(n)</code>` で収束する —— 同じ測り方で</p>
+<p>二乗の和(強い歪み)を測ると <b>位置 sd / 幅 sd の比は 1.0</b>(n=200,000 でも</p>
+<p>n=1,000,000 でも)。規格の比較損失の例でモンテカルロが公表値に素直に乗るのは</p>
+<p>そのため。</p>
+<p>したがって `<code style="color:#22d3bf">dlow</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">dhigh</code>` が大きいとき、<b>出力が対称なら</b>それは伝播則の</p>
+<p>誤りではなくモンテカルロの位置決めの揺れであることが多い。理論上は厳密に</p>
+<p>一致するはずの正規入力でも `<code style="color:#22d3bf">ndig=3</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">delta=0.005</code>`)は n=5,000,000 で</p>
+<p>5 本中 2 本しか通らない。</p>
+<p>★区間の推定器そのものに偏りは無い。1 成分・正規の厳密解(半幅 1.959964)に対し</p>
+<p>実測の偏りは n=50,000 で −0.0060、n=5,000,000 で <b>−0.000008</b> まで縮み、</p>
+<p>標準偏差も `<code style="color:#22d3bf">1/sqrt(n)</code>` に従う(0.0086 → 0.0009)。</p>
+<p>★検証用のモンテカルロは `<code style="color:#22d3bf">delta/5</code>` の精度まで回すことが規格の推奨で、試行数の</p>
+<p>目安は `<code style="color:#22d3bf">M &gt;= 10^4 / (1 - p)</code>`(95 % なら 2 x 10^5)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_measurement_system_analysis">poc_measurement_system_analysis</a> — <code style="color:#22d3bf">py -3.11 examples/poc_measurement_system_analysis.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">uncertainty</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

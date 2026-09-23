@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gum_propagate — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_propagate(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, correlation=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.gum_propagate(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, correlation=None)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;gum_propagate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Fortpflanzungsgesetz der Messunsicherheit (GUM 5.2, mit Korrelationen) (`<code style="color:#22d3bf">table</code>`).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>u_c^2 = sum_i (c_i u_i)^2 + 2 sum_{i&lt;j} c_i c_j u_i u_j r_ij</p>
+<p>*table* は列 *u*(標準不確かさ)と *sensitivity*(感度係数 `<code style="color:#22d3bf">c_i = df/dx_i</code>`)を</p>
+<p>持つ表。*correlation* に (n, n) の相関行列を渡すと相関項を含める。</p>
+<p>★門にできる閉形式: `<code style="color:#22d3bf">f = x y</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">c_x = y</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">c_y = x</code>` なので</p>
+<p>`<code style="color:#22d3bf">u_c/|f| = sqrt((u_x/x)^2 + (u_y/y)^2)</code>` —— 相対不確かさの二乗和。</p>
+<p>相関 `<code style="color:#22d3bf">r = +1</code><code style="color:#22d3bf"> の 2 成分では </code><code style="color:#22d3bf">u_c = |c1 u1 + c2 u2||</code>` に<b>厳密に</b>一致し、</p>
+<p>`<code style="color:#22d3bf">r = -1</code><code style="color:#22d3bf"> では </code><code style="color:#22d3bf">|c1 u1 - c2 u2|</code>`(打ち消し)。無相関なら寄与の合計が</p>
+<p>`<code style="color:#22d3bf">u_c^2</code>` にぴったり閉じる。</p>
+<p>★★<b>相関を無視した誤りの向きは一定ではない</b>。「独立として扱うと過小評価になる」</p>
+<p>はよく言われるが、<b>偽である</b>。規格の worked example(電圧・電流・位相差から</p>
+<p>抵抗とリアクタンスを同時に出す例、3 量すべてに相関がある)で相関を落として測ると:</p>
+<p>u_c(R)  0.0702 -&gt; 0.1945   <b>2.8 倍の過大</b></p>
+<p>u_c(X)  0.2961 -&gt; 0.2009   過小</p>
+<p>u_c(Z)  0.2367 -&gt; 0.2041   過小</p>
+<p>同じ 1 つのデータで、量によって向きが逆に出る —— 感度係数の符号と相関の符号の</p>
+<p>積で決まるので、当たり前といえば当たり前だが、「安全側に外れる」と思って相関を</p>
+<p>省くと <b>R では 3 倍近く過大な不確かさを報告</b>することになる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_measurement_system_analysis">poc_measurement_system_analysis</a> — <code style="color:#22d3bf">py -3.11 examples/poc_measurement_system_analysis.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a> · <a style="color:#22d3bf" href="opspc:gum_validate">gum_validate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">uncertainty</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a> · <a style="color:#22d3bf" href="opspc:gum_validate">gum_validate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

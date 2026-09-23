@@ -1,0 +1,50 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gum_monte_carlo — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_monte_carlo(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.gum_monte_carlo(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;gum_monte_carlo&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>GUM 补充文件 1(JCGM 101)的蒙特卡罗分布传播(`<code style="color:#22d3bf">table</code>`)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>各入力量を分布から引いて `<code style="color:#22d3bf">y = sum_i c_i x_i</code>` を作り、標本から標準不確かさと</p>
+<p>最短の包含区間を返す。既定は正規分布で、*distribution* に列名を渡すと</p>
+<p>`<code style="color:#22d3bf">gum_standard_uncertainty</code>` と同じ形の名前(rectangular / triangular / ...)を</p>
+<p>成分ごとに指定できる(半幅ではなく<b>標準不確かさ</b>を持つ分布を作る)。</p>
+<p>*value* と *power* に列名を渡すと <b>冪モデル</b> を回す:</p>
+<p>y = sum_i c_i (x_i + e_i)^{p_i}</p>
+<p>(`<code style="color:#22d3bf">e_i</code><code style="color:#22d3bf"> が分布から引いた揺らぎ。既定は </code><code style="color:#22d3bf">x_i = 0</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">p_i = 1</code>` = 線形。)</p>
+<p>冪までに絞ったのは、台帳に載る op は<b>宣言的</b>でなければならず、任意の関数を</p>
+<p>受け取れないため —— それでも規格の非線形の例(二乗の和)はこれで表現でき、</p>
+<p>伝播則が破綻する場面を再現できる。</p>
+<p>★これは `<code style="color:#22d3bf">gum_propagate</code>` の<b>独立な検算</b>である。伝播則は偏微分と分散の代数、</p>
+<p>こちらは乱数の標本 —— 導出も実装も別なので、線形モデルでは</p>
+<p>`<code style="color:#22d3bf">u_mc -&gt; u_c</code>`(1/sqrt(n) の速さ)に近づくはずで、近づかなければどちらかが</p>
+<p>壊れている。相関は Cholesky 分解で入れるので、伝播則の相関項とは別の経路を通る。</p>
+<p>★★<b>非線形では両者が食い違うのが正しい</b>。規格の例(比較損失</p>
+<p>`<code style="color:#22d3bf">dY = X1^2 + X2^2</code><code style="color:#22d3bf">、各 </code><code style="color:#22d3bf">u = 0.005</code><code style="color:#22d3bf">)を </code><code style="color:#22d3bf">x1 = x2 = 0</code>` で回すと:</p>
+<p>伝播則   感度 `<code style="color:#22d3bf">c_i = 2 x_i</code><code style="color:#22d3bf"> が**両方 0** になるので </code><code style="color:#22d3bf">u_c = 0</code>`、区間 [0, 0]</p>
+<p>モンテカルロ  `<code style="color:#22d3bf">dy = 50e-6</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">u = 50e-6</code><code style="color:#22d3bf">、区間 </code><code style="color:#22d3bf">[0, 150e-6]</code>`</p>
+<p>伝播則は「不確かさゼロ」と答える —— これは実装の誤りではなく、**1 次近似が</p>
+<p>極値で情報を失う**という手法そのものの限界。こういう場面があるから補遺 1 の</p>
+<p>モンテカルロが要る。`<code style="color:#22d3bf">x1 = 0.010</code><code style="color:#22d3bf"> では伝播則の区間が </code><code style="color:#22d3bf">[-96, +296]e-6</code>` と</p>
+<p><b>負の損失</b>を含み(物理的にありえない)、`<code style="color:#22d3bf">x1 = 0.050</code>` まで離れると</p>
+<p>`<code style="color:#22d3bf">[1520, 3480]</code><code style="color:#22d3bf"> 対 </code><code style="color:#22d3bf">[1590, 3543]</code>` と近づく。</p>
+<p>★★**正規分布でない入力では、包含区間は `<code style="color:#22d3bf">k u_c</code>` と一致しない**。矩形分布を</p>
+<p>足し合わせると中心極限定理で正規に近づくが、成分が 1 つだけなら最短 95 % 区間の</p>
+<p>半幅は **`<code style="color:#22d3bf">0.95 a</code><code style="color:#22d3bf">**(支持の端 </code><code style="color:#22d3bf">a</code>` ではない —— 95 % ぶんの幅しか要らない)で、</p>
+<p>`<code style="color:#22d3bf">k u = 1.96 a/sqrt(3) = 1.1316 a</code>` より<b>狭い</b>。比は</p>
+<p>`<code style="color:#22d3bf">1.959964/(sqrt(3) x 0.95) = 1.1911</code>` という閉形式で、実測 1.1914。</p>
+<p>これは欠陥ではなく<b>伝播則が分布の形を捨てている</b>ことの現れなので、両方返して</p>
+<p>読み手に見せる(この 0.95 を最初 `<code style="color:#22d3bf">a</code>` と思い込んで門を誤らせた)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_measurement_system_analysis">poc_measurement_system_analysis</a> — <code style="color:#22d3bf">py -3.11 examples/poc_measurement_system_analysis.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_validate">gum_validate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">uncertainty</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_validate">gum_validate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -550,11 +550,14 @@ def section8_tool_gaps():
     print("      6 節の対策 C はそれを呼ぶだけになる。")
 
     # (b) 基準物によるスケール引き直しの op が無い
-    for kw in ("gauge", "rescale_by", "scale_from", "known_length"):
+    # ★語で穴を固定すると、別の意味で同じ語を使う族が来た瞬間に鳴る。`gauge` は
+    #   測定システム解析(`msa_gauge_rr` = ゲージ R&R)が入った時点で当たるように
+    #   なった —— この repo で 4 度目の偽陽性なので、意味の合う語だけに絞る。
+    for kw in ("rescale_by", "scale_from", "known_length", "scale_by_reference"):
         hit = [n for n in allnames if kw in n.lower()]
         assert not hit, (kw, hit)
     print("  (b) **画面内の既知長さでスケールを引き直す op が無い**")
-    print("      ('gauge'/'scale_from'/'known_length' で 0 件)。")
+    print("      ('rescale_by'/'scale_from'/'known_length' で 0 件)。")
     print("      `annotate_scale_bar` は**描く**ほうで、測るほうではない。")
     print("      6 節で見たとおりこの手法には「基準物をワークと同じ半径に置く」")
     print("      という非自明な条件が付くので、op にして docstring に書く価値がある。")

@@ -1,0 +1,69 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">msa_gauge_rr — SPC <code style="color:#22d3bf">msa</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;msa_gauge_rr&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>基于方差分析法的量具重复性与再现性(`<code style="color:#22d3bf">table</code>`)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>繰り返し性 EV(同じ人が同じ物を測り直したときの散らばり)、再現性 AV(人が</p>
+<p>変わったときの散らばり。交互作用を含む)、その合成 GRR、部品間 PV、総変動 TV、</p>
+<p>`<code style="color:#22d3bf">%GRR = 100 GRR/TV</code><code style="color:#22d3bf">、区別できる階級数 </code><code style="color:#22d3bf">ndc = 1.41 PV/GRR</code>`。</p>
+<p>*tolerance* を渡すと公差に対する比 `<code style="color:#22d3bf">%tolerance = 100 GRR/tolerance</code>` も返す。</p>
+<p>★分散成分は<b>釣り合った交差計画の期待平均平方</b>から出す:</p>
+<p>var_repeat = MS_err</p>
+<p>var_inter  = (MS_inter - MS_err) / r</p>
+<p>var_oper   = (MS_oper - MS_inter) / (p r)</p>
+<p>var_part   = (MS_part - MS_inter) / (o r)</p>
+<p>★★<b>負の分散成分は 0 に丸めるが、丸めたことを隠さない</b>(`<code style="color:#22d3bf">clamped</code>` 列)。</p>
+<p>期待平均平方の差は推定量なので、真の成分が 0 に近いと負になりうる。黙って 0 に</p>
+<p>すると「測定者差は無い」と読めてしまうが、正しくは「<b>推定できなかった</b>」。</p>
+<p>しかもこれは稀な端ではない —— 部品 60 x 測定者 4 x 繰り返し 5 で測定者差を</p>
+<p><b>厳密に 0</b> にした合成データを種 40 本で回すと、<b>31 本</b>で再現性成分が負に出る</p>
+<p>(実測 2026-09-23)。丸めを申告しない実装は、この 31 本すべてで「差が無い」と</p>
+<p>言い切ってしまう。</p>
+<p>★推定量の揺れも隠さない。同じ 60x4x5 で真値 0.4 の繰り返し性は種 40 本で</p>
+<p>平均 0.39710・標準偏差 0.00788 に出る —— 理論の `<code style="color:#22d3bf">sigma/sqrt(2 df)</code>`</p>
+<p>(df = 960 で 0.00913)と同じ桁で、<b>1 本の種を 1 % の精度で信じてはいけない</b>。</p>
+<p>再現性はもっと悪く、測定者 4 人(自由度 3)からの推定なので真値 0.5 に対して</p>
+<p>標準偏差 0.159 —— 桁が合えば上等という量である。</p>
+<p>★★<b>交互作用を残すか、誤差にプールするかで答えが変わる</b>。規格の手順は</p>
+<p>「交互作用の F 検定が有意でなければ交互作用項を落として再計算する」で、</p>
+<p>*pool_interaction* がその選択:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;auto&quot;</code>`(既定)—— 交互作用の p 値が *pool_alpha*(既定 0.25)を<b>超えたら</b></p>
+<p>プールする。</p>
+<p>★★<b>0.25 は規格が明記した数ではない</b>。参考マニュアル本文が言うのは</p>
+<p>「交互作用を見落とす危険を下げるため<b>高い有意水準を選べ</b>」という定性的な指示</p>
+<p>だけで、数値は書かれていない。0.25 はソフトウェア側の慣行の多数派で、</p>
+<p>別の実装は 0.05 を既定にしている。α を<b>大きく</b>すると <code style="color:#22d3bf">p &gt; alpha</code> が成りにくく</p>
+<p>なる = <b>交互作用を残しやすい</b>ので、0.25 は本文の方針に忠実な(保守的な)側。</p>
+<p>一方で規格の worked example の表は脚注に「α = 0.05 で判定」と書いてあるので、</p>
+<p>**その表を再現すると名乗る検査は <code style="color:#22d3bf">pool_alpha=0.05</code> を明示して通すべき**である</p>
+<p>(既定値の話と、公表例題の再現条件の話は別)。この例題では F = 0.434 が</p>
+<p>どちらの α でも非有意なので結果は変わらないが、境界付近のデータでは既定の違いが</p>
+<p>EV / AV を数 % 動かす —— 実測でモデル切替は EV を 7.3 % 動かした。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">False</code>` —— 常に交互作用を残す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">True</code>` —— 常にプールする。</p>
+<p>返りの `<code style="color:#22d3bf">interaction_pooled</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">interaction_p</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">pool_alpha</code>` に**どちらを</p>
+<p>使ったかを必ず載せる**。黙って切り替えると、同じ道具が同じ工程について別の数字を</p>
+<p>返し、その理由が出力のどこにも残らない。</p>
+<p>★実測(規格の例題、10 部品 x 3 測定者 x 3 回の 90 点): 交互作用を残すと</p>
+<p>EV = 0.214435、プールすると EV = 0.199933 —— <b>7.3 % 違う</b>。選択は p 値の</p>
+<p>閾値で決まるので、データがわずかに動けばモデルが飛ぶ。この例題では</p>
+<p>`<code style="color:#22d3bf">F = 0.4337 / p = 0.9741</code>` と交互作用がまったく効いていないため、規格は</p>
+<p>プールした側を公表値にしている(その値をこの実装は 3e-7 で再現する)。</p>
+<p>★門にできる厳密な関係: `<code style="color:#22d3bf">TV^2 == GRR^2 + PV^2</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">GRR^2 == EV^2 + AV^2</code>`</p>
+<p>(定義そのもの)、寄与率の合計 100 %、そして**測定者が 1 人のときの EV は</p>
+<p>升目ごとの標本分散の平均に厳密に一致する**(numpy が真値になる)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_measurement_system_analysis">poc_measurement_system_analysis</a> — <code style="color:#22d3bf">py -3.11 examples/poc_measurement_system_analysis.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a> · <a style="color:#22d3bf" href="opspc:gum_validate">gum_validate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">msa</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

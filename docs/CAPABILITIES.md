@@ -16,9 +16,9 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 33 項目**
+**収録 34 項目**
 
-## 測る (8)
+## 測る (9)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -51,6 +51,14 @@
 使う op: `dem_geodetic_to_ecef`, `dem_ecef_to_geodetic`, `dem_geoid_height`, `dem_height_frame_convert`, `dem_height_frame_residual`, `dem_datum_shift_3param`, `dem_enu_from_geodetic`, `dem_geodetic_from_enu`
 
 動く例: `poc_geodetic_height_frames`, `poc_geodetic_benchmarks_real`, `dem_geodesy_tour`
+
+### [その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ)](capabilities/measurement-system-and-uncertainty.md)
+
+工程のばらつきを見る管理図も工程能力も、**測定のばらつきを含んだままの数字**を見ています。この層はそれを分けます —— 総変動のうち何割が部品どうしの差で、何割が「測るという行為」の差なのか。そして 1 回の測定について、成分ごとの不確かさを合成して報告可能な形にします。
+
+使う op: `msa_anova_table`, `msa_gauge_rr`, `msa_bias_linearity`, `msa_attribute_agreement`, `gum_standard_uncertainty`, `gum_propagate`, `gum_expanded`, `gum_monte_carlo`, `gum_validate`, `spc_capability`, `spc_xbar_r`
+
+動く例: `poc_measurement_system_analysis`
 
 ### [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md)
 

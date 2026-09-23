@@ -437,6 +437,27 @@
    ]
   },
   {
+   "id": "measurement-system-and-uncertainty",
+   "title": "その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ)",
+   "title_en": "How much of that number is your measuring, not your process (gauge R&R and measurement uncertainty)",
+   "category": "測る",
+   "note": "docs/capabilities/measurement-system-and-uncertainty.md",
+   "status": "verified-synthetic",
+   "ops_total": 11,
+   "ops_named_in_tests": 11,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_measurement_system_analysis",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "one-stroke-drawing",
    "title": "写真を 1 本の線にする(点描 → 巡回路 → 回る円)",
    "title_en": "Turn a photograph into a single line (stipple, tour, rotating circles)",
@@ -862,8 +883,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 238,
-  "run_by_the_poc_gate": 141,
+  "examples2d_total": 239,
+  "run_by_the_poc_gate": 142,
   "run_by_the_example_gate": 97,
   "not_run_by_any_gate": 0,
   "gates": [

@@ -41,7 +41,9 @@
 from __future__ import annotations
 
 import argparse
+import glob
 import os
+import re
 import subprocess
 import sys
 
@@ -90,9 +92,43 @@ PATH_TO_SURFACE = [
     ("tools/regen_all.py", ("regen_all",)),
 ]
 
-#: ここを触ったら「op が増減しうる」= 帳簿は全部動く。
-REGISTRY_FILES = ("ops.py", "opsmath.py", "ops3d.py", "mathops.py", "api.py",
-                  "fullseye/__init__.py", "backends_", "printpath.py")
+#: 台帳でない中枢。ここを触っても op は増減しうる。
+_CORE_FILES = ("api.py", "fullseye/__init__.py", "backends_", "typed_catalog.py")
+
+
+def _ledger_modules(path):
+    """台帳が ``_MOD`` で名指ししている実装モジュール名を静的に拾う。"""
+    try:
+        with open(path, encoding="utf-8") as fh:
+            src = fh.read()
+    except OSError:                                        # pragma: no cover
+        return []
+    m = re.search(r"^_MOD\s*=\s*\{(.*?)\}", src, re.S | re.M)
+    return re.findall(r'"([A-Za-z_][A-Za-z_0-9]*)"\s*:', m.group(1)) if m else []
+
+
+def _registry_files():
+    """「ここを触ったら op が増減しうる」ファイル一覧を **repo から導出**する。
+
+    ★★ここは以前 8 つの名前の**手書き列挙**だった。実際には台帳が **40 本**あり、
+    照合は ``startswith`` の完全一致なので ``opsspc.py`` も ``ops1d.py`` も当たらない
+    —— opsspc に op を 8 本足しても「動きうる帳簿: 無し / 選んだ門: 0」と出て、
+    **門が 1 つも選ばれなかった**(2026-09-23 実測。40 本中 3 本しか載っていなかった)。
+    台帳が増えるたびに列挙を直す前提の仕組みは、直し忘れた瞬間に黙って素通しになる
+    —— しかも「0 件」は「帳簿に触っていない」と**区別がつかない顔**で出る。
+
+    そこで列挙をやめ、``ops*.py`` を全部台帳と見なし、各台帳が ``_MOD`` で名指しする
+    実装モジュール(``spc.py`` / ``blob2d.py`` …)も併せて導出する。
+    """
+    names = set(_CORE_FILES)
+    for p in glob.glob(os.path.join(ROOT, "ops*.py")):
+        names.add(os.path.basename(p))
+        for mod in _ledger_modules(p):
+            names.add(mod + ".py")
+    return tuple(sorted(names))
+
+
+REGISTRY_FILES = _registry_files()
 
 
 def _selected():

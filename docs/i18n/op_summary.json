@@ -14212,6 +14212,78 @@
    "ko": "``vector (3,)`` → 정수 시프트 ``(dz, dy, dx)``. :func:`shift_to_vector` 의 반대 방향.",
    "de": "Ein ``vector (3,)`` → eine ganzzahlige Verschiebung ``(dz, dy, dx)``. Die Gegenrichtung von :func:`shift_to_vector`."
   },
+  "spc/gum_expanded": {
+   "fp": "77a9a7ba77bd",
+   "en": "Welch-Satterthwaite effective degrees of freedom, coverage factor k and expanded uncertainty U (``table``).",
+   "zh": "Welch-Satterthwaite 有效自由度、包含因子 k 与扩展不确定度 U(``table``)。",
+   "tw": "Welch-Satterthwaite 有效自由度、包含因子 k 與擴展不確定度 U(``table``)。",
+   "ko": "Welch-Satterthwaite 유효자유도와 포함인자 k, 확장불확도 U (``table``).",
+   "de": "Effektive Freiheitsgrade nach Welch-Satterthwaite, Erweiterungsfaktor k und erweiterte Unsicherheit U (``table``)."
+  },
+  "spc/gum_monte_carlo": {
+   "fp": "d9e91a6e241b",
+   "en": "Monte Carlo propagation of distributions (GUM Supplement 1, JCGM 101) (``table``).",
+   "zh": "GUM 补充文件 1(JCGM 101)的蒙特卡罗分布传播(``table``)。",
+   "tw": "GUM 補充文件 1(JCGM 101)的蒙地卡羅分布傳播(``table``)。",
+   "ko": "GUM 보충문서 1(JCGM 101)의 몬테카를로 전파 (``table``).",
+   "de": "Monte-Carlo-Fortpflanzung von Verteilungen (GUM Supplement 1, JCGM 101) (``table``)."
+  },
+  "spc/gum_propagate": {
+   "fp": "a0a2e97dfe75",
+   "en": "Law of propagation of uncertainty (GUM 5.2, with correlations) (``table``).",
+   "zh": "不确定度传播律(GUM 5.2,含相关性)(``table``)。",
+   "tw": "不確定度傳播律(GUM 5.2,含相關性)(``table``)。",
+   "ko": "불확도 전파 법칙(GUM 5.2, 상관 포함) (``table``).",
+   "de": "Fortpflanzungsgesetz der Messunsicherheit (GUM 5.2, mit Korrelationen) (``table``)."
+  },
+  "spc/gum_standard_uncertainty": {
+   "fp": "ee986188867f",
+   "en": "Convert uncertainty components from the **shape of their distribution** into standard uncertainties (``table``).",
+   "zh": "依据**分布的形状**将不确定度分量换算为标准不确定度(``table``)。",
+   "tw": "依據**分布的形狀**將不確定度分量換算為標準不確定度(``table``)。",
+   "ko": "**분포의 형태**로부터 불확도 성분을 표준불확도로 환산 (``table``).",
+   "de": "Unsicherheitskomponenten anhand der **Form ihrer Verteilung** in Standardunsicherheiten umrechnen (``table``)."
+  },
+  "spc/gum_validate": {
+   "fp": "1aad1d927ed1",
+   "en": "**Validate** the propagation-law result against the Monte Carlo result (``table``).",
+   "zh": "用蒙特卡罗的结果**验证**传播律的结果(``table``)。",
+   "tw": "以蒙地卡羅的結果**驗證**傳播律的結果(``table``)。",
+   "ko": "몬테카를로 결과로 전파 법칙의 결과를 **검증** (``table``).",
+   "de": "Das Ergebnis des Fortpflanzungsgesetzes mit dem Monte-Carlo-Ergebnis **validieren** (``table``)."
+  },
+  "spc/msa_anova_table": {
+   "fp": "eac5dc1a6fcd",
+   "en": "Analysis-of-variance table for a crossed two-factor design (part x operator x replicate) (``table``).",
+   "zh": "交叉双因子设计(零件 x 测量者 x 重复)的方差分析表(``table``)。",
+   "tw": "交叉雙因子設計(零件 x 量測者 x 重複)的變異數分析表(``table``)。",
+   "ko": "교차 2요인 설계(부품 x 측정자 x 반복)의 분산분석표 (``table``).",
+   "de": "Varianzanalysetabelle für einen gekreuzten zweifaktoriellen Versuchsplan (Teil x Prüfer x Wiederholung) (``table``)."
+  },
+  "spc/msa_attribute_agreement": {
+   "fp": "d334291c7d9e",
+   "en": "Agreement between appraisers on attribute (pass/fail) inspection (``table``).",
+   "zh": "计数型(合格/不合格)检验中检验员之间的一致性(``table``)。",
+   "tw": "計數型(合格/不合格)檢驗中檢驗員之間的一致性(``table``)。",
+   "ko": "계수치(합격/불합격) 검사에서 검사원 간의 일치도 (``table``).",
+   "de": "Übereinstimmung der Prüfer bei attributiver (io/nio) Prüfung (``table``)."
+  },
+  "spc/msa_bias_linearity": {
+   "fp": "f26fb762c306",
+   "en": "Bias against a reference value and how that bias depends on the reference (linearity) (``table``).",
+   "zh": "相对于参考值的偏倚,以及该偏倚随参考值的变化(线性)(``table``)。",
+   "tw": "相對於參考值的偏倚,以及該偏倚隨參考值的變化(線性)(``table``)。",
+   "ko": "기준값에 대한 편의와 그 편의의 기준값 의존성(직선성) (``table``).",
+   "de": "Systematische Abweichung gegenüber einem Referenzwert und deren Abhängigkeit vom Referenzwert (Linearität) (``table``)."
+  },
+  "spc/msa_gauge_rr": {
+   "fp": "3d57d8b4bbf4",
+   "en": "Gauge repeatability and reproducibility by the analysis-of-variance method (``table``).",
+   "zh": "基于方差分析法的量具重复性与再现性(``table``)。",
+   "tw": "以變異數分析法求量具重複性與再現性(``table``)。",
+   "ko": "분산분석법에 의한 게이지 반복성·재현성(R&R) (``table``).",
+   "de": "Wiederhol- und Vergleichpräzision eines Messmittels nach dem Varianzanalyseverfahren (``table``)."
+  },
   "spc/spc_capability": {
    "fp": "b1fb992a47e7",
    "ja": "計測と仕様限界からの工程能力指数 Cp / Cpk(中心なら Cpk = Cp)。"

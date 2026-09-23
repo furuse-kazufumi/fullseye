@@ -1,8 +1,8 @@
 {
- "n_ops": 2138,
+ "n_ops": 2147,
  "tiers": {
   "color": 12,
-  "ledger": 1189,
+  "ledger": 1198,
   "nary": 17,
   "registry": 920
  },
@@ -5847,6 +5847,72 @@
    ]
   },
   {
+   "name": "gum_expanded",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "uncertainty",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "gum_monte_carlo",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "uncertainty",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "gum_propagate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "uncertainty",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "gum_standard_uncertainty",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "uncertainty",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "gum_validate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "uncertainty",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
    "name": "gyroid_isosurface",
    "halcon": "",
    "in_sort": null,
@@ -8384,6 +8450,58 @@
    "in_sorts": [
     "image2d",
     "image2d"
+   ]
+  },
+  {
+   "name": "msa_anova_table",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "msa",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "msa_attribute_agreement",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "msa",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "msa_bias_linearity",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "msa",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "msa_gauge_rr",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "msa",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table"
    ]
   },
   {
