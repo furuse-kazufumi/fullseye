@@ -12,6 +12,7 @@ complementing the reference docs (`docs/ops/`, guides) meant for lookup.
 | `fullseye_poc_museum_qiita_ja.md` / `fullseye_poc_museum_qiita_en.md` | **PoC 展示館**: 真値を仕込んだ計測 PoC 53 本を 9 ウィングで展示(生成物。正本は `exhibits/poc_captions.json` + `examples/poc_*.py` の図、`tools/gen_wingpoc_gallery.py` で組む) | ja / **en** |
 | `exhibits/` | 紙面の科学館 —— op で遊ぶ展示。`_intro` / `museum` / `science` / `wing*`(1D/2D/3D/astro/conv/ct/evo …) | ja / 一部 **en** |
 | `qiita_math_drawing_ja.md` / `qiita_math_drawing_en.md` | **数学描画シリーズ**: 定理を門にして描く PoC を 1 本ずつ追記して育てる(第 1〜5 回 = 一筆書き / 複素平面 / 定理の図 / うなり / 力学系と極小曲面)。ja は限定共有、en は一般公開(LinkedIn の誘導先) | ja / **en** |
+| `qiita_measuring_the_measurement_ja.md` / `qiita_measuring_the_measurement_en.md` | **測る側を測る**: ゲージ R&R と測定の不確かさ。合成の門 52 件が緑のまま、規格の公表値と厳密解が 5 件の欠陥を出した話。ja は限定共有、en は一般公開 | ja / **en** |
 | `qiita_3dgs_sim_native.md` | 物理シミュをそのまま 3D Gaussian Splatting にする(姿勢推定いらず・純 PyTorch) | ja |
 | `assets/` | 記事と README で使う図版。**すべて Fullseye 自身の op の実出力**(モックアップなし) | — |
 
@@ -26,17 +27,18 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 
 <!-- articles:start -->
 
-## この下にあるもの(全 49 本 —— 生成)
+## この下にあるもの(全 52 本 —— 生成)
 
 `py -3.11 tools/gen_docs_index_ops.py` が `docs/articles/` を歩いて作ります。**ここから辿れない文書を作らない**ための一覧なので、手で足し引きしないでください。
 
-**記事**(13) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
+**記事**(16) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
 
 | ファイル | 見出し |
 |---|---|
 | [`LINKEDIN_POST.md`](LINKEDIN_POST.md) | LinkedIn 投稿キット(Fullseye) |
 | [`LINKEDIN_POST_flybrain.md`](LINKEDIN_POST_flybrain.md) | LinkedIn 投稿キット(ハエの視覚モデルを体に載せた話) |
 | [`LINKEDIN_POST_math_drawing.md`](LINKEDIN_POST_math_drawing.md) | LinkedIn 投稿キット(数学の絵を定理で採点する話) |
+| [`LINKEDIN_POST_msa.md`](LINKEDIN_POST_msa.md) | LinkedIn 投稿キット(測る側を測る —— 規格の公表値が 5 件を出した話) |
 | [`fullseye_overview_qiita_en.md`](fullseye_overview_qiita_en.md) | Carrying ~1,000 Explainable Classical Vision Algorithms as "Skills" — Building Fullseye, a Self-Made Vision Workshop ... |
 | [`fullseye_overview_qiita_ja.md`](fullseye_overview_qiita_ja.md) | 説明できる古典画像処理を「スキル」として1000個持ち歩く ―― Physical AI のための自作ビジョン工房 **Fullseye** をつくっている話 |
 | [`fullseye_poc_museum_qiita_en.md`](fullseye_poc_museum_qiita_en.md) | A Metrology Museum on Paper — Planting Your Own Ground Truth to Find Where Image Measurement Breaks |
@@ -47,6 +49,8 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 | [`qiita_flybrain_closedloop_ja.md`](qiita_flybrain_closedloop_ja.md) | 静止した検査に全部通ったモデルが、歩き出した瞬間に全滅した ―― ハエの視覚モデルを体に載せて測る |
 | [`qiita_math_drawing_en.md`](qiita_math_drawing_en.md) | Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test |
 | [`qiita_math_drawing_ja.md`](qiita_math_drawing_ja.md) | 数学の絵は、きれいなので誰も確かめない ―― 定理を門にして描く PoC シリーズ |
+| [`qiita_measuring_the_measurement_en.md`](qiita_measuring_the_measurement_en.md) | I Got All 52 Tests Green, Then Checked Against the Standard’s Own Answers — 5 Failed |
+| [`qiita_measuring_the_measurement_ja.md`](qiita_measuring_the_measurement_ja.md) | 検査 52 件を全部緑にしてから、規格の答えと突き合わせたら 5 件落ちた —— 測る側を測る話 |
 
 **展示(exhibits)**(28) —— 記事の「紙面の科学館」章の単一真実源。`<id>.ja.md` / `<id>.en.md` の 2 枚組で、本文は `tools/build_exhibits.py` が組み立てる。`wingpoc.*` だけは `poc_captions.json` + 各 PoC の図から `tools/gen_wingpoc_gallery.py` が生成する(PoC 展示館の記事も同時に出る)。
 
