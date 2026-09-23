@@ -66,7 +66,7 @@
 
 使う op: `measure_pos`, `measure_pairs`, `blob_label`, `blob_select`
 
-動く例: `poc_dimensional_inspection`, `poc_screw_thread_metrology`
+動く例: `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_calipers_under_illusion`
 
 ### [地形の傾き・水の流れ・見通しを測る](capabilities/terrain-and-visibility.md)
 

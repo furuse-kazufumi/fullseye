@@ -430,7 +430,7 @@ def main():
                      "%.3f 〜 %.3f" % (min(ratios.values()), max(ratios.values())),
                      "1(継ぎ目なし)"])
         rows.append(["langtons_ant", "高速道路の傾き[マス/歩]", "%.3f" % late,
-                     "0.5(104 歩で 52 マス)"])
+                     "0.115(104 歩で正味 12 マス)"])
         figs.save_table("numbers", ["系", "主張", "実測", "真値"], rows,
                         title="絵を見ずに採点した結果",
                         caption="この PoC の主張は全部この表に入っています。"

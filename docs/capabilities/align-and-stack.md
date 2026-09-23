@@ -31,10 +31,18 @@ import fullseye as fs
 import numpy as np
 
 rng = np.random.default_rng(0)
-a = rng.normal(0, 1, (64, 64))
+
+# ★対象は**星野**(frame_align は star_detect で星を取ってから合わせる)。
+#   一様な雑音だけを渡すと星が 0 個で、推定せずに拒否されます。
+yy, xx = np.mgrid[0:128, 0:128]
+a = rng.normal(100.0, 10.0, (128, 128))
+for r, c in rng.integers(12, 116, (40, 2)):
+    a += 3000.0 * np.exp(-((yy - r) ** 2 + (xx - c) ** 2) / (2 * 1.6 ** 2))
 b = np.roll(a, (3, -2), axis=(0, 1))
-info = fs.frame_align([a, b])
-print(info)                          # vote_margin も一緒に見る
+
+H, info = fs.frame_align(a, b)       # 返りは (3x3 の変換, 内訳の dict)
+print(info["shift_row"], info["shift_col"])   # -3.0, 2.0(仕込んだずれ)
+print(info["rms_px"], info["vote_margin"])    # 2.5e-14, 0.135
 ```
 
 ## 裏づけ

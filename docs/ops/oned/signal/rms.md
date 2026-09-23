@@ -4,7 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: measurement
-examples: [lens_design_demo, lightfield_depth, poc_battery_electrode_breathing, poc_bilateral_asymmetry, poc_bump_coplanarity, poc_cad_scan_deviation, poc_camera_calibration, poc_dimensional_inspection, poc_exoplanet_transit, poc_fabric_defect, poc_focus_stacking, poc_panorama_drift, poc_print_registration, poc_river_surface_velocity, poc_screw_thread_metrology, poc_solar_limb_darkening, poc_strain_history, poc_surface_roughness, poc_symmetry_restoration, poc_thermal_radiometry, profile_shape_inspection]
+examples: [lens_design_demo, lightfield_depth, poc_battery_electrode_breathing, poc_bilateral_asymmetry, poc_bump_coplanarity, poc_cad_scan_deviation, poc_calipers_under_illusion, poc_camera_calibration, poc_dimensional_inspection, poc_exoplanet_transit, poc_fabric_defect, poc_focus_stacking, poc_panorama_drift, poc_print_registration, poc_river_surface_velocity, poc_screw_thread_metrology, poc_solar_limb_darkening, poc_strain_history, poc_surface_roughness, poc_symmetry_restoration, poc_thermal_radiometry, profile_shape_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -34,6 +34,7 @@ is given (a vibration/energy envelope over time).
 - [poc_bilateral_asymmetry](../../../../examples/poc_bilateral_asymmetry.py) — `py -3.11 examples/poc_bilateral_asymmetry.py`
 - [poc_bump_coplanarity](../../../../examples/poc_bump_coplanarity.py) — `py -3.11 examples/poc_bump_coplanarity.py`
 - [poc_cad_scan_deviation](../../../../examples/poc_cad_scan_deviation.py) — `py -3.11 examples/poc_cad_scan_deviation.py`
+- [poc_calipers_under_illusion](../../../../examples/poc_calipers_under_illusion.py) — `py -3.11 examples/poc_calipers_under_illusion.py`
 - [poc_camera_calibration](../../../../examples/poc_camera_calibration.py) — `py -3.11 examples/poc_camera_calibration.py`
 - [poc_dimensional_inspection](../../../../examples/poc_dimensional_inspection.py) — `py -3.11 examples/poc_dimensional_inspection.py`
 - [poc_exoplanet_transit](../../../../examples/poc_exoplanet_transit.py) — `py -3.11 examples/poc_exoplanet_transit.py`

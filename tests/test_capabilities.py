@@ -158,3 +158,71 @@ def test_the_top_pages_link_to_both_ledgers_near_the_top(path, head_lines):
     for target in ("CAPABILITIES", "HARDENING"):
         assert target in head, (
             "%s の先頭 %d 行に %s へのリンクが無い" % (path, head_lines, target))
+
+
+# --------------------------------------------------------------------------- #
+# 「最初の 1 本」を実際に走らせる
+# --------------------------------------------------------------------------- #
+# ★2026-09-24 に見つけた穴: 既存の門は frontmatter の `ops:` に書いた名前が実在
+#   するかは見るが、**本文のコードは一度も実行していなかった**。だから
+#   `measure_pos(img, row=32, col0=0, col1=127)`(実際の引数は測定線ハンドル)、
+#   `fs.frame_align([a, b])`(実際は (reference, frame) の 2 引数)、
+#   `fs.ledger.blob_count(mask)`(blob_count は台帳ではなく 2-D の進化 op)が
+#   3 本とも**走らないまま出荷**されていた。名前の実在と呼び方の正しさは別物で、
+#   前者だけの門は後者に構造的に盲目([[feedback_registered_only_gates_miss_unregistered]])。
+#
+# 走らないことが正しい例もある —— 利用者自身の写真や校正板の角点が要るもの。
+# それは**理由つきで名指し**する。名指しの無いものが 1 本でも落ちたら赤。
+# 「ファイルが無いから仕方ない」を既定にすると、呼び方の誤りがそこに紛れる。
+NEEDS_USER_INPUT = {
+    "camera-intrinsics-calibration": "校正板を撮った各視点の角点 pts_view0..3",
+    "estimate-lens-distortion": "補正したい実写画像 img",
+    "fix-text-in-images": "report_figure.png",
+    "golden-compare": "golden.png",
+    "inspection-workflow": "ロット画像の入った lot_0001/ と DigitalIO の io",
+    "lens-distortion-correction": "wide_angle.png",
+    "one-stroke-drawing": "photo.png",
+    "polarization-imaging": "polarcam_frame.npy",
+    "raw-to-display-isp": "frame_rggb.npy",
+    "xlsx-report": "part.png",
+}
+
+_PY_BLOCK = re.compile(r"```python\n(.*?)```", re.S)
+
+
+def _capability_samples():
+    out = []
+    for cap in CAP.load_all():
+        src = io.open(cap["_path"], encoding="utf-8").read()
+        for i, code in enumerate(_PY_BLOCK.findall(src)):
+            out.append((cap["id"], i, code))
+    return out
+
+
+def test_every_capability_sample_actually_runs(tmp_path, monkeypatch):
+    """能力ノートの python ブロックを全部実行する。"""
+    monkeypatch.chdir(tmp_path)          # 書き出す例があっても repo を汚さない
+    samples = _capability_samples()
+    assert len(samples) >= 30, "能力ノートの例が極端に少ない: %d" % len(samples)
+
+    broke, ran = [], 0
+    for cap_id, i, code in samples:
+        try:
+            exec(compile(code, "%s[%d]" % (cap_id, i), "exec"),
+                 {"__name__": "__capability_sample__"})
+            ran += 1
+        except Exception as exc:                                    # noqa: BLE001
+            if cap_id in NEEDS_USER_INPUT:
+                continue                 # 名指し済み: 利用者の入力が要る例
+            broke.append((cap_id, i, "%s: %s" % (type(exc).__name__, exc)[:120]))
+    assert not broke, (
+        "能力ノートのコード例が走らない(名指しされていない): %s" % broke[:6])
+    assert ran >= len(samples) - len(NEEDS_USER_INPUT), (
+        "走った例が想定より少ない: %d / %d" % (ran, len(samples)))
+
+
+def test_the_needs_user_input_list_has_no_dead_entries():
+    """名指しの一覧に、もう落ちない能力が残っていないこと(免除は縮める側)。"""
+    ids = {cap["id"] for cap in CAP.load_all()}
+    ghosts = sorted(set(NEEDS_USER_INPUT) - ids)
+    assert not ghosts, "存在しない能力を免除している: %s" % ghosts

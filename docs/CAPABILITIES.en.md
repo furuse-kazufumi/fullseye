@@ -67,7 +67,7 @@ Locate edges along a measurement line from the intensity gradient, at sub-pixel 
 
 Operators: `measure_pos`, `measure_pairs`, `blob_label`, `blob_select`
 
-Runnable: `poc_dimensional_inspection`, `poc_screw_thread_metrology`
+Runnable: `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_calipers_under_illusion`
 
 ### [Slope, flow and line of sight on a terrain](capabilities/terrain-and-visibility.md)
 

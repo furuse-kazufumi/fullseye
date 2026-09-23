@@ -33,7 +33,9 @@ import numpy as np
 mask = np.zeros((64, 64), bool)
 mask[10:20, 10:20] = True
 mask[40:46, 40:46] = True
-print('個数 =', fs.ledger.blob_count(mask))
+# ★`blob_count` は**台帳 op ではなく 2-D の進化 op** です。
+#   `fs.ledger.<name>` で見つからないときは `fs.op_find("<name>")` を引くと、どの層に居るかが返ります。
+print('個数 =', fs.op.blob_count(mask))          # 2.0
 ```
 
 ## 裏づけ

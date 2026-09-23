@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 942. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 948. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -285,6 +285,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1252** — ★Gibt man für die Kontrollgruppe mit dem wahren Wert 0 ein "%" aus, entsteht durch Division durch null eine sinnlose riesige Zahl. Die Fläche in mm^2 belassen und % nur anfügen, wenn der wahre Wert eine Bedeutung hat.
 - **L1263** — ★Den Unterschied eines einzelnen Laufs nicht als "es hat gewirkt" lesen —— den Seed variieren und mit der Streuung vergleichen
 - **L1353** — ★Ein assert, der auslöst, sobald die Lücke geschlossen ist. Am 2026-09-07 hat er tatsächlich ausgelöst, und diese Zeile wurde umgeschrieben: nach dem Hinweis, dass "Zylinderbohrungen, Fasen und Verrundungen nicht konstruierbar sind", wurden plane / cylinder / torus / capsule ergänzt. Der Hinweis hat das Werkzeug verändert, also halten wir es fest und gehen weiter.
+
+## `examples/poc_calipers_under_illusion.py`
+
+- **L141** _(ja)_ — ★はじめ図説に「半幅を変えると採用点の数が変わる」と書いたが、生成された 本文を読むと 4 通りとも 41 点だった。**書いたことがデータと違った**ので 直し、「変わらない」ほうを門にした。証拠の数が動く例は第 5 章のツェルナー。
+- **L150** _(ja)_ — (b) ★探針 1 枚では足りない ---- ずらし量 × 探索半幅の格子で全数を見る 最初は shift=0.25 だけで試して「測定器は決して動かない」と書いた。 格子で見ると **0.125 と 0.375 でだけ** 0.14 度傾く。既定に見える 0.25 は、たまたま外れない側だった。
+- **L266** _(ja)_ — 外れた組み合わせを絵の上に描き戻す。★全体図では 8 px の飛びが潰れて 見えないので、目地の帯の周りだけを**等倍で切り出す**。
+- **L365** _(ja)_ — ★測定線は軸そのものの上にある。そのまま塗ると被写体が消えるので、 指示線だけ 12 px 上へ逃がして描く(測っている行は軸の行のまま)。
+- **L476** _(ja)_ — ★中心の座標は推測せず illusion.py から読む(最初 (h/2, w/4) と当てずっぽうに 置いて、周りの円のエッジを掴み rms が 3.4 になった)。真の中心は (170, 168) と (170, 452)、半径 30。
 
 ## `examples/poc_camera_calibration.py`
 
@@ -1426,6 +1434,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_caltab.py`
 
 - **L121** — ★Ob das Gate auslöst, hängt von der Umgebung ab, also wird das nicht behauptet. Es wird nur geprüft, dass der Wert **unverborgen zurückgegeben wird**.
+
+## `tests/test_capabilities.py`
+
+- **L166** _(ja)_ — ★2026-09-24 に見つけた穴: 既存の門は frontmatter の `ops:` に書いた名前が実在 するかは見るが、**本文のコードは一度も実行していなかった**。だから `measure_pos(img, row=32, col0=0, col1=127)`(実際の引数は測定線ハンドル)、 `fs.frame_align([a, b])`(実際は (reference, frame) の 2 引数)、 `fs.ledger.blob_count(mask)`(blob_count は台帳ではなく 2-D の進化 op)が 3 本とも**走らないまま出荷**されていた。名前の実在と呼び方の正しさは別物で、 前者だけの門は後者に構造的に盲目([[feedback_registered_only_gates_miss_unregistered]])。 走らないことが正しい例もある —— 利用者自身の写真や校正板の角点が要るもの。 それは**理由つきで名指し**する。名指しの無いものが 1 本でも落ちたら赤。 「ファイルが無いから仕方ない」を既定にすると、呼び方の誤りがそこに紛れる。
 
 ## `tests/test_chain_type_contracts.py`
 

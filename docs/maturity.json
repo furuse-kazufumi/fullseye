@@ -634,6 +634,13 @@
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
      "registry": "examples2d"
+    },
+    {
+     "id": "poc_calipers_under_illusion",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
     }
    ]
   },
@@ -907,8 +914,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 240,
-  "run_by_the_poc_gate": 143,
+  "examples2d_total": 241,
+  "run_by_the_poc_gate": 144,
   "run_by_the_example_gate": 97,
   "not_run_by_any_gate": 0,
   "gates": [
