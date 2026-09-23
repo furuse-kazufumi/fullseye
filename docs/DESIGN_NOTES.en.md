@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 948. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 952. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -612,6 +612,13 @@ This repository records *why* things are the way they are in **comments in the s
 - **L702** — ★The return is **not a mask but (N, 3) (z, y, x) coordinates** (the 2-D `local_max` / `sk_local_maxima` return an image, so the family is inconsistent. Section 10 gap (g)). At first I counted with `count_nonzero` and got the order of magnitude wrong.
 - **L777** — ★To fit 3.4× up and 0.93× down on one plot, **the vertical axis is the log10 ratio**. 0 is "exactly the ground truth". Kept linear, downward deviations get crushed and become invisible.
 - **L792** — ★Overlaying the raw MSD, the 4Dτ line dominates everything and the differences are invisible. Taking **the ratio divided by the ground truth**, the departure from 1.0 (= how it breaks) can be read from the shape.
+
+## `examples/poc_periodic_video_boundary.py`
+
+- **L137** _(ja)_ — 第 2 章 ★空の出力は、等変性の門を素通りする # --------------------------------------------------------------------------- #
+- **L267** _(ja)_ — 第 4 章 ★汚れるフレームは集合として閉形式で予言できる # --------------------------------------------------------------------------- #
+- **L296** _(ja)_ — ★汚れが先頭側だけで末尾側に無いこと = 窓が後方(因果的)である証拠
+- **L457** _(ja)_ — ★この 1 行が要る。門 tests/test_poc_scripts_run.py は exit 0 だけでなく **PASS の印字**も見ており、落とすと exit -2(門が付ける合成コード、 意味は「exit 0 だが PASS を印字していない」)で赤になる。
 
 ## `examples/poc_photoelasticity.py`
 

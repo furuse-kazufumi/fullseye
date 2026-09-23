@@ -4,7 +4,7 @@ dim: videostream
 category: motion
 in: video
 out: video
-examples: [video_streaming]
+examples: [poc_periodic_video_boundary, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ frames. Ghost-free compared with :func:`frame_difference_causal`.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_periodic_video_boundary](../../../../examples/poc_periodic_video_boundary.py) — `py -3.11 examples/poc_periodic_video_boundary.py`
 - [video_streaming](../../../../examples/video_streaming.py) — `py -3.11 examples/video_streaming.py`
 
 ## 型が繋がる次の op(`video` を入力に取れる)

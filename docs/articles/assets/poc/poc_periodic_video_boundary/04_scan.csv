@@ -1,0 +1,17 @@
+﻿op,中身のあるフレーム,汚れたフレーム,最大差,群
+background_subtraction_window,28/32,8,1.00e+00,窓つき(端だけ)
+deflicker,32/32,32,1.40e-01,全フレーム
+exponential_background,32/32,32,3.41e-01,全フレーム
+exponential_foreground,30/32,32,1.00e+00,全フレーム
+frame_difference_causal,31/32,2,6.26e-02,窓つき(端だけ)
+motion_energy_image,0/32,0,0.00e+00,空に近い
+motion_history_image,0/32,0,0.00e+00,空に近い
+moving_average_window,32/32,4,6.31e-02,窓つき(端だけ)
+optical_flow_magnitude_stream,31/32,2,6.63e+00,窓つき(端だけ)
+running_gaussian_background,32/32,32,4.27e-01,全フレーム
+running_gaussian_foreground,23/32,32,1.00e+00,全フレーム
+temporal_bandpass,-,-,-,TypeError: temporal_bandpass() missing
+temporal_bilateral,32/32,8,4.61e-02,窓つき(端だけ)
+temporal_median_window,32/32,8,1.27e-01,窓つき(端だけ)
+three_frame_difference,0/32,0,0.00e+00,空に近い
+video_interpolate_flow,-,-,-,"形が変わる (63, 48, 48)"

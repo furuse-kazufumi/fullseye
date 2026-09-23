@@ -4,7 +4,7 @@ dim: videostream
 category: window
 in: video
 out: video
-examples: [poc_strain_history, video_streaming]
+examples: [poc_periodic_video_boundary, poc_strain_history, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ which is what a live stream can do.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_periodic_video_boundary](../../../../examples/poc_periodic_video_boundary.py) — `py -3.11 examples/poc_periodic_video_boundary.py`
 - [poc_strain_history](../../../../examples/poc_strain_history.py) — `py -3.11 examples/poc_strain_history.py`
 - [video_streaming](../../../../examples/video_streaming.py) — `py -3.11 examples/video_streaming.py`
 
