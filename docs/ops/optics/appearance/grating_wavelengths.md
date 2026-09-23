@@ -4,7 +4,7 @@ dim: optics
 category: appearance
 in: 
 out: vector
-examples: [appearance_structural_colour]
+examples: [appearance_structural_colour, poc_beats_fringes_and_screens]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.2  # fullseye lib version this note was generated for
@@ -56,6 +56,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [appearance_structural_colour](../../../../examples/appearance_structural_colour.py) — `py -3.11 examples/appearance_structural_colour.py`
+- [poc_beats_fringes_and_screens](../../../../examples/poc_beats_fringes_and_screens.py) — `py -3.11 examples/poc_beats_fringes_and_screens.py`
 
 ## 型が繋がる次の op(`vector` を入力に取れる)
 

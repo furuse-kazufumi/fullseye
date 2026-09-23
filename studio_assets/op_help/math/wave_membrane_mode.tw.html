@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">wave_membrane_mode — MATH <code style="color:#22d3bf">wave</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">matrix</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wave_membrane_mode(kind=&#x27;rectangular&#x27;, m=2, n=3, shape=(256, 256), aspect=1.0, free_edge=True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathops; mathops.wave_membrane_mode(kind=&#x27;rectangular&#x27;, m=2, n=3, shape=(256, 256), aspect=1.0, free_edge=True)</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;wave_membrane_mode&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>振動<b>膜</b>的一個本徵模態 —— 沙子畫出的那個圖形(不是板)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>★<b>This is a membrane, not a plate.</b> The familiar Chladni pattern</p>
+<p>`<code style="color:#22d3bf">cos(m pi x) cos(n pi y) - cos(n pi x) cos(m pi y)</code>` solves the Helmholtz</p>
+<p>equation with free (Neumann) edges; a real Chladni *plate* obeys the</p>
+<p><b>biharmonic</b> equation and has a different frequency ladder. The pictures</p>
+<p>look alike, the frequencies do not — so this op says membrane and is checked</p>
+<p>against membrane truth only.</p>
+<p>`<code style="color:#22d3bf">kind=&quot;rectangular&quot;</code>` returns the (possibly combined) cosine mode over a</p>
+<p>rectangle of the given *aspect*; `<code style="color:#22d3bf">kind=&quot;circular&quot;</code>` returns</p>
+<p>`<code style="color:#22d3bf">J_m(k r) cos(m theta)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">k</code>` from the Bessel zero, zero outside the disc.</p>
+<p>★<b>Why this earns its place</b>: the nodal lines of a rectangular mode are known</p>
+<p><b>by count</b> — a simple `<code style="color:#22d3bf">(m, n)</code><code style="color:#22d3bf"> mode has </code><code style="color:#22d3bf">m-1</code>` interior vertical and</p>
+<p>`<code style="color:#22d3bf">n-1</code>` horizontal nodal lines — and the circular mode&#x27;s nodal circles are at</p>
+<p>the ratios of successive Bessel zeros. The drawing can therefore be graded.</p>
+<p>Returns a `<code style="color:#22d3bf">matrix</code>` (signed displacement, peak scaled to 1). Use</p>
+<p>:func:<code style="color:#22d3bf">wave_nodal_lines</code> for the zero set.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: unknown kind; </code><code style="color:#22d3bf">m</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">n</code>` below the valid range;</p>
+<p>a grid over the cap; non-positive aspect; `<code style="color:#22d3bf">free_edge=False</code>` combined with</p>
+<p>`<code style="color:#22d3bf">m == n</code>` for the combined mode (the difference vanishes identically).</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• **complex 輸入一律 <code style="color:#22d3bf">ValueError</code>** —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• **含被遮罩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒絕「剝掉遮罩直接使用下面原值」的隱式轉換。請明確選擇填補還是丟棄。</p>
+<p style="margin:2px 0 2px 12px">• **所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明確給出個數後拒絕 —— 它會汙染整個結果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形狀嚴格</b>:不對 1-D 與 2-D 做隱式提升或廣播(向量槽位收到矩陣、矩陣槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;請明確 reshape)。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩陣的運算子與 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超過 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 萬個元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_beats_fringes_and_screens">poc_beats_fringes_and_screens</a> — <code style="color:#22d3bf">py -3.11 examples/poc_beats_fringes_and_screens.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">matrix</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opmath:mat_solve">mat_solve</a> · <a style="color:#22d3bf" href="opmath:mat_lstsq">mat_lstsq</a> · <a style="color:#22d3bf" href="opmath:mat_svd">mat_svd</a> · <a style="color:#22d3bf" href="opmath:mat_eigh">mat_eigh</a> · <a style="color:#22d3bf" href="opmath:mat_pinv">mat_pinv</a> · <a style="color:#22d3bf" href="opmath:mat_cond">mat_cond</a> · <a style="color:#22d3bf" href="opmath:stat_covariance">stat_covariance</a> · <a style="color:#22d3bf" href="opmath:stat_correlation">stat_correlation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">wave</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:wave_mode_frequencies">wave_mode_frequencies</a> · <a style="color:#22d3bf" href="opmath:wave_nodal_lines">wave_nodal_lines</a> · <a style="color:#22d3bf" href="opmath:wave_two_slit">wave_two_slit</a> · <a style="color:#22d3bf" href="opmath:wave_fringe_period">wave_fringe_period</a> · <a style="color:#22d3bf" href="opmath:wave_grating_orders">wave_grating_orders</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

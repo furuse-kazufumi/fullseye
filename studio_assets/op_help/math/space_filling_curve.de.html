@@ -1,0 +1,49 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">space_filling_curve — MATH <code style="color:#22d3bf">construct</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">pairs</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.space_filling_curve(kind=&#x27;hilbert&#x27;, order=4)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.space_filling_curve(kind=&#x27;hilbert&#x27;, order=4)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;space_filling_curve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Hilbert-/Moore-/Scan-Ordnung auf einem `<code style="color:#22d3bf">2**order</code>`-Quadrat — eine Permutation, geprüft.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Returns the visiting order as `<code style="color:#22d3bf">pairs</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(4**order, 2)</code>` of integer grid</p>
+<p>coordinates. Two scan orders are included <b>as control groups</b>, not as</p>
+<p>filler: `<code style="color:#22d3bf">row_major</code>` jumps a whole row at the end of each line and</p>
+<p>`<code style="color:#22d3bf">boustrophedon</code>` (serpentine) does not, so &quot;consecutive points are</p>
+<p>adjacent&quot; separates them, and the locality measurement separates all four.</p>
+<p>★<b>Why this earns its place — the defining properties are integers</b>:</p>
+<p style="margin:2px 0 2px 12px">• The result visits `<code style="color:#22d3bf">4**order</code>` cells, <b>each exactly once</b>: a</p>
+<p>permutation, verified by sorting, not by sampling.</p>
+<p style="margin:2px 0 2px 12px">• For Hilbert, Moore and boustrophedon, **consecutive points are always at</p>
+<p>L1 distance exactly 1**. Row-major is not (it jumps at every line end),</p>
+<p>which is the control.</p>
+<p style="margin:2px 0 2px 12px">• Moore&#x27;s curve is <b>closed</b>: the last point is adjacent to the first.</p>
+<p>Hilbert&#x27;s is not.</p>
+<p style="margin:2px 0 2px 12px">• *Locality.* For a gap of `<code style="color:#22d3bf">k</code>` in index, the mean Euclidean distance</p>
+<p>grows like `<code style="color:#22d3bf">sqrt(k)</code>` for Hilbert and much faster for row-major. That is</p>
+<p>why Hilbert order is used for spatial indexes, and it is measurable here</p>
+<p>rather than asserted.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: unknown </code><code style="color:#22d3bf">kind</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">order &lt; 1</code>`; the grid would</p>
+<p>exceed the cap; `<code style="color:#22d3bf">moore</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">order &lt; 2</code>` (it is not defined below that).</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">Leitfaden zur Familie math_metrology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_theorems_as_pictures">poc_theorems_as_pictures</a> — <code style="color:#22d3bf">py -3.11 examples/poc_theorems_as_pictures.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">pairs</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmath:neighbour_index_gaps">neighbour_index_gaps</a> · <a style="color:#22d3bf" href="opmath:curve_locality">curve_locality</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">construct</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:circle_packing_apollonian">circle_packing_apollonian</a> · <a style="color:#22d3bf" href="opmath:ford_circles">ford_circles</a> · <a style="color:#22d3bf" href="opmath:phyllotaxis_pattern">phyllotaxis_pattern</a> · <a style="color:#22d3bf" href="opmath:neighbour_index_gaps">neighbour_index_gaps</a> · <a style="color:#22d3bf" href="opmath:ifs_fractal">ifs_fractal</a> · <a style="color:#22d3bf" href="opmath:ifs_similarity_dimension">ifs_similarity_dimension</a> · <a style="color:#22d3bf" href="opmath:curve_locality">curve_locality</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

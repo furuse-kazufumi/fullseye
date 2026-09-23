@@ -173,6 +173,13 @@ _OP_BRIDGE_SKIP = {
     # 当てる」側にある(videocube の percentile 111.9 と同じ型)。台帳
     # (`fullseye.ledger.cplx_domain_colour`)からは今までどおり saturation を指定して使える。
     "cplx_domain_colour",
+    # 2026-09-23: 定理が門になる図の生成側。曲率の四つ組・ファレイの分母・
+    # 葉序の角度・IFS の写像・曲線の位数だけで描くので、**画像を 1 枚受け取らない**。
+    # 橋が渡す「画像 1 枚」に対応する引数が無いため、橋に載せても恒等を返す
+    # 死んだ op が増えるだけになる(台帳からは今までどおり使える)。
+    "circle_packing_apollonian", "ford_circles", "phyllotaxis_pattern",
+    "ifs_fractal", "ifs_similarity_dimension", "space_filling_curve",
+    "geodesic_dome",
     # 2026-09-21: conngraph の states_participation_ratio(matrix → measurement)。画像を行列として実効次数を
     # 出すのは特徴として意味はあるが、橋 1 本のために op 図の全数再描画(50 分)を回す価値が無い。台帳から使う。
     "states_participation_ratio",
@@ -387,8 +394,16 @@ INPUT_ADAPTERS = {
 #: サブピクセル並進の合成クリップの信号 std^2≈1.8e-4 に対して過大で、k/alpha を
 #: いくら振っても前景が出ない)、学習率 alpha はほぼ効かない。k と var_init を
 #: 振ると弱信号でも到達できる(2026-09-03 実測)。
+#: dynsys_correlation_dimension: 既定ヒューリスティックは正の数値既定を持つ先頭 2 つ
+#: = (n_radii, max_points) を取るが、**max_points は探針では答えを 1 桁も動かさない**
+#: (探針の点群がどの上限より小さいため。実測 2026-09-23: 1,000 / 4,000 / 8,000 で
+#: 2.637035 のまま)。答えを動かすのは n_radii(6 → 42 で 2.678 → 2.632)と、
+#: ★本当に効く r_lo / r_hi(半径の窓)だが、後者は既定が None で「データから決める」
+#: 意味なので、正の数値既定を要求する橋の選定には載らない。嘘のノブを 1 本足すより
+#: **a だけを配線して b を『未使用』と書く**ほうが正しい。
 OP_TUNABLE_OVERRIDE = {
     "running_gaussian_foreground": ("k", "var_init"),
+    "dynsys_correlation_dimension": ("n_radii",),
 }
 
 #: 相対スケール(既定の 1/4〜2 倍)が **定義域を突き抜ける** 引数の絶対範囲。

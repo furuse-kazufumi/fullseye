@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2105,
- "n_notes": 2111,
+ "n_ops": 2138,
+ "n_notes": 2144,
  "notes": {
   "vol_dilate": [
    {
@@ -8675,6 +8675,16 @@
     "path": "docs/ops/2d/typed/tb_dtof_depth.md"
    }
   ],
+  "tb_dynsys_correlation_dimension": [
+   {
+    "op": "tb_dynsys_correlation_dimension",
+    "dim": "2d",
+    "category": "typed",
+    "in": "points",
+    "out": "feature",
+    "path": "docs/ops/2d/typed/tb_dynsys_correlation_dimension.md"
+   }
+  ],
   "tb_elastic_deform": [
    {
     "op": "tb_elastic_deform",
@@ -12042,6 +12052,15 @@
     "path": "docs/ops/3d/plane_sweep_stereo/warp_by_plane.md"
    }
   ],
+  "geodesic_dome": [
+   {
+    "op": "geodesic_dome",
+    "dim": "3d",
+    "category": "polyhedron",
+    "out": "mesh",
+    "path": "docs/ops/3d/polyhedron/geodesic_dome.md"
+   }
+  ],
   "dlt_pose": [
    {
     "op": "dlt_pose",
@@ -13329,6 +13348,52 @@
     "in": "points",
     "out": "measurement",
     "path": "docs/ops/3d/superquadric/superquadric_residual.md"
+   }
+  ],
+  "curve3d_tube_mesh": [
+   {
+    "op": "curve3d_tube_mesh",
+    "dim": "3d",
+    "category": "surface",
+    "in": "points",
+    "out": "mesh",
+    "path": "docs/ops/3d/surface/curve3d_tube_mesh.md"
+   }
+  ],
+  "gyroid_isosurface": [
+   {
+    "op": "gyroid_isosurface",
+    "dim": "3d",
+    "category": "surface",
+    "out": "mesh",
+    "path": "docs/ops/3d/surface/gyroid_isosurface.md"
+   }
+  ],
+  "gyroid_solid_mask": [
+   {
+    "op": "gyroid_solid_mask",
+    "dim": "3d",
+    "category": "surface",
+    "out": "voxel",
+    "path": "docs/ops/3d/surface/gyroid_solid_mask.md"
+   }
+  ],
+  "minimal_surface": [
+   {
+    "op": "minimal_surface",
+    "dim": "3d",
+    "category": "surface",
+    "out": "mesh",
+    "path": "docs/ops/3d/surface/minimal_surface.md"
+   }
+  ],
+  "minimal_surface_bend": [
+   {
+    "op": "minimal_surface_bend",
+    "dim": "3d",
+    "category": "surface",
+    "out": "mesh",
+    "path": "docs/ops/3d/surface/minimal_surface_bend.md"
    }
   ],
   "background_flatten": [
@@ -17030,6 +17095,136 @@
     "path": "docs/ops/math/complex/potential_flow_joukowski.md"
    }
   ],
+  "circle_packing_apollonian": [
+   {
+    "op": "circle_packing_apollonian",
+    "dim": "math",
+    "category": "construct",
+    "out": "table",
+    "path": "docs/ops/math/construct/circle_packing_apollonian.md"
+   }
+  ],
+  "curve_locality": [
+   {
+    "op": "curve_locality",
+    "dim": "math",
+    "category": "construct",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/math/construct/curve_locality.md"
+   }
+  ],
+  "ford_circles": [
+   {
+    "op": "ford_circles",
+    "dim": "math",
+    "category": "construct",
+    "out": "table",
+    "path": "docs/ops/math/construct/ford_circles.md"
+   }
+  ],
+  "ifs_fractal": [
+   {
+    "op": "ifs_fractal",
+    "dim": "math",
+    "category": "construct",
+    "out": "pairs",
+    "path": "docs/ops/math/construct/ifs_fractal.md"
+   }
+  ],
+  "ifs_similarity_dimension": [
+   {
+    "op": "ifs_similarity_dimension",
+    "dim": "math",
+    "category": "construct",
+    "out": "measurement",
+    "path": "docs/ops/math/construct/ifs_similarity_dimension.md"
+   }
+  ],
+  "neighbour_index_gaps": [
+   {
+    "op": "neighbour_index_gaps",
+    "dim": "math",
+    "category": "construct",
+    "in": "pairs",
+    "out": "signal",
+    "path": "docs/ops/math/construct/neighbour_index_gaps.md"
+   }
+  ],
+  "phyllotaxis_pattern": [
+   {
+    "op": "phyllotaxis_pattern",
+    "dim": "math",
+    "category": "construct",
+    "out": "pairs",
+    "path": "docs/ops/math/construct/phyllotaxis_pattern.md"
+   }
+  ],
+  "space_filling_curve": [
+   {
+    "op": "space_filling_curve",
+    "dim": "math",
+    "category": "construct",
+    "out": "pairs",
+    "path": "docs/ops/math/construct/space_filling_curve.md"
+   }
+  ],
+  "dynsys_bifurcation_map": [
+   {
+    "op": "dynsys_bifurcation_map",
+    "dim": "math",
+    "category": "dynsys",
+    "out": "pairs",
+    "path": "docs/ops/math/dynsys/dynsys_bifurcation_map.md"
+   }
+  ],
+  "dynsys_correlation_dimension": [
+   {
+    "op": "dynsys_correlation_dimension",
+    "dim": "math",
+    "category": "dynsys",
+    "in": "points",
+    "out": "measurement",
+    "path": "docs/ops/math/dynsys/dynsys_correlation_dimension.md"
+   }
+  ],
+  "dynsys_lyapunov_spectrum": [
+   {
+    "op": "dynsys_lyapunov_spectrum",
+    "dim": "math",
+    "category": "dynsys",
+    "out": "signal",
+    "path": "docs/ops/math/dynsys/dynsys_lyapunov_spectrum.md"
+   }
+  ],
+  "dynsys_poincare_section": [
+   {
+    "op": "dynsys_poincare_section",
+    "dim": "math",
+    "category": "dynsys",
+    "in": "table",
+    "out": "pairs",
+    "path": "docs/ops/math/dynsys/dynsys_poincare_section.md"
+   }
+  ],
+  "ode_flow_states": [
+   {
+    "op": "ode_flow_states",
+    "dim": "math",
+    "category": "dynsys",
+    "out": "table",
+    "path": "docs/ops/math/dynsys/ode_flow_states.md"
+   }
+  ],
+  "ode_vector_field_grid": [
+   {
+    "op": "ode_vector_field_grid",
+    "dim": "math",
+    "category": "dynsys",
+    "out": "flow2d",
+    "path": "docs/ops/math/dynsys/ode_vector_field_grid.md"
+   }
+  ],
   "interp_cubic": [
    {
     "op": "interp_cubic",
@@ -17198,6 +17393,62 @@
     "in": "signal",
     "out": "signal",
     "path": "docs/ops/math/stats/stat_zscore.md"
+   }
+  ],
+  "wave_fringe_period": [
+   {
+    "op": "wave_fringe_period",
+    "dim": "math",
+    "category": "wave",
+    "in": "image2d",
+    "out": "measurement",
+    "path": "docs/ops/math/wave/wave_fringe_period.md"
+   }
+  ],
+  "wave_grating_orders": [
+   {
+    "op": "wave_grating_orders",
+    "dim": "math",
+    "category": "wave",
+    "out": "table",
+    "path": "docs/ops/math/wave/wave_grating_orders.md"
+   }
+  ],
+  "wave_membrane_mode": [
+   {
+    "op": "wave_membrane_mode",
+    "dim": "math",
+    "category": "wave",
+    "out": "matrix",
+    "path": "docs/ops/math/wave/wave_membrane_mode.md"
+   }
+  ],
+  "wave_mode_frequencies": [
+   {
+    "op": "wave_mode_frequencies",
+    "dim": "math",
+    "category": "wave",
+    "out": "signal",
+    "path": "docs/ops/math/wave/wave_mode_frequencies.md"
+   }
+  ],
+  "wave_nodal_lines": [
+   {
+    "op": "wave_nodal_lines",
+    "dim": "math",
+    "category": "wave",
+    "in": "matrix",
+    "out": "mask",
+    "path": "docs/ops/math/wave/wave_nodal_lines.md"
+   }
+  ],
+  "wave_two_slit": [
+   {
+    "op": "wave_two_slit",
+    "dim": "math",
+    "category": "wave",
+    "out": "image2d",
+    "path": "docs/ops/math/wave/wave_two_slit.md"
    }
   ],
   "align_metrology_model": [
@@ -19573,6 +19824,65 @@
     "in": "image2d × image2d",
     "out": "image2d",
     "path": "docs/ops/printpath/inspect/print_layer_defect_map.md"
+   }
+  ],
+  "engrave_lines": [
+   {
+    "op": "engrave_lines",
+    "dim": "printpath",
+    "category": "npr",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/printpath/npr/engrave_lines.md"
+   }
+  ],
+  "halftone_moire_period": [
+   {
+    "op": "halftone_moire_period",
+    "dim": "printpath",
+    "category": "npr",
+    "out": "table",
+    "path": "docs/ops/printpath/npr/halftone_moire_period.md"
+   }
+  ],
+  "halftone_screen": [
+   {
+    "op": "halftone_screen",
+    "dim": "printpath",
+    "category": "npr",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/printpath/npr/halftone_screen.md"
+   }
+  ],
+  "hatch_field": [
+   {
+    "op": "hatch_field",
+    "dim": "printpath",
+    "category": "npr",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/printpath/npr/hatch_field.md"
+   }
+  ],
+  "mosaic_tiles_render": [
+   {
+    "op": "mosaic_tiles_render",
+    "dim": "printpath",
+    "category": "npr",
+    "in": "image2d × pairs",
+    "out": "image2d",
+    "path": "docs/ops/printpath/npr/mosaic_tiles_render.md"
+   }
+  ],
+  "mosaic_tiles_sites": [
+   {
+    "op": "mosaic_tiles_sites",
+    "dim": "printpath",
+    "category": "npr",
+    "in": "image2d",
+    "out": "pairs",
+    "path": "docs/ops/printpath/npr/mosaic_tiles_sites.md"
    }
   ],
   "contours_to_gcode": [

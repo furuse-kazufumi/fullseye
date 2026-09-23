@@ -68,7 +68,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-—
+[wave_fringe_period](../wave/wave_fringe_period.md)
 
 ## 同カテゴリ(`complex`)
 

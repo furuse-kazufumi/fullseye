@@ -16,9 +16,9 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 30 項目**
+**収録 33 項目**
 
-## 測る (7)
+## 測る (8)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -75,6 +75,14 @@
 使う op: `mesh_volume`, `vol_rle_volume`, `interp_scattered`, `dem_slope`
 
 動く例: `poc_stockpile_volume`, `poc_lidar_terrain_change`
+
+### [絵では確かめられないもの(積分器の次数・リアプノフ指数・分岐・相関次元・極小曲面)](capabilities/what-a-picture-cannot-check.md)
+
+力学系(軌道・ベクトル場・ポアンカレ断面・リアプノフ指数・分岐図・相関次元)と極小曲面(カテノイド・ヘリコイド・エンネパー・シェルク・ジャイロイド)を作り、**恒等式と定義だけで採点します**。軌道は管メッシュにして立体で見られます。
+
+使う op: `ode_flow_states`, `ode_vector_field_grid`, `dynsys_poincare_section`, `dynsys_lyapunov_spectrum`, `dynsys_bifurcation_map`, `dynsys_correlation_dimension`, `minimal_surface`, `minimal_surface_bend`, `gyroid_isosurface`, `gyroid_solid_mask`, `curve3d_tube_mesh`
+
+動く例: `poc_what_a_picture_cannot_check`
 
 ## 見つける (3)
 
@@ -162,7 +170,7 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 
 動く例: `raw_to_display_isp`
 
-## 波と信号 (2)
+## 波と信号 (3)
 
 ### [配列で方向を測り、距離と速度を分ける](capabilities/beamforming-and-range-doppler.md)
 
@@ -171,6 +179,14 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 使う op: `beamform_delay_sum`, `beamform_doa`, `range_doppler_map`, `range_doppler_peaks`
 
 動く例: `poc_multibeam_bathymetry`, `poc_bev_sensor_fusion`
+
+### [うなりは一つ(膜のモード・干渉縞・回折次数・印刷のモアレ・墨に落とす)](capabilities/beats-fringes-and-screens.md)
+
+膜の固有モードと節線、二重スリットの干渉縞、回折格子の次数、そして印刷の網点・モアレ・彫版線・ハッチ・モザイクを作り、**どれも絵の外にある真値で採点します**。
+
+使う op: `wave_membrane_mode`, `wave_mode_frequencies`, `wave_nodal_lines`, `wave_two_slit`, `wave_fringe_period`, `wave_grating_orders`, `halftone_screen`, `halftone_moire_period`, `engrave_lines`, `hatch_field`, `mosaic_tiles_sites`, `mosaic_tiles_render`
+
+動く例: `poc_beats_fringes_and_screens`
 
 ### [振動と音から異常を診断する](capabilities/vibration-and-acoustics.md)
 
@@ -264,7 +280,7 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 
 動く例: `annotate_paper_tour`
 
-## 描く (1)
+## 描く (2)
 
 ### [写真を 1 本の線にする(点描 → 巡回路 → 回る円)](capabilities/one-stroke-drawing.md)
 
@@ -273,3 +289,11 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 使う op: `stipple_points_from_image`, `stipple_energy`, `stroke_tour_closed`, `mst_length`, `stroke_resample_closed`, `stroke_tone_error`, `contour_fourier_complex`, `contour_epicycle_chain`, `contour_fourier_truncation_energy`
 
 動く例: `poc_one_stroke_epicycles`
+
+### [定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線)](capabilities/theorems-as-pictures.md)
+
+数学的に美しい図を描きます —— 互いに接する円の充填、ファレイ数列のフォード円、正二十面体からの測地ドーム、葉序の螺旋、IFS のアトラクタ、空間充填曲線。
+
+使う op: `circle_packing_apollonian`, `ford_circles`, `phyllotaxis_pattern`, `neighbour_index_gaps`, `ifs_fractal`, `ifs_similarity_dimension`, `space_filling_curve`, `curve_locality`, `geodesic_dome`
+
+動く例: `poc_theorems_as_pictures`

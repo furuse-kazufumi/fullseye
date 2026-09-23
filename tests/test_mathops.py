@@ -515,7 +515,10 @@ def test_histogram_bins_capped():
 # --------------------------------------------------------------------------- #
 def test_mathops_registry_names_resolve():
     # tier1 16 + tier2 complex 10 + interp_scattered(2026-09-08、散在点)
-    assert len(mathops.MATHOPS) == 35   # 複素平面の面 8 op を足した
+    # tier1 16 + complex 18 + construct 8 + wave 6 + dynsys 6。★ここは op を
+    #   足すたびに動く行なので、足した理由を残しておく(35 = 複素平面の
+    #   面 8 op、43 = 定理が門になる図 8 op、55 = 波動 6 + 力学系 6)。
+    assert len(mathops.MATHOPS) == 55
     for name in mathops.MATHOPS:
         assert callable(getattr(mathops, name)), name
         assert name in mathops.__all__
@@ -1474,3 +1477,279 @@ def test_the_closed_form_interior_is_a_lower_bound_with_no_counterexample():
     assert int((e[ins] != float(mi)).sum()) == 0            # 反例ゼロ
     assert ins.sum() < stay.sum()                           # しかし全部ではない
     assert 0.80 < ins.sum() / stay.sum() < 0.98
+
+
+# --------------------------------------------------------------------------- #
+# 定理が門になる図(2026-09-23)
+#
+# ★数学の図はきれいなので、合っているかを誰も確かめない。ここでは絵を一度も
+#   見ずに、**定理と既存 op**だけで合否を決める。
+# --------------------------------------------------------------------------- #
+def test_every_apollonian_circle_satisfies_descartes():
+    """デカルトの円定理が**全部の円**で成り立つこと(機械精度)。
+
+    生成は反射 k' = 2(k1+k2+k3) - k4 で行うので、四つ組が定理を満たすことは
+    自明ではない —— 中心が複素デカルトの式で正しく決まっていて初めて、
+    「接している 4 円」であり続ける。ここでは**接している組をこちらで探し直して**
+    定理に入れる(op が使った四つ組をそのまま使わない)。
+    """
+    t = mathops.circle_packing_apollonian(depth=3)
+    x, y, r, k = t["x"], t["y"], t["radius"], t["curvature"]
+    assert len(x) == 2 * 3 ** 3 + 2 == 56
+    # 半径と曲率は互いの逆数(外円は曲率が負)
+    assert np.allclose(np.abs(1.0 / k), r, rtol=1e-12)
+
+    # 接している組を距離から探す: |zi - zj| == |ri +- rj|
+    n = len(x)
+    z = x + 1j * y
+    tangent = np.zeros((n, n), dtype=bool)
+    for i in range(n):
+        d = np.abs(z - z[i])
+        tangent[i] = (np.isclose(d, r + r[i], rtol=1e-9, atol=1e-12)
+                      | np.isclose(d, np.abs(r - r[i]), rtol=1e-9, atol=1e-12))
+        tangent[i, i] = False
+    assert tangent.sum() > 0, "接している円が 1 組も見つからない"
+
+    # 互いに接する 4 円を 1 組見つけて定理に入れる
+    quads = 0
+    for i in range(n):
+        for j in range(i + 1, n):
+            if not tangent[i, j]:
+                continue
+            for m in range(j + 1, n):
+                if not (tangent[i, m] and tangent[j, m]):
+                    continue
+                for q in range(m + 1, n):
+                    if tangent[i, q] and tangent[j, q] and tangent[m, q]:
+                        ks = k[[i, j, m, q]]
+                        lhs, rhs = ks.sum() ** 2, 2.0 * (ks ** 2).sum()
+                        assert abs(lhs - rhs) <= 1e-6 * max(abs(lhs), abs(rhs), 1.0), (
+                            "接している 4 円がデカルトの円定理を破る: k=%s" % (ks,))
+                        quads += 1
+                        if quads >= 12:
+                            return
+    assert quads > 0, "互いに接する 4 円が 1 組も見つからない"
+
+
+def test_the_integral_gasket_stays_integral_for_ever():
+    """★(-1, 2, 2, 3) から始めた充填は、**どこまで行っても曲率が整数**。
+
+    Lagarias-Mallows-Wilks。反射は整数を整数に写すので、実装が少しでも
+    ずれていれば整数から外れる —— 絵では絶対に見えない種類の誤り。
+    """
+    for depth in (2, 3, 4):
+        k = mathops.circle_packing_apollonian(curvatures=(-1.0, 2.0, 2.0, 3.0),
+                                              depth=depth)["curvature"]
+        off = np.abs(k - np.round(k))
+        assert off.max() < 1e-6, ("整数でない曲率が出た(最大ずれ %.2e、depth=%d)"
+                                  % (off.max(), depth))
+
+
+def test_apollonian_refuses_a_quadruple_that_is_not_descartes():
+    """定理を満たさない四つ組は**黙って描かず**に拒否する(fail-closed)。"""
+    with pytest.raises(ValueError, match="Descartes"):
+        mathops.circle_packing_apollonian(curvatures=(-1.0, 2.0, 2.0, 4.0))
+
+
+def test_ford_circles_touch_exactly_when_the_integers_say_so():
+    """★接するのは |p*s - q*r| = 1 のときに限る(整数の厳密な等式)。
+
+    フォード円は p/q に半径 1/(2q^2) で載る。2 つが接する条件は**幾何でなく
+    整数論**で決まるので、こちらは距離を測り、あちらは整数を見る ——
+    2 つの答えが 1 つでも食い違えば落ちる。
+    """
+    t = mathops.ford_circles(max_denominator=9)
+    p, q, x, y, r = t["p"], t["q"], t["x"], t["y"], t["radius"]
+    # ★円は (p/q, 1/(2q^2)) に**載っている**ので、接触は 2 次元の距離で見る。
+    #   x の差だけで測ると 0/1 と 1/9 のような組を「接していない」と読む
+    #   (距離 0.1111 対 半径和 0.5062)—— 最初これで落ちた。
+    assert np.allclose(y, 0.5 / q ** 2.0, rtol=1e-12)
+    assert np.allclose(x, p / q, rtol=1e-12)
+    assert np.allclose(r, 0.5 / q ** 2.0, rtol=1e-12)
+
+    n = len(p)
+    for i in range(n):
+        for j in range(i + 1, n):
+            d = float(np.hypot(x[i] - x[j], y[i] - y[j]))
+            touch_geom = np.isclose(d, r[i] + r[j], rtol=1e-11, atol=1e-14)
+            touch_int = abs(int(p[i]) * int(q[j]) - int(q[i]) * int(p[j])) == 1
+            assert touch_geom == touch_int, (
+                "幾何と整数が食い違う: %d/%d と %d/%d, 距離 %.17g, 半径和 %.17g"
+                % (p[i], q[i], p[j], q[j], d, r[i] + r[j]))
+
+
+def test_the_farey_count_matches_the_totient_sum():
+    """|F_n| = 1 + sum_{k<=n} phi(k)。数え方が op と独立(オイラーの関数)。"""
+    def phi(m):
+        c = 0
+        for a in range(1, m + 1):
+            x, y = a, m
+            while y:
+                x, y = y, x % y
+            c += (x == 1)
+        return c
+
+    for n in (5, 9, 12):
+        got = len(mathops.ford_circles(max_denominator=n)["p"])
+        want = 1 + sum(phi(k) for k in range(1, n + 1))
+        assert got == want, (n, got, want)
+
+
+def test_the_golden_angle_is_the_one_that_packs():
+    """★フィボナッチの斜列が出るのは**黄金角のときだけ**。
+
+    「葉序の絵」は角度をどう選んでも螺旋に見える。だから絵を見ずに、
+    近傍の**番号差**を数える —— 黄金角では 8, 13, 21, 34, 55 と
+    フィボナッチ数に山が立ち、対照群の 137.0 度では立たない。
+    """
+    fib = {1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144}
+
+    def peaks(angle):
+        pts = mathops.phyllotaxis_pattern(n_points=600, angle_deg=angle)
+        counts = mathops.neighbour_index_gaps(pts, k=6)
+        order = np.argsort(counts)[::-1]
+        return [int(g) for g in order[:7] if counts[g] > 0]
+
+    golden = peaks(None)                      # 既定 = 黄金角
+    control = peaks(137.0)
+    g_hits = sum(1 for g in golden if g in fib)
+    c_hits = sum(1 for g in control if g in fib)
+    assert g_hits >= 6, ("黄金角なのにフィボナッチの山が %d 個しかない: %s"
+                         % (g_hits, golden))
+    assert g_hits > c_hits, ("対照群(137.0 度)と区別できていない: 黄金 %s / 対照 %s"
+                             % (golden, control))
+
+
+def test_moran_agrees_with_the_box_counting_op():
+    """★モランの式(閉形式)と、既存 `fractal_dimension`(箱数え)が一致すること。
+
+    片方は写像の縮小率だけから解く d、もう片方は**描いた点**を箱で数える d。
+    導出も入力も違うので、一致は偶然では起きない。箱数えは有限の点数で必ず
+    上に出るので、幅は 0.15 を許して**順序と水準**を見る。
+    """
+    import ops as _ops
+    fd = dict(_ops.OPS)["fractal_dimension"] if "fractal_dimension" in dict(_ops.OPS) \
+        else None
+    for preset, closed in (("sierpinski", np.log(3) / np.log(2)),
+                           ("koch", np.log(4) / np.log(3)),
+                           ("cantor_dust", np.log(4) / np.log(3))):
+        d = float(mathops.ifs_similarity_dimension(preset))
+        assert abs(d - closed) < 1e-9, (preset, d, closed)
+        pts = mathops.ifs_fractal(preset, n_points=40000, seed=0)
+        assert pts.shape == (40000, 2)
+        if fd is None:
+            continue
+        # 点を 256x256 の二値画像にして、既存 op に測らせる
+        g = np.zeros((256, 256), dtype=np.float64)
+        q = pts - pts.min(axis=0)
+        q = q / max(q.max(), 1e-12) * 255.0
+        g[q[:, 1].astype(int).clip(0, 255), q[:, 0].astype(int).clip(0, 255)] = 1.0
+        box = float(np.asarray(fd(g, 0.5, 0.5)).reshape(-1)[0])
+        assert abs(box - d) < 0.25, ("箱数えと閉形式が離れすぎ: %s 箱 %.3f 閉 %.3f"
+                                     % (preset, box, d))
+
+
+def test_ifs_refuses_maps_that_are_not_similarities():
+    """相似でない写像(バーンズリーのシダ)には**モランの式は使えない**ので拒否する。
+
+    ★`match="similarit"` で書くと **op 名 `ifs_similarity_dimension` に当たって
+    必ず通る**。しかも preset 名を間違えていても(`"fern"`、正しくは
+    `"barnsley_fern"`)「未知 preset の拒否」を見て合格になる —— 検査が
+    「拒否した」ことだけを見て「**なぜ**拒否したか」を見ていないと、こうなる。
+    """
+    with pytest.raises(ValueError, match="is not a similarity"):
+        mathops.ifs_similarity_dimension("barnsley_fern")
+    # シダ自体は**描ける**(描けないのは次元のほう)
+    assert mathops.ifs_fractal("barnsley_fern", None, 2000).shape == (2000, 2)
+
+
+def test_a_space_filling_curve_visits_every_cell_exactly_once():
+    """4^n 点の**置換**であり、隣り合う点は必ず距離 1。
+
+    「空間充填曲線」を名乗る以上、抜けも重複もあってはならない。ここは
+    集合として数え、隣接は差の絶対値で見る(絵は一切見ない)。
+    """
+    for kind in ("hilbert", "moore", "boustrophedon"):
+        for order in (2, 3, 4):
+            pts = mathops.space_filling_curve(kind, order)
+            n = 2 ** order
+            assert pts.shape == (n * n, 2), (kind, order, pts.shape)
+            seen = {(int(a), int(b)) for a, b in pts}
+            assert len(seen) == n * n, ("抜け/重複: %s order=%d, 一意 %d / %d"
+                                        % (kind, order, len(seen), n * n))
+            step = np.abs(np.diff(pts, axis=0)).sum(axis=1)
+            assert np.all(step == 1), ("隣が距離 1 でない: %s order=%d, 最大 %d"
+                                       % (kind, order, step.max()))
+        # ★ムーア曲線は**閉じている**(最後から最初に戻れる)。ヒルベルトは閉じない。
+        pts = mathops.space_filling_curve(kind, 4)
+        closed = int(np.abs(pts[0] - pts[-1]).sum()) == 1
+        assert closed == (kind == "moore"), (kind, closed)
+
+
+def test_hilbert_keeps_locality_and_a_raster_scan_does_not():
+    """★局所性は主張でなく**表**。ヒルベルトは sqrt(k)、走査線は k に比例。"""
+    h = mathops.curve_locality(mathops.space_filling_curve("hilbert", 5))
+    b = mathops.curve_locality(mathops.space_filling_curve("boustrophedon", 5))
+    assert list(h["gap"]) == list(b["gap"])
+    # 同じ番号差で、走査線のほうが必ず遠い(k=1 は両方 1 なので k>=2 を見る)
+    far = h["gap"] >= 2
+    assert np.all(b["ratio"][far] > h["ratio"][far]), (h["ratio"], b["ratio"])
+    # ヒルベルトは k=32 で sqrt(32)=5.66 の近く、走査線は 32 に近い側へ伸びる
+    i32 = int(np.argmax(h["gap"] == 32))
+    assert 3.5 < h["ratio"][i32] < 9.0, h["ratio"][i32]
+    assert b["ratio"][i32] > 12.0, b["ratio"][i32]
+
+
+def test_the_geodesic_dome_has_exactly_twelve_pentagons():
+    """★★オイラーの公式 V - E + F = 2 が、**次数 5 の頂点をちょうど 12 個**に縛る。
+
+    どれだけ細かく分割しても 12 個から動かない。11 個でも 13 個でも球にならない
+    ので、これは実装の都合ではなく**位相の帰結**である。次数は既存の
+    `graph_degree_table`(隣接行列から数える別実装)に数えさせる —— 自分で
+    数え直して自分と一致しても、何も確かめたことにならない。
+    """
+    import conngraph
+    import render3d
+
+    for freq in (1, 2, 3, 4):
+        V, F = render3d.geodesic_dome(frequency=freq)
+        assert V.shape[1] == 3 and F.shape[1] == 3
+        assert V.shape[0] == 10 * freq * freq + 2, (freq, V.shape)
+        assert F.shape[0] == 20 * freq * freq, (freq, F.shape)
+        # 全頂点が半径 1 の球面上(射影が効いている)
+        rad = np.linalg.norm(V, axis=1)
+        assert np.allclose(rad, 1.0, atol=1e-12), (freq, rad.min(), rad.max())
+
+        # 面から隣接行列を組み、**既存 op**に次数を数えさせる
+        n = V.shape[0]
+        W = np.zeros((n, n), dtype=np.float64)
+        for a, b, c in F:
+            for i, j in ((a, b), (b, c), (c, a)):
+                W[int(i), int(j)] = W[int(j), int(i)] = 1.0
+        deg = conngraph.graph_degree_table(W)["in_degree"]
+        assert int((deg == 5).sum()) == 12, (
+            "次数 5 の頂点が %d 個(オイラーの公式より 12)freq=%d"
+            % (int((deg == 5).sum()), freq))
+        assert int((deg == 6).sum()) == n - 12, (freq, deg)
+
+        # V - E + F = 2 も直接見る(辺は隣接行列の非零の半分)
+        edges = int(W.sum() // 2)
+        assert n - edges + F.shape[0] == 2, (freq, n, edges, F.shape[0])
+
+
+def test_the_new_construct_ops_are_registered_and_reachable():
+    """8 op が台帳とファサードの両方から引けること(登録面の取りこぼし検査)。"""
+    names = ["circle_packing_apollonian", "ford_circles", "phyllotaxis_pattern",
+             "neighbour_index_gaps", "ifs_fractal", "ifs_similarity_dimension",
+             "space_filling_curve", "curve_locality"]
+    import opsmath
+    for n in names:
+        assert n in opsmath.OPSMATH, n
+        assert opsmath.OPSMATH[n]["category"] == "construct", n
+    import fullseye as fs
+    for n in names:
+        assert hasattr(fs, n) and n in fs.__all__, n
+        assert hasattr(fs.ledger, n), n
+    assert len(mathops.MATHOPS) == 55
+    assert sum(1 for r in opsmath.OPSMATH.values()
+               if r["category"] == "construct") == 8

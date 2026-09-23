@@ -4,7 +4,7 @@ dim: 3d
 category: curvature
 in: points
 out: curvature
-examples: [curvature_grasp, itokawa_curvature]
+examples: [curvature_grasp, itokawa_curvature, minimal_surfaces]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.2  # fullseye lib version this note was generated for
@@ -45,6 +45,7 @@ normals(向き付き参照法線, (N,3))未指定時は凸側マグニチュー�
 
 - [curvature_grasp](../../../../examples_3d/curvature_grasp.py) — `py -3.11 examples_3d/curvature_grasp.py`
 - [itokawa_curvature](../../../../examples_3d/itokawa_curvature.py) — `py -3.11 examples_3d/itokawa_curvature.py`
+- [minimal_surfaces](../../../../examples_3d/minimal_surfaces.py) — `py -3.11 examples_3d/minimal_surfaces.py`
 
 ## 型が繋がる次の op(`curvature` を入力に取れる)
 

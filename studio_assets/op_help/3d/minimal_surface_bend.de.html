@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">minimal_surface_bend — 3D <code style="color:#22d3bf">surface</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">mesh</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.minimal_surface_bend(t=0.0, nu=80, nv=120, extent=1.5, scale=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import render3d; render3d.minimal_surface_bend(t=0.0, nu=80, nv=120, extent=1.5, scale=1.0)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;minimal_surface_bend&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Die Katenoid-Helikoid-Biegung — jedes Mitglied der Familie bleibt minimal.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>The *associate family* `<code style="color:#22d3bf">cos(t) * helicoid + sin(t) * catenoid</code>` (in the</p>
+<p>Weierstrass sense) deforms one into the other <b>without stretching</b>: the</p>
+<p>surfaces are isometric at every `<code style="color:#22d3bf">t</code>`, and every one of them is minimal.</p>
+<p>`<code style="color:#22d3bf">t = 0</code><code style="color:#22d3bf"> is the helicoid, </code><code style="color:#22d3bf">t = pi/2</code>` the catenoid.</p>
+<p>★<b>Why this earns its place</b>: it turns &quot;minimal&quot; from a property of two</p>
+<p>named surfaces into a <b>one-parameter claim that must hold throughout</b>. If</p>
+<p>an implementation is only accidentally right at the endpoints, the middle of</p>
+<p>the family exposes it — and the intrinsic geometry (first fundamental form)</p>
+<p>must not change along the way, which is a second, independent check.</p>
+<p>Returns a `<code style="color:#22d3bf">mesh</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: the same shape/scale contracts as</p>
+<p>:func:<code style="color:#22d3bf">minimal_surface</code>; a non-finite `<code style="color:#22d3bf">t</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:minimal_surfaces">minimal_surfaces</a> — <code style="color:#22d3bf">py -3.11 examples_3d/minimal_surfaces.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">mesh</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:supersample_mesh">supersample_mesh</a> · <a style="color:#22d3bf" href="op3d:render_beauty">render_beauty</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">surface</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:minimal_surface">minimal_surface</a> · <a style="color:#22d3bf" href="op3d:gyroid_isosurface">gyroid_isosurface</a> · <a style="color:#22d3bf" href="op3d:gyroid_solid_mask">gyroid_solid_mask</a> · <a style="color:#22d3bf" href="op3d:curve3d_tube_mesh">curve3d_tube_mesh</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render3d.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

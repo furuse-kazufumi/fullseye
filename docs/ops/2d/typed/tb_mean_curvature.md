@@ -67,6 +67,7 @@ tb_mean_curvature 0.50 0.50
 
 次の例は元の台帳 op `mean_curvature` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
 - [curvature_shape_index](../../../../examples_3d/curvature_shape_index.py) — `py -3.11 examples_3d/curvature_shape_index.py`
+- [minimal_surfaces](../../../../examples_3d/minimal_surfaces.py) — `py -3.11 examples_3d/minimal_surfaces.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

@@ -4,7 +4,7 @@ dim: conngraph
 category: stats
 in: conn_graph
 out: table
-examples: [poc_larval_connectome_reservoir]
+examples: [poc_larval_connectome_reservoir, poc_theorems_as_pictures]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.2  # fullseye lib version this note was generated for
@@ -35,6 +35,7 @@ version: 0.2.2  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_larval_connectome_reservoir](../../../../examples/poc_larval_connectome_reservoir.py) — `py -3.11 examples/poc_larval_connectome_reservoir.py`
+- [poc_theorems_as_pictures](../../../../examples/poc_theorems_as_pictures.py) — `py -3.11 examples/poc_theorems_as_pictures.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

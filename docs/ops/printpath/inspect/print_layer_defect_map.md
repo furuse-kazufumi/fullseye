@@ -39,7 +39,7 @@ version: 0.2.2  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[stipple_points_from_image](../stroke/stipple_points_from_image.md) · [stipple_energy](../stroke/stipple_energy.md) · [stroke_tone_error](../stroke/stroke_tone_error.md)
+[stipple_points_from_image](../stroke/stipple_points_from_image.md) · [stipple_energy](../stroke/stipple_energy.md) · [stroke_tone_error](../stroke/stroke_tone_error.md) · [halftone_screen](../npr/halftone_screen.md) · [engrave_lines](../npr/engrave_lines.md) · [hatch_field](../npr/hatch_field.md) · [mosaic_tiles_sites](../npr/mosaic_tiles_sites.md) · [mosaic_tiles_render](../npr/mosaic_tiles_render.md)
 
 ## 同カテゴリ(`inspect`)
 

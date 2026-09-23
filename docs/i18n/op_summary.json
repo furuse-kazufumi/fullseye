@@ -4736,6 +4736,14 @@
    "ko": "광자 도착 시간 히스토그램으로부터 구한 거리: ``d = c*t/2``.",
    "de": "Entfernung aus einem Photonen-Ankunftszeit-Histogramm: ``d = c*t/2``."
   },
+  "2d/tb_dynsys_correlation_dimension": {
+   "fp": "0dd35f264899",
+   "ja": "グラスバーガー–プロカッチャの相関次元 —— ``log C(r)`` の傾き。",
+   "zh": "Grassberger–Procaccia 关联维数 —— ``log C(r)`` 的斜率。",
+   "tw": "Grassberger–Procaccia 關聯維數 —— ``log C(r)`` 的斜率。",
+   "ko": "그라스베르거–프로카치아 상관 차원 —— ``log C(r)`` 의 기울기。",
+   "de": "Grassberger-Procaccia-Korrelationsdimension — die Steigung von ``log C(r)``."
+  },
   "2d/tb_elastic_deform": {
    "fp": "042631286861",
    "en": "Elastic deformation via a smooth random displacement field (correlation length ``sigma``, RMS amplitude ``alpha``).",
@@ -7464,6 +7472,14 @@
    "ko": "각 점의 곡률 κ 와 비틀림 τ(재매개변수화 불변인 닫힌 식). → (kappa (N,), tau (N,)).",
    "de": "Krümmung κ und Torsion τ an jedem Punkt (eine reparametrisierungsinvariante geschlossene Form). → (kappa (N,), tau (N,))."
   },
+  "3d/curve3d_tube_mesh": {
+   "fp": "5dd004f27969",
+   "ja": "空間曲線を管メッシュに —— MATLAB の ``tubeplot``、ただし体積を検算できる。",
+   "zh": "把空间曲线做成管状网格 —— MATLAB 的 ``tubeplot``,但体积可以核对。",
+   "tw": "把空間曲線做成管狀網格 —— MATLAB 的 ``tubeplot``,但體積可以核對。",
+   "ko": "공간 곡선을 관 메시로 —— MATLAB 의 ``tubeplot``, 다만 부피를 검산할 수 있다。",
+   "de": "Eine Raumkurve als Röhrennetz — MATLABs ``tubeplot``, aber mit nachrechenbarem Volumen."
+  },
   "3d/cutout": {
    "fp": "01d5ae373b42",
    "en": "Remove an axis-aligned box region in space and return ``(kept, kept_idx)`` (mimicking a local dropout).",
@@ -7992,6 +8008,14 @@
    "ko": "source 에서 모든 점까지의 측지 거리(kNN 그래프 위 Dijkstra). → (N,) float(도달 불가는 inf).",
    "de": "Geodätische Distanzen von einer Quelle zu jedem Punkt (Dijkstra auf dem kNN-Graphen). → (N,) float (inf, wo unerreichbar)."
   },
+  "3d/geodesic_dome": {
+   "fp": "a3c625b4abaa",
+   "ja": "正二十面体を細分した測地球 —— 形を決めているのはオイラーの公式。",
+   "zh": "对正二十面体细分得到的测地球 —— 决定形状的是欧拉公式。",
+   "tw": "對正二十面體細分得到的測地球 —— 決定形狀的是尤拉公式。",
+   "ko": "정이십면체를 세분한 측지구 —— 모양을 정하는 것은 오일러 공식이다.",
+   "de": "Geodätische Kugel aus einem unterteilten Ikosaeder — Euler bestimmt die Form."
+  },
   "3d/geodesic_mesh": {
    "fp": "68c260545001",
    "en": "Geodesic distance from a source to each vertex by Dijkstra on the triangle mesh's edge graph. → (V,) float.",
@@ -8031,6 +8055,22 @@
    "tw": "建構用於 CSG 求值的體素中心座標網格(與 occupancy 相同的格點慣例)。",
    "ko": "CSG 평가용 복셀 중심 좌표 격자를 만듭니다(occupancy 와 같은 격자 규약).",
    "de": "Baut das Gitter der Voxelmittelpunkte für die CSG-Auswertung (dieselbe Gitterkonvention wie occupancy)."
+  },
+  "3d/gyroid_isosurface": {
+   "fp": "d4cb95f14ffc",
+   "ja": "ジャイロイド —— 節面近似から作る三重周期曲面。",
+   "zh": "螺旋二十四面体(gyroid)—— 由节面近似生成的三重周期曲面。",
+   "tw": "螺旋二十四面體(gyroid)—— 由節面近似生成的三重週期曲面。",
+   "ko": "자이로이드 —— 마디면 근사로 만드는 삼중 주기 곡면。",
+   "de": "Das Gyroid — eine dreifach periodische Fläche aus ihrer Knotenflächennäherung."
+  },
+  "3d/gyroid_solid_mask": {
+   "fp": "d89b9b8ad1e2",
+   "ja": "印刷できる**固体**としてのジャイロイド —— 等値面から ±*thickness* の殻。",
+   "zh": "作为可打印**实体**的 gyroid —— 等值面 ±*thickness* 之内的壳。",
+   "tw": "作為可列印**實體**的 gyroid —— 等值面 ±*thickness* 之內的殼。",
+   "ko": "인쇄할 수 있는 **고체**로서의 자이로이드 —— 등위면에서 ±*thickness* 의 껍질。",
+   "de": "Das Gyroid als druckbarer **Festkörper** — die Schale innerhalb ±*thickness* der Niveaufläche."
   },
   "3d/harris3d_keypoints": {
    "fp": "51ca460c7275",
@@ -8511,6 +8551,22 @@
    "tw": "點群 (N,3) → 包含全部點的(近似)最小包圍球 {center(3), radius}。",
    "ko": "점군 (N,3) → 모든 점을 포함하는 (근사) 최소 포함구 {center(3), radius}.",
    "de": "Punktmenge (N,3) → die (näherungsweise) kleinste umschließende Kugel aller Punkte, {center(3), radius}."
+  },
+  "3d/minimal_surface": {
+   "fp": "b5f89213dac3",
+   "ja": "古典的な極小曲面を、厳密なパラメータ表示から作る。",
+   "zh": "由精确参数化生成的经典极小曲面。",
+   "tw": "由精確參數化生成的經典極小曲面。",
+   "ko": "고전적인 극소 곡면을, 엄밀한 매개변수 표시에서 만든다。",
+   "de": "Eine klassische Minimalfläche aus ihrer exakten Parametrisierung."
+  },
+  "3d/minimal_surface_bend": {
+   "fp": "254f74004bfe",
+   "ja": "カテノイド ⇄ ヘリコイドの曲げ —— 族のどれもまだ極小のまま。",
+   "zh": "悬链面 ⇄ 螺旋面的弯折 —— 族中每一个仍然是极小曲面。",
+   "tw": "懸鏈面 ⇄ 螺旋面的彎折 —— 族中每一個仍然是極小曲面。",
+   "ko": "카테노이드 ⇄ 헬리코이드의 굽힘 —— 족의 어느 것도 여전히 극소다。",
+   "de": "Die Katenoid-Helikoid-Biegung — jedes Mitglied der Familie bleibt minimal."
   },
   "3d/mls_smooth": {
    "fp": "c03ac322cc37",
@@ -11684,6 +11740,14 @@
    "ko": "각도 격자 전체를 2-D 이미지의 평범한 리스트로(``(v, u)`` 행 우선).",
    "de": "Das gesamte Winkelgitter als einfache Liste von 2-D-Bildern (zeilenweise über ``(v, u)``)."
   },
+  "math/circle_packing_apollonian": {
+   "fp": "3a95a522f30d",
+   "ja": "デカルトの四つ組から作るアポロニウスの充填 —— どの円も定理を背負っている。",
+   "zh": "由笛卡儿四元组生成的阿波罗尼奥斯圆填充 —— 每个圆都背着一条定理。",
+   "tw": "由笛卡兒四元組生成的阿波羅尼奧斯圓填充 —— 每個圓都背著一條定理。",
+   "ko": "데카르트 사원수 조합에서 만드는 아폴로니우스 원 채우기 —— 모든 원이 정리를 지고 있다.",
+   "de": "Apollonisches Kreispacking aus einem Descartes-Quadrupel — jeder Kreis trägt einen Satz."
+  },
   "math/cplx_argument_principle": {
    "fp": "30108a1ac6cd",
    "ja": "偏角の原理: ``f`` の標本値だけから、閉曲線が囲む零点の数 − 極の数を数える。",
@@ -11804,6 +11868,70 @@
    "ko": "닫힌 폐곡선이 한 점을 감는 횟수(회전수).",
    "de": "Windungszahl einer geschlossenen Kontur um einen Punkt (Umlaufzahl)."
   },
+  "math/curve_locality": {
+   "fp": "0f9f5f6fe860",
+   "ja": "曲線に沿って番号差 k の 2 点は、平面上でどれだけ離れているか。",
+   "zh": "沿曲线编号相差 k 的两点, 在平面上相距多远?",
+   "tw": "沿曲線編號相差 k 的兩點, 在平面上相距多遠?",
+   "ko": "곡선을 따라 번호 차가 k 인 두 점은 평면에서 얼마나 떨어져 있는가?",
+   "de": "Punkte mit Indexabstand ``k`` entlang der Kurve — wie weit liegen sie in der Ebene auseinander?"
+  },
+  "math/dynsys_bifurcation_map": {
+   "fp": "06cdb5fedc10",
+   "ja": "1 次元写像の軌道図 —— 周期倍分岐を、数えられる点で。",
+   "zh": "一维映射的轨道图 —— 把倍周期分岔化为可数的点。",
+   "tw": "一維映射的軌道圖 —— 把倍週期分岔化為可數的點。",
+   "ko": "1 차원 사상의 궤도 그림 —— 주기 배가 분기를, 셀 수 있는 점으로。",
+   "de": "Das Orbitdiagramm einer 1-D-Abbildung — Periodenverdopplung als abzählbare Punkte."
+  },
+  "math/dynsys_correlation_dimension": {
+   "fp": "0dd35f264899",
+   "ja": "グラスバーガー–プロカッチャの相関次元 —— ``log C(r)`` の傾き。",
+   "zh": "Grassberger–Procaccia 关联维数 —— ``log C(r)`` 的斜率。",
+   "tw": "Grassberger–Procaccia 關聯維數 —— ``log C(r)`` 的斜率。",
+   "ko": "그라스베르거–프로카치아 상관 차원 —— ``log C(r)`` 의 기울기。",
+   "de": "Grassberger-Procaccia-Korrelationsdimension — die Steigung von ``log C(r)``."
+  },
+  "math/dynsys_lyapunov_spectrum": {
+   "fp": "2965175b10ba",
+   "ja": "接流 + QR で出すリアプノフ・スペクトル —— そして答え合わせできる和。",
+   "zh": "用切流 + QR 求出的李雅普诺夫谱 —— 以及可以核对的和。",
+   "tw": "用切流 + QR 求出的李雅普諾夫譜 —— 以及可以核對的和。",
+   "ko": "접선 흐름 + QR 로 구하는 랴푸노프 스펙트럼 —— 그리고 답을 맞춰 볼 수 있는 합。",
+   "de": "Das Lyapunov-Spektrum über Tangentialfluss + QR — und die Summe, die man nachrechnen kann."
+  },
+  "math/dynsys_poincare_section": {
+   "fp": "a32ac8c98f39",
+   "ja": "軌道が平面を横切る所 —— 交点は補間して返す。",
+   "zh": "轨道穿过平面之处 —— 交点经插值后返回。",
+   "tw": "軌道穿過平面之處 —— 交點經內插後回傳。",
+   "ko": "궤적이 평면을 가로지르는 곳 —— 교점은 보간해서 돌려준다。",
+   "de": "Wo eine Trajektorie eine Ebene schneidet — der Schnittpunkt interpoliert."
+  },
+  "math/ford_circles": {
+   "fp": "9b054158e6b0",
+   "ja": "ファレイ分数のフォード円 —— 接することは整数の等式**そのもの**。",
+   "zh": "法里分数的福特圆 —— 相切就是一个整数等式本身。",
+   "tw": "法里分數的福特圓 —— 相切就是一個整數等式本身。",
+   "ko": "패리 분수의 포드 원 —— 접한다는 것은 정수 등식 그 자체다.",
+   "de": "Ford-Kreise der Farey-Brüche — Berührung *ist* eine ganzzahlige Identität."
+  },
+  "math/ifs_fractal": {
+   "fp": "29f6d5ca87f9",
+   "ja": "反復関数系のカオスゲーム —— 次元は閉形式で分かっている。",
+   "zh": "迭代函数系统的混沌游戏 —— 维数有闭形式。",
+   "tw": "迭代函數系統的混沌遊戲 —— 維數有閉形式。",
+   "ko": "반복 함수계의 카오스 게임 —— 차원은 닫힌 형식으로 알 수 있다.",
+   "de": "Chaosspiel auf einem iterierten Funktionensystem — die Dimension ist geschlossen darstellbar."
+  },
+  "math/ifs_similarity_dimension": {
+   "fp": "d8feb5dbc152",
+   "ja": "モランの式 ``sum(r_i**d) = 1`` を d について解く —— 写像だけから。",
+   "zh": "对莫兰方程 ``sum(r_i**d) = 1`` 解出 d —— 只用映射本身。",
+   "tw": "對莫蘭方程式 ``sum(r_i**d) = 1`` 解出 d —— 只用映射本身。",
+   "ko": "모란 방정식 ``sum(r_i**d) = 1`` 을 d 에 대해 푼다 —— 사상만으로.",
+   "de": "Morans Gleichung ``sum(r_i**d) = 1`` nach d gelöst — allein aus den Abbildungen."
+  },
   "math/interp_cubic": {
    "fp": "4cf3d6b52865",
    "ja": "3 次スプライン補間(``scipy.interpolate.CubicSpline``)。",
@@ -11888,6 +12016,38 @@
    "ko": "특이값 분해 ``A = U @ diag(s) @ Vt``(LAPACK ``gesdd``).",
    "de": "Singulärwertzerlegung ``A = U @ diag(s) @ Vt`` (LAPACK ``gesdd``)."
   },
+  "math/neighbour_index_gaps": {
+   "fp": "e2166625f3e5",
+   "ja": "最近傍どうしが**番号の上で**どれだけ離れているか —— 斜列を数にする。",
+   "zh": "最近邻之间在**编号上**相距多远 —— 把斜列(parastichy)变成数。",
+   "tw": "最近鄰之間在**編號上**相距多遠 —— 把斜列(parastichy)變成數。",
+   "ko": "최근접 이웃들이 **번호상으로** 얼마나 떨어져 있는가 —— 사선열을 수로 만든다.",
+   "de": "Wie weit liegen nächste Nachbarn *im Index* auseinander — Parastichen als Zahl."
+  },
+  "math/ode_flow_states": {
+   "fp": "67e5d3216392",
+   "ja": "名前で呼んだベクトル場を積む —— 軌道と、払った分の次数。",
+   "zh": "对具名向量场做积分 —— 轨道,以及你所付出的阶数。",
+   "tw": "對具名向量場做積分 —— 軌道,以及你所付出的階數。",
+   "ko": "이름으로 부른 벡터장을 적분한다 —— 궤적과, 치른 만큼의 차수。",
+   "de": "Integriert ein benanntes Vektorfeld — die Trajektorie, mit der Ordnung, die man bezahlt hat."
+  },
+  "math/ode_vector_field_grid": {
+   "fp": "ac502d5e852a",
+   "ja": "名前で呼んだ場を格子で標本化 —— 既存のビューアが取る ``flow2d``。",
+   "zh": "在网格上采样具名场 —— 现有查看器可直接接收的 ``flow2d``。",
+   "tw": "在網格上取樣具名場 —— 現有檢視器可直接接收的 ``flow2d``。",
+   "ko": "이름으로 부른 장을 격자에서 표본화 —— 기존 뷰어가 받는 ``flow2d``。",
+   "de": "Tastet ein benanntes Feld auf einem Gitter ab — ein ``flow2d``, das die vorhandenen Betrachter annehmen."
+  },
+  "math/phyllotaxis_pattern": {
+   "fp": "592c93877283",
+   "ja": "フォーゲルの螺旋 —— 最も詰まる角度と、そこに現れる螺旋。",
+   "zh": "沃格尔螺线 —— 堆积最紧的那个角度, 以及由它生出的螺旋。",
+   "tw": "沃格爾螺線 —— 堆積最緊的那個角度, 以及由它生出的螺旋。",
+   "ko": "포겔 나선 —— 가장 조밀하게 쌓이는 각도와 거기서 나타나는 나선.",
+   "de": "Vogels Spirale — der Winkel, der am besten packt, und die Spiralen, die er erzeugt."
+  },
   "math/poly_eval": {
    "fp": "5f9a69fd2a97",
    "ja": "多項式を *x* で評価する(係数は最高次から)。",
@@ -11919,6 +12079,14 @@
    "tw": "儒可夫斯基翼型周圍的無黏流, 以複速度場給出。",
    "ko": "주코프스키 익형 주위의 비점성 흐름을 복소 속도장으로.",
    "de": "Reibungsfreie Strömung um ein Joukowski-Profil als komplexes Geschwindigkeitsfeld."
+  },
+  "math/space_filling_curve": {
+   "fp": "cf8968c34e49",
+   "ja": "``2**order`` の正方格子上のヒルベルト/ムーア/走査順 —— 置換であることを検査つきで。",
+   "zh": "``2**order`` 方格上的希尔伯特/摩尔/扫描顺序 —— 并验证它确实是一个置换。",
+   "tw": "``2**order`` 方格上的希爾伯特/摩爾/掃描順序 —— 並驗證它確實是一個置換。",
+   "ko": "``2**order`` 정사각 격자 위의 힐베르트/무어/주사 순서 —— 치환임을 검사한다.",
+   "de": "Hilbert-/Moore-/Scan-Ordnung auf einem ``2**order``-Quadrat — eine Permutation, geprüft."
   },
   "math/stat_correlation": {
    "fp": "bd33cd23f258",
@@ -11959,6 +12127,54 @@
    "tw": "標準化一維樣本:``(x - mean) / std``(母體 ``ddof=0``)。",
    "ko": "1-D 표본을 표준화합니다: ``(x - mean) / std``(모집단 ``ddof=0``).",
    "de": "Standardisiert eine 1-D-Stichprobe: ``(x - mean) / std`` (Population, ``ddof=0``)."
+  },
+  "math/wave_fringe_period": {
+   "fp": "302887ba4d1c",
+   "ja": "縞模様の画像から周期を測り返す(画素)。",
+   "zh": "从条纹图像中反过来测出周期(像素)。",
+   "tw": "從條紋影像中反過來量出週期(像素)。",
+   "ko": "줄무늬 영상에서 주기를 되짚어 측정한다(픽셀)。",
+   "de": "Misst die Periode aus einem gestreiften Bild zurück (Pixel)."
+  },
+  "math/wave_grating_orders": {
+   "fp": "e54a9ea73f80",
+   "ja": "格子が各次数を送る向き —— ``d (sin_out − sin_in) = m λ`` を角度について解く。",
+   "zh": "光栅把各级次送往何处 —— 对角度求解 ``d (sin_out − sin_in) = m λ``。",
+   "tw": "光柵把各級次送往何處 —— 對角度求解 ``d (sin_out − sin_in) = m λ``。",
+   "ko": "격자가 각 차수를 보내는 방향 —— ``d (sin_out − sin_in) = m λ`` 를 각도에 대해 푼다。",
+   "de": "Wohin ein Gitter jede Ordnung schickt — ``d (sin_out − sin_in) = m λ`` nach dem Winkel aufgelöst."
+  },
+  "math/wave_membrane_mode": {
+   "fp": "a6138d659af5",
+   "ja": "振動する**膜**の固有モード 1 枚 —— 砂が描くあの形(板ではない)。",
+   "zh": "振动**膜**的一个本征模态 —— 沙子画出的那个图形(不是板)。",
+   "tw": "振動**膜**的一個本徵模態 —— 沙子畫出的那個圖形(不是板)。",
+   "ko": "진동하는 **막**의 고유 모드 한 장 —— 모래가 그리는 그 모양(판이 아니다)。",
+   "de": "Eine Eigenmode einer schwingenden **Membran** — die Figur, die der Sand zeichnet (keine Platte)."
+  },
+  "math/wave_mode_frequencies": {
+   "fp": "7a5bef4757bb",
+   "ja": "膜の固有値の梯子 —— 答え合わせに使える閉形式。",
+   "zh": "膜的本征值阶梯 —— 可用来核对的闭式解。",
+   "tw": "膜的本徵值階梯 —— 可用來核對的閉式解。",
+   "ko": "막의 고윳값 사다리 —— 답을 맞춰 볼 수 있는 닫힌 형식。",
+   "de": "Die Eigenwertleiter einer Membran — eine geschlossene Form zum Nachrechnen."
+  },
+  "math/wave_nodal_lines": {
+   "fp": "e25b83ba61bc",
+   "ja": "符号つきの場が符号を変える所 —— 節集合をマスクで返す。",
+   "zh": "带符号的场改变符号的位置 —— 以掩膜返回节集。",
+   "tw": "帶符號的場改變符號的位置 —— 以遮罩回傳節集。",
+   "ko": "부호가 있는 장이 부호를 바꾸는 곳 —— 마디 집합을 마스크로 돌려준다。",
+   "de": "Wo ein vorzeichenbehaftetes Feld das Vorzeichen wechselt — die Knotenmenge als Maske."
+  },
+  "math/wave_two_slit": {
+   "fp": "7a22c4706617",
+   "ja": "スクリーン上の二重スリット干渉 —— 縞の公式でなく物理から組む。",
+   "zh": "屏幕上的双缝干涉 —— 由物理构建,而非套用条纹公式。",
+   "tw": "螢幕上的雙狹縫干涉 —— 由物理建構,而非套用條紋公式。",
+   "ko": "스크린 위의 이중 슬릿 간섭 —— 무늬 공식이 아니라 물리에서 만든다。",
+   "de": "Doppelspalt-Interferenz auf einem Schirm — aus der Physik gebaut, nicht aus der Streifenformel."
   },
   "motionmag/band_snr": {
    "fp": "e9ec32a0d184",
@@ -13395,6 +13611,54 @@
    "tw": "到達時間直方圖的描述量:峰、重心、寬度、背景。",
    "ko": "도달 시각 히스토그램의 기술량: 피크·무게중심·폭·배경.",
    "de": "Kenngrößen eines Ankunftszeit-Histogramms: Maximum, Schwerpunkt, Breite, Hintergrund."
+  },
+  "printpath/engrave_lines": {
+   "fp": "80a85b5ca27c",
+   "ja": "銅版彫刻 —— 平行線の**幅**が濃淡を運ぶ。",
+   "zh": "铜版雕刻 —— 平行线的**宽度**承载灰阶。",
+   "tw": "銅版雕刻 —— 平行線的**寬度**承載灰階。",
+   "ko": "동판 조각 —— 평행선의 **폭**이 농담을 나른다。",
+   "de": "Kupferstich — die **Breite** paralleler Linien trägt den Tonwert."
+  },
+  "printpath/halftone_moire_period": {
+   "fp": "1f91fd2c86e7",
+   "ja": "2 枚の網点のうなり —— 周期と向きを閉形式で。",
+   "zh": "两张半色调网屏之间的拍频 —— 周期与方向的闭式解。",
+   "tw": "兩張半色調網屏之間的拍頻 —— 週期與方向的閉式解。",
+   "ko": "두 장의 하프톤 스크린이 만드는 맥놀이 —— 주기와 방향을 닫힌 형식으로。",
+   "de": "Die Schwebung zwischen zwei Halbtonrastern — Periode und Richtung in geschlossener Form."
+  },
+  "printpath/halftone_screen": {
+   "fp": "d83d6a520a8f",
+   "ja": "古典的な回転網点 —— 点の面積が濃淡を運ぶ。",
+   "zh": "经典的旋转半色调网屏 —— 网点面积承载灰阶。",
+   "tw": "經典的旋轉半色調網屏 —— 網點面積承載灰階。",
+   "ko": "고전적인 회전 하프톤 스크린 —— 점의 면적이 농담을 나른다。",
+   "de": "Ein klassisches gedrehtes Halbtonraster — die Punktfläche trägt den Tonwert."
+  },
+  "printpath/hatch_field": {
+   "fp": "45da7c144ca3",
+   "ja": "**絵に沿う**クロスハッチ —— 向きは構造テンソルから。",
+   "zh": "**顺着画面**的交叉排线 —— 方向来自结构张量。",
+   "tw": "**順著畫面**的交叉排線 —— 方向來自結構張量。",
+   "ko": "**그림을 따라가는** 크로스해칭 —— 방향은 구조 텐서에서。",
+   "de": "Kreuzschraffur, die **dem Bild folgt** — die Richtung kommt vom Strukturtensor."
+  },
+  "printpath/mosaic_tiles_render": {
+   "fp": "4562baba29a0",
+   "ja": "各ボロノイ胞を、持っている画素の**平均**で塗る。",
+   "zh": "用各 Voronoi 单元所辖像素的**均值**来填色。",
+   "tw": "用各 Voronoi 單元所轄像素的**均值**來填色。",
+   "ko": "각 보로노이 셀을, 그 셀이 가진 화소의 **평균**으로 칠한다。",
+   "de": "Färbt jede Voronoi-Zelle mit dem **Mittelwert** der ihr gehörenden Pixel."
+  },
+  "printpath/mosaic_tiles_sites": {
+   "fp": "2331a4120c88",
+   "ja": "画像の上で回す Lloyd 反復 —— モザイクのタイル中心。",
+   "zh": "在图像上运行的 Lloyd 迭代 —— 马赛克的瓷砖中心。",
+   "tw": "在影像上執行的 Lloyd 迭代 —— 馬賽克的磁磚中心。",
+   "ko": "영상 위에서 도는 Lloyd 반복 —— 모자이크 타일의 중심。",
+   "de": "Lloyds Iteration auf einem Bild — die Kachelzentren eines Mosaiks."
   },
   "quat/iqft2": {
    "fp": "68ca723f61a3",

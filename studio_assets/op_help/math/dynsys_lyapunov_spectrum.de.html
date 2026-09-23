@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dynsys_lyapunov_spectrum — MATH <code style="color:#22d3bf">dynsys</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">signal</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynsys_lyapunov_spectrum(system=&#x27;lorenz&#x27;, params=None, x0=None, t_end=200.0, dt=0.005, burn_in=20.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.dynsys_lyapunov_spectrum(system=&#x27;lorenz&#x27;, params=None, x0=None, t_end=200.0, dt=0.005, burn_in=20.0)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;dynsys_lyapunov_spectrum&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Das Lyapunov-Spektrum über Tangentialfluss + QR — und die Summe, die man nachrechnen kann.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Integrates the state together with an orthonormal frame of tangent vectors</p>
+<p>(the variational equation `<code style="color:#22d3bf">dY/dt = J(x) Y</code>`), re-orthonormalising by QR at</p>
+<p>every step and accumulating `<code style="color:#22d3bf">log</code>` of the diagonal. The exponents come out</p>
+<p><b>ordered</b>, largest first.</p>
+<p>★★<b>Why this earns its place — the trace identity.</b> The sum of the exponents</p>
+<p>equals the time-average of the divergence of the field:</p>
+<p>sum(lambda_i) == &lt;div f&gt;</p>
+<p>For Lorenz the divergence is the <b>constant</b> `<code style="color:#22d3bf">-(sigma + 1 + beta)</code>`, so the</p>
+<p>sum is known in closed form: `<code style="color:#22d3bf">-13.6667</code>` for the classical parameters. That</p>
+<p>is an exact target the attractor picture cannot provide. The published largest</p>
+<p>exponent (≈ 0.906 for sigma=10, beta=8/3, rho=28) is a second, independent</p>
+<p>check.</p>
+<p>Returns a `<code style="color:#22d3bf">signal</code>`: the exponents, descending.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: unknown system; non-finite input; </code><code style="color:#22d3bf">burn_in</code>` not</p>
+<p>shorter than `<code style="color:#22d3bf">t_end</code>`; a trajectory that left float range.</p>
+<p>Limits: the exponents converge like `<code style="color:#22d3bf">1/sqrt(T)</code>` — a short window gives a</p>
+<p>plausible but wrong spectrum. The trace identity converges much faster and is</p>
+<p>the honest gate; the individual exponents need long windows.</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">Leitfaden zur Familie math_metrology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_what_a_picture_cannot_check">poc_what_a_picture_cannot_check</a> — <code style="color:#22d3bf">py -3.11 examples/poc_what_a_picture_cannot_check.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">signal</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmath:mat_solve">mat_solve</a> · <a style="color:#22d3bf" href="opmath:mat_lstsq">mat_lstsq</a> · <a style="color:#22d3bf" href="opmath:stat_describe">stat_describe</a> · <a style="color:#22d3bf" href="opmath:stat_histogram">stat_histogram</a> · <a style="color:#22d3bf" href="opmath:stat_zscore">stat_zscore</a> · <a style="color:#22d3bf" href="opmath:interp_linear">interp_linear</a> · <a style="color:#22d3bf" href="opmath:interp_cubic">interp_cubic</a> · <a style="color:#22d3bf" href="opmath:interp_scattered">interp_scattered</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">dynsys</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:ode_flow_states">ode_flow_states</a> · <a style="color:#22d3bf" href="opmath:ode_vector_field_grid">ode_vector_field_grid</a> · <a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a> · <a style="color:#22d3bf" href="opmath:dynsys_bifurcation_map">dynsys_bifurcation_map</a> · <a style="color:#22d3bf" href="opmath:dynsys_correlation_dimension">dynsys_correlation_dimension</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

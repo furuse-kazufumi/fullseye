@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 850. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 902. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -28,20 +28,20 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `api.py`
 
-- **L553** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
-- **L569** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
-- **L624** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
-- **L1160** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
-- **L1178** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
-- **L1247** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
-- **L1542** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
-- **L1573** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
-- **L1857** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
-- **L1893** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L2214** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L2454** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L2458** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L2527** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L565** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
+- **L581** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
+- **L636** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
+- **L1182** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
+- **L1200** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
+- **L1269** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
+- **L1564** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
+- **L1595** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
+- **L1879** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
+- **L1915** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L2236** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L2476** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L2480** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L2549** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
 
 ## `astrostack.py`
 
@@ -98,7 +98,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `backends_typed.py`
 
-- **L558** — ★Until 2026-09-05 it read ``tools/chain_fuzz`` (not shipped) via sys.path manipulation. It failed in the wheel, and since the build() below silently returned [], the tb_* 143 ops were disappearing.
+- **L401** _(ja)_ — ★本当に効く r_lo / r_hi(半径の窓)だが、後者は既定が None で「データから決める」 意味なので、正の数値既定を要求する橋の選定には載らない。嘘のノブを 1 本足すより **a だけを配線して b を『未使用』と書く**ほうが正しい。
+- **L573** — ★Until 2026-09-05 it read ``tools/chain_fuzz`` (not shipped) via sys.path manipulation. It failed in the wheel, and since the build() below silently returned [], the tb_* 143 ops were disappearing.
 
 ## `blob2d.py`
 
@@ -250,6 +251,11 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_beam_modal_video.py`
 
 - **L629** — ★Collision: at fps 48.5 the aliasing of the illumination lands exactly on f_1 = 3.00 Hz
+
+## `examples/poc_beats_fringes_and_screens.py`
+
+- **L237** _(ja)_ — ★デューティ 50 % の矩形格子は**偶数次が消える** —— 矩形波のフーリエ係数が 偶数調波でちょうど 0 になるからで、これは実装の都合ではない閉形式の事実。 最初「±1, ±2 が立つ」と期待して NG にした: 期待が誤っていた(op は正しい)。 偶数次が「消えていること」まで見るので、山の位置だけを見るより強い門になる。
+- **L535** _(ja)_ — ★図の書き出しが失敗したら、ここで拾う。見ないと「検査は全部 OK・でも図は 1 枚も出ていない」が黙って通る(examplefig は fail-soft で貯める)。
 
 ## `examples/poc_bev_sensor_fusion.py`
 
@@ -527,6 +533,12 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L568** — ★The measurement is slower than that. The fraction of grain-boundary pixels actually erased on the mask, f_eff, is smaller than f (the blur leaks the neighbouring black into the 1 px at both ends of the gap, and the local threshold picks it up), so compare against the prediction re-derived with f_eff, ΔG0 + 6.64 log10(1-f_eff).
 
+## `examples/poc_moire_screen.py`
+
+- **L586** _(ja)_ — ★2026-09-23: 語の網を ("notch", "destripe", "mura") に狭めた。npr 族が入って 'moire' と 'periodic' が引っかかるようになったが、`halftone_moire_period` は **うなりの周期を予言する** op であって**落とす** op ではない —— 穴は残っている。 「語で引く穴の固定」は、別の意味で同じ語を使う族が来た瞬間に偽陽性になる (この PoC は (a) で `fly_hex_lattice` の例を既に書いている)。**穴の主張は 語でなく「何ができないか」で書くこと**: ここで無いのは「特定の (fx, fy) を 落とす」op であって、「モアレという語を含む op」ではない。
+- **L636** _(ja)_ — ★2026-09-23: **"moire" はここから外した** —— この PoC が「族の名前か docstring に入れておけ」と書いた提案がそのまま実装され、`halftone_moire_period` が 引けるようになったため。穴の記録は**埋まったら埋まったと書く**(消さない): 消すと「昔から在った」ことになり、何が効いたのかが記録から落ちる。
+- **L640** _(ja)_ — ★元の判定は「名前にその語を持つ op が返らないこと」(docstring 一致は数えない)。 `op_find` は docstring も語幹も拾うので、素の `== []` にすると `edge_alias_energy` のような無関係の族で必ず鳴る(一度そう書いて落ちた)。
+
 ## `examples/poc_multibeam_bathymetry.py`
 
 - **L518** — The number of partial angles that synthesise the echo. ★Setting this to 61 makes, at 70 degrees, the arrival times of adjacent partial angles 330 µs apart, wider than the 64 µs pulse width, so the envelope becomes a **comb** and amplitude detection picks up one tooth (the detection offset came out as -1131 µs). It is more correct to build a histogram of the arrival-time density and convolve it with the pulse.
@@ -604,8 +616,9 @@ This repository records *why* things are the way they are in **comments in the s
 - **L855** — ★On the FM side, **do not narrow** the search range (narrowing doesn't change the result, but it forecloses the excuse that "AM's aliasing is due to the search range").
 - **L1242** — ★A point where the two-stage broke is always a point where the coarse exceeded the cell radius (pin the inclusion relation)
 - **L1277** _(ja)_ — ★2026-09-13: 'lattice' だけ例外を 1 つ許す。flyvision 族の `fly_hex_lattice`(複眼の六角格子)が この語を含んで CI で鳴った(run 34751219513)。あれは網点の格子ではないので印刷の穴は 残ったまま —— 例外は名指しで 1 件に限り、それ以外が現れたら今までどおり鳴る。 「語で引く穴の固定」は、無関係の族が同じ語を使った瞬間に偽陽性になる、という実例。
-- **L1316** — ★Add noise to the reference too —— with a zero-noise image, star_detect gives "0 stars" and a ValueError (which is itself a correct fail-closed).
-- **L1339** — ★2026-09-08: Following this PoC's note, I fixed the op side. I wrote "cannot be used on repetitive structures" with measured numbers in the docstring, and made it return the **runner-up peak / top peak** of the vote as `vote_margin`. This number can distinguish two cases that the approval rate cannot.
+- **L1283** _(ja)_ — ★2026-09-23: **'halftone' / 'screen' / 'moire' の 3 語は埋まった**。npr 族の `halftone_screen`(回転網点の合成)と `halftone_moire_period`(2 版のうなりの 周期と向きを閉形式で)が入り、この PoC が「入口が 1 つも無い」と書いていた うちの合成とモアレ予言はファサードから引ける。**穴の記録は消さずに、埋まった 語を「在ることの検査」に裏返す** —— 消すと「昔から在った」ことになる。 残っている穴は 'rosette' / 'misregist' / 'lpi' / 'trapping'(版ずれの測定、 スクリーン角/線数の推定、トラッピング)で、そちらが印刷検査の本丸。
+- **L1327** — ★Add noise to the reference too —— with a zero-noise image, star_detect gives "0 stars" and a ValueError (which is itself a correct fail-closed).
+- **L1350** — ★2026-09-08: Following this PoC's note, I fixed the op side. I wrote "cannot be used on repetitive structures" with measured numbers in the docstring, and made it return the **runner-up peak / top peak** of the vote as `vote_margin`. This number can distinguish two cases that the approval rate cannot.
 
 ## `examples/poc_print_warpage_risk.py`
 
@@ -738,6 +751,12 @@ This repository records *why* things are the way they are in **comments in the s
 - **L1168** — (9) ★ Theme: the confidence's strengths and weaknesses reverse with conditions
 - **L1172** — ★ The cliffs each is good at are opposite = you cannot pick either one as the confidence
 
+## `examples/poc_theorems_as_pictures.py`
+
+- **L308** _(ja)_ — ★手前側の**辺**を集めて、ひとつの座標系で一度に焼く。三角形を 1 枚ずつ 焼くと、呼び出しごとに自分の外接矩形へ正規化されて図が壊れる。
+- **L423** _(ja)_ — ★判定は "is not a similarity" で行う。"similarit" だけで見ると **op 名 `ifs_similarity_dimension` そのものに当たって必ず通る** —— 最初それで書いており、しかも preset 名を間違えて("fern"、正しくは "barnsley_fern")未知 preset の拒否を見ていたのに OK が出ていた。
+- **L547** _(ja)_ — ★図の書き出しが失敗したら、ここで拾う。見ないと「検査は全部 OK・でも図は 1 枚も出ていない」が黙って通る(examplefig は fail-soft で貯める)。
+
 ## `examples/poc_thermal_radiometry.py`
 
 - **L507** — ★Forward is **direct integration**, inverse is a **calibration table**. Round-tripping through the same table trivially yields error 0 and does not count as measuring the floor.
@@ -847,6 +866,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L802** — ★The floor is not 0. With 24 trials the longest 2 points happened to be 0 % and the judgment "the shortest L that holds 0 %" passed, but with 120 trials even the longest 20000 mm leaves 2 %. **Measure the floor first, then decide at what multiple of the floor to call it a cliff** (do not use 0 % in the judgment).
 - **L1057** — ★With 120 trials it was no longer exactly 100 % (97 / 98 %). The "100 %" of 24 trials was just a small denominator. Look at the floor and set it at 95 %.
 
+## `examples/poc_weld_bead_profile.py`
+
+- **L697** _(ja)_ — ★2026-09-23: `op_find("stripe")` は 0 件でなくなった —— wave 族の `wave_fringe_period`(「縞模様の画像から周期を測り返す」)が docstring で 引っかかる。だがあれは**画像全体の 1 本の支配的な周期**を返す op で、 ここで要るのは**列ごとの輝線の中心をサブピクセルで**取る op。穴は残っている。 語で穴を固定すると、別の意味で同じ語を使う族が来た瞬間に偽陽性になる (この repo で 3 度目: `fly_hex_lattice` / `halftone_moire_period` / これ)。
+
 ## `examples/poc_weld_bead_scan_angle.py`
 
 - **L485** — ★Candidates are "points that returned to the height of the base-metal surface," so **all the flat base metal outside the groove** also becomes a candidate. Only after confirming that weld metal (a drop of at least CHECK_DEV from the base-metal surface) exists within the inner CHECK_IN mm is it accepted as a toe —— without this gate, candidates slide down onto the base metal and the leg length flies out by 1.7 mm.
@@ -854,6 +877,13 @@ This repository records *why* things are the way they are in **comments in the s
 - **L572** — ★The mean of true values for only the surviving cross-sections. See what dropped out of the aggregation.
 - **L999** — ★Only the convexity deviated from the prediction. The cause is the creep of the toe (because τ is an absolute-value threshold).
 - **L1193** — ★How the groove disappears with angle (viewed by the drop from the base-metal surface)
+
+## `examples/poc_what_a_picture_cannot_check.py`
+
+- **L280** _(ja)_ — ★**偏りの正体を探し当ててから書く**。平面の推定が 1.88 と 真値 2 より低いのは、最初に疑った「点数が足りない」ではなかった (400 → 3,000 点で 1.8825 → 1.8709 と**むしろ下がる**)。正体は **べき乗則を見る半径の窓**で、既定は対距離の 1〜25 パーセンタイル —— 単位正方形ではその上端が箱の端に当たり、相関和が飽和して傾きが審う。 窓を小さい r 側に寄せると 2.05 まで上がる。
+- **L402** _(ja)_ — ★平行移動フレームの効き目: まっすぐな区間を含む曲線でも半径が崩れない
+- **L480** _(ja)_ — ★K の一致は必要条件にすぎない
+- **L630** _(ja)_ — ★図の書き出しが失敗したら、ここで拾う。見ないと「検査は全部 OK・でも図は 1 枚も出ていない」が黙って通る(examplefig は fail-soft で貯める)。
 
 ## `examples/polarization_camera_pipeline.py`
 
@@ -892,6 +922,11 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L34** — Actually call it and verify. ★Until 2026-09-05, this example wrote "matches np.sum(axis=0) when azimuth=elevation=0" but **had never once verified it**. Moreover, because the op → example index mistook the hasattr string for a call, "ops with not a single example" were hidden inside 100% coverage.
 
+## `examples_3d/geodesic_dome.py`
+
+- **L6** _(ja)_ — ★この例の要点は絵ではなく**オイラーの公式**: V − E + F = 2 から、次数 5 の 頂点は**どれだけ細分してもちょうど 12 個**になる。11 個でも 13 個でも球には ならない。ここでは次数を **別実装の op**(conngraph.graph_degree_table)に 数えさせて確かめる —— 自分で数え直して自分と一致しても、何も確かめたことに ならないため。 repo をそのまま clone した状態でも動くように、リポジトリ直下を import パスへ入れる。
+- **L48** _(ja)_ — ★オイラーの公式の帰結。細分しても 12 から動かない。
+
 ## `examples_3d/geometry_metrology.py`
 
 - **L186** — ★Output the difference from the infinite-line version as a number (the same 2 segments)
@@ -909,6 +944,12 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples_3d/metrics_eval.py`
 
 - **L234** — ★Nearest-neighbor distance lies when it is "just re-measured with zero change." Re-taking the same slope at a different density or position makes the nearest neighbor grab an adjacent point along the surface, producing **a spurious change on the order of the point spacing**. M3C2 projects onto the normal direction, so that component drops out. (The prediction before writing this PoC, "C2C also comes out too large under a normal shift," was **wrong** —— moving parallel surfaces along the normal direction alone keeps the nearest-neighbor distance nearly at the true value. The lie appeared in the re-taking along the surface instead.)
+
+## `examples_3d/minimal_surfaces.py`
+
+- **L6** _(ja)_ — ★この例の要点は絵ではなく**定義そのもの**: 極小曲面とは「平均曲率 H が至るところ 0」の曲面である。既存の `vertex_curvature` がまさにその H を測るので、 「これは極小曲面だ」という主張を、**作り方を知らない op が採点する**。 対照群として単位球(H = 1)と半径 1 の円柱(H = 0.5)を同じ手続きにかけ、 門が素通しでないことを示す。
+- **L12** _(ja)_ — ★カテノイドとヘリコイドは等長なのでガウス曲率 K が一致するが、それは **必要条件にすぎない** —— K が一致しても極小とは限らないので、門は H に置く。 repo をそのまま clone した状態でも動くように、リポジトリ直下を import パスへ入れる。
+- **L130** _(ja)_ — ★平行移動フレームの効き目: まっすぐな区間を含む曲線でも半径が崩れない
 
 ## `examples_3d/sdf_csg.py`
 
@@ -965,10 +1006,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `fullseye/__init__.py`
 
-- **L370** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L554** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
-- **L953** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L972** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L382** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L566** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
+- **L975** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L994** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1058,8 +1099,17 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `mathops.py`
 
-- **L1674** _(ja)_ — ★既存の cplx_* は閉曲線を点列で持つ層(積分・巻き数・ローラン・等角写像)。# ここで足すのは**領域**の層 —— 値の場・位相彩色・ニュートンの吸引域・ # 脱出時間・翼まわりのポテンシャル流。新しい語は 1 つも作らない # (cimage / rgbimage / labels2d / mask / roots / signal はすべて既存)。 # 真値は「使った式」ではなく、偏角の原理・Cayley の定理・主カージオイドの # 閉形式内部判定・c=0 のジュリア集合(単位円板)・そして既存 op である # cplx_winding_number / cplx_cr_residual / cplx_joukowski / poly_roots。 # --------------------------------------------------------------------------- #
-- **L2128** _(ja)_ — ★もう一方の臨界点 -b は円の**内側**になければならない。外に出ると dz/dzeta = 0 が流れの領域に現れ、そこで速度が発散する(翼でなく尖りが 2 つある図形になる)。
+- **L113** _(ja)_ — 定理が門になる図(2026-09-23)。★`MATHOPS`(台帳が読む一覧)と `__all__` (import * の公開面)は**別物**で、両方に書かないと片方だけ通る。
+- **L1711** _(ja)_ — ★既存の cplx_* は閉曲線を点列で持つ層(積分・巻き数・ローラン・等角写像)。# ここで足すのは**領域**の層 —— 値の場・位相彩色・ニュートンの吸引域・ # 脱出時間・翼まわりのポテンシャル流。新しい語は 1 つも作らない # (cimage / rgbimage / labels2d / mask / roots / signal はすべて既存)。 # 真値は「使った式」ではなく、偏角の原理・Cayley の定理・主カージオイドの # 閉形式内部判定・c=0 のジュリア集合(単位円板)・そして既存 op である # cplx_winding_number / cplx_cr_residual / cplx_joukowski / poly_roots。 # --------------------------------------------------------------------------- #
+- **L2165** _(ja)_ — ★もう一方の臨界点 -b は円の**内側**になければならない。外に出ると dz/dzeta = 0 が流れの領域に現れ、そこで速度が発散する(翼でなく尖りが 2 つある図形になる)。
+- **L2278** _(ja)_ — ★どれも「きれいな図」だが、**採ったのはきれいだからではなく、 正しさを定理が言えるから**である。数学の図はきれいなので、合って いるかを誰も確かめない —— だから絵の外に真値を置く: circle_packing_apollonian デカルトの円定理(厳密な代数等式)+ 整数充填 ford_circles 接するのは |ps - qr| = 1 のときに限る(整数で厳密) phyllotaxis_pattern 隣の番号差がフィボナッチ数(黄金角のときだけ) ifs_fractal モランの式 sum r^d = 1 と、既存 fractal_dimension space_filling_curve 4^n 点をちょうど 1 回ずつ・隣は必ず距離 1 相棒(neighbour_index_gaps / ifs_similarity_dimension / curve_locality)は **主張を数にする側**で、これが無いと「それらしい絵」しか残らない。 ------------------------------------------------------------------------- #
+- **L2391** _(ja)_ — ★四つ組の**最後**が「直前に生まれた円」。それを落とす反射は**親をもう一度** 作るので、種の四つ組だけ 4 方向、以降は 3 方向に進む。ここを間違えると depth 3 で 56 個のはずが 88 個になった(実測。一意な円は 56 のままなので、 絵は正しく見えるが同じ円を何度も描き、以降の段が指数的に太る)。
+- **L2787** _(ja)_ — ★ムーア曲線 = ヒルベルト曲線 4 本を輪に閉じたもの。四分割の**向きと進む方向**は 総当たり(8 対称 x 反転、4096 通り)で「継ぎ目 3 か所と折り返しが全部距離 1」を 満たす 32 解を出し、その 1 つを固定した。手で置くと隣接条件が静かに壊れる (最初の実装は隣接 False・閉 False のまま、絵としては正しく見えていた)。
+- **L2893** _(ja)_ — ★クラドニ図形は「板」ではなく**膜**の解である。よく見る cos*cos - cos*cos は ヘルムホルツ方程式 + ノイマン境界の膜のモードで、実際のクラドニ板は **重調和方程式**に従う別物。砂が節線に集まる絵は同じでも周波数比は合わない。 ここでは膜と明記し、膜の真値(閉形式の固有値・ベッセル零点)だけで採点する。 干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)。 ------------------------------------------------------------------------- #
+- **L3237** _(ja)_ — ★真値は**公表値か閉形式だけ**: 線形系は expm(At)x0 が厳密解で刻み半分に すると誤差が 1/16(4 次)、Lorenz のリアプノフ指数の**和**はトレース恒等式 により厳密に -(sigma+1+beta)、ロジスティック写像の周期倍分岐は 3 と 1+sqrt6、 相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
+- **L3241** _(ja)_ — ★関数(callable)を引数に取らない —— 型付き台帳は入力を sort で登録し、 連鎖ファザーがデータから引数を組むので callable は載らない。系は族名か係数配列。 ------------------------------------------------------------------------- #
+- **L3412** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
+- **L3710** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
 
 ## `medial.py`
 
@@ -1115,12 +1165,15 @@ This repository records *why* things are the way they are in **comments in the s
 ## `ops3d.py`
 
 - **L384** — ★out is not image2d but **rgbimage** (measured 2026-09-02). Both the docstring and the implementation say 'RGB (size, size, 3) float [0,1]', and only this line claimed a 2-D luminance image. This op only ran once a mesh seed was supplied, and the type predicate surfaced it with a TYPEMISS: "declared 'image2d' but returned ndarray(512,512,3)" (until then, because of the shape that splits (V,F) into 2 positional arguments, it had **never run once**). The other 3 render_* ops (ambient_occlusion / cast_shadow / supersample_mesh) are 2-D as measured, so image2d is fine for them -- the lie was only this one line.
-- **L474** _(ja)_ — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
-- **L629** — ★Added 2026-09-08. Until then the pose helper for carving (visualhull.look_at) could not be reached from any public layer, and grabbing the same-named render3d.look_at (gluLookAt, -Z forward) resulted in **an empty hull without exception** (poc_livestock_body_volume).
-- **L650** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
-- **L740** — ★The reason (a) for holding it back -- 'the points candidate list gets shorter and silently overwrites the existing champion' -- is gone now that backends_typed.TYPE_TO_SORT folds coordgrid -> points: the 2-D bridges tb_sphere_sdf / tb_box_sdf carry INPUT_ADAPTERS._points_to_grid and **actually build a coordinate field from the point cloud**, so their "points" declaration is not a lie (measured: passing (64,3) returns (16,16,16) = alive). The lie was only on the 3-D ledger side.
-- **L901** — ★axis=1. The canonical form of `pairs` is **(N,2)** (measured: the 6 consuming ops explicitly reject (2,N)). While the predicate was `lambda v: True`, this produced (2,n) and declared as its type 'a shape no consumer can accept'
-- **L939** — ★The canonical form of position is **3 components [z, y, x]**. Decided not by majority vote but by **running the consumers**: refine_translation_lk / refine_lm fail-closed with "init_pos must have exactly 3 components [z, y, x] (got 4)" when passed 4 components (measured). The generator is also 3 components (8.0, 8.0, 8.0). But the match_* family returns **4 components [score, d, h, w]** as per docstring, so flowing it with a declared out of "position" wipes out the downstream refinement ops = a type lie. Since score itself is honest information, **the function side is not trimmed** (get() stays at 4 components), and the coordinates alone are extracted on the call() side that claims the ledger's type (the same treatment as project_points).
+- **L407** _(ja)_ — ★どれだけ細分しても**次数 5 の頂点はちょうど 12 個**。これは V - E + F = 2 の帰結であって実装の都合ではない(11 個でも 13 個でも 球にならない)。mesh_subdivide は任意メッシュの細分で、正多面体から の構成は持っていなかった。入力を取らない生成 op。
+- **L413** _(ja)_ — ★極小曲面と掃引(2026-09-23)。極小曲面は**平均曲率 H が至るところ 0** の 曲面で、既存 `vertex_curvature` がまさにそれを測る —— 「これは極小曲面だ」 という主張を、作り方を知らない op が採点する。カテノイドとヘリコイドは 等長なのでガウス曲率 K が一致するが、それは**必要条件にすぎない**(門に するのは H)。実測 |H| 中央値 0.0001 に対し、対照群の単位球 1.00004・ 半径 1 の円柱 0.50000。
+- **L423** _(ja)_ — ★これは**節面近似**であって厳密な三重周期極小曲面ではない。残差は 隠さず docstring に書く(主曲率スケールの 1 % 程度)。
+- **L507** _(ja)_ — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
+- **L662** — ★Added 2026-09-08. Until then the pose helper for carving (visualhull.look_at) could not be reached from any public layer, and grabbing the same-named render3d.look_at (gluLookAt, -Z forward) resulted in **an empty hull without exception** (poc_livestock_body_volume).
+- **L683** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
+- **L773** — ★The reason (a) for holding it back -- 'the points candidate list gets shorter and silently overwrites the existing champion' -- is gone now that backends_typed.TYPE_TO_SORT folds coordgrid -> points: the 2-D bridges tb_sphere_sdf / tb_box_sdf carry INPUT_ADAPTERS._points_to_grid and **actually build a coordinate field from the point cloud**, so their "points" declaration is not a lie (measured: passing (64,3) returns (16,16,16) = alive). The lie was only on the 3-D ledger side.
+- **L934** — ★axis=1. The canonical form of `pairs` is **(N,2)** (measured: the 6 consuming ops explicitly reject (2,N)). While the predicate was `lambda v: True`, this produced (2,n) and declared as its type 'a shape no consumer can accept'
+- **L972** — ★The canonical form of position is **3 components [z, y, x]**. Decided not by majority vote but by **running the consumers**: refine_translation_lk / refine_lm fail-closed with "init_pos must have exactly 3 components [z, y, x] (got 4)" when passed 4 components (measured). The generator is also 3 components (8.0, 8.0, 8.0). But the match_* family returns **4 components [score, d, h, w]** as per docstring, so flowing it with a declared out of "position" wipes out the downstream refinement ops = a type lie. Since score itself is honest information, **the function side is not trimmed** (get() stays at 4 components), and the coordinates alone are extracted on the call() side that claims the ledger's type (the same treatment as project_points).
 
 ## `opsastrostack.py`
 
@@ -1155,6 +1208,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `opsmath.py`
 
 - **L85** _(ja)_ — ★閉形式の内部判定。脱出時間の図に「ここは絶対に出ない」を重ねられる。
+- **L90** _(ja)_ — ★定理が門になる図(2026-09-23)。数学の図はきれいなので、合っているかを 誰も確かめない —— ここに入れるのは**絵の外に真値がある**ものだけ。 デカルトの円定理 / |ps - qr| = 1 / フィボナッチの斜列 / モランの式 / 4^n 点をちょうど 1 回ずつ。相棒の 3 本は「主張を数にする」側で、 これが無いと「それらしい絵」しか残らない。
+- **L96** _(ja)_ — ★型は `pairs`(N,2)。`points` は **(N,3) の 3 次元点**で、 最初そちらで登録して型契約の門に捕まった —— 名前が似ているので 取り違えやすい(門が無ければ「もっともらしく間違った」宣言が残った)。
+- **L111** _(ja)_ — ★波動(2026-09-23)。クラドニ図形は「板」ではなく**膜**の解 —— 板は重調和 方程式に従う別物で、砂が節線に集まる絵は同じでも周波数比は合わない。膜と 明記して、膜の閉形式(矩形は pi^2(m^2/a^2 + n^2/b^2)、円はベッセルの零点) だけで採点する。干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)が独立に持っている。
+- **L128** _(ja)_ — ★力学系(2026-09-23)。真値は公表値か閉形式だけ: 線形系は expm(At)x0 が 厳密解で刻み半分なら誤差 1/16(4 次)、Lorenz のリアプノフ指数の**和**は トレース恒等式で厳密に -(sigma+1+beta)、ロジスティックの周期倍分岐は 3 と 1+sqrt6、相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
 
 ## `opsoptics.py`
 
@@ -1169,6 +1226,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L25** — * ★ We newly established ``flow2d``. The existing ``flow_dense`` has the predicate ``ndim == 4 and shape[0] == 3`` (3-D scene flow), so 2-D ``(2, h, w)`` **does not apply in the first place**. Borrowing the name would mean the ledger declares "it returns 3 components" while returning 2 components, making the declaration a lie. It satisfies this repo's condition for adding a type ("if there is no op that has a seed, it becomes permanently unexecuted"): **7 generating ops** (cross_correlate / multipass / deform_pass / ensemble_correlate / replace_outliers / to_velocity / sample_at_windows) and **13 consuming ops** (including overlap of 8 field quantities, 2 visualizations, 2 tests, 3 evaluations), so generation and consumption are closed within the family.
 - **L35** — ★ We always give it an exit (the 2 ops of ``visualise``) —— a type that can be made but not seen becomes a dead end mid-chain and produces a "narrow sort". Fail-closed in both directions is also confirmed by measurement: passing a 2-D flow to ``reprconv.flow_magnitude`` raises ValueError (rejecting by name with "takes (3, D, H, W)"), and passing a 3-D scene flow to ``piv_vorticity`` raises ValueError. * the input image pair is ``image2d`` —— particle images are 2-D real fields themselves, so existing 2-D ops (smoothing, threshold, background subtraction, annotation) can be used with meaning intact. There is **no guarantee brightness fits in [0,1]**, but that is the same standing as the composite of astrostack. * ``piv_outlier_mask`` is ``mask`` —— bool 2-D, as the predicate says. Unlike ``dem_stream_network``, which could not call itself mask because it has nan, here missing data is folded to the ``True`` (outlier) side, so it is closed as bool. * statistics are ``table`` (dict). ``piv_error_stats`` / ``piv_peak_locking``. * the output of the velocity conversion ``piv_to_velocity`` is also ``flow2d`` —— **the unit changes from px/frame to m/s but the type is the same**. Here we write honestly: the type cannot protect the unit. So we made both scales **required arguments** (the same judgment as ``cell_size`` of ``demops``). We also considered separating the unit by type, but that would be a type where only 1 op makes ``m/s`` and no op consumes it —— contrary to the order "add after evidence emerges", so we did not adopt it.
+
+## `opsprintpath.py`
+
+- **L54** _(ja)_ — ★様式化(2026-09-23)。「きれいな絵」を返す op ではなく、**保った量と捨てた 量を数で返す** op にする —— 既存の NPR ライブラリは絵しか返さない。真値は モアレ周期の予言(描く前に分かる)、被覆率 w/d の閉形式、既知の縞の向き、 Lloyd の単調減少(既存 stipple_energy が測る)、セル平均の L2 最適性。 点描の 6 op と同じ族に入れたのは、どちらも「濃淡を離散的な墨に落とす」 同じ問題で、入口も出口も同じ語彙(image2d / pairs)だから。
 
 ## `opsrangedoppler.py`
 
@@ -1201,9 +1262,12 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `printpath.py`
 
-- **L661** _(ja)_ — ★ペンプロッタの経路と 3D プリンタの経路は**同じ対象**(順に回る線分の列)で、 # 出口も同じ(contours_to_gcode → gcode_write / gcode_time_estimate)。 # だから族を新しく立てず、ここに stroke カテゴリとして足す。 # 参考: Kaplan & Bosch, "TSP Art", Computational Aesthetics 2005。 # --------------------------------------------------------------------------- # 点描の距離。"euclidean" 以外は将来。
-- **L762** _(ja)_ — ★画素ごとの最近傍を**KD 木**で引く。以前は各反復で (画素 x 点) の距離行列を まるごと作っていたので、202x300 の絵に 9,000 点を置くだけで 60,600 x 9,000 = 5.5 億要素(4.4 GB 相当)を 18 回組み直していた —— 手元で 101 秒、共有ランナーでは PoC の実行門(1 本 600 秒)に迫る。KD 木は**厳密に同じ最近傍**を返すので答えは 変わらない(同距離の並びだけは実装依存になるため、種を固定した回帰検査を置く)。
-- **L978** _(ja)_ — ★被覆率で塗る。整数画素の円板で塗っていたときはペン幅が**階段**になり (0.5 / 1.0 / 1.5 px がインク率 0.1900 で一致し、2.0 で 0.4853 へ跳ねた)、 「目標の濃さに合うペン幅」を解くことができなかった。画素中心から標本までの 距離で被覆率を出すと、ペン幅が連続なノブになる。
+- **L45** _(ja)_ — 様式化(npr、2026-09-23)。★test_printpath の門が `set(OPSPRINTPATH) == set(__all__) - {定数}` を要求するので、 台帳とここの**両方**に書く必要がある。
+- **L667** _(ja)_ — ★ペンプロッタの経路と 3D プリンタの経路は**同じ対象**(順に回る線分の列)で、 # 出口も同じ(contours_to_gcode → gcode_write / gcode_time_estimate)。 # だから族を新しく立てず、ここに stroke カテゴリとして足す。 # 参考: Kaplan & Bosch, "TSP Art", Computational Aesthetics 2005。 # --------------------------------------------------------------------------- # 点描の距離。"euclidean" 以外は将来。
+- **L768** _(ja)_ — ★画素ごとの最近傍を**KD 木**で引く。以前は各反復で (画素 x 点) の距離行列を まるごと作っていたので、202x300 の絵に 9,000 点を置くだけで 60,600 x 9,000 = 5.5 億要素(4.4 GB 相当)を 18 回組み直していた —— 手元で 101 秒、共有ランナーでは PoC の実行門(1 本 600 秒)に迫る。KD 木は**厳密に同じ最近傍**を返すので答えは 変わらない(同距離の並びだけは実装依存になるため、種を固定した回帰検査を置く)。
+- **L984** _(ja)_ — ★被覆率で塗る。整数画素の円板で塗っていたときはペン幅が**階段**になり (0.5 / 1.0 / 1.5 px がインク率 0.1900 で一致し、2.0 で 0.4853 へ跳ねた)、 「目標の濃さに合うペン幅」を解くことができなかった。画素中心から標本までの 距離で被覆率を出すと、ペン幅が連続なノブになる。
+- **L1036** _(ja)_ — ★「きれいな絵」を返す op ではなく、**保った量と捨てた量を数で返す** op にする。 既存の NPR ライブラリは絵しか返さない —— 差はそこ。真値はモアレ周期の予言、 被覆率 w/d の閉形式、既知の縞の向き、Lloyd の単調減少(既存 stipple_energy が 測る)、セル平均が L2 最適であること。 ------------------------------------------------------------------------- #
+- **L1247** _(ja)_ — ★ストロークを**構造に沿わせる**なら、縞の周波数ベクトルはその **直交方向**に向ける(線は周波数ベクトルに直交に走る)。 この 90 度を入れ忘れていて、docstring は「沿う」と書きながら 実装は「横切る」だった —— 既知の角度の縞を渡す門で掴んだ (2026-09-23)。絵を見るだけではどちらも「それらしい線」に見える。
 
 ## `problems.py`
 
@@ -1220,6 +1284,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L38** — ★ Only those whose ``public`` column is true may be used in figures to be published. Those limited to cited use for research and education purposes carry ``cite``.
 - **L97** — ★ skimage only holds a bundled subset; the rest it fetches at runtime via pooch. Whatever it cannot fetch **we do not use in this repo** (if a PoC depends on the connection, it becomes unclear whether a failure was the implementation or the network).
+
+## `render3d.py`
+
+- **L1920** _(ja)_ — ★極小曲面は**平均曲率 H が至るところ 0** の曲面。既存 `vertex_curvature` が まさにそれを測るので、「これは極小曲面だ」という主張を、作り方を知らない op
+- **L1922** _(ja)_ — が採点する。★カテノイドとヘリコイドは等長なのでガウス曲率 K が一致するが、 それは**必要条件にすぎない** —— 門にするのは H のほう。 ------------------------------------------------------------------------- #
+- **L2127** _(ja)_ — ★marching cubes は**面積 0 の三角形**を出す(格子点をちょうど通る等値面で、 2 頂点が同じ位置に来る)。曲率 op はそれを正しく拒否するので、ここで落とす —— 黙って渡すと「曲率が定義できない」と下流で落ち、原因がここだと分からない。
+- **L2189** _(ja)_ — ★平行移動フレームで掃く(フレネ枠を使わない —— 直線部で法線が定義できず、 変曲点で従法線が反転して管がねじれる)。真値は、円を中心線にすると トーラスになり体積 2 pi^2 R r^2・表面積 4 pi^2 R r が解析解であること。 ------------------------------------------------------------------------- #
 
 ## `reprconv.py`
 
@@ -1309,6 +1380,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L121** — ★Whether the gate fires is environment-dependent, so do not assert it. Only check that the value **is returned without being hidden**.
 
+## `tests/test_chain_type_contracts.py`
+
+- **L221** _(ja)_ — だけなので、格子も積分時間も最小で足りる。★二重スリットは「縞が 3 本 入らない」と fail-closed するので、スクリーンの幅と分離を検証済みの 組み合わせ(550 nm / 200 um / 200 mm / 5 um 画素)で渡す。
+
 ## `tests/test_ci_wheel_check_paths.py`
 
 - **L68** — ★Do **not** look at returncode. What this check targets is argument resolution, not the contents of the wheel. Judging the contents depends on the environment —— measured 2026-09-05: in an environment that exposes the source via PYTHONPATH, because the script drops the repo root from sys.path, some modules cannot be imported and it fails (this does not happen in a pip-installed environment). Because returncode was being looked at here, on Linux this check was failing in a way that made it look like a "path resolution problem".
@@ -1348,6 +1423,11 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L338** — ★The maximum is the harmonic: period / (1/f_max_bin) lands near an integer
 - **L368** _(ja)_ — ★どれも閉形式の真値を持つので、「動いた」でなく「理論値と合う」で検査する。 --------------------------------------------------------------------------- #
+
+## `tests/test_dynsys.py`
+
+- **L112** _(ja)_ — ★残差の正体は burn-in 。短い burn での誤差は 3 倍以上大きい。
+- **L123** _(ja)_ — ★r の列を**1 本だけ**選ぶ。横に幅を持たせると、隣の r の不動点が 別の柝に見えて r = 2.9 でも「3 本」になる(一度それで誤判定した)。
 
 ## `tests/test_example_scripts_run.py`
 
@@ -1395,7 +1475,11 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_mathops.py`
 
-- **L1106** _(ja)_ — ★極は標本に乗れないので**偶数**格子で(零点と違って値が数にならない)
+- **L518** _(ja)_ — tier1 16 + complex 18 + construct 8 + wave 6 + dynsys 6。★ここは op を 足すたびに動く行なので、足した理由を残しておく(35 = 複素平面の 面 8 op、43 = 定理が門になる図 8 op、55 = 波動 6 + 力学系 6)。
+- **L1109** _(ja)_ — ★極は標本に乗れないので**偶数**格子で(零点と違って値が数にならない)
+- **L1485** _(ja)_ — ★数学の図はきれいなので、合っているかを誰も確かめない。ここでは絵を一度も 見ずに、**定理と既存 op**だけで合否を決める。 --------------------------------------------------------------------------- #
+- **L1563** _(ja)_ — ★円は (p/q, 1/(2q^2)) に**載っている**ので、接触は 2 次元の距離で見る。 x の差だけで測ると 0/1 と 1/9 のような組を「接していない」と読む (距離 0.1111 対 半径和 0.5062)—— 最初これで落ちた。
+- **L1683** _(ja)_ — ★ムーア曲線は**閉じている**(最後から最初に戻れる)。ヒルベルトは閉じない。
 
 ## `tests/test_mcp_images.py`
 
@@ -1471,9 +1555,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_printpath.py`
 
-- **L327** _(ja)_ — ★頂点より少ない標本は既定で拒否(長さが縮んで濃淡の再現が壊れる)
-- **L364** _(ja)_ — ★完全な係数列で呼ぶ(打ち切ると尾のエネルギーが分からず予言が下界になる)。 parametrisation は "index" —— stroke_resample_closed が**すでに弧長で** 打ち直しているので、ここで "arclength" を選ぶと op が内部でもう 1 度 打ち直して**別の輪郭の係数**になる(弧長の打ち直しは冪等でない)。
-- **L449** _(ja)_ — ★目標の濃さに合うペン幅を閉形式で解くと、偏りが桁で縮む
+- **L330** _(ja)_ — ★頂点より少ない標本は既定で拒否(長さが縮んで濃淡の再現が壊れる)
+- **L367** _(ja)_ — ★完全な係数列で呼ぶ(打ち切ると尾のエネルギーが分からず予言が下界になる)。 parametrisation は "index" —— stroke_resample_closed が**すでに弧長で** 打ち直しているので、ここで "arclength" を選ぶと op が内部でもう 1 度 打ち直して**別の輪郭の係数**になる(弧長の打ち直しは冪等でない)。
+- **L452** _(ja)_ — ★目標の濃さに合うペン幅を閉形式で解くと、偏りが桁で縮む
 
 ## `tests/test_public_reachability.py`
 
@@ -1524,6 +1608,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_volops.py`
 
 - **L566** _(ja)_ — ★これらは「HALCON がボクセル型を持たない」ことを理由に足した族なので、正しさの 根拠は**幾何が保証する真値**しかない。だから全部、真値の分かる形(球・立方体・ トーラス・既知 sigma の白色雑音)で検査する。 --------------------------------------------------------------------------- #
+
+## `tests/test_wave.py`
+
+- **L85** _(ja)_ — ★J'_0 の零点と比べると合わない —— 取り違えを門で固定する
 
 ## `tools/chain_fuzz.py`
 

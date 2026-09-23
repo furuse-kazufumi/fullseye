@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ode_vector_field_grid — MATH <code style="color:#22d3bf">dynsys</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">flow2d</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ode_vector_field_grid(system=&#x27;rossler&#x27;, params=None, bounds=(-10.0, 10.0, -10.0, 10.0), shape=(64, 64), plane=&#x27;xy&#x27;, offset=0.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathops; mathops.ode_vector_field_grid(system=&#x27;rossler&#x27;, params=None, bounds=(-10.0, 10.0, -10.0, 10.0), shape=(64, 64), plane=&#x27;xy&#x27;, offset=0.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;ode_vector_field_grid&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>在網格上取樣具名場 —— 現有檢視器可直接接收的 `<code style="color:#22d3bf">flow2d</code>`。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Returns `<code style="color:#22d3bf">(2, H, W)</code><code style="color:#22d3bf"> with components </code><code style="color:#22d3bf">(dy, dx)</code>` — the library&#x27;s</p>
+<p>`<code style="color:#22d3bf">flow2d</code>` layout — so the <b>existing flow family</b> (quiver, streamlines,</p>
+<p>colour wheel, `<code style="color:#22d3bf">flow_magnitude</code>`) renders it with no new drawing code. For a</p>
+<p>3-D system, *plane* picks the slice (`<code style="color:#22d3bf">xy</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">xz</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">yz</code>`) and *offset*</p>
+<p>fixes the third coordinate.</p>
+<p>★<b>Why this earns its place</b>: it is the bridge that keeps this family from</p>
+<p>growing its own renderer. The vectors are the same `<code style="color:#22d3bf">_dyn_derivative</code>` the</p>
+<p>integrator uses, so what you see is what gets integrated.</p>
+<p>★The layout is <b>channel-first</b>, not the `<code style="color:#22d3bf">(H, W, 2)</code>` that reads more</p>
+<p>naturally here: `<code style="color:#22d3bf">flow2d</code>` is an existing type with an existing predicate and</p>
+<p>existing consumers, and a row that declares `<code style="color:#22d3bf">flow2d</code>` while returning the</p>
+<p>transpose is a type lie the fuzzer catches (it did —— 2026-09-23). Row 0 is</p>
+<p>the <b>top</b> (the image convention), so the vertical component is negated to</p>
+<p>match what the viewer draws.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: unknown system or plane; a grid over the cap;</p>
+<p>non-finite bounds; a degenerate window.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• **complex 輸入一律 <code style="color:#22d3bf">ValueError</code>** —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• **含被遮罩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒絕「剝掉遮罩直接使用下面原值」的隱式轉換。請明確選擇填補還是丟棄。</p>
+<p style="margin:2px 0 2px 12px">• **所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明確給出個數後拒絕 —— 它會汙染整個結果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形狀嚴格</b>:不對 1-D 與 2-D 做隱式提升或廣播(向量槽位收到矩陣、矩陣槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;請明確 reshape)。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩陣的運算子與 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超過 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 萬個元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_what_a_picture_cannot_check">poc_what_a_picture_cannot_check</a> — <code style="color:#22d3bf">py -3.11 examples/poc_what_a_picture_cannot_check.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">flow2d</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">dynsys</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:ode_flow_states">ode_flow_states</a> · <a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a> · <a style="color:#22d3bf" href="opmath:dynsys_lyapunov_spectrum">dynsys_lyapunov_spectrum</a> · <a style="color:#22d3bf" href="opmath:dynsys_bifurcation_map">dynsys_bifurcation_map</a> · <a style="color:#22d3bf" href="opmath:dynsys_correlation_dimension">dynsys_correlation_dimension</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

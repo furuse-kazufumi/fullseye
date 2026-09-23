@@ -110,6 +110,20 @@ __all__ = [
     "mandelbrot_interior",
     "potential_flow_joukowski",
     "joukowski_circulation",
+    # 定理が門になる図(2026-09-23)。★`MATHOPS`(台帳が読む一覧)と `__all__`
+    # (import * の公開面)は**別物**で、両方に書かないと片方だけ通る。
+    "circle_packing_apollonian", "ford_circles",
+    "phyllotaxis_pattern", "neighbour_index_gaps",
+    "ifs_fractal", "ifs_similarity_dimension",
+    "space_filling_curve", "curve_locality",
+    # 波動と力学系(2026-09-23)。定数も公開面に出す(族名の一覧は利用者が読む)。
+    "wave_membrane_mode", "wave_mode_frequencies", "wave_nodal_lines",
+    "wave_two_slit", "wave_fringe_period", "wave_grating_orders",
+    "ode_flow_states", "ode_vector_field_grid", "dynsys_poincare_section",
+    "dynsys_lyapunov_spectrum", "dynsys_bifurcation_map",
+    "dynsys_correlation_dimension",
+    "DYNSYS_SYSTEMS", "DYNSYS_MAPS",
+    "IFS_PRESETS", "CURVE_KINDS", "GOLDEN_ANGLE_DEG",
     "MATHOPS", "MAX_ELEMENTS", "POLY_COND_WARN", "MAX_CONTOUR_POINTS",
 ]
 
@@ -131,6 +145,29 @@ MATHOPS = [
     "mandelbrot_interior",
     "potential_flow_joukowski",
     "joukowski_circulation",
+    # 定理が門になる図(2026-09-23)
+    "circle_packing_apollonian",
+    "ford_circles",
+    "phyllotaxis_pattern",
+    "neighbour_index_gaps",
+    "ifs_fractal",
+    "ifs_similarity_dimension",
+    "space_filling_curve",
+    "curve_locality",
+    # 波動 —— 膜の固有モード・干渉・回折(2026-09-23)
+    "wave_membrane_mode",
+    "wave_mode_frequencies",
+    "wave_nodal_lines",
+    "wave_two_slit",
+    "wave_fringe_period",
+    "wave_grating_orders",
+    # 力学系 —— 積む・断面・指数・分岐(2026-09-23)
+    "ode_flow_states",
+    "ode_vector_field_grid",
+    "dynsys_poincare_section",
+    "dynsys_lyapunov_spectrum",
+    "dynsys_bifurcation_map",
+    "dynsys_correlation_dimension",
 ]
 
 #: Refuse an array larger than this (~67M float64 = 512 MB) — the SVD/eigen
@@ -2233,3 +2270,1457 @@ def joukowski_circulation(alpha_deg=5.0, speed=1.0, chord_b=1.0,
     if not np.isfinite(u) or u <= 0.0:
         raise ValueError("%s: speed must be finite and positive, got %r" % (op, speed))
     return float(4.0 * np.pi * a * u * np.sin(np.deg2rad(float(alpha_deg)) + beta))
+
+
+# ------------------------------------------------------------------------- #
+# 定理が門になる図(2026-09-23)
+#
+# ★どれも「きれいな図」だが、**採ったのはきれいだからではなく、
+#   正しさを定理が言えるから**である。数学の図はきれいなので、合って
+#   いるかを誰も確かめない —— だから絵の外に真値を置く:
+#
+#     circle_packing_apollonian  デカルトの円定理(厳密な代数等式)+ 整数充填
+#     ford_circles               接するのは |ps - qr| = 1 のときに限る(整数で厳密)
+#     phyllotaxis_pattern        隣の番号差がフィボナッチ数(黄金角のときだけ)
+#     ifs_fractal                モランの式 sum r^d = 1 と、既存 fractal_dimension
+#     space_filling_curve        4^n 点をちょうど 1 回ずつ・隣は必ず距離 1
+#
+#   相棒(neighbour_index_gaps / ifs_similarity_dimension / curve_locality)は
+#   **主張を数にする側**で、これが無いと「それらしい絵」しか残らない。
+# ------------------------------------------------------------------------- #
+
+_THM_MAX_CIRCLES = 200_000
+
+_THM_MAX_POINTS = 2_000_000
+
+GOLDEN_ANGLE_DEG = 180.0 * (3.0 - np.sqrt(5.0))          # 137.50776...
+
+IFS_PRESETS = ("sierpinski", "koch", "cantor_dust", "barnsley_fern", "dragon")
+
+_IFS_MAP_TABLE = {
+    # (a, b, c, d, e, f) = [[a b],[c d]] x + [e f]
+    "sierpinski": [(.5, 0, 0, .5, 0, 0), (.5, 0, 0, .5, .5, 0), (.5, 0, 0, .5, .25, .5)],
+    "koch": [(1 / 3., 0, 0, 1 / 3., 0, 0),
+             (1 / 6., -np.sqrt(3) / 6, np.sqrt(3) / 6, 1 / 6., 1 / 3., 0),
+             (1 / 6., np.sqrt(3) / 6, -np.sqrt(3) / 6, 1 / 6., .5, np.sqrt(3) / 6),
+             (1 / 3., 0, 0, 1 / 3., 2 / 3., 0)],
+    "cantor_dust": [(1 / 3., 0, 0, 1 / 3., 0, 0), (1 / 3., 0, 0, 1 / 3., 2 / 3., 0),
+                    (1 / 3., 0, 0, 1 / 3., 0, 2 / 3.), (1 / 3., 0, 0, 1 / 3., 2 / 3., 2 / 3.)],
+    "barnsley_fern": [(0, 0, 0, .16, 0, 0), (.85, .04, -.04, .85, 0, 1.6),
+                      (.2, -.26, .23, .22, 0, 1.6), (-.15, .28, .26, .24, 0, .44)],
+    "dragon": [(.5, -.5, .5, .5, 0, 0), (-.5, -.5, .5, -.5, 1, 0)],
+}
+
+_IFS_MAP_WEIGHTS = {"barnsley_fern": (0.01, 0.85, 0.07, 0.07)}
+
+CURVE_KINDS = ("hilbert", "moore", "row_major", "boustrophedon")
+
+
+def circle_packing_apollonian(curvatures=(-1.0, 2.0, 2.0, 3.0), depth=4,
+                              min_curvature=0.0):
+    """Apollonian gasket from a Descartes quadruple — every circle a theorem.
+
+    Four mutually tangent circles satisfy the **Descartes circle theorem**
+
+        (k1 + k2 + k3 + k4)**2 == 2 * (k1**2 + k2**2 + k3**2 + k4**2)
+
+    where ``k = 1/r`` is the curvature (negative for the enclosing circle). The
+    theorem is quadratic in ``k4``, so a triple of mutually tangent circles has
+    **two** solutions and the second is ``k4' = 2*(k1+k2+k3) - k4``; recursing on
+    that reflection fills the gasket. The centres follow the complex form
+    ``k4*z4 = k1*z1 + k2*z2 + k3*z3 +- 2*sqrt(k1*k2*z1*z2 + ...)``, so no
+    geometry is fitted — every circle is produced by an exact algebraic step.
+
+    ★**Why this earns its place**: the drawing carries its own proof. Each circle
+    can be checked against Descartes to machine precision, tangency is
+    ``|z_i - z_j| == |r_i +- r_j|`` exactly, and **an integral quadruple stays
+    integral for ever** — start from ``(-1, 2, 2, 3)`` and every curvature in the
+    infinite packing is an integer (Lagarias-Mallows-Wilks). A drawing routine
+    that is slightly wrong cannot keep integers integral.
+
+    Parameters
+    ----------
+    curvatures : 4 floats
+        A Descartes quadruple. The default ``(-1, 2, 2, 3)`` is the smallest
+        integral gasket. Must satisfy the theorem to ``1e-9`` relative.
+    depth : int >= 0
+        Reflection levels. Level 0 is the four seed circles; each further level
+        adds ``4 * 3**(level-1)``, so the total is ``2 * 3**depth + 2``.
+    min_curvature : float
+        Drop circles smaller than ``1/min_curvature`` (0 = keep all).
+
+    Returns a ``table``: ``x``, ``y``, ``radius``, ``curvature``, ``depth``
+    (the enclosing circle has negative curvature and positive radius).
+
+    **Raises** ``ValueError``: not four curvatures; the quadruple does not
+    satisfy Descartes; every curvature negative or zero (no packing); ``depth``
+    negative or so large the packing exceeds the cap; non-finite input.
+
+    HALCON: no operator.
+    """
+    op = "circle_packing_apollonian"
+    k = np.asarray(curvatures, dtype=np.float64).ravel()
+    if k.size != 4:
+        raise ValueError("%s: need exactly 4 curvatures, got %d" % (op, k.size))
+    if not np.all(np.isfinite(k)):
+        raise ValueError("%s: curvatures contain a non-finite value" % op)
+    lhs = float(k.sum()) ** 2
+    rhs = 2.0 * float((k * k).sum())
+    scale = max(abs(lhs), abs(rhs), 1.0)
+    if abs(lhs - rhs) > 1e-9 * scale:
+        raise ValueError("%s: the four curvatures are not a Descartes quadruple — "
+                         "(sum k)^2 = %g but 2*sum(k^2) = %g (relative gap %.2e). "
+                         "Four mutually tangent circles must satisfy the theorem."
+                         % (op, lhs, rhs, abs(lhs - rhs) / scale))
+    if np.all(k <= 0):
+        raise ValueError("%s: every curvature is <= 0 — there is nothing to pack" % op)
+    d = int(depth)
+    if d < 0:
+        raise ValueError("%s: depth must be >= 0, got %r" % (op, depth))
+    total = 2 * 3 ** d + 2
+    if total > _THM_MAX_CIRCLES:
+        raise ValueError("%s: depth %d would make %d circles, over the %d cap"
+                         % (op, d, total, _THM_MAX_CIRCLES))
+    mc = float(min_curvature)
+    if not np.isfinite(mc) or mc < 0.0:
+        raise ValueError("%s: min_curvature must be finite and >= 0, got %r"
+                         % (op, min_curvature))
+
+    z = _apollonian_seed_centres(k, op)
+    circles = [(complex(z[i]), float(k[i]), 0) for i in range(4)]
+    # ★四つ組の**最後**が「直前に生まれた円」。それを落とす反射は**親をもう一度**
+    #   作るので、種の四つ組だけ 4 方向、以降は 3 方向に進む。ここを間違えると
+    #   depth 3 で 56 個のはずが 88 個になった(実測。一意な円は 56 のままなので、
+    #   絵は正しく見えるが同じ円を何度も描き、以降の段が指数的に太る)。
+    frontier = [(tuple(range(4)), True)]
+    for level in range(1, d + 1):
+        nxt = []
+        for quad, is_seed in frontier:
+            for drop in range(4 if is_seed else 3):
+                keep = [quad[t] for t in range(4) if t != drop]
+                ka = np.array([circles[t][1] for t in keep])
+                za = np.array([circles[t][0] for t in keep])
+                kd = circles[quad[drop]][1]
+                zd = circles[quad[drop]][0]
+                knew = 2.0 * float(ka.sum()) - kd
+                if knew == 0:
+                    continue                       # 直線(曲率 0)は描かない
+                znew = (2.0 * complex((ka * za).sum()) - kd * zd) / knew
+                circles.append((znew, knew, level))
+                nxt.append((tuple(keep) + (len(circles) - 1,), False))
+        frontier = nxt
+
+    rows = [(c.real, c.imag, 1.0 / kk, kk, lv) for c, kk, lv in circles
+            if kk != 0 and (mc == 0.0 or abs(kk) <= 1.0 / mc or kk < 0)]
+    a = np.asarray(rows, dtype=np.float64)
+    return {"x": a[:, 0], "y": a[:, 1], "radius": np.abs(a[:, 2]),
+            "curvature": a[:, 3], "depth": a[:, 4].astype(np.int64)}
+
+
+def _apollonian_seed_centres(k, op):
+    """曲率だけから、互いに接する 4 円の中心を決める(複素デカルト)。
+
+    外円(k<0)を原点に置き、残り 3 つを接するように配置する。
+    """
+    idx = np.argsort(k)                    # 外円(負)が先頭に来る
+    k0, k1, k2, k3 = (float(k[i]) for i in idx)
+    r0, r1, r2 = abs(1.0 / k0), 1.0 / k1, 1.0 / k2
+    z0 = 0.0 + 0.0j
+    z1 = complex(r0 - r1, 0.0)             # 外円に内接
+    d = r1 + r2                            # 円 1 と円 2 は外接
+    e = r0 - r2                            # 円 2 も外円に内接
+    # z2 は |z2 - z1| = d, |z2| = e を満たす
+    cosang = (e * e + abs(z1) ** 2 - d * d) / (2.0 * e * abs(z1)) if abs(z1) > 0 else 0.0
+    cosang = float(np.clip(cosang, -1.0, 1.0))
+    ang = np.arccos(cosang)
+    z2 = e * np.exp(1j * ang)
+    # 4 つめは複素デカルトの式から
+    ks = np.array([k0, k1, k2], dtype=np.complex128)
+    zs = np.array([z0, z1, z2], dtype=np.complex128)
+    root = np.sqrt(ks[0] * ks[1] * zs[0] * zs[1] + ks[1] * ks[2] * zs[1] * zs[2]
+                   + ks[2] * ks[0] * zs[2] * zs[0])
+    num = (ks * zs).sum()
+    cands = [(num + 2.0 * root) / k3, (num - 2.0 * root) / k3]
+    z3 = min(cands, key=lambda c: abs(abs(c - z1) - (1.0 / k1 + 1.0 / k3)))
+    out = np.empty(4, dtype=np.complex128)
+    out[idx[0]], out[idx[1]], out[idx[2]], out[idx[3]] = z0, z1, z2, z3
+    return out
+
+
+def ford_circles(max_denominator=12, lo=0, hi=1):
+    """Ford circles for the Farey fractions — tangency *is* an integer identity.
+
+    For a fraction ``p/q`` in lowest terms the Ford circle sits at
+    ``(p/q, 1/(2q**2))`` with radius ``1/(2q**2)``. Two such circles are
+    **tangent if and only if** ``|p*s - q*r| == 1`` — the Farey-neighbour
+    condition — and otherwise strictly disjoint. They never overlap.
+
+    ★**Why this earns its place**: the picture's correctness is an identity
+    between integers, not a tolerance. ``|p*s - q*r|`` is computed in exact
+    integer arithmetic and compared with the *geometric* tangency
+    ``|c_i - c_j| == r_i + r_j`` measured from the coordinates; the two must
+    agree on every pair. The number of fractions is the Farey length
+    ``1 + sum(phi(q) for q in 1..n)``, another exact integer.
+
+    Returns a ``table``: ``x``, ``y``, ``radius``, ``p``, ``q``.
+
+    **Raises** ``ValueError``: ``max_denominator < 1``; ``lo >= hi``; the
+    interval or denominator would exceed the cap.
+
+    HALCON: no operator.
+    """
+    op = "ford_circles"
+    n = int(max_denominator)
+    if n < 1:
+        raise ValueError("%s: max_denominator must be >= 1, got %r" % (op, max_denominator))
+    a, b = int(lo), int(hi)
+    if a >= b:
+        raise ValueError("%s: need lo < hi, got %d and %d" % (op, a, b))
+    from math import gcd
+    ps, qs = [], []
+    for q in range(1, n + 1):
+        for p in range(a * q, b * q + 1):
+            if gcd(abs(p), q) == 1 or q == 1:
+                if gcd(abs(p), q) != 1 and not (q == 1):
+                    continue
+                ps.append(p)
+                qs.append(q)
+        if len(ps) > _THM_MAX_CIRCLES:
+            raise ValueError("%s: max_denominator %d over the %d cap"
+                             % (op, n, _THM_MAX_CIRCLES))
+    p = np.asarray(ps, dtype=np.int64)
+    q = np.asarray(qs, dtype=np.int64)
+    order = np.lexsort((q, p * 1.0 / q))
+    p, q = p[order], q[order]
+    r = 1.0 / (2.0 * q.astype(np.float64) ** 2)
+    return {"x": p.astype(np.float64) / q, "y": r, "radius": r, "p": p, "q": q}
+
+
+def phyllotaxis_pattern(n_points=400, angle_deg=None, scale=1.0, power=0.5):
+    """Vogel's spiral — the angle that packs best, and the spirals it makes.
+
+    Point ``k`` sits at ``r = scale * k**power``, ``theta = k * angle_deg``. With
+    the **golden angle** ``180*(3 - sqrt 5) = 137.50776...`` degrees (the default)
+    this is the arrangement of sunflower florets, pine-cone scales and the leaves
+    of most plants.
+
+    ★**Why this earns its place — two independent theorems, each with a control
+    group**:
+
+      - *The golden angle packs best.* Sweep the divergence angle and the minimum
+        nearest-neighbour distance is **maximised** at 137.50776 deg; a fraction
+        of a degree either side is measurably worse. Nothing in the formula says
+        this — it has to be measured.
+      - *The visible spirals are consecutive Fibonacci numbers.* Take each point's
+        nearest neighbours and look at the **difference of their indices**: the
+        differences concentrate on 1, 2, 3, 5, 8, 13, 21, 34... At a non-golden
+        angle they do not.
+
+    Returns ``pairs`` ``(n, 2)`` of ``(x, y)``.
+
+    **Raises** ``ValueError``: ``n_points < 1`` or over the cap; non-finite angle
+    or scale; ``power`` outside ``(0, 1]``.
+
+    HALCON: no operator.
+    """
+    op = "phyllotaxis_pattern"
+    n = int(n_points)
+    if n < 1:
+        raise ValueError("%s: n_points must be >= 1, got %r" % (op, n_points))
+    if n > _THM_MAX_POINTS:
+        raise ValueError("%s: n_points %d over the %d cap" % (op, n, _THM_MAX_POINTS))
+    ang = GOLDEN_ANGLE_DEG if angle_deg is None else float(angle_deg)
+    if not np.isfinite(ang):
+        raise ValueError("%s: angle_deg %r is not finite" % (op, angle_deg))
+    sc = float(scale)
+    if not np.isfinite(sc) or sc <= 0.0:
+        raise ValueError("%s: scale must be finite and positive, got %r" % (op, scale))
+    pw = float(power)
+    if not np.isfinite(pw) or not (0.0 < pw <= 1.0):
+        raise ValueError("%s: power must lie in (0, 1], got %r — at or below 0 the "
+                         "spiral does not grow and above 1 the density falls off, "
+                         "which is not what phyllotaxis means" % (op, power))
+    k = np.arange(n, dtype=np.float64)
+    r = sc * k ** pw
+    th = np.deg2rad(ang) * k
+    return np.stack([r * np.cos(th), r * np.sin(th)], axis=1)
+
+
+def neighbour_index_gaps(points, k=6):
+    """How far apart *in index* are a point's nearest neighbours — parastichy as a number.
+
+    In a phyllotactic pattern the visible spirals (**parastichies**) are not drawn
+    by anything; they are an illusion of which florets happen to sit next to each
+    other. This op replaces the illusion with a count: for every point, take its
+    *k* nearest neighbours **in space** and record the difference of their
+    **ordering indices**. The histogram of those differences is returned, index
+    ``g`` holding how many neighbour pairs were ``g`` apart.
+
+    ★**Why this earns its place**: with the golden angle the peaks land on
+    **Fibonacci numbers** (8, 13, 21, 34, 55 ...), and with any other angle they
+    do not. That is a statement about the arrangement which can be checked
+    **without looking at the picture** — which is the whole point, because the
+    spirals look convincing at every angle.
+
+    Parameters
+    ----------
+    points : (N, 2) array
+        Ordered points — **the order is the data here**, not a convenience.
+    k : int >= 1
+        Neighbours per point (6 is the natural choice: a well-packed planar
+        arrangement is locally hexagonal).
+
+    Returns a ``signal``: ``counts[g]`` = number of neighbour pairs whose index
+    difference is ``g`` (``counts[0]`` is always 0 — a point is not its own
+    neighbour).
+
+    **Raises** ``ValueError``: not an (N, 2) array; fewer than ``k + 1`` points;
+    ``k`` below 1; non-finite coordinates.
+
+    Limits: the first points of a spiral sit near the centre where the packing
+    is degenerate, so the histogram has a low-index tail that carries no
+    parastichy information. Compare *peaks*, not the raw tail.
+
+    HALCON: no operator.
+    """
+    op = "neighbour_index_gaps"
+    p = np.asarray(points, dtype=np.float64)
+    if p.ndim != 2 or p.shape[1] != 2:
+        raise ValueError("%s: points must be (N, 2), got %s" % (op, (p.shape,)))
+    if not np.all(np.isfinite(p)):
+        raise ValueError("%s: points contain a non-finite value" % op)
+    kk = int(k)
+    if kk < 1:
+        raise ValueError("%s: k must be >= 1, got %r" % (op, k))
+    if p.shape[0] < kk + 1:
+        raise ValueError("%s: need at least k + 1 = %d points, got %d"
+                         % (op, kk + 1, p.shape[0]))
+    from scipy.spatial import cKDTree
+    _, idx = cKDTree(p).query(p, k=kk + 1)
+    gaps = np.abs(idx[:, 1:] - np.arange(p.shape[0])[:, None]).ravel()
+    return np.bincount(gaps).astype(np.int64)
+
+
+def ifs_fractal(preset="sierpinski", maps=None, n_points=60000, seed=0, burn_in=32):
+    """Chaos game on an iterated function system — the dimension is a closed form.
+
+    Picks a map at random (by ``weights``, or by area if none are given), applies
+    it, and plots the orbit. After a short burn-in the orbit lands on the
+    attractor and stays there, so the picture is the attractor and not a path to
+    it.
+
+    ★**Why this earns its place — two numbers that must agree and were computed
+    two different ways**:
+
+      - *Moran's equation.* For similarities with ratios ``r_i`` satisfying the
+        open set condition, the similarity dimension ``d`` is the unique root of
+        ``sum(r_i**d) == 1`` — a closed form read off the **maps**, before
+        anything is drawn. Sierpinski gives ``log 3 / log 2 = 1.5850``, the Koch
+        curve ``log 4 / log 3 = 1.2619``, Cantor dust ``log 4 / log 3`` as well.
+      - *Box counting.* This repository's existing ``fractal_dimension``
+        operator measures the dimension from the **drawing**. The two must agree,
+        and they are not the same computation: one is algebra on the maps, the
+        other is a regression on a rasterised image.
+
+      Hutchinson's theorem gives a third, structural check: the attractor is
+      **invariant**, so applying every map to the point set maps it back into
+      itself.
+
+    ``maps`` overrides ``preset``: a sequence of ``(a, b, c, d, e, f)`` meaning
+    ``x -> [[a, b], [c, d]] x + [e, f]``.
+
+    Returns ``pairs`` ``(n, 2)``.
+
+    **Raises** ``ValueError``: unknown preset; a map that is not 6 numbers; a map
+    that is not a contraction (spectral norm >= 1 — the orbit would escape);
+    ``n_points`` below 1 or over the cap; negative ``burn_in``.
+
+    HALCON: no operator.
+    """
+    op = "ifs_fractal"
+    if maps is None:
+        if preset not in IFS_PRESETS:
+            raise ValueError("%s: preset must be one of %r, got %r"
+                             % (op, IFS_PRESETS, preset))
+        rows = _IFS_MAP_TABLE[preset]
+        w = _IFS_MAP_WEIGHTS.get(preset)
+    else:
+        rows = [tuple(float(v) for v in m) for m in maps]
+        w = None
+        for i, m in enumerate(rows):
+            if len(m) != 6:
+                raise ValueError("%s: map #%d must be 6 numbers (a b c d e f), got %d"
+                                 % (op, i, len(m)))
+    M = np.asarray([[m[0], m[1], m[2], m[3]] for m in rows], dtype=np.float64)
+    T = np.asarray([[m[4], m[5]] for m in rows], dtype=np.float64)
+    if not np.all(np.isfinite(M)) or not np.all(np.isfinite(T)):
+        raise ValueError("%s: a map contains a non-finite value" % op)
+    for i in range(M.shape[0]):
+        A = M[i].reshape(2, 2)
+        s = float(np.linalg.svd(A, compute_uv=False)[0])
+        if s >= 1.0:
+            raise ValueError("%s: map #%d has spectral norm %.4f >= 1 — it is not a "
+                             "contraction, so the chaos game has no attractor to "
+                             "land on and the orbit escapes." % (op, i, s))
+    n = int(n_points)
+    if n < 1:
+        raise ValueError("%s: n_points must be >= 1, got %r" % (op, n_points))
+    if n > _THM_MAX_POINTS:
+        raise ValueError("%s: n_points %d over the %d cap" % (op, n, _THM_MAX_POINTS))
+    bi = int(burn_in)
+    if bi < 0:
+        raise ValueError("%s: burn_in must be >= 0, got %r" % (op, burn_in))
+
+    if w is None:
+        det = np.abs(M[:, 0] * M[:, 3] - M[:, 1] * M[:, 2])
+        w = det if det.sum() > 0 else np.ones(M.shape[0])
+    p = np.asarray(w, dtype=np.float64)
+    p = p / p.sum()
+
+    rng = np.random.default_rng(int(seed))
+    pick = rng.choice(M.shape[0], size=n + bi, p=p)
+    z = np.zeros(2, dtype=np.float64)
+    out = np.empty((n, 2), dtype=np.float64)
+    for t in range(n + bi):
+        a = M[pick[t]]
+        z = np.array([a[0] * z[0] + a[1] * z[1] + T[pick[t], 0],
+                      a[2] * z[0] + a[3] * z[1] + T[pick[t], 1]])
+        if t >= bi:
+            out[t - bi] = z
+    return out
+
+
+def ifs_similarity_dimension(preset="sierpinski", maps=None, tol=1e-13):
+    """Moran's equation ``sum(r_i**d) = 1`` solved for ``d`` — from the maps alone.
+
+    The similarity dimension of a self-similar set, computed **before** anything
+    is drawn. Valid when the pieces overlap only on a set of measure zero (the
+    open set condition); affine maps that are not similarities (the fern) have
+    no single ratio, so this raises rather than returning a number that looks
+    right (measured: the fern's four maps have singular-value ratios from 0.16
+    to 0.85, so no ``r_i`` exists).
+    """
+    op = "ifs_similarity_dimension"
+    if maps is None:
+        if preset not in IFS_PRESETS:
+            raise ValueError("%s: preset must be one of %r, got %r"
+                             % (op, IFS_PRESETS, preset))
+        rows = _IFS_MAP_TABLE[preset]
+    else:
+        rows = [tuple(float(v) for v in m) for m in maps]
+    rs = []
+    for i, m in enumerate(rows):
+        A = np.array([[m[0], m[1]], [m[2], m[3]]], dtype=np.float64)
+        s = np.linalg.svd(A, compute_uv=False)
+        if abs(s[0] - s[1]) > 1e-9 * max(s[0], 1e-30):
+            raise ValueError("%s: map #%d is not a similarity — its singular values "
+                             "are %.6f and %.6f, so it has no single contraction "
+                             "ratio and Moran's equation does not apply. Measure the "
+                             "dimension from the drawing instead (fractal_dimension)."
+                             % (op, i, s[0], s[1]))
+        rs.append(float(s[0]))
+    r = np.asarray(rs)
+    lo, hi = 0.0, 8.0
+    for _ in range(200):
+        mid = 0.5 * (lo + hi)
+        if (r ** mid).sum() > 1.0:
+            lo = mid
+        else:
+            hi = mid
+        if hi - lo < tol:
+            break
+    return 0.5 * (lo + hi)
+
+
+def space_filling_curve(kind="hilbert", order=4):
+    """Hilbert / Moore / scan orders on a ``2**order`` square — a permutation, checked.
+
+    Returns the visiting order as ``pairs`` ``(4**order, 2)`` of integer grid
+    coordinates. Two scan orders are included **as control groups**, not as
+    filler: ``row_major`` jumps a whole row at the end of each line and
+    ``boustrophedon`` (serpentine) does not, so "consecutive points are
+    adjacent" separates them, and the locality measurement separates all four.
+
+    ★**Why this earns its place — the defining properties are integers**:
+
+      - The result visits ``4**order`` cells, **each exactly once**: a
+        permutation, verified by sorting, not by sampling.
+      - For Hilbert, Moore and boustrophedon, **consecutive points are always at
+        L1 distance exactly 1**. Row-major is not (it jumps at every line end),
+        which is the control.
+      - Moore's curve is **closed**: the last point is adjacent to the first.
+        Hilbert's is not.
+      - *Locality.* For a gap of ``k`` in index, the mean Euclidean distance
+        grows like ``sqrt(k)`` for Hilbert and much faster for row-major. That is
+        why Hilbert order is used for spatial indexes, and it is measurable here
+        rather than asserted.
+
+    **Raises** ``ValueError``: unknown ``kind``; ``order < 1``; the grid would
+    exceed the cap; ``moore`` with ``order < 2`` (it is not defined below that).
+
+    HALCON: no operator.
+    """
+    op = "space_filling_curve"
+    if kind not in CURVE_KINDS:
+        raise ValueError("%s: kind must be one of %r, got %r" % (op, CURVE_KINDS, kind))
+    o = int(order)
+    if o < 1:
+        raise ValueError("%s: order must be >= 1, got %r" % (op, order))
+    n = 1 << o
+    if n * n > _THM_MAX_POINTS:
+        raise ValueError("%s: order %d would visit %d cells, over the %d cap"
+                         % (op, o, n * n, _THM_MAX_POINTS))
+    if kind == "moore" and o < 2:
+        raise ValueError("%s: the Moore curve needs order >= 2 (it is four Hilbert "
+                         "quadrants joined into a loop), got %d" % (op, o))
+
+    if kind == "row_major":
+        yy, xx = np.divmod(np.arange(n * n), n)
+        return np.stack([xx, yy], axis=1).astype(np.int64)
+    if kind == "boustrophedon":
+        yy, xx = np.divmod(np.arange(n * n), n)
+        xx = np.where(yy % 2 == 1, n - 1 - xx, xx)
+        return np.stack([xx, yy], axis=1).astype(np.int64)
+    if kind == "hilbert":
+        return _sfc_hilbert(n)
+    half = n >> 1
+    # ★ムーア曲線 = ヒルベルト曲線 4 本を輪に閉じたもの。四分割の**向きと進む方向**は
+    #   総当たり(8 対称 x 反転、4096 通り)で「継ぎ目 3 か所と折り返しが全部距離 1」を
+    #   満たす 32 解を出し、その 1 つを固定した。手で置くと隣接条件が静かに壊れる
+    #   (最初の実装は隣接 False・閉 False のまま、絵としては正しく見えていた)。
+    q = _sfc_hilbert(half)
+    ts = (2, 0, 0, 2)                       # 0=そのまま 1=x反転 2=y反転 4=転置 の組
+    rev = (1, 0, 0, 1)
+    off = ((0, 0), (0, half), (half, half), (half, 0))
+    parts = []
+    for qi in range(4):
+        x, y = q[:, 0].copy(), q[:, 1].copy()
+        t = ts[qi]
+        if t & 4:
+            x, y = y, x
+        if t & 1:
+            x = half - 1 - x
+        if t & 2:
+            y = half - 1 - y
+        a = np.stack([x, y], axis=1)
+        if rev[qi]:
+            a = a[::-1]
+        parts.append(a + np.asarray(off[qi]))
+    return np.concatenate(parts, axis=0).astype(np.int64)
+
+
+def _sfc_hilbert(n):
+    d = np.arange(n * n, dtype=np.int64)
+    x = np.zeros_like(d)
+    y = np.zeros_like(d)
+    t = d.copy()
+    s = 1
+    while s < n:
+        rx = 1 & (t // 2)
+        ry = 1 & (t ^ rx)
+        flip = ry == 0
+        xf = np.where(flip & (rx == 1), s - 1 - x, x)
+        yf = np.where(flip & (rx == 1), s - 1 - y, y)
+        x2 = np.where(flip, yf, xf)
+        y2 = np.where(flip, xf, yf)
+        x = x2 + s * rx
+        y = y2 + s * ry
+        t = t // 4
+        s *= 2
+    return np.stack([x, y], axis=1)
+
+
+def curve_locality(points, gaps=(1, 2, 4, 8, 16, 32)):
+    """Points ``k`` apart along the curve — how far apart are they on the plane?
+
+    The reason a space-filling curve is used for storage layout, texture tiling
+    or rendering order is **locality**: neighbours in the ordering should stay
+    neighbours in space. This op measures that directly — for each gap ``k`` it
+    returns the mean Euclidean distance between points ``i`` and ``i + k``.
+
+    ★**Why this earns its place**: the claim "Hilbert has better locality than
+    scanning row by row" is usually asserted and never measured. Here it is a
+    table you can read: a Hilbert curve grows roughly as ``sqrt(k)`` (measured
+    1.00 / 1.53 / 2.12 / 3.17 / 4.29 / 6.38 at k = 1 .. 32), while a boustrophedon
+    scan grows nearly **linearly** (1.00 / 1.96 / 3.79 / 7.07 / 12.12 / 16.07) —
+    an honest, reproducible gap rather than a slogan.
+
+    Parameters
+    ----------
+    points : (N, 2) array
+        The curve's points **in visiting order**.
+    gaps : ints
+        Index gaps to report. Gaps at or beyond ``N`` are dropped (not an error;
+        a short curve simply has nothing to say about a long gap).
+
+    Returns a ``table``: ``gap`` (int), ``mean_distance``, and ``ratio`` =
+    ``mean_distance / mean_distance[gap == 1]`` so curves of different scales can
+    be compared directly.
+
+    **Raises** ``ValueError``: not an (N, 2) array; fewer than 2 points;
+    non-finite coordinates; every requested gap out of range.
+
+    HALCON: no operator.
+    """
+    op = "curve_locality"
+    p = np.asarray(points, dtype=np.float64)
+    if p.ndim != 2 or p.shape[1] != 2:
+        raise ValueError("%s: points must be (N, 2), got %s" % (op, (p.shape,)))
+    if p.shape[0] < 2:
+        raise ValueError("%s: need at least 2 points, got %d" % (op, p.shape[0]))
+    if not np.all(np.isfinite(p)):
+        raise ValueError("%s: points contain a non-finite value" % op)
+    ks, means = [], []
+    for k in gaps:
+        k = int(k)
+        if k < 1 or k >= p.shape[0]:
+            continue
+        d = np.hypot(p[k:, 0] - p[:-k, 0], p[k:, 1] - p[:-k, 1])
+        ks.append(k)
+        means.append(float(d.mean()))
+    if not ks:
+        raise ValueError("%s: every requested gap is out of range for %d points "
+                         "(gaps=%r)" % (op, p.shape[0], tuple(gaps)))
+    m = np.asarray(means, dtype=np.float64)
+    base = m[0] if ks[0] == 1 else m.min()
+    return {"gap": np.asarray(ks, dtype=np.int64), "mean_distance": m,
+            "ratio": m / base if base > 0 else np.full(m.shape, np.nan)}
+
+
+# ------------------------------------------------------------------------- #
+# 波動 —— 膜の固有モード・干渉・回折(2026-09-23)
+#
+# ★クラドニ図形は「板」ではなく**膜**の解である。よく見る cos*cos - cos*cos は
+#   ヘルムホルツ方程式 + ノイマン境界の膜のモードで、実際のクラドニ板は
+#   **重調和方程式**に従う別物。砂が節線に集まる絵は同じでも周波数比は合わない。
+#   ここでは膜と明記し、膜の真値(閉形式の固有値・ベッセル零点)だけで採点する。
+#   干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)。
+# ------------------------------------------------------------------------- #
+
+_WAVE_MAX_GRID = 4_000_000
+
+def _wave_bessel_j_zeros(order, count):
+    """J_order' (微分) の零点を、区間の符号変化 + 二分法で求める。
+
+    scipy が在れば ``jnp_zeros`` を使うが、無くても動くよう自前で持つ
+    (この repo の既定は stdlib + numpy で動くこと)。
+    """
+    try:
+        from scipy.special import jnp_zeros
+        return np.asarray(jnp_zeros(int(order), int(count)), dtype=np.float64)
+    except Exception:                                       # noqa: BLE001
+        pass
+    from numpy.polynomial import legendre  # noqa: F401  (numpy があることの保証)
+    try:
+        from scipy.special import jv as _jv
+    except Exception:                                       # noqa: BLE001
+        _jv = None
+    if _jv is None:
+        raise ValueError("wave_mode_frequencies: circular modes need scipy.special "
+                         "(Bessel functions); the rectangular kind needs nothing")
+    def dj(x):
+        return 0.5 * (_jv(order - 1, x) - _jv(order + 1, x))
+    xs = np.linspace(1e-6, 4.0 + 4.0 * count + 2.0 * order, 20000)
+    v = dj(xs)
+    out = []
+    for i in range(xs.size - 1):
+        if v[i] == 0.0:
+            out.append(xs[i])
+        elif v[i] * v[i + 1] < 0:
+            lo, hi = xs[i], xs[i + 1]
+            for _ in range(80):
+                mid = 0.5 * (lo + hi)
+                if dj(lo) * dj(mid) <= 0:
+                    hi = mid
+                else:
+                    lo = mid
+            out.append(0.5 * (lo + hi))
+        if len(out) >= count:
+            break
+    return np.asarray(out[:count], dtype=np.float64)
+
+def wave_membrane_mode(kind="rectangular", m=2, n=3, shape=(256, 256), aspect=1.0,
+                       free_edge=True):
+    """One eigenmode of a vibrating **membrane** — the shape the sand draws.
+
+    ★**This is a membrane, not a plate.** The familiar Chladni pattern
+    ``cos(m pi x) cos(n pi y) - cos(n pi x) cos(m pi y)`` solves the Helmholtz
+    equation with free (Neumann) edges; a real Chladni *plate* obeys the
+    **biharmonic** equation and has a different frequency ladder. The pictures
+    look alike, the frequencies do not — so this op says membrane and is checked
+    against membrane truth only.
+
+    ``kind="rectangular"`` returns the (possibly combined) cosine mode over a
+    rectangle of the given *aspect*; ``kind="circular"`` returns
+    ``J_m(k r) cos(m theta)`` with ``k`` from the Bessel zero, zero outside the disc.
+
+    ★**Why this earns its place**: the nodal lines of a rectangular mode are known
+    **by count** — a simple ``(m, n)`` mode has ``m-1`` interior vertical and
+    ``n-1`` horizontal nodal lines — and the circular mode's nodal circles are at
+    the ratios of successive Bessel zeros. The drawing can therefore be graded.
+
+    Returns a ``matrix`` (signed displacement, peak scaled to 1). Use
+    :func:`wave_nodal_lines` for the zero set.
+
+    **Raises** ``ValueError``: unknown kind; ``m``/``n`` below the valid range;
+    a grid over the cap; non-positive aspect; ``free_edge=False`` combined with
+    ``m == n`` for the combined mode (the difference vanishes identically).
+
+    HALCON: no operator.
+    """
+    op = "wave_membrane_mode"
+    if kind not in ("rectangular", "circular"):
+        raise ValueError("%s: kind must be 'rectangular' or 'circular', got %r"
+                         % (op, kind))
+    h, w = int(shape[0]), int(shape[1])
+    if h < 4 or w < 4 or h * w > _WAVE_MAX_GRID:
+        raise ValueError("%s: shape %r outside 4x4 .. %d cells" % (op, shape, _WAVE_MAX_GRID))
+    a = float(aspect)
+    if not np.isfinite(a) or a <= 0:
+        raise ValueError("%s: aspect must be finite and > 0, got %r" % (op, aspect))
+    mm, nn = int(m), int(n)
+
+    y = np.linspace(0.0, 1.0, h)[:, None]
+    x = np.linspace(0.0, 1.0, w)[None, :]
+    if kind == "rectangular":
+        if mm < 0 or nn < 0:
+            raise ValueError("%s: m and n must be >= 0 for a rectangle" % op)
+        if free_edge:
+            if mm == nn:
+                raise ValueError("%s: the combined free-edge mode vanishes identically "
+                                 "for m == n (%d); pass free_edge=False for the plain "
+                                 "cosine mode" % (op, mm))
+            u = (np.cos(mm * np.pi * x) * np.cos(nn * np.pi * y / a)
+                 - np.cos(nn * np.pi * x) * np.cos(mm * np.pi * y / a))
+        else:
+            u = np.sin(mm * np.pi * x) * np.sin(nn * np.pi * y / a)
+    else:
+        if mm < 0 or nn < 1:
+            raise ValueError("%s: circular needs m >= 0 (angular) and n >= 1 (radial)"
+                             % op)
+        k = float(_wave_bessel_j_zeros(mm, nn)[-1])
+        cy, cx = (h - 1) / 2.0, (w - 1) / 2.0
+        yy, xx = np.mgrid[0:h, 0:w]
+        r = np.hypot((yy - cy) / cy, (xx - cx) / cx)
+        th = np.arctan2(yy - cy, xx - cx)
+        try:
+            from scipy.special import jv
+        except Exception:                                   # noqa: BLE001
+            raise ValueError("%s: circular modes need scipy.special (Bessel functions)"
+                             % op)
+        u = jv(mm, k * np.clip(r, 0, 1)) * np.cos(mm * th)
+        u = np.where(r <= 1.0, u, 0.0)
+    peak = float(np.max(np.abs(u)))
+    return u / peak if peak > 0 else u
+
+def wave_mode_frequencies(kind="rectangular", count=10, aspect=1.0):
+    """The eigenvalue ladder of a membrane — a closed form you can check against.
+
+    ``kind="rectangular"``: the Dirichlet eigenvalues of a rectangle are
+    ``pi**2 * (m**2 + n**2 / aspect**2)`` for ``m, n >= 1`` — **not** ``m n pi``,
+    which is the usual slip. ``kind="circular"``: the free-edge (Neumann) circular
+    membrane's eigenvalues are the squares of the zeros of ``J'_m``.
+
+    ★**Why this earns its place**: this ladder is what separates a membrane from a
+    plate, and it is exactly computable. The square drum's ratios start
+    2, 5, 5, 8, 10, 10, 13 (in units of ``pi**2``) — the repeated 5 and 10 are the
+    famous degeneracies that make the square drum's modes ambiguous, and a wrong
+    implementation loses them.
+
+    Returns a ``signal``: the eigenvalues, ascending.
+
+    **Raises** ``ValueError``: unknown kind; non-positive count or aspect; a
+    circular request without scipy.
+    """
+    op = "wave_mode_frequencies"
+    if kind not in ("rectangular", "circular"):
+        raise ValueError("%s: kind must be 'rectangular' or 'circular', got %r"
+                         % (op, kind))
+    c = int(count)
+    if c < 1:
+        raise ValueError("%s: count must be >= 1, got %r" % (op, count))
+    a = float(aspect)
+    if not np.isfinite(a) or a <= 0:
+        raise ValueError("%s: aspect must be finite and > 0, got %r" % (op, aspect))
+    if kind == "rectangular":
+        k = int(np.ceil(np.sqrt(c))) + 4
+        mm, nn = np.meshgrid(np.arange(1, k + 1), np.arange(1, k + 1))
+        lam = np.pi ** 2 * (mm ** 2 + nn ** 2 / a ** 2)
+        return np.sort(lam.ravel())[:c]
+    out = []
+    order = 0
+    while len(out) < c + 8:
+        out.extend(_wave_bessel_j_zeros(order, c) ** 2)
+        order += 1
+        if order > c + 4:
+            break
+    return np.sort(np.asarray(out, dtype=np.float64))[:c]
+
+def wave_nodal_lines(field, tol=0.0):
+    """Where a signed field changes sign — the nodal set, as a mask.
+
+    A pixel is marked when it differs in sign from its right or lower neighbour
+    (or is within *tol* of zero). That is the discrete version of "the sand
+    collects where the plate does not move".
+
+    ★**Why this earns its place**: the count is predictable. A plain ``(m, n)``
+    rectangular mode has ``m-1`` interior nodal lines in one direction and ``n-1``
+    in the other, so the mask can be graded against integers rather than by eye.
+
+    Returns a ``mask``.
+
+    **Raises** ``ValueError``: not a 2-D array; non-finite values; negative *tol*.
+    """
+    op = "wave_nodal_lines"
+    u = np.asarray(field, dtype=np.float64)
+    if u.ndim != 2 or min(u.shape) < 2:
+        raise ValueError("%s: field must be 2-D with at least 2x2, got %s"
+                         % (op, (u.shape,)))
+    if not np.all(np.isfinite(u)):
+        raise ValueError("%s: field contains a non-finite value" % op)
+    t = float(tol)
+    if not np.isfinite(t) or t < 0:
+        raise ValueError("%s: tol must be finite and >= 0, got %r" % (op, tol))
+    s = np.sign(u)
+    out = np.zeros(u.shape, dtype=bool)
+    out[:, :-1] |= (s[:, :-1] * s[:, 1:]) < 0
+    out[:-1, :] |= (s[:-1, :] * s[1:, :]) < 0
+    if t > 0:
+        out |= np.abs(u) <= t
+    return out
+
+def wave_two_slit(wavelength_nm=550.0, slit_sep_um=20.0, distance_mm=200.0,
+                  shape=(256, 512), pixel_um=5.0, slit_width_um=2.0):
+    """Two-slit interference on a screen — built from the physics, not the fringe formula.
+
+    Each slit is treated as a line source of the given width; the screen intensity
+    is ``|sum over slit of exp(i k R) / sqrt(R)|**2`` with ``R`` the true distance
+    from each source point. **The textbook spacing ``lambda D / d`` is nowhere in
+    this computation** — which is the point: it is then available as an
+    independent prediction to check the picture against.
+
+    ★**Why this earns its place**: :func:`wave_fringe_period` measures the period
+    of the produced image, and it must land on ``lambda D / d`` (in pixels,
+    ``lambda D / (d * pixel)``). Two ways to the same number, only one of which
+    was used to draw.
+
+    Returns an ``image2d`` normalised to a peak of 1.
+
+    **Raises** ``ValueError``: non-positive wavelength, separation, distance,
+    pixel or width; a grid over the cap; a geometry so coarse that fewer than
+    three fringes fit on the screen (reported, not silently aliased).
+
+    Limits: scalar, monochromatic, far-from-paraxial geometries are not modelled;
+    the slits are lines, so there is no vertical structure.
+    """
+    op = "wave_two_slit"
+    lam = float(wavelength_nm) * 1e-3                      # -> um
+    d = float(slit_sep_um)
+    D = float(distance_mm) * 1e3                           # -> um
+    px = float(pixel_um)
+    sw = float(slit_width_um)
+    for nm, v in (("wavelength_nm", lam), ("slit_sep_um", d), ("distance_mm", D),
+                  ("pixel_um", px), ("slit_width_um", sw)):
+        if not np.isfinite(v) or v <= 0:
+            raise ValueError("%s: %s must be finite and > 0" % (op, nm))
+    h, w = int(shape[0]), int(shape[1])
+    if h < 4 or w < 8 or h * w > _WAVE_MAX_GRID:
+        raise ValueError("%s: shape %r outside 4x8 .. %d cells" % (op, shape, _WAVE_MAX_GRID))
+    period_px = lam * D / (d * px)
+    if period_px * 3.0 > w:
+        raise ValueError("%s: the predicted fringe period is %.1f px and the screen is "
+                         "%d px — fewer than 3 fringes fit (move the screen closer, "
+                         "widen the separation, or use a bigger shape)"
+                         % (op, period_px, w))
+    if period_px < 4.0:
+        raise ValueError("%s: the predicted fringe period is %.2f px — below the 4 px "
+                         "needed to sample a fringe (this would alias)" % (op, period_px))
+    xs = (np.arange(w) - (w - 1) / 2.0) * px
+    k = 2.0 * np.pi / lam
+    nsrc = max(3, int(np.ceil(sw / (lam / 4.0))))
+    off = np.linspace(-sw / 2.0, sw / 2.0, nsrc)
+    amp = np.zeros(w, dtype=np.complex128)
+    for centre in (-d / 2.0, +d / 2.0):
+        for o in off:
+            R = np.hypot(xs - (centre + o), D)
+            amp += np.exp(1j * k * R) / np.sqrt(R)
+    line = np.abs(amp) ** 2
+    line = line / line.max()
+    return np.repeat(line[None, :], h, axis=0)
+
+def wave_fringe_period(image, axis=1):
+    """The period of a striped image, measured back out of it (pixels).
+
+    Takes the mean profile along *axis*, removes the mean, and reads the dominant
+    frequency from the FFT with a **parabolic interpolation** on the log spectrum,
+    so the answer is not quantised to the FFT bin.
+
+    ★**Why this earns its place**: it closes the loop on :func:`wave_two_slit` and
+    on any halftone or grating image — the period predicted by the closed form and
+    the period measured from the pixels are two different computations.
+
+    Returns a ``measurement``: the period in pixels.
+
+    **Raises** ``ValueError``: not a 2-D array; fewer than 8 samples along *axis*;
+    non-finite values; a profile with no variation (a flat image has no period).
+    """
+    op = "wave_fringe_period"
+    im = np.asarray(image, dtype=np.float64)
+    if im.ndim != 2:
+        raise ValueError("%s: image must be 2-D, got %s" % (op, (im.shape,)))
+    if not np.all(np.isfinite(im)):
+        raise ValueError("%s: image contains a non-finite value" % op)
+    a = int(axis)
+    if a not in (0, 1):
+        raise ValueError("%s: axis must be 0 or 1, got %r" % (op, axis))
+    prof = im.mean(axis=0 if a == 1 else 1)
+    if prof.size < 8:
+        raise ValueError("%s: need at least 8 samples along the axis, got %d"
+                         % (op, prof.size))
+    prof = prof - prof.mean()
+    if float(np.ptp(prof)) <= 0:
+        raise ValueError("%s: the profile is flat — there is no period to measure" % op)
+    spec = np.abs(np.fft.rfft(prof * np.hanning(prof.size))) ** 2
+    spec[0] = 0.0
+    i = int(np.argmax(spec))
+    if i <= 0 or i >= spec.size - 1:
+        return float(prof.size) / max(i, 1)
+    y0, y1, y2 = np.log(spec[i - 1:i + 2] + 1e-300)
+    delta = 0.5 * (y0 - y2) / (y0 - 2.0 * y1 + y2)
+    return float(prof.size) / (i + float(delta))
+
+def wave_grating_orders(pitch_um=1.6, wavelength_nm=550.0, sin_in=0.0,
+                        orders=(-2, -1, 1, 2)):
+    """Where a grating sends each order: ``d (sin_out - sin_in) = m lambda`` solved for the angle.
+
+    The companion to the existing ``grating_wavelengths`` (which solves the same
+    identity for *lambda*): given the pitch and the wavelength, this returns the
+    outgoing direction of each order, and marks the orders that are
+    **evanescent** — ``|sin_out| > 1`` means that order does not propagate, which
+    is why a CD shows fewer colours at grazing incidence.
+
+    ★**Why this earns its place**: the two ops invert one another, so a round trip
+    must return the wavelength it started from; and the angles can be compared
+    against the peak positions of a *simulated* far field (the existing
+    ``fraunhofer_pattern`` of a real grating aperture), which knows nothing about
+    the grating equation.
+
+    Returns a ``table``: ``order``, ``sin_out``, ``angle_deg`` (NaN when
+    evanescent), ``propagates``.
+
+    **Raises** ``ValueError``: non-positive pitch or wavelength; ``|sin_in| > 1``;
+    order 0 alone with no others (it is always the specular direction — allowed,
+    but a caller asking only for it probably meant something else); non-finite input.
+    """
+    op = "wave_grating_orders"
+    d = float(pitch_um)
+    lam = float(wavelength_nm) * 1e-3
+    si = float(sin_in)
+    if not np.isfinite(d) or d <= 0:
+        raise ValueError("%s: pitch_um must be finite and > 0, got %r" % (op, pitch_um))
+    if not np.isfinite(lam) or lam <= 0:
+        raise ValueError("%s: wavelength_nm must be finite and > 0" % op)
+    if not np.isfinite(si) or abs(si) > 1.0:
+        raise ValueError("%s: sin_in must lie in [-1, 1], got %r" % (op, sin_in))
+    m = np.asarray(orders, dtype=np.int64).ravel()
+    if m.size == 0:
+        raise ValueError("%s: orders is empty" % op)
+    so = si + m * lam / d
+    prop = np.abs(so) <= 1.0
+    ang = np.where(prop, np.degrees(np.arcsin(np.clip(so, -1.0, 1.0))), np.nan)
+    return {"order": m, "sin_out": so, "angle_deg": ang, "propagates": prop}
+
+
+# ------------------------------------------------------------------------- #
+# 力学系 —— 積む・断面・指数・分岐(2026-09-23)
+#
+# ★真値は**公表値か閉形式だけ**: 線形系は expm(At)x0 が厳密解で刻み半分に
+#   すると誤差が 1/16(4 次)、Lorenz のリアプノフ指数の**和**はトレース恒等式
+#   により厳密に -(sigma+1+beta)、ロジスティック写像の周期倍分岐は 3 と 1+sqrt6、
+#   相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
+# ★関数(callable)を引数に取らない —— 型付き台帳は入力を sort で登録し、
+#   連鎖ファザーがデータから引数を組むので callable は載らない。系は族名か係数配列。
+# ------------------------------------------------------------------------- #
+
+_DYN_MAX_STEPS = 4_000_000
+
+_DYN_MAX_GRID = 4_000_000
+
+DYNSYS_SYSTEMS = {
+    # Lorenz (1963): sigma, beta, rho。発散 div f = -(sigma + 1 + beta) は**定数**。
+    "lorenz": (10.0, 8.0 / 3.0, 28.0),
+    # Rossler (1976): a, b, c。div f = a - c + x の**x に依る**(定数ではない)。
+    "rossler": (0.2, 0.2, 5.7),
+    # 調和振動子: omega。エネルギーが保存するので積分器の漂流が見える。
+    "harmonic": (1.0,),
+    # 線形系 x' = A x。params は A を行優先で並べたもの(n*n 個)。厳密解が expm(At)x0。
+    "linear": (0.0, 1.0, -1.0, 0.0),
+}
+
+DYNSYS_MAPS = ("logistic", "sine", "tent")
+
+def _dyn_system_dim(system, params):
+    if system == "linear":
+        n = int(round(np.sqrt(params.size)))
+        if n * n != params.size:
+            raise ValueError("ode: linear needs a square matrix, got %d numbers"
+                             % params.size)
+        return n
+    return {"lorenz": 3, "rossler": 3, "harmonic": 2}[system]
+
+def _dyn_derivative(system, params, x):
+    """x は (..., n)。返りも同じ形。**ここだけが系の定義**(他の op は全部これを呼ぶ)。"""
+    if system == "lorenz":
+        s, b, r = params
+        dx = s * (x[..., 1] - x[..., 0])
+        dy = x[..., 0] * (r - x[..., 2]) - x[..., 1]
+        dz = x[..., 0] * x[..., 1] - b * x[..., 2]
+        return np.stack([dx, dy, dz], axis=-1)
+    if system == "rossler":
+        a, b, c = params
+        dx = -x[..., 1] - x[..., 2]
+        dy = x[..., 0] + a * x[..., 1]
+        dz = b + x[..., 2] * (x[..., 0] - c)
+        return np.stack([dx, dy, dz], axis=-1)
+    if system == "harmonic":
+        w = params[0]
+        return np.stack([x[..., 1], -(w ** 2) * x[..., 0]], axis=-1)
+    if system == "linear":
+        n = _dyn_system_dim(system, params)
+        A = params.reshape(n, n)
+        return x @ A.T
+    raise ValueError("ode: unknown system %r — one of %s"
+                     % (system, tuple(DYNSYS_SYSTEMS)))
+
+def _dyn_jacobian(system, params, x):
+    """接方程式に要るヤコビ行列 (n, n)。**解析形**(差分でなく)。"""
+    if system == "lorenz":
+        s, b, r = params
+        return np.array([[-s, s, 0.0],
+                         [r - x[2], -1.0, -x[0]],
+                         [x[1], x[0], -b]])
+    if system == "rossler":
+        a, b, c = params
+        return np.array([[0.0, -1.0, -1.0],
+                         [1.0, a, 0.0],
+                         [x[2], 0.0, x[0] - c]])
+    if system == "harmonic":
+        w = params[0]
+        return np.array([[0.0, 1.0], [-(w ** 2), 0.0]])
+    if system == "linear":
+        n = _dyn_system_dim(system, params)
+        return params.reshape(n, n)
+    raise ValueError("ode: unknown system %r" % (system,))
+
+def _dyn_prepare(system, params):
+    if system not in DYNSYS_SYSTEMS:
+        raise ValueError("ode: unknown system %r — one of %s"
+                         % (system, tuple(DYNSYS_SYSTEMS)))
+    p = (np.asarray(DYNSYS_SYSTEMS[system], dtype=np.float64) if params is None
+         else np.asarray(params, dtype=np.float64).ravel())
+    if not np.all(np.isfinite(p)):
+        raise ValueError("ode: params contain a non-finite value")
+    if system != "linear" and p.size != len(DYNSYS_SYSTEMS[system]):
+        raise ValueError("ode: %s takes %d parameters, got %d"
+                         % (system, len(DYNSYS_SYSTEMS[system]), p.size))
+    return p
+
+def ode_flow_states(system="lorenz", params=None, x0=None, t_end=40.0, dt=0.005,
+                    method="rk4"):
+    """Integrate a named vector field — the trajectory, with the order you paid for.
+
+    Explicit Runge-Kutta on one of the named systems (``lorenz``, ``rossler``,
+    ``harmonic``, ``linear``). ``method="rk4"`` is the classical 4th-order step;
+    ``method="euler"`` is there as a **control group** — the same picture comes out
+    of both, and only the error tells them apart.
+
+    ★**Why the field is a name, not a function**: the typed ledger registers inputs
+    by sort and the chain fuzzer builds arguments from data, so a callable can
+    never be reached from there. A name (or, for ``linear``, the matrix itself in
+    ``params``) keeps every op in this family reachable from the ledger.
+
+    ★**Why this earns its place**: for ``system="linear"`` the exact solution is
+    ``expm(A t) x0``, so the error is known in closed form — and halving ``dt``
+    divides it by **16**, which is what "4th order" means. A drawing of an
+    attractor cannot be checked; this can.
+
+    Parameters
+    ----------
+    system : str
+        One of ``DYNSYS_SYSTEMS``.
+    params : floats or None
+        System parameters (defaults in ``DYNSYS_SYSTEMS``). For ``linear`` this is
+        the matrix ``A`` in row-major order (``n*n`` numbers).
+    x0 : floats or None
+        Initial state (default: a point on the attractor / unit first coordinate).
+    t_end, dt : float
+        Integration window and step. ``t_end / dt`` must stay under 4,000,000.
+    method : "rk4" | "euler"
+
+    Returns a ``states`` table: ``t`` (S,) and ``x`` (S, n).
+
+    **Raises** ``ValueError``: unknown system or method; wrong parameter count;
+    non-finite input; ``dt`` not positive; a step count over the cap; a trajectory
+    that left float range (the field diverged — reported, never silently clipped).
+
+    HALCON: no operator.
+    """
+    op = "ode_flow_states"
+    p = _dyn_prepare(system, params)
+    n = _dyn_system_dim(system, p)
+    if method not in ("rk4", "euler"):
+        raise ValueError("%s: method must be 'rk4' or 'euler', got %r" % (op, method))
+    h = float(dt)
+    if not np.isfinite(h) or h <= 0:
+        raise ValueError("%s: dt must be finite and > 0, got %r" % (op, dt))
+    T = float(t_end)
+    if not np.isfinite(T) or T <= 0:
+        raise ValueError("%s: t_end must be finite and > 0, got %r" % (op, t_end))
+    steps = int(round(T / h))
+    if steps < 1 or steps > _DYN_MAX_STEPS:
+        raise ValueError("%s: t_end/dt = %d steps, outside 1..%d"
+                         % (op, steps, _DYN_MAX_STEPS))
+    if x0 is None:
+        x = np.zeros(n, dtype=np.float64)
+        x[0] = 1.0
+        if system in ("lorenz", "rossler"):
+            x = np.array([1.0, 1.0, 1.0][:n], dtype=np.float64)
+    else:
+        x = np.asarray(x0, dtype=np.float64).ravel()
+        if x.size != n:
+            raise ValueError("%s: x0 must have %d components, got %d"
+                             % (op, n, x.size))
+    if not np.all(np.isfinite(x)):
+        raise ValueError("%s: x0 contains a non-finite value" % op)
+
+    out = np.empty((steps + 1, n), dtype=np.float64)
+    out[0] = x
+    for i in range(steps):
+        if method == "euler":
+            x = x + h * _dyn_derivative(system, p, x)
+        else:
+            k1 = _dyn_derivative(system, p, x)
+            k2 = _dyn_derivative(system, p, x + 0.5 * h * k1)
+            k3 = _dyn_derivative(system, p, x + 0.5 * h * k2)
+            k4 = _dyn_derivative(system, p, x + h * k3)
+            x = x + (h / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
+        if not np.all(np.isfinite(x)):
+            raise ValueError("%s: the trajectory left float range at step %d "
+                             "(the field diverged for these parameters/step)"
+                             % (op, i + 1))
+        out[i + 1] = x
+    # ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に
+    #   なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
+    res = {"t": np.arange(steps + 1, dtype=np.float64) * h}
+    for k in range(n):
+        res["x%d" % k] = out[:, k]
+    return res
+
+def ode_vector_field_grid(system="rossler", params=None, bounds=(-10.0, 10.0, -10.0, 10.0),
+                          shape=(64, 64), plane="xy", offset=0.0):
+    """Sample a named field on a grid — a ``flow2d`` the existing viewers take.
+
+    Returns ``(2, H, W)`` with components ``(dy, dx)`` — the library's
+    ``flow2d`` layout — so the **existing flow family** (quiver, streamlines,
+    colour wheel, ``flow_magnitude``) renders it with no new drawing code. For a
+    3-D system, *plane* picks the slice (``xy`` / ``xz`` / ``yz``) and *offset*
+    fixes the third coordinate.
+
+    ★**Why this earns its place**: it is the bridge that keeps this family from
+    growing its own renderer. The vectors are the same ``_dyn_derivative`` the
+    integrator uses, so what you see is what gets integrated.
+
+    ★The layout is **channel-first**, not the ``(H, W, 2)`` that reads more
+    naturally here: ``flow2d`` is an existing type with an existing predicate and
+    existing consumers, and a row that declares ``flow2d`` while returning the
+    transpose is a type lie the fuzzer catches (it did —— 2026-09-23). Row 0 is
+    the **top** (the image convention), so the vertical component is negated to
+    match what the viewer draws.
+
+    **Raises** ``ValueError``: unknown system or plane; a grid over the cap;
+    non-finite bounds; a degenerate window.
+    """
+    op = "ode_vector_field_grid"
+    p = _dyn_prepare(system, params)
+    n = _dyn_system_dim(system, p)
+    if plane not in ("xy", "xz", "yz"):
+        raise ValueError("%s: plane must be xy / xz / yz, got %r" % (op, plane))
+    b = np.asarray(bounds, dtype=np.float64).ravel()
+    if b.size != 4 or not np.all(np.isfinite(b)):
+        raise ValueError("%s: bounds must be 4 finite numbers (x0, x1, y0, y1)" % op)
+    if b[1] <= b[0] or b[3] <= b[2]:
+        raise ValueError("%s: bounds are degenerate: %s" % (op, tuple(b)))
+    h, w = (int(shape[0]), int(shape[1]))
+    if h < 2 or w < 2 or h * w > _DYN_MAX_GRID:
+        raise ValueError("%s: shape %r outside 2x2 .. %d cells" % (op, shape, _DYN_MAX_GRID))
+    gx = np.linspace(b[0], b[1], w)
+    gy = np.linspace(b[3], b[2], h)                # 行 0 が上
+    X, Y = np.meshgrid(gx, gy)
+    pts = np.zeros(X.shape + (n,), dtype=np.float64)
+    i0, i1 = {"xy": (0, 1), "xz": (0, 2), "yz": (1, 2)}[plane]
+    if max(i0, i1) >= n:
+        raise ValueError("%s: plane %r needs %d dimensions, the system has %d"
+                         % (op, plane, max(i0, i1) + 1, n))
+    pts[..., i0] = X
+    pts[..., i1] = Y
+    for k in range(n):
+        if k not in (i0, i1):
+            pts[..., k] = float(offset)
+    d = _dyn_derivative(system, p, pts)
+    # (2, H, W) = (dy, dx)。dy は上向きを負に(行 0 が上なので)。
+    return np.stack([-d[..., i1], d[..., i0]], axis=0)
+
+def dynsys_poincare_section(states, axis=2, value=None, direction=1):
+    """Where a trajectory crosses a plane — with the crossing point interpolated.
+
+    Takes the ``x`` block of :func:`ode_flow_states` and returns the points where
+    coordinate *axis* crosses *value* in the given *direction* (+1 upward, -1
+    downward, 0 either). The crossing is found by **linear interpolation between
+    the two straddling samples**, not by taking the nearer sample — otherwise the
+    section is quantised by the step size and a periodic orbit looks like a cloud.
+
+    ★**Why this earns its place**: a periodic orbit must give **one** point (to
+    within the interpolation error), a period-2 orbit two, and a chaotic one a
+    fractal set. That is a check with a number in it, unlike "the picture looks
+    like a strange attractor".
+
+    Returns a ``pairs`` array of the remaining coordinates at each crossing.
+
+    **Raises** ``ValueError``: states not (S, n) with S >= 2; axis out of range;
+    direction not in (-1, 0, 1); non-finite input; no crossing found (reported,
+    not returned as an empty array that a caller may read as "no orbit").
+    """
+    op = "dynsys_poincare_section"
+    if isinstance(states, dict):                            # ode_flow_states の table
+        cols = sorted(k for k in states if k.startswith("x") and k[1:].isdigit())
+        if not cols:
+            raise ValueError("%s: the table has no x0, x1, ... columns — pass the "
+                             "output of ode_flow_states" % op)
+        x = np.stack([np.asarray(states[c], dtype=np.float64) for c in cols], axis=1)
+    else:
+        x = np.asarray(states, dtype=np.float64)
+    if x.ndim != 2 or x.shape[0] < 2:
+        raise ValueError("%s: states must be (S, n) with S >= 2, got %s"
+                         % (op, (x.shape,)))
+    if not np.all(np.isfinite(x)):
+        raise ValueError("%s: states contain a non-finite value" % op)
+    a = int(axis)
+    if not 0 <= a < x.shape[1]:
+        raise ValueError("%s: axis %d outside 0..%d" % (op, a, x.shape[1] - 1))
+    if direction not in (-1, 0, 1):
+        raise ValueError("%s: direction must be -1, 0 or +1, got %r" % (op, direction))
+    v = float(np.mean(x[:, a])) if value is None else float(value)
+    s = x[:, a] - v
+    lo, hi = s[:-1], s[1:]
+    up = (lo < 0) & (hi >= 0)
+    dn = (lo > 0) & (hi <= 0)
+    hit = up if direction == 1 else (dn if direction == -1 else (up | dn))
+    idx = np.flatnonzero(hit)
+    if idx.size == 0:
+        raise ValueError("%s: the trajectory never crosses %s = %g in direction %+d "
+                         "(widen the window or move the plane)" % (op, "xyzw"[a], v, direction))
+    t = lo[idx] / (lo[idx] - hi[idx])
+    cross = x[idx] + (x[idx + 1] - x[idx]) * t[:, None]
+    keep = [k for k in range(x.shape[1]) if k != a]
+    out = cross[:, keep]
+    return out[:, :2] if out.shape[1] >= 2 else np.stack([out[:, 0], np.zeros(out.shape[0])], axis=1)
+
+def dynsys_lyapunov_spectrum(system="lorenz", params=None, x0=None, t_end=200.0,
+                             dt=0.005, burn_in=20.0):
+    """The Lyapunov spectrum by tangent flow + QR — and the sum you can check.
+
+    Integrates the state together with an orthonormal frame of tangent vectors
+    (the variational equation ``dY/dt = J(x) Y``), re-orthonormalising by QR at
+    every step and accumulating ``log`` of the diagonal. The exponents come out
+    **ordered**, largest first.
+
+    ★★**Why this earns its place — the trace identity.** The sum of the exponents
+    equals the time-average of the divergence of the field:
+
+        sum(lambda_i) == <div f>
+
+    For Lorenz the divergence is the **constant** ``-(sigma + 1 + beta)``, so the
+    sum is known in closed form: ``-13.6667`` for the classical parameters. That
+    is an exact target the attractor picture cannot provide. The published largest
+    exponent (≈ 0.906 for sigma=10, beta=8/3, rho=28) is a second, independent
+    check.
+
+    Returns a ``signal``: the exponents, descending.
+
+    **Raises** ``ValueError``: unknown system; non-finite input; ``burn_in`` not
+    shorter than ``t_end``; a trajectory that left float range.
+
+    Limits: the exponents converge like ``1/sqrt(T)`` — a short window gives a
+    plausible but wrong spectrum. The trace identity converges much faster and is
+    the honest gate; the individual exponents need long windows.
+
+    HALCON: no operator.
+    """
+    op = "dynsys_lyapunov_spectrum"
+    p = _dyn_prepare(system, params)
+    n = _dyn_system_dim(system, p)
+    h = float(dt)
+    if not np.isfinite(h) or h <= 0:
+        raise ValueError("%s: dt must be finite and > 0" % op)
+    if not (0.0 <= float(burn_in) < float(t_end)):
+        raise ValueError("%s: need 0 <= burn_in < t_end, got %r and %r"
+                         % (op, burn_in, t_end))
+    x = (np.array([1.0] * n) if x0 is None
+         else np.asarray(x0, dtype=np.float64).ravel())
+    if x.size != n or not np.all(np.isfinite(x)):
+        raise ValueError("%s: x0 must be %d finite numbers" % (op, n))
+
+    def step(state):
+        k1 = _dyn_derivative(system, p, state)
+        k2 = _dyn_derivative(system, p, state + 0.5 * h * k1)
+        k3 = _dyn_derivative(system, p, state + 0.5 * h * k2)
+        k4 = _dyn_derivative(system, p, state + h * k3)
+        return state + (h / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
+
+    for _ in range(int(round(float(burn_in) / h))):
+        x = step(x)
+        if not np.all(np.isfinite(x)):
+            raise ValueError("%s: the trajectory left float range during burn-in" % op)
+
+    Q = np.eye(n)
+    total = np.zeros(n)
+    steps = int(round((float(t_end) - float(burn_in)) / h))
+    for _ in range(steps):
+        J = _dyn_jacobian(system, p, x)
+        # 接方程式も同じ 4 次で進める(状態と次数を揃える)
+        y1 = J @ Q
+        y2 = _dyn_jacobian(system, p, step(x) if False else x) @ (Q + 0.5 * h * y1)
+        y3 = _dyn_jacobian(system, p, x) @ (Q + 0.5 * h * y2)
+        y4 = _dyn_jacobian(system, p, x) @ (Q + h * y3)
+        Y = Q + (h / 6.0) * (y1 + 2.0 * y2 + 2.0 * y3 + y4)
+        x = step(x)
+        Q, R = np.linalg.qr(Y)
+        d = np.diag(R).copy()
+        sgn = np.sign(d)
+        sgn[sgn == 0] = 1.0
+        Q = Q * sgn
+        total += np.log(np.abs(d) + 1e-300)
+        if not np.all(np.isfinite(x)):
+            raise ValueError("%s: the trajectory left float range" % op)
+    return np.sort(total / (steps * h))[::-1]
+
+def dynsys_bifurcation_map(kind="logistic", r_lo=2.5, r_hi=4.0, n_r=800,
+                           burn_in=300, keep=100, x0=0.5):
+    """The orbit diagram of a 1-D map — period doubling, as points you can count.
+
+    For each parameter value the map is iterated ``burn_in`` times (discarded) and
+    the next ``keep`` states are returned. ``logistic`` is ``r x (1 - x)``,
+    ``sine`` is ``r sin(pi x)``, ``tent`` is ``r min(x, 1-x) * 2``.
+
+    ★**Why this earns its place**: the first period-doubling values are known
+    exactly for the logistic map — ``r = 3`` and ``r = 1 + sqrt 6 = 3.449489...``
+    — and the ratio of successive intervals tends to **Feigenbaum's constant**
+    ``4.669201...``, which is universal. Counting distinct states per ``r`` turns
+    the picture into integers (1, 2, 4, 8, ...) that can be checked.
+
+    Returns a ``pairs`` array of ``(r, x)``.
+
+    **Raises** ``ValueError``: unknown map; ``r_lo >= r_hi``; non-positive counts;
+    a grid over the cap; ``x0`` outside the unit interval.
+
+    HALCON: no operator.
+    """
+    op = "dynsys_bifurcation_map"
+    if kind not in DYNSYS_MAPS:
+        raise ValueError("%s: kind must be one of %s, got %r" % (op, DYNSYS_MAPS, kind))
+    lo, hi = float(r_lo), float(r_hi)
+    if not (np.isfinite(lo) and np.isfinite(hi)) or hi <= lo:
+        raise ValueError("%s: need r_lo < r_hi, got %r and %r" % (op, r_lo, r_hi))
+    nr, nb, nk = int(n_r), int(burn_in), int(keep)
+    if min(nr, nk) < 1 or nb < 0:
+        raise ValueError("%s: n_r and keep must be >= 1 and burn_in >= 0" % op)
+    if nr * nk > _DYN_MAX_GRID:
+        raise ValueError("%s: n_r * keep = %d over the %d cap" % (op, nr * nk, _DYN_MAX_GRID))
+    x = float(x0)
+    if not (0.0 < x < 1.0):
+        raise ValueError("%s: x0 must lie strictly in (0, 1), got %r" % (op, x0))
+    r = np.linspace(lo, hi, nr)
+    s = np.full(nr, x, dtype=np.float64)
+
+    def step(v):
+        if kind == "logistic":
+            return r * v * (1.0 - v)
+        if kind == "sine":
+            return r * np.sin(np.pi * v)
+        return r * 2.0 * np.minimum(v, 1.0 - v)
+
+    for _ in range(nb):
+        s = step(s)
+    out = np.empty((nr, nk, 2), dtype=np.float64)
+    for j in range(nk):
+        s = step(s)
+        out[:, j, 0] = r
+        out[:, j, 1] = s
+    pts = out.reshape(-1, 2)
+    return pts[np.isfinite(pts).all(axis=1)]
+
+def dynsys_correlation_dimension(points, n_radii=24, r_lo=None, r_hi=None,
+                                 max_points=4000, seed=0):
+    """Grassberger-Procaccia correlation dimension — the slope of ``log C(r)``.
+
+    ``C(r)`` is the fraction of point pairs closer than ``r``; for a self-similar
+    set it grows like ``r**D``, and *D* is read off the straight part of the
+    log-log plot (fitted on the middle 60 % of the radii, where the curve is free
+    of the small-``r`` noise floor and the large-``r`` saturation).
+
+    ★**Why this earns its place**: unlike box counting it needs no grid, and its
+    answers are known for simple sets — a circle gives **1**, a filled square
+    **2**, a Cantor set ``log2/log3 = 0.6309``. It measures a different quantity
+    from the existing ``fractal_dimension`` (box counting), so the two are an
+    independent pair rather than two names for one number.
+
+    Returns a ``measurement``: the fitted dimension.
+
+    **Raises** ``ValueError``: fewer than 32 points; not a 2-D array; non-finite
+    input; a degenerate cloud (every point identical); a radius range that leaves
+    no pairs.
+
+    Limits: sub-sampled to *max_points* (pairs grow quadratically). ★The
+    dominant error is **not** the sub-sampling but the **radius window**: the
+    default range is the 1st-25th percentile of pair distances, and on a *bounded*
+    set its upper end runs into the boundary, where ``C(r)`` saturates and flattens
+    the slope. Measured on a unit square (true D = 2): 1.879 with the default
+    window and 1.873 / 1.879 / 1.871 at 400 / 1,500 / 3,000 points —— more points
+    do **not** help; narrowing the window to ``r_lo=0.01, r_hi=0.1`` gives 1.947
+    and ``0.002 / 0.05`` gives 2.050. Pass *r_lo* / *r_hi* explicitly when the
+    answer matters, and report the window with the number.
+    """
+    op = "dynsys_correlation_dimension"
+    p = np.asarray(points, dtype=np.float64)
+    if p.ndim != 2 or p.shape[0] < 32:
+        raise ValueError("%s: need (N, d) with N >= 32, got %s" % (op, (p.shape,)))
+    if not np.all(np.isfinite(p)):
+        raise ValueError("%s: points contain a non-finite value" % op)
+    m = int(max_points)
+    if p.shape[0] > m:
+        rng = np.random.default_rng(int(seed))
+        p = p[rng.choice(p.shape[0], size=m, replace=False)]
+    d = np.linalg.norm(p[:, None, :] - p[None, :, :], axis=-1)
+    iu = np.triu_indices(p.shape[0], 1)
+    dist = d[iu]
+    pos = dist[dist > 0]
+    if pos.size == 0:
+        raise ValueError("%s: every point is identical — no scale to measure" % op)
+    lo = float(np.percentile(pos, 1)) if r_lo is None else float(r_lo)
+    # ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が
+    #   飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の
+    #   手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
+    hi = float(np.percentile(pos, 25)) if r_hi is None else float(r_hi)
+    if not (np.isfinite(lo) and np.isfinite(hi)) or hi <= lo or lo <= 0:
+        raise ValueError("%s: need 0 < r_lo < r_hi, got %g and %g" % (op, lo, hi))
+    radii = np.logspace(np.log10(lo), np.log10(hi), int(n_radii))
+    counts = np.array([(dist < r).sum() for r in radii], dtype=np.float64)
+    ok = counts > 0
+    if ok.sum() < 4:
+        raise ValueError("%s: fewer than 4 usable radii — the cloud has no scale range"
+                         % op)
+    lr, lc = np.log(radii[ok]), np.log(counts[ok] / dist.size)
+    a = int(0.2 * lr.size)
+    b = max(a + 3, int(0.8 * lr.size))
+    slope = float(np.polyfit(lr[a:b], lc[a:b], 1)[0])
+    return slope

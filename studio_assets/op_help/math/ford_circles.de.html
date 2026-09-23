@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ford_circles — MATH <code style="color:#22d3bf">construct</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ford_circles(max_denominator=12, lo=0, hi=1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.ford_circles(max_denominator=12, lo=0, hi=1)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;ford_circles&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Ford-Kreise der Farey-Brüche — Berührung *ist* eine ganzzahlige Identität.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>For a fraction `<code style="color:#22d3bf">p/q</code>` in lowest terms the Ford circle sits at</p>
+<p>`<code style="color:#22d3bf">(p/q, 1/(2q**2))</code><code style="color:#22d3bf"> with radius </code><code style="color:#22d3bf">1/(2q**2)</code>`. Two such circles are</p>
+<p><b>tangent if and only if</b> `<code style="color:#22d3bf">|p*s - q*r| == 1</code>` — the Farey-neighbour</p>
+<p>condition — and otherwise strictly disjoint. They never overlap.</p>
+<p>★<b>Why this earns its place</b>: the picture&#x27;s correctness is an identity</p>
+<p>between integers, not a tolerance. `<code style="color:#22d3bf">|p*s - q*r|</code>` is computed in exact</p>
+<p>integer arithmetic and compared with the *geometric* tangency</p>
+<p>`<code style="color:#22d3bf">|c_i - c_j| == r_i + r_j</code>` measured from the coordinates; the two must</p>
+<p>agree on every pair. The number of fractions is the Farey length</p>
+<p>`<code style="color:#22d3bf">1 + sum(phi(q) for q in 1..n)</code>`, another exact integer.</p>
+<p>Returns a `<code style="color:#22d3bf">table</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">x</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">y</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">p</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">q</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">max_denominator &lt; 1</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">lo &gt;= hi</code>`; the</p>
+<p>interval or denominator would exceed the cap.</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">Leitfaden zur Familie math_metrology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_theorems_as_pictures">poc_theorems_as_pictures</a> — <code style="color:#22d3bf">py -3.11 examples/poc_theorems_as_pictures.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">construct</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:circle_packing_apollonian">circle_packing_apollonian</a> · <a style="color:#22d3bf" href="opmath:phyllotaxis_pattern">phyllotaxis_pattern</a> · <a style="color:#22d3bf" href="opmath:neighbour_index_gaps">neighbour_index_gaps</a> · <a style="color:#22d3bf" href="opmath:ifs_fractal">ifs_fractal</a> · <a style="color:#22d3bf" href="opmath:ifs_similarity_dimension">ifs_similarity_dimension</a> · <a style="color:#22d3bf" href="opmath:space_filling_curve">space_filling_curve</a> · <a style="color:#22d3bf" href="opmath:curve_locality">curve_locality</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

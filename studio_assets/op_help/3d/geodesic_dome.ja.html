@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_dome — 3D <code style="color:#22d3bf">polyhedron</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">mesh</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_dome(frequency=3, radius=1.0, hemisphere=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import render3d; render3d.geodesic_dome(frequency=3, radius=1.0, hemisphere=False)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;geodesic_dome&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>正二十面体を細分した測地球 —— 形を決めているのはオイラーの公式。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Each icosahedron face is cut into `<code style="color:#22d3bf">frequency**2</code>` triangles and every vertex</p>
+<p>is pushed out to the sphere. The counts are then <b>forced</b>, not chosen:</p>
+<p>`<code style="color:#22d3bf">F = 20*f**2</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">E = 30*f**2</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">V = 10*f**2 + 2</code>`, and Euler&#x27;s formula</p>
+<p>`<code style="color:#22d3bf">V - E + F == 2</code>` holds exactly.</p>
+<p>★<b>Why this earns its place</b>: Euler also forces the *irregularity*. If every</p>
+<p>vertex had degree 6 then `<code style="color:#22d3bf">2E = 6V</code><code style="color:#22d3bf">, which contradicts </code><code style="color:#22d3bf">V - E + F = 2</code>`;</p>
+<p>counting degrees gives `<code style="color:#22d3bf">sum(6 - deg(v)) == 12</code>` over all vertices, so a</p>
+<p>triangulated sphere built from hexagons must contain <b>exactly twelve</b></p>
+<p>pentagons — no more, no fewer, at any frequency. That is why a football has</p>
+<p>twelve black patches, and it is an integer this operator must reproduce</p>
+<p>exactly. Nothing about the drawing can be &quot;close enough&quot;.</p>
+<p>Returns a `<code style="color:#22d3bf">mesh</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(V, F)</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">V</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">(n, 3)</code><code style="color:#22d3bf"> float, </code><code style="color:#22d3bf">F</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">(m, 3)</code>`</p>
+<p>int. With `<code style="color:#22d3bf">hemisphere=True</code><code style="color:#22d3bf"> the vertices below </code><code style="color:#22d3bf">z = 0</code>` and the faces</p>
+<p>touching them are dropped (then Euler no longer gives 2, and the</p>
+<p>twelve-pentagon count applies to the full sphere only — said here rather</p>
+<p>than letting the gate quietly change meaning).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">frequency &lt; 1</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">radius &lt;= 0</code>`; the mesh would</p>
+<p>exceed the cap.</p>
+<p>HALCON: no operator (`<code style="color:#22d3bf">gen_sphere_object_model_3d</code>` makes a UV sphere, whose</p>
+<p>poles are degenerate — a different object).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:geodesic_dome">geodesic_dome</a> — <code style="color:#22d3bf">py -3.11 examples_3d/geodesic_dome.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">mesh</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:supersample_mesh">supersample_mesh</a> · <a style="color:#22d3bf" href="op3d:render_beauty">render_beauty</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">polyhedron</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render3d.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

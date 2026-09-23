@@ -44,7 +44,7 @@ version: 0.2.2  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[stipple_energy](stipple_energy.md) · [stroke_tour_closed](stroke_tour_closed.md) · [mst_length](mst_length.md) · [stroke_tone_error](stroke_tone_error.md)
+[stipple_energy](stipple_energy.md) · [stroke_tour_closed](stroke_tour_closed.md) · [mst_length](mst_length.md) · [stroke_tone_error](stroke_tone_error.md) · [mosaic_tiles_render](../npr/mosaic_tiles_render.md)
 
 ## 同カテゴリ(`stroke`)
 

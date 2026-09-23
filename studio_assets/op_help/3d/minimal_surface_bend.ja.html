@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">minimal_surface_bend — 3D <code style="color:#22d3bf">surface</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">mesh</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.minimal_surface_bend(t=0.0, nu=80, nv=120, extent=1.5, scale=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import render3d; render3d.minimal_surface_bend(t=0.0, nu=80, nv=120, extent=1.5, scale=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;minimal_surface_bend&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>カテノイド ⇄ ヘリコイドの曲げ —— 族のどれもまだ極小のまま。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>The *associate family* `<code style="color:#22d3bf">cos(t) * helicoid + sin(t) * catenoid</code>` (in the</p>
+<p>Weierstrass sense) deforms one into the other <b>without stretching</b>: the</p>
+<p>surfaces are isometric at every `<code style="color:#22d3bf">t</code>`, and every one of them is minimal.</p>
+<p>`<code style="color:#22d3bf">t = 0</code><code style="color:#22d3bf"> is the helicoid, </code><code style="color:#22d3bf">t = pi/2</code>` the catenoid.</p>
+<p>★<b>Why this earns its place</b>: it turns &quot;minimal&quot; from a property of two</p>
+<p>named surfaces into a <b>one-parameter claim that must hold throughout</b>. If</p>
+<p>an implementation is only accidentally right at the endpoints, the middle of</p>
+<p>the family exposes it — and the intrinsic geometry (first fundamental form)</p>
+<p>must not change along the way, which is a second, independent check.</p>
+<p>Returns a `<code style="color:#22d3bf">mesh</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: the same shape/scale contracts as</p>
+<p>:func:<code style="color:#22d3bf">minimal_surface</code>; a non-finite `<code style="color:#22d3bf">t</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:minimal_surfaces">minimal_surfaces</a> — <code style="color:#22d3bf">py -3.11 examples_3d/minimal_surfaces.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">mesh</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:supersample_mesh">supersample_mesh</a> · <a style="color:#22d3bf" href="op3d:render_beauty">render_beauty</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">surface</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:minimal_surface">minimal_surface</a> · <a style="color:#22d3bf" href="op3d:gyroid_isosurface">gyroid_isosurface</a> · <a style="color:#22d3bf" href="op3d:gyroid_solid_mask">gyroid_solid_mask</a> · <a style="color:#22d3bf" href="op3d:curve3d_tube_mesh">curve3d_tube_mesh</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render3d.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

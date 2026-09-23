@@ -81,6 +81,27 @@
    ]
   },
   {
+   "id": "beats-fringes-and-screens",
+   "title": "うなりは一つ(膜のモード・干渉縞・回折次数・印刷のモアレ・墨に落とす)",
+   "title_en": "One beat (membrane modes, fringes, diffraction orders, print moire, and turning tone into ink)",
+   "category": "波と信号",
+   "note": "docs/capabilities/beats-fringes-and-screens.md",
+   "status": "verified-synthetic",
+   "ops_total": 12,
+   "ops_named_in_tests": 12,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_beats_fringes_and_screens",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "blob-and-region",
    "title": "領域を切り出して、選んで、数える",
    "title_en": "Segment regions, select them, and count",
@@ -621,6 +642,27 @@
    ]
   },
   {
+   "id": "theorems-as-pictures",
+   "title": "定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線)",
+   "title_en": "Theorems as pictures (Apollonian, Ford, geodesic dome, phyllotaxis, IFS, space-filling curves)",
+   "category": "描く",
+   "note": "docs/capabilities/theorems-as-pictures.md",
+   "status": "verified-synthetic",
+   "ops_total": 9,
+   "ops_named_in_tests": 9,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_theorems_as_pictures",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "tomography-reconstruction",
    "title": "投影から断面を再構成する(CT)",
    "title_en": "Reconstruct slices from projections (CT)",
@@ -756,10 +798,8 @@
    "note": "docs/capabilities/volume-from-3d-scan.md",
    "status": "verified-synthetic",
    "ops_total": 4,
-   "ops_named_in_tests": 3,
-   "ops_not_named_in_tests": [
-    "mesh_volume"
-   ],
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
    "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
@@ -771,6 +811,27 @@
     },
     {
      "id": "poc_lidar_terrain_change",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "what-a-picture-cannot-check",
+   "title": "絵では確かめられないもの(積分器の次数・リアプノフ指数・分岐・相関次元・極小曲面)",
+   "title_en": "What a picture cannot check (integrator order, Lyapunov spectrum, bifurcations, correlation dimension, minimal surfaces)",
+   "category": "測る",
+   "note": "docs/capabilities/what-a-picture-cannot-check.md",
+   "status": "verified-synthetic",
+   "ops_total": 11,
+   "ops_named_in_tests": 11,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_what_a_picture_cannot_check",
      "data": "synthetic",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
@@ -801,8 +862,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 235,
-  "run_by_the_poc_gate": 138,
+  "examples2d_total": 238,
+  "run_by_the_poc_gate": 141,
   "run_by_the_example_gate": 97,
   "not_run_by_any_gate": 0,
   "gates": [

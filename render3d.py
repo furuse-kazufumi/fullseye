@@ -1812,3 +1812,451 @@ __all__ += ["fbm_noise", "mesh_displace_fbm", "terrain_region_mask", "sample_bou
             "mesh_scatter_boulders", "mesh_edge_lengths", "mesh_subdivide",
             "displacement_band_weights", "mesh_displace_spectrum", "bump_normals_fbm",
             "MAX_SUBDIVIDE_FACES"]
+
+
+# ------------------------------------------------------------------------- #
+# 測地ドーム(2026-09-23)—— オイラーの公式が門になる
+#
+# 正二十面体を細分して球に射影する。どれだけ細分しても **次数 5 の頂点は
+# ちょうど 12 個**で、これは V - E + F = 2 から出る帰結であって実装の都合
+# ではない(5 角形が 11 個でも 13 個でも球にならない)。既存の
+# `mesh_subdivide` は任意メッシュの細分で、正多面体からの構成は持たない。
+# ------------------------------------------------------------------------- #
+
+#: 測地ドームの頂点数の上限。frequency f で V = 10 f^2 + 2 なので、
+#: f = 100 で 100,002 頂点。ここを超える要求は**黙って巨大な配列を作らず**
+#: ValueError で止める(fail-closed)。
+_DOME_MAX_VERTICES = 2_000_000
+
+
+def geodesic_dome(frequency=3, radius=1.0, hemisphere=False):
+    """Geodesic sphere from a subdivided icosahedron — Euler decides the shape.
+
+    Each icosahedron face is cut into ``frequency**2`` triangles and every vertex
+    is pushed out to the sphere. The counts are then **forced**, not chosen:
+    ``F = 20*f**2``, ``E = 30*f**2``, ``V = 10*f**2 + 2``, and Euler's formula
+    ``V - E + F == 2`` holds exactly.
+
+    ★**Why this earns its place**: Euler also forces the *irregularity*. If every
+    vertex had degree 6 then ``2E = 6V``, which contradicts ``V - E + F = 2``;
+    counting degrees gives ``sum(6 - deg(v)) == 12`` over all vertices, so a
+    triangulated sphere built from hexagons must contain **exactly twelve**
+    pentagons — no more, no fewer, at any frequency. That is why a football has
+    twelve black patches, and it is an integer this operator must reproduce
+    exactly. Nothing about the drawing can be "close enough".
+
+    Returns a ``mesh`` ``(V, F)``: ``V`` is ``(n, 3)`` float, ``F`` is ``(m, 3)``
+    int. With ``hemisphere=True`` the vertices below ``z = 0`` and the faces
+    touching them are dropped (then Euler no longer gives 2, and the
+    twelve-pentagon count applies to the full sphere only — said here rather
+    than letting the gate quietly change meaning).
+
+    **Raises** ``ValueError``: ``frequency < 1``; ``radius <= 0``; the mesh would
+    exceed the cap.
+
+    HALCON: no operator (``gen_sphere_object_model_3d`` makes a UV sphere, whose
+    poles are degenerate — a different object).
+    """
+    op = "geodesic_dome"
+    f = int(frequency)
+    if f < 1:
+        raise ValueError("%s: frequency must be >= 1, got %r" % (op, frequency))
+    r = float(radius)
+    if not np.isfinite(r) or r <= 0.0:
+        raise ValueError("%s: radius must be finite and positive, got %r" % (op, radius))
+    if 10 * f * f + 2 > _DOME_MAX_VERTICES:
+        raise ValueError("%s: frequency %d would make %d vertices, over the %d cap"
+                         % (op, f, 10 * f * f + 2, _DOME_MAX_VERTICES))
+
+    t = (1.0 + np.sqrt(5.0)) / 2.0
+    base = np.array([[-1, t, 0], [1, t, 0], [-1, -t, 0], [1, -t, 0],
+                     [0, -1, t], [0, 1, t], [0, -1, -t], [0, 1, -t],
+                     [t, 0, -1], [t, 0, 1], [-t, 0, -1], [-t, 0, 1]], dtype=np.float64)
+    faces = np.array([[0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11],
+                      [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
+                      [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
+                      [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]],
+                     dtype=np.int64)
+
+    verts = {}
+    out_v, out_f = [], []
+
+    def add(p):
+        key = (round(p[0], 10), round(p[1], 10), round(p[2], 10))
+        if key not in verts:
+            verts[key] = len(out_v)
+            out_v.append(p)
+        return verts[key]
+
+    for tri in faces:
+        a, b, c = base[tri[0]], base[tri[1]], base[tri[2]]
+        grid = {}
+        for i in range(f + 1):
+            for j in range(f + 1 - i):
+                kk = f - i - j
+                grid[(i, j)] = add((a * i + b * j + c * kk) / float(f))
+        for i in range(f):
+            for j in range(f - i):
+                out_f.append([grid[(i, j)], grid[(i + 1, j)], grid[(i, j + 1)]])
+                if i + j < f - 1:
+                    out_f.append([grid[(i + 1, j)], grid[(i + 1, j + 1)],
+                                  grid[(i, j + 1)]])
+
+    V = np.asarray(out_v, dtype=np.float64)
+    V = r * V / np.linalg.norm(V, axis=1, keepdims=True)
+    F = np.asarray(out_f, dtype=np.int64)
+    if hemisphere:
+        keep = V[:, 2] >= -1e-12
+        idx = -np.ones(V.shape[0], dtype=np.int64)
+        idx[keep] = np.arange(int(keep.sum()))
+        good = keep[F].all(axis=1)
+        V, F = V[keep], idx[F[good]]
+    return V, F
+
+
+# ------------------------------------------------------------------------- #
+# 極小曲面 —— 定義そのものが門(2026-09-23)
+#
+# ★極小曲面は**平均曲率 H が至るところ 0** の曲面。既存 `vertex_curvature` が
+#   まさにそれを測るので、「これは極小曲面だ」という主張を、作り方を知らない op
+#   が採点する。★カテノイドとヘリコイドは等長なのでガウス曲率 K が一致するが、
+#   それは**必要条件にすぎない** —— 門にするのは H のほう。
+# ------------------------------------------------------------------------- #
+
+MINIMAL_SURFACES = ("catenoid", "helicoid", "enneper", "scherk")
+
+_SURF_MAX_VERTS = 2_000_000
+
+def _surf_grid_faces(nu, nv, wrap_u=False, wrap_v=False):
+    """(nu, nv) の格子から三角形の面を作る。端を巻くかどうかは曲面ごと。"""
+    iu = np.arange(nu if wrap_u else nu - 1)
+    iv = np.arange(nv if wrap_v else nv - 1)
+    U, V = np.meshgrid(iu, iv, indexing="ij")
+    u0, v0 = U.ravel(), V.ravel()
+    u1, v1 = (u0 + 1) % nu, (v0 + 1) % nv
+    a = u0 * nv + v0
+    b = u1 * nv + v0
+    c = u1 * nv + v1
+    d = u0 * nv + v1
+    return np.concatenate([np.stack([a, b, c], 1), np.stack([a, c, d], 1)]).astype(np.int64)
+
+def minimal_surface(kind="catenoid", nu=80, nv=120, extent=1.5, scale=1.0):
+    """A classical minimal surface, from its exact parametrisation.
+
+    ``catenoid`` ``(c cosh(u/c) cos v, c cosh(u/c) sin v, u)``, ``helicoid``
+    ``(u cos v, u sin v, c v)``, ``enneper``
+    ``(u - u^3/3 + u v^2, v - v^3/3 + v u^2, u^2 - v^2)`` and ``scherk``
+    ``z = log(cos y / cos x)`` (the doubly periodic surface, over one cell).
+
+    ★★**Why this earns its place — the definition is the gate.** A minimal surface
+    is one whose **mean curvature vanishes everywhere**, and the existing
+    ``vertex_curvature`` op measures exactly that. So the claim "this is a minimal
+    surface" is checked by an op that knows nothing about how the surface was
+    built. ★A trap worth naming: the catenoid and the helicoid are *isometric*, so
+    their **Gaussian** curvatures agree pointwise — but that is a **necessary, not
+    sufficient** condition for minimality (a sphere and a plane differ in K, yet
+    matching K would not make either minimal). Grade on H.
+
+    Parameters
+    ----------
+    kind : str
+        One of ``MINIMAL_SURFACES``.
+    nu, nv : int
+        Grid resolution along the two parameters.
+    extent : float
+        Half-range of the first parameter (how much of the surface to take).
+    scale : float
+        The surface's own scale parameter (``c`` for catenoid and helicoid).
+
+    Returns a ``mesh``: ``(vertices, faces)``.
+
+    **Raises** ``ValueError``: unknown kind; a grid below 4x4 or over the cap;
+    non-positive scale; an extent that reaches the singularity (Scherk's surface
+    is only defined where ``cos x`` and ``cos y`` share a sign, so an extent at or
+    beyond ``pi/2`` is refused rather than silently clipped to infinity).
+
+    HALCON: no operator.
+    """
+    op = "minimal_surface"
+    if kind not in MINIMAL_SURFACES:
+        raise ValueError("%s: kind must be one of %s, got %r"
+                         % (op, MINIMAL_SURFACES, kind))
+    a, b = int(nu), int(nv)
+    if a < 4 or b < 4 or a * b > _SURF_MAX_VERTS:
+        raise ValueError("%s: grid %dx%d outside 4x4 .. %d vertices"
+                         % (op, a, b, _SURF_MAX_VERTS))
+    c = float(scale)
+    if not np.isfinite(c) or c <= 0:
+        raise ValueError("%s: scale must be finite and > 0, got %r" % (op, scale))
+    e = float(extent)
+    if not np.isfinite(e) or e <= 0:
+        raise ValueError("%s: extent must be finite and > 0, got %r" % (op, extent))
+
+    if kind == "catenoid":
+        u = np.linspace(-e, e, a)[:, None]
+        v = np.linspace(0.0, 2.0 * np.pi, b, endpoint=False)[None, :]
+        r = c * np.cosh(u / c)
+        V = np.stack([(r * np.cos(v)).ravel(), (r * np.sin(v)).ravel(),
+                      np.broadcast_to(u, (a, b)).ravel()], axis=1)
+        F = _surf_grid_faces(a, b, wrap_v=True)
+    elif kind == "helicoid":
+        u = np.linspace(-e, e, a)[:, None]
+        v = np.linspace(-np.pi, np.pi, b)[None, :]
+        V = np.stack([(u * np.cos(v)).ravel(), (u * np.sin(v)).ravel(),
+                      (c * np.broadcast_to(v, (a, b))).ravel()], axis=1)
+        F = _surf_grid_faces(a, b)
+    elif kind == "enneper":
+        u = np.linspace(-e, e, a)[:, None]
+        v = np.linspace(-e, e, b)[None, :]
+        x = u - u ** 3 / 3.0 + u * v ** 2
+        y = v - v ** 3 / 3.0 + v * u ** 2
+        z = u ** 2 - v ** 2
+        V = np.stack([np.broadcast_to(x, (a, b)).ravel(),
+                      np.broadcast_to(y, (a, b)).ravel(),
+                      np.broadcast_to(z, (a, b)).ravel()], axis=1) * c
+        F = _surf_grid_faces(a, b)
+    else:                                                   # scherk
+        if e >= np.pi / 2.0 - 1e-3:
+            raise ValueError("%s: Scherk's surface blows up at |x| = pi/2; extent must "
+                             "stay below %.5f, got %r" % (op, np.pi / 2.0 - 1e-3, extent))
+        u = np.linspace(-e, e, a)[:, None]
+        v = np.linspace(-e, e, b)[None, :]
+        z = np.log(np.cos(v) / np.cos(u))
+        V = np.stack([np.broadcast_to(u, (a, b)).ravel(),
+                      np.broadcast_to(v, (a, b)).ravel(),
+                      z.ravel()], axis=1) * c
+        F = _surf_grid_faces(a, b)
+    return V, F
+
+def minimal_surface_bend(t=0.0, nu=80, nv=120, extent=1.5, scale=1.0):
+    """The catenoid-helicoid bend — every member of the family is still minimal.
+
+    The *associate family* ``cos(t) * helicoid + sin(t) * catenoid`` (in the
+    Weierstrass sense) deforms one into the other **without stretching**: the
+    surfaces are isometric at every ``t``, and every one of them is minimal.
+    ``t = 0`` is the helicoid, ``t = pi/2`` the catenoid.
+
+    ★**Why this earns its place**: it turns "minimal" from a property of two
+    named surfaces into a **one-parameter claim that must hold throughout**. If
+    an implementation is only accidentally right at the endpoints, the middle of
+    the family exposes it — and the intrinsic geometry (first fundamental form)
+    must not change along the way, which is a second, independent check.
+
+    Returns a ``mesh``.
+
+    **Raises** ``ValueError``: the same shape/scale contracts as
+    :func:`minimal_surface`; a non-finite ``t``.
+    """
+    op = "minimal_surface_bend"
+    tt = float(t)
+    if not np.isfinite(tt):
+        raise ValueError("%s: t must be finite, got %r" % (op, t))
+    a, b = int(nu), int(nv)
+    if a < 4 or b < 4 or a * b > _SURF_MAX_VERTS:
+        raise ValueError("%s: grid %dx%d outside 4x4 .. %d vertices"
+                         % (op, a, b, _SURF_MAX_VERTS))
+    c = float(scale)
+    if not np.isfinite(c) or c <= 0:
+        raise ValueError("%s: scale must be finite and > 0, got %r" % (op, scale))
+    e = float(extent)
+    if not np.isfinite(e) or e <= 0:
+        raise ValueError("%s: extent must be finite and > 0, got %r" % (op, extent))
+    u = np.linspace(-e, e, a)[:, None]
+    v = np.linspace(-np.pi, np.pi, b)[None, :]
+    # 標準的な associate family(u は双曲線側の助変数)
+    x = np.cos(tt) * np.sinh(u) * np.sin(v) + np.sin(tt) * np.cosh(u) * np.cos(v)
+    y = -np.cos(tt) * np.sinh(u) * np.cos(v) + np.sin(tt) * np.cosh(u) * np.sin(v)
+    z = np.cos(tt) * np.broadcast_to(v, (a, b)) + np.sin(tt) * np.broadcast_to(u, (a, b))
+    V = np.stack([np.broadcast_to(x, (a, b)).ravel(),
+                  np.broadcast_to(y, (a, b)).ravel(),
+                  np.asarray(z).ravel()], axis=1) * c
+    return V, _surf_grid_faces(a, b)
+
+def gyroid_isosurface(shape=(64, 64, 64), level=0.0, periods=1.0):
+    """The gyroid — a triply periodic surface from its nodal approximation.
+
+    Samples ``sin x cos y + sin y cos z + sin z cos x`` over ``periods`` unit
+    cells and extracts the level set. At ``level = 0`` the field is **odd under
+    the body-centred inversion**, so the two sides have exactly equal volume —
+    a symmetry fact, independent of the meshing, that the existing
+    ``mesh_volume`` can be pointed at.
+
+    ★**Honest limit, stated in the contract**: this is the *nodal approximation*
+    to the gyroid, not the exact triply periodic minimal surface. Schoen's gyroid
+    has ``H = 0`` everywhere; the nodal surface has a residual mean curvature
+    (measured, not hidden) of about **12 % of the principal-curvature scale** at a
+    64³ grid —— compare the exact families in :func:`minimal_surface`, whose
+    ``|H|`` median is 1e-4 against a curvature scale of order 1. Use the gyroid as
+    a scaffold and a picture, not as a claim of minimality.
+
+    Parameters
+    ----------
+    shape : (nz, ny, nx)
+    level : float
+        Iso value. 0 gives the balanced surface; non-zero splits the volume.
+    periods : float
+        Unit cells along each axis.
+    Returns a ``mesh`` (vertices, faces).
+
+    ★The thickened **solid** form lives in :func:`gyroid_solid_mask`, not behind
+    a keyword here —— one function that returns a mesh or a volume depending on an
+    argument cannot be given a single declared output type, and a ledger row that
+    lies about its output is the defect class this library keeps catching
+    (``indices_to_labels``: one word covering a 1-D mask and a 3-D volume).
+
+    **Raises** ``ValueError``: a grid below 8 per axis or over the cap;
+    non-positive periods; a level outside the field's range (no surface exists
+    there — reported rather than returning an empty mesh); negative thickness.
+    """
+    op = "gyroid_isosurface"
+    lv = float(level)
+    if not np.isfinite(lv):
+        raise ValueError("%s: level must be finite, got %r" % (op, level))
+    f = _gyroid_field(op, shape, periods)
+    if not (f.min() < lv < f.max()):
+        raise ValueError("%s: level %g lies outside the field range [%g, %g] — there is "
+                         "no surface there" % (op, lv, f.min(), f.max()))
+    try:
+        from skimage.measure import marching_cubes
+    except Exception:                                       # noqa: BLE001
+        raise ValueError("%s: the mesh form needs scikit-image (marching cubes); "
+                         "pass thickness=... for the mask form" % op)
+    verts, faces, _, _ = marching_cubes(f, level=lv)
+    verts = np.asarray(verts, dtype=np.float64)
+    faces = np.asarray(faces, dtype=np.int64)
+    # ★marching cubes は**面積 0 の三角形**を出す(格子点をちょうど通る等値面で、
+    #   2 頂点が同じ位置に来る)。曲率 op はそれを正しく拒否するので、ここで落とす ——
+    #   黙って渡すと「曲率が定義できない」と下流で落ち、原因がここだと分からない。
+    e1 = verts[faces[:, 1]] - verts[faces[:, 0]]
+    e2 = verts[faces[:, 2]] - verts[faces[:, 0]]
+    area2 = np.linalg.norm(np.cross(e1, e2), axis=1)
+    keep = area2 > 1e-12
+    if not keep.any():
+        raise ValueError("%s: every triangle is degenerate at level %g" % (op, lv))
+    faces = faces[keep]
+    used = np.unique(faces)
+    remap = np.full(verts.shape[0], -1, dtype=np.int64)
+    remap[used] = np.arange(used.size)
+    return verts[used], remap[faces]
+
+def _gyroid_field(op, shape, periods):
+    """ジャイロイドの節関数を格子で標本化する(メッシュ形と固体形で共有)。"""
+    sh = tuple(int(s) for s in shape)
+    if len(sh) != 3 or min(sh) < 8 or int(np.prod(sh)) > _SURF_MAX_VERTS * 4:
+        raise ValueError("%s: shape %r must be 3-D with at least 8 per axis and under "
+                         "the cap" % (op, shape))
+    p = float(periods)
+    if not np.isfinite(p) or p <= 0:
+        raise ValueError("%s: periods must be finite and > 0, got %r" % (op, periods))
+    z, y, x = np.meshgrid(*[np.linspace(0.0, 2.0 * np.pi * p, n, endpoint=False)
+                            for n in sh], indexing="ij")
+    return np.sin(x) * np.cos(y) + np.sin(y) * np.cos(z) + np.sin(z) * np.cos(x)
+
+
+def gyroid_solid_mask(shape=(64, 64, 64), level=0.0, periods=1.0, thickness=0.3):
+    """The gyroid as a printable **solid**: the shell within ±*thickness* of the level set.
+
+    Returns a ``volume`` (float 0/1), so it feeds the existing voxel ops
+    (``vol_label`` / ``skeletonize_vol`` / ``mesh_slice_stack``) directly and needs
+    no marching cubes —— this form works on bare numpy, while
+    :func:`gyroid_isosurface` needs scikit-image.
+
+    ★**Why this earns its place**: at ``level = 0`` the field is odd under the
+    body-centred inversion, so the solid fraction of the two sides is *exactly*
+    equal —— a symmetry fact the mask can be checked against (the measured
+    fraction above 0 converges on 0.5 as the grid refines), and the shell volume
+    grows linearly in *thickness* for small *thickness* because the level set has
+    finite area. Both are independent of how the field was sampled.
+
+    **Raises** ``ValueError``: a grid below 8 per axis or over the cap;
+    non-positive periods; a non-finite level; a negative thickness.
+    """
+    op = "gyroid_solid_mask"
+    lv = float(level)
+    if not np.isfinite(lv):
+        raise ValueError("%s: level must be finite, got %r" % (op, level))
+    th = float(thickness)
+    if not np.isfinite(th) or th < 0:
+        raise ValueError("%s: thickness must be finite and >= 0, got %r" % (op, thickness))
+    f = _gyroid_field(op, shape, periods)
+    return (np.abs(f - lv) <= th).astype(np.float64)
+
+
+
+# ------------------------------------------------------------------------- #
+# 軌道を管メッシュに(MATLAB の tubeplot 相当、2026-09-23)
+#
+# ★平行移動フレームで掃く(フレネ枠を使わない —— 直線部で法線が定義できず、
+#   変曲点で従法線が反転して管がねじれる)。真値は、円を中心線にすると
+#   トーラスになり体積 2 pi^2 R r^2・表面積 4 pi^2 R r が解析解であること。
+# ------------------------------------------------------------------------- #
+
+def curve3d_tube_mesh(points, radius=0.1, segments=12, closed=False):
+    """A space curve as a tube mesh — the MATLAB ``tubeplot``, with a volume you can check.
+
+    Sweeps a circle of *radius* along the polyline using a **parallel-transport**
+    frame (no Frenet frame: the normal of a straight segment is undefined and the
+    binormal flips at an inflection, which twists the tube). Returns
+    ``(vertices, faces)`` for the existing 3-D viewers and mesh ops.
+
+    ★**Why this earns its place**: for a closed circular centre line the tube is a
+    torus, whose volume ``2 pi^2 R r^2`` and area ``4 pi^2 R r`` are analytic —
+    and the existing ``mesh_volume`` / ``mesh_area`` ops measure the result. Two
+    independent implementations meeting at a closed form is a real check; "it
+    looks like a tube" is not.
+
+    **Raises** ``ValueError``: fewer than 2 points; not (N, 3); radius not
+    positive; fewer than 3 segments; non-finite input; a curve with repeated
+    consecutive points (the direction is undefined there).
+    """
+    op = "curve3d_tube_mesh"
+    p = np.asarray(points, dtype=np.float64)
+    if p.ndim != 2 or p.shape[1] != 3 or p.shape[0] < 2:
+        raise ValueError("%s: points must be (N, 3) with N >= 2, got %s"
+                         % (op, (p.shape,)))
+    if not np.all(np.isfinite(p)):
+        raise ValueError("%s: points contain a non-finite value" % op)
+    r = float(radius)
+    if not np.isfinite(r) or r <= 0:
+        raise ValueError("%s: radius must be finite and > 0, got %r" % (op, radius))
+    k = int(segments)
+    if k < 3:
+        raise ValueError("%s: segments must be >= 3, got %r" % (op, segments))
+    q = np.vstack([p, p[:1]]) if closed else p
+    tang = np.gradient(q, axis=0)
+    ln = np.linalg.norm(tang, axis=1)
+    if np.any(ln <= 0):
+        raise ValueError("%s: the curve repeats a point — the direction is undefined "
+                         "there (drop duplicates first)" % op)
+    tang = tang / ln[:, None]
+
+    # 平行移動フレーム(Frenet を使わない理由は docstring に書いたとおり)
+    ref = np.array([0.0, 0.0, 1.0])
+    if abs(float(tang[0] @ ref)) > 0.9:
+        ref = np.array([1.0, 0.0, 0.0])
+    nrm = np.empty_like(tang)
+    v = ref - tang[0] * float(tang[0] @ ref)
+    nrm[0] = v / np.linalg.norm(v)
+    for i in range(1, tang.shape[0]):
+        v = nrm[i - 1] - tang[i] * float(tang[i] @ nrm[i - 1])
+        nv = np.linalg.norm(v)
+        nrm[i] = (v / nv) if nv > 1e-12 else nrm[i - 1]
+    bin_ = np.cross(tang, nrm)
+
+    th = np.linspace(0.0, 2.0 * np.pi, k, endpoint=False)
+    # ring[i, j] = cos(th_j) * normal_i + sin(th_j) * binormal_i   -> (m, k, 3)
+    ring = (np.cos(th)[None, :, None] * nrm[:, None, :]
+            + np.sin(th)[None, :, None] * bin_[:, None, :])
+    V = (q[:, None, :] + r * ring).reshape(-1, 3)
+
+    m = q.shape[0]
+    faces = []
+    for i in range(m - 1):
+        for j in range(k):
+            a = i * k + j
+            b = i * k + (j + 1) % k
+            c = (i + 1) * k + j
+            d = (i + 1) * k + (j + 1) % k
+            faces.append((a, c, d))
+            faces.append((a, d, b))
+    return V, np.asarray(faces, dtype=np.int64)

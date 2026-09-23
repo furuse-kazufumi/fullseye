@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gyroid_isosurface — 3D <code style="color:#22d3bf">surface</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">mesh</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gyroid_isosurface(shape=(64, 64, 64), level=0.0, periods=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import render3d; render3d.gyroid_isosurface(shape=(64, 64, 64), level=0.0, periods=1.0)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;gyroid_isosurface&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Das Gyroid — eine dreifach periodische Fläche aus ihrer Knotenflächennäherung.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Samples `<code style="color:#22d3bf">sin x cos y + sin y cos z + sin z cos x</code><code style="color:#22d3bf"> over </code><code style="color:#22d3bf">periods</code>` unit</p>
+<p>cells and extracts the level set. At `<code style="color:#22d3bf">level = 0</code>` the field is **odd under</p>
+<p>the body-centred inversion**, so the two sides have exactly equal volume —</p>
+<p>a symmetry fact, independent of the meshing, that the existing</p>
+<p>`<code style="color:#22d3bf">mesh_volume</code>` can be pointed at.</p>
+<p>★<b>Honest limit, stated in the contract</b>: this is the *nodal approximation*</p>
+<p>to the gyroid, not the exact triply periodic minimal surface. Schoen&#x27;s gyroid</p>
+<p>has `<code style="color:#22d3bf">H = 0</code>` everywhere; the nodal surface has a residual mean curvature</p>
+<p>(measured, not hidden) of about <b>12 % of the principal-curvature scale</b> at a</p>
+<p>64³ grid —— compare the exact families in :func:<code style="color:#22d3bf">minimal_surface</code>, whose</p>
+<p>`<code style="color:#22d3bf">|H|</code>` median is 1e-4 against a curvature scale of order 1. Use the gyroid as</p>
+<p>a scaffold and a picture, not as a claim of minimality.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>shape : (nz, ny, nx)</p>
+<p>level : float</p>
+<p>Iso value. 0 gives the balanced surface; non-zero splits the volume.</p>
+<p>periods : float</p>
+<p>Unit cells along each axis.</p>
+<p>Returns a `<code style="color:#22d3bf">mesh</code>` (vertices, faces).</p>
+<p>★The thickened <b>solid</b> form lives in :func:<code style="color:#22d3bf">gyroid_solid_mask</code>, not behind</p>
+<p>a keyword here —— one function that returns a mesh or a volume depending on an</p>
+<p>argument cannot be given a single declared output type, and a ledger row that</p>
+<p>lies about its output is the defect class this library keeps catching</p>
+<p>(`<code style="color:#22d3bf">indices_to_labels</code>`: one word covering a 1-D mask and a 3-D volume).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a grid below 8 per axis or over the cap;</p>
+<p>non-positive periods; a level outside the field&#x27;s range (no surface exists</p>
+<p>there — reported rather than returning an empty mesh); negative thickness.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:minimal_surfaces">minimal_surfaces</a> — <code style="color:#22d3bf">py -3.11 examples_3d/minimal_surfaces.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">mesh</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:supersample_mesh">supersample_mesh</a> · <a style="color:#22d3bf" href="op3d:render_beauty">render_beauty</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">surface</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:minimal_surface">minimal_surface</a> · <a style="color:#22d3bf" href="op3d:minimal_surface_bend">minimal_surface_bend</a> · <a style="color:#22d3bf" href="op3d:gyroid_solid_mask">gyroid_solid_mask</a> · <a style="color:#22d3bf" href="op3d:curve3d_tube_mesh">curve3d_tube_mesh</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render3d.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

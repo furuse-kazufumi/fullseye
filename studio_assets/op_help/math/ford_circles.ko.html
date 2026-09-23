@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ford_circles — MATH <code style="color:#22d3bf">construct</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ford_circles(max_denominator=12, lo=0, hi=1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathops; mathops.ford_circles(max_denominator=12, lo=0, hi=1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;ford_circles&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>패리 분수의 포드 원 —— 접한다는 것은 정수 등식 그 자체다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>For a fraction `<code style="color:#22d3bf">p/q</code>` in lowest terms the Ford circle sits at</p>
+<p>`<code style="color:#22d3bf">(p/q, 1/(2q**2))</code><code style="color:#22d3bf"> with radius </code><code style="color:#22d3bf">1/(2q**2)</code>`. Two such circles are</p>
+<p><b>tangent if and only if</b> `<code style="color:#22d3bf">|p*s - q*r| == 1</code>` — the Farey-neighbour</p>
+<p>condition — and otherwise strictly disjoint. They never overlap.</p>
+<p>★<b>Why this earns its place</b>: the picture&#x27;s correctness is an identity</p>
+<p>between integers, not a tolerance. `<code style="color:#22d3bf">|p*s - q*r|</code>` is computed in exact</p>
+<p>integer arithmetic and compared with the *geometric* tangency</p>
+<p>`<code style="color:#22d3bf">|c_i - c_j| == r_i + r_j</code>` measured from the coordinates; the two must</p>
+<p>agree on every pair. The number of fractions is the Farey length</p>
+<p>`<code style="color:#22d3bf">1 + sum(phi(q) for q in 1..n)</code>`, another exact integer.</p>
+<p>Returns a `<code style="color:#22d3bf">table</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">x</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">y</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">p</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">q</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">max_denominator &lt; 1</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">lo &gt;= hi</code>`; the</p>
+<p>interval or denominator would exceed the cap.</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
+<p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
+<p style="margin:2px 0 2px 12px">• **complex 입력은 <code style="color:#22d3bf">ValueError</code>** —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
+<p style="margin:2px 0 2px 12px">• **masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code>** —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
+<p style="margin:2px 0 2px 12px">• <b>형상은 엄격</b>: 1-D 와 2-D 를 암묵적으로 승격·브로드캐스트하지 않습니다(vector 슬롯에 matrix, matrix 슬롯에 vector 는 <code style="color:#22d3bf">ValueError</code>. reshape 를 명시하세요).</p>
+<p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 행렬을 받는 연산자와 <code style="color:#22d3bf">stat_histogram</code> 의 bins 는 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 만 요소)를 넘으면 <code style="color:#22d3bf">ValueError</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_theorems_as_pictures">poc_theorems_as_pictures</a> — <code style="color:#22d3bf">py -3.11 examples/poc_theorems_as_pictures.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">construct</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:circle_packing_apollonian">circle_packing_apollonian</a> · <a style="color:#22d3bf" href="opmath:phyllotaxis_pattern">phyllotaxis_pattern</a> · <a style="color:#22d3bf" href="opmath:neighbour_index_gaps">neighbour_index_gaps</a> · <a style="color:#22d3bf" href="opmath:ifs_fractal">ifs_fractal</a> · <a style="color:#22d3bf" href="opmath:ifs_similarity_dimension">ifs_similarity_dimension</a> · <a style="color:#22d3bf" href="opmath:space_filling_curve">space_filling_curve</a> · <a style="color:#22d3bf" href="opmath:curve_locality">curve_locality</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -51,6 +51,21 @@ _CATALOG = {
         ("stroke_resample_closed", "printpath", ["pairs"], "pairs"),
         ("stroke_tone_error", "printpath", ["image2d", "pairs"], "table"),
     ],
+    # ★様式化(2026-09-23)。「きれいな絵」を返す op ではなく、**保った量と捨てた
+    # 量を数で返す** op にする —— 既存の NPR ライブラリは絵しか返さない。真値は
+    # モアレ周期の予言(描く前に分かる)、被覆率 w/d の閉形式、既知の縞の向き、
+    # Lloyd の単調減少(既存 stipple_energy が測る)、セル平均の L2 最適性。
+    # 点描の 6 op と同じ族に入れたのは、どちらも「濃淡を離散的な墨に落とす」
+    # 同じ問題で、入口も出口も同じ語彙(image2d / pairs)だから。
+    "npr": [
+        ("halftone_screen", "printpath", ["image2d"], "image2d"),
+        # 2 版のうなり。描く前に周期と向きを言える(実測との比 0.986)。
+        ("halftone_moire_period", "printpath", [], "table"),
+        ("engrave_lines", "printpath", ["image2d"], "image2d"),
+        ("hatch_field", "printpath", ["image2d"], "image2d"),
+        ("mosaic_tiles_sites", "printpath", ["image2d"], "pairs"),
+        ("mosaic_tiles_render", "printpath", ["image2d", "pairs"], "image2d"),
+    ],
     # 検査 —— 観測した層と期待の層
     "inspect": [
         ("print_layer_defect_map", "printpath", ["image2d", "image2d"], "image2d"),

@@ -87,6 +87,60 @@ _CATALOG = {
         ("potential_flow_joukowski", "mathops", [], "cimage"),
         ("joukowski_circulation", "mathops", [], "measurement"),
     ],
+    # ★定理が門になる図(2026-09-23)。数学の図はきれいなので、合っているかを
+    # 誰も確かめない —— ここに入れるのは**絵の外に真値がある**ものだけ。
+    # デカルトの円定理 / |ps - qr| = 1 / フィボナッチの斜列 / モランの式 /
+    # 4^n 点をちょうど 1 回ずつ。相棒の 3 本は「主張を数にする」側で、
+    # これが無いと「それらしい絵」しか残らない。
+    "construct": [
+        # ★型は `pairs`(N,2)。`points` は **(N,3) の 3 次元点**で、
+        # 最初そちらで登録して型契約の門に捕まった —— 名前が似ているので
+        # 取り違えやすい(門が無ければ「もっともらしく間違った」宣言が残った)。
+        ("circle_packing_apollonian", "mathops", [], "table"),
+        ("ford_circles", "mathops", [], "table"),
+        ("phyllotaxis_pattern", "mathops", [], "pairs"),
+        # 隣接の**番号差**を数える —— 黄金角のときだけフィボナッチが出る。
+        ("neighbour_index_gaps", "mathops", ["pairs"], "signal"),
+        ("ifs_fractal", "mathops", [], "pairs"),
+        # モランの式 sum r^d = 1 の解。既存の fractal_dimension(箱数え)が
+        # 独立の真値になる —— 別の測り方なので「使った式で答え合わせ」にならない。
+        ("ifs_similarity_dimension", "mathops", [], "measurement"),
+        ("space_filling_curve", "mathops", [], "pairs"),
+        ("curve_locality", "mathops", ["pairs"], "table"),
+    ],
+    # ★波動(2026-09-23)。クラドニ図形は「板」ではなく**膜**の解 —— 板は重調和
+    # 方程式に従う別物で、砂が節線に集まる絵は同じでも周波数比は合わない。膜と
+    # 明記して、膜の閉形式(矩形は pi^2(m^2/a^2 + n^2/b^2)、円はベッセルの零点)
+    # だけで採点する。干渉と回折の真値は既存 op(grating_wavelengths /
+    # fraunhofer_pattern)が独立に持っている。
+    "wave": [
+        # モードの形は**符号つき**([-1, 1])なので image2d ではなく matrix。
+        # image2d を名乗ると節線の両側が同じ値に見え、腹の位相が消える。
+        ("wave_membrane_mode", "mathops", [], "matrix"),
+        ("wave_mode_frequencies", "mathops", [], "signal"),
+        ("wave_nodal_lines", "mathops", ["matrix"], "mask"),
+        ("wave_two_slit", "mathops", [], "image2d"),
+        # 縞間隔 lambda*D/d を**測り返す**側。作った op と測る op を分けないと
+        # 「使った式で答え合わせ」になる。
+        ("wave_fringe_period", "mathops", ["image2d"], "measurement"),
+        ("wave_grating_orders", "mathops", [], "table"),
+    ],
+    # ★力学系(2026-09-23)。真値は公表値か閉形式だけ: 線形系は expm(At)x0 が
+    # 厳密解で刻み半分なら誤差 1/16(4 次)、Lorenz のリアプノフ指数の**和**は
+    # トレース恒等式で厳密に -(sigma+1+beta)、ロジスティックの周期倍分岐は 3 と
+    # 1+sqrt6、相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
+    "dynsys": [
+        # 軌道は列の辞書(t, x0, x1, ...)= table。系は**族名か係数配列**で受け、
+        # callable は取らない(型付き台帳は入力を sort で登録するので載らない)。
+        ("ode_flow_states", "mathops", [], "table"),
+        ("ode_vector_field_grid", "mathops", [], "flow2d"),
+        ("dynsys_poincare_section", "mathops", ["table"], "pairs"),
+        ("dynsys_lyapunov_spectrum", "mathops", [], "signal"),
+        ("dynsys_bifurcation_map", "mathops", [], "pairs"),
+        # 相関次元は (N,3) の軌道を食う。既存の fractal_dimension(箱数え)が
+        # 別の測り方の真値になる。
+        ("dynsys_correlation_dimension", "mathops", ["points"], "measurement"),
+    ],
 }
 
 

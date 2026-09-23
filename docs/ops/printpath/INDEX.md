@@ -1,4 +1,4 @@
-# PRINTPATH operator help — 17 ops in 5 categories
+# PRINTPATH operator help — 23 ops in 6 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/printpath/<category>/<op>.md` を走査。
 
@@ -19,6 +19,10 @@
 ### inspect (1)
 
 [print_layer_defect_map](inspect/print_layer_defect_map.md)
+
+### npr (6)
+
+[engrave_lines](npr/engrave_lines.md) · [halftone_moire_period](npr/halftone_moire_period.md) · [halftone_screen](npr/halftone_screen.md) · [hatch_field](npr/hatch_field.md) · [mosaic_tiles_render](npr/mosaic_tiles_render.md) · [mosaic_tiles_sites](npr/mosaic_tiles_sites.md)
 
 ### slice (3)
 

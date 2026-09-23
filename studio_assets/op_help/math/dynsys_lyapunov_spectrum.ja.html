@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dynsys_lyapunov_spectrum — MATH <code style="color:#22d3bf">dynsys</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">signal</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynsys_lyapunov_spectrum(system=&#x27;lorenz&#x27;, params=None, x0=None, t_end=200.0, dt=0.005, burn_in=20.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.dynsys_lyapunov_spectrum(system=&#x27;lorenz&#x27;, params=None, x0=None, t_end=200.0, dt=0.005, burn_in=20.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;dynsys_lyapunov_spectrum&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>接流 + QR で出すリアプノフ・スペクトル —— そして答え合わせできる和。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Integrates the state together with an orthonormal frame of tangent vectors</p>
+<p>(the variational equation `<code style="color:#22d3bf">dY/dt = J(x) Y</code>`), re-orthonormalising by QR at</p>
+<p>every step and accumulating `<code style="color:#22d3bf">log</code>` of the diagonal. The exponents come out</p>
+<p><b>ordered</b>, largest first.</p>
+<p>★★<b>Why this earns its place — the trace identity.</b> The sum of the exponents</p>
+<p>equals the time-average of the divergence of the field:</p>
+<p>sum(lambda_i) == &lt;div f&gt;</p>
+<p>For Lorenz the divergence is the <b>constant</b> `<code style="color:#22d3bf">-(sigma + 1 + beta)</code>`, so the</p>
+<p>sum is known in closed form: `<code style="color:#22d3bf">-13.6667</code>` for the classical parameters. That</p>
+<p>is an exact target the attractor picture cannot provide. The published largest</p>
+<p>exponent (≈ 0.906 for sigma=10, beta=8/3, rho=28) is a second, independent</p>
+<p>check.</p>
+<p>Returns a `<code style="color:#22d3bf">signal</code>`: the exponents, descending.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: unknown system; non-finite input; </code><code style="color:#22d3bf">burn_in</code>` not</p>
+<p>shorter than `<code style="color:#22d3bf">t_end</code>`; a trajectory that left float range.</p>
+<p>Limits: the exponents converge like `<code style="color:#22d3bf">1/sqrt(T)</code>` — a short window gives a</p>
+<p>plausible but wrong spectrum. The trace identity converges much faster and is</p>
+<p>the honest gate; the individual exponents need long windows.</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• **complex 入力は <code style="color:#22d3bf">ValueError</code>** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
+<p style="margin:2px 0 2px 12px">• **masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code>** — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**(件数を明示して拒否 — 結果全体に伝播するため)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形状は厳格</b>: 1-D と 2-D を暗黙昇格・ブロードキャストしない(vector 枠に matrix、matrix 枠に vector は <code style="color:#22d3bf">ValueError</code>。reshape を明示する)。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 行列を取る op と <code style="color:#22d3bf">stat_histogram</code> の bins は <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万要素)超で <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_what_a_picture_cannot_check">poc_what_a_picture_cannot_check</a> — <code style="color:#22d3bf">py -3.11 examples/poc_what_a_picture_cannot_check.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmath:mat_solve">mat_solve</a> · <a style="color:#22d3bf" href="opmath:mat_lstsq">mat_lstsq</a> · <a style="color:#22d3bf" href="opmath:stat_describe">stat_describe</a> · <a style="color:#22d3bf" href="opmath:stat_histogram">stat_histogram</a> · <a style="color:#22d3bf" href="opmath:stat_zscore">stat_zscore</a> · <a style="color:#22d3bf" href="opmath:interp_linear">interp_linear</a> · <a style="color:#22d3bf" href="opmath:interp_cubic">interp_cubic</a> · <a style="color:#22d3bf" href="opmath:interp_scattered">interp_scattered</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">dynsys</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:ode_flow_states">ode_flow_states</a> · <a style="color:#22d3bf" href="opmath:ode_vector_field_grid">ode_vector_field_grid</a> · <a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a> · <a style="color:#22d3bf" href="opmath:dynsys_bifurcation_map">dynsys_bifurcation_map</a> · <a style="color:#22d3bf" href="opmath:dynsys_correlation_dimension">dynsys_correlation_dimension</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

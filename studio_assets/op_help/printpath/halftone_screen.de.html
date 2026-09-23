@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">halftone_screen — PRINTPATH <code style="color:#22d3bf">npr</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.halftone_screen(image, lpi=60.0, angle_deg=45.0, pixel_um=25.4, sharpness=8.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import printpath; printpath.halftone_screen(image, lpi=60.0, angle_deg=45.0, pixel_um=25.4, sharpness=8.0)</code>; aus dem Register: <code style="color:#22d3bf">opsprintpath.get(&quot;halftone_screen&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Ein klassisches gedrehtes Halbtonraster — die Punktfläche trägt den Tonwert.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Thresholds the image against a rotated periodic spot function (the product of</p>
+<p>two shifted cosines, the classical round-dot screen). *lpi* is lines per inch</p>
+<p>and *pixel_um* the pixel pitch, so the screen frequency in pixels follows the</p>
+<p>printing convention rather than a bare &quot;period in pixels&quot;.</p>
+<p>★<b>Why this earns its place</b>: two screens at different angles beat against</p>
+<p>one another, and the <b>period and direction of that moiré are a closed form</b></p>
+<p>(:func:<code style="color:#22d3bf">halftone_moire_period</code>) that can be predicted *before* anything is</p>
+<p>drawn and then measured out of the image. That is why newspaper printing puts</p>
+<p>the plates at 15°/45°/75° — the beat is pushed to a frequency the eye does not</p>
+<p>resolve — and this op lets that be shown as numbers, not folklore.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>image : 2-D array in [0, 1]</p>
+<p>Tone; 0 prints solid, 1 prints blank (the ink is `<code style="color:#22d3bf">1 - image</code>`).</p>
+<p>lpi : float</p>
+<p>Screen ruling, lines per inch. Newspapers use 65-85, magazines 133-175.</p>
+<p>angle_deg : float</p>
+<p>Screen angle. The classical set is K 45°, M 75°, C 15°, Y 0°.</p>
+<p>pixel_um : float</p>
+<p>Pixel pitch in micrometres (25.4 um = 1000 dpi).</p>
+<p>sharpness : float</p>
+<p>Edge hardness of the dot; large values give a hard threshold.</p>
+<p>Returns an `<code style="color:#22d3bf">image2d</code>`: 1 = paper, 0 = ink.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-positive lpi, pixel pitch or sharpness; a screen</p>
+<p>period below 2 px (it would alias — reported, never silently drawn); a</p>
+<p>non-finite or oversized image.</p>
+<p>Limits: this is a *screen*, not a printer. Dot gain, ink spread and</p>
+<p>registration error are not modelled, so measured ink is the geometric</p>
+<p>coverage and will read lighter than a real press.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">Leitfaden zur Familie printpath</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_beats_fringes_and_screens">poc_beats_fringes_and_screens</a> — <code style="color:#22d3bf">py -3.11 examples/poc_beats_fringes_and_screens.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_registration">poc_print_registration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_registration.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:stipple_points_from_image">stipple_points_from_image</a> · <a style="color:#22d3bf" href="opprintpath:stipple_energy">stipple_energy</a> · <a style="color:#22d3bf" href="opprintpath:stroke_tone_error">stroke_tone_error</a> · <a style="color:#22d3bf" href="opprintpath:engrave_lines">engrave_lines</a> · <a style="color:#22d3bf" href="opprintpath:hatch_field">hatch_field</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_sites">mosaic_tiles_sites</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_render">mosaic_tiles_render</a> · <a style="color:#22d3bf" href="opprintpath:print_layer_defect_map">print_layer_defect_map</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">npr</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:halftone_moire_period">halftone_moire_period</a> · <a style="color:#22d3bf" href="opprintpath:engrave_lines">engrave_lines</a> · <a style="color:#22d3bf" href="opprintpath:hatch_field">hatch_field</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_sites">mosaic_tiles_sites</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_render">mosaic_tiles_render</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

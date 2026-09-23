@@ -1,0 +1,59 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">circle_packing_apollonian — MATH <code style="color:#22d3bf">construct</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.circle_packing_apollonian(curvatures=(-1.0, 2.0, 2.0, 3.0), depth=4, min_curvature=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.circle_packing_apollonian(curvatures=(-1.0, 2.0, 2.0, 3.0), depth=4, min_curvature=0.0)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;circle_packing_apollonian&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Apollonisches Kreispacking aus einem Descartes-Quadrupel — jeder Kreis trägt einen Satz.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Four mutually tangent circles satisfy the <b>Descartes circle theorem</b></p>
+<p>(k1 + k2 + k3 + k4)**2 == 2 * (k1<b>2 + k2</b>2 + k3<b>2 + k4</b>2)</p>
+<p>where `<code style="color:#22d3bf">k = 1/r</code>` is the curvature (negative for the enclosing circle). The</p>
+<p>theorem is quadratic in `<code style="color:#22d3bf">k4</code>`, so a triple of mutually tangent circles has</p>
+<p><b>two</b> solutions and the second is `<code style="color:#22d3bf">k4&#x27; = 2*(k1+k2+k3) - k4</code>`; recursing on</p>
+<p>that reflection fills the gasket. The centres follow the complex form</p>
+<p>`<code style="color:#22d3bf">k4*z4 = k1*z1 + k2*z2 + k3*z3 +- 2*sqrt(k1*k2*z1*z2 + ...)</code>`, so no</p>
+<p>geometry is fitted — every circle is produced by an exact algebraic step.</p>
+<p>★<b>Why this earns its place</b>: the drawing carries its own proof. Each circle</p>
+<p>can be checked against Descartes to machine precision, tangency is</p>
+<p>`<code style="color:#22d3bf">|z_i - z_j| == |r_i +- r_j|</code>` exactly, and **an integral quadruple stays</p>
+<p>integral for ever** — start from `<code style="color:#22d3bf">(-1, 2, 2, 3)</code>` and every curvature in the</p>
+<p>infinite packing is an integer (Lagarias-Mallows-Wilks). A drawing routine</p>
+<p>that is slightly wrong cannot keep integers integral.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>curvatures : 4 floats</p>
+<p>A Descartes quadruple. The default `<code style="color:#22d3bf">(-1, 2, 2, 3)</code>` is the smallest</p>
+<p>integral gasket. Must satisfy the theorem to `<code style="color:#22d3bf">1e-9</code>` relative.</p>
+<p>depth : int &gt;= 0</p>
+<p>Reflection levels. Level 0 is the four seed circles; each further level</p>
+<p>adds `<code style="color:#22d3bf">4 * 3**(level-1)</code><code style="color:#22d3bf">, so the total is </code><code style="color:#22d3bf">2 * 3**depth + 2</code>`.</p>
+<p>min_curvature : float</p>
+<p>Drop circles smaller than `<code style="color:#22d3bf">1/min_curvature</code>` (0 = keep all).</p>
+<p>Returns a `<code style="color:#22d3bf">table</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">x</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">y</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">curvature</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">depth</code>`</p>
+<p>(the enclosing circle has negative curvature and positive radius).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: not four curvatures; the quadruple does not</p>
+<p>satisfy Descartes; every curvature negative or zero (no packing); `<code style="color:#22d3bf">depth</code>`</p>
+<p>negative or so large the packing exceeds the cap; non-finite input.</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">Leitfaden zur Familie math_metrology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_theorems_as_pictures">poc_theorems_as_pictures</a> — <code style="color:#22d3bf">py -3.11 examples/poc_theorems_as_pictures.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">construct</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:ford_circles">ford_circles</a> · <a style="color:#22d3bf" href="opmath:phyllotaxis_pattern">phyllotaxis_pattern</a> · <a style="color:#22d3bf" href="opmath:neighbour_index_gaps">neighbour_index_gaps</a> · <a style="color:#22d3bf" href="opmath:ifs_fractal">ifs_fractal</a> · <a style="color:#22d3bf" href="opmath:ifs_similarity_dimension">ifs_similarity_dimension</a> · <a style="color:#22d3bf" href="opmath:space_filling_curve">space_filling_curve</a> · <a style="color:#22d3bf" href="opmath:curve_locality">curve_locality</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

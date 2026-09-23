@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dynsys_poincare_section — MATH <code style="color:#22d3bf">dynsys</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynsys_poincare_section(states, axis=2, value=None, direction=1)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.dynsys_poincare_section(states, axis=2, value=None, direction=1)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;dynsys_poincare_section&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Where a trajectory crosses a plane — with the crossing point interpolated.</p>
+<p>Takes the `<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> block of :func:</code>ode_flow_states` and returns the points where</p>
+<p>coordinate *axis* crosses *value* in the given *direction* (+1 upward, -1</p>
+<p>downward, 0 either). The crossing is found by **linear interpolation between</p>
+<p>the two straddling samples**, not by taking the nearer sample — otherwise the</p>
+<p>section is quantised by the step size and a periodic orbit looks like a cloud.</p>
+<p>★<b>Why this earns its place</b>: a periodic orbit must give <b>one</b> point (to</p>
+<p>within the interpolation error), a period-2 orbit two, and a chaotic one a</p>
+<p>fractal set. That is a check with a number in it, unlike &quot;the picture looks</p>
+<p>like a strange attractor&quot;.</p>
+<p>Returns a `<code style="color:#22d3bf">pairs</code>` array of the remaining coordinates at each crossing.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: states not (S, n) with S &gt;= 2; axis out of range;</p>
+<p>direction not in (-1, 0, 1); non-finite input; no crossing found (reported,</p>
+<p>not returned as an empty array that a caller may read as &quot;no orbit&quot;).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• **complex 入力は <code style="color:#22d3bf">ValueError</code>** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
+<p style="margin:2px 0 2px 12px">• **masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code>** — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**(件数を明示して拒否 — 結果全体に伝播するため)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形状は厳格</b>: 1-D と 2-D を暗黙昇格・ブロードキャストしない(vector 枠に matrix、matrix 枠に vector は <code style="color:#22d3bf">ValueError</code>。reshape を明示する)。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 行列を取る op と <code style="color:#22d3bf">stat_histogram</code> の bins は <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万要素)超で <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_what_a_picture_cannot_check">poc_what_a_picture_cannot_check</a> — <code style="color:#22d3bf">py -3.11 examples/poc_what_a_picture_cannot_check.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pairs</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmath:neighbour_index_gaps">neighbour_index_gaps</a> · <a style="color:#22d3bf" href="opmath:curve_locality">curve_locality</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">dynsys</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:ode_flow_states">ode_flow_states</a> · <a style="color:#22d3bf" href="opmath:ode_vector_field_grid">ode_vector_field_grid</a> · <a style="color:#22d3bf" href="opmath:dynsys_lyapunov_spectrum">dynsys_lyapunov_spectrum</a> · <a style="color:#22d3bf" href="opmath:dynsys_bifurcation_map">dynsys_bifurcation_map</a> · <a style="color:#22d3bf" href="opmath:dynsys_correlation_dimension">dynsys_correlation_dimension</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

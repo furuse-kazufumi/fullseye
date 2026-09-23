@@ -203,6 +203,43 @@ def test_opsmath_call_returns_declared_types():
         "potential_flow_joukowski": (5.0, 1.0, 1.0, -0.09 + 0.09j, 0j, 3.0, (24, 24)),
         "joukowski_circulation": (),
     })
+    # 定理が門になる図(2026-09-23)。ここでも測るのは「宣言した型どおり返すか」
+    # だけなので、深さ・点数は最小で足りる(絵の細かさは要らない)。
+    phy = mathops.phyllotaxis_pattern(60)
+    sfc = mathops.space_filling_curve("hilbert", 3)
+    args.update({
+        "circle_packing_apollonian": ((-1.0, 2.0, 2.0, 3.0), 2),
+        "ford_circles": (8,),
+        "phyllotaxis_pattern": (60,),
+        "neighbour_index_gaps": (phy,),
+        "ifs_fractal": ("sierpinski", None, 2000, 0),
+        "ifs_similarity_dimension": (),
+        "space_filling_curve": ("hilbert", 3),
+        "curve_locality": (sfc,),
+    })
+    # 波動と力学系(2026-09-23)。ここでも測るのは「宣言した型どおり返すか」
+    # だけなので、格子も積分時間も最小で足りる。★二重スリットは「縞が 3 本
+    # 入らない」と fail-closed するので、スクリーンの幅と分離を検証済みの
+    # 組み合わせ(550 nm / 200 um / 200 mm / 5 um 画素)で渡す。
+    mode = mathops.wave_membrane_mode("rectangular", 2, 3, (48, 48), 1.0)
+    slit = mathops.wave_two_slit(550.0, 200.0, 200.0, (16, 512), 5.0)
+    flow = mathops.ode_flow_states("lorenz", None, None, 4.0, 0.01)
+    orbit = np.stack([flow["x0"], flow["x1"], flow["x2"]], axis=1)
+    args.update({
+        "wave_membrane_mode": ("rectangular", 2, 3, (48, 48), 1.0),
+        "wave_mode_frequencies": ("rectangular", 6, 1.0),
+        "wave_nodal_lines": (mode,),
+        "wave_two_slit": (550.0, 200.0, 200.0, (16, 512), 5.0),
+        "wave_fringe_period": (slit,),
+        "wave_grating_orders": (1.6, 550.0, 0.0, (-1, 0, 1)),
+        "ode_flow_states": ("lorenz", None, None, 4.0, 0.01),
+        "ode_vector_field_grid": ("rossler", None, (-8.0, 8.0, -8.0, 8.0), (24, 24)),
+        "dynsys_poincare_section": (flow,),
+        # burn_in < t_end が契約(既定 20.0 なので t_end も伸ばす)。
+        "dynsys_lyapunov_spectrum": ("lorenz", None, None, 30.0, 0.01, 5.0),
+        "dynsys_bifurcation_map": ("logistic", 2.5, 4.0, 40),
+        "dynsys_correlation_dimension": (orbit,),
+    })
     from tools.chain_fuzz import TYPE_CHECKS
     missing = [n for n in opsmath.OPSMATH if n not in args]
     assert not missing, f"test args missing for: {missing}"

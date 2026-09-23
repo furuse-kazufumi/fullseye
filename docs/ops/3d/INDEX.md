@@ -1,4 +1,4 @@
-# 3D operator help — 366 ops in 66 categories
+# 3D operator help — 372 ops in 68 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -165,6 +165,10 @@
 
 [plane_sweep_depth](plane_sweep_stereo/plane_sweep_depth.md) · [warp_by_plane](plane_sweep_stereo/warp_by_plane.md)
 
+### polyhedron (1)
+
+[geodesic_dome](polyhedron/geodesic_dome.md)
+
 ### pose_estimation (3)
 
 [dlt_pose](pose_estimation/dlt_pose.md) · [pnp_ransac](pose_estimation/pnp_ransac.md) · [reprojection_error](pose_estimation/reprojection_error.md)
@@ -248,6 +252,10 @@
 ### superquadric (4)
 
 [fit_superquadric](superquadric/fit_superquadric.md) · [inside_outside](superquadric/inside_outside.md) · [sample_surface](superquadric/sample_surface.md) · [superquadric_residual](superquadric/superquadric_residual.md)
+
+### surface (5)
+
+[curve3d_tube_mesh](surface/curve3d_tube_mesh.md) · [gyroid_isosurface](surface/gyroid_isosurface.md) · [gyroid_solid_mask](surface/gyroid_solid_mask.md) · [minimal_surface](surface/minimal_surface.md) · [minimal_surface_bend](surface/minimal_surface_bend.md)
 
 ### surface_fit (4)
 

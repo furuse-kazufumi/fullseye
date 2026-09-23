@@ -70,7 +70,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-—
+[neighbour_index_gaps](../construct/neighbour_index_gaps.md) · [curve_locality](../construct/curve_locality.md)
 
 ## 同カテゴリ(`stats`)
 

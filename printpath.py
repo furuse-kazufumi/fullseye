@@ -42,6 +42,12 @@ __all__ = [
     "mst_length",
     "stroke_resample_closed",
     "stroke_tone_error",
+    # 様式化(npr、2026-09-23)。★test_printpath の門が
+    # `set(OPSPRINTPATH) == set(__all__) - {定数}` を要求するので、
+    # 台帳とここの**両方**に書く必要がある。
+    "halftone_screen", "halftone_moire_period",
+    "engrave_lines", "hatch_field",
+    "mosaic_tiles_sites", "mosaic_tiles_render",
 ]
 
 #: 読む線分の上限(1 行 1 線分、これを超えたら ValueError —— 黙って間引かない)。
@@ -1022,3 +1028,331 @@ def _stroke_gauss(a, sigma):
     out = np.apply_along_axis(lambda v: np.convolve(
         np.concatenate([v[r:0:-1], v, v[-2:-r - 2:-1]]), k, mode="valid"), 1, out)
     return out
+
+
+# ------------------------------------------------------------------------- #
+# 様式化(npr)—— 何を保って何を捨てたかを数で返す(2026-09-23)
+#
+# ★「きれいな絵」を返す op ではなく、**保った量と捨てた量を数で返す** op にする。
+#   既存の NPR ライブラリは絵しか返さない —— 差はそこ。真値はモアレ周期の予言、
+#   被覆率 w/d の閉形式、既知の縞の向き、Lloyd の単調減少(既存 stipple_energy が
+#   測る)、セル平均が L2 最適であること。
+# ------------------------------------------------------------------------- #
+
+_NPR_MAX_PIXELS = 16_000_000
+
+def _npr_check_image(op, image, name="image"):
+    g = np.asarray(image, dtype=np.float64)
+    if g.ndim != 2 or min(g.shape) < 4:
+        raise ValueError("%s: %s must be 2-D with at least 4x4, got %s"
+                         % (op, name, (g.shape,)))
+    if not np.all(np.isfinite(g)):
+        raise ValueError("%s: %s contains a non-finite value" % (op, name))
+    if g.size > _NPR_MAX_PIXELS:
+        raise ValueError("%s: %s has %d pixels, over the %d cap"
+                         % (op, name, g.size, _NPR_MAX_PIXELS))
+    return np.clip(g, 0.0, 1.0)
+
+def _npr_screen_frequency(lpi, pixel_um):
+    """1 画素あたりの線数(周波数)。lpi は 1 インチ = 25400 um あたりの線数。"""
+    return float(lpi) * float(pixel_um) / 25400.0
+
+def halftone_screen(image, lpi=60.0, angle_deg=45.0, pixel_um=25.4, sharpness=8.0):
+    """A classic rotated halftone screen — dots whose area carries the tone.
+
+    Thresholds the image against a rotated periodic spot function (the product of
+    two shifted cosines, the classical round-dot screen). *lpi* is lines per inch
+    and *pixel_um* the pixel pitch, so the screen frequency in pixels follows the
+    printing convention rather than a bare "period in pixels".
+
+    ★**Why this earns its place**: two screens at different angles beat against
+    one another, and the **period and direction of that moiré are a closed form**
+    (:func:`halftone_moire_period`) that can be predicted *before* anything is
+    drawn and then measured out of the image. That is why newspaper printing puts
+    the plates at 15°/45°/75° — the beat is pushed to a frequency the eye does not
+    resolve — and this op lets that be shown as numbers, not folklore.
+
+    Parameters
+    ----------
+    image : 2-D array in [0, 1]
+        Tone; 0 prints solid, 1 prints blank (the ink is ``1 - image``).
+    lpi : float
+        Screen ruling, lines per inch. Newspapers use 65-85, magazines 133-175.
+    angle_deg : float
+        Screen angle. The classical set is K 45°, M 75°, C 15°, Y 0°.
+    pixel_um : float
+        Pixel pitch in micrometres (25.4 um = 1000 dpi).
+    sharpness : float
+        Edge hardness of the dot; large values give a hard threshold.
+
+    Returns an ``image2d``: 1 = paper, 0 = ink.
+
+    **Raises** ``ValueError``: non-positive lpi, pixel pitch or sharpness; a screen
+    period below 2 px (it would alias — reported, never silently drawn); a
+    non-finite or oversized image.
+
+    Limits: this is a *screen*, not a printer. Dot gain, ink spread and
+    registration error are not modelled, so measured ink is the geometric
+    coverage and will read lighter than a real press.
+    """
+    op = "halftone_screen"
+    g = _npr_check_image(op, image)
+    f = _npr_screen_frequency(lpi, pixel_um)
+    if not np.isfinite(f) or f <= 0:
+        raise ValueError("%s: lpi and pixel_um must be finite and > 0" % op)
+    period = 1.0 / f
+    if period < 2.0:
+        raise ValueError("%s: the screen period is %.2f px — below the 2 px Nyquist "
+                         "limit, so the screen would alias into a moire with the pixel "
+                         "grid. Raise pixel_um (finer output) or lower lpi."
+                         % (op, period))
+    s = float(sharpness)
+    if not np.isfinite(s) or s <= 0:
+        raise ValueError("%s: sharpness must be finite and > 0, got %r" % (op, sharpness))
+    h, w = g.shape
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
+    a = np.radians(float(angle_deg))
+    u = (xx * np.cos(a) + yy * np.sin(a)) * f
+    v = (-xx * np.sin(a) + yy * np.cos(a)) * f
+    spot = 0.5 * (np.cos(2 * np.pi * u) + np.cos(2 * np.pi * v)) * 0.5 + 0.5
+    return np.clip(0.5 + s * (g - spot), 0.0, 1.0)
+
+def halftone_moire_period(lpi_a=60.0, angle_a_deg=45.0, lpi_b=60.0, angle_b_deg=75.0,
+                          pixel_um=25.4):
+    """The beat between two halftone screens — period and direction, in closed form.
+
+    Each screen is a frequency **vector** ``f (cos t, sin t)``; where two screens
+    overlap the visible moiré is the difference vector, so its period is
+    ``1 / |f_a - f_b|`` and its direction is that of the difference. For equal
+    rulings the magnitude reduces to ``2 f sin(dt / 2)``, which is why the beat
+    period grows without bound as the angle difference goes to zero — two plates
+    at nearly the same angle give a huge, very visible moiré.
+
+    ★**Why this earns its place**: the prediction is available **before** any
+    screen is drawn, and :func:`halftone_screen` plus an FFT can measure the beat
+    out of the picture. Two independent routes to one number.
+
+    Returns a ``table``: ``period_px``, ``angle_deg``, ``freq_cycles_per_px``.
+
+    **Raises** ``ValueError``: non-positive ruling or pitch; two screens that are
+    identical in both ruling and angle (the difference vanishes — there is no
+    beat, and returning ``inf`` silently would be worse than saying so).
+    """
+    op = "halftone_moire_period"
+    fa = _npr_screen_frequency(lpi_a, pixel_um)
+    fb = _npr_screen_frequency(lpi_b, pixel_um)
+    for nm, v in (("lpi_a", fa), ("lpi_b", fb)):
+        if not np.isfinite(v) or v <= 0:
+            raise ValueError("%s: %s and pixel_um must be finite and > 0" % (op, nm))
+    ta, tb = np.radians(float(angle_a_deg)), np.radians(float(angle_b_deg))
+    dx = fa * np.cos(ta) - fb * np.cos(tb)
+    dy = fa * np.sin(ta) - fb * np.sin(tb)
+    mag = float(np.hypot(dx, dy))
+    if mag <= 1e-12:
+        raise ValueError("%s: the two screens are identical (same ruling and angle) — "
+                         "there is no beat to report" % op)
+    return {"period_px": np.array([1.0 / mag]),
+            "angle_deg": np.array([float(np.degrees(np.arctan2(dy, dx)))]),
+            "freq_cycles_per_px": np.array([mag])}
+
+def engrave_lines(image, spacing_px=6.0, angle_deg=0.0, gamma=1.0, max_width=0.95):
+    """Copperplate engraving — parallel lines whose **width** carries the tone.
+
+    ★**Why this earns its place**: while the lines do not touch, the ink coverage
+    of a ruling of width ``w`` and spacing ``d`` is exactly ``w / d``. So the width
+    needed for a target tone is **solved, not tuned**: ``w = (1 - tone) * d``. The
+    op therefore has a closed form to be graded against — blur the result and the
+    local mean must come back to the tone you asked for.
+
+    Parameters
+    ----------
+    image : 2-D array in [0, 1]
+    spacing_px : float
+        Line spacing. The finest tone step a ruling can hold is ``1 / spacing``.
+    angle_deg : float
+    gamma : float
+        Tone shaping applied before solving for the width (``tone**gamma``).
+    max_width : float
+        Widest line as a fraction of the spacing; 1.0 would make solid black and
+        lose the ruling.
+
+    Returns an ``image2d``: 1 = paper, 0 = ink.
+
+    **Raises** ``ValueError``: spacing below 2 px (the ruling cannot be sampled);
+    ``max_width`` outside (0, 1]; non-positive gamma; a non-finite or oversized image.
+    """
+    op = "engrave_lines"
+    g = _npr_check_image(op, image)
+    d = float(spacing_px)
+    if not np.isfinite(d) or d < 2.0:
+        raise ValueError("%s: spacing_px must be >= 2 (a ruling below 2 px cannot be "
+                         "sampled), got %r" % (op, spacing_px))
+    mw = float(max_width)
+    if not (0.0 < mw <= 1.0):
+        raise ValueError("%s: max_width must lie in (0, 1], got %r" % (op, max_width))
+    gm = float(gamma)
+    if not np.isfinite(gm) or gm <= 0:
+        raise ValueError("%s: gamma must be finite and > 0, got %r" % (op, gamma))
+    h, w = g.shape
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
+    a = np.radians(float(angle_deg))
+    t = (xx * np.cos(a) + yy * np.sin(a)) % d           # 線からの距離(0..d)
+    half = np.minimum(np.clip(1.0 - g ** gm, 0.0, 1.0) * mw, mw) * d * 0.5
+    dist = np.minimum(t, d - t)                          # 最寄りの線までの距離
+    return np.clip(dist - half + 0.5, 0.0, 1.0)
+
+def hatch_field(image, spacing_px=8.0, sigma=2.0, levels=3, cross_deg=90.0):
+    """Cross-hatching that **follows the picture** — direction from the structure tensor.
+
+    The stroke direction is the local structure orientation (the existing
+    ``structure_tensor_orientation``: strokes run *along* edges, not across them),
+    and the number of superposed hatch layers comes from the tone — one layer for
+    a light grey, up to *levels* for a dark one, each rotated by *cross_deg*.
+
+    ★**Why this earns its place**: the direction is checkable against a picture
+    whose orientation is known by construction (a sine grating at 30° must give
+    strokes at 30°), and the tone is checkable by blurring the result. The usual
+    NPR routine offers neither.
+
+    Returns an ``image2d``: 1 = paper, 0 = ink.
+
+    **Raises** ``ValueError``: spacing below 2 px; levels below 1; non-positive
+    sigma; a non-finite or oversized image.
+
+    Limits: a single orientation per pixel, so crossings and junctions (where the
+    structure tensor is isotropic) get an arbitrary but locally smooth direction —
+    the coherence, not the orientation, is what says whether to trust it.
+    """
+    op = "hatch_field"
+    g = _npr_check_image(op, image)
+    d = float(spacing_px)
+    if not np.isfinite(d) or d < 2.0:
+        raise ValueError("%s: spacing_px must be >= 2, got %r" % (op, spacing_px))
+    k = int(levels)
+    if k < 1:
+        raise ValueError("%s: levels must be >= 1, got %r" % (op, levels))
+    s = float(sigma)
+    if not np.isfinite(s) or s <= 0:
+        raise ValueError("%s: sigma must be finite and > 0, got %r" % (op, sigma))
+
+    import ops as _ops                                   # 既存の構造テンソルを使う
+    table = dict(_ops.OPS)
+    fn = table.get("structure_tensor_orientation")
+    if fn is None:
+        raise ValueError("%s: structure_tensor_orientation is not registered — "
+                         "this op is deliberately built on it rather than "
+                         "re-implementing the tensor" % op)
+    theta = np.asarray(fn(g, min(s / 8.0, 1.0), 0.5), dtype=np.float64)
+    theta = theta * np.pi if theta.max() <= 1.0 + 1e-9 else theta
+    # ★ストロークを**構造に沿わせる**なら、縞の周波数ベクトルはその
+    # **直交方向**に向ける(線は周波数ベクトルに直交に走る)。
+    # この 90 度を入れ忘れていて、docstring は「沿う」と書きながら
+    # 実装は「横切る」だった —— 既知の角度の縞を渡す門で掴んだ
+    # (2026-09-23)。絵を見るだけではどちらも「それらしい線」に見える。
+    theta = theta + 0.5 * np.pi
+
+    h, w = g.shape
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
+    out = np.ones(g.shape, dtype=np.float64)
+    dark = np.clip(1.0 - g, 0.0, 1.0)
+    for i in range(k):
+        a = theta + np.radians(float(cross_deg)) * i
+        t = (xx * np.cos(a) + yy * np.sin(a)) % d
+        dist = np.minimum(t, d - t)
+        # この層は「この層まで塗るほど暗い」画素にだけ乗せる
+        active = dark >= (i + 0.5) / k
+        half = 0.5 * np.clip(dark * d / k, 0.0, d * 0.45)
+        layer = np.clip(dist - half + 0.5, 0.0, 1.0)
+        out = np.where(active, np.minimum(out, layer), out)
+    return out
+
+def mosaic_tiles_sites(image, n_tiles=400, iterations=12, seed=0, weighted=True):
+    """Lloyd's iteration on an image — the tile centres of a mosaic.
+
+    Places *n_tiles* sites and moves each to the centroid of the pixels it owns,
+    weighted by local contrast when *weighted* (so detail gets smaller tiles).
+
+    ★**Why this earns its place**: Lloyd's iteration is a **descent** — the
+    quantisation energy cannot increase — and that is a property of the algorithm,
+    not of the picture. The energy is *not* reported here on purpose: the existing
+    ``stipple_energy`` measures it from the sites, so the monotonicity can be
+    checked by an op that did not produce them. Measuring your own descent with
+    your own number proves nothing.
+
+    Returns ``pairs``: the site coordinates (row, col).
+
+    **Raises** ``ValueError``: fewer than 4 tiles or more tiles than pixels;
+    negative iterations; a non-finite or oversized image.
+    """
+    op = "mosaic_tiles_sites"
+    g = _npr_check_image(op, image)
+    n = int(n_tiles)
+    if n < 4 or n > g.size:
+        raise ValueError("%s: n_tiles must lie in 4..%d, got %r" % (op, g.size, n_tiles))
+    it = int(iterations)
+    if it < 0:
+        raise ValueError("%s: iterations must be >= 0, got %r" % (op, iterations))
+    h, w = g.shape
+    rng = np.random.default_rng(int(seed))
+    pts = np.stack([rng.uniform(0, h - 1, n), rng.uniform(0, w - 1, n)], axis=1)
+
+    yy, xx = np.mgrid[0:h, 0:w]
+    pix = np.stack([yy.ravel(), xx.ravel()], axis=1).astype(np.float64)
+    if weighted:
+        gy, gx = np.gradient(g)
+        wt = np.hypot(gy, gx).ravel()
+        wt = wt / (wt.max() + 1e-12) + 0.05
+    else:
+        wt = np.ones(pix.shape[0], dtype=np.float64)
+
+    from scipy.spatial import cKDTree                    # ★距離行列を作らない(250 倍の教訓)
+    for _ in range(it):
+        owner = cKDTree(pts).query(pix, k=1)[1]
+        num_r = np.bincount(owner, weights=wt * pix[:, 0], minlength=n)
+        num_c = np.bincount(owner, weights=wt * pix[:, 1], minlength=n)
+        den = np.bincount(owner, weights=wt, minlength=n)
+        ok = den > 0
+        pts[ok, 0] = num_r[ok] / den[ok]
+        pts[ok, 1] = num_c[ok] / den[ok]
+    return pts
+
+def mosaic_tiles_render(image, sites):
+    """Paint each Voronoi cell with the **mean** of the pixels it owns.
+
+    ★**Why the mean and not something prettier**: for a fixed partition the mean
+    is the ``L2``-optimal constant — no other value lowers the squared error
+    inside the cell. The tile colour is therefore a solution, not a taste, and any
+    alternative can be *shown* to be worse by evaluating the same sum.
+
+    Returns an ``image2d``: the mosaic.
+
+    **Raises** ``ValueError``: sites not (N, 2) with N >= 1; sites outside the
+    image; a non-finite or oversized image.
+
+    Limits: cells are convex polygons, so this does not imitate the irregular
+    tesserae of real mosaic and never runs a single tile along an edge the way a
+    mosaicist would.
+    """
+    op = "mosaic_tiles_render"
+    g = _npr_check_image(op, image)
+    p = np.asarray(sites, dtype=np.float64)
+    if p.ndim != 2 or p.shape[1] != 2 or p.shape[0] < 1:
+        raise ValueError("%s: sites must be (N, 2) with N >= 1, got %s"
+                         % (op, (p.shape,)))
+    if not np.all(np.isfinite(p)):
+        raise ValueError("%s: sites contain a non-finite value" % op)
+    h, w = g.shape
+    if p[:, 0].min() < -0.5 or p[:, 0].max() > h - 0.5 or             p[:, 1].min() < -0.5 or p[:, 1].max() > w - 0.5:
+        raise ValueError("%s: some sites lie outside the image (%s vs %s) — a cell "
+                         "with no pixels would be painted from nothing"
+                         % (op, (float(p[:, 0].min()), float(p[:, 1].min()),
+                                 float(p[:, 0].max()), float(p[:, 1].max())), (h, w)))
+    from scipy.spatial import cKDTree
+    yy, xx = np.mgrid[0:h, 0:w]
+    pix = np.stack([yy.ravel(), xx.ravel()], axis=1).astype(np.float64)
+    owner = cKDTree(p).query(pix, k=1)[1]
+    n = p.shape[0]
+    tot = np.bincount(owner, weights=g.ravel(), minlength=n)
+    cnt = np.bincount(owner, minlength=n)
+    mean = np.where(cnt > 0, tot / np.maximum(cnt, 1), 0.0)
+    return mean[owner].reshape(h, w)

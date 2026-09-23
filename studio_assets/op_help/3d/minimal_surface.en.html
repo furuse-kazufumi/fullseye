@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">minimal_surface — 3D <code style="color:#22d3bf">surface</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">mesh</code> (an op determined by its arguments alone — it takes no image or data input)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.minimal_surface(kind=&#x27;catenoid&#x27;, nu=80, nv=120, extent=1.5, scale=1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import render3d; render3d.minimal_surface(kind=&#x27;catenoid&#x27;, nu=80, nv=120, extent=1.5, scale=1.0)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;minimal_surface&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>A classical minimal surface, from its exact parametrisation.</p>
+<p>`<code style="color:#22d3bf">catenoid</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(c cosh(u/c) cos v, c cosh(u/c) sin v, u)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">helicoid</code>`</p>
+<p>`<code style="color:#22d3bf">(u cos v, u sin v, c v)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">enneper</code>`</p>
+<p>`<code style="color:#22d3bf">(u - u^3/3 + u v^2, v - v^3/3 + v u^2, u^2 - v^2)</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">scherk</code>`</p>
+<p>`<code style="color:#22d3bf">z = log(cos y / cos x)</code>` (the doubly periodic surface, over one cell).</p>
+<p>★★<b>Why this earns its place — the definition is the gate.</b> A minimal surface</p>
+<p>is one whose <b>mean curvature vanishes everywhere</b>, and the existing</p>
+<p>`<code style="color:#22d3bf">vertex_curvature</code>` op measures exactly that. So the claim &quot;this is a minimal</p>
+<p>surface&quot; is checked by an op that knows nothing about how the surface was</p>
+<p>built. ★A trap worth naming: the catenoid and the helicoid are *isometric*, so</p>
+<p>their <b>Gaussian</b> curvatures agree pointwise — but that is a **necessary, not</p>
+<p>sufficient** condition for minimality (a sphere and a plane differ in K, yet</p>
+<p>matching K would not make either minimal). Grade on H.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>kind : str</p>
+<p>One of `<code style="color:#22d3bf">MINIMAL_SURFACES</code>`.</p>
+<p>nu, nv : int</p>
+<p>Grid resolution along the two parameters.</p>
+<p>extent : float</p>
+<p>Half-range of the first parameter (how much of the surface to take).</p>
+<p>scale : float</p>
+<p>The surface&#x27;s own scale parameter (`<code style="color:#22d3bf">c</code>` for catenoid and helicoid).</p>
+<p>Returns a `<code style="color:#22d3bf">mesh</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(vertices, faces)</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: unknown kind; a grid below 4x4 or over the cap;</p>
+<p>non-positive scale; an extent that reaches the singularity (Scherk&#x27;s surface</p>
+<p>is only defined where `<code style="color:#22d3bf">cos x</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">cos y</code>` share a sign, so an extent at or</p>
+<p>beyond `<code style="color:#22d3bf">pi/2</code>` is refused rather than silently clipped to infinity).</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:minimal_surfaces">minimal_surfaces</a> — <code style="color:#22d3bf">py -3.11 examples_3d/minimal_surfaces.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">mesh</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:supersample_mesh">supersample_mesh</a> · <a style="color:#22d3bf" href="op3d:render_beauty">render_beauty</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">surface</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:minimal_surface_bend">minimal_surface_bend</a> · <a style="color:#22d3bf" href="op3d:gyroid_isosurface">gyroid_isosurface</a> · <a style="color:#22d3bf" href="op3d:gyroid_solid_mask">gyroid_solid_mask</a> · <a style="color:#22d3bf" href="op3d:curve3d_tube_mesh">curve3d_tube_mesh</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render3d.py — 3D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

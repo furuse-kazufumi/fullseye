@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">engrave_lines — PRINTPATH <code style="color:#22d3bf">npr</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.engrave_lines(image, spacing_px=6.0, angle_deg=0.0, gamma=1.0, max_width=0.95)</code>(要直接呼叫實作,<code style="color:#22d3bf">import printpath; printpath.engrave_lines(image, spacing_px=6.0, angle_deg=0.0, gamma=1.0, max_width=0.95)</code>;從台帳取用則 <code style="color:#22d3bf">opsprintpath.get(&quot;engrave_lines&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>銅版雕刻 —— 平行線的<b>寬度</b>承載灰階。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>★<b>Why this earns its place</b>: while the lines do not touch, the ink coverage</p>
+<p>of a ruling of width `<code style="color:#22d3bf">w</code><code style="color:#22d3bf"> and spacing </code><code style="color:#22d3bf">d</code><code style="color:#22d3bf"> is exactly </code><code style="color:#22d3bf">w / d</code>`. So the width</p>
+<p>needed for a target tone is <b>solved, not tuned</b>: `<code style="color:#22d3bf">w = (1 - tone) * d</code>`. The</p>
+<p>op therefore has a closed form to be graded against — blur the result and the</p>
+<p>local mean must come back to the tone you asked for.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>image : 2-D array in [0, 1]</p>
+<p>spacing_px : float</p>
+<p>Line spacing. The finest tone step a ruling can hold is `<code style="color:#22d3bf">1 / spacing</code>`.</p>
+<p>angle_deg : float</p>
+<p>gamma : float</p>
+<p>Tone shaping applied before solving for the width (`<code style="color:#22d3bf">tone**gamma</code>`).</p>
+<p>max_width : float</p>
+<p>Widest line as a fraction of the spacing; 1.0 would make solid black and</p>
+<p>lose the ruling.</p>
+<p>Returns an `<code style="color:#22d3bf">image2d</code>`: 1 = paper, 0 = ink.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: spacing below 2 px (the ruling cannot be sampled);</p>
+<p>`<code style="color:#22d3bf">max_width</code>` outside (0, 1]; non-positive gamma; a non-finite or oversized image.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_beats_fringes_and_screens">poc_beats_fringes_and_screens</a> — <code style="color:#22d3bf">py -3.11 examples/poc_beats_fringes_and_screens.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:stipple_points_from_image">stipple_points_from_image</a> · <a style="color:#22d3bf" href="opprintpath:stipple_energy">stipple_energy</a> · <a style="color:#22d3bf" href="opprintpath:stroke_tone_error">stroke_tone_error</a> · <a style="color:#22d3bf" href="opprintpath:halftone_screen">halftone_screen</a> · <a style="color:#22d3bf" href="opprintpath:hatch_field">hatch_field</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_sites">mosaic_tiles_sites</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_render">mosaic_tiles_render</a> · <a style="color:#22d3bf" href="opprintpath:print_layer_defect_map">print_layer_defect_map</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">npr</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:halftone_screen">halftone_screen</a> · <a style="color:#22d3bf" href="opprintpath:halftone_moire_period">halftone_moire_period</a> · <a style="color:#22d3bf" href="opprintpath:hatch_field">hatch_field</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_sites">mosaic_tiles_sites</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_render">mosaic_tiles_render</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

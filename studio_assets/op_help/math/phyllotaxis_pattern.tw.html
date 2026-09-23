@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">phyllotaxis_pattern — MATH <code style="color:#22d3bf">construct</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">pairs</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phyllotaxis_pattern(n_points=400, angle_deg=None, scale=1.0, power=0.5)</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathops; mathops.phyllotaxis_pattern(n_points=400, angle_deg=None, scale=1.0, power=0.5)</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;phyllotaxis_pattern&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>沃格爾螺線 —— 堆積最緊的那個角度, 以及由它生出的螺旋。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Point `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> sits at </code><code style="color:#22d3bf">r = scale * k**power</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">theta = k * angle_deg</code>`. With</p>
+<p>the <b>golden angle</b> `<code style="color:#22d3bf">180*(3 - sqrt 5) = 137.50776...</code>` degrees (the default)</p>
+<p>this is the arrangement of sunflower florets, pine-cone scales and the leaves</p>
+<p>of most plants.</p>
+<p>★**Why this earns its place — two independent theorems, each with a control</p>
+<p>group**:</p>
+<p style="margin:2px 0 2px 12px">• *The golden angle packs best.* Sweep the divergence angle and the minimum</p>
+<p>nearest-neighbour distance is <b>maximised</b> at 137.50776 deg; a fraction</p>
+<p>of a degree either side is measurably worse. Nothing in the formula says</p>
+<p>this — it has to be measured.</p>
+<p style="margin:2px 0 2px 12px">• *The visible spirals are consecutive Fibonacci numbers.* Take each point&#x27;s</p>
+<p>nearest neighbours and look at the <b>difference of their indices</b>: the</p>
+<p>differences concentrate on 1, 2, 3, 5, 8, 13, 21, 34... At a non-golden</p>
+<p>angle they do not.</p>
+<p>Returns `<code style="color:#22d3bf">pairs</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(n, 2)</code><code style="color:#22d3bf"> of </code><code style="color:#22d3bf">(x, y)</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">n_points &lt; 1</code>` or over the cap; non-finite angle</p>
+<p>or scale; `<code style="color:#22d3bf">power</code><code style="color:#22d3bf"> outside </code><code style="color:#22d3bf">(0, 1]</code>`.</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• **complex 輸入一律 <code style="color:#22d3bf">ValueError</code>** —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• **含被遮罩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒絕「剝掉遮罩直接使用下面原值」的隱式轉換。請明確選擇填補還是丟棄。</p>
+<p style="margin:2px 0 2px 12px">• **所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明確給出個數後拒絕 —— 它會汙染整個結果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形狀嚴格</b>:不對 1-D 與 2-D 做隱式提升或廣播(向量槽位收到矩陣、矩陣槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;請明確 reshape)。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩陣的運算子與 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超過 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 萬個元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_theorems_as_pictures">poc_theorems_as_pictures</a> — <code style="color:#22d3bf">py -3.11 examples/poc_theorems_as_pictures.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">pairs</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opmath:neighbour_index_gaps">neighbour_index_gaps</a> · <a style="color:#22d3bf" href="opmath:curve_locality">curve_locality</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">construct</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:circle_packing_apollonian">circle_packing_apollonian</a> · <a style="color:#22d3bf" href="opmath:ford_circles">ford_circles</a> · <a style="color:#22d3bf" href="opmath:neighbour_index_gaps">neighbour_index_gaps</a> · <a style="color:#22d3bf" href="opmath:ifs_fractal">ifs_fractal</a> · <a style="color:#22d3bf" href="opmath:ifs_similarity_dimension">ifs_similarity_dimension</a> · <a style="color:#22d3bf" href="opmath:space_filling_curve">space_filling_curve</a> · <a style="color:#22d3bf" href="opmath:curve_locality">curve_locality</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

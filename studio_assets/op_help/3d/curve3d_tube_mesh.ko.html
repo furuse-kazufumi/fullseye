@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">curve3d_tube_mesh — 3D <code style="color:#22d3bf">surface</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curve3d_tube_mesh(points, radius=0.1, segments=12, closed=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import render3d; render3d.curve3d_tube_mesh(points, radius=0.1, segments=12, closed=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;curve3d_tube_mesh&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>공간 곡선을 관 메시로 —— MATLAB 의 `<code style="color:#22d3bf">tubeplot</code>`, 다만 부피를 검산할 수 있다。</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Sweeps a circle of *radius* along the polyline using a <b>parallel-transport</b></p>
+<p>frame (no Frenet frame: the normal of a straight segment is undefined and the</p>
+<p>binormal flips at an inflection, which twists the tube). Returns</p>
+<p>`<code style="color:#22d3bf">(vertices, faces)</code>` for the existing 3-D viewers and mesh ops.</p>
+<p>★<b>Why this earns its place</b>: for a closed circular centre line the tube is a</p>
+<p>torus, whose volume `<code style="color:#22d3bf">2 pi^2 R r^2</code><code style="color:#22d3bf"> and area </code><code style="color:#22d3bf">4 pi^2 R r</code>` are analytic —</p>
+<p>and the existing `<code style="color:#22d3bf">mesh_volume</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mesh_area</code>` ops measure the result. Two</p>
+<p>independent implementations meeting at a closed form is a real check; &quot;it</p>
+<p>looks like a tube&quot; is not.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: fewer than 2 points; not (N, 3); radius not</p>
+<p>positive; fewer than 3 segments; non-finite input; a curve with repeated</p>
+<p>consecutive points (the direction is undefined there).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:minimal_surfaces">minimal_surfaces</a> — <code style="color:#22d3bf">py -3.11 examples_3d/minimal_surfaces.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">mesh</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:supersample_mesh">supersample_mesh</a> · <a style="color:#22d3bf" href="op3d:render_beauty">render_beauty</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">surface</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:minimal_surface">minimal_surface</a> · <a style="color:#22d3bf" href="op3d:minimal_surface_bend">minimal_surface_bend</a> · <a style="color:#22d3bf" href="op3d:gyroid_isosurface">gyroid_isosurface</a> · <a style="color:#22d3bf" href="op3d:gyroid_solid_mask">gyroid_solid_mask</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render3d.py — 3D 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,49 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">space_filling_curve — MATH <code style="color:#22d3bf">construct</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">pairs</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.space_filling_curve(kind=&#x27;hilbert&#x27;, order=4)</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathops; mathops.space_filling_curve(kind=&#x27;hilbert&#x27;, order=4)</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;space_filling_curve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>`<code style="color:#22d3bf">2**order</code>` 方格上的希爾伯特/摩爾/掃描順序 —— 並驗證它確實是一個置換。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Returns the visiting order as `<code style="color:#22d3bf">pairs</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(4**order, 2)</code>` of integer grid</p>
+<p>coordinates. Two scan orders are included <b>as control groups</b>, not as</p>
+<p>filler: `<code style="color:#22d3bf">row_major</code>` jumps a whole row at the end of each line and</p>
+<p>`<code style="color:#22d3bf">boustrophedon</code>` (serpentine) does not, so &quot;consecutive points are</p>
+<p>adjacent&quot; separates them, and the locality measurement separates all four.</p>
+<p>★<b>Why this earns its place — the defining properties are integers</b>:</p>
+<p style="margin:2px 0 2px 12px">• The result visits `<code style="color:#22d3bf">4**order</code>` cells, <b>each exactly once</b>: a</p>
+<p>permutation, verified by sorting, not by sampling.</p>
+<p style="margin:2px 0 2px 12px">• For Hilbert, Moore and boustrophedon, **consecutive points are always at</p>
+<p>L1 distance exactly 1**. Row-major is not (it jumps at every line end),</p>
+<p>which is the control.</p>
+<p style="margin:2px 0 2px 12px">• Moore&#x27;s curve is <b>closed</b>: the last point is adjacent to the first.</p>
+<p>Hilbert&#x27;s is not.</p>
+<p style="margin:2px 0 2px 12px">• *Locality.* For a gap of `<code style="color:#22d3bf">k</code>` in index, the mean Euclidean distance</p>
+<p>grows like `<code style="color:#22d3bf">sqrt(k)</code>` for Hilbert and much faster for row-major. That is</p>
+<p>why Hilbert order is used for spatial indexes, and it is measurable here</p>
+<p>rather than asserted.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: unknown </code><code style="color:#22d3bf">kind</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">order &lt; 1</code>`; the grid would</p>
+<p>exceed the cap; `<code style="color:#22d3bf">moore</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">order &lt; 2</code>` (it is not defined below that).</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• **complex 輸入一律 <code style="color:#22d3bf">ValueError</code>** —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• **含被遮罩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒絕「剝掉遮罩直接使用下面原值」的隱式轉換。請明確選擇填補還是丟棄。</p>
+<p style="margin:2px 0 2px 12px">• **所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明確給出個數後拒絕 —— 它會汙染整個結果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形狀嚴格</b>:不對 1-D 與 2-D 做隱式提升或廣播(向量槽位收到矩陣、矩陣槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;請明確 reshape)。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩陣的運算子與 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超過 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 萬個元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_theorems_as_pictures">poc_theorems_as_pictures</a> — <code style="color:#22d3bf">py -3.11 examples/poc_theorems_as_pictures.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">pairs</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opmath:neighbour_index_gaps">neighbour_index_gaps</a> · <a style="color:#22d3bf" href="opmath:curve_locality">curve_locality</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">construct</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:circle_packing_apollonian">circle_packing_apollonian</a> · <a style="color:#22d3bf" href="opmath:ford_circles">ford_circles</a> · <a style="color:#22d3bf" href="opmath:phyllotaxis_pattern">phyllotaxis_pattern</a> · <a style="color:#22d3bf" href="opmath:neighbour_index_gaps">neighbour_index_gaps</a> · <a style="color:#22d3bf" href="opmath:ifs_fractal">ifs_fractal</a> · <a style="color:#22d3bf" href="opmath:ifs_similarity_dimension">ifs_similarity_dimension</a> · <a style="color:#22d3bf" href="opmath:curve_locality">curve_locality</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

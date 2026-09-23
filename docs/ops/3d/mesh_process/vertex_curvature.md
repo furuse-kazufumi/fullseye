@@ -4,7 +4,7 @@ dim: 3d
 category: mesh_process
 in: mesh
 out: curvature
-examples: [dl_mesh_curvature, mesh_props]
+examples: [dl_mesh_curvature, mesh_props, minimal_surfaces]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.2  # fullseye lib version this note was generated for
@@ -55,6 +55,7 @@ Raises:
 
 - [dl_mesh_curvature](../../../../examples_3d/dl_mesh_curvature.py) — `py -3.11 examples_3d/dl_mesh_curvature.py`
 - [mesh_props](../../../../examples_3d/mesh_props.py) — `py -3.11 examples_3d/mesh_props.py`
+- [minimal_surfaces](../../../../examples_3d/minimal_surfaces.py) — `py -3.11 examples_3d/minimal_surfaces.py`
 
 ## 型が繋がる次の op(`curvature` を入力に取れる)
 

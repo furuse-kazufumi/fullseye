@@ -583,14 +583,26 @@ def section8_tool_gaps():
     print("      (この PoC は scipy.ndimage.gaussian_filter を直に呼んでいる)。")
 
     # (b) 周波数ノッチ / 周期ノイズ除去の op が無い
-    for kw in ("notch", "moire", "periodic", "destripe", "mura"):
+    # ★2026-09-23: 語の網を ("notch", "destripe", "mura") に狭めた。npr 族が入って
+    #   'moire' と 'periodic' が引っかかるようになったが、`halftone_moire_period` は
+    #   **うなりの周期を予言する** op であって**落とす** op ではない —— 穴は残っている。
+    #   「語で引く穴の固定」は、別の意味で同じ語を使う族が来た瞬間に偽陽性になる
+    #   (この PoC は (a) で `fly_hex_lattice` の例を既に書いている)。**穴の主張は
+    #   語でなく「何ができないか」で書くこと**: ここで無いのは「特定の (fx, fy) を
+    #   落とす」op であって、「モアレという語を含む op」ではない。
+    for kw in ("notch", "destripe", "mura"):
         hit = [n for n in allnames if kw in n.lower()]
         assert not hit, (kw, hit)
-    print("  (b) ★★**周波数ノッチの op が 3 層のどこにも無い**('notch'/'moire'/")
-    print("      'periodic'/'destripe'/'mura' で 0 件)。`bandpass_image` は等方の")
-    print("      帯域で、**特定の (fx, fy) を落とす**ことはできない。4 節のノッチは")
-    print("      この PoC が numpy で書いた。周期ノイズ除去は産業用画像処理の定番なので、")
+    # 予言する側は**在ること**を確かめる(逆向きの回帰検査)
+    assert "halftone_moire_period" in allnames
+    print("  (b) ★★**周波数ノッチの op が 3 層のどこにも無い**('notch'/'destripe'/")
+    print("      'mura' で 0 件)。`bandpass_image` は等方の帯域で、**特定の (fx, fy) を")
+    print("      落とす**ことはできない。4 節のノッチはこの PoC が numpy で書いた。")
+    print("      周期ノイズ除去は産業用画像処理の定番なので、")
     print("      `notch_filter(img, freqs, radius)` は族に入れる価値がある。")
+    print("      ★**半分は埋まった**(2026-09-23): `halftone_moire_period` がうなりの")
+    print("      周期と向きを**描く前に**返すので、ノッチを置く周波数は探さずに")
+    print("      決まる。残っているのは「そこを落とす」側だけ。")
 
     # (c) 2 次元の周波数解析が「放射平均」しかない
     # 同じ radial 周波数 0.05、向きだけが 0 度 / 45 度違う 2 枚
@@ -620,13 +632,24 @@ def section8_tool_gaps():
     print("      周波数領域で何か**する**(ノッチ・位相を見る・逆変換する)には使えない。")
     print("      `fft_image_inv` があるのに、その間をつなぐ複素の口が公開されていない。")
 
-    # (e) op_find が「モアレ」「エイリアス」で何も返さない
-    for q in ("moire", "aliasing", "notch"):
-        assert fs.op_find(q) == [] or all(
-            "moire" not in r["op"] for r in fs.op_find(q)), q
-    print("  (e) `fs.op_find(\"moire\")` / `(\"aliasing\")` / `(\"notch\")` が空。")
-    print("      ディスプレイ検査・印刷検査で最初に引く語なので、")
-    print("      族の名前か docstring に入れておくと、この PoC の遠回りが減る。")
+    # (e) op_find が「エイリアス」「ノッチ」で何も返さない
+    # ★2026-09-23: **"moire" はここから外した** —— この PoC が「族の名前か docstring
+    #   に入れておけ」と書いた提案がそのまま実装され、`halftone_moire_period` が
+    #   引けるようになったため。穴の記録は**埋まったら埋まったと書く**(消さない):
+    #   消すと「昔から在った」ことになり、何が効いたのかが記録から落ちる。
+    # ★元の判定は「名前にその語を持つ op が返らないこと」(docstring 一致は数えない)。
+    #   `op_find` は docstring も語幹も拾うので、素の `== []` にすると
+    #   `edge_alias_energy` のような無関係の族で必ず鳴る(一度そう書いて落ちた)。
+    for q in ("aliasing", "notch"):
+        named = [r["op"] for r in fs.op_find(q) if q in r["op"].lower()]
+        assert not named, (q, named)
+    moire_hits = [r["op"] for r in fs.op_find("moire")]
+    assert moire_hits == ["halftone_moire_period"], moire_hits
+    print("  (e) `fs.op_find(\"aliasing\")` / `(\"notch\")` は依然として空。")
+    print("      ★`fs.op_find(\"moire\")` は **2026-09-23 に埋まった** ——")
+    print("      この PoC の提案(「族の名前か docstring に入れておくと遠回りが")
+    print("      減る」)がそのまま実装され、`halftone_moire_period` で引ける。")
+    print("      ディスプレイ検査・印刷検査で最初に引く語はあと 2 語。")
     print()
     print("  次にやるべきこと: (b) の `notch_filter` と (c) の方向別スペクトルを")
     print("  `filters_freq` 族へ。ただし 5 節の 2 つの境界 ——「2 次元距離 < ノッチ半径")

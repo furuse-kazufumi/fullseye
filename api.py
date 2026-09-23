@@ -337,6 +337,18 @@ from mathops import (  # noqa: E402,F401
     cplx_plane_grid, cplx_rational_field, cplx_domain_colour,
     cplx_newton_basins, cplx_escape_time, mandelbrot_interior,
     potential_flow_joukowski, joukowski_circulation,
+    # 定理が門になる図(2026-09-23)
+    circle_packing_apollonian, ford_circles,
+    phyllotaxis_pattern, neighbour_index_gaps,
+    ifs_fractal, ifs_similarity_dimension,
+    space_filling_curve, curve_locality,
+    # 波動 —— 膜の固有モード・干渉・回折(2026-09-23)
+    wave_membrane_mode, wave_mode_frequencies, wave_nodal_lines,
+    wave_two_slit, wave_fringe_period, wave_grating_orders,
+    # 力学系 —— 積む・断面・指数・分岐(2026-09-23)
+    ode_flow_states, ode_vector_field_grid, dynsys_poincare_section,
+    dynsys_lyapunov_spectrum, dynsys_bifurcation_map,
+    dynsys_correlation_dimension,
 )
 # 仮想マシンビジョン環境: 部品を買う前に「その構成で狙う欠陥が見つかるか」を
 # 閉形式の光学 + 数式で作った欠陥 + 撮像連鎖で先に確かめる層。
@@ -878,6 +890,16 @@ __all__ = [
     "cplx_plane_grid", "cplx_rational_field", "cplx_domain_colour",
     "cplx_newton_basins", "cplx_escape_time", "mandelbrot_interior",
     "potential_flow_joukowski", "joukowski_circulation",
+    "circle_packing_apollonian", "ford_circles",
+    "phyllotaxis_pattern", "neighbour_index_gaps",
+    "ifs_fractal", "ifs_similarity_dimension",
+    "space_filling_curve", "curve_locality",
+    # 波動と力学系(2026-09-23)
+    "wave_membrane_mode", "wave_mode_frequencies", "wave_nodal_lines",
+    "wave_two_slit", "wave_fringe_period", "wave_grating_orders",
+    "ode_flow_states", "ode_vector_field_grid", "dynsys_poincare_section",
+    "dynsys_lyapunov_spectrum", "dynsys_bifurcation_map",
+    "dynsys_correlation_dimension",
     "visiondesign", "system_geometry", "resolving_power", "system_feasibility",
     "image_formation", "detectability_limit",
     "defectgen", "defect_scratch", "defect_pits", "defect_crack", "defect_blob",

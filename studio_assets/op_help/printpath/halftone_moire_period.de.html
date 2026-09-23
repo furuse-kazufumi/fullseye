@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">halftone_moire_period — PRINTPATH <code style="color:#22d3bf">npr</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.halftone_moire_period(lpi_a=60.0, angle_a_deg=45.0, lpi_b=60.0, angle_b_deg=75.0, pixel_um=25.4)</code> (die Implementierung direkt: <code style="color:#22d3bf">import printpath; printpath.halftone_moire_period(lpi_a=60.0, angle_a_deg=45.0, lpi_b=60.0, angle_b_deg=75.0, pixel_um=25.4)</code>; aus dem Register: <code style="color:#22d3bf">opsprintpath.get(&quot;halftone_moire_period&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Die Schwebung zwischen zwei Halbtonrastern — Periode und Richtung in geschlossener Form.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Each screen is a frequency <b>vector</b> `<code style="color:#22d3bf">f (cos t, sin t)</code>`; where two screens</p>
+<p>overlap the visible moiré is the difference vector, so its period is</p>
+<p>`<code style="color:#22d3bf">1 / |f_a - f_b|</code>` and its direction is that of the difference. For equal</p>
+<p>rulings the magnitude reduces to `<code style="color:#22d3bf">2 f sin(dt / 2)</code>`, which is why the beat</p>
+<p>period grows without bound as the angle difference goes to zero — two plates</p>
+<p>at nearly the same angle give a huge, very visible moiré.</p>
+<p>★<b>Why this earns its place</b>: the prediction is available <b>before</b> any</p>
+<p>screen is drawn, and :func:<code style="color:#22d3bf">halftone_screen</code> plus an FFT can measure the beat</p>
+<p>out of the picture. Two independent routes to one number.</p>
+<p>Returns a `<code style="color:#22d3bf">table</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">period_px</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">angle_deg</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">freq_cycles_per_px</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-positive ruling or pitch; two screens that are</p>
+<p>identical in both ruling and angle (the difference vanishes — there is no</p>
+<p>beat, and returning `<code style="color:#22d3bf">inf</code>` silently would be worse than saying so).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">Leitfaden zur Familie printpath</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_beats_fringes_and_screens">poc_beats_fringes_and_screens</a> — <code style="color:#22d3bf">py -3.11 examples/poc_beats_fringes_and_screens.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_moire_screen">poc_moire_screen</a> — <code style="color:#22d3bf">py -3.11 examples/poc_moire_screen.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_registration">poc_print_registration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_registration.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:gcode_write">gcode_write</a> · <a style="color:#22d3bf" href="opprintpath:gcode_extrusion_volume">gcode_extrusion_volume</a> · <a style="color:#22d3bf" href="opprintpath:gcode_time_estimate">gcode_time_estimate</a> · <a style="color:#22d3bf" href="opprintpath:gcode_layer_image">gcode_layer_image</a> · <a style="color:#22d3bf" href="opprintpath:contours_to_gcode">contours_to_gcode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">npr</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:halftone_screen">halftone_screen</a> · <a style="color:#22d3bf" href="opprintpath:engrave_lines">engrave_lines</a> · <a style="color:#22d3bf" href="opprintpath:hatch_field">hatch_field</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_sites">mosaic_tiles_sites</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_render">mosaic_tiles_render</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

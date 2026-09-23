@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mosaic_tiles_render — PRINTPATH <code style="color:#22d3bf">npr</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mosaic_tiles_render(image, sites)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import printpath; printpath.mosaic_tiles_render(image, sites)</code>、台帳から引くなら <code style="color:#22d3bf">opsprintpath.get(&quot;mosaic_tiles_render&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>各ボロノイ胞を、持っている画素の<b>平均</b>で塗る。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>★<b>Why the mean and not something prettier</b>: for a fixed partition the mean</p>
+<p>is the `<code style="color:#22d3bf">L2</code>`-optimal constant — no other value lowers the squared error</p>
+<p>inside the cell. The tile colour is therefore a solution, not a taste, and any</p>
+<p>alternative can be *shown* to be worse by evaluating the same sum.</p>
+<p>Returns an `<code style="color:#22d3bf">image2d</code>`: the mosaic.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: sites not (N, 2) with N &gt;= 1; sites outside the</p>
+<p>image; a non-finite or oversized image.</p>
+<p>Limits: cells are convex polygons, so this does not imitate the irregular</p>
+<p>tesserae of real mosaic and never runs a single tile along an edge the way a</p>
+<p>mosaicist would.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_beats_fringes_and_screens">poc_beats_fringes_and_screens</a> — <code style="color:#22d3bf">py -3.11 examples/poc_beats_fringes_and_screens.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:stipple_points_from_image">stipple_points_from_image</a> · <a style="color:#22d3bf" href="opprintpath:stipple_energy">stipple_energy</a> · <a style="color:#22d3bf" href="opprintpath:stroke_tone_error">stroke_tone_error</a> · <a style="color:#22d3bf" href="opprintpath:halftone_screen">halftone_screen</a> · <a style="color:#22d3bf" href="opprintpath:engrave_lines">engrave_lines</a> · <a style="color:#22d3bf" href="opprintpath:hatch_field">hatch_field</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_sites">mosaic_tiles_sites</a> · <a style="color:#22d3bf" href="opprintpath:print_layer_defect_map">print_layer_defect_map</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">npr</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:halftone_screen">halftone_screen</a> · <a style="color:#22d3bf" href="opprintpath:halftone_moire_period">halftone_moire_period</a> · <a style="color:#22d3bf" href="opprintpath:engrave_lines">engrave_lines</a> · <a style="color:#22d3bf" href="opprintpath:hatch_field">hatch_field</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_sites">mosaic_tiles_sites</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

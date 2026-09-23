@@ -1,0 +1,134 @@
+[
+ {
+  "file": "01_membrane.png",
+  "name": "membrane",
+  "caption": "固有値は π²(m²/a² + n²/b²)。**積の mnπ ではない**。モードの形は [-1, 1] の符号つきなので、image2d ではなく matrix で返す(image2d を名乗ると腹の位相が消える)。",
+  "shape": [
+   937,
+   1243,
+   3
+  ]
+ },
+ {
+  "file": "02_nodal.png",
+  "name": "nodal",
+  "caption": "(m, n) モードの節線は縦 m−1 本・横 n−1 本。円膜の節円は J₀ の零点 / k にある —— J′₀ の零点は腹の位置であって節ではない(取り違えると op が誤っているように見える)。",
+  "shape": [
+   937,
+   1243,
+   3
+  ]
+ },
+ {
+  "file": "03_fringes.png",
+  "name": "fringes",
+  "caption": "縞間隔は λD/d。波長を 550 → 450 nm にすると細かく、分離を倍にすると細かく、距離を倍にすると粗くなる ——どれも比が閉形式どおり。",
+  "shape": [
+   263,
+   2078,
+   3
+  ]
+ },
+ {
+  "file": "04_fringe_scaling.png",
+  "name": "fringe_scaling",
+  "caption": "重なっていることが主張。同じ式で答え合わせをするとこの図は必ず重なるので、測る側は FFT で独立に出している。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_grating.png",
+  "name": "grating",
+  "caption": "★デューティ 50 % の矩形格子は**偶数次が消える**(矩形波のフーリエ係数が偶数調波で 0)。強度比 3 次 / 1 次 = 1/9 も sinc(m/2)² の閉形式どおり。閉形式の wave_grating_orders は角度を返し、既存 grating_wavelengths で逆算すると元の 550 nm に戻る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_moire.png",
+  "name": "moire",
+  "caption": "新聞の 15° / 45° / 75° は差が 30° で、うなりが最も細かくなる組み合わせ。二重スリットの縞とまったく同じ「2 つの周波数ベクトルの差」の式で出ている。",
+  "shape": [
+   413,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "07_moire_scaling.png",
+  "name": "moire_scaling",
+  "caption": "★FFT の探す範囲を切らないと**スクリーン自身の山**(どの角度でも 16.7 px = 1/f)を拾って「予言と全然合わない」と読める。うなりは低周波側にある。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_halftone_tone.png",
+  "name": "halftone_tone",
+  "caption": "平均絶対差 0.0517。絵の良さではなく「何を保って何を捨てたか」を数で言うのが、この族の主張。",
+  "shape": [
+   605,
+   1576,
+   3
+  ]
+ },
+ {
+  "file": "09_engrave.png",
+  "name": "engrave",
+  "caption": "被覆率は線幅 / 間隔 = w/d。閉形式との差は 4 段すべてで 0.01 未満。「それらしい線」を引くのではなく、置いた墨の量を数で言える。",
+  "shape": [
+   413,
+   1330,
+   3
+  ]
+ },
+ {
+  "file": "10_hatch.png",
+  "name": "hatch",
+  "caption": "向きは既存 structure_tensor_orientation が決める(この族は構造テンソルを再実装しない)。★測るときに f_min を切らないと、線ではなく**濃淡の包絡**(元の縞と同じ 24 px)を拾って 90° ずれて見える。",
+  "shape": [
+   349,
+   1074,
+   3
+  ]
+ },
+ {
+  "file": "11_mosaic.png",
+  "name": "mosaic",
+  "caption": "Lloyd 反復でセルが等エネルギーに近づく。エネルギーを測るのは**既存の** stipple_energy(この族の実装を何も知らない)。セル平均は二乗誤差の最小点で、セルごとに全数走査して確かめてある。",
+  "shape": [
+   349,
+   1074,
+   3
+  ]
+ },
+ {
+  "file": "12_lloyd.png",
+  "name": "lloyd",
+  "caption": "下がり続けることが主張。上がった回があれば重心の計算か所属の割り当てが壊れている。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "13_numbers.png",
+  "name": "numbers",
+  "caption": "どの行も「使った式」ではない真値で採点している: 膜の閉形式とベッセルの零点、λD/d を測り返す別の op、既存 grating_wavelengths との往復、描く前のモアレ予言、w/d の閉形式、既存 structure_tensor_orientation、既存 stipple_energy。",
+  "shape": [
+   368,
+   869,
+   3
+  ],
+  "csv": "13_numbers.csv",
+  "tsv": "13_numbers.tsv"
+ }
+]

@@ -401,6 +401,39 @@ _CATALOG = {
         # 物理ベース合成プリセット(Hapke + raycast 影 + 環境光 0 + 線形トーン)
         ("render_regolith", "render_beauty", ["mesh"], "rgbimage", False),
     ],
+    # 正多面体からの構成(2026-09-23)。sdf_csg の球/箱/円環は**陰関数**の
+    # プリミティブで、頂点と面を持つ正多面体からの構成はここが初めて。
+    "polyhedron": [
+        # ★どれだけ細分しても**次数 5 の頂点はちょうど 12 個**。これは
+        # V - E + F = 2 の帰結であって実装の都合ではない(11 個でも 13 個でも
+        # 球にならない)。mesh_subdivide は任意メッシュの細分で、正多面体から
+        # の構成は持っていなかった。入力を取らない生成 op。
+        ("geodesic_dome", "render3d", [], "mesh", False),
+    ],
+    # ★極小曲面と掃引(2026-09-23)。極小曲面は**平均曲率 H が至るところ 0** の
+    # 曲面で、既存 `vertex_curvature` がまさにそれを測る —— 「これは極小曲面だ」
+    # という主張を、作り方を知らない op が採点する。カテノイドとヘリコイドは
+    # 等長なのでガウス曲率 K が一致するが、それは**必要条件にすぎない**(門に
+    # するのは H)。実測 |H| 中央値 0.0001 に対し、対照群の単位球 1.00004・
+    # 半径 1 の円柱 0.50000。
+    "surface": [
+        ("minimal_surface", "render3d", [], "mesh", False),
+        # 等長変形の族(t を振っても H は 0 のまま・面積も不変)。
+        ("minimal_surface_bend", "render3d", [], "mesh", False),
+        # ★これは**節面近似**であって厳密な三重周期極小曲面ではない。残差は
+        # 隠さず docstring に書く(主曲率スケールの 1 % 程度)。
+        ("gyroid_isosurface", "render3d", [], "mesh", False),
+        # 固体(印刷できる足場)。numpy だけで動くので scikit-image の無い環境
+        # でも使える —— メッシュ形と固体形を**別 op に分けた**理由は、引数で
+        # mesh か voxel が変わる関数には宣言 out 型を 1 つ与えられないから
+        # (`indices_to_labels` で踏んだ「1 語が 2 つの形を指す」型の嘘)。
+        ("gyroid_solid_mask", "render3d", [], "voxel", False),
+        # 軌道 → 管メッシュ(MATLAB の tubeplot 相当)。円を中心線にするとトーラス
+        # なので体積 2 pi^2 R r^2・表面積 4 pi^2 R r が解析解 = 既存 mesh_volume /
+        # mesh_area が真値を持つ。平行移動フレームで掃く(フレネ枠は直線部で
+        # 法線が定義できず、変曲点で従法線が反転して管がねじれる)。
+        ("curve3d_tube_mesh", "render3d", ["points"], "mesh", False),
+    ],
     "terrain": [  # 地形レリーフ(メッシュに実ジオメトリとして起伏・岩を足す。決定的 seed)
         ("mesh_displace_fbm", "render3d", ["mesh"], "mesh", False),
         # 面ごとの重み (M,) ndarray。旧宣言 "table" は型の嘘(chain_fuzz TYPEMISS 2026-09-03)

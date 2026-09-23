@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">halftone_screen — PRINTPATH <code style="color:#22d3bf">npr</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.halftone_screen(image, lpi=60.0, angle_deg=45.0, pixel_um=25.4, sharpness=8.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.halftone_screen(image, lpi=60.0, angle_deg=45.0, pixel_um=25.4, sharpness=8.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;halftone_screen&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>고전적인 회전 하프톤 스크린 —— 점의 면적이 농담을 나른다。</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Thresholds the image against a rotated periodic spot function (the product of</p>
+<p>two shifted cosines, the classical round-dot screen). *lpi* is lines per inch</p>
+<p>and *pixel_um* the pixel pitch, so the screen frequency in pixels follows the</p>
+<p>printing convention rather than a bare &quot;period in pixels&quot;.</p>
+<p>★<b>Why this earns its place</b>: two screens at different angles beat against</p>
+<p>one another, and the <b>period and direction of that moiré are a closed form</b></p>
+<p>(:func:<code style="color:#22d3bf">halftone_moire_period</code>) that can be predicted *before* anything is</p>
+<p>drawn and then measured out of the image. That is why newspaper printing puts</p>
+<p>the plates at 15°/45°/75° — the beat is pushed to a frequency the eye does not</p>
+<p>resolve — and this op lets that be shown as numbers, not folklore.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>image : 2-D array in [0, 1]</p>
+<p>Tone; 0 prints solid, 1 prints blank (the ink is `<code style="color:#22d3bf">1 - image</code>`).</p>
+<p>lpi : float</p>
+<p>Screen ruling, lines per inch. Newspapers use 65-85, magazines 133-175.</p>
+<p>angle_deg : float</p>
+<p>Screen angle. The classical set is K 45°, M 75°, C 15°, Y 0°.</p>
+<p>pixel_um : float</p>
+<p>Pixel pitch in micrometres (25.4 um = 1000 dpi).</p>
+<p>sharpness : float</p>
+<p>Edge hardness of the dot; large values give a hard threshold.</p>
+<p>Returns an `<code style="color:#22d3bf">image2d</code>`: 1 = paper, 0 = ink.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-positive lpi, pixel pitch or sharpness; a screen</p>
+<p>period below 2 px (it would alias — reported, never silently drawn); a</p>
+<p>non-finite or oversized image.</p>
+<p>Limits: this is a *screen*, not a printer. Dot gain, ink spread and</p>
+<p>registration error are not modelled, so measured ink is the geometric</p>
+<p>coverage and will read lighter than a real press.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_beats_fringes_and_screens">poc_beats_fringes_and_screens</a> — <code style="color:#22d3bf">py -3.11 examples/poc_beats_fringes_and_screens.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_registration">poc_print_registration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_registration.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">image2d</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:stipple_points_from_image">stipple_points_from_image</a> · <a style="color:#22d3bf" href="opprintpath:stipple_energy">stipple_energy</a> · <a style="color:#22d3bf" href="opprintpath:stroke_tone_error">stroke_tone_error</a> · <a style="color:#22d3bf" href="opprintpath:engrave_lines">engrave_lines</a> · <a style="color:#22d3bf" href="opprintpath:hatch_field">hatch_field</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_sites">mosaic_tiles_sites</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_render">mosaic_tiles_render</a> · <a style="color:#22d3bf" href="opprintpath:print_layer_defect_map">print_layer_defect_map</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">npr</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:halftone_moire_period">halftone_moire_period</a> · <a style="color:#22d3bf" href="opprintpath:engrave_lines">engrave_lines</a> · <a style="color:#22d3bf" href="opprintpath:hatch_field">hatch_field</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_sites">mosaic_tiles_sites</a> · <a style="color:#22d3bf" href="opprintpath:mosaic_tiles_render">mosaic_tiles_render</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

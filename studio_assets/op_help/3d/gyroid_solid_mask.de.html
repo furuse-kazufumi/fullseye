@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gyroid_solid_mask — 3D <code style="color:#22d3bf">surface</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">voxel</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gyroid_solid_mask(shape=(64, 64, 64), level=0.0, periods=1.0, thickness=0.3)</code> (die Implementierung direkt: <code style="color:#22d3bf">import render3d; render3d.gyroid_solid_mask(shape=(64, 64, 64), level=0.0, periods=1.0, thickness=0.3)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;gyroid_solid_mask&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Das Gyroid als druckbarer <b>Festkörper</b> — die Schale innerhalb ±*thickness* der Niveaufläche.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Returns a `<code style="color:#22d3bf">volume</code>` (float 0/1), so it feeds the existing voxel ops</p>
+<p>(`<code style="color:#22d3bf">vol_label</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">skeletonize_vol</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mesh_slice_stack</code>`) directly and needs</p>
+<p>no marching cubes —— this form works on bare numpy, while</p>
+<p>:func:<code style="color:#22d3bf">gyroid_isosurface</code> needs scikit-image.</p>
+<p>★<b>Why this earns its place</b>: at `<code style="color:#22d3bf">level = 0</code>` the field is odd under the</p>
+<p>body-centred inversion, so the solid fraction of the two sides is *exactly*</p>
+<p>equal —— a symmetry fact the mask can be checked against (the measured</p>
+<p>fraction above 0 converges on 0.5 as the grid refines), and the shell volume</p>
+<p>grows linearly in *thickness* for small *thickness* because the level set has</p>
+<p>finite area. Both are independent of how the field was sampled.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a grid below 8 per axis or over the cap;</p>
+<p>non-positive periods; a non-finite level; a negative thickness.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:minimal_surfaces">minimal_surfaces</a> — <code style="color:#22d3bf">py -3.11 examples_3d/minimal_surfaces.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">voxel</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a> · <a style="color:#22d3bf" href="op3d:curvature_maps">curvature_maps</a> · <a style="color:#22d3bf" href="op3d:edt_jfa">edt_jfa</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">surface</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:minimal_surface">minimal_surface</a> · <a style="color:#22d3bf" href="op3d:minimal_surface_bend">minimal_surface_bend</a> · <a style="color:#22d3bf" href="op3d:gyroid_isosurface">gyroid_isosurface</a> · <a style="color:#22d3bf" href="op3d:curve3d_tube_mesh">curve3d_tube_mesh</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render3d.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

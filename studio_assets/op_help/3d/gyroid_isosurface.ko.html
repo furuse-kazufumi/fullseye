@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gyroid_isosurface — 3D <code style="color:#22d3bf">surface</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">mesh</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gyroid_isosurface(shape=(64, 64, 64), level=0.0, periods=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import render3d; render3d.gyroid_isosurface(shape=(64, 64, 64), level=0.0, periods=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;gyroid_isosurface&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>자이로이드 —— 마디면 근사로 만드는 삼중 주기 곡면。</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Samples `<code style="color:#22d3bf">sin x cos y + sin y cos z + sin z cos x</code><code style="color:#22d3bf"> over </code><code style="color:#22d3bf">periods</code>` unit</p>
+<p>cells and extracts the level set. At `<code style="color:#22d3bf">level = 0</code>` the field is **odd under</p>
+<p>the body-centred inversion**, so the two sides have exactly equal volume —</p>
+<p>a symmetry fact, independent of the meshing, that the existing</p>
+<p>`<code style="color:#22d3bf">mesh_volume</code>` can be pointed at.</p>
+<p>★<b>Honest limit, stated in the contract</b>: this is the *nodal approximation*</p>
+<p>to the gyroid, not the exact triply periodic minimal surface. Schoen&#x27;s gyroid</p>
+<p>has `<code style="color:#22d3bf">H = 0</code>` everywhere; the nodal surface has a residual mean curvature</p>
+<p>(measured, not hidden) of about <b>12 % of the principal-curvature scale</b> at a</p>
+<p>64³ grid —— compare the exact families in :func:<code style="color:#22d3bf">minimal_surface</code>, whose</p>
+<p>`<code style="color:#22d3bf">|H|</code>` median is 1e-4 against a curvature scale of order 1. Use the gyroid as</p>
+<p>a scaffold and a picture, not as a claim of minimality.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>shape : (nz, ny, nx)</p>
+<p>level : float</p>
+<p>Iso value. 0 gives the balanced surface; non-zero splits the volume.</p>
+<p>periods : float</p>
+<p>Unit cells along each axis.</p>
+<p>Returns a `<code style="color:#22d3bf">mesh</code>` (vertices, faces).</p>
+<p>★The thickened <b>solid</b> form lives in :func:<code style="color:#22d3bf">gyroid_solid_mask</code>, not behind</p>
+<p>a keyword here —— one function that returns a mesh or a volume depending on an</p>
+<p>argument cannot be given a single declared output type, and a ledger row that</p>
+<p>lies about its output is the defect class this library keeps catching</p>
+<p>(`<code style="color:#22d3bf">indices_to_labels</code>`: one word covering a 1-D mask and a 3-D volume).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a grid below 8 per axis or over the cap;</p>
+<p>non-positive periods; a level outside the field&#x27;s range (no surface exists</p>
+<p>there — reported rather than returning an empty mesh); negative thickness.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:minimal_surfaces">minimal_surfaces</a> — <code style="color:#22d3bf">py -3.11 examples_3d/minimal_surfaces.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">mesh</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:supersample_mesh">supersample_mesh</a> · <a style="color:#22d3bf" href="op3d:render_beauty">render_beauty</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">surface</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:minimal_surface">minimal_surface</a> · <a style="color:#22d3bf" href="op3d:minimal_surface_bend">minimal_surface_bend</a> · <a style="color:#22d3bf" href="op3d:gyroid_solid_mask">gyroid_solid_mask</a> · <a style="color:#22d3bf" href="op3d:curve3d_tube_mesh">curve3d_tube_mesh</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render3d.py — 3D 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

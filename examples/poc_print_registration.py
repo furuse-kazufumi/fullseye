@@ -1280,20 +1280,31 @@ def section9_tool_gaps():
     #   「語で引く穴の固定」は、無関係の族が同じ語を使った瞬間に偽陽性になる、という実例。
     allowed_names = {"lattice": {"fly_hex_lattice"}}          # 名前に語を含んでよい op(名指し)
     allowed_ledger = {"lattice": "opsflyvision"}              # op_find が拾ってよい台帳(docstring が語を含む)
+    # ★2026-09-23: **'halftone' / 'screen' / 'moire' の 3 語は埋まった**。npr 族の
+    #   `halftone_screen`(回転網点の合成)と `halftone_moire_period`(2 版のうなりの
+    #   周期と向きを閉形式で)が入り、この PoC が「入口が 1 つも無い」と書いていた
+    #   うちの合成とモアレ予言はファサードから引ける。**穴の記録は消さずに、埋まった
+    #   語を「在ることの検査」に裏返す** —— 消すと「昔から在った」ことになる。
+    #   残っている穴は 'rosette' / 'misregist' / 'lpi' / 'trapping'(版ずれの測定、
+    #   スクリーン角/線数の推定、トラッピング)で、そちらが印刷検査の本丸。
+    filled = {"halftone_screen", "halftone_moire_period"}
+    for nm in sorted(filled):
+        assert nm in allnames, nm
     missing = {}
-    for kw in ("halftone", "screen", "rosette", "misregist", "lpi", "moire",
-               "trapping", "lattice"):
+    for kw in ("rosette", "misregist", "lpi", "trapping", "lattice"):
         hit = sorted(n for n in allnames if kw in n.lower() and n not in allowed_names.get(kw, set()))
         found = [f for f in fs.op_find(kw) if f.get("ledger") != allowed_ledger.get(kw) and f.get("match") != "doc"]
         missing[kw] = (hit, found)
         assert not hit, (kw, hit)
         assert not found, (kw, found)
-    print("  (a) ★**印刷の語彙が 4 層のどこにも無い**: 'halftone' / 'screen' /")
-    print("      'rosette' / 'misregist' / 'lpi' / 'moire' / 'trapping' /")
-    print("      'lattice' の 8 語で名前 0 件・op_find 0 件(例外は複眼の")
-    print("      `fly_hex_lattice` 1 件のみ = 網点の格子ではない)。網点の合成、")
-    print("      スクリーン角の推定、版ずれの測定はどれも産業用画像処理の定番で、")
-    print("      入口が 1 つも無いのは大きい。この PoC は合成器を numpy で書いた。")
+    print("  (a) ★**印刷の語彙の穴は半分残っている**: 'rosette' / 'misregist' /")
+    print("      'lpi' / 'trapping' / 'lattice' の 5 語で名前 0 件・op_find 0 件")
+    print("      (例外は複眼の `fly_hex_lattice` 1 件のみ = 網点の格子ではない)。")
+    print("      ★**2026-09-23 に 'halftone' / 'screen' / 'moire' は埋まった** ——")
+    print("      `halftone_screen`(回転網点の合成)と `halftone_moire_period`")
+    print("      (2 版のうなりの周期と向きを**描く前に**閉形式で)。")
+    print("      残っているのは**測る側** —— 版ずれの測定、スクリーン角と線数の")
+    print("      推定、ロゼットの評価で、この PoC はそちらを numpy で書いている。")
 
     # (b) 2 次元の並進を測る op が公開層に無い(周期性を意識したものは尚更)
     assert not hasattr(fs, "piv_cross_correlate")

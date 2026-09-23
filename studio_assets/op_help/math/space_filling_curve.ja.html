@@ -1,0 +1,49 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">space_filling_curve — MATH <code style="color:#22d3bf">construct</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">pairs</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.space_filling_curve(kind=&#x27;hilbert&#x27;, order=4)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.space_filling_curve(kind=&#x27;hilbert&#x27;, order=4)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;space_filling_curve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>`<code style="color:#22d3bf">2**order</code>` の正方格子上のヒルベルト/ムーア/走査順 —— 置換であることを検査つきで。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Returns the visiting order as `<code style="color:#22d3bf">pairs</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(4**order, 2)</code>` of integer grid</p>
+<p>coordinates. Two scan orders are included <b>as control groups</b>, not as</p>
+<p>filler: `<code style="color:#22d3bf">row_major</code>` jumps a whole row at the end of each line and</p>
+<p>`<code style="color:#22d3bf">boustrophedon</code>` (serpentine) does not, so &quot;consecutive points are</p>
+<p>adjacent&quot; separates them, and the locality measurement separates all four.</p>
+<p>★<b>Why this earns its place — the defining properties are integers</b>:</p>
+<p style="margin:2px 0 2px 12px">• The result visits `<code style="color:#22d3bf">4**order</code>` cells, <b>each exactly once</b>: a</p>
+<p>permutation, verified by sorting, not by sampling.</p>
+<p style="margin:2px 0 2px 12px">• For Hilbert, Moore and boustrophedon, **consecutive points are always at</p>
+<p>L1 distance exactly 1**. Row-major is not (it jumps at every line end),</p>
+<p>which is the control.</p>
+<p style="margin:2px 0 2px 12px">• Moore&#x27;s curve is <b>closed</b>: the last point is adjacent to the first.</p>
+<p>Hilbert&#x27;s is not.</p>
+<p style="margin:2px 0 2px 12px">• *Locality.* For a gap of `<code style="color:#22d3bf">k</code>` in index, the mean Euclidean distance</p>
+<p>grows like `<code style="color:#22d3bf">sqrt(k)</code>` for Hilbert and much faster for row-major. That is</p>
+<p>why Hilbert order is used for spatial indexes, and it is measurable here</p>
+<p>rather than asserted.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: unknown </code><code style="color:#22d3bf">kind</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">order &lt; 1</code>`; the grid would</p>
+<p>exceed the cap; `<code style="color:#22d3bf">moore</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">order &lt; 2</code>` (it is not defined below that).</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• **complex 入力は <code style="color:#22d3bf">ValueError</code>** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
+<p style="margin:2px 0 2px 12px">• **masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code>** — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**(件数を明示して拒否 — 結果全体に伝播するため)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形状は厳格</b>: 1-D と 2-D を暗黙昇格・ブロードキャストしない(vector 枠に matrix、matrix 枠に vector は <code style="color:#22d3bf">ValueError</code>。reshape を明示する)。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 行列を取る op と <code style="color:#22d3bf">stat_histogram</code> の bins は <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万要素)超で <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_theorems_as_pictures">poc_theorems_as_pictures</a> — <code style="color:#22d3bf">py -3.11 examples/poc_theorems_as_pictures.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pairs</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmath:neighbour_index_gaps">neighbour_index_gaps</a> · <a style="color:#22d3bf" href="opmath:curve_locality">curve_locality</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">construct</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:circle_packing_apollonian">circle_packing_apollonian</a> · <a style="color:#22d3bf" href="opmath:ford_circles">ford_circles</a> · <a style="color:#22d3bf" href="opmath:phyllotaxis_pattern">phyllotaxis_pattern</a> · <a style="color:#22d3bf" href="opmath:neighbour_index_gaps">neighbour_index_gaps</a> · <a style="color:#22d3bf" href="opmath:ifs_fractal">ifs_fractal</a> · <a style="color:#22d3bf" href="opmath:ifs_similarity_dimension">ifs_similarity_dimension</a> · <a style="color:#22d3bf" href="opmath:curve_locality">curve_locality</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

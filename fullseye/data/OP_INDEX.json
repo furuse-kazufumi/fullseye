@@ -1,10 +1,10 @@
 {
- "n_ops": 2105,
+ "n_ops": 2138,
  "tiers": {
   "color": 12,
-  "ledger": 1157,
+  "ledger": 1189,
   "nary": 17,
-  "registry": 919
+  "registry": 920
  },
  "sorts": [
   "angle",
@@ -2010,6 +2010,17 @@
    ]
   },
   {
+   "name": "circle_packing_apollonian",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "construct",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
+  },
+  {
    "name": "clearcoat_shade",
    "halcon": "",
    "in_sort": "rgbimage",
@@ -2790,6 +2801,32 @@
    "dim": "3d",
    "in_sorts": [
     "points"
+   ]
+  },
+  {
+   "name": "curve3d_tube_mesh",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "mesh",
+   "category": "surface",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
+   "name": "curve_locality",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "construct",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "pairs"
    ]
   },
   {
@@ -3716,6 +3753,54 @@
    ]
   },
   {
+   "name": "dynsys_bifurcation_map",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "dynsys",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
+  },
+  {
+   "name": "dynsys_correlation_dimension",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "measurement",
+   "category": "dynsys",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
+   "name": "dynsys_lyapunov_spectrum",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "signal",
+   "category": "dynsys",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
+  },
+  {
+   "name": "dynsys_poincare_section",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "pairs",
+   "category": "dynsys",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "edge_alias_energy",
    "halcon": "",
    "in_sort": "image2d",
@@ -3826,6 +3911,19 @@
    "dim": "shape2d",
    "in_sorts": [
     "pairs"
+   ]
+  },
+  {
+   "name": "engrave_lines",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "npr",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -4905,6 +5003,17 @@
    ]
   },
   {
+   "name": "ford_circles",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "construct",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
+  },
+  {
    "name": "fourier_smooth",
    "halcon": "",
    "in_sort": "pairs",
@@ -5307,6 +5416,17 @@
    "in_sorts": [
     "points"
    ]
+  },
+  {
+   "name": "geodesic_dome",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "mesh",
+   "category": "polyhedron",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": []
   },
   {
    "name": "geodesic_mesh",
@@ -5727,6 +5847,52 @@
    ]
   },
   {
+   "name": "gyroid_isosurface",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "mesh",
+   "category": "surface",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": []
+  },
+  {
+   "name": "gyroid_solid_mask",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "voxel",
+   "category": "surface",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": []
+  },
+  {
+   "name": "halftone_moire_period",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "npr",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": []
+  },
+  {
+   "name": "halftone_screen",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "npr",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "harris3d_keypoints",
    "halcon": "",
    "in_sort": "voxel",
@@ -5751,6 +5917,19 @@
    "in_sorts": [
     "phash",
     "phash"
+   ]
+  },
+  {
+   "name": "hatch_field",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "npr",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -5877,6 +6056,28 @@
     "points",
     "points"
    ]
+  },
+  {
+   "name": "ifs_fractal",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "construct",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
+  },
+  {
+   "name": "ifs_similarity_dimension",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "measurement",
+   "category": "construct",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
   },
   {
    "name": "illuminant_from_dichromatic_planes",
@@ -7844,6 +8045,28 @@
    ]
   },
   {
+   "name": "minimal_surface",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "mesh",
+   "category": "surface",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": []
+  },
+  {
+   "name": "minimal_surface_bend",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "mesh",
+   "category": "surface",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": []
+  },
+  {
    "name": "mirror_plane_from_pairs",
    "halcon": "",
    "in_sort": "points",
@@ -8071,6 +8294,33 @@
    ]
   },
   {
+   "name": "mosaic_tiles_render",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "npr",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "image2d",
+    "pairs"
+   ]
+  },
+  {
+   "name": "mosaic_tiles_sites",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "pairs",
+   "category": "npr",
+   "tier": "ledger",
+   "ledger": "opsprintpath",
+   "dim": "printpath",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "motion_energy_image",
    "halcon": "",
    "in_sort": "video",
@@ -8278,6 +8528,19 @@
    "dim": "oned",
    "in_sorts": [
     "signal"
+   ]
+  },
+  {
+   "name": "neighbour_index_gaps",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "signal",
+   "category": "construct",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "pairs"
    ]
   },
   {
@@ -8549,6 +8812,28 @@
    "in_sorts": [
     "signal"
    ]
+  },
+  {
+   "name": "ode_flow_states",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "dynsys",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
+  },
+  {
+   "name": "ode_vector_field_grid",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "flow2d",
+   "category": "dynsys",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
   },
   {
    "name": "opd_map",
@@ -9098,6 +9383,17 @@
    "in_sorts": [
     "image2d"
    ]
+  },
+  {
+   "name": "phyllotaxis_pattern",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "construct",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
   },
   {
    "name": "piv_cross_correlate",
@@ -12561,6 +12857,17 @@
    ]
   },
   {
+   "name": "space_filling_curve",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "construct",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
+  },
+  {
    "name": "spad_deadtime_apply",
    "halcon": "",
    "in_sort": "countrate",
@@ -15210,6 +15517,76 @@
    "in_sorts": [
     "image2d"
    ]
+  },
+  {
+   "name": "wave_fringe_period",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "measurement",
+   "category": "wave",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "wave_grating_orders",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "wave",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
+  },
+  {
+   "name": "wave_membrane_mode",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "matrix",
+   "category": "wave",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
+  },
+  {
+   "name": "wave_mode_frequencies",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "signal",
+   "category": "wave",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
+  },
+  {
+   "name": "wave_nodal_lines",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "mask",
+   "category": "wave",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "wave_two_slit",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "image2d",
+   "category": "wave",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
   },
   {
    "name": "wavefront_from_opd",
@@ -22644,6 +23021,16 @@
    "name": "tb_dtof_depth",
    "halcon": "",
    "in_sort": "counts",
+   "out_sort": "feature",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
+   "name": "tb_dynsys_correlation_dimension",
+   "halcon": "",
+   "in_sort": "points",
    "out_sort": "feature",
    "category": "typed",
    "tier": "registry",

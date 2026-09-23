@@ -4,7 +4,7 @@ dim: piv
 category: field
 in: flow2d
 out: image2d
-examples: [piv_field_analysis_tour]
+examples: [piv_field_analysis_tour, poc_what_a_picture_cannot_check]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.2  # fullseye lib version this note was generated for
@@ -35,6 +35,7 @@ version: 0.2.2  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [piv_field_analysis_tour](../../../../examples/piv_field_analysis_tour.py) — `py -3.11 examples/piv_field_analysis_tour.py`
+- [poc_what_a_picture_cannot_check](../../../../examples/poc_what_a_picture_cannot_check.py) — `py -3.11 examples/poc_what_a_picture_cannot_check.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

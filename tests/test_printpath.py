@@ -18,7 +18,10 @@ import fourierdesc as FD  # noqa: E402
 
 _OPS = ["gcode_read", "gcode_write", "gcode_extrusion_volume", "gcode_time_estimate", "gcode_layer_image",
         "mesh_slice_contours", "mesh_slice_stack", "contours_to_gcode", "read_3mf", "write_3mf", "print_layer_defect_map",
-        "stipple_points_from_image", "stipple_energy", "stroke_tour_closed", "mst_length", "stroke_resample_closed", "stroke_tone_error"]
+        "stipple_points_from_image", "stipple_energy", "stroke_tour_closed", "mst_length", "stroke_resample_closed", "stroke_tone_error",
+        # 様式化(2026-09-23)
+        "halftone_screen", "halftone_moire_period", "engrave_lines", "hatch_field",
+        "mosaic_tiles_sites", "mosaic_tiles_render"]
 FIL_AREA = np.pi * (1.75 / 2) ** 2
 
 
@@ -155,7 +158,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
 
     assert opsprintpath.missing() == []
     assert set(opsprintpath.OPSPRINTPATH) == set(_OPS) == set(P.__all__) - {"MAX_GCODE_SEGMENTS", "MAX_LAYER_PIXELS"}
-    assert len(opsprintpath.categories()) == 5   # stroke を足した
+    assert len(opsprintpath.categories()) == 6   # stroke と npr を足した
 
 
 def test_every_op_is_reachable_from_the_public_tier():

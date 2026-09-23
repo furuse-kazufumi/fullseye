@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(235 例)
+### 2-D 画像/信号/幾何(238 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -209,6 +209,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **analysis**
 - **MICrONS の脳の波 ―― 1 mm³ の視覚野で、配線は実測の応答をどこまで説明するか** — 同じニューロンの EM 配線と 2 光子応答を持つ MICrONS(Ding ら 2025)の公開表 12,894 体 × 120 コマと 1.69 M 対を、生データを commit せずに読む。実測応答を points_activity_video で 1 mm³ の波として回し、like-to-like を再現(結合 0.071 > 触れている 0.045 > 同領域 0.025、軸索ごとの置換帰無で 15 SD)、配線は近接以上を足す(相手平均との相関: 結合 0.24 > 触れている 0.18 > 同領域 0.12、対で 73 %)、conngraph の reservoir に実測を流した波は次数保存シャッフル 20 本の全部より高い(0.085 vs 0.048)が正直に薄い(標的 1 体に入力 1.8 本、広がりは対照と同じ)。reservoir は 1 段 1 ステップなので post は 1 コマずらして比べる。 `py -3.11 examples/poc_microns_brain_wave.py`
 - **動きの量子化 ―― 脳から筋へ、命令の次元はどこで落ちるか(MaleCNS の首と RL の関節を同じ物差しで)** — MaleCNS の 脳 → 下行ニューロン(首)→ 腹髄 → 運動ニューロン の部分グラフに乱数刺激 400 通りを前向きに通し、各層の実効次元(participation ratio)を読む: 282 > 61 > 8.7 > 2.4。層の大きさを揃えても脳は 249、送り手だけ混ぜた対照は MN 22 ——腹髄 → 筋の圧縮は配線の特異性、首は収束そのもの。向きだけの次元(単位ノルム)でも実配線 25 vs 対照 54。同じ数式で G1 のRL 歩行は 2.4〜4.1、ダンス 9、格闘 12、evis の筋活動 6〜9(桁の比較)。conngraph に 4 op を追加。 `py -3.11 examples/poc_connectome_motor_bottleneck.py`
+- **定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線)** — 数学的に美しい図は、きれいなので**合っているかを誰も確かめない** —— 実装が少し間違っていても円は詰まるし螺旋は回る。そこで 6 つの図を描き、**絵とは独立の真値**だけで採点した。★デカルトの円定理: 生成は反射で行うので、**接触を距離から探し直して**定理に入れる(depth 4 の 164 円で、見つかった接触 4 円の組すべてが相対ずれ 1e-13 以下)。★整数充填: 種 (−1,2,2,3) の曲率はどこまで行っても整数のまま(Lagarias–Mallows–Wilks)—— 絵では絶対に見えない誤りを捕まえる。★フォード円が接するのは **|p·s − q·r| = 1** のときに限る: 分母 12 までの 47 円・1,081 組で不一致 0、個数もオイラーの関数の和と一致。★★測地ドームは**次数 5 の頂点がちょうど 12 個**(f = 1,2,3,4,6 すべて、V−E+F=2)—— 次数は**既存の別実装** graph_degree_table に数えさせた(自分で数え直して自分と一致しても確かめたことにならない)。★葉序は角度をどう選んでも螺旋に見えるので絵を見ずに近傍の**番号差**を数える: 黄金角では山の 7/7 がフィボナッチ、対照群 137.0° と 90° は 2/7。★モランの式は**描く前に**次元を解き(シェルピンスキー 1.5850 = log3/log2 と 9 桁一致)、描いた点は既存 fractal_dimension が 1.6164 —— 導出も入力も違うので一致は偶然では起きない。相似でないアフィン写像(シダ)は拒否する。★空間充填曲線は 4^n 点をちょうど 1 回ずつ通り隣は距離 1(row_major は行末で跳ぶ = 対照群、閉じているのは moore だけ)。局所性は主張でなく**表**: ヒルベルトは k=32 で 6.38 ≈ √32、走査線は 16.07。 `py -3.11 examples/poc_theorems_as_pictures.py`
+- **うなりは一つ(干渉縞と印刷のモアレは同じ数学)** — 二重スリットの縞と、2 版を重ねた網点のモアレは教科書では別の章に載っているが、どちらも「2 つの周期構造の周波数ベクトルの差」で式は 1 本しかない —— その 1 本を両側から確かめた。★矩形膜の固有値は π²(m²/a² + n²/b²) で、正方膜の 8 モードが**最大差 0.00e+00** で一致(よく書かれる mnπ は積の式で、縮退の重複 5・5・10・10 まで見ると完全に別物)。節線の本数 m−1 / n−1 は整数なので丸めの余地がない。★円膜の節円は **J₀ の零点 / k** にある(J′₀ の零点は**腹** —— 取り違えると op が誤っているように見え、実際に一度読み違えた)。★縞間隔 λD/d は**作った op とは別の op**(wave_fringe_period)が測り返して 4 設定すべて比 0.998〜1.003。縞が 3 本入らない設定は拒む。★回折格子は既存 grating_wavelengths で逆算して **550.000000 nm** に戻り、伝播しない次数は角度を捏造しない。デューティ 50 % の矩形格子では**偶数次が消え**(矩形波のフーリエ係数が 0)、3 次 / 1 次の強度比は sinc(m/2)² の 1/9(実測 0.1140)。★★モアレの周期は**描く前に**閉形式で出し、重ねた絵の FFT で測り返して比 0.948〜0.986 —— ★探す範囲を切らないと**スクリーン自身の山**(どの角度でも 16.7 px = 1/f)を拾って「予言と全然合わない」と読める。同じスクリーン同士は inf を返さず拒む。★網点が捨てたのは階調で、**保ったのは局所の平均濃度**(4 周期の窓で平均すると元の濃淡に戻り、平均絶対差 0.0517)。★彫版線のインク率は w/d の閉形式と 4 段すべて**差 0.0000**。ハッチの向きは既存 structure_tensor_orientation が決め、向きが構成で分かっている縞で 0.0〜0.3° のずれ(★f_min を切らないと線ではなく**濃淡の包絡**を拾って 90° ずれて見える)。★Lloyd のエネルギーは**既存 stipple_energy** が測って単調減少、セル平均は L2 最適でセル 10 個を全数走査して反例 0。検査 36 件・図 13 枚。 `py -3.11 examples/poc_beats_fringes_and_screens.py`
+- **絵では確かめられないもの(力学系と極小曲面を定義と恒等式で採点する)** — ローレンツ・アトラクタの図は積分器が 1 次でも 4 次でも蝶に見え、極小曲面の図は平均曲率が 0 でなくてもきれいに見える —— 「見て分かる」が一切効かない族なので採点を全部絵の外から取った。★線形系の厳密解は expm(At)x₀ で、刻み半分にすると RK4 の誤差は**比 16.0 / 16.0 / 16.0**(4 次)、対照群のオイラー法は 2.08 / 2.04 / 2.02(1 次)、同じ dt=0.01 で 2.02e-02 対 3.33e-10。★★リアプノフ指数の**和**はトレース恒等式で厳密に −(σ+1+β) = −13.666667、実測 −13.666664(差 2.57e-06)—— 指数を出す手続き(接流 + QR)とは独立。λ₁ = 0.9142(公表値 0.906)、λ₂ = −0.008(理論 0)、保存系の対照群は和 4.87e-15。★周期倍分岐は r = 3 と 1+√6 が厳密で実測 2.999401 / 3.449260、δ = 4.7485(文献値 4.6692)。★**残差を隠さない**: 分岐点での収束は代数的なので有限の burn-in では必ず手前に見え、burn 2,000 → 20,000 で誤差が **10.9 倍縮む** —— 門は「誤差が小さい」ではなく「伸ばすと置いていった分だけ縮む」で置いた。★★相関次元は円 1.0061・カントール 0.6408(log2/log3 = 0.6309)だが平面は 1.8789(真値 2)—— 偏りの正体を**探し当ててから書いた**: 点数を 400 → 3,000 にしても 1.8825 / 1.8789 / 1.8709 と**動かず**、正体は**べき乗則を見る半径の窓**(既定は対距離の 1〜25 パーセンタイルで、上端が箱の端に当たり相関和が飽和する)。窓を狭めると 1.887 → 1.947 と真値に寄る。★★場の**発散は厳密に tr(A)・渦度は A₁₀−A₀₁** で、それを測るのは**PIV 族の既存 op**(piv_divergence / piv_vorticity)—— 4 通りすべて 1e-6 未満、ローレンツの xy 断面は −σ−1 = −11.000000。★円を中心線にした管はトーラスなので体積 2π²Rr²・表面積 4π²Rr が解析解で、既存 mesh_volume / mesh_area が比 0.997 / 0.999。まっすぐな区間を含む曲線でも半径が 0.150000000000 で崩れない(平行移動フレーム —— フレネ枠は直線部で法線が定義できない)。★★極小曲面は |H| 中央値 0.00002〜0.00014 で、対照群の単位球 1.00004・半径 1 の円柱 0.50000 —— 門が素通しでない証拠。カテノイドとヘリコイドはガウス曲率が一致するが(等長)それは**必要条件にすぎない**。等長な曲げは面積 17.6738〜17.6756 で不変。★ジャイロイドは体積比 0.499928 / 0.499981 / 0.499991(体心反転の対称性・格子に依らない)だが、**節面近似の残差は隠さず出す**(|H| / 主曲率スケール = 0.1250 —— Schoen のジャイロイドは H = 0)。検査 43 件・図 11 枚。 `py -3.11 examples/poc_what_a_picture_cannot_check.py`
 - **複素平面を「面」で見る(位相彩色・吸引域・脱出時間・翼まわりの流れ)** — 複素解析の図(位相彩色・ニュートンの吸引域・マンデルブロ集合・翼まわりの流れ)は、きれいなので**合っているかを誰も確かめない**種類の絵である。4 枚を描き、1 枚ごとに**絵とは独立の真値**を当てて採点した。零点と極は既存 op(cplx_winding_number)が数える(+3 / +1 / −2、窓の外は数えない対照群つき)。★位相彩色は**画素の RGB だけ**から色相の巻き数を読むと零点の位数になる(偏角の原理)。★★z²−1 のニュートン吸引域はCayley 1879 の厳密解 = 2 つの半平面で、512² = 262,144 画素が**1 画素も外れず**未収束 0。3 次は Cayley が解けなかった側で、同じ格子の境界画素が 1,026 → 13,348(13 倍)—— それでも共役対称は厳密。★主カージオイドと周期 2 球は**反復せずに**内側と言える閉形式で、85,624 画素が反例 0 件、ただし実際に残った 95,078 画素の 90.1 %(下界であることも数で出る)。c=0 のジュリア集合は単位円板(全数走査)。翼まわりの場は翼の外で正則なので cplx_cr_residual が 2.06e-04、循環は経路に依らず(外周 −3.0263 / 内周 −3.0263)、後縁が有限なのはクッタ条件のおかげで循環 0 なら 20 倍以上に発散する(対照群)。★揚力と薄翼理論の比は迎角にも速さにもよらず**厳密に a/b**(1.0940、ずれ < 1e-9)。 `py -3.11 examples/poc_complex_plane_fields.py`
 - **写真を 1 本の線にして、回る振り子に描かせる(濃淡 → 点描 → 巡回路 → フーリエ → G-code)** — 葛飾北斎「神奈川沖浪裏」(メトロポリタン美術館 CC0)の濃淡を 1 本の閉じた線にし、それを回る円の連鎖として描き直す。様式化は必ず「それらしい絵」が出るので、各段を数で門にした: 点描は濃淡を追うか(ランプで相関 0.9946、対照の一様画像では等間隔 cv 0.13)、★★**相関だけでは指数が見えない** —— 重心ボロノイの最適密度は √重み なので(Gersho)、実測の指数は 0.61 で暗さに比例していない(重みを二乗して 0.77)。巡回路は**最小全域木より短くなれない**ので比で言う(1.146、素朴な座標順は 41.4)、濃淡の再現は相関 0.984(同数のランダム線の対照群は +0.013)。★ペン幅は閉形式で解け、インク率は目標の 0.890 倍 —— 不足の 11 % が**線の重なりの量**。★★**ナイキストを先に確かめる**: 等弧長の打ち直しは間隔が線分より粗いと角を切って線が縮み、フーリエに載せる前に情報が落ちる(16,384 点で長さ保持 0.935 → 65,536 点で 0.984、誤差は 1/N)。★★円の本数はパーセバルで**描く前に**決まる(K=16 で 95.9 %、K=64 で 99.0 %)。GIF は**本物の回る腕**で、1 → 4 → 16 → 90 → 600 → 4000 本と増えるにつれ絵が正体を現す。出口は既存の G-code op で「1 本の線で紙の上 15.57 m、プロッタ最短 8.6 分」。--image で自分の写真でも走る。 `py -3.11 examples/poc_one_stroke_epicycles.py`
 - **高さは 2 つある・実データ編(公開された測量成果 523 点で、高さの取り違えを検出器にかける)** — NOAA/NGS の公開 datasheet は 1 点につき楕円体高 h(NAD 83)・正標高 H(NAVD 88)・ジオイド高 N(GEOID18)・地心直交座標を全部公開している —— コロラド州フロントレンジの 523 点で答え合わせ。既存 dem_geodetic_to_ecef は公開 (x,y,z) と rms 0.5 mm・最大 0.8 mm(これまで自分との往復しか測っていなかった)。0.25 度格子の双一次補間は公開 N と rms 11.1 cm で、GEOID18 と旧 GEOID12B のモデル差(平均 −1.0 cm)より大きい = 格子を細かくするほうが先に効く。格子外の 15 点は端で埋めず拒否。楕円体高を標高の列に入れると全点が直線 −N に乗って中央値 16.75 m 持ち上がる(外れ値に見えない)。★残差は由来を 1 文字も読まないのに、水準 1.6 cm < 網調整 1.9 cm < GPS 3.8 cm < VERTCON3 8.3 cm の順に並ぶ。生データは commit せず集計 56 KB だけ。 `py -3.11 examples/poc_geodetic_benchmarks_real.py`
@@ -340,7 +343,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **薄い欠陥はどこまで見えるか(実写の地に真値を仕込んで検出限界を測る)** — 「どこまで薄い傷が見えるか」は普通、平らな地に白色雑音を載せた合成画像で見積もる。その見積もりがどれだけ甘いかを、CC0 実写テクスチャ(brick / grass / gravel)に**位置・大きさ・振幅が既知のガウシアン欠陥を仕込んで**測る。比較相手は**検出器が実際に見る残差 σ を実写に揃えた**合成の地 —— 雑音の量を同じにしてから構造の効果だけを取り出す。★★雑音を揃えても実写の限界は 2.03〜3.47 倍高い: **限界を決めているのは雑音ではなく地の構造**。★背景窓 3 通り × 欠陥 σ 2 通り × 地 3 種の 18 通り全部で 比は 1 を超え(1.72〜4.56)、整合フィルタと `laplace_of_gauss` という独立な 2 検出器でも残る。★外した予測: 「欠陥が大きいほど差が開く」は**振幅の刻みが作った差**だった(34 段では σ=1.5 と σ=3.0 が別の格子点に丸まる。60 段にすると両方 3.30 倍で差が消える)。★★「実写だから場所で変わる」も誤り —— 場所による散らばりは brick 16.8 倍に対し grass 2.4 / gravel 3.3 で、**合成の 3.3 倍と区別がつかない**。散らばりを生むのは目地という**構造**であって「実写であること」ではない。★★ゼロ点(背景を引かず生の画素の最大点)は、**当てるだけなら整合フィルタより 0.65〜0.90 倍良い**(整合フィルタは地の構造も増幅するので損をする)。無欠陥面の空振りも brick では 0 対 0 の引き分け。分かれるのは**照明が 2 % ずれた瞬間**で、ゼロ点は 1 万画素あたり 10.3 回鳴り整合フィルタは 0.0 回 —— 生の画素の閾値は明るさの絶対値だから。**当てる力・空振り・ずれへの強さを別々に数えないと、役に立たない検出器を勝たせられる。** `py -3.11 examples/poc_real_defect_floor.py`
 - **捜索救難の走査幅(画像から測った 1 本の数字が計画を決める)** — 空撮画像から**横距離曲線**(機体直下からの横方向距離ごとの検出確率)を測り、その面積 W = ∫p dx を**走査幅**として捜索計画へ渡す。画像処理と意思決定を 1 本の数字でつなぐ展示。★走査幅の定義そのものを実証: 形の違う 4 本の曲線(実測 p / 幅 W の矩形 / 底辺 2W の三角形 / 二峰形)を同じ面積 256.2 m に揃えると、検出割合は 0.2559 / 0.2563 / 0.2556 / 0.2566 —— **4 つとも予測 0.2562 の 0.8σ 以内**。**形は消え、面積だけが残る**。★崖は C = W v t / A = 1。閉形式を先に印字して min(1,C) = 1.0000 / 1-exp(-C) = 0.6321、矩形の対照で実測 1.0000 / 0.6348(+0.005 は航跡が有限本 n=64 のためで、厳密 1-(1-W/Wd)^64 = 0.6350)。★★予測を外した 1: 実測の p を入れると平行捜索は **0.8464** で 1.000 に届かない。min(1,C) は p が幅 W の**矩形**であること(定値域則)に依存していて、裾を引く実曲線では隣の航跡と裾が重なる。★★予測を外した 2: 「平らな曲線のほうが矩形に近く平行捜索に強い」と予測したが**逆**(0.7705 対 0.8464)。矩形に近いとは『平ら』ではなく『W の内側に立ち、外へ裾を引かない』こと(支持域/W が 2.40 対 2.25)。同条件でも**ランダム捜索では 2 本が一致する**(面積しか見ない)。★★予測を外した 3: 「端は解像度が落ちる」—— ナディア向き中心投影では**地上分解能は端まで一定**(相対ばらつき 0.0e+00)。落ちるのは cos^4・大気・軸外ぼけのほうで、f-theta なら 2.132 倍粗くなる。★★予測を外した 4: 「背景を引けば良くなる」—— 画像全体の中央値と σ で割るのは**アフィン変換で順位が変わらない**(174.4 → 172.0 m)。効くのは**場所ごと**に引いたときだけ(239.6 m)。★最適高度は内点(220 m で W = 258.1 ± 4.0 m)。ただし 220 m と 300 m は標準誤差内で**測り分けられていない**と明記。掃引速度 W·v で見ると、v ∝ min(1,h/600) の機体では最適が 420 m へ動く。★見張り役: **誤検出は端ではなく直下に集中**(0-32 m 帯 113 件 / 最外帯 0 件)—— 目標も白波も同じ cos^4 で暗くなるので、いちばんよく見える所がいちばん吠える。閾値だけで W は 406 → 170 m 動くので、**『走査幅 400 m』は誤検出率と対でなければ何も言っていない**。★素材側の穴も 1 つ: 点源を画素中心 1 点標本で描くと総フラックス誤差 4.6e-07 なのに**ピークが σ=0.9 px で 10.6 % 過大**になり、σ が横距離で変わるので横距離曲線そのものが傾く。erf で画素を厳密積分するよう直した。★★道具の穴を 4 つ見つけ、うち 1 つはその場で埋めた: op_find の語の切り出しが ASCII 限定で、**和文の複数語クエリは構造的に必ず 0 件**だった(採点する doc も docstring の 1 行目だけ)。CJK の段を足し、star_detect の docstring に分野中立の説明語を書いた。 `py -3.11 examples/poc_search_sweep_width.py`
 
-### 3-D 点群/体積/曲面(119 例)
+### 3-D 点群/体積/曲面(121 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -358,6 +361,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **metrology**
 - **平面度メトロロジー(基準面からの偏差)** — 点群に平面を当て、基準面からの偏差=平面度を測る。既知の膨らみ高さと一致することで検証。 `py -3.11 examples_3d/plane_flatness.py`
+- **測地ドーム — オイラーの公式が 5 角形を 12 個に縛る** — 正二十面体を細分して球に射影する。f を 1→6 と上げると頂点は 12→362 に増えるが、**次数 5 の頂点はどれだけ細分してもちょうど 12 個**(V−E+F=2 の帰結で、11 でも 13 でも球にならない)。次数は別実装の graph_degree_table に数えさせる。半径を変えても位相は不変、半球は切り口を持つので頂点が減る。 `py -3.11 examples_3d/geodesic_dome.py`
+- **極小曲面と管メッシュ — 定義そのものが門になる** — 極小曲面とは「平均曲率 H が至るところ 0」の曲面で、既存 vertex_curvature がまさにそれを測る —— 「これは極小曲面だ」という主張を**作り方を知らない op が採点**する。カテノイド・ヘリコイド・エンネパー・シェルクの |H| 中央値は 0.00002〜0.00014 で、対照群の単位球は 1.00004・半径 1 の円柱は 0.50000(門が素通しでない証拠)。★ガウス曲率 K の一致は**必要条件にすぎない**(カテノイドとヘリコイドは等長なので K が一致するが、K が一致しても極小とは限らない)。等長な曲げの族は面積 17.6738〜17.6756 で不変。ジャイロイドは体積比 0.499928 / 0.499981 / 0.499991(体心反転の対称性・格子に依らない)だが、**節面近似の残差は隠さず出す**(|H| / 主曲率スケール = 0.1250)。円を中心線にした管はトーラスなので体積 2π²Rr²・表面積 4π²Rr が解析解で、既存 mesh_volume / mesh_area が比 0.997 / 0.999。まっすぐな区間を含む曲線でも半径が 0.150000000000 で崩れない(平行移動フレーム —— フレネ枠は直線部で法線が定義できない)。 `py -3.11 examples_3d/minimal_surfaces.py`
 - **真球度/丸さ検査** — 点群に球を当て、真球からの偏差=真球度を測る。完全な球ほど偏差が小さいことを確認。 `py -3.11 examples_3d/roundness.py`
 - **30%外れ値下での頑健プリミティブ適合** — 平面/球/円柱を RANSAC で当て、外れ値30%が混じってもパラメータを正しく復元する。 `py -3.11 examples_3d/ransac_prim.py`
 - **domain(処理領域)と boundary(境界殻)でメモリを絞って計測** — vol_reduce_domain で治具を消し vol_crop_domain でメモリ 1/34(実測)、vol_boundary の殻 19% を vol_boundary_points で物理mm点群化して fit_sphere3 が中心誤差 0.000mm、vol_uncrop は元フレームへ bit 一致で貼り戻し。 `py -3.11 examples_3d/roi_domain_boundary.py`
@@ -571,7 +576,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 366 ops / 66 categories。_
+_計 372 ops / 68 categories。_
 
 
 ### annotate3d(7)
@@ -607,8 +612,8 @@ _計 366 ops / 66 categories。_
 - `project` (`points → keypoints`) — 3D 点 (n,3) をカメラ (rvec,t,K) で 2D (n,2) に射影(透視除算)。 · 例: `bundle_adjust`
 
 ### curvature(5)
-- `principal_curvatures` (`points → curvature`) — 各点の主曲率 (k1>=k2)。→ (k1 (N,), k2 (N,))。 · 例: `curvature_grasp`, `itokawa_curvature`
-- `mean_curvature` (`points → signal`) — 平均曲率 H=(k1+k2)/2。→ (N,)。向きに依存する量。 · 例: `curvature_shape_index`
+- `principal_curvatures` (`points → curvature`) — 各点の主曲率 (k1>=k2)。→ (k1 (N,), k2 (N,))。 · 例: `curvature_grasp`, `itokawa_curvature`, `minimal_surfaces`
+- `mean_curvature` (`points → signal`) — 平均曲率 H=(k1+k2)/2。→ (N,)。向きに依存する量。 · 例: `curvature_shape_index`, `minimal_surfaces`
 - `gaussian_curvature` (`points → signal`) — ガウス曲率 K=k1·k2(法線の反転に不変)。→ (N,)。 · 例: `curvature_grasp`, `curvature_shape_index`
 - `shape_index` (`points → descriptor`) — Koenderink の shape index s∈[-1,1] (凸球+1・円柱+0.5・鞍点0・凹球-1)。→ (N,)。 · 例: `curvature_grasp`, `itokawa_curvature`
 - `estimate_normals` (`points → normals`) — 外向き(近傍重心から離れる)に統一した点群法線。→ (N,3)。 · 例: `cylinder_axis_metrology`, `feature_register`, `oriented_normals`
@@ -787,10 +792,10 @@ _計 366 ops / 66 categories。_
 - `decimate_qem` (`mesh → mesh`) — Quadric-error-metric edge-collapse decimation toward *target_faces*. · 例: `mesh_decimate`, `mesh_lod_download`, `mesh_resolution_demo`
 - `face_normals` (`mesh → normals`) — 三角形メッシュの**面法線**(各三角形の単位法線ベクトル)。→ (M,3)。 · 例: `mesh_props`
 - `vertex_normals` (`mesh → normals`) — 三角形メッシュの**頂点法線**(面積重み付きで集約した単位法線)。→ (N,3)。 · 例: `mesh_props`
-- `mesh_area` (`mesh → measurement`) — 三角形メッシュの**表面積**(全三角形面積の総和)。→ float。 · 例: `dl_mesh_curvature`, `mesh_props`
-- `vertex_curvature` (`mesh → curvature`) — 三角形メッシュの各頂点の**平均曲率の大きさ**(mean curvature magnitude)。→ (N,)。 · 例: `dl_mesh_curvature`, `mesh_props`
+- `mesh_area` (`mesh → measurement`) — 三角形メッシュの**表面積**(全三角形面積の総和)。→ float。 · 例: `dl_mesh_curvature`, `mesh_props`, `minimal_surfaces`
+- `vertex_curvature` (`mesh → curvature`) — 三角形メッシュの各頂点の**平均曲率の大きさ**(mean curvature magnitude)。→ (N,)。 · 例: `dl_mesh_curvature`, `mesh_props`, `minimal_surfaces`
 - `face_areas` (`mesh → signal`) — 三角形メッシュの**面ごとの面積** → ``(M,)``。 · 例: `mesh_props`
-- `mesh_volume` (`mesh → measurement`) — 閉じた三角形メッシュが囲む**符号付き体積** → float。 · 例: `hull_bounds`, `mesh_props`
+- `mesh_volume` (`mesh → measurement`) — 閉じた三角形メッシュが囲む**符号付き体積** → float。 · 例: `hull_bounds`, `mesh_props`, `minimal_surfaces`
 - `boundary_vertices` (`mesh → indices`) — 開いた縁(境界)に乗っている**頂点の index** → ``(K,)``。 · 例: `mesh_decimate`, `mesh_props`
 
 ### metrics(8)
@@ -852,6 +857,9 @@ _計 366 ops / 66 categories。_
 ### plane_sweep_stereo(2)
 - `plane_sweep_depth` (`image2d, image2d → depth`) — plane-sweep stereo で密な深度マップを推定。→ (H,W) depth。 · 例: `plane_sweep_depth`
 - `warp_by_plane` (`image2d → image2d`) — homography H で img を逆ワープ。→ out[y,x] = img(H·(x,y,1))(bilinear)。 · 例: `motion_scene`
+
+### polyhedron(1)
+- `geodesic_dome` (` → mesh`) — Geodesic sphere from a subdivided icosahedron — Euler decides the shape. · 例: `geodesic_dome`
 
 ### pose_estimation(3)
 - `dlt_pose` (`points, keypoints → pose`) — DLT で 3D-2D 対応からカメラ姿勢を復元(K 既知)。→ (R (3,3), t (3,))。6 点以上必要。 · 例: `pnp_pose_outliers`, `pose_estimation`
@@ -1024,6 +1032,13 @@ _計 366 ops / 66 categories。_
 - `inside_outside` (`points → signal`) — スーパー2次曲面の内外関数 F(表面=1, 内部<1, 外部>1)。 · 例: `superquadric_fit`
 - `superquadric_residual` (`points → measurement`) — Gross-Boult 体積補正残差 mean( (sqrt(a1 a2 a3)(F^eps1 - 1))^2 )。 · 例: `superquadric_fit`
 
+### surface(5)
+- `minimal_surface` (` → mesh`) — A classical minimal surface, from its exact parametrisation. · 例: `minimal_surfaces`
+- `minimal_surface_bend` (` → mesh`) — The catenoid-helicoid bend — every member of the family is still minimal. · 例: `minimal_surfaces`
+- `gyroid_isosurface` (` → mesh`) — The gyroid — a triply periodic surface from its nodal approximation. · 例: `minimal_surfaces`
+- `gyroid_solid_mask` (` → voxel`) — The gyroid as a printable **solid**: the shell within ±*thickness* of the level set. · 例: `minimal_surfaces`
+- `curve3d_tube_mesh` (`points → mesh`) — A space curve as a tube mesh — the MATLAB ``tubeplot``, with a volume you can check. · 例: `minimal_surfaces`
+
 ### surface_fit(4)
 - `fit_poly_surface` (`image2d, image2d, image2d → poly_surface`) — 散布 (x,y,z) → z=f(x,y) 多項式最小二乗。返り値 model(coef/powers/degree/rms/pv)。 · 例: `contours_to_terrain`
 - `eval_poly_surface` (`poly_surface, image2d, image2d → image2d`) — model を (x,y) で評価 → z(x の shape で返す)。 · 例: `contours_to_terrain`
@@ -1073,7 +1088,7 @@ _計 366 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 931 ops / 48 categories。_
+_計 932 ops / 48 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1365,7 +1380,7 @@ _計 931 ops / 48 categories。_
 - `xcv3_brisk_count` `image → feature` · 例: `gallery2d_features`
 - `xcv3_agast_count` `image → feature` · 例: `gallery2d_features`
 - `xcv3_lsd_count` `image → feature` · 例: `gallery2d_features`
-- `fractal_dimension` `image → feature` · 例: `gallery2d_features`
+- `fractal_dimension` `image → feature` · 例: `gallery2d_features`, `poc_theorems_as_pictures`
 
 ### filtering(1)
 - `tf_gradient_domain_reintegrate` `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1937,7 +1952,7 @@ _計 931 ops / 48 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(154)
+### typed(155)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
@@ -2023,6 +2038,7 @@ _計 931 ops / 48 categories。_
 - `tb_stat_correlation` `matrix → matrix` · 例: なし
 - `tb_stat_zscore` `signal → signal` · 例: なし
 - `tb_cplx_cr_residual` `cimage → feature` · 例: なし
+- `tb_dynsys_correlation_dimension` `points → feature` · 例: なし
 - `tb_angular_spectrum_propagate` `cimage → cimage` · 例: なし
 - `tb_wetness` `rgbimage → rgbimage` · 例: なし
 - `tb_env_studio` `points → signal` · 例: なし
@@ -2160,7 +2176,7 @@ _計 42 ops / 3 categories。_
 - `signal_features` (`signal → table`) — A compact acoustic/vibration feature vector for anomaly detection:
 
 ## Math operators(opsmath)by category
-_計 35 ops / 4 categories。_
+_計 55 ops / 7 categories。_
 
 
 視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。北極星は「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
@@ -2185,6 +2201,24 @@ _計 35 ops / 4 categories。_
 - `potential_flow_joukowski` (` → cimage`) — Inviscid flow past a Joukowski aerofoil, as a complex velocity field.
 - `joukowski_circulation` (` → measurement`) — The Kutta circulation ``Gamma = 4*pi*a*U*sin(alpha + beta)`` for that section.
 
+### construct(8)
+- `circle_packing_apollonian` (` → table`) — Apollonian gasket from a Descartes quadruple — every circle a theorem.
+- `ford_circles` (` → table`) — Ford circles for the Farey fractions — tangency *is* an integer identity.
+- `phyllotaxis_pattern` (` → pairs`) — Vogel's spiral — the angle that packs best, and the spirals it makes.
+- `neighbour_index_gaps` (`pairs → signal`) — How far apart *in index* are a point's nearest neighbours — parastichy as a number.
+- `ifs_fractal` (` → pairs`) — Chaos game on an iterated function system — the dimension is a closed form.
+- `ifs_similarity_dimension` (` → measurement`) — Moran's equation ``sum(r_i**d) = 1`` solved for ``d`` — from the maps alone.
+- `space_filling_curve` (` → pairs`) — Hilbert / Moore / scan orders on a ``2**order`` square — a permutation, checked.
+- `curve_locality` (`pairs → table`) — Points ``k`` apart along the curve — how far apart are they on the plane?
+
+### dynsys(6)
+- `ode_flow_states` (` → table`) — Integrate a named vector field — the trajectory, with the order you paid for.
+- `ode_vector_field_grid` (` → flow2d`) — Sample a named field on a grid — a ``flow2d`` the existing viewers take.
+- `dynsys_poincare_section` (`table → pairs`) — Where a trajectory crosses a plane — with the crossing point interpolated.
+- `dynsys_lyapunov_spectrum` (` → signal`) — The Lyapunov spectrum by tangent flow + QR — and the sum you can check.
+- `dynsys_bifurcation_map` (` → pairs`) — The orbit diagram of a 1-D map — period doubling, as points you can count.
+- `dynsys_correlation_dimension` (`points → measurement`) — Grassberger-Procaccia correlation dimension — the slope of ``log C(r)``.
+
 ### interp_poly(6)
 - `interp_linear` (`signal, signal, signal → signal`) — Piecewise-linear interpolation of ``(x, y)`` samples at query *xq*.
 - `interp_cubic` (`signal, signal, signal → signal`) — Cubic-spline interpolation (``scipy.interpolate.CubicSpline``).
@@ -2207,6 +2241,14 @@ _計 35 ops / 4 categories。_
 - `stat_covariance` (`matrix → matrix`) — Sample covariance matrix of ``(N, D)`` observations → ``(D, D)``.
 - `stat_correlation` (`matrix → matrix`) — Pearson correlation matrix of ``(N, D)`` observations → ``(D, D)``.
 - `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
+
+### wave(6)
+- `wave_membrane_mode` (` → matrix`) — One eigenmode of a vibrating **membrane** — the shape the sand draws.
+- `wave_mode_frequencies` (` → signal`) — The eigenvalue ladder of a membrane — a closed form you can check against.
+- `wave_nodal_lines` (`matrix → mask`) — Where a signed field changes sign — the nodal set, as a mask.
+- `wave_two_slit` (` → image2d`) — Two-slit interference on a screen — built from the physics, not the fringe formula.
+- `wave_fringe_period` (`image2d → measurement`) — The period of a striped image, measured back out of it (pixels).
+- `wave_grating_orders` (` → table`) — Where a grating sends each order: ``d (sin_out - sin_in) = m lambda`` solved for the angle.
 
 ## Optics operators(opsoptics)by category
 _計 131 ops / 16 categories。_

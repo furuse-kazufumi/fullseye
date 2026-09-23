@@ -1,5 +1,5 @@
 {
- "generated_for": 931,
+ "generated_for": 932,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -14381,6 +14381,20 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "tb_dynsys_correlation_dimension": {
+   "extra": {
+    "a": "tb_dynsys_correlation_dimension.a.jpg",
+    "chain": "tb_dynsys_correlation_dimension.chain.jpg"
+   },
+   "fig": "tb_dynsys_correlation_dimension.png",
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "float",
+   "program": "img_to_points 0.50 0.50\ntb_dynsys_correlation_dimension 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "tb_elastic_deform": {
    "color_ok": false,
    "extra": {
@@ -21823,10 +21837,10 @@
   "domain": 3,
   "empty": 1,
   "failed": 0,
-  "ok": 927,
+  "ok": 928,
   "unreachable": 0,
-  "with_chain": 375,
+  "with_chain": 376,
   "with_gif": 40,
-  "with_sweep": 576
+  "with_sweep": 577
  }
 }

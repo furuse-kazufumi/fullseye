@@ -4,7 +4,7 @@ dim: 3d
 category: curvature
 in: points
 out: signal
-examples: [curvature_shape_index]
+examples: [curvature_shape_index, minimal_surfaces]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.2  # fullseye lib version this note was generated for
@@ -41,6 +41,7 @@ normals(向き付き参照法線, (N,3))未指定時は凸側ヒューリステ�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [curvature_shape_index](../../../../examples_3d/curvature_shape_index.py) — `py -3.11 examples_3d/curvature_shape_index.py`
+- [minimal_surfaces](../../../../examples_3d/minimal_surfaces.py) — `py -3.11 examples_3d/minimal_surfaces.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

@@ -1,0 +1,57 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ode_flow_states — MATH <code style="color:#22d3bf">dynsys</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ode_flow_states(system=&#x27;lorenz&#x27;, params=None, x0=None, t_end=40.0, dt=0.005, method=&#x27;rk4&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.ode_flow_states(system=&#x27;lorenz&#x27;, params=None, x0=None, t_end=40.0, dt=0.005, method=&#x27;rk4&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;ode_flow_states&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Integrate a named vector field — the trajectory, with the order you paid for.</p>
+<p>Explicit Runge-Kutta on one of the named systems (`<code style="color:#22d3bf">lorenz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">rossler</code>`,</p>
+<p>`<code style="color:#22d3bf">harmonic</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">linear</code><code style="color:#22d3bf">). </code><code style="color:#22d3bf">method=&quot;rk4&quot;</code>` is the classical 4th-order step;</p>
+<p>`<code style="color:#22d3bf">method=&quot;euler&quot;</code>` is there as a <b>control group</b> — the same picture comes out</p>
+<p>of both, and only the error tells them apart.</p>
+<p>★<b>Why the field is a name, not a function</b>: the typed ledger registers inputs</p>
+<p>by sort and the chain fuzzer builds arguments from data, so a callable can</p>
+<p>never be reached from there. A name (or, for `<code style="color:#22d3bf">linear</code>`, the matrix itself in</p>
+<p>`<code style="color:#22d3bf">params</code>`) keeps every op in this family reachable from the ledger.</p>
+<p>★<b>Why this earns its place</b>: for `<code style="color:#22d3bf">system=&quot;linear&quot;</code>` the exact solution is</p>
+<p>`<code style="color:#22d3bf">expm(A t) x0</code><code style="color:#22d3bf">, so the error is known in closed form — and halving </code><code style="color:#22d3bf">dt</code>`</p>
+<p>divides it by <b>16</b>, which is what &quot;4th order&quot; means. A drawing of an</p>
+<p>attractor cannot be checked; this can.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>system : str</p>
+<p>One of `<code style="color:#22d3bf">DYNSYS_SYSTEMS</code>`.</p>
+<p>params : floats or None</p>
+<p>System parameters (defaults in `<code style="color:#22d3bf">DYNSYS_SYSTEMS</code><code style="color:#22d3bf">). For </code><code style="color:#22d3bf">linear</code>` this is</p>
+<p>the matrix `<code style="color:#22d3bf">A</code><code style="color:#22d3bf"> in row-major order (</code><code style="color:#22d3bf">n*n</code>` numbers).</p>
+<p>x0 : floats or None</p>
+<p>Initial state (default: a point on the attractor / unit first coordinate).</p>
+<p>t_end, dt : float</p>
+<p>Integration window and step. `<code style="color:#22d3bf">t_end / dt</code>` must stay under 4,000,000.</p>
+<p>method : &quot;rk4&quot; | &quot;euler&quot;</p>
+<p>Returns a `<code style="color:#22d3bf">states</code><code style="color:#22d3bf"> table: </code><code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (S,) and </code><code style="color:#22d3bf">x</code>` (S, n).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: unknown system or method; wrong parameter count;</p>
+<p>non-finite input; `<code style="color:#22d3bf">dt</code>` not positive; a step count over the cap; a trajectory</p>
+<p>that left float range (the field diverged — reported, never silently clipped).</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every mathops op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
+<p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_what_a_picture_cannot_check">poc_what_a_picture_cannot_check</a> — <code style="color:#22d3bf">py -3.11 examples/poc_what_a_picture_cannot_check.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">dynsys</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:ode_vector_field_grid">ode_vector_field_grid</a> · <a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a> · <a style="color:#22d3bf" href="opmath:dynsys_lyapunov_spectrum">dynsys_lyapunov_spectrum</a> · <a style="color:#22d3bf" href="opmath:dynsys_bifurcation_map">dynsys_bifurcation_map</a> · <a style="color:#22d3bf" href="opmath:dynsys_correlation_dimension">dynsys_correlation_dimension</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
