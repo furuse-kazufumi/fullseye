@@ -10,7 +10,7 @@ public_private: true
 public_id: fe04f6eef40119913894
 ---
 
-> **言語 / Language**: **日本語** · English(準備中)
+> **言語 / Language**: **日本語** · [English](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b)
 
 # 数学の絵は、きれいなので誰も確かめない ―― 定理を門にして描く PoC シリーズ
 
