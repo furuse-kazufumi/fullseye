@@ -49,6 +49,7 @@ Each instalment is one drawing built to that bar, and each one ships with a **sc
 | 4 | [One beat — a two-slit fringe and a print moiré are the same mathematics](#4-one-beat--a-two-slit-fringe-and-a-print-moiré-are-the-same-mathematics) | Closed-form eigenvalues / zeros of Bessel functions / the grating equation / a predicted moiré period |
 | 5 | [What a picture cannot check — dynamical systems and minimal surfaces](#5-what-a-picture-cannot-check--dynamical-systems-and-minimal-surfaces) | The matrix exponential / the trace identity / exact bifurcation points / the definition H ≡ 0 |
 | 6 | [Making pictures that lie to the eye, then grading the measurement](#6-making-pictures-that-lie-to-the-eye-then-grading-the-measurement) | Lucas' theorem / Descartes' circle theorem / div(curl ψ) ≡ 0 / mass conservation |
+| 7 | [Auditing the instrument — where a caliper fails, and why](#7-auditing-the-instrument--where-a-caliper-fails-and-why) | Ground truth guaranteed by the generator / the fit residual / a declared expected width / the definition of an edge |
 
 ---
 
@@ -584,6 +585,149 @@ And one on speed. Building a full-image distance field per primitive cost **17.7
 It is **not for finished artwork**. Only pictures whose claim can be checked went in, so anything beautiful but uncheckable was left out — which also means every picture here can answer "why is that correct?".
 
 It also does not measure the **strength** of an illusion. How tilted the mortar *looks* is psychophysics and outside this family's remit. What is measured is only that it **is not tilted**.
+
+## 7. Auditing the instrument — where a caliper fails, and why
+
+### The pipeline
+
+```
+Generate a picture whose answer is already known (an illusion)
+  -> hand it to an industrial sub-pixel caliper
+  -> compare against the truth the generator guarantees
+  -> when it misses, find out why, and try to fix it
+  -> when it does not fix, say so
+```
+
+Round 6 produced pictures that ship with their own ground truth. Round 7 is what those pictures are for: **grading the instrument rather than the specimen**.
+
+Fullseye carries HALCON-style sub-pixel calipers — `measure_pos`, `measure_pairs`, `fuzzy_measure_pairing`, `apply_metrology_model`. These are the tools you point at a part on a production line to read a dimension. The question here is what happens when you point them at a figure the eye is *known* to get wrong.
+
+No new operator was written for this round. The generators and the calipers already live in the same box, so the whole audit closes in one script.
+
+### First: the instrument is right where the eye is wrong
+
+![A caliper on the cafe wall](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/01_caliper_on_cafe_wall.png?v=1)
+
+*↑ Blue is the reference line handed to `add_metrology_object_line_measure`; orange are the 41 edge points the model found by searching along the normal. The tiles still look tilted, yet the points lie on one straight line (rms = 0.0) and the refitted line comes back at **exactly 0.0 degrees**.*
+
+![Ebbinghaus](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/10_ebbinghaus_circle_caliper.png?v=1)
+
+*↑ The left disc looks smaller and the right one larger. The circle metrology object returns **29.996525 px and 29.996525 px** — a difference of **2.5e-12 px**. The difference the eye insists on is not in the image.*
+
+![Ebbinghaus radii](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/11_ebbinghaus_radius.png?v=1)
+
+*↑ Even with the axis expanded to a 0.2 px window the two points stay on top of each other. Both sit 0.0035 px below the nominal 30 px, but **that offset lands equally on both, so it cancels in the difference**.*
+
+### But one probe was not enough
+
+This is the part of the round I learned the most from.
+
+I first measured the cafe wall at a single setting (shift 0.25) and wrote down that **the instrument never moves under an illusion**. A clean result.
+
+Then I measured the whole grid: 5 shifts x 4 search half-widths, **all twenty combinations**.
+
+![The shift x half-width grid](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/03_cafe_wall_grid.png?v=1)
+
+*↑ Whenever the search half-width reaches the 8 px mortar band (10 px and 16 px), the fit tilts by 0.1429 degrees — but **only at shifts 0.125 and 0.375**. Shift 0.25 happened to be on the safe side.*
+
+![At native scale](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/05_caliper_grabbed_the_far_side.png?v=1)
+
+*↑ What is actually happening. In the full figure the 8 px jump collapses into invisibility, so this crops 34 rows around the mortar at native scale. In the lower panel some points sit on the **far side of the band** — the search reached the opposite boundary.*
+
+**Probed at the one setting that looks like the default, this defect is structurally invisible.**
+
+### The miss does not show in the answer. It shows in the residual.
+
+This is the part that carries over to real work.
+
+![Answer against residual](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/04_cafe_wall_residual.png?v=1)
+
+*↑ The same twenty combinations, with the answer (angle) and the residual (rms) plotted together.*
+
+When it misses, the angle reads **0.1429 degrees**. On the number alone that is "near enough to zero" and it passes. The residual, though, moves from **0.00 to 1.70** — an order of magnitude — and "angle is zero" agrees with "rms is zero" across all twenty cases.
+
+**Put the gate on the residual, not on the answer.** Whether the shape you fitted was actually there is not visible from the answer's side.
+
+### The instrument also fails — for a different reason than the eye
+
+![A caliper on Mueller-Lyer](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/06_muller_caliper.png?v=1)
+
+*↑ Two edges on the measurement line without arrowheads (top), **four** with them (bottom).*
+
+The arrowheads do not merely make the shaft look longer. They **put extra edges on the measurement line**. The caliper pairs adjacent edges of opposite polarity, so it ends up measuring an arrowhead stroke rather than the shaft — a width of 5.701 px.
+
+The eye fails by saying "longer"; the instrument fails by measuring something else entirely. **The two failure modes are not the same.**
+
+![Four answers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/07_muller_widths.png?v=1)
+
+*↑ One shaft, four answers, depending on how you measure. None of them is a bug.*
+
+### Declaring how you measure turns a quiet error into a visible refusal
+
+![Fuzzy score](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/08_fuzzy_score.png?v=1)
+
+*↑ `fuzzy_measure_pairing` told in advance that the width should be 220 px. Without arrowheads it scores 0.9988; with them, **0.0225**.*
+
+That is not a wrong number. It is the instrument **reporting, numerically, that no structure of the expected width is present**. Only adjacent opposite-polarity pairs are candidates, so the pair spanning the shaft is never even proposed.
+
+**Every constraint you declare converts a class of silent error into a refusal you can see.**
+
+### The 3.777 px was never the illusion. It was the edge definition.
+
+Even with the arrowheads removed the answer is 223.777 px against a truth of 220. Is that the illusion leaking in?
+
+![Edge definition](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/09_edge_definition.png?v=1)
+
+*↑ Sweeping the shaft length from 140 to 300 px leaves the offset at **+3.777 px, constant to within 0.0000 px**.*
+
+**A proportional error would mean a wrong scale; a constant one means the edge was never defined.** The shaft is drawn with a stroke width, so the distance between its outer edges exceeds the length of the segment by exactly that width. Subtract it and the truth comes back.
+
+### What moved was not the answer. It was the amount of evidence.
+
+![Zollner](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/12_zollner_caliper.png?v=1)
+
+*↑ All seven lines look like they converge; measured, the largest slope is **4.3e-04 degrees** — 0.0039 px of rise across 520 px of width.*
+
+![Slope and point count](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/13_zollner_angles.png?v=1)
+
+*↑ The slopes are indistinguishable from the zero line. What alternates is the **number of accepted edge points** — 13 and 19 out of 61 — because the hatch direction flips on every other line.*
+
+**"Measured" and "measured well" are different quantities.** Watch only the first and the difference never surfaces.
+
+### When it does not fix, say it does not fix
+
+![Poggendorff](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/14_poggendorff_caliper.png?v=1)
+
+*↑ The two visible segments are exactly one straight line, hidden by the band. Orange are the naive caliper's points; blue is the line refitted through the centre of both edges.*
+
+Here the instrument loses. Two segments that are collinear by construction come back **0.450 degrees** apart.
+
+The cause is identifiable: the **edge polarity alternates in runs** (41 points in 9 runs, +18 / −23). A thin line has an upper and a lower edge, and "the position of the line" is undefined until you say which one — or the middle. The caliper was moving between them.
+
+![Residuals](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/15_poggendorff_residual.png?v=1)
+
+*↑ Pairing both edges and taking the centre brings the angle difference from 0.450 to **0.115 degrees** and the residual from 2.07 to 0.10/0.39. **It does not reach zero.** The thin vertical rules at the band edges and the image border clip the measurement line, and that was not chased further — which is the honest state of it.*
+
+### The audit
+
+![The audit table](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/16_audit.png?v=1)
+
+*↑ No row in this table was decided by looking. The truth is guaranteed by the generator; the answers came from operators that already shipped.*
+
+Three rows recover the truth as it stands; five depart from it, in three distinct ways — **fixable by deciding** (search half-width, stroke-width offset), **convertible into a refusal** (declaring the expected width), and **not fixed** (Poggendorff).
+
+### What checking found
+
+Two things I wrote in this round **disagreed with the data**. Both surfaced from reading the generated captions back.
+
+1. The cafe-wall sweep caption said the number of accepted points changes with the search half-width. All four settings accept 41. The count that genuinely varies belongs to Zollner.
+2. The audit caption said two rows missed and that deciding brings them back. Five rows miss, and Poggendorff does not come back.
+
+**A caption is verified by reading what was generated, not by what you meant when you wrote it.** Even when the numbers are interpolated automatically, the prose around them is still written by hand, and it drifts the same way.
+
+### What this is not for
+
+This PoC does not argue that calipers are robust, or fragile, under illusions. It shows — with pictures that carry their own truth — that **the answer splits by exactly as much as you left undecided about how to measure**. It is useful as a desk check when choosing how to place a measurement line: search half-width, expected width, edge polarity. Sensor noise, uneven illumination and depth of field are not in it.
 
 ---
 

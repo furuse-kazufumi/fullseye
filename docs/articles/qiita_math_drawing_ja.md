@@ -49,6 +49,7 @@ public_id: fe04f6eef40119913894
 | 4 | [うなりは一つ ―― 干渉縞と印刷のモアレは同じ数学](#第-4-回-うなりは一つ--干渉縞と印刷のモアレは同じ数学) | 閉形式の固有値 / ベッセルの零点 / 格子式 / モアレ周期の予言 |
 | 5 | [絵では確かめられないもの ―― 力学系と極小曲面](#第-5-回-絵では確かめられないもの--力学系と極小曲面) | 行列指数関数 / トレース恒等式 / 厳密な分岐点 / H ≡ 0 という定義 |
 | 6 | [目が嘘をつく絵を作って、測る側を採点する](#第-6-回-目が嘘をつく絵を作って測る側を採点する) | リュカの定理 / デカルトの円定理 / div(curl ψ) ≡ 0 / 総量保存 |
+| 7 | [測定器のほうを健診する ―― キャリパーが外すのはどこで、なぜか](#第-7-回-測定器のほうを健診する--キャリパーが外すのはどこでなぜか) | 生成器が保証する真値 / 残差 rms / 想定幅の宣言 / 端の定義 |
 
 ---
 
@@ -584,6 +585,147 @@ print("|H| 中央値 %.5f(対照群の単位球は 1.0)" % np.median(H[np.isfini
 **作品としての完成度**には向きません。この族には**主張が検算できる図**しか入れていないので、美しいが検算できない図は、描けても入れていません。逆に言えば、ここにある絵は全部「なぜそれで正しいと言えるのか」に答えられます。
 
 また、錯視の**強さ**は測っていません(「どれくらい傾いて見えるか」は心理物理の話で、この族の守備範囲の外です)。測っているのは「**傾いていないこと**」だけです。
+
+## 第 7 回: 測定器のほうを健診する ―― キャリパーが外すのはどこで、なぜか
+
+### 手順
+
+```
+答えの分かっている絵(錯視)を作る → 産業用のサブピクセル測定器に測らせる
+→ 真値と突き合わせる → 外れたら「なぜ外れたか」を突き止め、直せるか試す
+→ 直らなかったものは、直らなかったと書く
+```
+
+第 6 回で「真値の付いた絵」が作れるようになりました。第 7 回はその絵の使い道です ―― **測られる側ではなく、測る側を採点します**。
+
+Fullseye には HALCON 流のサブピクセル測定器が入っています(`measure_pos` / `measure_pairs` / `fuzzy_measure_pairing` / `apply_metrology_model`)。工場で寸法を測るための道具です。この道具に、**目が確実に外すと分かっている図**を測らせるとどうなるか。
+
+★この回で**新しい op は 1 つも作っていません**。作る側と測る側が同じ箱に入っているので、答え合わせが 1 本のスクリプトで閉じます。
+
+### まず、測定器は目より正しい
+
+![カフェウォールにキャリパーを当てる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/01_caliper_on_cafe_wall.png?v=1)
+
+*↑ 青が与えた参照線、橙が測定器が**法線方向に探して見つけたエッジ点** 41 個。タイルは傾いて見えたままなのに、点は一直線に乗り(rms = 0.0)、当て直した直線の角度は**厳密に 0.0 度**。*
+
+![エビングハウス](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/10_ebbinghaus_circle_caliper.png?v=1)
+
+*↑ 左の円は小さく、右の円は大きく見えます。円の計測オブジェクトが返した半径は **29.996525 px と 29.996525 px** ―― 差は **2.5e-12 px**。目が主張する差は、画像の側には存在しません。*
+
+![エビングハウスの半径](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/11_ebbinghaus_radius.png?v=1)
+
+*↑ 縦軸を 0.2 px 幅まで拡大しても 2 点は重なったまま。どちらも指定の 30 px より 0.0035 px 小さいのですが、**そのずれは両方に同じだけ乗るので、差を取ると消えます**。*
+
+### ところが、探針 1 枚では足りなかった
+
+ここが、この回でいちばん学びになったところです。
+
+最初、カフェウォールを 1 通りの設定(ずらし量 0.25)だけで測って、「**測定器は錯視では決して動かない**」と書きました。きれいな結論です。
+
+そのあと、ずらし量 5 通り × 探索半幅 4 通りの **20 通り全部**を測りました。
+
+![ずらし量 × 探索半幅の格子](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/03_cafe_wall_grid.png?v=1)
+
+*↑ 探索半幅が目地の帯幅 8 px に届く 10 px と 16 px のとき、**ずらし量 0.125 と 0.375 でだけ** 0.1429 度傾きます。0.25 は、たまたま外れない側でした。*
+
+![等倍で切り出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/05_caliper_grabbed_the_far_side.png?v=1)
+
+*↑ 何が起きているか。全体図では 8 px の飛びが潰れて見えないので、目地の周り 34 行だけを等倍で切り出しました。下の段では、点が**帯の反対側にも乗っています** ―― 探索範囲が向こう側の境界に届いているのです。*
+
+**既定に見える 1 点だけで試すと、この欠陥は構造的に見つかりません。**
+
+### 外したことは、答えではなく残差に出る
+
+そして、ここがいちばん実務に効くところです。
+
+![答えと残差](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/04_cafe_wall_residual.png?v=1)
+
+*↑ 同じ 20 通りについて、答え(角度)と残差(rms)を重ねたもの。*
+
+外れたときの角度は **0.1429 度**です。数字だけ見れば「ほぼ 0」で、そのまま通ってしまいます。ところが**残差は 0.00 から 1.70 へ桁で動きます**。しかも「角度 0 ⇔ rms 0」が 20 通り全部で一致しました。
+
+**門は答えではなく残差に置く。**「当てた形が本当にそこにあったか」は、答えの側からは見えません。
+
+### 測定器も外す。ただし目とは別の理由で
+
+![ミュラー・リヤーにキャリパーを当てる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/06_muller_caliper.png?v=1)
+
+*↑ 上(矢羽根なし)は測定線上のエッジが 2 本、下(矢羽根あり)は **4 本**。*
+
+矢羽根は「長く見せる」だけではありません。**測定線の上に余計なエッジを置きます**。測定器は隣り合う逆極性のエッジを対にするので、軸ではなく**矢羽根のストロークを測ってしまいます**(幅 5.701 px)。
+
+目は「長く見える」と外し、測定器は「別の物を測る」と外す ―― **外れ方が違います**。
+
+![4 通りの答え](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/07_muller_widths.png?v=1)
+
+*↑ 同じ 1 本の軸が、測り方で 4 通りの答えになります。どれもバグではありません。*
+
+### 測り方を宣言すると、静かな誤りが見える拒否に変わる
+
+![適合度](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/08_fuzzy_score.png?v=1)
+
+*↑ `fuzzy_measure_pairing` に「幅は 220 px のはず」と**宣言して**測らせたもの。矢羽根なしでは適合度 0.9988、矢羽根ありでは **0.0225**。*
+
+これは「間違った値を返した」のではありません。**「想定した幅の構造は見つからない」と数で申告している**状態です。隣り合う逆極性の対しか候補にしないので、軸をまたぐ対はそもそも提案されません。
+
+**測り方を宣言した分だけ、失敗が静かな誤りから見える拒否に変わります。**
+
+### 3.777 px は錯視ではなく、端の定義だった
+
+矢羽根が無い図でも、答えは 223.777 px で真値 220 と合いません。錯視のせいでしょうか。
+
+![端の定義](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/09_edge_definition.png?v=1)
+
+*↑ 軸の長さを 140〜300 px に振ると、ずれは **+3.777 px 一定**(振れ幅 0.0000 px)。*
+
+**比例していれば倍率の誤り、一定なら端の定義のずれ**です。軸は太さを持って描かれているので、「外側エッジ間の距離」は「線分の長さ」より線幅ぶん長い。引けば真値に戻ります。
+
+### 動くのは答えではなく、証拠の数のほうだった
+
+![ツェルナー](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/12_zollner_caliper.png?v=1)
+
+*↑ 収束して見える 7 本すべてが、測ると水平(最大 |傾き| **4.3e-04 度** = 幅 520 px を渡って 0.0039 px)。*
+
+![傾きと点の数](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/13_zollner_angles.png?v=1)
+
+*↑ 傾きは 7 本とも 0 に重なって見分けが付きません。動いたのは**採用されたエッジ点の数**で、ハッチの向きが 1 本おきに反転するため 61 点中 **13 と 19** を交互に取ります。*
+
+**「測れた」と「よく測れた」は別の量**です。前者だけ見ていると、この差は見えません。
+
+### 直らなかったものは、直らなかったと書く
+
+![ポッゲンドルフ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/14_poggendorff_caliper.png?v=1)
+
+*↑ 帯の左右の 2 本は厳密に 1 本の直線です(帯で隠れているだけ)。橙が素朴なキャリパーの点、青が両エッジを対にして中心を取り直した線。*
+
+ここでは測定器が外します。共線のはずの 2 区間で、角度が **0.450 度**違いました。
+
+原因は突き止められました。**極性が塊で交互している**のです(41 点が 9 個の塊、+18 / −23)。細い線には**上側と下側の 2 つのエッジ**があり、「線の位置」はどちらか(あるいは中心か)を言うまで定義されません。測定器はその 2 つを行き来していました。
+
+![残差](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/15_poggendorff_residual.png?v=1)
+
+*↑ 両エッジを対にして中心を取ると、角度差は 0.450 → **0.115 度**、残差は 2.07 → 0.10/0.39 まで下がります。**それでも 0 ではありません。**帯の縁の細い縦線と画像の端が測定線に掛かっており、そこまでは追い込んでいない ―― というのが正直な状態です。*
+
+### 健診結果
+
+![健診表](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/16_audit.png?v=1)
+
+*↑ この表に「絵を見て判断した」行は 1 つもありません。真値は生成器が保証し、答えは既存の測定 op が返したものです。*
+
+真値をそのまま回復したのは 3 行、外れたのは 5 行。外れた内訳は 3 通りでした ―― **決めれば戻るもの**(探索半幅・線幅の下駄)、**拒否に変えられるもの**(想定幅の宣言)、そして **戻らなかったもの**(ポッゲンドルフ)。
+
+### 検査が見つけたもの
+
+この回で自分の書いたものが 2 か所、**データと食い違っていました**。どちらも「生成された図説を読み返して」見つけたものです。
+
+1. カフェウォールの掃引の図説に「半幅を変えると採用点の数が変わる」と書きましたが、4 通りとも 41 点でした。証拠の数が実際に動くのはツェルナーのほうです。
+2. 健診表の図説に「外した行は 2 行・決めれば戻る」と書きましたが、実際は 5 行で、ポッゲンドルフは戻っていません。
+
+**図説は、書いた時点ではなく、生成されたものを読んで確かめる。** 数字を `%` で埋め込んで自動生成していても、**その周りの文章は手で書いている**ので、同じようにずれます。
+
+### 向かないこと
+
+この PoC は「測定器は錯視に強い/弱い」を言うものではありません。**測り方を決めていない分だけ答えが割れる**ことを、真値つきの図で数として見せるものです。工場で使う測定線の張り方(探索半幅・想定幅・エッジの極性)を決めるときの、机上の確認には使えます。実写のノイズ・照明むら・被写界深度は入っていません。
 
 ---
 
