@@ -100,6 +100,10 @@ LEDGER_DIMS = {
                  "module": "annotate", "family": "figure_annotation"},
     "gfx2d": {"registry": "opsgfx2d", "table": "OPSGFX2D",
               "module": "gfx2d", "family": "game_graphics_2d"},
+    # 2 モジュール台帳(illusion + perpetual)。ここの "module" は既定値で、
+    # op ごとの module は台帳の info が持つ(ops1d が "dsp" を既定にするのと同じ)。
+    "generative": {"registry": "opsgenerative", "table": "OPSGENERATIVE",
+                   "module": "perpetual", "family": "generative_art"},
     "imgmetrics": {"registry": "opsimgmetrics", "table": "OPSIMGMETRICS",
                    "module": "imgmetrics", "family": "image_difference_metrics"},
     # ★2026-09-08: ops1d(dsp 16 + funct1d 23)は登録済みなのに **docs/ops に

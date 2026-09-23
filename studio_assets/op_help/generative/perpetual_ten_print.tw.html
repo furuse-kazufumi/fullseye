@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_ten_print — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">rgb</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_ten_print(cols: &#x27;int&#x27; = 32, rows: &#x27;int&#x27; = 24, cell: &#x27;int&#x27; = 18, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import perpetual; perpetual.perpetual_ten_print(cols: &#x27;int&#x27; = 32, rows: &#x27;int&#x27; = 24, cell: &#x27;int&#x27; = 18, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_ten_print&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>`<code style="color:#22d3bf">10 PRINT CHR$(205.5+RND(1)); : GOTO 10</code>` ―― 無限に伸びる迷路。</p>
+<p>Commodore 64 の一行プログラム。各升に 2 種類の斜線のどちらかを置くだけで、</p>
+<p>迷路に見える。<b>升の中身は 2 通りしかない</b>(混ざった升は無い)のが不変量。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_illusions_and_perpetual_drawing">poc_illusions_and_perpetual_drawing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_illusions_and_perpetual_drawing.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">rgb</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">perpetual</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:perpetual_truchet">perpetual_truchet</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_elementary_ca">perpetual_elementary_ca</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_langtons_ant">perpetual_langtons_ant</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_chaos_game">perpetual_chaos_game</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_apollonian">perpetual_apollonian</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_harmonograph">perpetual_harmonograph</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_ifs_attractor">perpetual_ifs_attractor</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_flow_field">perpetual_flow_field</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: perpetual.py — GENERATIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

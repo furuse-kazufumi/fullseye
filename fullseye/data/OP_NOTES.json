@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2147,
- "n_notes": 2153,
+ "n_ops": 2177,
+ "n_notes": 2183,
  "notes": {
   "vol_dilate": [
    {
@@ -15600,6 +15600,279 @@
     "in": "signal",
     "out": "table",
     "path": "docs/ops/flyvision/tuning/fly_dsi.md"
+   }
+  ],
+  "illusion_cafe_wall": [
+   {
+    "op": "illusion_cafe_wall",
+    "dim": "generative",
+    "category": "illusion",
+    "out": "rgb",
+    "path": "docs/ops/generative/illusion/illusion_cafe_wall.md"
+   }
+  ],
+  "illusion_checker_shadow": [
+   {
+    "op": "illusion_checker_shadow",
+    "dim": "generative",
+    "category": "illusion",
+    "out": "rgb",
+    "path": "docs/ops/generative/illusion/illusion_checker_shadow.md"
+   }
+  ],
+  "illusion_ebbinghaus": [
+   {
+    "op": "illusion_ebbinghaus",
+    "dim": "generative",
+    "category": "illusion",
+    "out": "rgb",
+    "path": "docs/ops/generative/illusion/illusion_ebbinghaus.md"
+   }
+  ],
+  "illusion_fraser_spiral": [
+   {
+    "op": "illusion_fraser_spiral",
+    "dim": "generative",
+    "category": "illusion",
+    "out": "rgb",
+    "path": "docs/ops/generative/illusion/illusion_fraser_spiral.md"
+   }
+  ],
+  "illusion_ground_truth": [
+   {
+    "op": "illusion_ground_truth",
+    "dim": "generative",
+    "category": "illusion",
+    "out": "table",
+    "path": "docs/ops/generative/illusion/illusion_ground_truth.md"
+   }
+  ],
+  "illusion_hermann_grid": [
+   {
+    "op": "illusion_hermann_grid",
+    "dim": "generative",
+    "category": "illusion",
+    "out": "rgb",
+    "path": "docs/ops/generative/illusion/illusion_hermann_grid.md"
+   }
+  ],
+  "illusion_kanizsa": [
+   {
+    "op": "illusion_kanizsa",
+    "dim": "generative",
+    "category": "illusion",
+    "out": "rgb",
+    "path": "docs/ops/generative/illusion/illusion_kanizsa.md"
+   }
+  ],
+  "illusion_muller_lyer": [
+   {
+    "op": "illusion_muller_lyer",
+    "dim": "generative",
+    "category": "illusion",
+    "out": "rgb",
+    "path": "docs/ops/generative/illusion/illusion_muller_lyer.md"
+   }
+  ],
+  "illusion_poggendorff": [
+   {
+    "op": "illusion_poggendorff",
+    "dim": "generative",
+    "category": "illusion",
+    "out": "rgb",
+    "path": "docs/ops/generative/illusion/illusion_poggendorff.md"
+   }
+  ],
+  "illusion_ponzo": [
+   {
+    "op": "illusion_ponzo",
+    "dim": "generative",
+    "category": "illusion",
+    "out": "rgb",
+    "path": "docs/ops/generative/illusion/illusion_ponzo.md"
+   }
+  ],
+  "illusion_scintillating_grid": [
+   {
+    "op": "illusion_scintillating_grid",
+    "dim": "generative",
+    "category": "illusion",
+    "out": "rgb",
+    "path": "docs/ops/generative/illusion/illusion_scintillating_grid.md"
+   }
+  ],
+  "illusion_simultaneous_contrast": [
+   {
+    "op": "illusion_simultaneous_contrast",
+    "dim": "generative",
+    "category": "illusion",
+    "out": "rgb",
+    "path": "docs/ops/generative/illusion/illusion_simultaneous_contrast.md"
+   }
+  ],
+  "illusion_zollner": [
+   {
+    "op": "illusion_zollner",
+    "dim": "generative",
+    "category": "illusion",
+    "out": "rgb",
+    "path": "docs/ops/generative/illusion/illusion_zollner.md"
+   }
+  ],
+  "perpetual_loop": [
+   {
+    "op": "perpetual_loop",
+    "dim": "generative",
+    "category": "loop",
+    "out": "rgbvideo",
+    "path": "docs/ops/generative/loop/perpetual_loop.md"
+   }
+  ],
+  "perpetual_loop_seam": [
+   {
+    "op": "perpetual_loop_seam",
+    "dim": "generative",
+    "category": "loop",
+    "in": "rgbvideo",
+    "out": "table",
+    "path": "docs/ops/generative/loop/perpetual_loop_seam.md"
+   }
+  ],
+  "perpetual_apollonian": [
+   {
+    "op": "perpetual_apollonian",
+    "dim": "generative",
+    "category": "perpetual",
+    "out": "rgb",
+    "path": "docs/ops/generative/perpetual/perpetual_apollonian.md"
+   }
+  ],
+  "perpetual_chaos_game": [
+   {
+    "op": "perpetual_chaos_game",
+    "dim": "generative",
+    "category": "perpetual",
+    "out": "rgb",
+    "path": "docs/ops/generative/perpetual/perpetual_chaos_game.md"
+   }
+  ],
+  "perpetual_elementary_ca": [
+   {
+    "op": "perpetual_elementary_ca",
+    "dim": "generative",
+    "category": "perpetual",
+    "out": "rgb",
+    "path": "docs/ops/generative/perpetual/perpetual_elementary_ca.md"
+   }
+  ],
+  "perpetual_flow_field": [
+   {
+    "op": "perpetual_flow_field",
+    "dim": "generative",
+    "category": "perpetual",
+    "out": "rgb",
+    "path": "docs/ops/generative/perpetual/perpetual_flow_field.md"
+   }
+  ],
+  "perpetual_harmonograph": [
+   {
+    "op": "perpetual_harmonograph",
+    "dim": "generative",
+    "category": "perpetual",
+    "out": "rgb",
+    "path": "docs/ops/generative/perpetual/perpetual_harmonograph.md"
+   }
+  ],
+  "perpetual_identities": [
+   {
+    "op": "perpetual_identities",
+    "dim": "generative",
+    "category": "perpetual",
+    "out": "table",
+    "path": "docs/ops/generative/perpetual/perpetual_identities.md"
+   }
+  ],
+  "perpetual_ifs_attractor": [
+   {
+    "op": "perpetual_ifs_attractor",
+    "dim": "generative",
+    "category": "perpetual",
+    "out": "rgb",
+    "path": "docs/ops/generative/perpetual/perpetual_ifs_attractor.md"
+   }
+  ],
+  "perpetual_langtons_ant": [
+   {
+    "op": "perpetual_langtons_ant",
+    "dim": "generative",
+    "category": "perpetual",
+    "out": "rgb",
+    "path": "docs/ops/generative/perpetual/perpetual_langtons_ant.md"
+   }
+  ],
+  "perpetual_plasma": [
+   {
+    "op": "perpetual_plasma",
+    "dim": "generative",
+    "category": "perpetual",
+    "out": "rgb",
+    "path": "docs/ops/generative/perpetual/perpetual_plasma.md"
+   }
+  ],
+  "perpetual_reaction_diffusion": [
+   {
+    "op": "perpetual_reaction_diffusion",
+    "dim": "generative",
+    "category": "perpetual",
+    "out": "rgb",
+    "path": "docs/ops/generative/perpetual/perpetual_reaction_diffusion.md"
+   }
+  ],
+  "perpetual_ten_print": [
+   {
+    "op": "perpetual_ten_print",
+    "dim": "generative",
+    "category": "perpetual",
+    "out": "rgb",
+    "path": "docs/ops/generative/perpetual/perpetual_ten_print.md"
+   }
+  ],
+  "perpetual_truchet": [
+   {
+    "op": "perpetual_truchet",
+    "dim": "generative",
+    "category": "perpetual",
+    "out": "rgb",
+    "path": "docs/ops/generative/perpetual/perpetual_truchet.md"
+   }
+  ],
+  "perpetual_render": [
+   {
+    "op": "perpetual_render",
+    "dim": "generative",
+    "category": "stream",
+    "in": "table",
+    "out": "rgb",
+    "path": "docs/ops/generative/stream/perpetual_render.md"
+   }
+  ],
+  "perpetual_state": [
+   {
+    "op": "perpetual_state",
+    "dim": "generative",
+    "category": "stream",
+    "out": "table",
+    "path": "docs/ops/generative/stream/perpetual_state.md"
+   }
+  ],
+  "perpetual_step": [
+   {
+    "op": "perpetual_step",
+    "dim": "generative",
+    "category": "stream",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/generative/stream/perpetual_step.md"
    }
   ],
   "camera_orientation_from_skyline": [

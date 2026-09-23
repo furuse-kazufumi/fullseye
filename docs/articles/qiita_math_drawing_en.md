@@ -48,6 +48,7 @@ Each instalment is one drawing built to that bar, and each one ships with a **sc
 | 3 | [Theorems that happen to be pictures](#3-theorems-that-happen-to-be-pictures) | Descartes' circle theorem / Farey neighbours / Euler's formula / Moran's equation |
 | 4 | [One beat — a two-slit fringe and a print moiré are the same mathematics](#4-one-beat--a-two-slit-fringe-and-a-print-moiré-are-the-same-mathematics) | Closed-form eigenvalues / zeros of Bessel functions / the grating equation / a predicted moiré period |
 | 5 | [What a picture cannot check — dynamical systems and minimal surfaces](#5-what-a-picture-cannot-check--dynamical-systems-and-minimal-surfaces) | The matrix exponential / the trace identity / exact bifurcation points / the definition H ≡ 0 |
+| 6 | [Making pictures that lie to the eye, then grading the measurement](#6-making-pictures-that-lie-to-the-eye-then-grading-the-measurement) | Lucas' theorem / Descartes' circle theorem / div(curl ψ) ≡ 0 / mass conservation |
 
 ---
 
@@ -430,6 +431,159 @@ V, F = fs.ledger.minimal_surface("catenoid", nu=90, nv=140, extent=1.2)
 H = np.abs(np.asarray(fs.ledger.vertex_curvature((V, F))))
 print("median |H| %.5f (the unit-sphere control is 1.0)" % np.median(H[np.isfinite(H)]))
 ```
+
+---
+
+## 6. Making pictures that lie to the eye, then grading the measurement
+
+### The pipeline
+
+```
+draw an illusion -> return the invariant the picture denies, as a number -> let existing ops measure it
+run a system that never finishes -> grade it by an identity, not by appearance
+make every time-dependent quantity a function of theta -> the seam is never created
+```
+
+The first five rounds were about **scoring a picture from outside the picture**. Round 6 turns that around: now we **make the picture that gets scored**.
+
+And the surest place to find pictures whose appearance lies is **optical illusions**. The café-wall mortar lines are *exactly* horizontal. The two Müller-Lyer shafts are *exactly* the same length. The two checker-shadow squares hold the *same floating-point value*. Only the seeing is different.
+
+![Six illusions](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/01_scene.png?v=1)
+
+*↑ All six keep, exactly, the invariant your eye denies. The generator can hand back that invariant as a number (`illusion_ground_truth`), which makes the picture a **grading sheet for whatever measures it**.*
+
+### Illusions do not only fool people
+
+This was the most interesting finding of the round.
+
+![Café wall](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/02_cafe_wall.png?v=1)
+
+*↑ The mortar lines are exactly horizontal — all eight measured at slope **0.0e+00**.*
+
+![Sweeping the offset](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/03_cafe_wall_shift.png?v=1)
+
+*↑ Only the row offset changes. **The mortar is exactly horizontal in every panel**; only the seeing changes. It vanishes at 0 and 0.5 because the tile edges line up across the mortar.*
+
+![Müller-Lyer](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/04_muller_lyer.png?v=1)
+
+*↑ Strip the arrowheads and the two shafts are **pixel-identical**. But measure "the dark run along the row" naively on the arrowed figure and you get **223 pixels and 225** — the antialiased skirt of the arrowhead lands on the end of the shaft. The truth is 220 for both.*
+
+**A naive measurement is off by two pixels too.** Illusions are usually filed under "quirks of human vision", but this one is also a statement about measurement in general: *on a figure whose endpoint is not sharply defined, measuring without first defining how you measure will miss.*
+
+![Checker shadow](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/05_checker_shadow.png?v=1)
+
+![Row profile](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/06_checker_profile.png?v=1)
+
+*↑ Where the two profiles **touch the same horizontal line** are the two illusion squares. Take the shadow factor to be dark ÷ light and the light square inside the shadow coincides, numerically, with the dark square outside it (difference 0.0e+00).*
+
+![Kanizsa](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/07_kanizsa.png?v=1)
+
+*↑ **Not one edge of the triangle is drawn.** Along the contour the image is the background (ptp 0.0e+00). Run an edge detector and none of the contour a person sees comes back.*
+
+![Fraser](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/08_fraser.png?v=1)
+
+![Hermann and scintillating grids](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/09_hermann.png?v=1)
+
+![The measurement drawn back onto the picture](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/10_measured_back_on.png?v=1)
+
+*↑ Left: **the tiles still look tilted**, yet the thin rules drawn at the measured mortar positions run straight from edge to edge and are parallel to each other (slope 0.0e+00). Right: vertical rules at the shaft ends measured on the bare figure land at **the same positions for both shafts** — only the arrowheads differ. Because the measuring side and the drawing side live in the same box, **a measured value can go straight back onto the picture**: not numbers *beside* the image, but *on* it.*
+
+![Eye versus measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/11_eye_vs_measure.png?v=1)
+
+*↑ For six illusions: **what the eye claims** (plainly different, set to 1) against **what measurement returns**. All six measure exactly 0. This figure is the family's reason to exist.*
+
+### How do you grade something that never finishes?
+
+The lineage that runs from the 8-bit one-liners — 10 PRINT's random maze, elementary cellular automata, Langton's ant, the chaos game — has a problem: **any stopping point is mid-way**, so appearance cannot grade it.
+
+So only systems carrying a claim that holds *independently of the picture* were admitted.
+
+![Rule 90](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/12_rule90.png?v=1)
+
+*↑ Rule 90 from a single cell, 200 rows. **Cell k of row n equals the parity of the binomial coefficient `C(n,k)`, exactly** — Pascal's triangle mod 2. Gradeable without looking at the picture at all, which is what qualifies this family.*
+
+![A gallery of rules](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/13_rule_gallery.png?v=1)
+
+*↑ Every one starts from the same single cell. The only change is one 8-bit rule number. Rule 30 was once used to generate random numbers; rule 110 is proven **Turing-complete**.*
+
+![Langton's ant](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/14_langtons_ant.png?v=1)
+
+*↑ Two rules only (on white, turn right and paint black; on black, turn left and paint white). Symmetry for the first ten thousand steps, then chaos, then — abruptly — **the "highway": from there on it travels diagonally with period 104, forever**.*
+
+![Growth curve](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/15_langton_growth.png?v=1)
+
+*↑ Black cells against steps. Noisy at first, then a straight line at **12/104 = 0.1154 cells per step** once the highway starts. **You can tell it has started from the slope, without looking at the picture.***
+
+![Apollonian gasket](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/16_apollonian.png?v=1)
+
+*↑ Every gap takes another tangent circle, so it never ends. **Four mutually tangent circles satisfy Descartes' circle theorem `(Σk)² = 2Σk²` exactly** (residual 1.2e-16) — and the complex curvature-centre form fixes the position too, so this is drawn by **algebra**, not by fitting.*
+
+![Chaos game](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/17_chaos_game.png?v=1)
+
+![Barnsley fern](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/18_fern.png?v=1)
+
+![Flow field](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/19_flow_field.png?v=1)
+
+*↑ The field is built as the **curl of a potential ψ**, so its divergence is identically zero (incompressible, residual 7.0e-17). You can see it: the streamlines **close** around the vortices. A field built from "noise that looks about right" would show sources and sinks there instead.*
+
+![Reaction-diffusion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/20_reaction_diffusion.png?v=1)
+
+![Plasma](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/21_plasma.png?v=1)
+
+![10 PRINT and Truchet](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/22_eight_bit.png?v=1)
+
+*↑ Left is `10 PRINT CHR$(205.5+RND(1)); : GOTO 10`, the Commodore 64 one-liner. Right is Truchet tiling, where **the arcs always end at the midpoint of an edge**, so no arrangement can break the curves.*
+
+### Pictures that loop in time
+
+![Seamless loop](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/23_loop.gif?v=1)
+
+*↑ There is no cut where the last frame returns to the first.*
+
+The construction is the point. Rather than "snap back at the end", **make every time-dependent quantity a function of θ and take θ from 0 to 2π**: then t = T is literally the same expression as t = 0. The seam is not removed in editing — **it is never created**.
+
+![Seam ratio](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/24_seam.png?v=1)
+
+*↑ **The right answer for a seam is 1, not 0.** The ratio is (the last step) ÷ (a typical step). At 1, the last step is indistinguishable from any other. **At 0 there is no seamlessness — there is no motion.** Mistake one for the other and a dead animation reads as a perfect result.*
+
+### Gates and results
+
+| Claim | Quantity | Measured | Where the truth comes from |
+|---|---|---|---|
+| Café wall | slope of 8 mortar lines | **0.0e+00** | horizontal by construction |
+| Müller-Lyer | two rows, shafts only | **pixel-identical** | equal by construction |
+| — naive measurement | dark run, with arrowheads | **223 vs 225** | truth 220 — a measuring defect |
+| Checker shadow | difference of two squares | **0.0e+00** | shadow factor = dark/light |
+| Kanizsa | ptp along the illusory edge | **0.0e+00** | no edge is drawn |
+| Simultaneous contrast | difference of two patches | **0.0e+00** | identical by construction |
+| **Rule 90** | row n vs `C(n,k) mod 2` | **0.0e+00** | **Lucas' theorem** |
+| Langton's ant | displacement per 104 steps | **0.0e+00** | period 104, diagonal (2,2) |
+| — | net growth on the highway | **exactly 12 cells** | integer (settled by measuring) |
+| **Apollonian** | `(Σk)² − 2Σk²` | **1.19e-16** | **Descartes' circle theorem** |
+| — | tangency of every generated circle | 9.20e-07 | tangent (recursion accumulates) |
+| **Flow field** | `div(curl ψ)` | **6.95e-17** | identically zero |
+| Reaction-diffusion | total mass at feed = kill = 0 | **1.98e-16** | conserved |
+| Plasma | the four corner values | **0.0e+00** | midpoint displacement never overwrites |
+| Seamless loops | seam ratio, 4 systems | **0.997–1.041** | **1**, not 0 |
+
+### What the tests found
+
+**Four defects. None of them visible in the picture.**
+
+1. **An `int64` overflow.** Accumulating binomial coefficients silently overflowed at `C(62,31)×31`. Replaced by the consequence of Lucas' theorem — `C(n,k)` is odd iff `(n & k) == k` — which leaves no room to overflow.
+2. **The wrong pair of checker squares.** I had picked two squares of the same shade, 0.31 apart. The pair has to be the **dark** square outside the shadow and the **light** square inside it. The picture looks convincing either way; only the number tells you.
+3. **A growth rate I guessed.** "52 cells per 104 steps" did not match the measured 0.114/step. Measuring properly gives **exactly 12 cells** — the ant paints and unpaints within the period, so the net is far smaller. Measurement was right and the guess was wrong; that is the whole story.
+4. **A square-root branch in the Apollonian solver.** The complex curvature-centre has two branches, and one of them returns a circle that is *not* tangent to its three parents. Using the principal value alone sent **a chain of circles outside the bounding disc** — and it still looked convincingly fractal, so **it was invisible until the image was opened and read**. Now the branch is chosen by checking tangency numerically, and "no circle escapes the disc" is a gate.
+
+A smaller finding along the way: **`std()` of a constant array is not exactly zero** (subtracting the mean leaves about one ulp; measured 5.6e-17). To assert "every value is the same" exactly, use `ptp` — max minus min.
+
+And one on speed. Building a full-image distance field per primitive cost **17.7 s** for the twelve illusions and **4.96 s** for one Apollonian gasket. Touching only the bounding box brings those to **0.07 s and 0.03 s** (250× and 165×). How long a PoC takes *is* the CI verdict, so this is a gate question, not a plumbing one.
+
+### What this is not for
+
+It is **not for finished artwork**. Only pictures whose claim can be checked went in, so anything beautiful but uncheckable was left out — which also means every picture here can answer "why is that correct?".
+
+It also does not measure the **strength** of an illusion. How tilted the mortar *looks* is psychophysics and outside this family's remit. What is measured is only that it **is not tilted**.
 
 ---
 

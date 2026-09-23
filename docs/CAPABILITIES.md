@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 34 項目**
+**収録 35 項目**
 
 ## 測る (9)
 
@@ -288,7 +288,7 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 
 動く例: `annotate_paper_tour`
 
-## 描く (2)
+## 描く (3)
 
 ### [写真を 1 本の線にする(点描 → 巡回路 → 回る円)](capabilities/one-stroke-drawing.md)
 
@@ -297,6 +297,14 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 使う op: `stipple_points_from_image`, `stipple_energy`, `stroke_tour_closed`, `mst_length`, `stroke_resample_closed`, `stroke_tone_error`, `contour_fourier_complex`, `contour_epicycle_chain`, `contour_fourier_truncation_energy`
 
 動く例: `poc_one_stroke_epicycles`
+
+### [目が嘘をつく絵を作って、測る側を採点する(錯視・無限描画・循環動画)](capabilities/pictures-that-carry-their-own-truth.md)
+
+**真値が最初から付いている画像**を作ります。Fullseye のほとんどの op は与えられた 画像を測る側にいますが、この族だけが反対側にいます。
+
+使う op: `illusion_cafe_wall`, `illusion_muller_lyer`, `illusion_checker_shadow`, `illusion_kanizsa`, `illusion_fraser_spiral`, `illusion_ground_truth`, `perpetual_elementary_ca`, `perpetual_langtons_ant`, `perpetual_apollonian`, `perpetual_flow_field`, `perpetual_identities`, `perpetual_state`, `perpetual_step`, `perpetual_render`, `perpetual_loop`, `perpetual_loop_seam`
+
+動く例: `poc_illusions_and_perpetual_drawing`
 
 ### [定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線)](capabilities/theorems-as-pictures.md)
 

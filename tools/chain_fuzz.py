@@ -1291,8 +1291,29 @@ def _b_gum_validate(pool, rng):
     return (guf, mcm), {"ndig": 1}
 
 
+def _b_perpetual_state(pool, rng):
+    """``perpetual_step`` / ``perpetual_render`` に**本物の状態**を渡す。
+
+    ★宣言 in は ``table`` だが、プールから拾った任意の表では ``system`` キーが
+    無く必ず拒否される —— 走ったことにはなるが計算はしていない(MSA の 9 op で
+    同じ穴を踏んだ)。種を builder で作って、実際に回るようにする。
+    """
+    import perpetual as _pp
+    name = ("langtons_ant", "elementary_ca", "chaos_game")[int(rng.integers(0, 3))]
+    return ([_pp.perpetual_state(name, size=41)], {})
+
+
+def _b_perpetual_loop_seam(pool, rng):
+    """``perpetual_loop_seam`` に**本物の循環動画**を渡す(小さいコマ数で)。"""
+    import perpetual as _pp
+    return ([_pp.perpetual_loop("plasma_orbit", frames=5, size=24)], {})
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
+    "perpetual_step": _b_perpetual_state,
+    "perpetual_render": _b_perpetual_state,
+    "perpetual_loop_seam": _b_perpetual_loop_seam,
     "msa_anova_table": _b_msa_table,
     "msa_gauge_rr": _b_msa_table,
     "msa_bias_linearity": _b_msa_bias,

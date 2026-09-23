@@ -689,7 +689,8 @@ def _registry_adapters():
                  "opsgfx2d", "opsimgmetrics", "opscolortransport",
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
-                 "opsmeasure1d", "opsblob", "opsflyvision", "opsspc"):
+                 "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
+                 "opsgenerative"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
@@ -829,6 +830,14 @@ def catalog():
     for n, m in opsspc.OPSSPC.items():
         if m["func"] is not None:
             ops.append((n, "spc", list(m["in"]), m["out"], m["func"]))
+    # 絵を作る側(opsgenerative 台帳)。**新しい型語彙を 1 つも作らない**判断:
+    # 30 op の返りは既存の rgb((H,W,3))/ rgbvideo((T,H,W,3))/ table に収まる。
+    # 「錯視画像」という型を作らないのが要点で、作った絵に既存の 2,147 op が
+    # そのまま掛かること自体がこの族の値打ち(真値つきの試験入力になる)。
+    import opsgenerative
+    for n, m in opsgenerative.OPSGENERATIVE.items():
+        if m["func"] is not None:
+            ops.append((n, "generative", list(m["in"]), m["out"], m["func"]))
     # 欠陥 → CAD 面の逆写像(opscadmap 台帳)。**新しい型語彙を 1 つも作らない**
     # 判断: 4 op の入出力は既存の mesh / keypoints / points / labels / table /
     # indices にそのまま収まる。代わりにこの族が持ち込んだのは

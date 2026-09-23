@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_loop — GENERATIVE <code style="color:#22d3bf">loop</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">rgbvideo</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_loop(kind: &#x27;str&#x27; = &#x27;harmonograph&#x27;, frames: &#x27;int&#x27; = 48, size: &#x27;int&#x27; = 360, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import perpetual; perpetual.perpetual_loop(kind: &#x27;str&#x27; = &#x27;harmonograph&#x27;, frames: &#x27;int&#x27; = 48, size: &#x27;int&#x27; = 360, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_loop&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p><b>継ぎ目の無い循環動画</b>を作る → `<code style="color:#22d3bf">rgbvideo</code>` (T,H,W,3)。</p>
+<p>★循環を「最後に頭へ戻す」で作らない。時間依存の量を<b>すべて θ の関数</b>に</p>
+<p>して θ = 2πt/T を回すと、t = T は t = 0 と<b>同じ式</b>になる —— つまり継ぎ目は</p>
+<p>最初から存在しない。これは編集で消す種類のものではなく、<b>構成から従う</b>。</p>
+<p>:func:<code style="color:#22d3bf">perpetual_loop_seam</code> がその継ぎ目を数で出す(厳密に 0 になる)。</p>
+<p>`<code style="color:#22d3bf">frames</code>` コマ返す(t = 0 .. T-1)。t = T は t = 0 と一致するので含めない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">Leitfaden zur Familie generative_art</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_illusions_and_perpetual_drawing">poc_illusions_and_perpetual_drawing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_illusions_and_perpetual_drawing.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">rgbvideo</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:perpetual_loop_seam">perpetual_loop_seam</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">loop</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:perpetual_loop_seam">perpetual_loop_seam</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: perpetual.py — GENERATIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

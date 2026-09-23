@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_elementary_ca — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">rgb</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_elementary_ca(rule: &#x27;int&#x27; = 90, width: &#x27;int&#x27; = 401, rows: &#x27;int&#x27; = 200, seed: &#x27;int&#x27; = -1, cell: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import perpetual; perpetual.perpetual_elementary_ca(rule: &#x27;int&#x27; = 90, width: &#x27;int&#x27; = 401, rows: &#x27;int&#x27; = 200, seed: &#x27;int&#x27; = -1, cell: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_elementary_ca&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>基本セルオートマトン(Wolfram の 256 規則)を上から下へ無限に伸ばす。</p>
+<p>`<code style="color:#22d3bf">seed &lt; 0</code>` で<b>中央 1 点</b>から始める(規則 90 ならシェルピンスキー、</p>
+<p>規則 30 なら擬似乱数、規則 110 なら万能計算)。</p>
+<p>不変量(規則 90・1 点始動): 第 n 行の第 k セルは <b>C(n,k) mod 2</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_illusions_and_perpetual_drawing">poc_illusions_and_perpetual_drawing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_illusions_and_perpetual_drawing.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgb</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">perpetual</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:perpetual_ten_print">perpetual_ten_print</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_truchet">perpetual_truchet</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_langtons_ant">perpetual_langtons_ant</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_chaos_game">perpetual_chaos_game</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_apollonian">perpetual_apollonian</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_harmonograph">perpetual_harmonograph</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_ifs_attractor">perpetual_ifs_attractor</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_flow_field">perpetual_flow_field</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: perpetual.py — GENERATIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

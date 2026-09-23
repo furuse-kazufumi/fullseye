@@ -1,0 +1,96 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南仅有日文版(它是人写的散文,这里不做机械替换)。</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">絵を作る側(錯視・無限描画・循環動画) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>Fullseye のほとんどの op は<b>与えられた画像を測る</b>側にいます。この族だけが</p>
+<p>反対側にいて、<b>画像を作ります</b>。ただし作るのは「素材」ではなく、</p>
+<p><b>真値が最初から付いている画像</b>です。</p>
+<p>3 つの入口があります。</p>
+<p>| 入口 | 何が出るか | 何を主張するか |</p>
+<p>|---|---|---|</p>
+<p>| 錯視(13 op) | 1 枚の <code style="color:#22d3bf">rgb</code> | <b>目が否定する不変量</b>(平行・等長・同値・共線)を、厳密に守っている |</p>
+<p>| 無限描画(12 op) | 1 枚の <code style="color:#22d3bf">rgb</code> | 絵とは独立に成り立つ<b>恒等式</b>を持っている |</p>
+<p>| 循環動画(2 op)+ 状態(3 op) | <code style="color:#22d3bf">rgbvideo</code> / <code style="color:#22d3bf">table</code> | <b>継ぎ目が無いこと</b>を、構成から保証している |</p>
+<p>新しい型語は 1 つも作っていません。返りは既存の <code style="color:#22d3bf">rgb</code>(H,W,3)・</p>
+<p><code style="color:#22d3bf">rgbvideo</code>(T,H,W,3)・<code style="color:#22d3bf">table</code> だけです。<b>「錯視画像」という特別な型を作らない</b></p>
+<p>のが設計の中心で、作った絵に既存の 2,000 以上の op がそのまま掛かることが、</p>
+<p>この族の値打ちそのものだからです。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ検査ライブラリが錯視を持つのか</h3>
+<p>装飾だからではありません。**錯視は「見た目は確かめの役に立たない」ことの、</p>
+<p>最も純粋な実例**だからです。</p>
+<p><code style="color:#22d3bf">illusion_cafe_wall</code> の目地は<b>厳密な水平線</b>です。<code style="color:#22d3bf">illusion_muller_lyer</code> の</p>
+<p>2 本の軸は<b>厳密に等長</b>です。<code style="color:#22d3bf">illusion_checker_shadow</code> の 2 マスは**浮動小数</p>
+<p>として同じ値**です。見えているものが違う、というだけ。</p>
+<p>そして面白いのはここから先で —— <b>錯視は人間の目だけを騙すのではありません</b>。</p>
+<p><code style="color:#22d3bf">illusion_muller_lyer</code> の図で「行の黒い区間」を素朴に測ると、2 本の軸は</p>
+<p><b>223 画素と 225 画素</b>になります(矢羽根の反エイリアスの裾が軸の端に乗る)。</p>
+<p>素朴な計測も 2 画素ずれる。だからこの族は、測る側の<b>採点表</b>として使えます。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    G[&quot;illusion_cafe_wall&lt;br/&gt;illusion_checker_shadow&lt;br/&gt;…13 op&quot;] --&gt;|rgb| M[&quot;既存の計測 op&lt;br/&gt;(threshold / blob / measure1d …)&quot;]
+    G --&gt;|table| T[&quot;illusion_ground_truth&lt;br/&gt;目が否定する不変量&quot;]
+    M --&gt; C{一致するか}
+    T --&gt; C
+    C --&gt;|一致| OK[&quot;測る側は目に騙されていない&quot;]
+    C --&gt;|不一致| NG[&quot;測り方の欠陥が見えた&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">無限に描き続けるものを、どう採点するか</h3>
+<p><code style="color:#22d3bf">perpetual_ten_print</code>(Commodore 64 の一行プログラム)、</p>
+<p><code style="color:#22d3bf">perpetual_elementary_ca</code>(Wolfram の 256 規則)、<code style="color:#22d3bf">perpetual_langtons_ant</code>、</p>
+<p><code style="color:#22d3bf">perpetual_chaos_game</code>、<code style="color:#22d3bf">perpetual_apollonian</code>、<code style="color:#22d3bf">perpetual_harmonograph</code>、</p>
+<p><code style="color:#22d3bf">perpetual_ifs_attractor</code>、<code style="color:#22d3bf">perpetual_flow_field</code>、</p>
+<p><code style="color:#22d3bf">perpetual_reaction_diffusion</code>、<code style="color:#22d3bf">perpetual_plasma</code>、<code style="color:#22d3bf">perpetual_truchet</code> ——</p>
+<p>どれも「いつ止めても途中」なので、<b>絵の見た目では採点できません</b>。</p>
+<p>そこで、絵とは独立に成り立つ主張を持つものだけを入れました。</p>
+<p><code style="color:#22d3bf">perpetual_identities</code> が 6 本まとめて実測で返します。</p>
+<p>| 系 | 恒等式 | 実測の残差 |</p>
+<p>|---|---|---|</p>
+<p>| 規則 90 | 第 n 行 = <code style="color:#22d3bf">C(n,k) mod 2</code>(リュカの定理) | <code style="color:#22d3bf">0.000e+00</code> |</p>
+<p>| ラングトンの蟻 | 周期 104 で同じ斜め (2,2) を繰り返す | <code style="color:#22d3bf">0.000e+00</code> |</p>
+<p>| アポロニウス | <code style="color:#22d3bf">(Σk)² = 2Σk²</code>(デカルトの円定理) | <code style="color:#22d3bf">1.19e-16</code> |</p>
+<p>| 流れ場 | <code style="color:#22d3bf">div(curl ψ) = 0</code>(非圧縮) | <code style="color:#22d3bf">6.95e-17</code> |</p>
+<p>| 反応拡散 | 餌も死も 0 なら総量保存 | <code style="color:#22d3bf">1.98e-16</code> |</p>
+<p>| プラズマ | 4 隅は最後まで書き換えられない | <code style="color:#22d3bf">0.000e+00</code> |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">「無限」を op でどう持つか</h3>
+<p>1 枚返す生成器だけでは「無限に描き続ける」ことになりません。だから</p>
+<p><b>状態 → 進める → 描く</b>の 3 本組を置いてあります ——</p>
+<p><code style="color:#22d3bf">perpetual_state</code> / <code style="color:#22d3bf">perpetual_step</code> / <code style="color:#22d3bf">perpetual_render</code>。</p>
+<p><b>op の側は「いつ止めるか」を決めません。</b></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
+
+s = fs.ledger.perpetual_state(&quot;langtons_ant&quot;, size=301)
+s = fs.ledger.perpetual_step(s, 12_000)       # 好きなだけ回してよい
+img = fs.ledger.perpetual_render(s)           # 何歩目で描いてもよい
+
+ident = fs.ledger.perpetual_identities()      # 絵を見ずに採点する
+print(dict(zip(ident[&quot;system&quot;], ident[&quot;residual&quot;])))</pre>
+<p>状態の宣言型は <code style="color:#22d3bf">table</code> ですが、<b>table は広い型</b>です。無関係な表を渡されたら</p>
+<p><code style="color:#22d3bf">KeyError</code> ではなく「これは perpetual の状態ではない」と明示的に拒否します</p>
+<p>(fail-closed)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">時間軸で循環する画像</h3>
+<p><code style="color:#22d3bf">perpetual_loop</code> は<b>継ぎ目の無い</b>動画を返します。ここは作り方が要点で、</p>
+<p>「最後に頭へ戻す」のではありません。時間依存の量を<b>すべて θ の関数</b>にして</p>
+<p>θ = 2πt/T を回すと、t = T は t = 0 と<b>同じ式</b>になります —— つまり継ぎ目は</p>
+<p>最初から存在しません。編集で消す種類のものではなく、構成から従います。</p>
+<p><code style="color:#22d3bf">perpetual_loop_seam</code> がそれを数で出します。読み方に注意が要ります:</p>
+<p>&gt; <b>比が 0 ではなく 1 に近いのが正解。</b> 比 = (最後のまたぎの差) ÷ (ふつうの</p>
+<p>&gt; コマ間の差)。1 なら「最後のまたぎが、ほかのまたぎと見分けが付かない」。</p>
+<p>&gt; 0 なら継ぎ目が無いのではなく、<b>動きが止まっている</b>という意味になります。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">v = fs.ledger.perpetual_loop(&quot;plasma_orbit&quot;, frames=48, size=360)
+m = fs.ledger.perpetual_loop_seam(v)
+print(float(m[&quot;ratio&quot;][0]))        # 0.99〜1.02 なら継ぎ目なし</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">向くところ / 向かないところ</h3>
+<p><b>向く</b>: 測る側の採点(錯視図 + <code style="color:#22d3bf">illusion_ground_truth</code>)、尽きない試験入力、</p>
+<p>周期境界を持つ時間方向 op の素材、真値つきの合成データ。</p>
+<p><b>向かない</b>: 「作品」としての完成度。この族は<b>主張が検算できる図</b>だけを</p>
+<p>持っていて、美しいが検算できない図は入れていません</p>
+<p>(<code style="color:#22d3bf">illusion_ebbinghaus</code> / <code style="color:#22d3bf">illusion_zollner</code> / <code style="color:#22d3bf">illusion_ponzo</code> /</p>
+<p><code style="color:#22d3bf">illusion_poggendorff</code> / <code style="color:#22d3bf">illusion_fraser_spiral</code> / <code style="color:#22d3bf">illusion_kanizsa</code> /</p>
+<p><code style="color:#22d3bf">illusion_hermann_grid</code> / <code style="color:#22d3bf">illusion_scintillating_grid</code> /</p>
+<p><code style="color:#22d3bf">illusion_simultaneous_contrast</code> はいずれも不変量を持ちます)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">作っている途中で出た欠陥(3 件)</h3>
+<p>どれも<b>絵を見ても気づけない</b>型でした。</p>
+<p>1. 二項係数を <code style="color:#22d3bf">int64</code> で積んでいて、<code style="color:#22d3bf">C(62,31)×31</code> で<b>黙って溢れた</b>。</p>
+<p>リュカの定理「<code style="color:#22d3bf">C(n,k)</code> が奇 ⟺ <code style="color:#22d3bf">(n&amp;k)==k</code>」に置き換えて、桁あふれの余地を消した。</p>
+<p>2. <code style="color:#22d3bf">illusion_checker_shadow</code> で<b>対にするマスを間違えていた</b>(同じ明暗のマスを</p>
+<p>2 つ選んでいた。差 0.31)。対にすべきは「影の外の暗マス」と「影の中の明マス」。</p>
+<p>3. 定数の配列でも <code style="color:#22d3bf">std()</code> は厳密に 0 になりません(平均を引く途中で 1 ulp 残る、</p>
+<p>実測 5.6e-17)。「全部同じ値」を厳密に言うなら <code style="color:#22d3bf">ptp</code>(最大 − 最小)を使います。</p>

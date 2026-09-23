@@ -187,6 +187,252 @@ def chapter_components():
 
 
 # --------------------------------------------------------------------------- #
+# 第 1b 章 古典的なゲージ R&R 報告の面 —— 別の推定法が真値になる                    #
+# --------------------------------------------------------------------------- #
+#: n = 3 の管理図定数(範囲法)。``d2`` は範囲の期待値を σ に戻す係数、``D4``/``A2``
+#: は管理限界の係数。**分散分析とは独立に導かれた表の値**なので、ここから出した
+#: 繰り返し性は「既存の別実装が真値になる」の条件を満たす。
+_D2_N3, _D4_N3, _A2_N3 = 1.693, 2.574, 1.023
+
+
+def chapter_report_panels(G):
+    print("\n[1b] 古典的な報告の面 —— 範囲法という**別の推定**で確かめる")
+    t = reference_table()
+    m = t["value"].reshape(3, 10, 3)                  # (測定者, 部品, 繰り返し)
+    rng_ = m.max(axis=2) - m.min(axis=2)              # 各升目の範囲
+    rbar = float(rng_.mean())
+    ev_range = rbar / _D2_N3
+    ev_anova = dict(zip(G["component"], G["sigma"]))["repeatability"]
+    check(abs(ev_range / ev_anova - 1.0) < 0.02,
+          "★範囲法(R̄/d₂)が分散分析の繰り返し性と一致する",
+          "%.6f vs %.6f(差 %.2f %%)—— 導出も実装も別"
+          % (ev_range, ev_anova, 100 * (ev_range / ev_anova - 1.0)))
+    ucl = _D4_N3 * rbar
+    # ★「全部内側のはず」と書いたら 1 升はみ出した。実データのほうが正しい ——
+    #   規格の例題は**わざと 1 点だけ管理外**にしてある(範囲図の読み方を示すため)。
+    n_out = int((rng_ > ucl).sum())
+    check(n_out == 1, "範囲図は 1 升だけ管理限界の外(例題が仕込んだ読みどころ)",
+          "限界 %.4f を超えた升目 %d / 30" % (ucl, n_out))
+
+    xbar = m.mean(axis=2)
+    grand = float(xbar.mean())
+    lo_l, hi_l = grand - _A2_N3 * rbar, grand + _A2_N3 * rbar
+    out = int(((xbar < lo_l) | (xbar > hi_l)).sum())
+    check(out > 15,
+          "★平均管理図では**外に出るほうが良い**(限界は測定雑音だけで作る)",
+          "30 点中 %d 点が外 —— 部品の差が測定のばらつきを超えている証拠" % out)
+
+    # ndc は閉形式で書ける。寄与率 ρ(= GRR の分散の割合)だけで決まる。
+    pc = dict(zip(G["component"], G["pct_contribution"]))
+    rho = pc["gauge_rr"] / 100.0
+    ndc_closed = 1.41 * np.sqrt((1.0 - rho) / rho)
+    check(abs(ndc_closed - G["ndc"][0]) < 1e-3,
+          "★ndc は寄与率だけの閉形式 1.41√((1−ρ)/ρ)",
+          "%.4f vs op の %.4f" % (ndc_closed, G["ndc"][0]))
+
+    if not figs.enabled():
+        return
+    x = np.arange(1, 11, dtype=float)
+    figs.save_plot("r_chart",
+                   [("測定者 A", x, rng_[0]), ("測定者 B", x, rng_[1]),
+                    ("測定者 C", x, rng_[2]),
+                    ("管理限界 D₄R̄ = %.3f" % ucl, np.array([1.0, 10.0]),
+                     np.full(2, ucl))],
+                   xlabel="部品", ylabel="3 回の測定値の範囲",
+                   title="範囲管理図 —— 測る行為そのものが安定しているか",
+                   kinds=["line", "line", "line", "line"],
+                   caption="各升目(部品 × 測定者)で 3 回測った値の**幅**。"
+                           "ここだけは**限界の内側に収まってほしい** —— はみ出す升目は"
+                           "「その部品をその人が測るとき、測り方が揺れている」という"
+                           "意味だからです。実測は 1 升だけ外(例題が仕込んだ読みどころ)。★この図の平均 R̄ から"
+                           "**分散分析とは別の道**で繰り返し性が出ます(R̄/d₂ = %.6f、"
+                           "分散分析 %.6f、差 %.2f %%)—— 導出も実装も違うので、"
+                           "片方が壊れれば一致しません。"
+                           % (ev_range, ev_anova, 100 * (ev_range / ev_anova - 1.0)))
+    figs.save_plot("xbar_chart",
+                   [("測定者 A", x, xbar[0]), ("測定者 B", x, xbar[1]),
+                    ("測定者 C", x, xbar[2]),
+                    ("上限 %.3f" % hi_l, np.array([1.0, 10.0]), np.full(2, hi_l)),
+                    ("下限 %.3f" % lo_l, np.array([1.0, 10.0]), np.full(2, lo_l))],
+                   xlabel="部品", ylabel="3 回の平均",
+                   title="平均管理図 —— ここだけは**外に出るほうが良い**",
+                   kinds=["line", "line", "line", "line", "line"],
+                   caption="管理図というと「限界の外は異常」ですが、ゲージ R&R の"
+                           "平均図だけは**逆**です。この限界は**測定のばらつきだけ**から"
+                           "引いてあるので、部品に本当の差があるなら点は外へ出ます。"
+                           "実測は 30 点中 **%d 点**が外 —— 測定系が部品の差を"
+                           "見分けられている、という読み方をします。3 本の線が"
+                           "**ほぼ重なっている**ことが、測定者を変えても同じ物が"
+                           "同じに見えている(再現性が良い)ということ。" % out)
+    figs.save_plot("by_operator",
+                   [("測定者 %s の 30 点" % "ABC"[j],
+                     np.full(30, float(j + 1)) + np.linspace(-0.22, 0.22, 30),
+                     m[j].ravel()) for j in range(3)]
+                   + [("各測定者の平均", np.arange(1.0, 4.0), xbar.mean(axis=1))],
+                   xlabel="測定者", ylabel="測定値",
+                   kinds=["scatter", "scatter", "scatter", "line"],
+                   title="再現性 —— 人が変わると答えはどれだけ動くか",
+                   caption="測定者ごとに 30 点すべてを並べたもの。**縦の広がりは"
+                           "ほとんど部品の差**で、見たいのは 3 つの塊の**中心のずれ**の"
+                           "ほうです(実測 %.4f / %.4f / %.4f)。この小さなずれが"
+                           "再現性 AV = 0.226838 の正体で、総変動の 4.4 %% にあたります。"
+                           % tuple(xbar.mean(axis=1)))
+    rr = np.linspace(0.005, 0.60, 400)
+    figs.save_plot("ndc_curve",
+                   [("ndc = 1.41√((1−ρ)/ρ)", 100 * rr,
+                     1.41 * np.sqrt((1.0 - rr) / rr)),
+                    ("使ってよい下限 ndc = 4", np.array([0.5, 60.0]), np.full(2, 4.0)),
+                    ("この例題(ρ = %.1f %%)" % (100 * rho),
+                     np.array([100 * rho]), np.array([ndc_closed]))],
+                   kinds=["line", "line", "scatter"],
+                   xlabel="GRR が総変動に占める割合 ρ [%]",
+                   ylabel="区別できる階級数 ndc", ylim=(0.0, 20.0),
+                   title="「使える測定器か」は 1 本の曲線で決まる",
+                   caption="区別できる階級数は、測定の寄与率 ρ **だけ**の関数です —— "
+                           "`ndc = 1.41√((1−ρ)/ρ)`。部品の実際の大きさにも単位にも"
+                           "よりません。規格の例題は ρ = %.2f %% で **ndc = %.4f**、"
+                           "曲線にぴったり乗ります(op の返り値と 1e-3 まで一致)。"
+                           "慣行の合格線 4 を割るのは ρ が約 11 %% を超えたあたり。"
+                           % (100 * rho, ndc_closed))
+
+
+# --------------------------------------------------------------------------- #
+# 第 7b 章 GUM の「形」を 4 枚で —— 除数・Welch・畳み込み・収束                     #
+# --------------------------------------------------------------------------- #
+def chapter_gum_gallery():
+    print("\n[7b] 不確かさの形 —— 除数・自由度・畳み込み・収束")
+    # (a) 分布形ごとの除数。半幅 a を形ごとに変えると、**どれも u = 1** になる。
+    a_rect, a_tri, a_u, s_nor = np.sqrt(3.0), np.sqrt(6.0), np.sqrt(2.0), 1.0
+    z = np.linspace(-3.4, 3.4, 1201)
+    rect = np.where(np.abs(z) <= a_rect, 1.0 / (2 * a_rect), 0.0)
+    tri = np.where(np.abs(z) <= a_tri, (a_tri - np.abs(z)) / (a_tri ** 2), 0.0)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        ush = np.where(np.abs(z) < a_u * 0.999,
+                       1.0 / (np.pi * np.sqrt(np.maximum(a_u ** 2 - z ** 2, 1e-12))), 0.0)
+    nor = np.exp(-0.5 * (z / s_nor) ** 2) / (s_nor * np.sqrt(2 * np.pi))
+    rg = np.random.default_rng(3)
+    n_s = 2_000_000
+    smp = (rg.uniform(-a_rect, a_rect, n_s),                       # 矩形
+           a_tri * 0.5 * (rg.uniform(-1, 1, n_s) + rg.uniform(-1, 1, n_s)),  # 三角
+           a_u * np.sin(rg.uniform(0.0, 2 * np.pi, n_s)),          # U 字(逆正弦)
+           rg.normal(0.0, s_nor, n_s))                             # 正規
+    sds = [float(v.std(ddof=1)) for v in smp]
+    # 標本からの標準偏差の誤差は σ/√(2n) ≈ 5e-4。その 10 倍を許容にする。
+    check(max(abs(v - 1.0) for v in sds) < 5e-3,
+          "★4 つの分布形は半幅を変えると**どれも u = 1** になる",
+          "実測 " + " / ".join("%.4f" % v for v in sds))
+
+    # (b) Welch-Satterthwaite: 定理「ν_eff は最小の自由度を下回らない」
+    w = np.linspace(0.0, 1.0, 401)
+    nu1, nu2 = 3.0, 30.0
+    u1, u2 = w, np.sqrt(np.maximum(1.0 - w ** 2, 0.0))
+    uc4 = (u1 ** 2 + u2 ** 2) ** 2
+    nu_eff = uc4 / (u1 ** 4 / nu1 + u2 ** 4 / nu2 + 1e-300)
+    check(float(nu_eff.min()) >= min(nu1, nu2) - 1e-9,
+          "★定理: ν_eff は最小の自由度を下回らない",
+          "掃引の最小 %.4f(min ν = %.0f)" % (nu_eff.min(), min(nu1, nu2)))
+
+    # (c) Irwin-Hall n = 1..4(どれも u = 1 になるよう規格化)+ 超過尖度の閉形式
+    def ih_density(n, y):
+        a = np.sqrt(3.0 / n)                       # 各一様の半幅(和の u が 1 になる)
+        s = (y + n * a) / (2 * a)                  # y -> [0, n] の変数
+        out = np.zeros_like(y)
+        for i, zz in enumerate(s):
+            acc = 0.0
+            for k in range(n + 1):
+                c = 1.0
+                for q in range(k):
+                    c *= (n - q) / (q + 1)
+                acc += (-1) ** k * c * max(zz - k, 0.0) ** (n - 1)
+            f = 1.0
+            for q in range(2, n):
+                f *= q
+            out[i] = acc / f
+        return out / (2 * a)
+
+    y = np.linspace(-4.6, 4.6, 601)
+    dens = [ih_density(n, y) for n in (1, 2, 3, 4)]
+    dy = float(y[1] - y[0])
+    m4 = float(np.sum(dens[3] * y ** 4) * dy)
+    check(abs((m4 - 3.0) + 0.3) < 2e-3,
+          "★Irwin-Hall(4) の超過尖度は閉形式 −6/(5n) = −0.3",
+          "実測 %.4f" % (m4 - 3.0))
+
+    # (d) モンテカルロの収束 —— 端点が厳密解へ 1/√n で寄る
+    exact_lo = np.sqrt(3.0) * (2.0 * 0.6 ** 0.25 - 4.0)
+    ns = np.array([2_000, 8_000, 32_000, 128_000, 512_000], dtype=float)
+    lows = []
+    for nn in ns:
+        mc = fs.ledger.gum_monte_carlo(
+            {"u": [1.0] * 4, "sensitivity": [1.0] * 4,
+             "distribution": ["rectangular"] * 4},
+            n=int(nn), seed=7, distribution="distribution")
+        lows.append(float(mc["low"][0]))
+    err = np.abs(np.array(lows) - exact_lo)
+    check(err[-1] < err[0],
+          "標本を増やすとモンテカルロは厳密解へ寄る",
+          "誤差 %.4f(n=2e3) -> %.4f(n=5.1e5)" % (err[0], err[-1]))
+
+    if not figs.enabled():
+        return
+    figs.save_plot("divisors",
+                   [("矩形(半幅 a = √3、除数 √3)", z, rect),
+                    ("三角(a = √6、除数 √6)", z, tri),
+                    # U 字は両端で**発散する**ので、描くときだけ頭を切る
+                    ("U 字(a = √2、除数 √2。両端は切ってある)", z,
+                     np.minimum(ush, 0.88)),
+                    ("正規(95 %% 幅 / 1.959964)", z, nor)],
+                   xlabel="入力量のずれ", ylabel="確率密度", ylim=(0.0, 0.95),
+                   title="形が違っても、同じ「u = 1」になる",
+                   caption="校正証明書に「±a」とだけ書いてあるとき、それを標準不確かさへ"
+                           "直す除数は**形で決まります** —— 矩形なら a/√3、三角なら a/√6、"
+                           "両端に寄る U 字(温度の上下動など)なら a/√2、「95 %% の幅」と"
+                           "書いてあるなら 1.959964 で割る。この 4 本は**半幅をわざと"
+                           "変えて、どれも u = 1 に揃えたもの**(実測 %s)。"
+                           "形を取り違えると、同じ ±a が最大 √3 倍ずれます。"
+                           % " / ".join("%.4f" % v for v in sds))
+    figs.save_plot("welch",
+                   [("ν_eff(掃引)", w, nu_eff),
+                    ("定理の下限 min ν = 3", np.array([0.0, 1.0]), np.full(2, nu1)),
+                    ("成分の自由度の和 33", np.array([0.0, 1.0]), np.full(2, nu1 + nu2))],
+                   xlabel="自由度 3 の成分が占める割合 u₁ / u_c", ylabel="有効自由度 ν_eff",
+                   title="Welch–Satterthwaite —— 定理がそのまま絵になる",
+                   ylim=(0.0, 36.0),
+                   caption="自由度 3 の成分と自由度 30 の成分を混ぜ、比だけを左から右へ"
+                           "動かしたもの。**ν_eff は下の線(最小の自由度)を決して"
+                           "割りません** —— 合成の自由度が、いちばん頼りない成分より"
+                           "悪くなることはない、という定理です。左端は自由度 30 の成分"
+                           "だけ、右端は自由度 3 の成分だけ。実測の最小 %.4f。"
+                           % nu_eff.min())
+    figs.save_plot("irwin_hall",
+                   [("一様 1 つ", y, dens[0]), ("2 つの和", y, dens[1]),
+                    ("3 つの和", y, dens[2]), ("4 つの和", y, dens[3]),
+                    ("正規(同じ u = 1)", y,
+                     np.exp(-0.5 * y ** 2) / np.sqrt(2 * np.pi))],
+                   xlabel="出力 y(どれも u = 1 に規格化)", ylabel="確率密度",
+                   title="足すほど正規に近づく —— ただし裾は最後まで薄い",
+                   caption="矩形分布を n 個足した分布(Irwin–Hall)を、**どれも"
+                           "u = 1 になるように**重ねたもの。n が増えると形は急速に"
+                           "正規へ寄りますが、**裾は最後まで薄いまま**です —— "
+                           "超過尖度は `−6/(5n)`(n=4 で **−0.3**、実測 %.4f)。"
+                           "伝播則が矩形の例で 95 %% 区間を広めに出すのは、この"
+                           "薄い裾に正規の厚い裾を当てているからです。" % (m4 - 3.0))
+    figs.save_plot("mc_convergence",
+                   [("モンテカルロの 2.5 %% 点", ns, np.array(lows)),
+                    ("厳密解 √3(2·0.6^¼ − 4) = %.6f" % exact_lo,
+                     np.array([ns[0], ns[-1]]), np.full(2, exact_lo))],
+                   kinds=["scatter", "line"],
+                   xlabel="標本数 n", ylabel="区間の下端",
+                   title="乱数は厳密解に寄るだけで、厳密解を超えない",
+                   caption="同じ問題(4 つの矩形分布の和)を標本数を変えて 5 回。"
+                           "点は**厳密解の線へ寄っていく**だけで、それ以上の情報は"
+                           "出てきません(誤差 %.4f → %.4f)。だから厳密解があるなら"
+                           "乱数は捨てます —— 公表されている「MCM の区間 ±3.88」も、"
+                           "実はモンテカルロの産物ではなく**厳密分位点の丸め**でした。"
+                           % (err[0], err[-1]))
+
+
+# --------------------------------------------------------------------------- #
 # 第 2 章 モデルの選択が答えを動かす                                              #
 # --------------------------------------------------------------------------- #
 def chapter_pooling(G, keep):
@@ -707,6 +953,7 @@ def main():
     print("PoC: その数字のうち、いくつが測り方のものか")
     print("=" * 74)
     G, keep = chapter_components()
+    chapter_report_panels(G)
     chapter_pooling(G, keep)
     evs, avs, negs = chapter_spread()
     obs, kap = chapter_bias_and_kappa()
@@ -714,6 +961,7 @@ def main():
     xs, guf_lo, guf_hi, mc_lo, mc_hi = chapter_breakdown()
     chapter_breakdown_movie()
     exact_lo, guf, half, gap = chapter_exact()
+    chapter_gum_gallery()
 
     if figs.enabled():
         s = dict(zip(G["component"], G["sigma"]))

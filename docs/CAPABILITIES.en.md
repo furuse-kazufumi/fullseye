@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 34 capabilities**
+**Currently 35 capabilities**
 
 ## Measure (9)
 
@@ -289,7 +289,7 @@ Operators: `text_box`, `annotate_text_path`, `annotate_text_path_layout`, `annot
 
 Runnable: `annotate_paper_tour`
 
-## Draw (2)
+## Draw (3)
 
 ### [Turn a photograph into a single line (stipple, tour, rotating circles)](capabilities/one-stroke-drawing.md)
 
@@ -298,6 +298,14 @@ Turn the tone of a picture into a single closed line a pen could draw without li
 Operators: `stipple_points_from_image`, `stipple_energy`, `stroke_tour_closed`, `mst_length`, `stroke_resample_closed`, `stroke_tone_error`, `contour_fourier_complex`, `contour_epicycle_chain`, `contour_fourier_truncation_energy`
 
 Runnable: `poc_one_stroke_epicycles`
+
+### [Pictures that carry their own ground truth (illusions, endless drawing, seamless loops)](capabilities/pictures-that-carry-their-own-truth.md)
+
+Generates pictures that ship with their own ground truth: optical illusions whose denied invariant is exact (parallel, equal-length, identical-valued), endless generative systems whose correctness is an identity rather than an appearance, and seamless loops where the seam is absent by construction rather than removed by editing.
+
+Operators: `illusion_cafe_wall`, `illusion_muller_lyer`, `illusion_checker_shadow`, `illusion_kanizsa`, `illusion_fraser_spiral`, `illusion_ground_truth`, `perpetual_elementary_ca`, `perpetual_langtons_ant`, `perpetual_apollonian`, `perpetual_flow_field`, `perpetual_identities`, `perpetual_state`, `perpetual_step`, `perpetual_render`, `perpetual_loop`, `perpetual_loop_seam`
+
+Runnable: `poc_illusions_and_perpetual_drawing`
 
 ### [Theorems as pictures (Apollonian, Ford, geodesic dome, phyllotaxis, IFS, space-filling curves)](capabilities/theorems-as-pictures.md)
 

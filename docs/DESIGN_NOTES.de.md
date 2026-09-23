@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 927. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 942. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -474,6 +474,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L375** _(ja)_ — ★これは note 080 で退けた「順位で判定する」とは別物 —— 判定は今も床で行い、 ここで固定するのは**分離しているという性質**だけ。
 - **L403** _(ja)_ — ★書体 1 本の環境では**主張を弱める**。妨害から作った床は書体の散らばりより 狭く(実測 0.0258 対 0.0581)、撮り方の違いだけで無事な字まで超えてしまう (実測 7 本中 5 本)。**この環境では言えないことを言わない**のが正しく、 閾値を緩めて通すのは測定を捨てるのと同じ。CI には CJK を 2 本入れてある。
 
+## `examples/poc_illusions_and_perpetual_drawing.py`
+
+- **L194** _(ja)_ — ★★「目の主張 1 / 実測 0」を点で並べても**何の図か分かりにくい**。 測った結果を**絵の上に描き戻す**ほうが強い —— 測った目地の位置に 端から端まで真っ直ぐな罫を引くと、タイルは傾いて見えたままなのに 罫は平行だと目で確かめられる。図を描く側と測る側が同じ箱にあるから できる見せ方で、見た目と数値を「並べる」のではなく「重ねる」。
+- **L199** _(ja)_ — ★罫を目地と**同じ太さ**にすると目地を塗りつぶしてしまい、錯視ごと 消える(最初それで (a) が別の図になった)。目地を太くしてから、 その中に細い罫を通す。
+- **L254** _(ja)_ — ★閉形式で厳密に出るものと、再帰で誤差が積もるものを同じ物差しで見ない。
+- **L277** _(ja)_ — ★最初は「104 歩で 52 マス = 0.5 /歩」と書いたが、実測 0.114 と合わなかった。 測り直すと**正味の増加は 104 歩あたりちょうど 12 マス**(整数)。周期の 中で塗っては消すので、正味はずっと少ない。推測でなく実測が正しかった。
+
 ## `examples/poc_interferometry_step.py`
 
 - **L159** — 3) ★Wiederholte Messung — Verzerrung von Streuung trennen # ------------------------------------------------------------------ #
@@ -526,15 +533,16 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_measurement_system_analysis.py`
 
 - **L155** _(ja)_ — ★★看板は**一目で読める**ものにする。濃淡の地図は情報としては正しいが 読者には「色のついた雑音」で、何の図か分からない。ゲージ R&R の古典的な 見せ方 —— 部品ごとに測定値を縦に並べる —— なら、10 個の塊が縦に離れて いるのが部品差、各塊の**太さ**が測る行為のばらつき、と目で読める。
-- **L220** _(ja)_ — ★2 点を結んだ直線では「7.3 % 違う」としか言えない。**交互作用の強さを 掃引**すると、いつモデル選択が効いていつ効かないのかが曲線で見える。
-- **L415** _(ja)_ — ★★規格の「t 表を引く直前に切り捨てる」は、滑らかな t(ν) に対する**階段**。 実装が踏んだ欠陥(切り捨てずに引いた)が、そのまま曲線と階段の差になる。
-- **L438** _(ja)_ — ★3 点の散布では「向きが逆」が読み取れない。**相関係数を掃引**すると、 2 本の曲線が無相関の水平線を**反対側で**横切るのが見える。
-- **L510** _(ja)_ — ★★その 150 は乱数ではなく**閉形式**で出る: X1²+X2² は u²χ²₂ = 平均 2u² の 指数分布なので、上側 95 % 点は 2u² ln 20。公表値と小数 1 桁まで合う。
-- **L525** _(ja)_ — ★★閉形式が絵になる場所。x1 = x2 = 0 では X1^2 + X2^2 は u^2 chi^2_2、 すなわち**平均 2u^2 の指数分布**。95 % 点は 2 u^2 ln 20 で閉形式。
-- **L591** _(ja)_ — ★★半幅を 3 本の水平線で並べても「なぜ違うのか」は見えない。**密度を 重ねる**と、正規近似の裾が実際より厚いことが絵で分かる。
-- **L603** _(ja)_ — ★区間は**水平の線分**で描く(plot_series は非有限を拒むので 「NaN で区切って 2 本の縦線」は使えない。読みやすくもある)
-- **L666** _(ja)_ — ★窓は**3 段階すべてが入る**ように取る。伝播則の下端が 0 を超えるのは x1 > 2 k u = 0.0196 なので、そこまで届かない窓だと「追いつく」が見えない。
-- **L676** _(ja)_ — ★各コマで最大値に正規化する。絶対密度のままだと、指数(原点で 2e4)と 後半の正規(1.6e3)で 1 桁違い、後半が平らに潰れて**形の変化が見えない**。
+- **L211** _(ja)_ — ★「全部内側のはず」と書いたら 1 升はみ出した。実データのほうが正しい —— 規格の例題は**わざと 1 点だけ管理外**にしてある(範囲図の読み方を示すため)。
+- **L466** _(ja)_ — ★2 点を結んだ直線では「7.3 % 違う」としか言えない。**交互作用の強さを 掃引**すると、いつモデル選択が効いていつ効かないのかが曲線で見える。
+- **L661** _(ja)_ — ★★規格の「t 表を引く直前に切り捨てる」は、滑らかな t(ν) に対する**階段**。 実装が踏んだ欠陥(切り捨てずに引いた)が、そのまま曲線と階段の差になる。
+- **L684** _(ja)_ — ★3 点の散布では「向きが逆」が読み取れない。**相関係数を掃引**すると、 2 本の曲線が無相関の水平線を**反対側で**横切るのが見える。
+- **L756** _(ja)_ — ★★その 150 は乱数ではなく**閉形式**で出る: X1²+X2² は u²χ²₂ = 平均 2u² の 指数分布なので、上側 95 % 点は 2u² ln 20。公表値と小数 1 桁まで合う。
+- **L771** _(ja)_ — ★★閉形式が絵になる場所。x1 = x2 = 0 では X1^2 + X2^2 は u^2 chi^2_2、 すなわち**平均 2u^2 の指数分布**。95 % 点は 2 u^2 ln 20 で閉形式。
+- **L837** _(ja)_ — ★★半幅を 3 本の水平線で並べても「なぜ違うのか」は見えない。**密度を 重ねる**と、正規近似の裾が実際より厚いことが絵で分かる。
+- **L849** _(ja)_ — ★区間は**水平の線分**で描く(plot_series は非有限を拒むので 「NaN で区切って 2 本の縦線」は使えない。読みやすくもある)
+- **L912** _(ja)_ — ★窓は**3 段階すべてが入る**ように取る。伝播則の下端が 0 を超えるのは x1 > 2 k u = 0.0196 なので、そこまで届かない窓だと「追いつく」が見えない。
+- **L922** _(ja)_ — ★各コマで最大値に正規化する。絶対密度のままだと、指数(原点で 2e4)と 後半の正規(1.6e3)で 1 桁違い、後半が平らに潰れて**形の変化が見えない**。
 
 ## `examples/poc_mesh_quality_repair.py`
 
@@ -1078,6 +1086,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L68** — ★Auto-Ops, die das Funktions-Gate **nicht bestanden** haben, aus der Schlagzeile ausschließen — zuvor wurden sie nur per [warn] ausgegeben, aber weiter mitgezählt, was die „funktional gegatterte“ Paritätszahl mit Ops aufblähte, die das Gate ablehnt.
 - **L87** — ★2026-09-08: Diese Zeile lautete -- "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." Gemessen: **979 + 17 = 979**, d. h. die 17 n-ary-ops sind eine **Teilmenge** von ``reg_counted`` (``nary_names - reg_counted`` ist leer). Die 979 der Ueberschrift stimmt, doch allein die Aufschluesselungszeile sieht nach 'Addition' aus, und wer sie addiert, erhaelt 996. Die Zahlen stimmen, aber **die Erklaerung luegt**, daher wurde es korrigiert. Ob die Aufschluesselung als Summe aufgeht, prueft jedes Mal ``tests/test_honest_summary_arithmetic.py``.
 
+## `illusion.py`
+
+- **L290** _(ja)_ — ★周りの円は**互いに重ならない**ように置く。n 個を半径 rs の環に並べるとき、 隣どうしの中心間距離は 2*rs*sin(pi/n) なので rs > rr / sin(pi/n) が要る。 最初これを守らずに (rs=62, rr=46, n=6) と置いたら、周りの円が融合して **花のような 1 つの塊**になった —— エビングハウス錯視になっていない。
+
 ## `imgevolve.py`
 
 - **L48** _(ja)_ — ★module / requires(2026-09-19): 「unknown operator」が backend 不足を隠していた (外部レビュー #1)。索引が出自と optional 依存を持てば、core 環境の ``api._resolve`` が同梱の複製(fullseye/data/OP_INDEX.json)から不足 extra を 案内できる。requires は AST で静的に読むので、生成環境に依らず同じ値。
@@ -1144,23 +1156,23 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `opassist.py`
 
 - **L52** — ★2026-09-08: ops1d (dsp 16 + funct1d 23) war registriert, erschien aber weder in docs noch in op_run / op_assist / op_find -- 'registriert' und 'abrufbar' sind verschieden. Nach dem Hinzufuegen zu opdocs schlug dieses Gate auf der nicht abrufbaren Seite an.
-- **L256** — ★Design (2026-09-04, Nutzer: 'Verschiedene Container-Typen behandeln zu koennen ist besser, aber Einheitlichkeit ist auch wichtig'): Anfangs mischte `kind` "seq" und "matrix" hinein -- das heisst, der **Werttyp** (numerisch, ganzzahlig oder Auswahl) und die **Container-Form** (einzeln, Vektor oder Matrix) konkurrierten in einem Feld. Aus Sicht der UI liess sich ein 'int-3-Vektor' nicht ausdruecken, und nur Matrizen hatten ihre Struktur unter dem `seq`-Schluessel, sodass die Handhabung zerstreut war. Dies wurde orthogonalisiert: `kind` enthaelt nur den Werttyp, und der Container kommt stets in `container`. Auch ein Skalar wird nicht zur Ausnahme (`{"form": "scalar", "shape": ()}`), sodass die UI ihre Verzweigung als einen einzigen Pfad schreiben kann.
-- **L371** — ★Laengste Uebereinstimmung. Beim Durchsuchen von kurz nach lang trifft `sigma_per_mm` auf `_mm` und wird zu "mm" (tatsaechlich ist es 1/mm). Bei falscher Einheit wird die Zahl der UI stillschweigend zu etwas anderem.
-- **L453** _(ja)_ — ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、 それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
-- **L486** — ★Der springende Punkt: Manche Argumente **haben ihren Default nicht als Tupel angegeben**. `center=None` (ein optionales (row,col)), das erforderliche `trans` (3-Vektor), `k_cam` (3x3-Matrix)... allein am Default betrachtet erscheinen sie als 'eine einzelne Zahl', und die UI bricht, indem sie eine spin box anzeigt. Die Struktur wird ueber den Namen ergaenzt.
-- **L691** _(ja)_ — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
-- **L697** — ★Durch Messung festgestellt: Uebergibt man ein generisches 0..1-signal an die Wellenlaengeneingabe von `prism_min_deviation_deg`, wird es von 'Wellenlaenge muss positiv sein' abgewiesen, was es zu einem **op macht, dessen Beispiel nicht laeuft**. Ist die Einheit bekannt, kommt es dem 'laeuft auf Knopfdruck' naeher, es mit einem fuer diese Groesse plausiblen Bereich zu initialisieren.
-- **L842** — Eine Folge japanischen (CJK-)Textes. ★``_WORD_RE`` ist ``[a-z0-9]+``, sodass eine japanische Anfrage **kein einziges Wort ergibt** (``_WORD_RE.findall(...) == []`` bei japanischer Eingabe). Die Stemming-Stufe stirbt, und da die Teiluebereinstimmung nach einer Zeichenkette samt Leerraum sucht, war eine **mehrwortige japanische Anfrage strukturell stets 0 Treffer** -- in einem Produkt, dessen docstrings ueberwiegend japanisch sind und das in 6 Sprachen ausgeliefert wird. Am 2026-09-08 durch `poc_search_sweep_width` aufgedeckt (die japanischen Anfragen fuer 'Punkterkennung' / 'Spot-Erkennung' / 'kleines Ziel' ueber ``op_find`` ergaben allesamt 0 Treffer, und obwohl die Subpixel-Schwerpunkt-Punktziel-Erkennung nur ``star_detect`` ist, war sie vom Japanischen aus nicht erreichbar).
-- **L895** — Die als Stamm-Uebereinstimmung geltende gemeinsame Praefixlaenge. ★Bei 4 werden "median"/"medial" und "contrast"/"contour" verknuepft; schneidet man bei 5, werden "correlation"/"correlate" (8), "segmentation"/"segment" (7), "rotation"/"rotate" (5) und "gaussian"/"gauss" (5) erfasst, die beiden obigen Paare hingegen nicht.
-- **L905** — Die **nach dem gemeinsamen Praefix erlaubte Endung**. ★Entscheidet man allein nach der Praefixlaenge, werden "median"/"medial" verknuepft (sie teilen ein 5-Zeichen-"media"). Prueft man, ob die Endung nach einer Flexionsendung aussieht, kommt "correlation"/"correlate" (ion / e) durch, waehrend "median"/"medial" (n / l) und "corner"/"cornea" (r / a) herausfallen.
-- **L1001** — ★Untergrenze. Ohne sie gibt "zzz-nothing-matches" `histogram_match` zurueck (weil "matches" mit `match_*` stamm-uebereinstimmt). Liegt das Gewicht der getroffenen Woerter unter 15 % der gesamten Anfrage, gilt es als 'kein Treffer'. Gemessen: "digital image correlation" ist 0.19 (besteht), "zzz-nothing-matches" ist 0.10 (verworfen).
-- **L1175** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
-- **L1203** _(ja)_ — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
-- **L1255** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
-- **L1275** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
-- **L1288** _(ja)_ — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
-- **L1298** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
-- **L1316** _(ja)_ — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
+- **L259** — ★Design (2026-09-04, Nutzer: 'Verschiedene Container-Typen behandeln zu koennen ist besser, aber Einheitlichkeit ist auch wichtig'): Anfangs mischte `kind` "seq" und "matrix" hinein -- das heisst, der **Werttyp** (numerisch, ganzzahlig oder Auswahl) und die **Container-Form** (einzeln, Vektor oder Matrix) konkurrierten in einem Feld. Aus Sicht der UI liess sich ein 'int-3-Vektor' nicht ausdruecken, und nur Matrizen hatten ihre Struktur unter dem `seq`-Schluessel, sodass die Handhabung zerstreut war. Dies wurde orthogonalisiert: `kind` enthaelt nur den Werttyp, und der Container kommt stets in `container`. Auch ein Skalar wird nicht zur Ausnahme (`{"form": "scalar", "shape": ()}`), sodass die UI ihre Verzweigung als einen einzigen Pfad schreiben kann.
+- **L374** — ★Laengste Uebereinstimmung. Beim Durchsuchen von kurz nach lang trifft `sigma_per_mm` auf `_mm` und wird zu "mm" (tatsaechlich ist es 1/mm). Bei falscher Einheit wird die Zahl der UI stillschweigend zu etwas anderem.
+- **L456** _(ja)_ — ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、 それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
+- **L489** — ★Der springende Punkt: Manche Argumente **haben ihren Default nicht als Tupel angegeben**. `center=None` (ein optionales (row,col)), das erforderliche `trans` (3-Vektor), `k_cam` (3x3-Matrix)... allein am Default betrachtet erscheinen sie als 'eine einzelne Zahl', und die UI bricht, indem sie eine spin box anzeigt. Die Struktur wird ueber den Namen ergaenzt.
+- **L697** _(ja)_ — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
+- **L703** — ★Durch Messung festgestellt: Uebergibt man ein generisches 0..1-signal an die Wellenlaengeneingabe von `prism_min_deviation_deg`, wird es von 'Wellenlaenge muss positiv sein' abgewiesen, was es zu einem **op macht, dessen Beispiel nicht laeuft**. Ist die Einheit bekannt, kommt es dem 'laeuft auf Knopfdruck' naeher, es mit einem fuer diese Groesse plausiblen Bereich zu initialisieren.
+- **L848** — Eine Folge japanischen (CJK-)Textes. ★``_WORD_RE`` ist ``[a-z0-9]+``, sodass eine japanische Anfrage **kein einziges Wort ergibt** (``_WORD_RE.findall(...) == []`` bei japanischer Eingabe). Die Stemming-Stufe stirbt, und da die Teiluebereinstimmung nach einer Zeichenkette samt Leerraum sucht, war eine **mehrwortige japanische Anfrage strukturell stets 0 Treffer** -- in einem Produkt, dessen docstrings ueberwiegend japanisch sind und das in 6 Sprachen ausgeliefert wird. Am 2026-09-08 durch `poc_search_sweep_width` aufgedeckt (die japanischen Anfragen fuer 'Punkterkennung' / 'Spot-Erkennung' / 'kleines Ziel' ueber ``op_find`` ergaben allesamt 0 Treffer, und obwohl die Subpixel-Schwerpunkt-Punktziel-Erkennung nur ``star_detect`` ist, war sie vom Japanischen aus nicht erreichbar).
+- **L901** — Die als Stamm-Uebereinstimmung geltende gemeinsame Praefixlaenge. ★Bei 4 werden "median"/"medial" und "contrast"/"contour" verknuepft; schneidet man bei 5, werden "correlation"/"correlate" (8), "segmentation"/"segment" (7), "rotation"/"rotate" (5) und "gaussian"/"gauss" (5) erfasst, die beiden obigen Paare hingegen nicht.
+- **L911** — Die **nach dem gemeinsamen Praefix erlaubte Endung**. ★Entscheidet man allein nach der Praefixlaenge, werden "median"/"medial" verknuepft (sie teilen ein 5-Zeichen-"media"). Prueft man, ob die Endung nach einer Flexionsendung aussieht, kommt "correlation"/"correlate" (ion / e) durch, waehrend "median"/"medial" (n / l) und "corner"/"cornea" (r / a) herausfallen.
+- **L1007** — ★Untergrenze. Ohne sie gibt "zzz-nothing-matches" `histogram_match` zurueck (weil "matches" mit `match_*` stamm-uebereinstimmt). Liegt das Gewicht der getroffenen Woerter unter 15 % der gesamten Anfrage, gilt es als 'kein Treffer'. Gemessen: "digital image correlation" ist 0.19 (besteht), "zzz-nothing-matches" ist 0.10 (verworfen).
+- **L1181** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
+- **L1209** _(ja)_ — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
+- **L1261** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
+- **L1281** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
+- **L1294** _(ja)_ — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
+- **L1304** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
+- **L1322** _(ja)_ — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
 
 ## `ops.py`
 
@@ -1268,6 +1280,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `pcseg.py`
 
 - **L448** — ★ ``full_matrices=True`` (Standard) allokiert das (N, N) U und **wirft es weg**. Gemessen 2026-09-06: für 20000 Punkte 3.73 s / 3.2 GB, während ``full_matrices=False`` 0.876 ms (**4263x**) mit bitidentischem Vt ist. Bei 100k Punkten stirbt es bei 80 GB. Dasselbe Muster war in pcseg.fit_plane / measure / ops / camera / pnp3d (alle werfen U weg). Das statische Gate ist tests/test_svd_full_matrices.py.
+
+## `perpetual.py`
+
+- **L323** _(ja)_ — ★★平方根には**枝が 2 つ**あり、片方は「親 3 円に接しない円」を返す。 最初は主値だけを使っていて、絵の左上に**外円の外へ逃げる円の鎖**が 出た —— 絵としては「フラクタルっぽい」ので、見ただけでは欠陥と 分からない。接することを**数で確かめて**枝を選ぶ。
+- **L692** _(ja)_ — ★二項係数そのものを積むと C(62,31)*31 が int64 を**黙って溢れる**。 要るのは偶奇だけなので、リュカの定理の帰結 「C(n,k) が奇 ⟺ (n & k) == k」を使う(桁あふれの余地が無い)。
+- **L712** _(ja)_ — ★向きの符号は回転の規約で変わる。定理が言うのは「周期 104 で**同じ**斜めの 変位を繰り返す」ことなので、そちらを門にする(大きさは縦横とも 2)。
+- **L719** _(ja)_ — ★高速道路は**正味で 104 歩あたりちょうど 12 マス**黒を増やす(実測で整数)。 最初は「104 歩で 52 マス」と書いたが実測 0.114/歩 と合わず、測り直して 12/104 = 0.11538 だった。周期の中で塗っては消すので、正味はずっと少ない。
+- **L736** _(ja)_ — ★★描いた円が**本当に接しているか**。平方根の枝を選び損ねると、 絵としては「フラクタルっぽい」まま外へ逃げる鎖が出る(実際に出した)。
 
 ## `pivops.py`
 
@@ -1481,6 +1501,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L99** _(ja)_ — ★2026-09-14: ここは `resolve()` の戻りを検査せず `spec["xml"]` を引いていた。 `scene_registry` が**実在しない場面に None を返す**設計(資産が無い環境では 正しい振る舞い)なので、資産チェックアウトが無いと `TypeError` で落ちる。 同じファイル群の `test_fullseye_3dgs.py` は**既にこの skip 作法を持っていた** —— 作法が兄弟に適用されていなかった ([[feedback_same_bug_class_recurs_check_siblings]])。
 
+## `tests/test_generative.py`
+
+- **L66** _(ja)_ — ★ head を変えると画布の幅も変わる(矢羽根の置き場が要る)ので、 2 枚を直接重ねることはできない。軸の**長さ**で比べる。
+- **L84** _(ja)_ — ★ std() は平均を引くので、定数でも 1 ulp 残る(実測 5.6e-17)。 「全部同じ値」を厳密に言うなら ptp(最大 − 最小)。
+- **L111** _(ja)_ — ★ ptp なら厳密。本物の辺があれば 0.85 前後になる量なので、門は十分厳しい。
+- **L132** _(ja)_ — ★許容を 1 つにまとめない。閉形式で厳密に出るものと、**再帰で誤差が積もる** ものを同じ物差しで見ると、どちらかの門が甘くなる。接触だけは深さ 5 の 再帰の末端なので相対 1e-5(実測 9.2e-07)。
+
 ## `tests/test_glassmirror.py`
 
 - **L91** — ★Es war kontraintuitiv: in der Annahme "Kupfer ist röter als Gold" schrieb ich cu[2] < au[2] und es schlug fehl. Selbst nach veröffentlichten Werten liegt gegenüber Aus R(450 nm) ≈ 0.40 Cu bei ≈ 0.56, also **hat Kupfer mehr Blau** (= Gold ist das gesättigtere Gelb). Falsch war diese Vorannahme, nicht die Tabelle.
@@ -1655,8 +1682,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L45** — ★Fuer Katalog, Hints und Adapter ist das ausgelieferte Modul ``typed_catalog`` die Quelle der Wahrheit (2026-09-05). Frueher lebten sie hier, und backends_typed las sie, indem es tools/ zu sys.path hinzufuegte -- dadurch verschwanden im wheel tb_* 143 op stillschweigend. Die Richtung wurde umgekehrt.
 - **L286** — Ereignispositionen (Punktprozess) -- der Einstiegspunkt von point_spectrum. ★**Nicht nur gleichverteilten Zufall verwenden**: ohne eine periodische Komponente wird das sinnvolle Verhalten einer "op, die Perioden findet" kein einziges Mal ausgeuebt, daher als Keim **strukturierte Daten** verwenden, die 12 unabhaengige Ereignisse in eine Reihe mit Periode 17.0 mischen (die Disziplin dieses repo, dass rein zufaellige Tests strukturelle Defekte verbergen).
 - **L900** — ★Eine Punktwolke mit nicht-endlichen Werten **bringt die KD-Baum-Konstruktion selbst mit einem rohen ValueError zum Absturz** (scipy: "data must be finite"). Der Pool ist so ausgelegt, dass er NONFINITE protokolliert und die Werte behaelt, daher ist eine verunreinigte Punktwolke hier erwartbar -- die bauende Seite muss absichern. Am 2026-09-06 real getroffen: eine neue Familie kam hinzu, die Art, wie Ketten durchlaufen werden, aenderte sich, und bei seed 3_000_0xx wurde dieser Pfad getroffen und der fuzzer selbst hielt an (kein Defekt der op, sondern **ein Defekt des Werkzeugs**. Die Zusage ist, dass nicht bindbare Eingabe uebersprungen und nicht geworfen wird).
-- **L1704** — ★Bis 2026-09-02 war es ``lambda v: True`` = **da das Praedikat als "vorhanden" gezaehlt wird, ist es schlimmer als gar keins** (auch das Pruefskript zaehlt es als "hat ein Praedikat"). Gemessen liess es sogar None / 42 / einen String / ein dict durch. Der Kanon wurde festgelegt, indem alle 6 konsumierenden op (reprconvs pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar) **vollstaendig ausgefuehrt** wurden: alle 6 op akzeptieren nur die beiden obigen Formen, alles andere wird zu einem namentlichen fail-closed mit "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (gemessen). Da **(2,N) nicht akzeptiert wird**, wurden die 3 adapter, die ein 2-tuple mit np.stack zu (2,N) zusammendrueckten, auf axis=1 korrigiert. Zwei Arrays unterschiedlicher Laenge (histograms counts/edges) sind ebenfalls kein "Paar" und werden abgewiesen.
-- **L1822** — ★"Genau 2 Elemente" ist **absichtlich anders** als pose (das via `len >= 2` info erlaubt). Gemessen 2026-09-02: die 4 bestehenden consumer, die ein mesh als ein Argument nehmen (face_normals / vertex_normals / mesh_area / vertex_curvature), geben fuer ein 3-tuple "mesh must be a 2-element tuple (vertices, faces)" aus, und cadmaps `_mesh` und render3d._mesh_arrays akzeptieren ebenfalls nur 2 Elemente. Das heisst **der Kanon fuer den mesh sort dieses repo ist ein 2-tuple**, und ein zusaetzliches Element ist nicht "mehr Information", sondern eine Luege auf Typ-Ebene, die alles Nachgelagerte ausloescht. Die einzige Ausnahme `voxel_to_mesh` (die (v, f, n) zurueckgibt) laesst jetzt die kanonische Reihenfolge in ops3d.RESULT_ADAPTERS extrahieren (gleich behandelt wie gicp / vol_label).
+- **L1725** — ★Bis 2026-09-02 war es ``lambda v: True`` = **da das Praedikat als "vorhanden" gezaehlt wird, ist es schlimmer als gar keins** (auch das Pruefskript zaehlt es als "hat ein Praedikat"). Gemessen liess es sogar None / 42 / einen String / ein dict durch. Der Kanon wurde festgelegt, indem alle 6 konsumierenden op (reprconvs pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar) **vollstaendig ausgefuehrt** wurden: alle 6 op akzeptieren nur die beiden obigen Formen, alles andere wird zu einem namentlichen fail-closed mit "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (gemessen). Da **(2,N) nicht akzeptiert wird**, wurden die 3 adapter, die ein 2-tuple mit np.stack zu (2,N) zusammendrueckten, auf axis=1 korrigiert. Zwei Arrays unterschiedlicher Laenge (histograms counts/edges) sind ebenfalls kein "Paar" und werden abgewiesen.
+- **L1843** — ★"Genau 2 Elemente" ist **absichtlich anders** als pose (das via `len >= 2` info erlaubt). Gemessen 2026-09-02: die 4 bestehenden consumer, die ein mesh als ein Argument nehmen (face_normals / vertex_normals / mesh_area / vertex_curvature), geben fuer ein 3-tuple "mesh must be a 2-element tuple (vertices, faces)" aus, und cadmaps `_mesh` und render3d._mesh_arrays akzeptieren ebenfalls nur 2 Elemente. Das heisst **der Kanon fuer den mesh sort dieses repo ist ein 2-tuple**, und ein zusaetzliches Element ist nicht "mehr Information", sondern eine Luege auf Typ-Ebene, die alles Nachgelagerte ausloescht. Die einzige Ausnahme `voxel_to_mesh` (die (v, f, n) zurueckgibt) laesst jetzt die kanonische Reihenfolge in ops3d.RESULT_ADAPTERS extrahieren (gleich behandelt wie gicp / vol_label).
 
 ## `tools/ci_wheel_check.py`
 
@@ -1770,16 +1797,16 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tools/opdocs.py`
 
-- **L105** — ★2026-09-08: ops1d (dsp 16 + funct1d 23) war registriert, hatte aber **nicht eine einzige Notiz unter docs/ops** —— es erscheint in OP_CATALOG, aber ohne Notiz je op (Typvertrag, Fallstricke, verwandte ops) fehlte es vollständig im RAG-Korpus. Aufgefallen ist es, als `poc_web_roll_periodicity` dsp um 2 ergänzte.
-- **L802** _(ja)_ — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
-- **L864** — ★Die n-äre (mehreingabige) Schicht. Bis zum 2026-09-09 hatten **17 Operatoren keine einzige Notiz** (`add_image`, `sub_image`, `bit_and`, `reduce_domain`, `union2` …). In `OP_INDEX.json` stehen sie als Tier `nary`, doch ohne Notiz unter `docs/ops/` waren sie **aus dem RAG-Korpus heraus nie auffindbar**. Der Grund für das Übersehen ist klar: hier wurde nur `ops.REGISTRY` durchlaufen, und `ops.REGISTRY` (899) stimmt mit der Zahl der 2-D-Notizen (899) überein — von der Registry aus gezählt sah es vollständig aus. Erst schichtübergreifendes Zählen zeigt es.
-- **L906** — ★2026-09-07: ``OPS3D[...]["doc"]`` ist zum Registrierungszeitpunkt nur **die erste Zeile des Docstrings**, herausgeschnitten (ops3d._build). Verwendet man es für die "Verwendung" einer Notiz, wird es zu einer einzigen Zeile, egal wie viele Absätze die Implementierung schreibt —— der 3-D-Anteil von "494 ops mit einzeiliger Verwendung" war durch dieses Abschneiden verursacht (viele ops haben selbst lange Docstrings). Lies den Docstring der Funktion vollständig, wie bei der ledger-dim.
-- **L929** — ★ Ein Brücken-op (``tb_<name>``) hat dieselbe Implementierung wie das ``<name>`` des Ledgers, und Beispiele werden unter dem Ledger-Namen geschrieben. Bis zum 2026-09-06 galten 147 davon als "null Beispiele", aber das bedeutete nur, dass wir nicht gezählt hatten, dass **Beispiele, die dieselbe Implementierung aufrufen, unter einem anderen Namen existieren**. Erbe die Beispiele der Ledger-Seite und vermerke in der Notiz ausdrücklich, dass es "Beispiele des ursprünglichen op" sind (um nicht zu lügen).
-- **L1149** — ★Ein n-ärer Operator lässt sich nicht über `fullseye.apply` aufrufen — das ist das Ein-Bild-Modell. Die Ein-Bild-Aufrufform hier hinzuschreiben lässt **die Notiz lügen**; die einzige Aufgabe dieser Notiz ist zu sagen, wie man aufruft, also ist eine falsche Aufrufform schlimmer als gar keine. Der öffentliche Weg ist `fullseye.FullseyeGraph`.
-- **L1168** — ★2026-09-07: **Schreibe zuerst den öffentlichen Pfad**. Hier stand nur ein direkter Import des Implementierungsmoduls, und `fullseye.ledger.<name>`, das Nutzer tatsächlich verwenden, tauchte nicht auf (alle 1.244 ops außer 2-D). Dass PoCs wiederholt "nicht in fs.<name>" meldeten, lag nicht daran, dass der Name fehlte, sondern daran, dass **der Einstiegspunkt nicht geschrieben war**.
-- **L1579** — ★ Gib die Einstiegspunkte in 6 Sprachen aus (2026-09-09). Die Blätter (Studios op-Hilfe) haben 10.191 Seiten in 6 Sprachen, doch **der Index, der dorthin führt, war nur Japanisch** —— eine Lücke der Form, dass die Übersetzungen existieren, aber nicht erreichbar sind. Der Wortlaut des Rahmens kommt in `T()`, sodass Löcher in den Paralleltexten vom bestehenden Gate (test_chrome_translation_table_has_no_holes) überwacht werden.
-- **L1624** — ★ Dies zeigte lange nur auf `2d/guides/` und schickte die Leser kein einziges Mal zu den Leitfäden der 30 Familien wie Optik, PIV und Tomographie (behoben 2026-09-09).
-- **L2140** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
+- **L109** — ★2026-09-08: ops1d (dsp 16 + funct1d 23) war registriert, hatte aber **nicht eine einzige Notiz unter docs/ops** —— es erscheint in OP_CATALOG, aber ohne Notiz je op (Typvertrag, Fallstricke, verwandte ops) fehlte es vollständig im RAG-Korpus. Aufgefallen ist es, als `poc_web_roll_periodicity` dsp um 2 ergänzte.
+- **L806** _(ja)_ — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
+- **L868** — ★Die n-äre (mehreingabige) Schicht. Bis zum 2026-09-09 hatten **17 Operatoren keine einzige Notiz** (`add_image`, `sub_image`, `bit_and`, `reduce_domain`, `union2` …). In `OP_INDEX.json` stehen sie als Tier `nary`, doch ohne Notiz unter `docs/ops/` waren sie **aus dem RAG-Korpus heraus nie auffindbar**. Der Grund für das Übersehen ist klar: hier wurde nur `ops.REGISTRY` durchlaufen, und `ops.REGISTRY` (899) stimmt mit der Zahl der 2-D-Notizen (899) überein — von der Registry aus gezählt sah es vollständig aus. Erst schichtübergreifendes Zählen zeigt es.
+- **L910** — ★2026-09-07: ``OPS3D[...]["doc"]`` ist zum Registrierungszeitpunkt nur **die erste Zeile des Docstrings**, herausgeschnitten (ops3d._build). Verwendet man es für die "Verwendung" einer Notiz, wird es zu einer einzigen Zeile, egal wie viele Absätze die Implementierung schreibt —— der 3-D-Anteil von "494 ops mit einzeiliger Verwendung" war durch dieses Abschneiden verursacht (viele ops haben selbst lange Docstrings). Lies den Docstring der Funktion vollständig, wie bei der ledger-dim.
+- **L933** — ★ Ein Brücken-op (``tb_<name>``) hat dieselbe Implementierung wie das ``<name>`` des Ledgers, und Beispiele werden unter dem Ledger-Namen geschrieben. Bis zum 2026-09-06 galten 147 davon als "null Beispiele", aber das bedeutete nur, dass wir nicht gezählt hatten, dass **Beispiele, die dieselbe Implementierung aufrufen, unter einem anderen Namen existieren**. Erbe die Beispiele der Ledger-Seite und vermerke in der Notiz ausdrücklich, dass es "Beispiele des ursprünglichen op" sind (um nicht zu lügen).
+- **L1153** — ★Ein n-ärer Operator lässt sich nicht über `fullseye.apply` aufrufen — das ist das Ein-Bild-Modell. Die Ein-Bild-Aufrufform hier hinzuschreiben lässt **die Notiz lügen**; die einzige Aufgabe dieser Notiz ist zu sagen, wie man aufruft, also ist eine falsche Aufrufform schlimmer als gar keine. Der öffentliche Weg ist `fullseye.FullseyeGraph`.
+- **L1172** — ★2026-09-07: **Schreibe zuerst den öffentlichen Pfad**. Hier stand nur ein direkter Import des Implementierungsmoduls, und `fullseye.ledger.<name>`, das Nutzer tatsächlich verwenden, tauchte nicht auf (alle 1.244 ops außer 2-D). Dass PoCs wiederholt "nicht in fs.<name>" meldeten, lag nicht daran, dass der Name fehlte, sondern daran, dass **der Einstiegspunkt nicht geschrieben war**.
+- **L1583** — ★ Gib die Einstiegspunkte in 6 Sprachen aus (2026-09-09). Die Blätter (Studios op-Hilfe) haben 10.191 Seiten in 6 Sprachen, doch **der Index, der dorthin führt, war nur Japanisch** —— eine Lücke der Form, dass die Übersetzungen existieren, aber nicht erreichbar sind. Der Wortlaut des Rahmens kommt in `T()`, sodass Löcher in den Paralleltexten vom bestehenden Gate (test_chrome_translation_table_has_no_holes) überwacht werden.
+- **L1628** — ★ Dies zeigte lange nur auf `2d/guides/` und schickte die Leser kein einziges Mal zu den Leitfäden der 30 Familien wie Optik, PIV und Tomographie (behoben 2026-09-09).
+- **L2144** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
 
 ## `tools/preflight.py`
 

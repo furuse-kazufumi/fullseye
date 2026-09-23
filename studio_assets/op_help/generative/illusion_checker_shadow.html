@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">illusion_checker_shadow — GENERATIVE <code style="color:#22d3bf">illusion</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">rgb</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illusion_checker_shadow(size: &#x27;int&#x27; = 46, n: &#x27;int&#x27; = 8, light: &#x27;float&#x27; = 0.62, dark: &#x27;float&#x27; = 0.31) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import illusion; illusion.illusion_checker_shadow(size: &#x27;int&#x27; = 46, n: &#x27;int&#x27; = 8, light: &#x27;float&#x27; = 0.62, dark: &#x27;float&#x27; = 0.31) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;illusion_checker_shadow&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>チェッカーシャドウ。<b>印を付けた 2 マスは厳密に同じ画素値</b>。</p>
+<p>影の係数を `<code style="color:#22d3bf">dark / light</code>` に取ると、影の中の明マスは影の外の暗マスと</p>
+<p><b>数として同じ</b>になる。★この図は `<code style="color:#22d3bf">aa=0</code>`(反エイリアスなし)で描く ——</p>
+<p>縁の混色が入ると「厳密に同値」という主張のほうが嘘になるため。</p>
+<p>不変量: :data:<code style="color:#22d3bf">CHECKER_PATCHES</code> の 2 マス —— <b>影の外の暗マス</b> (2,3) と</p>
+<p><b>影の中の明マス</b> (5,5) —— の画素値が完全に一致(差が厳密に 0)。</p>
+<p>★ここは一度間違えた。対にすべきは「暗マス × 影なし」と「明マス × 影あり」で、</p>
+<p>同じ明暗のマスを 2 つ選んでも当然ながら一致しない(実測 0.31 の差が出た)。</p>
+<p>絵は「それらしく」見えてしまうので、<b>数で確かめるまで気づけない</b> ——</p>
+<p>この族が守ろうとしているのと同じ型の事故。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_illusions_and_perpetual_drawing">poc_illusions_and_perpetual_drawing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_illusions_and_perpetual_drawing.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">rgb</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">illusion</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:illusion_cafe_wall">illusion_cafe_wall</a> · <a style="color:#22d3bf" href="opgenerative:illusion_muller_lyer">illusion_muller_lyer</a> · <a style="color:#22d3bf" href="opgenerative:illusion_ponzo">illusion_ponzo</a> · <a style="color:#22d3bf" href="opgenerative:illusion_zollner">illusion_zollner</a> · <a style="color:#22d3bf" href="opgenerative:illusion_poggendorff">illusion_poggendorff</a> · <a style="color:#22d3bf" href="opgenerative:illusion_fraser_spiral">illusion_fraser_spiral</a> · <a style="color:#22d3bf" href="opgenerative:illusion_ebbinghaus">illusion_ebbinghaus</a> · <a style="color:#22d3bf" href="opgenerative:illusion_kanizsa">illusion_kanizsa</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: illusion.py — GENERATIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

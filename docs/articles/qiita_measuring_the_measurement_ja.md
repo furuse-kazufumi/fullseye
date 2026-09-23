@@ -6,7 +6,8 @@ tags:
   - 品質管理
   - Python
   - OSS
-public_private: true
+public_private: false
+public_id: ea25bda80e674336405b
 ---
 
 > **言語 / Language**: **日本語** · English(準備中)
@@ -350,7 +351,7 @@ g["clamped"]   # [False, True, False, False, False] ← 再現性が丸められ
 
 - 能力ノート: [その数字のうち、いくつが測り方のものか](https://furuse.work/capabilities/measurement-system-and-uncertainty.html)
 - PoC: [`examples/poc_measurement_system_analysis.py`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
-- 展示館: [紙面の計測館](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)(全 142 展示)
+- 展示館: [紙面の計測館](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)(全 143 展示)
 
 ---
 

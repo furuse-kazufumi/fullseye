@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 927. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 942. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -474,6 +474,13 @@ This repository records *why* things are the way they are in **comments in the s
 - **L375** _(ja)_ — ★これは note 080 で退けた「順位で判定する」とは別物 —— 判定は今も床で行い、 ここで固定するのは**分離しているという性質**だけ。
 - **L403** _(ja)_ — ★書体 1 本の環境では**主張を弱める**。妨害から作った床は書体の散らばりより 狭く(実測 0.0258 対 0.0581)、撮り方の違いだけで無事な字まで超えてしまう (実測 7 本中 5 本)。**この環境では言えないことを言わない**のが正しく、 閾値を緩めて通すのは測定を捨てるのと同じ。CI には CJK を 2 本入れてある。
 
+## `examples/poc_illusions_and_perpetual_drawing.py`
+
+- **L194** _(ja)_ — ★★「目の主張 1 / 実測 0」を点で並べても**何の図か分かりにくい**。 測った結果を**絵の上に描き戻す**ほうが強い —— 測った目地の位置に 端から端まで真っ直ぐな罫を引くと、タイルは傾いて見えたままなのに 罫は平行だと目で確かめられる。図を描く側と測る側が同じ箱にあるから できる見せ方で、見た目と数値を「並べる」のではなく「重ねる」。
+- **L199** _(ja)_ — ★罫を目地と**同じ太さ**にすると目地を塗りつぶしてしまい、錯視ごと 消える(最初それで (a) が別の図になった)。目地を太くしてから、 その中に細い罫を通す。
+- **L254** _(ja)_ — ★閉形式で厳密に出るものと、再帰で誤差が積もるものを同じ物差しで見ない。
+- **L277** _(ja)_ — ★最初は「104 歩で 52 マス = 0.5 /歩」と書いたが、実測 0.114 と合わなかった。 測り直すと**正味の増加は 104 歩あたりちょうど 12 マス**(整数)。周期の 中で塗っては消すので、正味はずっと少ない。推測でなく実測が正しかった。
+
 ## `examples/poc_interferometry_step.py`
 
 - **L159** — 3) ★Repeated measurement — separate bias from spread # ------------------------------------------------------------------ #
@@ -526,15 +533,16 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_measurement_system_analysis.py`
 
 - **L155** _(ja)_ — ★★看板は**一目で読める**ものにする。濃淡の地図は情報としては正しいが 読者には「色のついた雑音」で、何の図か分からない。ゲージ R&R の古典的な 見せ方 —— 部品ごとに測定値を縦に並べる —— なら、10 個の塊が縦に離れて いるのが部品差、各塊の**太さ**が測る行為のばらつき、と目で読める。
-- **L220** _(ja)_ — ★2 点を結んだ直線では「7.3 % 違う」としか言えない。**交互作用の強さを 掃引**すると、いつモデル選択が効いていつ効かないのかが曲線で見える。
-- **L415** _(ja)_ — ★★規格の「t 表を引く直前に切り捨てる」は、滑らかな t(ν) に対する**階段**。 実装が踏んだ欠陥(切り捨てずに引いた)が、そのまま曲線と階段の差になる。
-- **L438** _(ja)_ — ★3 点の散布では「向きが逆」が読み取れない。**相関係数を掃引**すると、 2 本の曲線が無相関の水平線を**反対側で**横切るのが見える。
-- **L510** _(ja)_ — ★★その 150 は乱数ではなく**閉形式**で出る: X1²+X2² は u²χ²₂ = 平均 2u² の 指数分布なので、上側 95 % 点は 2u² ln 20。公表値と小数 1 桁まで合う。
-- **L525** _(ja)_ — ★★閉形式が絵になる場所。x1 = x2 = 0 では X1^2 + X2^2 は u^2 chi^2_2、 すなわち**平均 2u^2 の指数分布**。95 % 点は 2 u^2 ln 20 で閉形式。
-- **L591** _(ja)_ — ★★半幅を 3 本の水平線で並べても「なぜ違うのか」は見えない。**密度を 重ねる**と、正規近似の裾が実際より厚いことが絵で分かる。
-- **L603** _(ja)_ — ★区間は**水平の線分**で描く(plot_series は非有限を拒むので 「NaN で区切って 2 本の縦線」は使えない。読みやすくもある)
-- **L666** _(ja)_ — ★窓は**3 段階すべてが入る**ように取る。伝播則の下端が 0 を超えるのは x1 > 2 k u = 0.0196 なので、そこまで届かない窓だと「追いつく」が見えない。
-- **L676** _(ja)_ — ★各コマで最大値に正規化する。絶対密度のままだと、指数(原点で 2e4)と 後半の正規(1.6e3)で 1 桁違い、後半が平らに潰れて**形の変化が見えない**。
+- **L211** _(ja)_ — ★「全部内側のはず」と書いたら 1 升はみ出した。実データのほうが正しい —— 規格の例題は**わざと 1 点だけ管理外**にしてある(範囲図の読み方を示すため)。
+- **L466** _(ja)_ — ★2 点を結んだ直線では「7.3 % 違う」としか言えない。**交互作用の強さを 掃引**すると、いつモデル選択が効いていつ効かないのかが曲線で見える。
+- **L661** _(ja)_ — ★★規格の「t 表を引く直前に切り捨てる」は、滑らかな t(ν) に対する**階段**。 実装が踏んだ欠陥(切り捨てずに引いた)が、そのまま曲線と階段の差になる。
+- **L684** _(ja)_ — ★3 点の散布では「向きが逆」が読み取れない。**相関係数を掃引**すると、 2 本の曲線が無相関の水平線を**反対側で**横切るのが見える。
+- **L756** _(ja)_ — ★★その 150 は乱数ではなく**閉形式**で出る: X1²+X2² は u²χ²₂ = 平均 2u² の 指数分布なので、上側 95 % 点は 2u² ln 20。公表値と小数 1 桁まで合う。
+- **L771** _(ja)_ — ★★閉形式が絵になる場所。x1 = x2 = 0 では X1^2 + X2^2 は u^2 chi^2_2、 すなわち**平均 2u^2 の指数分布**。95 % 点は 2 u^2 ln 20 で閉形式。
+- **L837** _(ja)_ — ★★半幅を 3 本の水平線で並べても「なぜ違うのか」は見えない。**密度を 重ねる**と、正規近似の裾が実際より厚いことが絵で分かる。
+- **L849** _(ja)_ — ★区間は**水平の線分**で描く(plot_series は非有限を拒むので 「NaN で区切って 2 本の縦線」は使えない。読みやすくもある)
+- **L912** _(ja)_ — ★窓は**3 段階すべてが入る**ように取る。伝播則の下端が 0 を超えるのは x1 > 2 k u = 0.0196 なので、そこまで届かない窓だと「追いつく」が見えない。
+- **L922** _(ja)_ — ★各コマで最大値に正規化する。絶対密度のままだと、指数(原点で 2e4)と 後半の正規(1.6e3)で 1 桁違い、後半が平らに潰れて**形の変化が見えない**。
 
 ## `examples/poc_mesh_quality_repair.py`
 
@@ -1078,6 +1086,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L68** — ★Exclude auto ops that FAILED the functional gate from the headline — they were previously only [warn]-printed while still counted, inflating the "functionally gated" parity number with ops the gate rejects.
 - **L87** — ★2026-09-08: This line read -- "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." Measured, **979 + 17 = 979**, i.e. the 17 n-ary ops are a **subset** of ``reg_counted`` (``nary_names - reg_counted`` is empty). The heading's 979 is correct, but the breakdown line alone looks like 'addition', and a reader adding it gets 996. The numbers agree yet **the explanation lies**, so it was fixed. Whether the breakdown holds as a sum is checked every time by ``tests/test_honest_summary_arithmetic.py``.
 
+## `illusion.py`
+
+- **L290** _(ja)_ — ★周りの円は**互いに重ならない**ように置く。n 個を半径 rs の環に並べるとき、 隣どうしの中心間距離は 2*rs*sin(pi/n) なので rs > rr / sin(pi/n) が要る。 最初これを守らずに (rs=62, rr=46, n=6) と置いたら、周りの円が融合して **花のような 1 つの塊**になった —— エビングハウス錯視になっていない。
+
 ## `imgevolve.py`
 
 - **L48** _(ja)_ — ★module / requires(2026-09-19): 「unknown operator」が backend 不足を隠していた (外部レビュー #1)。索引が出自と optional 依存を持てば、core 環境の ``api._resolve`` が同梱の複製(fullseye/data/OP_INDEX.json)から不足 extra を 案内できる。requires は AST で静的に読むので、生成環境に依らず同じ値。
@@ -1144,23 +1156,23 @@ This repository records *why* things are the way they are in **comments in the s
 ## `opassist.py`
 
 - **L52** — ★2026-09-08: ops1d (dsp 16 + funct1d 23) was registered yet appeared neither in docs nor in op_run / op_assist / op_find -- 'registered' and 'reachable' are different. Adding them to opdocs made this gate ring on the unreachable side.
-- **L256** — ★Design (2026-09-04, user: 'It's better to handle various container types, but consistency matters too'): At first `kind` mixed in "seq" and "matrix" -- that is, the **value type** (numeric, integer, or choice) and the **container shape** (single, vector, or matrix) competed in one field. From the UI's view an 'int 3-vector' could not be expressed, and only matrices had their structure under the `seq` key, so handling was scattered. This was made orthogonal: `kind` holds only the value type, and the container always goes into `container`. A scalar is not made an exception either (`{"form": "scalar", "shape": ()}`), so the UI can write its branching as a single path.
-- **L371** — ★Longest match. Scanning shortest-first, `sigma_per_mm` matches `_mm` and becomes "mm" (it is actually 1/mm). Get the unit wrong and the UI's number silently becomes something else.
-- **L453** _(ja)_ — ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、 それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
-- **L486** — ★The key point: some arguments **do not have their default given as a tuple**. `center=None` (an optional (row,col)), the required `trans` (3-vector), `k_cam` (3x3 matrix)... looking at the default alone they appear to be 'a single number', and the UI breaks by showing one spin box. Supplement the structure by name.
-- **L691** _(ja)_ — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
-- **L697** — ★Found by measurement: passing a generic 0..1 signal into the wavelength input of `prism_min_deviation_deg` gets rejected by 'wavelength must be positive', making it an **op whose sample does not run**. If the unit is known, seeding it with a range plausible for that quantity is closer to 'runs when you press it'.
-- **L842** — A run of Japanese (CJK) text. ★``_WORD_RE`` is ``[a-z0-9]+``, so a Japanese query **yields not a single word** (``_WORD_RE.findall(...) == []`` on the Japanese input). The stemming stage dies, and because partial match searches for a string that includes the whitespace, a **multi-word Japanese query was structurally always 0 hits** -- in a product whose docstrings are mostly Japanese and that ships in 6 languages. Surfaced on 2026-09-08 when `poc_search_sweep_width` hit it (the Japanese queries for 'point detection' / 'spot detection' / 'small target' via ``op_find`` were all 0 hits, and although sub-pixel-centroid point-target detection is only ``star_detect``, it could not be reached from Japanese).
-- **L895** — The common-prefix length treated as a stem match. ★At 4, "median"/"medial" and "contrast"/"contour" get linked; cutting at 5, "correlation"/"correlate" (8), "segmentation"/"segment" (7), "rotation"/"rotate" (5), and "gaussian"/"gauss" (5) are picked up while the two pairs above are not.
-- **L905** — The **suffix allowed after** the common prefix. ★Deciding by prefix length alone links "median"/"medial" (they share a 5-character "media"). Judging whether the suffix looks like an inflectional ending, "correlation"/"correlate" (ion / e) passes, while "median"/"medial" (n / l) and "corner"/"cornea" (r / a) fall out.
-- **L1001** — ★Floor. Without it, "zzz-nothing-matches" returns `histogram_match` (because "matches" stem-matches `match_*`). If the weight of the matched words is under 15 % of the whole query, it is treated as 'no match'. Measured: "digital image correlation" is 0.19 (passes), "zzz-nothing-matches" is 0.10 (dropped).
-- **L1175** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
-- **L1203** _(ja)_ — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
-- **L1255** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
-- **L1275** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
-- **L1288** _(ja)_ — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
-- **L1298** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
-- **L1316** _(ja)_ — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
+- **L259** — ★Design (2026-09-04, user: 'It's better to handle various container types, but consistency matters too'): At first `kind` mixed in "seq" and "matrix" -- that is, the **value type** (numeric, integer, or choice) and the **container shape** (single, vector, or matrix) competed in one field. From the UI's view an 'int 3-vector' could not be expressed, and only matrices had their structure under the `seq` key, so handling was scattered. This was made orthogonal: `kind` holds only the value type, and the container always goes into `container`. A scalar is not made an exception either (`{"form": "scalar", "shape": ()}`), so the UI can write its branching as a single path.
+- **L374** — ★Longest match. Scanning shortest-first, `sigma_per_mm` matches `_mm` and becomes "mm" (it is actually 1/mm). Get the unit wrong and the UI's number silently becomes something else.
+- **L456** _(ja)_ — ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、 それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
+- **L489** — ★The key point: some arguments **do not have their default given as a tuple**. `center=None` (an optional (row,col)), the required `trans` (3-vector), `k_cam` (3x3 matrix)... looking at the default alone they appear to be 'a single number', and the UI breaks by showing one spin box. Supplement the structure by name.
+- **L697** _(ja)_ — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
+- **L703** — ★Found by measurement: passing a generic 0..1 signal into the wavelength input of `prism_min_deviation_deg` gets rejected by 'wavelength must be positive', making it an **op whose sample does not run**. If the unit is known, seeding it with a range plausible for that quantity is closer to 'runs when you press it'.
+- **L848** — A run of Japanese (CJK) text. ★``_WORD_RE`` is ``[a-z0-9]+``, so a Japanese query **yields not a single word** (``_WORD_RE.findall(...) == []`` on the Japanese input). The stemming stage dies, and because partial match searches for a string that includes the whitespace, a **multi-word Japanese query was structurally always 0 hits** -- in a product whose docstrings are mostly Japanese and that ships in 6 languages. Surfaced on 2026-09-08 when `poc_search_sweep_width` hit it (the Japanese queries for 'point detection' / 'spot detection' / 'small target' via ``op_find`` were all 0 hits, and although sub-pixel-centroid point-target detection is only ``star_detect``, it could not be reached from Japanese).
+- **L901** — The common-prefix length treated as a stem match. ★At 4, "median"/"medial" and "contrast"/"contour" get linked; cutting at 5, "correlation"/"correlate" (8), "segmentation"/"segment" (7), "rotation"/"rotate" (5), and "gaussian"/"gauss" (5) are picked up while the two pairs above are not.
+- **L911** — The **suffix allowed after** the common prefix. ★Deciding by prefix length alone links "median"/"medial" (they share a 5-character "media"). Judging whether the suffix looks like an inflectional ending, "correlation"/"correlate" (ion / e) passes, while "median"/"medial" (n / l) and "corner"/"cornea" (r / a) fall out.
+- **L1007** — ★Floor. Without it, "zzz-nothing-matches" returns `histogram_match` (because "matches" stem-matches `match_*`). If the weight of the matched words is under 15 % of the whole query, it is treated as 'no match'. Measured: "digital image correlation" is 0.19 (passes), "zzz-nothing-matches" is 0.10 (dropped).
+- **L1181** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
+- **L1209** _(ja)_ — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
+- **L1261** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
+- **L1281** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
+- **L1294** _(ja)_ — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
+- **L1304** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
+- **L1322** _(ja)_ — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
 
 ## `ops.py`
 
@@ -1268,6 +1280,14 @@ This repository records *why* things are the way they are in **comments in the s
 ## `pcseg.py`
 
 - **L448** — ★ ``full_matrices=True`` (default) allocates the (N, N) U and **throws it away**. Measured 2026-09-06: for 20000 points, 3.73 s / 3.2 GB, whereas ``full_matrices=False`` is 0.876 ms (**4263x**) with Vt bit-identical. For 100k points it dies at 80 GB. The same pattern was in pcseg.fit_plane / measure / ops / camera / pnp3d (all throwing away U). The static gate is tests/test_svd_full_matrices.py.
+
+## `perpetual.py`
+
+- **L323** _(ja)_ — ★★平方根には**枝が 2 つ**あり、片方は「親 3 円に接しない円」を返す。 最初は主値だけを使っていて、絵の左上に**外円の外へ逃げる円の鎖**が 出た —— 絵としては「フラクタルっぽい」ので、見ただけでは欠陥と 分からない。接することを**数で確かめて**枝を選ぶ。
+- **L692** _(ja)_ — ★二項係数そのものを積むと C(62,31)*31 が int64 を**黙って溢れる**。 要るのは偶奇だけなので、リュカの定理の帰結 「C(n,k) が奇 ⟺ (n & k) == k」を使う(桁あふれの余地が無い)。
+- **L712** _(ja)_ — ★向きの符号は回転の規約で変わる。定理が言うのは「周期 104 で**同じ**斜めの 変位を繰り返す」ことなので、そちらを門にする(大きさは縦横とも 2)。
+- **L719** _(ja)_ — ★高速道路は**正味で 104 歩あたりちょうど 12 マス**黒を増やす(実測で整数)。 最初は「104 歩で 52 マス」と書いたが実測 0.114/歩 と合わず、測り直して 12/104 = 0.11538 だった。周期の中で塗っては消すので、正味はずっと少ない。
+- **L736** _(ja)_ — ★★描いた円が**本当に接しているか**。平方根の枝を選び損ねると、 絵としては「フラクタルっぽい」まま外へ逃げる鎖が出る(実際に出した)。
 
 ## `pivops.py`
 
@@ -1481,6 +1501,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L99** _(ja)_ — ★2026-09-14: ここは `resolve()` の戻りを検査せず `spec["xml"]` を引いていた。 `scene_registry` が**実在しない場面に None を返す**設計(資産が無い環境では 正しい振る舞い)なので、資産チェックアウトが無いと `TypeError` で落ちる。 同じファイル群の `test_fullseye_3dgs.py` は**既にこの skip 作法を持っていた** —— 作法が兄弟に適用されていなかった ([[feedback_same_bug_class_recurs_check_siblings]])。
 
+## `tests/test_generative.py`
+
+- **L66** _(ja)_ — ★ head を変えると画布の幅も変わる(矢羽根の置き場が要る)ので、 2 枚を直接重ねることはできない。軸の**長さ**で比べる。
+- **L84** _(ja)_ — ★ std() は平均を引くので、定数でも 1 ulp 残る(実測 5.6e-17)。 「全部同じ値」を厳密に言うなら ptp(最大 − 最小)。
+- **L111** _(ja)_ — ★ ptp なら厳密。本物の辺があれば 0.85 前後になる量なので、門は十分厳しい。
+- **L132** _(ja)_ — ★許容を 1 つにまとめない。閉形式で厳密に出るものと、**再帰で誤差が積もる** ものを同じ物差しで見ると、どちらかの門が甘くなる。接触だけは深さ 5 の 再帰の末端なので相対 1e-5(実測 9.2e-07)。
+
 ## `tests/test_glassmirror.py`
 
 - **L91** — ★It was counterintuitive: thinking "copper is redder than gold", I wrote cu[2] < au[2] and it failed. Even by published values, against Au's R(450 nm) ≈ 0.40, Cu ≈ 0.56, so **copper has more blue** (= gold is the more saturated yellow). It was this preconception, not the table, that was wrong.
@@ -1655,8 +1682,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L45** — ★The catalog, hints and adapters have the shipped module ``typed_catalog`` as the source of truth (2026-09-05). They used to live here, and backends_typed read them by adding tools/ to sys.path -- as a result tb_* 143 op silently vanished in the wheel. The direction was reversed.
 - **L286** — Event positions (point process) -- the entry point of point_spectrum. ★**Don't use uniform random only**: without a periodic component you never once exercise the meaningful behavior of an "op that finds periods", so seed it with **structured data** mixing 12 unrelated events into a series with period 17.0 (this repo's discipline that random-only tests hide structural defects).
 - **L900** — ★A point cloud with non-finite values **crashes the KD-tree construction itself with a raw ValueError** (scipy: "data must be finite"). The pool is designed to record NONFINITE and keep the values, so a dirty point cloud arriving here is expected -- the side that builds it must guard. Hit for real on 2026-09-06: a new family was added, the way chains are walked changed, and at seed 3_000_0xx this path was struck and the fuzzer itself halted (not a defect of the op but **a defect of the tool**. The promise is that unbindable input is skipped, not raised).
-- **L1704** — ★Until 2026-09-02 it was ``lambda v: True`` = **since the predicate is counted as "present", it's worse than absent** (the inspection script also counts it as "has a predicate"). Measured, it let through even None / 42 / a string / a dict. The canon was decided by **running all** of the 6 consuming op (reprconv's pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar): all 6 op accept only the two shapes above, and everything else becomes a named fail-closed with "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (measured). Since **(2,N) is not accepted**, the 3 adapters that were collapsing a 2-tuple into (2,N) with np.stack were fixed to axis=1. Two arrays of differing length (histogram's counts/edges) are also not a "pair" and are rejected.
-- **L1822** — ★"Exactly 2 elements" is **deliberately different** from pose (which allows info via `len >= 2`). Measured 2026-09-02: the 4 existing consumers that take a mesh as one argument (face_normals / vertex_normals / mesh_area / vertex_curvature) emit "mesh must be a 2-element tuple (vertices, faces)" for a 3-tuple, and cadmap's `_mesh` and render3d._mesh_arrays also accept only 2 elements. In other words **the canon for this repo's mesh sort is a 2-tuple**, and an extra element is not "more information" but a type-level lie that wipes out everything downstream. The sole exception `voxel_to_mesh` (which returns (v, f, n)) now has the canonical order extracted in ops3d.RESULT_ADAPTERS (treated the same as gicp / vol_label).
+- **L1725** — ★Until 2026-09-02 it was ``lambda v: True`` = **since the predicate is counted as "present", it's worse than absent** (the inspection script also counts it as "has a predicate"). Measured, it let through even None / 42 / a string / a dict. The canon was decided by **running all** of the 6 consuming op (reprconv's pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar): all 6 op accept only the two shapes above, and everything else becomes a named fail-closed with "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (measured). Since **(2,N) is not accepted**, the 3 adapters that were collapsing a 2-tuple into (2,N) with np.stack were fixed to axis=1. Two arrays of differing length (histogram's counts/edges) are also not a "pair" and are rejected.
+- **L1843** — ★"Exactly 2 elements" is **deliberately different** from pose (which allows info via `len >= 2`). Measured 2026-09-02: the 4 existing consumers that take a mesh as one argument (face_normals / vertex_normals / mesh_area / vertex_curvature) emit "mesh must be a 2-element tuple (vertices, faces)" for a 3-tuple, and cadmap's `_mesh` and render3d._mesh_arrays also accept only 2 elements. In other words **the canon for this repo's mesh sort is a 2-tuple**, and an extra element is not "more information" but a type-level lie that wipes out everything downstream. The sole exception `voxel_to_mesh` (which returns (v, f, n)) now has the canonical order extracted in ops3d.RESULT_ADAPTERS (treated the same as gicp / vol_label).
 
 ## `tools/ci_wheel_check.py`
 
@@ -1770,16 +1797,16 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tools/opdocs.py`
 
-- **L105** — ★2026-09-08: ops1d (dsp 16 + funct1d 23) was registered yet **had not a single note under docs/ops** —— it appears in OP_CATALOG, but with no per-op note (type contract, pitfalls, related ops) it was entirely missing from the RAG corpus. We noticed when `poc_web_roll_periodicity` added 2 to dsp.
-- **L802** _(ja)_ — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
-- **L864** — ★The n-ary (multi-input) tier. Until 2026-09-09 **17 operators had no note at all** (`add_image`, `sub_image`, `bit_and`, `reduce_domain`, `union2`…). They appear in `OP_INDEX.json` as tier `nary`, but with no note under `docs/ops/` they could **never be retrieved from the RAG corpus**. The reason it went unnoticed is plain: this code walked only `ops.REGISTRY`, and `ops.REGISTRY` (899) matches the 2-D note count (899) — so counting from the registry side it looked complete. It only shows when you count across tiers.
-- **L906** — ★2026-09-07: ``OPS3D[...]["doc"]`` is, at registration time, just **the first line of the docstring** cut out (ops3d._build). Using it for a note's "usage" turns it into a single line no matter how many paragraphs the implementation writes —— the 3-D share of "494 ops with a one-line usage" was caused by this truncation (many ops have long docstrings themselves). Read the function's docstring in full, as for the ledger dim.
-- **L929** — ★ A bridging op (``tb_<name>``) has the same implementation as the ledger's ``<name>``, and examples are written under the ledger name. Until 2026-09-06, 147 of them were "zero examples," but that only meant we had not counted that **examples calling the same implementation exist under a different name**. Inherit the ledger-side examples and note explicitly in the note that they are "examples of the original op" (so as not to lie).
-- **L1149** — ★An n-ary operator cannot be called through `fullseye.apply` — that is the one-image model. Writing the one-image call form here makes **the note lie**, and telling the reader how to call the operator is the note's only job, so a wrong call form is worse than none. The public route is `fullseye.FullseyeGraph`.
-- **L1168** — ★2026-09-07: **Write the public path first**. This only wrote a direct import of the implementation module and did not surface `fullseye.ledger.<name>`, which users actually use (all 1,244 ops other than 2-D). The reason PoCs repeatedly reported "not in fs.<name>" was not that the name was missing but that **the entry point was not written**.
-- **L1579** — ★ Surface the entry points in 6 languages (2026-09-09). The leaves (Studio's op help) have 10,191 pages across 6 languages, yet **the index leading there was Japanese only** —— a gap of the form where the translations exist but cannot be reached. The frame's wording goes into `T()`, so holes in the parallel translations are watched by the existing gate (test_chrome_translation_table_has_no_holes).
-- **L1624** — ★ For a long time this pointed only at `2d/guides/` and never once sent readers to the guides of the 30 families such as optics, PIV, and tomography (fixed 2026-09-09).
-- **L2140** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
+- **L109** — ★2026-09-08: ops1d (dsp 16 + funct1d 23) was registered yet **had not a single note under docs/ops** —— it appears in OP_CATALOG, but with no per-op note (type contract, pitfalls, related ops) it was entirely missing from the RAG corpus. We noticed when `poc_web_roll_periodicity` added 2 to dsp.
+- **L806** _(ja)_ — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
+- **L868** — ★The n-ary (multi-input) tier. Until 2026-09-09 **17 operators had no note at all** (`add_image`, `sub_image`, `bit_and`, `reduce_domain`, `union2`…). They appear in `OP_INDEX.json` as tier `nary`, but with no note under `docs/ops/` they could **never be retrieved from the RAG corpus**. The reason it went unnoticed is plain: this code walked only `ops.REGISTRY`, and `ops.REGISTRY` (899) matches the 2-D note count (899) — so counting from the registry side it looked complete. It only shows when you count across tiers.
+- **L910** — ★2026-09-07: ``OPS3D[...]["doc"]`` is, at registration time, just **the first line of the docstring** cut out (ops3d._build). Using it for a note's "usage" turns it into a single line no matter how many paragraphs the implementation writes —— the 3-D share of "494 ops with a one-line usage" was caused by this truncation (many ops have long docstrings themselves). Read the function's docstring in full, as for the ledger dim.
+- **L933** — ★ A bridging op (``tb_<name>``) has the same implementation as the ledger's ``<name>``, and examples are written under the ledger name. Until 2026-09-06, 147 of them were "zero examples," but that only meant we had not counted that **examples calling the same implementation exist under a different name**. Inherit the ledger-side examples and note explicitly in the note that they are "examples of the original op" (so as not to lie).
+- **L1153** — ★An n-ary operator cannot be called through `fullseye.apply` — that is the one-image model. Writing the one-image call form here makes **the note lie**, and telling the reader how to call the operator is the note's only job, so a wrong call form is worse than none. The public route is `fullseye.FullseyeGraph`.
+- **L1172** — ★2026-09-07: **Write the public path first**. This only wrote a direct import of the implementation module and did not surface `fullseye.ledger.<name>`, which users actually use (all 1,244 ops other than 2-D). The reason PoCs repeatedly reported "not in fs.<name>" was not that the name was missing but that **the entry point was not written**.
+- **L1583** — ★ Surface the entry points in 6 languages (2026-09-09). The leaves (Studio's op help) have 10,191 pages across 6 languages, yet **the index leading there was Japanese only** —— a gap of the form where the translations exist but cannot be reached. The frame's wording goes into `T()`, so holes in the parallel translations are watched by the existing gate (test_chrome_translation_table_has_no_holes).
+- **L1628** — ★ For a long time this pointed only at `2d/guides/` and never once sent readers to the guides of the 30 families such as optics, PIV, and tomography (fixed 2026-09-09).
+- **L2144** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
 
 ## `tools/preflight.py`
 

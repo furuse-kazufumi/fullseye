@@ -43,6 +43,7 @@
 | [その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ)](capabilities/measurement-system-and-uncertainty.md) | How much of that number is your measuring, not your process (gauge R&R and measurement uncertainty) | 測る | `verified-synthetic` | 11/11 | `poc_measurement_system_analysis` synthetic → tests/test_poc_scripts_run.py |
 | [写真を 1 本の線にする(点描 → 巡回路 → 回る円)](capabilities/one-stroke-drawing.md) | Turn a photograph into a single line (stipple, tour, rotating circles) | 描く | `validated-public-real-data` | 9/9 | `poc_one_stroke_epicycles` real → tests/test_poc_scripts_run.py |
 | [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md) | Compute reflection, refraction and interference | 光と色 | `verified-synthetic` | 4/4 | `glass_and_mirror_optics` synthetic → tests/test_example_scripts_run.py<br>`appearance_structural_colour` synthetic → tests/test_example_scripts_run.py |
+| [目が嘘をつく絵を作って、測る側を採点する(錯視・無限描画・循環動画)](capabilities/pictures-that-carry-their-own-truth.md) | Pictures that carry their own ground truth (illusions, endless drawing, seamless loops) | 描く | `verified-synthetic` | 14/16 | `poc_illusions_and_perpetual_drawing` synthetic → tests/test_poc_scripts_run.py |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | Find small point-like targets and locate them below the pixel | 見つける | `verified-synthetic` | 4/4 | `poc_search_sweep_width` synthetic → tests/test_poc_scripts_run.py<br>`poc_astro_photometry` synthetic → tests/test_poc_scripts_run.py |
 | [偏光カメラの生フレームを Stokes・DoLP・Mueller に読む](capabilities/polarization-imaging.md) | Read a polarisation camera's raw frame into Stokes, DoLP and Mueller | 光と色 | `verified-synthetic` | 10/10 | `polarization_camera_pipeline` synthetic → tests/test_example_scripts_run.py<br>`poc_polarization_specular` synthetic → tests/test_poc_scripts_run.py |
 | [Bayer の生フレームを、段ごとに説明できる式で表示画像にする](capabilities/raw-to-display-isp.md) | Turn a Bayer raw frame into a display image, one explainable stage at a time | 光と色 | `verified-synthetic` | 13/14 | `raw_to_display_isp` synthetic → tests/test_example_scripts_run.py |
@@ -63,8 +64,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 239 |
-| `tests/test_poc_scripts_run.py` が走らせる | 142 |
+| 2-D 台帳の例 | 240 |
+| `tests/test_poc_scripts_run.py` が走らせる | 143 |
 | `tests/test_example_scripts_run.py` が走らせる | 97 |
 | **どの門も走らせていない** | **0** |
 

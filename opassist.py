@@ -56,6 +56,9 @@ _LEDGERS = (
     ("opsblob", "OPSBLOB"),
     # 2026-09-20: 結合グラフ(connectome)解析。新語 conn_graph / synapse_table。
     ("opsconngraph", "OPSCONNGRAPH"),
+    # 2026-09-23: 絵を作る側(錯視 / 無限描画 / 循環動画)。新語はゼロ ——
+    #   返りは既存の rgb / rgbvideo / table。
+    ("opsgenerative", "OPSGENERATIVE"),
     ("opsemproof", "OPSEMPROOF"),
     ("opsvideocube", "OPSVIDEOCUBE"),
     ("opslive4d", "OPSLIVE4D"),
@@ -681,6 +684,9 @@ def sample_input(op_name: str):
         "signal": lambda: np.linspace(0.0, 1.0, 64),
         "normalmap": _sample_normalmap,
         "rgbimage": lambda: np.tile(np.array([0.6, 0.4, 0.3]), (32, 32, 1)),
+        "rgb": lambda: np.clip(np.random.default_rng(0).random((32, 32, 3)), 0, 1),
+        "rgbvideo": lambda: np.clip(
+            np.random.default_rng(0).random((5, 16, 16, 3)), 0, 1),
         "points": lambda: np.random.default_rng(0).normal(size=(64, 3)),
         "pointmap": lambda: np.random.default_rng(0).normal(size=(16, 16, 3)),
         "voxel": lambda: np.random.default_rng(0).random((16, 16, 16)),

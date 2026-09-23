@@ -1,8 +1,8 @@
 {
- "n_ops": 2147,
+ "n_ops": 2177,
  "tiers": {
   "color": 12,
-  "ledger": 1198,
+  "ledger": 1228,
   "nary": 17,
   "registry": 920
  },
@@ -6199,6 +6199,149 @@
    ]
   },
   {
+   "name": "illusion_cafe_wall",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "illusion",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "illusion_checker_shadow",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "illusion",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "illusion_ebbinghaus",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "illusion",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "illusion_fraser_spiral",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "illusion",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "illusion_ground_truth",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "illusion",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "illusion_hermann_grid",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "illusion",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "illusion_kanizsa",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "illusion",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "illusion_muller_lyer",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "illusion",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "illusion_poggendorff",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "illusion",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "illusion_ponzo",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "illusion",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "illusion_scintillating_grid",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "illusion",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "illusion_simultaneous_contrast",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "illusion",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "illusion_zollner",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "illusion",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
    "name": "image_entropy",
    "halcon": "",
    "in_sort": "image2d",
@@ -9397,6 +9540,199 @@
    "in_sorts": [
     "image2d"
    ]
+  },
+  {
+   "name": "perpetual_apollonian",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "perpetual",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "perpetual_chaos_game",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "perpetual",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "perpetual_elementary_ca",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "perpetual",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "perpetual_flow_field",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "perpetual",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "perpetual_harmonograph",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "perpetual",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "perpetual_identities",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "perpetual",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "perpetual_ifs_attractor",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "perpetual",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "perpetual_langtons_ant",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "perpetual",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "perpetual_loop",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgbvideo",
+   "category": "loop",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "perpetual_loop_seam",
+   "halcon": "",
+   "in_sort": "rgbvideo",
+   "out_sort": "table",
+   "category": "loop",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": [
+    "rgbvideo"
+   ]
+  },
+  {
+   "name": "perpetual_plasma",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "perpetual",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "perpetual_reaction_diffusion",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "perpetual",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "perpetual_render",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "rgb",
+   "category": "stream",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "perpetual_state",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "stream",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "perpetual_step",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "stream",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "perpetual_ten_print",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "perpetual",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "perpetual_truchet",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgb",
+   "category": "perpetual",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
   },
   {
    "name": "phase_displacement",

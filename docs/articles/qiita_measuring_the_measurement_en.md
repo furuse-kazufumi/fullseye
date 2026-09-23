@@ -7,6 +7,7 @@ tags:
   - Python
   - OSS
 public_private: false
+public_id: 415a59ddbab04d0b42df
 ---
 
 > **Language**: 日本語(準備中) · **English**
@@ -350,7 +351,7 @@ Nine operators, 55 tests in the end, and a PoC with 30 checks and 14 figures (on
 
 - Capability note: [How much of that number belongs to the way you measured it](https://furuse.work/capabilities/measurement-system-and-uncertainty.html)
 - PoC: [`examples/poc_measurement_system_analysis.py`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
-- Exhibition: [A Museum of Measurement on Paper](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10) (142 exhibits)
+- Exhibition: [A Metrology Museum on Paper](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10) (143 exhibits)
 
 ---
 

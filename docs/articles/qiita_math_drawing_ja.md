@@ -48,6 +48,7 @@ public_id: fe04f6eef40119913894
 | 3 | [定理が絵になる](#第-3-回-定理が絵になる) | デカルトの円定理 / ファレイ隣接 / オイラーの公式 / モランの式 |
 | 4 | [うなりは一つ ―― 干渉縞と印刷のモアレは同じ数学](#第-4-回-うなりは一つ--干渉縞と印刷のモアレは同じ数学) | 閉形式の固有値 / ベッセルの零点 / 格子式 / モアレ周期の予言 |
 | 5 | [絵では確かめられないもの ―― 力学系と極小曲面](#第-5-回-絵では確かめられないもの--力学系と極小曲面) | 行列指数関数 / トレース恒等式 / 厳密な分岐点 / H ≡ 0 という定義 |
+| 6 | [目が嘘をつく絵を作って、測る側を採点する](#第-6-回-目が嘘をつく絵を作って測る側を採点する) | リュカの定理 / デカルトの円定理 / div(curl ψ) ≡ 0 / 総量保存 |
 
 ---
 
@@ -430,6 +431,159 @@ V, F = fs.ledger.minimal_surface("catenoid", nu=90, nv=140, extent=1.2)
 H = np.abs(np.asarray(fs.ledger.vertex_curvature((V, F))))
 print("|H| 中央値 %.5f(対照群の単位球は 1.0)" % np.median(H[np.isfinite(H)]))
 ```
+
+---
+
+## 第 6 回: 目が嘘をつく絵を作って、測る側を採点する
+
+### 手順
+
+```
+錯視図を作る → その図が「否定している不変量」を数で返す → 既存の op に測らせる
+無限に描き続ける系を回す → 絵ではなく恒等式で採点する
+時間依存の量をすべて θ の関数にする → 継ぎ目が最初から存在しない動画になる
+```
+
+ここまでの 5 回は「**描いた絵を、絵の外から採点する**」話でした。第 6 回は向きが変わります —— **採点される側の絵を、こちらから作ります**。
+
+いちばん確実に「見た目が嘘をつく」ことが分かっている絵、つまり**錯視**です。カフェウォールの目地は**厳密な水平線**で、ミュラー・リヤーの 2 本の軸は**厳密に等長**で、チェッカーシャドウの 2 マスは**浮動小数として同じ値**です。見えているものが違う、というだけ。
+
+![6 つの錯視](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/01_scene.png?v=1)
+
+*↑ 6 枚とも、目が否定している不変量を厳密に守って作ってあります。生成器はその不変量を数として返せる(`illusion_ground_truth`)ので、この図はそのまま**測る側の採点表**になります。*
+
+### 錯視は、人間の目だけを騙すのではない
+
+これがこの回でいちばん面白かったところです。
+
+![カフェウォール](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/02_cafe_wall.png?v=1)
+
+*↑ 目地は厳密な水平線。8 本すべて傾き **0.0e+00**(実測)。*
+
+![ずらし量の掃引](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/03_cafe_wall_shift.png?v=1)
+
+*↑ ずらし量だけを振ったもの。**どの枚でも目地は厳密に水平**ですが、見え方だけが変わります。0 と 0.5 で錯視が消えるのは、市松の縦の境界が目地の上下で揃うため。*
+
+![ミュラー・リヤー](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/04_muller_lyer.png?v=1)
+
+*↑ 2 本の軸は矢羽根を外すと**画素単位で同一**。ところが矢羽根を付けた図で「行の黒い区間」を素朴に測ると **223 画素と 225 画素**になります —— 反エイリアスの裾が軸の端に乗るため。真値はどちらも 220。*
+
+**素朴な計測も 2 画素ずれます。** 錯視は「人間の視覚系の癖」の話だと思われがちですが、実際には「**端の定義が曖昧な図で、測り方を決めずに測ると外す**」という、計測一般の話でもあります。
+
+![チェッカーシャドウ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/05_checker_shadow.png?v=1)
+
+![行プロファイル](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/06_checker_profile.png?v=1)
+
+*↑ 2 本のプロファイルが**同じ高さの水平線に触れている**ところが、錯視の 2 マスです。影の係数を「暗マス ÷ 明マス」に取れば、影の中の明マスは影の外の暗マスと**数として一致**します(差 0.0e+00)。*
+
+![カニッツァ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/07_kanizsa.png?v=1)
+
+*↑ 三角形の辺は**1 本も描かれていません**。辺の上の画素は背景そのもの(ptp 0.0e+00)。エッジ検出を掛けても、人が見ている輪郭は 1 本も出ません。*
+
+![フレーザー](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/08_fraser.png?v=1)
+
+![ヘルマン格子ときらめき格子](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/09_hermann.png?v=1)
+
+![測った結果を絵に描き戻す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/10_measured_back_on.png?v=1)
+
+*↑ 左: **タイルは傾いて見えたまま**なのに、測った目地の位置に引いた細い罫は端から端まで真っ直ぐで、互いに平行です(傾き 0.0e+00)。右: 軸だけの図で測った端の位置に縦の罫を引くと、**2 本の軸で同じ位置に来ます** —— 矢羽根の向きが違うだけ。★測る側と描く側が同じ箱にあるので、**測った値をそのまま絵に返せます**。見た目と数値を「並べる」のではなく「重ねる」。*
+
+![目の主張 vs 測った値](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/11_eye_vs_measure.png?v=1)
+
+*↑ 6 つの錯視について、**目が主張する差**(見た目でははっきり違う = 1 と置いた)と、**実際に測った差**。実測は 6 件とも厳密に 0。この図がこの族の存在理由です。*
+
+### 止めるまで描き続けるものを、どう採点するか
+
+8 ビットの一行プログラムから続く系譜 —— 10 PRINT のランダム迷路、基本セルオートマトン、ラングトンの蟻、カオスゲーム。これらは「**いつ止めても途中**」なので、絵では採点できません。
+
+そこで、**絵とは独立に成り立つ主張**を持つものだけを入れました。
+
+![規則 90](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/12_rule90.png?v=1)
+
+*↑ 規則 90 を中央 1 点から 200 行。**第 n 行の第 k セルは二項係数 `C(n,k)` の偶奇に厳密に一致**します —— パスカルの三角形を 2 で割った余り。絵を一切見ずに採点できる、という意味でこの族の代表例です。*
+
+![規則の並べ比べ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/13_rule_gallery.png?v=1)
+
+*↑ 始まりはどれも中央の 1 セルだけ。変えたのは 8 ビットの規則番号 1 つです。規則 30 は乱数生成に使われた歴史があり、規則 110 は**万能計算**ができることが証明されています。*
+
+![ラングトンの蟻](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/14_langtons_ant.png?v=1)
+
+*↑ 規則は 2 つだけ(白なら右折して黒く塗る、黒なら左折して白く塗る)。最初の 1 万歩ほどは対称な模様、次に無秩序、そして**突然「高速道路」に入り、以後は周期 104 で斜めに進み続けます**。*
+
+![蟻の成長曲線](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/15_langton_growth.png?v=1)
+
+*↑ 黒マスの数を歩数に対して。前半は揺れますが、高速道路に入ると **12/104 = 0.1154 マス/歩**の直線になります。**絵を見なくても、傾きで「入った」が分かります。***
+
+![アポロニウス](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/16_apollonian.png?v=1)
+
+*↑ 隙間に接する円を入れ続けるので終わりがありません。**互いに接する 4 円の曲率はデカルトの円定理 `(Σk)² = 2Σk²` を厳密に満たします**(残差 1.2e-16)—— 円の位置まで複素数の曲率中心で解けるので、当てはめではなく**代数**で描いています。*
+
+![カオスゲーム](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/17_chaos_game.png?v=1)
+
+![バーンズリーのシダ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/18_fern.png?v=1)
+
+![流れ場](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/19_flow_field.png?v=1)
+
+*↑ 場は**ポテンシャル ψ の回転**として作ってあるので、発散が恒等的に 0(非圧縮、残差 7.0e-17)。流線が渦のまわりで**閉じている**のがその絵です —— 「それらしい雑音」で作った流れ場では、ここが湧き出しと吸い込みになります。*
+
+![反応拡散](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/20_reaction_diffusion.png?v=1)
+
+![プラズマ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/21_plasma.png?v=1)
+
+![10 PRINT とトルシェ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/22_eight_bit.png?v=1)
+
+*↑ 左は `10 PRINT CHR$(205.5+RND(1)); : GOTO 10` —— Commodore 64 の一行プログラム。右はトルシェ・タイルで、**弧の端点が必ず辺の中点に来る**ので、どう組んでも曲線が途切れません。*
+
+### 時間軸で循環する画像
+
+![継ぎ目の無い循環動画](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/23_loop.gif?v=1)
+
+*↑ 最後のコマから最初のコマへ戻るところに、切れ目がありません。*
+
+作り方が要点です。「最後に頭へ戻す」のではなく、**時間依存の量をすべて θ の関数にして θ を 0→2π 回す**と、t = T は t = 0 と**同じ式**になります —— 継ぎ目は編集で消すものではなく、**最初から存在しません**。
+
+![継ぎ目の比](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/24_seam.png?v=1)
+
+*↑ **継ぎ目の正解は 0 ではなく 1 です。** 比 =(最後のまたぎの差)÷(ふつうのコマ間の差)。1 なら「最後のまたぎが、ほかのまたぎと見分けが付かない」。**0 だと継ぎ目が無いのではなく、動きが止まっている**という意味になります —— ここを取り違えると「完璧な結果」に見えます。*
+
+### 門と成績
+
+| 主張 | 測った量 | 実測 | 真値の出どころ |
+|---|---|---|---|
+| カフェウォール | 目地 8 本の傾き | **0.0e+00** | 目地は水平線(構成) |
+| ミュラー・リヤー | 軸だけの図の 2 行 | **画素単位で同一** | 等長(構成) |
+| 同(素朴な計測) | 矢羽根つきで行の黒い区間 | **223 vs 225** | 真値 220 ―― 測り方の欠陥 |
+| チェッカーシャドウ | 2 マスの画素値の差 | **0.0e+00** | 影の係数 = 暗/明(厳密) |
+| カニッツァ | 錯覚輪郭上の ptp | **0.0e+00** | 辺は描かれていない |
+| 同時対比 | 2 パッチの差 | **0.0e+00** | 同値(構成) |
+| **規則 90** | 第 n 行 vs `C(n,k) mod 2` | **0.0e+00** | **リュカの定理** |
+| ラングトンの蟻 | 104 歩ごとの変位 | **0.0e+00** | 周期 104・斜め (2,2) |
+| 同 | 高速道路の正味増加 | **ちょうど 12 マス** | 整数(実測で確定) |
+| **アポロニウス** | `(Σk)² − 2Σk²` | **1.19e-16** | **デカルトの円定理** |
+| 同 | 生成した全円と親 3 円の接触 | 9.20e-07 | 接する(再帰で誤差が積もる) |
+| **流れ場** | `div(curl ψ)` | **6.95e-17** | 恒等的に 0 |
+| 反応拡散 | 餌も死も 0 のときの総量 | **1.98e-16** | 保存(拡散は再分配) |
+| プラズマ | 4 隅の値 | **0.0e+00** | 中点変位は既存値を触らない |
+| 循環動画 | 継ぎ目の比(4 種) | **0.997〜1.041** | **1**(0 ではない) |
+
+### 検査が見つけたもの
+
+**4 件出ました。どれも絵を見ても気づけない型です。**
+
+1. **二項係数を `int64` で積んでいて、`C(62,31)×31` で黙って溢れた。** リュカの定理の帰結「`C(n,k)` が奇 ⟺ `(n & k) == k`」に置き換えて、桁あふれの余地を消しました。
+2. **チェッカーシャドウで対にするマスを間違えていた。** 同じ明暗のマスを 2 つ選んでいて、差が 0.31 出ました。対にすべきは「影の外の**暗**マス」と「影の中の**明**マス」。絵は"それらしく"見えるので、数で測るまで気づけません。
+3. **「104 歩で 52 マス」と見当で書いた成長率が、実測 0.114/歩 と合わなかった。** 測り直すと**正味ちょうど 12 マス**(整数)。周期の中で塗っては消すので、正味はずっと少ない。**推測でなく実測が正しかった**という、それだけの話です。
+4. **★アポロニウスで平方根の枝を選び損ねていた。** 複素曲率中心には枝が 2 つあり、片方は「親 3 円に接しない円」を返します。主値だけを使っていたため、**外円の外へ逃げる円の鎖**が出ていました —— しかも絵としては「フラクタルっぽい」ので、**画像を開いて見るまで分かりません**。接することを数で確かめて枝を選ぶようにし、「外へ逃げた円が無い」を門にしました。
+
+そのほかに、**定数の配列でも `std()` は厳密に 0 にならない**(平均を引く途中で 1 ulp 残る、実測 5.6e-17)という小さな発見がありました。「全部同じ値」を厳密に言いたいときは `ptp`(最大 − 最小)を使います。
+
+速度も 1 件。素朴に全画面の距離場を primitive ごとに作っていたので、錯視 12 枚で **17.7 秒**、アポロニウス 1 枚で **4.96 秒**かかっていました。外接箱だけを触る方式にして **0.07 秒 / 0.03 秒**(250 倍・165 倍)。PoC の所要時間は CI の合否そのものなので、これは配管ではなく門の問題です。
+
+### 向かないこと
+
+**作品としての完成度**には向きません。この族には**主張が検算できる図**しか入れていないので、美しいが検算できない図は、描けても入れていません。逆に言えば、ここにある絵は全部「なぜそれで正しいと言えるのか」に答えられます。
+
+また、錯視の**強さ**は測っていません(「どれくらい傾いて見えるか」は心理物理の話で、この族の守備範囲の外です)。測っているのは「**傾いていないこと**」だけです。
 
 ---
 
