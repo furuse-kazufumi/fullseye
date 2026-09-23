@@ -6,7 +6,7 @@ tags:
   - 数学
   - アルゴリズム
   - 画像処理
-public_private: false
+public_private: true
 public_id: fe04f6eef40119913894
 ---
 
