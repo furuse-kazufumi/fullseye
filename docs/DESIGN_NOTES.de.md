@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 955. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 959. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -487,6 +487,13 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L364** _(ja)_ — ★**環境に依存する量を assert しない。** 床は「その環境に入っている書体の 散らばり」から作るので、**どの書体が入っているかで動く** —— 実測 2026-09-17: 手元(Meiryo / 游ゴシック / MS ゴシック)は 0.0581、CI(Noto 系 3 本)は 0.0462。本数は同じ 3 本で、違うのは**中身**(CI の 3 本は互いに似ていて 距離の中央が 0.0250 対 0.0437)。この差で `電` 1 字(距離 0.053)が CI でだけ床を超え、`fp == 0` が**手元で緑・CI で赤**になった。 固定すべきなのは**順序**である —— 壊れた字の最小距離が、無事な字の最大距離を 上回ること。これは閾値の置き方と無関係に手法の良し悪しを測る(CI の実測: 無事な字の最大 0.053 < 壊れた字の最小 0.069 で、**両環境とも完全に分離**)。 その上で「床がその隙間に落ちたか」は環境の性質として**報告する**。
 - **L375** _(ja)_ — ★これは note 080 で退けた「順位で判定する」とは別物 —— 判定は今も床で行い、 ここで固定するのは**分離しているという性質**だけ。
 - **L403** _(ja)_ — ★書体 1 本の環境では**主張を弱める**。妨害から作った床は書体の散らばりより 狭く(実測 0.0258 対 0.0581)、撮り方の違いだけで無事な字まで超えてしまう (実測 7 本中 5 本)。**この環境では言えないことを言わない**のが正しく、 閾値を緩めて通すのは測定を捨てるのと同じ。CI には CJK を 2 本入れてある。
+
+## `examples/poc_gravitational_lens_invariants.py`
+
+- **L77** _(ja)_ — 色。★赤と緑は対にしない
+- **L129** _(ja)_ — ★縁の幅は**像面の画素**で測る。光源面の距離をそのまま使うと、倍率の 大きいところで縁が細く見え、面積が系統的にずれる(実測 2.1% → 0.2%)。 d は光源面の量なので、像面での変化率 |∇d| で割って像面の単位に直す。
+- **L242** _(ja)_ — ★はじめ「暗い像が小さくなる u = 1.5 がいちばん苦しい」と読んで**外した**。 実測ではどの解像度でも **u = 0.3(焦線に近い側)が最悪**で、u = 1.5 の 暗い像は n=3201 でも 209 画素ある。苦しいのは「像が小さい」ほうではなく 「像が引き伸ばされて細い弧になる」ほうだった。
+- **L531** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/poc_illusions_and_perpetual_drawing.py`
 
