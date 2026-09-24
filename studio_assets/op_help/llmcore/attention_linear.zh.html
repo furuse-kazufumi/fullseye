@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">attention_linear — LLMCORE <code style="color:#22d3bf">attend</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_linear(query, key, value, causal: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import llmcore; llmcore.attention_linear(query, key, value, causal: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_linear&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>softmax を外した注意 → tokens。<b>(QKᵀ)V == Q(KᵀV) —— 結合則そのもの</b>。</p>
+<p>Katharopoulos ら 2020。softmax を外すと行列積の結合則が使え、(T, T) を作らずに</p>
+<p>(d, dv) の状態だけで足りる。<b>同じ数の別の括り方</b>なので答えは一致し(相対差 7.1e-16)、</p>
+<p>計算量は O(T²d) から O(Td²) に移る —— 交差点は <b>T == d</b>(実測: T=d=64 で比 0.9、</p>
+<p>T=1024 で 14.6 倍)。★T を 2048 にしても比は 14.4 で頭打ちになる。式が言う 32 倍には</p>
+<p>届かない —— 二次の側が帯域律速に入るから。</p>
+<p>Args:</p>
+<p>query: (T, d) float。</p>
+<p>key: (S, d) float。</p>
+<p>value: (S, dv) float。`<code style="color:#22d3bf">causal=True</code>` では S == T。</p>
+<p>causal: True なら「自分より前だけ」を累積状態で足す(逐次 1 回で線形時間)。</p>
+<p>Returns:</p>
+<p>tokens (T, dv) float: <b>softmax を通していない</b>ので行和 1 の凸結合ではない。</p>
+<p>`<code style="color:#22d3bf">attention_softmax</code>` の代わりではなく、<b>別の注意</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_attention_identities">poc_attention_identities</a> — <code style="color:#22d3bf">py -3.11 examples/poc_attention_identities.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">tokens</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opllmcore:rms_norm">rms_norm</a> · <a style="color:#22d3bf" href="opllmcore:rope_rotate">rope_rotate</a> · <a style="color:#22d3bf" href="opllmcore:attention_scores">attention_scores</a> · <a style="color:#22d3bf" href="opllmcore:attention_apply">attention_apply</a> · <a style="color:#22d3bf" href="opllmcore:attention_softmax">attention_softmax</a> · <a style="color:#22d3bf" href="opllmcore:attention_tiled">attention_tiled</a> · <a style="color:#22d3bf" href="opllmcore:attention_grouped">attention_grouped</a> · <a style="color:#22d3bf" href="opllmcore:kv_cache_decode">kv_cache_decode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">attend</code>)</h3>
+<p><a style="color:#22d3bf" href="opllmcore:attention_softmax">attention_softmax</a> · <a style="color:#22d3bf" href="opllmcore:attention_tiled">attention_tiled</a> · <a style="color:#22d3bf" href="opllmcore:attention_grouped">attention_grouped</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: llmcore.py — LLMCORE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">rms_norm — LLMCORE <code style="color:#22d3bf">prepare</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">tokens</code> → <code style="color:#22d3bf">tokens</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import llmcore; llmcore.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsllmcore.get(&quot;rms_norm&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>RMS 正規化 → tokens。<b>既定(eps=0, weight なし)では出力の RMS が厳密に 1</b>。</p>
+<p>Zhang・Sennrich 2019。LayerNorm から平均を引く段を落としたもので、残るのは</p>
+<p>「行のノルムを揃える」だけ —— だから <b>RMS が 1 になることが検算になる</b></p>
+<p>(実測 2.2e-16)。`<code style="color:#22d3bf">eps</code><code style="color:#22d3bf"> を入れると 1 からずれる。それが </code><code style="color:#22d3bf">eps</code>` の値段。</p>
+<p>Args:</p>
+<p>tokens: (T, d) float。1 行が 1 トークン。</p>
+<p>eps: 平方根の中に足す下駄。0 なら RMS は厳密に 1、正なら 1 未満に縮む。</p>
+<p>weight: (d,) float か None。学習で付く軸ごとの倍率(掛けるだけなので RMS は動く)。</p>
+<p>Returns:</p>
+<p>tokens (T, d) float: 各行を自分の RMS で割ったもの(`<code style="color:#22d3bf">weight</code>` があれば掛けたもの)。</p>
+<p><b>全成分が 0 の行</b>は割れないので ValueError(黙って 0/0 の NaN を返さない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_attention_identities">poc_attention_identities</a> — <code style="color:#22d3bf">py -3.11 examples/poc_attention_identities.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">tokens</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opllmcore:rope_rotate">rope_rotate</a> · <a style="color:#22d3bf" href="opllmcore:attention_scores">attention_scores</a> · <a style="color:#22d3bf" href="opllmcore:attention_apply">attention_apply</a> · <a style="color:#22d3bf" href="opllmcore:attention_softmax">attention_softmax</a> · <a style="color:#22d3bf" href="opllmcore:attention_tiled">attention_tiled</a> · <a style="color:#22d3bf" href="opllmcore:attention_linear">attention_linear</a> · <a style="color:#22d3bf" href="opllmcore:attention_grouped">attention_grouped</a> · <a style="color:#22d3bf" href="opllmcore:kv_cache_decode">kv_cache_decode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">prepare</code>)</h3>
+<p><a style="color:#22d3bf" href="opllmcore:rope_rotate">rope_rotate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: llmcore.py — LLMCORE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

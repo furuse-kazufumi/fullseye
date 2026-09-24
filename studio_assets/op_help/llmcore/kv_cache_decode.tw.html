@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">kv_cache_decode — LLMCORE <code style="color:#22d3bf">decode</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import llmcore; llmcore.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsllmcore.get(&quot;kv_cache_decode&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>1 トークン分だけ進める推論(KV Cache)→ tokens (1, dv)。</p>
+<p>因果マスクの下では<b>未来を書き換えても前の出力が 1 ビットも動かない</b>(実測 0.0e+00)</p>
+<p>ので、済んだ key/value を取っておいて 1 行だけ計算すればよい —— 逐次に 1 行ずつ</p>
+<p>進めた結果は、全系列を一括で通した結果と一致する(相対差 1.6e-16)。</p>
+<p>計算量は 1 歩あたり O(T d) で、一括の O(T² d) を T 歩に割ったものに等しい。</p>
+<p>Args:</p>
+<p>query_step: (1, d) float。いま生成しようとしている 1 トークン。</p>
+<p>key_cache: (T, d) float。ここまでに見た key(自分を含む)。</p>
+<p>value_cache: (T, dv) float。同じ長さの value。</p>
+<p>scale: スコアの倍率。None なら 1/√d。</p>
+<p>Returns:</p>
+<p>tokens (1, dv) float: 一括で通した最終行と一致する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_attention_identities">poc_attention_identities</a> — <code style="color:#22d3bf">py -3.11 examples/poc_attention_identities.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">tokens</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opllmcore:rms_norm">rms_norm</a> · <a style="color:#22d3bf" href="opllmcore:rope_rotate">rope_rotate</a> · <a style="color:#22d3bf" href="opllmcore:attention_scores">attention_scores</a> · <a style="color:#22d3bf" href="opllmcore:attention_apply">attention_apply</a> · <a style="color:#22d3bf" href="opllmcore:attention_softmax">attention_softmax</a> · <a style="color:#22d3bf" href="opllmcore:attention_tiled">attention_tiled</a> · <a style="color:#22d3bf" href="opllmcore:attention_linear">attention_linear</a> · <a style="color:#22d3bf" href="opllmcore:attention_grouped">attention_grouped</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">decode</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: llmcore.py — LLMCORE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

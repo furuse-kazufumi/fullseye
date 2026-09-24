@@ -1,14 +1,15 @@
 {
- "n_ops": 2177,
+ "n_ops": 2187,
  "tiers": {
   "color": 12,
-  "ledger": 1228,
+  "ledger": 1238,
   "nary": 17,
   "registry": 920
  },
  "sorts": [
   "angle",
   "any",
+  "attnmap",
   "axes",
   "beatcube",
   "bspline_curve",
@@ -96,6 +97,7 @@
   "synapse_table",
   "table",
   "text",
+  "tokens",
   "transport_plan",
   "vector",
   "video",
@@ -1181,6 +1183,107 @@
    "dim": "annotate",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "attention_apply",
+   "halcon": "",
+   "in_sort": "attnmap",
+   "out_sort": "tokens",
+   "category": "score",
+   "tier": "ledger",
+   "ledger": "opsllmcore",
+   "dim": "llmcore",
+   "in_sorts": [
+    "attnmap",
+    "tokens"
+   ]
+  },
+  {
+   "name": "attention_grouped",
+   "halcon": "",
+   "in_sort": "tokens",
+   "out_sort": "tokens",
+   "category": "attend",
+   "tier": "ledger",
+   "ledger": "opsllmcore",
+   "dim": "llmcore",
+   "in_sorts": [
+    "tokens",
+    "tokens",
+    "tokens"
+   ]
+  },
+  {
+   "name": "attention_linear",
+   "halcon": "",
+   "in_sort": "tokens",
+   "out_sort": "tokens",
+   "category": "attend",
+   "tier": "ledger",
+   "ledger": "opsllmcore",
+   "dim": "llmcore",
+   "in_sorts": [
+    "tokens",
+    "tokens",
+    "tokens"
+   ]
+  },
+  {
+   "name": "attention_scores",
+   "halcon": "",
+   "in_sort": "tokens",
+   "out_sort": "attnmap",
+   "category": "score",
+   "tier": "ledger",
+   "ledger": "opsllmcore",
+   "dim": "llmcore",
+   "in_sorts": [
+    "tokens",
+    "tokens"
+   ]
+  },
+  {
+   "name": "attention_softmax",
+   "halcon": "",
+   "in_sort": "tokens",
+   "out_sort": "tokens",
+   "category": "attend",
+   "tier": "ledger",
+   "ledger": "opsllmcore",
+   "dim": "llmcore",
+   "in_sorts": [
+    "tokens",
+    "tokens",
+    "tokens"
+   ]
+  },
+  {
+   "name": "attention_tiled",
+   "halcon": "",
+   "in_sort": "tokens",
+   "out_sort": "tokens",
+   "category": "attend",
+   "tier": "ledger",
+   "ledger": "opsllmcore",
+   "dim": "llmcore",
+   "in_sorts": [
+    "tokens",
+    "tokens",
+    "tokens"
+   ]
+  },
+  {
+   "name": "attention_weights",
+   "halcon": "",
+   "in_sort": "attnmap",
+   "out_sort": "attnmap",
+   "category": "score",
+   "tier": "ledger",
+   "ledger": "opsllmcore",
+   "dim": "llmcore",
+   "in_sorts": [
+    "attnmap"
    ]
   },
   {
@@ -6833,6 +6936,21 @@
    ]
   },
   {
+   "name": "kv_cache_decode",
+   "halcon": "",
+   "in_sort": "tokens",
+   "out_sort": "tokens",
+   "category": "decode",
+   "tier": "ledger",
+   "ledger": "opsllmcore",
+   "dim": "llmcore",
+   "in_sorts": [
+    "tokens",
+    "tokens",
+    "tokens"
+   ]
+  },
+  {
    "name": "lab_to_rgb",
    "halcon": "",
    "in_sort": "lab",
@@ -12118,6 +12236,19 @@
    ]
   },
   {
+   "name": "rms_norm",
+   "halcon": "",
+   "in_sort": "tokens",
+   "out_sort": "tokens",
+   "category": "prepare",
+   "tier": "ledger",
+   "ledger": "opsllmcore",
+   "dim": "llmcore",
+   "in_sorts": [
+    "tokens"
+   ]
+  },
+  {
    "name": "rmse",
    "halcon": "",
    "in_sort": "image2d",
@@ -12157,6 +12288,19 @@
    "in_sorts": [
     "points",
     "points"
+   ]
+  },
+  {
+   "name": "rope_rotate",
+   "halcon": "",
+   "in_sort": "tokens",
+   "out_sort": "tokens",
+   "category": "prepare",
+   "tier": "ledger",
+   "ledger": "opsllmcore",
+   "dim": "llmcore",
+   "in_sorts": [
+    "tokens"
    ]
   },
   {

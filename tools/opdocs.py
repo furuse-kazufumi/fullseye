@@ -176,6 +176,10 @@ LEDGER_DIMS = {
     # 新語なし(signal / depth / image2d / keypoints / table)。
     "geocam": {"registry": "opsgeocam", "table": "OPSGEOCAM",
                "module": "geocam", "family": "geocam"},
+    # 2026-09-24: LLM に至る系譜の芯。恒等式が立つものだけ(注意の 3 段 / タイル /
+    # 線形 / GQA / RoPE / RMSNorm / KV Cache)。新語 tokens (T,d) と attnmap (T,S)。
+    "llmcore": {"registry": "opsllmcore", "table": "OPSLLMCORE",
+                "module": "llmcore", "family": "llmcore"},
 }
 
 

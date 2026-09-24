@@ -270,9 +270,25 @@ def _synapse_table(rng):
     return np.stack([pre, post, np.ceil(W[pre, post])], axis=1).astype(np.float64)
 
 
+def _patch_tokens(rng, size=32, patch=8):
+    """滑らかな画像を patch x patch で切った (T, patch²) の列。llmcore の種。"""
+    y, x = np.mgrid[0:size, 0:size]
+    img = 0.5 + 0.5 * np.sin(x / 5.0) * np.cos(y / 7.0) + 0.02 * rng.standard_normal((size, size))
+    n = size // patch
+    return img.reshape(n, patch, n, patch).transpose(0, 2, 1, 3).reshape(n * n, patch * patch)
+
+
 def make_generators():
     return {
         "voxel": _ball_vol,
+        # llmcore(2026-09-24): tokens は**画像パッチ**を種にする。★一様乱数だと
+        # どの行も似た向きになり、注意の重みが全行ほぼ一様になって「走ったが
+        # 意味のある出力でない」側に落ちる。滑らかな画像を 8x8 で切ると、
+        # 近い場所のパッチが近い向きを向く = 注意が構造を持つ。
+        "tokens": _patch_tokens,
+        # attnmap: 上の tokens から実際に作った注意行列(行和 1 の本物)。
+        "attnmap": lambda rng: __import__("llmcore").attention_weights(
+            __import__("llmcore").attention_scores(_patch_tokens(rng), _patch_tokens(rng))),
         # conngraph(2026-09-20): 新語 2 つの種
         "conn_graph": _conn_graph,
         "synapse_table": _synapse_table,
@@ -1648,6 +1664,18 @@ TYPE_CHECKS = {
                           and v.dtype != bool
                           and np.issubdtype(v.dtype, np.integer)
                           and v.size > 0 and int(v.min()) >= 0,
+    # tokens(2026-09-24、llmcore 族): (T, d) の実数列。**軸の順が意味を持つ** ——
+    # matrix の述語には当たるが、転置した (d, T) も「行列」としては正しいので、
+    # 型を分けないと「長さ d の列を幅 T で」計算した数が例外なしに返る。
+    "tokens": lambda v: isinstance(v, np.ndarray) and v.ndim == 2 and v.size > 0
+                        and np.issubdtype(v.dtype, np.floating)
+                        and bool(np.isfinite(v).all()),
+    # attnmap(2026-09-24、llmcore 族): (T, S) の注意行列。生スコアと softmax 後の
+    # 両方が座る(行和 1 は attention_apply が入口で検査する)。image2d と形は同じだが、
+    # 画像として平滑化やしきい値をかけると行和 1 が黙って壊れる側。
+    "attnmap": lambda v: isinstance(v, np.ndarray) and v.ndim == 2 and v.size > 0
+                         and np.issubdtype(v.dtype, np.floating)
+                         and bool(np.isfinite(v).all()),
     # conn_graph(2026-09-20、conngraph 族): 正方・実数・有限の n×n 隣接行列。
     # matrix の述語には当たるが、こちらは**正方と有限**を要求する —— 非正方や
     # NaN 入りを「グラフ」と名乗る op を TYPEMISS にするための型。

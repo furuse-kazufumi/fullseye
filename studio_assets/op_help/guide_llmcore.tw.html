@@ -1,0 +1,58 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南僅有日文版(它是人寫的散文,這裡不做機械替換)。</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">LLM に至る系譜の芯(速くする工夫は、全部おなじ数の別の括り方) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>状態機械 → RNN → Attention → Transformer という系譜に出てくる仕組みのうち、<b>厳密な等式・保存量・整数不変量が立つものだけ</b>をアルゴリズムとして持っています。「それらしく動く」ものは入れていません —— 蒸留も Sampler も Perplexity も、真値が無いのでこの箱の外です。RAG・Tool Calling・Guardrails は<b>系の設計であってアルゴリズムではない</b>ので、こちらではなく llmesh / llive の側に置きます。</p>
+<p>なぜ画像の箱に入っているか: <b>注意はトークン列の上の演算</b>で、画像を格子に切ればそのまま ViT の入口になります。この族の op は <code style="color:#22d3bf">tokens</code> (T, d) を受けて <code style="color:#22d3bf">tokens</code> か <code style="color:#22d3bf">attnmap</code> (T, S) を返すだけなので、トークンが単語だろうが画素パッチだろうが同じ式で動きます。</p>
+<p>10 op / 4 カテゴリ(<b>numpy だけ</b>。台帳は <code style="color:#22d3bf">opsllmcore.py</code>、実体は <code style="color:#22d3bf">llmcore.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>prepare(2)</b> — <code style="color:#22d3bf">rms_norm</code>(出力の RMS が<b>厳密に 1</b>)/ <code style="color:#22d3bf">rope_rotate</code>(回転なので<b>ノルムを保つ</b>、内積は<b>相対位置だけ</b>で決まる)。</p>
+<p style="margin:2px 0 2px 12px">• <b>score(3)</b> — <code style="color:#22d3bf">attention_scores</code>(生の QKᵀ/√d)/ <code style="color:#22d3bf">attention_weights</code>(行ごとの softmax + マスク。<b>行和 1、マスク位置は厳密に 0</b>)/ <code style="color:#22d3bf">attention_apply</code>(重みで混ぜる。<b>行和 1 を入口で検査する</b>ので、画像を重みの席に入れたら例外で止まります)。</p>
+<p style="margin:2px 0 2px 12px">• <b>attend(4)</b> — <code style="color:#22d3bf">attention_softmax</code>(一括の参照実装 = 答え合わせの基準)/ <code style="color:#22d3bf">attention_tiled</code>(タイル + online softmax = FlashAttention の芯)/ <code style="color:#22d3bf">attention_linear</code>((QKᵀ)V == Q(KᵀV))/ <code style="color:#22d3bf">attention_grouped</code>(GQA。両端が MHA と MQA に厳密一致)。</p>
+<p style="margin:2px 0 2px 12px">• <b>decode(1)</b> — <code style="color:#22d3bf">kv_cache_decode</code>(1 トークンずつ進める推論)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">連鎖</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    img[画像] --&gt; P[パッチ列 tokens]
+    P --&gt; N[rms_norm] --&gt; R[rope_rotate]
+    R --&gt; S[attention_scores] --&gt; W[attention_weights] --&gt; A[attention_apply] --&gt; out[tokens]
+    R --&gt; F[attention_softmax] --&gt; out
+    R --&gt; T[attention_tiled] --&gt; out
+    R --&gt; L[attention_linear] --&gt; out
+    R --&gt; G[attention_grouped] --&gt; out
+    R --&gt; K[kv_cache_decode] --&gt; out</pre>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
+L = fs.ledger
+
+q, k, v = patches @ Wq, patches @ Wk, patches          # (T, d) の列。画素パッチでよい
+q, k = L.rope_rotate(q), L.rope_rotate(k)              # 位置符号(ノルムは動かない)
+
+w = L.attention_weights(L.attention_scores(q, k), &quot;causal&quot;)   # 行和 1 / 未来は厳密に 0
+y = L.attention_apply(w, v)                                   # = attention_softmax(q,k,v,&quot;causal&quot;)
+
+y2 = L.attention_tiled(q, k, v, tile=32, mask=&quot;causal&quot;)       # (T,T) を作らない。答えは同じ
+y3 = L.attention_linear(q, k, v, causal=True)                 # softmax を外すと結合則が効く
+y4 = L.attention_grouped(q, k, v, n_heads=4, n_kv_heads=1)    # MQA(n_kv_heads=4 で MHA)
+step = L.kv_cache_decode(q[-1:], k, v)                        # 1 トークンだけ進める</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実測(画像パッチ 64 トークン、<code style="color:#22d3bf">examples/poc_attention_identities.py</code>)</h3>
+<p>| 主張 | 閉形式・真値 | 実測 |</p>
+<p>|---|---|---|</p>
+<p>| 注意の行和 | 1 | ずれ <b>2.22e-16</b> |</p>
+<p>| マスク位置の重み | 0 | <b>0.0e+00</b>(許容差が要らない) |</p>
+<p>| 因果の非ゼロ数 | T(T+1)/2 = 2080 | <b>2080</b>(整数で一致) |</p>
+<p>| 窓の非ゼロ数(W=9) | Σ min(i+1,W) = 540 | <b>540</b>(整数で一致) |</p>
+<p>| タイル + online softmax | 一括と同じ | 7 通りのタイルで最悪 <b>1.33e-15</b> |</p>
+<p>| (QKᵀ)V == Q(KᵀV) | 0 | <b>1.18e-15</b> |</p>
+<p>| 未来を書き換えたときの前半 | 0 | <b>0.0e+00</b>(後半は 0.403 動く) |</p>
+<p>| KV Cache の逐次 | 一括と同じ | <b>5.92e-16</b> |</p>
+<p>| 置換同変(位置符号なし) | 0 | <b>4.4e-16</b>(RoPE を入れると 0.018) |</p>
+<p>| RoPE のノルム保存 | 0 | <b>4.44e-16</b> |</p>
+<p>| RoPE の相対位置(絶対位置 40 通り) | 0 | <b>1.11e-15</b> |</p>
+<p>| GQA == MHA / MQA | 0 | <b>0.0e+00 / 0.0e+00</b> |</p>
+<p>| RMS 正規化 | 1 | ずれ <b>2.22e-16</b>(eps=1e-6 で 1.53e-04) |</p>
+<p><b>FlashAttention も線形 Attention も近似ではありません。</b> 速いのは計算を変えたからではなく、前者は (T, T) の行列を<b>作らない</b>から、後者は同じ積を<b>別の順で括る</b>から。交差点は <b>T == d</b> で、比は T/d に沿って育ちますが T=2048 では式が言う 32 倍に届かず 15〜16 倍で頭打ちになります(二次の側が帯域律速。これは時間の測定なので機械に依ります)。</p>
+<p>★<b>外した予言を 2 つ残してあります</b>: タイルを細かくするほど誤差が積もる(→ 64 倍のタイル数で 1.1 倍にしかならない)/ online softmax の途中経過は答えに単調に近づく(→ 単調ではない。走っている最大値が更新されるたびに分母が組み替わるので、途中の値は答えの近似ですらない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型の話</h3>
+<p>新語を 2 つ足しました。基準はこの repo 共通の 1 つ ——「混ぜたときに例外ではなく、<b>もっともらしく間違った数値</b>が出るか」。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">tokens</code> = (T, d) の実数列。<b>軸の順が意味を持ちます</b>。既存の <code style="color:#22d3bf">matrix</code> に載せると、転置した (d, T) がそのまま通って「長さ d の列を幅 T で」計算してしまい、例外ではなく別の数が返ります。<code style="color:#22d3bf">signal</code>(1-D)や <code style="color:#22d3bf">points</code>(3 列固定)とも別物です。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">attnmap</code> = (T, S) の注意行列。生のスコアと softmax 後の重みの両方が座ります。<code style="color:#22d3bf">image2d</code> に載せると「画像として」平滑化やしきい値がかかって行和 1 が黙って壊れるので分けました —— <code style="color:#22d3bf">attention_apply</code> は行和を入口で検査するので、この席に画像を入れたら<b>例外で止まります</b>。</p>
+<p>どちらも <code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> には<b>入れていません</b>。2-D レジストリへの自動の橋(<code style="color:#22d3bf">tb_&lt;op&gt;</code>)が架かると、注意の入力として意味の無い 1 枚の画像が渡されて「走ったが全面が同じ値」になるからです。</p>
+<p><b>torch は使いません。</b> 上の恒等式は全部 numpy で書けます。任意依存を要る op は CI の一部の Python にしか入らず、環境によって落ちます(2026-09-24 に実際に落として学びました)。</p>

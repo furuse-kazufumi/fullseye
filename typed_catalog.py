@@ -925,6 +925,10 @@ def catalog():
         ("opsprintpath", "OPSPRINTPATH", "printpath"),
         # 2026-09-21: 固定カメラの向き(太陽・スカイライン)。新語なし(signal / depth / image2d / keypoints / table)。
         ("opsgeocam", "OPSGEOCAM", "geocam"),
+        # 2026-09-24: LLM に至る系譜の芯。新語 tokens((T,d)の列。matrix に載せると
+        # 転置が黙って通り「長さ d の列を幅 T で」計算する)と attnmap((T,S)の注意行列。
+        # image2d に載せると平滑化やしきい値がかかり行和 1 が静かに壊れる)。
+        ("opsllmcore", "OPSLLMCORE", "llmcore"),
     ):
         _m = __import__(_mod)
         for n, m in getattr(_m, _tbl).items():

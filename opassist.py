@@ -63,6 +63,8 @@ _LEDGERS = (
     ("opsvideocube", "OPSVIDEOCUBE"),
     ("opslive4d", "OPSLIVE4D"),
     ("opsprintpath", "OPSPRINTPATH"),
+    # 2026-09-24: LLM に至る系譜の芯(注意・RoPE・RMSNorm)。新語 tokens / attnmap。
+    ("opsllmcore", "OPSLLMCORE"),
     ("opsgeocam", "OPSGEOCAM"),          # 2026-09-21: 固定カメラの向きを写真から(太陽・スカイライン、新語なし)      # 2026-09-21: 3D プリンタ(G-code / 3MF / スライス / 層画像の検査)            # 2026-09-21: 生きている組織の 3D+t(増幅・流れ・補間・高さ場)      # 2026-09-21: 動画の空間×時間の立方体(Video Summagator の再実装)          # 2026-09-21: EM 校正のセカンドオピニオン(labels2d / image2d / table)
 )
 
@@ -698,6 +700,11 @@ def sample_input(op_name: str):
         #   「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
         "conn_graph": _sample_conn_graph,
         "synapse_table": _sample_synapse_table,
+        # llmcore(2026-09-24): ★一様乱数にしない —— どの行も似た向きになり、
+        #   注意の重みが全行ほぼ一様になって「押しても何も起きない」種になる。
+        #   滑らかな画像を 8x8 パッチに切ると、近い場所が近い向きを向く。
+        "tokens": _sample_tokens,
+        "attnmap": _sample_attnmap,
     }
     #: 単位に合う種(汎用の 0..1 では意味を持たない量がある)。
     #: ★ 実測で判明: `prism_min_deviation_deg` の波長入力に 0..1 の汎用 signal を渡すと
@@ -723,6 +730,21 @@ def sample_input(op_name: str):
             # 書き先のパス名は発明しない —— None を渡し、op が「path is None — pass a file path」と言う。
             kwargs[spec["name"]] = None if (writes_file and spec["name"] in _PATH_PARAMS) else _sample_value(spec)
     return args, kwargs
+
+
+def _sample_tokens():
+    """滑らかな画像を 8x8 で切った (16, 64) のパッチ列。llmcore の種。"""
+    import numpy as np
+    y, x = np.mgrid[0:32, 0:32]
+    img = 0.5 + 0.5 * np.sin(x / 5.0) * np.cos(y / 7.0)
+    return img.reshape(4, 8, 4, 8).transpose(0, 2, 1, 3).reshape(16, 64)
+
+
+def _sample_attnmap():
+    """`_sample_tokens` から実際に作った (16, 16) の注意行列(行和 1)。"""
+    import llmcore
+    t = _sample_tokens()
+    return llmcore.attention_weights(llmcore.attention_scores(t, t))
 
 
 def _sample_conn_graph():

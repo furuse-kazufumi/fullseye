@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">attention_tiled — LLMCORE <code style="color:#22d3bf">attend</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_tiled(query, key, value, tile: &#x27;int&#x27; = 64, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import llmcore; llmcore.attention_tiled(query, key, value, tile: &#x27;int&#x27; = 64, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_tiled&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>タイル + online softmax の注意(FlashAttention の芯)→ tokens。<b>近似ではない</b>。</p>
+<p>Dao ら 2022。key/value を `<code style="color:#22d3bf">tile</code>` 行ずつ読み、走っている最大値と分母をその場で</p>
+<p>補正しながら足す。作る中間行列は (T, `<code style="color:#22d3bf">tile</code>`) だけで、<b>(T, T) を一度も作らない</b> ——</p>
+<p>速さの出どころは近似ではなく、置き場所。`<code style="color:#22d3bf">attention_softmax</code>` との相対差は</p>
+<p>タイル 128 枚でも <b>1.2e-15</b>(タイル 1 枚で 8.2e-16 なので、枚数を 128 倍しても 1.5 倍)。</p>
+<p>Args:</p>
+<p>query: (T, d) float。</p>
+<p>key: (S, d) float。</p>
+<p>value: (S, dv) float。</p>
+<p>tile: 一度に読む key/value の行数。小さいほど中間行列が小さく、枚数が増える。</p>
+<p>mask: None / `<code style="color:#22d3bf">&quot;causal&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;window&quot;</code>` / (T, S) の bool 配列。</p>
+<p>window: `<code style="color:#22d3bf">mask=&quot;window&quot;</code>` のときの窓幅。</p>
+<p>scale: スコアの倍率。None なら 1/√d。</p>
+<p>Returns:</p>
+<p>tokens (T, dv) float: `<code style="color:#22d3bf">attention_softmax</code>` と機械精度で一致する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_attention_identities">poc_attention_identities</a> — <code style="color:#22d3bf">py -3.11 examples/poc_attention_identities.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">tokens</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opllmcore:rms_norm">rms_norm</a> · <a style="color:#22d3bf" href="opllmcore:rope_rotate">rope_rotate</a> · <a style="color:#22d3bf" href="opllmcore:attention_scores">attention_scores</a> · <a style="color:#22d3bf" href="opllmcore:attention_apply">attention_apply</a> · <a style="color:#22d3bf" href="opllmcore:attention_softmax">attention_softmax</a> · <a style="color:#22d3bf" href="opllmcore:attention_linear">attention_linear</a> · <a style="color:#22d3bf" href="opllmcore:attention_grouped">attention_grouped</a> · <a style="color:#22d3bf" href="opllmcore:kv_cache_decode">kv_cache_decode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">attend</code>)</h3>
+<p><a style="color:#22d3bf" href="opllmcore:attention_softmax">attention_softmax</a> · <a style="color:#22d3bf" href="opllmcore:attention_linear">attention_linear</a> · <a style="color:#22d3bf" href="opllmcore:attention_grouped">attention_grouped</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: llmcore.py — LLMCORE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

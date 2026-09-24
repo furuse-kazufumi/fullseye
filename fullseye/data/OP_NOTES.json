@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2177,
- "n_notes": 2183,
+ "n_ops": 2187,
+ "n_notes": 2193,
  "notes": {
   "vol_dilate": [
    {
@@ -17191,6 +17191,106 @@
     "in": "volseq",
     "out": "volseq",
     "path": "docs/ops/live4d/time/volseq_magnify_motion.md"
+   }
+  ],
+  "attention_grouped": [
+   {
+    "op": "attention_grouped",
+    "dim": "llmcore",
+    "category": "attend",
+    "in": "tokens × tokens × tokens",
+    "out": "tokens",
+    "path": "docs/ops/llmcore/attend/attention_grouped.md"
+   }
+  ],
+  "attention_linear": [
+   {
+    "op": "attention_linear",
+    "dim": "llmcore",
+    "category": "attend",
+    "in": "tokens × tokens × tokens",
+    "out": "tokens",
+    "path": "docs/ops/llmcore/attend/attention_linear.md"
+   }
+  ],
+  "attention_softmax": [
+   {
+    "op": "attention_softmax",
+    "dim": "llmcore",
+    "category": "attend",
+    "in": "tokens × tokens × tokens",
+    "out": "tokens",
+    "path": "docs/ops/llmcore/attend/attention_softmax.md"
+   }
+  ],
+  "attention_tiled": [
+   {
+    "op": "attention_tiled",
+    "dim": "llmcore",
+    "category": "attend",
+    "in": "tokens × tokens × tokens",
+    "out": "tokens",
+    "path": "docs/ops/llmcore/attend/attention_tiled.md"
+   }
+  ],
+  "kv_cache_decode": [
+   {
+    "op": "kv_cache_decode",
+    "dim": "llmcore",
+    "category": "decode",
+    "in": "tokens × tokens × tokens",
+    "out": "tokens",
+    "path": "docs/ops/llmcore/decode/kv_cache_decode.md"
+   }
+  ],
+  "rms_norm": [
+   {
+    "op": "rms_norm",
+    "dim": "llmcore",
+    "category": "prepare",
+    "in": "tokens",
+    "out": "tokens",
+    "path": "docs/ops/llmcore/prepare/rms_norm.md"
+   }
+  ],
+  "rope_rotate": [
+   {
+    "op": "rope_rotate",
+    "dim": "llmcore",
+    "category": "prepare",
+    "in": "tokens",
+    "out": "tokens",
+    "path": "docs/ops/llmcore/prepare/rope_rotate.md"
+   }
+  ],
+  "attention_apply": [
+   {
+    "op": "attention_apply",
+    "dim": "llmcore",
+    "category": "score",
+    "in": "attnmap × tokens",
+    "out": "tokens",
+    "path": "docs/ops/llmcore/score/attention_apply.md"
+   }
+  ],
+  "attention_scores": [
+   {
+    "op": "attention_scores",
+    "dim": "llmcore",
+    "category": "score",
+    "in": "tokens × tokens",
+    "out": "attnmap",
+    "path": "docs/ops/llmcore/score/attention_scores.md"
+   }
+  ],
+  "attention_weights": [
+   {
+    "op": "attention_weights",
+    "dim": "llmcore",
+    "category": "score",
+    "in": "attnmap",
+    "out": "attnmap",
+    "path": "docs/ops/llmcore/score/attention_weights.md"
    }
   ],
   "cplx_argument_principle": [
