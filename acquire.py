@@ -314,6 +314,111 @@ def unpack(buf, pixel_format, shape) -> np.ndarray:
     return fn(buf, bits, h * w).reshape(h, w)
 
 
+#: GenICam SFNC v2.8 feature names this module drives, with the level and unit the
+#: standard itself assigns. ``R`` means the standard requires every compliant device
+#: to have it, ``O`` that it may be absent -- which is why a missing ``O`` feature is
+#: reported rather than treated as a broken camera.
+#:
+#: These are *standard* names, not vendor names: one table covers every GenTL
+#: producer. ``examples/data/sfnc_acquire_vocabulary.json`` carries the same rows
+#: straight from EMVA's published PDF, and a test compares the two.
+#:
+#: The unit column is SFNC 1.2 Standard Units. ``ExposureTime`` is microseconds and
+#: ``AcquisitionFrameRate`` is hertz because the standard says so. ``Gain`` has no
+#: unit in the standard -- only the device's own node does -- so this module never
+#: calls it dB.
+SFNC_FEATURES = {
+    "PixelFormat": ("R", "IEnumeration", None),
+    "Width": ("R", "IInteger", None),
+    "Height": ("R", "IInteger", None),
+    "OffsetX": ("R", "IInteger", None),
+    "OffsetY": ("R", "IInteger", None),
+    "AcquisitionMode": ("R", "IEnumeration", None),
+    "AcquisitionStart": ("R", "ICommand", None),
+    "AcquisitionStop": ("R", "ICommand", None),
+    "AcquisitionFrameRate": ("R", "IFloat", "Hz"),
+    "TriggerSelector": ("R", "IEnumeration", None),
+    "TriggerMode": ("R", "IEnumeration", None),
+    "TriggerSource": ("R", "IEnumeration", None),
+    "TriggerActivation": ("R", "IEnumeration", None),
+    "ExposureMode": ("R", "IEnumeration", None),
+    "ExposureTime": ("R", "IFloat", "us"),
+    "ExposureAuto": ("O", "IEnumeration", None),
+    "GainSelector": ("O", "IEnumeration", None),
+    "Gain": ("O", "IFloat", None),
+    "GainAuto": ("O", "IEnumeration", None),
+    "BlackLevel": ("O", "IFloat", None),
+    "DeviceVendorName": ("R", "IString", None),
+    "DeviceModelName": ("R", "IString", None),
+    "DeviceSerialNumber": ("R", "IString", None),
+    "DeviceFirmwareVersion": ("R", "IString", None),
+    "PayloadSize": ("R", "IInteger", "B"),
+    "TimestampLatch": ("O", "ICommand", None),
+    "TimestampLatchValue": ("O", "IInteger", "ns"),
+    "ReverseX": ("R", "IBoolean", None),
+    "ReverseY": ("R", "IBoolean", None),
+    "BinningHorizontal": ("O", "IInteger", None),
+    "BinningVertical": ("O", "IInteger", None),
+}
+
+#: Feature names the standard requires, so their absence is a real finding.
+SFNC_REQUIRED = tuple(n for n, (lvl, _i, _u) in sorted(SFNC_FEATURES.items())
+                      if lvl == "R")
+
+
+class _NodeMap:
+    """One way to read and write GenICam features across the SDKs that expose them.
+
+    Only the *access* differs between SDKs; the names, units and required/optional
+    status come from the standard. Keeping the difference in one small class is what
+    lets a single vocabulary cover every GenTL producer.
+    """
+
+    __slots__ = ("kind", "obj")
+
+    def __init__(self, kind, obj):
+        self.kind = kind
+        self.obj = obj
+
+    def has(self, name: str) -> bool:
+        try:
+            return self._node(name) is not None
+        except Exception:                                   # noqa: BLE001
+            return False
+
+    def _node(self, name):
+        if self.kind == "vmbpy":
+            return self.obj.get_feature_by_name(name)
+        return getattr(self.obj, name)
+
+    def get(self, name: str):
+        n = self._node(name)
+        if self.kind == "pypylon":
+            return n.GetValue()
+        if self.kind == "vmbpy":
+            return n.get()
+        return n.value                                      # GenICam / harvesters
+
+    def set(self, name: str, value):
+        n = self._node(name)
+        if self.kind == "pypylon":
+            n.SetValue(value)
+        elif self.kind == "vmbpy":
+            n.set(value)
+        else:
+            n.value = value
+
+    def execute(self, name: str) -> None:
+        n = self._node(name)
+        for attr in ("execute", "Execute", "run"):
+            fn = getattr(n, attr, None)
+            if callable(fn):
+                fn()
+                return
+        raise ValueError("_NodeMap: %r is not executable on a %s node map"
+                         % (name, self.kind))
+
+
 def bit_depth_of(pixel_format) -> int | None:
     """Significant bits for a GenICam-style pixel format name, or ``None`` if unknown.
 
@@ -805,6 +910,122 @@ class Camera:
                      timestamp_source=meta.get("timestamp_source", "host"),
                      frame_id=meta.get("frame_id"),
                      exposure_us=meta.get("exposure_us"), gain=meta.get("gain"), gain_unit=meta.get("gain_unit"))
+
+
+    def node_map(self):
+        """The device's GenICam node map, or ``None`` when the backend has none.
+
+        Returns:
+            _NodeMap | None: ``None`` for ``callable``, ``dir`` and the depth
+            backends, which are not GenICam devices at all -- saying so is better
+            than raising, because "this source has no features" is a fact a caller
+            may want to branch on.
+        """
+        h = self._handle
+        if h is None:
+            return None
+        if self.backend == "genicam":
+            return _NodeMap("genicam", h[2].remote_device.node_map)
+        if self.backend == "basler":
+            return _NodeMap("pypylon", h[1])
+        if self.backend == "vimba":
+            return _NodeMap("vmbpy", h[2])
+        if self.backend == "callable":
+            #: A mock node map makes the SFNC path testable with no hardware at all.
+            nm = self.opts.get("node_map")
+            return _NodeMap("genicam", nm) if nm is not None else None
+        return None
+
+    def features(self, names=None) -> dict:
+        """Read SFNC features from the device.
+
+        Args:
+            names: which features to read; ``None`` reads every name in
+                :data:`SFNC_FEATURES` that the device actually exposes.
+        Returns:
+            dict: name -> value for the features present. A feature the standard
+            marks optional and the device does not have is simply absent; a
+            **required** one that is missing is reported as ``None`` so the gap is
+            visible rather than silently skipped.
+        Raises:
+            RuntimeError: when the backend has no node map.
+            ValueError: for a name that is not an SFNC feature -- a vendor-specific
+                name is a real thing, but it does not belong in a table that claims
+                to be the standard's.
+        """
+        nm = self.node_map()
+        if nm is None:
+            raise RuntimeError("features: backend %r has no GenICam node map"
+                               % self.backend)
+        wanted = tuple(SFNC_FEATURES) if names is None else tuple(names)
+        bad = [n for n in wanted if n not in SFNC_FEATURES]
+        if bad:
+            raise ValueError("features: not SFNC v2.8 feature names: %s"
+                             % ", ".join(sorted(bad)))
+        out = {}
+        for name in wanted:
+            level = SFNC_FEATURES[name][0]
+            if SFNC_FEATURES[name][1] == "ICommand":
+                continue                                    # a command has no value
+            if not nm.has(name):
+                if level == "R":
+                    out[name] = None                        # required and absent
+                continue
+            try:
+                out[name] = nm.get(name)
+            except Exception:                               # noqa: BLE001
+                if level == "R":
+                    out[name] = None
+        return out
+
+    def configure(self, **features) -> dict:
+        """Set SFNC features by their standard names and report what the device took.
+
+        Cameras clamp: ask for 100000 us on a sensor whose maximum is 33000 and you
+        get 33000. Returning the requested value would be a small lie that turns into
+        a wrong exposure in a measurement, so every value is read back.
+
+        Args:
+            **features: SFNC feature names and values, e.g.
+                ``configure(ExposureTime=5000.0, TriggerMode="Off")``.
+                ``ExposureTime`` is in microseconds and ``AcquisitionFrameRate`` in
+                hertz because SFNC 1.2 fixes those units.
+        Returns:
+            dict: name -> the value the device reports **after** the write.
+        Raises:
+            RuntimeError: when the backend has no node map.
+            ValueError: for a name outside :data:`SFNC_FEATURES`, or a feature the
+                device does not expose. Writing a name the device does not have
+                would otherwise fail somewhere deeper with a vendor-specific error.
+        """
+        nm = self.node_map()
+        if nm is None:
+            raise RuntimeError("configure: backend %r has no GenICam node map"
+                               % self.backend)
+        bad = [n for n in features if n not in SFNC_FEATURES]
+        if bad:
+            raise ValueError("configure: not SFNC v2.8 feature names: %s"
+                             % ", ".join(sorted(bad)))
+        absent = [n for n in features if not nm.has(n)]
+        if absent:
+            raise ValueError("configure: the device does not expose %s"
+                             % ", ".join(sorted(absent)))
+        for name, value in features.items():
+            nm.set(name, value)
+        return self.features(tuple(features))
+
+    def missing_required_features(self) -> list:
+        """SFNC features the standard requires but this device does not expose.
+
+        Returns:
+            list: the missing names, sorted. An empty list is the expected answer;
+            a non-empty one is a finding about the device, not about this module.
+        """
+        nm = self.node_map()
+        if nm is None:
+            raise RuntimeError("missing_required_features: backend %r has no "
+                               "GenICam node map" % self.backend)
+        return sorted(n for n in SFNC_REQUIRED if not nm.has(n))
 
     def frames(self, n: int) -> list:
         """Grab *n* frames (list). For the ``dir`` backend it wraps around."""

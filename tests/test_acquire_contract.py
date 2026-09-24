@@ -433,3 +433,165 @@ def test_the_connectivity_doc_pixel_format_table_matches_the_code():
         row = "| %s | %d | %d | %d |" % (label, len(names), have, skip)
         assert row in text, row
     assert "%d 形式)は `acquire.unpack()`" % len(acquire.PACKED_FORMATS) in text
+
+
+# --------------------------------------------------------------------------- SFNC
+#
+# ★機能名はベンダの名前ではなく規格の名前なので、**1 本の語彙表で GenTL を出す
+# 全ベンダを覆える**。だからこの層は「どのベンダの SDK を入れたか」と無関係に
+# 検査できる —— 模擬ノードマップで足りる。実機が無いことは言い訳にならない。
+
+
+class _FakeNode:
+    """GenICam のノード 1 つ。値を持ち、clamp する(実機はする)。"""
+
+    def __init__(self, value, lo=None, hi=None, executable=False):
+        self.value = value
+        self._lo, self._hi, self._exec = lo, hi, executable
+        self.executed = 0
+
+    def __setattr__(self, k, v):
+        if k == "value" and getattr(self, "_lo", None) is not None:
+            v = min(max(v, self._lo), self._hi)
+        object.__setattr__(self, k, v)
+
+    def execute(self):
+        if not self._exec:
+            raise AttributeError("not a command")
+        self.executed += 1
+
+
+class _FakeMap:
+    """ノードを属性で見せるだけの模擬。harvesters の node_map と同じ触り方。"""
+
+    def __init__(self, **nodes):
+        for k, v in nodes.items():
+            setattr(self, k, v)
+
+
+def _fake_camera(**nodes):
+    nm = _FakeMap(**nodes)
+    return acquire.Camera(lambda: np.zeros((4, 4), dtype=np.uint8),
+                          backend="callable", node_map=nm), nm
+
+
+def test_the_shipped_vocabulary_is_the_published_one():
+    """表は手で書いてある。**規格から取った台帳**と突き合わせて留める。"""
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                        "examples", "data", "sfnc_acquire_vocabulary.json")
+    with open(path, encoding="utf-8") as fh:
+        doc = json.load(fh)
+    assert doc["source"].startswith("https://www.emva.org/")
+    led = doc["features"]
+    assert set(acquire.SFNC_FEATURES) <= set(led), (
+        sorted(set(acquire.SFNC_FEATURES) - set(led)))
+    for name, (level, iface, unit) in sorted(acquire.SFNC_FEATURES.items()):
+        row = led[name]
+        assert row["level"] == level, (name, row["level"], level)
+        assert row["interface"] == iface, (name, row["interface"], iface)
+        assert row["unit"] == unit, (name, row["unit"], unit)
+
+
+def test_the_standard_units_are_not_invented():
+    """★SFNC 1.2 が単位を決めている機能だけが単位を持つ。Gain は持たない。"""
+    assert acquire.SFNC_FEATURES["ExposureTime"][2] == "us"
+    assert acquire.SFNC_FEATURES["AcquisitionFrameRate"][2] == "Hz"
+    assert acquire.SFNC_FEATURES["PayloadSize"][2] == "B"
+    assert acquire.SFNC_FEATURES["TimestampLatchValue"][2] == "ns"
+    #: 規格は Gain に単位を割り当てていない —— dB と呼ばない。
+    assert acquire.SFNC_FEATURES["Gain"][2] is None
+
+
+def test_a_source_without_a_node_map_says_so_instead_of_raising_deeper():
+    cam = acquire.Camera(lambda: np.zeros((4, 4), dtype=np.uint8), backend="callable")
+    assert cam.node_map() is None
+    with pytest.raises(RuntimeError) as e:
+        cam.features()
+    assert "node map" in str(e.value)
+
+
+def test_features_are_read_by_their_standard_names():
+    cam, _nm = _fake_camera(ExposureTime=_FakeNode(5000.0),
+                            PixelFormat=_FakeNode("Mono12"),
+                            Width=_FakeNode(1920), Height=_FakeNode(1080))
+    got = cam.features(("ExposureTime", "PixelFormat", "Width"))
+    assert got == {"ExposureTime": 5000.0, "PixelFormat": "Mono12", "Width": 1920}
+
+
+def test_configure_reports_what_the_device_took_not_what_was_asked():
+    """★カメラは clamp する。要求値を返すのは小さな嘘で、露光の取り違えになる。"""
+    cam, _nm = _fake_camera(ExposureTime=_FakeNode(1000.0, lo=10.0, hi=33000.0))
+    got = cam.configure(ExposureTime=100000.0)
+    assert got["ExposureTime"] == 33000.0          # 要求は 100000 us
+    assert got["ExposureTime"] != 100000.0
+
+
+def test_a_vendor_name_is_refused_by_the_standard_table():
+    cam, _nm = _fake_camera(ExposureTimeAbs=_FakeNode(5000.0))
+    for call in (lambda: cam.configure(ExposureTimeAbs=1.0),
+                 lambda: cam.features(("ExposureTimeAbs",))):
+        with pytest.raises(ValueError) as e:
+            call()
+        assert "SFNC" in str(e.value)
+
+
+def test_writing_a_feature_the_device_lacks_is_refused_here_not_deeper():
+    cam, _nm = _fake_camera(ExposureTime=_FakeNode(5000.0))
+    with pytest.raises(ValueError) as e:
+        cam.configure(Gain=3.0)
+    assert "does not expose" in str(e.value)
+
+
+def test_a_missing_required_feature_is_reported_and_an_optional_one_is_not():
+    """★規格が必須と言う機能の不在は**装置についての発見**。黙って飛ばさない。"""
+    cam, _nm = _fake_camera(ExposureTime=_FakeNode(5000.0))
+    got = cam.features(("ExposureTime", "Width", "Gain"))
+    assert got["ExposureTime"] == 5000.0
+    assert got["Width"] is None                    # 必須なのに無い -> 見える
+    assert "Gain" not in got                       # 任意で無い -> 黙っていてよい
+
+
+def test_missing_required_features_lists_the_gap():
+    cam, _nm = _fake_camera(ExposureTime=_FakeNode(5000.0), Width=_FakeNode(64),
+                            Height=_FakeNode(64))
+    gap = cam.missing_required_features()
+    assert "PixelFormat" in gap and "TriggerMode" in gap
+    assert "ExposureTime" not in gap and "Width" not in gap
+    #: 任意の機能は不足に数えない
+    assert "Gain" not in gap and "ExposureAuto" not in gap
+
+
+def test_commands_are_executed_not_assigned():
+    cam, nm = _fake_camera(AcquisitionStart=_FakeNode(None, executable=True))
+    cam.node_map().execute("AcquisitionStart")
+    assert nm.AcquisitionStart.executed == 1
+
+
+def test_a_command_has_no_value_so_reading_all_features_skips_it():
+    cam, _nm = _fake_camera(AcquisitionStart=_FakeNode(None, executable=True),
+                            ExposureTime=_FakeNode(1.0))
+    got = cam.features()
+    assert "AcquisitionStart" not in got
+    assert got["ExposureTime"] == 1.0
+
+
+def test_every_required_feature_in_the_table_is_marked_required():
+    assert set(acquire.SFNC_REQUIRED) == {
+        n for n, (lvl, _i, _u) in acquire.SFNC_FEATURES.items() if lvl == "R"}
+    assert "ExposureTime" in acquire.SFNC_REQUIRED
+    assert "Gain" not in acquire.SFNC_REQUIRED
+
+
+def test_the_connectivity_doc_sfnc_section_matches_the_code():
+    doc = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                       "docs", "CONNECTIVITY.md")
+    text = open(doc, encoding="utf-8").read()
+    n = len(acquire.SFNC_FEATURES)
+    req = len(acquire.SFNC_REQUIRED)
+    assert "## カメラの機能名 (SFNC %d 機能)" % n in text
+    assert "| 規格が**必須**と決めている機能 | %d |" % req in text
+    assert "| 任意の機能 | %d |" % (n - req) in text
+    #: 例に書いた呼び方が実在すること(説明のコード例は門が無いと静かに腐る)
+    for name in ("configure", "missing_required_features"):
+        assert "cam.%s(" % name in text
+        assert callable(getattr(acquire.Camera, name))

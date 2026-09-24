@@ -1,0 +1,257 @@
+{
+ "source": "https://www.emva.org/wp-content/uploads/GenICam_SFNC_v2_8.pdf",
+ "title": "GenICam Standard Features Naming Convention v2.8",
+ "fetched": "2026-09-25",
+ "scope": "the acquisition features acquire drives; level/unit are the standard's own",
+ "note": "level R = required by the standard, O = optional. unit follows SFNC 1.2 Standard Units; Gain has none.",
+ "features": {
+  "PixelFormat": {
+   "level": "R",
+   "interface": "IEnumeration",
+   "access": "R/(W)",
+   "unit": null,
+   "section": "Image Format Control",
+   "desc": "Format of the pixels provided by the device."
+  },
+  "Width": {
+   "level": "R",
+   "interface": "IInteger",
+   "access": "R/(W)",
+   "unit": null,
+   "section": "Image Format Control",
+   "desc": "Width of the image provided by the device (in pixels)."
+  },
+  "Height": {
+   "level": "R",
+   "interface": "IInteger",
+   "access": "R/(W)",
+   "unit": null,
+   "section": "Image Format Control",
+   "desc": "Height of the image provided by the device (in pixels)."
+  },
+  "OffsetX": {
+   "level": "R",
+   "interface": "IInteger",
+   "access": "R/W",
+   "unit": null,
+   "section": "Image Format Control",
+   "desc": "Horizontal offset from the origin to the region of interest (in pixels)."
+  },
+  "OffsetY": {
+   "level": "R",
+   "interface": "IInteger",
+   "access": "R/W",
+   "unit": null,
+   "section": "Image Format Control",
+   "desc": "Vertical offset from the origin to the region of interest (in pixels)."
+  },
+  "AcquisitionMode": {
+   "level": "R",
+   "interface": "IEnumeration",
+   "access": "R/(W)",
+   "unit": null,
+   "section": "Acquisition Control",
+   "desc": "Sets the acquisition mode of the device."
+  },
+  "AcquisitionStart": {
+   "level": "R",
+   "interface": "ICommand",
+   "access": "(R)/W",
+   "unit": null,
+   "section": "Acquisition Control",
+   "desc": "Starts the Acquisition of the device."
+  },
+  "AcquisitionStop": {
+   "level": "R",
+   "interface": "ICommand",
+   "access": "(R)/W",
+   "unit": null,
+   "section": "Acquisition Control",
+   "desc": "Stops the Acquisition of the device at the end of the current Frame."
+  },
+  "AcquisitionFrameRate": {
+   "level": "R",
+   "interface": "IFloat",
+   "access": "R/W",
+   "unit": "Hz",
+   "section": "Acquisition Control",
+   "desc": "Controls the acquisition rate (in Hertz) at which the frames are"
+  },
+  "TriggerSelector": {
+   "level": "R",
+   "interface": "IEnumeration",
+   "access": "R/W",
+   "unit": null,
+   "section": "Acquisition Control",
+   "desc": "Selects the type of trigger to configure."
+  },
+  "TriggerMode": {
+   "level": "R",
+   "interface": "IEnumeration",
+   "access": "R/W",
+   "unit": null,
+   "section": "Acquisition Control",
+   "desc": "Controls if the selected trigger is active."
+  },
+  "TriggerSource": {
+   "level": "R",
+   "interface": "IEnumeration",
+   "access": "R/W",
+   "unit": null,
+   "section": "Acquisition Control",
+   "desc": "Specifies the internal signal or physical input Line to use as the trigger"
+  },
+  "TriggerActivation": {
+   "level": "R",
+   "interface": "IEnumeration",
+   "access": "R/W",
+   "unit": null,
+   "section": "Acquisition Control",
+   "desc": "Specifies the activation mode of the trigger."
+  },
+  "ExposureMode": {
+   "level": "R",
+   "interface": "IEnumeration",
+   "access": "R/W",
+   "unit": null,
+   "section": "Acquisition Control",
+   "desc": "Sets the operation mode of the Exposure."
+  },
+  "ExposureTime": {
+   "level": "R",
+   "interface": "IFloat",
+   "access": "R/W",
+   "unit": "us",
+   "section": "Acquisition Control",
+   "desc": "Sets the Exposure time when ExposureMode is Timed and"
+  },
+  "ExposureAuto": {
+   "level": "O",
+   "interface": "IEnumeration",
+   "access": "R/W",
+   "unit": null,
+   "section": "Acquisition Control",
+   "desc": "Sets the automatic exposure mode when ExposureMode is Timed."
+  },
+  "GainSelector": {
+   "level": "O",
+   "interface": "IEnumeration",
+   "access": "R/W",
+   "unit": null,
+   "section": "Analog Control",
+   "desc": "Selects which Gain is controlled by the various Gain features."
+  },
+  "Gain": {
+   "level": "O",
+   "interface": "IFloat",
+   "access": "R/W",
+   "unit": null,
+   "section": "Analog Control",
+   "desc": "Controls the selected gain as an absolute physical value."
+  },
+  "GainAuto": {
+   "level": "O",
+   "interface": "IEnumeration",
+   "access": "R/W",
+   "unit": null,
+   "section": "Analog Control",
+   "desc": "Sets the automatic gain control (AGC) mode."
+  },
+  "BlackLevel": {
+   "level": "O",
+   "interface": "IFloat",
+   "access": "R/W",
+   "unit": null,
+   "section": "Analog Control",
+   "desc": "Controls the analog black level as an absolute physical value."
+  },
+  "DeviceVendorName": {
+   "level": "R",
+   "interface": "IString",
+   "access": "R",
+   "unit": null,
+   "section": "Device Control",
+   "desc": "Name of the manufacturer of the device."
+  },
+  "DeviceModelName": {
+   "level": "R",
+   "interface": "IString",
+   "access": "R",
+   "unit": null,
+   "section": "Device Control",
+   "desc": "Model of the device."
+  },
+  "DeviceSerialNumber": {
+   "level": "R",
+   "interface": "IString",
+   "access": "R",
+   "unit": null,
+   "section": "Device Control",
+   "desc": "Device's serial number."
+  },
+  "DeviceFirmwareVersion": {
+   "level": "R",
+   "interface": "IString",
+   "access": "R",
+   "unit": null,
+   "section": "Device Control",
+   "desc": "Version of the firmware in the device."
+  },
+  "PayloadSize": {
+   "level": "R",
+   "interface": "IInteger",
+   "access": "R",
+   "unit": "B",
+   "section": "Transport Layer Control",
+   "desc": "Provides the number of bytes transferred for each data buffer or chunk"
+  },
+  "TimestampLatch": {
+   "level": "O",
+   "interface": "ICommand",
+   "access": "(R)/W",
+   "unit": null,
+   "section": "Device Control",
+   "desc": "Latches the current timestamp counter into TimestampLatchValue."
+  },
+  "TimestampLatchValue": {
+   "level": "O",
+   "interface": "IInteger",
+   "access": "R",
+   "unit": "ns",
+   "section": "Device Control",
+   "desc": "Returns the latched value of the timestamp counter."
+  },
+  "ReverseX": {
+   "level": "R",
+   "interface": "IBoolean",
+   "access": "R/W",
+   "unit": null,
+   "section": "Image Format Control",
+   "desc": "Flip horizontally the image sent by the device."
+  },
+  "ReverseY": {
+   "level": "R",
+   "interface": "IBoolean",
+   "access": "R/W",
+   "unit": null,
+   "section": "Image Format Control",
+   "desc": "Flip vertically the image sent by the device."
+  },
+  "BinningHorizontal": {
+   "level": "O",
+   "interface": "IInteger",
+   "access": "R/W",
+   "unit": null,
+   "section": "Image Format Control",
+   "desc": "Number of horizontal photo-sensitive cells to combine together."
+  },
+  "BinningVertical": {
+   "level": "O",
+   "interface": "IInteger",
+   "access": "R/W",
+   "unit": null,
+   "section": "Image Format Control",
+   "desc": "Number of vertical photo-sensitive cells to combine together."
+  }
+ }
+}

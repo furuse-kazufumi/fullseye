@@ -66,6 +66,25 @@ Fullseye は vision に加え **デバイス制御・産業通信** を扱う(HA
 
 **詰め形式**(`Mono12p` など 25 形式)は `acquire.unpack()` が展開する。詰めたままのバッファを `2**bits - 1` で割ると、**例外を出さずに画像に見える別のもの**が出るので、`_coerce` は uint8 の詰めバッファを拒否する。
 
+## カメラの機能名 (SFNC 31 機能)
+
+`ExposureTime` も `TriggerMode` も `PixelFormat` も、**GenICam SFNC が綴りを決めた規格の名前**であってベンダの名前ではない。だから **1 本の語彙表で GenTL を出す全ベンダを覆える** —— ベンダ SDK を 1 本足しても覆えるのは 1 社。台帳は `examples/data/sfnc_acquire_vocabulary.json`(SFNC v2.8 から)。
+
+| | 数 |
+|---|--:|
+| 規格が**必須**と決めている機能 | 22 |
+| 任意の機能 | 9 |
+
+```python
+cam = acquire.Camera(0, backend="genicam", cti=["/path/to/producer.cti"])
+cam.configure(ExposureTime=5000.0, TriggerMode="Off")   # us は SFNC 1.2 が決めた単位
+cam.missing_required_features()                         # 規格に足りない機能があれば出る
+```
+
+★`configure()` は**装置が実際に取った値**を読み直して返す。カメラは clamp する(上限 33000 us の機に 100000 を頼めば 33000 になる)ので、要求値を返すのは小さな嘘になり、そのまま露光の取り違えになる。
+
+★単位は推測しない。`ExposureTime` は **us**、`AcquisitionFrameRate` は **Hz**、`PayloadSize` は **B**、`TimestampLatchValue` は **ns**。**`Gain` に単位の規定は無い**(`dB` は §1.2 の一覧に載っているだけ)ので、この層は Gain を dB と呼ばない。
+
 ## デバイス制御 (device) (12)
 
 | driver | kind | 種別 | pip | 説明 |
