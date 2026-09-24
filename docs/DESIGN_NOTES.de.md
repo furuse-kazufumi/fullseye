@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 959. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 964. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -866,6 +866,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L336** — ★Mit threshold=0 alles nehmen und die Stufenhöhe selbst messen. Die amplitude von measure_pos (die Differenz zwischen den beiden Enden des Gradientenlappens) bleibt auf halber Stufe stehen, wenn die Maserung den Gradienten nicht-monoton macht, und gibt eine Stufe von 0.14 als 0.05 zurück (in Abschnitt 8 gezählt).
 - **L345** — ★Der zur Rückrechnung auf px verwendete Außenkantenradius ist der **der gemessenen Zeile**. Verwendet man den Median über den gesamten 15°-Sektor, bewegt sich die Außenkante durch exzentrisches Wachstum um mehr als 10 px innerhalb des Sektors, sodass alle äußeren Ringe verschoben werden (ich schrieb es zunächst so und ließ die Ringe 18–35 komplett wegfallen).
 - **L543** — ★Ist die Breitenkorrelation auch in der Richtung mit falscher Jahreszahl hoch —— die Jahreszahl und die Breitenkorrelation sind verschiedene Größen
+
+## `examples/poc_vanishing_detail_and_morphing_area.py`
+
+- **L73** _(ja)_ — 色。★赤と緑は対にしない
+- **L623** _(ja)_ — 3. 消える距離は整数(束ね幅を縦に積む。★各行を正規化しない)
+- **L638** _(ja)_ — ★消える行(f·k が整数)に左端で印を付ける
+- **L775** _(ja)_ — ★見せる図は決め打ちの制御点で(検査のほうは乱数 4 通りで通してある)
+- **L851** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/poc_vegetation_cover.py`
 

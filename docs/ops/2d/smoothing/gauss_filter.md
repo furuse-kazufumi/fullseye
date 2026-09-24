@@ -5,7 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: gauss_filter
-examples: [gallery2d_smoothing_rank, poc_cell_counting, poc_document_scan, poc_focus_stacking, poc_gear_tooth_metrology, poc_pv_thermal_survey, poc_sea_ice_concentration, poc_search_sweep_width, poc_solar_limb_darkening, poc_vessel_network, poc_white_balance]
+examples: [gallery2d_smoothing_rank, poc_cell_counting, poc_document_scan, poc_focus_stacking, poc_gear_tooth_metrology, poc_pv_thermal_survey, poc_sea_ice_concentration, poc_search_sweep_width, poc_solar_limb_darkening, poc_vanishing_detail_and_morphing_area, poc_vessel_network, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -74,6 +74,7 @@ gauss_filter 0.35 0.50
 - [poc_sea_ice_concentration](../../../../examples/poc_sea_ice_concentration.py) — `py -3.11 examples/poc_sea_ice_concentration.py`
 - [poc_search_sweep_width](../../../../examples/poc_search_sweep_width.py) — `py -3.11 examples/poc_search_sweep_width.py`
 - [poc_solar_limb_darkening](../../../../examples/poc_solar_limb_darkening.py) — `py -3.11 examples/poc_solar_limb_darkening.py`
+- [poc_vanishing_detail_and_morphing_area](../../../../examples/poc_vanishing_detail_and_morphing_area.py) — `py -3.11 examples/poc_vanishing_detail_and_morphing_area.py`
 - [poc_vessel_network](../../../../examples/poc_vessel_network.py) — `py -3.11 examples/poc_vessel_network.py`
 - [poc_white_balance](../../../../examples/poc_white_balance.py) — `py -3.11 examples/poc_white_balance.py`
 

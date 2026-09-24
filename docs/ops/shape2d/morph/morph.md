@@ -4,7 +4,7 @@ dim: shape2d
 category: morph
 in: image2d × image2d × pairs × pairs
 out: image2d
-examples: [image_morph]
+examples: [image_morph, poc_vanishing_detail_and_morphing_area]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -49,6 +49,7 @@ alpha=0 で A、alpha=1 で B に一致する。単純な blend(A,B,alpha) と�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [image_morph](../../../../examples/image_morph.py) — `py -3.11 examples/image_morph.py`
+- [poc_vanishing_detail_and_morphing_area](../../../../examples/poc_vanishing_detail_and_morphing_area.py) — `py -3.11 examples/poc_vanishing_detail_and_morphing_area.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

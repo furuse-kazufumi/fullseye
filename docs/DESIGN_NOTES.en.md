@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 959. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 964. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -866,6 +866,14 @@ This repository records *why* things are the way they are in **comments in the s
 - **L336** — ★Take everything with threshold=0 and measure the step height yourself. The amplitude of measure_pos (the difference between the two ends of the gradient lobe) stops midway up the step when the grain makes the gradient non-monotonic, returning a 0.14 step as 0.05 (counted in Section 8).
 - **L345** — ★The outer-edge radius used to convert back to px is that of **the measured row**. Using the median over the whole 15° sector makes the outer edge move by more than 10 px within the sector due to eccentric growth, so all the outer rings shift (I first wrote it that way and dropped rings 18–35 entirely).
 - **L543** — ★Is the width correlation high even in the direction where the year count is wrong —— the year count and the width correlation are separate quantities
+
+## `examples/poc_vanishing_detail_and_morphing_area.py`
+
+- **L73** _(ja)_ — 色。★赤と緑は対にしない
+- **L623** _(ja)_ — 3. 消える距離は整数(束ね幅を縦に積む。★各行を正規化しない)
+- **L638** _(ja)_ — ★消える行(f·k が整数)に左端で印を付ける
+- **L775** _(ja)_ — ★見せる図は決め打ちの制御点で(検査のほうは乱数 4 通りで通してある)
+- **L851** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/poc_vegetation_cover.py`
 
