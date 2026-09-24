@@ -238,7 +238,8 @@
 
 ## `examples/poc_attention_identities.py`
 
-- **L537** — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
+- **L232** — ★合否にするのは**厳密に数えられる側**だけ。(QK^T)V は 2T^2 d + 2T^2 d 回、 Q(K^T V) は 2Td^2 + 2Td^2 回の積和なので、比は **厳密に T/d** である。 これは機械に依らない整数の主張で、交差点が T == d にあることの中身でもある。
+- **L563** — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/poc_barcode_1d.py`
 
@@ -1494,6 +1495,7 @@
 - **L234** — ★「次は ## デバイス制御」と決め打ちしていたため、あいだに節を 1 つ足した だけでその表の行まで backend 行として読んでしまった(2026-09-24)。 節の終わりは**次の見出し**であって、特定の見出しの名前ではない。
 - **L361** — ★ここまでの門は「acquire が持っている綴り」からしか数えていない。**規格の全数**を 分母に置くと、そもそも知らない形式が見つかる —— 実際これで 10 bit 非詰めの Bayer 4 形式が丸ごと抜けていた(2026-09-24)。台帳は EMVA が無償公開している 「GenICam Pixel Format Names and Values」の単板 59 形式。
 - **L408** — ★最初ここに「詰め形式は容器 = 有効」と書いて、この門に捕まった。実際は 2 通りある: (a) 10/12/14 bit の**非詰め**が 16 bit 容器に入る場合と、 (b) **grouped**(GigE Vision 1.x の `Packed`)の 10 bit が 12 bit に 入る場合 —— 2 画素 = 3 バイトなので 1 画素あたり 12 bit になる。 真の lsb packed(`p`)だけが容器 = 有効。
+- **L440** — ★機能名はベンダの名前ではなく規格の名前なので、**1 本の語彙表で GenTL を出す 全ベンダを覆える**。だからこの層は「どのベンダの SDK を入れたか」と無関係に 検査できる —— 模擬ノードマップで足りる。実機が無いことは言い訳にならない。
 
 ## `tests/test_annotate_bold_italic.py`
 
@@ -1729,6 +1731,10 @@
 
 - **L26** — ★素の import だと不在環境で収集ごと中断する(2026-09-05 実測)。
 
+## `tests/test_runner_scratch_families.py`
+
+- **L38** — ★**宣言された家族**。key = "<module>.<function>"、値 = 守り方の説明。 ここに無い関数が ``_bind_args`` を呼んでいたら、この門は落ちる。
+
 ## `tests/test_rust_abi_parity.py`
 
 - **L402** — ★契約では **FS_E_INVALID_ARG**(引数が定義域の外)であって FS_E_TYPE ではない。 `FsValueError` を足すまでは両方 `FsTypeError` で、Rust が 1 を返すのに Python は 2 相当を投げる、という**状態コードの食い違い**が残っていた。
@@ -1782,6 +1788,10 @@
 - **L916** — ★ 非有限が混じった点群は **KD 木の構築そのものが生の ValueError で落ちる** (scipy: "data must be finite")。プールは NONFINITE を記録したうえで値を 残す設計なので、汚れた点群がここへ来るのは想定内 —— 建てる側が防ぐ。 2026-09-06 に実際に踏んだ: 新しい族が増えて連鎖の歩き方が変わり、 seed 3_000_0xx でこの経路に当たってファザー自身が停止した(op の欠陥では なく**道具の欠陥**。束縛できない入力は例外ではなくスキップが約束)。
 - **L1753** — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
 - **L1871** — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
+
+## `tools/chain_mine.py`
+
+- **L456** — ★探針が作る ``text`` は ``"ラベル 73"`` のように**相対パスとしても成立する**。 台帳でパス引数を text と宣言している書き込み op にそれが渡ると、op は素直に cwd へ書く —— cwd は repo 直下である。ファザー側(``chain_fuzz.run_chain``) には 2026-09-23 から捨て場が在ったが、**採掘側のここには無かった**ので 2026-09-25 に repo 直下へ xlsx が 2 本生まれた。仕組みが在ることと、 全部の経路がそこを通ることは別([[feedback_count_wrapper_families_not_mechanisms]])。
 
 ## `tools/ci_wheel_check.py`
 

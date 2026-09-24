@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 621 of 1009. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 621 of 1013. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -240,7 +240,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_attention_identities.py`
 
-- **L537** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
+- **L232** _(ja)_ — ★合否にするのは**厳密に数えられる側**だけ。(QK^T)V は 2T^2 d + 2T^2 d 回、 Q(K^T V) は 2Td^2 + 2Td^2 回の積和なので、比は **厳密に T/d** である。 これは機械に依らない整数の主張で、交差点が T == d にあることの中身でもある。
+- **L563** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/poc_barcode_1d.py`
 
@@ -1496,6 +1497,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L234** _(ja)_ — ★「次は ## デバイス制御」と決め打ちしていたため、あいだに節を 1 つ足した だけでその表の行まで backend 行として読んでしまった(2026-09-24)。 節の終わりは**次の見出し**であって、特定の見出しの名前ではない。
 - **L361** _(ja)_ — ★ここまでの門は「acquire が持っている綴り」からしか数えていない。**規格の全数**を 分母に置くと、そもそも知らない形式が見つかる —— 実際これで 10 bit 非詰めの Bayer 4 形式が丸ごと抜けていた(2026-09-24)。台帳は EMVA が無償公開している 「GenICam Pixel Format Names and Values」の単板 59 形式。
 - **L408** _(ja)_ — ★最初ここに「詰め形式は容器 = 有効」と書いて、この門に捕まった。実際は 2 通りある: (a) 10/12/14 bit の**非詰め**が 16 bit 容器に入る場合と、 (b) **grouped**(GigE Vision 1.x の `Packed`)の 10 bit が 12 bit に 入る場合 —— 2 画素 = 3 バイトなので 1 画素あたり 12 bit になる。 真の lsb packed(`p`)だけが容器 = 有効。
+- **L440** _(ja)_ — ★機能名はベンダの名前ではなく規格の名前なので、**1 本の語彙表で GenTL を出す 全ベンダを覆える**。だからこの層は「どのベンダの SDK を入れたか」と無関係に 検査できる —— 模擬ノードマップで足りる。実機が無いことは言い訳にならない。
 
 ## `tests/test_annotate_bold_italic.py`
 
@@ -1731,6 +1733,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L26** — ★A bare import aborts the whole collection in an environment where it is absent (measured 2026-09-05).
 
+## `tests/test_runner_scratch_families.py`
+
+- **L38** _(ja)_ — ★**宣言された家族**。key = "<module>.<function>"、値 = 守り方の説明。 ここに無い関数が ``_bind_args`` を呼んでいたら、この門は落ちる。
+
 ## `tests/test_rust_abi_parity.py`
 
 - **L402** _(ja)_ — ★契約では **FS_E_INVALID_ARG**(引数が定義域の外)であって FS_E_TYPE ではない。 `FsValueError` を足すまでは両方 `FsTypeError` で、Rust が 1 を返すのに Python は 2 相当を投げる、という**状態コードの食い違い**が残っていた。
@@ -1784,6 +1790,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L916** — ★A point cloud with non-finite values **crashes the KD-tree construction itself with a raw ValueError** (scipy: "data must be finite"). The pool is designed to record NONFINITE and keep the values, so a dirty point cloud arriving here is expected -- the side that builds it must guard. Hit for real on 2026-09-06: a new family was added, the way chains are walked changed, and at seed 3_000_0xx this path was struck and the fuzzer itself halted (not a defect of the op but **a defect of the tool**. The promise is that unbindable input is skipped, not raised).
 - **L1753** — ★Until 2026-09-02 it was ``lambda v: True`` = **since the predicate is counted as "present", it's worse than absent** (the inspection script also counts it as "has a predicate"). Measured, it let through even None / 42 / a string / a dict. The canon was decided by **running all** of the 6 consuming op (reprconv's pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar): all 6 op accept only the two shapes above, and everything else becomes a named fail-closed with "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (measured). Since **(2,N) is not accepted**, the 3 adapters that were collapsing a 2-tuple into (2,N) with np.stack were fixed to axis=1. Two arrays of differing length (histogram's counts/edges) are also not a "pair" and are rejected.
 - **L1871** — ★"Exactly 2 elements" is **deliberately different** from pose (which allows info via `len >= 2`). Measured 2026-09-02: the 4 existing consumers that take a mesh as one argument (face_normals / vertex_normals / mesh_area / vertex_curvature) emit "mesh must be a 2-element tuple (vertices, faces)" for a 3-tuple, and cadmap's `_mesh` and render3d._mesh_arrays also accept only 2 elements. In other words **the canon for this repo's mesh sort is a 2-tuple**, and an extra element is not "more information" but a type-level lie that wipes out everything downstream. The sole exception `voxel_to_mesh` (which returns (v, f, n)) now has the canonical order extracted in ops3d.RESULT_ADAPTERS (treated the same as gicp / vol_label).
+
+## `tools/chain_mine.py`
+
+- **L456** _(ja)_ — ★探針が作る ``text`` は ``"ラベル 73"`` のように**相対パスとしても成立する**。 台帳でパス引数を text と宣言している書き込み op にそれが渡ると、op は素直に cwd へ書く —— cwd は repo 直下である。ファザー側(``chain_fuzz.run_chain``) には 2026-09-23 から捨て場が在ったが、**採掘側のここには無かった**ので 2026-09-25 に repo 直下へ xlsx が 2 本生まれた。仕組みが在ることと、 全部の経路がそこを通ることは別([[feedback_count_wrapper_families_not_mechanisms]])。
 
 ## `tools/ci_wheel_check.py`
 

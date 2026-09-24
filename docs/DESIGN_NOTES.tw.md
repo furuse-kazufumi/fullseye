@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：610 / 1009 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：610 / 1013 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `accel.py`
@@ -240,7 +240,8 @@
 
 ## `examples/poc_attention_identities.py`
 
-- **L537** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
+- **L232** _(ja)_ — ★合否にするのは**厳密に数えられる側**だけ。(QK^T)V は 2T^2 d + 2T^2 d 回、 Q(K^T V) は 2Td^2 + 2Td^2 回の積和なので、比は **厳密に T/d** である。 これは機械に依らない整数の主張で、交差点が T == d にあることの中身でもある。
+- **L563** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/poc_barcode_1d.py`
 
@@ -1496,6 +1497,7 @@
 - **L234** _(ja)_ — ★「次は ## デバイス制御」と決め打ちしていたため、あいだに節を 1 つ足した だけでその表の行まで backend 行として読んでしまった(2026-09-24)。 節の終わりは**次の見出し**であって、特定の見出しの名前ではない。
 - **L361** _(ja)_ — ★ここまでの門は「acquire が持っている綴り」からしか数えていない。**規格の全数**を 分母に置くと、そもそも知らない形式が見つかる —— 実際これで 10 bit 非詰めの Bayer 4 形式が丸ごと抜けていた(2026-09-24)。台帳は EMVA が無償公開している 「GenICam Pixel Format Names and Values」の単板 59 形式。
 - **L408** _(ja)_ — ★最初ここに「詰め形式は容器 = 有効」と書いて、この門に捕まった。実際は 2 通りある: (a) 10/12/14 bit の**非詰め**が 16 bit 容器に入る場合と、 (b) **grouped**(GigE Vision 1.x の `Packed`)の 10 bit が 12 bit に 入る場合 —— 2 画素 = 3 バイトなので 1 画素あたり 12 bit になる。 真の lsb packed(`p`)だけが容器 = 有効。
+- **L440** _(ja)_ — ★機能名はベンダの名前ではなく規格の名前なので、**1 本の語彙表で GenTL を出す 全ベンダを覆える**。だからこの層は「どのベンダの SDK を入れたか」と無関係に 検査できる —— 模擬ノードマップで足りる。実機が無いことは言い訳にならない。
 
 ## `tests/test_annotate_bold_italic.py`
 
@@ -1731,6 +1733,10 @@
 
 - **L26** — ★裸的 import 在缺失該項的環境裡會中斷整個收集（實測 2026-09-05）。
 
+## `tests/test_runner_scratch_families.py`
+
+- **L38** _(ja)_ — ★**宣言された家族**。key = "<module>.<function>"、値 = 守り方の説明。 ここに無い関数が ``_bind_args`` を呼んでいたら、この門は落ちる。
+
 ## `tests/test_rust_abi_parity.py`
 
 - **L402** _(ja)_ — ★契約では **FS_E_INVALID_ARG**(引数が定義域の外)であって FS_E_TYPE ではない。 `FsValueError` を足すまでは両方 `FsTypeError` で、Rust が 1 を返すのに Python は 2 相当を投げる、という**状態コードの食い違い**が残っていた。
@@ -1784,6 +1790,10 @@
 - **L916** — ★混有非有限值的點雲會**讓 KD 樹的建構本身以生的 ValueError 崩潰**（scipy："data must be finite"）。池的設計是記錄 NONFINITE 後仍保留值，所以髒點雲來到這裡是預期之內 -- 由建構方防範。2026-09-06 實際踩到：新的族增加後連鎖的走法變了，在 seed 3_000_0xx 命中這條路徑，fuzzer 自身停止了（不是 op 的缺陷而是**工具的缺陷**。無法綁定的輸入約定為跳過而非拋出例外）。
 - **L1753** — ★到 2026-09-02 為止一直是 ``lambda v: True`` = **因為述詞被計為「有」，反而比沒有更糟**（點檢腳本也會把它計為「有述詞」）。實測下它連 None / 42 / 字串 / dict 都放行。正典是透過**全部執行**消費側 6 個 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）來確定的：6 個 op 都只接受上面兩種形狀，其餘的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 變成指名的 fail-closed（實測）。因為**不接受 (2,N)**，把 2-tuple 用 np.stack 壓成 (2,N) 的 3 個 adapter 改成了 axis=1。長度不同的兩條（histogram 的 counts/edges）也不是「對」，予以拒絕。
 - **L1871** — ★「恰好 2 個元素」與 pose（用 `len >= 2` 允許 info）**是刻意不同的**。實測 2026-09-02：把 mesh 作為單個引數接收的 4 個既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）對 3-tuple 會送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 個元素。也就是說 **本 repo 的 mesh sort 正典是 2-tuple**，多餘的元素不是「資訊更多」，而是讓下游全滅的型別層面的謊言。唯一的例外 `voxel_to_mesh`（回傳 (v, f, n)）現在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（與 gicp / vol_label 同樣處理）。
+
+## `tools/chain_mine.py`
+
+- **L456** _(ja)_ — ★探針が作る ``text`` は ``"ラベル 73"`` のように**相対パスとしても成立する**。 台帳でパス引数を text と宣言している書き込み op にそれが渡ると、op は素直に cwd へ書く —— cwd は repo 直下である。ファザー側(``chain_fuzz.run_chain``) には 2026-09-23 から捨て場が在ったが、**採掘側のここには無かった**ので 2026-09-25 に repo 直下へ xlsx が 2 本生まれた。仕組みが在ることと、 全部の経路がそこを通ることは別([[feedback_count_wrapper_families_not_mechanisms]])。
 
 ## `tools/ci_wheel_check.py`
 
