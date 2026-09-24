@@ -691,3 +691,55 @@ def test_the_copy_gate_actually_catches_a_view():
     assert bad, "複製していない式を _COPIERS が通してしまう"
 
 
+# --------------------------------------------------------------------------- GenTL
+#
+# ★列挙軸の一番大きな穴はここだった。`_enumerate("genicam")` は [] を返していて、
+# **GenTL を出す全ベンダを覆える唯一の経路だけが列挙できない**状態だった。
+# GenTL 1.6 が「プロデューサのインストーラは GENICAM_GENTL{32/64}_PATH に自分を
+# 足す」と決めているので、こちらはその変数を読めばよく、ベンダごとの表は要らない。
+# 実機も SDK も無しで検査できる —— 変数と `.cti` という名前のファイルがあればよい。
+
+
+def test_gentl_producers_are_found_through_the_standard_variable(tmp_path):
+    d = tmp_path / "producers"
+    d.mkdir()
+    (d / "TLSimu.cti").write_bytes(b"x")
+    (d / "vendor.cti").write_bytes(b"x")
+    (d / "readme.txt").write_bytes(b"x")          # .cti でないものは拾わない
+    got = acquire.gentl_producers({"GENICAM_GENTL64_PATH": str(d)})
+    assert [os.path.basename(g) for g in got] == ["TLSimu.cti", "vendor.cti"]
+
+
+def test_several_directories_are_read_in_the_order_the_variable_lists_them(tmp_path):
+    a, b = tmp_path / "a", tmp_path / "b"
+    a.mkdir()
+    b.mkdir()
+    (a / "first.cti").write_bytes(b"x")
+    (b / "second.cti").write_bytes(b"x")
+    env = {"GENICAM_GENTL64_PATH": os.pathsep.join([str(a), str(b)])}
+    got = [os.path.basename(g) for g in acquire.gentl_producers(env)]
+    assert got == ["first.cti", "second.cti"]
+
+
+def test_a_producer_listed_twice_is_returned_once(tmp_path):
+    d = tmp_path / "p"
+    d.mkdir()
+    (d / "one.cti").write_bytes(b"x")
+    env = {"GENICAM_GENTL64_PATH": os.pathsep.join([str(d), str(d)]),
+           "GENICAM_GENTL32_PATH": str(d)}
+    assert len(acquire.gentl_producers(env)) == 1
+
+
+def test_a_missing_directory_is_skipped_not_raised(tmp_path):
+    """装置が無いことと、道具が壊れていることを取り違えない。"""
+    env = {"GENICAM_GENTL64_PATH": os.pathsep.join([str(tmp_path / "nope"), ""])}
+    assert acquire.gentl_producers(env) == []
+
+
+def test_no_producer_installed_is_an_empty_list_not_an_error():
+    assert acquire.gentl_producers({}) == []
+
+
+def test_the_variable_names_are_the_ones_the_standard_defines():
+    """★綴りは GenTL 1.6 が決めている。推測で似た名前を書かない。"""
+    assert acquire.GENTL_PATH_VARS == ("GENICAM_GENTL64_PATH", "GENICAM_GENTL32_PATH")

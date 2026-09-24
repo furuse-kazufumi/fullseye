@@ -62,6 +62,7 @@ from __future__ import annotations
 
 import glob
 import os
+import sys
 import time
 
 import numpy as np
@@ -1101,6 +1102,47 @@ def _ms_to_s(v):
     return None if v in (None, 0) else float(v) * 1e-3
 
 
+#: GenTL 1.6 names the variable a producer's installer must extend. 32- and 64-bit
+#: producers live in separate variables so both can be installed at once; this module
+#: is 64-bit unless the interpreter says otherwise.
+GENTL_PATH_VARS = ("GENICAM_GENTL64_PATH", "GENICAM_GENTL32_PATH")
+
+
+def gentl_producers(env=None) -> list:
+    """Every GenTL producer (``.cti``) installed on this machine, in the order the
+    standard's path variable lists them.
+
+    A producer registers itself at install time by extending
+    ``GENICAM_GENTL{32,64}_PATH`` (GenTL 1.6). Reading that variable is why one code
+    path reaches every vendor that ships a GenTL producer -- there is no per-vendor
+    table here, and there does not need to be.
+
+    Args:
+        env: mapping to read instead of ``os.environ`` (for tests).
+    Returns:
+        list[str]: absolute paths to ``.cti`` files, de-duplicated, order preserved.
+            Empty when no producer is installed -- which is a fact about the machine,
+            not an error.
+    """
+    env = os.environ if env is None else env
+    #: 64-bit first: a 64-bit interpreter must not load a 32-bit producer.
+    names = GENTL_PATH_VARS if sys.maxsize > 2 ** 32 else GENTL_PATH_VARS[::-1]
+    out, seen = [], set()
+    for var in names:
+        for part in (env.get(var) or "").split(os.pathsep):
+            part = part.strip()
+            if not part or not os.path.isdir(part):
+                continue
+            for fn in sorted(os.listdir(part)):
+                if not fn.lower().endswith(".cti"):
+                    continue
+                full = os.path.join(part, fn)
+                if full not in seen:
+                    seen.add(full)
+                    out.append(full)
+    return out
+
+
 def list_devices(backends=None) -> list:
     """Enumerate devices across every AVAILABLE backend, not just OpenCV indices.
 
@@ -1154,7 +1196,30 @@ def _enumerate(backend: str) -> list:
         return [{"backend": "oak", "id": d.getMxId(), "label": "OAK %s" % d.getMxId()}
                 for d in dai.Device.getAllAvailableDevices()]
     if backend == "genicam":  # pragma: no cover - needs harvesters + a .cti
-        return []                                    # needs a producer path; opts-driven
+        #: ★以前はここが [] を返していた。GenTL を出す全ベンダを覆える唯一の経路
+        #:   だけが列挙できない、という穴だった。プロデューサは GenTL 1.6 の
+        #:   GENICAM_GENTL{32,64}_PATH に自分を登録するので、こちらはそれを読む。
+        ctis = gentl_producers()
+        if not ctis:
+            return []
+        from harvesters.core import Harvester
+        h = Harvester()
+        try:
+            for cti in ctis:
+                h.add_file(cti)
+            h.update()
+            out = []
+            for i, d in enumerate(h.device_info_list):
+                sn = getattr(d, "serial_number", None)
+                model = getattr(d, "model", None) or getattr(d, "display_name", None)
+                out.append({"backend": "genicam", "id": sn or i,
+                            "label": "%s %s" % (model or "GenTL device", sn or i),
+                            "vendor": getattr(d, "vendor", None),
+                            "index": i})
+            return out
+        finally:
+            #: プロデューサを開いたまま抜けると、次に開く側が掴めなくなる。
+            h.reset()
     return []
 
 
