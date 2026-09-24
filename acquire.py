@@ -67,11 +67,24 @@ import time
 
 import numpy as np
 
+#: ★公開面は**本体から数える**(`tests/test_acquire_contract.py` の門が AST で
+#:   読み、ここと突き合わせる)。`dir()` は環境で変わるので一次情報はこちら。
+#:   2026-09-25 まで 7 つ足りていなかった —— 追記のつもりが当たっていなかった。
 __all__ = [
-    "Camera", "Frame", "list_cameras", "list_devices", "capabilities",
-    "coverage", "bit_depth_of", "PIXEL_BITS", "DEPTH_BACKENDS",
-    "PACKED_FORMATS", "unpack", "unpack_lsb", "unpack_grouped",
+    # 装置を開く・撮る
+    "Camera", "Frame", "list_cameras", "list_devices", "capabilities", "coverage",
     "open_framegrabber", "grab_image", "close_framegrabber",
+    # 画素形式(PFNC を分母にした表)
+    "PIXEL_BITS", "PACKED_FORMATS", "NOT_CARRIED", "bit_depth_of",
+    "unpack", "unpack_lsb", "unpack_grouped",
+    # 機能名(SFNC を分母にした表)
+    "SFNC_FEATURES", "SFNC_REQUIRED",
+    # GenTL のプロデューサ探索
+    "GENTL_PATH_VARS", "gentl_producers",
+    # 8 軸の自己採点
+    "COVERAGE_AXES", "axes",
+    # 奥行き backend の単位
+    "DEPTH_BACKENDS",
 ]
 
 # Acquisition backends catalogue (native + optional industrial / Physical-AI sensors).

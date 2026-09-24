@@ -792,3 +792,75 @@ def test_no_producer_installed_is_an_empty_list_not_an_error():
 def test_the_variable_names_are_the_ones_the_standard_defines():
     """★綴りは GenTL 1.6 が決めている。推測で似た名前を書かない。"""
     assert acquire.GENTL_PATH_VARS == ("GENICAM_GENTL64_PATH", "GENICAM_GENTL32_PATH")
+
+
+# ------------------------------------------------------------------- 公開面
+#
+# ★`__all__` は「何を公開したか」の一次情報(`dir()` は環境で変わる)。だから
+# 本体が増えたのに `__all__` が増えない、という遅れは**静かに**起きる —— 実際に
+# 2026-09-25 まで 7 つ足りていなかった(追記のつもりが当たっていなかった)。
+# 門は台帳側でなく**本体側から数える**。
+
+#: 公開名なのに `__all__` に出さないもの。理由を書いて名指しする(いまは無い)。
+_NOT_EXPORTED = {}
+
+
+def _module_public_names() -> set:
+    """`acquire.py` の module-level 公開名を AST で数える。
+
+    関数・クラスは先頭が `_` でないもの、表は大文字の名前。import した名前は
+    数えない(この モジュールが**作った**ものだけが公開面)。
+    """
+    import ast
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                        "acquire.py")
+    with open(path, encoding="utf-8") as fh:
+        tree = ast.parse(fh.read())
+    out = set()
+    for n in tree.body:
+        if isinstance(n, (ast.FunctionDef, ast.ClassDef)) and not n.name.startswith("_"):
+            out.add(n.name)
+        elif isinstance(n, ast.Assign):
+            for tg in n.targets:
+                if isinstance(tg, ast.Name) and not tg.id.startswith("_") and tg.id.isupper():
+                    out.add(tg.id)
+    return out
+
+
+def test_the_public_name_gate_is_not_empty():
+    """★一致の門は空を通す。まず「数えている物が在る」ことを確かめる。"""
+    names = _module_public_names()
+    assert len(names) > 15, ("公開名が %d 個しか数えられない —— 数え方が壊れている"
+                             % len(names))
+
+
+def test_all_lists_every_public_name():
+    """本体に在る公開名が `__all__` に出ていること。"""
+    missing = sorted(_module_public_names() - set(acquire.__all__) - set(_NOT_EXPORTED))
+    assert not missing, (
+        ("`__all__` に出ていない公開名: %s" + chr(10) +
+         "足すか、出さない理由を `_NOT_EXPORTED` に書くこと。"
+         "`dir()` は環境で変わるので、`__all__` が遅れると"
+         "「在る」と言える名前が実際より少なくなる。") % missing)
+
+
+def test_all_does_not_name_something_that_is_gone():
+    """逆も見る —— 消した名前が `__all__` に残っていないこと。"""
+    stale = sorted(set(acquire.__all__) - _module_public_names())
+    assert not stale, ("`__all__` に在るのに本体に無い: %s(改名か削除)" % stale)
+
+
+def test_every_exported_name_really_resolves():
+    for name in acquire.__all__:
+        assert hasattr(acquire, name), "`__all__` の %s が解決しない" % name
+
+
+def test_the_public_name_gate_catches_a_missing_export():
+    """★門は壊して確かめる。`__all__` から 1 つ抜いたら落ちること。"""
+    saved = list(acquire.__all__)
+    try:
+        acquire.__all__.remove("Camera")
+        missing = _module_public_names() - set(acquire.__all__) - set(_NOT_EXPORTED)
+        assert "Camera" in missing, "抜けた公開名を門が見逃した"
+    finally:
+        acquire.__all__[:] = saved
