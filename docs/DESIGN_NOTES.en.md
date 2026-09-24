@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 969. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 978. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -424,8 +424,9 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_endless_zoom_and_turning_solids.py`
 
 - **L75** _(ja)_ — 深さの巡回に使う色。★赤と緑は対にしない(意味が見る人で反転するため)
-- **L370** _(ja)_ — ★ここで最初の予言を外した。「2 パーセントの床は marching cubes の面取りの せい」と読んだが、距離を伸ばすと厳密な立方体も同じところまで落ちた —— 床の正体は**透視投影**だった。面取りのぶんは別の量(最大/最小の比)に出る。
-- **L595** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
+- **L375** _(ja)_ — ★ここで最初の予言を外した。「2 パーセントの床は marching cubes の面取りの せい」と読んだが、距離を伸ばすと厳密な立方体も同じところまで落ちた —— 床の正体は**透視投影**だった。面取りのぶんは別の量(最大/最小の比)に出る。
+- **L593** _(ja)_ — ★op が静かに degrade していないか。`fs.op.*` は backend_safe.guard 越しで、 例外が出ても「sort 妥当な別の値」を返す —— 厳密な等式の検査だけが落ちて、 原因が症状から離れる。degrade していたらここで名指しする。
+- **L608** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/poc_eye_to_brain.py`
 
@@ -953,6 +954,16 @@ This repository records *why* things are the way they are in **comments in the s
 - **L402** _(ja)_ — ★平行移動フレームの効き目: まっすぐな区間を含む曲線でも半径が崩れない
 - **L480** _(ja)_ — ★K の一致は必要条件にすぎない
 - **L630** _(ja)_ — ★図の書き出しが失敗したら、ここで拾う。見ないと「検査は全部 OK・でも図は 1 枚も出ていない」が黙って通る(examplefig は fail-soft で貯める)。
+
+## `examples/poc_zernike_aberrations.py`
+
+- **L85** _(ja)_ — n <= 6 の 28 モード。★(n+1)(n+2)/2 = 28 は閉形式で数えられる
+- **L367** _(ja)_ — 絵を作る道具 —— ★色は飾りでなく量に結びつける # --------------------------------------------------------------------------- #
+- **L648** _(ja)_ — ★同じ絵を**線形補間**で読むとどうなるか(章ごとの接尾辞 lin_)
+- **L779** _(ja)_ — ★1 次か 2 次かは「収差を半分にしたときの比」で分かる(章ごとの接尾辞)
+- **L806** _(ja)_ — ★帯は必ず書く。球面収差のハローは明るいので、同じ帯でも段数が変わる (実測: 無収差の 3.5-8.0 λ/D は線形 1 段、球面収差 0.30 波なら 6 段)。
+- **L982** _(ja)_ — ★検査で使った点像は瞳 96・格子 1024(1 画素 0.19 λ/D)で、絵としては 粗い。**同じ無収差**をもう一度、細かい刻みで描き直す(数は検査のもの)。
+- **L1235** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/polarization_camera_pipeline.py`
 
@@ -1662,8 +1673,9 @@ This repository records *why* things are the way they are in **comments in the s
 - **L57** — ★2026-09-08: drop the fixed 6 and **match the CPU count**. On shared runners (2–4 vCPU) 6-way parallelism only slows each one, without shrinking the total time, and once the PoCs grew to 84, **each job hit pytest's 900-second timeout** (py3.10 / 3.12). Locally (12 cores) it runs as before at 6 or more.
 - **L73** — ★**Do not pass** ``PYTHONPATH`` (2026-09-09). For a long time ``PYTHONPATH=<repo>`` was passed, but that is a setting users do not make, and it meant the gate stood one step away from where the accident happens —— by the same blind spot, `examples/piv_flow_from_particles.py` and others stayed as "ModuleNotFoundError when run straight from a checkout" (that side did not even have a gate that runs it, so it went unnoticed. `test_example_scripts_run.py`). On the PoC side, 108 of 116 add the repo root to ``sys.path`` themselves, and the remaining 8 only import ``fullseye``, so all pass even after removing it (measured).
 - **L92** — ★On failure, also return the tail of stdout. A PoC prints its findings and "which check failed" to stdout before SystemExit(1), so with stderr alone you **only learn "exit 1" with nothing else** (2026-09-07 CI, py3.10 poc_ct_fidelity).
-- **L101** — ★2026-09-07: this long **returned 0**, passing straight through the `assert code == 0` below —— a gate that discards its verdict right after computing it (measured: 3 PoCs never print PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). Return -2 so it fails.
-- **L123** — ★This gate runs the 84 PoCs **in one batch** (session fixture). That time is charged to the first test, so pyproject's default timeout (900 seconds) fails on shared runners. Widen only here —— relaxing the default would also dull hang detection for other tests.
+- **L95** _(ja)_ — ★stdout は 4000 文字残す。1200 だと**章の後ろだけ**が見えて、前半で 落ちた検査の実測値が CI から読めない(2026-09-24、poc_endless_zoom の 10 番目が落ちたとき「NG が残っている(10 番目)」しか分からなかった)。
+- **L104** — ★2026-09-07: this long **returned 0**, passing straight through the `assert code == 0` below —— a gate that discards its verdict right after computing it (measured: 3 PoCs never print PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). Return -2 so it fails.
+- **L126** — ★This gate runs the 84 PoCs **in one batch** (session fixture). That time is charged to the first test, so pyproject's default timeout (900 seconds) fails on shared runners. Widen only here —— relaxing the default would also dull hang detection for other tests.
 
 ## `tests/test_printpath.py`
 
