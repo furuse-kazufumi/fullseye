@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 621 of 1013. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 621 of 1019. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -24,8 +24,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `acquire.py`
 
-- **L78** — ★2026-09-24: the table used to carry rows this module could not open. ``capabilities()`` announced nine backends while ``Camera._open`` branched on five, so ``realsense``, ``oak``, ``zed`` and ``kinect`` answered ``ValueError: unknown backend`` even with the SDK installed — a declaration/implementation split of exactly the kind a "registered only" gate is blind to. Each row now names the opener, ``_open`` dispatches THROUGH the table, and ``test_acquire_contract.py`` asserts every declared backend has one. ``unit`` is the physical meaning of what ``grab()`` returns: "normalised" -> float64 in [0, 1] (an image) "m" -> float64 metres (a depth map; NEVER rescaled to [0, 1], which would destroy the measurement — 35 ledger ops take `depth`) (name, module-to-probe, pip, kind, unit, opener, one-line desc)
-- **L166** — ★This is the fix for a silent defect: a 12-bit sensor hands back a uint16 buffer, and dividing by the CONTAINER maximum (65535) instead of 4095 makes the whole image **16x too dark** (measured: 4095 -> 0.0625) with no exception — every threshold operator downstream is then wrong. The container cannot tell you the depth; the pixel format can, so backends pass it in and this table decides.
+- **L79** — ★2026-09-24: the table used to carry rows this module could not open. ``capabilities()`` announced nine backends while ``Camera._open`` branched on five, so ``realsense``, ``oak``, ``zed`` and ``kinect`` answered ``ValueError: unknown backend`` even with the SDK installed — a declaration/implementation split of exactly the kind a "registered only" gate is blind to. Each row now names the opener, ``_open`` dispatches THROUGH the table, and ``test_acquire_contract.py`` asserts every declared backend has one. ``unit`` is the physical meaning of what ``grab()`` returns: "normalised" -> float64 in [0, 1] (an image) "m" -> float64 metres (a depth map; NEVER rescaled to [0, 1], which would destroy the measurement — 35 ledger ops take `depth`) (name, module-to-probe, pip, kind, unit, opener, one-line desc)
+- **L213** — ★This is the fix for a silent defect: a 12-bit sensor hands back a uint16 buffer, and dividing by the CONTAINER maximum (65535) instead of 4095 makes the whole image **16x too dark** (measured: 4095 -> 0.0625) with no exception — every threshold operator downstream is then wrong. The container cannot tell you the depth; the pixel format can, so backends pass it in and this table decides.
+- **L882** _(ja)_ — ★``as_numpy_ndarray()`` はフレームのバッファを**そのまま指す** (vmbpy 同梱の例が「同じメモリを使う」と書いている)。vmbpy の取得は フレームを再キューして**バッファを使い回す**ので、複製しないと 次の 1 枚が前の 1 枚を書き換える —— 例外は出ず、絵だけが入れ替わる。
+- **L1245** _(ja)_ — ★以前はここが [] を返していた。GenTL を出す全ベンダを覆える唯一の経路 だけが列挙できない、という穴だった。プロデューサは GenTL 1.6 の GENICAM_GENTL{32,64}_PATH に自分を登録するので、こちらはそれを読む。
 
 ## `annotate.py`
 
@@ -1498,6 +1500,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L361** _(ja)_ — ★ここまでの門は「acquire が持っている綴り」からしか数えていない。**規格の全数**を 分母に置くと、そもそも知らない形式が見つかる —— 実際これで 10 bit 非詰めの Bayer 4 形式が丸ごと抜けていた(2026-09-24)。台帳は EMVA が無償公開している 「GenICam Pixel Format Names and Values」の単板 59 形式。
 - **L408** _(ja)_ — ★最初ここに「詰め形式は容器 = 有効」と書いて、この門に捕まった。実際は 2 通りある: (a) 10/12/14 bit の**非詰め**が 16 bit 容器に入る場合と、 (b) **grouped**(GigE Vision 1.x の `Packed`)の 10 bit が 12 bit に 入る場合 —— 2 画素 = 3 バイトなので 1 画素あたり 12 bit になる。 真の lsb packed(`p`)だけが容器 = 有効。
 - **L440** _(ja)_ — ★機能名はベンダの名前ではなく規格の名前なので、**1 本の語彙表で GenTL を出す 全ベンダを覆える**。だからこの層は「どのベンダの SDK を入れたか」と無関係に 検査できる —— 模擬ノードマップで足りる。実機が無いことは言い訳にならない。
+- **L602** _(ja)_ — ★SDK のバッファを指したまま返すと、**次の 1 枚が前の 1 枚を書き換える**。 例外は出ない —— 絵だけが入れ替わるので、連写を保存して初めて気づく。 実機が要る経路なので実行では確かめられない。**ソースで確かめる**。
+- **L640** _(ja)_ — ★複製が要らない backend と、その**理由**。黙って外さない。
+- **L696** _(ja)_ — ★SDK を採点したのと**同じ物差し**で自分も採点する。違う物差しで測った数を 並べると「SDK より厚い」が意味を失う。しかも自己申告にしない —— 各軸が どの入口で満たされているかを**実在する名前**で名指しし、門がそれを引く。
+- **L745** _(ja)_ — ★列挙軸の一番大きな穴はここだった。`_enumerate("genicam")` は [] を返していて、 **GenTL を出す全ベンダを覆える唯一の経路だけが列挙できない**状態だった。 GenTL 1.6 が「プロデューサのインストーラは GENICAM_GENTL{32/64}_PATH に自分を 足す」と決めているので、こちらはその変数を読めばよく、ベンダごとの表は要らない。 実機も SDK も無しで検査できる —— 変数と `.cti` という名前のファイルがあればよい。
 
 ## `tests/test_annotate_bold_italic.py`
 

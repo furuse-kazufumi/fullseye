@@ -85,6 +85,25 @@ cam.missing_required_features()                         # 規格に足りない�
 
 ★単位は推測しない。`ExposureTime` は **us**、`AcquisitionFrameRate` は **Hz**、`PayloadSize` は **B**、`TimestampLatchValue` は **ns**。**`Gain` に単位の規定は無い**(`dB` は §1.2 の一覧に載っているだけ)ので、この層は Gain を dB と呼ばない。
 
+## 取り込み層の 8 軸 (8/8)
+
+公開されている 13 の Python SDK を採点したのと**同じ 8 軸**で、この層自身を採点する。違う物差しで測った数を並べると「SDK より厚い」が意味を失う。
+
+★自己申告にしない。各軸は**どの入口で満たされているか**を実在する名前で名指しし、門がその名前を引く。改名や削除があれば落ちる —— **証拠が消えた「対応済み」は嘘になる**。
+
+| 軸 | 充足 | 入口 |
+|---|---|---|
+| 列挙 | ✓ | `list_devices`・`_enumerate`・`gentl_producers` |
+| 取得モード | ✓ | `Camera.grab`・`Camera.frames`・`Camera.stream`・`Camera.grab_frame` |
+| バッファ | ✓ | `Camera._raw_grab` |
+| 画素形式 | ✓ | `PIXEL_BITS`・`PACKED_FORMATS`・`NOT_CARRIED`・`unpack` |
+| ビット深度 | ✓ | `bit_depth_of`・`_to01` |
+| メタデータ | ✓ | `Frame`・`Camera.features` |
+| 物理単位 | ✓ | `DEPTH_BACKENDS`・`SFNC_FEATURES` |
+| 終了処理 | ✓ | `Camera.close` |
+
+比較の相手は `C:/dev/docs/device_sdk_corpus/COVERAGE.md`(`pypylon` と `vmbpy` が 8/8、`ouster` / `pyrealsense2` / `zivid` が 7/8)。
+
 ## デバイス制御 (device) (12)
 
 | driver | kind | 種別 | pip | 説明 |

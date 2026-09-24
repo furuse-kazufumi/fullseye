@@ -691,6 +691,55 @@ def test_the_copy_gate_actually_catches_a_view():
     assert bad, "複製していない式を _COPIERS が通してしまう"
 
 
+# --------------------------------------------------------------------------- 8 軸
+#
+# ★SDK を採点したのと**同じ物差し**で自分も採点する。違う物差しで測った数を
+# 並べると「SDK より厚い」が意味を失う。しかも自己申告にしない —— 各軸が
+# どの入口で満たされているかを**実在する名前**で名指しし、門がそれを引く。
+
+
+def test_every_coverage_axis_names_something_that_exists():
+    got = acquire.axes()
+    assert len(got) == 8, got
+    missing = {a: v["entry"] for a, v in got.items() if not v["present"]}
+    assert not missing, (
+        ("軸が名指しした入口が見つからない: %s" + chr(10) +
+         "改名か削除。主張のほうを直すこと —— 消えた証拠つきの「対応済み」は嘘になる。")
+        % missing)
+
+
+def test_the_axes_are_the_same_eight_the_sdks_were_scored_on():
+    """物差しが勝手に増えたり減ったりしていないこと。"""
+    assert set(acquire.COVERAGE_AXES) == {
+        "enumeration", "acquisition_mode", "buffer", "pixel_format",
+        "bit_depth", "metadata", "physical_unit", "teardown"}
+
+
+def test_the_axis_gate_catches_a_renamed_entry_point():
+    """★門は壊して確かめる。存在しない名前を混ぜたら落ちること。"""
+    saved = dict(acquire.COVERAGE_AXES)
+    try:
+        acquire.COVERAGE_AXES["teardown"] = ("Camera.close", "Camera.shutdown_all")
+        bad = {a: v for a, v in acquire.axes().items() if not v["present"]}
+        assert "teardown" in bad, "存在しない入口を門が通した"
+    finally:
+        acquire.COVERAGE_AXES.clear()
+        acquire.COVERAGE_AXES.update(saved)
+
+
+def test_the_connectivity_doc_axis_table_matches_the_code():
+    doc = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                       "docs", "CONNECTIVITY.md")
+    text = open(doc, encoding="utf-8").read()
+    got = acquire.axes()
+    n = sum(1 for v in got.values() if v["present"])
+    assert "## 取り込み層の 8 軸 (%d/%d)" % (n, len(got)) in text
+    #: 入口の名前も本文に出ていること(名前が消えたら表も落ちる)
+    for v in got.values():
+        for entry in v["entry"]:
+            assert "`%s`" % entry in text, entry
+
+
 # --------------------------------------------------------------------------- GenTL
 #
 # ★列挙軸の一番大きな穴はここだった。`_enumerate("genicam")` は [] を返していて、

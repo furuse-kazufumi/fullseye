@@ -118,6 +118,52 @@ DEPTH_BACKENDS = tuple(n for n, _m, _p, _k, unit, _o, _d in _BACKENDS if unit ==
 _BACKEND_BY_NAME = {row[0]: row for row in _BACKENDS}
 
 
+#: The eight axes a device SDK is scored on, and where this module answers each.
+#:
+#: The same eight are used to score published SDKs (13 of them, in a separate
+#: corpus), so the two numbers can be compared. Scoring this module on a different
+#: list would make "we cover more than SDK X" meaningless.
+#:
+#: Each value names **things that must exist** -- a test resolves every one of them,
+#: so a rename or a deletion turns the claim red instead of leaving a stale boast.
+COVERAGE_AXES = {
+    "enumeration": ("list_devices", "_enumerate", "gentl_producers"),
+    "acquisition_mode": ("Camera.grab", "Camera.frames", "Camera.stream",
+                         "Camera.grab_frame"),
+    "buffer": ("Camera._raw_grab",),
+    "pixel_format": ("PIXEL_BITS", "PACKED_FORMATS", "NOT_CARRIED", "unpack"),
+    "bit_depth": ("bit_depth_of", "_to01"),
+    "metadata": ("Frame", "Camera.features"),
+    "physical_unit": ("DEPTH_BACKENDS", "SFNC_FEATURES"),
+    "teardown": ("Camera.close",),
+}
+
+
+def axes() -> dict:
+    """Self-assessment on the eight axes, with the entry point that answers each.
+
+    Returns:
+        dict: axis -> ``{"entry": [names], "present": bool}``. ``present`` is False
+        when any named entry point is missing, because a claim whose evidence has
+        been renamed away is worse than no claim.
+    """
+    out = {}
+    for axis, names in COVERAGE_AXES.items():
+        ok = True
+        for name in names:
+            target = globals()
+            obj = None
+            for part in name.split("."):
+                obj = (target.get(part) if isinstance(target, dict)
+                       else getattr(target, part, None))
+                if obj is None:
+                    break
+                target = obj
+            ok = ok and obj is not None
+        out[axis] = {"entry": list(names), "present": bool(ok)}
+    return out
+
+
 def capabilities() -> list:
     """Acquisition backends: ``{name, kind, available, implemented, unit, pip, desc}``.
 
