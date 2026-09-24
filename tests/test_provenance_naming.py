@@ -74,6 +74,13 @@ _INTEROP_ALLOWLIST = {
         "名指しているだけで、fullseye 側の何かに名前を付けてはいない。出典を消すと"
         "数値が検証不能になる(PROVENANCE.md の「出典表記」に当たる)",
     ),
+    "allied vision": (
+        ("acquire.py",),
+        "``vimba`` backend が開く**実在の SDK の名前**(Vimba X / vmbpy)。basler と"
+        "同じ扱いで、backend の表と opener の docstring に出るだけであり、fullseye 側の"
+        "何かに名前を付けてはいない。誰の SDK かを消すと、利用者がどれを入れれば"
+        "その backend が動くのか分からなくなる",
+    ),
     "teledyne": (
         ("optscene.py",),
         "sensor_catalog が載せる**実在センサの製造元**。型番だけでは何のセンサか"

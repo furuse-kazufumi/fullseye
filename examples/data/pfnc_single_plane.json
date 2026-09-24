@@ -1,0 +1,363 @@
+{
+ "source": "https://www.emva.org/wp-content/uploads/GenICamPixelFormatValues.pdf",
+ "title": "GenICam Pixel Format Names and Values",
+ "fetched": "2026-09-24",
+ "scope": "single-plane (Mono / Bayer) formats only -- one integer per pixel",
+ "note": "value>>16 & 0xFF is the STORAGE bits per pixel; bits is the SIGNIFICANT bits. Mono12 is 12 significant in a 16-bit container, so dividing by 65535 makes it (2**16-1)/(2**12-1) = 16.0037x too dark.",
+ "formats": {
+  "BayerBG10": {
+   "value": "0x0110000F",
+   "bits": 10,
+   "storage_bits": 16,
+   "desc": "Bayer Blue-Green 10-bit unpacked"
+  },
+  "BayerBG10Packed": {
+   "value": "0x010C0029",
+   "bits": 10,
+   "storage_bits": 12,
+   "desc": "Bayer Blue-Green 10-bit packed"
+  },
+  "BayerBG10p": {
+   "value": "0x010A0052",
+   "bits": 10,
+   "storage_bits": 10,
+   "desc": "Bayer Blue-Green 10-bit packed"
+  },
+  "BayerBG12": {
+   "value": "0x01100013",
+   "bits": 12,
+   "storage_bits": 16,
+   "desc": "Bayer Blue-Green 12-bit unpacked"
+  },
+  "BayerBG12Packed": {
+   "value": "0x010C002D",
+   "bits": 12,
+   "storage_bits": 12,
+   "desc": "Bayer Blue-Green 12-bit packed"
+  },
+  "BayerBG12p": {
+   "value": "0x010C0053",
+   "bits": 12,
+   "storage_bits": 12,
+   "desc": "Bayer Blue-Green 12-bit packed"
+  },
+  "BayerBG14": {
+   "value": "0x0110010C",
+   "bits": 14,
+   "storage_bits": 16,
+   "desc": "Bayer Blue-Green 14-bit"
+  },
+  "BayerBG14p": {
+   "value": "0x010E0108",
+   "bits": 14,
+   "storage_bits": 14,
+   "desc": "Bayer Blue-Green 14-bit packed"
+  },
+  "BayerBG16": {
+   "value": "0x01100031",
+   "bits": 16,
+   "storage_bits": 16,
+   "desc": "Bayer Blue-Green 16-bit"
+  },
+  "BayerBG4p": {
+   "value": "0x01040110",
+   "bits": 4,
+   "storage_bits": 4,
+   "desc": "Bayer Blue-Green 4-bit packed"
+  },
+  "BayerBG8": {
+   "value": "0x0108000B",
+   "bits": 8,
+   "storage_bits": 8,
+   "desc": "Bayer Blue-Green 8-bit"
+  },
+  "BayerGB10": {
+   "value": "0x0110000E",
+   "bits": 10,
+   "storage_bits": 16,
+   "desc": "Bayer Green-Blue 10-bit unpacked"
+  },
+  "BayerGB10Packed": {
+   "value": "0x010C0028",
+   "bits": 10,
+   "storage_bits": 12,
+   "desc": "Bayer Green-Blue 10-bit packed"
+  },
+  "BayerGB10p": {
+   "value": "0x010A0054",
+   "bits": 10,
+   "storage_bits": 10,
+   "desc": "Bayer Green-Blue 10-bit packed"
+  },
+  "BayerGB12": {
+   "value": "0x01100012",
+   "bits": 12,
+   "storage_bits": 16,
+   "desc": "Bayer Green-Blue 12-bit unpacked"
+  },
+  "BayerGB12Packed": {
+   "value": "0x010C002C",
+   "bits": 12,
+   "storage_bits": 12,
+   "desc": "Bayer Green-Blue 12-bit packed"
+  },
+  "BayerGB12p": {
+   "value": "0x010C0055",
+   "bits": 12,
+   "storage_bits": 12,
+   "desc": "Bayer Green-Blue 12-bit packed"
+  },
+  "BayerGB14": {
+   "value": "0x0110010B",
+   "bits": 14,
+   "storage_bits": 16,
+   "desc": "Bayer Green-Blue 14-bit"
+  },
+  "BayerGB14p": {
+   "value": "0x010E0107",
+   "bits": 14,
+   "storage_bits": 14,
+   "desc": "Bayer Green-Blue 14-bit packed"
+  },
+  "BayerGB16": {
+   "value": "0x01100030",
+   "bits": 16,
+   "storage_bits": 16,
+   "desc": "Bayer Green-Blue 16-bit"
+  },
+  "BayerGB4p": {
+   "value": "0x0104010F",
+   "bits": 4,
+   "storage_bits": 4,
+   "desc": "Bayer Green-Blue 4-bit packed"
+  },
+  "BayerGB8": {
+   "value": "0x0108000A",
+   "bits": 8,
+   "storage_bits": 8,
+   "desc": "Bayer Green-Blue 8-bit"
+  },
+  "BayerGR10": {
+   "value": "0x0110000C",
+   "bits": 10,
+   "storage_bits": 16,
+   "desc": "Bayer Green-Red 10-bit unpacked"
+  },
+  "BayerGR10Packed": {
+   "value": "0x010C0026",
+   "bits": 10,
+   "storage_bits": 12,
+   "desc": "Bayer Green-Red 10-bit packed"
+  },
+  "BayerGR10p": {
+   "value": "0x010A0056",
+   "bits": 10,
+   "storage_bits": 10,
+   "desc": "Bayer Green-Red 10-bit packed"
+  },
+  "BayerGR12": {
+   "value": "0x01100010",
+   "bits": 12,
+   "storage_bits": 16,
+   "desc": "Bayer Green-Red 12-bit unpacked"
+  },
+  "BayerGR12Packed": {
+   "value": "0x010C002A",
+   "bits": 12,
+   "storage_bits": 12,
+   "desc": "Bayer Green-Red 12-bit packed"
+  },
+  "BayerGR12p": {
+   "value": "0x010C0057",
+   "bits": 12,
+   "storage_bits": 12,
+   "desc": "Bayer Green-Red 12-bit packed"
+  },
+  "BayerGR14": {
+   "value": "0x01100109",
+   "bits": 14,
+   "storage_bits": 16,
+   "desc": "Bayer Green-Red 14-bit"
+  },
+  "BayerGR14p": {
+   "value": "0x010E0105",
+   "bits": 14,
+   "storage_bits": 14,
+   "desc": "Bayer Green-Red 14-bit packed"
+  },
+  "BayerGR16": {
+   "value": "0x0110002E",
+   "bits": 16,
+   "storage_bits": 16,
+   "desc": "Bayer Green-Red 16-bit"
+  },
+  "BayerGR4p": {
+   "value": "0x0104010D",
+   "bits": 4,
+   "storage_bits": 4,
+   "desc": "Bayer Green-Red 4-bit packed"
+  },
+  "BayerGR8": {
+   "value": "0x01080008",
+   "bits": 8,
+   "storage_bits": 8,
+   "desc": "Bayer Green-Red 8-bit"
+  },
+  "BayerRG10": {
+   "value": "0x0110000D",
+   "bits": 10,
+   "storage_bits": 16,
+   "desc": "Bayer Red-Green 10-bit unpacked"
+  },
+  "BayerRG10Packed": {
+   "value": "0x010C0027",
+   "bits": 10,
+   "storage_bits": 12,
+   "desc": "Bayer Red-Green 10-bit packed"
+  },
+  "BayerRG10p": {
+   "value": "0x010A0058",
+   "bits": 10,
+   "storage_bits": 10,
+   "desc": "Bayer Red-Green 10-bit packed"
+  },
+  "BayerRG12": {
+   "value": "0x01100011",
+   "bits": 12,
+   "storage_bits": 16,
+   "desc": "Bayer Red-Green 12-bit unpacked"
+  },
+  "BayerRG12Packed": {
+   "value": "0x010C002B",
+   "bits": 12,
+   "storage_bits": 12,
+   "desc": "Bayer Red-Green 12-bit packed"
+  },
+  "BayerRG12p": {
+   "value": "0x010C0059",
+   "bits": 12,
+   "storage_bits": 12,
+   "desc": "Bayer Red-Green 12-bit packed"
+  },
+  "BayerRG14": {
+   "value": "0x0110010A",
+   "bits": 14,
+   "storage_bits": 16,
+   "desc": "Bayer Red-Green 14-bit"
+  },
+  "BayerRG14p": {
+   "value": "0x010E0106",
+   "bits": 14,
+   "storage_bits": 14,
+   "desc": "Bayer Red-Green 14-bit packed"
+  },
+  "BayerRG16": {
+   "value": "0x0110002F",
+   "bits": 16,
+   "storage_bits": 16,
+   "desc": "Bayer Red-Green 16-bit"
+  },
+  "BayerRG4p": {
+   "value": "0x0104010E",
+   "bits": 4,
+   "storage_bits": 4,
+   "desc": "Bayer Red-Green 4-bit packed"
+  },
+  "BayerRG8": {
+   "value": "0x01080009",
+   "bits": 8,
+   "storage_bits": 8,
+   "desc": "Bayer Red-Green 8-bit"
+  },
+  "Mono10": {
+   "value": "0x01100003",
+   "bits": 10,
+   "storage_bits": 16,
+   "desc": "Monochrome 10-bit unpacked"
+  },
+  "Mono10Packed": {
+   "value": "0x010C0004",
+   "bits": 10,
+   "storage_bits": 12,
+   "desc": "Monochrome 10-bit packed"
+  },
+  "Mono10p": {
+   "value": "0x010A0046",
+   "bits": 10,
+   "storage_bits": 10,
+   "desc": "Monochrome 10-bit packed"
+  },
+  "Mono12": {
+   "value": "0x01100005",
+   "bits": 12,
+   "storage_bits": 16,
+   "desc": "Monochrome 12-bit unpacked"
+  },
+  "Mono12Packed": {
+   "value": "0x010C0006",
+   "bits": 12,
+   "storage_bits": 12,
+   "desc": "Monochrome 12-bit packed"
+  },
+  "Mono12p": {
+   "value": "0x010C0047",
+   "bits": 12,
+   "storage_bits": 12,
+   "desc": "Monochrome 12-bit packed"
+  },
+  "Mono14": {
+   "value": "0x01100025",
+   "bits": 14,
+   "storage_bits": 16,
+   "desc": "Monochrome 14-bit unpacked"
+  },
+  "Mono14p": {
+   "value": "0x010E0104",
+   "bits": 14,
+   "storage_bits": 14,
+   "desc": "Monochrome 14-bit packed"
+  },
+  "Mono16": {
+   "value": "0x01100007",
+   "bits": 16,
+   "storage_bits": 16,
+   "desc": "Monochrome 16-bit"
+  },
+  "Mono1p": {
+   "value": "0x01010037",
+   "bits": 1,
+   "storage_bits": 1,
+   "desc": "Monochrome 1-bit packed"
+  },
+  "Mono2p": {
+   "value": "0x01020038",
+   "bits": 2,
+   "storage_bits": 2,
+   "desc": "Monochrome 2-bit packed"
+  },
+  "Mono32": {
+   "value": "0x01200111",
+   "bits": 32,
+   "storage_bits": 32,
+   "desc": "Monochrome 32-bit"
+  },
+  "Mono4p": {
+   "value": "0x01040039",
+   "bits": 4,
+   "storage_bits": 4,
+   "desc": "Monochrome 4-bit packed"
+  },
+  "Mono8": {
+   "value": "0x01080001",
+   "bits": 8,
+   "storage_bits": 8,
+   "desc": "Monochrome 8-bit"
+  },
+  "Mono8s": {
+   "value": "0x01080002",
+   "bits": 8,
+   "storage_bits": 8,
+   "desc": "Monochrome 8-bit signed"
+  }
+ }
+}

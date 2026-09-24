@@ -35,19 +35,36 @@ Fullseye は vision に加え **デバイス制御・産業通信** を扱う(HA
 | profibus | scaffold | — | pyprofibus | PROFIBUS DP (RS-485 PHY, GSD) |
 | profinet | scaffold | — | pnio-dcp | PROFINET DCP commissioning (RT via gateway) |
 
-## 画像取り込み (acquire) (9)
+## 画像取り込み (acquire) (10)
 
-| source | kind | あり | pip | 説明 |
-|---|---|---|---|---|
-| callable | native | ✓ | — | a user-supplied fn() -> frame |
-| dir | native | ✓ | — | a folder / glob of images (offline & tests) |
-| basler | optional | — | pypylon | Basler cameras |
-| genicam | optional | — | harvesters | GigE/USB3 Vision via GenTL (industrial) |
-| kinect | optional | — | pyk4a | Azure Kinect DK depth |
-| oak | optional | — | depthai | Luxonis OAK-D depth camera |
-| opencv | optional | ✓ | opencv-python | USB/UVC webcam, IP/RTSP stream, video file |
-| realsense | optional | — | pyrealsense2 | Intel RealSense RGB-D (Physical AI) |
-| zed | optional | — | pyzed | Stereolabs ZED stereo depth |
+`unit` = `grab()` が返す量。`normalised` = [0,1] の画像 / `m` = **メートルの距離**(深度は計測値なので [0,1] に正規化しない)。
+`実装` = この repo に opener が在るか。`あり` = その SDK がこの環境で import できるか ——**別の問いなので別の列**にしてある(申告だけして開けない行が在った)。
+
+| source | kind | unit | 実装 | あり | pip | 説明 |
+|---|---|---|---|---|---|---|
+| callable | native | normalised | ✓ | ✓ | — | a user-supplied fn() -> frame |
+| dir | native | normalised | ✓ | ✓ | — | a folder / glob of images (offline & tests) |
+| basler | optional | normalised | ✓ | — | pypylon | Basler cameras (pypylon) |
+| genicam | optional | normalised | ✓ | — | harvesters | GigE/USB3 Vision via GenTL (industrial) |
+| opencv | optional | normalised | ✓ | ✓ | opencv-python | USB/UVC webcam, IP/RTSP stream, video file |
+| vimba | optional | normalised | ✓ | — | vmbpy | Allied Vision Vimba X (vmbpy) |
+| kinect | optional | m | ✓ | — | pyk4a | Azure Kinect DK depth (discontinued; Orbbec is the successor) |
+| oak | optional | m | ✓ | — | depthai | Luxonis OAK-D stereo depth (depth in metres) |
+| realsense | optional | m | ✓ | — | pyrealsense2 | Intel RealSense RGB-D (depth in metres) |
+| zed | optional | m | ✓ | — | pyzed | Stereolabs ZED stereo depth (depth in metres) |
+
+## 画素形式 (単板 59 形式)
+
+分母は **EMVA が公表している綴りの全数**(GenICam Pixel Format Names and Values、無償)であって、こちらが知っている綴りの数ではない。**自分の表から数えると、そもそも知らない形式は永遠に見つからない** —— 実際この分母に替えて 10 bit 非詰めの Bayer 4 形式が抜けているのが出た。台帳は `examples/data/pfnc_single_plane.json`。
+
+| 群 | 規格 | 対応 | 理由つきで外した | 対応率(外した分を除く) |
+|---|--:|--:|--:|--:|
+| Mono | 15 | 10 | 5 | 100% |
+| Bayer | 44 | 40 | 4 | 100% |
+
+外したものは `acquire.NOT_CARRIED` に理由つきで並ぶ(8 bit 未満 / 符号つき / 32 bit)。**黙って知らないままにはしない**のが要点で、「対応率」は 「外した理由が書いてある」ことと一緒でなければ意味がない。
+
+**詰め形式**(`Mono12p` など 25 形式)は `acquire.unpack()` が展開する。詰めたままのバッファを `2**bits - 1` で割ると、**例外を出さずに画像に見える別のもの**が出るので、`_coerce` は uint8 の詰めバッファを拒否する。
 
 ## デバイス制御 (device) (12)
 
