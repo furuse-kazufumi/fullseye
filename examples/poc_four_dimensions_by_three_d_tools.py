@@ -120,6 +120,25 @@ def angle_by_index(i, period):
     return 2.0 * np.pi * (i % period) / period
 
 
+def view2(deg_y=32.0, deg_x=22.0):
+    """3 次元を**一般の向き**から見る 2x3 の正射影(上 2 行が正規直交)。
+
+    ★これが要る理由: `rot4(0, t1, 1, t2)` の t2 は **zw 面**の回転なので、
+    x と y には一切効かない。落とした 3 次元の **x, y だけ**を描くと、
+    比が有理でも無理でも**厳密に同じ絵**になる(実測 0.000e+00)—— 実際に
+    `tesseract_rational` と `tesseract_irrational` がバイト単位で同一の
+    GIF になっていた。z を絵に効かせると差が出る(実測 1.322)。
+    """
+    a, b = np.radians(deg_y), np.radians(deg_x)
+    ry = np.array([[np.cos(a), 0.0, np.sin(a)],
+                   [0.0, 1.0, 0.0],
+                   [-np.sin(a), 0.0, np.cos(a)]])
+    rx = np.array([[1.0, 0.0, 0.0],
+                   [0.0, np.cos(b), -np.sin(b)],
+                   [0.0, np.sin(b), np.cos(b)]])
+    return (rx @ ry)[:2]
+
+
 def tesseract():
     """一辺 2 の超立方体。頂点・辺・面・胞を数える。"""
     V = np.array([[x, y, z, w] for x in (-1, 1) for y in (-1, 1)
@@ -348,6 +367,28 @@ def main():
           "刻み %d で %d 歩まで回して最小 %.4f —— 有理は 0.0、無理は 1e-2 の壁"
           % (int(irr_div), irr_steps, best_irr))
 
+    #: ★図が主題を映しているか。x, y だけで描くと zw 面の回転が**消える**。
+    #:   実際にそれで 2 つの GIF がバイト単位で同一になっていた。
+    m2 = view2()
+    check(abs(float(np.abs(m2 @ m2.T - np.eye(2)).max())) < 1e-12,
+          "見る向きの 2 方向は正規直交",
+          "|MMᵀ − I| = %.1e" % float(np.abs(m2 @ m2.T - np.eye(2)).max()))
+    gap_xy = gap_view = 0.0
+    for i in range(60):
+        t_a = 2.0 * np.pi * i / 60.0
+        p_rat = project4to3(V4, rot4(0, t_a, 1, angle_by_index(i * 2, 60)))
+        p_irr = project4to3(V4, rot4(0, t_a, 1, 2.0 * np.pi * i * golden / 60.0))
+        gap_xy = max(gap_xy, float(np.abs(p_rat[:, :2] - p_irr[:, :2]).max()))
+        gap_view = max(gap_view,
+                       float(np.abs(p_rat @ m2.T - p_irr @ m2.T).max()))
+    print("   有理比と無理比の見た目の差: x,y だけ %.1e / 一般の向き %.3f"
+          % (gap_xy, gap_view))
+    check(gap_xy == 0.0 and gap_view > 0.5,
+          "★x, y だけを描くと 2 枚目の回転が**絵から消える**",
+          "60 コマ通して x,y の差は **%.1e**(厳密に 0)なのに、一般の向きで"
+          "見ると **%.3f** —— 図がこの成分を捨てていたので、正反対の主張の "
+          "GIF が**バイト単位で同一**になっていた" % (gap_xy, gap_view))
+
     # ---------------------------------------------------------------- #
     print("\n6. 管の体積の誤差は、2 つに厳密に分かれる")
     Rt, rt = 2.0, 0.25
@@ -495,6 +536,7 @@ def main():
 
         # --- 超立方体の二重回転 ---
         edges = E4
+        M2 = view2()
         for name, (a, b), cap in (
                 ("tesseract_rational", (1, 2),
                  "比 **1 : 2**(有理)。60 コマでちょうど元に戻る —— "
@@ -514,7 +556,8 @@ def main():
                     t2 = angle_by_index(i * b, 60)
                 Rm = rot4(0, t1, 1, t2)
                 P3 = project4to3(V4, Rm)
-                fr.append(draw_lines_2d(300, P3[:, :2], edges,
+                # ★x, y だけを描くと zw 面の回転が消える。一般の向きで見る。
+                fr.append(draw_lines_2d(300, P3 @ M2.T, edges,
                                         (0.19, 0.44, 0.62), width=1.0,
                                         half=1.5))
             figs.save_gif(name, fr, fps=12,

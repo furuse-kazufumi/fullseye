@@ -4,7 +4,7 @@ dim: generative
 category: illusion
 in: 
 out: rgb
-examples: [poc_illusions_and_perpetual_drawing]
+examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -33,7 +33,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [poc_illusions_and_perpetual_drawing](../../../../examples/poc_illusions_and_perpetual_drawing.py) — `py -3.11 examples/poc_illusions_and_perpetual_drawing.py`
+- (まだありません)
 
 ## 型が繋がる次の op(`rgb` を入力に取れる)
 

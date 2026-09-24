@@ -40,6 +40,7 @@ figs.save("strain", exx, "ε_xx。±2000 µε で塗り分け", signed=True)
 from __future__ import annotations
 
 import atexit
+import hashlib
 import json
 import os
 import re
@@ -144,6 +145,34 @@ def _report_errors_at_exit():
 atexit.register(_report_errors_at_exit)
 
 
+#: 書いた図の sha256 -> 名前。★同じ中身の図が 2 枚出たら台帳に積む
+_written: dict[str, str] = {}
+
+
+def _note_unique(path, name: str) -> None:
+    """書いた図の**中身**を突き合わせ、同一バイト列なら errors に積む。
+
+    ★2026-09-24: 4 次元 PoC の `tesseract_rational` と `tesseract_irrational`
+    が**バイト単位で同一**だった。投影が 2 枚目の回転に原理的に盲目で(x,y の
+    差が厳密に 0)、正反対の主張の図が同じ絵になっていた。枚数・名前・説明を
+    見る門は在ったのに、**中身が同じかを見る門だけが無かった**ので通った。
+
+    「同じ絵を 2 回出す」が正しい場面は無い(同じものを見せたいなら同じ図を
+    2 度参照すればよい)ので、無条件に欠陥として扱う。
+    """
+    try:
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    except Exception:                                    # noqa: BLE001
+        return
+    prev = _written.get(digest)
+    if prev is not None and prev != name:
+        _errors.append(
+            "%s: %r と**中身が完全に同一**(バイト列が一致)—— "
+            "別の主張の図なら、どちらかが主張を示していない" % (name, prev))
+    else:
+        _written.setdefault(digest, name)
+
+
 def _to_rgb8(v, signed: bool, gray: bool = False):
     """(H,W) か (H,W,3|4) → uint8 RGB。**値域の伸ばし方をここに 1 か所だけ持つ**。
 
@@ -203,6 +232,7 @@ def save(name: str, image, caption: str = "", signed: bool = False,
         rgb = _to_rgb8(image, signed, gray)
         path = d / ("%02d_%s.png" % (len(_manifest) + 1, name))
         fs.write_image(str(path), rgb)     # uint8 はそのまま画素値(api.write_image)
+        _note_unique(path, name)
         _manifest.append({"file": path.name, "name": name, "caption": caption,
                           "shape": list(np.shape(image))})
         (d / "figures.json").write_text(
@@ -323,6 +353,7 @@ def save_gif(name: str, frames, caption: str = "", fps: float = 8.0,
         if size > GIF_SIZE_WARN:
             _errors.append("%s: GIF が %.1f MB(目安 %.0f MB)—— コマ数か大きさを減らす"
                            % (name, size / 1e6, GIF_SIZE_WARN / 1e6))
+        _note_unique(path, name)
         _manifest.append({"file": path.name, "name": name, "caption": caption,
                           "shape": list(np.shape(rgb[0])), "animated": True,
                           "frames": len(ims), "frames_written": written,
@@ -344,6 +375,7 @@ def reset() -> None:
     """状態を捨てる(試験用)。"""
     _manifest.clear()
     _errors.clear()
+    _written.clear()
 
 
 # --------------------------------------------------------------------------- #

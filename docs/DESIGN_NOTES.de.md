@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 992. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 997. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -153,11 +153,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examplefig.py`
 
-- **L180** — ★`colorize_depth` gibt **float [0,1]** zurück. Empfängt man es mit `np.asarray(..., np.uint8)`, wird jedes 0.x auf 0 abgeschnitten und pechschwarz (getroffen am 2026-09-06).
-- **L212** — ★Lass den Textkörper des Beispiels nicht weg. Schade, dass die Abbildung nicht erscheint, aber die Zahlen müssen gezeigt werden.
-- **L251** — ★Reiche hier nicht einfach an :func:`_to_rgb8` weiter. Das übergibt (H,W) an `colorize_depth`, aber **darin wird jeder Frame einzeln normalisiert**, sodass ein Frame, der ganz 0 ist, und einer, der ganz 1 ist, in derselben Farbe herauskommen (von einem Test am 2026-09-09 gefangen). Erst durch die explizite Übergabe des Wertebereichs wird der Maßstab zu einem einzigen.
-- **L316** — ★Pillow **faltet einen mit dem vorherigen identischen Frame zu einem einzigen** (diese Zeit wird zur Anzeigezeit des vorherigen Frames addiert, sodass sich die Bewegungsgeschwindigkeit nicht ändert). Wir zählen nach dem Schreiben und halten, wenn es von der übergebenen Zahl abweicht, **beide** im Register fest —— um nicht still ein "72-Frame-GIF" durchgehen zu lassen, dessen Inhalt 40 Frames hat.
-- **L380** — ★2026-09-08: Ist das Panel klein, passt der Titel nicht, und ``annotate_figure_grid`` verweigert (korrekt), sodass **eine Abbildung still verschwand**. Ein 29×19-core-Gitter oder eine 24×24-verkleinerte Karte erscheint in PoCs routinemäßig, doch der Fehler sagt "kürze den Titel" —— die tatsächliche Behebung ist "vergrößere das Panel". Zwei Zuständige fielen unabhängig in dasselbe Loch (es gibt einen Fall, in dem eine scene-Abbildung auf dem Schild verschwand), deshalb lassen wir nicht jeden Aufrufer die Vergrößerung schreiben, sondern vergrößern hier einmal per Nächster-Nachbar. Wir nehmen Nächster-Nachbar, um beim Vergrößern **keine Werte zu erzeugen** (Interpolation würde auf der Abbildung nicht existierende Zwischenwerte erzeugen, und die Pseudofarbe würde lügen).
+- **L148** _(ja)_ — 書いた図の sha256 -> 名前。★同じ中身の図が 2 枚出たら台帳に積む
+- **L209** — ★`colorize_depth` gibt **float [0,1]** zurück. Empfängt man es mit `np.asarray(..., np.uint8)`, wird jedes 0.x auf 0 abgeschnitten und pechschwarz (getroffen am 2026-09-06).
+- **L242** — ★Lass den Textkörper des Beispiels nicht weg. Schade, dass die Abbildung nicht erscheint, aber die Zahlen müssen gezeigt werden.
+- **L281** — ★Reiche hier nicht einfach an :func:`_to_rgb8` weiter. Das übergibt (H,W) an `colorize_depth`, aber **darin wird jeder Frame einzeln normalisiert**, sodass ein Frame, der ganz 0 ist, und einer, der ganz 1 ist, in derselben Farbe herauskommen (von einem Test am 2026-09-09 gefangen). Erst durch die explizite Übergabe des Wertebereichs wird der Maßstab zu einem einzigen.
+- **L346** — ★Pillow **faltet einen mit dem vorherigen identischen Frame zu einem einzigen** (diese Zeit wird zur Anzeigezeit des vorherigen Frames addiert, sodass sich die Bewegungsgeschwindigkeit nicht ändert). Wir zählen nach dem Schreiben und halten, wenn es von der übergebenen Zahl abweicht, **beide** im Register fest —— um nicht still ein "72-Frame-GIF" durchgehen zu lassen, dessen Inhalt 40 Frames hat.
+- **L412** — ★2026-09-08: Ist das Panel klein, passt der Titel nicht, und ``annotate_figure_grid`` verweigert (korrekt), sodass **eine Abbildung still verschwand**. Ein 29×19-core-Gitter oder eine 24×24-verkleinerte Karte erscheint in PoCs routinemäßig, doch der Fehler sagt "kürze den Titel" —— die tatsächliche Behebung ist "vergrößere das Panel". Zwei Zuständige fielen unabhängig in dasselbe Loch (es gibt einen Fall, in dem eine scene-Abbildung auf dem Schild verschwand), deshalb lassen wir nicht jeden Aufrufer die Vergrößerung schreiben, sondern vergrößern hier einmal per Nächster-Nachbar. Wir nehmen Nächster-Nachbar, um beim Vergrößern **keine Werte zu erzeugen** (Interpolation würde auf der Abbildung nicht existierende Zwischenwerte erzeugen, und die Pseudofarbe würde lügen).
 
 ## `examples/acoustic_condition_monitoring.py`
 
@@ -468,10 +469,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_four_dimensions_by_three_d_tools.py`
 
 - **L52** _(ja)_ — 色。★赤と緑は対にしない
-- **L336** _(ja)_ — ★変数名は章ごとに分ける(あとの章の best に上書きされて、図の説明が 別の章の数字を出していた)
-- **L362** _(ja)_ — ★marching-cubes 系と同じく巻きが内向きなので絶対値を取る
-- **L384** _(ja)_ — ★B との差が「断面の角数に依らない」= 2 つの誤差が独立に分かれている証拠
-- **L608** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
+- **L355** _(ja)_ — ★変数名は章ごとに分ける(あとの章の best に上書きされて、図の説明が 別の章の数字を出していた)
+- **L370** _(ja)_ — ★図が主題を映しているか。x, y だけで描くと zw 面の回転が**消える**。 実際にそれで 2 つの GIF がバイト単位で同一になっていた。
+- **L403** _(ja)_ — ★marching-cubes 系と同じく巻きが内向きなので絶対値を取る
+- **L425** _(ja)_ — ★B との差が「断面の角数に依らない」= 2 つの誤差が独立に分かれている証拠
+- **L559** _(ja)_ — ★x, y だけを描くと zw 面の回転が消える。一般の向きで見る。
+- **L651** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/poc_gear_tooth_metrology.py`
 
@@ -508,10 +511,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_illusions_and_perpetual_drawing.py`
 
-- **L194** _(ja)_ — ★★「目の主張 1 / 実測 0」を点で並べても**何の図か分かりにくい**。 測った結果を**絵の上に描き戻す**ほうが強い —— 測った目地の位置に 端から端まで真っ直ぐな罫を引くと、タイルは傾いて見えたままなのに 罫は平行だと目で確かめられる。図を描く側と測る側が同じ箱にあるから できる見せ方で、見た目と数値を「並べる」のではなく「重ねる」。
-- **L199** _(ja)_ — ★罫を目地と**同じ太さ**にすると目地を塗りつぶしてしまい、錯視ごと 消える(最初それで (a) が別の図になった)。目地を太くしてから、 その中に細い罫を通す。
-- **L254** _(ja)_ — ★閉形式で厳密に出るものと、再帰で誤差が積もるものを同じ物差しで見ない。
-- **L277** _(ja)_ — ★最初は「104 歩で 52 マス = 0.5 /歩」と書いたが、実測 0.114 と合わなかった。 測り直すと**正味の増加は 104 歩あたりちょうど 12 マス**(整数)。周期の 中で塗っては消すので、正味はずっと少ない。推測でなく実測が正しかった。
+- **L60** _(ja)_ — ★ここは以前「錯視の図で測る側を採点する」章だった。だが並んでいた検査は **自分で置いた定数を読み返すだけ**で、間に変換が 1 つも無かった —— 厳密に水平に引いた目地が水平だ、平坦に塗ったマスが平坦だ、同値に置いた 2 パッチが同値だ。錯視は人間の知覚の性質なので、測る側が騙される理由が そもそも無い。**同義反復**なので落とした(2026-09-24、指摘を受けて)。 残したのは 1 件だけ —— **素朴な長さ計測が実際に外す**こと。これは 知覚ではなく**アルゴリズムの偏り**の話なので、中身がある。
+- **L95** _(ja)_ — ★外した予言 —— 「矢羽根が長いほど偏りも大きい」と読んだが違った。
+- **L103** _(ja)_ — ★錯視の絵(カフェウォール・チェッカー・カニッツァ・フレーザー・ エビングハウス)は**直線と矩形を引いているだけ**で、この箱の力を 何も示していない。2026-09-24 の指摘を受けて主図から降ろした。 残すのは、測る側の**偏り**が見える 1 枚だけ。
+- **L144** _(ja)_ — ★閉形式で厳密に出るものと、再帰で誤差が積もるものを同じ物差しで見ない。
+- **L167** _(ja)_ — ★最初は「104 歩で 52 マス = 0.5 /歩」と書いたが、実測 0.114 と合わなかった。 測り直すと**正味の増加は 104 歩あたりちょうど 12 マス**(整数)。周期の 中で塗っては消すので、正味はずっと少ない。推測でなく実測が正しかった。
 
 ## `examples/poc_interferometry_step.py`
 
@@ -1864,6 +1868,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1581** — ★ Der Bereich "Unschärfe innerhalb von 1 Pixel" wird **nicht aus dem Gitter entnommen**. Die Schrittweite des Sweeps beträgt 3.9 mm, während die Schärfentiefe nur 0.74 mm ist, sodass kein einziger Punkt auf das Gitter fällt (die erste Version stürzte dort ab, weil min() leer wurde). Löse die Grenze selbst per Bisektion.
 - **L1600** — ★ Der Überhöhungsfaktor ist **vertikale Pixel/mm ÷ horizontale Pixel/mm**. Die erste Version schrieb den Kehrwert und zeigte "0.13x" auf einer um das 8-fache gestreckten Abbildung an (was dem Leser genau das Gegenteil vermittelt).
 - **L2090** — ★ In zwei Zeilen aufteilen, oben und unten. In einer Abbildung überlagert, lesen sich die beiden Linien mit unterschiedlichen Einheiten (Pixelzahl und Detektionsrate) so, als lägen sie auf derselben vertikalen Achse (genau so sah es tatsächlich aus).
+
+## `tools/gen_wingpoc_gallery.py`
+
+- **L299** _(ja)_ — ★展示に載るのは 1 本あたり 2 枚ほど。PoC は中央値 6 枚・最大 25 枚 作っているので、**残りへの道**を必ず出す(2026-09-24、ユーザー指摘 「生成した数百枚はどこにあるのか記事からは分からない」)。
 
 ## `tools/op_example_index.py`
 

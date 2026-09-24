@@ -217,6 +217,25 @@ def _ops_used(poc_id: str) -> list:
     return sorted(n for n in tbl if len(n) >= 4 and OEI._called(n, src))
 
 
+def _figures_line(poc_id: str, lang: str) -> str:
+    """その PoC が作った図の**全部**へのリンクと枚数。
+
+    ★展示ブロックに出るのは主図と測定の図だけで、残りは repo にあるのに
+    記事から辿れなかった(実測: 1,165 枚中 317 枚しか参照されていない)。
+    """
+    d = os.path.join(ASSETS, poc_id)
+    n = 0
+    if os.path.isdir(d):
+        n = len([f for f in os.listdir(d)
+                 if f.lower().endswith((".png", ".gif"))
+                 and not f.endswith("_720.jpg")])
+    url = ("https://github.com/furuse-kazufumi/fullseye/tree/master/"
+           "docs/articles/assets/poc/" + poc_id)
+    if lang == "ja":
+        return "この回が作った図は全部で **%d 枚**あります —— [全部見る](%s)" % (n, url)
+    return "This run produced **%d figures** in total - [see them all](%s)" % (n, url)
+
+
 def _ops_line(poc_id: str, lang: str) -> str:
     """「使用 op」行。細かい説明は書かず、ノート(ヘルプの目録)へのリンクに任せる
     (ユーザー方針 2026-09-07「ヘルプの目録へのリンクを貼っておけば細かい説明はいらない」)。"""
@@ -276,6 +295,11 @@ def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
         "",
         ("ソース: [%s](%s)" % ("examples/%s.py" % ex["id"], src)) if lang == "ja"
         else ("Source: [%s](%s)" % ("examples/%s.py" % ex["id"], src)),
+        "",
+        # ★展示に載るのは 1 本あたり 2 枚ほど。PoC は中央値 6 枚・最大 25 枚
+        #   作っているので、**残りへの道**を必ず出す(2026-09-24、ユーザー指摘
+        #   「生成した数百枚はどこにあるのか記事からは分からない」)。
+        _figures_line(ex["id"], lang),
         "",
         _ops_line(ex["id"], lang),
         "",
