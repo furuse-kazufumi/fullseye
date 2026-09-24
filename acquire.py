@@ -832,7 +832,11 @@ class Camera:
             _, _vmb, cam = self._handle
             frame = cam.get_frame(timeout_ms=int(self.opts.get("timeout_ms", 2000)))
             fmt = str(frame.get_pixel_format())
-            return (frame.as_numpy_ndarray(),
+            #: ★``as_numpy_ndarray()`` はフレームのバッファを**そのまま指す**
+            #:   (vmbpy 同梱の例が「同じメモリを使う」と書いている)。vmbpy の取得は
+            #:   フレームを再キューして**バッファを使い回す**ので、複製しないと
+            #:   次の 1 枚が前の 1 枚を書き換える —— 例外は出ず、絵だけが入れ替わる。
+            return (np.array(frame.as_numpy_ndarray()),
                     {"pixel_format": fmt, "bit_depth": bit_depth_of(fmt),
                      "timestamp_s": _ns_to_s(frame.get_timestamp()),
                      "timestamp_source": "device", "frame_id": frame.get_id()})

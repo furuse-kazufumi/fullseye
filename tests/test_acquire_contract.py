@@ -595,3 +595,99 @@ def test_the_connectivity_doc_sfnc_section_matches_the_code():
     for name in ("configure", "missing_required_features"):
         assert "cam.%s(" % name in text
         assert callable(getattr(acquire.Camera, name))
+
+
+# --------------------------------------------------------------------------- バッファ
+#
+# ★SDK のバッファを指したまま返すと、**次の 1 枚が前の 1 枚を書き換える**。
+# 例外は出ない —— 絵だけが入れ替わるので、連写を保存して初めて気づく。
+# 実機が要る経路なので実行では確かめられない。**ソースで確かめる**。
+
+
+def _raw_grab_returns() -> dict:
+    """``_raw_grab`` の backend ごとに「何を返しているか」を式のまま集める。
+
+    枝は ``if b == "<name>":`` で分かれているので、その名前を鍵にする。
+    """
+    import ast as _ast
+    import inspect
+    import textwrap
+
+    #: メソッドのソースは字下げされているので、そのままでは parse できない。
+    src = textwrap.dedent(inspect.getsource(acquire.Camera._raw_grab))
+    fn = _ast.parse(src).body[0]
+    out = {}
+    for node in _ast.walk(fn):
+        if not isinstance(node, _ast.If):
+            continue
+        t = node.test
+        if not (isinstance(t, _ast.Compare) and isinstance(t.comparators[0], _ast.Constant)):
+            continue
+        name = t.comparators[0].value
+        if not isinstance(name, str):
+            continue
+        for n in _ast.walk(node):
+            if isinstance(n, _ast.Return) and isinstance(n.value, _ast.Tuple) and n.value.elts:
+                expr = _ast.unparse(n.value.elts[0])
+                if expr != "None":
+                    out.setdefault(name, []).append(expr)
+    return out
+
+
+#: 複製を作る呼び方。これのどれかで包まれていなければ、SDK のメモリを指したまま。
+_COPIERS = ("np.array(", ".astype(", ".copy()")
+
+#: ★複製が要らない backend と、その**理由**。黙って外さない。
+_NO_COPY_NEEDED = {
+    "callable": "利用者の関数が作った配列。こちらが所有するバッファではない",
+    "dir": "画像を 1 枚ずつ読むので毎回新しい配列になる",
+    "opencv": "VideoCapture.read() / imread() は呼ぶたびに確保する",
+}
+
+
+def test_every_sdk_backend_copies_out_of_its_buffer():
+    """★バッファを使い回す SDK から、指したままの配列を返していないか。
+
+    2026-09-25 の実測: ``vimba`` の ``as_numpy_ndarray()`` は**フレームのバッファを
+    そのまま指す**(vmbpy 同梱の例が「同じメモリを使う」と書いている)。vmbpy の
+    取得はフレームを再キューしてバッファを使い回すので、複製しないと**次の 1 枚が
+    前の 1 枚を書き換える** —— 例外は出ず、絵だけが入れ替わる。
+
+    実機が要る経路なので実行では確かめられない。**ソースで確かめる**。
+    """
+    got = _raw_grab_returns()
+    assert len(got) >= 8, ("backend の枝が %d 本しか読めていない —— 門が空になっている"
+                           % len(got))
+    #: 申告した backend が全部読めているか(表と実装のずれもここで出る)
+    declared = {c["name"] for c in acquire.capabilities()}
+    missing = sorted(declared - set(got) - set(_NO_COPY_NEEDED))
+    assert not missing, "枝が見つからない backend: %s" % missing
+    bad = []
+    for name, exprs in sorted(got.items()):
+        if name in _NO_COPY_NEEDED:
+            continue
+        for e in exprs:
+            if not any(c in e for c in _COPIERS):
+                bad.append("%s: %s" % (name, e))
+    assert not bad, (
+        ("SDK のバッファを複製せずに返している枝がある: %s" + chr(10) +
+         "次の 1 枚が前の 1 枚を書き換える(例外は出ない)。np.array(...) で包むこと。")
+        % bad)
+
+
+def test_the_exemptions_are_named_and_still_exist():
+    """免除は**理由つきで名指し**。実在しない backend の免除は嘘になる。"""
+    names = {c["name"] for c in acquire.capabilities()}
+    stale = sorted(set(_NO_COPY_NEEDED) - names)
+    assert not stale, "実在しない backend の免除: %s" % stale
+    for n, why in _NO_COPY_NEEDED.items():
+        assert len(why) > 10, n
+
+
+def test_the_copy_gate_actually_catches_a_view():
+    """★門は壊して確かめる。複製しない式を混ぜたら落ちること。"""
+    bad = [r for r in ["frame.as_numpy_ndarray()"]
+           if not any(c in r for c in _COPIERS)]
+    assert bad, "複製していない式を _COPIERS が通してしまう"
+
+
