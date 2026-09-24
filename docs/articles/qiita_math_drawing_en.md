@@ -26,6 +26,9 @@ public_id: dc100e7ea90e9575c40b
 
 *↑ As the arms go 1 → 4 → 16 → 90 → 600 → 4000, the picture gives itself away. How close it gets at each stage is known **before** anything is drawn.*
 
+
+> **About the figures**: every figure from the seven runs this article covers is shown below (**86** of them). All 151 runs and **1165 figures**, including those outside this series, are laid out in [the metrology museum](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10); the files themselves are [here](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc).
+
 ## About this series
 
 Domain colouring. Newton basins. The Mandelbrot set. Apollonian gaskets. Phyllotactic spirals. Flow around an aerofoil. **Mathematical pictures look right. And things that look right never get checked.**
@@ -161,6 +164,37 @@ print(err["corr"], err["length_px"])
 
 ---
 
+
+This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_one_stroke_epicycles)
+
+#### The rest of this run's figures
+
+The remaining **6 figures** from the same run. Captions are cut to their first sentence; the detailed reading belongs to the figures above.
+
+![lloyd](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/02_lloyd.png?v=3)
+
+*↑ Lloyd's energy sum w|x-c(x)|^2 never goes up — that is a property of the algorithm that can be checked exactly, which is why it is the gate rather than the look…*
+
+![tone](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/04_tone.png?v=3)
+
+*↑ the tone of a line drawing exists at a scale coarser than the line, so both pictures are compared after a Gaussian of sigma 6 px: correlation 0.984 against +0.0…*
+
+![pen](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/05_pen.png?v=3)
+
+*↑ while the strokes do not overlap the ink fraction is length x width / area, so the width that reproduces the mean tone is solved in closed form (0.90 px here)*
+
+![harmonics](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/06_harmonics.png?v=3)
+
+*↑ Parseval makes this a prediction, not a measurement: the squared error of the order-K reconstruction equals the energy of the coefficients above K, exactly*
+
+![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/08_numbers.png?v=3)
+
+*↑ every row is measured by an operator in this run; the harmonic rows are predicted in closed form before the drawing is made*
+
+![harmonic table](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/09_harmonic_table.png?v=3)
+
+*↑ Parseval: the error above is the energy that was left out, exactly*
+
 ## 2. The complex plane as an area, not a curve
 
 ### Recipe
@@ -213,6 +247,49 @@ print("unconverged:", int((basins < 0).sum()))          # Cayley's exact solutio
 ```
 
 ---
+
+
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_complex_plane_fields)
+
+#### The rest of this run's figures
+
+The remaining **9 figures** from the same run. Captions are cut to their first sentence; the detailed reading belongs to the figures above.
+
+![rational](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/01_rational.png?v=3)
+
+*↑ 有理関数 (z−z₁)(z−z₂)/(z−p) の位相彩色。*
+
+![orders](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/02_orders.png?v=3)
+
+*↑ ★絵が定理を証明する側に回る。*
+
+![boundary](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/04_boundary.png?v=3)
+
+*↑ 2 次の境界は虚軸 1 本(513 画素の格子で 1026)。*
+
+![mandelbrot](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/05_mandelbrot.png?v=3)
+
+*↑ ★★右の明るい部分は**反復せずに**内側と分かる領域 —— 固定点 z* = (1−√(1−4c))/2 が吸引的(|2z*| < 1)なら軌道は決して 脱出しない、という閉形式。*
+
+![julia](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/06_julia.png?v=3)
+
+*↑ z → z² + c は |z| を 2 乗するだけなので、c = 0 では「|z| < 1 は 0 へ、|z| > 1 は無限へ」が厳密に言える。*
+
+![flow](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/07_flow.png?v=3)
+
+*↑ 迎角 8 度のジューコフスキー翼まわりの非粘性流。*
+
+![kutta](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/08_kutta.png?v=3)
+
+*↑ 後縁は写像の特異点(dz/dζ = 0)なので、循環が正しくないと1/√距離 で発散する。*
+
+![lift](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/09_lift.png?v=3)
+
+*↑ ★CL = 2π(a/b)sin(α+β)。*
+
+![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/10_numbers.png?v=3)
+
+*↑ どの行も「使った式」ではない真値で採点している: 既存 op (cplx_winding_number / cplx_cr_residual)、Cayley の定理、閉形式の内部判定、c=0 のジュリア集合、クッタ条件の対照群、薄翼理論との比。*
 
 ## 3. Theorems that happen to be pictures
 
@@ -276,6 +353,53 @@ print("peaks of the index gap:", gaps.argsort()[::-1][:5])   # 8, 13, 21, ... at
 ```
 
 ---
+
+
+This run produced **11 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_theorems_as_pictures)
+
+#### The rest of this run's figures
+
+The remaining **10 figures** from the same run. Captions are cut to their first sentence; the detailed reading belongs to the figures above.
+
+![apollonian counts](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/02_apollonian_counts.png?v=3)
+
+*↑ 合計は 2·3^depth + 2。*
+
+![ford](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/03_ford.png?v=3)
+
+*↑ フォードの円(分母 12 まで、47 円)。*
+
+![dome](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/04_dome.png?v=3)
+
+*↑ 分割 f を 1, 2, 3, 4, 6 と上げても、次数 5 の頂点は**ちょうど 12 個**から動かない(次数 6 だけが増える)。*
+
+![dome degrees](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/05_dome_degrees.png?v=3)
+
+*↑ オイラーの公式 V − E + F = 2 の帰結。*
+
+![phyllotaxis](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/06_phyllotaxis.png?v=3)
+
+*↑ 3 枚とも螺旋に見える。*
+
+![parastichy](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/07_parastichy.png?v=3)
+
+*↑ 黄金角の山は [34, 55, 89, 21, 13, 8, 144] —— すべてフィボナッチ数。*
+
+![ifs](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/08_ifs.png?v=3)
+
+*↑ モランの式 Σrᵢᵈ = 1 は**写像の縮小率だけ**から d を出す。*
+
+![curves](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/09_curves.png?v=3)
+
+*↑ order 5 で 4^5 = 1,024 点をちょうど 1 回ずつ通り、隣り合う点は必ず距離 1。*
+
+![locality](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/10_locality.png?v=3)
+
+*↑ ヒルベルトは √k の近くを通り(k=32 で 6.38)、走査線はほぼ k に比例する(16.07)。*
+
+![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/11_numbers.png?v=3)
+
+*↑ どの行も「使った式」ではない真値で採点している: デカルトの円定理、整数充填、|ps − qr| = 1、オイラーの関数の和、オイラーの公式(既存 graph_degree_table が数えた)、フィボナッチ、モランの式と既存 fractal_dimension、置換であること。*
 
 ## 4. One beat — a two-slit fringe and a print moiré are the same mathematics
 
@@ -347,6 +471,61 @@ print("measured %.2f px / lambda*D/d = %.2f px"
 ```
 
 ---
+
+
+This run produced **13 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_beats_fringes_and_screens)
+
+#### The rest of this run's figures
+
+The remaining **12 figures** from the same run. Captions are cut to their first sentence; the detailed reading belongs to the figures above.
+
+![nodal](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/02_nodal.png?v=3)
+
+*↑ (m, n) モードの節線は縦 m−1 本・横 n−1 本。*
+
+![fringes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/03_fringes.png?v=3)
+
+*↑ 縞間隔は λD/d。*
+
+![fringe scaling](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/04_fringe_scaling.png?v=3)
+
+*↑ 重なっていることが主張。*
+
+![grating](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/05_grating.png?v=3)
+
+*↑ ★デューティ 50 % の矩形格子は**偶数次が消える**(矩形波のフーリエ係数が偶数調波で 0)。*
+
+![moire](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/06_moire.png?v=3)
+
+*↑ 新聞の 15° / 45° / 75° は差が 30° で、うなりが最も細かくなる組み合わせ。*
+
+![moire scaling](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/07_moire_scaling.png?v=3)
+
+*↑ ★FFT の探す範囲を切らないと**スクリーン自身の山**(どの角度でも 16.7 px = 1/f)を拾って「予言と全然合わない」と読める。*
+
+![halftone tone](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/08_halftone_tone.png?v=3)
+
+*↑ 平均絶対差 0.0517。*
+
+![engrave](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/09_engrave.png?v=3)
+
+*↑ 被覆率は線幅 / 間隔 = w/d。*
+
+![hatch](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/10_hatch.png?v=3)
+
+*↑ 向きは既存 structure_tensor_orientation が決める(この族は構造テンソルを再実装しない)。*
+
+![mosaic](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/11_mosaic.png?v=3)
+
+*↑ Lloyd 反復でセルが等エネルギーに近づく。*
+
+![lloyd](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/12_lloyd.png?v=3)
+
+*↑ 下がり続けることが主張。*
+
+![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/13_numbers.png?v=3)
+
+*↑ どの行も「使った式」ではない真値で採点している: 膜の閉形式とベッセルの零点、λD/d を測り返す別の op、既存 grating_wavelengths との往復、描く前のモアレ予言、w/d の閉形式、既存 structure_tensor_orientation、既存 stipple_energy。*
 
 ## 5. What a picture cannot check — dynamical systems and minimal surfaces
 
@@ -435,6 +614,53 @@ print("median |H| %.5f (the unit-sphere control is 1.0)" % np.median(H[np.isfini
 
 ---
 
+
+This run produced **11 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check)
+
+#### The rest of this run's figures
+
+The remaining **10 figures** from the same run. Captions are cut to their first sentence; the detailed reading belongs to the figures above.
+
+![rk4](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/01_rk4.png?v=3)
+
+*↑ 厳密解は expm(At)x₀ なので、誤差は積分器の次数をそのまま出す。*
+
+![lorenz](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/02_lorenz.png?v=3)
+
+*↑ ローレンツ・アトラクタの xz 断面。*
+
+![lyapunov](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/03_lyapunov.png?v=3)
+
+*↑ Σλ = -13.66666、閉形式 −(σ+1+β) = -13.66667(差 2.6e-06)。*
+
+![dimension](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/05_dimension.png?v=3)
+
+*↑ 円 1・平面 2・カントール log2/log3 = 0.6309。*
+
+![field](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/06_field.png?v=3)
+
+*↑ ode_vector_field_grid は flow2d((2, H, W) の (dy, dx))を返すので、piv_divergence / piv_vorticity / piv_flow_magnitude がそのまま使える。*
+
+![poincare](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/07_poincare.png?v=3)
+
+*↑ 同じ op で両方を測っている。*
+
+![tube](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/08_tube.png?v=3)
+
+*↑ ローレンツの軌道を管メッシュに(MATLAB の tubeplot 相当、12510 頂点 / 25000 面)。*
+
+![minimal](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/09_minimal.png?v=3)
+
+*↑ 「これは極小曲面だ」という主張を、**作り方を知らない op が採点する**。*
+
+![gyroid](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/10_gyroid.png?v=3)
+
+*↑ level = 0 で場は体心反転に対し奇なので、両側の体積はちょうど半分ずつ(実測 0.499928 / 0.499981 / 0.499991、格子に依らない)。*
+
+![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/11_numbers.png?v=3)
+
+*↑ どの行も絵からは読めない: expm との誤差の比、トレース恒等式、厳密な分岐点、既知の 3 つの次元、PIV 族の既存 op が測った tr(A)、トーラスの解析解、既存 vertex_curvature が測った H —— そして節面近似の残差は隠さずここに出してある。*
+
 ## 6. Making pictures that lie to the eye, then grading the measurement
 
 ### The pipeline
@@ -447,51 +673,21 @@ make every time-dependent quantity a function of theta -> the seam is never crea
 
 The first five rounds were about **scoring a picture from outside the picture**. Round 6 turns that around: now we **make the picture that gets scored**.
 
-And the surest place to find pictures whose appearance lies is **optical illusions**. The café-wall mortar lines are *exactly* horizontal. The two Müller-Lyer shafts are *exactly* the same length. The two checker-shadow squares hold the *same floating-point value*. Only the seeing is different.
+The plan was to put optical illusions here. The café-wall mortar lines are *exactly* horizontal, the two Müller-Lyer shafts are *exactly* the same length, and the two checker-shadow squares hold the *same floating-point value* — so having an operator measure them would show that measurement is not fooled.
 
-![Six illusions](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/01_scene.png?v=1)
+### The illusion chapter is gone — measuring it said nothing
 
-*↑ All six keep, exactly, the invariant your eye denies. The generator can hand back that invariant as a number (`illusion_ground_truth`), which makes the picture a **grading sheet for whatever measures it**.*
+**It showed nothing.** All seven checks placed a constant and read the same constant back: grout lines drawn exactly horizontal measured as horizontal (slope 0.0e+00), squares filled flat measured as flat (ptp 0.0e+00), two patches set equal measured as equal. **There is no transformation in between.** An illusion is a property of human perception, so a measurement has no reason to be fooled, and "the measurement is not fooled" is a tautology rather than a finding. The pictures were straight lines and rectangles, demonstrating nothing about the library.
 
-### Illusions do not only fool people
+One check survived, about a bias in the measurement itself.
 
-This was the most interesting finding of the round.
+![Müller-Lyer bias](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/01_muller_lyer_bias.png?v=3)
 
-![Café wall](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/02_cafe_wall.png?v=1)
+*↑ With the arrowheads removed the two shafts are **pixel-identical**, yet a naive length estimate returns **223 and 225 pixels** - and with no arrowheads at all it still returns **223** against a true 220, because the anti-aliased skirt is counted as ink. That is a plain defect, prior to any illusion.*
 
-*↑ The mortar lines are exactly horizontal — all eight measured at slope **0.0e+00**.*
+![Bias against arrowhead length](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/02_bias_vs_head.png?v=3)
 
-![Sweeping the offset](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/03_cafe_wall_shift.png?v=1)
-
-*↑ Only the row offset changes. **The mortar is exactly horizontal in every panel**; only the seeing changes. It vanishes at 0 and 0.5 because the tile edges line up across the mortar.*
-
-![Müller-Lyer](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/04_muller_lyer.png?v=1)
-
-*↑ Strip the arrowheads and the two shafts are **pixel-identical**. But measure "the dark run along the row" naively on the arrowed figure and you get **223 pixels and 225** — the antialiased skirt of the arrowhead lands on the end of the shaft. The truth is 220 for both.*
-
-**A naive measurement is off by two pixels too.** Illusions are usually filed under "quirks of human vision", but this one is also a statement about measurement in general: *on a figure whose endpoint is not sharply defined, measuring without first defining how you measure will miss.*
-
-![Checker shadow](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/05_checker_shadow.png?v=1)
-
-![Row profile](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/06_checker_profile.png?v=1)
-
-*↑ Where the two profiles **touch the same horizontal line** are the two illusion squares. Take the shadow factor to be dark ÷ light and the light square inside the shadow coincides, numerically, with the dark square outside it (difference 0.0e+00).*
-
-![Kanizsa](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/07_kanizsa.png?v=1)
-
-*↑ **Not one edge of the triangle is drawn.** Along the contour the image is the background (ptp 0.0e+00). Run an edge detector and none of the contour a person sees comes back.*
-
-![Fraser](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/08_fraser.png?v=1)
-
-![Hermann and scintillating grids](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/09_hermann.png?v=1)
-
-![The measurement drawn back onto the picture](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/10_measured_back_on.png?v=1)
-
-*↑ Left: **the tiles still look tilted**, yet the thin rules drawn at the measured mortar positions run straight from edge to edge and are parallel to each other (slope 0.0e+00). Right: vertical rules at the shaft ends measured on the bare figure land at **the same positions for both shafts** — only the arrowheads differ. Because the measuring side and the drawing side live in the same box, **a measured value can go straight back onto the picture**: not numbers *beside* the image, but *on* it.*
-
-![Eye versus measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/11_eye_vs_measure.png?v=1)
-
-*↑ For six illusions: **what the eye claims** (plainly different, set to 1) against **what measurement returns**. All six measure exactly 0. This figure is the family's reason to exist.*
+*↑ A second prediction was wrong here too: the bias was expected to grow with arrowhead length, but it reaches two pixels at twenty and **does not move up to eighty**. What creates it is whether a skirt lands on the end, not how long the head is.*
 
 ### How do you grade something that never finishes?
 
@@ -499,57 +695,57 @@ The lineage that runs from the 8-bit one-liners — 10 PRINT's random maze, elem
 
 So only systems carrying a claim that holds *independently of the picture* were admitted.
 
-![Rule 90](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/12_rule90.png?v=1)
+![Rule 90](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/03_rule90.png?v=3)
 
 *↑ Rule 90 from a single cell, 200 rows. **Cell k of row n equals the parity of the binomial coefficient `C(n,k)`, exactly** — Pascal's triangle mod 2. Gradeable without looking at the picture at all, which is what qualifies this family.*
 
-![A gallery of rules](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/13_rule_gallery.png?v=1)
+![A gallery of rules](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/04_rule_gallery.png?v=3)
 
 *↑ Every one starts from the same single cell. The only change is one 8-bit rule number. Rule 30 was once used to generate random numbers; rule 110 is proven **Turing-complete**.*
 
-![Langton's ant](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/14_langtons_ant.png?v=1)
+![Langton's ant](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/05_langtons_ant.png?v=3)
 
 *↑ Two rules only (on white, turn right and paint black; on black, turn left and paint white). Symmetry for the first ten thousand steps, then chaos, then — abruptly — **the "highway": from there on it travels diagonally with period 104, forever**.*
 
-![Growth curve](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/15_langton_growth.png?v=1)
+![Growth curve](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/06_langton_growth.png?v=3)
 
 *↑ Black cells against steps. Noisy at first, then a straight line at **12/104 = 0.1154 cells per step** once the highway starts. **You can tell it has started from the slope, without looking at the picture.***
 
-![Apollonian gasket](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/16_apollonian.png?v=2)
+![Apollonian gasket](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/07_apollonian.png?v=3)
 
 *↑ Every gap takes another tangent circle, so it never ends. **Four mutually tangent circles satisfy Descartes' circle theorem `(Σk)² = 2Σk²` exactly** (residual 1.2e-16) — and the complex curvature-centre form fixes the position too, so this is drawn by **algebra**, not by fitting. The **fill brightness is the curvature** (one over the radius), so the shading shows exactly the quantity the theorem constrains.*
 
-![Chaos game](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/17_chaos_game.png?v=2)
+![Chaos game](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/08_chaos_game.png?v=3)
 
 *↑ Rolling a die and stepping half-way to a vertex is enough to draw the Sierpinski triangle. **Brightness is the density of points** (accumulated bilinearly, with an asinh tone that lifts the dark end). The rendering is not decoration: from the same point set, a picture accumulated by truncation gives a box-counting dimension **0.032** below log3/log2, while this one is off by only **0.0030**.*
 
-![Barnsley fern](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/18_fern.png?v=2)
+![Barnsley fern](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/09_fern.png?v=3)
 
 *↑ Barnsley's fern - four affine maps chosen at random, iterated. **Brightness is density**, normalised by a quantile rather than the maximum (one point at the base dwarfs the rest, and dividing by the maximum crushes everything else to black).*
 
-![Flow field](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/19_flow_field.png?v=2)
+![Flow field](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/10_flow_field.png?v=3)
 
 *↑ The field is built as the **curl of a potential ψ**, so its divergence is identically zero (incompressible, residual 7.0e-17). You can see it: the streamlines **close** around the vortices. A field built from "noise that looks about right" would show sources and sinks there instead. The **colour and width of each line follow the speed** |grad psi|; at constant width and tone the same field only makes a scribble.*
 
-![Reaction-diffusion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/20_reaction_diffusion.png?v=2)
+![Reaction-diffusion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/11_reaction_diffusion.png?v=3)
 
 *↑ Gray-Scott reaction-diffusion, started from **twelve scattered seeds**. A single seed at the centre covers only 0.086 of the frame after the same number of steps, against **0.379** when scattered - and placing them on a regular lattice makes the lattice itself visible, so they are jittered.*
 
-![Plasma](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/21_plasma.png?v=1)
+![Plasma](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/12_plasma.png?v=3)
 
-![10 PRINT and Truchet](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/22_eight_bit.png?v=1)
+![10 PRINT and Truchet](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/13_eight_bit.png?v=3)
 
 *↑ Left is `10 PRINT CHR$(205.5+RND(1)); : GOTO 10`, the Commodore 64 one-liner. Right is Truchet tiling, where **the arcs always end at the midpoint of an edge**, so no arrangement can break the curves.*
 
 ### Pictures that loop in time
 
-![Seamless loop](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/23_loop.gif?v=1)
+![Seamless loop](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/14_loop.gif?v=3)
 
 *↑ There is no cut where the last frame returns to the first.*
 
 The construction is the point. Rather than "snap back at the end", **make every time-dependent quantity a function of θ and take θ from 0 to 2π**: then t = T is literally the same expression as t = 0. The seam is not removed in editing — **it is never created**.
 
-![Seam ratio](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/24_seam.png?v=1)
+![Seam ratio](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/15_seam.png?v=3)
 
 *↑ **The right answer for a seam is 1, not 0.** The ratio is (the last step) ÷ (a typical step). At 1, the last step is indistinguishable from any other. **At 0 there is no seamlessness — there is no motion.** Mistake one for the other and a dead animation reads as a perfect result.*
 
@@ -591,6 +787,17 @@ And one on speed. Building a full-image distance field per primitive cost **17.7
 It is **not for finished artwork**. Only pictures whose claim can be checked went in, so anything beautiful but uncheckable was left out — which also means every picture here can answer "why is that correct?".
 
 It also does not measure the **strength** of an illusion. How tilted the mortar *looks* is psychophysics and outside this family's remit. What is measured is only that it **is not tilted**.
+
+
+This run produced **16 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing)
+
+#### The rest of this run's figures
+
+The remaining **1 figures** from the same run. Captions are cut to their first sentence; the detailed reading belongs to the figures above.
+
+![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/16_numbers.png?v=3)
+
+*↑ この PoC の主張は全部この表に入っています。*
 
 ## 7. Auditing the instrument — where a caliper fails, and why
 
@@ -787,23 +994,7 @@ defect. Scanning all 151 runs found exactly two such pairs - the other being a
 
 ### Measuring an optical illusion said nothing
 
-That chapter is gone. Its checks placed a constant and read the same constant
-back: grout lines drawn exactly horizontal measured as horizontal (slope
-0.0e+00), squares filled flat measured as flat (ptp 0.0e+00), two patches set
-equal measured as equal. **There is no transformation in between.** An illusion
-is a property of human perception, so a measurement has no reason to be fooled,
-and "the measurement is not fooled" is a tautology rather than a finding. The
-pictures were straight lines and rectangles, demonstrating nothing about the
-library.
-
-One check survived, about a bias in the measurement itself. The two shafts of the
-Müller-Lyer figure are exactly equal, yet a naive length estimate returns **223
-and 225 pixels** - and with no arrowheads at all it still returns **223** against
-a true 220, because the anti-aliased skirt is counted as ink. That is a plain
-defect, prior to any illusion. A second prediction was wrong here too: the bias
-was expected to grow with arrowhead length, but it reaches two pixels at twenty
-and **does not move up to eighty**. What creates it is whether a skirt lands on
-the end, not how long the head is.
+That chapter was dropped in round 6, where the reasoning now lives. In short: all seven checks placed a constant and read the same constant back, with no transformation in between. One check survived, about a bias in the measurement itself.
 
 ### 1,155 figures were produced; 317 were in the article
 
@@ -817,6 +1008,17 @@ appear, every exhibit carries a line saying how many figures the run produced
 with a link to all of them (**1,155 of 1,155** now reachable). Captions on the
 additional figures are cut to their first sentence: the point is the count, and
 the detailed reading belongs to the first two.
+
+
+This run produced **16 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_calipers_under_illusion)
+
+#### The rest of this run's figures
+
+The remaining **1 figures** from the same run. Captions are cut to their first sentence; the detailed reading belongs to the figures above.
+
+![cafe wall sweep](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/02_cafe_wall_sweep.png?v=3)
+
+*↑ `measure_length` は「参照線の法線方向に何 px 探すか」。*
 
 ## Sources
 
