@@ -737,6 +737,87 @@ This PoC does not argue that calipers are robust, or fragile, under illusions. I
 
 ---
 
+### Redrawing the pictures changed what could be measured from them
+
+Re-doing the tone and colour alone moved the measurement closer to the truth:
+from the same point set, the same operator and the same threshold, the
+box-counting dimension went from **0.032** below log3/log2 to **0.0030** below.
+
+The cause was the accumulation. The old code truncated to integer pixels with
+`.astype(np.int64)` - not even rounding - so **the whole picture was shifted by
+exactly half a pixel** (measured centroid offset **-0.5009 / -0.4998 px**). The
+total mass agreed to **0.00e+00** over 399,936 points, so a gate that checks only
+the zeroth moment is structurally blind to this. Accumulating bilinearly leaves
+the centroid off by **0.000e+00**, because in one dimension
+`i(1-f) + (i+1)f = i + f` returns the original position exactly, and two
+dimensions separate by axis.
+
+The tone is now an inverse hyperbolic sine, which is strictly monotone, so not
+one of 4,998 sampled pixel pairs changes order. Normalising by the maximum,
+however, crushed Barnsley's fern to near-black, because one point at its base
+dwarfs everything else; a quantile fixed it (std 0.052 to **0.0996**).
+Reaction-diffusion had a single seed at the centre and covered only **0.086** of
+the frame; twelve scattered seeds reach **0.379** at the same cost - and placing
+them on a lattice makes the lattice itself visible, so they are jittered.
+
+One prediction was wrong. The Apollonian colours were crushed at the large
+circles, so ranks looked like the fix; they made it worse, since the tiny circles
+are the majority and pushed every large one to the bottom. A logarithm with a
+gamma of 0.45 was the answer. **Equalising a distribution works against you when
+the subject you want to show is the minority.**
+
+### Two figures making opposite claims were the same picture
+
+In the chapter where a tesseract turns in two planes at once, the animation for
+the rational ratio and the one for the golden ratio were **byte-identical**.
+
+The projection was to blame: the figure drew only the **x and y** components of
+the three-dimensional shadow, and the second rotation acts in the **zw** plane,
+which touches neither. Across sixty frames the x,y difference is **exactly
+0.000e+00**, while x,y,z differ by 2.494 - the subject of the chapter was
+invisible in that projection by construction. Viewing the shadow from a generic
+direction (a 2x3 orthographic projection, orthonormal to 1.11e-16) gives a
+difference of **1.322**.
+
+This passed because **nothing checked whether two figures had the same content**.
+Their count, names, captions and existence were all gated; only identity was not.
+Every figure's sha256 is now recorded, and a repeated byte string is treated as a
+defect. Scanning all 151 runs found exactly two such pairs - the other being a
+**stale leftover** from a run with a different figure count.
+
+### Measuring an optical illusion said nothing
+
+That chapter is gone. Its checks placed a constant and read the same constant
+back: grout lines drawn exactly horizontal measured as horizontal (slope
+0.0e+00), squares filled flat measured as flat (ptp 0.0e+00), two patches set
+equal measured as equal. **There is no transformation in between.** An illusion
+is a property of human perception, so a measurement has no reason to be fooled,
+and "the measurement is not fooled" is a tautology rather than a finding. The
+pictures were straight lines and rectangles, demonstrating nothing about the
+library.
+
+One check survived, about a bias in the measurement itself. The two shafts of the
+Müller-Lyer figure are exactly equal, yet a naive length estimate returns **223
+and 225 pixels** - and with no arrowheads at all it still returns **223** against
+a true 220, because the anti-aliased skirt is counted as ink. That is a plain
+defect, prior to any illusion. A second prediction was wrong here too: the bias
+was expected to grow with arrowhead length, but it reaches two pixels at twenty
+and **does not move up to eighty**. What creates it is whether a skirt lands on
+the end, not how long the head is.
+
+### 1,155 figures were produced; 317 were in the article
+
+Counting them settled it: the museum referenced **27 %**, leaving **848 figures
+unreachable from the article**. Each exhibit showed 2.1 pictures on average -
+**139 of 150 showed exactly two** - while the runs produce a median of six and up
+to twenty-five.
+
+The article now shows **767** instead of 318, and for whatever still does not
+appear, every exhibit carries a line saying how many figures the run produced
+with a link to all of them (**1,155 of 1,155** now reachable). Captions on the
+additional figures are cut to their first sentence: the point is the count, and
+the detailed reading belongs to the first two.
+
 ## Sources
 
 - Image: Katsushika Hokusai, *Under the Wave off Kanagawa* (Thirty-six Views of Mount Fuji, c. 1830–32). The Metropolitan Museum of Art Open Access release marked `isPublicDomain: true` (CC0), object 45434 / image DP130155, converted to luminance and downscaled.
