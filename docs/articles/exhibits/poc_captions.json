@@ -44,6 +44,55 @@
    "計測",
    "ComputerVision",
    "品質管理"
+  ],
+  "parts": [
+   {
+    "id": "entrance",
+    "kind": "index",
+    "slug": null,
+    "title_ja": null,
+    "title_en": null
+   },
+   {
+    "id": "wingset_measured",
+    "kind": "generated",
+    "slug": "what",
+    "wings": [
+     "wing_industrial",
+     "wing_metrology",
+     "wing_bio",
+     "wing_astroenv"
+    ],
+    "title_ja": "紙面の計測館 —— 何を測るかの棟(産業検査・寸法計測・医用生物・天文環境)",
+    "title_en": "A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)"
+   },
+   {
+    "id": "wingset_method",
+    "kind": "generated",
+    "slug": "how",
+    "wings": [
+     "wing_imaging",
+     "wing_xyt",
+     "wing_geometry",
+     "wing_color",
+     "wing_forensics",
+     "wing_threed"
+    ],
+    "title_ja": "紙面の計測館 —— どう測るかの棟(撮像品質・時系列・幾何校正・色・法科学・3-D 形状)",
+    "title_en": "A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)"
+   },
+   {
+    "id": "lane_math_article",
+    "kind": "external",
+    "slug": null,
+    "wings": [
+     "lane_math"
+    ],
+    "article_ja": "qiita_math_drawing_ja.md",
+    "article_en": "qiita_math_drawing_en.md",
+    "title_ja": "数学の絵は、きれいなので誰も確かめない ―― 定理を門にして描く PoC シリーズ",
+    "title_en": "Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test"
+   }
   ]
  },
  "entrance": {
@@ -204,6 +253,14 @@
    "title_en": "The 3-D Shape Wing — Align First, and the Alignment Eats the Defect",
    "placard_ja": "点群とメッシュの仕事は、2-D の仕事と 1 つだけ決定的に違います。**測る前に姿勢を合わせる**という段が入ることです。合わせる段は、測りたいずれを最小にする向きに形を回します。だから欠陥が大きいほど、合わせの段が欠陥を吸い、残差は小さく、部品は良品に見えます。この部屋の展示は、その吸われた分を数える試みです。\n\n真値はすべて式で置いてあります。立体は解析的な面のブール演算で作り、体積・表面積・肉厚・曲率が式で分かるものを選びます。変形は既知の場(局所のへこみ、反り、法線方向の一定の摩耗)、姿勢は既知の回転と並進、点群は面からの一様サンプルに既知の密度・雑音・欠測を掛けたものです。だから「合わせの誤差」と「形の誤差」を別々に持てます。\n\n3-D 特有の落とし穴も、この部屋では別々に数えます。最近傍距離は雑音があると必ず正へ偏る(片側だけ数える量だから)、法線の符号は下請けの都合で決まる、密度を変えると距離の尺度そのものが動く、対称な形は姿勢が一意に決まらない。どれも 1 つの数字に畳んだ瞬間に見えなくなります。",
    "placard_en": "Work on point clouds and meshes differs from 2-D work in one decisive way: a pose-alignment step comes before the measurement. That step rotates the shape into whatever orientation makes the discrepancy smallest, so the larger the defect, the more of it the alignment absorbs, leaving a small residual and a part that looks in tolerance. The exhibits in this room try to count what the alignment ate.\n\nEvery ground truth here is written as a formula. Solids are built from analytic surfaces combined with boolean operations, chosen so that volume, surface area, wall thickness and curvature are known in closed form. Deformations are known fields (a local dent, a warp, a constant wear along the surface normal), poses are known rotations and translations, and the scan is a uniform sample of the surface with a known density, noise level and occlusion pattern. That is what makes it possible to hold the alignment error and the shape error apart.\n\nThe pitfalls specific to 3-D also get counted separately here. A nearest-neighbour distance is biased upward whenever there is noise, because it only ever counts one side. Normal signs are decided by whatever helper computed them. Changing the point density changes the scale of the distance itself. A symmetric shape has no unique pose. Each of these disappears the moment the numbers are folded into one."
+  },
+  {
+   "id": "lane_math",
+   "order": 99,
+   "title_ja": "数学の絵 ―― 定理が門になる回(別記事)",
+   "title_en": "Mathematical pictures — where the theorem is the test (separate article)",
+   "placard_ja": "この展示先の回は、計測の展示館ではなく**数学の絵のシリーズ**に掛かっています。分ける基準は「真値がどこから来るか」です —— 計測の展示は測る対象があり真値は対象の側に、ここの回は対象が無く、真値は描いた絵そのものの定理・恒等式・不変量から出ます。記事は手書きなので、生成器はここを描きません。",
+   "placard_en": "These runs hang in the **mathematical-picture series**, not in the metrology museum. The dividing line is where the ground truth comes from: a metrology exhibit measures an object and the truth lives in that object, while these runs have no object at all — the truth comes from a theorem, an identity or an invariant of the drawing itself. That article is written by hand, so the generator does not render this lane."
   }
  ],
  "exhibits": [
@@ -1737,7 +1794,7 @@
   },
   {
    "id": "poc_one_stroke_epicycles",
-   "wing": "wing_imaging",
+   "wing": "lane_math",
    "added": "2026-09-22",
    "numbers_source": "log",
    "figure": "epicycles",
@@ -1749,7 +1806,7 @@
   },
   {
    "id": "poc_complex_plane_fields",
-   "wing": "wing_imaging",
+   "wing": "lane_math",
    "added": "2026-09-22",
    "numbers_source": "log",
    "figure": "mandelbrot",
@@ -1760,7 +1817,7 @@
   },
   {
    "id": "poc_theorems_as_pictures",
-   "wing": "wing_imaging",
+   "wing": "lane_math",
    "added": "2026-09-23",
    "numbers_source": "log",
    "figure": "apollonian",
@@ -1771,7 +1828,7 @@
   },
   {
    "id": "poc_beats_fringes_and_screens",
-   "wing": "wing_imaging",
+   "wing": "lane_math",
    "added": "2026-09-23",
    "numbers_source": "log",
    "figure": "membrane",
@@ -1782,7 +1839,7 @@
   },
   {
    "id": "poc_what_a_picture_cannot_check",
-   "wing": "wing_imaging",
+   "wing": "lane_math",
    "added": "2026-09-23",
    "numbers_source": "log",
    "figure": "lorenz",
@@ -1804,7 +1861,7 @@
   },
   {
    "id": "poc_illusions_and_perpetual_drawing",
-   "wing": "wing_imaging",
+   "wing": "lane_math",
    "added": "2026-09-23",
    "numbers_source": "log",
    "figure": "apollonian",
@@ -1815,7 +1872,7 @@
   },
   {
    "id": "poc_calipers_under_illusion",
-   "wing": "wing_metrology",
+   "wing": "lane_math",
    "added": "2026-09-24",
    "numbers_source": "log",
    "figure": "caliper_on_cafe_wall",

@@ -27,11 +27,11 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 
 <!-- articles:start -->
 
-## この下にあるもの(全 52 本 —— 生成)
+## この下にあるもの(全 56 本 —— 生成)
 
 `py -3.11 tools/gen_docs_index_ops.py` が `docs/articles/` を歩いて作ります。**ここから辿れない文書を作らない**ための一覧なので、手で足し引きしないでください。
 
-**記事**(16) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
+**記事**(20) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
 
 | ファイル | 見出し |
 |---|---|
@@ -41,8 +41,12 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 | [`LINKEDIN_POST_msa.md`](LINKEDIN_POST_msa.md) | LinkedIn 投稿キット(測る側を測る —— 規格の公表値が 5 件を出した話) |
 | [`fullseye_overview_qiita_en.md`](fullseye_overview_qiita_en.md) | Carrying ~1,000 Explainable Classical Vision Algorithms as "Skills" — Building Fullseye, a Self-Made Vision Workshop ... |
 | [`fullseye_overview_qiita_ja.md`](fullseye_overview_qiita_ja.md) | 説明できる古典画像処理を「スキル」として1000個持ち歩く ―― Physical AI のための自作ビジョン工房 **Fullseye** をつくっている話 |
+| [`fullseye_poc_museum_how_qiita_en.md`](fullseye_poc_museum_how_qiita_en.md) | A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3... |
+| [`fullseye_poc_museum_how_qiita_ja.md`](fullseye_poc_museum_how_qiita_ja.md) | 紙面の計測館 —— どう測るかの棟(撮像品質・時系列・幾何校正・色・法科学・3-D 形状) |
 | [`fullseye_poc_museum_qiita_en.md`](fullseye_poc_museum_qiita_en.md) | A Metrology Museum on Paper — Planting Your Own Ground Truth to Find Where Image Measurement Breaks |
 | [`fullseye_poc_museum_qiita_ja.md`](fullseye_poc_museum_qiita_ja.md) | 紙面の計測館 ―― 真値を自分で仕込んで、画像計測の「壊れる場所」を先に知る |
+| [`fullseye_poc_museum_what_qiita_en.md`](fullseye_poc_museum_what_qiita_en.md) | A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground) |
+| [`fullseye_poc_museum_what_qiita_ja.md`](fullseye_poc_museum_what_qiita_ja.md) | 紙面の計測館 —— 何を測るかの棟(産業検査・寸法計測・医用生物・天文環境) |
 | [`qiita_3dgs_sim_native.md`](qiita_3dgs_sim_native.md) | 物理シミュレーションを、そのまま3D Gaussian Splattingにする ―― 「姿勢推定いらず」の3DGSを純PyTorchでRTX 5090に実装した話 |
 | [`qiita_blas_threads_ja.md`](qiita_blas_threads_ja.md) | 24 コアが 1 コアに負ける ―― 行列分解の速さを、仮説ではなく測定で決めるまで |
 | [`qiita_flybrain_closedloop_en.md`](qiita_flybrain_closedloop_en.md) | It Passed Every Static Test, Then Failed Completely the Moment It Started Walking — Putting a Connectome-Constrained ... |

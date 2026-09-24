@@ -47,8 +47,40 @@ GH = "https://github.com/furuse-kazufumi/fullseye/blob/master/"
 THUMB_W = 720
 JPEG_Q = 92
 OUT_WING = {L: os.path.join(EXHIBITS, "wingpoc.%s.md" % L) for L in ("ja", "en")}
+#: 総合案内。★既存の Qiita 枠がこのファイルを指しているので、名前を変えない ――
+#: 外部リンク・LGTM・ストックはこの URL に付いている。館の入口に充てるのが筋。
 OUT_ARTICLE = {"ja": os.path.join(_ROOT, "docs", "articles", "fullseye_poc_museum_qiita_ja.md"),
                "en": os.path.join(_ROOT, "docs", "articles", "fullseye_poc_museum_qiita_en.md")}
+LEDGER = os.path.join(EXHIBITS, "exhibit_numbers.json")
+
+
+def part_path(slug: str, lang: str) -> str:
+    """棟 1 つの記事の置き場。"""
+    return os.path.join(_ROOT, "docs", "articles",
+                        "fullseye_poc_museum_%s_qiita_%s.md" % (slug, lang))
+
+
+def _numbers() -> dict:
+    """収蔵番号 ``id -> "2026.037"``。台帳が唯一の出どころ。"""
+    with open(LEDGER, encoding="utf-8") as fh:
+        return {k: v["no"] for k, v in json.load(fh)["issued"].items()}
+
+
+def _qiita_items() -> dict:
+    p = os.path.join(EXHIBITS, "qiita_items.json")
+    return json.load(open(p, encoding="utf-8")) if os.path.exists(p) else {}
+
+
+def _part_url(part: dict, lang: str, items: dict) -> str:
+    """棟の記事 URL。投稿済みならその URL、まだなら GitHub の md。"""
+    if part["kind"] == "external":
+        key, rel = part["id"] + "." + lang, "docs/articles/" + part["article_" + lang]
+    elif part["kind"] == "index":
+        key, rel = lang, "docs/articles/fullseye_poc_museum_qiita_%s.md" % lang
+    else:
+        key = part["id"] + "." + lang
+        rel = "docs/articles/fullseye_poc_museum_%s_qiita_%s.md" % (part["slug"], lang)
+    return (items.get(key) or {}).get("url") or (GH + rel)
 
 _LOCAL = re.compile(r"[A-Za-z]:\\\\|/c/dev/|/Users/|AppData")
 _SCENE = re.compile(r"scene|input|overlay|montage|frame|before|after|mask|image|map|panel|track|recon|render|stack|field|labels|segment|view")
@@ -276,7 +308,7 @@ def _ops_line(poc_id: str, lang: str) -> str:
     return ("使用 op(ノートへ): " if lang == "ja" else "Ops used (notes): ") + links + more
 
 
-def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
+def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
                 second: dict | None = None, thumb2: str | None = None,
                 extras: list | None = None, more: list | None = None) -> str:
     title = ex["title_" + lang]
@@ -286,7 +318,9 @@ def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
     run = ex.get("run") or ("py -3.11 examples/%s.py" % ex["id"])
     src = GH + "examples/%s.py" % ex["id"]
     lines = [
-        "## %d. %s" % (n, title),
+        # ★見出しは**収蔵番号**。順路番号(何番目か)は出さない —— 展示を 1 つ挟むだけで
+        #   以降が全部ずれ、記事を分けるたびに番号が動くため(2026-09-25)。
+        "## No.%s —— %s" % (no, title),
         "",
         "[![%s](%s)](%s)" % (title.replace("]", ")"), th, full),
         "",
@@ -344,21 +378,21 @@ def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
     return "\n".join(lines)
 
 
-def build(lang: str, cap: dict, byid: dict) -> tuple[str, str]:
-    """(翼 md, 記事 md)。"""
-    wings = sorted(cap["wings"], key=lambda w: w["order"])
+def _wing_sections(lang: str, cap: dict, byid: dict, nos: dict, wings: list) -> tuple[str, int]:
+    """指定した翼の展示を並べる。``(markdown, 展示数)``。
+
+    ★番号は台帳から引く。ここで数えないのは、数えた番号は**並びを変えると動く**からで、
+    動く番号は読者の索引としても外部リンクの宛先としても使えない。
+    """
     exhibits = cap["exhibits"]
-    n = 0
-    wing_parts = []
-    latest = sorted(exhibits, key=lambda e: e["added"], reverse=True)[:8]
-    for w in wings:
+    parts, n = [], 0
+    for w in sorted(cap["wings"], key=lambda w: w["order"]):
+        if w["id"] not in wings:
+            continue
         exs = [e for e in exhibits if e["wing"] == w["id"]]
         if not exs:
             continue
-        wing_parts.append("### %s" % w["title_" + lang])
-        wing_parts.append("")
-        wing_parts.append(w["placard_" + lang].strip())
-        wing_parts.append("")
+        parts += ["### %s" % w["title_" + lang], "", w["placard_" + lang].strip(), ""]
         for ex in exs:
             n += 1
             pick, figs, second = _figure_for(ex)
@@ -367,68 +401,136 @@ def build(lang: str, cap: dict, byid: dict) -> tuple[str, str]:
             more = _more_statics(figs, pick, second)
             extras = [g for g in figs if g.get("animated") and g is not pick and g is not second
                       and os.path.exists(os.path.join(ASSETS, ex["id"], g["file"]))]
-            wing_parts.append(_exhibit_md(n, ex, lang, pick, thumb, byid,
-                                          second, thumb2, extras, more))
-    total = n
-    head = "<!-- generated -->"   # 生成物の印だけ(手順は tools/gen_wingpoc_gallery.py の docstring に書く)
-    wing_md = head + "\n\n" + "\n".join(wing_parts)
-    ent = cap["entrance"]
+            parts.append(_exhibit_md(nos[ex["id"]], ex, lang, pick, thumb, byid,
+                                     second, thumb2, extras, more))
+    return "\n".join(parts), n
+
+
+def _switch(lang: str, url: str) -> str:
+    return ("> **言語 / Language**: **日本語** · [English](%s)" % url if lang == "ja"
+            else "> **Language**: [日本語](%s) · **English**" % url)
+
+
+def build_wing_md(lang: str, cap: dict, byid: dict, nos: dict) -> str:
+    """docs サイト用の翼ページ。**全部の展示**を 1 枚に並べる(収蔵目録に当たる)。"""
+    all_wings = [w["id"] for w in cap["wings"]]
+    body, _n = _wing_sections(lang, cap, byid, nos, all_wings)
+    return "<!-- generated -->\n\n" + body + "\n"
+
+
+def build_entrance(lang: str, cap: dict, byid: dict, nos: dict) -> str:
+    """総合案内。**目次を持つのはここだけ**。
+
+    各棟が全体の目次を持つと、棟を 1 つ足すたびに全部の記事を投稿し直すことになる。
+    博物館と同じく、案内を 1 か所に置いて各棟からはそこへ 1 行返す。
+    """
+    ent, meta = cap["entrance"], cap["meta"]
+    items = _qiita_items()
     other = "en" if lang == "ja" else "ja"
-    # 相方の言語版へのリンク: Qiita に投稿済み(exhibits/qiita_items.json)ならその URL、無ければ GitHub の md。
-    items = {}
-    qi = os.path.join(EXHIBITS, "qiita_items.json")
-    if os.path.exists(qi):
-        items = json.load(io.open(qi, encoding="utf-8"))
-    other_url = (items.get(other) or {}).get("url") or (GH + "docs/articles/fullseye_poc_museum_qiita_%s.md" % other)
-    switch = ("> **言語 / Language**: **日本語** · [English](%s)" % other_url
-              if lang == "ja" else
-              "> **Language**: [日本語](%s) · **English**" % other_url)
-    title = ent.get("title_" + lang) or cap["meta"]["title_" + lang]
+    title = ent.get("title_" + lang) or meta["title_" + lang]
     tldr = "\n".join("- " + t for t in ent["tldr_" + lang])
     gl = "\n".join("- **%s** —— %s" % (t, e) for t, e in ent["glossary_" + lang])
-    lat = "\n".join("- %s — %s(%s)" % (e["added"], e["title_" + lang], e["id"]) if lang == "ja"
-                    else "- %s — %s (%s)" % (e["added"], e["title_" + lang], e["id"]) for e in latest)
-    hero = RAW + _hero_montage(cap)
-    hero_line = ("![%s](%s)" % ("PoC museum montage", hero))
+    latest = sorted(cap["exhibits"], key=lambda e: e["added"], reverse=True)[:8]
+    lat = "\n".join(
+        ("- %s — No.%s %s" % (e["added"], nos[e["id"]], e["title_" + lang])) for e in latest)
     hero_cap = ("*↑ 展示の場面図を 12 枚並べたもの。どれも PoC スクリプト自身の出力で、記事のために描いた絵は 1 枚もありません。*"
                 if lang == "ja" else
                 "*↑ Twelve exhibit scenes side by side. Every tile is the PoC script's own output; nothing was drawn for the article.*")
-    funnel = ("> 図と op の使い方は docs サイト [furuse.work](https://furuse.work/) と共通です。各展示の「使用 op」から op ノート(型契約・罠・図・Studio で走るプログラム)へ飛べます。AI に読ませるなら [AI_RAG_GUIDE](https://furuse.work/AI_RAG_GUIDE.html)。"
-              if lang == "ja" else
-              "> Figures and op usage are shared with the docs site [furuse.work](https://furuse.work/). The \"Ops used\" line under each exhibit jumps to the op notes (type contracts, pitfalls, figures, runnable Studio programs). For AI readers: [AI_RAG_GUIDE](https://furuse.work/AI_RAG_GUIDE.html).")
+    # 棟の目次。★展示数は毎回数えて出す(手で書くと必ず古くなる)。
+    counts = {}
+    for e in cap["exhibits"]:
+        counts[e["wing"]] = counts.get(e["wing"], 0) + 1
+    rows = [("| 記事 | 展示室 | 展示数 |" if lang == "ja" else "| Article | Wings | Exhibits |"),
+            "|---|---|---:|"]
+    #: 目次に出す短い翼名。★区切りは ` / ` —— 翼名そのものに「・」が入るので
+    #: (寸法・形状計測 / 医用・生物 / 色・分離)、「・」で繋ぐと境目が読めなくなる。
+    def _short(w):
+        t = w["title_" + lang].split(" ―― ")[0].split(" — ")[0].strip()
+        for suffix in ("ウィング", " Wing", " wing"):
+            if t.endswith(suffix):
+                t = t[: -len(suffix)].strip()
+        return t
+    wt = {w["id"]: _short(w) for w in cap["wings"]}
+    for p in meta["parts"]:
+        if p["kind"] == "index":
+            continue
+        n = sum(counts.get(w, 0) for w in p["wings"])
+        rows.append("| [%s](%s) | %s | %d |" % (p["title_" + lang], _part_url(p, lang, items),
+                                                " / ".join(wt[w] for w in p["wings"]), n))
+    index_note = ("この館は記事を分けています。**どの棟も単体で読めます** —— "
+                  "下の表から入ってください。番号(`No.2026.037`)は**収蔵番号**で、"
+                  "棟を移しても分けても変わりません。"
+                  if lang == "ja" else
+                  "The museum is split across several articles; **each wing reads on its own** — "
+                  "pick one below. The numbers (`No.2026.037`) are accession numbers: they do not "
+                  "change when an exhibit moves between articles or when an article is split.")
     parts = [
-        switch, "", "# " + title, "",
-        hero_line, "", hero_cap, "",
-        funnel, "",
-        "## TL;DR" , "", tldr, "",
-        # 版の更新(任意キー news_<lang>、新しい順の本文をそのまま貼る)。展示の数字を引く
-        # 読者が「どの版の話か」「引用に使う DOI は何か」を TL;DR の直後で知れるように。
+        _switch(lang, _part_url(meta["parts"][0], other, items)), "",
+        "# " + title, "",
+        "![%s](%s)" % ("PoC museum montage", RAW + _hero_montage(cap)), "", hero_cap, "",
+        ("> 図と op の使い方は docs サイト [furuse.work](https://furuse.work/) と共通です。各展示の「使用 op」から op ノート(型契約・罠・図・Studio で走るプログラム)へ飛べます。AI に読ませるなら [AI_RAG_GUIDE](https://furuse.work/AI_RAG_GUIDE.html)。"
+         if lang == "ja" else
+         "> Figures and op usage are shared with the docs site [furuse.work](https://furuse.work/). The \"Ops used\" line under each exhibit jumps to the op notes (type contracts, pitfalls, figures, runnable Studio programs). For AI readers: [AI_RAG_GUIDE](https://furuse.work/AI_RAG_GUIDE.html)."), "",
+        ("## TL;DR" if lang == "ja" else "## TL;DR"), "", tldr, "",
         *(([("## 版の更新(新しい順)" if lang == "ja" else "## Version updates (newest first)"), "",
             ent["news_" + lang].strip(), ""]) if "news_" + lang in ent else []),
+        ("## 展示室の案内" if lang == "ja" else "## Where to go"), "", index_note, "",
+        *rows, "",
+        ("## 用語(先に読むと楽)" if lang == "ja" else "## Glossary (read this first)"), "", gl, "",
+        ("## 展示館のテーゼ" if lang == "ja" else "## The museum's thesis"), "",
+        ent["thesis_" + lang].strip(), "",
+        ("## 最近の追加(新しい順)" if lang == "ja" else "## Recently added (newest first)"), "", lat, "",
+    ]
+    parts += _closing(ent, lang)
+    return "\n".join(parts).rstrip() + "\n"
+
+
+def build_part(part: dict, lang: str, cap: dict, byid: dict, nos: dict) -> str:
+    """棟 1 つ。★**全体の目次は持たない** —— 案内へ 1 行返すだけ。
+
+    棟どうしの「前 / 次」も置かない。間に棟を挿入すると両隣が壊れるため。
+    """
+    ent, meta, items = cap["entrance"], cap["meta"], _qiita_items()
+    other = "en" if lang == "ja" else "ja"
+    body, n = _wing_sections(lang, cap, byid, nos, part["wings"])
+    home = _part_url(meta["parts"][0], lang, items)
+    back = ("> **[紙面の計測館 総合案内](%s)** の一棟です。ほかの棟・用語・テーゼは案内にあります。"
+            % home if lang == "ja" else
+            "> One wing of **[A Metrology Museum on Paper — the entrance](%s)**, where the other "
+            "wings, the glossary and the thesis live." % home)
+    lead = (("この棟には **%d 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。"
+             % n) if lang == "ja" else
+            ("**%d exhibits** hang in this wing. The numbers are accession numbers: they do not "
+             "change when an exhibit moves or when an article is split." % n))
+    parts = [
+        _switch(lang, _part_url(part, other, items)), "",
+        "# " + part["title_" + lang], "",
+        back, "", lead, "",
         ("> 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。"
          if lang == "ja" else
          "> The \"Ops used\" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html)."),
-        "",
-        ("## 用語(先に読むと楽)" if lang == "ja" else "## Glossary (read this first)"), "", gl, "",
-        ("## 展示館のテーゼ" if lang == "ja" else "## The museum's thesis"), "", ent["thesis_" + lang].strip(), "",
-        ("## 最近の追加(新しい順)" if lang == "ja" else "## Recently added (newest first)"), "", lat, "",
-        ("## 展示室(全 %d 展示)" % total if lang == "ja" else "## The wings (%d exhibits)" % total), "",
-        wing_md, "",
+        "", body, "",
     ]
-    # 閉館部: JSON が howto/limits を別キーで持つ版と、closing に「## 見出し」込みで
-    # 持つ版の両方を受ける(closing に見出しがあればそのまま貼る)。
+    parts += [ent.get("credits_" + lang, "").strip(), "",
+              ent.get("cta_" + lang, "").strip(), ""]
+    return "\n".join(parts).rstrip() + "\n"
+
+
+def _closing(ent: dict, lang: str) -> list:
+    """閉館部。JSON が howto/limits を別キーで持つ版と closing に見出し込みで持つ版の両方を受ける。"""
     closing = ent["closing_" + lang].strip()
+    out = []
     if "howto_" + lang in ent:
-        parts += [("## 自分の問題に当てはめるには" if lang == "ja" else "## Bringing this to your own problem"), "",
-                  ent["howto_" + lang].strip(), ""]
+        out += [("## 自分の問題に当てはめるには" if lang == "ja" else "## Bringing this to your own problem"),
+                "", ent["howto_" + lang].strip(), ""]
     if "limits_" + lang in ent:
-        parts += [("## 正直に、まだ出来ないこと" if lang == "ja" else "## Honestly: what is not there yet"), "",
-                  ent["limits_" + lang].strip(), ""]
+        out += [("## 正直に、まだ出来ないこと" if lang == "ja" else "## Honestly: what is not there yet"),
+                "", ent["limits_" + lang].strip(), ""]
     if not re.match(r"^#+ ", closing):
-        parts += [("## 閉館の挨拶" if lang == "ja" else "## Closing"), ""]
-    parts += [closing, "", ent.get("credits_" + lang, "").strip(), "",
-              ent.get("cta_" + lang, "").strip(), ""]   # 招待リンク + いいね依頼(ユーザー指示 2026-09-07)
-    return wing_md + "\n", "\n".join(parts).rstrip() + "\n"
+        out += [("## 閉館の挨拶" if lang == "ja" else "## Closing"), ""]
+    out += [closing, "", ent.get("credits_" + lang, "").strip(), "",
+            ent.get("cta_" + lang, "").strip(), ""]
+    return out
 
 
 def main() -> int:
@@ -436,10 +538,21 @@ def main() -> int:
     ap.add_argument("--check", action="store_true")
     a = ap.parse_args()
     cap, byid = _load()
+    nos = _numbers()
+    missing = sorted(e["id"] for e in cap["exhibits"] if e["id"] not in nos)
+    if missing:
+        raise BuildError("収蔵番号が無い展示: %s(tools/gen_exhibit_numbers.py で発行する)"
+                         % ", ".join(missing))
     stale = []
     for lang in ("ja", "en"):
-        wing_md, art_md = build(lang, cap, byid)
-        for path, text in ((OUT_WING[lang], wing_md), (OUT_ARTICLE[lang], art_md)):
+        out = [(OUT_WING[lang], build_wing_md(lang, cap, byid, nos)),
+               (OUT_ARTICLE[lang], build_entrance(lang, cap, byid, nos))]
+        for p in cap["meta"]["parts"]:
+            #: ★`external` の部(手書きの数学記事)は描かない。`index` は案内なので上で出した。
+            if p["kind"] != "generated":
+                continue
+            out.append((part_path(p["slug"], lang), build_part(p, lang, cap, byid, nos)))
+        for path, text in out:
             if _LOCAL.search(text):
                 raise BuildError("ローカルパスが混ざっている: %s" % path)
             cur = io.open(path, encoding="utf-8").read() if os.path.exists(path) else None
@@ -453,7 +566,11 @@ def main() -> int:
             return 1
         print("up to date")
         return 0
-    print("wrote", len(cap["exhibits"]), "exhibits ->", *OUT_ARTICLE.values(), sep="\n  ")
+    gen = [p for p in cap["meta"]["parts"] if p["kind"] == "generated"]
+    print("wrote %d exhibits -> 案内 1 + 棟 %d(x2 言語)" % (len(cap["exhibits"]), len(gen)))
+    for p in gen:
+        n = sum(1 for e in cap["exhibits"] if e["wing"] in p["wings"])
+        print("  %-18s %3d 展示  %s" % (p["slug"], n, os.path.basename(part_path(p["slug"], "ja"))))
     return 0
 
 
