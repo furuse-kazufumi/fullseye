@@ -109,6 +109,34 @@ def _figure_for(ex):
     return pick, figs, second
 
 
+#: 1 展示に出す静止画の追加枚数。★2 枚固定をやめる(2026-09-24)
+MORE_STATICS = 4
+
+
+def _more_statics(figs, pick, second):
+    """主図・2 枚目・動く図を除いた静止画から、間隔をあけて数枚選ぶ。
+
+    ★先頭から詰めて取ると章の前半に偏るので、**等間隔に間引く** ——
+    どの章からも 1 枚は出るようにするため。
+    """
+    rest = [g for g in figs
+            if g is not pick and g is not second and not g.get("animated")]
+    if len(rest) <= MORE_STATICS:
+        return rest
+    step = len(rest) / float(MORE_STATICS)
+    return [rest[min(int(i * step), len(rest) - 1)] for i in range(MORE_STATICS)]
+
+
+def _first_sentence(text: str, limit: int = 150) -> str:
+    """説明の**最初の 1 文**だけを返す(記事の肥大を抑える)。"""
+    t = (text or "").strip()
+    for mark in ("。", ". "):
+        i = t.find(mark)
+        if 0 < i <= limit:
+            return t[:i + len(mark)].strip()
+    return t[:limit].rstrip() + ("…" if len(t) > limit else "")
+
+
 def _thumb(poc_id: str, file: str) -> str:
     """幅 720 px の JPEG サムネを作り、ファイル名を返す(既にあれば作り直さない)。
 
@@ -250,7 +278,7 @@ def _ops_line(poc_id: str, lang: str) -> str:
 
 def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
                 second: dict | None = None, thumb2: str | None = None,
-                extras: list | None = None) -> str:
+                extras: list | None = None, more: list | None = None) -> str:
     title = ex["title_" + lang]
     cap = ex["caption_" + lang]
     full = RAW + ex["id"] + "/" + pick["file"]
@@ -279,6 +307,15 @@ def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
         lines += ["[![%s](%s)](%s)" % (alt, th2, full2), "", cap_line, ""]
     # 看板にも 2 枚目にも入らなかった**動く図**は全部出す —— GIF を落とすと「クリックしないと
     # 動かない絵」になり、動きが主題の展示ではそれで意味が消える(2026-09-21、GIF 2 本の展示で気づいた)。
+    # ★追加の静止画。説明は 1 文に切る(枚数を増やすのが目的で、詳しい
+    #   説明は主図と 2 枚目が持っている)。2026-09-24 に 2 枚固定をやめた。
+    for fig in (more or []):
+        full4 = RAW + ex["id"] + "/" + fig["file"]
+        th4 = RAW + ex["id"] + "/" + _thumb(ex["id"], fig["file"])
+        sub_ = _first_sentence(fig.get("caption") or "")
+        alt = (sub_[:100] if sub_ else "図").replace("]", ")")
+        cap_line = ("*↑ %s*" % sub_) if sub_ else "*↑ この回の図*"
+        lines += ["[![%s](%s)](%s)" % (alt, th4, full4), "", cap_line, ""]
     for fig in (extras or []):
         full3 = RAW + ex["id"] + "/" + fig["file"]
         sub = (fig.get("caption") or "").strip()
@@ -327,9 +364,11 @@ def build(lang: str, cap: dict, byid: dict) -> tuple[str, str]:
             pick, figs, second = _figure_for(ex)
             thumb = _thumb(ex["id"], pick["file"])
             thumb2 = _thumb(ex["id"], second["file"]) if second is not None else None
+            more = _more_statics(figs, pick, second)
             extras = [g for g in figs if g.get("animated") and g is not pick and g is not second
                       and os.path.exists(os.path.join(ASSETS, ex["id"], g["file"]))]
-            wing_parts.append(_exhibit_md(n, ex, lang, pick, thumb, byid, second, thumb2, extras))
+            wing_parts.append(_exhibit_md(n, ex, lang, pick, thumb, byid,
+                                          second, thumb2, extras, more))
     total = n
     head = "<!-- generated -->"   # 生成物の印だけ(手順は tools/gen_wingpoc_gallery.py の docstring に書く)
     wing_md = head + "\n\n" + "\n".join(wing_parts)
