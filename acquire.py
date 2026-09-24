@@ -136,9 +136,13 @@ _BACKEND_BY_NAME = {row[0]: row for row in _BACKENDS}
 
 #: The eight axes a device SDK is scored on, and where this module answers each.
 #:
-#: The same eight are used to score published SDKs (13 of them, in a separate
-#: corpus), so the two numbers can be compared. Scoring this module on a different
-#: list would make "we cover more than SDK X" meaningless.
+#: The same eight are used to score published SDKs in a separate corpus, so the two
+#: assessments can be compared. Scoring this module on a different list would make
+#: "we cover more than SDK X" meaningless.
+#:
+#: ★No count of those SDKs is written here. The corpus lives in another tree, so a
+#: number quoted here has no gate keeping it true -- it said "13" while the corpus
+#: had grown to 28 (2026-09-25). A figure nothing can check is worse than no figure.
 #:
 #: Each value names **things that must exist** -- a test resolves every one of them,
 #: so a rename or a deletion turns the claim red instead of leaving a stale boast.

@@ -978,3 +978,29 @@ def test_the_connectivity_doc_uvc_section_matches_the_code():
     assert acquire.uvc_to_sfnc("CT_EXPOSURE_TIME_ABSOLUTE_CONTROL", 5000) == (
         "ExposureTime", 500000.0)
     assert acquire.sfnc_to_uvc("ExposureTime", 500000.0)[1] == 5000
+
+
+def test_the_shipped_uvc_ledger_carries_the_exposure_step():
+    """★台帳に書いてあるのに誰も読まない値は、静かにコードと食い違う。"""
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                        "examples", "data", "uvc_controls.json")
+    with open(path, encoding="utf-8") as fh:
+        doc = json.load(fh)
+    assert doc["exposure_step_us"] == acquire.UVC_EXPOSURE_STEP_US
+    assert doc["uncompressed"] == acquire.UVC_UNCOMPRESSED
+    #: 単位を書いていない制御が台帳にも本文どおり null で入っていること
+    assert doc["controls"]["PU_GAIN_CONTROL"]["unit"] is None
+    assert doc["note"].startswith("単位は規格が本文で言っているものだけ")
+
+
+def test_the_axis_note_quotes_no_number_it_cannot_check():
+    """★別の木にあるコーパスの件数を、このソースに書かない(留める門が無い)。"""
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                        "acquire.py")
+    head = open(path, encoding="utf-8").read()
+    i = head.find("COVERAGE_AXES = {")
+    assert i > 0
+    note = head[max(0, i - 900):i]
+    assert "score published SDKs" in note, "8 軸の註が見つからない"
+    stale = [w for w in ("13 of them", "13 SDKs", "(13") if w in note]
+    assert not stale, ("別の木のコーパスの件数が書かれている: %s" % stale)
