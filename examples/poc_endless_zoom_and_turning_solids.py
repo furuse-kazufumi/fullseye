@@ -153,6 +153,27 @@ def zoom_frame(zoom, size=260, ss=2):
     return _downsample(img, ss)
 
 
+def box_counts(mask):
+    """s = 1, 2, 4, … で「構造を含む箱」を数える → 整数の列。
+
+    ★`fs.op.fractal_dimension` の中でやっている数え上げを、PoC 側にもう 1 つ
+    持つ(同じ仕様の 2 度目の実装)。**整数なので環境に依らない** —— 次元の
+    ほうは最小二乗を通るので、同じ整数列でも BLAS の並列化で最下位ビットが
+    揺れうる(2026-09-24 の CI で実測。6 つとも 6 桁まで同じなのに std != 0)。
+    """
+    m = np.asarray(mask) > 0.5
+    h, w = m.shape
+    lim = min(h, w)
+    out = []
+    s = 1
+    while s <= lim // 2:
+        b = m[:h // s * s, :w // s * s].reshape(
+            h // s, s, w // s, s).any(axis=(1, 3))
+        out.append(int(b.sum()))
+        s *= 2
+    return tuple(out)
+
+
 def approximant(zoom, level, n=512):
     """深さ ``level`` までで削った近似集合。ズームに合わせて level も繰り上げる。"""
     u, v = _uv(zoom, n)
@@ -275,10 +296,26 @@ def main() -> int:
     # ------------------------------------------------------------------ #
     print("\n3. 測った次元は、ズームしても 1 ミリも動かない")
     zooms = list(range(6))
-    dims = [fs.op.fractal_dimension(approximant(float(z), 8, n=512)) for z in zooms]
+    masks = [approximant(float(z), 8, n=512) for z in zooms]
+    dims = [fs.op.fractal_dimension(m) for m in masks]
+    counts = [box_counts(m) for m in masks]
     sd = float(np.std(dims))
-    check(sd == 0.0, "ズーム %d 段で次元の標準偏差が厳密に 0" % len(zooms),
-          "%s" % " ".join("%.6f" % d for d in dims))
+    #: ★主張は**整数**で置く。埋まった箱の数が 6 ズームとも同じ整数列である
+    #:   ことが「ズームしても同じ集合を見ている」そのもので、整数だから
+    #:   環境に依らない。
+    check(all(c == counts[0] for c in counts),
+          "★ズーム %d 段で「埋まった箱の数」が同じ整数列" % len(zooms),
+          "%s —— 4·3^k。整数なので環境に依らない"
+          % " / ".join(str(v) for v in counts[0]))
+    #: ★次元のほうは最小二乗を通るので**機械精度**でしか主張しない。
+    #:   `sd == 0.0` と書いていた時期があり、CI で落ちた —— 6 つとも 6 桁まで
+    #:   同じ値なのに std != 0 で、degrade の記録も 0 件だった。同じ整数列を
+    #:   渡しても BLAS の並列化で lstsq の最下位ビットが揺れる。
+    #:   それは「ズームで次元が動く」ことではない。
+    check(sd < 1e-12, "ズーム %d 段で測った次元が機械精度で一致" % len(zooms),
+          "%s(標準偏差 %.1e)—— ★ビット一致は主張しない。最小二乗の"
+          "最下位ビットは BLAS の並列化で揺れうる"
+          % (" ".join("%.6f" % d for d in dims), sd))
     truth = float(np.log2(3.0))
     err = abs(dims[0] - truth)
     check(err < 1e-12, "次元 = log2(3) に機械精度で一致",

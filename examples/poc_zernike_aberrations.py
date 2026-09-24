@@ -27,7 +27,7 @@
   2. **絵を回すと、絵は回るのに測った振幅は 1 ビットも動かない。** 回転は
      係数を exp(−imθ) 倍するだけなので、対の振幅 √(c₊²+c₋²) は**厳密に**
      不変 —— 6 通りの角度で最大 **1.1e-16**、二乗和の差は **0.0e+00**。
-     絵に描いてから読み返しても、3 通りの回転で幅 **2.03e-09**。
+     絵に描いてから読み返しても、3 通りの回転で幅 **3.34e-10**。
   3. **点像の第 1 暗環はベッセル関数の零点で決まる。** j₁ の第 1 零点 ÷ π =
      **1.219670 λ/D** で、絵から **3.6e-04** 以内。無収差のストレール比は
      厳密に **1.000000000000**。`wavefront_stats` が返すマレシャル近似は
@@ -50,9 +50,9 @@
      入れ替わらない** —— 見やすくすることと嘘をつくことは別だと数で言える。
 
 ★外した予言を 3 つ残してある: 瞳の縁をなめらかにしても第 1 暗環は改善しない /
-誤差 ∝ 1/瞳径 も成立しない —— 真因は**線形補間**で、3 次にすると最悪 1.1e-02 が
-**3.6e-04** になり瞳を 3 倍に振っても平らだった / 停留環を放物線で精密化したら
-悪化した。★自分の測り方の欠陥も 2 件: 瞳を格子の中心から半画素ずらして置いて
+誤差 ∝ 1/瞳径 も成立しない —— 真因は**線形補間**で、線形だと最悪 **1.1e-02** で
+しかも瞳を大きくすると悪化するのに、3 次にすると **3.6e-04**(**30 倍**)で
+瞳を 3 倍に振っても平らだった / 停留環を放物線で精密化したら悪化した。★自分の測り方の欠陥も 2 件: 瞳を格子の中心から半画素ずらして置いて
 いた(直すと像面の虚部の残り **5.3e-17**)/ 方位を最近傍で拾って、**瞳の半径にも
 縁の滑らかさにもまったく依らない**偽信号 **0.01489** を作っていた(双一次で
 **0.00058**、**26 倍**)。
@@ -176,13 +176,40 @@ def pair_amplitude(coeffs, n, m):
 # --------------------------------------------------------------------------- #
 # 当てはめ —— 既存 op と、外周リングだけ違う自前版                               #
 # --------------------------------------------------------------------------- #
+def bilinear_sample(img, ys, xs):
+    """画素座標 (ys, xs) で双一次補間。外は 0(``grid_sample`` と同じ約束)。
+
+    ★`fit_zernike` は `torch.nn.functional.grid_sample(align_corners=True)` で
+    同じことをしている(正規化座標 −1 ↔ 画素 0、+1 ↔ 画素 W−1、外は 0 埋め)。
+    ここを numpy で書くので、**torch が無い環境でもこの PoC は全部走る** ——
+    CI は大きさと時間のため py3.11 にしか torch を入れない。
+    """
+    a = np.asarray(img, np.float32)
+    H, W = a.shape
+    y0 = np.floor(ys).astype(np.int64)
+    x0 = np.floor(xs).astype(np.int64)
+    fy, fx = ys - y0, xs - x0
+    out = np.zeros(np.shape(ys), np.float64)
+    for dy in (0, 1):
+        for dx in (0, 1):
+            yy, xx = y0 + dy, x0 + dx
+            ok = (yy >= 0) & (yy < H) & (xx >= 0) & (xx < W)
+            wy = fy if dy else 1.0 - fy
+            wx = fx if dx else 1.0 - fx
+            v = np.zeros_like(out)
+            v[ok] = a[yy[ok], xx[ok]]
+            out += (wy * wx) * v
+    return out
+
+
 def fit_dropping_rings(img, rings, n_max=N_MAX, nr=48, nt=72):
     """``fit_zernike`` と同じ手順で、**外周 ``rings`` 本だけ捨てて**当てはめる。
 
-    ★op 本体には触らない。「原因はここだ」を示すための、同じ手順の写しである。
+    ★op 本体には触らない。「原因はここだ」を示すための、同じ手順の写し ——
+    同じ基底・同じ極座標格子・同じ最小二乗で、**numpy だけ**で書いてある。
+    `rings=0` なら `fit_zernike` と同じものを計算するので、torch がある環境
+    では**2 つの実装として突き合わせられる**。
     """
-    import torch
-    import torch.nn.functional as F
     from match3d import _zernike_basis
 
     H, W = img.shape
@@ -194,14 +221,19 @@ def fit_dropping_rings(img, rings, n_max=N_MAX, nr=48, nt=72):
     Rg, Tg = np.meshgrid(rr, th, indexing="ij")
     ys = cy + Rg * rad * np.sin(Tg)
     xs = cx + Rg * rad * np.cos(Tg)
-    grid = torch.stack([torch.as_tensor(xs / (W - 1) * 2 - 1, dtype=torch.float32),
-                        torch.as_tensor(ys / (H - 1) * 2 - 1, dtype=torch.float32)],
-                       -1)[None]
-    samp = F.grid_sample(torch.as_tensor(np.asarray(img, np.float32))[None, None],
-                         grid, align_corners=True)[0, 0].numpy().ravel()
+    samp = bilinear_sample(img, ys, xs).ravel()
     mask = rho <= 1.0 - rings / float(nr)
     coef, *_ = np.linalg.lstsq(B[:, mask].T, samp[mask], rcond=None)
     return {idx[i]: float(coef[i]) for i in range(len(idx))}
+
+
+def have_torch():
+    """``fit_zernike`` が走る環境か。★CI は py3.11 にしか torch を入れない。"""
+    try:
+        import torch                                        # noqa: F401
+    except Exception:
+        return False
+    return True
 
 
 def worst_leak(coeffs, n, m):
@@ -533,7 +565,7 @@ def run_checks():
     fit_default, fit_dropped = {}, {}
     for (n, m) in probe:
         img = wavefront({(n, m): 1.0}, size=256)
-        c_def = L.fit_zernike(img.astype(np.float32), n_max=N_MAX)
+        c_def = fit_dropping_rings(img, rings=0)
         c_drop = fit_dropping_rings(img, rings=1)
         fit_default[(n, m)] = (c_def[(n, m)], worst_leak(c_def, n, m))
         fit_dropped[(n, m)] = (c_drop[(n, m)], worst_leak(c_drop, n, m))
@@ -548,6 +580,29 @@ def run_checks():
     gain_ring = leak_def / max(leak_drop, 1e-12)
     check(leak_def > 0.08, "既定の当てはめは op の開示どおり約 10 パーセント漏れる",
           "4 モードで最大 %.4f(docstring の記述と一致)" % leak_def)
+
+    #: ★本物の op と突き合わせる —— **同じ仕様の 2 度目の実装**。
+    #:   `fit_zernike` は torch(`grid_sample`)で補間するので、CI の
+    #:   py3.10 / py3.12 には入っていない(大きさと時間のため py3.11 だけ)。
+    #:   だから発見そのものは numpy の写しで立て、op があるときだけ照合する。
+    twin_gap = None
+    if have_torch():
+        twin_gap = 0.0
+        for (n_, m_) in probe:
+            img = wavefront({(n_, m_): 1.0}, size=256)
+            real = L.fit_zernike(img.astype(np.float32), n_max=N_MAX)
+            mine = fit_dropping_rings(img, rings=0)
+            twin_gap = max(twin_gap,
+                           max(abs(real[k] - mine[k]) for k in real))
+        print("   本物の op(torch)と自前の写し(numpy)の最大差 %.2e"
+              % twin_gap)
+        check(twin_gap < 1e-5,
+              "★自前の写しは `fit_zernike` と同じものを計算している",
+              "4 モードで最大 %.1e —— grid_sample が float32 なのでその桁。"
+              "**発見は写しの側で立つので、torch が無い環境でも全部走る**"
+              % twin_gap)
+    else:
+        print("   torch が無いので op との照合は飛ばす(発見は写しの側で立つ)")
     check(leak_drop < 1e-3 and rec_drop < 1e-3,
           "★外周リングを 1 本捨てるだけで漏れが消える",
           "漏れ %.5f から %.6f へ(%.0f 倍)、回収のずれ %.6f —— "
@@ -557,8 +612,7 @@ def run_checks():
     leak_curve = []
     for nr in nr_list:
         img = wavefront({(2, 0): 1.0}, size=256)
-        c = L.fit_zernike(img.astype(np.float32), n_max=N_MAX,
-                          nr=nr, nt=nr * 3 // 2)
+        c = fit_dropping_rings(img, rings=0, nr=nr, nt=nr * 3 // 2)
         leak_curve.append(worst_leak(c, 2, 0))
     ratio_nr = [leak_curve[i] / leak_curve[i + 1]
                 for i in range(len(leak_curve) - 1)]
@@ -579,7 +633,7 @@ def run_checks():
     over_gain = []
     for over in over_list:
         img = wavefront({(2, 0): 1.0}, size=256, extend=over)
-        c = L.fit_zernike(img.astype(np.float32), n_max=N_MAX)
+        c = fit_dropping_rings(img, rings=0)
         over_gain.append(worst_leak(c, 2, 0))
     print("   多項式を円板の外まで延ばす(解像度そのまま): %s"
           % " / ".join("%.2f 倍まで %.6f" % (o, g)
@@ -588,6 +642,7 @@ def run_checks():
           "★縁の段差を円板の縁から追い出しても同じだけ消える",
           "漏れ %.5f から %.6f へ —— 原因は最外リングが瞳の縁に乗ること"
           % (leak_def, max(over_gain)))
+    out.update(twin_gap=twin_gap)
     out.update(fit_default=fit_default, fit_dropped=fit_dropped,
                nr_list=nr_list, leak_curve=leak_curve, leak_def=leak_def,
                leak_drop=leak_drop, gain_ring=gain_ring, gain_res=gain_res,
@@ -618,7 +673,7 @@ def run_checks():
     amp_pic = []
     for a in pic_angles:
         img = wavefront(rotate_coeffs(coma, a), size=256, extend=1.05)
-        c = L.fit_zernike(img.astype(np.float32), n_max=N_MAX)
+        c = fit_dropping_rings(img, rings=0)
         amp_pic.append(pair_amplitude(c, 3, 1))
     spread_pic = float(np.ptp(amp_pic))
     print("   絵に描いて読み返したコマの振幅: %s"
@@ -1064,7 +1119,11 @@ def draw_figures(out):
                             "吸い込んでいる。**解像度は一切変えず**にその 1 本"
                             "を捨てるだけで、漏れは 4 モードの最悪でも "
                             "%.5f → **%.6f**(%.0f 倍)、回収のずれは "
-                            "%.6f になります。"
+                            "%.6f になります。★当てはめは op と同じ手順を "
+                            "numpy で書いた**写し**で回しています(op 本体は "
+                            "torch を要り、CI の一部に入っていないため)。"
+                            "torch がある環境では本物と照合していて、"
+                            "最大差は grid_sample の float32 の桁です。"
                             % (out["leak_def"], out["leak_drop"],
                                out["gain_ring"], max(
                                    abs(v[0] - 1.0)

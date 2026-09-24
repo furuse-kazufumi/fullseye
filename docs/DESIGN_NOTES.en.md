@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 978. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 981. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -424,9 +424,11 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_endless_zoom_and_turning_solids.py`
 
 - **L75** _(ja)_ — 深さの巡回に使う色。★赤と緑は対にしない(意味が見る人で反転するため)
-- **L375** _(ja)_ — ★ここで最初の予言を外した。「2 パーセントの床は marching cubes の面取りの せい」と読んだが、距離を伸ばすと厳密な立方体も同じところまで落ちた —— 床の正体は**透視投影**だった。面取りのぶんは別の量(最大/最小の比)に出る。
-- **L593** _(ja)_ — ★op が静かに degrade していないか。`fs.op.*` は backend_safe.guard 越しで、 例外が出ても「sort 妥当な別の値」を返す —— 厳密な等式の検査だけが落ちて、 原因が症状から離れる。degrade していたらここで名指しする。
-- **L608** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
+- **L303** _(ja)_ — ★主張は**整数**で置く。埋まった箱の数が 6 ズームとも同じ整数列である ことが「ズームしても同じ集合を見ている」そのもので、整数だから 環境に依らない。
+- **L310** _(ja)_ — ★次元のほうは最小二乗を通るので**機械精度**でしか主張しない。 `sd == 0.0` と書いていた時期があり、CI で落ちた —— 6 つとも 6 桁まで 同じ値なのに std != 0 で、degrade の記録も 0 件だった。同じ整数列を 渡しても BLAS の並列化で lstsq の最下位ビットが揺れる。 それは「ズームで次元が動く」ことではない。
+- **L412** _(ja)_ — ★ここで最初の予言を外した。「2 パーセントの床は marching cubes の面取りの せい」と読んだが、距離を伸ばすと厳密な立方体も同じところまで落ちた —— 床の正体は**透視投影**だった。面取りのぶんは別の量(最大/最小の比)に出る。
+- **L630** _(ja)_ — ★op が静かに degrade していないか。`fs.op.*` は backend_safe.guard 越しで、 例外が出ても「sort 妥当な別の値」を返す —— 厳密な等式の検査だけが落ちて、 原因が症状から離れる。degrade していたらここで名指しする。
+- **L645** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/poc_eye_to_brain.py`
 
@@ -958,12 +960,13 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_zernike_aberrations.py`
 
 - **L85** _(ja)_ — n <= 6 の 28 モード。★(n+1)(n+2)/2 = 28 は閉形式で数えられる
-- **L367** _(ja)_ — 絵を作る道具 —— ★色は飾りでなく量に結びつける # --------------------------------------------------------------------------- #
-- **L648** _(ja)_ — ★同じ絵を**線形補間**で読むとどうなるか(章ごとの接尾辞 lin_)
-- **L779** _(ja)_ — ★1 次か 2 次かは「収差を半分にしたときの比」で分かる(章ごとの接尾辞)
-- **L806** _(ja)_ — ★帯は必ず書く。球面収差のハローは明るいので、同じ帯でも段数が変わる (実測: 無収差の 3.5-8.0 λ/D は線形 1 段、球面収差 0.30 波なら 6 段)。
-- **L982** _(ja)_ — ★検査で使った点像は瞳 96・格子 1024(1 画素 0.19 λ/D)で、絵としては 粗い。**同じ無収差**をもう一度、細かい刻みで描き直す(数は検査のもの)。
-- **L1235** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
+- **L399** _(ja)_ — 絵を作る道具 —— ★色は飾りでなく量に結びつける # --------------------------------------------------------------------------- #
+- **L584** _(ja)_ — ★本物の op と突き合わせる —— **同じ仕様の 2 度目の実装**。 `fit_zernike` は torch(`grid_sample`)で補間するので、CI の py3.10 / py3.12 には入っていない(大きさと時間のため py3.11 だけ)。 だから発見そのものは numpy の写しで立て、op があるときだけ照合する。
+- **L703** _(ja)_ — ★同じ絵を**線形補間**で読むとどうなるか(章ごとの接尾辞 lin_)
+- **L834** _(ja)_ — ★1 次か 2 次かは「収差を半分にしたときの比」で分かる(章ごとの接尾辞)
+- **L861** _(ja)_ — ★帯は必ず書く。球面収差のハローは明るいので、同じ帯でも段数が変わる (実測: 無収差の 3.5-8.0 λ/D は線形 1 段、球面収差 0.30 波なら 6 段)。
+- **L1037** _(ja)_ — ★検査で使った点像は瞳 96・格子 1024(1 画素 0.19 λ/D)で、絵としては 粗い。**同じ無収差**をもう一度、細かい刻みで描き直す(数は検査のもの)。
+- **L1294** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/polarization_camera_pipeline.py`
 
