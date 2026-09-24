@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 964. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 969. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -461,6 +461,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L523** — ★Die Überschrift dieses PoC. Die Kurve des stärksten Detektors fällt mit einem einzigen Druck auf die Speichern-Schaltfläche bis zur Diagonalen (und darunter).
 - **L677** — (4) ★Lücke (a): Das argmin-Auslesen des op ist bei einem erneut gespeicherten Bild im Wesentlichen eine konstante Karte. AUC ist genau 0.5 = nicht von Zufall zu unterscheiden.
 - **L704** — (9) ★Lücke (b): 8-Pixel-Gitter. Es errät nur richtig, wenn die Differenz ein Vielfaches von 8 ist (ohne erneutes Speichern).
+
+## `examples/poc_four_dimensions_by_three_d_tools.py`
+
+- **L52** _(ja)_ — 色。★赤と緑は対にしない
+- **L336** _(ja)_ — ★変数名は章ごとに分ける(あとの章の best に上書きされて、図の説明が 別の章の数字を出していた)
+- **L362** _(ja)_ — ★marching-cubes 系と同じく巻きが内向きなので絶対値を取る
+- **L384** _(ja)_ — ★B との差が「断面の角数に依らない」= 2 つの誤差が独立に分かれている証拠
+- **L608** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/poc_gear_tooth_metrology.py`
 

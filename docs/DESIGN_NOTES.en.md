@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 964. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 969. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -461,6 +461,14 @@ This repository records *why* things are the way they are in **comments in the s
 - **L523** — ★The headline of this PoC. The curve of the strongest detector drops to the diagonal (and below) with a single press of the save button.
 - **L677** — (4) ★Gap (a): the op's argmin readout is essentially a constant map for a re-saved image. AUC is exactly 0.5 = indistinguishable from random.
 - **L704** — (9) ★Gap (b): 8-pixel grid. It only guesses right when the difference is a multiple of 8 (no re-saving).
+
+## `examples/poc_four_dimensions_by_three_d_tools.py`
+
+- **L52** _(ja)_ — 色。★赤と緑は対にしない
+- **L336** _(ja)_ — ★変数名は章ごとに分ける(あとの章の best に上書きされて、図の説明が 別の章の数字を出していた)
+- **L362** _(ja)_ — ★marching-cubes 系と同じく巻きが内向きなので絶対値を取る
+- **L384** _(ja)_ — ★B との差が「断面の角数に依らない」= 2 つの誤差が独立に分かれている証拠
+- **L608** _(ja)_ — ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
 
 ## `examples/poc_gear_tooth_metrology.py`
 
