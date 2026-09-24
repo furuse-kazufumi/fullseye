@@ -81,7 +81,12 @@ _SOLID_STOPS = [(0.0, (0.06, 0.10, 0.26)), (0.35, (0.18, 0.42, 0.62)),
 
 
 def check(ok, label, detail=""):
-    _PASS.append(bool(ok))
+    """★真偽値だけでなく label と detail も覚える。
+
+    門は落ちた PoC の stdout の**末尾**しか残さないので、章の前半で落ちると
+    番号しか CI に届かない。最後に落ちたものを再掲すれば、末尾だけで読める。
+    """
+    _PASS.append((bool(ok), label, detail))
     print("  [%s] %s %s" % ("OK" if ok else "NG", label,
                             ("---- " + detail) if detail else ""))
 
@@ -585,12 +590,20 @@ def main() -> int:
         errs = figs.errors()
         assert not errs, errs
 
-    ok = sum(_PASS)
+    # ★op が静かに degrade していないか。`fs.op.*` は backend_safe.guard 越しで、
+    #   例外が出ても「sort 妥当な別の値」を返す —— 厳密な等式の検査だけが落ちて、
+    #   原因が症状から離れる。degrade していたらここで名指しする。
+    fell = fs.fallbacks()
+    check(not fell, "この PoC の間に静かに degrade した op は無い",
+          "記録 %d 件%s" % (len(fell), (": " + repr(fell[:3])) if fell else ""))
+
+    ok = sum(1 for v in _PASS if v[0])
     print("\n検査 %d 件中 %d 件 OK(%.1f 秒)" % (len(_PASS), ok, time.time() - t0))
     if ok != len(_PASS):
-        for i, v in enumerate(_PASS):
-            if not v:
-                print("  NG が残っている(%d 番目)" % (i + 1))
+        for i, (good, label, detail) in enumerate(_PASS):
+            if not good:
+                print("  NG が残っている(%d 番目): %s ---- %s"
+                      % (i + 1, label, detail))
         return 1
     # ★門 tests/test_poc_scripts_run.py は exit 0 だけでなく PASS の印字も見る。
     print("PASS")

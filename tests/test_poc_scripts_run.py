@@ -92,9 +92,12 @@ def _run_one(path: Path) -> tuple[str, int, str]:
     # ★失敗時は stdout の末尾も返す。PoC は所見と「どの検査が落ちたか」を
     # stdout に印字して SystemExit(1) するので、stderr だけだと**空のまま
     # 「exit 1」しか分からない**(2026-09-07 の CI、py3.10 の poc_ct_fidelity)。
+    # ★stdout は 4000 文字残す。1200 だと**章の後ろだけ**が見えて、前半で
+    #   落ちた検査の実測値が CI から読めない(2026-09-24、poc_endless_zoom の
+    #   10 番目が落ちたとき「NG が残っている(10 番目)」しか分からなかった)。
     tail = (r.stderr.decode("utf-8", "replace")[-1200:]
             + chr(10) + "--- stdout(末尾) ---" + chr(10)
-            + r.stdout.decode("utf-8", "replace")[-1200:])
+            + r.stdout.decode("utf-8", "replace")[-4000:])
     if r.returncode == 0:
         out = r.stdout.decode("utf-8", "replace")
         if "\nPASS" not in out:
