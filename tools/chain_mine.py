@@ -453,6 +453,17 @@ def mine_chain(ops, gens, chain_seed, length, tally=None, verbose=False):
     (ファザーと同じ)。抽選回数を記録しておくので --replay で厳密に再走できる。
     """
     tally = {} if tally is None else tally
+    #: ★探針が作る ``text`` は ``"ラベル 73"`` のように**相対パスとしても成立する**。
+    #:   台帳でパス引数を text と宣言している書き込み op にそれが渡ると、op は素直に
+    #:   cwd へ書く —— cwd は repo 直下である。ファザー側(``chain_fuzz.run_chain``)
+    #:   には 2026-09-23 から捨て場が在ったが、**採掘側のここには無かった**ので
+    #:   2026-09-25 に repo 直下へ xlsx が 2 本生まれた。仕組みが在ることと、
+    #:   全部の経路がそこを通ることは別([[feedback_count_wrapper_families_not_mechanisms]])。
+    with cf._scratch_cwd():
+        return _mine_chain_inner(ops, gens, chain_seed, length, tally, verbose)
+
+
+def _mine_chain_inner(ops, gens, chain_seed, length, tally, verbose):
     rng = np.random.default_rng(chain_seed)
     pool = _init_pool(gens, rng)
     starts = sorted(t for t in pool if _eligible(ops, t, pool))
@@ -497,6 +508,12 @@ def replay_chain(ops, gens, chain_seed, start_type, script, arg_keys,
     失敗 op はプールに何も足さないため、成功列だけを再走すれば各 step の
     プールは採掘時と同一。抽選回数を記録しているので引数も同一になる。
     """
+    with cf._scratch_cwd():                      # 採掘と同じ理由(上の注を見よ)
+        return _replay_chain_inner(ops, gens, chain_seed, start_type, script,
+                                   arg_keys, verbose)
+
+
+def _replay_chain_inner(ops, gens, chain_seed, start_type, script, arg_keys, verbose):
     by_name = {o[0]: o for o in ops}
     rng = np.random.default_rng(chain_seed)
     pool = _init_pool(gens, rng)

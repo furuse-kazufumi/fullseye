@@ -378,3 +378,52 @@ def test_chain_threads_the_input_through_every_step(env):
         assert len(got["ops"]) >= 2, "1 op は合成ではない"
         found += 1
     assert found >= 5
+
+
+# --------------------------------------------------------------------------- #
+# 採掘側も repo 直下を汚さない(2026-09-25 の実測から)                        #
+# --------------------------------------------------------------------------- #
+def test_the_miner_writes_nothing_into_the_repo_root(env):
+    """★ファザーには 2026-09-23 から捨て場が在ったが、**採掘側には無かった**。
+
+    スイートを回した直後、repo 直下に `ラベル 2` / `ラベル 73`(中身は xlsx)が
+    生まれた。探針が作る ``text`` は相対パスとしても成立するので、台帳でパス引数を
+    ``text`` と宣言している書き込み op がそれを受けると cwd へ書く。守りが
+    ``run_chain`` にしか無く、採掘側は素通りしていた —— 仕組みが在ることと、
+    全部の経路がそこを通ることは別である。
+
+    この門は**事故の起きる場所**で数える。そして**空で通さない**ために、
+    書き込み op を強制実行し、捨て場に実物が落ちたことまで確かめる:
+
+      1. ``write_3mf`` を ``replay_chain`` で強制実行する(採掘と同じ道を通る)
+      2. 捨て場に**実物が落ちた**ことを見る(書き込み自体は起きている)
+      3. その上で repo 直下の一覧が **1 つも増えていない**ことを見る
+    """
+    import os
+    import pathlib
+    import tempfile
+
+    from tools.chain_fuzz import _SCRATCH
+
+    ops, gens = env
+    root = pathlib.Path(__file__).resolve().parents[1]
+    scratch = pathlib.Path(os.path.join(tempfile.gettempdir(), _SCRATCH))
+    if scratch.is_dir():
+        for p in scratch.iterdir():          # 前の回の残りと区別できるようにする
+            if p.is_file():
+                p.unlink()
+
+    before = sorted(p.name for p in root.iterdir())
+    out, out_type, _sec = replay_chain(ops, gens, 7, "mesh", ["write_3mf"], [1],
+                                       verbose=False)
+    for seed in range(8):                    # 採掘そのものも回す
+        mine_chain(ops, gens, seed, 3)
+    after = sorted(p.name for p in root.iterdir())
+
+    assert out is not None and out_type == "text", (
+        "write_3mf が完走していない —— この門は空を通している (out=%r)" % (out,))
+    wrote = sorted(p.name for p in scratch.iterdir()) if scratch.is_dir() else []
+    assert wrote, "捨て場に何も落ちていない = 書き込みが起きていないので門が空"
+    assert after == before, (
+        "採掘が repo 直下にファイルを作った: %s(捨て場へ移す守りが外れている)"
+        % sorted(set(after) - set(before)))
