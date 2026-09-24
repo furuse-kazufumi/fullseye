@@ -88,9 +88,9 @@ public_id: fe04f6eef40119913894
 | 円の本数 | K=64 で **99.0 %** | パーセバルの等式 | 予言と実測の差 **7e-15 px** |
 | 紙の上 | **15.57 m / 最短 8.6 分** | G-code に変換して測る | ― |
 
-![元の版画と点描](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/01_stipple.png)
+[![元の版画と点描](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/01_stipple_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/01_stipple.png)
 
-![一本の線と対照群](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/03_tour.png)
+[![一本の線と対照群](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/03_tour_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/03_tour.png)
 
 *↑ 左が一筆書き(MST の 1.146 倍)、右が同じ点を座標順に繋いだ対照群(41.4 倍)。同じ点でも繋ぎ方でこれだけ違います。*
 
@@ -171,27 +171,27 @@ print(err["corr"], err["length_px"])
 
 以下は同じ実行が作った残り **6 枚**です。説明は 1 文目だけに切ってあります —— 詳しい読み方は上の主図が持っています。
 
-![lloyd](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/02_lloyd.png?v=3)
+[![lloyd](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/02_lloyd_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/02_lloyd.png?v=3)
 
 *↑ Lloyd's energy sum w|x-c(x)|^2 never goes up — that is a property of the algorithm that can be checked exactly, which is why it is the gate rather than the look…*
 
-![tone](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/04_tone.png?v=3)
+[![tone](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/04_tone_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/04_tone.png?v=3)
 
 *↑ the tone of a line drawing exists at a scale coarser than the line, so both pictures are compared after a Gaussian of sigma 6 px: correlation 0.984 against +0.0…*
 
-![pen](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/05_pen.png?v=3)
+[![pen](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/05_pen_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/05_pen.png?v=3)
 
 *↑ while the strokes do not overlap the ink fraction is length x width / area, so the width that reproduces the mean tone is solved in closed form (0.90 px here)*
 
-![harmonics](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/06_harmonics.png?v=3)
+[![harmonics](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/06_harmonics_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/06_harmonics.png?v=3)
 
 *↑ Parseval makes this a prediction, not a measurement: the squared error of the order-K reconstruction equals the energy of the coefficients above K, exactly*
 
-![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/08_numbers.png?v=3)
+[![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/08_numbers_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/08_numbers.png?v=3)
 
 *↑ every row is measured by an operator in this run; the harmonic rows are predicted in closed form before the drawing is made*
 
-![harmonic table](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/09_harmonic_table.png?v=3)
+[![harmonic table](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/09_harmonic_table_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/09_harmonic_table.png?v=3)
 
 *↑ Parseval: the error above is the energy that was left out, exactly*
 
@@ -205,7 +205,7 @@ print(err["corr"], err["length_px"])
 
 複素解析の可視化は、**曲線の上**(積分・巻き数・ローラン係数・等角写像)と**領域の上**(値の場・位相彩色・吸引域)で別の道具が要ります。この回は後者です。
 
-![位相彩色・ニュートンの吸引域・脱出時間・翼まわりの流れ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/03_newton.png?v=1)
+[![位相彩色・ニュートンの吸引域・脱出時間・翼まわりの流れ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/03_newton_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/03_newton.png?v=1)
 
 *↑ どれも「きれいだから正しい」が効かない絵。採点は全部この絵の外から来る。*
 
@@ -255,39 +255,39 @@ print("未収束:", int((basins < 0).sum()))          # Cayley の厳密解な�
 
 以下は同じ実行が作った残り **9 枚**です。説明は 1 文目だけに切ってあります —— 詳しい読み方は上の主図が持っています。
 
-![rational](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/01_rational.png?v=3)
+[![rational](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/01_rational_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/01_rational.png?v=3)
 
 *↑ 有理関数 (z−z₁)(z−z₂)/(z−p) の位相彩色。*
 
-![orders](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/02_orders.png?v=3)
+[![orders](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/02_orders_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/02_orders.png?v=3)
 
 *↑ ★絵が定理を証明する側に回る。*
 
-![boundary](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/04_boundary.png?v=3)
+[![boundary](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/04_boundary_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/04_boundary.png?v=3)
 
 *↑ 2 次の境界は虚軸 1 本(513 画素の格子で 1026)。*
 
-![mandelbrot](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/05_mandelbrot.png?v=3)
+[![mandelbrot](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/05_mandelbrot_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/05_mandelbrot.png?v=3)
 
 *↑ ★★右の明るい部分は**反復せずに**内側と分かる領域 —— 固定点 z* = (1−√(1−4c))/2 が吸引的(|2z*| < 1)なら軌道は決して 脱出しない、という閉形式。*
 
-![julia](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/06_julia.png?v=3)
+[![julia](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/06_julia_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/06_julia.png?v=3)
 
 *↑ z → z² + c は |z| を 2 乗するだけなので、c = 0 では「|z| < 1 は 0 へ、|z| > 1 は無限へ」が厳密に言える。*
 
-![flow](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/07_flow.png?v=3)
+[![flow](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/07_flow_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/07_flow.png?v=3)
 
 *↑ 迎角 8 度のジューコフスキー翼まわりの非粘性流。*
 
-![kutta](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/08_kutta.png?v=3)
+[![kutta](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/08_kutta_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/08_kutta.png?v=3)
 
 *↑ 後縁は写像の特異点(dz/dζ = 0)なので、循環が正しくないと1/√距離 で発散する。*
 
-![lift](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/09_lift.png?v=3)
+[![lift](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/09_lift_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/09_lift.png?v=3)
 
 *↑ ★CL = 2π(a/b)sin(α+β)。*
 
-![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/10_numbers.png?v=3)
+[![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/10_numbers_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/10_numbers.png?v=3)
 
 *↑ どの行も「使った式」ではない真値で採点している: 既存 op (cplx_winding_number / cplx_cr_residual)、Cayley の定理、閉形式の内部判定、c=0 のジュリア集合、クッタ条件の対照群、薄翼理論との比。*
 
@@ -303,7 +303,7 @@ print("未収束:", int((basins < 0).sum()))          # Cayley の厳密解な�
 
 アポロニウスの円、フォードの円、測地ドーム、葉序の螺旋、IFS のアトラクタ、空間充填曲線。**実装が少し間違っていても、円は詰まるし螺旋は回るしフラクタルはフラクタルに見えます。**
 
-![アポロニウスの充填とフォードの円](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/01_apollonian.png?v=1)
+[![アポロニウスの充填とフォードの円](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/01_apollonian_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/01_apollonian.png?v=1)
 
 ### 門と成績
 
@@ -361,43 +361,43 @@ print("番号差の山:", gaps.argsort()[::-1][:5])      # 黄金角なら 8, 13
 
 以下は同じ実行が作った残り **10 枚**です。説明は 1 文目だけに切ってあります —— 詳しい読み方は上の主図が持っています。
 
-![apollonian counts](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/02_apollonian_counts.png?v=3)
+[![apollonian counts](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/02_apollonian_counts_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/02_apollonian_counts.png?v=3)
 
 *↑ 合計は 2·3^depth + 2。*
 
-![ford](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/03_ford.png?v=3)
+[![ford](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/03_ford_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/03_ford.png?v=3)
 
 *↑ フォードの円(分母 12 まで、47 円)。*
 
-![dome](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/04_dome.png?v=3)
+[![dome](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/04_dome_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/04_dome.png?v=3)
 
 *↑ 分割 f を 1, 2, 3, 4, 6 と上げても、次数 5 の頂点は**ちょうど 12 個**から動かない(次数 6 だけが増える)。*
 
-![dome degrees](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/05_dome_degrees.png?v=3)
+[![dome degrees](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/05_dome_degrees_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/05_dome_degrees.png?v=3)
 
 *↑ オイラーの公式 V − E + F = 2 の帰結。*
 
-![phyllotaxis](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/06_phyllotaxis.png?v=3)
+[![phyllotaxis](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/06_phyllotaxis_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/06_phyllotaxis.png?v=3)
 
 *↑ 3 枚とも螺旋に見える。*
 
-![parastichy](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/07_parastichy.png?v=3)
+[![parastichy](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/07_parastichy_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/07_parastichy.png?v=3)
 
 *↑ 黄金角の山は [34, 55, 89, 21, 13, 8, 144] —— すべてフィボナッチ数。*
 
-![ifs](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/08_ifs.png?v=3)
+[![ifs](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/08_ifs_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/08_ifs.png?v=3)
 
 *↑ モランの式 Σrᵢᵈ = 1 は**写像の縮小率だけ**から d を出す。*
 
-![curves](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/09_curves.png?v=3)
+[![curves](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/09_curves_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/09_curves.png?v=3)
 
 *↑ order 5 で 4^5 = 1,024 点をちょうど 1 回ずつ通り、隣り合う点は必ず距離 1。*
 
-![locality](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/10_locality.png?v=3)
+[![locality](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/10_locality_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/10_locality.png?v=3)
 
 *↑ ヒルベルトは √k の近くを通り(k=32 で 6.38)、走査線はほぼ k に比例する(16.07)。*
 
-![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/11_numbers.png?v=3)
+[![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/11_numbers_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/11_numbers.png?v=3)
 
 *↑ どの行も「使った式」ではない真値で採点している: デカルトの円定理、整数充填、|ps − qr| = 1、オイラーの関数の和、オイラーの公式(既存 graph_degree_table が数えた)、フィボナッチ、モランの式と既存 fractal_dimension、置換であること。*
 
@@ -413,7 +413,7 @@ print("番号差の山:", gaps.argsort()[::-1][:5])      # 黄金角なら 8, 13
 
 二重スリットの縞と、2 版を重ねた網点のモアレは教科書では別の章に載っています。**でも式は 1 本しかありません。** この回はその 1 本を両側から確かめます。
 
-![膜の固有モードと節線](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/01_membrane.png?v=1)
+[![膜の固有モードと節線](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/01_membrane_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/01_membrane.png?v=1)
 
 *↑ モードの形は符号つき([-1, 1])。節線の両側で位相が反転するので、`image2d` を名乗ると腹の位相が消える。*
 
@@ -479,51 +479,51 @@ print("実測 %.2f px / lambda*D/d = %.2f px"
 
 以下は同じ実行が作った残り **12 枚**です。説明は 1 文目だけに切ってあります —— 詳しい読み方は上の主図が持っています。
 
-![nodal](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/02_nodal.png?v=3)
+[![nodal](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/02_nodal_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/02_nodal.png?v=3)
 
 *↑ (m, n) モードの節線は縦 m−1 本・横 n−1 本。*
 
-![fringes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/03_fringes.png?v=3)
+[![fringes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/03_fringes_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/03_fringes.png?v=3)
 
 *↑ 縞間隔は λD/d。*
 
-![fringe scaling](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/04_fringe_scaling.png?v=3)
+[![fringe scaling](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/04_fringe_scaling_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/04_fringe_scaling.png?v=3)
 
 *↑ 重なっていることが主張。*
 
-![grating](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/05_grating.png?v=3)
+[![grating](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/05_grating_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/05_grating.png?v=3)
 
 *↑ ★デューティ 50 % の矩形格子は**偶数次が消える**(矩形波のフーリエ係数が偶数調波で 0)。*
 
-![moire](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/06_moire.png?v=3)
+[![moire](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/06_moire_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/06_moire.png?v=3)
 
 *↑ 新聞の 15° / 45° / 75° は差が 30° で、うなりが最も細かくなる組み合わせ。*
 
-![moire scaling](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/07_moire_scaling.png?v=3)
+[![moire scaling](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/07_moire_scaling_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/07_moire_scaling.png?v=3)
 
 *↑ ★FFT の探す範囲を切らないと**スクリーン自身の山**(どの角度でも 16.7 px = 1/f)を拾って「予言と全然合わない」と読める。*
 
-![halftone tone](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/08_halftone_tone.png?v=3)
+[![halftone tone](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/08_halftone_tone_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/08_halftone_tone.png?v=3)
 
 *↑ 平均絶対差 0.0517。*
 
-![engrave](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/09_engrave.png?v=3)
+[![engrave](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/09_engrave_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/09_engrave.png?v=3)
 
 *↑ 被覆率は線幅 / 間隔 = w/d。*
 
-![hatch](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/10_hatch.png?v=3)
+[![hatch](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/10_hatch_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/10_hatch.png?v=3)
 
 *↑ 向きは既存 structure_tensor_orientation が決める(この族は構造テンソルを再実装しない)。*
 
-![mosaic](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/11_mosaic.png?v=3)
+[![mosaic](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/11_mosaic_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/11_mosaic.png?v=3)
 
 *↑ Lloyd 反復でセルが等エネルギーに近づく。*
 
-![lloyd](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/12_lloyd.png?v=3)
+[![lloyd](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/12_lloyd_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/12_lloyd.png?v=3)
 
 *↑ 下がり続けることが主張。*
 
-![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/13_numbers.png?v=3)
+[![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/13_numbers_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/13_numbers.png?v=3)
 
 *↑ どの行も「使った式」ではない真値で採点している: 膜の閉形式とベッセルの零点、λD/d を測り返す別の op、既存 grating_wavelengths との往復、描く前のモアレ予言、w/d の閉形式、既存 structure_tensor_orientation、既存 stipple_energy。*
 
@@ -538,7 +538,7 @@ print("実測 %.2f px / lambda*D/d = %.2f px"
 
 **ローレンツ・アトラクタの図は、積分器が 1 次でも 4 次でも蝶に見えます。** 極小曲面の図は、平均曲率が 0 でなくてもきれいな曲面に見えます。この回は「見て分かる」が一切効きません。
 
-![ローレンツの軌道と分岐図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/04_bifurcation.png?v=1)
+[![ローレンツの軌道と分岐図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/04_bifurcation_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/04_bifurcation.png?v=1)
 
 ### 門と成績
 
@@ -621,43 +621,43 @@ print("|H| 中央値 %.5f(対照群の単位球は 1.0)" % np.median(H[np.isfini
 
 以下は同じ実行が作った残り **10 枚**です。説明は 1 文目だけに切ってあります —— 詳しい読み方は上の主図が持っています。
 
-![rk4](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/01_rk4.png?v=3)
+[![rk4](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/01_rk4_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/01_rk4.png?v=3)
 
 *↑ 厳密解は expm(At)x₀ なので、誤差は積分器の次数をそのまま出す。*
 
-![lorenz](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/02_lorenz.png?v=3)
+[![lorenz](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/02_lorenz_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/02_lorenz.png?v=3)
 
 *↑ ローレンツ・アトラクタの xz 断面。*
 
-![lyapunov](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/03_lyapunov.png?v=3)
+[![lyapunov](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/03_lyapunov_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/03_lyapunov.png?v=3)
 
 *↑ Σλ = -13.66666、閉形式 −(σ+1+β) = -13.66667(差 2.6e-06)。*
 
-![dimension](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/05_dimension.png?v=3)
+[![dimension](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/05_dimension_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/05_dimension.png?v=3)
 
 *↑ 円 1・平面 2・カントール log2/log3 = 0.6309。*
 
-![field](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/06_field.png?v=3)
+[![field](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/06_field_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/06_field.png?v=3)
 
 *↑ ode_vector_field_grid は flow2d((2, H, W) の (dy, dx))を返すので、piv_divergence / piv_vorticity / piv_flow_magnitude がそのまま使える。*
 
-![poincare](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/07_poincare.png?v=3)
+[![poincare](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/07_poincare_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/07_poincare.png?v=3)
 
 *↑ 同じ op で両方を測っている。*
 
-![tube](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/08_tube.png?v=3)
+[![tube](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/08_tube_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/08_tube.png?v=3)
 
 *↑ ローレンツの軌道を管メッシュに(MATLAB の tubeplot 相当、12510 頂点 / 25000 面)。*
 
-![minimal](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/09_minimal.png?v=3)
+[![minimal](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/09_minimal_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/09_minimal.png?v=3)
 
 *↑ 「これは極小曲面だ」という主張を、**作り方を知らない op が採点する**。*
 
-![gyroid](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/10_gyroid.png?v=3)
+[![gyroid](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/10_gyroid_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/10_gyroid.png?v=3)
 
 *↑ level = 0 で場は体心反転に対し奇なので、両側の体積はちょうど半分ずつ(実測 0.499928 / 0.499981 / 0.499991、格子に依らない)。*
 
-![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/11_numbers.png?v=3)
+[![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/11_numbers_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/11_numbers.png?v=3)
 
 *↑ どの行も絵からは読めない: expm との誤差の比、トレース恒等式、厳密な分岐点、既知の 3 つの次元、PIV 族の既存 op が測った tr(A)、トーラスの解析解、既存 vertex_curvature が測った H —— そして節面近似の残差は隠さずここに出してある。*
 
@@ -681,11 +681,11 @@ print("|H| 中央値 %.5f(対照群の単位球は 1.0)" % np.median(H[np.isfini
 
 残したのは 1 件だけ、**測る側の偏り**です。
 
-![ミュラー・リヤーの偏り](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/01_muller_lyer_bias.png?v=3)
+[![ミュラー・リヤーの偏り](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/01_muller_lyer_bias_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/01_muller_lyer_bias.png?v=3)
 
 *↑ 2 本の軸は矢羽根を外すと**画素単位で同一**(差 0)。ところが「行の黒い区間」を素朴に測ると **223 画素と 225 画素**になります。しかも**矢羽根が無くても 223 画素**(真値 220)—— 反エイリアスの裾を「黒い画素」として数えているからで、これは錯視より前の**素の欠陥**です。*
 
-![矢羽根の長さを振る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/02_bias_vs_head.png?v=3)
+[![矢羽根の長さを振る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/02_bias_vs_head_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/02_bias_vs_head.png?v=3)
 
 *↑ ★ここでも外しました。「矢羽根が長いほど偏る」と読みましたが、20 px で 2 画素に達したあと **80 px まで動きません**。偏りを作るのは長さではなく、**端に裾が乗るかどうか**だけでした。*
 
@@ -695,45 +695,45 @@ print("|H| 中央値 %.5f(対照群の単位球は 1.0)" % np.median(H[np.isfini
 
 そこで、**絵とは独立に成り立つ主張**を持つものだけを入れました。
 
-![規則 90](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/03_rule90.png?v=3)
+[![規則 90](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/03_rule90_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/03_rule90.png?v=3)
 
 *↑ 規則 90 を中央 1 点から 200 行。**第 n 行の第 k セルは二項係数 `C(n,k)` の偶奇に厳密に一致**します —— パスカルの三角形を 2 で割った余り。絵を一切見ずに採点できる、という意味でこの族の代表例です。*
 
-![規則の並べ比べ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/04_rule_gallery.png?v=3)
+[![規則の並べ比べ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/04_rule_gallery_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/04_rule_gallery.png?v=3)
 
 *↑ 始まりはどれも中央の 1 セルだけ。変えたのは 8 ビットの規則番号 1 つです。規則 30 は乱数生成に使われた歴史があり、規則 110 は**万能計算**ができることが証明されています。*
 
-![ラングトンの蟻](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/05_langtons_ant.png?v=3)
+[![ラングトンの蟻](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/05_langtons_ant_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/05_langtons_ant.png?v=3)
 
 *↑ 規則は 2 つだけ(白なら右折して黒く塗る、黒なら左折して白く塗る)。最初の 1 万歩ほどは対称な模様、次に無秩序、そして**突然「高速道路」に入り、以後は周期 104 で斜めに進み続けます**。*
 
-![蟻の成長曲線](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/06_langton_growth.png?v=3)
+[![蟻の成長曲線](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/06_langton_growth_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/06_langton_growth.png?v=3)
 
 *↑ 黒マスの数を歩数に対して。前半は揺れますが、高速道路に入ると **12/104 = 0.1154 マス/歩**の直線になります。**絵を見なくても、傾きで「入った」が分かります。***
 
-![アポロニウス](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/07_apollonian.png?v=3)
+[![アポロニウス](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/07_apollonian_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/07_apollonian.png?v=3)
 
 *↑ 隙間に接する円を入れ続けるので終わりがありません。**互いに接する 4 円の曲率はデカルトの円定理 `(Σk)² = 2Σk²` を厳密に満たします**(残差 1.2e-16)—— 円の位置まで複素数の曲率中心で解けるので、当てはめではなく**代数**で描いています。 ★**塗りの明るさは曲率**(= 1/半径)—— 定理が試している量をそのまま色にしてあるので、絵の濃淡が主張と同じものを指しています。*
 
-![カオスゲーム](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/08_chaos_game.png?v=3)
+[![カオスゲーム](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/08_chaos_game_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/08_chaos_game.png?v=3)
 
 *↑ 賽を振って頂点へ半分ずつ寄るだけで、シェルピンスキーの三角形が出ます。**明るさは点の密度**(双一次で積み、asinh で暗部を伸ばしてあります)。描き方は飾りではありません —— 同じ点列でも、切り捨てて積んだ絵から測った箱数え次元は真値 log3/log2 から **−0.032** ずれるのに、こう描くと **−0.0030** で **10 倍**正確になります。*
 
-![バーンズリーのシダ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/09_fern.png?v=3)
+[![バーンズリーのシダ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/09_fern_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/09_fern.png?v=3)
 
 *↑ バーンズリーのシダ —— 4 本のアフィン写像を確率で選んで回すだけ。**明るさは密度**で、正規化は最大値でなく分位点で行っています(根元の 1 点が飛び抜けるので、最大値で割ると他が全部潰れます)。*
 
-![流れ場](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/10_flow_field.png?v=3)
+[![流れ場](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/10_flow_field_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/10_flow_field.png?v=3)
 
 *↑ 場は**ポテンシャル ψ の回転**として作ってあるので、発散が恒等的に 0(非圧縮、残差 7.0e-17)。流線が渦のまわりで**閉じている**のがその絵です —— 「それらしい雑音」で作った流れ場では、ここが湧き出しと吸い込みになります。 ★**線の色と太さは流速** |∇ψ| —— 太さも濃さも一定だと、同じ場から描いても落書きにしかなりません。*
 
-![反応拡散](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/11_reaction_diffusion.png?v=3)
+[![反応拡散](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/11_reaction_diffusion_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/11_reaction_diffusion.png?v=3)
 
 *↑ グレイ–スコット反応拡散。**種は散らして 12 個**置いてあります ——中央に 1 個だけだと、同じ歩数でも模様の被覆が 0.086 にしかならず、画面の大半が余白になります(散らすと **0.379**)。★格子状に並べると**格子そのものが絵に出る**ので、ずらして置きます。*
 
-![プラズマ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/12_plasma.png?v=3)
+[![プラズマ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/12_plasma_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/12_plasma.png?v=3)
 
-![10 PRINT とトルシェ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/13_eight_bit.png?v=3)
+[![10 PRINT とトルシェ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/13_eight_bit_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/13_eight_bit.png?v=3)
 
 *↑ 左は `10 PRINT CHR$(205.5+RND(1)); : GOTO 10` —— Commodore 64 の一行プログラム。右はトルシェ・タイルで、**弧の端点が必ず辺の中点に来る**ので、どう組んでも曲線が途切れません。*
 
@@ -745,7 +745,7 @@ print("|H| 中央値 %.5f(対照群の単位球は 1.0)" % np.median(H[np.isfini
 
 作り方が要点です。「最後に頭へ戻す」のではなく、**時間依存の量をすべて θ の関数にして θ を 0→2π 回す**と、t = T は t = 0 と**同じ式**になります —— 継ぎ目は編集で消すものではなく、**最初から存在しません**。
 
-![継ぎ目の比](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/15_seam.png?v=3)
+[![継ぎ目の比](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/15_seam_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/15_seam.png?v=3)
 
 *↑ **継ぎ目の正解は 0 ではなく 1 です。** 比 =(最後のまたぎの差)÷(ふつうのコマ間の差)。1 なら「最後のまたぎが、ほかのまたぎと見分けが付かない」。**0 だと継ぎ目が無いのではなく、動きが止まっている**という意味になります —— ここを取り違えると「完璧な結果」に見えます。*
 
@@ -795,7 +795,7 @@ print("|H| 中央値 %.5f(対照群の単位球は 1.0)" % np.median(H[np.isfini
 
 以下は同じ実行が作った残り **1 枚**です。説明は 1 文目だけに切ってあります —— 詳しい読み方は上の主図が持っています。
 
-![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/16_numbers.png?v=3)
+[![numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/16_numbers_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/16_numbers.png?v=3)
 
 *↑ この PoC の主張は全部この表に入っています。*
 
@@ -817,15 +817,15 @@ Fullseye には HALCON 流のサブピクセル測定器が入っています(`m
 
 ### まず、測定器は目より正しい
 
-![カフェウォールにキャリパーを当てる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/01_caliper_on_cafe_wall.png?v=1)
+[![カフェウォールにキャリパーを当てる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/01_caliper_on_cafe_wall_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/01_caliper_on_cafe_wall.png?v=1)
 
 *↑ 青が与えた参照線、橙が測定器が**法線方向に探して見つけたエッジ点** 41 個。タイルは傾いて見えたままなのに、点は一直線に乗り(rms = 0.0)、当て直した直線の角度は**厳密に 0.0 度**。*
 
-![エビングハウス](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/10_ebbinghaus_circle_caliper.png?v=1)
+[![エビングハウス](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/10_ebbinghaus_circle_caliper_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/10_ebbinghaus_circle_caliper.png?v=1)
 
 *↑ 左の円は小さく、右の円は大きく見えます。円の計測オブジェクトが返した半径は **29.996525 px と 29.996525 px** ―― 差は **2.5e-12 px**。目が主張する差は、画像の側には存在しません。*
 
-![エビングハウスの半径](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/11_ebbinghaus_radius.png?v=1)
+[![エビングハウスの半径](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/11_ebbinghaus_radius_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/11_ebbinghaus_radius.png?v=1)
 
 *↑ 縦軸を 0.2 px 幅まで拡大しても 2 点は重なったまま。どちらも指定の 30 px より 0.0035 px 小さいのですが、**そのずれは両方に同じだけ乗るので、差を取ると消えます**。*
 
@@ -837,11 +837,11 @@ Fullseye には HALCON 流のサブピクセル測定器が入っています(`m
 
 そのあと、ずらし量 5 通り × 探索半幅 4 通りの **20 通り全部**を測りました。
 
-![ずらし量 × 探索半幅の格子](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/03_cafe_wall_grid.png?v=1)
+[![ずらし量 × 探索半幅の格子](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/03_cafe_wall_grid_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/03_cafe_wall_grid.png?v=1)
 
 *↑ 探索半幅が目地の帯幅 8 px に届く 10 px と 16 px のとき、**ずらし量 0.125 と 0.375 でだけ** 0.1429 度傾きます。0.25 は、たまたま外れない側でした。*
 
-![等倍で切り出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/05_caliper_grabbed_the_far_side.png?v=1)
+[![等倍で切り出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/05_caliper_grabbed_the_far_side_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/05_caliper_grabbed_the_far_side.png?v=1)
 
 *↑ 何が起きているか。全体図では 8 px の飛びが潰れて見えないので、目地の周り 34 行だけを等倍で切り出しました。下の段では、点が**帯の反対側にも乗っています** ―― 探索範囲が向こう側の境界に届いているのです。*
 
@@ -851,7 +851,7 @@ Fullseye には HALCON 流のサブピクセル測定器が入っています(`m
 
 そして、ここがいちばん実務に効くところです。
 
-![答えと残差](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/04_cafe_wall_residual.png?v=1)
+[![答えと残差](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/04_cafe_wall_residual_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/04_cafe_wall_residual.png?v=1)
 
 *↑ 同じ 20 通りについて、答え(角度)と残差(rms)を重ねたもの。*
 
@@ -861,7 +861,7 @@ Fullseye には HALCON 流のサブピクセル測定器が入っています(`m
 
 ### 測定器も外す。ただし目とは別の理由で
 
-![ミュラー・リヤーにキャリパーを当てる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/06_muller_caliper.png?v=1)
+[![ミュラー・リヤーにキャリパーを当てる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/06_muller_caliper_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/06_muller_caliper.png?v=1)
 
 *↑ 上(矢羽根なし)は測定線上のエッジが 2 本、下(矢羽根あり)は **4 本**。*
 
@@ -869,13 +869,13 @@ Fullseye には HALCON 流のサブピクセル測定器が入っています(`m
 
 目は「長く見える」と外し、測定器は「別の物を測る」と外す ―― **外れ方が違います**。
 
-![4 通りの答え](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/07_muller_widths.png?v=1)
+[![4 通りの答え](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/07_muller_widths_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/07_muller_widths.png?v=1)
 
 *↑ 同じ 1 本の軸が、測り方で 4 通りの答えになります。どれもバグではありません。*
 
 ### 測り方を宣言すると、静かな誤りが見える拒否に変わる
 
-![適合度](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/08_fuzzy_score.png?v=1)
+[![適合度](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/08_fuzzy_score_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/08_fuzzy_score.png?v=1)
 
 *↑ `fuzzy_measure_pairing` に「幅は 220 px のはず」と**宣言して**測らせたもの。矢羽根なしでは適合度 0.9988、矢羽根ありでは **0.0225**。*
 
@@ -887,7 +887,7 @@ Fullseye には HALCON 流のサブピクセル測定器が入っています(`m
 
 矢羽根が無い図でも、答えは 223.777 px で真値 220 と合いません。錯視のせいでしょうか。
 
-![端の定義](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/09_edge_definition.png?v=1)
+[![端の定義](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/09_edge_definition_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/09_edge_definition.png?v=1)
 
 *↑ 軸の長さを 140〜300 px に振ると、ずれは **+3.777 px 一定**(振れ幅 0.0000 px)。*
 
@@ -895,11 +895,11 @@ Fullseye には HALCON 流のサブピクセル測定器が入っています(`m
 
 ### 動くのは答えではなく、証拠の数のほうだった
 
-![ツェルナー](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/12_zollner_caliper.png?v=1)
+[![ツェルナー](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/12_zollner_caliper_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/12_zollner_caliper.png?v=1)
 
 *↑ 収束して見える 7 本すべてが、測ると水平(最大 |傾き| **4.3e-04 度** = 幅 520 px を渡って 0.0039 px)。*
 
-![傾きと点の数](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/13_zollner_angles.png?v=1)
+[![傾きと点の数](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/13_zollner_angles_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/13_zollner_angles.png?v=1)
 
 *↑ 傾きは 7 本とも 0 に重なって見分けが付きません。動いたのは**採用されたエッジ点の数**で、ハッチの向きが 1 本おきに反転するため 61 点中 **13 と 19** を交互に取ります。*
 
@@ -907,7 +907,7 @@ Fullseye には HALCON 流のサブピクセル測定器が入っています(`m
 
 ### 直らなかったものは、直らなかったと書く
 
-![ポッゲンドルフ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/14_poggendorff_caliper.png?v=1)
+[![ポッゲンドルフ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/14_poggendorff_caliper_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/14_poggendorff_caliper.png?v=1)
 
 *↑ 帯の左右の 2 本は厳密に 1 本の直線です(帯で隠れているだけ)。橙が素朴なキャリパーの点、青が両エッジを対にして中心を取り直した線。*
 
@@ -915,7 +915,7 @@ Fullseye には HALCON 流のサブピクセル測定器が入っています(`m
 
 原因は突き止められました。**極性が塊で交互している**のです(41 点が 9 個の塊、+18 / −23)。細い線には**上側と下側の 2 つのエッジ**があり、「線の位置」はどちらか(あるいは中心か)を言うまで定義されません。測定器はその 2 つを行き来していました。
 
-![残差](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/15_poggendorff_residual.png?v=1)
+[![残差](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/15_poggendorff_residual_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/15_poggendorff_residual.png?v=1)
 
 *↑ 両エッジを対にして中心を取ると、角度差は 0.450 → **0.115 度**、残差は 2.07 → 0.10/0.39 まで下がります。**それでも 0 ではありません。**帯の縁の細い縦線と画像の端が測定線に掛かっており、そこまでは追い込んでいない ―― というのが正直な状態です。*
 
@@ -979,7 +979,7 @@ sha256 を記録して、同一バイト列が 2 枚出たら欠陥にする門�
 
 ### 健診結果
 
-![健診表](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/16_audit.png?v=1)
+[![健診表](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/16_audit_720.jpg?v=1)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/16_audit.png?v=1)
 
 *↑ この表に「絵を見て判断した」行は 1 つもありません。真値は生成器が保証し、答えは既存の測定 op が返したものです。*
 
@@ -1007,7 +1007,7 @@ sha256 を記録して、同一バイト列が 2 枚出たら欠陥にする門�
 
 以下は同じ実行が作った残り **1 枚**です。説明は 1 文目だけに切ってあります —— 詳しい読み方は上の主図が持っています。
 
-![cafe wall sweep](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/02_cafe_wall_sweep.png?v=3)
+[![cafe wall sweep](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/02_cafe_wall_sweep_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/02_cafe_wall_sweep.png?v=3)
 
 *↑ `measure_length` は「参照線の法線方向に何 px 探すか」。*
 
