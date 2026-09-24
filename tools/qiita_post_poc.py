@@ -97,11 +97,36 @@ def _save_items(d: dict) -> None:
         json.dumps(d, ensure_ascii=False, indent=1) + "\n")
 
 
-def run(lang: str, write: bool, public: bool, allow_shrink: bool) -> int:
+def _parts(cap: dict) -> list:
+    """投稿できる記事(案内 + 生成された棟)。手書きの `external` はここでは扱わない。"""
+    return [p for p in cap["meta"].get("parts", [{"id": "entrance", "kind": "index"}])
+            if p["kind"] in ("index", "generated")]
+
+
+def _slot(part: dict, lang: str) -> str:
+    """`qiita_items.json` の鍵。
+
+    ★案内は `ja` / `en` のまま据え置く —— 既存の枠がその鍵で記録されており、
+    変えると同じ記事に PATCH できず**新しい記事を量産**してしまう。
+    """
+    return lang if part["kind"] == "index" else "%s.%s" % (part["id"], lang)
+
+
+def _body_path(part: dict, lang: str) -> str:
+    if part["kind"] == "index":
+        return ARTICLE.format(lang=lang)
+    return os.path.join(REPO, "docs", "articles",
+                        "fullseye_poc_museum_%s_qiita_%s.md" % (part["slug"], lang))
+
+
+def run(lang: str, write: bool, public: bool, allow_shrink: bool, part=None) -> int:
     cap = json.load(open(CAPTIONS, encoding="utf-8"))
-    title = cap["meta"]["title_" + lang]
+    part = part or _parts(cap)[0]
+    title = part.get("title_" + lang) or cap["meta"]["title_" + lang]
     tags = [{"name": t, "versions": []} for t in cap["meta"].get("qiita_tags", ["画像処理", "Python"])]
-    body = io.open(ARTICLE.format(lang=lang), encoding="utf-8").read()
+    body = io.open(_body_path(part, lang), encoding="utf-8").read()
+    slot = _slot(part, lang)
+    lang = slot   # 以後のログと鍵は記事単位で引く
     print("[%s] local: %d chars, title=%r" % (lang, len(body), title))
     errs = check_body(body)
     if errs:
@@ -145,14 +170,28 @@ def run(lang: str, write: bool, public: bool, allow_shrink: bool) -> int:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--lang", action="append", choices=["ja", "en"])
+    ap.add_argument("--part", action="append",
+                    help="投稿する記事の id(既定 = 案内と全部の棟)。手書きの記事は扱わない")
     ap.add_argument("--check", action="store_true", help="検査だけ(書かない)")
     ap.add_argument("--public", action="store_true", help="限定共有ではなく公開にする(明示時のみ)")
     ap.add_argument("--allow-shrink", action="store_true")
     a = ap.parse_args(argv)
     langs = a.lang or ["ja", "en"]
+    cap = json.load(open(CAPTIONS, encoding="utf-8"))
+    parts = _parts(cap)
+    if a.part:
+        want = set(a.part)
+        known = {p["id"] for p in parts}
+        bad = sorted(want - known)
+        if bad:
+            print("そんな記事は無い: %s(在るのは %s)" % (", ".join(bad), ", ".join(sorted(known))))
+            return 2
+        parts = [p for p in parts if p["id"] in want]
     rc = 0
-    for lang in langs:
-        rc = max(rc, run(lang, write=not a.check, public=a.public, allow_shrink=a.allow_shrink))
+    for part in parts:
+        for lang in langs:
+            rc = max(rc, run(lang, write=not a.check, public=a.public,
+                             allow_shrink=a.allow_shrink, part=part))
     return rc
 
 
