@@ -1,0 +1,610 @@
+{
+ "_note": "収蔵台帳。追記のみ。収蔵番号は受け入れた瞬間に 1 回だけ発行し、以後変えない・再利用しない。番号は「どこに展示しているか」とは独立なので、記事間の移動でも 棟の分割でも動かない。除籍は retired に理由つきで記録し、番号は欠番のまま残す。訂正は消さずに note 欄へ。発行は tools/gen_exhibit_numbers.py。",
+ "issued": {
+  "poc_allsky_cloud_cover": {
+   "accessioned": "2026-09-06",
+   "no": "2026.001"
+  },
+  "poc_aoi_ct_traceability": {
+   "accessioned": "2026-09-14",
+   "no": "2026.120"
+  },
+  "poc_asbuilt_wall_deviation": {
+   "accessioned": "2026-09-08",
+   "no": "2026.091"
+  },
+  "poc_astro_photometry": {
+   "accessioned": "2026-09-06",
+   "no": "2026.002"
+  },
+  "poc_attention_identities": {
+   "accessioned": "2026-09-24",
+   "no": "2026.151"
+  },
+  "poc_barcode_1d": {
+   "accessioned": "2026-09-06",
+   "no": "2026.003"
+  },
+  "poc_battery_ct_degradation": {
+   "accessioned": "2026-09-07",
+   "no": "2026.054"
+  },
+  "poc_battery_electrode_breathing": {
+   "accessioned": "2026-09-08",
+   "no": "2026.092"
+  },
+  "poc_battery_electrode_tortuosity": {
+   "accessioned": "2026-09-08",
+   "no": "2026.093"
+  },
+  "poc_beam_modal_video": {
+   "accessioned": "2026-09-07",
+   "no": "2026.055"
+  },
+  "poc_bearing_diagnosis": {
+   "accessioned": "2026-09-06",
+   "no": "2026.004"
+  },
+  "poc_beats_fringes_and_screens": {
+   "accessioned": "2026-09-23",
+   "no": "2026.140"
+  },
+  "poc_bev_sensor_fusion": {
+   "accessioned": "2026-09-07",
+   "no": "2026.056"
+  },
+  "poc_bilateral_asymmetry": {
+   "accessioned": "2026-09-06",
+   "no": "2026.005"
+  },
+  "poc_bone_trabecular_thickness": {
+   "accessioned": "2026-09-07",
+   "no": "2026.057"
+  },
+  "poc_bump_coplanarity": {
+   "accessioned": "2026-09-08",
+   "no": "2026.094"
+  },
+  "poc_cad_scan_deviation": {
+   "accessioned": "2026-09-07",
+   "no": "2026.058"
+  },
+  "poc_calipers_under_illusion": {
+   "accessioned": "2026-09-24",
+   "no": "2026.144"
+  },
+  "poc_camera_calibration": {
+   "accessioned": "2026-09-06",
+   "no": "2026.006"
+  },
+  "poc_camera_shake_deblur": {
+   "accessioned": "2026-09-06",
+   "no": "2026.007"
+  },
+  "poc_cell_counting": {
+   "accessioned": "2026-09-06",
+   "no": "2026.008"
+  },
+  "poc_change_detection_misreg": {
+   "accessioned": "2026-09-07",
+   "no": "2026.059"
+  },
+  "poc_cold_chain_excursion": {
+   "accessioned": "2026-09-07",
+   "no": "2026.060"
+  },
+  "poc_colocalization_crosstalk": {
+   "accessioned": "2026-09-07",
+   "no": "2026.061"
+  },
+  "poc_colormap_readability": {
+   "accessioned": "2026-09-07",
+   "no": "2026.062"
+  },
+  "poc_complex_plane_fields": {
+   "accessioned": "2026-09-22",
+   "no": "2026.138"
+  },
+  "poc_compound_eye": {
+   "accessioned": "2026-09-13",
+   "no": "2026.118"
+  },
+  "poc_connectome_motor_bottleneck": {
+   "accessioned": "2026-09-21",
+   "no": "2026.129"
+  },
+  "poc_crack_width": {
+   "accessioned": "2026-09-06",
+   "no": "2026.009"
+  },
+  "poc_crack_width_timeseries": {
+   "accessioned": "2026-09-08",
+   "no": "2026.095"
+  },
+  "poc_crop_phenotyping": {
+   "accessioned": "2026-09-07",
+   "no": "2026.063"
+  },
+  "poc_ct_fidelity": {
+   "accessioned": "2026-09-06",
+   "no": "2026.010"
+  },
+  "poc_ct_void_morphology": {
+   "accessioned": "2026-09-07",
+   "no": "2026.064"
+  },
+  "poc_datacenter_thermal_field": {
+   "accessioned": "2026-09-08",
+   "no": "2026.096"
+  },
+  "poc_dehazing": {
+   "accessioned": "2026-09-06",
+   "no": "2026.011"
+  },
+  "poc_dem_terrain": {
+   "accessioned": "2026-09-06",
+   "no": "2026.012"
+  },
+  "poc_dfm_thickness_overhang": {
+   "accessioned": "2026-09-07",
+   "no": "2026.065"
+  },
+  "poc_dic_strain": {
+   "accessioned": "2026-09-06",
+   "no": "2026.013"
+  },
+  "poc_die_tilt_tsv_overlay": {
+   "accessioned": "2026-09-08",
+   "no": "2026.097"
+  },
+  "poc_dimensional_inspection": {
+   "accessioned": "2026-09-06",
+   "no": "2026.014"
+  },
+  "poc_document_scan": {
+   "accessioned": "2026-09-06",
+   "no": "2026.015"
+  },
+  "poc_dtof_ranging": {
+   "accessioned": "2026-09-06",
+   "no": "2026.016"
+  },
+  "poc_em_branch_territory": {
+   "accessioned": "2026-09-21",
+   "no": "2026.132"
+  },
+  "poc_em_second_opinion": {
+   "accessioned": "2026-09-21",
+   "no": "2026.126"
+  },
+  "poc_endless_zoom_and_turning_solids": {
+   "accessioned": "2026-09-24",
+   "no": "2026.146"
+  },
+  "poc_exoplanet_transit": {
+   "accessioned": "2026-09-07",
+   "no": "2026.066"
+  },
+  "poc_eye_to_brain": {
+   "accessioned": "2026-09-20",
+   "no": "2026.125"
+  },
+  "poc_fabric_defect": {
+   "accessioned": "2026-09-06",
+   "no": "2026.017"
+  },
+  "poc_fiber_orientation": {
+   "accessioned": "2026-09-06",
+   "no": "2026.018"
+  },
+  "poc_fly_optomotor_steering": {
+   "accessioned": "2026-09-22",
+   "no": "2026.135"
+  },
+  "poc_fly_vision": {
+   "accessioned": "2026-09-13",
+   "no": "2026.119"
+  },
+  "poc_focus_stacking": {
+   "accessioned": "2026-09-06",
+   "no": "2026.019"
+  },
+  "poc_forensics_roc": {
+   "accessioned": "2026-09-06",
+   "no": "2026.020"
+  },
+  "poc_four_dimensions_by_three_d_tools": {
+   "accessioned": "2026-09-24",
+   "no": "2026.149"
+  },
+  "poc_fresco_craquelure": {
+   "accessioned": "2026-09-07",
+   "no": "2026.067"
+  },
+  "poc_gear_tooth_metrology": {
+   "accessioned": "2026-09-06",
+   "no": "2026.021"
+  },
+  "poc_geodetic_benchmarks_real": {
+   "accessioned": "2026-09-22",
+   "no": "2026.136"
+  },
+  "poc_geodetic_height_frames": {
+   "accessioned": "2026-09-08",
+   "no": "2026.098"
+  },
+  "poc_glyph_typo_detection": {
+   "accessioned": "2026-09-17",
+   "no": "2026.122"
+  },
+  "poc_gravitational_lens_invariants": {
+   "accessioned": "2026-09-24",
+   "no": "2026.147"
+  },
+  "poc_illusions_and_perpetual_drawing": {
+   "accessioned": "2026-09-23",
+   "no": "2026.143"
+  },
+  "poc_interferometry_step": {
+   "accessioned": "2026-09-06",
+   "no": "2026.022"
+  },
+  "poc_larval_connectome_reservoir": {
+   "accessioned": "2026-09-20",
+   "no": "2026.123"
+  },
+  "poc_leaf_disease_area": {
+   "accessioned": "2026-09-07",
+   "no": "2026.068"
+  },
+  "poc_leak_localization": {
+   "accessioned": "2026-09-07",
+   "no": "2026.069"
+  },
+  "poc_lidar_terrain_change": {
+   "accessioned": "2026-09-07",
+   "no": "2026.070"
+  },
+  "poc_lightfield_depth": {
+   "accessioned": "2026-09-06",
+   "no": "2026.023"
+  },
+  "poc_live4d": {
+   "accessioned": "2026-09-21",
+   "no": "2026.128"
+  },
+  "poc_livestock_body_volume": {
+   "accessioned": "2026-09-08",
+   "no": "2026.099"
+  },
+  "poc_machine_condition_fusion": {
+   "accessioned": "2026-09-07",
+   "no": "2026.071"
+  },
+  "poc_malecns_activity_wave": {
+   "accessioned": "2026-09-20",
+   "no": "2026.124"
+  },
+  "poc_matrix_code_reading": {
+   "accessioned": "2026-09-06",
+   "no": "2026.024"
+  },
+  "poc_measurement_system_analysis": {
+   "accessioned": "2026-09-23",
+   "no": "2026.142"
+  },
+  "poc_mesh_quality_repair": {
+   "accessioned": "2026-09-07",
+   "no": "2026.072"
+  },
+  "poc_metal_grain_size": {
+   "accessioned": "2026-09-07",
+   "no": "2026.073"
+  },
+  "poc_microns_brain_wave": {
+   "accessioned": "2026-09-21",
+   "no": "2026.131"
+  },
+  "poc_moire_screen": {
+   "accessioned": "2026-09-06",
+   "no": "2026.025"
+  },
+  "poc_motion_magnification": {
+   "accessioned": "2026-09-06",
+   "no": "2026.026"
+  },
+  "poc_mri_bias_field": {
+   "accessioned": "2026-09-07",
+   "no": "2026.074"
+  },
+  "poc_multibeam_bathymetry": {
+   "accessioned": "2026-09-08",
+   "no": "2026.100"
+  },
+  "poc_nuclei_ploidy": {
+   "accessioned": "2026-09-06",
+   "no": "2026.027"
+  },
+  "poc_one_stroke_epicycles": {
+   "accessioned": "2026-09-22",
+   "no": "2026.137"
+  },
+  "poc_pallet_load_utilization": {
+   "accessioned": "2026-09-08",
+   "no": "2026.101"
+  },
+  "poc_panorama_drift": {
+   "accessioned": "2026-09-06",
+   "no": "2026.028"
+  },
+  "poc_particle_sizing": {
+   "accessioned": "2026-09-06",
+   "no": "2026.029"
+  },
+  "poc_particle_tracking": {
+   "accessioned": "2026-09-06",
+   "no": "2026.030"
+  },
+  "poc_periodic_video_boundary": {
+   "accessioned": "2026-09-24",
+   "no": "2026.145"
+  },
+  "poc_photoelasticity": {
+   "accessioned": "2026-09-06",
+   "no": "2026.031"
+  },
+  "poc_pigment_unmixing": {
+   "accessioned": "2026-09-06",
+   "no": "2026.032"
+  },
+  "poc_pipe_wall_loss": {
+   "accessioned": "2026-09-07",
+   "no": "2026.075"
+  },
+  "poc_polarization_specular": {
+   "accessioned": "2026-09-06",
+   "no": "2026.033"
+  },
+  "poc_print_layer_inspection": {
+   "accessioned": "2026-09-21",
+   "no": "2026.130"
+  },
+  "poc_print_registration": {
+   "accessioned": "2026-09-08",
+   "no": "2026.102"
+  },
+  "poc_print_warpage_risk": {
+   "accessioned": "2026-09-07",
+   "no": "2026.076"
+  },
+  "poc_prnu_camera_fingerprint": {
+   "accessioned": "2026-09-07",
+   "no": "2026.077"
+  },
+  "poc_public_camera_heading": {
+   "accessioned": "2026-09-21",
+   "no": "2026.133"
+  },
+  "poc_public_camera_heading_real": {
+   "accessioned": "2026-09-21",
+   "no": "2026.134"
+  },
+  "poc_pv_thermal_survey": {
+   "accessioned": "2026-09-07",
+   "no": "2026.078"
+  },
+  "poc_rail_corrugation": {
+   "accessioned": "2026-09-08",
+   "no": "2026.103"
+  },
+  "poc_real_coin_metrology": {
+   "accessioned": "2026-09-08",
+   "no": "2026.104"
+  },
+  "poc_real_deblur_honesty": {
+   "accessioned": "2026-09-08",
+   "no": "2026.105"
+  },
+  "poc_real_defect_floor": {
+   "accessioned": "2026-09-09",
+   "no": "2026.116"
+  },
+  "poc_real_sky_photometry": {
+   "accessioned": "2026-09-08",
+   "no": "2026.106"
+  },
+  "poc_real_stain_unmix": {
+   "accessioned": "2026-09-08",
+   "no": "2026.107"
+  },
+  "poc_real_stereo_depth": {
+   "accessioned": "2026-09-08",
+   "no": "2026.108"
+  },
+  "poc_real_texture_invariance": {
+   "accessioned": "2026-09-08",
+   "no": "2026.109"
+  },
+  "poc_recycling_sorting": {
+   "accessioned": "2026-09-07",
+   "no": "2026.079"
+  },
+  "poc_registration_basin": {
+   "accessioned": "2026-09-06",
+   "no": "2026.034"
+  },
+  "poc_river_surface_velocity": {
+   "accessioned": "2026-09-07",
+   "no": "2026.080"
+  },
+  "poc_rotation_invariance_audit": {
+   "accessioned": "2026-09-09",
+   "no": "2026.117"
+  },
+  "poc_safety_clearance": {
+   "accessioned": "2026-09-07",
+   "no": "2026.081"
+  },
+  "poc_scan_to_bim_asbuilt": {
+   "accessioned": "2026-09-07",
+   "no": "2026.082"
+  },
+  "poc_screw_thread_metrology": {
+   "accessioned": "2026-09-07",
+   "no": "2026.083"
+  },
+  "poc_sea_ice_concentration": {
+   "accessioned": "2026-09-06",
+   "no": "2026.035"
+  },
+  "poc_search_sweep_width": {
+   "accessioned": "2026-09-08",
+   "no": "2026.110"
+  },
+  "poc_settlement_significance": {
+   "accessioned": "2026-09-08",
+   "no": "2026.111"
+  },
+  "poc_solar_el_inspection": {
+   "accessioned": "2026-09-07",
+   "no": "2026.084"
+  },
+  "poc_solar_limb_darkening": {
+   "accessioned": "2026-09-06",
+   "no": "2026.036"
+  },
+  "poc_solder_fillet_aoi": {
+   "accessioned": "2026-09-07",
+   "no": "2026.085"
+  },
+  "poc_spc": {
+   "accessioned": "2026-09-14",
+   "no": "2026.121"
+  },
+  "poc_star_astrometry": {
+   "accessioned": "2026-09-06",
+   "no": "2026.037"
+  },
+  "poc_stockpile_volume": {
+   "accessioned": "2026-09-08",
+   "no": "2026.112"
+  },
+  "poc_strain_history": {
+   "accessioned": "2026-09-06",
+   "no": "2026.038"
+  },
+  "poc_structure_4d_deterioration": {
+   "accessioned": "2026-09-07",
+   "no": "2026.086"
+  },
+  "poc_superresolution_limits": {
+   "accessioned": "2026-09-06",
+   "no": "2026.039"
+  },
+  "poc_surface_roughness": {
+   "accessioned": "2026-09-06",
+   "no": "2026.040"
+  },
+  "poc_symmetry_restoration": {
+   "accessioned": "2026-09-07",
+   "no": "2026.087"
+  },
+  "poc_template_tracking": {
+   "accessioned": "2026-09-06",
+   "no": "2026.041"
+  },
+  "poc_theorems_as_pictures": {
+   "accessioned": "2026-09-23",
+   "no": "2026.139"
+  },
+  "poc_thermal_drift_metrology": {
+   "accessioned": "2026-09-06",
+   "no": "2026.042"
+  },
+  "poc_thermal_radiometry": {
+   "accessioned": "2026-09-08",
+   "no": "2026.113"
+  },
+  "poc_thermography_ndt": {
+   "accessioned": "2026-09-06",
+   "no": "2026.043"
+  },
+  "poc_timelapse_growth": {
+   "accessioned": "2026-09-06",
+   "no": "2026.044"
+  },
+  "poc_traffic_counting": {
+   "accessioned": "2026-09-06",
+   "no": "2026.045"
+  },
+  "poc_tree_ring_dendro": {
+   "accessioned": "2026-09-07",
+   "no": "2026.088"
+  },
+  "poc_vanishing_detail_and_morphing_area": {
+   "accessioned": "2026-09-24",
+   "no": "2026.148"
+  },
+  "poc_vegetation_cover": {
+   "accessioned": "2026-09-06",
+   "no": "2026.046"
+  },
+  "poc_veiling_glare": {
+   "accessioned": "2026-09-06",
+   "no": "2026.047"
+  },
+  "poc_vessel_network": {
+   "accessioned": "2026-09-06",
+   "no": "2026.048"
+  },
+  "poc_video_cube": {
+   "accessioned": "2026-09-21",
+   "no": "2026.127"
+  },
+  "poc_warehouse_flow": {
+   "accessioned": "2026-09-07",
+   "no": "2026.089"
+  },
+  "poc_water_level": {
+   "accessioned": "2026-09-06",
+   "no": "2026.049"
+  },
+  "poc_web_roll_periodicity": {
+   "accessioned": "2026-09-08",
+   "no": "2026.114"
+  },
+  "poc_weld_bead_profile": {
+   "accessioned": "2026-09-06",
+   "no": "2026.050"
+  },
+  "poc_weld_bead_scan_angle": {
+   "accessioned": "2026-09-08",
+   "no": "2026.115"
+  },
+  "poc_weld_radiograph_porosity": {
+   "accessioned": "2026-09-07",
+   "no": "2026.090"
+  },
+  "poc_what_a_picture_cannot_check": {
+   "accessioned": "2026-09-23",
+   "no": "2026.141"
+  },
+  "poc_white_balance": {
+   "accessioned": "2026-09-06",
+   "no": "2026.051"
+  },
+  "poc_wound_area_tracking": {
+   "accessioned": "2026-09-06",
+   "no": "2026.052"
+  },
+  "poc_xyt_event_surface": {
+   "accessioned": "2026-09-06",
+   "no": "2026.053"
+  },
+  "poc_zernike_aberrations": {
+   "accessioned": "2026-09-24",
+   "no": "2026.150"
+  }
+ },
+ "retired": {}
+}
