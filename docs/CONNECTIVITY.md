@@ -85,6 +85,32 @@ cam.missing_required_features()                         # 規格に足りない�
 
 ★単位は推測しない。`ExposureTime` は **us**、`AcquisitionFrameRate` は **Hz**、`PayloadSize` は **B**、`TimestampLatchValue` は **ns**。**`Gain` に単位の規定は無い**(`dB` は §1.2 の一覧に載っているだけ)ので、この層は Gain を dB と呼ばない。
 
+## webcam の機能名 (UVC 49 制御)
+
+`opencv` backend が開いているのは **USB Video Class (UVC) 1.5** の装置で、この規格も
+GenICam SFNC と同じように制御の名前を決めている。台帳は `examples/data/uvc_controls.json`
+(UVC 1.5 の本文から)。
+
+| | 数 |
+|---|--:|
+| Camera Terminal `CT_*` | 21 |
+| Processing Unit `PU_*` | 19 |
+| Video Streaming `VS_*` | 9 |
+
+```python
+acquire.uvc_to_sfnc("CT_EXPOSURE_TIME_ABSOLUTE_CONTROL", 5000)   # -> ("ExposureTime", 500000.0)
+acquire.sfnc_to_uvc("ExposureTime", 500000.0)                    # -> (..., 5000)
+```
+
+★**2 つの規格で露光の単位が違う**。UVC の `dwExposureTimeAbsolute` は本文が
+「1: 0.0001 sec … 100000: 10 sec」と定める **0.0001 秒(100 us)刻み**、SFNC の
+`ExposureTime` は **us**。同じ `5000` が 5 ms と **0.5 秒**になる —— 100 倍で、例外は
+出ず絵の明るさだけが変わる。だから換算は表に書き、門が往復で確かめる。
+
+★単位は**本文が言っているものだけ**を運ぶ。焦点は **mm**、絞りは **f 値 × 100**、
+パン・チルトは**秒角**。`Gain` は UVC も SFNC も単位を規定していないので、この層は
+どちらの側でも `dB` と呼ばない。
+
 ## 取り込み層の 8 軸 (8/8)
 
 公開されている 13 の Python SDK を採点したのと**同じ 8 軸**で、この層自身を採点する。違う物差しで測った数を並べると「SDK より厚い」が意味を失う。

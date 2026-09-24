@@ -79,6 +79,9 @@ __all__ = [
     "unpack", "unpack_lsb", "unpack_grouped",
     # 機能名(SFNC を分母にした表)
     "SFNC_FEATURES", "SFNC_REQUIRED",
+    # webcam の機能名(UVC を分母にした表)
+    "UVC_CONTROLS", "UVC_TO_SFNC", "UVC_EXPOSURE_STEP_US", "UVC_UNCOMPRESSED",
+    "uvc_to_sfnc", "sfnc_to_uvc",
     # GenTL のプロデューサ探索
     "GENTL_PATH_VARS", "gentl_producers",
     # 8 軸の自己採点
@@ -175,6 +178,134 @@ def axes() -> dict:
             ok = ok and obj is not None
         out[axis] = {"entry": list(names), "present": bool(ok)}
     return out
+
+
+#: UVC 1.5 controls -- the vocabulary of the devices the ``opencv`` backend opens.
+#:
+#: A webcam is a USB Video Class device, and UVC names and (sometimes) dimensions its
+#: controls exactly as SFNC does for GenICam cameras. Carrying the names means a
+#: webcam's exposure can be read by its standard name instead of an integer index.
+#:
+#: Value is ``(interface, unit)``. ``interface`` is the standard's own grouping:
+#: ``CT`` camera terminal, ``PU`` processing unit, ``VS`` video streaming.
+#: ★``unit`` carries **only what the standard states in prose**. Where UVC does not
+#: state a unit (``PU_GAIN_CONTROL`` says merely "the setting for the attribute of
+#: the addressed Gain control") the entry is ``None`` -- inventing ``dB`` there would
+#: be a claim the standard does not make.
+UVC_CONTROLS = {
+    "CT_SCANNING_MODE_CONTROL": ("CT", None),
+    "CT_AE_MODE_CONTROL": ("CT", None),
+    "CT_AE_PRIORITY_CONTROL": ("CT", None),
+    "CT_EXPOSURE_TIME_ABSOLUTE_CONTROL": ("CT", "0.0001s"),
+    "CT_EXPOSURE_TIME_RELATIVE_CONTROL": ("CT", None),
+    "CT_FOCUS_ABSOLUTE_CONTROL": ("CT", "mm"),
+    "CT_FOCUS_RELATIVE_CONTROL": ("CT", None),
+    "CT_FOCUS_AUTO_CONTROL": ("CT", None),
+    "CT_FOCUS_SIMPLE_CONTROL": ("CT", None),
+    "CT_IRIS_ABSOLUTE_CONTROL": ("CT", "fstop*100"),
+    "CT_IRIS_RELATIVE_CONTROL": ("CT", None),
+    "CT_ZOOM_ABSOLUTE_CONTROL": ("CT", None),
+    "CT_ZOOM_RELATIVE_CONTROL": ("CT", None),
+    "CT_PANTILT_ABSOLUTE_CONTROL": ("CT", "arcsec"),
+    "CT_PANTILT_RELATIVE_CONTROL": ("CT", None),
+    "CT_ROLL_ABSOLUTE_CONTROL": ("CT", None),
+    "CT_ROLL_RELATIVE_CONTROL": ("CT", None),
+    "CT_PRIVACY_CONTROL": ("CT", None),
+    "CT_WINDOW_CONTROL": ("CT", None),
+    "CT_DIGITAL_WINDOW_CONTROL": ("CT", None),
+    "CT_REGION_OF_INTEREST_CONTROL": ("CT", None),
+    "PU_BACKLIGHT_COMPENSATION_CONTROL": ("PU", None),
+    "PU_BRIGHTNESS_CONTROL": ("PU", None),
+    "PU_CONTRAST_CONTROL": ("PU", None),
+    "PU_CONTRAST_AUTO_CONTROL": ("PU", None),
+    "PU_GAIN_CONTROL": ("PU", None),
+    "PU_POWER_LINE_FREQUENCY_CONTROL": ("PU", None),
+    "PU_HUE_CONTROL": ("PU", None),
+    "PU_HUE_AUTO_CONTROL": ("PU", None),
+    "PU_SATURATION_CONTROL": ("PU", None),
+    "PU_SHARPNESS_CONTROL": ("PU", None),
+    "PU_GAMMA_CONTROL": ("PU", None),
+    "PU_WHITE_BALANCE_TEMPERATURE_CONTROL": ("PU", None),
+    "PU_WHITE_BALANCE_TEMPERATURE_AUTO_CONTROL": ("PU", None),
+    "PU_WHITE_BALANCE_COMPONENT_CONTROL": ("PU", None),
+    "PU_WHITE_BALANCE_COMPONENT_AUTO_CONTROL": ("PU", None),
+    "PU_DIGITAL_MULTIPLIER_CONTROL": ("PU", None),
+    "PU_DIGITAL_MULTIPLIER_LIMIT_CONTROL": ("PU", None),
+    "PU_ANALOG_VIDEO_STANDARD_CONTROL": ("PU", None),
+    "PU_ANALOG_LOCK_STATUS_CONTROL": ("PU", None),
+    "VS_PROBE_CONTROL": ("VS", None),
+    "VS_COMMIT_CONTROL": ("VS", None),
+    "VS_STILL_PROBE_CONTROL": ("VS", None),
+    "VS_STILL_COMMIT_CONTROL": ("VS", None),
+    "VS_STILL_IMAGE_TRIGGER_CONTROL": ("VS", None),
+    "VS_STREAM_ERROR_CODE_CONTROL": ("VS", None),
+    "VS_GENERATE_KEY_FRAME_CONTROL": ("VS", None),
+    "VS_UPDATE_FRAME_SEGMENT_CONTROL": ("VS", None),
+    "VS_SYNCH_DELAY_CONTROL": ("VS", None),
+}
+
+#: Controls whose value the standard dimensions, and how many SFNC units one step is.
+#:
+#: ★UVC 1.5 defines ``dwExposureTimeAbsolute`` as "1: 0.0001 sec ... 100000: 10 sec",
+#: i.e. **100 us per step**, while SFNC gives ``ExposureTime`` in **us**. The same
+#: number 5000 therefore means 5 ms under SFNC and 0.5 s under UVC -- a factor of 100
+#: that raises no exception and only moves the picture.
+UVC_EXPOSURE_STEP_US = 100.0
+
+#: UVC control -> (SFNC feature, SFNC units per UVC step). ``None`` scale means the
+#: two standards name the same quantity but **neither dimensions it**, so the number
+#: is carried across unchanged and stays unitless.
+UVC_TO_SFNC = {
+    "CT_EXPOSURE_TIME_ABSOLUTE_CONTROL": ("ExposureTime", UVC_EXPOSURE_STEP_US),
+    "PU_GAIN_CONTROL": ("Gain", None),
+}
+
+
+def uvc_to_sfnc(control: str, value):
+    """Translate one UVC control reading into the SFNC name and unit.
+
+    Args:
+        control: a key of :data:`UVC_CONTROLS`.
+        value: the raw value the device reported, in the standard's own steps.
+    Returns:
+        tuple: ``(sfnc_feature, value_in_sfnc_units)``.
+    Raises:
+        ValueError: the control is not in UVC 1.5, or the standards do not name the
+            same quantity -- refusing here beats inventing a correspondence.
+    """
+    if control not in UVC_CONTROLS:
+        raise ValueError("%r is not a UVC 1.5 control" % control)
+    if control not in UVC_TO_SFNC:
+        raise ValueError("UVC %s has no SFNC counterpart in this table -- add one "
+                         "with the standard's own wording, do not guess" % control)
+    name, scale = UVC_TO_SFNC[control]
+    return name, (value if scale is None else value * scale)
+
+
+def sfnc_to_uvc(feature: str, value):
+    """The inverse of :func:`uvc_to_sfnc`, in the standard's own steps.
+
+    Args:
+        feature: an SFNC feature name that appears in :data:`UVC_TO_SFNC`.
+        value: the value in SFNC units.
+    Returns:
+        tuple: ``(uvc_control, value_in_uvc_steps)``.
+    Raises:
+        ValueError: no UVC control names the same quantity.
+    """
+    for control, (name, scale) in UVC_TO_SFNC.items():
+        if name == feature:
+            return control, (value if scale is None else value / scale)
+    raise ValueError("SFNC %s has no UVC counterpart in this table" % feature)
+
+
+#: Uncompressed payload formats UVC 1.5 defines, with the GUIDs from its own table.
+UVC_UNCOMPRESSED = {
+    "YUY2": "32595559-0000-0010-8000-00AA00389B71",
+    "NV12": "3231564E-0000-0010-8000-00AA00389B71",
+    "M420": "3032344D-0000-0010-8000-00AA00389B71",
+    "I420": "30323449-0000-0010-8000-00AA00389B71",
+}
 
 
 def capabilities() -> list:

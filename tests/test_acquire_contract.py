@@ -864,3 +864,117 @@ def test_the_public_name_gate_catches_a_missing_export():
         assert "Camera" in missing, "抜けた公開名を門が見逃した"
     finally:
         acquire.__all__[:] = saved
+
+
+# ---------------------------------------------------------------------- UVC
+#
+# ★`opencv` backend が開くのは UVC の装置。その規格が制御の名前と、いくつかは
+# 単位まで決めている。単位が SFNC と違うので、換算を**往復で**確かめる ——
+# 100 倍の係数を書き忘れても例外は出ず、露光だけが狂う。
+
+
+def test_the_uvc_vocabulary_is_the_published_one():
+    """表は手で書いてある。**規格から取った台帳**と突き合わせて留める。"""
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                        "examples", "data", "uvc_controls.json")
+    with open(path, encoding="utf-8") as fh:
+        doc = json.load(fh)
+    assert doc["source"].startswith("https://www.usb.org/")
+    led = doc["controls"]
+    assert set(acquire.UVC_CONTROLS) == set(led), (
+        sorted(set(acquire.UVC_CONTROLS) ^ set(led)))
+    for name, (iface, unit) in sorted(acquire.UVC_CONTROLS.items()):
+        assert led[name]["interface"] == iface, (name, iface)
+        assert led[name]["unit"] == unit, (name, unit)
+
+
+def test_the_three_interfaces_have_the_counts_the_standard_publishes():
+    n = {}
+    for _name, (iface, _u) in acquire.UVC_CONTROLS.items():
+        n[iface] = n.get(iface, 0) + 1
+    assert n == {"CT": 21, "PU": 19, "VS": 9}, n
+    assert len(acquire.UVC_CONTROLS) == 49
+
+
+def test_the_exposure_step_is_the_one_the_standard_states():
+    """★UVC は 0.0001 秒刻み、SFNC は us。係数はちょうど 100。"""
+    assert acquire.UVC_EXPOSURE_STEP_US == 100.0
+    #: 規格の表の両端: 1 -> 0.0001 秒 = 100 us / 100000 -> 10 秒 = 10_000_000 us
+    _n, us = acquire.uvc_to_sfnc("CT_EXPOSURE_TIME_ABSOLUTE_CONTROL", 1)
+    assert us == 100.0
+    _n, us = acquire.uvc_to_sfnc("CT_EXPOSURE_TIME_ABSOLUTE_CONTROL", 100000)
+    assert us == 10_000_000.0
+
+
+def test_exposure_survives_a_round_trip_between_the_two_standards():
+    for steps in (1, 33, 5000, 100000):
+        name, us = acquire.uvc_to_sfnc("CT_EXPOSURE_TIME_ABSOLUTE_CONTROL", steps)
+        assert name == "ExposureTime"
+        back_control, back = acquire.sfnc_to_uvc(name, us)
+        assert back_control == "CT_EXPOSURE_TIME_ABSOLUTE_CONTROL"
+        assert back == steps, (steps, us, back)
+
+
+def test_the_two_standards_disagree_by_exactly_a_hundred():
+    """★門は差そのものを言う。5000 は SFNC で 5 ms、UVC で 0.5 秒。"""
+    _n, us = acquire.uvc_to_sfnc("CT_EXPOSURE_TIME_ABSOLUTE_CONTROL", 5000)
+    assert us == 500000.0                      # 0.5 秒
+    assert us / 5000.0 == acquire.UVC_EXPOSURE_STEP_US
+
+
+def test_gain_is_carried_across_without_a_unit_because_neither_standard_gives_one():
+    """★どちらの規格も `Gain` に単位を与えていない。勝手に dB と呼ばない。"""
+    assert acquire.UVC_CONTROLS["PU_GAIN_CONTROL"][1] is None
+    assert acquire.SFNC_FEATURES["Gain"][2] is None
+    name, v = acquire.uvc_to_sfnc("PU_GAIN_CONTROL", 7)
+    assert (name, v) == ("Gain", 7)
+
+
+def test_a_control_outside_the_standard_is_refused():
+    with pytest.raises(ValueError) as e:
+        acquire.uvc_to_sfnc("CT_MAGIC_CONTROL", 1)
+    assert "not a UVC" in str(e.value)
+
+
+def test_a_control_with_no_counterpart_is_refused_instead_of_guessed():
+    """★対応が無いものを黙って通さない —— 推測の対応こそが欲しくないもの。"""
+    with pytest.raises(ValueError) as e:
+        acquire.uvc_to_sfnc("CT_FOCUS_ABSOLUTE_CONTROL", 1000)
+    assert "do not guess" in str(e.value)
+
+
+def test_the_units_that_are_carried_are_the_ones_the_standard_states():
+    assert acquire.UVC_CONTROLS["CT_FOCUS_ABSOLUTE_CONTROL"][1] == "mm"
+    assert acquire.UVC_CONTROLS["CT_IRIS_ABSOLUTE_CONTROL"][1] == "fstop*100"
+    assert acquire.UVC_CONTROLS["CT_PANTILT_ABSOLUTE_CONTROL"][1] == "arcsec"
+    assert acquire.UVC_CONTROLS["CT_EXPOSURE_TIME_ABSOLUTE_CONTROL"][1] == "0.0001s"
+    #: 本文が単位を言っていない制御には単位を書かない
+    assert acquire.UVC_CONTROLS["PU_BRIGHTNESS_CONTROL"][1] is None
+
+
+def test_the_uncompressed_guids_are_the_published_ones():
+    assert len(acquire.UVC_UNCOMPRESSED) == 4
+    assert acquire.UVC_UNCOMPRESSED["YUY2"] == "32595559-0000-0010-8000-00AA00389B71"
+    for name, guid in acquire.UVC_UNCOMPRESSED.items():
+        assert len(guid) == 36 and guid.endswith("-0000-0010-8000-00AA00389B71"), name
+
+
+def test_the_connectivity_doc_uvc_section_matches_the_code():
+    """★説明の数字と呼び方は、別の実行の値を引いたまま残る。門で留める。"""
+    doc = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                       "docs", "CONNECTIVITY.md")
+    text = open(doc, encoding="utf-8").read()
+    n = {}
+    for _name, (iface, _u) in acquire.UVC_CONTROLS.items():
+        n[iface] = n.get(iface, 0) + 1
+    assert "## webcam の機能名 (UVC %d 制御)" % len(acquire.UVC_CONTROLS) in text
+    assert "| Camera Terminal `CT_*` | %d |" % n["CT"] in text
+    assert "| Processing Unit `PU_*` | %d |" % n["PU"] in text
+    assert "| Video Streaming `VS_*` | %d |" % n["VS"] in text
+    #: 例に書いた呼び方が実在し、書いてある答えを実際に返すこと
+    for name in ("uvc_to_sfnc", "sfnc_to_uvc"):
+        assert "acquire.%s(" % name in text
+        assert callable(getattr(acquire, name))
+    assert acquire.uvc_to_sfnc("CT_EXPOSURE_TIME_ABSOLUTE_CONTROL", 5000) == (
+        "ExposureTime", 500000.0)
+    assert acquire.sfnc_to_uvc("ExposureTime", 500000.0)[1] == 5000

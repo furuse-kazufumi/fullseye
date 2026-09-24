@@ -1,0 +1,210 @@
+{
+ "source": "https://www.usb.org/sites/default/files/USB_Video_Class_1_5.zip",
+ "standard": "USB Video Class 1.5 (2012-08-09)",
+ "note": "単位は規格が本文で言っているものだけを載せている。言っていない制御は unit=null —— 規格が実装依存と認めている量に dB などの名前を付けないため。",
+ "exposure_step_us": 100.0,
+ "controls": {
+  "CT_SCANNING_MODE_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_AE_MODE_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_AE_PRIORITY_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_EXPOSURE_TIME_ABSOLUTE_CONTROL": {
+   "interface": "CT",
+   "unit": "0.0001s"
+  },
+  "CT_EXPOSURE_TIME_RELATIVE_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_FOCUS_ABSOLUTE_CONTROL": {
+   "interface": "CT",
+   "unit": "mm"
+  },
+  "CT_FOCUS_RELATIVE_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_FOCUS_AUTO_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_FOCUS_SIMPLE_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_IRIS_ABSOLUTE_CONTROL": {
+   "interface": "CT",
+   "unit": "fstop*100"
+  },
+  "CT_IRIS_RELATIVE_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_ZOOM_ABSOLUTE_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_ZOOM_RELATIVE_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_PANTILT_ABSOLUTE_CONTROL": {
+   "interface": "CT",
+   "unit": "arcsec"
+  },
+  "CT_PANTILT_RELATIVE_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_ROLL_ABSOLUTE_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_ROLL_RELATIVE_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_PRIVACY_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_WINDOW_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_DIGITAL_WINDOW_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "CT_REGION_OF_INTEREST_CONTROL": {
+   "interface": "CT",
+   "unit": null
+  },
+  "PU_BACKLIGHT_COMPENSATION_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_BRIGHTNESS_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_CONTRAST_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_CONTRAST_AUTO_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_GAIN_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_POWER_LINE_FREQUENCY_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_HUE_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_HUE_AUTO_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_SATURATION_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_SHARPNESS_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_GAMMA_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_WHITE_BALANCE_TEMPERATURE_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_WHITE_BALANCE_TEMPERATURE_AUTO_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_WHITE_BALANCE_COMPONENT_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_WHITE_BALANCE_COMPONENT_AUTO_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_DIGITAL_MULTIPLIER_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_DIGITAL_MULTIPLIER_LIMIT_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_ANALOG_VIDEO_STANDARD_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "PU_ANALOG_LOCK_STATUS_CONTROL": {
+   "interface": "PU",
+   "unit": null
+  },
+  "VS_PROBE_CONTROL": {
+   "interface": "VS",
+   "unit": null
+  },
+  "VS_COMMIT_CONTROL": {
+   "interface": "VS",
+   "unit": null
+  },
+  "VS_STILL_PROBE_CONTROL": {
+   "interface": "VS",
+   "unit": null
+  },
+  "VS_STILL_COMMIT_CONTROL": {
+   "interface": "VS",
+   "unit": null
+  },
+  "VS_STILL_IMAGE_TRIGGER_CONTROL": {
+   "interface": "VS",
+   "unit": null
+  },
+  "VS_STREAM_ERROR_CODE_CONTROL": {
+   "interface": "VS",
+   "unit": null
+  },
+  "VS_GENERATE_KEY_FRAME_CONTROL": {
+   "interface": "VS",
+   "unit": null
+  },
+  "VS_UPDATE_FRAME_SEGMENT_CONTROL": {
+   "interface": "VS",
+   "unit": null
+  },
+  "VS_SYNCH_DELAY_CONTROL": {
+   "interface": "VS",
+   "unit": null
+  }
+ },
+ "uncompressed": {
+  "YUY2": "32595559-0000-0010-8000-00AA00389B71",
+  "NV12": "3231564E-0000-0010-8000-00AA00389B71",
+  "M420": "3032344D-0000-0010-8000-00AA00389B71",
+  "I420": "30323449-0000-0010-8000-00AA00389B71"
+ }
+}
