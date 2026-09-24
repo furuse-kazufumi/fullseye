@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_ifs_attractor — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">rgb</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_ifs_attractor(points: &#x27;int&#x27; = 300000, size: &#x27;int&#x27; = 560, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import perpetual; perpetual.perpetual_ifs_attractor(points: &#x27;int&#x27; = 300000, size: &#x27;int&#x27; = 560, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_ifs_attractor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_ifs_attractor(points: &#x27;int&#x27; = 300000, size: &#x27;int&#x27; = 560, seed: &#x27;int&#x27; = 0, sub: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import perpetual; perpetual.perpetual_ifs_attractor(points: &#x27;int&#x27; = 300000, size: &#x27;int&#x27; = 560, seed: &#x27;int&#x27; = 0, sub: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_ifs_attractor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>反復関数系の吸引子(バーンズリーのシダ)―― 4 本の式を無限に回すだけ。</p>
 <p>不変量: 吸引子は <b>4 つの写像の像の和に等しい</b>(自己相似の定義そのもの)。</p>

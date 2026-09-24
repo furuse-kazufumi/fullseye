@@ -22,6 +22,9 @@ version: 0.2.3  # fullseye lib version this note was generated for
 不変量: 互いに接する 4 円の曲率が **デカルトの円定理**
 ``(Σk)² = 2Σk²`` を厳密に満たす。:func:`perpetual_identities` で確かめられる。
 
+★塗りの明るさは**曲率**(= 1/半径)。定理が試している量をそのまま色にして
+あるので、絵の濃淡が主張と同じものを指している。
+
 ## 詳しい使い方ガイド
 
 - [generative_art ファミリ ガイド](../guides/generative_art.md)

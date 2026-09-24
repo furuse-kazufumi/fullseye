@@ -515,19 +515,25 @@ So only systems carrying a claim that holds *independently of the picture* were 
 
 *↑ Black cells against steps. Noisy at first, then a straight line at **12/104 = 0.1154 cells per step** once the highway starts. **You can tell it has started from the slope, without looking at the picture.***
 
-![Apollonian gasket](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/16_apollonian.png?v=1)
+![Apollonian gasket](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/16_apollonian.png?v=2)
 
-*↑ Every gap takes another tangent circle, so it never ends. **Four mutually tangent circles satisfy Descartes' circle theorem `(Σk)² = 2Σk²` exactly** (residual 1.2e-16) — and the complex curvature-centre form fixes the position too, so this is drawn by **algebra**, not by fitting.*
+*↑ Every gap takes another tangent circle, so it never ends. **Four mutually tangent circles satisfy Descartes' circle theorem `(Σk)² = 2Σk²` exactly** (residual 1.2e-16) — and the complex curvature-centre form fixes the position too, so this is drawn by **algebra**, not by fitting. The **fill brightness is the curvature** (one over the radius), so the shading shows exactly the quantity the theorem constrains.*
 
-![Chaos game](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/17_chaos_game.png?v=1)
+![Chaos game](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/17_chaos_game.png?v=2)
 
-![Barnsley fern](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/18_fern.png?v=1)
+*↑ Rolling a die and stepping half-way to a vertex is enough to draw the Sierpinski triangle. **Brightness is the density of points** (accumulated bilinearly, with an asinh tone that lifts the dark end). The rendering is not decoration: from the same point set, a picture accumulated by truncation gives a box-counting dimension **0.032** below log3/log2, while this one is off by only **0.0030**.*
 
-![Flow field](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/19_flow_field.png?v=1)
+![Barnsley fern](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/18_fern.png?v=2)
 
-*↑ The field is built as the **curl of a potential ψ**, so its divergence is identically zero (incompressible, residual 7.0e-17). You can see it: the streamlines **close** around the vortices. A field built from "noise that looks about right" would show sources and sinks there instead.*
+*↑ Barnsley's fern - four affine maps chosen at random, iterated. **Brightness is density**, normalised by a quantile rather than the maximum (one point at the base dwarfs the rest, and dividing by the maximum crushes everything else to black).*
 
-![Reaction-diffusion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/20_reaction_diffusion.png?v=1)
+![Flow field](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/19_flow_field.png?v=2)
+
+*↑ The field is built as the **curl of a potential ψ**, so its divergence is identically zero (incompressible, residual 7.0e-17). You can see it: the streamlines **close** around the vortices. A field built from "noise that looks about right" would show sources and sinks there instead. The **colour and width of each line follow the speed** |grad psi|; at constant width and tone the same field only makes a scribble.*
+
+![Reaction-diffusion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/20_reaction_diffusion.png?v=2)
+
+*↑ Gray-Scott reaction-diffusion, started from **twelve scattered seeds**. A single seed at the centre covers only 0.086 of the frame after the same number of steps, against **0.379** when scattered - and placing them on a regular lattice makes the lattice itself visible, so they are jittered.*
 
 ![Plasma](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/21_plasma.png?v=1)
 

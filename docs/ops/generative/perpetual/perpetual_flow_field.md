@@ -23,6 +23,9 @@ version: 0.2.3  # fullseye lib version this note was generated for
 (非圧縮)で、粒子が湧いたり消えたりしない。「それらしい雑音」で作った
 流れ場との違いはここで、:func:`perpetual_identities` が数で出す。
 
+★線の色と太さは**流速** |∇ψ| に結びつけてある(太さも濃さも一定だと、
+同じ場から描いても「落書き」にしかならない)。
+
 ## 詳しい使い方ガイド
 
 - [generative_art ファミリ ガイド](../guides/generative_art.md)

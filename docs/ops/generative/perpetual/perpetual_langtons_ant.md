@@ -21,6 +21,9 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 不変量: 高速道路に入ったあとは **周期 104 で斜めに (-2,-2) 進む**。
 
+★塗りは「そのマスが黒でいた時間」。高速道路は最後にできるので薄く、
+最初の混沌は濃い —— **時間の順序が絵に出る**。
+
 ## 詳しい使い方ガイド
 
 - [generative_art ファミリ ガイド](../guides/generative_art.md)

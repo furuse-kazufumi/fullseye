@@ -13,7 +13,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 # perpetual_ifs_attractor — GENERATIVE `perpetual` op
 
 - **データ種**: `なし` → `rgb`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.perpetual_ifs_attractor(points: 'int' = 300000, size: 'int' = 560, seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import perpetual; perpetual.perpetual_ifs_attractor(points: 'int' = 300000, size: 'int' = 560, seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `opsgenerative.get("perpetual_ifs_attractor")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.perpetual_ifs_attractor(points: 'int' = 300000, size: 'int' = 560, seed: 'int' = 0, sub: 'int' = 2) -> 'np.ndarray'` (実装を直接呼ぶなら `import perpetual; perpetual.perpetual_ifs_attractor(points: 'int' = 300000, size: 'int' = 560, seed: 'int' = 0, sub: 'int' = 2) -> 'np.ndarray'`、台帳から引くなら `opsgenerative.get("perpetual_ifs_attractor")`)
 
 ## 使い方
 

@@ -1,11 +1,14 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">perpetual_chaos_game — GENERATIVE <code style="color:#22d3bf">perpetual</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">rgb</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_chaos_game(points: &#x27;int&#x27; = 400000, size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, vertices: &#x27;int&#x27; = 3, ratio: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import perpetual; perpetual.perpetual_chaos_game(points: &#x27;int&#x27; = 400000, size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, vertices: &#x27;int&#x27; = 3, ratio: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_chaos_game&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_chaos_game(points: &#x27;int&#x27; = 400000, size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, vertices: &#x27;int&#x27; = 3, ratio: &#x27;float&#x27; = 0.5, sub: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import perpetual; perpetual.perpetual_chaos_game(points: &#x27;int&#x27; = 400000, size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, vertices: &#x27;int&#x27; = 3, ratio: &#x27;float&#x27; = 0.5, sub: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_chaos_game&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>カオスゲーム ―― 賽を振って半分ずつ寄るだけで、シェルピンスキーが出る。</p>
 <p>不変量: 3 頂点・比 1/2 の吸引子の箱数次元は <b>log3/log2 = 1.5850</b>。</p>
+<p>★描き方が測れる真値を変える。同じ点列でも、切り捨てて積んだ絵から測った</p>
+<p>次元は真値から <b>−0.032</b> ずれるのに、双一次 + asinh で描くと <b>−0.0030</b></p>
+<p>—— <b>10 倍</b>正確になる(しきい値 0.1、実測)。濃淡は飾りではない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">Leitfaden zur Familie generative_art</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -515,19 +515,25 @@ print("|H| 中央値 %.5f(対照群の単位球は 1.0)" % np.median(H[np.isfini
 
 *↑ 黒マスの数を歩数に対して。前半は揺れますが、高速道路に入ると **12/104 = 0.1154 マス/歩**の直線になります。**絵を見なくても、傾きで「入った」が分かります。***
 
-![アポロニウス](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/16_apollonian.png?v=1)
+![アポロニウス](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/16_apollonian.png?v=2)
 
-*↑ 隙間に接する円を入れ続けるので終わりがありません。**互いに接する 4 円の曲率はデカルトの円定理 `(Σk)² = 2Σk²` を厳密に満たします**(残差 1.2e-16)—— 円の位置まで複素数の曲率中心で解けるので、当てはめではなく**代数**で描いています。*
+*↑ 隙間に接する円を入れ続けるので終わりがありません。**互いに接する 4 円の曲率はデカルトの円定理 `(Σk)² = 2Σk²` を厳密に満たします**(残差 1.2e-16)—— 円の位置まで複素数の曲率中心で解けるので、当てはめではなく**代数**で描いています。 ★**塗りの明るさは曲率**(= 1/半径)—— 定理が試している量をそのまま色にしてあるので、絵の濃淡が主張と同じものを指しています。*
 
-![カオスゲーム](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/17_chaos_game.png?v=1)
+![カオスゲーム](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/17_chaos_game.png?v=2)
 
-![バーンズリーのシダ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/18_fern.png?v=1)
+*↑ 賽を振って頂点へ半分ずつ寄るだけで、シェルピンスキーの三角形が出ます。**明るさは点の密度**(双一次で積み、asinh で暗部を伸ばしてあります)。描き方は飾りではありません —— 同じ点列でも、切り捨てて積んだ絵から測った箱数え次元は真値 log3/log2 から **−0.032** ずれるのに、こう描くと **−0.0030** で **10 倍**正確になります。*
 
-![流れ場](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/19_flow_field.png?v=1)
+![バーンズリーのシダ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/18_fern.png?v=2)
 
-*↑ 場は**ポテンシャル ψ の回転**として作ってあるので、発散が恒等的に 0(非圧縮、残差 7.0e-17)。流線が渦のまわりで**閉じている**のがその絵です —— 「それらしい雑音」で作った流れ場では、ここが湧き出しと吸い込みになります。*
+*↑ バーンズリーのシダ —— 4 本のアフィン写像を確率で選んで回すだけ。**明るさは密度**で、正規化は最大値でなく分位点で行っています(根元の 1 点が飛び抜けるので、最大値で割ると他が全部潰れます)。*
 
-![反応拡散](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/20_reaction_diffusion.png?v=1)
+![流れ場](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/19_flow_field.png?v=2)
+
+*↑ 場は**ポテンシャル ψ の回転**として作ってあるので、発散が恒等的に 0(非圧縮、残差 7.0e-17)。流線が渦のまわりで**閉じている**のがその絵です —— 「それらしい雑音」で作った流れ場では、ここが湧き出しと吸い込みになります。 ★**線の色と太さは流速** |∇ψ| —— 太さも濃さも一定だと、同じ場から描いても落書きにしかなりません。*
+
+![反応拡散](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/20_reaction_diffusion.png?v=2)
+
+*↑ グレイ–スコット反応拡散。**種は散らして 12 個**置いてあります ——中央に 1 個だけだと、同じ歩数でも模様の被覆が 0.086 にしかならず、画面の大半が余白になります(散らすと **0.379**)。★格子状に並べると**格子そのものが絵に出る**ので、ずらして置きます。*
 
 ![プラズマ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/21_plasma.png?v=1)
 
