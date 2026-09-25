@@ -193,3 +193,50 @@ def test_sample_photo_unknown_name_raises_instead_of_killing_the_process():
         fs.sample_photo("no_such_photo_xyz")
     assert not issubclass(realdata.RealDataError, SystemExit)
     assert "sample_photo" in fs.__all__
+
+
+def _ops_out(monkeypatch, capsys, *args) -> str:
+    monkeypatch.setattr(sys, "argv", ["fullseye", "ops", *args])
+    assert imgevolve.main() == 0
+    return capsys.readouterr().out
+
+
+def _assert_a_zero_is_not_a_silent_zero(out: str) -> None:
+    """★「0 件」と「0 件に見えているだけ」を区別すること(門の本体)。
+
+    2026-09-25 まで ``fullseye ops --search msa`` は ``0 ops match`` と言い切っていた ——
+    台帳には 4 件在るのに。同じ欠陥は ``has`` では 2026-09-20 に、``api.list_ops`` では
+    同日に塞がれており、**この一覧だけが 3 面目として残っていた**。
+    """
+    assert "0 ops match" in out, out[-200:]
+    assert "台帳層にさらに" in out, (
+        "当たりが台帳に在るのに、一覧が黙って 0 件と答えている: %s" % out[-200:])
+
+
+def test_a_search_that_only_hits_the_ledger_says_so(monkeypatch, capsys):
+    _assert_a_zero_is_not_a_silent_zero(_ops_out(monkeypatch, capsys, "--search", "msa"))
+
+
+def test_the_silent_zero_gate_catches_a_listing_that_hides_the_ledger(monkeypatch, capsys):
+    """★門を壊して確かめる —— 添え書きを消した出力は落ちること。"""
+    out = _ops_out(monkeypatch, capsys, "--search", "msa")
+    with pytest.raises(AssertionError):
+        _assert_a_zero_is_not_a_silent_zero(out.replace("台帳層にさらに", "(消した)"))
+
+
+def test_the_ledger_is_reachable_from_the_listing(monkeypatch, capsys):
+    out = _ops_out(monkeypatch, capsys, "--search", "msa", "--include-ledger")
+    assert "msa_gauge_rr" in out and "4 ops match" in out
+
+
+def test_the_default_listing_keeps_the_image_vocabulary(monkeypatch, capsys):
+    """既定は据え置き —— パイプラインと進化はこの語彙で回る。"""
+    import api
+    out = _ops_out(monkeypatch, capsys)
+    assert "--- %d ops match ---" % len(api.list_ops()) in out
+
+
+def test_the_listing_and_the_index_agree_when_the_ledger_is_included(monkeypatch, capsys):
+    import api
+    out = _ops_out(monkeypatch, capsys, "--include-ledger")
+    assert "--- %d ops match ---" % len(api.list_ops(include_ledger=True)) in out

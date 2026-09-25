@@ -95,19 +95,40 @@ def _imwrite(path, v):
 
 # ---- subcommands ----------------------------------------------------------- #
 def cmd_ops(a):
-    rows = _all_ops()
+    """op の一覧。
+
+    ★2026-09-25: この一覧はレジストリと n-ary しか見ておらず、``--search msa`` が
+    **``0 ops match`` と言い切って**いた —— 台帳には 4 件在るのに。同じ欠陥は
+    ``has`` では 2026-09-20 に(N131「発見面と判定面が別だった」)、``api.list_ops``
+    では 2026-09-25 に塞がれており、**この一覧だけが 3 面目として残っていた**。
+
+    既定の並びは据え置き(画像の語彙)。ただし**台帳に当たりが在るのに黙らない** ——
+    件数の下に何件隠れているかを出す。0 件と「0 件に見えているだけ」は別物である。
+    """
     import api as _api
+    rows = _all_ops()
+    ledger = _api.ledger_rows()
     kw = _api._fold(a.search or "")                      # 大小とアクセントを畳む(GenSpark N85 / N132)
-    for r in sorted(rows, key=lambda r: (r["tier"], r["in_sort"], r["name"])):
-        if a.sort and _api._fold(r["in_sort"]) != _api._fold(a.sort):
-            continue
-        if kw and kw not in _api._fold(r["name"] + " " + (r["halcon"] or "") + " " + r["category"]):
+
+    def _hit(r):
+        if a.sort and _api._fold(r["in_sort"] or "") != _api._fold(a.sort):
+            return False
+        return not kw or kw in _api._fold(
+            r["name"] + " " + (r["halcon"] or "") + " " + (r["category"] or ""))
+
+    shown = rows + (ledger if a.include_ledger else [])
+    for r in sorted(shown, key=lambda r: (r["tier"], r["in_sort"] or "", r["name"])):
+        if not _hit(r):
             continue
         print("%-26s %-8s->%-8s  halcon=%-24s [%s/%s]"
-              % (r["name"], r["in_sort"], r["out_sort"], r["halcon"] or "-", r["tier"], r["category"]))
-    print("--- %d ops match ---" % sum(
-        1 for r in rows if (not a.sort or _api._fold(r["in_sort"]) == _api._fold(a.sort))
-        and (not kw or kw in _api._fold(r["name"] + " " + (r["halcon"] or "") + " " + r["category"]))))
+              % (r["name"], r["in_sort"] or "-", r["out_sort"] or "-", r["halcon"] or "-",
+                 r["tier"], r["category"]))
+    print("--- %d ops match ---" % sum(1 for r in shown if _hit(r)))
+    if not a.include_ledger:
+        hidden = sum(1 for r in ledger if _hit(r))
+        if hidden:
+            print("--- 台帳層にさらに %d 件(--include-ledger で並ぶ; "
+                  "呼び方は fullseye.op_assist('<op>')) ---" % hidden)
     return 0
 
 
@@ -618,6 +639,8 @@ def main() -> int:
     p = sub.add_parser("ops", help="list/search implemented operators")
     p.add_argument("--search", default="")
     p.add_argument("--sort", default="")
+    p.add_argument("--include-ledger", action="store_true",
+                   help="型付き台帳の op も並べる(既定は画像の語彙だけ)")
     p.set_defaults(fn=cmd_ops)
 
     p = sub.add_parser("has", help="is a HALCON op implemented + how to call it")
