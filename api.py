@@ -2516,6 +2516,46 @@ def algo_rows() -> list[dict]:
             for op in algo.ALGO_REGISTRY]
 
 
+def ledger_rows() -> list[dict]:
+    """Rows for the typed-ledger tier (``opassist._LEDGERS``), shaped like ``_rows()``.
+
+    ★2026-09-25(外部レポート 第 58 報 N218 の一次検証から): ``list_ops()`` は
+    レジストリと n-ary しか並べず、**型付き台帳の 1,238 op(msa / gum / spc /
+    stroke / halftone / optics / 3d …)を 1 つも返していなかった**。同じ欠陥は
+    機械可読索引の側で 2026-09-15 に塞がれている(``imgevolve._ledger_rows``)のに、
+    Python から呼ぶ探索関数だけが取り残されていた —— **片側だけ塞がった穴**である。
+    「op を並べる」と名乗る関数が黙って 1,238 op を落とすと、返った件数を数えた人は
+    「無い」と結論する([[feedback_registered_only_gates_miss_unregistered]])。
+
+    台帳は ``fullseye.op_find``(語幹検索)・``fullseye.ledger``(属性呼び出し)・
+    CLI の索引からは**届いていた**ので全滅ではない。欠けていたのは一覧だけ。
+
+    族の一覧は ``opassist._LEDGERS`` を正本にする —— ``imgevolve._ledger_rows`` は
+    この関数に委譲する。表を 2 つ持つと、族を足したときに片方だけ増える。
+    """
+    import importlib
+
+    taken = {r["name"] for r in _rows()}
+    rows, seen = [], set(taken)
+    for mod_name, table in opassist._LEDGERS:
+        mod = importlib.import_module(mod_name)
+        entries = getattr(mod, table)
+        assert isinstance(entries, dict) and entries, "%s.%s が空" % (mod_name, table)
+        dim = "3d" if mod_name == "ops3d" else ("oned" if mod_name == "ops1d"
+                                                else mod_name[len("ops"):])
+        for name, info in entries.items():
+            if name in seen:
+                continue
+            seen.add(name)
+            ins = list(info.get("in") or [])
+            rows.append({"name": name, "halcon": "", "in_sort": ins[0] if ins else None,
+                         "out_sort": info.get("out"), "category": info.get("category"),
+                         "tier": "ledger", "ledger": mod_name, "dim": dim,
+                         "in_sorts": ins})
+    assert rows, "台帳層が空(opassist._LEDGERS が 1 op も返さない)"
+    return rows
+
+
 def _fold(text: str) -> str:
     """Case- and accent-insensitive key for name matching (NFKD, combining marks dropped, casefold)."""
     import unicodedata
@@ -2523,10 +2563,18 @@ def _fold(text: str) -> str:
 
 
 def list_ops(sort: str | None = None, search: str | None = None,
-             include_algo: bool = False) -> list[dict]:
+             include_algo: bool = False, include_ledger: bool = False) -> list[dict]:
     """Every operator as a uniform dict. Filter by input *sort* and/or *search*
     (substring over name/halcon/category). *include_algo* (default False, so the image
     focus is unchanged for every existing caller) appends the general-algorithm tier.
+
+    ★*include_ledger* (default False, same reason) appends the **typed-ledger tier** —
+    1,238 ops (``msa_*`` / ``gum_*`` / ``spc_*`` / ``stroke_*`` / optics / 3-D …) that
+    this function returned **nowhere** until 2026-09-25. Without it the count here is the
+    image vocabulary (registry + n-ary), NOT the op count of the package: the machine-readable
+    index (``docs/OP_INDEX.json``, what the CLI and MCP read) lists all four tiers. The ledger
+    was always reachable through :func:`op_find`, :func:`op_assist` and ``fullseye.ledger`` —
+    it was the *listing* that was blind. See :func:`ledger_rows`.
 
     Each row carries ``"knobs"`` = :func:`knob_summary` (what ``a`` / ``b`` do, as measured;
     ``None`` when the op has not been measured) and, for the ``"nary"`` tier, ``"arity"`` and
@@ -2542,7 +2590,11 @@ def list_ops(sort: str | None = None, search: str | None = None,
     (``"ötsu"`` finds ``otsu``; 2026-09-20, GenSpark N85 — ``sort="IMAGE"`` used to match nothing)."""
     kw = _fold(search or "")
     sort_key = _fold(sort or "")
-    rows = _rows() + (algo_rows() if include_algo else [])
+    rows = (_rows() + (algo_rows() if include_algo else [])
+            #: ``knobs`` はここで足す —— 台帳の行は**機械可読索引と 1 バイト同じ形**に
+            #: 保つ(``imgevolve._ledger_rows`` がこの関数に委譲するため、鍵を 1 つ足すと
+            #: ``docs/OP_INDEX.json`` が動く)。台帳 op は ``a`` / ``b`` を取らないので常に None。
+            + [dict(r, knobs=None) for r in (ledger_rows() if include_ledger else [])])
     if sort_key:
         known = sorted({r["in_sort"] for r in rows})
         if sort_key not in {_fold(k) for k in known}:
@@ -2556,7 +2608,10 @@ def list_ops(sort: str | None = None, search: str | None = None,
         if kw and kw not in hay:
             continue
         out.append(r)
-    return sorted(out, key=lambda r: (r["tier"], r["in_sort"], r["name"]))
+    #: ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。
+    #: 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ
+    #: だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+    return sorted(out, key=lambda r: (r["tier"], r["in_sort"] or "", r["name"]))
 
 
 def op_names(include_nary: bool = False) -> list[str]:

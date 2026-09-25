@@ -34,9 +34,9 @@
 
 | 記事 | 展示室 | 展示数 |
 |---|---|---:|
-| [紙面の計測館 —— 何を測るかの棟(産業検査・寸法計測・医用生物・天文環境)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_poc_museum_what_qiita_ja.md) | 産業検査 / 寸法・形状計測 / 医用・生物 / 天文・環境 | 84 |
-| [紙面の計測館 —— どう測るかの棟(撮像品質・時系列・幾何校正・色・法科学・3-D 形状)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_poc_museum_how_qiita_ja.md) | 撮像品質・復元 / 時系列を 3-D として測る / 幾何・校正 / 色・分離 / 法科学・文書 / 3-D 形状 | 60 |
-| [数学の絵は、きれいなので誰も確かめない ―― 定理を門にして描く PoC シリーズ](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/qiita_math_drawing_ja.md) | 数学の絵 | 7 |
+| [紙面の計測館 —— 何を測るかの棟(産業検査・寸法計測・医用生物・天文環境)](https://qiita.com/furuse-kazufumi/items/30c644316df826f4106e) | 産業検査 / 寸法・形状計測 / 医用・生物 / 天文・環境 | 84 |
+| [紙面の計測館 —— どう測るかの棟(撮像品質・時系列・幾何校正・色・法科学・3-D 形状)](https://qiita.com/furuse-kazufumi/items/75ada244f3d93a7156b7) | 撮像品質・復元 / 時系列を 3-D として測る / 幾何・校正 / 色・分離 / 法科学・文書 / 3-D 形状 | 60 |
+| [数学の絵は、きれいなので誰も確かめない ―― 定理を門にして描く PoC シリーズ](https://qiita.com/furuse-kazufumi/items/fe04f6eef40119913894) | 数学の絵 | 7 |
 
 ## 用語(先に読むと楽)
 

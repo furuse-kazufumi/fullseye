@@ -1,4 +1,4 @@
-> **Language**: [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_poc_museum_what_qiita_ja.md) · **English**
+> **Language**: [日本語](https://qiita.com/furuse-kazufumi/items/30c644316df826f4106e) · **English**
 
 # A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)
 

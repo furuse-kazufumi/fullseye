@@ -1,4 +1,4 @@
-> **Language**: [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_poc_museum_how_qiita_ja.md) · **English**
+> **Language**: [日本語](https://qiita.com/furuse-kazufumi/items/75ada244f3d93a7156b7) · **English**
 
 # A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)
 

@@ -402,29 +402,13 @@ def _ledger_rows(taken):
       その名前で ``fullseye.apply`` が動くのはそちらだから。
     * 族の import 失敗は**握らない**。台帳は numpy/scipy だけで組める一次モジュール
       なので、失敗は「壊れた checkout」であって「無い機能」ではない。
-    """
-    import importlib
 
-    import opassist
-    rows = []
-    seen = set(taken)
-    for mod_name, table in opassist._LEDGERS:
-        mod = importlib.import_module(mod_name)
-        entries = getattr(mod, table)
-        assert isinstance(entries, dict) and entries, "%s.%s が空" % (mod_name, table)
-        dim = "3d" if mod_name == "ops3d" else ("oned" if mod_name == "ops1d"
-                                                 else mod_name[len("ops"):])
-        for name, info in entries.items():
-            if name in seen:
-                continue
-            seen.add(name)
-            ins = list(info.get("in") or [])
-            rows.append({"name": name, "halcon": "", "in_sort": ins[0] if ins else None,
-                         "out_sort": info.get("out"), "category": info.get("category"),
-                         "tier": "ledger", "ledger": mod_name, "dim": dim,
-                         "in_sorts": ins})
-    assert rows, "台帳層が空(opassist._LEDGERS が 1 op も返さない)"
-    return rows
+    ★2026-09-25: 組み立ての本体は ``api.ledger_rows()`` に移した。同じ規則の表が
+    2 つ在ると、族を足したときに片方だけ増える —— 実際に ``api.list_ops()`` は
+    この層を 1 op も返さないまま取り残されていた(上の註の逆向きの事故)。
+    """
+    import api as _api
+    return [r for r in _api.ledger_rows() if r["name"] not in taken]
 
 
 def _index_default_out() -> str:

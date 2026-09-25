@@ -144,3 +144,66 @@ def test_fullseye_facade_reexports_api():
     assert fullseye.__version__ == api.__version__
     assert np.allclose(fullseye.apply(f, "gaussian"), api.apply(f, "gaussian"))
     assert fullseye.op_names() == api.op_names()
+
+
+def _assert_listing_matches_the_index(rows, index):
+    """一覧(``list_ops``)と機械可読索引(``docs/OP_INDEX.json``)が同じ op を数えること。
+
+    ★門の本体を関数にしておく —— 破壊試験が「式をもう一度書く」のではなく
+    **本物の判定を呼ぶ**ようにするため(同じ式を 2 度書いた門は、式が間違っていても通る)。
+    """
+    #: ★突き合わせは**名前**で行う。索引の ``color`` 層は別の op ではなく、
+    #: レジストリ行に ``backends_color`` の担当分として貼り直した札である
+    #: (``imgevolve._index_payload``)。tier で照合すると、その 12 件が
+    #: 「一覧に無い」と誤って出る —— 層の付け替えを欠落と読み違える形。
+    want = {o["name"] for o in index["ops"]}
+    got = {r["name"] for r in rows}
+    missing, extra = sorted(want - got), sorted(got - want)
+    assert not missing and not extra, (
+        "list_ops と索引がずれている: 一覧に無い %d 件 %s / 索引に無い %d 件 %s"
+        % (len(missing), missing[:5], len(extra), extra[:5]))
+    #: 付け替えは「同じ op が両方に在る」ことまで見る(札の違いを黙認しない)。
+    by_name = {r["name"]: r["tier"] for r in rows}
+    recoloured = [o["name"] for o in index["ops"] if o["tier"] == "color"]
+    assert recoloured, "色層が空(索引の tier 付け替えが効いていない)"
+    assert all(by_name[n] == "registry" for n in recoloured), (
+        "索引で color に付け替えられた op が、一覧では registry でない")
+
+
+def _index():
+    import json
+    import os
+    p = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                     "docs", "OP_INDEX.json")
+    with open(p, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def test_the_listing_reaches_every_tier_the_index_knows():
+    """★2026-09-25: ``list_ops()`` は台帳層の 1,238 op を 1 つも返していなかった。
+
+    索引側では 2026-09-15 に塞がれた欠陥で、**Python から呼ぶ一覧だけが取り残されて
+    いた**。件数を数えた人が「無い」と結論する形の静かな欠落なので、2 つの入口が
+    同じ op を数えることを門にする。
+    """
+    _assert_listing_matches_the_index(api.list_ops(include_ledger=True), _index())
+
+
+def test_the_tier_gate_catches_a_listing_that_drops_a_tier():
+    """★門を壊して確かめる —— 台帳を外した既定の一覧は、索引と食い違うこと。"""
+    with pytest.raises(AssertionError) as e:
+        _assert_listing_matches_the_index(api.list_ops(), _index())
+    assert "一覧に無い" in str(e.value)
+
+
+def test_the_default_listing_still_holds_the_image_vocabulary():
+    """既定は据え置き —— 台帳を既定に混ぜると、パイプラインと進化の語彙が変わる。"""
+    tiers = {r["tier"] for r in api.list_ops()}
+    assert tiers == {"registry", "nary"}, tiers
+
+
+def test_the_index_and_the_listing_share_one_ledger_table():
+    """台帳の表は 1 つだけ(``api.ledger_rows``)。索引側はそこへ委譲する。"""
+    import imgevolve
+    assert ({r["name"] for r in imgevolve._ledger_rows(set())}
+            == {r["name"] for r in api.ledger_rows()})

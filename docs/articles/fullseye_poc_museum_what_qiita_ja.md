@@ -1,4 +1,4 @@
-> **言語 / Language**: **日本語** · [English](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_poc_museum_what_qiita_en.md)
+> **言語 / Language**: **日本語** · [English](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca)
 
 # 紙面の計測館 —— 何を測るかの棟(産業検査・寸法計測・医用生物・天文環境)
 

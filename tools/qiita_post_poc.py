@@ -97,10 +97,15 @@ def _save_items(d: dict) -> None:
         json.dumps(d, ensure_ascii=False, indent=1) + "\n")
 
 
-def _parts(cap: dict) -> list:
-    """投稿できる記事(案内 + 生成された棟)。手書きの `external` はここでは扱わない。"""
+#: 既定で投稿する記事の種類。★手書きの `external` は**名指ししたときだけ**扱う —— 引数無しの
+#: 一括投稿が、生成物でない記事(数学の回など)を巻き込まないようにする。
+DEFAULT_KINDS = ("index", "generated")
+
+
+def _parts(cap: dict, kinds=DEFAULT_KINDS) -> list:
+    """投稿できる記事。既定は案内 + 生成された棟で、手書きの `external` は入らない。"""
     return [p for p in cap["meta"].get("parts", [{"id": "entrance", "kind": "index"}])
-            if p["kind"] in ("index", "generated")]
+            if p["kind"] in kinds]
 
 
 def _slot(part: dict, lang: str) -> str:
@@ -115,6 +120,9 @@ def _slot(part: dict, lang: str) -> str:
 def _body_path(part: dict, lang: str) -> str:
     if part["kind"] == "index":
         return ARTICLE.format(lang=lang)
+    if part["kind"] == "external":
+        #: 手書きの記事は生成物でないので、原稿の名前を台帳から引く。
+        return os.path.join(REPO, "docs", "articles", part["article_" + lang])
     return os.path.join(REPO, "docs", "articles",
                         "fullseye_poc_museum_%s_qiita_%s.md" % (part["slug"], lang))
 
@@ -171,7 +179,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--lang", action="append", choices=["ja", "en"])
     ap.add_argument("--part", action="append",
-                    help="投稿する記事の id(既定 = 案内と全部の棟)。手書きの記事は扱わない")
+                    help="投稿する記事の id(既定 = 案内と全部の棟)。手書きの記事は名指ししたときだけ")
     ap.add_argument("--check", action="store_true", help="検査だけ(書かない)")
     ap.add_argument("--public", action="store_true", help="限定共有ではなく公開にする(明示時のみ)")
     ap.add_argument("--allow-shrink", action="store_true")
@@ -180,6 +188,8 @@ def main(argv=None) -> int:
     cap = json.load(open(CAPTIONS, encoding="utf-8"))
     parts = _parts(cap)
     if a.part:
+        #: 名指しされたときだけ手書きの記事も候補に入れる。
+        parts = _parts(cap, kinds=DEFAULT_KINDS + ("external",))
         want = set(a.part)
         known = {p["id"] for p in parts}
         bad = sorted(want - known)

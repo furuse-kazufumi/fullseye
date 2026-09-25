@@ -1,4 +1,4 @@
-> **言語 / Language**: **日本語** · [English](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_poc_museum_how_qiita_en.md)
+> **言語 / Language**: **日本語** · [English](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8)
 
 # 紙面の計測館 —— どう測るかの棟(撮像品質・時系列・幾何校正・色・法科学・3-D 形状)
 

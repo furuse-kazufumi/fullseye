@@ -3,12 +3,48 @@
   "id": "c1606bcfa2085d204ad6",
   "url": "https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6",
   "private": false,
-  "updated": "2026-09-24T18:41:52+00:00"
+  "updated": "2026-09-25T03:41:24+00:00"
  },
  "en": {
   "id": "8a8f23e53b19ee8cdc10",
   "url": "https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10",
   "private": false,
-  "updated": "2026-09-24T18:42:12+00:00"
+  "updated": "2026-09-25T03:41:25+00:00"
+ },
+ "wingset_measured.ja": {
+  "id": "30c644316df826f4106e",
+  "url": "https://qiita.com/furuse-kazufumi/items/30c644316df826f4106e",
+  "private": false,
+  "updated": "2026-09-25T03:36:34+00:00"
+ },
+ "wingset_measured.en": {
+  "id": "4f65e33d11099a1ebbca",
+  "url": "https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca",
+  "private": false,
+  "updated": "2026-09-25T03:36:45+00:00"
+ },
+ "wingset_method.ja": {
+  "id": "75ada244f3d93a7156b7",
+  "url": "https://qiita.com/furuse-kazufumi/items/75ada244f3d93a7156b7",
+  "private": false,
+  "updated": "2026-09-25T03:37:05+00:00"
+ },
+ "wingset_method.en": {
+  "id": "9468b213793e3f6b1dc8",
+  "url": "https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8",
+  "private": false,
+  "updated": "2026-09-25T03:37:13+00:00"
+ },
+ "lane_math_article.ja": {
+  "id": "fe04f6eef40119913894",
+  "url": "https://qiita.com/furuse-kazufumi/items/fe04f6eef40119913894",
+  "private": false,
+  "updated": "2026-09-25T03:39:59+00:00"
+ },
+ "lane_math_article.en": {
+  "id": "dc100e7ea90e9575c40b",
+  "url": "https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b",
+  "private": false,
+  "updated": "2026-09-25T03:40:02+00:00"
  }
 }
