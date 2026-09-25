@@ -522,15 +522,28 @@ register("serial",
 
 # ---- cataloged protocols (comprehensive menu; a first-class Channel adapter is
 # on the roadmap — capabilities() reports them so you know the exact lib + kind).
-def _cataloged_factory(name, pip, module):
+#: ★**断り文句が「install 'None'」と言っていた。** `cclink` は pure-python の
+#: master が存在しないので pip 名も import 名も持たない —— そこを場合分けせずに
+#: 書式へ流し込んだ結果、`open_channel("cclink")` は
+#: 「install 'None' and use the None client directly」と答えていた。
+#: **入っていないものを名指しする口は、名指しできない相手で必ず崩れる。**
+#: 2026-09-25、`device.open_driver` を足すときに同じ分岐を書いて気づいた(隣の
+#: 層を直したら、元の層を読み返すこと)。
+#: ★もう 1 つ: 相手が**入っている**ときに「install しろ」と言っていた。入って
+#: いるのに入れろと言う案内は、読んだ人をそこで止める。
+def _cataloged_factory(name, pip, module, desc=""):
     def factory(**opts):
         avail = _importable(module) if module else False
-        if not avail and pip:
-            raise CommError("protocol %r needs '%s' (pip install %s)" % (name, module, pip))
+        if not module or not pip:
+            raise CommError(
+                "protocol %r has no pure-python client on PyPI%s — see "
+                "docs/CONNECTIVITY.md for how to reach it." % (name, " (%s)" % desc if desc else ""))
+        if not avail:
+            raise CommError("protocol %r needs %r (pip install %s)" % (name, module, pip))
         raise CommError(
-            "protocol %r is cataloged: install '%s' and use the %r client directly, "
-            "or see docs/CONNECTIVITY.md — a first-class Fullseye Channel adapter is "
-            "on the roadmap." % (name, pip, module))
+            "protocol %r is cataloged and %r is installed — talk to it with that client "
+            "directly, or see docs/CONNECTIVITY.md; a first-class Fullseye Channel "
+            "adapter is on the roadmap." % (name, module))
     return factory
 
 
@@ -559,5 +572,5 @@ _CATALOG = [
     ("cclink", None, None, "scaffold", "CC-Link IE (no pure-python master; reach via SLMP)"),
 ]
 for _name, _module, _pip, _kind, _desc in _CATALOG:
-    register(_name, _cataloged_factory(_name, _pip, _module),
+    register(_name, _cataloged_factory(_name, _pip, _module, _desc),
              native=False, pip=_pip, kind=_kind, probe=_module, desc=_desc)

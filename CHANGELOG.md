@@ -7,6 +7,29 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★★**隣の層を直したら、直した当人の穴が見えた** —— `comm.open_channel("cclink")`
+  が「**install 'None' and use the None client directly**」と答えていた。CC-Link IE
+  には pure-python の master が存在せず pip 名も import 名も持たないのに、そこを
+  場合分けせずに書式へ流し込んでいた。**入っていないものを名指しする口は、
+  名指しできない相手で必ず崩れる**。`device.open_driver` に同じ分岐(kinova)を
+  書いたその日に、元の層を読み返して見つけた。
+  - いまは「pure-python の client が PyPI に無い(CC-Link IE は SLMP 経由で届く)」
+    と答える —— その SLMP を Fullseye は実際にカタログしている。
+  - ★もう 1 つ直した: 相手が**入っている**ときにも「install しろ」と言っていた。
+    入っているのに入れろと言う案内は、読んだ人をそこで止める。
+- ★**1 本だけ見る門は、1 本だけしか守らない。** `comm` の断り文句の門は
+  `ethernet-ip` **1 本**だけを見ており、その陰で `cclink` が上の状態だった
+  ([[feedback_one_probe_input_is_not_coverage]])。**全 protocol** を回って
+  「開くか、CommError で pip 名か import 名を言って断るか」を見る門に替えた。
+  `device` で先に踏んだ「**相手が居ないのは扉が無いのとは別**」もそのまま効く
+  (native な protocol は本当に繋ぎに行くので `OSError` は扉が在る証拠)。
+- ★**接続の 3 層が、同じ約束を守るようにした**(protocol / image source / driver)。
+  (1) 名簿を出す (2) **名簿の名前でそのまま開ける** (3) 開けないときは何を
+  入れればよいか名指しする —— の 3 点。`acquire` は (1)(2) は持っていたが、
+  opener が SDK 名を言うかは見ていなかったので門を足した。3 層まとめて見る門
+  (`test_the_three_connectivity_layers_make_the_same_promise`)も置いたので、
+  次に層を足す人は 3 つそろえないと通らない。`docs/CONNECTIVITY.md` の冒頭にも
+  この約束を書いた。
 - ★★**名簿に 12 の driver を載せておきながら、扉が 3 つしか無かった**。
   `device.capabilities()` は I-O・サーボ・ロボット・ROS を合わせて **12 driver**
   を名乗るのに、Fullseye から開ける口が在ったのは `DigitalIO` の **3 backend**

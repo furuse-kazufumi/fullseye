@@ -127,3 +127,77 @@ def test_facade_exposes_comm():
     assert "modbus-tcp" in fullseye.protocols()
     cap = fullseye.capabilities()                          # aggregate comm+acquire+device
     assert set(cap) == {"comm", "acquire", "device"}
+
+
+# --------------------------------------------------------------------------- #
+# 名簿と扉 —— 全数で見る                                                        #
+# --------------------------------------------------------------------------- #
+#: ★**1 本だけ見る門は、1 本だけしか守らない。** ここには長いあいだ
+#: `test_cataloged_protocol_gives_install_hint` が在り、`ethernet-ip` の断り文句
+#: **1 本**だけを見ていた。その陰で `cclink` は
+#: 「install 'None' and use the None client directly」と答えていた —— pip 名も
+#: import 名も持たない 1 行が、場合分けの外に落ちていたからである
+#: ([[feedback_one_probe_input_is_not_coverage]])。全数で見る。
+#: ★**「相手が居ない」は「扉が無い」ではない**(device 側で先に踏んだ):
+#: native な protocol は本当に繋ぎに行くので、`OSError` は扉が在る証拠として通す。
+def _assert_every_protocol_has_a_door(names, opener, registry) -> None:
+    missing, vague = [], []
+    for name in names:
+        entry = registry[name]
+        try:
+            got = opener(name)
+        except comm.CommError as e:
+            msg = str(e)
+            hints = [h for h in (entry.get("_probe"), entry.get("pip")) if h]
+            if name not in msg:
+                vague.append((name, "断り文句が protocol 名を言わない: %s" % msg))
+            elif "None" in msg:
+                vague.append((name, "持っていない名前をそのまま書いている: %s" % msg))
+            elif hints and not any(h in msg for h in hints):
+                vague.append((name, "何を入れればよいか言わない: %s" % msg))
+            continue
+        except OSError:
+            continue                      # 線の先に誰も居ないのは、口が無いのとは別
+        except Exception as e:            # noqa: BLE001
+            missing.append((name, "%s: %s" % (type(e).__name__, e)))
+            continue
+        try:
+            got.close()
+        except Exception:
+            pass
+    assert not missing, (
+        "名簿に載っているのに扉が無い protocol: %s —— 開くか CommError で断ること"
+        % (missing,))
+    assert not vague, "断り文句が何も教えていない: %s" % (vague,)
+
+
+def test_every_protocol_on_the_menu_has_a_door():
+    _assert_every_protocol_has_a_door(comm.protocols(), comm.open_channel, comm._REGISTRY)
+
+
+def test_a_protocol_without_a_pip_package_is_not_told_to_install_none():
+    """★実際に踏んだ形 —— pip 名を持たない protocol の断り文句を読む。"""
+    with pytest.raises(comm.CommError) as ei:
+        comm.open_channel("cclink")
+    msg = str(ei.value)
+    assert "None" not in msg, "持っていない名前をそのまま書いている: %s" % msg
+    assert "cclink" in msg
+
+
+def test_the_door_gate_catches_a_refusal_that_says_none():
+    """★門を壊して確かめる。"""
+    def opener(name):
+        raise comm.CommError("protocol %r needs 'None' (pip install None)" % name)
+
+    with pytest.raises(AssertionError) as e:
+        _assert_every_protocol_has_a_door(["cclink"], opener, comm._REGISTRY)
+    assert "持っていない名前" in str(e.value)
+
+
+def test_the_door_gate_catches_a_protocol_with_no_entry_point():
+    def opener(name):
+        raise KeyError(name)
+
+    with pytest.raises(AssertionError) as e:
+        _assert_every_protocol_has_a_door(["mqtt"], opener, comm._REGISTRY)
+    assert "扉が無い" in str(e.value)

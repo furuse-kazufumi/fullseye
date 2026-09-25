@@ -5,6 +5,15 @@ Fullseye は vision に加え **デバイス制御・産業通信** を扱う(HA
 返す実カタログを書き写したもの。**この doc は手書きで、正しさは門が持つ** ——
 表と実装がずれたら `tests/test_connectivity_doc.py` が落ちる。
 
+**3 層とも同じ約束を守ります**(protocol / image source / driver):
+
+1. 名簿を出す —— `comm.protocols()` / `acquire.capabilities()` / `device.drivers()`
+2. **名簿の名前でそのまま開ける** —— `open_channel` / `open_framegrabber` / `open_driver`
+3. 開けないときは **何を入れればよいかを名指しする**(pip 名か import 名)
+
+3 つそろって初めて「対応している」と言えます —— 名簿だけ在って開け方が無い状態は、
+読んだ人をそこで止めるからです(`tests/test_acquire_contract.py` の
+`test_the_three_connectivity_layers_make_the_same_promise` が 3 層まとめて見ます)。
 - **native** = 標準ライブラリのみで**すぐ動く**(uniform な API)
 - **optional** = `pip` 欄のパッケージを入れると有効になる
 - **scaffold** = 特殊ハード/リアルタイム/native SDK が必要(文書化・best-effort)

@@ -42,6 +42,72 @@ def test_every_declared_backend_has_an_opener():
         "capabilities() は「対応」と申告するが、SDK を入れても ValueError になる" % missing)
 
 
+#: ★**「開く実装が在る」と「入っていないときに何を入れればよいか言う」は別**。
+#: 上の門は opener の**存在**を見るが、SDK が無い機械で呼ばれたときに何と言うかは
+#: 見ていなかった。2026-09-25 に接続の 3 層(protocol / image source / driver)を
+#: 揃えたとき、`comm` は `cclink` に「install 'None'」と言い、`device` は 9 driver に
+#: 入口すら持っていなかった。**同じ問いに答える層は、同じ約束をすること。**
+def _assert_every_opener_names_its_sdk(backends, source_of) -> None:
+    vague = []
+    for name, module, pip, kind, _unit, opener, _desc in backends:
+        if kind == "native":
+            continue                       # 外部 SDK が要らない(断る相手が居ない)
+        src = source_of(opener)
+        hints = [h for h in (module, pip) if h]
+        if not any(h in src for h in hints):
+            vague.append((name, "断り文句に %s が出てこない" % " / ".join(hints)))
+    assert not vague, (
+        "SDK が無い機械で何を入れればよいか言わない opener: %s —— "
+        "`comm` / `device` と同じく、断るときは pip 名か import 名を書くこと" % (vague,))
+
+
+def _opener_source(opener: str) -> str:
+    import inspect
+    return inspect.getsource(getattr(acquire.Camera, opener))
+
+
+def test_every_opener_names_the_sdk_it_needs():
+    _assert_every_opener_names_its_sdk(acquire._BACKENDS, _opener_source)
+
+
+def test_the_sdk_naming_gate_catches_a_silent_opener():
+    """★門を壊して確かめる —— 「使えません」とだけ言う opener は落ちること。"""
+    with pytest.raises(AssertionError) as e:
+        _assert_every_opener_names_its_sdk(
+            acquire._BACKENDS, lambda _o: "raise RuntimeError('not available')")
+    assert "言わない" in str(e.value)
+
+
+def test_the_three_connectivity_layers_make_the_same_promise():
+    """★protocol / image source / driver の 3 層が、同じ約束を守っていること。
+
+    どれも (1) 名簿を出し (2) 名簿の名前で開けて (3) 開けないときは何を入れれば
+    よいか言う。片方だけ直すと穴が半分残るので、3 層をまとめて 1 か所で見る。
+    """
+    import comm
+    import device
+
+    assert len(acquire.capabilities()) >= 10
+    assert len(comm.protocols()) >= 20
+    assert len(device.drivers()) >= 12
+
+    #: 名簿の名前で開ける口が、3 層すべてに在ること(名前だけ確かめる)。
+    assert callable(acquire.open_framegrabber)
+    assert callable(comm.open_channel)
+    assert callable(device.open_driver)
+
+    #: 知らない名前は、3 層とも**既知の名前を並べて**断ること。
+    with pytest.raises(Exception) as e1:
+        acquire.open_framegrabber(0, backend="nope-not-a-backend")
+    assert "opencv" in str(e1.value)
+    with pytest.raises(KeyError) as e2:
+        comm.open_channel("nope-not-a-protocol")
+    assert "modbus-tcp" in str(e2.value)
+    with pytest.raises(KeyError) as e3:
+        device.open_driver("nope-not-a-driver")
+    assert "io-memory" in str(e3.value)
+
+
 def test_opener_names_are_unique_and_private():
     names = [row[5] for row in acquire._BACKENDS]
     assert len(set(names)) == len(names), "opener 名が重複している: %s" % names

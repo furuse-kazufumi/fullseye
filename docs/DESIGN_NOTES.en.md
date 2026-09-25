@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 624 of 1062. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 624 of 1067. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -133,6 +133,11 @@ This repository records *why* things are the way they are in **comments in the s
 ## `champion_to_macro.py`
 
 - **L225** — ★Enforce the headline honesty claim ("a DNA op is added only when it beats the hand baseline on a LOCKED holdout") — previously this flag was printed but never gated, so a worse-than-hand macro could be registered and then selected by the next evolution. The gate refuses that unless it is explicitly overridden.
+
+## `comm.py`
+
+- **L525** _(ja)_ — ★**断り文句が「install 'None'」と言っていた。** `cclink` は pure-python の master が存在しないので pip 名も import 名も持たない —— そこを場合分けせずに 書式へ流し込んだ結果、`open_channel("cclink")` は 「install 'None' and use the None client directly」と答えていた。 **入っていないものを名指しする口は、名指しできない相手で必ず崩れる。** 2026-09-25、`device.open_driver` を足すときに同じ分岐を書いて気づいた(隣の 層を直したら、元の層を読み返すこと)。
+- **L532** _(ja)_ — ★もう 1 つ: 相手が**入っている**ときに「install しろ」と言っていた。入って いるのに入れろと言う案内は、読んだ人をそこで止める。
 
 ## `conngraph.py`
 
@@ -1509,19 +1514,20 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_acquire_contract.py`
 
-- **L100** _(ja)_ — 16.003663...**。★「16 倍」と書いて落ちた —— 器の幅と有効ビットの比は 2^4 ではなく (2^16-1)/(2^12-1) で、1 桁目から違う。
-- **L234** _(ja)_ — ★「次は ## デバイス制御」と決め打ちしていたため、あいだに節を 1 つ足した だけでその表の行まで backend 行として読んでしまった(2026-09-24)。 節の終わりは**次の見出し**であって、特定の見出しの名前ではない。
-- **L257** _(ja)_ — ★「見つける」は「開く」とは**別の問い**。1 列にまとめていたせいで、 開けるのに一覧に出てこない zed / kinect が表では ✓ のままだった (2026-09-25)。列の中身は AST から数えた実際の分岐と突き合わせる。
-- **L371** _(ja)_ — ★ここまでの門は「acquire が持っている綴り」からしか数えていない。**規格の全数**を 分母に置くと、そもそも知らない形式が見つかる —— 実際これで 10 bit 非詰めの Bayer 4 形式が丸ごと抜けていた(2026-09-24)。台帳は EMVA が無償公開している 「GenICam Pixel Format Names and Values」の単板 59 形式。
-- **L418** _(ja)_ — ★最初ここに「詰め形式は容器 = 有効」と書いて、この門に捕まった。実際は 2 通りある: (a) 10/12/14 bit の**非詰め**が 16 bit 容器に入る場合と、 (b) **grouped**(GigE Vision 1.x の `Packed`)の 10 bit が 12 bit に 入る場合 —— 2 画素 = 3 バイトなので 1 画素あたり 12 bit になる。 真の lsb packed(`p`)だけが容器 = 有効。
-- **L450** _(ja)_ — ★機能名はベンダの名前ではなく規格の名前なので、**1 本の語彙表で GenTL を出す 全ベンダを覆える**。だからこの層は「どのベンダの SDK を入れたか」と無関係に 検査できる —— 模擬ノードマップで足りる。実機が無いことは言い訳にならない。
-- **L612** _(ja)_ — ★SDK のバッファを指したまま返すと、**次の 1 枚が前の 1 枚を書き換える**。 例外は出ない —— 絵だけが入れ替わるので、連写を保存して初めて気づく。 実機が要る経路なので実行では確かめられない。**ソースで確かめる**。
-- **L650** _(ja)_ — ★複製が要らない backend と、その**理由**。黙って外さない。
-- **L706** _(ja)_ — ★SDK を採点したのと**同じ物差し**で自分も採点する。違う物差しで測った数を 並べると「SDK より厚い」が意味を失う。しかも自己申告にしない —— 各軸が どの入口で満たされているかを**実在する名前**で名指しし、門がそれを引く。
-- **L755** _(ja)_ — ★列挙軸の一番大きな穴はここだった。`_enumerate("genicam")` は [] を返していて、 **GenTL を出す全ベンダを覆える唯一の経路だけが列挙できない**状態だった。 GenTL 1.6 が「プロデューサのインストーラは GENICAM_GENTL{32/64}_PATH に自分を 足す」と決めているので、こちらはその変数を読めばよく、ベンダごとの表は要らない。 実機も SDK も無しで検査できる —— 変数と `.cti` という名前のファイルがあればよい。
-- **L809** _(ja)_ — ★`__all__` は「何を公開したか」の一次情報(`dir()` は環境で変わる)。だから 本体が増えたのに `__all__` が増えない、という遅れは**静かに**起きる —— 実際に 2026-09-25 まで 7 つ足りていなかった(追記のつもりが当たっていなかった)。 門は台帳側でなく**本体側から数える**。
-- **L881** _(ja)_ — ★`opencv` backend が開くのは UVC の装置。その規格が制御の名前と、いくつかは 単位まで決めている。単位が SFNC と違うので、換算を**往復で**確かめる —— 100 倍の係数を書き忘れても例外は出ず、露光だけが狂う。
-- **L1096** _(ja)_ — ★門そのものを呼んで、本当に落ちることを確かめる(式の真似ではなく)。
+- **L45** _(ja)_ — ★**「開く実装が在る」と「入っていないときに何を入れればよいか言う」は別**。 上の門は opener の**存在**を見るが、SDK が無い機械で呼ばれたときに何と言うかは 見ていなかった。2026-09-25 に接続の 3 層(protocol / image source / driver)を 揃えたとき、`comm` は `cclink` に「install 'None'」と言い、`device` は 9 driver に 入口すら持っていなかった。**同じ問いに答える層は、同じ約束をすること。**
+- **L166** _(ja)_ — 16.003663...**。★「16 倍」と書いて落ちた —— 器の幅と有効ビットの比は 2^4 ではなく (2^16-1)/(2^12-1) で、1 桁目から違う。
+- **L300** _(ja)_ — ★「次は ## デバイス制御」と決め打ちしていたため、あいだに節を 1 つ足した だけでその表の行まで backend 行として読んでしまった(2026-09-24)。 節の終わりは**次の見出し**であって、特定の見出しの名前ではない。
+- **L323** _(ja)_ — ★「見つける」は「開く」とは**別の問い**。1 列にまとめていたせいで、 開けるのに一覧に出てこない zed / kinect が表では ✓ のままだった (2026-09-25)。列の中身は AST から数えた実際の分岐と突き合わせる。
+- **L437** _(ja)_ — ★ここまでの門は「acquire が持っている綴り」からしか数えていない。**規格の全数**を 分母に置くと、そもそも知らない形式が見つかる —— 実際これで 10 bit 非詰めの Bayer 4 形式が丸ごと抜けていた(2026-09-24)。台帳は EMVA が無償公開している 「GenICam Pixel Format Names and Values」の単板 59 形式。
+- **L484** _(ja)_ — ★最初ここに「詰め形式は容器 = 有効」と書いて、この門に捕まった。実際は 2 通りある: (a) 10/12/14 bit の**非詰め**が 16 bit 容器に入る場合と、 (b) **grouped**(GigE Vision 1.x の `Packed`)の 10 bit が 12 bit に 入る場合 —— 2 画素 = 3 バイトなので 1 画素あたり 12 bit になる。 真の lsb packed(`p`)だけが容器 = 有効。
+- **L516** _(ja)_ — ★機能名はベンダの名前ではなく規格の名前なので、**1 本の語彙表で GenTL を出す 全ベンダを覆える**。だからこの層は「どのベンダの SDK を入れたか」と無関係に 検査できる —— 模擬ノードマップで足りる。実機が無いことは言い訳にならない。
+- **L678** _(ja)_ — ★SDK のバッファを指したまま返すと、**次の 1 枚が前の 1 枚を書き換える**。 例外は出ない —— 絵だけが入れ替わるので、連写を保存して初めて気づく。 実機が要る経路なので実行では確かめられない。**ソースで確かめる**。
+- **L716** _(ja)_ — ★複製が要らない backend と、その**理由**。黙って外さない。
+- **L772** _(ja)_ — ★SDK を採点したのと**同じ物差し**で自分も採点する。違う物差しで測った数を 並べると「SDK より厚い」が意味を失う。しかも自己申告にしない —— 各軸が どの入口で満たされているかを**実在する名前**で名指しし、門がそれを引く。
+- **L821** _(ja)_ — ★列挙軸の一番大きな穴はここだった。`_enumerate("genicam")` は [] を返していて、 **GenTL を出す全ベンダを覆える唯一の経路だけが列挙できない**状態だった。 GenTL 1.6 が「プロデューサのインストーラは GENICAM_GENTL{32/64}_PATH に自分を 足す」と決めているので、こちらはその変数を読めばよく、ベンダごとの表は要らない。 実機も SDK も無しで検査できる —— 変数と `.cti` という名前のファイルがあればよい。
+- **L875** _(ja)_ — ★`__all__` は「何を公開したか」の一次情報(`dir()` は環境で変わる)。だから 本体が増えたのに `__all__` が増えない、という遅れは**静かに**起きる —— 実際に 2026-09-25 まで 7 つ足りていなかった(追記のつもりが当たっていなかった)。 門は台帳側でなく**本体側から数える**。
+- **L947** _(ja)_ — ★`opencv` backend が開くのは UVC の装置。その規格が制御の名前と、いくつかは 単位まで決めている。単位が SFNC と違うので、換算を**往復で**確かめる —— 100 倍の係数を書き忘れても例外は出ず、露光だけが狂う。
+- **L1162** _(ja)_ — ★門そのものを呼んで、本当に落ちることを確かめる(式の真似ではなく)。
 
 ## `tests/test_annotate_bold_italic.py`
 
@@ -1565,6 +1571,11 @@ This repository records *why* things are the way they are in **comments in the s
 - **L65** — ★OPS3D is a flat table of {op name: metadata dict}. Counting it as `sum(len(v) for v in values())` yields **the total number of metadata keys across all ops** (2,492), which would have carved a meaningless number into the ledger (2026-09-08; I noticed by looking at the structure before writing).
 - **L85** _(ja)_ — ★2026-09-25 追加: 通信の名簿(`comm.protocols`)は数えていたのに、 **駆動の名簿は数えていなかった**。接続の 3 層(protocol / image source / driver)のうち 1 つだけ見ていない状態で、 driver が 1 行消えても誰も気づかない。
 - **L91** — ★Added 2026-09-08: two ledgers that accumulate descriptions. **Descriptions are what quietly shrink most**, so count them here (the source of docs/CAPABILITIES.md and docs/HARDENING.md).
+
+## `tests/test_comm.py`
+
+- **L135** _(ja)_ — ★**1 本だけ見る門は、1 本だけしか守らない。** ここには長いあいだ `test_cataloged_protocol_gives_install_hint` が在り、`ethernet-ip` の断り文句 **1 本**だけを見ていた。その陰で `cclink` は 「install 'None' and use the None client directly」と答えていた —— pip 名も import 名も持たない 1 行が、場合分けの外に落ちていたからである ([[feedback_one_probe_input_is_not_coverage]])。全数で見る。
+- **L141** _(ja)_ — ★**「相手が居ない」は「扉が無い」ではない**(device 側で先に踏んだ): native な protocol は本当に繋ぎに行くので、`OSError` は扉が在る証拠として通す。
 
 ## `tests/test_connectivity_doc.py`
 
