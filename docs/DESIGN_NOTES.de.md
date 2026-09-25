@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1071. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1076. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -136,8 +136,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `comm.py`
 
-- **L532** _(ja)_ — ★**断り文句が「install 'None'」と言っていた。** `cclink` は pure-python の master が存在しないので pip 名も import 名も持たない —— そこを場合分けせずに 書式へ流し込んだ結果、`open_channel("cclink")` は 「install 'None' and use the None client directly」と答えていた。 **入っていないものを名指しする口は、名指しできない相手で必ず崩れる。** 2026-09-25、`device.open_driver` を足すときに同じ分岐を書いて気づいた(隣の 層を直したら、元の層を読み返すこと)。
-- **L539** _(ja)_ — ★もう 1 つ: 相手が**入っている**ときに「install しろ」と言っていた。入って いるのに入れろと言う案内は、読んだ人をそこで止める。
+- **L358** _(ja)_ — ★CRC は**公表された検査値**で裏を取る。CRC-16/MODBUS の諸元は ``width=16 poly=0x8005 init=0xffff refin=true refout=true xorout=0x0000 check=0x4b37``(CRC catalogue)—— ``check`` は ASCII ``"123456789"`` の CRC である。 自分で作った入力の往復だけで試すと、**反射入力と反射出力を同時に取り違えた実装が 緑になる**(自分で包んで自分で開けるので、向きの誤りが打ち消し合う)。 外の値と突き合わせて初めて、線の向こうの装置と話が通じることが言える。
+- **L606** _(ja)_ — ★表は 1 つに畳む —— 同じ PDU 処理を RTU の装置役 (:class:`ModbusRtuLoopback`)でも使う。2 つ書くと、FC を足した ときに片方だけ増える。
+- **L716** _(ja)_ — ★``modbus-rtu`` は 2026-09-25 まで「名簿に載るだけ」の行で、開こうとすると 「pymodbus を入れて直接使え」と断っていた。だが RTU は Modbus TCP と**同じ PDU** を別の框で包んだものにすぎず、その PDU の組み立てと解釈は**既にここに在って 単体試験も付いていた**。足りなかったのは框(アドレス + CRC)と線の口だけで、 断り続ける理由は無かった —— **名簿は「持っていないもの」だけでなく、 「持っているのに繋いでいないもの」も隠す。**
+- **L729** _(ja)_ — ★**断り文句が「install 'None'」と言っていた。** `cclink` は pure-python の master が存在しないので pip 名も import 名も持たない —— そこを場合分けせずに 書式へ流し込んだ結果、`open_channel("cclink")` は 「install 'None' and use the None client directly」と答えていた。 **入っていないものを名指しする口は、名指しできない相手で必ず崩れる。** 2026-09-25、`device.open_driver` を足すときに同じ分岐を書いて気づいた(隣の 層を直したら、元の層を読み返すこと)。
+- **L736** _(ja)_ — ★もう 1 つ: 相手が**入っている**ときに「install しろ」と言っていた。入って いるのに入れろと言う案内は、読んだ人をそこで止める。
 
 ## `conngraph.py`
 
@@ -1126,10 +1129,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `fullseye/__init__.py`
 
-- **L385** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L575** — ★Der Adapter, der sich an den deklarierten out-Typ haelt, **verwirft alles ab dem 2. Element** eines op, der ein Tupel zurueckgibt (``wht`` von ``drizzle_resample``, ``info`` von ``piv_cross_correlate``). Wird die verworfene Seite benoetigt, war sie ueber den Eingang des ledger nicht erreichbar. Am 2026-09-06 schrieb ein Superaufloesungs-PoC ``flow, info = fs.ledger.piv_cross_correlate(...)``, entpackte das (2,R,C) entlang der 1. Achse, nutzte die 2. Zeile von dy als dx und machte die Verschiebungsschaetzung von 0.12 -> 0.74 px (ohne Ausnahme). Mit ``.raw`` erreicht man die rohe Rueckgabe: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
-- **L985** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L1004** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L388** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L578** — ★Der Adapter, der sich an den deklarierten out-Typ haelt, **verwirft alles ab dem 2. Element** eines op, der ein Tupel zurueckgibt (``wht`` von ``drizzle_resample``, ``info`` von ``piv_cross_correlate``). Wird die verworfene Seite benoetigt, war sie ueber den Eingang des ledger nicht erreichbar. Am 2026-09-06 schrieb ein Superaufloesungs-PoC ``flow, info = fs.ledger.piv_cross_correlate(...)``, entpackte das (2,R,C) entlang der 1. Achse, nutzte die 2. Zeile von dy als dx und machte die Verschiebungsschaetzung von 0.12 -> 0.74 px (ohne Ausnahme). Mit ``.raw`` erreicht man die rohe Rueckgabe: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
+- **L992** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1011** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1578,6 +1581,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L135** _(ja)_ — ★**1 本だけ見る門は、1 本だけしか守らない。** ここには長いあいだ `test_cataloged_protocol_gives_install_hint` が在り、`ethernet-ip` の断り文句 **1 本**だけを見ていた。その陰で `cclink` は 「install 'None' and use the None client directly」と答えていた —— pip 名も import 名も持たない 1 行が、場合分けの外に落ちていたからである ([[feedback_one_probe_input_is_not_coverage]])。全数で見る。
 - **L141** _(ja)_ — ★**「相手が居ない」は「扉が無い」ではない**(device 側で先に踏んだ): native な protocol は本当に繋ぎに行くので、`OSError` は扉が在る証拠として通す。
+- **L209** _(ja)_ — ★**捕まえられない例外は、無いのと同じ。** `fullseye.open_channel` は facade に 在るのに、それが投げる `CommError` は 2026-09-25 まで facade に無く、利用者は 内部モジュール名 `comm` を import しないと `except` に書けなかった。 1 つずつ足すのではなく**クラスごと**閉じる —— `__all__` が公開の一次情報で、 そこに在って facade に無い名前は、書いた本人しか使えない。
+- **L214** _(ja)_ — ★免除は**理由つきで名指し**する。`comm.register`(protocol の登録)を facade に 出したら、**既に在った `fullseye.register`(点群のレジストレーション op)を 上書き**した —— 出荷していれば利用者の点群処理が静かに別物になっていた (2026-09-25、既存の例の門が捕まえた)。同名は譲らず、内部名で使う。
 
 ## `tests/test_connectivity_doc.py`
 

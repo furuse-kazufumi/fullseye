@@ -373,6 +373,9 @@ with warnings.catch_warnings():
     from comm import (  # noqa: E402,F401  (communication transports / industrial protocols)
         open_channel, protocols, Channel,
         TcpChannel, UdpChannel, HttpChannel, ModbusTcpChannel, ModbusTcpServer,
+        ModbusRtuChannel, ModbusRtuLoopback, CommError,
+        modbus_build_pdu, modbus_parse_response, modbus_apply_pdu,
+        modbus_crc16, modbus_rtu_frame, modbus_rtu_unframe,
     )
     from device import (  # noqa: E402,F401  (device control)
         DigitalIO, pulse, signal_result, signal_verdict, wait_input,
@@ -763,6 +766,10 @@ __all__ = [
     "Camera", "list_cameras", "open_framegrabber", "grab_image", "close_framegrabber",
     "open_channel", "protocols", "capabilities", "Channel",
     "TcpChannel", "UdpChannel", "HttpChannel", "ModbusTcpChannel", "ModbusTcpServer",
+    "ModbusRtuChannel", "ModbusRtuLoopback",
+    "CommError",
+    "modbus_build_pdu", "modbus_parse_response", "modbus_apply_pdu",
+    "modbus_crc16", "modbus_rtu_frame", "modbus_rtu_unframe",
     "DigitalIO", "pulse", "signal_result", "signal_verdict", "wait_input",
     "open_driver", "drivers", "DeviceError",
     "read_wav", "write_wav", "read_audio", "spectrum", "spectrogram",

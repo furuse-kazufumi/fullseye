@@ -27,6 +27,8 @@ import struct
 __all__ = [
     "Channel", "open_channel", "protocols", "capabilities", "register",
     "TcpChannel", "UdpChannel", "HttpChannel", "ModbusTcpChannel", "ModbusTcpServer",
+    "ModbusRtuChannel", "ModbusRtuLoopback", "modbus_apply_pdu",
+    "modbus_crc16", "modbus_rtu_frame", "modbus_rtu_unframe",
 ]
 
 
@@ -353,6 +355,178 @@ class ModbusTcpChannel(Channel):
         return modbus_parse_response(fc, resp)
 
 
+#: ★CRC は**公表された検査値**で裏を取る。CRC-16/MODBUS の諸元は
+#: ``width=16 poly=0x8005 init=0xffff refin=true refout=true xorout=0x0000
+#: check=0x4b37``(CRC catalogue)—— ``check`` は ASCII ``"123456789"`` の CRC である。
+#: 自分で作った入力の往復だけで試すと、**反射入力と反射出力を同時に取り違えた実装が
+#: 緑になる**(自分で包んで自分で開けるので、向きの誤りが打ち消し合う)。
+#: 外の値と突き合わせて初めて、線の向こうの装置と話が通じることが言える。
+_CRC16_POLY_REFLECTED = 0xA001                     # 0x8005 を反射したもの
+
+
+def modbus_crc16(data: bytes) -> int:
+    """CRC-16/MODBUS of *data* (init 0xFFFF, reflected poly 0xA001, no final xor).
+
+    ``modbus_crc16(b"123456789") == 0x4B37`` — the published catalogue check value.
+    """
+    crc = 0xFFFF
+    for byte in data:
+        crc ^= byte
+        for _ in range(8):
+            crc = (crc >> 1) ^ _CRC16_POLY_REFLECTED if crc & 1 else crc >> 1
+    return crc & 0xFFFF
+
+
+def modbus_rtu_frame(unit: int, pdu: bytes) -> bytes:
+    """Wrap a PDU for a serial line: address + PDU + CRC (low byte first)."""
+    body = bytes([int(unit) & 0xFF]) + pdu
+    return body + struct.pack("<H", modbus_crc16(body))
+
+
+def modbus_rtu_unframe(frame: bytes, unit=None) -> bytes:
+    """Unwrap an RTU frame and return the PDU.
+
+    **Fail-closed**: a bad CRC, or a reply carrying another slave's address,
+    raises :class:`CommError` instead of returning plausible-looking bytes —— a
+    mis-addressed reply on a shared RS-485 line is exactly what the checksum is
+    there to catch, and half a frame read as data is worse than no reading.
+    """
+    if len(frame) < 4:
+        raise CommError("Modbus RTU frame too short (%d bytes)" % len(frame))
+    body, crc = frame[:-2], struct.unpack("<H", frame[-2:])[0]
+    want = modbus_crc16(body)
+    if crc != want:
+        raise CommError("Modbus RTU CRC mismatch: frame 0x%04X, computed 0x%04X"
+                        % (crc, want))
+    if unit is not None and body[0] != (int(unit) & 0xFF):
+        raise CommError("Modbus RTU address mismatch: asked unit %d, answered %d"
+                        % (int(unit), body[0]))
+    return body[1:]
+
+
+#: 応答の長さは**関数コードで決まる**(RTU の框には長さ欄が無い)。先頭 2 バイト
+#: (アドレス + FC)を読んでから、残りが何バイトかを決める。
+_RTU_FIXED_TAIL = {_FC_WRITE_COIL: 4, _FC_WRITE_REGISTER: 4,
+                   _FC_WRITE_COILS: 4, _FC_WRITE_REGISTERS: 4}
+
+
+class ModbusRtuChannel(Channel):
+    """A built-in Modbus **RTU** client — the same PDU as :class:`ModbusTcpChannel`,
+    framed with a unit address and a CRC-16 for a serial line.
+
+    Uniform API: ``read(kind, addr, count)`` / ``write(kind, addr, value)``::
+
+        ch = fullseye.open_channel("modbus-rtu", port="COM3", baudrate=19200, unit=1)
+
+    *transport* accepts any object with ``write(bytes)`` / ``read(n) -> bytes`` /
+    ``close()`` instead of a serial port — an RS-485-over-Ethernet gateway, or
+    :class:`ModbusRtuLoopback` for tests and dry runs. Without it the port is
+    opened with ``pyserial``, whose absence is reported by name.
+    """
+
+    def __init__(self, port="COM1", baudrate=9600, unit=1, timeout=1.0,
+                 transport=None, **kw):
+        self.unit = int(unit)
+        self.timeout = float(timeout)
+        if transport is not None:
+            self._t = transport
+            return
+        try:
+            import serial
+        except Exception as e:
+            raise CommError(
+                "protocol 'modbus-rtu' needs 'serial' (pip install pyserial): %s" % e)
+        self._t = serial.Serial(port=port, baudrate=int(baudrate),
+                                timeout=self.timeout, **kw)
+
+    def close(self):
+        if getattr(self, "_t", None) is not None:
+            try:
+                self._t.close()
+            finally:
+                self._t = None
+
+    # ------------------------------------------------------------------ wire --
+    def _read_exactly(self, n: int) -> bytes:
+        buf = b""
+        while len(buf) < n:
+            chunk = self._t.read(n - len(buf))
+            if not chunk:
+                raise CommError("Modbus RTU timed out after %d of %d bytes" % (len(buf), n))
+            buf += chunk
+        return buf
+
+    def _transact(self, pdu: bytes) -> bytes:
+        self._t.write(modbus_rtu_frame(self.unit, pdu))
+        head = self._read_exactly(2)                   # address + function code
+        fc = head[1]
+        if fc & 0x80:
+            tail = self._read_exactly(1 + 2)           # exception code + CRC
+        elif fc in _RTU_FIXED_TAIL:
+            tail = self._read_exactly(_RTU_FIXED_TAIL[fc] + 2)
+        else:
+            nb = self._read_exactly(1)                 # byte count
+            tail = nb + self._read_exactly(nb[0] + 2)
+        return modbus_rtu_unframe(head + tail, self.unit)
+
+    def read(self, kind="holding", addr=0, count=1):
+        if kind not in _KIND_FC_READ:
+            raise ValueError("read kind must be one of %s" % list(_KIND_FC_READ))
+        fc = _KIND_FC_READ[kind]
+        return modbus_parse_response(
+            fc, self._transact(modbus_build_pdu(fc, addr, count)))[:count]
+
+    def write(self, kind="holding", addr=0, value=0):
+        if kind == "coil":
+            fc = _FC_WRITE_COILS if isinstance(value, (list, tuple)) else _FC_WRITE_COIL
+        elif kind == "holding":
+            fc = _FC_WRITE_REGISTERS if isinstance(value, (list, tuple)) else _FC_WRITE_REGISTER
+        else:
+            raise ValueError("write kind must be 'coil' or 'holding'")
+        return modbus_parse_response(
+            fc, self._transact(modbus_build_pdu(fc, addr, value)))
+
+
+class ModbusRtuLoopback:
+    """The **device** at the other end of the wire, in-process (no serial port).
+
+    The serial-line twin of :class:`ModbusTcpServer`: it holds a coil map and a
+    register map and answers real RTU frames, so a line handshake can be built
+    and tested without hardware::
+
+        dev = fullseye.ModbusRtuLoopback(unit=1, registers={100: 7})
+        ch = fullseye.ModbusRtuChannel(transport=dev, unit=1)
+        ch.read("holding", 100, 1)            # -> [7]
+
+    ★A frame addressed to another unit is answered with **silence**, the way a
+    real slave behaves (the client then times out) — not with a plausible reply.
+    A simulator that answers everything hides the one bug a shared RS-485 bus
+    actually produces.
+    """
+
+    def __init__(self, unit=1, coils=None, registers=None):
+        self.unit = int(unit)
+        self.coils = dict(coils or {})
+        self.registers = dict(registers or {})
+        self._out = b""
+
+    def write(self, data) -> int:
+        data = bytes(data)
+        pdu = modbus_rtu_unframe(data)                 # CRC はここで確かめる
+        if data[0] != (self.unit & 0xFF):
+            return len(data)                           # 自分宛でない -> 黙る
+        self._out += modbus_rtu_frame(
+            self.unit, modbus_apply_pdu(pdu, self.coils, self.registers))
+        return len(data)
+
+    def read(self, n: int = 1) -> bytes:
+        out, self._out = self._out[:n], self._out[n:]
+        return out
+
+    def close(self):
+        self._out = b""
+
+
 class ModbusTcpServer:
     """A tiny in-process Modbus-TCP **simulator** (threaded) for tests & dev.
 
@@ -429,44 +603,10 @@ class ModbusTcpServer:
         return buf
 
     def _handle(self, pdu: bytes) -> bytes:
-        fc = pdu[0]
-        try:
-            if fc in (_FC_READ_COILS, _FC_READ_DISCRETE):
-                addr, count = struct.unpack(">HH", pdu[1:5])
-                nbytes = (count + 7) // 8
-                buf = bytearray(nbytes)
-                for i in range(count):
-                    if self.coils.get(addr + i, False):
-                        buf[i // 8] |= 1 << (i % 8)
-                return struct.pack(">BB", fc, nbytes) + bytes(buf)
-            if fc in (_FC_READ_HOLDING, _FC_READ_INPUT):
-                addr, count = struct.unpack(">HH", pdu[1:5])
-                data = b"".join(struct.pack(">H", self.registers.get(addr + i, 0) & 0xFFFF)
-                                for i in range(count))
-                return struct.pack(">BB", fc, len(data)) + data
-            if fc == _FC_WRITE_COIL:
-                addr, val = struct.unpack(">HH", pdu[1:5])
-                self.coils[addr] = (val == 0xFF00)
-                return pdu[:5]
-            if fc == _FC_WRITE_REGISTER:
-                addr, val = struct.unpack(">HH", pdu[1:5])
-                self.registers[addr] = val
-                return pdu[:5]
-            if fc == _FC_WRITE_COILS:
-                addr, count, nbytes = struct.unpack(">HHB", pdu[1:6])
-                data = pdu[6:6 + nbytes]
-                for i in range(count):
-                    self.coils[addr + i] = bool((data[i // 8] >> (i % 8)) & 1)
-                return struct.pack(">BHH", fc, addr, count)
-            if fc == _FC_WRITE_REGISTERS:
-                addr, count, nbytes = struct.unpack(">HHB", pdu[1:6])
-                data = pdu[6:6 + nbytes]
-                for i in range(count):
-                    self.registers[addr + i] = struct.unpack(">H", data[2 * i:2 * i + 2])[0]
-                return struct.pack(">BHH", fc, addr, count)
-        except struct.error:
-            pass
-        return struct.pack(">BB", fc | 0x80, 0x01)     # illegal function
+        #: ★表は 1 つに畳む —— 同じ PDU 処理を RTU の装置役
+        #: (:class:`ModbusRtuLoopback`)でも使う。2 つ書くと、FC を足した
+        #: ときに片方だけ増える。
+        return modbus_apply_pdu(pdu, self.coils, self.registers)
 
     def stop(self):
         self._stop = True
@@ -477,6 +617,54 @@ class ModbusTcpServer:
                 pass
         if self._thread is not None:
             self._thread.join(timeout=2.0)
+
+
+def modbus_apply_pdu(pdu: bytes, coils: dict, registers: dict) -> bytes:
+    """Apply a request *pdu* to a coil/register store; return the response PDU.
+
+    The **device** half of Modbus, shared by the TCP simulator
+    (:class:`ModbusTcpServer`) and the serial-line loopback
+    (:class:`ModbusRtuLoopback`). Supports FC 1-6, 15 and 16; any other
+    function answers "illegal function" (0x01) rather than staying silent.
+    """
+    fc = pdu[0]
+    try:
+        if fc in (_FC_READ_COILS, _FC_READ_DISCRETE):
+            addr, count = struct.unpack(">HH", pdu[1:5])
+            nbytes = (count + 7) // 8
+            buf = bytearray(nbytes)
+            for i in range(count):
+                if coils.get(addr + i, False):
+                    buf[i // 8] |= 1 << (i % 8)
+            return struct.pack(">BB", fc, nbytes) + bytes(buf)
+        if fc in (_FC_READ_HOLDING, _FC_READ_INPUT):
+            addr, count = struct.unpack(">HH", pdu[1:5])
+            data = b"".join(struct.pack(">H", registers.get(addr + i, 0) & 0xFFFF)
+                            for i in range(count))
+            return struct.pack(">BB", fc, len(data)) + data
+        if fc == _FC_WRITE_COIL:
+            addr, val = struct.unpack(">HH", pdu[1:5])
+            coils[addr] = (val == 0xFF00)
+            return pdu[:5]
+        if fc == _FC_WRITE_REGISTER:
+            addr, val = struct.unpack(">HH", pdu[1:5])
+            registers[addr] = val
+            return pdu[:5]
+        if fc == _FC_WRITE_COILS:
+            addr, count, nbytes = struct.unpack(">HHB", pdu[1:6])
+            data = pdu[6:6 + nbytes]
+            for i in range(count):
+                coils[addr + i] = bool((data[i // 8] >> (i % 8)) & 1)
+            return struct.pack(">BHH", fc, addr, count)
+        if fc == _FC_WRITE_REGISTERS:
+            addr, count, nbytes = struct.unpack(">HHB", pdu[1:6])
+            data = pdu[6:6 + nbytes]
+            for i in range(count):
+                registers[addr + i] = struct.unpack(">H", data[2 * i:2 * i + 2])[0]
+            return struct.pack(">BHH", fc, addr, count)
+    except struct.error:
+        pass
+    return struct.pack(">BB", fc | 0x80, 0x01)     # illegal function
 
 
 # --------------------------------------------------------------------------- #
@@ -525,6 +713,15 @@ register("serial",
                            lambda mod, **o: _SerialChannel(mod, **o)),
          native=False, pip="pyserial", kind="optional", probe="serial",
          desc="RS-232/485 serial port (send/receive)")
+#: ★``modbus-rtu`` は 2026-09-25 まで「名簿に載るだけ」の行で、開こうとすると
+#: 「pymodbus を入れて直接使え」と断っていた。だが RTU は Modbus TCP と**同じ PDU**
+#: を別の框で包んだものにすぎず、その PDU の組み立てと解釈は**既にここに在って
+#: 単体試験も付いていた**。足りなかったのは框(アドレス + CRC)と線の口だけで、
+#: 断り続ける理由は無かった —— **名簿は「持っていないもの」だけでなく、
+#: 「持っているのに繋いでいないもの」も隠す。**
+register("modbus-rtu", lambda **o: ModbusRtuChannel(**o),
+         native=False, pip="pyserial", kind="optional", probe="serial",
+         desc="Modbus RTU on a serial line (built-in; pyserial for a real port)")
 
 
 # ---- cataloged protocols (comprehensive menu; a first-class Channel adapter is
@@ -563,7 +760,6 @@ _CATALOG = [
     ("websocket", "websocket", "websocket-client", "optional", "WebSocket client"),
     ("zmq", "zmq", "pyzmq", "optional", "ZeroMQ messaging"),
     # --- PLC / fieldbus (register/tag read-write) ---
-    ("modbus-rtu", "pymodbus", "pymodbus", "optional", "Modbus RTU (serial) via pymodbus"),
     ("ethernet-ip", "pycomm3", "pycomm3", "optional", "EtherNet/IP + CIP (Allen-Bradley Logix)"),
     ("s7", "snap7", "python-snap7", "optional", "Siemens S7 (S7comm) — DB/Merker/I/O"),
     ("slmp", "pymcprotocol", "pymcprotocol", "optional", "Mitsubishi MC protocol / SLMP (MELSEC)"),

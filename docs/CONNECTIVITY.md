@@ -34,7 +34,7 @@ Fullseye は vision に加え **デバイス制御・産業通信** を扱う(HA
 | can | optional | — | python-can | raw CAN bus |
 | ethernet-ip | optional | — | pycomm3 | EtherNet/IP + CIP (Allen-Bradley Logix) |
 | fins | optional | — | fins-driver | Omron FINS (CIO/DM areas) |
-| modbus-rtu | optional | — | pymodbus | Modbus RTU (serial) via pymodbus |
+| modbus-rtu | optional | ✓ | pyserial | Modbus RTU on a serial line (built-in; pyserial for a real port) |
 | mqtt | optional | — | paho-mqtt | MQTT pub/sub (IIoT broker) |
 | opcua | optional | — | asyncua | OPC-UA client (industrial servers) |
 | s7 | optional | — | python-snap7 | Siemens S7 (S7comm) — DB/Merker/I/O |
@@ -188,6 +188,17 @@ except fullseye.DeviceError as e:
     print(e)   # driver 'ur-rtde' needs 'rtde_control' (pip install ur_rtde)
 ```
 
+シリアル線の Modbus RTU も**内蔵**で、実物の線が無くても組み上げられます
+(装置役が同じ框を解いて答えます)。
+
+```python
+dev = fullseye.ModbusRtuLoopback(unit=1, registers={100: 7})   # 線の向こうの装置
+ch  = fullseye.ModbusRtuChannel(transport=dev, unit=1)         # ハード不要
+ch.read("holding", 100, 1)                                     # -> [7]
+
+# 実物の線(pyserial が要るのはここだけ)
+# ch = fullseye.open_channel("modbus-rtu", port="COM3", baudrate=19200, unit=1)
+```
 同じ作法が protocol 側(`fullseye.open_channel`)にもあります —— 名簿は
 `capabilities()`、扉は `open_*`、断るときは pip 名を言う、の 3 点セットです。
 カメラ: `with fullseye.Camera(0) as cam: frame = cam.grab()`(USB/UVC/IP/RTSP、深度は RealSense/OAK-D 等 optional)。

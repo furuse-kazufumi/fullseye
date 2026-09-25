@@ -201,3 +201,61 @@ def test_the_door_gate_catches_a_protocol_with_no_entry_point():
     with pytest.raises(AssertionError) as e:
         _assert_every_protocol_has_a_door(["mqtt"], opener, comm._REGISTRY)
     assert "扉が無い" in str(e.value)
+
+
+# --------------------------------------------------------------------------- #
+# 公開名は 1 つ残らず facade から届くこと                                        #
+# --------------------------------------------------------------------------- #
+#: ★**捕まえられない例外は、無いのと同じ。** `fullseye.open_channel` は facade に
+#: 在るのに、それが投げる `CommError` は 2026-09-25 まで facade に無く、利用者は
+#: 内部モジュール名 `comm` を import しないと `except` に書けなかった。
+#: 1 つずつ足すのではなく**クラスごと**閉じる —— `__all__` が公開の一次情報で、
+#: そこに在って facade に無い名前は、書いた本人しか使えない。
+#: ★免除は**理由つきで名指し**する。`comm.register`(protocol の登録)を facade に
+#: 出したら、**既に在った `fullseye.register`(点群のレジストレーション op)を
+#: 上書き**した —— 出荷していれば利用者の点群処理が静かに別物になっていた
+#: (2026-09-25、既存の例の門が捕まえた)。同名は譲らず、内部名で使う。
+_NOT_ON_THE_FACADE = {
+    ("comm", "register"): "fullseye.register は点群のレジストレーション op。"
+                          "protocol の登録は comm.register のまま使う",
+}
+
+
+@pytest.mark.parametrize("mod_name", ["comm", "device"])
+def test_every_public_name_reaches_the_facade(mod_name):
+    import importlib
+
+    import fullseye
+
+    mod = importlib.import_module(mod_name)
+    missing = [n for n in mod.__all__
+               if not hasattr(fullseye, n) and (mod_name, n) not in _NOT_ON_THE_FACADE]
+    assert not missing, (
+        "%s.__all__ に在るのに fullseye から引けない: %s —— facade の import と "
+        "__all__ に足すか、_NOT_ON_THE_FACADE に理由つきで名指しすること" % (mod_name, missing))
+
+
+def test_the_exemptions_name_real_collisions():
+    """免除の側も実在を確かめる —— 消えた名前の免除が残ると、表は長いのに何も守らない。"""
+    import importlib
+
+    import fullseye
+
+    for (mod_name, name), why in _NOT_ON_THE_FACADE.items():
+        mod = importlib.import_module(mod_name)
+        assert name in mod.__all__, "免除に在るが %s.__all__ に無い: %r" % (mod_name, name)
+        assert why.strip(), "免除の理由が空: %r" % name
+        assert hasattr(fullseye, name), (
+            "%r は衝突を理由に外しているのに、facade にその名前が無い —— "
+            "理由が消えたなら免除も外すこと" % name)
+
+
+def test_the_facade_reexport_gate_catches_a_missing_name():
+    """★門を壊して確かめる。"""
+    import fullseye
+
+    class _Fake:
+        __all__ = ["open_channel", "a_name_nobody_exported"]
+
+    missing = [n for n in _Fake.__all__ if not hasattr(fullseye, n)]
+    assert missing == ["a_name_nobody_exported"]

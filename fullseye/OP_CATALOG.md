@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(248 例)
+### 2-D 画像/信号/幾何(249 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -119,6 +119,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **第三者レビュー(GenSpark、0.2.0)が見つけた初見の摩擦を、直したあとの形で 1 本ずつ確かめる** — 「無い」と「入っていない」を分ける MissingBackendError(索引の module/requires から不足 extra を案内)、run_pipeline の 5 形が同じ結果で外した形は原因を指す TypeError、全 NaN の otsu は明示エラー、文字列・複素配列は方針に依らず TypeError、n-ary の形状不一致は要るものを文で言う、Op は名前で pickle、op_names(include_nary=True) と list_ops の knobs 欄、CLI apply --input2、台帳の引き方(producers / consumers / presets)の fail-closed と write_wav の path、native_guard、画像 I/O(書けない先は 1 文で止める、uint16 / depth=16 / float は無損失)。変えなかった設計(既定 fallback / 警告は op ごとに 1 度 / float32 は記録しない)も実演。 `py -3.11 examples/genspark_external_review.py`
 - **基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する** — compare_to_golden = 位相相関で整数並進を合わせ→差分→閾値→連結成分→計測 dict(shift/ssim/psnr/欠陥面積・個数)。同一→欠陥 0、3px ずれた良品→合わせれば 0、異物 48px→1 個、6px 大ずれは max_shift 超えで align_ok=0→ng。golden_measure/golden_spec で inspect_batch に差し込み 6 枚のロットで 2 枚だけ ng を assert。 `py -3.11 examples/golden_compare.py`
 - **フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す** — 合成画像フォルダ(良品 5・欠陥 1・壊れたファイル 1)を inspect_batch で 前処理→計測→judge→集計。各行に入力 sha256・計測・根拠つき Verdict、数値列は EWMA で工程管理、.md/.jsonl(+.xlsx)に 書き分け、監査ログに追記。欠陥だけ ng・壊れた 1 枚は error で止まらないことを assert。 `py -3.11 examples/inspection_workflow.py`
+- **検査の判定を PLC の線に出す —— Modbus TCP でも、シリアル(RTU)でも** — 合成の部品を 1 枚検査して ok/ng を決め、内蔵の PLC シミュレータ(Modbus TCP)と 内蔵の装置役(Modbus RTU)の両方へ one-hot コイルで出し、2 つが一致することを assert。さらに**線が嘘をついたとき** —— 1 ビット化けた框と、別の装置の返事 —— が それらしい数を返さずに落ちることまで見せる。ハードは 1 つも要らない。 `py -3.11 examples/line_handshake.py`
 - **型付きの検査結果を Excel(.xlsx)レポートに書き出す** — mdio.report と同じ (見出し, value, sort) の列から現場が使う .xlsx を作る。測定表・点群・スカラはセルに、画像はサムネイルを 1 枚埋め込む(openpyxl、optional)。書いて openpyxl で開き直し セル値と埋め込み画像数を assert。jsonio=機械 / mdio=読む / xlsxio=配る の第 3 系統。未知 sort は断る。 `py -3.11 examples/xlsx_report.py`
 - **op の返り値(型付き)を JSON に出して bit そのままで戻す** — image / region / points / contour / feature / matrix / table を sort ごとの一つの JSON 形に。浮動小数は base64 の float64 で往復 bit 一致、region は run-length、非有限値は封筒に印を立てて運ぶ。save_json / load_json でファイル一往復、to_json_lines / from_json_lines で JSONL 台帳。★match は慣例が 2 つ混在するので橋を作らず断る(fail-closed)。 `py -3.11 examples/typed_results_json.py`
 - **精度ユニオン型ストレージ(PrecisionUnion)を N-D の実データ様式で使う** — ラベルボリューム(無損失)と深度ボリューム(atol 量子化)をタイル別最小ビット深さで保持し、メモリ比・save/load のファイル比・遅延アフィン連鎖の一致を数値で確かめる。高エントロピー画像では勝たないことも同じ場で示す(honest な境界)。 `py -3.11 examples/precision_union_volume.py`
@@ -1792,7 +1793,7 @@ _計 932 ops / 48 categories。_
 
 ### segmentation(54)
 - `threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_traffic_counting`, `poc_water_level`, `video_streaming`
-- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `degenerate_inputs`, `gallery2d_segmentation`, `genspark_external_review`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`, `typed_results_json`
+- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `degenerate_inputs`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`, `typed_results_json`
 - `canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`, `poc_real_coin_metrology`
 - `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`
 - `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_cell_counting`, `poc_fresco_craquelure`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_vegetation_cover`

@@ -15,13 +15,13 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**28 findings (28 fixed), from 11 PoCs.**
+**29 findings (28 fixed), from 12 PoCs.**
 
 ## By kind
 
 | Kind | Findings | Fixed |
 |---|---:|---:|
-| Silently wrong (no exception) | 12 | 12 |
+| Silently wrong (no exception) | 13 | 12 |
 | Implementation defect | 5 | 5 |
 | The gate did not stand where the accident happens | 3 | 3 |
 | Present but unreachable | 7 | 7 |
@@ -33,6 +33,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 |---|---:|
 | [`genspark_external_review`](../examples/genspark_external_review.py) | 17 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
+| [`line_handshake`](../examples/line_handshake.py) | 1 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
 | [`poc_multibeam_bathymetry`](../examples/poc_multibeam_bathymetry.py) | 1 |
@@ -118,6 +119,12 @@ Found by: `genspark_external_review` / Changed: `imgio.py`, `engine.py`, `api.py
 GenSpark 第 55 報(0.2.1 を入れ直しての再測定、2026-09-20)。修正確認 8 件のあと、残存 8 件・新規 4 件。 _(ja)_
 
 Found by: `genspark_external_review` / Changed: `api.py`, `opassist.py`, `imgevolve.py`, `fullseye/__main__.py`, `unified.py` / Gate: `test_strict_mode_makes_every_guard_raise`, `test_op_run_explains_the_argument_order_and_registry_ops`, `test_python_dash_m_fullseye_is_the_cli`, `test_index_names_the_difference_from_the_shipped_copy`, `test_index_default_output_never_lands_inside_an_installed_package`, `test_unified_pipeline_points_knob_tuples_to_run_pipeline` / Status: fixed
+
+#### [大津のしきい値をビンの**中点**で取るので、背景の山を含むビンの画素が前景に入る](hardening/otsu-threshold-at-the-bin-midpoint.md) _(ja)_
+
+値が 2 種類しかない板(背景 0.30・明部 0.90、20x20 = 400 px)で、`fullseye.apply(im, "otsu")` が **4,096 px 全部を前景**にする(期待 400)。例外も警告も出ない。 _(ja)_
+
+Found by: `line_handshake` / Changed: `ops.py` / Gate: — / Status: open
 
 ### Implementation defect
 

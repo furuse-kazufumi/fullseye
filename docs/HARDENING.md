@@ -14,13 +14,13 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**28 件(うち直したもの 28 件)。見つけた PoC は 11 本。**
+**29 件(うち直したもの 28 件)。見つけた PoC は 12 本。**
 
 ## 種別ごと
 
 | 種別 | 件数 | 直した |
 |---|---:|---:|
-| 静かに間違う(例外が出ない) | 12 | 12 |
+| 静かに間違う(例外が出ない) | 13 | 12 |
 | 実装の誤り | 5 | 5 |
 | 門が事故の起きる場所に立っていなかった | 3 | 3 |
 | 在るのに引けない | 7 | 7 |
@@ -32,6 +32,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 |---|---:|
 | [`genspark_external_review`](../examples/genspark_external_review.py) | 17 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
+| [`line_handshake`](../examples/line_handshake.py) | 1 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
 | [`poc_multibeam_bathymetry`](../examples/poc_multibeam_bathymetry.py) | 1 |
@@ -117,6 +118,12 @@ GenSpark 第 28〜35 報(0.2.1 の仕上げに回した分)。
 GenSpark 第 55 報(0.2.1 を入れ直しての再測定、2026-09-20)。修正確認 8 件のあと、残存 8 件・新規 4 件。
 
 見つけた PoC: `genspark_external_review` / 直した所: `api.py`, `opassist.py`, `imgevolve.py`, `fullseye/__main__.py`, `unified.py` / 門: `test_strict_mode_makes_every_guard_raise`, `test_op_run_explains_the_argument_order_and_registry_ops`, `test_python_dash_m_fullseye_is_the_cli`, `test_index_names_the_difference_from_the_shipped_copy`, `test_index_default_output_never_lands_inside_an_installed_package`, `test_unified_pipeline_points_knob_tuples_to_run_pipeline` / 状態: fixed
+
+#### [大津のしきい値をビンの**中点**で取るので、背景の山を含むビンの画素が前景に入る](hardening/otsu-threshold-at-the-bin-midpoint.md)
+
+値が 2 種類しかない板(背景 0.30・明部 0.90、20x20 = 400 px)で、`fullseye.apply(im, "otsu")` が **4,096 px 全部を前景**にする(期待 400)。例外も警告も出ない。
+
+見つけた PoC: `line_handshake` / 直した所: `ops.py` / 門: — / 状態: open
 
 ### 実装の誤り
 

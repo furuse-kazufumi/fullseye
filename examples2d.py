@@ -145,6 +145,12 @@ EXAMPLES = [
      "summary": "合成画像フォルダ(良品 5・欠陥 1・壊れたファイル 1)を inspect_batch で 前処理→計測→judge→集計。"
                 "各行に入力 sha256・計測・根拠つき Verdict、数値列は EWMA で工程管理、.md/.jsonl(+.xlsx)に "
                 "書き分け、監査ログに追記。欠陥だけ ng・壊れた 1 枚は error で止まらないことを assert。"},
+    {"id": "line_handshake", "task": "workflow", "data": "synthetic",
+     "name": "検査の判定を PLC の線に出す —— Modbus TCP でも、シリアル(RTU)でも",
+     "summary": "合成の部品を 1 枚検査して ok/ng を決め、内蔵の PLC シミュレータ(Modbus TCP)と "
+                "内蔵の装置役(Modbus RTU)の両方へ one-hot コイルで出し、2 つが一致することを assert。"
+                "さらに**線が嘘をついたとき** —— 1 ビット化けた框と、別の装置の返事 —— が "
+                "それらしい数を返さずに落ちることまで見せる。ハードは 1 つも要らない。"},
     {"id": "xlsx_report", "task": "workflow", "data": "synthetic",
      "name": "型付きの検査結果を Excel(.xlsx)レポートに書き出す",
      "summary": "mdio.report と同じ (見出し, value, sort) の列から現場が使う .xlsx を作る。測定表・点群・"
