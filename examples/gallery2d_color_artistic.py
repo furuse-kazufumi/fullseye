@@ -221,7 +221,18 @@ def gt_maxentropy_thresh() -> str:
     # beat-the-null: 前景も背景も存在(全 0 / 全 1 の自明解でない)。
     if not (0.0 < mean < 1.0):
         raise AssertionError(f"xsitk_maxentropy_thresh: 前景/背景を分離すべき(前景率={mean:.4f})")
-    return f"xsitk_maxentropy_thresh: 二値・前景率 {mean:.3f}(0/1 双方が存在=分離成立)"
+    # ★**向き**も見る(2026-09-26)。ここまでの確認は「二値」「自明解でない」だけで、
+    # **どちらの向きでも通っていた** —— 実際この op は兄弟の補集合を返していた
+    # (docs/hardening/itk-threshold-ops-returned-the-dark-side.md)。明るい画素の
+    # 方が region に入ることを、入力そのものと突き合わせて確かめる。
+    bright = float(inp[out > 0.5].mean()) if (out > 0.5).any() else 0.0
+    dark = float(inp[out <= 0.5].mean()) if (out <= 0.5).any() else 1.0
+    if not bright > dark:
+        raise AssertionError(
+            f"xsitk_maxentropy_thresh: region の平均輝度 {bright:.3f} が "
+            f"region 外 {dark:.3f} を上回らない —— 暗い側を前景にしている")
+    return (f"xsitk_maxentropy_thresh: 二値・前景率 {mean:.3f}"
+            f"(region 内 {bright:.3f} > 外 {dark:.3f} = 明るい側が region)")
 
 
 def gt_signed_maurer_dist() -> str:

@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1083. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1086. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -231,6 +231,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L46** — ★Ist das Repository-Wurzelverzeichnis nicht im Pfad, wird ``demops`` nicht gefunden (dieses Beispiel importiert `fullseye` nicht, daher greift der Pfad-Hook nicht).
 - **L59** — ★EXTEND: Zellgröße [m]. Bei echten Daten über dem_cell_size_webmercator(zoom, Breitengrad) ermitteln.
 - **L158** — ★Ehrliche Beobachtung: Liegt mitten an einem Hang eine Fehlstelle (no-data), so entwässert deren nördlicher Nachbar selbst als Outlet nicht in die Fehlstelle, sondern nach Südwesten (die Richtung mit endlichem Gefälle). Die Implementierung lautet "nur in die Fehlstelle, wenn es keinen anderen Abstieg gibt", enger als das "lässt Fluss zur Fehlstelle zu" des Docstrings. Hier wird nur ausgegeben, ohne assert.
+
+## `examples/gallery2d_color_artistic.py`
+
+- **L224** _(ja)_ — ★**向き**も見る(2026-09-26)。ここまでの確認は「二値」「自明解でない」だけで、 **どちらの向きでも通っていた** —— 実際この op は兄弟の補集合を返していた (docs/hardening/itk-threshold-ops-returned-the-dark-side.md)。明るい画素の 方が region に入ることを、入力そのものと突き合わせて確かめる。
 
 ## `examples/gallery2d_edges.py`
 
@@ -1849,6 +1853,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_studio_ops_browser.py`
 
 - **L11** — ★Ein nacktes import **bricht die gesamte Collection ab** in einer Umgebung ohne matplotlib (pytest fuehrt nach einem einzigen Import-Fehler den Rest nicht mehr aus). Gemessen am 2026-09-05.
+
+## `tests/test_threshold_polarity_2026_09_26.py`
+
+- **L35** _(ja)_ — しきい値「方法」の名前。★op 名から拾うので、**新しく足した方法も自動で門に入る** (免除台帳に名前を書かない限り)。綴りで探す門は綴りが違うものを見逃すので、 説明文も一緒に見る。
+- **L43** _(ja)_ — ★**暗い側が答えで正しい op**。理由つきで名指しする —— 台帳が黙って腐らないよう、 下の試験が「本当にまだ暗い側なのか」を確かめる。
 
 ## `tests/test_videostream.py`
 

@@ -14,13 +14,13 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**29 件(うち直したもの 29 件)。見つけた PoC は 12 本。**
+**30 件(うち直したもの 30 件)。見つけた PoC は 13 本。**
 
 ## 種別ごと
 
 | 種別 | 件数 | 直した |
 |---|---:|---:|
-| 静かに間違う(例外が出ない) | 13 | 13 |
+| 静かに間違う(例外が出ない) | 14 | 14 |
 | 実装の誤り | 5 | 5 |
 | 門が事故の起きる場所に立っていなかった | 3 | 3 |
 | 在るのに引けない | 7 | 7 |
@@ -41,6 +41,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 | [`poc_search_sweep_width`](../examples/poc_search_sweep_width.py) | 1 |
 | [`poc_stockpile_volume`](../examples/poc_stockpile_volume.py) | 1 |
 | [`poc_thermal_radiometry`](../examples/poc_thermal_radiometry.py) | 1 |
+| [`threshold_family_agreement`](../examples/threshold_family_agreement.py) | 1 |
 | [`tools/chain_fuzz.py`](../tools/chain_fuzz.py) | 1 |
 
 ## 記録
@@ -124,6 +125,12 @@ GenSpark 第 55 報(0.2.1 を入れ直しての再測定、2026-09-20)。修正�
 値が 2 種類しかない板(背景 0.30・明部 0.90、20x20 = 400 px)で、`fullseye.apply(im, "otsu")` が **4,096 px 全部を前景**にする(期待 400)。例外も警告も出ない。
 
 見つけた PoC: `line_handshake` / 直した所: `ops.py`, `accel.py`, `detect.py`, `fscript.py` / 門: `test_a_flat_plate_gives_exactly_the_bright_box`, `test_the_three_implementations_of_otsu_agree`, `test_the_gpu_port_agrees_with_the_core_op`, `test_the_threshold_is_equivariant_under_an_affine_map`, `test_the_midpoint_spelling_is_what_the_gate_catches`, `test_segment_objects_sees_one_box_not_one_frame`, `test_the_fscript_builtin_agrees_with_the_core_op` / 状態: fixed
+
+#### [SimpleITK 由来の 3 つのしきい値 op が、兄弟 op の**補集合**を返していた](hardening/itk-threshold-ops-returned-the-dark-side.md)
+
+明部ちょうど 400 px の板で:
+
+見つけた PoC: `threshold_family_agreement` / 直した所: `backends_r3.py` / 門: `test_the_region_is_the_bright_side`, `test_a_global_automatic_threshold_gets_the_box_exactly`, `test_they_all_agree_with_each_other`, `test_the_complement_is_what_the_gate_catches`, `test_the_itk_convention_is_the_one_we_had_wrong` / 状態: fixed
 
 ### 実装の誤り
 

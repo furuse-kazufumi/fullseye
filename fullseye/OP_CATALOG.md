@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(249 例)
+### 2-D 画像/信号/幾何(250 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -125,6 +125,14 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **精度ユニオン型ストレージ(PrecisionUnion)を N-D の実データ様式で使う** — ラベルボリューム(無損失)と深度ボリューム(atol 量子化)をタイル別最小ビット深さで保持し、メモリ比・save/load のファイル比・遅延アフィン連鎖の一致を数値で確かめる。高エントロピー画像では勝たないことも同じ場で示す(honest な境界)。 `py -3.11 examples/precision_union_volume.py`
 - **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 
+**segmentation**
+- **12 通りの自動しきい値に同じ絵を見せる —— 割れてよい数と、割れては困る向き** — 値が 2 種類しかない板(明部ちょうど 400 px)を大域 10 種・局所 4 種の自動しきい値に見せ、大域が全部 400 px で一致することを assert。局所は数が外れてよいが向きは同じであることを確かめる。向きが逆だと面積が 400 から3,696(9.2 倍)になり例外も警告も出ないところまで見せる。実際に SimpleITK 由来の 3 op が補集合を返していたのをこの形で見つけた。 `py -3.11 examples/threshold_family_agreement.py`
+- **細胞の計数と分割(計数が合っていて分割が全部外れる点がある)** — 既知の位置・大きさ・重なりで細胞を配置して真値を握る。★**偏り +0.3 個(0.4 %)なのに分割誤り 13.3 件**という点が実在する(過分割 +1 と過統合 -1 が相殺する)。★**過分割は重なりに反応しない** —— 密度を 5 段振っても過分割の列はほぼ一定で、過分割は種の撒き方が、過統合は重なりが決める別原因。★「最適な h は密度で動く」は基準を書かないと真偽が決まらない(偏り基準では1.1→0.0 と動き、1対1 基準では 0.4 で動かない)。縁の規約だけで計数が 13 % 動く。 `py -3.11 examples/poc_cell_counting.py`
+- **成長のタイムラプスを時空間の連結成分として測る(合体はいつ起きたか)** — ★ゼロ点(フレーム独立の計数)は思ったより強く、塊の数が減るフレームは真の合体時刻の1 コマ以内に出る。壊れるのは数ではなく**その先** ——「どれとどれが」「合体か消失か」「同時に 2 組か」。★★**空間の離散化は合体を早める**(予想が外れた: 画素は面積を持つので円が半画素ぶん太り、まだ接していないのに繋がる。-1.16 / -0.04 フレーム)。一方フレーム格子への丸めは必ず遅らせる(+0.17 / +0.94)—— **逆向きの 2 つが混ざる**。 `py -3.11 examples/poc_timelapse_growth.py`
+- **植生被覆率(被覆率が当たっていて画素が全部外れる、が実際に起きる)** — 合成群落なので被覆率も画素の帰属も真値が既知。発芽期・湿った土でゼロ点の被覆率誤差は **-0.2 pp(ほぼ完璧)なのに適合率も再現率も 0.000** —— 植生と答えた画素数だけが偶然一致していた。混合画素が 100% になると二値手法は生育段階で誤差の向きが逆転する(発芽期 +32〜+46 pp / 繁茂期 -14〜-36 pp)。 `py -3.11 examples/poc_vegetation_cover.py`
+- **MRI バイアス場と組織面積(GM と WM は逆向きに壊れ、足すと隠れる)** — 楕円殻の脳ファントムで 3 組織の真値面積を握り、乗算場と Rician 雑音を掛けて 3 クラス大津で測る。★★振幅 30 % で **GM +20.2 % / WM -7.7 % なのに GM+WM は +0.0 %**(脳実質体積は両方間違っても動かない)。★雑音を止めると符号が反転(GM -11.8 %)し、崖は幾何予測 30 % に対し実測 17.5 %。★★log I をそのまま平滑する補正は**場が無くても GM +81.8 %** 壊す(解剖が場に見える)が、分割残差の Wells 型反復なら 40 % でも +1.8 %。周波数の崖は基底で決まり(多項式 32 / ガウス 16 / 格子 B スプライン 8 px)、4 px では理想補正だけが残る。SNR 15 で場なしでも GM +8.5 %(裾の予測 +6.3 %)。 `py -3.11 examples/poc_mri_bias_field.py`
+- **葉の病斑面積率(等級は色の軸より葉マスクと縁の定義で決まる)** — 閉形式の葉と既知面積の病斑に土・照明むら・白飛び・影を重ねた合成葉。緑の固定しきい値は土だけで **+65.2 pt**、射影 G で葉を切り a* で病斑を切ると標準場面で -0.8 pt。★白飛びの鏡面反射は a* に**偽陽性しか出さない**(20 % で +12.6 pt、偽陰性 0.0 ―― 予想した符号の逆転は起きない)、白を足しても動かない色相なら +2.0 pt。★★縁のぼけ幅 4 px では境界を 25 %/75 % 線のどちらに置くかだけで **±3.5 pt** 動き(Steiner の式が 0.4 pt 以内で予測)、等級境界 ±3 pt の 40 枚は土の上では 19〜35 枚が誤等級、黒布 + 明るさ葉マスク + 色相固定なら 8 枚。 `py -3.11 examples/poc_leaf_disease_area.py`
+
 **color**
 - **Bayer の生フレームを段ごとに説明できる式で表示画像にする(ISP 8 段)** — 黒レベル → 欠陥画素 → 周辺減光 → AWB(RAW 側)→ 双線形デモザイク → CCM → 色相彩度 → 明暗を全部閉じた式で。植えた台座・減光・かぶり・欠陥 12 画素を順に外し、デモザイク後の誤差は 95 % 点で 5e-4(最大は円の縁のジッパー 6e-2 を隠さず印字)。★gray-world は場面の平均が灰でないと真の照明の逆にならない —— 一致しない数字を並べて段の限界を見せる。 `py -3.11 examples/raw_to_display_isp.py`
 - **色恒常性(どの手法にも「効く条件」があり、勝ち続ける手法は無い)** — 既知の反射率チャートに既知の光源を掛けて合成し、角度誤差で測る。白パッチ法は素のチャートで 1.06 度と最良だが、**一番明るい 1 枚を外すだけで 8.45 度(8 倍)**、飽和 43% で 13.61 度 = ゼロ点に厳密退化する。灰色世界は有彩色が 60% を占めると29.79 度でゼロ点に負ける。**最適な p は場面ごとに 1 から ∞ まで動く**。 `py -3.11 examples/poc_white_balance.py`
@@ -179,13 +187,6 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **upscaling**
 - **超解像は情報を増やすか(単一画像では増えない)** — 縮小してから戻して元と比べる。★**bicubic というゼロ点を上回れたのは最大 +0.036 dB** で、分解能は全手法が低解像側のナイキストで揃って死ぬ。鮮鋭化は勾配エネルギーを真値ちょうどに戻すが PSNR は 1.57 dB 落ちる。副画素ずれの16 枚合成は**標本化が足りないときだけ** +13.96 dB で本当に増える。 `py -3.11 examples/poc_superresolution_limits.py`
-
-**segmentation**
-- **細胞の計数と分割(計数が合っていて分割が全部外れる点がある)** — 既知の位置・大きさ・重なりで細胞を配置して真値を握る。★**偏り +0.3 個(0.4 %)なのに分割誤り 13.3 件**という点が実在する(過分割 +1 と過統合 -1 が相殺する)。★**過分割は重なりに反応しない** —— 密度を 5 段振っても過分割の列はほぼ一定で、過分割は種の撒き方が、過統合は重なりが決める別原因。★「最適な h は密度で動く」は基準を書かないと真偽が決まらない(偏り基準では1.1→0.0 と動き、1対1 基準では 0.4 で動かない)。縁の規約だけで計数が 13 % 動く。 `py -3.11 examples/poc_cell_counting.py`
-- **成長のタイムラプスを時空間の連結成分として測る(合体はいつ起きたか)** — ★ゼロ点(フレーム独立の計数)は思ったより強く、塊の数が減るフレームは真の合体時刻の1 コマ以内に出る。壊れるのは数ではなく**その先** ——「どれとどれが」「合体か消失か」「同時に 2 組か」。★★**空間の離散化は合体を早める**(予想が外れた: 画素は面積を持つので円が半画素ぶん太り、まだ接していないのに繋がる。-1.16 / -0.04 フレーム)。一方フレーム格子への丸めは必ず遅らせる(+0.17 / +0.94)—— **逆向きの 2 つが混ざる**。 `py -3.11 examples/poc_timelapse_growth.py`
-- **植生被覆率(被覆率が当たっていて画素が全部外れる、が実際に起きる)** — 合成群落なので被覆率も画素の帰属も真値が既知。発芽期・湿った土でゼロ点の被覆率誤差は **-0.2 pp(ほぼ完璧)なのに適合率も再現率も 0.000** —— 植生と答えた画素数だけが偶然一致していた。混合画素が 100% になると二値手法は生育段階で誤差の向きが逆転する(発芽期 +32〜+46 pp / 繁茂期 -14〜-36 pp)。 `py -3.11 examples/poc_vegetation_cover.py`
-- **MRI バイアス場と組織面積(GM と WM は逆向きに壊れ、足すと隠れる)** — 楕円殻の脳ファントムで 3 組織の真値面積を握り、乗算場と Rician 雑音を掛けて 3 クラス大津で測る。★★振幅 30 % で **GM +20.2 % / WM -7.7 % なのに GM+WM は +0.0 %**(脳実質体積は両方間違っても動かない)。★雑音を止めると符号が反転(GM -11.8 %)し、崖は幾何予測 30 % に対し実測 17.5 %。★★log I をそのまま平滑する補正は**場が無くても GM +81.8 %** 壊す(解剖が場に見える)が、分割残差の Wells 型反復なら 40 % でも +1.8 %。周波数の崖は基底で決まり(多項式 32 / ガウス 16 / 格子 B スプライン 8 px)、4 px では理想補正だけが残る。SNR 15 で場なしでも GM +8.5 %(裾の予測 +6.3 %)。 `py -3.11 examples/poc_mri_bias_field.py`
-- **葉の病斑面積率(等級は色の軸より葉マスクと縁の定義で決まる)** — 閉形式の葉と既知面積の病斑に土・照明むら・白飛び・影を重ねた合成葉。緑の固定しきい値は土だけで **+65.2 pt**、射影 G で葉を切り a* で病斑を切ると標準場面で -0.8 pt。★白飛びの鏡面反射は a* に**偽陽性しか出さない**(20 % で +12.6 pt、偽陰性 0.0 ―― 予想した符号の逆転は起きない)、白を足しても動かない色相なら +2.0 pt。★★縁のぼけ幅 4 px では境界を 25 %/75 % 線のどちらに置くかだけで **±3.5 pt** 動き(Steiner の式が 0.4 pt 以内で予測)、等級境界 ±3 pt の 40 枚は土の上では 19〜35 枚が誤等級、黒布 + 明るさ葉マスク + 色相固定なら 8 枚。 `py -3.11 examples/poc_leaf_disease_area.py`
 
 **geometry**
 - **パノラマの累積ドリフト(埋もれていた既存実装はゼロ点を上回らなかった)** — 既知の回転列から 36 枚を切り出して 360 度で閉じ、閉ループ誤差で測る。ドリフトの伸びは log-log の傾き **0.894**(√N の予想は外れ、1 段あたりの偏りが効く)。**純回転 3 自由度で当てはめると 8 自由度より 2.3 倍良い**(0.275 → 0.118 px)。既存の `bundle_adjust_mosaic` は 36 枚中 30 枚を単位行列のまま返す。 `py -3.11 examples/poc_panorama_drift.py`
@@ -1314,14 +1315,14 @@ _計 932 ops / 48 categories。_
 - `xsitk_signed_maurer_dist` `region → image` · 例: `gallery2d_color_artistic`
 - `xsitk_connected_threshold` `image → region` · 例: `gallery2d_color_artistic`
 - `xsitk_confidence_connected` `image → region` · 例: `gallery2d_color_artistic`
-- `xsitk_maxentropy_thresh` `image → region` · 例: `gallery2d_color_artistic`
-- `xsitk_moments_thresh` `image → region` · 例: `gallery2d_color_artistic`
-- `xsitk_huang_thresh` `image → region` · 例: `gallery2d_color_artistic`
+- `xsitk_maxentropy_thresh` `image → region` · 例: `gallery2d_color_artistic`, `threshold_family_agreement`
+- `xsitk_moments_thresh` `image → region` · 例: `gallery2d_color_artistic`, `threshold_family_agreement`
+- `xsitk_huang_thresh` `image → region` · 例: `gallery2d_color_artistic`, `threshold_family_agreement`
 
 ### features(73)
 - `effective_bit_depth` `image → feature` · 例: `gallery2d_features`
 - `blob_count` (halcon: `count_obj`) `region → feature` · 例: `gallery2d_features`, `poc_real_coin_metrology`, `quickstart`
-- `area_frac` (halcon: `area_center`) `region → feature` · 例: `gallery2d_features`
+- `area_frac` (halcon: `area_center`) `region → feature` · 例: `gallery2d_features`, `threshold_family_agreement`
 - `count_contours` (halcon: `count_obj`) `contour → feature` · 例: `gallery2d_features`
 - `total_length` (halcon: `length_xld`) `contour → feature` · 例: `gallery2d_features`, `poc_solar_el_inspection`
 - `vol_count` `volume → feature` · 例: `gallery2d_features`
@@ -1793,27 +1794,27 @@ _計 932 ops / 48 categories。_
 
 ### segmentation(54)
 - `threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_traffic_counting`, `poc_water_level`, `video_streaming`
-- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `degenerate_inputs`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`, `typed_results_json`
+- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `degenerate_inputs`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`, `threshold_family_agreement`, `typed_results_json`
 - `canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`, `poc_real_coin_metrology`
 - `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`
-- `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_cell_counting`, `poc_fresco_craquelure`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_vegetation_cover`
-- `sk_li` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
-- `sk_yen` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
-- `sk_sauvola` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`
-- `sk_niblack` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_cell_counting`, `poc_fresco_craquelure`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_vegetation_cover`, `threshold_family_agreement`
+- `sk_li` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
+- `sk_yen` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
+- `sk_sauvola` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `threshold_family_agreement`
+- `sk_niblack` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
 - `sk_canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`, `genspark_external_review`
 - `sk_felzenszwalb` `image → region` · 例: `gallery2d_segmentation`
 - `sk_slic` `image → region` · 例: `gallery2d_segmentation`
 - `sk_chan_vese` `image → region` · 例: `gallery2d_segmentation`
 - `sk_local_maxima` (halcon: `local_max`) `image → region` · 例: `gallery2d_segmentation`
 - `sk_hysteresis` (halcon: `hysteresis_threshold`) `image → region` · 例: `gallery2d_segmentation`
-- `cv_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_vegetation_cover`
+- `cv_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_vegetation_cover`, `threshold_family_agreement`
 - `cv_adaptive_mean` (halcon: `dyn_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `cv_adaptive_gauss` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `cv_canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`
 - `h_threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`
-- `binary_threshold` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
-- `auto_threshold` (halcon: `auto_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_battery_electrode_breathing`, `poc_bump_coplanarity`
+- `binary_threshold` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
+- `auto_threshold` (halcon: `auto_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_battery_electrode_breathing`, `poc_bump_coplanarity`, `threshold_family_agreement`
 - `dyn_threshold` (halcon: `dyn_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_metal_grain_size`
 - `var_threshold` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_document_scan`
 - `local_threshold` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`
@@ -1839,8 +1840,8 @@ _計 932 ops / 48 categories。_
 - `xsk2_multiotsu` `image → image` · 例: `gallery2d_segmentation`, `poc_mri_bias_field`
 - `xsk2_h_maxima` `image → region` · 例: `gallery2d_segmentation`, `poc_cell_counting`
 - `xcv2_meanshift` `image → image` · 例: `gallery2d_segmentation`
-- `xmh_bernsen` `image → region` · 例: `gallery2d_segmentation`
-- `xsk3_rank_otsu` `image → region` · 例: `gallery2d_segmentation`
+- `xmh_bernsen` `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
+- `xsk3_rank_otsu` `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
 - `xsk3_h_minima` `image → region` · 例: `gallery2d_segmentation`, `genspark_external_review`
 - `xsk3_threshold_local_median` `image → region` · 例: `gallery2d_segmentation`
 - `xsk3_peak_local_max` `image → region` · 例: `gallery2d_segmentation`

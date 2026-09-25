@@ -270,19 +270,19 @@ RECIPES = {
  "xsitk_maxentropy_thresh": {
   "in": "image",
   "out": "region",
-  "recipe": "np.asarray(sitk.GetArrayFromImage(sitk.MaximumEntropyThreshold(sitk.GetImageFromArray(v.astype('float32')),1,0,int(64+192*a))),np.float64)",
+  "recipe": "np.asarray(sitk.GetArrayFromImage(sitk.MaximumEntropyThreshold(sitk.GetImageFromArray(v.astype('float32')),0,1,int(64+192*a))),np.float64)",
   "cat": ""
  },
  "xsitk_moments_thresh": {
   "in": "image",
   "out": "region",
-  "recipe": "np.asarray(sitk.GetArrayFromImage(sitk.MomentsThreshold(sitk.GetImageFromArray(v.astype('float32')),1,0,int(64+192*a))),np.float64)",
+  "recipe": "np.asarray(sitk.GetArrayFromImage(sitk.MomentsThreshold(sitk.GetImageFromArray(v.astype('float32')),0,1,int(64+192*a))),np.float64)",
   "cat": ""
  },
  "xsitk_huang_thresh": {
   "in": "image",
   "out": "region",
-  "recipe": "np.asarray(sitk.GetArrayFromImage(sitk.HuangThreshold(sitk.GetImageFromArray((np.clip(v,0,1)*255).astype('uint8')),1,0,int(64+192*a))),np.float64)",
+  "recipe": "np.asarray(sitk.GetArrayFromImage(sitk.HuangThreshold(sitk.GetImageFromArray((np.clip(v,0,1)*255).astype('uint8')),0,1,int(64+192*a))),np.float64)",
   "cat": ""
  },
  "xsk3_rank_otsu": {

@@ -145,6 +145,13 @@ EXAMPLES = [
      "summary": "合成画像フォルダ(良品 5・欠陥 1・壊れたファイル 1)を inspect_batch で 前処理→計測→judge→集計。"
                 "各行に入力 sha256・計測・根拠つき Verdict、数値列は EWMA で工程管理、.md/.jsonl(+.xlsx)に "
                 "書き分け、監査ログに追記。欠陥だけ ng・壊れた 1 枚は error で止まらないことを assert。"},
+    {"id": "threshold_family_agreement", "task": "segmentation", "data": "synthetic",
+     "name": "12 通りの自動しきい値に同じ絵を見せる —— 割れてよい数と、割れては困る向き",
+     "summary": "値が 2 種類しかない板(明部ちょうど 400 px)を大域 10 種・局所 4 種の"
+                "自動しきい値に見せ、大域が全部 400 px で一致することを assert。局所は数が"
+                "外れてよいが向きは同じであることを確かめる。向きが逆だと面積が 400 から"
+                "3,696(9.2 倍)になり例外も警告も出ないところまで見せる。実際に SimpleITK "
+                "由来の 3 op が補集合を返していたのをこの形で見つけた。"},
     {"id": "line_handshake", "task": "workflow", "data": "synthetic",
      "name": "検査の判定を PLC の線に出す —— Modbus TCP でも、シリアル(RTU)でも",
      "summary": "合成の部品を 1 枚検査して ok/ng を決め、内蔵の PLC シミュレータ(Modbus TCP)と "

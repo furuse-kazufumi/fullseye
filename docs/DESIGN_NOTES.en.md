@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 624 of 1083. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 624 of 1086. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -231,6 +231,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L46** — ★Unless the repository root is on the path, ``demops`` is not found (this example does not import `fullseye`, so the path hook does not kick in).
 - **L59** — ★EXTEND: cell size [m]. For real data, obtain it via dem_cell_size_webmercator(zoom, latitude).
 - **L158** — ★Honest observation: when there is a no-data cell partway down a slope, its northern neighbour, even as an outlet, does not drain into the no-data but goes south-west (the direction with a finite drop). The implementation is "drain into no-data only when there is nowhere else to descend", narrower than the docstring's "allows flow toward no-data". Here we only print and do not assert.
+
+## `examples/gallery2d_color_artistic.py`
+
+- **L224** _(ja)_ — ★**向き**も見る(2026-09-26)。ここまでの確認は「二値」「自明解でない」だけで、 **どちらの向きでも通っていた** —— 実際この op は兄弟の補集合を返していた (docs/hardening/itk-threshold-ops-returned-the-dark-side.md)。明るい画素の 方が region に入ることを、入力そのものと突き合わせて確かめる。
 
 ## `examples/gallery2d_edges.py`
 
@@ -1849,6 +1853,11 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_studio_ops_browser.py`
 
 - **L11** — ★A plain import **aborts the whole collection** in an environment without matplotlib (pytest won't run the rest after a single import failure). Measured 2026-09-05.
+
+## `tests/test_threshold_polarity_2026_09_26.py`
+
+- **L35** _(ja)_ — しきい値「方法」の名前。★op 名から拾うので、**新しく足した方法も自動で門に入る** (免除台帳に名前を書かない限り)。綴りで探す門は綴りが違うものを見逃すので、 説明文も一緒に見る。
+- **L43** _(ja)_ — ★**暗い側が答えで正しい op**。理由つきで名指しする —— 台帳が黙って腐らないよう、 下の試験が「本当にまだ暗い側なのか」を確かめる。
 
 ## `tests/test_videostream.py`
 

@@ -4,7 +4,7 @@ dim: 2d
 category: segmentation
 in: image
 out: region
-examples: [gallery2d_segmentation]
+examples: [gallery2d_segmentation, threshold_family_agreement]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -62,6 +62,7 @@ xmh_bernsen 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
+- [threshold_family_agreement](../../../../examples/threshold_family_agreement.py) — `py -3.11 examples/threshold_family_agreement.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 

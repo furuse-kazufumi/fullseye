@@ -5,7 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: binary_threshold
-examples: [gallery2d_segmentation, poc_cell_counting, poc_fresco_craquelure, poc_leaf_disease_area, poc_nuclei_ploidy, poc_vegetation_cover]
+examples: [gallery2d_segmentation, poc_cell_counting, poc_fresco_craquelure, poc_leaf_disease_area, poc_nuclei_ploidy, poc_vegetation_cover, threshold_family_agreement]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -65,6 +65,7 @@ sk_otsu 0.50 0.50
 - [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`
 - [poc_nuclei_ploidy](../../../../examples/poc_nuclei_ploidy.py) — `py -3.11 examples/poc_nuclei_ploidy.py`
 - [poc_vegetation_cover](../../../../examples/poc_vegetation_cover.py) — `py -3.11 examples/poc_vegetation_cover.py`
+- [threshold_family_agreement](../../../../examples/threshold_family_agreement.py) — `py -3.11 examples/threshold_family_agreement.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 
