@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 624 of 1033. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 624 of 1034. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -1796,7 +1796,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_wingpoc_gallery.py`
 
-- **L232** _(ja)_ — ★入れ替える 2 件は**受入日が違うもの**を選ぶ。同じ日の 2 件を入れ替えても 何も壊れないので、それで「捕まえた」と言うと破壊試験が嘘になる。
+- **L156** _(ja)_ — ★英語側は**展示数を指す句に限定**する。英語の数詞は散文に普通に出るので (two separate numbers / two opposite kinds)、広く拾うと誤検知だらけになり、 誤検知だらけの門は消される。日本語の「N 点」は展示を数える言い方なので広いまま。
+- **L236** _(ja)_ — ★入れ替える 2 件は**受入日が違うもの**を選ぶ。同じ日の 2 件を入れ替えても 何も壊れないので、それで「捕まえた」と言うと破壊試験が嘘になる。
 
 ## `tools/chain_fuzz.py`
 

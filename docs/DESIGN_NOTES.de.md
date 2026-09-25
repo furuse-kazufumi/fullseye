@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1033. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1034. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -1796,7 +1796,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_wingpoc_gallery.py`
 
-- **L232** _(ja)_ — ★入れ替える 2 件は**受入日が違うもの**を選ぶ。同じ日の 2 件を入れ替えても 何も壊れないので、それで「捕まえた」と言うと破壊試験が嘘になる。
+- **L156** _(ja)_ — ★英語側は**展示数を指す句に限定**する。英語の数詞は散文に普通に出るので (two separate numbers / two opposite kinds)、広く拾うと誤検知だらけになり、 誤検知だらけの門は消される。日本語の「N 点」は展示を数える言い方なので広いまま。
+- **L236** _(ja)_ — ★入れ替える 2 件は**受入日が違うもの**を選ぶ。同じ日の 2 件を入れ替えても 何も壊れないので、それで「捕まえた」と言うと破壊試験が嘘になる。
 
 ## `tools/chain_fuzz.py`
 
