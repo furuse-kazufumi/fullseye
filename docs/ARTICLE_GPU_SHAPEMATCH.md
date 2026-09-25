@@ -145,7 +145,7 @@ $loco = "<ローカルの作業パス>\dev\venvs\loco\Scripts\python.exe"   # to
   素直)。[textbook]
 - **conv2d のカーネル=バッチ軸** —— DL の標準プリミティブ。変換を out_channels に積むのが
   本実装の再定式化。[標準手法の転用]
-- **RAD コーパス実在確認**: `D:/docs/image_corpus_v2` は NeRF/3DGS など現代 DL 視覚中心で、
+- **RAD コーパス実在確認**: `image_corpus_v2`(**repo の外**の RAD コーパス)は NeRF/3DGS など現代 DL 視覚中心で、
   古典 shape matching の一次論文は薄い(=この差別化は新規研究でなく工学的移植、と正直に
   書ける)。GPU 最適化パターンの出典は `docs/GPU_OPTIMIZATION_PATTERNS.md` 付録に実在確認済。
 

@@ -1414,11 +1414,14 @@ def main(argv=None):
         if bad:
             raise SystemExit("%d 件が決定的でない" % bad)
 
+    #: ★台帳に残すパスは repo 相対へ落とす(公開される場所なので)。
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from _relpaths import relativise as _rel
     os.makedirs(os.path.dirname(META_PATH), exist_ok=True)
     with open(META_PATH, "w", encoding="utf-8") as fh:
-        json.dump({"generator": "tools/gen_wingastro_gallery.py", "seed": SEED,
-                   "exhibits": meta}, fh, ensure_ascii=False, indent=1,
-                  default=float)
+        json.dump(_rel({"generator": "tools/gen_wingastro_gallery.py", "seed": SEED,
+                        "exhibits": meta}, ROOT), fh, ensure_ascii=False, indent=1,
+                       default=float)
     print("[wingastro] meta -> %s" % os.path.relpath(META_PATH, ROOT))
 
     if set(want) == set(EXHIBITS):

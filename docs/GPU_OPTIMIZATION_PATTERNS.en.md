@@ -1,11 +1,11 @@
-<!-- i18n-source-sha: aaba6c6be932 -->
+<!-- i18n-source-sha: 082bd7431e41 -->
 # GPU Optimization Design-Pattern Catalog (for RTX 5090 / Blackwell sm_120)
 
 [日本語](./GPU_OPTIMIZATION_PATTERNS.md) · **English**
 
 **Target GPU (confirmed)**: NVIDIA RTX 5090, Blackwell, compute capability **sm_120**, 32 GB VRAM, driver 610.74.
 **Current state (confirmed)**: Only `torch 2.11.0+cpu` and `jax 0.7.1` (CpuDevice) are installed, so **nothing runs on the GPU right now**. sm_120 requires a build from the CUDA 12.8+ generation.
-**Nature of this catalog**: Written without web search, from the RAD corpus (`D:/docs/*_corpus_v2/`, existence confirmed) plus a knowledge base. **Guesses are explicitly marked "(guess)"**. Each workload is tied back to real code that was read (`physarum_search.py` / `shapematch.py` / `afterman/eco_world.py`).
+**Nature of this catalog**: Written without web search, from the RAD corpus (`*_corpus_v2`, kept outside the repo; existence confirmed) plus a knowledge base. **Guesses are explicitly marked "(guess)"**. Each workload is tied back to real code that was read (`physarum_search.py` / `shapematch.py` / `afterman/eco_world.py`).
 
 Source notation:
 - **[corpus]** = a paper whose existence was confirmed in the RAD corpus (cited with its arXiv number).
@@ -260,7 +260,7 @@ py -3.11 -m pip install -U "jax[cuda12]"
 
 ## Appendix: RAD corpus sources whose existence was confirmed for this catalog
 
-All confirmed to exist by grep under `D:/docs/numerical_methods_corpus_v2/` and `D:/docs/mlops_corpus_v2/` (file paths are the clusters in the body's footnotes).
+All confirmed to exist by grep under `numerical_methods_corpus_v2` and `mlops_corpus_v2` (RAD corpora kept outside the repo) (file paths are the clusters in the body's footnotes).
 
 - **torch-sla: Differentiable Sparse Linear Algebra ...** (arXiv 2601.13994) — batched sparse solve, cuDSS/CuPy/torch-native auto-dispatch. → basis for P2/P13/first move.
 - **Mapping Sparse Triangular Solves to GPUs via Fine-grained Domain Decomposition** (arXiv 2508.04917) — fit subdomains into shared memory, eliminate inter-block sync, triangular solve 10.7×. → P3/P6/P19.

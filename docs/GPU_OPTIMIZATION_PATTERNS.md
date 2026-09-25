@@ -2,7 +2,7 @@
 
 **対象 GPU(確認済み)**: NVIDIA RTX 5090、Blackwell、compute capability **sm_120**、VRAM 32GB、driver 610.74。
 **現状(確認済み)**: `torch 2.11.0+cpu` と `jax 0.7.1`(CpuDevice)しか入っておらず、**いま GPU では走らない**。sm_120 は CUDA 12.8+ 世代のビルドが要る。
-**このカタログの性格**: Web 検索は使わず、RAD コーパス(`D:/docs/*_corpus_v2/`、実在確認済み)+ 知識ベースで書いた。**推測は「(推測)」と明示**する。実コード(`physarum_search.py` / `shapematch.py` / `afterman/eco_world.py`)を読んで各ワークロードに紐づけた。
+**このカタログの性格**: Web 検索は使わず、RAD コーパス(**repo の外**に置いた `*_corpus_v2`、実在確認済み)+ 知識ベースで書いた。**推測は「(推測)」と明示**する。実コード(`physarum_search.py` / `shapematch.py` / `afterman/eco_world.py`)を読んで各ワークロードに紐づけた。
 
 出典表記:
 - **[コーパス]** = RAD コーパスで実在確認した論文(arXiv 番号つきで明記)。
@@ -257,7 +257,7 @@ py -3.11 -m pip install -U "jax[cuda12]"
 
 ## 付録: このカタログで実在確認できた RAD コーパス出典
 
-すべて `D:/docs/numerical_methods_corpus_v2/` と `D:/docs/mlops_corpus_v2/` 配下で grep により実在確認(ファイルパスは本文脚注のクラスタ)。
+すべて `numerical_methods_corpus_v2` と `mlops_corpus_v2`(**repo の外**の RAD コーパス)配下で grep により実在確認(ファイルパスは本文脚注のクラスタ)。
 
 - **torch-sla: Differentiable Sparse Linear Algebra ...**(arXiv 2601.13994) — batched 疎 solve、cuDSS/CuPy/torch-native 自動ディスパッチ。→ P2/P13/第1手の根拠。
 - **Mapping Sparse Triangular Solves to GPUs via Fine-grained Domain Decomposition**(arXiv 2508.04917) — サブドメインを shared memory に収め inter-block 同期消去、三角ソルブ 10.7×。→ P3/P6/P19。

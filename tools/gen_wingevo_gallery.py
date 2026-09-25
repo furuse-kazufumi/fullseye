@@ -2062,9 +2062,12 @@ def write_exhibit_md(results, meta, log=print):
     lines.append("")
     with open(path, "w", encoding="utf-8", newline="\n") as fh:
         fh.write("\n".join(lines))
+    #: ★台帳に残すパスは repo 相対へ落とす(公開される場所なので)。
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from _relpaths import relativise as _rel
     mpath = os.path.join(ASSETS, "_wingevo_meta.json")
     with open(mpath, "w", encoding="utf-8") as fh:
-        json.dump(meta, fh, ensure_ascii=False, indent=1)
+        json.dump(_rel(meta, _ROOT), fh, ensure_ascii=False, indent=1)
     log(f"  exhibits -> {path}")
     log(f"  meta     -> {mpath}")
     return path

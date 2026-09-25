@@ -3,7 +3,7 @@
  "seed": 20260902,
  "exhibits": {
   "sqrt_n": {
-   "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingastro_stack_sqrtn.png",
+   "file": "docs/articles/assets/wingastro_stack_sqrtn.png",
    "sha256": "b56990b32c0acb3c787658ddaa507053bb1b521f460c14ad0e738d4e9087d22a",
    "data": {
     "base_rms": 16.50651462274706,
@@ -42,7 +42,7 @@
    }
   },
   "lucky_sheet": {
-   "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingastro_lucky_sheet.png",
+   "file": "docs/articles/assets/wingastro_lucky_sheet.png",
    "sha256": "7db0bead655c7f76271f64e0b03562d96c77df9680aac2f39a87aec5cc161019",
    "data": {
     "scores": [
@@ -94,7 +94,7 @@
    }
   },
   "lucky_sweep": {
-   "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingastro_lucky_sweep.gif",
+   "file": "docs/articles/assets/media/wingastro_lucky_sweep.gif",
    "sha256": "02e4e706bd564251b9735c6b47cede35f4b9bbf129a52afb4fd4ab094d0d76f3",
    "data": {
     "rows": [
@@ -135,7 +135,7 @@
    }
   },
   "cosmic": {
-   "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingastro_cosmic.png",
+   "file": "docs/articles/assets/wingastro_cosmic.png",
    "sha256": "d2a87da276f1d0c6d4e70bbc11d8ce5f50efee1bc74d00eb47745ae939f2a650",
    "data": {
     "truth_px": 44,
@@ -160,7 +160,7 @@
    }
   },
   "drizzle": {
-   "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingastro_drizzle.gif",
+   "file": "docs/articles/assets/media/wingastro_drizzle.gif",
    "sha256": "13afa63bddc016d7c931704e8cfae22d8b144b400ab2e77524310cb3ef1ef510",
    "data": {
     "input_sum": 372862.06495988026,
@@ -198,7 +198,7 @@
    }
   },
   "drizzle_flux": {
-   "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingastro_drizzle_flux.png",
+   "file": "docs/articles/assets/wingastro_drizzle_flux.png",
    "sha256": "c97bee2546fbdfd6a16ad7501cf24cdd8a25634f61c5c34857cb1f099c2903ee",
    "data": {
     "input_sum": 306035.5635362281,
@@ -286,7 +286,7 @@
    }
   },
   "drizzle_pair": {
-   "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingastro_drizzle_pair.png",
+   "file": "docs/articles/assets/wingastro_drizzle_pair.png",
    "sha256": "6feea09ffb8d8f6cd5f41b83e28f430d91d4f6f2713e3e02c83b999d1aec3c2c",
    "data": {
     "separation_px": 1.6,
@@ -299,7 +299,7 @@
    }
   },
   "clip_breakdown": {
-   "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingastro_clip_breakdown.gif",
+   "file": "docs/articles/assets/media/wingastro_clip_breakdown.gif",
    "sha256": "87f25843d28f6e4711a511c74f5f767071150e307a0104211122c054410d7800",
    "data": {
     "boost": 900.0,
@@ -383,7 +383,7 @@
    }
   },
   "align": {
-   "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingastro_align.png",
+   "file": "docs/articles/assets/wingastro_align.png",
    "sha256": "9a78f28d0b012c270425374e5c88d3b9a1ade48eb120f7ca27577a626fc5d990",
    "data": {
     "median_shift_err_px": 0.03585932226949002,
@@ -407,7 +407,7 @@
    }
   },
   "photometry": {
-   "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingastro_photometry.png",
+   "file": "docs/articles/assets/wingastro_photometry.png",
    "sha256": "45a2dca8dbf860822d0b6cd20860ab1ead079c0b94005076617cac884c3db6c9",
    "data": {
     "wide": [

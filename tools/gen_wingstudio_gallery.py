@@ -2608,11 +2608,14 @@ def _merge_meta(recs) -> None:
             old = {}
     for r in recs:
         old[r["name"]] = r
+    #: ★台帳に残すパスは repo 相対へ落とす(公開される場所なので)。
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from _relpaths import relativise as _rel
     ordered = [old[k] for k in EXHIBITS if k in old]
     os.makedirs(ASSETS, exist_ok=True)
     with open(META_PATH, "w", encoding="utf-8") as f:
-        json.dump({"generator": "tools/gen_wingstudio_gallery.py", "seed": SEED,
-                   "exhibits": ordered}, f, ensure_ascii=False, indent=2)
+        json.dump(_rel({"generator": "tools/gen_wingstudio_gallery.py", "seed": SEED,
+                        "exhibits": ordered}, _ROOT), f, ensure_ascii=False, indent=2)
     print("meta ->", META_PATH)
 
 

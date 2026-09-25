@@ -1,6 +1,6 @@
 {
  "pipeline": {
-  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingct_pipeline.gif",
+  "file": "docs/articles/assets/media/wingct_pipeline.gif",
   "sha256": "27d449cf6e8447aceeae952050bb6ad39d98d74f6acfe04df6e53fa08d1df753",
   "data": {
    "true_mm3": 16838.9,
@@ -24,7 +24,7 @@
   }
  },
  "view_sweep": {
-  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingct_view_sweep.gif",
+  "file": "docs/articles/assets/media/wingct_view_sweep.gif",
   "sha256": "fe860888293fe5bd7fc6a44c1891d2cb45fa7587d07bc504ae9c3f13c189d32a",
   "data": {
    "rows": [
@@ -76,7 +76,7 @@
   }
  },
  "view_tiles": {
-  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingct_view_tiles.png",
+  "file": "docs/articles/assets/wingct_view_tiles.png",
   "sha256": "5eb87d5aa3605ea755228024dfc52a04c981d2e082540b55c7535ec320370cfa",
   "data": {
    "rows": [
@@ -114,7 +114,7 @@
   }
  },
  "center_shift": {
-  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingct_center_shift.gif",
+  "file": "docs/articles/assets/media/wingct_center_shift.gif",
   "sha256": "68ad26531c7e59bcfff9c868a74015e70aec164d376011b16b2bfa7c4f1f1ed7",
   "data": {
    "rows": [
@@ -147,7 +147,7 @@
   }
  },
  "limited_angle": {
-  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingct_limited_angle.png",
+  "file": "docs/articles/assets/wingct_limited_angle.png",
   "sha256": "88bbbfbe30a7e2a069c4e6995dcf3bf03f3029e0d3f00d0781012671e28eda31",
   "data": {
    "rows": [
@@ -207,7 +207,7 @@
   }
  },
  "beam_hardening": {
-  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingct_beam_hardening.png",
+  "file": "docs/articles/assets/wingct_beam_hardening.png",
   "sha256": "0fae3a08cb5cdeb6befe8bb3361f0cf15165f8b328d9e9c8d7b1d5b69dae269b",
   "data": {
    "cup_clean": 1.0006,
@@ -223,7 +223,7 @@
   }
  },
  "rings": {
-  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingct_rings.png",
+  "file": "docs/articles/assets/wingct_rings.png",
   "sha256": "2c51613ba1bb5f301166b9fb4da5f822867db412b35019007f65fd48383b050b",
   "data": {
    "nrms_clean": 0.025,
@@ -238,7 +238,7 @@
   }
  },
  "volume_check": {
-  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingct_volume_check.png",
+  "file": "docs/articles/assets/wingct_volume_check.png",
   "sha256": "d6710e55e9d200e87581e8ac6d850ea396f2f09ea443f1fd1aa7f4cfe5fc010e",
   "data": {
    "true_mm3": 16838.9,

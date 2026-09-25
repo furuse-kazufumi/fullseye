@@ -78,6 +78,24 @@ MEDIA = os.path.join(ASSETS, "media")
 THUMBS = os.path.join(ASSETS, "thumbs")
 EXHIBITS = os.path.join(_ROOT, "docs", "articles", "exhibits")
 META_PATH = os.path.join(ASSETS, "_wing3d_meta.json")
+
+
+def _relativise(obj):
+    """台帳に載せるパスを **repo からの相対**にする。
+
+    ★2026-09-25: この台帳は公開される `docs/` の下に在るのに、図の場所を
+    `C:/dev/projects/imgevolve/docs/...` という**手元の絶対パス**で書いていた
+    (164 か所)。読み手の機械には無いパスで、しかも作業環境を晒す。
+    生成のときに絶対で持つのは正しい —— **残すときに相対へ落とす**。
+    """
+    if isinstance(obj, dict):
+        return {k: _relativise(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_relativise(v) for v in obj]
+    if isinstance(obj, str) and obj.replace(chr(92), "/").startswith(
+            _ROOT.replace(chr(92), "/")):
+        return os.path.relpath(obj, _ROOT).replace(os.sep, "/")
+    return obj
 MANIFEST_PATH = os.path.join(ASSETS, "_wing3d_manifest.md")
 # ``tools/build_exhibits.py`` は ``<id>.<lang>.md`` を優先し、ja に限り ``<id>.md`` も
 # 受ける(en は ja を流用しない)。記事は ja/en 両方を組むので 2 枚とも出す。
@@ -3857,7 +3875,10 @@ def main(argv=None) -> int:
             old = {}
     for m in results:
         old[m["exhibit"]] = m
-    ordered = [old[n] for n, _ in _EXHIBITS if n in old]
+    #: ★台帳に残すパスは repo 相対へ落とす(公開される場所なので)。
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from _relpaths import relativise as _rel
+    ordered = [_rel(old[n], _ROOT) for n, _ in _EXHIBITS if n in old]
     with open(META_PATH, "w", encoding="utf-8") as fh:
         json.dump({"generated_by": "tools/gen_wing3d_gallery.py", "seed": SEED,
                    "exhibits": ordered}, fh, ensure_ascii=False, indent=2,

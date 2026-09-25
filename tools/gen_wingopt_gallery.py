@@ -2773,8 +2773,12 @@ def main(argv=None) -> int:
         meta = {n: {"info": {k: v for k, v in r["info"].items()},
                     "title": TITLES[n], "ops": OPS[n],
                     "facts": r["facts"]} for n, r in results.items()}
+        #: ★台帳に残すパスは repo 相対へ落とす(公開される場所なので)。
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from _relpaths import relativise as _rel
         with open(args.out_meta, "w", encoding="utf-8") as fh:
-            json.dump(meta, fh, ensure_ascii=False, indent=1, default=float)
+            json.dump(_rel(meta, _ROOT), fh, ensure_ascii=False, indent=1,
+                      default=float)
         log(f"meta: {args.out_meta}")
         _write_captions(results, log)
 

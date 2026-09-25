@@ -1,10 +1,12 @@
 # Fullseye connectivity — devices, cameras & industrial protocols
 
 Fullseye は vision に加え **デバイス制御・産業通信** を扱う(HALCON に無い差別化)。
-下表は  が返す実カタログ(この doc は自動生成)。
+下表は `comm.capabilities()` / `acquire.capabilities()` / `device.capabilities()` が
+返す実カタログを書き写したもの。**この doc は手書きで、正しさは門が持つ** ——
+表と実装がずれたら `tests/test_connectivity_doc.py` が落ちる。
 
 - **native** = 標準ライブラリのみで**すぐ動く**(uniform な API)
-- **optional** =  で有効化
+- **optional** = `pip` 欄のパッケージを入れると有効になる
 - **scaffold** = 特殊ハード/リアルタイム/native SDK が必要(文書化・best-effort)
 
 ## 通信プロトコル (comm) (23)
@@ -128,7 +130,7 @@ acquire.sfnc_to_uvc("ExposureTime", 500000.0)                    # -> (..., 5000
 | 物理単位 | ✓ | `DEPTH_BACKENDS`・`SFNC_FEATURES` |
 | 終了処理 | ✓ | `Camera.close` |
 
-比較の相手は `C:/dev/docs/device_sdk_corpus/COVERAGE.md`(`pypylon` と `vmbpy` が 8/8、`ouster` / `pyrealsense2` / `zivid` が 7/8)。
+比較の相手は **repo の外**に置いた device SDK コーパスの採点表(公表されている 13 の Python SDK を同じ 8 軸で読んだもの)。そこでは `pypylon` と `vmbpy` が 8/8、`ouster` / `pyrealsense2` / `zivid` が 7/8 だった。
 
 ## デバイス制御 (device) (12)
 

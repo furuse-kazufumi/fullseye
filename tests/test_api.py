@@ -147,27 +147,57 @@ def test_fullseye_facade_reexports_api():
 
 
 def _assert_listing_matches_the_index(rows, index):
-    """一覧(``list_ops``)と機械可読索引(``docs/OP_INDEX.json``)が同じ op を数えること。
+    """一覧(``list_ops``)が、索引が知っている**層**を取りこぼさないこと。
 
-    ★門の本体を関数にしておく —— 破壊試験が「式をもう一度書く」のではなく
-    **本物の判定を呼ぶ**ようにするため(同じ式を 2 度書いた門は、式が間違っていても通る)。
+    ★主張は「**層に盲目でないこと**」であって「op の顔ぶれが索引と同じこと」では
+    ない。registry の顔ぶれは**入っている optional 依存で変わり、しかも op 単位で
+    変わる** —— `backends_r3` は 56 op のうち `xcv3_*` 8 本だけが opencv-contrib を
+    要り、モジュールの申告依存は `skimage`(CI に在る)である。そこを完全一致の
+    門にしたため 2026-09-25 に **CI で 26 op** ぶん赤になった
+    ([[feedback_gate_computed_a_verdict_then_discarded_it]] の
+    「手元にある optional 依存が CI に無い」型)。
+
+    見るのは 3 つ、どれも環境で変わらない:
+
+    1. 索引に無い op が一覧に在らない(在れば**索引が古い**)。
+    2. **台帳層は完全一致**。台帳は numpy/scipy だけで組める一次モジュールなので、
+       欠けたら環境のせいにできない —— この門が本来捕まえたい事故はここで落ちる。
+    3. 索引が知っている層は、どれも一覧に現れる(層まるごとの欠落を止める)。
     """
-    #: ★突き合わせは**名前**で行う。索引の ``color`` 層は別の op ではなく、
-    #: レジストリ行に ``backends_color`` の担当分として貼り直した札である
-    #: (``imgevolve._index_payload``)。tier で照合すると、その 12 件が
-    #: 「一覧に無い」と誤って出る —— 層の付け替えを欠落と読み違える形。
-    want = {o["name"] for o in index["ops"]}
+    by_name = {o["name"]: o for o in index["ops"]}
     got = {r["name"] for r in rows}
-    missing, extra = sorted(want - got), sorted(got - want)
-    assert not missing and not extra, (
-        "list_ops と索引がずれている: 一覧に無い %d 件 %s / 索引に無い %d 件 %s"
-        % (len(missing), missing[:5], len(extra), extra[:5]))
-    #: 付け替えは「同じ op が両方に在る」ことまで見る(札の違いを黙認しない)。
-    by_name = {r["name"]: r["tier"] for r in rows}
-    recoloured = [o["name"] for o in index["ops"] if o["tier"] == "color"]
-    assert recoloured, "色層が空(索引の tier 付け替えが効いていない)"
-    assert all(by_name[n] == "registry" for n in recoloured), (
-        "索引で color に付け替えられた op が、一覧では registry でない")
+    extra = sorted(got - set(by_name))
+    assert not extra, (
+        "索引に無い op が一覧に在る(索引が古い): %d 件 %s" % (len(extra), extra[:5]))
+
+    want_ledger = {n for n, o in by_name.items() if o["tier"] == "ledger"}
+    got_ledger = {r["name"] for r in rows if r["tier"] == "ledger"}
+    assert got_ledger == want_ledger, (
+        "台帳層が索引と食い違う(依存を持たない層なので環境差では説明がつかない): "
+        "一覧に無い %s / 索引に無い %s"
+        % (sorted(want_ledger - got_ledger)[:5], sorted(got_ledger - want_ledger)[:5]))
+
+    #: 索引の ``color`` は別の op ではなく、レジストリ行に貼り直した札なので数えない。
+    want_tiers = {o["tier"] for o in index["ops"]} - {"color"}
+    got_tiers = {r["tier"] for r in rows}
+    assert want_tiers <= got_tiers, (
+        "一覧に現れない層が在る: %s —— 層がまるごと見えないのがこの門の見張るもの"
+        % sorted(want_tiers - got_tiers))
+
+
+def _assert_the_listing_holds_everything_this_process_has(rows):
+    """一覧が、**この処理系が実際に持っている** op を 1 つも落としていないこと。
+
+    索引と違ってこちらは同じプロセスの中の話なので、環境で変わらない。
+    ``list_ops`` が絞り込みや並べ替えで静かに落とす事故を、ここで止める。
+    """
+    reg = {r["name"] for r in rows if r["tier"] == "registry"}
+    assert reg == set(api.op_names()), (
+        "一覧の registry が、この処理系のレジストリと食い違う: 一覧に無い %s / 余分 %s"
+        % (sorted(set(api.op_names()) - reg)[:5], sorted(reg - set(api.op_names()))[:5]))
+    nary = {r["name"] for r in rows if r["tier"] == "nary"}
+    assert nary == set(api.op_names(include_nary=True)) - set(api.op_names()), (
+        "一覧の n-ary が、この処理系の n-ary と食い違う")
 
 
 def _index():
@@ -193,7 +223,8 @@ def test_the_tier_gate_catches_a_listing_that_drops_a_tier():
     """★門を壊して確かめる —— 台帳を外した既定の一覧は、索引と食い違うこと。"""
     with pytest.raises(AssertionError) as e:
         _assert_listing_matches_the_index(api.list_ops(), _index())
-    assert "一覧に無い" in str(e.value)
+    #: ★台帳をまるごと外すと「層が現れない」で落ちる —— この門が見張る事故そのもの。
+    assert "層が在る" in str(e.value) or "台帳層" in str(e.value), str(e.value)
 
 
 def test_the_default_listing_still_holds_the_image_vocabulary():
@@ -207,3 +238,42 @@ def test_the_index_and_the_listing_share_one_ledger_table():
     import imgevolve
     assert ({r["name"] for r in imgevolve._ledger_rows(set())}
             == {r["name"] for r in api.ledger_rows()})
+
+
+def test_the_listing_holds_everything_this_process_has():
+    _assert_the_listing_holds_everything_this_process_has(api.list_ops(include_ledger=True))
+
+
+def test_that_gate_catches_a_listing_that_drops_one_registry_op():
+    """★門を壊して確かめる —— レジストリの 1 本を落とした一覧は落ちること。"""
+    rows = api.list_ops(include_ledger=True)
+    victim = next(r["name"] for r in rows if r["tier"] == "registry")
+    with pytest.raises(AssertionError) as e:
+        _assert_the_listing_holds_everything_this_process_has(
+            [r for r in rows if r["name"] != victim])
+    assert victim in str(e.value)
+
+
+def test_the_tier_gate_survives_an_environment_without_the_heavy_extras(monkeypatch):
+    """★CI の環境をここで作って確かめる —— **待たずに**。
+
+    CI は py3.11 にしか torch / kornia / opencv-contrib / mahotas を入れない。
+    2026-09-25 の実測では、そのせいで **26 op** が索引にあって一覧に無かった。
+    その形を作って、門が**通る**ことを見る(層は欠けていないので通ってよい)。
+    """
+    index = _index()
+    heavy = {o["name"] for o in index["ops"]
+             if o["tier"] in ("registry", "color")
+             and o["name"].startswith(("dl_", "xkor_", "xcv3_", "xmh_"))}
+    assert len(heavy) >= 20, "重い extras の op が %d 本しか見つからない" % len(heavy)
+    rows = [r for r in api.list_ops(include_ledger=True) if r["name"] not in heavy]
+    _assert_listing_matches_the_index(rows, index)
+
+
+def test_the_ledger_omission_is_never_excused_as_an_environment_difference():
+    """★台帳 1 本を落としたら、環境差の話にせず落ちること。"""
+    rows = api.list_ops(include_ledger=True)
+    victim = next(r["name"] for r in rows if r["tier"] == "ledger")
+    with pytest.raises(AssertionError) as e:
+        _assert_listing_matches_the_index([r for r in rows if r["name"] != victim], _index())
+    assert "台帳層" in str(e.value) and victim in str(e.value)

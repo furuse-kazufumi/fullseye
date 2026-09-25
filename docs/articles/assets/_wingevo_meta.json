@@ -6,8 +6,8 @@
     "stem": "wingevo_champion_photon_denoise",
     "kind": "png",
     "info": {
-     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_photon_denoise.png",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_photon_denoise_thumb.jpg",
+     "png": "docs/articles/assets/wingevo_champion_photon_denoise.png",
+     "thumb": "docs/articles/assets/wingevo_champion_photon_denoise_thumb.jpg",
      "size": [
       1060,
       352
@@ -28,8 +28,8 @@
     "stem": "wingevo_champion_vibration_map",
     "kind": "png",
     "info": {
-     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_vibration_map.png",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_vibration_map_thumb.jpg",
+     "png": "docs/articles/assets/wingevo_champion_vibration_map.png",
+     "thumb": "docs/articles/assets/wingevo_champion_vibration_map_thumb.jpg",
      "size": [
       956,
       326
@@ -50,8 +50,8 @@
     "stem": "wingevo_champion_lf_slope",
     "kind": "png",
     "info": {
-     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_lf_slope.png",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_lf_slope_thumb.jpg",
+     "png": "docs/articles/assets/wingevo_champion_lf_slope.png",
+     "thumb": "docs/articles/assets/wingevo_champion_lf_slope_thumb.jpg",
      "size": [
       956,
       326
@@ -72,8 +72,8 @@
     "stem": "wingevo_champion_specular_removal",
     "kind": "png",
     "info": {
-     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_specular_removal.png",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_specular_removal_thumb.jpg",
+     "png": "docs/articles/assets/wingevo_champion_specular_removal.png",
+     "thumb": "docs/articles/assets/wingevo_champion_specular_removal_thumb.jpg",
      "size": [
       1060,
       352
@@ -96,8 +96,8 @@
     "stem": "wingevo_beat_null",
     "kind": "png",
     "info": {
-     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_beat_null.png",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_beat_null_thumb.jpg",
+     "png": "docs/articles/assets/wingevo_beat_null.png",
+     "thumb": "docs/articles/assets/wingevo_beat_null_thumb.jpg",
      "size": [
       1120,
       746
@@ -146,8 +146,8 @@
     "stem": "wingevo_observed_vs_locked",
     "kind": "png",
     "info": {
-     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_observed_vs_locked.png",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_observed_vs_locked_thumb.jpg",
+     "png": "docs/articles/assets/wingevo_observed_vs_locked.png",
+     "thumb": "docs/articles/assets/wingevo_observed_vs_locked_thumb.jpg",
      "size": [
       1120,
       660
@@ -194,8 +194,8 @@
     "stem": "wingevo_seed_spread",
     "kind": "gif",
     "info": {
-     "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingevo_seed_spread.gif",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_seed_spread_thumb.jpg",
+     "gif": "docs/articles/assets/media/wingevo_seed_spread.gif",
+     "thumb": "docs/articles/assets/thumbs/wingevo_seed_spread_thumb.jpg",
      "frames": 8,
      "size": [
       1100,
@@ -237,8 +237,8 @@
     "stem": "wingevo_generations",
     "kind": "gif",
     "info": {
-     "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingevo_generations.gif",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_generations_thumb.jpg",
+     "gif": "docs/articles/assets/media/wingevo_generations.gif",
+     "thumb": "docs/articles/assets/thumbs/wingevo_generations_thumb.jpg",
      "frames": 24,
      "size": [
       1120,
@@ -338,8 +338,8 @@
     "stem": "wingevo_stage_photon",
     "kind": "gif",
     "info": {
-     "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingevo_stage_photon.gif",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_stage_photon_thumb.jpg",
+     "gif": "docs/articles/assets/media/wingevo_stage_photon.gif",
+     "thumb": "docs/articles/assets/thumbs/wingevo_stage_photon_thumb.jpg",
      "frames": 6,
      "size": [
       1040,
@@ -373,8 +373,8 @@
     "stem": "wingevo_stage_specular",
     "kind": "gif",
     "info": {
-     "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingevo_stage_specular.gif",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_stage_specular_thumb.jpg",
+     "gif": "docs/articles/assets/media/wingevo_stage_specular.gif",
+     "thumb": "docs/articles/assets/thumbs/wingevo_stage_specular_thumb.jpg",
      "frames": 6,
      "size": [
       1000,
@@ -411,8 +411,8 @@
     "stem": "wingevo_signature_collapse",
     "kind": "gif",
     "info": {
-     "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingevo_signature_collapse.gif",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_signature_collapse_thumb.jpg",
+     "gif": "docs/articles/assets/media/wingevo_signature_collapse.gif",
+     "thumb": "docs/articles/assets/thumbs/wingevo_signature_collapse_thumb.jpg",
      "frames": 40,
      "size": [
       1100,
@@ -437,8 +437,8 @@
     "stem": "wingevo_type_fixpoint",
     "kind": "gif",
     "info": {
-     "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingevo_type_fixpoint.gif",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_type_fixpoint_thumb.jpg",
+     "gif": "docs/articles/assets/media/wingevo_type_fixpoint.gif",
+     "thumb": "docs/articles/assets/thumbs/wingevo_type_fixpoint_thumb.jpg",
      "frames": 5,
      "size": [
       1100,
@@ -471,8 +471,8 @@
     "stem": "wingevo_coverage_families",
     "kind": "png",
     "info": {
-     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_coverage_families.png",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_coverage_families_thumb.jpg",
+     "png": "docs/articles/assets/wingevo_coverage_families.png",
+     "thumb": "docs/articles/assets/wingevo_coverage_families_thumb.jpg",
      "size": [
       1120,
       816
@@ -584,8 +584,8 @@
     "stem": "wingevo_diffusion",
     "kind": "gif",
     "info": {
-     "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingevo_diffusion.gif",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_diffusion_thumb.jpg",
+     "gif": "docs/articles/assets/media/wingevo_diffusion.gif",
+     "thumb": "docs/articles/assets/thumbs/wingevo_diffusion_thumb.jpg",
      "frames": 40,
      "size": [
       1100,
@@ -611,8 +611,8 @@
     "stem": "wingevo_silent_bug",
     "kind": "png",
     "info": {
-     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_silent_bug.png",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_silent_bug_thumb.jpg",
+     "png": "docs/articles/assets/wingevo_silent_bug.png",
+     "thumb": "docs/articles/assets/wingevo_silent_bug_thumb.jpg",
      "size": [
       1120,
       780
@@ -644,8 +644,8 @@
     "stem": "wingevo_promotion_gate",
     "kind": "png",
     "info": {
-     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_promotion_gate.png",
-     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_promotion_gate_thumb.jpg",
+     "png": "docs/articles/assets/wingevo_promotion_gate.png",
+     "thumb": "docs/articles/assets/wingevo_promotion_gate_thumb.jpg",
      "size": [
       1120,
       860

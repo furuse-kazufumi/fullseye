@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1042. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1054. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -1523,7 +1523,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_api.py`
 
-- **L155** _(ja)_ — ★突き合わせは**名前**で行う。索引の ``color`` 層は別の op ではなく、 レジストリ行に ``backends_color`` の担当分として貼り直した札である (``imgevolve._index_payload``)。tier で照合すると、その 12 件が 「一覧に無い」と誤って出る —— 層の付け替えを欠落と読み違える形。
+- **L226** _(ja)_ — ★台帳をまるごと外すと「層が現れない」で落ちる —— この門が見張る事故そのもの。
 
 ## `tests/test_astrostack.py`
 
@@ -1558,6 +1558,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L64** — ★OPS3D ist eine flache Tabelle {op-Name: metadata dict}. Zählt man sie als `sum(len(v) for v in values())`, ergibt das **die Gesamtzahl der Metadaten-Schlüssel über alle ops** (2,492), womit beinahe eine bedeutungslose Zahl ins Register geschrieben worden wäre (2026-09-08, vor dem Schreiben durch Ansehen der Struktur bemerkt).
 - **L85** — ★Hinzugefügt 2026-09-08: zwei Register, die Beschreibungen sammeln. **Beschreibungen schrumpfen am leisesten**, deshalb werden sie hier gezählt (Quelle von docs/CAPABILITIES.md und docs/HARDENING.md).
 
+## `tests/test_connectivity_doc.py`
+
+- **L88** _(ja)_ — ★`あり` の欄は**見ない** —— その lib が import できるかは機械ごとに違い、 そこを門にすると手元と CI で答えが変わる。
+- **L146** _(ja)_ — ★入口の名前は**実装の台帳から**引く。表に手で書いた名前が古くなると、 「証拠が消えた対応済み」になる。
+- **L191** _(ja)_ — ★門を壊して確かめる —— 「通るだけの門」と「何も見ていない門」は区別できない。 (節, 壊し方, 期待する文言)。壊すのは**表の側**で、判定は本物の関数を呼ぶ。
+
 ## `tests/test_degenerate_inputs.py`
 
 - **L77** _(ja)_ — ★スカラに「0 要素」は無い(2026-09-17、戻りの橋 ``feature_to_img`` で feature が初めて**入力**になったときに気づいた)。この門が探している のは 0/0 なので、空配列の代わりに**分母を 0 にする値** 0.0 を渡す。
@@ -1583,6 +1589,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L312** — ★Mit nur Anzahl und Namen bleiben der Typvertrag (in_sort/out_sort), die Kategorie, die HALCON-Entsprechung und der tier komplett veraltet und werden trotzdem grün (Codex' adversariales Review, 2026-09-06). RAG liest in_sort/out_sort, um typverknüpfbare ops zu wählen; ist das veraltet, **schlägt es voller Zuversicht eine Kette vor, die nicht verbindet**. Samt Inhalt abgleichen.
 - **L400** _(ja)_ — ★日本語版だけを見ていた門を 6 言語に広げた(2026-09-16)。`local_std` を足した ときに ja/en/ko/tw/zh が 1,947 のまま落ちたが、**de は落ちなかった** —— ドイツ語の桁区切りはピリオドで `1.947` と書くため、`"{:,}"` では一致も 不一致も見えない。門が 1 言語にしか立っていないと、他の 5 言語は黙って腐る。
 - **L467** — ★Prüfen, dass die Ausgabe "Inhalt hat" —— ein Gate, das nur die Übereinstimmung prüft, wird grün, selbst wenn beide leer sind # --------------------------------------------------------------------------- # Gemessen 2026-09-06. **Unterschreitet man es, schlägt es fehl** (Anheben ist erlaubt).
+
+## `tests/test_docs_no_local_paths.py`
+
+- **L36** _(ja)_ — ★区切りは 1 つとも 2 つとも書かれる —— JSON の中では区切りが**二重になる**。 一重の形だけ見ていたので 2026-09-25 に二重の形を丸ごと見落とした (最大の漏れが公開 JSON の 164 か所だった)。
+- **L39** _(ja)_ — ★ここに綴りの例を書かないこと。この門は自分のコメントも読むので、 例として書いたパスがそのまま違反になる(実際に一度そうなった)。
+- **L41** _(ja)_ — ★`e:\n` のようなエスケープ列と LaTeX の `q:\,` は道ではない —— 区切りの次が n/r/t で語が続かないもの、道に使えない文字で始まるものは外す。
 
 ## `tests/test_dsp.py`
 
@@ -1634,7 +1646,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_glyphops.py`
 
 - **L256** _(ja)_ — ★bbox は**描いた後のインクから**取る。PIL の text() は書体の ascent 分だけ 下げて描くので、指定した座標をそのまま bbox にすると字が縦にはみ出し、 無事な字まで「遠い」と出る(実測 0.058〜0.110、床 0.058)。
-- **L348** _(ja)_ — ★ここで検査するのは **閉形式で言い切れること** だけにしてある。 端から端まで(受理率・誤検出)の証拠は repo の外の実写 12 枚で取った (`C:/dev/data/glyph_poc/`、正本 = glyph コーパスの curated/140)。 合成の場面を 1 枚こしらえて「動いた」と言うのは**やめた** —— 候補の生成は 局所標準偏差の分位点で切るので背景が**ざらついている**ことを要求し、四隅の 精密化は背景の勾配が**小さい**ことを要求する。実写はその両方を満たすが、 素朴な合成(一様乱数の背景)はどちらか片方しか満たせず、合成で緑にすると 「合成に合わせた実装」になってしまう。
+- **L348** _(ja)_ — ★ここで検査するのは **閉形式で言い切れること** だけにしてある。 端から端まで(受理率・誤検出)の証拠は repo の外の実写 12 枚で取った (**repo の外**に置いた実写一式、正本 = glyph コーパスの curated/140)。 合成の場面を 1 枚こしらえて「動いた」と言うのは**やめた** —— 候補の生成は 局所標準偏差の分位点で切るので背景が**ざらついている**ことを要求し、四隅の 精密化は背景の勾配が**小さい**ことを要求する。実写はその両方を満たすが、 素朴な合成(一様乱数の背景)はどちらか片方しか満たせず、合成で緑にすると 「合成に合わせた実装」になってしまう。
 - **L483** _(ja)_ — ★比(中央値 ÷ 床)は環境で動く(Windows 3 書体 1.90 / CI noto-cjk 2.45)ので、 境にしないし、ここでも値を断言しない。載っていることだけ見る。
 
 ## `tests/test_honest_summary_arithmetic.py`
@@ -1907,17 +1919,30 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1950** — ★2026-09-02: gabor verwendet nun eine feste Skala, die durch die L1-Norm des Kernels teilt, und gibt einen **ueber op hinweg vergleichbaren Absolutwert** zurueck. Zuvor teilte es durch "den maximalen Absolutwert in diesem Bild", also pro Orientierung durch einen anderen Divisor, was die Groesse der Antwort selbst = die Unterscheidungskraft ueber Orientierungen zunichtemachte. Im Gegenzug faellt der Rueckgabewert in ein schmales Band am unteren Ende von [0,1] (Mittel 0.007–0.030 bei diesen 3 Mustern), sodass **ein direktes Einfuegen alle 3 pechschwarz macht**. Zeige das Bild auf das 1–99%tile gestreckt und gib in den Label-Zahlen die vor der Streckung gemessenen Werte an (dieselbe Konvention wie das highpass-Panel von freq_sweep).
 - **L2065** — ★2026-09-02: die 3 op wurden zu getrennten Implementierungen. Zuvor ritten alle 3 auf geom "zoom" mit einer gegenseitigen maximalen Differenz von 0.0 / 4.9e-14 (= identisch), und zudem war b in allen 3 tot. Jetzt zoom_image_factor = 2 Skalierungsfaktoren (Hoehe/Breite) / zoom_image_size = Zielgroesse / rescale_img = isotroper Skalierungsfaktor + Interpolationsordnung. Die canvas shape bleibt bei allen wie die Eingabe.
 
+## `tools/gen_wing3d_gallery.py`
+
+- **L3878** _(ja)_ — ★台帳に残すパスは repo 相対へ落とす(公開される場所なので)。
+
 ## `tools/gen_wingastro_gallery.py`
 
 - **L411** — ★Miss das Rauschen mit :func:`astrostack.noise_sigma` (ein robustes Hintergrund-σ). Verwendet man "RMS des Residuums gegen den Ground Truth", gehen **sogar PSF-Verschiebungen ins Residuum ein** -- dieses Experiment variiert absichtlich FWHM pro Frame, sodass eine andere Auswahl die PSF nach dem Stacken aendert und man nicht mehr unterscheiden kann, ob das gestiegene Residuum vom Rauschen oder von der Bildaenderung kommt (gemessen bewegte sich der Wert von 25.2 -> 61.3, aber das meiste davon war kein Rauschen). Das Hintergrund-σ haengt nicht von der Form der Sterne ab.
 - **L471** — ★Die "maximale Differenz" bewegt sich bei einem einzelnen Frame nicht -- denn solange der Recall unter 1 liegt, haelt ein einziges uebersehenes Pixel das Maximum unveraendert fest. **Wie viele Pixel weiterhin stark vom Ground Truth abweichen** und **die Gesamtmenge der Abweichung** spiegeln die Wirkung der Entfernung direkt wider.
 - **L713** — ★ In Originalgröße nebeneinandergestellt lässt sich "2 detektiert" **mit bloßem Auge nicht bestätigen** (innerhalb von 44x44 ist ein Paar im Abstand von 1.6 Pixeln nur ein Klumpen von wenigen Pixeln). Um keine Abbildung zu erzeugen, die den Leser allein der Behauptung des Detektors vertrauen lässt, schneide um jedes Paar denselben physischen Bereich aus und vergrößere ihn.
 - **L844** — ★ Die Fehlerkarte färbt **die Größe, nicht das Vorzeichen**. Die erste Version verwendete eine divergierende Farbskala, aber der Fehler in diesem Experiment ist stets positiv, sodass "positiv = das Blau von right" entstand und sich die umgekehrte Bedeutung ergab, bei der **ein defekter Zustand mit der "korrekten" Farbe eingefärbt wird**. Hier soll dem Leser nicht die Richtung, sondern "wie falsch es ist" vermittelt werden, also variiere nur die Intensität einer einzigen wrong-Farbe (und zeige zusätzlich Symbole und Zahlen, damit die Bedeutung nicht allein an der Farbe hängt).
+- **L1417** _(ja)_ — ★台帳に残すパスは repo 相対へ落とす(公開される場所なので)。
 
 ## `tools/gen_wingconv_gallery.py`
 
 - **L573** — 5. ★Eine volle Runde über die Darstellungen hinweg (die Kette der Umwandlungen ist genau der Ort, an dem Lügen entstehen) # --------------------------------------------------------------------------- #
 - **L599** — ★ "Eine Schale, kein Volumenkörper" **darf nicht mit einer Maximum-Intensity-Projektion behauptet werden** —— MIP ist das Maximum entlang der Tiefenrichtung, sodass selbst eine dünne Schale innen gefüllt aussieht (tatsächlich haben wir es einmal so gezeichnet und beinahe die kaum unterschiedlichen Zahlen "Volumen 5768 -> Schale 5608" berichtet). Ob das Innere erhalten bleibt, sagt man mit dem **Mittelschnitt** und dem **inneren Füllgrad**.
+
+## `tools/gen_wingct_gallery.py`
+
+- **L862** _(ja)_ — ★台帳に残すパスは repo 相対へ落とす(公開される場所なので)。
+
+## `tools/gen_wingevo_gallery.py`
+
+- **L2065** _(ja)_ — ★台帳に残すパスは repo 相対へ落とす(公開される場所なので)。
 
 ## `tools/gen_wingopt_gallery.py`
 
@@ -1927,6 +1952,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1581** — ★ Der Bereich "Unschärfe innerhalb von 1 Pixel" wird **nicht aus dem Gitter entnommen**. Die Schrittweite des Sweeps beträgt 3.9 mm, während die Schärfentiefe nur 0.74 mm ist, sodass kein einziger Punkt auf das Gitter fällt (die erste Version stürzte dort ab, weil min() leer wurde). Löse die Grenze selbst per Bisektion.
 - **L1600** — ★ Der Überhöhungsfaktor ist **vertikale Pixel/mm ÷ horizontale Pixel/mm**. Die erste Version schrieb den Kehrwert und zeigte "0.13x" auf einer um das 8-fache gestreckten Abbildung an (was dem Leser genau das Gegenteil vermittelt).
 - **L2090** — ★ In zwei Zeilen aufteilen, oben und unten. In einer Abbildung überlagert, lesen sich die beiden Linien mit unterschiedlichen Einheiten (Pixelzahl und Detektionsrate) so, als lägen sie auf derselben vertikalen Achse (genau so sah es tatsächlich aus).
+- **L2776** _(ja)_ — ★台帳に残すパスは repo 相対へ落とす(公開される場所なので)。
 
 ## `tools/gen_wingpoc_gallery.py`
 
@@ -1939,6 +1965,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L444** _(ja)_ — 棟の目次。★展示数は毎回数えて出す(手で書くと必ず古くなる)。
 - **L450** _(ja)_ — 目次に出す短い翼名。★区切りは ` / ` —— 翼名そのものに「・」が入るので (寸法・形状計測 / 医用・生物 / 色・分離)、「・」で繋ぐと境目が読めなくなる。
 - **L556** _(ja)_ — ★`external` の部(手書きの数学記事)は描かない。`index` は案内なので上で出した。
+
+## `tools/gen_wingstudio_gallery.py`
+
+- **L2611** _(ja)_ — ★台帳に残すパスは repo 相対へ落とす(公開される場所なので)。
 
 ## `tools/op_example_index.py`
 

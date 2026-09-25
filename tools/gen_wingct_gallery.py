@@ -859,9 +859,12 @@ def main(argv=None):
             if again != meta[name]["sha256"]:
                 raise SystemExit(f"{name} が決定的でない")
 
+    #: ★台帳に残すパスは repo 相対へ落とす(公開される場所なので)。
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from _relpaths import relativise as _rel
     os.makedirs(os.path.dirname(META_PATH), exist_ok=True)
     with open(META_PATH, "w", encoding="utf-8") as fh:
-        json.dump(meta, fh, ensure_ascii=False, indent=1, default=float)
+        json.dump(_rel(meta, ROOT), fh, ensure_ascii=False, indent=1, default=float)
 
     if set(want) == set(EXHIBITS):
         ja, en = _captions(meta)
