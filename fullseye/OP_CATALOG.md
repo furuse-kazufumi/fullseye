@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(250 例)
+### 2-D 画像/信号/幾何(251 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -124,6 +124,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **op の返り値(型付き)を JSON に出して bit そのままで戻す** — image / region / points / contour / feature / matrix / table を sort ごとの一つの JSON 形に。浮動小数は base64 の float64 で往復 bit 一致、region は run-length、非有限値は封筒に印を立てて運ぶ。save_json / load_json でファイル一往復、to_json_lines / from_json_lines で JSONL 台帳。★match は慣例が 2 つ混在するので橋を作らず断る(fail-closed)。 `py -3.11 examples/typed_results_json.py`
 - **精度ユニオン型ストレージ(PrecisionUnion)を N-D の実データ様式で使う** — ラベルボリューム(無損失)と深度ボリューム(atol 量子化)をタイル別最小ビット深さで保持し、メモリ比・save/load のファイル比・遅延アフィン連鎖の一致を数値で確かめる。高エントロピー画像では勝たないことも同じ場で示す(honest な境界)。 `py -3.11 examples/precision_union_volume.py`
 - **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
+
+**measurement**
+- **形状特徴を閉形式の真値で採点する —— そして消えないバイアスを見せる** — 矩形と円の厳密な閉形式(面積・矩形度・周囲長²/(4π面積)・円形度)で region 特徴を採点。面積と矩形度は丸め誤差 0 で一致。コンパクトさが頭打ちしないことを長さを伸ばして assert し、周囲長の 2 つの推定量が**逆の形で外す**(perimeter は円で +5%・crofton は正方形で -5%、どちらも解像度で消えない)ことを示す。 `py -3.11 examples/shape_factors_closed_form.py`
 
 **segmentation**
 - **12 通りの自動しきい値に同じ絵を見せる —— 割れてよい数と、割れては困る向き** — 値が 2 種類しかない板(明部ちょうど 400 px)を大域 10 種・局所 4 種の自動しきい値に見せ、大域が全部 400 px で一致することを assert。局所は数が外れてよいが向きは同じであることを確かめる。向きが逆だと面積が 400 から3,696(9.2 倍)になり例外も警告も出ないところまで見せる。実際に SimpleITK 由来の 3 op が補集合を返していたのをこの形で見つけた。 `py -3.11 examples/threshold_family_agreement.py`
@@ -1322,7 +1325,7 @@ _計 932 ops / 48 categories。_
 ### features(73)
 - `effective_bit_depth` `image → feature` · 例: `gallery2d_features`
 - `blob_count` (halcon: `count_obj`) `region → feature` · 例: `gallery2d_features`, `poc_real_coin_metrology`, `quickstart`
-- `area_frac` (halcon: `area_center`) `region → feature` · 例: `gallery2d_features`, `threshold_family_agreement`
+- `area_frac` (halcon: `area_center`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`, `threshold_family_agreement`
 - `count_contours` (halcon: `count_obj`) `contour → feature` · 例: `gallery2d_features`
 - `total_length` (halcon: `length_xld`) `contour → feature` · 例: `gallery2d_features`, `poc_solar_el_inspection`
 - `vol_count` `volume → feature` · 例: `gallery2d_features`
@@ -1336,9 +1339,9 @@ _計 932 ops / 48 categories。_
 - `area_center` (halcon: `area_center`) `region → match` · 例: `gallery2d_features`
 - `count_obj` (halcon: `count_obj`) `region → feature` · 例: `gallery2d_features`
 - `circularity` (halcon: `circularity`) `region → feature` · 例: `gallery2d_features`, `poc_cell_counting`, `poc_particle_sizing`, `poc_rotation_invariance_audit`
-- `compactness` (halcon: `compactness`) `region → feature` · 例: `gallery2d_features`
+- `compactness` (halcon: `compactness`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`
 - `convexity` (halcon: `convexity`) `region → feature` · 例: `gallery2d_features`
-- `rectangularity` (halcon: `rectangularity`) `region → feature` · 例: `gallery2d_features`
+- `rectangularity` (halcon: `rectangularity`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`
 - `eccentricity` (halcon: `eccentricity`) `region → feature` · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
 - `orientation_region` (halcon: `orientation_region`) `region → feature` · 例: `gallery2d_features`
 - `roundness` (halcon: `roundness`) `region → feature` · 例: `gallery2d_features`

@@ -927,7 +927,16 @@ def _sh_region_feat(p):
         if metric == "circularity":
             return np.float64(min(1.0, 4 * np.pi * pr.area / (per * per)))
         if metric == "compactness":
-            return np.float64(min(1.0, (per * per) / (4 * np.pi * max(pr.area, 1)) / 10))
+            # ★**頭打ちを外した**(2026-09-26)。以前は ``min(1.0, C'/10)`` で、
+            # C' = L^2/(4πF) が 10 を超える形(幅 2 px なら長さ 80 以上の傷)を
+            # 全部 1.0 に潰していた —— 傷や割れという、いちばん見たい領域で
+            # 「形が違うのに同じ数」が返っていた。値域 [0,1] はそもそも契約では
+            # なく(`elliptic_axis` 6.35 / `r3_region_features` 18.1 が既に超える)、
+            # 同じ量を素のまま返す兄弟 op(`r3_region_features`)も在った。
+            # HALCON は max(1, C') と下で切るが、ここでは切らない —— 小さすぎて
+            # C' < 1 になる領域は「近似が効いていない」という情報そのものであり、
+            # 必要なら呼ぶ側で切れる。docs/hardening/compactness-saturated-at-one.md
+            return np.float64((per * per) / (4 * np.pi * max(pr.area, 1)))
         if metric == "convexity":
             return np.float64(pr.area / max(pr.area_convex, 1))
         if metric == "solidity":
@@ -1566,7 +1575,7 @@ SEED: list[tuple] = [
     ("circularity", "features", REG, FEA, "region_feat", {"metric": "circularity"},
      '円形度 ``4π・面積 / 周囲長²``(1 に近いほど真円に近い)。連結成分が\n複数ある場合は最大面積のものだけを評価する。HALCON の ``circularity``\n（Shape factor for the circularity (similarity to a circle) of a\nregion.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("compactness", "features", REG, FEA, "region_feat", {"metric": "compactness"},
-     'コンパクトさ ``周囲長² / (4π・面積) / 10``(円形度の逆数に近い量を\n10 で正規化しただけの実装 ―― この ``/10`` は HALCON の定義に基づく係数\nではなく、値を [0,1] に収めるための便宜的なスケーリングである点に注意)。\nHALCON の ``compactness``（Shape factor for the compactness of a region.）\nに相当する近似。\n\n``a``, ``b`` は未使用。'),
+     'コンパクトさ ``周囲長² / (4π・面積)``。円で 1、細長い/ぎざぎざ/穴が多いほど\n大きくなり、**上限は無い**。HALCON の ``compactness``（Shape factor for the\ncompactness of a region.）と同じ量。\n\n★2026-09-26 まで ``/10`` して ``min(1.0, ...)`` で切っていた —— 値を [0,1] に\n収めるための便宜だったが、``周囲長²/(4π・面積)`` が 10 を超える形(幅 2 px なら\n長さ 80 以上の傷)を**全部 1.0 に潰していた**。傷や割れという、いちばん見たい\n領域で「形が違うのに同じ数」が返っていたことになる。値域 [0,1] はそもそも\nfeature の契約ではない(``elliptic_axis`` は 6.35、``r3_region_features`` は\n18.1 を返す)ので、潰す理由が無かった ――\n``docs/hardening/compactness-saturated-at-one.md``。\n\nHALCON は ``max(1, C)`` と**下で**切る(画素近似で 1 を下回りうるため)が、\nここでは切らない。1 を下回る値は「領域が小さすぎて近似が効いていない」と\nいう情報そのもので、必要なら呼ぶ側で切れる。\n\n``a``, ``b`` は未使用。'),
     ("convexity", "features", REG, FEA, "region_feat", {"metric": "convexity"},
      '凸性 ``面積 / 凸包面積``(1 に近いほど凸形状に近い)。``skimage.\nmeasure.regionprops`` の ``area`` と ``area_convex`` の比。HALCON の\n``convexity``（Shape factor for the convexity of a region.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("rectangularity", "features", REG, FEA, "region_feat", {"metric": "rectangularity"},

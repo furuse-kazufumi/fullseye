@@ -10,11 +10,19 @@
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/compactness.chain.jpg">compactness: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>コンパクトさ `<code style="color:#22d3bf">周囲長² / (4π・面積) / 10</code>`(円形度の逆数に近い量を</p>
-<p>10 で正規化しただけの実装 ―― この `<code style="color:#22d3bf">/10</code>` は HALCON の定義に基づく係数</p>
-<p>ではなく、値を [0,1] に収めるための便宜的なスケーリングである点に注意)。</p>
-<p>HALCON の `<code style="color:#22d3bf">compactness</code>`（Shape factor for the compactness of a region.）</p>
-<p>に相当する近似。</p>
+<p>コンパクトさ `<code style="color:#22d3bf">周囲長² / (4π・面積)</code>`。円で 1、細長い/ぎざぎざ/穴が多いほど</p>
+<p>大きくなり、<b>上限は無い</b>。HALCON の `<code style="color:#22d3bf">compactness</code>`（Shape factor for the</p>
+<p>compactness of a region.）と同じ量。</p>
+<p>★2026-09-26 まで `<code style="color:#22d3bf">/10</code><code style="color:#22d3bf"> して </code><code style="color:#22d3bf">min(1.0, ...)</code>` で切っていた —— 値を [0,1] に</p>
+<p>収めるための便宜だったが、`<code style="color:#22d3bf">周囲長²/(4π・面積)</code>` が 10 を超える形(幅 2 px なら</p>
+<p>長さ 80 以上の傷)を<b>全部 1.0 に潰していた</b>。傷や割れという、いちばん見たい</p>
+<p>領域で「形が違うのに同じ数」が返っていたことになる。値域 [0,1] はそもそも</p>
+<p>feature の契約ではない(`<code style="color:#22d3bf">elliptic_axis</code><code style="color:#22d3bf"> は 6.35、</code><code style="color:#22d3bf">r3_region_features</code>` は</p>
+<p>18.1 を返す)ので、潰す理由が無かった ――</p>
+<p>`<code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>`。</p>
+<p>HALCON は `<code style="color:#22d3bf">max(1, C)</code>` と<b>下で</b>切る(画素近似で 1 を下回りうるため)が、</p>
+<p>ここでは切らない。1 を下回る値は「領域が小さすぎて近似が効いていない」と</p>
+<p>いう情報そのもので、必要なら呼ぶ側で切れる。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
@@ -28,6 +36,7 @@
 compactness 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Acompactness%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Acompactness%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shape_factors_closed_form">shape_factors_closed_form</a> — <code style="color:#22d3bf">py -3.11 examples/shape_factors_closed_form.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">feature</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">features</code>)</h3>

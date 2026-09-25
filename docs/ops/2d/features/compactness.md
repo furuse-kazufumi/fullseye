@@ -5,7 +5,7 @@ category: features
 in: region
 out: feature
 halcon: compactness
-examples: [gallery2d_features]
+examples: [gallery2d_features, shape_factors_closed_form]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -31,11 +31,21 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 使い方
 
-コンパクトさ ``周囲長² / (4π・面積) / 10``(円形度の逆数に近い量を
-10 で正規化しただけの実装 ―― この ``/10`` は HALCON の定義に基づく係数
-ではなく、値を [0,1] に収めるための便宜的なスケーリングである点に注意)。
-HALCON の ``compactness``（Shape factor for the compactness of a region.）
-に相当する近似。
+コンパクトさ ``周囲長² / (4π・面積)``。円で 1、細長い/ぎざぎざ/穴が多いほど
+大きくなり、**上限は無い**。HALCON の ``compactness``（Shape factor for the
+compactness of a region.）と同じ量。
+
+★2026-09-26 まで ``/10`` して ``min(1.0, ...)`` で切っていた —— 値を [0,1] に
+収めるための便宜だったが、``周囲長²/(4π・面積)`` が 10 を超える形(幅 2 px なら
+長さ 80 以上の傷)を**全部 1.0 に潰していた**。傷や割れという、いちばん見たい
+領域で「形が違うのに同じ数」が返っていたことになる。値域 [0,1] はそもそも
+feature の契約ではない(``elliptic_axis`` は 6.35、``r3_region_features`` は
+18.1 を返す)ので、潰す理由が無かった ――
+``docs/hardening/compactness-saturated-at-one.md``。
+
+HALCON は ``max(1, C)`` と**下で**切る(画素近似で 1 を下回りうるため)が、
+ここでは切らない。1 を下回る値は「領域が小さすぎて近似が効いていない」と
+いう情報そのもので、必要なら呼ぶ側で切れる。
 
 ``a``, ``b`` は未使用。
 
@@ -61,6 +71,7 @@ compactness 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
+- [shape_factors_closed_form](../../../../examples/shape_factors_closed_form.py) — `py -3.11 examples/shape_factors_closed_form.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)
 

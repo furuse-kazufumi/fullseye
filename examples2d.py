@@ -145,6 +145,13 @@ EXAMPLES = [
      "summary": "合成画像フォルダ(良品 5・欠陥 1・壊れたファイル 1)を inspect_batch で 前処理→計測→judge→集計。"
                 "各行に入力 sha256・計測・根拠つき Verdict、数値列は EWMA で工程管理、.md/.jsonl(+.xlsx)に "
                 "書き分け、監査ログに追記。欠陥だけ ng・壊れた 1 枚は error で止まらないことを assert。"},
+    {"id": "shape_factors_closed_form", "task": "measurement", "data": "synthetic",
+     "name": "形状特徴を閉形式の真値で採点する —— そして消えないバイアスを見せる",
+     "summary": "矩形と円の厳密な閉形式(面積・矩形度・周囲長²/(4π面積)・円形度)で region "
+                "特徴を採点。面積と矩形度は丸め誤差 0 で一致。コンパクトさが頭打ちしない"
+                "ことを長さを伸ばして assert し、周囲長の 2 つの推定量が**逆の形で外す**"
+                "(perimeter は円で +5%・crofton は正方形で -5%、どちらも解像度で消えない)"
+                "ことを示す。"},
     {"id": "threshold_family_agreement", "task": "segmentation", "data": "synthetic",
      "name": "12 通りの自動しきい値に同じ絵を見せる —— 割れてよい数と、割れては困る向き",
      "summary": "値が 2 種類しかない板(明部ちょうど 400 px)を大域 10 種・局所 4 種の"

@@ -521,12 +521,12 @@
    "de": "Die Implementierung ist identisch mit ``anisotropic_diffusion`` (``kind: \"anisotropic\"``). Echte coherence-enhancing diffusion steuert die Diffusionsrichtung entlang der Eigenvektoren des Strukturtensors (um linienförmige Strukturen zu verbinden), aber dieser Ersatz berechnet keinen Strukturtensor und verwendet stattdessen die einfache anisotrope Perona-Malik-Diffusion (eine Grenze der Annäherung -- der Verbindungseffekt linienförmiger Strukturen wird nicht reproduziert). Ein Platzhalter für HALCONs ``coherence_enhancing_diff`` (Perform a coherence enhancing diffusion of an image.)."
   },
   "2d/compactness": {
-   "fp": "85ad2beff731",
-   "en": "Compactness ``perimeter^2 / (4pi * area) / 10`` -- an implementation that simply normalizes a quantity close to the reciprocal of circularity by dividing by 10. Note that this ``/10`` is not a coefficient based on HALCON's definition, but a convenience scaling to keep the value within [0,1]. An approximation of HALCON's ``compactness`` (Shape factor for the compactness of a region.).",
-   "zh": "紧凑度 ``周长² / (4π・面积) / 10``(只是将接近圆形度倒数的量除以 10 进行归一化的实现——请注意这个 ``/10`` 并非基于 HALCON 定义的系数,而只是为了把数值收进 [0,1] 而做的便宜缩放)。相当于 HALCON 的 ``compactness``(Shape factor for the compactness of a region.)的近似。",
-   "tw": "緊湊度 ``周長² / (4π・面積) / 10``(只是把接近圓形度倒數的量除以 10 做正規化的實作——請注意這個 ``/10`` 並非基於 HALCON 定義的係數,只是為了讓數值落在 [0,1] 而做的權宜縮放)。相當於 HALCON 的 ``compactness``(Shape factor for the compactness of a region.)的近似。",
-   "ko": "콤팩트니스 ``둘레² / (4π・면적) / 10``(원형도의 역수에 가까운 값을 10으로 정규화했을 뿐인 구현 -- 이 ``/10``은 HALCON의 정의에 근거한 계수가 아니라 값을 [0,1]에 담기 위한 편의상의 스케일링이라는 점에 주의). HALCON의 ``compactness``(Shape factor for the compactness of a region.)에 해당하는 근사.",
-   "de": "Kompaktheit ``Umfang^2 / (4pi * Fläche) / 10`` -- eine Implementierung, die lediglich eine dem Kehrwert der Rundheit nahekommende Größe durch 10 normiert. Zu beachten: Dieses ``/10`` ist kein auf HALCONs Definition beruhender Koeffizient, sondern eine praktische Skalierung, um den Wert in den Bereich [0,1] zu bringen. Eine Approximation von HALCONs ``compactness`` (Shape factor for the compactness of a region.)."
+   "fp": "67873f3efdb1",
+   "en": "Compactness ``perimeter^2 / (4pi * area)``. It is 1 for a circle and grows with elongation, roughness and holes, with **no upper bound**. The same quantity as HALCON's ``compactness`` (Shape factor for the compactness of a region.).",
+   "zh": "紧凑度 ``周长² / (4π・面积)``。圆为 1,越细长/越粗糙/孔洞越多则越大,**没有上限**。与 HALCON 的 ``compactness``(Shape factor for the compactness of a region.)是同一个量。",
+   "tw": "緊湊度 ``周長² / (4π・面積)``。圓為 1,越細長/越粗糙/孔洞越多就越大,**沒有上限**。與 HALCON 的 ``compactness``(Shape factor for the compactness of a region.)是同一個量。",
+   "ko": "콤팩트니스 ``둘레² / (4π・면적)``. 원이면 1이고 가늘고 길수록, 울퉁불퉁할수록, 구멍이 많을수록 커지며 **상한이 없다**. HALCON의 ``compactness``(Shape factor for the compactness of a region.)와 같은 양이다.",
+   "de": "Kompaktheit ``Umfang² / (4π · Fläche)``. Für einen Kreis ist sie 1 und wächst mit Länglichkeit, Rauheit und Löchern — **ohne obere Schranke**. Dieselbe Größe wie HALCONs ``compactness`` (Shape factor for the compactness of a region.)."
   },
   "2d/compactness_xld": {
    "fp": "57413426e4e4",
