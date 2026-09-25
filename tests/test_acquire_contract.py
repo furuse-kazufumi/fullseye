@@ -254,7 +254,17 @@ def test_the_connectivity_doc_lists_exactly_the_implemented_backends():
         assert cells[1] == c["kind"], (c["name"], cells[1], c["kind"])
         assert cells[2] == c["unit"], (c["name"], cells[2], c["unit"])
         assert cells[3] == ("✓" if c["implemented"] else "—"), (c["name"], cells[3])
-        assert cells[5] == (c["pip"] or "—"), (c["name"], cells[5], c["pip"])
+        #: ★「見つける」は「開く」とは**別の問い**。1 列にまとめていたせいで、
+        #:   開けるのに一覧に出てこない zed / kinect が表では ✓ のままだった
+        #:   (2026-09-25)。列の中身は AST から数えた実際の分岐と突き合わせる。
+        findable = c["name"] in _branch_strings("_enumerate")
+        assert cells[4] == ("✓" if findable else "—"), (
+            "%s の「見つける」欄が実装と食い違う: 表 %r / 実装 %s"
+            % (c["name"], cells[4], "列挙できる" if findable else "分岐が無い"))
+        if not findable:
+            assert c["name"] in acquire.NOT_ENUMERABLE, (
+                "%s は列挙できないのに理由が `NOT_ENUMERABLE` に無い" % c["name"])
+        assert cells[6] == (c["pip"] or "—"), (c["name"], cells[6], c["pip"])
 
 
 # --------------------------------------------------------------------------- packed
@@ -1004,3 +1014,87 @@ def test_the_axis_note_quotes_no_number_it_cannot_check():
     assert "score published SDKs" in note, "8 軸の註が見つからない"
     stale = [w for w in ("13 of them", "13 SDKs", "(13") if w in note]
     assert not stale, ("別の木のコーパスの件数が書かれている: %s" % stale)
+
+
+# --------------------------------------------------------------------------- #
+# 掴める backend は必ず見つけられる(2026-09-25)
+# --------------------------------------------------------------------------- #
+
+def _branch_strings(func_name: str) -> set:
+    """`acquire.py` の関数 1 つが分岐で名指ししている文字列を **AST で**拾う。
+
+    正規表現で数えない。比較の左辺の変数名は分岐ごとに違うことがあり
+    (`backend ==` / `kind ==` / `b ==`)、綴りを 1 つ決め打つと静かに取りこぼす ――
+    実際 2026-09-25 に `_raw_grab` を正規表現で数えて 10 分岐中 5 しか見えなかった。
+    """
+    import ast
+    import io as _io
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                        "acquire.py")
+    tree = ast.parse(_io.open(path, encoding="utf-8").read())
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef) and node.name == func_name:
+            got = set()
+            for n in ast.walk(node):
+                if not (isinstance(n, ast.Compare) and len(n.ops) == 1
+                        and isinstance(n.ops[0], (ast.Eq, ast.In))):
+                    continue
+                for c in n.comparators:
+                    if isinstance(c, ast.Constant) and isinstance(c.value, str):
+                        got.add(c.value)
+                    elif isinstance(c, (ast.Tuple, ast.List, ast.Set)):
+                        for e in c.elts:
+                            if isinstance(e, ast.Constant) and isinstance(e.value, str):
+                                got.add(e.value)
+            return got
+    raise AssertionError("%s が acquire.py に無い" % func_name)
+
+
+def test_the_backend_branch_reader_is_not_empty():
+    """★この門が空を通していないこと。分岐が 1 つも読めていないなら以下は無意味。"""
+    grab = _branch_strings("_raw_grab")
+    assert len(grab) >= 8, "掴む分岐が %d しか読めていない: %s" % (len(grab), sorted(grab))
+
+
+def _assert_all_grabbable_are_findable(grab: set, enum: set) -> None:
+    """抜けが在れば落ちる。★破壊試験から**同じ判定**を呼べるよう関数へ出す ――
+    式だけ真似た破壊試験は、門そのものが発火するかを確かめていない。"""
+    missing = sorted(grab - enum - set(acquire.NOT_ENUMERABLE))
+    assert not missing, (
+        "掴めるのに見つけられない backend: %s" % ", ".join(missing)
+        + " —— `_enumerate` に分岐を足すか、装置を持たないなら `NOT_ENUMERABLE` に"
+          "理由つきで名指しする")
+
+
+def test_every_grabbable_backend_can_also_be_found():
+    """★掴める backend は必ず列挙もできる。
+
+    2026-09-25 まで `zed` と `kinect` は `_raw_grab` にだけ在り、**開けば取れるのに
+    装置一覧に出てこなかった**。例外は出ず、`list_devices()` が静かに短い答えを
+    返すだけなので、走らせても気づけない。第3バッチで直した `genicam` が `[]` を
+    返していたのと同じ型である。
+    """
+    _assert_all_grabbable_are_findable(_branch_strings("_raw_grab"),
+                                       _branch_strings("_enumerate"))
+
+
+def test_the_exemption_table_names_only_real_backends():
+    """★免除表が実在しない名前を守っていない(免除の側も実在を確かめる)。"""
+    grab = _branch_strings("_raw_grab")
+    ghost = sorted(set(acquire.NOT_ENUMERABLE) - grab)
+    assert not ghost, "`NOT_ENUMERABLE` が掴めない名前を免除している: %s" % ghost
+    for name, why in acquire.NOT_ENUMERABLE.items():
+        assert why and why.strip(), "%s の免除に理由が書かれていない" % name
+
+
+def test_the_enumeration_gate_catches_a_backend_that_cannot_be_found():
+    """★破壊試験: 掴めるだけの backend を 1 つ作ったら落ちること。"""
+    grab = _branch_strings("_raw_grab")
+    enum = _branch_strings("_enumerate")
+    pretend = sorted(grab - set(acquire.NOT_ENUMERABLE))
+    assert pretend, "掴める実装 backend が 1 つも無い"
+    #: ★門そのものを呼んで、本当に落ちることを確かめる(式の真似ではなく)。
+    for name in pretend:
+        with pytest.raises(AssertionError) as e:
+            _assert_all_grabbable_are_findable(grab, enum - {name})
+        assert name in str(e.value), "落ちたが、抜けた backend を名指ししていない"

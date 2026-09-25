@@ -38,20 +38,20 @@ Fullseye は vision に加え **デバイス制御・産業通信** を扱う(HA
 ## 画像取り込み (acquire) (10)
 
 `unit` = `grab()` が返す量。`normalised` = [0,1] の画像 / `m` = **メートルの距離**(深度は計測値なので [0,1] に正規化しない)。
-`実装` = この repo に opener が在るか。`あり` = その SDK がこの環境で import できるか ——**別の問いなので別の列**にしてある(申告だけして開けない行が在った)。
+`開く` = opener が在るか。★`見つける` = **装置一覧に出るか** —— 別の問いなので別の列にしてある。2026-09-25 まで zed と kinect は開けるのに一覧に出てこず、1 列にまとめていたせいで表からは見えなかった。`—` は装置を持たない合成 backend(`acquire.NOT_ENUMERABLE` に理由つき)。`あり` = その SDK がこの環境で import できるか ——**別の問いなので別の列**にしてある(申告だけして開けない行が在った)。
 
-| source | kind | unit | 実装 | あり | pip | 説明 |
-|---|---|---|---|---|---|---|
-| callable | native | normalised | ✓ | ✓ | — | a user-supplied fn() -> frame |
-| dir | native | normalised | ✓ | ✓ | — | a folder / glob of images (offline & tests) |
-| basler | optional | normalised | ✓ | — | pypylon | Basler cameras (pypylon) |
-| genicam | optional | normalised | ✓ | — | harvesters | GigE/USB3 Vision via GenTL (industrial) |
-| opencv | optional | normalised | ✓ | ✓ | opencv-python | USB/UVC webcam, IP/RTSP stream, video file |
-| vimba | optional | normalised | ✓ | — | vmbpy | Allied Vision Vimba X (vmbpy) |
-| kinect | optional | m | ✓ | — | pyk4a | Azure Kinect DK depth (discontinued; Orbbec is the successor) |
-| oak | optional | m | ✓ | — | depthai | Luxonis OAK-D stereo depth (depth in metres) |
-| realsense | optional | m | ✓ | — | pyrealsense2 | Intel RealSense RGB-D (depth in metres) |
-| zed | optional | m | ✓ | — | pyzed | Stereolabs ZED stereo depth (depth in metres) |
+| source | kind | unit | 開く | **見つける** | あり | pip | 説明 |
+|---|---|---|---|---|---|---|---|
+| callable | native | normalised | ✓ | — | ✓ | — | a user-supplied fn() -> frame |
+| dir | native | normalised | ✓ | — | ✓ | — | a folder / glob of images (offline & tests) |
+| basler | optional | normalised | ✓ | ✓ | — | pypylon | Basler cameras (pypylon) |
+| genicam | optional | normalised | ✓ | ✓ | — | harvesters | GigE/USB3 Vision via GenTL (industrial) |
+| opencv | optional | normalised | ✓ | ✓ | ✓ | opencv-python | USB/UVC webcam, IP/RTSP stream, video file |
+| vimba | optional | normalised | ✓ | ✓ | — | vmbpy | Allied Vision Vimba X (vmbpy) |
+| kinect | optional | m | ✓ | ✓ | — | pyk4a | Azure Kinect DK depth (discontinued; Orbbec is the successor) |
+| oak | optional | m | ✓ | ✓ | — | depthai | Luxonis OAK-D stereo depth (depth in metres) |
+| realsense | optional | m | ✓ | ✓ | — | pyrealsense2 | Intel RealSense RGB-D (depth in metres) |
+| zed | optional | m | ✓ | ✓ | — | pyzed | Stereolabs ZED stereo depth (depth in metres) |
 
 ## 画素形式 (単板 59 形式)
 

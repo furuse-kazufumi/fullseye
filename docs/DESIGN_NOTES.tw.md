@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：610 / 1034 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：610 / 1039 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `accel.py`
@@ -25,13 +25,16 @@
 ## `acquire.py`
 
 - **L70** _(ja)_ — ★公開面は**本体から数える**(`tests/test_acquire_contract.py` の門が AST で 読み、ここと突き合わせる)。`dir()` は環境で変わるので一次情報はこちら。 2026-09-25 まで 7 つ足りていなかった —— 追記のつもりが当たっていなかった。
-- **L95** _(ja)_ — ★2026-09-24: the table used to carry rows this module could not open. ``capabilities()`` announced nine backends while ``Camera._open`` branched on five, so ``realsense``, ``oak``, ``zed`` and ``kinect`` answered ``ValueError: unknown backend`` even with the SDK installed — a declaration/implementation split of exactly the kind a "registered only" gate is blind to. Each row now names the opener, ``_open`` dispatches THROUGH the table, and ``test_acquire_contract.py`` asserts every declared backend has one. ``unit`` is the physical meaning of what ``grab()`` returns: "normalised" -> float64 in [0, 1] (an image) "m" -> float64 metres (a depth map; NEVER rescaled to [0, 1], which would destroy the measurement — 35 ledger ops take `depth`) (name, module-to-probe, pip, kind, unit, opener, one-line desc)
-- **L143** _(ja)_ — ★No count of those SDKs is written here. The corpus lives in another tree, so a number quoted here has no gate keeping it true -- it said "13" while the corpus had grown to 28 (2026-09-25). A figure nothing can check is worse than no figure. Each value names **things that must exist** -- a test resolves every one of them, so a rename or a deletion turns the claim red instead of leaving a stale boast.
-- **L195** _(ja)_ — ★``unit`` carries **only what the standard states in prose**. Where UVC does not state a unit (``PU_GAIN_CONTROL`` says merely "the setting for the attribute of the addressed Gain control") the entry is ``None`` -- inventing ``dB`` there would be a claim the standard does not make.
-- **L253** _(ja)_ — ★UVC 1.5 defines ``dwExposureTimeAbsolute`` as "1: 0.0001 sec ... 100000: 10 sec", i.e. **100 us per step**, while SFNC gives ``ExposureTime`` in **us**. The same number 5000 therefore means 5 ms under SFNC and 0.5 s under UVC -- a factor of 100 that raises no exception and only moves the picture.
-- **L361** _(ja)_ — ★This is the fix for a silent defect: a 12-bit sensor hands back a uint16 buffer, and dividing by the CONTAINER maximum (65535) instead of 4095 makes the whole image **16x too dark** (measured: 4095 -> 0.0625) with no exception — every threshold operator downstream is then wrong. The container cannot tell you the depth; the pixel format can, so backends pass it in and this table decides.
-- **L1030** _(ja)_ — ★``as_numpy_ndarray()`` はフレームのバッファを**そのまま指す** (vmbpy 同梱の例が「同じメモリを使う」と書いている)。vmbpy の取得は フレームを再キューして**バッファを使い回す**ので、複製しないと 次の 1 枚が前の 1 枚を書き換える —— 例外は出ず、絵だけが入れ替わる。
-- **L1393** _(ja)_ — ★以前はここが [] を返していた。GenTL を出す全ベンダを覆える唯一の経路 だけが列挙できない、という穴だった。プロデューサは GenTL 1.6 の GENICAM_GENTL{32,64}_PATH に自分を登録するので、こちらはそれを読む。
+- **L96** _(ja)_ — ★2026-09-24: the table used to carry rows this module could not open. ``capabilities()`` announced nine backends while ``Camera._open`` branched on five, so ``realsense``, ``oak``, ``zed`` and ``kinect`` answered ``ValueError: unknown backend`` even with the SDK installed — a declaration/implementation split of exactly the kind a "registered only" gate is blind to. Each row now names the opener, ``_open`` dispatches THROUGH the table, and ``test_acquire_contract.py`` asserts every declared backend has one. ``unit`` is the physical meaning of what ``grab()`` returns: "normalised" -> float64 in [0, 1] (an image) "m" -> float64 metres (a depth map; NEVER rescaled to [0, 1], which would destroy the measurement — 35 ledger ops take `depth`) (name, module-to-probe, pip, kind, unit, opener, one-line desc)
+- **L144** _(ja)_ — ★No count of those SDKs is written here. The corpus lives in another tree, so a number quoted here has no gate keeping it true -- it said "13" while the corpus had grown to 28 (2026-09-25). A figure nothing can check is worse than no figure. Each value names **things that must exist** -- a test resolves every one of them, so a rename or a deletion turns the claim red instead of leaving a stale boast.
+- **L196** _(ja)_ — ★``unit`` carries **only what the standard states in prose**. Where UVC does not state a unit (``PU_GAIN_CONTROL`` says merely "the setting for the attribute of the addressed Gain control") the entry is ``None`` -- inventing ``dB`` there would be a claim the standard does not make.
+- **L254** _(ja)_ — ★UVC 1.5 defines ``dwExposureTimeAbsolute`` as "1: 0.0001 sec ... 100000: 10 sec", i.e. **100 us per step**, while SFNC gives ``ExposureTime`` in **us**. The same number 5000 therefore means 5 ms under SFNC and 0.5 s under UVC -- a factor of 100 that raises no exception and only moves the picture.
+- **L362** _(ja)_ — ★This is the fix for a silent defect: a 12-bit sensor hands back a uint16 buffer, and dividing by the CONTAINER maximum (65535) instead of 4095 makes the whole image **16x too dark** (measured: 4095 -> 0.0625) with no exception — every threshold operator downstream is then wrong. The container cannot tell you the depth; the pixel format can, so backends pass it in and this table decides.
+- **L1031** _(ja)_ — ★``as_numpy_ndarray()`` はフレームのバッファを**そのまま指す** (vmbpy 同梱の例が「同じメモリを使う」と書いている)。vmbpy の取得は フレームを再キューして**バッファを使い回す**ので、複製しないと 次の 1 枚が前の 1 枚を書き換える —— 例外は出ず、絵だけが入れ替わる。
+- **L1408** _(ja)_ — ★以前はここが [] を返していた。GenTL を出す全ベンダを覆える唯一の経路 だけが列挙できない、という穴だった。プロデューサは GenTL 1.6 の GENICAM_GENTL{32,64}_PATH に自分を登録するので、こちらはそれを読む。
+- **L1433** _(ja)_ — ★同一性は `id`。`serial_number` は Windows では取得できず既定 0 のまま 返るので、鍵にすると全機が同じ鍵になる(Stereolabs API reference)。
+- **L1442** _(ja)_ — ★`camera_state` の既定は `NOT_AVAILABLE` ―― 一覧に出ても塞がっている ことがある。黙って落とさず状態を添える(在るが使えない、は発見である)。 CAMERA_STATE の全メンバーは公表文書から裏が取れなかったので、 文書が名指しする `NOT_AVAILABLE` とだけ突き合わせる。
+- **L1454** _(ja)_ — ★pyk4a は台数しか教えてくれないので、シリアルを読むには**開く**しかない (pyk4a の example/devices.py)。だから列挙そのものが装置を触る ―― 必ず閉じ、開けなかった機は落とさずに「在るが開けない」として返す。
 
 ## `annotate.py`
 
@@ -1501,15 +1504,17 @@
 
 - **L100** _(ja)_ — 16.003663...**。★「16 倍」と書いて落ちた —— 器の幅と有効ビットの比は 2^4 ではなく (2^16-1)/(2^12-1) で、1 桁目から違う。
 - **L234** _(ja)_ — ★「次は ## デバイス制御」と決め打ちしていたため、あいだに節を 1 つ足した だけでその表の行まで backend 行として読んでしまった(2026-09-24)。 節の終わりは**次の見出し**であって、特定の見出しの名前ではない。
-- **L361** _(ja)_ — ★ここまでの門は「acquire が持っている綴り」からしか数えていない。**規格の全数**を 分母に置くと、そもそも知らない形式が見つかる —— 実際これで 10 bit 非詰めの Bayer 4 形式が丸ごと抜けていた(2026-09-24)。台帳は EMVA が無償公開している 「GenICam Pixel Format Names and Values」の単板 59 形式。
-- **L408** _(ja)_ — ★最初ここに「詰め形式は容器 = 有効」と書いて、この門に捕まった。実際は 2 通りある: (a) 10/12/14 bit の**非詰め**が 16 bit 容器に入る場合と、 (b) **grouped**(GigE Vision 1.x の `Packed`)の 10 bit が 12 bit に 入る場合 —— 2 画素 = 3 バイトなので 1 画素あたり 12 bit になる。 真の lsb packed(`p`)だけが容器 = 有効。
-- **L440** _(ja)_ — ★機能名はベンダの名前ではなく規格の名前なので、**1 本の語彙表で GenTL を出す 全ベンダを覆える**。だからこの層は「どのベンダの SDK を入れたか」と無関係に 検査できる —— 模擬ノードマップで足りる。実機が無いことは言い訳にならない。
-- **L602** _(ja)_ — ★SDK のバッファを指したまま返すと、**次の 1 枚が前の 1 枚を書き換える**。 例外は出ない —— 絵だけが入れ替わるので、連写を保存して初めて気づく。 実機が要る経路なので実行では確かめられない。**ソースで確かめる**。
-- **L640** _(ja)_ — ★複製が要らない backend と、その**理由**。黙って外さない。
-- **L696** _(ja)_ — ★SDK を採点したのと**同じ物差し**で自分も採点する。違う物差しで測った数を 並べると「SDK より厚い」が意味を失う。しかも自己申告にしない —— 各軸が どの入口で満たされているかを**実在する名前**で名指しし、門がそれを引く。
-- **L745** _(ja)_ — ★列挙軸の一番大きな穴はここだった。`_enumerate("genicam")` は [] を返していて、 **GenTL を出す全ベンダを覆える唯一の経路だけが列挙できない**状態だった。 GenTL 1.6 が「プロデューサのインストーラは GENICAM_GENTL{32/64}_PATH に自分を 足す」と決めているので、こちらはその変数を読めばよく、ベンダごとの表は要らない。 実機も SDK も無しで検査できる —— 変数と `.cti` という名前のファイルがあればよい。
-- **L799** _(ja)_ — ★`__all__` は「何を公開したか」の一次情報(`dir()` は環境で変わる)。だから 本体が増えたのに `__all__` が増えない、という遅れは**静かに**起きる —— 実際に 2026-09-25 まで 7 つ足りていなかった(追記のつもりが当たっていなかった)。 門は台帳側でなく**本体側から数える**。
-- **L871** _(ja)_ — ★`opencv` backend が開くのは UVC の装置。その規格が制御の名前と、いくつかは 単位まで決めている。単位が SFNC と違うので、換算を**往復で**確かめる —— 100 倍の係数を書き忘れても例外は出ず、露光だけが狂う。
+- **L257** _(ja)_ — ★「見つける」は「開く」とは**別の問い**。1 列にまとめていたせいで、 開けるのに一覧に出てこない zed / kinect が表では ✓ のままだった (2026-09-25)。列の中身は AST から数えた実際の分岐と突き合わせる。
+- **L371** _(ja)_ — ★ここまでの門は「acquire が持っている綴り」からしか数えていない。**規格の全数**を 分母に置くと、そもそも知らない形式が見つかる —— 実際これで 10 bit 非詰めの Bayer 4 形式が丸ごと抜けていた(2026-09-24)。台帳は EMVA が無償公開している 「GenICam Pixel Format Names and Values」の単板 59 形式。
+- **L418** _(ja)_ — ★最初ここに「詰め形式は容器 = 有効」と書いて、この門に捕まった。実際は 2 通りある: (a) 10/12/14 bit の**非詰め**が 16 bit 容器に入る場合と、 (b) **grouped**(GigE Vision 1.x の `Packed`)の 10 bit が 12 bit に 入る場合 —— 2 画素 = 3 バイトなので 1 画素あたり 12 bit になる。 真の lsb packed(`p`)だけが容器 = 有効。
+- **L450** _(ja)_ — ★機能名はベンダの名前ではなく規格の名前なので、**1 本の語彙表で GenTL を出す 全ベンダを覆える**。だからこの層は「どのベンダの SDK を入れたか」と無関係に 検査できる —— 模擬ノードマップで足りる。実機が無いことは言い訳にならない。
+- **L612** _(ja)_ — ★SDK のバッファを指したまま返すと、**次の 1 枚が前の 1 枚を書き換える**。 例外は出ない —— 絵だけが入れ替わるので、連写を保存して初めて気づく。 実機が要る経路なので実行では確かめられない。**ソースで確かめる**。
+- **L650** _(ja)_ — ★複製が要らない backend と、その**理由**。黙って外さない。
+- **L706** _(ja)_ — ★SDK を採点したのと**同じ物差し**で自分も採点する。違う物差しで測った数を 並べると「SDK より厚い」が意味を失う。しかも自己申告にしない —— 各軸が どの入口で満たされているかを**実在する名前**で名指しし、門がそれを引く。
+- **L755** _(ja)_ — ★列挙軸の一番大きな穴はここだった。`_enumerate("genicam")` は [] を返していて、 **GenTL を出す全ベンダを覆える唯一の経路だけが列挙できない**状態だった。 GenTL 1.6 が「プロデューサのインストーラは GENICAM_GENTL{32/64}_PATH に自分を 足す」と決めているので、こちらはその変数を読めばよく、ベンダごとの表は要らない。 実機も SDK も無しで検査できる —— 変数と `.cti` という名前のファイルがあればよい。
+- **L809** _(ja)_ — ★`__all__` は「何を公開したか」の一次情報(`dir()` は環境で変わる)。だから 本体が増えたのに `__all__` が増えない、という遅れは**静かに**起きる —— 実際に 2026-09-25 まで 7 つ足りていなかった(追記のつもりが当たっていなかった)。 門は台帳側でなく**本体側から数える**。
+- **L881** _(ja)_ — ★`opencv` backend が開くのは UVC の装置。その規格が制御の名前と、いくつかは 単位まで決めている。単位が SFNC と違うので、換算を**往復で**確かめる —— 100 倍の係数を書き忘れても例外は出ず、露光だけが狂う。
+- **L1096** _(ja)_ — ★門そのものを呼んで、本当に落ちることを確かめる(式の真似ではなく)。
 
 ## `tests/test_annotate_bold_italic.py`
 

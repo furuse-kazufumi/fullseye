@@ -83,7 +83,8 @@ __all__ = [
     "UVC_CONTROLS", "UVC_TO_SFNC", "UVC_EXPOSURE_STEP_US", "UVC_UNCOMPRESSED",
     "uvc_to_sfnc", "sfnc_to_uvc",
     # GenTL のプロデューサ探索
-    "GENTL_PATH_VARS", "gentl_producers",
+    "GENTL_PATH_VARS",
+    "NOT_ENUMERABLE", "gentl_producers",
     # 8 軸の自己採点
     "COVERAGE_AXES", "axes",
     # 奥行き backend の単位
@@ -1363,9 +1364,23 @@ def list_devices(backends=None) -> list:
     return out
 
 
+#: 装置を持たない合成 backend ―― 列挙するものが無いので `_enumerate` に分岐を持たない。
+#: 免除は**理由つきで名指し**する(表を空にすると、門は何も見ていないのと同じになる)。
+NOT_ENUMERABLE = {
+    "callable": "呼び出し側が渡した関数。装置ではないので探す対象が無い",
+    "dir": "ディレクトリの画像列。装置ではなくパスで指す",
+}
+
+
 def _enumerate(backend: str) -> list:
     """Per-backend device enumeration. Hardware paths are exercised only where a device
-    is present; with no SDK installed the caller never reaches them."""
+    is present; with no SDK installed the caller never reaches them.
+
+    ★**掴める backend は必ずここにも分岐を持つ。** 2026-09-25 まで zed と kinect は
+    `_raw_grab` にだけ在って、開けば取れるのに一覧に出てこなかった ―― 例外は出ず、
+    `list_devices()` が静かに短い答えを返すだけだった。装置を持たない合成 backend は
+    `NOT_ENUMERABLE` に理由つきで名指しする。
+    """
     if backend == "opencv":
         return [{"backend": "opencv", "id": i, "label": "OpenCV device %d" % i}
                 for i in list_cameras()]
@@ -1414,6 +1429,47 @@ def _enumerate(backend: str) -> list:
         finally:
             #: プロデューサを開いたまま抜けると、次に開く側が掴めなくなる。
             h.reset()
+    if backend == "zed":  # pragma: no cover - needs pyzed
+        #: ★同一性は `id`。`serial_number` は Windows では取得できず既定 0 のまま
+        #:   返るので、鍵にすると全機が同じ鍵になる(Stereolabs API reference)。
+        import pyzed.sl as sl
+        out = []
+        for d in sl.Camera.get_device_list():
+            sn = int(getattr(d, "serial_number", 0) or 0)
+            state = getattr(d, "camera_state", None)
+            model = getattr(d, "camera_model", None)
+            name = getattr(d, "camera_name", None)
+            #: ★`camera_state` の既定は `NOT_AVAILABLE` ―― 一覧に出ても塞がっている
+            #:   ことがある。黙って落とさず状態を添える(在るが使えない、は発見である)。
+            #:   CAMERA_STATE の全メンバーは公表文書から裏が取れなかったので、
+            #:   文書が名指しする `NOT_AVAILABLE` とだけ突き合わせる。
+            txt = str(state) if state is not None else ""
+            out.append({"backend": "zed", "id": int(getattr(d, "id", -1)),
+                        "serial": sn or None,
+                        "label": "%s %s" % (name or model or "ZED", sn or "?"),
+                        "state": txt or None,
+                        "available": None if not txt else ("NOT_AVAILABLE" not in txt)})
+        return out
+    if backend == "kinect":  # pragma: no cover - needs pyk4a
+        #: ★pyk4a は台数しか教えてくれないので、シリアルを読むには**開く**しかない
+        #:   (pyk4a の example/devices.py)。だから列挙そのものが装置を触る ――
+        #:   必ず閉じ、開けなかった機は落とさずに「在るが開けない」として返す。
+        from pyk4a import PyK4A, connected_device_count
+        out = []
+        for i in range(connected_device_count()):
+            dev = PyK4A(device_id=i)
+            sn, ok = None, True
+            try:
+                dev.open()
+                sn = dev.serial
+            except Exception:
+                ok = False
+            else:
+                dev.close()
+            out.append({"backend": "kinect", "id": i, "serial": sn,
+                        "label": "Azure Kinect %s" % (sn or i),
+                        "available": ok})
+        return out
     return []
 
 

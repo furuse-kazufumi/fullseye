@@ -5,6 +5,35 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
+## Unreleased
+
+- ★★**掴めるのに見つけられない backend を塞いだ**(`zed` / `kinect`)。`Camera._raw_grab` は
+  **10 分岐**を持つのに `_enumerate` は **6 分岐**しかなく、**Stereolabs ZED と Azure Kinect は
+  開けば取れるのに装置一覧に出てこなかった**。例外は出ず、`list_devices()` が静かに短い答えを
+  返すだけなので、走らせても気づけない —— 0.2.3 で直した `genicam` が `[]` を返していたのと
+  同じ型である。分岐を数えたのは **AST**。正規表現で数えたら比較の左辺の綴り違いで
+  10 分岐中 5 しか見えなかった。
+  - ★**ZED の同一性は `serial_number` ではなく `id`**。公表 API reference が
+    「`serial_number` は既定 0、**Windows では取得できない**」と書いている。serial を鍵に
+    すると全機が同じ鍵になるので、serial は取れたときだけ添える。
+  - ★**列挙できても開けるとは限らない**。`DeviceProperties.camera_state` の既定は
+    `sl.CAMERA_STATE.NOT_AVAILABLE` なので、一覧に出た装置が塞がっていることがある。
+    黙って落とさず状態を添えて返す —— 「在るが使えない」は装置についての**発見**であって
+    不在ではない(規格が必須と言う機能の不在を見せるのと同じ考え方)。`CAMERA_STATE` の
+    全メンバーは公表文書から裏が取れなかったので**決め打ちせず**、文書が名指しする
+    `NOT_AVAILABLE` とだけ突き合わせる。
+  - ★**Kinect は列挙そのものが装置を開く**。`pyk4a` は台数しか返さないので、シリアルを
+    読むには `PyK4A(device_id=i).open()` が要る(公式 `example/devices.py`)。だから必ず
+    閉じ、開けなかった機は落とさずに「在るが開けない」として返す。
+  - 門は**再発を数で止める**: `_raw_grab` の分岐がすべて `_enumerate` にも在ることを
+    AST で突き合わせ、装置を持たない合成 backend は `NOT_ENUMERABLE`(`callable` / `dir`)に
+    **理由つきで**名指しする。免除の側も実在を確かめる。破壊試験は 8 backend それぞれを
+    1 つずつ消して、門が落ちて**その名前を名指しする**ことまで見る。
+- ★**文書の表にも同じ盲点があった**。`docs/CONNECTIVITY.md` の `実装` 列は「opener が
+  在るか」だけを言っていたので、**開けるが見つからない** zed / kinect も ✓ のままだった。
+  列を `開く` と **`見つける`** に分け、門が AST から数えた実際の分岐と突き合わせる
+  (壊して確かめた)。
+
 ## 0.2.3 — 2026-09-25
 
 - ★★**うなり・力学系・様式化・極小曲面 23 op**(math 族に新カテゴリ `wave` 6 + `dynsys` 6 で 43 → 55 op、printpath に新カテゴリ `npr` 6 op で 17 → 23 op、3-D に新カテゴリ `surface` 5 op。合計 2,114 → 2,138)。**新しい型の語は 1 つも作っていない**(matrix / signal / mask / image2d / measurement / table / pairs / flow2d / mesh / voxel / points はすべて既存)。**新族を立てずに既存台帳の新カテゴリに入れた** —— 新族は登録面が 21 手順ぶん増え、時間の大半がそこに消えるため。
