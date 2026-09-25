@@ -46,7 +46,10 @@ CHAIN = [
     (["tools/gen_capabilities_index.py"], "能力索引(docs/capabilities/*.md から)"),
     (["tools/gen_hardening_index.py"], "堅牢性台帳"),
     (["tools/gen_maturity.py"], "成熟度台帳(生成物 + 機械可読 JSON)"),
-    (["tools/gen_wingpoc_gallery.py"], "PoC 展示館(ja/en)"),
+    # ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、
+    #   未発行の展示が 1 つでもあると BuildError で止まる。
+    (["tools/gen_exhibit_numbers.py"], "収蔵番号の発行(追記のみ・既存は動かさない)"),
+    (["tools/gen_wingpoc_gallery.py"], "PoC 展示館(総合案内 + 棟、ja/en)"),
     (["tools/gen_examples_readme.py"], "examples/README.md"),
     (["tools/gen_oss_landscape.py"], "既存 OSS の地図(docs/literature/oss_landscape.json → OSS_LANDSCAPE.md)"),
     (["tools/gen_docs_index_ops.py"], "docs/README*.md の ops / poc / docmap ブロック"),
