@@ -373,13 +373,13 @@ with warnings.catch_warnings():
     from comm import (  # noqa: E402,F401  (communication transports / industrial protocols)
         open_channel, protocols, Channel,
         TcpChannel, UdpChannel, HttpChannel, ModbusTcpChannel, ModbusTcpServer,
-        ModbusRtuChannel, ModbusRtuLoopback, CommError,
+        ModbusRtuChannel, ModbusRtuLoopback, CommError, unregister_protocol,
         modbus_build_pdu, modbus_parse_response, modbus_apply_pdu,
         modbus_crc16, modbus_rtu_frame, modbus_rtu_unframe,
     )
     from device import (  # noqa: E402,F401  (device control)
         DigitalIO, pulse, signal_result, signal_verdict, wait_input,
-        open_driver, drivers, DeviceError,
+        open_driver, drivers, register_driver, unregister_driver, DeviceError,
     )
     import dsp  # noqa: E402,F401  (1-D signal / acoustic / vibration)
     from dsp import (  # noqa: E402,F401  (1-D signal / acoustic / vibration — beyond images)
@@ -767,11 +767,12 @@ __all__ = [
     "open_channel", "protocols", "capabilities", "Channel",
     "TcpChannel", "UdpChannel", "HttpChannel", "ModbusTcpChannel", "ModbusTcpServer",
     "ModbusRtuChannel", "ModbusRtuLoopback",
-    "CommError",
+    "CommError", "unregister_protocol",
     "modbus_build_pdu", "modbus_parse_response", "modbus_apply_pdu",
     "modbus_crc16", "modbus_rtu_frame", "modbus_rtu_unframe",
     "DigitalIO", "pulse", "signal_result", "signal_verdict", "wait_input",
-    "open_driver", "drivers", "DeviceError",
+    "open_driver", "drivers", "register_driver", "unregister_driver",
+    "DeviceError",
     "read_wav", "write_wav", "read_audio", "spectrum", "spectrogram",
     "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks",
     "signal_local_std", "signal_quantize", "signal_companding_mu_law",

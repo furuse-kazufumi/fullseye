@@ -188,6 +188,42 @@ except fullseye.DeviceError as e:
     print(e)   # driver 'ur-rtde' needs 'rtde_control' (pip install ur_rtde)
 ```
 
+**名簿に在るが開けない行は、自分で埋められます。** `register_driver` は
+`comm.register` の双子で、引数の綴りも揃えてあります —— 一度包んでしまえば、
+その先は同梱の driver と同じ扱い(名簿に出る・名簿の綴りで開く)になります。
+
+```python
+import dynamixel_sdk
+
+def my_dynamixel(port="COM4", baudrate=57600, **o):
+    return dynamixel_sdk.PortHandler(port)      # 自分の装置に合わせた薄い包み
+
+fullseye.register_driver("dynamixel", my_dynamixel,
+                         pip="dynamixel-sdk", probe="dynamixel_sdk",
+                         family="servo", desc="自前の Dynamixel アダプタ")
+
+fullseye.open_driver("dynamixel", port="COM4")  # 以後は名簿の綴りで開く
+```
+
+同梱の名簿に無い名前(`"my-plc"` のような社内装置)も同じ口で足せます
+(`native=True` = 外部依存なし)。表の **実装** 欄が数えるのは
+**この版に同梱されているもの**なので、登録した分はそこには増えません ——
+自分の環境で開けることと、配られた版が開けることは別の主張だからです。
+
+足したものは `fullseye.unregister_driver(name)` で外せます(protocol 側は
+`comm.unregister_protocol(name)`)。**同梱の行は外せません** —— 自分が足した
+ものだけが取り消しの対象で、配られた名簿が誤って空になることはありません。
+差し替えを外すと、同梱の行がそのまま戻ります。
+
+```python
+fullseye.register_driver("house-lamp", MyLamp, native=True, desc="社内の積層灯")
+fullseye.open_driver("house-lamp").show("ok")
+fullseye.unregister_driver("house-lamp")     # -> True(名簿は元の 12 行に戻る)
+fullseye.unregister_driver("io-memory")      # -> False(同梱の行は外せない)
+```
+
+動く実物は `examples/line_handshake.py`(ハードは 1 つも要りません)。
+
 シリアル線の Modbus RTU も**内蔵**で、実物の線が無くても組み上げられます
 (装置役が同じ框を解いて答えます)。
 

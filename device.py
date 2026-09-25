@@ -25,7 +25,9 @@ from __future__ import annotations
 import time
 
 __all__ = ["DigitalIO", "pulse", "signal_result", "signal_verdict", "wait_input",
-           "capabilities", "drivers", "open_driver", "DeviceError"]
+           "capabilities", "drivers", "open_driver", "register_driver",
+           "unregister_driver",
+           "DeviceError"]
 
 class DeviceError(RuntimeError):
     """A device / driver error (the twin of :class:`comm.CommError`).
@@ -76,15 +78,28 @@ def capabilities() -> list:
     Native backends (memory / Modbus coils) are both. See :func:`open_driver`.
     """
     import importlib.util
+
+    def _importable(mod):
+        try:
+            return mod is not None and importlib.util.find_spec(mod) is not None
+        except Exception:
+            return False
+
     out = []
     for name, module, pip, kind, family, desc in _DRIVERS:
-        avail = (kind == "native") or (module is not None and
-                                       importlib.util.find_spec(module) is not None
-                                       if module else False)
+        if name in _REGISTERED:      # 差し替えられた行は登録側の申告で答える
+            continue
+        avail = (kind == "native") or (_importable(module) if module else False)
         out.append({"name": name, "kind": kind, "family": family,
                     "implemented": name in _OPENABLE,
                     "available": bool(avail), "pip": pip, "desc": desc})
-    return out
+    for name in sorted(_REGISTERED):
+        e = _REGISTERED[name]
+        avail = True if e["native"] else (_importable(e["probe"]) if e["probe"] else False)
+        out.append({"name": name, "kind": e["kind"], "family": e["family"],
+                    "implemented": True,
+                    "available": bool(avail), "pip": e["pip"], "desc": e["desc"]})
+    return sorted(out, key=lambda r: r["name"])
 
 
 #: ★**名簿の綴りと構築子の綴りが違っていた。** 名簿(``capabilities()``)は
@@ -95,10 +110,52 @@ _OPENABLE = {"io-memory": "memory", "io-modbus": "modbus", "gpio": "gpio"}
 
 _BY_NAME = {d[0]: d for d in _DRIVERS}
 
+#: 利用者が :func:`register_driver` で足したアダプタ(name -> エントリ)。
+#: 同名なら同梱の行より**こちらが勝つ**(自分の装置に合わせて差し替えられる)。
+_REGISTERED: dict = {}
+
+
+def register_driver(name: str, factory, native: bool = False, pip=None, desc: str = "",
+                    kind=None, probe=None, family: str = "io") -> None:
+    """Register your own device driver under *name*; ``factory(**opts)`` opens it.
+
+    The twin of :func:`comm.register`, with the same words: *native* = no external
+    dependency; *pip* = the package an optional adapter needs; *kind* ∈
+    {"native","optional","scaffold"} (defaults from *native*); *probe* = the import
+    name used to report availability; *family* groups the row in
+    :func:`capabilities` (io / servo / motion / robot / gripper / middleware).
+
+        fullseye.register_driver("my-plc", lambda **o: MyPlc(**o), native=True,
+                                 desc="in-house PLC over its own protocol")
+        io = fullseye.open_driver("my-plc")
+
+    Registering a name the catalogue already carries **replaces** it — that is how
+    you turn a cataloged-but-not-implemented driver (``dynamixel``, ``ur-rtde``, …)
+    into one this install can open, without waiting for a first-class adapter.
+    """
+    if not callable(factory):
+        raise TypeError("register_driver(%r): factory must be callable, got %r"
+                        % (name, type(factory).__name__))
+    if kind is None:
+        kind = "native" if native else "optional"
+    _REGISTERED[name] = {"factory": factory, "native": bool(native), "pip": pip,
+                         "desc": desc, "kind": kind, "probe": probe, "family": family}
+
+
+def unregister_driver(name: str) -> bool:
+    """Remove a driver added by :func:`register_driver`; ``True`` if one was removed.
+
+    The shipped catalogue cannot be removed this way — ``unregister_driver`` only
+    undoes *your* registrations, so a stray call can never make a documented driver
+    vanish. Unknown names return ``False`` rather than raising: undoing something
+    that is not there is not an error.
+    """
+    return _REGISTERED.pop(name, None) is not None
+
 
 def drivers() -> list:
     """All device driver names (see :func:`capabilities` for what each one needs)."""
-    return sorted(_BY_NAME)
+    return sorted(set(_BY_NAME) | set(_REGISTERED))
 
 
 #: ★**名簿に 12 載せて、扉が 3 つしか無かった**(2026-09-25)。``capabilities()``
@@ -119,6 +176,8 @@ def open_driver(name: str, **opts):
         io = fullseye.open_driver("io-memory")       # works out of the box
         fullseye.open_driver("ur-rtde")              # DeviceError: needs 'rtde_control'
     """
+    if name in _REGISTERED:
+        return _REGISTERED[name]["factory"](**opts)
     if name not in _BY_NAME:
         raise KeyError("unknown device driver %r; known: %s"
                        % (name, ", ".join(drivers())))
@@ -139,11 +198,13 @@ def open_driver(name: str, **opts):
     except Exception:
         avail = False
     if not avail:
-        raise DeviceError("driver %r needs %r (pip install %s)" % (name, module, pip))
+        raise DeviceError("driver %r needs %r (pip install %s); or register your own "
+                          "adapter with fullseye.register_driver(%r, factory)"
+                          % (name, module, pip, name))
     raise DeviceError(
         "driver %r is cataloged and %r is installed — drive it with that SDK directly, "
-        "or see docs/CONNECTIVITY.md; a first-class Fullseye driver adapter is on the "
-        "roadmap." % (name, module))
+        "or wrap it once and register it: fullseye.register_driver(%r, factory). "
+        "See docs/CONNECTIVITY.md." % (name, module, name))
 
 
 class DigitalIO:

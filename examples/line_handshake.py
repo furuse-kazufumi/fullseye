@@ -13,6 +13,7 @@
    ``port="COM3"`` に替えるだけで、上の呼び方は 1 文字も変わらない)
 4. ★**線が嘘をついたとき何が起きるか** —— 1 ビット化けた框と、別の装置の返事。
    どちらも「それらしい数」を返さずに落ちることを確かめる
+5. 名簿に無い**社内の装置**を `register_driver` で足し、同じ呼び方で駆動する
 
 4 がこの例の眼目である。現場で人を困らせるのは正常系ではなく、**間違った数が
 正しい顔をして返ってくる**ことだから。
@@ -108,6 +109,46 @@ def when_the_line_lies() -> list:
     return out
 
 
+class HouseLamp:
+    """社内にしか無い想定の「積層灯」。外部 SDK も線も要らない(この例のため)。
+
+    実物なら、ここでベンダの SDK を呼ぶ。大事なのは**包む厚みが薄くてよい**こと
+    —— `open()` と `set()` さえ在れば、以後は同梱の driver と同じ扱いになる。
+    """
+
+    def __init__(self, lamps=("green", "red", "amber"), **_opts):
+        self.lamps = tuple(lamps)
+        self.state = {n: False for n in self.lamps}
+
+    def show(self, status: str) -> dict:
+        lit = {"ok": "green", "ng": "red"}.get(status, "amber")
+        self.state = {n: (n == lit) for n in self.lamps}
+        return dict(self.state)
+
+    def close(self):
+        self.state = {n: False for n in self.lamps}
+
+
+def through_a_driver_you_registered(status: str) -> dict:
+    """★名簿に無い装置を 1 行で足して、名簿の綴りで開く。
+
+    `register_driver` は `comm.register` の双子で、引数の綴りも揃えてある。
+    ここまでの `open_driver("io-modbus")` と**呼び方が同じ**になるのが要点 ——
+    自前の装置だけ別の作法、にならない。
+    """
+    fs.register_driver("house-lamp", lambda **o: HouseLamp(**o), native=True,
+                       family="io", desc="社内の積層灯(この例のための作り物)")
+    assert "house-lamp" in fs.drivers(), "登録したのに名簿に出ていない"
+    lamp = fs.open_driver("house-lamp")          # 同梱の driver と同じ開け方
+    try:
+        return lamp.show(status)
+    finally:
+        lamp.close()
+        #: 足したものは外せる。**この過程の名簿を元に戻す**ので、下の数え上げは
+        #: 「配られた版が何を開けるか」を答えたままでいられる。
+        fs.unregister_driver("house-lamp")
+
+
 def main() -> int:
     for bright, want in ((400, "ok"), (900, "ng")):
         status = inspect_one(bright)
@@ -127,12 +168,25 @@ def main() -> int:
         print("  %-22s -> %s" % (what, said))
 
     print()
+    print("名簿に無い装置を自分で足す(register_driver):")
+    for status in ("ok", "ng", "timeout"):
+        lit = through_a_driver_you_registered(status)
+        on = [n for n, v in lit.items() if v]
+        assert len(on) == 1, "積層灯が one-hot になっていない: %s" % lit
+        print("  %-8s -> %s 点灯" % (status, on[0]))
+    #: 登録は**この過程の中だけ**に効き、外せば名簿は元に戻る。自分の環境で
+    #: 開けることと、配られた版が開けることは別の主張だから、下の数え上げは
+    #: 登録を外した後の姿を見せる。
+    assert "house-lamp" not in fs.drivers(), "登録が残っている(外し忘れ)"
+
+    print()
     caps = fs.capabilities()
     print("名簿と、そのうち Fullseye 自身が開けるもの:")
     for layer in ("comm", "acquire", "device"):
         rows = caps[layer]
         n = sum(1 for r in rows if r["implemented"])
         print("  %-8s %2d / %2d" % (layer, n, len(rows)))
+    print("  (上で足した house-lamp は外したので、この数は同梱分だけ)")
     print("  (開けない行も、何を入れればよいかは名指しで返ります)")
     print()
     print("PASS")

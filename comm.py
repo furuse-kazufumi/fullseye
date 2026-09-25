@@ -25,7 +25,7 @@ import socket
 import struct
 
 __all__ = [
-    "Channel", "open_channel", "protocols", "capabilities", "register",
+    "Channel", "open_channel", "protocols", "capabilities", "register", "unregister_protocol",
     "TcpChannel", "UdpChannel", "HttpChannel", "ModbusTcpChannel", "ModbusTcpServer",
     "ModbusRtuChannel", "ModbusRtuLoopback", "modbus_apply_pdu",
     "modbus_crc16", "modbus_rtu_frame", "modbus_rtu_unframe",
@@ -90,6 +90,35 @@ def register(name, factory, native=False, pip=None, desc="", kind=None, probe=No
     _REGISTRY[name] = {"factory": factory, "native": bool(native), "pip": pip,
                        "desc": desc, "kind": kind, "_probe": probe,
                        "implemented": bool(implemented)}
+
+
+#: 同梱の protocol 名。``register`` が後から上書きしても、ここは import 時の
+#: 顔ぶれを覚えている —— **配られた版に何が在るか**は利用者の登録で変わらない。
+_SHIPPED: frozenset = frozenset()
+
+
+def _freeze_shipped() -> None:
+    """Called once at import, after the built-in catalogue is registered."""
+    global _SHIPPED
+    _SHIPPED = frozenset(_REGISTRY)
+
+
+def unregister_protocol(name: str) -> bool:
+    """Remove a protocol added by :func:`register`; ``True`` if one was removed.
+
+    ★A shipped protocol cannot be removed — ``unregister_protocol("modbus-tcp")``
+    raises
+    :class:`KeyError` rather than quietly emptying the catalogue everyone reads.
+    Unknown names return ``False``: undoing something that is not there is not an
+    error. The twin of :func:`device.unregister_driver`, and named after it: a bare
+    ``unregister`` on the facade would not say what it removes. (:func:`register` keeps
+    its shorter historical name because it is already public.)
+    """
+    if name in _SHIPPED:
+        raise KeyError("%r ships with Fullseye and cannot be unregistered; "
+                       "register your own factory under the same name to replace it"
+                       % name)
+    return _REGISTRY.pop(name, None) is not None
 
 
 def open_channel(protocol: str, **opts) -> Channel:
@@ -778,3 +807,7 @@ for _name, _module, _pip, _kind, _desc in _CATALOG:
     register(_name, _cataloged_factory(_name, _pip, _module, _desc),
              native=False, pip=_pip, kind=_kind, probe=_module, desc=_desc,
              implemented=False)
+
+#: ★同梱の顔ぶれを**ここで**凍らせる(名簿を全部登録し終えた後)。これより前に
+#: 呼ぶと空を覚えてしまい、``unregister`` が同梱の protocol を消せてしまう。
+_freeze_shipped()
