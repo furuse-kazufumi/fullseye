@@ -149,6 +149,12 @@
 - **L803** — ★縮閉線の内側は測地緯度が一意でない -> 黙って範囲外の緯度を返さず拒否する。 楕円 x²/a² + z²/b² = 1 の縮閉線は (a·x)^(2/3) + (b·z)^(2/3) = (a²-b²)^(2/3)。 等号の外側だけが「法線が 1 本に決まる」領域(2/3 乗は非負なので符号は |z|)。
 - **L984** — ★ 鎖の残り。ECEF ↔ 測地座標 は在ったが、その先(ジオイド高・標高・datum・ENU) # が無く、能力ノート docs/capabilities/geodetic-frames.md に「どれも未実装。 # GNSS が返すのは楕円体高で地図が使うのは標高、取り違えると日本付近で 30〜40 m # 静かにずれる」と自分で書いてあった。ここを閉じる。 # --------------------------------------------------------------------------- # :func:`dem_height_frame_convert` が受ける高さの基準。
 
+## `device.py`
+
+- **L75** — ★**名簿の綴りと構築子の綴りが違っていた。** 名簿(``capabilities()``)は ``io-modbus`` と名乗るのに、構築子は ``DigitalIO("modbus")`` を取る —— つまり**表を読んでそのまま渡すと ``ValueError``** になっていた。名簿を 印刷しておきながら、その綴りで呼べないのは名簿の側の不備である。
+- **L89** — ★**名簿に 12 載せて、扉が 3 つしか無かった**(2026-09-25)。``capabilities()`` は I-O・サーボ・ロボット・ROS を名乗るのに、開ける口が在ったのは :class:`DigitalIO` の 3 backend だけで、残り 9 には入口が 1 つも無かった —— 名簿を読んだ人が、そこから何かを始める方法が無い。隣の層(``comm``)は 同じ問いに既に答えていたので、これは機能の不在ではなく**片側の入口だけが 塞がれていた**型である。開けないものにも「何を入れればよいか」を返す。
+- **L115** — ★PyPI に無い SDK(ベンダ配布の wheel)は「pip install None」と言わせない。
+
 ## `engine.py`
 
 - **L121** — ★backend が入っていないだけの名前は「unknown」でなく不足 extra を言う(api._resolve と同じ門、2026-09-19)
@@ -1111,10 +1117,10 @@
 
 ## `fullseye/__init__.py`
 
-- **L382** — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L572** — ★ 宣言 out 型に合わせる adapter は、タプルを返す op の**2 番目以降を 捨てる**(``drizzle_resample`` の ``wht``、``piv_cross_correlate`` の ``info``)。捨てられた側が必要なとき、台帳の入口からは届かなかった。 2026-09-06、超解像の PoC が ``flow, info = fs.ledger.piv_cross_correlate(...)`` と書いて (2,R,C) を第 1 軸で開き、dy の 2 行目を dx として使い、 ずれ推定を 0.12 → 0.74 画素にした(例外は出ない)。 ``.raw`` で素の返りに届く: ``fs.ledger.piv_cross_correlate.raw(a, b)``。
-- **L981** — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L1000** — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L385** — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L575** — ★ 宣言 out 型に合わせる adapter は、タプルを返す op の**2 番目以降を 捨てる**(``drizzle_resample`` の ``wht``、``piv_cross_correlate`` の ``info``)。捨てられた側が必要なとき、台帳の入口からは届かなかった。 2026-09-06、超解像の PoC が ``flow, info = fs.ledger.piv_cross_correlate(...)`` と書いて (2,R,C) を第 1 軸で開き、dy の 2 行目を dx として使い、 ずれ推定を 0.12 → 0.74 画素にした(例外は出ない)。 ``.raw`` で素の返りに届く: ``fs.ledger.piv_cross_correlate.raw(a, b)``。
+- **L985** — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1004** — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1542,6 +1548,7 @@
 ## `tests/test_capabilities.py`
 
 - **L166** — ★2026-09-24 に見つけた穴: 既存の門は frontmatter の `ops:` に書いた名前が実在 するかは見るが、**本文のコードは一度も実行していなかった**。だから `measure_pos(img, row=32, col0=0, col1=127)`(実際の引数は測定線ハンドル)、 `fs.frame_align([a, b])`(実際は (reference, frame) の 2 引数)、 `fs.ledger.blob_count(mask)`(blob_count は台帳ではなく 2-D の進化 op)が 3 本とも**走らないまま出荷**されていた。名前の実在と呼び方の正しさは別物で、 前者だけの門は後者に構造的に盲目([[feedback_registered_only_gates_miss_unregistered]])。 走らないことが正しい例もある —— 利用者自身の写真や校正板の角点が要るもの。 それは**理由つきで名指し**する。名指しの無いものが 1 本でも落ちたら赤。 「ファイルが無いから仕方ない」を既定にすると、呼び方の誤りがそこに紛れる。
+- **L182** — ★2026-09-25: `io` は例のなかで `fs.open_driver("io-memory")` から開く ようにしたので、免除の理由は**ロット画像だけ**に縮んだ。
 
 ## `tests/test_chain_type_contracts.py`
 
@@ -1553,8 +1560,9 @@
 
 ## `tests/test_collection_sizes.py`
 
-- **L64** — ★OPS3D は {op 名: メタデータ dict} の平坦な表。`sum(len(v) for v in values())` と数えると**各 op のメタデータのキー数の総和**(2,492)になり、意味の無い 数字を台帳に刻むところだった(2026-09-08、書く前に構造を見て気づいた)。
-- **L85** — ★2026-09-08 追加: 説明を貯める 2 つの台帳。**説明ほど静かに減る**ので ここで数える(docs/CAPABILITIES.md と docs/HARDENING.md の元)。
+- **L65** — ★OPS3D は {op 名: メタデータ dict} の平坦な表。`sum(len(v) for v in values())` と数えると**各 op のメタデータのキー数の総和**(2,492)になり、意味の無い 数字を台帳に刻むところだった(2026-09-08、書く前に構造を見て気づいた)。
+- **L85** — ★2026-09-25 追加: 通信の名簿(`comm.protocols`)は数えていたのに、 **駆動の名簿は数えていなかった**。接続の 3 層(protocol / image source / driver)のうち 1 つだけ見ていない状態で、 driver が 1 行消えても誰も気づかない。
+- **L91** — ★2026-09-08 追加: 説明を貯める 2 つの台帳。**説明ほど静かに減る**ので ここで数える(docs/CAPABILITIES.md と docs/HARDENING.md の元)。
 
 ## `tests/test_connectivity_doc.py`
 
@@ -1572,6 +1580,11 @@
 
 - **L440** — ★ 返りは**常に (N, 3)**。スカラを渡しても (3,) ではなく (1, 3) になる —— 台帳が points = (N, 3) と宣言しているため(2026-09-06、ファザーの TYPEMISS で食い違いが露見して実装を宣言に合わせた)。
 - **L755** — ★ 旧日本測地系に近い 3 パラメータでは、同じ緯度経度が地上で数百 m 動く
+
+## `tests/test_device_open_driver.py`
+
+- **L36** — ★**「相手が居ない」は「扉が無い」ではない。** この門を最初に書いたとき、 ``io-modbus`` が ``ConnectionRefusedError`` で落ちて 1 件挙がった —— が、それは 「PLC に届く口が在って、線の先に誰も居なかった」ということで、口が無いのとは **正反対**である。だから「この install が実際に開ける driver」からの ``OSError`` は通す。一緒くたにすると、門は CI に PLC を繋げと要求し始める —— 繋がりようの ない要求をする門は、やがて外される。
+- **L83** — ★pip も import 名も持たない driver は名簿に無い(在れば、その行が 「何も分からない行」なので、ここで落ちてよい)。
 
 ## `tests/test_docs_index_numbers.py`
 

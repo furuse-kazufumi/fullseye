@@ -23,6 +23,7 @@
   "recipes.RECIPES": 20,
   "imgio.COLORMAPS": 19,
   "comm.protocols": 23,
+  "device.drivers": 12,
   "poc_exhibits": 137,
   "capabilities": 29,
   "hardening_findings": 28

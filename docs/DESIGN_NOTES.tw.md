@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：610 / 1055 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：610 / 1062 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `accel.py`
@@ -150,6 +150,12 @@
 - **L754** — ★台帳聲明 ``points`` = (N, 3)。傳入純量會變成 (3,),與聲明不符,所以總是摺疊為 (N, 3)(2026-09-06 由 fuzzer 的 TYPEMISS 暴露。加入 6 個地心座標 op 後沒有跑 fuzzer)。若想保持格子形式的 (H, W, 3),請用 :func:`dem_geocentric_grid`。
 - **L803** — ★漸屈線內側的大地緯度不唯一 -> 不悄悄回傳超出範圍的緯度,而是拒絕。橢圓 x²/a² + z²/b² = 1 的漸屈線為 (a·x)^(2/3) + (b·z)^(2/3) = (a²-b²)^(2/3)。只有等號外側才是「法線唯一確定」的區域(2/3 次冪非負,所以符號取 |z|)。
 - **L984** _(ja)_ — ★ 鎖の残り。ECEF ↔ 測地座標 は在ったが、その先(ジオイド高・標高・datum・ENU) # が無く、能力ノート docs/capabilities/geodetic-frames.md に「どれも未実装。 # GNSS が返すのは楕円体高で地図が使うのは標高、取り違えると日本付近で 30〜40 m # 静かにずれる」と自分で書いてあった。ここを閉じる。 # --------------------------------------------------------------------------- # :func:`dem_height_frame_convert` が受ける高さの基準。
+
+## `device.py`
+
+- **L75** _(ja)_ — ★**名簿の綴りと構築子の綴りが違っていた。** 名簿(``capabilities()``)は ``io-modbus`` と名乗るのに、構築子は ``DigitalIO("modbus")`` を取る —— つまり**表を読んでそのまま渡すと ``ValueError``** になっていた。名簿を 印刷しておきながら、その綴りで呼べないのは名簿の側の不備である。
+- **L89** _(ja)_ — ★**名簿に 12 載せて、扉が 3 つしか無かった**(2026-09-25)。``capabilities()`` は I-O・サーボ・ロボット・ROS を名乗るのに、開ける口が在ったのは :class:`DigitalIO` の 3 backend だけで、残り 9 には入口が 1 つも無かった —— 名簿を読んだ人が、そこから何かを始める方法が無い。隣の層(``comm``)は 同じ問いに既に答えていたので、これは機能の不在ではなく**片側の入口だけが 塞がれていた**型である。開けないものにも「何を入れればよいか」を返す。
+- **L115** _(ja)_ — ★PyPI に無い SDK(ベンダ配布の wheel)は「pip install None」と言わせない。
 
 ## `engine.py`
 
@@ -1113,10 +1119,10 @@
 
 ## `fullseye/__init__.py`
 
-- **L382** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L572** — ★與宣告 out 型別對齊的 adapter，會**丟棄回傳元組的 op 的第 2 項及以後**(``drizzle_resample`` 的 ``wht``、``piv_cross_correlate`` 的 ``info``)。當被丟棄的一側需要用到時,從台帳入口就搆不著。2026-09-06,某超解析度 PoC 寫成 ``flow, info = fs.ledger.piv_cross_correlate(...)``,沿第 1 軸拆開 (2,R,C),把 dy 的第 2 列當作 dx 使用,使偏移估計從 0.12 -> 0.74 像素(不拋例外)。用 ``.raw`` 可搆到原始回傳:``fs.ledger.piv_cross_correlate.raw(a, b)``。
-- **L981** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L1000** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L385** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L575** — ★與宣告 out 型別對齊的 adapter，會**丟棄回傳元組的 op 的第 2 項及以後**(``drizzle_resample`` 的 ``wht``、``piv_cross_correlate`` 的 ``info``)。當被丟棄的一側需要用到時,從台帳入口就搆不著。2026-09-06,某超解析度 PoC 寫成 ``flow, info = fs.ledger.piv_cross_correlate(...)``,沿第 1 軸拆開 (2,R,C),把 dy 的第 2 列當作 dx 使用,使偏移估計從 0.12 -> 0.74 像素(不拋例外)。用 ``.raw`` 可搆到原始回傳:``fs.ledger.piv_cross_correlate.raw(a, b)``。
+- **L985** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1004** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1544,6 +1550,7 @@
 ## `tests/test_capabilities.py`
 
 - **L166** _(ja)_ — ★2026-09-24 に見つけた穴: 既存の門は frontmatter の `ops:` に書いた名前が実在 するかは見るが、**本文のコードは一度も実行していなかった**。だから `measure_pos(img, row=32, col0=0, col1=127)`(実際の引数は測定線ハンドル)、 `fs.frame_align([a, b])`(実際は (reference, frame) の 2 引数)、 `fs.ledger.blob_count(mask)`(blob_count は台帳ではなく 2-D の進化 op)が 3 本とも**走らないまま出荷**されていた。名前の実在と呼び方の正しさは別物で、 前者だけの門は後者に構造的に盲目([[feedback_registered_only_gates_miss_unregistered]])。 走らないことが正しい例もある —— 利用者自身の写真や校正板の角点が要るもの。 それは**理由つきで名指し**する。名指しの無いものが 1 本でも落ちたら赤。 「ファイルが無いから仕方ない」を既定にすると、呼び方の誤りがそこに紛れる。
+- **L182** _(ja)_ — ★2026-09-25: `io` は例のなかで `fs.open_driver("io-memory")` から開く ようにしたので、免除の理由は**ロット画像だけ**に縮んだ。
 
 ## `tests/test_chain_type_contracts.py`
 
@@ -1555,8 +1562,9 @@
 
 ## `tests/test_collection_sizes.py`
 
-- **L64** — ★OPS3D 是 {op 名: 元資料 dict} 的扁平表。用 `sum(len(v) for v in values())` 計數會得到**各 op 元資料鍵數的總和**（2,492），差點把一個沒有意義的數字刻進台賬（2026-09-08，在寫入前查看結構時發現）。
-- **L85** — ★2026-09-08 新增：兩個用於累積說明的台賬。**說明最容易悄悄減少**，所以在這裡計數（docs/CAPABILITIES.md 與 docs/HARDENING.md 的來源）。
+- **L65** — ★OPS3D 是 {op 名: 元資料 dict} 的扁平表。用 `sum(len(v) for v in values())` 計數會得到**各 op 元資料鍵數的總和**（2,492），差點把一個沒有意義的數字刻進台賬（2026-09-08，在寫入前查看結構時發現）。
+- **L85** _(ja)_ — ★2026-09-25 追加: 通信の名簿(`comm.protocols`)は数えていたのに、 **駆動の名簿は数えていなかった**。接続の 3 層(protocol / image source / driver)のうち 1 つだけ見ていない状態で、 driver が 1 行消えても誰も気づかない。
+- **L91** — ★2026-09-08 新增：兩個用於累積說明的台賬。**說明最容易悄悄減少**，所以在這裡計數（docs/CAPABILITIES.md 與 docs/HARDENING.md 的來源）。
 
 ## `tests/test_connectivity_doc.py`
 
@@ -1574,6 +1582,11 @@
 
 - **L440** — ★返回**始終是 (N, 3)**。即使傳入純量，得到的也是 (1, 3) 而非 (3,) —— 因為台賬聲明 points = (N, 3)（2026-09-06，fuzzer 的 TYPEMISS 暴露了不一致，於是把實作對齊到聲明）。
 - **L755** _(ja)_ — ★ 旧日本測地系に近い 3 パラメータでは、同じ緯度経度が地上で数百 m 動く
+
+## `tests/test_device_open_driver.py`
+
+- **L36** _(ja)_ — ★**「相手が居ない」は「扉が無い」ではない。** この門を最初に書いたとき、 ``io-modbus`` が ``ConnectionRefusedError`` で落ちて 1 件挙がった —— が、それは 「PLC に届く口が在って、線の先に誰も居なかった」ということで、口が無いのとは **正反対**である。だから「この install が実際に開ける driver」からの ``OSError`` は通す。一緒くたにすると、門は CI に PLC を繋げと要求し始める —— 繋がりようの ない要求をする門は、やがて外される。
+- **L83** _(ja)_ — ★pip も import 名も持たない driver は名簿に無い(在れば、その行が 「何も分からない行」なので、ここで落ちてよい)。
 
 ## `tests/test_docs_index_numbers.py`
 

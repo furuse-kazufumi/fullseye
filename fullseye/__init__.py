@@ -374,7 +374,10 @@ with warnings.catch_warnings():
         open_channel, protocols, Channel,
         TcpChannel, UdpChannel, HttpChannel, ModbusTcpChannel, ModbusTcpServer,
     )
-    from device import DigitalIO, pulse, signal_result, signal_verdict, wait_input  # noqa: E402,F401  (device control)
+    from device import (  # noqa: E402,F401  (device control)
+        DigitalIO, pulse, signal_result, signal_verdict, wait_input,
+        open_driver, drivers, DeviceError,
+    )
     import dsp  # noqa: E402,F401  (1-D signal / acoustic / vibration)
     from dsp import (  # noqa: E402,F401  (1-D signal / acoustic / vibration — beyond images)
         read_wav, write_wav, read_audio, spectrum, spectrogram,
@@ -761,6 +764,7 @@ __all__ = [
     "open_channel", "protocols", "capabilities", "Channel",
     "TcpChannel", "UdpChannel", "HttpChannel", "ModbusTcpChannel", "ModbusTcpServer",
     "DigitalIO", "pulse", "signal_result", "signal_verdict", "wait_input",
+    "open_driver", "drivers", "DeviceError",
     "read_wav", "write_wav", "read_audio", "spectrum", "spectrogram",
     "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks",
     "signal_local_std", "signal_quantize", "signal_companding_mu_law",

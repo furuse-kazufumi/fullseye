@@ -179,7 +179,9 @@ NEEDS_USER_INPUT = {
     "estimate-lens-distortion": "補正したい実写画像 img",
     "fix-text-in-images": "report_figure.png",
     "golden-compare": "golden.png",
-    "inspection-workflow": "ロット画像の入った lot_0001/ と DigitalIO の io",
+    #: ★2026-09-25: `io` は例のなかで `fs.open_driver("io-memory")` から開く
+    #:   ようにしたので、免除の理由は**ロット画像だけ**に縮んだ。
+    "inspection-workflow": "ロット画像の入った lot_0001/",
     "lens-distortion-correction": "wide_angle.png",
     "one-stroke-drawing": "photo.png",
     "polarization-imaging": "polarcam_frame.npy",

@@ -14,13 +14,26 @@ cell — set an output, pulse an ejector, wait for a trigger — over the transp
 Backends: ``"memory"`` (in-process, for tests/dev), ``"modbus"`` (PLC coils via the
 built-in Modbus-TCP client), ``"gpio"`` (Raspberry Pi / Jetson / SBC — optional,
 needs ``periphery`` or ``RPi.GPIO`` or ``gpiod``).
+
+:func:`capabilities` is the menu of drivers (I-O, servos, robots, ROS) and
+:func:`open_driver` is the door: it opens the ones this install can drive and,
+for the rest, names the exact SDK to install — the same contract
+:func:`comm.open_channel` gives the protocol catalogue.
 """
 from __future__ import annotations
 
 import time
 
 __all__ = ["DigitalIO", "pulse", "signal_result", "signal_verdict", "wait_input",
-           "capabilities"]
+           "capabilities", "drivers", "open_driver", "DeviceError"]
+
+class DeviceError(RuntimeError):
+    """A device / driver error (the twin of :class:`comm.CommError`).
+
+    Subclasses :class:`RuntimeError`, so code that already caught ``RuntimeError``
+    around :class:`DigitalIO` keeps working.
+    """
+
 
 #: Default one-hot coil map for the 4-state Verdict -> PLC handshake.
 _VERDICT_COILS = {"ok": 0, "ng": 1, "error": 2, "timeout": 3}
@@ -57,6 +70,65 @@ def capabilities() -> list:
         out.append({"name": name, "kind": kind, "family": family,
                     "available": bool(avail), "pip": pip, "desc": desc})
     return out
+
+
+#: ★**名簿の綴りと構築子の綴りが違っていた。** 名簿(``capabilities()``)は
+#: ``io-modbus`` と名乗るのに、構築子は ``DigitalIO("modbus")`` を取る ——
+#: つまり**表を読んでそのまま渡すと ``ValueError``** になっていた。名簿を
+#: 印刷しておきながら、その綴りで呼べないのは名簿の側の不備である。
+_OPENABLE = {"io-memory": "memory", "io-modbus": "modbus", "gpio": "gpio"}
+
+_BY_NAME = {d[0]: d for d in _DRIVERS}
+
+
+def drivers() -> list:
+    """All device driver names (see :func:`capabilities` for what each one needs)."""
+    return sorted(_BY_NAME)
+
+
+#: ★**名簿に 12 載せて、扉が 3 つしか無かった**(2026-09-25)。``capabilities()``
+#: は I-O・サーボ・ロボット・ROS を名乗るのに、開ける口が在ったのは
+#: :class:`DigitalIO` の 3 backend だけで、残り 9 には入口が 1 つも無かった ——
+#: 名簿を読んだ人が、そこから何かを始める方法が無い。隣の層(``comm``)は
+#: 同じ問いに既に答えていたので、これは機能の不在ではなく**片側の入口だけが
+#: 塞がれていた**型である。開けないものにも「何を入れればよいか」を返す。
+def open_driver(name: str, **opts):
+    """Open device driver *name*, or say exactly why this install cannot.
+
+    ``open_driver("io-memory")`` / ``("io-modbus", host=..., port=...)`` /
+    ``("gpio")`` return a :class:`DigitalIO`. Every other cataloged driver raises
+    :class:`DeviceError` naming the SDK to install and how to reach it — never a
+    bare ``KeyError``, because those drivers are on the menu :func:`capabilities`
+    prints. An unknown *name* (not on the menu at all) raises ``KeyError``.
+
+        io = fullseye.open_driver("io-memory")       # works out of the box
+        fullseye.open_driver("ur-rtde")              # DeviceError: needs 'rtde_control'
+    """
+    if name not in _BY_NAME:
+        raise KeyError("unknown device driver %r; known: %s"
+                       % (name, ", ".join(drivers())))
+    backend = _OPENABLE.get(name)
+    if backend is not None:
+        return DigitalIO(backend, **opts)
+
+    _n, module, pip, _kind, _family, desc = _BY_NAME[name]
+    #: ★PyPI に無い SDK(ベンダ配布の wheel)は「pip install None」と言わせない。
+    if not pip:
+        raise DeviceError(
+            "driver %r (%s) has no PyPI package: get the vendor %r SDK and drive it "
+            "directly — see docs/CONNECTIVITY.md." % (name, desc, module))
+
+    import importlib.util
+    try:
+        avail = module is not None and importlib.util.find_spec(module) is not None
+    except Exception:
+        avail = False
+    if not avail:
+        raise DeviceError("driver %r needs %r (pip install %s)" % (name, module, pip))
+    raise DeviceError(
+        "driver %r is cataloged and %r is installed — drive it with that SDK directly, "
+        "or see docs/CONNECTIVITY.md; a first-class Fullseye driver adapter is on the "
+        "roadmap." % (name, module))
 
 
 class DigitalIO:
@@ -103,8 +175,9 @@ class DigitalIO:
                 self._gpio_kind = "rpi"
                 self._rpi = RG
             except Exception as e:
-                raise RuntimeError(
-                    "gpio backend needs one of: periphery / RPi.GPIO / gpiod: %s" % e)
+                raise DeviceError(
+                    "driver 'gpio' needs one of: periphery / RPi.GPIO / gpiod "
+                    "(pip install python-periphery): %s" % e)
 
     # ------------------------------------------------------------------- I/O --
     def set(self, pin: int, on: bool = True):

@@ -7,6 +7,33 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★★**名簿に 12 の driver を載せておきながら、扉が 3 つしか無かった**。
+  `device.capabilities()` は I-O・サーボ・ロボット・ROS を合わせて **12 driver**
+  を名乗るのに、Fullseye から開ける口が在ったのは `DigitalIO` の **3 backend**
+  だけで、残る 9(dynamixel / feetech / canopen / ur-rtde / robotiq / xarm / ros /
+  franka / kinova)には**入口が 1 つも無かった**。名簿を読んだ人が、そこから何かを
+  始める方法が無い。
+  - **同じ問いに隣の層は既に答えていた。** `comm.open_channel` は、開けない
+    protocol にも「`'X'` を入れて `Y` の client を直接使え」と**名指しで**返す。
+    つまりこれは機能の不在ではなく、**片側の入口だけが塞がれていた**型
+    ([[feedback_a_fix_leaves_the_twin_surface_open]])。接続の 3 層のうち
+    protocol には扉が在り、driver には無かった。
+  - `device.open_driver(name)` / `device.drivers()` / `device.DeviceError` を足し、
+    facade(`fullseye.open_driver` ほか)にも通した。開ける 3 つは `DigitalIO` を
+    返し、残りは **pip 名か import 名を必ず言う** `DeviceError` で断る。
+  - ★**名簿の綴りと構築子の綴りが違っていた。** 表は `io-modbus` と名乗るのに
+    構築子は `DigitalIO("modbus")` を取るので、**表を読んでそのまま渡すと**
+    `ValueError` になっていた。`open_driver` は名簿の綴りを受け取って訳す。
+  - ★**門が 1 件出した: 「相手が居ない」は「扉が無い」ではない。** 最初の門は
+    `io-modbus` の `ConnectionRefusedError` を「扉が無い」と数えたが、それは
+    「PLC に届く口が在って、線の先に誰も居なかった」ということで正反対である。
+    一緒くたにすると、門は CI に PLC を繋げと要求し始める。開ける driver からの
+    `OSError` だけを通すようにし、その区別自体も壊して確かめている。
+  - `DeviceError` は `RuntimeError` の子にしたので、既に `RuntimeError` で
+    捕まえている呼び出し側は壊れない。`gpio` の失敗も同じ型に揃えた。
+  - **駆動の名簿も「静かに減らない」台帳に載せた**。`comm.protocols` は数えて
+    いたのに `device.drivers` は数えておらず、接続の 3 層のうち 1 つだけが
+    見張られていない状態だった(`docs/COLLECTION_SIZES.json`)。
 - ★★**出荷モジュールの説明文が、古い数を現在形で名乗っていた**。`fullseye/__init__.py`
   は wheel に入るのに、`capabilities()` の説明文が image sources を **9** と書いていた ——
   zed と kinect を数えていない版のままである(実測 **10**)。ほかに `_OpNamespace` が

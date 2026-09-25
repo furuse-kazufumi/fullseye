@@ -13,7 +13,9 @@
 3. 欠陥の 1 枚だけが ng、壊れた 1 枚は error で **バッチを止めない**
 4. 数値の計測列は EWMA(spc_ewma)で工程管理の目安が付く
 5. 同じ結果を .md / .jsonl(/ .xlsx)に書き分け、監査ログ(JSON Lines)に追記する
-6. 行の Verdict はそのまま PLC 出口 ``signal_verdict`` に渡せる(語彙一致)
+6. 行の Verdict はそのまま PLC 出口 ``signal_verdict`` に渡せる(語彙一致)。
+   出口は ``fs.open_driver("io-memory")`` —— **名簿 ``fs.drivers()`` の名前を
+   そのまま渡す**。入っていない driver は pip 名を名指しで断る
 
 ことを assert で確かめる(絵に描いたふりをしない)。
 
@@ -99,11 +101,22 @@ def main() -> int:
     except ImportError:
         print('xlsx: skip(openpyxl 未導入、pip install "fullseye[xlsx]")')
 
-    # 6. 行の Verdict は PLC 出口にそのまま渡せる
-    import device
-    io = device.DigitalIO(backend="memory")
-    assert device.signal_verdict(io, fs.as_verdict(out["rows"][5])) == "ng"
+    # 6. 行の Verdict は PLC 出口にそのまま渡せる。出口は**名簿から開く** ——
+    #    `fs.drivers()` に並ぶ名前をそのまま `fs.open_driver` に渡す。
+    assert "io-memory" in fs.drivers(), "名簿に試験用の出口が無い"
+    io = fs.open_driver("io-memory")                 # ハード無しで動く出口
+    assert fs.signal_verdict(io, fs.as_verdict(out["rows"][5])) == "ng"
     print("PLC 出口(one-hot コイル)に ng を出せた")
+
+    #    この install に入っていない driver は、**何を入れればよいかを名指しで**断る
+    #    (名簿に載っているのに開き方が分からない、が起きないようにするため)。
+    try:
+        fs.open_driver("ur-rtde")
+    except fs.DeviceError as e:
+        assert "ur-rtde" in str(e) and "rtde_control" in str(e)
+        print("入っていない driver の断り文句:", e)
+    else:
+        print("ur-rtde が開けた(この機械には ur_rtde が入っている)")
     print("PASS")
     return 0
 

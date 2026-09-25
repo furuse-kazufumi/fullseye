@@ -161,4 +161,20 @@ fullseye.signal_result(io, ok)      # PASS/FAIL 出力を駆動
 fullseye.pulse(io, pin=3, ms=50)    # リジェクト射出
 ```
 
+上の表の **driver 名をそのまま**渡して開けます。開けないものは「何を入れれば
+よいか」を名指しで返すので、名簿を読んでから手が止まりません。
+
+```python
+fullseye.drivers()                     # 名簿(表と同じ名前)
+io = fullseye.open_driver("io-memory") # ハード無しで動く(試験・素振り)
+io = fullseye.open_driver("io-modbus", host="127.0.0.1", port=1502)
+
+try:
+    arm = fullseye.open_driver("ur-rtde")
+except fullseye.DeviceError as e:
+    print(e)   # driver 'ur-rtde' needs 'rtde_control' (pip install ur_rtde)
+```
+
+同じ作法が protocol 側(`fullseye.open_channel`)にもあります —— 名簿は
+`capabilities()`、扉は `open_*`、断るときは pip 名を言う、の 3 点セットです。
 カメラ: `with fullseye.Camera(0) as cam: frame = cam.grab()`(USB/UVC/IP/RTSP、深度は RealSense/OAK-D 等 optional)。

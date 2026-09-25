@@ -42,7 +42,8 @@ out = fs.inspect_batch("lot_0001/", ["gaussian", "otsu"], measure=measure, spec=
 print(out["summary"])                              # {'n': 7, 'ok': 5, 'ng': 1, 'error': 1, 'unjudged': 0}
 for r in out["rows"]:
     print(r["hash"], r["verdict"]["status"], r["verdict"]["detail"])
-fs.signal_verdict(io, fs.as_verdict(out["rows"][0]))   # PLC 出口へ(io は DigitalIO)
+io = fs.open_driver("io-memory")                       # PLC 出口(名簿は fs.drivers())
+fs.signal_verdict(io, fs.as_verdict(out["rows"][0]))   # one-hot コイルへ
 ```
 
 ## 裏づけ
@@ -50,4 +51,4 @@ fs.signal_verdict(io, fs.as_verdict(out["rows"][0]))   # PLC 出口へ(io は Di
 - 実装: `fullseye/judge.py`(`judge`: 4 規則・fail-closed)/ `fullseye/inspect_batch.py`(`inspect_batch`, `as_verdict`: 列挙・hash・recipe・計測・判定・series・EWMA・3 系統レポート・監査ログ)
 - 例: [`inspection_workflow`](../../examples/inspection_workflow.py)(合成ロット 良品 5・欠陥 1・壊れた 1 を回し、欠陥だけ ng・壊れた 1 枚は error で続行・.md/.jsonl/監査ログ・PLC 出口まで assert)
 - 試験: `tests/test_judge.py`(仕様内 ok / 超過 ng+violations / 欠損 error / NaN error / 境界 inclusive / eq・in / 誤字の仕様は ValueError / signal_verdict にそのまま渡せる)/ `tests/test_inspect_batch.py`(決定的順序 / hash・計測・verdict / 欠陥だけ ng・壊れた 1 枚は error で続行 / series→EWMA / .md・.jsonl・.xlsx / 監査ログ追記 / 0 枚・壊れた spec・未知拡張子は拒否)
-- 来歴: 新アルゴリズム無し(既存 `run_pipeline` / `spc_ewma`(Roberts 1959)/ jsonio・mdio・xlsxio の配線)。判定語彙は `fsruntime.Verdict` と `device.signal_verdict` に一致。
+- 来歴: 新アルゴリズム無し(既存 `run_pipeline` / `spc_ewma`(Roberts 1959)/ jsonio・mdio・xlsxio の配線)。判定語彙は `fsruntime.Verdict` と `device.signal_verdict` に一致。出口は `device.open_driver`(名簿 `device.capabilities()` の driver 名をそのまま渡す)。

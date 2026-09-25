@@ -56,6 +56,7 @@ def _ledger():
 def _measure():
     """環境に依らない大きさだけを測る。"""
     import comm
+    import device
     import examples2d
     import imgio
     import ops3d
@@ -81,6 +82,11 @@ def _measure():
         "recipes.RECIPES": len(recipes.RECIPES),
         "imgio.COLORMAPS": len(imgio.COLORMAPS),
         "comm.protocols": len(comm.protocols()),
+        #: ★2026-09-25 追加: 通信の名簿(`comm.protocols`)は数えていたのに、
+        #:   **駆動の名簿は数えていなかった**。接続の 3 層(protocol /
+        #:   image source / driver)のうち 1 つだけ見ていない状態で、
+        #:   driver が 1 行消えても誰も気づかない。
+        "device.drivers": len(device.drivers()),
         "poc_exhibits": exhibits,
         # ★2026-09-08 追加: 説明を貯める 2 つの台帳。**説明ほど静かに減る**ので
         #   ここで数える(docs/CAPABILITIES.md と docs/HARDENING.md の元)。
