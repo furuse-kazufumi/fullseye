@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1067. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1071. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -136,8 +136,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `comm.py`
 
-- **L525** _(ja)_ — ★**断り文句が「install 'None'」と言っていた。** `cclink` は pure-python の master が存在しないので pip 名も import 名も持たない —— そこを場合分けせずに 書式へ流し込んだ結果、`open_channel("cclink")` は 「install 'None' and use the None client directly」と答えていた。 **入っていないものを名指しする口は、名指しできない相手で必ず崩れる。** 2026-09-25、`device.open_driver` を足すときに同じ分岐を書いて気づいた(隣の 層を直したら、元の層を読み返すこと)。
-- **L532** _(ja)_ — ★もう 1 つ: 相手が**入っている**ときに「install しろ」と言っていた。入って いるのに入れろと言う案内は、読んだ人をそこで止める。
+- **L532** _(ja)_ — ★**断り文句が「install 'None'」と言っていた。** `cclink` は pure-python の master が存在しないので pip 名も import 名も持たない —— そこを場合分けせずに 書式へ流し込んだ結果、`open_channel("cclink")` は 「install 'None' and use the None client directly」と答えていた。 **入っていないものを名指しする口は、名指しできない相手で必ず崩れる。** 2026-09-25、`device.open_driver` を足すときに同じ分岐を書いて気づいた(隣の 層を直したら、元の層を読み返すこと)。
+- **L539** _(ja)_ — ★もう 1 つ: 相手が**入っている**ときに「install しろ」と言っていた。入って いるのに入れろと言う案内は、読んだ人をそこで止める。
 
 ## `conngraph.py`
 
@@ -158,9 +158,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `device.py`
 
-- **L75** _(ja)_ — ★**名簿の綴りと構築子の綴りが違っていた。** 名簿(``capabilities()``)は ``io-modbus`` と名乗るのに、構築子は ``DigitalIO("modbus")`` を取る —— つまり**表を読んでそのまま渡すと ``ValueError``** になっていた。名簿を 印刷しておきながら、その綴りで呼べないのは名簿の側の不備である。
-- **L89** _(ja)_ — ★**名簿に 12 載せて、扉が 3 つしか無かった**(2026-09-25)。``capabilities()`` は I-O・サーボ・ロボット・ROS を名乗るのに、開ける口が在ったのは :class:`DigitalIO` の 3 backend だけで、残り 9 には入口が 1 つも無かった —— 名簿を読んだ人が、そこから何かを始める方法が無い。隣の層(``comm``)は 同じ問いに既に答えていたので、これは機能の不在ではなく**片側の入口だけが 塞がれていた**型である。開けないものにも「何を入れればよいか」を返す。
-- **L115** _(ja)_ — ★PyPI に無い SDK(ベンダ配布の wheel)は「pip install None」と言わせない。
+- **L60** _(ja)_ — ★**``available`` は「SDK が入っている」であって「Fullseye から開ける」ではない。** 2026-09-25 まで名簿はこの 2 つを 1 つの欄で答えていた —— `dynamixel_sdk` を入れた 機械で ``available`` は True になるのに、`open_driver("dynamixel")` は「その SDK を 直接使え」と断る。読んだ人は「対応済み」と受け取る。 ``implemented`` は**環境に依らない**(この版に一級のアダプタが在るか)ので、表にも 書けるし、どの機械でも同じ門で見られる。「いま開けるか」は ``implemented and available``。
+- **L66** _(ja)_ — ★欄の名前は自分で決めていない —— **`acquire` は既にこの区別を持っていた** (`implemented` = opener が在る / `available` = SDK が在る、「the two are different questions」と註まで在る)。同じ問いに 3 層が別々の語で答えると、 読む側は毎回学び直す。**先に正しかった層の語に合わせる。**
+- **L90** _(ja)_ — ★**名簿の綴りと構築子の綴りが違っていた。** 名簿(``capabilities()``)は ``io-modbus`` と名乗るのに、構築子は ``DigitalIO("modbus")`` を取る —— つまり**表を読んでそのまま渡すと ``ValueError``** になっていた。名簿を 印刷しておきながら、その綴りで呼べないのは名簿の側の不備である。
+- **L104** _(ja)_ — ★**名簿に 12 載せて、扉が 3 つしか無かった**(2026-09-25)。``capabilities()`` は I-O・サーボ・ロボット・ROS を名乗るのに、開ける口が在ったのは :class:`DigitalIO` の 3 backend だけで、残り 9 には入口が 1 つも無かった —— 名簿を読んだ人が、そこから何かを始める方法が無い。隣の層(``comm``)は 同じ問いに既に答えていたので、これは機能の不在ではなく**片側の入口だけが 塞がれていた**型である。開けないものにも「何を入れればよいか」を返す。
+- **L130** _(ja)_ — ★PyPI に無い SDK(ベンダ配布の wheel)は「pip install None」と言わせない。
 
 ## `engine.py`
 
@@ -1579,9 +1581,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_connectivity_doc.py`
 
-- **L88** _(ja)_ — ★`あり` の欄は**見ない** —— その lib が import できるかは機械ごとに違い、 そこを門にすると手元と CI で答えが変わる。
-- **L146** _(ja)_ — ★入口の名前は**実装の台帳から**引く。表に手で書いた名前が古くなると、 「証拠が消えた対応済み」になる。
-- **L191** _(ja)_ — ★門を壊して確かめる —— 「通るだけの門」と「何も見ていない門」は区別できない。 (節, 壊し方, 期待する文言)。壊すのは**表の側**で、判定は本物の関数を呼ぶ。
+- **L96** _(ja)_ — ★ここは長いあいだ `あり`(= その lib が import できるか)の欄で、 **機械ごとに違うので門が見られなかった** —— 誰も検査しない欄が表に 1 列在る状態だった(しかも中身は `kind == native` の写しで、pyserial を 入れた機械では嘘になる)。2026-09-25 に「実装」(Fullseye 自身が開けるか) へ替えた。**版で決まる**ので、どの機械でも同じ答えになる。
+- **L168** _(ja)_ — ★入口の名前は**実装の台帳から**引く。表に手で書いた名前が古くなると、 「証拠が消えた対応済み」になる。
+- **L213** _(ja)_ — ★門を壊して確かめる —— 「通るだけの門」と「何も見ていない門」は区別できない。 (節, 壊し方, 期待する文言)。壊すのは**表の側**で、判定は本物の関数を呼ぶ。
+- **L222** _(ja)_ — ★実際に踏んだ形 —— 名簿には載るが開けない driver を「開ける」と書く。
+- **L352** _(ja)_ — ★**名簿が「在る」と言うのと、開けるのは別の問い**だった。2026-09-25 まで `capabilities()` の `available` 1 欄が両方を兼ねており、`dynamixel_sdk` を入れた 機械では `available: True` なのに `open_driver("dynamixel")` は「その SDK を直接 使え」と断った —— 読んだ人は「対応済み」と受け取る。`acquire` は既に `implemented` / `available` を分けて持っていたので、**先に正しかった層の語**に 合わせた。ここではその欄が**実際の口の振る舞いと一致する**ことを見る。
 
 ## `tests/test_degenerate_inputs.py`
 

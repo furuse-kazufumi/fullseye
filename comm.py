@@ -76,15 +76,18 @@ class Channel:
 _REGISTRY: dict = {}
 
 
-def register(name, factory, native=False, pip=None, desc="", kind=None, probe=None):
+def register(name, factory, native=False, pip=None, desc="", kind=None, probe=None,
+             implemented=True):
     """Register a Channel factory under *name*. *factory(**opts)* returns an opened
     Channel. *native* = pure-stdlib; *pip* = the package an optional adapter needs;
     *kind* ∈ {"native","optional","scaffold"} (defaults from *native*); *probe* is
-    the import name used to report availability."""
+    the import name used to report availability; *implemented* = False for a cataloged
+    protocol that Fullseye lists but cannot open itself (see :func:`capabilities`)."""
     if kind is None:
         kind = "native" if native else "optional"
     _REGISTRY[name] = {"factory": factory, "native": bool(native), "pip": pip,
-                       "desc": desc, "kind": kind, "_probe": probe}
+                       "desc": desc, "kind": kind, "_probe": probe,
+                       "implemented": bool(implemented)}
 
 
 def open_channel(protocol: str, **opts) -> Channel:
@@ -109,17 +112,21 @@ def _importable(mod: str) -> bool:
 
 
 def capabilities() -> list:
-    """Per-protocol availability: ``{name, kind, native, available, pip, desc}``.
+    """Per-protocol availability: ``{name, kind, native, implemented, available, pip, desc}``.
 
     ``kind`` ∈ native / optional / scaffold. ``available`` is True for native
     protocols and for optional/scaffold ones whose pip package is importable — so
     you see at a glance what this install can talk to and what a ``pip install``
-    would unlock."""
+    would unlock. ★``implemented`` answers the **other** question: whether Fullseye
+    itself can open it (:func:`open_channel` returns a Channel). A cataloged
+    protocol whose library is installed is ``available`` but not ``implemented`` ——
+    reachable with that library directly, not *through* Fullseye."""
     out = []
     for name in sorted(_REGISTRY):
         e = _REGISTRY[name]
         avail = True if e["native"] else (_importable(e["_probe"]) if e.get("_probe") else False)
         out.append({"name": name, "kind": e.get("kind", "optional"), "native": e["native"],
+                    "implemented": bool(e.get("implemented", True)),
                     "available": avail, "pip": e["pip"], "desc": e["desc"]})
     return out
 
@@ -573,4 +580,5 @@ _CATALOG = [
 ]
 for _name, _module, _pip, _kind, _desc in _CATALOG:
     register(_name, _cataloged_factory(_name, _pip, _module, _desc),
-             native=False, pip=_pip, kind=_kind, probe=_module, desc=_desc)
+             native=False, pip=_pip, kind=_kind, probe=_module, desc=_desc,
+             implemented=False)

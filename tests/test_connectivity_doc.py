@@ -38,6 +38,14 @@ _NUM = re.compile(r"\d+")
 _TICKED = re.compile(r"`([^`]+)`")
 
 
+#: 表の ✓ / — を真偽に読む。**空欄や別の記号は通さない** —— 読めない印を
+#: 「False」と読むと、書き間違えた行が静かに緑になる。
+def _tick(cell: str) -> bool:
+    cell = (cell or "").strip()
+    assert cell in ("\u2713", "\u2014"), "実装欄は ✓ か — のどちらか: %r" % cell
+    return cell == "\u2713"
+
+
 def _text() -> str:
     return io.open(DOC, encoding="utf-8").read()
 
@@ -85,8 +93,14 @@ def _check_comm(heading: str, section: str) -> None:
     for name, cells in sorted(listed.items()):
         assert cells[1] == caps[name]["kind"], (
             "%s の kind が食い違う: 表 %r / 実装 %r" % (name, cells[1], caps[name]["kind"]))
-        #: ★`あり` の欄は**見ない** —— その lib が import できるかは機械ごとに違い、
-        #:   そこを門にすると手元と CI で答えが変わる。
+        #: ★ここは長いあいだ `あり`(= その lib が import できるか)の欄で、
+        #:   **機械ごとに違うので門が見られなかった** —— 誰も検査しない欄が表に
+        #:   1 列在る状態だった(しかも中身は `kind == native` の写しで、pyserial を
+        #:   入れた機械では嘘になる)。2026-09-25 に「実装」(Fullseye 自身が開けるか)
+        #:   へ替えた。**版で決まる**ので、どの機械でも同じ答えになる。
+        assert _tick(cells[2]) == caps[name]["implemented"], (
+            "%s の実装欄が食い違う: 表 %r / 実装 %r"
+            % (name, cells[2], caps[name]["implemented"]))
         pip = cells[3] if cells[3] != "—" else None
         assert pip == (caps[name].get("pip") or None), (
             "%s の pip が食い違う: 表 %r / 実装 %r" % (name, pip, caps[name].get("pip")))
@@ -103,6 +117,14 @@ def _check_device(heading: str, section: str) -> None:
     for name, cells in sorted(listed.items()):
         assert cells[1] == caps[name]["kind"], (
             "%s の kind が食い違う: 表 %r / 実装 %r" % (name, cells[1], caps[name]["kind"]))
+        assert cells[2] == caps[name]["family"], (
+            "%s の種別が食い違う: 表 %r / 実装 %r" % (name, cells[2], caps[name]["family"]))
+        assert _tick(cells[3]) == caps[name]["implemented"], (
+            "%s の実装欄が食い違う: 表 %r / 実装 %r"
+            % (name, cells[3], caps[name]["implemented"]))
+        pip = cells[4] if cells[4] != "—" else None
+        assert pip == (caps[name].get("pip") or None), (
+            "%s の pip が食い違う: 表 %r / 実装 %r" % (name, pip, caps[name].get("pip")))
 
 
 def _check_pixel_formats(heading: str, section: str) -> None:
@@ -197,6 +219,19 @@ _BREAKS = [
      "pip が食い違う"),
     ("デバイス制御 (device)", lambda s: s.replace("| optional |", "| native |", 1),
      "kind が食い違う"),
+    #: ★実際に踏んだ形 —— 名簿には載るが開けない driver を「開ける」と書く。
+    ("デバイス制御 (device)",
+     lambda s: s.replace("| canopen | optional | motion | \u2014 |",
+                         "| canopen | optional | motion | \u2713 |", 1),
+     "実装欄が食い違う"),
+    ("通信プロトコル (comm)",
+     lambda s: s.replace("| mqtt | optional | \u2014 |",
+                         "| mqtt | optional | \u2713 |", 1),
+     "実装欄が食い違う"),
+    ("通信プロトコル (comm)",
+     lambda s: s.replace("| mqtt | optional | \u2014 |",
+                         "| mqtt | optional | ? |", 1),
+     "\u2713 か \u2014"),
     ("画素形式", lambda s: s.replace("| Mono | 15 | 10 | 5 |", "| Mono | 15 | 11 | 4 |"),
      "食い違う"),
     ("取り込み層の 8 軸", lambda s: s.replace("`Camera.close`", "`Camera.shutdown`"),
@@ -308,3 +343,66 @@ def test_the_facade_count_gate_notices_a_reworded_sentence():
     with pytest.raises(AssertionError) as e:
         _facade_counts("まったく別の説明文")
     assert "名乗っていない" in str(e.value)
+
+
+
+# --------------------------------------------------------------------------- #
+# 名簿の `implemented` は、実際の口と一致していること                            #
+# --------------------------------------------------------------------------- #
+#: ★**名簿が「在る」と言うのと、開けるのは別の問い**だった。2026-09-25 まで
+#: `capabilities()` の `available` 1 欄が両方を兼ねており、`dynamixel_sdk` を入れた
+#: 機械では `available: True` なのに `open_driver("dynamixel")` は「その SDK を直接
+#: 使え」と断った —— 読んだ人は「対応済み」と受け取る。`acquire` は既に
+#: `implemented` / `available` を分けて持っていたので、**先に正しかった層の語**に
+#: 合わせた。ここではその欄が**実際の口の振る舞いと一致する**ことを見る。
+def _assert_the_menu_tells_the_truth_about_opening(rows, opener, refusal_marks) -> None:
+    wrong = []
+    for row in rows:
+        name = row["name"]
+        if row["implemented"]:
+            continue                      # 開ける側は他の門(扉の門)が見ている
+        try:
+            got = opener(name)
+        except Exception as e:            # noqa: BLE001
+            if not any(m in str(e) for m in refusal_marks):
+                wrong.append((name, "断り方が想定外: %s" % str(e)[:80]))
+            continue
+        try:
+            got.close()
+        except Exception:
+            pass
+        wrong.append((name, "implemented=False なのに開けた"))
+    assert not wrong, (
+        "名簿の implemented が実際の口と食い違う: %s" % (wrong,))
+
+
+def test_the_comm_menu_tells_the_truth_about_opening():
+    _assert_the_menu_tells_the_truth_about_opening(
+        comm.capabilities(), comm.open_channel,
+        ("cataloged", "needs", "no pure-python client"))
+
+
+def test_the_device_menu_tells_the_truth_about_opening():
+    _assert_the_menu_tells_the_truth_about_opening(
+        device.capabilities(), device.open_driver,
+        ("cataloged", "needs", "no PyPI package"))
+
+
+def test_every_layer_reports_both_questions():
+    """3 層とも「SDK が在るか」と「Fullseye が開けるか」を**別の欄**で答えること。"""
+    import acquire as _acq
+    for mod in (comm, _acq, device):
+        row = mod.capabilities()[0]
+        for key in ("available", "implemented"):
+            assert key in row, "%s.capabilities() に %r が無い" % (mod.__name__, key)
+
+
+def test_the_truth_gate_catches_a_menu_that_overstates():
+    """★門を壊して確かめる —— 開けないのに「開ける」と名乗る行を落とすこと。"""
+    rows = [dict(r) for r in device.capabilities()]
+    for r in rows:
+        r["implemented"] = False          # 全部「開けない」と名乗らせる
+    with pytest.raises(AssertionError) as e:
+        _assert_the_menu_tells_the_truth_about_opening(
+            rows, device.open_driver, ("cataloged", "needs", "no PyPI package"))
+    assert "開けた" in str(e.value)

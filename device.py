@@ -57,10 +57,24 @@ _DRIVERS = [
 ]
 
 
+#: ★**``available`` は「SDK が入っている」であって「Fullseye から開ける」ではない。**
+#: 2026-09-25 まで名簿はこの 2 つを 1 つの欄で答えていた —— `dynamixel_sdk` を入れた
+#: 機械で ``available`` は True になるのに、`open_driver("dynamixel")` は「その SDK を
+#: 直接使え」と断る。読んだ人は「対応済み」と受け取る。
+#: ``implemented`` は**環境に依らない**(この版に一級のアダプタが在るか)ので、表にも
+#: 書けるし、どの機械でも同じ門で見られる。「いま開けるか」は ``implemented and available``。
+#: ★欄の名前は自分で決めていない —— **`acquire` は既にこの区別を持っていた**
+#: (`implemented` = opener が在る / `available` = SDK が在る、「the two are
+#: different questions」と註まで在る)。同じ問いに 3 層が別々の語で答えると、
+#: 読む側は毎回学び直す。**先に正しかった層の語に合わせる。**
 def capabilities() -> list:
-    """Device drivers: ``{name, kind, family, available, pip, desc}`` — the
-    actuators / robots / I-O this install can drive, and what a ``pip install``
-    would unlock. Native backends (memory / Modbus coils) always work."""
+    """Device drivers: ``{name, kind, family, implemented, available, pip, desc}``.
+
+    ``implemented`` = Fullseye itself can open it (:func:`open_driver` returns a driver);
+    ``available`` = the SDK is importable here. They are different questions: an
+    installed SDK with no Fullseye adapter is reachable, but not *through* Fullseye.
+    Native backends (memory / Modbus coils) are both. See :func:`open_driver`.
+    """
     import importlib.util
     out = []
     for name, module, pip, kind, family, desc in _DRIVERS:
@@ -68,6 +82,7 @@ def capabilities() -> list:
                                        importlib.util.find_spec(module) is not None
                                        if module else False)
         out.append({"name": name, "kind": kind, "family": family,
+                    "implemented": name in _OPENABLE,
                     "available": bool(avail), "pip": pip, "desc": desc})
     return out
 

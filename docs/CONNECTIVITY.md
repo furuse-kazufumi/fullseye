@@ -17,10 +17,14 @@ Fullseye は vision に加え **デバイス制御・産業通信** を扱う(HA
 - **native** = 標準ライブラリのみで**すぐ動く**(uniform な API)
 - **optional** = `pip` 欄のパッケージを入れると有効になる
 - **scaffold** = 特殊ハード/リアルタイム/native SDK が必要(文書化・best-effort)
+- **実装** = **Fullseye 自身が開けるか**(`open_*` が口を返す)。`—` の行は名簿には載るが、
+  その SDK を直接使う —— `open_*` は何を入れればよいかを名指しで返します。
+  ★この欄は**版で決まる**ので表に書けます(「SDK が入っているか」は機械ごとに違うので、
+  表には書かず `capabilities()` の `available` で見ます)。
 
 ## 通信プロトコル (comm) (23)
 
-| protocol | kind | あり | pip | 説明 |
+| protocol | kind | 実装 | pip | 説明 |
 |---|---|---|---|---|
 | http | native | ✓ | — | HTTP/REST client |
 | modbus-tcp | native | ✓ | — | Modbus TCP client (PLC / I-O; built-in, no deps) |
@@ -34,7 +38,7 @@ Fullseye は vision に加え **デバイス制御・産業通信** を扱う(HA
 | mqtt | optional | — | paho-mqtt | MQTT pub/sub (IIoT broker) |
 | opcua | optional | — | asyncua | OPC-UA client (industrial servers) |
 | s7 | optional | — | python-snap7 | Siemens S7 (S7comm) — DB/Merker/I/O |
-| serial | optional | — | pyserial | RS-232/485 serial port (send/receive) |
+| serial | optional | ✓ | pyserial | RS-232/485 serial port (send/receive) |
 | slmp | optional | — | pymcprotocol | Mitsubishi MC protocol / SLMP (MELSEC) |
 | sparkplug | optional | — | pysparkplug | Sparkplug B over MQTT |
 | websocket | optional | — | websocket-client | WebSocket client |
@@ -143,20 +147,20 @@ acquire.sfnc_to_uvc("ExposureTime", 500000.0)                    # -> (..., 5000
 
 ## デバイス制御 (device) (12)
 
-| driver | kind | 種別 | pip | 説明 |
-|---|---|---|---|---|
-| io-memory | native | io | — | in-process digital I/O (tests / dry-run) |
-| io-modbus | native | io | — | digital I/O over Modbus coils (built-in) |
-| canopen | optional | motion | canopen | CANopen CiA-402 motion drives |
-| dynamixel | optional | servo | dynamixel-sdk | Robotis Dynamixel servos |
-| feetech | optional | servo | feetech-servo-sdk | Feetech STS/SCS servos |
-| gpio | optional | io | python-periphery | SBC GPIO — Raspberry Pi / Jetson (also RPi.GPIO / gpiod) |
-| robotiq | optional | gripper | pyRobotiqGripper | Robotiq 2F / Hand-E grippers |
-| ros | optional | middleware | rclpy | ROS 2 node bridge (rclpy) |
-| ur-rtde | optional | robot | ur_rtde | Universal Robots RTDE / URScript |
-| xarm | optional | robot | xArm-Python-SDK | UFACTORY xArm / Lite6 / 850 |
-| franka | scaffold | robot | panda-python | Franka Panda / FR3 (libfranka + RT kernel) |
-| kinova | scaffold | robot | — | Kinova Gen3 (off-PyPI kortex wheel) |
+| driver | kind | 種別 | 実装 | pip | 説明 |
+|---|---|---|---|---|---|
+| io-memory | native | io | ✓ | — | in-process digital I/O (tests / dry-run) |
+| io-modbus | native | io | ✓ | — | digital I/O over Modbus coils (built-in) |
+| canopen | optional | motion | — | canopen | CANopen CiA-402 motion drives |
+| dynamixel | optional | servo | — | dynamixel-sdk | Robotis Dynamixel servos |
+| feetech | optional | servo | — | feetech-servo-sdk | Feetech STS/SCS servos |
+| gpio | optional | io | ✓ | python-periphery | SBC GPIO — Raspberry Pi / Jetson (also RPi.GPIO / gpiod) |
+| robotiq | optional | gripper | — | pyRobotiqGripper | Robotiq 2F / Hand-E grippers |
+| ros | optional | middleware | — | rclpy | ROS 2 node bridge (rclpy) |
+| ur-rtde | optional | robot | — | ur_rtde | Universal Robots RTDE / URScript |
+| xarm | optional | robot | — | xArm-Python-SDK | UFACTORY xArm / Lite6 / 850 |
+| franka | scaffold | robot | — | panda-python | Franka Panda / FR3 (libfranka + RT kernel) |
+| kinova | scaffold | robot | — | — | Kinova Gen3 (off-PyPI kortex wheel) |
 
 ## 使い方(native はすぐ動く)
 

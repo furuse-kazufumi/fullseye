@@ -7,6 +7,27 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★★**名簿の `available` が、2 つの違う問いに 1 つの欄で答えていた**。
+  `comm` / `device` の `capabilities()` は `available` を「SDK が import できるか」
+  の意味で返すが、読む人はそれを「Fullseye から使えるか」と受け取る。実際、
+  `dynamixel_sdk` を入れた機械では **`available: True` なのに
+  `open_driver("dynamixel")` は「その SDK を直接使え」と断る**。同じことが
+  `comm` の 18 protocol でも起きていた。
+  - ★**欄の名前は自分で決めなかった。** 調べたら `acquire` は**既にこの区別を
+    持っていた** —— `implemented`(opener が在る)と `available`(SDK が在る)を
+    分け、docstring に「the two are different questions」とまで書いてある。
+    3 層が同じ問いに別々の語で答えると読む側は毎回学び直すので、**先に
+    正しかった層の語に合わせた**。いま `comm` = 5/23、`device` = 3/12、
+    `acquire` = 10/10 が「Fullseye 自身が開ける」数である。
+  - 名簿の `implemented` が**実際の口の振る舞いと一致する**ことを門にした
+    (`implemented=False` の行は必ず断られ、断り文句は pip 名か import 名を言う)。
+- ★**検査できない欄が表に 1 列あった**。`docs/CONNECTIVITY.md` の `あり` 欄は
+  「その lib が import できるか」で、**機械ごとに違うので門が見られなかった**
+  (中身は `kind == native` の写しで、pyserial を入れた機械では嘘になる)。
+  **版で決まる**「実装」欄に替え、門に載せた。ついでに device の表は `kind` しか
+  照合していなかったので、種別と pip も見るようにした。
+  - `✓` / `—` 以外の印は通さない —— 読めない印を False と読むと、書き間違えた行が
+    静かに緑になる。
 - ★★**隣の層を直したら、直した当人の穴が見えた** —— `comm.open_channel("cclink")`
   が「**install 'None' and use the None client directly**」と答えていた。CC-Link IE
   には pure-python の master が存在せず pip 名も import 名も持たないのに、そこを
