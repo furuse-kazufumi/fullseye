@@ -138,6 +138,60 @@ def test_an_animated_figure_is_embedded_as_the_gif_itself(cap):
             assert stem + "_720.jpg" not in joined, (lang, poc_id, "GIF が JPEG に化けている")
 
 
+def test_a_placard_never_hand_writes_its_exhibit_count(cap):
+    """★解説板が展示数を手書きしていない(`{n}` の置き場所だけ)。
+
+    10 翼中 **9 翼**が、展示 53 点の頃に書いた数をそのまま名乗っていた ―― 産業検査は
+    「この部屋の 10 点」と書きながら実際は 27 点(2026-09-25)。例外は出ず、記事は正しく
+    生成され、門も 1 つも赤くならない。誰も数えないから腐る。
+
+    だから「いま正しいか」ではなく「**手書きの数が在るか**」を見る。直した直後は
+    どちらでも通るが、次に誰かが数を書き戻したときに落ちるのはこちらだけ。
+    """
+    c, _byid = cap
+    bad = []
+    for w in c["wings"]:
+        if re.search(r"\d+\s*点", w["placard_ja"]):
+            bad.append("%s (ja)" % w["id"])
+        # ★英語側は**展示数を指す句に限定**する。英語の数詞は散文に普通に出るので
+        #   (two separate numbers / two opposite kinds)、広く拾うと誤検知だらけになり、
+        #   誤検知だらけの門は消される。日本語の「N 点」は展示を数える言い方なので広いまま。
+        if re.search(r"\b(?:these|the|this room's)\s+"
+                     r"(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\s+"
+                     r"(?:exhibits?|pieces?|rooms?|runs?)\b", w["placard_en"], re.I):
+            bad.append("%s (en)" % w["id"])
+    assert not bad, (
+        "解説板が数を手書きしている: %s\n"
+        "  —— 展示は増えるので必ずずれる。`{n}` に置き換えると生成器が実数を入れる。"
+        % ", ".join(bad))
+
+
+def test_the_placard_count_reaches_the_article(cap):
+    """★`{n}` が記事で**実数に化けている**(置き場所のまま出ていない)。
+
+    置き場所にしただけで埋め忘れると、読者には `{n} 点` と表示される。
+    """
+    c, _byid = cap
+    holders = [w["id"] for w in c["wings"] if "{n}" in w["placard_ja"]]
+    assert holders, "置き場所を使っている翼が 1 つも無い(この門は空を通している)"
+    for lang in ("ja", "en"):
+        for path in _generated(c, lang):
+            text = io.open(path, encoding="utf-8").read()
+            assert "{n}" not in text, (
+                "%s に置き場所 `{n}` がそのまま出ている" % os.path.basename(path))
+    #: そして実際の点数が本文に在ることを 1 翼で確かめる(空を通さないため)。
+    counts = {}
+    for e in c["exhibits"]:
+        counts[e["wing"]] = counts.get(e["wing"], 0) + 1
+    w0 = next(w for w in c["wings"] if w["id"] in holders)
+    part = next(p for p in c["meta"]["parts"]
+                if p["kind"] == "generated" and w0["id"] in p["wings"])
+    body = io.open(G.part_path(part["slug"], "ja"), encoding="utf-8").read()
+    want = w0["placard_ja"].strip().replace("{n}", str(counts[w0["id"]]))
+    assert want in body, ("%s の解説板が実数で出ていない(期待した点数 %d)"
+                          % (w0["id"], counts[w0["id"]]))
+
+
 # --------------------------------------------------------------------------
 # 収蔵番号(2026-09-25)
 # --------------------------------------------------------------------------

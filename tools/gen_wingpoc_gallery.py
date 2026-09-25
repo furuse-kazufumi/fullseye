@@ -392,7 +392,12 @@ def _wing_sections(lang: str, cap: dict, byid: dict, nos: dict, wings: list) -> 
         exs = [e for e in exhibits if e["wing"] == w["id"]]
         if not exs:
             continue
-        parts += ["### %s" % w["title_" + lang], "", w["placard_" + lang].strip(), ""]
+        #: ★解説板の「この部屋の {n} 点」は**生成で埋める**。手書きの数は腐る ――
+        #:   10 翼中 9 翼が展示 53 点の頃の数を名乗ったままだった(産業検査は 10 と
+        #:   書いて実際 27、2026-09-25)。例外は出ず、門も赤くならない。
+        #:   `.format` は使わない(解説板に別の波括弧が在ると壊れるため)。
+        placard = w["placard_" + lang].strip().replace("{n}", str(len(exs)))
+        parts += ["### %s" % w["title_" + lang], "", placard, ""]
         for ex in exs:
             n += 1
             pick, figs, second = _figure_for(ex)
