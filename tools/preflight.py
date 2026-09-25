@@ -23,8 +23,10 @@
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -273,12 +275,50 @@ def check_ci() -> Result:
     return Result("ci", "PASS" if conc == "success" else "FAIL", "CI = %s" % conc)
 
 
+#: pytest の集計行(`12 failed, 34 passed in 5.67s`)。落ちた本数を拾うために使う。
+_PYTEST_TALLY = re.compile(r"\b\d+ (?:failed|passed|error|errors)\b")
+
+
+def _suite_detail(out: str) -> str:
+    """スイートの出力から**合否の理由**を取り出す。
+
+    ★2026-09-25: ここは以前 stdout の**最終行だけ**を返していた。fullseye の
+    スイートは動画を扱う PoC が ffmpeg の警告を stdout に吐くので、最終行が
+    `[mov,mp4,...] moov atom not found` になることがある —— 36 分走らせて
+    「FAIL、moov atom not found」しか残らず、**何が落ちたのか分からなかった**。
+    その行は前回の **PASS** にも出ていたので、合否とは無関係である。
+
+    長い検査ほど、失敗したときの情報量が価値を決める。「落ちた」しか返さない
+    36 分は、原因究明のために**もう 1 回 36 分**を払わせる。
+    """
+    lines = [x.rstrip() for x in out.splitlines() if x.strip()]
+    bad = [x for x in lines if x.startswith(("FAILED", "ERROR"))]
+    tally = [x for x in lines if _PYTEST_TALLY.search(x)]
+    parts = []
+    if bad:
+        parts.append("; ".join(x[:110] for x in bad[:3]))
+        if len(bad) > 3:
+            parts.append("ほか %d 件" % (len(bad) - 3))
+    if tally:
+        parts.append(tally[-1][:110])
+    return " / ".join(parts) or "(出力に FAILED も集計行も無い)"
+
+
 def check_full_suite() -> Result:
     t = time.time()
     r = _run([PY, "-m", "pytest", "-q", "-p", "no:cacheprovider"], timeout=5400)
-    last = [x for x in r.stdout.strip().splitlines() if x.strip()][-1:] or [""]
+    #: ★全出力は **repo の外**に残す。repo 直下に置くと「余計なファイル」を見る門に
+    #: 当たりうるし、木が汚れて「凍った木で 1 回」という証拠の条件が崩れる。
+    log = os.path.join(tempfile.gettempdir(),
+                       "fullseye-preflight-suite-%s.log" % time.strftime("%Y%m%d-%H%M%S"))
+    try:
+        with io.open(log, "w", encoding="utf-8", errors="replace") as f:
+            f.write(r.stdout + "\n" + (r.stderr or ""))
+        where = " 全文=%s" % log
+    except OSError as e:                                  # noqa: BLE001 - ログが書けないのは検査の失敗ではない
+        where = " (全文を書けなかった: %s)" % e
     return Result("full-suite", "PASS" if r.returncode == 0 else "FAIL",
-                  "%s (%.0f 分)" % (last[0][:90], (time.time() - t) / 60))
+                  "%s (%.0f 分)%s" % (_suite_detail(r.stdout), (time.time() - t) / 60, where))
 
 
 CHECKS = [

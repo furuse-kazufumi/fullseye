@@ -1112,9 +1112,9 @@
 ## `fullseye/__init__.py`
 
 - **L382** — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L566** — ★ 宣言 out 型に合わせる adapter は、タプルを返す op の**2 番目以降を 捨てる**(``drizzle_resample`` の ``wht``、``piv_cross_correlate`` の ``info``)。捨てられた側が必要なとき、台帳の入口からは届かなかった。 2026-09-06、超解像の PoC が ``flow, info = fs.ledger.piv_cross_correlate(...)`` と書いて (2,R,C) を第 1 軸で開き、dy の 2 行目を dx として使い、 ずれ推定を 0.12 → 0.74 画素にした(例外は出ない)。 ``.raw`` で素の返りに届く: ``fs.ledger.piv_cross_correlate.raw(a, b)``。
-- **L975** — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L994** — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L572** — ★ 宣言 out 型に合わせる adapter は、タプルを返す op の**2 番目以降を 捨てる**(``drizzle_resample`` の ``wht``、``piv_cross_correlate`` の ``info``)。捨てられた側が必要なとき、台帳の入口からは届かなかった。 2026-09-06、超解像の PoC が ``flow, info = fs.ledger.piv_cross_correlate(...)`` と書いて (2,R,C) を第 1 軸で開き、dy の 2 行目を dx として使い、 ずれ推定を 0.12 → 0.74 画素にした(例外は出ない)。 ``.raw`` で素の返りに届く: ``fs.ledger.piv_cross_correlate.raw(a, b)``。
+- **L981** — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1000** — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1987,8 +1987,9 @@
 
 ## `tools/preflight.py`
 
-- **L119** — ★`build/lib` に前回の staging コピーが残っていると、setuptools はそれを **そのまま wheel に詰める**(2026-09-05 実測: py-modules から外したモジュールが wheel に入ったままで、門の変異テストが通ってしまった)。release.yml が clean checkout から建てる理由と同じ。ここでも建てる前に必ず捨てる。
-- **L313** — ★`--only suite` を `--full` 無しで呼ぶと 0 項目になり、以前は 「すべて PASS」と言って rc=0 で帰っていた(2026-09-05 レビューで実測)。 **何も検査していないのに通す門**は、無い門より悪い。
+- **L121** — ★`build/lib` に前回の staging コピーが残っていると、setuptools はそれを **そのまま wheel に詰める**(2026-09-05 実測: py-modules から外したモジュールが wheel に入ったままで、門の変異テストが通ってしまった)。release.yml が clean checkout から建てる理由と同じ。ここでも建てる前に必ず捨てる。
+- **L310** — ★全出力は **repo の外**に残す。repo 直下に置くと「余計なファイル」を見る門に 当たりうるし、木が汚れて「凍った木で 1 回」という証拠の条件が崩れる。
+- **L353** — ★`--only suite` を `--full` 無しで呼ぶと 0 項目になり、以前は 「すべて PASS」と言って rc=0 で帰っていた(2026-09-05 レビューで実測)。 **何も検査していないのに通す門**は、無い門より悪い。
 
 ## `tools/preflight_op_add.py`
 

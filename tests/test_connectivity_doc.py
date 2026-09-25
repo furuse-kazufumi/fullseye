@@ -252,3 +252,59 @@ def test_the_exemptions_name_sections_that_actually_exist():
     for key, why in EXEMPT.items():
         assert any(h.startswith(key) for h in sections), "免除に在るが節が無い: %r" % key
         assert why.strip(), "免除の理由が空: %r" % key
+
+
+# --------------------------------------------------------------------------- #
+# facade の説明文が名乗る数                                                      #
+# --------------------------------------------------------------------------- #
+#: ``fullseye.capabilities()`` の docstring は **wheel に入る**。2026-09-25 まで
+#: そこは image sources を **9** と書いており、zed と kinect を数えていなかった。
+#: 3 つの数は滅多に動かない(新しい backend は出来事である)ので、数は残して
+#: 門で留める —— 動いたときに気づけるほうが役に立つ。
+_FACADE_RE = re.compile(
+    r"protocols \((\d+)\), image sources \((\d+)\) and device drivers \((\d+)\)")
+
+
+def _facade_counts(doc: str):
+    m = _FACADE_RE.search(doc or "")
+    assert m, "capabilities() の説明文が 3 つの数を名乗っていない(言い回しが変わった?)"
+    return tuple(int(x) for x in m.groups())
+
+
+def _assert_the_facade_doc_counts_match(doc: str, live) -> None:
+    said = _facade_counts(doc)
+    assert said == live, (
+        "facade の説明文の数が実装と食い違う: 説明文 %s / 実装 %s "
+        "(comm, acquire, device の順)" % (said, live))
+
+
+def _live_counts():
+    import acquire
+    return (len(comm.capabilities()), len(acquire.capabilities()),
+            len(device.capabilities()))
+
+
+def test_the_facade_doc_counts_match_the_implementation():
+    import fullseye
+    _assert_the_facade_doc_counts_match(fullseye.capabilities.__doc__, _live_counts())
+
+
+def test_the_facade_count_gate_catches_a_stale_number():
+    """★門を壊して確かめる —— 1 つずらした説明文は落ちること。
+
+    実際に踏んだのは image sources が 9 のまま残っていた形なので、そこをずらす。
+    """
+    import fullseye
+    live = _live_counts()
+    doc = fullseye.capabilities.__doc__.replace(
+        "image sources (%d)" % live[1], "image sources (%d)" % (live[1] - 1), 1)
+    with pytest.raises(AssertionError) as e:
+        _assert_the_facade_doc_counts_match(doc, live)
+    assert "食い違う" in str(e.value)
+
+
+def test_the_facade_count_gate_notices_a_reworded_sentence():
+    """★言い回しごと変わったら黙って通さない(数が消えたのを「一致」と読まない)。"""
+    with pytest.raises(AssertionError) as e:
+        _facade_counts("まったく別の説明文")
+    assert "名乗っていない" in str(e.value)

@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1054. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1055. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -1114,9 +1114,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `fullseye/__init__.py`
 
 - **L382** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L566** — ★Der Adapter, der sich an den deklarierten out-Typ haelt, **verwirft alles ab dem 2. Element** eines op, der ein Tupel zurueckgibt (``wht`` von ``drizzle_resample``, ``info`` von ``piv_cross_correlate``). Wird die verworfene Seite benoetigt, war sie ueber den Eingang des ledger nicht erreichbar. Am 2026-09-06 schrieb ein Superaufloesungs-PoC ``flow, info = fs.ledger.piv_cross_correlate(...)``, entpackte das (2,R,C) entlang der 1. Achse, nutzte die 2. Zeile von dy als dx und machte die Verschiebungsschaetzung von 0.12 -> 0.74 px (ohne Ausnahme). Mit ``.raw`` erreicht man die rohe Rueckgabe: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
-- **L975** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L994** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L572** — ★Der Adapter, der sich an den deklarierten out-Typ haelt, **verwirft alles ab dem 2. Element** eines op, der ein Tupel zurueckgibt (``wht`` von ``drizzle_resample``, ``info`` von ``piv_cross_correlate``). Wird die verworfene Seite benoetigt, war sie ueber den Eingang des ledger nicht erreichbar. Am 2026-09-06 schrieb ein Superaufloesungs-PoC ``flow, info = fs.ledger.piv_cross_correlate(...)``, entpackte das (2,R,C) entlang der 1. Achse, nutzte die 2. Zeile von dy als dx und machte die Verschiebungsschaetzung von 0.12 -> 0.74 px (ohne Ausnahme). Mit ``.raw`` erreicht man die rohe Rueckgabe: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
+- **L981** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1000** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1989,8 +1989,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tools/preflight.py`
 
-- **L119** — ★ Bleibt in `build/lib` eine vorherige Staging-Kopie zurück, **packt setuptools sie unverändert ins wheel** (gemessen 2026-09-05: ein aus py-modules entferntes Modul blieb im wheel, und der Mutationstest des Gates ging durch). Derselbe Grund, aus dem release.yml aus einem sauberen Checkout baut. Auch hier vor dem Bauen unbedingt verwerfen.
-- **L313** — ★ `--only suite` ohne `--full` aufzurufen ergibt 0 Elemente, und früher meldete es "alles PASS" und kehrte mit rc=0 zurück (gemessen im Review vom 2026-09-05). **Ein Gate, das durchlässt, während es nichts prüft**, ist schlimmer als gar kein Gate.
+- **L121** — ★ Bleibt in `build/lib` eine vorherige Staging-Kopie zurück, **packt setuptools sie unverändert ins wheel** (gemessen 2026-09-05: ein aus py-modules entferntes Modul blieb im wheel, und der Mutationstest des Gates ging durch). Derselbe Grund, aus dem release.yml aus einem sauberen Checkout baut. Auch hier vor dem Bauen unbedingt verwerfen.
+- **L310** _(ja)_ — ★全出力は **repo の外**に残す。repo 直下に置くと「余計なファイル」を見る門に 当たりうるし、木が汚れて「凍った木で 1 回」という証拠の条件が崩れる。
+- **L353** — ★ `--only suite` ohne `--full` aufzurufen ergibt 0 Elemente, und früher meldete es "alles PASS" und kehrte mit rc=0 zurück (gemessen im Review vom 2026-09-05). **Ein Gate, das durchlässt, während es nichts prüft**, ist schlimmer als gar kein Gate.
 
 ## `tools/preflight_op_add.py`
 

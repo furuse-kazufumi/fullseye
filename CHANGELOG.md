@@ -7,6 +7,24 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★★**出荷モジュールの説明文が、古い数を現在形で名乗っていた**。`fullseye/__init__.py`
+  は wheel に入るのに、`capabilities()` の説明文が image sources を **9** と書いていた ——
+  zed と kinect を数えていない版のままである(実測 **10**)。ほかに `_OpNamespace` が
+  「2-D op 882 個」(実測 932)、`_LedgerNamespace` が「台帳 894 個」(実測 1,243)。
+  - **動く数と凍った数を分ける。** op の数は版ごとに動くので説明文から落として
+    数え方を指す(`op_names()` / `list_ops(include_ledger=True)`)—— 毎回の op 追加で
+    docstring を直させる門は守られずに形骸化する。接続の 3 つの数は滅多に動かない
+    (新しい backend は出来事である)ので、数は残して**門で留める**。
+  - ★**同じファイルの日付つきの実測は直さない。** 「2026-09-06 の実測で
+    `dir(fullseye)` の 1092 名前…」は**凍った証拠**であって、古い数ではない。
+    一括置換の門を書くとこの区別ができず、証拠のほうを壊す。
+- ★**preflight が全数テストの「落ちた理由」を捨てていた件を直した**。`check_full_suite()`
+  は stdout の**最終行だけ**を verdict に添えていたが、スイートは動画を扱う PoC が
+  ffmpeg の警告を吐くので、最終行が `moov atom not found` になることがある —— 36 分
+  走らせた末に「FAIL、moov atom not found」しか残らず、**何が落ちたのか分からなかった**。
+  同じ行は前回の **PASS** にも出ていたので、合否と無関係である。いまは `FAILED` /
+  `ERROR` 行と pytest の集計行を添え、**全出力を repo の外**のファイルに残して場所を言う
+  (repo 直下に置くと余計なファイルを見る門に当たり、木も汚れる)。
 - ★★**公開ページからローカル絶対パスを抜いた(12 ファイル)**。`docs/` は
   `_config.yml` のとおり **そのまま https://furuse.work/ として配信**されるのに、
   その配下に手元の絶対パスが載っていた。いちばん大きかったのは棟の台帳

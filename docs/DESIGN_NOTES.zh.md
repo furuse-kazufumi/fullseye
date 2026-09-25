@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：610 / 1054 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：610 / 1055 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel.py`
@@ -1114,9 +1114,9 @@
 ## `fullseye/__init__.py`
 
 - **L382** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L566** — ★与声明 out 类型对齐的 adapter，会**丢弃返回元组的 op 的第 2 项及以后**(``drizzle_resample`` 的 ``wht``、``piv_cross_correlate`` 的 ``info``)。当被丢弃的一侧需要用到时,从台账入口就够不着。2026-09-06,某超分辨率 PoC 写成 ``flow, info = fs.ledger.piv_cross_correlate(...)``,沿第 1 轴拆开 (2,R,C),把 dy 的第 2 行当作 dx 使用,使偏移估计从 0.12 -> 0.74 像素(不抛异常)。用 ``.raw`` 可够到原始返回:``fs.ledger.piv_cross_correlate.raw(a, b)``。
-- **L975** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L994** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L572** — ★与声明 out 类型对齐的 adapter，会**丢弃返回元组的 op 的第 2 项及以后**(``drizzle_resample`` 的 ``wht``、``piv_cross_correlate`` 的 ``info``)。当被丢弃的一侧需要用到时,从台账入口就够不着。2026-09-06,某超分辨率 PoC 写成 ``flow, info = fs.ledger.piv_cross_correlate(...)``,沿第 1 轴拆开 (2,R,C),把 dy 的第 2 行当作 dx 使用,使偏移估计从 0.12 -> 0.74 像素(不抛异常)。用 ``.raw`` 可够到原始返回:``fs.ledger.piv_cross_correlate.raw(a, b)``。
+- **L981** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1000** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1989,8 +1989,9 @@
 
 ## `tools/preflight.py`
 
-- **L119** — ★ 如果 `build/lib` 里残留着上次的 staging 副本，setuptools 会**原样把它塞进 wheel**（2026-09-05 实测：从 py-modules 中移除的模块仍留在 wheel 里，门的变异测试竟然通过了）。这与 release.yml 从 clean checkout 构建的理由相同。这里也一样，构建前务必清除。
-- **L313** — ★ 不带 `--full` 调用 `--only suite` 会得到 0 个项目，以前会说"全部 PASS"并以 rc=0 返回（2026-09-05 评审中实测）。**什么都没检查却放行的门**，比没有门更糟。
+- **L121** — ★ 如果 `build/lib` 里残留着上次的 staging 副本，setuptools 会**原样把它塞进 wheel**（2026-09-05 实测：从 py-modules 中移除的模块仍留在 wheel 里，门的变异测试竟然通过了）。这与 release.yml 从 clean checkout 构建的理由相同。这里也一样，构建前务必清除。
+- **L310** _(ja)_ — ★全出力は **repo の外**に残す。repo 直下に置くと「余計なファイル」を見る門に 当たりうるし、木が汚れて「凍った木で 1 回」という証拠の条件が崩れる。
+- **L353** — ★ 不带 `--full` 调用 `--only suite` 会得到 0 个项目，以前会说"全部 PASS"并以 rc=0 返回（2026-09-05 评审中实测）。**什么都没检查却放行的门**，比没有门更糟。
 
 ## `tools/preflight_op_add.py`
 

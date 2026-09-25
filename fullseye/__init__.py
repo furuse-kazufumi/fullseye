@@ -404,7 +404,10 @@ def capabilities() -> dict:
     families: ``{"comm": [...], "acquire": [...], "device": [...]}``. Each entry
     reports ``kind`` (native / optional / scaffold), whether it is ``available``
     here, and the ``pip`` package that unlocks it. The comprehensive, honest menu
-    of protocols (23), image sources (9) and device drivers (12)."""
+    of protocols (23), image sources (10) and device drivers (12).
+    ★これら 3 つの数は ``tests/test_connectivity_doc.py`` が実装と突き合わせる ——
+    2026-09-25 まで image sources は **9** のままで、zed と kinect を数えて
+    いなかった(この説明文は wheel に入る)。"""
     import comm
     import acquire
     import device
@@ -413,7 +416,8 @@ def capabilities() -> dict:
             "device": device.capabilities()}
 
 class _OpNamespace:
-    """進化する 2-D op(``ops.REGISTRY``、882 個)を**属性で**呼ぶ入口。
+    """進化する 2-D op(``ops.REGISTRY``)を**属性で**呼ぶ入口。
+    ★数は版ごとに動くのでここに書かない —— 数えるなら ``fullseye.op_names()``。
 
         import fullseye as fs
         out = fs.op.gray_erosion(img)          # = fs.apply(img, "gray_erosion")
@@ -481,7 +485,9 @@ op = _OpNamespace()
 
 
 class _LedgerNamespace:
-    """**型つき台帳の op すべて**(894 個)を属性で呼ぶ入口。
+    """**型つき台帳の op すべて**を属性で呼ぶ入口。
+    ★数は版ごとに動くのでここに書かない —— 数えるなら
+    ``fullseye.list_ops(include_ledger=True)``。
 
         import fullseye as fs
         fs.ledger.reflect_points(pts, plane_point, plane_normal)
