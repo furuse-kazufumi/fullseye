@@ -37,7 +37,9 @@ def _otsu_mask(g):
     """Otsu threshold -> foreground mask. Between-class variance is
     ``(mu·tot - w·muT)^2 / (w·wf)`` (Otsu 1979); it is evaluated only on bins where
     both classes are non-empty, so a degenerate last bin can no longer win and
-    return an all-empty mask."""
+    return an all-empty mask. The threshold is the **upper edge** of the
+    winning bin (2026-09-26): taking its mid-point let the background pixels
+    that live in that same bin cross into the foreground."""
     x = np.clip(np.asarray(g, np.float64), 0, 1)
     hist, edges = np.histogram(x, 256, (0, 1))
     hist = hist.astype(np.float64)
@@ -52,8 +54,13 @@ def _otsu_mask(g):
     valid = (w > 0) & (wf > 0)
     between = np.zeros_like(w)
     between[valid] = (mu[valid] * tot - w[valid] * muT) ** 2 / (w[valid] * wf[valid])
-    t = mids[int(np.argmax(between))]
-    return x > t
+    if not valid.any():
+        # 占有ビンが 1 つ = 分ける山が無い(定数画像)。
+        return x > 0
+    # ★しきい値は argmax ビンの**上端**(2026-09-26、ops._otsu と同じ直し)。
+    # 中点だと argmax ビン(背景の山を含む)の画素が前景に入り、平らな板で
+    # 全画素が 1 つの対象として返っていた。
+    return x >= edges[int(np.argmax(between)) + 1]
 
 
 def segment_objects(image, threshold="otsu", invert: bool = False,

@@ -67,12 +67,12 @@ MACROS = [{'name': 'macro_denoise',
                  'pop': 28,
                  'selected_seed': 7,
                  'captured': '2026-08-15',
-                 'score': {'train': 0.9697, 'holdout': 0.9475, 'locked_holdout': 0.9062},
+                 'score': {'train': 0.9694, 'holdout': 0.9468, 'locked_holdout': 0.9059},
                  'recorded_evolution_score': {'train': 0.9697,
                                               'holdout': 0.9475,
                                               'locked_holdout': 0.9062},
-                 'score_matches_evolution': True,
-                 'overridden_ops': [],
+                 'score_matches_evolution': False,
+                 'overridden_ops': ['otsu'],
                  'baselines': {'trivial': {'train': 0.2505,
                                            'holdout': 0.2673,
                                            'locked_holdout': 0.2161},
@@ -87,7 +87,12 @@ MACROS = [{'name': 'macro_denoise',
                                 'is recomputed here in the full registry. '
                                 'beats_hand_on_locked_holdout states, without spin, whether it '
                                 'beats the strongest hand baseline on the locked split (the one '
-                                'honesty guard evolution never selected on).'}},
+                                'honesty guard evolution never selected on). 2026-09-26: `otsu` '
+                                'のしきい値をビンの中点からビンの上端へ直した(docs/hardening/otsu-threshold-at-the-bin-midpoint.md)。この '
+                                'DNA は `otsu` を最終段に持つので、**進化した当時の値では測り直せない** —— '
+                                '`recorded_evolution_score` は当時のまま残し、`score` '
+                                'を今のレジストリで測り直した値に更新し、`overridden_ops` に `otsu` '
+                                'を載せた。数字が動いたことを消さずに書くのが本来の用途。'}},
  {'name': 'macro_binarize',
   'category': 'macro',
   'problem': 'binarize',

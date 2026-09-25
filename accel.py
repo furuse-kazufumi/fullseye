@@ -274,7 +274,7 @@ def _illuminate(t, a, b, dev):
 # ── Batch 2(2026-08-31): image→region の関門 op。otsu が CPU に残ると
 #    その先の region morphology 島へ GPU 常駐のまま入れず転送が分断される。
 def _otsu(t, a, b, dev):
-    """core _otsu の逐語移植: 256-bin ヒストグラム → 間クラス分散 argmax → x > mid。"""
+    """core _otsu の逐語移植: 256-bin ヒストグラム → 間クラス分散 argmax → x >= そのビンの上端。"""
     # ヒストグラムと最終比較は float64 で行う(P3: f32 だと bin 境界直下の値が
     # 境界へ丸まり argmax が動く。histc の f64 規約は np.histogram と完全一致を実測)
     x = t.clamp(0, 1)
@@ -293,7 +293,13 @@ def _otsu(t, a, b, dev):
         sb = torch.where(den > 1e-12,
                          (mu_t * omega - mu) ** 2 / den.clamp_min(1e-12),
                          torch.zeros_like(den))
-        outs.append((xi > mids[int(sb.argmax())]).float())
+        # ★CPU 側(ops._otsu)と同じく**ビンの上端**で切る(2026-09-26)。
+        # 中点で切ると argmax ビンの背景画素が前景に混ざる。ここを直し忘れると
+        # 同じ絵で CPU と GPU の答えが割れる(test_fast_parity が門)。
+        if not bool((den > 1e-12).any()):
+            outs.append((xi > 0).float())
+        else:
+            outs.append((xi >= edges[int(sb.argmax()) + 1]).float())
     return torch.stack(outs)
 
 

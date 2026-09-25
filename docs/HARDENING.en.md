@@ -15,13 +15,13 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**29 findings (28 fixed), from 12 PoCs.**
+**29 findings (29 fixed), from 12 PoCs.**
 
 ## By kind
 
 | Kind | Findings | Fixed |
 |---|---:|---:|
-| Silently wrong (no exception) | 13 | 12 |
+| Silently wrong (no exception) | 13 | 13 |
 | Implementation defect | 5 | 5 |
 | The gate did not stand where the accident happens | 3 | 3 |
 | Present but unreachable | 7 | 7 |
@@ -124,7 +124,7 @@ Found by: `genspark_external_review` / Changed: `api.py`, `opassist.py`, `imgevo
 
 値が 2 種類しかない板(背景 0.30・明部 0.90、20x20 = 400 px)で、`fullseye.apply(im, "otsu")` が **4,096 px 全部を前景**にする(期待 400)。例外も警告も出ない。 _(ja)_
 
-Found by: `line_handshake` / Changed: `ops.py` / Gate: — / Status: open
+Found by: `line_handshake` / Changed: `ops.py`, `accel.py`, `detect.py`, `fscript.py` / Gate: `test_a_flat_plate_gives_exactly_the_bright_box`, `test_the_three_implementations_of_otsu_agree`, `test_the_gpu_port_agrees_with_the_core_op`, `test_the_threshold_is_equivariant_under_an_affine_map`, `test_the_midpoint_spelling_is_what_the_gate_catches`, `test_segment_objects_sees_one_box_not_one_frame`, `test_the_fscript_builtin_agrees_with_the_core_op` / Status: fixed
 
 ### Implementation defect
 

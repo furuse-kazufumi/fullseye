@@ -1243,7 +1243,7 @@ def _threshold(v, a, b):
 def _otsu(v, a, b):
     """大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。
 
-``a``, ``b`` は未使用（しきい値は入力から自動で決まる）。値が ``[0,1]`` に収まっていればその範囲を、はみ出していれば**入力の実際の範囲**を 256 ビンのヒストグラムに分け、クラス間分散 ``ω(1-ω)`` を最大化するしきい値を全探索して選び、それより大きい画素を前景とする。前景・背景 2 クラスの分離を仮定するため、ヒストグラムが単峰（1 山）の画像では意図しない位置で切れることがある。
+``a``, ``b`` は未使用（しきい値は入力から自動で決まる）。値が ``[0,1]`` に収まっていればその範囲を、はみ出していれば**入力の実際の範囲**を 256 ビンのヒストグラムに分け、クラス間分散 ``ω(1-ω)`` を最大化するビンを全探索して選び、**そのビンの上端**をしきい値として、それ以上の画素を前景とする(ビンの中点で切ると argmax ビンに居る背景画素が前景側に混ざる —— 2026-09-26 に直した。``docs/hardening/otsu-threshold-at-the-bin-midpoint.md``)。前景・背景 2 クラスの分離を仮定するため、ヒストグラムが単峰（1 山）の画像では意図しない位置で切れることがある。
 
 **判別できない入力の扱い**（2026-09-19 の外部レビュー #7 / #8 で明文化）: 有限の画素が 1 つも無い入力（全 NaN / inf）はしきい値が定義できないので ``ValueError`` を投げる（``fullseye.apply`` の既定の方針では台帳に記録して region の既定値へ落ち、``on_error="raise"`` でそのまま止まる。以前は numpy の RuntimeWarning を出しつつ黙って全 0 を返していた）。空白フレーム（定数画像）は山が 1 つも無いので、値が 0 なら全画素が背景、0 より大きければ**全画素が前景**になる（``docs/op_blank_frame.json`` に測定あり）。定数かどうかは呼ぶ側で ``np.ptp`` 等で先に弾くこと。"""
     x = np.asarray(v, np.float64)
@@ -1266,7 +1266,18 @@ def _otsu(v, a, b):
     p = hist.astype(np.float64) / max(1, hist.sum()); omega = np.cumsum(p)
     mids = (edges[:-1] + edges[1:]) / 2; mu = np.cumsum(p * mids); mu_t = mu[-1]
     den = omega * (1 - omega); sb = np.where(den > 1e-12, (mu_t * omega - mu) ** 2 / np.maximum(den, 1e-12), 0.0)
-    return (x > mids[int(np.argmax(sb))]).astype(np.float64)
+    # ★**しきい値は argmax ビンの「上端」で取る**(2026-09-26)。中点で取ると、
+    # argmax が指すのは**背景の山を含むビン**なので、その中点より上に居る背景画素
+    # 自身が前景に入る。背景 0.30 / 明部 0.90 の板では 400 px の答えが 4,096 px
+    # (全画素)になり、例外も警告も出なかった —— skimage と OpenCV は同じ絵で
+    # 400 を返す。ビンの上端で切れば argmax ビンの画素は全部背景側に落ちる。
+    # 試験の入力に必ず雑音が載っていたため 30 年物の門が全部通していた
+    # (docs/hardening/otsu-threshold-at-the-bin-midpoint.md)。
+    if not np.any(den > 1e-12):
+        # 占有ビンが 1 つしかない = 分けるべき山が無い(定数画像)。しきい値は
+        # 定義できないので、ビン格子の都合で決めずに「正なら前景」と明示する。
+        return (x > 0).astype(np.float64)
+    return (x >= edges[int(np.argmax(sb)) + 1]).astype(np.float64)
 
 
 #: **平坦な面を「差がある」と言わないための許容差。**

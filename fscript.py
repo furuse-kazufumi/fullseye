@@ -1205,10 +1205,20 @@ def _b_binary_threshold(env, img):
     mu = np.cumsum(p * (np.arange(256) + 0.5) / 256.0)
     mu_t = mu[-1]
     denom = omega * (1.0 - omega)
-    denom[denom == 0] = 1e-12
-    sigma_b = (mu_t * omega - mu) ** 2 / denom
-    t = (np.argmax(sigma_b) + 0.5) / 256.0
-    return Region(a >= t)
+    split = denom > 1e-12
+    sigma_b = np.where(split, (mu_t * omega - mu) ** 2 / np.maximum(denom, 1e-12), 0.0)
+    if not split.any():
+        # 占有ビンが 1 つ = 分けるべき山が無い(定数フレーム)。しきい値は定義
+        # できないので、ビン格子の都合で決めずに「正なら前景」と明示する
+        # (中核 op `ops._otsu` と同じ約束)。
+        return Region(a > 0)
+    # ★**しきい値は argmax ビンの「上端」**(2026-09-26)。(k + 0.5)/256 は
+    # そのビンの**中点**で、argmax が指すのは背景の山を含むビンなので、同じ
+    # ビンに居る背景画素が前景へ漏れていた(背景 0.30 / 明部 0.90 の板で
+    # 4,096 px 全部が前景、期待 400)。`ops._otsu` / `accel._otsu` /
+    # `detect._otsu_mask` と**同じ式を 4 か所に別々に書いてあり、4 つとも
+    # 同じ誤りを持っていた** —— docs/hardening/otsu-threshold-at-the-bin-midpoint.md。
+    return Region(a >= (int(np.argmax(sigma_b)) + 1) / 256.0)
 
 
 def _b_dilation(env, region, radius):
