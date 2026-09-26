@@ -6,7 +6,7 @@ function (unwrapped, so exceptions surface instead of being swallowed by `_safe`
 on canonical inputs and checks:
 
   1. runs without exception on several (a, b) samples
-  2. returns the declared output sort (image / region / feature / contour), with
+  2. returns the declared output sort (image / region / feature / contour / match), with
      the right ndim / dtype / value domain — a "region" must be BINARY ({0,1}),
      since a mere [0,1] range test passes any grayscale image unchanged
   3. changed the input — a pure pass-through is an identity, not an implementation,
@@ -70,6 +70,17 @@ def _check_sort(out, sort, shape):
     if sort == "contour":
         ok = isinstance(out, dict) and "cs" in out and isinstance(out["cs"], list)
         return ok, True, "" if ok else "not a contour dict"
+    if sort == "match":
+        # ★``match`` は **1 次元ベクトル**(`ops._ncc_locate` と同じ形)。1 スカラー
+        # では表せない組(面積+重心、楕円の 3 指標 …)を運ぶために在る。
+        # この枝が無かったので、下の「image / region = 2 次元」に落ちて
+        # ``ndim=1`` で弾かれていた —— 正しく作られた op が「実装されていない」
+        # と数えられ、HALCON 対応数が静かに 1 本少なかった。
+        arr = np.asarray(out, np.float64) if not isinstance(out, np.ndarray) else out
+        if arr.ndim != 1 or arr.size < 1:
+            return False, True, "match not a 1-D vector (ndim=%d, size=%d)" % (arr.ndim, arr.size)
+        finite = bool(np.all(np.isfinite(arr)))
+        return finite, True, "" if finite else "match has non-finite values"
     # image / region  -> 2-D float array
     if not isinstance(out, np.ndarray):
         return False, True, "not ndarray (%s)" % type(out).__name__

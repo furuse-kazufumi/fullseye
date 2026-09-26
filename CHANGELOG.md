@@ -7,6 +7,37 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★★**機能ゲートが `match` ソートを知らず、正しい op を「実装されていない」と
+  数えていた。** `eccentricity` を HALCON の 3 値に直したら、HALCON 対応の見出しが
+  **979 から 977 に減った** —— 正しくしたのに数が減る。`verify_auto._check_sort` は
+  `feature` と `contour` だけを特別扱いし、**残りを無条件に「image / region = 2 次元」**
+  として検査していたので、1 次元ベクトルを返す `match` が `ndim=1` で弾かれていた。
+  - ★**`area_center` はずっと落ち続けていた。** 対応数から静かに 1 本引かれており、
+    **数が減って初めて、前から減っていたことが分かった**。
+  - ★**知らないものを「知らない」と言わず、既定の枝で処理していた。**
+    `else: raise` が在れば、`match` を足した日に気づけた。
+  - 直したあと 979 → **980**。★増えた 1 本は `area_center` で、`eccentricity` 2 本は
+    元から数えられていた(スカラーを返していたので `feature` として通っていた)ため
+    差し引きゼロ。**上がった理由は「実装が増えた」ではなく「門が正しく数えられる
+    ようになった」** —— 数字が上がったときこそ内訳を言う。
+- ★★**`eccentricity` は HALCON の 3 値のどれでもない量を返していた。** HALCON の
+  `eccentricity` は `Anisometry = Ra/Rb` / `Bulkiness = π·Ra·Rb/A` /
+  `StructureFactor = Anisometry·Bulkiness - 1` の **3 値**を返す演算子で、円なら
+  `(1, 1, 0)`。この op が返していたのは skimage の離心率 `sqrt(1-(b/a)²)` ——
+  **3 つのどれでもない**(円で 0.0 対 1.0、4x80 の棒で 0.999 対 20.65)。
+  - 1 スカラーでは 3 値を表せないので、`area_center` と同じ `match` ソートに変えた。
+    領域が空でも 3 成分を返す(成分数が入力で変わると受け取る側の形が壊れる)。
+  - ★**輪郭版はもう一段ずれていた。** `cv2.fitEllipse` は輪郭「点」への最小二乗
+    当てはめで、HALCON の定義は**囲まれた面積の幾何モーメント**から導く方。
+    4x80 の棒で Anisometry 39.1 対 20.65 —— 2 倍近い。モーメント由来に直して、
+    領域版と 3% 以内で一致するようになった。
+  - ★**`/10` の押し潰しはこれで 3 例目**(`compactness` / `compactness_xld` /
+    `elliptic_axis`)。`elliptic_axis` が返しているのは **Anisometry を 10 で割った
+    もの** —— つまり**別の演算子の出力**を勝手なスケールで縮めたもの。
+- **記録のみ(判断待ち)**: `docs/KNOWN_ISSUES.md` §51。`elliptic_axis` と
+  `diameter_region` は**画素の長さ**を含み、この repo は寸法を持つ特徴を画像サイズで
+  正規化する規約を持っている(`area_center` の註)。HALCON は画素値を返す ——
+  **1 op の判断ではなく規約の選択**なので、量の誤りだけを記録して手は付けていない。
 - ★★**HALCON と同じ名前の形状係数が、HALCON と別の量を返していた**(6 本)。
   規準はユーザー判断 ——「**op 名が HALCON と同じなら HALCON に合わせる**」。
   同名 6 本のうち、式が一致していたのは `convexity` だけだった。

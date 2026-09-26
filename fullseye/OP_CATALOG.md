@@ -1342,7 +1342,7 @@ _計 932 ops / 48 categories。_
 - `compactness` (halcon: `compactness`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`
 - `convexity` (halcon: `convexity`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`
 - `rectangularity` (halcon: `rectangularity`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`
-- `eccentricity` (halcon: `eccentricity`) `region → feature` · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
+- `eccentricity` (halcon: `eccentricity`) `region → match` · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
 - `orientation_region` (halcon: `orientation_region`) `region → feature` · 例: `gallery2d_features`
 - `roundness` (halcon: `roundness`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`
 - `diameter_region` (halcon: `diameter_region`) `region → feature` · 例: `gallery2d_features`
@@ -1367,7 +1367,7 @@ _計 932 ops / 48 categories。_
 - `moments_region_2nd_rel_invar` (halcon: `moments_region_2nd_rel_invar`) `region → feature` · 例: `gallery2d_features`
 - `moments_region_3rd_invar` (halcon: `moments_region_3rd_invar`) `region → feature` · 例: `gallery2d_features`
 - `estimate_noise` (halcon: `estimate_noise`) `image → feature` · 例: `gallery2d_features`, `poc_weld_radiograph_porosity`
-- `eccentricity_xld` (halcon: `eccentricity_xld`) `contour → feature` · 例: `gallery2d_features`
+- `eccentricity_xld` (halcon: `eccentricity_xld`) `contour → match` · 例: `gallery2d_features`
 - `orientation_xld` (halcon: `orientation_xld`) `contour → feature` · 例: `gallery2d_features`
 - `elliptic_axis_xld` (halcon: `elliptic_axis_xld`) `contour → feature` · 例: `gallery2d_features`
 - `diameter_xld` (halcon: `diameter_xld`) `contour → feature` · 例: `gallery2d_features`

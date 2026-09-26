@@ -2520,3 +2520,33 @@ op だけ。円で `compactness` が 1.0 でなく 1.09 前後になるのはこ
 残っているのは `eccentricity` / `eccentricity_xld` —— HALCON では 3 値
 (Anisometry / Bulkiness / StructureFactor)を返す演算子で、スカラーの `feature` 型
 では表せない。`area_center` と同じ `match` 型への変更が要るので別の巡で直す。
+
+
+## §51 寸法を持つ特徴を正規化する規約と、HALCON の画素値(2026-09-26、判断待ち)
+
+HALCON と同名の op を HALCON の式に合わせる作業で、**式では解けない食い違い**
+が 1 つ残った —— 寸法(画素の長さ)を持つ特徴の**スケール**である。
+
+この repo は「特徴は解像度に依らないよう正規化する」という規約を持ち、`area_center`
+の註に明記されている。実際 `diameter_region` / `get_region_thickness` / `contlength`
+は画像サイズで割った値を返す。HALCON は**画素値**を返す。
+
+| op | HALCON が返すもの | いま返しているもの |
+|---|---|---|
+| `elliptic_axis` | Ra, Rb(画素), Phi(ラジアン) | `Anisometry / 10` —— **3 値のどれでもない** |
+| `diameter_region` | 両端点 4 つ + Diameter(輪郭 2 点間の最大距離、画素) | 等面積円の直径 / 画像の長辺 |
+| `contlength` | 輪郭長(画素) | 正規化済み |
+| `get_region_thickness` | Thickness(画素) | 正規化済み |
+
+`elliptic_axis` と `diameter_region` は**量そのものも違う**(前者は別の演算子
+`eccentricity` の出力を 10 で割ったもの、後者は等面積円の直径で最大弦ではない)ので、
+そこは直す対象である。問題は直した後のスケールで:
+
+- **HALCON に合わせて画素値を返す** —— レシピを移した人の数がそのまま合う。代わりに
+  「特徴は解像度に依らない」という repo の規約が op ごとに割れる。
+- **正規化を続ける** —— repo の中では一貫するが、HALCON のしきい値をそのまま書いた人は
+  やはり違う判定を得る(式を直しても、そこは直らない)。
+
+**1 op の判断ではなく規約の選択**なので、記録だけにしてある。門
+(`tests/test_halcon_named_shape_factors_2026_09_26.py` の `_NOT_YET_HALCON`)に理由
+つきで名指しし、「本当にまだ HALCON の量ではない」ことを試験が確かめている。

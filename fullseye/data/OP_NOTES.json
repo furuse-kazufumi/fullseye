@@ -2180,7 +2180,7 @@
     "dim": "2d",
     "category": "features",
     "in": "region",
-    "out": "feature",
+    "out": "match",
     "halcon": "eccentricity",
     "path": "docs/ops/2d/features/eccentricity.md"
    }
@@ -2191,7 +2191,7 @@
     "dim": "2d",
     "category": "features",
     "in": "contour",
-    "out": "feature",
+    "out": "match",
     "halcon": "eccentricity_xld",
     "path": "docs/ops/2d/features/eccentricity_xld.md"
    }

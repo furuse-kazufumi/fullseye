@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">eccentricity — 2D <code style="color:#22d3bf">features</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">feature</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">match</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;eccentricity&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">eccentricity</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <p><img src="fig/eccentricity.png" alt="eccentricity: input → output"></p>
@@ -10,9 +10,20 @@
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/eccentricity.chain.jpg">eccentricity: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Exzentrizität aus einer Ellipsenapproximation (`<code style="color:#22d3bf">eccentricity</code><code style="color:#22d3bf"> von </code><code style="color:#22d3bf">skimage.measure.regionprops</code><code style="color:#22d3bf">; 0 = perfekter Kreis, je näher an 1, desto langgestreckter und linienförmiger). Ein Formindikator, der durch Anpassung der Region an eine äquivalente Ellipse gewonnen wird. Entspricht HALCONs </code><code style="color:#22d3bf">eccentricity</code>` (Shape features derived from the ellipse parameters.).</p>
+<p>Liefert die drei aus den Ellipsenparametern abgeleiteten Formmerkmale `<code style="color:#22d3bf">(Anisometry, Bulkiness, StructureFactor)</code><code style="color:#22d3bf"> als dreikomponentigen Vektor der Sortierung </code><code style="color:#22d3bf">match</code><code style="color:#22d3bf"> (ein einzelner Skalar kann drei Werte nicht tragen — dieselbe Form wie </code><code style="color:#22d3bf">area_center</code>`).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>`<code style="color:#22d3bf">Ra</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">Rb</code><code style="color:#22d3bf"> を同じモーメントを持つ楕円の半径、</code><code style="color:#22d3bf">A</code>` を面積として</p>
+<p>`<code style="color:#22d3bf">Anisometry = Ra/Rb</code>`(細長さ。円で 1、下限 1)</p>
+<p>`<code style="color:#22d3bf">Bulkiness = π·Ra·Rb / A</code>`(楕円をどれだけ埋めていないか。円で 1)</p>
+<p>`<code style="color:#22d3bf">StructureFactor = Anisometry·Bulkiness - 1</code>`(円で 0)</p>
+<p>HALCON の `<code style="color:#22d3bf">eccentricity</code>`（Shape features derived from the ellipse</p>
+<p>parameters.）<b>と同じ 3 値・同じ式</b>。3 つとも無次元なので正規化していない。</p>
+<p>★2026-09-26 まで skimage の離心率 `<code style="color:#22d3bf">sqrt(1-(b/a)²)</code>` という**3 つのどれでもない</p>
+<p>量**を 1 スカラーで返していた(円で 0.0 対 HALCON の 1.0、4x80 の棒で 0.999 対</p>
+<p>20.65)。1 スカラーでは 3 値を表せないため、`<code style="color:#22d3bf">area_center</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">match</code>`</p>
+<p>ソートに変えた。`<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>`。</p>
+<p>領域が空のときは円の値 `<code style="color:#22d3bf">(1, 1, 0)</code>` を返す fail-soft 仕様(成分数は入力で</p>
+<p>変わらない)。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -26,8 +37,8 @@ eccentricity 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%2
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rotation_invariance_audit">poc_rotation_invariance_audit</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rotation_invariance_audit.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">feature</code> als Eingabe)</h3>
-<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">match</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">features</code>)</h3>
 <p><a style="color:#22d3bf" href="op:effective_bit_depth">effective_bit_depth</a> · <a style="color:#22d3bf" href="op:blob_count">blob_count</a> · <a style="color:#22d3bf" href="op:area_frac">area_frac</a> · <a style="color:#22d3bf" href="op:count_contours">count_contours</a> · <a style="color:#22d3bf" href="op:total_length">total_length</a> · <a style="color:#22d3bf" href="op:vol_count">vol_count</a> · <a style="color:#22d3bf" href="op:sk_euler">sk_euler</a> · <a style="color:#22d3bf" href="op:sk_entropy_feat">sk_entropy_feat</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

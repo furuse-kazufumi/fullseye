@@ -3,7 +3,7 @@ op: eccentricity
 dim: 2d
 category: features
 in: region
-out: feature
+out: match
 halcon: eccentricity
 examples: [gallery2d_features, poc_rotation_invariance_audit]
 author: Kazufumi Furuse
@@ -13,7 +13,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 # eccentricity — 2D `features` op
 
-- **データ種**: `region` → `feature`
+- **データ種**: `region` → `match`
 - **呼び出し**: `fullseye.apply(img, "eccentricity", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `eccentricity`(意味・パラメータは HALCON リファレンスが参考になる)
 
@@ -31,12 +31,26 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 使い方
 
-楕円近似による離心率(``skimage.measure.regionprops`` の
-``eccentricity``、0=真円、1に近いほど細長い線分状)。領域を等価な楕円に
-フィットしたときの形状指標。HALCON の ``eccentricity``（Shape features
-derived from the ellipse parameters.）に相当。
+楕円パラメータ由来の 3 つの形状指標 ``(Anisometry, Bulkiness, StructureFactor)``
+を、``match`` ソートの 3 成分ベクトルで返す(1 スカラーでは 3 値を表せないため、
+``area_center`` と同じ形)。
 
-``a``, ``b`` は未使用。
+``Ra``/``Rb`` を同じモーメントを持つ楕円の半径、``A`` を面積として
+
+  ``Anisometry = Ra/Rb``(細長さ。円で 1、下限 1)
+  ``Bulkiness = π·Ra·Rb / A``(楕円をどれだけ埋めていないか。円で 1)
+  ``StructureFactor = Anisometry·Bulkiness - 1``(円で 0)
+
+HALCON の ``eccentricity``（Shape features derived from the ellipse
+parameters.）**と同じ 3 値・同じ式**。3 つとも無次元なので正規化していない。
+
+★2026-09-26 まで skimage の離心率 ``sqrt(1-(b/a)²)`` という**3 つのどれでもない
+量**を 1 スカラーで返していた(円で 0.0 対 HALCON の 1.0、4x80 の棒で 0.999 対
+20.65)。1 スカラーでは 3 値を表せないため、``area_center`` と同じ ``match``
+ソートに変えた。``docs/hardening/halcon-named-shape-factors.md``。
+
+領域が空のときは円の値 ``(1, 1, 0)`` を返す fail-soft 仕様(成分数は入力で
+変わらない)。``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 
@@ -62,9 +76,9 @@ eccentricity 0.50 0.50
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
 - [poc_rotation_invariance_audit](../../../../examples/poc_rotation_invariance_audit.py) — `py -3.11 examples/poc_rotation_invariance_audit.py`
 
-## 型が繋がる次の op(`feature` を入力に取れる)
+## 型が繋がる次の op(`match` を入力に取れる)
 
-[identity](../misc/identity.md) · [feature_to_img](../bridge/feature_to_img.md)
+[identity](../misc/identity.md)
 
 ## 同カテゴリ(`features`)
 

@@ -3,7 +3,7 @@ op: eccentricity_xld
 dim: 2d
 category: features
 in: contour
-out: feature
+out: match
 halcon: eccentricity_xld
 examples: [gallery2d_features]
 author: Kazufumi Furuse
@@ -13,7 +13,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 # eccentricity_xld — 2D `features` op
 
-- **データ種**: `contour` → `feature`
+- **データ種**: `contour` → `match`
 - **呼び出し**: `fullseye.apply(img, "eccentricity_xld", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `eccentricity_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
@@ -31,12 +31,17 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 使い方
 
-最大の輪郭(5 点以上)に ``cv2.fitEllipse`` で楕円をフィットし、その
-離心率 ``sqrt(1-(短軸/長軸)^2)`` を返す(0=真円、1に近いほど細長い)。
-HALCON の ``eccentricity_xld``（Shape features derived from the ellipse
-parameters of contours or polygons.）に相当。cv2 が無い、または点数不足
-の場合は 0 を返す。
+``eccentricity`` の輪郭版。最大の輪郭について ``(Anisometry, Bulkiness,
+StructureFactor)`` を ``match`` ソートの 3 成分ベクトルで返す。HALCON の
+``eccentricity_xld``（Shape features derived from the ellipse parameters of
+contours or polygons.）**と同じ 3 値・同じ式**。
 
+★``Ra``/``Rb`` は**囲まれた面積の幾何モーメント**から導く。2026-09-26 まで
+``cv2.fitEllipse``(輪郭「点」への最小二乗当てはめ)を使っていて、細長い形で
+大きく外れていた —— 4x80 の棒で Anisometry 39.1 対 20.65。HALCON の定義は
+モーメント由来の方である。
+
+cv2 が無い、点数が足りない、面積が 0 のときは円の値 ``(1, 1, 0)`` を返す。
 ``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
@@ -63,9 +68,9 @@ eccentricity_xld 0.50 0.50
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
 
-## 型が繋がる次の op(`feature` を入力に取れる)
+## 型が繋がる次の op(`match` を入力に取れる)
 
-[identity](../misc/identity.md) · [feature_to_img](../bridge/feature_to_img.md)
+[identity](../misc/identity.md)
 
 ## 同カテゴリ(`features`)
 

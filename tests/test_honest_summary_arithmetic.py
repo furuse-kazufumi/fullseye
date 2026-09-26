@@ -103,3 +103,45 @@ def test_the_breakdown_does_not_claim_a_sum_that_is_not_one():
             "重なりが %d 本あるのに、内訳が部分集合だと書いていない" % overlap)
     else:
         assert "disjoint" in head, "本当に交わらないなら、そう書いてよい"
+
+# --------------------------------------------------------------------------- #
+# ソートを知らない門は、正しい op を「実装されていない」と数える
+# --------------------------------------------------------------------------- #
+def test_the_functional_gate_accepts_a_match_sort_vector():
+    """★``match``(1 次元ベクトル)を返す op が門を通ること。
+
+    2026-09-26 まで ``_check_sort`` は ``feature`` と ``contour`` だけを特別扱いし、
+    残りを**無条件に**「image / region = 2 次元」として検査していた。``match`` は
+    そこへ黙って流れ込み ``ndim=1`` で弾かれる —— `area_center` はそのせいで
+    **ずっと**対応数から落ちていた。
+    """
+    import numpy as np
+
+    import verify_auto as VA
+
+    ok, _changed, why = VA._check_sort(np.array([0.5, 0.25, 0.75]), "match", (8, 8))
+    assert ok, "match の 1 次元ベクトルが弾かれる: %s" % why
+
+
+def test_the_functional_gate_still_rejects_a_wrong_shape():
+    """★緩めたのではないこと —— 2 次元や非有限は match でも落ちる。"""
+    import numpy as np
+
+    import verify_auto as VA
+
+    bad2d, _c, why2d = VA._check_sort(np.zeros((3, 3)), "match", (8, 8))
+    assert not bad2d and "1-D" in why2d, "2 次元を match として通してしまう"
+    badnan, _c2, whynan = VA._check_sort(np.array([1.0, np.nan]), "match", (8, 8))
+    assert not badnan and "non-finite" in whynan, "非有限を match として通してしまう"
+
+
+def test_the_match_sort_ops_are_counted_as_implemented():
+    """★数えられていること自体を門にする(また静かに落ちたら気づく)。"""
+    import verify_auto as VA
+
+    passing = set(VA.run(verbose_failures=False)["passing_ops"])
+    missing = [n for n in ("area_center", "eccentricity", "eccentricity_xld")
+               if n not in passing]
+    assert not missing, (
+        "match ソートの op が機能ゲートを通っていない: %s —— 対応数から静かに"
+        "落ちている" % missing)

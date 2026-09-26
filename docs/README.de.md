@@ -10,7 +10,7 @@
 
 *Sechs Akte, ausschließlich echte Operator-Ausgaben: Kantenorientierung, Blob-Auswahl, Subpixel-Messung, SDF zu Mesh, LiDAR-Clustering, Objektiv-Defokus.*
 
-**Fullseye** (Arbeitsname imgevolve) ist ein Werkzeug auf HALCON-/HDevelop-Niveau: eine numpy-native Bibliothek von Bildverarbeitungs-Operatoren, dazu eine visuelle Pipeline-Entwurfsumgebung im Stil von HDevelop (Fullseye Studio) und eine ausführende Laufzeitumgebung (FullseyeEngine). Es umfasst rund **932** Operatoren (gezählt in der Registry), bietet für **979/2313** tatsächliche HALCON-Operatoren eine genuine (wirklich gleichwertige) Implementierung und deckt 48 Kategorien ab.
+**Fullseye** (Arbeitsname imgevolve) ist ein Werkzeug auf HALCON-/HDevelop-Niveau: eine numpy-native Bibliothek von Bildverarbeitungs-Operatoren, dazu eine visuelle Pipeline-Entwurfsumgebung im Stil von HDevelop (Fullseye Studio) und eine ausführende Laufzeitumgebung (FullseyeEngine). Es umfasst rund **932** Operatoren (gezählt in der Registry), bietet für **980/2313** tatsächliche HALCON-Operatoren eine genuine (wirklich gleichwertige) Implementierung und deckt 48 Kategorien ab.
 
 ★ **Selten für eine Bildverarbeitungsbibliothek, bringt Fullseye auch virtuelles optisches Design mit** — dünne/dicke Linsen, Raytracing, Seidel-Aberrationen und PSF/MTF, dazu eine Damped-Least-Squares-Optimierung (Levenberg–Marquardt) der Linsenverordnung selbst (`optimize_lens`). Man kann **das abbildende System entwerfen und sein Bild dann mit den obigen Operatoren prüfen — durchgängig**, ein Unterscheidungsmerkmal für Halbleiter und Präzisionsmesstechnik.
 
@@ -157,7 +157,7 @@ Nach Namen suchen mit `py -3.11 imgevolve.py ops --search edge`; die vollständi
 
 | Dokument | Inhalt |
 |---|---|
-| [HALCON_PARITY.md](HALCON_PARITY.md) | Stand der genuine (wirklich gleichwertigen) Implementierungen (979/2313) — ob ein Operator tatsächlich dasselbe leistet und nicht bloß denselben Namen trägt |
+| [HALCON_PARITY.md](HALCON_PARITY.md) | Stand der genuine (wirklich gleichwertigen) Implementierungen (980/2313) — ob ein Operator tatsächlich dasselbe leistet und nicht bloß denselben Namen trägt |
 | [HALCON_COVERAGE.md](HALCON_COVERAGE.md) | Abdeckung, gemessen durch tatsächliches Scrapen der offiziellen Referenz (v2605) |
 | [LIB_COVERAGE.md](LIB_COVERAGE.md) | Bibliotheksübergreifende Abdeckung (Aufnahme markanter Operatoren jenseits von HALCON) |
 | [PARITY_CROSSBACKEND.md](PARITY_CROSSBACKEND.md) | Parität, belegt durch die Übereinstimmung unabhängiger Implementierungen (scipy/cv2/skimage) über die Backends hinweg |
@@ -215,7 +215,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 209
+## Dokumentkarte — alle 210
 
 Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 2,193 Operator-Notizen und 58 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
@@ -351,7 +351,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(132)
+**Other**(133)
 
 | Dokument | Inhalt |
 |---|---|
@@ -463,6 +463,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`hardening/empty-name-resolved-and-narrow-floats-not-upcast.md`](hardening/empty-name-resolved-and-narrow-floats-not-upcast.md) | id: empty-name-resolved-and-narrow-floats-not-upcast |
 | [`hardening/engine-load-on-an-instance-was-silently-ignored.md`](hardening/engine-load-on-an-instance-was-silently-ignored.md) | id: engine-load-on-an-instance-was-silently-ignored |
 | [`hardening/frame-align-inlier-ratio-is-not-confidence.md`](hardening/frame-align-inlier-ratio-is-not-confidence.md) | id: frame-align-inlier-ratio-is-not-confidence |
+| [`hardening/functional-gate-did-not-know-the-match-sort.md`](hardening/functional-gate-did-not-know-the-match-sort.md) | id: functional-gate-did-not-know-the-match-sort |
 | [`hardening/halcon-named-shape-factors.md`](hardening/halcon-named-shape-factors.md) | id: halcon-named-shape-factors |
 | [`hardening/image-io-dropped-write-failures-and-crushed-16-bit.md`](hardening/image-io-dropped-write-failures-and-crushed-16-bit.md) | id: image-io-dropped-write-failures-and-crushed-16-bit |
 | [`hardening/inputs-without-a-conversion-were-not-refused.md`](hardening/inputs-without-a-conversion-were-not-refused.md) | id: inputs-without-a-conversion-were-not-refused |

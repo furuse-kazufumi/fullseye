@@ -3306,7 +3306,7 @@
     "a",
     "b"
    ],
-   "out_kind": "float",
+   "out_kind": "ndarray",
    "program": "threshold 0.50 0.50\neccentricity 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
@@ -3320,7 +3320,7 @@
     "a",
     "b"
    ],
-   "out_kind": "float",
+   "out_kind": "ndarray",
    "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\neccentricity_xld 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"

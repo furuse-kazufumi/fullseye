@@ -156,6 +156,67 @@ def test_rectangularity_drops_for_a_shape_that_is_not_a_rectangle():
 
 
 # --------------------------------------------------------------------------- #
+# HALCON が 3 値を返す演算子(eccentricity)
+# --------------------------------------------------------------------------- #
+def halcon_eccentricity(reg):
+    """``(Anisometry, Bulkiness, StructureFactor)``(Ra/Rb = 同モーメント楕円の半径)。"""
+    pr = skimage_measure.regionprops((reg > 0.5).astype(int))[0]
+    ra, rb = pr.axis_major_length / 2.0, max(pr.axis_minor_length / 2.0, 1e-9)
+    area = float(pr.area)
+    aniso = ra / rb
+    bulk = np.pi * ra * rb / area
+    return np.array([aniso, bulk, aniso * bulk - 1.0])
+
+
+@pytest.mark.parametrize("shape", sorted(SHAPES))
+def test_eccentricity_returns_the_three_halcon_values(shape):
+    got = np.asarray(ops.RT["eccentricity"](SHAPES[shape].copy(), 0.5, 0.5), np.float64)
+    want = halcon_eccentricity(SHAPES[shape])
+    assert got.shape == (3,), "3 成分でない: %s" % (got.shape,)
+    assert np.abs(got - want).max() < 1e-9, (
+        "%s: %s だが HALCON は %s" % (shape, np.round(got, 4), np.round(want, 4)))
+
+
+def test_eccentricity_is_one_one_zero_for_a_circle():
+    """★閉形式: 円なら (1, 1, 0)。旧実装は 0.0 という 3 つのどれでもない値だった。"""
+    got = np.asarray(ops.RT["eccentricity"](_disc(48), 0.5, 0.5), np.float64)
+    assert abs(got[0] - 1.0) < 0.01 and abs(got[1] - 1.0) < 0.01 and abs(got[2]) < 0.02
+
+
+def test_eccentricity_keeps_three_components_when_the_region_is_empty():
+    """★成分の数が入力で変わらないこと(受け取る側の形が壊れる)。"""
+    got = np.asarray(ops.RT["eccentricity"](np.zeros((32, 32)), 0.5, 0.5), np.float64)
+    assert got.shape == (3,) and got[0] == 1.0
+
+
+def test_the_old_scalar_eccentricity_is_what_the_gate_catches():
+    """★旧式(skimage の離心率)は HALCON の 3 値のどれでもない。"""
+    reg = SHAPES["thin"]
+    pr = skimage_measure.regionprops((reg > 0.5).astype(int))[0]
+    old = float(pr.eccentricity)
+    want = halcon_eccentricity(reg)
+    assert np.abs(want - old).min() > 0.01, \
+        "旧式が 3 値のどれかに近い = 探針が弱い(細長い形で差が出るはず)"
+
+
+def test_the_contour_eccentricity_uses_moments_not_a_point_fit():
+    """★輪郭版は**囲まれた面積のモーメント**から Ra/Rb を出すこと。
+
+    `cv2.fitEllipse` は輪郭「点」への最小二乗当てはめで、細長い形では大きく外れる
+    (4x80 の棒で Anisometry 39.1 対 20.65)。HALCON の定義は前者。
+    """
+    if "eccentricity_xld" not in ops.RT or "gen_contour_region_xld" not in ops.RT:
+        pytest.skip("輪郭側がこの版に無い")
+    reg = SHAPES["thin"]
+    con = ops.RT["gen_contour_region_xld"](reg.copy(), 0.5, 0.5)
+    got = np.asarray(ops.RT["eccentricity_xld"](con, 0.5, 0.5), np.float64)
+    want = halcon_eccentricity(reg)
+    assert got.shape == (3,)
+    rel = abs(got[0] - want[0]) / want[0]
+    assert rel < 0.10, "Anisometry が領域版と %.1f%% 違う(点への当てはめに戻っている?)" % (100 * rel)
+
+
+# --------------------------------------------------------------------------- #
 # 壊して確かめる
 # --------------------------------------------------------------------------- #
 def test_the_old_isoperimetric_formula_is_what_the_gate_catches():
@@ -216,27 +277,38 @@ def test_the_contour_compactness_no_longer_saturates():
 #: ★同名なのに HALCON と別の量を返すもの。**直す予定のものだけ**をここに書き、
 #: 「本当にまだ違う」ことを下の試験が確かめる(直ったら台帳から外させる)。
 _NOT_YET_HALCON = {
-    "eccentricity": "HALCON の eccentricity は Anisometry / Bulkiness / "
-                    "StructureFactor の **3 値**を返す。スカラーの feature 型では"
-                    "表せないので、`area_center` と同じ match 型への変更が要る"
-                    "(別の巡で直す)",
-    "eccentricity_xld": "同上(輪郭版)",
+    "elliptic_axis": "HALCON は (Ra, Rb, Phi) を返し Ra/Rb は**画素の長さ**。この repo は "
+                     "寸法を持つ特徴を画像サイズで正規化する規約を持っており"
+                     "(`area_center` の註)、**どちらに合わせるかは 1 op でなく規約の選択**"
+                     "なので判断待ち。いま返しているのは Anisometry/10 で、"
+                     "**HALCON の 3 値のどれでもない**",
+    "diameter_region": "HALCON の Diameter は**輪郭 2 点間の最大距離**(画素)。いまは"
+                       "等面積円の直径を画像サイズで正規化した別の量。上と同じ規約の"
+                       "選択に載っているので判断待ち",
 }
 
 
 def test_the_not_yet_ledger_names_ops_that_really_still_differ():
-    """免除台帳が腐らないこと —— 直ったら外させる。"""
-    reg = SHAPES["rect"]
+    """免除台帳が腐らないこと —— 直ったら外させる。
+
+    ★ここで見るのは「**まだ HALCON の量ではない**」こと。直した日に台帳から
+    外し忘れると、台帳は「直っていない」と嘘をつき続ける。
+    """
+    reg = SHAPES["thin"]
     pr = skimage_measure.regionprops((reg > 0.5).astype(int))[0]
-    anisometry = pr.axis_major_length / max(pr.axis_minor_length, 1e-9)
+    ra, rb = pr.axis_major_length / 2.0, max(pr.axis_minor_length / 2.0, 1e-9)
+    st = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+    b = reg > 0.5
+    by, bx = np.nonzero(b & ~ndi.binary_erosion(b, st))
+    pts = np.stack([by, bx], 1).astype(float)
+    max_chord = float(np.sqrt(((pts[:, None, :] - pts[None, :, :]) ** 2).sum(-1).max()))
+    halcon_value = {"elliptic_axis": ra, "diameter_region": max_chord}
     stale = []
-    for name in _NOT_YET_HALCON:
-        if name not in ops.RT:
+    for name, want in halcon_value.items():
+        if name not in ops.RT or name not in _NOT_YET_HALCON:
             continue
-        if name.endswith("_xld"):
-            continue
-        got = _feat(name, reg)
-        if abs(got - anisometry) < 0.01:
+        got = np.ravel(np.asarray(ops.RT[name](reg.copy(), 0.5, 0.5), np.float64))
+        if got.size and abs(float(got[0]) - want) < 0.01:
             stale.append(name)
     assert not stale, "もう HALCON に合っている: %s —— 台帳から外すこと" % stale
 
@@ -245,13 +317,15 @@ def test_every_same_named_shape_factor_is_either_checked_or_named():
     """★**配布物の側から数える。** 同名の形状係数が増えたら、この門か台帳に載る。"""
     family = {"circularity", "compactness", "roundness", "rectangularity", "convexity",
               "circularity_xld", "compactness_xld", "rectangularity_xld",
-              "convexity_xld", "eccentricity", "eccentricity_xld"}
+              "convexity_xld", "eccentricity", "eccentricity_xld",
+              "elliptic_axis", "diameter_region"}
     same_named = {o.name for o in ops._BY_NAME.values()
                   if o.halcon == o.name and o.name in family}
     # rectangularity は閉形式の参照式ではなく、性質(どの角度でも矩形なら 1 /
     # 矩形でない形では落ちる)で専用に押さえている。
     checked = set(FORMULA) | {"rectangularity", "circularity_xld", "compactness_xld",
-                              "rectangularity_xld", "convexity_xld"}
+                              "rectangularity_xld", "convexity_xld",
+                              "eccentricity", "eccentricity_xld"}
     unknown = same_named - checked - set(_NOT_YET_HALCON)
     assert not unknown, (
         "同名なのに照合も免除もされていない形状係数: %s —— 門に足すか、理由つきで "

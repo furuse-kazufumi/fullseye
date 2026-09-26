@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">eccentricity_xld — 2D <code style="color:#22d3bf">features</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">match</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;eccentricity_xld&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">eccentricity_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
 <p><img src="fig/eccentricity_xld.png" alt="eccentricity_xld: input → output"></p>
@@ -10,8 +10,13 @@
 <p><b>Stages</b> (the ops that come before → this op, left to right):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/eccentricity_xld.chain.jpg">eccentricity_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Fits an ellipse to the largest contour (with 5 or more points) using `<code style="color:#22d3bf">cv2.fitEllipse</code><code style="color:#22d3bf"> and returns its eccentricity </code><code style="color:#22d3bf">sqrt(1-(minor axis/major axis)^2)</code><code style="color:#22d3bf"> (0 = perfect circle, closer to 1 = more elongated). Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">eccentricity_xld</code>` (Shape features derived from the ellipse parameters of contours or polygons.). Returns 0 if cv2 is unavailable or there are too few points.</p>
+<p>Contour counterpart of `<code style="color:#22d3bf">eccentricity</code><code style="color:#22d3bf">. For the largest contour it returns </code><code style="color:#22d3bf">(Anisometry, Bulkiness, StructureFactor)</code><code style="color:#22d3bf"> as a 3-component vector of </code><code style="color:#22d3bf">match</code><code style="color:#22d3bf"> sort. **The same three values and the same formulas as** HALCON&#x27;s </code><code style="color:#22d3bf">eccentricity_xld</code>` (Shape features derived from the ellipse parameters of contours or polygons.).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>★`<code style="color:#22d3bf">Ra</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">Rb</code>` は<b>囲まれた面積の幾何モーメント</b>から導く。2026-09-26 まで</p>
+<p>`<code style="color:#22d3bf">cv2.fitEllipse</code>`(輪郭「点」への最小二乗当てはめ)を使っていて、細長い形で</p>
+<p>大きく外れていた —— 4x80 の棒で Anisometry 39.1 対 20.65。HALCON の定義は</p>
+<p>モーメント由来の方である。</p>
+<p>cv2 が無い、点数が足りない、面積が 0 のときは円の値 `<code style="color:#22d3bf">(1, 1, 0)</code>` を返す。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
@@ -26,8 +31,8 @@ sk_find_contours 0.50 0.50
 eccentricity_xld 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Aeccentricity_xld%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Aeccentricity_xld%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">feature</code> as input)</h3>
-<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">match</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">features</code>)</h3>
 <p><a style="color:#22d3bf" href="op:effective_bit_depth">effective_bit_depth</a> · <a style="color:#22d3bf" href="op:blob_count">blob_count</a> · <a style="color:#22d3bf" href="op:area_frac">area_frac</a> · <a style="color:#22d3bf" href="op:count_contours">count_contours</a> · <a style="color:#22d3bf" href="op:total_length">total_length</a> · <a style="color:#22d3bf" href="op:vol_count">vol_count</a> · <a style="color:#22d3bf" href="op:sk_euler">sk_euler</a> · <a style="color:#22d3bf" href="op:sk_entropy_feat">sk_entropy_feat</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

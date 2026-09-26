@@ -114,6 +114,20 @@ def _u8(v):
 #:   roundness      C = 1 - σ/μ                μ,σ = 重心→輪郭距離の平均と標準偏差
 #:   rectangularity 同じ 1 次・2 次モーメントを持つ矩形との差の面積を矩形面積で正規化
 #: (https://www.mvtec.com/doc/halcon/2605/en/circularity.html ほか)
+#: ★HALCON の ``eccentricity`` は**3 値**を返す演算子である(Anisometry /
+#: Bulkiness / StructureFactor)。2026-09-26 まで、この op は skimage の離心率
+#: ``sqrt(1-(b/a)²)`` という **3 つのどれでもない量**を返していた。
+#: 3 つとも無次元なので、そのまま返して HALCON と数が合う。円なら (1, 1, 0)。
+def _halcon_eccentricity(ra, rb, area):
+    """``(Anisometry, Bulkiness, StructureFactor)``。"""
+    rb = max(float(rb), 1e-9)
+    ra = max(float(ra), 0.0)
+    area = max(float(area), 1e-9)
+    aniso = ra / rb
+    bulk = np.pi * ra * rb / area
+    return np.array([aniso, bulk, aniso * bulk - 1.0], np.float64)
+
+
 def _polygon_centre(y, x, area):
     """多角形が囲む**面積**の重心(点の平均ではない)。"""
     if area <= 0 or len(y) < 3:
@@ -1069,6 +1083,10 @@ def _sh_region_feat(p):
         if metric == "area":
             return np.float64(np.mean(m))
         if big is None:
+            # ★3 成分を返す op は、空でも 3 成分を返す(スカラーに落ちると
+            #   受け取る側の形が入力で変わる)。円の値 (1, 1, 0) を既定にする。
+            if metric == "eccentricity":
+                return np.array([1.0, 1.0, 0.0])
             return np.float64(0.0)
         if not _HAS_SK:
             return np.float64(float(big.sum()) / big.size)
@@ -1096,7 +1114,8 @@ def _sh_region_feat(p):
             # (HALCON は 0.998 のまま)。docs/hardening/halcon-named-shape-factors.md
             return np.float64(_halcon_rectangularity(big))
         if metric == "eccentricity":
-            return np.float64(pr.eccentricity)
+            return _halcon_eccentricity(pr.axis_major_length / 2.0,
+                                        pr.axis_minor_length / 2.0, pr.area)
         if metric == "orientation":
             return np.float64((pr.orientation + np.pi / 2) / np.pi)
         if metric == "roundness":
@@ -1373,7 +1392,7 @@ def _sh_xld(p):
                     "rectangularity", "moment_xld") and _HAS_CV:
             cs = [c for c in cv["cs"] if len(c) >= 5]
             if not cs:
-                return np.float64(0.0)
+                return np.array([1.0, 1.0, 0.0]) if kind == "eccentricity" else np.float64(0.0)
             c = max(cs, key=len)
             pts = np.stack([c[:, 1], c[:, 0]], 1).astype(np.float32)   # (x, y)
             if kind == "diameter":
@@ -1392,7 +1411,20 @@ def _sh_xld(p):
             (_, _), (d1, d2), ang = cv2.fitEllipse(pts)
             major, minor = max(d1, d2), max(min(d1, d2), 1e-6)
             if kind == "eccentricity":
-                return np.float64(np.sqrt(max(0.0, 1 - (minor / major) ** 2)))
+                # ★region 版と同じ HALCON の 3 値。Ra, Rb は**囲まれた面積の幾何
+                #   モーメント**から導く —— `cv2.fitEllipse` は輪郭「点」への
+                #   最小二乗当てはめで、細長い形では大きく外れる(実測: 4x80 の
+                #   棒で Anisometry 39.1 対 20.65)。HALCON の定義は前者。
+                mm = cv2.moments(pts)
+                ar = abs(float(mm["m00"])) or abs(float(cv2.contourArea(pts)))
+                if ar <= 0:
+                    return np.array([1.0, 1.0, 0.0])
+                c20, c02 = mm["mu20"] / ar, mm["mu02"] / ar
+                c11 = mm["mu11"] / ar
+                root = np.hypot(c20 - c02, 2.0 * c11)
+                l1, l2 = 0.5 * (c20 + c02 + root), 0.5 * (c20 + c02 - root)
+                return _halcon_eccentricity(2.0 * np.sqrt(max(l1, 0.0)),
+                                            2.0 * np.sqrt(max(l2, 0.0)), ar)
             if kind == "orientation":
                 return np.float64((ang % 180) / 180.0)
             return np.float64(minor / major)                          # elliptic_axis
@@ -1744,8 +1776,8 @@ SEED: list[tuple] = [
      '凸性 ``面積 / 凸包面積``(1 に近いほど凸形状に近い)。``skimage.\nmeasure.regionprops`` の ``area`` と ``area_convex`` の比。HALCON の\n``convexity``（Shape factor for the convexity of a region.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("rectangularity", "features", REG, FEA, "region_feat", {"metric": "rectangularity"},
      '矩形度。**同じ 1 次・2 次モーメントを持つ矩形**を作り、領域との差の面積を\nその矩形の面積で正規化する(``1 - |領域 XOR 矩形| / |矩形|``)。矩形なら 1。\nHALCON の ``rectangularity``（Shape factor for the rectangularity of a\nregion.）**と同じ定義**。\n\n★2026-09-26 まで**軸平行の**外接矩形との比(``skimage`` の ``extent``)だった。\n向きを見ないので、**同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた**\n(HALCON は 0.998 のまま)。``docs/hardening/halcon-named-shape-factors.md``。\n\n★正方形や円のように 2 次モーメントで向きが決まらない形では、「同じモーメントを\n持つ矩形」が向きの数だけ在って定義が向きを決めない。ここでは重なりが最大に\nなる向きを選ぶ —— そのまま任意の向きで当てると正方形が 0.651 になり、HALCON の\n「矩形なら 1」と食い違う。HALCON もこの形では最大 10% 過小評価すると明記する。\n\n``a``, ``b`` は未使用。'),
-    ("eccentricity", "features", REG, FEA, "region_feat", {"metric": "eccentricity"},
-     '楕円近似による離心率(``skimage.measure.regionprops`` の\n``eccentricity``、0=真円、1に近いほど細長い線分状)。領域を等価な楕円に\nフィットしたときの形状指標。HALCON の ``eccentricity``（Shape features\nderived from the ellipse parameters.）に相当。\n\n``a``, ``b`` は未使用。'),
+    ("eccentricity", "features", REG, MAT, "region_feat", {"metric": "eccentricity"},
+     '楕円パラメータ由来の 3 つの形状指標 ``(Anisometry, Bulkiness, StructureFactor)``\nを、``match`` ソートの 3 成分ベクトルで返す(1 スカラーでは 3 値を表せないため、\n``area_center`` と同じ形)。\n\n``Ra``/``Rb`` を同じモーメントを持つ楕円の半径、``A`` を面積として\n\n  ``Anisometry = Ra/Rb``(細長さ。円で 1、下限 1)\n  ``Bulkiness = π·Ra·Rb / A``(楕円をどれだけ埋めていないか。円で 1)\n  ``StructureFactor = Anisometry·Bulkiness - 1``(円で 0)\n\nHALCON の ``eccentricity``（Shape features derived from the ellipse\nparameters.）**と同じ 3 値・同じ式**。3 つとも無次元なので正規化していない。\n\n★2026-09-26 まで skimage の離心率 ``sqrt(1-(b/a)²)`` という**3 つのどれでもない\n量**を 1 スカラーで返していた(円で 0.0 対 HALCON の 1.0、4x80 の棒で 0.999 対\n20.65)。1 スカラーでは 3 値を表せないため、``area_center`` と同じ ``match``\nソートに変えた。``docs/hardening/halcon-named-shape-factors.md``。\n\n領域が空のときは円の値 ``(1, 1, 0)`` を返す fail-soft 仕様(成分数は入力で\n変わらない)。``a``, ``b`` は未使用。'),
     ("orientation_region", "features", REG, FEA, "region_feat", {"metric": "orientation"},
      '領域の主軸の向き(``regionprops`` の ``orientation``、[-π/2,π/2] を\n[0,1] へ線形写像)。楕円フィットした際の長軸の傾きを表す。HALCON の\n``orientation_region``（Orientation of a region.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("roundness", "features", REG, FEA, "region_feat", {"metric": "roundness"},
@@ -1856,8 +1888,8 @@ SEED: list[tuple] = [
     ("points_harris_binomial", "edges", IMG, IMG, "corner", {"kind": "harris_binomial"},
      '二項(ガウス)平滑化を前段に挟んだ Harris コーナー応答。まず ``b`` で\n決まるシグマで画像を平滑化し、その上で Harris 応答(skimage があれば\n``corner_harris``、無ければ構造テンソルを手計算、k=0.04)を求める。HALCON\nの ``points_harris_binomial``（Detect points of interest using the\nbinomial approximation of the Harris operator.）に相当。\n\n``a`` が Harris 応答自体のシグマ(0.5〜2.5)を、``b`` が前段の平滑化シグマ\n(0.5〜2.0)を振る。両方が使われる。'),
     # ---- v11e increment: XLD ellipse/moment features + crossings + pruning ----
-    ("eccentricity_xld", "features", CON, FEA, "xld", {"kind": "eccentricity"},
-     '最大の輪郭(5 点以上)に ``cv2.fitEllipse`` で楕円をフィットし、その\n離心率 ``sqrt(1-(短軸/長軸)^2)`` を返す(0=真円、1に近いほど細長い)。\nHALCON の ``eccentricity_xld``（Shape features derived from the ellipse\nparameters of contours or polygons.）に相当。cv2 が無い、または点数不足\nの場合は 0 を返す。\n\n``a``, ``b`` は未使用。'),
+    ("eccentricity_xld", "features", CON, MAT, "xld", {"kind": "eccentricity"},
+     '``eccentricity`` の輪郭版。最大の輪郭について ``(Anisometry, Bulkiness,\nStructureFactor)`` を ``match`` ソートの 3 成分ベクトルで返す。HALCON の\n``eccentricity_xld``（Shape features derived from the ellipse parameters of\ncontours or polygons.）**と同じ 3 値・同じ式**。\n\n★``Ra``/``Rb`` は**囲まれた面積の幾何モーメント**から導く。2026-09-26 まで\n``cv2.fitEllipse``(輪郭「点」への最小二乗当てはめ)を使っていて、細長い形で\n大きく外れていた —— 4x80 の棒で Anisometry 39.1 対 20.65。HALCON の定義は\nモーメント由来の方である。\n\ncv2 が無い、点数が足りない、面積が 0 のときは円の値 ``(1, 1, 0)`` を返す。\n``a``, ``b`` は未使用。'),
     ("orientation_xld", "features", CON, FEA, "xld", {"kind": "orientation"},
      '楕円フィットした輪郭の傾き角(``cv2.fitEllipse`` の角度を 180° で\n折り返して [0,1] に正規化)。HALCON の ``orientation_xld``（Calculate the\norientation of contours or polygons.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("elliptic_axis_xld", "features", CON, FEA, "xld", {"kind": "elliptic_axis"},

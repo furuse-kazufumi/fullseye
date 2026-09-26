@@ -286,7 +286,7 @@
 | `compactness` | region->feature | features | compactness | - | measure.regionprops | regionprops |
 | `convexity` | region->feature | features | convexity | - | measure.regionprops | regionprops |
 | `rectangularity` | region->feature | features | rectangularity | - | measure.regionprops | regionprops |
-| `eccentricity` | region->feature | features | eccentricity | - | measure.regionprops | regionprops |
+| `eccentricity` | region->match | features | eccentricity | - | measure.regionprops | regionprops |
 | `orientation_region` | region->feature | features | orientation_region | - | measure.regionprops | regionprops |
 | `roundness` | region->feature | features | roundness | - | measure.regionprops | regionprops |
 | `diameter_region` | region->feature | features | diameter_region | - | measure.regionprops | regionprops |
@@ -334,7 +334,7 @@
 | `estimate_noise` | image->feature | features | estimate_noise | minMaxLoc/meanStdDev | measure | - |
 | `points_foerstner` | image | edges | points_foerstner | cornerHarris/goodFeaturesToTrack | feature.corner_* | detectHarrisFeatures |
 | `points_harris_binomial` | image | edges | points_harris_binomial | cornerHarris/goodFeaturesToTrack | feature.corner_* | detectHarrisFeatures |
-| `eccentricity_xld` | contour->feature | features | eccentricity_xld | findContours | measure.find_contours | - |
+| `eccentricity_xld` | contour->match | features | eccentricity_xld | findContours | measure.find_contours | - |
 | `orientation_xld` | contour->feature | features | orientation_xld | findContours | measure.find_contours | - |
 | `elliptic_axis_xld` | contour->feature | features | elliptic_axis_xld | findContours | measure.find_contours | - |
 | `diameter_xld` | contour->feature | features | diameter_xld | findContours | measure.find_contours | - |

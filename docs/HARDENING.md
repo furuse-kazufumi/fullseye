@@ -14,7 +14,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**32 件(うち直したもの 32 件)。見つけた PoC は 14 本。**
+**33 件(うち直したもの 33 件)。見つけた PoC は 14 本。**
 
 ## 種別ごと
 
@@ -22,7 +22,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 |---|---:|---:|
 | 静かに間違う(例外が出ない) | 16 | 16 |
 | 実装の誤り | 5 | 5 |
-| 門が事故の起きる場所に立っていなかった | 3 | 3 |
+| 門が事故の起きる場所に立っていなかった | 4 | 4 |
 | 在るのに引けない | 7 | 7 |
 | 説明の穴(片道の参照・古い数字) | 1 | 1 |
 
@@ -31,8 +31,8 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 | PoC | 件数 |
 |---|---:|
 | [`genspark_external_review`](../examples/genspark_external_review.py) | 17 |
+| [`shape_factors_closed_form`](../examples/shape_factors_closed_form.py) | 3 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
-| [`shape_factors_closed_form`](../examples/shape_factors_closed_form.py) | 2 |
 | [`line_handshake`](../examples/line_handshake.py) | 1 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
@@ -137,7 +137,7 @@ GenSpark 第 55 報(0.2.1 を入れ直しての再測定、2026-09-20)。修正�
 
 同名を名乗る 6 本のうち、HALCON の式と一致していたのは `convexity` だけだった。
 
-見つけた PoC: `shape_factors_closed_form` / 直した所: `backends_auto.py` / 門: `test_the_op_returns_the_halcon_quantity`, `test_rectangularity_is_one_for_rectangles_whatever_the_angle`, `test_rectangularity_is_one_for_a_square`, `test_the_old_isoperimetric_formula_is_what_the_gate_catches`, `test_the_old_axis_aligned_extent_is_what_the_gate_catches`, `test_the_contour_twin_answers_the_same_question`, `test_every_same_named_shape_factor_is_either_checked_or_named` / 状態: fixed
+見つけた PoC: `shape_factors_closed_form` / 直した所: `backends_auto.py` / 門: `test_the_op_returns_the_halcon_quantity`, `test_rectangularity_is_one_for_rectangles_whatever_the_angle`, `test_rectangularity_is_one_for_a_square`, `test_the_old_isoperimetric_formula_is_what_the_gate_catches`, `test_the_old_axis_aligned_extent_is_what_the_gate_catches`, `test_the_contour_twin_answers_the_same_question`, `test_every_same_named_shape_factor_is_either_checked_or_named`, `test_eccentricity_returns_the_three_halcon_values`, `test_eccentricity_is_one_one_zero_for_a_circle`, `test_the_old_scalar_eccentricity_is_what_the_gate_catches`, `test_the_contour_eccentricity_uses_moments_not_a_point_fit` / 状態: fixed
 
 #### [SimpleITK 由来の 3 つのしきい値 op が、兄弟 op の**補集合**を返していた](hardening/itk-threshold-ops-returned-the-dark-side.md)
 
@@ -196,6 +196,12 @@ GenSpark のレビュー(別ノート 3 本)を直したあと、同じ族が他
 連鎖ファザー(`tools/chain_fuzz.py --cover-all`、300 連鎖)の分類 164 件のうち、SUSPECT(契約の穴)8 件が同じ形だった: `vol_edge_probe` の返り(**行のリスト**)が pool の `table` に入り、次の op が `optical_camera` / `lens_spec` / `light_spec` の**dict**を待つ席に受け取る。`camera["K"]` は `TypeError: list indices must be integers or slices, not str`、`lens.get(...)` は `AttributeError: 'list' object has no attribute 'get'` —— 例外は出るが、どの op がどの入力を拒んだのかを言わない。型語彙 `table` は台帳全体で 207 か所に使われ、産む側は list-of-rows(`vol_edge_probe` / `region_props` / `glass_catalog` / `defect_dataset` / `copy_move_regions`)と dict(諸元・統計・設計)の両方がある。
 
 見つけた PoC: `tools/chain_fuzz.py` / 直した所: `optscene.py`, `fourierdesc.py`, `tools/chain_fuzz.py`, `ops1d.py`, `opsoptics.py` / 門: `test_table_consumers_refuse_a_list_of_rows_with_the_op_name`, `test_a_wrong_kind_of_spec_is_refused_too`, `test_peak_subbin_and_register_light_ledger_out_match_what_they_return`, `test_nonfinite_allowlist_additions_are_documented_and_really_nonfinite`, `test_the_eight_suspect_replays_are_white_now` / 状態: fixed
+
+#### [機能ゲートが `match` ソートを知らず、正しい op を「実装されていない」と数えていた](hardening/functional-gate-did-not-know-the-match-sort.md)
+
+HALCON 対応の見出しが **979 から 977 に減った**。減らしたのは `eccentricity` / `eccentricity_xld` を HALCON の 3 値に直した変更 —— 正しくしたのに **対応数が減った**。
+
+見つけた PoC: `shape_factors_closed_form` / 直した所: `verify_auto.py` / 門: `test_the_functional_gate_accepts_a_match_sort_vector`, `test_the_functional_gate_still_rejects_a_wrong_shape`, `test_the_headline_equals_the_union_of_its_parts` / 状態: fixed
 
 ### 在るのに引けない
 

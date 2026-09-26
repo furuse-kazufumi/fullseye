@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">eccentricity_xld — 2D <code style="color:#22d3bf">features</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">match</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;eccentricity_xld&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">eccentricity_xld</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <p><img src="fig/eccentricity_xld.png" alt="eccentricity_xld: input → output"></p>
@@ -10,8 +10,13 @@
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/eccentricity_xld.chain.jpg">eccentricity_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>가장 큰 윤곽선(점 5개 이상)에 `<code style="color:#22d3bf">cv2.fitEllipse</code><code style="color:#22d3bf">로 타원을 맞추고, 그 이심률 </code><code style="color:#22d3bf">sqrt(1-(단축/장축)^2)</code><code style="color:#22d3bf">을 반환한다(0=진원, 1에 가까울수록 가늘고 길다). HALCON의 </code><code style="color:#22d3bf">eccentricity_xld</code>`(Shape features derived from the ellipse parameters of contours or polygons.)에 해당. cv2가 없거나 점 수가 부족하면 0을 반환한다.</p>
+<p>`<code style="color:#22d3bf">eccentricity</code><code style="color:#22d3bf">의 윤곽판. 가장 큰 윤곽에 대해 </code><code style="color:#22d3bf">(Anisometry, Bulkiness, StructureFactor)</code><code style="color:#22d3bf">를 </code><code style="color:#22d3bf">match</code><code style="color:#22d3bf"> 정렬의 3성분 벡터로 반환한다. HALCON의 </code><code style="color:#22d3bf">eccentricity_xld</code>`(Shape features derived from the ellipse parameters of contours or polygons.)와 <b>같은 세 값·같은 식</b>이다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>★`<code style="color:#22d3bf">Ra</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">Rb</code>` は<b>囲まれた面積の幾何モーメント</b>から導く。2026-09-26 まで</p>
+<p>`<code style="color:#22d3bf">cv2.fitEllipse</code>`(輪郭「点」への最小二乗当てはめ)を使っていて、細長い形で</p>
+<p>大きく外れていた —— 4x80 の棒で Anisometry 39.1 対 20.65。HALCON の定義は</p>
+<p>モーメント由来の方である。</p>
+<p>cv2 が無い、点数が足りない、面積が 0 のときは円の値 `<code style="color:#22d3bf">(1, 1, 0)</code>` を返す。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>
@@ -26,8 +31,8 @@ sk_find_contours 0.50 0.50
 eccentricity_xld 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Aeccentricity_xld%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Aeccentricity_xld%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">feature</code> 를 입력으로 받는 것)</h3>
-<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">match</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">features</code>)</h3>
 <p><a style="color:#22d3bf" href="op:effective_bit_depth">effective_bit_depth</a> · <a style="color:#22d3bf" href="op:blob_count">blob_count</a> · <a style="color:#22d3bf" href="op:area_frac">area_frac</a> · <a style="color:#22d3bf" href="op:count_contours">count_contours</a> · <a style="color:#22d3bf" href="op:total_length">total_length</a> · <a style="color:#22d3bf" href="op:vol_count">vol_count</a> · <a style="color:#22d3bf" href="op:sk_euler">sk_euler</a> · <a style="color:#22d3bf" href="op:sk_entropy_feat">sk_entropy_feat</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

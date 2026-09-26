@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 624 of 1095. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 624 of 1099. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -84,20 +84,23 @@ This repository records *why* things are the way they are in **comments in the s
 ## `backends_auto.py`
 
 - **L109** _(ja)_ — ★**HALCON と同名の形状係数は、HALCON の式で計算する**(2026-09-26)。 名前を借りたのにに別の量を返すと、HALCON のレシピを移してきた人が 同じしきい値で違う判定を得る —— しかも例外は出ない。一次情報: circularity C = min(1, F / (π·max²)) max = 重心から全輪郭画素までの最大距離 compactness C = max(1, L² / (4π·F)) L = 輪郭長 roundness C = 1 - σ/μ μ,σ = 重心→輪郭距離の平均と標準偏差 rectangularity 同じ 1 次・2 次モーメントを持つ矩形との差の面積を矩形面積で正規化 (https://www.mvtec.com/doc/halcon/2605/en/circularity.html ほか)
-- **L196** _(ja)_ — ★**2 次モーメントで向きが決まらない形では、向きは定義に含まれない。** 正方形や円は共分散が等方なので固有ベクトルが任意に決まる —— そのまま採点すると モーメント矩形が 45 度回った状態で当たり、**正方形が 0.651** になる(実測)。 HALCON は「矩形なら 1 を返す」と明記し、向きが決まらない形での過小評価は 最大 10% と書いている(https://www.mvtec.com/doc/halcon/1911/en/rectangularity_xld.html)。 等方なときは「同じモーメントを持つ矩形」が**向きの数だけ在る**ので、どれを選んでも 定義は満たす。ここでは重なりが最大になる向きを選ぶ —— 任意性を最大側で潰す。
-- **L744** — ★Do not change the canvas (reshape=False) + reflect outside the frame (mode="reflect"). Angle is -45°..+45° (0° at a=0.5). The original image is **folded back** into the four corners, so this is not directly suited to uses that want to "fill outside the frame with a background colour" such as deskewing forms (this is a known design decision, not a bug — for details and how to choose, see the docstring of `ops._rotate_img`).
-- **L767** — ★However, keep the return shape on the **same canvas as the input**. The image in this registry has a contract that it "connects unconditionally between stages", so changing the shape makes the evaluator fail because it cannot match the target image (measured: the moment the target-size version returned (70,50), `test_evolve_is_reproducible_given_seed` failed with "operands could not be broadcast together with shapes (70,50) (64,64)"). So we place the image resampled to Ht x Wt at the top-left of the canvas, pad the margin with 0, and crop the overflow —— the fact that "the image is now Ht x Wt pixels" stays visible as is.
-- **L1081** _(ja)_ — ★**頭打ちを外し、HALCON の式に揃えた**(2026-09-26)。以前は ``min(1.0, C'/10)`` で、C' = L²/(4πF) が 10 を超える形(幅 2 px なら 長さ 80 以上の傷)を全部 1.0 に潰していた —— 傷や割れという、いちばん 見たい領域で「形が違うのに同じ数」が返っていた。HALCON は上ではなく **下**を 1 で切る(画素近似で 1 を下回りうるため)。 docs/hardening/compactness-saturated-at-one.md
-- **L1093** _(ja)_ — ★HALCON は**同じ 1 次・2 次モーメントを持つ矩形**との差で測る。 以前は軸平行の外接矩形との比(skimage の extent)だったので、 **同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた** (HALCON は 0.998 のまま)。docs/hardening/halcon-named-shape-factors.md
-- **L1103** _(ja)_ — ★HALCON の roundness は ``1 - σ/μ``(重心→輪郭距離の平均と標準偏差)。 以前は ``4A/(π·長軸²)`` という別の量で、16x64 の矩形で 0.239 対 0.577 と食い違っていた。
-- **L1276** — ★2026-09-02: what it returned was the **integer pixel coordinates** of `np.where` themselves, so despite calling itself `sub_pix` it had no sub-pixel precision. We added refinement along the normal via parabola fitting (the same shared helper as core `ops._edges_sub_pix`; a same-named op wins last in the registry, so this is what actually runs —— fixing only core has no effect). Measured (a synthetic step edge whose true position is column 20.37, a=0.2): the old implementation returned columns {20.0, 21.0} with mean absolute error 0.500 px, and after refinement {20.324, 20.370} with 0.0228 px (about 22x improvement). The number of points and how connected components are split are unchanged (coordinates just move less than 1 px).
-- **L1356** _(ja)_ — ★region 版と同じ HALCON の式。重心は**囲まれた面積の重心**を使う (点の平均ではない —— 点が密な側に寄ってしまう)。
-- **L1362** _(ja)_ — ★region 版と**同じ欠陥がここにも在った**(``/10`` + 頭打ち)。 直した op の双子を見落とすと、穴が半分残る。
-- **L1383** _(ja)_ — ★HALCON は最小外接矩形ではなく**同じモーメントを持つ矩形**で測る。 輪郭を一度ラスタ化して region 版と同じ式に載せる(差の面積を 直接測るため)。
-- **L1443** — ★At b >= 0.75 it averages over 4 directions (0/45/90/135 degrees). The default b=0.5 is only 0 degrees as before, so **existing results do not change by a single bit**. Whether it helps depends on a (co-occurrence distance) (poc_real_texture_invariance section 6, 3 real materials): it helps isotropic materials at short-to-medium distances, and helps anisotropic brick only at distance 4 (swing/resolution 3.13 -> 1.54). At distance 1, brick
-- **L1448** — conversely worsens (0.30 -> 0.56). ★The root cause is that extending the distance collapses the resolution itself, 0.0328 -> 0.0122.
-- **L1655** — ★2026-09-02: these two shared `{"kind": "zoom"}` and were therefore a **completely identical implementation**, and neither used b (measured: max difference 0.0 for the same input, difference 0.0 between b=0 and b=1). In HALCON the factor version takes two scale factors and the size version takes a target size, which are **different things**, so we split the kind to match the reality to the names.
-- **L1728** — ★2026-09-02: the old spec was out_sort=feature / metric="area", but the reality was `np.mean(mask)` = the **area ratio occupied in the image**. Since HALCON's `area_center` is an op that returns (Area, Row, Column), there was a double discrepancy: (1) it does not return the centre, (2) the area is a ratio rather than a pixel count (= resolution-dependent). A single scalar cannot satisfy the name, so we make it the **1-D vector of the match sort**, the same as `ncc_locate`, and return (area ratio, row, column). Both match and feature are terminal sorts (candidates are identity only), so the genome->op mapping does not move.
+- **L117** _(ja)_ — ★HALCON の ``eccentricity`` は**3 値**を返す演算子である(Anisometry / Bulkiness / StructureFactor)。2026-09-26 まで、この op は skimage の離心率 ``sqrt(1-(b/a)²)`` という **3 つのどれでもない量**を返していた。 3 つとも無次元なので、そのまま返して HALCON と数が合う。円なら (1, 1, 0)。
+- **L210** _(ja)_ — ★**2 次モーメントで向きが決まらない形では、向きは定義に含まれない。** 正方形や円は共分散が等方なので固有ベクトルが任意に決まる —— そのまま採点すると モーメント矩形が 45 度回った状態で当たり、**正方形が 0.651** になる(実測)。 HALCON は「矩形なら 1 を返す」と明記し、向きが決まらない形での過小評価は 最大 10% と書いている(https://www.mvtec.com/doc/halcon/1911/en/rectangularity_xld.html)。 等方なときは「同じモーメントを持つ矩形」が**向きの数だけ在る**ので、どれを選んでも 定義は満たす。ここでは重なりが最大になる向きを選ぶ —— 任意性を最大側で潰す。
+- **L758** — ★Do not change the canvas (reshape=False) + reflect outside the frame (mode="reflect"). Angle is -45°..+45° (0° at a=0.5). The original image is **folded back** into the four corners, so this is not directly suited to uses that want to "fill outside the frame with a background colour" such as deskewing forms (this is a known design decision, not a bug — for details and how to choose, see the docstring of `ops._rotate_img`).
+- **L781** — ★However, keep the return shape on the **same canvas as the input**. The image in this registry has a contract that it "connects unconditionally between stages", so changing the shape makes the evaluator fail because it cannot match the target image (measured: the moment the target-size version returned (70,50), `test_evolve_is_reproducible_given_seed` failed with "operands could not be broadcast together with shapes (70,50) (64,64)"). So we place the image resampled to Ht x Wt at the top-left of the canvas, pad the margin with 0, and crop the overflow —— the fact that "the image is now Ht x Wt pixels" stays visible as is.
+- **L1086** _(ja)_ — ★3 成分を返す op は、空でも 3 成分を返す(スカラーに落ちると 受け取る側の形が入力で変わる)。円の値 (1, 1, 0) を既定にする。
+- **L1099** _(ja)_ — ★**頭打ちを外し、HALCON の式に揃えた**(2026-09-26)。以前は ``min(1.0, C'/10)`` で、C' = L²/(4πF) が 10 を超える形(幅 2 px なら 長さ 80 以上の傷)を全部 1.0 に潰していた —— 傷や割れという、いちばん 見たい領域で「形が違うのに同じ数」が返っていた。HALCON は上ではなく **下**を 1 で切る(画素近似で 1 を下回りうるため)。 docs/hardening/compactness-saturated-at-one.md
+- **L1111** _(ja)_ — ★HALCON は**同じ 1 次・2 次モーメントを持つ矩形**との差で測る。 以前は軸平行の外接矩形との比(skimage の extent)だったので、 **同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた** (HALCON は 0.998 のまま)。docs/hardening/halcon-named-shape-factors.md
+- **L1122** _(ja)_ — ★HALCON の roundness は ``1 - σ/μ``(重心→輪郭距離の平均と標準偏差)。 以前は ``4A/(π·長軸²)`` という別の量で、16x64 の矩形で 0.239 対 0.577 と食い違っていた。
+- **L1295** — ★2026-09-02: what it returned was the **integer pixel coordinates** of `np.where` themselves, so despite calling itself `sub_pix` it had no sub-pixel precision. We added refinement along the normal via parabola fitting (the same shared helper as core `ops._edges_sub_pix`; a same-named op wins last in the registry, so this is what actually runs —— fixing only core has no effect). Measured (a synthetic step edge whose true position is column 20.37, a=0.2): the old implementation returned columns {20.0, 21.0} with mean absolute error 0.500 px, and after refinement {20.324, 20.370} with 0.0228 px (about 22x improvement). The number of points and how connected components are split are unchanged (coordinates just move less than 1 px).
+- **L1375** _(ja)_ — ★region 版と同じ HALCON の式。重心は**囲まれた面積の重心**を使う (点の平均ではない —— 点が密な側に寄ってしまう)。
+- **L1381** _(ja)_ — ★region 版と**同じ欠陥がここにも在った**(``/10`` + 頭打ち)。 直した op の双子を見落とすと、穴が半分残る。
+- **L1402** _(ja)_ — ★HALCON は最小外接矩形ではなく**同じモーメントを持つ矩形**で測る。 輪郭を一度ラスタ化して region 版と同じ式に載せる(差の面積を 直接測るため)。
+- **L1414** _(ja)_ — ★region 版と同じ HALCON の 3 値。Ra, Rb は**囲まれた面積の幾何 モーメント**から導く —— `cv2.fitEllipse` は輪郭「点」への 最小二乗当てはめで、細長い形では大きく外れる(実測: 4x80 の 棒で Anisometry 39.1 対 20.65)。HALCON の定義は前者。
+- **L1475** — ★At b >= 0.75 it averages over 4 directions (0/45/90/135 degrees). The default b=0.5 is only 0 degrees as before, so **existing results do not change by a single bit**. Whether it helps depends on a (co-occurrence distance) (poc_real_texture_invariance section 6, 3 real materials): it helps isotropic materials at short-to-medium distances, and helps anisotropic brick only at distance 4 (swing/resolution 3.13 -> 1.54). At distance 1, brick
+- **L1480** — conversely worsens (0.30 -> 0.56). ★The root cause is that extending the distance collapses the resolution itself, 0.0328 -> 0.0122.
+- **L1687** — ★2026-09-02: these two shared `{"kind": "zoom"}` and were therefore a **completely identical implementation**, and neither used b (measured: max difference 0.0 for the same input, difference 0.0 between b=0 and b=1). In HALCON the factor version takes two scale factors and the size version takes a target size, which are **different things**, so we split the kind to match the reality to the names.
+- **L1760** — ★2026-09-02: the old spec was out_sort=feature / metric="area", but the reality was `np.mean(mask)` = the **area ratio occupied in the image**. Since HALCON's `area_center` is an op that returns (Area, Row, Column), there was a double discrepancy: (1) it does not return the centre, (2) the area is a ratio rather than a pixel count (= resolution-dependent). A single scalar cannot satisfy the name, so we make it the **1-D vector of the match sort**, the same as `ncc_locate`, and return (area ratio, row, column). Both match and feature are terminal sorts (candidates are identity only), so the genome->op mapping does not move.
 
 ## `backends_bridge.py`
 
@@ -1709,7 +1712,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_halcon_named_shape_factors_2026_09_26.py`
 
-- **L216** _(ja)_ — ★同名なのに HALCON と別の量を返すもの。**直す予定のものだけ**をここに書き、 「本当にまだ違う」ことを下の試験が確かめる(直ったら台帳から外させる)。
+- **L277** _(ja)_ — ★同名なのに HALCON と別の量を返すもの。**直す予定のものだけ**をここに書き、 「本当にまだ違う」ことを下の試験が確かめる(直ったら台帳から外させる)。
 
 ## `tests/test_honest_summary_arithmetic.py`
 
@@ -2091,6 +2094,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `unified.py`
 
 - **L560** _(ja)_ — ★2026-09-20(GenSpark 第 53 報 N181): dict / list を registry の鍵にして unhashable で落ちていた
+
+## `verify_auto.py`
+
+- **L74** _(ja)_ — ★``match`` は **1 次元ベクトル**(`ops._ncc_locate` と同じ形)。1 スカラー では表せない組(面積+重心、楕円の 3 指標 …)を運ぶために在る。 この枝が無かったので、下の「image / region = 2 次元」に落ちて ``ndim=1`` で弾かれていた —— 正しく作られた op が「実装されていない」 と数えられ、HALCON 対応数が静かに 1 本少なかった。
 
 ## `visionlab.py`
 
