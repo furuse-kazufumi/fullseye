@@ -103,7 +103,7 @@ plain C ABI there are no per-language bindings to maintain: Python (`ctypes`,
 toolchains were actually run (clang, gcc/MinGW, MSVC, .NET SDK 9, LuaJIT 2.1, CPython 3.11
 as of 2026-09-15) rather than which ones exist.
 
-What this is **not**: it is not the Python library (2,187 operators in the machine-readable
+What this is **not**: it is not the Python library (2,189 operators in the machine-readable
 index) in another language. Its
 purpose is to be a *second implementation* of a small contract, so that a differential
 fuzzer and a header-including C caller can find specification bugs the Python tests cannot
@@ -117,7 +117,7 @@ language wins, and the losses were SIMD losses; see `CHANGELOG.md` 0.1.11.
 **Every operator of the 2-D registry (901 single-input operators; the 918 2-D operators of the
 index minus the 17 n-ary ones; those whose backend is installed) is reachable through
 `fs_apply`; the five contract operators also have a native route. Look at `route`.** The typed
-ledgers (1,238 operators whose inputs are point clouds, signals, tables …) and the n-ary
+ledgers (1,240 operators whose inputs are point clouds, signals, tables …) and the n-ary
 operators cannot be carried by one image / region handle and are refused with a status code and
 a reason — a later stage, not a silent gap. `fs_apply(op, inputs, n_in, params_json, route_pref, outputs,
 out_cap, n_out, info)` names the operator as a string and takes its parameters as a JSON

@@ -4,7 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: signal
-examples: [degenerate_inputs, gallery2d_texture_freq, signal_filter]
+examples: [degenerate_inputs, gallery2d_texture_freq, optics_four_f_processor, signal_filter]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -32,6 +32,7 @@ names the exact minimum) instead of silently coming back unfiltered.
 
 - [degenerate_inputs](../../../../examples/degenerate_inputs.py) — `py -3.11 examples/degenerate_inputs.py`
 - [gallery2d_texture_freq](../../../../examples/gallery2d_texture_freq.py) — `py -3.11 examples/gallery2d_texture_freq.py`
+- [optics_four_f_processor](../../../../examples/optics_four_f_processor.py) — `py -3.11 examples/optics_four_f_processor.py`
 - [signal_filter](../../../../examples/signal_filter.py) — `py -3.11 examples/signal_filter.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2187,
- "n_notes": 2193,
+ "n_ops": 2189,
+ "n_notes": 2195,
  "notes": {
   "vol_dilate": [
    {
@@ -19652,6 +19652,25 @@
     "category": "wave",
     "out": "measurement",
     "path": "docs/ops/optics/wave/defocus_from_shift.md"
+   }
+  ],
+  "four_f_filter": [
+   {
+    "op": "four_f_filter",
+    "dim": "optics",
+    "category": "wave",
+    "in": "cimage × cimage",
+    "out": "cimage",
+    "path": "docs/ops/optics/wave/four_f_filter.md"
+   }
+  ],
+  "fourier_plane_filter": [
+   {
+    "op": "fourier_plane_filter",
+    "dim": "optics",
+    "category": "wave",
+    "out": "cimage",
+    "path": "docs/ops/optics/wave/fourier_plane_filter.md"
    }
   ],
   "fraunhofer_pattern": [

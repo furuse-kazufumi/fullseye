@@ -847,6 +847,10 @@ def _ledger_args():
         "depth_of_field": (), "relative_illumination": (),
         "airy_pattern": (16,), "angular_spectrum_propagate": (field,),
         "fraunhofer_pattern": (ap,), "gaussian_beam": (),
+        # 4f 光学プロセッサ(2026-09-26)。透過関数は場と同じ格子でなければ
+        # ならないので、生成器の既定サイズを場に合わせて渡す。
+        "fourier_plane_filter": (16,),
+        "four_f_filter": (field, O.fourier_plane_filter(16, "identity")),
         "defocus_from_shift": (), "pupil_psf": (ap,), "pupil_blur": (psf, ap),
         "psf_to_mtf": (psf,), "mtf_diffraction": (),
         "wavefront_stats": ({(2, 0): 0.05},),
@@ -875,8 +879,10 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # pupil_blur)を追加(124 → 127)。
     # 2026-09-18: optics "polarization" に偏光カメラの 3 op(polarization_demosaic /
     # mueller_from_intensities / mueller_checks)を追加(127 → 130)。
-    assert len(opsoptics.OPSOPTICS) == 131   # + polarization_demosaic_color
-    assert len(opsoptics.list_ops("wave")) == 7
+    assert len(opsoptics.OPSOPTICS) == 133   # + 4f 光学プロセッサ 2 op(2026-09-26)
+    # 2026-09-26: wave に 4f 光学プロセッサ 2 op(fourier_plane_filter /
+    # four_f_filter)を追加(7 → 9)。
+    assert len(opsoptics.list_ops("wave")) == 9
     # 2026-09-04: 見え方の 5 族(33 op)を追加 —— matappear "appearance" 7 /
     # glassmirror "interface" 4・"mirror" 2・"glassbody" 4 / metalfinish "finish" 5 /
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
@@ -901,7 +907,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # half lives in raytrace (its own ledger checks are in tests/test_raytrace.py)
     from_optics = {n for n, m in opsoptics.OPSOPTICS.items() if m["module"] == "optics"}
     assert from_optics == set(O.OPTICS) == set(O.__all__) & set(O.OPTICS)
-    assert len(from_optics) == 25                       # 18 + 3 pupil-shape (2026-09-15) + 4 polarisation camera (2026-09-18)
+    assert len(from_optics) == 27                       # 18 + 3 pupil-shape (2026-09-15) + 4 polarisation camera (2026-09-18)
+    #                                                   + 2 四f 光学プロセッサ (2026-09-26)
     assert all(m["module"] == "raytrace" for n, m in opsoptics.OPSOPTICS.items()
                if m["category"] == "design")
     assert all(m["module"] == "lensimage" for n, m in opsoptics.OPSOPTICS.items()

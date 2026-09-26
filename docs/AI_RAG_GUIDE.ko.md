@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 22cf3c0bad3a -->
+<!-- i18n-source-sha: 8fe28ab585e4 -->
 # Fullseye를 AI 어시스턴트의 RAG로 사용하는 방법(Claude Code용)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · **한국어** · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -38,7 +38,7 @@ py -3.11 tools/setup_claude_rag.py --uninstall  # 제거
 
 ## Tier 2(선택): 클러스터링된 코퍼스 — 외부 도구를 이용한 발전형
 
-**2,193개**의 노트를 주제 클러스터로 계층화하고, 각 클러스터에 LLM 요약을 붙인 "내비게이션이 있는 코퍼스"도 만들 수 있습니다. 내부적으로는 [RAPTOR](https://github.com/gadievron/raptor) 포크의 `corpus2skill`(TF-IDF + k-means + LLM 요약)을 사용하고 있지만, **이는 어디까지나 선택적인 최적화이며 필수가 아닙니다**. 요구 사항은 "`docs/ops`를 입력으로 클러스터별 SKILL.md 계층을 출력"하는 것뿐이므로, 동등한 도구라면 무엇으로든 대체할 수 있습니다.
+**2,195개**의 노트를 주제 클러스터로 계층화하고, 각 클러스터에 LLM 요약을 붙인 "내비게이션이 있는 코퍼스"도 만들 수 있습니다. 내부적으로는 [RAPTOR](https://github.com/gadievron/raptor) 포크의 `corpus2skill`(TF-IDF + k-means + LLM 요약)을 사용하고 있지만, **이는 어디까지나 선택적인 최적화이며 필수가 아닙니다**. 요구 사항은 "`docs/ops`를 입력으로 클러스터별 SKILL.md 계층을 출력"하는 것뿐이므로, 동등한 도구라면 무엇으로든 대체할 수 있습니다.
 
 재수집(노트 업데이트 후)의 예 — 내부 운용을 그대로 정직하게 기록한 것입니다.
 

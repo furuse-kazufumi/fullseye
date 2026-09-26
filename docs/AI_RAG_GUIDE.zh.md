@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 22cf3c0bad3a -->
+<!-- i18n-source-sha: 8fe28ab585e4 -->
 # 将 Fullseye 用作 AI 助手 RAG 的方法（面向 Claude Code）
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · **简体中文** · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -38,7 +38,7 @@ py -3.11 tools/setup_claude_rag.py --uninstall  # 卸载
 
 ## Tier 2（可选）：聚类语料库——借助外部工具的进阶形态
 
-也可以将 **2,193 条**笔记按主题聚类分层，并为每个聚类附上 LLM 摘要，做成"带导航的语料库"。我们内部使用的是 [RAPTOR](https://github.com/gadievron/raptor) 分支的 `corpus2skill`（TF-IDF + k-means + LLM 摘要），但**这只是一种可选的优化，并非必需**。要求仅仅是"以 `docs/ops` 为输入，输出按聚类划分的 SKILL.md 层级结构"，因此任何等效的工具都可以替代。
+也可以将 **2,195 条**笔记按主题聚类分层，并为每个聚类附上 LLM 摘要，做成"带导航的语料库"。我们内部使用的是 [RAPTOR](https://github.com/gadievron/raptor) 分支的 `corpus2skill`（TF-IDF + k-means + LLM 摘要），但**这只是一种可选的优化，并非必需**。要求仅仅是"以 `docs/ops` 为输入，输出按聚类划分的 SKILL.md 层级结构"，因此任何等效的工具都可以替代。
 
 重新导入（笔记更新后）的示例——如实记录内部的运行方式：
 

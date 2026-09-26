@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(252 例)
+### 2-D 画像/信号/幾何(253 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -126,6 +126,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 
 **measurement**
+- **レンズに微分を計算させる(4f 光学プロセッサ)** — 2 枚のレンズの間にフィルタを 1 枚置くと、光が空間微分を実行する —— GPU も 畳み込みカーネルも要らず、光が通り抜ける時間で終わる。真値は全部**閉形式か整数**: 恒等フィルタなら出力は入力の 180 度回転(2 枚のレンズがそれぞれ前向きの フーリエ変換を行うため)、(i2πf)^n なら n 階微分でガウシアンの閉形式と一致、渦位相板の**巻き数は整数**。外部の参照値を一つも使わない。--morph で 分数階微分 0→2 の連続変化を動画にする(静止画では別々の絵に見えるものが 1 本の族であることが目で分かる)。★偶数長のナイキストのビンを 0 にしないと 片側位相が奇対称を厳密に満たさないことも、桁で見せる。 `py -3.11 examples/optics_four_f_processor.py`
 - **特徴の次元を、真値を一つも使わずに測る** — 形を k 倍に拡大して値が k^p 倍になる指数 p を測り、領域を受けて数を返す 35 op の**次元**(無次元 29・長さ 5・面積 1)を表にする。HALCON の数値も閉形式の真値も使わない —— 変成関係だけで採点する。2026-09-26 に直した 8 op のうち 5 本はこの 1 枚で出ており、同じ枚で未解決の §52(moments 族が p=0、HALCON は 4/5/8)も指す。画布で割ると p が 1.015 から 0.015 へ落ちることをその場で見せ、値域や有限性の門では区別できないことを示す。 `py -3.11 examples/scale_law_of_features.py`
 - **形状特徴を閉形式の真値で採点する —— そして消えないバイアスを見せる** — 矩形と円の厳密な閉形式(面積・矩形度・周囲長²/(4π面積)・円形度)で region 特徴を採点。面積と矩形度は丸め誤差 0 で一致。コンパクトさが頭打ちしないことを長さを伸ばして assert し、周囲長の 2 つの推定量が**逆の形で外す**(perimeter は円で +5%・crofton は正方形で -5%、どちらも解像度で消えない)ことを示す。 `py -3.11 examples/shape_factors_closed_form.py`
 
@@ -1402,8 +1403,8 @@ _計 932 ops / 48 categories。_
 - `tf_gradient_domain_reintegrate` `image → image` · 例: `gallery2d_smoothing_rank`
 
 ### frequency(19)
-- `lowpass` `image → image` · 例: `degenerate_inputs`, `gallery2d_texture_freq`, `signal_filter`
-- `highpass` (halcon: `highpass_image`) `image → image` · 例: `gallery2d_texture_freq`, `signal_filter`
+- `lowpass` `image → image` · 例: `degenerate_inputs`, `gallery2d_texture_freq`, `optics_four_f_processor`, `signal_filter`
+- `highpass` (halcon: `highpass_image`) `image → image` · 例: `gallery2d_texture_freq`, `optics_four_f_processor`, `signal_filter`
 - `sk_butterworth` `image → image` · 例: `gallery2d_texture_freq`
 - `fft_image` (halcon: `fft_image`) `image → image` · 例: `degenerate_inputs`, `gallery2d_texture_freq`, `poc_moire_screen`
 - `power_real` (halcon: `power_real`) `image → image` · 例: `gallery2d_texture_freq`
@@ -2267,7 +2268,7 @@ _計 55 ops / 7 categories。_
 - `wave_grating_orders` (` → table`) — Where a grating sends each order: ``d (sin_out - sin_in) = m lambda`` solved for the angle.
 
 ## Optics operators(opsoptics)by category
-_計 131 ops / 16 categories。_
+_計 133 ops / 16 categories。_
 
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
@@ -2426,10 +2427,12 @@ _計 131 ops / 16 categories。_
 - `corrosion_mask` (` → image2d`) — 錆・緑青・汚れの**むら**(0–1 のマスク)。
 - `rough_transmission` (`signal → pairs`) — すりガラスの透過を「直進成分」と「拡散成分」に分ける。
 
-### wave(7)
+### wave(9)
 - `airy_pattern` (` → image2d`) — The diffraction-limited PSF of a circular pupil (Airy pattern).
 - `angular_spectrum_propagate` (`cimage → cimage`) — Exact scalar free-space propagation of a complex field (angular spectrum).
 - `fraunhofer_pattern` (`image2d → image2d`) — Far-field (Fraunhofer) diffraction intensity of an aperture.
+- `fourier_plane_filter` (` → cimage`) — 4f 系のフーリエ面に置く複素透過関数 ``H(fx, fy)``。
+- `four_f_filter` (`cimage, cimage → cimage`) — 4f 光学プロセッサ: 2 枚のレンズとフーリエ面のフィルタを通した出力。
 - `gaussian_beam` (` → table`) — Gaussian-beam propagation: spot size, wavefront curvature and Gouy phase.
 - `defocus_from_shift` (` → measurement`) — Defocus wavefront error (waves at the pupil edge) of an axial focus shift.
 - `pupil_psf` (`image2d → image2d`) — Diffraction PSF of an **arbitrary pupil shape** with defocus (sums to 1).

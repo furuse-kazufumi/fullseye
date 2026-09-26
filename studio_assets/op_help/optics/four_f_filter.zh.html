@@ -1,0 +1,55 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">four_f_filter — OPTICS <code style="color:#22d3bf">wave</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">cimage × cimage</code> → <code style="color:#22d3bf">cimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.four_f_filter(field, transfer, invert=True)</code>(要直接调用实现,<code style="color:#22d3bf">import optics; optics.four_f_filter(field, transfer, invert=True)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;four_f_filter&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>4f 光学プロセッサ: 2 枚のレンズとフーリエ面のフィルタを通した出力。</p>
+<p>入力面 → レンズ 1 → <b>フーリエ面</b>(`<code style="color:#22d3bf">transfer</code>` を掛ける)→ レンズ 2 →</p>
+<p>出力面。スカラ回折の理想 4f 系では出力は</p>
+<p>`<code style="color:#22d3bf">out(x, y) = (u * h)(-x, -y)</code>`</p>
+<p>—— 畳み込みに<b>座標反転</b>が付く。2 枚のレンズがそれぞれ*前向きの*フーリエ</p>
+<p>変換を行い、`<code style="color:#22d3bf">F{F{u}}(x) = u(-x)</code>` だからである。「フーリエ面で掛けるだけ」</p>
+<p>の計算と実物の 4f 系はここが違うので、反転は既定で<b>する</b>。</p>
+<p>離散でもこの反転は厳密で、添字の写像 `<code style="color:#22d3bf">n -&gt; (-n) mod N</code>` になる</p>
+<p>(`<code style="color:#22d3bf">np.roll(a[::-1], 1)</code>`)。反転そのものは添字の入れ替えなので誤差を持たない</p>
+<p>—— 残る誤差は FFT の往復が乗せる 1e-16 台だけである(`<code style="color:#22d3bf">transfer</code>` を 1 に</p>
+<p>した実測で最大絶対差 3.4e-16)。</p>
+<p>*invert* を `<code style="color:#22d3bf">False</code>` にすると反転を省く(フィルタ後の場を<b>入力座標のまま</b></p>
+<p>見たいとき。物理の 4f 系ではないので、既定にはしない)。</p>
+<p>真値(この op が再現するもの):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">identity</code>` フィルタ → 入力の 180 度回転に一致(実測 3.4e-16)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">block</code>` フィルタ → 厳密にゼロ。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">derivative_x</code>` order=n → *n* 階の空間微分。ガウシアン(w=8, 64x64)で</p>
+<p>1 階 5.8e-08 / 2 階 5.4e-08 の相対誤差 —— <b>1e-16 にならない</b>のは</p>
+<p>ガウシアンが厳密に帯域制限されていないから(打ち切りの分)。</p>
+<p style="margin:2px 0 2px 12px">• 線形性 `<code style="color:#22d3bf">4f(a*u1 + b*u2) = a*4f(u1) + b*4f(u2)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 合成 `<code style="color:#22d3bf">4f(4f(u, H1), H2)</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">4f(u, H1*H2)</code>`(反転を 2 回かけた分だけずれる</p>
+<p>ので、合成を試すときは *invert* を `<code style="color:#22d3bf">False</code>` にする)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">|H| = 1</code>` のフィルタは総パワーを保つ(Parseval)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *field* / *transfer* が 2-D でない、形が違う、</p>
+<p>2x2 未満、:data:<code style="color:#22d3bf">MAX_FIELD_ELEMENTS</code> 超、非有限、マスク付き。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
+<p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
+<p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>
+<p style="margin:2px 0 2px 12px">• **字符串一律 <code style="color:#22d3bf">ValueError</code>** —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 会成功,于是未解析的配置值会被当成长度混进来(实测:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾返回看着合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隐式提升拒绝。</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked array 一律 <code style="color:#22d3bf">ValueError</code><b>(仅接受实数槽位;拒绝无声丢弃虚部或剥掉掩码)。</b>所有输入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**。</p>
+<p style="margin:2px 0 2px 12px">• <b>逐项点名拒绝除零及其近亲</b>:焦距 0、曲率半径 0、折射率 &lt;= 0、全不透明光阑(全为 0,归一化变成 0/0)、总和 &lt;= 0 的 PSF、S0 = 0 的 Stokes 矢量、物体位于前焦点(像在无穷远)。</p>
+<p style="margin:2px 0 2px 12px">• <b>只有两个算子会返回非有限值,而且都写进了契约</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外返回 <code style="color:#22d3bf">far_mm = inf</code>(这正是超焦距的定义),<code style="color:#22d3bf">gaussian_beam</code> 在束腰处返回 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半径)。两者都同时返回一个有限的搭档(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。**除此之外的无声 NaN/Inf 都在内部检出并 <code style="color:#22d3bf">ValueError</code>** ——「float64 溢出了」和「答案是无穷大」是两种不同的主张,不能拿后者的脸去交付前者。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:生成网格受 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)限制,传入的场/PSF/光阑受 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24),ABCD 元件序列受 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024),Zernike 受 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。以 fail-closed 堵住「小参数引发巨大内部分配」的路径(实测:n_max=40 × 4096² 需要 108 GB)。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理上不可能的状态同样拒绝</b>:偏振度 &gt; 1 的 Stokes 矢量、负透过率、负强度、n-|m| 为奇数等非法 Zernike 指标。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_four_f_processor">optics_four_f_processor</a> — <code style="color:#22d3bf">py -3.11 examples/optics_four_f_processor.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">cimage</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opoptics:angular_spectrum_propagate">angular_spectrum_propagate</a> · <a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">wave</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:airy_pattern">airy_pattern</a> · <a style="color:#22d3bf" href="opoptics:angular_spectrum_propagate">angular_spectrum_propagate</a> · <a style="color:#22d3bf" href="opoptics:fraunhofer_pattern">fraunhofer_pattern</a> · <a style="color:#22d3bf" href="opoptics:fourier_plane_filter">fourier_plane_filter</a> · <a style="color:#22d3bf" href="opoptics:gaussian_beam">gaussian_beam</a> · <a style="color:#22d3bf" href="opoptics:defocus_from_shift">defocus_from_shift</a> · <a style="color:#22d3bf" href="opoptics:pupil_psf">pupil_psf</a> · <a style="color:#22d3bf" href="opoptics:pupil_blur">pupil_blur</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: optics.py — OPTICS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,55 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">four_f_filter — OPTICS <code style="color:#22d3bf">wave</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">cimage × cimage</code> → <code style="color:#22d3bf">cimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.four_f_filter(field, transfer, invert=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import optics; optics.four_f_filter(field, transfer, invert=True)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;four_f_filter&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>4f 光学プロセッサ: 2 枚のレンズとフーリエ面のフィルタを通した出力。</p>
+<p>入力面 → レンズ 1 → <b>フーリエ面</b>(`<code style="color:#22d3bf">transfer</code>` を掛ける)→ レンズ 2 →</p>
+<p>出力面。スカラ回折の理想 4f 系では出力は</p>
+<p>`<code style="color:#22d3bf">out(x, y) = (u * h)(-x, -y)</code>`</p>
+<p>—— 畳み込みに<b>座標反転</b>が付く。2 枚のレンズがそれぞれ*前向きの*フーリエ</p>
+<p>変換を行い、`<code style="color:#22d3bf">F{F{u}}(x) = u(-x)</code>` だからである。「フーリエ面で掛けるだけ」</p>
+<p>の計算と実物の 4f 系はここが違うので、反転は既定で<b>する</b>。</p>
+<p>離散でもこの反転は厳密で、添字の写像 `<code style="color:#22d3bf">n -&gt; (-n) mod N</code>` になる</p>
+<p>(`<code style="color:#22d3bf">np.roll(a[::-1], 1)</code>`)。反転そのものは添字の入れ替えなので誤差を持たない</p>
+<p>—— 残る誤差は FFT の往復が乗せる 1e-16 台だけである(`<code style="color:#22d3bf">transfer</code>` を 1 に</p>
+<p>した実測で最大絶対差 3.4e-16)。</p>
+<p>*invert* を `<code style="color:#22d3bf">False</code>` にすると反転を省く(フィルタ後の場を<b>入力座標のまま</b></p>
+<p>見たいとき。物理の 4f 系ではないので、既定にはしない)。</p>
+<p>真値(この op が再現するもの):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">identity</code>` フィルタ → 入力の 180 度回転に一致(実測 3.4e-16)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">block</code>` フィルタ → 厳密にゼロ。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">derivative_x</code>` order=n → *n* 階の空間微分。ガウシアン(w=8, 64x64)で</p>
+<p>1 階 5.8e-08 / 2 階 5.4e-08 の相対誤差 —— <b>1e-16 にならない</b>のは</p>
+<p>ガウシアンが厳密に帯域制限されていないから(打ち切りの分)。</p>
+<p style="margin:2px 0 2px 12px">• 線形性 `<code style="color:#22d3bf">4f(a*u1 + b*u2) = a*4f(u1) + b*4f(u2)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 合成 `<code style="color:#22d3bf">4f(4f(u, H1), H2)</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">4f(u, H1*H2)</code>`(反転を 2 回かけた分だけずれる</p>
+<p>ので、合成を試すときは *invert* を `<code style="color:#22d3bf">False</code>` にする)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">|H| = 1</code>` のフィルタは総パワーを保つ(Parseval)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *field* / *transfer* が 2-D でない、形が違う、</p>
+<p>2x2 未満、:data:<code style="color:#22d3bf">MAX_FIELD_ELEMENTS</code> 超、非有限、マスク付き。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>
+<p style="margin:2px 0 2px 12px">• **Strings lösen <code style="color:#22d3bf">ValueError</code> aus** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> gelingt, sodass ein ungeparster Konfigurationswert als Länge durchrutschen würde (gemessen: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> lieferte plausible 66,667 mm). bool wird als implizite Hochstufung <code style="color:#22d3bf">True == 1</code> ebenfalls abgelehnt.</p>
+<p style="margin:2px 0 2px 12px">• **complex / Masked Arrays lösen <code style="color:#22d3bf">ValueError</code> aus<b> (nur reelle Slots; das stille Verwerfen des Imaginärteils bzw. Abstreifen der Maske wird abgelehnt). </b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus.**</p>
+<p style="margin:2px 0 2px 12px">• <b>Division durch null und Verwandtes wird namentlich abgelehnt</b>: Brennweite 0, Krümmungsradius 0, Brechzahl &lt;= 0, undurchlässige Blende (alles 0, die Normierung wird 0/0), PSF mit Summe &lt;= 0, Stokes-Vektor mit S0 = 0 und ein Objekt im vorderen Brennpunkt (Bild im Unendlichen).</p>
+<p style="margin:2px 0 2px 12px">• <b>Nur zwei Operatoren liefern einen nicht-endlichen Wert, und beide halten das vertraglich fest</b>: <code style="color:#22d3bf">depth_of_field</code> liefert jenseits der hyperfokalen Distanz <code style="color:#22d3bf">far_mm = inf</code> (genau das bedeutet die hyperfokale Distanz), und <code style="color:#22d3bf">gaussian_beam</code> liefert an der Taille <code style="color:#22d3bf">wavefront_radius_mm = inf</code> (der Krümmungsradius einer ebenen Wellenfront). Beide liefern zusätzlich einen endlichen Partner (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>). **Jedes andere stille NaN/Inf wird intern erkannt und löst <code style="color:#22d3bf">ValueError</code> aus** — &quot;float64 ist übergelaufen&quot; und &quot;die Antwort ist unendlich&quot; sind verschiedene Aussagen; die erste wird nie im Gewand der zweiten geliefert.</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenzen</b>: erzeugte Gitter durch <code style="color:#22d3bf">optics.MAX_GRID</code> (4096), übergebene Felder/PSFs/Blenden durch <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24), ABCD-Elementketten durch <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024), Zernike durch <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25). Damit werden Pfade fail-closed geschlossen, in denen ein kleines Argument eine riesige interne Allokation auslöst (gemessen: n_max=40 × 4096² braucht 108 GB).</p>
+<p style="margin:2px 0 2px 12px">• <b>Physikalisch unmögliche Zustände werden ebenfalls abgelehnt</b>: Stokes-Vektor mit Polarisationsgrad &gt; 1, negative Transmission, negative Intensität und ungültige Zernike-Indizes wie ungerades n-|m|.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">Leitfaden zur Familie optics_imaging</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_four_f_processor">optics_four_f_processor</a> — <code style="color:#22d3bf">py -3.11 examples/optics_four_f_processor.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">cimage</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opoptics:angular_spectrum_propagate">angular_spectrum_propagate</a> · <a style="color:#22d3bf" href="opoptics:jones_apply">jones_apply</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">wave</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:airy_pattern">airy_pattern</a> · <a style="color:#22d3bf" href="opoptics:angular_spectrum_propagate">angular_spectrum_propagate</a> · <a style="color:#22d3bf" href="opoptics:fraunhofer_pattern">fraunhofer_pattern</a> · <a style="color:#22d3bf" href="opoptics:fourier_plane_filter">fourier_plane_filter</a> · <a style="color:#22d3bf" href="opoptics:gaussian_beam">gaussian_beam</a> · <a style="color:#22d3bf" href="opoptics:defocus_from_shift">defocus_from_shift</a> · <a style="color:#22d3bf" href="opoptics:pupil_psf">pupil_psf</a> · <a style="color:#22d3bf" href="opoptics:pupil_blur">pupil_blur</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: optics.py — OPTICS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

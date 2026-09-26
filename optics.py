@@ -134,6 +134,7 @@ __all__ = [
     "relative_illumination",
     "airy_pattern", "angular_spectrum_propagate", "fraunhofer_pattern",
     "gaussian_beam", "defocus_from_shift", "pupil_psf", "pupil_blur",
+    "fourier_plane_filter", "four_f_filter",
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
@@ -142,7 +143,7 @@ __all__ = [
     "OPTICS", "MAX_GRID", "MAX_FIELD_ELEMENTS", "MAX_SYSTEM_ELEMENTS",
     "MAX_ZERNIKE_TERMS", "MAX_ZERNIKE_ORDER", "MAX_ZERNIKE_BASIS",
     "MAX_PUPIL_FFT", "MAX_WAVES_PER_SAMPLE",
-    "JONES_KINDS", "MUELLER_KINDS",
+    "JONES_KINDS", "MUELLER_KINDS", "FOURIER_PLANE_KINDS",
 ]
 
 #: The public optics operators, by name (introspection / facade wiring).
@@ -151,6 +152,7 @@ OPTICS = [
     "relative_illumination",
     "airy_pattern", "angular_spectrum_propagate", "fraunhofer_pattern",
     "gaussian_beam", "defocus_from_shift", "pupil_psf", "pupil_blur",
+    "fourier_plane_filter", "four_f_filter",
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
@@ -779,6 +781,168 @@ def angular_spectrum_propagate(field, wavelength_um=0.55, distance_um=100.0,
         raise ValueError("angular_spectrum_propagate: the propagated field "
                          "overflowed float64 — the input field's dynamic range "
                          "is beyond what an FFT of this size can carry")
+    return np.ascontiguousarray(out, dtype=np.complex128)
+
+
+
+#: フーリエ面に置ける透過関数の種類(:func:`fourier_plane_filter`)。
+FOURIER_PLANE_KINDS = ("identity", "block", "derivative_x", "derivative_y",
+                       "laplacian", "lowpass", "highpass", "hilbert_x", "vortex")
+
+
+def fourier_plane_filter(size=64, kind="derivative_x", order=1, charge=1,
+                         radius_frac=0.25, pixel_pitch_um=1.0):
+    """4f 系のフーリエ面に置く複素透過関数 ``H(fx, fy)``。
+
+    返るのは ``numpy.fft.fftfreq`` の並び(**fftshift しない**)の complex128
+    ``(size, size)`` で、:func:`four_f_filter` にそのまま渡せる。空間周波数の
+    単位は cycles/um(``fftfreq(size, d=pixel_pitch_um)``)。
+
+    *kind*:
+
+    ``identity``
+        ``H = 1``。4f 系は結像するだけ —— 出力は入力の **180 度回転**になる。
+    ``block``
+        ``H = 0``。出力は厳密にゼロ(フーリエ面を塞いだ状態)。
+    ``derivative_x`` / ``derivative_y``
+        ``H = (i*2*pi*f)**order``。出力は *order* 階の空間微分。**レンズが
+        微分を計算する**のがこの 1 行で、光コンピューティングの核である。
+    ``laplacian``
+        ``H = -(2*pi)**2 * (fx**2 + fy**2)``。等方な 2 階微分。
+    ``lowpass`` / ``highpass``
+        ``|f| <= radius_frac * f_nyquist`` の円形開口(と、その補集合)。
+        ``f_nyquist = 1/(2*pixel_pitch_um)``。空間フィルタリングの教科書例。
+    ``hilbert_x``
+        ``H = -i*sign(fx)``(``fx = 0`` と、偶数長のナイキストのビンは 0)。
+        片側位相で縁が立つ —— シュリーレン法の数値版。★ナイキストを 0 に
+        するのは、``fftfreq`` が偶数長で ``-1/2`` だけを返し対になる ``+1/2``
+        が無いためで、残すと実数偶関数の出力が**奇対称を厳密に満たさない**
+        (実測 1.6e-09 → 0 にして 2.3e-16)。離散ヒルベルト変換の標準的な扱い。
+    ``vortex``
+        ``H = exp(i*charge*phi)`` の渦位相板。*charge* は**位相の巻き数**で、
+        フーリエ面の閉路を 1 周すると位相が厳密に ``2*pi*charge`` 進む
+        —— 整数の不変量なので門にできる。★DC 項は 0 にする(``phi`` が
+        原点で定義されないため)。結果として平均が落ちるので、この板は
+        **等方な縁強調**(半径方向ヒルベルト変換)として働く。
+
+    真値(この op が再現するもの):
+
+    * ``identity`` は ``four_f_filter`` を通すと入力の 180 度回転に一致 —— 実測で
+      最大絶対差 3.4e-16(64x64 のガウシアン、``pixel_pitch_um=1``)。**ビット一致
+      ではない**: FFT の往復が 1e-16 の屑を乗せる。ゼロ距離伝搬のように
+      短絡すれば厳密にできるが、それは ``identity`` だけの特別扱いになる。
+    * ``derivative_x`` order=1 をガウシアン ``exp(-x**2/w**2)`` に当てると
+      ``-2x/w**2 * exp(-x**2/w**2)`` に一致(帯域制限の範囲で)。
+    * ``vortex`` の巻き数は閉路上の位相差の和を ``2*pi`` で割って厳密に *charge*。
+    * ``lowpass`` + ``highpass`` = ``identity``(同じ *radius_frac* で厳密に 1)。
+
+    **Raises** ``ValueError``: *kind* が上の一覧に無い / *size* が 2 未満または
+    :data:`MAX_GRID` 超 / *order* が 0..8 の外 / *charge* が -32..32 の外 /
+    *radius_frac* が 0 以下または 1 超 / *pixel_pitch_um* が非正・非有限。
+    """
+    n = _count(size, "size", 2, MAX_GRID)
+    if kind not in FOURIER_PLANE_KINDS:
+        raise ValueError(
+            "fourier_plane_filter: kind %r is not one of %s"
+            % (kind, ", ".join(FOURIER_PLANE_KINDS)))
+    k = _count(order, "order", 0, 8)
+    m = _count(charge, "charge", -32, 32)
+    frac = _finite_scalar(radius_frac, "radius_frac")
+    if not 0.0 < frac <= 1.0:
+        raise ValueError("fourier_plane_filter: radius_frac must be in (0, 1], "
+                         "got %r" % (radius_frac,))
+    pitch = _positive(pixel_pitch_um, "pixel_pitch_um")
+
+    fy = np.fft.fftfreq(n, d=pitch)[:, None]
+    fx = np.fft.fftfreq(n, d=pitch)[None, :]
+    two_pi_i = 2j * np.pi
+
+    if kind == "identity":
+        return np.ones((n, n), dtype=np.complex128)
+    if kind == "block":
+        return np.zeros((n, n), dtype=np.complex128)
+    if kind == "derivative_x":
+        return np.asarray((two_pi_i * fx) ** k * np.ones((n, 1)),
+                          dtype=np.complex128)
+    if kind == "derivative_y":
+        return np.asarray((two_pi_i * fy) ** k * np.ones((1, n)),
+                          dtype=np.complex128)
+    if kind == "laplacian":
+        return np.asarray(-(2.0 * np.pi) ** 2 * (fx * fx + fy * fy),
+                          dtype=np.complex128)
+    if kind in ("lowpass", "highpass"):
+        f_nyq = 0.5 / pitch
+        inside = (fx * fx + fy * fy) <= (frac * f_nyq) ** 2
+        h = inside.astype(np.complex128)
+        # ★補集合はここで作る。`1 - lowpass` を呼び出し側に作らせると、
+        #   境界の扱いが 2 通りに分かれて lowpass + highpass = 1 が崩れる。
+        return h if kind == "lowpass" else (1.0 - h).astype(np.complex128)
+    if kind == "hilbert_x":
+        h = np.asarray(-1j * np.sign(fx) * np.ones((n, 1)), dtype=np.complex128)
+        # ★ナイキストのビンを 0 にする。``fftfreq`` は偶数長で ``-1/2`` だけを
+        #   返し、対になる ``+1/2`` が無いので、そこを残すと片側位相が**奇対称を
+        #   厳密に満たさない**(実測: 残差 1.6e-09 → 0 にすると 2.3e-16)。
+        #   離散ヒルベルト変換で標準的な扱いで、`scipy.signal.hilbert` も同じ。
+        if n % 2 == 0:
+            h[:, n // 2] = 0.0
+        return h
+    # vortex
+    phi = np.arctan2(fy * np.ones((1, n)), fx * np.ones((n, 1)))
+    h = np.exp(1j * m * phi)
+    h[0, 0] = 0.0                  # phi が原点で定義されない(平均が落ちる)
+    return np.ascontiguousarray(h, dtype=np.complex128)
+
+
+def four_f_filter(field, transfer, invert=True):
+    """4f 光学プロセッサ: 2 枚のレンズとフーリエ面のフィルタを通した出力。
+
+    入力面 → レンズ 1 → **フーリエ面**(``transfer`` を掛ける)→ レンズ 2 →
+    出力面。スカラ回折の理想 4f 系では出力は
+
+        ``out(x, y) = (u * h)(-x, -y)``
+
+    —— 畳み込みに**座標反転**が付く。2 枚のレンズがそれぞれ*前向きの*フーリエ
+    変換を行い、``F{F{u}}(x) = u(-x)`` だからである。「フーリエ面で掛けるだけ」
+    の計算と実物の 4f 系はここが違うので、反転は既定で**する**。
+
+    離散でもこの反転は厳密で、添字の写像 ``n -> (-n) mod N`` になる
+    (``np.roll(a[::-1], 1)``)。反転そのものは添字の入れ替えなので誤差を持たない
+    —— 残る誤差は FFT の往復が乗せる 1e-16 台だけである(``transfer`` を 1 に
+    した実測で最大絶対差 3.4e-16)。
+
+    *invert* を ``False`` にすると反転を省く(フィルタ後の場を**入力座標のまま**
+    見たいとき。物理の 4f 系ではないので、既定にはしない)。
+
+    真値(この op が再現するもの):
+
+    * ``identity`` フィルタ → 入力の 180 度回転に一致(実測 3.4e-16)。
+    * ``block`` フィルタ → 厳密にゼロ。
+    * ``derivative_x`` order=n → *n* 階の空間微分。ガウシアン(w=8, 64x64)で
+      1 階 5.8e-08 / 2 階 5.4e-08 の相対誤差 —— **1e-16 にならない**のは
+      ガウシアンが厳密に帯域制限されていないから(打ち切りの分)。
+    * 線形性 ``4f(a*u1 + b*u2) = a*4f(u1) + b*4f(u2)``。
+    * 合成 ``4f(4f(u, H1), H2)`` = ``4f(u, H1*H2)``(反転を 2 回かけた分だけずれる
+      ので、合成を試すときは *invert* を ``False`` にする)。
+    * ``|H| = 1`` のフィルタは総パワーを保つ(Parseval)。
+
+    **Raises** ``ValueError``: *field* / *transfer* が 2-D でない、形が違う、
+    2x2 未満、:data:`MAX_FIELD_ELEMENTS` 超、非有限、マスク付き。
+    """
+    u = _require_image(field, "field", "four_f_filter", complex_ok=True)
+    h = _require_image(transfer, "transfer", "four_f_filter", complex_ok=True)
+    if u.shape != h.shape:
+        raise ValueError(
+            "four_f_filter: field %s and transfer %s must have the same shape "
+            "— the transfer function lives on the same sampling grid as the "
+            "field's spectrum" % (u.shape, h.shape))
+    out = np.fft.ifft2(np.fft.fft2(u) * h)
+    if invert:
+        # 添字の反転 n -> (-n) mod N。DC 標本(添字 0)は動かない。
+        out = np.roll(out[::-1, ::-1], 1, axis=(0, 1))
+    if not np.isfinite(out).all():
+        raise ValueError("four_f_filter: the filtered field overflowed float64 "
+                         "— the transfer function's dynamic range is beyond "
+                         "what an FFT of this size can carry")
     return np.ascontiguousarray(out, dtype=np.complex128)
 
 

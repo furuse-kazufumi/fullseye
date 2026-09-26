@@ -1,8 +1,8 @@
 {
- "n_ops": 2187,
+ "n_ops": 2189,
  "tiers": {
   "color": 12,
-  "ledger": 1238,
+  "ledger": 1240,
   "nary": 17,
   "registry": 920
  },
@@ -5114,6 +5114,31 @@
    "tier": "ledger",
    "ledger": "opsmath",
    "dim": "math",
+   "in_sorts": []
+  },
+  {
+   "name": "four_f_filter",
+   "halcon": "",
+   "in_sort": "cimage",
+   "out_sort": "cimage",
+   "category": "wave",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "cimage",
+    "cimage"
+   ]
+  },
+  {
+   "name": "fourier_plane_filter",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "cimage",
+   "category": "wave",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
    "in_sorts": []
   },
   {

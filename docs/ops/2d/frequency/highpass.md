@@ -5,7 +5,7 @@ category: frequency
 in: image
 out: image
 halcon: highpass_image
-examples: [gallery2d_texture_freq, signal_filter]
+examples: [gallery2d_texture_freq, optics_four_f_processor, signal_filter]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -60,6 +60,7 @@ highpass 0.40 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_texture_freq](../../../../examples/gallery2d_texture_freq.py) — `py -3.11 examples/gallery2d_texture_freq.py`
+- [optics_four_f_processor](../../../../examples/optics_four_f_processor.py) — `py -3.11 examples/optics_four_f_processor.py`
 - [signal_filter](../../../../examples/signal_filter.py) — `py -3.11 examples/signal_filter.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

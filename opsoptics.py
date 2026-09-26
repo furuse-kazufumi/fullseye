@@ -117,6 +117,13 @@ _CATALOG = {
         ("airy_pattern", "optics", [], "image2d"),
         ("angular_spectrum_propagate", "optics", ["cimage"], "cimage"),
         ("fraunhofer_pattern", "optics", ["image2d"], "image2d"),
+        # 2026-09-26 追加(4f 光学プロセッサ = レンズが微分を計算する)。
+        # ★真値が閉形式で外部参照が要らない: 恒等フィルタ → 180 度回転、
+        #   (i2πf)^n → n 階微分(ガウシアンの微分は閉じた式)、渦位相板の
+        #   **巻き数が整数**。fourier_plane_filter は入力を取らない生成器で、
+        #   four_f_filter が場と透過関数を受ける(cimage 2 つ)。
+        ("fourier_plane_filter", "optics", [], "cimage"),
+        ("four_f_filter", "optics", ["cimage", "cimage"], "cimage"),
         ("gaussian_beam", "optics", [], "table"),
         # 2026-09-15 追加(げんしけん = 動物の目の標本シリーズ、第 1 標本コウイカ):
         # 任意形状の瞳(W 字・スリット・軸外の穴)+ Seidel デフォーカスの回折 PSF、

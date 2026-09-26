@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 22cf3c0bad3a -->
+<!-- i18n-source-sha: 8fe28ab585e4 -->
 # 將 Fullseye 用作 AI 助理 RAG 的方法（針對 Claude Code）
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · **繁體中文** · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -38,7 +38,7 @@ py -3.11 tools/setup_claude_rag.py --uninstall  # 解除安裝
 
 ## Tier 2（選用）：叢集化語料庫——藉助外部工具的進階型態
 
-也可以把 **2,193 篇**筆記依主題分層叢集，並為每個叢集附上 LLM 摘要，做成「附導覽的語料庫」。我們內部使用的是 [RAPTOR](https://github.com/gadievron/raptor) 分支的 `corpus2skill`（TF-IDF + k-means + LLM 摘要），但**這只是一種選用的最佳化，並非必要**。要求僅僅是「以 `docs/ops` 為輸入，輸出依叢集劃分的 SKILL.md 階層」，因此任何具同等功能的工具都可以替代。
+也可以把 **2,195 篇**筆記依主題分層叢集，並為每個叢集附上 LLM 摘要，做成「附導覽的語料庫」。我們內部使用的是 [RAPTOR](https://github.com/gadievron/raptor) 分支的 `corpus2skill`（TF-IDF + k-means + LLM 摘要），但**這只是一種選用的最佳化，並非必要**。要求僅僅是「以 `docs/ops` 為輸入，輸出依叢集劃分的 SKILL.md 階層」，因此任何具同等功能的工具都可以替代。
 
 重新匯入（筆記更新後）的範例——如實記錄內部的運作方式：
 

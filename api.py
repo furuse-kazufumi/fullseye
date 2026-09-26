@@ -736,6 +736,7 @@ from specularity import (  # noqa: E402,F401
 from optics import (  # noqa: E402,F401
     thin_lens, abcd_matrix, abcd_trace, depth_of_field, relative_illumination,
     airy_pattern, angular_spectrum_propagate, fraunhofer_pattern, gaussian_beam,
+    fourier_plane_filter, four_f_filter,
     defocus_from_shift, pupil_psf, pupil_blur,
     psf_to_mtf, mtf_diffraction, wavefront_stats,
     jones_element, jones_apply, stokes_from_jones,
@@ -1065,6 +1066,7 @@ __all__ = [
     "optics", "thin_lens", "abcd_matrix", "abcd_trace", "depth_of_field",
     "relative_illumination",
     "airy_pattern", "angular_spectrum_propagate", "fraunhofer_pattern",
+    "fourier_plane_filter", "four_f_filter",
     "gaussian_beam", "defocus_from_shift", "pupil_psf", "pupil_blur",
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
     "jones_element", "jones_apply", "stokes_from_jones",

@@ -88,7 +88,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`cimage` を入力に取れる)
 
-[angular_spectrum_propagate](../wave/angular_spectrum_propagate.md) · [jones_apply](jones_apply.md)
+[angular_spectrum_propagate](../wave/angular_spectrum_propagate.md) · [four_f_filter](../wave/four_f_filter.md) · [jones_apply](jones_apply.md)
 
 ## 同カテゴリ(`polarization`)
 

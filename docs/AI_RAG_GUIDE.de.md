@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 22cf3c0bad3a -->
+<!-- i18n-source-sha: 8fe28ab585e4 -->
 # Fullseye als RAG eines KI-Assistenten nutzen (für Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · **Deutsch**
@@ -38,7 +38,7 @@ Von da an ruft Claude Code bei Themen aus Bildverarbeitung und geometrischem Seh
 
 ## Tier 2 (optional): geclusterter Korpus — eine erweiterte Form mit externen Werkzeugen
 
-Man kann außerdem einen "navigierbaren Korpus" erstellen, der die **2.193 Notizen** hierarchisch in thematische Cluster gliedert und jedem Cluster eine LLM-Zusammenfassung beigibt. Intern verwenden wir dafür `corpus2skill` aus einem Fork von [RAPTOR](https://github.com/gadievron/raptor) (TF-IDF + k-means + LLM-Zusammenfassung), aber **das ist eine optionale Optimierung, keine Voraussetzung**. Die einzige Anforderung lautet: "`docs/ops` als Eingabe nehmen und eine SKILL.md-Hierarchie pro Cluster ausgeben" — jedes gleichwertige Werkzeug kann also einspringen.
+Man kann außerdem einen "navigierbaren Korpus" erstellen, der die **2.195 Notizen** hierarchisch in thematische Cluster gliedert und jedem Cluster eine LLM-Zusammenfassung beigibt. Intern verwenden wir dafür `corpus2skill` aus einem Fork von [RAPTOR](https://github.com/gadievron/raptor) (TF-IDF + k-means + LLM-Zusammenfassung), aber **das ist eine optionale Optimierung, keine Voraussetzung**. Die einzige Anforderung lautet: "`docs/ops` als Eingabe nehmen und eine SKILL.md-Hierarchie pro Cluster ausgeben" — jedes gleichwertige Werkzeug kann also einspringen.
 
 Beispiel für die erneute Aufnahme (nach einer Aktualisierung der Notizen) — ehrlich genau so dokumentiert, wie wir es intern betreiben:
 
