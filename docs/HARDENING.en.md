@@ -15,13 +15,13 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**33 findings (33 fixed), from 14 PoCs.**
+**34 findings (34 fixed), from 14 PoCs.**
 
 ## By kind
 
 | Kind | Findings | Fixed |
 |---|---:|---:|
-| Silently wrong (no exception) | 16 | 16 |
+| Silently wrong (no exception) | 17 | 17 |
 | Implementation defect | 5 | 5 |
 | The gate did not stand where the accident happens | 4 | 4 |
 | Present but unreachable | 7 | 7 |
@@ -32,7 +32,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 | PoC | Findings |
 |---|---:|
 | [`genspark_external_review`](../examples/genspark_external_review.py) | 17 |
-| [`shape_factors_closed_form`](../examples/shape_factors_closed_form.py) | 3 |
+| [`shape_factors_closed_form`](../examples/shape_factors_closed_form.py) | 4 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`line_handshake`](../examples/line_handshake.py) | 1 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
@@ -133,6 +133,12 @@ Found by: `line_handshake` / Changed: `ops.py`, `accel.py`, `detect.py`, `fscrip
 幅 2 px の傷の長さを変えても、**長さ 80 以上は全部 `1.0`**。 _(ja)_
 
 Found by: `shape_factors_closed_form` / Changed: `backends_auto.py` / Gate: `test_compactness_does_not_saturate_on_long_scratches`, `test_compactness_matches_the_closed_form_shape`, `test_the_old_squash_is_what_the_gate_catches` / Status: fixed
+
+#### [特徴が 1.0 で頭打ちし、形が違うのに同じ数を返していた(9 op)](hardening/features-saturated-at-one.md) _(ja)_
+
+`compactness` の頭打ちを直したあと、**同じ型が他にも無いか**を機械的に探した。 「単調に形を変える列を渡して、出力が止まる op」を数える探針で 9 本出た。 _(ja)_
+
+Found by: `shape_factors_closed_form` / Changed: `backends_auto.py` / Gate: `test_a_region_feature_responds_to_at_least_one_deformation`, `test_a_contour_feature_responds_to_at_least_one_deformation`, `test_height_width_ratio_reports_tall_objects_honestly`, `test_the_moment_features_keep_growing_on_long_shapes`, `test_the_probe_would_catch_a_squashed_feature`, `test_the_constant_ledger_names_ops_that_really_are_constant` / Status: fixed
 
 #### [HALCON と同じ名前の形状係数が、HALCON と**別の量**を返していた](hardening/halcon-named-shape-factors.md) _(ja)_
 

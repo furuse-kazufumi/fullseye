@@ -10,12 +10,16 @@
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/height_width_ratio.chain.jpg">height_width_ratio: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>外接矩形の縦横比 `<code style="color:#22d3bf">min(1, 高さ/幅)</code>`。高さが幅以下のときだけ正しい</p>
-<p>比率を返し、高さが幅を超える(縦長の)領域では 1.0 に飽和してしまう</p>
-<p>(実装の非対称性 ―― 真のアスペクト比ではなく「横長方向の扁平さ」しか</p>
-<p>表現できない近似)。HALCON の `<code style="color:#22d3bf">height_width_ratio</code>`（Compute the width,</p>
+<p>軸平行の外接矩形の縦横比 `<code style="color:#22d3bf">高さ / 幅</code>`。上限は無く、縦長なら 1 を超える</p>
+<p>(160x4 なら 40.0)。HALCON の `<code style="color:#22d3bf">height_width_ratio</code>`（Compute the width,</p>
 <p>height, and aspect ratio of the surrounding rectangle parallel to the</p>
-<p>coordinate axes.）の代役。</p>
+<p>coordinate axes.）が返す 3 値のうち <b>Ratio と同じ量</b>(Height と Width は</p>
+<p>画素の長さなので返していない —— docs/KNOWN_ISSUES.md §51)。</p>
+<p>★2026-09-26 まで `<code style="color:#22d3bf">min(1, 高さ/幅)</code>` で切っていたので、**縦長の対象が全部</p>
+<p>1.0** になっていた(60x20 で 1.0、真値 3.0)。横長は正しく出るので、</p>
+<p><b>向きが変わった瞬間に情報が消える</b>。飽和は説明文に「仕様」として書かれて</p>
+<p>いたが、値域 [0,1] は feature の契約ではなく、潰す理由が無かった ――</p>
+<p>`<code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>`。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>

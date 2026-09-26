@@ -1137,8 +1137,14 @@ def _sh_region_feat(p):
         if metric == "area_holes":
             return np.float64((pr.area_filled - pr.area) / max(pr.area_filled, 1))
         if metric == "aspect":
+            # ★**頭打ちを外した**(2026-09-26)。``min(1.0, H/W)`` だったので、
+            # **縦長の対象が全部 1.0** になっていた(60x20 で 1.0、真値 3.0 /
+            # 160x4 で 1.0、真値 40.0)。横長は正しく出るので、**向きが変わった
+            # 瞬間に情報が消える**。HALCON の ``height_width_ratio`` も軸平行の
+            # 外接矩形の高さ/幅で、上限は無い。
+            # docs/hardening/features-saturated-at-one.md
             minr, minc, maxr, maxc = pr.bbox
-            return np.float64(min(1.0, (maxr - minr) / max(maxc - minc, 1)))
+            return np.float64((maxr - minr) / max(maxc - minc, 1))
         if metric.startswith(("moment", "hu")):
             nu = skmeasure.moments_normalized(skmeasure.moments_central(big.astype(float)))
             hu = skmeasure.moments_hu(nu)
@@ -1149,7 +1155,11 @@ def _sh_region_feat(p):
                 "hu1": abs(hu[0]), "hu2": abs(hu[1]), "hu3": abs(hu[2]), "hu4": abs(hu[3]),
             }
             if metric in table:
-                return np.float64(min(1.0, float(table[metric])))
+                # ★**頭打ちを外した**(2026-09-26)。細長い形(幅 4・長さ 80 以上)で
+                # モーメント特徴が**全部 1.0** になり、形が違うのに同じ数が返って
+                # いた。値域 [0,1] は feature の契約ではない。
+                # docs/hardening/features-saturated-at-one.md
+                return np.float64(float(table[metric]))
         raise ValueError(metric)
     return fn
 
@@ -1405,9 +1415,11 @@ def _sh_xld(p):
                 return np.float64(_halcon_rectangularity(
                     _rasterise_contour(c, cv["shape"])))
             if kind == "moment_xld":
+                # ★領域版と**同じ頭打ちが輪郭版にも在った**(2026-09-26)。
+                # 直した op の双子を見落とすと、穴が半分残る。
                 mm = cv2.moments(pts)
                 a2 = mm["m00"] or 1.0
-                return np.float64(min(1.0, (mm["mu20"] + mm["mu02"]) / (a2 * a2 + 1e-6)))
+                return np.float64((mm["mu20"] + mm["mu02"]) / (a2 * a2 + 1e-6))
             (_, _), (d1, d2), ang = cv2.fitEllipse(pts)
             major, minor = max(d1, d2), max(min(d1, d2), 1e-6)
             if kind == "eccentricity":
@@ -1815,11 +1827,11 @@ SEED: list[tuple] = [
     ("area_holes", "features", REG, FEA, "region_feat", {"metric": "area_holes"},
      '領域内の穴が占める面積比 ``(穴埋め後面積 - 元面積) / 穴埋め後面積``。\n0 に近いほど穴が無く、1 に近いほど大半が穴という極端な形状を示す。HALCON\nの ``area_holes``（Compute the area of holes of regions.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("height_width_ratio", "features", REG, FEA, "region_feat", {"metric": "aspect"},
-     '外接矩形の縦横比 ``min(1, 高さ/幅)``。高さが幅以下のときだけ正しい\n比率を返し、高さが幅を超える(縦長の)領域では 1.0 に飽和してしまう\n(実装の非対称性 ―― 真のアスペクト比ではなく「横長方向の扁平さ」しか\n表現できない近似)。HALCON の ``height_width_ratio``（Compute the width,\nheight, and aspect ratio of the surrounding rectangle parallel to the\ncoordinate axes.）の代役。\n\n``a``, ``b`` は未使用。'),
+     '軸平行の外接矩形の縦横比 ``高さ / 幅``。上限は無く、縦長なら 1 を超える\n(160x4 なら 40.0)。HALCON の ``height_width_ratio``（Compute the width,\nheight, and aspect ratio of the surrounding rectangle parallel to the\ncoordinate axes.）が返す 3 値のうち **Ratio と同じ量**(Height と Width は\n画素の長さなので返していない —— docs/KNOWN_ISSUES.md §51)。\n\n★2026-09-26 まで ``min(1, 高さ/幅)`` で切っていたので、**縦長の対象が全部\n1.0** になっていた(60x20 で 1.0、真値 3.0)。横長は正しく出るので、\n**向きが変わった瞬間に情報が消える**。飽和は説明文に「仕様」として書かれて\nいたが、値域 [0,1] は feature の契約ではなく、潰す理由が無かった ――\n``docs/hardening/features-saturated-at-one.md``。\n\n``a``, ``b`` は未使用。'),
     ("moments_region_2nd", "features", REG, FEA, "region_feat", {"metric": "moment2"},
-     '正規化中心 2 次モーメントの和の絶対値 ``|μ20 + μ02|``(``skimage.\nmeasure.moments_normalized`` 由来)。HALCON の ``moments_region_2nd``\n（Calculate the geometric moments of regions.）は本来 M20/M02/M11 を\nそれぞれ返すが、この代役では 1 スカラーに単純化するため 2 成分を単純\n加算した合成値で近似している(個々の方向成分は失われる)。\n\n``a``, ``b`` は未使用。'),
+     '正規化中心 2 次モーメントの和の絶対値 ``|μ20 + μ02|``(``skimage.\nmeasure.moments_normalized`` 由来)。HALCON の ``moments_region_2nd``\n（Calculate the geometric moments of regions.）は本来 M20/M02/M11 を\nそれぞれ返すが、この代役では 1 スカラーに単純化するため 2 成分を単純\n加算した合成値で近似している(個々の方向成分は失われる)。\n\n★2026-09-26 まで ``min(1, ...)`` で頭打ちしていた —— 細長い形(幅 4・長さ 80 以上)で**全部 1.0** になり、形が違うのに同じ数が返っていた。値域 [0,1] は feature の契約ではない(``docs/hardening/features-saturated-at-one.md``)。\n\n★**``moments_region_2nd_invar`` と同じ数を返す。** ``|μ20+μ02|`` は定義上 Hu の第 1 不変モーメントそのものなので、名前は 2 つでも量は 1 つである(HALCON では前者が 5 値、後者が 3 値の別演算子)。docs/KNOWN_ISSUES.md §52。\n\n``a``, ``b`` は未使用。'),
     ("moments_region_2nd_invar", "features", REG, FEA, "region_feat", {"metric": "hu1"},
-     'Hu の第 1 不変モーメント(``skimage.measure.moments_hu`` の\n``hu[0]``)の絶対値。回転・スケール・平行移動に対して不変な形状記述子。\nHALCON の ``moments_region_2nd_invar``（Geometric moments of regions.）\nに相当する近似(HALCON 独自の相対不変モーメント定義とは厳密には異なり、\n古典的な Hu モーメントで代用している)。\n\n``a``, ``b`` は未使用。'),
+     'Hu の第 1 不変モーメント(``skimage.measure.moments_hu`` の\n``hu[0]``)の絶対値。回転・スケール・平行移動に対して不変な形状記述子。\nHALCON の ``moments_region_2nd_invar``（Geometric moments of regions.）\nに相当する近似(HALCON 独自の相対不変モーメント定義とは厳密には異なり、\n古典的な Hu モーメントで代用している)。\n\n★**``moments_region_2nd`` と同じ数を返す。** 向こうが計算している``|μ20+μ02|`` は定義上 Hu の第 1 不変モーメントそのもので、名前は 2 つでも量は 1 つである。docs/KNOWN_ISSUES.md §52。\n\n``a``, ``b`` は未使用。'),
     # Haralick texture (image -> feature)
     ("cooc_feature_matrix", "texture", IMG, FEA, "cooc", {"prop": "energy"},
      'グレーレベル共起行列(GLCM、``skimage.feature.graycomatrix``、16 階調\nに量子化、距離 ``1+3*a``、角度 0°)から Haralick テクスチャ特徴量\n``energy``(角二次モーメント、行列の値の集中度=テクスチャの均一性)を計算\nする。HALCON の ``cooc_feature_matrix``（Calculate gray value features\nfrom a co-occurrence matrix.）に相当(HALCON は複数の特徴量・複数角度を\n同時に返せるが、ここでは energy・角度 0° 固定に単純化)。\n\n``a`` が共起を取る画素間距離を 1〜4 の範囲で振る。\u2605``b >= 0.75`` で **0/45/90/135 度の 4 方向を平均**する(既定 ``b=0.5`` は従来どおり 0 度だけなので、既存の結果は 1 ビットも変わらない)。\n\n実写テクスチャ(brick / grass / gravel)を回して測ると(``poc_real_texture_invariance`` の節 6)、**効くかどうかは距離 ``a`` で変わる**:\n\n* まず ``a`` を伸ばすと**素材どうしの分解能そのものが潰れる**(0.0328 -> 0.0122、2.7 分の 1)。異方な brick の振れ幅は分解能の **0.30 -> 3.13 倍**へ膨らむ。\n* 4 方向平均は**等方な素材には短中距離で効く**(grass 0.23 -> 0.12、gravel 0.20 -> 0.11)。\n* 異方な brick には**距離 4 でだけ効き**(3.13 -> 1.54)、**距離 1 では逆に悪化する**(0.30 -> 0.56)。\n* 距離 4 まで来ると等方な grass すら改善しない(0.17 -> 0.19)—— 分解能が潰れたあとは平均しても取り返せない。\n\n**長い距離で使うときは、平均を掛ける前に素材がまだ分かれているかを確かめること。**なお「取り違えの回数」で測ると手順(補間の次数・切り出し方・角度の刻み)に敏感で、比(振れ幅 / 分解能)のほうが安定する。'),
@@ -1866,7 +1878,7 @@ SEED: list[tuple] = [
     ("moments_region_3rd", "features", REG, FEA, "region_feat", {"metric": "moment3"},
      '正規化中心 3 次モーメントの和の絶対値 ``|μ30 + μ03|``。\n``moments_region_2nd`` の 3 次版で、こちらも複数成分を単純加算した合成値\nによる近似(個々の方向成分は失われる)。HALCON の\n``moments_region_3rd``（Geometric moments of regions.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("moments_region_central", "features", REG, FEA, "region_feat", {"metric": "moment_central"},
-     '正規化中心モーメント(2 次まで)の和の絶対値 ``|μ20+μ11+μ02|``。\nHALCON の ``moments_region_central``（Geometric moments of regions.）に\n相当する、複数成分を 1 スカラーへ合成した近似。\n\n``a``, ``b`` は未使用。'),
+     '正規化中心モーメント(2 次まで)の和の絶対値 ``|μ20+μ11+μ02|``。\nHALCON の ``moments_region_central``（Geometric moments of regions.）に\n相当する、複数成分を 1 スカラーへ合成した近似。\n\n★2026-09-26 まで ``min(1, ...)`` で頭打ちしていた —— 細長い形(幅 4・長さ 80 以上)で**全部 1.0** になり、形が違うのに同じ数が返っていた。値域 [0,1] は feature の契約ではない(``docs/hardening/features-saturated-at-one.md``)。\n\n``a``, ``b`` は未使用。'),
     ("moments_region_central_invar", "features", REG, FEA, "region_feat", {"metric": "hu2"},
      'Hu の第 2 不変モーメント(``hu[1]``)の絶対値。HALCON の\n``moments_region_central_invar``（Geometric moments of regions.）に相当\nする近似(``moments_region_2nd_invar`` が Hu[0] を使うのに対し、こちらは\nHu[1] を使う ―― どちらも HALCON 独自の相対不変モーメントの厳密な代用では\nない)。\n\n``a``, ``b`` は未使用。'),
     ("moments_region_2nd_rel_invar", "features", REG, FEA, "region_feat", {"metric": "hu3"},
@@ -1899,7 +1911,7 @@ SEED: list[tuple] = [
     ("rectangularity_xld", "features", CON, FEA, "xld", {"kind": "rectangularity"},
      '矩形度の輪郭版。輪郭を塗りつぶして、**同じ 1 次・2 次モーメントを持つ矩形**との\n差の面積をその矩形の面積で正規化する。矩形なら 1。HALCON の\n``rectangularity_xld``（Shape factor for the rectangularity of contours or\npolygons.）**と同じ定義**。\n\n★2026-09-26 まで**最小外接回転矩形**(``cv2.minAreaRect``)との比だった ——\n似てはいるが別の測り方で、凹んだ形で系統的にずれる。\n\n``a``, ``b`` は未使用。'),
     ("moments_xld", "features", CON, FEA, "xld", {"kind": "moment_xld"},
-     '輪郭の生モーメント(``cv2.moments``)から ``(mu20+mu02)/面積²`` という\n単一スカラーを計算する ―― HALCON の ``moments_xld``（Geometric moments\nM20, M02, and M11 of contours or polygons.）が返す M20/M02/M11 の 3 成分を\n1 つに合成した近似(個々の方向成分・M11 は失われる)。\n\n``a``, ``b`` は未使用。'),
+     '輪郭の生モーメント(``cv2.moments``)から ``(mu20+mu02)/面積²`` という\n単一スカラーを計算する ―― HALCON の ``moments_xld``（Geometric moments\nM20, M02, and M11 of contours or polygons.）が返す M20/M02/M11 の 3 成分を\n1 つに合成した近似(個々の方向成分・M11 は失われる)。\n\n★2026-09-26 まで ``min(1, ...)`` で頭打ちしていた —— 細長い形(幅 4・長さ 80 以上)で**全部 1.0** になり、形が違うのに同じ数が返っていた。値域 [0,1] は feature の契約ではない(``docs/hardening/features-saturated-at-one.md``)。\n\n``a``, ``b`` は未使用。'),
     ("shape_trans_xld", "contour", CON, CON, "xld", {"kind": "convex"},
      '輪郭の凸包(``cv2.convexHull``)を計算し、輪郭形式のまま返す\n(``shape_trans`` の輪郭版)。HALCON の ``shape_trans_xld``（Transform the\nshape of contours or polygons.）が持つ複数の変形モードのうち、凸包 1 種類\nのみを実装している(近似)。\n\n``a``, ``b`` は未使用。cv2 が無い環境ではこの分岐は呼べない。'),
     ("zero_crossing", "segmentation", IMG, REG, "segment", {"kind": "zero_crossing"},

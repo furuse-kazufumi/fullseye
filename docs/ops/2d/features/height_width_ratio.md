@@ -31,12 +31,17 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 使い方
 
-外接矩形の縦横比 ``min(1, 高さ/幅)``。高さが幅以下のときだけ正しい
-比率を返し、高さが幅を超える(縦長の)領域では 1.0 に飽和してしまう
-(実装の非対称性 ―― 真のアスペクト比ではなく「横長方向の扁平さ」しか
-表現できない近似)。HALCON の ``height_width_ratio``（Compute the width,
+軸平行の外接矩形の縦横比 ``高さ / 幅``。上限は無く、縦長なら 1 を超える
+(160x4 なら 40.0)。HALCON の ``height_width_ratio``（Compute the width,
 height, and aspect ratio of the surrounding rectangle parallel to the
-coordinate axes.）の代役。
+coordinate axes.）が返す 3 値のうち **Ratio と同じ量**(Height と Width は
+画素の長さなので返していない —— docs/KNOWN_ISSUES.md §51)。
+
+★2026-09-26 まで ``min(1, 高さ/幅)`` で切っていたので、**縦長の対象が全部
+1.0** になっていた(60x20 で 1.0、真値 3.0)。横長は正しく出るので、
+**向きが変わった瞬間に情報が消える**。飽和は説明文に「仕様」として書かれて
+いたが、値域 [0,1] は feature の契約ではなく、潰す理由が無かった ――
+``docs/hardening/features-saturated-at-one.md``。
 
 ``a``, ``b`` は未使用。
 

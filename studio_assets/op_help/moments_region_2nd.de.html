@@ -12,6 +12,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der Absolutwert der Summe der normierten zentralen Momente zweiter Ordnung, `<code style="color:#22d3bf">|mu20 + mu02|</code><code style="color:#22d3bf"> (abgeleitet aus </code><code style="color:#22d3bf">skimage.measure.moments_normalized</code><code style="color:#22d3bf">). HALCONs </code><code style="color:#22d3bf">moments_region_2nd</code>` (Calculate the geometric moments of regions.) gibt ursprünglich M20/M02/M11 einzeln zurück, aber dieser Ersatz approximiert sie durch einen zusammengesetzten Wert, der durch einfache Addition der beiden Komponenten auf einen einzigen Skalar reduziert wird (die einzelnen Richtungskomponenten gehen verloren).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>★2026-09-26 まで `<code style="color:#22d3bf">min(1, ...)</code><code style="color:#22d3bf"> で頭打ちしていた —— 細長い形(幅 4・長さ 80 以上)で**全部 1.0** になり、形が違うのに同じ数が返っていた。値域 [0,1] は feature の契約ではない(</code><code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>`)。</p>
+<p>★**`<code style="color:#22d3bf">moments_region_2nd_invar</code><code style="color:#22d3bf"> と同じ数を返す。** </code><code style="color:#22d3bf">|μ20+μ02|</code>` は定義上 Hu の第 1 不変モーメントそのものなので、名前は 2 つでも量は 1 つである(HALCON では前者が 5 値、後者が 3 値の別演算子)。docs/KNOWN_ISSUES.md §52。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>

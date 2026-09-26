@@ -36,6 +36,8 @@ version: 0.2.3  # fullseye lib version this note was generated for
 M20, M02, and M11 of contours or polygons.）が返す M20/M02/M11 の 3 成分を
 1 つに合成した近似(個々の方向成分・M11 は失われる)。
 
+★2026-09-26 まで ``min(1, ...)`` で頭打ちしていた —— 細長い形(幅 4・長さ 80 以上)で**全部 1.0** になり、形が違うのに同じ数が返っていた。値域 [0,1] は feature の契約ではない(``docs/hardening/features-saturated-at-one.md``)。
+
 ``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド

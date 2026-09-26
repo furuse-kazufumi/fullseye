@@ -10,8 +10,13 @@
 <p><b>Stages</b> (the ops that come before → this op, left to right):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/height_width_ratio.chain.jpg">height_width_ratio: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The aspect ratio of the bounding rectangle, `<code style="color:#22d3bf">min(1, height/width)</code><code style="color:#22d3bf">. It returns the correct ratio only when height is less than or equal to width, and saturates at 1.0 for regions taller than they are wide (an asymmetry in the implementation -- an approximation that can express only &quot;flatness in the horizontal direction,&quot; not the true aspect ratio). A stand-in for HALCON&#x27;s </code><code style="color:#22d3bf">height_width_ratio</code>` (Compute the width, height, and aspect ratio of the surrounding rectangle parallel to the coordinate axes.).</p>
+<p>Aspect ratio `<code style="color:#22d3bf">height / width</code><code style="color:#22d3bf"> of the axis-parallel surrounding rectangle. There is no upper bound — a tall region exceeds 1 (160x4 gives 40.0). It is the **same quantity as the Ratio** among the three values HALCON&#x27;s </code><code style="color:#22d3bf">height_width_ratio</code>` (Compute the width, height, and aspect ratio of the surrounding rectangle parallel to the coordinate axes.) returns (Height and Width are pixel lengths and are not returned — see docs/KNOWN_ISSUES.md §51).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>★2026-09-26 まで `<code style="color:#22d3bf">min(1, 高さ/幅)</code>` で切っていたので、**縦長の対象が全部</p>
+<p>1.0** になっていた(60x20 で 1.0、真値 3.0)。横長は正しく出るので、</p>
+<p><b>向きが変わった瞬間に情報が消える</b>。飽和は説明文に「仕様」として書かれて</p>
+<p>いたが、値域 [0,1] は feature の契約ではなく、潰す理由が無かった ――</p>
+<p>`<code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>`。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

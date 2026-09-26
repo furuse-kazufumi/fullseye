@@ -14,13 +14,13 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**33 件(うち直したもの 33 件)。見つけた PoC は 14 本。**
+**34 件(うち直したもの 34 件)。見つけた PoC は 14 本。**
 
 ## 種別ごと
 
 | 種別 | 件数 | 直した |
 |---|---:|---:|
-| 静かに間違う(例外が出ない) | 16 | 16 |
+| 静かに間違う(例外が出ない) | 17 | 17 |
 | 実装の誤り | 5 | 5 |
 | 門が事故の起きる場所に立っていなかった | 4 | 4 |
 | 在るのに引けない | 7 | 7 |
@@ -31,7 +31,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 | PoC | 件数 |
 |---|---:|
 | [`genspark_external_review`](../examples/genspark_external_review.py) | 17 |
-| [`shape_factors_closed_form`](../examples/shape_factors_closed_form.py) | 3 |
+| [`shape_factors_closed_form`](../examples/shape_factors_closed_form.py) | 4 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`line_handshake`](../examples/line_handshake.py) | 1 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
@@ -132,6 +132,12 @@ GenSpark 第 55 報(0.2.1 を入れ直しての再測定、2026-09-20)。修正�
 幅 2 px の傷の長さを変えても、**長さ 80 以上は全部 `1.0`**。
 
 見つけた PoC: `shape_factors_closed_form` / 直した所: `backends_auto.py` / 門: `test_compactness_does_not_saturate_on_long_scratches`, `test_compactness_matches_the_closed_form_shape`, `test_the_old_squash_is_what_the_gate_catches` / 状態: fixed
+
+#### [特徴が 1.0 で頭打ちし、形が違うのに同じ数を返していた(9 op)](hardening/features-saturated-at-one.md)
+
+`compactness` の頭打ちを直したあと、**同じ型が他にも無いか**を機械的に探した。 「単調に形を変える列を渡して、出力が止まる op」を数える探針で 9 本出た。
+
+見つけた PoC: `shape_factors_closed_form` / 直した所: `backends_auto.py` / 門: `test_a_region_feature_responds_to_at_least_one_deformation`, `test_a_contour_feature_responds_to_at_least_one_deformation`, `test_height_width_ratio_reports_tall_objects_honestly`, `test_the_moment_features_keep_growing_on_long_shapes`, `test_the_probe_would_catch_a_squashed_feature`, `test_the_constant_ledger_names_ops_that_really_are_constant` / 状態: fixed
 
 #### [HALCON と同じ名前の形状係数が、HALCON と**別の量**を返していた](hardening/halcon-named-shape-factors.md)
 

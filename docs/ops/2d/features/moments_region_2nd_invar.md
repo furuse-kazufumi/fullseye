@@ -37,6 +37,8 @@ HALCON の ``moments_region_2nd_invar``（Geometric moments of regions.）
 に相当する近似(HALCON 独自の相対不変モーメント定義とは厳密には異なり、
 古典的な Hu モーメントで代用している)。
 
+★**``moments_region_2nd`` と同じ数を返す。** 向こうが計算している``|μ20+μ02|`` は定義上 Hu の第 1 不変モーメントそのもので、名前は 2 つでも量は 1 つである。docs/KNOWN_ISSUES.md §52。
+
 ``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
