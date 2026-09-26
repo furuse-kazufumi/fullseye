@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(251 例)
+### 2-D 画像/信号/幾何(252 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -126,6 +126,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 
 **measurement**
+- **特徴の次元を、真値を一つも使わずに測る** — 形を k 倍に拡大して値が k^p 倍になる指数 p を測り、領域を受けて数を返す 35 op の**次元**(無次元 29・長さ 5・面積 1)を表にする。HALCON の数値も閉形式の真値も使わない —— 変成関係だけで採点する。2026-09-26 に直した 8 op のうち 5 本はこの 1 枚で出ており、同じ枚で未解決の §52(moments 族が p=0、HALCON は 4/5/8)も指す。画布で割ると p が 1.015 から 0.015 へ落ちることをその場で見せ、値域や有限性の門では区別できないことを示す。 `py -3.11 examples/scale_law_of_features.py`
 - **形状特徴を閉形式の真値で採点する —— そして消えないバイアスを見せる** — 矩形と円の厳密な閉形式(面積・矩形度・周囲長²/(4π面積)・円形度)で region 特徴を採点。面積と矩形度は丸め誤差 0 で一致。コンパクトさが頭打ちしないことを長さを伸ばして assert し、周囲長の 2 つの推定量が**逆の形で外す**(perimeter は円で +5%・crofton は正方形で -5%、どちらも解像度で消えない)ことを示す。 `py -3.11 examples/shape_factors_closed_form.py`
 
 **segmentation**
@@ -1352,17 +1353,17 @@ _計 932 ops / 48 categories。_
 - `gray_histo_abs` (halcon: `gray_histo_abs`) `image → feature` · 例: `gallery2d_features`
 - `entropy_gray` (halcon: `entropy_gray`) `image → feature` · 例: `gallery2d_features`
 - `length_xld` (halcon: `length_xld`) `contour → feature` · 例: `gallery2d_features`
-- `contlength` (halcon: `contlength`) `region → feature` · 例: `gallery2d_features`
+- `contlength` (halcon: `contlength`) `region → feature` · 例: `gallery2d_features`, `scale_law_of_features`
 - `area_holes` (halcon: `area_holes`) `region → feature` · 例: `gallery2d_features`
 - `height_width_ratio` (halcon: `height_width_ratio`) `region → feature` · 例: `gallery2d_features`
-- `moments_region_2nd` (halcon: `moments_region_2nd`) `region → feature` · 例: `gallery2d_features`
+- `moments_region_2nd` (halcon: `moments_region_2nd`) `region → feature` · 例: `gallery2d_features`, `scale_law_of_features`
 - `moments_region_2nd_invar` (halcon: `moments_region_2nd_invar`) `region → feature` · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
 - `area_center_xld` (halcon: `area_center_xld`) `contour → match` · 例: `gallery2d_features`
 - `circularity_xld` (halcon: `circularity_xld`) `contour → feature` · 例: `gallery2d_features`
 - `compactness_xld` (halcon: `compactness_xld`) `contour → feature` · 例: `gallery2d_features`
 - `convexity_xld` (halcon: `convexity_xld`) `contour → feature` · 例: `gallery2d_features`
-- `moments_region_3rd` (halcon: `moments_region_3rd`) `region → feature` · 例: `gallery2d_features`
-- `moments_region_central` (halcon: `moments_region_central`) `region → feature` · 例: `gallery2d_features`
+- `moments_region_3rd` (halcon: `moments_region_3rd`) `region → feature` · 例: `gallery2d_features`, `scale_law_of_features`
+- `moments_region_central` (halcon: `moments_region_central`) `region → feature` · 例: `gallery2d_features`, `scale_law_of_features`
 - `moments_region_central_invar` (halcon: `moments_region_central_invar`) `region → feature` · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
 - `moments_region_2nd_rel_invar` (halcon: `moments_region_2nd_rel_invar`) `region → feature` · 例: `gallery2d_features`
 - `moments_region_3rd_invar` (halcon: `moments_region_3rd_invar`) `region → feature` · 例: `gallery2d_features`

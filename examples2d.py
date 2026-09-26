@@ -145,6 +145,14 @@ EXAMPLES = [
      "summary": "合成画像フォルダ(良品 5・欠陥 1・壊れたファイル 1)を inspect_batch で 前処理→計測→judge→集計。"
                 "各行に入力 sha256・計測・根拠つき Verdict、数値列は EWMA で工程管理、.md/.jsonl(+.xlsx)に "
                 "書き分け、監査ログに追記。欠陥だけ ng・壊れた 1 枚は error で止まらないことを assert。"},
+    {"id": "scale_law_of_features", "task": "measurement", "data": "synthetic",
+     "name": "特徴の次元を、真値を一つも使わずに測る",
+     "summary": "形を k 倍に拡大して値が k^p 倍になる指数 p を測り、領域を受けて数を返す "
+                "35 op の**次元**(無次元 29・長さ 5・面積 1)を表にする。HALCON の数値も"
+                "閉形式の真値も使わない —— 変成関係だけで採点する。2026-09-26 に直した 8 op の"
+                "うち 5 本はこの 1 枚で出ており、同じ枚で未解決の §52(moments 族が p=0、"
+                "HALCON は 4/5/8)も指す。画布で割ると p が 1.015 から 0.015 へ落ちること"
+                "をその場で見せ、値域や有限性の門では区別できないことを示す。"},
     {"id": "shape_factors_closed_form", "task": "measurement", "data": "synthetic",
      "name": "形状特徴を閉形式の真値で採点する —— そして消えないバイアスを見せる",
      "summary": "矩形と円の厳密な閉形式(面積・矩形度・周囲長²/(4π面積)・円形度)で region "

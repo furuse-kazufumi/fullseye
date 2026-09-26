@@ -914,9 +914,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 251,
+  "examples2d_total": 252,
   "run_by_the_poc_gate": 151,
-  "run_by_the_example_gate": 100,
+  "run_by_the_example_gate": 101,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

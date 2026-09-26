@@ -5,7 +5,7 @@ category: features
 in: region
 out: feature
 halcon: contlength
-examples: [gallery2d_features]
+examples: [gallery2d_features, scale_law_of_features]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -60,6 +60,7 @@ contlength 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
+- [scale_law_of_features](../../../../examples/scale_law_of_features.py) — `py -3.11 examples/scale_law_of_features.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)
 

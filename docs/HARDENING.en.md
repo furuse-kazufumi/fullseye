@@ -15,7 +15,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**35 findings (35 fixed), from 14 PoCs.**
+**36 findings (36 fixed), from 15 PoCs.**
 
 ## By kind
 
@@ -23,7 +23,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 |---|---:|---:|
 | Silently wrong (no exception) | 18 | 18 |
 | Implementation defect | 5 | 5 |
-| The gate did not stand where the accident happens | 4 | 4 |
+| The gate did not stand where the accident happens | 5 | 5 |
 | Present but unreachable | 7 | 7 |
 | Documentation hole (one-way reference, stale number) | 1 | 1 |
 
@@ -43,6 +43,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 | [`poc_search_sweep_width`](../examples/poc_search_sweep_width.py) | 1 |
 | [`poc_stockpile_volume`](../examples/poc_stockpile_volume.py) | 1 |
 | [`poc_thermal_radiometry`](../examples/poc_thermal_radiometry.py) | 1 |
+| [`scale_law_of_features`](../examples/scale_law_of_features.py) | 1 |
 | [`threshold_family_agreement`](../examples/threshold_family_agreement.py) | 1 |
 | [`tools/chain_fuzz.py`](../tools/chain_fuzz.py) | 1 |
 
@@ -215,6 +216,12 @@ Found by: `tools/chain_fuzz.py` / Changed: `optscene.py`, `fourierdesc.py`, `too
 HALCON 対応の見出しが **979 から 977 に減った**。減らしたのは `eccentricity` / `eccentricity_xld` を HALCON の 3 値に直した変更 —— 正しくしたのに **対応数が減った**。 _(ja)_
 
 Found by: `shape_factors_closed_form` / Changed: `verify_auto.py` / Gate: `test_the_functional_gate_accepts_a_match_sort_vector`, `test_the_functional_gate_still_rejects_a_wrong_shape`, `test_the_headline_equals_the_union_of_its_parts` / Status: fixed
+
+#### [どの門も「その特徴が何の次元を持つか」を知らなかった](hardening/no-gate-knew-what-dimension-a-feature-has.md) _(ja)_
+
+2026-09-26 に 8 op を HALCON の画素値へ直した。直し方は HALCON のリファレンスを 読み、閉形式と突き合わせることだった —— **外の一次情報が無ければ出なかった**。 _(ja)_
+
+Found by: `scale_law_of_features` / Changed: `tests/` / Gate: `test_the_feature_follows_its_declared_scale_law`, `test_every_region_feature_op_declares_a_scale_law`, `test_the_moment_ops_carry_halcons_dimension`, `test_the_law_would_catch_a_normalised_feature` / Status: fixed
 
 ### Present but unreachable
 

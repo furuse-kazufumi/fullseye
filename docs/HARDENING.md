@@ -14,7 +14,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**35 件(うち直したもの 35 件)。見つけた PoC は 14 本。**
+**36 件(うち直したもの 36 件)。見つけた PoC は 15 本。**
 
 ## 種別ごと
 
@@ -22,7 +22,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 |---|---:|---:|
 | 静かに間違う(例外が出ない) | 18 | 18 |
 | 実装の誤り | 5 | 5 |
-| 門が事故の起きる場所に立っていなかった | 4 | 4 |
+| 門が事故の起きる場所に立っていなかった | 5 | 5 |
 | 在るのに引けない | 7 | 7 |
 | 説明の穴(片道の参照・古い数字) | 1 | 1 |
 
@@ -42,6 +42,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 | [`poc_search_sweep_width`](../examples/poc_search_sweep_width.py) | 1 |
 | [`poc_stockpile_volume`](../examples/poc_stockpile_volume.py) | 1 |
 | [`poc_thermal_radiometry`](../examples/poc_thermal_radiometry.py) | 1 |
+| [`scale_law_of_features`](../examples/scale_law_of_features.py) | 1 |
 | [`threshold_family_agreement`](../examples/threshold_family_agreement.py) | 1 |
 | [`tools/chain_fuzz.py`](../tools/chain_fuzz.py) | 1 |
 
@@ -214,6 +215,12 @@ GenSpark のレビュー(別ノート 3 本)を直したあと、同じ族が他
 HALCON 対応の見出しが **979 から 977 に減った**。減らしたのは `eccentricity` / `eccentricity_xld` を HALCON の 3 値に直した変更 —— 正しくしたのに **対応数が減った**。
 
 見つけた PoC: `shape_factors_closed_form` / 直した所: `verify_auto.py` / 門: `test_the_functional_gate_accepts_a_match_sort_vector`, `test_the_functional_gate_still_rejects_a_wrong_shape`, `test_the_headline_equals_the_union_of_its_parts` / 状態: fixed
+
+#### [どの門も「その特徴が何の次元を持つか」を知らなかった](hardening/no-gate-knew-what-dimension-a-feature-has.md)
+
+2026-09-26 に 8 op を HALCON の画素値へ直した。直し方は HALCON のリファレンスを 読み、閉形式と突き合わせることだった —— **外の一次情報が無ければ出なかった**。
+
+見つけた PoC: `scale_law_of_features` / 直した所: `tests/` / 門: `test_the_feature_follows_its_declared_scale_law`, `test_every_region_feature_op_declares_a_scale_law`, `test_the_moment_ops_carry_halcons_dimension`, `test_the_law_would_catch_a_normalised_feature` / 状態: fixed
 
 ### 在るのに引けない
 
