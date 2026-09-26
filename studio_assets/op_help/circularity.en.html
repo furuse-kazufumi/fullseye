@@ -10,8 +10,12 @@
 <p><b>Stages</b> (the ops that come before → this op, left to right):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/circularity.chain.jpg">circularity: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Circularity `<code style="color:#22d3bf">4pi * area / perimeter^2</code><code style="color:#22d3bf"> (the closer to 1, the closer to a perfect circle). When there are multiple connected components, only the one with the largest area is evaluated. Equivalent to HALCON&#x27;s </code><code style="color:#22d3bf">circularity</code>` (Shape factor for the circularity (similarity to a circle) of a region.).</p>
+<p>Circularity `<code style="color:#22d3bf">min(1, area / (pi * max^2))</code><code style="color:#22d3bf">, where </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> is the **largest distance from the centre of gravity to a contour pixel**. It is 1 for a circle and smaller for elongated shapes or ones with large bulges or holes. If several connected components are present, only the largest one is evaluated. **The same formula as** HALCON&#x27;s </code><code style="color:#22d3bf">circularity</code>` (Shape factor for the circularity (similarity to a circle) of a region.).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>★2026-09-26 まで等周比 `<code style="color:#22d3bf">4π・面積/周囲長²</code>` という<b>別の量</b>を返していた。</p>
+<p>名前は HALCON から借りているのに数が違うので、HALCON のレシピを移してきた人が</p>
+<p>同じしきい値で違う判定を得ていた(正方形で 0.826 対 0.670 と<b>順序まで変わる</b>)。</p>
+<p>`<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>`。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
@@ -28,6 +32,7 @@ circularity 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%20
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_cell_counting">poc_cell_counting</a> — <code style="color:#22d3bf">py -3.11 examples/poc_cell_counting.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_particle_sizing">poc_particle_sizing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_particle_sizing.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rotation_invariance_audit">poc_rotation_invariance_audit</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rotation_invariance_audit.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shape_factors_closed_form">shape_factors_closed_form</a> — <code style="color:#22d3bf">py -3.11 examples/shape_factors_closed_form.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">feature</code> as input)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">features</code>)</h3>

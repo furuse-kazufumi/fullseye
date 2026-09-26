@@ -10,8 +10,15 @@
 <p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rectangularity.chain.jpg">rectangularity: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>矩形度(`<code style="color:#22d3bf">skimage</code><code style="color:#22d3bf"> 的 </code><code style="color:#22d3bf">extent</code><code style="color:#22d3bf"> = 面积 / 外接矩形面积)。数值越接近 1,表示区域越是不留空隙地填满自身的外接矩形。相当于 HALCON 的 </code><code style="color:#22d3bf">rectangularity</code>`(Shape factor for the rectangularity of a region.)。</p>
+<p>矩形度。构造一个与区域具有<b>相同一阶、二阶矩</b>的矩形,把两者之差的面积用该矩形的面积归一化(`<code style="color:#22d3bf">1 - |区域 XOR 矩形| / |矩形|</code><code style="color:#22d3bf">);矩形时为 1。与 HALCON 的 </code><code style="color:#22d3bf">rectangularity</code>`(Shape factor for the rectangularity of a region.)<b>定义相同</b>。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>★2026-09-26 まで<b>軸平行の</b>外接矩形との比(`<code style="color:#22d3bf">skimage</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">extent</code>`)だった。</p>
+<p>向きを見ないので、<b>同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた</b></p>
+<p>(HALCON は 0.998 のまま)。`<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>`。</p>
+<p>★正方形や円のように 2 次モーメントで向きが決まらない形では、「同じモーメントを</p>
+<p>持つ矩形」が向きの数だけ在って定義が向きを決めない。ここでは重なりが最大に</p>
+<p>なる向きを選ぶ —— そのまま任意の向きで当てると正方形が 0.651 になり、HALCON の</p>
+<p>「矩形なら 1」と食い違う。HALCON もこの形では最大 10% 過小評価すると明記する。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

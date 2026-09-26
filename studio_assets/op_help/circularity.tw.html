@@ -10,8 +10,12 @@
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/circularity.chain.jpg">circularity: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>圓形度 `<code style="color:#22d3bf">4π・面積 / 周長²</code><code style="color:#22d3bf">(越接近 1 越接近正圓)。當存在多個連通成分時,只評估面積最大的那一個。相當於 HALCON 的 </code><code style="color:#22d3bf">circularity</code>`(Shape factor for the circularity (similarity to a circle) of a region.)。</p>
+<p>圓形度 `<code style="color:#22d3bf">min(1, 面積 /(π・max²))</code><code style="color:#22d3bf">,</code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> 是**從重心到輪廓像素的最大距離**。圓為 1,越細長或有大的凸起/孔洞就越小。存在多個連通分量時只評估面積最大的一個。與 HALCON 的 </code><code style="color:#22d3bf">circularity</code>`(Shape factor for the circularity (similarity to a circle) of a region.)<b>是同一個公式</b>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>★2026-09-26 まで等周比 `<code style="color:#22d3bf">4π・面積/周囲長²</code>` という<b>別の量</b>を返していた。</p>
+<p>名前は HALCON から借りているのに数が違うので、HALCON のレシピを移してきた人が</p>
+<p>同じしきい値で違う判定を得ていた(正方形で 0.826 対 0.670 と<b>順序まで変わる</b>)。</p>
+<p>`<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>`。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
@@ -28,6 +32,7 @@ circularity 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%20
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_cell_counting">poc_cell_counting</a> — <code style="color:#22d3bf">py -3.11 examples/poc_cell_counting.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_particle_sizing">poc_particle_sizing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_particle_sizing.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rotation_invariance_audit">poc_rotation_invariance_audit</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rotation_invariance_audit.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shape_factors_closed_form">shape_factors_closed_form</a> — <code style="color:#22d3bf">py -3.11 examples/shape_factors_closed_form.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">feature</code> 作為輸入)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">features</code>)</h3>

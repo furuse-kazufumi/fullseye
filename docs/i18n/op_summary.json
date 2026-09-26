@@ -441,20 +441,20 @@
    "de": "Demosaicing von einem Bayer-Muster (CFA: Color Filter Array) zu einem RGB-Bild. Näherung an HALCONs ``cfa_to_rgb`` (wandelt ein Einchip-Farbfilterarray-Bild in ein RGB-Bild um)."
   },
   "2d/circularity": {
-   "fp": "c5026203dea9",
-   "en": "Circularity ``4pi * area / perimeter^2`` (the closer to 1, the closer to a perfect circle). When there are multiple connected components, only the one with the largest area is evaluated. Equivalent to HALCON's ``circularity`` (Shape factor for the circularity (similarity to a circle) of a region.).",
-   "zh": "圆形度 ``4π・面积 / 周长²``(越接近 1 越接近正圆)。当存在多个连通成分时,只评估面积最大的那一个。相当于 HALCON 的 ``circularity``(Shape factor for the circularity (similarity to a circle) of a region.)。",
-   "tw": "圓形度 ``4π・面積 / 周長²``(越接近 1 越接近正圓)。當存在多個連通成分時,只評估面積最大的那一個。相當於 HALCON 的 ``circularity``(Shape factor for the circularity (similarity to a circle) of a region.)。",
-   "ko": "원형도 ``4π・면적 / 둘레²``(1에 가까울수록 정원에 가깝다). 연결 성분이 여러 개인 경우 면적이 가장 큰 것만 평가한다. HALCON의 ``circularity``(Shape factor for the circularity (similarity to a circle) of a region.)에 해당.",
-   "de": "Rundheit (Circularity) ``4pi * Fläche / Umfang^2`` (je näher an 1, desto näher an einem perfekten Kreis). Gibt es mehrere zusammenhängende Komponenten, wird nur die mit der größten Fläche bewertet. Entspricht HALCONs ``circularity`` (Shape factor for the circularity (similarity to a circle) of a region.)."
+   "fp": "b8df4cc6d207",
+   "en": "Circularity ``min(1, area / (pi * max^2))``, where ``max`` is the **largest distance from the centre of gravity to a contour pixel**. It is 1 for a circle and smaller for elongated shapes or ones with large bulges or holes. If several connected components are present, only the largest one is evaluated. **The same formula as** HALCON's ``circularity`` (Shape factor for the circularity (similarity to a circle) of a region.).",
+   "zh": "圆形度 ``min(1, 面积 /(π・max²))``,``max`` 是**从重心到轮廓像素的最大距离**。圆为 1,越细长或有大的凸起/孔洞则越小。存在多个连通分量时只评估面积最大的一个。与 HALCON 的 ``circularity``(Shape factor for the circularity (similarity to a circle) of a region.)**是同一个公式**。",
+   "tw": "圓形度 ``min(1, 面積 /(π・max²))``,``max`` 是**從重心到輪廓像素的最大距離**。圓為 1,越細長或有大的凸起/孔洞就越小。存在多個連通分量時只評估面積最大的一個。與 HALCON 的 ``circularity``(Shape factor for the circularity (similarity to a circle) of a region.)**是同一個公式**。",
+   "ko": "원형도 ``min(1, 면적 /(π・max²))``. ``max``는 **무게중심에서 윤곽 화소까지의 최대 거리**이며, 원이면 1이고 가늘고 길거나 큰 돌출·구멍이 있을수록 작아진다. 연결 성분이 여러 개면 면적이 가장 큰 것만 평가한다. HALCON의 ``circularity``(Shape factor for the circularity (similarity to a circle) of a region.)와 **같은 식**이다.",
+   "de": "Rundheitsmaß ``min(1, Fläche / (π · max²))``, wobei ``max`` der **größte Abstand vom Schwerpunkt zu einem Konturpixel** ist. Für einen Kreis ist es 1 und kleiner für längliche Formen oder solche mit großen Ausbuchtungen oder Löchern. Bei mehreren Zusammenhangskomponenten wird nur die größte bewertet. **Dieselbe Formel wie** HALCONs ``circularity`` (Shape factor for the circularity (similarity to a circle) of a region.)."
   },
   "2d/circularity_xld": {
-   "fp": "af1fbd3cdc16",
-   "en": "For the largest contour, computes the area via the shoelace formula and the perimeter as the sum of segment lengths, then calculates circularity as ``4π・area/perimeter²`` (the contour-based version of the region-based ``circularity``). Corresponds to HALCON's ``circularity_xld`` (Shape factor for the circularity (similarity to a circle) of contours or polygons.).",
-   "zh": "针对最大的轮廓，用鞋带公式求面积，用各线段长度之和求周长，再计算圆形度 ``4π・面积/周长²``（是区域版 ``circularity`` 的轮廓版）。相当于 HALCON 的 ``circularity_xld``（Shape factor for the circularity (similarity to a circle) of contours or polygons.）。",
-   "tw": "針對最大的輪廓，用鞋帶公式求面積、以各線段長度之和求周長，再計算圓形度 ``4π・面積/周長²``（是區域版 ``circularity`` 的輪廓版）。相當於 HALCON 的 ``circularity_xld``（Shape factor for the circularity (similarity to a circle) of contours or polygons.）。",
-   "ko": "가장 큰 윤곽선에 대해 신발끈 공식으로 면적을, 선분 길이의 합으로 둘레를 구해 원형도 ``4π・면적/둘레²``를 계산한다(영역 버전 ``circularity``의 윤곽선 버전). HALCON의 ``circularity_xld``(Shape factor for the circularity (similarity to a circle) of contours or polygons.)에 해당.",
-   "de": "Für die größte Kontur wird die Fläche über die Schnürsenkelformel und der Umfang als Summe der Segmentlängen berechnet, anschließend die Zirkularität ``4π・Fläche/Umfang²`` bestimmt (die Konturversion des regionsbasierten ``circularity``). Entspricht HALCONs ``circularity_xld`` (Shape factor for the circularity (similarity to a circle) of contours or polygons.)."
+   "fp": "4606eb608325",
+   "en": "For the largest contour, computes ``min(1, F/(pi * max^2))`` from the shoelace area ``F`` and the largest distance ``max`` from the **centre of gravity of the enclosed area** to a contour point (the contour counterpart of ``circularity``). **The same formula as** HALCON's ``circularity_xld`` (Shape factor for the circularity (similarity to a circle) of contours or polygons.).",
+   "zh": "对最大的轮廓,用鞋带公式的面积 ``F`` 和从**所围面积的重心**到轮廓点的最大距离 ``max`` 计算 ``min(1, F/(π・max²))``(区域版 ``circularity`` 的轮廓版)。与 HALCON 的 ``circularity_xld``(Shape factor for the circularity (similarity to a circle) of contours or polygons.)**是同一个公式**。",
+   "tw": "對最大的輪廓,用鞋帶公式的面積 ``F`` 與從**所圍面積的重心**到輪廓點的最大距離 ``max`` 計算 ``min(1, F/(π・max²))``(區域版 ``circularity`` 的輪廓版)。與 HALCON 的 ``circularity_xld``(Shape factor for the circularity (similarity to a circle) of contours or polygons.)**是同一個公式**。",
+   "ko": "가장 큰 윤곽에 대해, 신발끈 공식의 면적 ``F``와 **둘러싸인 면적의 무게중심**에서 윤곽점까지의 최대 거리 ``max``로 ``min(1, F/(π・max²))``를 계산한다(영역판 ``circularity``의 윤곽판). HALCON의 ``circularity_xld``(Shape factor for the circularity (similarity to a circle) of contours or polygons.)와 **같은 식**이다.",
+   "de": "Berechnet für die größte Kontur ``min(1, F/(π · max²))`` aus der Fläche ``F`` (Gaußsche Trapezformel) und dem größten Abstand ``max`` vom **Schwerpunkt der eingeschlossenen Fläche** zu einem Konturpunkt (das Kontur-Gegenstück zu ``circularity``). **Dieselbe Formel wie** HALCONs ``circularity_xld`` (Shape factor for the circularity (similarity to a circle) of contours or polygons.)."
   },
   "2d/clahe": {
    "fp": "5f35ce3efc42",
@@ -529,12 +529,12 @@
    "de": "Kompaktheit ``Umfang² / (4π · Fläche)``. Für einen Kreis ist sie 1 und wächst mit Länglichkeit, Rauheit und Löchern — **ohne obere Schranke**. Dieselbe Größe wie HALCONs ``compactness`` (Shape factor for the compactness of a region.)."
   },
   "2d/compactness_xld": {
-   "fp": "57413426e4e4",
-   "en": "For the largest contour, computes compactness as ``perimeter²/(4π・area)/10`` (the contour-based version of ``compactness``; the ``/10`` is a convenience scaling to keep the value within [0,1] and is not HALCON's definition itself). An approximation corresponding to HALCON's ``compactness_xld`` (Shape factor for the compactness of contours or polygons.).",
-   "zh": "针对最大的轮廓，计算紧凑度 ``周长²/(4π・面积)/10``（是 ``compactness`` 的轮廓版，``/10`` 只是为了将数值收敛到 [0,1] 而做的权宜缩放，并非 HALCON 定义本身）。是对应 HALCON ``compactness_xld``（Shape factor for the compactness of contours or polygons.）的近似。",
-   "tw": "針對最大的輪廓，計算緊緻度 ``周長²/(4π・面積)/10``（是 ``compactness`` 的輪廓版，``/10`` 只是為了把數值收斂到 [0,1] 所做的權宜縮放，並非 HALCON 定義本身）。是對應 HALCON ``compactness_xld``（Shape factor for the compactness of contours or polygons.）的近似。",
-   "ko": "가장 큰 윤곽선에 대해 콤팩트함 ``둘레²/(4π・면적)/10``을 계산한다(``compactness``의 윤곽선 버전이며, ``/10``은 값을 [0,1]에 담기 위한 편의상의 스케일링으로 HALCON의 정의 자체는 아니다). HALCON의 ``compactness_xld``(Shape factor for the compactness of contours or polygons.)에 대응하는 근사.",
-   "de": "Für die größte Kontur wird die Kompaktheit als ``Umfang²/(4π・Fläche)/10`` berechnet (die Konturversion von ``compactness``; das ``/10`` ist eine praktische Skalierung, um den Wert in [0,1] zu halten, und nicht HALCONs eigentliche Definition). Eine Annäherung, die HALCONs ``compactness_xld`` (Shape factor for the compactness of contours or polygons.) entspricht."
+   "fp": "e2eb40bc54da",
+   "en": "For the largest contour, computes the compactness ``max(1, perimeter^2/(4pi * area))`` (the contour counterpart of ``compactness``). It is 1 for a circle and grows with elongation and roughness, with **no upper bound**. **The same formula as** HALCON's ``compactness_xld`` (Shape factor for the compactness of contours or polygons.).",
+   "zh": "对最大的轮廓计算紧凑度 ``max(1, 周长²/(4π・面积))``(区域版 ``compactness`` 的轮廓版)。圆为 1,越细长/越粗糙则越大,**没有上限**。与 HALCON 的 ``compactness_xld``(Shape factor for the compactness of contours or polygons.)**是同一个公式**。",
+   "tw": "對最大的輪廓計算緊湊度 ``max(1, 周長²/(4π・面積))``(區域版 ``compactness`` 的輪廓版)。圓為 1,越細長/越粗糙就越大,**沒有上限**。與 HALCON 的 ``compactness_xld``(Shape factor for the compactness of contours or polygons.)**是同一個公式**。",
+   "ko": "가장 큰 윤곽에 대해 콤팩트니스 ``max(1, 둘레²/(4π・면적))``를 계산한다(영역판 ``compactness``의 윤곽판). 원이면 1이고 가늘고 길수록, 울퉁불퉁할수록 커지며 **상한이 없다**. HALCON의 ``compactness_xld``(Shape factor for the compactness of contours or polygons.)와 **같은 식**이다.",
+   "de": "Berechnet für die größte Kontur die Kompaktheit ``max(1, Umfang²/(4π · Fläche))`` (das Kontur-Gegenstück zu ``compactness``). Für einen Kreis ist sie 1 und wächst mit Länglichkeit und Rauheit — **ohne obere Schranke**. **Dieselbe Formel wie** HALCONs ``compactness_xld`` (Shape factor for the compactness of contours or polygons.)."
   },
   "2d/connect_and_holes": {
    "fp": "68f724c4de3f",
@@ -3609,20 +3609,20 @@
    "de": "Die Implementierung ist identisch mit ``rank_image`` (``kind: \"rank\"``, ein Perzentilfilter über ein quadratisches Fenster). In HALCON sind ``rank_image`` (beliebige Maske) und ``rank_rect`` (auf rechteckige Masken beschränkt) getrennte Operatoren, aber in diesem Ersatz verweisen beide auf dieselbe Implementierung mit quadratischem Fenster. Ein Ersatz für HALCONs ``rank_rect`` (Compute a rank filter with rectangular masks.)."
   },
   "2d/rectangularity": {
-   "fp": "55fe0affdb9e",
-   "en": "Rectangularity (``skimage``'s ``extent`` = area / bounding-rectangle area). The closer the value is to 1, the more completely the region fills its own bounding rectangle without gaps. Equivalent to HALCON's ``rectangularity`` (Shape factor for the rectangularity of a region.).",
-   "zh": "矩形度(``skimage`` 的 ``extent`` = 面积 / 外接矩形面积)。数值越接近 1,表示区域越是不留空隙地填满自身的外接矩形。相当于 HALCON 的 ``rectangularity``(Shape factor for the rectangularity of a region.)。",
-   "tw": "矩形度(``skimage`` 的 ``extent`` = 面積 / 外接矩形面積)。數值越接近 1,表示區域越是不留空隙地填滿自身的外接矩形。相當於 HALCON 的 ``rectangularity``(Shape factor for the rectangularity of a region.)。",
-   "ko": "직사각형도(``skimage``의 ``extent`` = 면적 / 외접 직사각형 면적). 값이 1에 가까울수록 영역이 자신의 외접 직사각형을 빈틈없이 채우고 있음을 나타낸다. HALCON의 ``rectangularity``(Shape factor for the rectangularity of a region.)에 해당.",
-   "de": "Rechteckigkeit (``extent`` von ``skimage`` = Fläche / Fläche des umschreibenden Rechtecks). Je näher der Wert bei 1 liegt, desto lückenloser füllt die Region ihr eigenes umschreibendes Rechteck aus. Entspricht HALCONs ``rectangularity`` (Shape factor for the rectangularity of a region.)."
+   "fp": "0a7b5aaddcba",
+   "en": "Rectangularity. A rectangle with the **same first and second order moments** is constructed and the area of the difference to the region is normalised by the area of that rectangle (``1 - |region XOR rectangle| / |rectangle|``); it is 1 for a rectangle. **The same definition as** HALCON's ``rectangularity`` (Shape factor for the rectangularity of a region.).",
+   "zh": "矩形度。构造一个与区域具有**相同一阶、二阶矩**的矩形,把两者之差的面积用该矩形的面积归一化(``1 - |区域 XOR 矩形| / |矩形|``);矩形时为 1。与 HALCON 的 ``rectangularity``(Shape factor for the rectangularity of a region.)**定义相同**。",
+   "tw": "矩形度。建立一個與區域具有**相同一階、二階矩**的矩形,將兩者差的面積以該矩形的面積正規化(``1 - |區域 XOR 矩形| / |矩形|``);矩形時為 1。與 HALCON 的 ``rectangularity``(Shape factor for the rectangularity of a region.)**定義相同**。",
+   "ko": "직사각형도. **1차·2차 모멘트가 같은** 직사각형을 만들고, 영역과의 차이 면적을 그 직사각형의 면적으로 정규화한다(``1 - |영역 XOR 직사각형| / |직사각형|``). 직사각형이면 1이다. HALCON의 ``rectangularity``(Shape factor for the rectangularity of a region.)와 **같은 정의**이다.",
+   "de": "Rechteckigkeit. Es wird ein Rechteck mit **denselben Momenten erster und zweiter Ordnung** konstruiert; die Fläche der Differenz zur Region wird auf die Fläche dieses Rechtecks normiert (``1 - |Region XOR Rechteck| / |Rechteck|``) und ist für ein Rechteck 1. **Dieselbe Definition wie** HALCONs ``rectangularity`` (Shape factor for the rectangularity of a region.)."
   },
   "2d/rectangularity_xld": {
-   "fp": "89935e7610b5",
-   "en": "The fill ratio obtained by dividing the contour area by the area of the minimum-area rotated bounding rectangle (``cv2.minAreaRect``). A value close to 1 indicates the contour fills its bounding rectangle with little gap. Corresponds to HALCON's ``rectangularity_xld`` (Shape factor for the rectangularity of contours or polygons.).",
-   "zh": "用轮廓面积除以最小外接旋转矩形（``cv2.minAreaRect``）面积得到的填充率。数值越接近 1，表示轮廓越能几乎无缝地填满其外接矩形。相当于 HALCON 的 ``rectangularity_xld``（Shape factor for the rectangularity of contours or polygons.）。",
-   "tw": "用輪廓面積除以最小外接旋轉矩形（``cv2.minAreaRect``）面積得到的填充率。數值越接近 1，表示輪廓越能幾乎無縫地填滿其外接矩形。相當於 HALCON 的 ``rectangularity_xld``（Shape factor for the rectangularity of contours or polygons.）。",
-   "ko": "윤곽선 면적을 최소 외접 회전 사각형(``cv2.minAreaRect``) 면적으로 나눈 충전율. 값이 1에 가까울수록 윤곽선이 자신의 외접 사각형을 빈틈없이 채우고 있음을 나타낸다. HALCON의 ``rectangularity_xld``(Shape factor for the rectangularity of contours or polygons.)에 해당.",
-   "de": "Das Füllverhältnis, das man erhält, indem man die Konturfläche durch die Fläche des minimalen rotierten Begrenzungsrechtecks (``cv2.minAreaRect``) teilt. Ein Wert nahe 1 zeigt an, dass die Kontur ihr Begrenzungsrechteck nahezu lückenlos ausfüllt. Entspricht HALCONs ``rectangularity_xld`` (Shape factor for the rectangularity of contours or polygons.)."
+   "fp": "a50ec1f9cdb3",
+   "en": "Contour counterpart of rectangularity. The contour is filled and the area of the difference to a rectangle with the **same first and second order moments** is normalised by the area of that rectangle; it is 1 for a rectangle. **The same definition as** HALCON's ``rectangularity_xld`` (Shape factor for the rectangularity of contours or polygons.).",
+   "zh": "矩形度的轮廓版。把轮廓填充后,用与其具有**相同一阶、二阶矩**的矩形之差的面积除以该矩形的面积;矩形时为 1。与 HALCON 的 ``rectangularity_xld``(Shape factor for the rectangularity of contours or polygons.)**定义相同**。",
+   "tw": "矩形度的輪廓版。將輪廓填滿後,用與其具有**相同一階、二階矩**的矩形之差的面積除以該矩形的面積;矩形時為 1。與 HALCON 的 ``rectangularity_xld``(Shape factor for the rectangularity of contours or polygons.)**定義相同**。",
+   "ko": "직사각형도의 윤곽판. 윤곽을 채운 뒤 **1차·2차 모멘트가 같은** 직사각형과의 차이 면적을 그 직사각형의 면적으로 정규화한다. 직사각형이면 1이다. HALCON의 ``rectangularity_xld``(Shape factor for the rectangularity of contours or polygons.)와 **같은 정의**이다.",
+   "de": "Kontur-Gegenstück zur Rechteckigkeit. Die Kontur wird gefüllt und die Fläche der Differenz zu einem Rechteck mit **denselben Momenten erster und zweiter Ordnung** wird auf die Fläche dieses Rechtecks normiert; für ein Rechteck ist sie 1. **Dieselbe Definition wie** HALCONs ``rectangularity_xld`` (Shape factor for the rectangularity of contours or polygons.)."
   },
   "2d/reg_close": {
    "fp": "e1c2cf68b697",
@@ -3777,12 +3777,12 @@
    "de": "Dreht um die Bildmitte um ``-45° + 90°·a`` (a=0,5 → 0°). ``b`` unbenutzt."
   },
   "2d/roundness": {
-   "fp": "368e6121d93a",
-   "en": "Roundness ``4 * area / (pi * major-axis-length^2)`` (the closer to 1, the closer to a perfect circle; a different metric from ``circularity`` in that the denominator uses the major axis length rather than the perimeter). Equivalent to HALCON's ``roundness`` (Shape factors from contour.).",
-   "zh": "真圆度 ``4・面积 / (π・长轴长²)``(越接近 1 越接近正圆;与 ``circularity`` 不同,分母使用的是长轴长而非周长,是另一个指标)。相当于 HALCON 的 ``roundness``(Shape factors from contour.)。",
-   "tw": "真圓度 ``4・面積 / (π・長軸長²)``(越接近 1 越接近正圓;與 ``circularity`` 不同,分母使用的是長軸長而非周長,是另一個指標)。相當於 HALCON 的 ``roundness``(Shape factors from contour.)。",
-   "ko": "진원도 ``4・면적 / (π・장축 길이²)``(1에 가까울수록 정원에 가깝다. ``circularity``와는 분모에 둘레가 아니라 장축 길이를 사용한다는 점이 다른 별개의 지표). HALCON의 ``roundness``(Shape factors from contour.)에 해당.",
-   "de": "Rundheitsgrad (Roundness) ``4 * Fläche / (pi * Länge der Hauptachse^2)`` (je näher an 1, desto näher an einem perfekten Kreis; unterscheidet sich von ``circularity`` dadurch, dass im Nenner die Länge der Hauptachse statt des Umfangs verwendet wird -- eine eigenständige Kennzahl). Entspricht HALCONs ``roundness`` (Shape factors from contour.)."
+   "fp": "603e4cc6d3c8",
+   "en": "Roundness ``1 - sigma/mu``, where ``mu`` and ``sigma`` are the mean and standard deviation of the **distances from the centre of gravity to the contour pixels**; the more uniform those distances are (the rounder the shape), the closer to 1. **The same formula as** HALCON's ``roundness`` (Shape factors from contour.).",
+   "zh": "真圆度 ``1 - σ/μ``,``μ`` 与 ``σ`` 是**从重心到轮廓像素的距离**的均值与标准差;距离越均匀(越接近正圆)越接近 1。与 HALCON 的 ``roundness``(Shape factors from contour.)**是同一个公式**。",
+   "tw": "真圓度 ``1 - σ/μ``,``μ`` 與 ``σ`` 是**從重心到輪廓像素的距離**的平均與標準差;距離越均勻(越接近正圓)越接近 1。與 HALCON 的 ``roundness``(Shape factors from contour.)**是同一個公式**。",
+   "ko": "진원도 ``1 - σ/μ``. ``μ``와 ``σ``는 **무게중심에서 윤곽 화소까지의 거리**의 평균과 표준편차이며, 거리가 균일할수록(정원에 가까울수록) 1에 가깝다. HALCON의 ``roundness``(Shape factors from contour.)와 **같은 식**이다.",
+   "de": "Rundheit ``1 - sigma/mu``, wobei ``mu`` und ``sigma`` Mittelwert und Standardabweichung der **Abstände vom Schwerpunkt zu den Konturpixeln** sind; je gleichmäßiger diese Abstände (je runder die Form), desto näher an 1. **Dieselbe Formel wie** HALCONs ``roundness`` (Shape factors from contour.)."
   },
   "2d/scale_clip": {
    "fp": "6a9eaff90028",

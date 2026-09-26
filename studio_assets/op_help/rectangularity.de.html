@@ -10,8 +10,15 @@
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rectangularity.chain.jpg">rectangularity: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Rechteckigkeit (`<code style="color:#22d3bf">extent</code><code style="color:#22d3bf"> von </code><code style="color:#22d3bf">skimage</code><code style="color:#22d3bf"> = Fläche / Fläche des umschreibenden Rechtecks). Je näher der Wert bei 1 liegt, desto lückenloser füllt die Region ihr eigenes umschreibendes Rechteck aus. Entspricht HALCONs </code><code style="color:#22d3bf">rectangularity</code>` (Shape factor for the rectangularity of a region.).</p>
+<p>Rechteckigkeit. Es wird ein Rechteck mit <b>denselben Momenten erster und zweiter Ordnung</b> konstruiert; die Fläche der Differenz zur Region wird auf die Fläche dieses Rechtecks normiert (`<code style="color:#22d3bf">1 - |Region XOR Rechteck| / |Rechteck|</code><code style="color:#22d3bf">) und ist für ein Rechteck 1. **Dieselbe Definition wie** HALCONs </code><code style="color:#22d3bf">rectangularity</code>` (Shape factor for the rectangularity of a region.).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>★2026-09-26 まで<b>軸平行の</b>外接矩形との比(`<code style="color:#22d3bf">skimage</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">extent</code>`)だった。</p>
+<p>向きを見ないので、<b>同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた</b></p>
+<p>(HALCON は 0.998 のまま)。`<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>`。</p>
+<p>★正方形や円のように 2 次モーメントで向きが決まらない形では、「同じモーメントを</p>
+<p>持つ矩形」が向きの数だけ在って定義が向きを決めない。ここでは重なりが最大に</p>
+<p>なる向きを選ぶ —— そのまま任意の向きで当てると正方形が 0.651 になり、HALCON の</p>
+<p>「矩形なら 1」と食い違う。HALCON もこの形では最大 10% 過小評価すると明記する。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>

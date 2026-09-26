@@ -2501,32 +2501,22 @@ RSS の区間は **20.2 % 狭い**。相関が負なら逆に 99.64 % と過剰 
 **大きくなるほど外れる**(+5.2%)。`perimeter_crofton` は曲線で 1.0 に寄る代わりに、
 軸平行で -5.4% に落ち着く。「もっと細かく撮れば合う」は、ここでは成り立たない。
 
-いま `circularity` / `compactness` / `convexity` などが使っているのは `perimeter`。
-つまり**円形度の絶対値は円で 0.90 前後に系統的に沈む**(真値 1.0)。形どうしの
-比較や同じ形の変化を見る用途では効かないが、しきい値を絶対値で置く用途では効く。
+★**2026-09-26 に範囲が狭まった。** `circularity` を HALCON の定義(重心からの
+最大距離)に合わせたので、**円形度は周囲長に載らなくなった**。いま周囲長を
+使うのは `compactness` / `compactness_xld` / `contlength` と、それを内部で使う
+op だけ。円で `compactness` が 1.0 でなく 1.09 前後になるのはこのバイアスである。
 
 決めていないこと: 推定量を選べるようにするか(`a` で切り替える / 別 op を足す)、
-既定を変えるか。既定を変えると `poc_real_coin_metrology` や
-`poc_particle_sizing` の報告値が動く。
+既定を変えるか。HALCON がどちらの推定量を使っているかは文書に書かれていない
+ので、**合わせる相手が定まらない**のが判断を止めている理由である。
 
-### 50.2 ★★`circularity` は HALCON の `circularity` と**別の量**である
+### 50.2 ~~`circularity` は HALCON の `circularity` と別の量である~~(2026-09-26 解決)
 
-Fullseye の `circularity` は `4π·面積 / 周囲長²`(等周比)。
-HALCON の `circularity` は **面積 /(π·重心から輪郭画素までの最大距離²)** で、
-周囲長を使わない(MVTec のオペレータ文書で確認、2026-09-26)。
+★**ユーザー判断: 「op 名が HALCON と同じなら HALCON に合わせる」。** これに従って
+`circularity` / `roundness` / `rectangularity` と、その `_xld` 版・`compactness_xld`
+の計 6 本を HALCON の式に置き換えた。経緯と数字は
+`docs/hardening/halcon-named-shape-factors.md` に移した。
 
-| 形 | fullseye `circularity` | HALCON の式 |
-|---|---|---|
-| 円板 r=18 | 0.907 | 0.991 |
-| 正方形 24 | **0.855** | **0.693** |
-| 細長 4x40 | 0.285 | 0.133 |
-
-★**順序まで変わる。** fullseye は正方形を「かなり円い」(0.855)と言い、HALCON は
-0.693 と言う。HALCON のレシピを移してきて `circularity > 0.8` と書いた人は、
-ここでは正方形を通してしまう。op の説明文は自分の式を正直に書いているが、
-「HALCON の `circularity` に相当」とも書いてあり、**被覆率の表もそう数えている**。
-
-決めていないこと: (a) 実装を HALCON の定義に合わせる(6 本の PoC の報告値が動く。
-うち `poc_rotation_invariance_audit` は周囲長由来の荒れを主題にしているので、
-主題そのものが変わる)/ (b) 実装は据え置き、HALCON 相当の主張を外して別 op を
-足す(被覆率が 1 減る)。どちらも外向きの意味が変わるので、判断を仰ぐ。
+残っているのは `eccentricity` / `eccentricity_xld` —— HALCON では 3 値
+(Anisometry / Bulkiness / StructureFactor)を返す演算子で、スカラーの `feature` 型
+では表せない。`area_center` と同じ `match` 型への変更が要るので別の巡で直す。

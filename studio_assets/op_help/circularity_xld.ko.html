@@ -10,8 +10,10 @@
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/circularity_xld.chain.jpg">circularity_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>가장 큰 윤곽선에 대해 신발끈 공식으로 면적을, 선분 길이의 합으로 둘레를 구해 원형도 `<code style="color:#22d3bf">4π・면적/둘레²</code><code style="color:#22d3bf">를 계산한다(영역 버전 </code><code style="color:#22d3bf">circularity</code><code style="color:#22d3bf">의 윤곽선 버전). HALCON의 </code><code style="color:#22d3bf">circularity_xld</code>`(Shape factor for the circularity (similarity to a circle) of contours or polygons.)에 해당.</p>
+<p>가장 큰 윤곽에 대해, 신발끈 공식의 면적 `<code style="color:#22d3bf">F</code><code style="color:#22d3bf">와 **둘러싸인 면적의 무게중심**에서 윤곽점까지의 최대 거리 </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf">로 </code><code style="color:#22d3bf">min(1, F/(π・max²))</code><code style="color:#22d3bf">를 계산한다(영역판 </code><code style="color:#22d3bf">circularity</code><code style="color:#22d3bf">의 윤곽판). HALCON의 </code><code style="color:#22d3bf">circularity_xld</code>`(Shape factor for the circularity (similarity to a circle) of contours or polygons.)와 <b>같은 식</b>이다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>★2026-09-26 まで等周比 `<code style="color:#22d3bf">4π・面積/周囲長²</code>` という別の量だった。重心は点の</p>
+<p>平均ではなく面積の重心を使う —— 点が密な側に寄ってしまうため。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

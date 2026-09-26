@@ -10,8 +10,11 @@
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/roundness.chain.jpg">roundness: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>真圓度 `<code style="color:#22d3bf">4・面積 / (π・長軸長²)</code><code style="color:#22d3bf">(越接近 1 越接近正圓;與 </code><code style="color:#22d3bf">circularity</code><code style="color:#22d3bf"> 不同,分母使用的是長軸長而非周長,是另一個指標)。相當於 HALCON 的 </code><code style="color:#22d3bf">roundness</code>`(Shape factors from contour.)。</p>
+<p>真圓度 `<code style="color:#22d3bf">1 - σ/μ</code><code style="color:#22d3bf">,</code><code style="color:#22d3bf">μ</code><code style="color:#22d3bf"> 與 </code><code style="color:#22d3bf">σ</code><code style="color:#22d3bf"> 是**從重心到輪廓像素的距離**的平均與標準差;距離越均勻(越接近正圓)越接近 1。與 HALCON 的 </code><code style="color:#22d3bf">roundness</code>`(Shape factors from contour.)<b>是同一個公式</b>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>★2026-09-26 まで `<code style="color:#22d3bf">4・面積/(π・長軸長²)</code>` という別の量を返していた</p>
+<p>(16x64 の矩形で 0.239 対 0.577)。`<code style="color:#22d3bf">circularity</code>` が「面積が最大距離の円を</p>
+<p>どれだけ埋めるか」を見るのに対し、こちらは<b>縁の凸凹</b>を見る。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
@@ -25,6 +28,7 @@
 roundness 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aroundness%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aroundness%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shape_factors_closed_form">shape_factors_closed_form</a> — <code style="color:#22d3bf">py -3.11 examples/shape_factors_closed_form.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">feature</code> 作為輸入)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">features</code>)</h3>

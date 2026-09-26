@@ -10,11 +10,13 @@
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/compactness_xld.chain.jpg">compactness_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>最大の輪郭についてコンパクトさ `<code style="color:#22d3bf">周囲長²/(4π・面積)/10</code>` を計算する</p>
-<p>(`<code style="color:#22d3bf">compactness</code><code style="color:#22d3bf"> の輪郭版で、</code><code style="color:#22d3bf">/10</code>` は値を [0,1] に収めるための便宜的な</p>
-<p>スケーリング、HALCON の定義そのものではない)。HALCON の</p>
-<p>`<code style="color:#22d3bf">compactness_xld</code>`（Shape factor for the compactness of contours or</p>
-<p>polygons.）に相当する近似。</p>
+<p>最大の輪郭についてコンパクトさ `<code style="color:#22d3bf">max(1, 周囲長²/(4π・面積))</code>` を計算する</p>
+<p>(`<code style="color:#22d3bf">compactness</code>` の輪郭版)。円で 1、細長い/ぎざぎざなほど大きく、<b>上限は無い</b>。</p>
+<p>HALCON の `<code style="color:#22d3bf">compactness_xld</code>`（Shape factor for the compactness of contours</p>
+<p>or polygons.）<b>と同じ式</b>。</p>
+<p>★2026-09-26 まで `<code style="color:#22d3bf">/10</code>` して 1 で頭打ちしていた —— **領域版と同じ欠陥が輪郭版</p>
+<p>にも在った**。直した op の双子を見落とすと穴が半分残る</p>
+<p>(`<code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>`)。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>

@@ -1338,13 +1338,13 @@ _計 932 ops / 48 categories。_
 - `cv_good_features` `image → feature` · 例: `gallery2d_features`
 - `area_center` (halcon: `area_center`) `region → match` · 例: `gallery2d_features`
 - `count_obj` (halcon: `count_obj`) `region → feature` · 例: `gallery2d_features`
-- `circularity` (halcon: `circularity`) `region → feature` · 例: `gallery2d_features`, `poc_cell_counting`, `poc_particle_sizing`, `poc_rotation_invariance_audit`
+- `circularity` (halcon: `circularity`) `region → feature` · 例: `gallery2d_features`, `poc_cell_counting`, `poc_particle_sizing`, `poc_rotation_invariance_audit`, `shape_factors_closed_form`
 - `compactness` (halcon: `compactness`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`
-- `convexity` (halcon: `convexity`) `region → feature` · 例: `gallery2d_features`
+- `convexity` (halcon: `convexity`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`
 - `rectangularity` (halcon: `rectangularity`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`
 - `eccentricity` (halcon: `eccentricity`) `region → feature` · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
 - `orientation_region` (halcon: `orientation_region`) `region → feature` · 例: `gallery2d_features`
-- `roundness` (halcon: `roundness`) `region → feature` · 例: `gallery2d_features`
+- `roundness` (halcon: `roundness`) `region → feature` · 例: `gallery2d_features`, `shape_factors_closed_form`
 - `diameter_region` (halcon: `diameter_region`) `region → feature` · 例: `gallery2d_features`
 - `euler_number` (halcon: `euler_number`) `region → feature` · 例: `gallery2d_features`
 - `min_max_gray` (halcon: `min_max_gray`) `image → feature` · 例: `gallery2d_features`

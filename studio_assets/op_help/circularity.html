@@ -10,10 +10,14 @@
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/circularity.chain.jpg">circularity: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>円形度 `<code style="color:#22d3bf">4π・面積 / 周囲長²</code>`(1 に近いほど真円に近い)。連結成分が</p>
-<p>複数ある場合は最大面積のものだけを評価する。HALCON の `<code style="color:#22d3bf">circularity</code>`</p>
-<p>（Shape factor for the circularity (similarity to a circle) of a</p>
-<p>region.）に相当。</p>
+<p>円形度 `<code style="color:#22d3bf">min(1, 面積 /(π・max²))</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">max</code>` は<b>重心から輪郭画素までの最大距離</b></p>
+<p>で、円なら 1、細長い形や大きな出っ張り・穴があるほど小さい。連結成分が複数ある</p>
+<p>場合は最大面積のものだけを評価する。HALCON の `<code style="color:#22d3bf">circularity</code>`（Shape factor for</p>
+<p>the circularity (similarity to a circle) of a region.）<b>と同じ式</b>。</p>
+<p>★2026-09-26 まで等周比 `<code style="color:#22d3bf">4π・面積/周囲長²</code>` という<b>別の量</b>を返していた。</p>
+<p>名前は HALCON から借りているのに数が違うので、HALCON のレシピを移してきた人が</p>
+<p>同じしきい値で違う判定を得ていた(正方形で 0.826 対 0.670 と<b>順序まで変わる</b>)。</p>
+<p>`<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>`。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
@@ -30,6 +34,7 @@ circularity 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%20
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_cell_counting">poc_cell_counting</a> — <code style="color:#22d3bf">py -3.11 examples/poc_cell_counting.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_particle_sizing">poc_particle_sizing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_particle_sizing.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rotation_invariance_audit">poc_rotation_invariance_audit</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rotation_invariance_audit.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shape_factors_closed_form">shape_factors_closed_form</a> — <code style="color:#22d3bf">py -3.11 examples/shape_factors_closed_form.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">feature</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">features</code>)</h3>

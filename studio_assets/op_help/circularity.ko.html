@@ -10,8 +10,12 @@
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/circularity.chain.jpg">circularity: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>원형도 `<code style="color:#22d3bf">4π・면적 / 둘레²</code><code style="color:#22d3bf">(1에 가까울수록 정원에 가깝다). 연결 성분이 여러 개인 경우 면적이 가장 큰 것만 평가한다. HALCON의 </code><code style="color:#22d3bf">circularity</code>`(Shape factor for the circularity (similarity to a circle) of a region.)에 해당.</p>
+<p>원형도 `<code style="color:#22d3bf">min(1, 면적 /(π・max²))</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf">는 **무게중심에서 윤곽 화소까지의 최대 거리**이며, 원이면 1이고 가늘고 길거나 큰 돌출·구멍이 있을수록 작아진다. 연결 성분이 여러 개면 면적이 가장 큰 것만 평가한다. HALCON의 </code><code style="color:#22d3bf">circularity</code>`(Shape factor for the circularity (similarity to a circle) of a region.)와 <b>같은 식</b>이다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>★2026-09-26 まで等周比 `<code style="color:#22d3bf">4π・面積/周囲長²</code>` という<b>別の量</b>を返していた。</p>
+<p>名前は HALCON から借りているのに数が違うので、HALCON のレシピを移してきた人が</p>
+<p>同じしきい値で違う判定を得ていた(正方形で 0.826 対 0.670 と<b>順序まで変わる</b>)。</p>
+<p>`<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>`。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>
@@ -28,6 +32,7 @@ circularity 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%20
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_cell_counting">poc_cell_counting</a> — <code style="color:#22d3bf">py -3.11 examples/poc_cell_counting.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_particle_sizing">poc_particle_sizing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_particle_sizing.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rotation_invariance_audit">poc_rotation_invariance_audit</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rotation_invariance_audit.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shape_factors_closed_form">shape_factors_closed_form</a> — <code style="color:#22d3bf">py -3.11 examples/shape_factors_closed_form.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">feature</code> 를 입력으로 받는 것)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">features</code>)</h3>

@@ -5,7 +5,7 @@ category: features
 in: region
 out: feature
 halcon: roundness
-examples: [gallery2d_features]
+examples: [gallery2d_features, shape_factors_closed_form]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -31,9 +31,13 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 使い方
 
-真円度 ``4・面積 / (π・長軸長²)``(1 に近いほど真円に近い、
-``circularity`` とは分母に周囲長でなく長軸長を使う点が異なる別の指標)。
-HALCON の ``roundness``（Shape factors from contour.）に相当。
+真円度 ``1 - σ/μ``。``μ`` と ``σ`` は**重心から輪郭画素までの距離**の平均と
+標準偏差で、距離が一様なほど(= 真円に近いほど)1 に近い。HALCON の
+``roundness``（Shape factors from contour.）**と同じ式**。
+
+★2026-09-26 まで ``4・面積/(π・長軸長²)`` という別の量を返していた
+(16x64 の矩形で 0.239 対 0.577)。``circularity`` が「面積が最大距離の円を
+どれだけ埋めるか」を見るのに対し、こちらは**縁の凸凹**を見る。
 
 ``a``, ``b`` は未使用。
 
@@ -59,6 +63,7 @@ roundness 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
+- [shape_factors_closed_form](../../../../examples/shape_factors_closed_form.py) — `py -3.11 examples/shape_factors_closed_form.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)
 

@@ -10,8 +10,11 @@
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/compactness_xld.chain.jpg">compactness_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>針對最大的輪廓，計算緊緻度 `<code style="color:#22d3bf">周長²/(4π・面積)/10</code><code style="color:#22d3bf">（是 </code><code style="color:#22d3bf">compactness</code><code style="color:#22d3bf"> 的輪廓版，</code><code style="color:#22d3bf">/10</code><code style="color:#22d3bf"> 只是為了把數值收斂到 [0,1] 所做的權宜縮放，並非 HALCON 定義本身）。是對應 HALCON </code><code style="color:#22d3bf">compactness_xld</code>`（Shape factor for the compactness of contours or polygons.）的近似。</p>
+<p>對最大的輪廓計算緊湊度 `<code style="color:#22d3bf">max(1, 周長²/(4π・面積))</code><code style="color:#22d3bf">(區域版 </code><code style="color:#22d3bf">compactness</code><code style="color:#22d3bf"> 的輪廓版)。圓為 1,越細長/越粗糙就越大,**沒有上限**。與 HALCON 的 </code><code style="color:#22d3bf">compactness_xld</code>`(Shape factor for the compactness of contours or polygons.)<b>是同一個公式</b>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>★2026-09-26 まで `<code style="color:#22d3bf">/10</code>` して 1 で頭打ちしていた —— **領域版と同じ欠陥が輪郭版</p>
+<p>にも在った**。直した op の双子を見落とすと穴が半分残る</p>
+<p>(`<code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>`)。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

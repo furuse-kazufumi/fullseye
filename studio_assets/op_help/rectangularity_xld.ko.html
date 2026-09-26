@@ -10,8 +10,10 @@
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rectangularity_xld.chain.jpg">rectangularity_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>윤곽선 면적을 최소 외접 회전 사각형(`<code style="color:#22d3bf">cv2.minAreaRect</code><code style="color:#22d3bf">) 면적으로 나눈 충전율. 값이 1에 가까울수록 윤곽선이 자신의 외접 사각형을 빈틈없이 채우고 있음을 나타낸다. HALCON의 </code><code style="color:#22d3bf">rectangularity_xld</code>`(Shape factor for the rectangularity of contours or polygons.)에 해당.</p>
+<p>직사각형도의 윤곽판. 윤곽을 채운 뒤 <b>1차·2차 모멘트가 같은</b> 직사각형과의 차이 면적을 그 직사각형의 면적으로 정규화한다. 직사각형이면 1이다. HALCON의 `<code style="color:#22d3bf">rectangularity_xld</code>`(Shape factor for the rectangularity of contours or polygons.)와 <b>같은 정의</b>이다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>★2026-09-26 まで<b>最小外接回転矩形</b>(`<code style="color:#22d3bf">cv2.minAreaRect</code>`)との比だった ——</p>
+<p>似てはいるが別の測り方で、凹んだ形で系統的にずれる。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

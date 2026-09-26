@@ -10,8 +10,10 @@
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rectangularity_xld.chain.jpg">rectangularity_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>用輪廓面積除以最小外接旋轉矩形（`<code style="color:#22d3bf">cv2.minAreaRect</code><code style="color:#22d3bf">）面積得到的填充率。數值越接近 1，表示輪廓越能幾乎無縫地填滿其外接矩形。相當於 HALCON 的 </code><code style="color:#22d3bf">rectangularity_xld</code>`（Shape factor for the rectangularity of contours or polygons.）。</p>
+<p>矩形度的輪廓版。將輪廓填滿後,用與其具有<b>相同一階、二階矩</b>的矩形之差的面積除以該矩形的面積;矩形時為 1。與 HALCON 的 `<code style="color:#22d3bf">rectangularity_xld</code>`(Shape factor for the rectangularity of contours or polygons.)<b>定義相同</b>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>★2026-09-26 まで<b>最小外接回転矩形</b>(`<code style="color:#22d3bf">cv2.minAreaRect</code>`)との比だった ——</p>
+<p>似てはいるが別の測り方で、凹んだ形で系統的にずれる。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

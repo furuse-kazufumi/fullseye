@@ -5,7 +5,7 @@ category: features
 in: region
 out: feature
 halcon: circularity
-examples: [gallery2d_features, poc_cell_counting, poc_particle_sizing, poc_rotation_invariance_audit]
+examples: [gallery2d_features, poc_cell_counting, poc_particle_sizing, poc_rotation_invariance_audit, shape_factors_closed_form]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -31,10 +31,15 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 使い方
 
-円形度 ``4π・面積 / 周囲長²``(1 に近いほど真円に近い)。連結成分が
-複数ある場合は最大面積のものだけを評価する。HALCON の ``circularity``
-（Shape factor for the circularity (similarity to a circle) of a
-region.）に相当。
+円形度 ``min(1, 面積 /(π・max²))``。``max`` は**重心から輪郭画素までの最大距離**
+で、円なら 1、細長い形や大きな出っ張り・穴があるほど小さい。連結成分が複数ある
+場合は最大面積のものだけを評価する。HALCON の ``circularity``（Shape factor for
+the circularity (similarity to a circle) of a region.）**と同じ式**。
+
+★2026-09-26 まで等周比 ``4π・面積/周囲長²`` という**別の量**を返していた。
+名前は HALCON から借りているのに数が違うので、HALCON のレシピを移してきた人が
+同じしきい値で違う判定を得ていた(正方形で 0.826 対 0.670 と**順序まで変わる**)。
+``docs/hardening/halcon-named-shape-factors.md``。
 
 ``a``, ``b`` は未使用。
 
@@ -63,6 +68,7 @@ circularity 0.50 0.50
 - [poc_cell_counting](../../../../examples/poc_cell_counting.py) — `py -3.11 examples/poc_cell_counting.py`
 - [poc_particle_sizing](../../../../examples/poc_particle_sizing.py) — `py -3.11 examples/poc_particle_sizing.py`
 - [poc_rotation_invariance_audit](../../../../examples/poc_rotation_invariance_audit.py) — `py -3.11 examples/poc_rotation_invariance_audit.py`
+- [shape_factors_closed_form](../../../../examples/shape_factors_closed_form.py) — `py -3.11 examples/shape_factors_closed_form.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)
 

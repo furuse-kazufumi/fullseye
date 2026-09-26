@@ -31,10 +31,14 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 使い方
 
-最大の輪郭についてシューレース公式で面積、線分長の和で周囲長を求め、
-円形度 ``4π・面積/周囲長²`` を計算する(領域版の ``circularity`` の輪郭
-版)。HALCON の ``circularity_xld``（Shape factor for the circularity
-(similarity to a circle) of contours or polygons.）に相当。
+最大の輪郭について、シューレース公式の面積 ``F`` と、**囲まれた面積の重心**から
+輪郭点までの最大距離 ``max`` から ``min(1, F/(π・max²))`` を計算する
+(領域版 ``circularity`` の輪郭版)。HALCON の ``circularity_xld``
+（Shape factor for the circularity (similarity to a circle) of contours or
+polygons.）**と同じ式**。
+
+★2026-09-26 まで等周比 ``4π・面積/周囲長²`` という別の量だった。重心は点の
+平均ではなく面積の重心を使う —— 点が密な側に寄ってしまうため。
 
 ``a``, ``b`` は未使用。
 

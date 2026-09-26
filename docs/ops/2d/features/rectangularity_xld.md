@@ -31,10 +31,13 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 使い方
 
-輪郭面積を最小外接回転矩形(``cv2.minAreaRect``)の面積で割った充填率。
-値が 1 に近いほど輪郭が自身の外接矩形を隙間なく埋めていることを示す。
-HALCON の ``rectangularity_xld``（Shape factor for the rectangularity of
-contours or polygons.）に相当。
+矩形度の輪郭版。輪郭を塗りつぶして、**同じ 1 次・2 次モーメントを持つ矩形**との
+差の面積をその矩形の面積で正規化する。矩形なら 1。HALCON の
+``rectangularity_xld``（Shape factor for the rectangularity of contours or
+polygons.）**と同じ定義**。
+
+★2026-09-26 まで**最小外接回転矩形**(``cv2.minAreaRect``)との比だった ——
+似てはいるが別の測り方で、凹んだ形で系統的にずれる。
 
 ``a``, ``b`` は未使用。
 

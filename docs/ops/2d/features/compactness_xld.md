@@ -31,11 +31,14 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 使い方
 
-最大の輪郭についてコンパクトさ ``周囲長²/(4π・面積)/10`` を計算する
-(``compactness`` の輪郭版で、``/10`` は値を [0,1] に収めるための便宜的な
-スケーリング、HALCON の定義そのものではない)。HALCON の
-``compactness_xld``（Shape factor for the compactness of contours or
-polygons.）に相当する近似。
+最大の輪郭についてコンパクトさ ``max(1, 周囲長²/(4π・面積))`` を計算する
+(``compactness`` の輪郭版)。円で 1、細長い/ぎざぎざなほど大きく、**上限は無い**。
+HALCON の ``compactness_xld``（Shape factor for the compactness of contours
+or polygons.）**と同じ式**。
+
+★2026-09-26 まで ``/10`` して 1 で頭打ちしていた —— **領域版と同じ欠陥が輪郭版
+にも在った**。直した op の双子を見落とすと穴が半分残る
+(``docs/hardening/compactness-saturated-at-one.md``)。
 
 ``a``, ``b`` は未使用。
 

@@ -15,13 +15,13 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**31 findings (31 fixed), from 14 PoCs.**
+**32 findings (32 fixed), from 14 PoCs.**
 
 ## By kind
 
 | Kind | Findings | Fixed |
 |---|---:|---:|
-| Silently wrong (no exception) | 15 | 15 |
+| Silently wrong (no exception) | 16 | 16 |
 | Implementation defect | 5 | 5 |
 | The gate did not stand where the accident happens | 3 | 3 |
 | Present but unreachable | 7 | 7 |
@@ -33,6 +33,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 |---|---:|
 | [`genspark_external_review`](../examples/genspark_external_review.py) | 17 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
+| [`shape_factors_closed_form`](../examples/shape_factors_closed_form.py) | 2 |
 | [`line_handshake`](../examples/line_handshake.py) | 1 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
@@ -42,7 +43,6 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 | [`poc_search_sweep_width`](../examples/poc_search_sweep_width.py) | 1 |
 | [`poc_stockpile_volume`](../examples/poc_stockpile_volume.py) | 1 |
 | [`poc_thermal_radiometry`](../examples/poc_thermal_radiometry.py) | 1 |
-| [`shape_factors_closed_form`](../examples/shape_factors_closed_form.py) | 1 |
 | [`threshold_family_agreement`](../examples/threshold_family_agreement.py) | 1 |
 | [`tools/chain_fuzz.py`](../tools/chain_fuzz.py) | 1 |
 
@@ -133,6 +133,12 @@ Found by: `line_handshake` / Changed: `ops.py`, `accel.py`, `detect.py`, `fscrip
 幅 2 px の傷の長さを変えても、**長さ 80 以上は全部 `1.0`**。 _(ja)_
 
 Found by: `shape_factors_closed_form` / Changed: `backends_auto.py` / Gate: `test_compactness_does_not_saturate_on_long_scratches`, `test_compactness_matches_the_closed_form_shape`, `test_the_old_squash_is_what_the_gate_catches` / Status: fixed
+
+#### [HALCON と同じ名前の形状係数が、HALCON と**別の量**を返していた](hardening/halcon-named-shape-factors.md) _(ja)_
+
+同名を名乗る 6 本のうち、HALCON の式と一致していたのは `convexity` だけだった。 _(ja)_
+
+Found by: `shape_factors_closed_form` / Changed: `backends_auto.py` / Gate: `test_the_op_returns_the_halcon_quantity`, `test_rectangularity_is_one_for_rectangles_whatever_the_angle`, `test_rectangularity_is_one_for_a_square`, `test_the_old_isoperimetric_formula_is_what_the_gate_catches`, `test_the_old_axis_aligned_extent_is_what_the_gate_catches`, `test_the_contour_twin_answers_the_same_question`, `test_every_same_named_shape_factor_is_either_checked_or_named` / Status: fixed
 
 #### [SimpleITK 由来の 3 つのしきい値 op が、兄弟 op の**補集合**を返していた](hardening/itk-threshold-ops-returned-the-dark-side.md) _(ja)_
 

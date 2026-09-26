@@ -10,8 +10,11 @@
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/roundness.chain.jpg">roundness: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>진원도 `<code style="color:#22d3bf">4・면적 / (π・장축 길이²)</code><code style="color:#22d3bf">(1에 가까울수록 정원에 가깝다. </code><code style="color:#22d3bf">circularity</code><code style="color:#22d3bf">와는 분모에 둘레가 아니라 장축 길이를 사용한다는 점이 다른 별개의 지표). HALCON의 </code><code style="color:#22d3bf">roundness</code>`(Shape factors from contour.)에 해당.</p>
+<p>진원도 `<code style="color:#22d3bf">1 - σ/μ</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">μ</code><code style="color:#22d3bf">와 </code><code style="color:#22d3bf">σ</code><code style="color:#22d3bf">는 **무게중심에서 윤곽 화소까지의 거리**의 평균과 표준편차이며, 거리가 균일할수록(정원에 가까울수록) 1에 가깝다. HALCON의 </code><code style="color:#22d3bf">roundness</code>`(Shape factors from contour.)와 <b>같은 식</b>이다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>★2026-09-26 まで `<code style="color:#22d3bf">4・面積/(π・長軸長²)</code>` という別の量を返していた</p>
+<p>(16x64 の矩形で 0.239 対 0.577)。`<code style="color:#22d3bf">circularity</code>` が「面積が最大距離の円を</p>
+<p>どれだけ埋めるか」を見るのに対し、こちらは<b>縁の凸凹</b>を見る。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>
@@ -25,6 +28,7 @@
 roundness 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aroundness%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aroundness%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shape_factors_closed_form">shape_factors_closed_form</a> — <code style="color:#22d3bf">py -3.11 examples/shape_factors_closed_form.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">feature</code> 를 입력으로 받는 것)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">features</code>)</h3>

@@ -10,8 +10,11 @@
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/compactness_xld.chain.jpg">compactness_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>가장 큰 윤곽선에 대해 콤팩트함 `<code style="color:#22d3bf">둘레²/(4π・면적)/10</code><code style="color:#22d3bf">을 계산한다(</code><code style="color:#22d3bf">compactness</code><code style="color:#22d3bf">의 윤곽선 버전이며, </code><code style="color:#22d3bf">/10</code><code style="color:#22d3bf">은 값을 [0,1]에 담기 위한 편의상의 스케일링으로 HALCON의 정의 자체는 아니다). HALCON의 </code><code style="color:#22d3bf">compactness_xld</code>`(Shape factor for the compactness of contours or polygons.)에 대응하는 근사.</p>
+<p>가장 큰 윤곽에 대해 콤팩트니스 `<code style="color:#22d3bf">max(1, 둘레²/(4π・면적))</code><code style="color:#22d3bf">를 계산한다(영역판 </code><code style="color:#22d3bf">compactness</code><code style="color:#22d3bf">의 윤곽판). 원이면 1이고 가늘고 길수록, 울퉁불퉁할수록 커지며 **상한이 없다**. HALCON의 </code><code style="color:#22d3bf">compactness_xld</code>`(Shape factor for the compactness of contours or polygons.)와 <b>같은 식</b>이다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>★2026-09-26 まで `<code style="color:#22d3bf">/10</code>` して 1 で頭打ちしていた —— **領域版と同じ欠陥が輪郭版</p>
+<p>にも在った**。直した op の双子を見落とすと穴が半分残る</p>
+<p>(`<code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>`)。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

@@ -10,8 +10,15 @@
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rectangularity.chain.jpg">rectangularity: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>직사각형도(`<code style="color:#22d3bf">skimage</code><code style="color:#22d3bf">의 </code><code style="color:#22d3bf">extent</code><code style="color:#22d3bf"> = 면적 / 외접 직사각형 면적). 값이 1에 가까울수록 영역이 자신의 외접 직사각형을 빈틈없이 채우고 있음을 나타낸다. HALCON의 </code><code style="color:#22d3bf">rectangularity</code>`(Shape factor for the rectangularity of a region.)에 해당.</p>
+<p>직사각형도. <b>1차·2차 모멘트가 같은</b> 직사각형을 만들고, 영역과의 차이 면적을 그 직사각형의 면적으로 정규화한다(`<code style="color:#22d3bf">1 - |영역 XOR 직사각형| / |직사각형|</code><code style="color:#22d3bf">). 직사각형이면 1이다. HALCON의 </code><code style="color:#22d3bf">rectangularity</code>`(Shape factor for the rectangularity of a region.)와 <b>같은 정의</b>이다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>★2026-09-26 まで<b>軸平行の</b>外接矩形との比(`<code style="color:#22d3bf">skimage</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">extent</code>`)だった。</p>
+<p>向きを見ないので、<b>同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた</b></p>
+<p>(HALCON は 0.998 のまま)。`<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>`。</p>
+<p>★正方形や円のように 2 次モーメントで向きが決まらない形では、「同じモーメントを</p>
+<p>持つ矩形」が向きの数だけ在って定義が向きを決めない。ここでは重なりが最大に</p>
+<p>なる向きを選ぶ —— そのまま任意の向きで当てると正方形が 0.651 になり、HALCON の</p>
+<p>「矩形なら 1」と食い違う。HALCON もこの形では最大 10% 過小評価すると明記する。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>

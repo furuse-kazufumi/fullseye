@@ -5,7 +5,7 @@ category: features
 in: region
 out: feature
 halcon: convexity
-examples: [gallery2d_features]
+examples: [gallery2d_features, shape_factors_closed_form]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -59,6 +59,7 @@ convexity 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
+- [shape_factors_closed_form](../../../../examples/shape_factors_closed_form.py) — `py -3.11 examples/shape_factors_closed_form.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)
 

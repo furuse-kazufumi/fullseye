@@ -31,10 +31,19 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 使い方
 
-矩形度(``skimage`` の ``extent`` = 面積 / 外接矩形の面積)。値が 1 に
-近いほど、領域が自身の外接矩形を隙間なく埋めていることを示す。HALCON の
-``rectangularity``（Shape factor for the rectangularity of a region.）に
-相当。
+矩形度。**同じ 1 次・2 次モーメントを持つ矩形**を作り、領域との差の面積を
+その矩形の面積で正規化する(``1 - |領域 XOR 矩形| / |矩形|``)。矩形なら 1。
+HALCON の ``rectangularity``（Shape factor for the rectangularity of a
+region.）**と同じ定義**。
+
+★2026-09-26 まで**軸平行の**外接矩形との比(``skimage`` の ``extent``)だった。
+向きを見ないので、**同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた**
+(HALCON は 0.998 のまま)。``docs/hardening/halcon-named-shape-factors.md``。
+
+★正方形や円のように 2 次モーメントで向きが決まらない形では、「同じモーメントを
+持つ矩形」が向きの数だけ在って定義が向きを決めない。ここでは重なりが最大に
+なる向きを選ぶ —— そのまま任意の向きで当てると正方形が 0.651 になり、HALCON の
+「矩形なら 1」と食い違う。HALCON もこの形では最大 10% 過小評価すると明記する。
 
 ``a``, ``b`` は未使用。
 

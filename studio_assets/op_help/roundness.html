@@ -10,9 +10,12 @@
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/roundness.chain.jpg">roundness: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>真円度 `<code style="color:#22d3bf">4・面積 / (π・長軸長²)</code>`(1 に近いほど真円に近い、</p>
-<p>`<code style="color:#22d3bf">circularity</code>` とは分母に周囲長でなく長軸長を使う点が異なる別の指標)。</p>
-<p>HALCON の `<code style="color:#22d3bf">roundness</code>`（Shape factors from contour.）に相当。</p>
+<p>真円度 `<code style="color:#22d3bf">1 - σ/μ</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">μ</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">σ</code>` は<b>重心から輪郭画素までの距離</b>の平均と</p>
+<p>標準偏差で、距離が一様なほど(= 真円に近いほど)1 に近い。HALCON の</p>
+<p>`<code style="color:#22d3bf">roundness</code>`（Shape factors from contour.）<b>と同じ式</b>。</p>
+<p>★2026-09-26 まで `<code style="color:#22d3bf">4・面積/(π・長軸長²)</code>` という別の量を返していた</p>
+<p>(16x64 の矩形で 0.239 対 0.577)。`<code style="color:#22d3bf">circularity</code>` が「面積が最大距離の円を</p>
+<p>どれだけ埋めるか」を見るのに対し、こちらは<b>縁の凸凹</b>を見る。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
@@ -26,6 +29,7 @@
 roundness 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aroundness%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aroundness%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shape_factors_closed_form">shape_factors_closed_form</a> — <code style="color:#22d3bf">py -3.11 examples/shape_factors_closed_form.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">feature</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">features</code>)</h3>

@@ -10,8 +10,11 @@
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/compactness_xld.chain.jpg">compactness_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Für die größte Kontur wird die Kompaktheit als `<code style="color:#22d3bf">Umfang²/(4π・Fläche)/10</code><code style="color:#22d3bf"> berechnet (die Konturversion von </code><code style="color:#22d3bf">compactness</code><code style="color:#22d3bf">; das </code><code style="color:#22d3bf">/10</code><code style="color:#22d3bf"> ist eine praktische Skalierung, um den Wert in [0,1] zu halten, und nicht HALCONs eigentliche Definition). Eine Annäherung, die HALCONs </code><code style="color:#22d3bf">compactness_xld</code>` (Shape factor for the compactness of contours or polygons.) entspricht.</p>
+<p>Berechnet für die größte Kontur die Kompaktheit `<code style="color:#22d3bf">max(1, Umfang²/(4π · Fläche))</code><code style="color:#22d3bf"> (das Kontur-Gegenstück zu </code><code style="color:#22d3bf">compactness</code><code style="color:#22d3bf">). Für einen Kreis ist sie 1 und wächst mit Länglichkeit und Rauheit — **ohne obere Schranke**. **Dieselbe Formel wie** HALCONs </code><code style="color:#22d3bf">compactness_xld</code>` (Shape factor for the compactness of contours or polygons.).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>★2026-09-26 まで `<code style="color:#22d3bf">/10</code>` して 1 で頭打ちしていた —— **領域版と同じ欠陥が輪郭版</p>
+<p>にも在った**。直した op の双子を見落とすと穴が半分残る</p>
+<p>(`<code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>`)。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>

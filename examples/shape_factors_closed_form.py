@@ -18,7 +18,11 @@
    しかも 2 つある推定量が**逆の形で外す**。どちらを使うかは測定の規約であって、
    片方が正しいという話ではない(``docs/KNOWN_ISSUES.md`` §50)
 
-3 がこの例の眼目である。「もっと細かく撮れば合う」は、ここでは成り立たない。
+4. ★**HALCON と同じ名前の op は、HALCON と同じ数を返すか** —— 名前を借りて
+   別の量を返すと、HALCON のレシピを移してきた人が同じしきい値で違う判定を得る
+
+3 と 4 がこの例の眼目である。「もっと細かく撮れば合う」は 3 では成り立たず、
+4 は 2026-09-26 に**実際に 4 本の op で食い違っていた**(直した)。
 
 EXTEND: 自分の形で採点するなら `truth_for_rect` を差し替える。
 """
@@ -96,6 +100,48 @@ def the_perimeter_bias_does_not_vanish() -> list:
     return rows
 
 
+#: HALCON のオペレータ文書にある定義(2026-09-26 に一次情報で確認)。
+#: https://www.mvtec.com/doc/halcon/2605/en/circularity.html ほか
+def halcon_formulas(reg):
+    """試験側と同じく、**定義を独立に書き直して**比べる。"""
+    from scipy import ndimage as ndi
+    from skimage import measure as skm
+
+    b = reg > 0.5
+    st = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+    border = b & ~ndi.binary_erosion(b, st)
+    ys, xs = np.nonzero(b)
+    by, bx = np.nonzero(border)
+    d = np.hypot(by - ys.mean(), bx - xs.mean())
+    pr = skm.regionprops(b.astype(int))[0]
+    F = float(pr.area)
+    return {
+        "circularity": min(1.0, F / (np.pi * float(d.max()) ** 2)),
+        "compactness": max(1.0, pr.perimeter ** 2 / (4 * np.pi * F)),
+        "roundness": min(1.0, max(0.0, 1.0 - float(d.std()) / float(d.mean()))),
+        "convexity": F / max(pr.area_convex, 1),
+    }
+
+
+def the_same_name_gives_the_same_number() -> list:
+    """★同名の op が HALCON の式と一致すること。"""
+    out = []
+    shapes = {"円 r=24": disc(24), "正方形 40": rect(40, 40, 160),
+              "矩形 16x64": rect(16, 64, 160), "L 字": _l_shape()}
+    for label, reg in shapes.items():
+        want = halcon_formulas(reg)
+        for name, w in sorted(want.items()):
+            out.append((label, name, feat(name, reg), w))
+    return out
+
+
+def _l_shape():
+    reg = np.zeros((160, 160))
+    reg[50:110, 50:70] = 1.0
+    reg[90:110, 50:110] = 1.0
+    return reg
+
+
 def main() -> int:
     print("1) 閉形式で厳密に採れるもの(矩形)")
     print("%9s %-16s %14s %14s %10s" % ("形", "特徴", "真値", "実測", "差"))
@@ -135,6 +181,16 @@ def main() -> int:
     print()
     print("   -> どちらか一方が『正しい周囲長』ではない。円形度・コンパクトさの")
     print("      絶対値は、この規約の選択に載っている(docs/KNOWN_ISSUES.md §50)。")
+
+    print()
+    print("4) HALCON と同名の op は、HALCON の式と同じ数を返すか")
+    print("   %-10s %-14s %10s %10s" % ("形", "op", "fullseye", "HALCON"))
+    worst = 0.0
+    for label, name, got, want in the_same_name_gives_the_same_number():
+        worst = max(worst, abs(got - want))
+        print("   %-10s %-14s %10.6f %10.6f" % (label, name, got, want))
+    assert worst < 1e-9, "同名なのに HALCON の式と %g ずれている" % worst
+    print("   -> 最大差 %.1e(名前を借りた以上、数も借りる)" % worst)
 
     print()
     print("PASS")

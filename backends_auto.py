@@ -106,6 +106,156 @@ def _u8(v):
     return (np.clip(np.asarray(v, np.float64), 0, 1) * 255).astype(np.uint8)
 
 
+#: ★**HALCON と同名の形状係数は、HALCON の式で計算する**(2026-09-26)。
+#: 名前を借りたのにに別の量を返すと、HALCON のレシピを移してきた人が
+#: 同じしきい値で違う判定を得る —— しかも例外は出ない。一次情報:
+#:   circularity    C = min(1, F / (π·max²))   max = 重心から全輪郭画素までの最大距離
+#:   compactness    C = max(1, L² / (4π·F))    L = 輪郭長
+#:   roundness      C = 1 - σ/μ                μ,σ = 重心→輪郭距離の平均と標準偏差
+#:   rectangularity 同じ 1 次・2 次モーメントを持つ矩形との差の面積を矩形面積で正規化
+#: (https://www.mvtec.com/doc/halcon/2605/en/circularity.html ほか)
+def _polygon_centre(y, x, area):
+    """多角形が囲む**面積**の重心(点の平均ではない)。"""
+    if area <= 0 or len(y) < 3:
+        return float(np.mean(y)), float(np.mean(x))
+    y1, x1 = np.roll(y, -1), np.roll(x, -1)
+    cross = x * y1 - x1 * y
+    a2 = float(cross.sum())
+    if abs(a2) < 1e-12:
+        return float(np.mean(y)), float(np.mean(x))
+    cx = float(((x + x1) * cross).sum() / (3.0 * a2))
+    cy = float(((y + y1) * cross).sum() / (3.0 * a2))
+    return cy, cx
+
+
+def _rasterise_contour(c, shape):
+    """輪郭(行・列の並び)を、その画像の大きさの塗りつぶしマスクにする。"""
+    H, W = int(shape[0]), int(shape[1])
+    m = np.zeros((H, W), bool)
+    if len(c) < 3:
+        return m
+    rr = np.clip(np.round(c[:, 0]).astype(int), 0, H - 1)
+    cc = np.clip(np.round(c[:, 1]).astype(int), 0, W - 1)
+    m[rr, cc] = True
+    try:
+        from skimage.draw import polygon as _poly
+        yy, xx = _poly(c[:, 0], c[:, 1], (H, W))
+        m[yy, xx] = True
+    except Exception:                                        # noqa: BLE001
+        m = ndimage.binary_fill_holes(m)
+    return m
+
+
+def _contour_pixels(mask):
+    """領域の輪郭画素(4 近傍で外に接する画素)。"""
+    st = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+    return np.asarray(mask, bool) & ~ndimage.binary_erosion(np.asarray(mask, bool), st)
+
+
+def _centre_distances(mask):
+    """(重心から輪郭画素までの距離, 面積)。輪郭が取れなければ ``(None, F)``。"""
+    m = np.asarray(mask, bool)
+    area = float(m.sum())
+    ys, xs = np.nonzero(m)
+    if area <= 0:
+        return None, 0.0
+    cy, cx = float(ys.mean()), float(xs.mean())
+    by, bx = np.nonzero(_contour_pixels(m))
+    if by.size == 0:                       # 1 画素だけ等
+        by, bx = ys, xs
+    return np.hypot(by - cy, bx - cx), area
+
+
+def _halcon_circularity(dists, area):
+    """``min(1, F / (π·max²))``。HALCON は画素近似のため 1 で切る。"""
+    if dists is None or dists.size == 0:
+        return 0.0
+    mx = float(dists.max())
+    if mx <= 0:                            # 1 画素の領域: 円とみなす
+        return 1.0
+    return float(min(1.0, area / (np.pi * mx * mx)))
+
+
+def _halcon_compactness(length, area):
+    """``max(1, L²/(4π·F))``。HALCON は画素近似のため 1 で切る(下側)。"""
+    if area <= 0:
+        return 1.0
+    return float(max(1.0, (length * length) / (4.0 * np.pi * area)))
+
+
+def _halcon_roundness(dists):
+    """``1 - σ/μ``。重心→輪郭距離のばらつきが小さいほど 1 に近い。"""
+    if dists is None or dists.size == 0:
+        return 0.0
+    mu = float(dists.mean())
+    if mu <= 0:
+        return 1.0
+    return float(min(1.0, max(0.0, 1.0 - float(dists.std()) / mu)))
+
+
+#: ★**2 次モーメントで向きが決まらない形では、向きは定義に含まれない。**
+#: 正方形や円は共分散が等方なので固有ベクトルが任意に決まる —— そのまま採点すると
+#: モーメント矩形が 45 度回った状態で当たり、**正方形が 0.651** になる(実測)。
+#: HALCON は「矩形なら 1 を返す」と明記し、向きが決まらない形での過小評価は
+#: 最大 10% と書いている(https://www.mvtec.com/doc/halcon/1911/en/rectangularity_xld.html)。
+#: 等方なときは「同じモーメントを持つ矩形」が**向きの数だけ在る**ので、どれを選んでも
+#: 定義は満たす。ここでは重なりが最大になる向きを選ぶ —— 任意性を最大側で潰す。
+_ISOTROPIC_TOL = 0.05
+
+
+def _rect_mask(m, cy, cx, V, half):
+    yy, xx = np.mgrid[:m.shape[0], :m.shape[1]]
+    q = V.T @ np.stack([(yy - cy).ravel(), (xx - cx).ravel()])
+    return ((np.abs(q[0]) <= half[0]) & (np.abs(q[1]) <= half[1])).reshape(m.shape)
+
+
+def _moment_rectangle(mask):
+    """同じ 1 次・2 次モーメントを持つ矩形のマスク。
+
+    半辺は分散から ``a = sqrt(3·λ)``(一様な矩形の分散が ``a²/3`` であることから)。
+    等方な形では向きが定義されないので、重なりが最大になる向きを選ぶ(上の註)。
+    """
+    m = np.asarray(mask, bool)
+    ys, xs = np.nonzero(m)
+    if ys.size == 0:
+        return np.zeros_like(m)
+    cy, cx = float(ys.mean()), float(xs.mean())
+    dy, dx = ys - cy, xs - cx
+    cov = np.array([[float((dy * dy).mean()), float((dy * dx).mean())],
+                    [float((dy * dx).mean()), float((dx * dx).mean())]])
+    w, V = np.linalg.eigh(cov)
+    w = np.clip(w, 0.0, None)
+    half = np.sqrt(3.0 * w)
+    if float(w.sum()) <= 0:
+        return np.zeros_like(m)
+    if abs(w[1] - w[0]) / float(w.sum()) >= _ISOTROPIC_TOL:
+        return _rect_mask(m, cy, cx, V, half)
+    best, best_ov = None, -1.0
+    for deg in range(0, 90, 3):
+        t = np.deg2rad(deg)
+        R = np.array([[np.cos(t), -np.sin(t)], [np.sin(t), np.cos(t)]])
+        cand = _rect_mask(m, cy, cx, R, half)
+        ov = float(np.logical_and(m, cand).sum())
+        if ov > best_ov:
+            best, best_ov = cand, ov
+    return best
+
+
+def _halcon_rectangularity(mask):
+    """``1 - |領域 XOR 矩形| / |矩形|``(矩形なら 1、離れるほど小さい)。
+
+    ★HALCON の註記どおり、**2 次モーメントから向きが決まらない形**(正方形など)
+    では向きによって最大 10% 過小評価される —— アルゴリズムの性質であって誤りでは
+    ない(https://www.mvtec.com/doc/halcon/1911/en/rectangularity_xld.html)。
+    """
+    m = np.asarray(mask, bool)
+    rect = _moment_rectangle(m)
+    f_rect = float(rect.sum())
+    if f_rect <= 0:
+        return 0.0
+    return float(min(1.0, max(0.0, 1.0 - float(np.logical_xor(m, rect).sum()) / f_rect)))
+
+
 def _largest_label(mask):
     lab, n = ndimage.label(mask)
     if n == 0:
@@ -925,30 +1075,36 @@ def _sh_region_feat(p):
         pr = skmeasure.regionprops(big.astype(int))[0]
         per = pr.perimeter or 1.0
         if metric == "circularity":
-            return np.float64(min(1.0, 4 * np.pi * pr.area / (per * per)))
+            d, F = _centre_distances(big)
+            return np.float64(_halcon_circularity(d, F))
         if metric == "compactness":
-            # ★**頭打ちを外した**(2026-09-26)。以前は ``min(1.0, C'/10)`` で、
-            # C' = L^2/(4πF) が 10 を超える形(幅 2 px なら長さ 80 以上の傷)を
-            # 全部 1.0 に潰していた —— 傷や割れという、いちばん見たい領域で
-            # 「形が違うのに同じ数」が返っていた。値域 [0,1] はそもそも契約では
-            # なく(`elliptic_axis` 6.35 / `r3_region_features` 18.1 が既に超える)、
-            # 同じ量を素のまま返す兄弟 op(`r3_region_features`)も在った。
-            # HALCON は max(1, C') と下で切るが、ここでは切らない —— 小さすぎて
-            # C' < 1 になる領域は「近似が効いていない」という情報そのものであり、
-            # 必要なら呼ぶ側で切れる。docs/hardening/compactness-saturated-at-one.md
-            return np.float64((per * per) / (4 * np.pi * max(pr.area, 1)))
+            # ★**頭打ちを外し、HALCON の式に揃えた**(2026-09-26)。以前は
+            # ``min(1.0, C'/10)`` で、C' = L²/(4πF) が 10 を超える形(幅 2 px なら
+            # 長さ 80 以上の傷)を全部 1.0 に潰していた —— 傷や割れという、いちばん
+            # 見たい領域で「形が違うのに同じ数」が返っていた。HALCON は上ではなく
+            # **下**を 1 で切る(画素近似で 1 を下回りうるため)。
+            # docs/hardening/compactness-saturated-at-one.md
+            return np.float64(_halcon_compactness(per, float(pr.area)))
         if metric == "convexity":
             return np.float64(pr.area / max(pr.area_convex, 1))
         if metric == "solidity":
             return np.float64(pr.solidity)
         if metric == "rectangularity":
-            return np.float64(pr.extent)
+            # ★HALCON は**同じ 1 次・2 次モーメントを持つ矩形**との差で測る。
+            # 以前は軸平行の外接矩形との比(skimage の extent)だったので、
+            # **同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた**
+            # (HALCON は 0.998 のまま)。docs/hardening/halcon-named-shape-factors.md
+            return np.float64(_halcon_rectangularity(big))
         if metric == "eccentricity":
             return np.float64(pr.eccentricity)
         if metric == "orientation":
             return np.float64((pr.orientation + np.pi / 2) / np.pi)
         if metric == "roundness":
-            return np.float64(min(1.0, 4 * pr.area / (np.pi * max(pr.axis_major_length, 1) ** 2)))
+            # ★HALCON の roundness は ``1 - σ/μ``(重心→輪郭距離の平均と標準偏差)。
+            # 以前は ``4A/(π·長軸²)`` という別の量で、16x64 の矩形で 0.239 対 0.577
+            # と食い違っていた。
+            d, _F = _centre_distances(big)
+            return np.float64(_halcon_roundness(d))
         if metric == "diameter":
             return np.float64(pr.equivalent_diameter_area / max(m.shape))
         if metric == "euler":
@@ -1197,9 +1353,15 @@ def _sh_xld(p):
             if kind == "area":
                 return np.float64(min(1.0, area / (cv["shape"][0] * cv["shape"][1])))
             if kind == "circularity":
-                return np.float64(min(1.0, 4 * np.pi * area / (per * per)))
+                # ★region 版と同じ HALCON の式。重心は**囲まれた面積の重心**を使う
+                # (点の平均ではない —— 点が密な側に寄ってしまう)。
+                cy, cx = _polygon_centre(y, x, area)
+                d = np.hypot(y - cy, x - cx)
+                return np.float64(_halcon_circularity(d, area))
             if kind == "compactness":
-                return np.float64(min(1.0, (per * per) / (4 * np.pi * max(area, 1)) / 10))
+                # ★region 版と**同じ欠陥がここにも在った**(``/10`` + 頭打ち)。
+                # 直した op の双子を見落とすと、穴が半分残る。
+                return np.float64(_halcon_compactness(per, area))
             if kind == "convexity":
                 if _HAS_CV:
                     hull = cv2.convexHull(np.stack([x, y], 1).astype(np.float32))
@@ -1218,9 +1380,11 @@ def _sh_xld(p):
                 (_, _), r = cv2.minEnclosingCircle(pts)
                 return np.float64(min(1.0, 2 * r / max(cv["shape"])))
             if kind == "rectangularity":
-                ar = abs(float(cv2.contourArea(pts)))
-                (_, (w, h), _) = cv2.minAreaRect(pts)
-                return np.float64(min(1.0, ar / max(w * h, 1.0)))
+                # ★HALCON は最小外接矩形ではなく**同じモーメントを持つ矩形**で測る。
+                # 輪郭を一度ラスタ化して region 版と同じ式に載せる(差の面積を
+                # 直接測るため)。
+                return np.float64(_halcon_rectangularity(
+                    _rasterise_contour(c, cv["shape"])))
             if kind == "moment_xld":
                 mm = cv2.moments(pts)
                 a2 = mm["m00"] or 1.0
@@ -1573,19 +1737,19 @@ SEED: list[tuple] = [
     ("count_obj", "features", REG, FEA, "region_feat", {"metric": "count"},
      '連結成分の個数を数える(``ndimage.label``、既定 8 連結)。HALCON の\n``count_obj``/``connection`` の既定と同じ 8 連結を採用しており、斜めに\n接する 2 つの塊は 1 個として数える(4 連結にすると過剰カウントになる例\n=セルカウントで実測 342 個 vs 327 個、コード内コメント参照)。HALCON の\n``count_obj``（Number of objects in a tuple.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("circularity", "features", REG, FEA, "region_feat", {"metric": "circularity"},
-     '円形度 ``4π・面積 / 周囲長²``(1 に近いほど真円に近い)。連結成分が\n複数ある場合は最大面積のものだけを評価する。HALCON の ``circularity``\n（Shape factor for the circularity (similarity to a circle) of a\nregion.）に相当。\n\n``a``, ``b`` は未使用。'),
+     '円形度 ``min(1, 面積 /(π・max²))``。``max`` は**重心から輪郭画素までの最大距離**\nで、円なら 1、細長い形や大きな出っ張り・穴があるほど小さい。連結成分が複数ある\n場合は最大面積のものだけを評価する。HALCON の ``circularity``（Shape factor for\nthe circularity (similarity to a circle) of a region.）**と同じ式**。\n\n★2026-09-26 まで等周比 ``4π・面積/周囲長²`` という**別の量**を返していた。\n名前は HALCON から借りているのに数が違うので、HALCON のレシピを移してきた人が\n同じしきい値で違う判定を得ていた(正方形で 0.826 対 0.670 と**順序まで変わる**)。\n``docs/hardening/halcon-named-shape-factors.md``。\n\n``a``, ``b`` は未使用。'),
     ("compactness", "features", REG, FEA, "region_feat", {"metric": "compactness"},
      'コンパクトさ ``周囲長² / (4π・面積)``。円で 1、細長い/ぎざぎざ/穴が多いほど\n大きくなり、**上限は無い**。HALCON の ``compactness``（Shape factor for the\ncompactness of a region.）と同じ量。\n\n★2026-09-26 まで ``/10`` して ``min(1.0, ...)`` で切っていた —— 値を [0,1] に\n収めるための便宜だったが、``周囲長²/(4π・面積)`` が 10 を超える形(幅 2 px なら\n長さ 80 以上の傷)を**全部 1.0 に潰していた**。傷や割れという、いちばん見たい\n領域で「形が違うのに同じ数」が返っていたことになる。値域 [0,1] はそもそも\nfeature の契約ではない(``elliptic_axis`` は 6.35、``r3_region_features`` は\n18.1 を返す)ので、潰す理由が無かった ――\n``docs/hardening/compactness-saturated-at-one.md``。\n\nHALCON は ``max(1, C)`` と**下で**切る(画素近似で 1 を下回りうるため)が、\nここでは切らない。1 を下回る値は「領域が小さすぎて近似が効いていない」と\nいう情報そのもので、必要なら呼ぶ側で切れる。\n\n``a``, ``b`` は未使用。'),
     ("convexity", "features", REG, FEA, "region_feat", {"metric": "convexity"},
      '凸性 ``面積 / 凸包面積``(1 に近いほど凸形状に近い)。``skimage.\nmeasure.regionprops`` の ``area`` と ``area_convex`` の比。HALCON の\n``convexity``（Shape factor for the convexity of a region.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("rectangularity", "features", REG, FEA, "region_feat", {"metric": "rectangularity"},
-     '矩形度(``skimage`` の ``extent`` = 面積 / 外接矩形の面積)。値が 1 に\n近いほど、領域が自身の外接矩形を隙間なく埋めていることを示す。HALCON の\n``rectangularity``（Shape factor for the rectangularity of a region.）に\n相当。\n\n``a``, ``b`` は未使用。'),
+     '矩形度。**同じ 1 次・2 次モーメントを持つ矩形**を作り、領域との差の面積を\nその矩形の面積で正規化する(``1 - |領域 XOR 矩形| / |矩形|``)。矩形なら 1。\nHALCON の ``rectangularity``（Shape factor for the rectangularity of a\nregion.）**と同じ定義**。\n\n★2026-09-26 まで**軸平行の**外接矩形との比(``skimage`` の ``extent``)だった。\n向きを見ないので、**同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた**\n(HALCON は 0.998 のまま)。``docs/hardening/halcon-named-shape-factors.md``。\n\n★正方形や円のように 2 次モーメントで向きが決まらない形では、「同じモーメントを\n持つ矩形」が向きの数だけ在って定義が向きを決めない。ここでは重なりが最大に\nなる向きを選ぶ —— そのまま任意の向きで当てると正方形が 0.651 になり、HALCON の\n「矩形なら 1」と食い違う。HALCON もこの形では最大 10% 過小評価すると明記する。\n\n``a``, ``b`` は未使用。'),
     ("eccentricity", "features", REG, FEA, "region_feat", {"metric": "eccentricity"},
      '楕円近似による離心率(``skimage.measure.regionprops`` の\n``eccentricity``、0=真円、1に近いほど細長い線分状)。領域を等価な楕円に\nフィットしたときの形状指標。HALCON の ``eccentricity``（Shape features\nderived from the ellipse parameters.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("orientation_region", "features", REG, FEA, "region_feat", {"metric": "orientation"},
      '領域の主軸の向き(``regionprops`` の ``orientation``、[-π/2,π/2] を\n[0,1] へ線形写像)。楕円フィットした際の長軸の傾きを表す。HALCON の\n``orientation_region``（Orientation of a region.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("roundness", "features", REG, FEA, "region_feat", {"metric": "roundness"},
-     '真円度 ``4・面積 / (π・長軸長²)``(1 に近いほど真円に近い、\n``circularity`` とは分母に周囲長でなく長軸長を使う点が異なる別の指標)。\nHALCON の ``roundness``（Shape factors from contour.）に相当。\n\n``a``, ``b`` は未使用。'),
+     '真円度 ``1 - σ/μ``。``μ`` と ``σ`` は**重心から輪郭画素までの距離**の平均と\n標準偏差で、距離が一様なほど(= 真円に近いほど)1 に近い。HALCON の\n``roundness``（Shape factors from contour.）**と同じ式**。\n\n★2026-09-26 まで ``4・面積/(π・長軸長²)`` という別の量を返していた\n(16x64 の矩形で 0.239 対 0.577)。``circularity`` が「面積が最大距離の円を\nどれだけ埋めるか」を見るのに対し、こちらは**縁の凸凹**を見る。\n\n``a``, ``b`` は未使用。'),
     ("diameter_region", "features", REG, FEA, "region_feat", {"metric": "diameter"},
      '等価直径(面積が等しい円の直径)を領域の最大辺長で正規化した値\n(``regionprops`` の ``equivalent_diameter_area``)。HALCON の\n``diameter_region``（Maximal distance between two boundary points of a\nregion.）が定義する「境界上の 2 点間の最大距離」とは厳密には異なる指標\n(等価円直径による近似)。\n\n``a``, ``b`` は未使用。'),
     ("euler_number", "features", REG, FEA, "region_feat", {"metric": "euler"},
@@ -1652,9 +1816,9 @@ SEED: list[tuple] = [
     ("area_center_xld", "features", CON, FEA, "xld", {"kind": "area"},
      '最大の点数を持つ輪郭 1 本について、シューレース公式(靴紐公式)で\n多角形面積を求め、画像の全画素数で正規化して返す。HALCON の\n``area_center_xld``（Area and center of gravity (centroid) of contours and\npolygons.）は面積に加えて重心も返す演算子だが、この代役では面積のみを\n返す(重心情報は失われる近似 ―― ``feature`` ソートが 1 スカラーである\n契約上の制約)。\n\n``a``, ``b`` は未使用。輪郭が無ければ 0 を返す。'),
     ("circularity_xld", "features", CON, FEA, "xld", {"kind": "circularity"},
-     '最大の輪郭についてシューレース公式で面積、線分長の和で周囲長を求め、\n円形度 ``4π・面積/周囲長²`` を計算する(領域版の ``circularity`` の輪郭\n版)。HALCON の ``circularity_xld``（Shape factor for the circularity\n(similarity to a circle) of contours or polygons.）に相当。\n\n``a``, ``b`` は未使用。'),
+     '最大の輪郭について、シューレース公式の面積 ``F`` と、**囲まれた面積の重心**から\n輪郭点までの最大距離 ``max`` から ``min(1, F/(π・max²))`` を計算する\n(領域版 ``circularity`` の輪郭版)。HALCON の ``circularity_xld``\n（Shape factor for the circularity (similarity to a circle) of contours or\npolygons.）**と同じ式**。\n\n★2026-09-26 まで等周比 ``4π・面積/周囲長²`` という別の量だった。重心は点の\n平均ではなく面積の重心を使う —— 点が密な側に寄ってしまうため。\n\n``a``, ``b`` は未使用。'),
     ("compactness_xld", "features", CON, FEA, "xld", {"kind": "compactness"},
-     '最大の輪郭についてコンパクトさ ``周囲長²/(4π・面積)/10`` を計算する\n(``compactness`` の輪郭版で、``/10`` は値を [0,1] に収めるための便宜的な\nスケーリング、HALCON の定義そのものではない)。HALCON の\n``compactness_xld``（Shape factor for the compactness of contours or\npolygons.）に相当する近似。\n\n``a``, ``b`` は未使用。'),
+     '最大の輪郭についてコンパクトさ ``max(1, 周囲長²/(4π・面積))`` を計算する\n(``compactness`` の輪郭版)。円で 1、細長い/ぎざぎざなほど大きく、**上限は無い**。\nHALCON の ``compactness_xld``（Shape factor for the compactness of contours\nor polygons.）**と同じ式**。\n\n★2026-09-26 まで ``/10`` して 1 で頭打ちしていた —— **領域版と同じ欠陥が輪郭版\nにも在った**。直した op の双子を見落とすと穴が半分残る\n(``docs/hardening/compactness-saturated-at-one.md``)。\n\n``a``, ``b`` は未使用。'),
     ("convexity_xld", "features", CON, FEA, "xld", {"kind": "convexity"},
      '最大の輪郭について凸性 ``輪郭の面積 / 凸包の面積`` を計算する\n(``cv2.convexHull`` + ``cv2.contourArea``)。cv2 が無い環境では常に 1.0\n(完全凸)を返すフォールバックになる点に注意。HALCON の ``convexity_xld``\n（Shape factor for the convexity of contours or polygons.）に相当。\n\n``a``, ``b`` は未使用。'),
     # XLD contour -> contour (transforms / closing)
@@ -1701,7 +1865,7 @@ SEED: list[tuple] = [
     ("diameter_xld", "features", CON, FEA, "xld", {"kind": "diameter"},
      '輪郭を包含する最小外接円(``cv2.minEnclosingCircle``)の直径を画像の\n最大辺長で正規化した値。HALCON の ``diameter_xld``（Maximum distance\nbetween two contour or polygon points.）が定義する「輪郭上の 2 点間の\n最大距離」とは厳密には異なる指標(外接円の直径による近似、最小外接円は\n必ずしも最遠 2 点を結ぶ直径と一致しない)。\n\n``a``, ``b`` は未使用。'),
     ("rectangularity_xld", "features", CON, FEA, "xld", {"kind": "rectangularity"},
-     '輪郭面積を最小外接回転矩形(``cv2.minAreaRect``)の面積で割った充填率。\n値が 1 に近いほど輪郭が自身の外接矩形を隙間なく埋めていることを示す。\nHALCON の ``rectangularity_xld``（Shape factor for the rectangularity of\ncontours or polygons.）に相当。\n\n``a``, ``b`` は未使用。'),
+     '矩形度の輪郭版。輪郭を塗りつぶして、**同じ 1 次・2 次モーメントを持つ矩形**との\n差の面積をその矩形の面積で正規化する。矩形なら 1。HALCON の\n``rectangularity_xld``（Shape factor for the rectangularity of contours or\npolygons.）**と同じ定義**。\n\n★2026-09-26 まで**最小外接回転矩形**(``cv2.minAreaRect``)との比だった ——\n似てはいるが別の測り方で、凹んだ形で系統的にずれる。\n\n``a``, ``b`` は未使用。'),
     ("moments_xld", "features", CON, FEA, "xld", {"kind": "moment_xld"},
      '輪郭の生モーメント(``cv2.moments``)から ``(mu20+mu02)/面積²`` という\n単一スカラーを計算する ―― HALCON の ``moments_xld``（Geometric moments\nM20, M02, and M11 of contours or polygons.）が返す M20/M02/M11 の 3 成分を\n1 つに合成した近似(個々の方向成分・M11 は失われる)。\n\n``a``, ``b`` は未使用。'),
     ("shape_trans_xld", "contour", CON, CON, "xld", {"kind": "convex"},
