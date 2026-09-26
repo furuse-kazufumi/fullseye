@@ -12,6 +12,8 @@
   A3  estimate_noise が σ の単位ですらなく、σ>=0.08 で 1.0 に張り付いていた。
   A4  zoom_image_factor / zoom_image_size / rescale_img が同一実装で b が全部死んでいた。
   A5  area_center が中心を返さず、面積でなく面積比(解像度依存)を返していた。
+      ★2026-09-26: そのとき選んだ「正規化して解像度に依らなくする」規約自体を
+      やめ、HALCON と同じ**画素値**にした(docs/KNOWN_ISSUES.md §51)。
   A6  gabor の `_norm` が向きによる応答の大小を潰していた。
   A11 edges_sub_pix が整数画素座標を返していた(名前に反してサブピクセルでない)。
 """
@@ -321,24 +323,39 @@ def test_rescale_img_default_b_is_bit_identical_to_the_old_cubic_default():
 # A5: area_center が中心を返し、解像度に依らない                               #
 # --------------------------------------------------------------------------- #
 def test_area_center_returns_area_and_centre():
-    """旧実装は `np.mean(mask)` の 1 スカラ = 中心を返さない・面積でなく面積比。"""
+    """旧実装は `np.mean(mask)` の 1 スカラ = 中心を返さない・面積でなく面積比。
+
+    ★2026-09-26 に**規約が変わった**(docs/KNOWN_ISSUES.md §51、ユーザー判断)。
+    2026-09-02 の直しは 3 成分を返すところまでは正しかったが、そのとき選んだ
+    「画像サイズで割って解像度に依らなくする」は、**HALCON の同名演算子が返す量
+    とは別物**だった。いまは画素で返す —— 面積は画素数、重心は行・列。
+    """
     m = np.zeros((420, 420))
     m[30:90, 30:90] = 1.0
     out = np.asarray(RT["area_center"](m, 0.5, 0.5), np.float64)
     assert out.shape == (3,), "area_center は (面積, 行, 列) の 3 成分"
-    assert out[0] == pytest.approx(3600 / 176400.0, rel=1e-9)
-    assert out[1] == pytest.approx(59.5 / 419.0, rel=1e-6)
-    assert out[2] == pytest.approx(59.5 / 419.0, rel=1e-6)
+    assert out[0] == pytest.approx(3600.0, rel=1e-9)         # 60x60 画素
+    assert out[1] == pytest.approx(59.5, rel=1e-6)
+    assert out[2] == pytest.approx(59.5, rel=1e-6)
     assert BY["area_center"].out_sort == "match"
 
 
-def test_area_center_centre_is_resolution_independent():
-    """同じ相対位置・相対サイズなら解像度が倍でもほぼ同じ 3 成分を返す。"""
+def test_area_center_scales_with_the_object_not_with_the_canvas():
+    """★2026-09-26: 「解像度に依らない」を**やめた**ことを、ここで固定する。
+
+    旧規約は「同じ相対サイズなら解像度が倍でも同じ数」を求めていた。画素で返す
+    いまは逆で、**物が 2 倍なら面積は 4 倍・重心は 2 倍**になる —— 画素数は
+    正規化値から復元できないので、情報を捨てない側に倒した(§51)。
+    同じ物を大きな画像に置いただけなら数が変わらないことは
+    `tests/test_pixel_units_2026_09_26.py` が見ている。
+    """
     a = np.zeros((420, 420)); a[30:90, 30:90] = 1.0
     b = np.zeros((840, 840)); b[60:180, 60:180] = 1.0
     ra = np.asarray(RT["area_center"](a, 0.5, 0.5), np.float64)
     rb = np.asarray(RT["area_center"](b, 0.5, 0.5), np.float64)
-    assert np.allclose(ra, rb, atol=2e-3), (ra, rb)
+    assert rb[0] == pytest.approx(4.0 * ra[0], rel=1e-9), (ra, rb)
+    assert rb[1] == pytest.approx(2.0 * ra[1] + 0.5, rel=1e-6)
+    assert rb[2] == pytest.approx(2.0 * ra[2] + 0.5, rel=1e-6)
 
 
 def test_area_center_tracks_the_blob_position():
@@ -347,12 +364,13 @@ def test_area_center_tracks_the_blob_position():
     r1 = np.asarray(RT["area_center"](m1, 0.5, 0.5), np.float64)
     r2 = np.asarray(RT["area_center"](m2, 0.5, 0.5), np.float64)
     assert r1[0] == pytest.approx(r2[0])              # 面積は同じ
-    assert r2[1] > r1[1] + 0.5 and r2[2] > r1[2] + 0.5
+    assert r2[1] > r1[1] + 200.0 and r2[2] > r1[2] + 200.0   # 画素で 270 離れている
 
 
 def test_area_center_of_an_empty_region_is_fail_soft():
+    """空領域は面積 0・中心は**画像中心の画素座標**(2026-09-26 に画素へ)。"""
     out = np.asarray(RT["area_center"](np.zeros((32, 32)), 0.5, 0.5), np.float64)
-    assert np.allclose(out, [0.0, 0.5, 0.5]) and np.all(np.isfinite(out))
+    assert np.allclose(out, [0.0, 15.5, 15.5]) and np.all(np.isfinite(out))
 
 
 # --------------------------------------------------------------------------- #

@@ -1950,7 +1950,7 @@
     "dim": "2d",
     "category": "features",
     "in": "contour",
-    "out": "feature",
+    "out": "match",
     "halcon": "area_center_xld",
     "path": "docs/ops/2d/features/area_center_xld.md"
    }
@@ -2212,7 +2212,7 @@
     "dim": "2d",
     "category": "features",
     "in": "region",
-    "out": "feature",
+    "out": "match",
     "halcon": "elliptic_axis",
     "path": "docs/ops/2d/features/elliptic_axis.md"
    }
@@ -2223,7 +2223,7 @@
     "dim": "2d",
     "category": "features",
     "in": "contour",
-    "out": "feature",
+    "out": "match",
     "halcon": "elliptic_axis_xld",
     "path": "docs/ops/2d/features/elliptic_axis_xld.md"
    }

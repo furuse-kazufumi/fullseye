@@ -633,7 +633,7 @@
     "a",
     "b"
    ],
-   "out_kind": "float",
+   "out_kind": "ndarray",
    "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\narea_center_xld 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
@@ -3521,7 +3521,7 @@
     "a",
     "b"
    ],
-   "out_kind": "float",
+   "out_kind": "ndarray",
    "program": "threshold 0.50 0.50\nelliptic_axis 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
@@ -3535,7 +3535,7 @@
     "a",
     "b"
    ],
-   "out_kind": "float",
+   "out_kind": "ndarray",
    "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\nelliptic_axis_xld 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"

@@ -3,7 +3,7 @@ op: elliptic_axis
 dim: 2d
 category: features
 in: region
-out: feature
+out: match
 halcon: elliptic_axis
 examples: [gallery2d_features]
 author: Kazufumi Furuse
@@ -13,7 +13,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 # elliptic_axis — 2D `features` op
 
-- **データ種**: `region` → `feature`
+- **データ種**: `region` → `match`
 - **呼び出し**: `fullseye.apply(img, "elliptic_axis", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `elliptic_axis`(意味・パラメータは HALCON リファレンスが参考になる)
 
@@ -31,9 +31,11 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 使い方
 
-領域に等価な楕円（equivalent ellipse、慣性モーメントが一致する楕円）の長軸と短軸の比（アスペクト比）を返す。``skimage.measure.regionprops`` の ``axis_major_length``/``axis_minor_length`` から計算し、/10 でおおよそ [0,1] 程度のスケールに収める（正規化ではないため、非常に細長い領域では 1 を超えうる）。a, b は未使用。
+領域に等価な楕円(equivalent ellipse、慣性モーメントが一致する楕円)の``(Ra, Rb, Phi)`` を ``match`` ソートの 3 成分ベクトルで返す —— ``Ra``/``Rb`` は長半径・短半径(**画素**)、``Phi`` は主軸の角(ラジアン、列軸から反時計回り)。HALCON の ``elliptic_axis`` (Calculate the parameters of the equivalent ellipse.)と同じ 3 値。
 
-HALCON の ``elliptic_axis``（等価楕円の長半径・短半径そのもの 2 つの長さを返す演算）とは異なり、この実装は長さではなく比（アニソメトリー、``anisometry`` と同じ metric）だけを 1 スカラーで返す近似。
+★2026-09-26 まで ``Ra/Rb``(= **別の演算子 `eccentricity` の出力** Anisometry)を 10 で割った 1 スカラーを返していた —— 名前が約束している量ではなかった。docs/hardening/halcon-named-shape-factors.md。
+
+``a``, ``b`` は未使用。
 
 ## 詳しい使い方ガイド
 
@@ -58,9 +60,9 @@ elliptic_axis 0.50 0.50
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
 
-## 型が繋がる次の op(`feature` を入力に取れる)
+## 型が繋がる次の op(`match` を入力に取れる)
 
-[identity](../misc/identity.md) · [feature_to_img](../bridge/feature_to_img.md)
+[identity](../misc/identity.md)
 
 ## 同カテゴリ(`features`)
 

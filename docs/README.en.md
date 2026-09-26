@@ -215,7 +215,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 211
+## Document map — all 212
 
 The complete map, so that **no document is unreachable from this index** (the 2,193 per-op notes and 58 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
@@ -351,7 +351,7 @@ The complete map, so that **no document is unreachable from this index** (the 2,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(134)
+**Other**(135)
 
 | document | what it covers |
 |---|---|
@@ -458,6 +458,7 @@ The complete map, so that **no document is unreachable from this index** (the 2,
 | [`hardening/cli-help-and-subcommands-broke-in-the-wheel.md`](hardening/cli-help-and-subcommands-broke-in-the-wheel.md) | id: cli-help-and-subcommands-broke-in-the-wheel |
 | [`hardening/compactness-saturated-at-one.md`](hardening/compactness-saturated-at-one.md) | id: compactness-saturated-at-one |
 | [`hardening/dem-viewshed-self-occlusion.md`](hardening/dem-viewshed-self-occlusion.md) | id: dem-viewshed-self-occlusion |
+| [`hardening/dimensional-features-were-normalised.md`](hardening/dimensional-features-were-normalised.md) | id: dimensional-features-were-normalised |
 | [`hardening/ecef-to-geodetic-returned-latitude-180.md`](hardening/ecef-to-geodetic-returned-latitude-180.md) | id: ecef-to-geodetic-returned-latitude-180 |
 | [`hardening/empty-and-tiny-inputs-raised-raw-library-errors.md`](hardening/empty-and-tiny-inputs-raised-raw-library-errors.md) | id: empty-and-tiny-inputs-raised-raw-library-errors |
 | [`hardening/empty-name-resolved-and-narrow-floats-not-upcast.md`](hardening/empty-name-resolved-and-narrow-floats-not-upcast.md) | id: empty-name-resolved-and-narrow-floats-not-upcast |

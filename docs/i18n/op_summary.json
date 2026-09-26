@@ -1169,12 +1169,12 @@
    "de": "Rauschunterdrückung durch einen Sigmafilter (sigma filter, Lee-Typ). Es wird erneut gemittelt, wobei nur Pixel im Fenster verwendet werden, deren Abweichung vom Fenstermittelwert unter einem Schwellenwert liegt (0,05-0,4, eingestellt durch b), wodurch der Einfluss extremer Ausreißerpixel (z. B. Salt-and-Pepper-Rauschen) entfernt wird. Gibt es im Fenster kein passendes Pixel, wird der ursprüngliche Wert unverändert zurückgegeben. a stellt die Fenstergröße auf 3/5/7/9 ein."
   },
   "2d/elliptic_axis": {
-   "fp": "f266939dfa07",
-   "en": "Returns the ratio (aspect ratio) of the major to minor axis of the equivalent ellipse (the ellipse with matching moment of inertia) of the region. Computed from ``skimage.measure.regionprops``'s ``axis_major_length``/``axis_minor_length``, then divided by 10 to bring it roughly into the [0,1] scale (this is not true normalization, so it can exceed 1 for very elongated regions). a and b are unused.",
-   "zh": "返回区域的等价椭圆（equivalent ellipse，惯性矩相同的椭圆）的长轴与短轴之比（长宽比）。根据 ``skimage.measure.regionprops`` 的 ``axis_major_length``/``axis_minor_length`` 计算，并除以 10 使其大致落在 [0,1] 范围（并非归一化，因此对于非常细长的区域可能超过 1）。a、b 未使用。",
-   "tw": "回傳區域的等價橢圓（equivalent ellipse，慣性矩相同的橢圓）的長軸與短軸之比（長寬比）。依 ``skimage.measure.regionprops`` 的 ``axis_major_length``/``axis_minor_length`` 計算，並除以 10 使其大致落在 [0,1] 範圍內（並非正規化，因此對非常細長的區域可能超過 1）。a、b 未使用。",
-   "ko": "영역에 대응하는 등가 타원(equivalent ellipse, 관성 모멘트가 일치하는 타원)의 장축과 단축의 비(종횡비)를 반환한다. ``skimage.measure.regionprops``의 ``axis_major_length``/``axis_minor_length``로부터 계산하고, 10으로 나누어 대략 [0,1] 정도의 스케일로 맞춘다(정규화가 아니므로 매우 가늘고 긴 영역에서는 1을 넘을 수 있다). a, b는 사용되지 않는다.",
-   "de": "Gibt das Verhältnis (Seitenverhältnis) von großer zu kleiner Achse der äquivalenten Ellipse (equivalent ellipse, Ellipse mit gleichem Trägheitsmoment) der Region zurück. Berechnet aus ``axis_major_length``/``axis_minor_length`` von ``skimage.measure.regionprops`` und durch 10 geteilt, um es grob auf die Skala [0,1] zu bringen (keine echte Normierung, daher kann der Wert bei sehr langgestreckten Regionen 1 überschreiten). a und b werden nicht verwendet."
+   "fp": "1388c36c91a7",
+   "en": "Returns ``(Ra, Rb, Phi)`` of the equivalent ellipse of the region (the ellipse with the same moments of inertia) as a 3-component vector of ``match`` sort — ``Ra``/``Rb`` are the major and minor semi-axes in **pixels**, ``Phi`` is the angle of the major axis (radians, counter-clockwise from the column axis). The same three values as HALCON's ``elliptic_axis`` (Calculate the parameters of the equivalent ellipse.).",
+   "zh": "以 ``match`` 排序的 3 分量向量返回区域等价椭圆(惯性矩相同的椭圆)的 ``(Ra, Rb, Phi)``—— ``Ra``/``Rb`` 是长半轴与短半轴(**像素**),``Phi`` 是主轴的角度(弧度,从列轴逆时针)。与 HALCON 的 ``elliptic_axis``(Calculate the parameters of the equivalent ellipse.)是同样的三个值。",
+   "tw": "以 ``match`` 排序的 3 分量向量回傳區域等價橢圓(慣性矩相同的橢圓)的 ``(Ra, Rb, Phi)``—— ``Ra``/``Rb`` 是長半軸與短半軸(**像素**),``Phi`` 是主軸的角度(弧度,從列軸逆時針)。與 HALCON 的 ``elliptic_axis``(Calculate the parameters of the equivalent ellipse.)是同樣的三個值。",
+   "ko": "영역의 등가 타원(관성 모멘트가 같은 타원)의 ``(Ra, Rb, Phi)``를 ``match`` 정렬의 3성분 벡터로 반환한다 —— ``Ra``/``Rb``는 장반축과 단반축(**화소**), ``Phi``는 주축의 각(라디안, 열 축에서 반시계 방향). HALCON의 ``elliptic_axis``(Calculate the parameters of the equivalent ellipse.)와 같은 세 값이다.",
+   "de": "Liefert ``(Ra, Rb, Phi)`` der äquivalenten Ellipse der Region (die Ellipse mit denselben Trägheitsmomenten) als dreikomponentigen Vektor der Sortierung ``match`` — ``Ra``/``Rb`` sind große und kleine Halbachse in **Pixeln**, ``Phi`` ist der Winkel der Hauptachse (Bogenmaß, gegen den Uhrzeigersinn von der Spaltenachse). Dieselben drei Werte wie HALCONs ``elliptic_axis`` (Calculate the parameters of the equivalent ellipse.)."
   },
   "2d/elliptic_axis_xld": {
    "fp": "1e1e4cae560d",

@@ -736,11 +736,13 @@ def section_tool_gaps() -> None:
     assert not any(n.startswith("bone_") or "trabec" in n for n in fs.op_names())
     print("  (d) 骨形態計測の指標(BV/TV, Tb.Th, Tb.Sp, Tb.N)を一括で出す op が無い。"
           "blob_features の area/perimeter から自前。")
-    # (e) get_region_thickness は画像サイズで正規化された 1 スカラー
+    # (e) 【2026-09-26 半分塞がった】get_region_thickness が画素で返るようになった
     v = float(np.asarray(fs.apply(m, "get_region_thickness")))
-    assert v < 1.0
-    print("  (e) get_region_thickness は「最大内接円 × 2 / 画像辺長」の 1 スカラー(%.3f)で、"
-          "分布も画素単位も出ない。" % v)
+    assert v > 1.0, "画素で返っていない(%.3f)" % v
+    print("  (e) 【半分塞がった】get_region_thickness は画素で返るようになった"
+          "(最大内接円 × 2 = %.1f px)。残る穴は**分布が出ない**こと —— 骨梁の厚さは"
+          "\n      1 本ごとに違うので、最大値 1 つでは Tb.Th にならない"
+          "(この PoC は local_thickness の中央値を使っている)。" % v)
 
 
 # --------------------------------------------------------------------------- #

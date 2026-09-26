@@ -3,7 +3,7 @@ op: elliptic_axis_xld
 dim: 2d
 category: features
 in: contour
-out: feature
+out: match
 halcon: elliptic_axis_xld
 examples: [gallery2d_features]
 author: Kazufumi Furuse
@@ -13,7 +13,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 # elliptic_axis_xld — 2D `features` op
 
-- **データ種**: `contour` → `feature`
+- **データ種**: `contour` → `match`
 - **呼び出し**: `fullseye.apply(img, "elliptic_axis_xld", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `elliptic_axis_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
@@ -62,9 +62,9 @@ elliptic_axis_xld 0.50 0.50
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
 
-## 型が繋がる次の op(`feature` を入力に取れる)
+## 型が繋がる次の op(`match` を入力に取れる)
 
-[identity](../misc/identity.md) · [feature_to_img](../bridge/feature_to_img.md)
+[identity](../misc/identity.md)
 
 ## 同カテゴリ(`features`)
 

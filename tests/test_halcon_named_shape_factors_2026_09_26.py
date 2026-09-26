@@ -276,42 +276,29 @@ def test_the_contour_compactness_no_longer_saturates():
 # --------------------------------------------------------------------------- #
 #: ★同名なのに HALCON と別の量を返すもの。**直す予定のものだけ**をここに書き、
 #: 「本当にまだ違う」ことを下の試験が確かめる(直ったら台帳から外させる)。
-_NOT_YET_HALCON = {
-    "elliptic_axis": "HALCON は (Ra, Rb, Phi) を返し Ra/Rb は**画素の長さ**。この repo は "
-                     "寸法を持つ特徴を画像サイズで正規化する規約を持っており"
-                     "(`area_center` の註)、**どちらに合わせるかは 1 op でなく規約の選択**"
-                     "なので判断待ち。いま返しているのは Anisometry/10 で、"
-                     "**HALCON の 3 値のどれでもない**",
-    "diameter_region": "HALCON の Diameter は**輪郭 2 点間の最大距離**(画素)。いまは"
-                       "等面積円の直径を画像サイズで正規化した別の量。上と同じ規約の"
-                       "選択に載っているので判断待ち",
+_NOT_YET_HALCON: dict = {
+    # ★2026-09-26: `elliptic_axis` と `diameter_region` はここから外れた —— ユーザー
+    # 判断で「寸法を持つ特徴も HALCON と同じ**画素値**で返す」と決まり、量もスケールも
+    # 合わせたため(docs/KNOWN_ISSUES.md §51 は解決)。台帳を空にしても門は残す:
+    # 次に「まだ合わせていないもの」が出たとき、ここに名指しで載せる場所が要る。
 }
 
 
 def test_the_not_yet_ledger_names_ops_that_really_still_differ():
-    """免除台帳が腐らないこと —— 直ったら外させる。
+    """★免除台帳が腐らないこと —— 直ったら外させる。
 
-    ★ここで見るのは「**まだ HALCON の量ではない**」こと。直した日に台帳から
-    外し忘れると、台帳は「直っていない」と嘘をつき続ける。
+    2026-09-26 に `elliptic_axis` / `diameter_region` が外れて空になった。空の
+    台帳はこの試験を素通りするので、**空であること自体**も確かめる(「うっかり
+    全部消した」と「本当に全部直した」を区別するため)。
     """
-    reg = SHAPES["thin"]
-    pr = skimage_measure.regionprops((reg > 0.5).astype(int))[0]
-    ra, rb = pr.axis_major_length / 2.0, max(pr.axis_minor_length / 2.0, 1e-9)
-    st = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
-    b = reg > 0.5
-    by, bx = np.nonzero(b & ~ndi.binary_erosion(b, st))
-    pts = np.stack([by, bx], 1).astype(float)
-    max_chord = float(np.sqrt(((pts[:, None, :] - pts[None, :, :]) ** 2).sum(-1).max()))
-    halcon_value = {"elliptic_axis": ra, "diameter_region": max_chord}
-    stale = []
-    for name, want in halcon_value.items():
-        if name not in ops.RT or name not in _NOT_YET_HALCON:
-            continue
-        got = np.ravel(np.asarray(ops.RT[name](reg.copy(), 0.5, 0.5), np.float64))
-        if got.size and abs(float(got[0]) - want) < 0.01:
-            stale.append(name)
-    assert not stale, "もう HALCON に合っている: %s —— 台帳から外すこと" % stale
-
+    assert isinstance(_NOT_YET_HALCON, dict)
+    if not _NOT_YET_HALCON:
+        same = {o.name for o in ops._BY_NAME.values() if o.halcon == o.name}
+        assert "elliptic_axis" in same and "diameter_region" in same, \
+            "台帳が空なのに、対象の op が消えている"
+        return
+    for name in _NOT_YET_HALCON:
+        assert name in ops.RT, "免除しているのに op が無い: %r" % name
 
 def test_every_same_named_shape_factor_is_either_checked_or_named():
     """★**配布物の側から数える。** 同名の形状係数が増えたら、この門か台帳に載る。"""
@@ -325,7 +312,10 @@ def test_every_same_named_shape_factor_is_either_checked_or_named():
     # 矩形でない形では落ちる)で専用に押さえている。
     checked = set(FORMULA) | {"rectangularity", "circularity_xld", "compactness_xld",
                               "rectangularity_xld", "convexity_xld",
-                              "eccentricity", "eccentricity_xld"}
+                              "eccentricity", "eccentricity_xld",
+                              # 2026-09-26: 画素値化で HALCON の量に揃えた
+                              # (tests/test_pixel_units_2026_09_26.py が採点する)
+                              "elliptic_axis", "diameter_region"}
     unknown = same_named - checked - set(_NOT_YET_HALCON)
     assert not unknown, (
         "同名なのに照合も免除もされていない形状係数: %s —— 門に足すか、理由つきで "

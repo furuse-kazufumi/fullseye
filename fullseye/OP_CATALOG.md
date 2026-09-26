@@ -1357,7 +1357,7 @@ _計 932 ops / 48 categories。_
 - `height_width_ratio` (halcon: `height_width_ratio`) `region → feature` · 例: `gallery2d_features`
 - `moments_region_2nd` (halcon: `moments_region_2nd`) `region → feature` · 例: `gallery2d_features`
 - `moments_region_2nd_invar` (halcon: `moments_region_2nd_invar`) `region → feature` · 例: `gallery2d_features`, `poc_rotation_invariance_audit`
-- `area_center_xld` (halcon: `area_center_xld`) `contour → feature` · 例: `gallery2d_features`
+- `area_center_xld` (halcon: `area_center_xld`) `contour → match` · 例: `gallery2d_features`
 - `circularity_xld` (halcon: `circularity_xld`) `contour → feature` · 例: `gallery2d_features`
 - `compactness_xld` (halcon: `compactness_xld`) `contour → feature` · 例: `gallery2d_features`
 - `convexity_xld` (halcon: `convexity_xld`) `contour → feature` · 例: `gallery2d_features`
@@ -1369,7 +1369,7 @@ _計 932 ops / 48 categories。_
 - `estimate_noise` (halcon: `estimate_noise`) `image → feature` · 例: `gallery2d_features`, `poc_weld_radiograph_porosity`
 - `eccentricity_xld` (halcon: `eccentricity_xld`) `contour → match` · 例: `gallery2d_features`
 - `orientation_xld` (halcon: `orientation_xld`) `contour → feature` · 例: `gallery2d_features`
-- `elliptic_axis_xld` (halcon: `elliptic_axis_xld`) `contour → feature` · 例: `gallery2d_features`
+- `elliptic_axis_xld` (halcon: `elliptic_axis_xld`) `contour → match` · 例: `gallery2d_features`
 - `diameter_xld` (halcon: `diameter_xld`) `contour → feature` · 例: `gallery2d_features`
 - `rectangularity_xld` (halcon: `rectangularity_xld`) `contour → feature` · 例: `gallery2d_features`
 - `moments_xld` (halcon: `moments_xld`) `contour → feature` · 例: `gallery2d_features`
@@ -1377,7 +1377,7 @@ _計 932 ops / 48 categories。_
 - `hough_circle_trans` (halcon: `hough_circle_trans`) `image → image` · 例: `gallery2d_features`, `poc_real_coin_metrology`
 - `get_region_thickness` (halcon: `get_region_thickness`) `region → feature` · 例: `gallery2d_features`, `poc_bone_trabecular_thickness`
 - `connect_and_holes` (halcon: `connect_and_holes`) `region → feature` · 例: `gallery2d_features`
-- `elliptic_axis` (halcon: `elliptic_axis`) `region → feature` · 例: `gallery2d_features`
+- `elliptic_axis` (halcon: `elliptic_axis`) `region → match` · 例: `gallery2d_features`
 - `count_channels` (halcon: `count_channels`) `color → feature` · 例: `gallery2d_features`
 - `xsk_blob_log` `image → feature` · 例: `gallery2d_features`, `poc_search_sweep_width`
 - `xsk_blob_dog` `image → feature` · 例: `gallery2d_features`

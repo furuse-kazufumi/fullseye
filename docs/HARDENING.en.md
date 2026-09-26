@@ -15,13 +15,13 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**34 findings (34 fixed), from 14 PoCs.**
+**35 findings (35 fixed), from 14 PoCs.**
 
 ## By kind
 
 | Kind | Findings | Fixed |
 |---|---:|---:|
-| Silently wrong (no exception) | 17 | 17 |
+| Silently wrong (no exception) | 18 | 18 |
 | Implementation defect | 5 | 5 |
 | The gate did not stand where the accident happens | 4 | 4 |
 | Present but unreachable | 7 | 7 |
@@ -32,7 +32,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 | PoC | Findings |
 |---|---:|
 | [`genspark_external_review`](../examples/genspark_external_review.py) | 17 |
-| [`shape_factors_closed_form`](../examples/shape_factors_closed_form.py) | 4 |
+| [`shape_factors_closed_form`](../examples/shape_factors_closed_form.py) | 5 |
 | [`degenerate_inputs`](../examples/degenerate_inputs.py) | 2 |
 | [`line_handshake`](../examples/line_handshake.py) | 1 |
 | [`poc_geodetic_height_frames`](../examples/poc_geodetic_height_frames.py) | 1 |
@@ -133,6 +133,12 @@ Found by: `line_handshake` / Changed: `ops.py`, `accel.py`, `detect.py`, `fscrip
 幅 2 px の傷の長さを変えても、**長さ 80 以上は全部 `1.0`**。 _(ja)_
 
 Found by: `shape_factors_closed_form` / Changed: `backends_auto.py` / Gate: `test_compactness_does_not_saturate_on_long_scratches`, `test_compactness_matches_the_closed_form_shape`, `test_the_old_squash_is_what_the_gate_catches` / Status: fixed
+
+#### [寸法を持つ特徴が画像サイズで正規化されていて、HALCON の数と合わなかった](hardening/dimensional-features-were-normalised.md) _(ja)_
+
+30x70 の矩形(画像 200x200)で、HALCON の画素値との倍率: _(ja)_
+
+Found by: `shape_factors_closed_form` / Changed: `backends_auto.py`, `data/auto_specs/regions.json` / Gate: `test_area_center_is_pixels_not_a_fraction`, `test_contlength_is_the_perimeter_in_pixels`, `test_get_region_thickness_is_pixels_and_no_longer_saturates`, `test_diameter_region_is_the_max_chord_in_pixels`, `test_the_two_diameter_ops_agree`, `test_elliptic_axis_returns_ra_rb_phi_in_pixels`, `test_the_two_elliptic_axis_ops_use_the_same_angle_convention`, `test_a_bigger_image_does_not_change_a_pixel_measurement` / Status: fixed
 
 #### [特徴が 1.0 で頭打ちし、形が違うのに同じ数を返していた(9 op)](hardening/features-saturated-at-one.md) _(ja)_
 

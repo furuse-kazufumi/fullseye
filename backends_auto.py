@@ -128,6 +128,45 @@ def _halcon_eccentricity(ra, rb, area):
     return np.array([aniso, bulk, aniso * bulk - 1.0], np.float64)
 
 
+#: ★**寸法を持つ特徴は HALCON と同じ画素値で返す**(2026-09-26、ユーザー判断)。
+#: それまでは画像サイズで割って [0,1] に収めていた(「解像度に依らない」規約)。
+#: HALCON のレシピを移してきた人にとっては、正規化も式の違いと同じだけ「数が
+#: 合わない」原因になる。正規化が要るなら利用者が割れるが、**割った値から画素数を
+#: 復元することはできない** —— 情報を捨てない側に倒す。docs/KNOWN_ISSUES.md §51。
+def _max_chord(mask) -> float:
+    """輪郭 2 点間の最大距離(HALCON ``diameter_region`` の Diameter)。"""
+    b = np.asarray(mask, bool)
+    if not b.any():
+        return 0.0
+    st = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+    ys, xs = np.nonzero(b & ~ndimage.binary_erosion(b, st))
+    if ys.size == 0:
+        ys, xs = np.nonzero(b)
+    pts = np.stack([ys, xs], 1).astype(np.float64)
+    if pts.shape[0] > 4000:                     # 全対を取ると重いので凸包に落とす
+        try:
+            from scipy.spatial import ConvexHull
+            pts = pts[ConvexHull(pts).vertices]
+        except Exception:                       # noqa: BLE001
+            pts = pts[:: max(1, pts.shape[0] // 4000)]
+    d2 = ((pts[:, None, :] - pts[None, :, :]) ** 2).sum(-1)
+    return float(np.sqrt(d2.max()))
+
+
+def _ellipse_axes(pr):
+    """``(Ra, Rb, Phi)`` —— 同じモーメントを持つ楕円の半径(画素)と主軸の角(ラジアン)。
+
+    HALCON の ``elliptic_axis`` が返す 3 値。``Phi`` は列(x)軸から反時計回り。
+    """
+    ra = float(pr.axis_major_length) / 2.0
+    rb = float(pr.axis_minor_length) / 2.0
+    # skimage の orientation は「行軸から主軸まで」なので、列軸基準へ写す。
+    phi = float(np.pi / 2.0 - pr.orientation)
+    if phi > np.pi / 2.0:
+        phi -= np.pi
+    return np.array([ra, rb, phi], np.float64)
+
+
 def _polygon_centre(y, x, area):
     """多角形が囲む**面積**の重心(点の平均ではない)。"""
     if area <= 0 or len(y) < 3:
@@ -1068,17 +1107,18 @@ def _sh_region_feat(p):
         if metric == "area_center":
             # HALCON area_center = (Area, Row, Column)。1 スカラでは表せないので
             # match sort の 1-D ベクトルで 3 つとも返す(`ops._ncc_locate` と同形)。
-            # 3 成分とも **解像度に依らない** よう [0,1] 正規化する:
-            #   [0] 面積 / 画像画素数、[1] 重心行 / (H-1)、[2] 重心列 / (W-1)。
-            # 領域が空のときは (0, 0.5, 0.5) = 面積ゼロ・中心は画像中心(fail-soft)。
+            # ★**画素で返す**(2026-09-26、ユーザー判断)。それまでは 3 成分とも
+            # 画像サイズで割って [0,1] に収めていた(「解像度に依らない」規約)が、
+            # 同名は同じ数を取る方に倒した —— 正規化は利用者が割れるが、割った値
+            # から画素数は復元できない。docs/KNOWN_ISSUES.md §51。
+            #   [0] 面積(画素数)、[1] 重心の行、[2] 重心の列。
+            # 領域が空のときは面積ゼロ・中心は画像中心(fail-soft)。
             H, W = m.shape[:2]
             area = float(m.sum())
             if area <= 0:
-                return np.array([0.0, 0.5, 0.5])
+                return np.array([0.0, (H - 1) / 2.0, (W - 1) / 2.0])
             ys, xs = np.nonzero(m)
-            return np.array([area / float(m.size),
-                             float(ys.mean()) / max(H - 1, 1),
-                             float(xs.mean()) / max(W - 1, 1)])
+            return np.array([area, float(ys.mean()), float(xs.mean())])
         big, lab, n = _largest_label(m)
         if metric == "area":
             return np.float64(np.mean(m))
@@ -1125,15 +1165,25 @@ def _sh_region_feat(p):
             d, _F = _centre_distances(big)
             return np.float64(_halcon_roundness(d))
         if metric == "diameter":
-            return np.float64(pr.equivalent_diameter_area / max(m.shape))
+            # ★**量もスケールも違っていた**(2026-09-26)。等面積円の直径を画像サイズで
+            # 割っていたが、HALCON の Diameter は**輪郭 2 点間の最大距離**(画素)。
+            # 30x70 の矩形で 0.2585 対 74.85。おまけに輪郭版 `diameter_xld` は最大弦を
+            # 返していたので、**双子どうしで 5.6 倍食い違っていた**。
+            return np.float64(_max_chord(big))
         if metric == "euler":
             return np.float64(skmeasure.euler_number(m))
         if metric == "anisometry":
-            return np.float64(pr.axis_major_length / max(pr.axis_minor_length, 1e-6) / 10)
+            # ★**HALCON の `elliptic_axis` は (Ra, Rb, Phi) を返す。** ここが返して
+            # いたのは Anisometry(= Ra/Rb、**別の演算子 `eccentricity` の出力**)を
+            # 10 で割ったものだった —— 名前が約束している量ではない。
+            return _ellipse_axes(pr)
         if metric == "thickness":                    # 2x max inscribed distance (get_region_thickness)
-            return np.float64(min(1.0, 2 * float(ndimage.distance_transform_edt(m).max()) / max(m.shape)))
+            # ★画素で返す(2026-09-26)。頭打ちも外れる —— 厚みが画像の長辺の半分を
+            # 超える領域は、それまで全部 1.0 だった。
+            return np.float64(2 * float(ndimage.distance_transform_edt(m).max()))
         if metric == "perimeter":
-            return np.float64(min(1.0, per / (2.0 * (m.shape[0] + m.shape[1]))))
+            # ★画素で返す(2026-09-26)。HALCON の `contlength` は輪郭長(画素)。
+            return np.float64(per)
         if metric == "area_holes":
             return np.float64((pr.area_filled - pr.area) / max(pr.area_filled, 1))
         if metric == "aspect":
@@ -1380,7 +1430,11 @@ def _sh_xld(p):
             if kind == "num_points":
                 return np.float64(min(1.0, len(c) / 500.0))
             if kind == "area":
-                return np.float64(min(1.0, area / (cv["shape"][0] * cv["shape"][1])))
+                # ★画素で返す(2026-09-26)。HALCON の `area_center_xld` は
+                # (Area, Row, Column, PointOrder)。面積と重心を画素で返す
+                # (PointOrder は向きの印なので返していない —— §51)。
+                cy, cx = _polygon_centre(y, x, area)
+                return np.array([area, cy, cx], np.float64)
             if kind == "circularity":
                 # ★region 版と同じ HALCON の式。重心は**囲まれた面積の重心**を使う
                 # (点の平均ではない —— 点が密な側に寄ってしまう)。
@@ -1406,8 +1460,10 @@ def _sh_xld(p):
             c = max(cs, key=len)
             pts = np.stack([c[:, 1], c[:, 0]], 1).astype(np.float32)   # (x, y)
             if kind == "diameter":
-                (_, _), r = cv2.minEnclosingCircle(pts)
-                return np.float64(min(1.0, 2 * r / max(cv["shape"])))
+                # ★画素で返す + **最小外接円ではなく最大弦**(2026-09-26)。
+                # 領域版 `diameter_region` と同じ量になる。
+                d2 = ((pts[:, None, :] - pts[None, :, :]) ** 2).sum(-1)
+                return np.float64(float(np.sqrt(d2.max())))
             if kind == "rectangularity":
                 # ★HALCON は最小外接矩形ではなく**同じモーメントを持つ矩形**で測る。
                 # 輪郭を一度ラスタ化して region 版と同じ式に載せる(差の面積を
@@ -1439,7 +1495,16 @@ def _sh_xld(p):
                                             2.0 * np.sqrt(max(l2, 0.0)), ar)
             if kind == "orientation":
                 return np.float64((ang % 180) / 180.0)
-            return np.float64(minor / major)                          # elliptic_axis
+            # ★elliptic_axis: HALCON は (Ra, Rb, Phi)。fitEllipse は**直径**を返すので
+            # 半径にし、角は列(x)軸から反時計回りのラジアンに直す。
+            # ★``ang`` は**最初に返る軸**(d1 = 短軸のことが多い)の向きなので、
+            #   長軸でなければ 90 度回す —— これを忘れると領域版と 90 度ずれる
+            #   (30x70 の矩形で region 0 度 / xld -89.9 度、2026-09-26 に実測)。
+            deg = float(ang) + (0.0 if d1 >= d2 else 90.0)
+            phi = np.deg2rad(deg) % np.pi
+            if phi > np.pi / 2.0:
+                phi -= np.pi
+            return np.array([major / 2.0, minor / 2.0, phi], np.float64)
         # ---- contour -> contour (transforms / closing) ----
         if kind == "convex" and _HAS_CV:
             out = []
@@ -1857,7 +1922,7 @@ SEED: list[tuple] = [
      'ガウス性ホワイトノイズを加える(``np.random.default_rng`` で生成、\n標準偏差 ``0.02+0.2*b``)。乱数シードは ``int(a*997)+7`` で ``a`` から\n決定的に導出されるため、**同じ ``a`` なら常に同じノイズパターンが再現\nされる**(真にランダムではなく、``a`` を「ノイズの見え方の型」を選ぶ\n擬似的なノブとして使っている点に注意)。HALCON の ``add_noise_white``\n（Add noise to an image.）に相当。\n\n``a`` は乱数シード(=ノイズパターン)を、``b`` はノイズの強さ(標準偏差)\nを振る。両方が使われるが、``a`` の意味は「強さ」ではなく「パターン」で\nある点が他の op と異なる。'),
     # ---- v11d increment: XLD contour ops + region moments + misc ----------
     # XLD contour -> feature
-    ("area_center_xld", "features", CON, FEA, "xld", {"kind": "area"},
+    ("area_center_xld", "features", CON, MAT, "xld", {"kind": "area"},
      '最大の点数を持つ輪郭 1 本について、シューレース公式(靴紐公式)で\n多角形面積を求め、画像の全画素数で正規化して返す。HALCON の\n``area_center_xld``（Area and center of gravity (centroid) of contours and\npolygons.）は面積に加えて重心も返す演算子だが、この代役では面積のみを\n返す(重心情報は失われる近似 ―― ``feature`` ソートが 1 スカラーである\n契約上の制約)。\n\n``a``, ``b`` は未使用。輪郭が無ければ 0 を返す。'),
     ("circularity_xld", "features", CON, FEA, "xld", {"kind": "circularity"},
      '最大の輪郭について、シューレース公式の面積 ``F`` と、**囲まれた面積の重心**から\n輪郭点までの最大距離 ``max`` から ``min(1, F/(π・max²))`` を計算する\n(領域版 ``circularity`` の輪郭版)。HALCON の ``circularity_xld``\n（Shape factor for the circularity (similarity to a circle) of contours or\npolygons.）**と同じ式**。\n\n★2026-09-26 まで等周比 ``4π・面積/周囲長²`` という別の量だった。重心は点の\n平均ではなく面積の重心を使う —— 点が密な側に寄ってしまうため。\n\n``a``, ``b`` は未使用。'),
@@ -1904,7 +1969,7 @@ SEED: list[tuple] = [
      '``eccentricity`` の輪郭版。最大の輪郭について ``(Anisometry, Bulkiness,\nStructureFactor)`` を ``match`` ソートの 3 成分ベクトルで返す。HALCON の\n``eccentricity_xld``（Shape features derived from the ellipse parameters of\ncontours or polygons.）**と同じ 3 値・同じ式**。\n\n★``Ra``/``Rb`` は**囲まれた面積の幾何モーメント**から導く。2026-09-26 まで\n``cv2.fitEllipse``(輪郭「点」への最小二乗当てはめ)を使っていて、細長い形で\n大きく外れていた —— 4x80 の棒で Anisometry 39.1 対 20.65。HALCON の定義は\nモーメント由来の方である。\n\ncv2 が無い、点数が足りない、面積が 0 のときは円の値 ``(1, 1, 0)`` を返す。\n``a``, ``b`` は未使用。'),
     ("orientation_xld", "features", CON, FEA, "xld", {"kind": "orientation"},
      '楕円フィットした輪郭の傾き角(``cv2.fitEllipse`` の角度を 180° で\n折り返して [0,1] に正規化)。HALCON の ``orientation_xld``（Calculate the\norientation of contours or polygons.）に相当。\n\n``a``, ``b`` は未使用。'),
-    ("elliptic_axis_xld", "features", CON, FEA, "xld", {"kind": "elliptic_axis"},
+    ("elliptic_axis_xld", "features", CON, MAT, "xld", {"kind": "elliptic_axis"},
      '楕円フィットした輪郭の短軸/長軸の比。値が 1 に近いほど真円に近く、\n0 に近いほど細長い。HALCON の ``elliptic_axis_xld``（Parameters of the\nequivalent ellipse of contours or polygons.）が返す(長軸, 短軸, 角度)の\n組のうち、比 1 個のスカラーだけを返す近似。\n\n``a``, ``b`` は未使用。'),
     ("diameter_xld", "features", CON, FEA, "xld", {"kind": "diameter"},
      '輪郭を包含する最小外接円(``cv2.minEnclosingCircle``)の直径を画像の\n最大辺長で正規化した値。HALCON の ``diameter_xld``（Maximum distance\nbetween two contour or polygon points.）が定義する「輪郭上の 2 点間の\n最大距離」とは厳密には異なる指標(外接円の直径による近似、最小外接円は\n必ずしも最遠 2 点を結ぶ直径と一致しない)。\n\n``a``, ``b`` は未使用。'),

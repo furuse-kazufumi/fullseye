@@ -315,7 +315,7 @@
 | `polar_trans_image_inv` | image | geometry | polar_trans_image_inv | warpAffine/warpPolar | transform | imwarp |
 | `fft_image_inv` | image | frequency | fft_image_inv | dft+mask | fft+mask | fft2 |
 | `add_noise_white` | image | noise | add_noise_white | - | util.random_noise | imnoise |
-| `area_center_xld` | contour->feature | features | area_center_xld | findContours | measure.find_contours | - |
+| `area_center_xld` | contour->match | features | area_center_xld | findContours | measure.find_contours | - |
 | `circularity_xld` | contour->feature | features | circularity_xld | findContours | measure.find_contours | - |
 | `compactness_xld` | contour->feature | features | compactness_xld | findContours | measure.find_contours | - |
 | `convexity_xld` | contour->feature | features | convexity_xld | findContours | measure.find_contours | - |
@@ -336,7 +336,7 @@
 | `points_harris_binomial` | image | edges | points_harris_binomial | cornerHarris/goodFeaturesToTrack | feature.corner_* | detectHarrisFeatures |
 | `eccentricity_xld` | contour->match | features | eccentricity_xld | findContours | measure.find_contours | - |
 | `orientation_xld` | contour->feature | features | orientation_xld | findContours | measure.find_contours | - |
-| `elliptic_axis_xld` | contour->feature | features | elliptic_axis_xld | findContours | measure.find_contours | - |
+| `elliptic_axis_xld` | contour->match | features | elliptic_axis_xld | findContours | measure.find_contours | - |
 | `diameter_xld` | contour->feature | features | diameter_xld | findContours | measure.find_contours | - |
 | `rectangularity_xld` | contour->feature | features | rectangularity_xld | findContours | measure.find_contours | - |
 | `moments_xld` | contour->feature | features | moments_xld | findContours | measure.find_contours | - |
@@ -398,7 +398,7 @@
 | `get_region_convex` | region | region | get_region_convex | distanceTransform/findContours | morphology/segmentation | bwmorph |
 | `gen_region_polygon_xld` | contour->region | contour | gen_region_polygon_xld | findContours | measure.find_contours | - |
 | `connect_and_holes` | region->feature | features | connect_and_holes | - | measure.regionprops | regionprops |
-| `elliptic_axis` | region->feature | features | elliptic_axis | - | measure.regionprops | regionprops |
+| `elliptic_axis` | region->match | features | elliptic_axis | - | measure.regionprops | regionprops |
 | `polar_trans_region_inv` | region | geometry | polar_trans_region_inv | warpAffine/warpPolar | transform | imwarp |
 | `affine_trans_polygon_xld` | contour | contour | affine_trans_polygon_xld | findContours | measure.find_contours | - |
 | `gen_contour_region_xld` | region->contour | contour | gen_contour_region_xld | findContours | measure.find_contours | - |

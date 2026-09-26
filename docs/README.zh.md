@@ -215,7 +215,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文档地图 — 共 211 篇
+## 文档地图 — 共 212 篇
 
 完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,193 篇算子说明与 58 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
@@ -351,7 +351,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(134)
+**Other**(135)
 
 | 文档 | 内容 |
 |---|---|
@@ -458,6 +458,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`hardening/cli-help-and-subcommands-broke-in-the-wheel.md`](hardening/cli-help-and-subcommands-broke-in-the-wheel.md) | id: cli-help-and-subcommands-broke-in-the-wheel |
 | [`hardening/compactness-saturated-at-one.md`](hardening/compactness-saturated-at-one.md) | id: compactness-saturated-at-one |
 | [`hardening/dem-viewshed-self-occlusion.md`](hardening/dem-viewshed-self-occlusion.md) | id: dem-viewshed-self-occlusion |
+| [`hardening/dimensional-features-were-normalised.md`](hardening/dimensional-features-were-normalised.md) | id: dimensional-features-were-normalised |
 | [`hardening/ecef-to-geodetic-returned-latitude-180.md`](hardening/ecef-to-geodetic-returned-latitude-180.md) | id: ecef-to-geodetic-returned-latitude-180 |
 | [`hardening/empty-and-tiny-inputs-raised-raw-library-errors.md`](hardening/empty-and-tiny-inputs-raised-raw-library-errors.md) | id: empty-and-tiny-inputs-raised-raw-library-errors |
 | [`hardening/empty-name-resolved-and-narrow-floats-not-upcast.md`](hardening/empty-name-resolved-and-narrow-floats-not-upcast.md) | id: empty-name-resolved-and-narrow-floats-not-upcast |

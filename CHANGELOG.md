@@ -7,6 +7,25 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★★**寸法を持つ特徴を、HALCON と同じ**画素値**で返すようにした**(8 op、ユーザー判断)。
+  30x70 の矩形(画像 200x200)での倍率: `diameter_region` 290x / 
+  `get_region_thickness` 200x / `contlength` 800x / `area_center` の面積 **40,000x**。
+  - ★倍率は**画像の大きさで変わる** —— 同じ物体でも画像を広げるだけで数が
+    変わっていた。「解像度に依らない」という当初の意図とは逆の性質である。
+  - ★**量そのものが違うものも 2 本**: `diameter_region` は等面積円の直径を返して
+    おり、HALCON の Diameter(輪郭 2 点間の最大距離)ではなかった —— 輪郭版は
+    最大弦を返していたので**双子どうしで 5.6 倍食い違っていた**。`elliptic_axis` は
+    **別の演算子 `eccentricity` の出力**である Anisometry を 10 で割った値だった。
+  - ★**正規化は「規約」として明文化されていた**(`area_center` の註)。門は規約どおりかを
+    見ており、**規約そのものが HALCON と食い違っていることは誰も見ていなかった**。
+  - `area_center` / `area_center_xld` / `elliptic_axis` / `elliptic_axis_xld` は
+    `match` ソートで複数成分を返す。★``cv2.fitEllipse`` の角は**最初に返る軸**
+    (短軸のことが多い)の向きなので、長軸でなければ 90 度回す —— 忘れると
+    領域版と 90 度ずれる(実測: region 0 度 / xld -89.9 度)。
+  - 門 = `tests/test_pixel_units_2026_09_26.py`。**閉形式で採点**し(30x70 なら面積
+    2100、厚み 30、輪郭長 196)、さらに「**画像を広げても数が変わらない**」ことを
+    門にした(正規化に戻ると落ちる)。
+  - `docs/KNOWN_ISSUES.md` §51 はこれで解決。残るは §52(moments 族)だけ。
 - ★★**特徴が 1.0 で頭打ちしていた op が、他に 9 本あった。** `compactness` を直した
   あと「単調に形を変える列を渡して、出力が止まる op」を機械的に数えた結果:
   - `height_width_ratio` —— `min(1, 高さ/幅)` で **縦長の対象が全部 1.0**

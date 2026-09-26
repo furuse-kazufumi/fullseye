@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">elliptic_axis — 2D <code style="color:#22d3bf">features</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">feature</code></p>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">match</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;elliptic_axis&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">elliptic_axis</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
 <p><img src="fig/elliptic_axis.png" alt="elliptic_axis: input → output"></p>
@@ -10,9 +10,10 @@
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/elliptic_axis.chain.jpg">elliptic_axis: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>영역에 대응하는 등가 타원(equivalent ellipse, 관성 모멘트가 일치하는 타원)의 장축과 단축의 비(종횡비)를 반환한다. `<code style="color:#22d3bf">skimage.measure.regionprops</code><code style="color:#22d3bf">의 </code><code style="color:#22d3bf">axis_major_length</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">axis_minor_length</code>`로부터 계산하고, 10으로 나누어 대략 [0,1] 정도의 스케일로 맞춘다(정규화가 아니므로 매우 가늘고 긴 영역에서는 1을 넘을 수 있다). a, b는 사용되지 않는다.</p>
+<p>영역의 등가 타원(관성 모멘트가 같은 타원)의 `<code style="color:#22d3bf">(Ra, Rb, Phi)</code><code style="color:#22d3bf">를 </code><code style="color:#22d3bf">match</code><code style="color:#22d3bf"> 정렬의 3성분 벡터로 반환한다 —— </code><code style="color:#22d3bf">Ra</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">Rb</code><code style="color:#22d3bf">는 장반축과 단반축(**화소**), </code><code style="color:#22d3bf">Phi</code><code style="color:#22d3bf">는 주축의 각(라디안, 열 축에서 반시계 방향). HALCON의 </code><code style="color:#22d3bf">elliptic_axis</code>`(Calculate the parameters of the equivalent ellipse.)와 같은 세 값이다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の `<code style="color:#22d3bf">elliptic_axis</code><code style="color:#22d3bf">（等価楕円の長半径・短半径そのもの 2 つの長さを返す演算）とは異なり、この実装は長さではなく比（アニソメトリー、</code><code style="color:#22d3bf">anisometry</code>` と同じ metric）だけを 1 スカラーで返す近似。</p>
+<p>★2026-09-26 まで `<code style="color:#22d3bf">Ra/Rb</code><code style="color:#22d3bf">(= **別の演算子 </code>eccentricity` の出力** Anisometry)を 10 で割った 1 スカラーを返していた —— 名前が約束している量ではなかった。docs/hardening/halcon-named-shape-factors.md。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
@@ -25,8 +26,8 @@
 elliptic_axis 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aelliptic_axis%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aelliptic_axis%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">feature</code> 를 입력으로 받는 것)</h3>
-<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">match</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">features</code>)</h3>
 <p><a style="color:#22d3bf" href="op:effective_bit_depth">effective_bit_depth</a> · <a style="color:#22d3bf" href="op:blob_count">blob_count</a> · <a style="color:#22d3bf" href="op:area_frac">area_frac</a> · <a style="color:#22d3bf" href="op:count_contours">count_contours</a> · <a style="color:#22d3bf" href="op:total_length">total_length</a> · <a style="color:#22d3bf" href="op:vol_count">vol_count</a> · <a style="color:#22d3bf" href="op:sk_euler">sk_euler</a> · <a style="color:#22d3bf" href="op:sk_entropy_feat">sk_entropy_feat</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
