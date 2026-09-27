@@ -162,7 +162,8 @@ def main() -> None:
         px = sizes[i] / N * h2(m1 / sizes[i])                       # 恒等式 3(前の PoC で門)
         worst_gap = max(worst_gap, abs(v["split"] - want), v["merge"])
         splits.append({"id": int(i), "pixel": px, "wiring": v["split"], "conn": v["connection_split"],
-                       "ends": s, "part": part})
+                       "ends": s, "part": part,
+                       "nri_loss": 1.0 - SC.seg_synapse_nri(truth, cut, syn, spacing=spacing)["nri"]})
         # ---- いちばん広く接する隣と貼る ---------------------------------------------------
         sh = np.zeros_like(m)
         sh[1:] |= m[:-1]
@@ -182,7 +183,8 @@ def main() -> None:
         worst_gap = max(worst_gap, abs(v["merge"] - want), v["split"])
         mm = sizes[i] + sizes[j]
         merges.append({"id": int(i), "other": j, "pixel": mm / N * h2(sizes[i] / mm), "wiring": v["merge"],
-                       "conn": v["connection_merge"], "ends": e1 + e2})
+                       "conn": v["connection_merge"], "ends": e1 + e2,
+                       "nri_loss": 1.0 - SC.seg_synapse_nri(truth, glued, syn, spacing=spacing)["nri"]})
     # 恒等式 1: 全件で閉形式
     assert worst_gap < 1e-12, worst_gap
     # 恒等式 2: 端の VOI = 端のラベルだけの VOI(最後の融合で)
@@ -205,6 +207,12 @@ def main() -> None:
     wir = np.concatenate([ws, wm])
     rho = spearman(pix, wir)
     print("   画素の VOI と端の VOI の順位相関(全 %d 件): %.2f" % (len(pix), rho))
+    # NRI(Reilly 2018、端の対の F 値)を同じ誤りに: 端の VOI が 0 の誤りは NRI の損失も厳密に 0(対が 1 つも離れない)
+    nri = np.concatenate([[r["nri_loss"] for r in splits], [r["nri_loss"] for r in merges]])
+    assert np.array_equal(wir <= 1e-12, nri <= 1e-12)
+    assert SC.seg_synapse_nri(truth, truth, syn, spacing=spacing)["nri"] == 1.0
+    print("   NRI の損失(1 − NRI)と端の VOI の順位相関 %.2f、NRI の損失と画素の VOI の順位相関 %.2f"
+          % (spearman(nri, wir), spearman(nri, pix)))
 
     # ---- 校正の順番: 画素の VOI の大きい順に直す vs 配線の損傷の大きい順 vs でたらめ ----------------
     total = wir.sum()

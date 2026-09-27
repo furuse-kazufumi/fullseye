@@ -1,8 +1,8 @@
 {
- "n_ops": 2210,
+ "n_ops": 2211,
  "tiers": {
   "color": 12,
-  "ledger": 1261,
+  "ledger": 1262,
   "nary": 17,
   "registry": 920
  },
@@ -12889,6 +12889,21 @@
    "in_sorts": [
     "labels2d",
     "labels2d"
+   ]
+  },
+  {
+   "name": "seg_synapse_nri",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "wiring",
+   "tier": "ledger",
+   "ledger": "opsemproof",
+   "dim": "emproof",
+   "in_sorts": [
+    "labels2d",
+    "labels2d",
+    "table"
    ]
   },
   {

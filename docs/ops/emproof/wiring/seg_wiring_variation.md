@@ -62,11 +62,11 @@ differ; no synapse left after dropping background in the truth.
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[seg_synapse_partners](seg_synapse_partners.md)
+[seg_synapse_partners](seg_synapse_partners.md) · [seg_synapse_nri](seg_synapse_nri.md)
 
 ## 同カテゴリ(`wiring`)
 
-[seg_synapse_partners](seg_synapse_partners.md)
+[seg_synapse_partners](seg_synapse_partners.md) · [seg_synapse_nri](seg_synapse_nri.md)
 
 ---
 *Provenance: segcompare.py — EMPROOF operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -68,11 +68,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**2,216 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **58 family guides**. Entry points by dimension:
+**2,217 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **58 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 932/932, typed ledger 1263/1275, one-line facade `fullseye.<name>` 598/1251 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 932/932, typed ledger 1264/1276, one-line facade `fullseye.<name>` 598/1251 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 2221 notes, **2154** link at least one runnable example (67 have none) and **2170** have a usage section of 120+ characters (51 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2221.
+**Measured substance**: of 2222 notes, **2155** link at least one runnable example (67 have none) and **2171** have a usage section of 120+ characters (51 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2222.
 
 | dimension | ops | entry |
 |---|---:|---|
@@ -104,8 +104,8 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
 | `measure1d` | 14 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
+| `emproof` | 13 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `specular` | 13 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
-| `emproof` | 12 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
 | `volcolor` | 11 | [INDEX](ops/volcolor/INDEX.md) |
@@ -219,7 +219,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Document map — all 213
 
-The complete map, so that **no document is unreachable from this index** (the 2,216 per-op notes and 58 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 2,217 per-op notes and 58 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 

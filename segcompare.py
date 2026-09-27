@@ -24,6 +24,9 @@ implies from synapse annotations (each synapse's pre and post point):
     (pre object, post object) connections.
   * :func:`seg_wiring_variation` — the same VOI split / merge measured where the wiring is
     read: at the synapse ends, and over synapses grouped by connection.
+  * :func:`seg_synapse_nri` — neural reconstruction integrity (Reilly et al. 2018): the F-score
+    of pairs of synapse ends kept together, which is exactly ``1 - adapted Rand error`` over
+    the ends (checked inside).
 
 ``a`` is the ground truth and ``b`` the candidate — the split/merge names depend on it.
 ``ignore_label`` drops every pixel whose **truth** label equals it (the convention of the
@@ -348,3 +351,59 @@ def seg_wiring_variation(a, b, synapses, spacing=None, background=0):
             "merged_connections": int((n_a_per_b > 1).sum()),
             "n_lost": int(lost.sum()), "edges_a": int(len(ea)),
             "edges_b": int(len(np.unique(np.stack([ub, vb], 1)[~lost], axis=0))), "n": int(n)}
+
+
+def seg_synapse_nri(a, b, synapses, spacing=None, background=0):
+    """Neural reconstruction integrity (Reilly et al. 2018) of candidate ``b`` against truth ``a``.
+
+    NRI scores the pairs of synapse **ends** that a reconstruction keeps together. Over the
+    ``2n`` ends (``synapses`` as in :func:`seg_synapse_partners`; ends on ``background`` in
+    the truth are dropped, ends on background in the candidate are singletons), a pair of
+    ends that lies in one truth neuron **and** one candidate object is a true positive; a
+    pair in one truth neuron but different candidate objects is a false negative (a split);
+    a pair in one candidate object but different truth neurons is a false positive (a
+    merge). ``nri = 2TP / (2TP + FP + FN)`` with the pair ``precision`` and ``recall``.
+
+    Identity (checked inside, fail-closed): with ``n_ij`` the contingency table of the ends,
+    ``TP = sum C(n_ij, 2)``, ``TP + FN = sum C(s_i, 2)``, ``TP + FP = sum C(t_j, 2)``, so NRI
+    is exactly ``1 - adapted_rand_error`` of :func:`seg_rand` taken over the ends (the
+    ``- N`` form of the pair counts is ``2 C(n, 2)``). Both are computed and must agree to
+    1e-12. Returns ``nri``, ``precision``, ``recall``, ``tp``, ``fp``, ``fn``, ``n_ends``.
+
+    **Raises** ``ValueError``: as :func:`seg_wiring_variation`; fewer than 2 ends.
+    """
+    op = "seg_synapse_nri"
+    ua, va = _synapse_ids(a, synapses, spacing, "a", op)
+    ub, vb = _synapse_ids(b, synapses, spacing, "b", op)
+    if np.shape(a) != np.shape(b):
+        raise ValueError("%s: a %r and b %r differ in shape" % (op, np.shape(a), np.shape(b)))
+    bg = int(background)
+    ends_a = np.concatenate([ua, va])
+    ends_b = np.concatenate([ub, vb]).copy()
+    keep = ends_a != bg
+    ends_a, ends_b = ends_a[keep], ends_b[keep]
+    if ends_a.size < 2:
+        raise ValueError("%s: need at least 2 synapse ends outside the background" % op)
+    off = ends_b == bg
+    ends_b[off] = int(max(ends_b.max(), 0)) + 1 + np.arange(int(off.sum()))
+    _, ia = np.unique(ends_a, return_inverse=True)
+    _, ib = np.unique(ends_b, return_inverse=True)
+    ia, ib = ia.ravel().astype(np.int64), ib.ravel().astype(np.int64)
+    _, cnt = np.unique(ia * (int(ib.max()) + 1) + ib, return_counts=True)
+
+    def pairs(x):
+        x = np.asarray(x, dtype=np.float64)
+        return float((x * (x - 1) / 2.0).sum())
+
+    tp = pairs(cnt)
+    fn = pairs(np.bincount(ia)) - tp
+    fp = pairs(np.bincount(ib)) - tp
+    precision = tp / (tp + fp) if tp + fp > 0 else 1.0
+    recall = tp / (tp + fn) if tp + fn > 0 else 1.0
+    nri = 2 * tp / (2 * tp + fp + fn) if 2 * tp + fp + fn > 0 else 1.0
+    other = seg_rand(ends_a.reshape(1, -1), ends_b.reshape(1, -1))
+    if abs(nri - (1.0 - other["adapted_rand_error"])) > 1e-12:
+        raise ValueError("%s: NRI and 1 - adapted Rand error over the ends disagree (%r vs %r) — a bug in one of them"
+                         % (op, nri, 1.0 - other["adapted_rand_error"]))
+    return {"nri": float(nri), "precision": float(precision), "recall": float(recall),
+            "tp": tp, "fp": fp, "fn": fn, "n_ends": int(ends_a.size), "n_lost": int(off.sum())}

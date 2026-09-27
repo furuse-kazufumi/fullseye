@@ -777,6 +777,8 @@ So should proofreading go in order of pixel VOI?
 
 Fixing the top 20 removes 41 % of the wiring damage in pixel order, 49 % in wiring order (ideal) and 19 % at random. The pixel score is not a bad proxy — twice as good as random — but it falls 8 points short of ideal. The gap is not large, so I cannot claim that "pixel scores cannot order proofreading". What I can say is that the bias has a fixed direction: the pixel score sends proofreading effort to cuts that do not matter for the wiring. Errors were injected one at a time, so interactions between errors are not measured.
 
+The same errors were also scored with the other convention, NRI (Reilly 2018: the F-score of the pairs of synapse ends that lie in one object in both the truth and the candidate). The new op `seg_synapse_nri` checks inside that it equals exactly 1 − adapted Rand error over the ends. An error that costs 0 ends-VOI bits also costs 0 NRI (no pair is separated), and that is a gate. Measured, the rank correlation between NRI loss and ends VOI is 1.00 — both count pairs of ends, so they order the same errors almost identically — and 0.59 against pixel VOI, the same story as the 0.60 above.
+
 The gates caught two things here too.
 
 1. A comparison that only renamed the labels gave a VOI of 8.9e-16 instead of 0. The conditional entropy was computed as H(a,b) − H(a), and subtracting two large terms leaves rounding dust. The direct sum −Σ p log2(n_ij / n_i) makes it exactly 0 (the pixel VOI now uses the same formula). The regression test uses an input on which the old code actually produced the dust.

@@ -310,3 +310,58 @@ def test_wiring_refuses_shape_mismatch_and_all_background():
         S.seg_wiring_variation(a, np.ones((10, 11), int), {"pre": [[1.0, 1.0]], "post": [[2.0, 2.0]]})
     with pytest.raises(ValueError):
         S.seg_wiring_variation(np.zeros((10, 10), int), a, {"pre": [[1.0, 1.0]], "post": [[2.0, 2.0]]})
+
+
+
+# ---------------------------------------------------------------- NRI(端の対の F 値)
+def test_nri_is_one_on_the_truth_and_counts_pairs_by_hand():
+    a, pre, post = _wiring_case()
+    syn = {"pre": pre, "post": post}
+    r = S.seg_synapse_nri(a, a, syn)
+    assert r["nri"] == 1.0 and r["fp"] == 0 and r["fn"] == 0
+    # 端 16 個: 神経 1 に 6、神経 2 に 6、神経 3 に 4 → 対は C(6,2)+C(6,2)+C(4,2) = 36
+    assert r["tp"] == 36 and r["n_ends"] == 16
+
+
+def test_nri_split_makes_false_negatives_only():
+    a, pre, post = _wiring_case()
+    b = a.copy()
+    b[20:, :10] = 9                       # 神経 1 の端 6 個が 4 + 2 に分かれる: 失う対 = 4·2 = 8
+    r = S.seg_synapse_nri(a, b, {"pre": pre, "post": post})
+    assert r["fn"] == 8 and r["fp"] == 0 and r["tp"] == 28
+    assert r["recall"] == pytest.approx(28 / 36) and r["precision"] == 1.0
+    assert r["nri"] == pytest.approx(2 * 28 / (2 * 28 + 8))
+
+
+def test_nri_merge_makes_false_positives_only():
+    a, pre, post = _wiring_case()
+    b = np.where(a == 3, 2, a)            # 神経 2(端 6)と 3(端 4)を融合: 偽の対 = 6·4 = 24
+    r = S.seg_synapse_nri(a, b, {"pre": pre, "post": post})
+    assert r["fp"] == 24 and r["fn"] == 0
+    assert r["precision"] == pytest.approx(36 / 60) and r["recall"] == 1.0
+
+
+def test_nri_equals_one_minus_adapted_rand_over_the_ends_on_random_data():
+    rng = np.random.default_rng(5)
+    a = np.repeat(np.repeat(rng.integers(1, 6, (6, 6)), 5, 0), 5, 1)
+    b = np.repeat(np.repeat(rng.integers(1, 4, (6, 6)), 5, 0), 5, 1)
+    syn = {"pre": rng.uniform(0, 30, (60, 2)), "post": rng.uniform(0, 30, (60, 2))}
+    r = S.seg_synapse_nri(a, b, syn)
+    ends = np.vstack([syn["pre"], syn["post"]]).astype(int)
+    la, lb = a[ends[:, 0], ends[:, 1]], b[ends[:, 0], ends[:, 1]]
+    other = S.seg_rand(la.reshape(1, -1), lb.reshape(1, -1))
+    assert r["nri"] == pytest.approx(1.0 - other["adapted_rand_error"], abs=1e-12)
+    assert r["precision"] == pytest.approx(other["precision"], abs=1e-12)
+    assert r["recall"] == pytest.approx(other["recall"], abs=1e-12)
+
+
+def test_nri_lost_ends_are_singletons_and_refusals():
+    a, pre, post = _wiring_case()
+    b = a.copy()
+    b[:, 10:20] = 0
+    r = S.seg_synapse_nri(a, b, {"pre": pre, "post": post})
+    assert r["n_lost"] == 6 and r["fp"] == 0           # 背景を 1 つの物体とみなすと偽の対が出てしまう
+    with pytest.raises(ValueError):
+        S.seg_synapse_nri(np.zeros((40, 30), int), a, {"pre": pre, "post": post})
+    with pytest.raises(ValueError):
+        S.seg_synapse_nri(a, a[:, :20], {"pre": pre, "post": post})

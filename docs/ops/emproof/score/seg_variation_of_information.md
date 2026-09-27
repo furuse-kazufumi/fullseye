@@ -43,7 +43,7 @@ together), plus the entropies ``h_a``, ``h_b`` and the mutual information ``mi``
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[seg_synapse_partners](../wiring/seg_synapse_partners.md) · [seg_wiring_variation](../wiring/seg_wiring_variation.md)
+[seg_synapse_partners](../wiring/seg_synapse_partners.md) · [seg_wiring_variation](../wiring/seg_wiring_variation.md) · [seg_synapse_nri](../wiring/seg_synapse_nri.md)
 
 ## 同カテゴリ(`score`)
 

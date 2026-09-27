@@ -50,7 +50,7 @@ CREMI sample A(512² 断面 12 枚、試作)で人工融合の成分 vs 他: AUC
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[seg_synapse_partners](../wiring/seg_synapse_partners.md) · [seg_wiring_variation](../wiring/seg_wiring_variation.md)
+[seg_synapse_partners](../wiring/seg_synapse_partners.md) · [seg_wiring_variation](../wiring/seg_wiring_variation.md) · [seg_synapse_nri](../wiring/seg_synapse_nri.md)
 
 ## 同カテゴリ(`suspect`)
 

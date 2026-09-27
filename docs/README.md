@@ -70,11 +70,11 @@
 
 ## オペレータを探す
 
-**2,216 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **58 本の族ガイド**があります。次元ごとの入口:
+**2,217 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **58 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 932/932、型つき台帳 1263/1275、1 行ファサード `fullseye.<名前>` 598/1251。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 932/932、型つき台帳 1264/1276、1 行ファサード `fullseye.<名前>` 598/1251。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 2221 本のうち、実行できる例が付いているのは **2154 本**(67 本は例ゼロ)、使い方の説明が 120 字以上あるのは **2170 本**(51 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 2221 本すべてにある。
+**ノートの中身の実測**: 2222 本のうち、実行できる例が付いているのは **2155 本**(67 本は例ゼロ)、使い方の説明が 120 字以上あるのは **2171 本**(51 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 2222 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -106,8 +106,8 @@
 | `astrostack` — 天体スタック | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [ガイド](ops/live4d/guides/live4d.md) |
 | `measure1d` — サブピクセル計測 | 14 | [INDEX](ops/measure1d/INDEX.md) · [ガイド](ops/measure1d/guides/subpixel_measuring.md) |
+| `emproof` | 13 | [INDEX](ops/emproof/INDEX.md) · [ガイド](ops/emproof/guides/emproof.md) |
 | `specular` — 鏡面分離 | 13 | [INDEX](ops/specular/INDEX.md) · [ガイド](ops/specular/guides/specular_photometric.md) |
-| `emproof` | 12 | [INDEX](ops/emproof/INDEX.md) · [ガイド](ops/emproof/guides/emproof.md) |
 | `profile` — 断面形状 | 12 | [INDEX](ops/profile/INDEX.md) · [ガイド](ops/profile/guides/profile_metrology.md) |
 | `colortransport` — 色の輸送 | 11 | [INDEX](ops/colortransport/INDEX.md) |
 | `volcolor` — 体積の色 | 11 | [INDEX](ops/volcolor/INDEX.md) |
@@ -221,7 +221,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## ドキュメント地図 — 全 213 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 2,216 本と族ガイド 58 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 2,217 本と族ガイド 58 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 

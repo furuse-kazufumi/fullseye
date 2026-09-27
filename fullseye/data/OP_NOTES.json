@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2210,
- "n_notes": 2216,
+ "n_ops": 2211,
+ "n_notes": 2217,
  "notes": {
   "vol_dilate": [
    {
@@ -15472,6 +15472,16 @@
     "in": "labels2d × image2d",
     "out": "table",
     "path": "docs/ops/emproof/suspect/seg_membrane_chord_score.md"
+   }
+  ],
+  "seg_synapse_nri": [
+   {
+    "op": "seg_synapse_nri",
+    "dim": "emproof",
+    "category": "wiring",
+    "in": "labels2d × labels2d × table",
+    "out": "table",
+    "path": "docs/ops/emproof/wiring/seg_synapse_nri.md"
    }
   ],
   "seg_synapse_partners": [

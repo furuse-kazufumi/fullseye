@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">seg_synapse_nri — EMPROOF <code style="color:#22d3bf">wiring</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels2d × labels2d × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_synapse_nri(a, b, synapses, spacing=None, background=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import segcompare; segcompare.seg_synapse_nri(a, b, synapses, spacing=None, background=0)</code>; aus dem Register: <code style="color:#22d3bf">opsemproof.get(&quot;seg_synapse_nri&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Neural reconstruction integrity (Reilly et al. 2018) of candidate `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> against truth </code><code style="color:#22d3bf">a</code>`.</p>
+<p>NRI scores the pairs of synapse <b>ends</b> that a reconstruction keeps together. Over the</p>
+<p>`<code style="color:#22d3bf">2n</code><code style="color:#22d3bf"> ends (</code><code style="color:#22d3bf">synapses</code><code style="color:#22d3bf"> as in :func:</code>seg_synapse_partners<code style="color:#22d3bf">; ends on </code><code style="color:#22d3bf">background</code>` in</p>
+<p>the truth are dropped, ends on background in the candidate are singletons), a pair of</p>
+<p>ends that lies in one truth neuron <b>and</b> one candidate object is a true positive; a</p>
+<p>pair in one truth neuron but different candidate objects is a false negative (a split);</p>
+<p>a pair in one candidate object but different truth neurons is a false positive (a</p>
+<p>merge). `<code style="color:#22d3bf">nri = 2TP / (2TP + FP + FN)</code><code style="color:#22d3bf"> with the pair </code><code style="color:#22d3bf">precision</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">recall</code>`.</p>
+<p>Identity (checked inside, fail-closed): with `<code style="color:#22d3bf">n_ij</code>` the contingency table of the ends,</p>
+<p>`<code style="color:#22d3bf">TP = sum C(n_ij, 2)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">TP + FN = sum C(s_i, 2)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">TP + FP = sum C(t_j, 2)</code>`, so NRI</p>
+<p>is exactly `<code style="color:#22d3bf">1 - adapted_rand_error</code><code style="color:#22d3bf"> of :func:</code>seg_rand` taken over the ends (the</p>
+<p>`<code style="color:#22d3bf">- N</code><code style="color:#22d3bf"> form of the pair counts is </code><code style="color:#22d3bf">2 C(n, 2)</code>`). Both are computed and must agree to</p>
+<p>1e-12. Returns `<code style="color:#22d3bf">nri</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">precision</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">recall</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">tp</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">fp</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">fn</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n_ends</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>seg_wiring_variation`; fewer than 2 ends.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">Leitfaden zur Familie emproof</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_em_wiring_errors">poc_em_wiring_errors</a> — <code style="color:#22d3bf">py -3.11 examples/poc_em_wiring_errors.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_synapse_partners">seg_synapse_partners</a> · <a style="color:#22d3bf" href="opemproof:seg_wiring_variation">seg_wiring_variation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">wiring</code>)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_synapse_partners">seg_synapse_partners</a> · <a style="color:#22d3bf" href="opemproof:seg_wiring_variation">seg_wiring_variation</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segcompare.py — EMPROOF Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

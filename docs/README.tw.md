@@ -68,11 +68,11 @@
 
 ## 尋找運算子
 
-共有 **2,216 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **58 篇族群指南**。依維度的入口:
+共有 **2,217 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **58 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 932/932、型別台帳 1263/1275、單行門面 `fullseye.<名稱>` 598/1251 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 932/932、型別台帳 1264/1276、單行門面 `fullseye.<名稱>` 598/1251 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 2221 篇中，附有可執行範例的 **2154** 篇(67 篇沒有)，用法說明 120 字以上的 **2170** 篇(51 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)2221 篇全有。
+**內容實測**: 2222 篇中，附有可執行範例的 **2155** 篇(67 篇沒有)，用法說明 120 字以上的 **2171** 篇(51 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)2222 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
@@ -104,8 +104,8 @@
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
 | `measure1d` | 14 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
+| `emproof` | 13 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `specular` | 13 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
-| `emproof` | 12 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
 | `volcolor` | 11 | [INDEX](ops/volcolor/INDEX.md) |
@@ -219,7 +219,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文件地圖 — 共 213 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 2,216 篇運算子說明與 58 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 2,217 篇運算子說明與 58 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 
