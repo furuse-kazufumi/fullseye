@@ -87,6 +87,8 @@ LEDGER_DIMS = {
             "module": "spc", "family": "statistical_process_control"},
     "graph": {"registry": "opsgraph", "table": "OPSGRAPH",
               "module": "graphinv", "family": "graph_invariants"},
+    "text": {"registry": "opstext", "table": "OPSTEXT",
+             "module": "textregion", "family": "text_region"},
     # --- 2026-09-02 に登録した族。ここに載っていなかったあいだ、これらの op は
     #     docs/ops に 1 枚もノートを持っていなかった(RAG コーパスから丸ごと
     #     欠けていた)。ガイドは未執筆で、リンクは実在するときだけ張られる。

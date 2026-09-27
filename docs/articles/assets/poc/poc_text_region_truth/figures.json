@@ -1,0 +1,32 @@
+[
+ {
+  "file": "01_text_region_scene.png",
+  "name": "text_region_scene",
+  "caption": "",
+  "shape": [
+   304,
+   1960,
+   3
+  ]
+ },
+ {
+  "file": "02_text_region_coverage_latin.png",
+  "name": "text_region_coverage_latin",
+  "caption": "真値は描いたインク画素。再現率 = インクのうち候補矩形に入った割合。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_text_region_coverage_cjk.png",
+  "name": "text_region_coverage_cjk",
+  "caption": "真値は描いたインク画素。再現率 = インクのうち候補矩形に入った割合。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

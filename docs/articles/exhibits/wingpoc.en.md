@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 28 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 29 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -563,6 +563,30 @@ Source: [examples/poc_mt_hidden_fault.py](https://github.com/furuse-kazufumi/ful
 This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_mt_hidden_fault)
 
 Ops used (notes): [`spc_mt_distance`](https://furuse.work/ops/spc/mt/spc_mt_distance.html) · [`spc_mt_unit_space`](https://furuse.work/ops/spc/mt/spc_mt_unit_space.html)
+
+## No.2026.155 —— Where Is the Text, Without a Recogniser — Grading a Stroke-Width Detector on Text We Drew Ourselves
+
+[![Where Is the Text, Without a Recogniser — Grading a Stroke-Width Detector on Text We Drew Ourselves](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/01_text_region_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/01_text_region_scene.png)
+
+*↑ **Where Is the Text, Without a Recogniser — Grading a Stroke-Width Detector on Text We Drew Ourselves** ―― fullseye stopped at OCR pre-processing and had no layer answering "where is the text". Recognisers (trained models) stay out by design, so the geometry of text alone — a stroke has nearly constant width — drives a classical detector (Stroke Width Transform, Epshtein 2010) in three ops, graded on text we rendered ourselves (ink pixels known to the pixel). Three truths: for a rectangular stroke of width w the SWT equals w at every pixel (edges are defined as the inner boundary pixels on the ink side and width = centre-to-centre distance of opposing boundary pixels + 1, which makes it an exact integer); doubling the image doubles the median from 5 to 10; and the fraction of drawn ink that falls inside candidate boxes (recall). Latin text at size ≥ 32 reaches 80–90 % ink recall, CJK (kanji/kana) 60–79 %, box precision about 50 % (boxes include the glyphs' white space). A 6 sizes × 4 noise levels table shows that what breaks detection is small text, not noise (the dip at size 16 below size 12 is printed as unexplained). Without a CJK font the example runs Latin only and says so.*
+
+[![真値は描いたインク画素。再現率 = インクのうち候補矩形に入った割合。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/02_text_region_coverage_latin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/02_text_region_coverage_latin.png)
+
+*↑ The measurement ―― 真値は描いたインク画素。再現率 = インクのうち候補矩形に入った割合。 (figure labels are in Japanese; the numbers are the same)*
+
+[![真値は描いたインク画素。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/03_text_region_coverage_cjk_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/03_text_region_coverage_cjk.png)
+
+*↑ 真値は描いたインク画素。*
+
+```
+py -3.11 examples/poc_text_region_truth.py
+```
+
+Source: [examples/poc_text_region_truth.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_text_region_truth.py)
+
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_text_region_truth)
+
+Ops used (notes): [`swt_map`](https://furuse.work/ops/text/stroke/swt_map.html) · [`text_candidates`](https://furuse.work/ops/text/detect/text_candidates.html) · [`text_lines`](https://furuse.work/ops/text/layout/text_lines.html)
 
 ## No.2026.042 —— How Much Camera Thermal Drift Costs a Dimensional Measurement
 

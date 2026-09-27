@@ -1238,6 +1238,23 @@ def _b_spc_mt_distance(pool, rng):
 
 
 # --- 配線行列の不変量。正方の 0/1 行列(自己結合なし)。 --- #
+# --- 文字領域。暗い棒 2 本の画像 / その SWT / 候補の矩形。 --- #
+def _b_text_img(pool, rng):
+    img = np.ones((48, 96))
+    img[18:23, 8:40] = 0.0
+    img[18:23, 50:82] = 0.0
+    return (img,), {}
+
+
+def _b_text_swt(pool, rng):
+    import textregion
+    return (textregion.swt_map(_b_text_img(pool, rng)[0][0])["swt"],), {}
+
+
+def _b_text_boxes(pool, rng):
+    return (np.array([[18, 8, 23, 40], [18, 50, 23, 82]]),), {"stroke_width": [5.0, 5.0]}
+
+
 def _b_graph_adj(pool, rng):
     B = (rng.random((40, 40)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -1394,6 +1411,9 @@ OP_ARG_BUILDERS = {
     "graph_cycle3": _b_graph_adj,
     "graph_degree_preserving_null": _b_graph_null,
     "graph_swap_symmetry": _b_graph_swap,
+    "swt_map": _b_text_img,
+    "text_candidates": _b_text_swt,
+    "text_lines": _b_text_boxes,
     # --- 描画: 32x32 では物理的に収まらない 13 op ---------------------------- #
     "text_box": _b_draw(["image2d", "text"]),
     "leader_line": _b_leader_line,

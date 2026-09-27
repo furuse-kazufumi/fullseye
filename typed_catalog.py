@@ -690,7 +690,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opsgenerative"):
+                 "opsgraph", "opstext", "opsgenerative"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
@@ -838,6 +838,14 @@ def catalog():
     for n, m in opsgraph.OPSGRAPH.items():
         if m["func"] is not None:
             ops.append((n, "graph", list(m["in"]), m["out"], m["func"]))
+    # 文字領域(opstext 台帳)。**新しい型語彙を 1 つも作らない**判断: swt_map は
+    # image2d → table(幅の配列と個数)、text_candidates は matrix(幅の配列)→ table、
+    # text_lines は table → table。認識器は載せない(学習済みモデルは out_of_scope)。
+    # 真値は矩形ストロークの幅が厳密に整数になること(2026-09-27)。
+    import opstext
+    for n, m in opstext.OPSTEXT.items():
+        if m["func"] is not None:
+            ops.append((n, "text", list(m["in"]), m["out"], m["func"]))
     # 絵を作る側(opsgenerative 台帳)。**新しい型語彙を 1 つも作らない**判断:
     # 30 op の返りは既存の rgb((H,W,3))/ rgbvideo((T,H,W,3))/ table に収まる。
     # 「錯視画像」という型を作らないのが要点で、作った絵に既存の 2,147 op が

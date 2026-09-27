@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2196,
- "n_notes": 2202,
+ "n_ops": 2199,
+ "n_notes": 2205,
  "notes": {
   "vol_dilate": [
    {
@@ -21880,6 +21880,36 @@
     "in": "normalmap",
     "out": "rgbimage",
     "path": "docs/ops/specular/reflectance/dichromatic_render.md"
+   }
+  ],
+  "text_candidates": [
+   {
+    "op": "text_candidates",
+    "dim": "text",
+    "category": "detect",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/text/detect/text_candidates.md"
+   }
+  ],
+  "text_lines": [
+   {
+    "op": "text_lines",
+    "dim": "text",
+    "category": "layout",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/text/layout/text_lines.md"
+   }
+  ],
+  "swt_map": [
+   {
+    "op": "swt_map",
+    "dim": "text",
+    "category": "stroke",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/text/stroke/swt_map.md"
    }
   ],
   "beam_hardening_apply": [

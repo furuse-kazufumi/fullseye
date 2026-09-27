@@ -14787,6 +14787,30 @@
    "tw": "按 3-D 特徵篩選成分(2-D 斑點篩選的 3-D 版)。",
    "ko": "3-D 특징으로 성분을 거릅니다(2-D 블롭 선별의 3-D 판).",
    "de": "Siebt Komponenten nach 3-D-Merkmalen (das 3-D-Gegenstück zur 2-D-Blob-Auswahl)."
+  },
+  "text/swt_map": {
+   "fp": "8ab727301a0e",
+   "en": "Stroke Width Transform — writes, at every pixel, the width of the stroke that contains it.",
+   "zh": "笔画宽度变换——在每个像素写入包含该像素的笔画宽度。",
+   "tw": "筆畫寬度變換——在每個像素寫入包含該像素的筆畫寬度。",
+   "ko": "스트로크 폭 변환 — 각 화소에 그 화소를 포함하는 스트로크의 폭을 기록한다.",
+   "de": "Stroke Width Transform — schreibt in jedes Pixel die Breite des Strichs, der es enthält."
+  },
+  "text/text_candidates": {
+   "fp": "0d421269cd31",
+   "en": "Narrows the connected components of the SWT down to character candidates (width spread, aspect ratio, size).",
+   "zh": "把 SWT 的连通分量筛选为字符候选（宽度离散度、长宽比、大小）。",
+   "tw": "把 SWT 的連通分量篩選為字元候選（寬度離散度、長寬比、大小）。",
+   "ko": "SWT의 연결 성분을 문자 후보로 좁힌다(폭의 편차·종횡비·크기).",
+   "de": "Engt die Zusammenhangskomponenten der SWT auf Zeichenkandidaten ein (Breitenstreuung, Seitenverhältnis, Größe)."
+  },
+  "text/text_lines": {
+   "fp": "fb5ae40c2036",
+   "en": "Groups character-candidate boxes into lines (vertically overlapping, horizontally close, similar stroke width).",
+   "zh": "把字符候选矩形合并成文本行（纵向重叠、横向相近、笔画宽度相近）。",
+   "tw": "把字元候選矩形合併成文字行（縱向重疊、橫向相近、筆畫寬度相近）。",
+   "ko": "문자 후보 상자를 줄로 묶는다(세로로 겹치고, 가로로 가깝고, 스트로크 폭이 비슷한 것).",
+   "de": "Fasst Zeichenkandidaten-Boxen zu Zeilen zusammen (vertikal überlappend, horizontal nah, ähnliche Strichbreite)."
   }
  }
 }

@@ -1,8 +1,8 @@
 {
- "n_ops": 2196,
+ "n_ops": 2199,
  "tiers": {
   "color": 12,
-  "ledger": 1247,
+  "ledger": 1250,
   "nary": 17,
   "registry": 920
  },
@@ -14367,6 +14367,19 @@
    "in_sorts": []
   },
   {
+   "name": "swt_map",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "stroke",
+   "tier": "ledger",
+   "ledger": "opstext",
+   "dim": "text",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "synth_frame_series",
    "halcon": "",
    "in_sort": null,
@@ -14611,6 +14624,32 @@
    "in_sorts": [
     "image2d",
     "text"
+   ]
+  },
+  {
+   "name": "text_candidates",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "detect",
+   "tier": "ledger",
+   "ledger": "opstext",
+   "dim": "text",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "text_lines",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "layout",
+   "tier": "ledger",
+   "ledger": "opstext",
+   "dim": "text",
+   "in_sorts": [
+    "table"
    ]
   },
   {
