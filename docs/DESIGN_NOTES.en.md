@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1140. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1141. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -423,6 +423,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_compound_eye.py`
 
 - **L301** _(ja)_ — ★PoC の門(tests/test_poc_scripts_run.py)は exit 0 に加えて "PASS" の印字を 要求する(合否を計算したのに捨てる門を防ぐ規約)。以前は "OK:" と書いていて、 台帳に登録した瞬間に「exit 0 だが PASS を印字していない」で落ちた。
+
+## `examples/poc_connectome_across_decades.py`
+
+- **L147** _(ja)_ — ★2 匹の平均(半整数)を丸めると偶数丸めで奇数/偶数のギザギザが出る —— 合計(整数)で数える
 
 ## `examples/poc_crop_phenotyping.py`
 

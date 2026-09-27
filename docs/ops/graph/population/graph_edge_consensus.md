@@ -4,7 +4,7 @@ dim: graph
 category: population
 in: table
 out: table
-examples: [poc_connectome_across_worms]
+examples: [poc_connectome_across_decades, poc_connectome_across_worms]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -66,6 +66,7 @@ individual with no edges; ``n_null`` equal to 1 (no spread) or negative;
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_connectome_across_decades](../../../../examples/poc_connectome_across_decades.py) — `py -3.11 examples/poc_connectome_across_decades.py`
 - [poc_connectome_across_worms](../../../../examples/poc_connectome_across_worms.py) — `py -3.11 examples/poc_connectome_across_worms.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

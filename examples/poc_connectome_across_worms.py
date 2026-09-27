@@ -29,9 +29,11 @@ Witvliet et al. 2021(Nature 596:257)は遺伝的に同一な C. elegans 8 匹の
 無ければ合成の系列で回り、その旨を印字する。
 
 公表値との照合(論文 Methods、PMC8756380): 論文は「7 匹以上に在る結合」を stable とし、
-成虫の結合の約 43 % が stable・約 43 % が variable(シナプスの 16 %)とする。論文は左右の対で
-まとめ、後から生まれる細胞を除いてから分類するので、ここの素朴な数え方と母数が違う。
-差はそのまま印字する(合わせにいかない)。
+成虫の結合の約 43 % が stable とする。細胞単位で素朴に数えると 34 % にしかならない。
+著者が公開した結合ごとの分類表(``connection_classifications.csv``、同梱しない)が
+`FULLSEYE_CONNECTOME_DIR/witvliet/` に在れば、差を 3 段に分けて印字する: 論文は**左右の対で
+まとめた結合**が 7 匹以上に在れば、その対に属する細胞単位の結合 1 本 1 本に stable の札を付ける。
+この札の付け方だけで論文の stable を 95 % 以上再現できることを門にする。
 """
 from __future__ import annotations
 
@@ -95,10 +97,50 @@ def load_witvliet(d: str):
     return mats, common, len(set.union(*cells)), outside
 
 
+def pair_name(c: str, pool) -> str:
+    """左右の対の名前(``AVAL`` → ``AVA*``)。相方が ``pool`` に居なければそのまま。"""
+    if c[-1:] in ("L", "R") and (c[:-1] + ("R" if c[-1] == "L" else "L")) in pool:
+        return c[:-1] + "*"
+    return c
+
+
+def paper_gap(mats, cells, wd, adult):
+    """細胞単位の ≥7 / 対単位の札 / 論文の表 の 3 段。表が無ければ None。"""
+    path = os.path.join(wd, "connection_classifications.csv")
+    if not os.path.isfile(path):
+        return None
+    import csv
+    with open(path, encoding="utf-8") as f:
+        cls = {(r["pre"], r["post"]): r["classification"] for r in csv.DictReader(f)}
+    pool = set(cells)
+    P = [(m > 0) for m in mats.values()]
+    edges = [{(cells[i], cells[j]) for i, j in zip(*np.nonzero(p)) if i != j} for p in P]
+    occ, pocc = {}, {}
+    for e in edges:
+        for a, b in e:
+            occ[(a, b)] = occ.get((a, b), 0) + 1
+        for q in {(pair_name(a, pool), pair_name(b, pool)) for a, b in e}:
+            pocc[q] = pocc.get(q, 0) + 1
+    ad = edges[adult]
+    cell7 = {e for e in ad if occ[e] >= 7}
+    pair7 = {e for e in ad if pocc[(pair_name(e[0], pool), pair_name(e[1], pool))] >= 7}
+    paper = {e for e in ad if cls.get(e) == "stable"}
+    return {"n": len(ad), "cell7": len(cell7), "pair7": len(pair7), "paper": len(paper),
+            "paper_in_pair7": len(paper & pair7), "cell7_in_paper": len(cell7 & paper)}
+
+
+def occupancy_colours(K: int) -> np.ndarray:
+    """出現回数 1..K の色。★colorize_depth は入力を自分の値域に正規化し直すので、
+    0.25 から始めても最も暗い紫に戻る —— 長い色列を作ってから上 3/4 を選ぶ。"""
+    import fullseye as fs
+    ramp = np.asarray(fs.colorize_depth(np.linspace(0.0, 1.0, 256)), np.float64)[..., :3].reshape(256, 3)
+    return ramp[np.linspace(64, 255, K).round().astype(int)]
+
+
 def occupancy_frames(P, occ, order, K, scale=3):
     """発生段階ごとのコマ: 在る結合を「全体で何匹に出るか」の色で塗る(尺度は全コマ共通)。"""
     import fullseye as fs
-    col = np.asarray(fs.colorize_depth(np.linspace(0.0, 1.0, K)), np.float64)[..., :3].reshape(K, 3)
+    col = occupancy_colours(K)
     frames = []
     for t in range(P.shape[0]):
         img = np.full(P.shape[1:] + (3,), 0.12)
@@ -171,6 +213,7 @@ def main() -> None:
           % (adj, J[0, K - 2], J[0, K - 1], J[K - 2, K - 1]))
 
     rows = []
+    gap = None
     if real:
         P = np.stack([(m > 0) for m in mats.values()])
         for t in range(K):
@@ -186,6 +229,20 @@ def main() -> None:
                   "7 匹未満の結合が担うシナプス %.0f %%(論文の variable は %.0f %%、dynamic を含まない)"
                   % (a + 1, P[a].sum(), st, 100 * st / P[a].sum(), 100 * PAPER_STABLE_FRAC,
                      100 * syn_var, 100 * PAPER_VARIABLE_SYN))
+        gap = paper_gap(mats, cells, wd, K - 2)
+        if gap is not None:
+            n_ = gap["n"]
+            print("論文との差の内訳(成虫 #%d、共通 %d 細胞): 細胞単位で 7 匹以上 %.1f %% → 左右の対で 7 匹以上なら"
+                  "対の全結合に札 %.1f %% → 論文の表(variable・dynamic を先に除く)%.1f %%。論文の stable %d 本のうち"
+                  " %d 本(%.1f %%)を対の札だけで再現"
+                  % (K - 1, len(cells), 100 * gap["cell7"] / n_, 100 * gap["pair7"] / n_, 100 * gap["paper"] / n_,
+                     gap["paper"], gap["paper_in_pair7"], 100 * gap["paper_in_pair7"] / gap["paper"]))
+            assert gap["paper_in_pair7"] >= 0.95 * gap["paper"], gap
+            rows.append(("差の内訳 ① 細胞単位で 7 匹以上", n_, gap["cell7"], gap["cell7"] / n_, float("nan")))
+            rows.append(("差の内訳 ② 左右の対で 7 匹以上(対の全結合に札)", n_, gap["pair7"], gap["pair7"] / n_, float("nan")))
+            rows.append(("差の内訳 ③ 論文の表の stable", n_, gap["paper"], gap["paper"] / n_, float("nan")))
+        else:
+            print("(著者の分類表 connection_classifications.csv が無いので、論文との差の内訳は出さない)")
         # 実配線の主張(合成では検証しない)
         assert h[K] >= 10 * max(res["shared_all_null_max"], 1), (h[K], res["shared_all_null_max"])
         assert res["synapse_share"][K] > 0.5 and share_all_edges < 0.25, (res["synapse_share"][K], share_all_edges)
@@ -201,13 +258,13 @@ def main() -> None:
         occ = P.sum(axis=0)
         order = np.argsort(-(occ.sum(axis=0) + occ.sum(axis=1)), kind="stable")
         import fullseye as fs
-        col = np.asarray(fs.colorize_depth(np.linspace(0.0, 1.0, K)), np.float64)[..., :3].reshape(K, 3)
+        col = occupancy_colours(K)
         img = np.full(occ.shape + (3,), 0.12)
         o = occ[np.ix_(order, order)]
         img[o > 0] = col[o[o > 0] - 1]
         figs.save("occupancy_matrix", np.kron(img, np.ones((3, 3, 1))),
                   caption="%s。行 = 送り手、列 = 受け手(次数の降順)。色 = その結合が 8 匹中何匹に在るか"
-                          "(暗い紫 = 1 匹だけ → 緑 → 黄 = 8 匹全員、背景の灰 = どの個体にも無い)。全員に在る核は %d 本。" % (label, h[K]))
+                          "(青紫 = 1 匹だけ → 緑 → 黄 = 8 匹全員、背景の暗い灰 = どの個体にも無い。最も暗い紫は背景と紛れるので使わない)。全員に在る核は %d 本。" % (label, h[K]))
         figs.save_gif("wiring_across_development", occupancy_frames(P, occ, order, K), fps=1.5,
                       caption="生まれた直後から成虫まで 8 匹の配線を順に。色は全体での出現回数なので、"
                               "早い段階から在る結合ほど明るい。")
@@ -235,12 +292,14 @@ def main() -> None:
         if rows:
             figs.save_table("paper_comparison",
                             ["個体", "結合", "7 匹以上", "割合", "7 匹未満のシナプス"],
-                            [[a, str(b), str(c_), "%.0f %%" % (100 * d_), "%.0f %%" % (100 * e)]
+                            [[a, str(b), str(c_), "%.0f %%" % (100 * d_), "-" if e != e else "%.0f %%" % (100 * e)]
                              for a, b, c_, d_, e in rows]
                             + [["論文(stable / variable)", "-", "-", "≈ 43 %", "16 %(variable のみ)"]],
-                            title="公表値との照合(母数の違いは合わせにいかない)",
-                            caption="論文は左右の対でまとめ、後から生まれる細胞を除いてから分類する。"
-                                    "ここは 8 匹全員に在る細胞の上で素朴に数えた。")
+                            title="公表値との照合(差は内訳まで分けた)",
+                            caption="論文は左右の対でまとめた結合が 7 匹以上に在れば、その対の細胞単位の結合すべてに "
+                                    "stable の札を付ける(②)。①→② で %.1f 点上がり、variable と dynamic を先に除く分だけ ③ で %.1f 点下がる。"
+                                    % ((100.0 * (gap["pair7"] - gap["cell7"]) / gap["n"], 100.0 * (gap["pair7"] - gap["paper"]) / gap["n"])
+                                       if gap else (float("nan"), float("nan"))))
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS%s: 8 匹全員に在る結合 %d 本(ヌル最大 %d)、それが担うシナプス %.0f %%、同齢の成虫 2 匹の Jaccard %.2f。"

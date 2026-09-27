@@ -2,7 +2,7 @@
  {
   "file": "01_occupancy_matrix.png",
   "name": "occupancy_matrix",
-  "caption": "C. elegans 8 匹・化学シナプス(Witvliet 2021、nemanode.org)。行 = 送り手、列 = 受け手(次数の降順)。色 = その結合が 8 匹中何匹に在るか(暗い紫 = 1 匹だけ → 緑 → 黄 = 8 匹全員、背景の灰 = どの個体にも無い)。全員に在る核は 442 本。",
+  "caption": "C. elegans 8 匹・化学シナプス(Witvliet 2021、nemanode.org)。行 = 送り手、列 = 受け手(次数の降順)。色 = その結合が 8 匹中何匹に在るか(青紫 = 1 匹だけ → 緑 → 黄 = 8 匹全員、背景の暗い灰 = どの個体にも無い。最も暗い紫は背景と紛れるので使わない)。全員に在る核は 442 本。",
   "shape": [
    549,
    549,
@@ -56,10 +56,10 @@
  {
   "file": "06_paper_comparison.png",
   "name": "paper_comparison",
-  "caption": "論文は左右の対でまとめ、後から生まれる細胞を除いてから分類する。ここは 8 匹全員に在る細胞の上で素朴に数えた。",
+  "caption": "論文は左右の対でまとめた結合が 7 匹以上に在れば、その対の細胞単位の結合すべてに stable の札を付ける(②)。①→② で 14.4 点上がり、variable と dynamic を先に除く分だけ ③ で 3.5 点下がる。",
   "shape": [
-   152,
-   479,
+   224,
+   614,
    3
   ],
   "csv": "06_paper_comparison.csv",

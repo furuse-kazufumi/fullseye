@@ -422,6 +422,10 @@
 
 - **L301** — ★PoC の門(tests/test_poc_scripts_run.py)は exit 0 に加えて "PASS" の印字を 要求する(合否を計算したのに捨てる門を防ぐ規約)。以前は "OK:" と書いていて、 台帳に登録した瞬間に「exit 0 だが PASS を印字していない」で落ちた。
 
+## `examples/poc_connectome_across_decades.py`
+
+- **L147** — ★2 匹の平均(半整数)を丸めると偶数丸めで奇数/偶数のギザギザが出る —— 合計(整数)で数える
+
 ## `examples/poc_crop_phenotyping.py`
 
 - **L209** — ★乱数は**必ず (n_plant, NESTED_MAX) の形で先に引く**。葉数ごとに引く数を 変えると乱数列がずれ、n_leaf を 1 増やしただけで別の群落になる (2026-09-07: 植被率が葉数に対して単調でなくなり、崖が測れなかった)。

@@ -1,0 +1,34 @@
+[
+ {
+  "file": "01_jaccard_across_decades.png",
+  "name": "jaccard_across_decades",
+  "caption": "C. elegans 成虫 3 匹(Witvliet 2021 ×2 + White 1986 N2U、nemanode.org)。共通の 215 細胞の上の化学シナプスの有向結合。",
+  "shape": [
+   152,
+   422,
+   3
+  ],
+  "csv": "01_jaccard_across_decades.csv",
+  "tsv": "01_jaccard_across_decades.tsv"
+ },
+ {
+  "file": "02_occupancy_vs_null_decades.png",
+  "name": "occupancy_vs_null_decades",
+  "caption": "3 匹すべてに在る結合 1015 本、ヌルの平均 28.2 本。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_what_1986_missed.png",
+  "name": "what_1986_missed",
+  "caption": "2021 の 2 匹ともに在るのに 1986 に無い結合は平均 2.01 シナプス、3 匹とも在る結合は 5.73。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
