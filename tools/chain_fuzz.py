@@ -1284,6 +1284,18 @@ def _b_graph_consensus(pool, rng):
     return (mats,), {"ordered": True, "n_null": 2, "swaps_per_edge": 1}
 
 
+_SWC_Y = "1 1 0 0 0 5 -1\n2 3 10 0 0 1 1\n3 3 20 0 0 1 2\n4 3 30 10 0 1 3\n5 3 30 -10 0 1 3\n"
+
+
+def _b_tree_swc(pool, rng):
+    return (_SWC_Y,), {}
+
+
+def _b_tree_table(pool, rng):
+    import treemorph
+    return (treemorph.tree_from_swc(_SWC_Y),), {}
+
+
 def _b_spc_mt_sn_ratio(pool, rng):
     # 距離は正でなければならない(0 は「単位空間の中心に居る異常標本」= 分離ゼロ)。
     return (rng.uniform(0.5, 20.0, size=12),), {}
@@ -1423,6 +1435,9 @@ OP_ARG_BUILDERS = {
     "graph_degree_preserving_null": _b_graph_null,
     "graph_swap_symmetry": _b_graph_swap,
     "graph_edge_consensus": _b_graph_consensus,
+    "tree_from_swc": _b_tree_swc,
+    "tree_morphometry": _b_tree_table,
+    "tree_sholl": _b_tree_table,
     "swt_map": _b_text_img,
     "text_candidates": _b_text_swt,
     "text_lines": _b_text_boxes,

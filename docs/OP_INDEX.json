@@ -1,8 +1,8 @@
 {
- "n_ops": 2200,
+ "n_ops": 2203,
  "tiers": {
   "color": 12,
-  "ledger": 1251,
+  "ledger": 1254,
   "nary": 17,
   "registry": 920
  },
@@ -14944,6 +14944,45 @@
    "in_sorts": [
     "signal",
     "signal"
+   ]
+  },
+  {
+   "name": "tree_from_swc",
+   "halcon": "",
+   "in_sort": "text",
+   "out_sort": "table",
+   "category": "tree",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "text"
+   ]
+  },
+  {
+   "name": "tree_morphometry",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tree",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "tree_sholl",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tree",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "table"
    ]
   },
   {

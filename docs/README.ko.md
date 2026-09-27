@@ -68,11 +68,11 @@
 
 ## 연산자 찾기
 
-**2,206개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **58개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**2,209개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **58개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 932/932, 타입 台帳 1253/1265, 한 줄 파사드 `fullseye.<이름>` 598/1249 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 932/932, 타입 台帳 1256/1268, 한 줄 파사드 `fullseye.<이름>` 598/1250 — **파사드는 아직 절반**.
 
-**내용 실측**: 2211건 중 실행 가능한 예제가 붙은 것은 **2145**건(66건은 없음), 사용법이 120자 이상인 것은 **2160**건(51건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2211건 모두.
+**내용 실측**: 2214건 중 실행 가능한 예제가 붙은 것은 **2148**건(66건은 없음), 사용법이 120자 이상인 것은 **2163**건(51건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2214건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -113,11 +113,11 @@
 | `geocam` | 9 | [INDEX](ops/geocam/INDEX.md) · [guide](ops/geocam/guides/geocam.md) |
 | `interferometry` | 9 | [INDEX](ops/interferometry/INDEX.md) · [guide](ops/interferometry/guides/coherence_scanning.md) |
 | `motionmag` | 9 | [INDEX](ops/motionmag/INDEX.md) · [guide](ops/motionmag/guides/motion_magnification.md) |
+| `graph` | 8 | [INDEX](ops/graph/INDEX.md) |
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
 | `emproof` | 7 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
-| `graph` | 5 | [INDEX](ops/graph/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
@@ -219,7 +219,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 문서 지도 — 전 213건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 2,206건과 패밀리 가이드 58건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 2,209건과 패밀리 가이드 58건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 

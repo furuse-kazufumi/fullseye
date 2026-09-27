@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tree_from_swc — GRAPH <code style="color:#22d3bf">tree</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tree_from_swc(swc)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import treemorph; treemorph.tree_from_swc(swc)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;tree_from_swc&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>SWC(神経の木)を読み、根 1 つ・親 id &lt; 子 id・節点 = 辺 + 1 の約束を破った入力は拒む。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Returns a dict with `<code style="color:#22d3bf">id</code><code style="color:#22d3bf"> (n,), </code><code style="color:#22d3bf">type</code><code style="color:#22d3bf"> (n,), </code><code style="color:#22d3bf">xyz</code><code style="color:#22d3bf"> (n, 3), </code><code style="color:#22d3bf">radius</code>` (n,),</p>
+<p>`<code style="color:#22d3bf">parent_index</code><code style="color:#22d3bf"> (n,; -1 for the root, otherwise the row of the parent) and </code><code style="color:#22d3bf">root</code>`</p>
+<p>(row of the root). Rows keep the file order. Comment lines (`<code style="color:#22d3bf">#</code>`) and blank lines</p>
+<p>are skipped.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: not a string; a data line with fewer than 7 fields or</p>
+<p>unparsable numbers; no nodes; duplicate ids; zero or more than one root</p>
+<p>(parent == -1); a parent id that is not smaller than its child&#x27;s; a parent id that</p>
+<p>does not exist; non-finite coordinates or radius; a negative radius; more than</p>
+<p>`<code style="color:#22d3bf">MAX_TREE_NODES</code>` nodes.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swc_tree_truth">poc_swc_tree_truth</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swc_tree_truth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_edge_consensus">graph_edge_consensus</a> · <a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a> · <a style="color:#22d3bf" href="opgraph:tree_sholl">tree_sholl</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">tree</code>)</h3>
+<p><a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a> · <a style="color:#22d3bf" href="opgraph:tree_sholl">tree_sholl</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: treemorph.py — GRAPH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

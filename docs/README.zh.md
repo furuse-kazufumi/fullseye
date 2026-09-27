@@ -68,11 +68,11 @@
 
 ## 查找算子
 
-共有 **2,206 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **58 篇族指南**。按维度的入口:
+共有 **2,209 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **58 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 932/932、类型化台账 1253/1265、单行门面 `fullseye.<名称>` 598/1249 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 932/932、类型化台账 1256/1268、单行门面 `fullseye.<名称>` 598/1250 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 2211 篇中，附有可运行示例的 **2145** 篇(66 篇没有)，用法说明 120 字以上的 **2160** 篇(51 篇仅一行)。结构(调用形式、类型、可衔接算子)2211 篇全有。
+**内容实测**: 2214 篇中，附有可运行示例的 **2148** 篇(66 篇没有)，用法说明 120 字以上的 **2163** 篇(51 篇仅一行)。结构(调用形式、类型、可衔接算子)2214 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -113,11 +113,11 @@
 | `geocam` | 9 | [INDEX](ops/geocam/INDEX.md) · [guide](ops/geocam/guides/geocam.md) |
 | `interferometry` | 9 | [INDEX](ops/interferometry/INDEX.md) · [guide](ops/interferometry/guides/coherence_scanning.md) |
 | `motionmag` | 9 | [INDEX](ops/motionmag/INDEX.md) · [guide](ops/motionmag/guides/motion_magnification.md) |
+| `graph` | 8 | [INDEX](ops/graph/INDEX.md) |
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
 | `emproof` | 7 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
-| `graph` | 5 | [INDEX](ops/graph/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
@@ -219,7 +219,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 213 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,206 篇算子说明与 58 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,209 篇算子说明与 58 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 

@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tree_sholl — GRAPH <code style="color:#22d3bf">tree</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tree_sholl(tree, radii=None, n_radii=50, plane=None, center=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import treemorph; treemorph.tree_sholl(tree, radii=None, n_radii=50, plane=None, center=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsgraph.get(&quot;tree_sholl&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Sholl analysis: segments crossing spheres (3-D) or circles (a projection) around the root.</p>
+<p>`<code style="color:#22d3bf">radii</code><code style="color:#22d3bf"> are the shell radii (ascending, positive); if omitted, </code><code style="color:#22d3bf">n_radii</code>` shells at</p>
+<p>the mid-points of equal steps up to the largest distance from the centre (never exactly</p>
+<p>on a node&#x27;s distance). A shell passing exactly through a node is ambiguous under</p>
+<p>rounding — a rotation may move that node by one ulp to either side. `<code style="color:#22d3bf">plane=None</code>` measures in 3-D;</p>
+<p>`<code style="color:#22d3bf">plane=&quot;xy&quot; | &quot;xz&quot; | &quot;yz&quot;</code>` drops the third axis first — what a single image sees.</p>
+<p>`<code style="color:#22d3bf">center</code>` defaults to the root position.</p>
+<p>A segment (parent-child) crosses radius `<code style="color:#22d3bf">r</code>` when its end points lie strictly on</p>
+<p>opposite sides of `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> (the endpoint rule). Returns </code><code style="color:#22d3bf">radii</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">crossings</code>` (int array),</p>
+<p>`<code style="color:#22d3bf">max_crossings</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">radius_at_max</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">integral</code>` — the exact area under the whole</p>
+<p>continuous Sholl curve, computed from the segments&#x27; intervals (independent of where</p>
+<p>the shells are placed).</p>
+<p>Identities: in 3-D the crossings are invariant, integer for integer, under any rotation</p>
+<p>about the centre; and `<code style="color:#22d3bf">integral</code><code style="color:#22d3bf"> equals </code><code style="color:#22d3bf">sum |d_child - d_parent|</code>` (the tests also</p>
+<p>check that the mid-point sum of the sampled crossings converges to it — a second</p>
+<p>implementation).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: not a tree table; </code><code style="color:#22d3bf">plane</code>` not one of None/xy/xz/yz;</p>
+<p>radii not 1-D, not finite, not positive or not strictly increasing; `<code style="color:#22d3bf">n_radii &lt; 1</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swc_tree_truth">poc_swc_tree_truth</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swc_tree_truth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_edge_consensus">graph_edge_consensus</a> · <a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">tree</code>)</h3>
+<p><a style="color:#22d3bf" href="opgraph:tree_from_swc">tree_from_swc</a> · <a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: treemorph.py — GRAPH 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

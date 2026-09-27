@@ -18,8 +18,9 @@ Usage:
     opsgraph.get("graph_cycle3")(adj)
 """
 import graphinv
+import treemorph
 
-_MOD = {"graphinv": graphinv}
+_MOD = {"graphinv": graphinv, "treemorph": treemorph}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -42,6 +43,14 @@ _CATALOG = {
     #   というもっともらしい嘘を返す。table なら他 op の表を渡しても op が断る。
     "population": [
         ("graph_edge_consensus", "graphinv", ["table"], "table"),
+    ],
+    # 神経の木(SWC)。木はグラフの一種なのでこの台帳に置く。入口は text(SWC の本文か
+    # パス)で、読んだ時点で構造の約束(根 1・親 id < 子 id・節点 = 辺 + 1)を検査する。
+    # 3-D の Sholl は回転で整数が 1 つも動かない —— 投影(plane=)は動く、が PoC の主題。
+    "tree": [
+        ("tree_from_swc", "treemorph", ["text"], "table"),
+        ("tree_morphometry", "treemorph", ["table"], "table"),
+        ("tree_sholl", "treemorph", ["table"], "table"),
     ],
 }
 

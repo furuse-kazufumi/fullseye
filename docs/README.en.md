@@ -68,11 +68,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**2,206 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **58 family guides**. Entry points by dimension:
+**2,209 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **58 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 932/932, typed ledger 1253/1265, one-line facade `fullseye.<name>` 598/1249 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 932/932, typed ledger 1256/1268, one-line facade `fullseye.<name>` 598/1250 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 2211 notes, **2145** link at least one runnable example (66 have none) and **2160** have a usage section of 120+ characters (51 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2211.
+**Measured substance**: of 2214 notes, **2148** link at least one runnable example (66 have none) and **2163** have a usage section of 120+ characters (51 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2214.
 
 | dimension | ops | entry |
 |---|---:|---|
@@ -113,11 +113,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `geocam` | 9 | [INDEX](ops/geocam/INDEX.md) · [guide](ops/geocam/guides/geocam.md) |
 | `interferometry` | 9 | [INDEX](ops/interferometry/INDEX.md) · [guide](ops/interferometry/guides/coherence_scanning.md) |
 | `motionmag` | 9 | [INDEX](ops/motionmag/INDEX.md) · [guide](ops/motionmag/guides/motion_magnification.md) |
+| `graph` | 8 | [INDEX](ops/graph/INDEX.md) |
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
 | `emproof` | 7 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
-| `graph` | 5 | [INDEX](ops/graph/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
@@ -219,7 +219,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Document map — all 213
 
-The complete map, so that **no document is unreachable from this index** (the 2,206 per-op notes and 58 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 2,209 per-op notes and 58 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 

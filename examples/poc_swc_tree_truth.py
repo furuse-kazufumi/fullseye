@@ -21,6 +21,9 @@ SWC は構造制約を持つ(根は 1 つ / 親 id < 子 id / 節点数 = 辺数
 2. 3 次元 Sholl は**回転で整数が 1 つも動かない**(原点からの距離が回転不変だから)。
    12 回転すべてで `np.array_equal`。
 3. 分岐点の真値 = 子を 2 つ以上持つ節点の数(SWC から直接)。ケーブル総長 = Σ|子 − 親|。
+4. fullseye の op(:func:`treemorph.tree_from_swc` / ``tree_morphometry`` / ``tree_sholl``)が、
+   この PoC の自前の計算と**整数まで一致**する(分岐・節点・3-D と投影の Sholl)。PoC は op の
+   実例であり、同時に op の第 2 実装になっている。
 
 素材が無ければ(`FULLSEYE_NEUROMORPHO_DIR` に `*.swc` が無ければ)、同じ構造制約を満たす
 合成の木で回り、その旨を印字する。NeuroMorpho.Org のデータは CC BY 4.0
@@ -39,6 +42,7 @@ _ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_ROOT))
 import examplefig as figs  # noqa: E402
 import fullseye as fs  # noqa: E402
+import treemorph as TM  # noqa: E402
 
 N_PIX = 512
 N_ROT = 12
@@ -168,6 +172,12 @@ def render(xyz, rad, parent, child, n_pix=N_PIX):
     return img, scale
 
 
+def to_swc_text(ids, typ, xyz, rad, par) -> str:
+    """配列の木を SWC の本文に戻す(合成の木を op に渡すため)。"""
+    return "\n".join("%d %d %.9f %.9f %.9f %.6f %d" % (i, t, x[0], x[1], x[2], r, p)
+                     for i, t, x, r, p in zip(ids, typ, xyz, rad, par))
+
+
 def main() -> None:
     d = os.environ.get("FULLSEYE_NEUROMORPHO_DIR", "")
     files = sorted(glob.glob(os.path.join(d, "*.swc"))) if d else []
@@ -186,6 +196,15 @@ def main() -> None:
         rmax = float(np.linalg.norm(xyz0, axis=1).max())
         radii = np.arange(SHOLL_STEP, rmax, SHOLL_STEP)
         base = sholl_3d(xyz0, parent, child, radii)
+
+        # ★門 4: fullseye の op が自前の計算と整数まで一致する(op の実例 + 第 2 実装)
+        tree = TM.tree_from_swc(to_swc_text(ids, typ, xyz, rad, par))
+        m = TM.tree_morphometry(tree)
+        assert (m["nodes"], m["edges"], m["bifurcations"]) == (info["nodes"], info["edges"], n_bif), m
+        assert abs(m["cable_length"] - cable) < 1e-6 * cable, (m["cable_length"], cable)
+        assert np.array_equal(TM.tree_sholl(tree, radii=radii)["crossings"], base)
+        assert np.array_equal(TM.tree_sholl(tree, radii=radii, plane="xy")["crossings"],
+                              sholl_2d(xyz0[:, :2], parent, child, radii))
 
         # ★門 2: 3 次元 Sholl は回転で整数が 1 つも動かない
         rng = np.random.default_rng(0)
@@ -242,7 +261,7 @@ def main() -> None:
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     real = [r for r in rows if r[1] == "実データ"]
-    print("\nPASS%s: %d 本の木で SWC の構造制約と 3-D Sholl の回転不変(%d 回転・整数一致)が通り、投影では Sholl が最大 %d 交点、"
+    print("\nPASS%s: %d 本の木で op(tree_from_swc / tree_morphometry / tree_sholl)が自前の計算と整数まで一致し、SWC の構造制約と 3-D Sholl の回転不変(%d 回転・整数一致)が通り、投影では Sholl が最大 %d 交点、"
           "分岐点が真値 %s に対し %s 個まで動いた。" % ("" if real else "(合成)", len(rows), N_ROT,
                                                      max(r[6] for r in rows),
                                                      "/".join(str(r[3]) for r in rows),

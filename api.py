@@ -464,6 +464,8 @@ from graphinv import (  # noqa: E402,F401
     graph_degree_summary, graph_cycle3, graph_degree_preserving_null, graph_swap_symmetry,
     graph_edge_consensus,
 )
+import treemorph  # noqa: E402  (neuron trees from SWC)
+from treemorph import tree_from_swc, tree_morphometry, tree_sholl  # noqa: E402,F401
 import textregion  # noqa: E402  (where is the text, without a recogniser)
 from textregion import swt_map, text_candidates, text_lines  # noqa: E402,F401
 # 画像 → CAD 面の**逆写像**: 既存の align_cad_to_scan / ICP / ppf は「姿勢は出す」
@@ -933,7 +935,7 @@ __all__ = [
     "peak_subbin", "point_spectrum",
     "signal_features", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",
-    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "textregion",
+    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "textregion",
     "gfx2d", "alpha_composite", "alpha_composite_premul", "blend_mode", "bloom",
     "chromatic_aberration", "color_grade", "color_lut", "dither", "film_grain",
     "layer_stack", "light_mask", "linear_to_srgb", "nine_slice",

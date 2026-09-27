@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2200,
- "n_notes": 2206,
+ "n_ops": 2203,
+ "n_notes": 2209,
  "notes": {
   "vol_dilate": [
    {
@@ -16449,6 +16449,36 @@
     "in": "matrix",
     "out": "table",
     "path": "docs/ops/graph/symmetry/graph_swap_symmetry.md"
+   }
+  ],
+  "tree_from_swc": [
+   {
+    "op": "tree_from_swc",
+    "dim": "graph",
+    "category": "tree",
+    "in": "text",
+    "out": "table",
+    "path": "docs/ops/graph/tree/tree_from_swc.md"
+   }
+  ],
+  "tree_morphometry": [
+   {
+    "op": "tree_morphometry",
+    "dim": "graph",
+    "category": "tree",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/graph/tree/tree_morphometry.md"
+   }
+  ],
+  "tree_sholl": [
+   {
+    "op": "tree_sholl",
+    "dim": "graph",
+    "category": "tree",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/graph/tree/tree_sholl.md"
    }
   ],
   "evidence_quantile": [

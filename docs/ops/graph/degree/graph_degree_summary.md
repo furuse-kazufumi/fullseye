@@ -45,7 +45,7 @@ matrix over the node cap.
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[graph_edge_consensus](../population/graph_edge_consensus.md)
+[graph_edge_consensus](../population/graph_edge_consensus.md) · [tree_morphometry](../tree/tree_morphometry.md) · [tree_sholl](../tree/tree_sholl.md)
 
 ## 同カテゴリ(`degree`)
 

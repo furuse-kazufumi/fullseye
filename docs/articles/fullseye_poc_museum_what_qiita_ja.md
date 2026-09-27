@@ -2202,7 +2202,7 @@ py -3.11 examples/poc_swc_tree_truth.py
 
 この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_swc_tree_truth)
 
-使用 op(ノートへ): [`skeleton`](https://furuse.work/ops/2d/region/skeleton.html)
+使用 op(ノートへ): [`skeleton`](https://furuse.work/ops/2d/region/skeleton.html) · [`tree_from_swc`](https://furuse.work/ops/graph/tree/tree_from_swc.html) · [`tree_morphometry`](https://furuse.work/ops/graph/tree/tree_morphometry.html) · [`tree_sholl`](https://furuse.work/ops/graph/tree/tree_sholl.html)
 
 ### 天文・環境ウィング ―― 位置で偏り、真値の定義で反転する
 
