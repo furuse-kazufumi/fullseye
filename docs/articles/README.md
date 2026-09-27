@@ -27,11 +27,11 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 
 <!-- articles:start -->
 
-## この下にあるもの(全 56 本 —— 生成)
+## この下にあるもの(全 58 本 —— 生成)
 
 `py -3.11 tools/gen_docs_index_ops.py` が `docs/articles/` を歩いて作ります。**ここから辿れない文書を作らない**ための一覧なので、手で足し引きしないでください。
 
-**記事**(20) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
+**記事**(22) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
 
 | ファイル | 見出し |
 |---|---|
@@ -51,6 +51,8 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 | [`qiita_blas_threads_ja.md`](qiita_blas_threads_ja.md) | 24 コアが 1 コアに負ける ―― 行列分解の速さを、仮説ではなく測定で決めるまで |
 | [`qiita_flybrain_closedloop_en.md`](qiita_flybrain_closedloop_en.md) | It Passed Every Static Test, Then Failed Completely the Moment It Started Walking — Putting a Connectome-Constrained ... |
 | [`qiita_flybrain_closedloop_ja.md`](qiita_flybrain_closedloop_ja.md) | 静止した検査に全部通ったモデルが、歩き出した瞬間に全滅した ―― ハエの視覚モデルを体に載せて測る |
+| [`qiita_gates_en.md`](qiita_gates_en.md) | Every Test Is Green and the Gates Still Lie — What the Gates of an Image-Measurement Library Missed, and How to Build... |
+| [`qiita_gates_ja.md`](qiita_gates_ja.md) | テストが全部緑でも、門は嘘をつける ―― 画像計測ライブラリで門が見逃したものと、見逃さない門の作り方 |
 | [`qiita_math_drawing_en.md`](qiita_math_drawing_en.md) | Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test |
 | [`qiita_math_drawing_ja.md`](qiita_math_drawing_ja.md) | 数学の絵は、きれいなので誰も確かめない ―― 定理を門にして描く PoC シリーズ |
 | [`qiita_measuring_the_measurement_en.md`](qiita_measuring_the_measurement_en.md) | I Got All 52 Tests Green, Then Checked Against the Standard’s Own Answers — 5 Failed |
