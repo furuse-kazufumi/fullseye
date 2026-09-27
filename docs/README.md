@@ -70,11 +70,11 @@
 
 ## オペレータを探す
 
-**2,195 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **58 本の族ガイド**があります。次元ごとの入口:
+**2,198 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **58 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 932/932、型つき台帳 1242/1254、1 行ファサード `fullseye.<名前>` 598/1247。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 932/932、型つき台帳 1245/1257、1 行ファサード `fullseye.<名前>` 598/1247。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 2200 本のうち、実行できる例が付いているのは **2134 本**(66 本は例ゼロ)、使い方の説明が 120 字以上あるのは **2149 本**(51 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 2200 本すべてにある。
+**ノートの中身の実測**: 2203 本のうち、実行できる例が付いているのは **2137 本**(66 本は例ゼロ)、使い方の説明が 120 字以上あるのは **2152 本**(51 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 2203 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -96,6 +96,7 @@
 | `quat` — 四元数・単元信号 | 19 | [INDEX](ops/quat/INDEX.md) · [ガイド](ops/quat/guides/quaternion_monogenic.md) |
 | `lightfield` — ライトフィールド | 17 | [INDEX](ops/lightfield/INDEX.md) · [ガイド](ops/lightfield/guides/lightfield_depth.md) |
 | `photon` — 光子計数 / dToF | 17 | [INDEX](ops/photon/INDEX.md) · [ガイド](ops/photon/guides/photon_timeresolved.md) |
+| `spc` | 17 | [INDEX](ops/spc/INDEX.md) |
 | `tomography` — 断層 | 17 | [INDEX](ops/tomography/INDEX.md) |
 | `flyvision` | 16 | [INDEX](ops/flyvision/INDEX.md) · [ガイド](ops/flyvision/guides/fly_vision.md) |
 | `imgforensics` — 改ざん検出 | 16 | [INDEX](ops/imgforensics/INDEX.md) |
@@ -105,7 +106,6 @@
 | `astrostack` — 天体スタック | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [ガイド](ops/live4d/guides/live4d.md) |
 | `measure1d` — サブピクセル計測 | 14 | [INDEX](ops/measure1d/INDEX.md) · [ガイド](ops/measure1d/guides/subpixel_measuring.md) |
-| `spc` | 14 | [INDEX](ops/spc/INDEX.md) |
 | `specular` — 鏡面分離 | 13 | [INDEX](ops/specular/INDEX.md) · [ガイド](ops/specular/guides/specular_photometric.md) |
 | `profile` — 断面形状 | 12 | [INDEX](ops/profile/INDEX.md) · [ガイド](ops/profile/guides/profile_metrology.md) |
 | `colortransport` — 色の輸送 | 11 | [INDEX](ops/colortransport/INDEX.md) |
@@ -219,7 +219,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## ドキュメント地図 — 全 213 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 2,195 本と族ガイド 58 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 2,198 本と族ガイド 58 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 

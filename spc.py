@@ -405,21 +405,19 @@ def spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None):
 
 
 #: The op family, mirrored by :mod:`opsspc` (name -> callable).
-SPC = {
-    "spc_xbar_r": spc_xbar_r,
-    "spc_cusum": spc_cusum,
-    "spc_capability": spc_capability,
-    "spc_hotelling_t2": spc_hotelling_t2,
-}
+def _registry():
+    """Name -> function for every operator this module publishes.
 
-
-if __name__ == "__main__":                                # pragma: no cover
-    rng = np.random.default_rng(0)
-    sg = rng.normal(10.0, 1.0, size=(20, 5))
-    print("spc: %d ops" % len(SPC))
-    print("  xbar_r in_control:", spc_xbar_r(sg)["in_control"])
-    print("  cusum first_alarm:", spc_cusum(rng.normal(0, 1, 50), target=0.0)["first_alarm"])
-    print("  cpk:", round(spc_capability(rng.normal(10, 1, 200), 6.0, 14.0)["cpk"], 3))
+    ★Built by looking at this module, not by hand. The hand-written version listed
+    four operators and was never updated when ewma / msa / gum arrived, so it was
+    stale by thirteen — and the test that pinned it to those four *enforced* the
+    staleness. A registry that answers "what does this module publish?" must be
+    derived from the module, and ``tests/test_spc.py`` checks it agrees with the
+    ``opsspc`` catalogue, which is the other surface that answers the same
+    question.
+    """
+    return {name: obj for name, obj in sorted(globals().items())
+            if name.startswith(("spc_", "msa_", "gum_")) and callable(obj)}
 
 
 # =========================================================================== #
@@ -1345,3 +1343,276 @@ def _shortest_interval(y: np.ndarray, level: float):
     widths = s[q:] - s[:n - q]
     i = int(np.argmin(widths))
     return float(s[i]), float(s[i + q])
+
+
+# --------------------------------------------------------------------------
+# MT-method (Mahalanobis-Taguchi)
+# --------------------------------------------------------------------------
+# Why this sits next to `spc_hotelling_t2` rather than replacing it: both chart
+# several correlated measurements jointly, but they answer different questions and
+# are scaled differently. Hotelling asks "is this observation outside the control
+# region of the sample I estimated from?" and its limit comes from an F
+# distribution. The MT-method asks "how far is this observation from a *unit space*
+# of known-good product, in units where the unit space itself averages one?" — the
+# scale is the reference population, not a distributional tail. That reference
+# framing is what lets a line set a single threshold (commonly 3) and keep it
+# across products, and it is why the method is standard practice in quality
+# engineering. Provenance: Taguchi & Jugulum, *The Mahalanobis-Taguchi Strategy*
+# (2002); Taguchi, Chowdhury & Wu, *The Mahalanobis-Taguchi System* (2001).
+#
+# The exact identity that makes these operators checkable (derived, not fitted):
+# standardise with the ddof=1 standard deviation, so ``z_i = (x_i - m)/s``, and let
+# ``R`` be the correlation matrix of the same data. Then
+#
+#     (1/N) sum_i z_i' R^-1 z_i = tr(R^-1 (1/N) sum_i z_i z_i')
+#                              = tr(R^-1 ((N-1)/N) R) = ((N-1)/N) p
+#
+# because ``(1/N) sum_i z_i z_i' = ((N-1)/N) R`` exactly (the ddof=1 divisor in the
+# standardisation is N-1 while the outer average divides by N). Dividing by ``p``,
+#
+#     mean of MD^2 over the unit space == (N-1)/N        <- exact, to float error
+#
+# which is the quantitative form of the textbook statement "the unit space has an
+# average Mahalanobis distance of 1": it is 1 only in the limit, and the deficit is
+# exactly 1/N. A test that pins 1.0 would be wrong for every finite sample; a test
+# that pins (N-1)/N is right for all of them.
+
+
+def _mt_unit_space(arr: np.ndarray, op: str):
+    """Mean, ddof=1 standard deviation and inverse correlation of *arr*.
+
+    A feature with zero spread carries no information. Rather than dividing by
+    zero (or refusing the whole matrix), its standard deviation is set to 1 and
+    its correlation row/column to the identity contribution, so the feature
+    contributes exactly nothing to the distance and the matrix stays invertible.
+    The count of such features is reported, because silently ignoring a dead
+    sensor is how a unit space starts lying.
+    """
+    mean = arr.mean(axis=0)
+    std = arr.std(axis=0, ddof=1)
+    # ★"no spread" is not "std == 0.0". A column holding one repeated value leaves
+    #   rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero
+    #   (measured). Dividing by that dust amplifies it into a distance of nonsense,
+    #   and the absolute test never fires. Put the floor at the *relative* scale of
+    #   the column, below which a spread cannot be represented in the data itself.
+    floor = np.finfo(float).eps * 64.0 * np.maximum(np.abs(mean), 1.0)
+    flat = np.asarray(std <= floor).reshape(-1)
+    n_flat = int(flat.sum())
+    if n_flat:
+        std = std.copy()
+        std[flat] = 1.0
+    z = (arr - mean) / std
+    p = arr.shape[1]
+    if p == 1:
+        corr = np.ones((1, 1), dtype=float)
+    else:
+        with np.errstate(divide="ignore", invalid="ignore"):
+            corr = np.atleast_2d(np.corrcoef(z, rowvar=False))
+        if not np.all(np.isfinite(corr)):
+            corr = np.nan_to_num(corr, nan=0.0, posinf=0.0, neginf=0.0)
+            np.fill_diagonal(corr, 1.0)
+    try:
+        inv_corr = np.linalg.inv(corr)
+    except np.linalg.LinAlgError:
+        # Perfectly collinear features make the correlation matrix singular. The
+        # pseudo-inverse keeps the distance defined (the collinear directions add
+        # nothing) instead of failing a whole production run; the caller is told.
+        inv_corr = np.linalg.pinv(corr)
+        singular = True
+    else:
+        singular = False
+    return mean, std, corr, inv_corr, n_flat, singular
+
+
+def _mt_md(arr: np.ndarray, mean, std, inv_corr) -> np.ndarray:
+    """Row-wise Mahalanobis-Taguchi distance ``sqrt(z' R^-1 z / p)``."""
+    z = (arr - mean) / std
+    quad = np.einsum("ij,jk,ik->i", z, inv_corr, z)
+    return np.sqrt(np.maximum(quad / arr.shape[1], 0.0))
+
+
+def spc_mt_unit_space(data):
+    """Build an MT-method unit space from known-good observations.
+
+    ``data`` is a 2-D array of shape ``(n, p)`` — ``n`` observations of ``p``
+    features, **all of which must be normal product**. The unit space is the
+    triple ``(mean, std, inv_corr)``: per-feature mean and ddof=1 standard
+    deviation, and the inverse of the correlation matrix of the standardised
+    data. Feed it to :func:`spc_mt_distance` to score new observations.
+
+    Returns a dict with ``mean``, ``std``, ``corr`` and ``inv_corr`` arrays, the
+    unit space's own ``md`` per row, ``md_sq_mean``, the exact expected value
+    ``md_sq_mean_exact = (n-1)/n``, the counts ``n`` and ``p``, how many features
+    had no spread (``flat_features``), and whether the correlation matrix was
+    singular enough to need a pseudo-inverse (``pseudo_inverse``).
+
+    The mean of ``md**2`` over the unit space equals ``(n-1)/n`` exactly — the
+    quantitative form of "a unit space averages a distance of one". It reaches 1
+    only as ``n`` grows; the deficit is exactly ``1/n``.
+
+    **Raises** ``ValueError``: a non-2-D / empty *data*, fewer than two
+    observations (no spread to standardise by), zero features, or non-finite
+    input.
+    """
+    op = "spc_mt_unit_space"
+    arr = _as_float_array(data, "data", op)
+    if arr.ndim != 2:
+        raise ValueError("%s: data must be 2-D (n observations x p features), got a "
+                         "%d-D array of shape %r" % (op, arr.ndim, arr.shape))
+    n, p = arr.shape
+    if n < 2:
+        raise ValueError("%s: need at least 2 observations to measure spread, got "
+                         "n=%d" % (op, n))
+    if p < 1:
+        raise ValueError("%s: need at least 1 feature, got p=%d" % (op, p))
+    mean, std, corr, inv_corr, n_flat, singular = _mt_unit_space(arr, op)
+    md = _mt_md(arr, mean, std, inv_corr)
+    return {
+        "mean": mean,
+        "std": std,
+        "corr": corr,
+        "inv_corr": inv_corr,
+        "md": md,
+        "md_sq_mean": float(np.mean(md ** 2)),
+        "md_sq_mean_exact": float(n - 1) / float(n),
+        "n": int(n),
+        "p": int(p),
+        "flat_features": n_flat,
+        "pseudo_inverse": bool(singular),
+    }
+
+
+def spc_mt_distance(data, mean=None, std=None, inv_corr=None, threshold=3.0):
+    """Score observations against an MT-method unit space.
+
+    ``data`` is a 2-D array of shape ``(m, p)``. Pass the ``mean``, ``std`` and
+    ``inv_corr`` from :func:`spc_mt_unit_space` to score new product against a
+    stored unit space; omit all three and the unit space is built from ``data``
+    itself, which is the training case and makes ``md_sq_mean`` land on
+    ``(m-1)/m``.
+
+    Each row's distance is ``MD_i = sqrt(z_i' R^-1 z_i / p)`` with
+    ``z_i = (x_i - mean) / std``. Rows with ``MD > threshold`` are reported in
+    ``flagged``; the rest in ``inside``. Dividing the quadratic form by ``p`` is
+    what puts the unit space at 1 regardless of how many features are used, so a
+    threshold carries over when features are added or removed.
+
+    Returns a dict with the per-row ``md`` and ``md_sq`` arrays, ``flagged``,
+    ``inside``, the ``threshold``, ``md_sq_mean``, and ``n``/``p``.
+
+    Relationship to :func:`spc_hotelling_t2` (used as the oracle in the tests):
+    on the standardised matrix the covariance *is* the correlation, so
+    ``md**2 == t2 / p`` exactly for the same data.
+
+    **Raises** ``ValueError``: a non-2-D / empty *data*, a non-positive
+    ``threshold``, a unit space given only in part, a ``mean`` / ``std`` /
+    ``inv_corr`` whose shape disagrees with ``p``, a non-positive entry in
+    ``std``, or non-finite input.
+    """
+    op = "spc_mt_distance"
+    arr = _as_float_array(data, "data", op)
+    if arr.ndim != 2:
+        raise ValueError("%s: data must be 2-D (m observations x p features), got a "
+                         "%d-D array of shape %r" % (op, arr.ndim, arr.shape))
+    m, p = arr.shape
+    if p < 1:
+        raise ValueError("%s: need at least 1 feature, got p=%d" % (op, p))
+    if not (float(threshold) > 0.0):
+        raise ValueError("%s: threshold must be positive, got %r" % (op, threshold))
+    given = [x is not None for x in (mean, std, inv_corr)]
+    if any(given) and not all(given):
+        # ★A unit space given in part is the dangerous case: the missing piece
+        #   would be silently estimated from the very data under test, so a drifted
+        #   batch would score itself as normal. Refuse instead.
+        raise ValueError("%s: pass all of mean, std and inv_corr together (a unit "
+                         "space estimated partly from the data under test would "
+                         "score that data as normal), got mean=%s std=%s inv_corr=%s"
+                         % (op, *["given" if g else "missing" for g in given]))
+    if all(given):
+        mu = _as_1d(mean, "mean", op)
+        sd = _as_1d(std, "std", op)
+        inv = _as_float_array(inv_corr, "inv_corr", op)
+        inv = np.atleast_2d(inv)
+        if mu.size != p or sd.size != p:
+            raise ValueError("%s: mean has %d and std has %d entries but data has "
+                             "p=%d features" % (op, mu.size, sd.size, p))
+        if inv.shape != (p, p):
+            raise ValueError("%s: inv_corr must be (p, p)=(%d, %d), got %r"
+                             % (op, p, p, inv.shape))
+        if np.any(sd <= 0.0):
+            raise ValueError("%s: std must be positive everywhere (a zero entry "
+                             "means that feature had no spread in the unit space; "
+                             "spc_mt_unit_space reports it as flat_features and "
+                             "substitutes 1.0)" % op)
+    else:
+        if m < 2:
+            raise ValueError("%s: need at least 2 observations to build a unit space "
+                             "from the data itself, got m=%d (or pass mean/std/"
+                             "inv_corr)" % (op, m))
+        mu, sd, _corr, inv, _flat, _sing = _mt_unit_space(arr, op)
+    md = _mt_md(arr, mu, sd, inv)
+    over = md > float(threshold)
+    return {
+        "md": md,
+        "md_sq": md ** 2,
+        "flagged": np.flatnonzero(over).astype(int),
+        "inside": np.flatnonzero(~over).astype(int),
+        "threshold": float(threshold),
+        "md_sq_mean": float(np.mean(md ** 2)),
+        "n": int(m),
+        "p": int(p),
+    }
+
+
+def spc_mt_sn_ratio(md):
+    """Larger-the-better SN ratio of abnormal-sample distances, in decibels.
+
+    MT-method item selection asks which features earn their place: run the unit
+    space with a subset of features, score the *abnormal* samples, and keep the
+    subset whose distances are largest. The figure of merit is the
+    larger-the-better signal-to-noise ratio
+
+        eta = -10 log10( (1/n) sum_i 1 / MD_i^2 )
+
+    an inverse-square average, so one abnormal sample that the subset fails to
+    separate drags the whole score down — which is the behaviour wanted when the
+    cost of a miss dominates. The caller drives the subsets (classically by an
+    orthogonal array); this operator is the closed-form score for one subset.
+
+    ``md`` is a 1-D array of distances for the abnormal samples. Returns a dict
+    with ``sn_ratio_db``, the ``harmonic_mean_md_sq`` it came from, and ``n``.
+
+    For a constant ``MD == d`` the sum collapses and ``eta == 20 log10(d)``
+    exactly — pinned in the tests, and the reason a subset that puts every
+    abnormal sample at distance 10 scores exactly 20 dB.
+
+    **Raises** ``ValueError``: an empty or non-1-D *md*, a non-positive entry (a
+    zero distance would divide by zero: an abnormal sample sitting exactly on the
+    unit-space centre means the subset separates nothing), or non-finite input.
+    """
+    op = "spc_mt_sn_ratio"
+    arr = _as_1d(md, "md", op)
+    if np.any(arr <= 0.0):
+        bad = int(np.flatnonzero(arr <= 0.0)[0])
+        raise ValueError("%s: md must be positive everywhere, got %r at index %d "
+                         "(a zero distance means that abnormal sample sits on the "
+                         "unit-space centre, so the subset separates nothing)"
+                         % (op, float(arr[bad]), bad))
+    hm = float(np.mean(1.0 / (arr ** 2)))
+    return {
+        "sn_ratio_db": float(-10.0 * np.log10(hm)),
+        "harmonic_mean_md_sq": hm,
+        "n": int(arr.size),
+    }
+
+
+SPC = _registry()
+
+
+if __name__ == "__main__":                                # pragma: no cover
+    rng = np.random.default_rng(0)
+    sg = rng.normal(10.0, 1.0, size=(20, 5))
+    print("spc: %d ops" % len(SPC))
+    print("  xbar_r in_control:", spc_xbar_r(sg)["in_control"])
+    print("  cusum first_alarm:", spc_cusum(rng.normal(0, 1, 50), target=0.0)["first_alarm"])
+    print("  cpk:", round(spc_capability(rng.normal(10, 1, 200), 6.0, 14.0)["cpk"], 3))

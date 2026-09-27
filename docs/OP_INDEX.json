@@ -1,8 +1,8 @@
 {
- "n_ops": 2189,
+ "n_ops": 2192,
  "tiers": {
   "color": 12,
-  "ledger": 1240,
+  "ledger": 1243,
   "nary": 17,
   "registry": 920
  },
@@ -13561,6 +13561,45 @@
    "in_sort": "matrix",
    "out_sort": "table",
    "category": "multivariate",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "spc_mt_distance",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "mt",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "spc_mt_sn_ratio",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "mt",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "spc_mt_unit_space",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "mt",
    "tier": "ledger",
    "ledger": "opsspc",
    "dim": "spc",

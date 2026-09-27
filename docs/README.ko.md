@@ -68,11 +68,11 @@
 
 ## 연산자 찾기
 
-**2,195개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **58개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**2,198개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **58개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 932/932, 타입 台帳 1242/1254, 한 줄 파사드 `fullseye.<이름>` 598/1247 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 932/932, 타입 台帳 1245/1257, 한 줄 파사드 `fullseye.<이름>` 598/1247 — **파사드는 아직 절반**.
 
-**내용 실측**: 2200건 중 실행 가능한 예제가 붙은 것은 **2134**건(66건은 없음), 사용법이 120자 이상인 것은 **2149**건(51건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2200건 모두.
+**내용 실측**: 2203건 중 실행 가능한 예제가 붙은 것은 **2137**건(66건은 없음), 사용법이 120자 이상인 것은 **2152**건(51건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2203건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -94,6 +94,7 @@
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `lightfield` | 17 | [INDEX](ops/lightfield/INDEX.md) · [guide](ops/lightfield/guides/lightfield_depth.md) |
 | `photon` | 17 | [INDEX](ops/photon/INDEX.md) · [guide](ops/photon/guides/photon_timeresolved.md) |
+| `spc` | 17 | [INDEX](ops/spc/INDEX.md) |
 | `tomography` | 17 | [INDEX](ops/tomography/INDEX.md) |
 | `flyvision` | 16 | [INDEX](ops/flyvision/INDEX.md) · [guide](ops/flyvision/guides/fly_vision.md) |
 | `imgforensics` | 16 | [INDEX](ops/imgforensics/INDEX.md) |
@@ -103,7 +104,6 @@
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
 | `measure1d` | 14 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
-| `spc` | 14 | [INDEX](ops/spc/INDEX.md) |
 | `specular` | 13 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
@@ -217,7 +217,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 문서 지도 — 전 213건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 2,195건과 패밀리 가이드 58건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 2,198건과 패밀리 가이드 58건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 

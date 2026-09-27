@@ -1,4 +1,4 @@
-# SPC operator help — 14 ops in 6 categories
+# SPC operator help — 17 ops in 7 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/spc/<category>/<op>.md` を走査。
 
@@ -19,6 +19,10 @@
 ### msa (4)
 
 [msa_anova_table](msa/msa_anova_table.md) · [msa_attribute_agreement](msa/msa_attribute_agreement.md) · [msa_bias_linearity](msa/msa_bias_linearity.md) · [msa_gauge_rr](msa/msa_gauge_rr.md)
+
+### mt (3)
+
+[spc_mt_distance](mt/spc_mt_distance.md) · [spc_mt_sn_ratio](mt/spc_mt_sn_ratio.md) · [spc_mt_unit_space](mt/spc_mt_unit_space.md)
 
 ### multivariate (1)
 

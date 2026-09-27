@@ -534,7 +534,7 @@ Source: [examples/poc_spc.py](https://github.com/furuse-kazufumi/fullseye/blob/m
 
 This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_spc)
 
-Ops used (notes): [`spc_capability`](https://furuse.work/ops/spc/capability/spc_capability.html) · [`spc_cusum`](https://furuse.work/ops/spc/change/spc_cusum.html) · [`spc_ewma`](https://furuse.work/ops/spc/change/spc_ewma.html) · [`spc_hotelling_t2`](https://furuse.work/ops/spc/multivariate/spc_hotelling_t2.html) · [`spc_xbar_r`](https://furuse.work/ops/spc/chart/spc_xbar_r.html)
+Ops used (notes): [`spc_capability`](https://furuse.work/ops/spc/capability/spc_capability.html) · [`spc_cusum`](https://furuse.work/ops/spc/change/spc_cusum.html) · [`spc_ewma`](https://furuse.work/ops/spc/change/spc_ewma.html) · [`spc_hotelling_t2`](https://furuse.work/ops/spc/multivariate/spc_hotelling_t2.html) · [`spc_mt_distance`](https://furuse.work/ops/spc/mt/spc_mt_distance.html) · [`spc_mt_sn_ratio`](https://furuse.work/ops/spc/mt/spc_mt_sn_ratio.html) · [`spc_mt_unit_space`](https://furuse.work/ops/spc/mt/spc_mt_unit_space.html) · [`spc_xbar_r`](https://furuse.work/ops/spc/chart/spc_xbar_r.html)
 
 ## No.2026.042 —— How Much Camera Thermal Drift Costs a Dimensional Measurement
 

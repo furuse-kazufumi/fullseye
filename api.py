@@ -457,6 +457,7 @@ from flyvision import (  # noqa: E402,F401
 import spc  # noqa: E402  (statistical process control)
 from spc import (  # noqa: E402,F401
     spc_xbar_r, spc_cusum, spc_ewma, spc_capability, spc_hotelling_t2,
+    spc_mt_unit_space, spc_mt_distance, spc_mt_sn_ratio,
 )
 # 画像 → CAD 面の**逆写像**: 既存の align_cad_to_scan / ICP / ppf は「姿勢は出す」
 # が、2-D 画像上で見つけた欠陥が CAD 面のどの座標かに落とす経路が空だった。

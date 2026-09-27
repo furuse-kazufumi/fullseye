@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2189,
- "n_notes": 2195,
+ "n_ops": 2192,
+ "n_notes": 2198,
  "notes": {
   "vol_dilate": [
    {
@@ -21620,6 +21620,36 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/spc/msa/msa_gauge_rr.md"
+   }
+  ],
+  "spc_mt_distance": [
+   {
+    "op": "spc_mt_distance",
+    "dim": "spc",
+    "category": "mt",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/spc/mt/spc_mt_distance.md"
+   }
+  ],
+  "spc_mt_sn_ratio": [
+   {
+    "op": "spc_mt_sn_ratio",
+    "dim": "spc",
+    "category": "mt",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/spc/mt/spc_mt_sn_ratio.md"
+   }
+  ],
+  "spc_mt_unit_space": [
+   {
+    "op": "spc_mt_unit_space",
+    "dim": "spc",
+    "category": "mt",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/spc/mt/spc_mt_unit_space.md"
    }
   ],
   "spc_hotelling_t2": [

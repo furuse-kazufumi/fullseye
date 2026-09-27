@@ -1205,7 +1205,7 @@ def _b_fly_dsi(pool, rng):
     return (resp, ang), {}
 
 
-# --- SPC(統計的工程管理)の 4 op。形の制約(部分群 2..10 列 / 観測 m>=p+1)を満たす --- #
+# --- SPC(統計的工程管理)。形の制約(部分群 2..10 列 / 観測 m>=p+1)を満たす --- #
 def _b_spc_xbar_r(pool, rng):
     return (rng.normal(10.0, 1.0, size=(20, 5)),), {}
 
@@ -1224,6 +1224,22 @@ def _b_spc_capability(pool, rng):
 
 def _b_spc_hotelling_t2(pool, rng):
     return (rng.normal(0.0, 1.0, size=(50, 3)),), {}
+
+
+# --- MT 法。単位空間は「観測 >= 2」だけが制約(p+1 は要らない) --- #
+def _b_spc_mt_unit_space(pool, rng):
+    return (rng.normal(0.0, 1.0, size=(60, 4)),), {}
+
+
+def _b_spc_mt_distance(pool, rng):
+    # ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から
+    #   作る」訓練時の呼び方で、ファザーが最も広く回せる。
+    return (rng.normal(0.0, 1.0, size=(60, 4)),), {"threshold": 3.0}
+
+
+def _b_spc_mt_sn_ratio(pool, rng):
+    # 距離は正でなければならない(0 は「単位空間の中心に居る異常標本」= 分離ゼロ)。
+    return (rng.uniform(0.5, 20.0, size=12),), {}
 
 
 def _b_msa_table(pool, rng):
@@ -1352,6 +1368,9 @@ OP_ARG_BUILDERS = {
     "spc_ewma": _b_spc_ewma,
     "spc_capability": _b_spc_capability,
     "spc_hotelling_t2": _b_spc_hotelling_t2,
+    "spc_mt_unit_space": _b_spc_mt_unit_space,
+    "spc_mt_distance": _b_spc_mt_distance,
+    "spc_mt_sn_ratio": _b_spc_mt_sn_ratio,
     # --- 描画: 32x32 では物理的に収まらない 13 op ---------------------------- #
     "text_box": _b_draw(["image2d", "text"]),
     "leader_line": _b_leader_line,

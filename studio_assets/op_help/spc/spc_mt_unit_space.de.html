@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spc_mt_unit_space — SPC <code style="color:#22d3bf">mt</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_mt_unit_space(data)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.spc_mt_unit_space(data)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;spc_mt_unit_space&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Build an MT-method unit space from known-good observations.</p>
+<p>`<code style="color:#22d3bf">data</code><code style="color:#22d3bf"> is a 2-D array of shape </code><code style="color:#22d3bf">(n, p)</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> observations of </code><code style="color:#22d3bf">p</code>`</p>
+<p>features, <b>all of which must be normal product</b>. The unit space is the</p>
+<p>triple `<code style="color:#22d3bf">(mean, std, inv_corr)</code>`: per-feature mean and ddof=1 standard</p>
+<p>deviation, and the inverse of the correlation matrix of the standardised</p>
+<p>data. Feed it to :func:<code style="color:#22d3bf">spc_mt_distance</code> to score new observations.</p>
+<p>Returns a dict with `<code style="color:#22d3bf">mean</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">std</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">corr</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">inv_corr</code>` arrays, the</p>
+<p>unit space&#x27;s own `<code style="color:#22d3bf">md</code><code style="color:#22d3bf"> per row, </code><code style="color:#22d3bf">md_sq_mean</code>`, the exact expected value</p>
+<p>`<code style="color:#22d3bf">md_sq_mean_exact = (n-1)/n</code><code style="color:#22d3bf">, the counts </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">p</code>`, how many features</p>
+<p>had no spread (`<code style="color:#22d3bf">flat_features</code>`), and whether the correlation matrix was</p>
+<p>singular enough to need a pseudo-inverse (`<code style="color:#22d3bf">pseudo_inverse</code>`).</p>
+<p>The mean of `<code style="color:#22d3bf">md**2</code><code style="color:#22d3bf"> over the unit space equals </code><code style="color:#22d3bf">(n-1)/n</code>` exactly — the</p>
+<p>quantitative form of &quot;a unit space averages a distance of one&quot;. It reaches 1</p>
+<p>only as `<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> grows; the deficit is exactly </code><code style="color:#22d3bf">1/n</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-2-D / empty *data*, fewer than two</p>
+<p>observations (no spread to standardise by), zero features, or non-finite</p>
+<p>input.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">mt</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:spc_mt_distance">spc_mt_distance</a> · <a style="color:#22d3bf" href="opspc:spc_mt_sn_ratio">spc_mt_sn_ratio</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

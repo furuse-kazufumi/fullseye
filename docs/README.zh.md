@@ -68,11 +68,11 @@
 
 ## 查找算子
 
-共有 **2,195 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **58 篇族指南**。按维度的入口:
+共有 **2,198 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **58 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 932/932、类型化台账 1242/1254、单行门面 `fullseye.<名称>` 598/1247 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 932/932、类型化台账 1245/1257、单行门面 `fullseye.<名称>` 598/1247 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 2200 篇中，附有可运行示例的 **2134** 篇(66 篇没有)，用法说明 120 字以上的 **2149** 篇(51 篇仅一行)。结构(调用形式、类型、可衔接算子)2200 篇全有。
+**内容实测**: 2203 篇中，附有可运行示例的 **2137** 篇(66 篇没有)，用法说明 120 字以上的 **2152** 篇(51 篇仅一行)。结构(调用形式、类型、可衔接算子)2203 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -94,6 +94,7 @@
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `lightfield` | 17 | [INDEX](ops/lightfield/INDEX.md) · [guide](ops/lightfield/guides/lightfield_depth.md) |
 | `photon` | 17 | [INDEX](ops/photon/INDEX.md) · [guide](ops/photon/guides/photon_timeresolved.md) |
+| `spc` | 17 | [INDEX](ops/spc/INDEX.md) |
 | `tomography` | 17 | [INDEX](ops/tomography/INDEX.md) |
 | `flyvision` | 16 | [INDEX](ops/flyvision/INDEX.md) · [guide](ops/flyvision/guides/fly_vision.md) |
 | `imgforensics` | 16 | [INDEX](ops/imgforensics/INDEX.md) |
@@ -103,7 +104,6 @@
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
 | `measure1d` | 14 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
-| `spc` | 14 | [INDEX](ops/spc/INDEX.md) |
 | `specular` | 13 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
@@ -217,7 +217,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 213 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,195 篇算子说明与 58 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,198 篇算子说明与 58 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 

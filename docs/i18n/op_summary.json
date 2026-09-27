@@ -14300,6 +14300,18 @@
    "fp": "9c8badfbf811",
    "ja": "Hotelling の T² による多変量 SPC(F 分布由来の管理限界で相関する計測を同時に判定)。"
   },
+  "spc/spc_mt_distance": {
+   "fp": "27ade6a39799",
+   "ja": "MT 法の単位空間からの距離で観測を採点する(MD² = T²/p)。"
+  },
+  "spc/spc_mt_sn_ratio": {
+   "fp": "b11c9e94fcfa",
+   "ja": "異常標本の距離から望大特性の SN 比(dB)を出す —— 項目選択の採点。"
+  },
+  "spc/spc_mt_unit_space": {
+   "fp": "aad803d931f6",
+   "ja": "既知良品の観測から MT 法の単位空間を作る(MD² の平均はちょうど (n-1)/n)。"
+  },
   "spc/spc_xbar_r": {
    "fp": "232365db9c7c",
    "ja": "部分群計測からの Shewhart Xbar-R 管理図(ISO 8258 定数で管理限界と逸脱を出す)。"

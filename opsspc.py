@@ -4,7 +4,7 @@
 Motivation (2026-09-13): fullseye produces measurements from images (measure1d /
 shapestat / imgmetrics / blob) but had no operator to answer the line's question —
 *is this process in control, and is it capable?* This registry is that pathway
-(spc.py, 4 ops / 4 categories). Every op is a closed-form textbook / standards model
+(spc.py, 17 ops / 7 categories). Every op is a closed-form textbook / standards model
 with an exact identity to check it against, not a fitted model (see the thresholds
 in the guide and ``tests/test_spc.py``).
 
@@ -56,6 +56,18 @@ _CATALOG = {
     ],
     "multivariate": [
         ("spc_hotelling_t2", "spc", ["matrix"], "table"),
+    ],
+    # MT 法(マハラノビス・タグチ)。Hotelling と同じ「相関した測定をまとめて見る」
+    # 問いだが、基準が**既知良品の単位空間**で、尺度は分布の裾ではなく参照集団。
+    # だから閾値(慣習的に 3)を製品を変えても持ち回せる。
+    # ★単位空間の MD² の平均は **ちょうど (n-1)/n**(導出、当てはめではない)。
+    #   教科書の「単位空間の距離は平均 1」を有限標本で正確に言い直したもので、
+    #   1.0 を固定する試験はどんな標本でも間違い、(n-1)/n は全部で正しい。
+    "mt": [
+        ("spc_mt_unit_space", "spc", ["matrix"], "table"),
+        ("spc_mt_distance", "spc", ["matrix"], "table"),
+        # 項目選択の採点。異常標本の距離(1 次元)を受けて SN 比を返す。
+        ("spc_mt_sn_ratio", "spc", ["signal"], "table"),
     ],
     # 測定システム解析。入力は「1 行 = 1 回の測定」の表(部品 / 測定者 / 値)で、
     # 返りも表 —— 新しい型の語は 1 つも要らない。

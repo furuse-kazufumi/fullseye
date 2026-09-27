@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spc_mt_distance — SPC <code style="color:#22d3bf">mt</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_mt_distance(data, mean=None, std=None, inv_corr=None, threshold=3.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spc; spc.spc_mt_distance(data, mean=None, std=None, inv_corr=None, threshold=3.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;spc_mt_distance&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>MT 法の単位空間からの距離で観測を採点する(MD² = T²/p)。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>`<code style="color:#22d3bf">data</code><code style="color:#22d3bf"> is a 2-D array of shape </code><code style="color:#22d3bf">(m, p)</code><code style="color:#22d3bf">. Pass the </code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">std</code>` and</p>
+<p>`<code style="color:#22d3bf">inv_corr</code><code style="color:#22d3bf"> from :func:</code>spc_mt_unit_space` to score new product against a</p>
+<p>stored unit space; omit all three and the unit space is built from `<code style="color:#22d3bf">data</code>`</p>
+<p>itself, which is the training case and makes `<code style="color:#22d3bf">md_sq_mean</code>` land on</p>
+<p>`<code style="color:#22d3bf">(m-1)/m</code>`.</p>
+<p>Each row&#x27;s distance is `<code style="color:#22d3bf">MD_i = sqrt(z_i&#x27; R^-1 z_i / p)</code>` with</p>
+<p>`<code style="color:#22d3bf">z_i = (x_i - mean) / std</code><code style="color:#22d3bf">. Rows with </code><code style="color:#22d3bf">MD &gt; threshold</code>` are reported in</p>
+<p>`<code style="color:#22d3bf">flagged</code><code style="color:#22d3bf">; the rest in </code><code style="color:#22d3bf">inside</code><code style="color:#22d3bf">. Dividing the quadratic form by </code><code style="color:#22d3bf">p</code>` is</p>
+<p>what puts the unit space at 1 regardless of how many features are used, so a</p>
+<p>threshold carries over when features are added or removed.</p>
+<p>Returns a dict with the per-row `<code style="color:#22d3bf">md</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">md_sq</code><code style="color:#22d3bf"> arrays, </code><code style="color:#22d3bf">flagged</code>`,</p>
+<p>`<code style="color:#22d3bf">inside</code><code style="color:#22d3bf">, the </code><code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">md_sq_mean</code><code style="color:#22d3bf">, and </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">p</code>`.</p>
+<p>Relationship to :func:<code style="color:#22d3bf">spc_hotelling_t2</code> (used as the oracle in the tests):</p>
+<p>on the standardised matrix the covariance *is* the correlation, so</p>
+<p>`<code style="color:#22d3bf">md**2 == t2 / p</code>` exactly for the same data.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-2-D / empty *data*, a non-positive</p>
+<p>`<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">, a unit space given only in part, a </code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">std</code>` /</p>
+<p>`<code style="color:#22d3bf">inv_corr</code><code style="color:#22d3bf"> whose shape disagrees with </code><code style="color:#22d3bf">p</code>`, a non-positive entry in</p>
+<p>`<code style="color:#22d3bf">std</code>`, or non-finite input.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">mt</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:spc_mt_unit_space">spc_mt_unit_space</a> · <a style="color:#22d3bf" href="opspc:spc_mt_sn_ratio">spc_mt_sn_ratio</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

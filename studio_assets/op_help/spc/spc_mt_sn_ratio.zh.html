@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spc_mt_sn_ratio — SPC <code style="color:#22d3bf">mt</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_mt_sn_ratio(md)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.spc_mt_sn_ratio(md)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;spc_mt_sn_ratio&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Larger-the-better SN ratio of abnormal-sample distances, in decibels.</p>
+<p>MT-method item selection asks which features earn their place: run the unit</p>
+<p>space with a subset of features, score the *abnormal* samples, and keep the</p>
+<p>subset whose distances are largest. The figure of merit is the</p>
+<p>larger-the-better signal-to-noise ratio</p>
+<p>eta = -10 log10( (1/n) sum_i 1 / MD_i^2 )</p>
+<p>an inverse-square average, so one abnormal sample that the subset fails to</p>
+<p>separate drags the whole score down — which is the behaviour wanted when the</p>
+<p>cost of a miss dominates. The caller drives the subsets (classically by an</p>
+<p>orthogonal array); this operator is the closed-form score for one subset.</p>
+<p>`<code style="color:#22d3bf">md</code>` is a 1-D array of distances for the abnormal samples. Returns a dict</p>
+<p>with `<code style="color:#22d3bf">sn_ratio_db</code><code style="color:#22d3bf">, the </code><code style="color:#22d3bf">harmonic_mean_md_sq</code><code style="color:#22d3bf"> it came from, and </code><code style="color:#22d3bf">n</code>`.</p>
+<p>For a constant `<code style="color:#22d3bf">MD == d</code><code style="color:#22d3bf"> the sum collapses and </code><code style="color:#22d3bf">eta == 20 log10(d)</code>`</p>
+<p>exactly — pinned in the tests, and the reason a subset that puts every</p>
+<p>abnormal sample at distance 10 scores exactly 20 dB.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: an empty or non-1-D *md*, a non-positive entry (a</p>
+<p>zero distance would divide by zero: an abnormal sample sitting exactly on the</p>
+<p>unit-space centre means the subset separates nothing), or non-finite input.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">mt</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:spc_mt_unit_space">spc_mt_unit_space</a> · <a style="color:#22d3bf" href="opspc:spc_mt_distance">spc_mt_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

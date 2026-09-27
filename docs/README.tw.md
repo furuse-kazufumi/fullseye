@@ -68,11 +68,11 @@
 
 ## 尋找運算子
 
-共有 **2,195 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **58 篇族群指南**。依維度的入口:
+共有 **2,198 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **58 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 932/932、型別台帳 1242/1254、單行門面 `fullseye.<名稱>` 598/1247 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 932/932、型別台帳 1245/1257、單行門面 `fullseye.<名稱>` 598/1247 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 2200 篇中，附有可執行範例的 **2134** 篇(66 篇沒有)，用法說明 120 字以上的 **2149** 篇(51 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)2200 篇全有。
+**內容實測**: 2203 篇中，附有可執行範例的 **2137** 篇(66 篇沒有)，用法說明 120 字以上的 **2152** 篇(51 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)2203 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
@@ -94,6 +94,7 @@
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `lightfield` | 17 | [INDEX](ops/lightfield/INDEX.md) · [guide](ops/lightfield/guides/lightfield_depth.md) |
 | `photon` | 17 | [INDEX](ops/photon/INDEX.md) · [guide](ops/photon/guides/photon_timeresolved.md) |
+| `spc` | 17 | [INDEX](ops/spc/INDEX.md) |
 | `tomography` | 17 | [INDEX](ops/tomography/INDEX.md) |
 | `flyvision` | 16 | [INDEX](ops/flyvision/INDEX.md) · [guide](ops/flyvision/guides/fly_vision.md) |
 | `imgforensics` | 16 | [INDEX](ops/imgforensics/INDEX.md) |
@@ -103,7 +104,6 @@
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
 | `measure1d` | 14 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
-| `spc` | 14 | [INDEX](ops/spc/INDEX.md) |
 | `specular` | 13 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
@@ -217,7 +217,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文件地圖 — 共 213 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 2,195 篇運算子說明與 58 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 2,198 篇運算子說明與 58 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 

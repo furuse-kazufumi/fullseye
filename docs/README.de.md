@@ -68,11 +68,11 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**2,195 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **58 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**2,198 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **58 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 932/932, typisiertes Ledger 1242/1254, Fassade `fullseye.<name>` 598/1247 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 932/932, typisiertes Ledger 1245/1257, Fassade `fullseye.<name>` 598/1247 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 2200 Notizen verweisen **2134** auf mindestens ein lauffähiges Beispiel (66 ohne), **2149** haben einen Nutzungsabschnitt ab 120 Zeichen (51 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 2200.
+**Gemessener Inhalt**: von 2203 Notizen verweisen **2137** auf mindestens ein lauffähiges Beispiel (66 ohne), **2152** haben einen Nutzungsabschnitt ab 120 Zeichen (51 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 2203.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
@@ -94,6 +94,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `lightfield` | 17 | [INDEX](ops/lightfield/INDEX.md) · [guide](ops/lightfield/guides/lightfield_depth.md) |
 | `photon` | 17 | [INDEX](ops/photon/INDEX.md) · [guide](ops/photon/guides/photon_timeresolved.md) |
+| `spc` | 17 | [INDEX](ops/spc/INDEX.md) |
 | `tomography` | 17 | [INDEX](ops/tomography/INDEX.md) |
 | `flyvision` | 16 | [INDEX](ops/flyvision/INDEX.md) · [guide](ops/flyvision/guides/fly_vision.md) |
 | `imgforensics` | 16 | [INDEX](ops/imgforensics/INDEX.md) |
@@ -103,7 +104,6 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
 | `measure1d` | 14 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
-| `spc` | 14 | [INDEX](ops/spc/INDEX.md) |
 | `specular` | 13 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
@@ -217,7 +217,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Dokumentkarte — alle 213
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 2,195 Operator-Notizen und 58 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 2,198 Operator-Notizen und 58 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 

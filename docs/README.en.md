@@ -68,11 +68,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**2,195 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **58 family guides**. Entry points by dimension:
+**2,198 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **58 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 932/932, typed ledger 1242/1254, one-line facade `fullseye.<name>` 598/1247 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 932/932, typed ledger 1245/1257, one-line facade `fullseye.<name>` 598/1247 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 2200 notes, **2134** link at least one runnable example (66 have none) and **2149** have a usage section of 120+ characters (51 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2200.
+**Measured substance**: of 2203 notes, **2137** link at least one runnable example (66 have none) and **2152** have a usage section of 120+ characters (51 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2203.
 
 | dimension | ops | entry |
 |---|---:|---|
@@ -94,6 +94,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `lightfield` | 17 | [INDEX](ops/lightfield/INDEX.md) · [guide](ops/lightfield/guides/lightfield_depth.md) |
 | `photon` | 17 | [INDEX](ops/photon/INDEX.md) · [guide](ops/photon/guides/photon_timeresolved.md) |
+| `spc` | 17 | [INDEX](ops/spc/INDEX.md) |
 | `tomography` | 17 | [INDEX](ops/tomography/INDEX.md) |
 | `flyvision` | 16 | [INDEX](ops/flyvision/INDEX.md) · [guide](ops/flyvision/guides/fly_vision.md) |
 | `imgforensics` | 16 | [INDEX](ops/imgforensics/INDEX.md) |
@@ -103,7 +104,6 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
 | `measure1d` | 14 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
-| `spc` | 14 | [INDEX](ops/spc/INDEX.md) |
 | `specular` | 13 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
@@ -217,7 +217,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Document map — all 213
 
-The complete map, so that **no document is unreachable from this index** (the 2,195 per-op notes and 58 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 2,198 per-op notes and 58 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 
