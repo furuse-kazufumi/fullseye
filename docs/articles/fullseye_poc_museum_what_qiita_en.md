@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**86 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**87 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1640,7 +1640,7 @@ Ops used (notes): [`attention_apply`](https://furuse.work/ops/llmcore/score/atte
 
 Counting cells, reading a nucleus's DNA content, measuring vessel branching, tracking a wound's area: all of these tend to be reported as one number, and there are situations in which that number is right anyway. Cell counting where over- and under-segmentation balance to a +0.3-cell bias; ploidy classification that survives a forgotten background subtraction; a calibration that returns the most stable and most wrong healing constant.
 
-The 15 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
+The 16 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
 
 The thing to watch for is a method that appears to improve while the quantity it measures quietly swaps: the area classifier gets better with more blur because 'area' is leaking DNA content. Unless the reason for every improvement is traced, this kind of lie gets carried home as a result.
 
@@ -2095,6 +2095,30 @@ Source: [examples/poc_connectome_lr_symmetry.py](https://github.com/furuse-kazuf
 This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_connectome_lr_symmetry)
 
 Ops used (notes): [`graph_degree_summary`](https://furuse.work/ops/graph/degree/graph_degree_summary.html) · [`graph_swap_symmetry`](https://furuse.work/ops/graph/symmetry/graph_swap_symmetry.html)
+
+## No.2026.154 —— Grading Skeleton Measurement on Real Trees — NeuroMorpho SWC as Ground Truth, and What Projection Breaks
+
+[![Grading Skeleton Measurement on Real Trees — NeuroMorpho SWC as Ground Truth, and What Projection Breaks](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swc_tree_truth/03_junctions_vs_view_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swc_tree_truth/03_junctions_vs_view.png)
+
+*↑ **Grading Skeleton Measurement on Real Trees — NeuroMorpho SWC as Ground Truth, and What Projection Breaks** ―― The vessel-network PoC used a synthetic tree as truth; here the truth is a real tree — NeuroMorpho.Org SWC files (coordinates, radius and parent id per node; three mouse neocortical neurons, CC BY 4.0). SWC carries structural constraints (exactly one root, parent id < child id, nodes = edges + 1) that are gates in themselves: a broken tree is not graded. The 3-D Sholl count (intersections of branches with spheres around the soma) depends only on distances from the origin, so across 12 rotations not a single integer moves. Image measurement, however, runs on a projection — the projected Sholl count moves by up to 9–16 intersections with viewing angle, and the bifurcation count against ground truth 16 / 11 / 37 becomes 22–28 / 15–24 / 41–49 over 12 viewing angles (the excess is branch crossings that thinning turns into junctions), while skeleton length shrinks to 0.72–0.82 of the cable length. The precision of a "tree measurement" is set by the line of sight, not the tree. No data is bundled; without it the example runs on a synthetic tree that satisfies the same constraints (a tangled 3-D synthetic tree projects worse than the real ones — and says so).*
+
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swc_tree_truth/01_swc_projection_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swc_tree_truth/01_swc_projection.png)
+
+*↑ The measurement (figure labels are in Japanese; the numbers are the same)*
+
+[![3-D の交点数は 12 回転で整数が 1 つも動かない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swc_tree_truth/02_sholl_3d_vs_projected_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swc_tree_truth/02_sholl_3d_vs_projected.png)
+
+*↑ 3-D の交点数は 12 回転で整数が 1 つも動かない。*
+
+```
+py -3.11 examples/poc_swc_tree_truth.py
+```
+
+Source: [examples/poc_swc_tree_truth.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_swc_tree_truth.py)
+
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_swc_tree_truth)
+
+Ops used (notes): [`skeleton`](https://furuse.work/ops/2d/region/skeleton.html)
 
 ### The Astronomy and Environment Wing — Biased by Position, Flipped by the Definition of Truth
 

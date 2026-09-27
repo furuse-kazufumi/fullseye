@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1136. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1137. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -886,6 +886,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_surface_roughness.py`
 
 - **L272** — ★The truth is defined **only after declaring the band**. Not the roughness component itself, but "the roughness component after cutting at λc" is the truth. If you make this the raw rough_true, even measuring by the correct procedure is off by -23%, and that 23% mixes with the sampling error. There is no "roughness truth" that does not include a band -- this is also the claim of Section 2.
+
+## `examples/poc_swc_tree_truth.py`
+
+- **L190** _(ja)_ — ★門 2: 3 次元 Sholl は回転で整数が 1 つも動かない
 
 ## `examples/poc_template_tracking.py`
 

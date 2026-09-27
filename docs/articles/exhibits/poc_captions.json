@@ -1770,6 +1770,17 @@
    "run": "py -3.11 examples/poc_connectome_lr_symmetry.py"
   },
   {
+   "id": "poc_swc_tree_truth",
+   "wing": "wing_bio",
+   "added": "2026-09-27",
+   "numbers_source": "log",
+   "title_ja": "本物の木で骨格計測を採点する ―― NeuroMorpho の SWC を真値に、投影が何を壊すかを測る",
+   "title_en": "Grading Skeleton Measurement on Real Trees — NeuroMorpho SWC as Ground Truth, and What Projection Breaks",
+   "caption_ja": "血管網 PoC は合成の木を真値にしたが、ここでは実物の木 ―― NeuroMorpho.Org の SWC(節点ごとに座標・半径・親 id、マウス新皮質 3 本、CC BY 4.0)―― を真値にする。SWC は構造制約(根はちょうど 1 つ / 親 id < 子 id / 節点数 = 辺数 + 1)を持つのでそれ自体が門になり、壊れた木は採点しない。3 次元の Sholl 交点数(根を中心とする球と枝の交点)は原点からの距離が回転不変なので、12 回転で整数が 1 つも動かない。ところが画像計測は投影の上で走る ―― 投影して円で数えた Sholl は角度で最大 9〜16 交点動き、分岐点は真値 16 / 11 / 37 個に対して視線 12 角度で 22〜28 / 15〜24 / 41〜49 個(余分は枝の交差が細線化で分岐に化けたもの)、骨格長はケーブル総長の 0.72〜0.82 倍に縮む。「木の計測」の精度は木でなく視線が決めている。データは同梱せず、無ければ構造制約を満たす合成の木で回る(3 次元で絡む合成の木は投影の余分が実物より多い ―― 印字する)。",
+   "caption_en": "The vessel-network PoC used a synthetic tree as truth; here the truth is a real tree — NeuroMorpho.Org SWC files (coordinates, radius and parent id per node; three mouse neocortical neurons, CC BY 4.0). SWC carries structural constraints (exactly one root, parent id < child id, nodes = edges + 1) that are gates in themselves: a broken tree is not graded. The 3-D Sholl count (intersections of branches with spheres around the soma) depends only on distances from the origin, so across 12 rotations not a single integer moves. Image measurement, however, runs on a projection — the projected Sholl count moves by up to 9–16 intersections with viewing angle, and the bifurcation count against ground truth 16 / 11 / 37 becomes 22–28 / 15–24 / 41–49 over 12 viewing angles (the excess is branch crossings that thinning turns into junctions), while skeleton length shrinks to 0.72–0.82 of the cable length. The precision of a \"tree measurement\" is set by the line of sight, not the tree. No data is bundled; without it the example runs on a synthetic tree that satisfies the same constraints (a tangled 3-D synthetic tree projects worse than the real ones — and says so).",
+   "run": "py -3.11 examples/poc_swc_tree_truth.py"
+  },
+  {
    "id": "poc_public_camera_heading",
    "wing": "wing_geometry",
    "added": "2026-09-21",

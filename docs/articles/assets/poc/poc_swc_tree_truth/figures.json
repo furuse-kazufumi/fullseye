@@ -1,0 +1,32 @@
+[
+ {
+  "file": "01_swc_projection.png",
+  "name": "swc_projection",
+  "caption": "",
+  "shape": [
+   605,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "02_sholl_3d_vs_projected.png",
+  "name": "sholl_3d_vs_projected",
+  "caption": "3-D の交点数は 12 回転で整数が 1 つも動かない。投影(円)は角度で最大 9 交点動き、平均で -0.6。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_junctions_vs_view.png",
+  "name": "junctions_vs_view",
+  "caption": "真値 16 個に対し投影は 22〜28 個。余分は枝の交差が細線化で分岐に化けたもの。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

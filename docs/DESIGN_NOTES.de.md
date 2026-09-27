@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1136. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1137. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -886,6 +886,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_surface_roughness.py`
 
 - **L272** — ★Die Wahrheit wird **erst nach Deklaration des Bandes** definiert. Nicht die Rauheitskomponente selbst, sondern "die Rauheitskomponente nach dem Schnitt bei λc" ist die Wahrheit. Nimmt man hier das rohe rough_true, weicht selbst eine Messung nach korrektem Verfahren um -23% ab, und diese 23% vermischen sich mit dem Abtastfehler. Eine "Rauheitswahrheit" ohne Band existiert nicht -- das ist zugleich die Aussage von Abschnitt 2.
+
+## `examples/poc_swc_tree_truth.py`
+
+- **L190** _(ja)_ — ★門 2: 3 次元 Sholl は回転で整数が 1 つも動かない
 
 ## `examples/poc_template_tracking.py`
 
