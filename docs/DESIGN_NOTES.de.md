@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1126. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1128. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -1912,6 +1912,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L35** _(ja)_ — しきい値「方法」の名前。★op 名から拾うので、**新しく足した方法も自動で門に入る** (免除台帳に名前を書かない限り)。綴りで探す門は綴りが違うものを見逃すので、 説明文も一緒に見る。
 - **L43** _(ja)_ — ★**暗い側が答えで正しい op**。理由つきで名指しする —— 台帳が黙って腐らないよう、 下の試験が「本当にまだ暗い側なのか」を確かめる。
+
+## `tests/test_vacuous_assertions.py`
+
+- **L62** _(ja)_ — ★他の試験の docstring に `\*` 等が在ると ast.parse が DeprecationWarning を出す。数えるだけの処理なので黙らせる (門の出力に無関係な警告を 84 ファイル分足さない)。
+- **L95** _(ja)_ — ★書き下した列(`for img in (v, w)`)は、中身が何であれ空にならない。 中の名前が「呼び出しの戻り」でも、周る回数は 2 と決まっている。
 
 ## `tests/test_videostream.py`
 
