@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">physarum_route — GRAPH <code style="color:#22d3bf">flow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.physarum_route(cost, start=None, end=None, connectivity=4, dt=0.1, max_iters=5000, tol=1e-06, frac=0.5, snapshots=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import physarum_search; physarum_search.physarum_route(cost, start=None, end=None, connectivity=4, dt=0.1, max_iters=5000, tol=1e-06, frac=0.5, snapshots=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;physarum_route&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>コスト画像の最小コスト経路を粘菌の管の力学で: 隣接画素を長さ (c_u+c_v)/2 の管で結び、route_through_array と同じ量を最小化する。導電度の画像、経路の画素列、経路コスト、途中経過の画像を返す。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Every pixel is a node; neighbouring pixels (`<code style="color:#22d3bf">connectivity</code>` 4 or 8) are joined by a tube of</p>
+<p>length `<code style="color:#22d3bf">(c_u + c_v) / 2</code><code style="color:#22d3bf"> (times </code><code style="color:#22d3bf">sqrt(2)</code>` on diagonals), so the length of a route equals</p>
+<p>the sum of the pixel costs it visits minus half the cost of its two ends — the same quantity</p>
+<p>`<code style="color:#22d3bf">skimage.graph.route_through_array(..., geometric=False)</code>` minimises (it counts both ends</p>
+<p>fully). `<code style="color:#22d3bf">start</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">end</code><code style="color:#22d3bf"> are </code><code style="color:#22d3bf">(row, col)</code>`; defaults are the top-left and bottom-right</p>
+<p>corners. Dynamics and convergence as in :func:<code style="color:#22d3bf">graph_physarum_path</code>.</p>
+<p>Returns `<code style="color:#22d3bf">conductance</code>` (an image: each pixel&#x27;s thickest incident tube, 1 on the route</p>
+<p>when converged), `<code style="color:#22d3bf">path</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">(k, 2)</code><code style="color:#22d3bf"> pixel coordinates start → end), </code><code style="color:#22d3bf">path_cost</code>` (sum of</p>
+<p>the pixel costs along it, comparable to `<code style="color:#22d3bf">route_through_array</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">route_length</code>` (sum</p>
+<p>of the tube lengths), `<code style="color:#22d3bf">flow_length</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">iters</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">converged</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">history</code>`, and, with</p>
+<p>`<code style="color:#22d3bf">snapshots = m &gt; 0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">snapshots</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">m</code>` conductance images at evenly spaced</p>
+<p>iterations, the last one final) for watching the tubes thicken, `<code style="color:#22d3bf">snapshot_iters</code>` and</p>
+<p>`<code style="color:#22d3bf">snapshot_cost</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">sum L_e D_e</code>` at those iterations (Bonifaci&#x27;s Lyapunov function, which</p>
+<p>never increases in continuous time).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: cost not a 2-D finite image of positive values; </code><code style="color:#22d3bf">start</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">end</code>`</p>
+<p>outside the image or equal; `<code style="color:#22d3bf">connectivity</code><code style="color:#22d3bf"> not 4 or 8; and as :func:</code>graph_physarum_path`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_physarum_maze">poc_physarum_maze</a> — <code style="color:#22d3bf">py -3.11 examples/poc_physarum_maze.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_edge_consensus">graph_edge_consensus</a> · <a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a> · <a style="color:#22d3bf" href="opgraph:tree_sholl">tree_sholl</a> · <a style="color:#22d3bf" href="opgraph:tree_run_length">tree_run_length</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">flow</code>)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_physarum_path">graph_physarum_path</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: physarum_search.py — GRAPH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

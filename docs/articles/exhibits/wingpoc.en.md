@@ -1656,7 +1656,7 @@ Ops used (notes): [`attention_apply`](https://furuse.work/ops/llmcore/score/atte
 
 Counting cells, reading a nucleus's DNA content, measuring vessel branching, tracking a wound's area: all of these tend to be reported as one number, and there are situations in which that number is right anyway. Cell counting where over- and under-segmentation balance to a +0.3-cell bias; ploidy classification that survives a forgotten background subtraction; a calibration that returns the most stable and most wrong healing constant.
 
-The 23 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
+The 24 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
 
 The thing to watch for is a method that appears to improve while the quantity it measures quietly swaps: the area classifier gets better with more blur because 'area' is leaking DNA content. Unless the reason for every improvement is traced, this kind of lie gets carried home as a result.
 
@@ -2283,6 +2283,34 @@ Source: [examples/poc_skeleton_run_length_vs_voi.py](https://github.com/furuse-k
 This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi)
 
 Ops used (notes): [`seg_variation_of_information`](https://furuse.work/ops/emproof/score/seg_variation_of_information.html) · [`tree_from_swc`](https://furuse.work/ops/graph/tree/tree_from_swc.html) · [`tree_run_length`](https://furuse.work/ops/graph/tree/tree_run_length.html)
+
+## No.2026.163 —— Slime-Mould Tubes Solve the Maze — Thickening and Thinning Alone Converge to the Shortest Path, Bracketed by a Theorem and Dijkstra
+
+[![Slime-Mould Tubes Solve the Maze — Thickening and Thinning Alone Converge to the Shortest Path, Bracketed by a Theorem and Dijkstra](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/01_maze_tubes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/01_maze_tubes.png)
+
+*↑ **Slime-Mould Tubes Solve the Maze — Thickening and Thinning Alone Converge to the Shortest Path, Bracketed by a Theorem and Dijkstra** ―― The slime mould Physarum leaves the shortest path of a maze by nothing more than thickening and thinning its tubes with the flow through them (Tero 2010). Its dynamics (Kirchhoff pressures, dD/dt = |Q| − D) are proved to converge to the indicator of the shortest path when it is unique (Bonifaci 2012). Two new ops run it — graph_physarum_path on a weighted graph and physarum_route on a cost image (neighbouring pixels joined by a tube of length (c_u+c_v)/2) — with Dijkstra (scipy) and route_through_array (skimage) as the truth. On five 15×15 lattices, a 21×21 perfect maze and a 32×32 terrain the mould's route equals the minimum-cost path in every case (difference < 1e-9). At 600 iterations the lattice routes already match 5/5 (the Afterman PoC had 4/5); by 3,000 iterations 3/5 have converged to the indicator (> 0.99 on the path, < 0.01 elsewhere) and the two cut off are those whose gap to the runner-up route (the exact second-shortest, from Dijkstra with each edge of the shortest path removed in turn) is smallest, 0.009 and 0.032 — the gap sets the speed. The Lyapunov function V = Σ L·D fell in the maze from 227,280 to 133.60 (shortest path 133.59) without rising once over 23 intervals, and the inequality flow length Σ|Q|L ≥ shortest path held exactly throughout. Where many routes tie (uniform cost) the tubes never settle on one, and the op refuses.*
+
+[![同じ迷路、24 コマ。行き止まりから順に細り、最後に最短路だけが残る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/02_maze_tubes_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/02_maze_tubes_gif.gif)
+
+*↑ The measurement ―― 同じ迷路、24 コマ。行き止まりから順に細り、最後に最短路だけが残る。 (figure labels are in Japanese; the numbers are the same)*
+
+[![32×32。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/03_terrain_route_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/03_terrain_route.png)
+
+*↑ 32×32。*
+
+[![15×15 の格子、辺長 U(0.5, 1.5)、左上 → 右下。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/04_lattice_tubes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/04_lattice_tubes.png)
+
+*↑ 15×15 の格子、辺長 U(0.5, 1.5)、左上 → 右下。*
+
+```
+py -3.11 examples/poc_physarum_maze.py
+```
+
+Source: [examples/poc_physarum_maze.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_physarum_maze.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_physarum_maze)
+
+Ops used (notes): [`graph_physarum_path`](https://furuse.work/ops/graph/flow/graph_physarum_path.html) · [`physarum_route`](https://furuse.work/ops/graph/flow/physarum_route.html)
 
 ## No.2026.154 —— Grading Skeleton Measurement on Real Trees — NeuroMorpho SWC as Ground Truth, and What Projection Breaks
 

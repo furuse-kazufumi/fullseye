@@ -1,4 +1,4 @@
-# GRAPH operator help — 10 ops in 6 categories
+# GRAPH operator help — 12 ops in 7 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/graph/<category>/<op>.md` を走査。
 
@@ -7,6 +7,10 @@
 ### degree (1)
 
 [graph_degree_summary](degree/graph_degree_summary.md)
+
+### flow (2)
+
+[graph_physarum_path](flow/graph_physarum_path.md) · [physarum_route](flow/physarum_route.md)
 
 ### motif (1)
 

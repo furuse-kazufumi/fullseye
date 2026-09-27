@@ -526,3 +526,234 @@ def _solve_batch_cudagraph(graph: Graph, sources, sinks, *, I0, mu, dt,
     for _ in range(time_steps):
         gr.replay()
     return D_buf.cpu().numpy()
+
+
+
+# ── 型付き台帳の op(opsgraph "flow")───────────────────────────────────────── #
+def _lengths_matrix(lengths, op):
+    a = np.asarray(lengths)
+    if isinstance(lengths, (str, bytes)) or np.ma.isMaskedArray(lengths) or a.dtype.kind not in "fiub":
+        raise ValueError("%s: lengths must be a numeric (n, n) matrix" % op)
+    a = a.astype(np.float64)
+    if a.ndim != 2 or a.shape[0] != a.shape[1] or a.shape[0] < 2:
+        raise ValueError("%s: lengths must be a square (n, n) matrix with n >= 2, got %r" % (op, a.shape))
+    if not np.isfinite(a).all() or (a < 0).any():
+        raise ValueError("%s: lengths must be finite and non-negative (0 = no edge)" % op)
+    if not np.array_equal(a, a.T):
+        raise ValueError("%s: lengths must be symmetric (tubes have no direction)" % op)
+    if (np.diag(a) != 0).any():
+        raise ValueError("%s: the diagonal must be 0 (no self-loops)" % op)
+    return a
+
+
+def _node(k, n, name, op, default):
+    if k is None:
+        return default
+    try:
+        k = int(k)
+    except (TypeError, ValueError):
+        raise ValueError("%s: %s must be an integer node index" % (op, name)) from None
+    if not 0 <= k < n:
+        raise ValueError("%s: %s %d is outside [0, %d)" % (op, name, k, n))
+    return k
+
+
+def _run(graph, source, sink, dt, max_iters, tol, frac, op):
+    if not (0.0 < float(dt) <= 1.0) or not np.isfinite(dt):
+        raise ValueError("%s: dt must lie in (0, 1], got %r" % (op, dt))
+    if int(max_iters) < 1 or not (float(tol) >= 0) or not np.isfinite(tol):
+        raise ValueError("%s: max_iters must be >= 1 and tol >= 0 (0 = run exactly max_iters)" % op)
+    if not (0.0 < float(frac) <= 1.0):
+        raise ValueError("%s: frac must lie in (0, 1], got %r" % (op, frac))
+    if bfs_shortest_len(graph, source, sink) < 0:
+        raise ValueError("%s: sink is not reachable from source (no tube can carry the flow)" % op)
+    res = solve_physarum(graph, source, sink, I0=1.0, mu=1.0, dt=float(dt),
+                         max_iters=int(max_iters), tol=float(tol), device="numpy")
+    path = _follow_flow(graph, res.Q, source, sink)
+    if path is None:
+        raise ValueError("%s: following the flow from source did not reach sink (the solve failed)" % op)
+    thick = res.D[_edge_index(graph.edges, path)]
+    if res.D.max() > 0 and thick.min() < float(frac) * res.D.max():
+        raise ValueError("%s: the route still shares flow with a tube %.3g times thicker than its thinnest one "
+                         "(not converged: raise max_iters or lower tol; a tie between equal-length routes never converges)"
+                         % (op, res.D.max() / max(thick.min(), 1e-300)))
+    return res, path
+
+
+def _follow_flow(graph, Q, source, sink):
+    """源から、流量が最も多く出ていく管を辿って吸込へ(ポテンシャル流は閉路を持たない)。"""
+    n = graph.n
+    out = [[] for _ in range(n)]
+    for k, (u, v) in enumerate(graph.edges):
+        if Q[k] > 0:
+            out[u].append((Q[k], v))
+        elif Q[k] < 0:
+            out[v].append((-Q[k], u))
+    path, u, seen = [source], source, {source}
+    while u != sink:
+        if not out[u]:
+            return None
+        _, v = max(out[u])
+        if v in seen:                                    # 数値誤差で閉路に見えたら失敗として返す
+            return None
+        seen.add(v)
+        path.append(v)
+        u = v
+        if len(path) > n:
+            return None
+    return np.asarray(path, dtype=np.int64)
+
+
+def graph_physarum_path(lengths, source=0, sink=None, dt=0.1, max_iters=5000, tol=1e-6, frac=0.5):
+    """Shortest path by the slime mould's tube dynamics (Tero et al. 2010) on a weighted graph.
+
+    ``lengths`` is a symmetric ``(n, n)`` matrix of tube lengths (``0`` = no tube, diagonal 0).
+    A unit flow is pushed from ``source`` to ``sink`` (default ``n - 1``) through tubes of
+    conductance ``D_e``; the pressures solve the weighted Laplacian (Kirchhoff), the flow in a
+    tube is ``Q_e = D_e (p_u - p_v) / L_e``, and each tube adapts ``dD_e/dt = |Q_e| - D_e``
+    (explicit Euler, step ``dt``). Bonifaci, Mehlhorn and Varma (2012) prove that with a unique
+    shortest path the conductances converge to its indicator: ``D_e -> 1`` on it, ``0`` off it.
+    The path is read by following, from the source, the tube that carries the most flow out of
+    each node (a potential flow has no cycle); it must be at least ``frac`` of the thickest tube
+    all along, else the run is refused as not converged.
+
+    Returns ``conductance`` and ``flow`` (``(n, n)`` matrices, flow antisymmetric), ``path``
+    (node indices source → sink), ``path_length`` (sum of the tube lengths along it),
+    ``flow_length`` = ``sum |Q_e| L_e`` (the length of the unit flow; it is ``>= path_length``
+    for every unit flow and equal only when all flow rides shortest paths), ``iters``,
+    ``converged`` (max |dD| fell below ``tol``), ``history`` (max |dD| per iteration).
+
+    **Raises** ``ValueError``: matrix not square / symmetric / finite / non-negative, self-loops;
+    bad node indices or ``source == sink``; sink unreachable; ``dt`` outside (0, 1]; no path
+    survived the threshold (not converged).
+    """
+    op = "graph_physarum_path"
+    a = _lengths_matrix(lengths, op)
+    n = a.shape[0]
+    source = _node(source, n, "source", op, 0)
+    sink = _node(sink, n, "sink", op, n - 1)
+    if source == sink:
+        raise ValueError("%s: source and sink must differ" % op)
+    iu, ju = np.nonzero(np.triu(a, 1))
+    if len(iu) == 0:
+        raise ValueError("%s: the matrix has no edge" % op)
+    graph = Graph(n=n, edges=np.column_stack([iu, ju]).astype(int), length=a[iu, ju],
+                  coords=np.zeros((n, 2), dtype=int))
+    res, path = _run(graph, source, sink, dt, max_iters, tol, frac, op)
+    cond = np.zeros((n, n))
+    cond[iu, ju] = res.D
+    cond[ju, iu] = res.D
+    flow = np.zeros((n, n))
+    flow[iu, ju] = res.Q
+    flow[ju, iu] = -res.Q
+    return {"conductance": cond, "flow": flow, "path": path,
+            "path_length": float(a[path[:-1], path[1:]].sum()),
+            "flow_length": float((np.abs(res.Q) * graph.length).sum()),
+            "iters": int(res.iters), "converged": bool(res.converged),
+            "history": np.asarray(res.history, dtype=np.float64)}
+
+
+def physarum_route(cost, start=None, end=None, connectivity=4, dt=0.1, max_iters=5000, tol=1e-6,
+                   frac=0.5, snapshots=0):
+    """Minimum-cost route through a cost image found by the slime mould's tube dynamics.
+
+    Every pixel is a node; neighbouring pixels (``connectivity`` 4 or 8) are joined by a tube of
+    length ``(c_u + c_v) / 2`` (times ``sqrt(2)`` on diagonals), so the length of a route equals
+    the sum of the pixel costs it visits minus half the cost of its two ends — the same quantity
+    ``skimage.graph.route_through_array(..., geometric=False)`` minimises (it counts both ends
+    fully). ``start`` / ``end`` are ``(row, col)``; defaults are the top-left and bottom-right
+    corners. Dynamics and convergence as in :func:`graph_physarum_path`.
+
+    Returns ``conductance`` (an image: each pixel's thickest incident tube, 1 on the route
+    when converged), ``path`` (``(k, 2)`` pixel coordinates start → end), ``path_cost`` (sum of
+    the pixel costs along it, comparable to ``route_through_array``), ``route_length`` (sum
+    of the tube lengths), ``flow_length``, ``iters``, ``converged``, ``history``, and, with
+    ``snapshots = m > 0``, ``snapshots`` (``m`` conductance images at evenly spaced
+    iterations, the last one final) for watching the tubes thicken, ``snapshot_iters`` and
+    ``snapshot_cost`` = ``sum L_e D_e`` at those iterations (Bonifaci's Lyapunov function, which
+    never increases in continuous time).
+
+    **Raises** ``ValueError``: cost not a 2-D finite image of positive values; ``start`` / ``end``
+    outside the image or equal; ``connectivity`` not 4 or 8; and as :func:`graph_physarum_path`.
+    """
+    op = "physarum_route"
+    c = np.asarray(cost)
+    if isinstance(cost, (str, bytes)) or np.ma.isMaskedArray(cost) or c.dtype.kind not in "fiub":
+        raise ValueError("%s: cost must be a numeric 2-D image" % op)
+    c = c.astype(np.float64)
+    if c.ndim != 2 or min(c.shape) < 2:
+        raise ValueError("%s: cost must be a 2-D image with at least 2 rows and columns, got %r" % (op, c.shape))
+    if not np.isfinite(c).all() or (c <= 0).any():
+        raise ValueError("%s: every cost must be finite and > 0 (a tube of length 0 carries infinite flow)" % op)
+    H, W = c.shape
+    if int(connectivity) not in (4, 8):
+        raise ValueError("%s: connectivity must be 4 or 8, got %r" % (op, connectivity))
+
+    def pix(p, name, default):
+        if p is None:
+            return default
+        try:
+            r, q = int(p[0]), int(p[1])
+        except (TypeError, ValueError, IndexError):
+            raise ValueError("%s: %s must be (row, col)" % (op, name)) from None
+        if not (0 <= r < H and 0 <= q < W):
+            raise ValueError("%s: %s %r is outside the %dx%d image" % (op, name, (r, q), H, W))
+        return r, q
+
+    s = pix(start, "start", (0, 0))
+    e = pix(end, "end", (H - 1, W - 1))
+    if s == e:
+        raise ValueError("%s: start and end must differ" % op)
+    idx = np.arange(H * W).reshape(H, W)
+    steps = [((0, 1), 1.0), ((1, 0), 1.0)]
+    if int(connectivity) == 8:
+        steps += [((1, 1), np.sqrt(2.0)), ((1, -1), np.sqrt(2.0))]
+    us, vs, ls = [], [], []
+    for (dr, dq), k in steps:
+        r0, r1 = max(0, -dr), H - max(0, dr)
+        q0, q1 = max(0, -dq), W - max(0, dq)
+        u = idx[r0:r1, q0:q1]
+        v = idx[r0 + dr:r1 + dr, q0 + dq:q1 + dq]
+        us.append(u.ravel())
+        vs.append(v.ravel())
+        ls.append(k * 0.5 * (c.ravel()[u.ravel()] + c.ravel()[v.ravel()]))
+    edges = np.column_stack([np.concatenate(us), np.concatenate(vs)]).astype(int)
+    length = np.concatenate(ls)
+    graph = Graph(n=H * W, edges=edges, length=length, coords=np.column_stack(np.divmod(np.arange(H * W), W)))
+    src, dst = int(idx[s]), int(idx[e])
+    m = int(snapshots)
+    if m < 0:
+        raise ValueError("%s: snapshots must be >= 0" % op)
+    res, path = _run(graph, src, dst, dt, max_iters, tol, frac, op)
+
+    def image_of(D):
+        img = np.zeros(H * W)
+        np.maximum.at(img, edges[:, 0], D)
+        np.maximum.at(img, edges[:, 1], D)
+        return img.reshape(H, W)
+
+    out = {"conductance": image_of(res.D), "path": graph.coords[path],
+           "path_cost": float(c.ravel()[path].sum()),
+           "route_length": float(length[_edge_index(edges, path)].sum()),
+           "flow_length": float((np.abs(res.Q) * length).sum()),
+           "iters": int(res.iters), "converged": bool(res.converged),
+           "history": np.asarray(res.history, dtype=np.float64)}
+    if m > 0:
+        # 同じ式を途中で止めて撮る(warm start で続きを回す)。最後の 1 枚は上の最終状態と同じ反復数。
+        marks = np.unique(np.maximum(1, np.round(np.linspace(0, res.iters, m + 1)[1:]).astype(int)))
+        shots, costs, D, done = [], [], None, 0
+        for k in marks:
+            r = solve_physarum(graph, src, dst, I0=1.0, mu=1.0, dt=float(dt), max_iters=int(k - done),
+                               tol=0.0, D_init=D, device="numpy")
+            D, done = r.D, k
+            shots.append(image_of(D))
+            costs.append(float((length * D).sum()))
+        out["snapshots"] = shots
+        out["snapshot_iters"] = marks
+        out["snapshot_cost"] = np.asarray(costs)          # V = Σ L_e D_e、Bonifaci の Lyapunov 関数(連続時間で単調非増加)
+    return out
+
+
+def _edge_index(edges, path):
+    key = {(int(u), int(v)): k for k, (u, v) in enumerate(edges)}
+    return np.array([key.get((int(u), int(v)), key.get((int(v), int(u)))) for u, v in zip(path[:-1], path[1:])], dtype=int)

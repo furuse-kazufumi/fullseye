@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_physarum_path — GRAPH <code style="color:#22d3bf">flow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_physarum_path(lengths, source=0, sink=None, dt=0.1, max_iters=5000, tol=1e-06, frac=0.5)</code>(要直接调用实现,<code style="color:#22d3bf">import physarum_search; physarum_search.graph_physarum_path(lengths, source=0, sink=None, dt=0.1, max_iters=5000, tol=1e-06, frac=0.5)</code>;从台账取用则 <code style="color:#22d3bf">opsgraph.get(&quot;graph_physarum_path&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Shortest path by the slime mould&#x27;s tube dynamics (Tero et al. 2010) on a weighted graph.</p>
+<p>`<code style="color:#22d3bf">lengths</code><code style="color:#22d3bf"> is a symmetric </code><code style="color:#22d3bf">(n, n)</code><code style="color:#22d3bf"> matrix of tube lengths (</code><code style="color:#22d3bf">0</code>` = no tube, diagonal 0).</p>
+<p>A unit flow is pushed from `<code style="color:#22d3bf">source</code><code style="color:#22d3bf"> to </code><code style="color:#22d3bf">sink</code><code style="color:#22d3bf"> (default </code><code style="color:#22d3bf">n - 1</code>`) through tubes of</p>
+<p>conductance `<code style="color:#22d3bf">D_e</code>`; the pressures solve the weighted Laplacian (Kirchhoff), the flow in a</p>
+<p>tube is `<code style="color:#22d3bf">Q_e = D_e (p_u - p_v) / L_e</code><code style="color:#22d3bf">, and each tube adapts </code><code style="color:#22d3bf">dD_e/dt = |Q_e| - D_e</code>`</p>
+<p>(explicit Euler, step `<code style="color:#22d3bf">dt</code>`). Bonifaci, Mehlhorn and Varma (2012) prove that with a unique</p>
+<p>shortest path the conductances converge to its indicator: `<code style="color:#22d3bf">D_e -&gt; 1</code><code style="color:#22d3bf"> on it, </code><code style="color:#22d3bf">0</code>` off it.</p>
+<p>The path is read by following, from the source, the tube that carries the most flow out of</p>
+<p>each node (a potential flow has no cycle); it must be at least `<code style="color:#22d3bf">frac</code>` of the thickest tube</p>
+<p>all along, else the run is refused as not converged.</p>
+<p>Returns `<code style="color:#22d3bf">conductance</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">flow</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">(n, n)</code><code style="color:#22d3bf"> matrices, flow antisymmetric), </code><code style="color:#22d3bf">path</code>`</p>
+<p>(node indices source → sink), `<code style="color:#22d3bf">path_length</code>` (sum of the tube lengths along it),</p>
+<p>`<code style="color:#22d3bf">flow_length</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">sum |Q_e| L_e</code><code style="color:#22d3bf"> (the length of the unit flow; it is </code><code style="color:#22d3bf">&gt;= path_length</code>`</p>
+<p>for every unit flow and equal only when all flow rides shortest paths), `<code style="color:#22d3bf">iters</code>`,</p>
+<p>`<code style="color:#22d3bf">converged</code><code style="color:#22d3bf"> (max |dD| fell below </code><code style="color:#22d3bf">tol</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">history</code>` (max |dD| per iteration).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: matrix not square / symmetric / finite / non-negative, self-loops;</p>
+<p>bad node indices or `<code style="color:#22d3bf">source == sink</code><code style="color:#22d3bf">; sink unreachable; </code><code style="color:#22d3bf">dt</code>` outside (0, 1]; no path</p>
+<p>survived the threshold (not converged).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_physarum_maze">poc_physarum_maze</a> — <code style="color:#22d3bf">py -3.11 examples/poc_physarum_maze.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_edge_consensus">graph_edge_consensus</a> · <a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a> · <a style="color:#22d3bf" href="opgraph:tree_sholl">tree_sholl</a> · <a style="color:#22d3bf" href="opgraph:tree_run_length">tree_run_length</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">flow</code>)</h3>
+<p><a style="color:#22d3bf" href="opgraph:physarum_route">physarum_route</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: physarum_search.py — GRAPH 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

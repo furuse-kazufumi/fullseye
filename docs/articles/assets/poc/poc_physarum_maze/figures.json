@@ -1,0 +1,46 @@
+[
+ {
+  "file": "01_maze_tubes.png",
+  "name": "maze_tubes",
+  "caption": "21×21 の完全迷路(左上 → 右下)。dt 0.2、79 反復で収束。",
+  "shape": [
+   365,
+   292,
+   3
+  ]
+ },
+ {
+  "file": "02_maze_tubes_gif.gif",
+  "name": "maze_tubes_gif",
+  "caption": "同じ迷路、24 コマ。行き止まりから順に細り、最後に最短路だけが残る。",
+  "shape": [
+   252,
+   252,
+   3
+  ],
+  "animated": true,
+  "frames": 24,
+  "frames_written": 24,
+  "fps": 6.0
+ },
+ {
+  "file": "03_terrain_route.png",
+  "name": "terrain_route",
+  "caption": "32×32。経路コスト 40.526、2500 反復。",
+  "shape": [
+   678,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "04_lattice_tubes.png",
+  "name": "lattice_tubes",
+  "caption": "15×15 の格子、辺長 U(0.5, 1.5)、左上 → 右下。上: 差 0.113 の seed は 2509 反復で 1 本に収束。下: 差 0.009 の seed は 3000 反復でも 2 本目が残る(道の読み取りは流れを辿るので最短路に一致)。",
+  "shape": [
+   797,
+   692,
+   3
+  ]
+ }
+]

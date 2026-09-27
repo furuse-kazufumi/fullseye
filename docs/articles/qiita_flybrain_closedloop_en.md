@@ -88,6 +88,7 @@ One experiment = one question. **This article is appended to every time an exper
 | Do synapses grow in proportion to neurites? | System-wide, density rises ×1.32 during L1 and wobbles by 1.14 afterwards (as the paper says). Per cell, the rank correlation between neurite growth and synapse gain is only 0.23. Of 6,674 new synapses, 48 % thickened existing connections and 54 % made new ones | Addendum |
 | Run length forgives no small merge | One cut's ERL matches the closed form on 1,713 skeletons. Sweeping the merge size from 5 % to 50 %, VOI merge rises 0.14 → 0.66 bits, but the receiving skeleton's ERL is 0 for every q. Uniform 3-point cuts of unbranched skeletons match the Dirichlet expectation, ratio 1.02 | Addendum |
 | What the slime mould taught: its tubes are continuous (work in progress) | Maze 5/5; with continuous parts the ridge vanishes 24/24; greedy recovery returns 8/8 readable circuits that inherit 9/9. Under evolution the leak gives 8/8, but "evolution crossed the ridge" was retracted (the leak had erased it). Peeling the floors during the search: heritability 13/16 vs 4/16 at n=16 (p=0.0038). One task, fixed schedule — research remains | Addendum |
+| Slime-mould tubes solve the maze (two ops) | Five lattices, a perfect maze and a terrain: the mould's route equals Dijkstra / route_through_array everywhere (< 1e-9). 3/5 converged to the indicator; the two cut off have the smallest runner-up gaps (0.009, 0.032). The Lyapunov V never rose over 23 intervals | Addendum |
 
 ## Glossary (worth reading first)
 
@@ -874,6 +875,24 @@ The fly in this article carries a fixed wiring on a body. Its readout (the one l
 **What is open (the research left).** One task only (exp_position), and the peeling schedule 20/40/60/80 is fixed. Still to do: a Baldwin-type comparison (bare retraining mixed into the fitness), the schedule's sensitivity, replication on another task, whether cosine's 5/8 is chance, and Afterman's own zero point that the quaternion does not beat a real-valued version of equal parameter count. Until these are filled, the design guideline for Afterman — search = leak, recovery = progressive removal, readout = scaffold — stays a **candidate**.
 
 **Why it sits in the fly article.** On the fly side the front end (flyvis) is frozen and the activity of 65 types × 721 columns is cached (688 MB, 94 s), so evolving a head is an hour of compute, the same scale as PHD6. What we measure next: does an evolved head beat the hand-written readout's correlation, and when it does, is the circuit readable (does the recovery stage work)? The slime-mould story has no figures because the results are jsonl and logs and none were drawn; they will be drawn together with the fly run.
+
+### Slime-mould tubes solve the maze — the dynamics as Fullseye ops, bracketed by a theorem and Dijkstra (2026-09-28)
+
+The maze dynamics from the "origin" of the section above became two Fullseye ops. `graph_physarum_path` runs on a weighted graph, `physarum_route` on a cost image (neighbouring pixels joined by a tube of length (c_u + c_v)/2, minimising the same quantity as `route_through_array`). The dynamics are only this: solve the Kirchhoff pressures for a unit flow, read the flow Q in each tube, and move each conductance toward it, dD/dt = |Q| − D. When the shortest path is unique the conductances are proved to converge to its indicator (1 on it, 0 elsewhere; Bonifaci, Mehlhorn and Varma 2012). The truth is Dijkstra (scipy) and `route_through_array` (skimage).
+
+![tubes thickening](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/01_maze_tubes.png)
+
+On a 21×21 perfect maze (one route) it converged in 79 iterations; the route differs from `route_through_array` by no pixel and crosses no wall. The Lyapunov function V = Σ L·D (Bonifaci's "infrastructure cost", non-increasing in continuous time) fell from 227,280 to 133.60 (shortest path 133.59) and never rose over the 23 intervals between 24 snapshots.
+
+![lattice tube thickness](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/04_lattice_tubes.png)
+
+On five 15×15 lattices (edge lengths U(0.5, 1.5)) every route equals Dijkstra's (difference < 1e-9), and by the Afterman PoC's criterion — the route already right at 600 iterations — it is 5/5 (Afterman had 4/5). But only 3/5 reached the indicator by 3,000 iterations. The two cut off are those whose **gap to the runner-up** (the exact second-shortest route: Dijkstra rerun with each edge of the shortest path removed in turn, since any other route must miss one of them) is smallest, 0.009 and 0.032, against 0.041–0.113 for the three that converged. The lower row of the figure is such a seed: two routes still compete at 3,000 iterations. The gap sets the speed; the route is read by following the flow, so it matches the shortest path even when the gap is small. Where many routes tie (uniform cost) the tubes never settle on one, and the op refuses (fail-closed).
+
+![terrain route](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/03_terrain_route.png)
+
+A 32×32 smooth terrain matched too (cut off at 2,500 iterations, with neighbouring tubes still faintly present). The inequality flow length Σ|Q|L ≥ shortest path held exactly in every case (equality at convergence).
+
+Prior art: several reimplementations of Tero 2010 exist on GitHub, but none I found gates against Dijkstra or uses `route_through_array` as the truth on a cost image. Jones 2010's "Physarum machine" (chemotactic particles) is a different model. These ops surface `physarum_search.py`, written on 2026-08-26 during a GPU study and never registered, now with the Dijkstra, inequality and Lyapunov gates attached.
 
 ### What we measure next
 

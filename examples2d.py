@@ -116,6 +116,11 @@ EXAMPLES = [
                 "真値は合成系列の閉形式(核 C + 固有 u: h[K]=C・Jaccard=C/(C+2u))。論文の stable ≈ 43 % に対し"
                 "素朴な数え方では 34 % —— 著者の分類表と照合すると、論文は左右の対で 7 匹以上なら対の全結合に札を付けて"
                 "おり、それだけで論文の stable の 99.6 % を再現する。実データが無ければ合成系列で回る。"},
+    {"id": "poc_physarum_maze", "task": "imgmetrics", "data": "synthetic",
+     "name": "粘菌の管は迷路を解く —— 太る・細るだけの力学が最短路に収束することを、定理と Dijkstra で挟む",
+     "summary": "Tero 2010 の管の力学(dD/dt = |Q| − D)を graph_physarum_path(重み付きグラフ)と physarum_route(コスト画像)で回す。"
+                "15×15 の格子 5 通り・完全迷路・地形の全部で道が Dijkstra / route_through_array と一致(差 < 1e-9)。指示関数への収束"
+                "(Bonifaci 2012)は 3/5、残り 2 は 2 位との差が小さく拮抗が残る。Lyapunov V = Σ L·D は 23 区間で一度も増えない。"},
     {"id": "poc_skeleton_run_length_vs_voi", "task": "imgmetrics", "data": "synthetic",
      "name": "走行長は小さな融合を許さない —— 同じ誤りを、ERL と VOI は違う重さで数える",
      "summary": "Witvliet 2021 の骨格を正解に、候補のラベル付けを 1 つずつ仕込む。分断 1 つの ERL は閉形式 (A²+(L−A−|e|)²)/L、"

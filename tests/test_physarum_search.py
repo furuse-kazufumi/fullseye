@@ -230,3 +230,108 @@ def test_cuda_graph_requires_cuda_device():
         g = P.maze_to_graph(free)
         s, t = P.node_at(g, *s_rc), P.node_at(g, *t_rc)
         P.solve_physarum_batch(g, [s], [t], device="cpu", use_cuda_graph=True)
+
+
+
+# ── 型付き台帳の op: graph_physarum_path / physarum_route ─────────────────── #
+def _lattice(n, seed):
+    """n×n 格子、辺長 U(0.5, 1.5)(最短路はほぼ確実に一意)。afterman の PH と同じ作り。"""
+    rng = np.random.default_rng(seed)
+    A = np.zeros((n * n, n * n))
+    for r in range(n):
+        for c in range(n):
+            u = r * n + c
+            if c + 1 < n:
+                A[u, u + 1] = A[u + 1, u] = rng.uniform(0.5, 1.5)
+            if r + 1 < n:
+                A[u, u + n] = A[u + n, u] = rng.uniform(0.5, 1.5)
+    return A
+
+
+@pytest.mark.parametrize("seed", [0, 1, 2])
+def test_graph_physarum_path_matches_dijkstra_and_converges_to_the_indicator(seed):
+    from scipy.sparse.csgraph import dijkstra
+    A = _lattice(7, seed)
+    r = P.graph_physarum_path(A, 0, 48, dt=0.3)
+    d = dijkstra(A, indices=0)[48]
+    assert r["converged"] and r["path"][0] == 0 and r["path"][-1] == 48
+    assert r["path_length"] == pytest.approx(d, abs=1e-9)
+    assert d - 1e-12 <= r["flow_length"] < d + 1e-4                  # 単位流量の長さ ≥ 最短(厳密)、収束で等号へ
+    on = r["conductance"][r["path"][:-1], r["path"][1:]]
+    assert on.min() > 0.99                                            # Bonifaci: 最短路の管は 1 へ
+    off = r["conductance"].copy()
+    off[r["path"][:-1], r["path"][1:]] = 0
+    off[r["path"][1:], r["path"][:-1]] = 0
+    assert off.max() < 1e-2                                           # それ以外は 0 へ
+    assert np.allclose(r["flow"], -r["flow"].T)
+
+
+def test_graph_physarum_path_is_symmetric_under_relabelling_and_reversal():
+    A = _lattice(6, 4)
+    perm = np.random.default_rng(0).permutation(36)
+    inv = np.argsort(perm)
+    r = P.graph_physarum_path(A, 0, 35, dt=0.3)
+    q = P.graph_physarum_path(A[np.ix_(perm, perm)], inv[0], inv[35], dt=0.3)
+    assert q["path_length"] == pytest.approx(r["path_length"], abs=1e-9)
+    assert perm[q["path"]].tolist() == r["path"].tolist()
+    back = P.graph_physarum_path(A, 35, 0, dt=0.3)                    # 向きを逆にしても同じ道
+    assert back["path"][::-1].tolist() == r["path"].tolist()
+
+
+def test_graph_physarum_path_refuses_bad_input():
+    A = _lattice(4, 0)
+    for bad in (A[:3], A + 1e-9 * np.eye(16), -A, np.where(A > 0, np.nan, 0.0), "x"):
+        with pytest.raises(ValueError):
+            P.graph_physarum_path(bad)
+    B = A.copy()
+    B[1, 0] = 0.0                                                      # 非対称
+    with pytest.raises(ValueError):
+        P.graph_physarum_path(B)
+    with pytest.raises(ValueError):
+        P.graph_physarum_path(A, 0, 0)
+    with pytest.raises(ValueError):
+        P.graph_physarum_path(A, 0, 99)
+    C = np.zeros((4, 4)); C[0, 1] = C[1, 0] = 1.0; C[2, 3] = C[3, 2] = 1.0
+    with pytest.raises(ValueError):                                    # 到達不能
+        P.graph_physarum_path(C, 0, 3)
+    with pytest.raises(ValueError):
+        P.graph_physarum_path(A, dt=0.0)
+
+
+def test_physarum_route_equals_route_through_array_and_the_end_identity():
+    from skimage.graph import route_through_array
+    c = np.random.default_rng(1).uniform(0.5, 1.5, (9, 9))
+    r = P.physarum_route(c, snapshots=3)
+    path, cost = route_through_array(c, (0, 0), (8, 8), fully_connected=False, geometric=False)
+    assert r["converged"] and r["path_cost"] == pytest.approx(cost, abs=1e-9)
+    assert r["path"].tolist() == [list(p) for p in path]
+    assert r["route_length"] == pytest.approx(cost - 0.5 * (c[0, 0] + c[8, 8]), abs=1e-12)   # 両端の半分
+    assert r["route_length"] - 1e-12 <= r["flow_length"] < r["route_length"] + 1e-4
+    assert r["conductance"].shape == (9, 9) and r["conductance"][tuple(r["path"].T)].min() > 0.99
+    assert len(r["snapshots"]) == 3 and np.allclose(r["snapshots"][-1], r["conductance"])
+    assert r["snapshot_iters"][-1] == r["iters"]
+    # 8 近傍: 斜めは √2 倍。真値は geometric=True の route_through_array
+    r8 = P.physarum_route(c, connectivity=8)
+    _, c8 = route_through_array(c, (0, 0), (8, 8), fully_connected=True, geometric=True)
+    assert r8["route_length"] == pytest.approx(c8, abs=1e-9)          # geometric=True は両端を半分で数える
+
+
+def test_physarum_route_walls_are_avoided_and_a_tie_is_refused():
+    from skimage.graph import route_through_array
+    c = np.random.default_rng(7).uniform(0.5, 1.5, (7, 7))
+    c[3, :6] = 1000.0                                                  # 壁: 右端の 1 画素だけ通れる
+    r = P.physarum_route(c, (0, 0), (6, 0))
+    _, cost = route_through_array(c, (0, 0), (6, 0), fully_connected=False, geometric=False)
+    assert (r["path"][:, 1] == 6).any() and r["path_cost"] == pytest.approx(cost, abs=1e-9)
+    # 一様なコスト = 同じ長さの道が何本もある(タイ)。導電度は分かれたまま 1 本に収束しない → 拒否(fail-closed)
+    with pytest.raises(ValueError, match="tie|converged"):
+        P.physarum_route(np.ones((5, 5)), max_iters=400)
+    for bad in (np.ones((7, 7)) * 0.0, np.ones(7), np.full((7, 7), np.inf), "x"):
+        with pytest.raises(ValueError):
+            P.physarum_route(bad)
+    with pytest.raises(ValueError):
+        P.physarum_route(np.ones((7, 7)), (0, 0), (0, 0))
+    with pytest.raises(ValueError):
+        P.physarum_route(np.ones((7, 7)), (0, 0), (9, 9))
+    with pytest.raises(ValueError):
+        P.physarum_route(np.ones((7, 7)), connectivity=6)

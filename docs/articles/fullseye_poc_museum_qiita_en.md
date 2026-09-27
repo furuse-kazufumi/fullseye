@@ -34,7 +34,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 
 | Article | Wings | Exhibits |
 |---|---|---:|
-| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 95 |
+| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 96 |
 | [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 60 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
 
@@ -61,12 +61,12 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 - 2026-09-28 — No.2026.161 Do Synapses Grow in Proportion to Neurites? — Shape Growth and Wiring Growth Set Side by Side, Cell by Cell, in Eight Worms
 - 2026-09-28 — No.2026.162 Run Length Forgives No Small Merge — ERL and VOI Weigh the Same Error Differently
+- 2026-09-28 — No.2026.163 Slime-Mould Tubes Solve the Maze — Thickening and Thinning Alone Converge to the Shortest Path, Bracketed by a Theorem and Dijkstra
 - 2026-09-27 — No.2026.152 Every Sensor Reads Normal, Yet the Machine Is Failing — How Much the MT Method Recovers from Univariate 3σ
 - 2026-09-27 — No.2026.155 Where Is the Text, Without a Recogniser — Grading a Stroke-Width Detector on Text We Drew Ourselves
 - 2026-09-27 — No.2026.153 Is the Worm's Wiring Bilaterally Symmetric? — The L/R-Swap Jaccard, Bracketed by a Closed Form and a Degree-Preserving Null
 - 2026-09-27 — No.2026.156 How Much of the Wiring Do Two Genetically Identical Worms Share? — Counting the Connections Present in All 8 Worms of a Developmental Series
 - 2026-09-27 — No.2026.157 How Much Does a Hand-Traced Wiring Diagram from 40 Years Ago Overlap Today's Adult Worms? — The Era Difference Next to the Individual Difference
-- 2026-09-27 — No.2026.158 How Much Do a Worm's Neurites Grow from Birth to Adulthood? — Measuring Eight Animals' Skeletons with the Tree Ops and Setting the Result Beside the Paper
 
 ## Applying it to your own problem
 

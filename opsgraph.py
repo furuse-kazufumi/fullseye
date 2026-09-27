@@ -18,9 +18,10 @@ Usage:
     opsgraph.get("graph_cycle3")(adj)
 """
 import graphinv
+import physarum_search
 import treemorph
 
-_MOD = {"graphinv": graphinv, "treemorph": treemorph}
+_MOD = {"graphinv": graphinv, "treemorph": treemorph, "physarum_search": physarum_search}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -55,6 +56,12 @@ _CATALOG = {
         ("tree_sholl", "treemorph", ["table"], "table"),
         # 走行長(ERL): 正解の骨格の上を候補のラベル(節点ごとの 1-D 整数列 = signal の席)で走る。
         ("tree_run_length", "treemorph", ["table", "signal"], "table"),
+    ],
+    # 流れで道を探す(粘菌 Tero 2010 の管の力学)。定理が門: 最短路が一意なら導電度はその指示関数に
+    # 収束する(Bonifaci 2012)。真値は Dijkstra(scipy)と route_through_array(skimage)。
+    "flow": [
+        ("graph_physarum_path", "physarum_search", ["matrix"], "table"),
+        ("physarum_route", "physarum_search", ["image2d"], "table"),
     ],
 }
 

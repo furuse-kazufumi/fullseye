@@ -469,6 +469,7 @@ import segcompare  # noqa: E402  (compare two segmentations: VOI / Rand)
 from segcompare import (seg_contingency, seg_variation_of_information, seg_rand,  # noqa: E402,F401
                         seg_synapse_partners, seg_wiring_variation, seg_synapse_nri,
                         seg_wiring_exposure)
+from physarum_search import graph_physarum_path, physarum_route  # noqa: E402,F401
 from treemorph import tree_from_swc, tree_morphometry, tree_sholl  # noqa: E402,F401
 import textregion  # noqa: E402  (where is the text, without a recogniser)
 from textregion import swt_map, text_candidates, text_lines  # noqa: E402,F401

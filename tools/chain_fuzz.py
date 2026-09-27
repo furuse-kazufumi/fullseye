@@ -1305,6 +1305,23 @@ def _b_tree_labels(pool, rng):
     return (t, rng.integers(1, 4, len(t["id"]))), {}
 
 
+def _b_physarum_graph(pool, rng):
+    n = 5
+    A = np.zeros((n * n, n * n))
+    for r in range(n):
+        for c in range(n):
+            u = r * n + c
+            if c + 1 < n:
+                A[u, u + 1] = A[u + 1, u] = rng.uniform(0.5, 1.5)
+            if r + 1 < n:
+                A[u, u + n] = A[u + n, u] = rng.uniform(0.5, 1.5)
+    return (A,), {"dt": 0.3, "max_iters": 600}
+
+
+def _b_physarum_route(pool, rng):
+    return (rng.uniform(0.5, 1.5, (8, 8)),), {"dt": 0.3, "max_iters": 600}
+
+
 def _b_graph_growth(pool, rng):
     A = rng.poisson(0.3, (30, 30)).astype(float)
     B = A + rng.poisson(0.4, (30, 30))
@@ -1472,6 +1489,8 @@ OP_ARG_BUILDERS = {
     "graph_swap_symmetry": _b_graph_swap,
     "graph_edge_consensus": _b_graph_consensus,
     "graph_strength_growth": _b_graph_growth,
+    "graph_physarum_path": _b_physarum_graph,
+    "physarum_route": _b_physarum_route,
     "tree_from_swc": _b_tree_swc,
     "tree_morphometry": _b_tree_table,
     "tree_sholl": _b_tree_table,

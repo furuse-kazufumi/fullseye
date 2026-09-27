@@ -1,8 +1,8 @@
 {
- "n_ops": 2212,
+ "n_ops": 2214,
  "tiers": {
   "color": 12,
-  "ledger": 1263,
+  "ledger": 1265,
   "nary": 17,
   "registry": 920
  },
@@ -5939,6 +5939,19 @@
    ]
   },
   {
+   "name": "graph_physarum_path",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "flow",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "graph_rich_club",
    "halcon": "",
    "in_sort": "conn_graph",
@@ -10070,6 +10083,19 @@
    "ledger": "opsmath",
    "dim": "math",
    "in_sorts": []
+  },
+  {
+   "name": "physarum_route",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "flow",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "image2d"
+   ]
   },
   {
    "name": "piv_cross_correlate",
