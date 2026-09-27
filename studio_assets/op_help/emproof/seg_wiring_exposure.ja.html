@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">seg_wiring_exposure — EMPROOF <code style="color:#22d3bf">wiring</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels2d × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_wiring_exposure(labels, synapses, spacing=None, background=0, p=0.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segcompare; segcompare.seg_wiring_exposure(labels, synapses, spacing=None, background=0, p=0.5)</code>、台帳から引くなら <code style="color:#22d3bf">opsemproof.get(&quot;seg_wiring_exposure&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>物体ごとに、それを切った(または中に融合が隠れていた)時の配線の損傷を、シナプスの端の個数だけから: 上限 s/2n、到達できる最大、端が一様に散っている時の 2 項分布の期待値、相対密度。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Cutting an object whose `<code style="color:#22d3bf">s</code><code style="color:#22d3bf"> synapse ends (</code><code style="color:#22d3bf">synapses</code><code style="color:#22d3bf"> as in :func:</code>seg_synapse_partners`)</p>
+<p>fall `<code style="color:#22d3bf">s1</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">s - s1</code><code style="color:#22d3bf"> on the two sides costs exactly </code><code style="color:#22d3bf">(s / 2n) * H2(s1 / s)</code>` bits of</p>
+<p>ends-level split (:func:<code style="color:#22d3bf">seg_wiring_variation</code>), and a hidden merge of two neurons inside</p>
+<p>one object costs the same expression as merge. So what an object can cost is fixed by its</p>
+<p>end count before any geometry is known:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">bound = s / 2n</code>` — the supremum over all cuts (reached when the ends halve). The bounds</p>
+<p>sum to `<code style="color:#22d3bf">n_ends / 2n</code><code style="color:#22d3bf">: exactly 1 bit when no end lies on </code><code style="color:#22d3bf">background</code>`.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">worst = (s / 2n) * H2(floor(s / 2) / s)</code>` — the largest cost a cut can actually reach.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">expected = (s / 2n) * E[H2(K / s)]</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">K ~ Binomial(s, p)</code>` — the cost of a cut that</p>
+<p>puts each end on the cut-off side independently with probability `<code style="color:#22d3bf">p</code>` (default 1/2,</p>
+<p>the cut through the object&#x27;s median voxel with ends spread evenly over it). This is the</p>
+<p>count-only prediction; the gap to the observed cost is the spatial clustering of the ends.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">density = (s / 2n) / (voxels / N)</code>` — the object&#x27;s share of ends over its share of the</p>
+<p>`<code style="color:#22d3bf">N</code>` voxels of the volume. For an edit, wiring bits / pixel bits = density × (H2 of the</p>
+<p>end fractions / H2 of the voxel fractions): merges have the second factor near 1 (ends</p>
+<p>follow voxels), so their ratio is the density; a cut&#x27;s second factor is</p>
+<p>`<code style="color:#22d3bf">H2(s1 / s) / 1</code>` and is what the binomial predicts.</p>
+<p>Objects with no end are not listed. Returns `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">voxels</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ends</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">density</code>`,</p>
+<p>`<code style="color:#22d3bf">bound</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">worst</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">expected</code><code style="color:#22d3bf"> (aligned arrays), </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> synapses, </code><code style="color:#22d3bf">n_ends</code>` kept,</p>
+<p>`<code style="color:#22d3bf">n_background</code><code style="color:#22d3bf"> ends dropped, </code><code style="color:#22d3bf">total_bound</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">total_expected</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>seg_synapse_partners<code style="color:#22d3bf">; </code><code style="color:#22d3bf">p</code>` not strictly inside</p>
+<p>(0, 1); no end outside the background.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_em_wiring_errors">poc_em_wiring_errors</a> — <code style="color:#22d3bf">py -3.11 examples/poc_em_wiring_errors.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_synapse_partners">seg_synapse_partners</a> · <a style="color:#22d3bf" href="opemproof:seg_wiring_variation">seg_wiring_variation</a> · <a style="color:#22d3bf" href="opemproof:seg_synapse_nri">seg_synapse_nri</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">wiring</code>)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_synapse_partners">seg_synapse_partners</a> · <a style="color:#22d3bf" href="opemproof:seg_wiring_variation">seg_wiring_variation</a> · <a style="color:#22d3bf" href="opemproof:seg_synapse_nri">seg_synapse_nri</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segcompare.py — EMPROOF operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

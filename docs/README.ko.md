@@ -68,11 +68,11 @@
 
 ## 연산자 찾기
 
-**2,217개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **58개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**2,218개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **58개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 932/932, 타입 台帳 1264/1276, 한 줄 파사드 `fullseye.<이름>` 598/1251 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 932/932, 타입 台帳 1265/1277, 한 줄 파사드 `fullseye.<이름>` 598/1251 — **파사드는 아직 절반**.
 
-**내용 실측**: 2222건 중 실행 가능한 예제가 붙은 것은 **2155**건(67건은 없음), 사용법이 120자 이상인 것은 **2171**건(51건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2222건 모두.
+**내용 실측**: 2223건 중 실행 가능한 예제가 붙은 것은 **2156**건(67건은 없음), 사용법이 120자 이상인 것은 **2172**건(51건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2223건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -102,9 +102,9 @@
 | `shapestat` | 16 | [INDEX](ops/shapestat/INDEX.md) · [guide](ops/shapestat/guides/shape_statistics.md) |
 | `videostream` | 16 | [INDEX](ops/videostream/INDEX.md) · [guide](ops/videostream/guides/video_streaming.md) |
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
+| `emproof` | 14 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
 | `measure1d` | 14 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
-| `emproof` | 13 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `specular` | 13 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
@@ -219,7 +219,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 문서 지도 — 전 213건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 2,217건과 패밀리 가이드 58건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 2,218건과 패밀리 가이드 58건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 

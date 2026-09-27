@@ -365,3 +365,74 @@ def test_nri_lost_ends_are_singletons_and_refusals():
         S.seg_synapse_nri(np.zeros((40, 30), int), a, {"pre": pre, "post": post})
     with pytest.raises(ValueError):
         S.seg_synapse_nri(a, a[:, :20], {"pre": pre, "post": post})
+
+
+
+# ---------------------------------------------------------------- 配線の露出(端の個数だけから)
+def test_exposure_bounds_sum_to_one_bit_and_density_follows_the_shares():
+    a, pre, post = _wiring_case()
+    r = S.seg_wiring_exposure(a, {"pre": pre, "post": post})
+    assert r["labels"].tolist() == [1, 2, 3] and r["ends"].tolist() == [6, 6, 4]
+    assert r["bound"].tolist() == pytest.approx([6 / 16, 6 / 16, 4 / 16], abs=1e-15)
+    assert r["total_bound"] == pytest.approx(1.0, abs=1e-15) and r["n_background"] == 0
+    # 3 本とも体積 400 / 1200 なので、密度 = 端の取り分 ÷ 1/3
+    assert r["density"].tolist() == pytest.approx([1.125, 1.125, 0.75], abs=1e-15)
+    # worst: 端 6 個は 3+3 で H2 = 1(bound と一致)、4 個も 2+2
+    assert r["worst"].tolist() == pytest.approx(r["bound"].tolist(), abs=1e-15)
+
+
+def test_expected_h2_binomial_by_hand_and_against_scipy():
+    from scipy.stats import binom
+    assert S._expected_h2_binomial(1, 0.5) == 0.0
+    assert S._expected_h2_binomial(2, 0.5) == pytest.approx(0.5, abs=1e-15)            # 1+1 の確率 1/2 で H2 = 1
+    assert S._expected_h2_binomial(3, 0.5) == pytest.approx(0.75 * _h2(1 / 3), abs=1e-15)
+    for s, p in ((7, 0.5), (12, 0.2), (40, 0.5), (301, 0.7)):
+        k = np.arange(s + 1)
+        q = k / s
+        h = np.array([_h2(float(x)) for x in q])
+        assert S._expected_h2_binomial(s, p) == pytest.approx(float((binom.pmf(k, s, p) * h).sum()), abs=1e-12)
+    e = [S._expected_h2_binomial(s, 0.5) for s in range(1, 60)]
+    assert all(x < y for x, y in zip(e, e[1:])) and e[-1] < 1.0                     # 単調に 1 へ
+    assert S._expected_h2_binomial(4000, 0.5) > 0.999
+    assert S._expected_h2_binomial(4, 0.1) < S._expected_h2_binomial(4, 0.5)
+
+
+def test_exposure_expected_matches_shuffling_the_ends_over_the_object():
+    rng = np.random.default_rng(3)
+    a = np.zeros((40, 30), int)
+    a[:, :10], a[:, 10:20], a[:, 20:] = 1, 2, 3
+    s = 5
+    pts = np.c_[rng.uniform(0, 40, (2 * s, 1)), rng.uniform(0, 10, (2 * s, 1))]     # 端 2s 個すべて神経 1
+    r = S.seg_wiring_exposure(a, {"pre": pts[:s], "post": pts[s:]})
+    assert r["labels"].tolist() == [1] and r["ends"].tolist() == [2 * s]
+    # 神経 1 の体素に端を 2s 個ばら撒き、体素の中央で切る(p = 1/2)—— 混ぜ直しの H2 の平均が 2 項分布の期待値
+    vox = np.flatnonzero(a == 1)
+    side = (np.arange(a.size).reshape(a.shape)[a == 1] // 30) >= 20
+    h = [_h2(side[rng.choice(len(vox), 2 * s, replace=False)].mean()) for _ in range(6000)]
+    assert abs(np.mean(h) - S._expected_h2_binomial(2 * s, 0.5)) < 0.015
+    assert r["expected"][0] == pytest.approx(r["bound"][0] * S._expected_h2_binomial(2 * s, 0.5), abs=1e-15)
+
+
+def test_exposure_drops_background_ends_and_refuses_bad_p():
+    a, pre, post = _wiring_case()
+    b = a.copy()
+    b[:, 10:20] = 0                                             # 神経 2 を背景に: その端 6 個は落ちる
+    r = S.seg_wiring_exposure(b, {"pre": pre, "post": post})
+    assert r["labels"].tolist() == [1, 3] and r["n_background"] == 6 and r["n_ends"] == 10
+    assert r["total_bound"] == pytest.approx(10 / 16, abs=1e-15)
+    for bad in (0.0, 1.0, -0.2, float("nan")):
+        with pytest.raises(ValueError):
+            S.seg_wiring_exposure(a, {"pre": pre, "post": post}, p=bad)
+    with pytest.raises(ValueError):
+        S.seg_wiring_exposure(np.zeros((40, 30), int), {"pre": pre, "post": post})
+
+
+def test_exposure_predicts_the_closed_form_cost_of_an_actual_cut():
+    a, pre, post = _wiring_case()
+    b = a.copy()
+    b[20:, :10] = 9                                             # 神経 1 の端 6 個が 4 + 2 に
+    v = S.seg_wiring_variation(a, b, {"pre": pre, "post": post})
+    r = S.seg_wiring_exposure(a, {"pre": pre, "post": post})
+    i = r["labels"].tolist().index(1)
+    assert v["split"] == pytest.approx(r["bound"][i] * _h2(2 / 6), abs=1e-12)
+    assert v["split"] <= r["worst"][i] + 1e-12 <= r["bound"][i] + 1e-12

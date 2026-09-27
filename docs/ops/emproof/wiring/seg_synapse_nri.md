@@ -51,11 +51,11 @@ is exactly ``1 - adapted_rand_error`` of :func:`seg_rand` taken over the ends (t
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[seg_synapse_partners](seg_synapse_partners.md) · [seg_wiring_variation](seg_wiring_variation.md)
+[seg_synapse_partners](seg_synapse_partners.md) · [seg_wiring_variation](seg_wiring_variation.md) · [seg_wiring_exposure](seg_wiring_exposure.md)
 
 ## 同カテゴリ(`wiring`)
 
-[seg_synapse_partners](seg_synapse_partners.md) · [seg_wiring_variation](seg_wiring_variation.md)
+[seg_synapse_partners](seg_synapse_partners.md) · [seg_wiring_variation](seg_wiring_variation.md) · [seg_wiring_exposure](seg_wiring_exposure.md)
 
 ---
 *Provenance: segcompare.py — EMPROOF operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

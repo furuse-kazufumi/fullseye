@@ -46,11 +46,11 @@ table with ``pre`` / ``post`` nor an ``(n, 2, ndim)`` array; points not ``(n, nd
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[seg_wiring_variation](seg_wiring_variation.md) · [seg_synapse_nri](seg_synapse_nri.md)
+[seg_wiring_variation](seg_wiring_variation.md) · [seg_synapse_nri](seg_synapse_nri.md) · [seg_wiring_exposure](seg_wiring_exposure.md)
 
 ## 同カテゴリ(`wiring`)
 
-[seg_wiring_variation](seg_wiring_variation.md) · [seg_synapse_nri](seg_synapse_nri.md)
+[seg_wiring_variation](seg_wiring_variation.md) · [seg_synapse_nri](seg_synapse_nri.md) · [seg_wiring_exposure](seg_wiring_exposure.md)
 
 ---
 *Provenance: segcompare.py — EMPROOF operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

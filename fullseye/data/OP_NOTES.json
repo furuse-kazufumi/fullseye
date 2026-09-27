@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2211,
- "n_notes": 2217,
+ "n_ops": 2212,
+ "n_notes": 2218,
  "notes": {
   "vol_dilate": [
    {
@@ -15492,6 +15492,16 @@
     "in": "labels2d × table",
     "out": "table",
     "path": "docs/ops/emproof/wiring/seg_synapse_partners.md"
+   }
+  ],
+  "seg_wiring_exposure": [
+   {
+    "op": "seg_wiring_exposure",
+    "dim": "emproof",
+    "category": "wiring",
+    "in": "labels2d × table",
+    "out": "table",
+    "path": "docs/ops/emproof/wiring/seg_wiring_exposure.md"
    }
   ],
   "seg_wiring_variation": [

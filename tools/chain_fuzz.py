@@ -1482,6 +1482,7 @@ OP_ARG_BUILDERS = {
     "seg_synapse_partners": _b_seg_wiring,
     "seg_wiring_variation": _b_seg_wiring_pair,
     "seg_synapse_nri": _b_seg_wiring_pair,
+    "seg_wiring_exposure": _b_seg_wiring,
     "swt_map": _b_text_img,
     "text_candidates": _b_text_swt,
     "text_lines": _b_text_boxes,

@@ -27,6 +27,9 @@ implies from synapse annotations (each synapse's pre and post point):
   * :func:`seg_synapse_nri` — neural reconstruction integrity (Reilly et al. 2018): the F-score
     of pairs of synapse ends kept together, which is exactly ``1 - adapted Rand error`` over
     the ends (checked inside).
+  * :func:`seg_wiring_exposure` (``labels2d, table -> table``) — what a cut of (or a hidden merge
+    inside) each object can cost in ends-level bits, from its end count alone: the bound
+    ``s / 2n``, the worst reachable, and the binomial expectation for evenly spread ends.
 
 ``a`` is the ground truth and ``b`` the candidate — the split/merge names depend on it.
 ``ignore_label`` drops every pixel whose **truth** label equals it (the convention of the
@@ -45,6 +48,8 @@ Provenance: Meila, *J. Multivariate Anal.* 2007 (VOI); Rand, *JASA* 1971; Hubert
 SNEMI3D); the CREMI challenge (cremi.org).
 """
 from __future__ import annotations
+
+import math
 
 import numpy as np
 
@@ -407,3 +412,76 @@ def seg_synapse_nri(a, b, synapses, spacing=None, background=0):
                          % (op, nri, 1.0 - other["adapted_rand_error"]))
     return {"nri": float(nri), "precision": float(precision), "recall": float(recall),
             "tp": tp, "fp": fp, "fn": fn, "n_ends": int(ends_a.size), "n_lost": int(off.sum())}
+
+
+
+def _expected_h2_binomial(s, p):
+    """E[H2(K / s)] for K ~ Binomial(s, p), as an exact finite sum (log-space weights)."""
+    s = int(s)
+    if s <= 0:
+        return 0.0
+    k = np.arange(s + 1, dtype=np.float64)
+    lw = (np.array([math.lgamma(s + 1) - math.lgamma(i + 1) - math.lgamma(s - i + 1) for i in range(s + 1)])
+          + k * math.log(p) + (s - k) * math.log(1.0 - p))
+    w = np.exp(lw)
+    q = k / s
+    h = np.zeros(s + 1)
+    inner = (q > 0) & (q < 1)
+    h[inner] = -(q[inner] * np.log2(q[inner]) + (1 - q[inner]) * np.log2(1 - q[inner]))
+    return float((w * h).sum())
+
+
+def seg_wiring_exposure(labels, synapses, spacing=None, background=0, p=0.5):
+    """How much wiring each object stakes on staying one piece — from synapse end counts alone.
+
+    Cutting an object whose ``s`` synapse ends (``synapses`` as in :func:`seg_synapse_partners`)
+    fall ``s1`` / ``s - s1`` on the two sides costs exactly ``(s / 2n) * H2(s1 / s)`` bits of
+    ends-level split (:func:`seg_wiring_variation`), and a hidden merge of two neurons inside
+    one object costs the same expression as merge. So what an object can cost is fixed by its
+    end count before any geometry is known:
+
+    * ``bound = s / 2n`` — the supremum over all cuts (reached when the ends halve). The bounds
+      sum to ``n_ends / 2n``: exactly 1 bit when no end lies on ``background``.
+    * ``worst = (s / 2n) * H2(floor(s / 2) / s)`` — the largest cost a cut can actually reach.
+    * ``expected = (s / 2n) * E[H2(K / s)]``, ``K ~ Binomial(s, p)`` — the cost of a cut that
+      puts each end on the cut-off side independently with probability ``p`` (default 1/2,
+      the cut through the object's median voxel with ends spread evenly over it). This is the
+      count-only prediction; the gap to the observed cost is the spatial clustering of the ends.
+    * ``density = (s / 2n) / (voxels / N)`` — the object's share of ends over its share of the
+      ``N`` voxels of the volume. For an edit, wiring bits / pixel bits = density × (H2 of the
+      end fractions / H2 of the voxel fractions): merges have the second factor near 1 (ends
+      follow voxels), so their ratio is the density; a cut's second factor is
+      ``H2(s1 / s) / 1`` and is what the binomial predicts.
+
+    Objects with no end are not listed. Returns ``labels``, ``voxels``, ``ends``, ``density``,
+    ``bound``, ``worst``, ``expected`` (aligned arrays), ``n`` synapses, ``n_ends`` kept,
+    ``n_background`` ends dropped, ``total_bound``, ``total_expected``.
+
+    **Raises** ``ValueError``: as :func:`seg_synapse_partners`; ``p`` not strictly inside
+    (0, 1); no end outside the background.
+    """
+    op = "seg_wiring_exposure"
+    p = float(p)
+    if not (0.0 < p < 1.0) or not np.isfinite(p):
+        raise ValueError("%s: p must lie strictly inside (0, 1), got %r" % (op, p))
+    u, v = _synapse_ids(labels, synapses, spacing, "labels", op)
+    lab = np.asarray(labels)
+    n = int(len(u))
+    bg = int(background)
+    ends = np.concatenate([u, v])
+    ends = ends[ends != bg]
+    if ends.size == 0:
+        raise ValueError("%s: every synapse end lies on the background" % op)
+    ids, s = np.unique(ends, return_counts=True)
+    vox = np.array([int((lab == i).sum()) for i in ids], dtype=np.int64)
+    share = s / (2.0 * n)
+    half = np.floor(s / 2.0) / s
+    worst = np.where((half > 0) & (half < 1),
+                     -(half * np.log2(np.where(half > 0, half, 1)) + (1 - half) * np.log2(np.where(half < 1, 1 - half, 1))),
+                     0.0)
+    expected = np.array([_expected_h2_binomial(int(k), p) for k in s])
+    return {"labels": ids.astype(np.int64), "voxels": vox, "ends": s.astype(np.int64),
+            "density": share / (vox / float(lab.size)),
+            "bound": share, "worst": share * worst, "expected": share * expected,
+            "n": n, "n_ends": int(ends.size), "n_background": int(2 * n - ends.size),
+            "total_bound": float(share.sum()), "total_expected": float((share * expected).sum())}

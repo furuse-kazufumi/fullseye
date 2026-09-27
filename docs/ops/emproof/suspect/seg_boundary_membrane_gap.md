@@ -44,7 +44,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[seg_synapse_partners](../wiring/seg_synapse_partners.md) · [seg_wiring_variation](../wiring/seg_wiring_variation.md) · [seg_synapse_nri](../wiring/seg_synapse_nri.md)
+[seg_synapse_partners](../wiring/seg_synapse_partners.md) · [seg_wiring_variation](../wiring/seg_wiring_variation.md) · [seg_synapse_nri](../wiring/seg_synapse_nri.md) · [seg_wiring_exposure](../wiring/seg_wiring_exposure.md)
 
 ## 同カテゴリ(`suspect`)
 

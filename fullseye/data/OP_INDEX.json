@@ -1,8 +1,8 @@
 {
- "n_ops": 2211,
+ "n_ops": 2212,
  "tiers": {
   "color": 12,
-  "ledger": 1262,
+  "ledger": 1263,
   "nary": 17,
   "registry": 920
  },
@@ -12932,6 +12932,20 @@
    "in_sorts": [
     "labels2d",
     "labels2d"
+   ]
+  },
+  {
+   "name": "seg_wiring_exposure",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "wiring",
+   "tier": "ledger",
+   "ledger": "opsemproof",
+   "dim": "emproof",
+   "in_sorts": [
+    "labels2d",
+    "table"
    ]
   },
   {

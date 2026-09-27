@@ -68,11 +68,11 @@
 
 ## 查找算子
 
-共有 **2,217 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **58 篇族指南**。按维度的入口:
+共有 **2,218 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **58 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 932/932、类型化台账 1264/1276、单行门面 `fullseye.<名称>` 598/1251 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 932/932、类型化台账 1265/1277、单行门面 `fullseye.<名称>` 598/1251 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 2222 篇中，附有可运行示例的 **2155** 篇(67 篇没有)，用法说明 120 字以上的 **2171** 篇(51 篇仅一行)。结构(调用形式、类型、可衔接算子)2222 篇全有。
+**内容实测**: 2223 篇中，附有可运行示例的 **2156** 篇(67 篇没有)，用法说明 120 字以上的 **2172** 篇(51 篇仅一行)。结构(调用形式、类型、可衔接算子)2223 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -102,9 +102,9 @@
 | `shapestat` | 16 | [INDEX](ops/shapestat/INDEX.md) · [guide](ops/shapestat/guides/shape_statistics.md) |
 | `videostream` | 16 | [INDEX](ops/videostream/INDEX.md) · [guide](ops/videostream/guides/video_streaming.md) |
 | `astrostack` | 14 | [INDEX](ops/astrostack/INDEX.md) |
+| `emproof` | 14 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `live4d` | 14 | [INDEX](ops/live4d/INDEX.md) · [guide](ops/live4d/guides/live4d.md) |
 | `measure1d` | 14 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
-| `emproof` | 13 | [INDEX](ops/emproof/INDEX.md) · [guide](ops/emproof/guides/emproof.md) |
 | `specular` | 13 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
 | `profile` | 12 | [INDEX](ops/profile/INDEX.md) · [guide](ops/profile/guides/profile_metrology.md) |
 | `colortransport` | 11 | [INDEX](ops/colortransport/INDEX.md) |
@@ -219,7 +219,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 213 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,217 篇算子说明与 58 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,218 篇算子说明与 58 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 

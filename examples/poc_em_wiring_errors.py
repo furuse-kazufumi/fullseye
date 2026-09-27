@@ -21,6 +21,13 @@
     あたりの配線の損傷(中央値)は融合 1.30 に対し分断 0.58。画素の VOI の大きい順に直すのは、でたらめ
     よりはずっと効く(上位 20 件で 41 % 対 19 %)が、配線の順(49 %)には届かない。
 
+    その比 1.30 / 0.58 の中身(9 巡目): 誤り 1 件の「配線ビット ÷ 画素ビット」は恒等的に
+    **密度 × 偏り** —— 密度 = その神経のシナプスの端の取り分 ÷ 体素の取り分、偏り = 端の 2 分割の H2 ÷
+    体素の 2 分割の H2。融合は端が体素に付いて回るので偏り ≈ 1 で、比はほぼ密度。分断は体素を半分に
+    切るので分母の H2 = 1 で、偏り = H2(s1/s) そのもの。端の個数 s が少ない(中央値 3)から、端が神経の
+    上に一様に散っていても H2 の期待値は 2 項分布で 0.62 止まり。実測 0.53 との差が端の空間的な偏りの分。
+    ``seg_wiring_exposure`` はこの端の個数だけからの予言(上限 s/2n、2 項分布の期待値)を神経ごとに返す。
+
 検査する恒等式(下の assert、当てはめた数字は無い):
 
 1. 端の水準の閉形式: 神経の端 s 個が s1 / s2 に分かれると split はちょうど (s/2n)·H2(s1/s) ビット、
@@ -29,6 +36,9 @@
 2. 第 2 経路: 端の VOI は、端の位置のラベルだけで取った ``seg_variation_of_information`` と同じ。
 3. 画素の VOI も閉形式どおり(m/N)·H2(m1/m) —— 前の PoC(分けすぎとまとめすぎ)と同じ門。
 4. 正解どうし・付け替えで 0。
+5. 比の分解: 全件で 配線 / 画素 = 密度 × 偏り(相対 1e-9)。``seg_wiring_exposure`` の上限の和 = 背景に
+   落ちない端の割合、分断 1 件の配線は上限以下。端を神経の体素に混ぜ直した H2 の平均は 2 項分布の閉形式と
+   0.02 以内(切る面は体素の中央 = p 1/2)。
 
 誤りは 1 件ずつ独立に仕込むので、「直した割合」は 1 件ごとの損傷の和で数える(誤りどうしの干渉は
 測っていない)。
@@ -162,7 +172,8 @@ def main() -> None:
         px = sizes[i] / N * h2(m1 / sizes[i])                       # 恒等式 3(前の PoC で門)
         worst_gap = max(worst_gap, abs(v["split"] - want), v["merge"])
         splits.append({"id": int(i), "pixel": px, "wiring": v["split"], "conn": v["connection_split"],
-                       "ends": s, "part": part,
+                       "ends": s, "part": part, "s1": s1, "voxels": int(sizes[i]),
+                       "density": (s / (2 * n)) / (sizes[i] / N), "balance": h2(s1 / s) / h2(m1 / sizes[i]),
                        "nri_loss": 1.0 - SC.seg_synapse_nri(truth, cut, syn, spacing=spacing)["nri"]})
         # ---- いちばん広く接する隣と貼る ---------------------------------------------------
         sh = np.zeros_like(m)
@@ -184,6 +195,7 @@ def main() -> None:
         mm = sizes[i] + sizes[j]
         merges.append({"id": int(i), "other": j, "pixel": mm / N * h2(sizes[i] / mm), "wiring": v["merge"],
                        "conn": v["connection_merge"], "ends": e1 + e2,
+                       "density": ((e1 + e2) / (2 * n)) / (mm / N), "balance": h2(e1 / (e1 + e2)) / h2(sizes[i] / mm),
                        "nri_loss": 1.0 - SC.seg_synapse_nri(truth, glued, syn, spacing=spacing)["nri"]})
     # 恒等式 1: 全件で閉形式
     assert worst_gap < 1e-12, worst_gap
@@ -213,6 +225,36 @@ def main() -> None:
     assert SC.seg_synapse_nri(truth, truth, syn, spacing=spacing)["nri"] == 1.0
     print("   NRI の損失(1 − NRI)と端の VOI の順位相関 %.2f、NRI の損失と画素の VOI の順位相関 %.2f"
           % (spearman(nri, wir), spearman(nri, pix)))
+
+    # ---- 恒等式 5: 比 = 密度 × 偏り、端の個数だけからの予言(seg_wiring_exposure)----------------------
+    for r in splits + merges:
+        assert abs(r["wiring"] / r["pixel"] - r["density"] * r["balance"]) <= 1e-9 * max(1.0, r["wiring"] / r["pixel"])
+    ex = SC.seg_wiring_exposure(truth, syn, spacing=spacing)
+    assert abs(ex["total_bound"] - ex["n_ends"] / (2 * n)) < 1e-12
+    at = {int(l): k for k, l in enumerate(ex["labels"])}
+    bound = np.array([ex["bound"][at[r["id"]]] for r in splits])
+    predicted = np.array([ex["expected"][at[r["id"]]] for r in splits])
+    assert (ws <= bound + 1e-12).all() and np.allclose(bound, [r["ends"] / (2 * n) for r in splits], atol=1e-15)
+    # 混ぜ直し: 端 s 個を神経の体素に一様にばら撒き、同じ中央の面で切る → H2 の平均は 2 項分布の期待値
+    rng = np.random.default_rng(2)
+    binom = np.array([SC._expected_h2_binomial(r["ends"], 0.5) for r in splits])
+    shuffled = np.empty(len(splits))
+    for k, r in enumerate(splits):
+        vox = np.flatnonzero(truth == r["id"])
+        side = r["part"].ravel()[vox]
+        shuffled[k] = np.mean([h2(side[rng.choice(len(vox), r["ends"], replace=False)].mean()) for _ in range(200)])
+    assert abs(shuffled.mean() - binom.mean()) < 0.02, (shuffled.mean(), binom.mean())
+    bal_s = np.array([r["balance"] for r in splits])
+    bal_m = np.array([r["balance"] for r in merges])
+    dens_s = np.array([r["density"] for r in splits])
+    dens_m = np.array([r["density"] for r in merges])
+    print("   比の分解(配線 / 画素 = 密度 × 偏り、全 %d 件で恒等): 融合の偏りの中央値 %.2f(四分位 %.2f–%.2f)、密度の中央値 %.2f"
+          % (len(splits) + len(merges), np.median(bal_m), *np.percentile(bal_m, [25, 75]), np.median(dens_m)))
+    print("   分断の偏り H2(s1/s): 中央値 %.2f、平均 %.2f(0 が %d 件)。端の個数の中央値 %d。端を神経に一様にばら撒くと"
+          " 平均 %.2f、2 項分布の閉形式 %.2f" % (np.median(bal_s), bal_s.mean(), int((bal_s == 0).sum()),
+                                             int(np.median([r["ends"] for r in splits])), shuffled.mean(), binom.mean()))
+    print("   分断 %d 件の配線の損傷の合計: 実測 %.3f ビット / 端の個数だけの予言(2 項分布) %.3f / 上限 %.3f"
+          % (len(splits), ws.sum(), predicted.sum(), bound.sum()))
 
     # ---- 校正の順番: 画素の VOI の大きい順に直す vs 配線の損傷の大きい順 vs でたらめ ----------------
     total = wir.sum()
@@ -259,6 +301,18 @@ def main() -> None:
                 caps.append((what % ((r["pixel"],) if r is big else (r["pixel"], r["wiring"]))) + "(端 %d 個)" % r["ends"])
             figs.save_grid("two_cuts", panels, caps, ncols=2,
                            title="神経を z 方向に重ねた影。明るい側が切り離した半分、白い四角がシナプスの端")
+    if figs.enabled():
+        sg = np.arange(1, max(r["ends"] for r in splits) + 1)
+        figs.save_plot("count_only_prediction",
+                       [("端が一様に散っていた時の期待 E[H2](2 項分布)", sg, [SC._expected_h2_binomial(int(s), 0.5) for s in sg]),
+                        ("実測の分断(1 点 = 1 件)", np.array([r["ends"] for r in splits], float), bal_s)],
+                       xlabel="神経のシナプスの端の個数 s", ylabel="偏りの因子 H2(s1/s)",
+                       title="分断の配線コストは端の個数でほぼ決まり、実測は 0 か釣り合いかに割れる",
+                       caption="%s。分断 1 件の 配線 / 画素 は恒等的に 密度 × 偏り。偏りの平均は実測 %.2f、端を神経の上に一様に"
+                               "ばら撒いた時 %.2f(2 項分布の閉形式 %.2f)。端の個数が少ない(中央値 %d)ことが偏りの主因で、"
+                               "空間的な集まり方は残りの差。" % (src, bal_s.mean(), shuffled.mean(), binom.mean(),
+                                                            int(np.median([r["ends"] for r in splits]))),
+                       kinds=["line", "scatter"], ylim=(0.0, 1.45))
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS%s: 分断 %d・融合 %d 件の端の VOI が閉形式と全件一致。分断の %d 件は配線を変えず、画素 1 ビットあたりの"

@@ -67,6 +67,7 @@ _CATALOG = {
         ("seg_synapse_partners", "segcompare", ["labels2d", "table"], "table"),
         ("seg_wiring_variation", "segcompare", ["labels2d", "labels2d", "table"], "table"),
         ("seg_synapse_nri", "segcompare", ["labels2d", "labels2d", "table"], "table"),
+        ("seg_wiring_exposure", "segcompare", ["labels2d", "table"], "table"),
     ],
 }
 
