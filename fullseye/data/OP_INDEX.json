@@ -1,8 +1,8 @@
 {
- "n_ops": 2208,
+ "n_ops": 2209,
  "tiers": {
   "color": 12,
-  "ledger": 1259,
+  "ledger": 1260,
   "nary": 17,
   "registry": 920
  },
@@ -5962,6 +5962,20 @@
    "dim": "conngraph",
    "in_sorts": [
     "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_strength_growth",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "population",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "matrix",
+    "matrix"
    ]
   },
   {

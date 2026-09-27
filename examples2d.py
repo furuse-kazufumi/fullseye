@@ -116,6 +116,11 @@ EXAMPLES = [
                 "真値は合成系列の閉形式(核 C + 固有 u: h[K]=C・Jaccard=C/(C+2u))。論文の stable ≈ 43 % に対し"
                 "素朴な数え方では 34 % —— 著者の分類表と照合すると、論文は左右の対で 7 匹以上なら対の全結合に札を付けて"
                 "おり、それだけで論文の stable の 99.6 % を再現する。実データが無ければ合成系列で回る。"},
+    {"id": "poc_worm_synapses_vs_neurites", "task": "imgmetrics", "data": "synthetic",
+     "name": "シナプスは神経突起に比例して増えるか —— 8 匹の線虫で、形の成長と配線の成長を細胞ごとに並べる",
+     "summary": "Witvliet 2021 の 8 匹の骨格(tree op)と配線(graph_strength_growth)から: 系全体では密度は L1 で ×1.32 上がり"
+                "その後の揺れは 1.14(論文どおり)。細胞ごとの突起の伸びとシナプスの増えの順位相関は 0.23(零分布 0.17)で弱い。"
+                "新しいシナプス 6,674 個の 48 % は既存の接続を太らせ、54 % が新しい接続。ハブの取り分は出発時より下がる。"},
     {"id": "poc_em_split_merge_score", "task": "imgmetrics", "data": "synthetic",
      "name": "電子顕微鏡の神経の切り出しを採点する —— 分けすぎとまとめすぎを別々の数字にする(VOI の split / merge)",
      "summary": "CREMI sample A の正解に seg_inject_split / seg_inject_merge で誤りを 1 つずつ仕込むと、split だけ・merge だけが"

@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**93 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**94 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1664,7 +1664,7 @@ Ops used (notes): [`attention_apply`](https://furuse.work/ops/llmcore/score/atte
 
 Counting cells, reading a nucleus's DNA content, measuring vessel branching, tracking a wound's area: all of these tend to be reported as one number, and there are situations in which that number is right anyway. Cell counting where over- and under-segmentation balance to a +0.3-cell bias; ploidy classification that survives a forgotten background subtraction; a calibration that returns the most stable and most wrong healing constant.
 
-The 21 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
+The 22 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
 
 The thing to watch for is a method that appears to improve while the quantity it measures quietly swaps: the area classifier gets better with more blur because 'area' is leaking DNA content. Unless the reason for every improvement is traced, this kind of lie gets carried home as a result.
 
@@ -2224,7 +2224,7 @@ Ops used (notes): [`blob_label`](https://furuse.work/ops/blob/connect/blob_label
 
 [![Where Segmentation Errors Break the Wiring Diagram — Pixel Scores Overweight Splits and Underweight Merges](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/01_proofreading_order_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/01_proofreading_order.png)
 
-*↑ **Where Segmentation Errors Break the Wiring Diagram — Pixel Scores Overweight Splits and Underweight Merges** ―― A connectome is read by dropping synapse annotations (a pre and a post point) onto segmented neurons, so segmentation errors turn into wiring errors — but not all of them. seg_wiring_variation retakes the pixel VOI at the 2n synapse ends only. On the ground truth of CREMI sample A (125 slices × 625 squared, 115 synapses, 107 connections), one error at a time was injected into each of the 54 neurons carrying synapses: cut in half at the median x, or glued to the neighbour it touches most. The ends VOI matched the closed form (s/2n)·H2(s1/s) in all 108 cases (largest error 1.4e-17). 23 of the 54 cuts change the wiring by not a single bit (no synapse end on one side of the cut). Wiring damage per pixel bit (median) is 1.30 for merges and 0.58 for splits; the rank correlation of pixel and ends VOI is 0.60. Fixing the top 20 errors by pixel VOI removes 41 % of the wiring damage — far better than random (19 %) but short of the wiring order (49 %). Found by the checks: computing a conditional entropy as H(a,b) − H(a) left 8.9e-16 of rounding dust on a pure relabelling and failed the 'identical means 0' gate; the direct sum −Σ p log2(n_ij / n_i) makes it exactly 0. VOI over synapses grouped by connection alone stays 0 when a one-synapse connection is cut (most of the 107), so the ends level is primary. Raw data is not bundled.*
+*↑ **Where Segmentation Errors Break the Wiring Diagram — Pixel Scores Overweight Splits and Underweight Merges** ―― A connectome is read by dropping synapse annotations (a pre and a post point) onto segmented neurons, so segmentation errors turn into wiring errors — but not all of them. seg_wiring_variation retakes the pixel VOI at the 2n synapse ends only. This construction is the synapse VI of Plaza et al. 2014 (Focused proofreading); what is new here is the numpy-only implementation, the connection level, the injection experiment and the proofreading-order comparison. On the ground truth of CREMI sample A (125 slices × 625 squared, 115 synapses, 107 connections), one error at a time was injected into each of the 54 neurons carrying synapses: cut in half at the median x, or glued to the neighbour it touches most. The ends VOI matched the closed form (s/2n)·H2(s1/s) in all 108 cases (largest error 1.4e-17). 23 of the 54 cuts change the wiring by not a single bit (no synapse end on one side of the cut). Wiring damage per pixel bit (median) is 1.30 for merges and 0.58 for splits; the rank correlation of pixel and ends VOI is 0.60. Fixing the top 20 errors by pixel VOI removes 41 % of the wiring damage — far better than random (19 %) but short of the wiring order (49 %). Found by the checks: computing a conditional entropy as H(a,b) − H(a) left 8.9e-16 of rounding dust on a pure relabelling and failed the 'identical means 0' gate; the direct sum −Σ p log2(n_ij / n_i) makes it exactly 0. VOI over synapses grouped by connection alone stays 0 when a one-synapse connection is cut (most of the 107), so the ends level is primary. Raw data is not bundled.*
 
 [![1 点 = 仕込んだ誤り 1 件。順位相関 0.60。分断の 23 / 54 件は配線を 1 ビットも変えない(横軸の上に並ぶ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/02_pixel_vs_wiring_cost_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/02_pixel_vs_wiring_cost.png)
 
@@ -2243,6 +2243,30 @@ Source: [examples/poc_em_wiring_errors.py](https://github.com/furuse-kazufumi/fu
 This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_em_wiring_errors)
 
 Ops used (notes): [`seg_synapse_partners`](https://furuse.work/ops/emproof/wiring/seg_synapse_partners.html) · [`seg_variation_of_information`](https://furuse.work/ops/emproof/score/seg_variation_of_information.html) · [`seg_wiring_variation`](https://furuse.work/ops/emproof/wiring/seg_wiring_variation.html)
+
+## No.2026.161 —— Do Synapses Grow in Proportion to Neurites? — Shape Growth and Wiring Growth Set Side by Side, Cell by Cell, in Eight Worms
+
+[![Do Synapses Grow in Proportion to Neurites? — Shape Growth and Wiring Growth Set Side by Side, Cell by Cell, in Eight Worms](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/01_density_by_stage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/01_density_by_stage.png)
+
+*↑ **Do Synapses Grow in Proportion to Neurites? — Shape Growth and Wiring Growth Set Side by Side, Cell by Cell, in Eight Worms** ―― Witvliet 2021's eight animals carry both a skeleton (shape) and a wiring diagram (synapses) per individual. From the total neurite length measured by the tree ops and the total number of chemical synapses, density rises ×1.32 from 0.462 /µm at birth to 0.611 at 16 h of L1, and afterwards wobbles (max / min) by 1.14 — consistent with the paper's "density is maintained except during L1" (the gate is "the L1 rise exceeds the later wobble", with no number hard-coded). Cell by cell, over the 178 cells with a skeleton and synapses in both animals 1 and 8, the rank correlation between neurite growth (median ×3.7) and synapse gain (median ×6.0) is 0.23 (97.5th percentile of a cell-shuffling null: 0.17): not zero, but shape alone does not decide it. Density rose in 82 % of cells. Comparing the matrices of animals 1 and 8 with the new op graph_strength_growth, of the 6,674 new synapses 3,232 thickened existing connections, 3,627 made new ones, −159 were on connections that vanished and −26 on ones that thinned (the four sum exactly to 6,674). The rank correlation between partners at birth and the gain is 0.58 for inputs / 0.51 for outputs, and the top-decile hubs' share falls from 34 % to 28 % of inputs and 24 % to 20 % of outputs — "hubs disproportionately add inputs" does not appear under this definition (the paper's quantity is defined differently, so this is not a contradiction). Raw data is not bundled.*
+
+[![1 点 = 細胞 178 個。順位相関 0.23(零分布 97.5 % 点 0.17)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/02_cell_growth_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/02_cell_growth_scatter.png)
+
+*↑ The measurement ―― 1 点 = 細胞 178 個。順位相関 0.23(零分布 97.5 % 点 0.17)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![順位相関 入力 0.58 / 出力 0.51。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/03_gain_vs_degree_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/03_gain_vs_degree.png)
+
+*↑ 順位相関 入力 0.58 / 出力 0.51。*
+
+```
+py -3.11 examples/poc_worm_synapses_vs_neurites.py
+```
+
+Source: [examples/poc_worm_synapses_vs_neurites.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_worm_synapses_vs_neurites.py)
+
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites)
+
+Ops used (notes): [`graph_strength_growth`](https://furuse.work/ops/graph/population/graph_strength_growth.html) · [`tree_from_swc`](https://furuse.work/ops/graph/tree/tree_from_swc.html) · [`tree_morphometry`](https://furuse.work/ops/graph/tree/tree_morphometry.html)
 
 ## No.2026.154 —— Grading Skeleton Measurement on Real Trees — NeuroMorpho SWC as Ground Truth, and What Projection Breaks
 

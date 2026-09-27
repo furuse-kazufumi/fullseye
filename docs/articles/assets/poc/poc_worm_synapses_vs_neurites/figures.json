@@ -1,0 +1,32 @@
+[
+ {
+  "file": "01_density_by_stage.png",
+  "name": "density_by_stage",
+  "caption": "Witvliet 2021 の 8 匹。化学シナプスの総数を神経突起の総長で割った。L1 の間に ×1.32、L1 以後の揺れは 1.14。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_cell_growth_scatter.png",
+  "name": "cell_growth_scatter",
+  "caption": "1 点 = 細胞 178 個。順位相関 0.23(零分布 97.5 % 点 0.17)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_gain_vs_degree.png",
+  "name": "gain_vs_degree",
+  "caption": "順位相関 入力 0.58 / 出力 0.51。上位 1 割のハブの取り分は入力 34 % → 28 %。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

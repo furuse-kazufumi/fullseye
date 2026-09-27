@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2208,
- "n_notes": 2214,
+ "n_ops": 2209,
+ "n_notes": 2215,
  "notes": {
   "vol_dilate": [
    {
@@ -16489,6 +16489,16 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/graph/population/graph_edge_consensus.md"
+   }
+  ],
+  "graph_strength_growth": [
+   {
+    "op": "graph_strength_growth",
+    "dim": "graph",
+    "category": "population",
+    "in": "matrix × matrix",
+    "out": "table",
+    "path": "docs/ops/graph/population/graph_strength_growth.md"
    }
   ],
   "graph_swap_symmetry": [

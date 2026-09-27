@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_strength_growth — GRAPH <code style="color:#22d3bf">population</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_strength_growth(a, b, hub_fraction=0.1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import graphinv; graphinv.graph_strength_growth(a, b, hub_fraction=0.1)</code>; aus dem Register: <code style="color:#22d3bf">opsgraph.get(&quot;graph_strength_growth&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Where the new synapses went — one wiring matrix `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> (earlier) against </code><code style="color:#22d3bf">b</code>` (later).</p>
+<p>Both are weight matrices (synapse counts) on the <b>same</b> node order; self-loops are</p>
+<p>dropped. With `<code style="color:#22d3bf">S = sum</code><code style="color:#22d3bf"> of each matrix and </code><code style="color:#22d3bf">dS = S_b - S_a</code>`:</p>
+<p style="margin:2px 0 2px 12px">• per node: `<code style="color:#22d3bf">in_a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">out_a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">in_b</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">out_b</code><code style="color:#22d3bf"> (strengths), </code><code style="color:#22d3bf">degree_a</code>` (number of</p>
+<p>partners, in + out, presence `<code style="color:#22d3bf">&gt; 0</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">gain_in = in_b - in_a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">gain_out</code>`.</p>
+<p>Identity: `<code style="color:#22d3bf">gain_in.sum() == gain_out.sum() == dS</code>` (every synapse has one pre and one post).</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">strengthened</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">weakened</code><code style="color:#22d3bf"> (weight change on edges present in both), </code><code style="color:#22d3bf">added</code>`</p>
+<p>(weight of edges only in `<code style="color:#22d3bf">b</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">lost</code><code style="color:#22d3bf"> (weight of edges only in </code><code style="color:#22d3bf">a</code>`);</p>
+<p>`<code style="color:#22d3bf">strengthened - weakened + added - lost == dS</code>`.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">rho_in</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">rho_out</code><code style="color:#22d3bf"> — Spearman rank correlation of </code><code style="color:#22d3bf">degree_a</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">gain_in</code>` /</p>
+<p>`<code style="color:#22d3bf">gain_out</code><code style="color:#22d3bf"> over nodes with </code><code style="color:#22d3bf">degree_a &gt; 0</code>` (0.0 with fewer than 3 such nodes or no</p>
+<p>variance); `<code style="color:#22d3bf">n_ranked</code>`.</p>
+<p style="margin:2px 0 2px 12px">• hubs = the top `<code style="color:#22d3bf">hub_fraction</code><code style="color:#22d3bf"> of ranked nodes by </code><code style="color:#22d3bf">degree_a</code>` (at least 1):</p>
+<p>`<code style="color:#22d3bf">hub_share_in_a</code><code style="color:#22d3bf"> (their share of </code><code style="color:#22d3bf">S_a</code><code style="color:#22d3bf"> as post-synaptic partners), </code><code style="color:#22d3bf">hub_share_gain_in</code>`</p>
+<p>(their share of `<code style="color:#22d3bf">dS</code>` arriving as inputs), and the same for outputs. If new synapses were</p>
+<p>spread in proportion to existing strength, the two shares would be equal — the gap is</p>
+<p>what &quot;hubs grow disproportionately&quot; means in numbers.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: either matrix not square / non-finite / negative / a string or</p>
+<p>masked array; shapes differ; `<code style="color:#22d3bf">hub_fraction</code><code style="color:#22d3bf"> outside </code><code style="color:#22d3bf">(0, 1]</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">dS == 0</code>` is allowed</p>
+<p>(shares of the gain are then 0).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_worm_synapses_vs_neurites">poc_worm_synapses_vs_neurites</a> — <code style="color:#22d3bf">py -3.11 examples/poc_worm_synapses_vs_neurites.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_edge_consensus">graph_edge_consensus</a> · <a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a> · <a style="color:#22d3bf" href="opgraph:tree_sholl">tree_sholl</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">population</code>)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_edge_consensus">graph_edge_consensus</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: graphinv.py — GRAPH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

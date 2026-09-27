@@ -31,7 +31,13 @@
 4. 正解どうし・付け替えで 0。
 
 誤りは 1 件ずつ独立に仕込むので、「直した割合」は 1 件ごとの損傷の和で数える(誤りどうしの干渉は
-測っていない)。データは CREMI sample A(``FULLSEYE_CREMI`` か ``<FULLSEYE_DATA_DIR か
+測っていない)。
+
+先行研究: シナプスの注釈のある画素だけで VI を取る「synapse VI」は Plaza・Scheffer・Chklovskii 2014
+(Focused proofreading, arXiv:1409.1199、NeuroProof の C++)が定義し、split と merge の 2 項に分けている。
+端の VOI はその構成と同じ。この PoC のものは、numpy だけの実装、接続ごとの水準、誤りを 1 件ずつ仕込んで
+画素と配線の損傷を同じ単位で比べる実験、校正の順番の比較。NRI(Reilly 2018)は端の対の F 値、ERL
+(Januszewski 2018)は骨格の走行長で、どちらも情報量ではない。データは CREMI sample A(``FULLSEYE_CREMI`` か ``<FULLSEYE_DATA_DIR か
 ~/.cache/fullseye>/cremi/sample_A_20160501.hdf``、h5py が要る)の xy の 1/4 の区画(z 全 125 枚)。
 生データは commit しない。無ければ合成の 3 次元の細胞で回る。
 """

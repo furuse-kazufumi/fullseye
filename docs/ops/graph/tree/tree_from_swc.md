@@ -4,7 +4,7 @@ dim: graph
 category: tree
 in: text
 out: table
-examples: [poc_swc_tree_truth, poc_worm_neurites_grow]
+examples: [poc_swc_tree_truth, poc_worm_neurites_grow, poc_worm_synapses_vs_neurites]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ does not exist; non-finite coordinates or radius; a negative radius; more than
 
 - [poc_swc_tree_truth](../../../../examples/poc_swc_tree_truth.py) — `py -3.11 examples/poc_swc_tree_truth.py`
 - [poc_worm_neurites_grow](../../../../examples/poc_worm_neurites_grow.py) — `py -3.11 examples/poc_worm_neurites_grow.py`
+- [poc_worm_synapses_vs_neurites](../../../../examples/poc_worm_synapses_vs_neurites.py) — `py -3.11 examples/poc_worm_synapses_vs_neurites.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

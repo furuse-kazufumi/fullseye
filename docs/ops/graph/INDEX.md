@@ -1,4 +1,4 @@
-# GRAPH operator help — 8 ops in 6 categories
+# GRAPH operator help — 9 ops in 6 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/graph/<category>/<op>.md` を走査。
 
@@ -16,9 +16,9 @@
 
 [graph_degree_preserving_null](null/graph_degree_preserving_null.md)
 
-### population (1)
+### population (2)
 
-[graph_edge_consensus](population/graph_edge_consensus.md)
+[graph_edge_consensus](population/graph_edge_consensus.md) · [graph_strength_growth](population/graph_strength_growth.md)
 
 ### symmetry (1)
 

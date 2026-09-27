@@ -17,6 +17,9 @@ import emproof as E  # noqa: E402
 
 _OPS = ["seg_membrane_response", "seg_membrane_chord_score", "seg_boundary_membrane_gap",
         "seg_inject_merge", "seg_inject_split", "seg_label_changes", "holdout_threshold"]
+# 同じ台帳(opsemproof)に 2026-09-27 から同居する segcompare の op(採点と配線)。emproof.py の家族ではない。
+_SEG = ["seg_contingency", "seg_variation_of_information", "seg_rand",
+        "seg_synapse_partners", "seg_wiring_variation"]
 
 
 def cells(size=160, n=16, rings=0, seed=0):
@@ -146,9 +149,13 @@ def test_holdout_threshold_chooses_on_train_and_reports_on_test():
 def test_the_ledger_lists_every_op_and_nothing_is_missing():
     import opsemproof
 
+    import segcompare as SC
+
     assert opsemproof.missing() == []
-    assert set(opsemproof.OPSEMPROOF) == set(_OPS) == set(E.__all__) - {"MAX_LABEL_PIXELS", "SPLIT_AXES"}
-    assert len(opsemproof.OPSEMPROOF) == 7 and len(opsemproof.categories()) == 4
+    assert set(_OPS) == set(E.__all__) - {"MAX_LABEL_PIXELS", "SPLIT_AXES"}
+    assert set(_SEG) == {n for n in dir(SC) if n.startswith("seg_")}       # 台帳の外に op を置き忘れない
+    assert set(opsemproof.OPSEMPROOF) == set(_OPS) | set(_SEG)
+    assert len(opsemproof.OPSEMPROOF) == 12 and len(opsemproof.categories()) == 6
 
 
 def test_every_op_is_reachable_from_the_public_tier():
@@ -163,7 +170,7 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "emproof"]
-    assert {r[0] for r in rows} == set(_OPS)
+    assert {r[0] for r in rows} == set(_OPS) | set(_SEG)
     assert {r[3] for r in rows} == {"image2d", "table", "labels2d"}
 
 

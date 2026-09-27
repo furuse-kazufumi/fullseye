@@ -85,6 +85,7 @@ One experiment = one question. **This article is appended to every time an exper
 | How much do a worm's neurites grow from birth to adulthood? | 4.3-fold (the paper says about 5). Summing the authors' own file also gives 3.95, so the 5-fold itself does not come out. The longest skeleton path matches the authors' values to 1.75e-9 | Addendum |
 | Scoring a neuron segmentation from electron microscopy as over-splitting and over-merging | Injecting one error at a time raises only split or only merge, exactly by the closed form (error < 1e-12). A classic segmentation crosses over between the 65th and 70th percentiles. Leaving membrane pixels as background inflates merge 2.4-fold | Addendum |
 | Where segmentation errors break the wiring diagram | 4 in 10 cuts change the wiring by not a single bit. Wiring damage per pixel bit is 1.30 for merges and 0.58 for splits. Proofreading in pixel-score order works twice as well as random but falls 8 points short of ideal | Addendum |
+| Do synapses grow in proportion to neurites? | System-wide, density rises ×1.32 during L1 and wobbles by 1.14 afterwards (as the paper says). Per cell, the rank correlation between neurite growth and synapse gain is only 0.23. Of 6,674 new synapses, 48 % thickened existing connections and 54 % made new ones | Addendum |
 
 ## Glossary (worth reading first)
 
@@ -752,6 +753,8 @@ The scores in the previous section count pixels. But a connectome wants a wiring
 
 This round adds two wiring ops to Fullseye. `seg_synapse_partners` reads which neuron each end of a synapse falls in, returning the wiring diagram the segmentation implies. `seg_wiring_variation` retakes the pixel VOI at **the 2n synapse ends only**. CREMI sample A comes with 216 annotated synapses; I used the 115 (107 connections) whose two ends both fall in a block of 125 slices × 625 × 625.
 
+Taking the VOI at the synapses only is not new: Plaza, Scheffer and Chklovskii defined it as the synapse VI in 2014 (Focused proofreading, arXiv:1409.1199), split into the same two terms, and implemented it in NeuroProof (C++). What this round adds is a numpy-only implementation, the connection level, the experiment that injects one error at a time and compares pixel and wiring damage in one unit, and the proofreading-order comparison. NRI (Reilly 2018) is an F-score over pairs of ends and ERL (Januszewski 2018) a run length along skeletons; neither is information-theoretic.
+
 The experiment: into each of the 54 neurons carrying synapses, inject one error at a time — cut it in half at its median x, or glue it to the neighbour it touches most — and compare pixel VOI with ends VOI. The check is a closed form: when a neuron's s ends divide s1 / s2, split rises by exactly (s/2n)·H2(s1/s) bits. All 108 cases matched it (largest error 1.4e-17).
 
 ![pixel errors against wiring errors](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/02_pixel_vs_wiring_cost.png)
@@ -779,6 +782,33 @@ The gates caught two things here too.
 2. At first only the VOI over synapses grouped by connection was returned. But a connection with a single synapse has nothing to scatter into when it is cut, so it stays at 0 — and most of the 107 connections are like that. The ends level became the primary measure; the connection level stays as `connection_split` / `connection_merge`.
 
 The classic 3-D segmentation I tried first (membrane response per slice → threshold → 3-D connected components) joined along z into one giant object at every threshold and could not serve as a candidate. In EM where the z spacing (40 nm) is ten times the xy spacing (4 nm), cutting per slice and then linking along z needs a separate stage.
+
+### Do synapses grow in proportion to neurites? (2026-09-28)
+
+"How much do neurites grow" and "how much wiring do 8 worms share" above measured shape and wiring separately. They are the same 8 animals, so the two can be set side by side. Witvliet 2021 writes that "except for L1, synapse number increased in proportion to neurite length, maintaining synapse density", and that hub neurons (many partners at birth) "disproportionately" add inputs but not outputs. This round adds `graph_strength_growth` to Fullseye — between two wiring matrices, it counts where synapses were added, split into inputs and outputs per cell — and checks both claims with it and the existing tree ops.
+
+![density by stage](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/01_density_by_stage.png)
+
+| Stage | Total neurite length | Chemical synapses | Density (/µm) |
+|---|---|---|---|
+| L1 at birth | 2,806 µm | 1,296 | 0.462 |
+| L1 16 h | 4,544 µm | 2,777 | 0.611 |
+| L3 27 h | 6,396 µm | 4,456 | 0.697 |
+| Adult #2 | 12,038 µm | 7,970 | 0.662 |
+
+System-wide, the paper holds: density rises ×1.32 during L1, and afterwards its wobble (max / min) is 1.14. The gate is "the L1 rise exceeds the later wobble" — no number is hard-coded.
+
+Per cell, the story changes. Over the 178 cells that have both a skeleton and synapses in animals 1 and 8, the rank correlation between neurite growth (median ×3.7) and synapse gain (median ×6.0) is **0.23**. It clears the 97.5th percentile of a null that shuffles cells (0.17), so it is not zero, but it is too weak to say that the cells whose neurites grew most gained the most synapses. Density rose in 82 % of cells — in nearly every cell, synapses grow faster than shape.
+
+![per-cell growth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/02_cell_growth_scatter.png)
+
+The cells where shape and wiring diverge most: SIADL grows ×3.8 in neurite but ×22 in synapses, SIBDR ×4.1 against ×21, RIR ×1.9 against ×9. In the other direction, a body-wall muscle (BWM-VR04) grows ×15 in neurite for ×7 in synapses. Which cells stand out is not the paper's subject, so only the names and numbers are recorded here.
+
+Where did the 6,674 new synapses go? Comparing the matrices of animals 1 and 8 with `graph_strength_growth`: 3,232 (48 %) thickened connections present at birth, 3,627 (54 %) made new connections, −159 were on connections that disappeared and −26 on connections that thinned (the four sum to 6,674 exactly). This does not match the paper's "~4,500 new synapses strengthened most connections present at birth". The 3,232 here is the weight gained on connections present in both animals; how the paper matches connections and counts "strengthened" cannot be checked from this repository, so the number is recorded without a reason for the gap.
+
+![gain against partners at birth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/03_gain_vs_degree.png)
+
+As for hubs: the rank correlation between the number of partners at birth and the synapses gained is 0.58 for inputs and 0.51 for outputs — both positive. The top-decile 19 hubs' share goes from 34 % of inputs at birth to 28 % of the input gain, and from 24 % of outputs to 20 % of the output gain — down, not up. If "hubs disproportionately add inputs" is read as "their share of the gain exceeds their share at birth", it does not appear under this definition. The paper's quantity (strengthening per connection, hubs against non-hubs) is different, so this is not a contradiction; the definition and the numbers are recorded here.
 
 ### What we measure next
 

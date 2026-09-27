@@ -292,6 +292,9 @@ def make_generators():
         # conngraph(2026-09-20): 新語 2 つの種
         "conn_graph": _conn_graph,
         "synapse_table": _synapse_table,
+        # table(列名 → 配列)の種。segcompare の配線 op が読む {pre, post} の座標表にしてある ——
+        # 他の table を受ける op(graph_edge_consensus 等)は列名を見て断るので、嘘にはならない。
+        "table": lambda rng: {"pre": rng.uniform(0, 32, (12, 2)), "post": rng.uniform(0, 32, (12, 2))},
         "points": _points,
         "image2d": lambda rng: rng.random((32, 32)),
         "depth": lambda rng: 1.0 + rng.random((32, 32)),
@@ -1296,6 +1299,14 @@ def _b_tree_table(pool, rng):
     return (treemorph.tree_from_swc(_SWC_Y),), {}
 
 
+def _b_graph_growth(pool, rng):
+    A = rng.poisson(0.3, (30, 30)).astype(float)
+    B = A + rng.poisson(0.4, (30, 30))
+    np.fill_diagonal(A, 0)
+    np.fill_diagonal(B, 0)
+    return (A, B), {}
+
+
 def _b_seg_pair(pool, rng):
     a = np.repeat(np.repeat(rng.integers(1, 6, (4, 4)), 8, 0), 8, 1)
     b = a.copy()
@@ -1454,6 +1465,7 @@ OP_ARG_BUILDERS = {
     "graph_degree_preserving_null": _b_graph_null,
     "graph_swap_symmetry": _b_graph_swap,
     "graph_edge_consensus": _b_graph_consensus,
+    "graph_strength_growth": _b_graph_growth,
     "tree_from_swc": _b_tree_swc,
     "tree_morphometry": _b_tree_table,
     "tree_sholl": _b_tree_table,

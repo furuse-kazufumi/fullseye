@@ -31,7 +31,12 @@ Two levels, both VOI split / merge (``synapses`` as in :func:`seg_synapse_partne
     their (pre object, post object) pair — one true connection scattered over several,
     or different true connections fused into one (synapses attributed to the wrong
     partner). A connection with a single synapse cannot scatter, so this level is blind
-    to cuts that only rename a one-synapse connection; the ends level is not. Synapses with an end on
+    to cuts that only rename a one-synapse connection; the ends level is not.
+
+Provenance: the ends level is the "synapse VI" of Plaza, Scheffer & Chklovskii 2014
+(*Focused proofreading*, arXiv:1409.1199; VI over the voxels carrying synaptic
+annotations, implemented in NeuroProof, C++). The connection level, the lost-synapse
+convention and the per-edit closed forms (``(s/2n)·H2(s1/s)`` for a cut) are this module's. Synapses with an end on
 ``background`` in the truth are dropped; in the candidate, each such synapse is **lost**
 and counted in ``n_lost`` as its own singleton at both levels (not one shared
 "background" object, which would fake a huge merge). Also returns ``split_connections`` (true connections

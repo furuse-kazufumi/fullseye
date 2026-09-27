@@ -407,3 +407,88 @@ def graph_edge_consensus(adjs, ordered=False, n_null=0, swaps_per_edge=5, seed=0
             "n_null": n_null,
         })
     return out
+
+
+def _rank(x: np.ndarray) -> np.ndarray:
+    """Average ranks (ties share the mean rank), 1-based — what Spearman is defined on."""
+    x = np.asarray(x, dtype=np.float64)
+    order = np.argsort(x, kind="stable")
+    ranks = np.empty(len(x), dtype=np.float64)
+    ranks[order] = np.arange(1, len(x) + 1)
+    _u, inv, cnt = np.unique(x, return_inverse=True, return_counts=True)
+    sums = np.bincount(inv.ravel(), weights=ranks)
+    return sums[inv.ravel()] / cnt[inv.ravel()]
+
+
+def _spearman(x, y) -> float:
+    if len(x) < 3:
+        return 0.0
+    rx, ry = _rank(x), _rank(y)
+    rx, ry = rx - rx.mean(), ry - ry.mean()
+    d = float(np.sqrt((rx ** 2).sum() * (ry ** 2).sum()))
+    return 0.0 if d == 0.0 else float((rx * ry).sum() / d)
+
+
+def graph_strength_growth(a, b, hub_fraction=0.1):
+    """Where the new synapses went — one wiring matrix ``a`` (earlier) against ``b`` (later).
+
+    Both are weight matrices (synapse counts) on the **same** node order; self-loops are
+    dropped. With ``S = sum`` of each matrix and ``dS = S_b - S_a``:
+
+      * per node: ``in_a``, ``out_a``, ``in_b``, ``out_b`` (strengths), ``degree_a`` (number of
+        partners, in + out, presence ``> 0``), ``gain_in = in_b - in_a``, ``gain_out``.
+        Identity: ``gain_in.sum() == gain_out.sum() == dS`` (every synapse has one pre and one post).
+      * ``strengthened`` / ``weakened`` (weight change on edges present in both), ``added``
+        (weight of edges only in ``b``), ``lost`` (weight of edges only in ``a``);
+        ``strengthened - weakened + added - lost == dS``.
+      * ``rho_in`` / ``rho_out`` — Spearman rank correlation of ``degree_a`` with ``gain_in`` /
+        ``gain_out`` over nodes with ``degree_a > 0`` (0.0 with fewer than 3 such nodes or no
+        variance); ``n_ranked``.
+      * hubs = the top ``hub_fraction`` of ranked nodes by ``degree_a`` (at least 1):
+        ``hub_share_in_a`` (their share of ``S_a`` as post-synaptic partners), ``hub_share_gain_in``
+        (their share of ``dS`` arriving as inputs), and the same for outputs. If new synapses were
+        spread in proportion to existing strength, the two shares would be equal — the gap is
+        what "hubs grow disproportionately" means in numbers.
+
+    **Raises** ``ValueError``: either matrix not square / non-finite / negative / a string or
+    masked array; shapes differ; ``hub_fraction`` outside ``(0, 1]``; ``dS == 0`` is allowed
+    (shares of the gain are then 0).
+    """
+    op = "graph_strength_growth"
+    A = _as_weight_matrix(a, "a", op)
+    B = _as_weight_matrix(b, "b", op)
+    if A.shape != B.shape:
+        raise ValueError("%s: a %r and b %r differ in shape" % (op, A.shape, B.shape))
+    if (A < 0).any() or (B < 0).any():
+        raise ValueError("%s: weights must be non-negative synapse counts" % op)
+    hf = float(hub_fraction)
+    if not (0.0 < hf <= 1.0):
+        raise ValueError("%s: hub_fraction must be in (0, 1], got %r" % (op, hub_fraction))
+    np.fill_diagonal(A, 0.0)
+    np.fill_diagonal(B, 0.0)
+    in_a, out_a, in_b, out_b = A.sum(0), A.sum(1), B.sum(0), B.sum(1)
+    pa, pb = A > 0, B > 0
+    both = pa & pb
+    diff = B - A
+    s_a, s_b = float(A.sum()), float(B.sum())
+    deg = (pa.sum(0) + pa.sum(1)).astype(np.int64)      # partners as post + as pre
+    gain_in, gain_out = in_b - in_a, out_b - out_a
+    ranked = np.nonzero(deg > 0)[0]
+    rho_in = _spearman(deg[ranked], gain_in[ranked])
+    rho_out = _spearman(deg[ranked], gain_out[ranked])
+    n_hub = max(1, int(round(hf * len(ranked)))) if len(ranked) else 0
+    hubs = ranked[np.argsort(-deg[ranked], kind="stable")[:n_hub]]
+    ds = s_b - s_a
+
+    def share(x, total):
+        return float(x[hubs].sum() / total) if total != 0 else 0.0
+
+    return {"n": int(A.shape[0]), "s_a": s_a, "s_b": s_b, "ds": ds,
+            "in_a": in_a, "out_a": out_a, "in_b": in_b, "out_b": out_b, "degree_a": deg,
+            "gain_in": gain_in, "gain_out": gain_out,
+            "strengthened": float(np.clip(diff[both], 0, None).sum()),
+            "weakened": float(-np.clip(diff[both], None, 0).sum()),
+            "added": float(B[pb & ~pa].sum()), "lost": float(A[pa & ~pb].sum()),
+            "rho_in": rho_in, "rho_out": rho_out, "n_ranked": int(len(ranked)),
+            "hubs": hubs, "hub_share_in_a": share(in_a, s_a), "hub_share_gain_in": share(gain_in, ds),
+            "hub_share_out_a": share(out_a, s_a), "hub_share_gain_out": share(gain_out, ds)}

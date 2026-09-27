@@ -250,3 +250,109 @@ def test_consensus_refuses_a_non_square_image_table():
     rng = np.random.default_rng(0)
     with pytest.raises(ValueError):
         G.graph_edge_consensus({"a": rng.random((16, 24)), "b": rng.random((16, 24))})
+
+
+
+# ---------------------------------------------------------------- 成長(どこにシナプスが足されたか)
+def _growth_case():
+    """4 節点。0 はハブ(3 本の入力)。b では既存の辺が太り、1 本増え、1 本消える。"""
+    a = np.array([[0, 0, 0, 0],
+                  [3, 0, 0, 0],
+                  [2, 0, 0, 1],
+                  [1, 0, 0, 0]], float)
+    b = np.array([[0, 0, 0, 0],
+                  [6, 0, 0, 0],
+                  [5, 0, 0, 0],      # 2->3 が消えた(lost 1)
+                  [1, 2, 0, 0]], float)   # 3->1 が増えた(added 2)
+    return a, b
+
+
+def test_strength_growth_identities_on_a_structured_case():
+    a, b = _growth_case()
+    r = G.graph_strength_growth(a, b)
+    assert r["ds"] == b.sum() - a.sum() == 7
+    assert r["gain_in"].sum() == r["gain_out"].sum() == r["ds"]
+    assert r["strengthened"] == 6 and r["weakened"] == 0 and r["added"] == 2 and r["lost"] == 1
+    assert r["strengthened"] - r["weakened"] + r["added"] - r["lost"] == r["ds"]
+    assert r["degree_a"].tolist() == [3, 1, 2, 2]          # 0: 3 入力; 2: 1 出力 + 1 出力 ... (pre 2 本)
+    assert r["gain_in"].tolist() == [6, 2, 0, -1]
+
+
+def test_strength_growth_identities_hold_on_random_matrices():
+    rng = np.random.default_rng(0)
+    a = rng.poisson(0.4, (50, 50)).astype(float)
+    b = a + rng.poisson(0.6, (50, 50))
+    b[rng.random((50, 50)) < 0.1] = 0
+    r = G.graph_strength_growth(a, b)
+    np.fill_diagonal(a, 0)
+    np.fill_diagonal(b, 0)
+    assert r["gain_in"].sum() == pytest.approx(r["ds"]) and r["gain_out"].sum() == pytest.approx(r["ds"])
+    assert r["strengthened"] - r["weakened"] + r["added"] - r["lost"] == pytest.approx(b.sum() - a.sum())
+    assert r["in_a"].sum() == pytest.approx(a.sum()) and r["out_b"].sum() == pytest.approx(b.sum())
+
+
+def test_strength_growth_is_invariant_to_a_consistent_relabelling():
+    rng = np.random.default_rng(1)
+    a = rng.poisson(0.3, (30, 30)).astype(float)
+    b = a + rng.poisson(0.5, (30, 30))
+    p = rng.permutation(30)
+    r0 = G.graph_strength_growth(a, b)
+    r1 = G.graph_strength_growth(a[np.ix_(p, p)], b[np.ix_(p, p)])
+    for k in ("ds", "strengthened", "weakened", "added", "lost", "rho_in", "rho_out",
+              "hub_share_in_a", "hub_share_gain_in", "hub_share_out_a", "hub_share_gain_out"):
+        assert r1[k] == pytest.approx(r0[k], abs=1e-12), k
+    assert np.array_equal(r1["gain_in"], r0["gain_in"][p])
+
+
+def test_strength_growth_proportional_spreading_gives_equal_hub_shares():
+    """新しいシナプスを既存の重みに比例して撒くと、ハブの「取り分」は出発時の取り分と一致する。"""
+    rng = np.random.default_rng(2)
+    a = rng.poisson(0.5, (40, 40)).astype(float)
+    np.fill_diagonal(a, 0)
+    b = a * 2.5
+    r = G.graph_strength_growth(a, b, hub_fraction=0.2)
+    assert r["hub_share_gain_in"] == pytest.approx(r["hub_share_in_a"], abs=1e-12)
+    assert r["hub_share_gain_out"] == pytest.approx(r["hub_share_out_a"], abs=1e-12)
+    assert r["added"] == 0 and r["lost"] == 0 and r["weakened"] == 0
+
+
+def test_strength_growth_spearman_matches_scipy_and_hubs_are_the_top_degrees():
+    scipy_stats = pytest.importorskip("scipy.stats")
+    rng = np.random.default_rng(3)
+    a = rng.poisson(0.3, (60, 60)).astype(float)
+    b = a + rng.poisson(0.4, (60, 60)) * (a > 0)       # 太るだけ(既存の辺に比例気味)
+    r = G.graph_strength_growth(a, b)
+    k = r["degree_a"] > 0
+    assert r["rho_in"] == pytest.approx(scipy_stats.spearmanr(r["degree_a"][k], r["gain_in"][k])[0], abs=1e-12)
+    assert r["rho_out"] == pytest.approx(scipy_stats.spearmanr(r["degree_a"][k], r["gain_out"][k])[0], abs=1e-12)
+    top = r["degree_a"][r["hubs"]].min()
+    assert (r["degree_a"][k] > top).sum() < len(r["hubs"])
+
+
+def test_strength_growth_identical_inputs_and_self_loops():
+    a, _ = _growth_case()
+    a2 = a.copy()
+    np.fill_diagonal(a2, 5)                      # 自己結合は落とす
+    r = G.graph_strength_growth(a2, a)
+    assert r["ds"] == 0 and r["rho_in"] == 0.0 and r["hub_share_gain_in"] == 0.0
+    assert r["gain_in"].tolist() == [0, 0, 0, 0]
+
+
+@pytest.mark.parametrize("bad", [
+    lambda a: (a, a[:3, :3]),
+    lambda a: (a, -a),
+    lambda a: (a, np.where(a > 0, np.nan, a)),
+    lambda a: ("a", a),
+])
+def test_strength_growth_refuses(bad):
+    a, _ = _growth_case()
+    x, y = bad(a)
+    with pytest.raises(ValueError):
+        G.graph_strength_growth(x, y)
+
+
+def test_strength_growth_refuses_bad_hub_fraction():
+    a, b = _growth_case()
+    for hf in (0.0, 1.5, -0.1):
+        with pytest.raises(ValueError):
+            G.graph_strength_growth(a, b, hub_fraction=hf)

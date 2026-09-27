@@ -43,6 +43,8 @@ _CATALOG = {
     #   というもっともらしい嘘を返す。table なら他 op の表を渡しても op が断る。
     "population": [
         ("graph_edge_consensus", "graphinv", ["table"], "table"),
+        # 2 時点(または 2 個体)の間で、どの節点にどれだけ重みが足されたか(入力と出力を分ける)。
+        ("graph_strength_growth", "graphinv", ["matrix", "matrix"], "table"),
     ],
     # 神経の木(SWC)。木はグラフの一種なのでこの台帳に置く。入口は text(SWC の本文か
     # パス)で、読んだ時点で構造の約束(根 1・親 id < 子 id・節点 = 辺 + 1)を検査する。

@@ -14847,6 +14847,10 @@
   "emproof/seg_wiring_variation": {
    "fp": "1d0212a6d116",
    "ja": "候補の分割が正解の配線図をどう壊すかを VOI で測る。シナプスの端で取る split / merge と、接続ごとに束ねた connection_split / connection_merge の 2 水準。"
+  },
+  "graph/graph_strength_growth": {
+   "fp": "542117d70263",
+   "ja": "2 つの配線行列(前と後)の間で、どの節点にどれだけシナプスが足されたかを入力と出力に分けて数える。太らせた・新しい・消えた・細った重みの内訳、相手の数との順位相関、ハブの取り分。"
   }
  }
 }
