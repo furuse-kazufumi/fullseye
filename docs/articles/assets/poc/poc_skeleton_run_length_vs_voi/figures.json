@@ -1,0 +1,22 @@
+[
+ {
+  "file": "01_merge_size_erl_vs_voi.png",
+  "name": "merge_size_erl_vs_voi",
+  "caption": "Witvliet 2021 の骨格 1713 本。骨格 a の遠い側 q を骨格 b の物体に貼った(856 組の平均)。VOI の merge は q → 0 で 0 に向かい、a の損失は分断と同じ 1 − (1 − q)² に従うが、b は q に依らず走行を全部失う。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_cut_position_erl.png",
+  "name": "cut_position_erl",
+  "caption": "1 点 = 骨格 1 本。真ん中で切ると ERL は L の約 1/2、端で切ると約 0.8 L。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

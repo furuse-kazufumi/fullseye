@@ -1299,6 +1299,12 @@ def _b_tree_table(pool, rng):
     return (treemorph.tree_from_swc(_SWC_Y),), {}
 
 
+def _b_tree_labels(pool, rng):
+    import treemorph
+    t = treemorph.tree_from_swc(_SWC_Y)
+    return (t, rng.integers(1, 4, len(t["id"]))), {}
+
+
 def _b_graph_growth(pool, rng):
     A = rng.poisson(0.3, (30, 30)).astype(float)
     B = A + rng.poisson(0.4, (30, 30))
@@ -1469,6 +1475,7 @@ OP_ARG_BUILDERS = {
     "tree_from_swc": _b_tree_swc,
     "tree_morphometry": _b_tree_table,
     "tree_sholl": _b_tree_table,
+    "tree_run_length": _b_tree_labels,
     "seg_contingency": _b_seg_pair,
     "seg_variation_of_information": _b_seg_pair,
     "seg_rand": _b_seg_pair,

@@ -86,6 +86,7 @@ One experiment = one question. **This article is appended to every time an exper
 | Scoring a neuron segmentation from electron microscopy as over-splitting and over-merging | Injecting one error at a time raises only split or only merge, exactly by the closed form (error < 1e-12). A classic segmentation crosses over between the 65th and 70th percentiles. Leaving membrane pixels as background inflates merge 2.4-fold | Addendum |
 | Where segmentation errors break the wiring diagram | 4 in 10 cuts change the wiring by not a single bit. Wiring damage per pixel bit is 1.30 for merges and 0.58 for splits. Proofreading in pixel-score order works twice as well as random but falls 8 points short of ideal | Addendum |
 | Do synapses grow in proportion to neurites? | System-wide, density rises ×1.32 during L1 and wobbles by 1.14 afterwards (as the paper says). Per cell, the rank correlation between neurite growth and synapse gain is only 0.23. Of 6,674 new synapses, 48 % thickened existing connections and 54 % made new ones | Addendum |
+| Run length forgives no small merge | One cut's ERL matches the closed form on 1,713 skeletons. Sweeping the merge size from 5 % to 50 %, VOI merge rises 0.14 → 0.66 bits, but the receiving skeleton's ERL is 0 for every q. Uniform 3-point cuts of unbranched skeletons match the Dirichlet expectation, ratio 1.02 | Addendum |
 
 ## Glossary (worth reading first)
 
@@ -809,6 +810,34 @@ Where did the 6,674 new synapses go? Comparing the matrices of animals 1 and 8 w
 ![gain against partners at birth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/03_gain_vs_degree.png)
 
 As for hubs: the rank correlation between the number of partners at birth and the synapses gained is 0.58 for inputs and 0.51 for outputs — both positive. The top-decile 19 hubs' share goes from 34 % of inputs at birth to 28 % of the input gain, and from 24 % of outputs to 20 % of the output gain — down, not up. If "hubs disproportionately add inputs" is read as "their share of the gain exceeds their share at birth", it does not appear under this definition. The paper's quantity (strengthening per connection, hubs against non-hubs) is different, so this is not a contradiction; the definition and the numbers are recorded here.
+
+### Run length forgives no small merge (2026-09-28)
+
+The two sections above scored with VOI. Connectomics has a second convention: **ERL** (expected run length, Januszewski 2018) — how far along the ground-truth skeleton one can travel while staying inside one object. Runs of a merged object count as zero, however small the other party. This round adds `tree_run_length` to Fullseye: it counts the runs of a skeleton painted with candidate labels, and `zero_labels` zeroes the merged objects.
+
+The ground truth is Witvliet 2021's 1,713 skeletons (12+ nodes); the candidate labellings were **injected** one at a time (they are not a segmenter's output). The check is a closed form: cutting at edge e gives exactly (A² + (L − A − |e|)²)/L, where A is the cable of the cut-off subtree, counted by a separate traversal. All 1,713 matched (relative 4e-15). The VOI split of the same cut matches (m/N)·H2(m1/m) too (3.5e-16).
+
+![cut position and ERL](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi/02_cut_position_erl.png)
+
+Where a cut lands decides how much it hurts. On 100 unbranched skeletons, a cut in the middle leaves ERL at 0.48 L; a cut near an end (one tenth in), 0.80 L. VOI is also largest in the middle, so for cuts the two scores agree in direction.
+
+They disagree on merges. I glued the far q of skeleton a onto skeleton b's object and swept q from 5 % to 50 % (856 pairs).
+
+![merge size against the two scores](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi/01_merge_size_erl_vs_voi.png)
+
+| q | VOI merge | ERL loss (a, the glued one) | ERL loss (b, the receiver) |
+|---|---|---|---|
+| 5 % | 0.142 bits | 0.094 | **1.000** |
+| 20 % | 0.377 | 0.356 | **1.000** |
+| 50 % | 0.662 | 0.752 | **1.000** |
+
+VOI merge goes to 0 as q → 0. Under ERL the receiving skeleton b loses its entire run however small the fragment glued onto it; a's own loss follows the cut formula 1 − (1 − q)². This b column is what "ERL is harsh on merges" means: a neuron that contains a merged object cannot be trusted anywhere, by definition.
+
+One probabilistic gate to finish. Cutting 65 unbranched skeletons at 3 points uniform along the cable, the run-length fractions follow Dirichlet(1, …, 1), so E[Σ l_i² / L'²] = 2/(m + 2). The measured ratio is 1.023.
+
+The gates caught two things. The first version claimed that a's loss was independent of q — wrong. ERL zeroes the runs of the merged **object**; the remaining 1 − q of a survives as an intact run. The constant loss falls on b, which that object covers entirely. And sampling the cut positions uniformly over node indices biased the ratio to 0.945: skeleton edges are uneven in length, so the positions must be uniform along the cable.
+
+ERL implementations exist in funkelab's funlib.evaluate (needs graph_tool) and the Allen Institute's segmentation-skeleton-metrics (numpy + networkx); this one is numpy only, with the closed-form gates attached.
 
 ### What we measure next
 

@@ -71,7 +71,7 @@ individual with no edges; ``n_null`` equal to 1 (no spread) or negative;
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[tree_morphometry](../tree/tree_morphometry.md) · [tree_sholl](../tree/tree_sholl.md)
+[tree_morphometry](../tree/tree_morphometry.md) · [tree_sholl](../tree/tree_sholl.md) · [tree_run_length](../tree/tree_run_length.md)
 
 ## 同カテゴリ(`population`)
 

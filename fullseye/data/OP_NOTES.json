@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2209,
- "n_notes": 2215,
+ "n_ops": 2210,
+ "n_notes": 2216,
  "notes": {
   "vol_dilate": [
    {
@@ -16529,6 +16529,16 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/graph/tree/tree_morphometry.md"
+   }
+  ],
+  "tree_run_length": [
+   {
+    "op": "tree_run_length",
+    "dim": "graph",
+    "category": "tree",
+    "in": "table × signal",
+    "out": "table",
+    "path": "docs/ops/graph/tree/tree_run_length.md"
    }
   ],
   "tree_sholl": [

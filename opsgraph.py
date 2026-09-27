@@ -53,6 +53,8 @@ _CATALOG = {
         ("tree_from_swc", "treemorph", ["text"], "table"),
         ("tree_morphometry", "treemorph", ["table"], "table"),
         ("tree_sholl", "treemorph", ["table"], "table"),
+        # 走行長(ERL): 正解の骨格の上を候補のラベル(節点ごとの 1-D 整数列 = signal の席)で走る。
+        ("tree_run_length", "treemorph", ["table", "signal"], "table"),
     ],
 }
 

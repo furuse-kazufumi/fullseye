@@ -1,8 +1,8 @@
 {
- "n_ops": 2209,
+ "n_ops": 2210,
  "tiers": {
   "color": 12,
-  "ledger": 1260,
+  "ledger": 1261,
   "nary": 17,
   "registry": 920
  },
@@ -15055,6 +15055,20 @@
    "dim": "graph",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "tree_run_length",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tree",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "table",
+    "signal"
    ]
   },
   {

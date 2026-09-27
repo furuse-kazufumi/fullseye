@@ -232,3 +232,83 @@ def tree_sholl(tree, radii=None, n_radii=50, plane=None, center=None):
     area = float((hi - lo).sum())
     return {"radii": r, "crossings": cross, "max_crossings": int(cross[k]),
             "radius_at_max": float(r[k]), "integral": area}
+
+
+def tree_run_length(tree, labels, background=0, zero_labels=None):
+    """Expected run length (ERL) of a skeleton under a candidate labelling of its nodes.
+
+    ``labels`` gives, for every node of the tree table, the candidate object it falls in.
+    A **run** is a maximal connected piece of the tree whose nodes all carry the same
+    label and that holds at least one edge; its length is the cable inside it (an edge
+    belongs to a run only if both ends share the label; a lone node between two cuts is
+    no run). Edges touching ``background`` belong to no run. Runs whose label is
+    in ``zero_labels`` (objects that also cover another skeleton — a merge) count as length
+    0, as in Januszewski et al. 2018: a merged run is not trustworthy anywhere.
+
+    ``erl = sum(l_i^2) / L`` with ``L`` the whole cable — the run length a point drawn
+    uniformly along the skeleton finds itself in (points on cut or background edges find
+    length 0). Also returns ``run_lengths`` (one per run, merged runs already zeroed),
+    ``runs``, ``max_run``, ``cable_length``, ``cut_edges`` (both ends labelled, differently),
+    ``background_edges`` and ``merged_runs``.
+
+    Identities: ``erl == L`` when every node carries one non-background label;
+    ``sum(run_lengths) + cut cable + background cable == L``; for any labelling with
+    ``k`` runs and no lost cable, ``erl >= L / k`` (Cauchy-Schwarz) and ``erl <= max_run``;
+    a path of length ``L`` cut at ``m`` equally spaced points gives exactly ``L / (m + 1)``;
+    cut at ``m`` uniformly random points, ``E[erl] = 2L / (m + 2)`` (Dirichlet(1, .., 1)).
+
+    **Raises** ``ValueError``: not a tree table; ``labels`` not one integer per node,
+    non-finite or non-integer.
+    """
+    op = "tree_run_length"
+    xyz, pidx, _root = _check_tree(tree, op)
+    n = xyz.shape[0]
+    if isinstance(labels, (str, bytes)):
+        raise ValueError("%s: labels must be an integer array with one entry per node" % op)
+    lab = np.asarray(labels)
+    if lab.dtype.kind == "f":
+        if not np.isfinite(lab).all() or not np.array_equal(lab, np.round(lab)):
+            raise ValueError("%s: labels must be integers" % op)
+        lab = lab.astype(np.int64)
+    if lab.dtype.kind == "b":
+        lab = lab.astype(np.int64)
+    if lab.dtype.kind not in "iu" or lab.shape != (n,):
+        raise ValueError("%s: labels must be an integer array of shape (%d,), got %r %s" % (op, n, lab.shape, lab.dtype))
+    lab = lab.astype(np.int64)
+    bg = int(background)
+    zero = set(int(z) for z in (zero_labels if zero_labels is not None else ()))
+    child = np.flatnonzero(pidx >= 0)
+    parent = pidx[child]
+    seg = np.linalg.norm(xyz[child] - xyz[parent], axis=1)
+    L = float(seg.sum())
+    touches_bg = (lab[child] == bg) | (lab[parent] == bg)
+    same = (lab[child] == lab[parent]) & ~touches_bg
+    cut = ~same & ~touches_bg
+    # runs = connected components over the "same" edges (union-find on nodes)
+    root_of = np.arange(n)
+
+    def find(i):
+        while root_of[i] != i:
+            root_of[i] = root_of[root_of[i]]
+            i = root_of[i]
+        return i
+
+    for c, p in zip(child[same], parent[same]):
+        a, b = find(int(c)), find(int(p))
+        if a != b:
+            root_of[a] = b
+    comp = np.array([find(int(i)) for i in range(n)])
+    _u, inv = np.unique(comp, return_inverse=True)
+    inv = inv.ravel()
+    lengths = np.bincount(inv[child[same]], weights=seg[same], minlength=len(_u))
+    keep = (lab[_u] != bg) & (lengths > 0)                 # a run carries cable; lone cut-off nodes carry none
+    run_lab = lab[_u][keep]
+    run_len = lengths[keep]
+    merged = np.array([int(x) in zero for x in run_lab], dtype=bool)
+    run_len = np.where(merged, 0.0, run_len)
+    erl = float((run_len ** 2).sum() / L) if L > 0 else 0.0
+    return {"erl": erl, "run_lengths": run_len, "run_labels": run_lab, "runs": int(run_len.size),
+            "max_run": float(run_len.max()) if run_len.size else 0.0, "cable_length": L,
+            "cut_edges": int(cut.sum()), "cut_cable": float(seg[cut].sum()),
+            "background_edges": int(touches_bg.sum()), "background_cable": float(seg[touches_bg].sum()),
+            "merged_runs": int(merged.sum())}

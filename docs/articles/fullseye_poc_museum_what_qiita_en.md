@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**94 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**95 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1664,7 +1664,7 @@ Ops used (notes): [`attention_apply`](https://furuse.work/ops/llmcore/score/atte
 
 Counting cells, reading a nucleus's DNA content, measuring vessel branching, tracking a wound's area: all of these tend to be reported as one number, and there are situations in which that number is right anyway. Cell counting where over- and under-segmentation balance to a +0.3-cell bias; ploidy classification that survives a forgotten background subtraction; a calibration that returns the most stable and most wrong healing constant.
 
-The 22 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
+The 23 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
 
 The thing to watch for is a method that appears to improve while the quantity it measures quietly swaps: the area classifier gets better with more blur because 'area' is leaking DNA content. Unless the reason for every improvement is traced, this kind of lie gets carried home as a result.
 
@@ -2267,6 +2267,26 @@ Source: [examples/poc_worm_synapses_vs_neurites.py](https://github.com/furuse-ka
 This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites)
 
 Ops used (notes): [`graph_strength_growth`](https://furuse.work/ops/graph/population/graph_strength_growth.html) · [`tree_from_swc`](https://furuse.work/ops/graph/tree/tree_from_swc.html) · [`tree_morphometry`](https://furuse.work/ops/graph/tree/tree_morphometry.html)
+
+## No.2026.162 —— Run Length Forgives No Small Merge — ERL and VOI Weigh the Same Error Differently
+
+[![Run Length Forgives No Small Merge — ERL and VOI Weigh the Same Error Differently](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi/01_merge_size_erl_vs_voi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi/01_merge_size_erl_vs_voi.png)
+
+*↑ **Run Length Forgives No Small Merge — ERL and VOI Weigh the Same Error Differently** ―― Automatic segmentations are scored either by VOI (split / merge, from the contingency table) or by ERL (expected run length, Januszewski 2018): how far along the ground-truth skeleton one can travel inside one object. The new op tree_run_length counts the runs of a skeleton painted with candidate labels and treats runs of merged objects as length 0. With Witvliet 2021's 1,713 skeletons (12+ nodes) as ground truth, one candidate error at a time was injected (the candidates are synthetic, not a segmenter's output). One cut: ERL matches the closed form (A² + (L − A − |e|)²)/L (A = cable of the cut-off subtree, counted by a second traversal) on all 1,713 skeletons (relative 4e-15), and VOI split matches (m/N)·H2 (3.5e-16). On 100 unbranched skeletons, cutting in the middle leaves ERL at 0.48 L, cutting near an end 0.80 L. Gluing the far q of skeleton a onto skeleton b's object (856 pairs): VOI merge rises monotonically from 0.142 bits at q = 5 % to 0.662 at 50 %, while the ERL of the receiving skeleton b is 0 for every q (loss 1.000) and a's loss follows the cut formula 1 − (1 − q)². Cutting 65 unbranched skeletons at 3 points uniform along the cable, the run fractions follow Dirichlet(1,…,1): mean Σl²/L'² ÷ 2/(m+2) = 1.023. Found by the checks: the first version claimed that a's loss was independent of q — wrong; ERL zeroes the runs of the merged object, and the rest of a survives intact; the constant loss falls on b, which that object covers entirely. Sampling cut positions uniformly over node indices instead of cable biased the ratio to 0.945, because edge lengths are uneven. Raw data is not bundled.*
+
+[![1 点 = 骨格 1 本。真ん中で切ると ERL は L の約 1/2、端で切ると約 0.8 L。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi/02_cut_position_erl_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi/02_cut_position_erl.png)
+
+*↑ The measurement ―― 1 点 = 骨格 1 本。真ん中で切ると ERL は L の約 1/2、端で切ると約 0.8 L。 (figure labels are in Japanese; the numbers are the same)*
+
+```
+py -3.11 examples/poc_skeleton_run_length_vs_voi.py
+```
+
+Source: [examples/poc_skeleton_run_length_vs_voi.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_skeleton_run_length_vs_voi.py)
+
+This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi)
+
+Ops used (notes): [`seg_variation_of_information`](https://furuse.work/ops/emproof/score/seg_variation_of_information.html) · [`tree_from_swc`](https://furuse.work/ops/graph/tree/tree_from_swc.html) · [`tree_run_length`](https://furuse.work/ops/graph/tree/tree_run_length.html)
 
 ## No.2026.154 —— Grading Skeleton Measurement on Real Trees — NeuroMorpho SWC as Ground Truth, and What Projection Breaks
 

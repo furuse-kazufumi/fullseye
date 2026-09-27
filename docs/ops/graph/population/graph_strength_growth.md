@@ -53,7 +53,7 @@ masked array; shapes differ; ``hub_fraction`` outside ``(0, 1]``; ``dS == 0`` is
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[graph_edge_consensus](graph_edge_consensus.md) · [tree_morphometry](../tree/tree_morphometry.md) · [tree_sholl](../tree/tree_sholl.md)
+[graph_edge_consensus](graph_edge_consensus.md) · [tree_morphometry](../tree/tree_morphometry.md) · [tree_sholl](../tree/tree_sholl.md) · [tree_run_length](../tree/tree_run_length.md)
 
 ## 同カテゴリ(`population`)
 

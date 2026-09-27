@@ -4,7 +4,7 @@ dim: emproof
 category: score
 in: labels2d × labels2d
 out: table
-examples: [poc_em_split_merge_score, poc_em_wiring_errors]
+examples: [poc_em_split_merge_score, poc_em_wiring_errors, poc_skeleton_run_length_vs_voi]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -39,6 +39,7 @@ together), plus the entropies ``h_a``, ``h_b`` and the mutual information ``mi``
 
 - [poc_em_split_merge_score](../../../../examples/poc_em_split_merge_score.py) — `py -3.11 examples/poc_em_split_merge_score.py`
 - [poc_em_wiring_errors](../../../../examples/poc_em_wiring_errors.py) — `py -3.11 examples/poc_em_wiring_errors.py`
+- [poc_skeleton_run_length_vs_voi](../../../../examples/poc_skeleton_run_length_vs_voi.py) — `py -3.11 examples/poc_skeleton_run_length_vs_voi.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

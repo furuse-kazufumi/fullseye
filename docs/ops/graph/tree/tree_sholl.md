@@ -53,11 +53,11 @@ radii not 1-D, not finite, not positive or not strictly increasing; ``n_radii < 
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[graph_edge_consensus](../population/graph_edge_consensus.md) · [tree_morphometry](tree_morphometry.md)
+[graph_edge_consensus](../population/graph_edge_consensus.md) · [tree_morphometry](tree_morphometry.md) · [tree_run_length](tree_run_length.md)
 
 ## 同カテゴリ(`tree`)
 
-[tree_from_swc](tree_from_swc.md) · [tree_morphometry](tree_morphometry.md)
+[tree_from_swc](tree_from_swc.md) · [tree_morphometry](tree_morphometry.md) · [tree_run_length](tree_run_length.md)
 
 ---
 *Provenance: treemorph.py — GRAPH operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

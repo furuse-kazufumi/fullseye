@@ -1,4 +1,4 @@
-# GRAPH operator help — 9 ops in 6 categories
+# GRAPH operator help — 10 ops in 6 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/graph/<category>/<op>.md` を走査。
 
@@ -24,9 +24,9 @@
 
 [graph_swap_symmetry](symmetry/graph_swap_symmetry.md)
 
-### tree (3)
+### tree (4)
 
-[tree_from_swc](tree/tree_from_swc.md) · [tree_morphometry](tree/tree_morphometry.md) · [tree_sholl](tree/tree_sholl.md)
+[tree_from_swc](tree/tree_from_swc.md) · [tree_morphometry](tree/tree_morphometry.md) · [tree_run_length](tree/tree_run_length.md) · [tree_sholl](tree/tree_sholl.md)
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

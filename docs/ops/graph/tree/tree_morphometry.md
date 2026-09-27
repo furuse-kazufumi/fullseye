@@ -45,11 +45,11 @@ either count breaks the equality. A root with one child is not a tip.
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[graph_edge_consensus](../population/graph_edge_consensus.md) · [tree_sholl](tree_sholl.md)
+[graph_edge_consensus](../population/graph_edge_consensus.md) · [tree_sholl](tree_sholl.md) · [tree_run_length](tree_run_length.md)
 
 ## 同カテゴリ(`tree`)
 
-[tree_from_swc](tree_from_swc.md) · [tree_sholl](tree_sholl.md)
+[tree_from_swc](tree_from_swc.md) · [tree_sholl](tree_sholl.md) · [tree_run_length](tree_run_length.md)
 
 ---
 *Provenance: treemorph.py — GRAPH operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

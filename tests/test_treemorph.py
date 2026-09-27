@@ -154,3 +154,118 @@ def test_real_neuromorpho_files_keep_their_promises():
         d = np.linalg.norm(t["xyz"] - t["xyz"][t["root"]], axis=1)
         k = np.flatnonzero(t["parent_index"] >= 0)
         assert s["integral"] == pytest.approx(float(np.abs(d[k] - d[t["parent_index"][k]]).sum()), rel=1e-12)
+
+
+
+# ---------------------------------------------------------------- 走行長(ERL)
+def _path(n=101, step=1.0):
+    """x 軸に沿った n 節点の鎖。ケーブル長 (n-1)·step。"""
+    lines = ["1 1 0 0 0 1 -1"] + ["%d 3 %.6f 0 0 1 %d" % (k, (k - 1) * step, k - 1) for k in range(2, n + 1)]
+    return T.tree_from_swc("\n".join(lines))
+
+
+def _y_tree():
+    """根から 10 節点の幹、そこで 2 本に分かれ各 10 節点(全長 30)。"""
+    lines = ["1 1 0 0 0 1 -1"]
+    for k in range(2, 12):
+        lines.append("%d 3 %d 0 0 1 %d" % (k, k - 1, k - 1))
+    for b, dy in ((0, 1), (1, -1)):
+        for j in range(10):
+            k = 12 + b * 10 + j
+            p = 11 if j == 0 else k - 1
+            lines.append("%d 3 %d %d 0 1 %d" % (k, 11 + j, dy * (j + 1), p))
+    return T.tree_from_swc("\n".join(lines))
+
+
+def _brute_runs(tree, labels, background=0):
+    """第 2 実装: 辺を 1 本ずつ見て、同じラベルの節点どうしを素朴に併合。"""
+    pidx = np.asarray(tree["parent_index"])
+    xyz = np.asarray(tree["xyz"], float)
+    n = len(pidx)
+    group = list(range(n))
+    for _ in range(n):
+        for k in range(n):
+            p = pidx[k]
+            if p >= 0 and labels[k] == labels[p] and labels[k] != background:
+                g = min(group[k], group[p])
+                group[k] = group[p] = g
+    out = {}
+    for k in range(n):
+        p = pidx[k]
+        if p >= 0 and labels[k] == labels[p] and labels[k] != background:
+            out[group[k]] = out.get(group[k], 0.0) + float(np.linalg.norm(xyz[k] - xyz[p]))
+    return sorted(out.values())
+
+
+def test_run_length_of_an_intact_skeleton_is_its_cable():
+    t = _y_tree()
+    L = T.tree_morphometry(t)["cable_length"]            # 枝の最初の辺は斜め(√2)なので 30 ではない
+    r = T.tree_run_length(t, np.full(31, 7))
+    assert r["erl"] == pytest.approx(L) and r["runs"] == 1 and r["cut_edges"] == 0
+
+
+def test_equally_spaced_cuts_on_a_path_give_exactly_the_closed_form():
+    """走行 m+1 本がそれぞれ 10 辺、切れ目の辺が m 本: erl = (m+1)·10² / L(L = 11(m+1) − 1)。"""
+    for m in (1, 3, 4, 9):
+        n = 11 * (m + 1)
+        t = _path(n)
+        lab = np.arange(n) // 11 + 1
+        r = T.tree_run_length(t, lab)
+        L = float(n - 1)
+        assert r["cut_edges"] == m and r["runs"] == m + 1 and r["cable_length"] == pytest.approx(L)
+        assert r["erl"] == pytest.approx((m + 1) * 100.0 / L)
+        assert sum(r["run_lengths"]) + r["cut_cable"] == pytest.approx(L)      # 切れ目の辺は誰の走行でもない
+
+
+def test_erl_bounds_and_conservation_on_random_cuts_of_a_tree():
+    t = _y_tree()
+    rng = np.random.default_rng(0)
+    for _ in range(20):
+        lab = rng.integers(1, 5, 31)
+        r = T.tree_run_length(t, lab)
+        assert sorted(r["run_lengths"].tolist()) == pytest.approx(_brute_runs(t, lab), abs=1e-12)
+        L = r["cable_length"]
+        assert sum(r["run_lengths"]) + r["cut_cable"] + r["background_cable"] == pytest.approx(L)
+        if r["runs"]:
+            assert r["erl"] <= r["max_run"] + 1e-12
+            kept = sum(r["run_lengths"])
+            assert r["erl"] >= kept ** 2 / (L * r["runs"]) - 1e-12        # Cauchy–Schwarz
+
+
+def test_uniform_random_cuts_match_the_dirichlet_expectation():
+    """長さ L の道を m 点で一様に切ると E[Σ l_i²] = 2L²/(m+2)。1 万回の平均で 2 % 以内。"""
+    L, m = 1.0, 3
+    rng = np.random.default_rng(1)
+    t = _path(1001, 0.001)                 # 1000 辺、長さ 1.0
+    acc = 0.0
+    trials = 4000
+    for _ in range(trials):
+        cuts = np.sort(rng.integers(1, 1000, m))       # 切る辺(節点 k と k-1 の間)
+        lab = np.searchsorted(cuts, np.arange(1001), side="right") + 1
+        acc += T.tree_run_length(t, lab)["erl"]
+    assert acc / trials == pytest.approx(2 * L / (m + 2), rel=0.03)
+
+
+def test_background_and_merged_labels_are_lost_cable():
+    t = _path(11)                          # 長さ 10
+    lab = np.ones(11, int)
+    lab[5] = 0                             # 1 節点が背景: 両側の辺 2 本が失われる
+    r = T.tree_run_length(t, lab)
+    assert r["background_edges"] == 2 and r["background_cable"] == pytest.approx(2.0)
+    assert sorted(r["run_lengths"].tolist()) == [4.0, 4.0] and r["erl"] == pytest.approx(32 / 10)
+    r2 = T.tree_run_length(t, np.ones(11, int), zero_labels=[1])
+    assert r2["erl"] == 0.0 and r2["merged_runs"] == 1 and r2["runs"] == 1
+
+
+def test_run_length_is_invariant_to_relabelling():
+    t = _y_tree()
+    lab = np.random.default_rng(2).integers(1, 4, 31)
+    perm = np.array([0, 30, 10, 20])
+    a, b = T.tree_run_length(t, lab), T.tree_run_length(t, perm[lab])
+    assert a["erl"] == pytest.approx(b["erl"]) and sorted(a["run_lengths"]) == pytest.approx(sorted(b["run_lengths"]))
+
+
+@pytest.mark.parametrize("bad", [np.ones(30, int), np.full(31, 1.5), "labels", np.full(31, np.nan)])
+def test_run_length_refuses_bad_labels(bad):
+    with pytest.raises(ValueError):
+        T.tree_run_length(_y_tree(), bad)

@@ -116,6 +116,11 @@ EXAMPLES = [
                 "真値は合成系列の閉形式(核 C + 固有 u: h[K]=C・Jaccard=C/(C+2u))。論文の stable ≈ 43 % に対し"
                 "素朴な数え方では 34 % —— 著者の分類表と照合すると、論文は左右の対で 7 匹以上なら対の全結合に札を付けて"
                 "おり、それだけで論文の stable の 99.6 % を再現する。実データが無ければ合成系列で回る。"},
+    {"id": "poc_skeleton_run_length_vs_voi", "task": "imgmetrics", "data": "synthetic",
+     "name": "走行長は小さな融合を許さない —— 同じ誤りを、ERL と VOI は違う重さで数える",
+     "summary": "Witvliet 2021 の骨格を正解に、候補のラベル付けを 1 つずつ仕込む。分断 1 つの ERL は閉形式 (A²+(L−A−|e|)²)/L、"
+                "VOI は (m/N)·H2 と全件一致。融合の大きさ q を 5 % → 50 % と振ると VOI の merge は単調に増えるが、ERL は融合した"
+                "走行を丸ごと 0 にするので損失は q に依らない。分岐の無い骨格の一様 m 点切りは Dirichlet の期待値 2L/(m+2) と一致。"},
     {"id": "poc_worm_synapses_vs_neurites", "task": "imgmetrics", "data": "synthetic",
      "name": "シナプスは神経突起に比例して増えるか —— 8 匹の線虫で、形の成長と配線の成長を細胞ごとに並べる",
      "summary": "Witvliet 2021 の 8 匹の骨格(tree op)と配線(graph_strength_growth)から: 系全体では密度は L1 で ×1.32 上がり"

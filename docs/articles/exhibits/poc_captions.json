@@ -1847,6 +1847,17 @@
    "run": "py -3.11 examples/poc_worm_synapses_vs_neurites.py"
   },
   {
+   "id": "poc_skeleton_run_length_vs_voi",
+   "wing": "wing_bio",
+   "added": "2026-09-28",
+   "numbers_source": "log",
+   "title_ja": "走行長は小さな融合を許さない ―― 同じ誤りを、ERL と VOI は違う重さで数える",
+   "title_en": "Run Length Forgives No Small Merge — ERL and VOI Weigh the Same Error Differently",
+   "caption_ja": "自動切り出しの採点には、分割表から出す VOI(split / merge)と、正解の骨格の上を「同じ物体のまま何 µm 走れるか」で測る ERL(expected run length、Januszewski 2018)がある。新しい op tree_run_length は、骨格の節点に候補のラベルを塗った走行を数え、融合した物体の走行を 0 とみなす。Witvliet 2021 の骨格 1,713 本(12 節点以上)を正解に、候補のラベル付けを 1 つずつ仕込んだ(候補は合成で、切り出し器の出力ではない)。分断 1 つの ERL は閉形式 (A² + (L − A − |e|)²)/L(A = 切った側の部分木のケーブル、第 2 の走査で数える)と全 1,713 本で一致(相対 4e-15)、VOI の split は (m/N)·H2 と一致(3.5e-16)。分岐の無い骨格 100 本では、真ん中で切ると ERL は 0.48 L、端(1 割)で切ると 0.80 L。骨格 a の遠い側 q を骨格 b の物体に貼る融合(856 組)では、VOI の merge は q = 5 % の 0.142 ビットから 50 % の 0.662 へ単調に増えるが、貼られた側 b の ERL は q に依らず 0(損失 1.000)、a の損失は分断と同じ 1 − (1 − q)²。分岐の無い骨格 65 本をケーブルの上で一様に 3 点で切ると、走行の割合は Dirichlet(1,…,1) に従い、平均 Σl²/L'² ÷ 2/(m+2) = 1.023。★検査が見つけたもの: 最初の版は「貼った側 a の損失が q に依らず一定」と主張していた —— 誤り。ERL が 0 にするのは融合した物体の走行で、a の残りは無傷のまま残る。一定の損失を受けるのはその物体に丸ごと覆われる b。また、切る位置を節点番号の上で一様に取ると期待値との比が 0.945 にずれた —— 辺の長さが揃っていないので、ケーブルの上で一様に取る。生データは同梱しない。",
+   "caption_en": "Automatic segmentations are scored either by VOI (split / merge, from the contingency table) or by ERL (expected run length, Januszewski 2018): how far along the ground-truth skeleton one can travel inside one object. The new op tree_run_length counts the runs of a skeleton painted with candidate labels and treats runs of merged objects as length 0. With Witvliet 2021's 1,713 skeletons (12+ nodes) as ground truth, one candidate error at a time was injected (the candidates are synthetic, not a segmenter's output). One cut: ERL matches the closed form (A² + (L − A − |e|)²)/L (A = cable of the cut-off subtree, counted by a second traversal) on all 1,713 skeletons (relative 4e-15), and VOI split matches (m/N)·H2 (3.5e-16). On 100 unbranched skeletons, cutting in the middle leaves ERL at 0.48 L, cutting near an end 0.80 L. Gluing the far q of skeleton a onto skeleton b's object (856 pairs): VOI merge rises monotonically from 0.142 bits at q = 5 % to 0.662 at 50 %, while the ERL of the receiving skeleton b is 0 for every q (loss 1.000) and a's loss follows the cut formula 1 − (1 − q)². Cutting 65 unbranched skeletons at 3 points uniform along the cable, the run fractions follow Dirichlet(1,…,1): mean Σl²/L'² ÷ 2/(m+2) = 1.023. Found by the checks: the first version claimed that a's loss was independent of q — wrong; ERL zeroes the runs of the merged object, and the rest of a survives intact; the constant loss falls on b, which that object covers entirely. Sampling cut positions uniformly over node indices instead of cable biased the ratio to 0.945, because edge lengths are uneven. Raw data is not bundled.",
+   "run": "py -3.11 examples/poc_skeleton_run_length_vs_voi.py"
+  },
+  {
    "id": "poc_swc_tree_truth",
    "wing": "wing_bio",
    "added": "2026-09-27",
