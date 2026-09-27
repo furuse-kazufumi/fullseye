@@ -81,6 +81,7 @@ One experiment = one question. **This article is appended to every time an exper
 | Is the worm's wiring left/right symmetric (within one animal)? | Half of it. Overlap with the L/R-swapped wiring 0.473 (perfect symmetry 1.000, chance 0.080). The asymmetry is not concentrated in a few pairs | Addendum |
 | When a neuron's tree is measured from an image, how far is it from the real tree? | The viewing direction decides. 3-D Sholl does not move a single integer under rotation; the projection moves by up to 9–16 intersections, and 16 true branch points become 22–28 | Addendum |
 | How much wiring do 8 genetically identical worms share? | 442 connections in all 8 (chance: 0) carry 57 % of the synapses. But two same-age adults overlap by only 0.53 | Addendum |
+| How much does a hand-traced wiring diagram from 40 years ago overlap today's adults? | 0.43–0.44, only 0.07 below two adults reconstructed the same way (0.51). What 1986 lacks are thin connections (mean 2.0 vs 5.7 synapses) | Addendum |
 
 ## Glossary (worth reading first)
 
@@ -649,15 +650,46 @@ There are two readings. **The core shared by everyone cannot be explained by cha
 
 ![Age difference vs overlap](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/04_jaccard_vs_age_gap.png)
 
-**Against the published value (not fitted)**: the paper calls a connection stable when it is present in at least 7 datasets and reports about 43 % of adult connections as stable. The naive count here gives 34 %. I split the 9-point gap one factor at a time. **Pooling left/right pairs** (counting AVAL→AVAR and AVAR→AVAL as one) gives 37 %, which accounts for 3 points. Dropping cells born after hatching is already built in by restricting to the cells present in all 8 worms (counting all cells instead lowers it to 28 %). **The remaining 6 points are unexplained.** The paper first removes "few-synapse, left/right-asymmetric" connections as variable and puts connections that grow more than 5-fold into a separate class before counting, so I suspect a different denominator, but I have not checked it.
+**Against the published value (not fitted)**: the paper calls a connection stable when it is present in at least 7 datasets and reports about 43 % of adult connections as stable. The naive count here gives 34 %. The whole 9-point gap could be split by matching against the **per-connection classification table** the authors published.
+
+| Counting rule (adult #7, 1,746 connections on the 183 cells present in all 8) | Share stable |
+|---|---|
+| ① a cell-level connection present in at least 7 worms (this article's naive count) | 34.5 % |
+| ② if the **left/right-pooled connection** is present in at least 7 worms, label every cell-level connection of that pair stable | 48.9 % |
+| ③ the paper's table (variable and "developmentally changing" connections removed first) | 45.4 % |
+
+The paper labels the way ② does. **Of the 792 connections the paper calls stable, 789 (99.6 %) are reproduced by ② alone.** A connection present in only 6 or fewer worms at the cell level still counts as stable once its left/right partner connection is added. The 3.5 points from ② down to ③ are the priority rule that assigns some of those connections to variable or dynamic first. Counting on all cells with only the post-embryonic cells removed, instead of the 183, gives 43.2 % — matching the published ~43 %.
+
+I first nearly wrote "37 % after pooling pairs", but that was a different quantity with the denominator also switched to pooled connections. **The paper puts a pair-level label on cell-level connections.** The two differ only in what counts as one connection; neither is wrong.
+
+![Against the published value, with the breakdown](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/06_paper_comparison.png?v=2)
+
+*(Figure text is in Japanese, as elsewhere in this article: rows ①–③ are the three counting rules above.)*
 
 The ground truth is a closed form on a synthetic series: with a core of C connections shared by everyone and u unique, non-overlapping connections per worm, "present in all" is exactly C and every pairwise overlap is C/(C+2u). The op matches this down to the integer before touching real data. This round added **`graph_edge_consensus`** to Fullseye (stack K individuals' wirings and return per-connection occupancy, pairwise overlap, synapse share, the developmental split and a per-individual null). The same op compares "wiring present in every unit / only in some" across many units built from one design.
+
+### How much does a hand-traced wiring diagram from 40 years ago overlap today's adults? (2026-09-27)
+
+The origin of worm wiring diagrams is White et al. 1986 — the first complete wiring traced **by hand** from electron micrographs; one adult (N2U) is on nemanode.org. I stacked it with the two 2021 adults of the previous section (datasets 7 and 8) on the same cell names (215 cells in common). The question: **how large is the difference of era and method, compared with the difference between individuals?**
+
+| Pair | Overlap (Jaccard) |
+|---|---|
+| The two 2021 adults (same method) | **0.508** |
+| 1986 N2U vs the 2021 adults | **0.431 / 0.442** |
+| Connections present in all 3 | 1,015 (degree-preserving null: 28 on average = 36×) |
+
+Across era and method, the overlap is **only 0.07 lower** than between two animals done the same way — small next to the individual difference of 1 − 0.508 = 0.49. What does the 1986 diagram lack? The 451 connections present in both 2021 adults but absent in 1986 are **thin — 2.0 synapses on average** (connections present in all three average 5.7).
+
+![What 1986 missed is thin](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_decades/03_what_1986_missed.png)
+
+*↑ x-axis = the summed synapse count of the two 2021 adults (figure text in Japanese). Connections missing in 1986 (blue) cluster around a sum of 2. My first version rounded the two animals' **mean** and produced an odd/even zigzag — the trace of numpy's round-half-to-even (2.5 → 2), not biology. Counting the integer sum removed it.*
+
+Honest breakdown: the N2U on nemanode was supplemented with muscle information by the Zhen lab in 2020, so "the era difference" also contains re-annotation. White 1986's other animal (JSH) is an L4 larva and is left out of the adult comparison. The only op used is `graph_edge_consensus`, added in this round.
 
 ### What we measure next
 
 When a result lands, it gains a row in "Experiments so far" and loses its line here.
 
-- [ ] **Explain the remaining 6 points of "stable 37 % vs the paper's 43 %" for the 8 worms** — implement the paper's classification as in its Methods (remove variable first, a separate class for connections growing more than 5-fold) and count on the same denominator.
 - [ ] **Replace the hand-written readout with an evolving (DNA-decoded) head (F1)** — the front-end cache is done; input = the 631 interior columns, zero point = the 4-feature linear regression (hold-out 0.98–0.99).
 - [ ] **Re-derive the KCab subtypes from morphology (dendrite positions in the public SWC skeletons)** — a third fingerprint, independent of connectivity, for the s asymmetry that both connectivity implementations agree on.
 - [ ] **Re-run the developmental ladder with DSI** —— the non-finite values were flyvis's NaN padding of the stimulus; the gate is fixed (addendum above). 34 conditions × 6 speeds, about 3.5 hours.
