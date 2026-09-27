@@ -154,3 +154,99 @@ def test_swap_symmetry_refuses_bad_pairs():
         G.graph_swap_symmetry(B, [(0, 1), (1, 2)])
     with pytest.raises(ValueError):
         G.graph_swap_symmetry(B, [(0, 9)])
+
+
+# ---- 個体間の重なり(graph_edge_consensus) ------------------------------
+def _series(K=5, n=20, core=15, uniq=6, seed=0, weighted=True):
+    """核 core 本を全員に、固有 uniq 本を個体ごとに重ならず。閉形式が全部決まる構造。"""
+    rng = np.random.default_rng(seed)
+    cand = np.array([(i, j) for i in range(n) for j in range(n) if i != j])
+    pick = rng.choice(len(cand), size=core + K * uniq, replace=False)
+    mats = []
+    for k in range(K):
+        M = np.zeros((n, n))
+        for (i, j) in cand[pick[:core]]:
+            M[i, j] = 4 if weighted else 1
+        for (i, j) in cand[pick[core + k * uniq: core + (k + 1) * uniq]]:
+            M[i, j] = 1
+        mats.append(M)
+    return mats
+
+
+def test_consensus_closed_form_on_core_plus_unique_series():
+    K, core, uniq = 5, 15, 6
+    r = G.graph_edge_consensus(_series(K, core=core, uniq=uniq), ordered=True)
+    assert r["occupancy_hist"] == [0, K * uniq, 0, 0, 0, core]
+    off = r["jaccard"][~np.eye(K, dtype=bool)]
+    assert np.all(off == core / (core + 2 * uniq))
+    assert (r["stable"], r["added"], r["lost"], r["flicker"]) == (core, uniq, uniq, (K - 2) * uniq)
+    # 核の重み 4 x core x K、固有 1 x uniq x K
+    assert r["synapse_share"][K] == pytest.approx(4 * core / (4 * core + uniq))
+
+
+def test_consensus_counting_identities_on_random_individuals():
+    rng = np.random.default_rng(5)
+    mats = [(rng.random((25, 25)) < 0.2) * rng.integers(1, 6, (25, 25)) for _ in range(4)]
+    r = G.graph_edge_consensus(mats, ordered=True)
+    h = r["occupancy_hist"]
+    assert h[0] == 0
+    assert sum(c * x for c, x in enumerate(h)) == sum(r["edges_per_individual"])
+    assert sum(h) == r["union"]
+    assert r["stable"] + r["added"] + r["lost"] + r["flicker"] == r["union"]
+    assert sum(r["synapse_share"]) == pytest.approx(1.0)
+    J = r["jaccard"]
+    assert np.allclose(J, J.T) and np.all(np.diag(J) == 1.0)
+
+
+def test_consensus_identical_individuals_share_every_edge():
+    B = _random(30, 0.2, seed=3)
+    r = G.graph_edge_consensus({"a": B, "b": B, "c": B})
+    assert r["occupancy_hist"][3] == r["union"] == int(B.sum())
+    assert np.all(r["jaccard"] == 1.0) and r["names"] == ["a", "b", "c"]
+
+
+def test_consensus_order_matters_only_for_the_developmental_split():
+    mats = _series(4, core=10, uniq=5, seed=2)
+    fwd = G.graph_edge_consensus(mats, ordered=True)
+    rev = G.graph_edge_consensus(mats[::-1], ordered=True)
+    assert fwd["occupancy_hist"] == rev["occupancy_hist"]
+    assert (fwd["added"], fwd["lost"]) == (rev["lost"], rev["added"])
+
+
+def test_consensus_null_keeps_degrees_and_finds_no_planted_core():
+    r = G.graph_edge_consensus(_series(6, n=40, core=40, uniq=30, seed=1), n_null=4)
+    assert r["occupancy_hist"][6] == 40
+    assert r["shared_all_null_max"] < 40            # 核は次数だけでは再現しない
+    assert r["n_null"] == 4 and len(r["occupancy_null_mean"]) == 7
+
+
+def test_consensus_self_loops_are_dropped_and_input_not_mutated():
+    B = _random(10, 0.3, seed=4).astype(float)
+    B[0, 0] = 5.0
+    before = B.copy()
+    r = G.graph_edge_consensus([B, B])
+    assert np.array_equal(B, before)
+    assert r["edges_per_individual"][0] == int((before > 0).sum()) - 1
+
+
+@pytest.mark.parametrize("bad, kw", [
+    ([np.eye(3, k=1)], {}),                                     # 1 個体
+    ([np.eye(3, k=1), np.eye(4, k=1)], {}),                     # 大きさ違い
+    ([np.eye(3, k=1), np.zeros((3, 3))], {}),                   # 辺ゼロ
+    ([np.eye(3, k=1), -np.eye(3, k=1)], {}),                    # 負
+    ([np.eye(3, k=1), np.eye(3, k=1)], {"n_null": 1}),          # 広がりが測れない
+    ([np.eye(3, k=1), np.eye(3, k=1)], {"swaps_per_edge": 0}),
+    (np.stack([np.eye(3, k=1)] * 2), {}),                       # 3-D 配列(個体の束は list か table で)
+    ("abc", {}),
+])
+def test_consensus_refuses(bad, kw):
+    with pytest.raises(ValueError):
+        G.graph_edge_consensus(bad, **kw)
+
+
+def test_consensus_refuses_a_non_square_image_table():
+    # 非正方の画像は形の検査で止まる。★正方の画像は重み行列と区別できない(全画素 > 0 なら
+    # 全結合として数える)—— 入力が配線であることは呼び手の責任で、op は形しか確かめられない
+    rng = np.random.default_rng(0)
+    with pytest.raises(ValueError):
+        G.graph_edge_consensus({"a": rng.random((16, 24)), "b": rng.random((16, 24))})

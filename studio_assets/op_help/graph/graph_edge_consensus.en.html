@@ -1,0 +1,53 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_edge_consensus — GRAPH <code style="color:#22d3bf">population</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_edge_consensus(adjs, ordered=False, n_null=0, swaps_per_edge=5, seed=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import graphinv; graphinv.graph_edge_consensus(adjs, ordered=False, n_null=0, swaps_per_edge=5, seed=0)</code>; from the registry, <code style="color:#22d3bf">opsgraph.get(&quot;graph_edge_consensus&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>How many individuals share each connection — K wiring matrices on one node order.</p>
+<p>`<code style="color:#22d3bf">adjs</code><code style="color:#22d3bf"> is either a list of K square matrices or a table </code><code style="color:#22d3bf">{name: matrix}</code>` (its</p>
+<p>insertion order is the individual order), all on the <b>same</b> node order (align</p>
+<p>the cell names first; a node absent from an individual is a zero row and column).</p>
+<p>Weights (synapse counts) are kept for the synapse shares; presence is `<code style="color:#22d3bf">&gt; 0</code>`.</p>
+<p>Self-loops are dropped.</p>
+<p>Returns a dict with:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> (K), </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">names</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">edges_per_individual</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">union</code>` (edges</p>
+<p>seen in at least one individual)</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">occupancy_hist</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">h[c]</code><code style="color:#22d3bf"> = number of edges present in exactly </code><code style="color:#22d3bf">c</code>`</p>
+<p>individuals, `<code style="color:#22d3bf">c = 0..K</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">h[0]</code>` is always 0: only the union is counted)</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">jaccard</code><code style="color:#22d3bf"> — the K x K pairwise overlap </code><code style="color:#22d3bf">|Ei ∩ Ej| / |Ei ∪ Ej|</code>`</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">synapse_share</code><code style="color:#22d3bf"> — for each </code><code style="color:#22d3bf">c</code>`, the fraction of all synapses (summed over</p>
+<p>individuals) on edges of occupancy `<code style="color:#22d3bf">c</code>` (with a 0/1 input: the edge share)</p>
+<p style="margin:2px 0 2px 12px">• with `<code style="color:#22d3bf">ordered=True</code>` (individuals listed in developmental order): the union is</p>
+<p>split by its presence pattern along the order into `<code style="color:#22d3bf">stable</code>` (present in all),</p>
+<p>`<code style="color:#22d3bf">added</code><code style="color:#22d3bf"> (absent, then present to the end: </code><code style="color:#22d3bf">0..01..1</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">lost</code>`</p>
+<p>(`<code style="color:#22d3bf">1..10..0</code><code style="color:#22d3bf">) and </code><code style="color:#22d3bf">flicker</code><code style="color:#22d3bf"> (anything else). The four sum to </code><code style="color:#22d3bf">union</code>`.</p>
+<p style="margin:2px 0 2px 12px">• with `<code style="color:#22d3bf">n_null &gt;= 2</code>`: every individual is rewired <b>independently</b> by</p>
+<p>degree-preserving swaps (each node&#x27;s in/out degree kept exactly, checked per</p>
+<p>sample, fail-closed) and the occupancy histogram is re-counted. Reports</p>
+<p>`<code style="color:#22d3bf">occupancy_null_mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">occupancy_null_sd</code><code style="color:#22d3bf"> per </code><code style="color:#22d3bf">c</code>` and</p>
+<p>`<code style="color:#22d3bf">shared_all_ratio</code>` (edges present in all K, observed over the null mean; inf</p>
+<p>when the null never shares one, so `<code style="color:#22d3bf">shared_all_null_max</code>` is reported too):</p>
+<p>the chance level of &quot;the same connection in every animal&quot; given only each</p>
+<p>animal&#x27;s degrees.</p>
+<p>Identities (the tests are built on these, not on fitted numbers):</p>
+<p>`<code style="color:#22d3bf">sum_c c * h[c] == sum_i |E_i|</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">sum_c h[c] == union</code>`; K identical inputs give</p>
+<p>`<code style="color:#22d3bf">h[K] == union</code>` and every Jaccard == 1; the Jaccard matrix is symmetric with a unit</p>
+<p>diagonal; `<code style="color:#22d3bf">stable + added + lost + flicker == union</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">synapse_share</code>` sums to 1.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">adjs</code>` not a list / table; fewer than 2 individuals;</p>
+<p>matrices of different sizes; any refusal of :func:<code style="color:#22d3bf">graph_degree_summary</code></p>
+<p>(non-square, negative, non-finite, string / bool / complex / masked input); an</p>
+<p>individual with no edges; `<code style="color:#22d3bf">n_null</code>` equal to 1 (no spread) or negative;</p>
+<p>`<code style="color:#22d3bf">swaps_per_edge &lt; 1</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_connectome_across_worms">poc_connectome_across_worms</a> — <code style="color:#22d3bf">py -3.11 examples/poc_connectome_across_worms.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">population</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: graphinv.py — GRAPH operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

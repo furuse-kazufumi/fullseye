@@ -462,6 +462,7 @@ from spc import (  # noqa: E402,F401
 import graphinv  # noqa: E402  (graph invariants of wiring matrices)
 from graphinv import (  # noqa: E402,F401
     graph_degree_summary, graph_cycle3, graph_degree_preserving_null, graph_swap_symmetry,
+    graph_edge_consensus,
 )
 import textregion  # noqa: E402  (where is the text, without a recogniser)
 from textregion import swt_map, text_candidates, text_lines  # noqa: E402,F401

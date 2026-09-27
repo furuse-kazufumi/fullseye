@@ -14811,6 +14811,10 @@
    "tw": "把字元候選矩形合併成文字行（縱向重疊、橫向相近、筆畫寬度相近）。",
    "ko": "문자 후보 상자를 줄로 묶는다(세로로 겹치고, 가로로 가깝고, 스트로크 폭이 비슷한 것).",
    "de": "Fasst Zeichenkandidaten-Boxen zu Zeilen zusammen (vertikal überlappend, horizontal nah, ähnliche Strichbreite)."
+  },
+  "graph/graph_edge_consensus": {
+   "fp": "92f8ab0f7cf8",
+   "ja": "K 個体の配線を同じ節点順で重ね、各結合が何個体に在るかを数える(Σ c·h[c] = Σ|E_i| が厳密)—— 個体差と発生の比較。"
   }
  }
 }

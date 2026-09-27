@@ -1273,6 +1273,17 @@ def _b_graph_swap(pool, rng):
     return (B,), {"pairs": [(0, 1), (2, 3), (4, 5)]}
 
 
+def _b_graph_consensus(pool, rng):
+    # 3 個体、同じ 30 節点。核 + 個体ごとの揺らぎ(全員に在る辺が必ずある)。
+    core = (rng.random((30, 30)) < 0.08)
+    mats = {}
+    for k in "abc":
+        B = (core | (rng.random((30, 30)) < 0.05)).astype(int)
+        np.fill_diagonal(B, 0)
+        mats[k] = B
+    return (mats,), {"ordered": True, "n_null": 2, "swaps_per_edge": 1}
+
+
 def _b_spc_mt_sn_ratio(pool, rng):
     # 距離は正でなければならない(0 は「単位空間の中心に居る異常標本」= 分離ゼロ)。
     return (rng.uniform(0.5, 20.0, size=12),), {}
@@ -1411,6 +1422,7 @@ OP_ARG_BUILDERS = {
     "graph_cycle3": _b_graph_adj,
     "graph_degree_preserving_null": _b_graph_null,
     "graph_swap_symmetry": _b_graph_swap,
+    "graph_edge_consensus": _b_graph_consensus,
     "swt_map": _b_text_img,
     "text_candidates": _b_text_swt,
     "text_lines": _b_text_boxes,

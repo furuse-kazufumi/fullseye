@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2199,
- "n_notes": 2205,
+ "n_ops": 2200,
+ "n_notes": 2206,
  "notes": {
   "vol_dilate": [
    {
@@ -16429,6 +16429,16 @@
     "in": "matrix",
     "out": "table",
     "path": "docs/ops/graph/null/graph_degree_preserving_null.md"
+   }
+  ],
+  "graph_edge_consensus": [
+   {
+    "op": "graph_edge_consensus",
+    "dim": "graph",
+    "category": "population",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/graph/population/graph_edge_consensus.md"
    }
   ],
   "graph_swap_symmetry": [

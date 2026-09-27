@@ -8,7 +8,9 @@ degree-preserving null (Maslov & Sneppen 2002 / Milo et al. 2002), worked on the
 public C. elegans connectome (Cook et al. 2019; 302 listed - 300 wired == CANL, CANR).
 
 Type vocabulary: **no new word**. Every op eats a square ``matrix`` and returns a
-``table`` (dict of integers, ratios and degree arrays) — the sorts opsspc already uses.
+``table`` (dict of integers, ratios and degree arrays) — the sorts opsspc already uses —
+except ``graph_edge_consensus``, which eats a ``table`` ``{individual: matrix}`` (K wirings
+on one node order; Witvliet et al. 2021 give 8 worms from birth to adulthood).
 
 Usage:
     import opsgraph
@@ -34,6 +36,12 @@ _CATALOG = {
     # 対称操作(左右の対を入れ替える)。恒等ペアで 1.0 が門。
     "symmetry": [
         ("graph_swap_symmetry", "graphinv", ["matrix"], "table"),
+    ],
+    # 個体と個体(K 枚の配線を同じ節点順で重ねる)。入力は table {個体名: 行列}。
+    # ★matrix の束を images に載せない —— 画像を渡すと全画素 > 0 で「全結合が全員に在る」
+    #   というもっともらしい嘘を返す。table なら他 op の表を渡しても op が断る。
+    "population": [
+        ("graph_edge_consensus", "graphinv", ["table"], "table"),
     ],
 }
 

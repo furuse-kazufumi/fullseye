@@ -7,7 +7,7 @@ answers. Raw counts (2,710 directed 3-cycles) depend on size and cannot be compa
 across graphs; the ratio against a **degree-preserving null** can. Every operator here
 carries an identity that holds to the last integer, not a fitted threshold.
 
-Four operators (all ``matrix -> table``, no new type vocabulary):
+Five operators (``matrix -> table``, and one ``table -> table``; no new type vocabulary):
 
   * :func:`graph_degree_summary` — n, |E|, in/out degrees, density, self-loops,
     reciprocal pairs. Identity: ``sum(in) == sum(out) == |E|`` for a directed graph.
@@ -20,6 +20,10 @@ Four operators (all ``matrix -> table``, no new type vocabulary):
   * :func:`graph_swap_symmetry` — Jaccard overlap between the wiring and the wiring
     with node pairs exchanged (left/right partners, say). Identity: the identity pairing
     gives exactly 1; exchanging a pair twice returns the original.
+  * :func:`graph_edge_consensus` — K wirings of K individuals on one node order: how many
+    individuals carry each edge, pairwise Jaccard, the synapse share by occupancy, the
+    developmental split stable / added / lost / flicker, and a null that rewires every
+    individual independently. Identity: ``sum_c c * h[c] == sum_i |E_i|``.
 
 Measured — the identities the tests are built on (``tests/test_graphinv.py``):
 
@@ -30,10 +34,13 @@ Measured — the identities the tests are built on (``tests/test_graphinv.py``):
     swap symmetry with identity pairs               Jaccard == 1.0
     swapping a pair twice                           B recovered exactly
     C. elegans hermaphrodite chemical (Cook 2019)   302 listed - 300 wired == {CANL, CANR}
+    core C + unique u per individual, K of them     h[K] == C, h[1] == K*u, Jaccard == C/(C+2u)
+    C. elegans, 8 worms (Witvliet 2021)             442 edges in all 8; null max 0 in 20 samples
 
 Provenance (public standards and textbooks only): Maslov & Sneppen, *Science* 2002
 (degree-preserving rewiring); Milo et al., *Science* 2002 (network motifs);
-Cook et al., *Nature* 2019 (C. elegans connectome, the worked example).
+Cook et al., *Nature* 2019 (C. elegans connectome, the worked example);
+Witvliet et al., *Nature* 2021 (8 isogenic worms from birth to adulthood).
 """
 from __future__ import annotations
 
@@ -261,3 +268,142 @@ def graph_swap_symmetry(adj, pairs):
         "shared": shared, "union": union, "edges": int(B.sum()),
         "n_pairs": len(seen) // 2,
     }
+
+
+def _as_weight_matrix(a, name: str, op: str) -> np.ndarray:
+    """The weighted twin of :func:`_as_binary_adjacency` (same refusals, float64 kept)."""
+    _as_binary_adjacency(a, name, op)          # every refusal lives in one place
+    return np.array(a, dtype=np.float64)
+
+
+def graph_edge_consensus(adjs, ordered=False, n_null=0, swaps_per_edge=5, seed=0):
+    """How many individuals share each connection — K wiring matrices on one node order.
+
+    ``adjs`` is either a list of K square matrices or a table ``{name: matrix}`` (its
+    insertion order is the individual order), all on the **same** node order (align
+    the cell names first; a node absent from an individual is a zero row and column).
+    Weights (synapse counts) are kept for the synapse shares; presence is ``> 0``.
+    Self-loops are dropped.
+
+    Returns a dict with:
+
+      * ``k`` (K), ``n``, ``names``, ``edges_per_individual`` and ``union`` (edges
+        seen in at least one individual)
+      * ``occupancy_hist`` — ``h[c]`` = number of edges present in exactly ``c``
+        individuals, ``c = 0..K`` (``h[0]`` is always 0: only the union is counted)
+      * ``jaccard`` — the K x K pairwise overlap ``|Ei ∩ Ej| / |Ei ∪ Ej|``
+      * ``synapse_share`` — for each ``c``, the fraction of all synapses (summed over
+        individuals) on edges of occupancy ``c`` (with a 0/1 input: the edge share)
+      * with ``ordered=True`` (individuals listed in developmental order): the union is
+        split by its presence pattern along the order into ``stable`` (present in all),
+        ``added`` (absent, then present to the end: ``0..01..1``), ``lost``
+        (``1..10..0``) and ``flicker`` (anything else). The four sum to ``union``.
+      * with ``n_null >= 2``: every individual is rewired **independently** by
+        degree-preserving swaps (each node's in/out degree kept exactly, checked per
+        sample, fail-closed) and the occupancy histogram is re-counted. Reports
+        ``occupancy_null_mean`` / ``occupancy_null_sd`` per ``c`` and
+        ``shared_all_ratio`` (edges present in all K, observed over the null mean; inf
+        when the null never shares one, so ``shared_all_null_max`` is reported too):
+        the chance level of "the same connection in every animal" given only each
+        animal's degrees.
+
+    Identities (the tests are built on these, not on fitted numbers):
+    ``sum_c c * h[c] == sum_i |E_i|``; ``sum_c h[c] == union``; K identical inputs give
+    ``h[K] == union`` and every Jaccard == 1; the Jaccard matrix is symmetric with a unit
+    diagonal; ``stable + added + lost + flicker == union``; ``synapse_share`` sums to 1.
+
+    **Raises** ``ValueError``: ``adjs`` not a list / table; fewer than 2 individuals;
+    matrices of different sizes; any refusal of :func:`graph_degree_summary`
+    (non-square, negative, non-finite, string / bool / complex / masked input); an
+    individual with no edges; ``n_null`` equal to 1 (no spread) or negative;
+    ``swaps_per_edge < 1``.
+    """
+    op = "graph_edge_consensus"
+    if isinstance(adjs, dict):
+        names = [str(k) for k in adjs.keys()]
+        mats = list(adjs.values())
+    elif isinstance(adjs, (list, tuple)):
+        names = ["%d" % i for i in range(len(adjs))]
+        mats = list(adjs)
+    else:
+        raise ValueError("%s: adjs must be a list of matrices or a table {name: matrix}, "
+                         "got %s" % (op, type(adjs).__name__))
+    K = len(mats)
+    if K < 2:
+        raise ValueError("%s: need at least 2 individuals to compare, got %d" % (op, K))
+    n_null = int(n_null)
+    if n_null < 0 or n_null == 1:
+        raise ValueError("%s: n_null must be 0 (off) or >= 2, got %r" % (op, n_null))
+    if int(swaps_per_edge) < 1:
+        raise ValueError("%s: swaps_per_edge must be >= 1, got %r" % (op, swaps_per_edge))
+    W = [_as_weight_matrix(m, "adjs[%s]" % names[i], op) for i, m in enumerate(mats)]
+    n = W[0].shape[0]
+    for i, w in enumerate(W):
+        if w.shape[0] != n:
+            raise ValueError("%s: adjs[%s] has %d nodes but adjs[%s] has %d — put every "
+                             "individual on one node order first"
+                             % (op, names[i], w.shape[0], names[0], n))
+        np.fill_diagonal(w, 0.0)
+    P = np.stack([(w > 0) for w in W]).astype(np.int8)            # (K, n, n)
+    E = P.reshape(K, -1).sum(axis=1).astype(int)
+    if (E == 0).any():
+        raise ValueError("%s: individual %s has no edges — nothing to share"
+                         % (op, names[int(np.argmin(E))]))
+    occ = P.sum(axis=0).astype(np.int64)                           # (n, n), 0..K
+    hist = np.bincount(occ.ravel(), minlength=K + 1)
+    hist[0] = 0
+    union = int((occ > 0).sum())
+    flat = P.reshape(K, -1).astype(np.int64)
+    inter = flat @ flat.T
+    J = np.empty((K, K))
+    for i in range(K):
+        for j in range(K):
+            u = E[i] + E[j] - inter[i, j]
+            J[i, j] = inter[i, j] / u if u else 1.0
+    S = np.stack(W).sum(axis=0)                                    # synapses summed over individuals
+    tot = float(S.sum())
+    share = [float(S[occ == c].sum() / tot) if c > 0 else 0.0 for c in range(K + 1)]
+    out = {
+        "k": K, "n": int(n), "names": names,
+        "edges_per_individual": [int(e) for e in E], "union": union,
+        "occupancy_hist": [int(h) for h in hist],
+        "jaccard": J, "synapse_share": share,
+    }
+    if ordered:
+        pat = P.reshape(K, -1)[:, occ.ravel() > 0].T.astype(np.int8)  # (union, K)
+        stable = int((pat.sum(axis=1) == K).sum())
+        steps = np.diff(pat, axis=1)
+        n_up = (steps == 1).sum(axis=1)
+        n_dn = (steps == -1).sum(axis=1)
+        added = int(((n_up == 1) & (n_dn == 0) & (pat[:, 0] == 0)).sum())
+        lost = int(((n_up == 0) & (n_dn == 1) & (pat[:, 0] == 1)).sum())
+        out.update({"stable": stable, "added": added, "lost": lost,
+                    "flicker": union - stable - added - lost})
+    if n_null >= 2:
+        rng = np.random.default_rng(seed)
+        hs = []
+        for _ in range(n_null):
+            occ_r = np.zeros((n, n), dtype=np.int64)
+            for i in range(K):
+                B = P[i]
+                R = _rewire(B, rng, int(swaps_per_edge) * int(E[i])) if E[i] >= 2 else B.copy()
+                if not (np.array_equal(R.sum(axis=0), B.sum(axis=0))
+                        and np.array_equal(R.sum(axis=1), B.sum(axis=1))):
+                    raise ValueError("%s: a null sample changed the degree sequence of "
+                                     "individual %s — refusing to report" % (op, names[i]))
+                occ_r += R
+            h = np.bincount(occ_r.ravel(), minlength=K + 1)
+            h[0] = 0
+            hs.append(h)
+        hs = np.array(hs, dtype=float)
+        m, s = hs.mean(axis=0), hs.std(axis=0, ddof=1)
+        out.update({
+            "occupancy_null_mean": [float(x) for x in m],
+            "occupancy_null_sd": [float(x) for x in s],
+            "shared_all_ratio": float(hist[K] / m[K]) if m[K] > 0 else float("inf"),
+            # the ratio is inf when no null sample shares any edge; the max says how far
+            # the observed count sits above every sample drawn
+            "shared_all_null_max": int(hs[:, K].max()),
+            "n_null": n_null,
+        })
+    return out

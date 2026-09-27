@@ -1,8 +1,8 @@
 {
- "n_ops": 2199,
+ "n_ops": 2200,
  "tiers": {
   "color": 12,
-  "ledger": 1250,
+  "ledger": 1251,
   "nary": 17,
   "registry": 920
  },
@@ -5828,6 +5828,19 @@
    "dim": "conngraph",
    "in_sorts": [
     "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_edge_consensus",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "population",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "table"
    ]
   },
   {

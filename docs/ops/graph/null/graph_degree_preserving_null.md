@@ -45,7 +45,7 @@ compared; raw counts cannot.
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-—
+[graph_edge_consensus](../population/graph_edge_consensus.md)
 
 ## 同カテゴリ(`null`)
 
