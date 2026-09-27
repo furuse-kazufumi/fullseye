@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**88 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**89 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1664,7 +1664,7 @@ Ops used (notes): [`attention_apply`](https://furuse.work/ops/llmcore/score/atte
 
 Counting cells, reading a nucleus's DNA content, measuring vessel branching, tracking a wound's area: all of these tend to be reported as one number, and there are situations in which that number is right anyway. Cell counting where over- and under-segmentation balance to a +0.3-cell bias; ploidy classification that survives a forgotten background subtraction; a calibration that returns the most stable and most wrong healing constant.
 
-The 16 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
+The 17 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
 
 The thing to watch for is a method that appears to improve while the quantity it measures quietly swaps: the area classifier gets better with more blur because 'area' is leaking DNA content. Unless the reason for every improvement is traced, this kind of lie gets carried home as a result.
 
@@ -2119,6 +2119,42 @@ Source: [examples/poc_connectome_lr_symmetry.py](https://github.com/furuse-kazuf
 This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_connectome_lr_symmetry)
 
 Ops used (notes): [`graph_degree_summary`](https://furuse.work/ops/graph/degree/graph_degree_summary.html) · [`graph_swap_symmetry`](https://furuse.work/ops/graph/symmetry/graph_swap_symmetry.html)
+
+## No.2026.156 —— How Much of the Wiring Do Two Genetically Identical Worms Share? — Counting the Connections Present in All 8 Worms of a Developmental Series
+
+[![How Much of the Wiring Do Two Genetically Identical Worms Share? — Counting the Connections Present in All 8 Worms of a Developmental Series](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/01_occupancy_matrix_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/01_occupancy_matrix.png)
+
+*↑ **How Much of the Wiring Do Two Genetically Identical Worms Share? — Counting the Connections Present in All 8 Worms of a Developmental Series** ―― The chemical-synapse wiring of 8 genetically identical C. elegans (Witvliet 2021, from birth to adulthood), stacked on the 183 cells present in all 8, with graph_edge_consensus counting how many worms carry each connection. 442 connections are present in all 8 worms; a degree-preserving null that rewires every worm independently while keeping each cell's in- and out-degree gives at most 0 in 20 samples. This core is 15 % of the 2,977 connections in the union but carries 57 % of the synapses summed over the 8 worms. Pairwise Jaccard falls with the difference in estimated age (0.51 on average for neighbouring stages, 0.33-0.34 between the newborn and the adults), and the two same-age adults overlap by only 0.53 - no more than neighbouring stages. Along the developmental order, 701 connections appear and stay to the end while 55 disappear. Ground truth is a closed form on a synthetic series: with a core of C connections in every worm and u unique connections per worm, h[K] = C, h[1] = K*u, every pairwise Jaccard is C/(C+2u), and stable/added/lost/flicker = C/u/u/(K-2)u, matched by the op down to the integer. Against the paper: it calls a connection stable when present in at least 7 datasets and reports about 43 % of adult connections as stable; the naive count here gives 34 % (the paper pools left/right pairs and drops post-embryonic cells before classifying, so the denominators differ; the gap is reported, not fitted away). No data is bundled (the nemanode.org data carries no explicit licence); without it the example runs on a synthetic series.*
+
+[![生まれた直後から成虫まで 8 匹の配線を順に。色は全体での出現回数なので、早い段階から在る結合ほど明るい。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/02_wiring_across_development.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/02_wiring_across_development.gif)
+
+*↑ The measurement ―― 生まれた直後から成虫まで 8 匹の配線を順に。色は全体での出現回数なので、早い段階から在る結合ほど明るい。 (figure labels are in Japanese; the numbers are the same)*
+
+[![ヌルは各個体の入次数・出次数を保ったまま独立に組み替えた配線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/03_occupancy_vs_null_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/03_occupancy_vs_null.png)
+
+*↑ ヌルは各個体の入次数・出次数を保ったまま独立に組み替えた配線。*
+
+[![横軸 0 の点が同齢の成虫 2 匹(Jaccard 0.53)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/04_jaccard_vs_age_gap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/04_jaccard_vs_age_gap.png)
+
+*↑ 横軸 0 の点が同齢の成虫 2 匹(Jaccard 0.53)。*
+
+[![8 匹全員に在る結合は結合数の 15 %、シナプスの 57 %。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/05_synapse_share_by_occupancy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/05_synapse_share_by_occupancy.png)
+
+*↑ 8 匹全員に在る結合は結合数の 15 %、シナプスの 57 %。*
+
+[![論文は左右の対でまとめ、後から生まれる細胞を除いてから分類する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/06_paper_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/06_paper_comparison.png)
+
+*↑ 論文は左右の対でまとめ、後から生まれる細胞を除いてから分類する。*
+
+```
+py -3.11 examples/poc_connectome_across_worms.py
+```
+
+Source: [examples/poc_connectome_across_worms.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_connectome_across_worms.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_connectome_across_worms)
+
+Ops used (notes): [`graph_edge_consensus`](https://furuse.work/ops/graph/population/graph_edge_consensus.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ## No.2026.154 —— Grading Skeleton Measurement on Real Trees — NeuroMorpho SWC as Ground Truth, and What Projection Breaks
 

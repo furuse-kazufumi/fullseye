@@ -1,0 +1,68 @@
+[
+ {
+  "file": "01_occupancy_matrix.png",
+  "name": "occupancy_matrix",
+  "caption": "C. elegans 8 匹・化学シナプス(Witvliet 2021、nemanode.org)。行 = 送り手、列 = 受け手(次数の降順)。色 = その結合が 8 匹中何匹に在るか(暗い紫 = 1 匹だけ → 緑 → 黄 = 8 匹全員、背景の灰 = どの個体にも無い)。全員に在る核は 442 本。",
+  "shape": [
+   549,
+   549,
+   3
+  ]
+ },
+ {
+  "file": "02_wiring_across_development.gif",
+  "name": "wiring_across_development",
+  "caption": "生まれた直後から成虫まで 8 匹の配線を順に。色は全体での出現回数なので、早い段階から在る結合ほど明るい。",
+  "shape": [
+   549,
+   549,
+   3
+  ],
+  "animated": true,
+  "frames": 8,
+  "frames_written": 8,
+  "fps": 1.5
+ },
+ {
+  "file": "03_occupancy_vs_null.png",
+  "name": "occupancy_vs_null",
+  "caption": "ヌルは各個体の入次数・出次数を保ったまま独立に組み替えた配線。8 匹全員に在る結合は実測 442 本、ヌルでは 20 標本の最大でも 0 本。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_jaccard_vs_age_gap.png",
+  "name": "jaccard_vs_age_gap",
+  "caption": "横軸 0 の点が同齢の成虫 2 匹(Jaccard 0.53)。隣り合う段階の平均は 0.51。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_synapse_share_by_occupancy.png",
+  "name": "synapse_share_by_occupancy",
+  "caption": "8 匹全員に在る結合は結合数の 15 %、シナプスの 57 %。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_paper_comparison.png",
+  "name": "paper_comparison",
+  "caption": "論文は左右の対でまとめ、後から生まれる細胞を除いてから分類する。ここは 8 匹全員に在る細胞の上で素朴に数えた。",
+  "shape": [
+   152,
+   479,
+   3
+  ],
+  "csv": "06_paper_comparison.csv",
+  "tsv": "06_paper_comparison.tsv"
+ }
+]

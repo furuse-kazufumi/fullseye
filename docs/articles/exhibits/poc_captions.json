@@ -1781,6 +1781,17 @@
    "run": "py -3.11 examples/poc_connectome_lr_symmetry.py"
   },
   {
+   "id": "poc_connectome_across_worms",
+   "wing": "wing_bio",
+   "added": "2026-09-27",
+   "numbers_source": "log",
+   "title_ja": "同じ線虫の配線は、個体が違うとどこまで同じか ―― 8 匹の発生系列で「全員に在る結合」を数える",
+   "title_en": "How Much of the Wiring Do Two Genetically Identical Worms Share? — Counting the Connections Present in All 8 Worms of a Developmental Series",
+   "caption_ja": "遺伝的に同一な C. elegans 8 匹(Witvliet 2021、生直後〜成虫)の化学シナプス配線を、8 匹全員に在る 183 細胞の上で重ね、各結合が何匹に在るかを graph_edge_consensus で数えた図。8 匹全員に在る結合は 442 本で、各個体の入次数・出次数を保ったまま独立に組み替えた次数保存ヌルでは 20 標本の最大でも 0 本。この核は和集合 2,977 本の 15 % の結合で、8 匹合計のシナプスの 57 % を担う。一方、2 匹どうしの Jaccard は推定齢の差とともに下がり(隣り合う段階の平均 0.51、生直後と成虫で 0.33〜0.34)、同齢の成虫 2 匹どうしでも 0.53 と隣り合う発生段階と同程度にとどまる。発生順に見ると、途中から現れて最後まで残る結合が 701 本、途中で消える結合は 55 本。真値は合成系列の閉形式 ―― 核 C 本を全員に、固有 u 本を個体ごとに重ならず置くと h[K]=C・h[1]=K·u・どの 2 匹の Jaccard も C/(C+2u)・stable/added/lost/flicker = C/u/u/(K−2)u で、整数まで op と一致する。公表値との照合: 論文は 7 匹以上に在る結合を stable とし成虫の結合の約 43 % とするが、ここの素朴な数え方では 34 %(論文は左右の対でまとめ、後から生まれる細胞を除いてから分類するので母数が違う。差は合わせにいかない)。データは同梱せず(nemanode.org のデータには明示のライセンスが無い)、無ければ合成の系列で回る。",
+   "caption_en": "The chemical-synapse wiring of 8 genetically identical C. elegans (Witvliet 2021, from birth to adulthood), stacked on the 183 cells present in all 8, with graph_edge_consensus counting how many worms carry each connection. 442 connections are present in all 8 worms; a degree-preserving null that rewires every worm independently while keeping each cell's in- and out-degree gives at most 0 in 20 samples. This core is 15 % of the 2,977 connections in the union but carries 57 % of the synapses summed over the 8 worms. Pairwise Jaccard falls with the difference in estimated age (0.51 on average for neighbouring stages, 0.33-0.34 between the newborn and the adults), and the two same-age adults overlap by only 0.53 - no more than neighbouring stages. Along the developmental order, 701 connections appear and stay to the end while 55 disappear. Ground truth is a closed form on a synthetic series: with a core of C connections in every worm and u unique connections per worm, h[K] = C, h[1] = K*u, every pairwise Jaccard is C/(C+2u), and stable/added/lost/flicker = C/u/u/(K-2)u, matched by the op down to the integer. Against the paper: it calls a connection stable when present in at least 7 datasets and reports about 43 % of adult connections as stable; the naive count here gives 34 % (the paper pools left/right pairs and drops post-embryonic cells before classifying, so the denominators differ; the gap is reported, not fitted away). No data is bundled (the nemanode.org data carries no explicit licence); without it the example runs on a synthetic series.",
+   "run": "py -3.11 examples/poc_connectome_across_worms.py"
+  },
+  {
    "id": "poc_swc_tree_truth",
    "wing": "wing_bio",
    "added": "2026-09-27",
