@@ -116,6 +116,17 @@ EXAMPLES = [
                 "真値は合成系列の閉形式(核 C + 固有 u: h[K]=C・Jaccard=C/(C+2u))。論文の stable ≈ 43 % に対し"
                 "素朴な数え方では 34 % —— 著者の分類表と照合すると、論文は左右の対で 7 匹以上なら対の全結合に札を付けて"
                 "おり、それだけで論文の stable の 99.6 % を再現する。実データが無ければ合成系列で回る。"},
+    {"id": "poc_em_split_merge_score", "task": "imgmetrics", "data": "synthetic",
+     "name": "電子顕微鏡の神経の切り出しを採点する —— 分けすぎとまとめすぎを別々の数字にする(VOI の split / merge)",
+     "summary": "CREMI sample A の正解に seg_inject_split / seg_inject_merge で誤りを 1 つずつ仕込むと、split だけ・merge だけが"
+                "閉形式 (m/N)·H2(m1/m) ビットどおり上がる(8 件とも誤差 < 1e-12)。古典の切り出し(膜応答 → しきい値 → 連結成分"
+                " → 膜の画素を最寄りの細胞へ)は、しきい値 65 % と 70 % の間で分けすぎからまとめすぎへ入れ替わり、VOI 最小は 65 %。"
+                "★膜の画素を背景のまま残すと merge が 2.4 倍に水増しされ、どのしきい値でも「まとめすぎ」に見える。"},
+    {"id": "poc_em_wiring_errors", "task": "imgmetrics", "data": "synthetic",
+     "name": "切り出しの誤りは配線図のどこを壊すか —— 画素の採点は分断を重く、融合を軽く数える",
+     "summary": "CREMI sample A(3 次元)の正解に、シナプスのある神経 1 本ずつ分断・融合を仕込み(54 + 54 件)、画素の VOI と"
+                "シナプスの端の VOI(seg_wiring_variation)を比べる。端の VOI は全件で閉形式 (s/2n)·H2(s1/s) と一致。"
+                "分断の 23 / 54 件は配線を 1 ビットも変えず、画素 1 ビットあたりの配線の損傷は融合 1.30 / 分断 0.58。"},
     {"id": "poc_worm_neurites_grow", "task": "imgmetrics", "data": "synthetic",
      "name": "線虫の神経突起は生まれてから何倍に伸びるか —— 8 匹の骨格を tree op で測り、論文の値と並べる",
      "summary": "Witvliet 2021 の 8 匹の骨格(ニューロン 196〜218 本、断片に分かれた骨格 61 個を含む木 1,727 本)を SWC に直して"

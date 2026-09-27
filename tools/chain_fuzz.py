@@ -1296,6 +1296,25 @@ def _b_tree_table(pool, rng):
     return (treemorph.tree_from_swc(_SWC_Y),), {}
 
 
+def _b_seg_pair(pool, rng):
+    a = np.repeat(np.repeat(rng.integers(1, 6, (4, 4)), 8, 0), 8, 1)
+    b = a.copy()
+    b[:16, :16] = 9                      # 融合と分断が両方ある候補
+    return (a, b), {}
+
+
+def _b_seg_wiring(pool, rng):
+    a = np.repeat(np.repeat(rng.integers(1, 6, (4, 4)), 8, 0), 8, 1)
+    syn = {"pre": rng.uniform(0, 32, (12, 2)), "post": rng.uniform(0, 32, (12, 2))}
+    return (a, syn), {}
+
+
+def _b_seg_wiring_pair(pool, rng):
+    (a, b), _ = _b_seg_pair(pool, rng)
+    syn = {"pre": rng.uniform(0, 32, (12, 2)), "post": rng.uniform(0, 32, (12, 2))}
+    return (a, b, syn), {}
+
+
 def _b_spc_mt_sn_ratio(pool, rng):
     # 距離は正でなければならない(0 は「単位空間の中心に居る異常標本」= 分離ゼロ)。
     return (rng.uniform(0.5, 20.0, size=12),), {}
@@ -1438,6 +1457,11 @@ OP_ARG_BUILDERS = {
     "tree_from_swc": _b_tree_swc,
     "tree_morphometry": _b_tree_table,
     "tree_sholl": _b_tree_table,
+    "seg_contingency": _b_seg_pair,
+    "seg_variation_of_information": _b_seg_pair,
+    "seg_rand": _b_seg_pair,
+    "seg_synapse_partners": _b_seg_wiring,
+    "seg_wiring_variation": _b_seg_wiring_pair,
     "swt_map": _b_text_img,
     "text_candidates": _b_text_swt,
     "text_lines": _b_text_boxes,

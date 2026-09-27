@@ -189,6 +189,14 @@
    "accessioned": "2026-09-21",
    "no": "2026.126"
   },
+  "poc_em_split_merge_score": {
+   "accessioned": "2026-09-27",
+   "no": "2026.159"
+  },
+  "poc_em_wiring_errors": {
+   "accessioned": "2026-09-27",
+   "no": "2026.160"
+  },
   "poc_endless_zoom_and_turning_solids": {
    "accessioned": "2026-09-24",
    "no": "2026.146"

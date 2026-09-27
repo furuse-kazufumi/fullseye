@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsemproof —— EM 連結体校正の「古典 CV セカンドオピニオン」op の統一レジストリ。
 
-実体は ``emproof.py``(7 op / 4 カテゴリ)。台帳の役目は 3 つ:
+実体は ``emproof.py``(7 op / 4 カテゴリ)と ``segcompare.py``(分割の採点と配線、5 op / 2 カテゴリ)。台帳の役目は 3 つ:
 docs/ops へノートを出す・連鎖ファザーに食わせる・宣言型と素の返りを橋渡しする。
 
 使い方::
@@ -28,8 +28,9 @@ EM の自動分割が残す**融合**(2 細胞が 1 id)と**分断**(1 細胞が
   fuzz は任意の 1-D 信号を入れるので AUC は 0.5 付近になるだけで、例外にはならない(契約どおり)。
 """
 import emproof
+import segcompare
 
-_MOD = {"emproof": emproof}
+_MOD = {"emproof": emproof, "segcompare": segcompare}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -51,6 +52,20 @@ _CATALOG = {
     # 測る —— 閾値は訓練側で選び、評価は別の側で
     "evaluate": [
         ("holdout_threshold", "emproof", ["signal", "signal", "signal", "signal"], "table"),
+    ],
+    # 採点 —— 競技会(CREMI / SNEMI)の標準量。正解 a と候補 b の分割表だけから出る。
+    # VOI を split(分けすぎ)と merge(まとめすぎ)に分けて返すのが要点。seg_label_changes は
+    # 誤りを「件数」で、こちらは「量(ビット・対の割合)」で数える。
+    "score": [
+        ("seg_contingency", "segcompare", ["labels2d", "labels2d"], "table"),
+        ("seg_variation_of_information", "segcompare", ["labels2d", "labels2d"], "table"),
+        ("seg_rand", "segcompare", ["labels2d", "labels2d"], "table"),
+    ],
+    # 配線 —— 分割から読める配線図。シナプス表 {pre, post} の両端がどの物体に落ちるか。
+    # 分割の誤りが配線の誤りにどう化けるかを、同じ VOI(シナプスを接続ごとに束ねて)で測る。
+    "wiring": [
+        ("seg_synapse_partners", "segcompare", ["labels2d", "table"], "table"),
+        ("seg_wiring_variation", "segcompare", ["labels2d", "labels2d", "table"], "table"),
     ],
 }
 

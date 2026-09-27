@@ -14827,6 +14827,26 @@
   "graph/tree_sholl": {
    "fp": "a384b132e74d",
    "ja": "Sholl 解析: 根を中心とする球(3-D)か円(投影)と枝の交点数。3-D は回転で整数が動かない。"
+  },
+  "emproof/seg_contingency": {
+   "fp": "2947bba75095",
+   "ja": "正解と候補の 2 つの分割の分割表(同時に現れるラベルの対と画素数)。"
+  },
+  "emproof/seg_variation_of_information": {
+   "fp": "5ec73133ccd8",
+   "ja": "VOI を split(候補が本物を割った量)と merge(別々のものをくっつけた量)に分けてビットで返す。"
+  },
+  "emproof/seg_rand": {
+   "fp": "08f56fe88729",
+   "ja": "Rand 指数・調整 Rand 指数・CREMI の adapted Rand error(画素の対で数える precision / recall つき)。"
+  },
+  "emproof/seg_synapse_partners": {
+   "fp": "6525a89b9c74",
+   "ja": "分割から配線図を読む。シナプスの前後の点がどの物体に落ちるかと、(前の物体, 後の物体) の接続の一覧。"
+  },
+  "emproof/seg_wiring_variation": {
+   "fp": "1d0212a6d116",
+   "ja": "候補の分割が正解の配線図をどう壊すかを VOI で測る。シナプスの端で取る split / merge と、接続ごとに束ねた connection_split / connection_merge の 2 水準。"
   }
  }
 }

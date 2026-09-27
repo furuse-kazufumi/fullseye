@@ -465,6 +465,9 @@ from graphinv import (  # noqa: E402,F401
     graph_edge_consensus,
 )
 import treemorph  # noqa: E402  (neuron trees from SWC)
+import segcompare  # noqa: E402  (compare two segmentations: VOI / Rand)
+from segcompare import (seg_contingency, seg_variation_of_information, seg_rand,  # noqa: E402,F401
+                        seg_synapse_partners, seg_wiring_variation)
 from treemorph import tree_from_swc, tree_morphometry, tree_sholl  # noqa: E402,F401
 import textregion  # noqa: E402  (where is the text, without a recogniser)
 from textregion import swt_map, text_candidates, text_lines  # noqa: E402,F401
@@ -935,7 +938,7 @@ __all__ = [
     "peak_subbin", "point_spectrum",
     "signal_features", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",
-    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "textregion",
+    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion",
     "gfx2d", "alpha_composite", "alpha_composite_premul", "blend_mode", "bloom",
     "chromatic_aberration", "color_grade", "color_lut", "dither", "film_grain",
     "layer_stack", "light_mask", "linear_to_srgb", "nine_slice",

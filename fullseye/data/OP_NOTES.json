@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2203,
- "n_notes": 2209,
+ "n_ops": 2208,
+ "n_notes": 2214,
  "notes": {
   "vol_dilate": [
    {
@@ -15424,6 +15424,36 @@
     "path": "docs/ops/emproof/response/seg_membrane_response.md"
    }
   ],
+  "seg_contingency": [
+   {
+    "op": "seg_contingency",
+    "dim": "emproof",
+    "category": "score",
+    "in": "labels2d × labels2d",
+    "out": "table",
+    "path": "docs/ops/emproof/score/seg_contingency.md"
+   }
+  ],
+  "seg_rand": [
+   {
+    "op": "seg_rand",
+    "dim": "emproof",
+    "category": "score",
+    "in": "labels2d × labels2d",
+    "out": "table",
+    "path": "docs/ops/emproof/score/seg_rand.md"
+   }
+  ],
+  "seg_variation_of_information": [
+   {
+    "op": "seg_variation_of_information",
+    "dim": "emproof",
+    "category": "score",
+    "in": "labels2d × labels2d",
+    "out": "table",
+    "path": "docs/ops/emproof/score/seg_variation_of_information.md"
+   }
+  ],
   "seg_boundary_membrane_gap": [
    {
     "op": "seg_boundary_membrane_gap",
@@ -15442,6 +15472,26 @@
     "in": "labels2d × image2d",
     "out": "table",
     "path": "docs/ops/emproof/suspect/seg_membrane_chord_score.md"
+   }
+  ],
+  "seg_synapse_partners": [
+   {
+    "op": "seg_synapse_partners",
+    "dim": "emproof",
+    "category": "wiring",
+    "in": "labels2d × table",
+    "out": "table",
+    "path": "docs/ops/emproof/wiring/seg_synapse_partners.md"
+   }
+  ],
+  "seg_wiring_variation": [
+   {
+    "op": "seg_wiring_variation",
+    "dim": "emproof",
+    "category": "wiring",
+    "in": "labels2d × labels2d × table",
+    "out": "table",
+    "path": "docs/ops/emproof/wiring/seg_wiring_variation.md"
    }
   ],
   "fly_flow_from_directions": [

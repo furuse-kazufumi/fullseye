@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**91 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**93 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1664,7 +1664,7 @@ Ops used (notes): [`attention_apply`](https://furuse.work/ops/llmcore/score/atte
 
 Counting cells, reading a nucleus's DNA content, measuring vessel branching, tracking a wound's area: all of these tend to be reported as one number, and there are situations in which that number is right anyway. Cell counting where over- and under-segmentation balance to a +0.3-cell bias; ploidy classification that survives a forgotten background subtraction; a calibration that returns the most stable and most wrong healing constant.
 
-The 19 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
+The 21 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
 
 The thing to watch for is a method that appears to improve while the quantity it measures quietly swaps: the area classifier gets better with more blur because 'area' is leaking DNA content. Unless the reason for every improvement is traced, this kind of lie gets carried home as a result.
 
@@ -2199,6 +2199,50 @@ Source: [examples/poc_worm_neurites_grow.py](https://github.com/furuse-kazufumi/
 This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_worm_neurites_grow)
 
 Ops used (notes): [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`tree_from_swc`](https://furuse.work/ops/graph/tree/tree_from_swc.html) · [`tree_morphometry`](https://furuse.work/ops/graph/tree/tree_morphometry.html) · [`tree_sholl`](https://furuse.work/ops/graph/tree/tree_sholl.html)
+
+## No.2026.159 —— Scoring Neuron Segmentations from Electron Microscopy — Over-Splitting and Over-Merging as Two Separate Numbers
+
+[![Scoring Neuron Segmentations from Electron Microscopy — Over-Splitting and Over-Merging as Two Separate Numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_split_merge_score/01_split_vs_merge_by_threshold_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_split_merge_score/01_split_vs_merge_by_threshold.png)
+
+*↑ **Scoring Neuron Segmentations from Electron Microscopy — Over-Splitting and Over-Merging as Two Separate Numbers** ―― The errors of automatic neuron segmentation for connectomics are of two kinds: a split cuts one neuron into two, a merge glues two neurons into one. seg_variation_of_information returns VOI divided into split and merge. Injecting one error at a time into the ground truth of CREMI sample A (z = 40, 512 squared) with the existing seg_inject_split / seg_inject_merge, the 4 splits raise only split and the 4 merges only merge, each by exactly (m/N)·H2(m1/m) bits (error < 1e-12; exact for any division of real data). A classic segmentation (membrane response -> threshold -> connected components -> membrane pixels assigned to the nearest cell) goes from over-split at the 60th percentile (split 1.14 / merge 0.18) to over-merged at the 85th (split 0.05 / merge 5.02), with the lowest VOI (1.263) at the 65th, just before the crossing. Found by the checks: leaving membrane pixels as background (label 0) counts the whole background as one huge region and inflates merge 2.4-fold (2.07 against 0.85 at the 70th percentile), making every threshold look over-merged. scikit-image, the second implementation, agrees on the adapted Rand error, but its precision is divided by the truth pairs, the opposite of its docstring. Raw data is not bundled.*
+
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_split_merge_score/02_truth_vs_classic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_split_merge_score/02_truth_vs_classic.png)
+
+*↑ The measurement (figure labels are in Japanese; the numbers are the same)*
+
+```
+py -3.11 examples/poc_em_split_merge_score.py
+```
+
+Source: [examples/poc_em_split_merge_score.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_em_split_merge_score.py)
+
+This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_em_split_merge_score)
+
+Ops used (notes): [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`seg_inject_merge`](https://furuse.work/ops/emproof/inject/seg_inject_merge.html) · [`seg_inject_split`](https://furuse.work/ops/emproof/inject/seg_inject_split.html) · [`seg_label_changes`](https://furuse.work/ops/emproof/inject/seg_label_changes.html) · [`seg_membrane_response`](https://furuse.work/ops/emproof/response/seg_membrane_response.html) · [`seg_rand`](https://furuse.work/ops/emproof/score/seg_rand.html) · [`seg_variation_of_information`](https://furuse.work/ops/emproof/score/seg_variation_of_information.html)
+
+## No.2026.160 —— Where Segmentation Errors Break the Wiring Diagram — Pixel Scores Overweight Splits and Underweight Merges
+
+[![Where Segmentation Errors Break the Wiring Diagram — Pixel Scores Overweight Splits and Underweight Merges](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/01_proofreading_order_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/01_proofreading_order.png)
+
+*↑ **Where Segmentation Errors Break the Wiring Diagram — Pixel Scores Overweight Splits and Underweight Merges** ―― A connectome is read by dropping synapse annotations (a pre and a post point) onto segmented neurons, so segmentation errors turn into wiring errors — but not all of them. seg_wiring_variation retakes the pixel VOI at the 2n synapse ends only. On the ground truth of CREMI sample A (125 slices × 625 squared, 115 synapses, 107 connections), one error at a time was injected into each of the 54 neurons carrying synapses: cut in half at the median x, or glued to the neighbour it touches most. The ends VOI matched the closed form (s/2n)·H2(s1/s) in all 108 cases (largest error 1.4e-17). 23 of the 54 cuts change the wiring by not a single bit (no synapse end on one side of the cut). Wiring damage per pixel bit (median) is 1.30 for merges and 0.58 for splits; the rank correlation of pixel and ends VOI is 0.60. Fixing the top 20 errors by pixel VOI removes 41 % of the wiring damage — far better than random (19 %) but short of the wiring order (49 %). Found by the checks: computing a conditional entropy as H(a,b) − H(a) left 8.9e-16 of rounding dust on a pure relabelling and failed the 'identical means 0' gate; the direct sum −Σ p log2(n_ij / n_i) makes it exactly 0. VOI over synapses grouped by connection alone stays 0 when a one-synapse connection is cut (most of the 107), so the ends level is primary. Raw data is not bundled.*
+
+[![1 点 = 仕込んだ誤り 1 件。順位相関 0.60。分断の 23 / 54 件は配線を 1 ビットも変えない(横軸の上に並ぶ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/02_pixel_vs_wiring_cost_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/02_pixel_vs_wiring_cost.png)
+
+*↑ The measurement ―― 1 点 = 仕込んだ誤り 1 件。順位相関 0.60。分断の 23 / 54 件は配線を 1 ビットも変えない(横軸の上に並ぶ)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/03_two_cuts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/03_two_cuts.png)
+
+*↑ この回の図*
+
+```
+py -3.11 examples/poc_em_wiring_errors.py
+```
+
+Source: [examples/poc_em_wiring_errors.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_em_wiring_errors.py)
+
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_em_wiring_errors)
+
+Ops used (notes): [`seg_synapse_partners`](https://furuse.work/ops/emproof/wiring/seg_synapse_partners.html) · [`seg_variation_of_information`](https://furuse.work/ops/emproof/score/seg_variation_of_information.html) · [`seg_wiring_variation`](https://furuse.work/ops/emproof/wiring/seg_wiring_variation.html)
 
 ## No.2026.154 —— Grading Skeleton Measurement on Real Trees — NeuroMorpho SWC as Ground Truth, and What Projection Breaks
 

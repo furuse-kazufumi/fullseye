@@ -1,4 +1,4 @@
-# EMPROOF operator help — 7 ops in 4 categories
+# EMPROOF operator help — 12 ops in 6 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/emproof/<category>/<op>.md` を走査。
 
@@ -20,9 +20,17 @@
 
 [seg_membrane_response](response/seg_membrane_response.md)
 
+### score (3)
+
+[seg_contingency](score/seg_contingency.md) · [seg_rand](score/seg_rand.md) · [seg_variation_of_information](score/seg_variation_of_information.md)
+
 ### suspect (2)
 
 [seg_boundary_membrane_gap](suspect/seg_boundary_membrane_gap.md) · [seg_membrane_chord_score](suspect/seg_membrane_chord_score.md)
+
+### wiring (2)
+
+[seg_synapse_partners](wiring/seg_synapse_partners.md) · [seg_wiring_variation](wiring/seg_wiring_variation.md)
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

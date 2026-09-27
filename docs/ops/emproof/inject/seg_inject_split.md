@@ -4,7 +4,7 @@ dim: emproof
 category: inject
 in: labels2d
 out: labels2d
-examples: [poc_em_second_opinion]
+examples: [poc_em_second_opinion, poc_em_split_merge_score]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -39,10 +39,11 @@ version: 0.2.3  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_em_second_opinion](../../../../examples/poc_em_second_opinion.py) — `py -3.11 examples/poc_em_second_opinion.py`
+- [poc_em_split_merge_score](../../../../examples/poc_em_split_merge_score.py) — `py -3.11 examples/poc_em_split_merge_score.py`
 
 ## 型が繋がる次の op(`labels2d` を入力に取れる)
 
-[seg_membrane_chord_score](../suspect/seg_membrane_chord_score.md) · [seg_boundary_membrane_gap](../suspect/seg_boundary_membrane_gap.md) · [seg_inject_merge](seg_inject_merge.md) · [seg_label_changes](seg_label_changes.md)
+[seg_membrane_chord_score](../suspect/seg_membrane_chord_score.md) · [seg_boundary_membrane_gap](../suspect/seg_boundary_membrane_gap.md) · [seg_inject_merge](seg_inject_merge.md) · [seg_label_changes](seg_label_changes.md) · [seg_contingency](../score/seg_contingency.md) · [seg_variation_of_information](../score/seg_variation_of_information.md) · [seg_rand](../score/seg_rand.md) · [seg_synapse_partners](../wiring/seg_synapse_partners.md)
 
 ## 同カテゴリ(`inject`)
 

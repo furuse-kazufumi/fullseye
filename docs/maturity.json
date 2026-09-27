@@ -914,8 +914,8 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 261,
-  "run_by_the_poc_gate": 158,
+  "examples2d_total": 263,
+  "run_by_the_poc_gate": 160,
   "run_by_the_example_gate": 103,
   "not_run_by_any_gate": 0,
   "gates": [

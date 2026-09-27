@@ -1,0 +1,22 @@
+[
+ {
+  "file": "01_split_vs_merge_by_threshold.png",
+  "name": "split_vs_merge_by_threshold",
+  "caption": "CREMI sample A z=40 (512^2 @ 300,300)。膜応答の低い画素を細胞とみて連結成分を取り、膜の画素を最寄りの細胞へ割り振った切り出しを、正解と VOI で比べた。しきい値を上げると split が 1.14 → 0.05 に下がり、merge が 0.18 → 5.02 に上がる。VOI 最小は 65%。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_truth_vs_classic.png",
+  "name": "truth_vs_classic",
+  "caption": "",
+  "shape": [
+   605,
+   1576,
+   3
+  ]
+ }
+]

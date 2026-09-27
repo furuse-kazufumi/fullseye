@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">seg_synapse_partners — EMPROOF <code style="color:#22d3bf">wiring</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">labels2d × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_synapse_partners(labels, synapses, spacing=None, background=0)</code>(要直接调用实现,<code style="color:#22d3bf">import segcompare; segcompare.seg_synapse_partners(labels, synapses, spacing=None, background=0)</code>;从台账取用则 <code style="color:#22d3bf">opsemproof.get(&quot;seg_synapse_partners&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Read the wiring diagram a segmentation implies: which object each synapse connects.</p>
+<p>`<code style="color:#22d3bf">synapses</code><code style="color:#22d3bf"> is a table </code><code style="color:#22d3bf">{&quot;pre&quot;: (n, ndim), &quot;post&quot;: (n, ndim)}</code><code style="color:#22d3bf"> (or an </code><code style="color:#22d3bf">(n, 2, ndim)</code>`</p>
+<p>array) holding the two ends of `<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> synapses in physical units (divided by </code><code style="color:#22d3bf">spacing</code>` per axis, default 1, then floored to a voxel).</p>
+<p>Returns `<code style="color:#22d3bf">pre_ids</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">post_ids</code><code style="color:#22d3bf"> (the object under each end), </code><code style="color:#22d3bf">connection</code>` (index</p>
+<p>of each synapse&#x27;s connection in `<code style="color:#22d3bf">edges</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">(k, 2)</code>` distinct</p>
+<p>(pre object, post object) pairs), `<code style="color:#22d3bf">synapses_per_edge</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n_background</code>` (synapses</p>
+<p>with an end on `<code style="color:#22d3bf">background</code><code style="color:#22d3bf">) and </code><code style="color:#22d3bf">n_autapse</code>` (both ends in the same non-background</p>
+<p>object — a merge, or a real autapse).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: bad labels (as :func:</code>seg_contingency<code style="color:#22d3bf">); </code><code style="color:#22d3bf">synapses</code>` not a</p>
+<p>table with `<code style="color:#22d3bf">pre</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">post</code><code style="color:#22d3bf"> nor an </code><code style="color:#22d3bf">(n, 2, ndim)</code><code style="color:#22d3bf"> array; points not </code><code style="color:#22d3bf">(n, ndim)</code>`, non-finite, of different counts or outside the volume; bad spacing.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_em_wiring_errors">poc_em_wiring_errors</a> — <code style="color:#22d3bf">py -3.11 examples/poc_em_wiring_errors.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_wiring_variation">seg_wiring_variation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">wiring</code>)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_wiring_variation">seg_wiring_variation</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segcompare.py — EMPROOF 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

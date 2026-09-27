@@ -83,6 +83,8 @@ One experiment = one question. **This article is appended to every time an exper
 | How much wiring do 8 genetically identical worms share? | 442 connections in all 8 (chance: 0) carry 57 % of the synapses. But two same-age adults overlap by only 0.53 | Addendum |
 | How much does a hand-traced wiring diagram from 40 years ago overlap today's adults? | 0.43–0.44, only 0.07 below two adults reconstructed the same way (0.51). What 1986 lacks are thin connections (mean 2.0 vs 5.7 synapses) | Addendum |
 | How much do a worm's neurites grow from birth to adulthood? | 4.3-fold (the paper says about 5). Summing the authors' own file also gives 3.95, so the 5-fold itself does not come out. The longest skeleton path matches the authors' values to 1.75e-9 | Addendum |
+| Scoring a neuron segmentation from electron microscopy as over-splitting and over-merging | Injecting one error at a time raises only split or only merge, exactly by the closed form (error < 1e-12). A classic segmentation crosses over between the 65th and 70th percentiles. Leaving membrane pixels as background inflates merge 2.4-fold | Addendum |
+| Where segmentation errors break the wiring diagram | 4 in 10 cuts change the wiring by not a single bit. Wiring damage per pixel bit is 1.30 for merges and 0.58 for splits. Proofreading in pixel-score order works twice as well as random but falls 8 points short of ideal | Addendum |
 
 ## Glossary (worth reading first)
 
@@ -715,6 +717,68 @@ Getting there, I rebuilt the gate three times:
 ![Sholl curves of AVAL](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/02_sholl_through_development.png)
 
 *↑ Sholl curves of the neuron named AVAL at four stages. The x-axis is the distance from the skeleton's start point (not necessarily the cell body). In the adult the process reaches 25 µm out. Being 3-D Sholl, the curve is the same from any viewing direction — unlike the section above on measuring trees from images, where the projection moved by 9–16 crossings with the view.*
+
+### Scoring a neuron segmentation from electron microscopy as over-splitting and over-merging (2026-09-27)
+
+Every wiring diagram so far was built by cutting neurons, one by one, out of electron-microscope sections. That cutting is now automatic, and it can go wrong in only two ways: a **split** cuts one neuron into two, a **merge** glues two different neurons together. A split can be repaired later by joining the pieces; a merge puts synapses into the diagram that do not exist. So the challenges (CREMI / SNEMI) do not score "how wrong" as one number — they report the two separately.
+
+This round adds three scoring ops to Fullseye: `seg_contingency` (the contingency table of truth against candidate), `seg_variation_of_information` (VOI returned in bits as split = over-splitting and merge = over-merging) and `seg_rand` (the Rand index, the adjusted Rand index and CREMI's adapted Rand error). The data is CREMI sample A (electron microscopy of a fruit-fly brain, z = 40, 512 × 512).
+
+The check is a closed form. Using the existing `seg_inject_split` / `seg_inject_merge`, I inject one error at a time into the ground truth. Cutting a region of m pixels into m1 and m2 raises split by **exactly (m/N)·H2(m1/m) bits** and leaves merge at 0 (H2 is the binary entropy); a merge does the opposite. All 4 splits and 4 merges agree with the formula to below 1e-12. The formula holds exactly for any division of any real data, so the gate stands on the real ground truth, not on synthetic data.
+
+Next I scored a classic segmentation (membrane response → threshold → connected components → membrane pixels assigned to the nearest cell).
+
+![split and merge by threshold](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_split_merge_score/01_split_vs_merge_by_threshold.png)
+
+| Threshold (share of pixels taken as cell) | split (over-splitting) | merge (over-merging) |
+|---|---|---|
+| 60 % | 1.14 | 0.18 |
+| 65 % | 0.91 | 0.35 |
+| 85 % | 0.05 | 5.02 |
+
+Raising the threshold fattens the cells until they start to join their neighbours through gaps in the membrane: split falls, merge rises, and they cross between the 65th and 70th percentiles. VOI (split + merge) is lowest at 65 %, just before the crossing, at 1.263 bits. One number stops at "65 % is best"; two numbers also say "even the best point is still on the over-split side".
+
+![EM section, ground truth, classic segmentation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_split_merge_score/02_truth_vs_classic.png)
+
+*↑ From the left: the EM section, the ground-truth labels, and the classic segmentation at 65 %. Holes and small fragments left inside the cells are what split counts.*
+
+The conclusion flipped once on the way. In the first version every threshold looked over-merged. The cause was a preprocessing step in the scoring: membrane pixels were left as background (label 0). The whole background then counts as one huge "region" that glues dozens of true cells together. At the 70th percentile merge was 2.07; with membrane pixels assigned to the nearest cell it is 0.85 — a **2.4-fold inflation**. The segmentation is the same; one scoring convention turns over-splitting into apparent over-merging.
+
+The second implementation had a defect of its own. Checking against scikit-image's `adapted_rand_error`, the error agreed but precision and recall came out swapped: scikit-image's code divides its precision by the truth pairs, the opposite of its docstring. The F-score is symmetric, so the error is right; only separate precision and recall disagree. Fullseye's `seg_rand` states the mapping in its docstring and the tests pin it explicitly.
+
+### Where segmentation errors break the wiring diagram (2026-09-27)
+
+The scores in the previous section count pixels. But a connectome wants a wiring diagram, not pixels, and the diagram is read by dropping synapse annotations (a pre point and a post point) onto the segmented neurons. So segmentation errors turn into wiring errors — but not all of them. Cutting a neuron where it has no synapses leaves the diagram unchanged.
+
+This round adds two wiring ops to Fullseye. `seg_synapse_partners` reads which neuron each end of a synapse falls in, returning the wiring diagram the segmentation implies. `seg_wiring_variation` retakes the pixel VOI at **the 2n synapse ends only**. CREMI sample A comes with 216 annotated synapses; I used the 115 (107 connections) whose two ends both fall in a block of 125 slices × 625 × 625.
+
+The experiment: into each of the 54 neurons carrying synapses, inject one error at a time — cut it in half at its median x, or glue it to the neighbour it touches most — and compare pixel VOI with ends VOI. The check is a closed form: when a neuron's s ends divide s1 / s2, split rises by exactly (s/2n)·H2(s1/s) bits. All 108 cases matched it (largest error 1.4e-17).
+
+![pixel errors against wiring errors](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/02_pixel_vs_wiring_cost.png)
+
+| | 54 splits | 54 merges |
+|---|---|---|
+| Change the wiring by not a single bit | **23** | 5 |
+| Wiring damage per pixel bit (median) | 0.58 | **1.30** |
+
+As a proxy for wiring damage, the pixel score **overweights splits and underweights merges**. Four in ten cuts leave the wiring intact, because one side of the cut holds no synapse end at all. A merge gathers the synapses of different neurons onto one object and creates connections that do not exist. Proofreaders say "a split is fixed by joining the pieces later; a merge creates false synapses" — in one unit (bits), this is what that looks like.
+
+![a neuron whose cut leaves the wiring intact, and one whose small cut breaks it](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/03_two_cuts.png)
+
+*↑ Left: a large error in pixels (0.027 bits), but all 16 synapse ends lie on one side, so the wiring damage is 0. Right: a twelfth of that in pixels (0.002 bits), yet its 8 ends split 4 to 4, and per pixel bit it breaks the wiring more than any of the 54 cuts (0.035 bits).*
+
+So should proofreading go in order of pixel VOI?
+
+![order of fixing against wiring damage removed](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/01_proofreading_order.png)
+
+Fixing the top 20 removes 41 % of the wiring damage in pixel order, 49 % in wiring order (ideal) and 19 % at random. The pixel score is not a bad proxy — twice as good as random — but it falls 8 points short of ideal. The gap is not large, so I cannot claim that "pixel scores cannot order proofreading". What I can say is that the bias has a fixed direction: the pixel score sends proofreading effort to cuts that do not matter for the wiring. Errors were injected one at a time, so interactions between errors are not measured.
+
+The gates caught two things here too.
+
+1. A comparison that only renamed the labels gave a VOI of 8.9e-16 instead of 0. The conditional entropy was computed as H(a,b) − H(a), and subtracting two large terms leaves rounding dust. The direct sum −Σ p log2(n_ij / n_i) makes it exactly 0 (the pixel VOI now uses the same formula). The regression test uses an input on which the old code actually produced the dust.
+2. At first only the VOI over synapses grouped by connection was returned. But a connection with a single synapse has nothing to scatter into when it is cut, so it stays at 0 — and most of the 107 connections are like that. The ends level became the primary measure; the connection level stays as `connection_split` / `connection_merge`.
+
+The classic 3-D segmentation I tried first (membrane response per slice → threshold → 3-D connected components) joined along z into one giant object at every threshold and could not serve as a candidate. In EM where the z spacing (40 nm) is ten times the xy spacing (4 nm), cutting per slice and then linking along z needs a separate stage.
 
 ### What we measure next
 

@@ -2,12 +2,15 @@
 title: 'Every Test Is Green and the Gates Still Lie — What the Gates of an Image-Measurement Library Missed, and How to Build Ones That Do Not'
 tags:
   - Python
-  - testing
+  - テスト
   - QualityAssurance
   - ImageProcessing
   - CI
 public_private: true
+public_id: 90e76b71095279a11b12
 ---
+
+> **Language / 言語**: **English** · [日本語](https://qiita.com/furuse-kazufumi/private/35601d8f6d19e78bc16a)
 
 # Every Test Is Green and the Gates Still Lie — What the Gates of an Image-Measurement Library Missed, and How to Build Ones That Do Not
 
@@ -94,6 +97,9 @@ On the day of writing I added ops and PoCs that measure the *C. elegans* connect
 - **A translation was silently not read (pattern 2).** I added a Japanese summary for an op whose docstring is English. The fingerprint matched, yet no Japanese help page was generated: the entry sat at the top level instead of under the required key, so the reader never found it. Regeneration exited 0 and said nothing.
 - **A 9-point gap to a paper, split completely by matching a classification table one connection at a time (pattern 4).** For 8 genetically identical worms, "connections present in at least 7 worms" were 34 % of the adult's connections, against about 43 % in the paper. Instead of fitting, I matched against the authors' published per-connection table. The paper labels every connection of a left/right pair stable once the pooled pair connection is present in at least 7 worms; that rule alone reproduces 789 of the paper's 792 stable connections. Neither count is wrong; they differ in what counts as one connection.
 - **A zigzag in a figure was rounding.** A histogram of the rounded mean synapse count of two animals went up and down between odd and even bins. numpy's `round` rounds half to even (2.5 → 2), so half-integers pile into even bins — dangerously easy to read as a biological periodicity. Counting the integer sum removed it.
+- **I nearly used an author's field as ground truth (pattern 4).** For the neuron skeletons of the 8 worms, I started a gate comparing the op's cable length with the "length" field the authors wrote into the file — and 1,360 of 1,586 disagreed. That field is not the sum of segment lengths (median 0.89 of it); it was computed upstream with a definition that cannot be checked. I switched to the per-node "distance from the root" field instead; it also lists nodes without coordinates, and comparing only nodes with coordinates, all 1,586 matched to a relative 1.75e-9. **Ground truth brought in from outside is not ground truth until its definition is checked.**
+- **The second implementation had its names swapped (pattern 4).** Checking the segmentation score (CREMI's adapted Rand error) against scikit-image, the error agreed but precision and recall came out swapped. scikit-image's code divides its precision by the truth pairs, the opposite of its docstring ("divided by the number in the test image"). The F-score is symmetric, so the error itself is right; only separate precision and recall disagree. **A second implementation exposes the other side's defects too.**
+- **One preprocessing step flipped the conclusion (pattern 2).** Scoring a neuron segmentation from electron microscopy by VOI split (over-splitting) and merge (over-merging), every threshold first looked over-merged. The cause was leaving membrane pixels as background (label 0): the whole background counted as one huge region and inflated merge 2.4-fold. Assigning membrane pixels to the nearest cell, the segmentation crosses cleanly from over-split to over-merged between the 65th and 70th percentiles.
 
 ## Kinds of gates (the ones Fullseye uses)
 

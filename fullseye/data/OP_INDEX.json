@@ -1,8 +1,8 @@
 {
- "n_ops": 2203,
+ "n_ops": 2208,
  "tiers": {
   "color": 12,
-  "ledger": 1254,
+  "ledger": 1259,
   "nary": 17,
   "registry": 920
  },
@@ -12783,6 +12783,20 @@
    ]
   },
   {
+   "name": "seg_contingency",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "score",
+   "tier": "ledger",
+   "ledger": "opsemproof",
+   "dim": "emproof",
+   "in_sorts": [
+    "labels2d",
+    "labels2d"
+   ]
+  },
+  {
    "name": "seg_inject_merge",
    "halcon": "",
    "in_sort": "labels2d",
@@ -12847,6 +12861,63 @@
    "dim": "emproof",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "seg_rand",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "score",
+   "tier": "ledger",
+   "ledger": "opsemproof",
+   "dim": "emproof",
+   "in_sorts": [
+    "labels2d",
+    "labels2d"
+   ]
+  },
+  {
+   "name": "seg_synapse_partners",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "wiring",
+   "tier": "ledger",
+   "ledger": "opsemproof",
+   "dim": "emproof",
+   "in_sorts": [
+    "labels2d",
+    "table"
+   ]
+  },
+  {
+   "name": "seg_variation_of_information",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "score",
+   "tier": "ledger",
+   "ledger": "opsemproof",
+   "dim": "emproof",
+   "in_sorts": [
+    "labels2d",
+    "labels2d"
+   ]
+  },
+  {
+   "name": "seg_wiring_variation",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "wiring",
+   "tier": "ledger",
+   "ledger": "opsemproof",
+   "dim": "emproof",
+   "in_sorts": [
+    "labels2d",
+    "labels2d",
+    "table"
    ]
   },
   {

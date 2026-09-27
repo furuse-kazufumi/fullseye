@@ -1,0 +1,32 @@
+[
+ {
+  "file": "01_proofreading_order.png",
+  "name": "proofreading_order",
+  "caption": "CREMI sample A(z 125 枚 × xy 625² @ 0,625)。分断 54 件・融合 54 件を 1 件ずつ仕込み、それぞれの配線の損傷(シナプスの端で取った VOI)を足し上げた。上位 20 件で、画素の VOI の順は 41%、配線の順は 49%。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_pixel_vs_wiring_cost.png",
+  "name": "pixel_vs_wiring_cost",
+  "caption": "1 点 = 仕込んだ誤り 1 件。順位相関 0.60。分断の 23 / 54 件は配線を 1 ビットも変えない(横軸の上に並ぶ)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_two_cuts.png",
+  "name": "two_cuts",
+  "caption": "",
+  "shape": [
+   718,
+   1280,
+   3
+  ]
+ }
+]

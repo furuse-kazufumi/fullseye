@@ -4,7 +4,7 @@ dim: emproof
 category: inject
 in: labels2d × labels2d
 out: table
-examples: [poc_em_second_opinion]
+examples: [poc_em_second_opinion, poc_em_split_merge_score]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -44,10 +44,11 @@ version: 0.2.3  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_em_second_opinion](../../../../examples/poc_em_second_opinion.py) — `py -3.11 examples/poc_em_second_opinion.py`
+- [poc_em_split_merge_score](../../../../examples/poc_em_split_merge_score.py) — `py -3.11 examples/poc_em_split_merge_score.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-—
+[seg_synapse_partners](../wiring/seg_synapse_partners.md) · [seg_wiring_variation](../wiring/seg_wiring_variation.md)
 
 ## 同カテゴリ(`inject`)
 
