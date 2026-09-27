@@ -68,11 +68,11 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**2,198 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **58 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**2,202 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **58 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 932/932, typisiertes Ledger 1245/1257, Fassade `fullseye.<name>` 598/1247 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 932/932, typisiertes Ledger 1249/1261, Fassade `fullseye.<name>` 598/1248 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 2203 Notizen verweisen **2137** auf mindestens ein lauffähiges Beispiel (66 ohne), **2152** haben einen Nutzungsabschnitt ab 120 Zeichen (51 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 2203.
+**Gemessener Inhalt**: von 2207 Notizen verweisen **2141** auf mindestens ein lauffähiges Beispiel (66 ohne), **2156** haben einen Nutzungsabschnitt ab 120 Zeichen (51 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 2207.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
@@ -118,6 +118,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
+| `graph` | 4 | [INDEX](ops/graph/INDEX.md) |
 
 Nach Namen suchen mit `py -3.11 imgevolve.py ops --search edge`; die vollständige Tabelle ist [OP_CATALOG.md](OP_CATALOG.md), der dimensionsübergreifende Einstieg [ops/INDEX.md](ops/INDEX.md).
 
@@ -217,7 +218,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Dokumentkarte — alle 213
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 2,198 Operator-Notizen und 58 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 2,202 Operator-Notizen und 58 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 

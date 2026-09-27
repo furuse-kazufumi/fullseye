@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2192,
- "n_notes": 2198,
+ "n_ops": 2196,
+ "n_notes": 2202,
  "notes": {
   "vol_dilate": [
    {
@@ -16399,6 +16399,46 @@
     "in": "sprites",
     "out": "rgba",
     "path": "docs/ops/gfx2d/tile/tilemap_render.md"
+   }
+  ],
+  "graph_degree_summary": [
+   {
+    "op": "graph_degree_summary",
+    "dim": "graph",
+    "category": "degree",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/graph/degree/graph_degree_summary.md"
+   }
+  ],
+  "graph_cycle3": [
+   {
+    "op": "graph_cycle3",
+    "dim": "graph",
+    "category": "motif",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/graph/motif/graph_cycle3.md"
+   }
+  ],
+  "graph_degree_preserving_null": [
+   {
+    "op": "graph_degree_preserving_null",
+    "dim": "graph",
+    "category": "null",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/graph/null/graph_degree_preserving_null.md"
+   }
+  ],
+  "graph_swap_symmetry": [
+   {
+    "op": "graph_swap_symmetry",
+    "dim": "graph",
+    "category": "symmetry",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/graph/symmetry/graph_swap_symmetry.md"
    }
   ],
   "evidence_quantile": [

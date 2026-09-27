@@ -11212,6 +11212,22 @@
    "ko": "네 모서리로 갈수록 어둡게: ``out = rgb * (1 - strength * t**power)``.",
    "de": "Dunkelt zu den Ecken hin ab: ``out = rgb * (1 - strength * t**power)``."
   },
+  "graph/graph_cycle3": {
+   "fp": "7934e15fdf87",
+   "ja": "有向 3 サイクルの数 tr(B³)/3(総当たりの第 2 実装と一致)。"
+  },
+  "graph/graph_degree_preserving_null": {
+   "fp": "f719ff3602a4",
+   "ja": "次数保存のヌルモデルで 3 サイクルと相互辺を比・z にする(各標本で次数列を厳密に保存)。"
+  },
+  "graph/graph_degree_summary": {
+   "fp": "5fed9a97dd44",
+   "ja": "有向配線行列の次数・密度・相互辺(Σ入 = Σ出 = |E| が厳密)。"
+  },
+  "graph/graph_swap_symmetry": {
+   "fp": "5fedd9945b45",
+   "ja": "節点の対を入れ替えた配線との Jaccard(恒等ペアで 1.0)—— 左右対称の検査。"
+  },
   "imgforensics/copy_move_regions": {
    "fp": "1c4c573f1d5b",
    "en": "Pairs of **copy-move** (self-duplicated) regions within one image. ``table``.",

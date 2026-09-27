@@ -690,7 +690,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgenerative"):
+                 "opsgraph", "opsgenerative"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
@@ -830,6 +830,14 @@ def catalog():
     for n, m in opsspc.OPSSPC.items():
         if m["func"] is not None:
             ops.append((n, "spc", list(m["in"]), m["out"], m["func"]))
+    # 配線行列の不変量(opsgraph 台帳)。**新しい型語彙を 1 つも作らない**判断:
+    # 4 op はすべて matrix(正方の隣接行列)→ table(整数の恒等式・ヌルとの比・
+    # 次数の配列の dict)。コネクトーム / 血管網 / 配管図を同じ物差しで測る族で、
+    # 真値は整数の恒等式と第 2 実装と対称操作(2026-09-27)。
+    import opsgraph
+    for n, m in opsgraph.OPSGRAPH.items():
+        if m["func"] is not None:
+            ops.append((n, "graph", list(m["in"]), m["out"], m["func"]))
     # 絵を作る側(opsgenerative 台帳)。**新しい型語彙を 1 つも作らない**判断:
     # 30 op の返りは既存の rgb((H,W,3))/ rgbvideo((T,H,W,3))/ table に収まる。
     # 「錯視画像」という型を作らないのが要点で、作った絵に既存の 2,147 op が

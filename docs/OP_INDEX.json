@@ -1,8 +1,8 @@
 {
- "n_ops": 2192,
+ "n_ops": 2196,
  "tiers": {
   "color": 12,
-  "ledger": 1243,
+  "ledger": 1247,
   "nary": 17,
   "registry": 920
  },
@@ -5766,6 +5766,32 @@
    ]
   },
   {
+   "name": "graph_cycle3",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "motif",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "graph_degree_preserving_null",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "null",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "graph_degree_preserving_shuffle",
    "halcon": "",
    "in_sort": "conn_graph",
@@ -5776,6 +5802,19 @@
    "dim": "conngraph",
    "in_sorts": [
     "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_degree_summary",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "degree",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "matrix"
    ]
   },
   {
@@ -5910,6 +5949,19 @@
    "dim": "conngraph",
    "in_sorts": [
     "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_swap_symmetry",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "symmetry",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "matrix"
    ]
   },
   {

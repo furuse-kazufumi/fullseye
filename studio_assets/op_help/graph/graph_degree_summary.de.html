@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_degree_summary — GRAPH <code style="color:#22d3bf">degree</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_summary(adj)</code> (die Implementierung direkt: <code style="color:#22d3bf">import graphinv; graphinv.graph_degree_summary(adj)</code>; aus dem Register: <code style="color:#22d3bf">opsgraph.get(&quot;graph_degree_summary&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Degrees, density and reciprocity of a directed wiring matrix.</p>
+<p>`<code style="color:#22d3bf">adj</code><code style="color:#22d3bf"> is a square matrix; entry </code><code style="color:#22d3bf">(i, j) &gt; 0</code><code style="color:#22d3bf"> means an edge </code><code style="color:#22d3bf">i -&gt; j</code>`. Self-loops</p>
+<p>are counted separately and excluded from the edge statistics. Returns a dict with</p>
+<p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">self_loops</code><code style="color:#22d3bf">, the </code><code style="color:#22d3bf">in_degree</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">out_degree</code>` arrays,</p>
+<p>`<code style="color:#22d3bf">density</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">edges / (n (n-1))</code><code style="color:#22d3bf">), and </code><code style="color:#22d3bf">reciprocal_pairs</code>` (unordered pairs wired</p>
+<p>in both directions).</p>
+<p>The identity `<code style="color:#22d3bf">in_degree.sum() == out_degree.sum() == edges</code>` holds exactly for</p>
+<p>any directed graph and is checked before returning (fail-closed — if it ever broke,</p>
+<p>the matrix was not what the caller thought).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-square / empty / non-finite / negative input, or a</p>
+<p>matrix over the node cap.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:graphinv_three_phyla">graphinv_three_phyla</a> — <code style="color:#22d3bf">py -3.11 examples/graphinv_three_phyla.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">degree</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: graphinv.py — GRAPH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_degree_preserving_null — GRAPH <code style="color:#22d3bf">null</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_preserving_null(adj, n_samples=20, swaps_per_edge=5, seed=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import graphinv; graphinv.graph_degree_preserving_null(adj, n_samples=20, swaps_per_edge=5, seed=0)</code>; aus dem Register: <code style="color:#22d3bf">opsgraph.get(&quot;graph_degree_preserving_null&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Compare 3-cycles and reciprocity against a degree-preserving null model.</p>
+<p>Each null sample rewires the graph by `<code style="color:#22d3bf">swaps_per_edge * |E|</code>` edge swaps that keep</p>
+<p>every node&#x27;s in- and out-degree <b>exactly</b> (Maslov &amp; Sneppen 2002). The sample&#x27;s</p>
+<p>degree sequences are checked against the original before it is used — a null that</p>
+<p>drifted would make every ratio a lie, so this fails closed.</p>
+<p>Returns a dict with the observed `<code style="color:#22d3bf">cycles3</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">reciprocal_pairs</code>`, the null</p>
+<p>`<code style="color:#22d3bf">*_null_mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">*_null_sd</code><code style="color:#22d3bf">, the </code><code style="color:#22d3bf">*_ratio</code><code style="color:#22d3bf"> (observed / null mean) and </code><code style="color:#22d3bf">*_z</code>`,</p>
+<p>plus `<code style="color:#22d3bf">n_samples</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">swaps</code>`. Ratios are what let graphs of different size be</p>
+<p>compared; raw counts cannot.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>graph_degree_summary<code style="color:#22d3bf">; </code><code style="color:#22d3bf">n_samples &lt; 2</code>`</p>
+<p>(no spread to estimate); `<code style="color:#22d3bf">swaps_per_edge &lt; 1</code>`; a graph with fewer than 2 edges</p>
+<p>(nothing to swap).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:graphinv_three_phyla">graphinv_three_phyla</a> — <code style="color:#22d3bf">py -3.11 examples/graphinv_three_phyla.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">null</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: graphinv.py — GRAPH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

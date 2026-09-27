@@ -1237,6 +1237,25 @@ def _b_spc_mt_distance(pool, rng):
     return (rng.normal(0.0, 1.0, size=(60, 4)),), {"threshold": 3.0}
 
 
+# --- 配線行列の不変量。正方の 0/1 行列(自己結合なし)。 --- #
+def _b_graph_adj(pool, rng):
+    B = (rng.random((40, 40)) < 0.12).astype(int)
+    np.fill_diagonal(B, 0)
+    return (B,), {}
+
+
+def _b_graph_null(pool, rng):
+    B = (rng.random((40, 40)) < 0.12).astype(int)
+    np.fill_diagonal(B, 0)
+    return (B,), {"n_samples": 3, "swaps_per_edge": 2, "seed": 0}
+
+
+def _b_graph_swap(pool, rng):
+    B = (rng.random((40, 40)) < 0.12).astype(int)
+    np.fill_diagonal(B, 0)
+    return (B,), {"pairs": [(0, 1), (2, 3), (4, 5)]}
+
+
 def _b_spc_mt_sn_ratio(pool, rng):
     # 距離は正でなければならない(0 は「単位空間の中心に居る異常標本」= 分離ゼロ)。
     return (rng.uniform(0.5, 20.0, size=12),), {}
@@ -1371,6 +1390,10 @@ OP_ARG_BUILDERS = {
     "spc_mt_unit_space": _b_spc_mt_unit_space,
     "spc_mt_distance": _b_spc_mt_distance,
     "spc_mt_sn_ratio": _b_spc_mt_sn_ratio,
+    "graph_degree_summary": _b_graph_adj,
+    "graph_cycle3": _b_graph_adj,
+    "graph_degree_preserving_null": _b_graph_null,
+    "graph_swap_symmetry": _b_graph_swap,
     # --- 描画: 32x32 では物理的に収まらない 13 op ---------------------------- #
     "text_box": _b_draw(["image2d", "text"]),
     "leader_line": _b_leader_line,

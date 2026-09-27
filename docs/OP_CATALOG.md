@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(253 例)
+### 2-D 画像/信号/幾何(254 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -111,6 +111,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **imgmetrics**
 - **統計的工程管理を op の連鎖で(検査計測が管理下か・能力があるか)** — マシンビジョンの計測列に Xbar-R 管理図 / CUSUM / 工程能力 Cp-Cpk / 多変量 Hotelling T² を掛ける。+4σ の逸脱は管理図が即座に、+0.8σ の持続ドリフトは CUSUM が Shewhart 3σ(0 件)より早く捕らえ、中心が仕様中点なら Cpk=Cp、多変量 T² は相関する計測の同時ドリフトを 1 判定にまとめる。どれも標準・教科書の閉じた式で、ISO 8258 定数・CUSUM の傾き d−k・T² 平均行 0 を厳密に検査する。 `py -3.11 examples/poc_spc.py`
+- **配線行列は「次数だけの偶然」より何倍構造を持つか(3 つの門を同じ物差しで)** — コネクトーム / 血管網 / 配管図を隣接行列として、次数・相互辺・有向 3 サイクルを次数保存のヌルとの比で測る。素の個数は規模で決まって比べられないが、比なら門を跨げる。真値は整数の恒等式(Σ入 = Σ出 = |E|)・第 2 実装(3 サイクルの総当たり)・各標本の次数列保存・恒等ペアの Jaccard = 1。実データ無しでも合成配線で恒等式が通る。 `py -3.11 examples/graphinv_three_phyla.py`
 
 **workflow**
 - **op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す** — table / points は本物の GFM 表、image / region は 1 行要約(画素は描かない)。json_block で厳密な JSON を ```json フェンスに包み、extract_json で Markdown 文書から fullseye 封筒だけを bit 一致で回収。report は『読める』と『機械で戻せる』を with_json で 1 文書に両立。異種フェンスは無視し未知 sort は断る。 `py -3.11 examples/typed_results_markdown.py`

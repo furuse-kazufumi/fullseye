@@ -68,11 +68,11 @@
 
 ## 查找算子
 
-共有 **2,198 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **58 篇族指南**。按维度的入口:
+共有 **2,202 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **58 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 932/932、类型化台账 1245/1257、单行门面 `fullseye.<名称>` 598/1247 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 932/932、类型化台账 1249/1261、单行门面 `fullseye.<名称>` 598/1248 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 2203 篇中，附有可运行示例的 **2137** 篇(66 篇没有)，用法说明 120 字以上的 **2152** 篇(51 篇仅一行)。结构(调用形式、类型、可衔接算子)2203 篇全有。
+**内容实测**: 2207 篇中，附有可运行示例的 **2141** 篇(66 篇没有)，用法说明 120 字以上的 **2156** 篇(51 篇仅一行)。结构(调用形式、类型、可衔接算子)2207 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -118,6 +118,7 @@
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
+| `graph` | 4 | [INDEX](ops/graph/INDEX.md) |
 
 按名称检索用 `py -3.11 imgevolve.py ops --search edge`;全部算子的对照表见 [OP_CATALOG.md](OP_CATALOG.md)，跨维度入口见 [ops/INDEX.md](ops/INDEX.md)。
 
@@ -217,7 +218,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 213 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,198 篇算子说明与 58 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,202 篇算子说明与 58 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 
