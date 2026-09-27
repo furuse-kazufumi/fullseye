@@ -462,7 +462,8 @@ from spc import (  # noqa: E402,F401
 import graphinv  # noqa: E402  (graph invariants of wiring matrices)
 from graphinv import (  # noqa: E402,F401
     graph_degree_summary, graph_cycle3, graph_degree_preserving_null, graph_swap_symmetry,
-    graph_edge_consensus, graph_strength_growth,
+    graph_edge_consensus, graph_strength_growth, graph_kcore, graph_rich_club_curve,
+    graph_core_persistence,
 )
 import treemorph  # noqa: E402  (neuron trees from SWC)
 import segcompare  # noqa: E402  (compare two segmentations: VOI / Rand)

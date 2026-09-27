@@ -1,8 +1,8 @@
 {
- "n_ops": 2214,
+ "n_ops": 2217,
  "tiers": {
   "color": 12,
-  "ledger": 1265,
+  "ledger": 1268,
   "nary": 17,
   "registry": 920
  },
@@ -5766,6 +5766,19 @@
    ]
   },
   {
+   "name": "graph_core_persistence",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "population",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "graph_cycle3",
    "halcon": "",
    "in_sort": "matrix",
@@ -5871,6 +5884,19 @@
    ]
   },
   {
+   "name": "graph_kcore",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "core",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "graph_laplacian_spectrum",
    "halcon": "",
    "in_sort": "conn_graph",
@@ -5962,6 +5988,19 @@
    "dim": "conngraph",
    "in_sorts": [
     "conn_graph"
+   ]
+  },
+  {
+   "name": "graph_rich_club_curve",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "core",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "matrix"
    ]
   },
   {

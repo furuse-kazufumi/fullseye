@@ -1,8 +1,12 @@
-# GRAPH operator help — 12 ops in 7 categories
+# GRAPH operator help — 15 ops in 8 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/graph/<category>/<op>.md` を走査。
 
 ## カテゴリ
+
+### core (2)
+
+[graph_kcore](core/graph_kcore.md) · [graph_rich_club_curve](core/graph_rich_club_curve.md)
 
 ### degree (1)
 
@@ -20,9 +24,9 @@
 
 [graph_degree_preserving_null](null/graph_degree_preserving_null.md)
 
-### population (2)
+### population (3)
 
-[graph_edge_consensus](population/graph_edge_consensus.md) · [graph_strength_growth](population/graph_strength_growth.md)
+[graph_core_persistence](population/graph_core_persistence.md) · [graph_edge_consensus](population/graph_edge_consensus.md) · [graph_strength_growth](population/graph_strength_growth.md)
 
 ### symmetry (1)
 

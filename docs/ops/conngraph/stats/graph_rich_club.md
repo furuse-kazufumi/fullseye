@@ -4,7 +4,7 @@ dim: conngraph
 category: stats
 in: conn_graph
 out: measurement
-examples: []
+examples: [poc_worm_core_persists]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -33,7 +33,7 @@ rich club 係数 φ(k): 総次数 (in+out、二値) > k のノードが張る部
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_worm_core_persists](../../../../examples/poc_worm_core_persists.py) — `py -3.11 examples/poc_worm_core_persists.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 

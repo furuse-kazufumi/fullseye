@@ -356,3 +356,188 @@ def test_strength_growth_refuses_bad_hub_fraction():
     for hf in (0.0, 1.5, -0.1):
         with pytest.raises(ValueError):
             G.graph_strength_growth(a, b, hub_fraction=hf)
+
+
+# ---------------------------------------------------------------------------------------------------
+# k-core / s-core, rich club curve, core persistence
+# ---------------------------------------------------------------------------------------------------
+
+def _complete(n=6):
+    B = np.ones((n, n), int)
+    np.fill_diagonal(B, 0)
+    return B
+
+
+def _tree(n=15, seed=3):
+    """Random recursive tree (each node hangs off an earlier one), both directions written."""
+    rng = np.random.default_rng(seed)
+    B = np.zeros((n, n), int)
+    for v in range(1, n):
+        u = int(rng.integers(v))
+        B[u, v] = B[v, u] = 1
+    return B
+
+
+def test_kcore_theorems_complete_tree_cycle():
+    K = _complete(7)
+    r = G.graph_kcore(K, mode="undirected")
+    assert r["kmax"] == 6 and r["inner"].all() and r["n_inner"] == 7          # one core of index n−1
+    assert list(r["levels"]) == [6] and list(r["counts"]) == [7]
+    T = _tree(20)
+    assert G.graph_kcore(T, mode="undirected")["kmax"] == 1                    # a tree has index 1
+    C = _cycle(9) + _cycle(9).T                                                # undirected 9-cycle
+    assert G.graph_kcore(C, mode="undirected")["kmax"] == 2
+    assert G.graph_kcore(_cycle(9), mode="in")["kmax"] == 1                    # directed cycle: in = out = 1
+    assert G.graph_kcore(_cycle(9), mode="total")["kmax"] == 2
+    # a star: the hub has degree n−1 but its core index is 1 (leaves peel it down)
+    S = np.zeros((8, 8), int)
+    S[0, 1:] = 1
+    S[1:, 0] = 1
+    rs = G.graph_kcore(S, mode="undirected")
+    assert rs["kmax"] == 1 and rs["inner"].all()
+
+
+def test_kcore_matches_networkx_and_counts_partition():
+    nx = pytest.importorskip("networkx")
+    for seed in (1, 2, 3):
+        B = _random(60, 0.08, seed)
+        r = G.graph_kcore(B, mode="undirected")
+        Gx = nx.Graph()
+        Gx.add_nodes_from(range(60))
+        Gx.add_edges_from(zip(*np.nonzero(np.maximum(B, B.T))))
+        Gx.remove_edges_from(nx.selfloop_edges(Gx))
+        cn = nx.core_number(Gx)
+        assert all(int(r["core"][v]) == cn[v] for v in range(60))
+        assert int(r["counts"].sum()) == 60
+        assert r["inner"].sum() == r["n_inner"] >= 1
+        # every innermost node keeps >= kmax neighbours inside the innermost core
+        idx = np.nonzero(r["inner"])[0]
+        sub = np.maximum(B, B.T)[np.ix_(idx, idx)]
+        assert (sub.sum(axis=1) >= r["kmax"]).all()
+    # in / out on a directed graph: hand peel (second implementation)
+    B = _random(40, 0.12, 5)
+    for mode, axis in (("in", 0), ("out", 1)):
+        r = G.graph_kcore(B, mode=mode)
+        alive = np.ones(40, bool)
+        core = np.zeros(40, int)
+        cur = 0
+        for _ in range(40):
+            M = B * np.outer(alive, alive)
+            d = M.sum(axis=axis)
+            d = np.where(alive, d, 10 ** 6)
+            v = int(np.argmin(d))
+            cur = max(cur, int(d[v]))
+            core[v] = cur
+            alive[v] = False
+        assert np.array_equal(core, r["core"])
+
+
+def test_score_equals_kcore_on_binary_and_scales_with_weights():
+    rng = np.random.default_rng(7)
+    W = rng.poisson(0.4, (30, 30)).astype(float)
+    np.fill_diagonal(W, 0)
+    B = (W > 0).astype(int)
+    for mode in ("in", "out", "total", "undirected"):
+        k = G.graph_kcore(B, mode=mode)
+        s1 = G.graph_kcore(B, mode=mode, weighted=True)
+        assert np.allclose(s1["core"], k["core"])                                # s-core of 0/1 == k-core
+        s2 = G.graph_kcore(W, mode=mode, weighted=True)
+        s3 = G.graph_kcore(2.5 * W, mode=mode, weighted=True)
+        assert np.allclose(s3["core"], 2.5 * s2["core"])                         # weights × c → indices × c
+        assert s2["kmax"] >= k["kmax"] - 1e-12                                   # strength >= degree (weights >= 1)
+        assert s2["weighted"] and not k["weighted"]
+
+
+@pytest.mark.parametrize("bad", [np.ones((3, 4)), -np.ones((3, 3)), np.array([[np.nan, 1], [1, 0]]),
+                                 np.array([["a", "b"], ["c", "d"]]), np.ones((3, 3), bool)])
+def test_kcore_refuses(bad):
+    with pytest.raises(ValueError):
+        G.graph_kcore(bad)
+
+
+def test_kcore_refuses_bad_mode():
+    with pytest.raises(ValueError, match="mode"):
+        G.graph_kcore(_complete(4), mode="sideways")
+
+
+def test_rich_club_curve_matches_conngraph_and_complete_graph():
+    C = pytest.importorskip("conngraph")
+    B = _random(50, 0.1, 11)
+    r = G.graph_rich_club_curve(B, mode="total", n_null=3, swaps_per_edge=1)
+    for i, k in enumerate(r["k"]):
+        assert r["phi"][i] == pytest.approx(C.graph_rich_club(B, int(k)))      # same φ(k) for every k
+        assert r["count"][i] == int(((B.sum(0) + B.sum(1)) > k).sum())
+    assert len(r["k"]) == int((B.sum(0) + B.sum(1)).max())
+    K = _complete(6)
+    rk = G.graph_rich_club_curve(K, n_null=2)
+    assert np.allclose(rk["phi"], 1.0) and np.allclose(rk["ratio"], 1.0)        # no swap can change K_n
+    assert not rk["regime"].any()
+    # the null of a rewired graph is the graph's own ensemble: ratio ~ 1 in the well-populated range
+    R = G.graph_rich_club_curve(G._rewire(B.astype(np.int8), np.random.default_rng(1), 5 * int(B.sum())),
+                                n_null=30)
+    good = R["count"] >= 10
+    assert np.nanmax(np.abs(R["ratio"][good] - 1.0)) < 0.35
+    # a planted rich club: 6 hubs fully wired to each other on top of a sparse graph
+    P = _random(60, 0.04, 2)
+    hubs = np.arange(6)
+    P[np.ix_(hubs, hubs)] = 1
+    np.fill_diagonal(P, 0)
+    rp = G.graph_rich_club_curve(P, n_null=20, seed=3)
+    top = rp["count"] <= 6
+    assert (rp["count"] > 0)[top].any() and np.nanmin(rp["ratio"][top & (rp["count"] > 1)]) > 1.0
+
+
+def test_rich_club_curve_in_out_modes_and_refusals():
+    B = _random(40, 0.1, 4)
+    ri = G.graph_rich_club_curve(B, mode="in", n_null=2)
+    ro = G.graph_rich_club_curve(B, mode="out", n_null=2)
+    assert len(ri["k"]) == int(B.sum(0).max()) and len(ro["k"]) == int(B.sum(1).max())
+    with pytest.raises(ValueError, match="mode"):
+        G.graph_rich_club_curve(B, mode="undirected")
+    with pytest.raises(ValueError, match="n_null"):
+        G.graph_rich_club_curve(B, n_null=1)
+    with pytest.raises(ValueError, match="swaps_per_edge"):
+        G.graph_rich_club_curve(B, swaps_per_edge=0)
+    with pytest.raises(ValueError):
+        G.graph_rich_club_curve(np.zeros((5, 5)))
+
+
+def test_core_persistence_identities_and_synthetic_series():
+    # a clique of 5 that every individual shares + a private clique of 5 per individual (same index 4)
+    n = 30
+    mats = {}
+    for i, name in enumerate("abcd"):
+        B = _random(n, 0.03, 20 + i)
+        B[np.ix_(range(5), range(5))] = 1
+        priv = np.arange(6 + 5 * i, 11 + 5 * i)
+        B[np.ix_(priv, priv)] = 1
+        np.fill_diagonal(B, 0)
+        mats[name] = B
+    r = G.graph_core_persistence(mats, mode="undirected")
+    assert r["k"] == 4 and r["names"] == list("abcd")
+    assert int(r["n_inner"].sum()) == int(r["appearances"].sum())                # Σ|inner_i| == Σ appearances
+    assert r["n_persistent"] + r["n_recurrent"] + r["n_transient"] + r["n_never"] == n
+    assert r["persistent"][:5].all()                                                # the shared clique persists
+    for i in range(4):
+        assert r["membership"][i][r["persistent"]].all()                            # persistent ⊆ every inner core
+        assert r["membership"][i][6 + 5 * i:11 + 5 * i].all()                       # the private clique is in its own core
+    assert r["n_transient"] >= 20                                                   # 4 private cliques × 5 nodes
+    # identical inputs: everything in the core is persistent, nothing recurrent / transient
+    same = G.graph_core_persistence([mats["a"], mats["a"], mats["a"]], mode="undirected")
+    assert same["n_recurrent"] == 0 and same["n_transient"] == 0
+    assert same["n_persistent"] == int(G.graph_kcore(mats["a"], mode="undirected")["n_inner"])
+    # list input names are indices; weighted mode passes through
+    rl = G.graph_core_persistence([mats["a"], mats["b"]], mode="in", weighted=True)
+    assert rl["names"] == ["0", "1"] and rl["weighted"] and rl["kmax"].dtype.kind == "f"
+
+
+def test_core_persistence_refuses():
+    B = _random(10, 0.2, 1)
+    with pytest.raises(ValueError, match="at least 2"):
+        G.graph_core_persistence([B])
+    with pytest.raises(ValueError, match="node order"):
+        G.graph_core_persistence([B, _random(11, 0.2, 1)])
+    with pytest.raises(ValueError, match="list of matrices"):
+        G.graph_core_persistence(B)
+    with pytest.raises(ValueError, match="mode"):
+        G.graph_core_persistence([B, B], mode="x")

@@ -71,11 +71,11 @@ individual with no edges; ``n_null`` equal to 1 (no spread) or negative;
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[tree_morphometry](../tree/tree_morphometry.md) · [tree_sholl](../tree/tree_sholl.md) · [tree_run_length](../tree/tree_run_length.md)
+[graph_core_persistence](graph_core_persistence.md) · [tree_morphometry](../tree/tree_morphometry.md) · [tree_sholl](../tree/tree_sholl.md) · [tree_run_length](../tree/tree_run_length.md)
 
 ## 同カテゴリ(`population`)
 
-[graph_strength_growth](graph_strength_growth.md)
+[graph_strength_growth](graph_strength_growth.md) · [graph_core_persistence](graph_core_persistence.md)
 
 ---
 *Provenance: graphinv.py — GRAPH operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

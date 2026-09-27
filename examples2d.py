@@ -121,6 +121,11 @@ EXAMPLES = [
      "summary": "Tero 2010 の管の力学(dD/dt = |Q| − D)を graph_physarum_path(重み付きグラフ)と physarum_route(コスト画像)で回す。"
                 "15×15 の格子 5 通り・完全迷路・地形の全部で道が Dijkstra / route_through_array と一致(差 < 1e-9)。指示関数への収束"
                 "(Bonifaci 2012)は 3/5、残り 2 は 2 位との差が小さく拮抗が残る。Lyapunov V = Σ L·D は 23 区間で一度も増えない。"},
+    {"id": "poc_worm_core_persists", "task": "imgmetrics", "data": "synthetic",
+     "name": "線虫の脳の核は生まれた時から在る —— 8 匹の発生系列で「最も深い殻」に居続ける細胞を数える",
+     "summary": "Witvliet 2021 の 8 匹を graph_kcore / graph_rich_club_curve / graph_core_persistence で剥く。シナプス数で剥いた最深殻は発生を"
+                "通じて 6〜10 細胞(指数 7 → 55)、RIA の対は 8 匹全員に居る。0/1 の k-core は最深殻が 150 細胞に膨らむ。4 種の核のどれかで"
+                "持続する細胞 51 = Yadav & Singh 2026 の公表値。門は定理(完全グラフ n−1・木 1・閉路 2)と networkx との一致。"},
     {"id": "poc_skeleton_run_length_vs_voi", "task": "imgmetrics", "data": "synthetic",
      "name": "走行長は小さな融合を許さない —— 同じ誤りを、ERL と VOI は違う重さで数える",
      "summary": "Witvliet 2021 の骨格を正解に、候補のラベル付けを 1 つずつ仕込む。分断 1 つの ERL は閉形式 (A²+(L−A−|e|)²)/L、"

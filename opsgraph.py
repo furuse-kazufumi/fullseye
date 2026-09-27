@@ -46,6 +46,15 @@ _CATALOG = {
         ("graph_edge_consensus", "graphinv", ["table"], "table"),
         # 2 時点(または 2 個体)の間で、どの節点にどれだけ重みが足されたか(入力と出力を分ける)。
         ("graph_strength_growth", "graphinv", ["matrix", "matrix"], "table"),
+        # K 個体の最深殻(k-core / s-core)に居続ける節点(persistent / recurrent / transient)。入力は table。
+        ("graph_core_persistence", "graphinv", ["table"], "table"),
+    ],
+    # 核と富裕層。k-core は「全員が k 本以上持つ極大部分グラフ」(Seidman 1983)、重み版 s-core は
+    # 強さで剥く(Eidsaa & Almaas 2013)。定理が門: 完全グラフは n−1 の 1 殻、木は 1、閉路は 2。
+    # rich club φ(k) は 1 点の conngraph.graph_rich_club と全 k で一致、割るのは次数保存ヌル。
+    "core": [
+        ("graph_kcore", "graphinv", ["matrix"], "table"),
+        ("graph_rich_club_curve", "graphinv", ["matrix"], "table"),
     ],
     # 神経の木(SWC)。木はグラフの一種なのでこの台帳に置く。入口は text(SWC の本文か
     # パス)で、読んだ時点で構造の約束(根 1・親 id < 子 id・節点 = 辺 + 1)を検査する。

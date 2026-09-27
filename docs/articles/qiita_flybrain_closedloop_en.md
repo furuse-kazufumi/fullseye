@@ -89,6 +89,7 @@ One experiment = one question. **This article is appended to every time an exper
 | Run length forgives no small merge | One cut's ERL matches the closed form on 1,713 skeletons. Sweeping the merge size from 5 % to 50 %, VOI merge rises 0.14 → 0.66 bits, but the receiving skeleton's ERL is 0 for every q. Uniform 3-point cuts of unbranched skeletons match the Dirichlet expectation, ratio 1.02 | Addendum |
 | What the slime mould taught: its tubes are continuous (work in progress) | Maze 5/5; with continuous parts the ridge vanishes 24/24; greedy recovery returns 8/8 readable circuits that inherit 9/9. Under evolution the leak gives 8/8, but "evolution crossed the ridge" was retracted (the leak had erased it). Peeling the floors during the search: heritability 13/16 vs 4/16 at n=16 (p=0.0038). One task, fixed schedule — research remains | Addendum |
 | Slime-mould tubes solve the maze (two ops) | Five lattices, a perfect maze and a terrain: the mould's route equals Dijkstra / route_through_array everywhere (< 1e-9). 3/5 converged to the indicator; the two cut off have the smallest runner-up gaps (0.009, 0.032). The Lyapunov V never rose over 23 intervals | Addendum |
+| The worm brain's core is there from birth (3 ops) | Peeled by synapse count, the deepest shell stays at 6–10 cells through development (index 7 → 55) and the RIA pair never leaves it; the 0/1 k-core swells to 150 cells and cannot single out a core. 51 cells persistent in some core type = the published value | Addendum |
 
 ## Glossary (worth reading first)
 
@@ -893,6 +894,35 @@ On five 15×15 lattices (edge lengths U(0.5, 1.5)) every route equals Dijkstra's
 A 32×32 smooth terrain matched too (cut off at 2,500 iterations, with neighbouring tubes still faintly present). The inequality flow length Σ|Q|L ≥ shortest path held exactly in every case (equality at convergence).
 
 Prior art: several reimplementations of Tero 2010 exist on GitHub, but none I found gates against Dijkstra or uses `route_through_array` as the truth on a cost image. Jones 2010's "Physarum machine" (chemotactic particles) is a different model. These ops surface `physarum_search.py`, written on 2026-08-26 during a GPU study and never registered, now with the Dijkstra, inequality and Lyapunov gates attached.
+
+### The worm brain's core is there from birth — counting the cells that stay in the deepest shell across 8 developmental stages (2026-09-28)
+
+"How much wiring do 8 worms share" counted **connections** by how many animals carry them. This time we count how deep in the wiring each **cell** sits. The ruler is the k-core (Seidman 1983): the maximal subgraph in which every member has at least k connections; peel the shells from the outside and what remains is the "deepest shell". Its weighted twin, the s-core (Eidsaa & Almaas 2013), peels by "every member has at least s synapses". Three new ops — `graph_kcore` (in / out / total / undirected × binary / weighted), `graph_rich_club_curve` (the rich-club coefficient for every k at once, divided by the degree-preserving null) and `graph_core_persistence` (the cells that stay in the deepest shell of all K animals) — are gated by theorems: a complete graph is one shell of index n − 1, a tree 1, a cycle 2; the s-core of a 0/1 matrix equals the k-core exactly; scaling the weights by c scales the indices by c; the undirected k-core agrees with networkx on every node; φ(k) equals the single-k `graph_rich_club` for every k.
+
+![8 wirings on the neuron positions](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/03_core_map.png)
+
+![from 0 h after birth to adulthood](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/04_core_map_gif.gif)
+
+The 8 wirings are drawn on the neuron positions (the roots of the authors' published skeletons, viewed along the body axis), aligned to the 7th animal (an adult) by Procrustes. Orange is that animal's deepest shell (in-degree s-core); red are the cells in the deepest shell of all 8. Results:
+
+| core type | deepest index (0 h → adult) | size of the deepest shell | in all 8 |
+|---|---|---|---|
+| in, s-core (peel by synapse count) | 7 → 55 | **6–10 cells** | **RIAL RIAR** RMDDR RMDVL (4) |
+| out, s-core | 6 → 48 | 2–33 | RIAL RIAR (2) |
+| in, k-core (peel by 0/1) | 3 → 5 | 15 → **150** | 12 (RIA, RMD, SMD) |
+| out, k-core | 3 → 5 | 65 → 110 | 42 |
+
+Peeling by synapse count, the deepest shell stays small — 6 to 10 cells — throughout development while its index deepens from 7 to 55, and the interneuron pair RIA never leaves it from 0 h to adulthood (the shell holds 10 motor and 2 interneuron classes; no muscle or glia enters). Peeling by 0/1 the k-core is coarse even in the adult (index 3–5) and its deepest shell swells to 150 cells, which cannot single out a core — the way of counting decides the claim.
+
+![depth of the deepest shell](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/01_core_depth.png)
+
+Published value: Yadav & Singh (bioRxiv, 2026-06) measured the same quantities on the same 8 animals and report **51 cells persistent in at least one of the 4 core types (in / out × k / s)**. Here it is **51 as well**. They also write that among head neurons only AIBR, RIBL and RIAR persist; under my definition (persistent in **all** 4 types) it is RIAL and RIAR. I could not tell from the text which definition gives their 3, so the mismatch is recorded as is (nothing fitted).
+
+![rich club regime](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/02_rich_club_curves.png)
+
+The rich club (density among high in-degree cells over the null) exceeds 1 in some band at every stage, with peak ratios 1.4–3.3 and the band widening to k = 1–28 in the adult. One L3 animal dips below 1 at high k, so the 8 animals do not form a monotone series.
+
+Prior art: the k-core and rich-club quantities are those of Yadav & Singh 2026 (they came first). Our part is the numpy ops gated by theorems, agreement with a second implementation (networkx), the s-core vs k-core contrast, and the moving figure on the cell positions. Data from nemanode.org and the authors' skeleton repository (not bundled).
 
 ### What we measure next
 

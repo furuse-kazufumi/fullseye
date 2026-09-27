@@ -14871,6 +14871,18 @@
   "graph/physarum_route": {
    "fp": "55240c7a61a4",
    "ja": "コスト画像の最小コスト経路を粘菌の管の力学で: 隣接画素を長さ (c_u+c_v)/2 の管で結び、route_through_array と同じ量を最小化する。導電度の画像、経路の画素列、経路コスト、途中経過の画像を返す。"
+  },
+  "graph/graph_kcore": {
+   "fp": "4d6c49c3526a",
+   "ja": "配線行列の k-core(重み付きなら s-core)分解: 各節点の核の指数。入次数・出次数・総次数・無向のどれで剥くかを選ぶ。定理が門(完全グラフは n−1、木は 1、閉路は 2)。最深殻の節点、殻ごとの個数を返す。"
+  },
+  "graph/graph_rich_club_curve": {
+   "fp": "cb194aee29c6",
+   "ja": "rich club 係数 φ(k) を全 k で一度に: 次数 > k の節点が張る部分グラフの密度を、次数保存ヌルの平均で割る。比 > 1 が rich club の帯。1 点の graph_rich_club と全 k で一致するのが門。"
+  },
+  "graph/graph_core_persistence": {
+   "fp": "73d152744216",
+   "ja": "K 個体の配線を同じ節点順で重ね、最深殻(k-core / s-core)に全員で居る節点(persistent)・何匹かで居る(recurrent)・1 匹だけ(transient)を数える。Σ|最深殻| = Σ出現回数 が門。"
   }
  }
 }

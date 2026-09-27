@@ -1656,7 +1656,7 @@ Ops used (notes): [`attention_apply`](https://furuse.work/ops/llmcore/score/atte
 
 Counting cells, reading a nucleus's DNA content, measuring vessel branching, tracking a wound's area: all of these tend to be reported as one number, and there are situations in which that number is right anyway. Cell counting where over- and under-segmentation balance to a +0.3-cell bias; ploidy classification that survives a forgotten background subtraction; a calibration that returns the most stable and most wrong healing constant.
 
-The 24 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
+The 25 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
 
 The thing to watch for is a method that appears to improve while the quantity it measures quietly swaps: the area classifier gets better with more blur because 'area' is leaking DNA content. Unless the reason for every improvement is traced, this kind of lie gets carried home as a result.
 
@@ -2335,6 +2335,34 @@ Source: [examples/poc_swc_tree_truth.py](https://github.com/furuse-kazufumi/full
 This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_swc_tree_truth)
 
 Ops used (notes): [`skeleton`](https://furuse.work/ops/2d/region/skeleton.html) · [`tree_from_swc`](https://furuse.work/ops/graph/tree/tree_from_swc.html) · [`tree_morphometry`](https://furuse.work/ops/graph/tree/tree_morphometry.html) · [`tree_sholl`](https://furuse.work/ops/graph/tree/tree_sholl.html)
+
+## No.2026.164 —— The Worm Brain's Core Is There from Birth — Counting the Cells That Stay in the Deepest Shell Across 8 Developmental Stages
+
+[![The Worm Brain's Core Is There from Birth — Counting the Cells That Stay in the Deepest Shell Across 8 Developmental Stages](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/03_core_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/03_core_map.png)
+
+*↑ **The Worm Brain's Core Is There from Birth — Counting the Cells That Stay in the Deepest Shell Across 8 Developmental Stages** ―― The chemical-synapse wirings of Witvliet 2021's 8 animals (0 h after birth → adult) are peeled with three new ops: graph_kcore (k-core / weighted s-core; in, out, total, undirected), graph_rich_club_curve (the rich-club coefficient for every k, divided by the degree-preserving null) and graph_core_persistence (the cells that stay in the deepest shell of all K animals). Gates are theorems: a complete graph is one shell of index n − 1, a tree 1, a cycle 2; the s-core of a 0/1 matrix equals the k-core exactly; weights × c → indices × c; the undirected k-core agrees with networkx on every node; φ(k) equals the single-k graph_rich_club for every k. Peeled by synapse count, the deepest (in-degree s-core) shell stays at 6–10 cells through development while its index deepens from 7 to 55, and the interneuron pair RIA is in the deepest shell of all 8 (10 motor and 2 interneuron classes; no muscle or glia). Peeled by 0/1, the k-core is coarse even in the adult (index 3–5) and its deepest shell swells to 150 cells. 51 cells persist in at least one of the 4 core types (in / out × k / s) — the published value of Yadav & Singh 2026 (bioRxiv); their 'only AIBR, RIBL, RIAR among head neurons' does not match the RIAL, RIAR persistent in all 4 types under my definition, and is recorded as is. A rich-club band exists at every stage (peak ratio 1.4–3.3, k = 1–28 in the adult). Figures: the 8 wirings on the neuron positions (skeleton roots, viewed along the body axis) aligned to the adult by Procrustes, and a moving figure interpolating between stages as connections grow and the core changes hands. ≈ 17 s.*
+
+[![同じ 8 匹。0/1 の k-core は成虫でも指数 5、最深殻が 179 細胞まで膨らむ。シナプス数で剥く s-core は最深殻が 6〜10 細胞のまま深くなる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/01_core_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/01_core_depth.png)
+
+*↑ The measurement ―― 同じ 8 匹。0/1 の k-core は成虫でも指数 5、最深殻が 179 細胞まで膨らむ。シナプス数で剥く s-core は最深殻が 6〜10 細胞のまま深くなる。 (figure labels are in Japanese; the numbers are the same)*
+
+[![次数保存ヌル 20 標本。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/02_rich_club_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/02_rich_club_curves.png)
+
+*↑ 次数保存ヌル 20 標本。*
+
+[![生後 0 時間から成虫まで。結合が生え、最深殻(橙)が入れ替わる中で、赤の細胞(RIAL RIAR)は一度も外れない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/04_core_map_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/04_core_map_gif.gif)
+
+*↑ The animation ―― 生後 0 時間から成虫まで。結合が生え、最深殻(橙)が入れ替わる中で、赤の細胞(RIAL RIAR)は一度も外れない。*
+
+```
+py -3.11 examples/poc_worm_core_persists.py
+```
+
+Source: [examples/poc_worm_core_persists.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_worm_core_persists.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_worm_core_persists)
+
+Ops used (notes): [`graph_core_persistence`](https://furuse.work/ops/graph/population/graph_core_persistence.html) · [`graph_kcore`](https://furuse.work/ops/graph/core/graph_kcore.html) · [`graph_rich_club`](https://furuse.work/ops/conngraph/stats/graph_rich_club.html) · [`graph_rich_club_curve`](https://furuse.work/ops/graph/core/graph_rich_club_curve.html)
 
 ### The Astronomy and Environment Wing — Biased by Position, Flipped by the Definition of Truth
 

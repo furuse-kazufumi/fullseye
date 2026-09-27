@@ -45,7 +45,7 @@ either count breaks the equality. A root with one child is not a tip.
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[graph_edge_consensus](../population/graph_edge_consensus.md) · [tree_sholl](tree_sholl.md) · [tree_run_length](tree_run_length.md)
+[graph_edge_consensus](../population/graph_edge_consensus.md) · [graph_core_persistence](../population/graph_core_persistence.md) · [tree_sholl](tree_sholl.md) · [tree_run_length](tree_run_length.md)
 
 ## 同カテゴリ(`tree`)
 

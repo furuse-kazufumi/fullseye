@@ -1322,6 +1322,23 @@ def _b_physarum_route(pool, rng):
     return (rng.uniform(0.5, 1.5, (8, 8)),), {"dt": 0.3, "max_iters": 600}
 
 
+def _b_graph_kcore(pool, rng):
+    B = (rng.random((30, 30)) < 0.12).astype(int)
+    np.fill_diagonal(B, 0)
+    return (B,), {"mode": "total"}
+
+
+def _b_graph_rich_club(pool, rng):
+    B = (rng.random((30, 30)) < 0.12).astype(int)
+    np.fill_diagonal(B, 0)
+    return (B,), {"n_null": 2, "swaps_per_edge": 1}
+
+
+def _b_graph_core_persistence(pool, rng):
+    (mats,), _ = _b_graph_consensus(pool, rng)
+    return (mats,), {"mode": "in"}
+
+
 def _b_graph_growth(pool, rng):
     A = rng.poisson(0.3, (30, 30)).astype(float)
     B = A + rng.poisson(0.4, (30, 30))
@@ -1489,6 +1506,9 @@ OP_ARG_BUILDERS = {
     "graph_swap_symmetry": _b_graph_swap,
     "graph_edge_consensus": _b_graph_consensus,
     "graph_strength_growth": _b_graph_growth,
+    "graph_kcore": _b_graph_kcore,
+    "graph_rich_club_curve": _b_graph_rich_club,
+    "graph_core_persistence": _b_graph_core_persistence,
     "graph_physarum_path": _b_physarum_graph,
     "physarum_route": _b_physarum_route,
     "tree_from_swc": _b_tree_swc,

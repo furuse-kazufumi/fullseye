@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2214,
- "n_notes": 2220,
+ "n_ops": 2217,
+ "n_notes": 2223,
  "notes": {
   "vol_dilate": [
    {
@@ -16471,6 +16471,26 @@
     "path": "docs/ops/gfx2d/tile/tilemap_render.md"
    }
   ],
+  "graph_kcore": [
+   {
+    "op": "graph_kcore",
+    "dim": "graph",
+    "category": "core",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/graph/core/graph_kcore.md"
+   }
+  ],
+  "graph_rich_club_curve": [
+   {
+    "op": "graph_rich_club_curve",
+    "dim": "graph",
+    "category": "core",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/graph/core/graph_rich_club_curve.md"
+   }
+  ],
   "graph_degree_summary": [
    {
     "op": "graph_degree_summary",
@@ -16519,6 +16539,16 @@
     "in": "matrix",
     "out": "table",
     "path": "docs/ops/graph/null/graph_degree_preserving_null.md"
+   }
+  ],
+  "graph_core_persistence": [
+   {
+    "op": "graph_core_persistence",
+    "dim": "graph",
+    "category": "population",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/graph/population/graph_core_persistence.md"
    }
   ],
   "graph_edge_consensus": [

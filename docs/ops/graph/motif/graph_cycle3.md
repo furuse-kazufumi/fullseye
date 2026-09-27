@@ -40,7 +40,7 @@ formula cannot catch its own off-by-three.
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[graph_edge_consensus](../population/graph_edge_consensus.md) · [tree_morphometry](../tree/tree_morphometry.md) · [tree_sholl](../tree/tree_sholl.md) · [tree_run_length](../tree/tree_run_length.md)
+[graph_edge_consensus](../population/graph_edge_consensus.md) · [graph_core_persistence](../population/graph_core_persistence.md) · [tree_morphometry](../tree/tree_morphometry.md) · [tree_sholl](../tree/tree_sholl.md) · [tree_run_length](../tree/tree_run_length.md)
 
 ## 同カテゴリ(`motif`)
 

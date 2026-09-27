@@ -54,7 +54,7 @@ non-finite or non-integer.
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[graph_edge_consensus](../population/graph_edge_consensus.md) · [tree_morphometry](tree_morphometry.md) · [tree_sholl](tree_sholl.md)
+[graph_edge_consensus](../population/graph_edge_consensus.md) · [graph_core_persistence](../population/graph_core_persistence.md) · [tree_morphometry](tree_morphometry.md) · [tree_sholl](tree_sholl.md)
 
 ## 同カテゴリ(`tree`)
 

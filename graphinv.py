@@ -24,6 +24,16 @@ Five operators (``matrix -> table``, and one ``table -> table``; no new type voc
     individuals carry each edge, pairwise Jaccard, the synapse share by occupancy, the
     developmental split stable / added / lost / flicker, and a null that rewires every
     individual independently. Identity: ``sum_c c * h[c] == sum_i |E_i|``.
+  * :func:`graph_kcore` — the k-core decomposition (Seidman 1983) by in-, out-, total or
+    undirected degree, or its weighted twin the s-core (Eidsaa & Almaas 2013). Identities:
+    a complete graph is one core of index n−1, a tree has index 1, a cycle 2; the s-core
+    of a 0/1 matrix is the k-core; scaling every weight by c scales every s-core index by c.
+  * :func:`graph_rich_club_curve` — the rich-club coefficient φ(k) for every k at once,
+    normalised by the degree-preserving null. Identity: φ(k) equals the single-k
+    ``conngraph.graph_rich_club`` for every k; the null of a complete graph is itself.
+  * :func:`graph_core_persistence` — K wirings on one node order: which nodes sit in the
+    innermost core of every individual (persistent), of some (recurrent), of one
+    (transient). Identity: ``sum_i |inner_i| == sum_v appearances[v]``.
 
 Measured — the identities the tests are built on (``tests/test_graphinv.py``):
 
@@ -36,6 +46,10 @@ Measured — the identities the tests are built on (``tests/test_graphinv.py``):
     C. elegans hermaphrodite chemical (Cook 2019)   302 listed - 300 wired == {CANL, CANR}
     core C + unique u per individual, K of them     h[K] == C, h[1] == K*u, Jaccard == C/(C+2u)
     C. elegans, 8 worms (Witvliet 2021)             442 edges in all 8; null max 0 in 20 samples
+    complete graph K_n, k-core                      every node has index n−1 (exact)
+    tree / cycle, k-core                            index 1 / 2 (exact)
+    s-core of a 0/1 matrix                          == k-core (exact); weights × c → indices × c
+    rich club φ(k) vs conngraph.graph_rich_club     equal for every k (exact)
 
 Provenance (public standards and textbooks only): Maslov & Sneppen, *Science* 2002
 (degree-preserving rewiring); Milo et al., *Science* 2002 (network motifs);
@@ -492,3 +506,259 @@ def graph_strength_growth(a, b, hub_fraction=0.1):
             "rho_in": rho_in, "rho_out": rho_out, "n_ranked": int(len(ranked)),
             "hubs": hubs, "hub_share_in_a": share(in_a, s_a), "hub_share_gain_in": share(gain_in, ds),
             "hub_share_out_a": share(out_a, s_a), "hub_share_gain_out": share(gain_out, ds)}
+
+
+# ---------------------------------------------------------------------------------------------------
+# k-core / s-core, rich club curve, and the persistence of the innermost core across individuals.
+# ---------------------------------------------------------------------------------------------------
+
+_CORE_MODES = ("in", "out", "total", "undirected")
+
+
+def _core_degree_matrix(W: np.ndarray, mode: str, weighted: bool) -> np.ndarray:
+    """The matrix whose row / column sums are the degrees to peel on.
+
+    0/1 presence unless ``weighted``. For ``undirected`` the matrix is symmetrised first
+    (``max(W, W.T)``: an edge in either direction counts once, with its larger weight).
+    """
+    A = W if weighted else (W > 0).astype(np.float64)
+    if mode == "undirected":
+        A = np.maximum(A, A.T)
+    return A
+
+
+def _peel(A: np.ndarray, mode: str) -> np.ndarray:
+    """Generalised core decomposition by repeated removal of the minimum-degree node.
+
+    The index of the removed node is the running maximum of the minimum degree seen so far
+    (Batagelj & Zaveršnik 2003 for k-cores; the same peeling with real weights is the s-core
+    of Eidsaa & Almaas 2013). With 0/1 weights this is exactly the classic k-core. O(n^2).
+    """
+    n = A.shape[0]
+    if mode == "in":
+        deg = A.sum(axis=0).astype(np.float64)
+    elif mode == "out":
+        deg = A.sum(axis=1).astype(np.float64)
+    elif mode == "total":
+        deg = (A.sum(axis=0) + A.sum(axis=1)).astype(np.float64)
+    else:                                            # undirected (A already symmetric)
+        deg = A.sum(axis=1).astype(np.float64)
+    alive = np.ones(n, dtype=bool)
+    core = np.zeros(n, dtype=np.float64)
+    cur = 0.0
+    for _ in range(n):
+        d = np.where(alive, deg, np.inf)
+        v = int(np.argmin(d))
+        cur = max(cur, float(d[v]))
+        core[v] = cur
+        alive[v] = False
+        # the survivors lose the edges that touched v
+        if mode == "in":
+            deg -= A[v, :]                            # v's out-edges were their in-degree
+        elif mode == "out":
+            deg -= A[:, v]
+        elif mode == "total":
+            deg -= A[v, :] + A[:, v]
+        else:
+            deg -= A[v, :]
+        deg[~alive] = 0.0
+        deg = np.where(deg < 0, 0.0, deg)             # rounding dust with real weights
+    return core
+
+
+def graph_kcore(adj, mode="total", weighted=False):
+    """k-core (or weighted s-core) decomposition of a wiring matrix — every node's core index.
+
+    A k-core is the maximal subgraph in which every node has degree at least k (Seidman
+    1983); a node's **core index** is the largest k of a core it belongs to. ``mode`` picks
+    the degree: ``"in"`` (inputs a node receives), ``"out"``, ``"total"`` (in + out; a
+    reciprocal pair counts twice, as in :func:`conngraph.graph_rich_club`) or
+    ``"undirected"`` (an edge in either direction counts once — this is what
+    ``networkx.core_number`` computes on the symmetrised graph). With ``weighted=True`` the
+    degree is the **strength** (sum of weights, e.g. synapse counts) and the result is the
+    s-core of Eidsaa & Almaas 2013: the index is the running maximum of the minimum
+    strength during peeling, so it is a real number with the units of the weights.
+    Self-loops are dropped.
+
+    Returns a dict: ``core`` (n,) — the index per node (int for k-core, float for s-core);
+    ``kmax`` — the innermost index; ``inner`` (n,) bool — nodes of the innermost core;
+    ``n_inner``; ``levels`` — the distinct indices in increasing order and ``counts`` — how
+    many nodes have each (``sum(counts) == n``); ``mode``; ``weighted``.
+
+    Identities (the tests): a complete graph on n nodes has every index n−1; a tree 1;
+    a cycle 2; ``undirected`` agrees with ``networkx.core_number`` on random graphs;
+    the s-core of a 0/1 matrix equals the k-core; multiplying every weight by c multiplies
+    every s-core index by c; the innermost core is never empty and every one of its nodes
+    has at least ``kmax`` (weighted: strength) inside the core.
+
+    **Raises** ``ValueError``: as :func:`graph_degree_summary` (non-square, negative,
+    non-finite, string / bool / complex / masked input); ``mode`` not one of
+    in / out / total / undirected.
+    """
+    op = "graph_kcore"
+    if mode not in _CORE_MODES:
+        raise ValueError("%s: mode must be one of %s, got %r" % (op, "/".join(_CORE_MODES), mode))
+    W = _as_weight_matrix(adj, "adj", op)
+    np.fill_diagonal(W, 0.0)
+    A = _core_degree_matrix(W, mode, bool(weighted))
+    core = _peel(A, mode)
+    if not weighted:
+        core_out = np.rint(core).astype(np.int64)
+    else:
+        core_out = core
+    kmax = core_out.max()
+    inner = core_out == kmax
+    levels, counts = np.unique(core_out, return_counts=True)
+    return {
+        "core": core_out, "kmax": kmax, "inner": inner, "n_inner": int(inner.sum()),
+        "levels": levels, "counts": counts.astype(np.int64), "mode": mode, "weighted": bool(weighted),
+        "n": int(W.shape[0]),
+    }
+
+
+def _rich_club_phi(B: np.ndarray, deg: np.ndarray, ks: np.ndarray) -> tuple:
+    """φ(k) = directed edges among nodes with degree > k over r(r−1); r < 2 gives 0 (as conngraph)."""
+    phi = np.zeros(len(ks))
+    cnt = np.zeros(len(ks), dtype=np.int64)
+    order = np.argsort(-deg)
+    dsorted = deg[order]
+    for i, k in enumerate(ks):
+        r = int((dsorted > k).sum())
+        cnt[i] = r
+        if r < 2:
+            continue
+        idx = order[:r]
+        phi[i] = float(B[np.ix_(idx, idx)].sum()) / float(r * (r - 1))
+    return phi, cnt
+
+
+def graph_rich_club_curve(adj, mode="total", n_null=20, swaps_per_edge=5, seed=0):
+    """Rich-club coefficient φ(k) for every k, against the degree-preserving null.
+
+    φ(k) is the directed density of the subgraph spanned by the nodes whose degree exceeds
+    k: ``edges among them / (r (r − 1))``, ``r`` = their number (Colizza et al. 2006; the
+    same formula as :func:`conngraph.graph_rich_club`, here for all k at once). ``mode``
+    is the degree used to rank nodes: ``"total"`` (in + out), ``"in"`` or ``"out"`` (Yadav
+    & Singh 2026 rank by in- and out-degree separately). A rising φ(k) alone means little —
+    high-degree nodes are dense in any graph — so φ is divided by its mean over ``n_null``
+    rewirings that keep every node's in- and out-degree exactly (Maslov & Sneppen 2002;
+    every sample is checked, fail-closed). ``ratio > 1`` is the rich-club regime; Towlson
+    et al. 2013 call it significant where ``ratio > 1 + sd``.
+
+    Returns a dict: ``k`` (all integers 0 .. max degree − 1), ``count`` (nodes with degree
+    > k), ``phi``, ``null_mean``, ``null_sd``, ``ratio`` (nan where the null mean is 0),
+    ``z``, ``regime`` (bool: ratio > 1 + null sd of the ratio), ``n_null``, ``mode``.
+
+    Identities: ``phi[k] == conngraph.graph_rich_club(adj, k)`` for every k with
+    ``mode="total"``; a complete graph has ``phi == 1`` and ``ratio == 1`` everywhere
+    (no swap can change it); a rewired sample of the graph itself has ratio ≈ 1.
+
+    **Raises** ``ValueError``: as :func:`graph_degree_preserving_null` (non-square,
+    negative, ... ; ``n_null < 2``; ``swaps_per_edge < 1``; fewer than 2 edges);
+    ``mode`` not in / out / total.
+    """
+    op = "graph_rich_club_curve"
+    if mode not in ("in", "out", "total"):
+        raise ValueError("%s: mode must be in / out / total, got %r" % (op, mode))
+    B = _as_binary_adjacency(adj, "adj", op).astype(np.int64)
+    np.fill_diagonal(B, 0)
+    if int(n_null) < 2:
+        raise ValueError("%s: n_null must be >= 2 to estimate a spread, got %r" % (op, n_null))
+    if int(swaps_per_edge) < 1:
+        raise ValueError("%s: swaps_per_edge must be >= 1, got %r" % (op, swaps_per_edge))
+    E = int(B.sum())
+    if E < 2:
+        raise ValueError("%s: need at least 2 edges, got %d" % (op, E))
+
+    def _deg(M):
+        if mode == "in":
+            return M.sum(axis=0)
+        if mode == "out":
+            return M.sum(axis=1)
+        return M.sum(axis=0) + M.sum(axis=1)
+
+    deg = _deg(B)
+    ks = np.arange(0, int(deg.max()), dtype=np.int64)
+    phi, cnt = _rich_club_phi(B, deg, ks)
+    rng = np.random.default_rng(seed)
+    kin, kout = B.sum(axis=0), B.sum(axis=1)
+    null = np.zeros((int(n_null), len(ks)))
+    for si in range(int(n_null)):
+        R = _rewire(B.astype(np.int8), rng, int(swaps_per_edge) * E).astype(np.int64)
+        if not (np.array_equal(R.sum(axis=0), kin) and np.array_equal(R.sum(axis=1), kout)):
+            raise ValueError("%s: null sample %d changed a degree sequence — refusing to report" % (op, si))
+        null[si], _ = _rich_club_phi(R, _deg(R), ks)
+    mean = null.mean(axis=0)
+    sd = null.std(axis=0, ddof=1) if n_null > 1 else np.zeros_like(mean)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        ratio = np.where(mean > 0, phi / np.where(mean > 0, mean, 1.0), np.nan)
+        ratio_sd = np.where(mean > 0, sd / np.where(mean > 0, mean, 1.0), np.nan)
+        z = np.where(sd > 0, (phi - mean) / np.where(sd > 0, sd, 1.0), np.nan)
+    regime = np.isfinite(ratio) & (ratio > 1.0 + np.nan_to_num(ratio_sd))
+    return {
+        "k": ks, "count": cnt, "phi": phi, "null_mean": mean, "null_sd": sd, "ratio": ratio, "z": z,
+        "regime": regime, "n_null": int(n_null), "mode": mode, "swaps": int(swaps_per_edge) * E,
+    }
+
+
+def graph_core_persistence(adjs, mode="in", weighted=False):
+    """Which nodes sit in the innermost core of every individual — K wirings on one node order.
+
+    ``adjs`` is a list of K square matrices or a table ``{name: matrix}`` on the **same**
+    node order (a node absent from an individual is a zero row and column). For each
+    individual the innermost core of :func:`graph_kcore` (same ``mode`` / ``weighted``) is
+    taken; ``appearances[v]`` counts the individuals whose innermost core contains v.
+    Following Yadav & Singh 2026, a node is **persistent** if it is in the core of all K,
+    **recurrent** if in 2 .. K−1, **transient** if in exactly 1, and **never** otherwise.
+
+    Returns a dict: ``k`` (K), ``n``, ``names``, ``membership`` (K, n) bool,
+    ``appearances`` (n,), ``persistent`` / ``recurrent`` / ``transient`` / ``never`` (n,)
+    bool masks, ``n_persistent`` .. ``n_never``, ``kmax`` (K,) the innermost index per
+    individual, ``n_inner`` (K,), ``mode``, ``weighted``.
+
+    Identities: ``sum(n_inner) == sum(appearances)``; the four classes partition the
+    nodes; K identical inputs make every core node persistent and nothing recurrent or
+    transient; every persistent node is in every individual's innermost core.
+
+    **Raises** ``ValueError``: ``adjs`` not a list / table; fewer than 2 individuals;
+    matrices of different sizes; any refusal of :func:`graph_kcore`.
+    """
+    op = "graph_core_persistence"
+    if isinstance(adjs, dict):
+        names = [str(k) for k in adjs.keys()]
+        mats = list(adjs.values())
+    elif isinstance(adjs, (list, tuple)):
+        names = ["%d" % i for i in range(len(adjs))]
+        mats = list(adjs)
+    else:
+        raise ValueError("%s: adjs must be a list of matrices or a table {name: matrix}, "
+                         "got %s" % (op, type(adjs).__name__))
+    K = len(mats)
+    if K < 2:
+        raise ValueError("%s: need at least 2 individuals, got %d" % (op, K))
+    if mode not in _CORE_MODES:
+        raise ValueError("%s: mode must be one of %s, got %r" % (op, "/".join(_CORE_MODES), mode))
+    cores = []
+    n = None
+    for i, m in enumerate(mats):
+        r = graph_kcore(m, mode=mode, weighted=weighted)
+        if n is None:
+            n = r["n"]
+        elif r["n"] != n:
+            raise ValueError("%s: adjs[%s] has %d nodes but adjs[%s] has %d — put every "
+                             "individual on one node order first" % (op, names[i], r["n"], names[0], n))
+        cores.append(r)
+    membership = np.stack([r["inner"] for r in cores])
+    app = membership.sum(axis=0).astype(np.int64)
+    persistent = app == K
+    transient = app == 1
+    never = app == 0
+    recurrent = ~(persistent | transient | never)
+    return {
+        "k": K, "n": int(n), "names": names, "membership": membership, "appearances": app,
+        "persistent": persistent, "recurrent": recurrent, "transient": transient, "never": never,
+        "n_persistent": int(persistent.sum()), "n_recurrent": int(recurrent.sum()),
+        "n_transient": int(transient.sum()), "n_never": int(never.sum()),
+        "kmax": np.array([r["kmax"] for r in cores]), "n_inner": np.array([r["n_inner"] for r in cores], dtype=np.int64),
+        "mode": mode, "weighted": bool(weighted),
+    }

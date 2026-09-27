@@ -1,0 +1,46 @@
+[
+ {
+  "file": "01_core_depth.png",
+  "name": "core_depth",
+  "caption": "同じ 8 匹。0/1 の k-core は成虫でも指数 5、最深殻が 179 細胞まで膨らむ。シナプス数で剥く s-core は最深殻が 6〜10 細胞のまま深くなる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_rich_club_curves.png",
+  "name": "rich_club_curves",
+  "caption": "次数保存ヌル 20 標本。1 を超える帯が rich club(細胞が 5 個未満になる尾は描かない)。成虫では k の広い範囲で 1 を超え、最大 3.33 倍。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_core_map.png",
+  "name": "core_map",
+  "caption": "神経だけを描く(筋肉・グリアは最深殻に入らない)。辺の明るさはシナプス数の対数。青 = 普通の結合、橙 = 最深殻の中の結合。各匹の位置は成虫(7 匹目)へ Procrustes(回転・拡大・平行移動、残差上位 2 割を外して再適合)で揃え、2〜98 パーセンタイルの箱で切った。位置の無い神経 0 個は描かない。",
+  "shape": [
+   1095,
+   2290,
+   3
+  ]
+ },
+ {
+  "file": "04_core_map_gif.gif",
+  "name": "core_map_gif",
+  "caption": "生後 0 時間から成虫まで。結合が生え、最深殻(橙)が入れ替わる中で、赤の細胞(RIAL RIAR)は一度も外れない。",
+  "shape": [
+   480,
+   560,
+   3
+  ],
+  "animated": true,
+  "frames": 94,
+  "frames_written": 57,
+  "fps": 8.0
+ }
+]
