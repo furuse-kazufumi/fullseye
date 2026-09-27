@@ -1,0 +1,22 @@
+[
+ {
+  "file": "01_lr_jaccard_closed_form.png",
+  "name": "lr_jaccard_closed_form",
+  "caption": "集合の数え上げから Jaccard = (m−k)/(m+k)。op は 16 段すべてで分子・分母まで整数で一致した。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_lr_pair_asymmetry.png",
+  "name": "lr_pair_asymmetry",
+  "caption": "C. elegans 雌雄同体・化学シナプス(Cook 2019)。98 組のうち上位 10 組が非対称辺の 20 %(一様なら 10 %)。水平線は全体の Jaccard からの期待率 1 − J。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

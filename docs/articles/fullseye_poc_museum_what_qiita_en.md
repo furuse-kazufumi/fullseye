@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**85 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**86 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1640,7 +1640,7 @@ Ops used (notes): [`attention_apply`](https://furuse.work/ops/llmcore/score/atte
 
 Counting cells, reading a nucleus's DNA content, measuring vessel branching, tracking a wound's area: all of these tend to be reported as one number, and there are situations in which that number is right anyway. Cell counting where over- and under-segmentation balance to a +0.3-cell bias; ploidy classification that survives a forgotten background subtraction; a calibration that returns the most stable and most wrong healing constant.
 
-The 14 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
+The 15 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
 
 The thing to watch for is a method that appears to improve while the quantity it measures quietly swaps: the area classifier gets better with more blur because 'area' is leaking DNA content. Unless the reason for every improvement is traced, this kind of lie gets carried home as a result.
 
@@ -2075,6 +2075,26 @@ Source: [examples/poc_em_branch_territory.py](https://github.com/furuse-kazufumi
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_em_branch_territory)
 
 Ops used (notes): [`identity`](https://furuse.work/ops/2d/misc/identity.html) · [`points_activity_video`](https://furuse.work/ops/conngraph/activity/points_activity_video.html) · [`skeleton`](https://furuse.work/ops/2d/region/skeleton.html) · [`skeleton_branches3d`](https://furuse.work/ops/3d/medial/skeleton_branches3d.html) · [`skeleton_graph3d`](https://furuse.work/ops/3d/medial/skeleton_graph3d.html) · [`skeletonize_vol`](https://furuse.work/ops/3d/medial/skeletonize_vol.html) · [`vol_distance_transform`](https://furuse.work/ops/3d/medial/vol_distance_transform.html) · [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html) · [`vol_nearest_label`](https://furuse.work/ops/3d/medial/vol_nearest_label.html) · [`vol_nearest_seed_vector`](https://furuse.work/ops/3d/medial/vol_nearest_seed_vector.html) · [`vol_rle_components`](https://furuse.work/ops/3d/rle_region/vol_rle_components.html) · [`vol_rle_decode`](https://furuse.work/ops/3d/rle_region/vol_rle_decode.html) · [`vol_rle_volume`](https://furuse.work/ops/3d/rle_region/vol_rle_volume.html)
+
+## No.2026.153 —— Is the Worm's Wiring Bilaterally Symmetric? — The L/R-Swap Jaccard, Bracketed by a Closed Form and a Degree-Preserving Null
+
+[![Is the Worm's Wiring Bilaterally Symmetric? — The L/R-Swap Jaccard, Bracketed by a Closed Form and a Degree-Preserving Null](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/01_lr_jaccard_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/01_lr_jaccard_closed_form.png)
+
+*↑ **Is the Worm's Wiring Bilaterally Symmetric? — The L/R-Swap Jaccard, Bracketed by a Closed Form and a Degree-Preserving Null** ―― The chemical-synapse wiring of the C. elegans hermaphrodite (Cook 2019; n=300, |E|=3,669, 98 left/right pairs): the edge-set overlap (Jaccard) between the wiring and the same wiring with every L/R pair swapped. The measured 0.473 sits between perfect symmetry (1.000) and a degree-preserving null that rewires edges while keeping every degree (0.080 ± 0.002, z 159). Ground truth is a counting closed form: in a mirrored synthetic wiring with m edges per side, moving k right-hand edges gives Jaccard = (m−k)/(m+k), and the op matches it down to the integer numerator and denominator at all 16 steps k=0..120. Per-pair asymmetry falls smoothly from 0.7 to 0.15 — the expected "concentration in a few pairs" turned out to be only about twice uniform (top 10 pairs carry 20 %, uniform would be 10 %). Leading pairs: HSN 60 %, PVN 57 %, RMG 53 %, URX 48 %. No data is bundled; without it the example runs on the synthetic mirrored wiring (Jaccard 0.500 = (120−40)/(120+40)).*
+
+[![C. elegans 雌雄同体・化学シナプス(Cook 2019)。98 組のうち上位 10 組が非対称辺の 20 %(一様なら 10 %)。水平線は全体の Jaccard からの期待率 1 − J。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/02_lr_pair_asymmetry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/02_lr_pair_asymmetry.png)
+
+*↑ The measurement ―― C. elegans 雌雄同体・化学シナプス(Cook 2019)。98 組のうち上位 10 組が非対称辺の 20 %(一様なら 10 %)。水平線は全体の Jaccard からの期待率 1 − J。 (figure labels are in Japanese; the numbers are the same)*
+
+```
+py -3.11 examples/poc_connectome_lr_symmetry.py
+```
+
+Source: [examples/poc_connectome_lr_symmetry.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_connectome_lr_symmetry.py)
+
+This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_connectome_lr_symmetry)
+
+Ops used (notes): [`graph_degree_summary`](https://furuse.work/ops/graph/degree/graph_degree_summary.html) · [`graph_swap_symmetry`](https://furuse.work/ops/graph/symmetry/graph_swap_symmetry.html)
 
 ### The Astronomy and Environment Wing — Biased by Position, Flipped by the Definition of Truth
 

@@ -4,7 +4,7 @@ dim: graph
 category: symmetry
 in: matrix
 out: table
-examples: [graphinv_three_phyla]
+examples: [graphinv_three_phyla, poc_connectome_lr_symmetry]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -41,6 +41,7 @@ a node appearing in two pairs; a pair of a node with itself.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [graphinv_three_phyla](../../../../examples/graphinv_three_phyla.py) — `py -3.11 examples/graphinv_three_phyla.py`
+- [poc_connectome_lr_symmetry](../../../../examples/poc_connectome_lr_symmetry.py) — `py -3.11 examples/poc_connectome_lr_symmetry.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **85 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **86 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1640,7 +1640,7 @@ py -3.11 examples/poc_attention_identities.py
 
 細胞を数える、核の DNA 量を読む、血管の分岐を測る、創傷の面積を追う。どれも「1 つの数字」で報告されがちで、しかもその数字が合ってしまう場面があります。過分割と過統合が釣り合って個数の偏りが +0.3 個になる細胞計数、背景を引き忘れても分類が生き残る倍数性、いちばん安定して、いちばん間違った治癒定数を返す較正。
 
-この部屋の 14 点は、真値に「どれとどれが重なっているか」「面積と DNA 量が別々にばらつく」「分岐則を厳密に満たす木」といった、ラベル画像だけでは残らない情報を持たせています。実データに差し替えるときも、ラベル画像だけを真値と呼ぶと主題そのものが消える、と各 docstring に書いてあります。
+この部屋の 15 点は、真値に「どれとどれが重なっているか」「面積と DNA 量が別々にばらつく」「分岐則を厳密に満たす木」といった、ラベル画像だけでは残らない情報を持たせています。実データに差し替えるときも、ラベル画像だけを真値と呼ぶと主題そのものが消える、と各 docstring に書いてあります。
 
 見どころは、性能が上がったように見えて測っている量が入れ替わっている場面です。ぼかすほど面積分類器が良くなるのは、面積という名前で DNA 量を漏らしているから。1 つの指標が良くなった理由を毎回追わないと、こういう嘘を成果として持ち帰ることになります。
 
@@ -2075,6 +2075,26 @@ py -3.11 examples/poc_em_branch_territory.py
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_em_branch_territory)
 
 使用 op(ノートへ): [`identity`](https://furuse.work/ops/2d/misc/identity.html) · [`points_activity_video`](https://furuse.work/ops/conngraph/activity/points_activity_video.html) · [`skeleton`](https://furuse.work/ops/2d/region/skeleton.html) · [`skeleton_branches3d`](https://furuse.work/ops/3d/medial/skeleton_branches3d.html) · [`skeleton_graph3d`](https://furuse.work/ops/3d/medial/skeleton_graph3d.html) · [`skeletonize_vol`](https://furuse.work/ops/3d/medial/skeletonize_vol.html) · [`vol_distance_transform`](https://furuse.work/ops/3d/medial/vol_distance_transform.html) · [`vol_label`](https://furuse.work/ops/3d/regionprops/vol_label.html) · [`vol_nearest_label`](https://furuse.work/ops/3d/medial/vol_nearest_label.html) · [`vol_nearest_seed_vector`](https://furuse.work/ops/3d/medial/vol_nearest_seed_vector.html) · [`vol_rle_components`](https://furuse.work/ops/3d/rle_region/vol_rle_components.html) · [`vol_rle_decode`](https://furuse.work/ops/3d/rle_region/vol_rle_decode.html) · [`vol_rle_volume`](https://furuse.work/ops/3d/rle_region/vol_rle_volume.html)
+
+## No.2026.153 —— 線虫の配線は左右対称か ―― L/R 入れ替えの Jaccard を閉形式と次数保存ヌルで挟む
+
+[![線虫の配線は左右対称か ―― L/R 入れ替えの Jaccard を閉形式と次数保存ヌルで挟む](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/01_lr_jaccard_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/01_lr_jaccard_closed_form.png)
+
+*↑ **線虫の配線は左右対称か ―― L/R 入れ替えの Jaccard を閉形式と次数保存ヌルで挟む** ―― C. elegans 雌雄同体の化学シナプス配線(Cook 2019、n=300、|E|=3,669、左右対 98 組)で、左右の対をすべて入れ替えた配線と元の配線の辺集合の重なり(Jaccard)を測った図。実測 0.473 は、完全対称なら 1.000、同じ次数列で辺を入れ替えた次数保存ヌルなら 0.080 ± 0.002(z 159)で、そのどちらからも離れた中間にある。真値は集合の数え上げの閉形式 ―― 鏡映な合成配線(片側 m 辺)の右半分から k 辺を移すと Jaccard = (m−k)/(m+k) で、k=0..120 の 16 段で分子・分母の整数まで op と一致する。対ごとの非対称率は 0.7 から 0.15 へなだらかに下がり、予想した「少数の対への集中」は実測では一様の 2 倍程度(上位 10 組で 20 %、一様なら 10 %)。上位は HSN 60 % / PVN 57 % / RMG 53 % / URX 48 %。データは同梱せず、無ければ合成の鏡映配線(Jaccard 0.500 = (120−40)/(120+40))で回る。*
+
+[![C. elegans 雌雄同体・化学シナプス(Cook 2019)。98 組のうち上位 10 組が非対称辺の 20 %(一様なら 10 %)。水平線は全体の Jaccard からの期待率 1 − J。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/02_lr_pair_asymmetry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/02_lr_pair_asymmetry.png)
+
+*↑ 測定の図 ―― C. elegans 雌雄同体・化学シナプス(Cook 2019)。98 組のうち上位 10 組が非対称辺の 20 %(一様なら 10 %)。水平線は全体の Jaccard からの期待率 1 − J。*
+
+```
+py -3.11 examples/poc_connectome_lr_symmetry.py
+```
+
+ソース: [examples/poc_connectome_lr_symmetry.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_connectome_lr_symmetry.py)
+
+この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_connectome_lr_symmetry)
+
+使用 op(ノートへ): [`graph_degree_summary`](https://furuse.work/ops/graph/degree/graph_degree_summary.html) · [`graph_swap_symmetry`](https://furuse.work/ops/graph/symmetry/graph_swap_symmetry.html)
 
 ### 天文・環境ウィング ―― 位置で偏り、真値の定義で反転する
 
