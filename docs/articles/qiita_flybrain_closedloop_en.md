@@ -1,5 +1,5 @@
 ---
-title: 'It Passed Every Static Test, Then Failed Completely the Moment It Started Walking — Putting a Connectome-Constrained Fly Visual Model on a Body'
+title: 'Putting a Fly Visual Model on a Body and Measuring It'
 tags:
   - Python
   - 機械学習
@@ -12,7 +12,7 @@ public_id: 638f0b0aa7865e17c67c
 
 > **Language**: [日本語](https://qiita.com/furuse-kazufumi/items/331af639c2b9a1493576) · **English**
 
-# It Passed Every Static Test, Then Failed Completely the Moment It Started Walking — Putting a Connectome-Constrained Fly Visual Model on a Body
+# Putting a Fly Visual Model on a Body and Measuring It
 
 <!--
   This article is the readable form of a running experiment ledger: one more entry is appended
@@ -87,6 +87,7 @@ One experiment = one question. **This article is appended to every time an exper
 | Where segmentation errors break the wiring diagram | The ratio is identically density × balance; the cut discount comes mostly from how few ends a neuron has (median 3, binomial 0.62). 4 in 10 cuts change the wiring by not a single bit. Wiring damage per pixel bit is 1.30 for merges and 0.58 for splits. Proofreading in pixel-score order works twice as well as random but falls 8 points short of ideal | Addendum |
 | Do synapses grow in proportion to neurites? | System-wide, density rises ×1.32 during L1 and wobbles by 1.14 afterwards (as the paper says). Per cell, the rank correlation between neurite growth and synapse gain is only 0.23. Of 6,674 new synapses, 48 % thickened existing connections and 54 % made new ones | Addendum |
 | Run length forgives no small merge | One cut's ERL matches the closed form on 1,713 skeletons. Sweeping the merge size from 5 % to 50 %, VOI merge rises 0.14 → 0.66 bits, but the receiving skeleton's ERL is 0 for every q. Uniform 3-point cuts of unbranched skeletons match the Dirichlet expectation, ratio 1.02 | Addendum |
+| What the slime mould taught: its tubes are continuous (work in progress) | Maze 5/5; with continuous parts the ridge vanishes 24/24; greedy recovery returns 8/8 readable circuits that inherit 9/9. Under evolution the leak gives 8/8, but "evolution crossed the ridge" was retracted (the leak had erased it). Peeling the floors during the search: heritability 13/16 vs 4/16 at n=16 (p=0.0038). One task, fixed schedule — research remains | Addendum |
 
 ## Glossary (worth reading first)
 
@@ -846,6 +847,33 @@ One probabilistic gate to finish. Cutting 65 unbranched skeletons at 3 points un
 The gates caught two things. The first version claimed that a's loss was independent of q — wrong. ERL zeroes the runs of the merged **object**; the remaining 1 − q of a survives as an intact run. The constant loss falls on b, which that object covers entirely. And sampling the cut positions uniformly over node indices biased the ratio to 0.945: skeleton edges are uneven in length, so the positions must be uniform along the cable.
 
 ERL implementations exist in funkelab's funlib.evaluate (needs graph_tool) and the Allen Institute's segmentation-skeleton-metrics (numpy + networkx); this one is numpy only, with the closed-form gates attached.
+
+### What the slime mould taught was not its dynamics but that its tubes are continuous — preparing to replace the hand-written readout with an evolving head (work in progress, 2026-09-28)
+
+The fly in this article carries a fixed wiring on a body. Its readout (the one line that turns the four T4/T5 directions into a self-rotation estimate) is hand-written, and the sections above found that the readout's correlation is the bottleneck. The next bridge is to put an **evolving head** (from a separate project, Afterman: a Transformer that decodes structure from a DNA) where that hand-written line sits. The slime-mould experiments run between 2026-08-30 and 09-15 were the preparation, and they are recorded here. **This is work in progress with research left in it.** Three parts: what held, what was retracted, what is open.
+
+**Origin.** When evolution searches for structure, a task that needs three things at once (L layers × depth × FFN, a logical-AND ridge) was crossed by discrete evolution in only 2 of 8 seeds. The slime mould *Physarum polycephalum* finds the shortest path of a maze by nothing more than thickening and thinning its tubes (conductances) with the flow through them (Tero et al. *Science* 327:439, 2010; convergence proved by Bonifaci, Mehlhorn and Varma 2012). The question was whether importing that dynamics would cross the ridge.
+
+**What held (numbers are the pre-registered predictions against the measurements).**
+
+| Act | Question | Result |
+|---|---|---|
+| Maze | Does the Physarum equation reach the shortest path of a 15×15 maze (random edge lengths, unique shortest path)? | Exact version (Kirchhoff solve): 4 of 5 seeds match within 600 iterations, the fifth at 5,000. The control that reinforces by gross traffic ignoring direction: 0/5. A (1+4)-ES on the same graph: 1/5 after 50,000 evaluations — the mould won on **reachability**, not cost |
+| Ridge | Does the ridge vanish once the parts are continuous conductances? | Gradient, Physarum rule, and **a task-blind activity flow**, 3 arms × 8 seeds = **24/24 solved** (validation MSE 0.006–0.035, floor 0.216). What mattered was not the selection dynamics but **continuity itself** |
+| Recovery | Continuous solutions are spread out and unreadable. Can discretisation pressure recover a readable circuit? | Greedy zeroing with re-adaptation after each cut: **8/8** recovered to 4–5-part minimal circuits. The three recovered circuit types solved the task from fresh weights **9/9** — they are heritable |
+| Into evolution | Do continuous conductances work under mutation and selection rather than gradients? | Evolution with a leak in the decoder (lending a thin conductance to absent parts): **8/8** (baseline 2/8, Fisher p=0.007). But see the retractions below |
+| Recovery inside evolution | If the lent conductance is peeled away during the search, are the solutions heritable? | Zeroing each part's floor at generations 20/40/60/80 until the genome is bare (progressive_all): **n=16, crossed 13/16 ∧ heritable 13/16**; the control that keeps the floor, 14/16 ∧ **4/16**, Fisher **p=0.0038**. All five pre-registered predictions held |
+
+**What was retracted (this is the substance).**
+
+- "Evolution crossed the ridge" (8/8) was wrong. Adversarial checking showed that an individual with a single LOCAL gene solves the task at MSE 0.0274 with the leak, and falls back to the 0.2313 floor once the readout's max mixing (the MAXPOOL component) is removed from the leak. The correct reading: **the leak erased the ridge and evolution solved the one-gene problem that was left.** Pitfall B24: after adding a relaxation, audit whether the AND survives on single-part specimens.
+- "Then the MAXPOOL supply explains everything" was rejected too: the leak without MAXPOOL still gives 7/8 (p=0.041), while discrete evolution seeded with MAXPOOL gives 4/8 (p=0.61). The mechanism does not reduce to a single component.
+- "Leak solutions do not inherit" (1 of 7 nomax winners solves bare) survived only in part. The "bare" heritability test had a blind spot: a missing readout (MOTOR) gene forces the output to identically 0, MSE 0.2637 (pitfall B25). Re-measured with only the readout lent, cosine annealing's heritability rose 3/8 → 5/8 and progressive removal 4/8 → 7/8. The nomax 1/8 stayed, and 6/8 were genuine parasites. **The readout is scaffold, not a subject of evolution** — decided after this audit.
+- The provenance of the leak's defaults (bits 32, identity quaternion) was stated as "reused from PHB"; two of them had no provenance, an overclaim.
+
+**What is open (the research left).** One task only (exp_position), and the peeling schedule 20/40/60/80 is fixed. Still to do: a Baldwin-type comparison (bare retraining mixed into the fitness), the schedule's sensitivity, replication on another task, whether cosine's 5/8 is chance, and Afterman's own zero point that the quaternion does not beat a real-valued version of equal parameter count. Until these are filled, the design guideline for Afterman — search = leak, recovery = progressive removal, readout = scaffold — stays a **candidate**.
+
+**Why it sits in the fly article.** On the fly side the front end (flyvis) is frozen and the activity of 65 types × 721 columns is cached (688 MB, 94 s), so evolving a head is an hour of compute, the same scale as PHD6. What we measure next: does an evolved head beat the hand-written readout's correlation, and when it does, is the circuit readable (does the recovery stage work)? The slime-mould story has no figures because the results are jsonl and logs and none were drawn; they will be drawn together with the fly run.
 
 ### What we measure next
 
