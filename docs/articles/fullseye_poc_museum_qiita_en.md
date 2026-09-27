@@ -34,7 +34,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 
 | Article | Wings | Exhibits |
 |---|---|---:|
-| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 84 |
+| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 85 |
 | [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 60 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
 
@@ -59,6 +59,7 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 ## Recently added (newest first)
 
+- 2026-09-27 — No.2026.152 Every Sensor Reads Normal, Yet the Machine Is Failing — How Much the MT Method Recovers from Univariate 3σ
 - 2026-09-24 — No.2026.144 Auditing the Instrument with Illusions - Where a Caliper Fails, and Why
 - 2026-09-24 — No.2026.145 Testing the Periodic Boundary of Temporal Operators with a Seamless Loop
 - 2026-09-24 — No.2026.146 Endless Zooms and Turning Solids: Making the Return Itself the Ground Truth
@@ -66,7 +67,6 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 - 2026-09-24 — No.2026.148 The Exact Distance at Which Detail Vanishes, and the Area of a Changing Shape
 - 2026-09-24 — No.2026.149 Scoring Four-Dimensional Claims with Ordinary Three-Dimensional Operators
 - 2026-09-24 — No.2026.150 Scoring an Aberration as a Picture: Zernike Polynomials and the Point Spread Function
-- 2026-09-24 — No.2026.151 Every Speedup Is the Same Arithmetic Regrouped: Scoring Attention with Identities
 
 ## Applying it to your own problem
 

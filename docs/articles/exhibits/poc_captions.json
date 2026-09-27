@@ -1342,6 +1342,17 @@
    "run": "py -3.11 examples/poc_spc.py"
   },
   {
+   "id": "poc_mt_hidden_fault",
+   "wing": "wing_industrial",
+   "added": "2026-09-27",
+   "numbers_source": "log",
+   "title_ja": "どのセンサーも正常値なのに、設備は異常 ―― MT 法が単変量 3σ の見逃しを拾う量",
+   "title_en": "Every Sensor Reads Normal, Yet the Machine Is Failing — How Much the MT Method Recovers from Univariate 3σ",
+   "caption_ja": "設備保全 PoC(振動・熱・形状の 3 センサ、20 特徴量)の健全 48 本を MT 法(マハラノビス・タグチ)の単位空間にし、健全の別標本 32 本で「単変量 max|z|」と「MD」の閾値を両方とも誤警報 0 に揃えて比べた図。健全な設備では特徴量どうしが強く相関する(継手温度と全体温度で ρ=0.999)ので、相関が壊れた標本は各特徴量が正常範囲のままでも距離では遠い。単変量が『全特徴量とも正常範囲』と言った 169 標本のうち MT 法は 79 本(47 %)を異常と言う。散布図の左上(単変量の閾値より左・MT の閾値より上)がその領域。恒等式は 2 つ: 単位空間の MD² 平均 = (N−1)/N(ddof=1 の定義から厳密)、2 特徴で点 (+z, −z) の MD² = z²/(1−ρ)(閉形式)。慣習の |z|>3 は 20 特徴では偶然に 12.5 % 鳴る。軽い故障は正常(0)と故障(1)の線形内挿 ―― 元 PoC の「重症度 × 故障値」は軽い側で正常より静かで冷たい別の異常になり、検出率が重症度に単調でなかった。素材は合成で、この割合はこの相関構造の上界。",
+   "caption_en": "The 20 features (vibration, thermal, shape) of the machine-condition PoC: 48 healthy records form a Mahalanobis–Taguchi unit space, and 32 further healthy records set both thresholds — univariate max|z| and MD — at zero false alarms. Healthy machines have strongly correlated features (coupling vs. global temperature: ρ=0.999), so a record that breaks the correlation is far in distance while every single feature stays in range. Of the 169 fault records the univariate rule called \"all features normal\", the MT method flags 79 (47 %); the upper-left region of the scatter (left of the univariate threshold, above the MD threshold) is exactly that set. Two exact identities: the unit space's mean MD² equals (N−1)/N (from the ddof=1 definition), and for two features the point (+z, −z) has MD² = z²/(1−ρ) in closed form. The customary |z|>3 fires by chance 12.5 % of the time with 20 features. Mild faults are a linear blend between normal (0) and fault (1) — the original PoC's \"severity × fault value\" produced, at the mild end, a machine quieter and cooler than normal, and detection was not monotone in severity. Synthetic material; the fraction is an upper bound for this correlation structure.",
+   "run": "py -3.11 examples/poc_mt_hidden_fault.py"
+  },
+  {
    "id": "poc_star_astrometry",
    "wing": "wing_astroenv",
    "added": "2026-09-06",

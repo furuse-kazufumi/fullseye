@@ -317,6 +317,10 @@
    "accessioned": "2026-09-07",
    "no": "2026.074"
   },
+  "poc_mt_hidden_fault": {
+   "accessioned": "2026-09-27",
+   "no": "2026.152"
+  },
   "poc_multibeam_bathymetry": {
    "accessioned": "2026-09-08",
    "no": "2026.100"

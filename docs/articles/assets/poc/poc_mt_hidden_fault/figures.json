@@ -1,0 +1,62 @@
+[
+ {
+  "file": "01_mt_hidden_cloud.png",
+  "name": "mt_hidden_cloud",
+  "caption": "左上の領域(単変量の閾値より左・MT の閾値より上)が「相関を見ないと失う検出」。169 標本中 79 本。枠の外(重い故障、439 本)は両方式とも異常と言う。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_mt_vs_univariate_misalignment.png",
+  "name": "mt_vs_univariate_misalignment",
+  "caption": "芯ずれ。差が最大なのは重症度 0.05 で、単変量 25.0 % に対し MT 法 100.0 %。重症度 0.50 以上は両方式とも 100 %。閾値は健全の別標本 32 本で両方式とも誤警報 0。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_mt_vs_univariate_unbalance.png",
+  "name": "mt_vs_univariate_unbalance",
+  "caption": "アンバランス。差が最大なのは重症度 0.10 で、単変量 58.3 % に対し MT 法 95.8 %。重症度 0.50 以上は両方式とも 100 %。閾値は健全の別標本 32 本で両方式とも誤警報 0。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_mt_vs_univariate_bearing_outer.png",
+  "name": "mt_vs_univariate_bearing_outer",
+  "caption": "軸受外輪傷。差が最大なのは重症度 0.05 で、単変量 16.7 % に対し MT 法 37.5 %。重症度 0.50 以上は両方式とも 100 %。閾値は健全の別標本 32 本で両方式とも誤警報 0。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_mt_vs_univariate_lubrication.png",
+  "name": "mt_vs_univariate_lubrication",
+  "caption": "潤滑不良。差が最大なのは重症度 0.10 で、単変量 45.8 % に対し MT 法 100.0 %。重症度 0.50 以上は両方式とも 100 %。閾値は健全の別標本 32 本で両方式とも誤警報 0。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_mt_vs_univariate_looseness.png",
+  "name": "mt_vs_univariate_looseness",
+  "caption": "ゆるみ。差が最大なのは重症度 0.15 で、単変量 37.5 % に対し MT 法 95.8 %。重症度 0.50 以上は両方式とも 100 %。閾値は健全の別標本 32 本で両方式とも誤警報 0。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

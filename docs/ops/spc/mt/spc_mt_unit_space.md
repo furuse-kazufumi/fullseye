@@ -4,7 +4,7 @@ dim: spc
 category: mt
 in: matrix
 out: table
-examples: [poc_spc]
+examples: [poc_mt_hidden_fault, poc_spc]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -47,6 +47,7 @@ input.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_mt_hidden_fault](../../../../examples/poc_mt_hidden_fault.py) — `py -3.11 examples/poc_mt_hidden_fault.py`
 - [poc_spc](../../../../examples/poc_spc.py) — `py -3.11 examples/poc_spc.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
