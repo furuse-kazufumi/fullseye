@@ -53,6 +53,8 @@ public_id: 638f0b0aa7865e17c67c
 
 - **The eye itself is a design, too.** Run the compound-eye optics (inter-ommatidial angle Δφ, acceptance angle Δρ, count) through closed-form operators and you can put a number on things like *a narrow acceptance angle inventing a coarse grating that was never in the input* — predicted 16.1°, measured 16.2°, and 223× smaller at the fly's own acceptance angle. Figure and a few lines of code in **section 0**.
 
+- **How much of the brain's wiring do 8 genetically identical worms share?** 442 connections are present in all 8; chance (rewiring each worm while keeping only its degrees) gives at most 0 in 20 tries. This "core present in everyone" is only 15 % of the connections, yet it carries 57 % of the synapses. Meanwhile two adults of the same age overlap by only 0.53 — no more than neighbouring developmental stages. **The "blueprint" lives in a few thick connections; most of the rest differs from worm to worm.**
+
 This is not an article about reproducing a fly brain. It is about **where a pretrained model starts lying once you mount it in your own system** — stated in numbers. The same traps appear when you put someone else's pretrained model on your robot or your production line.
 
 ## Experiments so far (this table grows)
@@ -76,6 +78,9 @@ One experiment = one question. **This article is appended to every time an exper
 | Does a staged curriculum produce direction selectivity? | Yes (0/8 → **5/8**) — and the final behavioural stage destroys it (→ 1/8) | appendix |
 | Can we freeze the optic-lobe front end and cache every cell type's activity? | Yes (45,669 nodes × 12 places × 350 frames) — but **41–73 % of the T4/T5 signal comes from the 90 border columns** (a boundary artefact) | appendix |
 | Does the male whole-CNS connectome have left/right gaps? | Not in cell counts (96 % of 11,229 types within ±1 cell). The only significant asymmetry is **one type, Kenyon cell KCab-s** — a subtype-boundary difference. Completion shrinks it by 20–30 % but does not remove it. A second implementation with the public tool coconatfly agrees (s connectivity cluster L 201 / R 352) | appendix |
+| Is the worm's wiring left/right symmetric (within one animal)? | Half of it. Overlap with the L/R-swapped wiring 0.473 (perfect symmetry 1.000, chance 0.080). The asymmetry is not concentrated in a few pairs | Addendum |
+| When a neuron's tree is measured from an image, how far is it from the real tree? | The viewing direction decides. 3-D Sholl does not move a single integer under rotation; the projection moves by up to 9–16 intersections, and 16 true branch points become 22–28 | Addendum |
+| How much wiring do 8 genetically identical worms share? | 442 connections in all 8 (chance: 0) carry 57 % of the synapses. But two same-age adults overlap by only 0.53 | Addendum |
 
 ## Glossary (worth reading first)
 
@@ -574,10 +579,85 @@ There are no left/right gaps at the level of cell counts; the one significant as
 
 **Same-day addendum (second implementation)**: the same 1,810 KCab cells were re-clustered with the public tool **coconatfly** (R, natverse: the cosine matrix from `cf_cosine_plot`, then ward.D into 4 clusters). Agreement with the published labels is L 0.88 / R 0.84 (higher than the home-grown classifier's 0.72 / 0.76); agreement with the home-grown consensus labels is 0.72, and the disagreements sit at the c / m boundary. **The s connectivity cluster is L 201 / R 352 — about 150 more on the right, independent of the implementation.** One step further in the reading: the left/right difference of s in connectivity space is real, while the c / m boundary moves with the method (part of the subtype asymmetry is where the line is drawn). Two implementations agreeing may still mean the same hole seen twice, so the third fingerprint will be morphology, not connectivity.
 
+### Is the worm's wiring left/right symmetric? — Testing the ruler on a brain whose wiring is complete (2026-09-27)
+
+Before measuring "left vs right" or "individual differences" in the fly brain, I tested the ruler itself on **the smallest brain whose wiring is completely known**. The *C. elegans* hermaphrodite has 302 neurons and its chemical-synapse wiring is fully public (Cook et al. 2019, wormwiring.org; the data is not in the repository).
+
+The question is simple: **if every left/right pair (98 pairs such as AVAL and AVAR) is swapped, does the wiring stay the same?** If it does, it is perfectly symmetric. I measured the overlap (Jaccard) between the swapped wiring and the original.
+
+| Quantity | Value |
+|---|---|
+| Neurons / directed chemical connections / L-R pairs | 300 / 3,669 / 98 |
+| Overlap with the L/R-swapped wiring (Jaccard) | **0.473** |
+| If perfectly symmetric | 1.000 |
+| Chance: rewired keeping every in/out degree (20 samples) | 0.080 ± 0.002 (z 159) |
+
+![Closed form vs the op for the L/R swap](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/01_lr_jaccard_closed_form.png)
+
+*↑ The ground truth is a counting closed form. Take a perfectly mirrored synthetic wiring (m edges per side) and move k right-hand edges: the overlap is exactly (m−k)/(m+k). The op matched it at all 16 steps, down to the integer numerator and denominator. (Figure text is in Japanese.)*
+
+The worm sits exactly between perfect symmetry and chance: **half of the wiring is mirrored and half is not.** I expected the asymmetry to be concentrated in a few pairs; it was not. The 10 most asymmetric pairs hold 20 % of the asymmetric edges, against 10 % if spread evenly — only about twice uniform. The leading pairs are HSN 60 %, PVN 57 %, RMG 53 % and URX 48 %.
+
+![Asymmetry per pair](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/02_lr_pair_asymmetry.png)
+
+The ops used are Fullseye's `graph_swap_symmetry` (Jaccard against the pair-swapped wiring) and `graph_degree_preserving_null` (chance that keeps every degree).
+
+### When a neuron's tree is measured from an image, how far is it from the real tree? (2026-09-27)
+
+A connectome is built by cutting neuron "trees" out of electron-microscope images. So I went the other way: **take the real tree as ground truth and measure what image-based measurement breaks.** The material is three mouse neocortex reconstructions from NeuroMorpho.Org (SWC format, CC BY 4.0, RRID:SCR_002145). SWC carries structural promises — one root, a parent's id is smaller than its child's, nodes = edges + 1 — and those promises are themselves a gate (a line that breaks them fails on load).
+
+The same tree was viewed from 12 directions and put through what image measurement usually does: project, then thin.
+
+| Quantity | 3-D (the real tree) | Projected image |
+|---|---|---|
+| Sholl analysis (intersections with concentric spheres / circles) | **not a single integer moves** over 12 rotations | moves by up to 9–16 with direction |
+| Branch points | true 16 / 11 / 37 | 22–28 / 15–24 / 41–49 |
+| Skeleton length / real cable length | 1 | 0.72–0.82 |
+
+![Projected vs 3-D Sholl](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swc_tree_truth/02_sholl_3d_vs_projected.png)
+
+![Branch points vs viewing direction](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swc_tree_truth/03_junctions_vs_view.png)
+
+*↑ The extra branch points are branches in front and behind that cross on the image and turn into "branches" when thinned.*
+
+**The accuracy of tree measurement was set by the viewing direction, not by the tree.** When dendritic branches are counted from a single microscope image, "where it was seen from" is mixed straight into the count.
+
+### How much of the brain's wiring do 8 genetically identical worms share? (2026-09-27)
+
+After left vs right comes **animal vs animal**. Witvliet et al. 2021 (Nature 596:257) reconstructed the brain (nerve ring) of 8 genetically identical worms by electron microscopy, from just after birth to adulthood (data at nemanode.org; it carries no explicit licence, only a request to cite, so it is not in the repository). I stacked the 8 wirings on the 183 cells present in all 8 and counted **how many worms carry each connection**.
+
+![The 8 wirings in developmental order](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/02_wiring_across_development.gif)
+
+*↑ The 8 wirings shown in order from just after birth to adulthood. Each dot is one connection (row = sender, column = receiver). The colour is how many of the 8 worms carry it: yellow = all 8, purple = only one. The newborn's wiring is almost all yellow; purple and blue dots (connections only some worms have) accumulate as the animal grows.*
+
+| Quantity | Value |
+|---|---|
+| Connections per worm (newborn → adult) | 768 → 1,792 |
+| Connections in any of the 8 (union) | 2,977 |
+| **Connections present in all 8** | **442** |
+| The same by chance (each worm rewired keeping its degrees, 20 samples) | mean 0.0, max 0 |
+| Synapses (summed over the 8) on connections present in all 8 | **57 %** (15 % of the connections) |
+| Overlap (Jaccard) of the two same-age adults | 0.53 |
+| Overlap of neighbouring stages / newborn vs adult | 0.51 / 0.33–0.34 |
+| Connections that appear and stay to the end / that disappear | 701 / 55 |
+
+![How far above chance is the shared core](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/03_occupancy_vs_null.png)
+
+![The core is few connections but most synapses](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/05_synapse_share_by_occupancy.png)
+
+There are two readings. **The core shared by everyone cannot be explained by chance** (chance gave 0 in all 20 tries), and although it is only 15 % of the connections it carries 57 % of the synapses — the thicker a connection, the more it is conserved across animals. At the same time **individual differences are large**: two adults of the same age overlap by 0.53, no more than a 5-hour-old and an 8-hour-old larva.
+
+![Age difference vs overlap](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/04_jaccard_vs_age_gap.png)
+
+**Against the published value (not fitted)**: the paper calls a connection stable when it is present in at least 7 datasets and reports about 43 % of adult connections as stable. The naive count here gives 34 %. I split the 9-point gap one factor at a time. **Pooling left/right pairs** (counting AVAL→AVAR and AVAR→AVAL as one) gives 37 %, which accounts for 3 points. Dropping cells born after hatching is already built in by restricting to the cells present in all 8 worms (counting all cells instead lowers it to 28 %). **The remaining 6 points are unexplained.** The paper first removes "few-synapse, left/right-asymmetric" connections as variable and puts connections that grow more than 5-fold into a separate class before counting, so I suspect a different denominator, but I have not checked it.
+
+The ground truth is a closed form on a synthetic series: with a core of C connections shared by everyone and u unique, non-overlapping connections per worm, "present in all" is exactly C and every pairwise overlap is C/(C+2u). The op matches this down to the integer before touching real data. This round added **`graph_edge_consensus`** to Fullseye (stack K individuals' wirings and return per-connection occupancy, pairwise overlap, synapse share, the developmental split and a per-individual null). The same op compares "wiring present in every unit / only in some" across many units built from one design.
+
 ### What we measure next
 
 When a result lands, it gains a row in "Experiments so far" and loses its line here.
 
+- [ ] **Explain the remaining 6 points of "stable 37 % vs the paper's 43 %" for the 8 worms** — implement the paper's classification as in its Methods (remove variable first, a separate class for connections growing more than 5-fold) and count on the same denominator.
 - [ ] **Replace the hand-written readout with an evolving (DNA-decoded) head (F1)** — the front-end cache is done; input = the 631 interior columns, zero point = the 4-feature linear regression (hold-out 0.98–0.99).
 - [ ] **Re-derive the KCab subtypes from morphology (dendrite positions in the public SWC skeletons)** — a third fingerprint, independent of connectivity, for the s asymmetry that both connectivity implementations agree on.
 - [ ] **Re-run the developmental ladder with DSI** —— the non-finite values were flyvis's NaN padding of the stimulus; the gate is fixed (addendum above). 34 conditions × 6 speeds, about 3.5 hours.
