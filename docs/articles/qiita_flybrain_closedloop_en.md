@@ -82,6 +82,7 @@ One experiment = one question. **This article is appended to every time an exper
 | When a neuron's tree is measured from an image, how far is it from the real tree? | The viewing direction decides. 3-D Sholl does not move a single integer under rotation; the projection moves by up to 9–16 intersections, and 16 true branch points become 22–28 | Addendum |
 | How much wiring do 8 genetically identical worms share? | 442 connections in all 8 (chance: 0) carry 57 % of the synapses. But two same-age adults overlap by only 0.53 | Addendum |
 | How much does a hand-traced wiring diagram from 40 years ago overlap today's adults? | 0.43–0.44, only 0.07 below two adults reconstructed the same way (0.51). What 1986 lacks are thin connections (mean 2.0 vs 5.7 synapses) | Addendum |
+| How much do a worm's neurites grow from birth to adulthood? | 4.3-fold (the paper says about 5). Summing the authors' own file also gives 3.95, so the 5-fold itself does not come out. The longest skeleton path matches the authors' values to 1.75e-9 | Addendum |
 
 ## Glossary (worth reading first)
 
@@ -685,6 +686,35 @@ Across era and method, the overlap is **only 0.07 lower** than between two anima
 *↑ x-axis = the summed synapse count of the two 2021 adults (figure text in Japanese). Connections missing in 1986 (blue) cluster around a sum of 2. My first version rounded the two animals' **mean** and produced an odd/even zigzag — the trace of numpy's round-half-to-even (2.5 → 2), not biology. Counting the integer sum removed it.*
 
 Honest breakdown: the N2U on nemanode was supplemented with muscle information by the Zhen lab in 2020, so "the era difference" also contains re-annotation. White 1986's other animal (JSH) is an L4 larva and is left out of the adult comparison. The only op used is `graph_edge_consensus`, added in this round.
+
+### How much do a worm's neurites grow from birth to adulthood? (2026-09-27)
+
+After the wiring (who synapses onto whom) comes the **shape**. For the 8 worms of Witvliet 2021 the **skeleton** of every neuron's neurites (a branching line) is public too, and the paper says the total neurite length grew 5-fold from birth to adulthood. I measured it again with the three neuron-tree ops added to Fullseye this round: `tree_from_swc` (reads SWC and refuses a tree that breaks its promises — one root, a parent numbered below its child, nodes = edges + 1), `tree_morphometry` (branches, tips, cable length) and `tree_sholl` (Sholl analysis).
+
+| Stage | Skeletons | Total neurite length |
+|---|---|---|
+| L1 at birth | 196 | 2,806 µm |
+| L1 16 h | 205 | 4,544 µm |
+| L3 27 h | 210 | 6,396 µm |
+| Adult #8 | 218 | 12,038 µm |
+
+![Total neurite length](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/01_neurite_length_growth.png)
+
+*(Figure text is in Japanese.)*
+
+Adult over newborn is **4.29-fold** (3.86-fold on the 195 cells present in all 8) — the same order as the paper's 5, but not 5. Summing the length the authors wrote into the skeleton files gives **3.95-fold**, also not 5. I read this as: the paper's 5-fold is not a plain sum of this file (the cells or the region counted differ). The L3 total is close to L2 because of specimen shrinkage; the authors' code scales L3 lengths by 1.1.
+
+Two layers of checking. First, all 1,727 trees (the 61 skeletons that break into fragments are measured per fragment and summed) passed the structural promises and the Sholl closed form (area under the curve = sum |d_child − d_parent|). Second, as a second implementation, on the 1,586 single-fragment skeletons the op's "longest distance from the root along the branches" matched the per-node distances the authors wrote in the file to a **relative 1.75e-9**.
+
+Getting there, I rebuilt the gate three times:
+
+1. I nearly used the authors' "length" field as ground truth — and 1,360 of 1,586 disagreed. That field is not the sum of segment lengths (median 0.89 of it); it was computed upstream with a definition this repository cannot confirm, so it is not a gate.
+2. The per-node distance field also lists nodes without coordinates (54 of 196 skeletons in the first animal). Comparing only nodes with coordinates, they match.
+3. Writing coordinates to SWC with 3 decimals shifted the longest path by 1.9e-6; with 6 decimals it drops to 1.75e-9.
+
+![Sholl curves of AVAL](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/02_sholl_through_development.png)
+
+*↑ Sholl curves of the neuron named AVAL at four stages. The x-axis is the distance from the skeleton's start point (not necessarily the cell body). In the adult the process reaches 25 µm out. Being 3-D Sholl, the curve is the same from any viewing direction — unlike the section above on measuring trees from images, where the projection moved by 9–16 crossings with the view.*
 
 ### What we measure next
 

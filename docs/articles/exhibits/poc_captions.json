@@ -1803,6 +1803,17 @@
    "run": "py -3.11 examples/poc_connectome_across_decades.py"
   },
   {
+   "id": "poc_worm_neurites_grow",
+   "wing": "wing_bio",
+   "added": "2026-09-27",
+   "numbers_source": "log",
+   "title_ja": "線虫の神経突起は、生まれてから何倍に伸びるか ―― 8 匹の骨格を op で測り、論文の値と並べる",
+   "title_en": "How Much Do a Worm's Neurites Grow from Birth to Adulthood? — Measuring Eight Animals' Skeletons with the Tree Ops and Setting the Result Beside the Paper",
+   "caption_ja": "Witvliet 2021 の C. elegans 8 匹(生直後〜成虫)の神経突起の骨格を SWC の木に直し、tree_from_swc / tree_morphometry / tree_sholl で測った図。木は 1,727 本(途中で途切れて断片に分かれた骨格 61 個は断片ごとに測って合算)で、構造の約束(根 1 つ・親 id < 子 id・節点 = 辺 + 1)と Sholl の閉形式(曲線の下の面積 = Σ|d_子 − d_親|)をすべて通過。第 2 実装: 断片が 1 つの骨格 1,586 本で、op の最長経路が著者の節点ごとの dist_to_root の最大と相対 1.75e-9 で一致。★検査が見つけたもの: 著者の length は線分の長さの合計ではなく(中央値 0.89 倍、1,586 本中 1,360 本が不一致)門にならない。dist_to_root には座標の無い節点も混ざる(1 匹目で 196 本中 54 本)ので、座標のある節点だけで比べる。SWC に座標を小数 3 桁で書くと丸めで 1.9e-6 ずれた。総長は生直後 2,806 µm → 成虫 12,038 µm で 4.29 倍(8 匹に共通の 195 本だけなら 3.86 倍)、論文は約 5 倍。著者の length を足しても 3.95 倍で、5 倍そのものはこのファイルの単純な合計からは出ない(同じ桁までは合う)。L3 の個体の総長が L2 とほぼ同じなのは標本の縮みで、著者は 1.1 倍に補正している。データは同梱しない。",
+   "caption_en": "The neurite skeletons of the 8 C. elegans of Witvliet 2021 (birth to adult), converted to SWC trees and measured with tree_from_swc / tree_morphometry / tree_sholl. 1,727 trees (the 61 skeletons that break into fragments are measured per fragment and summed) all pass the structural promises (one root, parent id < child id, nodes = edges + 1) and the Sholl closed form (area under the curve = sum |d_child - d_parent|). Second implementation: on the 1,586 single-fragment skeletons the op's longest path matches the maximum of the authors' per-node dist_to_root to a relative 1.75e-9. Found by the checks: the authors' length field is not the sum of segment lengths (median 0.89 of it; 1,360 of 1,586 disagree) and cannot be a gate; dist_to_root also lists nodes without coordinates (54 of 196 skeletons in the first animal), so only nodes with coordinates are compared; writing coordinates to SWC with 3 decimals shifted the path by 1.9e-6. Total length grows from 2,806 um at birth to 12,038 um in the adult, 4.29-fold (3.86-fold on the 195 cells present in all 8), against about 5-fold in the paper; summing the authors' own length field also gives 3.95-fold, so the 5-fold itself does not come out of a plain sum of this file (the order of magnitude agrees). The L3 total is close to L2 because of specimen shrinkage, which the authors correct by 1.1. No data is bundled.",
+   "run": "py -3.11 examples/poc_worm_neurites_grow.py"
+  },
+  {
    "id": "poc_swc_tree_truth",
    "wing": "wing_bio",
    "added": "2026-09-27",

@@ -4,7 +4,7 @@ dim: graph
 category: tree
 in: text
 out: table
-examples: [poc_swc_tree_truth]
+examples: [poc_swc_tree_truth, poc_worm_neurites_grow]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -39,6 +39,7 @@ does not exist; non-finite coordinates or radius; a negative radius; more than
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_swc_tree_truth](../../../../examples/poc_swc_tree_truth.py) — `py -3.11 examples/poc_swc_tree_truth.py`
+- [poc_worm_neurites_grow](../../../../examples/poc_worm_neurites_grow.py) — `py -3.11 examples/poc_worm_neurites_grow.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

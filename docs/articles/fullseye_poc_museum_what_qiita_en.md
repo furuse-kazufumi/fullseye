@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**90 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**91 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1664,7 +1664,7 @@ Ops used (notes): [`attention_apply`](https://furuse.work/ops/llmcore/score/atte
 
 Counting cells, reading a nucleus's DNA content, measuring vessel branching, tracking a wound's area: all of these tend to be reported as one number, and there are situations in which that number is right anyway. Cell counting where over- and under-segmentation balance to a +0.3-cell bias; ploidy classification that survives a forgotten background subtraction; a calibration that returns the most stable and most wrong healing constant.
 
-The 18 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
+The 19 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
 
 The thing to watch for is a method that appears to improve while the quantity it measures quietly swaps: the area classifier gets better with more blur because 'area' is leaking DNA content. Unless the reason for every improvement is traced, this kind of lie gets carried home as a result.
 
@@ -2179,6 +2179,26 @@ Source: [examples/poc_connectome_across_decades.py](https://github.com/furuse-ka
 This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_connectome_across_decades)
 
 Ops used (notes): [`graph_edge_consensus`](https://furuse.work/ops/graph/population/graph_edge_consensus.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html)
+
+## No.2026.158 —— How Much Do a Worm's Neurites Grow from Birth to Adulthood? — Measuring Eight Animals' Skeletons with the Tree Ops and Setting the Result Beside the Paper
+
+[![How Much Do a Worm's Neurites Grow from Birth to Adulthood? — Measuring Eight Animals' Skeletons with the Tree Ops and Setting the Result Beside the Paper](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/01_neurite_length_growth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/01_neurite_length_growth.png)
+
+*↑ **How Much Do a Worm's Neurites Grow from Birth to Adulthood? — Measuring Eight Animals' Skeletons with the Tree Ops and Setting the Result Beside the Paper** ―― The neurite skeletons of the 8 C. elegans of Witvliet 2021 (birth to adult), converted to SWC trees and measured with tree_from_swc / tree_morphometry / tree_sholl. 1,727 trees (the 61 skeletons that break into fragments are measured per fragment and summed) all pass the structural promises (one root, parent id < child id, nodes = edges + 1) and the Sholl closed form (area under the curve = sum |d_child - d_parent|). Second implementation: on the 1,586 single-fragment skeletons the op's longest path matches the maximum of the authors' per-node dist_to_root to a relative 1.75e-9. Found by the checks: the authors' length field is not the sum of segment lengths (median 0.89 of it; 1,360 of 1,586 disagree) and cannot be a gate; dist_to_root also lists nodes without coordinates (54 of 196 skeletons in the first animal), so only nodes with coordinates are compared; writing coordinates to SWC with 3 decimals shifted the path by 1.9e-6. Total length grows from 2,806 um at birth to 12,038 um in the adult, 4.29-fold (3.86-fold on the 195 cells present in all 8), against about 5-fold in the paper; summing the authors' own length field also gives 3.95-fold, so the 5-fold itself does not come out of a plain sum of this file (the order of magnitude agrees). The L3 total is close to L2 because of specimen shrinkage, which the authors correct by 1.1. No data is bundled.*
+
+[![同じ名前のニューロン AVAL を 4 つの発生段階で。3-D の Sholl なので回転に依らない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/02_sholl_through_development_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/02_sholl_through_development.png)
+
+*↑ The measurement ―― 同じ名前のニューロン AVAL を 4 つの発生段階で。3-D の Sholl なので回転に依らない。 (figure labels are in Japanese; the numbers are the same)*
+
+```
+py -3.11 examples/poc_worm_neurites_grow.py
+```
+
+Source: [examples/poc_worm_neurites_grow.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_worm_neurites_grow.py)
+
+This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_worm_neurites_grow)
+
+Ops used (notes): [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`tree_from_swc`](https://furuse.work/ops/graph/tree/tree_from_swc.html) · [`tree_morphometry`](https://furuse.work/ops/graph/tree/tree_morphometry.html) · [`tree_sholl`](https://furuse.work/ops/graph/tree/tree_sholl.html)
 
 ## No.2026.154 —— Grading Skeleton Measurement on Real Trees — NeuroMorpho SWC as Ground Truth, and What Projection Breaks
 

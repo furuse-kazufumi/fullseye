@@ -116,6 +116,12 @@ EXAMPLES = [
                 "真値は合成系列の閉形式(核 C + 固有 u: h[K]=C・Jaccard=C/(C+2u))。論文の stable ≈ 43 % に対し"
                 "素朴な数え方では 34 % —— 著者の分類表と照合すると、論文は左右の対で 7 匹以上なら対の全結合に札を付けて"
                 "おり、それだけで論文の stable の 99.6 % を再現する。実データが無ければ合成系列で回る。"},
+    {"id": "poc_worm_neurites_grow", "task": "imgmetrics", "data": "synthetic",
+     "name": "線虫の神経突起は生まれてから何倍に伸びるか —— 8 匹の骨格を tree op で測り、論文の値と並べる",
+     "summary": "Witvliet 2021 の 8 匹の骨格(ニューロン 196〜218 本、断片に分かれた骨格 61 個を含む木 1,727 本)を SWC に直して"
+                " tree_from_swc / tree_morphometry / tree_sholl で測る。第 2 実装: 断片が 1 つの骨格 1,586 本で op の最長経路が"
+                "著者の dist_to_root と相対 1.75e-9 で一致。総長は生直後 2,806 µm → 成虫 12,038 µm で 4.29 倍、論文は約 5 倍 ——"
+                " 著者の length を足しても 3.95 倍で、5 倍そのものはこのファイルからは出ない(同じ桁までは合う)。"},
     {"id": "poc_connectome_across_decades", "task": "imgmetrics", "data": "synthetic",
      "name": "40 年前の手作業の配線図と、今の成虫の配線はどれだけ重なるか —— 時代の差を個体の差と並べる",
      "summary": "White 1986 の手作業トレース(成虫 N2U)と Witvliet 2021 の成虫 2 匹を共通 215 細胞の上で重ねると、"

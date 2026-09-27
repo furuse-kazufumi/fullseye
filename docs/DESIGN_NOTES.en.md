@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1143. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1144. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -1049,6 +1049,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L402** _(ja)_ — ★平行移動フレームの効き目: まっすぐな区間を含む曲線でも半径が崩れない
 - **L480** _(ja)_ — ★K の一致は必要条件にすぎない
 - **L630** _(ja)_ — ★図の書き出しが失敗したら、ここで拾う。見ないと「検査は全部 OK・でも図は 1 枚も出ていない」が黙って通る(examplefig は fail-soft で貯める)。
+
+## `examples/poc_worm_neurites_grow.py`
+
+- **L111** _(ja)_ — ★dist_to_root には coords に無い節点も入っている(1 匹目で 196 本中 54 本)。 座標のある節点だけに絞らないと最大値が食い違う(最大 12 倍)。
 
 ## `examples/poc_zernike_aberrations.py`
 

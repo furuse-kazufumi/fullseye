@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1143. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1144. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -1049,6 +1049,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L402** _(ja)_ — ★平行移動フレームの効き目: まっすぐな区間を含む曲線でも半径が崩れない
 - **L480** _(ja)_ — ★K の一致は必要条件にすぎない
 - **L630** _(ja)_ — ★図の書き出しが失敗したら、ここで拾う。見ないと「検査は全部 OK・でも図は 1 枚も出ていない」が黙って通る(examplefig は fail-soft で貯める)。
+
+## `examples/poc_worm_neurites_grow.py`
+
+- **L111** _(ja)_ — ★dist_to_root には coords に無い節点も入っている(1 匹目で 196 本中 54 本)。 座標のある節点だけに絞らないと最大値が食い違う(最大 12 倍)。
 
 ## `examples/poc_zernike_aberrations.py`
 

@@ -1,0 +1,22 @@
+[
+ {
+  "file": "01_neurite_length_growth.png",
+  "name": "neurite_length_growth",
+  "caption": "tree_morphometry のケーブル長の合計(断片は合算)。共通の細胞だけで 3.86 倍、全骨格で 4.29 倍(論文は約 5 倍。論文は筋肉などを除き、L3 の個体を縮みの補正で 1.1 倍している)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_sholl_through_development.png",
+  "name": "sholl_through_development",
+  "caption": "同じ名前のニューロン AVAL を 4 つの発生段階で。3-D の Sholl なので回転に依らない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
