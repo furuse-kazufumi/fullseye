@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_physarum_transport — GRAPH <code style="color:#22d3bf">flow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_physarum_transport(lengths, supply, dt=0.1, max_iters=5000, tol=1e-06, gap_tol=1e-06)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import physarum_search; physarum_search.graph_physarum_transport(lengths, supply, dt=0.1, max_iters=5000, tol=1e-06, gap_tol=1e-06)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgraph.get(&quot;graph_physarum_transport&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>L1 optimal transport (the Beckmann problem) on a weighted graph by the slime mould&#x27;s tube dynamics.</p>
+<p>`<code style="color:#22d3bf">lengths</code><code style="color:#22d3bf"> is a symmetric </code><code style="color:#22d3bf">(n, n)</code><code style="color:#22d3bf"> matrix of tube lengths (</code><code style="color:#22d3bf">0</code>` = no tube, diagonal 0) and</p>
+<p>`<code style="color:#22d3bf">supply</code><code style="color:#22d3bf"> an </code><code style="color:#22d3bf">(n,)</code><code style="color:#22d3bf"> vector that sums to 0: mass enters at the nodes with </code><code style="color:#22d3bf">supply &gt; 0</code>` and</p>
+<p>leaves where it is `<code style="color:#22d3bf">&lt; 0</code>`. The pressures solve the weighted Laplacian with this right-hand</p>
+<p>side (Kirchhoff), each tube carries `<code style="color:#22d3bf">Q_e = D_e (p_u - p_v) / L_e</code>` and adapts</p>
+<p>`<code style="color:#22d3bf">dD_e/dt = |Q_e| - D_e</code><code style="color:#22d3bf"> (explicit Euler, step </code><code style="color:#22d3bf">dt</code>`). Bonifaci (2017) and Facca,</p>
+<p>Karrenbauer, Kolev and Mehlhorn (2020) prove that the flow converges to a minimiser of</p>
+<p>`<code style="color:#22d3bf">sum_e L_e |q_e|</code>` under flow conservation, i.e. to the 1-Wasserstein distance between</p>
+<p>`<code style="color:#22d3bf">supply+</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">supply-</code>` in the graph metric (Facca, Cardin and Putti 2018 for the</p>
+<p>continuum). With one unit source and one sink this is :func:<code style="color:#22d3bf">graph_physarum_path</code>.</p>
+<p>Returns `<code style="color:#22d3bf">cost</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">sum_e L_e |Q_e|</code>` (the transport cost of the current flow: an upper bound</p>
+<p>on the distance), `<code style="color:#22d3bf">dual_bound</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">supply . p&#x27;</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">p&#x27;</code>` the pressure scaled to be</p>
+<p>1-Lipschitz along every tube (Kantorovich–Rubinstein: a lower bound on the distance at any</p>
+<p>iteration, no external solver needed), `<code style="color:#22d3bf">gap</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">cost - dual_bound</code>` (0 at the optimum;</p>
+<p>it closes like `<code style="color:#22d3bf">tol / dt</code>` divided by the smallest non-zero flow, because the scaling is</p>
+<p>set by the tube whose conductance still lags its flow the most),</p>
+<p>`<code style="color:#22d3bf">conductance</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">flow</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">(n, n)</code>` matrices, flow antisymmetric; the net outflow of</p>
+<p>every node equals its supply), `<code style="color:#22d3bf">potential</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">(n,)</code>` pressures, 0 at one node per connected</p>
+<p>component), `<code style="color:#22d3bf">iters</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">converged</code><code style="color:#22d3bf"> (max |dD| fell below </code><code style="color:#22d3bf">tol</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">gap_converged</code>` (the</p>
+<p>run stopped because `<code style="color:#22d3bf">gap &lt;= gap_tol * cost</code><code style="color:#22d3bf">: the cost is certified within </code><code style="color:#22d3bf">gap_tol</code>` of the</p>
+<p>optimum; when several flows are optimal the conductances keep wandering while the pressures</p>
+<p>settle, so this is the stop that fires; the gap is checked every 10 iterations), `<code style="color:#22d3bf">history</code>`,</p>
+<p>`<code style="color:#22d3bf">cost_history</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">dual_history</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">(k, 2)</code>`: iteration and lower bound at each check).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: matrix not square / symmetric / finite / non-negative, self-loops,</p>
+<p>no edge; `<code style="color:#22d3bf">supply</code><code style="color:#22d3bf"> not an </code><code style="color:#22d3bf">(n,)</code>` finite numeric vector, all zero, not summing to 0</p>
+<p>(relative `<code style="color:#22d3bf">1e-9</code>`) or unbalanced inside a connected component (mass with nowhere to go);</p>
+<p>`<code style="color:#22d3bf">dt</code><code style="color:#22d3bf"> outside (0, 1]; </code><code style="color:#22d3bf">max_iters &lt; 1</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">tol &lt; 0</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">gap_tol &lt; 0</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_physarum_transport">poc_physarum_transport</a> — <code style="color:#22d3bf">py -3.11 examples/poc_physarum_transport.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_edge_consensus">graph_edge_consensus</a> · <a style="color:#22d3bf" href="opgraph:graph_core_persistence">graph_core_persistence</a> · <a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a> · <a style="color:#22d3bf" href="opgraph:tree_sholl">tree_sholl</a> · <a style="color:#22d3bf" href="opgraph:tree_run_length">tree_run_length</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">flow</code>)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_physarum_path">graph_physarum_path</a> · <a style="color:#22d3bf" href="opgraph:physarum_route">physarum_route</a> · <a style="color:#22d3bf" href="opgraph:physarum_transport_image">physarum_transport_image</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: physarum_search.py — GRAPH 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

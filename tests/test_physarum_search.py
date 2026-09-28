@@ -335,3 +335,197 @@ def test_physarum_route_walls_are_avoided_and_a_tie_is_refused():
         P.physarum_route(np.ones((7, 7)), (0, 0), (9, 9))
     with pytest.raises(ValueError):
         P.physarum_route(np.ones((7, 7)), connectivity=6)
+
+
+# ── 多源・多吸込: graph_physarum_transport / physarum_transport_image ──────── #
+# 門は定理と第 2 実装: 木の閉形式、1 次元の閉形式(colortransport.wasserstein_1d)、割当問題
+# (scipy の Hungarian 法)、単一対では graph_physarum_path(= Dijkstra)、小さな格子では LP
+# (scipy.optimize.linprog)。加えて Kantorovich–Rubinstein の下界が常に費用以下であること。
+def _tree(n, seed):
+    """乱数の木(節点 k の親は 0..k-1 から一様)、辺長 U(0.5, 1.5)。"""
+    rng = np.random.default_rng(seed)
+    A = np.zeros((n, n))
+    parent = np.full(n, -1)
+    for k in range(1, n):
+        p = int(rng.integers(0, k))
+        parent[k] = p
+        A[k, p] = A[p, k] = rng.uniform(0.5, 1.5)
+    return A, parent
+
+
+def _tree_w1(A, parent, s):
+    """木の上の W1 の閉形式: Σ_e L_e |部分木の供給の和|(道が一意なので辺 e を渡る質量は決まる)。"""
+    n = len(parent)
+    sub = s.astype(float).copy()
+    for k in range(n - 1, 0, -1):                                      # 子は親より番号が大きい
+        sub[parent[k]] += sub[k]
+    return float(sum(A[k, parent[k]] * abs(sub[k]) for k in range(1, n)))
+
+
+def _centered_supply(n, seed, k_src=4, k_dst=4):
+    rng = np.random.default_rng(seed)
+    s = np.zeros(n)
+    src = rng.choice(n, k_src, replace=False)
+    dst = rng.choice(np.setdiff1d(np.arange(n), src), k_dst, replace=False)
+    s[src] = rng.uniform(0.5, 1.5, k_src)
+    s[dst] = -rng.uniform(0.5, 1.5, k_dst)
+    s[dst] *= s[src].sum() / -s[dst].sum()
+    return s
+
+
+@pytest.mark.parametrize("seed", [0, 1, 2])
+def test_transport_on_a_tree_matches_the_closed_form_and_the_dual_bound_brackets_it(seed):
+    A, parent = _tree(25, seed)
+    s = _centered_supply(25, seed)
+    r = P.graph_physarum_transport(A, s, dt=0.3)
+    w = _tree_w1(A, parent, s)
+    assert r["converged"] or r["gap_converged"]
+    assert r["cost"] == pytest.approx(w, rel=1e-6)
+    assert r["dual_bound"] <= w + 1e-9 and w <= r["cost"] + 1e-9 * w          # 弱双対性(厳密; 丸め分だけ許す)
+    assert r["gap"] < 1e-3 * w                                                # 隙間は tol/dt/min|Q| の桁で閉じる
+    assert np.allclose(r["flow"], -r["flow"].T)
+    assert np.allclose(r["flow"].sum(1), s, atol=1e-9)                       # 正味の流出 = 供給(キルヒホッフ)
+
+
+def test_transport_on_a_path_equals_wasserstein_1d():
+    from colortransport import wasserstein_1d
+    rng = np.random.default_rng(3)
+    x = np.sort(rng.uniform(0, 10, 30))                                       # 不等間隔の 1 次元格子
+    A = np.zeros((30, 30))
+    for k in range(29):
+        A[k, k + 1] = A[k + 1, k] = x[k + 1] - x[k]
+    a = rng.uniform(0, 1, 30); a /= a.sum()
+    b = rng.uniform(0, 1, 30); b /= b.sum()
+    r = P.graph_physarum_transport(A, a - b, dt=0.3)
+    w = wasserstein_1d(x, x, p=1, u_weights=a, v_weights=b)
+    assert r["cost"] == pytest.approx(w, rel=1e-6)
+    assert r["dual_bound"] <= w + 1e-9
+
+
+def test_transport_on_a_bipartite_graph_equals_the_hungarian_assignment():
+    from scipy.optimize import linear_sum_assignment
+    rng = np.random.default_rng(5)
+    m = 7
+    pa, pb = rng.uniform(0, 1, (m, 2)), rng.uniform(0, 1, (m, 2))
+    C = np.sqrt(((pa[:, None, :] - pb[None, :, :]) ** 2).sum(-1))
+    A = np.zeros((2 * m, 2 * m))
+    A[:m, m:] = C
+    A[m:, :m] = C.T
+    s = np.concatenate([np.full(m, 1.0 / m), np.full(m, -1.0 / m)])
+    r = P.graph_physarum_transport(A, s, dt=0.3, max_iters=20000)
+    ri, ci = linear_sum_assignment(C)
+    w = C[ri, ci].sum() / m                                                   # 割当 LP の最適値(Birkhoff: 整数解)
+    assert r["cost"] == pytest.approx(w, rel=1e-5)
+    assert r["dual_bound"] <= w + 1e-9
+
+
+def test_transport_with_one_source_and_one_sink_is_the_shortest_path():
+    from scipy.sparse.csgraph import dijkstra
+    A = _lattice(7, 0)
+    s = np.zeros(49); s[0] = 1.0; s[48] = -1.0
+    r = P.graph_physarum_transport(A, s, dt=0.3)
+    q = P.graph_physarum_path(A, 0, 48, dt=0.3)
+    d = dijkstra(A, indices=0)[48]
+    assert r["cost"] == pytest.approx(d, rel=1e-5) == pytest.approx(q["path_length"], rel=1e-5)   # D の tol が流量に 1e-6 残す
+    assert r["dual_bound"] == pytest.approx(d, abs=1e-9)                     # 圧力の McShane 包絡 = 最短路のポテンシャル(厳密)
+    assert d <= r["cost"] + 1e-12
+    on = r["conductance"][q["path"][:-1], q["path"][1:]]
+    assert on.min() > 0.99                                                    # 同じ指示関数に収束
+
+
+def test_transport_is_a_metric_and_scales_like_one():
+    A, _ = _tree(20, 7)
+    s1, s2, s3 = (_centered_supply(20, k) for k in (11, 12, 13))
+    c = lambda s: P.graph_physarum_transport(A, s, dt=0.3)["cost"]           # noqa: E731
+    assert c(s1) == pytest.approx(c(-s1), rel=1e-6)                           # 対称
+    assert c(3.0 * s1) == pytest.approx(3.0 * c(s1), rel=1e-6)                # 質量に線形
+    assert P.graph_physarum_transport(2.0 * A, s1, dt=0.3)["cost"] == pytest.approx(2.0 * c(s1), rel=1e-6)
+    # 三角不等式: 供給 s1−s3 の輸送 ≤ (s1−s2) + (s2−s3) を、質量分布 a,b,c の差で作る
+    a = np.abs(s1); a /= a.sum(); b = np.abs(s2); b /= b.sum(); d = np.abs(s3); d /= d.sum()
+    assert c(a - d) <= c(a - b) + c(b - d) + 1e-9
+
+
+def test_transport_bounds_hold_before_convergence_and_the_sparse_path_agrees():
+    A, parent = _tree(30, 9)
+    s = _centered_supply(30, 9)
+    w = _tree_w1(A, parent, s)
+    early = P.graph_physarum_transport(A, s, dt=0.3, max_iters=3, tol=0.0, gap_tol=0.0)
+    assert not early["converged"] and early["iters"] == 3
+    assert early["dual_bound"] <= w + 1e-9 and w <= early["cost"] + 1e-9 * w  # 途中でも上下から挟む
+    assert early["gap"] > 1e-3 * w                                            # まだ開いている(門が空でない)
+    # 疎 + CG の経路(n > dense_max_n)は dense と同じ答え
+    iu, ju = np.nonzero(np.triu(A, 1))
+    g = P.Graph(n=30, edges=np.column_stack([iu, ju]).astype(int), length=A[iu, ju], coords=np.zeros((30, 2), int))
+    dense = P.solve_transport(g, s, dt=0.3, dense_max_n=1000)
+    sparse = P.solve_transport(g, s, dt=0.3, dense_max_n=0)
+    assert float((np.abs(sparse.Q) * g.length).sum()) == pytest.approx(w, rel=1e-6)
+    assert np.allclose(dense.D, sparse.D, atol=1e-6)
+
+
+def test_transport_refuses_bad_input():
+    A = _lattice(4, 0)
+    s = np.zeros(16); s[0] = 1.0; s[15] = -1.0
+    P.graph_physarum_transport(A, s, dt=0.3)                                   # 正常
+    for bad in (s[:15], s + 0.1, np.where(s == 0, np.nan, s), np.zeros(16), "x", np.ones((16, 2))):
+        with pytest.raises(ValueError):
+            P.graph_physarum_transport(A, bad)
+    C = np.zeros((4, 4)); C[0, 1] = C[1, 0] = 1.0; C[2, 3] = C[3, 2] = 1.0     # 2 成分
+    with pytest.raises(ValueError):                                            # 成分をまたぐ供給は運べない
+        P.graph_physarum_transport(C, [1.0, 0.0, 0.0, -1.0])
+    r = P.graph_physarum_transport(C, [1.0, -1.0, 0.5, -0.5], dt=0.3)          # 成分内で釣り合えば良い
+    assert r["cost"] == pytest.approx(1.5, rel=1e-6)
+    for bad_kw in ({"dt": 0.0}, {"dt": 1.5}, {"max_iters": 0}, {"tol": -1.0}, {"gap_tol": -1.0}):
+        with pytest.raises(ValueError):
+            P.graph_physarum_transport(A, s, **bad_kw)
+    with pytest.raises(ValueError):
+        P.graph_physarum_transport(A[:3], s[:3])
+
+
+def test_transport_image_manhattan_lp_and_graph_agree():
+    from scipy.optimize import linprog
+    # 1 画素ずつ: 費用 = マンハッタン距離(4 近傍)、八方位距離(8 近傍)。最短路が多数あるので D は
+    # 収束しなくてよいが費用は収束する。
+    a = np.zeros((6, 7)); a[0, 0] = 1.0
+    b = np.zeros((6, 7)); b[4, 6] = 1.0
+    r4 = P.physarum_transport_image(a, b, dt=0.3)
+    assert r4["cost"] == pytest.approx(4 + 6, rel=1e-4)
+    r8 = P.physarum_transport_image(a, b, connectivity=8, dt=0.3)
+    assert r8["cost"] == pytest.approx(4 * np.sqrt(2) + 2, rel=1e-4)
+    # 小さな格子の乱数質量: LP(最小費用流、q = q⁺ − q⁻ ≥ 0)の最適値と一致
+    rng = np.random.default_rng(2)
+    A = rng.uniform(0, 1, (4, 5)); B = rng.uniform(0, 1, (4, 5))
+    r = P.physarum_transport_image(A, B, dt=0.3, snapshots=4)
+    g, _ = P._grid_graph(4, 5, 4)
+    E = len(g.edges)
+    M = np.zeros((20, E))
+    M[g.edges[:, 0], np.arange(E)] = 1.0
+    M[g.edges[:, 1], np.arange(E)] = -1.0
+    s = (A / A.sum() - B / B.sum()).ravel()
+    lp = linprog(np.concatenate([g.length, g.length]), A_eq=np.hstack([M, -M]), b_eq=s,
+                 bounds=(0, None), method="highs")
+    assert lp.status == 0
+    assert r["cost"] == pytest.approx(lp.fun, rel=1e-4)
+    assert r["dual_bound"] <= lp.fun + 1e-9 and lp.fun <= r["cost"] + 1e-9 * lp.fun
+    assert r["flow_field"].shape == (4, 5, 2) and r["potential"].shape == (4, 5)
+    assert len(r["snapshots"]) == 4 and np.allclose(r["snapshots"][-1], r["conductance"])
+    assert r["snapshot_cost"][-1] == pytest.approx(r["cost"], rel=1e-9)
+    # 画像 op と graph op は同じ格子で同じ数
+    L = np.zeros((20, 20))
+    L[g.edges[:, 0], g.edges[:, 1]] = g.length
+    L[g.edges[:, 1], g.edges[:, 0]] = g.length
+    q = P.graph_physarum_transport(L, s, dt=0.3)
+    assert q["cost"] == pytest.approx(r["cost"], rel=1e-9)
+
+
+def test_transport_image_refuses_bad_input():
+    a = np.zeros((4, 4)); a[0, 0] = 1.0
+    b = np.zeros((4, 4)); b[3, 3] = 1.0
+    for bad in (a[:1], -a, np.where(a > 0, np.inf, 0.0), np.zeros((4, 4)), "x", a[:, :3]):
+        with pytest.raises(ValueError):
+            P.physarum_transport_image(bad, b)
+    with pytest.raises(ValueError):
+        P.physarum_transport_image(a, 2.0 * b, normalize=False)              # 質量が違う
+    assert P.physarum_transport_image(a, 2.0 * b)["cost"] == pytest.approx(6.0, rel=1e-4)
+    for bad_kw in ({"connectivity": 6}, {"snapshots": -1}, {"dt": 0.0}, {"max_iters": 0}):
+        with pytest.raises(ValueError):
+            P.physarum_transport_image(a, b, **bad_kw)

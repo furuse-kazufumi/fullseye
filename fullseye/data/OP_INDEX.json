@@ -1,8 +1,8 @@
 {
- "n_ops": 2217,
+ "n_ops": 2219,
  "tiers": {
   "color": 12,
-  "ledger": 1268,
+  "ledger": 1270,
   "nary": 17,
   "registry": 920
  },
@@ -5978,6 +5978,20 @@
    ]
   },
   {
+   "name": "graph_physarum_transport",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "flow",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "matrix",
+    "signal"
+   ]
+  },
+  {
    "name": "graph_rich_club",
    "halcon": "",
    "in_sort": "conn_graph",
@@ -10133,6 +10147,20 @@
    "ledger": "opsgraph",
    "dim": "graph",
    "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "physarum_transport_image",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "flow",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "image2d",
     "image2d"
    ]
   },

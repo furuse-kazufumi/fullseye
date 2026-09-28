@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">physarum_transport_image — GRAPH <code style="color:#22d3bf">flow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.physarum_transport_image(a, b, connectivity=4, normalize=True, dt=0.1, max_iters=5000, tol=1e-06, gap_tol=1e-06, snapshots=0)</code>(要直接调用实现,<code style="color:#22d3bf">import physarum_search; physarum_search.physarum_transport_image(a, b, connectivity=4, normalize=True, dt=0.1, max_iters=5000, tol=1e-06, gap_tol=1e-06, snapshots=0)</code>;从台账取用则 <code style="color:#22d3bf">opsgraph.get(&quot;physarum_transport_image&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Earth mover&#x27;s distance between two mass images by the slime mould&#x27;s tube dynamics.</p>
+<p>Every pixel is a node; neighbouring pixels (`<code style="color:#22d3bf">connectivity</code>` 4 or 8) are joined by a tube of</p>
+<p>length 1 (`<code style="color:#22d3bf">sqrt(2)</code>` on diagonals), so the ground metric is the grid path length (Manhattan</p>
+<p>for 4, octile for 8). Mass `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> enters and mass </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> leaves: the supply is </code><code style="color:#22d3bf">a - b</code>` after</p>
+<p>both are scaled to unit mass (`<code style="color:#22d3bf">normalize=True</code><code style="color:#22d3bf">; with </code><code style="color:#22d3bf">False</code>` they must already carry the</p>
+<p>same mass). Dynamics, convergence and the two-sided bound as in</p>
+<p>:func:<code style="color:#22d3bf">graph_physarum_transport</code>; larger images run on the sparse Laplacian with conjugate</p>
+<p>gradients.</p>
+<p>Returns `<code style="color:#22d3bf">cost</code>` (the 1-Wasserstein distance estimate in pixel units, an upper bound),</p>
+<p>`<code style="color:#22d3bf">dual_bound</code><code style="color:#22d3bf"> (Kantorovich–Rubinstein lower bound), </code><code style="color:#22d3bf">gap</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">conductance</code>` (an image: each</p>
+<p>pixel&#x27;s thickest incident tube), `<code style="color:#22d3bf">flow_field</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">(H, W, 2)</code>`: the mean of the flow vectors</p>
+<p>of the tubes at each pixel, in `<code style="color:#22d3bf">(row, col)</code>` units of mass per unit length, for drawing</p>
+<p>arrows), `<code style="color:#22d3bf">potential</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> pressures), </code><code style="color:#22d3bf">iters</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">converged</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">gap_converged</code>`,</p>
+<p>`<code style="color:#22d3bf">history</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">cost_history</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">dual_history</code><code style="color:#22d3bf">, and with </code><code style="color:#22d3bf">snapshots = m &gt; 0</code><code style="color:#22d3bf"> also </code><code style="color:#22d3bf">snapshots</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">m</code>`</p>
+<p>conductance images at evenly spaced iterations, the last one final), `<code style="color:#22d3bf">snapshot_iters</code>` and</p>
+<p>`<code style="color:#22d3bf">snapshot_cost</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">sum_e L_e |Q_e|</code>` at those iterations) for watching the tubes form.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: images not 2-D, finite, non-negative, of the same shape with at</p>
+<p>least 2 rows and columns, or without mass; unequal masses when `<code style="color:#22d3bf">normalize=False</code>`;</p>
+<p>`<code style="color:#22d3bf">connectivity</code><code style="color:#22d3bf"> not 4 or 8; </code><code style="color:#22d3bf">snapshots &lt; 0</code><code style="color:#22d3bf">; and as :func:</code>graph_physarum_transport`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_physarum_transport">poc_physarum_transport</a> — <code style="color:#22d3bf">py -3.11 examples/poc_physarum_transport.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_edge_consensus">graph_edge_consensus</a> · <a style="color:#22d3bf" href="opgraph:graph_core_persistence">graph_core_persistence</a> · <a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a> · <a style="color:#22d3bf" href="opgraph:tree_sholl">tree_sholl</a> · <a style="color:#22d3bf" href="opgraph:tree_run_length">tree_run_length</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">flow</code>)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_physarum_path">graph_physarum_path</a> · <a style="color:#22d3bf" href="opgraph:physarum_route">physarum_route</a> · <a style="color:#22d3bf" href="opgraph:graph_physarum_transport">graph_physarum_transport</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: physarum_search.py — GRAPH 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

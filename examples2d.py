@@ -121,6 +121,11 @@ EXAMPLES = [
      "summary": "Tero 2010 の管の力学(dD/dt = |Q| − D)を graph_physarum_path(重み付きグラフ)と physarum_route(コスト画像)で回す。"
                 "15×15 の格子 5 通り・完全迷路・地形の全部で道が Dijkstra / route_through_array と一致(差 < 1e-9)。指示関数への収束"
                 "(Bonifaci 2012)は 3/5、残り 2 は 2 位との差が小さく拮抗が残る。Lyapunov V = Σ L·D は 23 区間で一度も増えない。"},
+    {"id": "poc_physarum_transport", "task": "imgmetrics", "data": "synthetic",
+     "name": "粘菌は最適輸送を解く —— 源と吸込を質量の分布にすると、同じ管の力学が Earth Mover 距離へ収束する",
+     "summary": "graph_physarum_transport(重み付きグラフ + 供給ベクトル)と physarum_transport_image(質量画像 2 枚)で、Tero の管の力学を"
+                "L1 最適輸送(Beckmann 問題)に。真値 10 件(木の閉形式 5・1 次元・Hungarian 法・LP・平行移動 |dr|+|dc|・単一対の Dijkstra)"
+                "と全部一致し、Kantorovich–Rubinstein の下界(圧力の McShane 包絡)が費用を下から挟む。隙間が閉じたら止まる(証明書つき)。"},
     {"id": "poc_worm_core_persists", "task": "imgmetrics", "data": "synthetic",
      "name": "線虫の脳の核は生まれた時から在る —— 8 匹の発生系列で「最も深い殻」に居続ける細胞を数える",
      "summary": "Witvliet 2021 の 8 匹を graph_kcore / graph_rich_club_curve / graph_core_persistence で剥く。シナプス数で剥いた最深殻は発生を"

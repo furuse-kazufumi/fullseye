@@ -90,6 +90,7 @@ One experiment = one question. **This article is appended to every time an exper
 | What the slime mould taught: its tubes are continuous (work in progress) | Maze 5/5; with continuous parts the ridge vanishes 24/24; greedy recovery returns 8/8 readable circuits that inherit 9/9. Under evolution the leak gives 8/8, but "evolution crossed the ridge" was retracted (the leak had erased it). Peeling the floors during the search: heritability 13/16 vs 4/16 at n=16 (p=0.0038). Three more schedules (early, late, two-step): heritability 8/16, 12/16, 11/16 regardless of tail length; crossing drops when the floors go early (6/16). One task — research remains | Addendum |
 | Slime-mould tubes solve the maze (two ops) | Five lattices, a perfect maze and a terrain: the mould's route equals Dijkstra / route_through_array everywhere (< 1e-9). 3/5 converged to the indicator; the two cut off have the smallest runner-up gaps (0.009, 0.032). The Lyapunov V never rose over 23 intervals | Addendum |
 | The worm brain's core is there from birth (3 ops) | Peeled by synapse count, the deepest shell stays at 6–10 cells through development (index 7 → 55) and the RIA pair never leaves it; the 0/1 k-core swells to 150 cells and cannot single out a core. 51 cells persistent in some core type = the published value | Addendum |
+| The slime mould solves optimal transport (two ops) | With a supply vector the tube dynamics converge to L1 optimal transport. Ten truths (tree closed form, 1-D, Hungarian, LP, translation, Dijkstra) all match, and the Kantorovich–Rubinstein lower bound brackets the cost from below. The surviving tubes are the optimal assignment | Addendum |
 
 ## Glossary (worth reading first)
 
@@ -925,6 +926,24 @@ Published value: Yadav & Singh (bioRxiv, 2026-06) measured the same quantities o
 The rich club (density among high in-degree cells over the null) exceeds 1 in some band at every stage, with peak ratios 1.4–3.3 and the band widening to k = 1–28 in the adult. One L3 animal dips below 1 at high k, so the 8 animals do not form a monotone series.
 
 Prior art: the k-core and rich-club quantities are those of Yadav & Singh 2026 (they came first). Our part is the numpy ops gated by theorems, agreement with a second implementation (networkx), the s-core vs k-core contrast, and the moving figure on the cell positions. Data from nemanode.org and the authors' skeleton repository (not bundled).
+
+### The slime mould solves optimal transport — make the source and sink mass distributions and the same tube dynamics converge to the Earth Mover's Distance (2026-09-28)
+
+The maze ops above had one source and one sink. Give the same dynamics a supply vector b (sum 0; positive where mass enters, negative where it leaves) and it is proved to converge to a minimiser of Σ L_e|q_e| under flow conservation — L1 optimal transport on the graph, the Beckmann problem, i.e. the 1-Wasserstein distance between b⁺ and b⁻ (Bonifaci 2017; Facca, Karrenbauer, Kolev and Mehlhorn 2020; Facca, Cardin and Putti 2018 for the continuum). Two new ops, `graph_physarum_transport` (weighted graph + supply) and `physarum_transport_image` (two mass images, pixels joined by unit tubes = the Earth Mover's Distance in the Manhattan metric), return the cost Σ L|Q| (an upper bound) together with the Kantorovich–Rubinstein lower bound — b·φ for the McShane envelope φ of the pressure, made 1-Lipschitz. The true distance always lies between the two, so the gap certifies how far the current flow is from optimal, and the run stops when it closes (no external solver needed).
+
+![tubes forming](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/01_transport_tubes_gif.gif)
+
+The tubes carrying the mass of a disk (red) to two disks (blue) form over 183 iterations (24×24 pixels, 4-neighbourhood, 36 frames). Tubes start uniform; only the used routes thicken and remain. The EMD is 12.0001, and the run stopped when the gap to the lower bound 12.0000 closed.
+
+![12-vs-12 assignment](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/03_assignment_tubes.png)
+
+A complete bipartite graph of 12 vs 12 points (Euclidean lengths, 144 tubes). After 459 iterations the surviving tubes are exactly the Hungarian optimal assignment (≥ 1.00 on it, ≤ 0.001 elsewhere), and the cost 0.163244 matches the minimum assignment 0.163242 to 1e-5.
+
+![upper and lower bounds close](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/04_sandwich.png)
+
+Ten truths were checked: on five random trees the closed form Σ L_e|subtree supply| to 1.7e-15 (the flow on a tree is unique; 37–38 iterations); on an uneven 1-D grid the existing op `wasserstein_1d` at 0.316477; on a 6×6 grid of random mass the LP (HiGHS) at 0.591849; a disk shifted by (5, 8) pixels gives EMD 13.000086 = |dr| + |dc| as the theorem says; with one source and one sink the lower bound equals Dijkstra's distance 9.367260049 exactly (the envelope of the pressure is the shortest-path potential). The metric axioms (symmetry, linearity in length and mass, the triangle inequality) hold. 9.1 s in all.
+
+Honestly: the mould is not faster than the Hungarian algorithm or the network simplex. Its three merits are that a local rule alone reaches the optimum, that it batches in parallel, and that it certifies its own answer. Prior art: that Physarum dynamics solve optimal transport is proved in the papers above — we came later. Our part is a numpy op that returns a dual certificate, gated by the truths of trees, 1-D, assignment, LP and translation; Facca et al.'s DMK solver is a finite-element continuum version, a different thing. Next, the op goes onto the worm wiring: is the flow backbone from sensory sources to motor sinks the same in all 8 animals?
 
 ### What we measure next
 

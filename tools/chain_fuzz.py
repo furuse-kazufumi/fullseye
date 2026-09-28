@@ -1322,6 +1322,17 @@ def _b_physarum_route(pool, rng):
     return (rng.uniform(0.5, 1.5, (8, 8)),), {"dt": 0.3, "max_iters": 600}
 
 
+def _b_physarum_transport(pool, rng):
+    (A,), _ = _b_physarum_graph(pool, rng)
+    s = rng.uniform(0, 1, len(A))
+    s -= s.mean()
+    return (A, s), {"dt": 0.3, "max_iters": 600}
+
+
+def _b_physarum_transport_image(pool, rng):
+    return (rng.uniform(0, 1, (6, 7)), rng.uniform(0, 1, (6, 7))), {"dt": 0.3, "max_iters": 600}
+
+
 def _b_graph_kcore(pool, rng):
     B = (rng.random((30, 30)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -1511,6 +1522,8 @@ OP_ARG_BUILDERS = {
     "graph_core_persistence": _b_graph_core_persistence,
     "graph_physarum_path": _b_physarum_graph,
     "physarum_route": _b_physarum_route,
+    "graph_physarum_transport": _b_physarum_transport,
+    "physarum_transport_image": _b_physarum_transport_image,
     "tree_from_swc": _b_tree_swc,
     "tree_morphometry": _b_tree_table,
     "tree_sholl": _b_tree_table,

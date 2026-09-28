@@ -757,3 +757,381 @@ def physarum_route(cost, start=None, end=None, connectivity=4, dt=0.1, max_iters
 def _edge_index(edges, path):
     key = {(int(u), int(v)): k for k, (u, v) in enumerate(edges)}
     return np.array([key.get((int(u), int(v)), key.get((int(v), int(u)))) for u, v in zip(path[:-1], path[1:])], dtype=int)
+
+
+# ── 多源・多吸込: 粘菌は L1 最適輸送(Beckmann 問題)を解く ─────────────────── #
+# 源と吸込を 1 つずつでなく「供給ベクトル b(Σ b = 0)」で与えると、同じ管の力学が
+#     min Σ_e L_e |q_e|   s.t. 各節点の正味の流出 = b_i(流量保存)
+# の解 —— グラフ上の L1 最適輸送(Beckmann 問題 = b⁺ と b⁻ の 1-Wasserstein 距離)—— へ
+# 収束する(Bonifaci 2017 *J. Math. Biol.* "A revised model of fluid transport optimization in
+# Physarum polycephalum"; Facca–Karrenbauer–Kolev–Mehlhorn 2020 *Theor. Comput. Sci.*
+# "Convergence of the non-uniform Physarum dynamics"; 連続体は Facca–Cardin–Putti 2018
+# *SIAM J. Appl. Math.* "Towards a stationary Monge–Kantorovich dynamics")。
+# 費用の下界は Kantorovich–Rubinstein 双対: 管ごとに 1-Lipschitz な圧力 p に対し bᵀp ≤ W1。
+# 粘菌の圧力を max_e |p_u − p_v| / L_e で割れば常に実行可能な双対解になり、
+# cost − bᵀp' が「いまの流れが最適から幾ら離れているか」の証明書になる(外部ソルバ不要)。
+
+
+@dataclass
+class TransportResult:
+    D: np.ndarray               # (E,) 最終伝導率
+    Q: np.ndarray               # (E,) 最終流量(edges の向き u→v が正)
+    p: np.ndarray               # (n,) 最終圧力(連結成分ごとに 1 節点を 0 に固定)
+    iters: int
+    converged: bool             # max|dD| < tol
+    gap_converged: bool         # 双対の隙間 cost − bᵀp' が gap_tol × cost 以下になった(最適性の証明書)
+    history: list               # 各反復の max|dD|
+    cost_history: list          # 各反復の Σ L_e |Q_e|
+    dual_history: list          # (反復, 双対の下界) を検査した反復ごとに
+
+
+def _components(n: int, edges) -> np.ndarray:
+    """連結成分の番号(0..k-1)。union-find。"""
+    parent = np.arange(n)
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    for u, v in edges:
+        a, c = find(int(u)), find(int(v))
+        if a != c:
+            parent[a] = c
+    roots = np.array([find(k) for k in range(n)])
+    return np.unique(roots, return_inverse=True)[1]
+
+
+def solve_transport(graph: Graph, b, *, dt: float = 0.1, max_iters: int = 5000, tol: float = 1e-6,
+                    gap_tol: float = 1e-6, D_init=None, dense_max_n: int = 150) -> TransportResult:
+    """供給ベクトル ``b`` で粘菌方程式を回す(``solve_physarum`` の多源・多吸込への一般化)。
+
+    ゲージは連結成分ごとに 1 節点(b が最小の節点)の圧力を 0 に固定する(供給の無い成分も
+    特異にならない)。``n <= dense_max_n`` は dense 解、それより大きいグラフは疎ラプラシアン +
+    共役勾配(warm start)。停止は ``max|dD| < tol``(D の収束)、または双対の隙間
+    ``cost − bᵀp' <= gap_tol × cost``(Kantorovich–Rubinstein の下界が費用に追いついた = 費用が
+    最適から相対 gap_tol 以内という証明書。最適解が一意でないと D は収束しないが圧力は収束する
+    ので、この方で止まる)。Σ b = 0 と成分ごとの釣り合いは呼び出し側で確かめる。
+    """
+    ii, jj, L, n = graph.edges[:, 0], graph.edges[:, 1], graph.length, graph.n
+    E = len(graph.edges)
+    b = np.asarray(b, dtype=np.float64)
+    D = np.ones(E) if D_init is None else np.asarray(D_init, dtype=np.float64).copy()
+    comp = _components(n, graph.edges)
+    gauge = np.array([np.flatnonzero(comp == c)[np.argmin(b[comp == c])] for c in range(int(comp.max()) + 1)])
+    keep = np.setdiff1d(np.arange(n), gauge)
+    remap = -np.ones(n, dtype=int)
+    remap[keep] = np.arange(len(keep))
+    br = b[keep]
+    ri, rj = remap[ii], remap[jj]
+    dense = n <= int(dense_max_n)
+    if not dense:
+        from scipy.sparse import csr_matrix
+        from scipy.sparse.linalg import cg
+        both = (ri >= 0) & (rj >= 0)
+        onlyi = (ri >= 0) & (rj < 0)
+        onlyj = (ri < 0) & (rj >= 0)
+        rows = np.concatenate([ri[both], rj[both], ri[both], rj[both], ri[onlyi], rj[onlyj]])
+        cols = np.concatenate([rj[both], ri[both], ri[both], rj[both], ri[onlyi], rj[onlyj]])
+        x0 = np.zeros(len(keep))
+    history, cost_history, dual_history = [], [], []
+    converged = gap_converged = False
+    check_every = 10                                  # 双対の下界は Dijkstra 1 回ぶん高いので 10 反復ごと
+    Q = np.zeros(E)
+    p = np.zeros(n)
+    it = -1
+    for it in range(int(max_iters)):
+        g = D / L
+        if dense:
+            A = np.zeros((n, n))
+            np.add.at(A, (ii, jj), -g)
+            np.add.at(A, (jj, ii), -g)
+            np.add.at(A, (ii, ii), g)
+            np.add.at(A, (jj, jj), g)
+            pr = np.linalg.solve(A[np.ix_(keep, keep)], br) if len(keep) else np.zeros(0)
+        else:
+            gb = g[both]
+            data = np.concatenate([-gb, -gb, gb, gb, g[onlyi], g[onlyj]])
+            A = csr_matrix((data, (rows, cols)), shape=(len(keep), len(keep)))
+            pr, _info = cg(A, br, x0=x0, rtol=1e-10, atol=0.0, maxiter=1000)
+            x0 = pr
+        p = np.zeros(n)
+        p[keep] = pr
+        Q = g * (p[ii] - p[jj])
+        cost = float((np.abs(Q) * L).sum())
+        newD = D + dt * (np.abs(Q) - D)
+        d = float(np.max(np.abs(newD - D)))
+        history.append(d)
+        cost_history.append(cost)
+        D = newD
+        if d < tol:
+            converged = True
+            break
+        if gap_tol > 0 and (it % check_every == check_every - 1):
+            dual = transport_dual_bound(b, p, graph.edges, L)
+            dual_history.append((it + 1, dual))
+            if cost - dual <= float(gap_tol) * cost:
+                gap_converged = True
+                break
+    return TransportResult(D, Q, p, it + 1, converged, gap_converged, history, cost_history, dual_history)
+
+
+def _mcshane_envelope(p, n, edges, length):
+    """φ(v) = min_u (p(u) + d(u, v)): p の下にある最大の 1-Lipschitz 関数(McShane–Whitney)。
+
+    全節点を初期値 p(u) で同時に出発する Dijkstra 1 回。p が既に 1-Lipschitz なら φ = p。
+    """
+    import heapq
+    adj = [[] for _ in range(n)]
+    for (u, v), L in zip(edges, length):
+        adj[int(u)].append((float(L), int(v)))
+        adj[int(v)].append((float(L), int(u)))
+    dist = np.asarray(p, dtype=np.float64).copy()
+    heap = [(float(dist[k]), k) for k in range(n)]
+    heapq.heapify(heap)
+    while heap:
+        d, u = heapq.heappop(heap)
+        if d > dist[u]:
+            continue
+        for L, v in adj[u]:
+            nd = d + L
+            if nd < dist[v]:
+                dist[v] = nd
+                heapq.heappush(heap, (nd, v))
+    return dist
+
+
+def transport_dual_bound(b, p, edges, length) -> float:
+    """Kantorovich–Rubinstein の下界: 圧力から作った 1-Lipschitz な双対解 φ の ``b . φ``。
+
+    min Σ L_e |q_e| s.t. 流量保存 の双対は max bᵀφ s.t. |φ_u − φ_v| ≤ L_e(全管)。実行可能な φ
+    なら何でも bᵀφ は最適費用の下界(弱双対性)。ここでは 2 つ作って大きい方を返す:
+    (1) p を ``s = max_e |p_u − p_v| / L_e`` で割ったもの(1 本でも傾きの大きい管があると弱い)、
+    (2) McShane 包絡 φ(v) = min_u (p(u) + d(u, v))(傾きの大きい所だけを削る)。
+    粘菌の圧力は収束で等号に近づく。
+    """
+    b = np.asarray(b, dtype=np.float64)
+    p = np.asarray(p, dtype=np.float64)
+    length = np.asarray(length, dtype=np.float64)
+    slope = np.abs(p[edges[:, 0]] - p[edges[:, 1]]) / length
+    s = float(slope.max()) if len(slope) else 0.0
+    if s <= 0.0:
+        return 0.0
+    scaled = float(b @ p / s)
+    phi = _mcshane_envelope(p, len(p), edges, length)
+    return max(scaled, float(b @ phi))
+
+
+def _supply_vector(supply, n, edges, op):
+    s = np.asarray(supply)
+    if isinstance(supply, (str, bytes)) or np.ma.isMaskedArray(supply) or s.dtype.kind not in "fiub":
+        raise ValueError("%s: supply must be a numeric (n,) vector" % op)
+    s = np.squeeze(s.astype(np.float64))
+    if s.ndim != 1 or s.shape[0] != n:
+        raise ValueError("%s: supply must have one entry per node (%d), got shape %r" % (op, n, np.shape(supply)))
+    if not np.isfinite(s).all():
+        raise ValueError("%s: supply must be finite" % op)
+    total = float(np.abs(s).sum())
+    if total == 0.0:
+        raise ValueError("%s: supply is all zero (nothing to move)" % op)
+    if abs(float(s.sum())) > 1e-9 * total:
+        raise ValueError("%s: supply must sum to 0 (mass in = mass out), got %r" % (op, float(s.sum())))
+    comp = _components(n, edges)
+    for c in range(int(comp.max()) + 1):
+        if abs(float(s[comp == c].sum())) > 1e-9 * total:
+            raise ValueError("%s: a connected component has net supply %r (mass with nowhere to go)"
+                             % (op, float(s[comp == c].sum())))
+    return s
+
+
+def _check_dynamics(dt, max_iters, tol, gap_tol, op):
+    if not np.isfinite(dt) or not (0.0 < float(dt) <= 1.0):
+        raise ValueError("%s: dt must lie in (0, 1], got %r" % (op, dt))
+    if int(max_iters) < 1 or not np.isfinite(tol) or not (float(tol) >= 0):
+        raise ValueError("%s: max_iters must be >= 1 and tol >= 0 (0 = run exactly max_iters)" % op)
+    if not np.isfinite(gap_tol) or not (float(gap_tol) >= 0):
+        raise ValueError("%s: gap_tol must be >= 0 (0 = never stop on the duality gap)" % op)
+
+
+def graph_physarum_transport(lengths, supply, dt=0.1, max_iters=5000, tol=1e-6, gap_tol=1e-6):
+    """L1 optimal transport (the Beckmann problem) on a weighted graph by the slime mould's tube dynamics.
+
+    ``lengths`` is a symmetric ``(n, n)`` matrix of tube lengths (``0`` = no tube, diagonal 0) and
+    ``supply`` an ``(n,)`` vector that sums to 0: mass enters at the nodes with ``supply > 0`` and
+    leaves where it is ``< 0``. The pressures solve the weighted Laplacian with this right-hand
+    side (Kirchhoff), each tube carries ``Q_e = D_e (p_u - p_v) / L_e`` and adapts
+    ``dD_e/dt = |Q_e| - D_e`` (explicit Euler, step ``dt``). Bonifaci (2017) and Facca,
+    Karrenbauer, Kolev and Mehlhorn (2020) prove that the flow converges to a minimiser of
+    ``sum_e L_e |q_e|`` under flow conservation, i.e. to the 1-Wasserstein distance between
+    ``supply+`` and ``supply-`` in the graph metric (Facca, Cardin and Putti 2018 for the
+    continuum). With one unit source and one sink this is :func:`graph_physarum_path`.
+
+    Returns ``cost`` = ``sum_e L_e |Q_e|`` (the transport cost of the current flow: an upper bound
+    on the distance), ``dual_bound`` = ``supply . p'`` with ``p'`` the pressure scaled to be
+    1-Lipschitz along every tube (Kantorovich–Rubinstein: a lower bound on the distance at any
+    iteration, no external solver needed), ``gap`` = ``cost - dual_bound`` (0 at the optimum;
+    it closes like ``tol / dt`` divided by the smallest non-zero flow, because the scaling is
+    set by the tube whose conductance still lags its flow the most),
+    ``conductance`` and ``flow`` (``(n, n)`` matrices, flow antisymmetric; the net outflow of
+    every node equals its supply), ``potential`` (``(n,)`` pressures, 0 at one node per connected
+    component), ``iters``, ``converged`` (max |dD| fell below ``tol``), ``gap_converged`` (the
+    run stopped because ``gap <= gap_tol * cost``: the cost is certified within ``gap_tol`` of the
+    optimum; when several flows are optimal the conductances keep wandering while the pressures
+    settle, so this is the stop that fires; the gap is checked every 10 iterations), ``history``,
+    ``cost_history`` and ``dual_history`` (``(k, 2)``: iteration and lower bound at each check).
+
+    **Raises** ``ValueError``: matrix not square / symmetric / finite / non-negative, self-loops,
+    no edge; ``supply`` not an ``(n,)`` finite numeric vector, all zero, not summing to 0
+    (relative ``1e-9``) or unbalanced inside a connected component (mass with nowhere to go);
+    ``dt`` outside (0, 1]; ``max_iters < 1``; ``tol < 0``; ``gap_tol < 0``.
+    """
+    op = "graph_physarum_transport"
+    a = _lengths_matrix(lengths, op)
+    n = a.shape[0]
+    iu, ju = np.nonzero(np.triu(a, 1))
+    if len(iu) == 0:
+        raise ValueError("%s: the matrix has no edge" % op)
+    edges = np.column_stack([iu, ju]).astype(int)
+    s = _supply_vector(supply, n, edges, op)
+    _check_dynamics(dt, max_iters, tol, gap_tol, op)
+    graph = Graph(n=n, edges=edges, length=a[iu, ju], coords=np.zeros((n, 2), dtype=int))
+    res = solve_transport(graph, s, dt=float(dt), max_iters=int(max_iters), tol=float(tol), gap_tol=float(gap_tol))
+    cond = np.zeros((n, n))
+    cond[iu, ju] = res.D
+    cond[ju, iu] = res.D
+    flow = np.zeros((n, n))
+    flow[iu, ju] = res.Q
+    flow[ju, iu] = -res.Q
+    cost = float((np.abs(res.Q) * graph.length).sum())
+    dual = transport_dual_bound(s, res.p, edges, graph.length)
+    return {"cost": cost, "dual_bound": dual, "gap": cost - dual,
+            "conductance": cond, "flow": flow, "potential": res.p,
+            "iters": int(res.iters), "converged": bool(res.converged),
+            "gap_converged": bool(res.gap_converged),
+            "history": np.asarray(res.history, dtype=np.float64),
+            "cost_history": np.asarray(res.cost_history, dtype=np.float64),
+            "dual_history": np.asarray(res.dual_history, dtype=np.float64).reshape(-1, 2)}
+
+
+def _grid_graph(H, W, connectivity):
+    """H×W の画素格子。隣は長さ 1、斜めは sqrt(2)。"""
+    idx = np.arange(H * W).reshape(H, W)
+    steps = [((0, 1), 1.0), ((1, 0), 1.0)]
+    if int(connectivity) == 8:
+        steps += [((1, 1), np.sqrt(2.0)), ((1, -1), np.sqrt(2.0))]
+    us, vs, ls, dirs = [], [], [], []
+    for (dr, dq), k in steps:
+        r0, r1 = max(0, -dr), H - max(0, dr)
+        q0, q1 = max(0, -dq), W - max(0, dq)
+        u = idx[r0:r1, q0:q1].ravel()
+        v = idx[r0 + dr:r1 + dr, q0 + dq:q1 + dq].ravel()
+        us.append(u)
+        vs.append(v)
+        ls.append(np.full(len(u), k))
+        dirs.append(np.tile(np.array([dr, dq], dtype=np.float64) / k, (len(u), 1)))
+    edges = np.column_stack([np.concatenate(us), np.concatenate(vs)]).astype(int)
+    graph = Graph(n=H * W, edges=edges, length=np.concatenate(ls),
+                  coords=np.column_stack(np.divmod(np.arange(H * W), W)))
+    return graph, np.concatenate(dirs)
+
+
+def physarum_transport_image(a, b, connectivity=4, normalize=True, dt=0.1, max_iters=5000, tol=1e-6,
+                             gap_tol=1e-6, snapshots=0):
+    """Earth mover's distance between two mass images by the slime mould's tube dynamics.
+
+    Every pixel is a node; neighbouring pixels (``connectivity`` 4 or 8) are joined by a tube of
+    length 1 (``sqrt(2)`` on diagonals), so the ground metric is the grid path length (Manhattan
+    for 4, octile for 8). Mass ``a`` enters and mass ``b`` leaves: the supply is ``a - b`` after
+    both are scaled to unit mass (``normalize=True``; with ``False`` they must already carry the
+    same mass). Dynamics, convergence and the two-sided bound as in
+    :func:`graph_physarum_transport`; larger images run on the sparse Laplacian with conjugate
+    gradients.
+
+    Returns ``cost`` (the 1-Wasserstein distance estimate in pixel units, an upper bound),
+    ``dual_bound`` (Kantorovich–Rubinstein lower bound), ``gap``, ``conductance`` (an image: each
+    pixel's thickest incident tube), ``flow_field`` (``(H, W, 2)``: the mean of the flow vectors
+    of the tubes at each pixel, in ``(row, col)`` units of mass per unit length, for drawing
+    arrows), ``potential`` (``(H, W)`` pressures), ``iters``, ``converged``, ``gap_converged``,
+    ``history``, ``cost_history``, ``dual_history``, and with ``snapshots = m > 0`` also ``snapshots`` (``m``
+    conductance images at evenly spaced iterations, the last one final), ``snapshot_iters`` and
+    ``snapshot_cost`` (``sum_e L_e |Q_e|`` at those iterations) for watching the tubes form.
+
+    **Raises** ``ValueError``: images not 2-D, finite, non-negative, of the same shape with at
+    least 2 rows and columns, or without mass; unequal masses when ``normalize=False``;
+    ``connectivity`` not 4 or 8; ``snapshots < 0``; and as :func:`graph_physarum_transport`.
+    """
+    op = "physarum_transport_image"
+
+    def image(x, name):
+        v = np.asarray(x)
+        if isinstance(x, (str, bytes)) or np.ma.isMaskedArray(x) or v.dtype.kind not in "fiub":
+            raise ValueError("%s: %s must be a numeric 2-D image" % (op, name))
+        v = v.astype(np.float64)
+        if v.ndim != 2 or min(v.shape) < 2:
+            raise ValueError("%s: %s must be a 2-D image with at least 2 rows and columns, got %r" % (op, name, v.shape))
+        if not np.isfinite(v).all() or (v < 0).any():
+            raise ValueError("%s: %s must be finite and non-negative (it is a mass)" % (op, name))
+        if v.sum() <= 0:
+            raise ValueError("%s: %s carries no mass" % (op, name))
+        return v
+
+    A = image(a, "a")
+    B = image(b, "b")
+    if A.shape != B.shape:
+        raise ValueError("%s: a and b must have the same shape, got %r and %r" % (op, A.shape, B.shape))
+    if normalize:
+        A = A / A.sum()
+        B = B / B.sum()
+    elif abs(A.sum() - B.sum()) > 1e-9 * (A.sum() + B.sum()):
+        raise ValueError("%s: a and b carry different masses (%r vs %r); pass normalize=True to scale both to 1"
+                         % (op, float(A.sum()), float(B.sum())))
+    if int(connectivity) not in (4, 8):
+        raise ValueError("%s: connectivity must be 4 or 8, got %r" % (op, connectivity))
+    m = int(snapshots)
+    if m < 0:
+        raise ValueError("%s: snapshots must be >= 0" % op)
+    _check_dynamics(dt, max_iters, tol, gap_tol, op)
+    H, W = A.shape
+    graph, dirs = _grid_graph(H, W, connectivity)
+    s = (A - B).ravel()
+    s -= s.mean()                                     # 丸めの残りを消す(Σ = 0 を厳密に)
+    res = solve_transport(graph, s, dt=float(dt), max_iters=int(max_iters), tol=float(tol), gap_tol=float(gap_tol))
+    edges, length = graph.edges, graph.length
+
+    def image_of(D):
+        img = np.zeros(H * W)
+        np.maximum.at(img, edges[:, 0], D)
+        np.maximum.at(img, edges[:, 1], D)
+        return img.reshape(H, W)
+
+    vec = np.zeros((H * W, 2))
+    cnt = np.zeros(H * W)
+    np.add.at(vec, edges[:, 0], res.Q[:, None] * dirs)
+    np.add.at(vec, edges[:, 1], res.Q[:, None] * dirs)
+    np.add.at(cnt, edges[:, 0], 1.0)
+    np.add.at(cnt, edges[:, 1], 1.0)
+    cost = float((np.abs(res.Q) * length).sum())
+    dual = transport_dual_bound(s, res.p, edges, length)
+    out = {"cost": cost, "dual_bound": dual, "gap": cost - dual,
+           "conductance": image_of(res.D),
+           "flow_field": (vec / np.maximum(cnt, 1.0)[:, None]).reshape(H, W, 2),
+           "potential": res.p.reshape(H, W),
+           "iters": int(res.iters), "converged": bool(res.converged),
+           "gap_converged": bool(res.gap_converged),
+           "history": np.asarray(res.history, dtype=np.float64),
+           "cost_history": np.asarray(res.cost_history, dtype=np.float64),
+           "dual_history": np.asarray(res.dual_history, dtype=np.float64).reshape(-1, 2)}
+    if m > 0:
+        # 同じ式を途中で止めて撮る(D を持ち越して続きを回す)。最後の 1 枚は上の最終状態と同じ反復数。
+        marks = np.unique(np.maximum(1, np.round(np.linspace(0, res.iters, m + 1)[1:]).astype(int)))
+        shots, costs, D, done = [], [], None, 0
+        for k in marks:
+            r = solve_transport(graph, s, dt=float(dt), max_iters=int(k - done), tol=0.0, gap_tol=0.0, D_init=D)
+            D, done = r.D, int(k)
+            shots.append(image_of(D))
+            costs.append(float((np.abs(r.Q) * length).sum()))
+        out["snapshots"] = shots
+        out["snapshot_iters"] = marks
+        out["snapshot_cost"] = np.asarray(costs)
+    return out

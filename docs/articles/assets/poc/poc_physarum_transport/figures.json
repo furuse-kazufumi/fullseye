@@ -1,0 +1,56 @@
+[
+ {
+  "file": "01_transport_tubes_gif.gif",
+  "name": "transport_tubes_gif",
+  "caption": "円盤(赤)の質量を 2 つの円盤(青)へ運ぶ管が張られていく(明るさ = 導電度の平方根)。24×24 画素、4 近傍、183 反復、48 コマ。最後に残る管の束が最適輸送の流れ。",
+  "shape": [
+   192,
+   192,
+   3
+  ],
+  "animated": true,
+  "frames": 48,
+  "frames_written": 36,
+  "fps": 8.0
+ },
+ {
+  "file": "02_transport_tubes.png",
+  "name": "transport_tubes",
+  "caption": "EMD 12.0001(画素単位)。粘菌の費用 12.0001、Kantorovich–Rubinstein の下界 12.0000。",
+  "shape": [
+   237,
+   626,
+   3
+  ]
+ },
+ {
+  "file": "03_assignment_tubes.png",
+  "name": "assignment_tubes",
+  "caption": "完全 2 部グラフ 144 本、ユークリッド長。粘菌の費用 0.163244 = 最小割当 0.163242。",
+  "shape": [
+   766,
+   630,
+   3
+  ]
+ },
+ {
+  "file": "04_sandwich.png",
+  "name": "sandwich",
+  "caption": "円盤 → 2 円盤。下界は 10 反復ごとに圧力の McShane 包絡から。隙間 1.3e-04 で停止(相対 1e-6 以下)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_five_truths.png",
+  "name": "five_truths",
+  "caption": "木 seed 0 16.34; 木 seed 1 13.71; 木 seed 2 14.19; 木 seed 3 15.71; 木 seed 4 14.44; 1 次元 0.3165; 割当 12×12 0.1632; 格子 6×6 LP 0.5918; 平行移動 (5, 8) 13; 単一対 7×7 9.367",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

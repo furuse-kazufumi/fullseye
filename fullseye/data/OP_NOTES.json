@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2217,
- "n_notes": 2223,
+ "n_ops": 2219,
+ "n_notes": 2225,
  "notes": {
   "vol_dilate": [
    {
@@ -16511,6 +16511,16 @@
     "path": "docs/ops/graph/flow/graph_physarum_path.md"
    }
   ],
+  "graph_physarum_transport": [
+   {
+    "op": "graph_physarum_transport",
+    "dim": "graph",
+    "category": "flow",
+    "in": "matrix × signal",
+    "out": "table",
+    "path": "docs/ops/graph/flow/graph_physarum_transport.md"
+   }
+  ],
   "physarum_route": [
    {
     "op": "physarum_route",
@@ -16519,6 +16529,16 @@
     "in": "image2d",
     "out": "table",
     "path": "docs/ops/graph/flow/physarum_route.md"
+   }
+  ],
+  "physarum_transport_image": [
+   {
+    "op": "physarum_transport_image",
+    "dim": "graph",
+    "category": "flow",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/graph/flow/physarum_transport_image.md"
    }
   ],
   "graph_cycle3": [

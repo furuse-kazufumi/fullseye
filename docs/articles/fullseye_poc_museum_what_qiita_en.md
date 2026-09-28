@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**97 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**98 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1664,7 +1664,7 @@ Ops used (notes): [`attention_apply`](https://furuse.work/ops/llmcore/score/atte
 
 Counting cells, reading a nucleus's DNA content, measuring vessel branching, tracking a wound's area: all of these tend to be reported as one number, and there are situations in which that number is right anyway. Cell counting where over- and under-segmentation balance to a +0.3-cell bias; ploidy classification that survives a forgotten background subtraction; a calibration that returns the most stable and most wrong healing constant.
 
-The 25 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
+The 26 exhibits carry ground truth that a label image alone cannot hold — which cells overlap which, area and DNA content varying independently, a tree that satisfies the branching law exactly. Each docstring warns that calling a label image 'the truth' on real data erases the very thing being tested.
 
 The thing to watch for is a method that appears to improve while the quantity it measures quietly swaps: the area classifier gets better with more blur because 'area' is leaking DNA content. Unless the reason for every improvement is traced, this kind of lie gets carried home as a result.
 
@@ -2319,6 +2319,38 @@ Source: [examples/poc_physarum_maze.py](https://github.com/furuse-kazufumi/fulls
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_physarum_maze)
 
 Ops used (notes): [`graph_physarum_path`](https://furuse.work/ops/graph/flow/graph_physarum_path.html) · [`physarum_route`](https://furuse.work/ops/graph/flow/physarum_route.html)
+
+## No.2026.165 —— Slime Mould Solves Optimal Transport — Make the Source and Sink Mass Distributions and the Same Tube Dynamics Converge to the Earth Mover's Distance
+
+[![Slime Mould Solves Optimal Transport — Make the Source and Sink Mass Distributions and the Same Tube Dynamics Converge to the Earth Mover's Distance](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/01_transport_tubes_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/01_transport_tubes_gif.gif)
+
+*↑ **Slime Mould Solves Optimal Transport — Make the Source and Sink Mass Distributions and the Same Tube Dynamics Converge to the Earth Mover's Distance** ―― The maze PoC had one source and one sink. Give the same dynamics (Kirchhoff pressures, Q = D (p_u − p_v)/L, dD/dt = |Q| − D) a supply vector (sum 0) instead, and it converges to L1 optimal transport on the graph — the Beckmann problem, i.e. the 1-Wasserstein distance (Bonifaci 2017; Facca, Karrenbauer, Kolev and Mehlhorn 2020; Facca, Cardin and Putti 2018 for the continuum). Two new ops, graph_physarum_transport (weighted graph + supply) and physarum_transport_image (two mass images, pixels joined by unit tubes = EMD in the Manhattan metric), return the cost Σ L|Q| (an upper bound) together with the Kantorovich–Rubinstein lower bound — b·φ for the McShane envelope φ of the pressure, made 1-Lipschitz. The true distance always lies between them, so the gap certifies how far the current flow is from optimal, and the run stops when it closes. Ten truths: on five random trees the closed form Σ L_e|subtree supply| matches to 1.7e-15 (the flow on a tree is unique; 37–38 iterations); on an uneven 1-D grid the existing op wasserstein_1d agrees at 0.316477; on a 12-vs-12 complete bipartite graph the Hungarian minimum assignment 0.163242 is met at 0.163244 (459 iterations) and the surviving tubes are exactly the optimal assignment (≥ 1.00 on it, ≤ 0.001 elsewhere); on a 6×6 grid of random mass the LP (HiGHS) optimum 0.591849 is matched; a disk shifted by (5, 8) pixels gives EMD 13.000086 = |dr| + |dc| as the theorem says; with one source and one sink the lower bound equals Dijkstra's distance 9.367260049 exactly (the envelope of the pressure is the shortest-path potential). The metric axioms (symmetry, linearity in length and mass, triangle inequality) hold. Disk → two disks (24×24) reaches EMD 12.0001 in 183 iterations, filmed in 36 frames as the tubes form. 9.1 s in all. Honestly: the mould is not faster than the Hungarian algorithm or the network simplex. Its merits are that a local rule alone reaches the optimum, that it batches in parallel, and that it certifies its own answer.*
+
+[![EMD 12.0001(画素単位)。粘菌の費用 12.0001、Kantorovich–Rubinstein の下界 12.0000。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/02_transport_tubes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/02_transport_tubes.png)
+
+*↑ The measurement ―― EMD 12.0001(画素単位)。粘菌の費用 12.0001、Kantorovich–Rubinstein の下界 12.0000。 (figure labels are in Japanese; the numbers are the same)*
+
+[![完全 2 部グラフ 144 本、ユークリッド長。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/03_assignment_tubes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/03_assignment_tubes.png)
+
+*↑ 完全 2 部グラフ 144 本、ユークリッド長。*
+
+[![円盤 → 2 円盤。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/04_sandwich_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/04_sandwich.png)
+
+*↑ 円盤 → 2 円盤。*
+
+[![木 seed 0 16.34; 木 seed 1 13.71; 木 seed 2 14.19; 木 seed 3 15.71; 木 seed 4 14.44; 1 次元 0.3165; 割当 12×1](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/05_five_truths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/05_five_truths.png)
+
+*↑ 木 seed 0 16.34; 木 seed 1 13.71; 木 seed 2 14.19; 木 seed 3 15.71; 木 seed 4 14.44; 1 次元 0.3165; 割当 12×12 0.1632; 格子 6×6 LP 0.5918; 平行移動 (5, 8) 13; 単一対 7×…*
+
+```
+py -3.11 examples/poc_physarum_transport.py
+```
+
+Source: [examples/poc_physarum_transport.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_physarum_transport.py)
+
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_physarum_transport)
+
+Ops used (notes): [`graph_physarum_transport`](https://furuse.work/ops/graph/flow/graph_physarum_transport.html) · [`physarum_transport_image`](https://furuse.work/ops/graph/flow/physarum_transport_image.html) · [`wasserstein_1d`](https://furuse.work/ops/colortransport/transport/wasserstein_1d.html)
 
 ## No.2026.154 —— Grading Skeleton Measurement on Real Trees — NeuroMorpho SWC as Ground Truth, and What Projection Breaks
 

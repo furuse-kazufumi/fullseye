@@ -71,6 +71,11 @@ _CATALOG = {
     "flow": [
         ("graph_physarum_path", "physarum_search", ["matrix"], "table"),
         ("physarum_route", "physarum_search", ["image2d"], "table"),
+        # 源と吸込を供給ベクトル(Σ = 0)にすると同じ力学が L1 最適輸送(Beckmann 問題)へ収束する
+        # (Bonifaci 2017、Facca ら 2020)。門は木の閉形式・1 次元の閉形式・割当問題・LP、
+        # そして Kantorovich–Rubinstein の下界(McShane 包絡)が費用を下から挟むこと。
+        ("graph_physarum_transport", "physarum_search", ["matrix", "signal"], "table"),
+        ("physarum_transport_image", "physarum_search", ["image2d", "image2d"], "table"),
     ],
 }
 

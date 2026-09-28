@@ -54,7 +54,7 @@ outside the image or equal; ``connectivity`` not 4 or 8; and as :func:`graph_phy
 
 ## 同カテゴリ(`flow`)
 
-[graph_physarum_path](graph_physarum_path.md)
+[graph_physarum_path](graph_physarum_path.md) · [graph_physarum_transport](graph_physarum_transport.md) · [physarum_transport_image](physarum_transport_image.md)
 
 ---
 *Provenance: physarum_search.py — GRAPH operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
