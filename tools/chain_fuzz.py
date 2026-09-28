@@ -1333,6 +1333,19 @@ def _b_physarum_transport_image(pool, rng):
     return (rng.uniform(0, 1, (6, 7)), rng.uniform(0, 1, (6, 7))), {"dt": 0.3, "max_iters": 600}
 
 
+def _b_car_poses(pool, rng):
+    poses = np.array([[rng.uniform(-3, 3), rng.uniform(-3, 3), rng.uniform(-3.1, 3.1)],
+                      [rng.uniform(-3, 3), rng.uniform(-3, 3), rng.uniform(-3.1, 3.1)]])
+    return (poses,), {"radius": float(rng.uniform(0.5, 2.0)), "step": 0.1}
+
+
+def _b_car_hybrid_astar(pool, rng):
+    occ = np.zeros((16, 24), bool)
+    occ[4:12, 12] = True                     # 途中に短い壁
+    poses = np.array([[2.0, 8.0, 0.0], [22.0, 8.0, 0.0]])
+    return (occ, poses), {"radius": 3.0, "cell": 1.0, "n_theta": 24, "max_expansions": 20000}
+
+
 def _b_graph_kcore(pool, rng):
     B = (rng.random((30, 30)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -1524,6 +1537,9 @@ OP_ARG_BUILDERS = {
     "physarum_route": _b_physarum_route,
     "graph_physarum_transport": _b_physarum_transport,
     "physarum_transport_image": _b_physarum_transport_image,
+    "car_dubins_path": _b_car_poses,
+    "car_reeds_shepp_path": _b_car_poses,
+    "car_hybrid_astar": _b_car_hybrid_astar,
     "tree_from_swc": _b_tree_swc,
     "tree_morphometry": _b_tree_table,
     "tree_sholl": _b_tree_table,

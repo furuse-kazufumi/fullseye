@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2219,
- "n_notes": 2225,
+ "n_ops": 2222,
+ "n_notes": 2228,
  "notes": {
   "vol_dilate": [
    {
@@ -16559,6 +16559,36 @@
     "in": "matrix",
     "out": "table",
     "path": "docs/ops/graph/null/graph_degree_preserving_null.md"
+   }
+  ],
+  "car_dubins_path": [
+   {
+    "op": "car_dubins_path",
+    "dim": "graph",
+    "category": "path",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/graph/path/car_dubins_path.md"
+   }
+  ],
+  "car_hybrid_astar": [
+   {
+    "op": "car_hybrid_astar",
+    "dim": "graph",
+    "category": "path",
+    "in": "image2d × matrix",
+    "out": "table",
+    "path": "docs/ops/graph/path/car_hybrid_astar.md"
+   }
+  ],
+  "car_reeds_shepp_path": [
+   {
+    "op": "car_reeds_shepp_path",
+    "dim": "graph",
+    "category": "path",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/graph/path/car_reeds_shepp_path.md"
    }
   ],
   "graph_core_persistence": [

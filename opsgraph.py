@@ -17,11 +17,12 @@ Usage:
     opsgraph.list_ops("null")
     opsgraph.get("graph_cycle3")(adj)
 """
+import carpath
 import graphinv
 import physarum_search
 import treemorph
 
-_MOD = {"graphinv": graphinv, "treemorph": treemorph, "physarum_search": physarum_search}
+_MOD = {"graphinv": graphinv, "treemorph": treemorph, "physarum_search": physarum_search, "carpath": carpath}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -76,6 +77,15 @@ _CATALOG = {
         # そして Kantorovich–Rubinstein の下界(McShane 包絡)が費用を下から挟むこと。
         ("graph_physarum_transport", "physarum_search", ["matrix", "signal"], "table"),
         ("physarum_transport_image", "physarum_search", ["image2d", "image2d"], "table"),
+    ],
+    # 経路計画: 車(曲率の上限 1/ρ)の姿勢 (x, y, θ) → 姿勢 の最短路。poses は (2, 3) の行列 [[始点], [終点]]。
+    # Dubins(前進のみ・6 語)と Reeds–Shepp(後退あり・48 語)は閉形式で、候補は前進積分で終点を検証して落とした数を返す。
+    # Hybrid A* は占有格子(image2d、> 0.5 = 障害物)の上の A* で、障害物を無視した RS 長がヒューリスティック
+    # (許容)、節点から目標へ RS の解析的な一撃。障害物の無い格子では答えが RS 長と厳密一致する(門)。
+    "path": [
+        ("car_dubins_path", "carpath", ["matrix"], "table"),
+        ("car_reeds_shepp_path", "carpath", ["matrix"], "table"),
+        ("car_hybrid_astar", "carpath", ["image2d", "matrix"], "table"),
     ],
 }
 

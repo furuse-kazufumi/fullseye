@@ -473,6 +473,7 @@ from segcompare import (seg_contingency, seg_variation_of_information, seg_rand,
 from physarum_search import (  # noqa: E402,F401
     graph_physarum_path, physarum_route, graph_physarum_transport, physarum_transport_image,
 )
+from carpath import car_dubins_path, car_reeds_shepp_path, car_hybrid_astar  # noqa: E402,F401
 from treemorph import tree_from_swc, tree_morphometry, tree_sholl  # noqa: E402,F401
 import textregion  # noqa: E402  (where is the text, without a recogniser)
 from textregion import swt_map, text_candidates, text_lines  # noqa: E402,F401

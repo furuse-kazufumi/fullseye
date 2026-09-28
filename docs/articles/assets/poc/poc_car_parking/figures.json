@@ -1,0 +1,56 @@
+[
+ {
+  "file": "01_dubins_six_words.png",
+  "name": "dubins_six_words",
+  "caption": "前進だけの車の最短路は LSL/RSR/LSR/RSL/RLR/LRL の 6 語に限られる(定理)。区間長は閉形式で、各候補は前進積分で終点を検証してある。この対では 5 語が目標に届く。",
+  "shape": [
+   486,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "02_reeds_shepp_gallery.png",
+  "name": "reeds_shepp_gallery",
+  "caption": "小文字 = 後退の区間。後退を許すと Dubins より必ず短いか等しい(400 対で確認、最大差 10.647)。ρ = 1 m。",
+  "shape": [
+   1499,
+   1330,
+   3
+  ]
+ },
+ {
+  "file": "03_parking_tree.png",
+  "name": "parking_tree",
+  "caption": "縦列駐車の Hybrid A*: 灰 = 障害物(縁石・駐車車両 2 台・壁)、薄緑の点 = 展開した 4203 姿勢、赤 = 前進、青 = 後退。費用 16.018 m、障害物を無視した Reeds–Shepp の下界 7.986 m。cell 0.25 m、θ 72 分割、ρ 5.5 m、車体 4.5 × 1.8 m。",
+  "shape": [
+   320,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "04_parking_gif.gif",
+  "name": "parking_gif",
+  "caption": "車(橙)が Hybrid A* の道を辿って 2 台の間に入る。52 コマ、前進 30 区間・後退 12 区間、切替 8 回。",
+  "shape": [
+   320,
+   720,
+   3
+  ],
+  "animated": true,
+  "frames": 52,
+  "frames_written": 40,
+  "fps": 8.0
+ },
+ {
+  "file": "05_truths.png",
+  "name": "truths",
+  "caption": "RS 最適化器 1 10.1321; Dubins 最適化器 1 10.1321; RS 最適化器 2 6.6829; Dubins 最適化器 2 8.7569; RS 最適化器 3 3.3224; Dubins 最適化器 3 4.5527; 整列 5 m (Dubins) 5.0000; 整列 5 m (RS) 5.0000; 真後ろ 2 m (RS) 2.0000; 空の格子 Hybrid A* (RS) 23.3533; 空の格子 Hybrid A* (Dubins) 23.3533",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

@@ -121,6 +121,12 @@ EXAMPLES = [
      "summary": "Tero 2010 の管の力学(dD/dt = |Q| − D)を graph_physarum_path(重み付きグラフ)と physarum_route(コスト画像)で回す。"
                 "15×15 の格子 5 通り・完全迷路・地形の全部で道が Dijkstra / route_through_array と一致(差 < 1e-9)。指示関数への収束"
                 "(Bonifaci 2012)は 3/5、残り 2 は 2 位との差が小さく拮抗が残る。Lyapunov V = Σ L·D は 23 区間で一度も増えない。"},
+    {"id": "poc_car_parking", "task": "imgmetrics", "data": "synthetic",
+     "name": "車は最短でどう曲がるか —— Dubins・Reeds–Shepp の閉形式と Hybrid A* の縦列駐車",
+     "summary": "car_dubins_path(前進のみ・6 語)と car_reeds_shepp_path(後退あり・48 語)の閉形式、car_hybrid_astar(占有格子の上の"
+                "Hybrid A*、RS 長をヒューリスティックに解析的な一撃)。候補は前進積分で終点を検証して落とした数を返す(0 落ち、18 語族"
+                "が全部出る)。語ごとの区間長を SLSQP で解く第 2 実装と一致、距離 ≤ RS ≤ Dubins・可逆・鏡映・剛体・三角不等式、"
+                "空の格子で Hybrid A* = RS 長と厳密一致、縦列駐車は衝突なし・実現可能・下界以上、壁は ValueError。"},
     {"id": "poc_physarum_transport", "task": "imgmetrics", "data": "synthetic",
      "name": "粘菌は最適輸送を解く —— 源と吸込を質量の分布にすると、同じ管の力学が Earth Mover 距離へ収束する",
      "summary": "graph_physarum_transport(重み付きグラフ + 供給ベクトル)と physarum_transport_image(質量画像 2 枚)で、Tero の管の力学を"

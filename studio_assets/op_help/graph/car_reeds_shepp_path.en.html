@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">car_reeds_shepp_path — GRAPH <code style="color:#22d3bf">path</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.car_reeds_shepp_path(poses, radius=1.0, step=0.05)</code> (to call the implementation directly, <code style="color:#22d3bf">import carpath; carpath.car_reeds_shepp_path(poses, radius=1.0, step=0.05)</code>; from the registry, <code style="color:#22d3bf">opsgraph.get(&quot;car_reeds_shepp_path&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Shortest path of a car that may reverse, between two poses (Reeds and Shepp 1990), by closed form.</p>
+<p>`<code style="color:#22d3bf">poses</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">[[x, y, theta], [x&#x27;, y&#x27;, theta&#x27;]]</code>` (start, goal). The car turns with minimum radius</p>
+<p>`<code style="color:#22d3bf">radius</code>` and may change gear. Reeds and Shepp proved the shortest path has at most five segments</p>
+<p>drawn from 48 words (Sussmann and Tang 1991: 46 suffice); the 44 formulas used here (the 12 base</p>
+<p>words of the paper expanded by time reversal, reflection and backwards reading, as in OMPL) generate</p>
+<p>every candidate. Each candidate is verified by forward integration and discarded if it misses the</p>
+<p>goal (counted in `<code style="color:#22d3bf">n_rejected</code>`); the shortest survivor is the answer. Reversed segments carry</p>
+<p>`<code style="color:#22d3bf">gear = -1</code>`.</p>
+<p>Returns `<code style="color:#22d3bf">word</code><code style="color:#22d3bf"> (letters L/S/R; reversed segments are lower-case), </code><code style="color:#22d3bf">length</code>` (metres, sum of</p>
+<p>absolute segment lengths), `<code style="color:#22d3bf">segments</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">[(kind, gear, length)]</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">points</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N, 3)</code>` poses</p>
+<p>sampled every `<code style="color:#22d3bf">step</code><code style="color:#22d3bf"> metres, </code><code style="color:#22d3bf">candidates</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">[(word, length)]</code><code style="color:#22d3bf"> sorted, </code><code style="color:#22d3bf">n_candidates</code>`,</p>
+<p>`<code style="color:#22d3bf">n_rejected</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">lower_bound</code><code style="color:#22d3bf"> (Euclidean distance), </code><code style="color:#22d3bf">radius</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: poses not </code><code style="color:#22d3bf">(2, 3)</code><code style="color:#22d3bf"> finite; </code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">step</code>` not positive; no word</p>
+<p>reached the goal.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_car_parking">poc_car_parking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_car_parking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_edge_consensus">graph_edge_consensus</a> · <a style="color:#22d3bf" href="opgraph:graph_core_persistence">graph_core_persistence</a> · <a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a> · <a style="color:#22d3bf" href="opgraph:tree_sholl">tree_sholl</a> · <a style="color:#22d3bf" href="opgraph:tree_run_length">tree_run_length</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">path</code>)</h3>
+<p><a style="color:#22d3bf" href="opgraph:car_dubins_path">car_dubins_path</a> · <a style="color:#22d3bf" href="opgraph:car_hybrid_astar">car_hybrid_astar</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: carpath.py — GRAPH operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

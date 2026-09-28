@@ -1,4 +1,4 @@
-# GRAPH operator help — 17 ops in 8 categories
+# GRAPH operator help — 20 ops in 9 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/graph/<category>/<op>.md` を走査。
 
@@ -23,6 +23,10 @@
 ### null (1)
 
 [graph_degree_preserving_null](null/graph_degree_preserving_null.md)
+
+### path (3)
+
+[car_dubins_path](path/car_dubins_path.md) · [car_hybrid_astar](path/car_hybrid_astar.md) · [car_reeds_shepp_path](path/car_reeds_shepp_path.md)
 
 ### population (3)
 

@@ -1,8 +1,8 @@
 {
- "n_ops": 2219,
+ "n_ops": 2222,
  "tiers": {
   "color": 12,
-  "ledger": 1270,
+  "ledger": 1273,
   "nary": 17,
   "registry": 920
  },
@@ -1967,6 +1967,46 @@
    "dim": "3d",
    "in_sorts": [
     "coordgrid"
+   ]
+  },
+  {
+   "name": "car_dubins_path",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "path",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "car_hybrid_astar",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "path",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "image2d",
+    "matrix"
+   ]
+  },
+  {
+   "name": "car_reeds_shepp_path",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "path",
+   "tier": "ledger",
+   "ledger": "opsgraph",
+   "dim": "graph",
+   "in_sorts": [
+    "matrix"
    ]
   },
   {

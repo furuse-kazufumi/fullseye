@@ -3946,7 +3946,7 @@ Ops used (notes): [`moving_average_window`](https://furuse.work/ops/videostream/
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 7 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 8 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -4087,6 +4087,38 @@ Source: [examples/poc_rotation_invariance_audit.py](https://github.com/furuse-ka
 This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_rotation_invariance_audit)
 
 Ops used (notes): [`annotate_outline`](https://furuse.work/ops/annotate/paper/annotate_outline.html) · [`annotate_table`](https://furuse.work/ops/annotate/paper/annotate_table.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`circularity`](https://furuse.work/ops/2d/features/circularity.html) · [`eccentricity`](https://furuse.work/ops/2d/features/eccentricity.html) · [`moments_region_2nd_invar`](https://furuse.work/ops/2d/features/moments_region_2nd_invar.html) · [`moments_region_central_invar`](https://furuse.work/ops/2d/features/moments_region_central_invar.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+
+## No.2026.166 —— How a Car Turns Shortest — Dubins and Reeds–Shepp in Closed Form, and Hybrid A* Parallel Parking on an Occupancy Grid
+
+[![How a Car Turns Shortest — Dubins and Reeds–Shepp in Closed Form, and Hybrid A* Parallel Parking on an Occupancy Grid](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/01_dubins_six_words_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/01_dubins_six_words.png)
+
+*↑ **How a Car Turns Shortest — Dubins and Reeds–Shepp in Closed Form, and Hybrid A* Parallel Parking on an Occupancy Grid** ―― There are theorems for the shortest path of a front-steered car (minimum turning radius ρ) from pose (x, y, θ) to pose (x', y', θ'). Forward only: Dubins (1957), three segments (arc, line, arc) from six words. With reversing: Reeds and Shepp (1990), at most five segments from 48 words (46 by Sussmann and Tang 1991). Both have closed-form segment lengths, returned by the new ops car_dubins_path and car_reeds_shepp_path. With obstacles, car_hybrid_astar: A* over motion primitives {left, straight, right} × {forward, reverse} on an occupancy grid, pruned per discrete cell (x, y, θ), with the obstacle-free Reeds–Shepp length as an admissible heuristic and an analytic shot from each node to the goal (Dolgov et al. 2010). Correctness: every closed-form candidate is verified by forward integration and discarded if it misses the goal, and the count is returned — over 400 random pairs, 0 rejected, 6.6 RS candidates per pair, and all 18 word families appear both as candidates and as the optimum. A second implementation that solves each word's endpoint equations for the segment lengths by SLSQP from many starts (assuming nothing about the closed-form structure) matches the closed form to 1e-6 on 3 pairs × RS / Dubins (RS 10.132129 / 6.682896 / 3.322408; Dubins 10.132129 / 8.756928 / 4.552667). The theorem's inequalities and symmetries — Euclidean distance ≤ RS ≤ Dubins, reversibility L(s, g) = L(g, s), reflection, rigid-motion invariance, scaling with ρ, the triangle inequality — hold on 400 pairs + 200 triples; Dubins − RS is at most 10.647 m (what reversing buys). For an aligned goal RS = Dubins = distance with word S. On an obstacle-free 40 × 30 m grid Hybrid A* costs 23.353319 m, exactly the RS length 23.353319 m (1 expansion, the first shot goes through), and forward-only equals the Dubins length. Parallel parking (18 × 8 m, cell 0.25 m, 72 heading bins, car 4.5 × 1.8 m, ρ 5.5 m, a 7.5 m bay) costs 16.018 m ≥ the lower bound 7.986 m (the obstacle-free RS path hits the parked cars), 3,385 expansions, 4,203 generated, 42 segments (12 reversed, 8 gear changes), 0.8 s, and the returned poses are collision-free with the rectangular body and satisfy |Δθ| ≤ Δs/ρ. Walling the bay off raises ValueError (no partial path). 16.3 s in all. Honestly: a 6.5 m bay (car length + 2.0 m) was unreachable at this discretisation. Copying the RS formulas with the wrong mod2pi convention ((−π, π] vs [0, 2π)) makes the eight CCSC words never appear — the gate that counts word families caught it.*
+
+[![小文字 = 後退の区間。後退を許すと Dubins より必ず短いか等しい(400 対で確認、最大差 10.647)。ρ = 1 m。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/02_reeds_shepp_gallery_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/02_reeds_shepp_gallery.png)
+
+*↑ The measurement ―― 小文字 = 後退の区間。後退を許すと Dubins より必ず短いか等しい(400 対で確認、最大差 10.647)。ρ = 1 m。 (figure labels are in Japanese; the numbers are the same)*
+
+[![縦列駐車の Hybrid A*: 灰 = 障害物(縁石・駐車車両 2 台・壁)、薄緑の点 = 展開した 4203 姿勢、赤 = 前進、青 = 後退。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/03_parking_tree_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/03_parking_tree.png)
+
+*↑ 縦列駐車の Hybrid A*: 灰 = 障害物(縁石・駐車車両 2 台・壁)、薄緑の点 = 展開した 4203 姿勢、赤 = 前進、青 = 後退。*
+
+[![RS 最適化器 1 10.1321; Dubins 最適化器 1 10.1321; RS 最適化器 2 6.6829; Dubins 最適化器 2 8.7569; RS 最適化器 3 3.3224; ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/05_truths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/05_truths.png)
+
+*↑ RS 最適化器 1 10.1321; Dubins 最適化器 1 10.1321; RS 最適化器 2 6.6829; Dubins 最適化器 2 8.7569; RS 最適化器 3 3.3224; Dubins 最適化器 3 4.5527; 整列 5 m (Dubins) 5.0000; 整列 5…*
+
+[![車(橙)が Hybrid A* の道を辿って 2 台の間に入る。52 コマ、前進 30 区間・後退 12 区間、切替 8 回。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/04_parking_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/04_parking_gif.gif)
+
+*↑ The animation ―― 車(橙)が Hybrid A* の道を辿って 2 台の間に入る。52 コマ、前進 30 区間・後退 12 区間、切替 8 回。*
+
+```
+py -3.11 examples/poc_car_parking.py
+```
+
+Source: [examples/poc_car_parking.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_car_parking.py)
+
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_car_parking)
+
+Ops used (notes): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`car_dubins_path`](https://furuse.work/ops/graph/path/car_dubins_path.html) · [`car_hybrid_astar`](https://furuse.work/ops/graph/path/car_hybrid_astar.html) · [`car_reeds_shepp_path`](https://furuse.work/ops/graph/path/car_reeds_shepp_path.html)
 
 ## No.2026.133 —— Where Is the Public Camera Looking — The Orientation of a Fixed Camera Whose Only Published Fact Is Its Position, from the Picture Itself
 

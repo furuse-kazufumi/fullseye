@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">car_hybrid_astar — GRAPH <code style="color:#22d3bf">path</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=72, allow_reverse=True, footprint=None, clearance=0.0, reverse_penalty=0.0, switch_penalty=0.0, steer_penalty=0.0, shot_every=None, max_expansions=200000, return_tree=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import carpath; carpath.car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=72, allow_reverse=True, footprint=None, clearance=0.0, reverse_penalty=0.0, switch_penalty=0.0, steer_penalty=0.0, shot_every=None, max_expansions=200000, return_tree=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;car_hybrid_astar&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>占有格子(&gt; 0.5 = 障害物)の上で車の道を Hybrid A*(Dolgov ら 2010)で探す: {左・直進・右} × {前進・後退} の運動基本形を離散セル (x, y, θ) で枝刈りしながら A* で繋ぎ、障害物を無視した Reeds–Shepp 長(前進のみなら Dubins 長)を許容ヒューリスティックに、節点から目標へ解析的な一撃を試す。車体の矩形 footprint か余白 clearance、後退・切替・舵の罰則。姿勢列・長さ・費用・下界(RS 長)・区間・展開数を返す。障害物の無い格子では費用 = RS 長。到達不能は ValueError。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>`<code style="color:#22d3bf">occupancy</code><code style="color:#22d3bf"> is a 2-D grid (</code><code style="color:#22d3bf">&gt; 0.5</code><code style="color:#22d3bf"> = obstacle); cell </code><code style="color:#22d3bf">(row, col)</code>` covers metres</p>
+<p>`<code style="color:#22d3bf">x in [col*cell, (col+1)*cell)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">y in [row*cell, (row+1)*cell)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">poses</code>` is</p>
+<p>`<code style="color:#22d3bf">[[x, y, theta], [x&#x27;, y&#x27;, theta&#x27;]]</code>` (start, goal) in metres/radians. The car has minimum turning</p>
+<p>radius `<code style="color:#22d3bf">radius</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">footprint=(length, width, rear_offset)</code>` is a rectangle in rear-axle coordinates</p>
+<p>(`<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> = point car with </code><code style="color:#22d3bf">clearance</code>` metres kept from obstacles). Motion primitives are</p>
+<p>{left, straight, right} × {forward, reverse if `<code style="color:#22d3bf">allow_reverse</code><code style="color:#22d3bf">} arcs of </code><code style="color:#22d3bf">step</code>` metres (default</p>
+<p>`<code style="color:#22d3bf">1.01·sqrt(2)·cell</code>`, so each primitive leaves its cell); states are pruned per discrete cell</p>
+<p>`<code style="color:#22d3bf">(col, row, theta bin of 2π/n_theta)</code><code style="color:#22d3bf">. Cost = path length + </code><code style="color:#22d3bf">reverse_penalty</code>`·(reversed length)</p>
+<p>+ `<code style="color:#22d3bf">switch_penalty</code><code style="color:#22d3bf"> per gear change + </code><code style="color:#22d3bf">steer_penalty</code>` per steering change (all default 0, so the</p>
+<p>cost is the geometric length). The heuristic is the obstacle-free Reeds–Shepp length (Dubins when</p>
+<p>reversing is disallowed), admissible because every penalty is non-negative. At the start node, and then</p>
+<p>every `<code style="color:#22d3bf">shot_every</code><code style="color:#22d3bf"> expansions (default </code><code style="color:#22d3bf">None</code><code style="color:#22d3bf"> = adaptive: a node with cost-to-go </code><code style="color:#22d3bf">h</code>` tries when the</p>
+<p>expansion count is a multiple of `<code style="color:#22d3bf">ceil(h / step)</code>`, so nodes near the goal try every time, as in the</p>
+<p>paper), the shortest analytic path from the node to the goal is collision-checked, and the search ends</p>
+<p>when that shot is free. On an obstacle-free grid the first shot succeeds and the result equals the</p>
+<p>Reeds–Shepp (Dubins) length exactly; with obstacles the result is never below it (`<code style="color:#22d3bf">lower_bound</code>`).</p>
+<p>Cell pruning makes Hybrid A* an approximation of the optimum among all feasible paths, as in the paper.</p>
+<p>Returns `<code style="color:#22d3bf">points</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N, 3)</code>` poses along the path (start, tree part, analytic shot to the goal),</p>
+<p>`<code style="color:#22d3bf">length</code><code style="color:#22d3bf"> (metres), </code><code style="color:#22d3bf">cost</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">lower_bound</code>` (Reeds–Shepp/Dubins length start→goal),</p>
+<p>`<code style="color:#22d3bf">segments</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">[(kind, gear, length)]</code><code style="color:#22d3bf"> of the whole path, </code><code style="color:#22d3bf">n_expanded</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n_generated</code>`,</p>
+<p>`<code style="color:#22d3bf">closed_by_shot</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">True</code><code style="color:#22d3bf"> when the analytic expansion ended the search; </code><code style="color:#22d3bf">False</code>` when the goal cell</p>
+<p>itself was popped), `<code style="color:#22d3bf">shot_from</code><code style="color:#22d3bf"> (pose where the shot started), </code><code style="color:#22d3bf">tree</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">(K, 3)</code>` expanded poses,</p>
+<p>only when `<code style="color:#22d3bf">return_tree</code>`).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: grid not 2-D or empty; poses not </code><code style="color:#22d3bf">(2, 3)</code>` finite, outside the grid or in</p>
+<p>collision; `<code style="color:#22d3bf">radius</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">cell</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">step</code><code style="color:#22d3bf"> not positive, </code><code style="color:#22d3bf">n_theta &lt; 4</code>`, negative penalties; the goal is</p>
+<p>unreachable (open set exhausted) or `<code style="color:#22d3bf">max_expansions</code>` was hit (reported, never a partial path).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_car_parking">poc_car_parking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_car_parking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_edge_consensus">graph_edge_consensus</a> · <a style="color:#22d3bf" href="opgraph:graph_core_persistence">graph_core_persistence</a> · <a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a> · <a style="color:#22d3bf" href="opgraph:tree_sholl">tree_sholl</a> · <a style="color:#22d3bf" href="opgraph:tree_run_length">tree_run_length</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">path</code>)</h3>
+<p><a style="color:#22d3bf" href="opgraph:car_dubins_path">car_dubins_path</a> · <a style="color:#22d3bf" href="opgraph:car_reeds_shepp_path">car_reeds_shepp_path</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: carpath.py — GRAPH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
