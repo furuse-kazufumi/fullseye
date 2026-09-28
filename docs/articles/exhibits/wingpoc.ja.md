@@ -3946,7 +3946,7 @@ py -3.11 examples/poc_periodic_video_boundary.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 8 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 7 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -4087,38 +4087,6 @@ py -3.11 examples/poc_rotation_invariance_audit.py
 この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_rotation_invariance_audit)
 
 使用 op(ノートへ): [`annotate_outline`](https://furuse.work/ops/annotate/paper/annotate_outline.html) · [`annotate_table`](https://furuse.work/ops/annotate/paper/annotate_table.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`circularity`](https://furuse.work/ops/2d/features/circularity.html) · [`eccentricity`](https://furuse.work/ops/2d/features/eccentricity.html) · [`moments_region_2nd_invar`](https://furuse.work/ops/2d/features/moments_region_2nd_invar.html) · [`moments_region_central_invar`](https://furuse.work/ops/2d/features/moments_region_central_invar.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
-
-## No.2026.166 —— 車は最短でどう曲がるか ―― Dubins・Reeds–Shepp の閉形式と、占有格子の上の Hybrid A* で縦列駐車
-
-[![車は最短でどう曲がるか ―― Dubins・Reeds–Shepp の閉形式と、占有格子の上の Hybrid A* で縦列駐車](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/01_dubins_six_words_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/01_dubins_six_words.png)
-
-*↑ **車は最短でどう曲がるか ―― Dubins・Reeds–Shepp の閉形式と、占有格子の上の Hybrid A* で縦列駐車** ―― 前輪で舵を切る車(最小回転半径 ρ)が姿勢 (x, y, θ) から姿勢 (x', y', θ') へ移る最短の道には定理がある。前進だけなら Dubins(1957): 最短路は円弧・直線・円弧の 3 区間で語は 6 つ。後退を許せば Reeds–Shepp(1990): 高々 5 区間で語は 48(Sussmann–Tang 1991 で 46)。どちらも区間長は閉形式で、新しい op car_dubins_path / car_reeds_shepp_path がそれを返す。障害物があれば car_hybrid_astar ―― 占有格子の上で {左・直進・右} × {前進・後退} の運動基本形を離散セル (x, y, θ) で枝刈りしながら A* で繋ぎ、障害物を無視した Reeds–Shepp 長を許容ヒューリスティックに、節点から目標へ解析的な一撃を試す(Dolgov ら 2010)。正しさの担保: 閉形式の各候補は前進積分で終点を検証し、届かない候補は捨てて数を返す ―― 乱数 400 対で落ちた候補 0、対あたりの RS 候補 6.6 本、18 の語族が候補にも最短にも全部現れた。語ごとの区間長を未知数にした終点方程式を SLSQP で多数の初期値から解く第 2 実装(閉形式の構造を仮定しない)は 3 対 × RS / Dubins の 6 件で閉形式と 1e-6 で一致(RS 10.132129 / 6.682896 / 3.322408、Dubins 10.132129 / 8.756928 / 4.552667)。定理の不等式と対称 ―― ユークリッド距離 ≤ RS ≤ Dubins、可逆 L(s, g) = L(g, s)、鏡映、剛体変換で不変、ρ に比例、三角不等式 ―― は 400 対 + 200 組で全部成立し、Dubins − RS の最大は 10.647 m(後退が効く分)。整列した目標では RS = Dubins = 距離、語は S。障害物の無い 40 × 30 m の格子では Hybrid A* の費用 23.353319 m が RS 長 23.353319 m と厳密一致(展開 1、最初の一撃が通る)、前進のみでも Dubins 長と一致。縦列駐車(18 × 8 m、cell 0.25 m、θ 72 分割、車体 4.5 × 1.8 m、ρ 5.5 m、7.5 m の車室)は費用 16.018 m ≥ 下界 7.986 m(障害物を無視した RS の道は駐車車両にぶつかる)、展開 3,385・生成 4,203、区間 42(後退 12・切替 8)、0.8 秒で、返した姿勢列は車体の矩形で衝突せず |Δθ| ≤ Δs/ρ。壁で塞ぐと ValueError(部分的な道は返さない)。合計 16.3 秒。正直に: 6.5 m の車室(車長 + 2.0 m)はこの離散化では到達不能になった。RS の式を写すとき mod2pi の折り方((−π, π] か [0, 2π) か)を間違えると CCSC 系 8 語が一度も候補に出ない ―― 語族を数える門で見つけた。*
-
-[![小文字 = 後退の区間。後退を許すと Dubins より必ず短いか等しい(400 対で確認、最大差 10.647)。ρ = 1 m。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/02_reeds_shepp_gallery_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/02_reeds_shepp_gallery.png)
-
-*↑ 測定の図 ―― 小文字 = 後退の区間。後退を許すと Dubins より必ず短いか等しい(400 対で確認、最大差 10.647)。ρ = 1 m。*
-
-[![縦列駐車の Hybrid A*: 灰 = 障害物(縁石・駐車車両 2 台・壁)、薄緑の点 = 展開した 4203 姿勢、赤 = 前進、青 = 後退。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/03_parking_tree_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/03_parking_tree.png)
-
-*↑ 縦列駐車の Hybrid A*: 灰 = 障害物(縁石・駐車車両 2 台・壁)、薄緑の点 = 展開した 4203 姿勢、赤 = 前進、青 = 後退。*
-
-[![RS 最適化器 1 10.1321; Dubins 最適化器 1 10.1321; RS 最適化器 2 6.6829; Dubins 最適化器 2 8.7569; RS 最適化器 3 3.3224; ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/05_truths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/05_truths.png)
-
-*↑ RS 最適化器 1 10.1321; Dubins 最適化器 1 10.1321; RS 最適化器 2 6.6829; Dubins 最適化器 2 8.7569; RS 最適化器 3 3.3224; Dubins 最適化器 3 4.5527; 整列 5 m (Dubins) 5.0000; 整列 5…*
-
-[![車(橙)が Hybrid A* の道を辿って 2 台の間に入る。52 コマ、前進 30 区間・後退 12 区間、切替 8 回。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/04_parking_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/04_parking_gif.gif)
-
-*↑ 動く図 ―― 車(橙)が Hybrid A* の道を辿って 2 台の間に入る。52 コマ、前進 30 区間・後退 12 区間、切替 8 回。*
-
-```
-py -3.11 examples/poc_car_parking.py
-```
-
-ソース: [examples/poc_car_parking.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_car_parking.py)
-
-この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_car_parking)
-
-使用 op(ノートへ): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`car_dubins_path`](https://furuse.work/ops/graph/path/car_dubins_path.html) · [`car_hybrid_astar`](https://furuse.work/ops/graph/path/car_hybrid_astar.html) · [`car_reeds_shepp_path`](https://furuse.work/ops/graph/path/car_reeds_shepp_path.html)
 
 ## No.2026.133 —— 公共カメラはどこを向いているか ―― 位置しか公開されない固定カメラの向きを、写真そのものから決める
 
@@ -4443,6 +4411,42 @@ py -3.11 examples/poc_prnu_camera_fingerprint.py
 この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint)
 
 使用 op(ノートへ): [`aug_jpeg_blocks`](https://furuse.work/ops/2d/augmentation/aug_jpeg_blocks.html) · [`evidence_quantile`](https://furuse.work/ops/imgforensics/calibration/evidence_quantile.html) · [`fingerprint_correlate`](https://furuse.work/ops/imgforensics/sensor/fingerprint_correlate.html) · [`gauss_image`](https://furuse.work/ops/2d/smoothing/gauss_image.html) · [`median_image`](https://furuse.work/ops/2d/rank/median_image.html) · [`null_distribution`](https://furuse.work/ops/imgforensics/calibration/null_distribution.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`sensor_fingerprint`](https://furuse.work/ops/imgforensics/sensor/sensor_fingerprint.html) · [`sk_nlm`](https://furuse.work/ops/2d/smoothing/sk_nlm.html) · [`sk_tv`](https://furuse.work/ops/2d/smoothing/sk_tv.html) · [`sk_wavelet`](https://furuse.work/ops/2d/smoothing/sk_wavelet.html) · [`xsp_dct_denoise`](https://furuse.work/ops/2d/smoothing/xsp_dct_denoise.html) · [`xsp_wiener`](https://furuse.work/ops/2d/smoothing/xsp_wiener.html)
+
+### 自動運転 ―― 定理と第 2 実装が門になる回(別記事)
+
+この展示先の回は、計測の展示館ではなく**自動運転のシリーズ**に掛かっています。分ける基準は「真値がどこから来るか」です —— 計測の展示は測る対象があり真値は対象の側に、ここの回は車の運動学の定理・閉形式の構造を仮定しない第 2 実装・データセットの公表値から真値が出ます。記事は手書きなので、生成器はここを描きません。
+
+## No.2026.166 —— 車は最短でどう曲がるか ―― Dubins・Reeds–Shepp の閉形式と、占有格子の上の Hybrid A* で縦列駐車
+
+[![車は最短でどう曲がるか ―― Dubins・Reeds–Shepp の閉形式と、占有格子の上の Hybrid A* で縦列駐車](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/01_dubins_six_words_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/01_dubins_six_words.png)
+
+*↑ **車は最短でどう曲がるか ―― Dubins・Reeds–Shepp の閉形式と、占有格子の上の Hybrid A* で縦列駐車** ―― 前輪で舵を切る車(最小回転半径 ρ)が姿勢 (x, y, θ) から姿勢 (x', y', θ') へ移る最短の道には定理がある。前進だけなら Dubins(1957): 最短路は円弧・直線・円弧の 3 区間で語は 6 つ。後退を許せば Reeds–Shepp(1990): 高々 5 区間で語は 48(Sussmann–Tang 1991 で 46)。どちらも区間長は閉形式で、新しい op car_dubins_path / car_reeds_shepp_path がそれを返す。障害物があれば car_hybrid_astar ―― 占有格子の上で {左・直進・右} × {前進・後退} の運動基本形を離散セル (x, y, θ) で枝刈りしながら A* で繋ぎ、障害物を無視した Reeds–Shepp 長を許容ヒューリスティックに、節点から目標へ解析的な一撃を試す(Dolgov ら 2010)。正しさの担保: 閉形式の各候補は前進積分で終点を検証し、届かない候補は捨てて数を返す ―― 乱数 400 対で落ちた候補 0、対あたりの RS 候補 6.6 本、18 の語族が候補にも最短にも全部現れた。語ごとの区間長を未知数にした終点方程式を SLSQP で多数の初期値から解く第 2 実装(閉形式の構造を仮定しない)は 3 対 × RS / Dubins の 6 件で閉形式と 1e-6 で一致(RS 10.132129 / 6.682896 / 3.322408、Dubins 10.132129 / 8.756928 / 4.552667)。定理の不等式と対称 ―― ユークリッド距離 ≤ RS ≤ Dubins、可逆 L(s, g) = L(g, s)、鏡映、剛体変換で不変、ρ に比例、三角不等式 ―― は 400 対 + 200 組で全部成立し、Dubins − RS の最大は 10.647 m(後退が効く分)。整列した目標では RS = Dubins = 距離、語は S。障害物の無い 40 × 30 m の格子では Hybrid A* の費用 23.353319 m が RS 長 23.353319 m と厳密一致(展開 1、最初の一撃が通る)、前進のみでも Dubins 長と一致。縦列駐車(18 × 8 m、cell 0.25 m、θ 72 分割、車体 4.5 × 1.8 m、ρ 5.5 m、7.5 m の車室)は費用 16.018 m ≥ 下界 7.986 m(障害物を無視した RS の道は駐車車両にぶつかる)、展開 3,385・生成 4,203、区間 42(後退 12・切替 8)、0.8 秒で、返した姿勢列は車体の矩形で衝突せず |Δθ| ≤ Δs/ρ。壁で塞ぐと ValueError(部分的な道は返さない)。合計 16.3 秒。正直に: 6.5 m の車室(車長 + 2.0 m)はこの離散化では到達不能になった。RS の式を写すとき mod2pi の折り方((−π, π] か [0, 2π) か)を間違えると CCSC 系 8 語が一度も候補に出ない ―― 語族を数える門で見つけた。*
+
+[![小文字 = 後退の区間。後退を許すと Dubins より必ず短いか等しい(400 対で確認、最大差 10.647)。ρ = 1 m。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/02_reeds_shepp_gallery_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/02_reeds_shepp_gallery.png)
+
+*↑ 測定の図 ―― 小文字 = 後退の区間。後退を許すと Dubins より必ず短いか等しい(400 対で確認、最大差 10.647)。ρ = 1 m。*
+
+[![縦列駐車の Hybrid A*: 灰 = 障害物(縁石・駐車車両 2 台・壁)、薄緑の点 = 展開した 4203 姿勢、赤 = 前進、青 = 後退。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/03_parking_tree_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/03_parking_tree.png)
+
+*↑ 縦列駐車の Hybrid A*: 灰 = 障害物(縁石・駐車車両 2 台・壁)、薄緑の点 = 展開した 4203 姿勢、赤 = 前進、青 = 後退。*
+
+[![RS 最適化器 1 10.1321; Dubins 最適化器 1 10.1321; RS 最適化器 2 6.6829; Dubins 最適化器 2 8.7569; RS 最適化器 3 3.3224; ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/05_truths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/05_truths.png)
+
+*↑ RS 最適化器 1 10.1321; Dubins 最適化器 1 10.1321; RS 最適化器 2 6.6829; Dubins 最適化器 2 8.7569; RS 最適化器 3 3.3224; Dubins 最適化器 3 4.5527; 整列 5 m (Dubins) 5.0000; 整列 5…*
+
+[![車(橙)が Hybrid A* の道を辿って 2 台の間に入る。52 コマ、前進 30 区間・後退 12 区間、切替 8 回。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/04_parking_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/04_parking_gif.gif)
+
+*↑ 動く図 ―― 車(橙)が Hybrid A* の道を辿って 2 台の間に入る。52 コマ、前進 30 区間・後退 12 区間、切替 8 回。*
+
+```
+py -3.11 examples/poc_car_parking.py
+```
+
+ソース: [examples/poc_car_parking.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_car_parking.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_car_parking)
+
+使用 op(ノートへ): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`car_dubins_path`](https://furuse.work/ops/graph/path/car_dubins_path.html) · [`car_hybrid_astar`](https://furuse.work/ops/graph/path/car_hybrid_astar.html) · [`car_reeds_shepp_path`](https://furuse.work/ops/graph/path/car_reeds_shepp_path.html)
 
 ### 数学の絵 ―― 定理が門になる回(別記事)
 

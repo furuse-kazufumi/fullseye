@@ -12,6 +12,7 @@ complementing the reference docs (`docs/ops/`, guides) meant for lookup.
 | `fullseye_poc_museum_qiita_ja.md` / `fullseye_poc_museum_qiita_en.md` | **PoC 展示館**: 真値を仕込んだ計測 PoC 53 本を 9 ウィングで展示(生成物。正本は `exhibits/poc_captions.json` + `examples/poc_*.py` の図、`tools/gen_wingpoc_gallery.py` で組む) | ja / **en** |
 | `exhibits/` | 紙面の科学館 —— op で遊ぶ展示。`_intro` / `museum` / `science` / `wing*`(1D/2D/3D/astro/conv/ct/evo …) | ja / 一部 **en** |
 | `qiita_math_drawing_ja.md` / `qiita_math_drawing_en.md` | **数学描画シリーズ**: 定理を門にして描く PoC を 1 本ずつ追記して育てる(第 1〜5 回 = 一筆書き / 複素平面 / 定理の図 / うなり / 力学系と極小曲面)。ja は限定共有、en は一般公開(LinkedIn の誘導先) | ja / **en** |
+| `qiita_autonomous_driving_ja.md` / `qiita_autonomous_driving_en.md` | **自動運転シリーズ**: 定理と第 2 実装で採点する自動運転の op を 1 本ずつ追記して育てる(第 1 回 = 車の最短経路 Dubins / Reeds–Shepp / Hybrid A*)。ja は限定共有、en は一般公開 | ja / **en** |
 | `qiita_measuring_the_measurement_ja.md` / `qiita_measuring_the_measurement_en.md` | **測る側を測る**: ゲージ R&R と測定の不確かさ。合成の門 52 件が緑のまま、規格の公表値と厳密解が 5 件の欠陥を出した話。ja は限定共有、en は一般公開 | ja / **en** |
 | `qiita_3dgs_sim_native.md` | 物理シミュをそのまま 3D Gaussian Splatting にする(姿勢推定いらず・純 PyTorch) | ja |
 | `assets/` | 記事と README で使う図版。**すべて Fullseye 自身の op の実出力**(モックアップなし) | — |
@@ -27,11 +28,11 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 
 <!-- articles:start -->
 
-## この下にあるもの(全 58 本 —— 生成)
+## この下にあるもの(全 60 本 —— 生成)
 
 `py -3.11 tools/gen_docs_index_ops.py` が `docs/articles/` を歩いて作ります。**ここから辿れない文書を作らない**ための一覧なので、手で足し引きしないでください。
 
-**記事**(22) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
+**記事**(24) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
 
 | ファイル | 見出し |
 |---|---|
@@ -48,6 +49,8 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 | [`fullseye_poc_museum_what_qiita_en.md`](fullseye_poc_museum_what_qiita_en.md) | A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground) |
 | [`fullseye_poc_museum_what_qiita_ja.md`](fullseye_poc_museum_what_qiita_ja.md) | 紙面の計測館 —— 何を測るかの棟(産業検査・寸法計測・医用生物・天文環境) |
 | [`qiita_3dgs_sim_native.md`](qiita_3dgs_sim_native.md) | 物理シミュレーションを、そのまま3D Gaussian Splattingにする ―― 「姿勢推定いらず」の3DGSを純PyTorchでRTX 5090に実装した話 |
+| [`qiita_autonomous_driving_en.md`](qiita_autonomous_driving_en.md) | Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Imple... |
+| [`qiita_autonomous_driving_ja.md`](qiita_autonomous_driving_ja.md) | 自動運転のデモは動くので、誰も正しさを測らない ―― 定理と第 2 実装で採点する PoC シリーズ |
 | [`qiita_blas_threads_ja.md`](qiita_blas_threads_ja.md) | 24 コアが 1 コアに負ける ―― 行列分解の速さを、仮説ではなく測定で決めるまで |
 | [`qiita_flybrain_closedloop_en.md`](qiita_flybrain_closedloop_en.md) | Putting a Fly Visual Model on a Body and Measuring It |
 | [`qiita_flybrain_closedloop_ja.md`](qiita_flybrain_closedloop_ja.md) | ハエの視覚モデルを体に載せて測る |

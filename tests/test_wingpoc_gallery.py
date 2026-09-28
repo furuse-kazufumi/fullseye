@@ -329,23 +329,27 @@ def test_the_part_gate_catches_an_orphan_wing(cap):
         _check_parts(broken)
 
 
-def test_the_math_article_and_the_museum_share_no_poc(cap):
-    """★数学記事と展示館が同じ PoC を載せていない。
+def test_a_hand_written_article_and_the_museum_share_no_poc(cap):
+    """★手書きの記事(数学・自動運転 …)と展示館が同じ PoC を載せていない。
 
     載せると読者は同じ絵を 2 度見る。2026-09-25 まで **7 件**がこの状態だった ――
     例外は出ず、どちらの記事も単体では正しく見えるので、突き合わせる門が要る。
+    記事は台帳の external 棟から全部拾う —— 1 本だけ名指しすると、次のレーンが素通りする。
     """
     c, _byid = cap
-    ext = {w for p in c["meta"]["parts"] if p["kind"] == "external" for w in p["wings"]}
+    ext_parts = [p for p in c["meta"]["parts"] if p["kind"] == "external"]
+    assert ext_parts, "手書きの記事が台帳に無い(この門は何も見ていない)"
+    ext = {w for p in ext_parts for w in p["wings"]}
     in_museum = {e["id"] for e in c["exhibits"] if e["wing"] not in ext}
-    for lang in ("ja", "en"):
-        path = os.path.join(_ART, "qiita_math_drawing_%s.md" % lang)
-        used = set(re.findall(r"/assets/poc/(poc_[a-z0-9_]+)/",
-                              io.open(path, encoding="utf-8").read()))
-        dup = sorted(used & in_museum)
-        assert not dup, (
-            "数学記事(%s)と展示館が同じ PoC を載せている: %s\n"
-            "  —— 展示先(wing)を lane_math に移すか、記事から外す" % (lang, dup))
+    for p in ext_parts:
+        for lang in ("ja", "en"):
+            path = os.path.join(_ART, p["article_" + lang])
+            used = set(re.findall(r"/assets/poc/(poc_[a-z0-9_]+)/",
+                                  io.open(path, encoding="utf-8").read()))
+            dup = sorted(used & in_museum)
+            assert not dup, (
+                "手書きの記事(%s, %s)と展示館が同じ PoC を載せている: %s\n"
+                "  —— 展示先(wing)をその記事のレーンに移すか、記事から外す" % (p["id"], lang, dup))
 
 
 def test_every_exhibit_in_an_external_lane_is_actually_written_up(cap):
