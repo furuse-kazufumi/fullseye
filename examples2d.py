@@ -127,6 +127,14 @@ EXAMPLES = [
                 "Hybrid A*、RS 長をヒューリスティックに解析的な一撃)。候補は前進積分で終点を検証して落とした数を返す(0 落ち、18 語族"
                 "が全部出る)。語ごとの区間長を SLSQP で解く第 2 実装と一致、距離 ≤ RS ≤ Dubins・可逆・鏡映・剛体・三角不等式、"
                 "空の格子で Hybrid A* = RS 長と厳密一致、縦列駐車は衝突なし・実現可能・下界以上、壁は ValueError。"},
+    {"id": "poc_driving_school", "task": "imgmetrics", "data": "synthetic",
+     "name": "教習所が開校する —— 規格寸法の周回コースに車と信号を置き、LiDAR とカメラで見て、定理と恒等式で採点する",
+     "summary": "道路交通法施行規則 別表第三の寸法で周回コース(直線 80 m・幅 8 m)の中に幹線の十字(信号 4 基)と課題(クランク・S 字・"
+                "坂道・縦列駐車・方向変換・踏切)を置き、出口は連絡路で周回へ戻す(drivecourse)。3-D の世界に CC0 の車・信号機・標識"
+                "(driveworld)、回転式 LiDAR をメッシュに撃ち(lidarsim)、車載カメラで撮る。門 14: 面積の閉形式への単調収束、路面の "
+                "range = h/(−sin e) と 1e-9 一致、LiDAR の点をカメラに投影した深度・ラベルの一致(2 センサ 1 世界)、車の点は車の箱の中、"
+                "縁石の点は道の外、Hybrid A* の道は脱輪 0(半セル以内)、カメラが信号の赤・緑を読む。正直に: 規格の幅 3.5 m は前進のみ"
+                "では到達不能で切り返しが要る。"},
     {"id": "poc_physarum_transport", "task": "imgmetrics", "data": "synthetic",
      "name": "粘菌は最適輸送を解く —— 源と吸込を質量の分布にすると、同じ管の力学が Earth Mover 距離へ収束する",
      "summary": "graph_physarum_transport(重み付きグラフ + 供給ベクトル)と physarum_transport_image(質量画像 2 枚)で、Tero の管の力学を"

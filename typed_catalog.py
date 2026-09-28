@@ -690,7 +690,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opstext", "opsgenerative"):
+                 "opsgraph", "opstext", "opsdrive", "opsgenerative"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
@@ -846,6 +846,15 @@ def catalog():
     for n, m in opstext.OPSTEXT.items():
         if m["func"] is not None:
             ops.append((n, "text", list(m["in"]), m["out"], m["func"]))
+    # 自動運転の教習所ワールド(opsdrive 台帳)。**新しい型語彙を 1 つも作らない**判断:
+    # コース・世界・LiDAR の一掃・カメラの像は dict(table)のまま運ぶ(面のラベルと色を
+    # 落とすと真値が消える)。占有格子は image2d、姿勢と内部パラメータは matrix、
+    # メッシュは (V, F)。真値は規格の寸法(道路交通法施行規則 別表第三)の閉形式の面積・
+    # 平面と箱へのレイの閉形式・2 センサ 1 世界の恒等式(2026-09-29)。
+    import opsdrive
+    for n, m in opsdrive.OPSDRIVE.items():
+        if m["func"] is not None:
+            ops.append((n, "drive", list(m["in"]), m["out"], m["func"]))
     # 絵を作る側(opsgenerative 台帳)。**新しい型語彙を 1 つも作らない**判断:
     # 30 op の返りは既存の rgb((H,W,3))/ rgbvideo((T,H,W,3))/ table に収まる。
     # 「錯視画像」という型を作らないのが要点で、作った絵に既存の 2,147 op が

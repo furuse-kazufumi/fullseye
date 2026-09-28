@@ -45,6 +45,7 @@ This series lines up the ops built on that bar, one per instalment. Every instal
 | # | What is measured | Gate (where the truth comes from) |
 |---|---|---|
 | 1 | [How a car turns shortest](#1-how-a-car-turns-shortest) | Dubins / Reeds–Shepp theorems / forward integration / SLSQP second implementation / Hybrid A* = closed form on an empty grid |
+| 2 | [The driving school opens — build the world that carries its own truth first](#2-the-driving-school-opens--build-the-world-that-carries-its-own-truth-first) | Closed-form areas from the regulation sizes / closed-form ray hits on a plane / two sensors, one world / two point-in-polygon implementations |
 
 ---
 
@@ -176,9 +177,148 @@ This instalment produced **5** figures in all — [see them all](https://github.
 
 *↑ All 11 ground truths: 6 from the second implementation, 3 aligned goals, 2 empty grids. Every point sits on the diagonal.*
 
+## 2. The driving school opens — build the world that carries its own truth first
+
+![Waiting at a red light, threading the crank, merging onto the loop](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/05_drive_gif.gif)
+
+*↑ A chase camera with the LiDAR (16 beams) points overlaid. Grey = road, yellow = kerb, red = car, green = signal. Red light → intersection → crank (with reversing) → link road → loop. That the car **drove** is visible. How many centimetres its corners crossed the kerb line, and which face every LiDAR point came from, is not — but the world knows, so it can be counted.*
+
+Part 1 had only the geometry of paths; there were no sensors. To score a sensor you need a **world in which what it sees is decided in advance**. The ground truth of real datasets is human labelling: the edge of every box and the label of every point is somebody's judgement. So this part builds the world instead — not with arbitrary sizes, but with the numbers of **Appendix 3 of the Road Traffic Act Enforcement Regulations (standards for designated driving-school courses, ordinary licence)**.
+
+### Recipe
+
+```
+regulation sizes → one polygon per element (crank, S-curve, slope, parallel parking, turnaround, level crossing, loop, main roads)
+       → place with (x, y, yaw) → union = drivable region
+       → 3-D world: ground plane + kerb bands + lane paint + CC0 cars / signals / signs (every face carries a label and a colour)
+       → fire a spinning LiDAR at the mesh (points, range image, face labels) / render the in-car camera (colour, label, depth)
+       → drive it with round 13's Hybrid A* and score every pose and every frame
+```
+
+| Term | Meaning here |
+|---|---|
+| Loop course | Oval. Straights ≥ 80 m, width ≥ 8 m. The outer ring of a driving school; the exercises sit inside it |
+| Main roads | Roads ≥ 7 m wide crossing at right angles and joining the loop. Corner radius ≥ 3 m |
+| Crank | 3.5 m wide, 12 m between the bends, entries ≥ 4 m, 1 m fillet on the inner corners (ordinary licence) |
+| S-curve | 3.5 m wide, 7.5 m radius (outer arc), two arcs of 3/8 of a circle in opposite senses |
+| Turnaround | A 3.5 m bay, 5 m deep, beside a 3.5 m road, 1 m fillets |
+| Slope | ≥ 7 m wide, ≥ 1.5 m rise, gentle grade 6.5–9 %, steep 10–12.5 %, ≥ 4 m flat top |
+| Range image | One LiDAR sweep on a grid: row = elevation (beam), column = azimuth, value = range |
+| Inverse sensor model | The rule that turns "a return came back at this range" into occupancy updates of grid cells (here: just dropping kerb points into cells) |
+
+The new ops live in three modules. **drivecourse** (regulation-size 2-D polygons; truth = closed-form areas), **driveworld** (the 3-D world; CC0 Kenney Car Kit / City Kit Roads meshes scaled to real dimensions; the camera image is looked up from triangle ids), and **lidarsim** (Möller–Trumbore ray–triangle intersection, accelerated by binning every triangle by the azimuth and elevation intervals it subtends from the sensor; 80 k triangles × 58 k rays in under a second).
+
+[![Plan of the school](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan.png)
+
+*↑ From above. The loop (80 m straights, 8 m wide, R 30 semicircles) with the cross of main roads inside (four signals). Crank to the north-east, S-curve south-west, slope south-east (the dark patch is the ramp), parallel parking and turnaround north-west, level crossing on the eastern main road. The exits rejoin the loop through link roads, so you can circulate.*
+
+[![The same world at an angle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique.png)
+
+*↑ The 3-D world. Kerbs (0.15 m) and lane paint follow the polygon edges and are left out at the joints. Cars, signals, signs, street lights and cones are CC0 meshes. Every face has a label and a colour.*
+
+### Gates and scores
+
+Three kinds of truth: **closed forms derived from the regulation sizes, closed-form ray hits on planes and boxes, and the identity between two sensors looking at one world**. No trained model and no external simulator.
+
+| Claim | Measured | Where the truth comes from |
+|---|---|---|
+| The polygons are the regulation sizes | For the 5 elements with arcs, the shoelace area **converges monotonically** to the closed form as the arc goes 16 → 64 → 256 → 1024 points (crank 3.1e-5 → 7.5e-9, S-curve 2.8e-3 → 6.8e-7). The 4 arc-free elements match **exactly** | Closed forms (crank = w·L + 2r²(1 − π/4), S-curve = 2·(3/8)·π·(7.5² − 4²) + entries, semicircle = π R w) |
+| The LiDAR measures a plane correctly | **10,903 points** on flat road: range vs h/(−sin e), relative difference **2.1e-16** | Closed form |
+| The two sensors see one world | 3,450 LiDAR points projected into the camera: median relative depth difference **2.9e-3**, label agreement **100 %** (1-pixel tolerance; 99.1 % pixel-exact) | Identity |
+| Car points are inside cars | 1,607 points labelled "car" lie inside the placed car boxes (pose + real size): **100 %** | The world's own placement |
+| Kerb points are off the road | An occupancy grid built from 4,667 kerb points is a subset of the true occupancy (outside the polygons) dilated by one cell (precision **1.0000**), in all 68 driving frames | Point-in-polygon (two implementations: even-odd and winding) |
+| The driven path does not derail | Over 997 poses the corners of the body cross the kerb line by at most **0.117 m ≤ half a cell (0.125 m)**; on the exact polygons 11 poses cross (the planner's resolution) | Polygons |
+| Zero point | Driving the crank in a straight line derails in **50** of 60 poses | — |
+| The camera reads the signal | From the lit pixels of the 160 lamp pixels: red → `red`, green → `green`; with the lamps off → `unknown` | The world's own state |
+
+[![One LiDAR sweep](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep.png)
+
+*↑ A sweep 10 m before the stop line (32 beams, −25° to +15°, 0.5°; 10,903 points on the road). Points are coloured by the label of the face they hit — that this is generation-time truth rather than human labelling is the whole value of the world.*
+
+[![LiDAR over the in-car camera](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar.png)
+
+*↑ The same instant from the in-car camera (60°, 640 × 400) with the LiDAR points projected onto it. Point depth vs pixel depth and point label vs pixel label agreeing is the "two sensors, one world" gate. The signal is red.*
+
+### ★ Where you will get it wrong
+
+#### 1. The regulation 3.5 m width cannot be driven forward with max-steer-and-straight primitives
+
+Part 1's Hybrid A* uses {left, straight, right} × {forward, reverse} motion primitives. With a 4.5 × 1.8 m car, the regulation crank (3.5 m wide, 1 m fillets) is **unreachable forward-only** — at 0.25 m cells with 72 heading bins and at 0.125 m with 144 — the search exhausts its open set after a few dozen expansions. The S-curve (outer 7.5 m, inner 4 m) is the same. Allowing reversing gets through (crank: cost 57.9 m, 14 reverse segments; S-curve: 29.5 m, 1). The real driving test allows reversing too, with points deducted per manoeuvre. Without **intermediate steering angles** in the primitives, a corridor that fits geometrically does not fit after discretisation — the opposite of "it moved so it is right": **it did not move, and that was not wrong**.
+
+#### 2. "Collision-free" from the planner still pokes 12 cm over the polygon
+
+Collision checking is per cell (0.25 m). Measured on the exact polygons, 11 of 997 poses have a body corner over the kerb line, by up to 0.117 m. That is within half a cell, so the planner kept its promise — but **"collision-free" is only as strict as the resolution**. The gate sits at half a cell and reports the number of crossing poses and the largest excursion. If you must not touch the kerb, add clearance or refine the grid; both cost time.
+
+#### 3. Elements that touch edge to edge grow a kerb wall across the joint
+
+If the loop's straights and semicircles meet exactly on a shared edge, neither end edge is "inside the neighbour", so both grow kerbs — **a wall across the road**. The LiDAR saw it and dropped kerb points into cells that should be drivable (precision 0.90). Two fixes: overlap adjacent elements by 5 cm, and skip a 0.5 m edge piece if **either endpoint or the midpoint** lies inside a neighbour. Testing only the midpoint leaves pieces half across a mouth, and they become walls.
+
+#### 4. The lamps end up buried inside the signal head
+
+The signal mesh has a box for a head; placing the lamp discs just in front of its centre hides them behind the box face — **0 pixels** in the camera. Moving them outside the front face gives 160. A second trap: classifying by the **mean colour** of one lit and two dark lamps lets the dark ones dominate and green cannot be read. Classify on lit pixels only (max channel > 0.5).
+
+#### 5. Thin objects land on a different face one pixel over
+
+A kerb is 0.15 m tall — a two-pixel band at 20 m. Comparing a projected LiDAR point with the label of **the same pixel** gives 99.1 %, and most misses are kerb points landing on the neighbouring road pixel. Counting a match if the same label appears in the 3 × 3 window gives 100 %. Lane paint (0.12 m wide) is under one pixel far away, so it is counted as the road surface it is painted on. Writing "100 % label agreement" without **the tolerance in pixels** means nothing.
+
+#### 6. Huge triangles vanish behind the camera
+
+Modelling the ground as two enormous triangles makes the road disappear from the in-car camera: the rasteriser drops any triangle with a vertex behind the camera (it does no near-plane clipping by design). A 4 m grid confines the loss to the cell under the camera. The LiDAR has a cousin of this trap: taking a triangle's elevation interval from its vertices' min and max misses the middle of **an edge passing over the sensor** (an edge between two 5.7° vertices reaches 78.7°). Each edge needs its great-circle extremum added.
+
+### What it is bad at
+
+**No moving objects and no time.** The world is static and the car merely follows a pose sequence. No oncoming traffic with speed, no pedestrians. The signal changes colour but has no rule for when.
+
+**Sensor physics is geometry only.** The LiDAR has single returns, no intensity, no beam divergence, no rain or fog, no distortion from ego-motion during the sweep. The camera is Lambert shading only, no shadows, no exposure. This is not evidence that a detector works on a real car; it is a tool for **finding geometric mistakes**.
+
+**The car meshes have toy proportions.** Kenney's CC0 models are stretched per axis to the box dimensions (4.5 m long, 1.8 m wide). The point-cloud shapes differ from real cars.
+
+**Parallel parking has no size in the regulation.** The appendix of the circular is a figure and no primary numeric source was found, so the default bay is car length + 3.0 m, and the docstring says so.
+
+### Run it
+
+```bash
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 examples/poc_driving_school.py         # 14 gates and 6 figures, about 37 s
+```
+
+```python
+import numpy as np
+import fullseye as fs
+
+crank = fs.ledger.course_crank()                                  # regulation: 3.5 wide, 12 between bends, 4 entries, 1 fillet
+P = crank["polygon"]                                             # counter-clockwise polygon (K, 2)
+area = 0.5 * abs(np.dot(P[:, 0], np.roll(P[:, 1], -1)) - np.dot(P[:, 1], np.roll(P[:, 0], -1)))   # shoelace
+print(crank["params"]["regulation"], round(area, 3), round(crank["area_closed_form"], 3))
+# {'A': 3.5, 'B': 12.0, 'C': 4.0, 'D': 1.0} 82.682 82.679
+
+world = fs.ledger.world_build(crank, props=[("sedan", 20.0, 2.0, np.pi / 2)])   # make it 3-D and park one car
+spec = fs.ledger.lidar_spec(n_beams=16, azimuth_res_deg=1.0)
+T = np.eye(4); T[:3, 3] = (2.0, 0.0, 1.64)                        # inside the entry, sensor 1.64 m up
+scan = fs.ledger.lidar_scan(world["V"], world["F"], spec, T, labels=world["face_label"])
+hit = scan["ranges"] > 0
+print(scan["n_hits"], np.bincount(scan["labels"][hit]))
+# 2641 [2455  140   22    0    0    0    0    0    0   24]   ← number of points, per face label (road 2455, kerb 140, car 22, …, paint 24)
+```
+
+`labels` is the label of the face each ray hit. It is **generation-time truth**, so once you write a detector you can score it against this without waiting for human labels.
+
+---
+
+This part produced **6 figures** in all — [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_school)
+
+#### The remaining figure of this part
+
+[![Truth scatter](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths.png)
+
+*↑ Areas of the 8 element kinds (shoelace vs closed form) and 200 road ranges (measured vs h/(−sin e)). Everything sits on the diagonal.*
+
+---
+
 ## Next
 
-**Time to collision from optical flow, and the safe distance.** For a fronto-parallel surface approaching head-on, the time to collision τ is fixed by the divergence of the flow alone (Lee 1976, TTC = 2 / divergence) — without knowing distance or speed. The gate is a synthetic approach scene whose **true TTC is known**. Alongside it, the closed-form safe distance of Mobileye's RSS (Shalev-Shwartz et al. 2017, Lemmas 2 and 4) becomes an op, and "you can stop from this distance" is checked from outside the formula.
+**Time to collision from optical flow, and the safe distance.** For a fronto-parallel surface approaching head-on, the time to collision τ is fixed by the divergence of the flow alone (Lee 1976, TTC = 2 / divergence) — without knowing distance or speed. An oncoming car will drive through the school that opened in this part, the optical flow will be taken from two frames of the in-car camera, and the approach will be scored against the **true TTC the world knows**. Alongside it, the closed-form safe distance of Mobileye's RSS (Shalev-Shwartz et al. 2017, Lemma 2) will be checked with published response times, accelerations and decelerations.
 
 ## References
 

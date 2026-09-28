@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lidar_scan — DRIVE <code style="color:#22d3bf">lidar</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mesh × table × matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lidar_scan(V, F, spec, T_sensor, *, labels=None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import lidarsim; lidarsim.lidar_scan(V, F, spec, T_sensor, *, labels=None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;lidar_scan&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>メッシュ世界 `<code style="color:#22d3bf">(V, F)</code><code style="color:#22d3bf"> に姿勢 </code><code style="color:#22d3bf">T_sensor</code>`(world ← sensor)の LiDAR を 1 スイープ撃つ。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">V</code><code style="color:#22d3bf"> (N,3) float / </code><code style="color:#22d3bf">F</code>` (M,3) int: 三角形メッシュ(空・非 (N,3)・非有限・範囲外の面番号は</p>
+<p>`<code style="color:#22d3bf">ValueError</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">spec</code><code style="color:#22d3bf">: :func:</code>lidar_spec` の dict。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">T_sensor</code>`: 4×4 同次行列(world ← sensor)。センサ座標は x=前, y=左, z=上。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">labels</code>`: 面ごとの int ラベル (M,) または None(None なら当たったセルのラベルは 0)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">seed</code><code style="color:#22d3bf">: ノイズの乱数種(</code><code style="color:#22d3bf">noise_std == 0</code>` なら乱数を一切引かず、ビット単位で決定的)。</p>
+<p>返り値の dict:</p>
+<p>`<code style="color:#22d3bf">points</code><code style="color:#22d3bf"> (K,3) **世界座標**の反射点(行優先: beam 0 の列 0 から)/ </code><code style="color:#22d3bf">ranges</code>` (n_beams, n_az)</p>
+<p>[m] (0 = 無返答)/ `<code style="color:#22d3bf">hit_face</code><code style="color:#22d3bf"> (n_beams, n_az) int(−1 = 無し)/ </code><code style="color:#22d3bf">labels</code>` (n_beams, n_az) int</p>
+<p>(−1 = 無し)/ `<code style="color:#22d3bf">beam</code><code style="color:#22d3bf"> (K,) int / </code><code style="color:#22d3bf">col</code><code style="color:#22d3bf"> (K,) int / </code><code style="color:#22d3bf">n_hits</code>` int。</p>
+<p>最近接の面が `<code style="color:#22d3bf">range_min</code><code style="color:#22d3bf"> 未満または </code><code style="color:#22d3bf">range_max</code>` 超なら無返答(奥の面へ抜けない)。ノイズは</p>
+<p>無ノイズ距離で返答の有無を決めた後、`<code style="color:#22d3bf">ranges</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">points</code>` に足す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_school">poc_driving_school</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_school.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">lidar</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:lidar_spec">lidar_spec</a> · <a style="color:#22d3bf" href="opdrive:ray_plane_range">ray_plane_range</a> · <a style="color:#22d3bf" href="opdrive:ray_box_ranges">ray_box_ranges</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lidarsim.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

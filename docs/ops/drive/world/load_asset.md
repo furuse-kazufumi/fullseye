@@ -1,0 +1,46 @@
+---
+op: load_asset
+dim: drive
+category: world
+in: 
+out: table
+examples: [poc_driving_school]
+author: Kazufumi Furuse
+license: Apache-2.0
+version: 0.2.3  # fullseye lib version this note was generated for
+---
+
+# load_asset — DRIVE `world` op
+
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
+- **呼び出し**: `import fullseye as fs; fs.ledger.load_asset(name: 'str', dims=None, *, root=None) -> 'dict'` (実装を直接呼ぶなら `import driveworld; driveworld.load_asset(name: 'str', dims=None, *, root=None) -> 'dict'`、台帳から引くなら `opsdrive.get("load_asset")`)
+
+## 使い方
+
+同梱資産をメッシュ dict に: ``{"V", "F", "color", "label", "name", "dims"}``。
+
+z-up に直し、箱の寸法を ``dims``(既定 = :data:`ASSETS` の実寸)に軸ごとに合わせ、原点を箱の底面中心に置く。
+未知の名前・寸法 ≤ 0 は ValueError。同じ名前は 1 度だけ読む(キャッシュ)。
+
+## 参考(サンプルデータ・文献)
+
+- [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
+- [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
+- アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
+
+- [poc_driving_school](../../../../examples/poc_driving_school.py) — `py -3.11 examples/poc_driving_school.py`
+
+## 型が繋がる次の op(`table` を入力に取れる)
+
+[course_layout](../course/course_layout.md) · [course_occupancy](../course/course_occupancy.md) · [course_contains](../course/course_contains.md) · [world_build](world_build.md) · [world_camera](world_camera.md) · [lidar_scan](../lidar/lidar_scan.md)
+
+## 同カテゴリ(`world`)
+
+[world_build](world_build.md) · [world_camera](world_camera.md)
+
+---
+*Provenance: driveworld.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+
+© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

@@ -16,3 +16,10 @@ the **Gaskell shape model** produced from JAXA *Hayabusa* mission imagery.
 Synthetic X-ray-CT density volume built by voxelising anatomical hand-bone meshes from the
 **MS-Human-700** musculoskeletal model (bone geometry), arranged in a dummy hand pose. Used
 only to demonstrate Fullseye's volumetric / tomography operators on realistic bone shapes.
+
+## kenney/ (car-kit, city-kit-roads)
+Low-poly vehicle, traffic-light, sign and street-light meshes (OBJ + one colour-map texture per kit)
+from **Kenney** — *Car Kit 3.1* and *City Kit Roads 2.1*, https://kenney.nl — released under
+**CC0 1.0** (public domain dedication; `License.txt` in each folder is the original). Only the files
+`driveworld.ASSETS` reads are shipped (9 meshes, 2 textures). Credit is not required by the licence;
+we credit Kenney anyway. Used by `driveworld` to populate the driving-school world with cars and signals.

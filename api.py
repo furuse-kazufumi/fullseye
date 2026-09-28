@@ -474,6 +474,23 @@ from physarum_search import (  # noqa: E402,F401
     graph_physarum_path, physarum_route, graph_physarum_transport, physarum_transport_image,
 )
 from carpath import car_dubins_path, car_reeds_shepp_path, car_hybrid_astar  # noqa: E402,F401
+import drivecourse  # noqa: E402  (教習所コース: 規格寸法の 2-D 多角形)
+from drivecourse import (  # noqa: E402,F401
+    course_crank, course_s_curve, course_turnaround, course_slope, course_intersection,
+    course_parallel_parking, course_crossing, course_road, course_loop_bend, course_loop, course_layout,
+    course_occupancy, course_contains, polygon_area, slope_height,
+)
+import driveworld  # noqa: E402  (教習所の 3-D 世界: 路面・縁石・車・信号機・カメラ)
+from driveworld import (  # noqa: E402,F401
+    world_build, world_add, world_camera, world_bounds, set_signal_state, add_asset, add_signal,
+    load_asset, place_mesh, read_obj_colored, asset_dir, camera_pose, camera_intrinsics, project_points,
+    overlay_points, polygon_triangulate,
+)
+import lidarsim  # noqa: E402  (回転式 LiDAR をメッシュに撃つ)
+from lidarsim import (  # noqa: E402,F401
+    lidar_spec, lidar_scan, lidar_points_sensor_frame, lidar_range_image_to_points, ray_plane_range,
+    ray_box_ranges,
+)
 from treemorph import tree_from_swc, tree_morphometry, tree_sholl  # noqa: E402,F401
 import textregion  # noqa: E402  (where is the text, without a recogniser)
 from textregion import swt_map, text_candidates, text_lines  # noqa: E402,F401

@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">course_intersection — DRIVE <code style="color:#22d3bf">course</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_intersection(width=7.0, arm=20.0, corner_radius=3.0, arc_pts=16, stop_setback=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import drivecourse; drivecourse.course_intersection(width=7.0, arm=20.0, corner_radius=3.0, arc_pts=16, stop_setback=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;course_intersection&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>幹線コースの十字交差点: 幅 w の道路 2 本が原点で直交、各腕の長さ `<code style="color:#22d3bf">arm</code>`(交差部の縁から)、</p>
+<p>凹頂点 4 つを半径 `<code style="color:#22d3bf">corner_radius</code>` で削る。</p>
+<p>面積 = 2(2·arm + w)w − w² + 4r²(1 − π/4)。左側通行に合わせ、各流入路(東行 → 北行 → 西行 → 南行の順、</p>
+<p>流入方向 yaw = 0, π/2, π, 3π/2)に <b>停止線 1 本</b>(`<code style="color:#22d3bf">stop_lines</code>` (4, 2, 2): 流入車線 = 進行方向左半分</p>
+<p>を横切る線分、すみ切りの終わりから `<code style="color:#22d3bf">stop_setback</code><code style="color:#22d3bf"> 手前)と **信号機 1 基**(</code><code style="color:#22d3bf">signal_poses</code>` (4, 3):</p>
+<p>停止線の位置の左側 0.5 m 外、yaw = 流入車に向く向き = 流入方向 + π)。centerline は東西の道路軸。</p>
+<p>規格: 幅 ≥ 7、すみ切り ≥ 3(警視庁 審査基準)→ `<code style="color:#22d3bf">params[&quot;regulation&quot;]</code>`。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 幅・腕が正でない、r &lt; 0、arm &lt; r + stop_setback、arc_pts が不正。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_school">poc_driving_school</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_school.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">course</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a> · <a style="color:#22d3bf" href="opdrive:course_loop_bend">course_loop_bend</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivecourse.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

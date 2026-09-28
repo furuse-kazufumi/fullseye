@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">course_crossing — DRIVE <code style="color:#22d3bf">course</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_crossing(width=7.0, gauge=1.1, rail_outer=0.75, approach=6.0, stop_setback=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecourse; drivecourse.course_crossing(width=7.0, gauge=1.1, rail_outer=0.75, approach=6.0, stop_setback=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;course_crossing&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>踏切: 幅 w の道路(x 軸沿い)を線路が直角に横切る。踏切面(軌間 + レール外側 2 つ = 2.6 m)の両側に</p>
+<p>`<code style="color:#22d3bf">approach</code><code style="color:#22d3bf"> の直線。</code><code style="color:#22d3bf">rails</code>` (2, 2, 2) はレール 2 本の線分(x = L/2 ± gauge/2、道路幅いっぱい)、</p>
+<p>`<code style="color:#22d3bf">crossing_zone</code><code style="color:#22d3bf"> = (x0, x1) 踏切面、</code><code style="color:#22d3bf">stop_lines</code><code style="color:#22d3bf"> (1, 2, 2) は踏切面の </code><code style="color:#22d3bf">stop_setback</code>` 手前の左車線。</p>
+<p>多角形は矩形(レールはメタデータ)。規格: 軌間 1.1、レール外側 0.75 → `<code style="color:#22d3bf">params[&quot;regulation&quot;]</code>`。</p>
+<p>面積 = w·(2(rail_outer + gauge/2) + 2·approach)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 幅・軌間・approach が正でない、rail_outer &lt; 0、stop_setback &lt; 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_school">poc_driving_school</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_school.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">course</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a> · <a style="color:#22d3bf" href="opdrive:course_loop_bend">course_loop_bend</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivecourse.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

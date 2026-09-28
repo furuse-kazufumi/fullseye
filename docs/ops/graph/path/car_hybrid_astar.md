@@ -4,7 +4,7 @@ dim: graph
 category: path
 in: image2d × matrix
 out: table
-examples: [poc_car_parking]
+examples: [poc_car_parking, poc_driving_school]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -57,6 +57,7 @@ unreachable (open set exhausted) or ``max_expansions`` was hit (reported, never 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_car_parking](../../../../examples/poc_car_parking.py) — `py -3.11 examples/poc_car_parking.py`
+- [poc_driving_school](../../../../examples/poc_driving_school.py) — `py -3.11 examples/poc_driving_school.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

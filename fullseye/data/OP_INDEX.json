@@ -1,8 +1,8 @@
 {
- "n_ops": 2222,
+ "n_ops": 2242,
  "tiers": {
   "color": 12,
-  "ledger": 1273,
+  "ledger": 1293,
   "nary": 17,
   "registry": 920
  },
@@ -2522,6 +2522,157 @@
    "in_sorts": [
     "counts"
    ]
+  },
+  {
+   "name": "course_contains",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "signal",
+   "category": "course",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "points"
+   ]
+  },
+  {
+   "name": "course_crank",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "course",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "course_crossing",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "course",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "course_intersection",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "course",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "course_layout",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "course",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "course_loop",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "course",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "course_loop_bend",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "course",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "course_occupancy",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "course",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "course_parallel_parking",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "course",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "course_road",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "course",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "course_s_curve",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "course",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "course_slope",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "course",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "course_turnaround",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "course",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "covers_sensor",
@@ -7583,6 +7734,32 @@
    ]
   },
   {
+   "name": "lidar_scan",
+   "halcon": "",
+   "in_sort": "mesh",
+   "out_sort": "table",
+   "category": "lidar",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "mesh",
+    "table",
+    "matrix"
+   ]
+  },
+  {
+   "name": "lidar_spec",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lidar",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "lifetime_fit",
    "halcon": "",
    "in_sort": "counts",
@@ -7732,6 +7909,17 @@
    "in_sorts": [
     "voxel"
    ]
+  },
+  {
+   "name": "load_asset",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "world",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "local_min_max_funct_1d",
@@ -11692,6 +11880,20 @@
    ]
   },
   {
+   "name": "ray_box_ranges",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "signal",
+   "category": "lidar",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "points",
+    "points"
+   ]
+  },
+  {
    "name": "ray_fan",
    "halcon": "",
    "in_sort": "table",
@@ -11702,6 +11904,20 @@
    "dim": "optics",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "ray_plane_range",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "signal",
+   "category": "lidar",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "points",
+    "points"
    ]
   },
   {
@@ -16727,6 +16943,34 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "world_build",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "world",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "world_camera",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "world",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "matrix",
+    "matrix"
+   ]
   },
   {
    "name": "wrapped_phase",

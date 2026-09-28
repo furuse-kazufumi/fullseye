@@ -4448,6 +4448,42 @@ py -3.11 examples/poc_car_parking.py
 
 使用 op(ノートへ): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`car_dubins_path`](https://furuse.work/ops/graph/path/car_dubins_path.html) · [`car_hybrid_astar`](https://furuse.work/ops/graph/path/car_hybrid_astar.html) · [`car_reeds_shepp_path`](https://furuse.work/ops/graph/path/car_reeds_shepp_path.html)
 
+## No.2026.167 —— 教習所が開校する ―― 規格寸法の周回コースに車と信号を置き、LiDAR とカメラで見て、定理と恒等式で採点する
+
+[![教習所が開校する ―― 規格寸法の周回コースに車と信号を置き、LiDAR とカメラで見て、定理と恒等式で採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan.png)
+
+*↑ **教習所が開校する ―― 規格寸法の周回コースに車と信号を置き、LiDAR とカメラで見て、定理と恒等式で採点する** ―― 自動運転のデモは動くので、誰も正しさを測らない。測るには真値を持った世界が要る。道路交通法施行規則 別表第三(普通免許)の寸法どおりに周回コース(長円形、直線 80 m・幅 8 m)を作り、その中に幹線の十字(幅 7 m・信号 4 基)と課題 —— クランク(幅 3.5・曲角間 12・すみ切り 1)、S 字(幅 3.5・外側半径 7.5・弧 3/8 周)、坂道(緩 8 %・急 11 %)、縦列駐車、方向変換、踏切(軌間 1.1 m)—— を置き、出口は連絡路で周回へ戻す(drivecourse、真値は多角形の閉形式の面積)。3-D の世界にして CC0 の車・信号機・標識を実寸で置き(driveworld、面ごとにラベルと色)、回転式 LiDAR をメッシュに撃ち(lidarsim、Möller–Trumbore を方位・仰角のビンで加速、平面と箱の閉形式が第 2 実装)、車載カメラで撮る。門 14: 弧のある要素の面積は点数を増やすと閉形式へ単調収束、平らな路面の range は h/(−sin e) と 1e-9 で一致、LiDAR の点をカメラに投影した画素の深度と点の深度が一致(2 センサ 1 世界の恒等式)、車の LiDAR 点は置いた車の箱の中(100 %)、縁石の点から作った占有格子は真の占有の部分集合、Hybrid A*(13 巡目)の道は全姿勢で隅の越え幅が半セル以内、カメラが信号の赤・緑を読む(消すと読めない)。正直に: 規格の幅 3.5 m は 4.5 × 1.8 m の車に最大舵角と直進だけの運動基本形では前進のみで到達不能で、切り返しを許すと通る。*
+
+[![同じ世界を斜めから: CC0 の車・信号機・標識・コーン(Kenney)を実寸に合わせて置き、縁石(高さ 0.15 m)と白線を多角形の縁に沿って生成(継ぎ目には置かない)。面ごとにラベルと色を持つので、センサの真値は世界の側にある。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique.png)
+
+*↑ 測定の図 ―― 同じ世界を斜めから: CC0 の車・信号機・標識・コーン(Kenney)を実寸に合わせて置き、縁石(高さ 0.15 m)と白線を多角形の縁に沿って生成(継ぎ目には置かない)。面ごとにラベルと色を持つので、センサの真値は世界の側にある。*
+
+[![停止線の 10 m 手前での LiDAR 一掃(32 ビーム・0.5°、13835 点)を面のラベルで塗る: 灰 = 路面、黄 = 縁石、赤 = 車、緑 = 信号機、青 = 標識、橙 = コーン、白 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep.png)
+
+*↑ 停止線の 10 m 手前での LiDAR 一掃(32 ビーム・0.5°、13835 点)を面のラベルで塗る: 灰 = 路面、黄 = 縁石、赤 = 車、緑 = 信号機、青 = 標識、橙 = コーン、白 = 白線。*
+
+[![同じ瞬間の車載カメラ(60°)に LiDAR の点を投影して重ねる: 点の深度と画素の深度の相対差は中央値 2.89e-03、ラベル一致 100.0 %(1 画素の許容; 門 3、2 センサ 1 世界](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar.png)
+
+*↑ 同じ瞬間の車載カメラ(60°)に LiDAR の点を投影して重ねる: 点の深度と画素の深度の相対差は中央値 2.89e-03、ラベル一致 100.0 %(1 画素の許容; 門 3、2 センサ 1 世界の恒等式)。*
+
+[![真値の散布: 8 種の要素の面積(靴紐 vs 閉形式)と路面の range 200 点(実測 vs h/(−sin e))。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths.png)
+
+*↑ 真値の散布: 8 種の要素の面積(靴紐 vs 閉形式)と路面の range 200 点(実測 vs h/(−sin e))。*
+
+[![幹線で赤信号を待ち、青で発進して交差点を渡り、クランクを抜けて連絡路から周回コースへ合流する(68 コマ)。追走カメラの画像に LiDAR(16 ビーム)の点を重ねる。クランクは前進のみでは到達不能で、切り返し 14 回(後退の区間数)。全](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/05_drive_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/05_drive_gif.gif)
+
+*↑ 動く図 ―― 幹線で赤信号を待ち、青で発進して交差点を渡り、クランクを抜けて連絡路から周回コースへ合流する(68 コマ)。追走カメラの画像に LiDAR(16 ビーム)の点を重ねる。クランクは前進のみでは到達不能で、切り返し 14 回(後退の区間数)。全姿勢で隅の越え幅は半セル以内。*
+
+```
+py -3.11 examples/poc_driving_school.py
+```
+
+ソース: [examples/poc_driving_school.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_driving_school.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_school)
+
+使用 op(ノートへ): [`car_dubins_path`](https://furuse.work/ops/graph/path/car_dubins_path.html) · [`car_hybrid_astar`](https://furuse.work/ops/graph/path/car_hybrid_astar.html) · [`course_contains`](https://furuse.work/ops/drive/course/course_contains.html) · [`course_crank`](https://furuse.work/ops/drive/course/course_crank.html) · [`course_crossing`](https://furuse.work/ops/drive/course/course_crossing.html) · [`course_intersection`](https://furuse.work/ops/drive/course/course_intersection.html) · [`course_layout`](https://furuse.work/ops/drive/course/course_layout.html) · [`course_loop`](https://furuse.work/ops/drive/course/course_loop.html) · [`course_loop_bend`](https://furuse.work/ops/drive/course/course_loop_bend.html) · [`course_occupancy`](https://furuse.work/ops/drive/course/course_occupancy.html) · [`course_parallel_parking`](https://furuse.work/ops/drive/course/course_parallel_parking.html) · [`course_road`](https://furuse.work/ops/drive/course/course_road.html) · [`course_s_curve`](https://furuse.work/ops/drive/course/course_s_curve.html) · [`course_slope`](https://furuse.work/ops/drive/course/course_slope.html) · [`course_turnaround`](https://furuse.work/ops/drive/course/course_turnaround.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`lidar_scan`](https://furuse.work/ops/drive/lidar/lidar_scan.html) · [`lidar_spec`](https://furuse.work/ops/drive/lidar/lidar_spec.html) · [`load_asset`](https://furuse.work/ops/drive/world/load_asset.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`resample`](https://furuse.work/ops/oned/signal/resample.html) · [`world_build`](https://furuse.work/ops/drive/world/world_build.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
+
 ### 数学の絵 ―― 定理が門になる回(別記事)
 
 この展示先の回は、計測の展示館ではなく**数学の絵のシリーズ**に掛かっています。分ける基準は「真値がどこから来るか」です —— 計測の展示は測る対象があり真値は対象の側に、ここの回は対象が無く、真値は描いた絵そのものの定理・恒等式・不変量から出ます。記事は手書きなので、生成器はここを描きません。

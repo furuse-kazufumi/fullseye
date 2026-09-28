@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2222,
- "n_notes": 2228,
+ "n_ops": 2242,
+ "n_notes": 2248,
  "notes": {
   "vol_dilate": [
    {
@@ -15372,6 +15372,194 @@
     "in": "depth",
     "out": "image2d",
     "path": "docs/ops/dem/visibility/dem_viewshed.md"
+   }
+  ],
+  "course_contains": [
+   {
+    "op": "course_contains",
+    "dim": "drive",
+    "category": "course",
+    "in": "table × points",
+    "out": "signal",
+    "path": "docs/ops/drive/course/course_contains.md"
+   }
+  ],
+  "course_crank": [
+   {
+    "op": "course_crank",
+    "dim": "drive",
+    "category": "course",
+    "out": "table",
+    "path": "docs/ops/drive/course/course_crank.md"
+   }
+  ],
+  "course_crossing": [
+   {
+    "op": "course_crossing",
+    "dim": "drive",
+    "category": "course",
+    "out": "table",
+    "path": "docs/ops/drive/course/course_crossing.md"
+   }
+  ],
+  "course_intersection": [
+   {
+    "op": "course_intersection",
+    "dim": "drive",
+    "category": "course",
+    "out": "table",
+    "path": "docs/ops/drive/course/course_intersection.md"
+   }
+  ],
+  "course_layout": [
+   {
+    "op": "course_layout",
+    "dim": "drive",
+    "category": "course",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/course/course_layout.md"
+   }
+  ],
+  "course_loop": [
+   {
+    "op": "course_loop",
+    "dim": "drive",
+    "category": "course",
+    "out": "table",
+    "path": "docs/ops/drive/course/course_loop.md"
+   }
+  ],
+  "course_loop_bend": [
+   {
+    "op": "course_loop_bend",
+    "dim": "drive",
+    "category": "course",
+    "out": "table",
+    "path": "docs/ops/drive/course/course_loop_bend.md"
+   }
+  ],
+  "course_occupancy": [
+   {
+    "op": "course_occupancy",
+    "dim": "drive",
+    "category": "course",
+    "in": "table",
+    "out": "image2d",
+    "path": "docs/ops/drive/course/course_occupancy.md"
+   }
+  ],
+  "course_parallel_parking": [
+   {
+    "op": "course_parallel_parking",
+    "dim": "drive",
+    "category": "course",
+    "out": "table",
+    "path": "docs/ops/drive/course/course_parallel_parking.md"
+   }
+  ],
+  "course_road": [
+   {
+    "op": "course_road",
+    "dim": "drive",
+    "category": "course",
+    "out": "table",
+    "path": "docs/ops/drive/course/course_road.md"
+   }
+  ],
+  "course_s_curve": [
+   {
+    "op": "course_s_curve",
+    "dim": "drive",
+    "category": "course",
+    "out": "table",
+    "path": "docs/ops/drive/course/course_s_curve.md"
+   }
+  ],
+  "course_slope": [
+   {
+    "op": "course_slope",
+    "dim": "drive",
+    "category": "course",
+    "out": "table",
+    "path": "docs/ops/drive/course/course_slope.md"
+   }
+  ],
+  "course_turnaround": [
+   {
+    "op": "course_turnaround",
+    "dim": "drive",
+    "category": "course",
+    "out": "table",
+    "path": "docs/ops/drive/course/course_turnaround.md"
+   }
+  ],
+  "lidar_scan": [
+   {
+    "op": "lidar_scan",
+    "dim": "drive",
+    "category": "lidar",
+    "in": "mesh × table × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/lidar/lidar_scan.md"
+   }
+  ],
+  "lidar_spec": [
+   {
+    "op": "lidar_spec",
+    "dim": "drive",
+    "category": "lidar",
+    "out": "table",
+    "path": "docs/ops/drive/lidar/lidar_spec.md"
+   }
+  ],
+  "ray_box_ranges": [
+   {
+    "op": "ray_box_ranges",
+    "dim": "drive",
+    "category": "lidar",
+    "in": "points × points",
+    "out": "signal",
+    "path": "docs/ops/drive/lidar/ray_box_ranges.md"
+   }
+  ],
+  "ray_plane_range": [
+   {
+    "op": "ray_plane_range",
+    "dim": "drive",
+    "category": "lidar",
+    "in": "points × points",
+    "out": "signal",
+    "path": "docs/ops/drive/lidar/ray_plane_range.md"
+   }
+  ],
+  "load_asset": [
+   {
+    "op": "load_asset",
+    "dim": "drive",
+    "category": "world",
+    "out": "table",
+    "path": "docs/ops/drive/world/load_asset.md"
+   }
+  ],
+  "world_build": [
+   {
+    "op": "world_build",
+    "dim": "drive",
+    "category": "world",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/world/world_build.md"
+   }
+  ],
+  "world_camera": [
+   {
+    "op": "world_camera",
+    "dim": "drive",
+    "category": "world",
+    "in": "table × matrix × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/world/world_camera.md"
    }
   ],
   "holdout_threshold": [

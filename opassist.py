@@ -39,6 +39,8 @@ _LEDGERS = (
     ("opsacoustics", "OPSACOUSTICS"), ("opsinterferometry", "OPSINTERFEROMETRY"),
     ("opsflyvision", "OPSFLYVISION"), ("opsspc", "OPSSPC"), ("opsgraph", "OPSGRAPH"),
     ("opstext", "OPSTEXT"),
+    # 2026-09-29: 自動運転の教習所ワールド(規格寸法のコース / 3-D の世界 / 回転式 LiDAR)。新語なし。
+    ("opsdrive", "OPSDRIVE"),
     ("opstomography", "OPSTOMOGRAPHY"), ("opsvolcolor", "OPSVOLCOLOR"),
     ("opsreprconv", "OPSREPRCONV"), ("opscadmap", "OPSCADMAP"),
     ("opsannotate", "OPSANNOTATE"), ("opsgfx2d", "OPSGFX2D"),

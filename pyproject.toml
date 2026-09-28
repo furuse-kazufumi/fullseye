@@ -202,7 +202,7 @@ py-modules = [
   # flyvision: ハエ視葉の視覚処理経路(六角格子・EMD 運動・LGMD looming・水平系読み出し)。
   # 設計側(optics/visiondesign)と処理側(sceneflow)はあったが、複眼の視覚処理経路が
   # 無かった(2026-09-13 追加)。opsflyvision がレジストリ台帳。
-  "flyvision", "opsflyvision", "spc", "opsspc", "graphinv", "treemorph", "segcompare", "physarum_search", "carpath", "opsgraph", "textregion", "opstext", "cadmap", "opscadmap", "volcolor", "opsvolcolor", "tomography", "opstomography", "palette", "annotate", "opsannotate", "reprconv", "opsreprconv", "imgmetrics", "opsimgmetrics", "colortransport", "opscolortransport", "imgforensics", "opsimgforensics", "astrostack", "opsastrostack", "meshres", "videostream", "opsvideostream", "annotate3d", "contours_xld", "metriccontract", "fssystem", "illusion", "perpetual", "opsgenerative",
+  "flyvision", "opsflyvision", "spc", "opsspc", "graphinv", "treemorph", "segcompare", "physarum_search", "carpath", "drivecourse", "driveworld", "lidarsim", "opsdrive", "opsgraph", "textregion", "opstext", "cadmap", "opscadmap", "volcolor", "opsvolcolor", "tomography", "opstomography", "palette", "annotate", "opsannotate", "reprconv", "opsreprconv", "imgmetrics", "opsimgmetrics", "colortransport", "opscolortransport", "imgforensics", "opsimgforensics", "astrostack", "opsastrostack", "meshres", "videostream", "opsvideostream", "annotate3d", "contours_xld", "metriccontract", "fssystem", "illusion", "perpetual", "opsgenerative",
   # グリフ照合(指定の字と合っているかを測り、誤字を置き換える)。annotate の
   # フォント解決と豆腐検出を使い回す。2026-09-17 追加。
   "glyphops",
@@ -309,6 +309,9 @@ py-modules = [
                    # 読まないものを配らない ―― これを外すと wheel は 30 MB になる。
                    # リポジトリには残るので記事の再生成には支障しない。
                    "sample_3d/*.npy", "sample_3d/*.md",
+                   # 教習所ワールドの CC0 メッシュ(Kenney Car Kit / City Kit Roads、2026-09-29)。
+                   # driveworld.asset_dir() が読む。License.txt も同梱する。
+                   "sample_3d/kenney/*/*.obj", "sample_3d/kenney/*/*.png", "sample_3d/kenney/*/*.txt",
                    # 3-D **と全ての台帳族**(math / optics / imgmetrics / …)の help。
                    # ここが `op_help/3d/*.html` だけを挙げていたあいだ、
                    # `tools/opdocs.py html` が生成してリポジトリにコミットされていた

@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lidar_spec — DRIVE <code style="color:#22d3bf">lidar</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lidar_spec(n_beams: &#x27;int&#x27; = 32, v_fov_deg=(-25.0, 15.0), azimuth_res_deg: &#x27;float&#x27; = 0.2, range_max: &#x27;float&#x27; = 60.0, range_min: &#x27;float&#x27; = 0.5, noise_std: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lidarsim; lidarsim.lidar_spec(n_beams: &#x27;int&#x27; = 32, v_fov_deg=(-25.0, 15.0), azimuth_res_deg: &#x27;float&#x27; = 0.2, range_max: &#x27;float&#x27; = 60.0, range_min: &#x27;float&#x27; = 0.5, noise_std: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;lidar_spec&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>回転式 LiDAR の仕様 dict を作る(既定は 32 beam・仰角 −25…+15°・方位 0.2° = 1800 列)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n_beams</code><code style="color:#22d3bf">: レーザ層の数(≥ 1)。仰角帯 </code><code style="color:#22d3bf">v_fov_deg=(v_min, v_max)</code>` [度] を等分し、行 0 が</p>
+<p>上端 `<code style="color:#22d3bf">v_max</code><code style="color:#22d3bf"> 側(:mod:</code>spherical_proj<code style="color:#22d3bf"> と同じ)。</code><code style="color:#22d3bf">v_min &lt; v_max</code>`、いずれも [−90, 90] の中。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">azimuth_res_deg</code><code style="color:#22d3bf">: 方位角の刻み [度] (&gt; 0)。360° を割り切る値でなければ </code><code style="color:#22d3bf">ValueError</code>`</p>
+<p>(等間隔の 1 周が前提。0.2 → 1800 列、0.1 → 3600 列)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">range_min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">range_max</code><code style="color:#22d3bf"> [m]: 測距範囲(</code><code style="color:#22d3bf">0 ≤ range_min &lt; range_max &lt; ∞</code>`)。外の最近接は無返答。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">noise_std</code>` [m]: range 方向のガウスノイズの標準偏差(≥ 0、0 = 完全決定的)。</p>
+<p>返り値の dict: ``n_beams, n_az, v_fov_deg, azimuth_res_deg, range_min, range_max, noise_std,</p>
+<p>elevations (n_beams,) [rad, 行 0 = 上端], azimuths (n_az,) [rad, 列 0 = −π 側の中心]``。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_school">poc_driving_school</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_school.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">lidar</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:ray_plane_range">ray_plane_range</a> · <a style="color:#22d3bf" href="opdrive:ray_box_ranges">ray_box_ranges</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lidarsim.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -4,7 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: signal
-examples: []
+examples: [poc_driving_school]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -29,7 +29,7 @@ Resample a signal to *new_rate* (Fourier method).
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_driving_school](../../../../examples/poc_driving_school.py) — `py -3.11 examples/poc_driving_school.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

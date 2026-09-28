@@ -4448,6 +4448,42 @@ This run produced **5 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`car_dubins_path`](https://furuse.work/ops/graph/path/car_dubins_path.html) · [`car_hybrid_astar`](https://furuse.work/ops/graph/path/car_hybrid_astar.html) · [`car_reeds_shepp_path`](https://furuse.work/ops/graph/path/car_reeds_shepp_path.html)
 
+## No.2026.167 —— The Driving School Opens — Cars and Signals on a Regulation Loop Course, Seen by LiDAR and Camera, Scored by Theorems and Identities
+
+[![The Driving School Opens — Cars and Signals on a Regulation Loop Course, Seen by LiDAR and Camera, Scored by Theorems and Identities](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan.png)
+
+*↑ **The Driving School Opens — Cars and Signals on a Regulation Loop Course, Seen by LiDAR and Camera, Scored by Theorems and Identities** ―― Self-driving demos move, so nobody measures whether they are right. Measuring needs a world that carries its own ground truth. A regulation loop course (oval, 80 m straights, 8 m wide) is built to the dimensions of Appendix 3 of the Road Traffic Act Enforcement Regulations (ordinary licence), with a cross of main roads (7 m, four signals) and the test elements inside — crank (3.5 m wide, 12 m between bends, 1 m fillet), S-curve (3.5 m, outer radius 7.5 m, 3/8 of a circle), slope (8 % / 11 %), parallel parking, turnaround, level crossing (1.1 m gauge) — whose exits rejoin the loop (drivecourse; truth = closed-form polygon areas). The 2-D course becomes a 3-D world with CC0 cars, signals and signs at real size (driveworld; every face carries a label and a colour), a spinning LiDAR is fired at the mesh (lidarsim; Möller–Trumbore accelerated by azimuth/elevation bins, closed-form plane and box hits as the second implementation) and an in-car camera renders the same faces. Fourteen gates: polygon areas converge monotonically to the closed forms, flat-ground ranges equal h/(−sin e) to 1e-9, LiDAR points projected into the camera agree with the pixel depth and label (two sensors, one world), car points fall inside the placed car boxes (100 %), kerb points build an occupancy grid that is a subset of the true one, the Hybrid A* path (round 13) keeps every corner within half a cell of the kerb line, and the camera reads the signal as red or green (and cannot when the lamps are off). Honestly: the regulation 3.5 m width is unreachable forward-only for a 4.5 × 1.8 m car with max-steer-and-straight primitives; allowing reversing gets through.*
+
+[![同じ世界を斜めから: CC0 の車・信号機・標識・コーン(Kenney)を実寸に合わせて置き、縁石(高さ 0.15 m)と白線を多角形の縁に沿って生成(継ぎ目には置かない)。面ごとにラベルと色を持つので、センサの真値は世界の側にある。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique.png)
+
+*↑ The measurement ―― 同じ世界を斜めから: CC0 の車・信号機・標識・コーン(Kenney)を実寸に合わせて置き、縁石(高さ 0.15 m)と白線を多角形の縁に沿って生成(継ぎ目には置かない)。面ごとにラベルと色を持つので、センサの真値は世界の側にある。 (figure labels are in Japanese; the numbers are the same)*
+
+[![停止線の 10 m 手前での LiDAR 一掃(32 ビーム・0.5°、13835 点)を面のラベルで塗る: 灰 = 路面、黄 = 縁石、赤 = 車、緑 = 信号機、青 = 標識、橙 = コーン、白 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep.png)
+
+*↑ 停止線の 10 m 手前での LiDAR 一掃(32 ビーム・0.5°、13835 点)を面のラベルで塗る: 灰 = 路面、黄 = 縁石、赤 = 車、緑 = 信号機、青 = 標識、橙 = コーン、白 = 白線。*
+
+[![同じ瞬間の車載カメラ(60°)に LiDAR の点を投影して重ねる: 点の深度と画素の深度の相対差は中央値 2.89e-03、ラベル一致 100.0 %(1 画素の許容; 門 3、2 センサ 1 世界](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar.png)
+
+*↑ 同じ瞬間の車載カメラ(60°)に LiDAR の点を投影して重ねる: 点の深度と画素の深度の相対差は中央値 2.89e-03、ラベル一致 100.0 %(1 画素の許容; 門 3、2 センサ 1 世界の恒等式)。*
+
+[![真値の散布: 8 種の要素の面積(靴紐 vs 閉形式)と路面の range 200 点(実測 vs h/(−sin e))。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths.png)
+
+*↑ 真値の散布: 8 種の要素の面積(靴紐 vs 閉形式)と路面の range 200 点(実測 vs h/(−sin e))。*
+
+[![幹線で赤信号を待ち、青で発進して交差点を渡り、クランクを抜けて連絡路から周回コースへ合流する(68 コマ)。追走カメラの画像に LiDAR(16 ビーム)の点を重ねる。クランクは前進のみでは到達不能で、切り返し 14 回(後退の区間数)。全](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/05_drive_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/05_drive_gif.gif)
+
+*↑ The animation ―― 幹線で赤信号を待ち、青で発進して交差点を渡り、クランクを抜けて連絡路から周回コースへ合流する(68 コマ)。追走カメラの画像に LiDAR(16 ビーム)の点を重ねる。クランクは前進のみでは到達不能で、切り返し 14 回(後退の区間数)。全姿勢で隅の越え幅は半セル以内。*
+
+```
+py -3.11 examples/poc_driving_school.py
+```
+
+Source: [examples/poc_driving_school.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_driving_school.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_school)
+
+Ops used (notes): [`car_dubins_path`](https://furuse.work/ops/graph/path/car_dubins_path.html) · [`car_hybrid_astar`](https://furuse.work/ops/graph/path/car_hybrid_astar.html) · [`course_contains`](https://furuse.work/ops/drive/course/course_contains.html) · [`course_crank`](https://furuse.work/ops/drive/course/course_crank.html) · [`course_crossing`](https://furuse.work/ops/drive/course/course_crossing.html) · [`course_intersection`](https://furuse.work/ops/drive/course/course_intersection.html) · [`course_layout`](https://furuse.work/ops/drive/course/course_layout.html) · [`course_loop`](https://furuse.work/ops/drive/course/course_loop.html) · [`course_loop_bend`](https://furuse.work/ops/drive/course/course_loop_bend.html) · [`course_occupancy`](https://furuse.work/ops/drive/course/course_occupancy.html) · [`course_parallel_parking`](https://furuse.work/ops/drive/course/course_parallel_parking.html) · [`course_road`](https://furuse.work/ops/drive/course/course_road.html) · [`course_s_curve`](https://furuse.work/ops/drive/course/course_s_curve.html) · [`course_slope`](https://furuse.work/ops/drive/course/course_slope.html) · [`course_turnaround`](https://furuse.work/ops/drive/course/course_turnaround.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`lidar_scan`](https://furuse.work/ops/drive/lidar/lidar_scan.html) · [`lidar_spec`](https://furuse.work/ops/drive/lidar/lidar_spec.html) · [`load_asset`](https://furuse.work/ops/drive/world/load_asset.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`resample`](https://furuse.work/ops/oned/signal/resample.html) · [`world_build`](https://furuse.work/ops/drive/world/world_build.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
+
 ### Mathematical pictures — where the theorem is the test (separate article)
 
 These runs hang in the **mathematical-picture series**, not in the metrology museum. The dividing line is where the ground truth comes from: a metrology exhibit measures an object and the truth lives in that object, while these runs have no object at all — the truth comes from a theorem, an identity or an invariant of the drawing itself. That article is written by hand, so the generator does not render this lane.

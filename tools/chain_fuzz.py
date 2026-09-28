@@ -1346,6 +1346,65 @@ def _b_car_hybrid_astar(pool, rng):
     return (occ, poses), {"radius": 3.0, "cell": 1.0, "n_theta": 24, "max_expansions": 20000}
 
 
+def _b_course_none(pool, rng):
+    return (), {}
+
+
+def _b_course_layout(pool, rng):
+    import drivecourse as DC
+    return ([DC.course_crank(), DC.course_s_curve()], [(0.0, 0.0, 0.0), (40.0, 0.0, 0.0)]), {}
+
+
+def _b_course_grid(pool, rng):
+    import drivecourse as DC
+    return (DC.course_crank(),), {"cell": 0.5}
+
+
+def _b_course_contains(pool, rng):
+    import drivecourse as DC
+    return (DC.course_crank(), rng.uniform(-5, 25, (40, 2))), {}
+
+
+def _b_world_build(pool, rng):
+    import drivecourse as DC
+    return (DC.course_turnaround(),), {"props": [("cone", 2.0, 1.0, 0.0)]}
+
+
+def _b_world_camera(pool, rng):
+    import drivecourse as DC
+    import driveworld as DW
+    w = DW.world_build(DC.course_turnaround())
+    return (w, DW.camera_pose((-3.0, 1.75, 1.4), (8.0, 1.75, 0.8)), DW.camera_intrinsics(60, 64, 40)), \
+        {"width": 64, "height": 40}
+
+
+def _b_load_asset(pool, rng):
+    return ("cone",), {}
+
+
+def _b_lidar_scan(pool, rng):
+    import lidarsim as LS
+    V = np.array([[-30.0, -30.0, -1.7], [30.0, -30.0, -1.7], [30.0, 30.0, -1.7], [-30.0, 30.0, -1.7],
+                  [4.0, -1.0, -1.7], [6.0, -1.0, -1.7], [6.0, 1.0, -1.7], [4.0, 1.0, -1.7],
+                  [4.0, -1.0, 0.3], [6.0, -1.0, 0.3], [6.0, 1.0, 0.3], [4.0, 1.0, 0.3]])
+    F = np.array([[0, 1, 2], [0, 2, 3], [4, 5, 9], [4, 9, 8], [5, 6, 10], [5, 10, 9], [6, 7, 11], [6, 11, 10],
+                  [7, 4, 8], [7, 8, 11], [8, 9, 10], [8, 10, 11]])
+    spec = LS.lidar_spec(n_beams=8, v_fov_deg=(-20.0, 5.0), azimuth_res_deg=2.0, range_max=40.0)
+    return (V, F, spec, np.eye(4)), {}
+
+
+def _b_ray_plane(pool, rng):
+    d = rng.normal(size=(20, 3))
+    d /= np.linalg.norm(d, axis=1, keepdims=True)
+    return (np.zeros(3), d, (0.0, 0.0, 1.0, 1.7)), {}
+
+
+def _b_ray_box(pool, rng):
+    d = rng.normal(size=(20, 3))
+    d /= np.linalg.norm(d, axis=1, keepdims=True)
+    return (np.zeros(3), d, (2.0, -1.0, -1.0, 4.0, 1.0, 1.0)), {}
+
+
 def _b_graph_kcore(pool, rng):
     B = (rng.random((30, 30)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -1540,6 +1599,14 @@ OP_ARG_BUILDERS = {
     "car_dubins_path": _b_car_poses,
     "car_reeds_shepp_path": _b_car_poses,
     "car_hybrid_astar": _b_car_hybrid_astar,
+    "course_crank": _b_course_none, "course_s_curve": _b_course_none, "course_turnaround": _b_course_none,
+    "course_slope": _b_course_none, "course_intersection": _b_course_none,
+    "course_parallel_parking": _b_course_none, "course_crossing": _b_course_none,
+    "course_road": _b_course_none, "course_loop_bend": _b_course_none, "course_loop": _b_course_none,
+    "course_layout": _b_course_layout, "course_occupancy": _b_course_grid, "course_contains": _b_course_contains,
+    "world_build": _b_world_build, "world_camera": _b_world_camera, "load_asset": _b_load_asset,
+    "lidar_spec": _b_course_none, "lidar_scan": _b_lidar_scan,
+    "ray_plane_range": _b_ray_plane, "ray_box_ranges": _b_ray_box,
     "tree_from_swc": _b_tree_swc,
     "tree_morphometry": _b_tree_table,
     "tree_sholl": _b_tree_table,
