@@ -44,7 +44,7 @@ import numpy as np
 __all__ = [
     "LABELS", "ASSETS", "asset_dir", "read_obj_colored", "load_asset", "place_mesh",
     "world_build", "world_add", "world_camera", "world_bounds", "set_signal_state", "add_asset", "add_signal",
-    "camera_pose", "camera_intrinsics", "project_points", "overlay_points", "polygon_triangulate",
+    "camera_pose", "camera_intrinsics", "world_project_points", "overlay_points", "polygon_triangulate",
 ]
 
 LABELS = {0: "ground", 1: "kerb", 2: "car", 3: "traffic_light", 4: "sign", 5: "cone",
@@ -535,7 +535,7 @@ def camera_intrinsics(fov_deg: float, width: int, height: int) -> np.ndarray:
     return render3d.intrinsics_from_fov(float(fov_deg), int(width), int(height))
 
 
-def project_points(points, pose, K):
+def world_project_points(points, pose, K):
     """世界の点 (N,3) をカメラ(pose = world→camera 4×4、K 3×3)の画素へ: ``(col, row, depth)`` 各 (N,)。
 
     render3d と同じ規約(カメラは −Z を見る、行は上が小さい、画素中心は整数座標)。depth ≤ 0 は背後。"""
@@ -557,7 +557,7 @@ def overlay_points(image, points, pose, K, colors, *, radius: int = 1, depth_tes
     (別の面に隠れている点)は描かない。返り値は新しい配列。"""
     img = np.array(image, np.float64, copy=True)
     H, W = img.shape[:2]
-    col, row, depth = project_points(points, pose, K)
+    col, row, depth = world_project_points(points, pose, K)
     C = np.asarray(colors, np.float64)
     if C.ndim == 1:
         C = np.broadcast_to(C, (len(col), 3))

@@ -157,7 +157,7 @@ def test_camera_labels_depth_and_projection_agree():
     # 車の頂点を投影した画素は、車か(手前の何かに隠れていなければ)背景でない
     sedan = [o for o in w["objects"] if o["name"] == "sedan"][0]
     Vs = w["V"][slice(*sedan["verts"])]
-    col, row, depth = DW.project_points(Vs, pose, K)
+    col, row, depth = DW.world_project_points(Vs, pose, K)
     inside = (depth > 0) & (col >= 0) & (col < 320) & (row >= 0) & (row < 200)
     c = np.rint(col[inside]).astype(int)
     r = np.rint(row[inside]).astype(int)

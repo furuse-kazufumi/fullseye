@@ -314,7 +314,7 @@ def main() -> int:
 
     # 3b. 2 センサ 1 世界: LiDAR の点をカメラに投影 → その画素の深度・ラベルと一致
     cam = snap["cam"]
-    col, row, dep = DW.project_points(sc["points"], snap["P"], K)
+    col, row, dep = DW.world_project_points(sc["points"], snap["P"], K)
     inside = np.isfinite(col) & (dep > 0) & (col >= 0) & (col <= 639.49) & (row >= 0) & (row <= 399.49)
     cc = np.rint(col[inside]).astype(int)
     rr = np.rint(row[inside]).astype(int)

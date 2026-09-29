@@ -483,7 +483,7 @@ from drivecourse import (  # noqa: E402,F401
 import driveworld  # noqa: E402  (教習所の 3-D 世界: 路面・縁石・車・信号機・カメラ)
 from driveworld import (  # noqa: E402,F401
     world_build, world_add, world_camera, world_bounds, set_signal_state, add_asset, add_signal,
-    load_asset, place_mesh, read_obj_colored, asset_dir, camera_pose, camera_intrinsics, project_points,
+    load_asset, place_mesh, read_obj_colored, asset_dir, camera_pose, camera_intrinsics, world_project_points,
     overlay_points, polygon_triangulate,
 )
 import lidarsim  # noqa: E402  (回転式 LiDAR をメッシュに撃つ)
