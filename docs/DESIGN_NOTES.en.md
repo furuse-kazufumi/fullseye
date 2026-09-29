@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1147. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1148. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -1857,6 +1857,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L32** — ★The op set changes with the environment (Linux CI lacks torch/kornia/mahotas/xfeatures2d and has 859 ops; locally 885). A check comparing the locally generated docs against the **live registry** is only meaningful in a full environment —— same convention as test_opdocs: skip if not complete (the missing backend name appears in the reason). On the 2026-09-07 CI, 22 items failed on this. Environment-independent checks (file existence, content volume, figure existence) still run.
 - **L203** — ★2026-09-08: **exclude from the ledger and count separately any op that depends on the version of a third-party backend**. This ledger is written in "the environment that made the figures" and verified in "the environment that runs the tests". cv2 implementations change with the version, so a knob that does not work locally (opencv 5.0) works in CI (opencv-contrib 4.x) —— measured, `xcv_grabcut`'s b was exactly that. The ledger may only assert **things that hold in any environment**. Do not assert version-dependent parts (a narrow but correct ledger is better than a lying one).
+- **L356** _(ja)_ — ★optional backend(torch 等)が無い環境では、その op は「走らせられない」のであって「壊れている」のではない。 97 本おきの抜き取りは登録簿が増減するたびにずれるので、torch の要る op に当たる/当たらないが環境で変わる (2026-09-29: op が 2 本増えて tb_points_to_voxel に当たり、torch の無い py3.10 / 3.12 のシャードだけ赤)。 飛ばした本数は数えて、実際に走った本数で門を立てる。
 
 ## `tests/test_op_probe_ledger.py`
 
