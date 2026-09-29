@@ -86,8 +86,8 @@ def main() -> int:
     LOOP = DC.course_loop(LOOP_S, LOOP_R, LOOP_W)
     LAYOUT = DC.course_layout(LOOP["elements"], LOOP["placements"])
     WORLD = DW.world_build(LAYOUT, props=[("sedan", X_STOP, Y_EGO, 0.0), ("street_light", -20.0, -25.0, 0.0),
-                                          ("street_light", 10.0, -25.0, 0.0), ("suv", -20.0, LOOP_R + 2.0, math.pi),
-                                          ("truck", 25.0, LOOP_R - 2.0, 0.0)])
+                                          ("street_light", 10.0, -25.0, 0.0), ("suv", -20.0, LOOP_R - 2.0, math.pi),
+                                          ("truck", 25.0, LOOP_R + 2.0, 0.0)])   # 左側通行: 北の直線は内側(y = 28)が西行き、外側(y = 32)が東行き
     ONC = DW.add_asset(WORLD, "taxi", 40.0, Y_ONC, math.pi)
     EGO = DW.load_asset("sedan")
     K = DW.camera_intrinsics(60.0, 640, 400)

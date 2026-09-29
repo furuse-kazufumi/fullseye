@@ -4458,13 +4458,13 @@ py -3.11 examples/poc_car_parking.py
 
 *↑ 測定の図 ―― 同じ世界を斜めから: CC0 の車・信号機・標識・コーン(Kenney)を実寸に合わせて置き、縁石(高さ 0.15 m)と白線を多角形の縁に沿って生成(継ぎ目には置かない)。面ごとにラベルと色を持つので、センサの真値は世界の側にある。*
 
-[![停止線の 10 m 手前での LiDAR 一掃(32 ビーム・0.5°、13835 点)を面のラベルで塗る: 灰 = 路面、黄 = 縁石、赤 = 車、緑 = 信号機、青 = 標識、橙 = コーン、白 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep.png)
+[![停止線の 10 m 手前での LiDAR 一掃(32 ビーム・0.5°、13826 点)を面のラベルで塗る: 灰 = 路面、黄 = 縁石、赤 = 車、緑 = 信号機、青 = 標識、橙 = コーン、白 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep.png)
 
-*↑ 停止線の 10 m 手前での LiDAR 一掃(32 ビーム・0.5°、13835 点)を面のラベルで塗る: 灰 = 路面、黄 = 縁石、赤 = 車、緑 = 信号機、青 = 標識、橙 = コーン、白 = 白線。*
+*↑ 停止線の 10 m 手前での LiDAR 一掃(32 ビーム・0.5°、13826 点)を面のラベルで塗る: 灰 = 路面、黄 = 縁石、赤 = 車、緑 = 信号機、青 = 標識、橙 = コーン、白 = 白線。*
 
-[![同じ瞬間の車載カメラ(60°)に LiDAR の点を投影して重ねる: 点の深度と画素の深度の相対差は中央値 2.89e-03、ラベル一致 100.0 %(1 画素の許容; 門 3、2 センサ 1 世界](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar.png)
+[![同じ瞬間の車載カメラ(60°)に LiDAR の点を投影して重ねる: 点の深度と画素の深度の相対差は中央値 2.88e-03、ラベル一致 100.0 %(1 画素の許容; 門 3、2 センサ 1 世界](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar.png)
 
-*↑ 同じ瞬間の車載カメラ(60°)に LiDAR の点を投影して重ねる: 点の深度と画素の深度の相対差は中央値 2.89e-03、ラベル一致 100.0 %(1 画素の許容; 門 3、2 センサ 1 世界の恒等式)。*
+*↑ 同じ瞬間の車載カメラ(60°)に LiDAR の点を投影して重ねる: 点の深度と画素の深度の相対差は中央値 2.88e-03、ラベル一致 100.0 %(1 画素の許容; 門 3、2 センサ 1 世界の恒等式)。*
 
 [![真値の散布: 8 種の要素の面積(靴紐 vs 閉形式)と路面の range 200 点(実測 vs h/(−sin e))。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths.png)
 

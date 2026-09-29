@@ -191,3 +191,19 @@ def test_world_move_is_rigid_and_matches_a_fresh_placement():
     with pytest.raises(ValueError):
         DW.world_move(w, ground, 0.0, 0.0, 0.0)
 
+
+def test_car_assets_face_plus_x_at_yaw_zero():
+    """車キットの資産は yaw 0 で +x が前(ユーザー指摘 2026-09-29 の回帰): パトカーの赤いテールランプの面は後ろ(x < 0)、
+    セダンの頂点は生の z-up 変換を x・y で反転したもの(180° 回した規約が外れたら落ちる)。"""
+    m = DW.load_asset("police")
+    C = m["color"]
+    red = (C[:, 0] > 0.6) & (C[:, 1] < 0.35) & (C[:, 2] < 0.35)
+    assert red.any()
+    assert m["V"][m["F"][red]].mean(axis=(0, 1))[0] < -0.1 * m["dims"][0]      # 実測 −0.70 m(車長 4.8 m、赤い灯は中心より後ろ)
+    kd = DW.asset_dir() / DW._KIT_DIR["cars"]
+    V, F, _ = DW.read_obj_colored(kd / "sedan.obj", DW._read_png_rgb(kd / DW._COLORMAP))
+    V = DW._yup_to_zup(V)
+    lo, hi = V.min(axis=0), V.max(axis=0)
+    raw = (V - (lo + hi) / 2.0) / np.where(hi - lo > 1e-9, hi - lo, 1.0) * np.asarray(DW.ASSETS["sedan"][2])
+    s = DW.load_asset("sedan")["V"]
+    assert np.allclose(s[:, :2], -raw[:, :2], atol=1e-9) and np.allclose(s[:, 2] - s[:, 2].min(), raw[:, 2] - raw[:, 2].min())

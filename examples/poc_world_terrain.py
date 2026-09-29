@@ -164,8 +164,8 @@ def main() -> int:
     tg_err = np.percentile(np.abs(fdt - gx), 99)
     z_in = DTR.terrain_height(q[ins, 0], q[ins, 1], TP, LAYOUT) - DTR._road_wave(q[ins, 0], q[ins, 1], TP)[0]
     WORLD = DW.world_build(LAYOUT, props=[("street_light", -20.0, -25.0, 0.0), ("street_light", 10.0, -25.0, 0.0),
-                                          ("sign_stop", 15.0, -25.3, -math.pi / 2), ("sedan", -10.0, LOOP_R + 2.0, math.pi),
-                                          ("truck", 30.0, LOOP_R - 2.0, 0.0), ("cone", 36.0, -30.0, 0.0)],
+                                          ("sign_stop", 15.0, -25.3, -math.pi / 2), ("sedan", -10.0, LOOP_R - 2.0, math.pi),
+                                          ("truck", 30.0, LOOP_R + 2.0, 0.0), ("cone", 36.0, -30.0, 0.0)],   # 左側通行: 北の直線は内側が西行き
                            ground_margin=40.0, ground_step=2.0)
     n_flat = len(WORLD["V"])
     DTR.world_apply_terrain(WORLD, TP, step=2.0)

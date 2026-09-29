@@ -180,7 +180,12 @@ def load_asset(name: str, dims=None, *, root=None) -> dict:
         kd = root / _KIT_DIR[kit]
         tex = _read_png_rgb(kd / _COLORMAP)
         V, F, C = read_obj_colored(kd / fname, tex)
-        _ASSET_CACHE[key] = (_yup_to_zup(V), F, C)
+        V = _yup_to_zup(V)
+        if kit == "cars":
+            # Kenney の車キットは z-up に直すと前が −x を向く(テールランプが +x)。yaw 0 = +x が前、という姿勢の規約に合わせて
+            # 180° 回す(16 巡目まで全 PoC の車が進行方向と逆向きだった —— ユーザー指摘 2026-09-29)。
+            V = V * np.array([-1.0, -1.0, 1.0])
+        _ASSET_CACHE[key] = (V, F, C)
     V, F, C = _ASSET_CACHE[key]
     lo, hi = V.min(axis=0), V.max(axis=0)
     ext = np.where(hi - lo > 1e-9, hi - lo, 1.0)
