@@ -37,7 +37,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 | [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 98 |
 | [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 60 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
-| [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 3 |
+| [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 4 |
 
 ## Glossary (read this first)
 
@@ -62,12 +62,12 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 - 2026-09-29 — No.2026.167 The Driving School Opens — Cars and Signals on a Regulation Loop Course, Seen by LiDAR and Camera, Scored by Theorems and Identities
 - 2026-09-29 — No.2026.168 Time to Collision and Safe Distance — Optical-Flow τ and the RSS Closed Forms, Scored by the Driving-School World's Truth
+- 2026-09-29 — No.2026.169 Widening the World — Closed-Form Terrain, World-Space Materials and Procedural Trees and Pedestrians Win the Focus of Expansion Back from Flow
 - 2026-09-28 — No.2026.161 Do Synapses Grow in Proportion to Neurites? — Shape Growth and Wiring Growth Set Side by Side, Cell by Cell, in Eight Worms
 - 2026-09-28 — No.2026.162 Run Length Forgives No Small Merge — ERL and VOI Weigh the Same Error Differently
 - 2026-09-28 — No.2026.163 Slime-Mould Tubes Solve the Maze — Thickening and Thinning Alone Converge to the Shortest Path, Bracketed by a Theorem and Dijkstra
 - 2026-09-28 — No.2026.166 How a Car Turns Shortest — Dubins and Reeds–Shepp in Closed Form, and Hybrid A* Parallel Parking on an Occupancy Grid
 - 2026-09-28 — No.2026.165 Slime Mould Solves Optimal Transport — Make the Source and Sink Mass Distributions and the Same Tube Dynamics Converge to the Earth Mover's Distance
-- 2026-09-28 — No.2026.164 The Worm Brain's Core Is There from Birth — Counting the Cells That Stay in the Deepest Shell Across 8 Developmental Stages
 
 ## Applying it to your own problem
 

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2261,
- "n_notes": 2267,
+ "n_ops": 2282,
+ "n_notes": 2288,
  "notes": {
   "vol_dilate": [
    {
@@ -15631,6 +15631,200 @@
     "path": "docs/ops/drive/rss/rss_worst_case_gap_opposite.md"
    }
   ],
+  "add_mesh_object": [
+   {
+    "op": "add_mesh_object",
+    "dim": "drive",
+    "category": "terrain",
+    "in": "table × table",
+    "out": "scalar",
+    "path": "docs/ops/drive/terrain/add_mesh_object.md"
+   }
+  ],
+  "course_distance": [
+   {
+    "op": "course_distance",
+    "dim": "drive",
+    "category": "terrain",
+    "in": "table × points",
+    "out": "table",
+    "path": "docs/ops/drive/terrain/course_distance.md"
+   }
+  ],
+  "crosswalk_mesh": [
+   {
+    "op": "crosswalk_mesh",
+    "dim": "drive",
+    "category": "terrain",
+    "out": "table",
+    "path": "docs/ops/drive/terrain/crosswalk_mesh.md"
+   }
+  ],
+  "fbm_gradient": [
+   {
+    "op": "fbm_gradient",
+    "dim": "drive",
+    "category": "terrain",
+    "in": "image2d × image2d × table",
+    "out": "any",
+    "path": "docs/ops/drive/terrain/fbm_gradient.md"
+   }
+  ],
+  "fbm_height": [
+   {
+    "op": "fbm_height",
+    "dim": "drive",
+    "category": "terrain",
+    "in": "image2d × image2d × table",
+    "out": "image2d",
+    "path": "docs/ops/drive/terrain/fbm_height.md"
+   }
+  ],
+  "fbm_params": [
+   {
+    "op": "fbm_params",
+    "dim": "drive",
+    "category": "terrain",
+    "out": "table",
+    "path": "docs/ops/drive/terrain/fbm_params.md"
+   }
+  ],
+  "material_params": [
+   {
+    "op": "material_params",
+    "dim": "drive",
+    "category": "terrain",
+    "out": "table",
+    "path": "docs/ops/drive/terrain/material_params.md"
+   }
+  ],
+  "mesh_signed_volume": [
+   {
+    "op": "mesh_signed_volume",
+    "dim": "drive",
+    "category": "terrain",
+    "in": "points × matrix",
+    "out": "scalar",
+    "path": "docs/ops/drive/terrain/mesh_signed_volume.md"
+   }
+  ],
+  "pedestrian_mesh": [
+   {
+    "op": "pedestrian_mesh",
+    "dim": "drive",
+    "category": "terrain",
+    "out": "table",
+    "path": "docs/ops/drive/terrain/pedestrian_mesh.md"
+   }
+  ],
+  "perlin2": [
+   {
+    "op": "perlin2",
+    "dim": "drive",
+    "category": "terrain",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/drive/terrain/perlin2.md"
+   }
+  ],
+  "radial_periodogram": [
+   {
+    "op": "radial_periodogram",
+    "dim": "drive",
+    "category": "terrain",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/drive/terrain/radial_periodogram.md"
+   }
+  ],
+  "scatter_offroad": [
+   {
+    "op": "scatter_offroad",
+    "dim": "drive",
+    "category": "terrain",
+    "in": "table",
+    "out": "points",
+    "path": "docs/ops/drive/terrain/scatter_offroad.md"
+   }
+  ],
+  "spectral_slope": [
+   {
+    "op": "spectral_slope",
+    "dim": "drive",
+    "category": "terrain",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/drive/terrain/spectral_slope.md"
+   }
+  ],
+  "terrain_gradient": [
+   {
+    "op": "terrain_gradient",
+    "dim": "drive",
+    "category": "terrain",
+    "in": "image2d × image2d × table",
+    "out": "any",
+    "path": "docs/ops/drive/terrain/terrain_gradient.md"
+   }
+  ],
+  "terrain_height": [
+   {
+    "op": "terrain_height",
+    "dim": "drive",
+    "category": "terrain",
+    "in": "image2d × image2d × table",
+    "out": "image2d",
+    "path": "docs/ops/drive/terrain/terrain_height.md"
+   }
+  ],
+  "terrain_mesh": [
+   {
+    "op": "terrain_mesh",
+    "dim": "drive",
+    "category": "terrain",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/terrain/terrain_mesh.md"
+   }
+  ],
+  "terrain_params": [
+   {
+    "op": "terrain_params",
+    "dim": "drive",
+    "category": "terrain",
+    "out": "table",
+    "path": "docs/ops/drive/terrain/terrain_params.md"
+   }
+  ],
+  "tree_mesh": [
+   {
+    "op": "tree_mesh",
+    "dim": "drive",
+    "category": "terrain",
+    "out": "table",
+    "path": "docs/ops/drive/terrain/tree_mesh.md"
+   }
+  ],
+  "world_apply_terrain": [
+   {
+    "op": "world_apply_terrain",
+    "dim": "drive",
+    "category": "terrain",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/terrain/world_apply_terrain.md"
+   }
+  ],
+  "world_materials": [
+   {
+    "op": "world_materials",
+    "dim": "drive",
+    "category": "terrain",
+    "in": "table × table × matrix × matrix × table",
+    "out": "table",
+    "path": "docs/ops/drive/terrain/world_materials.md"
+   }
+  ],
   "flow_from_depth_motion": [
    {
     "op": "flow_from_depth_motion",
@@ -15639,6 +15833,16 @@
     "in": "image2d × matrix × matrix",
     "out": "table",
     "path": "docs/ops/drive/ttc/flow_from_depth_motion.md"
+   }
+  ],
+  "foe_from_flow": [
+   {
+    "op": "foe_from_flow",
+    "dim": "drive",
+    "category": "ttc",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/drive/ttc/foe_from_flow.md"
    }
   ],
   "foe_from_motion": [

@@ -1497,6 +1497,116 @@ def _b_rss_worst_lat(pool, rng):
     return (2.0, 0.3, -0.2, RS.rss_params()), {"dt": 0.01}
 
 
+def _b_xy_grid(pool, rng):
+    X, Y = np.meshgrid(np.linspace(-5.0, 5.0, 12), np.linspace(-4.0, 4.0, 10))
+    return (X, Y), {"seed": 3, "freq": 0.7}
+
+
+def _b_fbm_p(pool, rng):
+    return (0,), {"n_waves": 32}
+
+
+def _b_seed_only(pool, rng):
+    return (0,), {}
+
+
+def _b_fbm_field(pool, rng):
+    import driveterrain as DTR
+    X, Y = np.meshgrid(np.linspace(-20.0, 20.0, 12), np.linspace(-16.0, 16.0, 10))
+    return (X, Y, DTR.fbm_params(0, n_waves=32)), {}
+
+
+def _b_field_dx(pool, rng):
+    import driveterrain as DTR
+    xs = np.arange(48) * 1.0
+    X, Y = np.meshgrid(xs, xs)
+    return (DTR.fbm_height(X, Y, DTR.fbm_params(0, n_waves=64, f_min=1 / 40.0, f_max=1 / 4.0)), 1.0), {}
+
+
+def _b_slope(pool, rng):
+    (Z, dx), _ = _b_field_dx(pool, rng)
+    return (Z, dx, 1 / 20.0, 1 / 5.0), {"n_bins": 16}
+
+
+def _b_course_xy(pool, rng):
+    import drivecourse as DC
+    return (DC.course_road(30.0, 7.0), rng.uniform(-10, 40, (50, 2))), {}
+
+
+def _b_terrain_p(pool, rng):
+    return (0,), {"n_waves": 32, "road_amp": 0.5}
+
+
+def _b_terrain_field(pool, rng):
+    import drivecourse as DC
+    import driveterrain as DTR
+    X, Y = np.meshgrid(np.linspace(-10.0, 40.0, 12), np.linspace(-10.0, 17.0, 10))
+    return (X, Y, DTR.terrain_params(0, n_waves=32)), {"course": DC.course_road(30.0, 7.0)}
+
+
+def _b_terrain_mesh(pool, rng):
+    import drivecourse as DC
+    import driveterrain as DTR
+    return (DTR.terrain_params(0, n_waves=32), DC.course_road(30.0, 7.0), (-8.0, 38.0, -8.0, 15.0)), {"step": 4.0}
+
+
+def _b_world_terrain(pool, rng):
+    import drivecourse as DC
+    import driveterrain as DTR
+    import driveworld as DW
+    w = DW.world_build(DC.course_road(30.0, 7.0), props=[("cone", 4.0, 3.5, 0.0)], ground_step=4.0)
+    return (w, DTR.terrain_params(0, n_waves=32)), {"step": 4.0}
+
+
+def _b_world_view(pool, rng):
+    import drivecourse as DC
+    import driveterrain as DTR
+    import driveworld as DW
+    w = DW.world_build(DC.course_road(30.0, 7.0), ground_step=4.0)
+    DTR.world_apply_terrain(w, DTR.terrain_params(0, n_waves=32), step=4.0)
+    K = DW.camera_intrinsics(60.0, 96, 60)
+    P = DW.camera_pose((1.0, 3.5, 1.35), (21.0, 3.5, 0.9))
+    return (w, DW.world_camera(w, P, K, 96, 60), P, K, DTR.material_params(0)), {}
+
+
+def _b_tree(pool, rng):
+    return (5.0, 0.15, 1.5), {"kind": "conifer"}
+
+
+def _b_ped(pool, rng):
+    return (1.7,), {}
+
+
+def _b_crosswalk(pool, rng):
+    return ((10.0, 0.0), (10.0, 7.0), 3.0), {}
+
+
+def _b_add_mesh(pool, rng):
+    import drivecourse as DC
+    import driveterrain as DTR
+    import driveworld as DW
+    w = DW.world_build(DC.course_road(30.0, 7.0), ground_step=4.0)
+    return (w, DTR.tree_mesh(5.0), 2.0, -4.0, 0.3), {"name": "tree"}
+
+
+def _b_scatter(pool, rng):
+    import drivecourse as DC
+    return (DC.course_road(30.0, 7.0), (-10.0, 40.0, -10.0, 17.0)), {"n": 8, "r_min": 3.0, "margin": 2.0, "seed": 1}
+
+
+def _b_mesh_vol(pool, rng):
+    import driveterrain as DTR
+    m = DTR.tree_mesh(5.0, 0.15, 1.5, "conifer")
+    return (m["V"], m["F"]), {}
+
+
+def _b_foe_flow(pool, rng):
+    import drivettc as TT
+    (d, K, T), _ = _b_depth_K_T(pool, rng)
+    f = TT.flow_from_depth_motion(d, K, T)
+    return (f["u"], f["v"]), {}
+
+
 def _b_graph_kcore(pool, rng):
     B = (rng.random((30, 30)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -1707,6 +1817,13 @@ OP_ARG_BUILDERS = {
     "rss_longitudinal_opposite": _b_rss_two_v, "rss_lateral": _b_rss_lat, "rss_longitudinal_check": _b_rss_check,
     "rss_lateral_check": _b_rss_lat_check, "rss_worst_case_gap": _b_rss_worst, "rss_worst_case_gap_opposite": _b_rss_worst,
     "rss_worst_case_gap_lateral": _b_rss_worst_lat,
+    "foe_from_flow": _b_foe_flow,
+    "perlin2": _b_xy_grid, "fbm_params": _b_fbm_p, "fbm_height": _b_fbm_field, "fbm_gradient": _b_fbm_field,
+    "radial_periodogram": _b_field_dx, "spectral_slope": _b_slope, "course_distance": _b_course_xy,
+    "terrain_params": _b_terrain_p, "terrain_height": _b_terrain_field, "terrain_gradient": _b_terrain_field,
+    "terrain_mesh": _b_terrain_mesh, "world_apply_terrain": _b_world_terrain, "material_params": _b_seed_only,
+    "world_materials": _b_world_view, "tree_mesh": _b_tree, "pedestrian_mesh": _b_ped, "crosswalk_mesh": _b_crosswalk,
+    "add_mesh_object": _b_add_mesh, "scatter_offroad": _b_scatter, "mesh_signed_volume": _b_mesh_vol,
     "tree_from_swc": _b_tree_swc,
     "tree_morphometry": _b_tree_table,
     "tree_sholl": _b_tree_table,
@@ -2468,7 +2585,8 @@ NONFINITE_BY_CONTRACT_MSA = {"msa_anova_table"}
 NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "sdf_union", "sdf_intersect", "sdf_subtract",
                          "sdf_smooth_union", "sdf_offset", "mat_cond",
-                         "warp_by_plane", "triangulate"
+                         "warp_by_plane", "triangulate",
+                         "world_materials",     # "xyz" は空の画素が NaN(深度が無い所は世界座標も無い、docstring どおり)
                          } | NONFINITE_BY_CONTRACT_METRICS \
                          | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
                          | NONFINITE_BY_CONTRACT_OPTICS \

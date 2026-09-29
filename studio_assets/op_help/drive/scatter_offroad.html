@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">scatter_offroad — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scatter_offroad(course, bounds, n: &#x27;int&#x27; = 60, r_min: &#x27;float&#x27; = 4.0, margin: &#x27;float&#x27; = 3.0, seed: &#x27;int&#x27; = 0, max_tries: &#x27;int&#x27; = 20000) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveterrain; driveterrain.scatter_offroad(course, bounds, n: &#x27;int&#x27; = 60, r_min: &#x27;float&#x27; = 4.0, margin: &#x27;float&#x27; = 3.0, seed: &#x27;int&#x27; = 0, max_tries: &#x27;int&#x27; = 20000) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;scatter_offroad&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>道の外に物を撒く(dart throwing): 各点はコースから `<code style="color:#22d3bf">margin</code><code style="color:#22d3bf"> 以上、互いに </code><code style="color:#22d3bf">r_min</code>` 以上離れる。</p>
+<p>返り値 (n&#x27;, 3) = (x, y, yaw)。`<code style="color:#22d3bf">max_tries</code>` で n に届かなければあるだけ返す(n&#x27; ≤ n)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_world_terrain">poc_world_terrain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_world_terrain.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">points</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:ray_plane_range">ray_plane_range</a> · <a style="color:#22d3bf" href="opdrive:ray_box_ranges">ray_box_ranges</a> · <a style="color:#22d3bf" href="opdrive:course_distance">course_distance</a> · <a style="color:#22d3bf" href="opdrive:mesh_signed_volume">mesh_signed_volume</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">terrain</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:perlin2">perlin2</a> · <a style="color:#22d3bf" href="opdrive:fbm_params">fbm_params</a> · <a style="color:#22d3bf" href="opdrive:fbm_height">fbm_height</a> · <a style="color:#22d3bf" href="opdrive:fbm_gradient">fbm_gradient</a> · <a style="color:#22d3bf" href="opdrive:radial_periodogram">radial_periodogram</a> · <a style="color:#22d3bf" href="opdrive:spectral_slope">spectral_slope</a> · <a style="color:#22d3bf" href="opdrive:course_distance">course_distance</a> · <a style="color:#22d3bf" href="opdrive:terrain_params">terrain_params</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: driveterrain.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -213,3 +213,28 @@ def test_bad_transform():
         TT.flow_from_depth_motion(np.ones((4, 4)), _K(), T)
     with pytest.raises(ValueError):
         TT.ttc_truth(np.ones((4, 4)), _K(), np.eye(4), 0.0)
+
+
+# ─────────────────────────────── FoE を流れから(16 巡目) ───────────────────────────────
+
+def test_foe_from_flow_recovers_foe_from_motion_exactly_and_is_robust_to_noise():
+    """純平行移動の真の流れは FoE から放射状 → foe_from_flow は foe_from_motion と 1e-9 で一致(定理の門)。
+    雑音 0.2 px を足しても 1 px 以内、平行な流れは特異で ValueError。"""
+    import driveworld as DW
+    K = DW.camera_intrinsics(60, 160, 100)
+    T = np.eye(4)
+    T[:3, 3] = [0.1, -0.05, 0.8]
+    d = np.random.default_rng(0).uniform(5, 30, (100, 160))
+    f = TT.flow_from_depth_motion(d, K, T)
+    truth = TT.foe_from_motion(K, T)
+    r = TT.foe_from_flow(f["u"], f["v"])
+    assert np.allclose(r["foe"], truth, atol=1e-9) and r["residual"] < 1e-9 and r["n"] > 1000
+    rng = np.random.default_rng(1)
+    r2 = TT.foe_from_flow(f["u"] + rng.normal(0, 0.2, f["u"].shape), f["v"] + rng.normal(0, 0.2, f["v"].shape))
+    assert np.hypot(*(np.asarray(r2["foe"]) - truth)) < 1.0
+    with pytest.raises(ValueError):
+        TT.foe_from_flow(np.ones((10, 10)), np.zeros((10, 10)))
+    with pytest.raises(ValueError):
+        TT.foe_from_flow(np.zeros((10, 10)), np.zeros((10, 10)))
+    with pytest.raises(ValueError):
+        TT.foe_from_flow(f["u"], f["v"][:, :10])

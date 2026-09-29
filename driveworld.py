@@ -48,7 +48,8 @@ __all__ = [
 ]
 
 LABELS = {0: "ground", 1: "kerb", 2: "car", 3: "traffic_light", 4: "sign", 5: "cone",
-          6: "block", 7: "pedestrian", 8: "rail", 9: "line"}
+          6: "block", 7: "pedestrian", 8: "rail", 9: "line",
+          10: "terrain", 11: "puddle", 12: "crosswalk", 13: "tree"}     # 10 以降は driveterrain(16 巡目)
 
 #: 同梱する CC0 資産: 名前 → (キット, ファイル, 実寸 (長さ x, 幅 y, 高さ z) [m], ラベル)。
 ASSETS = {
@@ -603,7 +604,7 @@ def overlay_points(image, points, pose, K, colors, *, radius: int = 1, depth_tes
 
 def world_camera(world: dict, pose, K, width: int = 640, height: int = 400, *, light=(0.3, -0.5, 0.8),
                  ambient: float = 0.35, sky=(0.62, 0.75, 0.92), ego=None) -> dict:
-    """世界をカメラで撮る: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W)}``。
+    """世界をカメラで撮る: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。
 
     render3d.render_mesh(attributes=True) の三角形 id から面の色・ラベルを引き、色は Lambert
     (``ambient + (1−ambient)·max(n·l, 0)``、n は render3d のカメラ系法線を世界系に戻さず、光をカメラ系で与える)。
@@ -634,4 +635,5 @@ def world_camera(world: dict, pose, K, width: int = 640, height: int = 400, *, l
     label = np.full((height, width), -1, np.int64)
     label[hit] = Lb[face[hit]]
     depth = np.asarray(out["depth"], np.float64)
-    return {"color": np.clip(color, 0, 1), "label": label, "depth": depth, "face": face}
+    # "shade" = Lambert の明るさ(材質を画素ごとに掛け直す driveterrain.world_materials が使う)
+    return {"color": np.clip(color, 0, 1), "label": label, "depth": depth, "face": face, "shade": shade}

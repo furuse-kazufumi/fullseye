@@ -4520,6 +4520,42 @@ py -3.11 examples/poc_ttc_rss.py
 
 使用 op(ノートへ): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`course_layout`](https://furuse.work/ops/drive/course/course_layout.html) · [`course_loop`](https://furuse.work/ops/drive/course/course_loop.html) · [`crosshair`](https://furuse.work/ops/annotate/pointer/crosshair.html) · [`flow_from_depth_motion`](https://furuse.work/ops/drive/ttc/flow_from_depth_motion.html) · [`foe_from_motion`](https://furuse.work/ops/drive/ttc/foe_from_motion.html) · [`label_extent`](https://furuse.work/ops/drive/ttc/label_extent.html) · [`load_asset`](https://furuse.work/ops/drive/world/load_asset.html) · [`relative_motion`](https://furuse.work/ops/drive/ttc/relative_motion.html) · [`rss_lateral`](https://furuse.work/ops/drive/rss/rss_lateral.html) · [`rss_lateral_check`](https://furuse.work/ops/drive/rss/rss_lateral_check.html) · [`rss_longitudinal_check`](https://furuse.work/ops/drive/rss/rss_longitudinal_check.html) · [`rss_longitudinal_opposite`](https://furuse.work/ops/drive/rss/rss_longitudinal_opposite.html) · [`rss_longitudinal_same`](https://furuse.work/ops/drive/rss/rss_longitudinal_same.html) · [`rss_params`](https://furuse.work/ops/drive/rss/rss_params.html) · [`rss_worst_case_gap`](https://furuse.work/ops/drive/rss/rss_worst_case_gap.html) · [`rss_worst_case_gap_opposite`](https://furuse.work/ops/drive/rss/rss_worst_case_gap_opposite.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ttc_from_flow`](https://furuse.work/ops/drive/ttc/ttc_from_flow.html) · [`ttc_from_range`](https://furuse.work/ops/drive/ttc/ttc_from_range.html) · [`ttc_from_scale`](https://furuse.work/ops/drive/ttc/ttc_from_scale.html) · [`ttc_truth`](https://furuse.work/ops/drive/ttc/ttc_truth.html) · [`world_build`](https://furuse.work/ops/drive/world/world_build.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html) …(他 1)
 
+## No.2026.169 —— 世界を広げる ―― 閉形式の地形と世界座標の材質、手続きの木と歩行者で、拡大の中心を流れから取り戻す
+
+[![世界を広げる ―― 閉形式の地形と世界座標の材質、手続きの木と歩行者で、拡大の中心を流れから取り戻す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain.png)
+
+*↑ **世界を広げる ―― 閉形式の地形と世界座標の材質、手続きの木と歩行者で、拡大の中心を流れから取り戻す** ―― 15 巡目の教習所はコースの外 8 m で世界が終わり、路面に模様が無かったので、光学流の拡大の中心(FoE)は「既知」にするしかなかった。この展示は世界を、生成の時に真値を持たせたまま広げる。地形は乱数位相の正弦の和(fBm のスペクトル合成、Saupe 1988)で高さも勾配も閉形式、512 × 512 の周期図の傾きは β̂ = 3.59(定理 2H + 2 = 3.6、H = 0.8)。コースへの距離場は点-線分の閉形式で道の外では |∇d| = 1(eikonal)、道の周り 2 m は平ら、12 m で起伏に繋がり、路面には振幅 0.8 m のうねり。材質は描画した深度から画素の世界座標を戻し、Perlin(2002)の勾配雑音(格子点で 0、周期 256、解析的な導関数)を世界座標で評価する: アスファルトの粒、草、暗い染み、水溜り(写り込みの強さが真値)、摩耗した白線(摩耗率が真値)。車載カメラの路面の画素の高さは閉形式と中央値 0.4 mm、99 % 点 13.0 cm(2 m 升の弦)で一致し、水溜りの画素は全部道の内側、白線の色は摩耗率の混色 × 陰影と 0 で一致。木 70 本(角柱 + 円錐 / 回転楕円体、針葉樹の体積は発散定理のメッシュ体積と 1e-9、広葉樹の冠は内接で上界の 0.88 倍)は道から 4 m 以上・互いに 5 m 以上に散布、横断歩道 9 縞 = 16.2 m²、歩行者(箱 + 回転体)が横断歩道を渡る。自車が坂を上り下りする 10 秒(30 fps の 2 コマずつ)で、真の流れからの FoE は foe_from_motion と 6e-14 px(純並進の流れは FoE から放射状)。路面の画素の Lucas–Kanade の流れだけから最小二乗(流線と点の距離、角度の残差で重み)で出した FoE は模様ありで中央値 1.9 px(全画素 1.2 px)、同じ地形で路面だけ無地にすると 57 px。正直に: 摩耗した白線と水溜りは明るさのしきい値では向きを選んでも最良で 25 % を間違える —— それが「判りにくい物」の狙いで、真値は画素単位で厳密。木・歩行者は箱と回転体、水溜りの写り込みは空の色を混ぜただけ。*
+
+[![fBm の面(H = 0.8)の動径周期図は log–log で直線: 傾き β̂ = 3.59、定理(Saupe 1988: β = 2H + E、E = 2)は 3.6。帯域 [1/100, 1/10) 周期/m の 12 帯で当てはめ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/02_terrain_spectrum_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/02_terrain_spectrum.png)
+
+*↑ 測定の図 ―― fBm の面(H = 0.8)の動径周期図は log–log で直線: 傾き β̂ = 3.59、定理(Saupe 1988: β = 2H + E、E = 2)は 3.6。帯域 [1/100, 1/10] 周期/m の 12 帯で当てはめ。有限の帯域と Hann 窓で +0.1 ほど急に出る。*
+
+[![車載カメラ(60°, 640 × 400)の 1 コマと、その画素ごとの真値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/03_incar_materials_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/03_incar_materials.png)
+
+*↑ 車載カメラ(60°, 640 × 400)の 1 コマと、その画素ごとの真値。*
+
+[![t = 1.2 s(誤差が中央値に最も近い典型的なコマ)の車載カメラ(480 × 300、30 fps の 2 コマ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/04_foe_from_flow_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/04_foe_from_flow.png)
+
+*↑ t = 1.2 s(誤差が中央値に最も近い典型的なコマ)の車載カメラ(480 × 300、30 fps の 2 コマ)。*
+
+[![拡大の中心の推定誤差(真値との距離)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error.png)
+
+*↑ 拡大の中心の推定誤差(真値との距離)。*
+
+[![車載カメラで 0 → 10 s(51 コマ、6 m/s): 起伏の中の周回コースを坂を上り下りしながら走る。矢印は LK の流れ(×4)、橙の十字は流れから推定した拡大の中心、緑は真値。横断歩道を歩行者が渡り、路面には水溜りと摩耗した白線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/06_drive_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/06_drive_gif.gif)
+
+*↑ 動く図 ―― 車載カメラで 0 → 10 s(51 コマ、6 m/s): 起伏の中の周回コースを坂を上り下りしながら走る。矢印は LK の流れ(×4)、橙の十字は流れから推定した拡大の中心、緑は真値。横断歩道を歩行者が渡り、路面には水溜りと摩耗した白線。*
+
+```
+py -3.11 examples/poc_world_terrain.py
+```
+
+ソース: [examples/poc_world_terrain.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_world_terrain.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_world_terrain)
+
+使用 op(ノートへ): [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_mesh_object.html) · [`course_contains`](https://furuse.work/ops/drive/course/course_contains.html) · [`course_distance`](https://furuse.work/ops/drive/terrain/course_distance.html) · [`course_layout`](https://furuse.work/ops/drive/course/course_layout.html) · [`course_loop`](https://furuse.work/ops/drive/course/course_loop.html) · [`crosshair`](https://furuse.work/ops/annotate/pointer/crosshair.html) · [`crosswalk_mesh`](https://furuse.work/ops/drive/terrain/crosswalk_mesh.html) · [`fbm_gradient`](https://furuse.work/ops/drive/terrain/fbm_gradient.html) · [`fbm_height`](https://furuse.work/ops/drive/terrain/fbm_height.html) · [`flow_from_depth_motion`](https://furuse.work/ops/drive/ttc/flow_from_depth_motion.html) · [`foe_from_flow`](https://furuse.work/ops/drive/ttc/foe_from_flow.html) · [`foe_from_motion`](https://furuse.work/ops/drive/ttc/foe_from_motion.html) · [`material_params`](https://furuse.work/ops/drive/terrain/material_params.html) · [`mesh_signed_volume`](https://furuse.work/ops/drive/terrain/mesh_signed_volume.html) · [`pedestrian_mesh`](https://furuse.work/ops/drive/terrain/pedestrian_mesh.html) · [`perlin2`](https://furuse.work/ops/drive/terrain/perlin2.html) · [`radial_periodogram`](https://furuse.work/ops/drive/terrain/radial_periodogram.html) · [`relative_motion`](https://furuse.work/ops/drive/ttc/relative_motion.html) · [`scatter_offroad`](https://furuse.work/ops/drive/terrain/scatter_offroad.html) · [`spectral_slope`](https://furuse.work/ops/drive/terrain/spectral_slope.html) · [`terrain_gradient`](https://furuse.work/ops/drive/terrain/terrain_gradient.html) · [`terrain_height`](https://furuse.work/ops/drive/terrain/terrain_height.html) · [`terrain_params`](https://furuse.work/ops/drive/terrain/terrain_params.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) …(他 6)
+
 ### 数学の絵 ―― 定理が門になる回(別記事)
 
 この展示先の回は、計測の展示館ではなく**数学の絵のシリーズ**に掛かっています。分ける基準は「真値がどこから来るか」です —— 計測の展示は測る対象があり真値は対象の側に、ここの回は対象が無く、真値は描いた絵そのものの定理・恒等式・不変量から出ます。記事は手書きなので、生成器はここを描きません。

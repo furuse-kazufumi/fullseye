@@ -29,7 +29,7 @@ import numpy as np
 
 __all__ = [
     "camera_backproject", "camera_project", "relative_motion", "foe_from_motion", "flow_from_depth_motion",
-    "ttc_truth", "ttc_from_flow", "ttc_from_scale", "ttc_from_range", "label_extent",
+    "ttc_truth", "ttc_from_flow", "ttc_from_scale", "ttc_from_range", "label_extent", "foe_from_flow",
 ]
 
 
@@ -234,3 +234,50 @@ def label_extent(label, value: int) -> dict:
     cols = np.where(m.any(axis=0))[0]
     return {"col0": int(cols[0]), "col1": int(cols[-1]), "row0": int(rows[0]), "row1": int(rows[-1]),
             "width": int(cols[-1] - cols[0] + 1), "height": int(rows[-1] - rows[0] + 1), "n": int(m.sum())}
+
+
+def foe_from_flow(u, v, mask=None, *, min_speed: float = 0.3, max_speed: float = np.inf, iters: int = 5,
+                  angle_scale: float = 0.05) -> dict:
+    """光学流から拡大の中心(FoE)を推定する: ``{"foe": (col, row), "n", "residual"}``。
+
+    純平行移動の流れは FoE から放射状(Longuet-Higgins & Prazdny 1980)なので、各画素の流線(点 p_i を流れの向きに
+    通る直線)は全部 FoE を通る。FoE = Σ w_i·dist(F, 流線_i)² を最小にする点(2×2 の正規方程式)。重みは反復で
+    ``1/|p_i − F|·1/(1 + (角度残差/angle_scale)²)``(Cauchy 風)。遠い画素の流線ほど向きの誤差が FoE の位置に
+    効くので距離で割り、外れ値(遮蔽・無地)を角度残差で落とす。15 巡目で「既知」にした FoE を流れから出す口(16 巡目)。
+    定理の門: 真の流れ(flow_from_depth_motion)を入れると :func:`foe_from_motion` と 1e-9 で一致。
+
+    ``mask`` は使う画素(既定 = 有限で速さが [min_speed, max_speed] の画素)。有効画素が 3 未満、または正規方程式が
+    特異(流線が全部平行)なら ``ValueError``。"""
+    u = np.asarray(u, np.float64)
+    v = np.asarray(v, np.float64)
+    if u.ndim != 2 or u.shape != v.shape:
+        raise ValueError("u, v must be (H, W) of the same shape")
+    if iters < 1 or angle_scale <= 0:
+        raise ValueError("need iters ≥ 1 and angle_scale > 0")
+    H, W = u.shape
+    rr, cc = np.mgrid[0:H, 0:W].astype(np.float64)
+    sp = np.hypot(u, v)
+    m = np.isfinite(u) & np.isfinite(v) & (sp > min_speed) & (sp <= max_speed)
+    if mask is not None:
+        m &= np.asarray(mask, bool)
+    n = int(np.count_nonzero(m))
+    if n < 3:
+        raise ValueError("fewer than 3 usable flow vectors")
+    fx, fy = u[m] / sp[m], v[m] / sp[m]
+    nx, ny = -fy, fx                                     # 流線の法線
+    px, py = cc[m], rr[m]
+    c = nx * px + ny * py                                # 流線: nx·x + ny·y = c
+    w = np.ones(n)
+    F = None
+    res = None
+    for _ in range(int(iters)):
+        A = np.array([[np.sum(w * nx * nx), np.sum(w * nx * ny)], [np.sum(w * nx * ny), np.sum(w * ny * ny)]])
+        b = np.array([np.sum(w * nx * c), np.sum(w * ny * c)])
+        if abs(np.linalg.det(A)) < 1e-12 * max(1.0, float(np.trace(A)) ** 2):
+            raise ValueError("flow lines are parallel; FoE is not determined")
+        F = np.linalg.solve(A, b)
+        res = np.abs(nx * (px - F[0]) + ny * (py - F[1]))
+        dist = np.maximum(np.hypot(px - F[0], py - F[1]), 1.0)
+        ang = res / dist
+        w = (1.0 / dist) / (1.0 + (ang / angle_scale) ** 2)
+    return {"foe": (float(F[0]), float(F[1])), "n": n, "residual": float(np.median(res))}

@@ -489,7 +489,7 @@ from driveworld import (  # noqa: E402,F401
 import drivettc  # noqa: E402  (τ 理論の衝突までの時間: 深度像 + 剛体運動の閉形式が真値)
 from drivettc import (  # noqa: E402,F401
     camera_backproject, camera_project, relative_motion, foe_from_motion, flow_from_depth_motion, ttc_truth,
-    ttc_from_flow, ttc_from_scale, ttc_from_range, label_extent,
+    ttc_from_flow, ttc_from_scale, ttc_from_range, label_extent, foe_from_flow,
 )
 import rsssafety  # noqa: E402  (RSS の安全距離: 閉形式 + 最悪ケースの積分)
 from rsssafety import (  # noqa: E402,F401
@@ -498,6 +498,12 @@ from rsssafety import (  # noqa: E402,F401
     rss_worst_case_gap_lateral,
 )
 import lidarsim  # noqa: E402  (回転式 LiDAR をメッシュに撃つ)
+import driveterrain  # noqa: E402  (閉形式の地形・路面の材質・手続きの木と歩行者: 世界は生成時に真値を持つ)
+from driveterrain import (  # noqa: E402,F401
+    perlin2, fbm_params, fbm_height, fbm_gradient, radial_periodogram, spectral_slope, course_distance,
+    terrain_params, terrain_height, terrain_gradient, terrain_mesh, world_apply_terrain, material_params,
+    world_materials, tree_mesh, pedestrian_mesh, crosswalk_mesh, add_mesh_object, scatter_offroad, mesh_signed_volume,
+)
 from lidarsim import (  # noqa: E402,F401
     lidar_spec, lidar_scan, lidar_points_sensor_frame, lidar_range_image_to_points, ray_plane_range,
     ray_box_ranges,

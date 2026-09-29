@@ -47,6 +47,7 @@ This series lines up the ops built on that bar, one per instalment. Every instal
 | 1 | [How a car turns shortest](#1-how-a-car-turns-shortest) | Dubins / Reeds–Shepp theorems / forward integration / SLSQP second implementation / Hybrid A* = closed form on an empty grid |
 | 2 | [The driving school opens — build the world that carries its own truth first](#2-the-driving-school-opens--build-the-world-that-carries-its-own-truth-first) | Closed-form areas from the regulation sizes / closed-form ray hits on a plane / two sensors, one world / two point-in-polygon implementations |
 | 3 | [Time to collision and safe distance — optical-flow τ and the RSS closed forms, scored by the driving-school world's truth](#3-time-to-collision-and-safe-distance--optical-flow-τ-and-the-rss-closed-forms-scored-by-the-driving-school-worlds-truth) | Closed-form τ from depth + rigid motion / the one-frame identity / published RSS parameters and test values / Lemma 2 = worst-case integration |
+| 4 | [Widening the world — closed-form terrain, world-space materials and procedural trees and pedestrians win the focus of expansion back from flow](#4-widening-the-world--closed-form-terrain-world-space-materials-and-procedural-trees-and-pedestrians-win-the-focus-of-expansion-back-from-flow) | Perlin's theorem (zero at lattice points, period, analytic derivative) / fBm spectrum β = 2H + 2 / point–segment distance is eikonal / divergence-theorem volumes / rendered depth back-projected to the world / pure-translation flow radiates from the FoE (true flow = motion) |
 
 ---
 
@@ -456,8 +457,164 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 
 ---
 
+## 4. Widening the world — closed-form terrain, world-space materials and procedural trees and pedestrians win the focus of expansion back from flow
+
+![Driving the loop up and down through rolling terrain while the focus of expansion is estimated from road flow](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/06_drive_gif.gif)
+
+*↑ In-car camera, 0 → 10 s (51 frames, 6 m/s). Arrows are Lucas–Kanade flow (×4), the orange cross is the focus of expansion estimated from flow, green is the truth. The road carries grain, puddles and worn lane paint, a pedestrian crosses at the crosswalk, and outside the road there is fBm relief with trees. The numbers at the top are the road grade and the FoE error (all pixels / road only). **The focus of expansion that missed by 62 px in part 3 lands within 1–2 px once the road has texture** — and because every grain of that texture is a world-coordinate formula, the error can be counted in pixels.*
+
+Part 3 ended with two honest caveats. The focus of expansion (FoE) was taken as "known": the road had no texture, flow existed only on the car and the lamp post, and a least-squares estimate missed by a median of 62 px. And the world ended 8 m outside the course. This part widens the world — under one condition: **everything added must carry its truth from the moment it is generated.**
+
+That condition is the design axis of this series, fixed in part 2 when it switched to building the world instead of borrowing one. Synthetic datasets (Virtual KITTI, SYNTHIA, CARLA) also take labels, depth and flow from a renderer, and those are stricter than human labels. The difference is the **kind** of truth. A renderer can say which face a pixel belongs to and how far away it is; the height and gradient of the ground, the distance to the road, the wear of a lane marking, the reflectance of a puddle are values baked into a mesh or a texture, not formulas. Here the terrain height, its gradient, the distance to the course, the wear and the reflectance are **closed-form fields**. When a field is a formula, the rendered image can be projected back onto it and compared with it, and theorems — a spectral law, the eikonal equation, the divergence theorem — become gates. This is the opposite purpose to domain randomization (Tobin et al. 2017), which scatters appearance so that a learner becomes insensitive to it: here appearance is not scattered but derived from fields that hold the truth, for **scoring** rather than training.
+
+**How this differs from prior work.** Before starting, I searched my own literature corpus (procedural terrain, road networks, OpenDRIVE, synthetic driving datasets, domain randomization, hard road surfaces; 1,652 OpenAlex papers). Terrain generators are numerous — fBm, Perlin, Weierstrass–Mandelbrot, hydraulic erosion — but no abstract in the corpus states the relation between spectral slope and Hurst exponent **as a test**; the closest are a 2006 paper that estimates fractal dimension from the slope of a log–log periodogram and a 2023 paper that generates road-surface profiles from a prescribed PSD. Road-network generators (Parish and Müller 2001 with L-systems, Chen et al. 2008 with tensor fields) build streets, but no abstract names clothoids, Euler spirals or paramPoly3 as a checked invariant, and a 2022 validation study of 99 OpenDRIVE datasets found lane gaps in roughly 20 % of them — map geometry usually has no gate at all. Synthetic driving datasets (Virtual KITTI with detection, tracking, semantic and instance labels, depth and flow; SYNTHIA with pixel labels; Playing for Data with semantic labels captured from GTA V; the CARLA-derived SELMA with many sensors and weathers; SynPeDS with pedestrians and safety metadata) all take their labels from a renderer, so nothing in them can be checked against a theorem. Hard road surfaces — puddles (polarisation stereo in 2017, a reflection-attention cGAN in 2019, AGSENet in 2024), worn lane markings, crosswalks (CDSet, 3,434 images), occluded pedestrians — are almost all hand-labelled; the only truth-bearing synthetic sources are a 2025 3D-Gaussian-splatting renderer for rain and reflections and a 2026 Blender puddle set, and no generator synthesises worn markings with a wear truth. The difference here is that every field of the world — height, gradient, distance to the course, wear, puddle reflectance — is a closed-form function, so the gates are **theorems and identities** rather than agreement with a renderer.
+
+### Recipe
+
+```
+relief = sum of random-phase sinusoids (spectral synthesis of fBm, H = 0.8, 1,024 waves, periods 6–120 m) → height and gradient in closed form
+   → distance field to the course (point–segment distance, |∇d| = 1 off the road): flat within 2 m of the road, blended into the relief over 12 m → long-wave undulation on the road (±0.8 m)
+   → applied after the fact to part 2's flat world (the ground cells are replaced by the terrain mesh; assets are lifted rigidly by the height at their pose)
+   → 70 trees (prism + cone / spheroid) scattered ≥ 4 m from the road and ≥ 5 m apart, a crosswalk (9 stripes), a pedestrian (boxes + a solid of revolution), signs, lamp posts, cars, a cone
+   → render the in-car camera, back-project each pixel's depth to world coordinates, evaluate Perlin noise there: grain, grass, stains, puddles, worn paint, per pixel
+   → LK flow from two frames at 30 fps → least-squares FoE from the road pixels only → compare with the truth; also against the same terrain and trees with the texture removed
+```
+
+| Term | Meaning here |
+|---|---|
+| fBm (fractional Brownian motion) | A surface that looks equally rough at every magnification. One number, the Hurst exponent H (0–1), sets the roughness; larger H is smoother |
+| Power spectrum and β | The strength of each spatial frequency f in the surface. For fBm it is a straight line f^{−β}, with **β = 2H + E** (E = dimension, 2 for a surface; Saupe 1988) |
+| Spectral synthesis | Building the surface as a sum of sinusoids with amplitude ∝ f^{−H} and random direction and phase. A sum is a formula, so height and gradient are closed form |
+| Perlin gradient noise | Random gradient vectors on a lattice; the value is "gradient · offset from the lattice point", interpolated with a smooth polynomial (Perlin 2002). **The offset is zero at a lattice point, so the value is exactly zero there**; the permutation table has 256 entries, so the period is 256; differentiate the polynomial and the derivative is closed form |
+| Distance field and eikonal | The shortest distance d(x, y) from a point to the road. Where the nearest point is unique, ∇d is the unit vector pointing away from it, so \|∇d\| = 1 (the eikonal equation). The terrain uses d to stay flat near the road |
+| Divergence-theorem volume | The volume of a closed mesh is Σ v₀ · (v₁ × v₂) / 6. Prisms and polygonal cones match their closed forms exactly; an inscribed spheroid never exceeds its bound |
+| World-space material | Texture decided by the world's (x, y), not by image coordinates. The pattern stays glued to the road as the car moves, which is what produces flow |
+| Balanced error rate | The mean of the miss rate and the false-alarm rate of a two-class rule. When no threshold brings it down, the classes are genuinely hard to tell apart |
+
+The new ops live in one module, **driveterrain** (fBm, Perlin, distance field, terrain, materials, trees, pedestrian, crosswalk, scattering, volume). `foe_from_flow`, which estimates the FoE from flow, was added to part 3's **drivettc**.
+
+There are only four formulas and all are readable. **(1) Relief**: h(x, y) = Σ_k A_k cos(2π f_k (x cos θ_k + y sin θ_k) + φ_k). Draw the frequencies f_k log-uniformly and their density in the 2-D frequency plane is ∝ 1/f²; with amplitudes A_k ∝ f^{−H} the power is A² × density ∝ f^{−(2H+2)} — the theorem's β = 2H + 2 falls out directly. The gradient is the sum of the term-wise derivatives. **(2) Terrain**: z = h · w(d) + undulation, where w is a smoothstep that is 0 up to 2 m from the road and reaches 1 over the next 12 m. The product rule ∇(h·w) = w∇h + h·w′(d)·∇d, with ∇d the normal of the distance field, keeps the gradient closed form. **(3) Materials**: back-project the rendered depth to recover each pixel's world (x, y) and evaluate Perlin noise there. A puddle is where the noise exceeds a level (label 11); with wear ∈ [0, 1] the paint colour is white · (1 − wear) + road · wear. **(4) FoE**: under pure translation the flow radiates from the FoE (Longuet-Higgins and Prazdny 1980), so the line through each pixel along its flow direction — its flow line — must pass through the FoE. The FoE is the point minimising Σ w_i · dist(F, flow line_i)², a 2 × 2 normal equation; the weights fall with distance (a direction error at a far pixel moves the estimate most) and an angular residual rejects outliers.
+
+[![The loop course in rolling terrain](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain.png)
+
+*↑ The world from the south-west, from above (t = 6 s). The fBm relief (H = 0.8, periods 6–120 m, RMS set to 2.5 m) is flat within 2 m of the road and blends in over 12 m. The road carries a long-wave undulation (amplitude 0.8 m). 70 trees are scattered at least 4 m from the road and 5 m from each other. The world extends 40 m beyond the course (8 m in part 3).*
+
+### Gates and scores
+
+Three kinds of truth: **theorems** (Perlin, the fBm spectrum, eikonal, divergence, radial flow), **closed-form fields** (height, gradient, distance, wear) and **the identity between rendered depth and the world**. No trained model and no external renderer.
+
+| Claim | Measured | Where the truth comes from |
+|---|---|---|
+| Perlin noise obeys its theorem | Over 4,000 random points: max \|value\| at lattice points **2.7e-15**, period-256 error 9.3e-14, range [−0.594, 0.599], analytic derivative vs central difference **6.8e-10** | Theorem (zero at lattice points, period, derivative) |
+| The relief's spectrum is 2H + 2 | H = 0.8, 1,024 waves, periods 6–120 m, RMS 2.70 m on a 512² grid: log–log slope of the radial periodogram **β̂ = 3.591**, theorem 3.6 (difference −0.009, 12 bins, tolerance 0.25) | Saupe 1988 |
+| The distance field is eikonal | 2,635 points off the road: median \|∇d\| **1.00000000** (99th percentile 1.000000); 335 points on the road: d = 0 | Closed-form point–segment distance |
+| Terrain identities | Closed-form gradient vs central difference **4.2e-10**; the 8,625 mesh vertices equal the closed form (difference 0); on the road the height is the undulation alone (difference 0). Relief −7.91 to +9.56 m | Closed form |
+| The scattering keeps its promise | 70 trees at least **5.32 m** apart (promised 5 m) and **5.91 m** from the road (promised 4 m) | Distance field |
+| Closed-form volumes | Conifer (octagonal prism + octagonal cone): divergence-theorem volume **9.800076 = closed form 9.800076**. Broadleaf crown 23.344 ≤ spheroid 26.465 (0.882×), pedestrian's head 0.00513 ≤ sphere 0.00565 (0.907×). Crosswalk area = 9 stripes × 0.45 × 4 = **16.20 m²** | Divergence theorem; inscribed bounds |
+| The rendered world matches the formulas | In-car camera (60°, 640 × 400, t = 6 s), 119,575 road/terrain/puddle pixels: back-projected height vs closed form, median **0.4 mm**, 99th percentile 0.130 m (the chord of a 2 m cell). All 1,991 puddle pixels are on the road, all 37,082 terrain pixels are off it. The colour of the 2,624 paint pixels = white and road mixed by the wear, times shading (difference **0**) | Rendered depth back-projected to the world |
+| Hard things are genuinely hard | Worn paint (brightness 0.29–0.54) vs puddles (0.37–0.65; road 0.28): the best brightness threshold in either direction (θ = 0.47, "darker is paint") has a balanced error rate of **25 %** | Per-pixel truth (label, wear, puddle) |
+| The FoE theorem | In all 51 frames the FoE from the true flow and the FoE from the ego motion differ by at most **6.4e-14 px**. Up and down the slope the true FoE moves across rows 140.0–147.5 px (grade −1.5 to +1.5 %, crest at t = 5 s) | Radial theorem (true flow = depth + motion) |
+| Texture wins the FoE back | From LK (30 fps, road pixels, median flow error 0.67 px): textured, road only, median **1.9 px** (90th percentile 6.0); all pixels 1.2 px. Untextured (same terrain, same trees, 11 frames one second apart) **57.2 px** | True FoE |
+
+Side by side on the same frames (road-only error in px at t = 0, 1, …, 10 s): textured 2.0 / 0.7 / 1.7 / 2.4 / 4.3 / 3.1 / 25.9 / 0.6 / 1.3 / 0.6 / 1.4, untextured 59.2 / 70.0 / 57.2 / 45.4 / 60.0 / 62.1 / 44.4 / 43.2 / 27.2 / 3.6 / 107.3. The untextured road has one frame (t = 9 s) at 3.6 px and the textured road has one frame (t = 6 s) at 25.9 px. The gate is on medians, and the ratio was not "at least 2×" but more than 20×.
+
+[![One in-car frame and its truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/03_incar_materials_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/03_incar_materials.png)
+
+*↑ One in-car frame (60°, 640 × 400, t = 6 s) and its per-pixel truth. (a) colour, (b) labels (road, terrain, kerb, paint, crosswalk, puddle, tree, pedestrian), (c) paint wear (0 = white, 1 = road), (d) the truth fields (red = stain, blue = puddle, green = wear). The materials are evaluated at world coordinates recovered from the rendered depth, so label, wear, puddle and stain are exact per pixel. Worn paint and puddles cannot be separated by a brightness threshold better than a 25 % error rate.*
+
+[![The focus of expansion from flow](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/04_foe_from_flow_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/04_foe_from_flow.png)
+
+*↑ t = 1.2 s (the frame whose road-only error is closest to the median), 480 × 300, two frames at 30 fps. The focus of expansion is found by least squares from the LK flow of the road pixels alone (arrows ×4); orange = estimate, green = truth. (a) Textured road: 1.9 px from the truth. (b) Same terrain and trees with a plain road: flow survives only at the paint and kerb edges, and the estimate misses by 91.5 px.*
+
+### ★ Where you will get it wrong
+
+#### 1. Average the periodogram over rings; integrating shifts β by one
+
+When you collapse a 2-D periodogram radially, **summing** the power inside a ring at radius f multiplies by the ring's area ∝ f and flattens the slope by exactly one. The theorem β = 2H + 2 refers to the **average**. A summing implementation returns β̂ ≈ 2.6 at H = 0.8 and misdiagnoses the surface as "not fBm". Also drop the DC term and apply a window (Hann). A finite band and a window bias the slope towards steeper, which is why the gate is 0.25 wide. This run's difference was −0.009, the opposite sign to that bias — one run cannot say how large the bias is.
+
+#### 2. 512² × 1,024 waves at once is 2 GB
+
+The sum of sinusoids is one line if you build the (points × waves) matrix, but 512² grid points × 1,024 waves in double precision is 2 GB. Chunking the points by 16,384 makes each temporary array 128 MB (16,384 × 1,024 × 8 B) and does not change the time (5.4 s for the 512² surface). The terrain is not "fast because closed form"; it is exact because closed form, and fast only if you chunk.
+
+#### 3. Heights recovered from rendered depth may differ from the formula by 13 cm
+
+The terrain mesh is made of triangles over 2 m cells, so a back-projected depth lands on a **chord** of the mesh, not on the closed-form surface. The median is 0.4 mm but the 99th percentile is 0.130 m, and that is the chord error of the cell. A 1 mm gate fails a correct implementation. When you know the discretisation, open the gate by exactly that much — "median < 1 cm, 99 % < 15 cm" — and write down why.
+
+#### 4. Use π for a cone on a polygonal base and you are 10 % off
+
+The conifer's crown is a cone on an octagonal base, so its volume is ⅓ · (½ n R² sin(2π/n)) · h, not ⅓ π R² h. At n = 8, ½ · 8 · sin(π/4) = 2.828, which is 0.90 π — a truth that assumes a circle rejects a correct mesh by 10 %. A spheroid built by revolution is inscribed and never gives an equality, so its gate is "0.8–1× the bound" (measured 0.882; the head 0.907). Either **write the truth with the same discretisation as the mesh**, or make it an inequality.
+
+#### 5. Flow pairs at 30 fps, records at 5 fps
+
+As part 3 showed, LK flow is usable only between one and a dozen pixels. At 6 m/s the near road pixels move more than 50 px in 0.2 s, so the flow pair is 1/30 s apart while records and the GIF step every 0.2 s. This run's median flow error of 0.67 px is at that spacing. The least-squares FoE divides the weight of far pixels by their distance: their flow is small and its direction noisy, yet their flow lines are what move the FoE most.
+
+### What it is bad at
+
+**The trees and the pedestrian are not real shapes.** Trees are prisms with cones or spheroids; the pedestrian is boxes and a solid of revolution — shapes chosen so that a closed-form volume exists. Their appearance as detector training data is not the purpose; the truth of "which pixel is a tree" and of the volume is.
+
+**Puddle reflections only mix in the sky colour**; there is no mirror geometry (what would actually be reflected). The reflectance field is kept per pixel as truth, but it means "how much sky was mixed in", not optics.
+
+**The 25 % confusion is by design.** Worn paint and puddles were made so that brightness cannot separate them. That number is not a detector's score; it is evidence that the world contains hard things — and because the truth is exact per pixel, the mistakes can be counted.
+
+**The ego car does not brake for the pedestrian.** The pedestrian is timed to finish crossing before the car reaches the crosswalk; braking decisions are the job of part 3's RSS.
+
+**The 1–2 px FoE error includes the LK bias.** The median flow error of 0.67 px is for this texture and this window (15 px, 5 levels); the split between the LK share and the least-squares share was not measured.
+
+### Run it
+
+```bash
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 examples/poc_world_terrain.py         # 10 gates and 6 figures, about 46 s
+```
+
+```python
+import numpy as np
+import fullseye as fs
+
+road = fs.ledger.course_road(30.0, 7.0)                      # a straight road 7 m wide, 30 m long (x = 0 → 30, centreline y = 0)
+tp = fs.ledger.terrain_params(1, hurst=0.8, amplitude=2.0, flat=2.0, blend=10.0, road_amp=0.5)
+world = fs.ledger.world_build(road, ground_margin=30.0, ground_step=2.0)
+fs.ledger.world_apply_terrain(world, tp, step=2.0)          # apply the closed-form terrain to the flat world (in place)
+mat = fs.ledger.material_params(1, grain=0.15, puddle_level=0.42, wear=0.5)
+f = 160.0 / np.tan(np.radians(30.0))                         # 60° horizontal field of view, 320 × 200 (camera_intrinsics is not a ledger op, so write K directly)
+K = np.array([[f, 0.0, 160.0], [0.0, f, 100.0], [0.0, 0.0, 1.0]])
+
+def pose(x):                                                 # height follows the road, direction fixed (pure translation)
+    z = float(fs.ledger.terrain_height(np.array([[x]]), np.array([[0.0]]), tp, road)[0, 0]) + 1.35
+    return fs.look_at((x, 0.0, z), (x + 20.0, 0.0, z - 0.45))   # world → camera 4 × 4 (camera_pose is not a ledger op either)
+
+P0, P1 = pose(3.0), pose(3.2)                                # 6 m/s for 1/30 s
+v0 = fs.ledger.world_camera(world, P0, K, 320, 200)
+m0 = fs.ledger.world_materials(world, v0, P0, K, mat)        # materials at world coordinates recovered from depth
+print(int(m0["puddle"].sum()), "puddle pixels")               # → 563 puddle pixels (truth: label 11, per pixel)
+
+T = fs.ledger.relative_motion(P0, P1)
+tru = fs.ledger.flow_from_depth_motion(v0["depth"], K, T)    # the true flow (depth + motion)
+est = fs.ledger.foe_from_flow(tru["u"], tru["v"], tru["valid"] & (m0["label"] >= 0))
+print(np.round(fs.ledger.foe_from_motion(K, T), 3), np.round(est["foe"], 3))   # → [160. 91.062] [160. 91.062] (as the theorem says; the gate is 1e-6)
+```
+
+Besides `color`, `world_materials` returns `label`, `puddle`, `refl`, `stain`, `wear` and `xyz`. Once you write a detector, comparing against these gives a per-pixel score — no human labels and no renderer settings required.
+
+---
+
+This part produced **6 figures** in all — [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_world_terrain)
+
+#### The remaining figures of this part
+
+[![Spectrum of the relief](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/02_terrain_spectrum_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/02_terrain_spectrum.png)
+
+*↑ The radial periodogram of the fBm surface (H = 0.8) is a straight line in log–log: slope β̂ = 3.59, theorem (β = 2H + E, E = 2) 3.6. Fitted over the 12 bins in the band [1/100, 1/10] cycles/m.*
+
+[![FoE error](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error.png)
+
+*↑ Error of the estimated focus of expansion (distance to the truth, px). Median 1.9 px from the textured road pixels alone, 1.2 px from all pixels, 57.2 px on the plain road (dots, one per second). The ego drives up and then down (grade −1.5 to +1.5 %, crest at t = 5 s), so the true FoE also moves in the image.*
+
+---
+
 ## Next
-**Widen the world.** This part showed that without road texture the optical flow cannot pin the focus of expansion, and that the world ends 8 m outside the course. Next comes terrain — a generator for continuous relief and road-surface texture — plus signs, street trees, crosswalks and pedestrians, each carrying its truth (which pixel is which object, where the pedestrian is) from generation time. On top of that, the ego motion (focus of expansion) will be estimated from the flow, replacing this part's "known" quantities one at a time.
+**A second implementation of the world.** So far the world was built from formulas of my own: the road geometry was my polygons, the signs were only colours, and the traffic was one oncoming car. Next, road geometry is imported from the road-description standards OpenDRIVE / Lanelet2 (clothoids are exact, so arc length and curvature become closed-form gates), together with signs that carry meaning (speed limit, stop, no entry) and traffic in which several cars follow rules. On that widened world the first perception model — a detector for lanes, signs and pedestrians — is graded against the per-pixel truth, reporting "what percentage was right" instead of "it moved".
 
 ## References
 
@@ -471,3 +628,9 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 - H. C. Longuet-Higgins and K. Prazdny, "The interpretation of a moving retinal image", *Proc. R. Soc. Lond. B* 208, 1980 (focus of expansion).
 - S. Shalev-Shwartz, S. Shammah, A. Shashua, "On a Formal Model of Safe and Scalable Self-driving Cars", arXiv:1708.06374, 2017 (RSS; Lemma 2 and the opposite-direction and lateral closed forms).
 - Intel, *ad-rss-lib* (Apache-2.0): the parameter table in `doc/ad_rss/Appendix-ParameterDiscussion.md` and the expected values in `RssFormulaTests*.cpp`.
+- K. Perlin, "Improving noise", *Proc. SIGGRAPH*, 2002 (gradient noise with quintic interpolation).
+- D. Saupe, "Algorithms for random fractals", in H.-O. Peitgen and D. Saupe (eds.), *The Science of Fractal Images*, Springer, 1988 (spectral synthesis of fBm; β = 2H + E).
+- A. Gaidon, Q. Wang, Y. Cabon, E. Vig, "Virtual worlds as proxy for multi-object tracking analysis", *CVPR*, 2016 (Virtual KITTI).
+- G. Ros, L. Sellart, J. Materzynska, D. Vazquez, A. M. Lopez, "The SYNTHIA dataset: a large collection of synthetic images for semantic segmentation of urban scenes", *CVPR*, 2016.
+- A. Dosovitskiy, G. Ros, F. Codevilla, A. Lopez, V. Koltun, "CARLA: an open urban driving simulator", *CoRL*, 2017.
+- J. Tobin, R. Fong, A. Ray, J. Schneider, W. Zaremba, P. Abbeel, "Domain randomization for transferring deep neural networks from simulation to the real world", *IROS*, 2017.

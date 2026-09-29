@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsdrive — 自動運転の教習所ワールドの台帳: 規格寸法のコース(2-D)/ 3-D の世界 / 回転式 LiDAR / カメラ /
-τ 理論の衝突までの時間(drivettc)/ RSS の安全距離(rsssafety)。
+τ 理論の衝突までの時間(drivettc)/ RSS の安全距離(rsssafety)/ 閉形式の地形と路面の材質・手続きの物体(driveterrain)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -17,13 +17,14 @@ Usage:
     opsdrive.get("course_crank")()
 """
 import drivecourse
+import driveterrain
 import drivettc
 import driveworld
 import lidarsim
 import rsssafety
 
 _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidarsim, "drivettc": drivettc,
-        "rsssafety": rsssafety}
+        "rsssafety": rsssafety, "driveterrain": driveterrain}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -70,6 +71,7 @@ _CATALOG = {
         ("ttc_from_scale", "drivettc", [], "scalar"),
         ("ttc_from_range", "drivettc", [], "scalar"),
         ("label_extent", "drivettc", ["labels2d"], "table"),
+        ("foe_from_flow", "drivettc", ["image2d", "image2d"], "table"),
     ],
     # RSS(Shalev-Shwartz 2017)の安全距離: 閉形式(Lemma)と最悪ケースの時間積分(第 2 実装)、公表値は ad-rss-lib の表と試験。
     "rss": [
@@ -83,6 +85,30 @@ _CATALOG = {
         ("rss_worst_case_gap", "rsssafety", ["table"], "table"),
         ("rss_worst_case_gap_opposite", "rsssafety", ["table"], "table"),
         ("rss_worst_case_gap_lateral", "rsssafety", ["table"], "table"),
+    ],
+    # 世界を広げる(16 巡目): 閉形式の地形(fBm のスペクトル合成 β = 2H + 2、Perlin の勾配雑音)、コースへの距離場(eikonal)、
+    # 世界座標で評価する路面の材質(真値 = ラベル・摩耗率・水溜り・染み)、手続きの木・歩行者・横断歩道(体積・面積の閉形式)。
+    "terrain": [
+        ("perlin2", "driveterrain", ["image2d", "image2d"], "table"),
+        ("fbm_params", "driveterrain", [], "table"),
+        ("fbm_height", "driveterrain", ["image2d", "image2d", "table"], "image2d"),
+        ("fbm_gradient", "driveterrain", ["image2d", "image2d", "table"], "any"),
+        ("radial_periodogram", "driveterrain", ["image2d"], "table"),
+        ("spectral_slope", "driveterrain", ["image2d"], "table"),
+        ("course_distance", "driveterrain", ["table", "points"], "table"),
+        ("terrain_params", "driveterrain", [], "table"),
+        ("terrain_height", "driveterrain", ["image2d", "image2d", "table"], "image2d"),
+        ("terrain_gradient", "driveterrain", ["image2d", "image2d", "table"], "any"),
+        ("terrain_mesh", "driveterrain", ["table", "table"], "table"),
+        ("world_apply_terrain", "driveterrain", ["table", "table"], "table"),
+        ("material_params", "driveterrain", [], "table"),
+        ("world_materials", "driveterrain", ["table", "table", "matrix", "matrix", "table"], "table"),
+        ("tree_mesh", "driveterrain", [], "table"),
+        ("pedestrian_mesh", "driveterrain", [], "table"),
+        ("crosswalk_mesh", "driveterrain", [], "table"),
+        ("add_mesh_object", "driveterrain", ["table", "table"], "scalar"),
+        ("scatter_offroad", "driveterrain", ["table"], "points"),
+        ("mesh_signed_volume", "driveterrain", ["points", "matrix"], "scalar"),
     ],
 }
 
