@@ -46,6 +46,7 @@ This series lines up the ops built on that bar, one per instalment. Every instal
 |---|---|---|
 | 1 | [How a car turns shortest](#1-how-a-car-turns-shortest) | Dubins / Reeds–Shepp theorems / forward integration / SLSQP second implementation / Hybrid A* = closed form on an empty grid |
 | 2 | [The driving school opens — build the world that carries its own truth first](#2-the-driving-school-opens--build-the-world-that-carries-its-own-truth-first) | Closed-form areas from the regulation sizes / closed-form ray hits on a plane / two sensors, one world / two point-in-polygon implementations |
+| 3 | [Time to collision and safe distance — optical-flow τ and the RSS closed forms, scored by the driving-school world's truth](#3-time-to-collision-and-safe-distance--optical-flow-τ-and-the-rss-closed-forms-scored-by-the-driving-school-worlds-truth) | Closed-form τ from depth + rigid motion / the one-frame identity / published RSS parameters and test values / Lemma 2 = worst-case integration |
 
 ---
 
@@ -316,9 +317,147 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 
 ---
 
-## Next
+## 3. Time to collision and safe distance — optical-flow τ and the RSS closed forms, scored by the driving-school world's truth
 
-**Time to collision from optical flow, and the safe distance.** For a fronto-parallel surface approaching head-on, the time to collision τ is fixed by the divergence of the flow alone (Lee 1976, TTC = 2 / divergence) — without knowing distance or speed. An oncoming car will drive through the school that opened in this part, the optical flow will be taken from two frames of the in-car camera, and the approach will be scored against the **true TTC the world knows**. Alongside it, the closed-form safe distance of Mobileye's RSS (Shalev-Shwartz et al. 2017, Lemma 2) will be checked with published response times, accelerations and decelerations.
+![An oncoming car approaches, passes, and RSS stops the ego car in front of a parked one](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/06_approach_gif.gif)
+
+*↑ In-car camera, 0 → 10 s. While the oncoming car is in view its pixels carry the optical flow (arrows) and the true focus of expansion (cross), with the "true τ" and the "τ from flow" side by side at the top. After it passes, RSS flags the parked car in the ego lane as dangerous (t = 6.0 s), the ego brakes and stops 10.25 m short. **The numbers move** because the world holds the truth — τ and gap are not estimates, they are fixed at generation time.*
+
+Part 2 built the world, but nothing in it moved. This part sends a car the other way. Two questions: **how many seconds until we collide**, and **how many metres should we keep**. The first is Lee's (1976) τ theory — the time to collision with an approaching surface follows from how fast its image grows, with no distance and no speed; flies and humans brake on it. The second is Mobileye's RSS (Shalev-Shwartz et al. 2017) — from a response time and bounds on acceleration it gives, in closed form, the distance below which you are to blame. Both are **textbook formulas**, and in this world both can be checked against truth.
+
+### Recipe
+
+```
+Part 2's loop course (south straight, 80 m, left-hand traffic) → ego 8 m/s (north lane), oncoming 8 m/s (south lane), parked car ahead in the ego lane
+   → in-car camera 60°, 640 × 400, 10 Hz, 4.5 s (46 frames)
+   → τ three ways: truth (depth image + rigid motion between frames, closed form) / from flow (LK → time_to_contact) / from size (square root of area)
+   → RSS: closed-form safe distances with the published parameters → time-integrate the worst case and compare → three school scenes with verdict and braking
+```
+
+| Term | Meaning here |
+|---|---|
+| τ (tau) | Time to collision. With Z the depth of the surface and Ż its rate, τ = Z / (−Ż). At constant speed it falls one second per second (dτ/dt = −1) |
+| Focus of expansion (FoE) | For a translating camera, the image point the flow radiates from — the image of the heading |
+| Optical flow | Where each pixel moved between two frames, (u, v). Here pyramidal Lucas–Kanade, 5 levels |
+| RSS | Responsibility-Sensitive Safety: the definition and closed form of the distance at which, whatever the other car does within bounds, your prescribed response avoids contact |
+| ρ (response time) | Time from the situation becoming dangerous to the start of braking; the worst case assumes you may accelerate meanwhile |
+| a_min,brake / a_max,brake | The least deceleration you are guaranteed to apply / the most the other car might apply |
+| Proper response | What RSS prescribes: anything up to a_max,accel during ρ, then at least a_min,brake until stopped |
+
+Two new modules. **drivettc** derives, per pixel and in closed form, the true flow and the true τ from the depth image and the rigid motion; the flow-based τ wraps the existing `time_to_contact` and converts it to seconds. **rsssafety** holds the RSS closed forms for same-direction, opposite-direction and lateral distances, the worst-case time integration, and the verdicts. All three τ values are aligned to **the time of the first frame** — there is a one-frame trap here, described below.
+
+[![In-car camera and flow at t = 4 s](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow.png)
+
+*↑ t = 4 s. The flow on the oncoming car's pixels (arrows ×3) points outward from the focus of expansion (cross); its radial speed gives τ = 0.84 s (truth 0.84 s). The road has no texture, so flow exists only on the car and the lamp post.*
+
+### Gates and scores
+
+Three kinds of truth: **closed forms from the depth image and the rigid motion** (τ), **published values** (the RSS parameter table and test values), and **a theorem agreeing with an integration** (Lemma 2).
+
+| Claim | Measured | Where the truth comes from |
+|---|---|---|
+| The true flow gives τ back (identity) | Feeding the true flow to `time_to_contact` and adding one frame matches the true τ₀ to **8.5e-14** (46 frames, every pixel of the car) | Closed form |
+| τ falls one second per second | The car's nearest pixel's τ equals "distance to the front bumper / closing speed" within 8.3e-3, slope **−1.0045** | Poses and speeds |
+| Flow yields τ | Over the 22 frames where the car covers ≥ 150 px, LK τ has median relative error **0.026** (90th percentile 0.30); over all 46 frames 0.135 | Closed form |
+| Size yields τ | From the square root of the area (0.5 s apart), median relative error **0.045** (90th percentile 0.12); the truth lies inside the quantisation band [area ± perimeter/2] in 17 / 19 frames | Closed form |
+| RSS closed forms match the published values | ad-rss-lib's five lateral test values within **0.0065** (tolerance 0.01). Same direction at 50 km/h: **39.8 m** with no acceleration (published ≈ 40), **83.6 m** with 4 m/s² (published "about 80") | Published values |
+| Lemma 2 agrees with the worst-case integration | At v = 8 m/s, d_min = 26.28 m; integrating from there the minimum gap is **4.3e-14**. Over 50 random parameter sets \|min_gap − (d₀ − d_min)\| < 1e-13, and collision/no collision agree | Second implementation |
+| The school stops in time | Danger at 26.25 m (< 26.28) → speed held for ρ = 1 s, then 4 m/s² → final gap **10.25 m** = gap(t_b) − (vρ + v²/2b) to 1e-9 | Closed form |
+| τ shouts, RSS does not | For the car in the other lane true τ falls to **0.30 s**, yet the lateral safe distance is **0.725 m** < the 2.2 m lane gap, and RSS never flags danger | Closed form |
+| Drift over and it is dangerous | If the oncoming car drifts sideways at 0.6 m/s the lateral safe distance jumps to **2.45 m** and danger starts at t = 1 s; the longitudinal gap of 58.25 m is then already inside the **82.9 m** opposite-direction distance, and the worst case collides (minimum gap −24.7 m) | Second implementation |
+
+[![The four τ curves](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves.png)
+
+*↑ The two truth lines (overlapping) fall from 5 s at slope −1. Flow-based τ (light blue) sits on the truth from t ≥ 2 s and scatters at range where the flow is below one pixel. Size-based τ (orange) stays close throughout.*
+
+[![RSS stops before the parked car](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/04_rss_same_direction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/04_rss_same_direction.png)
+
+*↑ The gap to the parked car (blue) drops below the safe distance (orange, 26.28 m at v = 8) at t = 6.0 s: danger. Speed held for one second, then 4 m/s². The safe distance falls with v during braking.*
+
+### ★ Where you will get it wrong
+
+#### 1. τ from a two-frame flow is the τ one frame later
+
+τ = Z / (−Ż) is an instantaneous quantity. With flow from two frames, an image point moves to Z₀/Z₁ times its distance from the focus of expansion, so `time_to_contact`'s "radius² / (radial flow · radius)" is **Z₁ / (Z₀ − Z₁) frames** — the τ at the second frame, exactly **one frame less** than at the first. At 10 Hz that is 0.1 s, which is 20 % when τ is 0.5 s. Add one frame and it matches the truth to 1e-13 (gate 1). The difference is one frame even when the speed is not constant, so it suffices to decide which instant your τ refers to and be consistent. The size-based τ has the same one-frame offset (Δt·w₁/(w₁ − w₀) at the first frame, Δt·w₀/(w₁ − w₀) at the second).
+
+#### 2. Flow-based τ works only while the flow is one to a dozen pixels
+
+At range (car under 100 px, flow under one pixel) LK τ is 20–70 % off; too close (flow over 50 px) even five pyramid levels lose track. In between, 22 frames give a median of 2.6 %. Lengthening the frame interval to gain flow sounds right and made things worse here (0.3 s apart: four times the error) — LK assumes appearance does not change, and an approaching car changes appearance. "Flow gives τ" is conditional, and the condition can be written in pixels of flow.
+
+#### 3. Size-based τ loses to area quantisation
+
+Since the square root of the area n scales as 1/Z, τ₀ = Δt / (1 − √(n₀/n₁)). One frame apart (0.1 s) the area gain (30 px at τ = 2 s and 300 px) is smaller than the edge quantisation (half of an 80 px perimeter) and the band opens to infinity. Half a second apart the truth lies inside the band in 17 of 19 frames; the two outliers are the car's silhouette not being planar (its side comes into view as it nears). **From the same two frames, flow wants a short interval and size wants a long one** — keep separate intervals if you use both.
+
+#### 4. The lateral RSS formula differs in sign handling between the paper and the public implementation
+
+The paper's lemma is written for the case where both cars are still moving toward each other after ρ; outside that case (one is still moving away) the literal formula adds the receding car's stopping distance **in the approaching direction**. Intel's public ad-rss-lib adds the stopping distance only when the post-response velocity points at the other car, and treats μ differently (paper μ + [·]₊, library [· + μ]₊). The published test values are the library's, so this implementation follows the library and gates that it agrees with the paper inside the paper's assumption (over 100 of 300 random cases satisfy it; agreement to 1e-9). "The paper's formula verbatim" and "the same as the public implementation" are different claims.
+
+#### 5. The closing speed is v cos θ by the camera's pitch
+
+The in-car camera looks slightly down (1.4°). Depth is measured along the optical axis, so the closing speed of the oncoming car is not 16 m/s but 16·cos 1.4° = 15.995 m/s. Writing the truth as "distance / 16" is off by 3e-4 — small, but a 1e-9 gate does not pass. The truth formula must carry the axis direction.
+
+#### 6. The focus of expansion cannot be estimated from flow in this world
+
+A least-squares FoE from the whole flow field lands a median 62 px from the truth: the road has no texture, so flow exists only on the car and the lamp post. This part takes the ego motion as known and supplies the true FoE (reported, not gated). In real footage the road texture is what pins the FoE — **a world without texture kills the estimate**, a failure that tells you what to add to the world next.
+
+### What it is bad at
+
+**Ego motion is known.** The focus of expansion and the mask of the oncoming car's pixels (the world's face ids, standing in for a perfect detector) come from the truth. This is not a score for a whole perception pipeline with a detector and ego-motion estimation; it scores **whether the τ formulas and the RSS formulas agree with the world**.
+
+**RSS verdicts use two axes only**, longitudinal and lateral; intersections, right of way and occlusion (the paper's second half) are not included. The parameters are ad-rss-lib's "initial values for discussion"; neither the paper nor any law fixes numbers.
+
+**The oncoming car moves at constant speed in a straight line.** τ under deceleration, acceleration or mid-lane-change (dτ/dt ≠ −1) is not covered. The formulas apply as they are, but the "slope −1" gate is a constant-speed property.
+
+**The world ends 8 m outside the course** and the road surface is plain. No street trees, pedestrians or crosswalks yet — which is also why no flow can be taken from the road.
+
+### Run it
+
+```bash
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 examples/poc_ttc_rss.py         # 10 gates and 6 figures, about 35 seconds
+```
+
+```python
+import numpy as np
+import fullseye as fs
+
+# τ: one depth image, approaching at 8 m/s for 0.1 s (+z is forward in the camera frame)
+K = np.array([[34.6, 0.0, 31.5], [0.0, 34.6, 19.5], [0.0, 0.0, 1.0]])   # 64 × 40, 60° vertical (τ does not depend on K)
+depth = np.full((40, 64), 20.0)                                  # a wall 20 m ahead
+T = np.eye(4); T[2, 3] = 0.8                                     # 0.8 m closer per frame
+truth = fs.ledger.ttc_truth(depth, K, T, 0.1)
+flow = fs.ledger.flow_from_depth_motion(depth, K, T)              # the true flow (u, v)
+est = fs.ledger.ttc_from_flow(flow["u"], flow["v"], 0.1, foe=fs.ledger.foe_from_motion(K, T))
+print(round(float(np.nanmedian(truth["tau"])), 6), round(est["tau"], 6))
+# 2.5 2.5                                                         ← 20 m / 8 m/s; identical with the one-frame correction
+
+# RSS: ego at 8 m/s, a stopped car ahead. ρ 1 s, accel 3.5, braking 4 / 8 m/s² (the ad-rss-lib table)
+p = fs.ledger.rss_params()
+d_min = fs.ledger.rss_longitudinal_same(8.0, 0.0, p)
+sim = fs.ledger.rss_worst_case_gap(d_min, 8.0, 0.0, p)
+print(round(d_min, 3), round(sim["min_gap"], 9), sim["collided"])
+# 26.281 0.0 False                                                ← closed form = integration, exactly zero and no contact
+```
+
+---
+
+This part produced **6 figures** in all — [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ttc_rss)
+
+#### The remaining figures of this part
+
+[![Plan view](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan.png)
+
+*↑ The 80 m south straight from above (t = 3 s): ego (north lane, eastbound), oncoming car (south lane, westbound), parked car (x = 40).*
+
+[![Lateral safe distance](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/05_rss_lateral_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/05_rss_lateral.png)
+
+*↑ In their lanes the lateral gap of 2.2 m exceeds the 0.725 m safe distance, so falling τ (grey) never becomes danger. Once the oncoming car drifts at 0.6 m/s the safe distance jumps to 2.45 m and danger starts at t = 1 s.*
+
+---
+
+## Next
+**Widen the world.** This part showed that without road texture the optical flow cannot pin the focus of expansion, and that the world ends 8 m outside the course. Next comes terrain — a generator for continuous relief and road-surface texture — plus signs, street trees, crosswalks and pedestrians, each carrying its truth (which pixel is which object, where the pedestrian is) from generation time. On top of that, the ego motion (focus of expansion) will be estimated from the flow, replacing this part's "known" quantities one at a time.
 
 ## References
 
@@ -328,3 +467,7 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 - A. M. Shkel and V. Lumelsky, "Classification of the Dubins set", *Robotics and Autonomous Systems* 34, 2001.
 - D. Dolgov, S. Thrun, M. Montemerlo, J. Diebel, "Path planning for autonomous vehicles in unknown semi-structured environments", *Int. J. Robotics Research* 29, 2010.
 - The arrangement of the 44 Reeds–Shepp formulas follows OMPL (`ReedsSheppStateSpace`).
+- D. N. Lee, "A theory of visual control of braking based on information about time-to-collision", *Perception* 5, 1976.
+- H. C. Longuet-Higgins and K. Prazdny, "The interpretation of a moving retinal image", *Proc. R. Soc. Lond. B* 208, 1980 (focus of expansion).
+- S. Shalev-Shwartz, S. Shammah, A. Shashua, "On a Formal Model of Safe and Scalable Self-driving Cars", arXiv:1708.06374, 2017 (RSS; Lemma 2 and the opposite-direction and lateral closed forms).
+- Intel, *ad-rss-lib* (Apache-2.0): the parameter table in `doc/ad_rss/Appendix-ParameterDiscussion.md` and the expected values in `RssFormulaTests*.cpp`.

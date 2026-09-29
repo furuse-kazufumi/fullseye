@@ -1,8 +1,8 @@
 {
- "n_ops": 2242,
+ "n_ops": 2261,
  "tiers": {
   "color": 12,
-  "ledger": 1293,
+  "ledger": 1312,
   "nary": 17,
   "registry": 920
  },
@@ -4973,6 +4973,21 @@
    ]
   },
   {
+   "name": "flow_from_depth_motion",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "ttc",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
    "name": "flow_magnitude",
    "halcon": "",
    "in_sort": "flow_dense",
@@ -5294,6 +5309,20 @@
    "dim": "live4d",
    "in_sorts": [
     "volseq"
+   ]
+  },
+  {
+   "name": "foe_from_motion",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "signal",
+   "category": "ttc",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix"
    ]
   },
   {
@@ -7335,6 +7364,19 @@
    "dim": "3d",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "label_extent",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "ttc",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "labels2d"
    ]
   },
   {
@@ -12274,6 +12316,20 @@
    "in_sorts": []
   },
   {
+   "name": "relative_motion",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "ttc",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
    "name": "relative_pose",
    "halcon": "",
    "in_sort": "pose",
@@ -12807,6 +12863,132 @@
    "dim": "annotate",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "rss_lateral",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "rss",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "rss_lateral_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "rss",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "rss_longitudinal_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "rss",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "rss_longitudinal_opposite",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "rss",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "rss_longitudinal_same",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "rss",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "rss_params",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "rss",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "rss_stopping_distance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "rss",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "rss_worst_case_gap",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "rss",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "rss_worst_case_gap_lateral",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "rss",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "rss_worst_case_gap_opposite",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "rss",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -15503,6 +15685,57 @@
    ]
   },
   {
+   "name": "ttc_from_flow",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "ttc",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "ttc_from_range",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "ttc",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "ttc_from_scale",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "ttc",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "ttc_truth",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "ttc",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
    "name": "unpremultiply",
    "halcon": "",
    "in_sort": "rgba_premul",
@@ -16970,6 +17203,19 @@
     "table",
     "matrix",
     "matrix"
+   ]
+  },
+  {
+   "name": "world_move",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "world",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {

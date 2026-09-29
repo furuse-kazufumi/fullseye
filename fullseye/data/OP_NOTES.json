@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2242,
- "n_notes": 2248,
+ "n_ops": 2261,
+ "n_notes": 2267,
  "notes": {
   "vol_dilate": [
    {
@@ -15533,6 +15533,182 @@
     "path": "docs/ops/drive/lidar/ray_plane_range.md"
    }
   ],
+  "rss_lateral": [
+   {
+    "op": "rss_lateral",
+    "dim": "drive",
+    "category": "rss",
+    "in": "table",
+    "out": "scalar",
+    "path": "docs/ops/drive/rss/rss_lateral.md"
+   }
+  ],
+  "rss_lateral_check": [
+   {
+    "op": "rss_lateral_check",
+    "dim": "drive",
+    "category": "rss",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/rss/rss_lateral_check.md"
+   }
+  ],
+  "rss_longitudinal_check": [
+   {
+    "op": "rss_longitudinal_check",
+    "dim": "drive",
+    "category": "rss",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/rss/rss_longitudinal_check.md"
+   }
+  ],
+  "rss_longitudinal_opposite": [
+   {
+    "op": "rss_longitudinal_opposite",
+    "dim": "drive",
+    "category": "rss",
+    "in": "table",
+    "out": "scalar",
+    "path": "docs/ops/drive/rss/rss_longitudinal_opposite.md"
+   }
+  ],
+  "rss_longitudinal_same": [
+   {
+    "op": "rss_longitudinal_same",
+    "dim": "drive",
+    "category": "rss",
+    "in": "table",
+    "out": "scalar",
+    "path": "docs/ops/drive/rss/rss_longitudinal_same.md"
+   }
+  ],
+  "rss_params": [
+   {
+    "op": "rss_params",
+    "dim": "drive",
+    "category": "rss",
+    "out": "table",
+    "path": "docs/ops/drive/rss/rss_params.md"
+   }
+  ],
+  "rss_stopping_distance": [
+   {
+    "op": "rss_stopping_distance",
+    "dim": "drive",
+    "category": "rss",
+    "out": "scalar",
+    "path": "docs/ops/drive/rss/rss_stopping_distance.md"
+   }
+  ],
+  "rss_worst_case_gap": [
+   {
+    "op": "rss_worst_case_gap",
+    "dim": "drive",
+    "category": "rss",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/rss/rss_worst_case_gap.md"
+   }
+  ],
+  "rss_worst_case_gap_lateral": [
+   {
+    "op": "rss_worst_case_gap_lateral",
+    "dim": "drive",
+    "category": "rss",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/rss/rss_worst_case_gap_lateral.md"
+   }
+  ],
+  "rss_worst_case_gap_opposite": [
+   {
+    "op": "rss_worst_case_gap_opposite",
+    "dim": "drive",
+    "category": "rss",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/rss/rss_worst_case_gap_opposite.md"
+   }
+  ],
+  "flow_from_depth_motion": [
+   {
+    "op": "flow_from_depth_motion",
+    "dim": "drive",
+    "category": "ttc",
+    "in": "image2d × matrix × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/ttc/flow_from_depth_motion.md"
+   }
+  ],
+  "foe_from_motion": [
+   {
+    "op": "foe_from_motion",
+    "dim": "drive",
+    "category": "ttc",
+    "in": "matrix × matrix",
+    "out": "signal",
+    "path": "docs/ops/drive/ttc/foe_from_motion.md"
+   }
+  ],
+  "label_extent": [
+   {
+    "op": "label_extent",
+    "dim": "drive",
+    "category": "ttc",
+    "in": "labels2d",
+    "out": "table",
+    "path": "docs/ops/drive/ttc/label_extent.md"
+   }
+  ],
+  "relative_motion": [
+   {
+    "op": "relative_motion",
+    "dim": "drive",
+    "category": "ttc",
+    "in": "matrix × matrix",
+    "out": "matrix",
+    "path": "docs/ops/drive/ttc/relative_motion.md"
+   }
+  ],
+  "ttc_from_flow": [
+   {
+    "op": "ttc_from_flow",
+    "dim": "drive",
+    "category": "ttc",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/drive/ttc/ttc_from_flow.md"
+   }
+  ],
+  "ttc_from_range": [
+   {
+    "op": "ttc_from_range",
+    "dim": "drive",
+    "category": "ttc",
+    "out": "scalar",
+    "path": "docs/ops/drive/ttc/ttc_from_range.md"
+   }
+  ],
+  "ttc_from_scale": [
+   {
+    "op": "ttc_from_scale",
+    "dim": "drive",
+    "category": "ttc",
+    "out": "scalar",
+    "path": "docs/ops/drive/ttc/ttc_from_scale.md"
+   }
+  ],
+  "ttc_truth": [
+   {
+    "op": "ttc_truth",
+    "dim": "drive",
+    "category": "ttc",
+    "in": "image2d × matrix × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/ttc/ttc_truth.md"
+   }
+  ],
   "load_asset": [
    {
     "op": "load_asset",
@@ -15560,6 +15736,16 @@
     "in": "table × matrix × matrix",
     "out": "table",
     "path": "docs/ops/drive/world/world_camera.md"
+   }
+  ],
+  "world_move": [
+   {
+    "op": "world_move",
+    "dim": "drive",
+    "category": "world",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/world/world_move.md"
    }
   ],
   "holdout_threshold": [

@@ -46,6 +46,7 @@ public_id: 1f128b8a36df373c11c7
 |---|---|---|
 | 1 | [車は最短でどう曲がるか](#第-1-回-車は最短でどう曲がるか) | Dubins / Reeds–Shepp の定理 / 前進積分 / SLSQP の第 2 実装 / 空の格子で Hybrid A* = 閉形式 |
 | 2 | [教習所が開校する —— 真値を持った世界を先に作る](#第-2-回-教習所が開校する--真値を持った世界を先に作る) | 規格寸法の閉形式の面積 / 平面へのレイの閉形式 / 2 センサ 1 世界の恒等式 / 多角形の内外判定の 2 実装 |
+| 3 | [衝突までの時間と安全距離 —— τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する](#第-3-回-衝突までの時間と安全距離--τ-理論の光学流と-rss-の閉形式を教習所の世界の真値で採点する) | 深度像 + 剛体運動の閉形式(τ)/ 1 コマの恒等式 / RSS の公表パラメータ・試験値 / Lemma 2 = 最悪ケースの積分 |
 
 ---
 
@@ -315,9 +316,147 @@ print(scan["n_hits"], np.bincount(scan["labels"][hit]))
 
 ---
 
-## 次回
+## 第 3 回: 衝突までの時間と安全距離 —— τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する
 
-**光学流から衝突までの時間、そして安全距離。** 正面から近づく平面では、衝突までの時間 τ は流れの発散だけで決まります(Lee 1976、TTC = 2 / 発散)——距離も速度も知らずに。この回で開校した教習所の世界に対向車を走らせ、車載カメラの 2 コマから光学流を取り、**真の TTC が分かる**接近で採点します。合わせて Mobileye の RSS(Shalev-Shwartz ら 2017)の安全距離の閉形式(Lemma 2)を、応答時間・加速度・減速度の公表値で確かめます。
+![対向車が来て、通り過ぎ、停車車両の前で RSS が止める](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/06_approach_gif.gif)
+
+*↑ 車載カメラで 0 → 10 s。対向車が来る間はその画素の光学流(矢印)と真の拡大の中心(十字)を描き、上に「τ の真値」と「流れから出した τ」を並べる。通り過ぎたあと、自車線の停車車両に RSS が「危険」を出した瞬間(t = 6.0 s)に制動し、10.25 m 手前で止まる。**数字が動く**のは世界の側が真値を持っているから——τ も間隔も、推定でなく生成時に決まっている。*
+
+第 2 回で世界はできたが、動く物がいなかった。この回は対向車を走らせる。問いは 2 つ: **あと何秒でぶつかるか**、**何 m 空けるべきか**。前者は Lee(1976)の τ 理論——近づく面の像が広がる速さだけで衝突までの時間が決まり、距離も速度も要らない。ハエもヒトもこれで制動する。後者は Mobileye の RSS(Shalev-Shwartz ら 2017)——応答時間と加減速の上限から「これより近いと責任を問われる」距離を閉形式で与える。どちらも**教科書の式**で、この世界なら真値と突き合わせられる。
+
+### 手順
+
+```
+第 2 回の周回コース(南の直線 80 m、左側通行) → 自車 8 m/s(北の車線)・対向車 8 m/s(南の車線)・停車車両(自車線の先)
+   → 車載カメラ 60°、640 × 400、10 Hz で 4.5 秒(46 コマ)
+   → τ を 3 経路で: 真値(深度像 + 2 コマ間の剛体運動の閉形式)/ 流れから(LK → time_to_contact)/ 大きさから(面積の平方根)
+   → RSS: 公表パラメータで安全距離の閉形式 → 最悪ケースを時間積分して突き合わせ → 教習所の 3 場面で判定と制動
+```
+
+| 用語 | ここでの意味 |
+|---|---|
+| τ(タウ) | 衝突までの時間。Z を面までの奥行き、Ż をその変化率として τ = Z / (−Ż)。等速なら 1 秒に 1 秒ずつ減る(dτ/dt = −1) |
+| 拡大の中心(FoE) | 並進するカメラで、像の流れがそこから放射状に出る点。進行方向の像 |
+| 光学流 | 2 コマの間に各画素がどこへ動いたか(u, v)。ここでは Lucas–Kanade のピラミッド 5 段 |
+| RSS | Responsibility-Sensitive Safety。「相手が最悪の行動をしても、自分が定められた応答をすれば当たらない」距離の定義と閉形式 |
+| ρ(応答時間) | 危険に気づいてから制動を始めるまでの時間。その間は加速してしまうかもしれない、と最悪を見込む |
+| a_min,brake / a_max,brake | 自分が必ず出せる最小の減速度 / 相手が出しうる最大の減速度 |
+| proper response | RSS が定める応答: ρ の間は a_max,accel 以下の任意、その後 a_min,brake 以上で停止まで |
+
+新しい op は 2 つのモジュールです。**drivettc**(深度像と剛体運動から真の流れと真の τ を画素ごとに閉形式で出す。光学流から τ を出すのは既存の `time_to_contact` を秒に直して束ねる)、**rsssafety**(RSS の同方向・対向・横方向の安全距離の閉形式、最悪ケースの時間積分、判定)。3 つの経路の τ は全部 **最初のコマの時刻の τ** に揃えてあります——ここに 1 コマ分の落とし穴があり、後で書きます。
+
+[![t = 4 s の車載カメラと光学流](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow.png)
+
+*↑ t = 4 s。対向車の画素の光学流(矢印 ×3)は拡大の中心(十字)から外へ向かい、その半径方向の速さから τ = 0.84 s(真値 0.84 s)。路面には模様が無いので、流れは車と街灯にしか無い。*
+
+### 門と成績
+
+真値は **深度像 + 剛体運動の閉形式**(τ)、**公表値**(RSS のパラメータ表と試験値)、**定理と積分の一致**(Lemma 2)の 3 種類。
+
+| 主張 | 実測 | 真値の出どころ |
+|---|---|---|
+| 真の流れから τ が戻る(恒等式) | 真の流れを `time_to_contact` に入れ 1 コマ足すと、真の τ₀ と相対差 **8.5e-14**(46 コマ、対向車の全画素) | 閉形式 |
+| τ は 1 秒に 1 秒ずつ減る | 対向車の最も近い画素の τ は「前バンパーまでの距離 / 閉じる速さ」と相対差 8.3e-3 以内、傾き **−1.0045** | 姿勢と速度 |
+| 流れから τ が出る | 対向車が 150 画素以上の 22 コマで、LK の τ の相対差 中央値 **0.026**(90 % 点 0.30)。46 コマ全部では 0.135 | 閉形式 |
+| 大きさから τ が出る | 面積の平方根(コマ間隔 0.5 s)から、相対差 中央値 **0.045**(90 % 点 0.12)。量子化の許容区間 [面積 ±周長/2] に 17 / 19 コマ | 閉形式 |
+| RSS の閉形式は公表値どおり | ad-rss-lib の横方向の試験値 5 点と最大差 **0.0065**(許容 0.01)。50 km/h の同方向: 加速 0 で **39.8 m**(公表 ≈ 40)、加速 4 m/s² で **83.6 m**(公表「about 80」) | 公表値 |
+| Lemma 2 は最悪ケースの積分と一致 | v = 8 m/s で d_min = 26.28 m、そこから積分した最小間隔 **4.3e-14**。乱数 50 組でも \|min_gap − (d₀ − d_min)\| < 1e-13、衝突の有無も一致 | 第 2 実装 |
+| 教習所で止まる | 停車車両まで 26.25 m(< 26.28)で「危険」→ ρ = 1 s は速度維持、4 m/s² で制動 → 停止時の間隔 **10.25 m** = gap(t_b) − (vρ + v²/2b) と 1e-9 で一致 | 閉形式 |
+| τ は騒ぎ、RSS は騒がない | 対向車線の車で τ の真値は **0.30 s** まで落ちるが、横の安全距離 **0.725 m** < 車線の間隔 2.2 m で、RSS は一度も危険を出さない | 閉形式 |
+| 寄ってくれば危険 | 対向車が 0.6 m/s で横へ寄ると横の安全距離は **2.45 m** に跳ね、t = 1 s に危険。そのとき縦の間隔 58.25 m は対向の安全距離 **82.9 m** の中で、最悪ケースの積分は衝突する(最小間隔 −24.7 m) | 第 2 実装 |
+
+[![τ の 4 本の曲線](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves.png)
+
+*↑ 真値(2 本、重なる)は 5 s から傾き −1 で落ちる。流れからの τ(水色)は t ≥ 2 s で真値に乗り、遠い区間(流れが 1 画素未満)は散る。大きさからの τ(橙)は全域で近い。*
+
+[![RSS が停車車両の前で止める](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/04_rss_same_direction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/04_rss_same_direction.png)
+
+*↑ 停車車両までの間隔(青)が安全距離(橙、v = 8 で 26.28 m)を割った t = 6.0 s に「危険」。1 秒は速度維持、その後 4 m/s² で制動。制動中は v が下がるので安全距離も下がる。*
+
+### ★ 実装すると、ここで間違える
+
+#### 1. 2 コマの流れから出る τ は「1 コマ後の τ」
+
+τ 理論の式 τ = Z / (−Ż) は瞬間の量です。2 コマの差分で流れを取ると、像点は拡大の中心から Z₀/Z₁ 倍の位置に写るので、`time_to_contact` が返す「半径² / (半径方向の流れ · 半径)」は **Z₁ / (Z₀ − Z₁) コマ** —— 2 コマ目の時刻の τ で、最初のコマの τ より **ちょうど 1 コマ小さい**。10 Hz なら 0.1 秒、τ が 0.5 s のとき 20 % です。1 コマ足すと真値と 1e-13 で一致します(門 1)。等速でない場合も差は「1 コマ」なので、どの時刻の τ を名乗るかを決めて揃えれば済みます。大きさから出す τ にも同じ 1 コマの差があります(Δt·w₁/(w₁ − w₀) が最初のコマ、Δt·w₀/(w₁ − w₀) が次のコマ)。
+
+#### 2. 光学流の τ が効くのは、流れが 1〜十数画素のときだけ
+
+遠い(対向車が 100 画素以下、流れが 1 画素未満)と LK の τ は 20〜70 % 外れ、近すぎる(流れが 50 画素以上)とピラミッド 5 段でも追えなくなります。中間の 22 コマでは中央値 2.6 %。コマ間隔を伸ばして流れを稼げばよさそうですが、この世界ではむしろ悪化しました(0.3 s で 4 倍以上外れる)——LK は見た目が変わらない前提で、近づく車は見た目が変わるからです。「流れの τ は測れる」は条件つきで、その条件は流れの画素数で書けます。
+
+#### 3. 大きさから出す τ は、面積の量子化に負ける
+
+面積 n の平方根 ∝ 1/Z なので τ₀ = Δt / (1 − √(n₀/n₁))。1 コマ(0.1 s)では面積の増分(τ = 2 s、300 画素で 30 画素)が縁の量子化(周長 80 画素の半分)より小さく、区間が無限に開きます。コマ間隔を 0.5 s にすると 19 コマ中 17 で真値が区間に入り、外れた 2 コマは車のシルエットが平面でない分(近づくと側面が見えてくる)です。**同じ 2 コマから、流れは短い間隔を、大きさは長い間隔を要る** —— 両方を出すなら間隔を別に持つこと。
+
+#### 4. RSS の横方向は、論文の式と公開実装で符号の扱いが違う
+
+論文の Lemma は「ρ の後も互いに向かって動いている」前提で書かれていて、その前提の外(片方がまだ離れている)で式を字義どおり使うと、離れる車の停止距離を**近づく向きに足して**しまいます。Intel の公開実装 ad-rss-lib は「ρ 後の速度が相手へ向くときだけ停止距離を足す」と場合分けし、さらに μ の扱い(論文 μ + [·]₊、実装 [· + μ]₊)も違います。公表の試験値は実装のものなので、こちらは実装に合わせ、前提の内側では論文と一致することを門にしました(乱数 300 組から前提を満たす 100 組超で 1e-9)。「論文の式をそのまま」と「公開実装と同じ」は別の主張です。
+
+#### 5. カメラの俯角ぶん、閉じる速さは v cos θ
+
+車載カメラは少し下を向いています(1.4°)。深度は光軸に沿って測るので、対向車の閉じる速さは 16 m/s ではなく 16·cos 1.4° = 15.995 m/s。真値を「距離 / 16」で書くと 3e-4 ずれます。小さいですが、1e-9 の門は通りません。真値の式に光軸の向きを入れます。
+
+#### 6. 拡大の中心は、この世界では流れから推定できない
+
+流れ全体から最小二乗で拡大の中心を推定すると、真値から中央値 62 画素ずれました。路面に模様が無く、流れが車と街灯にしか無いからです。この回は自車の運動を既知として真の拡大の中心を与えています(門にせず数字だけ出す)。実写では路面のテクスチャが拡大の中心を決めるので、**世界に模様が無いことが推定を殺す**——次に世界へ足すべきものが分かる失敗です。
+
+### 向かないこと
+
+**自車の運動は既知です。** 拡大の中心も、対向車の画素の切り出し(世界の面 id = 完全な検出器の代役)も真値から取っています。検出器と自己運動推定を載せた「知覚パイプライン全体」の採点ではなく、**τ の式と RSS の式が世界と合っているか**の採点です。
+
+**RSS の判定は縦と横の 2 軸だけ**で、交差点・優先権・遮蔽(論文の後半)は入れていません。パラメータは ad-rss-lib の「議論のための初期値」で、論文にも法にも数値はありません。
+
+**対向車は等速直線です。** 減速・加速・車線変更の途中の τ(dτ/dt ≠ −1)は扱っていません。式はそのまま使えますが、門の「傾き −1」は等速の性質です。
+
+**世界はコースの外 8 m で終わり**、路面は無地です。街路樹も歩行者も横断歩道もまだ無い——光学流が路面から取れない理由でもあります。
+
+### 動かす
+
+```bash
+git clone https://github.com/furuse-kazufumi/fullseye
+cd fullseye
+py -3.11 examples/poc_ttc_rss.py         # 門 10 本と図 6 枚、約 35 秒
+```
+
+```python
+import numpy as np
+import fullseye as fs
+
+# τ: 深度像を 1 枚作り、8 m/s で 0.1 s 近づく(カメラ系で +z が前)
+K = np.array([[34.6, 0.0, 31.5], [0.0, 34.6, 19.5], [0.0, 0.0, 1.0]])   # 64 × 40、縦 60°(τ は K に依らない)
+depth = np.full((40, 64), 20.0)                                  # 20 m 先の壁
+T = np.eye(4); T[2, 3] = 0.8                                     # 1 コマで 0.8 m 近づく
+truth = fs.ledger.ttc_truth(depth, K, T, 0.1)
+flow = fs.ledger.flow_from_depth_motion(depth, K, T)              # 真の流れ (u, v)
+est = fs.ledger.ttc_from_flow(flow["u"], flow["v"], 0.1, foe=fs.ledger.foe_from_motion(K, T))
+print(round(float(np.nanmedian(truth["tau"])), 6), round(est["tau"], 6))
+# 2.5 2.5                                                         ← 20 m / 8 m/s。1 コマの補正込みで一致
+
+# RSS: 自車 8 m/s、前が停車。応答時間 1 s、加速 3.5、制動 4 / 8 m/s²(ad-rss-lib の表)
+p = fs.ledger.rss_params()
+d_min = fs.ledger.rss_longitudinal_same(8.0, 0.0, p)
+sim = fs.ledger.rss_worst_case_gap(d_min, 8.0, 0.0, p)
+print(round(d_min, 3), round(sim["min_gap"], 9), sim["collided"])
+# 26.281 0.0 False                                                ← 閉形式 = 積分、ちょうど 0 で当たらない
+```
+
+---
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ttc_rss)
+
+#### この回の残りの図
+
+[![平面](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan.png)
+
+*↑ 南の直線 80 m を真上から(t = 3 s)。自車(北の車線、東へ)、対向車(南の車線、西へ)、停車車両(x = 40)。*
+
+[![横の安全距離](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/05_rss_lateral_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/05_rss_lateral.png)
+
+*↑ 車線どおりなら横の間隔 2.2 m > 横の安全距離 0.725 m で、τ(灰)が落ちても危険にならない。対向車が 0.6 m/s で寄ると安全距離が 2.45 m に跳ね、t = 1 s に危険。*
+
+---
+
+## 次回
+**世界を広げる。** この回で分かったのは、路面に模様が無いと光学流が拡大の中心を決められないこと、そして世界がコースの外 8 m で終わることです。次は地形——連続した起伏と路面のテクスチャを生成する仕組み——と、標識・街路樹・横断歩道・歩行者を世界に足し、真値(どの画素がどの物体か、歩行者がどこにいるか)を生成時に持たせます。そのうえで、自己運動(拡大の中心)を流れから推定し、この回の「既知」を 1 つずつ推定に置き換えます。
 
 ## 出典
 
@@ -327,3 +466,7 @@ print(scan["n_hits"], np.bincount(scan["labels"][hit]))
 - A. M. Shkel and V. Lumelsky, "Classification of the Dubins set", *Robotics and Autonomous Systems* 34, 2001。
 - D. Dolgov, S. Thrun, M. Montemerlo, J. Diebel, "Path planning for autonomous vehicles in unknown semi-structured environments", *Int. J. Robotics Research* 29, 2010。
 - Reeds–Shepp の 44 式の並べ方は OMPL(`ReedsSheppStateSpace`)に従った。
+- D. N. Lee, "A theory of visual control of braking based on information about time-to-collision", *Perception* 5, 1976。
+- H. C. Longuet-Higgins and K. Prazdny, "The interpretation of a moving retinal image", *Proc. R. Soc. Lond. B* 208, 1980(拡大の中心)。
+- S. Shalev-Shwartz, S. Shammah, A. Shashua, "On a Formal Model of Safe and Scalable Self-driving Cars", arXiv:1708.06374, 2017(RSS。Lemma 2・対向・横方向の閉形式)。
+- Intel, *ad-rss-lib*(Apache-2.0)、`doc/ad_rss/Appendix-ParameterDiscussion.md` のパラメータ表と `RssFormulaTests*.cpp` の期待値。

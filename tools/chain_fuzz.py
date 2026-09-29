@@ -1405,6 +1405,98 @@ def _b_ray_box(pool, rng):
     return (np.zeros(3), d, (2.0, -1.0, -1.0, 4.0, 1.0, 1.0)), {}
 
 
+def _b_world_move(pool, rng):
+    import drivecourse as DC
+    import driveworld as DW
+    w = DW.world_build(DC.course_turnaround(), props=[("cone", 2.0, 1.0, 0.0)])
+    i = [k for k, o in enumerate(w["objects"]) if o["name"] == "cone"][0]
+    return (w, i, 3.0, 1.5, 0.4), {}
+
+
+def _b_two_poses(pool, rng):
+    import driveworld as DW
+    return (DW.camera_pose((-3.0, 1.75, 1.4), (8.0, 1.75, 0.8)), DW.camera_pose((-2.2, 1.75, 1.4), (8.8, 1.75, 0.8))), {}
+
+
+def _b_K_T(pool, rng):
+    import driveworld as DW
+    T = np.eye(4)
+    T[2, 3] = 0.8
+    return (DW.camera_intrinsics(60, 64, 40), T), {}
+
+
+def _b_depth_K_T(pool, rng):
+    import driveworld as DW
+    T = np.eye(4)
+    T[2, 3] = 0.8
+    return (rng.uniform(5, 30, (40, 64)), DW.camera_intrinsics(60, 64, 40), T), {}
+
+
+def _b_ttc_truth(pool, rng):
+    (d, K, T), _ = _b_depth_K_T(pool, rng)
+    return (d, K, T, 0.1), {}
+
+
+def _b_ttc_flow(pool, rng):
+    import drivettc as TT
+    (d, K, T), _ = _b_depth_K_T(pool, rng)
+    f = TT.flow_from_depth_motion(d, K, T)
+    return (f["u"], f["v"], 0.1), {"foe": TT.foe_from_motion(K, T)}
+
+
+def _b_ttc_scale(pool, rng):
+    return (20.0, 22.0, 0.1), {}
+
+
+def _b_ttc_range(pool, rng):
+    return (20.0, 16.0), {}
+
+
+def _b_label_extent(pool, rng):
+    L = np.zeros((20, 24), int)
+    L[4:9, 6:15] = 2
+    return (L, 2), {}
+
+
+def _b_rss_p(pool, rng):
+    import rsssafety as RS
+    return (RS.rss_params(),), {}
+
+
+def _b_rss_stop(pool, rng):
+    return (8.0, 1.0, 3.5, 4.0), {}
+
+
+def _b_rss_two_v(pool, rng):
+    import rsssafety as RS
+    return (8.0, 2.0, RS.rss_params()), {}
+
+
+def _b_rss_lat(pool, rng):
+    import rsssafety as RS
+    return (0.3, -0.2, RS.rss_params()), {}
+
+
+def _b_rss_check(pool, rng):
+    import rsssafety as RS
+    return (20.0, 8.0, 2.0, RS.rss_params()), {}
+
+
+def _b_rss_lat_check(pool, rng):
+    import rsssafety as RS
+    return (2.0, 0.3, -0.2, RS.rss_params()), {}
+
+
+def _b_rss_worst(pool, rng):
+    import rsssafety as RS
+    return (30.0, 8.0, 2.0, RS.rss_params()), {"dt": 0.01}
+
+
+def _b_rss_worst_lat(pool, rng):
+    import rsssafety as RS
+    return (2.0, 0.3, -0.2, RS.rss_params()), {"dt": 0.01}
+
+
 def _b_graph_kcore(pool, rng):
     B = (rng.random((30, 30)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -1607,6 +1699,14 @@ OP_ARG_BUILDERS = {
     "world_build": _b_world_build, "world_camera": _b_world_camera, "load_asset": _b_load_asset,
     "lidar_spec": _b_course_none, "lidar_scan": _b_lidar_scan,
     "ray_plane_range": _b_ray_plane, "ray_box_ranges": _b_ray_box,
+    "world_move": _b_world_move,
+    "relative_motion": _b_two_poses, "foe_from_motion": _b_K_T, "flow_from_depth_motion": _b_depth_K_T,
+    "ttc_truth": _b_ttc_truth, "ttc_from_flow": _b_ttc_flow, "ttc_from_scale": _b_ttc_scale, "ttc_from_range": _b_ttc_range,
+    "label_extent": _b_label_extent,
+    "rss_params": _b_course_none, "rss_stopping_distance": _b_rss_stop, "rss_longitudinal_same": _b_rss_two_v,
+    "rss_longitudinal_opposite": _b_rss_two_v, "rss_lateral": _b_rss_lat, "rss_longitudinal_check": _b_rss_check,
+    "rss_lateral_check": _b_rss_lat_check, "rss_worst_case_gap": _b_rss_worst, "rss_worst_case_gap_opposite": _b_rss_worst,
+    "rss_worst_case_gap_lateral": _b_rss_worst_lat,
     "tree_from_swc": _b_tree_swc,
     "tree_morphometry": _b_tree_table,
     "tree_sholl": _b_tree_table,

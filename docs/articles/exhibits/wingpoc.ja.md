@@ -4484,6 +4484,42 @@ py -3.11 examples/poc_driving_school.py
 
 使用 op(ノートへ): [`car_dubins_path`](https://furuse.work/ops/graph/path/car_dubins_path.html) · [`car_hybrid_astar`](https://furuse.work/ops/graph/path/car_hybrid_astar.html) · [`course_contains`](https://furuse.work/ops/drive/course/course_contains.html) · [`course_crank`](https://furuse.work/ops/drive/course/course_crank.html) · [`course_crossing`](https://furuse.work/ops/drive/course/course_crossing.html) · [`course_intersection`](https://furuse.work/ops/drive/course/course_intersection.html) · [`course_layout`](https://furuse.work/ops/drive/course/course_layout.html) · [`course_loop`](https://furuse.work/ops/drive/course/course_loop.html) · [`course_loop_bend`](https://furuse.work/ops/drive/course/course_loop_bend.html) · [`course_occupancy`](https://furuse.work/ops/drive/course/course_occupancy.html) · [`course_parallel_parking`](https://furuse.work/ops/drive/course/course_parallel_parking.html) · [`course_road`](https://furuse.work/ops/drive/course/course_road.html) · [`course_s_curve`](https://furuse.work/ops/drive/course/course_s_curve.html) · [`course_slope`](https://furuse.work/ops/drive/course/course_slope.html) · [`course_turnaround`](https://furuse.work/ops/drive/course/course_turnaround.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`lidar_scan`](https://furuse.work/ops/drive/lidar/lidar_scan.html) · [`lidar_spec`](https://furuse.work/ops/drive/lidar/lidar_spec.html) · [`load_asset`](https://furuse.work/ops/drive/world/load_asset.html) · [`resample`](https://furuse.work/ops/oned/signal/resample.html) · [`world_build`](https://furuse.work/ops/drive/world/world_build.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
 
+## No.2026.168 —— 衝突までの時間と安全距離 ―― τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する
+
+[![衝突までの時間と安全距離 ―― τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan.png)
+
+*↑ **衝突までの時間と安全距離 ―― τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する** ―― 対向車が来る。あと何秒でぶつかるか(τ、Lee 1976)は像が広がる速さだけで分かり、何 m 空けるべきかは Mobileye の RSS(Shalev-Shwartz ら 2017)が応答時間と加減速の上限から閉形式で与える。教習所の周回コース(直線 80 m、左側通行)で自車(8 m/s)の対向車線を同じ速さで来る車を車載カメラ(60°、640 × 400、10 Hz)で撮り、τ を 3 経路で出す: 深度像と 2 コマの間の剛体運動から画素ごとの閉形式(真値)、光学流(Lucas–Kanade 5 段)→ time_to_contact(FoE からの半径 / 半径方向の流れ)、見かけの面積の平方根の変化。恒等式: 純並進では真の流れを入れた値は「1 コマ後の τ」で、1 コマ足すと真の τ₀ と 1e-9 で一致(全コマ・全画素)。真の τ は 5 s から 1 秒に 1 秒ずつ減る(傾き −1)。流れからの τ は車が像で 150 画素以上の区間で真値に乗り、遠い区間はサブピクセルの流れで外れる(正直な数字)。RSS は ad-rss-lib の公表パラメータ表(ρ 1/2 s、加速 3.5、制動 4/8/3、横 0.2/0.8、μ 0.1 m)で、横方向の試験値 5 点と ±0.01、50 km/h の同方向で ≈ 40 / ≈ 80 m の公表図と一致。Lemma 2 の閉形式は最悪ケース(先行が急制動、後続は応答時間だけ加速して減速)の時間積分と 1e-6 で一致し、d₀ = d_min でちょうど 0。教習所では、自車線の停車車両に RSS が「危険」を出した瞬間に制動すると停止時の間隔が gap(t_b) − (vρ + v²/2b) と 1e-9 で一致する。対向車線の車は τ が 0.3 s まで落ちても横の安全距離 0.73 m < 車線の間隔 2.2 m で RSS は一度も騒がず、横へ 0.6 m/s で寄ってくると横が危険になり、そのとき縦はもう対向の安全距離 83 m の中で最悪ケースは衝突する —— 責任は寄った側。*
+
+[![t = 4 s の車載カメラ(60°, 640 × 400)。対向車の画素の光学流(Lucas–Kanade 5 段、×3 で描く)は真の FoE(十字)から外へ向かい、その半径方向の速さから τ = 0.84 s(真値 0.84 s)。路](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow.png)
+
+*↑ 測定の図 ―― t = 4 s の車載カメラ(60°, 640 × 400)。対向車の画素の光学流(Lucas–Kanade 5 段、×3 で描く)は真の FoE(十字)から外へ向かい、その半径方向の速さから τ = 0.84 s(真値 0.84 s)。路面には模様が無いので流れは車と街灯にしか無い。*
+
+[![対向車の τ(衝突までの時間)の 4 本: 真値は 5 s から 1 秒に 1 秒ずつ減る(傾き −1)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves.png)
+
+*↑ 対向車の τ(衝突までの時間)の 4 本: 真値は 5 s から 1 秒に 1 秒ずつ減る(傾き −1)。*
+
+[![場面 A: 停車車両への間隔(青)が RSS の安全距離(橙、v = 8 で 26.28 m)を割った t = 6.0 s に「危険」→ 応答時間 1 s は速度維持、その後 4 m/s² で制動。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/04_rss_same_direction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/04_rss_same_direction.png)
+
+*↑ 場面 A: 停車車両への間隔(青)が RSS の安全距離(橙、v = 8 で 26.28 m)を割った t = 6.0 s に「危険」→ 応答時間 1 s は速度維持、その後 4 m/s² で制動。*
+
+[![場面 B: 対向車線なら横の間隔 2.2 m > 横の安全距離 0.72 m で、τ が 0.3 s まで落ちても RSS は危険を出さない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/05_rss_lateral_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/05_rss_lateral.png)
+
+*↑ 場面 B: 対向車線なら横の間隔 2.2 m > 横の安全距離 0.72 m で、τ が 0.3 s まで落ちても RSS は危険を出さない。*
+
+[![車載カメラで 0 → 10 s(51 コマ): 対向車が来る間はその画素の光学流(矢印 ×4、長さ 40 px まで)と真の FoE(十字)を描き、τ の真値と流れからの τ を並べる。通り過ぎたあと自車線の停車車両に RSS が「危険」を](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/06_approach_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/06_approach_gif.gif)
+
+*↑ 動く図 ―― 車載カメラで 0 → 10 s(51 コマ): 対向車が来る間はその画素の光学流(矢印 ×4、長さ 40 px まで)と真の FoE(十字)を描き、τ の真値と流れからの τ を並べる。通り過ぎたあと自車線の停車車両に RSS が「危険」を出した瞬間(t = 6.0 s)に制動して 10.25 m 手前で止まる。*
+
+```
+py -3.11 examples/poc_ttc_rss.py
+```
+
+ソース: [examples/poc_ttc_rss.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ttc_rss.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ttc_rss)
+
+使用 op(ノートへ): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`course_layout`](https://furuse.work/ops/drive/course/course_layout.html) · [`course_loop`](https://furuse.work/ops/drive/course/course_loop.html) · [`crosshair`](https://furuse.work/ops/annotate/pointer/crosshair.html) · [`flow_from_depth_motion`](https://furuse.work/ops/drive/ttc/flow_from_depth_motion.html) · [`foe_from_motion`](https://furuse.work/ops/drive/ttc/foe_from_motion.html) · [`label_extent`](https://furuse.work/ops/drive/ttc/label_extent.html) · [`load_asset`](https://furuse.work/ops/drive/world/load_asset.html) · [`relative_motion`](https://furuse.work/ops/drive/ttc/relative_motion.html) · [`rss_lateral`](https://furuse.work/ops/drive/rss/rss_lateral.html) · [`rss_lateral_check`](https://furuse.work/ops/drive/rss/rss_lateral_check.html) · [`rss_longitudinal_check`](https://furuse.work/ops/drive/rss/rss_longitudinal_check.html) · [`rss_longitudinal_opposite`](https://furuse.work/ops/drive/rss/rss_longitudinal_opposite.html) · [`rss_longitudinal_same`](https://furuse.work/ops/drive/rss/rss_longitudinal_same.html) · [`rss_params`](https://furuse.work/ops/drive/rss/rss_params.html) · [`rss_worst_case_gap`](https://furuse.work/ops/drive/rss/rss_worst_case_gap.html) · [`rss_worst_case_gap_opposite`](https://furuse.work/ops/drive/rss/rss_worst_case_gap_opposite.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ttc_from_flow`](https://furuse.work/ops/drive/ttc/ttc_from_flow.html) · [`ttc_from_range`](https://furuse.work/ops/drive/ttc/ttc_from_range.html) · [`ttc_from_scale`](https://furuse.work/ops/drive/ttc/ttc_from_scale.html) · [`ttc_truth`](https://furuse.work/ops/drive/ttc/ttc_truth.html) · [`world_build`](https://furuse.work/ops/drive/world/world_build.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html) …(他 1)
+
 ### 数学の絵 ―― 定理が門になる回(別記事)
 
 この展示先の回は、計測の展示館ではなく**数学の絵のシリーズ**に掛かっています。分ける基準は「真値がどこから来るか」です —— 計測の展示は測る対象があり真値は対象の側に、ここの回は対象が無く、真値は描いた絵そのものの定理・恒等式・不変量から出ます。記事は手書きなので、生成器はここを描きません。

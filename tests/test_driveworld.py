@@ -173,3 +173,21 @@ def test_world_add_fails_closed():
         DW.world_add(w, np.zeros((3, 3)), np.array([[0, 1, 5]]), 0, (1, 1, 1))
     with pytest.raises(ValueError):
         DW.world_add(w, np.array([[0, 0, np.nan], [1, 0, 0], [0, 1, 0]]), np.array([[0, 1, 2]]), 0, (1, 1, 1))
+
+
+def test_world_move_is_rigid_and_matches_a_fresh_placement():
+    """動かした頂点 = 最初からその姿勢で置いた頂点(1e-9)。往復で元に戻る。資産でない物体は ValueError。"""
+    w = DW.world_build(_rect_course(), props=[("taxi", 3.0, 1.0, 0.3)])
+    i = [k for k, o in enumerate(w["objects"]) if o["name"] == "taxi"][0]
+    v0, v1 = w["objects"][i]["verts"]
+    before = w["V"][v0:v1].copy()
+    DW.world_move(w, i, 8.0, -2.0, 2.0)
+    fresh = DW.place_mesh(DW.load_asset("taxi")["V"], 8.0, -2.0, 2.0)
+    assert np.allclose(w["V"][v0:v1], fresh, atol=1e-9)
+    assert w["objects"][i]["pose"] == (8.0, -2.0, 2.0)
+    DW.world_move(w, i, 3.0, 1.0, 0.3)
+    assert np.allclose(w["V"][v0:v1], before, atol=1e-9)
+    ground = [k for k, o in enumerate(w["objects"]) if o["label"] == 0][0]
+    with pytest.raises(ValueError):
+        DW.world_move(w, ground, 0.0, 0.0, 0.0)
+

@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">rss_longitudinal_opposite — DRIVE <code style="color:#22d3bf">rss</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_longitudinal_opposite(v1: &#x27;float&#x27;, v2: &#x27;float&#x27;, p1: &#x27;dict&#x27;, p2: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import rsssafety; rsssafety.rss_longitudinal_opposite(v1: &#x27;float&#x27;, v2: &#x27;float&#x27;, p1: &#x27;dict&#x27;, p2: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;rss_longitudinal_opposite&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>対向(論文 Lemma two_way / lib `<code style="color:#22d3bf">calculateSafeLongitudinalDistanceOppositeDirection</code>`)の最小安全距離 [m]。</p>
+<p>c_1 は正しい車線(v1 ≥ 0、`<code style="color:#22d3bf">p1</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">brake_min_correct</code>` で減速)、c_2 は逆走(v2 は負でも大きさでも受けて</p>
+<p>`<code style="color:#22d3bf">abs</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">p2</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">brake_min</code><code style="color:#22d3bf"> で減速)。両車とも ρ の間 </code><code style="color:#22d3bf">accel_max</code>` で加速。</p>
+<p>`<code style="color:#22d3bf">d_min = S(v1; ρ_1, a_1, b_correct,1) + S(|v2|; ρ_2, a_2, b_min,2) + max(min_distance_1, min_distance_2)</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ttc_rss">poc_ttc_rss</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ttc_rss.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">scalar</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">rss</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:rss_params">rss_params</a> · <a style="color:#22d3bf" href="opdrive:rss_stopping_distance">rss_stopping_distance</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a> · <a style="color:#22d3bf" href="opdrive:rss_lateral">rss_lateral</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_check">rss_longitudinal_check</a> · <a style="color:#22d3bf" href="opdrive:rss_lateral_check">rss_lateral_check</a> · <a style="color:#22d3bf" href="opdrive:rss_worst_case_gap">rss_worst_case_gap</a> · <a style="color:#22d3bf" href="opdrive:rss_worst_case_gap_opposite">rss_worst_case_gap_opposite</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: rsssafety.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

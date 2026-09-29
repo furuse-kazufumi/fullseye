@@ -41,7 +41,7 @@ elevations (n_beams,) [rad, 行 0 = 上端], azimuths (n_az,) [rad, 列 0 = −�
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[course_layout](../course/course_layout.md) · [course_occupancy](../course/course_occupancy.md) · [course_contains](../course/course_contains.md) · [world_build](../world/world_build.md) · [world_camera](../world/world_camera.md) · [lidar_scan](lidar_scan.md)
+[course_layout](../course/course_layout.md) · [course_occupancy](../course/course_occupancy.md) · [course_contains](../course/course_contains.md) · [world_build](../world/world_build.md) · [world_camera](../world/world_camera.md) · [world_move](../world/world_move.md) · [lidar_scan](lidar_scan.md) · [rss_longitudinal_same](../rss/rss_longitudinal_same.md)
 
 ## 同カテゴリ(`lidar`)
 

@@ -12,11 +12,12 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     import opsdrive
 
     assert opsdrive.missing() == []
-    assert set(opsdrive.categories()) == {"course", "world", "lidar"}
-    assert len(opsdrive.OPSDRIVE) == 20
+    assert set(opsdrive.categories()) == {"course", "world", "lidar", "ttc", "rss"}
+    assert len(opsdrive.OPSDRIVE) == 39
     # 台帳の op は実装モジュールの __all__ に在る(逆は要らない: 補助関数は台帳に載せない)
-    import drivecourse, driveworld, lidarsim
-    pub = set(drivecourse.__all__) | set(driveworld.__all__) | set(lidarsim.__all__)
+    import drivecourse, driveworld, lidarsim, drivettc, rsssafety
+    pub = (set(drivecourse.__all__) | set(driveworld.__all__) | set(lidarsim.__all__) | set(drivettc.__all__)
+           | set(rsssafety.__all__))
     assert set(opsdrive.OPSDRIVE) <= pub, set(opsdrive.OPSDRIVE) - pub
 
 
@@ -33,8 +34,8 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "drive"]
-    assert len(rows) == 20
-    assert {r[3] for r in rows} == {"table", "image2d", "signal"}
+    assert len(rows) == 39
+    assert {r[3] for r in rows} == {"table", "image2d", "signal", "matrix", "scalar", "any"}
 
 
 def test_the_fuzzer_has_a_builder_for_every_op_and_they_run():

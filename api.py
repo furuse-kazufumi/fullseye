@@ -482,9 +482,20 @@ from drivecourse import (  # noqa: E402,F401
 )
 import driveworld  # noqa: E402  (教習所の 3-D 世界: 路面・縁石・車・信号機・カメラ)
 from driveworld import (  # noqa: E402,F401
-    world_build, world_add, world_camera, world_bounds, set_signal_state, add_asset, add_signal,
+    world_build, world_add, world_camera, world_bounds, set_signal_state, add_asset, add_signal, world_move,
     load_asset, place_mesh, read_obj_colored, asset_dir, camera_pose, camera_intrinsics, world_project_points,
     overlay_points, polygon_triangulate,
+)
+import drivettc  # noqa: E402  (τ 理論の衝突までの時間: 深度像 + 剛体運動の閉形式が真値)
+from drivettc import (  # noqa: E402,F401
+    camera_backproject, camera_project, relative_motion, foe_from_motion, flow_from_depth_motion, ttc_truth,
+    ttc_from_flow, ttc_from_scale, ttc_from_range, label_extent,
+)
+import rsssafety  # noqa: E402  (RSS の安全距離: 閉形式 + 最悪ケースの積分)
+from rsssafety import (  # noqa: E402,F401
+    rss_params, rss_stopping_distance, rss_longitudinal_same, rss_longitudinal_opposite, rss_lateral,
+    rss_longitudinal_check, rss_lateral_check, rss_worst_case_gap, rss_worst_case_gap_opposite,
+    rss_worst_case_gap_lateral,
 )
 import lidarsim  # noqa: E402  (回転式 LiDAR をメッシュに撃つ)
 from lidarsim import (  # noqa: E402,F401

@@ -1911,6 +1911,17 @@
    "run": "py -3.11 examples/poc_driving_school.py"
   },
   {
+   "id": "poc_ttc_rss",
+   "wing": "lane_drive",
+   "added": "2026-09-29",
+   "numbers_source": "log",
+   "title_ja": "衝突までの時間と安全距離 ―― τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する",
+   "title_en": "Time to Collision and Safe Distance — Optical-Flow τ and the RSS Closed Forms, Scored by the Driving-School World's Truth",
+   "caption_ja": "対向車が来る。あと何秒でぶつかるか(τ、Lee 1976)は像が広がる速さだけで分かり、何 m 空けるべきかは Mobileye の RSS(Shalev-Shwartz ら 2017)が応答時間と加減速の上限から閉形式で与える。教習所の周回コース(直線 80 m、左側通行)で自車(8 m/s)の対向車線を同じ速さで来る車を車載カメラ(60°、640 × 400、10 Hz)で撮り、τ を 3 経路で出す: 深度像と 2 コマの間の剛体運動から画素ごとの閉形式(真値)、光学流(Lucas–Kanade 5 段)→ time_to_contact(FoE からの半径 / 半径方向の流れ)、見かけの面積の平方根の変化。恒等式: 純並進では真の流れを入れた値は「1 コマ後の τ」で、1 コマ足すと真の τ₀ と 1e-9 で一致(全コマ・全画素)。真の τ は 5 s から 1 秒に 1 秒ずつ減る(傾き −1)。流れからの τ は車が像で 150 画素以上の区間で真値に乗り、遠い区間はサブピクセルの流れで外れる(正直な数字)。RSS は ad-rss-lib の公表パラメータ表(ρ 1/2 s、加速 3.5、制動 4/8/3、横 0.2/0.8、μ 0.1 m)で、横方向の試験値 5 点と ±0.01、50 km/h の同方向で ≈ 40 / ≈ 80 m の公表図と一致。Lemma 2 の閉形式は最悪ケース(先行が急制動、後続は応答時間だけ加速して減速)の時間積分と 1e-6 で一致し、d₀ = d_min でちょうど 0。教習所では、自車線の停車車両に RSS が「危険」を出した瞬間に制動すると停止時の間隔が gap(t_b) − (vρ + v²/2b) と 1e-9 で一致する。対向車線の車は τ が 0.3 s まで落ちても横の安全距離 0.73 m < 車線の間隔 2.2 m で RSS は一度も騒がず、横へ 0.6 m/s で寄ってくると横が危険になり、そのとき縦はもう対向の安全距離 83 m の中で最悪ケースは衝突する —— 責任は寄った側。",
+   "caption_en": "A car is coming the other way. How many seconds until impact (τ, Lee 1976) follows from how fast its image grows alone; how many metres to keep is what Mobileye's RSS (Shalev-Shwartz et al. 2017) gives in closed form from response time and acceleration bounds. On the driving-school loop (80 m straight, left-hand traffic) the ego car (8 m/s) films an oncoming car at the same speed with an in-car camera (60°, 640 × 400, 10 Hz), and τ is produced three ways: per pixel in closed form from the depth image and the rigid motion between two frames (truth), from optical flow (Lucas–Kanade, 5 levels) through time_to_contact (radius from the FoE over radial flow), and from the change of the apparent area's square root. Identity: for pure translation the true flow yields the τ one frame later, and adding one frame matches the true τ₀ to 1e-9 (every frame, every pixel). True τ falls from 5 s at exactly one second per second (slope −1). Flow-based τ sits on the truth while the car covers ≥ 150 px and drifts off at range where the flow is sub-pixel (reported honestly). RSS uses the ad-rss-lib parameter table (ρ 1/2 s, accel 3.5, braking 4/8/3, lateral 0.2/0.8, μ 0.1 m), matches its five lateral test values to ±0.01 and the published ≈ 40 / ≈ 80 m at 50 km/h. Lemma 2 agrees with a time integration of the worst case (lead brakes hard, follower accelerates for the response time then brakes) to 1e-6, with exactly zero gap at d₀ = d_min. In the school, braking the instant RSS flags the stopped car ahead leaves a final gap equal to gap(t_b) − (vρ + v²/2b) to 1e-9. The oncoming car in the other lane pushes τ down to 0.3 s yet RSS never flags it, because the lateral safe distance 0.73 m is below the 2.2 m lane gap; when it drifts over at 0.6 m/s the lateral check fails while the longitudinal gap is already inside the 83 m opposite-direction distance, and the worst case collides — the blame is on the drifting car.",
+   "run": "py -3.11 examples/poc_ttc_rss.py"
+  },
+  {
    "id": "poc_physarum_transport",
    "wing": "wing_bio",
    "added": "2026-09-28",

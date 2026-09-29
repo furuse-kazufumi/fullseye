@@ -1,5 +1,6 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""opsdrive — 自動運転の教習所ワールドの台帳: 規格寸法のコース(2-D)/ 3-D の世界 / 回転式 LiDAR / カメラ。
+"""opsdrive — 自動運転の教習所ワールドの台帳: 規格寸法のコース(2-D)/ 3-D の世界 / 回転式 LiDAR / カメラ /
+τ 理論の衝突までの時間(drivettc)/ RSS の安全距離(rsssafety)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -16,10 +17,13 @@ Usage:
     opsdrive.get("course_crank")()
 """
 import drivecourse
+import drivettc
 import driveworld
 import lidarsim
+import rsssafety
 
-_MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidarsim}
+_MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidarsim, "drivettc": drivettc,
+        "rsssafety": rsssafety}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -46,6 +50,7 @@ _CATALOG = {
         ("world_build", "driveworld", ["table"], "table"),
         ("world_camera", "driveworld", ["table", "matrix", "matrix"], "table"),
         ("load_asset", "driveworld", [], "table"),
+        ("world_move", "driveworld", ["table"], "any"),
     ],
     # 回転式 LiDAR: メッシュにレイを撃つ(Möller–Trumbore、方位・仰角のビンで加速)。平面・箱の閉形式が第 2 実装。
     "lidar": [
@@ -53,6 +58,31 @@ _CATALOG = {
         ("lidar_scan", "lidarsim", ["mesh", "table", "matrix"], "table"),
         ("ray_plane_range", "lidarsim", ["points", "points"], "signal"),
         ("ray_box_ranges", "lidarsim", ["points", "points"], "signal"),
+    ],
+    # τ 理論(Lee 1976)の衝突までの時間: 深度像 + 剛体運動の閉形式が真値、光学流と見かけの大きさが推定(15 巡目)。
+    # 恒等式 = 真の流れを time_to_contact に入れると 1 コマ後の τ(1 コマ足すと真の τ₀ と 1e-9 で一致)。
+    "ttc": [
+        ("relative_motion", "drivettc", ["matrix", "matrix"], "matrix"),
+        ("foe_from_motion", "drivettc", ["matrix", "matrix"], "signal"),
+        ("flow_from_depth_motion", "drivettc", ["image2d", "matrix", "matrix"], "table"),
+        ("ttc_truth", "drivettc", ["image2d", "matrix", "matrix"], "table"),
+        ("ttc_from_flow", "drivettc", ["image2d", "image2d"], "table"),
+        ("ttc_from_scale", "drivettc", [], "scalar"),
+        ("ttc_from_range", "drivettc", [], "scalar"),
+        ("label_extent", "drivettc", ["labels2d"], "table"),
+    ],
+    # RSS(Shalev-Shwartz 2017)の安全距離: 閉形式(Lemma)と最悪ケースの時間積分(第 2 実装)、公表値は ad-rss-lib の表と試験。
+    "rss": [
+        ("rss_params", "rsssafety", [], "table"),
+        ("rss_stopping_distance", "rsssafety", [], "scalar"),
+        ("rss_longitudinal_same", "rsssafety", ["table"], "scalar"),
+        ("rss_longitudinal_opposite", "rsssafety", ["table"], "scalar"),
+        ("rss_lateral", "rsssafety", ["table"], "scalar"),
+        ("rss_longitudinal_check", "rsssafety", ["table"], "table"),
+        ("rss_lateral_check", "rsssafety", ["table"], "table"),
+        ("rss_worst_case_gap", "rsssafety", ["table"], "table"),
+        ("rss_worst_case_gap_opposite", "rsssafety", ["table"], "table"),
+        ("rss_worst_case_gap_lateral", "rsssafety", ["table"], "table"),
     ],
 }
 

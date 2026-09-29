@@ -44,7 +44,7 @@ import numpy as np
 __all__ = [
     "LABELS", "ASSETS", "asset_dir", "read_obj_colored", "load_asset", "place_mesh",
     "world_build", "world_add", "world_camera", "world_bounds", "set_signal_state", "add_asset", "add_signal",
-    "camera_pose", "camera_intrinsics", "world_project_points", "overlay_points", "polygon_triangulate",
+    "camera_pose", "camera_intrinsics", "world_project_points", "overlay_points", "polygon_triangulate", "world_move",
 ]
 
 LABELS = {0: "ground", 1: "kerb", 2: "car", 3: "traffic_light", 4: "sign", 5: "cone",
@@ -520,6 +520,26 @@ def set_signal_state(world: dict, i: int, state: str) -> None:
     for kind, (f0, f1) in obj["lamp_faces"].items():
         world["face_color"][f0:f1] = _LAMP[kind] if kind == state else _LAMP["off"]
     obj["state"] = state
+
+
+def world_move(world: dict, i: int, x: float, y: float, yaw: float, z: float = 0.0) -> None:
+    """物体 i(資産で置いたもの)を新しい姿勢 (x, y, yaw) へ動かす(頂点だけ書き換える。面・ラベル・色は不変)。
+
+    対向車を 1 コマずつ進める(15 巡目の TTC)ための op。資産でない物体(縁石・路面・信号機)は ``ValueError``。
+    姿勢の意味は :func:`add_asset` と同じ(資産の原点 = 箱の底面中心、yaw は +x から反時計回り)。"""
+    obj = world["objects"][i]
+    if "dims" not in obj or obj.get("pose") is None:
+        raise ValueError("objects[%d] は資産で置いた物体でない(動かせるのは add_asset / props の物体だけ)" % i)
+    v0, v1 = obj["verts"]
+    x0, y0, yaw0 = obj["pose"]
+    c0, s0 = np.cos(-yaw0), np.sin(-yaw0)
+    V = world["V"][v0:v1] - np.array([x0, y0, 0.0])                    # 元の姿勢を外して原点へ
+    V = V @ np.array([[c0, -s0, 0.0], [s0, c0, 0.0], [0.0, 0.0, 1.0]]).T
+    z0 = float(obj.get("z", 0.0))
+    V[:, 2] -= z0
+    world["V"][v0:v1] = place_mesh(V, float(x), float(y), float(yaw), float(z))
+    obj["pose"] = (float(x), float(y), float(yaw))
+    obj["z"] = float(z)
 
 
 # ─────────────────────────────── カメラ ───────────────────────────────────
