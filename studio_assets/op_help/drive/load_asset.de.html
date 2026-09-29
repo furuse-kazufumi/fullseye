@@ -1,12 +1,14 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">load_asset — DRIVE <code style="color:#22d3bf">world</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.load_asset(name: &#x27;str&#x27;, dims=None, *, root=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveworld; driveworld.load_asset(name: &#x27;str&#x27;, dims=None, *, root=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;load_asset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.load_asset(name: &#x27;str&#x27;, dims=None, *, root=None, paint=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveworld; driveworld.load_asset(name: &#x27;str&#x27;, dims=None, *, root=None, paint=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;load_asset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>同梱資産をメッシュ dict に: `<code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot;, &quot;name&quot;, &quot;dims&quot;}</code>`。</p>
 <p>z-up に直し、箱の寸法を `<code style="color:#22d3bf">dims</code><code style="color:#22d3bf">(既定 = :data:</code>ASSETS` の実寸)に軸ごとに合わせ、原点を箱の底面中心に置く。</p>
 <p>未知の名前・寸法 ≤ 0 は ValueError。同じ名前は 1 度だけ読む(キャッシュ)。</p>
+<p>`<code style="color:#22d3bf">paint</code><code style="color:#22d3bf">: 車の車体色(:data:</code>CAR_PAINTS` の名前か (r, g, b)、None = 元の色)。車体の面だけを塗り替え、ガラス・タイヤ・灯火は元のまま、</p>
+<p>テクスチャの濃淡(明るさの比)は保つ。パトカー・タクシー(塗装が意味を持つ)と車以外は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -18,7 +18,11 @@ CC0 の車・信号機・標識を置き(driveworld)、回転式 LiDAR をメッ
   5. **縁石の点は道の外**: ラベル「縁石」の点から作った占有格子は、コースの真の占有(多角形の外)を 1 セル(8 近傍)膨らませた集合の部分集合。
   6. **脱輪**: Hybrid A*(13 巡目の op)が出した道の全姿勢で、車体の 4 隅の縁石線からのはみ出しが半セル以内(計画器の分解能)。
      厳密な多角形で越えた姿勢の数と最大の越え幅も出す。ゼロ点 = 縁石を無視して入口から出口へ直線で進むと脱輪する。
-  7. **カメラが信号を読む**: 灯火の画素の色で赤/緑を判定し、世界の状態と一致。ゼロ点 = 灯火を全部消すと判定できない。
+  7. **カメラが信号を読む(画像処理)**: 地図で分かる灯火の位置を車載カメラに投影した周り(ROI)から、色度の検出 op で点いた円盤を
+     探して赤/緑を判定し、世界の状態と一致。ゼロ点 = 灯火を全部消すと 'unknown'。
+  8. **閉ループ**(ユーザー指摘 2026-09-30「信号の色は画像処理で確認してから車を動かしてますか?」): 停止線に着いたら毎コマ車載カメラで
+     読み、'green' を読んだ次のコマから進む。赤の間は 1 mm も動かず、手前 10 m からの読みは世界の状態と全コマ一致。
+     ゼロ点 = 灯火を消すと 'unknown' が続き、待っても発進しない(fail-closed)。
 
 正直に書くこと: 規格の幅 3.5 m は 4.5 × 1.8 m の車にはぎりぎりで、最大舵角と直進だけの運動基本形(Dolgov 2010 の型)では
 クランクも S 字も **前進のみでは到達不能**(格子 0.125 m・θ 144 でも)。後退(切り返し)を許すと通る。実際の検定でも
@@ -41,6 +45,9 @@ import drivecourse as DC  # noqa: E402
 import driveworld as DW  # noqa: E402
 import lidarsim as LS  # noqa: E402
 import carpath as CP  # noqa: E402
+import balltrack as BT  # noqa: E402
+import roadjp as RJ  # noqa: E402
+import annotate as AN  # noqa: E402
 from occupancy import occupancy_grid_2d, inflate_obstacles  # noqa: E402
 import studio  # noqa: E402
 
@@ -52,7 +59,8 @@ LIDAR_H = 1.64                        # センサ高 [m](Argoverse 2 の up_lida
 LIDAR_FWD = 1.35                      # 後軸からセンサまで [m]
 LOOP_R, LOOP_S, LOOP_W = 30.0, 80.0, 8.0
 PAL = np.array([[0.62, 0.62, 0.66], [0.95, 0.92, 0.30], [0.95, 0.30, 0.20], [0.20, 0.95, 0.40], [0.30, 0.55, 1.0],
-                [1.0, 0.60, 0.10], [0.70, 0.40, 0.90], [1.0, 0.4, 0.7], [0.55, 0.35, 0.25], [1.0, 1.0, 1.0]])
+                [1.0, 0.60, 0.10], [0.70, 0.40, 0.90], [1.0, 0.4, 0.7], [0.55, 0.35, 0.25], [1.0, 1.0, 1.0],
+                [0.45, 0.60, 0.30], [0.30, 0.45, 0.70], [0.98, 0.98, 0.95], [0.20, 0.55, 0.20]])   # 10 地形・11 水たまり・12 横断歩道・13 木
 OK = []
 
 
@@ -187,11 +195,27 @@ def main() -> int:
     gate("面積: 弧の無い 4 要素(坂道・縦列駐車・踏切・直線)は閉形式と厳密一致", exact < 1e-12, "max %.1e" % exact)
 
     # 左側通行: 東行きは y > 0 の車線、西行きは y < 0。周回は反時計回り(南の直線が東行き)。
-    PROPS = [("sedan", -9.0, -1.75, math.pi), ("taxi", 6.0, -1.75, math.pi), ("police", 15.0, -1.75, math.pi),
-             ("truck", 48.0, -1.75, math.pi), ("suv", -1.75, 16.0, math.pi / 2), ("sedan", 20.0, 28.0, math.pi),
-             ("taxi", -25.0, -28.0, 0.0), ("suv", -20.0, 10.0, math.pi), ("cone", 19.0, 3.0, 0.0), ("cone", 21.0, 3.0, 0.0),
-             ("street_light", -4.0, 4.6, 0.0), ("street_light", 30.0, 22.5, 0.0), ("sign_stop", -20.0, 4.3, 0.0)]
+    # 車体色は日本で多い色から(白・黒・シルバー・青・ベージュ …、driveworld.CAR_PAINTS)。パトカー・タクシーは塗装が意味を持つので元の色
+    PROPS = [("sedan", -9.0, -1.75, math.pi, None, "white"), ("taxi", 6.0, -1.75, math.pi), ("police", 15.0, -1.75, math.pi),
+             ("truck", 48.0, -1.75, math.pi, None, "silver"), ("suv", -1.75, 16.0, math.pi / 2, None, "black"),
+             ("sedan", 20.0, 28.0, math.pi, None, "blue"), ("taxi", -25.0, -28.0, 0.0), ("suv", -20.0, 10.0, math.pi, None, "beige"), ("cone", 19.0, 3.0, 0.0), ("cone", 21.0, 3.0, 0.0),
+             ("street_light", -4.0, 4.6, -math.pi / 2), ("street_light", 30.0, 22.5, math.pi / 2)]   # 街灯の腕は道の側へ
     WORLD = DW.world_build(LAYOUT, props=PROPS)
+
+
+    def beside(pose, d_ahead, d_left):
+        """姿勢から d_ahead 前・d_left 左の点(標識の柱の位置)。"""
+        x, y, yaw = pose
+        c, s = math.cos(yaw), math.sin(yaw)
+        return (x + c * d_ahead - s * d_left, y + s * d_ahead + c * d_left)
+
+
+    # 日本の道路標識(roadjp、道路標識、区画線及び道路標示に関する命令 別表第二の寸法、路側式 板の下端 1.8 m、歩車道境界から 0.25 m 以上):
+    # 幹線(幅 7 m)の左の路側 = 中心から 3.5 + 0.25 + 0.3。標識は「yaw の向きへ進んで来る車」に面を向ける。
+    L7 = 3.5 + 0.25 + 0.3
+    RJ.add_sign(WORLD, "speed_limit", -30.0, L7, 0.0, value=40)                  # 西の幹線: 最高速度 40(規制 323)
+    RJ.add_sign(WORLD, "crosswalk", -(3.5 + 3.0 + 4.0) - 0.3, L7, 0.0)           # 東行き流入路の横断歩道の手前の角(指示 407)
+    RJ.add_sign(WORLD, "caution_crossing", 40.0 - 30.0, L7, 0.0)                 # 踏切(x = 40)の 30 m 手前: 踏切あり(警戒 207-A)
     CARS = [o for o in WORLD["objects"] if o["label"] == 2]
     print("  世界: 三角形 %d, 物体 %d(車 %d・信号機 %d), 広さ %.0f × %.0f m" % (
         len(WORLD["F"]), len(WORLD["objects"]), len(CARS), sum(o["name"] == "traffic_light" for o in WORLD["objects"]),
@@ -215,10 +239,21 @@ def main() -> int:
 
 
     APPROACH0 = (-44.0, 1.75, 0.0)                                  # 西の連絡路、東行き車線
-    STOP = (-7.5 - (CAR[0] - CAR[2]) - 0.3, 1.75, 0.0)              # 停止線の 0.3 m 手前に前端
+    X_STOPLINE = float(I["stop_lines"][0][0][0])                      # 東行きの停止線(横断歩道の 2 m 手前 = −12.5)
+    STOP = (X_STOPLINE - (CAR[0] - CAR[2]) - 0.3, 1.75, 0.0)          # 停止線の 0.3 m 手前に前端
     LOOK = ahead(STOP, -10.0)                                        # 停止線の 10 m 手前(灯火が視野に入り、円盤が数画素になる)
     CRANK_IN = tf((0.0, 0.0, 0.0), ahead(pC, 2.0))                   # クランクの入口の直線の中(後端まで入っている)
     CRANK_OUT = ahead(cex, IN + 0.5 - cex[1] - 3.0)                  # 連絡路の先端の手前(前端が周回に入る)
+    # 指定場所の一時停止(運転免許技能試験実施基準 場内コースの設定 (1)): 連絡路が周回に出る手前に 道路標識 330 + 停止線(道路標示 203、幅 0.45 m)
+    L35 = 1.75 + 0.25 + 0.3
+    p_stop = ahead(CRANK_OUT, 2.5)
+    RJ.add_sign(WORLD, "stop", *beside(p_stop, 0.0, L35), CRANK_OUT[2])
+    RJ.add_sign(WORLD, "slow", *beside(pC, -8.0, L35), pC[2])                  # クランクの入口の 8 m 手前: 徐行(規制 329)
+    _sx, _sy, _syaw = p_stop
+    _c, _s = math.cos(_syaw), math.sin(_syaw)
+    _V = np.array([[_sx - _s * 0.0, _sy + _c * 0.0, 0.006], [_sx - _s * 1.75, _sy + _c * 1.75, 0.006],
+                   [_sx + _c * 0.45 - _s * 1.75, _sy + _s * 0.45 + _c * 1.75, 0.006], [_sx + _c * 0.45, _sy + _s * 0.45, 0.006]])
+    DW.world_add(WORLD, _V, np.array([[0, 1, 2], [0, 2, 3]]), 9, DW._LINE_COLOR, name="stop_line")
     MERGE = (2.0, LOOP_R - 2.0, math.pi)                             # 周回の北の直線、西行き(左側 = 内側の車線)
     S_IN = tf((0.0, 0.0, 0.0), ahead(pS, 2.0))
     S_OUT = ahead(sex, -(CAR[0] - CAR[2]) - 0.5)                     # 車体が S 字の中に収まる姿勢
@@ -279,7 +314,7 @@ def main() -> int:
     SPEC_GIF = LS.lidar_spec(n_beams=16, v_fov_deg=(-25.0, 15.0), azimuth_res_deg=0.5, range_max=60.0)
     K = DW.camera_intrinsics(60.0, 640, 400)
     SIG = [k for k, o in enumerate(WORLD["objects"]) if o["name"] == "traffic_light"
-           and abs(o["pose"][0] + 7.5) < 0.1 and abs(o["pose"][1] - 4.0) < 0.1][0]     # 東行きの信号
+           and abs(o["pose"][0] - I["signal_poses"][0][0]) < 0.1 and abs(o["pose"][1] - 4.0) < 0.1][0]     # 東行きの信号(向こう側、対面)
     EGO = DW.load_asset("sedan")
 
 
@@ -371,42 +406,115 @@ def main() -> int:
     gate("縁石の点から作った占有格子 ⊆ 真の占有(1 セル膨張、8 近傍)(%d 点)" % n_kerb, prec == 1.0, "precision %.4f" % prec)
 
 
-    # 3d. カメラが信号を読む
-    def read_signal(cam_img, lamp_pixels):
-        """灯火の画素のうち点いているもの(最大チャネル > 0.5)の平均色で赤/緑を決める。点いた画素が無ければ unknown。"""
-        px = cam_img[lamp_pixels]
-        lit = px[px.max(axis=1) > 0.5]
-        if len(lit) < 2:
-            return "unknown"
-        c = lit.mean(axis=0)
-        return "red" if c[0] > c[1] else "green"
+    # 3d. カメラが信号を読む(画像処理 —— 閉ループの部品)
+    RED_LAMP, GREEN_LAMP = np.array(DW._LAMP["red"]), np.array(DW._LAMP["green"])
+    LAMP_CENTRES = np.array([WORLD["V"][WORLD["F"][f0:f1]].reshape(-1, 3).mean(axis=0)
+                             for _kind, (f0, f1) in WORLD["objects"][SIG]["lamp_faces"].items()])      # 地図の情報 = 信号の位置
 
 
-    face = snap["cam"]["face"]
-    lamp_px = np.zeros(face.shape, bool)
-    for kind, (f0, f1) in WORLD["objects"][SIG]["lamp_faces"].items():
-        lamp_px |= (face >= f0) & (face < f1)
-    read_red = read_signal(snap["cam"]["color"], lamp_px)
+    def read_signal(cam_img, P, roi=24):
+        """車載カメラの画像から信号の色を読む。地図で分かる灯火の位置を投影した周り(± roi px)を切り出し、色度の検出 op
+        (balltrack.ball_detect、明るさで正規化するので陰影に強い)で赤と緑の点いた円盤を探す。消灯は暗い灰(色度が中立)なので
+        掛からず、念のため中心画素の明るさ(最大チャネル > 0.5)も要求する。赤だけ → 'red'、緑だけ → 'green'、それ以外 → 'unknown'
+        (fail-closed)。返り値 = (state, ROI (c0, r0, c1, r1) か None)。真値(面 ID)は使わない。"""
+        col, row, dep = DW.world_project_points(LAMP_CENTRES, P, K)
+        if not np.all(dep > 0):
+            return "unknown", None
+        c0, c1 = max(0, int(col.min()) - roi), min(cam_img.shape[1], int(col.max()) + roi + 1)
+        r0, r1 = max(0, int(row.min()) - roi), min(cam_img.shape[0], int(row.max()) + roi + 1)
+        if c1 - c0 < 4 or r1 - r0 < 4:
+            return "unknown", None
+        crop = cam_img[r0:r1, c0:c1]
+
+        def lit(color):
+            dets = BT.ball_detect(crop, mode="chroma", color=tuple(float(v) for v in color), color_tol=0.15, radius_range=(1.0, 14.0))
+            out = []
+            for d in dets:
+                rr = min(crop.shape[0] - 1, max(0, int(round(d["row"]))))
+                cc = min(crop.shape[1] - 1, max(0, int(round(d["col"]))))
+                if crop[rr, cc].max() > 0.5:
+                    out.append(d)
+            return out
+
+        red, green = lit(RED_LAMP), lit(GREEN_LAMP)
+        state = "red" if red and not green else ("green" if green and not red else "unknown")
+        return state, (c0, r0, c1, r1)
+
+
+    read_red, roi_look = read_signal(snap["cam"]["color"], snap["P"])
     DW.set_signal_state(WORLD, SIG, "green")
-    read_green = read_signal(sense(LOOK)["cam"]["color"], lamp_px)
+    read_green, _ = read_signal(sense(LOOK)["cam"]["color"], snap["P"])
     DW.set_signal_state(WORLD, SIG, "off")
-    read_off = read_signal(sense(LOOK)["cam"]["color"], lamp_px)
+    read_off, _ = read_signal(sense(LOOK)["cam"]["color"], snap["P"])
     DW.set_signal_state(WORLD, SIG, "red")
-    gate("カメラが信号を読む: 赤 → 'red', 緑 → 'green'(灯火 %d 画素)" % lamp_px.sum(),
-         read_red == "red" and read_green == "green", "%s / %s" % (read_red, read_green))
-    gate("ゼロ点: 灯火を消すと読めない", read_off == "unknown", read_off)
+    print("  車載カメラ(停止線の 10 m 手前)の信号の ROI %s、読み: 赤 → %s、緑 → %s、消灯 → %s" % (roi_look, read_red, read_green, read_off))
+    gate("カメラが信号を読む(画像処理、真値の面 ID は使わない): 赤 → 'red'、緑 → 'green'", read_red == "red" and read_green == "green",
+         "%s / %s" % (read_red, read_green))
+    gate("ゼロ点: 灯火を消すと 'unknown'(fail-closed)", read_off == "unknown", read_off)
 
     # ─────────────────────────────── 4. 走らせて全コマで測る ────────────────────────────────
     PATH_LEN = float(np.sum(np.hypot(np.diff(PATH[:, 0]), np.diff(PATH[:, 1]))))
     print("== 4. 走らせる(%.0f m: 幹線 → 信号 → 交差点 → クランク → 連絡路 → 周回)—— 全コマで LiDAR を撃ち、縁石の precision を数える" % PATH_LEN)
     frames_pose = resample(PATH, 2.5)
-    hold = 6                                                              # 停止線で赤信号を待つコマ
     i_stop = int(np.argmin(np.hypot(frames_pose[:, 0] - STOP[0], frames_pose[:, 1] - STOP[1])))
-    seq = [(p, "red") for p in frames_pose[:i_stop + 1]] + [(frames_pose[i_stop], "red")] * hold + \
-          [(p, "green") for p in frames_pose[i_stop + 1:]]
+    i_look = int(np.argmin(np.hypot(frames_pose[:, 0] - LOOK[0], frames_pose[:, 1] - LOOK[1])))
+    hold = 6                                                              # 世界の信号機が赤を保つコマ数(車とは独立の時計)
+
+
+    def drive(lamps_on=True, max_wait=20):
+        """閉ループで走る: 停止線に着いたら毎コマ車載カメラで信号を読み、'green' を読んだコマの次から進む。'red' / 'unknown' の間は
+        同じ姿勢のまま(動かない)。世界の信号は、車が停止線に着いてから hold コマ後に緑になる(lamps_on=False なら消灯のまま = ゼロ点)。
+        返り値 = コマ列 [(pose, 世界の状態, 読み, ROI, 車載カメラの画像)]。信号の手前(i_stop まで)だけカメラを回す。"""
+        DW.set_signal_state(WORLD, SIG, "red" if lamps_on else "off")
+        seq, k, waited = [], 0, 0
+        while k < len(frames_pose):
+            pose = frames_pose[k]
+            if not lamps_on:
+                world_state = "off"
+            elif k < i_stop:
+                world_state = "red"
+            elif k == i_stop:
+                world_state = "green" if waited >= hold else "red"
+            else:
+                world_state = "green"
+            DW.set_signal_state(WORLD, SIG, world_state)
+            read, roi, cam_img = None, None, None
+            if k <= i_stop:
+                P = cam_pose_incar(pose)
+                cam_img = DW.world_camera(WORLD, P, K, 640, 400)["color"]
+                read, roi = read_signal(cam_img, P)
+            seq.append((pose, world_state, read, roi, cam_img))
+            if k == i_stop and read != "green":
+                waited += 1
+                if waited > max_wait:
+                    break                                                 # 発進できないまま打ち切り
+                continue                                                  # 同じ姿勢で次のコマ = 止まっている
+            k += 1
+        return seq
+
+
     t = time.time()
+    seq = drive(lamps_on=True)
+    k_arrive = next(i for i, s in enumerate(seq) if np.allclose(s[0], frames_pose[i_stop]))
+    k_go = next((i for i in range(k_arrive, len(seq)) if seq[i][2] == "green"), None)
+    stayed = k_go is not None and all(np.allclose(seq[i][0], frames_pose[i_stop]) for i in range(k_arrive, k_go + 1))
+    moved_after = k_go is not None and k_go + 1 < len(seq) and not np.allclose(seq[k_go + 1][0], frames_pose[i_stop])
+    reads_match = all(s[2] == s[1] for s in seq[i_look:] if s[2] is not None) and sum(s[2] is not None for s in seq[i_look:]) >= 4
+    n_wait = (k_go - k_arrive) if k_go is not None else None
+    print("  閉ループ: 停止線に着いたコマ %d、'green' を読んだコマ %s(赤で %s コマ待ち)、手前 10 m からの読み %d コマは世界の状態と%s(%.1f s)" % (
+        k_arrive, k_go, n_wait, sum(s[2] is not None for s in seq[i_look:]), "全部一致" if reads_match else "不一致あり", time.time() - t))
+    gate("閉ループ: 停止線で車載カメラが 'green' を読むまで動かず、読んだ次のコマから進む。手前 10 m からの読みは世界の状態と全コマ一致",
+         stayed and moved_after and reads_match and n_wait == hold)
+    t = time.time()
+    seq_off = drive(lamps_on=False, max_wait=8)
+    never_left = all(np.allclose(s[0], frames_pose[i_stop]) for s in seq_off[i_stop:]) and len(seq_off) == i_stop + 9
+    all_unknown = all(s[2] == "unknown" for s in seq_off[i_stop:])
+    gate("ゼロ点: 灯火を消すと 'unknown' が続き、%d コマ待っても発進しない(fail-closed)" % 8, never_left and all_unknown,
+         "%d コマ, 読み %s" % (len(seq_off), sorted({s[2] for s in seq_off[i_stop:]})))
+    DW.set_signal_state(WORLD, SIG, "red")
+
     gif, n_pts, prec_frames = [], [], []
-    for k, (pose, state) in enumerate(seq):
+    for k, (pose, state, read, roi, cam_img) in enumerate(seq):
         DW.set_signal_state(WORLD, SIG, state)
         sc2 = LS.lidar_scan(WORLD["V"], WORLD["F"], SPEC_GIF, sensor_T(pose), labels=WORLD["face_label"])
         h2 = sc2["ranges"] > 0
@@ -421,7 +529,16 @@ def main() -> int:
             Pc = DW.camera_pose((x - 9.0 * c, y - 9.0 * s, 4.5), (x + 6.0 * c, y + 6.0 * s, 0.6))
             Kc = DW.camera_intrinsics(55.0, 480, 300)
             img = DW.world_camera(WORLD, Pc, Kc, 480, 300, ego=(ego_mesh(EGO, pose), EGO["F"], EGO["color"]))
-            gif.append(DW.overlay_points(img["color"], sc2["points"], Pc, Kc, PAL[sc2["labels"][h2]], depth_test=img["depth"]))
+            fr = DW.overlay_points(img["color"], sc2["points"], Pc, Kc, PAL[sc2["labels"][h2]], depth_test=img["depth"])
+            if cam_img is not None and roi is not None:                     # 右上に車載カメラの ROI(3 倍)と判定を焼き込む
+                c0, r0, c1, r1 = roi
+                crop = np.repeat(np.repeat(cam_img[r0:r1, c0:c1], 3, axis=0), 3, axis=1)
+                hh, ww = min(crop.shape[0], 140), min(crop.shape[1], 140)
+                fr = np.array(fr, dtype=float, copy=True)
+                fr[6:hh + 10, fr.shape[1] - ww - 10:fr.shape[1] - 6] = 1.0
+                fr[8:hh + 8, fr.shape[1] - ww - 8:fr.shape[1] - 8] = crop[:hh, :ww]
+                fr = np.asarray(AN.text_box(fr, "車載カメラ → %s → %s" % (read, "停止" if read != "green" else "発進"), (8, 8), anchor="lt", font_size=12))
+            gif.append(fr)
     DW.set_signal_state(WORLD, SIG, "red")
     print("  %d コマ, LiDAR 点 %d〜%d / コマ, 縁石 precision 最小 %.4f, %.1f s" % (
         len(seq), min(n_pts), max(n_pts), min(prec_frames), time.time() - t))
@@ -451,9 +568,10 @@ def main() -> int:
                   "同じ瞬間の車載カメラ(60°)に LiDAR の点を投影して重ねる: 点の深度と画素の深度の相対差は中央値 %.2e、"
                   "ラベル一致 %.1f %%(1 画素の許容; 門 3、2 センサ 1 世界の恒等式)。信号は赤。" % (np.median(rel), 100 * lab_1px))
         figs.save_gif("drive_gif", gif, fps=6,
-                      caption="幹線で赤信号を待ち、青で発進して交差点を渡り、クランクを抜けて連絡路から周回コースへ合流する(%d コマ)。"
+                      caption="幹線で信号を待ち、車載カメラの画像処理(右上の ROI: 地図の信号位置を投影し色度で点灯を検出)が 'green' を読んだ"
+                              "次のコマで発進して交差点を渡り、クランクを抜けて連絡路から周回コースへ合流する(%d コマ、赤で %d コマ待ち)。"
                               "追走カメラの画像に LiDAR(16 ビーム)の点を重ねる。クランクは前進のみでは到達不能で、切り返し %d 回"
-                              "(後退の区間数)。全姿勢で隅の越え幅は半セル以内。" % (len(seq), n_rev_c))
+                              "(後退の区間数)。全姿勢で隅の越え幅は半セル以内。" % (len(seq), n_wait, n_rev_c))
         els8 = (loop_els[1], I, C, S, SL, PP, TA, X)
         tv = [e["area_closed_form"] for e in els8] + list(pred[:200])
         mv = [DC.polygon_area(e["polygon"]) for e in els8] + list(pts_r[flat][:200])

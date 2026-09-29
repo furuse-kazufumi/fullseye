@@ -163,10 +163,12 @@ def main() -> int:
     fdt = (DTR.terrain_height(q[:, 0] + e, q[:, 1], TP, LAYOUT) - DTR.terrain_height(q[:, 0] - e, q[:, 1], TP, LAYOUT)) / (2 * e)
     tg_err = np.percentile(np.abs(fdt - gx), 99)
     z_in = DTR.terrain_height(q[ins, 0], q[ins, 1], TP, LAYOUT) - DTR._road_wave(q[ins, 0], q[ins, 1], TP)[0]
-    WORLD = DW.world_build(LAYOUT, props=[("street_light", -20.0, -25.0, 0.0), ("street_light", 10.0, -25.0, 0.0),
-                                          ("sign_stop", 15.0, -25.3, -math.pi / 2), ("sedan", -10.0, LOOP_R - 2.0, math.pi),
-                                          ("truck", 30.0, LOOP_R + 2.0, 0.0), ("cone", 36.0, -30.0, 0.0)],   # 左側通行: 北の直線は内側が西行き
+    WORLD = DW.world_build(LAYOUT, props=[("street_light", -20.0, -25.0, -math.pi / 2), ("street_light", 10.0, -25.0, -math.pi / 2),   # 腕は道の側へ
+                                          ("sedan", -10.0, LOOP_R - 2.0, math.pi, None, "silver"),
+                                          ("truck", 30.0, LOOP_R + 2.0, 0.0, None, "blue"), ("cone", 36.0, -30.0, 0.0)],   # 左側通行: 北の直線は内側が西行き
                            ground_margin=40.0, ground_step=2.0)
+    import roadjp as RJ  # noqa: E402
+    RJ.add_sign(WORLD, "crosswalk", 15.0, -25.3, -math.pi / 2)             # 横断歩道(指示 407)、日本の標識(roadjp)
     n_flat = len(WORLD["V"])
     DTR.world_apply_terrain(WORLD, TP, step=2.0)
     Vg = WORLD["V"][slice(*WORLD["objects"][0]["verts"])]

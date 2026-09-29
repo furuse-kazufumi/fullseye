@@ -13,7 +13,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 # load_asset — DRIVE `world` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.load_asset(name: 'str', dims=None, *, root=None) -> 'dict'` (実装を直接呼ぶなら `import driveworld; driveworld.load_asset(name: 'str', dims=None, *, root=None) -> 'dict'`、台帳から引くなら `opsdrive.get("load_asset")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.load_asset(name: 'str', dims=None, *, root=None, paint=None) -> 'dict'` (実装を直接呼ぶなら `import driveworld; driveworld.load_asset(name: 'str', dims=None, *, root=None, paint=None) -> 'dict'`、台帳から引くなら `opsdrive.get("load_asset")`)
 
 ## 使い方
 
@@ -21,6 +21,9 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 z-up に直し、箱の寸法を ``dims``(既定 = :data:`ASSETS` の実寸)に軸ごとに合わせ、原点を箱の底面中心に置く。
 未知の名前・寸法 ≤ 0 は ValueError。同じ名前は 1 度だけ読む(キャッシュ)。
+
+``paint``: 車の車体色(:data:`CAR_PAINTS` の名前か (r, g, b)、None = 元の色)。車体の面だけを塗り替え、ガラス・タイヤ・灯火は元のまま、
+テクスチャの濃淡(明るさの比)は保つ。パトカー・タクシー(塗装が意味を持つ)と車以外は ValueError。
 
 ## 参考(サンプルデータ・文献)
 

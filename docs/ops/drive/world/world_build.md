@@ -21,8 +21,8 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 路面 = 全体を覆う平面(z = 0、ラベル 0)。各要素の多角形の縁に縁石(ラベル 1、継ぎ目の辺は除く)、
 縁の内側 0.15 m に白線(ラベル 9)。坂道は斜面のメッシュ(ラベル 0)。交差点の ``signal_poses`` には信号機を立て
-(初期状態 "red")、``stop_lines`` に停止線。``props`` は ``(asset_name, x, y, yaw)`` か
-``(asset_name, x, y, yaw, dims)`` の並び。返り値 = ``{"V","F","face_label","face_color","objects","bounds","course"}``。
+(初期状態 "red"、日本式: 向こう側の柱 + アームで車線上に横型 3 灯、roadjp)、``stop_lines`` に停止線、``crosswalks`` に横断歩道の縞。``props`` は ``(asset_name, x, y, yaw)`` か
+``(asset_name, x, y, yaw[, dims[, paint]])`` の並び(paint = 車の車体色、:data:`CAR_PAINTS`)。返り値 = ``{"V","F","face_label","face_color","objects","bounds","course"}``。
 
 ## 参考(サンプルデータ・文献)
 

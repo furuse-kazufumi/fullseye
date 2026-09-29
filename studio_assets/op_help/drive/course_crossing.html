@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">course_crossing — DRIVE <code style="color:#22d3bf">course</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_crossing(width=7.0, gauge=1.1, rail_outer=0.75, approach=6.0, stop_setback=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecourse; drivecourse.course_crossing(width=7.0, gauge=1.1, rail_outer=0.75, approach=6.0, stop_setback=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;course_crossing&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_crossing(width=7.0, gauge=1.1, rail_outer=0.75, approach=6.0, stop_setback=0.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecourse; drivecourse.course_crossing(width=7.0, gauge=1.1, rail_outer=0.75, approach=6.0, stop_setback=0.5)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;course_crossing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>踏切: 幅 w の道路(x 軸沿い)を線路が直角に横切る。踏切面(軌間 + レール外側 2 つ = 2.6 m)の両側に</p>
 <p>`<code style="color:#22d3bf">approach</code><code style="color:#22d3bf"> の直線。</code><code style="color:#22d3bf">rails</code>` (2, 2, 2) はレール 2 本の線分(x = L/2 ± gauge/2、道路幅いっぱい)、</p>

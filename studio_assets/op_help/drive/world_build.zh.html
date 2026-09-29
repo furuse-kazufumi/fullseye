@@ -7,8 +7,8 @@
 <p>コース(要素か layout)から世界を組む。</p>
 <p>路面 = 全体を覆う平面(z = 0、ラベル 0)。各要素の多角形の縁に縁石(ラベル 1、継ぎ目の辺は除く)、</p>
 <p>縁の内側 0.15 m に白線(ラベル 9)。坂道は斜面のメッシュ(ラベル 0)。交差点の `<code style="color:#22d3bf">signal_poses</code>` には信号機を立て</p>
-<p>(初期状態 &quot;red&quot;)、`<code style="color:#22d3bf">stop_lines</code><code style="color:#22d3bf"> に停止線。</code><code style="color:#22d3bf">props</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(asset_name, x, y, yaw)</code>` か</p>
-<p>`<code style="color:#22d3bf">(asset_name, x, y, yaw, dims)</code><code style="color:#22d3bf"> の並び。返り値 = </code><code style="color:#22d3bf">{&quot;V&quot;,&quot;F&quot;,&quot;face_label&quot;,&quot;face_color&quot;,&quot;objects&quot;,&quot;bounds&quot;,&quot;course&quot;}</code>`。</p>
+<p>(初期状態 &quot;red&quot;、日本式: 向こう側の柱 + アームで車線上に横型 3 灯、roadjp)、`<code style="color:#22d3bf">stop_lines</code><code style="color:#22d3bf"> に停止線、</code><code style="color:#22d3bf">crosswalks</code><code style="color:#22d3bf"> に横断歩道の縞。</code><code style="color:#22d3bf">props</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(asset_name, x, y, yaw)</code>` か</p>
+<p>`<code style="color:#22d3bf">(asset_name, x, y, yaw[, dims[, paint]])</code><code style="color:#22d3bf"> の並び(paint = 車の車体色、:data:</code>CAR_PAINTS<code style="color:#22d3bf">)。返り値 = </code><code style="color:#22d3bf">{&quot;V&quot;,&quot;F&quot;,&quot;face_label&quot;,&quot;face_color&quot;,&quot;objects&quot;,&quot;bounds&quot;,&quot;course&quot;}</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

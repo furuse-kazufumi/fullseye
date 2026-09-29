@@ -1,7 +1,8 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsdrive — 自動運転の教習所ワールドの台帳: 規格寸法のコース(2-D)/ 3-D の世界 / 回転式 LiDAR / カメラ /
 τ 理論の衝突までの時間(drivettc)/ RSS の安全距離(rsssafety)/ 閉形式の地形と路面の材質・手続きの物体(driveterrain)/
-卓球の球の力学・追跡・真値つきの台・ラケット(ballistics / balltrack / ballworld / racket)。
+卓球の球の力学・追跡・真値つきの台・ラケット(ballistics / balltrack / ballworld / racket)/
+日本の信号灯器と道路標識(roadjp、公表寸法をそのまま頂点に持つ)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -26,11 +27,13 @@ import drivettc
 import driveworld
 import lidarsim
 import racket
+import roadjp
 import rsssafety
 
 _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidarsim, "drivettc": drivettc,
         "rsssafety": rsssafety, "driveterrain": driveterrain,
-        "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket}
+        "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
+        "roadjp": roadjp}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -184,6 +187,18 @@ _CATALOG = {
         ("strategy_feeder", "racket", ["table"], "table"),
         ("shot_is_legal", "racket", ["table", "table", "table"], "table"),
         ("rally_simulate", "racket", ["table", "table", "table"], "table"),
+    ],
+    # 日本の信号灯器と道路標識(18 巡目): 公表寸法をそのまま頂点に持つメッシュ(標識 円 600 mm・逆三角 600 mm・菱形 450 mm、
+    # 板の下端 1.8 m / 灯器 レンズ 300 mm・下端 4.5 m 以上・アーム 2.0 m)。絵は RGBA(既存の rgba sort)、板・灯器は
+    # driveworld と同じ dict(V / F / color / label)、世界へ足す op は object 索引(scalar)を返す。
+    "roadjp": [
+        ("sign_params", "roadjp", [], "table"),
+        ("sign_image", "roadjp", [], "rgba"),
+        ("plate_mesh_from_image", "roadjp", ["rgba"], "table"),
+        ("sign_mesh", "roadjp", [], "table"),
+        ("add_sign", "roadjp", ["table"], "scalar"),
+        ("signal_jp_mesh", "roadjp", [], "table"),
+        ("add_signal_jp", "roadjp", ["table"], "scalar"),
     ],
 }
 

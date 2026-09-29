@@ -13,7 +13,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 # course_crossing — DRIVE `course` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.course_crossing(width=7.0, gauge=1.1, rail_outer=0.75, approach=6.0, stop_setback=1.0)` (実装を直接呼ぶなら `import drivecourse; drivecourse.course_crossing(width=7.0, gauge=1.1, rail_outer=0.75, approach=6.0, stop_setback=1.0)`、台帳から引くなら `opsdrive.get("course_crossing")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.course_crossing(width=7.0, gauge=1.1, rail_outer=0.75, approach=6.0, stop_setback=0.5)` (実装を直接呼ぶなら `import drivecourse; drivecourse.course_crossing(width=7.0, gauge=1.1, rail_outer=0.75, approach=6.0, stop_setback=0.5)`、台帳から引くなら `opsdrive.get("course_crossing")`)
 
 ## 使い方
 

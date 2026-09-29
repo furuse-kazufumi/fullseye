@@ -1,4 +1,4 @@
-# DRIVE operator help — 113 ops in 10 categories
+# DRIVE operator help — 120 ops in 11 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -27,6 +27,10 @@
 ### racket (10)
 
 [aim_velocity](racket/aim_velocity.md) · [racket_hit_check](racket/racket_hit_check.md) · [racket_impact](racket/racket_impact.md) · [racket_move](racket/racket_move.md) · [racket_params](racket/racket_params.md) · [racket_plan](racket/racket_plan.md) · [rally_simulate](racket/rally_simulate.md) · [shot_is_legal](racket/shot_is_legal.md) · [strategy_attacker](racket/strategy_attacker.md) · [strategy_feeder](racket/strategy_feeder.md)
+
+### roadjp (7)
+
+[add_sign](roadjp/add_sign.md) · [add_signal_jp](roadjp/add_signal_jp.md) · [plate_mesh_from_image](roadjp/plate_mesh_from_image.md) · [sign_image](roadjp/sign_image.md) · [sign_mesh](roadjp/sign_mesh.md) · [sign_params](roadjp/sign_params.md) · [signal_jp_mesh](roadjp/signal_jp_mesh.md)
 
 ### rss (10)
 

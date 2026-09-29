@@ -496,25 +496,31 @@ def slope_height(course, s):
     return np.interp(s, pr[:, 0], pr[:, 1])
 
 
-def course_intersection(width=7.0, arm=20.0, corner_radius=3.0, arc_pts=16, stop_setback=1.0):
+def course_intersection(width=7.0, arm=20.0, corner_radius=3.0, arc_pts=16, stop_setback=2.0, crosswalk=4.0):
     """幹線コースの十字交差点: 幅 w の道路 2 本が原点で直交、各腕の長さ ``arm``(交差部の縁から)、
     凹頂点 4 つを半径 ``corner_radius`` で削る。
 
-    面積 = 2(2·arm + w)w − w² + 4r²(1 − π/4)。左側通行に合わせ、各流入路(東行 → 北行 → 西行 → 南行の順、
-    流入方向 yaw = 0, π/2, π, 3π/2)に **停止線 1 本**(``stop_lines`` (4, 2, 2): 流入車線 = 進行方向左半分
-    を横切る線分、すみ切りの終わりから ``stop_setback`` 手前)と **信号機 1 基**(``signal_poses`` (4, 3):
-    停止線の位置の左側 0.5 m 外、yaw = 流入車に向く向き = 流入方向 + π)。centerline は東西の道路軸。
-    規格: 幅 ≥ 7、すみ切り ≥ 3(警視庁 審査基準)→ ``params["regulation"]``。
+    面積 = 2(2·arm + w)w − w² + 4r²(1 − π/4)。左側通行に合わせ、各腕に **横断歩道 1 本**(``crosswalks`` (4, 2, 2): すみ切りの
+    終わりから幅 ``crosswalk`` (既定 4 m)で道路を横切る帯の中心線)、各流入路(東行 → 北行 → 西行 → 南行の順、流入方向 yaw = 0, π/2, π, 3π/2)に
+    **停止線 1 本**(``stop_lines`` (4, 2, 2): 流入車線 = 進行方向左半分を横切る線分、横断歩道の ``stop_setback``(既定 2 m)手前)と
+    **信号機 1 基**(``signal_poses`` (4, 3): 交差点の**向こう側**、出口側の横断歩道の外の左の角(左側 0.5 m 外)、yaw = 流入車に向く向き
+    = 流入方向 + π)。centerline は東西の道路軸。
 
-    **Raises** ``ValueError``: 幅・腕が正でない、r < 0、arm < r + stop_setback、arc_pts が不正。"""
+    規格・基準(2026-09-30、ユーザー「日本の規格やルールに合わせて」): 幅 ≥ 7、すみ切り ≥ 3(警視庁 審査基準)→ ``params["regulation"]``。
+    信号機のある交差点には横断歩道と停止線を設ける(運転免許技能試験実施基準 令和 4 年 警察庁丙運発第 12 号 別添 場内コースの設定 (4))、
+    停止線は横断歩道の 2 m 手前が標準(信号機設置の指針の解説)、車両用灯器は交差点の向こう側(出口側)に置く(同)、横断歩道の幅は 4 m 以上が一般
+    (道路標示 201)。
+
+    **Raises** ``ValueError``: 幅・腕が正でない、r < 0、crosswalk < 0、arm < r + crosswalk + stop_setback、arc_pts が不正。"""
     op = "course_intersection"
     w = _positive(width, "width", op)
     arm_ = _positive(arm, "arm", op)
     r = _nonneg(corner_radius, "corner_radius", op)
     sb = _nonneg(stop_setback, "stop_setback", op)
+    cw = _nonneg(crosswalk, "crosswalk", op)
     n = _arc_count(arc_pts, op)
-    if arm_ < r + sb:
-        raise ValueError("%s: arm (%g) must be >= corner_radius + stop_setback (%g)" % (op, arm_, r + sb))
+    if arm_ < r + cw + sb:
+        raise ValueError("%s: arm (%g) must be >= corner_radius + crosswalk + stop_setback (%g)" % (op, arm_, r + cw + sb))
     h = 0.5 * w
     L = arm_ + h
     pts = [(L, -h), (L, h)]
@@ -525,23 +531,28 @@ def course_intersection(width=7.0, arm=20.0, corner_radius=3.0, arc_pts=16, stop
     pts += _fillet_reflex((-h, -h), (1.0, 0.0), (0.0, -1.0), r, n)
     pts += [(-h, -L), (h, -L)]
     pts += _fillet_reflex((h, -h), (0.0, 1.0), (1.0, 0.0), r, n)
-    # 東行の流入路(x < 0, 進行 +x)のひな形を 4 方向に回す
-    d_stop = h + r + sb
+    # 東行の流入路(x < 0, 進行 +x)のひな形を 4 方向に回す。横断歩道はすみ切りの終わり(h + r)から幅 cw、停止線はその sb 手前
+    d_cross = h + r + 0.5 * cw                                 # 横断歩道の帯の中心
+    d_stop = h + r + cw + sb
+    cross0 = np.array([[-d_cross, -h], [-d_cross, h]])         # 道路の全幅を横切る帯の中心線(幅 cw は world 側で描く)
     stop0 = np.array([[-d_stop, 0.0], [-d_stop, h]])          # 左半分(y ∈ [0, h])を横切る
-    sig0 = np.array([-d_stop, h + 0.5, math.pi])
-    stop_lines, signals = [], []
+    # 信号は流入路から見て交差点の**向こう側**(出口側の横断歩道の外)の左の角、流入路の方(西)を向く(日本の対面信号)。停止線の真横に
+    # 立てると車載カメラは 40° 見上げないと灯火が入らない(2026-09-30、閉ループ化で発覚)。
+    sig0 = np.array([h + r + cw + 0.5, h + 0.5, math.pi])
+    stop_lines, signals, crosswalks = [], [], []
     for k in range(4):
         yaw = k * math.pi / 2
         c, s = math.cos(yaw), math.sin(yaw)
         R = np.array([[c, -s], [s, c]])
         stop_lines.append(stop0 @ R.T)
+        crosswalks.append(cross0 @ R.T)
         signals.append([c * sig0[0] - s * sig0[1], s * sig0[0] + c * sig0[1], _wrap(sig0[2] + yaw)])
     area = 2 * (2 * arm_ + w) * w - w * w + 4 * _fillet_area(r)
-    params = {"width": w, "arm": arm_, "corner_radius": r, "arc_pts": n, "stop_setback": sb,
-              "regulation": {"width_min": 7.0, "corner_radius_min": 3.0}}
+    params = {"width": w, "arm": arm_, "corner_radius": r, "arc_pts": n, "stop_setback": sb, "crosswalk": cw,
+              "regulation": {"width_min": 7.0, "corner_radius_min": 3.0, "stop_setback_std": 2.0, "crosswalk_min": 4.0}}
     return _element("intersection", pts, [(-L, 0.0), (L, 0.0)], (-L, 0.0, 0.0), (L, 0.0, 0.0), w, params,
-                    area, op, stop_lines=np.asarray(stop_lines, np.float64),
-                    signal_poses=np.asarray(signals, np.float64), centerline_length=2 * L)
+                    area, op, stop_lines=np.asarray(stop_lines, np.float64), crosswalks=np.asarray(crosswalks, np.float64),
+                    crosswalk_width=cw, signal_poses=np.asarray(signals, np.float64), centerline_length=2 * L)
 
 
 def course_parallel_parking(car_length=4.5, car_width=1.8, extra=3.0, road_width=7.0, approach=5.0,
@@ -574,7 +585,7 @@ def course_parallel_parking(car_length=4.5, car_width=1.8, extra=3.0, road_width
                     centerline_length=L)
 
 
-def course_crossing(width=7.0, gauge=1.1, rail_outer=0.75, approach=6.0, stop_setback=1.0):
+def course_crossing(width=7.0, gauge=1.1, rail_outer=0.75, approach=6.0, stop_setback=0.5):
     """踏切: 幅 w の道路(x 軸沿い)を線路が直角に横切る。踏切面(軌間 + レール外側 2 つ = 2.6 m)の両側に
     ``approach`` の直線。``rails`` (2, 2, 2) はレール 2 本の線分(x = L/2 ± gauge/2、道路幅いっぱい)、
     ``crossing_zone`` = (x0, x1) 踏切面、``stop_lines`` (1, 2, 2) は踏切面の ``stop_setback`` 手前の左車線。

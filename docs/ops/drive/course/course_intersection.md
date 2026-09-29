@@ -13,20 +13,25 @@ version: 0.2.3  # fullseye lib version this note was generated for
 # course_intersection — DRIVE `course` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.course_intersection(width=7.0, arm=20.0, corner_radius=3.0, arc_pts=16, stop_setback=1.0)` (実装を直接呼ぶなら `import drivecourse; drivecourse.course_intersection(width=7.0, arm=20.0, corner_radius=3.0, arc_pts=16, stop_setback=1.0)`、台帳から引くなら `opsdrive.get("course_intersection")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.course_intersection(width=7.0, arm=20.0, corner_radius=3.0, arc_pts=16, stop_setback=2.0, crosswalk=4.0)` (実装を直接呼ぶなら `import drivecourse; drivecourse.course_intersection(width=7.0, arm=20.0, corner_radius=3.0, arc_pts=16, stop_setback=2.0, crosswalk=4.0)`、台帳から引くなら `opsdrive.get("course_intersection")`)
 
 ## 使い方
 
 幹線コースの十字交差点: 幅 w の道路 2 本が原点で直交、各腕の長さ ``arm``(交差部の縁から)、
 凹頂点 4 つを半径 ``corner_radius`` で削る。
 
-面積 = 2(2·arm + w)w − w² + 4r²(1 − π/4)。左側通行に合わせ、各流入路(東行 → 北行 → 西行 → 南行の順、
-流入方向 yaw = 0, π/2, π, 3π/2)に **停止線 1 本**(``stop_lines`` (4, 2, 2): 流入車線 = 進行方向左半分
-を横切る線分、すみ切りの終わりから ``stop_setback`` 手前)と **信号機 1 基**(``signal_poses`` (4, 3):
-停止線の位置の左側 0.5 m 外、yaw = 流入車に向く向き = 流入方向 + π)。centerline は東西の道路軸。
-規格: 幅 ≥ 7、すみ切り ≥ 3(警視庁 審査基準)→ ``params["regulation"]``。
+面積 = 2(2·arm + w)w − w² + 4r²(1 − π/4)。左側通行に合わせ、各腕に **横断歩道 1 本**(``crosswalks`` (4, 2, 2): すみ切りの
+終わりから幅 ``crosswalk`` (既定 4 m)で道路を横切る帯の中心線)、各流入路(東行 → 北行 → 西行 → 南行の順、流入方向 yaw = 0, π/2, π, 3π/2)に
+**停止線 1 本**(``stop_lines`` (4, 2, 2): 流入車線 = 進行方向左半分を横切る線分、横断歩道の ``stop_setback``(既定 2 m)手前)と
+**信号機 1 基**(``signal_poses`` (4, 3): 交差点の**向こう側**、出口側の横断歩道の外の左の角(左側 0.5 m 外)、yaw = 流入車に向く向き
+= 流入方向 + π)。centerline は東西の道路軸。
 
-**Raises** ``ValueError``: 幅・腕が正でない、r < 0、arm < r + stop_setback、arc_pts が不正。
+規格・基準(2026-09-30、ユーザー「日本の規格やルールに合わせて」): 幅 ≥ 7、すみ切り ≥ 3(警視庁 審査基準)→ ``params["regulation"]``。
+信号機のある交差点には横断歩道と停止線を設ける(運転免許技能試験実施基準 令和 4 年 警察庁丙運発第 12 号 別添 場内コースの設定 (4))、
+停止線は横断歩道の 2 m 手前が標準(信号機設置の指針の解説)、車両用灯器は交差点の向こう側(出口側)に置く(同)、横断歩道の幅は 4 m 以上が一般
+(道路標示 201)。
+
+**Raises** ``ValueError``: 幅・腕が正でない、r < 0、crosswalk < 0、arm < r + crosswalk + stop_setback、arc_pts が不正。
 
 ## 参考(サンプルデータ・文献)
 

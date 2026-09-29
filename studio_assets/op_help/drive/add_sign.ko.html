@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">add_sign — DRIVE <code style="color:#22d3bf">roadjp</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_sign(world: &#x27;dict&#x27;, kind: &#x27;str&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, *, value=None, mount_height: &#x27;float | None&#x27; = None, pole_radius: &#x27;float&#x27; = 0.03, cell: &#x27;int&#x27; = 4, size_px: &#x27;int&#x27; = 128, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;int&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import roadjp; roadjp.add_sign(world: &#x27;dict&#x27;, kind: &#x27;str&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, *, value=None, mount_height: &#x27;float | None&#x27; = None, pole_radius: &#x27;float&#x27; = 0.03, cell: &#x27;int&#x27; = 4, size_px: &#x27;int&#x27; = 128, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;int&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;add_sign&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>路側式の標識を立てる: 柱(円柱、灰、ラベル 6)+ 板(下端 = `<code style="color:#22d3bf">mount_height</code>`、既定 1.8 m、ラベル 4)。</p>
+<p>規約: <b>yaw の向きへ進んで来る車に板の面が向く</b>(法線 = (−cos yaw, −sin yaw))。実装は :func:<code style="color:#22d3bf">sign_mesh</code>(法線 −x)を</p>
+<p>:func:<code style="color:#22d3bf">driveworld.place_mesh</code> で回すだけ。板は柱の手前(車の側)に `<code style="color:#22d3bf">pole_radius + 1 cm</code>` 離して付ける。</p>
+<p>返り値 = 板の object 索引(`<code style="color:#22d3bf">extra = {&quot;kind&quot;, &quot;value&quot;, &quot;width&quot;, &quot;height&quot;, &quot;mount_height&quot;}</code>`)。柱は直前の別 object。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_school">poc_driving_school</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_school.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_world_terrain">poc_world_terrain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_world_terrain.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">scalar</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">roadjp</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:sign_params">sign_params</a> · <a style="color:#22d3bf" href="opdrive:sign_image">sign_image</a> · <a style="color:#22d3bf" href="opdrive:plate_mesh_from_image">plate_mesh_from_image</a> · <a style="color:#22d3bf" href="opdrive:sign_mesh">sign_mesh</a> · <a style="color:#22d3bf" href="opdrive:signal_jp_mesh">signal_jp_mesh</a> · <a style="color:#22d3bf" href="opdrive:add_signal_jp">add_signal_jp</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roadjp.py — DRIVE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

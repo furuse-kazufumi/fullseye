@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2337,
- "n_notes": 2343,
+ "n_ops": 2344,
+ "n_notes": 2350,
  "notes": {
   "vol_dilate": [
    {
@@ -16065,6 +16065,72 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/drive/racket/strategy_feeder.md"
+   }
+  ],
+  "add_sign": [
+   {
+    "op": "add_sign",
+    "dim": "drive",
+    "category": "roadjp",
+    "in": "table",
+    "out": "scalar",
+    "path": "docs/ops/drive/roadjp/add_sign.md"
+   }
+  ],
+  "add_signal_jp": [
+   {
+    "op": "add_signal_jp",
+    "dim": "drive",
+    "category": "roadjp",
+    "in": "table",
+    "out": "scalar",
+    "path": "docs/ops/drive/roadjp/add_signal_jp.md"
+   }
+  ],
+  "plate_mesh_from_image": [
+   {
+    "op": "plate_mesh_from_image",
+    "dim": "drive",
+    "category": "roadjp",
+    "in": "rgba",
+    "out": "table",
+    "path": "docs/ops/drive/roadjp/plate_mesh_from_image.md"
+   }
+  ],
+  "sign_image": [
+   {
+    "op": "sign_image",
+    "dim": "drive",
+    "category": "roadjp",
+    "out": "rgba",
+    "path": "docs/ops/drive/roadjp/sign_image.md"
+   }
+  ],
+  "sign_mesh": [
+   {
+    "op": "sign_mesh",
+    "dim": "drive",
+    "category": "roadjp",
+    "out": "table",
+    "path": "docs/ops/drive/roadjp/sign_mesh.md"
+   }
+  ],
+  "sign_params": [
+   {
+    "op": "sign_params",
+    "dim": "drive",
+    "category": "roadjp",
+    "out": "table",
+    "path": "docs/ops/drive/roadjp/sign_params.md"
+   }
+  ],
+  "signal_jp_mesh": [
+   {
+    "op": "signal_jp_mesh",
+    "dim": "drive",
+    "category": "roadjp",
+    "out": "table",
+    "path": "docs/ops/drive/roadjp/signal_jp_mesh.md"
    }
   ],
   "rss_lateral": [

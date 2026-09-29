@@ -1876,6 +1876,38 @@ def _b_rally(pool, rng):
     return (_b_ball_bp(pool, rng), _b_rp(pool, rng), BW.table_params()), {"max_hits": 2, "retries": 0, "seed": 0}
 
 
+def _b_sign_kind(pool, rng):
+    # 文字の無い種類(no_entry = 赤地に白の横棒)にして、フォントの有無で結果が変わらないようにする
+    return ("no_entry",), {}
+
+
+def _b_sign_img(pool, rng):
+    return ("no_entry",), {"size_px": 64}
+
+
+def _b_plate_mesh(pool, rng):
+    import roadjp as RJ
+    return (RJ.sign_image("no_entry", size_px=64), 0.6, 0.6), {"cell": 4}
+
+
+def _b_sign_mesh(pool, rng):
+    return ("no_entry",), {"size_px": 64}
+
+
+def _b_add_sign(pool, rng):
+    import driveworld as DW
+    return (DW._empty_world(), "no_entry", 5.0, -4.0, 0.0), {"size_px": 64}
+
+
+def _b_signal_jp(pool, rng):
+    return (), {"state": "red"}
+
+
+def _b_add_signal_jp(pool, rng):
+    import driveworld as DW
+    return (DW._empty_world(), 10.0, 0.0, 0.0), {"state": "red", "arm": 2.0}
+
+
 def _b_graph_kcore(pool, rng):
     B = (rng.random((30, 30)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -2112,6 +2144,9 @@ OP_ARG_BUILDERS = {
     "aim_velocity": _b_aim, "racket_plan": _b_racket_plan, "racket_move": _b_racket_move,
     "strategy_attacker": _b_strategy, "strategy_feeder": _b_strategy, "shot_is_legal": _b_shot_legal,
     "rally_simulate": _b_rally,
+    "sign_params": _b_sign_kind, "sign_image": _b_sign_img, "plate_mesh_from_image": _b_plate_mesh,
+    "sign_mesh": _b_sign_mesh, "add_sign": _b_add_sign, "signal_jp_mesh": _b_signal_jp,
+    "add_signal_jp": _b_add_signal_jp,
     "tree_from_swc": _b_tree_swc,
     "tree_morphometry": _b_tree_table,
     "tree_sholl": _b_tree_table,

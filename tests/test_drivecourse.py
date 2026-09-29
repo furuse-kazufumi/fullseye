@@ -103,7 +103,7 @@ def test_regulation_values_are_in_params():
     assert s["regulation"]["top_min"] == 4.0
     assert s["regulation"]["gentle_range"][0] <= s["grade_gentle"] <= s["regulation"]["gentle_range"][1]
     assert s["regulation"]["steep_range"][0] <= s["grade_steep"] <= s["regulation"]["steep_range"][1]
-    assert D.course_intersection()["params"]["regulation"] == {"width_min": 7.0, "corner_radius_min": 3.0}
+    assert D.course_intersection()["params"]["regulation"] == {"width_min": 7.0, "corner_radius_min": 3.0, "stop_setback_std": 2.0, "crosswalk_min": 4.0}
     assert D.course_crossing()["params"]["regulation"] == {"gauge": 1.1, "rail_outer": 0.75}
     pp = D.course_parallel_parking()["params"]
     assert pp["bay_length"] == 7.5 and "法令に数値なし" in pp["regulation"]["note"]
@@ -282,9 +282,13 @@ def test_intersection_signals_and_stop_lines():
     assert sig.shape == (4, 3) and stop.shape == (4, 2, 2)
     assert not np.any(D.course_contains(e, sig[:, :2]))          # 信号柱は路外
     assert np.all(D.course_contains(e, stop.mean(axis=1)))        # 停止線は路上
-    # 東行(yaw 0)流入路: 停止線は x = −(3.5 + 3 + 1) で左半分 y ∈ [0, 3.5]、信号はその左外側で西向き
-    assert np.allclose(stop[0], [[-7.5, 0.0], [-7.5, 3.5]])
-    assert np.allclose(sig[0], [-7.5, 4.0, math.pi])
+    # 東行(yaw 0)流入路: 横断歩道はすみ切りの終わり(6.5)から幅 4、停止線はその 2 m 手前 x = −12.5 で左半分 y ∈ [0, 3.5]、
+    # 信号は交差点の向こう側(出口側の横断歩道の外 x = +11.0)の左の角で西向き(対面)
+    assert e["crosswalks"].shape == (4, 2, 2) and e["crosswalk_width"] == 4.0
+    assert np.allclose(e["crosswalks"][0], [[-8.5, -3.5], [-8.5, 3.5]])
+    assert np.allclose(stop[0], [[-12.5, 0.0], [-12.5, 3.5]])
+    assert np.allclose(sig[0], [11.0, 4.0, math.pi])
+    assert np.all(D.course_contains(e, e["crosswalks"].mean(axis=1)))     # 横断歩道は路上
     for k in range(4):
         assert math.cos(sig[k, 2] - (k * math.pi / 2 + math.pi)) == pytest.approx(1.0)
     # 4 方向対称: 停止線の中点は原点から等距離
@@ -301,7 +305,7 @@ def test_crossing_rails_and_zone():
     assert z0 < r[0, 0, 0] < r[1, 0, 0] < z1
     assert np.all(D.course_contains(e, r.mean(axis=1)))
     assert e["params"]["length"] == pytest.approx(14.6)
-    assert e["stop_lines"][0, 0, 0] == pytest.approx(z0 - 1.0)
+    assert e["stop_lines"][0, 0, 0] == pytest.approx(z0 - 0.5)       # 踏切の手前の側端から 0.5 m 手前(運転免許技能試験実施基準)
 
 
 def test_slope_profile_and_height():

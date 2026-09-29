@@ -17,7 +17,8 @@
 
 フレーム規約:
   * 世界: x = 前/東, y = 左/北, z = 上(右手系)、メートル。路面は z = 0(坂道の要素だけ z > 0 の斜面を持つ)。
-  * Kenney のモデルは y-up なので (x, y, z) → (x, −z, y) で z-up に直し、**各モデルの箱の寸法を実寸(車長 4.5 m 等)に合わせて
+  * Kenney のモデルは y-up なので (x, y, z) → (x, −z, y) で z-up に直し、車は長軸(y-up の z)を x に、前照灯の側を +x に、
+    街灯は腕を +x に、信号機は頭を +x に回してから(向きは軸の長さ・左右対称性・灯の色で決め、門にしてある)、**各モデルの箱の寸法を実寸(車長 4.5 m 等)に合わせて
     軸ごとに引き伸ばす**(玩具の比率のままだと車幅が 2.6 m になる)。原点は箱の底面中心。
   * 姿勢 (x, y, yaw) は carpath と同じ(yaw は +x から反時計回り、ラジアン)。
 
@@ -42,7 +43,7 @@ from pathlib import Path
 import numpy as np
 
 __all__ = [
-    "LABELS", "ASSETS", "asset_dir", "read_obj_colored", "load_asset", "place_mesh",
+    "LABELS", "ASSETS", "CAR_PAINTS", "asset_dir", "read_obj_colored", "load_asset", "place_mesh",
     "world_build", "world_add", "world_camera", "world_bounds", "set_signal_state", "add_asset", "add_signal",
     "camera_pose", "camera_intrinsics", "world_project_points", "overlay_points", "polygon_triangulate", "world_move",
 ]
@@ -57,12 +58,16 @@ ASSETS = {
     "suv": ("cars", "suv.obj", (4.7, 1.9, 1.75), 2),
     "taxi": ("cars", "taxi.obj", (4.5, 1.8, 1.5), 2),
     "police": ("cars", "police.obj", (4.8, 1.85, 1.5), 2),
-    "truck": ("cars", "truck.obj", (6.5, 2.2, 2.6), 2),
-    "cone": ("cars", "cone.obj", (0.4, 0.4, 0.7), 5),
-    "traffic_light": ("roads", "traffic-light.obj", (0.5, 0.9, 5.0), 3),
-    "sign_stop": ("roads", "road-sign-stop.obj", (0.3, 0.8, 2.2), 4),
-    "street_light": ("roads", "light-curved.obj", (2.5, 0.4, 6.0), 6),
+    "truck": ("cars", "truck.obj", (5.3, 1.9, 1.8), 2),                 # Kenney の truck はピックアップ(生の比 2.95 : 1.5 : 1.3)
+    "cone": ("cars", "cone.obj", (0.4, 0.4, 0.5), 5),
+    "traffic_light": ("roads", "traffic-light.obj", (1.15, 0.87, 5.0), 3),   # 柱 + 頭(頭は +x に張り出す)、生の比で 5 m に
+    "sign_stop": ("roads", "road-sign-stop.obj", (0.35, 0.61, 2.2), 4),
+    "street_light": ("roads", "light-curved.obj", (2.0, 0.45, 6.0), 6),      # 腕は +x へ 2 m、生の比で 6 m に
 }
+#: 寸法は**生のモデルの比を保つ**(軸ごとの寸法合わせは向きが違うと形を潰す —— 2026-09-30 の訂正: 街灯の柱が幅 2.5 m の板、
+#: 信号機の頭が平板になっていた)。車だけは実寸(4.5 × 1.8 × 1.45 等)に軸ごとに合わせる(生の比との差は 1.8 倍以内)。
+#: 資産ごとの向きの規約: 車は前 = +x、街灯は腕 = +x、信号機は頭 = +x(灯火はその前面)、標識は面の法線 = x。
+_ASSET_YAW = {"street_light": -np.pi / 2, "traffic_light": np.pi}       # z-up に直した後に z 軸まわりに回す角(腕・頭を +x へ)
 _KIT_DIR = {"cars": "car-kit", "roads": "city-kit-roads"}
 _COLORMAP = "colormap.png"
 
@@ -160,14 +165,104 @@ def _yup_to_zup(V: np.ndarray) -> np.ndarray:
     return np.column_stack([V[:, 0], -V[:, 2], V[:, 1]])
 
 
+def _orient_car(V: np.ndarray) -> np.ndarray:
+    """Kenney の車キットを「長さ = x、前 = +x」に向ける: z-up に直した直後は**長軸が y**(y-up の z)で、前(黄色い前照灯)が −y、
+    後ろ(赤い尾灯)が +y。z 軸まわり +90°((x, y) → (−y, x))で前が +x に来る。
+
+    ★2026-09-30 の訂正: それまで「長さは x」と仮定して軸ごとに寸法を合わせていたので、幅 1.5 m が 4.5 m に伸び、長さ 2.55 m が
+    1.8 m に潰れ、車が 90° 横向きの別の形になっていた(ユーザー指摘「車の向きを間違えてるように見える」。前日の 180° 回しは
+    誤診で、潰れた形を反転しただけ)。門は生のモデルの最長軸が x に来ること + 灯の色の位置で立てる(test_driveworld)。"""
+    return np.column_stack([-V[:, 1], V[:, 0], V[:, 2]])
+
+
+#: 車体色(日本で多い順の目安: 白・黒・シルバー・グレー・青・赤・ベージュ・茶・緑)。表示用の sRGB 値(0〜1)。
+#: 塗り替えは車体の面だけ(ガラス・タイヤ・灯火・内装は元の色)で、元のテクスチャの濃淡(明るさの比)を保つ。
+CAR_PAINTS = {
+    "white": (0.93, 0.93, 0.91), "black": (0.08, 0.08, 0.09), "silver": (0.72, 0.73, 0.75), "grey": (0.42, 0.43, 0.45),
+    "blue": (0.14, 0.27, 0.58), "red": (0.74, 0.09, 0.11), "beige": (0.80, 0.72, 0.56), "brown": (0.42, 0.27, 0.18),
+    "green": (0.18, 0.40, 0.25),
+}
+#: 塗装そのものが意味を持つ車(パトカーの白黒・タクシーの行灯と車体色)は塗り替えない。
+_LIVERY = ("police", "taxi")
+
+
+def _rgb_to_hsv(C: np.ndarray) -> np.ndarray:
+    """(M, 3) の RGB → (M, 3) の HSV(色相は 0〜1)。numpy だけで(colorsys を行ごとに回さない)。"""
+    C = np.asarray(C, np.float64)
+    mx, mn = C.max(axis=1), C.min(axis=1)
+    d = mx - mn
+    h = np.zeros(len(C))
+    nz = d > 1e-12
+    r, g, b = C[:, 0], C[:, 1], C[:, 2]
+    i = nz & (mx == r)
+    h[i] = ((g - b)[i] / d[i]) % 6.0
+    i = nz & (mx == g) & (mx != r)
+    h[i] = (b - r)[i] / d[i] + 2.0
+    i = nz & (mx == b) & (mx != r) & (mx != g)
+    h[i] = (r - g)[i] / d[i] + 4.0
+    s = np.where(mx > 1e-12, d / np.maximum(mx, 1e-12), 0.0)
+    return np.column_stack([h / 6.0, s, mx])
+
+
+def _car_body_mask(mesh: dict) -> np.ndarray:
+    """車の資産(:func:`load_asset` の返り値)の**車体の塗装の面**の (M,) bool。
+
+    決め方: 彩度 0.45〜0.80 の面(ガラス・タイヤ・金属は無彩色、灯火は彩度 > 0.8 か前照灯・尾灯の色の判定で外す)を色相 10° の箱に分け、面積が
+    最大の箱の ±25° に入る面。実測(2026-09-30): セダン = 0〜10°(車体面積の 26 %)、SUV・ピックアップ = 150°(15 % / 24 %)。
+    車体と灯火の色相が近いセダン(尾灯 ≈ 3°)は、尾灯の色の判定(R > 0.6・G < 0.35・B < 0.35)で先に外す。
+    車体の面が見つからない(彩度のある面が全体の 5 % 未満)なら ValueError(黙って何も塗らない、を許さない)。"""
+    C = np.asarray(mesh["color"], np.float64)
+    V, F = np.asarray(mesh["V"], np.float64), np.asarray(mesh["F"], np.int64)
+    area = 0.5 * np.linalg.norm(np.cross(V[F[:, 1]] - V[F[:, 0]], V[F[:, 2]] - V[F[:, 0]]), axis=1)
+    hsv = _rgb_to_hsv(C)
+    lamp = ((C[:, 0] > 0.6) & (C[:, 1] < 0.35) & (C[:, 2] < 0.35)) | ((C[:, 0] > 0.8) & (C[:, 1] > 0.6) & (C[:, 2] < 0.3))
+    cand = (hsv[:, 1] > 0.45) & (hsv[:, 1] < 0.80) & ~lamp
+    if area[cand].sum() < 0.05 * area.sum():
+        raise ValueError("_car_body_mask: 車体の塗装の面が見つからない(彩度のある面 %.1f %%)" % (100.0 * area[cand].sum() / max(area.sum(), 1e-12)))
+    bins = (hsv[:, 0] * 36).astype(int) % 36
+    w = np.bincount(bins[cand], weights=area[cand], minlength=36)
+    h0 = (np.argmax(w) + 0.5) / 36.0
+    dh = np.abs(((hsv[:, 0] - h0) + 0.5) % 1.0 - 0.5)
+    return cand & (dh <= 25.0 / 360.0)
+
+
+def _repaint_car(mesh: dict, paint) -> dict:
+    """車の資産の車体を ``paint``(:data:`CAR_PAINTS` の名前か (r, g, b))に塗り替えた**新しい** mesh を返す(元は変えない)。
+
+    濃淡の保存: 新しい色 = paint × (その面の明るさ / 車体の面の明るさの中央値)を [0, 1] に切る。``paint`` が None か "original" なら写しを返す。
+    パトカー・タクシー(塗装が意味を持つ)は ValueError。未知の色の名前・範囲外の RGB も ValueError。"""
+    out = {k: (v.copy() if isinstance(v, np.ndarray) else v) for k, v in mesh.items()}
+    if paint is None or paint == "original":
+        return out
+    if mesh.get("name") in _LIVERY:
+        raise ValueError("_repaint_car: %s は塗装が意味を持つので塗り替えない" % mesh.get("name"))
+    if isinstance(paint, str):
+        if paint not in CAR_PAINTS:
+            raise ValueError("_repaint_car: 未知の色 %r(%s)" % (paint, ", ".join(sorted(CAR_PAINTS))))
+        rgb = np.asarray(CAR_PAINTS[paint], np.float64)
+    else:
+        rgb = np.asarray(paint, np.float64)
+        if rgb.shape != (3,) or not np.all((rgb >= 0.0) & (rgb <= 1.0)):
+            raise ValueError("_repaint_car: paint は色の名前か [0, 1] の (r, g, b)")
+    body = _car_body_mask(mesh)
+    v = np.asarray(mesh["color"], np.float64).max(axis=1)
+    ref = float(np.median(v[body]))
+    out["color"][body] = np.clip(rgb[None, :] * (v[body] / ref)[:, None], 0.0, 1.0)
+    out["paint"] = paint
+    return out
+
+
 _ASSET_CACHE: dict = {}
 
 
-def load_asset(name: str, dims=None, *, root=None) -> dict:
+def load_asset(name: str, dims=None, *, root=None, paint=None) -> dict:
     """同梱資産をメッシュ dict に: ``{"V", "F", "color", "label", "name", "dims"}``。
 
     z-up に直し、箱の寸法を ``dims``(既定 = :data:`ASSETS` の実寸)に軸ごとに合わせ、原点を箱の底面中心に置く。
-    未知の名前・寸法 ≤ 0 は ValueError。同じ名前は 1 度だけ読む(キャッシュ)。"""
+    未知の名前・寸法 ≤ 0 は ValueError。同じ名前は 1 度だけ読む(キャッシュ)。
+
+    ``paint``: 車の車体色(:data:`CAR_PAINTS` の名前か (r, g, b)、None = 元の色)。車体の面だけを塗り替え、ガラス・タイヤ・灯火は元のまま、
+    テクスチャの濃淡(明るさの比)は保つ。パトカー・タクシー(塗装が意味を持つ)と車以外は ValueError。"""
     if name not in ASSETS:
         raise ValueError("unknown asset %r (known: %s)" % (name, sorted(ASSETS)))
     kit, fname, dims0, label = ASSETS[name]
@@ -182,16 +277,21 @@ def load_asset(name: str, dims=None, *, root=None) -> dict:
         V, F, C = read_obj_colored(kd / fname, tex)
         V = _yup_to_zup(V)
         if kit == "cars":
-            # Kenney の車キットは z-up に直すと前が −x を向く(テールランプが +x)。yaw 0 = +x が前、という姿勢の規約に合わせて
-            # 180° 回す(16 巡目まで全 PoC の車が進行方向と逆向きだった —— ユーザー指摘 2026-09-29)。
-            V = V * np.array([-1.0, -1.0, 1.0])
+            V = _orient_car(V)
+        elif name in _ASSET_YAW:
+            V = place_mesh(V, 0.0, 0.0, _ASSET_YAW[name])                  # 街灯の腕(生では +y)・信号機の頭(生では −x)を +x へ
         _ASSET_CACHE[key] = (V, F, C)
     V, F, C = _ASSET_CACHE[key]
     lo, hi = V.min(axis=0), V.max(axis=0)
     ext = np.where(hi - lo > 1e-9, hi - lo, 1.0)
     Vs = (V - (lo + hi) / 2.0) / ext * dims
     Vs[:, 2] -= Vs[:, 2].min()                          # 底面を z = 0 に
-    return {"V": Vs, "F": F.copy(), "color": C.copy(), "label": int(label), "name": name, "dims": dims}
+    out = {"V": Vs, "F": F.copy(), "color": C.copy(), "label": int(label), "name": name, "dims": dims}
+    if paint is not None and paint != "original":
+        if kit not in ("cars",) or name == "cone":
+            raise ValueError("paint は車にだけ使える(%s)" % name)
+        out = _repaint_car(out, paint)
+    return out
 
 
 def place_mesh(V, x: float, y: float, yaw: float, z: float = 0.0) -> np.ndarray:
@@ -419,8 +519,8 @@ def world_build(course, *, props=(), kerb_height: float = 0.15, kerb_width: floa
 
     路面 = 全体を覆う平面(z = 0、ラベル 0)。各要素の多角形の縁に縁石(ラベル 1、継ぎ目の辺は除く)、
     縁の内側 0.15 m に白線(ラベル 9)。坂道は斜面のメッシュ(ラベル 0)。交差点の ``signal_poses`` には信号機を立て
-    (初期状態 "red")、``stop_lines`` に停止線。``props`` は ``(asset_name, x, y, yaw)`` か
-    ``(asset_name, x, y, yaw, dims)`` の並び。返り値 = ``{"V","F","face_label","face_color","objects","bounds","course"}``。"""
+    (初期状態 "red"、日本式: 向こう側の柱 + アームで車線上に横型 3 灯、roadjp)、``stop_lines`` に停止線、``crosswalks`` に横断歩道の縞。``props`` は ``(asset_name, x, y, yaw)`` か
+    ``(asset_name, x, y, yaw[, dims[, paint]])`` の並び(paint = 車の車体色、:data:`CAR_PAINTS`)。返り値 = ``{"V","F","face_label","face_color","objects","bounds","course"}``。"""
     world = _empty_world()
     xmin, xmax, ymin, ymax = world_bounds(course, ground_margin)
     world["bounds"] = (xmin, xmax, ymin, ymax)
@@ -460,8 +560,30 @@ def world_build(course, *, props=(), kerb_height: float = 0.15, kerb_width: floa
                 nrm = np.array([-d[1], d[0]]) / L * 0.45
                 Vs = np.array([[*a, 0.006], [*b, 0.006], [*(b + nrm), 0.006], [*(a + nrm), 0.006]])
                 world_add(world, Vs, np.array([[0, 1, 2], [0, 2, 3]]), 9, _LINE_COLOR, name="stop_line")
+        cw = float(el.get("crosswalk_width", 4.0))
+        for cwl in _seq(el, "crosswalks"):                       # 横断歩道(道路標示 201): 白の縞 0.45 m・間隔 0.45 m、帯の幅 cw
+            a, b = np.asarray(cwl, np.float64)
+            d = b - a
+            L = np.hypot(*d)
+            if L > 1e-9:
+                u = d / L                                            # 帯を横切る向き(縞はこの向きに並ぶ)
+                nrm = np.array([-u[1], u[0]])                        # 帯の幅の向き(= 車の進行方向)
+                pos = 0.0
+                while pos + 0.45 <= L + 1e-9:
+                    p0 = a + u * pos
+                    p1 = a + u * (pos + 0.45)
+                    Vs = np.array([[*(p0 - nrm * cw / 2), 0.006], [*(p1 - nrm * cw / 2), 0.006],
+                                   [*(p1 + nrm * cw / 2), 0.006], [*(p0 + nrm * cw / 2), 0.006]])
+                    world_add(world, Vs, np.array([[0, 1, 2], [0, 2, 3]]), 12, _LINE_COLOR, name="crosswalk")
+                    pos += 0.9
         for sp in _seq(el, "signal_poses"):
-            add_signal(world, *sp[:3], asset_root=asset_root)
+            # 日本式の信号機(roadjp、2026-09-30): 柱は流入路から見て交差点の向こう側の左の角、アームで流入車線の上へ、横型 3 灯(左から青黄赤)。
+            # signal_poses の yaw は「灯器が向く向き」(流入方向 + π)なので、add_signal_jp の「進入車の進行方向」には yaw + π を渡す。
+            # アーム長 = 柱(車線の左端から 0.5 m 外)から流入車線の中心まで。
+            import roadjp
+            hw = 0.5 * float(el.get("width", 7.0))
+            roadjp.add_signal_jp(world, float(sp[0]), float(sp[1]), float(sp[2]) + np.pi, state="red",
+                                 arm=min(3.5, max(1.5, (hw + 0.5) - 0.5 * hw)))
         for r in _seq(el, "rails"):
             a, b = np.asarray(r, np.float64)
             d = b - a
@@ -475,14 +597,15 @@ def world_build(course, *, props=(), kerb_height: float = 0.15, kerb_width: floa
     for p in props:
         name, x, y, yaw = p[0], float(p[1]), float(p[2]), float(p[3])
         dims = p[4] if len(p) > 4 else None
-        add_asset(world, name, x, y, yaw, dims=dims, asset_root=asset_root)
+        paint = p[5] if len(p) > 5 else None
+        add_asset(world, name, x, y, yaw, dims=dims, asset_root=asset_root, paint=paint)
     return world
 
 
 def add_asset(world: dict, name: str, x: float, y: float, yaw: float, *, dims=None, z: float = 0.0,
-              asset_root=None) -> int:
-    """資産(車・コーン・標識 …)を姿勢に置いて世界に足す。"""
-    m = load_asset(name, dims, root=asset_root)
+              asset_root=None, paint=None) -> int:
+    """資産(車・コーン・標識 …)を姿勢に置いて世界に足す。``paint`` = 車の車体色(:func:`load_asset` と同じ)。"""
+    m = load_asset(name, dims, root=asset_root, paint=paint)
     return world_add(world, place_mesh(m["V"], x, y, yaw, z), m["F"], m["label"], m["color"],
                      name=name, pose=(x, y, yaw), extra={"dims": tuple(float(v) for v in m["dims"])})
 
@@ -494,18 +617,22 @@ def add_signal(world: dict, x: float, y: float, yaw: float, *, state: str = "red
     灯火は yaw の向き(進入する車から見える向き)を向いた面。objects[i]["lamp_faces"] = {"red": (f0,f1), …}。"""
     if state not in ("red", "yellow", "green", "off"):
         raise ValueError("state は red / yellow / green / off")
-    m = load_asset("traffic_light", (0.5, 0.9, height), root=asset_root)
+    d0 = ASSETS["traffic_light"][2]
+    m = load_asset("traffic_light", (d0[0] * height / d0[2], d0[1] * height / d0[2], height), root=asset_root)
     i = world_add(world, place_mesh(m["V"], x, y, yaw), m["F"], 3, m["color"], name="traffic_light",
                   pose=(x, y, yaw), extra={"state": state, "lamp_faces": {}})
-    # 灯火: 柱の頭(高さの上端 0.9 m)に 3 つの円盤を縦に並べる。法線は −yaw 向き(進入車の方を向く)
+    # 灯火: 頭(+x に張り出す箱)の前面のすぐ外に 3 つの円盤を縦に並べる。法線は yaw の向き(進入車の方を向く)
     c, s = np.cos(yaw), np.sin(yaw)
     fwd = np.array([c, s, 0.0])
     left = np.array([-s, c, 0.0])
+    head = m["V"][m["V"][:, 2] > 0.7 * height]
+    x_front = float(head[:, 0].max()) + 0.02                               # 頭の前面(資産の x の最大)の 2 cm 外
+    z_top = float(head[:, 2].max())
     r = 0.15
     n_seg = 12
     ang = np.linspace(0, 2 * np.pi, n_seg, endpoint=False)
-    for kind, dz in (("red", -0.05), ("yellow", -0.40), ("green", -0.75)):
-        centre = np.array([x, y, height + dz]) + fwd * 0.30             # 灯火は頭部の箱(奥行 0.5 m)の前面より外に出す
+    for kind, dz in (("red", -0.20), ("yellow", -0.55), ("green", -0.90)):
+        centre = np.array([x, y, z_top + dz]) + fwd * x_front
         # 円盤の頂点(左 × 上の平面に円を描く)
         Vd = [centre] + [centre + left * (r * np.cos(a)) + np.array([0, 0, r * np.sin(a)]) for a in ang]
         Fd = [[0, 1 + k, 1 + (k + 1) % n_seg] for k in range(n_seg)]

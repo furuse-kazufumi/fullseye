@@ -181,9 +181,9 @@ print(res["cost"], ">=", res["lower_bound"], res["n_expanded"])
 
 ## 第 2 回: 教習所が開校する —— 真値を持った世界を先に作る
 
-![幹線で赤信号を待ち、クランクを抜けて周回コースへ合流する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/05_drive_gif.gif?v=2)
+![幹線で赤信号を待ち、クランクを抜けて周回コースへ合流する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/05_drive_gif.gif?v=3)
 
-*↑ 追走カメラの画像に LiDAR(16 ビーム)の点を重ねる。灰 = 路面、黄 = 縁石、赤 = 車、緑 = 信号機。信号待ち → 交差点 → クランク(切り返しあり)→ 連絡路 → 周回コース。**車が走った**ことは見れば分かる。**その道が縁石線から何 cm 出たか、LiDAR の点がどの面から来たか**は見ても分からない——世界の側に真値があるから数えられる。*
+*↑ 追走カメラの画像に LiDAR(16 ビーム)の点を重ねる。灰 = 路面、黄 = 縁石、赤 = 車、緑 = 信号機、白 = 横断歩道。右上の枠は車載カメラの ROI と判定 —— `red` の間は停止線で止まり、`green` を読んだ次のコマで発進する(閉ループ)。信号待ち → 交差点 → クランク(切り返しあり)→ 連絡路 → 周回コース。**車が走った**ことは見れば分かる。**その道が縁石線から何 cm 出たか、LiDAR の点がどの面から来たか**は見ても分からない——世界の側に真値があるから数えられる。*
 
 第 1 回は道の幾何だけで、センサが無かった。センサを採点するには、**何を見たかが最初から決まっている世界**が要る。実写データセットの真値は人手のラベルで、箱の縁も点のラベルも人の判断だ。そこでこの回は世界を作る側に回った——ただし勝手な寸法ではなく、**道路交通法施行規則 別表第三(指定自動車教習所のコースの基準、普通免許)** の数字で。
 
@@ -191,7 +191,8 @@ print(res["cost"], ">=", res["lower_bound"], res["n_expanded"])
 
 ```
 規格の寸法 → 課題ごとの多角形(クランク・S 字・坂道・縦列駐車・方向変換・踏切・周回・幹線) → (x, y, yaw) で配置 → 走れる領域の和
-       → 3-D の世界: 路面の平面 + 縁石の帯 + 白線 + CC0 の車・信号機・標識(面ごとにラベルと色)
+       → 3-D の世界: 路面の平面 + 縁石の帯 + 白線 + 横断歩道 + 停止線 + CC0 の車 + 日本の規格で手続き生成した信号機・標識(面ごとにラベルと色)
+       → 車載カメラの画像から信号の色を読み(地図の位置 → ROI → 色度の検出)、緑を読むまで発進しない(閉ループ)
        → 回転式 LiDAR をメッシュに撃つ(点・range 画像・面のラベル) / 車載カメラで撮る(色・ラベル・深度)
        → 13 巡目の Hybrid A* で走らせ、全姿勢・全コマで採点する
 ```
@@ -207,15 +208,15 @@ print(res["cost"], ">=", res["lower_bound"], res["n_expanded"])
 | レンジ画像 | LiDAR の一掃を 行 = 仰角(ビーム)、列 = 方位角 の格子にしたもの。画素値は距離 |
 | 逆センサーモデル | 「この距離で反射が返った」から格子の各セルの占有を更新する規則(今回は縁石の点を落とすだけ) |
 
-新しい op は 3 つのモジュールに分かれます。**drivecourse**(規格寸法の 2-D 多角形。真値は閉形式の面積)、**driveworld**(3-D の世界。CC0 の Kenney Car Kit / City Kit Roads を実寸に合わせて置く。カメラ像は三角形 id から色とラベルを引く)、**lidarsim**(Möller–Trumbore のレイ–三角形交差を、センサから見た各三角形の方位角・仰角の区間でビン分けして加速。8 万三角形 × 5.8 万レイで 1 秒未満)。
+新しい op は 3 つのモジュールに分かれます。**drivecourse**(規格寸法の 2-D 多角形。真値は閉形式の面積)、**driveworld**(3-D の世界。CC0 の Kenney Car Kit / City Kit Roads の車・街灯・コーンを実寸に合わせて置き、信号機と標識は **roadjp**(日本の規格の寸法で手続き生成: 横型 3 灯は左から青・黄・赤、交差点の向こう側の柱からアームで車線の上へ、灯器の下端 5.0 m、標識は円 600 mm・逆三角 600 mm・警戒の菱形 450 mm、板の下端 1.8 m)。カメラ像は三角形 id から色とラベルを引く)、**lidarsim**(Möller–Trumbore のレイ–三角形交差を、センサから見た各三角形の方位角・仰角の区間でビン分けして加速。8 万三角形 × 5.8 万レイで 1 秒未満)。
 
-[![教習所の平面](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan.png?v=2)
+[![教習所の平面](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan.png?v=3)
 
-*↑ 真上から。周回(直線 80 m・幅 8 m・半円 R 30)の中に幹線の十字(信号 4 基)。北東にクランク、南西に S 字、南東に坂道(暗い部分が斜面)、北西に縦列駐車と方向変換、東の幹線に踏切。課題の出口は連絡路で周回へ戻るので、ぐるぐる回れる。*
+*↑ 真上から。周回(直線 80 m・幅 8 m・半円 R 30)の中に幹線の十字(信号 4 基、各腕に横断歩道と、その 2 m 手前の停止線)。北東にクランク、南西に S 字、南東に坂道(暗い部分が斜面)、北西に縦列駐車と方向変換、東の幹線に踏切。課題の出口は連絡路で周回へ戻るので、ぐるぐる回れる。*
 
-[![同じ世界を斜めから](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique.png?v=2)
+[![同じ世界を斜めから](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique.png?v=3)
 
-*↑ 3-D の世界。縁石(高さ 0.15 m)と白線は多角形の縁に沿って生成し、継ぎ目には置かない。車・信号機・標識・街灯・コーンは CC0 のメッシュ。面ごとにラベルと色を持つ。*
+*↑ 3-D の世界。縁石(高さ 0.15 m)と白線は多角形の縁に沿って生成し、継ぎ目には置かない。車・街灯・コーンは CC0 のメッシュ、信号機(横型 3 灯、向こう側の柱からアームで車線上)と標識(止まれ・徐行・最高速度・横断歩道・踏切あり)は日本の規格の寸法で手続き生成。面ごとにラベルと色を持つ。*
 
 ### 門と成績
 
@@ -230,13 +231,14 @@ print(res["cost"], ">=", res["lower_bound"], res["n_expanded"])
 | 縁石の点は道の外 | 縁石の 4,667 点から作った占有格子は、真の占有(多角形の外)の 1 セル膨張の部分集合(precision **1.0000**)。走行 68 コマ全部で 1.0000 | 多角形の内外判定(偶奇と巻き数の 2 実装) |
 | 走った道は脱輪していない | 997 姿勢で車体 4 隅の縁石線からの越え幅は最大 **0.117 m ≤ 半セル 0.125 m**。厳密な多角形では 11 姿勢が越える(計画器の分解能) | 多角形 |
 | ゼロ点 | クランクの入口→出口を直線で進むと 60 姿勢中 **50** で脱輪 | ― |
-| カメラは信号を読む | 灯火 160 画素の点いた画素の色で 赤 → `red`、緑 → `green`。灯火を消すと `unknown` | 世界の側の状態 |
+| カメラは信号を読む(画像処理) | 地図で分かる灯火の位置を車載カメラに投影した周り(ROI ± 24 px)を、色度の検出 op にかけて点いた円盤を探す。赤 → `red`、緑 → `green`、灯火を消すと `unknown`。真値の面 ID は使わない | 世界の側の状態 |
+| 緑を読むまで動かない(閉ループ) | 停止線に着いてから毎コマ読み、`green` を読んだ次のコマから発進。赤の **6 コマ**は 1 mm も動かず、手前 10 m からの読み 11 コマは世界の状態と全コマ一致。ゼロ点: 灯火を消すと `unknown` が続き、8 コマ待っても発進しない | 世界の側の状態 |
 
-[![LiDAR の一掃](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep.png?v=2)
+[![LiDAR の一掃](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep.png?v=3)
 
 *↑ 停止線の 10 m 手前での一掃(32 ビーム、−25°〜+15°、0.5°、10,903 点が路面)。点は当たった面のラベルで塗ってある——これが人手のラベルでなく生成時の真値であることが、この世界の値打ち。*
 
-[![車載カメラに LiDAR を重ねる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar.png?v=2)
+[![車載カメラに LiDAR を重ねる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar.png?v=3)
 
 *↑ 同じ瞬間の車載カメラ(60°、640 × 400)に LiDAR の点を投影して重ねた。点の深度と画素の深度、点のラベルと画素のラベルが一致することが「2 センサ 1 世界」の門。信号は赤。*
 
@@ -254,9 +256,9 @@ print(res["cost"], ">=", res["lower_bound"], res["n_expanded"])
 
 周回の直線と半円を辺どうしでぴったり接すると、それぞれの端の辺は「隣の要素の内側」ではないので縁石が生成され、**道を横切る壁**になります。LiDAR がそれを見て、走れるはずのセルに縁石の点が落ちました(precision 0.90)。直し方は 2 つ: 隣り合う要素を 5 cm 重ねる、そして縁の小片(0.5 m)は**両端と中点のどれかが隣の内側なら置かない**。中点だけ見ると、口に半分かかった小片が壁になります。
 
-#### 4. 灯火は柱の頭の箱の中に埋まる
+#### 4. 停止線の真横に信号を立てると、止まった車のカメラには入らない
 
-信号機のメッシュは頭部が箱で、灯火の円盤を頭の中心の少し手前に置くと箱の面に隠れて**カメラに 0 画素**でした。前面より外へ出すと 160 画素。もう 1 つ、点いた灯火 1 つと消えた灯火 2 つの**平均色**で判定すると、消えた 2 つの暗さが支配して緑が読めません。点いている画素(最大チャネル > 0.5)だけで判定します。
+最初は信号機を停止線の横に置いていました。停止した車の車載カメラ(前方 20 m を見る 60°)から灯火は **40° 上**にあり、視野に入りません。日本の車両用灯器は交差点の**向こう側**(出口側)に置くのが基本で(信号機設置の指針)、そうすると停止線から 18 m 先・見上げ 9° で読めます。位置と高さは規格で決まっています —— 横型灯器は 1.5 m のアームで G.L. から 5.5 m 以上(県警の工事仕様書の標準設置姿図)、標識の板は下端 1.8 m・歩車道境界から 25 cm 以上(道路標識設置基準)。見た目で置くと、こういう所で嘘になります。
 
 #### 5. 細い物は 1 画素ずれると別の面に落ちる
 
@@ -272,7 +274,7 @@ print(res["cost"], ">=", res["lower_bound"], res["n_expanded"])
 
 **センサの物理は幾何だけです。** LiDAR は単一反射で、反射強度・ビームの広がり・雨や霧・回転中の自車の動きによる歪みはありません。カメラは Lambert の陰影だけで、影も露出も無い。「この検出器は実車で動く」の証拠にはならず、**幾何の間違いを見つける**道具です。
 
-**車のメッシュは玩具の比率です。** Kenney の CC0 モデルを箱の寸法(車長 4.5 m・車幅 1.8 m)に軸ごとに引き伸ばしています。点群の形は本物の車と違います。
+**車のメッシュは玩具の比率です。** Kenney の CC0 モデルを箱の寸法(車長 4.5 m・車幅 1.8 m)に軸ごとに引き伸ばしています(生の比との差は 1.8 倍以内)。点群の形は本物の車と違います。資産の向きは**見た目で決めない**: 生のモデルの最長軸・左右の鏡映対称(幅を反転すると形が自分に重なり、前後を反転すると重ならない)・灯の色(黄 = 前照灯、赤 = 尾灯)を門にしてあります。軸ごとの寸法合わせは向きを間違えると形を潰すので、倍率の最大 / 最小も門で見張っています。
 
 **縦列駐車の寸法は法令にありません。** 通達の別添は図で、数値の一次情報が取れなかったので、車長 + 3.0 m を既定にして docstring にそう書いてあります。
 
@@ -311,7 +313,7 @@ print(scan["n_hits"], np.bincount(scan["labels"][hit]))
 
 #### この回の残りの図
 
-[![真値の散布](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths.png)
+[![真値の散布](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/06_truths.png?v=2)
 
 *↑ 8 種の要素の面積(靴紐 vs 閉形式)と路面の range 200 点(実測 vs h/(−sin e))。全部が対角線の上。*
 
@@ -319,7 +321,7 @@ print(scan["n_hits"], np.bincount(scan["labels"][hit]))
 
 ## 第 3 回: 衝突までの時間と安全距離 —— τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する
 
-![対向車が来て、通り過ぎ、停車車両の前で RSS が止める](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/06_approach_gif.gif?v=2)
+![対向車が来て、通り過ぎ、停車車両の前で RSS が止める](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/06_approach_gif.gif?v=3)
 
 *↑ 車載カメラで 0 → 10 s。対向車が来る間はその画素の光学流(矢印)と真の拡大の中心(十字)を描き、上に「τ の真値」と「流れから出した τ」を並べる。通り過ぎたあと、自車線の停車車両に RSS が「危険」を出した瞬間(t = 6.0 s)に制動し、10.25 m 手前で止まる。**数字が動く**のは世界の側が真値を持っているから——τ も間隔も、推定でなく生成時に決まっている。*
 
@@ -346,7 +348,7 @@ print(scan["n_hits"], np.bincount(scan["labels"][hit]))
 
 新しい op は 2 つのモジュールです。**drivettc**(深度像と剛体運動から真の流れと真の τ を画素ごとに閉形式で出す。光学流から τ を出すのは既存の `time_to_contact` を秒に直して束ねる)、**rsssafety**(RSS の同方向・対向・横方向の安全距離の閉形式、最悪ケースの時間積分、判定)。3 つの経路の τ は全部 **最初のコマの時刻の τ** に揃えてあります——ここに 1 コマ分の落とし穴があり、後で書きます。
 
-[![t = 4 s の車載カメラと光学流](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow.png?v=2)
+[![t = 4 s の車載カメラと光学流](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow.png?v=3)
 
 *↑ t = 4 s。対向車の画素の光学流(矢印 ×3)は拡大の中心(十字)から外へ向かい、その半径方向の速さから τ = 0.84 s(真値 0.84 s)。路面には模様が無いので、流れは車と街灯にしか無い。*
 
@@ -366,7 +368,7 @@ print(scan["n_hits"], np.bincount(scan["labels"][hit]))
 | τ は騒ぎ、RSS は騒がない | 対向車線の車で τ の真値は **0.30 s** まで落ちるが、横の安全距離 **0.725 m** < 車線の間隔 2.2 m で、RSS は一度も危険を出さない | 閉形式 |
 | 寄ってくれば危険 | 対向車が 0.6 m/s で横へ寄ると横の安全距離は **2.45 m** に跳ね、t = 1 s に危険。そのとき縦の間隔 58.25 m は対向の安全距離 **82.9 m** の中で、最悪ケースの積分は衝突する(最小間隔 −24.7 m) | 第 2 実装 |
 
-[![τ の 4 本の曲線](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves.png?v=2)
+[![τ の 4 本の曲線](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves.png?v=3)
 
 *↑ 真値(2 本、重なる)は 5 s から傾き −1 で落ちる。流れからの τ(水色)は t ≥ 2 s で真値に乗り、遠い区間(流れが 1 画素未満)は散る。大きさからの τ(橙)は全域で近い。*
 
@@ -446,7 +448,7 @@ print(round(d_min, 3), round(sim["min_gap"], 9), sim["collided"])
 
 #### この回の残りの図
 
-[![平面](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan.png?v=2)
+[![平面](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan.png?v=3)
 
 *↑ 南の直線 80 m を真上から(t = 3 s)。自車(北の車線、東へ)、対向車(南の車線、西へ)、停車車両(x = 40)。*
 
@@ -458,7 +460,7 @@ print(round(d_min, 3), round(sim["min_gap"], 9), sim["collided"])
 
 ## 第 4 回: 世界を広げる —— 閉形式の地形と世界座標の材質、手続きの木と歩行者で、拡大の中心を流れから取り戻す
 
-![起伏の中の周回コースを坂を上り下りしながら走り、路面の流れから拡大の中心を出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/06_drive_gif.gif?v=2)
+![起伏の中の周回コースを坂を上り下りしながら走り、路面の流れから拡大の中心を出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/06_drive_gif.gif?v=3)
 
 *↑ 車載カメラで 0 → 10 s(51 コマ、6 m/s)。矢印は Lucas–Kanade の流れ(×4)、橙の十字は流れから推定した拡大の中心、緑は真値。路面には粒と水溜りと摩耗した白線、横断歩道を歩行者が渡り、道の外は fBm の起伏と木。上の数字は勾配と FoE の誤差(全画素 / 路面だけ)。**第 3 回では 62 px 外れた拡大の中心が、路面に模様が付いただけで 1〜2 px に来る**——そして模様の一粒一粒が世界座標の式で決まっているから、誤差を画素で数えられる。*
 
@@ -494,7 +496,7 @@ print(round(d_min, 3), round(sim["min_gap"], 9), sim["collided"])
 
 数式は 4 つだけ、どれも読める形です。**(1) 起伏**: h(x, y) = Σ_k A_k cos(2π f_k (x cos θ_k + y sin θ_k) + φ_k)。周波数 f_k を対数一様に撒くと 2 次元の周波数面での密度は ∝ 1/f²、振幅 A_k ∝ f^{−H} なので、パワーは A² × 密度 ∝ f^{−(2H+2)}——定理の β = 2H + 2 がそのまま出ます。勾配は項ごとに微分するだけ。**(2) 地形**: z = h · w(d) + うねり。w は smoothstep で、道から 2 m までは 0、そこから 12 m かけて 1。積の微分 ∇(h·w) = w∇h + h·w′(d)·∇d で、∇d は距離場の法線だから勾配も閉形式。**(3) 材質**: 描いた深度を逆投影して画素の世界座標 (x, y) を戻し、そこで Perlin の雑音を評価する。水溜りは雑音 > しきい値の所(ラベル 11)、摩耗率 wear ∈ [0, 1] で白線の色 = 白 · (1 − wear) + 路面 · wear。**(4) FoE**: 純並進なら流れは FoE から放射状(Longuet-Higgins & Prazdny 1980)なので、各画素を流れの向きに通す直線(流線)は全部 FoE を通る。FoE = Σ w_i · dist(F, 流線_i)² を最小にする点で、2 × 2 の正規方程式。重みは遠い画素ほど小さく(向きの誤差が位置に効く)、角度の残差で外れ値を落とす。
 
-[![起伏の中の周回コース](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain.png?v=2)
+[![起伏の中の周回コース](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain.png?v=3)
 
 *↑ 世界を南西の上空から(t = 6 s)。fBm の起伏(H = 0.8、周期 6〜120 m、RMS 2.5 m の設定)は道の周り 2 m で平らになり、12 m かけて繋がる。路面には長波長のうねり(振幅 0.8 m)。木 70 本は道から 4 m 以上・互いに 5 m 以上に散布。世界はコースの外 40 m まで(第 3 回は 8 m)。*
 
@@ -517,11 +519,11 @@ print(round(d_min, 3), round(sim["min_gap"], 9), sim["collided"])
 
 同じコマで並べると差がはっきりします(t = 0, 1, …, 10 s の路面だけの誤差、px)——模様あり 2.0 / 0.7 / 1.7 / 2.4 / 4.3 / 3.1 / 25.9 / 0.6 / 1.3 / 0.6 / 1.4、模様なし 59.2 / 70.0 / 57.2 / 45.4 / 60.0 / 62.1 / 44.4 / 43.2 / 27.2 / 3.6 / 107.3。模様なしにも 1 コマ(t = 9 s)3.6 px があり、模様ありにも 1 コマ(t = 6 s)25.9 px があります。門は中央値で置いてあり、「2 倍以上」どころか 20 倍を超えました。
 
-[![車載カメラの 1 コマとその真値](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/03_incar_materials_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/03_incar_materials.png)
+[![車載カメラの 1 コマとその真値](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/03_incar_materials_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/03_incar_materials.png?v=2)
 
 *↑ 車載カメラ(60°、640 × 400、t = 6 s)の 1 コマと、その画素ごとの真値。(a) 色、(b) ラベル(道・地形・縁石・白線・横断歩道・水溜り・木・歩行者)、(c) 白線の摩耗率(0 = 白、1 = 路面)、(d) 真値の場(赤 = 染み、青 = 水溜り、緑 = 摩耗率)。材質は描画した深度から戻した世界座標で評価するので、ラベル・摩耗率・水溜り・染みは画素単位で厳密。摩耗した白線と水溜りは明るさのしきい値では最良でも 25 % を間違える。*
 
-[![流れから出した拡大の中心](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/04_foe_from_flow_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/04_foe_from_flow.png)
+[![流れから出した拡大の中心](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/04_foe_from_flow_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/04_foe_from_flow.png?v=2)
 
 *↑ t = 1.2 s(路面だけの誤差が中央値に最も近い典型的なコマ)、480 × 300、30 fps の 2 コマ。路面の画素の LK の流れ(矢印 ×4)だけから拡大の中心を最小二乗で出す(橙)。真値は緑。(a) 模様のある路面では真値に 1.9 px。(b) 同じ地形・同じ木で路面を無地にすると、流れは白線と縁石の縁にしか無く、91.5 px 外れる。*
 
@@ -606,7 +608,7 @@ print(np.round(fs.ledger.foe_from_motion(K, T), 3), np.round(est["foe"], 3))   #
 
 *↑ fBm の面(H = 0.8)の動径周期図は log–log で直線: 傾き β̂ = 3.59、定理(β = 2H + E、E = 2)は 3.6。帯域 [1/100, 1/10] 周期/m の 12 帯で当てはめ。*
 
-[![拡大の中心の誤差](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error.png?v=2)
+[![拡大の中心の誤差](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error_720.jpg?v=3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error.png?v=3)
 
 *↑ 拡大の中心の推定誤差(真値との距離、px)。模様のある路面の画素だけで中央値 1.9 px、全画素で 1.2 px、無地の路面(1 s ごとの点)で 57.2 px。自車は坂を上って下る(勾配 −1.5〜+1.5 %、頂点は t = 5 s)ので、真の FoE も像の中を動く。*
 

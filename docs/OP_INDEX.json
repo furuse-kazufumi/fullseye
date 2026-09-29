@@ -1,8 +1,8 @@
 {
- "n_ops": 2337,
+ "n_ops": 2344,
  "tiers": {
   "color": 12,
-  "ledger": 1386,
+  "ledger": 1393,
   "nary": 17,
   "registry": 922
  },
@@ -434,6 +434,32 @@
    "dim": "measure1d",
    "in_sorts": [
     "metrologymodel"
+   ]
+  },
+  {
+   "name": "add_sign",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "roadjp",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "add_signal_jp",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "roadjp",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -11336,6 +11362,19 @@
    ]
   },
   {
+   "name": "plate_mesh_from_image",
+   "halcon": "",
+   "in_sort": "rgba",
+   "out_sort": "table",
+   "category": "roadjp",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgba"
+   ]
+  },
+  {
    "name": "plot_series",
    "halcon": "",
    "in_sort": "image2d",
@@ -14594,6 +14633,39 @@
    ]
   },
   {
+   "name": "sign_image",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "rgba",
+   "category": "roadjp",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "sign_mesh",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "roadjp",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "sign_params",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "roadjp",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "signal_features",
    "halcon": "",
    "in_sort": "signal",
@@ -14605,6 +14677,17 @@
    "in_sorts": [
     "signal"
    ]
+  },
+  {
+   "name": "signal_jp_mesh",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "roadjp",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "signed_distance_field",

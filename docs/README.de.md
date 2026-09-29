@@ -68,18 +68,18 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**2,343 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **58 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**2,350 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **58 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 934/934, typisiertes Ledger 1388/1400, Fassade `fullseye.<name>` 598/1251 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 934/934, typisiertes Ledger 1395/1407, Fassade `fullseye.<name>` 598/1251 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 2348 Notizen verweisen **2256** auf mindestens ein lauffähiges Beispiel (92 ohne), **2257** haben einen Nutzungsabschnitt ab 120 Zeichen (91 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 2348.
+**Gemessener Inhalt**: von 2355 Notizen verweisen **2257** auf mindestens ein lauffähiges Beispiel (98 ohne), **2263** haben einen Nutzungsabschnitt ab 120 Zeichen (92 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 2355.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
 | `2d` | 951 | [INDEX](ops/2d/INDEX.md) |
 | `3d` | 372 | [INDEX](ops/3d/INDEX.md) |
 | `optics` | 133 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
-| `drive` | 113 | [INDEX](ops/drive/INDEX.md) |
+| `drive` | 120 | [INDEX](ops/drive/INDEX.md) |
 | `math` | 55 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
 | `gfx2d` | 44 | [INDEX](ops/gfx2d/INDEX.md) |
@@ -220,7 +220,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Dokumentkarte — alle 213
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 2,343 Operator-Notizen und 58 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 2,350 Operator-Notizen und 58 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 

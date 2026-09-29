@@ -525,6 +525,10 @@ from racket import (  # noqa: E402,F401
     racket_params, racket_impact, racket_hit_check, aim_velocity, racket_plan, racket_move, rally_simulate,
     strategy_attacker, strategy_feeder, shot_is_legal,
 )
+import roadjp  # noqa: E402  (日本の信号灯器と道路標識: 公表寸法をそのまま頂点に持つメッシュ、driveworld の世界に足す)
+from roadjp import (  # noqa: E402,F401
+    sign_params, sign_image, plate_mesh_from_image, sign_mesh, add_sign, signal_jp_mesh, add_signal_jp,
+)
 from lidarsim import (  # noqa: E402,F401
     lidar_spec, lidar_scan, lidar_points_sensor_frame, lidar_range_image_to_points, ray_plane_range,
     ray_box_ranges,

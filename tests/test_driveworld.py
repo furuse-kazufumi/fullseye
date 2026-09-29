@@ -192,18 +192,102 @@ def test_world_move_is_rigid_and_matches_a_fresh_placement():
         DW.world_move(w, ground, 0.0, 0.0, 0.0)
 
 
+def test_every_asset_keeps_its_raw_proportions_and_orientation():
+    """資産の寸法合わせが形を潰していないこと(ユーザー「同じ間違いをしている物があれば直して」2026-09-30): 軸ごとの倍率の最大 / 最小が
+    車で 2 倍以内、柱物で 1.15 倍以内(街灯の柱が幅 2.5 m の板、信号機の頭が平板になっていた回帰)。向きの規約: 街灯の腕・信号機の頭は +x 側、
+    標識は面の法線が x(幅 y で鏡映対称)。"""
+    kd_by_kit = {kit: DW.asset_dir() / DW._KIT_DIR[kit] for kit in DW._KIT_DIR}
+    tex = {kit: DW._read_png_rgb(kd / DW._COLORMAP) for kit, kd in kd_by_kit.items()}
+    n = 0
+    for name, (kit, fname, dims, _label) in DW.ASSETS.items():
+        V, F, C = DW.read_obj_colored(kd_by_kit[kit] / fname, tex[kit])
+        V = DW._yup_to_zup(V)
+        if kit == "cars":
+            V = DW._orient_car(V)
+        elif name in DW._ASSET_YAW:
+            V = DW.place_mesh(V, 0.0, 0.0, DW._ASSET_YAW[name])
+        ext = V.max(axis=0) - V.min(axis=0)
+        scale = np.asarray(dims) / ext
+        ratio = scale.max() / scale.min()
+        assert ratio < (2.0 if kit == "cars" else 1.15), (name, ext, dims, ratio)
+        if name in ("street_light", "traffic_light"):                     # 腕 / 頭は +x 側(上部の重心が x > 0)
+            top = V[V[:, 2] > V[:, 2].min() + 0.7 * ext[2]]
+            assert top[:, 0].mean() > 0.02 * ext[2], (name, top[:, 0].mean())
+        if name == "sign_stop":                                            # 面の法線 = x: 幅 y は前後 x より長い
+            assert ext[1] > ext[0]
+        n += 1
+    assert n == len(DW.ASSETS) == 9
+
+
 def test_car_assets_face_plus_x_at_yaw_zero():
-    """車キットの資産は yaw 0 で +x が前(ユーザー指摘 2026-09-29 の回帰): パトカーの赤いテールランプの面は後ろ(x < 0)、
-    セダンの頂点は生の z-up 変換を x・y で反転したもの(180° 回した規約が外れたら落ちる)。"""
-    m = DW.load_asset("police")
-    C = m["color"]
-    red = (C[:, 0] > 0.6) & (C[:, 1] < 0.35) & (C[:, 2] < 0.35)
-    assert red.any()
-    assert m["V"][m["F"][red]].mean(axis=(0, 1))[0] < -0.1 * m["dims"][0]      # 実測 −0.70 m(車長 4.8 m、赤い灯は中心より後ろ)
+    """車キットは yaw 0 で「長さ = x、前 = +x」(ユーザー指摘 2026-09-29 / 訂正 2026-09-30 の回帰):
+    生のモデルの最長軸が寸法合わせの前に x に来ていること(来ていないと軸ごとの寸法合わせで幅が伸び長さが潰れ、横向きの別の形になる)、
+    黄色い前照灯が +x 側(車長の 0.3 倍より前)、赤い尾灯が −x 側(パトカーは赤が屋根の灯なので前照灯だけ)。"""
     kd = DW.asset_dir() / DW._KIT_DIR["cars"]
-    V, F, _ = DW.read_obj_colored(kd / "sedan.obj", DW._read_png_rgb(kd / DW._COLORMAP))
-    V = DW._yup_to_zup(V)
-    lo, hi = V.min(axis=0), V.max(axis=0)
-    raw = (V - (lo + hi) / 2.0) / np.where(hi - lo > 1e-9, hi - lo, 1.0) * np.asarray(DW.ASSETS["sedan"][2])
-    s = DW.load_asset("sedan")["V"]
-    assert np.allclose(s[:, :2], -raw[:, :2], atol=1e-9) and np.allclose(s[:, 2] - s[:, 2].min(), raw[:, 2] - raw[:, 2].min())
+    tex = DW._read_png_rgb(kd / DW._COLORMAP)
+    checked = 0
+    for name in ("sedan", "suv", "taxi", "police", "truck"):
+        V, F, C = DW.read_obj_colored(kd / DW.ASSETS[name][1], tex)
+        V = DW._orient_car(DW._yup_to_zup(V))
+        ext = V.max(axis=0) - V.min(axis=0)
+        assert int(np.argmax(ext)) == 0, (name, ext)                       # 最長軸が x
+        assert ext[0] / ext[1] > 1.5, (name, ext)                          # 車は幅より長い(生の比 1.7〜2.1)
+        # 左右対称性(ユーザー指定 2026-09-30): 車は長軸を含む鉛直面で鏡映対称、前後は非対称。幅 y を反転したときだけ形が自分に重なる
+        # (Chamfer 距離 ≈ 0)。x を反転すると前後が入れ替わって重ならない(実測 0.025〜0.093 m)。横向き(旧)だと逆になる。
+        from scipy.spatial import cKDTree
+        W = V - (V.min(axis=0) + V.max(axis=0)) / 2.0
+
+        def chamfer(A, B):
+            return 0.5 * (cKDTree(B).query(A)[0].mean() + cKDTree(A).query(B)[0].mean())
+        mirror_y = chamfer(W, W * np.array([1.0, -1.0, 1.0]))
+        mirror_x = chamfer(W, W * np.array([-1.0, 1.0, 1.0]))
+        assert mirror_y < 1e-3 and mirror_x > 20.0 * mirror_y, (name, mirror_y, mirror_x)      # 実測: y 反転 0〜3e-5、x 反転 0.025〜0.093
+        m = DW.load_asset(name)
+        cen = m["V"][m["F"]].mean(axis=1)
+        L = m["dims"][0]
+        yellow = (m["color"][:, 0] > 0.8) & (m["color"][:, 1] > 0.6) & (m["color"][:, 2] < 0.3)
+        red = (m["color"][:, 0] > 0.6) & (m["color"][:, 1] < 0.35) & (m["color"][:, 2] < 0.35)
+        if name != "taxi":                                                  # タクシーは車体が黄色
+            assert yellow.sum() >= 4 and cen[yellow, 0].mean() > 0.3 * L, (name, cen[yellow, 0].mean() / L)
+        if name != "police":                                                # パトカーの赤は屋根の灯
+            assert red.sum() >= 4 and cen[red, 0].mean() < -0.3 * L, (name, cen[red, 0].mean() / L)
+        checked += 1
+    assert checked == 5
+
+def test_car_paint_repaints_only_the_body():
+    """車体色(ユーザー 2026-09-30「車体の色も何種類か」): 車体の面だけが塗り替わり、灯火・ガラス・タイヤは 1 bit も変わらない。車体の面は灯火と重ならず、
+    面積の 1〜3 割(実測 セダン 26 %・SUV 14 %・ピックアップ 24 %)。濃淡の比は保たれる。パトカー・タクシー・車以外・未知の色は ValueError。"""
+    names = ("sedan", "suv", "truck")
+    assert len(DW.CAR_PAINTS) == 9
+    for name in names:
+        base = DW.load_asset(name)
+        body = DW._car_body_mask(base)
+        C = base["color"]
+        V, F = base["V"], base["F"]
+        area = 0.5 * np.linalg.norm(np.cross(V[F[:, 1]] - V[F[:, 0]], V[F[:, 2]] - V[F[:, 0]]), axis=1)
+        frac = area[body].sum() / area.sum()
+        assert 0.10 < frac < 0.35, (name, frac)
+        lamp = ((C[:, 0] > 0.6) & (C[:, 1] < 0.35) & (C[:, 2] < 0.35)) | ((C[:, 0] > 0.8) & (C[:, 1] > 0.6) & (C[:, 2] < 0.3))
+        assert lamp.sum() >= 4 and not (body & lamp).any()
+        for paint in ("white", "black", "blue"):
+            m = DW.load_asset(name, paint=paint)
+            assert np.array_equal(m["color"][~body], C[~body])                     # 車体以外は元のまま
+            assert np.array_equal(m["V"], base["V"]) and np.array_equal(m["F"], base["F"])
+            ref = np.asarray(DW.CAR_PAINTS[paint])
+            med = np.median(m["color"][body], axis=0)
+            assert np.abs(med - ref).max() < 0.08, (name, paint, med)                # 車体の中央値 = 指定の色(濃淡の中央)
+        assert np.array_equal(DW.load_asset(name, paint="original")["color"], C)
+    for bad in (("police", "white"), ("taxi", "white"), ("cone", "white"), ("sedan", "purple"), ("sedan", (1.2, 0.0, 0.0))):
+        with pytest.raises(ValueError):
+            DW.load_asset(bad[0], paint=bad[1])
+
+
+def test_world_build_props_accept_a_paint():
+    """world_build の props の 6 番目が車体色。塗った車の車体の色が世界の面の色に入る。"""
+    w = DW.world_build(_rect_course(), props=[("sedan", 0.0, 0.0, 0.0, None, "blue"), ("sedan", 8.0, 0.0, 0.0)])
+    cars = [o for o in w["objects"] if o["name"] == "sedan"]
+    assert len(cars) == 2
+    blue = w["face_color"][slice(*cars[0]["faces"])]
+    orig = w["face_color"][slice(*cars[1]["faces"])]
+    assert (np.abs(blue - np.asarray(DW.CAR_PAINTS["blue"])).max(axis=1) < 0.1).sum() > 50
+    assert (np.abs(orig - np.asarray(DW.CAR_PAINTS["blue"])).max(axis=1) < 0.1).sum() == 0
