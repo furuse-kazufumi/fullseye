@@ -341,15 +341,28 @@ def test_the_sample_program_in_the_help_round_trips_and_runs():
     picks = picks[::97][:8]                                # 8 本を抜き取り
     assert len(picks) >= 4, "抜き取れる op が %d 本しか無い" % len(picks)
     img = G.canonical_image()
+    ran, skipped = 0, []
     for n in picks:
         h = (HELP / ("%s.html" % n)).read_text(encoding="utf-8")
         enc = re.search(r'href="sample:([^"]+)"', h).group(1)
         prog = up.unquote(enc)
         assert prog == m["ops"][n]["program"], n
         v = img
-        for line in prog.splitlines():
-            name, a, b = line.split()
-            v = fs.apply(v, name, float(a), float(b), on_error="raise")
+        try:
+            for line in prog.splitlines():
+                name, a, b = line.split()
+                v = fs.apply(v, name, float(a), float(b), on_error="raise")
+        except ImportError as e:
+            # ★optional backend(torch 等)が無い環境では、その op は「走らせられない」のであって「壊れている」のではない。
+            #   97 本おきの抜き取りは登録簿が増減するたびにずれるので、torch の要る op に当たる/当たらないが環境で変わる
+            #   (2026-09-29: op が 2 本増えて tb_points_to_voxel に当たり、torch の無い py3.10 / 3.12 のシャードだけ赤)。
+            #   飛ばした本数は数えて、実際に走った本数で門を立てる。
+            if "optional" not in str(e):
+                raise
+            skipped.append((n, str(e).split(" (")[0]))
+            continue
+        ran += 1
+    assert ran >= 4, "実際に走ったサンプルが %d 本しか無い(飛ばした: %s)" % (ran, skipped)
 
 
 def test_the_figures_are_deterministic():
