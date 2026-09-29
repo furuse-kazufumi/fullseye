@@ -12,12 +12,14 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     import opsdrive
 
     assert opsdrive.missing() == []
-    assert set(opsdrive.categories()) == {"course", "world", "lidar", "ttc", "rss", "terrain"}
-    assert len(opsdrive.OPSDRIVE) == 60
+    assert set(opsdrive.categories()) == {"course", "world", "lidar", "ttc", "rss", "terrain",
+                                          "ball", "balltrack", "ballworld", "racket"}
+    assert len(opsdrive.OPSDRIVE) == 113
     # 台帳の op は実装モジュールの __all__ に在る(逆は要らない: 補助関数は台帳に載せない)
-    import drivecourse, driveworld, lidarsim, drivettc, rsssafety, driveterrain
+    import drivecourse, driveworld, lidarsim, drivettc, rsssafety, driveterrain, ballistics, balltrack, ballworld, racket
     pub = (set(drivecourse.__all__) | set(driveworld.__all__) | set(lidarsim.__all__) | set(drivettc.__all__)
-           | set(rsssafety.__all__) | set(driveterrain.__all__))
+           | set(rsssafety.__all__) | set(driveterrain.__all__) | set(ballistics.__all__) | set(balltrack.__all__)
+           | set(ballworld.__all__) | set(racket.__all__))
     assert set(opsdrive.OPSDRIVE) <= pub, set(opsdrive.OPSDRIVE) - pub
 
 
@@ -34,7 +36,7 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "drive"]
-    assert len(rows) == 60
+    assert len(rows) == 113
     assert {r[3] for r in rows} == {"table", "image2d", "signal", "matrix", "scalar", "any", "points"}
 
 

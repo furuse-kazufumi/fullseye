@@ -1,0 +1,48 @@
+---
+op: bounce
+dim: drive
+category: ball
+in: table × table
+out: table
+examples: [poc_ball_bounce]
+author: Kazufumi Furuse
+license: Apache-2.0
+version: 0.2.3  # fullseye lib version this note was generated for
+---
+
+# bounce — DRIVE `ball` op
+
+- **データ種**: `table × table` → `table`
+- **呼び出し**: `import fullseye as fs; fs.ledger.bounce(v, omega, normal, bp: 'dict', ip: 'dict') -> 'dict'` (実装を直接呼ぶなら `import ballistics; ballistics.bounce(v, omega, normal, bp: 'dict', ip: 'dict') -> 'dict'`、台帳から引くなら `opsdrive.get("bounce")`)
+
+## 使い方
+
+剛体球が平面に当たる瞬間の速度・角速度の更新(クーロン摩擦、Cross 2002 / Garwin 1969 の 2 領域)。
+
+接触点の滑り速度 s = v_t − r(ω × n)_t。必要な接線力積が μJ_n 以下なら滑りが止まって転がりに移る(grip)、
+超えるなら滑ったまま(slip、接線力積 = μJ_n)。法線は v_n' = −e v_n(e は定数か |v_n| の関数)。返り値
+``{"v", "omega", "regime" ("grip"|"slip"|"none"), "J_n", "J_t", "slip_speed", "e"}``。
+``v·n ≥ 0``(離れていく)なら何もしない(regime "none")。定理: 接触点まわりの角運動量は保存(:func:`contact_angular_momentum`)。
+
+## 参考(サンプルデータ・文献)
+
+- [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
+- [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
+- アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
+
+- [poc_ball_bounce](../../../../examples/poc_ball_bounce.py) — `py -3.11 examples/poc_ball_bounce.py`
+
+## 型が繋がる次の op(`table` を入力に取れる)
+
+[course_layout](../course/course_layout.md) · [course_occupancy](../course/course_occupancy.md) · [course_contains](../course/course_contains.md) · [world_build](../world/world_build.md) · [world_camera](../world/world_camera.md) · [world_move](../world/world_move.md) · [lidar_scan](../lidar/lidar_scan.md) · [rss_longitudinal_same](../rss/rss_longitudinal_same.md)
+
+## 同カテゴリ(`ball`)
+
+[ball_params](ball_params.md) · [impact_params](impact_params.md) · [flight_vacuum](flight_vacuum.md) · [flight_ode](flight_ode.md) · [flight_simulate](flight_simulate.md) · [flight_state_at](flight_state_at.md) · [magnus_lift_coefficient](magnus_lift_coefficient.md) · [drag_coefficient_sphere](drag_coefficient_sphere.md)
+
+---
+*Provenance: ballistics.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+
+© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

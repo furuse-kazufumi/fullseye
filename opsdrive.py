@@ -1,6 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opsdrive — 自動運転の教習所ワールドの台帳: 規格寸法のコース(2-D)/ 3-D の世界 / 回転式 LiDAR / カメラ /
-τ 理論の衝突までの時間(drivettc)/ RSS の安全距離(rsssafety)/ 閉形式の地形と路面の材質・手続きの物体(driveterrain)。
+τ 理論の衝突までの時間(drivettc)/ RSS の安全距離(rsssafety)/ 閉形式の地形と路面の材質・手続きの物体(driveterrain)/
+卓球の球の力学・追跡・真値つきの台・ラケット(ballistics / balltrack / ballworld / racket)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -16,15 +17,20 @@ Usage:
     opsdrive.list_ops("course")
     opsdrive.get("course_crank")()
 """
+import ballistics
+import balltrack
+import ballworld
 import drivecourse
 import driveterrain
 import drivettc
 import driveworld
 import lidarsim
+import racket
 import rsssafety
 
 _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidarsim, "drivettc": drivettc,
-        "rsssafety": rsssafety, "driveterrain": driveterrain}
+        "rsssafety": rsssafety, "driveterrain": driveterrain,
+        "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -109,6 +115,75 @@ _CATALOG = {
         ("add_mesh_object", "driveterrain", ["table", "table"], "scalar"),
         ("scatter_offroad", "driveterrain", ["table"], "points"),
         ("mesh_signed_volume", "driveterrain", ["points", "matrix"], "scalar"),
+    ],
+    # 卓球の球の力学(17 巡目): 真空の放物線(閉形式)と抗力 + マグヌスの RK4、跳ね(Cross 2002 / Garwin 1969、接触点まわりの
+    # 角運動量が保存)、頂点の等比 e^{2k}h₀、軌跡からの初期状態・空力係数の同定、摩擦(停止距離・滑り角)、けん玉のひもと皿。
+    "ball": [
+        ("ball_params", "ballistics", [], "table"),
+        ("impact_params", "ballistics", [], "table"),
+        ("flight_vacuum", "ballistics", ["signal"], "points"),
+        ("flight_ode", "ballistics", ["table"], "table"),
+        ("flight_simulate", "ballistics", ["table", "table"], "table"),
+        ("flight_state_at", "ballistics", ["table"], "table"),
+        ("magnus_lift_coefficient", "ballistics", ["signal"], "signal"),
+        ("drag_coefficient_sphere", "ballistics", ["signal"], "signal"),
+        ("bounce", "ballistics", ["table", "table"], "table"),
+        ("contact_angular_momentum", "ballistics", ["table"], "signal"),
+        ("apex_sequence", "ballistics", [], "signal"),
+        ("bounce_total_time", "ballistics", [], "scalar"),
+        ("restitution_from_apexes", "ballistics", ["signal"], "table"),
+        ("restitution_from_intervals", "ballistics", ["signal"], "table"),
+        ("fit_parabola", "ballistics", ["signal", "points"], "table"),
+        ("flight_fit", "ballistics", ["signal", "points", "table"], "table"),
+        ("fit_aero", "ballistics", ["signal", "points", "table"], "table"),
+        ("fit_bounce", "ballistics", ["table"], "table"),
+        ("slide_stop_distance", "ballistics", [], "scalar"),
+        ("incline_slip_angle", "ballistics", [], "scalar"),
+        ("mu_from_stop_distance", "ballistics", [], "scalar"),
+        ("roll_slide_state", "ballistics", ["table"], "table"),
+        ("tether_simulate", "ballistics", [], "table"),
+        ("pendulum_period", "ballistics", [], "scalar"),
+        ("cup_catch_check", "ballistics", [], "table"),
+    ],
+    # 球の追跡(17 巡目): しきい値 → 連結成分のサブピクセル重心、等速予測の追跡、等加速度 Kalman(放物線に厳密)、DLT の三角測量、
+    # 高さの局所最小の跳ね検出、模様の向きの Kabsch で角速度。
+    "balltrack": [
+        ("ball_detect", "balltrack", ["image2d"], "table"),
+        ("ball_track", "balltrack", ["table"], "table"),
+        ("kalman_ca", "balltrack", ["points"], "table"),
+        ("triangulate_dlt", "balltrack", ["matrix", "any", "any"], "table"),
+        ("track_triangulate", "balltrack", ["table", "any", "any"], "table"),
+        ("bounce_detect", "balltrack", ["signal", "signal"], "table"),
+        ("marker_direction", "balltrack", [], "signal"),
+        ("spin_from_markers", "balltrack", ["points", "points"], "table"),
+        ("reproject", "balltrack", ["points", "matrix", "matrix"], "matrix"),
+    ],
+    # 真値つきの台の世界(17 巡目): ITTF 寸法の台 + ネット + 床、正 20 面体の球と模様(ラベル 23 / 24)、台を囲むカメラ、
+    # 球の中心・像の半径・模様の投影の真値(裏側の模様は NaN)。
+    "ballworld": [
+        ("table_params", "ballworld", [], "table"),
+        ("table_world", "ballworld", ["table"], "table"),
+        ("ball_mesh", "ballworld", [], "table"),
+        ("add_ball", "ballworld", ["table", "table"], "scalar"),
+        ("ball_set_pose", "ballworld", ["table", "matrix"], "any"),
+        ("rotation_from_omega", "ballworld", [], "matrix"),
+        ("camera_rig", "ballworld", ["table"], "table"),
+        ("ball_truth", "ballworld", ["table", "table"], "table"),
+        ("icosphere", "ballworld", [], "any"),
+    ],
+    # ラケット(17 巡目): 動く板との衝突(ラケット系で bounce)、板の枠の当たり判定、目標へ届く初速(真空の閉形式 → 反復)、
+    # 望む v_out を出す法線と速度、上限つきの動き、2 本のラケットの打ち合いと打球の合法性の先読み。
+    "racket": [
+        ("racket_params", "racket", [], "table"),
+        ("racket_impact", "racket", ["table", "table"], "table"),
+        ("racket_hit_check", "racket", ["table"], "table"),
+        ("aim_velocity", "racket", ["table"], "table"),
+        ("racket_plan", "racket", ["table", "table"], "table"),
+        ("racket_move", "racket", ["table"], "any"),
+        ("strategy_attacker", "racket", ["table"], "table"),
+        ("strategy_feeder", "racket", ["table"], "table"),
+        ("shot_is_legal", "racket", ["table", "table", "table"], "table"),
+        ("rally_simulate", "racket", ["table", "table", "table"], "table"),
     ],
 }
 

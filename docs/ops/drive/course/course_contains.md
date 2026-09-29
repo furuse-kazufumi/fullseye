@@ -36,7 +36,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
-—
+[flight_vacuum](../ball/flight_vacuum.md) · [magnus_lift_coefficient](../ball/magnus_lift_coefficient.md) · [drag_coefficient_sphere](../ball/drag_coefficient_sphere.md) · [restitution_from_apexes](../ball/restitution_from_apexes.md) · [restitution_from_intervals](../ball/restitution_from_intervals.md) · [fit_parabola](../ball/fit_parabola.md) · [flight_fit](../ball/flight_fit.md) · [fit_aero](../ball/fit_aero.md)
 
 ## 同カテゴリ(`course`)
 

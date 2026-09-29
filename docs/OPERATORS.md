@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-932 operators across 48 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+934 operators across 48 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -894,6 +894,8 @@
 | `tb_equivalent_level` | signal->feature | typed |  | - | - | - |
 | `tb_fly_lgmd_eta` | signal | typed |  | - | - | - |
 | `tb_fly_tau_from_expansion` | signal | typed |  | - | - | - |
+| `tb_magnus_lift_coefficient` | signal | typed |  | - | - | - |
+| `tb_drag_coefficient_sphere` | signal | typed |  | - | - | - |
 | `tb_normals_to_egi` | points->image | typed |  | - | - | - |
 | `tb_keypoints_uv_to_points` | keypoints->points | typed |  | - | - | - |
 | `tb_points_zyx_to_keypoints_uv` | points->keypoints | typed |  | - | - | - |
@@ -938,9 +940,9 @@
 | `feature_to_img` | feature->image | bridge |  | - | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 310/932
-- skimage: 383/932
-- matlab: 259/932
+- opencv: 310/934
+- skimage: 383/934
+- matlab: 259/934
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

@@ -1607,6 +1607,275 @@ def _b_foe_flow(pool, rng):
     return (f["u"], f["v"]), {}
 
 
+def _b_ball_bp(pool, rng):
+    import ballistics as BL
+    return BL.ball_params()
+
+
+def _b_ball_ip(pool, rng):
+    import ballistics as BL
+    return BL.impact_params(0.9, 0.25)
+
+
+def _b_flight_vac(pool, rng):
+    return ((0.0, 0.0, 0.5), (3.0, 0.2, 1.0), np.linspace(0.0, 0.05, 6)), {}
+
+
+def _b_flight_ode(pool, rng):
+    return ((0.0, 0.0, 0.5), (3.0, 0.2, 1.0), (0.0, 200.0, 0.0), _b_ball_bp(pool, rng), 0.05), {"dt": 1e-3}
+
+
+def _b_flight_sim(pool, rng):
+    return ((0.0, 0.0, 0.02), (3.0, 0.2, -1.0), (0.0, 200.0, 0.0), _b_ball_bp(pool, rng), _b_ball_ip(pool, rng), 0.05), {"dt": 1e-3}
+
+
+def _b_flight_state(pool, rng):
+    return ((0.0, 0.0, 0.5), (3.0, 0.2, 1.0), (0.0, 200.0, 0.0), _b_ball_bp(pool, rng), 0.02), {"n_steps": 10}
+
+
+def _b_spin_ratio(pool, rng):
+    return (np.linspace(0.0, 0.5, 8),), {}
+
+
+def _b_reynolds(pool, rng):
+    return (np.geomspace(1e2, 1e5, 8),), {}
+
+
+def _b_bounce(pool, rng):
+    return ((5.0, -0.3, -2.6), (0.0, 240.0, 0.0), (0.0, 0.0, 1.0), _b_ball_bp(pool, rng), _b_ball_ip(pool, rng)), {}
+
+
+def _b_contact_L(pool, rng):
+    return ((5.0, -0.3, -2.6), (0.0, 240.0, 0.0), (0.0, 0.0, 1.0), _b_ball_bp(pool, rng)), {}
+
+
+def _b_apex_seq(pool, rng):
+    return (0.305, 0.9, 4), {}
+
+
+def _b_bounce_time(pool, rng):
+    return (0.305, 0.9), {}
+
+
+def _b_apexes(pool, rng):
+    import ballistics as BL
+    return (BL.apex_sequence(0.305, 0.9, 4),), {}
+
+
+def _b_intervals(pool, rng):
+    return (np.array([0.0, 0.5, 0.95, 1.355]),), {}
+
+
+def _b_t_p(pool, rng):
+    import ballistics as BL
+    t = np.linspace(0.0, 0.05, 6)
+    return (t, BL.flight_vacuum((0.0, 0.0, 0.5), (3.0, 0.2, 1.0), t)), {}
+
+
+def _b_flight_fit(pool, rng):
+    (t, p), _ = _b_t_p(pool, rng)
+    return (t, p, (0.0, 200.0, 0.0), _b_ball_bp(pool, rng)), {"iters": 2, "dt": 1e-3}
+
+
+def _b_fit_aero(pool, rng):
+    import ballistics as BL
+    # 8 パラメータの同定は ≥ 8 標本が要り、真空の軌跡だと C_d・C_L の列が消えて cond = inf → 抗力 + マグヌスの軌跡を渡す
+    bp = _b_ball_bp(pool, rng)
+    f = BL.flight_ode((0.0, 0.0, 0.5), (8.0, 0.5, 2.0), (0.0, 200.0, 0.0), bp, 0.101, 1e-3)
+    idx = np.arange(0, 100, 10)
+    return (f["t"][idx], f["p"][idx], (0.0, 200.0, 0.0), bp), {"iters": 2, "dt": 1e-3}
+
+
+def _b_fit_bounce(pool, rng):
+    import ballistics as BL
+    (v, w, n, bp, ip), _ = _b_bounce(pool, rng)
+    b = BL.bounce(v, w, n, bp, ip)
+    return (v, w, b["v"], b["omega"], n, bp), {}
+
+
+def _b_slide(pool, rng):
+    return (2.0, 0.3), {}
+
+
+def _b_mu(pool, rng):
+    return (0.3,), {}
+
+
+def _b_mu_from_stop(pool, rng):
+    return (2.0, 0.68), {}
+
+
+def _b_roll_slide(pool, rng):
+    return ((1.0, 0.0, 0.0), (0.0, 50.0, 0.0), (0.0, 0.0, 1.0), _b_ball_bp(pool, rng)), {}
+
+
+def _b_tether(pool, rng):
+    return ((0.3, 0.0, -0.2), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0), 0.4, 0.2), {"dt": 1e-3}
+
+
+def _b_pendulum(pool, rng):
+    return (0.4,), {}
+
+
+def _b_cup(pool, rng):
+    return ((0.0, 0.0, 0.03), (0.0, 0.0, -0.3), (0.0, 0.0, 0.0), (0.0, 0.0, 1.0), 0.03, 0.02), {}
+
+
+def _b_ball_img(pool, rng):
+    rr, cc = np.mgrid[0:60, 0:96]
+    img = 0.05 * rng.random((60, 96))
+    img[(rr - 30.0) ** 2 + (cc - 48.0) ** 2 <= 4.0 ** 2] = 1.0
+    return (img,), {"mode": "bright"}
+
+
+def _b_ball_dets(pool, rng):
+    dets = [[{"col": 40.0 + 3.0 * k, "row": 30.0 - 1.0 * k, "radius": 4.0, "area": 50, "fill": 0.9, "score": 6.4}]
+            for k in range(4)]
+    return (dets,), {"max_jump": 40.0}
+
+
+def _b_kalman(pool, rng):
+    import ballistics as BL
+    t = np.arange(8) * 0.01
+    return (BL.flight_vacuum((0.0, 0.0, 0.5), (3.0, 0.2, 1.0), t), 0.01), {"q": 1.0, "r": 1e-3}
+
+
+def _b_ball_cam(pool, rng):
+    import ballworld as BW
+    return BW.camera_rig(BW.table_params(), n=2, width=96, height_px=60)
+
+
+def _b_reproject(pool, rng):
+    import ballworld as BW
+    cam = _b_ball_cam(pool, rng)[0]
+    H = BW.table_params()["height"]
+    return (np.array([[0.0, 0.0, H + 0.2], [0.3, 0.1, H + 0.3], [-0.3, -0.1, H + 0.25]]), cam["pose"], cam["K"]), {}
+
+
+def _b_tri_dlt(pool, rng):
+    import ballworld as BW
+    import balltrack as BT
+    rig = _b_ball_cam(pool, rng)
+    X = np.array([[0.2, 0.1, BW.table_params()["height"] + 0.25]])
+    uvs = np.array([BT.reproject(X, c["pose"], c["K"])[0] for c in rig])
+    return (uvs, np.array([c["pose"] for c in rig]), np.array([c["K"] for c in rig])), {}
+
+
+def _b_track_tri(pool, rng):
+    import ballworld as BW
+    import balltrack as BT
+    rig = _b_ball_cam(pool, rng)
+    H = BW.table_params()["height"]
+    X = np.array([[0.0, 0.0, H + 0.2], [0.1, 0.02, H + 0.25], [0.2, 0.04, H + 0.28]])
+    tracks = []
+    for c in rig:
+        uv = BT.reproject(X, c["pose"], c["K"])
+        tracks.append({"frame": np.arange(3), "col": uv[:, 0], "row": uv[:, 1], "radius": np.full(3, 4.0),
+                       "found": np.ones(3, bool)})
+    return (tracks, np.array([c["pose"] for c in rig]), np.array([c["K"] for c in rig]), 3), {}
+
+
+def _b_bounce_det(pool, rng):
+    t = np.arange(12) * 0.01
+    return (t, 0.1 + np.abs(t - 0.05) * 2.0), {"min_gap": 2}
+
+
+def _b_marker_dir(pool, rng):
+    return ((50.0, 31.0), (48.0, 30.0), 4.0), {}
+
+
+def _b_spin_markers(pool, rng):
+    import ballworld as BW
+    d0 = np.array([[0.0, 0.0, 1.0], [0.6, 0.0, 0.8], [0.0, 0.6, 0.8]])
+    R = BW.rotation_from_omega((0.0, 50.0, 0.0), 1e-3)
+    return (d0, d0 @ R.T, 1e-3), {}
+
+
+def _b_table_world(pool, rng):
+    import ballworld as BW
+    return (BW.table_params(),), {}
+
+
+def _b_icosphere(pool, rng):
+    return (0.02, 1), {}
+
+
+def _b_ball_mesh(pool, rng):
+    return (0.02, 1), {}
+
+
+def _b_add_ball(pool, rng):
+    import ballworld as BW
+    tp = BW.table_params()
+    return (BW.table_world(tp), BW.ball_mesh(0.02, 1), (0.0, 0.0, tp["height"] + 0.2)), {}
+
+
+def _b_ball_pose(pool, rng):
+    import ballworld as BW
+    (w, m, p), _ = _b_add_ball(pool, rng)
+    i = BW.add_ball(w, m, p)
+    return (w, i, (0.1, 0.0, p[2]), np.eye(3)), {}
+
+
+def _b_rot_omega(pool, rng):
+    return ((0.0, 50.0, 0.0), 1e-3), {}
+
+
+def _b_cam_rig(pool, rng):
+    import ballworld as BW
+    return (BW.table_params(),), {"n": 2, "width": 96, "height_px": 60}
+
+
+def _b_ball_truth(pool, rng):
+    import ballworld as BW
+    (w, m, p), _ = _b_add_ball(pool, rng)
+    i = BW.add_ball(w, m, p)
+    return (w, i, _b_ball_cam(pool, rng)[0]), {}
+
+
+def _b_rp(pool, rng):
+    import racket as RK
+    return RK.racket_params()
+
+
+def _b_racket_impact(pool, rng):
+    return ((5.0, 0.0, -1.0), (0.0, 200.0, 0.0), (-1.0, 0.0, 0.0), (-2.0, 0.0, 0.0), _b_ball_bp(pool, rng), _b_rp(pool, rng)), {}
+
+
+def _b_hit_check(pool, rng):
+    return ((1.55, 0.02, 1.0), (1.55, 0.0, 1.0), (-1.0, 0.0, 0.0), _b_rp(pool, rng), 0.02), {}
+
+
+def _b_aim(pool, rng):
+    return ((-1.3, 0.0, 1.0), (0.75, 0.1, 0.76), 0.3, _b_ball_bp(pool, rng)), {"refine": 2, "dt": 1e-3}
+
+
+def _b_racket_plan(pool, rng):
+    return ((5.0, 0.0, -1.0), (0.0, 200.0, 0.0), (-4.0, 0.3, 1.5), _b_ball_bp(pool, rng), _b_rp(pool, rng)), {"refine": 2}
+
+
+def _b_racket_move(pool, rng):
+    return ((1.55, 0.0, 1.0), (0.0, 0.0, 0.0), (1.55, 0.2, 1.1), 0.01, _b_rp(pool, rng)), {}
+
+
+def _b_strategy(pool, rng):
+    import ballworld as BW
+    ctx = {"opp_pos": np.array([1.55, 0.1, 1.0]), "shot_index": 1, "tp": BW.table_params(), "prev_target": (0.75, 0.05)}
+    return (0, ctx, np.random.default_rng(0)), {}
+
+
+def _b_shot_legal(pool, rng):
+    import ballworld as BW
+    tp = BW.table_params()
+    return ((-1.3, 0.0, tp["height"] + 0.25), (5.0, 0.0, 1.5), (0.0, 0.0, 0.0), _b_ball_bp(pool, rng), _b_ball_ip(pool, rng), tp,
+            1.55, 0), {}
+
+
+def _b_rally(pool, rng):
+    import ballworld as BW
+    return (_b_ball_bp(pool, rng), _b_rp(pool, rng), BW.table_params()), {"max_hits": 2, "retries": 0, "seed": 0}
+
+
 def _b_graph_kcore(pool, rng):
     B = (rng.random((30, 30)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -1824,6 +2093,25 @@ OP_ARG_BUILDERS = {
     "terrain_mesh": _b_terrain_mesh, "world_apply_terrain": _b_world_terrain, "material_params": _b_seed_only,
     "world_materials": _b_world_view, "tree_mesh": _b_tree, "pedestrian_mesh": _b_ped, "crosswalk_mesh": _b_crosswalk,
     "add_mesh_object": _b_add_mesh, "scatter_offroad": _b_scatter, "mesh_signed_volume": _b_mesh_vol,
+    "ball_params": _b_course_none, "impact_params": _b_course_none, "flight_vacuum": _b_flight_vac,
+    "flight_ode": _b_flight_ode, "flight_simulate": _b_flight_sim, "flight_state_at": _b_flight_state,
+    "magnus_lift_coefficient": _b_spin_ratio, "drag_coefficient_sphere": _b_reynolds, "bounce": _b_bounce,
+    "contact_angular_momentum": _b_contact_L, "apex_sequence": _b_apex_seq, "bounce_total_time": _b_bounce_time,
+    "restitution_from_apexes": _b_apexes, "restitution_from_intervals": _b_intervals, "fit_parabola": _b_t_p,
+    "flight_fit": _b_flight_fit, "fit_aero": _b_fit_aero, "fit_bounce": _b_fit_bounce,
+    "slide_stop_distance": _b_slide, "incline_slip_angle": _b_mu, "mu_from_stop_distance": _b_mu_from_stop,
+    "roll_slide_state": _b_roll_slide, "tether_simulate": _b_tether, "pendulum_period": _b_pendulum,
+    "cup_catch_check": _b_cup,
+    "ball_detect": _b_ball_img, "ball_track": _b_ball_dets, "kalman_ca": _b_kalman, "triangulate_dlt": _b_tri_dlt,
+    "track_triangulate": _b_track_tri, "bounce_detect": _b_bounce_det, "marker_direction": _b_marker_dir,
+    "spin_from_markers": _b_spin_markers, "reproject": _b_reproject,
+    "table_params": _b_course_none, "table_world": _b_table_world, "ball_mesh": _b_ball_mesh, "add_ball": _b_add_ball,
+    "ball_set_pose": _b_ball_pose, "rotation_from_omega": _b_rot_omega, "camera_rig": _b_cam_rig,
+    "ball_truth": _b_ball_truth, "icosphere": _b_icosphere,
+    "racket_params": _b_course_none, "racket_impact": _b_racket_impact, "racket_hit_check": _b_hit_check,
+    "aim_velocity": _b_aim, "racket_plan": _b_racket_plan, "racket_move": _b_racket_move,
+    "strategy_attacker": _b_strategy, "strategy_feeder": _b_strategy, "shot_is_legal": _b_shot_legal,
+    "rally_simulate": _b_rally,
     "tree_from_swc": _b_tree_swc,
     "tree_morphometry": _b_tree_table,
     "tree_sholl": _b_tree_table,
@@ -2587,6 +2875,9 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "sdf_smooth_union", "sdf_offset", "mat_cond",
                          "warp_by_plane", "triangulate",
                          "world_materials",     # "xyz" は空の画素が NaN(深度が無い所は世界座標も無い、docstring どおり)
+                         "ball_truth",          # "markers_uv" は球の裏側の模様が NaN(docstring どおり)
+                         "reproject",           # カメラの後ろ(深度 ≤ 0)の点は NaN(docstring どおり)
+                         "kalman_ca",           # "innovation" は観測の無いコマ(z が NaN)で NaN
                          } | NONFINITE_BY_CONTRACT_METRICS \
                          | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
                          | NONFINITE_BY_CONTRACT_OPTICS \

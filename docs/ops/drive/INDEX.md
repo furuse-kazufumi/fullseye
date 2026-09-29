@@ -1,8 +1,20 @@
-# DRIVE operator help — 60 ops in 6 categories
+# DRIVE operator help — 113 ops in 10 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
 ## カテゴリ
+
+### ball (25)
+
+[apex_sequence](ball/apex_sequence.md) · [ball_params](ball/ball_params.md) · [bounce](ball/bounce.md) · [bounce_total_time](ball/bounce_total_time.md) · [contact_angular_momentum](ball/contact_angular_momentum.md) · [cup_catch_check](ball/cup_catch_check.md) · [drag_coefficient_sphere](ball/drag_coefficient_sphere.md) · [fit_aero](ball/fit_aero.md) · [fit_bounce](ball/fit_bounce.md) · [fit_parabola](ball/fit_parabola.md) · [flight_fit](ball/flight_fit.md) · [flight_ode](ball/flight_ode.md) · [flight_simulate](ball/flight_simulate.md) · [flight_state_at](ball/flight_state_at.md) · [flight_vacuum](ball/flight_vacuum.md) · [impact_params](ball/impact_params.md) · [incline_slip_angle](ball/incline_slip_angle.md) · [magnus_lift_coefficient](ball/magnus_lift_coefficient.md) · [mu_from_stop_distance](ball/mu_from_stop_distance.md) · [pendulum_period](ball/pendulum_period.md) · [restitution_from_apexes](ball/restitution_from_apexes.md) · [restitution_from_intervals](ball/restitution_from_intervals.md) · [roll_slide_state](ball/roll_slide_state.md) · [slide_stop_distance](ball/slide_stop_distance.md) · [tether_simulate](ball/tether_simulate.md)
+
+### balltrack (9)
+
+[ball_detect](balltrack/ball_detect.md) · [ball_track](balltrack/ball_track.md) · [bounce_detect](balltrack/bounce_detect.md) · [kalman_ca](balltrack/kalman_ca.md) · [marker_direction](balltrack/marker_direction.md) · [reproject](balltrack/reproject.md) · [spin_from_markers](balltrack/spin_from_markers.md) · [track_triangulate](balltrack/track_triangulate.md) · [triangulate_dlt](balltrack/triangulate_dlt.md)
+
+### ballworld (9)
+
+[add_ball](ballworld/add_ball.md) · [ball_mesh](ballworld/ball_mesh.md) · [ball_set_pose](ballworld/ball_set_pose.md) · [ball_truth](ballworld/ball_truth.md) · [camera_rig](ballworld/camera_rig.md) · [icosphere](ballworld/icosphere.md) · [rotation_from_omega](ballworld/rotation_from_omega.md) · [table_params](ballworld/table_params.md) · [table_world](ballworld/table_world.md)
 
 ### course (13)
 
@@ -11,6 +23,10 @@
 ### lidar (4)
 
 [lidar_scan](lidar/lidar_scan.md) · [lidar_spec](lidar/lidar_spec.md) · [ray_box_ranges](lidar/ray_box_ranges.md) · [ray_plane_range](lidar/ray_plane_range.md)
+
+### racket (10)
+
+[aim_velocity](racket/aim_velocity.md) · [racket_hit_check](racket/racket_hit_check.md) · [racket_impact](racket/racket_impact.md) · [racket_move](racket/racket_move.md) · [racket_params](racket/racket_params.md) · [racket_plan](racket/racket_plan.md) · [rally_simulate](racket/rally_simulate.md) · [shot_is_legal](racket/shot_is_legal.md) · [strategy_attacker](racket/strategy_attacker.md) · [strategy_feeder](racket/strategy_feeder.md)
 
 ### rss (10)
 

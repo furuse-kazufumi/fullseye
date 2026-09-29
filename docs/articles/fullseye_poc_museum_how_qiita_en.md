@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**60 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**61 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -414,7 +414,7 @@ Ops used (notes): [`convex_hull`](https://furuse.work/ops/3d/bounds/convex_hull.
 
 ### The Time-as-3-D Wing — A Video Is One Volume
 
-Treat a 2-D video as one (t, y, x) volume and the 3-D ops — connected components, isosurfaces, region properties — work along time unchanged. Merging colonies become a Y in space-time, passing vehicles become bands in a (t, x) image, a wavefront's arrival time becomes an isosurface. The 14 exhibits here demonstrate exactly that.
+Treat a 2-D video as one (t, y, x) volume and the 3-D ops — connected components, isosurfaces, region properties — work along time unchanged. Merging colonies become a Y in space-time, passing vehicles become bands in a (t, x) image, a wavefront's arrival time becomes an isosurface. The 15 exhibits here demonstrate exactly that.
 
 The time axis also brings its own traps. Rounding onto the frame grid always delays; pixel area makes merging look early. Mislinks come in two opposite kinds, so a single error rate cannot say which way the diffusion coefficient is wrong. Template tracking drifts quietly before it ever loses the target, and all 152 drifted frames report 'found'.
 
@@ -855,6 +855,50 @@ Source: [examples/poc_live4d.py](https://github.com/furuse-kazufumi/fullseye/blo
 This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_live4d)
 
 Ops used (notes): [`blend`](https://furuse.work/ops/shape2d/morph/blend.html) · [`focus_sweep_height_video`](https://furuse.work/ops/live4d/render/focus_sweep_height_video.html) · [`focus_sweep_surface_video`](https://furuse.work/ops/live4d/render/focus_sweep_surface_video.html) · [`vol_flow_3d`](https://furuse.work/ops/live4d/flow/vol_flow_3d.html) · [`volseq_interpolate_flow`](https://furuse.work/ops/live4d/time/volseq_interpolate_flow.html) · [`volseq_magnify_motion`](https://furuse.work/ops/live4d/time/volseq_magnify_motion.html) · [`volseq_pathline_orbit`](https://furuse.work/ops/live4d/flow/volseq_pathline_orbit.html) · [`volseq_pathline_render`](https://furuse.work/ops/live4d/flow/volseq_pathline_render.html) · [`volseq_render_orbit`](https://furuse.work/ops/live4d/render/volseq_render_orbit.html) · [`volseq_synth_beating`](https://furuse.work/ops/live4d/synth/volseq_synth_beating.html) · [`volseq_synth_dividing`](https://furuse.work/ops/live4d/synth/volseq_synth_dividing.html)
+
+## No.2026.170 —— Measuring a Table-Tennis Ball the Way the Pioneers Did — Multi-Camera Tracking, Triangulation, Trajectory Prediction, Bounce and Spin, Scored by Theorems on a Table with Ground Truth
+
+[![Measuring a Table-Tennis Ball the Way the Pioneers Did — Multi-Camera Tracking, Triangulation, Trajectory Prediction, Bounce and Spin, Scored by Theorems on a Table with Ground Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/01_rig_view_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/01_rig_view.png)
+
+*↑ **Measuring a Table-Tennis Ball the Way the Pioneers Did — Multi-Camera Tracking, Triangulation, Trajectory Prediction, Bounce and Spin, Scored by Theorems on a Table with Ground Truth** ―― Robot table tennis has had the same visual stance since 1988: find the ball in several cameras, triangulate it into a 3-D point, look ahead with an equation of motion that includes drag and Magnus lift, predict across the bounce and, if you can, measure spin from the markings. This exhibit builds that whole chain from numpy ops and scores it against a truth the world itself holds (ball centre, pose, contact time and angular velocity are formulas fixed at generation). First the theorems of mechanics: with drag and Magnus set to zero the RK4 flight matches the closed-form parabola to 1e-12, and the least-squares parabola returns g = 9.81 to 4.0e-15. Over 500 random impacts (e ∈ [0.3, 1], μ ∈ [0, 0.6]) the angular momentum about the contact point is conserved to a relative 4.9e-16 at worst, 136 impacts reach rolling and 364 keep sliding. Dropped from 30.5 cm with e = 0.90 the apexes are 24.7, 20.0, 16.2 and 13.1 cm, within 3.0e-07 of the closed form e^{2k}h₀; the first bounce of 24.7 cm sits inside the ITTF 24–26 cm rule, both the apex list and the contact intervals give back e = 0.900000, and the total time to rest, 4.736 s, sits beside the closed-form 4.738 s. Then a 40 mm ball with 14 markings is placed on an ITTF table and a topspin shot (ω = 240 rad/s) is filmed at 100 fps for 0.6 s by two cameras plus one close-up (rendering 61 frames × 2 cameras took 22.0 s). The true contact is at t = 0.3094 s, point (0.507, 0.052), v [5.15, −0.28, −2.65] → [5.01, −0.17, 2.39], ω [0, 240, 0] → [8.5, 250.6, 0] (grip). Chromaticity detection finds the ball in 122 / 122 frames with a centre error of 0.152 px at the median, 0.299 px at the 90th percentile and 2.094 px at worst (image radius ≈ 4.3 px). DLT triangulation is 3.8e-15 m from the truth's own projections and, from the detections, 1.61 mm at the median, 4.25 mm at the 90th percentile and 23.56 mm at worst (median reprojection rms 0.094 px). The constant-acceleration Kalman filter is exact for a parabola, so its innovation on the parabolic truth is at most 8.2e-09 m (2.3e-03 m on the drag-plus-Magnus truth, which lies outside the model), and its velocity from the detections is off by 0.074 m/s at the median (|v| ≈ 5.9 m/s). The local minimum of z lands at t = 0.31, 0.6 ms from the truth. Fitting the initial state by a 6-parameter Gauss–Newton to the 15 frames (0.15 s) before the bounce (the true trajectory comes back to 3.2e-13) and predicting across the bounce puts the landing point 0.4 cm off (0.5 ms in time) when the true spin is known, 20.2 cm off when spin is ignored, and 6.6 cm off with a parabola even given the true spin — the difference is the Magnus term. On the close-up camera at the bounce (1000 fps, strobe) 19 / 19 frame pairs pair at least two markings, and the Kabsch rotation gives a median angular velocity of [1.7, 256.6, −2.1] rad/s against the truth [8.5, 250.6, 0] (|ω| 2394 rpm), a relative error of 3.7 %. The coefficient of restitution from equation-of-motion fits to 12 frames on each side gives v_z −2.637 → 2.403, e = 0.9114 (truth 0.90). Honestly: a parabolic fit gives 0.9398, 4.4 % off, because it absorbs drag and Magnus into g; the ball detection runs on synthetic footage with a known colour and no real lighting, blur or background; and the aerodynamic coefficients are textbook values with the truth built from the same formula (this is not a test of aerodynamics). 10 gates, 42.0 s. Finally two freely moving rackets (15 × 16 cm blades, ≤ 6 m/s) rally against each other: a feeder that returns near its previous target keeps the rally to the 12-hit cap, while an attacker aiming fast at the far corners ends it after 9 hits (a rewind mechanism previews each shot with the true physics and retries a miss; the attacker still misses after 99 rewinds). Gaussian noise on the perceived position leaves the rally length unchanged up to 5 cm (the blade's margin) and cuts it to 2 hits at 10 cm — the rally length scores perception, prediction and control as one number.*
+
+[![カメラ 1 の像での球の軌跡: 真値の投影(線)と検出(点)。中心の誤差の中央値 0.15 px。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/02_tracks_2d_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/02_tracks_2d.png)
+
+*↑ The measurement ―― カメラ 1 の像での球の軌跡: 真値の投影(線)と検出(点)。中心の誤差の中央値 0.15 px。 (figure labels are in Japanese; the numbers are the same)*
+
+[![x–z 面の軌跡。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/03_trajectory_xz_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/03_trajectory_xz.png)
+
+*↑ x–z 面の軌跡。*
+
+[![30.5 cm から落とした球(e = 0.90)の頂点: 閉形式 e^{2k}h₀ と 1e-6 で一致し、最初の跳ね 24.7 cm は ITTF の規格 24〜26 cm の中。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/04_drop_apexes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/04_drop_apexes.png)
+
+*↑ 30.5 cm から落とした球(e = 0.90)の頂点: 閉形式 e^{2k}h₀ と 1e-6 で一致し、最初の跳ね 24.7 cm は ITTF の規格 24〜26 cm の中。*
+
+[![跳ね際の近接カメラ(1000 fps、256 × 256、20°)の 4 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/05_spin_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/05_spin_frames.png)
+
+*↑ 跳ね際の近接カメラ(1000 fps、256 × 256、20°)の 4 コマ。*
+
+[![知覚(球の位置)にガウス雑音を足したときのラリーの本数(送り合い、上限 8 本): 0 mm → 8 本、50 mm → 8 本、100 mm → 2 本。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/08_rally_vs_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/08_rally_vs_noise.png)
+
+*↑ 知覚(球の位置)にガウス雑音を足したときのラリーの本数(送り合い、上限 8 本): 0 mm → 8 本、50 mm → 8 本、100 mm → 2 本。*
+
+[![追跡カメラ 1(2 × 2 平均で 512 × 400)、100 fps を 1/10 速で。橙の十字は検出、緑は Kalman の状態の投影、赤は跳ねる前の 15 コマから予測した着地点。球は 2291 rpm のトップスピンで、台で 1](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/06_rally_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/06_rally_gif.gif)
+
+*↑ The animation ―― 追跡カメラ 1(2 × 2 平均で 512 × 400)、100 fps を 1/10 速で。橙の十字は検出、緑は Kalman の状態の投影、赤は跳ねる前の 15 コマから予測した着地点。球は 2291 rpm のトップスピンで、台で 1 度跳ねる(e = 0.90)。*
+
+[![自由に動く 2 本のラケット(板 15 × 16 cm、速さ ≤ 6 m/s、加速度 ≤ 60 m/s²)の送り合い(前回に近い少しずらした位置へ返す)、最初の 3 秒を 1/5 速で。相手コートに 1 度跳ねた球を面 x = ±1.55 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/07_rally_two_rackets.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/07_rally_two_rackets.gif)
+
+*↑ The animation ―― 自由に動く 2 本のラケット(板 15 × 16 cm、速さ ≤ 6 m/s、加速度 ≤ 60 m/s²)の送り合い(前回に近い少しずらした位置へ返す)、最初の 3 秒を 1/5 速で。相手コートに 1 度跳ねた球を面 x = ±1.55 m で迎え撃ち、狙った点へ運動方程式で返す。この設定では上限 12 本まで続く。攻める側(遠い隅を速く)が入ると 9 本で終わる(out)。*
+
+```
+py -3.11 examples/poc_ball_bounce.py
+```
+
+Source: [examples/poc_ball_bounce.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ball_bounce.py)
+
+This run produced **8 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ball_bounce)
+
+Ops used (notes): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.html) · [`apex_sequence`](https://furuse.work/ops/drive/ball/apex_sequence.html) · [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_detect.html) · [`ball_mesh`](https://furuse.work/ops/drive/ballworld/ball_mesh.html) · [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`ball_set_pose`](https://furuse.work/ops/drive/ballworld/ball_set_pose.html) · [`ball_track`](https://furuse.work/ops/drive/balltrack/ball_track.html) · [`ball_truth`](https://furuse.work/ops/drive/ballworld/ball_truth.html) · [`bounce`](https://furuse.work/ops/drive/ball/bounce.html) · [`bounce_detect`](https://furuse.work/ops/drive/balltrack/bounce_detect.html) · [`bounce_total_time`](https://furuse.work/ops/drive/ball/bounce_total_time.html) · [`camera_rig`](https://furuse.work/ops/drive/ballworld/camera_rig.html) · [`contact_angular_momentum`](https://furuse.work/ops/drive/ball/contact_angular_momentum.html) · [`crosshair`](https://furuse.work/ops/annotate/pointer/crosshair.html) · [`fit_parabola`](https://furuse.work/ops/drive/ball/fit_parabola.html) · [`flight_fit`](https://furuse.work/ops/drive/ball/flight_fit.html) · [`flight_ode`](https://furuse.work/ops/drive/ball/flight_ode.html) · [`flight_simulate`](https://furuse.work/ops/drive/ball/flight_simulate.html) · [`flight_state_at`](https://furuse.work/ops/drive/ball/flight_state_at.html) · [`flight_vacuum`](https://furuse.work/ops/drive/ball/flight_vacuum.html) · [`impact_params`](https://furuse.work/ops/drive/ball/impact_params.html) · [`kalman_ca`](https://furuse.work/ops/drive/balltrack/kalman_ca.html) · [`marker_direction`](https://furuse.work/ops/drive/balltrack/marker_direction.html) · [`racket_params`](https://furuse.work/ops/drive/racket/racket_params.html) … (+12)
 
 ## No.2026.145 —— Testing the Periodic Boundary of Temporal Operators with a Seamless Loop
 

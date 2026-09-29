@@ -504,6 +504,27 @@ from driveterrain import (  # noqa: E402,F401
     terrain_params, terrain_height, terrain_gradient, terrain_mesh, world_apply_terrain, material_params,
     world_materials, tree_mesh, pedestrian_mesh, crosswalk_mesh, add_mesh_object, scatter_offroad, mesh_signed_volume,
 )
+import ballistics  # noqa: E402  (球の力学: 真空の閉形式 + 抗力・マグヌスの RK4、跳ねは接触点の角運動量が保存)
+from ballistics import (  # noqa: E402,F401
+    ball_params, impact_params, flight_vacuum, flight_ode, flight_simulate, flight_state_at, magnus_lift_coefficient,
+    drag_coefficient_sphere, bounce, contact_angular_momentum, apex_sequence, bounce_total_time, restitution_from_apexes,
+    restitution_from_intervals, fit_parabola, flight_fit, fit_aero, fit_bounce, slide_stop_distance, incline_slip_angle,
+    mu_from_stop_distance, roll_slide_state, tether_simulate, pendulum_period, cup_catch_check,
+)
+import balltrack  # noqa: E402  (球の追跡: サブピクセル検出 → 追跡 → DLT 三角測量 → 等加速度 Kalman、模様から角速度)
+from balltrack import (  # noqa: E402,F401
+    ball_detect, ball_track, kalman_ca, triangulate_dlt, track_triangulate, bounce_detect, marker_direction,
+    spin_from_markers, reproject,
+)
+import ballworld  # noqa: E402  (真値つきの台の世界: ITTF の台 + 球の模様 + カメラ、投影の真値)
+from ballworld import (  # noqa: E402,F401
+    table_params, table_world, ball_mesh, add_ball, ball_set_pose, rotation_from_omega, camera_rig, ball_truth, icosphere,
+)
+import racket  # noqa: E402  (ラケット: 動く板との衝突・狙い・打ち合い)
+from racket import (  # noqa: E402,F401
+    racket_params, racket_impact, racket_hit_check, aim_velocity, racket_plan, racket_move, rally_simulate,
+    strategy_attacker, strategy_feeder, shot_is_legal,
+)
 from lidarsim import (  # noqa: E402,F401
     lidar_spec, lidar_scan, lidar_points_sensor_frame, lidar_range_image_to_points, ray_plane_range,
     ray_box_ranges,

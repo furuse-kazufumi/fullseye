@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">kalman_ca — DRIVE <code style="color:#22d3bf">balltrack</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kalman_ca(z, dt: &#x27;float&#x27;, *, q: &#x27;float&#x27; = 1.0, r: &#x27;float&#x27; = 1.0, x0=None, P0: &#x27;float&#x27; = 1000.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import balltrack; balltrack.kalman_ca(z, dt: &#x27;float&#x27;, *, q: &#x27;float&#x27; = 1.0, r: &#x27;float&#x27; = 1.0, x0=None, P0: &#x27;float&#x27; = 1000.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;kalman_ca&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>等加速度モデルの Kalman フィルタ(位置の観測 (N, D)、状態 = 位置・速度・加速度 × D)。</p>
+<p>返り値 `<code style="color:#22d3bf">{&quot;x&quot; (N, 3D) 更新後, &quot;x_pred&quot; (N, 3D) 予測, &quot;P&quot; (N, 3D, 3D), &quot;innovation&quot; (N, D)}</code>`。</p>
+<p>`<code style="color:#22d3bf">q</code><code style="color:#22d3bf"> = 加速度の変化の分散(白色ジャーク)、</code><code style="color:#22d3bf">r</code>` = 観測の分散。放物線の真値を入れると(モデルが厳密なので)収束後の</p>
+<p>新息 → 0、r → 0 で更新後の位置 = 観測(門)。NaN の観測は予測だけ(欠測)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ball_bounce">poc_ball_bounce</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ball_bounce.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">balltrack</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:ball_detect">ball_detect</a> · <a style="color:#22d3bf" href="opdrive:ball_track">ball_track</a> · <a style="color:#22d3bf" href="opdrive:triangulate_dlt">triangulate_dlt</a> · <a style="color:#22d3bf" href="opdrive:track_triangulate">track_triangulate</a> · <a style="color:#22d3bf" href="opdrive:bounce_detect">bounce_detect</a> · <a style="color:#22d3bf" href="opdrive:marker_direction">marker_direction</a> · <a style="color:#22d3bf" href="opdrive:spin_from_markers">spin_from_markers</a> · <a style="color:#22d3bf" href="opdrive:reproject">reproject</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: balltrack.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

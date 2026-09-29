@@ -35,7 +35,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[world_camera](../world/world_camera.md) · [lidar_scan](../lidar/lidar_scan.md) · [foe_from_motion](foe_from_motion.md) · [flow_from_depth_motion](flow_from_depth_motion.md) · [ttc_truth](ttc_truth.md) · [world_materials](../terrain/world_materials.md) · [mesh_signed_volume](../terrain/mesh_signed_volume.md)
+[world_camera](../world/world_camera.md) · [lidar_scan](../lidar/lidar_scan.md) · [foe_from_motion](foe_from_motion.md) · [flow_from_depth_motion](flow_from_depth_motion.md) · [ttc_truth](ttc_truth.md) · [world_materials](../terrain/world_materials.md) · [mesh_signed_volume](../terrain/mesh_signed_volume.md) · [triangulate_dlt](../balltrack/triangulate_dlt.md)
 
 ## 同カテゴリ(`ttc`)
 

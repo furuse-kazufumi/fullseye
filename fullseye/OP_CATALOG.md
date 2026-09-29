@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(272 例)
+### 2-D 画像/信号/幾何(273 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -118,6 +118,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **教習所が開校する —— 規格寸法の周回コースに車と信号を置き、LiDAR とカメラで見て、定理と恒等式で採点する** — 道路交通法施行規則 別表第三の寸法で周回コース(直線 80 m・幅 8 m)の中に幹線の十字(信号 4 基)と課題(クランク・S 字・坂道・縦列駐車・方向変換・踏切)を置き、出口は連絡路で周回へ戻す(drivecourse)。3-D の世界に CC0 の車・信号機・標識(driveworld)、回転式 LiDAR をメッシュに撃ち(lidarsim)、車載カメラで撮る。門 14: 面積の閉形式への単調収束、路面の range = h/(−sin e) と 1e-9 一致、LiDAR の点をカメラに投影した深度・ラベルの一致(2 センサ 1 世界)、車の点は車の箱の中、縁石の点は道の外、Hybrid A* の道は脱輪 0(半セル以内)、カメラが信号の赤・緑を読む。正直に: 規格の幅 3.5 m は前進のみでは到達不能で切り返しが要る。 `py -3.11 examples/poc_driving_school.py`
 - **衝突までの時間と安全距離 —— τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する** — 教習所の周回コースで対向車(8 m/s)を車載カメラで撮り、τ(Lee 1976)を 3 経路で出す: 深度像 + 剛体運動の閉形式(真値)、光学流(LK)→ time_to_contact、見かけの面積の平方根。恒等式 = 真の流れを入れると 1 コマ後の τ で、1 コマ足すと真値と 1e-9。真の τ は 1 秒に 1 秒ずつ減る。RSS(Shalev-Shwartz 2017)の安全距離は ad-rss-lib の公表パラメータ・試験値と一致し、Lemma 2 は最悪ケースの時間積分と 1e-6 で一致。停車車両に「危険」を出した瞬間に制動すると停止時の間隔は閉形式どおり。対向車線の車は τ が 0.3 s まで落ちても横の安全距離(0.73 m < 2.2 m)で RSS は騒がず、寄ってくると危険になる。正直に: 流れの τ が効くのは車が像で大きい区間だけ。 `py -3.11 examples/poc_ttc_rss.py`
 - **世界を広げる —— 閉形式の地形と世界座標の材質、手続きの木と歩行者で、拡大の中心を流れから取り戻す** — 教習所の周回コースを fBm の起伏(乱数位相の正弦の和、高さも勾配も閉形式、スペクトル β̂ 3.59 = 2H + 2)の中に置き、道の周り 2 m は平ら(コースへの距離場は |∇d| = 1)、路面はうねる。描画した深度から画素の世界座標を戻して Perlin の雑音で材質を評価する(粒・染み・水溜り・摩耗した白線、真値は画素単位)。手続きの木 70 本・歩行者・横断歩道は体積と面積が閉形式。15 巡目で「既知」にした拡大の中心(FoE)を路面の LK の流れだけから出すと、模様ありで 1.9 px、無地の路面では 57 px 外れる。真の流れなら 1e-13(定理)。正直に: 摩耗した白線と水溜りは明るさのしきい値では最良でも 25 % を間違える(それが狙い)。 `py -3.11 examples/poc_world_terrain.py`
+- **卓球の球を先駆者の目で測る —— 真値つきの台で、多カメラ追跡・三角測量・軌道予測・跳ね・スピンを定理で採点する** — ITTF 寸法の台に 40 mm の球(模様 14 個)を置き、トップスピンの打球を 2 台 + 近接 1 台のカメラで 100 fps・0.6 秒撮る。力学は定理が門: 真空の RK4 は閉形式と 1e-12、放物線の当てはめは g = 9.81 を 4e-15 で戻し、乱数 500 通りの衝突で接触点まわりの角運動量は 4.9e-16 で保存、30.5 cm から落とした最初の跳ね 24.7 cm は ITTF の 24〜26 cm の中。色度の検出は中央値 0.152 px、DLT の三角測量は検出から中央値 1.61 mm、等加速度 Kalman は放物線の真値で新息 8.2e-09 m。跳ねの前 15 コマから運動方程式で初期状態を当てて跳ねを越えて予測すると、真のスピンを知っていれば着地点 0.4 cm、スピンを無視すると 20.2 cm 外れる。近接カメラ(1000 fps)の模様を Kabsch で対応づけた角速度は真値と 3.7 %、反発係数は運動方程式の当てはめで 0.9114(真値 0.90)。正直に: 放物線で e を出すと 0.9398(抗力とマグヌスを g に吸って 4.4 % ずれる)、検出は色が既知の合成映像。ラリー: 送り合いは上限 12 本、攻める側が入ると 9 本、知覚雑音 5 cm までは不変・10 cm で 2 本。 `py -3.11 examples/poc_ball_bounce.py`
 - **粘菌は最適輸送を解く —— 源と吸込を質量の分布にすると、同じ管の力学が Earth Mover 距離へ収束する** — graph_physarum_transport(重み付きグラフ + 供給ベクトル)と physarum_transport_image(質量画像 2 枚)で、Tero の管の力学をL1 最適輸送(Beckmann 問題)に。真値 10 件(木の閉形式 5・1 次元・Hungarian 法・LP・平行移動 |dr|+|dc|・単一対の Dijkstra)と全部一致し、Kantorovich–Rubinstein の下界(圧力の McShane 包絡)が費用を下から挟む。隙間が閉じたら止まる(証明書つき)。 `py -3.11 examples/poc_physarum_transport.py`
 - **線虫の脳の核は生まれた時から在る —— 8 匹の発生系列で「最も深い殻」に居続ける細胞を数える** — Witvliet 2021 の 8 匹を graph_kcore / graph_rich_club_curve / graph_core_persistence で剥く。シナプス数で剥いた最深殻は発生を通じて 6〜10 細胞(指数 7 → 55)、RIA の対は 8 匹全員に居る。0/1 の k-core は最深殻が 150 細胞に膨らむ。4 種の核のどれかで持続する細胞 51 = Yadav & Singh 2026 の公表値。門は定理(完全グラフ n−1・木 1・閉路 2)と networkx との一致。 `py -3.11 examples/poc_worm_core_persists.py`
 - **走行長は小さな融合を許さない —— 同じ誤りを、ERL と VOI は違う重さで数える** — Witvliet 2021 の骨格を正解に、候補のラベル付けを 1 つずつ仕込む。分断 1 つの ERL は閉形式 (A²+(L−A−|e|)²)/L、VOI は (m/N)·H2 と全件一致。融合の大きさ q を 5 % → 50 % と振ると VOI の merge は単調に増えるが、ERL は融合した走行を丸ごと 0 にするので損失は q に依らない。分岐の無い骨格の一様 m 点切りは Dirichlet の期待値 2L/(m+2) と一致。 `py -3.11 examples/poc_skeleton_run_length_vs_voi.py`
@@ -1124,7 +1125,7 @@ _計 372 ops / 68 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 932 ops / 48 categories。_
+_計 934 ops / 48 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1988,7 +1989,7 @@ _計 932 ops / 48 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(155)
+### typed(157)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
@@ -2120,6 +2121,8 @@ _計 932 ops / 48 categories。_
 - `tb_equivalent_level` `signal → feature` · 例: なし
 - `tb_fly_lgmd_eta` `signal → signal` · 例: なし
 - `tb_fly_tau_from_expansion` `signal → signal` · 例: なし
+- `tb_magnus_lift_coefficient` `signal → signal` · 例: なし
+- `tb_drag_coefficient_sphere` `signal → signal` · 例: なし
 - `tb_normals_to_egi` `points → image` · 例: なし
 - `tb_keypoints_uv_to_points` `keypoints → points` · 例: なし
 - `tb_points_zyx_to_keypoints_uv` `points → keypoints` · 例: なし

@@ -33,7 +33,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 
-[course_contains](../course/course_contains.md) · [ray_plane_range](../lidar/ray_plane_range.md) · [ray_box_ranges](../lidar/ray_box_ranges.md) · [course_distance](course_distance.md) · [mesh_signed_volume](mesh_signed_volume.md)
+[course_contains](../course/course_contains.md) · [ray_plane_range](../lidar/ray_plane_range.md) · [ray_box_ranges](../lidar/ray_box_ranges.md) · [course_distance](course_distance.md) · [mesh_signed_volume](mesh_signed_volume.md) · [fit_parabola](../ball/fit_parabola.md) · [flight_fit](../ball/flight_fit.md) · [fit_aero](../ball/fit_aero.md)
 
 ## 同カテゴリ(`terrain`)
 

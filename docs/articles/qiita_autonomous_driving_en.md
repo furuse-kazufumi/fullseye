@@ -181,7 +181,7 @@ This instalment produced **5** figures in all — [see them all](https://github.
 
 ## 2. The driving school opens — build the world that carries its own truth first
 
-![Waiting at a red light, threading the crank, merging onto the loop](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/05_drive_gif.gif)
+![Waiting at a red light, threading the crank, merging onto the loop](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/05_drive_gif.gif?v=2)
 
 *↑ A chase camera with the LiDAR (16 beams) points overlaid. Grey = road, yellow = kerb, red = car, green = signal. Red light → intersection → crank (with reversing) → link road → loop. That the car **drove** is visible. How many centimetres its corners crossed the kerb line, and which face every LiDAR point came from, is not — but the world knows, so it can be counted.*
 
@@ -210,11 +210,11 @@ regulation sizes → one polygon per element (crank, S-curve, slope, parallel pa
 
 The new ops live in three modules. **drivecourse** (regulation-size 2-D polygons; truth = closed-form areas), **driveworld** (the 3-D world; CC0 Kenney Car Kit / City Kit Roads meshes scaled to real dimensions; the camera image is looked up from triangle ids), and **lidarsim** (Möller–Trumbore ray–triangle intersection, accelerated by binning every triangle by the azimuth and elevation intervals it subtends from the sensor; 80 k triangles × 58 k rays in under a second).
 
-[![Plan of the school](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan.png)
+[![Plan of the school](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan.png?v=2)
 
 *↑ From above. The loop (80 m straights, 8 m wide, R 30 semicircles) with the cross of main roads inside (four signals). Crank to the north-east, S-curve south-west, slope south-east (the dark patch is the ramp), parallel parking and turnaround north-west, level crossing on the eastern main road. The exits rejoin the loop through link roads, so you can circulate.*
 
-[![The same world at an angle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique.png)
+[![The same world at an angle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/02_world_oblique.png?v=2)
 
 *↑ The 3-D world. Kerbs (0.15 m) and lane paint follow the polygon edges and are left out at the joints. Cars, signals, signs, street lights and cones are CC0 meshes. Every face has a label and a colour.*
 
@@ -233,11 +233,11 @@ Three kinds of truth: **closed forms derived from the regulation sizes, closed-f
 | Zero point | Driving the crank in a straight line derails in **50** of 60 poses | — |
 | The camera reads the signal | From the lit pixels of the 160 lamp pixels: red → `red`, green → `green`; with the lamps off → `unknown` | The world's own state |
 
-[![One LiDAR sweep](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep.png)
+[![One LiDAR sweep](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/03_lidar_sweep.png?v=2)
 
 *↑ A sweep 10 m before the stop line (32 beams, −25° to +15°, 0.5°; 10,903 points on the road). Points are coloured by the label of the face they hit — that this is generation-time truth rather than human labelling is the whole value of the world.*
 
-[![LiDAR over the in-car camera](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar.png)
+[![LiDAR over the in-car camera](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/04_camera_with_lidar.png?v=2)
 
 *↑ The same instant from the in-car camera (60°, 640 × 400) with the LiDAR points projected onto it. Point depth vs pixel depth and point label vs pixel label agreeing is the "two sensors, one world" gate. The signal is red.*
 
@@ -320,7 +320,7 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 
 ## 3. Time to collision and safe distance — optical-flow τ and the RSS closed forms, scored by the driving-school world's truth
 
-![An oncoming car approaches, passes, and RSS stops the ego car in front of a parked one](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/06_approach_gif.gif)
+![An oncoming car approaches, passes, and RSS stops the ego car in front of a parked one](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/06_approach_gif.gif?v=2)
 
 *↑ In-car camera, 0 → 10 s. While the oncoming car is in view its pixels carry the optical flow (arrows) and the true focus of expansion (cross), with the "true τ" and the "τ from flow" side by side at the top. After it passes, RSS flags the parked car in the ego lane as dangerous (t = 6.0 s), the ego brakes and stops 10.25 m short. **The numbers move** because the world holds the truth — τ and gap are not estimates, they are fixed at generation time.*
 
@@ -347,7 +347,7 @@ Part 2's loop course (south straight, 80 m, left-hand traffic) → ego 8 m/s (no
 
 Two new modules. **drivettc** derives, per pixel and in closed form, the true flow and the true τ from the depth image and the rigid motion; the flow-based τ wraps the existing `time_to_contact` and converts it to seconds. **rsssafety** holds the RSS closed forms for same-direction, opposite-direction and lateral distances, the worst-case time integration, and the verdicts. All three τ values are aligned to **the time of the first frame** — there is a one-frame trap here, described below.
 
-[![In-car camera and flow at t = 4 s](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow.png)
+[![In-car camera and flow at t = 4 s](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/02_incar_flow.png?v=2)
 
 *↑ t = 4 s. The flow on the oncoming car's pixels (arrows ×3) points outward from the focus of expansion (cross); its radial speed gives τ = 0.84 s (truth 0.84 s). The road has no texture, so flow exists only on the car and the lamp post.*
 
@@ -367,7 +367,7 @@ Three kinds of truth: **closed forms from the depth image and the rigid motion**
 | τ shouts, RSS does not | For the car in the other lane true τ falls to **0.30 s**, yet the lateral safe distance is **0.725 m** < the 2.2 m lane gap, and RSS never flags danger | Closed form |
 | Drift over and it is dangerous | If the oncoming car drifts sideways at 0.6 m/s the lateral safe distance jumps to **2.45 m** and danger starts at t = 1 s; the longitudinal gap of 58.25 m is then already inside the **82.9 m** opposite-direction distance, and the worst case collides (minimum gap −24.7 m) | Second implementation |
 
-[![The four τ curves](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves.png)
+[![The four τ curves](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/03_tau_curves.png?v=2)
 
 *↑ The two truth lines (overlapping) fall from 5 s at slope −1. Flow-based τ (light blue) sits on the truth from t ≥ 2 s and scatters at range where the flow is below one pixel. Size-based τ (orange) stays close throughout.*
 
@@ -447,7 +447,7 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 
 #### The remaining figures of this part
 
-[![Plan view](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan.png)
+[![Plan view](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan.png?v=2)
 
 *↑ The 80 m south straight from above (t = 3 s): ego (north lane, eastbound), oncoming car (south lane, westbound), parked car (x = 40).*
 
@@ -459,7 +459,7 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 
 ## 4. Widening the world — closed-form terrain, world-space materials and procedural trees and pedestrians win the focus of expansion back from flow
 
-![Driving the loop up and down through rolling terrain while the focus of expansion is estimated from road flow](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/06_drive_gif.gif)
+![Driving the loop up and down through rolling terrain while the focus of expansion is estimated from road flow](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/06_drive_gif.gif?v=2)
 
 *↑ In-car camera, 0 → 10 s (51 frames, 6 m/s). Arrows are Lucas–Kanade flow (×4), the orange cross is the focus of expansion estimated from flow, green is the truth. The road carries grain, puddles and worn lane paint, a pedestrian crosses at the crosswalk, and outside the road there is fBm relief with trees. The numbers at the top are the road grade and the FoE error (all pixels / road only). **The focus of expansion that missed by 62 px in part 3 lands within 1–2 px once the road has texture** — and because every grain of that texture is a world-coordinate formula, the error can be counted in pixels.*
 
@@ -495,7 +495,7 @@ The new ops live in one module, **driveterrain** (fBm, Perlin, distance field, t
 
 There are only four formulas and all are readable. **(1) Relief**: h(x, y) = Σ_k A_k cos(2π f_k (x cos θ_k + y sin θ_k) + φ_k). Draw the frequencies f_k log-uniformly and their density in the 2-D frequency plane is ∝ 1/f²; with amplitudes A_k ∝ f^{−H} the power is A² × density ∝ f^{−(2H+2)} — the theorem's β = 2H + 2 falls out directly. The gradient is the sum of the term-wise derivatives. **(2) Terrain**: z = h · w(d) + undulation, where w is a smoothstep that is 0 up to 2 m from the road and reaches 1 over the next 12 m. The product rule ∇(h·w) = w∇h + h·w′(d)·∇d, with ∇d the normal of the distance field, keeps the gradient closed form. **(3) Materials**: back-project the rendered depth to recover each pixel's world (x, y) and evaluate Perlin noise there. A puddle is where the noise exceeds a level (label 11); with wear ∈ [0, 1] the paint colour is white · (1 − wear) + road · wear. **(4) FoE**: under pure translation the flow radiates from the FoE (Longuet-Higgins and Prazdny 1980), so the line through each pixel along its flow direction — its flow line — must pass through the FoE. The FoE is the point minimising Σ w_i · dist(F, flow line_i)², a 2 × 2 normal equation; the weights fall with distance (a direction error at a far pixel moves the estimate most) and an angular residual rejects outliers.
 
-[![The loop course in rolling terrain](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain.png)
+[![The loop course in rolling terrain](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain.png?v=2)
 
 *↑ The world from the south-west, from above (t = 6 s). The fBm relief (H = 0.8, periods 6–120 m, RMS set to 2.5 m) is flat within 2 m of the road and blends in over 12 m. The road carries a long-wave undulation (amplitude 0.8 m). 70 trees are scattered at least 4 m from the road and 5 m from each other. The world extends 40 m beyond the course (8 m in part 3).*
 
@@ -607,7 +607,7 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 
 *↑ The radial periodogram of the fBm surface (H = 0.8) is a straight line in log–log: slope β̂ = 3.59, theorem (β = 2H + E, E = 2) 3.6. Fitted over the 12 bins in the band [1/100, 1/10] cycles/m.*
 
-[![FoE error](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error.png)
+[![FoE error](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/05_foe_error.png?v=2)
 
 *↑ Error of the estimated focus of expansion (distance to the truth, px). Median 1.9 px from the textured road pixels alone, 1.2 px from all pixels, 57.2 px on the plain road (dots, one per second). The ego drives up and then down (grade −1.5 to +1.5 %, crest at t = 5 s), so the true FoE also moves in the image.*
 

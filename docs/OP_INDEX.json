@@ -1,10 +1,10 @@
 {
- "n_ops": 2282,
+ "n_ops": 2337,
  "tiers": {
   "color": 12,
-  "ledger": 1333,
+  "ledger": 1386,
   "nary": 17,
-  "registry": 920
+  "registry": 922
  },
  "sorts": [
   "angle",
@@ -331,6 +331,20 @@
    ]
   },
   {
+   "name": "add_ball",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "ballworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
    "name": "add_frame_corners",
    "halcon": "",
    "in_sort": "pairs",
@@ -420,6 +434,19 @@
    "dim": "measure1d",
    "in_sorts": [
     "metrologymodel"
+   ]
+  },
+  {
+   "name": "aim_velocity",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "racket",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -1120,6 +1147,17 @@
    ]
   },
   {
+   "name": "apex_sequence",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "signal",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "apply_metrology_model",
    "halcon": "",
    "in_sort": "metrologymodel",
@@ -1375,6 +1413,82 @@
    "dim": "tomography",
    "in_sorts": [
     "sinogram"
+   ]
+  },
+  {
+   "name": "ball_detect",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "balltrack",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "ball_mesh",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "ballworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "ball_params",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "ball_set_pose",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "ballworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "matrix"
+   ]
+  },
+  {
+   "name": "ball_track",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "balltrack",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "ball_truth",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ballworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
    ]
   },
   {
@@ -1704,6 +1818,45 @@
    ]
   },
   {
+   "name": "bounce",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "bounce_detect",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "balltrack",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "bounce_total_time",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "boundary_vertices",
    "halcon": "",
    "in_sort": "mesh",
@@ -1953,6 +2106,19 @@
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "camera_rig",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ballworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
    "in_sorts": [
     "table"
    ]
@@ -2365,6 +2531,19 @@
    "in_sorts": [
     "points",
     "normals"
+   ]
+  },
+  {
+   "name": "contact_angular_momentum",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "signal",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -3083,6 +3262,17 @@
    "in_sorts": [
     "depth"
    ]
+  },
+  {
+   "name": "cup_catch_check",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "curvature_maps",
@@ -4034,6 +4224,19 @@
    ]
   },
   {
+   "name": "drag_coefficient_sphere",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
    "name": "drizzle_resample",
    "halcon": "",
    "in_sort": "images",
@@ -4787,6 +4990,34 @@
    ]
   },
   {
+   "name": "fit_aero",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "points",
+    "table"
+   ]
+  },
+  {
+   "name": "fit_bounce",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "fit_box3",
    "halcon": "",
    "in_sort": "points",
@@ -4902,6 +5133,20 @@
    "ledger": "ops3d",
    "dim": "3d",
    "in_sorts": [
+    "points"
+   ]
+  },
+  {
+   "name": "fit_parabola",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
     "points"
    ]
   },
@@ -5036,6 +5281,74 @@
    "dim": "3d",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "flight_fit",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "points",
+    "table"
+   ]
+  },
+  {
+   "name": "flight_ode",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "flight_simulate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "flight_state_at",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "flight_vacuum",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "points",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal"
    ]
   },
   {
@@ -6682,6 +6995,17 @@
    ]
   },
   {
+   "name": "icosphere",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "any",
+   "category": "ballworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "icp_point2plane",
    "halcon": "",
    "in_sort": "points",
@@ -6940,6 +7264,28 @@
    "in_sorts": [
     "image2d"
    ]
+  },
+  {
+   "name": "impact_params",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "incline_slip_angle",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "indices_to_labels",
@@ -7365,6 +7711,19 @@
    "dim": "imgforensics",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "kalman_ca",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "balltrack",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "points"
    ]
   },
   {
@@ -8111,6 +8470,19 @@
    ]
   },
   {
+   "name": "magnus_lift_coefficient",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
    "name": "mandelbrot_interior",
    "halcon": "",
    "in_sort": "cimage",
@@ -8122,6 +8494,17 @@
    "in_sorts": [
     "cimage"
    ]
+  },
+  {
+   "name": "marker_direction",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "signal",
+   "category": "balltrack",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "mat_cond",
@@ -9363,6 +9746,17 @@
    "in_sorts": []
   },
   {
+   "name": "mu_from_stop_distance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "mueller_apply",
    "halcon": "",
    "in_sort": "matrix",
@@ -10198,6 +10592,17 @@
    "in_sort": null,
    "out_sort": "table",
    "category": "terrain",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "pendulum_period",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "ball",
    "tier": "ledger",
    "ledger": "opsdrive",
    "dim": "drive",
@@ -11819,6 +12224,71 @@
    ]
   },
   {
+   "name": "racket_hit_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "racket",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "racket_impact",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "racket",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "racket_move",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "racket",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "racket_params",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "racket",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "racket_plan",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "racket",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
    "name": "radial_light",
    "halcon": "",
    "in_sort": null,
@@ -11879,6 +12349,21 @@
    "dim": "tomography",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "rally_simulate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "racket",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table",
+    "table"
    ]
   },
   {
@@ -12635,6 +13120,21 @@
    ]
   },
   {
+   "name": "reproject",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "matrix",
+   "category": "balltrack",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "points",
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
    "name": "reprojection_error",
    "halcon": "",
    "in_sort": "points",
@@ -12713,6 +13213,32 @@
    "in_sorts": [
     "conn_graph",
     "matrix"
+   ]
+  },
+  {
+   "name": "restitution_from_apexes",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "restitution_from_intervals",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal"
    ]
   },
   {
@@ -12957,6 +13483,19 @@
    ]
   },
   {
+   "name": "roll_slide_state",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "rope_rotate",
    "halcon": "",
    "in_sort": "tokens",
@@ -12981,6 +13520,17 @@
    "in_sorts": [
     "rot_scale"
    ]
+  },
+  {
+   "name": "rotation_from_omega",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "matrix",
+   "category": "ballworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "rotation_translation_error",
@@ -14016,6 +14566,21 @@
    ]
   },
   {
+   "name": "shot_is_legal",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "racket",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table",
+    "table"
+   ]
+  },
+  {
    "name": "sigma_clip_stack",
    "halcon": "",
    "in_sort": "images",
@@ -14253,6 +14818,17 @@
    "in_sorts": [
     "signal"
    ]
+  },
+  {
+   "name": "slide_stop_distance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "smallest_box3",
@@ -14631,6 +15207,20 @@
    ]
   },
   {
+   "name": "spin_from_markers",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "balltrack",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "points",
+    "points"
+   ]
+  },
+  {
    "name": "spot_diagram",
    "halcon": "",
    "in_sort": "table",
@@ -14955,6 +15545,32 @@
    "in_sorts": [
     "image2d",
     "image2d"
+   ]
+  },
+  {
+   "name": "strategy_attacker",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "racket",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "strategy_feeder",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "racket",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -15302,6 +15918,30 @@
    "in_sorts": []
   },
   {
+   "name": "table_params",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "ballworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "table_world",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ballworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "tangent_field",
    "halcon": "",
    "in_sort": null,
@@ -15507,6 +16147,17 @@
    "in_sorts": [
     "mesh"
    ]
+  },
+  {
+   "name": "tether_simulate",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "text_box",
@@ -15762,6 +16413,21 @@
    ]
   },
   {
+   "name": "track_triangulate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "balltrack",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "any",
+    "any"
+   ]
+  },
+  {
    "name": "transfer_function",
    "halcon": "",
    "in_sort": "signal",
@@ -15918,6 +16584,21 @@
    "dim": "3d",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "triangulate_dlt",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "balltrack",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "any",
+    "any"
    ]
   },
   {
@@ -24854,6 +25535,16 @@
    "requires": []
   },
   {
+   "name": "tb_drag_coefficient_sphere",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
    "name": "tb_dtof_depth",
    "halcon": "",
    "in_sort": "counts",
@@ -25295,6 +25986,16 @@
   },
   {
    "name": "tb_lowpass",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
+   "name": "tb_magnus_lift_coefficient",
    "halcon": "",
    "in_sort": "signal",
    "out_sort": "signal",

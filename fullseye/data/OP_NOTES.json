@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2282,
- "n_notes": 2288,
+ "n_ops": 2337,
+ "n_notes": 2343,
  "notes": {
   "vol_dilate": [
    {
@@ -8665,6 +8665,16 @@
     "path": "docs/ops/2d/typed/tb_derivate_funct_1d.md"
    }
   ],
+  "tb_drag_coefficient_sphere": [
+   {
+    "op": "tb_drag_coefficient_sphere",
+    "dim": "2d",
+    "category": "typed",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/2d/typed/tb_drag_coefficient_sphere.md"
+   }
+  ],
   "tb_dtof_depth": [
    {
     "op": "tb_dtof_depth",
@@ -9113,6 +9123,16 @@
     "in": "signal",
     "out": "signal",
     "path": "docs/ops/2d/typed/tb_lowpass.md"
+   }
+  ],
+  "tb_magnus_lift_coefficient": [
+   {
+    "op": "tb_magnus_lift_coefficient",
+    "dim": "2d",
+    "category": "typed",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/2d/typed/tb_magnus_lift_coefficient.md"
    }
   ],
   "tb_mat_cond": [
@@ -15374,6 +15394,421 @@
     "path": "docs/ops/dem/visibility/dem_viewshed.md"
    }
   ],
+  "apex_sequence": [
+   {
+    "op": "apex_sequence",
+    "dim": "drive",
+    "category": "ball",
+    "out": "signal",
+    "path": "docs/ops/drive/ball/apex_sequence.md"
+   }
+  ],
+  "ball_params": [
+   {
+    "op": "ball_params",
+    "dim": "drive",
+    "category": "ball",
+    "out": "table",
+    "path": "docs/ops/drive/ball/ball_params.md"
+   }
+  ],
+  "bounce": [
+   {
+    "op": "bounce",
+    "dim": "drive",
+    "category": "ball",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/ball/bounce.md"
+   }
+  ],
+  "bounce_total_time": [
+   {
+    "op": "bounce_total_time",
+    "dim": "drive",
+    "category": "ball",
+    "out": "scalar",
+    "path": "docs/ops/drive/ball/bounce_total_time.md"
+   }
+  ],
+  "contact_angular_momentum": [
+   {
+    "op": "contact_angular_momentum",
+    "dim": "drive",
+    "category": "ball",
+    "in": "table",
+    "out": "signal",
+    "path": "docs/ops/drive/ball/contact_angular_momentum.md"
+   }
+  ],
+  "cup_catch_check": [
+   {
+    "op": "cup_catch_check",
+    "dim": "drive",
+    "category": "ball",
+    "out": "table",
+    "path": "docs/ops/drive/ball/cup_catch_check.md"
+   }
+  ],
+  "drag_coefficient_sphere": [
+   {
+    "op": "drag_coefficient_sphere",
+    "dim": "drive",
+    "category": "ball",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/drive/ball/drag_coefficient_sphere.md"
+   }
+  ],
+  "fit_aero": [
+   {
+    "op": "fit_aero",
+    "dim": "drive",
+    "category": "ball",
+    "in": "signal × points × table",
+    "out": "table",
+    "path": "docs/ops/drive/ball/fit_aero.md"
+   }
+  ],
+  "fit_bounce": [
+   {
+    "op": "fit_bounce",
+    "dim": "drive",
+    "category": "ball",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/ball/fit_bounce.md"
+   }
+  ],
+  "fit_parabola": [
+   {
+    "op": "fit_parabola",
+    "dim": "drive",
+    "category": "ball",
+    "in": "signal × points",
+    "out": "table",
+    "path": "docs/ops/drive/ball/fit_parabola.md"
+   }
+  ],
+  "flight_fit": [
+   {
+    "op": "flight_fit",
+    "dim": "drive",
+    "category": "ball",
+    "in": "signal × points × table",
+    "out": "table",
+    "path": "docs/ops/drive/ball/flight_fit.md"
+   }
+  ],
+  "flight_ode": [
+   {
+    "op": "flight_ode",
+    "dim": "drive",
+    "category": "ball",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/ball/flight_ode.md"
+   }
+  ],
+  "flight_simulate": [
+   {
+    "op": "flight_simulate",
+    "dim": "drive",
+    "category": "ball",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/ball/flight_simulate.md"
+   }
+  ],
+  "flight_state_at": [
+   {
+    "op": "flight_state_at",
+    "dim": "drive",
+    "category": "ball",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/ball/flight_state_at.md"
+   }
+  ],
+  "flight_vacuum": [
+   {
+    "op": "flight_vacuum",
+    "dim": "drive",
+    "category": "ball",
+    "in": "signal",
+    "out": "points",
+    "path": "docs/ops/drive/ball/flight_vacuum.md"
+   }
+  ],
+  "impact_params": [
+   {
+    "op": "impact_params",
+    "dim": "drive",
+    "category": "ball",
+    "out": "table",
+    "path": "docs/ops/drive/ball/impact_params.md"
+   }
+  ],
+  "incline_slip_angle": [
+   {
+    "op": "incline_slip_angle",
+    "dim": "drive",
+    "category": "ball",
+    "out": "scalar",
+    "path": "docs/ops/drive/ball/incline_slip_angle.md"
+   }
+  ],
+  "magnus_lift_coefficient": [
+   {
+    "op": "magnus_lift_coefficient",
+    "dim": "drive",
+    "category": "ball",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/drive/ball/magnus_lift_coefficient.md"
+   }
+  ],
+  "mu_from_stop_distance": [
+   {
+    "op": "mu_from_stop_distance",
+    "dim": "drive",
+    "category": "ball",
+    "out": "scalar",
+    "path": "docs/ops/drive/ball/mu_from_stop_distance.md"
+   }
+  ],
+  "pendulum_period": [
+   {
+    "op": "pendulum_period",
+    "dim": "drive",
+    "category": "ball",
+    "out": "scalar",
+    "path": "docs/ops/drive/ball/pendulum_period.md"
+   }
+  ],
+  "restitution_from_apexes": [
+   {
+    "op": "restitution_from_apexes",
+    "dim": "drive",
+    "category": "ball",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/drive/ball/restitution_from_apexes.md"
+   }
+  ],
+  "restitution_from_intervals": [
+   {
+    "op": "restitution_from_intervals",
+    "dim": "drive",
+    "category": "ball",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/drive/ball/restitution_from_intervals.md"
+   }
+  ],
+  "roll_slide_state": [
+   {
+    "op": "roll_slide_state",
+    "dim": "drive",
+    "category": "ball",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/ball/roll_slide_state.md"
+   }
+  ],
+  "slide_stop_distance": [
+   {
+    "op": "slide_stop_distance",
+    "dim": "drive",
+    "category": "ball",
+    "out": "scalar",
+    "path": "docs/ops/drive/ball/slide_stop_distance.md"
+   }
+  ],
+  "tether_simulate": [
+   {
+    "op": "tether_simulate",
+    "dim": "drive",
+    "category": "ball",
+    "out": "table",
+    "path": "docs/ops/drive/ball/tether_simulate.md"
+   }
+  ],
+  "ball_detect": [
+   {
+    "op": "ball_detect",
+    "dim": "drive",
+    "category": "balltrack",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/drive/balltrack/ball_detect.md"
+   }
+  ],
+  "ball_track": [
+   {
+    "op": "ball_track",
+    "dim": "drive",
+    "category": "balltrack",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/balltrack/ball_track.md"
+   }
+  ],
+  "bounce_detect": [
+   {
+    "op": "bounce_detect",
+    "dim": "drive",
+    "category": "balltrack",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/balltrack/bounce_detect.md"
+   }
+  ],
+  "kalman_ca": [
+   {
+    "op": "kalman_ca",
+    "dim": "drive",
+    "category": "balltrack",
+    "in": "points",
+    "out": "table",
+    "path": "docs/ops/drive/balltrack/kalman_ca.md"
+   }
+  ],
+  "marker_direction": [
+   {
+    "op": "marker_direction",
+    "dim": "drive",
+    "category": "balltrack",
+    "out": "signal",
+    "path": "docs/ops/drive/balltrack/marker_direction.md"
+   }
+  ],
+  "reproject": [
+   {
+    "op": "reproject",
+    "dim": "drive",
+    "category": "balltrack",
+    "in": "points × matrix × matrix",
+    "out": "matrix",
+    "path": "docs/ops/drive/balltrack/reproject.md"
+   }
+  ],
+  "spin_from_markers": [
+   {
+    "op": "spin_from_markers",
+    "dim": "drive",
+    "category": "balltrack",
+    "in": "points × points",
+    "out": "table",
+    "path": "docs/ops/drive/balltrack/spin_from_markers.md"
+   }
+  ],
+  "track_triangulate": [
+   {
+    "op": "track_triangulate",
+    "dim": "drive",
+    "category": "balltrack",
+    "in": "table × any × any",
+    "out": "table",
+    "path": "docs/ops/drive/balltrack/track_triangulate.md"
+   }
+  ],
+  "triangulate_dlt": [
+   {
+    "op": "triangulate_dlt",
+    "dim": "drive",
+    "category": "balltrack",
+    "in": "matrix × any × any",
+    "out": "table",
+    "path": "docs/ops/drive/balltrack/triangulate_dlt.md"
+   }
+  ],
+  "add_ball": [
+   {
+    "op": "add_ball",
+    "dim": "drive",
+    "category": "ballworld",
+    "in": "table × table",
+    "out": "scalar",
+    "path": "docs/ops/drive/ballworld/add_ball.md"
+   }
+  ],
+  "ball_mesh": [
+   {
+    "op": "ball_mesh",
+    "dim": "drive",
+    "category": "ballworld",
+    "out": "table",
+    "path": "docs/ops/drive/ballworld/ball_mesh.md"
+   }
+  ],
+  "ball_set_pose": [
+   {
+    "op": "ball_set_pose",
+    "dim": "drive",
+    "category": "ballworld",
+    "in": "table × matrix",
+    "out": "any",
+    "path": "docs/ops/drive/ballworld/ball_set_pose.md"
+   }
+  ],
+  "ball_truth": [
+   {
+    "op": "ball_truth",
+    "dim": "drive",
+    "category": "ballworld",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/ballworld/ball_truth.md"
+   }
+  ],
+  "camera_rig": [
+   {
+    "op": "camera_rig",
+    "dim": "drive",
+    "category": "ballworld",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/ballworld/camera_rig.md"
+   }
+  ],
+  "icosphere": [
+   {
+    "op": "icosphere",
+    "dim": "drive",
+    "category": "ballworld",
+    "out": "any",
+    "path": "docs/ops/drive/ballworld/icosphere.md"
+   }
+  ],
+  "rotation_from_omega": [
+   {
+    "op": "rotation_from_omega",
+    "dim": "drive",
+    "category": "ballworld",
+    "out": "matrix",
+    "path": "docs/ops/drive/ballworld/rotation_from_omega.md"
+   }
+  ],
+  "table_params": [
+   {
+    "op": "table_params",
+    "dim": "drive",
+    "category": "ballworld",
+    "out": "table",
+    "path": "docs/ops/drive/ballworld/table_params.md"
+   }
+  ],
+  "table_world": [
+   {
+    "op": "table_world",
+    "dim": "drive",
+    "category": "ballworld",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/ballworld/table_world.md"
+   }
+  ],
   "course_contains": [
    {
     "op": "course_contains",
@@ -15531,6 +15966,105 @@
     "in": "points × points",
     "out": "signal",
     "path": "docs/ops/drive/lidar/ray_plane_range.md"
+   }
+  ],
+  "aim_velocity": [
+   {
+    "op": "aim_velocity",
+    "dim": "drive",
+    "category": "racket",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/racket/aim_velocity.md"
+   }
+  ],
+  "racket_hit_check": [
+   {
+    "op": "racket_hit_check",
+    "dim": "drive",
+    "category": "racket",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/racket/racket_hit_check.md"
+   }
+  ],
+  "racket_impact": [
+   {
+    "op": "racket_impact",
+    "dim": "drive",
+    "category": "racket",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/racket/racket_impact.md"
+   }
+  ],
+  "racket_move": [
+   {
+    "op": "racket_move",
+    "dim": "drive",
+    "category": "racket",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/racket/racket_move.md"
+   }
+  ],
+  "racket_params": [
+   {
+    "op": "racket_params",
+    "dim": "drive",
+    "category": "racket",
+    "out": "table",
+    "path": "docs/ops/drive/racket/racket_params.md"
+   }
+  ],
+  "racket_plan": [
+   {
+    "op": "racket_plan",
+    "dim": "drive",
+    "category": "racket",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/racket/racket_plan.md"
+   }
+  ],
+  "rally_simulate": [
+   {
+    "op": "rally_simulate",
+    "dim": "drive",
+    "category": "racket",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/drive/racket/rally_simulate.md"
+   }
+  ],
+  "shot_is_legal": [
+   {
+    "op": "shot_is_legal",
+    "dim": "drive",
+    "category": "racket",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/drive/racket/shot_is_legal.md"
+   }
+  ],
+  "strategy_attacker": [
+   {
+    "op": "strategy_attacker",
+    "dim": "drive",
+    "category": "racket",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/racket/strategy_attacker.md"
+   }
+  ],
+  "strategy_feeder": [
+   {
+    "op": "strategy_feeder",
+    "dim": "drive",
+    "category": "racket",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/racket/strategy_feeder.md"
    }
   ],
   "rss_lateral": [

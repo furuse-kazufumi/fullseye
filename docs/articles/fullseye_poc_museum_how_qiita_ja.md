@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **60 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **61 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -414,7 +414,7 @@ py -3.11 examples/poc_vanishing_detail_and_morphing_area.py
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 
-2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 14 点はその実演です。
+2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 15 点はその実演です。
 
 同時に、時間方向ならではの罠も出ました。フレーム格子への丸めは必ず遅らせ、画素の面積は合体を早める。誤リンクには向きの逆な 2 種類があり、誤り率 1 本では拡散係数がどちらへ外れるか決まらない。テンプレート追跡は見失うより先に静かにずれ、ずれた 152 フレーム全部が「見つけた」と報告する。
 
@@ -855,6 +855,50 @@ py -3.11 examples/poc_live4d.py
 この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_live4d)
 
 使用 op(ノートへ): [`blend`](https://furuse.work/ops/shape2d/morph/blend.html) · [`focus_sweep_height_video`](https://furuse.work/ops/live4d/render/focus_sweep_height_video.html) · [`focus_sweep_surface_video`](https://furuse.work/ops/live4d/render/focus_sweep_surface_video.html) · [`vol_flow_3d`](https://furuse.work/ops/live4d/flow/vol_flow_3d.html) · [`volseq_interpolate_flow`](https://furuse.work/ops/live4d/time/volseq_interpolate_flow.html) · [`volseq_magnify_motion`](https://furuse.work/ops/live4d/time/volseq_magnify_motion.html) · [`volseq_pathline_orbit`](https://furuse.work/ops/live4d/flow/volseq_pathline_orbit.html) · [`volseq_pathline_render`](https://furuse.work/ops/live4d/flow/volseq_pathline_render.html) · [`volseq_render_orbit`](https://furuse.work/ops/live4d/render/volseq_render_orbit.html) · [`volseq_synth_beating`](https://furuse.work/ops/live4d/synth/volseq_synth_beating.html) · [`volseq_synth_dividing`](https://furuse.work/ops/live4d/synth/volseq_synth_dividing.html)
+
+## No.2026.170 —— 卓球の球を先駆者の目で測る ―― 真値つきの台で、多カメラ追跡・三角測量・軌道予測・跳ね・スピンを定理で採点する
+
+[![卓球の球を先駆者の目で測る ―― 真値つきの台で、多カメラ追跡・三角測量・軌道予測・跳ね・スピンを定理で採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/01_rig_view_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/01_rig_view.png)
+
+*↑ **卓球の球を先駆者の目で測る ―― 真値つきの台で、多カメラ追跡・三角測量・軌道予測・跳ね・スピンを定理で採点する** ―― ロボット卓球の視覚は 1988 年から同じ構えでできている: 複数のカメラで球を見つけ、三角測量で 3-D の点にし、抗力とマグヌスの入った運動方程式で先を読み、跳ねを越えて予測し、できれば模様からスピンを測る。この展示はその一式を numpy の op で組み、世界の側が持つ真値(球の中心・姿勢・接触時刻・角速度は生成時に決めた式)で採点する。まず力学の定理: 抗力もマグヌスも 0 なら RK4 の飛翔は閉形式の放物線と 1e-12、放物線の最小二乗は g = 9.81 を 4.0e-15 で戻す。乱数 500 通りの衝突(e ∈ [0.3, 1]、μ ∈ [0, 0.6])で接触点まわりの角運動量の相対誤差は最大 4.9e-16、転がりに移るのが 136、滑ったままが 364。30.5 cm から落とすと(e = 0.90)頂点は 24.7、20.0、16.2、13.1 cm で閉形式 e^{2k}h₀ と 3.0e-07、最初の跳ね 24.7 cm は ITTF の規格 24〜26 cm の中、頂点列からも接触間隔からも e = 0.900000 が戻り、止まるまでの総時間 4.736 s は閉形式 4.738 s と並ぶ。次にITTF の台に 40 mm の球(模様 14 個)を置き、トップスピン(ω = 240 rad/s)の打球を 100 fps で 0.6 秒、カメラ 2 台 + 近接 1 台で撮る(61 コマ × 2 台の描画に 22.0 s)。真値の接触は t = 0.3094 s、点 (0.507, 0.052)、v [5.15, −0.28, −2.65] → [5.01, −0.17, 2.39]、ω [0, 240, 0] → [8.5, 250.6, 0](grip)。色度で検出した中心は 122 / 122 コマで見つかり真値の投影と中央値 0.152 px、90 % 点 0.299 px、最大 2.094 px(像の半径 ≈ 4.3 px)。DLT の三角測量は真値の投影から 3.8e-15 m、検出からは中央値 1.61 mm、90 % 点 4.25 mm、最大 23.56 mm(再投影 rms の中央値 0.094 px)。等加速度の Kalman は放物線に厳密なので真値を入れた新息は最大 8.2e-09 m(抗力 + マグヌスの真値だと 2.3e-03 m = モデルの外)、検出からの速度の誤差は中央値 0.074 m/s(|v| ≈ 5.9 m/s)。z の局所最小は t = 0.31 で真値と 0.6 ms。跳ねる前の 15 コマ(0.15 s)から 6 パラメータの Gauss–Newton で初期状態を当て(真値の軌跡なら 3.2e-13 で戻る)、跳ねを越えて予測すると、真のスピンを知っていれば着地点は 0.4 cm(時刻 0.5 ms)、スピンを無視すると 20.2 cm、放物線で当てると真のスピンでも 6.6 cm 外れる —— その差がマグヌスの分。跳ね際の近接カメラ(1000 fps、ストロボ)で模様が 2 つ以上対応づいたコマ組 19 / 19 を Kabsch で回した角速度の中央値は [1.7, 256.6, −2.1] rad/s(真値 [8.5, 250.6, 0]、|ω| 2394 rpm)で相対誤差 3.7 %。反発係数は前後 12 コマずつを運動方程式で当てて v_z −2.637 → 2.403、e = 0.9114(真値 0.90)。正直に: 放物線の当てはめだと 0.9398 で、抗力とマグヌスを g に吸って 4.4 % ずれる。球の検出は色が既知の合成映像で実写の照明・ぼけ・背景は無く、空力係数は文献の代表値で真値も同じ式(空力の門ではない)。10 門、42.0 s。最後に、自由に動くラケット 2 本(板 15 × 16 cm、速さ ≤ 6 m/s)で打ち合う: 前回に近い少しずらした位置へ返す送り合いは上限 12 本まで続き、遠い隅を速く狙う攻める側が入ると 9 本で終わる(打つ前に真の物理で先読みして外すなら巻き戻す仕組みつき、攻める側は 99 回巻き戻しても外した)。知覚の位置に雑音を足すと 5 cm までは本数が変わらず(板の余裕)、10 cm で 2 本 —— ラリーの本数が知覚・予測・制御の一式を採点する指標。*
+
+[![カメラ 1 の像での球の軌跡: 真値の投影(線)と検出(点)。中心の誤差の中央値 0.15 px。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/02_tracks_2d_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/02_tracks_2d.png)
+
+*↑ 測定の図 ―― カメラ 1 の像での球の軌跡: 真値の投影(線)と検出(点)。中心の誤差の中央値 0.15 px。*
+
+[![x–z 面の軌跡。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/03_trajectory_xz_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/03_trajectory_xz.png)
+
+*↑ x–z 面の軌跡。*
+
+[![30.5 cm から落とした球(e = 0.90)の頂点: 閉形式 e^{2k}h₀ と 1e-6 で一致し、最初の跳ね 24.7 cm は ITTF の規格 24〜26 cm の中。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/04_drop_apexes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/04_drop_apexes.png)
+
+*↑ 30.5 cm から落とした球(e = 0.90)の頂点: 閉形式 e^{2k}h₀ と 1e-6 で一致し、最初の跳ね 24.7 cm は ITTF の規格 24〜26 cm の中。*
+
+[![跳ね際の近接カメラ(1000 fps、256 × 256、20°)の 4 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/05_spin_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/05_spin_frames.png)
+
+*↑ 跳ね際の近接カメラ(1000 fps、256 × 256、20°)の 4 コマ。*
+
+[![知覚(球の位置)にガウス雑音を足したときのラリーの本数(送り合い、上限 8 本): 0 mm → 8 本、50 mm → 8 本、100 mm → 2 本。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/08_rally_vs_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/08_rally_vs_noise.png)
+
+*↑ 知覚(球の位置)にガウス雑音を足したときのラリーの本数(送り合い、上限 8 本): 0 mm → 8 本、50 mm → 8 本、100 mm → 2 本。*
+
+[![追跡カメラ 1(2 × 2 平均で 512 × 400)、100 fps を 1/10 速で。橙の十字は検出、緑は Kalman の状態の投影、赤は跳ねる前の 15 コマから予測した着地点。球は 2291 rpm のトップスピンで、台で 1](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/06_rally_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/06_rally_gif.gif)
+
+*↑ 動く図 ―― 追跡カメラ 1(2 × 2 平均で 512 × 400)、100 fps を 1/10 速で。橙の十字は検出、緑は Kalman の状態の投影、赤は跳ねる前の 15 コマから予測した着地点。球は 2291 rpm のトップスピンで、台で 1 度跳ねる(e = 0.90)。*
+
+[![自由に動く 2 本のラケット(板 15 × 16 cm、速さ ≤ 6 m/s、加速度 ≤ 60 m/s²)の送り合い(前回に近い少しずらした位置へ返す)、最初の 3 秒を 1/5 速で。相手コートに 1 度跳ねた球を面 x = ±1.55 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/07_rally_two_rackets.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/07_rally_two_rackets.gif)
+
+*↑ 動く図 ―― 自由に動く 2 本のラケット(板 15 × 16 cm、速さ ≤ 6 m/s、加速度 ≤ 60 m/s²)の送り合い(前回に近い少しずらした位置へ返す)、最初の 3 秒を 1/5 速で。相手コートに 1 度跳ねた球を面 x = ±1.55 m で迎え撃ち、狙った点へ運動方程式で返す。この設定では上限 12 本まで続く。攻める側(遠い隅を速く)が入ると 9 本で終わる(out)。*
+
+```
+py -3.11 examples/poc_ball_bounce.py
+```
+
+ソース: [examples/poc_ball_bounce.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ball_bounce.py)
+
+この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_ball_bounce)
+
+使用 op(ノートへ): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.html) · [`apex_sequence`](https://furuse.work/ops/drive/ball/apex_sequence.html) · [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_detect.html) · [`ball_mesh`](https://furuse.work/ops/drive/ballworld/ball_mesh.html) · [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`ball_set_pose`](https://furuse.work/ops/drive/ballworld/ball_set_pose.html) · [`ball_track`](https://furuse.work/ops/drive/balltrack/ball_track.html) · [`ball_truth`](https://furuse.work/ops/drive/ballworld/ball_truth.html) · [`bounce`](https://furuse.work/ops/drive/ball/bounce.html) · [`bounce_detect`](https://furuse.work/ops/drive/balltrack/bounce_detect.html) · [`bounce_total_time`](https://furuse.work/ops/drive/ball/bounce_total_time.html) · [`camera_rig`](https://furuse.work/ops/drive/ballworld/camera_rig.html) · [`contact_angular_momentum`](https://furuse.work/ops/drive/ball/contact_angular_momentum.html) · [`crosshair`](https://furuse.work/ops/annotate/pointer/crosshair.html) · [`fit_parabola`](https://furuse.work/ops/drive/ball/fit_parabola.html) · [`flight_fit`](https://furuse.work/ops/drive/ball/flight_fit.html) · [`flight_ode`](https://furuse.work/ops/drive/ball/flight_ode.html) · [`flight_simulate`](https://furuse.work/ops/drive/ball/flight_simulate.html) · [`flight_state_at`](https://furuse.work/ops/drive/ball/flight_state_at.html) · [`flight_vacuum`](https://furuse.work/ops/drive/ball/flight_vacuum.html) · [`impact_params`](https://furuse.work/ops/drive/ball/impact_params.html) · [`kalman_ca`](https://furuse.work/ops/drive/balltrack/kalman_ca.html) · [`marker_direction`](https://furuse.work/ops/drive/balltrack/marker_direction.html) · [`racket_params`](https://furuse.work/ops/drive/racket/racket_params.html) …(他 12)
 
 ## No.2026.145 —— 継ぎ目の無い動画で、時間方向 op の周期境界を検査する
 

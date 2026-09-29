@@ -1,5 +1,5 @@
 {
- "generated_for": 932,
+ "generated_for": 934,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -14367,6 +14367,32 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "tb_drag_coefficient_sphere": {
+   "color_ok": false,
+   "extra": {
+    "chain": "tb_drag_coefficient_sphere.chain.jpg",
+    "inputs": "tb_drag_coefficient_sphere.inputs.jpg"
+   },
+   "fig": "tb_drag_coefficient_sphere.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "a",
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_signal 0.50 0.50\ntb_drag_coefficient_sphere 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "tb_dtof_depth": {
    "extra": {
     "a": "tb_dtof_depth.a.jpg",
@@ -15454,6 +15480,32 @@
    ],
    "out_kind": "ndarray",
    "program": "img_to_signal 0.50 0.50\ntb_lowpass 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "tb_magnus_lift_coefficient": {
+   "color_ok": false,
+   "extra": {
+    "chain": "tb_magnus_lift_coefficient.chain.jpg",
+    "inputs": "tb_magnus_lift_coefficient.inputs.jpg"
+   },
+   "fig": "tb_magnus_lift_coefficient.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "a",
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_signal 0.50 0.50\ntb_magnus_lift_coefficient 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -21837,9 +21889,9 @@
   "domain": 3,
   "empty": 1,
   "failed": 0,
-  "ok": 928,
+  "ok": 930,
   "unreachable": 0,
-  "with_chain": 376,
+  "with_chain": 378,
   "with_gif": 40,
   "with_sweep": 577
  }
