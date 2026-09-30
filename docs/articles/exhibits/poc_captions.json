@@ -2010,6 +2010,17 @@
    "run": "py -3.11 examples/poc_table_tennis_bounce.py"
   },
   {
+   "id": "poc_table_tennis_rally_loop",
+   "wing": "wing_xyt",
+   "added": "2026-10-01",
+   "numbers_source": "log",
+   "title_ja": "読みの誤差が卓球のラリーを終わらせる ―― 雑音と遅れが着地点をどれだけ動かすかを、打つ前に閉形式で出す",
+   "title_en": "Reading Errors End the Table-Tennis Rally — How Much Noise and Latency Move the Landing Point, in Closed Form Before the Shot",
+   "caption_ja": "卓球ロボットは球の位置を読んでから、相手コートの狙った点に落ちる打球を計算して打つ。読みが δ ずれていれば、計算は**ずれた位置から**、球は**本当の位置から**飛び出すので着地点がずれ、台の縁までの余白を越えるとアウトでラリーが終わる。この展示は「読みの誤差 → 着地点の誤差」の伝わり方(ヤコビアン J、2 × 3)を打つ前に出し、雑音・遅れ・ラリーの途切れがそれで説明できるかを確かめる。門: 空気の無い世界で、狙い・ラケットの計画・衝突・飛翔を通した数値の J が閉形式 ΔL_xy = −δ_xy − (v_xy/|v_z(T)|)δ_z と差 2.5e-06(高さの読み違い 1 cm は前後に 2.1 cm)/ 抗力 + マグヌスありで σ = 2 cm の読みの 300 本のばらつき (前後 4.6, 左右 2.0) cm が J Σ Jᵀ と 1.0・0.8 % / 縁から 6 cm を σ = 3 cm で狙うアウトの確率が予測 0.043・打った 300 本で 0.060(二項の 1.5 σ)/ 遅れ τ = 5・10・20 ms の着地点のずれが J · (−vτ − ½gτ² ẑ) と 0.2〜0.6 % / 雑音 0 の送り合いは 4 回とも上限の 10 本、σ = 6 cm(余白から出した上限 σ* = 5.2 cm の 1.2 倍)では 9・8・2・7 本ですべてアウト / 誤差 0 なら狙いから 0.52 mm。見つけたこと: 「τ 前の読み」の高さを + ½gτ² と書いていた(正しくは −)。門は同じ読みのずれを両辺に入れて比べるので、誤りのまま通っていた —— 数値積分と突き合わせて直した。雑音が大きい側(縁 12 cm を σ = 5 cm)は予測 0.017、実際 0.003 —— 前の乱数では逆向きに 2.7 σ 外れていて、300 本では一次の近似の誤りの向きは決まらない。正直に: 誤差は球の位置の読みだけ(速度・回転は真値)で毎コマ独立のガウス、ラケットは計画どおりに打てる、アウトは縁の余白だけで判定。6 門、289 s。",
+   "caption_en": "A table-tennis robot reads where the ball is, then computes a return that lands on a chosen point of the opponent's half. If the reading is off by δ, the shot is computed **from the misread position** but the ball leaves **from the true one**, so the landing point moves; past the margin to the edge the ball is out and the rally ends. This exhibit works out, before the shot, how a reading error becomes a landing error (the Jacobian J, 2 × 3) and checks whether noise, latency and broken rallies are explained by it. Gates: without air, the numerical J through aiming, racket planning, impact and flight differs from the closed form ΔL_xy = −δ_xy − (v_xy/|v_z(T)|)δ_z by 2.5e-06 (a 1 cm height error moves the landing 2.1 cm along the table) / with drag and Magnus, the spread of 300 shots with σ = 2 cm readings (along 4.6, across 2.0 cm) is within 1.0 and 0.8 % of J Σ Jᵀ / aiming 6 cm from the edge with σ = 3 cm, the out probability is predicted 0.043 and 300 shots give 0.060 (1.5 σ binomial) / the landing error for latency τ = 5, 10, 20 ms matches J · (−vτ − ½gτ² ẑ) within 0.2–0.6 % / noise-free rallies reach the cap of 10 shots all 4 times, while σ = 6 cm (1.2 × the bound σ* = 5.2 cm from the margin) ends after 9, 8, 2, 7 shots, all out / with no error the ball lands 0.52 mm from the target. Found on the way: the height of the \"reading τ old\" was written with + ½gτ² (it is −). The gate puts the same reading error on both sides, so the mistake passed; a numerical integral caught it. With large noise (12 cm from the edge, σ = 5 cm) the prediction is 0.017 and the shots give 0.003; an earlier seed missed by 2.7 σ the other way, so 300 shots cannot tell which way the linearisation errs. Honestly: only the ball position is misread (velocity and spin are true), the noise is independent Gaussian per frame, the racket hits exactly as planned, and an out is judged only by the edge margin. 6 gates, 289 s.",
+   "run": "py -3.11 examples/poc_table_tennis_rally_loop.py"
+  },
+  {
    "id": "poc_physarum_transport",
    "wing": "wing_bio",
    "added": "2026-09-28",

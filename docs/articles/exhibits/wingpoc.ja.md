@@ -3462,7 +3462,7 @@ py -3.11 examples/poc_vanishing_detail_and_morphing_area.py
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 
-2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 18 点はその実演です。
+2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 19 点はその実演です。
 
 同時に、時間方向ならではの罠も出ました。フレーム格子への丸めは必ず遅らせ、画素の面積は合体を早める。誤リンクには向きの逆な 2 種類があり、誤り率 1 本では拡散係数がどちらへ外れるか決まらない。テンプレート追跡は見失うより先に静かにずれ、ずれた 152 フレーム全部が「見つけた」と報告する。
 
@@ -4055,6 +4055,34 @@ py -3.11 examples/poc_table_tennis_bounce.py
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_table_tennis_bounce)
 
 使用 op(ノートへ): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.html) · [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_detect.html) · [`ball_mesh`](https://furuse.work/ops/drive/ballworld/ball_mesh.html) · [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`ball_set_pose`](https://furuse.work/ops/drive/ballworld/ball_set_pose.html) · [`bounce`](https://furuse.work/ops/drive/ball/bounce.html) · [`bounce_detect`](https://furuse.work/ops/drive/balltrack/bounce_detect.html) · [`crosshair`](https://furuse.work/ops/annotate/pointer/crosshair.html) · [`flight_fit`](https://furuse.work/ops/drive/ball/flight_fit.html) · [`flight_ode`](https://furuse.work/ops/drive/ball/flight_ode.html) · [`flight_simulate`](https://furuse.work/ops/drive/ball/flight_simulate.html) · [`flight_state_at`](https://furuse.work/ops/drive/ball/flight_state_at.html) · [`impact_params`](https://furuse.work/ops/drive/ball/impact_params.html) · [`marker_direction`](https://furuse.work/ops/drive/balltrack/marker_direction.html) · [`ray_plane_range`](https://furuse.work/ops/drive/lidar/ray_plane_range.html) · [`reproject`](https://furuse.work/ops/drive/balltrack/reproject.html) · [`rotation_from_omega`](https://furuse.work/ops/drive/ballworld/rotation_from_omega.html) · [`spin_from_marker_sequence`](https://furuse.work/ops/drive/balltrack/spin_from_marker_sequence.html) · [`table_params`](https://furuse.work/ops/drive/ballworld/table_params.html) · [`table_world`](https://furuse.work/ops/drive/ballworld/table_world.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
+
+## No.2026.177 —— 読みの誤差が卓球のラリーを終わらせる ―― 雑音と遅れが着地点をどれだけ動かすかを、打つ前に閉形式で出す
+
+[![読みの誤差が卓球のラリーを終わらせる ―― 雑音と遅れが着地点をどれだけ動かすかを、打つ前に閉形式で出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.gif)
+
+*↑ **読みの誤差が卓球のラリーを終わらせる ―― 雑音と遅れが着地点をどれだけ動かすかを、打つ前に閉形式で出す** ―― 卓球ロボットは球の位置を読んでから、相手コートの狙った点に落ちる打球を計算して打つ。読みが δ ずれていれば、計算は**ずれた位置から**、球は**本当の位置から**飛び出すので着地点がずれ、台の縁までの余白を越えるとアウトでラリーが終わる。この展示は「読みの誤差 → 着地点の誤差」の伝わり方(ヤコビアン J、2 × 3)を打つ前に出し、雑音・遅れ・ラリーの途切れがそれで説明できるかを確かめる。門: 空気の無い世界で、狙い・ラケットの計画・衝突・飛翔を通した数値の J が閉形式 ΔL_xy = −δ_xy − (v_xy/|v_z(T)|)δ_z と差 2.5e-06(高さの読み違い 1 cm は前後に 2.1 cm)/ 抗力 + マグヌスありで σ = 2 cm の読みの 300 本のばらつき (前後 4.6, 左右 2.0) cm が J Σ Jᵀ と 1.0・0.8 % / 縁から 6 cm を σ = 3 cm で狙うアウトの確率が予測 0.043・打った 300 本で 0.060(二項の 1.5 σ)/ 遅れ τ = 5・10・20 ms の着地点のずれが J · (−vτ − ½gτ² ẑ) と 0.2〜0.6 % / 雑音 0 の送り合いは 4 回とも上限の 10 本、σ = 6 cm(余白から出した上限 σ* = 5.2 cm の 1.2 倍)では 9・8・2・7 本ですべてアウト / 誤差 0 なら狙いから 0.52 mm。見つけたこと: 「τ 前の読み」の高さを + ½gτ² と書いていた(正しくは −)。門は同じ読みのずれを両辺に入れて比べるので、誤りのまま通っていた —— 数値積分と突き合わせて直した。雑音が大きい側(縁 12 cm を σ = 5 cm)は予測 0.017、実際 0.003 —— 前の乱数では逆向きに 2.7 σ 外れていて、300 本では一次の近似の誤りの向きは決まらない。正直に: 誤差は球の位置の読みだけ(速度・回転は真値)で毎コマ独立のガウス、ラケットは計画どおりに打てる、アウトは縁の余白だけで判定。6 門、289 s。*
+
+[![高さを 5 cm 高く読むと、狙いの計算(灰)は低い弾道を選び、本当の位置から打った球(赤)は狙いより 10.2 cm 手前に落ちる。J の前後の増幅 2.06 × 5 cm = 10.3 cm(一次の予測)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/02_height_misread.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/02_height_misread.gif)
+
+*↑ 測定の図 ―― 高さを 5 cm 高く読むと、狙いの計算(灰)は低い弾道を選び、本当の位置から打った球(赤)は狙いより 10.2 cm 手前に落ちる。J の前後の増幅 2.06 × 5 cm = 10.3 cm(一次の予測)。*
+
+[![読みの雑音は 3 方向に同じ大きさでも、着地点のずれは前後に 2.2 倍伸びる(高さの読み違いが落ちる角の分だけ増える)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/04_spread_vs_prediction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/04_spread_vs_prediction.png)
+
+*↑ 読みの雑音は 3 方向に同じ大きさでも、着地点のずれは前後に 2.2 倍伸びる(高さの読み違いが落ちる角の分だけ増える)。*
+
+[![上から見た送り合い(1/2 速)。上 = 読みの雑音 0 で上限の 10 本、下 = 毎コマの読みに σ = 6 cm で 9 本(アウト)。ラケットは届いている —— 途切れる理由は空振りでなく、読み違いから狙った打球のアウト。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/03_rally_compare.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/03_rally_compare.gif)
+
+*↑ 動く図 ―― 上から見た送り合い(1/2 速)。上 = 読みの雑音 0 で上限の 10 本、下 = 毎コマの読みに σ = 6 cm で 9 本(アウト)。ラケットは届いている —— 途切れる理由は空振りでなく、読み違いから狙った打球のアウト。*
+
+```
+py -3.11 examples/poc_table_tennis_rally_loop.py
+```
+
+ソース: [examples/poc_table_tennis_rally_loop.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_table_tennis_rally_loop.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_table_tennis_rally_loop)
+
+使用 op(ノートへ): [`aim_velocity`](https://furuse.work/ops/drive/racket/aim_velocity.html) · [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`flight_simulate`](https://furuse.work/ops/drive/ball/flight_simulate.html) · [`impact_params`](https://furuse.work/ops/drive/ball/impact_params.html) · [`racket_impact`](https://furuse.work/ops/drive/racket/racket_impact.html) · [`racket_params`](https://furuse.work/ops/drive/racket/racket_params.html) · [`racket_plan`](https://furuse.work/ops/drive/racket/racket_plan.html) · [`rally_simulate`](https://furuse.work/ops/drive/racket/rally_simulate.html) · [`table_params`](https://furuse.work/ops/drive/ballworld/table_params.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ## No.2026.145 —— 継ぎ目の無い動画で、時間方向 op の周期境界を検査する
 

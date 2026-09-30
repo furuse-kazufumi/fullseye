@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1156. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1157. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -920,6 +920,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_table_tennis_bounce.py`
 
 - **L53** _(ja)_ — ITTF の台の跳ね(30 cm → 約 23 cm)を満たす e と、その落下の衝突の速さ [km/h]。★空気抵抗を無視した √(23/30) = 0.876 では 上り下りの抵抗で 1.2 cm 足りない(21.8 cm)ので、main の最初に抵抗込みで解き直す(_calibrate_ittf)。
+
+## `examples/poc_table_tennis_rally_loop.py`
+
+- **L342** _(ja)_ — ★送り合いの刻みは dt = 0.2 ms。刻みごとにコマを作ると 10 本で 2 万コマ超・数百 GB になり、 図づくりがメモリ逼迫で止められた(2026-10-01)。コマは**シミュレーションの時刻**で刻む: 1/2 速・25 fps = 0.02 s ごとに 1 コマ、軌跡は直近 0.3 s。コマは uint8 で持つ。
 
 ## `examples/poc_table_tennis_spin.py`
 

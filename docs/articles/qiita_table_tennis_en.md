@@ -46,6 +46,7 @@ The criteria are the same as in the autonomous-driving series ([here](https://qi
 | 2 | [Kendama — the string only pulls, the ball flies a parabola, the cup is carried by a prediction from images](#part-2-kendama--the-string-only-pulls-the-ball-flies-a-parabola-the-cup-is-carried-by-a-prediction-from-images) | elliptic integral and period theorems / closed forms of tension and slack angle / Japan Kendama Association dimensions / a world with ground truth / 3DGS projection and compositing formulas |
 | 3 | [Filming a spinning ball and reading its spin two ways — from the curve and from the markings](#part-3-filming-a-spinning-ball-and-reading-its-spin-two-ways--from-the-curve-and-from-the-markings) | the ω × v theorem (spin about the direction of travel produces no force) / a world with ground truth / two independent readings (track and markings) agree |
 | 4 | [Filming a bouncing ball with a high-speed camera and reading restitution and friction — checked against published values](#part-4-filming-a-bouncing-ball-with-a-high-speed-camera-and-reading-restitution-and-friction--checked-against-published-values) | the closed forms of Cross 2002 / the ITTF table bounce / the speed dependence of restitution in Inaba et al. 2017 / a world with ground truth |
+| 5 | [Reading errors end the rally — how much noise and latency move the landing point, in closed form before the shot](#part-5-reading-errors-end-the-rally--how-much-noise-and-latency-move-the-landing-point-in-closed-form-before-the-shot) | the closed-form error propagation in a vacuum / first-order propagation J Σ Jᵀ / the binomial distribution / latency under constant acceleration |
 
 ---
 
@@ -574,6 +575,111 @@ The whole PoC: `py -3.11 examples/poc_table_tennis_bounce.py` (figures and video
 
 ---
 
+## Part 5: Reading errors end the rally — how much noise and latency move the landing point, in closed form before the shot
+
+![Two rallies side by side](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/03_rally_compare.gif)
+
+*↑ Rallies seen from above (half speed). Top: no noise in the ball-position reading, the cap of 10 shots. Bottom: σ = 6 cm noise on every frame's reading, 9 shots, ending with an out. The rackets reach the ball — the rally breaks not on a miss but on a shot aimed from a misread position that lands out. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/03_rally_compare.mp4)*
+
+Part 1 only counted how long the rally lasted. This part works out **why it breaks**, as numbers, before the shot is played.
+
+A table-tennis robot reads where the ball is, then computes a return that lands on a chosen point of the opponent's half. If the reading is off by δ, the shot is computed **from the misread position** but the ball leaves **from the true one**. The landing point moves, and once it moves past the margin to the table edge the ball is out.
+
+The key is how a reading error turns into a landing error: the Jacobian J, a 2 × 3 matrix. With it, the spread under noise, the probability of an out and the effect of latency can all be predicted before the shot.
+
+### In a vacuum it is a closed form
+
+Without air, a reading error δ = (δ_x, δ_y, δ_z) moves the landing point by
+
+ΔL_xy = −δ_xy − (v_xy / |v_z(T)|) δ_z
+
+where v_z(T) is the vertical speed on landing. Errors along and across the table come straight back with the opposite sign. **A height error is stretched along the table by the landing angle.** This shot lands at a shallow angle, so misreading the height by 1 cm moves the landing point 2.1 cm along the table.
+
+![Misreading the height](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/02_height_misread.gif)
+
+*↑ From the side. Reading the ball 5 cm too high, the aim (grey) picks a lower arc, and the ball hit from its true position (red) lands 10.2 cm short. Yellow = the correctly read ball. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/02_height_misread.mp4)*
+
+### Steps
+
+1. Through aiming, racket planning, impact and flight, nudge the reading one axis at a time and take the numerical J from how the landing point moves.
+2. With the air removed, check that the numerical J matches the closed form.
+3. With drag and Magnus, predict the landing covariance J Σ Jᵀ from the reading-noise covariance Σ, and check it against 300 shots.
+4. The probability of an out is the mass of that Gaussian outside the opponent's half.
+5. Latency τ means a reading τ old, so the reading error is −vτ − ½gτ² ẑ; J times that is the landing error.
+6. Two rackets rally with noise on every frame's reading, to see where the rally breaks.
+
+![The landing cloud](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.gif)
+
+*↑ Aiming 6 cm inside the table edge (white) with σ = 3 cm noise on the position reading, 300 shots. Yellow = in, red = out (6 %). The cyan ellipse is the 2σ predicted from J before any shot, long along the table — height errors are stretched that way. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.mp4)*
+
+### Gates and results
+
+| Gate | Source of truth | Result |
+|---|---|---|
+| Vacuum closed form | ΔL_xy = −δ_xy − (v_xy/\|v_z(T)\|) δ_z | differs from the numerical J through aiming, planning, impact and flight by 2.5e-06 |
+| First-order propagation | J Σ Jᵀ (with drag and Magnus) | σ = 2 cm, 300 shots: landing spread (along 4.6, across 2.0) cm, within 1.0・0.8 % of the prediction |
+| Probability of an out | mass of the J Σ Jᵀ Gaussian outside the half | 6 cm from the edge with σ = 3 cm: predicted 0.043, 300 shots give 0.060 (1.5 σ binomial) |
+| Latency | J · (−vτ − ½gτ² ẑ) | τ = 5 / 10 / 20 ms, off by 0.2〜0.6 % |
+| Closed loop | noise-free rallies reach the cap / beyond the noise bound σ* from the margin the rally breaks | no noise: 10 shots all 4 times. σ = 6 cm (1.2 × σ* = 5.2 cm): 9・8・2・7 shots, all ending out |
+| Zero point | no error lands on the target | 0.52 mm |
+
+![Spread against prediction](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/04_spread_vs_prediction.png)
+
+*↑ Landing points of 300 shots with σ = 2 cm readings. The noise is the same size in all three directions, yet the spread is 2.2 × longer along the table.*
+
+### Pitfalls
+
+- **The sign of an "old reading".** τ earlier the ball was higher and falling more slowly; with constant acceleration z(t − τ) = z − v_z τ − ½gτ². I first wrote + ½gτ². The gate compares "the landing error when actually shooting from the old reading" with "J times the same reading error", so a wrong reading error **enters both sides and still passes**. A numerical integral caught it (the height error at τ = 20 ms is 0.8 cm, not 1.2 cm).
+- **I nearly wrote "the linearisation underestimates the tails", and withdrew it.** The first gate aimed 12 cm from the edge with σ = 5 cm: predicted 0.017, 300 shots gave 0.037 (2.7 σ binomial). With other random numbers it became 0.017 against 0.003 (1.8 σ) — **the direction flipped**. 300 shots cannot tell which way the approximation errs. The gate sits where the linearisation holds (6 cm from the edge, σ = 3 cm); the large-noise case is reported as numbers only.
+- **A video made at the rally's time step has over 20,000 frames.** Flight is integrated at 0.2 ms. The first version drew a frame every two simulation steps and the figure run was stopped for low memory. Frames are now cut by simulated time (every 0.02 s) and kept as uint8.
+
+### Not suited for
+
+- Only the ball position is misread (velocity and spin are true). The noise is independent Gaussian per frame; systematic camera errors (calibration drift) are not included.
+- The racket reproduces the planned face angle and speed exactly (no control error).
+- An out is judged only by the margin to the table edge; the net is ignored (the targets are deep).
+
+### Run it
+
+```python
+import numpy as np
+import fullseye as fs
+
+tp, rp = fs.ledger.table_params(), fs.ledger.racket_params()
+bp = fs.ledger.ball_params(rho=0.0)                        # no air (to compare with the closed form)
+ip = fs.ledger.impact_params(0.9, 0.25)
+H = tp["height"]
+p, v_in, w_in = np.array([-1.55, 0.1, H + 0.25]), np.array([-4.0, 0.2, -0.5]), np.array([0.0, -50.0, 0.0])
+target, T = np.array([0.75, 0.3, H + 0.02]), 0.42
+
+
+def landing(delta):
+    """Landing point of a ball aimed from the misread position p + δ but hit from the true p."""
+    w = np.zeros(3)
+    for _ in range(3):                                     # iterate the aim with the spin after the hit
+        aim = fs.ledger.aim_velocity(p + delta, target, T, bp, w)
+        plan = fs.ledger.racket_plan(v_in, w_in, aim["v"], bp, rp)
+        w = plan["omega_out"]
+    b = fs.ledger.racket_impact(v_in, w_in, plan["normal"], plan["v_racket"], bp, rp)
+    s = fs.ledger.flight_simulate(p, b["v"], b["omega"], bp, ip, 1.2, 2e-4, table_z=H)
+    return s["contacts"][0]["p"][:2], b["v"]
+
+
+L0, v = landing(np.zeros(3))
+h = 1e-3
+J = np.column_stack([(landing(h * e)[0] - landing(-h * e)[0]) / (2 * h) for e in np.eye(3)])
+vz_T = v[2] - 9.81 * T
+print(np.round(J, 3))
+# [[-1.     0.    -2.1  ]
+#  [-0.    -1.    -0.183]]
+print(np.round([-v[0] / abs(vz_T), -v[1] / abs(vz_T)], 3))   # closed form, third column: −v_xy / |v_z(T)|
+# [-2.1   -0.183]
+```
+
+The whole PoC: `py -3.11 examples/poc_table_tennis_rally_loop.py` (figures and videos when `FULLSEYE_FIGURE_DIR` is set).
+
+---
+
 ## Next time
 
-**The rally's closed loop, on video.** Part 1 only counted the rally's length. Next, perception noise and latency (camera fps, processing delay) are varied and the videos show where the exchange breaks down; the truth is the closed form of how a reading error turns into a landing-point error. After that we return to the spike trick (the spike into the ball's hole).
+**The spike trick.** Putting the spike into the ball's hole. Part 2's kendama stopped at landing the ball on a cup. Next, the hole's direction and the ball's spin are read from images, the condition for the spike to enter (the clearance between the hole's rim and the tip) is written in closed form, and the spike is guided in by the image prediction.

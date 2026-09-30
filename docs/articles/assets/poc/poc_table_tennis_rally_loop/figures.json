@@ -1,0 +1,78 @@
+[
+ {
+  "file": "01_landing_cloud.gif",
+  "name": "landing_cloud",
+  "caption": "台の縁から 6 cm の点(白)を狙い、球の位置の読みに σ = 30 mm の雑音を入れて 300 本打つ。黄 = 入った、赤 = アウト(6 %)。水色の楕円は打つ前に誤差の伝わり方 J から出した 2σ —— 高さの読み違いが前後に伸びる。",
+  "shape": [
+   360,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 95,
+  "frames_written": 75,
+  "fps": 15.0,
+  "video": "01_landing_cloud.mp4",
+  "video_frames": 95,
+  "video_fps": 15.0,
+  "video_shape": [
+   360,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "02_height_misread.gif",
+  "name": "height_misread",
+  "caption": "高さを 5 cm 高く読むと、狙いの計算(灰)は低い弾道を選び、本当の位置から打った球(赤)は狙いより 10.2 cm 手前に落ちる。J の前後の増幅 2.06 × 5 cm = 10.3 cm(一次の予測)。",
+  "shape": [
+   360,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 68,
+  "frames_written": 61,
+  "fps": 12.5,
+  "video": "02_height_misread.mp4",
+  "video_frames": 135,
+  "video_fps": 25.0,
+  "video_shape": [
+   360,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "03_rally_compare.gif",
+  "name": "rally_compare",
+  "caption": "上から見た送り合い(1/2 速)。上 = 読みの雑音 0 で上限の 10 本、下 = 毎コマの読みに σ = 6 cm で 9 本(アウト)。ラケットは届いている —— 途切れる理由は空振りでなく、読み違いから狙った打球のアウト。",
+  "shape": [
+   540,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 105,
+  "frames_written": 99,
+  "fps": 8.333333333333334,
+  "video": "03_rally_compare.mp4",
+  "video_frames": 313,
+  "video_fps": 25.0,
+  "video_shape": [
+   720,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "04_spread_vs_prediction.png",
+  "name": "spread_vs_prediction",
+  "caption": "読みの雑音は 3 方向に同じ大きさでも、着地点のずれは前後に 2.2 倍伸びる(高さの読み違いが落ちる角の分だけ増える)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

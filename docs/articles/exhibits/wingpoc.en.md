@@ -3462,7 +3462,7 @@ Ops used (notes): [`convex_hull`](https://furuse.work/ops/3d/bounds/convex_hull.
 
 ### The Time-as-3-D Wing — A Video Is One Volume
 
-Treat a 2-D video as one (t, y, x) volume and the 3-D ops — connected components, isosurfaces, region properties — work along time unchanged. Merging colonies become a Y in space-time, passing vehicles become bands in a (t, x) image, a wavefront's arrival time becomes an isosurface. The 18 exhibits here demonstrate exactly that.
+Treat a 2-D video as one (t, y, x) volume and the 3-D ops — connected components, isosurfaces, region properties — work along time unchanged. Merging colonies become a Y in space-time, passing vehicles become bands in a (t, x) image, a wavefront's arrival time becomes an isosurface. The 19 exhibits here demonstrate exactly that.
 
 The time axis also brings its own traps. Rounding onto the frame grid always delays; pixel area makes merging look early. Mislinks come in two opposite kinds, so a single error rate cannot say which way the diffusion coefficient is wrong. Template tracking drifts quietly before it ever loses the target, and all 152 drifted frames report 'found'.
 
@@ -4055,6 +4055,34 @@ Source: [examples/poc_table_tennis_bounce.py](https://github.com/furuse-kazufumi
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_table_tennis_bounce)
 
 Ops used (notes): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.html) · [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_detect.html) · [`ball_mesh`](https://furuse.work/ops/drive/ballworld/ball_mesh.html) · [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`ball_set_pose`](https://furuse.work/ops/drive/ballworld/ball_set_pose.html) · [`bounce`](https://furuse.work/ops/drive/ball/bounce.html) · [`bounce_detect`](https://furuse.work/ops/drive/balltrack/bounce_detect.html) · [`crosshair`](https://furuse.work/ops/annotate/pointer/crosshair.html) · [`flight_fit`](https://furuse.work/ops/drive/ball/flight_fit.html) · [`flight_ode`](https://furuse.work/ops/drive/ball/flight_ode.html) · [`flight_simulate`](https://furuse.work/ops/drive/ball/flight_simulate.html) · [`flight_state_at`](https://furuse.work/ops/drive/ball/flight_state_at.html) · [`impact_params`](https://furuse.work/ops/drive/ball/impact_params.html) · [`marker_direction`](https://furuse.work/ops/drive/balltrack/marker_direction.html) · [`ray_plane_range`](https://furuse.work/ops/drive/lidar/ray_plane_range.html) · [`reproject`](https://furuse.work/ops/drive/balltrack/reproject.html) · [`rotation_from_omega`](https://furuse.work/ops/drive/ballworld/rotation_from_omega.html) · [`spin_from_marker_sequence`](https://furuse.work/ops/drive/balltrack/spin_from_marker_sequence.html) · [`table_params`](https://furuse.work/ops/drive/ballworld/table_params.html) · [`table_world`](https://furuse.work/ops/drive/ballworld/table_world.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
+
+## No.2026.177 —— Reading Errors End the Table-Tennis Rally — How Much Noise and Latency Move the Landing Point, in Closed Form Before the Shot
+
+[![Reading Errors End the Table-Tennis Rally — How Much Noise and Latency Move the Landing Point, in Closed Form Before the Shot](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.gif)
+
+*↑ **Reading Errors End the Table-Tennis Rally — How Much Noise and Latency Move the Landing Point, in Closed Form Before the Shot** ―― A table-tennis robot reads where the ball is, then computes a return that lands on a chosen point of the opponent's half. If the reading is off by δ, the shot is computed **from the misread position** but the ball leaves **from the true one**, so the landing point moves; past the margin to the edge the ball is out and the rally ends. This exhibit works out, before the shot, how a reading error becomes a landing error (the Jacobian J, 2 × 3) and checks whether noise, latency and broken rallies are explained by it. Gates: without air, the numerical J through aiming, racket planning, impact and flight differs from the closed form ΔL_xy = −δ_xy − (v_xy/|v_z(T)|)δ_z by 2.5e-06 (a 1 cm height error moves the landing 2.1 cm along the table) / with drag and Magnus, the spread of 300 shots with σ = 2 cm readings (along 4.6, across 2.0 cm) is within 1.0 and 0.8 % of J Σ Jᵀ / aiming 6 cm from the edge with σ = 3 cm, the out probability is predicted 0.043 and 300 shots give 0.060 (1.5 σ binomial) / the landing error for latency τ = 5, 10, 20 ms matches J · (−vτ − ½gτ² ẑ) within 0.2–0.6 % / noise-free rallies reach the cap of 10 shots all 4 times, while σ = 6 cm (1.2 × the bound σ* = 5.2 cm from the margin) ends after 9, 8, 2, 7 shots, all out / with no error the ball lands 0.52 mm from the target. Found on the way: the height of the "reading τ old" was written with + ½gτ² (it is −). The gate puts the same reading error on both sides, so the mistake passed; a numerical integral caught it. With large noise (12 cm from the edge, σ = 5 cm) the prediction is 0.017 and the shots give 0.003; an earlier seed missed by 2.7 σ the other way, so 300 shots cannot tell which way the linearisation errs. Honestly: only the ball position is misread (velocity and spin are true), the noise is independent Gaussian per frame, the racket hits exactly as planned, and an out is judged only by the edge margin. 6 gates, 289 s.*
+
+[![高さを 5 cm 高く読むと、狙いの計算(灰)は低い弾道を選び、本当の位置から打った球(赤)は狙いより 10.2 cm 手前に落ちる。J の前後の増幅 2.06 × 5 cm = 10.3 cm(一次の予測)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/02_height_misread.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/02_height_misread.gif)
+
+*↑ The measurement ―― 高さを 5 cm 高く読むと、狙いの計算(灰)は低い弾道を選び、本当の位置から打った球(赤)は狙いより 10.2 cm 手前に落ちる。J の前後の増幅 2.06 × 5 cm = 10.3 cm(一次の予測)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![読みの雑音は 3 方向に同じ大きさでも、着地点のずれは前後に 2.2 倍伸びる(高さの読み違いが落ちる角の分だけ増える)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/04_spread_vs_prediction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/04_spread_vs_prediction.png)
+
+*↑ 読みの雑音は 3 方向に同じ大きさでも、着地点のずれは前後に 2.2 倍伸びる(高さの読み違いが落ちる角の分だけ増える)。*
+
+[![上から見た送り合い(1/2 速)。上 = 読みの雑音 0 で上限の 10 本、下 = 毎コマの読みに σ = 6 cm で 9 本(アウト)。ラケットは届いている —— 途切れる理由は空振りでなく、読み違いから狙った打球のアウト。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/03_rally_compare.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/03_rally_compare.gif)
+
+*↑ The animation ―― 上から見た送り合い(1/2 速)。上 = 読みの雑音 0 で上限の 10 本、下 = 毎コマの読みに σ = 6 cm で 9 本(アウト)。ラケットは届いている —— 途切れる理由は空振りでなく、読み違いから狙った打球のアウト。*
+
+```
+py -3.11 examples/poc_table_tennis_rally_loop.py
+```
+
+Source: [examples/poc_table_tennis_rally_loop.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_table_tennis_rally_loop.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_table_tennis_rally_loop)
+
+Ops used (notes): [`aim_velocity`](https://furuse.work/ops/drive/racket/aim_velocity.html) · [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`flight_simulate`](https://furuse.work/ops/drive/ball/flight_simulate.html) · [`impact_params`](https://furuse.work/ops/drive/ball/impact_params.html) · [`racket_impact`](https://furuse.work/ops/drive/racket/racket_impact.html) · [`racket_params`](https://furuse.work/ops/drive/racket/racket_params.html) · [`racket_plan`](https://furuse.work/ops/drive/racket/racket_plan.html) · [`rally_simulate`](https://furuse.work/ops/drive/racket/rally_simulate.html) · [`table_params`](https://furuse.work/ops/drive/ballworld/table_params.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ## No.2026.145 —— Testing the Periodic Boundary of Temporal Operators with a Seamless Loop
 

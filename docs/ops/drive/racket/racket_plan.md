@@ -4,7 +4,7 @@ dim: drive
 category: racket
 in: table × table
 out: table
-examples: []
+examples: [poc_table_tennis_rally_loop]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -29,7 +29,7 @@ v_r·n = |Δv|/(1+e) + v_in·n を初期値に、実際の衝突(摩擦・スピ
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_table_tennis_rally_loop](../../../../examples/poc_table_tennis_rally_loop.py) — `py -3.11 examples/poc_table_tennis_rally_loop.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
