@@ -50,6 +50,7 @@ This series lines up the ops built on that bar, one per instalment. Every instal
 | 4 | [Widening the world — closed-form terrain, world-space materials and procedural trees and pedestrians win the focus of expansion back from flow](#4-widening-the-world--closed-form-terrain-world-space-materials-and-procedural-trees-and-pedestrians-win-the-focus-of-expansion-back-from-flow) | Perlin's theorem (zero at lattice points, period, analytic derivative) / fBm spectrum β = 2H + 2 / point–segment distance is eikonal / divergence-theorem volumes / rendered depth back-projected to the world / pure-translation flow radiates from the FoE (true flow = motion) |
 | 5 | [Giving the car inertia and slopes — stopping just before the line with reaction and braking distance, and a hill start without rolling back](#5-giving-the-car-inertia-and-slopes--stopping-just-before-the-line-with-reaction-and-braking-distance-and-a-hill-start-without-rolling-back) | Closed-form stopping distance / RSS stopping distance (second implementation) / closed-form hill-start roll-back / energy balance / notice No. 12 deductions |
 | 6 | [Sun and weather — when the morning sun hides the signal, how fast you may drive in fog, wet roads and headlamps at night](#6-sun-and-weather--when-the-morning-sun-hides-the-signal-how-fast-you-may-drive-in-fog-wet-roads-and-headlamps-at-night) | NAOJ published values / shadow = h cot(elevation) / closed-form veil and chromaticity threshold / Koschmieder's law / road-design manual stopping distance (second implementation) / headlamp performance in the safety standard |
+| 7 | [An endless map — tiles made around the car, far tiles dropped, 50 km without a break](#7-an-endless-map--tiles-made-around-the-car-far-tiles-dropped-50-km-without-a-break) | both sides of a seam agree / regeneration fingerprints (SHA-256) / position re-summed as rationals / the (2r + 1)² bound |
 
 ---
 
@@ -869,14 +870,97 @@ This part produced **7 figures** in all — [see them all](https://github.com/fu
 
 ---
 
+## 7. An endless map — tiles made around the car, far tiles dropped, 50 km without a break
+
+![Tiles streaming around the car, from above](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/01_minimap_stream.gif)
+
+*↑ Red = the car. Only the 5 × 5 tiles around it (200 m each, 1 km square) are held; when the car crosses into a new tile, 5 tiles are made ahead and the 5 behind are dropped. Colour bands show relief, grey bands are roads. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_endless_map/01_minimap_stream.mp4)*
+
+This is the author's idea: "if the map kept being generated forward, backward, left and right without end, and map beyond a certain distance disappeared automatically, we could test much longer continuous driving." The driving-school world so far was a few hundred metres across, too small for long-distance tests.
+
+This part splits the world into tiles and **makes each tile's contents from nothing but its tile number and the world seed**. No random state is carried over, so a dropped tile comes back bit-for-bit identical, and the order of generation does not matter.
+
+### How it works
+
+1. Every random number of a tile comes from **a hash of its tile number** (SplitMix64, integer-only).
+2. **Roads are decided on edges.** Whether a road crosses a tile edge, and where, comes from **a hash of the edge number**. This tile's east edge is the same edge as the next tile's west edge, so both sides read the same value and the roads always meet at the seam. Inside a tile the crossing points are joined to a junction by straight lines.
+3. **Relief uses one integer lattice for the whole world.** Lattice index = tile number × cells per tile + cell index inside the tile (exact, being integers); interpolation uses only the fraction inside the tile. The ground is continuous across seams and never loses digits far away. The ground within 18 m of a road is flat.
+4. **Positions are held as (tile, coordinates inside the tile).** A global floating-point coordinate gets coarser the farther you go, but coordinates inside a tile always stay in [0, 200) m. Drawing also uses the car's tile as the origin and offsets the other tiles (a floating origin).
+5. Only the 5 × 5 tiles around the car are held; tiles that fall outside are dropped (`tile_stream`).
+
+![Chase camera](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/02_dashcam.gif)
+
+*↑ Chase camera (red = the car). Even starting 1,000 km away, the vertex coordinates being drawn stay within ±600 m. Roads and ground do not break at tile seams. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_endless_map/02_dashcam.mp4)*
+
+### Gates and results
+
+| Gate | Source of truth | Result |
+|---|---|---|
+| Seams | both tiles compute the same border | over 300 tile pairs (numbers up to ±10⁶ = ±200,000 km) height differs by 3.3 × 10⁻¹⁵ m; all 505 road crossings agree bit for bit |
+| Order-free | number order versus random order | the fingerprints (SHA-256) of a 5 × 5 block all agree |
+| Regeneration | fingerprint when first made | all 214 tiles dropped and remade during 50 km match |
+| Memory bound | (2r + 1)² | at most 25 tiles held; vertices and faces at most 0.90 MB |
+| Stays on the road | distance to the road centreline | at most 2.1 × 10⁻¹¹ m over 50 km, including across seams |
+| Long-distance precision | the same steps summed as rationals (no rounding) | starting 1,000 km away and driving 50 km, tile coordinates are off by 2.1 × 10⁻¹¹ m; a float32 global coordinate drifts by **33.4 m** |
+
+![The route driven](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/03_route.png)
+
+*↑ 50 km following the road network with an eastward bias. 956 tiles were visited, never more than 25 held at once.*
+
+### Pitfalls
+
+- **A float32 global coordinate makes the car "jump" far away.** 1,000 km out, float32 steps are 62.5 mm; rounding in adding 1 m steps piles up to 33.4 m over 50 km. GPU vertices are float32, so the drawing side also offsets tiles relative to the car's tile (a floating origin).
+- **Deciding seams on the tile side does not connect.** If each tile picks its road ends at random, neighbours do not match. Hashing the edge number makes both sides read the same value. Likewise, a lattice per tile leaves steps at the seam; use one integer lattice for the world, indexed exactly from the tile number.
+- **If the flattened band around a road is too narrow, the road sinks into the ground.** A 10 m ground triangle overlapping the road picks up heights from vertices away from it and rises above the road. The flat band is half the road width plus the lattice diagonal (about 18 m).
+- **The renderer drops any triangle with a vertex behind the camera.** A 100 m road strip vanishes entirely, so strips are cut at the lattice spacing. Holes that remain at the camera's feet are filled with the ground colour (for looks only).
+
+### Not suited for
+
+- Roads are straight lines from edges to a junction, with sharp corners; the physics of turning is the next part (lateral motion).
+- There are no buildings, traffic or signs; tiles connect only through roads and height.
+- Relief is Perlin noise only (terrain realism is gated by the fBm of Part 4).
+
+### Run it
+
+```python
+import numpy as np
+import fullseye as fs
+
+tp = fs.ledger.tile_params()                                # 200 m tiles, world seed 20261001
+
+# the east edge of tile (i, j) is the west edge of its east neighbour: the road crossing agrees bit for bit
+print(fs.ledger.tile_edge_crossing(5000, 2, "E", tp) == fs.ledger.tile_edge_crossing(5001, 2, "W", tp))
+# True
+
+# hold only the 3 × 3 around the car; on crossing a tile, make the side ahead and drop the side behind
+cache = {}
+fs.ledger.tile_stream(cache, 5000, 2, tp, radius=1)
+r = fs.ledger.tile_stream(cache, 5001, 2, tp, radius=1)
+print(r["n"], r["loaded"], r["evicted"])
+# 9 [(5002, 1), (5002, 2), (5002, 3)] [(4999, 1), (4999, 2), (4999, 3)]
+
+# a dropped tile remade has the same fingerprint
+a = fs.ledger.tile_digest(fs.ledger.tile_mesh(4999, 2, tp))
+b = fs.ledger.tile_digest(fs.ledger.tile_mesh(4999, 2, tp))
+print(a == b, a[:16])
+# True e2ad2e4cd85bd340
+
+# positions are (tile, inside): the step inside a tile is the same 1,000 km away
+print(fs.ledger.pose_normalize(5000, 2, 199.5 + 1.25, 30.0, 200.0))
+# (5001, 2, 0.75, 30.0)      ← carried into the east tile
+```
+
+The whole PoC: `py -3.11 examples/poc_driving_endless_map.py` (figures and videos when `FULLSEYE_FIGURE_DIR` is set).
+
+---
+
 ## Next
 
-**An endless map.** The author's idea: map tiles are generated around the car in every direction as it drives, and tiles beyond a set distance are dropped automatically. Each tile is seeded by its tile coordinates, so a tile that was dropped and is revisited comes back bit-for-bit identical. Four gates: roads and ground stay continuous across tile seams, a regenerated tile matches the original exactly, memory stays under a fixed bound however many kilometres are driven, and position error (floating-point cancellation) does not grow over long distances. That makes tens of kilometres of continuous driving testable.
-
-After that (part 8) comes **lateral motion**. The limit before a turning car's tyres slide sideways (the friction circle: longitudinal and lateral forces together stay under μ m g) and the cornering speed limit √(μ g R). This part's wet f goes into the curve: "can this radius be taken at this speed on a wet road?" computed in closed form and then driven. Tyre lateral force is linear (cornering stiffness) and then saturates; the bicycle model's steady-state circle (understeer gradient) is the truth.
+**Lateral motion.** The limit before a turning car's tyres slide sideways (the friction circle: longitudinal and lateral forces together stay under μ m g) and the cornering speed limit √(μ g R). This part's wet f goes into the curve: "can this radius be taken at this speed on a wet road?" computed in closed form and then driven. Tyre lateral force is linear (cornering stiffness) and then saturates; the bicycle model's steady-state circle (understeer gradient) is the truth.
 
 ## References
 
+- G. L. Steele Jr., D. Lea, C. H. Flood, "Fast splittable pseudorandom number generators", *OOPSLA* 2014 (SplitMix64) / K. Perlin, "Improving noise", *SIGGRAPH* 2002.
 - NAOJ Ephemeris Computation Office, sunrise/sunset tables 2026, Tokyo (https://eco.mtk.nao.ac.jp/koyomi/dni/2026/s1303.html etc.) and its definition of sunrise (upper limb, horizontal refraction 35′8″).
 - NOAA Global Monitoring Laboratory, *Solar Calculation Details* (https://gml.noaa.gov/grad/solcalc/calcdetails.html) / J. Meeus, *Astronomical Algorithms*, 2nd ed., Willmann-Bell, 1998.
 - F. Kasten and A. T. Young, "Revised optical air mass tables and approximation formula", *Applied Optics* 28, 1989 / G. Kopp and J. L. Lean, "A new, lower value of total solar irradiance", *GRL* 38, 2011.

@@ -7,6 +7,7 @@
 世界を 3D Gaussian Splatting にして描く(gsplatnp: 面に貼ったガウシアン + EWA 描画、密度と誤差のつまみ)。
 車の縦の運動と坂(drivelong: 空走 + 制動の停止距離の閉形式、坂の保持と発進のずり下がり、技能試験の減点)。
 太陽と天気(driveenv: 太陽の位置 = 暦計算室、影・逆光の光幕・霧 Koschmieder・雨・夜の前照灯を物理の単位で描き、見えてから止まれる速さ)。
+終わらない地図(driveinf: 区画の番号と種だけで決まる区画、辺のハッシュで継ぎ目がつながる道、整数格子の起伏、(区画, 区画の中) の座標)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -28,6 +29,7 @@ import ballworld
 import drivecourse
 import driveterrain
 import driveenv
+import driveinf
 import drivelong
 import drivettc
 import gsplatnp
@@ -43,7 +45,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong, "driveenv": driveenv}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -301,6 +303,23 @@ _CATALOG = {
         ("env_params", "driveenv", [], "table"),
         ("tone_map", "driveenv", ["any", "scalar"], "any"),
         ("env_render", "driveenv", ["table", "matrix", "matrix"], "table"),
+    ],
+    # 終わらない地図: 区画 (i, j) の中身は番号と世界の種だけで決まる(SplitMix64 のハッシュ)。道は辺の番号のハッシュで横切る位置を
+    # 決めるので継ぎ目で必ずつながり、起伏は全体の整数格子の Perlin を区画の中の小数で補間(継ぎ目で連続・遠くでも桁が落ちない)。
+    # 車の周り (2r+1)² 区画だけを持つ(tile_stream)。
+    "inf": [
+        ("tile_hash", "driveinf", [], "scalar"),
+        ("tile_uniform", "driveinf", [], "scalar"),
+        ("pose_normalize", "driveinf", [], "any"),
+        ("tile_params", "driveinf", [], "table"),
+        ("tile_edge_crossing", "driveinf", ["table"], "scalar"),
+        ("tile_roads", "driveinf", ["table"], "table"),
+        ("tile_road_distance", "driveinf", ["any", "any", "table"], "any"),
+        ("tile_height", "driveinf", ["any", "any", "table"], "any"),
+        ("tile_mesh", "driveinf", ["table"], "table"),
+        ("tile_digest", "driveinf", ["table"], "any"),
+        ("tile_stream", "driveinf", ["table", "table"], "table"),
+        ("global_to_tile", "driveinf", [], "any"),
     ],
 }
 

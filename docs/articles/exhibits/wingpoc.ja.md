@@ -4776,6 +4776,30 @@ py -3.11 examples/poc_driving_weather.py
 
 使用 op(ノートへ): [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_detect.html) · [`beta_from_mor`](https://furuse.work/ops/drive/env/beta_from_mor.html) · [`course_intersection`](https://furuse.work/ops/drive/course/course_intersection.html) · [`course_layout`](https://furuse.work/ops/drive/course/course_layout.html) · [`course_road`](https://furuse.work/ops/drive/course/course_road.html) · [`env_params`](https://furuse.work/ops/drive/env/env_params.html) · [`env_render`](https://furuse.work/ops/drive/env/env_render.html) · [`fog_beta_from_profile`](https://furuse.work/ops/drive/env/fog_beta_from_profile.html) · [`load_asset`](https://furuse.work/ops/drive/world/load_asset.html) · [`long_params`](https://furuse.work/ops/drive/long/long_params.html) · [`long_simulate`](https://furuse.work/ops/drive/long/long_simulate.html) · [`pedestrian_mesh`](https://furuse.work/ops/drive/terrain/pedestrian_mesh.html) · [`plan_command`](https://furuse.work/ops/drive/long/plan_command.html) · [`road_row_distance`](https://furuse.work/ops/drive/env/road_row_distance.html) · [`sight_stop_speed`](https://furuse.work/ops/drive/env/sight_stop_speed.html) · [`skill_test_score`](https://furuse.work/ops/drive/long/skill_test_score.html) · [`stop_line_plan`](https://furuse.work/ops/drive/long/stop_line_plan.html) · [`stopping_distance_grade`](https://furuse.work/ops/drive/long/stopping_distance_grade.html) · [`sun_at`](https://furuse.work/ops/drive/env/sun_at.html) · [`sun_events`](https://furuse.work/ops/drive/env/sun_events.html) · [`sun_illuminance`](https://furuse.work/ops/drive/env/sun_illuminance.html) · [`sun_vector`](https://furuse.work/ops/drive/env/sun_vector.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`veil_chroma_limit`](https://furuse.work/ops/drive/env/veil_chroma_limit.html) …(他 1)
 
+## No.2026.176 —— 終わらない地図 ―― 区画を車の周りに作り足し、離れた区画は捨てて、50 km を途切れずに走る
+
+[![終わらない地図 ―― 区画を車の周りに作り足し、離れた区画は捨てて、50 km を途切れずに走る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/01_minimap_stream.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/01_minimap_stream.gif)
+
+*↑ **終わらない地図 ―― 区画を車の周りに作り足し、離れた区画は捨てて、50 km を途切れずに走る** ―― 著者の発案 ——「マップが前後左右方向にエンドレスに作られていき、一定以上離れたマップは自動に消えていく形にすれば、もっと長距離の連続走行のテストもできるのではないか」。世界を一辺 200 m の区画 (i, j) に分け、**区画の中身を区画の番号と世界の種だけで決める**(SplitMix64 のハッシュ、乱数の状態を持ち越さない)。道は区画の辺ごとに「横切るか・どこで横切るか」を**辺の番号のハッシュ**で決めるので、両側の区画が同じ値を読み、継ぎ目で必ずつながる。起伏は全体で共通の整数格子(区画の番号 × 升目数 + 升目の番号)の Perlin を区画の中の小数だけで補間するので、継ぎ目で連続し遠くでも桁が落ちない。位置は (区画, 区画の中の座標) で持ち、描くときも車の区画を原点にする(浮動原点)。車の周り 5 × 5 区画だけを持ち、1,000 km 先の区画から東寄りに 50 km 走る。門: 継ぎ目(区画の組 300、番号 ±10⁶ まで)の高さの差 3.3e-15 m・道の横切り位置はビット一致 / 作る順に依らない / 捨ててから作り直した 214 区画の指紋(SHA-256)が最初と一致 / 持つ区画は最大 25 / 車は道の中心線から外れない / 区画の中の座標は 50 km 後も誤差 2e-11 m、全体の座標を float32 で持つと 33.42 m ずれる(1,000 km 先の float32 の刻みは 62.5 mm)。見つけたこと: 道の周りを平らにする範囲が狭いと、地面の格子の三角形が道より上に出て道が埋もれる(道幅の半分 + 格子の対角 ≈ 18 m にした)。描画器は頂点が 1 つでもカメラの後ろにある三角形を捨てるので、100 m 級の道の帯は丸ごと消えた(格子の刻みで切る)。正直に: 道は分岐点と辺を結ぶ直線の折れ線、建物・交通・標識は無い、起伏は Perlin だけ。6 門、26.2 s。*
+
+[![追従カメラ(赤 = 車、25 m ごと、最初の 3 km)。持っている 25 区画だけを、車のいる区画の原点に合わせて描く(浮動原点)—— 1,000 km 先でも頂点の座標は ±600 m に収まる。区画の継ぎ目で道と地面は途切れない。描](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/02_dashcam.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/02_dashcam.gif)
+
+*↑ 測定の図 ―― 追従カメラ(赤 = 車、25 m ごと、最初の 3 km)。持っている 25 区画だけを、車のいる区画の原点に合わせて描く(浮動原点)—— 1,000 km 先でも頂点の座標は ±600 m に収まる。区画の継ぎ目で道と地面は途切れない。描画器はカメラの後ろに頂点がある三角形を捨てるので、足元の穴は地面の色で埋めている(見た目だけ)。*
+
+[![東寄りに道の網をたどった経路。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/03_route_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/03_route.png)
+
+*↑ 東寄りに道の網をたどった経路。*
+
+```
+py -3.11 examples/poc_driving_endless_map.py
+```
+
+ソース: [examples/poc_driving_endless_map.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_driving_endless_map.py)
+
+この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_endless_map)
+
+使用 op(ノートへ): [`pose_normalize`](https://furuse.work/ops/drive/inf/pose_normalize.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`tile_digest`](https://furuse.work/ops/drive/inf/tile_digest.html) · [`tile_edge_crossing`](https://furuse.work/ops/drive/inf/tile_edge_crossing.html) · [`tile_height`](https://furuse.work/ops/drive/inf/tile_height.html) · [`tile_mesh`](https://furuse.work/ops/drive/inf/tile_mesh.html) · [`tile_params`](https://furuse.work/ops/drive/inf/tile_params.html) · [`tile_road_distance`](https://furuse.work/ops/drive/inf/tile_road_distance.html) · [`tile_roads`](https://furuse.work/ops/drive/inf/tile_roads.html) · [`tile_stream`](https://furuse.work/ops/drive/inf/tile_stream.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
+
 ### 数学の絵 ―― 定理が門になる回(別記事)
 
 この展示先の回は、計測の展示館ではなく**数学の絵のシリーズ**に掛かっています。分ける基準は「真値がどこから来るか」です —— 計測の展示は測る対象があり真値は対象の側に、ここの回は対象が無く、真値は描いた絵そのものの定理・恒等式・不変量から出ます。記事は手書きなので、生成器はここを描きません。

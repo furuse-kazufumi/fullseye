@@ -533,6 +533,11 @@ from kendama import (  # noqa: E402,F401
     kendama_combo_simulate,
 )
 import driveenv  # noqa: E402  (太陽と天気: 太陽の位置・影・逆光・霧・雨・夜の前照灯、見えてから止まれる速さ)
+import driveinf  # noqa: E402  (終わらない地図: 決定的な区画・継ぎ目でつながる道・桁の落ちない座標)
+from driveinf import (  # noqa: E402,F401
+    tile_hash, tile_uniform, pose_normalize, tile_params, tile_edge_crossing, tile_roads,
+    tile_road_distance, tile_height, tile_mesh, tile_digest, tile_stream, global_to_tile,
+)
 from driveenv import (  # noqa: E402,F401
     julian_day, sun_at, sun_events, sun_vector, sun_illuminance, koschmieder, mor_from_beta, beta_from_mor,
     road_row_distance, fog_beta_from_profile, veiling_luminance, veil_chroma_limit, sight_stop_speed, env_params, tone_map, env_render,

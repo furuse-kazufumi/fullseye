@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2410,
- "n_notes": 2416,
+ "n_ops": 2422,
+ "n_notes": 2428,
  "notes": {
   "vol_dilate": [
    {
@@ -16146,6 +16146,121 @@
     "in": "table × table",
     "out": "table",
     "path": "docs/ops/drive/gsplat/gs_update.md"
+   }
+  ],
+  "global_to_tile": [
+   {
+    "op": "global_to_tile",
+    "dim": "drive",
+    "category": "inf",
+    "out": "any",
+    "path": "docs/ops/drive/inf/global_to_tile.md"
+   }
+  ],
+  "pose_normalize": [
+   {
+    "op": "pose_normalize",
+    "dim": "drive",
+    "category": "inf",
+    "out": "any",
+    "path": "docs/ops/drive/inf/pose_normalize.md"
+   }
+  ],
+  "tile_digest": [
+   {
+    "op": "tile_digest",
+    "dim": "drive",
+    "category": "inf",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/inf/tile_digest.md"
+   }
+  ],
+  "tile_edge_crossing": [
+   {
+    "op": "tile_edge_crossing",
+    "dim": "drive",
+    "category": "inf",
+    "in": "table",
+    "out": "scalar",
+    "path": "docs/ops/drive/inf/tile_edge_crossing.md"
+   }
+  ],
+  "tile_hash": [
+   {
+    "op": "tile_hash",
+    "dim": "drive",
+    "category": "inf",
+    "out": "scalar",
+    "path": "docs/ops/drive/inf/tile_hash.md"
+   }
+  ],
+  "tile_height": [
+   {
+    "op": "tile_height",
+    "dim": "drive",
+    "category": "inf",
+    "in": "any × any × table",
+    "out": "any",
+    "path": "docs/ops/drive/inf/tile_height.md"
+   }
+  ],
+  "tile_mesh": [
+   {
+    "op": "tile_mesh",
+    "dim": "drive",
+    "category": "inf",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/inf/tile_mesh.md"
+   }
+  ],
+  "tile_params": [
+   {
+    "op": "tile_params",
+    "dim": "drive",
+    "category": "inf",
+    "out": "table",
+    "path": "docs/ops/drive/inf/tile_params.md"
+   }
+  ],
+  "tile_road_distance": [
+   {
+    "op": "tile_road_distance",
+    "dim": "drive",
+    "category": "inf",
+    "in": "any × any × table",
+    "out": "any",
+    "path": "docs/ops/drive/inf/tile_road_distance.md"
+   }
+  ],
+  "tile_roads": [
+   {
+    "op": "tile_roads",
+    "dim": "drive",
+    "category": "inf",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/inf/tile_roads.md"
+   }
+  ],
+  "tile_stream": [
+   {
+    "op": "tile_stream",
+    "dim": "drive",
+    "category": "inf",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/inf/tile_stream.md"
+   }
+  ],
+  "tile_uniform": [
+   {
+    "op": "tile_uniform",
+    "dim": "drive",
+    "category": "inf",
+    "out": "scalar",
+    "path": "docs/ops/drive/inf/tile_uniform.md"
    }
   ],
   "catch_plan_ballistic": [

@@ -2133,6 +2133,53 @@ def _b_skill_test_score(pool, rng):
     return ([{"kind": "stop", "gap": 0.5}, {"kind": "start", "rollback": 0.1}],), {}
 
 
+def _inf_tp():
+    import driveinf as DI
+    return DI.tile_params(tile=100.0, cells=4)
+
+
+def _b_tile_hash(pool, rng):
+    return (3, -4, 20261001), {"salt": 1}
+
+
+def _b_pose_normalize(pool, rng):
+    return (5, 2, 205.0, -3.0, 200.0), {}
+
+
+def _b_tile_params(pool, rng):
+    return (), {"tile": 100.0, "cells": 4}
+
+
+def _b_tile_edge(pool, rng):
+    return (0, 0, "E", _inf_tp()), {}
+
+
+def _b_tile_ij(pool, rng):
+    return (1, 2, _inf_tp()), {}
+
+
+def _b_tile_xy(pool, rng):
+    import numpy as np
+    return (1, 2, np.array([10.0, 50.0, 99.0]), np.array([5.0, 50.0, 100.0]), _inf_tp()), {}
+
+
+def _b_tile_mesh(pool, rng):
+    return (1, 2, _inf_tp()), {"step": 20.0}
+
+
+def _b_tile_digest(pool, rng):
+    import driveinf as DI
+    return (DI.tile_mesh(0, 0, _inf_tp(), step=20.0),), {}
+
+
+def _b_tile_stream(pool, rng):
+    return ({}, 0, 0, _inf_tp()), {"radius": 1, "step": 20.0}
+
+
+def _b_global_to_tile(pool, rng):
+    return (1234.5, -678.9, 200.0), {}
+
+
 def _env_world():
     import driveworld as DW
     import numpy as np
@@ -2509,6 +2556,9 @@ OP_ARG_BUILDERS = {
     "hill_hold_brake_min": _b_hill_hold_brake_min, "hill_start_rollback": _b_hill_start_rollback,
     "hill_start_command": _b_hill_start_command, "skill_test_thresholds": _b_skill_test_thresholds,
     "skill_test_score": _b_skill_test_score,
+    "tile_hash": _b_tile_hash, "tile_uniform": _b_tile_hash, "pose_normalize": _b_pose_normalize, "tile_params": _b_tile_params,
+    "tile_edge_crossing": _b_tile_edge, "tile_roads": _b_tile_ij, "tile_road_distance": _b_tile_xy, "tile_height": _b_tile_xy,
+    "tile_mesh": _b_tile_mesh, "tile_digest": _b_tile_digest, "tile_stream": _b_tile_stream, "global_to_tile": _b_global_to_tile,
     "julian_day": _b_julian_day, "sun_at": _b_sun_at, "sun_events": _b_sun_events, "sun_vector": _b_sun_vector,
     "sun_illuminance": _b_sun_illuminance, "koschmieder": _b_koschmieder, "mor_from_beta": _b_mor_from_beta,
     "beta_from_mor": _b_beta_from_mor, "road_row_distance": _b_road_row_distance, "fog_beta_from_profile": _b_fog_beta_from_profile,

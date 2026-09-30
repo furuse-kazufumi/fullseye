@@ -1,4 +1,4 @@
-# DRIVE operator help — 186 ops in 16 categories
+# DRIVE operator help — 198 ops in 17 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -27,6 +27,10 @@
 ### gsplat (4)
 
 [gs_from_world](gsplat/gs_from_world.md) · [gs_render](gsplat/gs_render.md) · [gs_render_fn](gsplat/gs_render_fn.md) · [gs_update](gsplat/gs_update.md)
+
+### inf (12)
+
+[global_to_tile](inf/global_to_tile.md) · [pose_normalize](inf/pose_normalize.md) · [tile_digest](inf/tile_digest.md) · [tile_edge_crossing](inf/tile_edge_crossing.md) · [tile_hash](inf/tile_hash.md) · [tile_height](inf/tile_height.md) · [tile_mesh](inf/tile_mesh.md) · [tile_params](inf/tile_params.md) · [tile_road_distance](inf/tile_road_distance.md) · [tile_roads](inf/tile_roads.md) · [tile_stream](inf/tile_stream.md) · [tile_uniform](inf/tile_uniform.md)
 
 ### kendama (19)
 

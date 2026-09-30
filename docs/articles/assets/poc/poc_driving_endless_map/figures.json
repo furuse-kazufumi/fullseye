@@ -1,0 +1,56 @@
+[
+ {
+  "file": "01_minimap_stream.gif",
+  "name": "minimap_stream",
+  "caption": "真上から: 赤 = 車、周り 5 × 5 の区画(一辺 200 m、1 km 四方)だけを持ち、車が区画をまたぐと進む側に 5 区画を作り、反対側の 5 区画を捨てる。色の濃淡は起伏、灰の帯は道(区画の境目で必ずつながる)。1,000 km 先の区画から東寄りに走る最初の 5 km。",
+  "shape": [
+   360,
+   360,
+   3
+  ],
+  "animated": true,
+  "frames": 100,
+  "frames_written": 100,
+  "fps": 6.0,
+  "video": "01_minimap_stream.mp4",
+  "video_frames": 200,
+  "video_fps": 12.0,
+  "video_shape": [
+   720,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "02_dashcam.gif",
+  "name": "dashcam",
+  "caption": "追従カメラ(赤 = 車、25 m ごと、最初の 3 km)。持っている 25 区画だけを、車のいる区画の原点に合わせて描く(浮動原点)—— 1,000 km 先でも頂点の座標は ±600 m に収まる。区画の継ぎ目で道と地面は途切れない。描画器はカメラの後ろに頂点がある三角形を捨てるので、足元の穴は地面の色で埋めている(見た目だけ)。",
+  "shape": [
+   270,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 60,
+  "frames_written": 60,
+  "fps": 6.0,
+  "video": "02_dashcam.mp4",
+  "video_frames": 119,
+  "video_fps": 12.0,
+  "video_shape": [
+   270,
+   480,
+   3
+  ]
+ },
+ {
+  "file": "03_route.png",
+  "name": "route",
+  "caption": "東寄りに道の網をたどった経路。区画は車の周り 5 × 5 だけを持ち、通った区画は 956(作り直したものを含まない)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

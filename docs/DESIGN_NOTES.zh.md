@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：610 / 1153 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：610 / 1156 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel.py`
@@ -43,21 +43,21 @@
 
 ## `api.py`
 
-- **L667** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
-- **L683** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
-- **L738** — ★``annotate.overlay_mask`` **有意不暴露到顶层**。同名的 ``imgio.overlay_mask`` 已作为 ``fs.overlay_mask`` 公开，其参数与含义都不同(imgio = 原始 RGB、mask>0.5、fill/margin / annotate = 角色名的颜色、也可用权重 [0,1]、拒绝形状不匹配)。在同名上加载不同的约定，调用方收到的不是异常而是**看似合理却不同的图**。公开 API 的破坏性变更不擅自做，故带角色的那个用 ``fs.annotate.overlay_mask`` 取用。
-- **L1286** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
-- **L1304** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
-- **L1373** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
-- **L1668** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
-- **L1699** — ★ **目前对彩色图像没有正确的调用方式**:整批传入会混色,按通道调用 3 次会让自归一化的 op 把每个通道除以各自的最大值,破坏通道间的比值(灰度边缘法的角度误差从自建 Sobel 的 1.03 度 -> 每图 4.17 度 -> 每通道 27.86 度,零点 29.14 度)。倒向哪一边是**契约的决定**,所以这里不改动任何一个默认数值,仅在 `on_error="raise"` 时拒绝,默认则记入台账使其可见。详情与选项见 docs/KNOWN_ISSUES.md。
-- **L1983** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
-- **L2019** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L2340** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L2580** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L2584** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L2705** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L2715** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L672** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
+- **L688** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
+- **L743** — ★``annotate.overlay_mask`` **有意不暴露到顶层**。同名的 ``imgio.overlay_mask`` 已作为 ``fs.overlay_mask`` 公开，其参数与含义都不同(imgio = 原始 RGB、mask>0.5、fill/margin / annotate = 角色名的颜色、也可用权重 [0,1]、拒绝形状不匹配)。在同名上加载不同的约定，调用方收到的不是异常而是**看似合理却不同的图**。公开 API 的破坏性变更不擅自做，故带角色的那个用 ``fs.annotate.overlay_mask`` 取用。
+- **L1291** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
+- **L1309** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
+- **L1378** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
+- **L1673** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
+- **L1704** — ★ **目前对彩色图像没有正确的调用方式**:整批传入会混色,按通道调用 3 次会让自归一化的 op 把每个通道除以各自的最大值,破坏通道间的比值(灰度边缘法的角度误差从自建 Sobel 的 1.03 度 -> 每图 4.17 度 -> 每通道 27.86 度,零点 29.14 度)。倒向哪一边是**契约的决定**,所以这里不改动任何一个默认数值,仅在 `on_error="raise"` 时拒绝,默认则记入台账使其可见。详情与选项见 docs/KNOWN_ISSUES.md。
+- **L1988** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
+- **L2024** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L2345** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L2585** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L2589** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L2710** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L2720** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -204,6 +204,10 @@
 - **L105** _(ja)_ — ★**名簿の綴りと構築子の綴りが違っていた。** 名簿(``capabilities()``)は ``io-modbus`` と名乗るのに、構築子は ``DigitalIO("modbus")`` を取る —— つまり**表を読んでそのまま渡すと ``ValueError``** になっていた。名簿を 印刷しておきながら、その綴りで呼べないのは名簿の側の不備である。
 - **L161** _(ja)_ — ★**名簿に 12 載せて、扉が 3 つしか無かった**(2026-09-25)。``capabilities()`` は I-O・サーボ・ロボット・ROS を名乗るのに、開ける口が在ったのは :class:`DigitalIO` の 3 backend だけで、残り 9 には入口が 1 つも無かった —— 名簿を読んだ人が、そこから何かを始める方法が無い。隣の層(``comm``)は 同じ問いに既に答えていたので、これは機能の不在ではなく**片側の入口だけが 塞がれていた**型である。開けないものにも「何を入れればよいか」を返す。
 - **L189** _(ja)_ — ★PyPI に無い SDK(ベンダ配布の wheel)は「pip install None」と言わせない。
+
+## `driveinf.py`
+
+- **L209** _(ja)_ — ★道の帯は step ごとに切る: 描画器(render3d)は頂点が 1 つでもカメラの後ろにある三角形を捨てるので、100 m 級の 1 枚の帯は車載カメラから丸ごと消えた(2026-10-01)
 
 ## `engine.py`
 
@@ -505,6 +509,11 @@
 ## `examples/poc_document_scan.py`
 
 - **L271** — ★直接把 sobel_dir 作用于二值掩码，会把梯度方向量化到 0/90 度，一点一票的带方向 Hough 就会坍缩到那两条线上（实测：4 条线中有 2 条正好是 0.00 / 90.00 度）。先模糊再测方向。
+
+## `examples/poc_driving_endless_map.py`
+
+- **L329** _(ja)_ — 追従カメラ: 車の 7 m 後ろ・3 m 上から、車の 25 m 先を見る(★頂点がカメラの後ろにある三角形は描かれないので、 カメラを車の真上に置くと足元の地面に穴が開く)
+- **L337** _(ja)_ — ★描画器は頂点が 1 つでもカメラの後ろにある三角形を捨てるので、足元に穴(空の色)が開く。地平線より下なのに何も 当たらなかった画素だけを地面の色で埋める(第 6 回の env_render と同じ扱い。見た目だけで、門には使わない)
 
 ## `examples/poc_em_second_opinion.py`
 
@@ -2010,8 +2019,8 @@
 - **L305** — 事件位置（点过程）-- point_spectrum 的入口。★**不要只用均匀随机**：没有周期成分就一次也不会触及「寻找周期的 op」的有意义行为，所以用把 12 个无关事件混入周期 17.0 序列的**结构化数据**作种子（随机-only 的测试会隐藏结构缺陷，是本 repo 的规律）。
 - **L919** — ★混有非有限值的点云会**让 KD 树的构建本身以生的 ValueError 崩溃**（scipy："data must be finite"）。池的设计是记录 NONFINITE 后仍保留值，所以脏点云来到这里是预期之内 -- 由构建方防范。2026-09-06 实际踩到：新的族增加后连锁的走法变了，在 seed 3_000_0xx 命中这条路径，fuzzer 自身停止了（不是 op 的缺陷而是**工具的缺陷**。无法绑定的输入约定为跳过而非抛异常）。
 - **L1238** _(ja)_ — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L2933** — ★到 2026-09-02 为止一直是 ``lambda v: True`` = **因为谓词被计为「有」，反而比没有更糟**（点检脚本也会把它计为「有谓词」）。实测下它连 None / 42 / 字符串 / dict 都放行。正典是通过**全部运行**消费侧 6 个 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）来确定的：6 个 op 都只接受上面两种形状，其余的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 变成指名的 fail-closed（实测）。因为**不接受 (2,N)**，把 2-tuple 用 np.stack 压成 (2,N) 的 3 个 adapter 改成了 axis=1。长度不同的两条（histogram 的 counts/edges）也不是「对」，予以拒绝。
-- **L3051** — ★「恰好 2 个元素」与 pose（用 `len >= 2` 允许 info）**是有意不同的**。实测 2026-09-02：把 mesh 作为单个参数接收的 4 个既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）对 3-tuple 会送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 个元素。也就是说 **本 repo 的 mesh sort 正典是 2-tuple**，多余的元素不是「信息更多」，而是让下游全灭的类型层面的谎言。唯一的例外 `voxel_to_mesh`（返回 (v, f, n)）现在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（与 gicp / vol_label 同样处理）。
+- **L2983** — ★到 2026-09-02 为止一直是 ``lambda v: True`` = **因为谓词被计为「有」，反而比没有更糟**（点检脚本也会把它计为「有谓词」）。实测下它连 None / 42 / 字符串 / dict 都放行。正典是通过**全部运行**消费侧 6 个 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）来确定的：6 个 op 都只接受上面两种形状，其余的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 变成指名的 fail-closed（实测）。因为**不接受 (2,N)**，把 2-tuple 用 np.stack 压成 (2,N) 的 3 个 adapter 改成了 axis=1。长度不同的两条（histogram 的 counts/edges）也不是「对」，予以拒绝。
+- **L3101** — ★「恰好 2 个元素」与 pose（用 `len >= 2` 允许 info）**是有意不同的**。实测 2026-09-02：把 mesh 作为单个参数接收的 4 个既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）对 3-tuple 会送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 个元素。也就是说 **本 repo 的 mesh sort 正典是 2-tuple**，多余的元素不是「信息更多」，而是让下游全灭的类型层面的谎言。唯一的例外 `voxel_to_mesh`（返回 (v, f, n)）现在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（与 gicp / vol_label 同样处理）。
 
 ## `tools/chain_mine.py`
 

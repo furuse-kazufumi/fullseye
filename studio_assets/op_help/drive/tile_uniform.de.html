@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tile_uniform — DRIVE <code style="color:#22d3bf">inf</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">scalar</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_uniform(i: &#x27;int&#x27;, j: &#x27;int&#x27;, seed: &#x27;int&#x27;, salt: &#x27;int&#x27; = 0) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveinf; driveinf.tile_uniform(i: &#x27;int&#x27;, j: &#x27;int&#x27;, seed: &#x27;int&#x27;, salt: &#x27;int&#x27; = 0) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;tile_uniform&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>:func:<code style="color:#22d3bf">tile_hash</code> の上位 53 ビットを [0, 1) の一様な実数に(倍精度で厳密に表せる)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">scalar</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:road_eval">road_eval</a> · <a style="color:#22d3bf" href="opdrive:long_simulate">long_simulate</a> · <a style="color:#22d3bf" href="opdrive:stopping_distance_grade">stopping_distance_grade</a> · <a style="color:#22d3bf" href="opdrive:stop_line_plan">stop_line_plan</a> · <a style="color:#22d3bf" href="opdrive:hill_hold_brake_min">hill_hold_brake_min</a> · <a style="color:#22d3bf" href="opdrive:hill_start_rollback">hill_start_rollback</a> · <a style="color:#22d3bf" href="opdrive:hill_start_command">hill_start_command</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">inf</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:tile_hash">tile_hash</a> · <a style="color:#22d3bf" href="opdrive:pose_normalize">pose_normalize</a> · <a style="color:#22d3bf" href="opdrive:tile_params">tile_params</a> · <a style="color:#22d3bf" href="opdrive:tile_edge_crossing">tile_edge_crossing</a> · <a style="color:#22d3bf" href="opdrive:tile_roads">tile_roads</a> · <a style="color:#22d3bf" href="opdrive:tile_road_distance">tile_road_distance</a> · <a style="color:#22d3bf" href="opdrive:tile_height">tile_height</a> · <a style="color:#22d3bf" href="opdrive:tile_mesh">tile_mesh</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: driveinf.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

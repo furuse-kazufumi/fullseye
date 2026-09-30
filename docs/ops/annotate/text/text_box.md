@@ -4,7 +4,7 @@ dim: annotate
 category: text
 in: image2d × text
 out: image2d
-examples: [annotate_gallery, annotate_paper_tour, drawlist_deferred, poc_ball_bounce, poc_connectome_across_worms, poc_driving_longitudinal, poc_driving_school, poc_driving_weather, poc_eye_to_brain, poc_kendama, poc_leak_localization, poc_machine_condition_fusion, poc_malecns_activity_wave, poc_measurement_system_analysis, poc_print_warpage_risk, poc_rotation_invariance_audit, poc_table_tennis_bounce, poc_table_tennis_spin, poc_ttc_rss, poc_world_terrain]
+examples: [annotate_gallery, annotate_paper_tour, drawlist_deferred, poc_ball_bounce, poc_connectome_across_worms, poc_driving_endless_map, poc_driving_longitudinal, poc_driving_school, poc_driving_weather, poc_eye_to_brain, poc_kendama, poc_leak_localization, poc_machine_condition_fusion, poc_malecns_activity_wave, poc_measurement_system_analysis, poc_print_warpage_risk, poc_rotation_invariance_audit, poc_table_tennis_bounce, poc_table_tennis_spin, poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -93,6 +93,7 @@ ValueError
 - [drawlist_deferred](../../../../examples/drawlist_deferred.py) — `py -3.11 examples/drawlist_deferred.py`
 - [poc_ball_bounce](../../../../examples/poc_ball_bounce.py) — `py -3.11 examples/poc_ball_bounce.py`
 - [poc_connectome_across_worms](../../../../examples/poc_connectome_across_worms.py) — `py -3.11 examples/poc_connectome_across_worms.py`
+- [poc_driving_endless_map](../../../../examples/poc_driving_endless_map.py) — `py -3.11 examples/poc_driving_endless_map.py`
 - [poc_driving_longitudinal](../../../../examples/poc_driving_longitudinal.py) — `py -3.11 examples/poc_driving_longitudinal.py`
 - [poc_driving_school](../../../../examples/poc_driving_school.py) — `py -3.11 examples/poc_driving_school.py`
 - [poc_driving_weather](../../../../examples/poc_driving_weather.py) — `py -3.11 examples/poc_driving_weather.py`
