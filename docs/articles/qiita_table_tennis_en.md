@@ -43,6 +43,7 @@ The criteria are the same as in the autonomous-driving series ([here](https://qi
 | Part | What is measured | Gates (where the truth comes from) |
 |---|---|---|
 | 1 | [The ball bounces — tracking, triangulation, prediction through the bounce, spin, rally](#part-1-the-ball-bounces--tracking-triangulation-prediction-through-the-bounce-spin-rally) | closed forms in vacuum / angular momentum about the contact point / apex ratio e^{2k}h₀ / the ITTF bounce standard / a world with ground truth / the rally length |
+| 2 | [Kendama — the string only pulls, the ball flies a parabola, the cup is carried by a prediction from images](#part-2-kendama--the-string-only-pulls-the-ball-flies-a-parabola-the-cup-is-carried-by-a-prediction-from-images) | elliptic integral and period theorems / closed forms of tension and slack angle / Japan Kendama Association dimensions / a world with ground truth / 3DGS projection and compositing formulas |
 
 ---
 
@@ -195,6 +196,193 @@ This part produced **8 figures** in total — [see them all](https://github.com/
 
 ---
 
+## Part 2: Kendama — the string only pulls, the ball flies a parabola, the cup is carried by a prediction from images
+
+![Catching in the big cup in a 3DGS world](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/10_gs_catch_gif.gif)
+
+*↑ Right = the image the closed loop's perception actually saw (the world turned into 3D Gaussian Splatting and rendered), left = the true shape at the same moment. The window at top right re-renders the kendama at three times the resolution. Blue ring = the ball found by chromaticity, cross = the landing point read from the parabola fitted to the frames after the string went slack. The only thing that moves the cup is the image on the right.*
+
+### The basic moves of kendama
+
+From the Japan Kendama Association's graded tricks, this part takes the four in which the ball is pulled straight up and caught in a cup.
+
+| Trick | Grip | Cup |
+|---|---|---|
+| Big cup (ōzara) | cup grip (spike tilted down, big cup up) | big cup |
+| Small cup (kozara) | same grip | small cup |
+| Base cup (chūzara) | ken grip (spike almost straight down) | base cup |
+| Candle (rōsoku) | pinch the spike | base cup |
+
+The teachers' procedure is the same for all: pull straight up with the knees → **move the ken only after the string goes slack** → carry the cup horizontally under the point where the ball will come down (do not scoop) → bend the knees at touchdown to absorb the impact. This PoC turns that procedure directly into the stages of its controller.
+
+Four rules. **(1)** Only gravity and string tension move the ball (a one-sided constraint, tension ≥ 0). **(2)** The ken and the cross piece are one rigid body whose position may move freely. **(3)** The ball rises after the string goes slack and is caught on the way down after its apex (a straight-up path counts as a parabola). **(4)** The spike is only for the ball's hole — in the cup tricks, touching the spike or the cross piece is a failure.
+
+### Procedure
+
+```
+Shape      : from the Japan Kendama Association's published values (60 mm ball, 70 mm across, 180 mm assembled) and the JKA 16-2
+             description (160 mm ken, cups 42 / 38 / 35 mm), the ken and cross piece are solids of revolution; so is the ball, hole included
+             (a 17 mm wide, 40 mm deep cavity)
+Mechanics  : string = one-sided constraint tension ≥ 0 (free fall when slack, radial speed lost when it snaps taut), by projection; with drag
+World      : two cameras (480 × 360, 100 fps). A synthetic world with ground truth, additionally turned into 3D Gaussian Splatting before rendering
+Perception : ball by chromaticity → triangulate from two cameras → "slack" when the ball is closer to the string hole than the string length
+             for two frames in a row → fit a gravity-known parabola (6 unknowns)
+Control    : lift (straight up with the knees) → wait (do not move until slack) → hold (do not approach until the ball clears the ken)
+             → carry (cup horizontally under the landing point) → absorb (lower it at touchdown)
+Scoring    : at the moment of touching the rim, lateral ≤ rim radius, relative speed ≤ 1 m/s, descending. Touching the ken = hit_ken (fail)
+```
+
+**In plain words**: a string cannot push. It can only pull — a "one-sided constraint". So when the ball is pulled up hard, at some moment the string goes slack, and from then on the ball flies a parabola. A parabola is fixed by gravity alone, so once a few positions after the slack are known, where the ball will come down can be computed. The cup only has to get there first and wait. What a person does as "watch the ball and wait where it falls" is done here with images and a parabola.
+
+[![Grips of the four tricks](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/02_kendama_closeup_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/02_kendama_closeup.png)
+
+*↑ The poses of the four grips. The ken and cross piece are one rigid body; only where it is held differs. Every dimension measured from the vertices matches the published value to 1e-9.*
+
+### Gates and scores
+
+| # | Gate | Truth | Score |
+|---|---|---|---|
+| 1 | Elliptic integral and large-amplitude pendulum period | published K(0.5) and the theorem T = 4√(L/g)K(sin θ₀/2) | K error 0; period string 3.0e-4, rod 8.9e-11 |
+| 2 | Tension and slack angle | closed forms m(v²/L + g cos θ), cos θ_s = (2/3) cos θ₀ | tension 0.26 %; slack angle 125.04° (closed form 125.26°) |
+| 3 | Energy and snap | conserved in flight; loss when taut = ½ m v_r² | spread in flight 2.5e-15 J; snap 0.2362 J vs 0.2367 J; dissipation first order in dt (ratio 9.7) |
+| 4 | Shape | published values (70 across, 160 ken, cups 42/38/35, 60 ball, 180 mm assembled) | all 1e-9 |
+| 5 | Big cup with true perception | stage order, no contact with the ken, rise after slack, catch descending | caught with 4.22 mm lateral offset; without the dodge the ball hits the cross piece at 0.260 s |
+| 6 | Detection → triangulation → slack | world ground truth | median error **0.51 mm**; slack detected +23 ms after truth |
+| 7 | Closed loop on images only | success rate with true perception | 20 trials: truth 1.00 / images **1.00** (all 390 estimates the plan received came from images) |
+| 8 | Same plan, 3 tricks + candle | flight and contact with the ken | small cup 1.00, base cup 0.95, candle (truth) 0.95; lowering at touchdown cuts relative speed 0.91 → 0.61 m/s |
+| 9 | Prediction error | ball position at the catch | **10.51 → 0.98 mm** from 3 to 44 frames after slack |
+| 10 | Pixel noise | success rate | 1.00 for 0–2 px, 0.90 at 8 px, 0.40 at 16 px |
+| 11 | Hole direction (stationary ball) | true hole axis | seen by both cameras in 14 of 40 poses, median error **1.8°** |
+| 12 | Recommended model (49 mm big cup) | JKA model's success rate | 1.00 vs 1.00 |
+| 13 | **Closed loop in a 3DGS world** | true perception | on 3DGS images at 4 mm spacing alone, all 1 + 2 trials caught; median triangulation error **0.30 mm** |
+| 14 | 3DGS knobs | detection rate | 1.00 for spacing 2–64 mm; 0.25 at 20 mm position error; 0.00 at colour error 0.3 |
+| 15 | The hole on 3DGS | true hole axis | 1 of 40 poses at 480 × 360; 16 (median 2.3°) at twice the resolution and 2 mm spacing; 0 at 4 mm |
+
+[![The y–z trajectory](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/04_catch_yz_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/04_catch_yz.png)
+
+*↑ The ball rises after the string goes slack; the cup waits until the ball clears the ken, returns horizontally, drops just before touchdown and catches. Dots are the two-camera triangulation.*
+
+**Reading gate 9**. A parabola fitted to the first 3 frames after slack misses the catch position by 1 cm — the triangulation error rides on the velocity of a short interval. The error falls as frames accumulate and drops below 1 mm at 44 frames. The cup is re-carried to each new prediction every frame, so a wrong first prediction is still in time — the big cup's rim radius, 21 mm, is the room for "waiting". Gate 10 staying at 1.00 up to 2 px of pixel noise is the same room; meanwhile the lateral offset grows 2.4 → 4.1 mm.
+
+### Recognising after turning the world into 3DGS
+
+Rendering the synthetic world's meshes directly gives images that are "too clean". A real scene reconstructed with 3D Gaussian Splatting (3DGS) is blurred in shape and carries errors in position and colour. So a layer was added that **turns the world into 3DGS before rendering and feeds the result to the same image processing** (`gsplatnp`, numpy only).
+
+```
+Gaussians : attached to the world's faces (face index + barycentric coordinates + an error fixed in the face's local frame); they follow the vertices
+Size      : σ = spacing (the 3DGS initial value). σ ≤ 0.5 R so a disc does not stick out of a curved surface; faces touching an edge (cup rims, the hole's mouth) get 1/4
+Rendering : EWA projection Σ' = J W Σ Wᵀ Jᵀ + 0.3 I, front-to-back alpha compositing, Mip-Splatting's opacity compensation
+Knobs     : spacing (density), position error, colour error
+```
+
+[![Mesh and 3DGS](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/08_gs_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/08_gs_views.png)
+
+*↑ The same close-up camera: mesh and 3DGS (2 mm, 16 mm spacing, with errors). Coarse spacing blurs; errors make it fuzzy with bleeding colour.*
+
+The renderer's gates are three formulas: the second moments of one Gaussian's alpha image equal Σ' (and equal the covariance of 3-D samples projected by a separate projection routine); a pixel covered by two Gaussians has the colour of the front-to-back compositing formula (and the image is the same in either array order); moving the world rigidly moves the Gaussians by the same transform.
+
+The results are rows 13–15 of the table. For following the ball, 3DGS hardly matters — even at 64 mm spacing ball detection stays at 1.00 (the curvature cap keeps at least 146 Gaussians on the ball). What breaks it is **position error** and **colour error**: with chromaticity detection, a colour error beyond the detector's tolerance (0.12) makes the ball disappear. The hole is different.
+
+| Poses where the hole was read (of 40) | Mesh | 3DGS 2 mm spacing | 3DGS 4 mm spacing |
+|---|---|---|---|
+| 480 × 360 | 14 | 1 | — |
+| twice the resolution | 23 | 16 (median error 2.3°) | 0 |
+
+At 480 × 360 the ball is 17 px and the hole 5 px. The 3DGS blur (about 1 px) comes in from both sides and fills the hole. **Reading the hole needs pixels on the ball and Gaussians inside the hole.** To do spike tricks (the spike into the hole), the cameras must sit on the better side of the bottom-right of this table.
+
+### ★ Where implementations go wrong
+
+#### 1. Adding perception does not mean it feeds the controller
+
+It happens that the parts which triangulate from images and fit a parabola exist, while the plan that moves the cup is still handed the world's true (p, v). The prediction is only used for scoring, and the closed loop never looks at the images. Gate it as "number of estimates the plan received = number of estimates that came from images" (rows 7 and 13).
+
+#### 2. A string cannot stay taut above 109.47°
+
+Gate the period of a pendulum released from rest at "string, 120°" and it fails. Above θ₀ = 90° the tension is negative from the start, and even launched from the bottom the string goes slack at cos θ_s = (2/3) cos θ₀. Measure large-amplitude periods with a rod, and give the string a slack-angle gate.
+
+#### 3. Without a dodge, a ball rising from straight below hits the cross piece
+
+Pulled straight up, the ball rises from directly beneath the kendama. Left alone it passes through the cross piece (the physics does not resolve the collision, so it passes silently). Measure the ball–kendama gap every step and count contact as failure, and in the second half of the lift move the hand 10 cm towards the string hole. Dodging the other way let the ken hide the ball from a camera and worsened the prediction.
+
+#### 4. Deciding "slack" on one frame fires while the string is taut
+
+Judging "the ball is closer to the string hole than the string length" on a single frame reports slack while taut under 2 px of pixel noise. Require two frames in a row.
+
+#### 5. A hole made as "a dark disc on the surface" vanishes in 3DGS
+
+On a mesh a disc looks like a hole. 3DGS sorts Gaussians by the depth of their centres, so from an angle the ball's own Gaussians in front cover a disc floating 0.3 mm above the surface, and the hole was read in 0 of 40 poses. Make it what it really is: a 40 mm deep cavity (dark walls and bottom).
+
+#### 6. Gaussians thinner than a pixel get fat unless compensated
+
+Adding 0.3 px² to the 2-D covariance for antialiasing makes sub-pixel Gaussians (the string, cup rims) stay opaque while growing to 0.55 px or more (the string rendered 3 pixels wide). Scaling opacity by √(det Σ / det(Σ + 0.3 I)) (Mip-Splatting) preserves the sum of alpha (gated).
+
+### What it is not for
+
+**This is not real video.** It is a synthetic world with ground truth. The 3DGS is not learned from photos either; it is built from the true shape and degraded with error knobs. It is a tool to measure "does image processing work on the 3DGS representation and renderer", and it claims nothing about reconstruction quality itself.
+
+**The ball's rotation is not solved.** The rendering convention is that the string hole faces the knot while taut and the ball keeps its last pose once slack. The hole direction in flight is not ground truth, and spike tricks are not in yet.
+
+**A catch is a geometric test.** Bounce and rolling on the rim are not handled; relative speed ≤ 1 m/s is an assumed threshold. The 15° tilt of the cup grip, the cup depths and the 75 g ball are assumptions. The JKA 16-2 dimensions come from a user-supplied description; the primary source was not checked.
+
+**Why the candle is harder than the base cup cannot be expressed.** The ken moves as a rigid, translating body, so the weak support of pinching fingers is absent, and the numbers come out as the same relative motion as the base cup.
+
+### Run it
+
+```bash
+py -3.11 examples/poc_kendama.py            # 15 gates (about 160 s without figures)
+```
+
+```python
+import numpy as np
+import fullseye as fs
+
+kp = fs.ledger.kendama_params(trick="ozara")          # JKA 16-2 model, big cup (cup grip)
+print(round(np.degrees(fs.ledger.tether_slack_angle(np.radians(150.0), kp["pendulum_length"])), 2))
+# 125.26                                               ← launched from the bottom with the energy of 150°, the string goes slack here
+
+w = fs.ledger.kendama_world(kp)                       # world with ground truth (ken, cross piece, ball, string)
+gs = fs.ledger.gs_from_world(w, spacing=0.004)        # turn the world into 3DGS (4 mm spacing)
+rig = fs.ledger.kendama_rig(kp)                       # two cameras
+c = rig[0]
+img = fs.ledger.gs_render(gs, c["pose"], c["K"], c["width"], c["height"])["color"]
+print(img.shape)
+# (360, 480, 3)
+```
+
+Set `trick` in `kendama_params` to `"kozara"` / `"chuzara"` / `"rousoku"` and only the grip changes, with the same plan. With `camera_perceiver(world, rig, render_fn=fs.ledger.gs_render_fn(gs))` the closed loop's perception looks at 3DGS images.
+
+---
+
+This part produced **10 figures** in all — [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_kendama)
+
+#### The remaining figures of this part
+
+![Catching in the big cup in the mesh world](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/05_catch_gif.gif)
+
+*↑ The image-only closed loop in the mesh world (camera 2, 100 fps at 1/10 speed). The cross is the predicted landing point.*
+
+![Prediction error vs frames](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/06_prediction_error_vs_frames.png)
+
+*↑ Error of the position at the catch read from the parabola fitted to n frames after slack (log10 mm on the vertical axis).*
+
+![3DGS knobs](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/09_gs_noise_knobs.png)
+
+*↑ 3DGS knobs and ball detection rate. Spacing does not matter; position and colour errors do.*
+
+[![Tension closed form](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/03_tension_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/03_tension_closed_form.png)
+
+*↑ The integrator's tension and the closed form m(v²/L + g cos θ). The string goes slack at the angle where it reaches 0.*
+
+[![Pixel noise and success rate](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/07_success_vs_pixel_noise_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/07_success_vs_pixel_noise.png)
+
+*↑ Pixel noise and success rate (20 trials each). Flat up to 2 px because of the room on the cup rim.*
+
+[![A camera frame](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/01_rig_view_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/01_rig_view.png)
+
+*↑ A frame from camera 2 (ball at its apex). The inset re-renders the same camera at three times the resolution.*
+
+---
+
 ## Next time
 
-Kendama. The string is a **one-sided constraint** (tension is non-negative, the ball falls freely when the string is slack, and the radial speed is lost when it snaps taut), and catching in the cup is a geometric test. The same bounce-and-friction tools score the ball landing in the cup against ground truth. After that, the coefficients of restitution and friction are measured from real video (one high-speed camera).
+Spike tricks (the spike into the ball's hole). The ball's rotation is solved and the hole's direction read from images to line up the spike — as row 15 shows, that needs pixels on the ball. After that, the coefficients of restitution and friction are measured from real video (one high-speed camera).

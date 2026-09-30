@@ -4,7 +4,7 @@ dim: drive
 category: ball
 in: 
 out: table
-examples: []
+examples: [poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -33,7 +33,7 @@ snap の瞬間以外で不変(RK 誤差の範囲)、小振幅の周期は 2π√
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_kendama](../../../../examples/poc_kendama.py) — `py -3.11 examples/poc_kendama.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

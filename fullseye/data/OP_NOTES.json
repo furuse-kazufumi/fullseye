@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2344,
- "n_notes": 2350,
+ "n_ops": 2378,
+ "n_notes": 2384,
  "notes": {
   "vol_dilate": [
    {
@@ -15927,6 +15927,336 @@
     "category": "course",
     "out": "table",
     "path": "docs/ops/drive/course/course_turnaround.md"
+   }
+  ],
+  "gs_from_world": [
+   {
+    "op": "gs_from_world",
+    "dim": "drive",
+    "category": "gsplat",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/gsplat/gs_from_world.md"
+   }
+  ],
+  "gs_render": [
+   {
+    "op": "gs_render",
+    "dim": "drive",
+    "category": "gsplat",
+    "in": "table × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/gsplat/gs_render.md"
+   }
+  ],
+  "gs_render_fn": [
+   {
+    "op": "gs_render_fn",
+    "dim": "drive",
+    "category": "gsplat",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/gsplat/gs_render_fn.md"
+   }
+  ],
+  "gs_update": [
+   {
+    "op": "gs_update",
+    "dim": "drive",
+    "category": "gsplat",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/gsplat/gs_update.md"
+   }
+  ],
+  "catch_plan_ballistic": [
+   {
+    "op": "catch_plan_ballistic",
+    "dim": "drive",
+    "category": "kendama",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/kendama/catch_plan_ballistic.md"
+   }
+  ],
+  "catch_plan_staged": [
+   {
+    "op": "catch_plan_staged",
+    "dim": "drive",
+    "category": "kendama",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/kendama/catch_plan_staged.md"
+   }
+  ],
+  "catch_success_rate": [
+   {
+    "op": "catch_success_rate",
+    "dim": "drive",
+    "category": "kendama",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/kendama/catch_success_rate.md"
+   }
+  ],
+  "elliptic_k_agm": [
+   {
+    "op": "elliptic_k_agm",
+    "dim": "drive",
+    "category": "kendama",
+    "out": "scalar",
+    "path": "docs/ops/drive/kendama/elliptic_k_agm.md"
+   }
+  ],
+  "hole_detect": [
+   {
+    "op": "hole_detect",
+    "dim": "drive",
+    "category": "kendama",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/drive/kendama/hole_detect.md"
+   }
+  ],
+  "kendama_catch_check": [
+   {
+    "op": "kendama_catch_check",
+    "dim": "drive",
+    "category": "kendama",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/kendama/kendama_catch_check.md"
+   }
+  ],
+  "kendama_params": [
+   {
+    "op": "kendama_params",
+    "dim": "drive",
+    "category": "kendama",
+    "out": "table",
+    "path": "docs/ops/drive/kendama/kendama_params.md"
+   }
+  ],
+  "kendama_simulate": [
+   {
+    "op": "kendama_simulate",
+    "dim": "drive",
+    "category": "kendama",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/kendama/kendama_simulate.md"
+   }
+  ],
+  "noisy_perceiver": [
+   {
+    "op": "noisy_perceiver",
+    "dim": "drive",
+    "category": "kendama",
+    "out": "any",
+    "path": "docs/ops/drive/kendama/noisy_perceiver.md"
+   }
+  ],
+  "parabola_fit_g": [
+   {
+    "op": "parabola_fit_g",
+    "dim": "drive",
+    "category": "kendama",
+    "out": "table",
+    "path": "docs/ops/drive/kendama/parabola_fit_g.md"
+   }
+  ],
+  "pendulum_launch_speed": [
+   {
+    "op": "pendulum_launch_speed",
+    "dim": "drive",
+    "category": "kendama",
+    "out": "scalar",
+    "path": "docs/ops/drive/kendama/pendulum_launch_speed.md"
+   }
+  ],
+  "pendulum_period_exact": [
+   {
+    "op": "pendulum_period_exact",
+    "dim": "drive",
+    "category": "kendama",
+    "out": "scalar",
+    "path": "docs/ops/drive/kendama/pendulum_period_exact.md"
+   }
+  ],
+  "pendulum_rod_simulate": [
+   {
+    "op": "pendulum_rod_simulate",
+    "dim": "drive",
+    "category": "kendama",
+    "out": "table",
+    "path": "docs/ops/drive/kendama/pendulum_rod_simulate.md"
+   }
+  ],
+  "swing_up_apex": [
+   {
+    "op": "swing_up_apex",
+    "dim": "drive",
+    "category": "kendama",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/kendama/swing_up_apex.md"
+   }
+  ],
+  "swing_up_lift": [
+   {
+    "op": "swing_up_lift",
+    "dim": "drive",
+    "category": "kendama",
+    "in": "table",
+    "out": "scalar",
+    "path": "docs/ops/drive/kendama/swing_up_lift.md"
+   }
+  ],
+  "swing_up_plan": [
+   {
+    "op": "swing_up_plan",
+    "dim": "drive",
+    "category": "kendama",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/kendama/swing_up_plan.md"
+   }
+  ],
+  "tether_slack_angle": [
+   {
+    "op": "tether_slack_angle",
+    "dim": "drive",
+    "category": "kendama",
+    "out": "any",
+    "path": "docs/ops/drive/kendama/tether_slack_angle.md"
+   }
+  ],
+  "tether_tension_fixed": [
+   {
+    "op": "tether_tension_fixed",
+    "dim": "drive",
+    "category": "kendama",
+    "out": "scalar",
+    "path": "docs/ops/drive/kendama/tether_tension_fixed.md"
+   }
+  ],
+  "add_ken": [
+   {
+    "op": "add_ken",
+    "dim": "drive",
+    "category": "kendamaworld",
+    "in": "table × table",
+    "out": "scalar",
+    "path": "docs/ops/drive/kendamaworld/add_ken.md"
+   }
+  ],
+  "add_string": [
+   {
+    "op": "add_string",
+    "dim": "drive",
+    "category": "kendamaworld",
+    "in": "table",
+    "out": "scalar",
+    "path": "docs/ops/drive/kendamaworld/add_string.md"
+   }
+  ],
+  "camera_perceiver": [
+   {
+    "op": "camera_perceiver",
+    "dim": "drive",
+    "category": "kendamaworld",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/kendamaworld/camera_perceiver.md"
+   }
+  ],
+  "ken_mesh": [
+   {
+    "op": "ken_mesh",
+    "dim": "drive",
+    "category": "kendamaworld",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/kendamaworld/ken_mesh.md"
+   }
+  ],
+  "ken_set_pose": [
+   {
+    "op": "ken_set_pose",
+    "dim": "drive",
+    "category": "kendamaworld",
+    "in": "table × matrix",
+    "out": "any",
+    "path": "docs/ops/drive/kendamaworld/ken_set_pose.md"
+   }
+  ],
+  "ken_truth": [
+   {
+    "op": "ken_truth",
+    "dim": "drive",
+    "category": "kendamaworld",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/kendamaworld/ken_truth.md"
+   }
+  ],
+  "kendama_clearance": [
+   {
+    "op": "kendama_clearance",
+    "dim": "drive",
+    "category": "kendamaworld",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/kendamaworld/kendama_clearance.md"
+   }
+  ],
+  "kendama_pose": [
+   {
+    "op": "kendama_pose",
+    "dim": "drive",
+    "category": "kendamaworld",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/kendamaworld/kendama_pose.md"
+   }
+  ],
+  "kendama_rig": [
+   {
+    "op": "kendama_rig",
+    "dim": "drive",
+    "category": "kendamaworld",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/kendamaworld/kendama_rig.md"
+   }
+  ],
+  "kendama_world": [
+   {
+    "op": "kendama_world",
+    "dim": "drive",
+    "category": "kendamaworld",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/kendamaworld/kendama_world.md"
+   }
+  ],
+  "string_mesh": [
+   {
+    "op": "string_mesh",
+    "dim": "drive",
+    "category": "kendamaworld",
+    "out": "any",
+    "path": "docs/ops/drive/kendamaworld/string_mesh.md"
+   }
+  ],
+  "string_set": [
+   {
+    "op": "string_set",
+    "dim": "drive",
+    "category": "kendamaworld",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/kendamaworld/string_set.md"
    }
   ],
   "lidar_scan": [

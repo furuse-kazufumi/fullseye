@@ -1,4 +1,4 @@
-# DRIVE operator help — 120 ops in 11 categories
+# DRIVE operator help — 154 ops in 14 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -19,6 +19,18 @@
 ### course (13)
 
 [course_contains](course/course_contains.md) · [course_crank](course/course_crank.md) · [course_crossing](course/course_crossing.md) · [course_intersection](course/course_intersection.md) · [course_layout](course/course_layout.md) · [course_loop](course/course_loop.md) · [course_loop_bend](course/course_loop_bend.md) · [course_occupancy](course/course_occupancy.md) · [course_parallel_parking](course/course_parallel_parking.md) · [course_road](course/course_road.md) · [course_s_curve](course/course_s_curve.md) · [course_slope](course/course_slope.md) · [course_turnaround](course/course_turnaround.md)
+
+### gsplat (4)
+
+[gs_from_world](gsplat/gs_from_world.md) · [gs_render](gsplat/gs_render.md) · [gs_render_fn](gsplat/gs_render_fn.md) · [gs_update](gsplat/gs_update.md)
+
+### kendama (18)
+
+[catch_plan_ballistic](kendama/catch_plan_ballistic.md) · [catch_plan_staged](kendama/catch_plan_staged.md) · [catch_success_rate](kendama/catch_success_rate.md) · [elliptic_k_agm](kendama/elliptic_k_agm.md) · [hole_detect](kendama/hole_detect.md) · [kendama_catch_check](kendama/kendama_catch_check.md) · [kendama_params](kendama/kendama_params.md) · [kendama_simulate](kendama/kendama_simulate.md) · [noisy_perceiver](kendama/noisy_perceiver.md) · [parabola_fit_g](kendama/parabola_fit_g.md) · [pendulum_launch_speed](kendama/pendulum_launch_speed.md) · [pendulum_period_exact](kendama/pendulum_period_exact.md) · [pendulum_rod_simulate](kendama/pendulum_rod_simulate.md) · [swing_up_apex](kendama/swing_up_apex.md) · [swing_up_lift](kendama/swing_up_lift.md) · [swing_up_plan](kendama/swing_up_plan.md) · [tether_slack_angle](kendama/tether_slack_angle.md) · [tether_tension_fixed](kendama/tether_tension_fixed.md)
+
+### kendamaworld (12)
+
+[add_ken](kendamaworld/add_ken.md) · [add_string](kendamaworld/add_string.md) · [camera_perceiver](kendamaworld/camera_perceiver.md) · [ken_mesh](kendamaworld/ken_mesh.md) · [ken_set_pose](kendamaworld/ken_set_pose.md) · [ken_truth](kendamaworld/ken_truth.md) · [kendama_clearance](kendamaworld/kendama_clearance.md) · [kendama_pose](kendamaworld/kendama_pose.md) · [kendama_rig](kendamaworld/kendama_rig.md) · [kendama_world](kendamaworld/kendama_world.md) · [string_mesh](kendamaworld/string_mesh.md) · [string_set](kendamaworld/string_set.md)
 
 ### lidar (4)
 

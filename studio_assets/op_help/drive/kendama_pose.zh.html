@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">kendama_pose — DRIVE <code style="color:#22d3bf">kendamaworld</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kendama_pose(world: &#x27;dict&#x27;, hand, p_ball, *, R_ken=None, R_ball=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import kendamaworld; kendamaworld.kendama_pose(world: &#x27;dict&#x27;, hand, p_ball, *, R_ken=None, R_ball=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;kendama_pose&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>けん玉の世界の状態を置く: けん(1 つの剛体。持つ所 kp[&quot;grip&quot;] を手元 `<code style="color:#22d3bf">hand</code><code style="color:#22d3bf"> に、姿勢 </code><code style="color:#22d3bf">R_ken</code>` 既定 = kp の技の姿勢</p>
+<p>kp[&quot;R_ken&quot;]: 皿胴の中心 = hand − R·grip)、玉(中心 `<code style="color:#22d3bf">p_ball</code>`)、</p>
+<p>糸(皿胴の糸穴 → 玉の糸穴)。`<code style="color:#22d3bf">R_ball</code>` 既定 = 玉の糸穴(−HOLE_AXIS_LOCAL)が皿胴の糸穴を向く回転(玉の回転は解かない:</p>
+<p>張っている間は正しく、飛翔中は近似)。返り値 ``{&quot;tie&quot;, &quot;cup&quot; (受ける皿の縁の中心), &quot;cup_axis&quot;, &quot;cross&quot; (皿胴の中心), &quot;string_hole&quot;, &quot;hole_axis&quot; (大きな穴の向き、世界),</p>
+<p>&quot;R_ball&quot;}``。</p>
+<p>`<code style="color:#22d3bf">world</code><code style="color:#22d3bf"> は :func:</code>kendama_world` のもの(world[&quot;kendama&quot;] が要る)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_kendama">poc_kendama</a> — <code style="color:#22d3bf">py -3.11 examples/poc_kendama.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">kendamaworld</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:ken_mesh">ken_mesh</a> · <a style="color:#22d3bf" href="opdrive:add_ken">add_ken</a> · <a style="color:#22d3bf" href="opdrive:ken_set_pose">ken_set_pose</a> · <a style="color:#22d3bf" href="opdrive:string_mesh">string_mesh</a> · <a style="color:#22d3bf" href="opdrive:add_string">add_string</a> · <a style="color:#22d3bf" href="opdrive:string_set">string_set</a> · <a style="color:#22d3bf" href="opdrive:kendama_world">kendama_world</a> · <a style="color:#22d3bf" href="opdrive:kendama_rig">kendama_rig</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: kendamaworld.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

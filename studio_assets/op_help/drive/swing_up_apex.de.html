@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">swing_up_apex — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swing_up_apex(kp: &#x27;dict&#x27;, *, lift: &#x27;float&#x27; = 0.265, T_lift: &#x27;float&#x27; = 0.15, kind: &#x27;str&#x27; = &#x27;bang&#x27;, g: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import kendama; kendama.swing_up_apex(kp: &#x27;dict&#x27;, *, lift: &#x27;float&#x27; = 0.265, T_lift: &#x27;float&#x27; = 0.15, kind: &#x27;str&#x27; = &#x27;bang&#x27;, g: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;swing_up_apex&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>:func:<code style="color:#22d3bf">swing_up_plan</code> で真下に吊った玉(支点の L 下、静止)がどこまで昇るかの閉形式。</p>
+<p>減速の加速度 a &gt; g なら減速に入った瞬間(bang: T/2、trap: 2T/3)に弛み、そのときの手元の高さ z_s と速さ v_s で自由落下</p>
+<p>→ 頂点 z = tie_z + z_s − L + v_s²/(2g)(手元の出発点から測った玉の中心、L = ひもの有効長、tie_z = 支点の手元からの高さ)。</p>
+<p>a ≤ g なら弛まず、玉は支点の L 下で止まる。返り値 ``{&quot;accel&quot;, &quot;flies&quot;, &quot;slack_t&quot;, &quot;z_slack&quot;, &quot;v_slack&quot;, &quot;apex&quot;,</p>
+<p>&quot;apex_above_handle&quot;, &quot;apex_above_cup&quot;}``(apex_above_handle = apex − lift、apex_above_cup = それから大皿の縁の高さを引いた量:</p>
+<p>皿に届くには ≥ h_c、皿の窓に入るには h_c ≤ … ≤ h_c + 1.5 r_b)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_kendama">poc_kendama</a> — <code style="color:#22d3bf">py -3.11 examples/poc_kendama.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">kendama</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:kendama_params">kendama_params</a> · <a style="color:#22d3bf" href="opdrive:elliptic_k_agm">elliptic_k_agm</a> · <a style="color:#22d3bf" href="opdrive:pendulum_period_exact">pendulum_period_exact</a> · <a style="color:#22d3bf" href="opdrive:pendulum_launch_speed">pendulum_launch_speed</a> · <a style="color:#22d3bf" href="opdrive:pendulum_rod_simulate">pendulum_rod_simulate</a> · <a style="color:#22d3bf" href="opdrive:tether_tension_fixed">tether_tension_fixed</a> · <a style="color:#22d3bf" href="opdrive:tether_slack_angle">tether_slack_angle</a> · <a style="color:#22d3bf" href="opdrive:swing_up_plan">swing_up_plan</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: kendama.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">kendama_simulate — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kendama_simulate(kp: &#x27;dict&#x27;, handle, *, p0, v0, t_end: &#x27;float&#x27;, dt: &#x27;float&#x27; = 0.001, perceive=None, catch_plan=None, g: &#x27;float&#x27; = None, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, v_rel_max: &#x27;float&#x27; = 1.0, plan_from: &#x27;float&#x27; = 0.0, stop_on_miss: &#x27;bool&#x27; = True, contact=None, contact_tol: &#x27;float&#x27; = 0.0005) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import kendama; kendama.kendama_simulate(kp: &#x27;dict&#x27;, handle, *, p0, v0, t_end: &#x27;float&#x27;, dt: &#x27;float&#x27; = 0.001, perceive=None, catch_plan=None, g: &#x27;float&#x27; = None, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, v_rel_max: &#x27;float&#x27; = 1.0, plan_from: &#x27;float&#x27; = 0.0, stop_on_miss: &#x27;bool&#x27; = True, contact=None, contact_tol: &#x27;float&#x27; = 0.0005) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;kendama_simulate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>けん玉の 2 段シミュレーション: ひもが張っている間は支点(<b>皿胴の糸穴</b> = 手元 + kp[&quot;tie_offset&quot;])に繋がれた玉</p>
+<p>(射影法、:func:<code style="color:#22d3bf">ballistics.tether_simulate</code> と同じ: 支点固定・真空なら同じ軌跡、ひもの長さ = kp[&quot;pendulum_length&quot;])、</p>
+<p>弛んだら自由落下(重力 + 抗力、kp[&quot;bp&quot;]; rho = 0 で真空)。毎 step :func:<code style="color:#22d3bf">kendama_catch_check</code>(大皿 = 手元 + kp[&quot;cup_offset&quot;]、</p>
+<p>軸 kp[&quot;cup_axis&quot;])で捕球を判定し、捕ったら終わる。</p>
+<p>`<code style="color:#22d3bf">handle</code><code style="color:#22d3bf"> = 手元(皿胴の中心)の (3,) の固定点か t → (3,) の関数(開ループの振り上げ)。</code><code style="color:#22d3bf">catch_plan</code>` があれば、弛んだ後</p>
+<p>(かつ t ≥ `<code style="color:#22d3bf">plan_from</code><code style="color:#22d3bf">: 振り上げが終わるまでは開ループを優先する)は毎 step </code><code style="color:#22d3bf">perceive</code>` で知覚した (p̂, v̂) を</p>
+<p>`<code style="color:#22d3bf">catch_plan(t, p̂, v̂, cup_state) → {&quot;target&quot;: 大皿の縁の中心の目標 (3,), …}</code>` に渡し、手元を速さ ≤ v_max・加速度 ≤ a_max の</p>
+<p>bang-bang で「目標 − cup_offset」へ運ぶ(手元が動くと支点も動くので、玉が落ちてきて |p − 支点| = L になれば再び張る)。</p>
+<p>知覚 `<code style="color:#22d3bf">perceive</code>`:</p>
+<p style="margin:2px 0 2px 12px">• None → 真値 (p, v)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">perceive(t, p, v) → (p̂, v̂)</code><code style="color:#22d3bf">(:func:</code>noisy_perceiver` など)は計画が生きている step だけ呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• 属性 `<code style="color:#22d3bf">observe_all = True</code><code style="color:#22d3bf"> の知覚(:func:</code>kendamaworld.camera_perceiver<code style="color:#22d3bf">)は **毎 step** </code><code style="color:#22d3bf">perceive(t, p, v, scene)</code>` で呼ぶ</p>
+<p>(scene = `<code style="color:#22d3bf">{&quot;t&quot;, &quot;hand&quot;, &quot;tie&quot;, &quot;cup&quot;, &quot;cup_axis&quot;, &quot;taut&quot;}</code>` = 手元の自己受容で分かる量 + 世界を描くための taut</p>
+<p>(玉の姿勢の描画の約束: 張っている間は糸穴が結び目を向き、弛んだら最後の姿勢のまま)。p も世界を描くためだけに渡す)。</p>
+<p>返り値が None なら計画はそのまま(最後の目標へ運び続け、目標が無ければ手元を止める)。</p>
+<p><b>玉を動かすのは重力(+ 抗力、rho &gt; 0 のとき)とひもの張力(≥ 0 の片側拘束)だけ</b>。けんは玉を押さない: `<code style="color:#22d3bf">contact(hand, p) → 隙間 [m]</code>`</p>
+<p>(:func:<code style="color:#22d3bf">kendamaworld.kendama_clearance</code> など)を渡すと、捕球の前に隙間 &lt; −`<code style="color:#22d3bf">contact_tol</code>` になった step で &quot;hit_ken&quot; として終わる</p>
+<p>(けん先・皿の縁・皿胴に玉が触れた = 失敗)。捕球は `<code style="color:#22d3bf">kp[&quot;catch_window&quot;]</code>`(玉が縁に触れた高さ)で判定する。</p>
+<p>終わり方 `<code style="color:#22d3bf">end_reason</code>`: &quot;caught&quot;(捕球)、&quot;hit_ken&quot;(けん玉に触れた)、&quot;missed&quot;(弛んだ後、下向きに落ちながら大皿の面より 2 r_b 以上下に来た。</p>
+<p>`<code style="color:#22d3bf">stop_on_miss=False</code>` なら止めない: snap の門に使う)、&quot;timeout&quot;(t_end)。</p>
+<p>返り値 ``{&quot;t&quot;, &quot;p&quot;, &quot;v&quot;, &quot;hand&quot;, &quot;anchor&quot; (= 支点 = 糸穴), &quot;cup&quot;, &quot;cup_v&quot;, &quot;taut&quot;, &quot;tension&quot;, &quot;energy&quot;, &quot;snap_times&quot;, &quot;snap_loss&quot;,</p>
+<p>&quot;slack_t&quot;, &quot;caught&quot;, &quot;catch_t&quot;, &quot;end_reason&quot;, &quot;lateral&quot;, &quot;plan_log&quot;, &quot;n_estimates&quot;, &quot;stage&quot;, &quot;min_gap&quot;}``(配列は終わった step まで。</p>
+<p>stage = 各 step の制御の段階 (&quot;lift&quot; 振り上げ / &quot;wait&quot; 弛んだが計画前 / 計画の &quot;stage&quot;(hold / carry / absorb)or &quot;plan&quot;)。slack_t = ひもが</p>
+<p>張った後で初めて弛んだ時刻、初めから弛んでいれば 0.0、一度も弛まなければ None。energy = ½mv² + mgz。n_estimates = 計画に</p>
+<p>渡した知覚の数)。初期状態が |p₀ − 支点(0)| &gt; L、t_end &lt; 0、dt ≤ 0、上限 ≤ 0 は ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_kendama">poc_kendama</a> — <code style="color:#22d3bf">py -3.11 examples/poc_kendama.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">kendama</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:kendama_params">kendama_params</a> · <a style="color:#22d3bf" href="opdrive:elliptic_k_agm">elliptic_k_agm</a> · <a style="color:#22d3bf" href="opdrive:pendulum_period_exact">pendulum_period_exact</a> · <a style="color:#22d3bf" href="opdrive:pendulum_launch_speed">pendulum_launch_speed</a> · <a style="color:#22d3bf" href="opdrive:pendulum_rod_simulate">pendulum_rod_simulate</a> · <a style="color:#22d3bf" href="opdrive:tether_tension_fixed">tether_tension_fixed</a> · <a style="color:#22d3bf" href="opdrive:tether_slack_angle">tether_slack_angle</a> · <a style="color:#22d3bf" href="opdrive:swing_up_plan">swing_up_plan</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: kendama.py — DRIVE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

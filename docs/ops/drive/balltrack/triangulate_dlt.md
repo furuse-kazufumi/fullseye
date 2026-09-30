@@ -4,7 +4,7 @@ dim: drive
 category: balltrack
 in: matrix × any × any
 out: table
-examples: [poc_ball_bounce]
+examples: [poc_ball_bounce, poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -29,6 +29,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_ball_bounce](../../../../examples/poc_ball_bounce.py) — `py -3.11 examples/poc_ball_bounce.py`
+- [poc_kendama](../../../../examples/poc_kendama.py) — `py -3.11 examples/poc_kendama.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

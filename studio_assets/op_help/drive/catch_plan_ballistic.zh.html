@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">catch_plan_ballistic — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.catch_plan_ballistic(kp: &#x27;dict&#x27;, *, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, g: &#x27;float&#x27; = None, v_target: &#x27;float&#x27; = 0.5, v_rel_max: &#x27;float&#x27; = 1.0, n_planes: &#x27;int&#x27; = 12, plane_step: &#x27;float&#x27; = 0.02, clearance: &#x27;bool&#x27; = False, margin: &#x27;float&#x27; = 0.002)</code>(要直接调用实现,<code style="color:#22d3bf">import kendama; kendama.catch_plan_ballistic(kp: &#x27;dict&#x27;, *, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, g: &#x27;float&#x27; = None, v_target: &#x27;float&#x27; = 0.5, v_rel_max: &#x27;float&#x27; = 1.0, n_planes: &#x27;int&#x27; = 12, plane_step: &#x27;float&#x27; = 0.02, clearance: &#x27;bool&#x27; = False, margin: &#x27;float&#x27; = 0.002)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;catch_plan_ballistic&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>弛んだ玉の (p, v) から放物線の閉形式で皿の到達点を出す計画。返り値は `<code style="color:#22d3bf">plan(t, p, v, cup_state) → dict</code>`。</p>
+<p>捕球の判定は「玉が皿の窓の上端(縁の面 + h_c + 1.5 r_b)に相対速さ ≤ v_rel_max で下向きに入る」瞬間に起きるので、</p>
+<p>窓の上端に玉が速さ `<code style="color:#22d3bf">v_target</code>` で届く面を選ぶ: 頂点 z_a = z + v_z²/(2g) から z_c = z_a − (h_c + 1.5 r_b) − v_target²/(2g)。</p>
+<p>到達時刻は z + v_z τ − ½ g τ² = z_c + h_c + 1.5 r_b の<b>遅い方の根</b>(下降)τ = (v_z + √(v_z² − 2g(z_c + h_c + 1.5 r_b − z)))/g、</p>
+<p>目標の xy = (x + v_x τ, y + v_y τ)。皿が bang-bang で τ までに届かなければ(閉形式の移動時間: 静止から 2√(d/a) または</p>
+<p>d/v + v/a、動いていれば現在の速さ込み)面を `<code style="color:#22d3bf">plane_step</code><code style="color:#22d3bf"> ずつ下げて </code><code style="color:#22d3bf">n_planes</code>` 段まで探す(下げるほど時間は増え、</p>
+<p>到達速さは増える)。どの面にも間に合わなければ <b>最上段を返し</b> `<code style="color:#22d3bf">feasible=False</code>`(到達速さが最小の面に賭ける。</p>
+<p>「最下段へ逃げる」と到達の直前に τ → 0 で必ず不可判定になり皿が 20 cm 沈んで落とす —— 測って退けた)。</p>
+<p>返り値 `<code style="color:#22d3bf">{&quot;target&quot; (皿の中心), &quot;t_hit&quot;, &quot;z_plane&quot;, &quot;v_ball_hit&quot;, &quot;speed_hit&quot;, &quot;feasible&quot;, &quot;travel&quot;, &quot;apex&quot;}</code>`。</p>
+<p>`<code style="color:#22d3bf">clearance=True</code><code style="color:#22d3bf">: 玉の下端が縁の面(+ </code><code style="color:#22d3bf">margin</code>`)より上に出る時刻 τ_up までは皿を<b>横に動かさない</b>(高さだけ面へ)——</p>
+<p>大皿の縁はけん玉のいちばん高い所なので、玉が縁の面より上なら xy がどこでもぶつからない。間に合うかは τ − τ_up で判定し、</p>
+<p>玉が縁の面を越えない面は不可。返り値に `<code style="color:#22d3bf">&quot;landing&quot;</code><code style="color:#22d3bf">(落下点 = 最終の目標)と </code><code style="color:#22d3bf">&quot;wait&quot;</code>`(τ_up、0 = 待たない)を足す。</p>
+<p>制限(正直に): 皿は目標で<b>静止して待つ</b>(到達時の相対速さ = 玉の速さ)。間に合わない面での「玉に合わせて皿を下げる」</p>
+<p>速度合わせは実装していない —— v_rel_max に頼る。抗力は無視(60 mm の玉の ≤ 0.5 s の飛翔で数 mm、毎 step 計画し直すので消える)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">any</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">kendama</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:kendama_params">kendama_params</a> · <a style="color:#22d3bf" href="opdrive:elliptic_k_agm">elliptic_k_agm</a> · <a style="color:#22d3bf" href="opdrive:pendulum_period_exact">pendulum_period_exact</a> · <a style="color:#22d3bf" href="opdrive:pendulum_launch_speed">pendulum_launch_speed</a> · <a style="color:#22d3bf" href="opdrive:pendulum_rod_simulate">pendulum_rod_simulate</a> · <a style="color:#22d3bf" href="opdrive:tether_tension_fixed">tether_tension_fixed</a> · <a style="color:#22d3bf" href="opdrive:tether_slack_angle">tether_slack_angle</a> · <a style="color:#22d3bf" href="opdrive:swing_up_plan">swing_up_plan</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: kendama.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

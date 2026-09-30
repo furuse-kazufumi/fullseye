@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">hole_detect — DRIVE <code style="color:#22d3bf">kendama</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hole_detect(img, ball_center, ball_radius, *, dark_ratio: &#x27;float&#x27; = 0.45, min_sat: &#x27;float&#x27; = 0.35, min_chroma: &#x27;float&#x27; = 0.1, min_area: &#x27;int&#x27; = 3) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import kendama; kendama.hole_detect(img, ball_center, ball_radius, *, dark_ratio: &#x27;float&#x27; = 0.45, min_sat: &#x27;float&#x27; = 0.35, min_chroma: &#x27;float&#x27; = 0.1, min_area: &#x27;int&#x27; = 3) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;hole_detect&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>玉の像の中の暗い円盤(けん先の穴)を探す: 玉の中心 `<code style="color:#22d3bf">ball_center</code><code style="color:#22d3bf"> (col, row)・像の半径 </code><code style="color:#22d3bf">ball_radius</code>` [px] の円の内側で、</p>
+<p>明るさ(RGB の平均)が玉の明るさの中央値の `<code style="color:#22d3bf">dark_ratio</code><code style="color:#22d3bf"> 倍未満、彩度 (max − min)/max ≥ </code><code style="color:#22d3bf">min_sat</code>`(灰色の糸を除く)、</p>
+<p>かつ色度(RGB / |RGB|)が玉の色度の中央値から `<code style="color:#22d3bf">min_chroma</code>` 以上離れた(陰になった玉の面は明るさだけが落ちて色度は同じ</p>
+<p>—— 明るさだけで拾うと影を穴と取り違えた、測って退けた)画素の連結成分のうち最大のもの。返り値 ``{&quot;found&quot;, &quot;col&quot;, &quot;row&quot;, &quot;angle&quot; (玉の中心 → 穴の重心の像の角度 [rad]、</p>
+<p>atan2(Δrow, Δcol)), &quot;offset&quot; (距離 / ball_radius: 0 = 正面、→ 1 = 縁), &quot;ellipticity&quot; (短軸 / 長軸、2 次モーメントから:</p>
+<p>1 = 正面の円、→ 0 = 真横), &quot;area&quot; [px]}``。見つからなければ found False(他は NaN)。</p>
+<p>正面から見た穴の中心は玉の中心と重なり、横へ回るほど縁へ寄って潰れる(offset ≈ sin φ、ellipticity ≈ cos φ、φ = 穴の軸と視線の角)。</p>
+<p>img (H, W, 3)、ball_radius &gt; 0 でなければ ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_kendama">poc_kendama</a> — <code style="color:#22d3bf">py -3.11 examples/poc_kendama.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">kendama</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:kendama_params">kendama_params</a> · <a style="color:#22d3bf" href="opdrive:elliptic_k_agm">elliptic_k_agm</a> · <a style="color:#22d3bf" href="opdrive:pendulum_period_exact">pendulum_period_exact</a> · <a style="color:#22d3bf" href="opdrive:pendulum_launch_speed">pendulum_launch_speed</a> · <a style="color:#22d3bf" href="opdrive:pendulum_rod_simulate">pendulum_rod_simulate</a> · <a style="color:#22d3bf" href="opdrive:tether_tension_fixed">tether_tension_fixed</a> · <a style="color:#22d3bf" href="opdrive:tether_slack_angle">tether_slack_angle</a> · <a style="color:#22d3bf" href="opdrive:swing_up_plan">swing_up_plan</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: kendama.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

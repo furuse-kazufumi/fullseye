@@ -1,8 +1,8 @@
 {
- "n_ops": 2344,
+ "n_ops": 2378,
  "tiers": {
   "color": 12,
-  "ledger": 1393,
+  "ledger": 1427,
   "nary": 17,
   "registry": 922
  },
@@ -358,6 +358,20 @@
    ]
   },
   {
+   "name": "add_ken",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "kendamaworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
    "name": "add_mesh_object",
    "halcon": "",
    "in_sort": "table",
@@ -455,6 +469,19 @@
    "in_sort": "table",
    "out_sort": "scalar",
    "category": "roadjp",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "add_string",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "kendamaworld",
    "tier": "ledger",
    "ledger": "opsdrive",
    "dim": "drive",
@@ -2124,6 +2151,19 @@
    ]
   },
   {
+   "name": "camera_perceiver",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "kendamaworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "camera_rays",
    "halcon": "",
    "in_sort": "table",
@@ -2253,6 +2293,45 @@
    "in_sorts": [
     "mesh",
     "vector"
+   ]
+  },
+  {
+   "name": "catch_plan_ballistic",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "catch_plan_staged",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "catch_success_rate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -4474,6 +4553,17 @@
    "in_sorts": [
     "pairs"
    ]
+  },
+  {
+   "name": "elliptic_k_agm",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "engrave_lines",
@@ -6773,6 +6863,60 @@
    ]
   },
   {
+   "name": "gs_from_world",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "gsplat",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "gs_render",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "gsplat",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "matrix"
+   ]
+  },
+  {
+   "name": "gs_render_fn",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "gsplat",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "gs_update",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "gsplat",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
    "name": "gum_expanded",
    "halcon": "",
    "in_sort": "table",
@@ -6979,6 +7123,19 @@
     "signal",
     "signal",
     "signal"
+   ]
+  },
+  {
+   "name": "hole_detect",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -7750,6 +7907,136 @@
    "dim": "drive",
    "in_sorts": [
     "points"
+   ]
+  },
+  {
+   "name": "ken_mesh",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "kendamaworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "ken_set_pose",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "kendamaworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "matrix"
+   ]
+  },
+  {
+   "name": "ken_truth",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "kendamaworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "kendama_catch_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "kendama_clearance",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "kendamaworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "kendama_params",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "kendama_pose",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "kendamaworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "kendama_rig",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "kendamaworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "kendama_simulate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "kendama_world",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "kendamaworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -9952,6 +10239,17 @@
    ]
   },
   {
+   "name": "noisy_perceiver",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "any",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "normal_consistency",
    "halcon": "",
    "in_sort": "points",
@@ -10457,6 +10755,17 @@
    ]
   },
   {
+   "name": "parabola_fit_g",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "parallax_layers",
    "halcon": "",
    "in_sort": "sprites",
@@ -10624,11 +10933,44 @@
    "in_sorts": []
   },
   {
+   "name": "pendulum_launch_speed",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "pendulum_period",
    "halcon": "",
    "in_sort": null,
    "out_sort": "scalar",
    "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "pendulum_period_exact",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "pendulum_rod_simulate",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "kendama",
    "tier": "ledger",
    "ledger": "opsdrive",
    "dim": "drive",
@@ -15657,6 +15999,30 @@
    ]
   },
   {
+   "name": "string_mesh",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "any",
+   "category": "kendamaworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "string_set",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "kendamaworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "stroke_resample_closed",
    "halcon": "",
    "in_sort": "pairs",
@@ -15905,6 +16271,45 @@
    "ledger": "opsroughness",
    "dim": "roughness",
    "in_sorts": []
+  },
+  {
+   "name": "swing_up_apex",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "swing_up_lift",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "swing_up_plan",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
   },
   {
    "name": "swt_map",
@@ -16237,6 +16642,28 @@
    "in_sort": null,
    "out_sort": "table",
    "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "tether_slack_angle",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "any",
+   "category": "kendama",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "tether_tension_fixed",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "kendama",
    "tier": "ledger",
    "ledger": "opsdrive",
    "dim": "drive",

@@ -2,7 +2,9 @@
 """opsdrive — 自動運転の教習所ワールドの台帳: 規格寸法のコース(2-D)/ 3-D の世界 / 回転式 LiDAR / カメラ /
 τ 理論の衝突までの時間(drivettc)/ RSS の安全距離(rsssafety)/ 閉形式の地形と路面の材質・手続きの物体(driveterrain)/
 卓球の球の力学・追跡・真値つきの台・ラケット(ballistics / balltrack / ballworld / racket)/
-日本の信号灯器と道路標識(roadjp、公表寸法をそのまま頂点に持つ)。
+日本の信号灯器と道路標識(roadjp、公表寸法をそのまま頂点に持つ)/
+けん玉の定理と閉ループの捕球・真値つきのけんの世界(kendama / kendamaworld)。
+世界を 3D Gaussian Splatting にして描く(gsplatnp: 面に貼ったガウシアン + EWA 描画、密度と誤差のつまみ)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -24,7 +26,10 @@ import ballworld
 import drivecourse
 import driveterrain
 import drivettc
+import gsplatnp
 import driveworld
+import kendama
+import kendamaworld
 import lidarsim
 import racket
 import roadjp
@@ -33,7 +38,8 @@ import rsssafety
 _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidarsim, "drivettc": drivettc,
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
-        "roadjp": roadjp}
+        "roadjp": roadjp,
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -199,6 +205,56 @@ _CATALOG = {
         ("add_sign", "roadjp", ["table"], "scalar"),
         ("signal_jp_mesh", "roadjp", [], "table"),
         ("add_signal_jp", "roadjp", ["table"], "scalar"),
+    ],
+    # けん玉の大皿(18 巡目): 大振幅振り子の周期 4√(L/g)K(k)(K は AGM)、張力 m(v²/L + g cos θ) と弛む角 cos θ_s = (2/3)cos θ₀、
+    # 振り上げ(bang-bang / 台形)と頂点の閉形式、皿の縁に乗る幾何、2 段のシミュレーション(張っている間は射影法、弛んだら自由落下)、
+    # 放物線の閉形式で皿を運ぶ閉ループの計画、知覚雑音つきの成功率。
+    "kendama": [
+        ("kendama_params", "kendama", [], "table"),
+        ("elliptic_k_agm", "kendama", [], "scalar"),
+        ("pendulum_period_exact", "kendama", [], "scalar"),
+        ("pendulum_launch_speed", "kendama", [], "scalar"),
+        ("pendulum_rod_simulate", "kendama", [], "table"),
+        ("tether_tension_fixed", "kendama", [], "scalar"),
+        ("tether_slack_angle", "kendama", [], "any"),
+        ("swing_up_plan", "kendama", ["table"], "any"),
+        ("swing_up_apex", "kendama", ["table"], "table"),
+        ("kendama_catch_check", "kendama", ["table"], "table"),
+        ("kendama_simulate", "kendama", ["table"], "table"),
+        ("catch_plan_ballistic", "kendama", ["table"], "any"),
+        ("noisy_perceiver", "kendama", [], "any"),
+        ("catch_success_rate", "kendama", ["table"], "table"),
+        # 作り直し: 段階を明示した捕球(hold → carry → absorb)、頂点を決める持ち上げ量の閉形式、g 既知の放物線の当てはめ、玉の穴の検出
+        ("catch_plan_staged", "kendama", ["table"], "any"),
+        ("swing_up_lift", "kendama", ["table"], "scalar"),
+        ("parabola_fit_g", "kendama", [], "table"),
+        ("hole_detect", "kendama", ["image2d"], "table"),
+    ],
+    # けんの世界(18 巡目、作り直し): けん(けん先・握り・中皿の回転体)+ 皿胴(両端が大皿・小皿に開く回転体)、ラベル 27 けん /
+    # 28 大皿 / 30 小皿 / 31 中皿 / 32 玉の穴(ballworld の 20〜26 と重ならない)、糸の角柱(29)、床 + けん + 穴のある玉 + 糸の世界、
+    # 振り上げの空間を見るカメラの組、受ける皿の中心の投影の真値。ballworld の上に載る層。
+    "kendamaworld": [
+        ("ken_mesh", "kendamaworld", ["table"], "table"),
+        ("add_ken", "kendamaworld", ["table", "table"], "scalar"),
+        ("ken_set_pose", "kendamaworld", ["table", "matrix"], "any"),
+        ("string_mesh", "kendamaworld", [], "any"),
+        ("add_string", "kendamaworld", ["table"], "scalar"),
+        ("string_set", "kendamaworld", ["table"], "any"),
+        ("kendama_world", "kendamaworld", ["table"], "table"),
+        ("kendama_rig", "kendamaworld", ["table"], "table"),
+        ("ken_truth", "kendamaworld", ["table", "table"], "table"),
+        # 作り直し: 技の姿勢で世界を置く、玉とけん玉の隙間(回転体の子午面の厳密な距離)、画像だけから (p̂, v̂) を出す知覚
+        ("kendama_pose", "kendamaworld", ["table"], "table"),
+        ("kendama_clearance", "kendamaworld", ["table"], "table"),
+        ("camera_perceiver", "kendamaworld", ["table"], "any"),
+    ],
+    # 世界(三角形の束)→ 3DGS: 面に貼ったガウシアン(面の番号 + 重心座標 + 局所の誤差を固定で持ち、頂点が動けば付いて動く)、
+    # EWA 投影 Σ' = J W Σ Wᵀ Jᵀ + 0.3 I と手前からの α 合成で描く。真値 = 2 次モーメントの閉形式・合成の式・剛体の同変性。
+    "gsplat": [
+        ("gs_from_world", "gsplatnp", ["table"], "table"),
+        ("gs_update", "gsplatnp", ["table", "table"], "table"),
+        ("gs_render", "gsplatnp", ["table", "matrix"], "table"),
+        ("gs_render_fn", "gsplatnp", ["table"], "any"),
     ],
 }
 

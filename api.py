@@ -525,6 +525,19 @@ from racket import (  # noqa: E402,F401
     racket_params, racket_impact, racket_hit_check, aim_velocity, racket_plan, racket_move, rally_simulate,
     strategy_attacker, strategy_feeder, shot_is_legal,
 )
+import kendama  # noqa: E402  (けん玉: 大振幅振り子の定理・張力と弛む角・振り上げ・皿への閉ループの捕球)
+from kendama import (  # noqa: E402,F401
+    kendama_params, elliptic_k_agm, pendulum_period_exact, pendulum_launch_speed, pendulum_rod_simulate,
+    tether_tension_fixed, tether_slack_angle, swing_up_plan, swing_up_apex, kendama_catch_check, kendama_simulate,
+    catch_plan_ballistic, noisy_perceiver, catch_success_rate, catch_plan_staged, swing_up_lift, parabola_fit_g, hole_detect,
+)
+import gsplatnp  # noqa: E402  (世界 → 3D Gaussian Splatting: 面に貼ったガウシアンと EWA 描画、密度と誤差のつまみ)
+from gsplatnp import gs_from_world, gs_update, gs_render, gs_render_fn  # noqa: E402,F401
+import kendamaworld  # noqa: E402  (けんの真値つき世界: けん + 大皿 + 糸のメッシュ、カメラの組、皿の投影の真値)
+from kendamaworld import (  # noqa: E402,F401
+    ken_mesh, add_ken, ken_set_pose, string_mesh, add_string, string_set, kendama_world, kendama_rig, ken_truth,
+    kendama_pose, kendama_clearance, camera_perceiver,
+)
 import roadjp  # noqa: E402  (日本の信号灯器と道路標識: 公表寸法をそのまま頂点に持つメッシュ、driveworld の世界に足す)
 from roadjp import (  # noqa: E402,F401
     sign_params, sign_image, plate_mesh_from_image, sign_mesh, add_sign, signal_jp_mesh, add_signal_jp,

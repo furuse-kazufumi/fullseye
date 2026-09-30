@@ -1908,6 +1908,183 @@ def _b_add_signal_jp(pool, rng):
     return (DW._empty_world(), 10.0, 0.0, 0.0), {"state": "red", "arm": 2.0}
 
 
+def _b_kp(pool, rng):
+    import kendama as KD
+    return KD.kendama_params()
+
+
+def _b_kp_vac(pool, rng):
+    import kendama as KD
+    return KD.kendama_params(rho=0.0)
+
+
+def _b_kp_only(pool, rng):
+    return (_b_kp(pool, rng),), {}
+
+
+def _b_ellk(pool, rng):
+    return (0.5,), {}
+
+
+def _b_period_exact(pool, rng):
+    return (0.39, 1.0), {}
+
+
+def _b_launch_speed(pool, rng):
+    return (1.0, 0.39), {}
+
+
+def _b_rod(pool, rng):
+    return (0.39, 1.0, 0.2), {"dt": 1e-3}
+
+
+def _b_tension(pool, rng):
+    return (1.0, 0.3, 0.39, 0.075), {}
+
+
+def _b_slack_angle(pool, rng):
+    return (2.0, 0.39), {}
+
+
+def _b_ken_catch(pool, rng):
+    kp = _b_kp(pool, rng)
+    c = np.array([0.1, 0.2, 0.3])
+    return (kp, c + np.array([0.0, 0.0, kp["cup_rest_height"]]), (0.0, 0.0, -0.1), c), {}
+
+
+def _b_ken_sim(pool, rng):
+    # 手元固定・真空・計画なしの 0.2 s(200 step): 張ったままの振り子(ballistics.tether_simulate と同じ軌跡)
+    kp = _b_kp_vac(pool, rng)
+    L = kp["string"]
+    return (kp, (0.0, 0.0, 0.0)), {"p0": (0.0, 0.0, -L), "v0": (1.0, 0.0, 0.0), "t_end": 0.2, "dt": 1e-3}
+
+
+def _b_perceiver(pool, rng):
+    return (np.random.default_rng(0), 0.01, 0.0), {}
+
+
+def _b_success(pool, rng):
+    return (_b_kp(pool, rng),), {"n": 1, "seed": 0, "t_end": 0.6}
+
+
+def _b_ken_mesh(pool, rng):
+    return (_b_kp(pool, rng),), {}
+
+
+def _b_add_ken(pool, rng):
+    import driveworld as DW
+    import kendamaworld as KW
+    return (DW._empty_world(), KW.ken_mesh(_b_kp(pool, rng)), (0.0, 0.0, 1.0)), {}
+
+
+def _b_ken_pose(pool, rng):
+    import kendamaworld as KW
+    (w, m, p), _ = _b_add_ken(pool, rng)
+    i = KW.add_ken(w, m, p)
+    return (w, i, (0.05, 0.0, 1.1), np.eye(3)), {}
+
+
+def _b_string_mesh(pool, rng):
+    return ((0.0, 0.0, 0.6), (0.0, 0.0, 1.0)), {}
+
+
+def _b_add_string(pool, rng):
+    import driveworld as DW
+    return (DW._empty_world(), (0.0, 0.0, 0.6), (0.0, 0.0, 1.0)), {}
+
+
+def _b_string_set(pool, rng):
+    import kendamaworld as KW
+    (w, a, b), _ = _b_add_string(pool, rng)
+    i = KW.add_string(w, a, b)
+    return (w, i, (0.2, 0.1, 0.7), (0.0, 0.0, 1.0)), {}
+
+
+def _b_ken_world(pool, rng):
+    return (_b_kp(pool, rng),), {"subdiv": 1}
+
+
+def _b_ken_rig(pool, rng):
+    return (_b_kp(pool, rng),), {"n": 2, "width": 96, "height_px": 60}
+
+
+def _b_ken_truth(pool, rng):
+    import kendamaworld as KW
+    kp = _b_kp(pool, rng)
+    w = KW.kendama_world(kp, subdiv=1)
+    return (w, w["kendama"]["ken"], KW.kendama_rig(kp, n=2, width=96, height_px=60)[0]), {}
+
+
+def _b_staged(pool, rng):
+    return (_b_kp(pool, rng),), {}
+
+
+def _b_parabola_g(pool, rng):
+    t = np.linspace(0.0, 0.07, 8)
+    P = np.array([0.1, -0.2, 1.1]) + np.outer(t, [0.3, -0.1, 2.0]) - np.outer(4.905 * t * t, [0.0, 0.0, 1.0])
+    return (t, P), {}
+
+
+def _b_hole_img(pool, rng):
+    rr, cc = np.mgrid[0:60, 0:60]
+    img = np.full((60, 60, 3), 0.6)
+    img[(rr - 30.0) ** 2 + (cc - 30.0) ** 2 <= 20.0 ** 2] = (1.0, 0.55, 0.05)
+    img[(rr - 34.0) ** 2 + (cc - 36.0) ** 2 <= 5.0 ** 2] = (0.10, 0.06, 0.03)
+    return (img, (30.0, 30.0), 20.0), {}
+
+
+def _b_kendama_pose(pool, rng):
+    import kendamaworld as KW
+    kp = _b_kp(pool, rng)
+    w = KW.kendama_world(kp, subdiv=1)
+    return (w, (0.0, 0.0, 1.0), (0.05, -0.013, 0.7)), {}
+
+
+def _b_ken_clear(pool, rng):
+    return (_b_kp(pool, rng), (0.0, 0.0, 1.0), [(0.0, 0.0, 1.2), (0.0, 0.3, 1.0)]), {}
+
+
+def _b_cam_perceiver(pool, rng):
+    import kendamaworld as KW
+    kp = _b_kp(pool, rng)
+    w = KW.kendama_world(kp, subdiv=1)
+    return (w, KW.kendama_rig(kp, n=2, width=96, height_px=72)), {"fps": 50.0, "window": 32}
+
+
+def _gs_quad_world():
+    import driveworld as DW
+    w = DW._empty_world()
+    V = np.array([[-0.1, -0.1, 0.0], [0.1, -0.1, 0.0], [0.1, 0.1, 0.0], [-0.1, 0.1, 0.0]])
+    DW.world_add(w, V, np.array([[0, 1, 2], [0, 2, 3]]), 5, (0.8, 0.5, 0.2), name="quad")
+    return w
+
+
+def _gs_cam():
+    import driveworld as DW
+    return DW.camera_pose((0.0, -0.4, 0.3), (0.0, 0.0, 0.0)), DW.camera_intrinsics(40.0, 64, 48)
+
+
+def _b_gs_from_world(pool, rng):
+    return (_gs_quad_world(),), {"spacing": 0.01}
+
+
+def _b_gs_update(pool, rng):
+    import gsplatnp as GS
+    w = _gs_quad_world()
+    return (GS.gs_from_world(w, spacing=0.01), w), {}
+
+
+def _b_gs_render(pool, rng):
+    import gsplatnp as GS
+    pose, K = _gs_cam()
+    return (GS.gs_from_world(_gs_quad_world(), spacing=0.01), pose, K, 64, 48), {}
+
+
+def _b_gs_render_fn(pool, rng):
+    import gsplatnp as GS
+    return (GS.gs_from_world(_gs_quad_world(), spacing=0.01),), {}
+
+
 def _b_graph_kcore(pool, rng):
     B = (rng.random((30, 30)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -2144,6 +2321,17 @@ OP_ARG_BUILDERS = {
     "aim_velocity": _b_aim, "racket_plan": _b_racket_plan, "racket_move": _b_racket_move,
     "strategy_attacker": _b_strategy, "strategy_feeder": _b_strategy, "shot_is_legal": _b_shot_legal,
     "rally_simulate": _b_rally,
+    "kendama_params": _b_course_none, "elliptic_k_agm": _b_ellk, "pendulum_period_exact": _b_period_exact,
+    "pendulum_launch_speed": _b_launch_speed, "pendulum_rod_simulate": _b_rod, "tether_tension_fixed": _b_tension,
+    "tether_slack_angle": _b_slack_angle, "swing_up_plan": _b_kp_only, "swing_up_apex": _b_kp_only,
+    "kendama_catch_check": _b_ken_catch, "kendama_simulate": _b_ken_sim, "catch_plan_ballistic": _b_kp_only,
+    "noisy_perceiver": _b_perceiver, "catch_success_rate": _b_success,
+    "ken_mesh": _b_ken_mesh, "add_ken": _b_add_ken, "ken_set_pose": _b_ken_pose, "string_mesh": _b_string_mesh,
+    "add_string": _b_add_string, "string_set": _b_string_set, "kendama_world": _b_ken_world,
+    "kendama_rig": _b_ken_rig, "ken_truth": _b_ken_truth,
+    "catch_plan_staged": _b_staged, "swing_up_lift": _b_staged, "parabola_fit_g": _b_parabola_g, "hole_detect": _b_hole_img,
+    "kendama_pose": _b_kendama_pose, "kendama_clearance": _b_ken_clear, "camera_perceiver": _b_cam_perceiver,
+    "gs_from_world": _b_gs_from_world, "gs_update": _b_gs_update, "gs_render": _b_gs_render, "gs_render_fn": _b_gs_render_fn,
     "sign_params": _b_sign_kind, "sign_image": _b_sign_img, "plate_mesh_from_image": _b_plate_mesh,
     "sign_mesh": _b_sign_mesh, "add_sign": _b_add_sign, "signal_jp_mesh": _b_signal_jp,
     "add_signal_jp": _b_add_signal_jp,
@@ -2913,6 +3101,8 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "ball_truth",          # "markers_uv" は球の裏側の模様が NaN(docstring どおり)
                          "reproject",           # カメラの後ろ(深度 ≤ 0)の点は NaN(docstring どおり)
                          "kalman_ca",           # "innovation" は観測の無いコマ(z が NaN)で NaN
+                         "ken_truth",           # "radius_px" はカメラの後ろ(深度 ≤ 0)で NaN(docstring どおり)
+                         "catch_success_rate",  # "mean_lateral" は 1 回も捕れなければ nan(docstring どおり)
                          } | NONFINITE_BY_CONTRACT_METRICS \
                          | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
                          | NONFINITE_BY_CONTRACT_OPTICS \
