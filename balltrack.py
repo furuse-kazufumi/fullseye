@@ -264,8 +264,14 @@ def bounce_detect(t, z, *, min_gap: int = 2) -> dict:
 
 # ─────────────────────────────── 模様からのスピン ───────────────────────────────
 
-def marker_direction(marker_uv, center_uv, radius_px) -> np.ndarray:
-    """像の中の模様の位置 (col, row) → 球面上の向き(カメラ系の単位ベクトル、前半球: x 右、y 上、z 手前)。"""
+def marker_direction(marker_uv, center_uv, radius_px, K=None) -> np.ndarray:
+    """像の中の模様の位置 (col, row) → 球面上の向き(カメラ系の単位ベクトル、前半球: x 右、y 上、z 手前)。
+
+    ``K`` (3, 3) を渡すと**透視で厳密に**解く: 球の角半径 α = atan(半径 px / f) から中心までの距離(半径 1 として 1/sin α)と
+    中心の視線を出し、模様の画素の視線を球面と交差させ、交点の法線を返す。★K が無い形は円板を正射影とみなし、中心を通る
+    視線を z とする系で答える —— 球が光軸から外れていると系ごと回り、球が動く映像では視線の変化がそのまま見かけの回転になる
+    (0.6 m 先を 6 m/s で横切る球は 1 ms で視線が 0.01 rad 回り、1 コマの回転 0.15 rad に 7 % 上乗せされた。2026-09-30、
+    PoC ㉔ の近接カメラ)。K が無ければ従来どおり。"""
     m = np.asarray(marker_uv, np.float64).reshape(2)
     c = np.asarray(center_uv, np.float64).reshape(2)
     if radius_px <= 0:
@@ -275,7 +281,21 @@ def marker_direction(marker_uv, center_uv, radius_px) -> np.ndarray:
     rr = x * x + y * y
     if rr > 1.0 + 1e-9:
         raise ValueError("marker lies outside the ball's disc")
-    return np.array([x, y, np.sqrt(max(0.0, 1.0 - rr))])
+    if K is None:
+        return np.array([x, y, np.sqrt(max(0.0, 1.0 - rr))])
+    Km = np.asarray(K, np.float64).reshape(3, 3)
+    f = 0.5 * (Km[0, 0] + Km[1, 1])
+    alpha = np.arctan(radius_px / f)
+    rc = np.linalg.solve(Km, np.array([c[0], c[1], 1.0]))
+    C = rc / np.linalg.norm(rc) / np.sin(alpha)                        # 中心(カメラ系 x 右・y 下・z 前、球の半径 = 1)
+    rm = np.linalg.solve(Km, np.array([m[0], m[1], 1.0]))
+    rm /= np.linalg.norm(rm)
+    b = float(rm @ C)
+    disc = b * b - (float(C @ C) - 1.0)
+    tt = b - np.sqrt(max(0.0, disc))                                   # 手前の交点(外れたら接点へ寄せる)
+    n = tt * rm - C
+    n /= np.linalg.norm(n)
+    return np.array([n[0], -n[1], -n[2]])                              # この関数の系(x 右、y 上、z 手前)へ
 
 
 def spin_from_markers(dirs0, dirs1, dt: float) -> dict:

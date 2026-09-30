@@ -133,3 +133,45 @@ def test_poc_scripts_get_a_default_figure_dir_when_run_directly(monkeypatch, tmp
     monkeypatch.setattr(sys, "argv", [str(tmp_path / "repo" / "examples" / "demo_not_poc.py")])
     examplefig._auto_default()
     assert examplefig.ENV_DIR not in os.environ
+
+
+# ─────────────────────────────── 動画(MP4 + 軽い GIF の対) ───────────────────────────────
+
+def _moving_dot(n=24, h=45, w=61):
+    out = []
+    for k in range(n):
+        a = np.zeros((h, w, 3))
+        a[20:25, 2 + 2 * k:7 + 2 * k] = (1.0, 0.5, 0.1)
+        out.append(a)
+    return out
+
+
+def test_save_video_writes_a_gif_row_that_points_to_the_mp4(_fresh):
+    """figures.json には GIF の 1 行だけが載り、"video" が同じ番号の MP4 を指す(MP4 自体は行を持たない)。奇数の辺でも書ける。"""
+    pytest.importorskip("imageio_ffmpeg")
+    p = figs.save_video("dot", _moving_dot(), caption="動く点", fps=24.0, gif_every=2, gif_width=None)
+    assert p is not None and p.name == "01_dot.gif", figs.errors()
+    man = json.loads((_fresh / "figures.json").read_text(encoding="utf-8"))
+    assert len(man) == 1 and man[0]["file"] == "01_dot.gif"
+    assert man[0]["video"] == "01_dot.mp4" and man[0]["video_frames"] == 24 and man[0]["frames"] == 12
+    assert (_fresh / "01_dot.mp4").stat().st_size > 0
+    import imageio.v2 as iio
+    r = iio.get_reader(str(_fresh / "01_dot.mp4"))
+    try:
+        assert r.count_frames() == 24
+    finally:
+        r.close()
+    assert not figs.errors()
+
+
+def test_save_video_does_nothing_without_the_directory(monkeypatch):
+    monkeypatch.delenv("FULLSEYE_FIGURE_DIR", raising=False)
+    monkeypatch.setenv("FULLSEYE_FIGURES", "off")
+    figs.reset()
+    assert figs.save_video("dot", _moving_dot()) is None
+
+
+def test_save_video_rejects_bad_arguments(_fresh):
+    assert figs.save_video("dot", [], fps=24.0) is None
+    assert figs.save_video("dot2", _moving_dot(), fps=0.0) is None
+    assert len(figs.errors()) == 2

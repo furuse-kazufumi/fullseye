@@ -4,7 +4,7 @@ dim: drive
 category: balltrack
 in: 
 out: signal
-examples: [poc_ball_bounce]
+examples: [poc_ball_bounce, poc_table_tennis_spin]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -13,11 +13,17 @@ version: 0.2.3  # fullseye lib version this note was generated for
 # marker_direction — DRIVE `balltrack` op
 
 - **データ種**: `なし` → `signal`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.marker_direction(marker_uv, center_uv, radius_px) -> 'np.ndarray'` (実装を直接呼ぶなら `import balltrack; balltrack.marker_direction(marker_uv, center_uv, radius_px) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("marker_direction")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.marker_direction(marker_uv, center_uv, radius_px, K=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import balltrack; balltrack.marker_direction(marker_uv, center_uv, radius_px, K=None) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("marker_direction")`)
 
 ## 使い方
 
 像の中の模様の位置 (col, row) → 球面上の向き(カメラ系の単位ベクトル、前半球: x 右、y 上、z 手前)。
+
+``K`` (3, 3) を渡すと**透視で厳密に**解く: 球の角半径 α = atan(半径 px / f) から中心までの距離(半径 1 として 1/sin α)と
+中心の視線を出し、模様の画素の視線を球面と交差させ、交点の法線を返す。★K が無い形は円板を正射影とみなし、中心を通る
+視線を z とする系で答える —— 球が光軸から外れていると系ごと回り、球が動く映像では視線の変化がそのまま見かけの回転になる
+(0.6 m 先を 6 m/s で横切る球は 1 ms で視線が 0.01 rad 回り、1 コマの回転 0.15 rad に 7 % 上乗せされた。2026-09-30、
+PoC ㉔ の近接カメラ)。K が無ければ従来どおり。
 
 ## 参考(サンプルデータ・文献)
 
@@ -28,6 +34,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_ball_bounce](../../../../examples/poc_ball_bounce.py) — `py -3.11 examples/poc_ball_bounce.py`
+- [poc_table_tennis_spin](../../../../examples/poc_table_tennis_spin.py) — `py -3.11 examples/poc_table_tennis_spin.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

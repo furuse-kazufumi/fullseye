@@ -1,12 +1,12 @@
-# DRIVE operator help — 184 ops in 16 categories
+# DRIVE operator help — 185 ops in 16 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
 ## カテゴリ
 
-### ball (25)
+### ball (26)
 
-[apex_sequence](ball/apex_sequence.md) · [ball_params](ball/ball_params.md) · [bounce](ball/bounce.md) · [bounce_total_time](ball/bounce_total_time.md) · [contact_angular_momentum](ball/contact_angular_momentum.md) · [cup_catch_check](ball/cup_catch_check.md) · [drag_coefficient_sphere](ball/drag_coefficient_sphere.md) · [fit_aero](ball/fit_aero.md) · [fit_bounce](ball/fit_bounce.md) · [fit_parabola](ball/fit_parabola.md) · [flight_fit](ball/flight_fit.md) · [flight_ode](ball/flight_ode.md) · [flight_simulate](ball/flight_simulate.md) · [flight_state_at](ball/flight_state_at.md) · [flight_vacuum](ball/flight_vacuum.md) · [impact_params](ball/impact_params.md) · [incline_slip_angle](ball/incline_slip_angle.md) · [magnus_lift_coefficient](ball/magnus_lift_coefficient.md) · [mu_from_stop_distance](ball/mu_from_stop_distance.md) · [pendulum_period](ball/pendulum_period.md) · [restitution_from_apexes](ball/restitution_from_apexes.md) · [restitution_from_intervals](ball/restitution_from_intervals.md) · [roll_slide_state](ball/roll_slide_state.md) · [slide_stop_distance](ball/slide_stop_distance.md) · [tether_simulate](ball/tether_simulate.md)
+[apex_sequence](ball/apex_sequence.md) · [ball_params](ball/ball_params.md) · [bounce](ball/bounce.md) · [bounce_total_time](ball/bounce_total_time.md) · [contact_angular_momentum](ball/contact_angular_momentum.md) · [cup_catch_check](ball/cup_catch_check.md) · [drag_coefficient_sphere](ball/drag_coefficient_sphere.md) · [fit_aero](ball/fit_aero.md) · [fit_bounce](ball/fit_bounce.md) · [fit_parabola](ball/fit_parabola.md) · [fit_spin](ball/fit_spin.md) · [flight_fit](ball/flight_fit.md) · [flight_ode](ball/flight_ode.md) · [flight_simulate](ball/flight_simulate.md) · [flight_state_at](ball/flight_state_at.md) · [flight_vacuum](ball/flight_vacuum.md) · [impact_params](ball/impact_params.md) · [incline_slip_angle](ball/incline_slip_angle.md) · [magnus_lift_coefficient](ball/magnus_lift_coefficient.md) · [mu_from_stop_distance](ball/mu_from_stop_distance.md) · [pendulum_period](ball/pendulum_period.md) · [restitution_from_apexes](ball/restitution_from_apexes.md) · [restitution_from_intervals](ball/restitution_from_intervals.md) · [roll_slide_state](ball/roll_slide_state.md) · [slide_stop_distance](ball/slide_stop_distance.md) · [tether_simulate](ball/tether_simulate.md)
 
 ### balltrack (9)
 

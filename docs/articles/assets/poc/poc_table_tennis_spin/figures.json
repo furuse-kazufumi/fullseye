@@ -1,0 +1,90 @@
+[
+ {
+  "file": "01_side_three_serves.gif",
+  "name": "side_three_serves",
+  "caption": "同じ速さ・同じ向き(v₀ = (6.0, 0, 1.3) m/s)で打ち出した 3 本を横から: トップスピン(橙)は沈んで x = 0.49 m、無回転(黄)は 0.75 m、バックスピン(青)は浮いて 1.12 m に落ちる(台の中心から)。球は見やすさのため 1.6 倍で描いた。MP4 = 240 fps の全コマ(1/8 スロー)。",
+  "shape": [
+   360,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 75,
+  "frames_written": 75,
+  "fps": 15.0,
+  "video": "01_side_three_serves.mp4",
+  "video_frames": 149,
+  "video_fps": 30.0,
+  "video_shape": [
+   540,
+   960,
+   3
+  ]
+ },
+ {
+  "file": "02_spin_closeup.gif",
+  "name": "spin_closeup",
+  "caption": "近接カメラ(1000 fps、20 コマ = 20 ms)のトップスピン。黒い模様(14 個、見えるのは 4〜6 個)を前のコマと向きで対応づけ、Kabsch で回転を当てる: ω = [-0.7, 150.1, -7.2] rad/s(真値 (0, 150, 0))。1/100 スロー、3 回繰り返し。",
+  "shape": [
+   512,
+   512,
+   3
+  ],
+  "animated": true,
+  "frames": 60,
+  "frames_written": 60,
+  "fps": 10.0,
+  "video": "02_spin_closeup.mp4",
+  "video_frames": 60,
+  "video_fps": 10.0,
+  "video_shape": [
+   512,
+   512,
+   3
+  ]
+ },
+ {
+  "file": "03_top_view_sidespin.gif",
+  "name": "top_view_sidespin",
+  "caption": "上から: 横回転(紫、ω = (0, 0, 150) rad/s)は無回転(黄)と同じ打ち出しから 15.4 cm 横に逸れて落ちる。曲がり方から読んだ回転 [1.8, 0.2, 152.9] rad/s。",
+  "shape": [
+   360,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 60,
+  "frames_written": 60,
+  "fps": 15.0,
+  "video": "03_top_view_sidespin.mp4",
+  "video_frames": 120,
+  "video_fps": 30.0,
+  "video_shape": [
+   360,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "04_two_readings.png",
+  "name": "two_readings",
+  "caption": "曲がり方(軌跡に運動方程式を当てる)と模様(近接カメラの Kabsch)は独立。進行方向に平行な成分は曲がり方からは読めない(定理)ので、垂直成分で比べる。",
+  "shape": [
+   176,
+   630,
+   3
+  ],
+  "csv": "04_two_readings.csv",
+  "tsv": "04_two_readings.tsv"
+ },
+ {
+  "file": "05_error_vs_length.png",
+  "name": "error_vs_length",
+  "caption": "跳ねる前の先頭 n コマだけで回転を読む。短いと曲がり(マグヌスの分)が検出の誤差に埋もれて読めない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

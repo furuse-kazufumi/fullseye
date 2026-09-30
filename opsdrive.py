@@ -149,6 +149,7 @@ _CATALOG = {
         ("fit_parabola", "ballistics", ["signal", "points"], "table"),
         ("flight_fit", "ballistics", ["signal", "points", "table"], "table"),
         ("fit_aero", "ballistics", ["signal", "points", "table"], "table"),
+        ("fit_spin", "ballistics", ["signal", "points", "table"], "table"),
         ("fit_bounce", "ballistics", ["table"], "table"),
         ("slide_stop_distance", "ballistics", [], "scalar"),
         ("incline_slip_angle", "ballistics", [], "scalar"),

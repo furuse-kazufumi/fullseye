@@ -220,6 +220,37 @@ def test_marker_direction_maps_disc_to_front_hemisphere():
         BT.marker_direction(c, c, 0.0)
 
 
+
+def test_marker_direction_view_ray_correction():
+    """K を渡すと透視で厳密に解く: 光軸上の球の中心の模様は (0, 0, 1)、光軸から外れた球でも真の向きと 1e-9 で一致し、
+    正射影の形(K なし)は外れる(2026-09-30)。"""
+    K = np.array([[800.0, 0, 320.0], [0, 800.0, 240.0], [0, 0, 1.0]])
+    c = (320.0, 240.0)
+    assert np.allclose(BT.marker_direction(c, c, 10.0, K), (0, 0, 1), atol=1e-12)
+    r = 0.02
+    C = np.array([0.25, -0.12, 0.6])                                   # カメラ系(x 右、y 下、z 前)、光軸から 24° 外れた球
+    worst_plain, worst_k = 0.0, 0.0
+    toward = -C / np.linalg.norm(C)
+    rng = np.random.default_rng(3)
+    for _ in range(40):
+        n = toward + 0.5 * rng.normal(size=3)
+        n /= np.linalg.norm(n)
+        if n @ toward < 0.3:
+            continue
+        uv = lambda X: (K @ (X / X[2]))[:2]                             # noqa: E731
+        cu = uv(C)
+        rad = 800.0 * r / np.sqrt(C @ C - r * r)
+        mu = uv(C + r * n)
+        truth = np.array([n[0], -n[1], -n[2]])                          # この関数の系(x 右、y 上、z 手前)
+        try:
+            dp = BT.marker_direction(mu, cu, rad)
+            dk = BT.marker_direction(mu, cu, rad, K)
+        except ValueError:
+            continue
+        worst_plain = max(worst_plain, np.arccos(np.clip(dp @ truth, -1, 1)))
+        worst_k = max(worst_k, float(np.linalg.norm(dk - truth)))           # arccos は 1 の近くで √ε しか分解できない
+    assert worst_k < 1e-9 and worst_plain > 0.1, (worst_plain, worst_k)
+
 # ─────────────────────────────── 跳ね ───────────────────────────────────────
 
 def test_bounce_detect_finds_simulated_contacts():

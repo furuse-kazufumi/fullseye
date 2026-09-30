@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：610 / 1149 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：610 / 1152 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel.py`
@@ -141,6 +141,10 @@
 - **L401** _(ja)_ — ★本当に効く r_lo / r_hi(半径の窓)だが、後者は既定が None で「データから決める」 意味なので、正の数値既定を要求する橋の選定には載らない。嘘のノブを 1 本足すより **a だけを配線して b を『未使用』と書く**ほうが正しい。
 - **L573** — ★在 2026-09-05 之前通过操作 sys.path 读取 ``tools/chain_fuzz``(未随附)。在 wheel 中会失败,而下面的 build() 悄悄返回 [],所以 tb_* 143 个 op 消失了。
 
+## `ballistics.py`
+
+- **L293** _(ja)_ — ★減衰つき(Levenberg–Marquardt)。素の Gauss–Newton は軌跡が短い(曲がりが雑音に埋もれる)と ω の方向が ほぼ不定になり、1 歩で 1e7 rad/s へ飛んだ(2026-09-30、PoC ㉔ の 10〜45 コマ)。費用が下がる歩だけ受け入れる。
+
 ## `blob2d.py`
 
 - **L287** — ★注意符号:顶点按 (row, col) 顺序排列,所以 ``_monotone_chain`` 返回的朝向是(把 row 视为 x 的)逆时针 = 屏幕上为顺时针。内侧是叉积**非负**的一侧(写成 ``<= 0`` 会让所有物体 solidity 为 0)。
@@ -223,7 +227,7 @@
 - **L242** — ★不要丢掉示例的正文。图出不来固然遗憾,但数字必须给出。
 - **L281** — ★这里不能甩给 :func:`_to_rgb8`。它把 (H,W) 传给 `colorize_depth`,但**在其中会逐帧归一化**,所以全为 0 的帧和全为 1 的帧会出同样的颜色(2026-09-09 被测试抓到)。只有显式传入值域,尺度才会统一为一个。
 - **L346** — ★Pillow 会**把与前一帧完全相同的帧折叠为一帧**(那部分时间会加到前一帧的显示时间上,所以动作速度不变)。写完后计数,若与传入的数不同就在台账里**两者都**留下 —— 以免把嘴上说「72 帧的 GIF」而内容只有 40 帧的情况悄悄放过。
-- **L412** — ★2026-09-08:面板小时标题放不下,``annotate_figure_grid``(正确地)拒绝,于是**有一张图悄悄消失了**。29×19 的 core 格子或 24×24 的缩小图在 PoC 里很常见,可错误却说「把标题缩短」—— 实际的修法是「把面板放大」。两位负责人独立地掉进同一个坑(有过看板的 scene 图消失一张的例子),所以不让每个调用者各自写放大,而在这里只做一次最近邻放大。用最近邻是为了在放大时**不造出值**(插值会在图上产生并不存在的中间值,伪彩会说谎)。
+- **L484** — ★2026-09-08:面板小时标题放不下,``annotate_figure_grid``(正确地)拒绝,于是**有一张图悄悄消失了**。29×19 的 core 格子或 24×24 的缩小图在 PoC 里很常见,可错误却说「把标题缩短」—— 实际的修法是「把面板放大」。两位负责人独立地掉进同一个坑(有过看板的 scene 图消失一张的例子),所以不让每个调用者各自写放大,而在这里只做一次最近邻放大。用最近邻是为了在放大时**不造出值**(插值会在图上产生并不存在的中间值,伪彩会说谎)。
 
 ## `examples/acoustic_condition_monitoring.py`
 
@@ -903,6 +907,11 @@
 
 - **L200** _(ja)_ — ★門 4: fullseye の op が自前の計算と整数まで一致する(op の実例 + 第 2 実装)
 - **L209** _(ja)_ — ★門 2: 3 次元 Sholl は回転で整数が 1 つも動かない
+
+## `examples/poc_table_tennis_spin.py`
+
+- **L49** _(ja)_ — ★追跡カメラは予算に関係なく 240 fps。120 fps に落とすと標本が半分になり、回転の誤差が √2 倍(バック 0.9 → 10.9 %)、 コマ間で球が 1.6 cm 動くので跳ねの谷も浅く見えた(2026-09-30)。予算は長さの掃引の刻みだけで削る。
+- **L269** _(ja)_ — 画像から見つけた跳ね(真値は使わない)。★z の局所最小のうち**最も低いもの** —— 欠けた検出が残ると空中に偽の 「跳ね」ができ、最初の谷を採るとその手前で軌跡を切ってしまう(バックスピンで 36 コマしか使えなかった)。 高さの閾値(台 + r + 1.5 cm)で選ぶ手は、コマ間で球が 1.6 cm 動く 120 fps で本物の谷を落とした
 
 ## `examples/poc_template_tracking.py`
 
@@ -1997,8 +2006,8 @@
 - **L305** — 事件位置（点过程）-- point_spectrum 的入口。★**不要只用均匀随机**：没有周期成分就一次也不会触及「寻找周期的 op」的有意义行为，所以用把 12 个无关事件混入周期 17.0 序列的**结构化数据**作种子（随机-only 的测试会隐藏结构缺陷，是本 repo 的规律）。
 - **L919** — ★混有非有限值的点云会**让 KD 树的构建本身以生的 ValueError 崩溃**（scipy："data must be finite"）。池的设计是记录 NONFINITE 后仍保留值，所以脏点云来到这里是预期之内 -- 由构建方防范。2026-09-06 实际踩到：新的族增加后连锁的走法变了，在 seed 3_000_0xx 命中这条路径，fuzzer 自身停止了（不是 op 的缺陷而是**工具的缺陷**。无法绑定的输入约定为跳过而非抛异常）。
 - **L1238** _(ja)_ — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L2914** — ★到 2026-09-02 为止一直是 ``lambda v: True`` = **因为谓词被计为「有」，反而比没有更糟**（点检脚本也会把它计为「有谓词」）。实测下它连 None / 42 / 字符串 / dict 都放行。正典是通过**全部运行**消费侧 6 个 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）来确定的：6 个 op 都只接受上面两种形状，其余的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 变成指名的 fail-closed（实测）。因为**不接受 (2,N)**，把 2-tuple 用 np.stack 压成 (2,N) 的 3 个 adapter 改成了 axis=1。长度不同的两条（histogram 的 counts/edges）也不是「对」，予以拒绝。
-- **L3032** — ★「恰好 2 个元素」与 pose（用 `len >= 2` 允许 info）**是有意不同的**。实测 2026-09-02：把 mesh 作为单个参数接收的 4 个既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）对 3-tuple 会送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 个元素。也就是说 **本 repo 的 mesh sort 正典是 2-tuple**，多余的元素不是「信息更多」，而是让下游全灭的类型层面的谎言。唯一的例外 `voxel_to_mesh`（返回 (v, f, n)）现在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（与 gicp / vol_label 同样处理）。
+- **L2923** — ★到 2026-09-02 为止一直是 ``lambda v: True`` = **因为谓词被计为「有」，反而比没有更糟**（点检脚本也会把它计为「有谓词」）。实测下它连 None / 42 / 字符串 / dict 都放行。正典是通过**全部运行**消费侧 6 个 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）来确定的：6 个 op 都只接受上面两种形状，其余的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 变成指名的 fail-closed（实测）。因为**不接受 (2,N)**，把 2-tuple 用 np.stack 压成 (2,N) 的 3 个 adapter 改成了 axis=1。长度不同的两条（histogram 的 counts/edges）也不是「对」，予以拒绝。
+- **L3041** — ★「恰好 2 个元素」与 pose（用 `len >= 2` 允许 info）**是有意不同的**。实测 2026-09-02：把 mesh 作为单个参数接收的 4 个既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）对 3-tuple 会送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 个元素。也就是说 **本 repo 的 mesh sort 正典是 2-tuple**，多余的元素不是「信息更多」，而是让下游全灭的类型层面的谎言。唯一的例外 `voxel_to_mesh`（返回 (v, f, n)）现在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（与 gicp / vol_label 同样处理）。
 
 ## `tools/chain_mine.py`
 

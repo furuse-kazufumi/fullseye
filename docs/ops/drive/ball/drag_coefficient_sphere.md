@@ -32,7 +32,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
-[flight_vacuum](flight_vacuum.md) · [magnus_lift_coefficient](magnus_lift_coefficient.md) · [restitution_from_apexes](restitution_from_apexes.md) · [restitution_from_intervals](restitution_from_intervals.md) · [fit_parabola](fit_parabola.md) · [flight_fit](flight_fit.md) · [fit_aero](fit_aero.md) · [bounce_detect](../balltrack/bounce_detect.md)
+[flight_vacuum](flight_vacuum.md) · [magnus_lift_coefficient](magnus_lift_coefficient.md) · [restitution_from_apexes](restitution_from_apexes.md) · [restitution_from_intervals](restitution_from_intervals.md) · [fit_parabola](fit_parabola.md) · [flight_fit](flight_fit.md) · [fit_aero](fit_aero.md) · [fit_spin](fit_spin.md)
 
 ## 同カテゴリ(`ball`)
 

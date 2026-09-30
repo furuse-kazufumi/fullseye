@@ -44,6 +44,7 @@ The criteria are the same as in the autonomous-driving series ([here](https://qi
 |---|---|---|
 | 1 | [The ball bounces — tracking, triangulation, prediction through the bounce, spin, rally](#part-1-the-ball-bounces--tracking-triangulation-prediction-through-the-bounce-spin-rally) | closed forms in vacuum / angular momentum about the contact point / apex ratio e^{2k}h₀ / the ITTF bounce standard / a world with ground truth / the rally length |
 | 2 | [Kendama — the string only pulls, the ball flies a parabola, the cup is carried by a prediction from images](#part-2-kendama--the-string-only-pulls-the-ball-flies-a-parabola-the-cup-is-carried-by-a-prediction-from-images) | elliptic integral and period theorems / closed forms of tension and slack angle / Japan Kendama Association dimensions / a world with ground truth / 3DGS projection and compositing formulas |
+| 3 | [Filming a spinning ball and reading its spin two ways — from the curve and from the markings](#part-3-filming-a-spinning-ball-and-reading-its-spin-two-ways--from-the-curve-and-from-the-markings) | the ω × v theorem (spin about the direction of travel produces no force) / a world with ground truth / two independent readings (track and markings) agree |
 
 ---
 
@@ -403,6 +404,88 @@ This part produced **11 figures** in all — [see them all](https://github.com/f
 
 ---
 
+## Part 3: Filming a spinning ball and reading its spin two ways — from the curve and from the markings
+
+![Three serves from the side](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/01_side_three_serves.gif)
+
+*↑ Three balls launched at the same speed and angle (v₀ = (6.0, 0, 1.3) m/s), seen from the side. Topspin (orange) dips and lands short, no spin (yellow) lands in the middle, backspin (blue) floats and lands long. Only the spin (150 rad/s ≈ 1,430 rpm) differs. The balls are drawn 1.6× larger for visibility. All 240 fps frames (1/8 slow motion): [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_table_tennis_spin/01_side_three_serves.mp4).*
+
+A spinning ball feels a force perpendicular to both its direction of travel and its spin axis (the Magnus force, along ω × v): downward for topspin, upward for backspin, sideways for sidespin. So **the curve of the track carries the spin**. The markings on the ball, on the other hand, show the rotation directly. This part reads the spin of the same serve from these two independent cues and checks one against the other.
+
+### Steps
+
+1. Film four serves that differ only in spin (top, none, back, side) with two cameras on either side of the table (240 fps, 1024 × 800).
+2. Find the ball by colour, triangulate, and get a 3-D track. Like a high-speed camera's ROI readout, only a 160 × 160 px window around the constant-velocity prediction from the previous two frames is read (the full frame when the ball is lost).
+3. **From the curve**: fit the drag + Magnus equation of motion to the pre-bounce track with **9 parameters — position, velocity and spin** (`fit_spin`).
+4. **From the markings**: film the same serve with a close-up camera (1000 fps, 20 frames) and fit the motion of the 14 black marks with Kabsch (`spin_from_markers`).
+5. Compare the two, predict the landing point from the read spin, and check it against the truth.
+
+![Sidespin from above](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/03_top_view_sidespin.gif)
+
+*↑ From above. Sidespin (purple) leaves the same launch as no spin (yellow) and lands 15 cm to the side. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_table_tennis_spin/03_top_view_sidespin.mp4)*
+
+![Close-up markings](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/02_spin_closeup.gif)
+
+*↑ Topspin seen by the close-up camera (1000 fps), 20 ms at 1/100 speed. The 4–6 visible marks are matched to the previous frame by direction and the rotation is fitted. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_table_tennis_spin/02_spin_closeup.mp4)*
+
+### Gates and results
+
+| Gate | Source of truth | Result |
+|---|---|---|
+| Identity | feed the true track to `fit_spin` | spin returned to 1.3 × 10⁻⁴ rad/s |
+| Unreadable component | theorem: force is ω × v, so spin parallel to travel produces none | instantaneous acceleration differs by 4.8 × 10⁻¹⁷ m/s²; after 0.25 s the track moves 7.1 mm (5.4 cm for perpendicular spin) |
+| Landing point | a world that holds the truth | landing predicted from the read spin within 2 cm for all four (x = 0.488 / 0.754 / 1.124 m; top < none < back) |
+| Spin from the curve | same | perpendicular-spin error 3.9 % (top), 0.9 % (back), 1.7 % (side); 7.6 rad/s for no spin |
+| Spin from the markings | same | 4.8 %, 3.2 %, 0.9 %; 2.0 rad/s for no spin |
+| The two agree | second implementation (one sees only the track, the other only the marks) | 3.0 %, 3.1 %, 1.9 % |
+| Track length | same | 400 % from 42 ms of track, 4 % from 321 ms |
+
+![Two readings](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/04_two_readings.png)
+
+*↑ The two readings side by side. The curve cannot see the component parallel to travel, so they are compared on the perpendicular component.*
+
+![Track length](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/05_error_vs_length.png)
+
+*↑ Spin cannot be read until the curve shows. Using only the first n frames, the Magnus bend is buried in the 1–2 mm triangulation error while the track is short.*
+
+### Pitfalls
+
+- **Spin about the direction of travel cannot be read from the curve.** The Magnus force is ω × v, so the part of ω parallel to v produces no force. Most of the 22 rad/s the fit reported for the no-spin ball lies along that direction. `fit_spin` returns the readable part separately as `omega_perp`. The markings show every component, which is how the two cues divide the work.
+- **The size of the spin can be undetermined.** The lift model C_L = 1/(2 + 1/S) (S = rω/v) levels off at 0.5 for large spin. With a short, noisy track the fit asks for "more force" and grows |ω| without bound (an undamped Gauss–Newton jumps to 10⁷ rad/s in one step). `fit_spin` fits with damping and returns `at_bound = True` when it hits the cap (1,000 rad/s by default) — do not trust the magnitude then.
+- **The net hides half the ball.** From the server-side camera, the net's white band hides the top half of a low ball beyond the net. The colour centroid shifts to the visible lower half, up to 26 mm after triangulation. Detections whose image radius is under 0.8× their neighbours' are dropped.
+- **For a ball crossing the frame, the change of line of sight looks like spin.** Treating the ball's image as a disc and turning a mark's offset from the centre into a direction is only right when the ball is on the optical axis. A ball crossing 0.6 m away at 6 m/s turns the line of sight by 0.01 rad per ms, adding 7 % to one frame's rotation (0.15 rad). Pass the camera K as `marker_direction(..., K)` and it solves the perspective exactly by intersecting the mark's pixel ray with the sphere.
+
+### Not suited for
+
+- The aerodynamic model (C_d = 0.4, spin-ratio C_L) is the same one that produced the truth; reading spin from the curve assumes the model is right. Measured C_L has been reported to dip near a spin ratio of 0.5 (Miyazaki et al. 2017), so on real balls C_L has to be measured first.
+- Spin is constant in flight (no decay).
+- Ball detection runs on synthetic video with a known colour; there is no real lighting, blur or background. The close-up camera is conveniently placed for the 20 ms the ball is in view.
+
+### Run it
+
+```python
+import numpy as np
+import fullseye as fs
+
+bp = fs.ledger.ball_params()                               # 40 mm, 2.7 g, drag 0.4, lift from the spin ratio
+t = np.arange(0.0, 0.30, 1 / 240)                          # 0.3 s at 240 fps
+f = fs.ledger.flight_ode([-1.3, 0.0, 1.01], [6.0, 0.0, 1.3], [0.0, 150.0, 0.0], bp, 0.31, 1e-4)
+p = np.column_stack([np.interp(t, f["t"], f["p"][:, k]) for k in range(3)])
+p_obs = p + np.random.default_rng(0).normal(0.0, 1.5e-3, p.shape)     # about 1.5 mm triangulation error
+
+r = fs.ledger.fit_spin(t, p_obs, bp)
+print(np.round(r["omega"], 1), np.round(r["omega_perp"], 1), r["at_bound"])
+# [ 16.5 157.8  -5.1] [  1.5 157.7  -8.4] False      ← spin [rad/s], readable part, hit the cap?
+
+r10 = fs.ledger.fit_spin(t[:15], p_obs[:15], bp)          # only the first 62 ms
+print(np.round(r10["omega_perp"], 1), r10["at_bound"])
+# [ -1.8 -93.8   8.1] True                            ← too short to read (stuck at the cap)
+```
+
+The whole PoC: `py -3.11 examples/poc_table_tennis_spin.py` (figures and videos when `FULLSEYE_FIGURE_DIR` is set).
+
+---
+
 ## Next time
 
-Spike tricks (the spike into the ball's hole). The ball's rotation is solved and the hole's direction read from images to line up the spike — as row 15 shows, that needs pixels on the ball. After that, the coefficients of restitution and friction are measured from real video (one high-speed camera).
+**Measuring bounce and friction from video and checking them against published values.** A ball bouncing on the table is filmed with one high-speed camera, and the coefficients of restitution e and friction μ are read from the images. The truth comes from published values: the table bounce in the ITTF Laws (dropped from 30 cm, about 23 cm), measured restitution and friction on the table (Inaba et al. 2017, with their dependence on impact speed), and the closed-form boundary between rolling and slipping after a thin-shelled ball bounces (Cross 2002). After that we return to the spike trick (the spike into the ball's hole).

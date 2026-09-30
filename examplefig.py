@@ -366,6 +366,78 @@ def save_gif(name: str, frames, caption: str = "", fps: float = 8.0,
         return None
 
 
+#: MP4 の上限コマ数(10 分の 60 fps 相当)。GIF と違い、長い映像はこちらで出す
+MAX_VIDEO_FRAMES = 36000
+
+
+def save_video(name: str, frames, caption: str = "", fps: float = 30.0,
+               gif_every: int = 1, gif_fps: float | None = None, gif_width: int | None = 480,
+               signed: bool = False):
+    """動画を 1 本書く: **MP4(全コマ・等倍)** と、記事に埋める **軽い GIF**(間引き・縮小)の対。
+
+    ``FULLSEYE_FIGURE_DIR`` が無ければ**何もせず ``None``**。MP4 は imageio + imageio-ffmpeg
+    (extras ``video``)で H.264 / yuv420p に書く(奇数の辺は 1 px 足して偶数にする —— yuv420p の制約)。
+    無ければ台帳に積んで GIF だけ出す(黙って落とさない)。
+
+    figures.json に載るのは **GIF の 1 行**(``"video"`` = MP4 のファイル名、``"video_frames"``、
+    ``"video_fps"`` を足す)。MP4 自体は行を持たない —— 図の読み手(展示館・op 文書)は画像しか
+    扱わないので、MP4 を行にすると全部の読み手が壊れる。記事は GIF を埋め、MP4 へリンクする。
+
+    Parameters
+    ----------
+    gif_every : int
+        GIF は ``gif_every`` コマに 1 枚(MP4 は全コマ)。
+    gif_fps : float or None
+        GIF の再生速度。None なら ``fps / gif_every``(実時間と同じ速さ)。
+    gif_width : int or None
+        GIF の幅(px、縦横比は保つ)。None なら等倍。
+    """
+    d = target_dir()
+    if d is None:
+        return None
+    try:
+        seq = list(frames)
+        if not seq:
+            raise ValueError("save_video: コマが 1 枚も無い")
+        if len(seq) > MAX_VIDEO_FRAMES:
+            raise ValueError("save_video: コマが %d 枚(上限 %d)" % (len(seq), MAX_VIDEO_FRAMES))
+        if not (fps > 0.0) or int(gif_every) < 1:
+            raise ValueError("save_video: fps は正、gif_every は 1 以上(来たのは %r, %r)" % (fps, gif_every))
+        rgb = _frames_to_rgb8(seq, signed)
+        h, w = rgb[0].shape[:2]
+        mp4 = d / ("%02d_%s.mp4" % (len(_manifest) + 1, name))
+        written_mp4 = None
+        try:
+            import imageio.v2 as iio
+
+            ph, pw = h + (h % 2), w + (w % 2)
+            pad = [a if (ph, pw) == (h, w) else np.pad(a, ((0, ph - h), (0, pw - w), (0, 0)), mode="edge") for a in rgb]
+            iio.mimwrite(str(mp4), pad, fps=float(fps), codec="libx264", quality=8,
+                         pixelformat="yuv420p", macro_block_size=1)
+            written_mp4 = mp4
+        except Exception as exc:                        # noqa: BLE001 - 無い環境では GIF だけ
+            _errors.append("%s: MP4 を書けなかった(%s: %s)—— extras [video] を入れる" % (name, type(exc).__name__, exc))
+        gseq = rgb[::int(gif_every)]
+        if gif_width is not None and w > int(gif_width):
+            from PIL import Image
+
+            gh = max(1, round(h * int(gif_width) / w))
+            gseq = [np.asarray(Image.fromarray(a).resize((int(gif_width), gh), Image.LANCZOS)) for a in gseq]
+        gfps = float(gif_fps) if gif_fps else float(fps) / int(gif_every)
+        path = save_gif(name, gseq, caption=caption, fps=gfps)
+        if path is not None and written_mp4 is not None:
+            want = "%02d_%s.mp4" % (int(path.name[:2]), name)
+            if written_mp4.name != want:                # GIF の番号と揃える(間に別の図が入らないので通常は同じ)
+                written_mp4 = written_mp4.replace(d / want)
+            _manifest[-1].update({"video": written_mp4.name, "video_frames": len(rgb), "video_fps": float(fps),
+                                  "video_shape": [h, w, 3]})
+            (d / "figures.json").write_text(json.dumps(_manifest, ensure_ascii=False, indent=1), encoding="utf-8")
+        return path
+    except Exception as exc:                            # noqa: BLE001
+        _errors.append("%s: %s: %s" % (name, type(exc).__name__, exc))
+        return None
+
+
 def manifest() -> list[dict]:
     """この実行で書いた図の一覧。"""
     return list(_manifest)

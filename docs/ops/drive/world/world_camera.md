@@ -4,7 +4,7 @@ dim: drive
 category: world
 in: table × matrix × matrix
 out: table
-examples: [poc_ball_bounce, poc_driving_longitudinal, poc_driving_school, poc_kendama, poc_ttc_rss, poc_world_terrain]
+examples: [poc_ball_bounce, poc_driving_longitudinal, poc_driving_school, poc_kendama, poc_table_tennis_spin, poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -35,6 +35,7 @@ render3d.render_mesh(attributes=True) の三角形 id から面の色・ラベ�
 - [poc_driving_longitudinal](../../../../examples/poc_driving_longitudinal.py) — `py -3.11 examples/poc_driving_longitudinal.py`
 - [poc_driving_school](../../../../examples/poc_driving_school.py) — `py -3.11 examples/poc_driving_school.py`
 - [poc_kendama](../../../../examples/poc_kendama.py) — `py -3.11 examples/poc_kendama.py`
+- [poc_table_tennis_spin](../../../../examples/poc_table_tennis_spin.py) — `py -3.11 examples/poc_table_tennis_spin.py`
 - [poc_ttc_rss](../../../../examples/poc_ttc_rss.py) — `py -3.11 examples/poc_ttc_rss.py`
 - [poc_world_terrain](../../../../examples/poc_world_terrain.py) — `py -3.11 examples/poc_world_terrain.py`
 

@@ -508,7 +508,7 @@ import ballistics  # noqa: E402  (球の力学: 真空の閉形式 + 抗力・�
 from ballistics import (  # noqa: E402,F401
     ball_params, impact_params, flight_vacuum, flight_ode, flight_simulate, flight_state_at, magnus_lift_coefficient,
     drag_coefficient_sphere, bounce, contact_angular_momentum, apex_sequence, bounce_total_time, restitution_from_apexes,
-    restitution_from_intervals, fit_parabola, flight_fit, fit_aero, fit_bounce, slide_stop_distance, incline_slip_angle,
+    restitution_from_intervals, fit_parabola, flight_fit, fit_aero, fit_spin, fit_bounce, slide_stop_distance, incline_slip_angle,
     mu_from_stop_distance, roll_slide_state, tether_simulate, pendulum_period, cup_catch_check,
 )
 import balltrack  # noqa: E402  (球の追跡: サブピクセル検出 → 追跡 → DLT 三角測量 → 等加速度 Kalman、模様から角速度)

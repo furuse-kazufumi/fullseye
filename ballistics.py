@@ -24,7 +24,7 @@ import numpy as np
 __all__ = [
     "ball_params", "impact_params", "flight_vacuum", "flight_ode", "flight_simulate", "flight_state_at", "magnus_lift_coefficient",
     "drag_coefficient_sphere", "bounce", "contact_angular_momentum", "apex_sequence", "bounce_total_time",
-    "restitution_from_apexes", "restitution_from_intervals", "fit_parabola", "flight_fit", "fit_aero", "fit_bounce",
+    "restitution_from_apexes", "restitution_from_intervals", "fit_parabola", "flight_fit", "fit_aero", "fit_spin", "fit_bounce",
     "slide_stop_distance", "incline_slip_angle", "mu_from_stop_distance", "roll_slide_state", "tether_simulate",
     "pendulum_period", "cup_catch_check",
 ]
@@ -246,6 +246,84 @@ def contact_angular_momentum(v, omega, normal, bp: dict) -> np.ndarray:
     n = _v3(normal, "normal")
     n = n / np.linalg.norm(n)
     return bp["inertia"] * w + bp["mass"] * bp["radius"] * np.cross(n, v)
+
+
+def fit_spin(t, p, bp: dict, *, omega0=None, omega_max: float = 1000.0, iters: int = 20, dt: float = 1e-3) -> dict:
+    """**曲がり方から回転を読む**: 軌跡 (t_i, p_i)(跳ねを含まない区間)に、抗力 + マグヌスの運動方程式を
+    (p₀, v₀, ω) の 9 パラメータで Gauss–Newton で当てる(空力係数は ``bp`` の値 = 既知とする)。
+
+    マグヌスの力は ω × v なので、**ω の v に平行な成分は力を生まず、軌跡からは決まらない**(進行方向を軸にした
+    回転 = 横回転の一部)。飛ぶうちに v の向きが変わるので完全に不定ではないが弱い。返り値の ``omega_perp`` =
+    初速に垂直な成分(読める部分)、``cond`` = ヤコビアンの条件数、``omega_axial_sensitivity`` = 平行成分を
+    1 rad/s 動かしたときの軌跡の変化の rms [m](小さいほど読めない)。
+    返り値 ``{"p0", "v0", "omega", "omega_perp", "rms", "cond", "omega_axial_sensitivity", "iters", "t0"}``。
+    真値の軌跡を入れると 1e-3 rad/s で戻る(門)。模様から測った角速度(:func:`balltrack.spin_from_markers`)と
+    独立な第 2 の測り方になる。
+
+    ``omega_max`` [rad/s] = 回転の大きさの上限(各歩の後にこの球へ射影する)。★スピン比の模型 C_L = 1/(2 + 1/S) は
+    回転が大きいと 0.5 で頭打ちになるので、力が足りないと見た当てはめは |ω| を際限なく大きくできる(大きさが決まらない)。
+    軌跡が短く雑音が勝つと 1e5 rad/s へ走った(2026-09-30)。既定 1000 rad/s ≈ 160 回転/秒(強打の上限より上)。
+    返り値の ``at_bound`` が True なら上限に張り付いた = 大きさは読めていない。"""
+    t = np.asarray(t, np.float64).reshape(-1)
+    P = np.asarray(p, np.float64).reshape(-1, 3)
+    if not (np.isfinite(omega_max) and omega_max > 0):
+        raise ValueError("omega_max must be a positive finite number")
+    if t.size != len(P) or t.size < 10 or not np.all(np.isfinite(P)) or not np.all(np.diff(t) > 0):
+        raise ValueError("need ≥ 10 finite samples with increasing t")
+    w0 = np.zeros(3) if omega0 is None else _v3(omega0, "omega0")
+    tau = t - t[0]
+    ff = flight_fit(t, P, w0, bp, dt=dt)
+    x = np.r_[ff["p0"], ff["v0"], w0]
+
+    def model(x):
+        f = flight_ode(x[:3], x[3:6], x[6:9], bp, tau[-1] + dt, dt)
+        return np.column_stack([np.interp(tau, f["t"], f["p"][:, k]) for k in range(3)])
+
+    scales = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 50.0, 50.0, 50.0])
+
+    def jac(x, res):
+        J = np.empty((res.size, 9))
+        for j in range(9):
+            h = 1e-6 * scales[j]
+            xp = x.copy()
+            xp[j] += h
+            J[:, j] = ((model(xp) - P).ravel() - res) / h
+        return J
+
+    # ★減衰つき(Levenberg–Marquardt)。素の Gauss–Newton は軌跡が短い(曲がりが雑音に埋もれる)と ω の方向が
+    #   ほぼ不定になり、1 歩で 1e7 rad/s へ飛んだ(2026-09-30、PoC ㉔ の 10〜45 コマ)。費用が下がる歩だけ受け入れる。
+    res = (model(x) - P).ravel()
+    cost = float(res @ res)
+    lam, it = 1e-3, 0
+    for it in range(1, iters + 1):
+        J = jac(x, res)
+        A = J.T @ J
+        g = J.T @ res
+        D = np.diag(np.maximum(np.diag(A), 1e-12))
+        improved = False
+        for _ in range(12):
+            dx = np.linalg.solve(A + lam * D, -g)
+            xn = x + dx
+            wn = float(np.linalg.norm(xn[6:9]))
+            if wn > omega_max:
+                xn[6:9] *= omega_max / wn
+                dx = xn - x
+            rn = (model(xn) - P).ravel()
+            cn = float(rn @ rn)
+            if cn < cost:
+                x, res, cost, lam, improved = xn, rn, cn, max(lam / 3.0, 1e-9), True
+                break
+            lam *= 4.0
+        if not improved or np.linalg.norm(dx / scales) < 1e-10:
+            break
+    J = jac(x, res)
+    vhat = x[3:6] / max(1e-12, float(np.linalg.norm(x[3:6])))
+    w = x[6:9]
+    sens = J[:, 6:9] @ vhat
+    return {"p0": x[:3], "v0": x[3:6], "omega": w, "omega_perp": w - (w @ vhat) * vhat,
+            "rms": float(np.sqrt(np.mean(np.sum(res.reshape(-1, 3) ** 2, axis=1)))), "cond": float(np.linalg.cond(J)),
+            "omega_axial_sensitivity": float(np.sqrt(np.mean(np.sum(sens.reshape(-1, 3) ** 2, axis=1)))),
+            "iters": it, "t0": float(t[0]), "at_bound": bool(np.linalg.norm(w) > omega_max * (1 - 1e-9))}
 
 
 def fit_bounce(v_in, omega_in, v_out, omega_out, normal, bp: dict) -> dict:

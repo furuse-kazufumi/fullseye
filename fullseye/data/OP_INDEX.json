@@ -1,8 +1,8 @@
 {
- "n_ops": 2408,
+ "n_ops": 2409,
  "tiers": {
   "color": 12,
-  "ledger": 1457,
+  "ledger": 1458,
   "nary": 17,
   "registry": 922
  },
@@ -5384,6 +5384,21 @@
    "dim": "3d",
    "in_sorts": [
     "points"
+   ]
+  },
+  {
+   "name": "fit_spin",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "points",
+    "table"
    ]
   },
   {

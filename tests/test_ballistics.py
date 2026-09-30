@@ -597,3 +597,51 @@ def test_cup_catch_check_ball_larger_than_cup():
     """皿の半径 0.01 < 玉の半径 0.015 は幾何的に入らない設定 → fail-closed で ValueError。"""
     with pytest.raises(ValueError):
         B.cup_catch_check([0.0, 0.0, 0.01], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 1.0], 0.01, 0.015)
+
+
+# ─────────────────────────────── 曲がり方から回転(fit_spin) ───────────────────────────────
+
+def _spin_track(omega, n=72, fps=240.0):
+    bp = B.ball_params()
+    f = B.flight_ode([-1.3, 0.0, 1.01], [6.0, 0.0, 1.3], omega, bp, n / fps + 0.01, 1e-4)
+    t = np.arange(n) / fps
+    return t, np.column_stack([np.interp(t, f["t"], f["p"][:, k]) for k in range(3)]), bp
+
+
+@pytest.mark.parametrize("omega", [(0.0, 150.0, 0.0), (0.0, -150.0, 0.0), (0.0, 0.0, 150.0), (0.0, 0.0, 0.0)])
+def test_fit_spin_returns_the_true_spin(omega):
+    """恒等式: 真値の軌跡から回転が 1e-3 rad/s で戻り、上限には張り付かない。"""
+    t, p, bp = _spin_track(omega)
+    r = B.fit_spin(t, p, bp)
+    assert np.linalg.norm(r["omega"] - np.asarray(omega)) < 1e-3
+    assert not r["at_bound"] and r["rms"] < 1e-6
+    vh = r["v0"] / np.linalg.norm(r["v0"])
+    assert abs(r["omega_perp"] @ vh) < 1e-9                             # 読める成分は初速に垂直
+
+
+def test_fit_spin_axial_spin_is_weakly_observable():
+    """定理: 進行方向に平行な回転は力を生まない → 平行な向きの感度は垂直の向きより桁で小さい。"""
+    t, p, bp = _spin_track((0.0, 150.0, 0.0))
+    r = B.fit_spin(t, p, bp)
+    a0 = B._accel([6.0, 0.0, 1.3], [0.0, 0.0, 0.0], bp)
+    a_ax = B._accel([6.0, 0.0, 1.3], 100.0 * np.array([6.0, 0.0, 1.3]) / np.hypot(6.0, 1.3), bp)
+    assert np.abs(a_ax - a0).max() < 1e-12
+    assert r["omega_axial_sensitivity"] > 0.0
+
+
+def test_fit_spin_caps_the_magnitude_on_a_short_noisy_track():
+    """C_L が頭打ちになるので、短く雑音の多い軌跡では |ω| が決まらない → 上限に射影して at_bound で知らせる(発散しない)。"""
+    t, p, bp = _spin_track((0.0, 150.0, 0.0), n=20)
+    noisy = p + np.random.default_rng(1).normal(0.0, 2e-3, p.shape)
+    r = B.fit_spin(t, noisy, bp, omega_max=800.0)
+    assert np.all(np.isfinite(r["omega"])) and np.linalg.norm(r["omega"]) <= 800.0 * (1 + 1e-9)
+
+
+def test_fit_spin_rejects_bad_input():
+    t, p, bp = _spin_track((0.0, 150.0, 0.0))
+    with pytest.raises(ValueError):
+        B.fit_spin(t[:9], p[:9], bp)
+    with pytest.raises(ValueError):
+        B.fit_spin(t, p, bp, omega_max=0.0)
+    with pytest.raises(ValueError):
+        B.fit_spin(t[::-1], p, bp)
