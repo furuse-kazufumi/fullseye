@@ -50,11 +50,15 @@ JKA 16-2 型の説明(一次資料は未確認)。穴の深さ 40 mm = 160 + 60 
      増やすと検出率は単調に下がり、20 mm / 0.3 で 0.5 未満(つまみが空回りしていない)。
  15. **3DGS の上の穴**: 解像度 × 2・間隔 2 mm で 2 台で見えた姿勢 ≥ 8・角度誤差の中央値 < 5°。間隔 4 mm では読めず、× 1 では
      メッシュより少ない(3DGS のぼけが 5 px の穴を塗りつぶす —— 穴を読むには玉に画素が、穴の中にガウシアンが要る)。
+ 16. **連続技**(ユーザー「受けたら、受けた状態から続けて別の皿で受けて」「10 回成功すれば良し」): 受けた皿から放ち(皿を上へ加速して g より強く
+     止める → 玉が皿から離れる)、飛んでいる間に持ち替えて(手首 ≤ 30 rad/s、仮定)次の皿を着地点の真下へ運び、**速さを合わせて**受ける
+     (位置と速度を目標にする手元の制御: 位置だけの制御は頂点 20 cm で 1 回も受けられない —— tests)。画像だけで もしかめ 10 回連続
+     (+ full では 3 皿・真値も)。毎回 昇ってから下降中、けん玉に触れない、飛び始めも画像から。
 
 正直に書くこと: 実写ではなく真値つきの合成映像(1 kHz の物理、100 fps・480 × 360 の 2 台)。玉 75 g・けん 70 g は仮定。ひもは伸びず
 質量も無い。玉の回転は解かない(描画の約束: 張っている間は糸穴が結び目を向き、弛んだら最後の姿勢のまま)。皿の縁での跳ね・転がりは
 扱わず、「縁に触れた瞬間に横ずれ ≤ 縁の半径・相対速さ ≤ 1 m/s(仮定の閾値)・下降中」を捕球とする。弛んだひもも真っ直ぐに描く。
-けんの姿勢は技ごとに固定(手首で迎えない)、手元の速さ ≤ 2 m/s・加速度 ≤ 20 m/s²(振り上げは開ループで 4.8 g)。ろうそくが
+1 回の技ではけんの姿勢は技ごとに固定(手首で迎えない)、手元の速さ ≤ 2 m/s・加速度 ≤ 20 m/s²(振り上げは開ループで 4.8 g)。連続技では飛んでいる間に持ち替えで回す(手首 ≤ 30 rad/s・手元 ≤ 2.5 m/s、仮定)。ろうそくが
 中皿より難しい理由(つまんだ指の支え)は剛体・並進だけの手元では表せない —— 数字は中皿と同じ相対運動になる。
 草稿から弱めた主張(測って退けた):
 (a) ひもの周期を 120° でも 1e-3 で、は偽 —— ひもは 109.47° で弛む(棒で測る)。
@@ -72,6 +76,9 @@ JKA 16-2 型の説明(一次資料は未確認)。穴の深さ 40 mm = 160 + 60 
     中心の深さで並べる 3DGS では斜めから手前の玉のガウシアンが円盤を覆った → 玉を穴の軸まわりの回転体にして、深さ 40 mm の
     くぼみ(暗い壁と底)にした。さらに縁の円盤が穴の口にはみ出し、画素より細い円盤が不透明のまま太った(糸が 3 画素に)→ 角に接する
     面は 1/4 の大きさで置き、Mip-Splatting の不透明度の補正を入れた。それでも 480 × 360 では玉 17 px・穴 5 px で読めない(門 15)。
+(l) 連続技で雑音が無いと 100 回でも同じ 1 周期の繰り返し(放つ動きが閉形式で決まり玉は真上に上がる)—— 回数は頑健さの証拠にならない。
+    画素雑音 2 px を足すと もしかめ 3 回・3 皿 6 回で崩れる(着地の直前に当て直すたびに目標が揺れ、手元が加速度の上限に張り付く)。
+    深追いはしない(ユーザー「単なる PoC、実演でしかない」)。
 (k) 3DGS の間隔を 64 mm まで粗くしても玉の検出は落ちない: 曲率の上限で玉の上には 146 個以上が残る。崩すのは位置と色の誤差。
 
 Run: py -3.11 examples/poc_kendama.py   (図は FULLSEYE_FIGURE_DIR を設定したときだけ書く。FULLSEYE_POC_BUDGET=reduced で試行を減らす
@@ -270,6 +277,42 @@ def _closeup(kp, size=380, scene_only=False):
     uv = {k: BT.reproject(v[None], pose, K_)[0] for k, v in pts.items()}
     uv = {k: v for k, v in uv.items() if np.all(np.isfinite(v)) and 4 <= v[0] <= size - 5 and 4 <= v[1] <= size - 5}
     return _layout_labels(img, uv, size)
+
+
+# ─────────────────────────────── 連続技(19 巡目)の組み立て ───────────────────────────────
+COMBO_CUP_Z = 1.15                          # 振り上げ終わりの大皿の高さ [m](連続技の頂点 ~1.45 m までカメラに入るよう CUP_Z から下げた)
+COMBO_RIG = dict(distance=2.0, height=1.05, target=(0.0, -0.05, 1.0))   # 2 台(方位 0°・90°)、2 m から: 0.4〜1.6 m が像に入る
+
+
+def _contact_combo(kp):
+    """連続技の接触: 手元 = 皿胴の中心、姿勢 R は時刻ごと(kendama_clearance の R_ken)。"""
+    return lambda hand, p, R: KW.kendama_clearance(kp, hand, p, R_ken=R, grip=np.zeros(3))["gap"][0]
+
+
+def _combo_run(sequence=("ozara", "chuzara"), n_catch=10, perception="image", apex_above_cup=0.20):
+    """吊った玉を振り上げて大皿で受け(18 巡目の制御)、そのまま連続技(:func:`kendama.kendama_combo_simulate`)へ渡す。
+    知覚は真値か画像だけ(振り上げ = 糸の弛み、連続技 = 皿からの飛び始め を画像から)。返り値 {"swing", "combo", "count_total", "per"}。"""
+    kp = KD.kendama_params(trick="ozara")
+    lift = KD.swing_up_lift(kp)
+    H0 = np.array([0.0, 0.0, COMBO_CUP_Z - lift - float(kp["cup_offset"][2])])
+    handle = KD.swing_up_plan(kp, lift=lift, origin=H0, dodge=DODGE)
+    L = kp["pendulum_length"]
+    p0 = H0 + kp["tie_offset"] + np.array([X0, 0.0, -math.sqrt(L * L - X0 * X0)])
+    per_s = per_c = None
+    if perception == "image":
+        world = KW.kendama_world(kp, hand=H0, n=WORLD_N)
+        rig = KW.kendama_rig(kp, **COMBO_RIG)
+        per_s = KW.camera_perceiver(world, rig, fps=FPS)
+        per_c = KW.camera_perceiver(world, rig, fps=FPS, flight_from="cup")
+    sw = KD.kendama_simulate(kp, handle, p0=p0, v0=np.zeros(3), t_end=1.5, catch_plan=KD.catch_plan_staged(kp), plan_from=handle.T_lift,
+                             perceive=per_s, contact=lambda h, p: KW.kendama_clearance(kp, h, p)["gap"][0])
+    out = {"swing": sw, "combo": None, "count_total": 0, "per": per_c}
+    if sw["caught"]:
+        cb = KD.kendama_combo_simulate(kp, sequence, n_catch=n_catch, hand0=sw["hand"][-1], hand_v0=sw["cup_v"][-1],
+                                       apex_above_cup=apex_above_cup, perceive=per_c, contact=_contact_combo(kp))
+        out["combo"] = cb
+        out["count_total"] = 1 + cb["count"]
+    return out
 
 
 def main() -> int:
@@ -688,6 +731,35 @@ def main() -> int:
          "×2 2 mm %d(%.1f°)、×2 4 mm %d、×1 2 mm %d vs メッシュ %d" % (hol[(2, 0.002)]["n"], hol[(2, 0.002)]["med"], hol[(2, 0.004)]["n"],
                                                              hol[(1, 0.002)]["n"], hol[(1, None)]["n"]))
 
+    # ─────────────────────────────── 12. 連続技(受けた状態から続けて別の皿で) ─────────────────────────
+    print("== 12. 連続技: 受けた皿から放ち、飛んでいる間に持ち替えて次の皿で受ける(もしかめ = 大皿 ↔ 中皿、3 皿 = 大皿 → 小皿 → 中皿)")
+    t_c = time.time()
+    combo_runs = [("もしかめ・画像", KD.COMBO_SEQUENCES["mosikame"], "image")]
+    if not REDUCED:
+        combo_runs += [("3 皿・画像", KD.COMBO_SEQUENCES["three_cups"], "image"), ("もしかめ・真値", KD.COMBO_SEQUENCES["mosikame"], "truth")]
+    combo = {}
+    for label, seq, pc in combo_runs:
+        rr = _combo_run(seq, n_catch=10, perception=pc)
+        cb = rr["combo"]
+        combo[label] = rr
+        if cb is None:
+            print("  %s: 振り上げで失敗(%s)" % (label, rr["swing"]["end_reason"]))
+            continue
+        rs = [c["rel_speed"] for c in cb["catches"]]
+        print("  %s: 振り上げの 1 回 + 連続 %d 回(終わり %s)= 協会のもしかめの級で %s 相当、着地の相対速さ %.2f〜%.2f m/s、けん玉との隙間の最小 %.1f mm(皿に乗っている間の接触 = 0、めり込みは無い)、"
+              "手首の角速度の最大 %.1f rad/s%s" % (label, cb["count"], cb["end_reason"], KD._mosikame_grade(rr["count_total"]), min(rs), max(rs),
+                                                1e3 * cb["min_gap"], cb["max_omega"],
+                                                "、飛び始めを画像から決めた回数 %d" % len(rr["per"].flights) if pc == "image" else ""))
+    print("  (%.1f s)" % (time.time() - t_c))
+    ok_c = True
+    for label, seq, pc in combo_runs:
+        cb = combo[label]["combo"]
+        ok_c &= (cb is not None and cb["count"] >= 10 and all(c["rose_then_fell"] for c in cb["catches"])
+                 and max(c["rel_speed"] for c in cb["catches"]) <= 1.0 and cb["min_gap"] > -5e-4
+                 and (pc != "image" or len(combo[label]["per"].flights) >= 10))
+    gate("連続技 10 回連続(ユーザーの合格線「10 回成功すれば良し」= 協会のもしかめ 5 級相当): 毎回 昇ってから下降中に受け、けん玉に触れず、"
+         "画像では飛び始めも画像から", ok_c, " / ".join("%s %d" % (k, v["combo"]["count"] if v["combo"] else 0) for k, v in combo.items()))
+
     # ─────────────────────────────── 11. 図 ─────────────────────────
     if figs.enabled():
         print("== 11. 図")
@@ -850,6 +922,19 @@ def main() -> int:
                               "右上の窓 = 同じカメラでけん玉のまわりを 3 倍の解像度に描き直したもの(左はメッシュ、右は同じ 3DGS)。青の輪 = 色度で検出した玉、"
                               "十字 = 弛んだ後のコマに当てた重力つきの放物線から読んだ着地点。t = %.3f s に大皿で受ける"
                               "(横ずれ %.2f mm、推定 %d 回は全部 3DGS の画像から)。" % (FPS, g_run["catch_t"], 1e3 * g_run["lateral"], g_run["n_estimates"]))
+        cm = combo.get("もしかめ・画像")
+        if cm is not None and cm["combo"] is not None:
+            cb = cm["combo"]
+            tc = np.array([c["t"] for c in cb["catches"]])
+            zc = np.array([c["z_catch"] for c in cb["catches"]])
+            figs.save_plot("combo_height", [("玉の高さ z(t)(画像だけの閉ループ)", cb["t"], cb["p"][:, 2]),
+                                            ("受けた瞬間(大皿と中皿を交互に)", tc, zc)],
+                           kinds=["line", "scatter"], xlabel="t [s](連続技の開始から)", ylabel="玉の中心の高さ [m]",
+                           caption="もしかめ(大皿 ↔ 中皿)10 回連続。受けた皿から放つと玉は重力だけの放物線で約 %.0f cm 昇り、下りてくるところを、飛んでいる"
+                                   "間に持ち替えた次の皿で受ける(着地の相対速さ %.2f〜%.2f m/s: 皿を玉と同じ向きに動かして速さを合わせる = 膝のクッション)。"
+                                   "手元を動かす根拠は 2 台のカメラの画像だけ(飛び始めも画像から)。" % (
+                                       100 * float(np.median([c["apex"] - c["z_catch"] for c in cb["catches"]])),
+                                       min(c["rel_speed"] for c in cb["catches"]), max(c["rel_speed"] for c in cb["catches"])))
         if figs.errors():
             print("図の書き出しで失敗:", "; ".join(figs.errors()))
 

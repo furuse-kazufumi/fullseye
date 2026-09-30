@@ -1,4 +1,4 @@
-# DRIVE operator help — 154 ops in 14 categories
+# DRIVE operator help — 155 ops in 14 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -24,9 +24,9 @@
 
 [gs_from_world](gsplat/gs_from_world.md) · [gs_render](gsplat/gs_render.md) · [gs_render_fn](gsplat/gs_render_fn.md) · [gs_update](gsplat/gs_update.md)
 
-### kendama (18)
+### kendama (19)
 
-[catch_plan_ballistic](kendama/catch_plan_ballistic.md) · [catch_plan_staged](kendama/catch_plan_staged.md) · [catch_success_rate](kendama/catch_success_rate.md) · [elliptic_k_agm](kendama/elliptic_k_agm.md) · [hole_detect](kendama/hole_detect.md) · [kendama_catch_check](kendama/kendama_catch_check.md) · [kendama_params](kendama/kendama_params.md) · [kendama_simulate](kendama/kendama_simulate.md) · [noisy_perceiver](kendama/noisy_perceiver.md) · [parabola_fit_g](kendama/parabola_fit_g.md) · [pendulum_launch_speed](kendama/pendulum_launch_speed.md) · [pendulum_period_exact](kendama/pendulum_period_exact.md) · [pendulum_rod_simulate](kendama/pendulum_rod_simulate.md) · [swing_up_apex](kendama/swing_up_apex.md) · [swing_up_lift](kendama/swing_up_lift.md) · [swing_up_plan](kendama/swing_up_plan.md) · [tether_slack_angle](kendama/tether_slack_angle.md) · [tether_tension_fixed](kendama/tether_tension_fixed.md)
+[catch_plan_ballistic](kendama/catch_plan_ballistic.md) · [catch_plan_staged](kendama/catch_plan_staged.md) · [catch_success_rate](kendama/catch_success_rate.md) · [elliptic_k_agm](kendama/elliptic_k_agm.md) · [hole_detect](kendama/hole_detect.md) · [kendama_catch_check](kendama/kendama_catch_check.md) · [kendama_combo_simulate](kendama/kendama_combo_simulate.md) · [kendama_params](kendama/kendama_params.md) · [kendama_simulate](kendama/kendama_simulate.md) · [noisy_perceiver](kendama/noisy_perceiver.md) · [parabola_fit_g](kendama/parabola_fit_g.md) · [pendulum_launch_speed](kendama/pendulum_launch_speed.md) · [pendulum_period_exact](kendama/pendulum_period_exact.md) · [pendulum_rod_simulate](kendama/pendulum_rod_simulate.md) · [swing_up_apex](kendama/swing_up_apex.md) · [swing_up_lift](kendama/swing_up_lift.md) · [swing_up_plan](kendama/swing_up_plan.md) · [tether_slack_angle](kendama/tether_slack_angle.md) · [tether_tension_fixed](kendama/tether_tension_fixed.md)
 
 ### kendamaworld (12)
 

@@ -13,7 +13,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 # camera_perceiver — DRIVE `kendamaworld` op
 
 - **データ種**: `table` → `any`
-- **呼び出し**: `import fullseye as fs; fs.ledger.camera_perceiver(world: 'dict', rig: 'list', *, fps: 'float' = 100.0, pixel_noise: 'float' = 0.0, rng=None, slack_margin: 'float' = 0.005, min_frames: 'int' = 3, window: 'int' = 128, color_tol: 'float' = 0.12, g: 'float' = 9.81, keep_frames: 'bool' = False, slack_frames: 'int' = 2, min_fill: 'float' = 0.6, reject: 'float' = 0.004, render_fn=None, holes: 'bool' = True)` (実装を直接呼ぶなら `import kendamaworld; kendamaworld.camera_perceiver(world: 'dict', rig: 'list', *, fps: 'float' = 100.0, pixel_noise: 'float' = 0.0, rng=None, slack_margin: 'float' = 0.005, min_frames: 'int' = 3, window: 'int' = 128, color_tol: 'float' = 0.12, g: 'float' = 9.81, keep_frames: 'bool' = False, slack_frames: 'int' = 2, min_fill: 'float' = 0.6, reject: 'float' = 0.004, render_fn=None, holes: 'bool' = True)`、台帳から引くなら `opsdrive.get("camera_perceiver")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.camera_perceiver(world: 'dict', rig: 'list', *, fps: 'float' = 100.0, pixel_noise: 'float' = 0.0, rng=None, slack_margin: 'float' = 0.005, min_frames: 'int' = 3, window: 'int' = 128, color_tol: 'float' = 0.12, g: 'float' = 9.81, keep_frames: 'bool' = False, slack_frames: 'int' = 2, min_fill: 'float' = 0.6, reject: 'float' = 0.004, render_fn=None, holes: 'bool' = True, flight_from: 'str' = 'tie', flight_margin: 'float' = 0.012)` (実装を直接呼ぶなら `import kendamaworld; kendamaworld.camera_perceiver(world: 'dict', rig: 'list', *, fps: 'float' = 100.0, pixel_noise: 'float' = 0.0, rng=None, slack_margin: 'float' = 0.005, min_frames: 'int' = 3, window: 'int' = 128, color_tol: 'float' = 0.12, g: 'float' = 9.81, keep_frames: 'bool' = False, slack_frames: 'int' = 2, min_fill: 'float' = 0.6, reject: 'float' = 0.004, render_fn=None, holes: 'bool' = True, flight_from: 'str' = 'tie', flight_margin: 'float' = 0.012)`、台帳から引くなら `opsdrive.get("camera_perceiver")`)
 
 ## 使い方
 
@@ -38,6 +38,10 @@ version: 0.2.3  # fullseye lib version this note was generated for
 3DGS など)。窓だけを描くときは cam の K(主点をずらした)・width・height を窓に合わせた辞書を渡す。
 ``holes=True``: 玉の窓の中で :func:`kendama.hole_detect` で穴を探し(雑音を足す前の画素で)、2 台で見えたコマは穴の重心を
 三角測量して玉の中心からの向き ``hole_dir``(世界の単位ベクトル)を記録する(皿の技では報告だけ、計画には使わない)。
+``flight_from="cup"``(19 巡目、連続技): 「飛び始め」を糸の弛みでなく、三角測量した玉と皿に乗った玉の位置(scene["rest"] = 受けている皿の
+縁の中心 + h_c·軸: 手元の自己受容で分かる)の距離が ``flight_margin`` を超えたコマが ``slack_frames`` 回続いたこと で決める(皿に乗っている
+間のコマは当てはめに入れない)。scene["R_ken"] があればけんをその姿勢で描く(持ち替え)。``perceive.reset()`` で今の放物線を捨て、次の
+飛び始めを待つ(記録 ``flights`` = 飛び始めのコマの索引の列)。既定 "tie" は今まで通り。
 fail-closed: fps ≤ 0、pixel_noise < 0、min_frames < 2、window < 32、カメラ 2 台未満、kendama の無い世界は ValueError。
 
 ## 参考(サンプルデータ・文献)

@@ -1,8 +1,8 @@
 {
- "n_ops": 2378,
+ "n_ops": 2379,
  "tiers": {
   "color": 12,
-  "ledger": 1427,
+  "ledger": 1428,
   "nary": 17,
   "registry": 922
  },
@@ -7969,6 +7969,19 @@
    "in_sort": "table",
    "out_sort": "table",
    "category": "kendamaworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "kendama_combo_simulate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "kendama",
    "tier": "ledger",
    "ledger": "opsdrive",
    "dim": "drive",

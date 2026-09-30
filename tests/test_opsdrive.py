@@ -15,7 +15,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     assert set(opsdrive.categories()) == {"course", "world", "lidar", "ttc", "rss", "terrain",
                                           "ball", "balltrack", "ballworld", "racket", "roadjp",
                                           "kendama", "kendamaworld", "gsplat"}
-    assert len(opsdrive.OPSDRIVE) == 154
+    assert len(opsdrive.OPSDRIVE) == 155
     # 台帳の op は実装モジュールの __all__ に在る(逆は要らない: 補助関数は台帳に載せない)
     import drivecourse, driveworld, lidarsim, drivettc, rsssafety, driveterrain, ballistics, balltrack, ballworld, racket
     import roadjp
@@ -41,7 +41,7 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "drive"]
-    assert len(rows) == 154
+    assert len(rows) == 155
     assert {r[3] for r in rows} == {"table", "image2d", "signal", "matrix", "scalar", "any", "points", "rgba"}
 
 

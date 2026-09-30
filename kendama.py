@@ -60,7 +60,7 @@ __all__ = [
     "kendama_params", "elliptic_k_agm", "pendulum_period_exact", "pendulum_launch_speed", "pendulum_rod_simulate",
     "tether_tension_fixed", "tether_slack_angle", "swing_up_plan", "swing_up_apex", "kendama_catch_check", "kendama_simulate",
     "catch_plan_ballistic", "noisy_perceiver", "catch_success_rate", "parabola_fit_g", "catch_plan_staged", "swing_up_lift",
-    "hole_detect",
+    "hole_detect", "kendama_combo_simulate", "COMBO_SEQUENCES", "JKA_MOSIKAME_GRADES",
 ]
 
 G = B.G
@@ -1013,3 +1013,314 @@ def parabola_fit_g(t, P, *, g: float = G, t_ref: float = None) -> dict:
     fit = A @ coef - np.outer(0.5 * g * tau * tau, [0.0, 0.0, 1.0])
     rms = float(np.sqrt(np.mean(np.sum((fit - P) ** 2, axis=1))))
     return {"p": coef[0].copy(), "v": coef[1].copy(), "t_ref": tr, "rms": rms, "n": int(t.size)}
+
+
+# ─────────────────────────────── 連続技(19 巡目: もしかめ・3 皿の連続) ───────────────────────────────
+
+#: 連続技の皿の順(:func:`kendama_combo_simulate` の ``sequence``)。もしかめ = 大皿 ↔ 中皿、three_cups = 大皿 → 小皿 → 中皿 → 大皿 …
+COMBO_SEQUENCES = {"mosikame": ("ozara", "chuzara"), "three_cups": ("ozara", "kozara", "chuzara")}
+
+#: 日本けん玉協会の級・段の認定の、もしかめの回数(kendama.or.jp/tricks/basic_tricks/)。多い順。
+JKA_MOSIKAME_GRADES = ((100, "準初段"), (50, "1級"), (40, "2級"), (30, "3級"), (20, "4級"), (10, "5級"), (4, "6級"))
+
+
+def _mosikame_grade(count: int) -> str:
+    """もしかめの連続回数 → 協会の表で何級相当か(4 回未満は「級外」)。"""
+    for n, name in JKA_MOSIKAME_GRADES:
+        if count >= n:
+            return name
+    return "級外"
+
+
+def _combo_poses(kp: dict) -> dict:
+    """連続技の姿勢の表: 技 → {"R", "c" (受ける皿の縁の中心、皿胴の中心から、けんの局所), "a" (皿の軸、局所), "r_c", "h_c"}。
+    仮定: 連続技では**持つ所 = 皿胴の中心**のまま握り替えない(手元 = 皿胴の中心、向きだけを手首で変える)。"""
+    r_b = kp["ball_radius"]
+    geo = {"width": kp["width"], "s_b": -(kp["ken_length"] - kp["cross_from_tip"]), "s_t": kp["cross_from_tip"],
+           "r_big": kp["cup_radius_big"], "r_small": kp["cup_radius_small"], "r_base": kp["cup_radius_base"], "r_grip": 0.0}
+    out = {}
+    for tr in KENDAMA_TRICKS:
+        if tr == "rousoku":
+            continue
+        R, _, (c, a, r) = _trick_pose(tr, geo)
+        out[tr] = {"R": R, "c": c, "a": a, "r_c": float(r), "h_c": float(math.sqrt(r_b * r_b - r * r))}
+    return out
+
+
+def _rot_log(R) -> np.ndarray:
+    """回転行列 → 回転ベクトル(軸 × 角、角 ∈ [0, π])。角 π は (R + I)/2 の列から軸を取る。"""
+    c = max(-1.0, min(1.0, 0.5 * (float(np.trace(R)) - 1.0)))
+    th = math.acos(c)
+    if th < 1e-12:
+        return np.zeros(3)
+    if math.pi - th < 1e-6:
+        M = 0.5 * (R + np.eye(3))
+        k = int(np.argmax(np.diag(M)))
+        ax = M[:, k] / math.sqrt(max(M[k, k], 1e-300))
+        return th * ax / np.linalg.norm(ax)
+    w = np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]]) / (2.0 * math.sin(th))
+    return th * w
+
+
+def _rot_exp(w) -> np.ndarray:
+    """回転ベクトル → 回転行列(Rodrigues)。"""
+    th = float(np.linalg.norm(w))
+    if th < 1e-15:
+        return np.eye(3)
+    k = np.asarray(w, np.float64) / th
+    K = np.array([[0, -k[2], k[1]], [k[2], 0, -k[0]], [-k[1], k[0], 0]])
+    return np.eye(3) + math.sin(th) * K + (1.0 - math.cos(th)) * K @ K
+
+
+def _move_pos_vel(pos, vel, target_p, target_v, t_go: float, dt: float, v_max: float, a_max: float):
+    """位置**と速度**を目標にする 1 歩(:func:`_move_bounded` は位置だけを目標にして止まる → 落ちてくる玉に速さを合わせられない)。
+
+    残り時間 t_go で (x*, v*) に着く 3 次(エルミート)の軌道の今の加速度 a = (6(x* − x) − 2 t_go (2 v + v*)) / t_go² を、
+    |a| ≤ a_max に切り、v + a dt を |v| ≤ v_max の球へ射影する(球への射影は縮小写像なので、実際の加速度 |Δv|/dt も ≤ a_max:
+    **最後の 1 歩で加速度の上限を超えない** —— :func:`_move_bounded` は行き過ぎた歩で速度を 0 に置くので超える、卓球の回の教訓)。
+    t_go ≤ dt なら速度 v* だけを追う。返り値 (pos2, vel2, acc)。"""
+    pos = np.asarray(pos, np.float64)
+    vel = np.asarray(vel, np.float64)
+    tv = np.asarray(target_v, np.float64)
+    if t_go > dt:
+        a = (6.0 * (np.asarray(target_p, np.float64) - pos) - 2.0 * t_go * (2.0 * vel + tv)) / (t_go * t_go)
+    else:
+        a = (tv - vel) / dt
+    an = float(np.linalg.norm(a))
+    if an > a_max:
+        a = a * (a_max / an)
+    v2 = vel + a * dt
+    vn = float(np.linalg.norm(v2))
+    if vn > v_max:
+        v2 = v2 * (v_max / vn)
+    return pos + v2 * dt, v2, (v2 - vel) / dt
+
+
+def kendama_combo_simulate(kp: dict, sequence=("ozara", "chuzara"), *, n_catch: int = 10, hand0=(0.0, 0.0, 1.0),
+                           hand_v0=(0.0, 0.0, 0.0), z_home: float = None, apex_above_cup: float = 0.20, k_match: float = 0.8,
+                           v_max: float = 2.5, a_max: float = 20.0, a_toss: float = 20.0, omega_max: float = 30.0,
+                           rot_clear: float = 0.15, v_rel_max: float = 1.0, dt: float = 1e-3, perceive=None, contact=None,
+                           contact_tol: float = 5e-4, controller: str = "pos_vel", t_max: float = None, g: float = None) -> dict:
+    """連続技: 玉が ``sequence[0]`` の皿に乗った状態から「放つ → 飛んでいる間に持ち替え → 次の皿を着地点の真下へ運び、速さを合わせて受ける」
+    を ``n_catch`` 回か最初の失敗まで繰り返す(もしかめ = ("ozara", "chuzara")、3 皿 = ("ozara", "kozara", "chuzara"))。
+    手元 ``hand0`` = 皿胴の中心(持ち替えは手首で向きを変えるだけ、握り替えない: 仮定)。最初の皿へは :func:`kendama_simulate` の
+    振り上げで受けて、その手元の位置・速度を ``hand0`` / ``hand_v0`` で渡す。
+
+    段階(毎回): **absorb**(受けた皿を上限つきで止める: 玉は皿と一緒)→ **toss**(皿を a_toss で上へ加速し、速さ v_toss に達したら
+    a_max(> g)で止める: 止め始めた歩で皿の抗力が負になり玉が離れる。離れた瞬間の玉の速度 = 皿の速度 → 頂点 = 離れた高さ + v²/2g)→
+    **flight**(知覚した放物線から着地の時刻 τ と点を出し、手元を「位置 = 着地点の真下(高さ z_home)、速度 = k_match × 玉の着地の速度」へ
+    :func:`_move_pos_vel` で運ぶ。持ち替えは玉が皿胴の中心から ``rot_clear``(0.15 m: 皿胴の中心から中皿の縁まで 0.12 m + 玉の半径)以上離れてから(知覚で。
+    離れないまま着地に間に合う最後の時刻が来たらそこで始める = 3 皿の大皿 → 小皿の 180° はこちらになることがある)、角速度の上限 ``omega_max`` の
+    三角形の角速度で次の姿勢へ回す。回し終わる前には受けない)→ 受けたら absorb に戻る。
+
+    物理: 玉は皿の上では皿と一緒に動く(皿の抗力 ∝ (a_皿 + g ẑ)·軸 ≥ 0 の間。負になったら離れる)、飛んでいる間は重力(+ 抗力)と
+    糸の張力(片側拘束、:func:`kendama_simulate` と同じ射影法)だけ。けんは玉を押さない(``contact(hand, p, R) → 隙間`` が −contact_tol
+    を下回ったら "hit_ken": :func:`kendamaworld.kendama_clearance` の ``R_ken``)。受ける判定は :func:`kendama_catch_check`(着地の窓
+    kp["catch_window"]、相対速さ ≤ ``v_rel_max``: 仮定 1 m/s)。窓に入ったのに速すぎたら "too_fast"。受けた瞬間に玉を縁に乗る位置へ置き、
+    速度を皿の速度にする(非弾性・跳ねない: 仮定。置き直す距離 ≤ 窓の 3 mm)。
+
+    放つ高さ(閉形式): 次の着地で玉の中心が乗る高さ z_r の ``apex_above_cup`` 上を頂点にする。今の玉の高さ z₀ から a_toss で加速すると
+    離れる高さは z₀ + v²/(2 a_toss) なので v_toss² = 2g (z_r + A − z₀) / (1 + g / a_toss)(抗力は入れない)。
+    ``controller="position"``: 飛んでいる間の手元を旧来の :func:`_move_bounded`(位置だけを目標に止まる)で運ぶ対照。
+    知覚 ``perceive``: None = 真値。:func:`kendamaworld.camera_perceiver`(``flight_from="cup"``)なら毎 step
+    ``perceive(t, p, v, scene)``(scene = 手元の自己受容で分かる量 + 描画用の姿勢 R_ken)を呼び、(p̂, v̂) か None を受ける。
+    受けたことは手の感覚で分かる(仮定: 触覚)として ``perceive.reset()`` があれば受けた歩で呼ぶ(前の飛翔の放物線を捨てる)。
+
+    仮定(公表値なし): 手首の角速度 ≤ 30 rad/s、手元の速さ ≤ 2.5 m/s・加速度 ≤ 20 m/s²、k_match = 0.8(人の「膝で速さを合わせる」の程度)。
+    返り値 ``{"count" (最初の失敗までに受けた回数), "catches" [{"t", "trick", "rel_speed", "lateral", "apex", "z_catch" (受けた瞬間の玉の中心の高さ), "z_release", "v_release",
+    "apex_closed", "rose_then_fell", "energy_drift"}], "end_reason" ("done" | "too_fast" | "hit_ken" | "missed" | "timeout"), "t", "p", "v",
+    "hand", "hand_v", "hand_a", "R", "on_cup", "taut", "stage", "min_gap", "grade" (もしかめの級相当), "max_omega"}``。"""
+    g = kp["g"] if g is None else _pos(g, "g")
+    bp = dict(kp["bp"])
+    bp["g"] = g
+    poses = _combo_poses(kp)
+    seq = tuple(sequence)
+    if len(seq) < 2 or any(s not in poses for s in seq):
+        raise ValueError("sequence must list ≥ 2 of %s" % ", ".join(poses))
+    if not (a_max > g and a_toss > 0 and v_max > 0 and omega_max > 0 and dt > 0 and n_catch >= 1 and 0.0 <= k_match <= 1.0):
+        raise ValueError("need a_max > g (the toss must out-decelerate gravity), a_toss, v_max, omega_max, dt > 0, n_catch ≥ 1, "
+                         "0 ≤ k_match ≤ 1")
+    if controller not in ("pos_vel", "position"):
+        raise ValueError("controller must be 'pos_vel' or 'position'")
+    a_toss = min(float(a_toss), float(a_max))
+    L = kp["pendulum_length"]
+    r_b = kp["ball_radius"]
+    tie_loc = np.array([0.0, -kp["cross_radius"], 0.0])
+    window = kp.get("catch_window")
+    zh = np.array([0.0, 0.0, 1.0])
+    hand = _v3(hand0, "hand0").copy()
+    hand_v = _v3(hand_v0, "hand_v0").copy()
+    z_home = float(hand[2]) if z_home is None else float(z_home)
+    t_max = (0.9 * n_catch + 1.0) if t_max is None else float(t_max)
+    kpj = {s: dict(kp, cup_radius=poses[s]["r_c"], cup_rest_height=poses[s]["h_c"]) for s in poses}
+
+    def cup_of(h, R_, s):
+        return h + R_ @ poses[s]["c"], R_ @ poses[s]["a"]
+
+    def rest_z(s):                                           # 手元が z_home のとき、姿勢 s の皿に乗った玉の中心の高さ
+        Rs = poses[s]["R"]
+        return z_home + float((Rs @ poses[s]["c"])[2]) + poses[s]["h_c"] * float((Rs @ poses[s]["a"])[2])
+
+    j = 0                                                   # 玉が乗っている皿の索引(飛んでいる間は次に受ける皿 = j + 1)
+    R = poses[seq[0]]["R"].copy()
+    c0, a0 = cup_of(hand, R, seq[0])
+    p = c0 + poses[seq[0]]["h_c"] * a0
+    v = hand_v.copy()
+    on_cup, stage = True, "absorb"
+    rot, toss_v, flight, last_plan = None, None, None, None
+    catches = []
+    end = "timeout"
+    n = int(math.floor(t_max / dt)) + 1
+    rec = {k: [] for k in ("t", "p", "v", "hand", "hand_v", "hand_a", "R", "on_cup", "taut", "stage")}
+    min_gap, max_om = float("inf"), 0.0
+    for i in range(n):
+        t = i * dt
+        s_cur = seq[j % len(seq)]
+        s_next = seq[(j + 1) % len(seq)]
+        omega = np.zeros(3)
+        if rot is not None:                                  # 持ち替え: 三角形の角速度(ピーク = omega_max)
+            u = min(1.0, max(0.0, (t - rot["t0"]) / rot["T"]))
+            s_u = 2.0 * u * u if u < 0.5 else 1.0 - 2.0 * (1.0 - u) ** 2
+            ds = ((4.0 * u if u < 0.5 else 4.0 * (1.0 - u)) / rot["T"]) if u < 1.0 else 0.0
+            R = rot["R0"] @ _rot_exp(s_u * rot["w"])
+            omega = rot["R0"] @ rot["w"] * ds
+            max_om = max(max_om, float(np.linalg.norm(omega)))
+            if u >= 1.0:
+                R, rot = rot["R1"].copy(), None
+        tie = hand + R @ tie_loc
+        taut = bool(np.linalg.norm(p - tie) >= L - 1e-9)
+        if perceive is not None:
+            cc, aa = cup_of(hand, R, s_cur)
+            est = perceive(t, p.copy(), v.copy(), {"t": t, "hand": hand.copy(), "tie": tie.copy(), "R_ken": R.copy(), "cup": cc,
+                                                   "cup_axis": aa, "rest": cc + poses[s_cur]["h_c"] * aa, "taut": taut})
+        else:
+            est = (p.copy(), v.copy())
+        # ── 判定(飛んでいる間) ──
+        if not on_cup:
+            cc, aa = cup_of(hand, R, s_next)
+            v_cup = hand_v + np.cross(omega, R @ poses[s_next]["c"])
+            chk = kendama_catch_check(kpj[s_next], p, v, cc, aa, v_cup, float("inf"), window)
+            if chk["caught"] and rot is None and np.allclose(R, poses[s_next]["R"]):
+                rel = float(np.linalg.norm(v - v_cup))
+                if rel > v_rel_max:
+                    end, stage = "too_fast", "too_fast"
+                else:
+                    zs = np.asarray(flight["z"])
+                    catches.append({"t": t, "trick": s_next, "rel_speed": rel, "lateral": chk["lateral"], "apex": float(zs.max()), "z_catch": float(p[2]),
+                                    "z_release": flight["z_rel"], "v_release": flight["v_rel"].copy(),
+                                    "apex_closed": flight["z_rel"] + flight["v_rel"][2] ** 2 / (2.0 * g),
+                                    "rose_then_fell": bool(flight["v_rel"][2] > 0 and v[2] < 0 and zs.max() > flight["z_rel"] + 1e-6
+                                                           and int(np.argmax(zs)) < len(zs) - 1),
+                                    "energy_drift": float(np.max(np.abs(np.asarray(flight["e"]) - flight["e"][0])))})
+                    j += 1
+                    s_cur, s_next = seq[j % len(seq)], seq[(j + 1) % len(seq)]
+                    on_cup, stage, last_plan, flight = True, "absorb", None, None
+                    p, v = cc + poses[s_cur]["h_c"] * aa, v_cup.copy()
+                    if hasattr(perceive, "reset"):
+                        perceive.reset()
+                    if len(catches) >= n_catch:
+                        end = "done"
+            if end == "timeout" and not on_cup:
+                if contact is not None:
+                    gap = float(np.asarray(contact(hand, p, R)).reshape(-1)[0])
+                    min_gap = min(min_gap, gap)
+                    if gap < -contact_tol:
+                        end = "hit_ken"
+                if end == "timeout" and v[2] < 0.0 and p[2] < cc[2] - 2.0 * r_b:
+                    end = "missed"
+        for k_, x_ in (("t", t), ("p", p.copy()), ("v", v.copy()), ("hand", hand.copy()), ("hand_v", hand_v.copy()), ("R", R.copy()),
+                       ("on_cup", on_cup), ("taut", taut), ("stage", stage)):
+            rec[k_].append(x_)
+        if end != "timeout" or i == n - 1:
+            rec["hand_a"].append(np.zeros(3))
+            break
+        # ── 手元の制御 ──
+        plan = None
+        a_cmd = np.zeros(3)
+        if on_cup:
+            if stage == "absorb":
+                a_cmd = -hand_v / dt
+                if float(np.linalg.norm(hand_v)) < 1e-12:
+                    stage = "toss"
+                    toss_v = math.sqrt(max(0.0, 2.0 * g * (rest_z(s_next) + apex_above_cup - float(p[2])) / (1.0 + g / a_toss)))
+            if stage == "toss":
+                if hand_v[2] < toss_v - 1e-12:
+                    a_cmd = np.array([0.0, 0.0, min(a_toss, (toss_v - hand_v[2]) / dt)])
+                else:
+                    a_cmd = np.array([0.0, 0.0, -a_max])      # 止め始め = 放つ
+            an = float(np.linalg.norm(a_cmd))
+            if an > a_max:
+                a_cmd = a_cmd * (a_max / an)
+            _, a_now = cup_of(hand, R, s_cur)
+            if float((a_cmd + g * zh) @ a_now) < 0.0:          # 皿の抗力が負 → 玉が離れる(速度 = いまの皿の速度)
+                on_cup, stage = False, "flight"
+                flight = {"z_rel": float(p[2]), "v_rel": v.copy(), "z": [float(p[2])], "e": [0.5 * float(v @ v) + g * float(p[2])], "braking": True}
+        else:
+            if est is not None:
+                ph, vh = np.asarray(est[0], np.float64), np.asarray(est[1], np.float64)
+                Rn = poses[s_next]["R"]
+                cn, an_ = Rn @ poses[s_next]["c"], Rn @ poses[s_next]["a"]
+                disc = vh[2] * vh[2] - 2.0 * g * (rest_z(s_next) - ph[2])
+                if disc >= 0.0 and np.all(np.isfinite(ph)):
+                    tau = (vh[2] + math.sqrt(disc)) / g
+                    land = ph + vh * tau - 0.5 * g * tau * tau * zh
+                    target = np.array([land[0] - poses[s_next]["h_c"] * an_[0] - cn[0],
+                                       land[1] - poses[s_next]["h_c"] * an_[1] - cn[1], z_home])
+                    last_plan = {"t_land": t + tau, "target": target, "v_target": k_match * (vh - g * tau * zh), "ball": ph}
+            plan = last_plan
+            if flight["braking"] and hand_v[2] > 0.0:          # 放つ動きの続き: 上向きの皿を a_max(> g)で止め切るまでは計画に渡さない
+                plan = None                                    # (途中で緩めると皿が玉に追いつき、玉を押し上げる = 測って退けた)
+            else:
+                flight["braking"] = False
+            if plan is None:
+                a_cmd = -hand_v / dt                           # 見えるまで止める(放った直後の止め = 放つ動きの続き)
+                an = float(np.linalg.norm(a_cmd))
+                if an > a_max:
+                    a_cmd = a_cmd * (a_max / an)
+            elif rot is None and not np.allclose(R, poses[s_next]["R"]):
+                w = _rot_log(R.T @ poses[s_next]["R"])
+                T_rot = 2.0 * float(np.linalg.norm(w)) / omega_max
+                tau_left = plan["t_land"] - t
+                far = float(np.linalg.norm(plan["ball"] - hand)) >= rot_clear
+                if (far and tau_left >= T_rot + 0.02) or tau_left <= T_rot + 0.03:
+                    rot = {"t0": t + dt, "T": T_rot, "R0": R.copy(), "R1": poses[s_next]["R"].copy(), "w": w}
+        if plan is not None:
+            if controller == "pos_vel":
+                hand2, hand_v2, a_cmd = _move_pos_vel(hand, hand_v, plan["target"], plan["v_target"], plan["t_land"] - t, dt, v_max, a_max)
+            else:
+                hand2, hand_v2 = _move_bounded(hand, hand_v, plan["target"], dt, v_max, a_max)
+                a_cmd = (hand_v2 - hand_v) / dt
+        else:
+            hand_v2 = hand_v + a_cmd * dt
+            vn = float(np.linalg.norm(hand_v2))
+            if vn > v_max:
+                hand_v2 = hand_v2 * (v_max / vn)
+            a_cmd = (hand_v2 - hand_v) / dt
+            hand2 = hand + hand_v2 * dt
+        rec["hand_a"].append(np.asarray(a_cmd, np.float64).copy())
+        # ── 玉 ──
+        if on_cup:
+            c2, a2 = cup_of(hand2, R, s_cur)
+            p, v = c2 + poses[s_cur]["h_c"] * a2, hand_v2.copy()
+        else:
+            pt, vt, _ = B._rk4((p[0], p[1], p[2]), (v[0], v[1], v[2]), (0.0, 0.0, 0.0), dt, bp)
+            p2, v2 = np.array(pt), np.array(vt)
+            tie2 = hand2 + R @ tie_loc
+            d = p2 - tie2
+            dist = float(np.linalg.norm(d))
+            if dist > L:                                    # 糸が張った: 片側拘束(kendama_simulate と同じ射影法)
+                rhat = d / dist
+                vr = float((v2 - (tie2 - tie) / dt) @ rhat)
+                if vr > 0.0:
+                    v2 = v2 - vr * rhat
+                p2 = tie2 + rhat * L
+            p, v = p2, v2
+            flight["z"].append(float(p[2]))
+            flight["e"].append(0.5 * float(v @ v) + g * float(p[2]))
+        hand, hand_v = hand2, hand_v2
+    out = {k_: np.asarray(x_) for k_, x_ in rec.items() if k_ != "stage"}
+    out["stage"] = rec["stage"]
+    cnt = len(catches)
+    out.update({"count": cnt, "catches": catches, "end_reason": end, "min_gap": min_gap, "max_omega": max_om,
+                "grade": _mosikame_grade(cnt), "sequence": seq})
+    return out

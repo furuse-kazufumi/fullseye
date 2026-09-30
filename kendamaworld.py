@@ -475,11 +475,13 @@ def _region_distance(Q, profile):
     return np.where(inside, -dmin, dmin)
 
 
-def kendama_clearance(kp: dict, hand, p_ball) -> dict:
+def kendama_clearance(kp: dict, hand, p_ball, *, R_ken=None, grip=None) -> dict:
     """玉の表面からけん玉(けん・皿胴の回転体)までの隙間 [m](負 = 玉がけん玉にめり込んでいる)。kp の技の姿勢(R_ken、持つ所 grip)で
     手元 ``hand``、玉の中心 ``p_ball``(どちらも (3,) か (N, 3))。回転体までの距離は子午面の輪郭までの 2-D の距離と厳密に等しい
     ので、メッシュの離散化によらない。返り値 ``{"gap" (N,), "ken" (N,), "cross" (N,)}``(ken / cross = 各部品までの隙間)。
-    物理はけん玉と玉の衝突を解かないので、この量で「玉がけん玉を突き抜けた」step を数える(門・正直な報告に使う)。"""
+    物理はけん玉と玉の衝突を解かないので、この量で「玉がけん玉を突き抜けた」step を数える(門・正直な報告に使う)。
+    ``R_ken``(19 巡目、連続技の持ち替え): 姿勢を kp["R_ken"] の代わりに (3, 3) か時刻ごとの (N, 3, 3) で渡す。``grip`` = 持つ所(局所)の
+    上書き。どちらも None なら今まで通り。"""
     k = _check_kp(kp)
     H = np.asarray(hand, np.float64).reshape(-1, 3)
     Pb = np.asarray(p_ball, np.float64).reshape(-1, 3)
@@ -487,7 +489,14 @@ def kendama_clearance(kp: dict, hand, p_ball) -> dict:
         H = np.repeat(H, len(Pb), axis=0)
     if H.shape != Pb.shape or not (np.all(np.isfinite(H)) and np.all(np.isfinite(Pb))):
         raise ValueError("hand and p_ball must be finite (3,) or (N, 3) of the same length")
-    d = (Pb - H) @ k["R_ken"] + k["grip"]                                    # けんの局所座標(皿胴の中心が原点)
+    Rk = np.asarray(k["R_ken"] if R_ken is None else R_ken, np.float64)
+    gr = np.asarray(k["grip"] if grip is None else grip, np.float64).reshape(3)
+    if Rk.ndim == 3:
+        if Rk.shape != (len(Pb), 3, 3):
+            raise ValueError("R_ken must be (3, 3) or (N, 3, 3)")
+        d = np.einsum("ni,nij->nj", Pb - H, Rk) + gr
+    else:
+        d = (Pb - H) @ Rk.reshape(3, 3) + gr                                 # けんの局所座標(皿胴の中心が原点)
     q_ken = np.column_stack([np.hypot(d[:, 1], d[:, 2]), d[:, 0]])          # けん: 軸 x
     q_cross = np.column_stack([np.hypot(d[:, 0], d[:, 1]), d[:, 2]])        # 皿胴: 軸 z
     rb = k["ball_radius"]
@@ -508,7 +517,8 @@ def _render_window(world, cam, x0: int, y0: int, w: int, h: int):
 
 def camera_perceiver(world: dict, rig: list, *, fps: float = 100.0, pixel_noise: float = 0.0, rng=None, slack_margin: float = 0.005,
                      min_frames: int = 3, window: int = 128, color_tol: float = 0.12, g: float = 9.81, keep_frames: bool = False,
-                     slack_frames: int = 2, min_fill: float = 0.6, reject: float = 0.004, render_fn=None, holes: bool = True):
+                     slack_frames: int = 2, min_fill: float = 0.6, reject: float = 0.004, render_fn=None, holes: bool = True,
+                     flight_from: str = "tie", flight_margin: float = 0.012):
     """画像だけから玉の (p̂, v̂) を出す知覚 ``perceive(t, p, v, scene) → (p̂, v̂) | None``(:func:`kendama.kendama_simulate` 用、
     属性 ``observe_all = True`` で毎 step 呼ばれる)。**真値 (p, v) は世界を描くためだけに使い、v は読まない。**
 
@@ -530,6 +540,10 @@ def camera_perceiver(world: dict, rig: list, *, fps: float = 100.0, pixel_noise:
     3DGS など)。窓だけを描くときは cam の K(主点をずらした)・width・height を窓に合わせた辞書を渡す。
     ``holes=True``: 玉の窓の中で :func:`kendama.hole_detect` で穴を探し(雑音を足す前の画素で)、2 台で見えたコマは穴の重心を
     三角測量して玉の中心からの向き ``hole_dir``(世界の単位ベクトル)を記録する(皿の技では報告だけ、計画には使わない)。
+    ``flight_from="cup"``(19 巡目、連続技): 「飛び始め」を糸の弛みでなく、三角測量した玉と皿に乗った玉の位置(scene["rest"] = 受けている皿の
+    縁の中心 + h_c·軸: 手元の自己受容で分かる)の距離が ``flight_margin`` を超えたコマが ``slack_frames`` 回続いたこと で決める(皿に乗っている
+    間のコマは当てはめに入れない)。scene["R_ken"] があればけんをその姿勢で描く(持ち替え)。``perceive.reset()`` で今の放物線を捨て、次の
+    飛び始めを待つ(記録 ``flights`` = 飛び始めのコマの索引の列)。既定 "tie" は今まで通り。
     fail-closed: fps ≤ 0、pixel_noise < 0、min_frames < 2、window < 32、カメラ 2 台未満、kendama の無い世界は ValueError。"""
     import balltrack as BT
     if "kendama" not in world:
@@ -540,6 +554,8 @@ def camera_perceiver(world: dict, rig: list, *, fps: float = 100.0, pixel_noise:
             or not (0.0 <= min_fill <= 1.0) or reject <= 0:
         raise ValueError("need min_frames ≥ 2, window ≥ 32, ≥ 2 cameras, slack_margin > 0, g > 0, slack_frames ≥ 1, "
                          "0 ≤ min_fill ≤ 1, reject > 0")
+    if flight_from not in ("tie", "cup") or not (flight_margin > 0):
+        raise ValueError("flight_from must be 'tie' or 'cup', flight_margin > 0")
     if pixel_noise > 0 and rng is None:
         rng = np.random.default_rng(0)
     L = float(world["kendama"]["kp"]["pendulum_length"])
@@ -611,10 +627,11 @@ def camera_perceiver(world: dict, rig: list, *, fps: float = 100.0, pixel_noise:
     def _frame(t, p, scene):
         t0 = time.perf_counter()
         # 玉の姿勢(描画の約束): 張っている間は糸穴が結び目を向く、弛んだら最後の姿勢のまま飛ぶ(弛んだ玉にトルクは無い)
-        if scene.get("taut", True) or st["R_ball"] is None:
-            st["R_ball"] = kendama_pose(world, scene["hand"], p)["R_ball"]
+        Rk = scene.get("R_ken")
+        if (scene.get("taut", True) and flight_from == "tie") or st["R_ball"] is None:
+            st["R_ball"] = kendama_pose(world, scene["hand"], p, R_ken=Rk)["R_ball"]
         else:
-            kendama_pose(world, scene["hand"], p, R_ball=st["R_ball"])
+            kendama_pose(world, scene["hand"], p, R_ball=st["R_ball"], R_ken=Rk)
         perceive.R_ball.append(st["R_ball"].copy())
         uvs, full, imgs, huv = [], [], [], []
         for ci, cam in enumerate(rig):
@@ -658,10 +675,16 @@ def camera_perceiver(world: dict, rig: list, *, fps: float = 100.0, pixel_noise:
         if keep_frames:
             perceive.images.append(imgs)
         k = len(perceive.frames) - 1
-        short = bool(np.all(np.isfinite(p_hat)) and float(np.linalg.norm(p_hat - perceive.frames[k]["tie"])) < L - slack_margin)
+        if flight_from == "cup":
+            rest = scene.get("rest")
+            short = bool(rest is not None and np.all(np.isfinite(p_hat))
+                         and float(np.linalg.norm(p_hat - np.asarray(rest, np.float64))) > flight_margin)
+        else:
+            short = bool(np.all(np.isfinite(p_hat)) and float(np.linalg.norm(p_hat - perceive.frames[k]["tie"])) < L - slack_margin)
         st["run"] = st["run"] + 1 if short else 0
         if perceive.slack_frame is None and st["run"] >= int(slack_frames):
             perceive.slack_frame = k - int(slack_frames) + 1
+            perceive.flights.append(perceive.slack_frame)
         if perceive.slack_frame is not None:
             tt = np.array([f["t"] for f in perceive.frames[perceive.slack_frame:]])
             PP = np.array([f["p_hat"] for f in perceive.frames[perceive.slack_frame:]])
@@ -688,6 +711,12 @@ def camera_perceiver(world: dict, rig: list, *, fps: float = 100.0, pixel_noise:
         tau = t - f["t_ref"]
         return f["p"] + f["v"] * tau - 0.5 * g * tau * tau * zhat, f["v"] - g * tau * zhat
 
+    def reset():
+        st["fit"], st["run"] = None, 0
+        perceive.slack_frame = None
+
+    perceive.reset = reset
+    perceive.flights = []
     perceive.observe_all = True
     perceive.R_ball = []
     perceive.frames = []

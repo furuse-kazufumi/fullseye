@@ -255,6 +255,7 @@ print(res["hits"], res["end_reason"], res["rewinds"])
 | 13 | **3DGS の世界で閉ループ** | 真値の知覚 | 間隔 4 mm の 3DGS の画像だけで 1 + 2 試行すべて捕る、三角測量の誤差 中央値 **0.30 mm** |
 | 14 | 3DGS のつまみ | 検出率 | 間隔 2〜64 mm で 1.00、位置の誤差 20 mm で 0.25、色の誤差 0.3 で 0.00 |
 | 15 | 3DGS の上の穴 | 真の穴の軸 | 480 × 360 では 40 姿勢中 1、解像度 × 2・間隔 2 mm で 16(中央値 2.3°)、間隔 4 mm では 0 |
+| 16 | **連続技 10 回**(もしかめ・3 皿) | 放つ頂点 v²/2g、けん玉に触れない、昇ってから下降中 | 画像だけで両方 **10 回連続**(5 級相当)、相対速さ 0.41〜0.48 m/s |
 
 [![y–z 面の軌跡](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/04_catch_yz_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/04_catch_yz.png)
 
@@ -287,6 +288,25 @@ print(res["hits"], res["end_reason"], res["rewinds"])
 | 解像度 × 2 | 23 | 16(誤差 中央値 2.3°) | 0 |
 
 480 × 360 だと玉は 17 px、穴は 5 px です。3DGS のぼけ(1 px ほど)が両側から入って、穴が塗りつぶされる。**穴を読むには玉に画素が要り、穴の中にガウシアンが要る**。とめけん(けん先を穴に入れる技)をやるなら、カメラをこの表の右下より良い側に置く必要があります。
+
+### 続けて別の皿で受ける(連続技)
+
+受けたら、その状態から続けて別の皿で受けます。協会の級の技の**もしかめ**(大皿と中皿を交互に)と、大皿 → 小皿 → 中皿 の 3 皿の連続です。
+
+```
+放つ     : 玉が乗った皿を上へ加速し、g より強く止める → 皿が玉より速く減速した瞬間に玉が離れる(頂点 = 離れた瞬間の v²/2g)
+持ち替え : 飛んでいる間に けんと皿胴(1 つの剛体)を回して次の皿を上に(手首 ≤ 30 rad/s、仮定)
+受ける   : 次の皿を着地点の真下へ運び、落ちてくる玉と同じ向きに皿を動かして速さを合わせる(位置と速度を目標にする手元の制御)
+知覚     : 皿からの「飛び始め」も画像から(皿の受け位置から 12 mm 離れたコマが 2 回続いたら)→ 放物線 → 次の皿
+```
+
+![連続技の玉の高さ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/11_combo_height.png)
+
+*↑ もしかめ 10 回連続の玉の高さ(画像だけの閉ループ)。放物線で昇って下りてくるところを、持ち替えた次の皿で受ける。受けた後に少し沈むのは、皿を玉と同じ向きに動かして速さを合わせた分(膝のクッション)。*
+
+画像だけで もしかめも 3 皿も **10 回連続**(協会のもしかめの級で 5 級相当)、着地の相対速さは 0.41〜0.48 m/s です。**位置だけを目標にする手元の制御では、頂点を皿の 20 cm 上にすると 1 回も受けられません** —— 皿が目標の位置で止まろうとするので、1.9 m/s で落ちてくる玉に速さを合わせられない。人の「膝で受ける」は、速度を合わせる制御です。
+
+正直に書くと、雑音が無いと 100 回続いても同じ 1 周期の繰り返しで(放つ動きは閉形式で決まり、玉は真上に上がる)、回数は頑健さの証拠になりません。画素雑音 2 px を足すと もしかめ 3 回・3 皿 6 回で崩れます(着地の直前に当て直すたびに目標が揺れる)。
 
 ### ★ 実装すると、ここで間違える
 
@@ -327,7 +347,7 @@ print(res["hits"], res["end_reason"], res["rewinds"])
 ### 動かす
 
 ```bash
-py -3.11 examples/poc_kendama.py            # 門 15 本(図なしで約 160 秒)
+py -3.11 examples/poc_kendama.py            # 門 16 本(図なしで約 171 秒)
 ```
 
 ```python
@@ -351,7 +371,7 @@ print(img.shape)
 
 ---
 
-この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_kendama)
+この回が作った図は全部で **11 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_kendama)
 
 #### この回の残りの図
 

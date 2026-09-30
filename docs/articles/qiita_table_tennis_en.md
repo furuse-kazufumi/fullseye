@@ -257,6 +257,7 @@ Scoring    : at the moment of touching the rim, lateral ≤ rim radius, relative
 | 13 | **Closed loop in a 3DGS world** | true perception | on 3DGS images at 4 mm spacing alone, all 1 + 2 trials caught; median triangulation error **0.30 mm** |
 | 14 | 3DGS knobs | detection rate | 1.00 for spacing 2–64 mm; 0.25 at 20 mm position error; 0.00 at colour error 0.3 |
 | 15 | The hole on 3DGS | true hole axis | 1 of 40 poses at 480 × 360; 16 (median 2.3°) at twice the resolution and 2 mm spacing; 0 at 4 mm |
+| 16 | **10 consecutive tricks** (moshikame, three cups) | toss apex v²/2g, no contact with the kendama, rise then descend | both **10 in a row** on images alone (grade 5), relative speed 0.41–0.48 m/s |
 
 [![The y–z trajectory](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/04_catch_yz_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/04_catch_yz.png)
 
@@ -289,6 +290,25 @@ The results are rows 13–15 of the table. For following the ball, 3DGS hardly m
 | twice the resolution | 23 | 16 (median error 2.3°) | 0 |
 
 At 480 × 360 the ball is 17 px and the hole 5 px. The 3DGS blur (about 1 px) comes in from both sides and fills the hole. **Reading the hole needs pixels on the ball and Gaussians inside the hole.** To do spike tricks (the spike into the hole), the cameras must sit on the better side of the bottom-right of this table.
+
+### Catching in another cup, one after another (consecutive tricks)
+
+After a catch, carry on from that state and catch in another cup: the association's graded trick **moshikame** (big cup and base cup in turn) and the three-cup sequence big → small → base.
+
+```
+Toss     : accelerate the cup holding the ball upwards and stop it harder than g → the ball leaves when the cup decelerates faster than it (apex = v²/2g at release)
+Turn     : in flight, rotate the ken and cross piece (one rigid body) to bring the next cup up (wrist ≤ 30 rad/s, assumed)
+Catch    : carry the next cup under the landing point and move it with the falling ball to match its speed (a hand controller that targets position and velocity)
+Perceive : the "flight start" from the cup is also found from images (two frames in a row 12 mm away from the cup seat) → parabola → next cup
+```
+
+![Ball height during the combo](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/11_combo_height.png)
+
+*↑ Ball height over 10 moshikame catches in a row (image-only closed loop). It rises and falls on a parabola and is caught by the next cup after the turn. The small dip after each catch is the cup moving with the ball to match its speed (the knees' cushion).*
+
+On images alone, moshikame and the three cups both run **10 in a row** (grade 5 on the association's moshikame table), relative speed at touchdown 0.41–0.48 m/s. **A hand controller that targets only position catches nothing with the apex 20 cm above the cup** — the cup tries to stop at its target and cannot match a ball arriving at 1.9 m/s. A person "catching with the knees" is a velocity-matching controller.
+
+Honestly: without noise, 100 in a row is the same cycle repeated (the toss is fixed by a closed form and the ball goes straight up), so the count is no evidence of robustness. With 2 px of pixel noise moshikame breaks after 3 and the three cups after 6 (the target jitters with every refit just before touchdown).
 
 ### ★ Where implementations go wrong
 
@@ -329,7 +349,7 @@ Adding 0.3 px² to the 2-D covariance for antialiasing makes sub-pixel Gaussians
 ### Run it
 
 ```bash
-py -3.11 examples/poc_kendama.py            # 15 gates (about 160 s without figures)
+py -3.11 examples/poc_kendama.py            # 16 gates (about 171 s without figures)
 ```
 
 ```python
@@ -353,7 +373,7 @@ Set `trick` in `kendama_params` to `"kozara"` / `"chuzara"` / `"rousoku"` and on
 
 ---
 
-This part produced **10 figures** in all — [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_kendama)
+This part produced **11 figures** in all — [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_kendama)
 
 #### The remaining figures of this part
 

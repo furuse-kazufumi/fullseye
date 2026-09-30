@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2378,
- "n_notes": 2384,
+ "n_ops": 2379,
+ "n_notes": 2385,
  "notes": {
   "vol_dilate": [
    {
@@ -16026,6 +16026,16 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/drive/kendama/kendama_catch_check.md"
+   }
+  ],
+  "kendama_combo_simulate": [
+   {
+    "op": "kendama_combo_simulate",
+    "dim": "drive",
+    "category": "kendama",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/kendama/kendama_combo_simulate.md"
    }
   ],
   "kendama_params": [

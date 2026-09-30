@@ -530,6 +530,7 @@ from kendama import (  # noqa: E402,F401
     kendama_params, elliptic_k_agm, pendulum_period_exact, pendulum_launch_speed, pendulum_rod_simulate,
     tether_tension_fixed, tether_slack_angle, swing_up_plan, swing_up_apex, kendama_catch_check, kendama_simulate,
     catch_plan_ballistic, noisy_perceiver, catch_success_rate, catch_plan_staged, swing_up_lift, parabola_fit_g, hole_detect,
+    kendama_combo_simulate,
 )
 import gsplatnp  # noqa: E402  (世界 → 3D Gaussian Splatting: 面に貼ったガウシアンと EWA 描画、密度と誤差のつまみ)
 from gsplatnp import gs_from_world, gs_update, gs_render, gs_render_fn  # noqa: E402,F401

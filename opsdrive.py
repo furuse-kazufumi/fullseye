@@ -229,6 +229,7 @@ _CATALOG = {
         ("swing_up_lift", "kendama", ["table"], "scalar"),
         ("parabola_fit_g", "kendama", [], "table"),
         ("hole_detect", "kendama", ["image2d"], "table"),
+        ("kendama_combo_simulate", "kendama", ["table"], "table"),   # 連続技(もしかめ・3 皿)
     ],
     # けんの世界(18 巡目、作り直し): けん(けん先・握り・中皿の回転体)+ 皿胴(両端が大皿・小皿に開く回転体)、ラベル 27 けん /
     # 28 大皿 / 30 小皿 / 31 中皿 / 32 玉の穴(ballworld の 20〜26 と重ならない)、糸の角柱(29)、床 + けん + 穴のある玉 + 糸の世界、

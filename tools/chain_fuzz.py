@@ -2051,6 +2051,10 @@ def _b_cam_perceiver(pool, rng):
     return (w, KW.kendama_rig(kp, n=2, width=96, height_px=72)), {"fps": 50.0, "window": 32}
 
 
+def _b_kendama_combo(pool, rng):
+    return (_b_kp(pool, rng),), {"n_catch": 1, "hand0": (0.0, 0.0, 1.1)}
+
+
 def _gs_quad_world():
     import driveworld as DW
     w = DW._empty_world()
@@ -2331,6 +2335,7 @@ OP_ARG_BUILDERS = {
     "kendama_rig": _b_ken_rig, "ken_truth": _b_ken_truth,
     "catch_plan_staged": _b_staged, "swing_up_lift": _b_staged, "parabola_fit_g": _b_parabola_g, "hole_detect": _b_hole_img,
     "kendama_pose": _b_kendama_pose, "kendama_clearance": _b_ken_clear, "camera_perceiver": _b_cam_perceiver,
+    "kendama_combo_simulate": _b_kendama_combo,
     "gs_from_world": _b_gs_from_world, "gs_update": _b_gs_update, "gs_render": _b_gs_render, "gs_render_fn": _b_gs_render_fn,
     "sign_params": _b_sign_kind, "sign_image": _b_sign_img, "plate_mesh_from_image": _b_plate_mesh,
     "sign_mesh": _b_sign_mesh, "add_sign": _b_add_sign, "signal_jp_mesh": _b_signal_jp,

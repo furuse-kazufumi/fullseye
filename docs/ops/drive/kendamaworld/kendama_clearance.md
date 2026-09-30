@@ -13,7 +13,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 # kendama_clearance — DRIVE `kendamaworld` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.kendama_clearance(kp: 'dict', hand, p_ball) -> 'dict'` (実装を直接呼ぶなら `import kendamaworld; kendamaworld.kendama_clearance(kp: 'dict', hand, p_ball) -> 'dict'`、台帳から引くなら `opsdrive.get("kendama_clearance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.kendama_clearance(kp: 'dict', hand, p_ball, *, R_ken=None, grip=None) -> 'dict'` (実装を直接呼ぶなら `import kendamaworld; kendamaworld.kendama_clearance(kp: 'dict', hand, p_ball, *, R_ken=None, grip=None) -> 'dict'`、台帳から引くなら `opsdrive.get("kendama_clearance")`)
 
 ## 使い方
 
@@ -21,6 +21,8 @@ version: 0.2.3  # fullseye lib version this note was generated for
 手元 ``hand``、玉の中心 ``p_ball``(どちらも (3,) か (N, 3))。回転体までの距離は子午面の輪郭までの 2-D の距離と厳密に等しい
 ので、メッシュの離散化によらない。返り値 ``{"gap" (N,), "ken" (N,), "cross" (N,)}``(ken / cross = 各部品までの隙間)。
 物理はけん玉と玉の衝突を解かないので、この量で「玉がけん玉を突き抜けた」step を数える(門・正直な報告に使う)。
+``R_ken``(19 巡目、連続技の持ち替え): 姿勢を kp["R_ken"] の代わりに (3, 3) か時刻ごとの (N, 3, 3) で渡す。``grip`` = 持つ所(局所)の
+上書き。どちらも None なら今まで通り。
 
 ## 参考(サンプルデータ・文献)
 
