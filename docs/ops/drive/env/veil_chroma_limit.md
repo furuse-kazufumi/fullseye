@@ -37,7 +37,7 @@ d* = ln(1 + W*/L_h)/β(灯火 c L e^{−βd} + 大気光 L_h (1 − e^{−βd}) 
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)
 
-[road_eval](../long/road_eval.md) · [long_simulate](../long/long_simulate.md) · [stopping_distance_grade](../long/stopping_distance_grade.md) · [stop_line_plan](../long/stop_line_plan.md) · [hill_hold_brake_min](../long/hill_hold_brake_min.md) · [hill_start_rollback](../long/hill_start_rollback.md) · [hill_start_command](../long/hill_start_command.md) · [julian_day](julian_day.md)
+[spin_from_marker_sequence](../balltrack/spin_from_marker_sequence.md) · [road_eval](../long/road_eval.md) · [long_simulate](../long/long_simulate.md) · [stopping_distance_grade](../long/stopping_distance_grade.md) · [stop_line_plan](../long/stop_line_plan.md) · [hill_hold_brake_min](../long/hill_hold_brake_min.md) · [hill_start_rollback](../long/hill_start_rollback.md) · [hill_start_command](../long/hill_start_command.md)
 
 ## 同カテゴリ(`env`)
 

@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **63 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **64 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -414,7 +414,7 @@ py -3.11 examples/poc_vanishing_detail_and_morphing_area.py
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 
-2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 17 点はその実演です。
+2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 18 点はその実演です。
 
 同時に、時間方向ならではの罠も出ました。フレーム格子への丸めは必ず遅らせ、画素の面積は合体を早める。誤リンクには向きの逆な 2 種類があり、誤り率 1 本では拡散係数がどちらへ外れるか決まらない。テンプレート追跡は見失うより先に静かにずれ、ずれた 152 フレーム全部が「見つけた」と報告する。
 
@@ -974,7 +974,39 @@ py -3.11 examples/poc_table_tennis_spin.py
 
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_table_tennis_spin)
 
-使用 op(ノートへ): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.html) · [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_detect.html) · [`ball_mesh`](https://furuse.work/ops/drive/ballworld/ball_mesh.html) · [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`ball_set_pose`](https://furuse.work/ops/drive/ballworld/ball_set_pose.html) · [`ball_track`](https://furuse.work/ops/drive/balltrack/ball_track.html) · [`bounce_detect`](https://furuse.work/ops/drive/balltrack/bounce_detect.html) · [`camera_rig`](https://furuse.work/ops/drive/ballworld/camera_rig.html) · [`fit_spin`](https://furuse.work/ops/drive/ball/fit_spin.html) · [`flight_ode`](https://furuse.work/ops/drive/ball/flight_ode.html) · [`flight_simulate`](https://furuse.work/ops/drive/ball/flight_simulate.html) · [`impact_params`](https://furuse.work/ops/drive/ball/impact_params.html) · [`marker_direction`](https://furuse.work/ops/drive/balltrack/marker_direction.html) · [`reproject`](https://furuse.work/ops/drive/balltrack/reproject.html) · [`rotation_from_omega`](https://furuse.work/ops/drive/ballworld/rotation_from_omega.html) · [`spin_from_markers`](https://furuse.work/ops/drive/balltrack/spin_from_markers.html) · [`table_params`](https://furuse.work/ops/drive/ballworld/table_params.html) · [`table_world`](https://furuse.work/ops/drive/ballworld/table_world.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`track_triangulate`](https://furuse.work/ops/drive/balltrack/track_triangulate.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
+使用 op(ノートへ): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.html) · [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_detect.html) · [`ball_mesh`](https://furuse.work/ops/drive/ballworld/ball_mesh.html) · [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`ball_set_pose`](https://furuse.work/ops/drive/ballworld/ball_set_pose.html) · [`ball_track`](https://furuse.work/ops/drive/balltrack/ball_track.html) · [`bounce_detect`](https://furuse.work/ops/drive/balltrack/bounce_detect.html) · [`camera_rig`](https://furuse.work/ops/drive/ballworld/camera_rig.html) · [`fit_spin`](https://furuse.work/ops/drive/ball/fit_spin.html) · [`flight_ode`](https://furuse.work/ops/drive/ball/flight_ode.html) · [`flight_simulate`](https://furuse.work/ops/drive/ball/flight_simulate.html) · [`impact_params`](https://furuse.work/ops/drive/ball/impact_params.html) · [`marker_direction`](https://furuse.work/ops/drive/balltrack/marker_direction.html) · [`reproject`](https://furuse.work/ops/drive/balltrack/reproject.html) · [`rotation_from_omega`](https://furuse.work/ops/drive/ballworld/rotation_from_omega.html) · [`spin_from_marker_sequence`](https://furuse.work/ops/drive/balltrack/spin_from_marker_sequence.html) · [`table_params`](https://furuse.work/ops/drive/ballworld/table_params.html) · [`table_world`](https://furuse.work/ops/drive/ballworld/table_world.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`track_triangulate`](https://furuse.work/ops/drive/balltrack/track_triangulate.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
+
+## No.2026.175 —— 跳ねる卓球の球を高速カメラで撮って、反発係数と摩擦係数を読む ―― 公表値と照合する
+
+[![跳ねる卓球の球を高速カメラで撮って、反発係数と摩擦係数を読む ―― 公表値と照合する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/05_regime_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/05_regime_map.png)
+
+*↑ **跳ねる卓球の球を高速カメラで撮って、反発係数と摩擦係数を読む ―― 公表値と照合する** ―― 卓球の球が台で跳ねると、縦の速さは反発係数 e の分だけ残り、横の速さと回転は摩擦で入れ替わる。接地点の滑りが小さければ跳ねの途中で止まって**転がりに移り**、大きければ**滑ったまま**離れる。この展示は台の上の跳ね 22 本を横から 1 台の高速カメラ(1000 fps、ROI 読み出し)で撮り、**画像だけから** e・摩擦係数 μ・跳ねの種類を読んで公表値と照合する。運動面が分かっているので 1 台で位置が出る(中心の画素の視線と面の交点)。跳ねの前後に抗力 + マグヌスの運動方程式を当てて接触の瞬間の速度を出し、回転は球の模様から 2 段で読む(新しい op spin_from_marker_sequence)。門: Cross 2002 の閉形式(薄い殻の球: 転がりに移る跳ねは v_x' = 0.6 v_x + 0.4 rω、滑ったままは Δv_t = μ(1+e)|v_z|、境目は (2/5)|s| = μ(1+e)|v_z|)が力積で書いた実装と乱数 300 通りで一致 / ITTF の台の跳ね(Laws 2.1.3: 30 cm → 約 23 cm)を動画から 23.0 cm / e の速さへの依存の傾き -0.00572 /(km/h)がInaba ら 2017 の実測 −0.0058 と 1.4 % / 滑ったままの跳ねから μ = 0.2500(真値 0.25)/ 跳ねの種類が閉形式の境目と 15 / 15 / 転がりに移った跳ねはrω' と v_x' が 3 % 以内 / 摩擦の無い台では横の速さも回転も変わらない。見つけたこと: 30 → 23 cm を e = √(23/30) = 0.876 と読むと空気抵抗の分を落とす —— その台は 21.7 cm しか跳ねず、抗力込みで約 23 cm になる e は 0.9019。Inaba らの式そのもの(切片 1.0002)は 30 cm から 25.5 cm 跳ねる台になり、ITTF と公表値同士で食い違う(研究室の台と規格の差か、測り方の差かは未確認)。転がりに移った跳ねの「見かけの μ」は μ の下界にすぎない。正直に: 合成映像、台の e(v) は ITTF の切片と Inaba らの傾きを継いだ合成、μ は定数(Inaba らの実測は接地点の速さで増える)、球の変形(5.5 m/s からの座屈)は入れていない。7 門、21.6 s。*
+
+[![ITTF の台の跳ねの試験(Laws 2.1.3: 30 cm から落として約 23 cm)。球の下端を 30 cm から落とし、動画から読んだ跳ねの高さは 23.0 cm(世界の真値 23.0 cm)。物差しは 1 cm 刻み。MP4 =](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/01_drop_test.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/01_drop_test.gif)
+
+*↑ 測定の図 ―― ITTF の台の跳ねの試験(Laws 2.1.3: 30 cm から落として約 23 cm)。球の下端を 30 cm から落とし、動画から読んだ跳ねの高さは 23.0 cm(世界の真値 23.0 cm)。物差しは 1 cm 刻み。MP4 = 240 fps の全コマ(1/8 スロー)。*
+
+[![動画から読んだ e(22 本)と公表値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/04_restitution_vs_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/04_restitution_vs_speed.png)
+
+*↑ 動画から読んだ e(22 本)と公表値。*
+
+[![バックスピン(ω = −150 rad/s)の跳ね(当たる瞬間 v = (4.9, −4.3) m/s)、1000 fps を 1/40 スローで。接地点が大きく滑ったまま離れる(滑り +7.89 → +2.89 m/s)。模様から読んだ回](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/02_backspin_bounce.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/02_backspin_bounce.gif)
+
+*↑ 動く図 ―― バックスピン(ω = −150 rad/s)の跳ね(当たる瞬間 v = (4.9, −4.3) m/s)、1000 fps を 1/40 スローで。接地点が大きく滑ったまま離れる(滑り +7.89 → +2.89 m/s)。模様から読んだ回転 -150 → +0 rad/s、横の速さの減り 1.997 m/s → 見かけの μ 0.250。*
+
+[![トップスピン(ω = +200 rad/s)の跳ね(当たる瞬間 v = (2.9, −3.1) m/s)。接地点の滑りが小さいので跳ねの途中で止まり、転がりに移って離れる(滑り -1.17 → -0.01 m/s、跳ねた後の rω' = 3](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/03_topspin_bounce.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/03_topspin_bounce.gif)
+
+*↑ 動く図 ―― トップスピン(ω = +200 rad/s)の跳ね(当たる瞬間 v = (2.9, −3.1) m/s)。接地点の滑りが小さいので跳ねの途中で止まり、転がりに移って離れる(滑り -1.17 → -0.01 m/s、跳ねた後の rω' = 3.320 m/s と v_x' = 3.312 m/s)。*
+
+```
+py -3.11 examples/poc_table_tennis_bounce.py
+```
+
+ソース: [examples/poc_table_tennis_bounce.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_table_tennis_bounce.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_table_tennis_bounce)
+
+使用 op(ノートへ): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.html) · [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_detect.html) · [`ball_mesh`](https://furuse.work/ops/drive/ballworld/ball_mesh.html) · [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`ball_set_pose`](https://furuse.work/ops/drive/ballworld/ball_set_pose.html) · [`bounce`](https://furuse.work/ops/drive/ball/bounce.html) · [`bounce_detect`](https://furuse.work/ops/drive/balltrack/bounce_detect.html) · [`crosshair`](https://furuse.work/ops/annotate/pointer/crosshair.html) · [`flight_fit`](https://furuse.work/ops/drive/ball/flight_fit.html) · [`flight_ode`](https://furuse.work/ops/drive/ball/flight_ode.html) · [`flight_simulate`](https://furuse.work/ops/drive/ball/flight_simulate.html) · [`flight_state_at`](https://furuse.work/ops/drive/ball/flight_state_at.html) · [`impact_params`](https://furuse.work/ops/drive/ball/impact_params.html) · [`marker_direction`](https://furuse.work/ops/drive/balltrack/marker_direction.html) · [`ray_plane_range`](https://furuse.work/ops/drive/lidar/ray_plane_range.html) · [`reproject`](https://furuse.work/ops/drive/balltrack/reproject.html) · [`rotation_from_omega`](https://furuse.work/ops/drive/ballworld/rotation_from_omega.html) · [`spin_from_marker_sequence`](https://furuse.work/ops/drive/balltrack/spin_from_marker_sequence.html) · [`table_params`](https://furuse.work/ops/drive/ballworld/table_params.html) · [`table_world`](https://furuse.work/ops/drive/ballworld/table_world.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
 
 ## No.2026.145 —— 継ぎ目の無い動画で、時間方向 op の周期境界を検査する
 

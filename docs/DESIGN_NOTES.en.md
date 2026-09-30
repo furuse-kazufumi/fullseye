@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1152. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1153. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -908,10 +908,14 @@ This repository records *why* things are the way they are in **comments in the s
 - **L200** _(ja)_ — ★門 4: fullseye の op が自前の計算と整数まで一致する(op の実例 + 第 2 実装)
 - **L209** _(ja)_ — ★門 2: 3 次元 Sholl は回転で整数が 1 つも動かない
 
+## `examples/poc_table_tennis_bounce.py`
+
+- **L53** _(ja)_ — ITTF の台の跳ね(30 cm → 約 23 cm)を満たす e と、その落下の衝突の速さ [km/h]。★空気抵抗を無視した √(23/30) = 0.876 では 上り下りの抵抗で 1.2 cm 足りない(21.8 cm)ので、main の最初に抵抗込みで解き直す(_calibrate_ittf)。
+
 ## `examples/poc_table_tennis_spin.py`
 
 - **L49** _(ja)_ — ★追跡カメラは予算に関係なく 240 fps。120 fps に落とすと標本が半分になり、回転の誤差が √2 倍(バック 0.9 → 10.9 %)、 コマ間で球が 1.6 cm 動くので跳ねの谷も浅く見えた(2026-09-30)。予算は長さの掃引の刻みだけで削る。
-- **L269** _(ja)_ — 画像から見つけた跳ね(真値は使わない)。★z の局所最小のうち**最も低いもの** —— 欠けた検出が残ると空中に偽の 「跳ね」ができ、最初の谷を採るとその手前で軌跡を切ってしまう(バックスピンで 36 コマしか使えなかった)。 高さの閾値(台 + r + 1.5 cm)で選ぶ手は、コマ間で球が 1.6 cm 動く 120 fps で本物の谷を落とした
+- **L245** _(ja)_ — 画像から見つけた跳ね(真値は使わない)。★z の局所最小のうち**最も低いもの** —— 欠けた検出が残ると空中に偽の 「跳ね」ができ、最初の谷を採るとその手前で軌跡を切ってしまう(バックスピンで 36 コマしか使えなかった)。 高さの閾値(台 + r + 1.5 cm)で選ぶ手は、コマ間で球が 1.6 cm 動く 120 fps で本物の谷を落とした
 
 ## `examples/poc_template_tracking.py`
 
@@ -2006,8 +2010,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L305** — Event positions (point process) -- the entry point of point_spectrum. ★**Don't use uniform random only**: without a periodic component you never once exercise the meaningful behavior of an "op that finds periods", so seed it with **structured data** mixing 12 unrelated events into a series with period 17.0 (this repo's discipline that random-only tests hide structural defects).
 - **L919** — ★A point cloud with non-finite values **crashes the KD-tree construction itself with a raw ValueError** (scipy: "data must be finite"). The pool is designed to record NONFINITE and keep the values, so a dirty point cloud arriving here is expected -- the side that builds it must guard. Hit for real on 2026-09-06: a new family was added, the way chains are walked changed, and at seed 3_000_0xx this path was struck and the fuzzer itself halted (not a defect of the op but **a defect of the tool**. The promise is that unbindable input is skipped, not raised).
 - **L1238** _(ja)_ — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L2923** — ★Until 2026-09-02 it was ``lambda v: True`` = **since the predicate is counted as "present", it's worse than absent** (the inspection script also counts it as "has a predicate"). Measured, it let through even None / 42 / a string / a dict. The canon was decided by **running all** of the 6 consuming op (reprconv's pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar): all 6 op accept only the two shapes above, and everything else becomes a named fail-closed with "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (measured). Since **(2,N) is not accepted**, the 3 adapters that were collapsing a 2-tuple into (2,N) with np.stack were fixed to axis=1. Two arrays of differing length (histogram's counts/edges) are also not a "pair" and are rejected.
-- **L3041** — ★"Exactly 2 elements" is **deliberately different** from pose (which allows info via `len >= 2`). Measured 2026-09-02: the 4 existing consumers that take a mesh as one argument (face_normals / vertex_normals / mesh_area / vertex_curvature) emit "mesh must be a 2-element tuple (vertices, faces)" for a 3-tuple, and cadmap's `_mesh` and render3d._mesh_arrays also accept only 2 elements. In other words **the canon for this repo's mesh sort is a 2-tuple**, and an extra element is not "more information" but a type-level lie that wipes out everything downstream. The sole exception `voxel_to_mesh` (which returns (v, f, n)) now has the canonical order extracted in ops3d.RESULT_ADAPTERS (treated the same as gicp / vol_label).
+- **L2933** — ★Until 2026-09-02 it was ``lambda v: True`` = **since the predicate is counted as "present", it's worse than absent** (the inspection script also counts it as "has a predicate"). Measured, it let through even None / 42 / a string / a dict. The canon was decided by **running all** of the 6 consuming op (reprconv's pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar): all 6 op accept only the two shapes above, and everything else becomes a named fail-closed with "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (measured). Since **(2,N) is not accepted**, the 3 adapters that were collapsing a 2-tuple into (2,N) with np.stack were fixed to axis=1. Two arrays of differing length (histogram's counts/edges) are also not a "pair" and are rejected.
+- **L3051** — ★"Exactly 2 elements" is **deliberately different** from pose (which allows info via `len >= 2`). Measured 2026-09-02: the 4 existing consumers that take a mesh as one argument (face_normals / vertex_normals / mesh_area / vertex_curvature) emit "mesh must be a 2-element tuple (vertices, faces)" for a 3-tuple, and cadmap's `_mesh` and render3d._mesh_arrays also accept only 2 elements. In other words **the canon for this repo's mesh sort is a 2-tuple**, and an extra element is not "more information" but a type-level lie that wipes out everything downstream. The sole exception `voxel_to_mesh` (which returns (v, f, n)) now has the canonical order extracted in ops3d.RESULT_ADAPTERS (treated the same as gicp / vol_label).
 
 ## `tools/chain_mine.py`
 

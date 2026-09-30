@@ -4,7 +4,7 @@ dim: drive
 category: balltrack
 in: points × points
 out: table
-examples: [poc_ball_bounce, poc_table_tennis_spin]
+examples: [poc_ball_bounce]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -34,7 +34,6 @@ M = 1 なら d₀ → d₁ の最小回転(軸 = d₀ × d₁)を返す("full" =
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_ball_bounce](../../../../examples/poc_ball_bounce.py) — `py -3.11 examples/poc_ball_bounce.py`
-- [poc_table_tennis_spin](../../../../examples/poc_table_tennis_spin.py) — `py -3.11 examples/poc_table_tennis_spin.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
@@ -42,7 +41,7 @@ M = 1 なら d₀ → d₁ の最小回転(軸 = d₀ × d₁)を返す("full" =
 
 ## 同カテゴリ(`balltrack`)
 
-[ball_detect](ball_detect.md) · [ball_track](ball_track.md) · [kalman_ca](kalman_ca.md) · [triangulate_dlt](triangulate_dlt.md) · [track_triangulate](track_triangulate.md) · [bounce_detect](bounce_detect.md) · [marker_direction](marker_direction.md) · [reproject](reproject.md)
+[ball_detect](ball_detect.md) · [ball_track](ball_track.md) · [kalman_ca](kalman_ca.md) · [triangulate_dlt](triangulate_dlt.md) · [track_triangulate](track_triangulate.md) · [bounce_detect](bounce_detect.md) · [marker_direction](marker_direction.md) · [spin_from_marker_sequence](spin_from_marker_sequence.md)
 
 ---
 *Provenance: balltrack.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

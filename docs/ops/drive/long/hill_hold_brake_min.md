@@ -31,7 +31,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)
 
-[road_eval](road_eval.md) · [long_simulate](long_simulate.md) · [stopping_distance_grade](stopping_distance_grade.md) · [stop_line_plan](stop_line_plan.md) · [hill_start_rollback](hill_start_rollback.md) · [hill_start_command](hill_start_command.md) · [julian_day](../env/julian_day.md) · [sun_at](../env/sun_at.md)
+[spin_from_marker_sequence](../balltrack/spin_from_marker_sequence.md) · [road_eval](road_eval.md) · [long_simulate](long_simulate.md) · [stopping_distance_grade](stopping_distance_grade.md) · [stop_line_plan](stop_line_plan.md) · [hill_start_rollback](hill_start_rollback.md) · [hill_start_command](hill_start_command.md) · [julian_day](../env/julian_day.md)
 
 ## 同カテゴリ(`long`)
 

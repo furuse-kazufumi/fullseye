@@ -1,0 +1,88 @@
+[
+ {
+  "file": "01_drop_test.gif",
+  "name": "drop_test",
+  "caption": "ITTF の台の跳ねの試験(Laws 2.1.3: 30 cm から落として約 23 cm)。球の下端を 30 cm から落とし、動画から読んだ跳ねの高さは 23.0 cm(世界の真値 23.0 cm)。物差しは 1 cm 刻み。MP4 = 240 fps の全コマ(1/8 スロー)。",
+  "shape": [
+   360,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 48,
+  "frames_written": 48,
+  "fps": 10.0,
+  "video": "01_drop_test.mp4",
+  "video_frames": 144,
+  "video_fps": 30.0,
+  "video_shape": [
+   480,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "02_backspin_bounce.gif",
+  "name": "backspin_bounce",
+  "caption": "バックスピン(ω = −150 rad/s)の跳ね(当たる瞬間 v = (4.9, −4.3) m/s)、1000 fps を 1/40 スローで。接地点が大きく滑ったまま離れる(滑り +7.89 → +2.89 m/s)。模様から読んだ回転 -150 → +0 rad/s、横の速さの減り 1.997 m/s → 見かけの μ 0.250。",
+  "shape": [
+   300,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 41,
+  "frames_written": 41,
+  "fps": 12.5,
+  "video": "02_backspin_bounce.mp4",
+  "video_frames": 81,
+  "video_fps": 25.0,
+  "video_shape": [
+   400,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "03_topspin_bounce.gif",
+  "name": "topspin_bounce",
+  "caption": "トップスピン(ω = +200 rad/s)の跳ね(当たる瞬間 v = (2.9, −3.1) m/s)。接地点の滑りが小さいので跳ねの途中で止まり、転がりに移って離れる(滑り -1.17 → -0.01 m/s、跳ねた後の rω' = 3.320 m/s と v_x' = 3.312 m/s)。",
+  "shape": [
+   300,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 41,
+  "frames_written": 41,
+  "fps": 12.5,
+  "video": "03_topspin_bounce.mp4",
+  "video_frames": 81,
+  "video_fps": 25.0,
+  "video_shape": [
+   400,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "04_restitution_vs_speed.png",
+  "name": "restitution_vs_speed",
+  "caption": "動画から読んだ e(22 本)と公表値。傾きは Inaba ら 2017 と 1.4 % で一致。Inaba らの直線そのものは ITTF の台の跳ね(約 23 cm)より高く跳ねる側にずれている —— 公表値同士の食い違い(研究室の台と規格の差か、測り方の差かは未確認)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_regime_map.png",
+  "name": "regime_map",
+  "caption": "境目より下の跳ねは接地点が止まって転がりに移り、上の跳ねは滑ったまま離れる(Cross 2002)。境目は動画から読んだ μ = 0.250 と e(v) で引いた。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

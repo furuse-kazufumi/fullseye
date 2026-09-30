@@ -4,7 +4,7 @@ dim: drive
 category: balltrack
 in: image2d
 out: table
-examples: [poc_ball_bounce, poc_driving_longitudinal, poc_driving_school, poc_driving_weather, poc_kendama, poc_table_tennis_spin]
+examples: [poc_ball_bounce, poc_driving_longitudinal, poc_driving_school, poc_driving_weather, poc_kendama, poc_table_tennis_bounce, poc_table_tennis_spin]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -37,6 +37,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 - [poc_driving_school](../../../../examples/poc_driving_school.py) — `py -3.11 examples/poc_driving_school.py`
 - [poc_driving_weather](../../../../examples/poc_driving_weather.py) — `py -3.11 examples/poc_driving_weather.py`
 - [poc_kendama](../../../../examples/poc_kendama.py) — `py -3.11 examples/poc_kendama.py`
+- [poc_table_tennis_bounce](../../../../examples/poc_table_tennis_bounce.py) — `py -3.11 examples/poc_table_tennis_bounce.py`
 - [poc_table_tennis_spin](../../../../examples/poc_table_tennis_spin.py) — `py -3.11 examples/poc_table_tennis_spin.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
@@ -45,7 +46,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 同カテゴリ(`balltrack`)
 
-[ball_track](ball_track.md) · [kalman_ca](kalman_ca.md) · [triangulate_dlt](triangulate_dlt.md) · [track_triangulate](track_triangulate.md) · [bounce_detect](bounce_detect.md) · [marker_direction](marker_direction.md) · [spin_from_markers](spin_from_markers.md) · [reproject](reproject.md)
+[ball_track](ball_track.md) · [kalman_ca](kalman_ca.md) · [triangulate_dlt](triangulate_dlt.md) · [track_triangulate](track_triangulate.md) · [bounce_detect](bounce_detect.md) · [marker_direction](marker_direction.md) · [spin_from_markers](spin_from_markers.md) · [spin_from_marker_sequence](spin_from_marker_sequence.md)
 
 ---
 *Provenance: balltrack.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

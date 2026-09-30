@@ -1800,6 +1800,16 @@ def _b_spin_markers(pool, rng):
     return (d0, d0 @ R.T, 1e-3), {}
 
 
+def _b_spin_marker_seq(pool, rng):
+    import ballworld as BW
+    d = np.array([[0.0, 0.0, 1.0], [0.6, 0.0, 0.8], [0.0, 0.6, 0.8], [-0.5, 0.3, 0.81]])
+    seq, R = [], np.eye(3)
+    for _ in range(8):
+        seq.append(d @ R.T)
+        R = BW.rotation_from_omega((0.0, 50.0, 10.0), 1e-3) @ R
+    return (seq, 1e-3), {}
+
+
 def _b_table_world(pool, rng):
     import ballworld as BW
     return (BW.table_params(),), {}
@@ -2474,7 +2484,7 @@ OP_ARG_BUILDERS = {
     "cup_catch_check": _b_cup,
     "ball_detect": _b_ball_img, "ball_track": _b_ball_dets, "kalman_ca": _b_kalman, "triangulate_dlt": _b_tri_dlt,
     "track_triangulate": _b_track_tri, "bounce_detect": _b_bounce_det, "marker_direction": _b_marker_dir,
-    "spin_from_markers": _b_spin_markers, "reproject": _b_reproject,
+    "spin_from_markers": _b_spin_markers, "spin_from_marker_sequence": _b_spin_marker_seq, "reproject": _b_reproject,
     "table_params": _b_course_none, "table_world": _b_table_world, "ball_mesh": _b_ball_mesh, "add_ball": _b_add_ball,
     "ball_set_pose": _b_ball_pose, "rotation_from_omega": _b_rot_omega, "camera_rig": _b_cam_rig,
     "ball_truth": _b_ball_truth, "icosphere": _b_icosphere,

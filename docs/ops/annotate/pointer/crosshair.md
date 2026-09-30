@@ -4,7 +4,7 @@ dim: annotate
 category: pointer
 in: image2d
 out: image2d
-examples: [annotate_gallery, poc_ball_bounce, poc_kendama, poc_ttc_rss, poc_world_terrain]
+examples: [annotate_gallery, poc_ball_bounce, poc_kendama, poc_table_tennis_bounce, poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -52,6 +52,7 @@ ValueError
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
 - [poc_ball_bounce](../../../../examples/poc_ball_bounce.py) — `py -3.11 examples/poc_ball_bounce.py`
 - [poc_kendama](../../../../examples/poc_kendama.py) — `py -3.11 examples/poc_kendama.py`
+- [poc_table_tennis_bounce](../../../../examples/poc_table_tennis_bounce.py) — `py -3.11 examples/poc_table_tennis_bounce.py`
 - [poc_ttc_rss](../../../../examples/poc_ttc_rss.py) — `py -3.11 examples/poc_ttc_rss.py`
 - [poc_world_terrain](../../../../examples/poc_world_terrain.py) — `py -3.11 examples/poc_world_terrain.py`
 

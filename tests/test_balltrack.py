@@ -348,3 +348,28 @@ def test_ball_track_associates_by_constant_velocity_and_rejects_jumps():
     d = BT.ball_detect(_disc().astype(np.float64), mode="bright", thresh=0.5)
     tr2 = BT.ball_track([d, d, [], d])
     assert tr2["frame"].tolist() == [0, 1, 3] and tr2["found"].tolist() == [True, True, False, True]
+
+
+def test_spin_from_marker_sequence_recovers_omega_and_beats_single_pairs():
+    """模様の列(雑音つき)から ω を読む: 2 段目(4 コマ離れた組)は 1 段目(隣同士)より誤差が小さい。見えないコマ(None)は飛ばす。"""
+    rng = np.random.default_rng(5)
+    w = np.array([0.0, 150.0, 20.0])
+    dt = 1e-3
+    marks = rng.normal(size=(14, 3))
+    marks /= np.linalg.norm(marks, axis=1, keepdims=True)
+    R = np.eye(3)
+    dirs = []
+    for k in range(20):
+        if k:
+            R = _rodrigues(w, dt) @ R
+        d = marks @ R.T
+        d = d[d[:, 2] > 0.2] + rng.normal(0, 0.01, (int((d[:, 2] > 0.2).sum()), 3))     # 手前の半球だけ見える + 位置の雑音
+        dirs.append(d if k != 7 else None)
+    r = BT.spin_from_marker_sequence(dirs, dt)
+    e2 = np.linalg.norm(r["omega"] - w) / np.linalg.norm(w)
+    e1 = np.linalg.norm(r["omega_stage1"] - w) / np.linalg.norm(w)
+    assert r["n_pairs"] >= 10 and e2 < 0.03 and e2 < e1
+    with pytest.raises(ValueError):
+        BT.spin_from_marker_sequence(dirs, 0.0)
+    empty = BT.spin_from_marker_sequence([None, None, None], dt)
+    assert empty["n_pairs"] == 0 and np.all(np.isnan(empty["omega"]))

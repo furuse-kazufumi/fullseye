@@ -514,7 +514,7 @@ from ballistics import (  # noqa: E402,F401
 import balltrack  # noqa: E402  (球の追跡: サブピクセル検出 → 追跡 → DLT 三角測量 → 等加速度 Kalman、模様から角速度)
 from balltrack import (  # noqa: E402,F401
     ball_detect, ball_track, kalman_ca, triangulate_dlt, track_triangulate, bounce_detect, marker_direction,
-    spin_from_markers, reproject,
+    spin_from_markers, spin_from_marker_sequence, reproject,
 )
 import ballworld  # noqa: E402  (真値つきの台の世界: ITTF の台 + 球の模様 + カメラ、投影の真値)
 from ballworld import (  # noqa: E402,F401

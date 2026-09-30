@@ -14,7 +14,7 @@ import numpy as np
 
 __all__ = [
     "ball_detect", "ball_track", "kalman_ca", "triangulate_dlt", "track_triangulate", "bounce_detect",
-    "marker_direction", "spin_from_markers", "reproject",
+    "marker_direction", "spin_from_markers", "spin_from_marker_sequence", "reproject",
 ]
 
 
@@ -183,6 +183,63 @@ def _projection_matrix(pose, K) -> np.ndarray:
     flip = np.diag([1.0, -1.0, -1.0])            # X 右, Y 上 → (x, −y, depth = −Z)
     Kc = np.array([[K[0, 0], 0.0, K[0, 2]], [0.0, K[1, 1], K[1, 2]], [0.0, 0.0, 1.0]])
     return Kc @ flip @ T[:3, :]
+
+
+def _rot(omega, dt):
+    th = float(np.linalg.norm(omega)) * dt
+    if th < 1e-15:
+        return np.eye(3)
+    k = np.asarray(omega, np.float64) / np.linalg.norm(omega)
+    Kx = np.array([[0, -k[2], k[1]], [k[2], 0, -k[0]], [-k[1], k[0], 0]])
+    return np.eye(3) + np.sin(th) * Kx + (1 - np.cos(th)) * Kx @ Kx
+
+
+def _match_marks(d0, d1, w_pred, dt, max_angle):
+    pred = d0 if w_pred is None else d0 @ _rot(w_pred, dt).T
+    cosang = pred @ d1.T
+    lim = np.cos(max_angle)
+    pairs, used_i, used_j = [], set(), set()
+    for i, j in sorted(((i, j) for i in range(len(d0)) for j in range(len(d1))), key=lambda ij: -cosang[ij]):
+        if i in used_i or j in used_j or cosang[i, j] < lim:
+            continue
+        pairs.append((i, j))
+        used_i.add(i)
+        used_j.add(j)
+    return pairs
+
+
+def spin_from_marker_sequence(dirs, dt: float, *, lag: int = 4, max_angle: float = 0.5) -> dict:
+    """コマの列の模様の向き ``dirs[k]``((M_k, 3) の単位ベクトル、見つからないコマは None)から角速度を読む(2 段)。
+
+    1 段目: 隣のコマ同士で、向きが ``max_angle`` [rad] 以内で最も近い模様を組にして Kabsch(:func:`spin_from_markers`)、
+    その中央値を ω₁ とする。2 段目: ``lag`` コマ離れた組を、前のコマを ω₁ で回した予測に最も近い模様(``max_angle``/2 以内)と
+    組んで当て直す —— 回転角が lag 倍になるので、模様の位置の誤差が効く割合は 1/lag。★1 コマの回転角は ``max_angle``
+    より十分小さいこと(模様の取り違え)、lag コマの回転は π より小さいこと(Kabsch は最短の回転を返す)。
+    返り値 ``{"omega", "omega_stage1", "n_pairs", "per_pair" (N, 3)}``(ω は dirs と同じ座標系)。組が 1 つも無ければ
+    ω は NaN。模様が見えた向きの組が要るので、各コマ 2 個以上の模様が要る。"""
+    if dt <= 0 or int(lag) < 1 or not (0 < max_angle < np.pi / 2):
+        raise ValueError("need dt > 0, lag >= 1, 0 < max_angle < pi/2")
+    D = [None if d is None else np.asarray(d, np.float64).reshape(-1, 3) for d in dirs]
+    D = [None if d is None or len(d) < 2 else d / np.linalg.norm(d, axis=1, keepdims=True) for d in D]
+
+    def fit(k0, k1, w_pred, ang):
+        d0, d1 = D[k0], D[k1]
+        if d0 is None or d1 is None:
+            return None
+        pairs = _match_marks(d0, d1, w_pred, (k1 - k0) * dt, ang)
+        if len(pairs) < 2:
+            return None
+        return spin_from_markers(d0[[i for i, _ in pairs]], d1[[j for _, j in pairs]], (k1 - k0) * dt)["omega"]
+
+    st1 = [w for w in (fit(k, k + 1, None, max_angle) for k in range(len(D) - 1)) if w is not None]
+    if not st1:
+        nan = np.full(3, np.nan)
+        return {"omega": nan, "omega_stage1": nan, "n_pairs": 0, "per_pair": np.zeros((0, 3))}
+    w1 = np.median(np.asarray(st1), axis=0)
+    lag = int(lag)
+    st2 = [w for w in (fit(k, k + lag, w1, 0.5 * max_angle) for k in range(len(D) - lag)) if w is not None]
+    per = np.asarray(st2) if st2 else np.asarray(st1)
+    return {"omega": np.median(per, axis=0), "omega_stage1": w1, "n_pairs": int(len(per)), "per_pair": per}
 
 
 def reproject(points, pose, K) -> np.ndarray:

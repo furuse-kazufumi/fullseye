@@ -906,10 +906,14 @@
 - **L200** — ★門 4: fullseye の op が自前の計算と整数まで一致する(op の実例 + 第 2 実装)
 - **L209** — ★門 2: 3 次元 Sholl は回転で整数が 1 つも動かない
 
+## `examples/poc_table_tennis_bounce.py`
+
+- **L53** — ITTF の台の跳ね(30 cm → 約 23 cm)を満たす e と、その落下の衝突の速さ [km/h]。★空気抵抗を無視した √(23/30) = 0.876 では 上り下りの抵抗で 1.2 cm 足りない(21.8 cm)ので、main の最初に抵抗込みで解き直す(_calibrate_ittf)。
+
 ## `examples/poc_table_tennis_spin.py`
 
 - **L49** — ★追跡カメラは予算に関係なく 240 fps。120 fps に落とすと標本が半分になり、回転の誤差が √2 倍(バック 0.9 → 10.9 %)、 コマ間で球が 1.6 cm 動くので跳ねの谷も浅く見えた(2026-09-30)。予算は長さの掃引の刻みだけで削る。
-- **L269** — 画像から見つけた跳ね(真値は使わない)。★z の局所最小のうち**最も低いもの** —— 欠けた検出が残ると空中に偽の 「跳ね」ができ、最初の谷を採るとその手前で軌跡を切ってしまう(バックスピンで 36 コマしか使えなかった)。 高さの閾値(台 + r + 1.5 cm)で選ぶ手は、コマ間で球が 1.6 cm 動く 120 fps で本物の谷を落とした
+- **L245** — 画像から見つけた跳ね(真値は使わない)。★z の局所最小のうち**最も低いもの** —— 欠けた検出が残ると空中に偽の 「跳ね」ができ、最初の谷を採るとその手前で軌跡を切ってしまう(バックスピンで 36 コマしか使えなかった)。 高さの閾値(台 + r + 1.5 cm)で選ぶ手は、コマ間で球が 1.6 cm 動く 120 fps で本物の谷を落とした
 
 ## `examples/poc_template_tracking.py`
 
@@ -2004,8 +2008,8 @@
 - **L305** — 事象の位置(点過程)—— point_spectrum の入口。★**一様乱数だけにしない**: 周期成分が無いと「周期を見つける op」の意味のある挙動を一度も踏まないので、 周期 17.0 の列に 12 個の無関係な事象を混ぜた**構造データ**を種にする (乱数だけの試験は構造の欠陥を隠す、というこの repo の規律)。
 - **L919** — ★ 非有限が混じった点群は **KD 木の構築そのものが生の ValueError で落ちる** (scipy: "data must be finite")。プールは NONFINITE を記録したうえで値を 残す設計なので、汚れた点群がここへ来るのは想定内 —— 建てる側が防ぐ。 2026-09-06 に実際に踏んだ: 新しい族が増えて連鎖の歩き方が変わり、 seed 3_000_0xx でこの経路に当たってファザー自身が停止した(op の欠陥では なく**道具の欠陥**。束縛できない入力は例外ではなくスキップが約束)。
 - **L1238** — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L2923** — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
-- **L3041** — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
+- **L2933** — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
+- **L3051** — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
 
 ## `tools/chain_mine.py`
 

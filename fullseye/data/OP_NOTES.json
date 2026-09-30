@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2409,
- "n_notes": 2415,
+ "n_ops": 2410,
+ "n_notes": 2416,
  "notes": {
   "vol_dilate": [
    {
@@ -15701,6 +15701,16 @@
     "in": "points × matrix × matrix",
     "out": "matrix",
     "path": "docs/ops/drive/balltrack/reproject.md"
+   }
+  ],
+  "spin_from_marker_sequence": [
+   {
+    "op": "spin_from_marker_sequence",
+    "dim": "drive",
+    "category": "balltrack",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/balltrack/spin_from_marker_sequence.md"
    }
   ],
   "spin_from_markers": [

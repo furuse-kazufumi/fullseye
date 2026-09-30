@@ -170,6 +170,7 @@ _CATALOG = {
         ("bounce_detect", "balltrack", ["signal", "signal"], "table"),
         ("marker_direction", "balltrack", [], "signal"),
         ("spin_from_markers", "balltrack", ["points", "points"], "table"),
+        ("spin_from_marker_sequence", "balltrack", ["any"], "table"),
         ("reproject", "balltrack", ["points", "matrix", "matrix"], "matrix"),
     ],
     # 真値つきの台の世界(17 巡目): ITTF 寸法の台 + ネット + 床、正 20 面体の球と模様(ラベル 23 / 24)、台を囲むカメラ、

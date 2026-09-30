@@ -131,36 +131,12 @@ def _spin_from_closeup(world, ball, sim, t_mid, R0):
         inside = np.hypot(cc - cb[0], rr - cb[1]) < rb * 0.85          # 縁は模様が潰れるので内側だけ
         marks = BT.ball_detect(np.where(inside, gray, 1.0), mode="dark", thresh=0.2, radius_range=(1.5, 12))
         dirs.append(np.asarray([BT.marker_direction((m["col"], m["row"]), cb, rb, K) for m in marks]) if len(marks) >= 2 else None)
-    # 1 段目: 隣のコマと対応づける(1 コマの回転 ≈ 0.15 rad なので、向きが 0.5 rad 以内で最も近い組)。
-    est1 = [e for e in (_kabsch_pair(dirs[k], dirs[k + 1], 1, None) for k in range(N_SPIN - 1)) if e is not None]
-    if not est1:
+    # 2 段で読む(balltrack.spin_from_marker_sequence): 隣のコマ同士で ω₁ → LAG コマ離れた組を ω₁ の予測で対応づけて当て直す
+    #   (回転角が LAG 倍になるので、模様の位置の誤差が効く割合は 1/LAG)。
+    sq = BT.spin_from_marker_sequence(dirs, 1.0 / FPS_SPIN, lag=LAG)
+    if not sq["n_pairs"]:
         return np.full(3, np.nan), frames, 0
-    w1 = np.median(np.asarray(est1), axis=0)
-    # 2 段目: LAG コマ離れた組で当て直す。回転角が LAG 倍になるので、模様の位置の誤差が効く割合は 1/LAG。
-    #   対応づけは 1 段目の ω で前のコマを回して予測し、予測に最も近い模様と組む(0.25 rad 以内)。
-    est = [e for e in (_kabsch_pair(dirs[k], dirs[k + LAG], LAG, w1) for k in range(N_SPIN - LAG)) if e is not None]
-    w_cam = np.median(np.asarray(est), axis=0) if est else w1
-    return Rc.T @ w_cam, frames, len(est)                               # カメラ系 → 世界系
-
-
-def _kabsch_pair(d0, d1, lag, w_pred):
-    """模様の向きの組 (d0, d1)(lag コマ離れている)を対応づけて回転を当てる(カメラ系の ω)。対応が 2 組未満なら None。"""
-    if d0 is None or d1 is None:
-        return None
-    dt = lag / FPS_SPIN
-    pred = d0 if w_pred is None else d0 @ BW.rotation_from_omega(w_pred, dt).T
-    cosang = pred @ d1.T
-    lim = np.cos(0.5 if w_pred is None else 0.25)
-    pairs, used_i, used_j = [], set(), set()
-    for i, j in sorted(((i, j) for i in range(len(d0)) for j in range(len(d1))), key=lambda ij: -cosang[ij]):
-        if i in used_i or j in used_j or cosang[i, j] < lim:
-            continue
-        pairs.append((i, j))
-        used_i.add(i)
-        used_j.add(j)
-    if len(pairs) < 2:
-        return None
-    return BT.spin_from_markers(d0[[i for i, _ in pairs]], d1[[j for _, j in pairs]], dt)["omega"]
+    return Rc.T @ sq["omega"], frames, sq["n_pairs"]                   # カメラ系 → 世界系
 
 
 def _roi_detections(world, ball, P, Rs, cam):

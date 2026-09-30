@@ -34,7 +34,7 @@ k > 0 は停止距離が v に単調なので二分法(1e-12)。A ≤ 0(下り�
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)
 
-[road_eval](../long/road_eval.md) · [long_simulate](../long/long_simulate.md) · [stopping_distance_grade](../long/stopping_distance_grade.md) · [stop_line_plan](../long/stop_line_plan.md) · [hill_hold_brake_min](../long/hill_hold_brake_min.md) · [hill_start_rollback](../long/hill_start_rollback.md) · [hill_start_command](../long/hill_start_command.md) · [julian_day](julian_day.md)
+[spin_from_marker_sequence](../balltrack/spin_from_marker_sequence.md) · [road_eval](../long/road_eval.md) · [long_simulate](../long/long_simulate.md) · [stopping_distance_grade](../long/stopping_distance_grade.md) · [stop_line_plan](../long/stop_line_plan.md) · [hill_hold_brake_min](../long/hill_hold_brake_min.md) · [hill_start_rollback](../long/hill_start_rollback.md) · [hill_start_command](../long/hill_start_command.md)
 
 ## 同カテゴリ(`env`)
 

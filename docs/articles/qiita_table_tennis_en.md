@@ -45,6 +45,7 @@ The criteria are the same as in the autonomous-driving series ([here](https://qi
 | 1 | [The ball bounces — tracking, triangulation, prediction through the bounce, spin, rally](#part-1-the-ball-bounces--tracking-triangulation-prediction-through-the-bounce-spin-rally) | closed forms in vacuum / angular momentum about the contact point / apex ratio e^{2k}h₀ / the ITTF bounce standard / a world with ground truth / the rally length |
 | 2 | [Kendama — the string only pulls, the ball flies a parabola, the cup is carried by a prediction from images](#part-2-kendama--the-string-only-pulls-the-ball-flies-a-parabola-the-cup-is-carried-by-a-prediction-from-images) | elliptic integral and period theorems / closed forms of tension and slack angle / Japan Kendama Association dimensions / a world with ground truth / 3DGS projection and compositing formulas |
 | 3 | [Filming a spinning ball and reading its spin two ways — from the curve and from the markings](#part-3-filming-a-spinning-ball-and-reading-its-spin-two-ways--from-the-curve-and-from-the-markings) | the ω × v theorem (spin about the direction of travel produces no force) / a world with ground truth / two independent readings (track and markings) agree |
+| 4 | [Filming a bouncing ball with a high-speed camera and reading restitution and friction — checked against published values](#part-4-filming-a-bouncing-ball-with-a-high-speed-camera-and-reading-restitution-and-friction--checked-against-published-values) | the closed forms of Cross 2002 / the ITTF table bounce / the speed dependence of restitution in Inaba et al. 2017 / a world with ground truth |
 
 ---
 
@@ -486,6 +487,93 @@ The whole PoC: `py -3.11 examples/poc_table_tennis_spin.py` (figures and videos 
 
 ---
 
+## Part 4: Filming a bouncing ball with a high-speed camera and reading restitution and friction — checked against published values
+
+![The ITTF table-bounce test](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/01_drop_test.gif)
+
+*↑ The table-bounce test in the ITTF Laws (2.1.3): a ball dropped from 30 cm should bounce about 23 cm. The bounce height read from the video is 23.0 cm. The ruler is marked in 1 cm steps. All 240 fps frames (1/8 slow motion): [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_table_tennis_bounce/01_drop_test.mp4).*
+
+When a table-tennis ball bounces on the table, the coefficient of restitution e decides how much of the vertical speed survives. Friction trades horizontal speed against spin. If the contact point (where the ball touches the table) slides only a little, the sliding stops during the bounce and the ball leaves **rolling**; if it slides a lot, the ball leaves **still sliding**. Which one happens changes where the ball goes next.
+
+This part films 22 bounces with one high-speed camera (1000 fps, from the side), reads e, the friction coefficient μ and the kind of bounce **from the images alone**, and checks them against published values.
+
+### Steps
+
+1. The ball's plane of motion (the vertical plane y = 0) is known, so one camera gives positions: intersect the line of sight through the ball's centre pixel with that plane (`ray_plane_range`).
+2. Fit the drag + Magnus equation of motion before and after the bounce and get the velocities at the moment of contact (`flight_fit`). Spin comes from the ball's marks (`spin_from_marker_sequence`).
+3. e = −v_z'/v_z. Compare the contact point's slip s = v_x − rω before and after; for bounces that leave sliding, μ = Δv_x /((1+e)|v_z|) (the formula used by Inaba et al.).
+4. Check the kind of bounce read from the video against the closed-form boundary drawn with the measured e and μ.
+
+![Backspin bounce](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/02_backspin_bounce.gif)
+
+*↑ A backspin bounce (−150 rad/s) at 1000 fps (1/40 speed). The contact point keeps sliding and friction almost cancels the spin (spin read from the marks: −150 → 0 rad/s). [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_table_tennis_bounce/02_backspin_bounce.mp4)*
+
+![Topspin bounce](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/03_topspin_bounce.gif)
+
+*↑ A topspin bounce (+200 rad/s). The contact point slides only a little, so the sliding stops during the bounce and the ball leaves rolling (after the bounce rω' = 3.320 m/s and v_x' = 3.312 m/s are almost equal). [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_table_tennis_bounce/03_topspin_bounce.mp4)*
+
+### Gates and results
+
+| Gate | Source of truth | Result |
+|---|---|---|
+| Closed forms of the bounce | Cross 2002 (thin-shelled ball I = (2/3) m r²): a bounce that ends rolling has v_x' = 0.6 v_x + 0.4 rω; one that keeps sliding has Δv_t = μ(1+e)\|v_z\|; the boundary is (2/5)\|s\| = μ(1+e)\|v_z\| | against the impulse implementation, 300 random impacts: kind 300/300, velocity difference 2.7 × 10⁻¹⁵ m/s |
+| ITTF table bounce | published (Laws 2.1.3: 30 cm → about 23 cm) | 23.0 cm from the video |
+| e versus impact speed | published (Inaba et al. 2017, plastic ball: −0.0058 per km/h) | slope over 22 bounces (5.0–16.4 km/h) −0.00572, 1.4 % off; median per-bounce e error 0.0004 |
+| Friction coefficient | a world that holds the truth (0.25, matched to the 0.2526 intercept of Inaba et al.) | 0.250 from the 3 clearly sliding bounces |
+| Kind of bounce | closed-form boundary drawn with the measured e and μ | 15 / 15 agree (1 bounce within ±10 % of the boundary is not judged) |
+| Rolling | a bounce that ends rolling has rω' = v_x' | 0.1–2.3 % over 10 bounces |
+| Zero point | a table without friction | horizontal speed changes by 0.002 m/s, spin by 0.2 % |
+
+![Restitution versus speed](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/04_restitution_vs_speed.png)
+
+*↑ The e read from the video drops as the impact gets faster; the slope agrees with Inaba et al. 2017 to 1.4 %. The upper line is their formula itself (intercept 1.0002), which sits on the livelier side of the ITTF table.*
+
+![Rolling or sliding](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/05_regime_map.png)
+
+*↑ Bounces below the boundary stop sliding and leave rolling; those above leave still sliding. The boundary is drawn with the μ and e read from the video.*
+
+### Pitfalls
+
+- **Reading 30 cm → 23 cm as e = √(23/30) = 0.876 drops the air drag.** For a 40 mm, 2.7 g ball, drag on the way down and up takes 1.3 cm, so a table with e = 0.876 bounces only 21.7 cm. The e that gives about 23 cm with drag is 0.902.
+- **Published values can disagree.** The formula of Inaba et al. itself (e = 1.0002 − 0.0058 v) makes a table that bounces 25.5 cm from 30 cm, which does not match the ITTF's about 23 cm. Whether this is their lab table versus the standard, or the way it was measured, has not been checked. This PoC's table uses the ITTF value as the intercept and the slope of Inaba et al. for the speed dependence.
+- **A bounce that ends rolling only gives a lower bound on μ.** Once the sliding stops, friction uses less impulse than μ J_n. The apparent μ of such bounces (0.03–0.24) is not μ. Measure μ only on bounces that are still sliding afterwards.
+- **One camera needs a known plane of motion.** Here the ball is played in the vertical plane y = 0. A ball flying at an angle needs two cameras (the triangulation of Part 1).
+
+### Not suited for
+
+- The friction coefficient is a constant. Inaba et al. measured it rising to 0.27–0.44 with the contact-point speed.
+- The ball does not deform. A thin shell is reported to start buckling around 5.5 m/s, lowering e further (Rémond et al. 2022); vertical speeds here stay under 4.5 m/s.
+- Synthetic video: no real lighting, blur or background.
+
+### Run it
+
+```python
+import numpy as np
+import fullseye as fs
+
+bp = fs.ledger.ball_params()
+ip = fs.ledger.impact_params(0.90, 0.25)                  # e, μ
+r = bp["radius"]
+v_in, n = [3.0, 0.0, -3.0], [0.0, 0.0, 1.0]
+
+# a bounce that keeps sliding (backspin) and one that ends rolling (topspin)
+for w in (-150.0, 200.0):
+    b = fs.ledger.bounce(v_in, [0.0, w, 0.0], n, bp, ip)
+    print(b["regime"], np.round(b["v"], 3), round(r * b["omega"][1], 3))
+# slip [1.575 0.    2.7  ] -0.862        ← keeps sliding: Δv_x = μ(1+e)|v_z| = 1.425
+# grip [3.4 0.  2.7] 3.4                 ← ends rolling: v_x' = 0.6·3 + 0.4·(0.02·200) = 3.4, rω' = v_x'
+
+# recover e and μ from (v, ω) before and after (for a rolling bounce μ is only a lower bound)
+b = fs.ledger.bounce(v_in, [0.0, -150.0, 0.0], n, bp, ip)
+f = fs.ledger.fit_bounce(v_in, [0.0, -150.0, 0.0], b["v"], b["omega"], n, bp)
+print(round(f["e"], 4), round(f["mu"], 4), f["regime"], f["mu_is_lower_bound"])
+# 0.9 0.25 slip False                   ← e, μ, kind, is μ a lower bound
+```
+
+The whole PoC: `py -3.11 examples/poc_table_tennis_bounce.py` (figures and videos when `FULLSEYE_FIGURE_DIR` is set).
+
+---
+
 ## Next time
 
-**Measuring bounce and friction from video and checking them against published values.** A ball bouncing on the table is filmed with one high-speed camera, and the coefficients of restitution e and friction μ are read from the images. The truth comes from published values: the table bounce in the ITTF Laws (dropped from 30 cm, about 23 cm), measured restitution and friction on the table (Inaba et al. 2017, with their dependence on impact speed), and the closed-form boundary between rolling and slipping after a thin-shelled ball bounces (Cross 2002). After that we return to the spike trick (the spike into the ball's hole).
+**The rally's closed loop, on video.** Part 1 only counted the rally's length. Next, perception noise and latency (camera fps, processing delay) are varied and the videos show where the exchange breaks down; the truth is the closed form of how a reading error turns into a landing-point error. After that we return to the spike trick (the spike into the ball's hole).

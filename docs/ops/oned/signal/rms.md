@@ -4,7 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: measurement
-examples: [lens_design_demo, lightfield_depth, poc_battery_electrode_breathing, poc_bilateral_asymmetry, poc_bump_coplanarity, poc_cad_scan_deviation, poc_calipers_under_illusion, poc_camera_calibration, poc_dimensional_inspection, poc_exoplanet_transit, poc_fabric_defect, poc_focus_stacking, poc_panorama_drift, poc_print_registration, poc_river_surface_velocity, poc_screw_thread_metrology, poc_solar_limb_darkening, poc_strain_history, poc_surface_roughness, poc_symmetry_restoration, poc_thermal_radiometry, profile_shape_inspection]
+examples: [lens_design_demo, lightfield_depth, poc_battery_electrode_breathing, poc_bilateral_asymmetry, poc_bump_coplanarity, poc_cad_scan_deviation, poc_calipers_under_illusion, poc_camera_calibration, poc_dimensional_inspection, poc_exoplanet_transit, poc_fabric_defect, poc_focus_stacking, poc_panorama_drift, poc_print_registration, poc_river_surface_velocity, poc_screw_thread_metrology, poc_solar_limb_darkening, poc_strain_history, poc_surface_roughness, poc_symmetry_restoration, poc_table_tennis_bounce, poc_thermal_radiometry, profile_shape_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -48,6 +48,7 @@ is given (a vibration/energy envelope over time).
 - [poc_strain_history](../../../../examples/poc_strain_history.py) — `py -3.11 examples/poc_strain_history.py`
 - [poc_surface_roughness](../../../../examples/poc_surface_roughness.py) — `py -3.11 examples/poc_surface_roughness.py`
 - [poc_symmetry_restoration](../../../../examples/poc_symmetry_restoration.py) — `py -3.11 examples/poc_symmetry_restoration.py`
+- [poc_table_tennis_bounce](../../../../examples/poc_table_tennis_bounce.py) — `py -3.11 examples/poc_table_tennis_bounce.py`
 - [poc_thermal_radiometry](../../../../examples/poc_thermal_radiometry.py) — `py -3.11 examples/poc_thermal_radiometry.py`
 - [profile_shape_inspection](../../../../examples/profile_shape_inspection.py) — `py -3.11 examples/profile_shape_inspection.py`
 
