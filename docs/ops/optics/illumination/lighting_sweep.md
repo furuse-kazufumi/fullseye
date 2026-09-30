@@ -59,7 +59,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-—
+[mtf50](../imaging/mtf50.md)
 
 ## 同カテゴリ(`illumination`)
 

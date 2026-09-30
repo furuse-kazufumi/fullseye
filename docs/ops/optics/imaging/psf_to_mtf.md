@@ -84,11 +84,11 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-—
+[mtf50](mtf50.md)
 
 ## 同カテゴリ(`imaging`)
 
-[mtf_diffraction](mtf_diffraction.md) · [wavefront_stats](wavefront_stats.md)
+[mtf_diffraction](mtf_diffraction.md) · [wavefront_stats](wavefront_stats.md) · [edge_spread](edge_spread.md) · [sfr_from_edge](sfr_from_edge.md) · [mtf50](mtf50.md) · [veiling_glare_index](veiling_glare_index.md)
 
 ---
 *Provenance: optics.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

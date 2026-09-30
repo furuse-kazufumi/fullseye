@@ -63,7 +63,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[fraunhofer_pattern](../wave/fraunhofer_pattern.md) · [pupil_psf](../wave/pupil_psf.md) · [pupil_blur](../wave/pupil_blur.md) · [psf_to_mtf](../imaging/psf_to_mtf.md) · [polarization_demosaic](../polarization/polarization_demosaic.md) · [polarization_demosaic_color](../polarization/polarization_demosaic_color.md) · [illumination_uniformity](../illumination/illumination_uniformity.md) · [render_through_lens](../imaging_sim/render_through_lens.md)
+[fraunhofer_pattern](../wave/fraunhofer_pattern.md) · [pupil_psf](../wave/pupil_psf.md) · [pupil_blur](../wave/pupil_blur.md) · [psf_to_mtf](../imaging/psf_to_mtf.md) · [edge_spread](../imaging/edge_spread.md) · [veiling_glare_index](../imaging/veiling_glare_index.md) · [polarization_demosaic](../polarization/polarization_demosaic.md) · [polarization_demosaic_color](../polarization/polarization_demosaic_color.md)
 
 ## 同カテゴリ(`appearance`)
 

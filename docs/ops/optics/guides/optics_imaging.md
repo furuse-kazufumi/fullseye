@@ -97,6 +97,40 @@ blocked = O.jones_apply(O.jones_element("polarizer", 90.0)
 print(abs(blocked).max())                        # 0.0
 ```
 
+## 写真から測る(imaging)—— 傾いたエッジの SFR と迷光指数
+
+``psf_to_mtf`` は PSF を持っている人向けです。検査の現場が持っているのは**刃のエッジの写真**と**白地に黒い点を置いた写真**なので、
+``edgesfr`` の 4 op はその写真から直接測ります(ISO 12233 の傾いたエッジ法 / ISO 9358 の黒点法の考え方)。
+窓の幅・sinc の補正・黒点の範囲は**必須引数**です —— SFR は窓の両端を黒/白の基準にするので迷光(裾)が約分されて見えず、
+黒点の指数は点の大きさで変わります(`examples/poc_veiling_glare.py`)。
+
+```python
+import math
+import numpy as np
+import edgesfr as E
+
+# 5° 傾けたエッジを σ = 1 px のガウスでぼかして撮った像(真値の MTF50 = √(ln 2 / 2π²σ²) = 0.1874 cyc/px)
+y, x = np.mgrid[0:128, 0:128].astype(float)
+d = ((x - 64.3) - (y - 64) * math.tan(math.radians(5))) * math.cos(math.radians(5))
+img = 0.5 * (1 + np.vectorize(math.erf)(d / math.sqrt(2)))
+
+esf = E.edge_spread(img, (8, 120, 24, 104), oversample=4)       # ISO 12233 の傾いたエッジ法
+sfr = E.sfr_from_edge(esf, 12, correction="derivative+bin")      # 窓 ±12 px と補正は必須
+print(round(esf["angle_deg"], 3), round(E.mtf50(sfr), 4))       # 5.0 0.1884(真値 0.1874 と 0.5 %)
+
+# 一様な光幕 20 % を足しても SFR は変わらない(窓の両端で正規化するので約分される)—— 迷光は黒点で測る
+veiled = 0.8 * img + 0.2
+print(np.abs(E.sfr_from_edge(E.edge_spread(veiled, (8, 120, 24, 104), oversample=4), 12,
+                             correction="derivative+bin") - sfr).max() < 1e-12)   # True
+spot = np.ones((128, 128))
+spot[48:80, 48:80] = 0.0
+dark = np.zeros_like(spot, bool)
+dark[60:68, 60:68] = True                                      # 黒点の中心部(縁のぼけを含めない)
+white = np.zeros_like(spot, bool)
+white[:16, :16] = True
+print(round(E.veiling_glare_index(0.8 * spot + 0.2, dark, white)["vgi"], 4))   # 0.2
+```
+
 ## 設計(design) — 近軸の先を実光線で
 
 上の 4 カテゴリは「設計の出発点」を閉形式で出します。実レンズがそこからどれだけずれるか — 像はどこに結び、どれだけボケ、どの面が原因で、製造ばらつきで歩留まりはどうなるか — は面を 1 枚ずつ**実光線**で通さないと分かりません。`raytrace.py` はそのための逐次光線追跡で、台帳では `opsoptics` の `design` カテゴリ(12 op)に載ります。全 op の共通入力は `lens_system` が返す**検証済みの処方(table)** です:

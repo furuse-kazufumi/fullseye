@@ -57,6 +57,7 @@ paraboloid / sphere_mirror の 4 処方(テストと例の共通出発点)。
     opsoptics.list_ops("polarization")
     opsoptics.get("thin_lens")(focal_mm=50.0, object_mm=200.0)
 """
+import edgesfr
 import illumdesign
 import optscene
 import lensimage
@@ -73,7 +74,7 @@ import raytrace
 _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
-        "lensopt": lensopt, "illumdesign": illumdesign,
+        "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr,
         "optscene": optscene}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
@@ -140,6 +141,12 @@ _CATALOG = {
         ("psf_to_mtf", "optics", ["image2d"], "pairs"),
         ("mtf_diffraction", "optics", [], "pairs"),
         ("wavefront_stats", "optics", ["table"], "table"),
+        # edgesfr(2026-10-01): 刃のエッジの写真から SFR/MTF、黒点の写真から迷光指数を**測る**側。
+        # psf_to_mtf は PSF を持っている人向け、現場が持っているのはエッジと黒点の写真(poc_veiling_glare 8 節の穴)。
+        ("edge_spread", "edgesfr", ["image2d"], "table"),
+        ("sfr_from_edge", "edgesfr", ["table"], "pairs"),
+        ("mtf50", "edgesfr", ["pairs"], "measurement"),
+        ("veiling_glare_index", "edgesfr", ["image2d", "image2d", "image2d"], "table"),
     ],
     # appearance(matappear): 微細構造の見え方を**波長から**作る族。回折格子・薄膜干渉・
     # 異方性微小面。入口 2 op(等色関数・分光→sRGB)は波長格子だけで呼べ、残り 3 op は

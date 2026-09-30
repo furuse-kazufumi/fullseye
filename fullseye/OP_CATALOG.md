@@ -2297,7 +2297,7 @@ _計 55 ops / 7 categories。_
 - `wave_grating_orders` (` → table`) — Where a grating sends each order: ``d (sin_out - sin_in) = m lambda`` solved for the angle.
 
 ## Optics operators(opsoptics)by category
-_計 133 ops / 16 categories。_
+_計 137 ops / 16 categories。_
 
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
@@ -2356,10 +2356,14 @@ _計 133 ops / 16 categories。_
 - `lighting_sweep` (` → pairs`) — Defect contrast versus ring-light elevation angle (``pairs``).
 - `illumination_design` (` → table`) — Rank the standard light families for a surface / defect pairing (``table``).
 
-### imaging(3)
+### imaging(7)
 - `psf_to_mtf` (`image2d → pairs`) — Radially-averaged MTF of a measured point-spread function.
 - `mtf_diffraction` (` → pairs`) — The diffraction-limited MTF of a circular pupil (closed form).
 - `wavefront_stats` (`table → table`) — Wavefront error statistics from a Zernike expansion: RMS, PV and Strehl.
+- `edge_spread` (`image2d → table`) — 傾いたエッジ(ISO 12233)の ROI から、画素より細かい ESF を作る。
+- `sfr_from_edge` (`table → pairs`) — ESF から SFR(エッジから測る MTF)を出す。
+- `mtf50` (`pairs → measurement`) — SFR(pairs: 周波数, 値)が 0.5 を**最初に**切る周波数(直線補間)。0.5 を切らなければ ``ValueError``
+- `veiling_glare_index` (`image2d, image2d, image2d → table`) — 迷光(ベーリンググレア)指数: 黒い点の中心の明るさの平均 / 白地の明るさの平均(ISO 9358 の考え方)。
 
 ### imaging_sim(5)
 - `psf_from_opd` (`table → image2d`) — Diffraction PSF of the real, aberrated pupil (``image2d``, sums to 1).

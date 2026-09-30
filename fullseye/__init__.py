@@ -355,6 +355,8 @@ with warnings.catch_warnings():
     )
     import lensopt  # noqa: E402,F401  (damped-least-squares lens optimisation)
     from lensopt import optimize_lens, merit_function, bend_singlet  # noqa: E402,F401
+    import edgesfr  # noqa: E402,F401  (slanted-edge SFR / MTF50 / veiling glare index from photographs)
+    from edgesfr import edge_spread, sfr_from_edge, mtf50, veiling_glare_index  # noqa: E402,F401
     import illumdesign  # noqa: E402,F401  (machine-vision illumination design)
     from illumdesign import (  # noqa: E402,F401
         light_source, irradiance_map, illumination_uniformity, defect_contrast,
@@ -987,6 +989,7 @@ __all__ = [
     "wavefront_from_opd", "seidel_coefficients", "tolerance_analysis",
     "glass_catalog", "sellmeier", "chromatic_shift", "chief_ray", "with_wavelength",
     "lensopt", "optimize_lens", "merit_function", "bend_singlet",
+    "edgesfr", "edge_spread", "sfr_from_edge", "mtf50", "veiling_glare_index",
     "illumdesign", "light_source", "irradiance_map", "illumination_uniformity",
     "defect_contrast", "lighting_sweep", "illumination_design",
     "lensimage", "psf_from_opd", "psf_field_grid", "distortion_map",

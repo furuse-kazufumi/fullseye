@@ -108,11 +108,11 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[abcd_matrix](../geometric/abcd_matrix.md) · [paraxial_trace](../design/paraxial_trace.md) · [seidel_coefficients](../design/seidel_coefficients.md) · [spot_stats](../design/spot_stats.md) · [tolerance_analysis](../design/tolerance_analysis.md) · [wavefront_from_opd](../design/wavefront_from_opd.md) · [spot_diagram](../design/spot_diagram.md) · [ray_fan](../design/ray_fan.md)
+[abcd_matrix](../geometric/abcd_matrix.md) · [sfr_from_edge](sfr_from_edge.md) · [paraxial_trace](../design/paraxial_trace.md) · [seidel_coefficients](../design/seidel_coefficients.md) · [spot_stats](../design/spot_stats.md) · [tolerance_analysis](../design/tolerance_analysis.md) · [wavefront_from_opd](../design/wavefront_from_opd.md) · [spot_diagram](../design/spot_diagram.md)
 
 ## 同カテゴリ(`imaging`)
 
-[psf_to_mtf](psf_to_mtf.md) · [mtf_diffraction](mtf_diffraction.md)
+[psf_to_mtf](psf_to_mtf.md) · [mtf_diffraction](mtf_diffraction.md) · [edge_spread](edge_spread.md) · [sfr_from_edge](sfr_from_edge.md) · [mtf50](mtf50.md) · [veiling_glare_index](veiling_glare_index.md)
 
 ---
 *Provenance: optics.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

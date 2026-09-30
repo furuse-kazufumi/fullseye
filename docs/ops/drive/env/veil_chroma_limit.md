@@ -4,7 +4,7 @@ dim: drive
 category: env
 in: any × scalar
 out: scalar
-examples: [poc_driving_weather, poc_veiling_glare]
+examples: [poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -33,7 +33,6 @@ d* = ln(1 + W*/L_h)/β(灯火 c L e^{−βd} + 大気光 L_h (1 − e^{−βd}) 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_driving_weather](../../../../examples/poc_driving_weather.py) — `py -3.11 examples/poc_driving_weather.py`
-- [poc_veiling_glare](../../../../examples/poc_veiling_glare.py) — `py -3.11 examples/poc_veiling_glare.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)
 

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2422,
- "n_notes": 2428,
+ "n_ops": 2426,
+ "n_notes": 2432,
  "notes": {
   "vol_dilate": [
    {
@@ -21045,6 +21045,26 @@
     "path": "docs/ops/optics/illumination/lighting_sweep.md"
    }
   ],
+  "edge_spread": [
+   {
+    "op": "edge_spread",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/imaging/edge_spread.md"
+   }
+  ],
+  "mtf50": [
+   {
+    "op": "mtf50",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "pairs",
+    "out": "measurement",
+    "path": "docs/ops/optics/imaging/mtf50.md"
+   }
+  ],
   "mtf_diffraction": [
    {
     "op": "mtf_diffraction",
@@ -21062,6 +21082,26 @@
     "in": "image2d",
     "out": "pairs",
     "path": "docs/ops/optics/imaging/psf_to_mtf.md"
+   }
+  ],
+  "sfr_from_edge": [
+   {
+    "op": "sfr_from_edge",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "table",
+    "out": "pairs",
+    "path": "docs/ops/optics/imaging/sfr_from_edge.md"
+   }
+  ],
+  "veiling_glare_index": [
+   {
+    "op": "veiling_glare_index",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "image2d × image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/imaging/veiling_glare_index.md"
    }
   ],
   "wavefront_stats": [

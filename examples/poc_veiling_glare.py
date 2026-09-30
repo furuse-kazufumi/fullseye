@@ -558,21 +558,33 @@ def section8_tool_gaps():
     print("8) 道具の穴 —— fullseye に無かったもの・危ないもの")
     print("=" * 78)
 
-    # (a) ESF / LSF / SFR / 迷光の op が 3 層のどこにも無い
+    # (a) ESF / LSF / SFR / 迷光の op —— 2026-10-01 に edgesfr の 4 op で塞いだ(それまでは 3 層のどこにも無かった)。
+    #     この PoC の手書きの測り方(esf_of / sfr / mtf50 / black_level)を**第 2 実装**にして、op が同じ答えを出すかを門にする。
     import ops as _ops
     allnames = set(dir(fs)) | set(dir(fs.ledger)) | {o.name for o in _ops.REGISTRY}
-    # driveenv(自動運転 第 6 回、2026-09-30)の veiling_luminance / veil_chroma_limit は **目の減能グレアの式で光幕を足す側**
-    # (Stiles–Holladay / CIE 146)で、画像から迷光を **測る** op ではない —— この節の穴(ESF/SFR/迷光指数の測定)は塞がっていない
-    NOT_MEASUREMENT = {"veiling_luminance", "veil_chroma_limit"}
-    for kw in ("esf", "lsf", "sfr", "slanted", "glare", "veil", "stray", "mtf50"):
-        hit = [n for n in allnames if kw in n.lower() and n not in NOT_MEASUREMENT]
-        assert not hit, (kw, hit)
-    print("  (a) ★**ESF/LSF/SFR と迷光の op が 3 層(facade %d / ledger %d / 進化 %d)の"
-          % (len(dir(fs)), len(dir(fs.ledger)), len(_ops.REGISTRY)))
-    print("      どこにも無い**。`psf_to_mtf` は「PSF を持っている人」向けで、現場が")
-    print("      持っているのは刃のエッジの写真。`edge_spread(img, roi)` /")
-    print("      `sfr_from_edge(esf, window)` / `veiling_glare_index(img, dark_mask)` の")
-    print("      3 本があれば、この PoC の 2〜5 節は op の呼び出しだけで書ける。")
+    need = ("edge_spread", "sfr_from_edge", "mtf50", "veiling_glare_index")
+    assert all(n in allnames for n in need), [n for n in need if n not in allnames]
+    worst_f50 = 0.0
+    for g in (0.0, 0.20):
+        e = esf_of(convolve(edge_scene(), g))
+        f, m, _, _ = sfr(e, 16)
+        a50 = mtf50(f, m)
+        b50 = fs.mtf50(fs.sfr_from_edge(e, 16, correction="none", ends=3))
+        worst_f50 = max(worst_f50, abs(b50 / a50 - 1.0))
+    assert worst_f50 < 2e-3, worst_f50
+    side = 64
+    o = convolve(black_square_scene(side), 0.20)
+    q = max(2, side // 8)
+    dm = np.zeros(o.shape, bool)
+    dm[_C - q:_C + q, _C - q:_C + q] = True
+    bm = np.zeros(o.shape, bool)
+    bm[20:60, 20:60] = True
+    vgi = fs.veiling_glare_index(o, dm, bm)["vgi"]
+    assert vgi == black_level(o, side), (vgi, black_level(o, side))
+    print("  (a) ESF/LSF/SFR と迷光の op は 2026-10-01 まで 3 層のどこにも無かった → `edgesfr` の 4 op")
+    print("      (`edge_spread` / `sfr_from_edge` / `mtf50` / `veiling_glare_index`、窓・補正・黒点の範囲は必須引数)。")
+    print("      この PoC の手書きの測り方と照合: MTF50 の差 最大 %.2f %%(窓の端の 1 標本の違い)、" % (100 * worst_f50))
+    print("      迷光指数は黒レベル法とビット一致(g = 0.20、一辺 %d px で %.4f)。" % (side, vgi))
 
     # (b) derivate_funct_1d は中心差分 —— MTF が sinc 倍に潰れる
     e = esf_of(convolve(edge_scene(), 0.0))
@@ -637,10 +649,9 @@ def section8_tool_gaps():
     print("      あってよい。この PoC は numpy の rfft2 を直に書いている。")
 
     print()
-    print("  次にやるべきこと: (a) の 3 本を `optics/imaging` 族へ。ただし出す前に、")
-    print("  この PoC と同じ土俵で「窓 W と黒点径 D を必須引数にする」ことを決める ——")
+    print("  (a) は `optics/imaging` 族に入れた。窓 W・sinc の補正・黒点の範囲は**必須引数** ——")
     print("  5 節のとおり、既定値を静かに選ぶと利用者は**間違った合否**を持ち帰る")
-    print("  (`strain_from_displacement` の method を必須にしたのと同じ判断)。")
+    print("  (`strain_from_displacement` の method を必須にしたのと同じ判断)。残りは (b)〜(e)。")
 
 
 def main():

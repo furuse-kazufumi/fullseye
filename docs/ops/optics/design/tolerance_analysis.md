@@ -58,7 +58,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [paraxial_trace](paraxial_trace.md) · [seidel_coefficients](seidel_coefficients.md) · [spot_stats](spot_stats.md) · [wavefront_from_opd](wavefront_from_opd.md) · [spot_diagram](spot_diagram.md) · [ray_fan](ray_fan.md)
+[abcd_matrix](../geometric/abcd_matrix.md) · [wavefront_stats](../imaging/wavefront_stats.md) · [sfr_from_edge](../imaging/sfr_from_edge.md) · [paraxial_trace](paraxial_trace.md) · [seidel_coefficients](seidel_coefficients.md) · [spot_stats](spot_stats.md) · [wavefront_from_opd](wavefront_from_opd.md) · [spot_diagram](spot_diagram.md)
 
 ## 同カテゴリ(`design`)
 

@@ -879,7 +879,9 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # pupil_blur)を追加(124 → 127)。
     # 2026-09-18: optics "polarization" に偏光カメラの 3 op(polarization_demosaic /
     # mueller_from_intensities / mueller_checks)を追加(127 → 130)。
-    assert len(opsoptics.OPSOPTICS) == 133   # + 4f 光学プロセッサ 2 op(2026-09-26)
+    # 2026-10-01: imaging に edgesfr の 4 op(edge_spread / sfr_from_edge / mtf50 /
+    # veiling_glare_index)を追加(133 → 137)。
+    assert len(opsoptics.OPSOPTICS) == 137
     # 2026-09-26: wave に 4f 光学プロセッサ 2 op(fourier_plane_filter /
     # four_f_filter)を追加(7 → 9)。
     assert len(opsoptics.list_ops("wave")) == 9

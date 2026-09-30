@@ -1,4 +1,4 @@
-# OPTICS operator help — 133 ops in 16 categories
+# OPTICS operator help — 137 ops in 16 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -42,9 +42,9 @@
 
 [defect_contrast](illumination/defect_contrast.md) · [illumination_design](illumination/illumination_design.md) · [illumination_uniformity](illumination/illumination_uniformity.md) · [irradiance_map](illumination/irradiance_map.md) · [light_source](illumination/light_source.md) · [lighting_sweep](illumination/lighting_sweep.md)
 
-### imaging (3)
+### imaging (7)
 
-[mtf_diffraction](imaging/mtf_diffraction.md) · [psf_to_mtf](imaging/psf_to_mtf.md) · [wavefront_stats](imaging/wavefront_stats.md)
+[edge_spread](imaging/edge_spread.md) · [mtf50](imaging/mtf50.md) · [mtf_diffraction](imaging/mtf_diffraction.md) · [psf_to_mtf](imaging/psf_to_mtf.md) · [sfr_from_edge](imaging/sfr_from_edge.md) · [veiling_glare_index](imaging/veiling_glare_index.md) · [wavefront_stats](imaging/wavefront_stats.md)
 
 ### imaging_sim (5)
 
