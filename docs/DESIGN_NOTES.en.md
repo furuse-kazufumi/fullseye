@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1148. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1149. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -607,6 +607,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L202** — 4) ★Comparison with the zero point (the max sample of the envelope) # ------------------------------------------------------------------ #
 - **L274** — 6) ★Noise sweep — where measurement breaks down # ------------------------------------------------------------------ #
 - **L314** — ★A small spread is no evidence of correctness
+
+## `examples/poc_kendama.py`
+
+- **L105** _(ja)_ — ★CI(2 コア、PoC を並列に走らせる)では full の設定が 600 秒の枠を超えて -1(timeout)になった(2026-09-30、run 36657843727、 手元 160 s)。FULLSEYE_POC_BUDGET=reduced(CI では既定)で、大皿の 20 試行(予測誤差の曲線と主要な門)はそのままに、小皿・中皿・ 画素雑音・推奨品の試行を 10 に、画素雑音の段を 0 / 2 / 8 / 16 px に、3DGS の試行・コマ・間隔の段を減らす。門の閾値は変えない (測った段だけで判定)。展示の数字は full の実測で、reduced は「同じ経路が走る」ことの証拠に留める(先頭に BUDGET: を印字)。
 
 ## `examples/poc_larval_connectome_reservoir.py`
 

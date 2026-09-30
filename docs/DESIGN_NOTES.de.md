@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1148. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1149. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -607,6 +607,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L202** — 4) ★Vergleich mit dem Nullpunkt (die maximale Probe der Einhüllenden) # ------------------------------------------------------------------ #
 - **L274** — 6) ★Rausch-Sweep — wo die Messung zusammenbricht # ------------------------------------------------------------------ #
 - **L314** — ★Eine kleine Streuung ist kein Beleg für Korrektheit
+
+## `examples/poc_kendama.py`
+
+- **L105** _(ja)_ — ★CI(2 コア、PoC を並列に走らせる)では full の設定が 600 秒の枠を超えて -1(timeout)になった(2026-09-30、run 36657843727、 手元 160 s)。FULLSEYE_POC_BUDGET=reduced(CI では既定)で、大皿の 20 試行(予測誤差の曲線と主要な門)はそのままに、小皿・中皿・ 画素雑音・推奨品の試行を 10 に、画素雑音の段を 0 / 2 / 8 / 16 px に、3DGS の試行・コマ・間隔の段を減らす。門の閾値は変えない (測った段だけで判定)。展示の数字は full の実測で、reduced は「同じ経路が走る」ことの証拠に留める(先頭に BUDGET: を印字)。
 
 ## `examples/poc_larval_connectome_reservoir.py`
 

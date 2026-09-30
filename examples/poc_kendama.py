@@ -74,11 +74,13 @@ JKA 16-2 型の説明(一次資料は未確認)。穴の深さ 40 mm = 160 + 60 
     面は 1/4 の大きさで置き、Mip-Splatting の不透明度の補正を入れた。それでも 480 × 360 では玉 17 px・穴 5 px で読めない(門 15)。
 (k) 3DGS の間隔を 64 mm まで粗くしても玉の検出は落ちない: 曲率の上限で玉の上には 146 個以上が残る。崩すのは位置と色の誤差。
 
-Run: py -3.11 examples/poc_kendama.py   (図は FULLSEYE_FIGURE_DIR を設定したときだけ書く)
+Run: py -3.11 examples/poc_kendama.py   (図は FULLSEYE_FIGURE_DIR を設定したときだけ書く。FULLSEYE_POC_BUDGET=reduced で試行を減らす
+     —— CI では reduced が既定、展示の数字は full)
 """
 from __future__ import annotations
 
 import math
+import os
 import sys
 import time
 from pathlib import Path
@@ -100,9 +102,15 @@ FPS = 100
 X0 = 0.02                                   # 玉を吊る横ずれ [m]
 DODGE = (0.0, -0.10, 0.0)                   # 振り上げの後半に手元を逃がす向き(糸穴の側)
 CUP_Z = 1.30                                # 持ち上げ終わりの受ける皿の高さ [m](カメラが見る範囲の上寄り)
+#: ★CI(2 コア、PoC を並列に走らせる)では full の設定が 600 秒の枠を超えて -1(timeout)になった(2026-09-30、run 36657843727、
+#:   手元 160 s)。FULLSEYE_POC_BUDGET=reduced(CI では既定)で、大皿の 20 試行(予測誤差の曲線と主要な門)はそのままに、小皿・中皿・
+#:   画素雑音・推奨品の試行を 10 に、画素雑音の段を 0 / 2 / 8 / 16 px に、3DGS の試行・コマ・間隔の段を減らす。門の閾値は変えない
+#:   (測った段だけで判定)。展示の数字は full の実測で、reduced は「同じ経路が走る」ことの証拠に留める(先頭に BUDGET: を印字)。
+REDUCED = os.environ.get("FULLSEYE_POC_BUDGET", "reduced" if os.environ.get("CI") else "full") == "reduced"
 N_TRIALS = 20
-N_GS = 2                                    # 3DGS の閉ループの試行数(1 試行 ≈ 3 s)
-PIX = (0.0, 0.5, 1.0, 2.0, 8.0, 16.0)
+N_SMALL = 10 if REDUCED else N_TRIALS         # 大皿以外の画像の試行数(10 なら 1 回の失敗で 0.9 = 門の閾値ちょうど)
+N_GS = 1 if REDUCED else 2                  # 3DGS の閉ループの試行数(1 試行 ≈ 3 s)
+PIX = (0.0, 2.0, 8.0, 16.0) if REDUCED else (0.0, 0.5, 1.0, 2.0, 8.0, 16.0)
 TRICKS = ("ozara", "kozara", "chuzara", "rousoku")
 ZERO = (0.0, 0.0, 0.0)
 UP = (0.0, 0.0, 1.0)
@@ -266,6 +274,7 @@ def _closeup(kp, size=380, scene_only=False):
 
 def main() -> int:
     """PoC の本体(examples の門: 実行は __main__ の守りの下で)。"""
+    print("BUDGET: %s(FULLSEYE_POC_BUDGET、CI では reduced が既定。展示の数字は full)" % ("reduced" if REDUCED else "full"))
     kp = KD.kendama_params()
     kv = KD.kendama_params(rho=0.0, tie_offset=ZERO, cup_offset=ZERO, cup_axis=UP)     # 点のけん: 定理の門
     L = kp["pendulum_length"]
@@ -432,7 +441,8 @@ def main() -> int:
         rt = rig
         tr = _rates(kt, lt, ot)
         na = _rates(kt, lt, ot, absorb=False)
-        im = _rates(kt, lt, ot, perceive=("cam", 0.0, wt, rt)) if trick != "rousoku" else None
+        im = (_rates(kt, lt, ot, perceive=("cam", 0.0, wt, rt), n=None if trick == "ozara" else N_SMALL)
+              if trick != "rousoku" else None)
         if trick == "rousoku":
             pr = KW.camera_perceiver(wt, rt, fps=FPS)
             hr = KD.swing_up_plan(kt, lift=lt, origin=ot, dodge=DODGE)
@@ -491,11 +501,12 @@ def main() -> int:
         "/".join(str(n) for n in ns[[0, 2, 7, 17, 27, -1]]), " / ".join("%.2f" % (1e3 * cv0[i]) for i in (0, 2, 7, 17, 27, -1)), 1e3 * rise0))
 
     # ─────────────────────────────── 7. 画素雑音のつまみ ───────────────────────
-    print("== 7. 画素雑音(検出の画素に足すガウス、σ)→ 成功率(大皿、%d 試行ずつ)" % N_TRIALS)
+    print("== 7. 画素雑音(検出の画素に足すガウス、σ)→ 成功率(大皿、0 px と 2 px は %d 試行、他は %d 試行ずつ)" % (N_TRIALS, N_SMALL))
     t_s = time.time()
     sweep = [(0.0, oz["image"])]
     for pn in PIX[1:]:
-        sweep.append((pn, _rates(kp, lift, H0, perceive=("cam", pn, world, rig))))
+        # 2 px は予測誤差の曲線(門)にも使う: 10 試行の平均だと途中の増えが 2.55 mm に揺れた(測った)ので reduced でも 20 試行
+        sweep.append((pn, _rates(kp, lift, H0, perceive=("cam", pn, world, rig), n=N_TRIALS if pn == 2.0 else N_SMALL)))
     for pn, rr in sweep:
         se = math.sqrt(max(rr["rate"] * (1 - rr["rate"]), 1e-12) / rr["n"])
         print("  %4.1f px → 成功率 %.2f(± %.2f、%s)、捕った試行の横ずれの平均 %.2f mm" % (
@@ -510,7 +521,7 @@ def main() -> int:
     rates = {pn: rr["rate"] for pn, rr in sweep}
     lats = {pn: rr["mean_lateral"] for pn, rr in sweep}
     gate("画素雑音: 0〜2 px は ≥ 0.9(平ら = 皿の縁の余裕、横ずれは 0 < 2 < 8 px と増える)、16 px は 0 px より低い",
-         all(rates[p] >= 0.9 for p in (0.0, 0.5, 1.0, 2.0)) and lats[0.0] < lats[2.0] < lats[8.0] and rates[16.0] < rates[0.0],
+         all(rates[p] >= 0.9 for p in PIX if p <= 2.0) and lats[0.0] < lats[2.0] < lats[8.0] and rates[16.0] < rates[0.0],
          " / ".join("%g px %.2f" % (p, rates[p]) for p in PIX))
 
     # ─────────────────────────────── 8. 穴の向き ─────────────────────────
@@ -549,7 +560,7 @@ def main() -> int:
     kl = KD.kendama_params("recommended_large_cup")
     ll = KD.swing_up_lift(kl)
     ol = _origin(kl, ll)
-    big = _rates(kl, ll, ol, perceive=("cam", 0.0, KW.kendama_world(kl, hand=ol, n=WORLD_N), rig))
+    big = _rates(kl, ll, ol, perceive=("cam", 0.0, KW.kendama_world(kl, hand=ol, n=WORLD_N), rig), n=N_SMALL)
     print("  推奨品: 成功率 %.2f(横ずれ %.2f mm)、JKA 型 %.2f(横ずれ %.2f mm)" % (big["rate"], 1e3 * big["mean_lateral"], oz["image"]["rate"],
                                                                          1e3 * oz["image"]["mean_lateral"]))
     gate("推奨品(大皿 49 mm)の成功率は JKA 型以上(大きい皿が悪くならない)", big["rate"] >= oz["image"]["rate"],
@@ -585,7 +596,7 @@ def main() -> int:
     # つまみ: 密度・位置の誤差・色の誤差 → 検出率と三角測量の誤差(捕球の試行の弛み → 捕球の 12 コマを、玉のまわりの窓だけ描き直す)
     Ps_ = np.array([c["pose"] for c in rig])
     Ks_ = np.array([c["K"] for c in rig])
-    ks = np.linspace(int(np.searchsorted(g_run["t"], g_run["slack_t"])), int(np.searchsorted(g_run["t"], g_run["catch_t"])) - 1, 12).astype(int)
+    ks = np.linspace(int(np.searchsorted(g_run["t"], g_run["slack_t"])), int(np.searchsorted(g_run["t"], g_run["catch_t"])) - 1, 8 if REDUCED else 12).astype(int)
 
     def _sweep(sp, pn, cn):
         gg = GSN.gs_from_world(gsw, spacing=sp, pos_noise=pn, color_noise=cn, max_per_object=8000, seed=0)
@@ -611,7 +622,7 @@ def main() -> int:
                 errs.append(float(np.linalg.norm(BT.triangulate_dlt(uvs, Ps_, Ks_)["p"] - p)))
         return {"rate": nd / len(ks), "med": float(np.median(errs)) if errs else float("nan"), "n_ball": int((gg["obj"] == i_ball_obj).sum())}
 
-    SPS = (0.002, 0.004, 0.008, 0.016, 0.032, 0.064)
+    SPS = (0.002, 0.004, 0.008, 0.064) if REDUCED else (0.002, 0.004, 0.008, 0.016, 0.032, 0.064)
     PNS = (0.0, 0.005, 0.010, 0.020)
     CNS = (0.0, 0.1, 0.2, 0.3)
     sw_sp = {s: _sweep(s, 0.0, 0.0) for s in SPS}
