@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sun_position — DRIVE <code style="color:#22d3bf">env</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_position(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveenv; driveenv.sun_position(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;sun_position&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>太陽の高度・方位(NOAA の太陽位置の式 = Meeus &quot;Astronomical Algorithms&quot; 第 25 章の低精度版)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>when : タイムゾーンつき datetime、またはユリウス日(UT)。</p>
+<p>lat, lon : 緯度・経度 [度] (北・東が正)。</p>
+<p>refraction : True で NOAA の大気差を足した見かけの高度。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict : `<code style="color:#22d3bf">elevation</code><code style="color:#22d3bf">(度、大気差つきなら見かけ)、</code><code style="color:#22d3bf">elevation_geometric</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">azimuth</code>`(北から時計回り 度 [0, 360))、</p>
+<p>`<code style="color:#22d3bf">declination</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">eq_time</code><code style="color:#22d3bf">(均時差 分)、</code><code style="color:#22d3bf">hour_angle</code><code style="color:#22d3bf">(度)、</code><code style="color:#22d3bf">jd</code>`。</p>
+<p>NOAA が述べる精度は 1800〜2100 年で高度・方位とも 1′ 程度(日の出入りの時刻で 1 分)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 素朴な datetime・範囲外の緯度経度。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_weather">poc_driving_weather</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_weather.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading">poc_public_camera_heading</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading_real">poc_public_camera_heading_real</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading_real.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">env</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:julian_day">julian_day</a> · <a style="color:#22d3bf" href="opdrive:sun_events">sun_events</a> · <a style="color:#22d3bf" href="opdrive:sun_vector">sun_vector</a> · <a style="color:#22d3bf" href="opdrive:sun_illuminance">sun_illuminance</a> · <a style="color:#22d3bf" href="opdrive:koschmieder">koschmieder</a> · <a style="color:#22d3bf" href="opdrive:mor_from_beta">mor_from_beta</a> · <a style="color:#22d3bf" href="opdrive:beta_from_mor">beta_from_mor</a> · <a style="color:#22d3bf" href="opdrive:road_row_distance">road_row_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: driveenv.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

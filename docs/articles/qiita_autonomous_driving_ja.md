@@ -49,6 +49,7 @@ public_id: 1f128b8a36df373c11c7
 | 3 | [衝突までの時間と安全距離 —— τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する](#第-3-回-衝突までの時間と安全距離--τ-理論の光学流と-rss-の閉形式を教習所の世界の真値で採点する) | 深度像 + 剛体運動の閉形式(τ)/ 1 コマの恒等式 / RSS の公表パラメータ・試験値 / Lemma 2 = 最悪ケースの積分 |
 | 4 | [世界を広げる —— 閉形式の地形と世界座標の材質、手続きの木と歩行者で、拡大の中心を流れから取り戻す](#第-4-回-世界を広げる--閉形式の地形と世界座標の材質手続きの木と歩行者で拡大の中心を流れから取り戻す) | Perlin の定理(格子点 0・周期・解析導関数)/ fBm のスペクトル β = 2H + 2 / 点-線分距離の eikonal / 発散定理の体積 / 描いた深度を世界へ戻す恒等式 / 純並進の流れは FoE から放射状(真の流れ = 運動) |
 | 5 | [車に慣性と坂を —— 空走 + 制動で停止線の手前に止まり、坂道で止まって逆行せずに発進する](#第-5-回-車に慣性と坂を--空走--制動で停止線の手前に止まり坂道で止まって逆行せずに発進する) | 停止距離の閉形式 / RSS の停止距離(第 2 実装)/ 坂道発進のずり下がりの閉形式 / エネルギー収支 / 警察庁 丙運発第 12 号の減点細目 |
+| 6 | [太陽と天気 —— 朝日の逆光で信号が読めない時間帯、霧の中で見えてから止まれる速さ、雨の路面、夜の前照灯](#第-6-回-太陽と天気--朝日の逆光で信号が読めない時間帯霧の中で見えてから止まれる速さ雨の路面夜の前照灯) | 国立天文台 暦計算室の公表値 / 影 = h cot(高度) / 光幕と色度の閾値の閉形式 / Koschmieder の法則 / 道路構造令の解説の停止距離(第 2 実装)/ 保安基準の前照灯の性能 |
 
 ---
 
@@ -735,12 +736,155 @@ print(fs.ledger.skill_test_score([{"kind": "stop", "gap": 0.5}, {"kind": "start"
 
 ---
 
+## 第 6 回: 太陽と天気 —— 朝日の逆光で信号が読めない時間帯、霧の中で見えてから止まれる速さ、雨の路面、夜の前照灯
+
+![春分の一日](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/01_sun_day.gif)
+
+*↑ 春分(2026-03-20)の東京、朝 5:15 から夜 20:15 まで 15 分おき。左 = 東へ向かう車の車載カメラ(停止線の 15 m 手前)と信号の読み、右 = 斜め上から。影は太陽と反対へ伸び、昼に短くなってまた伸びる。朝、太陽が信号の後ろの低い空にある間は、画像処理が赤を「読めない」。日が沈むと前照灯を点ける。*
+
+第 5 回までの車載カメラは、光の向きが決め打ちで、明るさは「面の色 × 陰影」だけでした。この回は世界を**物理の単位**(輝度 cd/m²・照度 lx)で照らし直し、太陽・影・逆光のまぶしさ・霧・雨・夜の前照灯を入れます。
+
+測りたいのは「きれいに見えるか」ではなく、**車載カメラの画像処理がどこで読めなくなるか**です。それを画素の式から**先に閉形式で出し**、描いた画像の読みがその両側で変わることを確かめます。そして第 5 回の停止距離と組み合わせて、「見えてから止まれるか」を閉ループで走らせます。
+
+### 手順
+
+```
+太陽   : 日時と緯度経度 → 高度・方位(NOAA の式 = Meeus の低精度版)。直達光は空気の量で弱まり、影は太陽から見た深度画像で落とす
+逆光   : 太陽と視線の角 θ で光幕 L_v = 10 E / θ²(Stiles–Holladay)が画面に重なる。光幕は白いので灯火の色を灰色へ寄せる
+霧     : Koschmieder の法則 L = L₀ e^{−βd} + L_h (1 − e^{−βd})、視程(気象光学距離)= 2.996/β
+雨     : 濡れた路面の摩擦係数 f(道路構造令の解説の表)で停止距離が延びる。灯火が路面に映る
+夜     : 灯火は自分で光る。前照灯は配光(光度の角度分布)から照度 I cos i / r² を与える
+判断   : 灯火の色が読める距離から「止まれる速さ」を出し、その上下で走らせる
+```
+
+**かみ砕き**: カメラが信号の色を読むときは、灯火の画素の**色の比**(赤っぽさ)を見ています。逆光のまぶしさや霧は、画面に**白い光を足す**働きをします。白を足すと色の比は灰色へ近づき、ある量を超えると「赤」と言えなくなります。その量(W*)は画素の式だけで決まるので、「太陽がどの角度まで近づくと読めないか」「霧の中で何 m まで読めるか」を、描く前に計算できます。
+
+[![逆光の閾値](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/03_backlight_threshold.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/03_backlight_threshold.png)
+
+*↑ 横 = 太陽と灯火への視線の角 θ、縦 = 画素の式から先に出した閾値 θ*。対角線の右下は読め、左上は読めない。赤が最も弱い。*
+
+### 門と成績
+
+| # | 門 | 真値 | 成績 |
+|---|---|---|---|
+| 1 | 太陽の位置 | 国立天文台 暦計算室の東京 2026 年(春分・夏至・秋分・冬至)の日の出・南中・日の入りの時刻と方位・南中高度 | **24 / 24 値**が丸めの単位(1 分・0.1°)で一致。時刻の差は最大 0.45 分(丸めの前) |
+| 2 | 影の長さ | 高さ × cot(高度) + 柱の角 | 真上から撮った画像の影の先端と、4 つの高度で最大 0.074 m(1 画素 0.10 m) |
+| 3 | 逆光 | 閾値 θ* = √(10 E / W*)(W* = 色度が許容 0.25 を割る白の量) | 3 色 × 太陽の角 27 点で、読めた / 読めないが予測と**食い違い 0**。赤の θ* は 12.7〜17.8°(太陽の高度で変わる) |
+| 4 | 春分の朝 | 太陽の式で出した「読めない時間帯」 | 東へ向かう車から赤が読めないのは **05:53〜07:05**。15 時刻を描いて、内側は「読めない」、外側は赤 |
+| 5 | 霧の濃さを画像から | 真の減衰係数 β | 路面の縦の輝度(雑音 1 %)に Koschmieder を当てて、視程 30〜200 m で**誤差 0.96 %** 以内 |
+| 6 | 霧の中で色が読める距離 | d* = ln(1 + W*/L_h)/β | 視程 150/200/250 m × 3 色の探針で、読める / 読めないが予測と**食い違い 0** |
+| 7 | 見えてから止まれるか | 止まれる速さ v*(停止距離の閉形式を v について解く) | 視程 200 m で赤が読めるのは停止線の 6.6 m 手前から → v* = **17.5 km/h**。0.9 倍では手前 0.50 m に止まり、1.3 倍では 1.58 m 越える |
+| 8 | 第 2 実装 | 道路構造令の解説の停止距離 D = 0.694V + 0.00394V²/f(反応 2.5 s) | 第 5 回の閉形式と 8 速度で 0.034 %(係数の丸めの分) |
+| 9 | 濡れた路面 | 停止距離の閉形式 | 40 km/h: 乾燥 18.39 m → 湿潤(f 0.38)24.31 m。積分器と 1e-6 |
+| 10 | 雨の鏡像 | 路面を鏡にした灯火の投影 | 位置の差 0.22 画素。地図の ROI の外なので、信号の読みは乱れない |
+| 11 | 夜の前照灯 | 保安基準の性能(すれ違い 40 m・走行 100 m の障害物) | 仮定した配光で、歩行者を**すれ違い 60 m・走行 120 m** まで画像で見つける。空の車線では何も見つけない |
+| 12 | 夜の閉ループ | 見つけてから止まれる速さ v* = 81 km/h(すれ違い灯) | 0.85 倍では歩行者の 15 m 手前に止まり、1.3 倍では止まれない |
+| 13 | ゼロ点 | 灯火を消す | 晴れ・霧・雨・夜のどれでも 'unknown'(fail-closed) |
+
+[![霧の中で色が読める距離](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/06_fog_reach.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/06_fog_reach.png)
+
+*↑ 霧の中で灯火の色が読める距離。閉形式 d* = ln(1 + W*/L_h)/β(線)と、描いた画像で読めた距離(点)。*
+
+**門 3・5 の読み方**。どちらも「描いてみたら読めなかった」ではありません。**読めなくなる境目を画素の式から先に出し、その両側で描いて確かめます**。逆光なら、色度が許容を割る白の量 W* と光幕の式 10E/θ² を等しいと置いて θ* = √(10E/W*)。霧なら、灯火の画素 c·L·e^{−βd} + L_h(1 − e^{−βd}) の色度は c·L + L_h(e^{βd} − 1) と同じなので、d* = ln(1 + W*/L_h)/β。大気光 L_h は画像の空から測ります。
+
+### ★ 実装すると、ここで間違える
+
+#### 1. 地方時の datetime をそのまま渡すと、太陽が 9 時間ずれる
+
+太陽の位置の式は UT で考えます。タイムゾーンの無い datetime を「日本時間のつもり」で渡すと、東京の正午に太陽が地平線の下にいます。タイムゾーンの無い datetime は**受け付けない**ようにしました。
+
+#### 2. 日の出の定義が 1 分を動かす
+
+「太陽の中心が高度 −0.833°」(NOAA)と「上辺が視地平線、地平大気差 35′8″」(暦計算室)では、日の出が 5〜8 秒ずれます。表が分に丸めてあるので、この差で丸めの結果が変わる日があります。比べる相手の定義で解きます。
+
+#### 3. 足元の地面が空になる
+
+三角形を描く道具が「頂点の 1 つでもカメラの後ろにある三角形」を落とすため、足元の大きな地面の三角形が抜けて、画面の下に空が出ます。地面(z = 0 の平面)は視線との交点を解析的に取って埋めます。
+
+#### 4. 影の分位で閾値を決めると、影が見えない
+
+影の画素は地面の 1 % 未満です。「明るさの 1 % 分位」を暗い側の基準にすると、基準が日なたになり、低い太陽ではまぶしさの明るさのむらを影と取り違えます。暗い側は最小値で取ります。
+
+#### 5. 走行灯の遠くの路面を、歩行者と取り違える
+
+「車線の中の明るい塊」を障害物とすると、走行灯が照らす遠くの路面が見つかってしまいます。同じ行(= 同じ距離)の路面の中央値を引き、それより十分明るい所だけを拾います。
+
+### 向かないこと
+
+**空の明るさ・薄明の照度・灯火の輝度・前照灯の配光・HDR カメラの階調は仮定です。** 読めなくなる境目の**形**(√(10E/W*)・ln(1 + W*/L_h)/β)は式から出ますが、**何 m・何度か**という数字はこれらの仮定で動きます。
+
+**光幕の式は、人の目の中の散乱の経験式です。** カメラのレンズの散乱をこれで代用しています。
+
+**霧は、描いたのと同じ一様な Koschmieder の世界の上で測っています。** 実際の霧(一様でない・灯火のまわりの光輪)への頑健さは測っていません。変曲点から β を出す閉形式(β = 2/d_i)は、雑音 1 % と画素の刻みでは大きく外れました(表の値は当てはめの方)。
+
+**雨筋と路面の鏡像のぼけは見た目だけです。** 鏡像の**位置**は鏡の幾何で厳密です。
+
+**前照灯の影はありません。** 太陽の影は、太陽から見た深度画像の解像度で縁が決まります。
+
+### 動かす
+
+```bash
+py -3.11 examples/poc_driving_weather.py            # 門 13 本(図なしで約 134.9 秒)
+```
+
+```python
+from datetime import datetime, timedelta, timezone
+import fullseye as fs
+
+# 東京の春分の日の出・南中・日の入り(暦計算室の定義)
+ev = fs.ledger.sun_events(2026, 3, 20, 35.6581, 139.7414, 9.0, h0="naoj")
+print(ev["sunrise"].strftime("%H:%M:%S"), round(ev["sunrise_azimuth"], 1), ev["transit"].strftime("%H:%M:%S"), round(ev["transit_altitude_apparent"], 1))
+# 05:45:17 89.8 11:48:34 54.2
+
+# 視程 100 m の霧の減衰係数と、見える距離 40 m の中で止まれる速さ(反応 0.75 s、制動 6 m/s²)
+print(round(fs.ledger.beta_from_mor(100.0), 5), round(3.6 * fs.ledger.sight_stop_speed(40.0, 0.75, 6.0), 1))
+# 0.02996 64.3
+
+# 赤の灯火(輝度 10000 cd/m²)の色度が許容 0.25 を割る白の量
+print(round(fs.ledger.veil_chroma_limit((1.0, 0.12, 0.08), 10000.0, 0.25)))
+# 2704
+```
+
+---
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_weather)
+
+#### この回の残りの図
+
+[![太陽の高度と暦計算室](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/02_sun_elevation.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/02_sun_elevation.png)
+
+*↑ 東京の太陽の高度(線)と国立天文台 暦計算室の公表値(点)。*
+
+[![霧の車載カメラ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/04_fog_views.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/04_fog_views.png)
+
+*↑ 霧の車載カメラ(停止線の 15 m 手前)。灯火は交差点の向こう、停止線から約 26 m 先にある。*
+
+[![霧の濃さを画像から](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/05_fog_profile.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/05_fog_profile.png)
+
+*↑ 車線の中の路面の輝度を行ごとに並べ(点)、Koschmieder を当てた線から視程を戻す。*
+
+[![雨と夜](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/07_rain_night.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/07_rain_night.png)
+
+*↑ 雨(路面に赤が映る)と夜(灯火は自分で光る)、すれ違い灯と走行灯で照らした歩行者。*
+
+---
+
 ## 次回
 
-**太陽と天気。** 日時と緯度経度から太陽の高度・方位を出し(国立天文台の暦が真値)、逆光で車載カメラが信号を読めなくなる角度を測る。霧は Koschmieder の法則(コントラストが距離で e^{−βd} に落ちる、視程 3.912/β)で描き、信号を読める距離が縮んだとき、この回の停止距離の閉形式と比べて「見えてから止まれるか」を出す。雨は路面の摩擦係数 μ を下げ(この回の μ のつまみに入る)、濡れた路面に信号が映る。夜は前照灯の照らす範囲と停止距離を比べる。
+**終わらない地図。** 著者の発案で、車の前後左右に地図のタイルをその場で作り足し、一定以上離れたタイルは自動で消す。タイルはタイル座標を種にして作るので、一度消したタイルに戻ってきても同じものが 1 ビットも違わずに作り直される。門は 4 つ: タイルの継ぎ目で道路と地面が途切れないこと、作り直したタイルが元と完全に一致すること、何 km 走っても記憶が一定の上限を越えないこと、長い距離を走っても位置の誤差(浮動小数の桁落ち)が育たないこと。これで数十 km の連続走行を試せる。
+
+その次(第 8 回)が**横の運動**。車線を曲がる車のタイヤが横に滑らない限界(摩擦円: 縦と横の力の合計が μ m g を越えない)と、カーブの限界速度 √(μ g R)。この回の雨の f をカーブに入れ、濡れた路面で「この半径をこの速さで曲がれるか」を閉形式で出して走らせる。タイヤの横の力は線形の範囲(コーナリングパワー)と飽和で、自転車モデルの定常円旋回(アンダーステアの係数)が真値になる。
 
 ## 出典
 
+- 国立天文台 暦計算室「日の出入り」2026 年 東京(https://eco.mtk.nao.ac.jp/koyomi/dni/2026/s1303.html ほか)と「日の出・日の入りの定義」(上辺・地平大気差 35′8″)。
+- NOAA Global Monitoring Laboratory, *Solar Calculation Details*(https://gml.noaa.gov/grad/solcalc/calcdetails.html)/ J. Meeus, *Astronomical Algorithms*, 2nd ed., Willmann-Bell, 1998。
+- F. Kasten and A. T. Young, "Revised optical air mass tables and approximation formula", *Applied Optics* 28, 1989 / G. Kopp and J. L. Lean, "A new, lower value of total solar irradiance", *GRL* 38, 2011。
+- WMO, *Guide to Instruments and Methods of Observation* (WMO-No. 8), Vol. I, Chapter 9(気象光学距離 MOR = ln(20)/σ、Koschmieder の閾値 0.02)/ 気象庁「予報用語 霧」(視程 1 km 未満、濃霧 陸上 100 m)。
+- N. Hautière, J.-P. Tarel, J. Lavenant, D. Aubert, "Automatic fog detection and estimation of visibility distance through use of an onboard camera", *Machine Vision and Applications* 17, 2006。
+- CIE 146:2002 / CIE 147:2002 *CIE Equations for Disability Glare*(Stiles–Holladay と一般式。本文は二次文献で確認)/ J. J. Vos, "On the cause of disability glare and its dependence on glare angle, age and ocular pigmentation", *Clin. Exp. Optom.* 86, 2003。
+- 国土交通省「道路構造令について(3)」(湿潤路面の縦すべり摩擦係数と停止距離の式、日本道路協会『道路構造令の解説と運用』より)。
+- 道路運送車両の保安基準の細目を定める告示 第 120 条(走行用前照灯 100 m・すれ違い用前照灯 40 m の障害物を確認できる性能)。
 - 警察庁交通局長「運転免許技能試験実施基準について(通達)」警察庁丙運発第 12 号、令和 4 年 3 月 4 日(減点細目: 停止位置不適・逆行・制動操作不良・発進手間どり)。
 - J. Y. Wong, *Theory of Ground Vehicles*, 4th ed., Wiley, 2008 / T. D. Gillespie, *Fundamentals of Vehicle Dynamics*, SAE, 1992(転がり抵抗係数の範囲)。
 

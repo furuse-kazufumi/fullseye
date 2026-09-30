@@ -2114,6 +2114,95 @@ def _b_skill_test_score(pool, rng):
     return ([{"kind": "stop", "gap": 0.5}, {"kind": "start", "rollback": 0.1}],), {}
 
 
+def _env_world():
+    import driveworld as DW
+    import numpy as np
+    w = DW._empty_world()
+    Vg, Fg = DW._grid_plane(-10, 10, -10, 10, step=4.0)
+    DW.world_add(w, Vg, Fg, 0, DW._ROAD_COLOR, name="ground")
+    bx = np.array([[x, y, z] for z in (0.0, 2.0) for y in (-0.2, 0.2) for x in (-0.2, 0.2)]) + np.array([4.0, 0.0, 0.0])
+    bf = np.array([[0, 1, 3], [0, 3, 2], [4, 6, 7], [4, 7, 5], [0, 4, 5], [0, 5, 1], [2, 3, 7], [2, 7, 6], [0, 2, 6], [0, 6, 4],
+                   [1, 5, 7], [1, 7, 3]])
+    DW.world_add(w, bx, bf, 6, (0.8, 0.8, 0.8), name="pole")
+    return w
+
+
+def _env_cam():
+    import driveworld as DW
+    return DW.camera_pose((-4.0, 0.0, 1.35), (8.0, 0.0, 0.9)), DW.camera_intrinsics(60.0, 48, 32)
+
+
+def _b_julian_day(pool, rng):
+    return (2461120.25,), {}
+
+
+def _b_sun_at(pool, rng):
+    return (2461120.25, 35.6581, 139.7414), {}
+
+
+def _b_sun_events(pool, rng):
+    return (2026, 3, 20, 35.6581, 139.7414), {}
+
+
+def _b_sun_vector(pool, rng):
+    return (20.0, 135.0), {}
+
+
+def _b_sun_illuminance(pool, rng):
+    return (35.0,), {}
+
+
+def _b_koschmieder(pool, rng):
+    return (500.0, 4000.0, 0.02, [5.0, 50.0]), {}
+
+
+def _b_mor_from_beta(pool, rng):
+    return (0.02,), {}
+
+
+def _b_beta_from_mor(pool, rng):
+    return (150.0,), {}
+
+
+def _b_road_row_distance(pool, rng):
+    return ([210.0, 250.0, 300.0], 190.0, 554.0, 1.35), {}
+
+
+def _b_fog_beta_from_profile(pool, rng):
+    import numpy as np
+    import driveenv as EV
+    rows = np.arange(195, 400)
+    d = EV.road_row_distance(rows, 190.0, 554.0, 1.35)
+    return (rows, EV.koschmieder(1000.0, 5000.0, 0.03, d), 190.0, 554.0, 1.35), {"slant": False}
+
+
+def _b_veiling_luminance(pool, rng):
+    return (50000.0, [5.0, 20.0]), {}
+
+
+def _b_veil_chroma_limit(pool, rng):
+    return ((1.0, 0.12, 0.08), 10000.0), {}
+
+
+def _b_sight_stop_speed(pool, rng):
+    return (40.0, 0.75, 6.0), {}
+
+
+def _b_env_params(pool, rng):
+    return (), {"sun": (30.0, 180.0), "fog_mor": 200.0}
+
+
+def _b_tone_map(pool, rng):
+    import numpy as np
+    return (np.full((8, 8, 3), 5000.0), 1e-4), {}
+
+
+def _b_env_render(pool, rng):
+    import driveenv as EV
+    P, K = _env_cam()
+    return (_env_world(), P, K, 48, 32, EV.env_params(sun=(30.0, 180.0))), {"shadow_res": 128}
+
+
 def _gs_quad_world():
     import driveworld as DW
     w = DW._empty_world()
@@ -2401,6 +2490,11 @@ OP_ARG_BUILDERS = {
     "hill_hold_brake_min": _b_hill_hold_brake_min, "hill_start_rollback": _b_hill_start_rollback,
     "hill_start_command": _b_hill_start_command, "skill_test_thresholds": _b_skill_test_thresholds,
     "skill_test_score": _b_skill_test_score,
+    "julian_day": _b_julian_day, "sun_at": _b_sun_at, "sun_events": _b_sun_events, "sun_vector": _b_sun_vector,
+    "sun_illuminance": _b_sun_illuminance, "koschmieder": _b_koschmieder, "mor_from_beta": _b_mor_from_beta,
+    "beta_from_mor": _b_beta_from_mor, "road_row_distance": _b_road_row_distance, "fog_beta_from_profile": _b_fog_beta_from_profile,
+    "veiling_luminance": _b_veiling_luminance, "veil_chroma_limit": _b_veil_chroma_limit, "sight_stop_speed": _b_sight_stop_speed,
+    "env_params": _b_env_params, "tone_map": _b_tone_map, "env_render": _b_env_render,
     "gs_from_world": _b_gs_from_world, "gs_update": _b_gs_update, "gs_render": _b_gs_render, "gs_render_fn": _b_gs_render_fn,
     "sign_params": _b_sign_kind, "sign_image": _b_sign_img, "plate_mesh_from_image": _b_plate_mesh,
     "sign_mesh": _b_sign_mesh, "add_sign": _b_add_sign, "signal_jp_mesh": _b_signal_jp,

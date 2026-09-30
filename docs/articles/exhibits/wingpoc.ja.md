@@ -702,7 +702,7 @@ py -3.11 examples/poc_veiling_glare.py
 
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_veiling_glare)
 
-使用 op(ノートへ): [`airy_pattern`](https://furuse.work/ops/optics/wave/airy_pattern.html) · [`create_funct_1d_pairs`](https://furuse.work/ops/oned/function/create_funct_1d_pairs.html) · [`derivate_funct_1d`](https://furuse.work/ops/oned/function/derivate_funct_1d.html) · [`get_y_value_funct_1d`](https://furuse.work/ops/oned/function/get_y_value_funct_1d.html) · [`invert_funct_1d`](https://furuse.work/ops/oned/function/invert_funct_1d.html) · [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html) · [`psf_to_mtf`](https://furuse.work/ops/optics/imaging/psf_to_mtf.html)
+使用 op(ノートへ): [`airy_pattern`](https://furuse.work/ops/optics/wave/airy_pattern.html) · [`create_funct_1d_pairs`](https://furuse.work/ops/oned/function/create_funct_1d_pairs.html) · [`derivate_funct_1d`](https://furuse.work/ops/oned/function/derivate_funct_1d.html) · [`get_y_value_funct_1d`](https://furuse.work/ops/oned/function/get_y_value_funct_1d.html) · [`invert_funct_1d`](https://furuse.work/ops/oned/function/invert_funct_1d.html) · [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html) · [`psf_to_mtf`](https://furuse.work/ops/optics/imaging/psf_to_mtf.html) · [`veil_chroma_limit`](https://furuse.work/ops/drive/env/veil_chroma_limit.html) · [`veiling_luminance`](https://furuse.work/ops/drive/env/veiling_luminance.html)
 
 ## No.2026.114 —— 搬送ロールの傷を周期から名指しする ―― 崖に着く前に、何も言えなくなる
 
@@ -4675,6 +4675,42 @@ py -3.11 examples/poc_driving_longitudinal.py
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_longitudinal)
 
 使用 op(ノートへ): [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_detect.html) · [`course_intersection`](https://furuse.work/ops/drive/course/course_intersection.html) · [`course_layout`](https://furuse.work/ops/drive/course/course_layout.html) · [`course_road`](https://furuse.work/ops/drive/course/course_road.html) · [`course_slope`](https://furuse.work/ops/drive/course/course_slope.html) · [`hill_hold_brake_min`](https://furuse.work/ops/drive/long/hill_hold_brake_min.html) · [`hill_start_command`](https://furuse.work/ops/drive/long/hill_start_command.html) · [`hill_start_rollback`](https://furuse.work/ops/drive/long/hill_start_rollback.html) · [`load_asset`](https://furuse.work/ops/drive/world/load_asset.html) · [`long_energy_residual`](https://furuse.work/ops/drive/long/long_energy_residual.html) · [`long_params`](https://furuse.work/ops/drive/long/long_params.html) · [`long_simulate`](https://furuse.work/ops/drive/long/long_simulate.html) · [`plan_command`](https://furuse.work/ops/drive/long/plan_command.html) · [`road_eval`](https://furuse.work/ops/drive/long/road_eval.html) · [`road_profile`](https://furuse.work/ops/drive/long/road_profile.html) · [`rss_stopping_distance`](https://furuse.work/ops/drive/rss/rss_stopping_distance.html) · [`skill_test_score`](https://furuse.work/ops/drive/long/skill_test_score.html) · [`stop_line_plan`](https://furuse.work/ops/drive/long/stop_line_plan.html) · [`stopping_distance_grade`](https://furuse.work/ops/drive/long/stopping_distance_grade.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_build`](https://furuse.work/ops/drive/world/world_build.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
+
+## No.2026.173 —— 太陽と天気 ―― 朝日の逆光で信号が読めない時間帯、霧の中で見えてから止まれる速さ、雨の路面、夜の前照灯
+
+[![太陽と天気 ―― 朝日の逆光で信号が読めない時間帯、霧の中で見えてから止まれる速さ、雨の路面、夜の前照灯](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/04_fog_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/04_fog_views.png)
+
+*↑ **太陽と天気 ―― 朝日の逆光で信号が読めない時間帯、霧の中で見えてから止まれる速さ、雨の路面、夜の前照灯** ―― 自動運転は太陽光や天候の中を走る(ユーザー「太陽光や天候も再現できるといいね」)。この展示は教習所の世界を物理の単位(輝度 cd/m²・照度 lx)で照らし直し、車載カメラの画像処理(色度で灯火を読む)が **どこで読めなくなるかを画素の式から先に閉形式で出し**、描いた画像の読みがその両側で変わることを確かめる。太陽: 日時と緯度経度から高度・方位(NOAA の式)。国立天文台 暦計算室の東京 2026 年(春分・夏至・秋分・冬至)の日の出・南中・日の入りの時刻・方位・高度 24 値が丸めの単位(1 分・0.1°)で一致。影の先端は h cot(高度) と 1 画素以内(4 つの高度)。逆光: 光幕 L_v = 10E/θ²(Stiles–Holladay)は白いので、灯火の色度を灰色へ寄せる。色度が検出の許容を割る白の量 W* から閾値 θ* = √(10E/W*) を出すと、3 色 × 太陽の角の掃引で「読めた / 読めない」が予測と食い違い 0。春分の朝、東へ向かう車から赤が読めないのは 05:53〜07:05(太陽の式で出し、描いて確認)。霧: Koschmieder の法則。路面の縦の輝度の曲線に当てはめて視程を画像から戻す(視程 30〜200 m で誤差 0.96 %、雑音 1 %)。灯火の色が読める距離は ln(1 + W*/L_h)/β(L_h = 画像の空から測った大気光)で、画像の読みと掃引の 1 刻み以内。視程 200 m では赤が読めるのは停止線の 6.6 m 手前から → 止まれる速さ 17.5 km/h(停止距離の閉形式を v について解く)。その 0.9 倍では停止線の手前に止まり、1.25 倍では越える(閉ループ)。雨: 道路構造令の解説の停止距離の式 D = 0.694V + 0.00394V²/f と前の回の閉形式が一致(第 2 実装)、湿潤の f で停止距離が延び、路面に映った赤は地図の ROI の外なので読みを乱さない。夜: 仮定した配光で、すれ違い灯は 60 m・走行灯は 120 m の歩行者を画像で見つけ(保安基準の 40 m・100 m の性能)、見つけてから止まれる速さの上下で止まる / 止まれない。灯火を消すとどの天気でも 'unknown'(fail-closed)。正直に: 空と薄明の明るさ・灯火の輝度・前照灯の配光・HDR カメラの階調は仮定、光幕は人の目の散乱の式でカメラのレンズを代用、霧は描画と同じ一様なKoschmieder の世界で測っている、雨筋と鏡像のぼけは見た目だけ。13 門、134.9 s。*
+
+[![春分(2026-03-20)の東京、朝 5:15 から夜 20:15 まで 15 分おき。左 = 東へ向かう車の車載カメラ(停止線の 15 m 手前)と信号の読み、右 = 斜め上から(影が太陽と反対へ伸び、短くなってまた伸びる)。朝、太陽が](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/01_sun_day.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/01_sun_day.gif)
+
+*↑ 測定の図 ―― 春分(2026-03-20)の東京、朝 5:15 から夜 20:15 まで 15 分おき。左 = 東へ向かう車の車載カメラ(停止線の 15 m 手前)と信号の読み、右 = 斜め上から(影が太陽と反対へ伸び、短くなってまた伸びる)。朝、太陽が信号の後ろの低い空にある間は光幕で赤の色度が灰色へ寄り、画像処理は「読めない」(05:53〜07:05)。日が沈むと前照灯を点ける。*
+
+[![東京の太陽の高度(NOAA の式、大気差つき)と国立天文台 暦計算室の公表値(点: 日の出・日の入りは高度 0、南中は高度)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/02_sun_elevation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/02_sun_elevation.png)
+
+*↑ 東京の太陽の高度(NOAA の式、大気差つき)と国立天文台 暦計算室の公表値(点: 日の出・日の入りは高度 0、南中は高度)。*
+
+[![逆光: 横 = 太陽と灯火への視線の角 θ、縦 = 画素の式から先に出した閾値 θ* = √(10 E_dn / W*)(高度で変わる)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/03_backlight_threshold_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/03_backlight_threshold.png)
+
+*↑ 逆光: 横 = 太陽と灯火への視線の角 θ、縦 = 画素の式から先に出した閾値 θ* = √(10 E_dn / W*)(高度で変わる)。*
+
+[![霧の濃さを画像から測る: 車線の中の路面の輝度を行ごとに並べると(点、雑音 1 %)、遠い行ほど大気光へ近づく。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/05_fog_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/05_fog_profile.png)
+
+*↑ 霧の濃さを画像から測る: 車線の中の路面の輝度を行ごとに並べると(点、雑音 1 %)、遠い行ほど大気光へ近づく。*
+
+[![霧の中で灯火の色が読める距離: 閉形式 d* = ln(1 + W*/L_h)/β(線)と、描いた画像で読めた距離(点)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/06_fog_reach_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/06_fog_reach.png)
+
+*↑ 霧の中で灯火の色が読める距離: 閉形式 d* = ln(1 + W*/L_h)/β(線)と、描いた画像で読めた距離(点)。*
+
+```
+py -3.11 examples/poc_driving_weather.py
+```
+
+ソース: [examples/poc_driving_weather.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_driving_weather.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_weather)
+
+使用 op(ノートへ): [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_detect.html) · [`beta_from_mor`](https://furuse.work/ops/drive/env/beta_from_mor.html) · [`course_intersection`](https://furuse.work/ops/drive/course/course_intersection.html) · [`course_layout`](https://furuse.work/ops/drive/course/course_layout.html) · [`course_road`](https://furuse.work/ops/drive/course/course_road.html) · [`env_params`](https://furuse.work/ops/drive/env/env_params.html) · [`env_render`](https://furuse.work/ops/drive/env/env_render.html) · [`fog_beta_from_profile`](https://furuse.work/ops/drive/env/fog_beta_from_profile.html) · [`load_asset`](https://furuse.work/ops/drive/world/load_asset.html) · [`long_params`](https://furuse.work/ops/drive/long/long_params.html) · [`long_simulate`](https://furuse.work/ops/drive/long/long_simulate.html) · [`pedestrian_mesh`](https://furuse.work/ops/drive/terrain/pedestrian_mesh.html) · [`plan_command`](https://furuse.work/ops/drive/long/plan_command.html) · [`road_row_distance`](https://furuse.work/ops/drive/env/road_row_distance.html) · [`sight_stop_speed`](https://furuse.work/ops/drive/env/sight_stop_speed.html) · [`skill_test_score`](https://furuse.work/ops/drive/long/skill_test_score.html) · [`stop_line_plan`](https://furuse.work/ops/drive/long/stop_line_plan.html) · [`stopping_distance_grade`](https://furuse.work/ops/drive/long/stopping_distance_grade.html) · [`sun_at`](https://furuse.work/ops/drive/env/sun_at.html) · [`sun_events`](https://furuse.work/ops/drive/env/sun_events.html) · [`sun_illuminance`](https://furuse.work/ops/drive/env/sun_illuminance.html) · [`sun_vector`](https://furuse.work/ops/drive/env/sun_vector.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`veil_chroma_limit`](https://furuse.work/ops/drive/env/veil_chroma_limit.html) …(他 1)
 
 ### 数学の絵 ―― 定理が門になる回(別記事)
 

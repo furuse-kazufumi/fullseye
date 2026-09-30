@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fog_beta_from_profile — DRIVE <code style="color:#22d3bf">env</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × any × scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fog_beta_from_profile(rows, luminance, horizon_row: &#x27;float&#x27;, focal: &#x27;float&#x27;, cam_height: &#x27;float&#x27;, pitch: &#x27;float&#x27; = 0.0, *, method: &#x27;str&#x27; = &#x27;fit&#x27;, slant: &#x27;bool&#x27; = True, beta_range=(0.0001, 0.5), n_grid: &#x27;int&#x27; = 400) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveenv; driveenv.fog_beta_from_profile(rows, luminance, horizon_row: &#x27;float&#x27;, focal: &#x27;float&#x27;, cam_height: &#x27;float&#x27;, pitch: &#x27;float&#x27; = 0.0, *, method: &#x27;str&#x27; = &#x27;fit&#x27;, slant: &#x27;bool&#x27; = True, beta_range=(0.0001, 0.5), n_grid: &#x27;int&#x27; = 400) -&gt; &#x27;Dict[str, float]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;fog_beta_from_profile&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>路面の縦の輝度の曲線から霧の減衰係数 β を測る(Hautière ら 2006 の考え方)。</p>
+<p>`<code style="color:#22d3bf">method=&quot;fit&quot;</code><code style="color:#22d3bf">(既定): 各行の路面までの距離(:func:</code>road_row_distance<code style="color:#22d3bf">、</code><code style="color:#22d3bf">slant=True</code>` で視線の長さ √(d² + H²))に</p>
+<p>Koschmieder L = L_h + (L₀ − L_h) e^{−β r} を当てる(β は対数格子 + 黄金分割、各 β で L₀・L_h は線形最小二乗)。</p>
+<p>`<code style="color:#22d3bf">method=&quot;inflection&quot;</code>`: 曲線を 5 行の移動平均で均し、2 階差分が符号を変える行 v_i から β = 2 (v_i − v_h)/λ</p>
+<p>(λ = f H / cos²α。距離を λ/(v − v_h) と近似したときの厳密な変曲点: L = L_h + (L₀ − L_h) e^{−βλ/u} の 2 階微分は u = βλ/2 で 0)。</p>
+<p>返り値にはどちらも入る: `<code style="color:#22d3bf">beta</code><code style="color:#22d3bf">(選んだ方)・</code><code style="color:#22d3bf">beta_fit</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">beta_inflection</code><code style="color:#22d3bf">(見つからなければ nan)・</code><code style="color:#22d3bf">L0</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">L_h</code>`・</p>
+<p>`<code style="color:#22d3bf">rms</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">mor</code>`(2.996/β)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 長さ違い・地平線より下の点が 5 未満・method が不正。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_weather">poc_driving_weather</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_weather.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">env</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:julian_day">julian_day</a> · <a style="color:#22d3bf" href="opdrive:sun_at">sun_at</a> · <a style="color:#22d3bf" href="opdrive:sun_events">sun_events</a> · <a style="color:#22d3bf" href="opdrive:sun_vector">sun_vector</a> · <a style="color:#22d3bf" href="opdrive:sun_illuminance">sun_illuminance</a> · <a style="color:#22d3bf" href="opdrive:koschmieder">koschmieder</a> · <a style="color:#22d3bf" href="opdrive:mor_from_beta">mor_from_beta</a> · <a style="color:#22d3bf" href="opdrive:beta_from_mor">beta_from_mor</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: driveenv.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

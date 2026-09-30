@@ -49,6 +49,7 @@ This series lines up the ops built on that bar, one per instalment. Every instal
 | 3 | [Time to collision and safe distance — optical-flow τ and the RSS closed forms, scored by the driving-school world's truth](#3-time-to-collision-and-safe-distance--optical-flow-τ-and-the-rss-closed-forms-scored-by-the-driving-school-worlds-truth) | Closed-form τ from depth + rigid motion / the one-frame identity / published RSS parameters and test values / Lemma 2 = worst-case integration |
 | 4 | [Widening the world — closed-form terrain, world-space materials and procedural trees and pedestrians win the focus of expansion back from flow](#4-widening-the-world--closed-form-terrain-world-space-materials-and-procedural-trees-and-pedestrians-win-the-focus-of-expansion-back-from-flow) | Perlin's theorem (zero at lattice points, period, analytic derivative) / fBm spectrum β = 2H + 2 / point–segment distance is eikonal / divergence-theorem volumes / rendered depth back-projected to the world / pure-translation flow radiates from the FoE (true flow = motion) |
 | 5 | [Giving the car inertia and slopes — stopping just before the line with reaction and braking distance, and a hill start without rolling back](#5-giving-the-car-inertia-and-slopes--stopping-just-before-the-line-with-reaction-and-braking-distance-and-a-hill-start-without-rolling-back) | Closed-form stopping distance / RSS stopping distance (second implementation) / closed-form hill-start roll-back / energy balance / notice No. 12 deductions |
+| 6 | [Sun and weather — when the morning sun hides the signal, how fast you may drive in fog, wet roads and headlamps at night](#6-sun-and-weather--when-the-morning-sun-hides-the-signal-how-fast-you-may-drive-in-fog-wet-roads-and-headlamps-at-night) | NAOJ published values / shadow = h cot(elevation) / closed-form veil and chromaticity threshold / Koschmieder's law / road-design manual stopping distance (second implementation) / headlamp performance in the safety standard |
 
 ---
 
@@ -736,12 +737,154 @@ This part produced **5 figures** in all — [see them all](https://github.com/fu
 
 ---
 
+## 6. Sun and weather — when the morning sun hides the signal, how fast you may drive in fog, wet roads and headlamps at night
+
+![An equinox day](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/01_sun_day.gif)
+
+*↑ Tokyo on the March equinox (2026-03-20), 5:15 to 20:15 every 15 minutes. Left: the in-car camera of an eastbound car (15 m before the stop line) and its signal reading; right: a view from above. Shadows point away from the sun, shorten at noon and lengthen again. In the morning, while the sun is low behind the signal, the image processing cannot read red. After sunset the headlamps come on.*
+
+Up to part 5 the in-car camera had a fixed light direction and brightness was just "surface colour × shading". This part relights the world in **physical units** (luminance cd/m², illuminance lx) and adds the sun, shadows, glare, fog, rain and headlamps.
+
+The question is not "does it look nice" but **where the in-car image processing stops reading**. That point is **computed first in closed form from the pixel equation**, and the rendered reading is checked on both sides of it. Combined with part 5's stopping distance, the car then drives a closed loop: "can it stop after it sees?"
+
+### Procedure
+
+```
+Sun      : date, time, position → elevation, azimuth (NOAA = Meeus low precision). Direct light weakens with air mass; shadows from a depth image seen from the sun
+Backlight: at angle θ between sun and line of sight, a veil L_v = 10 E / θ² (Stiles–Holladay) overlays the image. The veil is white and pulls lamp colours toward grey
+Fog      : Koschmieder's law L = L₀ e^{−βd} + L_h (1 − e^{−βd}); visibility (meteorological optical range) = 2.996/β
+Rain     : the wet friction coefficient f (road-design manual table) lengthens stopping; lamps reflect on the road
+Night    : lamps emit their own light; headlamps give illuminance I cos i / r² from a beam pattern
+Decision : from the distance at which a lamp's colour can be read, the speed that can still stop; drive above and below it
+```
+
+**In plain words**: to read a signal the camera looks at the **colour ratio** of the lamp pixels (how red they are). Glare and fog **add white light** to the image. Adding white pushes the ratio toward grey, and past some amount it is no longer "red". That amount (W*) follows from the pixel equation alone, so "how close the sun may come" and "how far a lamp can be read in fog" can be computed before rendering.
+
+[![Backlight threshold](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/03_backlight_threshold.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/03_backlight_threshold.png)
+
+*↑ Horizontal: angle θ between the sun and the line of sight to the lamp; vertical: the threshold θ* computed beforehand from the pixel equation. Below the diagonal it reads, above it does not. Red is the weakest.*
+
+### Gates and scores
+
+| # | Gate | Truth | Score |
+|---|---|---|---|
+| 1 | Sun position | NAOJ Ephemeris Computation Office, Tokyo 2026 (equinoxes, solstices): sunrise, transit, sunset times, azimuths and transit altitude | **24 / 24 values** agree to the rounding unit (1 min, 0.1°); time difference at most 0.45 min before rounding |
+| 2 | Shadow length | height × cot(elevation) + the pole's corner | shadow tip from a top-down image, at most 0.074 m off at four elevations (1 pixel = 0.10 m) |
+| 3 | Backlight | threshold θ* = √(10 E / W*) (W* = white that breaks tolerance 0.25) | 3 colours × 27 sun angles: read / no-read matches the prediction with **0 disagreements**; red θ* 12.7–17.8° (depends on sun elevation) |
+| 4 | Equinox morning | the no-read window from the sun equations | an eastbound car cannot read red during **05:53–07:05**; 15 rendered times: inside "no read", outside red |
+| 5 | Fog density from the image | true extinction β | Koschmieder fit to the road's vertical luminance (1 % noise): **within 0.96 %** for 30–200 m visibility |
+| 6 | Reading distance in fog | d* = ln(1 + W*/L_h)/β | visibility 150/200/250 m × 3 colours: read / no-read per probe matches with **0 disagreements** |
+| 7 | Can it stop after it sees? | speed v* that can stop (stopping-distance closed form solved for v) | at 200 m visibility red is read 6.6 m before the line → v* = **17.5 km/h**; at 0.9× it stops 0.50 m short, at 1.3× it crosses by 1.58 m |
+| 8 | Second implementation | road-design manual stopping distance D = 0.694V + 0.00394V²/f (2.5 s reaction) | 0.034 % from part 5's closed form over 8 speeds (coefficient rounding) |
+| 9 | Wet road | stopping-distance closed form | 40 km/h: dry 18.39 m → wet (f 0.38) 24.31 m; integrator within 1e-6 |
+| 10 | Rain reflection | projection of the lamp mirrored in the road | 0.22 pixel off; it lies outside the map ROI, so signal reading is undisturbed |
+| 11 | Headlamps | vehicle safety standard performance (obstacle at 40 m low / 100 m high) | with the assumed beam, a pedestrian is found in the image up to **60 m (low) and 120 m (high)**; nothing in the empty lane |
+| 12 | Night closed loop | speed that can stop after detection v* = 81 km/h (low beam) | at 0.85× it stops 15 m before the pedestrian, at 1.3× it cannot |
+| 13 | Zero point | lamps off | 'unknown' in clear, fog, rain and night (fail-closed) |
+
+[![Reading distance in fog](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/06_fog_reach.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/06_fog_reach.png)
+
+*↑ Distance at which a lamp's colour can be read in fog: closed form d* = ln(1 + W*/L_h)/β (lines) and the rendered reading (dots).*
+
+**Reading gates 3 and 5**. Neither is "rendered it and it failed". **The boundary is computed from the pixel equation first and rendered on both sides.** For backlight, set the white W* that breaks the chromaticity tolerance equal to the veil 10E/θ²: θ* = √(10E/W*). For fog, the lamp pixel c·L·e^{−βd} + L_h(1 − e^{−βd}) has the same chromaticity as c·L + L_h(e^{βd} − 1), so d* = ln(1 + W*/L_h)/β. The airlight L_h is measured from the image's sky.
+
+### ★ Where implementations go wrong
+
+#### 1. Passing local time as a naive datetime shifts the sun by nine hours
+
+The sun equations work in UT. A naive datetime meant as Japan time puts the sun below the horizon at Tokyo noon. Naive datetimes are **rejected**.
+
+#### 2. The definition of sunrise moves the minute
+
+"Sun centre at −0.833°" (NOAA) and "upper limb on the apparent horizon, horizontal refraction 35′8″" (NAOJ) differ by 5–8 seconds. The table is rounded to minutes, so on some days the rounding flips. Solve with the reference's definition.
+
+#### 3. The ground at the camera's feet turns into sky
+
+The rasteriser drops any triangle with a vertex behind the camera, so the large ground triangles at the feet vanish and sky shows at the bottom. The ground (the plane z = 0) is filled analytically from the ray intersection.
+
+#### 4. A percentile threshold hides the shadow
+
+Shadow pixels are under 1 % of the ground. Using the 1st percentile as the dark reference puts it in the sunlit area, and with a low sun the glare gradient is mistaken for shadow. Take the minimum for the dark side.
+
+#### 5. High beams make the far road look like a pedestrian
+
+Treating "a bright blob in the lane" as an obstacle finds the distant road lit by the high beam. Subtract the median of the same row (= the road at the same distance) and keep only pixels clearly brighter.
+
+### What it is not for
+
+**Sky and twilight brightness, lamp luminance, headlamp pattern and the HDR tone curve are assumptions.** The **shape** of the boundary (√(10E/W*), ln(1 + W*/L_h)/β) follows from the equations; the **metres and degrees** move with these assumptions.
+
+**The veil formula is an empirical law of scattering inside the human eye**, used as a stand-in for lens scatter.
+
+**Fog is measured in the same uniform Koschmieder world it was rendered in.** Robustness to real fog (non-uniform, halos around lamps) is not measured. The inflection closed form (β = 2/d_i) was far off with 1 % noise and pixel steps (the table uses the fit).
+
+**Rain streaks and reflection blur are only for looks.** The reflection's **position** is exact mirror geometry.
+
+**Headlamps cast no shadows.** Sun shadow edges are set by the resolution of the depth image seen from the sun.
+
+### Run it
+
+```bash
+py -3.11 examples/poc_driving_weather.py            # 13 gates (about 134.9 s without figures)
+```
+
+```python
+import fullseye as fs
+
+# Tokyo equinox sunrise, transit and sunset (NAOJ definition)
+ev = fs.ledger.sun_events(2026, 3, 20, 35.6581, 139.7414, 9.0, h0="naoj")
+print(ev["sunrise"].strftime("%H:%M:%S"), round(ev["sunrise_azimuth"], 1), ev["transit"].strftime("%H:%M:%S"), round(ev["transit_altitude_apparent"], 1))
+# 05:45:17 89.8 11:48:34 54.2
+
+# extinction for 100 m visibility, and the speed that can stop within 40 m of sight (0.75 s reaction, 6 m/s² braking)
+print(round(fs.ledger.beta_from_mor(100.0), 5), round(3.6 * fs.ledger.sight_stop_speed(40.0, 0.75, 6.0), 1))
+# 0.02996 64.3
+
+# white light that breaks tolerance 0.25 for a red lamp of 10000 cd/m²
+print(round(fs.ledger.veil_chroma_limit((1.0, 0.12, 0.08), 10000.0, 0.25)))
+# 2704
+```
+
+---
+
+This part produced **7 figures** in all — [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_weather)
+
+#### The remaining figures of this part
+
+[![Sun elevation and NAOJ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/02_sun_elevation.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/02_sun_elevation.png)
+
+*↑ Sun elevation in Tokyo (lines) and the NAOJ published values (dots).*
+
+[![Fog views](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/04_fog_views.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/04_fog_views.png)
+
+*↑ In-car camera in fog (15 m before the stop line). The lamp is across the intersection, about 26 m past the line.*
+
+[![Fog density from the image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/05_fog_profile.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/05_fog_profile.png)
+
+*↑ Road luminance in the lane, row by row (dots), and the Koschmieder fit that recovers the visibility.*
+
+[![Rain and night](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/07_rain_night.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/07_rain_night.png)
+
+*↑ Rain (red reflected on the road), night (lamps emit), and a pedestrian under low and high beams.*
+
+---
+
 ## Next
 
-**Sun and weather.** The sun's altitude and azimuth from date, time and position (the National Astronomical Observatory's ephemeris is the truth), and the angle at which backlight stops the in-car camera from reading the signal. Fog rendered by Koschmieder's law (contrast falls as e^{−βd}, visibility 3.912/β), and when the reading distance shrinks, "can it stop after it sees?" against this part's closed-form stopping distance. Rain lowers the road's μ (this part's μ knob) and puts the signal's reflection on the wet road. At night, the headlamps' reach against the stopping distance.
+**An endless map.** The author's idea: map tiles are generated around the car in every direction as it drives, and tiles beyond a set distance are dropped automatically. Each tile is seeded by its tile coordinates, so a tile that was dropped and is revisited comes back bit-for-bit identical. Four gates: roads and ground stay continuous across tile seams, a regenerated tile matches the original exactly, memory stays under a fixed bound however many kilometres are driven, and position error (floating-point cancellation) does not grow over long distances. That makes tens of kilometres of continuous driving testable.
+
+After that (part 8) comes **lateral motion**. The limit before a turning car's tyres slide sideways (the friction circle: longitudinal and lateral forces together stay under μ m g) and the cornering speed limit √(μ g R). This part's wet f goes into the curve: "can this radius be taken at this speed on a wet road?" computed in closed form and then driven. Tyre lateral force is linear (cornering stiffness) and then saturates; the bicycle model's steady-state circle (understeer gradient) is the truth.
 
 ## References
 
+- NAOJ Ephemeris Computation Office, sunrise/sunset tables 2026, Tokyo (https://eco.mtk.nao.ac.jp/koyomi/dni/2026/s1303.html etc.) and its definition of sunrise (upper limb, horizontal refraction 35′8″).
+- NOAA Global Monitoring Laboratory, *Solar Calculation Details* (https://gml.noaa.gov/grad/solcalc/calcdetails.html) / J. Meeus, *Astronomical Algorithms*, 2nd ed., Willmann-Bell, 1998.
+- F. Kasten and A. T. Young, "Revised optical air mass tables and approximation formula", *Applied Optics* 28, 1989 / G. Kopp and J. L. Lean, "A new, lower value of total solar irradiance", *GRL* 38, 2011.
+- WMO, *Guide to Instruments and Methods of Observation* (WMO-No. 8), Vol. I, Chapter 9 (MOR = ln(20)/σ; Koschmieder's 0.02 threshold) / Japan Meteorological Agency, forecast terms: fog (visibility under 1 km; dense fog about 100 m on land).
+- N. Hautière, J.-P. Tarel, J. Lavenant, D. Aubert, "Automatic fog detection and estimation of visibility distance through use of an onboard camera", *Machine Vision and Applications* 17, 2006.
+- CIE 146:2002 / CIE 147:2002 *CIE Equations for Disability Glare* (Stiles–Holladay and the general formula; checked via secondary literature) / J. J. Vos, "On the cause of disability glare and its dependence on glare angle, age and ocular pigmentation", *Clin. Exp. Optom.* 86, 2003.
+- MLIT (Japan), "On the Road Structure Ordinance (3)" (wet longitudinal friction coefficients and the stopping-distance formula, from the Japan Road Association manual).
+- Notice on the details of the Safety Regulations for Road Vehicles, Article 120 (driving beam: obstacle at 100 m; passing beam: 40 m).
 - National Police Agency, "Standards for driving licence skill tests (notice)", No. 12, 4 March 2022 (deductions: improper stop position, roll-back, poor braking, slow start).
 - J. Y. Wong, *Theory of Ground Vehicles*, 4th ed., Wiley, 2008 / T. D. Gillespie, *Fundamentals of Vehicle Dynamics*, SAE, 1992 (rolling-resistance ranges).
 

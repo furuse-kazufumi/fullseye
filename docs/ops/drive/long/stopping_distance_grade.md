@@ -4,7 +4,7 @@ dim: drive
 category: long
 in: scalar × scalar × scalar
 out: scalar
-examples: [poc_driving_longitudinal]
+examples: [poc_driving_longitudinal, poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -33,10 +33,11 @@ version: 0.2.3  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_driving_longitudinal](../../../../examples/poc_driving_longitudinal.py) — `py -3.11 examples/poc_driving_longitudinal.py`
+- [poc_driving_weather](../../../../examples/poc_driving_weather.py) — `py -3.11 examples/poc_driving_weather.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)
 
-[road_eval](road_eval.md) · [long_simulate](long_simulate.md) · [stop_line_plan](stop_line_plan.md) · [hill_hold_brake_min](hill_hold_brake_min.md) · [hill_start_rollback](hill_start_rollback.md) · [hill_start_command](hill_start_command.md)
+[road_eval](road_eval.md) · [long_simulate](long_simulate.md) · [stop_line_plan](stop_line_plan.md) · [hill_hold_brake_min](hill_hold_brake_min.md) · [hill_start_rollback](hill_start_rollback.md) · [hill_start_command](hill_start_command.md) · [julian_day](../env/julian_day.md) · [sun_at](../env/sun_at.md)
 
 ## 同カテゴリ(`long`)
 

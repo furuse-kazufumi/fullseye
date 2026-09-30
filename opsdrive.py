@@ -6,6 +6,7 @@
 けん玉の定理と閉ループの捕球・真値つきのけんの世界(kendama / kendamaworld)。
 世界を 3D Gaussian Splatting にして描く(gsplatnp: 面に貼ったガウシアン + EWA 描画、密度と誤差のつまみ)。
 車の縦の運動と坂(drivelong: 空走 + 制動の停止距離の閉形式、坂の保持と発進のずり下がり、技能試験の減点)。
+太陽と天気(driveenv: 太陽の位置 = 暦計算室、影・逆光の光幕・霧 Koschmieder・雨・夜の前照灯を物理の単位で描き、見えてから止まれる速さ)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -26,6 +27,7 @@ import balltrack
 import ballworld
 import drivecourse
 import driveterrain
+import driveenv
 import drivelong
 import drivettc
 import gsplatnp
@@ -41,7 +43,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong, "driveenv": driveenv}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -276,6 +278,27 @@ _CATALOG = {
         ("hill_start_command", "drivelong", ["scalar", "scalar", "scalar", "scalar"], "any"),
         ("skill_test_thresholds", "drivelong", [], "table"),
         ("skill_test_score", "drivelong", ["table"], "table"),
+    ],
+    # 太陽と天気: 太陽の高度・方位(NOAA / Meeus、真値 = 国立天文台 暦計算室の公表値)、晴天の照度、Koschmieder の霧と視程(WMO の MOR)、
+    # 路面の輝度の曲線から β を戻す(Hautière の考え方)、減能グレアの光幕(Stiles–Holladay / CIE)、灯火の色度が白に埋もれる閾値、
+    # 見えてから止まれる速さ(drivelong の停止距離を v について解く)、物理の単位の描画(影 = 太陽のシャドウマップ、灯火は自発光、前照灯)。
+    "env": [
+        ("julian_day", "driveenv", ["any"], "scalar"),
+        ("sun_at", "driveenv", ["any", "scalar", "scalar"], "table"),
+        ("sun_events", "driveenv", ["scalar", "scalar", "scalar", "scalar", "scalar"], "table"),
+        ("sun_vector", "driveenv", ["scalar", "scalar"], "any"),
+        ("sun_illuminance", "driveenv", ["scalar"], "table"),
+        ("koschmieder", "driveenv", ["any", "any", "scalar", "any"], "any"),
+        ("mor_from_beta", "driveenv", ["scalar"], "scalar"),
+        ("beta_from_mor", "driveenv", ["scalar"], "scalar"),
+        ("road_row_distance", "driveenv", ["any", "scalar", "scalar", "scalar"], "any"),
+        ("fog_beta_from_profile", "driveenv", ["any", "any", "scalar", "scalar", "scalar"], "table"),
+        ("veiling_luminance", "driveenv", ["any", "any"], "any"),
+        ("veil_chroma_limit", "driveenv", ["any", "scalar"], "scalar"),
+        ("sight_stop_speed", "driveenv", ["scalar", "scalar", "scalar"], "scalar"),
+        ("env_params", "driveenv", [], "table"),
+        ("tone_map", "driveenv", ["any", "scalar"], "any"),
+        ("env_render", "driveenv", ["table", "matrix", "matrix"], "table"),
     ],
 }
 

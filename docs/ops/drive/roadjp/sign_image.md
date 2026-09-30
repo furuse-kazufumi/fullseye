@@ -41,7 +41,7 @@ ValueError**(豆腐を黙って出さない)。``side`` は :func:`sign_params` 
 
 ## 型が繋がる次の op(`rgba` を入力に取れる)
 
-[plate_mesh_from_image](plate_mesh_from_image.md)
+[plate_mesh_from_image](plate_mesh_from_image.md) · [julian_day](../env/julian_day.md)
 
 ## 同カテゴリ(`roadjp`)
 

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2392,
- "n_notes": 2398,
+ "n_ops": 2408,
+ "n_notes": 2414,
  "notes": {
   "vol_dilate": [
    {
@@ -15927,6 +15927,165 @@
     "category": "course",
     "out": "table",
     "path": "docs/ops/drive/course/course_turnaround.md"
+   }
+  ],
+  "beta_from_mor": [
+   {
+    "op": "beta_from_mor",
+    "dim": "drive",
+    "category": "env",
+    "in": "scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/env/beta_from_mor.md"
+   }
+  ],
+  "env_params": [
+   {
+    "op": "env_params",
+    "dim": "drive",
+    "category": "env",
+    "out": "table",
+    "path": "docs/ops/drive/env/env_params.md"
+   }
+  ],
+  "env_render": [
+   {
+    "op": "env_render",
+    "dim": "drive",
+    "category": "env",
+    "in": "table × matrix × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/env/env_render.md"
+   }
+  ],
+  "fog_beta_from_profile": [
+   {
+    "op": "fog_beta_from_profile",
+    "dim": "drive",
+    "category": "env",
+    "in": "any × any × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/env/fog_beta_from_profile.md"
+   }
+  ],
+  "julian_day": [
+   {
+    "op": "julian_day",
+    "dim": "drive",
+    "category": "env",
+    "in": "any",
+    "out": "scalar",
+    "path": "docs/ops/drive/env/julian_day.md"
+   }
+  ],
+  "koschmieder": [
+   {
+    "op": "koschmieder",
+    "dim": "drive",
+    "category": "env",
+    "in": "any × any × scalar × any",
+    "out": "any",
+    "path": "docs/ops/drive/env/koschmieder.md"
+   }
+  ],
+  "mor_from_beta": [
+   {
+    "op": "mor_from_beta",
+    "dim": "drive",
+    "category": "env",
+    "in": "scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/env/mor_from_beta.md"
+   }
+  ],
+  "road_row_distance": [
+   {
+    "op": "road_row_distance",
+    "dim": "drive",
+    "category": "env",
+    "in": "any × scalar × scalar × scalar",
+    "out": "any",
+    "path": "docs/ops/drive/env/road_row_distance.md"
+   }
+  ],
+  "sight_stop_speed": [
+   {
+    "op": "sight_stop_speed",
+    "dim": "drive",
+    "category": "env",
+    "in": "scalar × scalar × scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/env/sight_stop_speed.md"
+   }
+  ],
+  "sun_at": [
+   {
+    "op": "sun_at",
+    "dim": "drive",
+    "category": "env",
+    "in": "any × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/env/sun_at.md"
+   }
+  ],
+  "sun_events": [
+   {
+    "op": "sun_events",
+    "dim": "drive",
+    "category": "env",
+    "in": "scalar × scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/env/sun_events.md"
+   }
+  ],
+  "sun_illuminance": [
+   {
+    "op": "sun_illuminance",
+    "dim": "drive",
+    "category": "env",
+    "in": "scalar",
+    "out": "table",
+    "path": "docs/ops/drive/env/sun_illuminance.md"
+   }
+  ],
+  "sun_vector": [
+   {
+    "op": "sun_vector",
+    "dim": "drive",
+    "category": "env",
+    "in": "scalar × scalar",
+    "out": "any",
+    "path": "docs/ops/drive/env/sun_vector.md"
+   }
+  ],
+  "tone_map": [
+   {
+    "op": "tone_map",
+    "dim": "drive",
+    "category": "env",
+    "in": "any × scalar",
+    "out": "any",
+    "path": "docs/ops/drive/env/tone_map.md"
+   }
+  ],
+  "veil_chroma_limit": [
+   {
+    "op": "veil_chroma_limit",
+    "dim": "drive",
+    "category": "env",
+    "in": "any × scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/env/veil_chroma_limit.md"
+   }
+  ],
+  "veiling_luminance": [
+   {
+    "op": "veiling_luminance",
+    "dim": "drive",
+    "category": "env",
+    "in": "any × any",
+    "out": "any",
+    "path": "docs/ops/drive/env/veiling_luminance.md"
    }
   ],
   "gs_from_world": [

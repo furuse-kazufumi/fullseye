@@ -561,8 +561,11 @@ def section8_tool_gaps():
     # (a) ESF / LSF / SFR / 迷光の op が 3 層のどこにも無い
     import ops as _ops
     allnames = set(dir(fs)) | set(dir(fs.ledger)) | {o.name for o in _ops.REGISTRY}
+    # driveenv(自動運転 第 6 回、2026-09-30)の veiling_luminance / veil_chroma_limit は **目の減能グレアの式で光幕を足す側**
+    # (Stiles–Holladay / CIE 146)で、画像から迷光を **測る** op ではない —— この節の穴(ESF/SFR/迷光指数の測定)は塞がっていない
+    NOT_MEASUREMENT = {"veiling_luminance", "veil_chroma_limit"}
     for kw in ("esf", "lsf", "sfr", "slanted", "glare", "veil", "stray", "mtf50"):
-        hit = [n for n in allnames if kw in n.lower()]
+        hit = [n for n in allnames if kw in n.lower() and n not in NOT_MEASUREMENT]
         assert not hit, (kw, hit)
     print("  (a) ★**ESF/LSF/SFR と迷光の op が 3 層(facade %d / ledger %d / 進化 %d)の"
           % (len(dir(fs)), len(dir(fs.ledger)), len(_ops.REGISTRY)))

@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">veil_chroma_limit — DRIVE <code style="color:#22d3bf">env</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veil_chroma_limit(color, luminance: &#x27;float&#x27;, tol: &#x27;float&#x27; = 0.15) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveenv; driveenv.veil_chroma_limit(color, luminance: &#x27;float&#x27;, tol: &#x27;float&#x27; = 0.15) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;veil_chroma_limit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>色 `<code style="color:#22d3bf">color</code><code style="color:#22d3bf">(RGB の比)で輝度 </code><code style="color:#22d3bf">luminance</code>` の灯火に白い光(光幕・霧の大気光)W を足したとき、色度の距離</p>
+<p>|(c L + W·1)/|c L + W·1| − c/|c||(balltrack.ball_detect の chroma と同じ量)が `<code style="color:#22d3bf">tol</code>` に達する W* [cd/m²]。</p>
+<p>距離は W に単調に増える(W → ∞ で灰色 (1,1,1)/√3 との距離に漸近)。漸近値が tol 以下なら `<code style="color:#22d3bf">inf</code>`(どれだけ白を足しても</p>
+<p>色は読める)。二分法で相対 1e-12。使い道: 逆光の閾値 θ* = √(10 E_glare / W*)(Stiles–Holladay)、霧の中で色が読める距離</p>
+<p>d* = ln(1 + W*/L_h)/β(灯火 c L e^{−βd} + 大気光 L_h (1 − e^{−βd}) の色度は c L + L_h (e^{βd} − 1)·1 と同じ)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_weather">poc_driving_weather</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_weather.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_veiling_glare">poc_veiling_glare</a> — <code style="color:#22d3bf">py -3.11 examples/poc_veiling_glare.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">scalar</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:road_eval">road_eval</a> · <a style="color:#22d3bf" href="opdrive:long_simulate">long_simulate</a> · <a style="color:#22d3bf" href="opdrive:stopping_distance_grade">stopping_distance_grade</a> · <a style="color:#22d3bf" href="opdrive:stop_line_plan">stop_line_plan</a> · <a style="color:#22d3bf" href="opdrive:hill_hold_brake_min">hill_hold_brake_min</a> · <a style="color:#22d3bf" href="opdrive:hill_start_rollback">hill_start_rollback</a> · <a style="color:#22d3bf" href="opdrive:hill_start_command">hill_start_command</a> · <a style="color:#22d3bf" href="opdrive:julian_day">julian_day</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">env</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:julian_day">julian_day</a> · <a style="color:#22d3bf" href="opdrive:sun_at">sun_at</a> · <a style="color:#22d3bf" href="opdrive:sun_events">sun_events</a> · <a style="color:#22d3bf" href="opdrive:sun_vector">sun_vector</a> · <a style="color:#22d3bf" href="opdrive:sun_illuminance">sun_illuminance</a> · <a style="color:#22d3bf" href="opdrive:koschmieder">koschmieder</a> · <a style="color:#22d3bf" href="opdrive:mor_from_beta">mor_from_beta</a> · <a style="color:#22d3bf" href="opdrive:beta_from_mor">beta_from_mor</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: driveenv.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

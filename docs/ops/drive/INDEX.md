@@ -1,4 +1,4 @@
-# DRIVE operator help — 168 ops in 15 categories
+# DRIVE operator help — 184 ops in 16 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -19,6 +19,10 @@
 ### course (13)
 
 [course_contains](course/course_contains.md) · [course_crank](course/course_crank.md) · [course_crossing](course/course_crossing.md) · [course_intersection](course/course_intersection.md) · [course_layout](course/course_layout.md) · [course_loop](course/course_loop.md) · [course_loop_bend](course/course_loop_bend.md) · [course_occupancy](course/course_occupancy.md) · [course_parallel_parking](course/course_parallel_parking.md) · [course_road](course/course_road.md) · [course_s_curve](course/course_s_curve.md) · [course_slope](course/course_slope.md) · [course_turnaround](course/course_turnaround.md)
+
+### env (16)
+
+[beta_from_mor](env/beta_from_mor.md) · [env_params](env/env_params.md) · [env_render](env/env_render.md) · [fog_beta_from_profile](env/fog_beta_from_profile.md) · [julian_day](env/julian_day.md) · [koschmieder](env/koschmieder.md) · [mor_from_beta](env/mor_from_beta.md) · [road_row_distance](env/road_row_distance.md) · [sight_stop_speed](env/sight_stop_speed.md) · [sun_at](env/sun_at.md) · [sun_events](env/sun_events.md) · [sun_illuminance](env/sun_illuminance.md) · [sun_vector](env/sun_vector.md) · [tone_map](env/tone_map.md) · [veil_chroma_limit](env/veil_chroma_limit.md) · [veiling_luminance](env/veiling_luminance.md)
 
 ### gsplat (4)
 

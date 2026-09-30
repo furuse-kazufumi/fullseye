@@ -532,6 +532,11 @@ from kendama import (  # noqa: E402,F401
     catch_plan_ballistic, noisy_perceiver, catch_success_rate, catch_plan_staged, swing_up_lift, parabola_fit_g, hole_detect,
     kendama_combo_simulate,
 )
+import driveenv  # noqa: E402  (太陽と天気: 太陽の位置・影・逆光・霧・雨・夜の前照灯、見えてから止まれる速さ)
+from driveenv import (  # noqa: E402,F401
+    julian_day, sun_at, sun_events, sun_vector, sun_illuminance, koschmieder, mor_from_beta, beta_from_mor,
+    road_row_distance, fog_beta_from_profile, veiling_luminance, veil_chroma_limit, sight_stop_speed, env_params, tone_map, env_render,
+)
 import drivelong  # noqa: E402  (車の縦の運動と坂: 停止距離の閉形式、坂道発進、技能試験の採点)
 from drivelong import (  # noqa: E402,F401
     long_params, road_profile, road_eval, long_simulate, long_energy_residual, stopping_distance_grade, stop_line_plan,

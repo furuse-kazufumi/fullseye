@@ -4,7 +4,7 @@ dim: drive
 category: world
 in: 
 out: table
-examples: [poc_driving_longitudinal, poc_driving_school, poc_ttc_rss]
+examples: [poc_driving_longitudinal, poc_driving_school, poc_driving_weather, poc_ttc_rss]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -35,6 +35,7 @@ z-up に直し、箱の寸法を ``dims``(既定 = :data:`ASSETS` の実寸)に�
 
 - [poc_driving_longitudinal](../../../../examples/poc_driving_longitudinal.py) — `py -3.11 examples/poc_driving_longitudinal.py`
 - [poc_driving_school](../../../../examples/poc_driving_school.py) — `py -3.11 examples/poc_driving_school.py`
+- [poc_driving_weather](../../../../examples/poc_driving_weather.py) — `py -3.11 examples/poc_driving_weather.py`
 - [poc_ttc_rss](../../../../examples/poc_ttc_rss.py) — `py -3.11 examples/poc_ttc_rss.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
