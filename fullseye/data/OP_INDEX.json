@@ -1,8 +1,8 @@
 {
- "n_ops": 2379,
+ "n_ops": 2392,
  "tiers": {
   "color": 12,
-  "ledger": 1428,
+  "ledger": 1441,
   "nary": 17,
   "registry": 922
  },
@@ -7096,6 +7096,50 @@
    ]
   },
   {
+   "name": "hill_hold_brake_min",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "long",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar"
+   ]
+  },
+  {
+   "name": "hill_start_command",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "any",
+   "category": "long",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "hill_start_rollback",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "long",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "histogram_match",
    "halcon": "",
    "in_sort": "image2d",
@@ -8766,6 +8810,45 @@
    "dim": "3d",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "long_energy_residual",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "long",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "long_params",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "long",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "long_simulate",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "long",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "any"
    ]
   },
   {
@@ -11664,6 +11747,19 @@
    ]
   },
   {
+   "name": "plan_command",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "long",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "plane_from_3points",
    "halcon": "",
    "in_sort": "points",
@@ -13877,6 +13973,33 @@
    ]
   },
   {
+   "name": "road_eval",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "long",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "scalar"
+   ]
+  },
+  {
+   "name": "road_profile",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "long",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "roll_slide_state",
    "halcon": "",
    "in_sort": "table",
@@ -15232,6 +15355,30 @@
    ]
   },
   {
+   "name": "skill_test_score",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "long",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "skill_test_thresholds",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "long",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "skyline_extract",
    "halcon": "",
    "in_sort": "image2d",
@@ -15969,6 +16116,35 @@
    "dim": "optics",
    "in_sorts": [
     "jones"
+   ]
+  },
+  {
+   "name": "stop_line_plan",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "long",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "stopping_distance_grade",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "long",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar"
    ]
   },
   {

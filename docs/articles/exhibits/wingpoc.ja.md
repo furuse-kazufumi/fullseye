@@ -4644,6 +4644,38 @@ py -3.11 examples/poc_world_terrain.py
 
 使用 op(ノートへ): [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_mesh_object.html) · [`add_sign`](https://furuse.work/ops/drive/roadjp/add_sign.html) · [`course_contains`](https://furuse.work/ops/drive/course/course_contains.html) · [`course_distance`](https://furuse.work/ops/drive/terrain/course_distance.html) · [`course_layout`](https://furuse.work/ops/drive/course/course_layout.html) · [`course_loop`](https://furuse.work/ops/drive/course/course_loop.html) · [`crosshair`](https://furuse.work/ops/annotate/pointer/crosshair.html) · [`crosswalk_mesh`](https://furuse.work/ops/drive/terrain/crosswalk_mesh.html) · [`fbm_gradient`](https://furuse.work/ops/drive/terrain/fbm_gradient.html) · [`fbm_height`](https://furuse.work/ops/drive/terrain/fbm_height.html) · [`flow_from_depth_motion`](https://furuse.work/ops/drive/ttc/flow_from_depth_motion.html) · [`foe_from_flow`](https://furuse.work/ops/drive/ttc/foe_from_flow.html) · [`foe_from_motion`](https://furuse.work/ops/drive/ttc/foe_from_motion.html) · [`material_params`](https://furuse.work/ops/drive/terrain/material_params.html) · [`mesh_signed_volume`](https://furuse.work/ops/drive/terrain/mesh_signed_volume.html) · [`pedestrian_mesh`](https://furuse.work/ops/drive/terrain/pedestrian_mesh.html) · [`perlin2`](https://furuse.work/ops/drive/terrain/perlin2.html) · [`radial_periodogram`](https://furuse.work/ops/drive/terrain/radial_periodogram.html) · [`relative_motion`](https://furuse.work/ops/drive/ttc/relative_motion.html) · [`scatter_offroad`](https://furuse.work/ops/drive/terrain/scatter_offroad.html) · [`spectral_slope`](https://furuse.work/ops/drive/terrain/spectral_slope.html) · [`terrain_gradient`](https://furuse.work/ops/drive/terrain/terrain_gradient.html) · [`terrain_height`](https://furuse.work/ops/drive/terrain/terrain_height.html) · [`terrain_params`](https://furuse.work/ops/drive/terrain/terrain_params.html) …(他 7)
 
+## No.2026.172 —— 車に慣性と坂を ―― 空走 + 制動で停止線の手前に止まり、坂道で止まって逆行せずに発進する
+
+[![車に慣性と坂を ―― 空走 + 制動で停止線の手前に止まり、坂道で止まって逆行せずに発進する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/01_drive_with_time.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/01_drive_with_time.gif)
+
+*↑ **車に慣性と坂を ―― 空走 + 制動で停止線の手前に止まり、坂道で止まって逆行せずに発進する** ―― これまでの教習所の車は、2.5 m おきの姿勢の列で動き、停止線でいきなり止まっていた —— 時間も速さも無かった(ユーザー「車に慣性の法則。速度に対する制動にかかる距離は反映されてる? 坂道はある?」)。この展示は車に縦の運動を入れる: m dv/dt = 駆動 − 制動 − m g sin θ − c_rr m g cos θ − ½ρC_dA v|v|、止まっている間はブレーキで保持できる範囲なら動かない。真値は 3 つ。停止距離の閉形式 vρ + (1/2k)ln(1 + k v²/A)(A = b ± g sin θ + c_rr g cos θ、空気抵抗が無ければ v²/2A)と積分器が平地・上り・下り × 20/40/60 km/h の 15 組で 8.5e-14、平地では別に書いた rsssafety の停止距離と 5.5e-13。坂道発進のずり下がり½a₁τ² + (a₁τ)²/(2a₂)(ブレーキを離してから駆動が立ち上がるまでの τ)と 1.8e-15。エネルギー収支(½v² + g z + 転がり・空気・制動の仕事 − 駆動の仕事)が全区間で 1.2e-9 J/kg。閉ループ: 車載カメラで信号の色を読み(読みを信じる 20 m の中で 117 / 117 一致)、黄を読んでから反応時間の空走 + 2 段の制動(通達の「ブレーキを数回に分けて踏まない場合」の減点に合わせた)で停止線の手前 0.500 m に止まり、赤の間は 1 mm も動かず、青を読んでから発進。坂道コース(8 % の上り)の一時停止と発進は逆行 0 m、11 % の下りは 15 km/h 以下。警察庁 丙運発第 12 号(令和 4 年)の減点細目で採点すると減点 0・100 点。つまみは閉形式のしきい値で読む: 反応時間 2.546 s を越えると線を越えて停止位置不適、路面の μ が 0.1134 を割ると止まれない(雨はこの μ に入る = 次の回)、踏み替えに 1 s かかる下手な発進は勾配 9 % で逆行小・10〜11 % で逆行中・12.5 % 以上で逆行大(試験中止)。灯火を消すと 'unknown' のまま止まって発進しない(fail-closed)。正直に: 逆行の距離(小 0.3・中 0.5・大 1 m)と「停止線の 2 m 以上手前は不適」は通達に数字が無く二次情報、質量 1300 kg・制動の上限・反応 0.75 s などは仮定、停止の計画は知覚した瞬間に決めて途中で測り直さない(世界とモデルが同じなのでぴったり止まる)、坂道の縁石が地面の高さに描かれる(driveworld の課題)。14 門、28.0 s。*
+
+[![速さ・路面の高さ・ブレーキの時系列。交差点では反応(空走)の間は速さを保ち、2 段で止まる(制動の 2 つの段)。赤の間は 0、青を読んで発進。坂で一時停止して発進し、急な下りでは制動で速さを保つ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/02_speed_distance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/02_speed_distance.png)
+
+*↑ 測定の図 ―― 速さ・路面の高さ・ブレーキの時系列。交差点では反応(空走)の間は速さを保ち、2 段で止まる(制動の 2 つの段)。赤の間は 0、青を読んで発進。坂で一時停止して発進し、急な下りでは制動で速さを保つ。*
+
+[![停止距離 = 空走 vρ + 制動距離(制動 4 m/s²、反応 0.75 s)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/03_stopping_distance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/03_stopping_distance.png)
+
+*↑ 停止距離 = 空走 vρ + 制動距離(制動 4 m/s²、反応 0.75 s)。*
+
+[![つまみ = 反応時間: 同じ場所で黄を読んでも、反応が遅いと空走が延び、閉形式のしきい値 ρ* = 2.55 s を越えると上限のブレーキでも停止線を越える(停止位置不適 / 信号無視)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/04_knob_reaction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/04_knob_reaction.png)
+
+*↑ つまみ = 反応時間: 同じ場所で黄を読んでも、反応が遅いと空走が延び、閉形式のしきい値 ρ* = 2.55 s を越えると上限のブレーキでも停止線を越える(停止位置不適 / 信号無視)。*
+
+[![つまみ = 勾配: ブレーキを離してからアクセルまで 1.0 s かかる下手な坂道発進のずり下がり。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/05_knob_grade_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/05_knob_grade.png)
+
+*↑ つまみ = 勾配: ブレーキを離してからアクセルまで 1.0 s かかる下手な坂道発進のずり下がり。*
+
+```
+py -3.11 examples/poc_driving_longitudinal.py
+```
+
+ソース: [examples/poc_driving_longitudinal.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_driving_longitudinal.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_longitudinal)
+
+使用 op(ノートへ): [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_detect.html) · [`course_intersection`](https://furuse.work/ops/drive/course/course_intersection.html) · [`course_layout`](https://furuse.work/ops/drive/course/course_layout.html) · [`course_road`](https://furuse.work/ops/drive/course/course_road.html) · [`course_slope`](https://furuse.work/ops/drive/course/course_slope.html) · [`hill_hold_brake_min`](https://furuse.work/ops/drive/long/hill_hold_brake_min.html) · [`hill_start_command`](https://furuse.work/ops/drive/long/hill_start_command.html) · [`hill_start_rollback`](https://furuse.work/ops/drive/long/hill_start_rollback.html) · [`load_asset`](https://furuse.work/ops/drive/world/load_asset.html) · [`long_energy_residual`](https://furuse.work/ops/drive/long/long_energy_residual.html) · [`long_params`](https://furuse.work/ops/drive/long/long_params.html) · [`long_simulate`](https://furuse.work/ops/drive/long/long_simulate.html) · [`plan_command`](https://furuse.work/ops/drive/long/plan_command.html) · [`road_eval`](https://furuse.work/ops/drive/long/road_eval.html) · [`road_profile`](https://furuse.work/ops/drive/long/road_profile.html) · [`rss_stopping_distance`](https://furuse.work/ops/drive/rss/rss_stopping_distance.html) · [`skill_test_score`](https://furuse.work/ops/drive/long/skill_test_score.html) · [`stop_line_plan`](https://furuse.work/ops/drive/long/stop_line_plan.html) · [`stopping_distance_grade`](https://furuse.work/ops/drive/long/stopping_distance_grade.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_build`](https://furuse.work/ops/drive/world/world_build.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
+
 ### 数学の絵 ―― 定理が門になる回(別記事)
 
 この展示先の回は、計測の展示館ではなく**数学の絵のシリーズ**に掛かっています。分ける基準は「真値がどこから来るか」です —— 計測の展示は測る対象があり真値は対象の側に、ここの回は対象が無く、真値は描いた絵そのものの定理・恒等式・不変量から出ます。記事は手書きなので、生成器はここを描きません。

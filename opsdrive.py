@@ -5,6 +5,7 @@
 日本の信号灯器と道路標識(roadjp、公表寸法をそのまま頂点に持つ)/
 けん玉の定理と閉ループの捕球・真値つきのけんの世界(kendama / kendamaworld)。
 世界を 3D Gaussian Splatting にして描く(gsplatnp: 面に貼ったガウシアン + EWA 描画、密度と誤差のつまみ)。
+車の縦の運動と坂(drivelong: 空走 + 制動の停止距離の閉形式、坂の保持と発進のずり下がり、技能試験の減点)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -25,6 +26,7 @@ import balltrack
 import ballworld
 import drivecourse
 import driveterrain
+import drivelong
 import drivettc
 import gsplatnp
 import driveworld
@@ -39,7 +41,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -256,6 +258,24 @@ _CATALOG = {
         ("gs_update", "gsplatnp", ["table", "table"], "table"),
         ("gs_render", "gsplatnp", ["table", "matrix"], "table"),
         ("gs_render_fn", "gsplatnp", ["table"], "any"),
+    ],
+    # 車の縦の運動: m dv/dt = 駆動 − 制動 − m g sin θ − c_rr m g cos θ − ½ρC_dA v|v|(止まっている間はブレーキの保持の範囲で動かない)。
+    # 真値 = 停止距離の閉形式 vρ + (1/2k)ln(1 + k v²/A)(A = b ± g sin θ + c_rr g cos θ)、rsssafety との一致、坂道発進のずり下がりの閉形式、
+    # エネルギー収支。採点 = 警察庁 丙運発第 12 号(令和 4 年)の減点細目。
+    "long": [
+        ("long_params", "drivelong", [], "table"),
+        ("road_profile", "drivelong", ["table"], "table"),
+        ("road_eval", "drivelong", ["table", "scalar"], "any"),
+        ("long_simulate", "drivelong", ["scalar", "scalar", "any"], "table"),
+        ("long_energy_residual", "drivelong", ["table"], "any"),
+        ("stopping_distance_grade", "drivelong", ["scalar", "scalar", "scalar"], "scalar"),
+        ("stop_line_plan", "drivelong", ["scalar", "scalar"], "table"),
+        ("plan_command", "drivelong", ["table"], "any"),
+        ("hill_hold_brake_min", "drivelong", ["scalar"], "scalar"),
+        ("hill_start_rollback", "drivelong", ["scalar", "scalar", "scalar"], "table"),
+        ("hill_start_command", "drivelong", ["scalar", "scalar", "scalar", "scalar"], "any"),
+        ("skill_test_thresholds", "drivelong", [], "table"),
+        ("skill_test_score", "drivelong", ["table"], "table"),
     ],
 }
 

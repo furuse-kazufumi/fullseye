@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">plan_command — DRIVE <code style="color:#22d3bf">long</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_command(plan: &#x27;dict&#x27;, road=None, params: &#x27;Optional[dict]&#x27; = None, hold_brake: &#x27;Optional[float]&#x27; = None, before: &#x27;Optional[Callable]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivelong; drivelong.plan_command(plan: &#x27;dict&#x27;, road=None, params: &#x27;Optional[dict]&#x27; = None, hold_brake: &#x27;Optional[float]&#x27; = None, before: &#x27;Optional[Callable]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;plan_command&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>:func:<code style="color:#22d3bf">stop_line_plan</code> を `<code style="color:#22d3bf">command(t, s, v)</code><code style="color:#22d3bf"> にする。t0 より前は </code><code style="color:#22d3bf">before</code>`(None = 速さを保つ)、react / cruise は</p>
+<p>速さを保つ(駆動 = 坂 + 転がり + 空気抵抗の打ち消し、下りで負なら制動)、brake1 / brake2 は計画の値、止まったら保持</p>
+<p>(制動 `<code style="color:#22d3bf">hold_brake</code>`(None = 上限)+ クリープの駆動)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_longitudinal">poc_driving_longitudinal</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_longitudinal.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">any</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">long</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:long_params">long_params</a> · <a style="color:#22d3bf" href="opdrive:road_profile">road_profile</a> · <a style="color:#22d3bf" href="opdrive:road_eval">road_eval</a> · <a style="color:#22d3bf" href="opdrive:long_simulate">long_simulate</a> · <a style="color:#22d3bf" href="opdrive:long_energy_residual">long_energy_residual</a> · <a style="color:#22d3bf" href="opdrive:stopping_distance_grade">stopping_distance_grade</a> · <a style="color:#22d3bf" href="opdrive:stop_line_plan">stop_line_plan</a> · <a style="color:#22d3bf" href="opdrive:hill_hold_brake_min">hill_hold_brake_min</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivelong.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

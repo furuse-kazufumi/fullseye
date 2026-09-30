@@ -37,7 +37,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 | [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 98 |
 | [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 62 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
-| [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 4 |
+| [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 5 |
 
 ## Glossary (read this first)
 
@@ -60,6 +60,7 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 ## Recently added (newest first)
 
+- 2026-09-30 — No.2026.172 Giving the Car Inertia and Slopes — Stopping Just Before the Line with Reaction and Braking Distance, and a Hill Start Without Rolling Back
 - 2026-09-30 — No.2026.171 Kendama the Way the Pioneers Did It — A True-to-Shape Kendama Filmed by Two Cameras, the Ball's Flight Predicted from Images Alone and Caught in the Big, Small and Base Cups
 - 2026-09-29 — No.2026.167 The Driving School Opens — Cars and Signals on a Regulation Loop Course, Seen by LiDAR and Camera, Scored by Theorems and Identities
 - 2026-09-29 — No.2026.168 Time to Collision and Safe Distance — Optical-Flow τ and the RSS Closed Forms, Scored by the Driving-School World's Truth
@@ -67,7 +68,6 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 - 2026-09-29 — No.2026.170 Measuring a Table-Tennis Ball the Way the Pioneers Did — Multi-Camera Tracking, Triangulation, Trajectory Prediction, Bounce and Spin, Scored by Theorems on a Table with Ground Truth
 - 2026-09-28 — No.2026.161 Do Synapses Grow in Proportion to Neurites? — Shape Growth and Wiring Growth Set Side by Side, Cell by Cell, in Eight Worms
 - 2026-09-28 — No.2026.162 Run Length Forgives No Small Merge — ERL and VOI Weigh the Same Error Differently
-- 2026-09-28 — No.2026.163 Slime-Mould Tubes Solve the Maze — Thickening and Thinning Alone Converge to the Shortest Path, Bracketed by a Theorem and Dijkstra
 
 ## Applying it to your own problem
 

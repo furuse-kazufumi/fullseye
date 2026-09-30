@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stopping_distance_grade — DRIVE <code style="color:#22d3bf">long</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stopping_distance_grade(v: &#x27;float&#x27;, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, c_rr: &#x27;float&#x27; = 0.0, k: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelong; drivelong.stopping_distance_grade(v: &#x27;float&#x27;, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, c_rr: &#x27;float&#x27; = 0.0, k: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;stopping_distance_grade&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>停止距離の閉形式 = 空走 v ρ + 制動距離 (1/(2k)) ln(1 + k v²/A)、A = brake + g sin θ + c_rr g cos θ(k = 0 で v²/(2A))。</p>
+<p>θ &gt; 0 が上り(止まりやすい)、θ &lt; 0 が下り。ρ の間は速さを保つ。A ≤ 0(下りで制動が坂に負ける)なら止まらない → `<code style="color:#22d3bf">inf</code>`。</p>
+<p>平地・c_rr = k = 0 で `<code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, 0, brake)</code>` と同じ式。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: v &lt; 0、非有限、|θ| ≥ 45°。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_longitudinal">poc_driving_longitudinal</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_longitudinal.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">scalar</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:road_eval">road_eval</a> · <a style="color:#22d3bf" href="opdrive:long_simulate">long_simulate</a> · <a style="color:#22d3bf" href="opdrive:stop_line_plan">stop_line_plan</a> · <a style="color:#22d3bf" href="opdrive:hill_hold_brake_min">hill_hold_brake_min</a> · <a style="color:#22d3bf" href="opdrive:hill_start_rollback">hill_start_rollback</a> · <a style="color:#22d3bf" href="opdrive:hill_start_command">hill_start_command</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">long</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:long_params">long_params</a> · <a style="color:#22d3bf" href="opdrive:road_profile">road_profile</a> · <a style="color:#22d3bf" href="opdrive:road_eval">road_eval</a> · <a style="color:#22d3bf" href="opdrive:long_simulate">long_simulate</a> · <a style="color:#22d3bf" href="opdrive:long_energy_residual">long_energy_residual</a> · <a style="color:#22d3bf" href="opdrive:stop_line_plan">stop_line_plan</a> · <a style="color:#22d3bf" href="opdrive:plan_command">plan_command</a> · <a style="color:#22d3bf" href="opdrive:hill_hold_brake_min">hill_hold_brake_min</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivelong.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

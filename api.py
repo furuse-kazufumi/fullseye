@@ -532,6 +532,11 @@ from kendama import (  # noqa: E402,F401
     catch_plan_ballistic, noisy_perceiver, catch_success_rate, catch_plan_staged, swing_up_lift, parabola_fit_g, hole_detect,
     kendama_combo_simulate,
 )
+import drivelong  # noqa: E402  (車の縦の運動と坂: 停止距離の閉形式、坂道発進、技能試験の採点)
+from drivelong import (  # noqa: E402,F401
+    long_params, road_profile, road_eval, long_simulate, long_energy_residual, stopping_distance_grade, stop_line_plan,
+    plan_command, hill_hold_brake_min, hill_start_rollback, hill_start_command, skill_test_thresholds, skill_test_score,
+)
 import gsplatnp  # noqa: E402  (世界 → 3D Gaussian Splatting: 面に貼ったガウシアンと EWA 描画、密度と誤差のつまみ)
 from gsplatnp import gs_from_world, gs_update, gs_render, gs_render_fn  # noqa: E402,F401
 import kendamaworld  # noqa: E402  (けんの真値つき世界: けん + 大皿 + 糸のメッシュ、カメラの組、皿の投影の真値)

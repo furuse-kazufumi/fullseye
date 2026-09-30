@@ -4,7 +4,7 @@ dim: drive
 category: rss
 in: 
 out: scalar
-examples: []
+examples: [poc_driving_longitudinal]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -43,11 +43,11 @@ ad-rss-lib の stated braking pattern による **符号つき位置オフセッ
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_driving_longitudinal](../../../../examples/poc_driving_longitudinal.py) — `py -3.11 examples/poc_driving_longitudinal.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)
 
-—
+[road_eval](../long/road_eval.md) · [long_simulate](../long/long_simulate.md) · [stopping_distance_grade](../long/stopping_distance_grade.md) · [stop_line_plan](../long/stop_line_plan.md) · [hill_hold_brake_min](../long/hill_hold_brake_min.md) · [hill_start_rollback](../long/hill_start_rollback.md) · [hill_start_command](../long/hill_start_command.md)
 
 ## 同カテゴリ(`rss`)
 

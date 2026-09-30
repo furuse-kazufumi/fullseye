@@ -1,4 +1,4 @@
-# DRIVE operator help — 155 ops in 14 categories
+# DRIVE operator help — 168 ops in 15 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -35,6 +35,10 @@
 ### lidar (4)
 
 [lidar_scan](lidar/lidar_scan.md) · [lidar_spec](lidar/lidar_spec.md) · [ray_box_ranges](lidar/ray_box_ranges.md) · [ray_plane_range](lidar/ray_plane_range.md)
+
+### long (13)
+
+[hill_hold_brake_min](long/hill_hold_brake_min.md) · [hill_start_command](long/hill_start_command.md) · [hill_start_rollback](long/hill_start_rollback.md) · [long_energy_residual](long/long_energy_residual.md) · [long_params](long/long_params.md) · [long_simulate](long/long_simulate.md) · [plan_command](long/plan_command.md) · [road_eval](long/road_eval.md) · [road_profile](long/road_profile.md) · [skill_test_score](long/skill_test_score.md) · [skill_test_thresholds](long/skill_test_thresholds.md) · [stop_line_plan](long/stop_line_plan.md) · [stopping_distance_grade](long/stopping_distance_grade.md)
 
 ### racket (10)
 

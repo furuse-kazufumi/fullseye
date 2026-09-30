@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2379,
- "n_notes": 2385,
+ "n_ops": 2392,
+ "n_notes": 2398,
  "notes": {
   "vol_dilate": [
    {
@@ -16306,6 +16306,134 @@
     "in": "points × points",
     "out": "signal",
     "path": "docs/ops/drive/lidar/ray_plane_range.md"
+   }
+  ],
+  "hill_hold_brake_min": [
+   {
+    "op": "hill_hold_brake_min",
+    "dim": "drive",
+    "category": "long",
+    "in": "scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/long/hill_hold_brake_min.md"
+   }
+  ],
+  "hill_start_command": [
+   {
+    "op": "hill_start_command",
+    "dim": "drive",
+    "category": "long",
+    "in": "scalar × scalar × scalar × scalar",
+    "out": "any",
+    "path": "docs/ops/drive/long/hill_start_command.md"
+   }
+  ],
+  "hill_start_rollback": [
+   {
+    "op": "hill_start_rollback",
+    "dim": "drive",
+    "category": "long",
+    "in": "scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/long/hill_start_rollback.md"
+   }
+  ],
+  "long_energy_residual": [
+   {
+    "op": "long_energy_residual",
+    "dim": "drive",
+    "category": "long",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/long/long_energy_residual.md"
+   }
+  ],
+  "long_params": [
+   {
+    "op": "long_params",
+    "dim": "drive",
+    "category": "long",
+    "out": "table",
+    "path": "docs/ops/drive/long/long_params.md"
+   }
+  ],
+  "long_simulate": [
+   {
+    "op": "long_simulate",
+    "dim": "drive",
+    "category": "long",
+    "in": "scalar × scalar × any",
+    "out": "table",
+    "path": "docs/ops/drive/long/long_simulate.md"
+   }
+  ],
+  "plan_command": [
+   {
+    "op": "plan_command",
+    "dim": "drive",
+    "category": "long",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/long/plan_command.md"
+   }
+  ],
+  "road_eval": [
+   {
+    "op": "road_eval",
+    "dim": "drive",
+    "category": "long",
+    "in": "table × scalar",
+    "out": "any",
+    "path": "docs/ops/drive/long/road_eval.md"
+   }
+  ],
+  "road_profile": [
+   {
+    "op": "road_profile",
+    "dim": "drive",
+    "category": "long",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/long/road_profile.md"
+   }
+  ],
+  "skill_test_score": [
+   {
+    "op": "skill_test_score",
+    "dim": "drive",
+    "category": "long",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/long/skill_test_score.md"
+   }
+  ],
+  "skill_test_thresholds": [
+   {
+    "op": "skill_test_thresholds",
+    "dim": "drive",
+    "category": "long",
+    "out": "table",
+    "path": "docs/ops/drive/long/skill_test_thresholds.md"
+   }
+  ],
+  "stop_line_plan": [
+   {
+    "op": "stop_line_plan",
+    "dim": "drive",
+    "category": "long",
+    "in": "scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/long/stop_line_plan.md"
+   }
+  ],
+  "stopping_distance_grade": [
+   {
+    "op": "stopping_distance_grade",
+    "dim": "drive",
+    "category": "long",
+    "in": "scalar × scalar × scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/long/stopping_distance_grade.md"
    }
   ],
   "aim_velocity": [

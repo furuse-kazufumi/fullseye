@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">skill_test_score — DRIVE <code style="color:#22d3bf">long</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skill_test_score(events, venue: &#x27;str&#x27; = &#x27;場内&#x27;, thresholds: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelong; drivelong.skill_test_score(events, venue: &#x27;str&#x27; = &#x27;場内&#x27;, thresholds: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;skill_test_score&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>技能試験の減点を集計する(警察庁 丙運発第 12 号 令和 4 年の減点細目)。</p>
+<p>events : dict の列。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">{&quot;kind&quot;: &quot;stop&quot;, &quot;gap&quot;: 前端から停止線 [m] (負 = 越えた), &quot;signal&quot;: &quot;red&quot; など(任意)}</code>` →</p>
+<p>gap &lt; 0 または gap &gt; stop_gap_max で 停止位置不適。赤信号で越え幅 &gt; signal_violation_over なら 信号無視(試験中止)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">{&quot;kind&quot;: &quot;brake&quot;, &quot;stages&quot;: 段数}</code>` → 1 段以下で 制動操作不良(「ブレーキを数回に分けて踏まない場合」)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">{&quot;kind&quot;: &quot;start&quot;, &quot;rollback&quot;: 逆行 [m] (その場所の累計), &quot;delay&quot;: 発進の合図から動き出すまで [s] (任意)}</code>` →</p>
+<p>逆行小・中・大(大は試験中止)、delay &gt; start_delay_max で 発進手間どり。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">{&quot;kind&quot;: &quot;hold&quot;, &quot;creep&quot;: 保持中に動いた距離 [m]}</code>` → creep &gt; creep_eps で 制動操作不良(クリープ)。</p>
+<p>venue : &quot;場内&quot; か &quot;路上&quot;(点数が違う細目がある)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict : `<code style="color:#22d3bf">deductions</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">(細目, 点, 説明)</code><code style="color:#22d3bf"> の列。点 None = 試験中止)、</code><code style="color:#22d3bf">total</code><code style="color:#22d3bf">(減点の合計)、</code><code style="color:#22d3bf">score</code>`(100 − 合計、</p>
+<p>試験中止なら None)、`<code style="color:#22d3bf">test_stopped</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">passed</code><code style="color:#22d3bf">(第一種 70 点以上)、</code><code style="color:#22d3bf">thresholds</code>`。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: venue が不正、event の kind が不明・値が非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_longitudinal">poc_driving_longitudinal</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_longitudinal.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">long</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:long_params">long_params</a> · <a style="color:#22d3bf" href="opdrive:road_profile">road_profile</a> · <a style="color:#22d3bf" href="opdrive:road_eval">road_eval</a> · <a style="color:#22d3bf" href="opdrive:long_simulate">long_simulate</a> · <a style="color:#22d3bf" href="opdrive:long_energy_residual">long_energy_residual</a> · <a style="color:#22d3bf" href="opdrive:stopping_distance_grade">stopping_distance_grade</a> · <a style="color:#22d3bf" href="opdrive:stop_line_plan">stop_line_plan</a> · <a style="color:#22d3bf" href="opdrive:plan_command">plan_command</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivelong.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

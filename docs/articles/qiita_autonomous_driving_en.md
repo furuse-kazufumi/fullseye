@@ -48,6 +48,7 @@ This series lines up the ops built on that bar, one per instalment. Every instal
 | 2 | [The driving school opens — build the world that carries its own truth first](#2-the-driving-school-opens--build-the-world-that-carries-its-own-truth-first) | Closed-form areas from the regulation sizes / closed-form ray hits on a plane / two sensors, one world / two point-in-polygon implementations |
 | 3 | [Time to collision and safe distance — optical-flow τ and the RSS closed forms, scored by the driving-school world's truth](#3-time-to-collision-and-safe-distance--optical-flow-τ-and-the-rss-closed-forms-scored-by-the-driving-school-worlds-truth) | Closed-form τ from depth + rigid motion / the one-frame identity / published RSS parameters and test values / Lemma 2 = worst-case integration |
 | 4 | [Widening the world — closed-form terrain, world-space materials and procedural trees and pedestrians win the focus of expansion back from flow](#4-widening-the-world--closed-form-terrain-world-space-materials-and-procedural-trees-and-pedestrians-win-the-focus-of-expansion-back-from-flow) | Perlin's theorem (zero at lattice points, period, analytic derivative) / fBm spectrum β = 2H + 2 / point–segment distance is eikonal / divergence-theorem volumes / rendered depth back-projected to the world / pure-translation flow radiates from the FoE (true flow = motion) |
+| 5 | [Giving the car inertia and slopes — stopping just before the line with reaction and braking distance, and a hill start without rolling back](#5-giving-the-car-inertia-and-slopes--stopping-just-before-the-line-with-reaction-and-braking-distance-and-a-hill-start-without-rolling-back) | Closed-form stopping distance / RSS stopping distance (second implementation) / closed-form hill-start roll-back / energy balance / notice No. 12 deductions |
 
 ---
 
@@ -615,10 +616,134 @@ This part produced **6 figures** in all — [see them all](https://github.com/fu
 
 ---
 
+## 5. Giving the car inertia and slopes — stopping just before the line with reaction and braking distance, and a hill start without rolling back
+
+![Driving the school with a clock](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/01_drive_with_time.gif)
+
+*↑ Driving with a clock, speed, distance to the stop line, brake stage and the in-car camera's signal reading. On reading amber the car covers the reaction distance, brakes in two stages and stops 0.50 m before the line; it does not move on red and starts after reading green. The second half is the slope course: stop and start. Bottom left: the longitudinal profile; bottom right: the speedometer.*
+
+Up to part 4 the car moved as a list of poses every 2.5 m and stopped dead at the stop line — no time, no speed. This part gives the car **longitudinal motion**.
+
+### Procedure
+
+```
+Motion  : m dv/dt = drive − brake − m g sin θ − c_rr m g cos θ − ½ρC_dA v|v| (at rest it stays put as long as the brake can hold it)
+Road    : height and grade along the path from the slope course's (x, z) (regulation: 6.5–9 % and 10–12.5 %)
+Stop    : from the speed and distance at the moment the signal is read: reaction distance → two-stage braking → hold 0.5 m before the line
+Hill    : stop and hold on the up-slope → start (it rolls back during τ, from brake release until the drive builds up)
+Scoring : National Police Agency notice No. 12 (2022) deductions — improper stop position, roll-back small/medium/large, poor braking, slow start
+```
+
+**In plain words**: the distance to stop has two parts: the distance covered **at the same speed** before the brake is pressed (reaction distance = speed × reaction time) and the distance covered **while slowing** (braking distance = speed² ÷ (2 × deceleration)). Uphill, gravity helps stop the car; downhill it gets in the way. So at the same speed a car needs more room to stop going downhill.
+
+[![Stopping distance: closed form and integrator](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/03_stopping_distance.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/03_stopping_distance.png)
+
+*↑ Speed and stopping distance on flat, uphill and downhill: the closed form (lines) and the integrator (dots) coincide.*
+
+### Gates and scores
+
+| # | Gate | Truth | Score |
+|---|---|---|---|
+| 1 | Stopping distance | closed form vρ + (1/2k)ln(1 + k v²/A), A = b ± g sin θ + c_rr g cos θ | flat/up/down × 20/40/60 km/h (15 cases) vs the integrator: **8.5e-14** |
+| 2 | Second implementation | the separately written rsssafety stopping distance (flat) | closed form 0.0, integrator 5.5e-13 |
+| 3 | Holding on a slope | minimum brake max(0, \|a_creep − g sin θ\| − c_rr g cos θ) | does not move above it, moves 1e-4 below (4 grades) |
+| 4 | Hill-start roll-back | closed form ½a₁τ² + (a₁τ)²/(2a₂) | vs integrator **1.8e-15**; 0.533 m at 11 %, τ 1.0 s |
+| 5 | Signal reading | the world's signal state | **117 / 117** correct within the trusted 20 m |
+| 6 | Stop line | 0–2 m before the line (no deduction) | **0.500000 m** before (plan to 1e-9) |
+| 7 | Closed loop | no motion on red | 0 mm; starts after reading green |
+| 8 | Slope | 0–2 m before, roll-back < 0.3 m | 0.500 m before, roll-back 0 m |
+| 9 | Scoring | notice No. 12 deductions | none: **100 points** |
+| 10 | Energy balance | ½v² + g z + rolling, drag, brake work − drive work = const | 1.2e-9 J/kg over all 499 intervals |
+| 11 | Knob: reaction time | closed-form threshold ρ* = 2.546 s | 2.50 s stops 0.278 m short; 2.60 s crosses by 0.278 m (improper stop position) |
+| 12 | Knob: road μ | closed-form lower bound μ* = 0.1134 | stops above it; 0.01 below crosses by 1.08 m |
+| 13 | Knob: grade | roll-back closed form | a start with a 1 s pedal change: small at 9 %, medium at 10–11 %, large (test stopped) at 12.5 % and up |
+| 14 | Zero point | lamps off | stays 'unknown', stops and does not start (fail-closed) |
+
+[![Reaction-time knob](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/04_knob_reaction.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/04_knob_reaction.png)
+
+*↑ Reaction time and stopping position: past the closed-form threshold of 2.546 s the car ends beyond the line.*
+
+**Reading gates 11–13**. A knob is not "turned it and it got worse"; **where it gets worse is computed first in closed form, and the run on either side confirms it**. For reaction time, ρ* = (distance to the line − stopping distance at maximum braking) ÷ speed; 0.05 s before it the car stops, 0.05 s after it crosses.
+
+### ★ Where implementations go wrong
+
+#### 1. A step that straddles a command switch shifts the stopping distance by v·dt/6
+
+When one integration step straddles "start braking", the post-switch command leaks into the step (RK4 evaluates the command at midpoints). The stopping distance moved by 2 cm and failed the closed-form gate. Split steps at switch times.
+
+#### 2. Missing the instant of stopping makes the car run backwards on a slope
+
+If the step in which the speed crosses 0 does not switch to "stopped → hold", the next step flips the direction of gravity versus brake and the car accelerates backwards. Brake and rolling resistance oppose motion; at rest a different rule applies: no motion while the brake can hold.
+
+#### 3. The stop line's coordinate is not the near edge of the painted line
+
+The course's x = −12.50 is the centre of the line; the near edge of the 0.45 m painted line is −12.95. Stopping on the centre leaves the car's nose on the paint (as part 2's car did). Stop on the near edge.
+
+#### 4. On a slippery road, "waiting" on the nominal brake is too late
+
+With small μ the braking limit caps at μ g. Planning the wait with the nominal deceleration and then hitting the cap crossed the line by 1.85 m at a μ that could have stopped. Compute the wait with the capped braking.
+
+### What it is not for
+
+**The stop is planned at the moment of perception and not re-measured.** World and model agree, so it stops exactly; robustness to a misread μ is not measured.
+
+**The notice gives no distance thresholds for roll-back and stop position.** Small 0.3 m / medium 0.5 m / large 1 m and "2 m or more short is improper" come from secondary sources (driving-school guides). Mass 1300 kg, a 6 m/s² braking limit, 0.75 s reaction and μ 0.8 are assumptions; c_rr 0.012 is within literature values.
+
+**The in-car camera reads the signal from about 20 m before the line.** Enough at 20 km/h, not for fast approaches. It matters once fog or night shrink the reading distance (next part).
+
+**The slope's kerbs are drawn at ground level.** A world-rendering (driveworld) issue; the PoC adds retaining walls and lane lines to make the slope visible.
+
+### Run it
+
+```bash
+py -3.11 examples/poc_driving_longitudinal.py            # 14 gates (about 28 s without figures)
+```
+
+```python
+import math
+import fullseye as fs
+
+# 40 km/h, 0.75 s reaction, 4 m/s² braking: flat, 8 % up and 8 % down
+v = 40 / 3.6
+for grade in (0.0, 0.08, -0.08):
+    print(grade, round(fs.ledger.stopping_distance_grade(v, 0.75, 4.0, theta=math.atan(grade)), 2))
+# 0.0 23.77
+# 0.08 21.24
+# -0.08 27.52
+
+# a hill start at 11 %: 1 s from brake release until 2 m/s² of drive (no creep)
+print(round(fs.ledger.hill_start_rollback(math.atan(0.11), 1.0, 2.0)["rollback"], 3))
+# 0.914
+
+# scoring (stopped 0.5 m before the line, rolled back 0.4 m on the slope)
+print(fs.ledger.skill_test_score([{"kind": "stop", "gap": 0.5}, {"kind": "start", "rollback": 0.4}])["score"])
+# 90
+```
+
+---
+
+This part produced **5 figures** in all — [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_longitudinal)
+
+#### The remaining figures of this part
+
+[![Speed and distance](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/02_speed_distance.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/02_speed_distance.png)
+
+*↑ Speed over the whole drive, with the stop line and the slope.*
+
+[![Grade knob](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/05_knob_grade.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/05_knob_grade.png)
+
+*↑ Grade and hill-start roll-back (1 s pedal change): closed form (line), integrator (dots) and the roll-back deduction bands.*
+
+---
+
 ## Next
-**A second implementation of the world.** So far the world was built from formulas of my own: the road geometry was my polygons, the signs were only colours, and the traffic was one oncoming car. Next, road geometry is imported from the road-description standards OpenDRIVE / Lanelet2 (clothoids are exact, so arc length and curvature become closed-form gates), together with signs that carry meaning (speed limit, stop, no entry) and traffic in which several cars follow rules. On that widened world the first perception model — a detector for lanes, signs and pedestrians — is graded against the per-pixel truth, reporting "what percentage was right" instead of "it moved".
+
+**Sun and weather.** The sun's altitude and azimuth from date, time and position (the National Astronomical Observatory's ephemeris is the truth), and the angle at which backlight stops the in-car camera from reading the signal. Fog rendered by Koschmieder's law (contrast falls as e^{−βd}, visibility 3.912/β), and when the reading distance shrinks, "can it stop after it sees?" against this part's closed-form stopping distance. Rain lowers the road's μ (this part's μ knob) and puts the signal's reflection on the wet road. At night, the headlamps' reach against the stopping distance.
 
 ## References
+
+- National Police Agency, "Standards for driving licence skill tests (notice)", No. 12, 4 March 2022 (deductions: improper stop position, roll-back, poor braking, slow start).
+- J. Y. Wong, *Theory of Ground Vehicles*, 4th ed., Wiley, 2008 / T. D. Gillespie, *Fundamentals of Vehicle Dynamics*, SAE, 1992 (rolling-resistance ranges).
 
 - L. E. Dubins, "On curves of minimal length with a constraint on average curvature, and with prescribed initial and terminal positions and tangents", *Amer. J. Math.* 79, 1957.
 - J. A. Reeds and L. A. Shepp, "Optimal paths for a car that goes both forwards and backwards", *Pacific J. Math.* 145, 1990.

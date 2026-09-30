@@ -2055,6 +2055,65 @@ def _b_kendama_combo(pool, rng):
     return (_b_kp(pool, rng),), {"n_catch": 1, "hand0": (0.0, 0.0, 1.1)}
 
 
+def _long_road():
+    import drivelong as DL
+    return DL.road_profile([(0.0, 0.0), (20.0, 0.0), (40.0, 1.6), (44.0, 1.6)])
+
+
+def _b_long_params(pool, rng):
+    return (), {}
+
+
+def _b_road_profile(pool, rng):
+    return ([(0.0, 0.0), (20.0, 0.0), (40.0, 1.6), (44.0, 1.6)],), {}
+
+
+def _b_road_eval(pool, rng):
+    return (_long_road(), 25.0), {}
+
+
+def _b_long_simulate(pool, rng):
+    return (0.0, 5.0, lambda t, s, v: (0.0, 2.0)), {"t_end": 4.0, "dt": 0.05}
+
+
+def _b_long_energy_residual(pool, rng):
+    import drivelong as DL
+    return (DL.long_simulate(0.0, 5.0, lambda t, s, v: (0.0, 2.0), t_end=4.0, dt=0.05),), {}
+
+
+def _b_stopping_distance_grade(pool, rng):
+    return (11.1, 0.75, 4.0), {"theta": 0.05}
+
+
+def _b_stop_line_plan(pool, rng):
+    return (5.5, 20.0), {}
+
+
+def _b_plan_command(pool, rng):
+    import drivelong as DL
+    return (DL.stop_line_plan(5.5, 20.0),), {}
+
+
+def _b_hill_hold_brake_min(pool, rng):
+    return (0.08,), {}
+
+
+def _b_hill_start_rollback(pool, rng):
+    return (0.08, 1.0, 2.0), {}
+
+
+def _b_hill_start_command(pool, rng):
+    return (1.0, 1.0, 2.0, 1.0), {}
+
+
+def _b_skill_test_thresholds(pool, rng):
+    return (), {}
+
+
+def _b_skill_test_score(pool, rng):
+    return ([{"kind": "stop", "gap": 0.5}, {"kind": "start", "rollback": 0.1}],), {}
+
+
 def _gs_quad_world():
     import driveworld as DW
     w = DW._empty_world()
@@ -2336,6 +2395,12 @@ OP_ARG_BUILDERS = {
     "catch_plan_staged": _b_staged, "swing_up_lift": _b_staged, "parabola_fit_g": _b_parabola_g, "hole_detect": _b_hole_img,
     "kendama_pose": _b_kendama_pose, "kendama_clearance": _b_ken_clear, "camera_perceiver": _b_cam_perceiver,
     "kendama_combo_simulate": _b_kendama_combo,
+    "long_params": _b_long_params, "road_profile": _b_road_profile, "road_eval": _b_road_eval,
+    "long_simulate": _b_long_simulate, "long_energy_residual": _b_long_energy_residual,
+    "stopping_distance_grade": _b_stopping_distance_grade, "stop_line_plan": _b_stop_line_plan, "plan_command": _b_plan_command,
+    "hill_hold_brake_min": _b_hill_hold_brake_min, "hill_start_rollback": _b_hill_start_rollback,
+    "hill_start_command": _b_hill_start_command, "skill_test_thresholds": _b_skill_test_thresholds,
+    "skill_test_score": _b_skill_test_score,
     "gs_from_world": _b_gs_from_world, "gs_update": _b_gs_update, "gs_render": _b_gs_render, "gs_render_fn": _b_gs_render_fn,
     "sign_params": _b_sign_kind, "sign_image": _b_sign_img, "plate_mesh_from_image": _b_plate_mesh,
     "sign_mesh": _b_sign_mesh, "add_sign": _b_add_sign, "signal_jp_mesh": _b_signal_jp,

@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">long_params — DRIVE <code style="color:#22d3bf">long</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.long_params(mass: &#x27;float&#x27; = 1300.0, c_rr: &#x27;float&#x27; = 0.012, cda: &#x27;float&#x27; = 0.65, rho_air: &#x27;float&#x27; = 1.2, a_drive_max: &#x27;float&#x27; = 3.0, a_brake_max: &#x27;float&#x27; = 6.0, reaction: &#x27;float&#x27; = 0.75, mu: &#x27;float&#x27; = 0.8, a_creep: &#x27;float&#x27; = 0.3, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;Dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelong; drivelong.long_params(mass: &#x27;float&#x27; = 1300.0, c_rr: &#x27;float&#x27; = 0.012, cda: &#x27;float&#x27; = 0.65, rho_air: &#x27;float&#x27; = 1.2, a_drive_max: &#x27;float&#x27; = 3.0, a_brake_max: &#x27;float&#x27; = 6.0, reaction: &#x27;float&#x27; = 0.75, mu: &#x27;float&#x27; = 0.8, a_creep: &#x27;float&#x27; = 0.3, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;Dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;long_params&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>縦の運動のパラメータ(既定値はすべて <b>仮定</b>。出典はモジュールの docstring)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>mass : 車両質量 [kg] (&gt; 0)。空気抵抗の係数 k = ρ_air C_d A / (2 m) にだけ効く。</p>
+<p>c_rr : 転がり抵抗係数(≥ 0、文献値 0.010〜0.015)</p>
+<p>cda : C_d × 前面投影面積 [m²] (≥ 0。0 で空気抵抗なし)</p>
+<p>rho_air : 空気密度 [kg/m³] (≥ 0)</p>
+<p>a_drive_max, a_brake_max : 駆動・制動の上限 [m/s²] (&gt; 0)。実際の上限はさらに μ g cos θ で頭打ち。</p>
+<p>reaction : 反応時間(空走)[s] (≥ 0)</p>
+<p>mu : 路面とタイヤの摩擦係数(&gt; 0。乾燥 0.7〜0.8・湿潤 0.4〜0.6 —— 要確認)</p>
+<p>a_creep : AT のクリープの駆動 [m/s²] (≥ 0。保持の間だけ)</p>
+<p>g : 重力加速度 [m/s²] (&gt; 0)</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict : 引数と同じキー + `<code style="color:#22d3bf">k</code>`(空気抵抗の係数 [1/m])。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 非有限・範囲外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_longitudinal">poc_driving_longitudinal</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_longitudinal.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">long</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:road_profile">road_profile</a> · <a style="color:#22d3bf" href="opdrive:road_eval">road_eval</a> · <a style="color:#22d3bf" href="opdrive:long_simulate">long_simulate</a> · <a style="color:#22d3bf" href="opdrive:long_energy_residual">long_energy_residual</a> · <a style="color:#22d3bf" href="opdrive:stopping_distance_grade">stopping_distance_grade</a> · <a style="color:#22d3bf" href="opdrive:stop_line_plan">stop_line_plan</a> · <a style="color:#22d3bf" href="opdrive:plan_command">plan_command</a> · <a style="color:#22d3bf" href="opdrive:hill_hold_brake_min">hill_hold_brake_min</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivelong.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

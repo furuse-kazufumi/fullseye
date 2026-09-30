@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">long_simulate — DRIVE <code style="color:#22d3bf">long</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × scalar × any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.long_simulate(s0: &#x27;float&#x27;, v0: &#x27;float&#x27;, command: &#x27;Callable&#x27;, road=None, t_end: &#x27;float&#x27; = 30.0, dt: &#x27;float&#x27; = 0.01, params: &#x27;Optional[dict]&#x27; = None, t_breaks: &#x27;Sequence[float]&#x27; = (), t0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivelong; drivelong.long_simulate(s0: &#x27;float&#x27;, v0: &#x27;float&#x27;, command: &#x27;Callable&#x27;, road=None, t_end: &#x27;float&#x27; = 30.0, dt: &#x27;float&#x27; = 0.01, params: &#x27;Optional[dict]&#x27; = None, t_breaks: &#x27;Sequence[float]&#x27; = (), t0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;long_simulate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>縦の運動方程式を RK4 で積分する(事象の時刻で刻みを切る。モジュールの docstring)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>s0, v0 : 初めの位置 [m] (道なりの弧長)と速度 [m/s] (負 = 後ろ向き)</p>
+<p>command : `<code style="color:#22d3bf">command(t, s, v) -&gt; (drive, brake)</code>`(どちらも ≥ 0 [m/s²]。上限は μ g cos θ と a_max で頭打ち)。</p>
+<p><b>v = 0.0 で呼ばれるのは止まっている間だけ</b>(動いている刻みの中間点で速度が 0 を横切っても、指令には動きの向きの</p>
+<p>±1e-300 を渡す)ので、指令は `<code style="color:#22d3bf">v == 0</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">v &lt;= 0</code>` で「止まったら保持」を書いてよい。</p>
+<p>指令が時刻で不連続に変わるなら、その時刻を `<code style="color:#22d3bf">t_breaks</code>` に入れると刻みがそこで切れる(厳密さのため)。</p>
+<p>road : 道の縦断(:func:<code style="color:#22d3bf">road_eval</code> と同じ)</p>
+<p>t_end : 終わりの時刻 [s]、dt : 刻み [s]</p>
+<p>params : :func:<code style="color:#22d3bf">long_params</code> の dict(None = 既定)</p>
+<p>t0 : 初めの時刻 [s]</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict : `<code style="color:#22d3bf">t, s, v, a, drive, brake, z, W_drive, W_brake, W_rr, W_drag</code>`(各 (n,) の配列、a = その時点の加速度)、</p>
+<p>`<code style="color:#22d3bf">stopped</code><code style="color:#22d3bf">(bool 配列)、</code><code style="color:#22d3bf">events</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">(&quot;stop&quot;|&quot;move&quot;, t, s, 向き)</code><code style="color:#22d3bf"> の列)、</code><code style="color:#22d3bf">saturated</code>`(上限で頭打ちになった刻みがあったか)、</p>
+<p>`<code style="color:#22d3bf">params</code>`。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 引数が不正、指令が負や非有限を返した。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_longitudinal">poc_driving_longitudinal</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_longitudinal.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">long</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:long_params">long_params</a> · <a style="color:#22d3bf" href="opdrive:road_profile">road_profile</a> · <a style="color:#22d3bf" href="opdrive:road_eval">road_eval</a> · <a style="color:#22d3bf" href="opdrive:long_energy_residual">long_energy_residual</a> · <a style="color:#22d3bf" href="opdrive:stopping_distance_grade">stopping_distance_grade</a> · <a style="color:#22d3bf" href="opdrive:stop_line_plan">stop_line_plan</a> · <a style="color:#22d3bf" href="opdrive:plan_command">plan_command</a> · <a style="color:#22d3bf" href="opdrive:hill_hold_brake_min">hill_hold_brake_min</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivelong.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
