@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(286 例)
+### 2-D 画像/信号/幾何(288 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -119,6 +119,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **衝突までの時間と安全距離 —— τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する** — 教習所の周回コースで対向車(8 m/s)を車載カメラで撮り、τ(Lee 1976)を 3 経路で出す: 深度像 + 剛体運動の閉形式(真値)、光学流(LK)→ time_to_contact、見かけの面積の平方根。恒等式 = 真の流れを入れると 1 コマ後の τ で、1 コマ足すと真値と 1e-9。真の τ は 1 秒に 1 秒ずつ減る。RSS(Shalev-Shwartz 2017)の安全距離は ad-rss-lib の公表パラメータ・試験値と一致し、Lemma 2 は最悪ケースの時間積分と 1e-6 で一致。停車車両に「危険」を出した瞬間に制動すると停止時の間隔は閉形式どおり。対向車線の車は τ が 0.3 s まで落ちても横の安全距離(0.73 m < 2.2 m)で RSS は騒がず、寄ってくると危険になる。正直に: 流れの τ が効くのは車が像で大きい区間だけ。 `py -3.11 examples/poc_ttc_rss.py`
 - **世界を広げる —— 閉形式の地形と世界座標の材質、手続きの木と歩行者で、拡大の中心を流れから取り戻す** — 教習所の周回コースを fBm の起伏(乱数位相の正弦の和、高さも勾配も閉形式、スペクトル β̂ 3.59 = 2H + 2)の中に置き、道の周り 2 m は平ら(コースへの距離場は |∇d| = 1)、路面はうねる。描画した深度から画素の世界座標を戻して Perlin の雑音で材質を評価する(粒・染み・水溜り・摩耗した白線、真値は画素単位)。手続きの木 70 本・歩行者・横断歩道は体積と面積が閉形式。15 巡目で「既知」にした拡大の中心(FoE)を路面の LK の流れだけから出すと、模様ありで 1.9 px、無地の路面では 57 px 外れる。真の流れなら 1e-13(定理)。正直に: 摩耗した白線と水溜りは明るさのしきい値では最良でも 25 % を間違える(それが狙い)。 `py -3.11 examples/poc_world_terrain.py`
 - **卓球の球を先駆者の目で測る —— 真値つきの台で、多カメラ追跡・三角測量・軌道予測・跳ね・スピンを定理で採点する** — ITTF 寸法の台に 40 mm の球(模様 14 個)を置き、トップスピンの打球を 2 台 + 近接 1 台のカメラで 100 fps・0.6 秒撮る。力学は定理が門: 真空の RK4 は閉形式と 1e-12、放物線の当てはめは g = 9.81 を 4e-15 で戻し、乱数 500 通りの衝突で接触点まわりの角運動量は 4.9e-16 で保存、30.5 cm から落とした最初の跳ね 24.7 cm は ITTF の 24〜26 cm の中。色度の検出は中央値 0.152 px、DLT の三角測量は検出から中央値 1.61 mm、等加速度 Kalman は放物線の真値で新息 8.2e-09 m。跳ねの前 15 コマから運動方程式で初期状態を当てて跳ねを越えて予測すると、真のスピンを知っていれば着地点 0.4 cm、スピンを無視すると 20.2 cm 外れる。近接カメラ(1000 fps)の模様を Kabsch で対応づけた角速度は真値と 3.7 %、反発係数は運動方程式の当てはめで 0.9114(真値 0.90)。正直に: 放物線で e を出すと 0.9398(抗力とマグヌスを g に吸って 4.4 % ずれる)、検出は色が既知の合成映像。ラリー: 送り合いは上限 12 本、攻める側が入ると 9 本、知覚雑音 5 cm までは不変・10 cm で 2 本。 `py -3.11 examples/poc_ball_bounce.py`
+- **セグメンテーションの関門 —— 真値つきの 6 つの世界に 10 手法を当て、どの物差しがどの壊れ方に盲目かを測る** — 真値つきの合成世界 6 種(触れ合う粒・ボロノイ結晶粒・影のある部品・質感だけ違う領域・照明の勾配・細い構造)に既存のセグメンテーション10 手法を既定のノブで当て、新しい物差し(Dice/Jaccard・境界 F・Hausdorff・過分割/未分割・個数の一致、segcompare の VI/Rand)で採点。門 = 真 vs 真が満点、どの物差しがどの壊れ方に盲目か(Otsu は J=0.95 でも粒が全部融合、勾配の分水嶺は境界 F=1.00 でも過分割 339)。影のある部品は閾値のオラクルでも J=0.29。 `py -3.11 examples/poc_segmentation_gauntlet.py`
 - **追越しと見えない所 —— 見通しが足りなければ待つ、ルームミラーに映ってから戻る、環道の車を妨げない、カーブミラーは遠く見える** — 教則の台帳の未着手から、追越し(見通しが D* に足りなければ待つ・禁止区間・ルームミラーに映ってから戻る)、進路変更、環状交差点、坂の頂上、カーブミラー。新モジュール drivepass 17 op。規則の 240 人は禁止区間 0・対向車との PET 最小 5.62 s、素朴は割り込み 240 / 240。凸面鏡 R 3 m を 8 m 離れて見ると 30 m 先の車が 190.04 m 先に見える(光線追跡)。正直に: 「付近」30 m・「急に」2.0 m/s²・鏡の寸法・参照分布は仮定、施行令 21 条は未確認。 `py -3.11 examples/poc_driving_pass.py`
 - **踏切と交差点の優先 —— 直前で止まって左右を見る、警報の間は入らない、向こう側が詰まっていれば入らない、広い道へは譲る** — 教則の台帳の未着手から、ルールベースの部品で再現できる踏切・交差点の優先・横断歩道・駐停車禁止の場面。新モジュール drivecrossing 17 op(解釈基準の警報の時間と遮断機の状態機械・警報灯を画素から読む・渡り切る時間と向こう側の余地・見通しの閉形式・36 条の優先・38 条・44 条の禁止区間)。ルールの 240 人は違反 0・列車が着くとき線路の上 0 人(余裕 最小 31.5 s)、警報中に入る版は 157 件で 23 人が線路の上。正直に: 幅の比 1.5・「急に」2.0 m/s²・遮断かんの時刻・参照分布は仮定、警報灯の毎分 50 回は二次資料。 `py -3.11 examples/poc_driving_crossing.py`
 - **横の運動 —— カーブの手前で落とす、車線の中を保つ、左に寄って左折する、内輪差で巻き込まない** — 著者の方針「部品はルールベースに限定して増やす」「ランダムな値は統計で極端に外れたものを採用しない」。新モジュール drivelateral 20 op(摩擦円とカーブの限界速度・道路構造令・2 輪モデル・内輪差の閉形式・クロソイド・pure pursuit と Stanley・曲率からの速度計画・TLC・左折右折の採点)。120 人の速度計画で摩擦円の使用率 最大 0.48(計画なし 1.65〜2.42)、左に寄った左折は隅の自転車から 0.66 m、前輪で隅をなぞると内輪差で触れる。標本の門は 1 個ずつ(0.1 % 点)と集団(KS)。正直に: 線形タイヤ・寸法と判定の幅は仮定。 `py -3.11 examples/poc_driving_lateral.py`
@@ -163,6 +164,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **形状特徴を閉形式の真値で採点する —— そして消えないバイアスを見せる** — 矩形と円の厳密な閉形式(面積・矩形度・周囲長²/(4π面積)・円形度)で region 特徴を採点。面積と矩形度は丸め誤差 0 で一致。コンパクトさが頭打ちしないことを長さを伸ばして assert し、周囲長の 2 つの推定量が**逆の形で外す**(perimeter は円で +5%・crofton は正方形で -5%、どちらも解像度で消えない)ことを示す。 `py -3.11 examples/shape_factors_closed_form.py`
 
 **segmentation**
+- **HALCON の Segmentation 章の 9 op を一巡する —— 差の検査・特徴空間の分類・領域成長・マーカー付き分水嶺** — segmentation.py に実装されていながら台帳に載っていなかった 9 op(check_difference / class_2dim_sup・unsup / learn_ndim_norm・class_ndim_norm / classify_image_class_lut / expand_gray / regiongrowing_n / watersheds_marker)を fullseye.ledger から順に呼び、合成画像で各 op の答えを数えて確かめる(マーカー付き分水嶺は尾根で割れる)。 `py -3.11 examples/halcon_segmentation_tour.py`
 - **12 通りの自動しきい値に同じ絵を見せる —— 割れてよい数と、割れては困る向き** — 値が 2 種類しかない板(明部ちょうど 400 px)を大域 10 種・局所 4 種の自動しきい値に見せ、大域が全部 400 px で一致することを assert。局所は数が外れてよいが向きは同じであることを確かめる。向きが逆だと面積が 400 から3,696(9.2 倍)になり例外も警告も出ないところまで見せる。実際に SimpleITK 由来の 3 op が補集合を返していたのをこの形で見つけた。 `py -3.11 examples/threshold_family_agreement.py`
 - **細胞の計数と分割(計数が合っていて分割が全部外れる点がある)** — 既知の位置・大きさ・重なりで細胞を配置して真値を握る。★**偏り +0.3 個(0.4 %)なのに分割誤り 13.3 件**という点が実在する(過分割 +1 と過統合 -1 が相殺する)。★**過分割は重なりに反応しない** —— 密度を 5 段振っても過分割の列はほぼ一定で、過分割は種の撒き方が、過統合は重なりが決める別原因。★「最適な h は密度で動く」は基準を書かないと真偽が決まらない(偏り基準では1.1→0.0 と動き、1対1 基準では 0.4 で動かない)。縁の規約だけで計数が 13 % 動く。 `py -3.11 examples/poc_cell_counting.py`
 - **成長のタイムラプスを時空間の連結成分として測る(合体はいつ起きたか)** — ★ゼロ点(フレーム独立の計数)は思ったより強く、塊の数が減るフレームは真の合体時刻の1 コマ以内に出る。壊れるのは数ではなく**その先** ——「どれとどれが」「合体か消失か」「同時に 2 組か」。★★**空間の離散化は合体を早める**(予想が外れた: 画素は面積を持つので円が半画素ぶん太り、まだ接していないのに繋がる。-1.16 / -0.04 フレーム)。一方フレーム格子への丸めは必ず遅らせる(+0.17 / +0.94)—— **逆向きの 2 つが混ざる**。 `py -3.11 examples/poc_timelapse_growth.py`
@@ -1828,22 +1830,22 @@ _計 934 ops / 48 categories。_
 - `sg_kmeans_intensity` `image → region` · 例: `gallery2d_segmentation`
 - `sg_region_growing_seeded` `image → region` · 例: `gallery2d_segmentation`
 - `sg_normalized_cut_2` `image → region` · 例: `gallery2d_segmentation`
-- `sg_watershed_gradient` `image → region` · 例: `gallery2d_segmentation`
+- `sg_watershed_gradient` `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 
 ### segmentation(54)
 - `threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_traffic_counting`, `poc_water_level`, `video_streaming`
-- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `degenerate_inputs`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`, `threshold_family_agreement`, `typed_results_json`
+- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `degenerate_inputs`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_segmentation_gauntlet`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`, `threshold_family_agreement`, `typed_results_json`
 - `canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`, `poc_real_coin_metrology`
 - `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`
 - `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_cell_counting`, `poc_fresco_craquelure`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_vegetation_cover`, `threshold_family_agreement`
 - `sk_li` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `sk_sauvola` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `threshold_family_agreement`
-- `sk_niblack` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
+- `sk_sauvola` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
+- `sk_niblack` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`, `genspark_external_review`
-- `sk_felzenszwalb` `image → region` · 例: `gallery2d_segmentation`
-- `sk_slic` `image → region` · 例: `gallery2d_segmentation`
-- `sk_chan_vese` `image → region` · 例: `gallery2d_segmentation`
+- `sk_felzenszwalb` `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
+- `sk_slic` `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
+- `sk_chan_vese` `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_local_maxima` (halcon: `local_max`) `image → region` · 例: `gallery2d_segmentation`
 - `sk_hysteresis` (halcon: `hysteresis_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `cv_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_vegetation_cover`, `threshold_family_agreement`
@@ -1855,10 +1857,10 @@ _計 934 ops / 48 categories。_
 - `auto_threshold` (halcon: `auto_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_battery_electrode_breathing`, `poc_bump_coplanarity`, `threshold_family_agreement`
 - `dyn_threshold` (halcon: `dyn_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_metal_grain_size`
 - `var_threshold` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_document_scan`
-- `local_threshold` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `local_threshold` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `hysteresis_threshold` (halcon: `hysteresis_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_fresco_craquelure`, `poc_solar_el_inspection`
 - `edges_image` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`
-- `watersheds` (halcon: `watersheds`) `image → region` · 例: `gallery2d_segmentation`
+- `watersheds` (halcon: `watersheds`) `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `regiongrowing` (halcon: `regiongrowing`) `image → region` · 例: `gallery2d_segmentation`
 - `local_max` (halcon: `local_max`) `image → region` · 例: `gallery2d_segmentation`
@@ -1871,7 +1873,7 @@ _計 934 ops / 48 categories。_
 - `fast_threshold` (halcon: `fast_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `nonmax_suppression_amp` (halcon: `nonmax_suppression_amp`) `image → region` · 例: `gallery2d_segmentation`
 - `pouring` (halcon: `pouring`) `image → region` · 例: `gallery2d_segmentation`
-- `xsk_random_walker` `image → region` · 例: `gallery2d_segmentation`, `genspark_external_review`
+- `xsk_random_walker` `image → region` · 例: `gallery2d_segmentation`, `genspark_external_review`, `poc_segmentation_gauntlet`
 - `xsk_flood` `image → region` · 例: `gallery2d_segmentation`
 - `xcv_grabcut` `image → region` · 例: `gallery2d_segmentation`
 - `xcv_watershed_markers` (halcon: `watersheds`) `image → region` · 例: `gallery2d_segmentation`

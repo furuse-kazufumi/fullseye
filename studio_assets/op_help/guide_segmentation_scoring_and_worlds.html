@@ -1,0 +1,74 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</h2>
+<p>セグメンテーション拡充 第 1 陣の 2 カテゴリ。<code style="color:#22d3bf">segeval</code>(<b>score</b>、採点の物差し 8 本)と</p>
+<p><code style="color:#22d3bf">segworld</code>(<b>world</b>、閉形式の真値を持つ合成世界 8 本)です。前者は「予測と真値がどれだけ</p>
+<p>違うか」を数え、後者は「原理的に 1 つの手法を壊す」入力を真値つきで作ります。学習器は</p>
+<p>載せません —— どの物差しも <b>定理か第 2 実装の門</b>、どの世界も <b>閉形式の真値</b> を持つものだけ。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">score(<code style="color:#22d3bf">segeval</code>): 1 枚の予測ラベル × 1 枚の真値ラベル → 数</h3>
+<p>入口はどちらも <code style="color:#22d3bf">labels2d</code>(非負整数、0 は背景)。出力は <code style="color:#22d3bf">table</code>(平らな dict)。</p>
+<p style="margin:2px 0 2px 12px">• <b>分割表と対応</b> — <code style="color:#22d3bf">seg_confusion_table</code>: 行 = 真、列 = 予測の画素数の表。対応は Hungarian で</p>
+<p>なく <b>最大重なり</b>(行ごと・列ごとの argmax)、相互に選び合えば <code style="color:#22d3bf">mutual</code>、全体が 1 対 1 なら</p>
+<p><code style="color:#22d3bf">unique_matching</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>領域の重なり</b> — <code style="color:#22d3bf">seg_dice_jaccard</code>: マスク(背景以外の和)か <code style="color:#22d3bf">per_label</code> でラベルごとに。</p>
+<p>恒等式 D = 2J/(1+J) が門。</p>
+<p style="margin:2px 0 2px 12px">• <b>境界の近さ</b> — <code style="color:#22d3bf">seg_boundary_f</code>(許容距離 τ 以内に相手の境界があるか = Martin 流の BF 値)/</p>
+<p><code style="color:#22d3bf">seg_hausdorff</code>(最悪のずれ、HD95 も)/ <code style="color:#22d3bf">seg_mean_surface_distance</code>(平均表面距離 ASSD)。</p>
+<p style="margin:2px 0 2px 12px">• <b>数え方の壊れ</b> — <code style="color:#22d3bf">seg_under_over_segmentation</code>(過分割・未分割を多数決の多重度で)/</p>
+<p><code style="color:#22d3bf">seg_object_counts_match</code>(分裂・融合・欠落・偽・一致を 2 部グラフの次数で)。</p>
+<p style="margin:2px 0 2px 12px">• <b>採点表</b> — <code style="color:#22d3bf">seg_score_card</code>: 上の全部 + 既存 <code style="color:#22d3bf">segcompare</code> の VI・Rand・ARI を 1 枚に。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">world(<code style="color:#22d3bf">segworld</code>): ノブ → 画像 + 真値ラベル + 閉形式の真値</h3>
+<p><code style="color:#22d3bf">world_*</code> は入力を取らず(ノブだけ)、<code style="color:#22d3bf">image</code>・<code style="color:#22d3bf">labels</code>・<code style="color:#22d3bf">truth</code> を持つ <code style="color:#22d3bf">table</code> を返します。</p>
+<p>各世界は <b>1 つの手法を壊す理由</b> を持ちます:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">world_blobs_touching</code> — 触れ合う円(閾値 + 連結成分では融合する。真値 = レンズの面積の閉形式)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">world_grains_voronoi</code> — 結晶粒(粒界の細線。真値 = ボロノイ多角形の面積・辺の長さ)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">world_parts_with_shadow</code> — 影つき工業部品(閾値を欺く暗い面と影)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">world_texture_regions</code> — 平均が同じで質感だけ違う領域(閾値では切れない)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">world_gradient_illumination</code> — 照明の勾配の上の暗い物体(大域閾値が壊れ、フラットフィールドで直る)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">world_thin_structures</code> — 幅 1〜3 px の線とひび(平滑化で消える)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lens_area</code> — 等半径 2 円の重なりの面積(閉形式、<code style="color:#22d3bf">world_blobs_touching</code> の真値の芯)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">voronoi_cells</code> — 矩形内のボロノイ分割(多角形・面積・内部の辺長。<code style="color:#22d3bf">world_grains_voronoi</code> の芯)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+    W[&quot;world_blobs_touching / world_grains_voronoi / …&lt;br/&gt;(ノブだけ)&quot;] --&gt; IMG[&quot;image + labels + truth (table)&quot;]
+    IMG --&gt;|labels| PRED[&quot;手法で分割&lt;br/&gt;(fs.apply / fs.ledger)&quot;]
+    IMG --&gt;|labels = 真値| TRUE[&quot;labels_true&quot;]
+    PRED --&gt; SC[&quot;seg_score_card&lt;br/&gt;Dice/Jaccard・VI・ARI・境界 F・HD95・過分割/未分割・個数&quot;]
+    TRUE --&gt; SC
+    LA[&quot;lens_area(r, d)&quot;] -. 真値の検算 .-&gt; W
+    VC[&quot;voronoi_cells(seeds, size)&quot;] -. 真値の検算 .-&gt; W</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">最短の使い方</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
+
+wld = fs.ledger.world_blobs_touching(n=8, overlap=0.25, seed=0)   # ノブ → 真値つきの世界
+truth_labels = wld[&quot;labels&quot;]
+
+# 手法の予測(ここでは真値をそのまま採点 = 満点を確かめる)
+card = fs.ledger.seg_score_card(truth_labels, truth_labels)
+assert card[&quot;dice&quot;] == 1.0 and card[&quot;voi&quot;] == 0.0 and card[&quot;counts_match&quot;]
+
+# 融合に盲目なマスクの物差し vs 融合を見る個数の物差し
+merged = truth_labels.copy()
+merged[merged &gt; 0] = 1                                            # 全部 1 つにつぶす(最悪の未分割)
+cm = fs.ledger.seg_object_counts_match(merged, truth_labels)
+assert cm[&quot;merged&quot;] == 1 and not cm[&quot;counts_match&quot;]               # Dice は高いままでも個数は崩れる</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">症状 → 原因(採点でだまされないために)</h3>
+<p>| 症状 | 原因 | 見る物差し |</p>
+<p>|---|---|---|</p>
+<p>| Dice・Jaccard は高いのに物体が足りない | マスクの物差しは <b>融合・分裂に盲目</b>(画素の重なりしか見ない) | <code style="color:#22d3bf">seg_object_counts_match</code> の <code style="color:#22d3bf">merged</code> / <code style="color:#22d3bf">split</code>、<code style="color:#22d3bf">seg_under_over_segmentation</code> |</p>
+<p>| 境界 F は高いのに領域が無数にある | 境界の物差しは <b>過分割に盲目</b>(割れ目が合っていれば満点) | <code style="color:#22d3bf">seg_under_over_segmentation</code> の <code style="color:#22d3bf">over</code>、<code style="color:#22d3bf">seg_score_card</code> の <code style="color:#22d3bf">voi</code> |</p>
+<p>| ASSD は小さいのに 1 か所だけ大きく外す | 平均は <b>外れ値に鈍い</b> | <code style="color:#22d3bf">seg_hausdorff</code>(最悪、HD95) |</p>
+<p>| <code style="color:#22d3bf">seg_hausdorff</code> が <code style="color:#22d3bf">ValueError</code> | 片方が 1 色(境界が無い)= 測る表面が無い | 入力に 2 つ以上のラベルがあるか確認 |</p>
+<p>| <code style="color:#22d3bf">class_2dim_unsup</code> のラベル 0 が背景に化ける | k-means の <b>0 はクラス番号</b>であって背景ではない | <code style="color:#22d3bf">blob_features</code> に渡す前に 1 から振り直す |</p>
+<p>| 真値どおりなのに満点にならない | 手法が <b>全画素分割</b>(背景の概念が無い)を返している | マスクの Dice は <code style="color:#22d3bf">—</code>、ARI / VI で比べる |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">一次情報</h3>
+<p style="margin:2px 0 2px 12px">• Martin et al. 2004, &quot;Learning to Detect Natural Image Boundaries&quot;(許容距離つき境界の適合率・再現率):</p>
+<p>&lt;https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/papers/mfm-pami-boundary.pdf&gt;</p>
+<p style="margin:2px 0 2px 12px">• Perazzi et al. 2016, DAVIS benchmark(境界 F 値 の運用): &lt;https://davischallenge.org/&gt;</p>
+<p style="margin:2px 0 2px 12px">• Meilă 2007, &quot;Comparing clusterings — an information based distance&quot;(VI): &lt;https://doi.org/10.1016/j.jmva.2006.11.013&gt;</p>
+<p style="margin:2px 0 2px 12px">• Hubert &amp; Arabie 1985, &quot;Comparing partitions&quot;(adjusted Rand index): &lt;https://doi.org/10.1007/BF01908075&gt;</p>
+<p style="margin:2px 0 2px 12px">• Taha &amp; Hanbury 2015, &quot;Metrics for evaluating 3D medical image segmentation&quot;(Dice/Jaccard/Hausdorff/ASSD の整理): &lt;https://doi.org/10.1186/s12880-015-0068-x&gt;</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">segcompare</code>(VI・Rand・ARI の実体)。<code style="color:#22d3bf">seg_score_card</code> はこれを呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">metrics3d.voxel_dice</code> / <code style="color:#22d3bf">voxel_iou</code> / <code style="color:#22d3bf">hausdorff_distance</code>(マスクの Dice・点群の Hausdorff の第 2 実装、テストの門)。</p>
+<p style="margin:2px 0 2px 12px">• HALCON Segmentation 章の 9 op(<code style="color:#22d3bf">docs/ops/segmentation/guides/halcon_segmentation.md</code>): 分割を <b>作る</b> 側。</p>
+<p>この 2 カテゴリは作った分割を <b>採点する</b> 側。</p>

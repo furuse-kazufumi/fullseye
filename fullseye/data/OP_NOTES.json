@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2536,
- "n_notes": 2542,
+ "n_ops": 2561,
+ "n_notes": 2567,
  "notes": {
   "vol_dilate": [
    {
@@ -24439,6 +24439,249 @@
     "category": "synth",
     "out": "depth",
     "path": "docs/ops/roughness/synth/surface_synth_psd.md"
+   }
+  ],
+  "class_2dim_sup": [
+   {
+    "op": "class_2dim_sup",
+    "dim": "segmentation",
+    "category": "classify",
+    "in": "image2d × image2d × mask",
+    "out": "mask",
+    "path": "docs/ops/segmentation/classify/class_2dim_sup.md"
+   }
+  ],
+  "class_2dim_unsup": [
+   {
+    "op": "class_2dim_unsup",
+    "dim": "segmentation",
+    "category": "classify",
+    "in": "image2d × image2d",
+    "out": "labels2d",
+    "path": "docs/ops/segmentation/classify/class_2dim_unsup.md"
+   }
+  ],
+  "class_ndim_norm": [
+   {
+    "op": "class_ndim_norm",
+    "dim": "segmentation",
+    "category": "classify",
+    "in": "images × table",
+    "out": "mask",
+    "path": "docs/ops/segmentation/classify/class_ndim_norm.md"
+   }
+  ],
+  "classify_image_class_lut": [
+   {
+    "op": "classify_image_class_lut",
+    "dim": "segmentation",
+    "category": "classify",
+    "in": "image2d × signal",
+    "out": "labels2d",
+    "path": "docs/ops/segmentation/classify/classify_image_class_lut.md"
+   }
+  ],
+  "learn_ndim_norm": [
+   {
+    "op": "learn_ndim_norm",
+    "dim": "segmentation",
+    "category": "classify",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/segmentation/classify/learn_ndim_norm.md"
+   }
+  ],
+  "check_difference": [
+   {
+    "op": "check_difference",
+    "dim": "segmentation",
+    "category": "compare",
+    "in": "image2d × image2d",
+    "out": "mask",
+    "path": "docs/ops/segmentation/compare/check_difference.md"
+   }
+  ],
+  "expand_gray": [
+   {
+    "op": "expand_gray",
+    "dim": "segmentation",
+    "category": "grow",
+    "in": "image2d × mask",
+    "out": "mask",
+    "path": "docs/ops/segmentation/grow/expand_gray.md"
+   }
+  ],
+  "regiongrowing_n": [
+   {
+    "op": "regiongrowing_n",
+    "dim": "segmentation",
+    "category": "grow",
+    "in": "images",
+    "out": "labels2d",
+    "path": "docs/ops/segmentation/grow/regiongrowing_n.md"
+   }
+  ],
+  "seg_boundary_f": [
+   {
+    "op": "seg_boundary_f",
+    "dim": "segmentation",
+    "category": "score",
+    "in": "labels2d × labels2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/score/seg_boundary_f.md"
+   }
+  ],
+  "seg_confusion_table": [
+   {
+    "op": "seg_confusion_table",
+    "dim": "segmentation",
+    "category": "score",
+    "in": "labels2d × labels2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/score/seg_confusion_table.md"
+   }
+  ],
+  "seg_dice_jaccard": [
+   {
+    "op": "seg_dice_jaccard",
+    "dim": "segmentation",
+    "category": "score",
+    "in": "labels2d × labels2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/score/seg_dice_jaccard.md"
+   }
+  ],
+  "seg_hausdorff": [
+   {
+    "op": "seg_hausdorff",
+    "dim": "segmentation",
+    "category": "score",
+    "in": "labels2d × labels2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/score/seg_hausdorff.md"
+   }
+  ],
+  "seg_mean_surface_distance": [
+   {
+    "op": "seg_mean_surface_distance",
+    "dim": "segmentation",
+    "category": "score",
+    "in": "labels2d × labels2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/score/seg_mean_surface_distance.md"
+   }
+  ],
+  "seg_object_counts_match": [
+   {
+    "op": "seg_object_counts_match",
+    "dim": "segmentation",
+    "category": "score",
+    "in": "labels2d × labels2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/score/seg_object_counts_match.md"
+   }
+  ],
+  "seg_score_card": [
+   {
+    "op": "seg_score_card",
+    "dim": "segmentation",
+    "category": "score",
+    "in": "labels2d × labels2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/score/seg_score_card.md"
+   }
+  ],
+  "seg_under_over_segmentation": [
+   {
+    "op": "seg_under_over_segmentation",
+    "dim": "segmentation",
+    "category": "score",
+    "in": "labels2d × labels2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/score/seg_under_over_segmentation.md"
+   }
+  ],
+  "watersheds_marker": [
+   {
+    "op": "watersheds_marker",
+    "dim": "segmentation",
+    "category": "watershed",
+    "in": "image2d × labels2d",
+    "out": "labels2d",
+    "path": "docs/ops/segmentation/watershed/watersheds_marker.md"
+   }
+  ],
+  "lens_area": [
+   {
+    "op": "lens_area",
+    "dim": "segmentation",
+    "category": "world",
+    "out": "scalar",
+    "path": "docs/ops/segmentation/world/lens_area.md"
+   }
+  ],
+  "voronoi_cells": [
+   {
+    "op": "voronoi_cells",
+    "dim": "segmentation",
+    "category": "world",
+    "in": "points",
+    "out": "table",
+    "path": "docs/ops/segmentation/world/voronoi_cells.md"
+   }
+  ],
+  "world_blobs_touching": [
+   {
+    "op": "world_blobs_touching",
+    "dim": "segmentation",
+    "category": "world",
+    "out": "table",
+    "path": "docs/ops/segmentation/world/world_blobs_touching.md"
+   }
+  ],
+  "world_gradient_illumination": [
+   {
+    "op": "world_gradient_illumination",
+    "dim": "segmentation",
+    "category": "world",
+    "out": "table",
+    "path": "docs/ops/segmentation/world/world_gradient_illumination.md"
+   }
+  ],
+  "world_grains_voronoi": [
+   {
+    "op": "world_grains_voronoi",
+    "dim": "segmentation",
+    "category": "world",
+    "out": "table",
+    "path": "docs/ops/segmentation/world/world_grains_voronoi.md"
+   }
+  ],
+  "world_parts_with_shadow": [
+   {
+    "op": "world_parts_with_shadow",
+    "dim": "segmentation",
+    "category": "world",
+    "out": "table",
+    "path": "docs/ops/segmentation/world/world_parts_with_shadow.md"
+   }
+  ],
+  "world_texture_regions": [
+   {
+    "op": "world_texture_regions",
+    "dim": "segmentation",
+    "category": "world",
+    "out": "table",
+    "path": "docs/ops/segmentation/world/world_texture_regions.md"
+   }
+  ],
+  "world_thin_structures": [
+   {
+    "op": "world_thin_structures",
+    "dim": "segmentation",
+    "category": "world",
+    "out": "table",
+    "path": "docs/ops/segmentation/world/world_thin_structures.md"
    }
   ],
   "contour_epicycle_chain": [

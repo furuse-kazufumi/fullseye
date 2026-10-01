@@ -867,6 +867,10 @@
 - **L1322** — ★穴を埋めた側の門(2026-09-08)。op_find に和文の段を足し、star_detect の docstring に分野中立の説明語を書いたので、**和文で上位に出ること**を 固定する。退行するとここが鳴る。
 - **L1327** — ★「点 検出」だけは今も出ない —— 「点」1 文字は cv_canny / frei_amp のような 輪郭 op の説明にも必ず出るので、同点が並んで押し出される。和文の段が 拾えるのは「2 文字以上の語が効く」場合だけ、という限界を隠さない。
 
+## `examples/poc_segmentation_gauntlet.py`
+
+- **L277** — ★表は世界ごとに 1 枚。examplefig.save_table は 1 セルごとに text_box を全画像に掛けるので、65 行 × 16 列の 1 枚は 100 秒を超えた (実測 104 s)。11 行 × 11 列 × 6 枚なら数秒で、読む側も世界ごとに手法を比べられる。
+
 ## `examples/poc_solar_el_inspection.py`
 
 - **L366** — ★校正線も**同じ撮像系(ぼけ)を通す**。ぼかさずに貼った校正線は実クラック より 2.4 倍強く応答し、崖が太い側へ寄った(2026-09-07 に踏んだ)。
@@ -1351,24 +1355,24 @@
 ## `opassist.py`
 
 - **L57** — ★2026-09-08: ops1d(dsp 16 + funct1d 23)は登録済みなのに、docs にも op_run / op_assist / op_find にも出ていなかった —— 「登録した」と 「引ける」は別。opdocs に足したら、この門が引けない側を鳴らした。
-- **L275** — ★ 設計(2026-09-04、ユーザー「色々なコンテナ型は扱えるほうが良いけど、統一感も 大事です」): 最初は `kind` に "seq" や "matrix" を混ぜていた ―― つまり**値の型** (数値か整数か選択肢か)と**容器の形**(1 個かベクトルか行列か)が 1 つの欄で 競合していた。UI から見ると「int の 3 ベクトル」が表現できず、行列だけ構造が `seq` キーの下にあるなど、扱いがばらける。ここを直交させ、`kind` は値型だけ、 容器は常に `container` に入れる形へ統一した。スカラも例外にしない (`{"form": "scalar", "shape": ()}`)ので、UI は分岐を 1 本に書ける。
-- **L390** — ★ 最長一致。短い順に見ると `sigma_per_mm` が `_mm` に当たって "mm" になる (実際は 1/mm)。単位を間違えると UI の数字が黙って別物になる。
-- **L472** — ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、 それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
-- **L505** — ★ ここが要点: **既定値が tuple で与えられていない**引数がある。 `center=None`(省略可の (row,col))、必須の `trans`(3 ベクトル)、 `k_cam`(3x3 行列)…… 既定値だけを見ると「数値 1 個」に見えてしまい、 UI が spin box を 1 個出して破綻する。名前で構造を補う。
-- **L713** — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
-- **L717** — llmcore(2026-09-24): ★一様乱数にしない —— どの行も似た向きになり、 注意の重みが全行ほぼ一様になって「押しても何も起きない」種になる。 滑らかな画像を 8x8 パッチに切ると、近い場所が近い向きを向く。
-- **L724** — ★ 実測で判明: `prism_min_deviation_deg` の波長入力に 0..1 の汎用 signal を渡すと 「波長は正の値」で弾かれ、**サンプルが動かない op** になっていた。単位が分かる なら、その量として妥当な範囲を種にする方が「押せば動く」に近い。
-- **L884** — 和文(CJK)の連なり。★``_WORD_RE`` は ``[a-z0-9]+`` なので、日本語のクエリは **語が 1 つも取れない**(``_WORD_RE.findall("点 検出") == []``)。語幹の段が 死に、部分一致は空白ごと含む文字列を探すので、**和文の複数語クエリは構造的に 必ず 0 件**だった —— docstring の大半が日本語で、6 言語を配っている製品で。 2026-09-08 に `poc_search_sweep_width` が踏んで判明(``op_find("点 検出")`` / ``("スポット 検出")`` / ``("小さい目標")`` がいずれも 0 件で、副画素重心つきの 点目標検出は ``star_detect`` しか無いのに和文から辿り着けなかった)。
-- **L937** — 語幹一致とみなす共通接頭辞の長さ。★4 にすると "median"/"medial" や "contrast"/"contour" が繋がってしまい、5 で切ると "correlation"/"correlate"(8)・"segmentation"/"segment"(7)・ "rotation"/"rotate"(5)・"gaussian"/"gauss"(5) は拾えて、上の 2 組は拾わない。
-- **L947** — 共通接頭辞の**後ろに許す語尾**。★接頭辞の長さだけで判定すると "median"/"medial" が繋がる(共通 "media" が 5 文字ある)。語尾が 屈折語尾らしいかどうかを見ると、"correlation"/"correlate"(ion / e)は 通り、"median"/"medial"(n / l)と "corner"/"cornea"(r / a)は落ちる。
-- **L1043** — ★床。無い状態だと "zzz-nothing-matches" が `histogram_match` を返す ("matches" が `match_*` に語幹一致するため)。当たった語の重みが クエリ全体の 15 % に満たなければ「当たっていない」とみなす。 実測: "digital image correlation" は 0.19(通す)、 "zzz-nothing-matches" は 0.10(落とす)。
-- **L1217** — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
-- **L1245** — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
-- **L1297** — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
-- **L1317** — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
-- **L1330** — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
-- **L1340** — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
-- **L1358** — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
+- **L279** — ★ 設計(2026-09-04、ユーザー「色々なコンテナ型は扱えるほうが良いけど、統一感も 大事です」): 最初は `kind` に "seq" や "matrix" を混ぜていた ―― つまり**値の型** (数値か整数か選択肢か)と**容器の形**(1 個かベクトルか行列か)が 1 つの欄で 競合していた。UI から見ると「int の 3 ベクトル」が表現できず、行列だけ構造が `seq` キーの下にあるなど、扱いがばらける。ここを直交させ、`kind` は値型だけ、 容器は常に `container` に入れる形へ統一した。スカラも例外にしない (`{"form": "scalar", "shape": ()}`)ので、UI は分岐を 1 本に書ける。
+- **L394** — ★ 最長一致。短い順に見ると `sigma_per_mm` が `_mm` に当たって "mm" になる (実際は 1/mm)。単位を間違えると UI の数字が黙って別物になる。
+- **L476** — ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、 それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
+- **L509** — ★ ここが要点: **既定値が tuple で与えられていない**引数がある。 `center=None`(省略可の (row,col))、必須の `trans`(3 ベクトル)、 `k_cam`(3x3 行列)…… 既定値だけを見ると「数値 1 個」に見えてしまい、 UI が spin box を 1 個出して破綻する。名前で構造を補う。
+- **L723** — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
+- **L727** — llmcore(2026-09-24): ★一様乱数にしない —— どの行も似た向きになり、 注意の重みが全行ほぼ一様になって「押しても何も起きない」種になる。 滑らかな画像を 8x8 パッチに切ると、近い場所が近い向きを向く。
+- **L734** — ★ 実測で判明: `prism_min_deviation_deg` の波長入力に 0..1 の汎用 signal を渡すと 「波長は正の値」で弾かれ、**サンプルが動かない op** になっていた。単位が分かる なら、その量として妥当な範囲を種にする方が「押せば動く」に近い。
+- **L913** — 和文(CJK)の連なり。★``_WORD_RE`` は ``[a-z0-9]+`` なので、日本語のクエリは **語が 1 つも取れない**(``_WORD_RE.findall("点 検出") == []``)。語幹の段が 死に、部分一致は空白ごと含む文字列を探すので、**和文の複数語クエリは構造的に 必ず 0 件**だった —— docstring の大半が日本語で、6 言語を配っている製品で。 2026-09-08 に `poc_search_sweep_width` が踏んで判明(``op_find("点 検出")`` / ``("スポット 検出")`` / ``("小さい目標")`` がいずれも 0 件で、副画素重心つきの 点目標検出は ``star_detect`` しか無いのに和文から辿り着けなかった)。
+- **L966** — 語幹一致とみなす共通接頭辞の長さ。★4 にすると "median"/"medial" や "contrast"/"contour" が繋がってしまい、5 で切ると "correlation"/"correlate"(8)・"segmentation"/"segment"(7)・ "rotation"/"rotate"(5)・"gaussian"/"gauss"(5) は拾えて、上の 2 組は拾わない。
+- **L976** — 共通接頭辞の**後ろに許す語尾**。★接頭辞の長さだけで判定すると "median"/"medial" が繋がる(共通 "media" が 5 文字ある)。語尾が 屈折語尾らしいかどうかを見ると、"correlation"/"correlate"(ion / e)は 通り、"median"/"medial"(n / l)と "corner"/"cornea"(r / a)は落ちる。
+- **L1072** — ★床。無い状態だと "zzz-nothing-matches" が `histogram_match` を返す ("matches" が `match_*` に語幹一致するため)。当たった語の重みが クエリ全体の 15 % に満たなければ「当たっていない」とみなす。 実測: "digital image correlation" は 0.19(通す)、 "zzz-nothing-matches" は 0.10(落とす)。
+- **L1246** — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
+- **L1274** — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
+- **L1326** — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
+- **L1346** — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
+- **L1359** — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
+- **L1369** — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
+- **L1387** — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
 
 ## `ops.py`
 
@@ -1932,7 +1936,10 @@
 ## `tests/test_public_reachability.py`
 
 - **L71** — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.op.<名前>` 経由で届く。ここに残る 1〜6 本は各モジュールのデモ入口 (`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
-- **L88** — ★2026-09-15: 33 行すべてが公開経路(fullseye.<名前> / .ledger / .op)に届くように なっており、2 番目の検査が「この表から行を消すこと」と 33 件を挙げた。 消した 33: transforms / mosaic / fit_transform / tools_geom / matrix / shapematch / objmodel3d / matching3d / matching / calib / caltab / calibration3d / contours_xld / contours_xld2 / image_channels / filters_freq / filters_flow / regions_setops / regions_gen / region_morph / morph_minkowski / segmentation / image_gen / image_paint / misc_vision / imgops_nary / scattered / inspection / pipeline3d / watershed3d / mesh_decimate / sample_data / scale。 表は空でも残す —— 「出すべきなのに出ていない」ものが次に現れたときの器。
+- **L82** — ★2026-10-02: py-modules の数え漏れ(68 → 408 本)と facade 経路の数え忘れを直して初めて見えた 9 本。 内部の道具(CLI・ヘルプ書庫・n-ary の組立て・Studio の索引・標本データの取得・大画像の実行補助)、 api が別名で包むもの(mesh_decimate → mesh_decimate_preserving)、fs.<module>.<fn> でだけ届くもの (pipeline3d の合成 op 6 本、watershed3d の 3 本)。後の 2 つは**台帳に載せる予定**(セグメンテーション拡充の陣)。
+- **L94** — ★2026-09-15: 33 行すべてが公開経路(fullseye.<名前> / .ledger / .op)に届くように なっており、2 番目の検査が「この表から行を消すこと」と 33 件を挙げた。 消した 33: transforms / mosaic / fit_transform / tools_geom / matrix / shapematch / objmodel3d / matching3d / matching / calib / caltab / calibration3d / contours_xld / contours_xld2 / image_channels / filters_freq / filters_flow / regions_setops / regions_gen / region_morph / morph_minkowski / segmentation / image_gen / image_paint / misc_vision / imgops_nary / scattered / inspection / pipeline3d / watershed3d / mesh_decimate / sample_data / scale。 表は空でも残す —— 「出すべきなのに出ていない」ものが次に現れたときの器。
+- **L116** — ★2026-10-02: コメント行の ``[[feedback_...]]`` で非貪欲の ``\]`` が止まり、py-modules 407 本のうち 68 本しか数えていなかった(339 本が門に映らない)。コメントを剥いでから囲みを取る。
+- **L134** — ★2026-10-02: 4 つ目の公開経路 = 知覚 facade(fullseye.vision.<群>.<関数>、halcon_facade_map.json の "module.func" が実体)。HALCON 章の実装(segmentation.py 等)はここからだけ届いていた。 py-modules の数え漏れ(68 → 408 本)を直した途端に 35 モジュールが「見えない」と出たが、 その多くは facade 経由で届く。利用者が呼べる経路は全部数える。
 
 ## `tests/test_raster.py`
 
@@ -1968,6 +1975,10 @@
 
 - **L120** — ★最初は逆に読んで赤になった —— 名前は閉形式の門(半分に割ると split が m/N)で固定してある
 - **L126** — ★scikit-image の precision は正解側の対で割っている(コードは truth x test の表の行和)= こちらの recall。docstring は「test の対で割る」と書くので、名前が入れ替わっている。 F 値は対称なので誤差そのものは一致する。
+
+## `tests/test_segmentation_halcon.py`
+
+- **L496** — ★2026-10-02: 同じ台帳に score(segeval)/world(segworld)のカテゴリが足された。HALCON の 9 本は 4 カテゴリの中にちょうど 9 本、他のカテゴリの op は segmentation.py の物ではない。
 
 ## `tests/test_shapestats.py`
 
@@ -2029,8 +2040,8 @@
 - **L305** — 事象の位置(点過程)—— point_spectrum の入口。★**一様乱数だけにしない**: 周期成分が無いと「周期を見つける op」の意味のある挙動を一度も踏まないので、 周期 17.0 の列に 12 個の無関係な事象を混ぜた**構造データ**を種にする (乱数だけの試験は構造の欠陥を隠す、というこの repo の規律)。
 - **L922** — ★ 非有限が混じった点群は **KD 木の構築そのものが生の ValueError で落ちる** (scipy: "data must be finite")。プールは NONFINITE を記録したうえで値を 残す設計なので、汚れた点群がここへ来るのは想定内 —— 建てる側が防ぐ。 2026-09-06 に実際に踏んだ: 新しい族が増えて連鎖の歩き方が変わり、 seed 3_000_0xx でこの経路に当たってファザー自身が停止した(op の欠陥では なく**道具の欠陥**。束縛できない入力は例外ではなくスキップが約束)。
 - **L1241** — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L3619** — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
-- **L3737** — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
+- **L3852** — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
+- **L3970** — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
 
 ## `tools/chain_mine.py`
 
@@ -2179,15 +2190,15 @@
 ## `tools/opdocs.py`
 
 - **L117** — ★2026-09-08: ops1d(dsp 16 + funct1d 23)は登録済みなのに **docs/ops に 1 枚もノートを持っていなかった** —— OP_CATALOG には出るのに、op ごとの ノート(型契約・罠・関連 op)が無いので RAG コーパスから丸ごと欠けていた。 `poc_web_roll_periodicity` が dsp に 2 本足したときに気づいた。
-- **L818** — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
-- **L880** — ★n-ary(多入力)層。2026-09-09 まで **17 op がノートを 1 枚も持っていなかった** (`add_image` `sub_image` `bit_and` `reduce_domain` `union2` …)。`OP_INDEX.json` には tier=`nary` で載るのに `docs/ops/` に無いので、**RAG コーパスからは 永久に引けない**状態だった。見落とした理由もはっきりしている: ここが `ops.REGISTRY` だけを歩いていて、`ops.REGISTRY`(899)と 2-D ノート(899)は 一致するので「欠落ゼロ」に見えた。層をまたいで数えて初めて出る (memory: feedback_search_all_tiers_before_declaring_a_gap)。 握り潰さない —— `imgops_nary` は numpy/scipy しか要らない一次モジュールで、 import に失敗するのは「壊れた checkout」であって「その環境に無い機能」ではない (`imgevolve._all_ops` が同じ理由で except を外している)。
-- **L922** — ★2026-09-07: ``OPS3D[...]["doc"]`` は登録時に **docstring の 1 行目だけ** を切り出したもの(ops3d._build)。ノートの「使い方」にそれを使うと、 実装が何段落書いていても 1 行に化ける —— 「使い方が 1 行の op 494 本」 の 3-D ぶんはこの切り詰めが原因だった(docstring 自体は長い op が多数)。 台帳 dim と同じく関数の docstring を丸ごと読む。
-- **L945** — ★橋渡し op(``tb_<name>``)は台帳の ``<name>`` と実装が同一で、例は台帳名で 書かれる。2026-09-06 まで 147 本が「例ゼロ」だったが、それは**同じ実装を 呼ぶ例が別名で存在する**のを数えていなかっただけ。台帳側の例を継承し、 ノートには「元 op の例」と明記する(嘘にならないように)。
-- **L1165** — ★n-ary(多入力)op は `fullseye.apply` では呼べない —— あれは 1 画像 モデル。ここに 1 画像の呼び方を書くと、**ノートが嘘をつく**(この ノートの唯一の仕事は「どう呼ぶか」なので、それは無いより悪い)。 公開経路は `fullseye.FullseyeGraph`。
-- **L1184** — ★2026-09-07: **公開経路を先に書く**。ここは実装モジュールの直 import しか 書いておらず、利用者が実際に使う `fullseye.ledger.<名>` が出ていなかった (2-D 以外の 1,244 op すべて)。PoC が繰り返し「fs.<名> に無い」と報告して いたのは、名前が無いことではなく**入口が書かれていないこと**の問題だった。
-- **L1631** — ★入口は 6 言語で出す(2026-09-09)。葉(Studio の op ヘルプ)は 6 言語 10,191 ページあるのに、**そこへ導く索引が日本語だけ**だった —— 訳は 在るのに辿り着けない、という形の欠落。枠の文言は `T()` に載せるので、 対訳の穴は既存の門(test_chrome_translation_table_has_no_holes)が見る。
-- **L1676** — ★ここは長く `2d/guides/` だけを指していて、光学・PIV・トモグラフィ等 30 ファミリのガイドへ読み手を一度も送っていなかった(2026-09-09 修正)。
-- **L2192** — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
+- **L823** — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
+- **L885** — ★n-ary(多入力)層。2026-09-09 まで **17 op がノートを 1 枚も持っていなかった** (`add_image` `sub_image` `bit_and` `reduce_domain` `union2` …)。`OP_INDEX.json` には tier=`nary` で載るのに `docs/ops/` に無いので、**RAG コーパスからは 永久に引けない**状態だった。見落とした理由もはっきりしている: ここが `ops.REGISTRY` だけを歩いていて、`ops.REGISTRY`(899)と 2-D ノート(899)は 一致するので「欠落ゼロ」に見えた。層をまたいで数えて初めて出る (memory: feedback_search_all_tiers_before_declaring_a_gap)。 握り潰さない —— `imgops_nary` は numpy/scipy しか要らない一次モジュールで、 import に失敗するのは「壊れた checkout」であって「その環境に無い機能」ではない (`imgevolve._all_ops` が同じ理由で except を外している)。
+- **L927** — ★2026-09-07: ``OPS3D[...]["doc"]`` は登録時に **docstring の 1 行目だけ** を切り出したもの(ops3d._build)。ノートの「使い方」にそれを使うと、 実装が何段落書いていても 1 行に化ける —— 「使い方が 1 行の op 494 本」 の 3-D ぶんはこの切り詰めが原因だった(docstring 自体は長い op が多数)。 台帳 dim と同じく関数の docstring を丸ごと読む。
+- **L950** — ★橋渡し op(``tb_<name>``)は台帳の ``<name>`` と実装が同一で、例は台帳名で 書かれる。2026-09-06 まで 147 本が「例ゼロ」だったが、それは**同じ実装を 呼ぶ例が別名で存在する**のを数えていなかっただけ。台帳側の例を継承し、 ノートには「元 op の例」と明記する(嘘にならないように)。
+- **L1170** — ★n-ary(多入力)op は `fullseye.apply` では呼べない —— あれは 1 画像 モデル。ここに 1 画像の呼び方を書くと、**ノートが嘘をつく**(この ノートの唯一の仕事は「どう呼ぶか」なので、それは無いより悪い)。 公開経路は `fullseye.FullseyeGraph`。
+- **L1189** — ★2026-09-07: **公開経路を先に書く**。ここは実装モジュールの直 import しか 書いておらず、利用者が実際に使う `fullseye.ledger.<名>` が出ていなかった (2-D 以外の 1,244 op すべて)。PoC が繰り返し「fs.<名> に無い」と報告して いたのは、名前が無いことではなく**入口が書かれていないこと**の問題だった。
+- **L1636** — ★入口は 6 言語で出す(2026-09-09)。葉(Studio の op ヘルプ)は 6 言語 10,191 ページあるのに、**そこへ導く索引が日本語だけ**だった —— 訳は 在るのに辿り着けない、という形の欠落。枠の文言は `T()` に載せるので、 対訳の穴は既存の門(test_chrome_translation_table_has_no_holes)が見る。
+- **L1681** — ★ここは長く `2d/guides/` だけを指していて、光学・PIV・トモグラフィ等 30 ファミリのガイドへ読み手を一度も送っていなかった(2026-09-09 修正)。
+- **L2197** — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
 
 ## `tools/preflight.py`
 

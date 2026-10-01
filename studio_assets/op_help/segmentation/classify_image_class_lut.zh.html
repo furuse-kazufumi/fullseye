@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">classify_image_class_lut — SEGMENTATION <code style="color:#22d3bf">classify</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × signal</code> → <code style="color:#22d3bf">labels2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.classify_image_class_lut(image, lut)</code>(要直接调用实现,<code style="color:#22d3bf">import segmentation; segmentation.classify_image_class_lut(image, lut)</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;classify_image_class_lut&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>按灰度 LUT(阈值/标签表)对像素分类(classify_image_class_lut)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:halcon_segmentation_tour">halcon_segmentation_tour</a> — <code style="color:#22d3bf">py -3.11 examples/halcon_segmentation_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">labels2d</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:watersheds_marker">watersheds_marker</a> · <a style="color:#22d3bf" href="opsegmentation:seg_confusion_table">seg_confusion_table</a> · <a style="color:#22d3bf" href="opsegmentation:seg_dice_jaccard">seg_dice_jaccard</a> · <a style="color:#22d3bf" href="opsegmentation:seg_boundary_f">seg_boundary_f</a> · <a style="color:#22d3bf" href="opsegmentation:seg_hausdorff">seg_hausdorff</a> · <a style="color:#22d3bf" href="opsegmentation:seg_mean_surface_distance">seg_mean_surface_distance</a> · <a style="color:#22d3bf" href="opsegmentation:seg_under_over_segmentation">seg_under_over_segmentation</a> · <a style="color:#22d3bf" href="opsegmentation:seg_object_counts_match">seg_object_counts_match</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">classify</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_2dim_sup">class_2dim_sup</a> · <a style="color:#22d3bf" href="opsegmentation:class_2dim_unsup">class_2dim_unsup</a> · <a style="color:#22d3bf" href="opsegmentation:learn_ndim_norm">learn_ndim_norm</a> · <a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segmentation.py — SEGMENTATION 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

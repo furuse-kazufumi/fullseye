@@ -7,6 +7,12 @@ from __future__ import annotations
 
 import numpy as np
 
+__all__ = [
+    "check_difference", "class_2dim_sup", "learn_ndim_norm", "class_ndim_norm",
+    "class_2dim_unsup", "classify_image_class_lut", "expand_gray", "regiongrowing_n",
+    "watersheds_marker",
+]
+
 
 def _img(a):
     return np.asarray(a, dtype=np.float64)

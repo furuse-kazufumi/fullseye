@@ -4,7 +4,7 @@ dim: blob
 category: split
 in: mask
 out: image2d
-examples: [blob_split_tour, poc_bone_trabecular_thickness]
+examples: [blob_split_tour, poc_bone_trabecular_thickness, poc_segmentation_gauntlet]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -45,6 +45,7 @@ Examples
 
 - [blob_split_tour](../../../../examples/blob_split_tour.py) — `py -3.11 examples/blob_split_tour.py`
 - [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
+- [poc_segmentation_gauntlet](../../../../examples/poc_segmentation_gauntlet.py) — `py -3.11 examples/poc_segmentation_gauntlet.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

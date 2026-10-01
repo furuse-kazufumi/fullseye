@@ -1,0 +1,168 @@
+[
+ {
+  "file": "01_worlds.png",
+  "name": "worlds",
+  "caption": "左 = 画像、右 = 真値のラベル。触れ合う粒(鎖状、重なりは閉形式のレンズ)、ボロノイ結晶粒(粒界の長さ = 多角形の辺)、影のある部品(影は背景)、質感だけ違う 3 領域(平均は同じ)、照明の勾配の上の暗い物体、幅 1〜3 px の線とひび。",
+  "shape": [
+   1377,
+   2130,
+   3
+  ]
+ },
+ {
+  "file": "02_scores_blobs.png",
+  "name": "scores_blobs",
+  "caption": "Jaccard は物体マスク(格子を返す手法は —)。VI = Meilă の情報の変分(0 が一致)、ARI = 補正 Rand、境界 F は τ = 2 px、HD95 = 境界の Hausdorff の 95 % 点。過分割/未分割は分割表の多数決の多重度、一致/分裂/融合/欠落/偽は主に重なる辺の次数。最後の行はルールの直し方。",
+  "shape": [
+   344,
+   833,
+   3
+  ],
+  "csv": "02_scores_blobs.csv",
+  "tsv": "02_scores_blobs.tsv"
+ },
+ {
+  "file": "03_scores_voronoi.png",
+  "name": "scores_voronoi",
+  "caption": "Jaccard は物体マスク(格子を返す手法は —)。VI = Meilă の情報の変分(0 が一致)、ARI = 補正 Rand、境界 F は τ = 2 px、HD95 = 境界の Hausdorff の 95 % 点。過分割/未分割は分割表の多数決の多重度、一致/分裂/融合/欠落/偽は主に重なる辺の次数。",
+  "shape": [
+   320,
+   830,
+   3
+  ],
+  "csv": "03_scores_voronoi.csv",
+  "tsv": "03_scores_voronoi.tsv"
+ },
+ {
+  "file": "04_scores_parts.png",
+  "name": "scores_parts",
+  "caption": "Jaccard は物体マスク(格子を返す手法は —)。VI = Meilă の情報の変分(0 が一致)、ARI = 補正 Rand、境界 F は τ = 2 px、HD95 = 境界の Hausdorff の 95 % 点。過分割/未分割は分割表の多数決の多重度、一致/分裂/融合/欠落/偽は主に重なる辺の次数。",
+  "shape": [
+   320,
+   831,
+   3
+  ],
+  "csv": "04_scores_parts.csv",
+  "tsv": "04_scores_parts.tsv"
+ },
+ {
+  "file": "05_scores_texture.png",
+  "name": "scores_texture",
+  "caption": "Jaccard は物体マスク(格子を返す手法は —)。VI = Meilă の情報の変分(0 が一致)、ARI = 補正 Rand、境界 F は τ = 2 px、HD95 = 境界の Hausdorff の 95 % 点。過分割/未分割は分割表の多数決の多重度、一致/分裂/融合/欠落/偽は主に重なる辺の次数。最後の行はルールの直し方。",
+  "shape": [
+   344,
+   831,
+   3
+  ],
+  "csv": "05_scores_texture.csv",
+  "tsv": "05_scores_texture.tsv"
+ },
+ {
+  "file": "06_scores_gradient.png",
+  "name": "scores_gradient",
+  "caption": "Jaccard は物体マスク(格子を返す手法は —)。VI = Meilă の情報の変分(0 が一致)、ARI = 補正 Rand、境界 F は τ = 2 px、HD95 = 境界の Hausdorff の 95 % 点。過分割/未分割は分割表の多数決の多重度、一致/分裂/融合/欠落/偽は主に重なる辺の次数。最後の行はルールの直し方。",
+  "shape": [
+   344,
+   831,
+   3
+  ],
+  "csv": "06_scores_gradient.csv",
+  "tsv": "06_scores_gradient.tsv"
+ },
+ {
+  "file": "07_scores_thin.png",
+  "name": "scores_thin",
+  "caption": "Jaccard は物体マスク(格子を返す手法は —)。VI = Meilă の情報の変分(0 が一致)、ARI = 補正 Rand、境界 F は τ = 2 px、HD95 = 境界の Hausdorff の 95 % 点。過分割/未分割は分割表の多数決の多重度、一致/分裂/融合/欠落/偽は主に重なる辺の次数。",
+  "shape": [
+   320,
+   831,
+   3
+  ],
+  "csv": "07_scores_thin.csv",
+  "tsv": "07_scores_thin.tsv"
+ },
+ {
+  "file": "08_gauntlet_blobs.gif",
+  "name": "gauntlet_blobs",
+  "caption": "触れ合う粒: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic, edt_watershed)。",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 11,
+  "frames_written": 11,
+  "fps": 1.0
+ },
+ {
+  "file": "09_gauntlet_voronoi.gif",
+  "name": "gauntlet_voronoi",
+  "caption": "結晶粒(ボロノイ): 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic)。",
+  "shape": [
+   576,
+   576,
+   3
+  ],
+  "animated": true,
+  "frames": 10,
+  "frames_written": 10,
+  "fps": 1.0
+ },
+ {
+  "file": "10_gauntlet_parts.gif",
+  "name": "gauntlet_parts",
+  "caption": "影のある部品: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic)。",
+  "shape": [
+   600,
+   780,
+   3
+  ],
+  "animated": true,
+  "frames": 10,
+  "frames_written": 10,
+  "fps": 1.0
+ },
+ {
+  "file": "11_gauntlet_texture.gif",
+  "name": "gauntlet_texture",
+  "caption": "質感だけ違う領域: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic, texture_kmeans)。",
+  "shape": [
+   576,
+   576,
+   3
+  ],
+  "animated": true,
+  "frames": 11,
+  "frames_written": 11,
+  "fps": 1.0
+ },
+ {
+  "file": "12_gauntlet_gradient.gif",
+  "name": "gauntlet_gradient",
+  "caption": "照明の勾配: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic, flat_field_otsu)。",
+  "shape": [
+   480,
+   660,
+   3
+  ],
+  "animated": true,
+  "frames": 11,
+  "frames_written": 11,
+  "fps": 1.0
+ },
+ {
+  "file": "13_gauntlet_thin.gif",
+  "name": "gauntlet_thin",
+  "caption": "細い構造: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic)。",
+  "shape": [
+   600,
+   600,
+   3
+  ],
+  "animated": true,
+  "frames": 10,
+  "frames_written": 10,
+  "fps": 1.0
+ }
+]

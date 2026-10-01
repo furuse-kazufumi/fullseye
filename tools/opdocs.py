@@ -188,6 +188,11 @@ LEDGER_DIMS = {
     # 線形 / GQA / RoPE / RMSNorm / KV Cache)。新語 tokens (T,d) と attnmap (T,S)。
     "llmcore": {"registry": "opsllmcore", "table": "OPSLLMCORE",
                 "module": "llmcore", "family": "llmcore"},
+    # 2026-10-02: HALCON Segmentation 章の 9 op(segmentation.py)。facade からは届いて
+    #   いたが台帳に無く、ノート 0 枚・連鎖ファザー未到達・op_run 不可だった。
+    #   新語なし(image2d / images / mask / labels2d / matrix / table / signal)。
+    "segmentation": {"registry": "opssegmentation", "table": "OPSSEGMENTATION",
+                     "module": "segmentation", "family": "halcon_segmentation"},
 }
 
 

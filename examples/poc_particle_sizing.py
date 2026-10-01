@@ -487,13 +487,14 @@ def section_tool_gaps() -> None:
     m[20:35, 30:55] = True
     lab = _LAB.blob_label(m)
 
-    # (a) 融合した塊を**割る**口が無い(距離変換 + 分水嶺が 2-D では非公開)
+    # (a) 融合した塊を**割る**口: 発見時(2026-09-06)は距離変換 + 分水嶺が 2-D では非公開
+    #     だった。2026-10-02 に台帳(fs.ledger.watersheds_marker)へ載った。
     import segmentation as seg
     assert hasattr(seg, "watersheds_marker"), "モジュールから消えた"
-    assert not hasattr(fs, "watersheds_marker"), "公開された(この節を書き換えること)"
-    assert not hasattr(fs.ledger, "watersheds_marker")
-    print("  (a) 2-D の分水嶺が公開経路に無い(segmentation.watersheds_marker は"
-          "モジュールにだけ在る)。融合した塊を割れない。")
+    assert hasattr(fs.ledger, "watersheds_marker"), "台帳から消えた(2026-10-02 に載せたもの)"
+    assert not hasattr(fs, "watersheds_marker"), "fs 直下にも出た(この節を書き換えること)"
+    print("  (a) 2-D の分水嶺は発見時は公開経路に無かった(segmentation.watersheds_marker は"
+          "モジュールにだけ在った)。2026-10-02 に fs.ledger.watersheds_marker として公開。")
 
     # (b) 距離変換が最大値で正規化される(画素単位の距離が取れない)
     dn = np.asarray(fs.apply(m.astype(np.float64), "distance_transform"))

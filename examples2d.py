@@ -159,6 +159,9 @@ EXAMPLES = [
                 "初期状態を当てて跳ねを越えて予測すると、真のスピンを知っていれば着地点 0.4 cm、スピンを無視すると 20.2 cm 外れる。"
                 "近接カメラ(1000 fps)の模様を Kabsch で対応づけた角速度は真値と 3.7 %、反発係数は運動方程式の当てはめで 0.9114(真値 0.90)。"
                 "正直に: 放物線で e を出すと 0.9398(抗力とマグヌスを g に吸って 4.4 % ずれる)、検出は色が既知の合成映像。ラリー: 送り合いは上限 12 本、攻める側が入ると 9 本、知覚雑音 5 cm までは不変・10 cm で 2 本。"},
+    {"id": "poc_segmentation_gauntlet", "task": "imgmetrics", "data": "synthetic",
+     "name": "セグメンテーションの関門 —— 真値つきの 6 つの世界に 10 手法を当て、どの物差しがどの壊れ方に盲目かを測る",
+     "summary": "真値つきの合成世界 6 種(触れ合う粒・ボロノイ結晶粒・影のある部品・質感だけ違う領域・照明の勾配・細い構造)に既存のセグメンテーション10 手法を既定のノブで当て、新しい物差し(Dice/Jaccard・境界 F・Hausdorff・過分割/未分割・個数の一致、segcompare の VI/Rand)で採点。門 = 真 vs 真が満点、どの物差しがどの壊れ方に盲目か(Otsu は J=0.95 でも粒が全部融合、勾配の分水嶺は境界 F=1.00 でも過分割 339)。影のある部品は閾値のオラクルでも J=0.29。"},
     {"id": "poc_driving_pass", "task": "imgmetrics", "data": "synthetic",
      "name": "追越しと見えない所 —— 見通しが足りなければ待つ、ルームミラーに映ってから戻る、環道の車を妨げない、カーブミラーは遠く見える",
      "summary": "教則の台帳の未着手から、追越し(見通しが D* に足りなければ待つ・禁止区間・ルームミラーに映ってから戻る)、進路変更、環状交差点、坂の頂上、カーブミラー。新モジュール drivepass 17 op。規則の 240 人は禁止区間 0・対向車との PET 最小 5.62 s、素朴は割り込み 240 / 240。凸面鏡 R 3 m を 8 m 離れて見ると 30 m 先の車が 190.04 m 先に見える(光線追跡)。正直に: 「付近」30 m・「急に」2.0 m/s²・鏡の寸法・参照分布は仮定、施行令 21 条は未確認。"},
@@ -332,6 +335,11 @@ EXAMPLES = [
                 "ことを長さを伸ばして assert し、周囲長の 2 つの推定量が**逆の形で外す**"
                 "(perimeter は円で +5%・crofton は正方形で -5%、どちらも解像度で消えない)"
                 "ことを示す。"},
+    {"id": "halcon_segmentation_tour", "task": "segmentation", "data": "synthetic",
+     "name": "HALCON の Segmentation 章の 9 op を一巡する —— 差の検査・特徴空間の分類・領域成長・マーカー付き分水嶺",
+     "summary": "segmentation.py に実装されていながら台帳に載っていなかった 9 op(check_difference / class_2dim_sup・unsup / "
+                "learn_ndim_norm・class_ndim_norm / classify_image_class_lut / expand_gray / regiongrowing_n / watersheds_marker)を "
+                "fullseye.ledger から順に呼び、合成画像で各 op の答えを数えて確かめる(マーカー付き分水嶺は尾根で割れる)。"},
     {"id": "threshold_family_agreement", "task": "segmentation", "data": "synthetic",
      "name": "12 通りの自動しきい値に同じ絵を見せる —— 割れてよい数と、割れては困る向き",
      "summary": "値が 2 種類しかない板(明部ちょうど 400 px)を大域 10 種・局所 4 種の"

@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">seg_dice_jaccard — SEGMENTATION <code style="color:#22d3bf">score</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_dice_jaccard(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, per_label: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import segeval; segeval.seg_dice_jaccard(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, per_label: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;seg_dice_jaccard&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Dice und Jaccard — einmal über die Maske (Vereinigung der Nicht-Hintergrund-Pixel) oder je Wahrheitslabel gegen seinen Maximal-Überlappungspartner (seg_dice_jaccard).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>マスク: `<code style="color:#22d3bf">intersection</code><code style="color:#22d3bf"> = 両方とも背景でない画素数、</code><code style="color:#22d3bf">size_pred</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">size_true</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">union</code>`。</p>
+<p>Jaccard J = ∩/∪、Dice D = 2∩/(|P|+|T|)。両方空なら 1(何も無いと正しく言った)。恒等式 D = 2J/(1+J)(門)。</p>
+<p>`<code style="color:#22d3bf">per_label=True</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(背景でない真のラベル)、</code><code style="color:#22d3bf">per_dice</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">per_jaccard</code>`(相手が無ければ 0)、</p>
+<p>`<code style="color:#22d3bf">mean_dice</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mean_jaccard</code>` を足す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_segmentation_gauntlet">poc_segmentation_gauntlet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_segmentation_gauntlet.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">score</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:seg_confusion_table">seg_confusion_table</a> · <a style="color:#22d3bf" href="opsegmentation:seg_boundary_f">seg_boundary_f</a> · <a style="color:#22d3bf" href="opsegmentation:seg_hausdorff">seg_hausdorff</a> · <a style="color:#22d3bf" href="opsegmentation:seg_mean_surface_distance">seg_mean_surface_distance</a> · <a style="color:#22d3bf" href="opsegmentation:seg_under_over_segmentation">seg_under_over_segmentation</a> · <a style="color:#22d3bf" href="opsegmentation:seg_object_counts_match">seg_object_counts_match</a> · <a style="color:#22d3bf" href="opsegmentation:seg_score_card">seg_score_card</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segeval.py — SEGMENTATION Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

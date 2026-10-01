@@ -690,7 +690,8 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsgenerative"):
+                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsgenerative",
+                 "opssegmentation"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
@@ -960,6 +961,14 @@ def catalog():
         # 転置が黙って通り「長さ d の列を幅 T で」計算する)と attnmap((T,S)の注意行列。
         # image2d に載せると平滑化やしきい値がかかり行和 1 が静かに壊れる)。
         ("opsllmcore", "OPSLLMCORE", "llmcore"),
+        # 2026-10-02: HALCON Segmentation 章の 9 op。新語なし。単入力は learn_ndim_norm
+        # (matrix → table)と regiongrowing_n(images → labels2d)だけで、どちらも
+        # TYPE_TO_SORT に無い型を持つので tb_* の橋は架からない(2-D の件数は不変)。
+        # 2026-10-02 追補: 同台帳に第 1 陣 score(segeval 8、labels2d×2 → table)と
+        # world(segworld 8。world_* はノブ → table、lens_area → scalar、
+        # voronoi_cells は points → table)を追加。多入力か、単入力でも out=table
+        # (TYPE_TO_SORT に無い)なので橋はやはり架からず 2-D の件数は不変。
+        ("opssegmentation", "OPSSEGMENTATION", "segmentation"),
     ):
         _m = __import__(_mod)
         for n, m in getattr(_m, _tbl).items():

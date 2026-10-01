@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">seg_hausdorff — SEGMENTATION <code style="color:#22d3bf">score</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segeval; segeval.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;seg_hausdorff&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>두 경계 화소 집합 사이의 Hausdorff 거리와 그 백분위수 버전(예: HD95)(seg_hausdorff).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>境界は :func:<code style="color:#22d3bf">_boundary</code> の規約。どちらかの境界が空(1 色の画像)なら測るものが無いので ValueError。</p>
+<p>返り値: `<code style="color:#22d3bf">hausdorff</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">hausdorff_percentile</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">percentile</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">directed_pred_to_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">directed_true_to_pred</code>`(各最大)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• (아직 없음)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">score</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:seg_confusion_table">seg_confusion_table</a> · <a style="color:#22d3bf" href="opsegmentation:seg_dice_jaccard">seg_dice_jaccard</a> · <a style="color:#22d3bf" href="opsegmentation:seg_boundary_f">seg_boundary_f</a> · <a style="color:#22d3bf" href="opsegmentation:seg_mean_surface_distance">seg_mean_surface_distance</a> · <a style="color:#22d3bf" href="opsegmentation:seg_under_over_segmentation">seg_under_over_segmentation</a> · <a style="color:#22d3bf" href="opsegmentation:seg_object_counts_match">seg_object_counts_match</a> · <a style="color:#22d3bf" href="opsegmentation:seg_score_card">seg_score_card</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segeval.py — SEGMENTATION 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

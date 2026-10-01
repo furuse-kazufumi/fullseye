@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">seg_object_counts_match — SEGMENTATION <code style="color:#22d3bf">score</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_object_counts_match(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import segeval; segeval.seg_object_counts_match(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;seg_object_counts_match&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Objektzahl-Übereinstimmung: zählt split / merged / missed / false / matched aus den Graden eines „hauptsächlich überlappenden“ bipartiten Graphen (seg_object_counts_match).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>真 i と予測 j(どちらも背景でない)の間に辺を置く条件 = 重なり n_ij ≥ `<code style="color:#22d3bf">min_overlap</code>` × min(|i|, |j|)</p>
+<p>(小さい方がもう一方に主に入っている)。真の次数 d_i、予測の次数 e_j:</p>
+<p>`<code style="color:#22d3bf">missed</code><code style="color:#22d3bf"> = #{d_i = 0}、</code><code style="color:#22d3bf">false</code><code style="color:#22d3bf"> = #{e_j = 0}、</code><code style="color:#22d3bf">split</code>` = #{d_i ≥ 2}(1 つの真が複数の予測に割れた)、</p>
+<p>`<code style="color:#22d3bf">merged</code><code style="color:#22d3bf"> = #{e_j ≥ 2}(1 つの予測が複数の真を抱えた)、</code><code style="color:#22d3bf">matched</code>` = #{d_i = 1 かつ その相手の e_j = 1}。</p>
+<p>`<code style="color:#22d3bf">counts_match</code>` = 真と予測の個数が同じで全部が一致。min_overlap &gt; 0.5 なら各予測は高々 1 つの真に「主に入る」が、</p>
+<p>真が小さく予測が大きい辺もあるので融合は検出できる。</p>
+<p>返り値: 上の数 + `<code style="color:#22d3bf">n_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_pred</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf">(真ラベル, 予測ラベル)の (m, 2)、</code><code style="color:#22d3bf">split_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">merged_pred</code>` /</p>
+<p>`<code style="color:#22d3bf">missed_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">false_pred</code><code style="color:#22d3bf">(ラベルの配列)、</code><code style="color:#22d3bf">min_overlap</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">score</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:seg_confusion_table">seg_confusion_table</a> · <a style="color:#22d3bf" href="opsegmentation:seg_dice_jaccard">seg_dice_jaccard</a> · <a style="color:#22d3bf" href="opsegmentation:seg_boundary_f">seg_boundary_f</a> · <a style="color:#22d3bf" href="opsegmentation:seg_hausdorff">seg_hausdorff</a> · <a style="color:#22d3bf" href="opsegmentation:seg_mean_surface_distance">seg_mean_surface_distance</a> · <a style="color:#22d3bf" href="opsegmentation:seg_under_over_segmentation">seg_under_over_segmentation</a> · <a style="color:#22d3bf" href="opsegmentation:seg_score_card">seg_score_card</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segeval.py — SEGMENTATION Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,8 +1,8 @@
 {
- "n_ops": 2536,
+ "n_ops": 2561,
  "tiers": {
   "color": 12,
-  "ledger": 1585,
+  "ledger": 1610,
   "nary": 17,
   "registry": 922
  },
@@ -2453,6 +2453,20 @@
    ]
   },
   {
+   "name": "check_difference",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "mask",
+   "category": "compare",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
    "name": "check_sequence_score",
    "halcon": "",
    "in_sort": "table",
@@ -2538,6 +2552,63 @@
    "ledger": "opsmath",
    "dim": "math",
    "in_sorts": []
+  },
+  {
+   "name": "class_2dim_sup",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "mask",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d",
+    "image2d",
+    "mask"
+   ]
+  },
+  {
+   "name": "class_2dim_unsup",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "labels2d",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "class_ndim_norm",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "mask",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "images",
+    "table"
+   ]
+  },
+  {
+   "name": "classify_image_class_lut",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "labels2d",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d",
+    "signal"
+   ]
   },
   {
    "name": "clearcoat_shade",
@@ -5387,6 +5458,20 @@
    "dim": "drive",
    "in_sorts": [
     "any"
+   ]
+  },
+  {
+   "name": "expand_gray",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "mask",
+   "category": "grow",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d",
+    "mask"
    ]
   },
   {
@@ -9093,6 +9178,19 @@
    ]
   },
   {
+   "name": "learn_ndim_norm",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "legal_stop_intervals",
    "halcon": "",
    "in_sort": "any",
@@ -9118,6 +9216,17 @@
     "image2d",
     "entries"
    ]
+  },
+  {
+   "name": "lens_area",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "world",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": []
   },
   {
    "name": "lens_catalog",
@@ -14526,6 +14635,19 @@
    ]
   },
   {
+   "name": "regiongrowing_n",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "labels2d",
+   "category": "grow",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
    "name": "register_cpd_rigid",
    "halcon": "",
    "in_sort": "points",
@@ -15805,6 +15927,20 @@
    ]
   },
   {
+   "name": "seg_boundary_f",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "score",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "labels2d",
+    "labels2d"
+   ]
+  },
+  {
    "name": "seg_boundary_membrane_gap",
    "halcon": "",
    "in_sort": "labels2d",
@@ -15819,6 +15955,20 @@
    ]
   },
   {
+   "name": "seg_confusion_table",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "score",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "labels2d",
+    "labels2d"
+   ]
+  },
+  {
    "name": "seg_contingency",
    "halcon": "",
    "in_sort": "labels2d",
@@ -15827,6 +15977,34 @@
    "tier": "ledger",
    "ledger": "opsemproof",
    "dim": "emproof",
+   "in_sorts": [
+    "labels2d",
+    "labels2d"
+   ]
+  },
+  {
+   "name": "seg_dice_jaccard",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "score",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "labels2d",
+    "labels2d"
+   ]
+  },
+  {
+   "name": "seg_hausdorff",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "score",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
    "in_sorts": [
     "labels2d",
     "labels2d"
@@ -15873,6 +16051,20 @@
    ]
   },
   {
+   "name": "seg_mean_surface_distance",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "score",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "labels2d",
+    "labels2d"
+   ]
+  },
+  {
    "name": "seg_membrane_chord_score",
    "halcon": "",
    "in_sort": "labels2d",
@@ -15900,6 +16092,20 @@
    ]
   },
   {
+   "name": "seg_object_counts_match",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "score",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "labels2d",
+    "labels2d"
+   ]
+  },
+  {
    "name": "seg_rand",
    "halcon": "",
    "in_sort": "labels2d",
@@ -15908,6 +16114,20 @@
    "tier": "ledger",
    "ledger": "opsemproof",
    "dim": "emproof",
+   "in_sorts": [
+    "labels2d",
+    "labels2d"
+   ]
+  },
+  {
+   "name": "seg_score_card",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "score",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
    "in_sorts": [
     "labels2d",
     "labels2d"
@@ -15940,6 +16160,20 @@
    "in_sorts": [
     "labels2d",
     "table"
+   ]
+  },
+  {
+   "name": "seg_under_over_segmentation",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "score",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "labels2d",
+    "labels2d"
    ]
   },
   {
@@ -20197,6 +20431,19 @@
    ]
   },
   {
+   "name": "voronoi_cells",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "world",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
    "name": "voxel_grid_downsample",
    "halcon": "",
    "in_sort": "points",
@@ -20499,6 +20746,20 @@
    ]
   },
   {
+   "name": "watersheds_marker",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "labels2d",
+   "category": "watershed",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d",
+    "labels2d"
+   ]
+  },
+  {
    "name": "wave_fringe_period",
    "halcon": "",
    "in_sort": "image2d",
@@ -20657,6 +20918,17 @@
    ]
   },
   {
+   "name": "world_blobs_touching",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "world",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": []
+  },
+  {
    "name": "world_build",
    "halcon": "",
    "in_sort": "table",
@@ -20683,6 +20955,28 @@
     "matrix",
     "matrix"
    ]
+  },
+  {
+   "name": "world_gradient_illumination",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "world",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": []
+  },
+  {
+   "name": "world_grains_voronoi",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "world",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": []
   },
   {
    "name": "world_materials",
@@ -20713,6 +21007,39 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "world_parts_with_shadow",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "world",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": []
+  },
+  {
+   "name": "world_texture_regions",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "world",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": []
+  },
+  {
+   "name": "world_thin_structures",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "world",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": []
   },
   {
    "name": "wrapped_phase",

@@ -18,7 +18,7 @@
 <p>| <code style="color:#22d3bf">fullseye.op.circularity</code> / <code style="color:#22d3bf">eccentricity</code> / <code style="color:#22d3bf">area_center</code> | 形の量 | <b>進化 op</b>。画像 1 枚 → スカラ 1 個。「2 番目の物体の面積」が取れない |</p>
 <p>| <code style="color:#22d3bf">fullseye.op.select_shape</code> / <code style="color:#22d3bf">blob_count</code> / <code style="color:#22d3bf">select_largest</code> | 選ぶ/数える | 同じく進化 op。つまみが <code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> の 2 つで、特徴量の名前も境界値も指定できない |</p>
 <p>| <code style="color:#22d3bf">regions_setops</code> / <code style="color:#22d3bf">regions_gen</code> | 領域の集合演算と生成 | 領域を<b>分ける</b>口が無い |</p>
-<p>| <code style="color:#22d3bf">segmentation.watersheds_marker</code> | 分水嶺 | モジュールには在るが facade にも台帳にも出ていない(別件) |</p>
+<p>| <code style="color:#22d3bf">segmentation.watersheds_marker</code> | 分水嶺 | 発見時はモジュールにだけ在った → 2026-10-02 に <code style="color:#22d3bf">opssegmentation</code> 台帳(<code style="color:#22d3bf">fs.ledger.watersheds_marker</code>)へ。算法が違う(immersion 型・skimage 依存)ので <code style="color:#22d3bf">blob_split</code> とは別物のまま |</p>
 <p><code style="color:#22d3bf">ndimage.label</code> 自体は op の実装の<b>中</b>に 20 か所以上あります。ただしどれも結果を画像かスカラに畳んでから返すので、利用者からは見えません。<b>実装が在ることと、公開経路が在ることは別</b>というのがこの repo で繰り返し出ている形です。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
 <p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD

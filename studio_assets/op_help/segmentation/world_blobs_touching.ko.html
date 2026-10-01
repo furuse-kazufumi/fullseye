@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">world_blobs_touching — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_blobs_touching(n: &#x27;int&#x27; = 10, overlap: &#x27;float&#x27; = 0.2, seed: &#x27;int&#x27; = 0, *, size=(160, 160), radius: &#x27;float&#x27; = 14.0, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segworld; segworld.world_blobs_touching(n: &#x27;int&#x27; = 10, overlap: &#x27;float&#x27; = 0.2, seed: &#x27;int&#x27; = 0, *, size=(160, 160), radius: &#x27;float&#x27; = 14.0, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;world_blobs_touching&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>겹치는 원반(세포/입자) 세계: 같은 반지름의 원을 사슬처럼 배치하여 각 원이 중심거리 2r(1 - overlap)에서 앞의 원하고만 겹친다(world_blobs_touching).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>ラベル = 円の内側で最も近い中心(重なりは垂直二等分線で分ける)。画像 = 明るい内部 + 暗い縁 + 重なりはやや明るい</p>
+<p>+ ぼかし + 雑音(細胞の見た目)。鎖がそれ以上伸ばせなければ新しい鎖を始める(その円は誰とも重ならない)。</p>
+<p>返り値: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">count_map</code><code style="color:#22d3bf">(各画素を覆う円の数)、</code><code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> = {</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">centers</code><code style="color:#22d3bf"> (n, 2) [y, x]、</code><code style="color:#22d3bf">radius</code>`、</p>
+<p>`<code style="color:#22d3bf">overlap</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">pairs</code><code style="color:#22d3bf"> (m, 2)(重なる組)、</code><code style="color:#22d3bf">lens_area</code><code style="color:#22d3bf"> (m,)(閉形式)、</code><code style="color:#22d3bf">areas</code><code style="color:#22d3bf"> (n,)(πr² − Σ レンズ/2)、</code><code style="color:#22d3bf">union_area</code>`、</p>
+<p>`<code style="color:#22d3bf">overlap_measured</code>`(2 つ以上に覆われた画素 / 和集合の画素)}。置けなければ ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_segmentation_gauntlet">poc_segmentation_gauntlet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_segmentation_gauntlet.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">world</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:world_grains_voronoi">world_grains_voronoi</a> · <a style="color:#22d3bf" href="opsegmentation:world_parts_with_shadow">world_parts_with_shadow</a> · <a style="color:#22d3bf" href="opsegmentation:world_texture_regions">world_texture_regions</a> · <a style="color:#22d3bf" href="opsegmentation:world_gradient_illumination">world_gradient_illumination</a> · <a style="color:#22d3bf" href="opsegmentation:world_thin_structures">world_thin_structures</a> · <a style="color:#22d3bf" href="opsegmentation:lens_area">lens_area</a> · <a style="color:#22d3bf" href="opsegmentation:voronoi_cells">voronoi_cells</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segworld.py — SEGMENTATION 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

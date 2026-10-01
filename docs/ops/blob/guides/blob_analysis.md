@@ -34,7 +34,7 @@ version: 0.1.0
 | `fullseye.op.circularity` / `eccentricity` / `area_center` | 形の量 | **進化 op**。画像 1 枚 → スカラ 1 個。「2 番目の物体の面積」が取れない |
 | `fullseye.op.select_shape` / `blob_count` / `select_largest` | 選ぶ/数える | 同じく進化 op。つまみが `a`/`b` の 2 つで、特徴量の名前も境界値も指定できない |
 | `regions_setops` / `regions_gen` | 領域の集合演算と生成 | 領域を**分ける**口が無い |
-| `segmentation.watersheds_marker` | 分水嶺 | モジュールには在るが facade にも台帳にも出ていない(別件) |
+| `segmentation.watersheds_marker` | 分水嶺 | 発見時はモジュールにだけ在った → 2026-10-02 に `opssegmentation` 台帳(`fs.ledger.watersheds_marker`)へ。算法が違う(immersion 型・skimage 依存)ので `blob_split` とは別物のまま |
 
 `ndimage.label` 自体は op の実装の**中**に 20 か所以上あります。ただしどれも結果を画像かスカラに畳んでから返すので、利用者からは見えません。**実装が在ることと、公開経路が在ることは別**というのがこの repo で繰り返し出ている形です。
 

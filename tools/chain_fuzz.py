@@ -2998,6 +2998,212 @@ def _b_perpetual_loop_seam(pool, rng):
     return ([_pp.perpetual_loop("plasma_orbit", frames=5, size=24)], {})
 
 
+# --- HALCON Segmentation 章の 9 op(opssegmentation 台帳、2026-10-02)の種 ------------ #
+# 汎用の種では走らない/走っても意味が無い理由(op ごと):
+#   class_ndim_norm   : `table` の種は {pre, post} の座標表で model["mean"] が無く KeyError
+#   classify_image_class_lut : `signal` の種は float なので返りが float 画像になり labels2d を名乗れない
+#   class_2dim_sup    : 一様乱数の参照領域は特徴空間の箱が全域に膨らみ「全画素 True」しか返さない
+#   class_2dim_unsup / regiongrowing_n / expand_gray / watersheds_marker :
+#                       構造の無い乱数画像は「全画素が別領域」「全面 1 領域」のどちらかに潰れる
+#   check_difference / learn_ndim_norm : 走るが、差の分布・共分散が意味を持つ種にする
+# apply.py はこのブロックを tools/chain_fuzz.py の ``OP_ARG_BUILDERS = {`` の直前に挿入し、
+# 辞書には ``_SEG9_ENTRIES`` の 9 行を足す。
+def _seg9_fields(rng, shape=(24, 24)):
+    """3 クラスの階段状 2 特徴画像(列で 3 分割)+ 小さな雑音。真のラベルも返す。"""
+    H, W = shape
+    gt = np.zeros((H, W), int)
+    gt[:, W // 3:2 * W // 3] = 1
+    gt[:, 2 * W // 3:] = 2
+    centers = np.array([[0.1, 0.1], [0.5, 0.9], [0.9, 0.3]])
+    f1 = centers[gt, 0] + rng.normal(0.0, 0.02, (H, W))
+    f2 = centers[gt, 1] + rng.normal(0.0, 0.02, (H, W))
+    return f1, f2, gt
+
+
+def _b_seg_check_difference(pool, rng):
+    a = rng.random((24, 24))
+    b = a + rng.normal(0.0, 0.08, a.shape)          # 差の約 2 割が tol=0.1 を超える
+    return (a, b), {"tol": 0.1}
+
+
+def _b_seg_class_2dim_sup(pool, rng):
+    f1, f2, gt = _seg9_fields(rng)
+    ref = gt == 1                                     # 中央クラスの画素を参照領域に
+    return (f1, f2, ref), {}
+
+
+def _b_seg_learn_ndim_norm(pool, rng):
+    X = rng.normal(size=(60, 3)) * np.array([2.0, 1.0, 0.5]) + np.array([1.0, -1.0, 0.0])
+    return (X,), {}
+
+
+def _b_seg_class_ndim_norm(pool, rng):
+    imgs = [rng.random((24, 24)) for _ in range(3)]
+    X = np.column_stack([im.ravel() for im in imgs])
+    model = __import__("segmentation").learn_ndim_norm(X)     # D=3 が画像の枚数と噛み合う
+    return (imgs, model), {"thresh": 2.0}
+
+
+def _b_seg_class_2dim_unsup(pool, rng):
+    f1, f2, _gt = _seg9_fields(rng)
+    return (f1, f2), {"n_clusters": 3}
+
+
+def _b_seg_classify_lut(pool, rng):
+    im = rng.random((24, 24))
+    lut = np.repeat(np.arange(4), 2)                  # 8 段の int LUT(クラス 0..3)
+    return (im, lut), {}
+
+
+def _b_seg_expand_gray(pool, rng):
+    im = rng.random((24, 24))
+    im[6:18, 6:18] = 0.5 + rng.normal(0.0, 0.01, (12, 12))   # 平坦な島
+    seed = np.zeros((24, 24), bool)
+    seed[11:13, 11:13] = True
+    return (im, seed), {"tol": 0.05}
+
+
+def _b_seg_regiongrowing_n(pool, rng):
+    f1, f2, _gt = _seg9_fields(rng, shape=(16, 16))  # python の BFS なので小さく
+    return ([f1, f2],), {"tol": 0.2}
+
+
+def _b_seg_watersheds_marker(pool, rng):
+    from scipy import ndimage as _ndi
+    im = _ndi.gaussian_filter(rng.random((24, 24)), 2.0)
+    mk = np.zeros((24, 24), int)
+    mk[3, 3] = 1
+    mk[20, 20] = 2
+    mk[3, 20] = 3
+    return (im, mk), {}
+
+
+_SEG9_ENTRIES = {
+    "check_difference": _b_seg_check_difference,
+    "class_2dim_sup": _b_seg_class_2dim_sup,
+    "learn_ndim_norm": _b_seg_learn_ndim_norm,
+    "class_ndim_norm": _b_seg_class_ndim_norm,
+    "class_2dim_unsup": _b_seg_class_2dim_unsup,
+    "classify_image_class_lut": _b_seg_classify_lut,
+    "expand_gray": _b_seg_expand_gray,
+    "regiongrowing_n": _b_seg_regiongrowing_n,
+    "watersheds_marker": _b_seg_watersheds_marker,
+}
+# --- /HALCON Segmentation 章の 9 op ---------------------------------------------------- #
+
+
+# --- セグメンテーション 第 1 陣(opssegmentation の score / world、2026-10-02)の種 ------ #
+# 汎用の種では走らない/走っても意味が無い理由(op ごと):
+#   score 系(segeval の 8 本): 2 枚のラベル画像が要る。汎用の labels2d の種は 1 枚ずつ
+#     別々に作られるので「形は合うが中身が無相関」になり、境界・個数の物差しが常に最悪値を
+#     返す = 壊れ方の違いが出ない。構造(四角)を仕込んだ真値と、その 1 画素ずらし+偽の塊を
+#     予測にして「ほぼ合うが少しずれる」入力にする(hausdorff/境界 F が有限で動く)。
+#   world 系(segworld の 8 本): world_* はノブだけ(入力無し)。既定のままだと 160〜260 px で
+#     遅いので、門と同じ構造を保ったまま小さく・個数を減らす。lens_area は 2 つのスカラ、
+#     voronoi_cells は (n, 2) の種(汎用 points は (N, 3) なので shape[1]==2 で弾かれる)。
+# apply.py はこのブロックを tools/chain_fuzz.py の ``OP_ARG_BUILDERS = {`` の直前に挿入し、
+# 辞書には下の 16 行(``_SEGBATCH1_ENTRIES`` と同じ対応)を足す。
+def _segbatch1_pair(rng):
+    """背景 0 + 2x2 の四角(1..4)の真値ラベルと、1 画素ずらし + 偽の塊を 1 つ足した予測。"""
+    t = np.zeros((40, 48), np.int64)
+    k = 0
+    for r in range(2):
+        for c in range(2):
+            k += 1
+            y, x = 4 + r * 18, 4 + c * 22
+            t[y:y + 12, x:x + 16] = k
+    p = np.roll(t, 1, axis=0)
+    p[6:10, 30:40] = 7                               # 偽の塊を 1 つ(個数の物差しが拾う)
+    return p, t
+
+
+def _b_segeval_seg_confusion_table(pool, rng):
+    return _segbatch1_pair(rng), {}
+
+
+def _b_segeval_seg_dice_jaccard(pool, rng):
+    return _segbatch1_pair(rng), {"per_label": True}
+
+
+def _b_segeval_seg_boundary_f(pool, rng):
+    return _segbatch1_pair(rng), {"tau": 2.0}
+
+
+def _b_segeval_seg_hausdorff(pool, rng):
+    return _segbatch1_pair(rng), {"percentile": 95.0}
+
+
+def _b_segeval_seg_mean_surface_distance(pool, rng):
+    return _segbatch1_pair(rng), {}
+
+
+def _b_segeval_seg_under_over_segmentation(pool, rng):
+    return _segbatch1_pair(rng), {}
+
+
+def _b_segeval_seg_object_counts_match(pool, rng):
+    return _segbatch1_pair(rng), {"min_overlap": 0.5}
+
+
+def _b_segeval_seg_score_card(pool, rng):
+    return _segbatch1_pair(rng), {"tau": 2.0, "min_overlap": 0.5}
+
+
+def _b_segworld_world_blobs_touching(pool, rng):
+    return (), {"n": 5, "overlap": 0.2, "seed": int(rng.integers(0, 1_000_000)),
+                "size": (72, 72), "radius": 10.0}
+
+
+def _b_segworld_world_grains_voronoi(pool, rng):
+    return (), {"n": 9, "seed": int(rng.integers(0, 1_000_000)), "size": (96, 96)}
+
+
+def _b_segworld_world_parts_with_shadow(pool, rng):
+    return (), {"seed": int(rng.integers(0, 1_000_000)), "n_parts": 2}
+
+
+def _b_segworld_world_texture_regions(pool, rng):
+    return (), {"seed": int(rng.integers(0, 1_000_000)), "n_regions": 2, "size": (96, 96)}
+
+
+def _b_segworld_world_gradient_illumination(pool, rng):
+    return (), {"seed": int(rng.integers(0, 1_000_000)), "n_objects": 4, "size": (96, 120)}
+
+
+def _b_segworld_world_thin_structures(pool, rng):
+    return (), {"seed": int(rng.integers(0, 1_000_000)), "n": 3, "size": (96, 96)}
+
+
+def _b_segworld_lens_area(pool, rng):
+    return (10.0, 12.0), {}                           # 等半径 r=10、中心間 d=12(重なる)
+
+
+def _b_segworld_voronoi_cells(pool, rng):
+    seeds = rng.uniform(4.0, 44.0, size=(6, 2))       # (n, 2) の [y, x](汎用 points は (N, 3))
+    return (seeds, (48, 48)), {}
+
+
+_SEGBATCH1_ENTRIES = {
+    "seg_confusion_table": _b_segeval_seg_confusion_table,
+    "seg_dice_jaccard": _b_segeval_seg_dice_jaccard,
+    "seg_boundary_f": _b_segeval_seg_boundary_f,
+    "seg_hausdorff": _b_segeval_seg_hausdorff,
+    "seg_mean_surface_distance": _b_segeval_seg_mean_surface_distance,
+    "seg_under_over_segmentation": _b_segeval_seg_under_over_segmentation,
+    "seg_object_counts_match": _b_segeval_seg_object_counts_match,
+    "seg_score_card": _b_segeval_seg_score_card,
+    "world_blobs_touching": _b_segworld_world_blobs_touching,
+    "world_grains_voronoi": _b_segworld_world_grains_voronoi,
+    "world_parts_with_shadow": _b_segworld_world_parts_with_shadow,
+    "world_texture_regions": _b_segworld_world_texture_regions,
+    "world_gradient_illumination": _b_segworld_world_gradient_illumination,
+    "world_thin_structures": _b_segworld_world_thin_structures,
+    "lens_area": _b_segworld_lens_area,
+    "voronoi_cells": _b_segworld_voronoi_cells,
+}
+# --- /セグメンテーション 第 1 陣の 16 op ------------------------------------------------- #
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -3033,6 +3239,33 @@ OP_ARG_BUILDERS = {
     "graph_degree_preserving_null": _b_graph_null,
     "graph_swap_symmetry": _b_graph_swap,
     "graph_edge_consensus": _b_graph_consensus,
+    # --- HALCON Segmentation 章の 9 op(opssegmentation、2026-10-02) ---------- #
+    "check_difference": _b_seg_check_difference,
+    "class_2dim_sup": _b_seg_class_2dim_sup,
+    "learn_ndim_norm": _b_seg_learn_ndim_norm,
+    "class_ndim_norm": _b_seg_class_ndim_norm,
+    "class_2dim_unsup": _b_seg_class_2dim_unsup,
+    "classify_image_class_lut": _b_seg_classify_lut,
+    "expand_gray": _b_seg_expand_gray,
+    "regiongrowing_n": _b_seg_regiongrowing_n,
+    "watersheds_marker": _b_seg_watersheds_marker,
+    # --- セグメンテーション 第 1 陣 score/world の 16 op(opssegmentation、2026-10-02) --- #
+    "seg_confusion_table": _b_segeval_seg_confusion_table,
+    "seg_dice_jaccard": _b_segeval_seg_dice_jaccard,
+    "seg_boundary_f": _b_segeval_seg_boundary_f,
+    "seg_hausdorff": _b_segeval_seg_hausdorff,
+    "seg_mean_surface_distance": _b_segeval_seg_mean_surface_distance,
+    "seg_under_over_segmentation": _b_segeval_seg_under_over_segmentation,
+    "seg_object_counts_match": _b_segeval_seg_object_counts_match,
+    "seg_score_card": _b_segeval_seg_score_card,
+    "world_blobs_touching": _b_segworld_world_blobs_touching,
+    "world_grains_voronoi": _b_segworld_world_grains_voronoi,
+    "world_parts_with_shadow": _b_segworld_world_parts_with_shadow,
+    "world_texture_regions": _b_segworld_world_texture_regions,
+    "world_gradient_illumination": _b_segworld_world_gradient_illumination,
+    "world_thin_structures": _b_segworld_world_thin_structures,
+    "lens_area": _b_segworld_lens_area,
+    "voronoi_cells": _b_segworld_voronoi_cells,
     "graph_strength_growth": _b_graph_growth,
     "graph_kcore": _b_graph_kcore,
     "graph_rich_club_curve": _b_graph_rich_club,

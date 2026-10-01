@@ -79,6 +79,12 @@ _INTERNAL = {
     "gaits": 2, "gsplat_sugar": 3, "lidar_sim": 1, "pick_render": 1,
     "polar_cam": 1, "sensor_fusion": 1, "stereo_sim": 1, "walk_physics": 6,
     "world_render": 1,
+    # ★2026-10-02: py-modules の数え漏れ(68 → 408 本)と facade 経路の数え忘れを直して初めて見えた 9 本。
+    #   内部の道具(CLI・ヘルプ書庫・n-ary の組立て・Studio の索引・標本データの取得・大画像の実行補助)、
+    #   api が別名で包むもの(mesh_decimate → mesh_decimate_preserving)、fs.<module>.<fn> でだけ届くもの
+    #   (pipeline3d の合成 op 6 本、watershed3d の 3 本)。後の 2 つは**台帳に載せる予定**(セグメンテーション拡充の陣)。
+    "gsplat_cli": 2, "helpstore": 4, "imgops_nary": 4, "mesh_decimate": 1, "opsearch": 2,
+    "pipeline3d": 6, "sample_data": 7, "scale": 6, "watershed3d": 3,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -107,9 +113,14 @@ def _shipped_modules():
     門は「利用者の手元に届くもの」の上に立てる。
     """
     src = io.open(os.path.join(ROOT, "pyproject.toml"), encoding="utf-8").read()
+    # ★2026-10-02: コメント行の ``[[feedback_...]]`` で非貪欲の ``\]`` が止まり、py-modules 407 本のうち
+    #   68 本しか数えていなかった(339 本が門に映らない)。コメントを剥いでから囲みを取る。
+    src = re.sub(r"#.*", "", src)
     body = re.search(r"py-modules\s*=\s*\[(.*?)\]", src, re.S)
     assert body, "pyproject.toml に py-modules が無い"
-    return re.findall(r'"([A-Za-z_][A-Za-z0-9_]*)"', body.group(1))
+    names = re.findall(r'"([A-Za-z_][A-Za-z0-9_]*)"', body.group(1))
+    assert len(names) > 300, "py-modules を途中で切っている: %d 本" % len(names)
+    return names
 
 
 def _public_names():
@@ -120,6 +131,14 @@ def _public_names():
     names = {n for n in dir(fs) if not n.startswith("_")}
     names |= {n for n in dir(fs.ledger) if not n.startswith("_")}
     names |= {o.name for o in ops.REGISTRY}
+    # ★2026-10-02: 4 つ目の公開経路 = 知覚 facade(fullseye.vision.<群>.<関数>、halcon_facade_map.json の
+    #   "module.func" が実体)。HALCON 章の実装(segmentation.py 等)はここからだけ届いていた。
+    #   py-modules の数え漏れ(68 → 408 本)を直した途端に 35 モジュールが「見えない」と出たが、
+    #   その多くは facade 経由で届く。利用者が呼べる経路は全部数える。
+    import json
+    with io.open(os.path.join(ROOT, "fullseye", "data", "halcon_facade_map.json"), encoding="utf-8") as f:
+        fmap = json.load(f)
+    names |= {v.rpartition(".")[2] for k, v in fmap.items() if not k.startswith("_") and isinstance(v, str)}
     return names
 
 
@@ -180,7 +199,7 @@ def test_pending_exposure_shrinks_when_fixed():
 #: 2026-09-14: 1231 -> 1235。opsspc 台帳の内部 API(_build/list_ops/categories/get/call/
 #: info/missing の非公開分)と spc.py の入力バリデータ(_as_float_array/_as_1d)。op 自身
 #: (spc_xbar_r/spc_cusum/spc_capability/spc_hotelling_t2)は typed_catalog と api から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 1235
+_HIDDEN_FUNCTIONS_TODAY = 901   # 2026-10-02: facade 経路を数えて 1235 → 901(ratchet)
 
 
 def _hidden_total():

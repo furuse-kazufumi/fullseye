@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">world_parts_with_shadow — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_parts_with_shadow(seed: &#x27;int&#x27; = 0, *, size=(200, 260), n_parts: &#x27;int&#x27; = 3, light_angle: &#x27;float&#x27; = 35.0, shadow_length: &#x27;float&#x27; = 9.0, noise: &#x27;float&#x27; = 0.02) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import segworld; segworld.world_parts_with_shadow(seed: &#x27;int&#x27; = 0, *, size=(200, 260), n_parts: &#x27;int&#x27; = 3, light_angle: &#x27;float&#x27; = 35.0, shadow_length: &#x27;float&#x27; = 9.0, noise: &#x27;float&#x27; = 0.02) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;world_parts_with_shadow&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Welt industrieller Teile (gedrehte Rechtecke mit kreisförmigen Löchern) mit Schatten durch schräge Beleuchtung, Flächenschattierung und Glanzlichtern (world_parts_with_shadow).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>光は `<code style="color:#22d3bf">light_angle</code><code style="color:#22d3bf">(度、画像の x 軸から y 軸へ)の向きに差す平行光。影 = 部品のマスクを光の向きに </code><code style="color:#22d3bf">shadow_length</code>`</p>
+<p>だけずらした集合から部品を除いた画素(穴は光を通す)。部品の面は光に向く側が明るく、遠い側は影と同じくらい暗い</p>
+<p>(閾値が欺かれる理由)。ハイライトは光に向く側の縁の近くのガウス。</p>
+<p>返り値: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(部品 1..n)、</code><code style="color:#22d3bf">shadow</code><code style="color:#22d3bf">(bool)、</code><code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> = {</code><code style="color:#22d3bf">n_parts</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">parts</code>`(center, w, h, angle, holes)、</p>
+<p>`<code style="color:#22d3bf">areas</code><code style="color:#22d3bf">(w h − Σ π r²)、</code><code style="color:#22d3bf">shadow_offset</code><code style="color:#22d3bf"> (dy, dx)、</code><code style="color:#22d3bf">shadow_area</code><code style="color:#22d3bf">(測った画素数)、</code><code style="color:#22d3bf">light_angle</code>`}。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_segmentation_gauntlet">poc_segmentation_gauntlet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_segmentation_gauntlet.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">world</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:world_blobs_touching">world_blobs_touching</a> · <a style="color:#22d3bf" href="opsegmentation:world_grains_voronoi">world_grains_voronoi</a> · <a style="color:#22d3bf" href="opsegmentation:world_texture_regions">world_texture_regions</a> · <a style="color:#22d3bf" href="opsegmentation:world_gradient_illumination">world_gradient_illumination</a> · <a style="color:#22d3bf" href="opsegmentation:world_thin_structures">world_thin_structures</a> · <a style="color:#22d3bf" href="opsegmentation:lens_area">lens_area</a> · <a style="color:#22d3bf" href="opsegmentation:voronoi_cells">voronoi_cells</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segworld.py — SEGMENTATION Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -35,7 +35,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 | Article | Wings | Exhibits |
 |---|---|---:|
 | [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 99 |
-| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 65 |
+| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 66 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
 | [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 12 |
 
@@ -62,12 +62,12 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 - 2026-10-02 — No.2026.182 Level Crossings and Right of Way — Stop and Look, Never Enter During the Alarm or Into a Blocked Exit, Yield to the Wider Road
 - 2026-10-02 — No.2026.183 Overtaking and What You Cannot See — Wait for Sight Distance, Return Once in the Mirror, Do Not Obstruct the Ring, and Why Curve Mirrors Make Cars Look Far
+- 2026-10-02 — No.2026.184 The Segmentation Gauntlet — Ten Methods Across Six Worlds With Ground Truth, and Which Measure Is Blind to Which Failure
 - 2026-10-01 — No.2026.178 Measuring a Camera Without Buying One — Recovering Quantum Efficiency, Gain and Dark Noise from a Planted Sensor with the EMVA 1288 Procedure
 - 2026-10-01 — No.2026.176 An Endless Map — Tiles Made Around the Car, Far Tiles Dropped, 50 km Without a Break
 - 2026-10-01 — No.2026.179 Moving Traffic and Blind Spots — a Child Behind a Parked Car, Meeting Oncoming Traffic, a Bus Stop, Bad Drivers
 - 2026-10-01 — No.2026.180 Decision Scenes — Mirrors, Predicting Amber from the Pedestrian Light, Giving Way to an Ambulance, Waiting for a Bus
 - 2026-10-01 — No.2026.181 Lateral Motion — Slowing Before a Bend, Staying in the Lane, Keeping Left to Turn Left, Off-Tracking
-- 2026-10-01 — No.2026.175 Filming a Bouncing Table-Tennis Ball with a High-Speed Camera and Reading Restitution and Friction — Checked Against Published Values
 
 ## Applying it to your own problem
 

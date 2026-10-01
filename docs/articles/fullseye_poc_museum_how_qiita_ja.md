@@ -4,13 +4,13 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **65 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **66 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 撮像品質・復元ウィング ―― 絵が良くなることと真値に近づくことは別
 
-手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 13 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
+手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 14 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
 
 見た目の指標は真値を最大値としません。霞んだ入力の対比が真値より高い、アンシャープで勾配は真値に一致するのに PSNR は落ちる、雑音を足すと PSNR が上がる。逆に、ナイキストより細かい縞を戻したのに PSNR が -0.01 dB しか動かない場面もあります。
 
@@ -427,6 +427,66 @@ py -3.11 examples/poc_vanishing_detail_and_morphing_area.py
 この回が作った図は全部で **14 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area)
 
 使用 op(ノートへ): [`convex_hull`](https://furuse.work/ops/3d/bounds/convex_hull.html) · [`gauss_filter`](https://furuse.work/ops/2d/smoothing/gauss_filter.html) · [`morph`](https://furuse.work/ops/shape2d/morph/morph.html)
+
+## No.2026.184 —— セグメンテーションの関門 ―― 真値つきの 6 つの世界に 10 手法を当て、どの物差しがどの壊れ方に盲目かを測る
+
+[![セグメンテーションの関門 ―― 真値つきの 6 つの世界に 10 手法を当て、どの物差しがどの壊れ方に盲目かを測る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/01_worlds_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/01_worlds.png)
+
+*↑ **セグメンテーションの関門 ―― 真値つきの 6 つの世界に 10 手法を当て、どの物差しがどの壊れ方に盲目かを測る** ―― セグメンテーションを増やす前に、採点の物差しと真値を先に置いた —— 新モジュール segeval(分割表・Dice/Jaccard・境界 F・Hausdorff/ASSD・過分割/未分割・個数の一致・採点表、各 op に恒等式か第 2 実装の門)と segworld(真値つきの合成世界 6 種: 等半径の触れ合う粒はレンズ面積の閉形式、ボロノイ結晶粒は粒界長が scipy の稜線と 1e-9 で一致、影のある部品、平均が同じで質感だけ違う領域、照明の勾配、幅 1〜3 px の細い構造)。既存 10 手法(Otsu・局所閾値・Niblack・Sauvola・Chan–Vese・random walker・分水嶺 2 種・Felzenszwalb・SLIC)を既定のノブで総当たり。門: 6 世界すべてで真 vs 真が全部の物差しで満点 / マスクの物差しは融合に盲目(Otsu は J=0.95 なのに 9/10 が未分割)/ 境界の物差しは過分割に盲目(勾配の分水嶺は BF=1.00 なのに過分割 339)/ Sauvola は結晶粒の個数を全部当てるが粒界の帯を落とし J=0.91 / 影のある部品はどの手法も J < 0.3、真値を見る閾値のオラクルでも J=0.29 / 質感はマスク手法 ARI < 0.3、局所 σ の k-means は ARI=0.92 / 照明の勾配は大域 Otsu J=0.21、フラットフィールド後 J=1.00 / 細い構造は Otsu の境界 F が 1.00 でも雑音の粒で過分割 29。正直に: 手法のノブは既定固定(合わせれば直るものがある)、境界 F は距離変換の BF(Martin 2004 の 2 部マッチングではない)、個数の一致の辺の条件は自前の定義。10 門、2.0 s。*
+
+[![Jaccard は物体マスク(格子を返す手法は —)。VI = Meilă の情報の変分(0 が一致)、ARI = 補正 Rand、境界 F は τ = 2 px、HD95 = 境界の Hausdorff の 95 % 点。過分割/未分割は](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/02_scores_blobs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/02_scores_blobs.png)
+
+*↑ 測定の図 ―― Jaccard は物体マスク(格子を返す手法は —)。VI = Meilă の情報の変分(0 が一致)、ARI = 補正 Rand、境界 F は τ = 2 px、HD95 = 境界の Hausdorff の 95 % 点。過分割/未分割は分割表の多数決の多重度、一致/分裂/融合/欠落/偽は主に重なる辺の次数。最後の行はルールの直し方。*
+
+[![Jaccard は物体マスク(格子を返す手法は —)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/03_scores_voronoi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/03_scores_voronoi.png)
+
+*↑ Jaccard は物体マスク(格子を返す手法は —)。*
+
+[![Jaccard は物体マスク(格子を返す手法は —)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/04_scores_parts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/04_scores_parts.png)
+
+*↑ Jaccard は物体マスク(格子を返す手法は —)。*
+
+[![Jaccard は物体マスク(格子を返す手法は —)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/05_scores_texture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/05_scores_texture.png)
+
+*↑ Jaccard は物体マスク(格子を返す手法は —)。*
+
+[![Jaccard は物体マスク(格子を返す手法は —)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/06_scores_gradient_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/06_scores_gradient.png)
+
+*↑ Jaccard は物体マスク(格子を返す手法は —)。*
+
+[![触れ合う粒: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_wa](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/08_gauntlet_blobs.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/08_gauntlet_blobs.gif)
+
+*↑ 動く図 ―― 触れ合う粒: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic, edt_watershed)。*
+
+[![結晶粒(ボロノイ): 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_rando](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/09_gauntlet_voronoi.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/09_gauntlet_voronoi.gif)
+
+*↑ 動く図 ―― 結晶粒(ボロノイ): 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic)。*
+
+[![影のある部品: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_w](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/10_gauntlet_parts.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/10_gauntlet_parts.gif)
+
+*↑ 動く図 ―― 影のある部品: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic)。*
+
+[![質感だけ違う領域: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/11_gauntlet_texture.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/11_gauntlet_texture.gif)
+
+*↑ 動く図 ―― 質感だけ違う領域: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic, texture_kmeans)。*
+
+[![照明の勾配: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_wa](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/12_gauntlet_gradient.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/12_gauntlet_gradient.gif)
+
+*↑ 動く図 ―― 照明の勾配: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic, flat_field_otsu)。*
+
+[![細い構造: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_wal](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/13_gauntlet_thin.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/13_gauntlet_thin.gif)
+
+*↑ 動く図 ―― 細い構造: 緑 = 真値の境界、赤 = 手法の境界、黄 = 一致。1 コマ = 1 手法(otsu, local_threshold, sk_niblack, sk_sauvola, sk_chan_vese, xsk_random_walker, watersheds, sg_watershed_gradient, sk_felzenszwalb, sk_slic)。*
+
+```
+py -3.11 examples/poc_segmentation_gauntlet.py
+```
+
+ソース: [examples/poc_segmentation_gauntlet.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_segmentation_gauntlet.py)
+
+この回が作った図は全部で **13 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_segmentation_gauntlet)
+
+使用 op(ノートへ): [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`local_threshold`](https://furuse.work/ops/2d/segmentation/local_threshold.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`seg_score_card`](https://furuse.work/ops/segmentation/score/seg_score_card.html) · [`sg_watershed_gradient`](https://furuse.work/ops/2d/segment/sg_watershed_gradient.html) · [`sk_chan_vese`](https://furuse.work/ops/2d/segmentation/sk_chan_vese.html) · [`sk_felzenszwalb`](https://furuse.work/ops/2d/segmentation/sk_felzenszwalb.html) · [`sk_niblack`](https://furuse.work/ops/2d/segmentation/sk_niblack.html) · [`sk_sauvola`](https://furuse.work/ops/2d/segmentation/sk_sauvola.html) · [`sk_slic`](https://furuse.work/ops/2d/segmentation/sk_slic.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`watersheds`](https://furuse.work/ops/2d/segmentation/watersheds.html) · [`world_blobs_touching`](https://furuse.work/ops/segmentation/world/world_blobs_touching.html) · [`world_gradient_illumination`](https://furuse.work/ops/segmentation/world/world_gradient_illumination.html) · [`world_grains_voronoi`](https://furuse.work/ops/segmentation/world/world_grains_voronoi.html) · [`world_parts_with_shadow`](https://furuse.work/ops/segmentation/world/world_parts_with_shadow.html) · [`world_texture_regions`](https://furuse.work/ops/segmentation/world/world_texture_regions.html) · [`world_thin_structures`](https://furuse.work/ops/segmentation/world/world_thin_structures.html) · [`xsk_random_walker`](https://furuse.work/ops/2d/segmentation/xsk_random_walker.html)
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 

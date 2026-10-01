@@ -14903,6 +14903,206 @@
   "graph/car_hybrid_astar": {
    "fp": "748f1361a251",
    "ja": "占有格子(> 0.5 = 障害物)の上で車の道を Hybrid A*(Dolgov ら 2010)で探す: {左・直進・右} × {前進・後退} の運動基本形を離散セル (x, y, θ) で枝刈りしながら A* で繋ぎ、障害物を無視した Reeds–Shepp 長(前進のみなら Dubins 長)を許容ヒューリスティックに、節点から目標へ解析的な一撃を試す。車体の矩形 footprint か余白 clearance、後退・切替・舵の罰則。姿勢列・長さ・費用・下界(RS 長)・区間・展開数を返す。障害物の無い格子では費用 = RS 長。到達不能は ValueError。"
+  },
+  "segmentation/check_difference": {
+   "fp": "1b3e948ef8cc",
+   "en": "Pixels whose difference from the reference image exceeds tol, as a region (check_difference).",
+   "zh": "与参考图像之差超过 tol 的像素，作为区域返回(check_difference)。",
+   "tw": "與參考影像之差超過 tol 的像素，作為區域回傳(check_difference)。",
+   "ko": "기준 영상과의 차가 tol을 넘는 화소를 영역으로 반환(check_difference).",
+   "de": "Pixel, deren Differenz zum Referenzbild tol übersteigt, als Region (check_difference)."
+  },
+  "segmentation/class_2dim_sup": {
+   "fp": "af20953f0f2a",
+   "en": "Supervised classification in a 2-channel feature space: pixels inside the distribution of ref_region (class_2dim_sup).",
+   "zh": "二通道特征空间的监督分类：落入 ref_region 分布内的像素(class_2dim_sup)。",
+   "tw": "二通道特徵空間的監督分類：落入 ref_region 分布內的像素(class_2dim_sup)。",
+   "ko": "2채널 특징 공간의 지도 분류: ref_region의 분포에 들어가는 화소(class_2dim_sup).",
+   "de": "Überwachte Klassifikation im 2-Kanal-Merkmalsraum: Pixel innerhalb der Verteilung von ref_region (class_2dim_sup)."
+  },
+  "segmentation/learn_ndim_norm": {
+   "fp": "32ec9b6f6184",
+   "en": "Learn a normal-distribution class (mean and covariance) from feature vectors (learn_ndim_norm).",
+   "zh": "从特征向量集合学习正态分布类(均值与协方差)(learn_ndim_norm)。",
+   "tw": "從特徵向量集合學習常態分布類別(平均與共變異數)(learn_ndim_norm)。",
+   "ko": "특징 벡터 집합에서 정규분포 클래스(평균·공분산)를 학습(learn_ndim_norm).",
+   "de": "Lernt eine Normalverteilungsklasse (Mittelwert und Kovarianz) aus Merkmalsvektoren (learn_ndim_norm)."
+  },
+  "segmentation/class_ndim_norm": {
+   "fp": "1344c6890083",
+   "en": "Classify N-D feature images with a learned normal-distribution class (Mahalanobis distance < thresh) (class_ndim_norm).",
+   "zh": "用学习到的正态分布类对 N 维特征图像分类(马氏距离 < thresh)(class_ndim_norm)。",
+   "tw": "用學到的常態分布類別對 N 維特徵影像分類(馬氏距離 < thresh)(class_ndim_norm)。",
+   "ko": "학습한 정규분포 클래스로 N차원 특징 영상을 분류(마할라노비스 거리 < thresh)(class_ndim_norm).",
+   "de": "Klassifiziert N-D-Merkmalsbilder mit einer gelernten Normalverteilungsklasse (Mahalanobis-Distanz < thresh) (class_ndim_norm)."
+  },
+  "segmentation/class_2dim_unsup": {
+   "fp": "d019902a560e",
+   "en": "Unsupervised k-means classification in a 2-channel feature space; returns a label image (class_2dim_unsup).",
+   "zh": "二通道特征空间的 k-means 无监督分类，返回标签图像(class_2dim_unsup)。",
+   "tw": "二通道特徵空間的 k-means 非監督分類，回傳標籤影像(class_2dim_unsup)。",
+   "ko": "2채널 특징 공간을 k-means로 비지도 분류하여 레이블 영상을 반환(class_2dim_unsup).",
+   "de": "Unüberwachte k-Means-Klassifikation im 2-Kanal-Merkmalsraum; liefert ein Labelbild (class_2dim_unsup)."
+  },
+  "segmentation/classify_image_class_lut": {
+   "fp": "833e6a9dd708",
+   "en": "Pixel classification through a gray-value LUT (threshold / label table) (classify_image_class_lut).",
+   "zh": "按灰度 LUT(阈值/标签表)对像素分类(classify_image_class_lut)。",
+   "tw": "依灰階 LUT(閾值/標籤表)對像素分類(classify_image_class_lut)。",
+   "ko": "그레이 LUT(임계값/레이블 표)로 화소를 분류(classify_image_class_lut).",
+   "de": "Pixelklassifikation über eine Grauwert-LUT (Schwellen-/Labeltabelle) (classify_image_class_lut)."
+  },
+  "segmentation/expand_gray": {
+   "fp": "4823b9bb9baf",
+   "en": "Grow a region from a seed by gray-value similarity (|delta| < tol) (expand_gray).",
+   "zh": "从种子按灰度相似性(|Δ| < tol)扩张区域(expand_gray)。",
+   "tw": "從種子依灰階相似性(|Δ| < tol)擴張區域(expand_gray)。",
+   "ko": "씨앗에서 그레이 유사도(|Δ| < tol)로 영역을 팽창(expand_gray).",
+   "de": "Erweitert eine Region vom Keim aus nach Grauwertähnlichkeit (|Δ| < tol) (expand_gray)."
+  },
+  "segmentation/regiongrowing_n": {
+   "fp": "59b4ad791feb",
+   "en": "Segment the whole image by multi-channel feature similarity; returns a label image (regiongrowing_n).",
+   "zh": "按多通道特征的相似性分割整幅图像，返回标签图像(regiongrowing_n)。",
+   "tw": "依多通道特徵的相似性分割整張影像，回傳標籤影像(regiongrowing_n)。",
+   "ko": "다채널 특징의 유사성으로 영상 전체를 영역 분할하여 레이블 영상을 반환(regiongrowing_n).",
+   "de": "Segmentiert das ganze Bild nach Ähnlichkeit mehrkanaliger Merkmale; liefert ein Labelbild (regiongrowing_n)."
+  },
+  "segmentation/watersheds_marker": {
+   "fp": "762070e7d07c",
+   "en": "Marker-controlled watershed segmentation; markers is an int label image (0 = unassigned) (watersheds_marker).",
+   "zh": "标记控制的分水岭分割；markers 为整数标签图像(0 = 未分配)(watersheds_marker)。",
+   "tw": "標記控制的分水嶺分割；markers 為整數標籤影像(0 = 未指派)(watersheds_marker)。",
+   "ko": "마커 제어 워터셰드 분할; markers는 정수 레이블 영상(0 = 미할당)(watersheds_marker).",
+   "de": "Markergesteuerte Wasserscheiden-Segmentierung; markers ist ein Integer-Labelbild (0 = nicht zugewiesen) (watersheds_marker)."
+  },
+  "segmentation/seg_confusion_table": {
+   "fp": "670f66edfbcf",
+   "en": "Label-correspondence contingency table (rows = truth, columns = prediction) with max-overlap matching and a uniqueness flag (seg_confusion_table).",
+   "zh": "标签对应的混淆表（行 = 真值，列 = 预测），并给出最大重叠匹配与一一对应（唯一性）标志（seg_confusion_table）。",
+   "tw": "標籤對應的混淆表（列 = 真值，欄 = 預測），並給出最大重疊匹配與一一對應（唯一性）旗標（seg_confusion_table）。",
+   "ko": "레이블 대응 혼동표(행 = 참값, 열 = 예측)와 최대 중첩 매칭·일대일(유일성) 표시(seg_confusion_table).",
+   "de": "Label-Zuordnungstabelle (Zeilen = Wahrheit, Spalten = Vorhersage) mit Maximal-Überlappungs-Zuordnung und Eindeutigkeits-Flag (seg_confusion_table)."
+  },
+  "segmentation/seg_dice_jaccard": {
+   "fp": "f9c678326f89",
+   "en": "Dice and Jaccard — once over the mask (union of non-background pixels), or per true label against its max-overlap partner (seg_dice_jaccard).",
+   "zh": "Dice 与 Jaccard —— 对掩膜（非背景像素的并集）算一组，或按真值标签与其最大重叠对象逐一计算（seg_dice_jaccard）。",
+   "tw": "Dice 與 Jaccard —— 對遮罩（非背景像素的聯集）算一組，或依真值標籤與其最大重疊對象逐一計算（seg_dice_jaccard）。",
+   "ko": "Dice와 Jaccard —— 마스크(배경이 아닌 화소의 합집합)에 대해 한 벌, per_label이면 참 레이블마다 최대 중첩 상대와(seg_dice_jaccard).",
+   "de": "Dice und Jaccard — einmal über die Maske (Vereinigung der Nicht-Hintergrund-Pixel) oder je Wahrheitslabel gegen seinen Maximal-Überlappungspartner (seg_dice_jaccard)."
+  },
+  "segmentation/seg_boundary_f": {
+   "fp": "6a76ee67a14c",
+   "en": "Boundary F-measure at tolerance tau: precision = fraction of predicted boundary pixels within tau of a true boundary, recall the reverse (seg_boundary_f).",
+   "zh": "容差 tau 下的边界 F 值：precision = 预测边界像素中落在真边界 tau 距离内的比例，recall 反之（seg_boundary_f）。",
+   "tw": "容差 tau 下的邊界 F 值：precision = 預測邊界像素中落在真邊界 tau 距離內的比例，recall 反之（seg_boundary_f）。",
+   "ko": "허용거리 tau의 경계 F 값: precision = 예측 경계 화소 중 참 경계로부터 tau 이내인 비율, recall은 그 반대(seg_boundary_f).",
+   "de": "Grenz-F-Maß bei Toleranz tau: Precision = Anteil der vorhergesagten Grenzpixel innerhalb von tau zu einer echten Grenze, Recall umgekehrt (seg_boundary_f)."
+  },
+  "segmentation/seg_hausdorff": {
+   "fp": "15deaaee12e7",
+   "en": "Hausdorff distance between the two boundary pixel sets, with a percentile variant such as HD95 (seg_hausdorff).",
+   "zh": "两组边界像素集合之间的 Hausdorff 距离，并给出其分位数版本（如 HD95）（seg_hausdorff）。",
+   "tw": "兩組邊界像素集合之間的 Hausdorff 距離，並給出其分位數版本（如 HD95）（seg_hausdorff）。",
+   "ko": "두 경계 화소 집합 사이의 Hausdorff 거리와 그 백분위수 버전(예: HD95)(seg_hausdorff).",
+   "de": "Hausdorff-Abstand zwischen den beiden Grenzpixelmengen, mit einer Perzentil-Variante wie HD95 (seg_hausdorff)."
+  },
+  "segmentation/seg_mean_surface_distance": {
+   "fp": "9c1868de5457",
+   "en": "Average symmetric surface distance (ASSD): mean of the both-direction boundary distances, plus the RMS (seg_mean_surface_distance).",
+   "zh": "平均对称表面距离（ASSD）：双向边界距离合并后的均值，另给 RMS（seg_mean_surface_distance）。",
+   "tw": "平均對稱表面距離（ASSD）：雙向邊界距離合併後的均值，另給 RMS（seg_mean_surface_distance）。",
+   "ko": "평균 대칭 표면 거리(ASSD): 양방향 경계 거리를 합쳐 평균한 값과 RMS(seg_mean_surface_distance).",
+   "de": "Mittlerer symmetrischer Oberflächenabstand (ASSD): Mittel der beidseitigen Grenzabstände, dazu der RMS (seg_mean_surface_distance)."
+  },
+  "segmentation/seg_under_over_segmentation": {
+   "fp": "b27a26055733",
+   "en": "Counts over- and under-segmentation as the multiplicity of the contingency-table majority vote (Levine & Nazif style) (seg_under_over_segmentation).",
+   "zh": "以混淆表多数表决的重数来计数过分割与欠分割（Levine & Nazif 风格）（seg_under_over_segmentation）。",
+   "tw": "以混淆表多數表決的重數來計數過分割與欠分割（Levine & Nazif 風格）（seg_under_over_segmentation）。",
+   "ko": "혼동표 다수결의 다중도로 과분할·미분할 개수를 센다(Levine & Nazif 방식)(seg_under_over_segmentation).",
+   "de": "Zählt Über- und Untersegmentierung als Vielfachheit der Mehrheitsentscheidung der Zuordnungstabelle (Levine & Nazif) (seg_under_over_segmentation)."
+  },
+  "segmentation/seg_object_counts_match": {
+   "fp": "25449186d3eb",
+   "en": "Object-count agreement: counts split / merged / missed / false / matched from the degrees of a 'mainly overlapping' bipartite graph (seg_object_counts_match).",
+   "zh": "物体个数一致性：由“主要重叠”边的二部图次数来计数分裂/融合/漏检/误检/匹配（seg_object_counts_match）。",
+   "tw": "物體個數一致性：由「主要重疊」邊的二部圖次數來計數分裂/融合/漏檢/誤檢/匹配（seg_object_counts_match）。",
+   "ko": "물체 개수 일치: '주로 겹치는' 간선의 이분 그래프 차수로 분열/융합/누락/오검/일치를 센다(seg_object_counts_match).",
+   "de": "Objektzahl-Übereinstimmung: zählt split / merged / missed / false / matched aus den Graden eines „hauptsächlich überlappenden“ bipartiten Graphen (seg_object_counts_match)."
+  },
+  "segmentation/seg_score_card": {
+   "fp": "5ce21edfca33",
+   "en": "All measures on one card: Dice/Jaccard, VI/split/merge, Rand/ARI, boundary F, Hausdorff/HD95/ASSD, over/under, split/merge/missed/false/matched and counts (seg_score_card).",
+   "zh": "把所有度量汇成一张表：Dice/Jaccard、VI/split/merge、Rand/ARI、边界 F、Hausdorff/HD95/ASSD、过/欠分割、分裂/融合/漏检/误检/匹配与个数（seg_score_card）。",
+   "tw": "把所有度量彙成一張表：Dice/Jaccard、VI/split/merge、Rand/ARI、邊界 F、Hausdorff/HD95/ASSD、過/欠分割、分裂/融合/漏檢/誤檢/匹配與個數（seg_score_card）。",
+   "ko": "모든 척도를 한 장에: Dice/Jaccard, VI/split/merge, Rand/ARI, 경계 F, Hausdorff/HD95/ASSD, 과/미분할, 분열/융합/누락/오검/일치와 개수(seg_score_card).",
+   "de": "Alle Maße auf einer Karte: Dice/Jaccard, VI/Split/Merge, Rand/ARI, Grenz-F, Hausdorff/HD95/ASSD, Über-/Untersegmentierung, Split/Merge/Missed/False/Matched und Anzahlen (seg_score_card)."
+  },
+  "segmentation/world_blobs_touching": {
+   "fp": "328124db99ad",
+   "en": "World of overlapping discs (cells/grains): equal-radius circles placed in a chain, each overlapping only the previous one at centre distance 2r(1 - overlap) (world_blobs_touching).",
+   "zh": "重叠圆盘（细胞/颗粒）世界：等半径圆排成链，每个只与前一个在中心距 2r(1 - overlap) 处重叠（world_blobs_touching）。",
+   "tw": "重疊圓盤（細胞/顆粒）世界：等半徑圓排成鏈，每個只與前一個在中心距 2r(1 - overlap) 處重疊（world_blobs_touching）。",
+   "ko": "겹치는 원반(세포/입자) 세계: 같은 반지름의 원을 사슬처럼 배치하여 각 원이 중심거리 2r(1 - overlap)에서 앞의 원하고만 겹친다(world_blobs_touching).",
+   "de": "Welt überlappender Scheiben (Zellen/Körner): gleich-radiale Kreise in einer Kette, jeder überlappt nur den vorigen bei Mittenabstand 2r(1 - overlap) (world_blobs_touching)."
+  },
+  "segmentation/world_grains_voronoi": {
+   "fp": "d108df7ebf52",
+   "en": "Voronoi grain world: n jittered seeds on a lattice; labels = index of the nearest seed (1..n) (world_grains_voronoi).",
+   "zh": "Voronoi 晶粒世界：格点上 n 个带抖动的种子，标签 = 最近种子的编号（1..n）（world_grains_voronoi）。",
+   "tw": "Voronoi 晶粒世界：格點上 n 個帶抖動的種子，標籤 = 最近種子的編號（1..n）（world_grains_voronoi）。",
+   "ko": "보로노이 결정립 세계: 격자 위 n개의 지터된 씨앗, 레이블 = 가장 가까운 씨앗의 번호(1..n)(world_grains_voronoi).",
+   "de": "Voronoi-Kornwelt: n jitterte Keime auf einem Gitter; Labels = Index des nächsten Keims (1..n) (world_grains_voronoi)."
+  },
+  "segmentation/world_parts_with_shadow": {
+   "fp": "da4eaaaaa4d4",
+   "en": "World of industrial parts (rotated rectangles with circular holes) with oblique-lighting shadows, facet shading and highlights (world_parts_with_shadow).",
+   "zh": "工业零件世界（带圆孔的旋转矩形）：斜向照明的阴影、表面明暗与高光（world_parts_with_shadow）。",
+   "tw": "工業零件世界（帶圓孔的旋轉矩形）：斜向照明的陰影、表面明暗與高光（world_parts_with_shadow）。",
+   "ko": "산업 부품 세계(원형 구멍이 있는 회전 사각형): 비스듬한 조명의 그림자·면 음영·하이라이트(world_parts_with_shadow).",
+   "de": "Welt industrieller Teile (gedrehte Rechtecke mit kreisförmigen Löchern) mit Schatten durch schräge Beleuchtung, Flächenschattierung und Glanzlichtern (world_parts_with_shadow)."
+  },
+  "segmentation/world_texture_regions": {
+   "fp": "b1e877937872",
+   "en": "World of 2-4 regions that share the same mean but differ only in variance and period (uncuttable by thresholding) (world_texture_regions).",
+   "zh": "2-4 个区域的世界：均值相同、仅方差与周期不同（阈值切不开）（world_texture_regions）。",
+   "tw": "2-4 個區域的世界：均值相同、僅變異數與週期不同（閾值切不開）（world_texture_regions）。",
+   "ko": "평균은 같고 분산·주기만 다른 2-4개 영역의 세계(임계값으로는 나눌 수 없음)(world_texture_regions).",
+   "de": "Welt aus 2-4 Regionen mit gleichem Mittelwert, die sich nur in Varianz und Periode unterscheiden (nicht durch Schwellwert trennbar) (world_texture_regions)."
+  },
+  "segmentation/world_gradient_illumination": {
+   "fp": "0d41d2fbebed",
+   "en": "World of dark objects over an illumination gradient plus noise (global thresholding breaks; local thresholding / flat-field cut it) (world_gradient_illumination).",
+   "zh": "照明梯度加噪声之上的暗物体世界（全局阈值失效，局部阈值/平场校正可切开）（world_gradient_illumination）。",
+   "tw": "照明梯度加雜訊之上的暗物體世界（全域閾值失效，局部閾值/平場校正可切開）（world_gradient_illumination）。",
+   "ko": "조명 그래디언트와 잡음 위의 어두운 물체 세계(전역 임계값은 무너지고 국소 임계값/플랫필드로 나뉜다)(world_gradient_illumination).",
+   "de": "Welt dunkler Objekte über einem Beleuchtungsgradienten plus Rauschen (globaler Schwellwert bricht; lokaler Schwellwert / Flat-Field trennt) (world_gradient_illumination)."
+  },
+  "segmentation/world_thin_structures": {
+   "fp": "2b12bf084445",
+   "en": "World of 1-3 px lines (straight) and cracks (polylines); ground truth = centrelines and widths (world_thin_structures).",
+   "zh": "宽 1-3 px 的线（直线）与裂纹（折线）世界；真值 = 中心线与宽度（world_thin_structures）。",
+   "tw": "寬 1-3 px 的線（直線）與裂紋（折線）世界；真值 = 中心線與寬度（world_thin_structures）。",
+   "ko": "폭 1-3 px의 선(직선)과 균열(절선) 세계; 참값 = 중심선과 폭(world_thin_structures).",
+   "de": "Welt aus 1-3 px breiten Linien (gerade) und Rissen (Polylinien); Ground Truth = Mittellinien und Breiten (world_thin_structures)."
+  },
+  "segmentation/lens_area": {
+   "fp": "a89dc276bc0e",
+   "en": "Closed-form overlap (lens) area of two equal-radius-r circles at centre distance d; 0 when d >= 2r (lens_area).",
+   "zh": "等半径 r 的两圆在中心距 d 处重叠（透镜）面积的闭式解；当 d >= 2r 时为 0（lens_area）。",
+   "tw": "等半徑 r 的兩圓在中心距 d 處重疊（透鏡）面積的閉式解；當 d >= 2r 時為 0（lens_area）。",
+   "ko": "반지름이 같은 두 원(중심거리 d)의 겹침(렌즈) 넓이의 닫힌 형식; d >= 2r이면 0(lens_area).",
+   "de": "Geschlossene Formel für die Überlappungsfläche (Linse) zweier Kreise mit gleichem Radius r bei Mittenabstand d; 0 bei d >= 2r (lens_area)."
+  },
+  "segmentation/voronoi_cells": {
+   "fp": "113f0b66f0ac",
+   "en": "Voronoi partition of seeds inside a rectangle, returned as polygons with areas and internal edge lengths (brute-force half-planes, O(n^2)) (voronoi_cells).",
+   "zh": "矩形内种子的 Voronoi 分割，以多边形返回（含面积与内部边长；半平面暴力法，O(n^2)）（voronoi_cells）。",
+   "tw": "矩形內種子的 Voronoi 分割，以多邊形回傳（含面積與內部邊長；半平面暴力法，O(n^2)）（voronoi_cells）。",
+   "ko": "사각형 안 씨앗의 보로노이 분할을 다각형(넓이·내부 변 길이 포함)으로 반환(반평면 완전탐색, O(n^2))(voronoi_cells).",
+   "de": "Voronoi-Partition von Keimen in einem Rechteck, als Polygone mit Flächen und inneren Kantenlängen zurückgegeben (Brute-Force-Halbebenen, O(n^2)) (voronoi_cells)."
   }
  }
 }

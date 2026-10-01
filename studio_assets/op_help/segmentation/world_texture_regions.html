@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">world_texture_regions — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_texture_regions(seed: &#x27;int&#x27; = 0, *, size=(192, 192), n_regions: &#x27;int&#x27; = 3, mean: &#x27;float&#x27; = 0.5, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segworld; segworld.world_texture_regions(seed: &#x27;int&#x27; = 0, *, size=(192, 192), n_regions: &#x27;int&#x27; = 3, mean: &#x27;float&#x27; = 0.5, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;world_texture_regions&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>平均が同じで分散・周期だけ違う 2〜4 領域の世界(閾値では切れない)。真値 = 領域ラベル(1..n、背景なし)。</p>
+<p>領域 = 離した種の最近傍(ボロノイ)。模様は順に: 小さい雑音(σ = noise)、大きい雑音(σ = 4 noise)、縞(周期 P₁・向き θ₁、</p>
+<p>振幅 0.2)+ 雑音、縞(周期 P₂・向き θ₂)+ 雑音。どれも零平均で `<code style="color:#22d3bf">mean</code>` に足す(クリップは ±0.45 で対称 = 平均を保つ)。</p>
+<p>返り値: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> = {</code><code style="color:#22d3bf">n_regions</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">seeds</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">specs</code>`(kind, std(理論)、period、angle(度)、amp)}。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_segmentation_gauntlet">poc_segmentation_gauntlet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_segmentation_gauntlet.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">world</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:world_blobs_touching">world_blobs_touching</a> · <a style="color:#22d3bf" href="opsegmentation:world_grains_voronoi">world_grains_voronoi</a> · <a style="color:#22d3bf" href="opsegmentation:world_parts_with_shadow">world_parts_with_shadow</a> · <a style="color:#22d3bf" href="opsegmentation:world_gradient_illumination">world_gradient_illumination</a> · <a style="color:#22d3bf" href="opsegmentation:world_thin_structures">world_thin_structures</a> · <a style="color:#22d3bf" href="opsegmentation:lens_area">lens_area</a> · <a style="color:#22d3bf" href="opsegmentation:voronoi_cells">voronoi_cells</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segworld.py — SEGMENTATION operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

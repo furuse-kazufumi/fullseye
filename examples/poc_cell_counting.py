@@ -1267,8 +1267,8 @@ def main():
          "画素単位の距離が取れない。vol_distance_transform で代用"),
         ("xsk2_h_maxima が [0,1] 切り詰め + h は比でしか振れない",
          "画素単位の h を指定できない。h < 0.05*max(EDT) は表現不能"),
-        ("2 次元 watershed が公開されていない",
-         "segmentation.watersheds_marker はモジュール直下のみ、mask 引数も無い"),
+        ("2 次元 watershed が公開されていない(→ 2026-10-02 に fs.ledger.watersheds_marker で解消)",
+         "発見時は segmentation.watersheds_marker がモジュール直下のみ。mask 引数は今も無い"),
         ("circularity / eccentricity / area_center が物体ごとに取れない",
          "画像全体の 1 スカラー。分割判定に使えないので自前でモーメントを回した"),
     )
@@ -1442,10 +1442,11 @@ def main():
     two[25:35, 25:35] = 1.0
     c = np.asarray(fs.apply(two, "circularity"))
     assert c.size == 1 or float(c.min()) == float(c.max()), c.shape
-    #      (d) 2 次元 watershed はモジュールには在るが facade に公開されていない
-    assert hasattr(fsseg, "watersheds_marker"), "モジュール側からも消えた"
-    assert not hasattr(fs, "watersheds_marker"), "公開された(この節を書き換えること)"
-    assert not hasattr(fs.ledger, "watersheds_marker")
+    #      (d) 2 次元 watershed: 発見時は segmentation.py の中にだけ在った。2026-10-02 に
+    #          台帳(fs.ledger.watersheds_marker、opssegmentation)へ載せた。fs 直下には出していない。
+    assert hasattr(fsseg, "watersheds_marker"), "モジュール側から消えた"
+    assert hasattr(fs.ledger, "watersheds_marker"), "台帳から消えた(2026-10-02 に載せたもの)"
+    assert not hasattr(fs, "watersheds_marker"), "fs 直下にも出た(この節を書き換えること)"
     #      (e) 2 次元のラベリング / region props は 3 次元にしか無い
     assert hasattr(fs.ledger, "vol_label") and hasattr(fs.ledger, "vol_region_props")
     assert not hasattr(fs.ledger, "label"), "2 次元ラベリングが生えた(良い変化)"

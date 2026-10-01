@@ -70,6 +70,10 @@ _LEDGERS = (
     ("opsprintpath", "OPSPRINTPATH"),
     # 2026-09-24: LLM に至る系譜の芯(注意・RoPE・RMSNorm)。新語 tokens / attnmap。
     ("opsllmcore", "OPSLLMCORE"),
+    # 2026-10-02: HALCON Segmentation 章の 9 op(画素分類・領域成長・マーカー分水嶺)。
+    #   facade(fullseye.vision.segment)からは届いていたが、台帳に無いあいだノート・
+    #   連鎖ファザー・op_run の入力補助が 1 つも付いていなかった。新語なし。
+    ("opssegmentation", "OPSSEGMENTATION"),
     ("opsgeocam", "OPSGEOCAM"),          # 2026-09-21: 固定カメラの向きを写真から(太陽・スカイライン、新語なし)      # 2026-09-21: 3D プリンタ(G-code / 3MF / スライス / 層画像の検査)            # 2026-09-21: 生きている組織の 3D+t(増幅・流れ・補間・高さ場)      # 2026-09-21: 動画の空間×時間の立方体(Video Summagator の再実装)          # 2026-09-21: EM 校正のセカンドオピニオン(labels2d / image2d / table)
 )
 
@@ -709,6 +713,12 @@ def sample_input(op_name: str):
         "sdf": lambda: np.random.default_rng(0).normal(size=(16, 16, 16)),
         "coordgrid": lambda: __import__("sdf_ops").grid_coords(((0.0, 10.0),) * 3, 16)[0],
         "images": lambda: [np.random.default_rng(k).random((32, 32)) for k in range(4)],
+        # 2026-10-02: mask / labels2d / matrix の種が無く、blob_label / blob_features /
+        #   watersheds_marker / mat_solve などの第 1 引数が None のまま「押しても動かない」
+        #   op になっていた(opssegmentation を載せた回に実測)。構造のある種にする。
+        "mask": _sample_mask,
+        "labels2d": _sample_labels2d,
+        "matrix": lambda: np.random.default_rng(0).normal(size=(64, 3)),
         # conngraph(2026-09-20): 12 ノードの 2 クリーク有向グラフと、それを産むシナプス表。
         # ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと
         #   「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
@@ -744,6 +754,25 @@ def sample_input(op_name: str):
             # 書き先のパス名は発明しない —— None を渡し、op が「path is None — pass a file path」と言う。
             kwargs[spec["name"]] = None if (writes_file and spec["name"] in _PATH_PARAMS) else _sample_value(spec)
     return args, kwargs
+
+
+def _sample_mask():
+    """中央に 32x32 の正方形(縁から離す —— poisson_blend は縁に接したら拒否)。"""
+    import numpy as np
+    m = np.zeros((64, 64), bool)
+    m[16:48, 16:48] = True
+    return m
+
+
+def _sample_labels2d():
+    """背景 0・物体 1..3(四角・細長い棒・穴あきの輪 —— 同じ形を並べない)。"""
+    import numpy as np
+    lab = np.zeros((64, 64), np.int32)
+    lab[6:22, 6:22] = 1
+    lab[10:18, 10:18] = 0
+    lab[30:36, 6:46] = 2
+    lab[40:60, 40:60] = 3
+    return lab
 
 
 def _sample_tokens():

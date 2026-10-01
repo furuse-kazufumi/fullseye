@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">class_2dim_sup — SEGMENTATION <code style="color:#22d3bf">classify</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d × mask</code> → <code style="color:#22d3bf">mask</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.class_2dim_sup(image1, image2, ref_region)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segmentation; segmentation.class_2dim_sup(image1, image2, ref_region)</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;class_2dim_sup&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>2 チャネル特徴空間で ref_region の分布に入る画素を分類(教師つき)(class_2dim_sup)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:halcon_segmentation_tour">halcon_segmentation_tour</a> — <code style="color:#22d3bf">py -3.11 examples/halcon_segmentation_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">mask</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:expand_gray">expand_gray</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">classify</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_2dim_unsup">class_2dim_unsup</a> · <a style="color:#22d3bf" href="opsegmentation:learn_ndim_norm">learn_ndim_norm</a> · <a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a> · <a style="color:#22d3bf" href="opsegmentation:classify_image_class_lut">classify_image_class_lut</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segmentation.py — SEGMENTATION operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
