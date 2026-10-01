@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ou_estimate — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ou_estimate(x, dt: &#x27;float&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetraffic; drivetraffic.ou_estimate(x, dt: &#x27;float&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;ou_estimate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>横ふらつき(平均 0 の OU 過程 dX = −θX dt + σ dW)の母数を、等間隔 dt の観測の列から読む。</p>
+<p>厳密離散化 x_{k+1} = φ x_k + ε_k(φ = e^{−θ dt}、ε ~ N(0, q²)、q² = σ²(1 − φ²)/(2θ))の条件つき最尤:</p>
+<p>φ̂ = Σ x_k x_{k+1} / Σ x_k²,  q̂² = mean((x_{k+1} − φ̂ x_k)²),  θ̂ = −ln φ̂ / dt,  σ̂ = q̂ sqrt(2θ̂ / (1 − φ̂²))</p>
+<p>(Euler の (1 − φ̂)/dt でなく ln を使うので dt が粗くても偏らない)。標準誤差は漸近式: se(φ̂) = sqrt((1 − φ²)/n)、</p>
+<p>se(q̂) = q/sqrt(2n)、θ̂・σ̂ はデルタ法。`<code style="color:#22d3bf">sigma_increment</code>` = sqrt(mean(Δx²)/dt) は θ を使わない粗い推定</p>
+<p>(E[Δx²] = σ²(1 − φ)/θ なので θ dt → 0 で σ。相関時間の長い系列を短く見るとき、位置の標本 SD より σ を安定に読める)。</p>
+<p>戻り値 dict: `<code style="color:#22d3bf">theta</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">sigma</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">sd</code><code style="color:#22d3bf">(定常 SD σ/√(2θ))、</code><code style="color:#22d3bf">phi</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">q</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">(増分の数)、</code><code style="color:#22d3bf">se_theta</code>`,</p>
+<p>`<code style="color:#22d3bf">se_sigma</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">sigma_increment</code>`。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 1-D でない・3 点未満・非有限、dt ≤ 0、φ̂ ∉ (0, 1)(この dt では平均へ戻る過程に見えない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_traffic">poc_driving_traffic</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_traffic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">traffic</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:idm_accel">idm_accel</a> · <a style="color:#22d3bf" href="opdrive:idm_equilibrium_gap">idm_equilibrium_gap</a> · <a style="color:#22d3bf" href="opdrive:idm_platoon_simulate">idm_platoon_simulate</a> · <a style="color:#22d3bf" href="opdrive:driver_style">driver_style</a> · <a style="color:#22d3bf" href="opdrive:lateral_wobble">lateral_wobble</a> · <a style="color:#22d3bf" href="opdrive:social_force_step">social_force_step</a> · <a style="color:#22d3bf" href="opdrive:pedestrian_crossing">pedestrian_crossing</a> · <a style="color:#22d3bf" href="opdrive:occlusion_reveal_distance">occlusion_reveal_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetraffic.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

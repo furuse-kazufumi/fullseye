@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">driver_style — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.driver_style(kind: &#x27;str&#x27;, seed: &#x27;Optional[int]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetraffic; drivetraffic.driver_style(kind: &#x27;str&#x27;, seed: &#x27;Optional[int]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;driver_style&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>運転の癖 3 種(&quot;careful&quot; / &quot;normal&quot; / &quot;sloppy&quot;)の母数を返す。<b>値はすべて仮定</b>(出典なし)。</p>
+<p>キー: IDM の `<code style="color:#22d3bf">v0, T, a, b, s0, delta</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">reaction_delay</code><code style="color:#22d3bf"> [s]、横ふらつき(OU 過程)の </code><code style="color:#22d3bf">wobble_theta</code>` [1/s]</p>
+<p>と `<code style="color:#22d3bf">wobble_sigma</code><code style="color:#22d3bf"> [m/√s] (定常の標準偏差は σ/sqrt(2θ) = 0.05 / 0.11 / 0.28 m)、</code><code style="color:#22d3bf">speed_noise</code>`(希望速度の</p>
+<p>相対むら)、`<code style="color:#22d3bf">length</code><code style="color:#22d3bf"> 4.5 m(仮定)、</code><code style="color:#22d3bf">kind</code><code style="color:#22d3bf">。返り値はそのまま </code><code style="color:#22d3bf">idm_platoon_simulate</code>` の 1 台分に渡せる。</p>
+<p>`<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> を与えると、主要な値に一様 ±10% の個人差を掛ける(</code><code style="color:#22d3bf">default_rng(seed)</code>` で決定的)。None なら名目値。</p>
+<p>順序の性質(門): 名目値で careful の T・s0 が最大で反応遅れが最小、sloppy がその逆、ふらつきの定常 SD は</p>
+<p>careful &lt; normal &lt; sloppy。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 未知の kind。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_traffic">poc_driving_traffic</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_traffic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">traffic</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:idm_accel">idm_accel</a> · <a style="color:#22d3bf" href="opdrive:idm_equilibrium_gap">idm_equilibrium_gap</a> · <a style="color:#22d3bf" href="opdrive:idm_platoon_simulate">idm_platoon_simulate</a> · <a style="color:#22d3bf" href="opdrive:lateral_wobble">lateral_wobble</a> · <a style="color:#22d3bf" href="opdrive:ou_estimate">ou_estimate</a> · <a style="color:#22d3bf" href="opdrive:social_force_step">social_force_step</a> · <a style="color:#22d3bf" href="opdrive:pedestrian_crossing">pedestrian_crossing</a> · <a style="color:#22d3bf" href="opdrive:occlusion_reveal_distance">occlusion_reveal_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetraffic.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

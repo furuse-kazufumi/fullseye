@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">passing_simulate — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.passing_simulate(dist_oncoming: &#x27;float&#x27;, parked_len: &#x27;float&#x27;, margin_front: &#x27;float&#x27;, margin_back: &#x27;float&#x27;, v_ego: &#x27;float&#x27;, v_oncoming: &#x27;float&#x27;, *, lane_change_time: &#x27;float&#x27;, ego_length: &#x27;float&#x27; = 0.0, dt: &#x27;float&#x27; = 0.01, v_obstacle: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetraffic; drivetraffic.passing_simulate(dist_oncoming: &#x27;float&#x27;, parked_len: &#x27;float&#x27;, margin_front: &#x27;float&#x27;, margin_back: &#x27;float&#x27;, v_ego: &#x27;float&#x27;, v_oncoming: &#x27;float&#x27;, *, lane_change_time: &#x27;float&#x27;, ego_length: &#x27;float&#x27; = 0.0, dt: &#x27;float&#x27; = 0.01, v_obstacle: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;passing_simulate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>&quot;go&quot; にした場合を時間を進めて走らせ、PET(自車が対向車線から戻り切った時刻と、対向車がその地点に着く時刻の差)を返す。</p>
+<p>閉形式と独立な経路: 自車の <b>横位置</b> を、x_in〜x_out の間は対向車線(y = 1)、x_out を過ぎたら</p>
+<p>y(τ) = 1 − smoothstep(τ / T_lc)(τ = x_out を過ぎてからの時間)で戻すとして刻み dt で進め、y が 0 になった刻みを</p>
+<p>探して刻み内を二分法で詰めた時刻を戻り切った時刻とする(T_lc = 0 なら x_out を過ぎた時刻)。対向車は x = D から</p>
+<p>−v_on で進め、戻り切った地点を通る刻みを探して線形補間する。v_on = 0 なら PET = inf。</p>
+<p>`<code style="color:#22d3bf">v_obstacle</code>` &gt; 0: 障害物の前端の外(x_out)も v_obstacle で進む(走っている自転車の追い越し)。</p>
+<p>戻り値 dict: `<code style="color:#22d3bf">t_clear</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">x_clear</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">t_oncoming</code><code style="color:#22d3bf">(対向車が x_clear に着く時刻)、</code><code style="color:#22d3bf">pet</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_traffic">poc_driving_traffic</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_traffic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">traffic</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:idm_accel">idm_accel</a> · <a style="color:#22d3bf" href="opdrive:idm_equilibrium_gap">idm_equilibrium_gap</a> · <a style="color:#22d3bf" href="opdrive:idm_platoon_simulate">idm_platoon_simulate</a> · <a style="color:#22d3bf" href="opdrive:driver_style">driver_style</a> · <a style="color:#22d3bf" href="opdrive:lateral_wobble">lateral_wobble</a> · <a style="color:#22d3bf" href="opdrive:ou_estimate">ou_estimate</a> · <a style="color:#22d3bf" href="opdrive:social_force_step">social_force_step</a> · <a style="color:#22d3bf" href="opdrive:pedestrian_crossing">pedestrian_crossing</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetraffic.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

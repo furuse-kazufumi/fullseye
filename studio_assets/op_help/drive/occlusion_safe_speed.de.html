@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">occlusion_safe_speed — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_safe_speed&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>見えた瞬間から距離 d 以内に止まれる最大速度 v = b(−ρ + sqrt(ρ² + 2d/b))。</p>
+<p>v ρ + v²/(2b) = d(空走 + 制動。`<code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, accel=0, brake=b)</code>` と同じ式)を v について</p>
+<p>解いた正の根。桁落ちを避けて v = 2d / (ρ + sqrt(ρ² + 2d/b)) で計算する(ρ = 0 で sqrt(2 b d))。</p>
+<p>d は配列でもよい。d ≤ 0 なら 0(見えた時には既に間に合わない)。</p>
+<p>門: `<code style="color:#22d3bf">rss_stopping_distance(v, ρ, 0, b)</code>` == d(第 2 実装、rtol 1e-12)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: reaction &lt; 0、brake ≤ 0、d が非有限(inf は許して inf を返す)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_traffic">poc_driving_traffic</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_traffic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">any</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">traffic</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:idm_accel">idm_accel</a> · <a style="color:#22d3bf" href="opdrive:idm_equilibrium_gap">idm_equilibrium_gap</a> · <a style="color:#22d3bf" href="opdrive:idm_platoon_simulate">idm_platoon_simulate</a> · <a style="color:#22d3bf" href="opdrive:driver_style">driver_style</a> · <a style="color:#22d3bf" href="opdrive:lateral_wobble">lateral_wobble</a> · <a style="color:#22d3bf" href="opdrive:ou_estimate">ou_estimate</a> · <a style="color:#22d3bf" href="opdrive:social_force_step">social_force_step</a> · <a style="color:#22d3bf" href="opdrive:pedestrian_crossing">pedestrian_crossing</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetraffic.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

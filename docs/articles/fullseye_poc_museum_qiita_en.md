@@ -37,7 +37,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 | [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 99 |
 | [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 65 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
-| [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 7 |
+| [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 8 |
 
 ## Glossary (read this first)
 
@@ -62,12 +62,12 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 - 2026-10-01 — No.2026.178 Measuring a Camera Without Buying One — Recovering Quantum Efficiency, Gain and Dark Noise from a Planted Sensor with the EMVA 1288 Procedure
 - 2026-10-01 — No.2026.176 An Endless Map — Tiles Made Around the Car, Far Tiles Dropped, 50 km Without a Break
+- 2026-10-01 — No.2026.179 Moving Traffic and Blind Spots — a Child Behind a Parked Car, Meeting Oncoming Traffic, a Bus Stop, Bad Drivers
 - 2026-10-01 — No.2026.175 Filming a Bouncing Table-Tennis Ball with a High-Speed Camera and Reading Restitution and Friction — Checked Against Published Values
 - 2026-10-01 — No.2026.177 Reading Errors End the Table-Tennis Rally — How Much Noise and Latency Move the Landing Point, in Closed Form Before the Shot
 - 2026-09-30 — No.2026.172 Giving the Car Inertia and Slopes — Stopping Just Before the Line with Reaction and Braking Distance, and a Hill Start Without Rolling Back
 - 2026-09-30 — No.2026.173 Sun and Weather — When the Morning Sun Hides the Signal, How Fast You May Drive in Fog, Wet Roads and Headlamps at Night
 - 2026-09-30 — No.2026.171 Kendama the Way the Pioneers Did It — A True-to-Shape Kendama Filmed by Two Cameras, the Ball's Flight Predicted from Images Alone and Caught in the Big, Small and Base Cups
-- 2026-09-30 — No.2026.174 Filming a Spinning Table-Tennis Ball and Reading Its Spin Two Ways — From the Curve and From the Markings
 
 ## Applying it to your own problem
 

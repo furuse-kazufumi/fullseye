@@ -4856,6 +4856,42 @@ py -3.11 examples/poc_driving_endless_map.py
 
 使用 op(ノートへ): [`pose_normalize`](https://furuse.work/ops/drive/inf/pose_normalize.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`tile_digest`](https://furuse.work/ops/drive/inf/tile_digest.html) · [`tile_edge_crossing`](https://furuse.work/ops/drive/inf/tile_edge_crossing.html) · [`tile_height`](https://furuse.work/ops/drive/inf/tile_height.html) · [`tile_mesh`](https://furuse.work/ops/drive/inf/tile_mesh.html) · [`tile_params`](https://furuse.work/ops/drive/inf/tile_params.html) · [`tile_road_distance`](https://furuse.work/ops/drive/inf/tile_road_distance.html) · [`tile_roads`](https://furuse.work/ops/drive/inf/tile_roads.html) · [`tile_stream`](https://furuse.work/ops/drive/inf/tile_stream.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
 
+## No.2026.179 —— 動く交通と死角 ―― 路肩駐車の陰の子ども、対向車とのすれ違い、バス停、下手な運転、横断歩道で待つ人
+
+[![動く交通と死角 ―― 路肩駐車の陰の子ども、対向車とのすれ違い、バス停、下手な運転、横断歩道で待つ人](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/01_dashcam_occlusion.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/01_dashcam_occlusion.gif)
+
+*↑ **動く交通と死角 ―― 路肩駐車の陰の子ども、対向車とのすれ違い、バス停、下手な運転、横断歩道で待つ人** ―― 著者の発案 ——「歩行者とか外乱要素がまだまだ足りない」「自転車とかも道路上では走ってるよ」「路肩駐車してる車もいる」「下手くそな運転してる奴もいる」「頻度は多くないけど、飛び出す奴や横切る奴もいる」「路肩駐車のある場合、対向車とのすれ違いのタイミングを考えないといけない」「バス停車中は人の乗り降りが多く、飛び出してくる人がいやすいので、追い越しは注意がいる。出来れば発車まで待つほうが良い」「歩道で待つ人がいれば一時停止」、そして「自動車の教本に書かれている内容を読み返し、その中にある要素を再現するべき」。国家公安委員会告示「交通の方法に関する教則」から運転者の場面を 159 拾い、再現の状態を付けた台帳(docs/drive/kyosoku_scenarios.json、再現 8・一部 11・再現不能 7 は理由つき・未着手 133)を作り、台帳と PoC が互いに名指しし合う門を置いた。新モジュール drivetraffic 18 op。門: 路肩駐車の陰の見え始めは箱の角をかすめる視線の閉形式 = 目を 2 mm ずつ進めた視線判定、止まれる最大速度 10.7 km/h なら 445 試行の全部で子どもの手前に止まり 1.3 倍では止まれない試行が出る / 歩道の子は「見え → 隠れ → 見える」/ すれ違いの境目は閉形式 = PET 1 s の二分法(相対 1.6e-9)、対向 600 台/時の平均の待ち 9.0 s = Adams の式 / バス停は発車まで待つ < 徐行 < そのまま(期待件数の閉形式 = 時空のポアソン過程の MC)/ IDM の車列は慎重・普通が平衡車間に収束し、反応が車間時間より長い荒い運転は t = 10.8 s に追突 / 横ふらつきを OU の最尤で読むと荒い運転 17 / 17・誤検出 0(位置のばらつきでは 13 / 17)/ 横断歩道で渡る人の見逃し 0 / 稀な飛び出しの件数の平均 = 分散 = ∫λ、重要度サンプリングは閉形式と素朴な MC に一致し分散 1/25.7 / 自転車の側方 1.5 m(PoC が決めた値)を全試行で保つ / 背景差分の検知は真値から 0.133 s 遅れ・それより前の誤検知 0 / 通し走行 335 m で接触なし。見つけたこと: 位置のばらつきでは荒い運転を 4 台に 1 台逃す、2D の視線は 3D の描画より 0.5 s 遅い(安全側)、IDM の止まった車列は s0 ちょうどにならない、徐行ではみ出すと待ちが 9.0 → 19.3 s に倍増。正直に: 癖・歩く速さ 1.2 m/s・側方間隔は仮定、死角は 2D。20 門、68 s。*
+
+[![俯瞰(通し走行 86 s・335 m): 自車(青)は路肩駐車の死角の手前で 10.7 km/h に落とし、対向の車列(橙 = 荒い運転、横にふらつく)が過ぎて隙間 D* が空くまで待ってからはみ出す。陰から走り出た子ども(黄)に止まり、渡](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/02_overhead_street.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/02_overhead_street.gif)
+
+*↑ 測定の図 ―― 俯瞰(通し走行 86 s・335 m): 自車(青)は路肩駐車の死角の手前で 10.7 km/h に落とし、対向の車列(橙 = 荒い運転、横にふらつく)が過ぎて隙間 D* が空くまで待ってからはみ出す。陰から走り出た子ども(黄)に止まり、渡り切ってから発進。脇道から出た自転車(紫)の後ろにつき、対向車が過ぎたら側方 1.5 m + 追い越しの間にふらつける幅 4.5 σ̂ √h を空けて追い越す。停車中のバス(緑)の前を乗客(赤)が渡るので追い越さずに発車まで待つ。紫の影は自車の目から見えない所。最小の距離: 子ども 3.07 m・自転車 2.87 m・対向車 0.78 m。*
+
+[![時空図(縦 = 先頭車からの位置、横 = 時刻、線 = 6 台)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/03_platoon_spacetime_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/03_platoon_spacetime.png)
+
+*↑ 時空図(縦 = 先頭車からの位置、横 = 時刻、線 = 6 台)。*
+
+[![横断の意図の混同行列(480 人、判断の時刻は乱数、位置の雑音 5 cm・向き 10°)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/04_intent_confusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/04_intent_confusion.png)
+
+*↑ 横断の意図の混同行列(480 人、判断の時刻は乱数、位置の雑音 5 cm・向き 10°)。*
+
+[![対向車がポアソン流のとき、はみ出しに要る隙間 τ = D*/v_on を待つ平均時間(Adams の式)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/06_passing_wait_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/06_passing_wait.png)
+
+*↑ 対向車がポアソン流のとき、はみ出しに要る隙間 τ = D*/v_on を待つ平均時間(Adams の式)。*
+
+[![停車中のバスの前後で出現率が高い(bus_stop_rate)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/07_bus_stop_risk_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/07_bus_stop_risk.png)
+
+*↑ 停車中のバスの前後で出現率が高い(bus_stop_rate)。*
+
+```
+py -3.11 examples/poc_driving_traffic.py
+```
+
+ソース: [examples/poc_driving_traffic.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_driving_traffic.py)
+
+この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_traffic)
+
+使用 op(ノートへ): [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_mesh_object.html) · [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`bus_stop_rate`](https://furuse.work/ops/drive/traffic/bus_stop_rate.html) · [`driver_style`](https://furuse.work/ops/drive/traffic/driver_style.html) · [`grid_lines`](https://furuse.work/ops/annotate/plot/grid_lines.html) · [`idm_accel`](https://furuse.work/ops/drive/traffic/idm_accel.html) · [`idm_equilibrium_gap`](https://furuse.work/ops/drive/traffic/idm_equilibrium_gap.html) · [`idm_platoon_simulate`](https://furuse.work/ops/drive/traffic/idm_platoon_simulate.html) · [`importance_risk_estimate`](https://furuse.work/ops/drive/traffic/importance_risk_estimate.html) · [`lateral_wobble`](https://furuse.work/ops/drive/traffic/lateral_wobble.html) · [`long_params`](https://furuse.work/ops/drive/long/long_params.html) · [`long_simulate`](https://furuse.work/ops/drive/long/long_simulate.html) · [`nice_ticks`](https://furuse.work/ops/annotate/plot/nice_ticks.html) · [`occlusion_reveal_distance`](https://furuse.work/ops/drive/traffic/occlusion_reveal_distance.html) · [`occlusion_safe_speed`](https://furuse.work/ops/drive/traffic/occlusion_safe_speed.html) · [`occlusion_visible_intervals`](https://furuse.work/ops/drive/traffic/occlusion_visible_intervals.html) · [`ou_estimate`](https://furuse.work/ops/drive/traffic/ou_estimate.html) · [`passing_decision`](https://furuse.work/ops/drive/traffic/passing_decision.html) · [`passing_gap_required`](https://furuse.work/ops/drive/traffic/passing_gap_required.html) · [`passing_simulate`](https://furuse.work/ops/drive/traffic/passing_simulate.html) · [`pedestrian_crossing`](https://furuse.work/ops/drive/traffic/pedestrian_crossing.html) · [`pedestrian_mesh`](https://furuse.work/ops/drive/terrain/pedestrian_mesh.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) …(他 5)
+
 ### 数学の絵 ―― 定理が門になる回(別記事)
 
 この展示先の回は、計測の展示館ではなく**数学の絵のシリーズ**に掛かっています。分ける基準は「真値がどこから来るか」です —— 計測の展示は測る対象があり真値は対象の側に、ここの回は対象が無く、真値は描いた絵そのものの定理・恒等式・不変量から出ます。記事は手書きなので、生成器はここを描きません。

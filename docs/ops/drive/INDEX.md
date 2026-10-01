@@ -1,4 +1,4 @@
-# DRIVE operator help — 198 ops in 17 categories
+# DRIVE operator help — 216 ops in 18 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -63,6 +63,10 @@
 ### terrain (20)
 
 [add_mesh_object](terrain/add_mesh_object.md) · [course_distance](terrain/course_distance.md) · [crosswalk_mesh](terrain/crosswalk_mesh.md) · [fbm_gradient](terrain/fbm_gradient.md) · [fbm_height](terrain/fbm_height.md) · [fbm_params](terrain/fbm_params.md) · [material_params](terrain/material_params.md) · [mesh_signed_volume](terrain/mesh_signed_volume.md) · [pedestrian_mesh](terrain/pedestrian_mesh.md) · [perlin2](terrain/perlin2.md) · [radial_periodogram](terrain/radial_periodogram.md) · [scatter_offroad](terrain/scatter_offroad.md) · [spectral_slope](terrain/spectral_slope.md) · [terrain_gradient](terrain/terrain_gradient.md) · [terrain_height](terrain/terrain_height.md) · [terrain_mesh](terrain/terrain_mesh.md) · [terrain_params](terrain/terrain_params.md) · [tree_mesh](terrain/tree_mesh.md) · [world_apply_terrain](terrain/world_apply_terrain.md) · [world_materials](terrain/world_materials.md)
+
+### traffic (18)
+
+[bus_stop_rate](traffic/bus_stop_rate.md) · [driver_style](traffic/driver_style.md) · [idm_accel](traffic/idm_accel.md) · [idm_equilibrium_gap](traffic/idm_equilibrium_gap.md) · [idm_platoon_simulate](traffic/idm_platoon_simulate.md) · [importance_risk_estimate](traffic/importance_risk_estimate.md) · [lateral_wobble](traffic/lateral_wobble.md) · [occlusion_reveal_distance](traffic/occlusion_reveal_distance.md) · [occlusion_safe_speed](traffic/occlusion_safe_speed.md) · [occlusion_visible_intervals](traffic/occlusion_visible_intervals.md) · [ou_estimate](traffic/ou_estimate.md) · [passing_decision](traffic/passing_decision.md) · [passing_gap_required](traffic/passing_gap_required.md) · [passing_simulate](traffic/passing_simulate.md) · [pedestrian_crossing](traffic/pedestrian_crossing.md) · [poisson_events](traffic/poisson_events.md) · [poisson_events_xt](traffic/poisson_events_xt.md) · [social_force_step](traffic/social_force_step.md)
 
 ### ttc (9)
 

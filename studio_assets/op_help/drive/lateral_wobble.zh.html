@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lateral_wobble — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">signal</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lateral_wobble(n: &#x27;int&#x27;, dt: &#x27;float&#x27;, *, theta: &#x27;float&#x27;, sigma: &#x27;float&#x27;, seed: &#x27;Optional[int]&#x27;, x0: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetraffic; drivetraffic.lateral_wobble(n: &#x27;int&#x27;, dt: &#x27;float&#x27;, *, theta: &#x27;float&#x27;, sigma: &#x27;float&#x27;, seed: &#x27;Optional[int]&#x27;, x0: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;lateral_wobble&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Ornstein–Uhlenbeck 過程 dX = −θ X dt + σ dW の厳密離散化(長さ n の列、刻み dt)。</p>
+<p>x_{k+1} = x_k e^{−θ dt} + σ sqrt((1 − e^{−2θ dt}) / (2θ)) ξ_k,   ξ_k ~ N(0, 1) 独立</p>
+<p>遷移分布が厳密なので dt に依らず定常分散 σ²/(2θ)、自己相関 corr(x_k, x_{k+j}) = e^{−θ j dt}(門は長い系列の標本で、</p>
+<p>許容幅は AR(1) の標本誤差から決める)。`<code style="color:#22d3bf">x0</code>` = None なら定常分布 N(0, σ²/(2θ)) から引く(最初から定常)。</p>
+<p>`<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">np.random.default_rng(seed)</code>`(None も可だが非決定的)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: n &lt; 1、dt ≤ 0、θ ≤ 0、σ &lt; 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_traffic">poc_driving_traffic</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_traffic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">signal</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:flight_vacuum">flight_vacuum</a> · <a style="color:#22d3bf" href="opdrive:magnus_lift_coefficient">magnus_lift_coefficient</a> · <a style="color:#22d3bf" href="opdrive:drag_coefficient_sphere">drag_coefficient_sphere</a> · <a style="color:#22d3bf" href="opdrive:restitution_from_apexes">restitution_from_apexes</a> · <a style="color:#22d3bf" href="opdrive:restitution_from_intervals">restitution_from_intervals</a> · <a style="color:#22d3bf" href="opdrive:fit_parabola">fit_parabola</a> · <a style="color:#22d3bf" href="opdrive:flight_fit">flight_fit</a> · <a style="color:#22d3bf" href="opdrive:fit_aero">fit_aero</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">traffic</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:idm_accel">idm_accel</a> · <a style="color:#22d3bf" href="opdrive:idm_equilibrium_gap">idm_equilibrium_gap</a> · <a style="color:#22d3bf" href="opdrive:idm_platoon_simulate">idm_platoon_simulate</a> · <a style="color:#22d3bf" href="opdrive:driver_style">driver_style</a> · <a style="color:#22d3bf" href="opdrive:ou_estimate">ou_estimate</a> · <a style="color:#22d3bf" href="opdrive:social_force_step">social_force_step</a> · <a style="color:#22d3bf" href="opdrive:pedestrian_crossing">pedestrian_crossing</a> · <a style="color:#22d3bf" href="opdrive:occlusion_reveal_distance">occlusion_reveal_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetraffic.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

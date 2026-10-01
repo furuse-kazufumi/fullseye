@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">importance_risk_estimate — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.importance_risk_estimate(simulate_fn: &#x27;Callable&#x27;, base_rate: &#x27;Callable&#x27;, boosted_rate: &#x27;Callable&#x27;, n_runs: &#x27;int&#x27;, seed, *, x_max: &#x27;float&#x27;, boosted_rate_max: &#x27;float&#x27;, n_grid: &#x27;int&#x27; = 20001) -&gt; &#x27;Dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivetraffic; drivetraffic.importance_risk_estimate(simulate_fn: &#x27;Callable&#x27;, base_rate: &#x27;Callable&#x27;, boosted_rate: &#x27;Callable&#x27;, n_runs: &#x27;int&#x27;, seed, *, x_max: &#x27;float&#x27;, boosted_rate_max: &#x27;float&#x27;, n_grid: &#x27;int&#x27; = 20001) -&gt; &#x27;Dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;importance_risk_estimate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>出現率を上げた試行(率 λ&#x27;)で事故を起こしやすくし、尤度比の重みで本来の率 λ の事故確率に戻す。</p>
+<p>1 回の試行 = `<code style="color:#22d3bf">poisson_events(boosted_rate)</code><code style="color:#22d3bf"> で出現位置 x_1..x_N を引き、</code><code style="color:#22d3bf">simulate_fn(events, rng)</code>` が事故なら 1</p>
+<p>(bool か [0, 1] の値)。重み(ポアソン過程の Radon–Nikodym 微分 dP_λ/dP_λ&#x27;):</p>
+<p>w = Π_i λ(x_i)/λ&#x27;(x_i) · exp(−(Λ − Λ&#x27;)),   Λ = ∫λ, Λ&#x27; = ∫λ&#x27;(台形、n_grid 点)</p>
+<p>推定 p̂ = mean(w · Y)、標準誤差 = std(w · Y)/sqrt(n)。`<code style="color:#22d3bf">boosted_rate</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">base_rate</code>` と同じにすれば w ≡ 1 で</p>
+<p>素朴なモンテカルロになる(門ではこれと、事故確率が閉形式で分かる simulate_fn とで比べる)。</p>
+<p>λ &gt; 0 なのに λ&#x27; = 0 の所があると推定が偏る(絶対連続でない)ので格子上で検査して ValueError。</p>
+<p>戻り値 dict: `<code style="color:#22d3bf">estimate</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">std_error</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">per_run_var</code><code style="color:#22d3bf">(w·Y の標本分散)、</code><code style="color:#22d3bf">n_runs</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">Lambda</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">Lambda_boost</code>`,</p>
+<p>`<code style="color:#22d3bf">mean_weight</code><code style="color:#22d3bf">(≈ 1 のはず。重みの健全性)、</code><code style="color:#22d3bf">ess</code><code style="color:#22d3bf">(有効標本数 (Σw)²/Σw²)、</code><code style="color:#22d3bf">hits</code>`(Y &gt; 0 の回数)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_traffic">poc_driving_traffic</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_traffic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">traffic</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:idm_accel">idm_accel</a> · <a style="color:#22d3bf" href="opdrive:idm_equilibrium_gap">idm_equilibrium_gap</a> · <a style="color:#22d3bf" href="opdrive:idm_platoon_simulate">idm_platoon_simulate</a> · <a style="color:#22d3bf" href="opdrive:driver_style">driver_style</a> · <a style="color:#22d3bf" href="opdrive:lateral_wobble">lateral_wobble</a> · <a style="color:#22d3bf" href="opdrive:ou_estimate">ou_estimate</a> · <a style="color:#22d3bf" href="opdrive:social_force_step">social_force_step</a> · <a style="color:#22d3bf" href="opdrive:pedestrian_crossing">pedestrian_crossing</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetraffic.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

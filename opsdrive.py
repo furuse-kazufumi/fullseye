@@ -8,6 +8,7 @@
 車の縦の運動と坂(drivelong: 空走 + 制動の停止距離の閉形式、坂の保持と発進のずり下がり、技能試験の減点)。
 太陽と天気(driveenv: 太陽の位置 = 暦計算室、影・逆光の光幕・霧 Koschmieder・雨・夜の前照灯を物理の単位で描き、見えてから止まれる速さ)。
 終わらない地図(driveinf: 区画の番号と種だけで決まる区画、辺のハッシュで継ぎ目がつながる道、整数格子の起伏、(区画, 区画の中) の座標)。
+動く交通参加者と死角(drivetraffic: IDM の車列と運転の癖、OU の横ふらつき、Social Force の歩行者と横断の意図、路肩駐車の死角から止まれる速さ、対向車とのすれ違いの境目、場所と時刻で変わる飛び出しの率、重要度サンプリングの事故率)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -30,6 +31,7 @@ import drivecourse
 import driveterrain
 import driveenv
 import driveinf
+import drivetraffic
 import drivelong
 import drivettc
 import gsplatnp
@@ -45,7 +47,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -320,6 +322,29 @@ _CATALOG = {
         ("tile_digest", "driveinf", ["table"], "any"),
         ("tile_stream", "driveinf", ["table", "table"], "table"),
         ("global_to_tile", "driveinf", [], "any"),
+    ],
+    # 動く交通参加者と死角: 追従は IDM(Treiber 2000、平衡車間の閉形式)、運転の癖は車ごとの母数と反応の遅れ、横ふらつきは OU 過程の
+    # 厳密な離散化、歩行者は Social Force(Helbing & Molnar 1995)と横断の意図(真値)。死角から止まれる最大速度は停止距離の逆、
+    # すれ違いは「はみ出す区間を抜ける時間」と対向車の到着の比較、飛び出しは非一様ポアソン(thinning)と重要度サンプリング。
+    "traffic": [
+        ("idm_accel", "drivetraffic", ["any"], "any"),
+        ("idm_equilibrium_gap", "drivetraffic", ["any"], "any"),
+        ("idm_platoon_simulate", "drivetraffic", ["any"], "table"),
+        ("driver_style", "drivetraffic", [], "table"),
+        ("lateral_wobble", "drivetraffic", [], "signal"),
+        ("ou_estimate", "drivetraffic", ["signal"], "table"),
+        ("social_force_step", "drivetraffic", ["points", "points", "points"], "any"),
+        ("pedestrian_crossing", "drivetraffic", [], "table"),
+        ("occlusion_reveal_distance", "drivetraffic", ["any"], "scalar"),
+        ("occlusion_visible_intervals", "drivetraffic", ["any"], "any"),
+        ("occlusion_safe_speed", "drivetraffic", ["any"], "any"),
+        ("passing_gap_required", "drivetraffic", [], "table"),
+        ("passing_decision", "drivetraffic", [], "any"),
+        ("passing_simulate", "drivetraffic", [], "table"),
+        ("bus_stop_rate", "drivetraffic", ["any"], "any"),
+        ("poisson_events", "drivetraffic", ["any"], "signal"),
+        ("poisson_events_xt", "drivetraffic", ["any"], "any"),
+        ("importance_risk_estimate", "drivetraffic", ["any"], "table"),
     ],
 }
 

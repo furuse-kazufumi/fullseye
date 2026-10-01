@@ -24,6 +24,8 @@
 ぴったり止まる。車載カメラ(60°、640 × 400)が信号を読めるのは停止線の手前およそ 20 m 以内(それより遠いと灯火の円盤が
 1 画素を切る)—— この距離より速く止まれない速さでは入れない。
 
+教則の場面: S003, S014, S100, S126(docs/drive/kyosoku_scenarios.json、交通の方法に関する教則の再現台帳)
+
 Run: py -3.11 examples/poc_driving_longitudinal.py   (図は FULLSEYE_FIGURE_DIR を設定したときだけ書く。
 FULLSEYE_POC_BUDGET=reduced(CI の既定)でカメラの周期と GIF のコマを減らす)
 """

@@ -27,6 +27,8 @@
 経験式でカメラのレンズの散乱を代用している。影は太陽のシャドウマップ(解像度で縁が決まる)、前照灯の影は無い。雨筋と路面の鏡像のぼけは見た目だけ。
 霧の測定は描画と同じ Koschmieder の世界の上で行うので、実際の霧(一様でない・光源の散乱の光輪)への頑健さは測っていない。
 
+教則の場面: S131, S132, S136, S138(docs/drive/kyosoku_scenarios.json、交通の方法に関する教則の再現台帳)
+
 Run: py -3.11 examples/poc_driving_weather.py   (図は FULLSEYE_FIGURE_DIR を設定したときだけ書く。
 FULLSEYE_POC_BUDGET=reduced(CI の既定)で角度・距離の掃引とカメラの周期を粗くし、GIF のコマを減らす)
 """

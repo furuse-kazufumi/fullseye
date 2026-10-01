@@ -1,0 +1,2701 @@
+{
+ "title": "交通の方法に関する教則 —— 場面の再現台帳",
+ "about": "国家公安委員会告示「交通の方法に関する教則」(令和 6 年 9 月 4 日 告示第 37 号までを反映)から運転者の場面を拾い、すべき行動を要約(本文の転載はしない)し、道路交通法の条文と照合した。status は Fullseye の PoC で再現しているか。★教則は 2026 年の改正(生活道路 30 km/h = 2026-09-01、自転車の右側通過 = 法 18 条 3 項 2026-04-01)を反映していない —— 現行法令を優先する。法令の照合は e-Gov のメンテナンス中に Wayback 保存版(2025-06-01 施行)で行った。",
+ "sources": {
+  "kyosoku": {
+   "title": "交通の方法に関する教則(昭和53年国家公安委員会告示第3号)",
+   "version": "最終改正 令和6年9月4日 国家公安委員会告示第37号(警察庁掲載ファイル名 20241113)",
+   "url": "https://www.npa.go.jp/bureau/traffic/20241113kyousoku.pdf",
+   "index_page": "https://www.npa.go.jp/bureau/traffic/koutsuuannzennjyouhou.html",
+   "retrieved": "2026-10-01"
+  },
+  "road_traffic_act": {
+   "title": "道路交通法(昭和35年法律第105号)",
+   "version": "e-Gov 法令API v2 データ(施行日 2025-06-01 版、current_revision_status=CurrentEnforced 当時)",
+   "url": "https://laws.e-gov.go.jp/api/2/law_data/335AC0000000105",
+   "retrieved_via": "Wayback Machine 2026-02-04 捕捉 http://web.archive.org/web/20260204233407/https://laws.e-gov.go.jp/api/2/law_data/335AC0000000105",
+   "note": "2026-10-01 時点で e-Gov 法令検索・API はメンテナンス中で直接取得不可"
+  },
+  "npa_speed_30": {
+   "title": "警察庁 生活道路における自動車の法定速度が引き下げられます(施行令11条の改正後条文を掲載)",
+   "url": "https://www.npa.go.jp/bureau/traffic/seikatsudouro/seikatsudoro.html"
+  },
+  "npa_bicycle_side": {
+   "title": "警察庁 自動車等が自転車等の右側を通過する場合の通行方法(法18条3項・4項、2026-04-01施行)",
+   "url": "https://www.npa.go.jp/bureau/traffic/bicycle/202603.pdf"
+  }
+ },
+ "legend": {
+  "law_status": {
+   "OK": "法本文で確認",
+   "PART": "義務は確認/数値細目は未確認",
+   "NPA": "警察庁掲載の政令本文で確認",
+   "UNV": "未確認",
+   "NONE": "対応する明文なし(確認範囲)"
+  },
+  "scoreability": {
+   "A": "数値の真値で定量採点可",
+   "B": "事象・幾何の二値判定で採点可",
+   "C": "定性的・採点困難"
+  }
+ },
+ "status_legend": {
+  "reproduced": "すべき行動をシミュレーションで行い、門で採点している",
+  "partial": "要素はあるが行動の門が無い・一部だけ",
+  "pending": "未着手",
+  "not_reproducible": "外界の画像と車の運動の世界に現れない(理由必須)"
+ },
+ "scenarios": [
+  {
+   "id": "S001",
+   "kyosoku_ref": "1-2-1(1),付表1(1)",
+   "category": "信号",
+   "scene": "信号機のある交差点・横断歩道・単路(青)",
+   "action": "青は直進・左折・右折可。ただし右折は対向直進・左折車を妨げない",
+   "law_articles": "7, 37",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S002",
+   "kyosoku_ref": "付表1(1) 黄色の灯火",
+   "category": "信号",
+   "scene": "黄信号に変わった瞬間",
+   "action": "停止位置を越えて進まない。黄に変わった時点で停止位置に近く安全に止まれない場合のみそのまま進行可",
+   "law_articles": "7 (信号の意味は施行令2条=未確認)",
+   "law_status": "UNV",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "停止位置",
+     "meaning": "停止線の直前、無ければ交差点直前(近接横断歩道があればその直前)",
+     "source": "教則 付表1備考"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S003",
+   "kyosoku_ref": "付表1(1) 赤色の灯火",
+   "category": "信号",
+   "scene": "赤信号",
+   "action": "停止位置を越えない。既に交差点内で左折・右折中の車はそのまま進めるが、右折は青方向の車を妨げない",
+   "law_articles": "7 (施行令2条=未確認)",
+   "law_status": "UNV",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_school",
+    "poc_driving_longitudinal"
+   ],
+   "note": "赤で停止線の手前に止まる(閉ループの信号読み + 空走と制動)。右左折中の扱いは無い"
+  },
+  {
+   "id": "S004",
+   "kyosoku_ref": "付表1(1) 青色の灯火の矢印",
+   "category": "信号",
+   "scene": "赤/黄+青矢印",
+   "action": "矢印方向のみ進行可(右矢印は転回も可)",
+   "law_articles": "7 (施行令2条=未確認)",
+   "law_status": "UNV",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S005",
+   "kyosoku_ref": "付表1(1) 黄色の灯火の点滅",
+   "category": "信号",
+   "scene": "黄点滅",
+   "action": "他の交通に注意して進行可(停止義務なし)",
+   "law_articles": "7 (施行令2条=未確認)",
+   "law_status": "UNV",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S006",
+   "kyosoku_ref": "付表1(1) 赤色の灯火の点滅",
+   "category": "信号",
+   "scene": "赤点滅",
+   "action": "停止位置で一時停止してから進行(一時停止標識と同じ扱い)",
+   "law_articles": "7, 43 (施行令2条=未確認)",
+   "law_status": "UNV",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "速度0",
+     "meaning": "停止位置での一時停止(速度0到達)",
+     "source": "教則 付表1"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S007",
+   "kyosoku_ref": "1-2-1(2)",
+   "category": "信号",
+   "scene": "時差式・全赤信号のある交差点",
+   "action": "横方向の信号ではなく自分の前方の信号を見る",
+   "law_articles": "7",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S008",
+   "kyosoku_ref": "1-2-1(4)",
+   "category": "信号",
+   "scene": "左折可の標示板(白地に青の左矢印)",
+   "action": "前方が赤・黄でも左折可。横断中の歩行者・自転車は妨げない",
+   "law_articles": "7 (標示板の意味は府令=未確認)",
+   "law_status": "PART",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S009",
+   "kyosoku_ref": "1-2-2,3 付表3",
+   "category": "標識・標示",
+   "scene": "規制標識・規制標示のある区間",
+   "action": "通行止め・速度・追越し禁止等の規制に従う",
+   "law_articles": "8 ほか(標識の意味は標識令=未確認)",
+   "law_status": "PART",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S010",
+   "kyosoku_ref": "1-3-1,2 付表1(3)",
+   "category": "警察官",
+   "scene": "警察官・交通巡視員の手信号・灯火信号",
+   "action": "信号機より手信号を優先して従う。腕水平=正面平行方向は青・交差方向は赤、腕垂直=黄相当",
+   "law_articles": "6, 7 (手信号の意味は施行令=未確認)",
+   "law_status": "PART",
+   "scoreability": "B",
+   "numbers": [
+    {
+     "value": "1 m",
+     "meaning": "交差点・横断歩道・踏切以外での手信号の停止位置=警察官の1m手前",
+     "source": "教則 付表1(3)備考"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S011",
+   "kyosoku_ref": "4-1-4",
+   "category": "運転前",
+   "scene": "飲酒・薬物の影響がある状態",
+   "action": "運転しない(前夜の飲酒も残る)",
+   "law_articles": "65",
+   "law_status": "OK",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "not_reproducible",
+   "reproduced_by": [],
+   "note": "運転者の身体の状態(飲酒・薬物)で、外界の画像と車の運動の世界に現れない"
+  },
+  {
+   "id": "S012",
+   "kyosoku_ref": "4-1-2",
+   "category": "運転前",
+   "scene": "長時間運転",
+   "action": "2時間に1回は休息",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "2 h",
+     "meaning": "休息の目安間隔",
+     "source": "教則 4-1-2"
+    }
+   ],
+   "status": "not_reproducible",
+   "reproduced_by": [],
+   "note": "運転者の休息の時間割で、外界の画像と車の運動の世界に現れない"
+  },
+  {
+   "id": "S013",
+   "kyosoku_ref": "4-5-1(3)",
+   "category": "視覚",
+   "scene": "トンネル出入口の明暗変化",
+   "action": "トンネル手前・出口で速度を落とす",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S014",
+   "kyosoku_ref": "4-5-2(2)(4)",
+   "category": "物理",
+   "scene": "カーブ・速度と停止距離",
+   "action": "制動距離・遠心力・衝撃力は速度の2乗に比例。カーブ手前の直線で減速",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "v^2比例",
+     "meaning": "速度2倍で制動距離等は4倍",
+     "source": "教則 4-5-2(4)"
+    },
+    {
+     "value": "60 km/h≒14 m落下",
+     "meaning": "衝突時衝撃の目安",
+     "source": "教則 4-5-2(3)"
+    }
+   ],
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_longitudinal"
+   ],
+   "note": "停止距離 = 空走 + 制動(速度の 2 乗)を閉形式で採点"
+  },
+  {
+   "id": "S015",
+   "kyosoku_ref": "5-1-1",
+   "category": "発進",
+   "scene": "乗降・ドア開放",
+   "action": "後方の車両を確認してからドアを少し開けて止め、安全確認後に降りる",
+   "law_articles": "71(4の3)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S016",
+   "kyosoku_ref": "5-1-2(4)",
+   "category": "発進",
+   "scene": "走行中の携帯電話・画面注視",
+   "action": "走行中は使用・注視しない(自動運行装置の適切使用時を除く)",
+   "law_articles": "71(5の5)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "not_reproducible",
+   "reproduced_by": [],
+   "note": "車内の機器の操作で、外界の画像と車の運動の世界に現れない"
+  },
+  {
+   "id": "S017",
+   "kyosoku_ref": "5-1-3,4",
+   "category": "発進",
+   "scene": "シートベルト・チャイルドシート",
+   "action": "運転者・同乗者全員着用、幼児はチャイルドシート",
+   "law_articles": "71の3",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "not_reproducible",
+   "reproduced_by": [],
+   "note": "車内の着用(シートベルト)で、外界の画像と車の運動の世界に現れない"
+  },
+  {
+   "id": "S018",
+   "kyosoku_ref": "5-1-5",
+   "category": "発進",
+   "scene": "発進時",
+   "action": "車の周囲・車の下を確認、合図をし、ミラーで前後左右を再確認して発進",
+   "law_articles": "なし(合図は53)",
+   "law_status": "NONE",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S019",
+   "kyosoku_ref": "5-1-6,7",
+   "category": "発進",
+   "scene": "大型車の路端発進・死角",
+   "action": "車体前後のはみ出し・死角に注意",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S020",
+   "kyosoku_ref": "5-2-1",
+   "category": "通行区分",
+   "scene": "中央線のある/ない道路の通常走行",
+   "action": "道路の中央(中央線)から左を通行。はみ出しは一方通行・幅不足・工事・6m未満での追越し等の例外のみ",
+   "law_articles": "17(4)(5)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "6 m",
+     "meaning": "左側部分の幅員6m未満なら見通しよく対向を妨げない時に限りはみ出し追越し可",
+     "source": "法17条5項4号・教則5-2-1(3)"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S021",
+   "kyosoku_ref": "5-2-2(1)",
+   "category": "通行区分",
+   "scene": "車両通行帯のない道路",
+   "action": "道路の左に寄って通行",
+   "law_articles": "18(1)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S022",
+   "kyosoku_ref": "5-2-2(2)",
+   "category": "通行区分",
+   "scene": "片側2車線/3車線以上",
+   "action": "2車線は左側を通行。3車線以上は最右車線を追越し用に空け、遅い車ほど左",
+   "law_articles": "20(1)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S023",
+   "kyosoku_ref": "5-2-2(3)",
+   "category": "通行区分",
+   "scene": "最右車線で追越し後",
+   "action": "追越し後は速やかに最右車線以外へ戻る",
+   "law_articles": "20(1) (車線の選び方は施行令=未確認)",
+   "law_status": "PART",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S024",
+   "kyosoku_ref": "5-2-3",
+   "category": "通行区分",
+   "scene": "車線内走行",
+   "action": "車線をまたがない・みだりに車線変更しない",
+   "law_articles": "20, 26の2",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S025",
+   "kyosoku_ref": "5-2-4",
+   "category": "通行区分",
+   "scene": "高さ制限のある場所",
+   "action": "車両(積荷含む)の高さが制限以下か確認",
+   "law_articles": "なし(標識)",
+   "law_status": "NONE",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S026",
+   "kyosoku_ref": "5-2-5",
+   "category": "緊急自動車",
+   "scene": "緊急自動車の接近(交差点付近)",
+   "action": "交差点を避け、道路の左側に寄って一時停止",
+   "law_articles": "40(1)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "速度0",
+     "meaning": "交差点外・左寄せでの一時停止",
+     "source": "法40条1項"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S027",
+   "kyosoku_ref": "5-2-5",
+   "category": "緊急自動車",
+   "scene": "緊急自動車の接近(交差点付近以外)",
+   "action": "道路の左側に寄って進路を譲る(一時停止までは不要)",
+   "law_articles": "40(2)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S028",
+   "kyosoku_ref": "5-2-5",
+   "category": "緊急自動車",
+   "scene": "一方通行路で緊急自動車接近",
+   "action": "左に寄るとかえって妨げる場合は右側に寄る",
+   "law_articles": "40(1)括弧書",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S029",
+   "kyosoku_ref": "5-2-6(1)",
+   "category": "バス",
+   "scene": "停留所の路線バスが発進の合図",
+   "action": "後方車は進路変更を妨げない(急ブレーキ・急ハンドルが必要な場合を除く)",
+   "law_articles": "31の2",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_traffic"
+   ],
+   "note": "停車中のバスの前後で飛び出しが多い場所。発車まで待つ。発進の合図を妨げない門は無い"
+  },
+  {
+   "id": "S030",
+   "kyosoku_ref": "5-2-6(2)",
+   "category": "バス",
+   "scene": "路線バス等専用通行帯",
+   "action": "指定車以外は通行しない(右左折・工事等を除く)",
+   "law_articles": "20(2) (専用通行帯の指定は標識)",
+   "law_status": "PART",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S031",
+   "kyosoku_ref": "5-2-6(3)",
+   "category": "バス",
+   "scene": "路線バス等優先通行帯",
+   "action": "バスが近づいたら速やかに出る。混雑で出られない恐れがあれば最初から入らない",
+   "law_articles": "20の2",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S032",
+   "kyosoku_ref": "5-2-7(1)-(3)",
+   "category": "通行禁止",
+   "scene": "通行止め・歩道・路側帯・安全地帯・立入禁止部分",
+   "action": "進入しない。沿道出入りで歩道を横切るときは直前で一時停止",
+   "law_articles": "17(1)(2)(6)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S033",
+   "kyosoku_ref": "5-2-7(4)",
+   "category": "通行禁止",
+   "scene": "歩道・路側帯のない道路の端",
+   "action": "路肩(路端から0.5m)にはみ出さない",
+   "law_articles": "施行令・府令(未確認)",
+   "law_status": "UNV",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "0.5 m",
+     "meaning": "路肩の幅(路端から)",
+     "source": "教則 5-2-7(4)"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S034",
+   "kyosoku_ref": "5-2-7(5)(6)",
+   "category": "通行禁止",
+   "scene": "軌道敷・路面電車",
+   "action": "軌道敷内を走らない。後方から電車が来たら速やかに出るか十分な距離を保つ",
+   "law_articles": "21",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S035",
+   "kyosoku_ref": "5-3-1(1)",
+   "category": "歩行者",
+   "scene": "歩行者の側方を通過",
+   "action": "安全な間隔を空けるか徐行",
+   "law_articles": "18(2)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "数値なし",
+     "meaning": "安全な間隔の数値は法・教則に規定なし",
+     "source": "法18条2項"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S036",
+   "kyosoku_ref": "5-3-1(2)",
+   "category": "歩行者",
+   "scene": "歩行者のいる安全地帯の側方",
+   "action": "徐行",
+   "law_articles": "71(3)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S037",
+   "kyosoku_ref": "5-3-1(3)",
+   "category": "路面電車",
+   "scene": "停留所で停車中の路面電車",
+   "action": "後方で停止し乗降・横断が終わるまで待つ。乗降者なしで1.5m以上空けられる時か安全地帯がある時は徐行で通過可",
+   "law_articles": "31",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "1.5 m",
+     "meaning": "路面電車との側方間隔",
+     "source": "法31条"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S038",
+   "kyosoku_ref": "5-3-1(4)",
+   "category": "歩行者",
+   "scene": "ぬかるみ・水たまり",
+   "action": "泥はねしないよう徐行等",
+   "law_articles": "71(1)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S039",
+   "kyosoku_ref": "5-3-1(5)",
+   "category": "歩行者",
+   "scene": "停車車両のそばを通過",
+   "action": "ドア開放・陰からの飛び出しに注意",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_traffic"
+   ],
+   "note": "路肩駐車の陰からの飛び出し: 死角の縁から止まれる最大速度まで落とす"
+  },
+  {
+   "id": "S040",
+   "kyosoku_ref": "5-3-2(1)",
+   "category": "横断歩道",
+   "scene": "横断歩道のない交差点・その付近を歩行者が横断中",
+   "action": "歩行者の通行を妨げない",
+   "law_articles": "38の2",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S041",
+   "kyosoku_ref": "5-3-2(2)前段",
+   "category": "横断歩道",
+   "scene": "横断歩道・自転車横断帯に接近(横断者がいないことが明らかでない)",
+   "action": "横断歩道の手前(停止線があればその手前)で停止できる速度に落として進む",
+   "law_articles": "38(1)前段",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "停止可能速度",
+     "meaning": "停止線までの距離で停止できる速度(v^2/2a≦残距離)。数値は規定なし",
+     "source": "法38条1項"
+    }
+   ],
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_traffic"
+   ],
+   "note": "横断歩道の手前で止まれる速度に落とす(意図の判定の場面のみ)"
+  },
+  {
+   "id": "S042",
+   "kyosoku_ref": "5-3-2(2)後段",
+   "category": "横断歩道",
+   "scene": "横断歩道を歩行者・自転車が横断中/横断しようとしている",
+   "action": "横断歩道の直前(停止線の直前)で一時停止し、通行を妨げない",
+   "law_articles": "38(1)後段",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "速度0",
+     "meaning": "直前で一時停止",
+     "source": "法38条1項"
+    }
+   ],
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_traffic"
+   ],
+   "note": "横断歩道の手前で待つ人の意図を読み、停止線の手前で一時停止"
+  },
+  {
+   "id": "S043",
+   "kyosoku_ref": "5-3-2(3)",
+   "category": "横断歩道",
+   "scene": "横断歩道の手前に停止車両がある",
+   "action": "その側方を通って前に出る前に一時停止",
+   "law_articles": "38(2)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "速度0",
+     "meaning": "前に出る前の一時停止",
+     "source": "法38条2項"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S044",
+   "kyosoku_ref": "5-3-2(4)",
+   "category": "横断歩道",
+   "scene": "横断歩道・自転車横断帯の手前30m以内",
+   "action": "他の車両の追越し・追抜きをしない(特定小型原付・軽車両の追抜きは除外)",
+   "law_articles": "38(3), 30(3)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "30 m",
+     "meaning": "横断歩道手前の追抜き・追越し禁止区間",
+     "source": "法38条3項・30条3号"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S045",
+   "kyosoku_ref": "5-3-2(5)",
+   "category": "横断歩道",
+   "scene": "横断歩道のない場所の横断者",
+   "action": "横断があり得ることに注意",
+   "law_articles": "なし(70)",
+   "law_status": "NONE",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S046",
+   "kyosoku_ref": "5-3-3",
+   "category": "交通弱者",
+   "scene": "車いす・白/黄のつえ・盲導犬の歩行者",
+   "action": "一時停止か徐行して安全に通れるようにする",
+   "law_articles": "71(2)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S047",
+   "kyosoku_ref": "5-3-4(1)",
+   "category": "交通弱者",
+   "scene": "付き添いのない子供が歩行",
+   "action": "一時停止か徐行",
+   "law_articles": "71(2)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_traffic"
+   ],
+   "note": "子どもの飛び出し(死角)に備える。付き添いの有無の判定は無い"
+  },
+  {
+   "id": "S048",
+   "kyosoku_ref": "5-3-4(2)",
+   "category": "交通弱者",
+   "scene": "停車中の通学通園バスの側方",
+   "action": "徐行して安全を確認",
+   "law_articles": "71(2の3)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S049",
+   "kyosoku_ref": "5-3-4(3)",
+   "category": "交通弱者",
+   "scene": "学校・幼稚園付近、通学路標識",
+   "action": "子供の飛び出しに特に注意",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S050",
+   "kyosoku_ref": "5-3-5",
+   "category": "交通弱者",
+   "scene": "通行に支障のある高齢歩行者",
+   "action": "一時停止か徐行",
+   "law_articles": "71(2の2)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S051",
+   "kyosoku_ref": "5-3-6(1)",
+   "category": "歩行者",
+   "scene": "歩行者用道路(許可車のみ)",
+   "action": "歩行者に注意して徐行",
+   "law_articles": "9",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S052",
+   "kyosoku_ref": "5-3-6(2),5-3-7(3)",
+   "category": "歩行者",
+   "scene": "沿道出入りで歩道・路側帯を横切る",
+   "action": "直前で一時停止し歩行者・自転車を妨げない",
+   "law_articles": "17(2)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "速度0",
+     "meaning": "歩道に入る直前の一時停止",
+     "source": "法17条2項"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S053",
+   "kyosoku_ref": "5-3-7(2)",
+   "category": "自転車",
+   "scene": "自転車・特定小型原付の側方を通過(追越し等)",
+   "action": "ふらつきを予想し安全な間隔を空けるか徐行",
+   "law_articles": "18(2)は歩行者のみ。自転車は2026-04施行の18条3項(未確認)",
+   "law_status": "UNV",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "1 m程度",
+     "meaning": "自転車右側通過時の間隔の目安(法定値ではない)",
+     "source": "警察庁 202603.pdf"
+    },
+    {
+     "value": "20-30 km/h程度",
+     "meaning": "1m確保できない場合の速度の目安",
+     "source": "警察庁 202603.pdf"
+    }
+   ],
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_traffic"
+   ],
+   "note": "ふらつく自転車の側方を、決めた間隔を下回らずに追い越す(間隔は PoC が決めた値で法の数値ではない)"
+  },
+  {
+   "id": "S054",
+   "kyosoku_ref": "5-3-7(4)",
+   "category": "自転車",
+   "scene": "交差点での自転車との交錯・左折巻き込み",
+   "action": "交差道路の自転車、左側の自転車の巻き込みに注意し、相手が自車を認識しているか確認",
+   "law_articles": "36(4)ほか",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S055",
+   "kyosoku_ref": "5-3-8(1)",
+   "category": "初心者等",
+   "scene": "初心者・高齢者・聴覚障害者・身体障害者マーク車、仮免車",
+   "action": "危険回避以外で幅寄せ・割込みをしない",
+   "law_articles": "71(5の4)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [
+    {
+     "value": "1年",
+     "meaning": "初心者マーク対象=免許1年未満",
+     "source": "教則 5-3-8"
+    },
+    {
+     "value": "70歳",
+     "meaning": "高齢者マーク対象",
+     "source": "教則 5-3-8"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S056",
+   "kyosoku_ref": "5-3-9,10",
+   "category": "迷惑行為",
+   "scene": "集団暴走・騒音運転",
+   "action": "ジグザグ運転・急発進・空ぶかしをしない",
+   "law_articles": "68, 71(5の3)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S057",
+   "kyosoku_ref": "5-4-1(1)",
+   "category": "速度",
+   "scene": "最高速度の指定がある道路",
+   "action": "指定速度を超えない",
+   "law_articles": "22(1)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S058",
+   "kyosoku_ref": "5-4-1(1)",
+   "category": "速度",
+   "scene": "最高速度の指定がない一般道路",
+   "action": "教則(R6版)は60km/hと記載。2026-09-01以降は中央線・車両通行帯の無い道路は30km/h",
+   "law_articles": "22(1), 施行令11条",
+   "law_status": "NPA",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "60 km/h",
+     "meaning": "中央線・車両通行帯あり等の一般道路の法定速度",
+     "source": "施行令11条1号(警察庁ページ引用)"
+    },
+    {
+     "value": "30 km/h",
+     "meaning": "上記以外(生活道路)の法定速度、2026-09-01施行",
+     "source": "施行令11条2号(警察庁ページ引用)"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S059",
+   "kyosoku_ref": "5-4-1(2)",
+   "category": "速度",
+   "scene": "一般原動機付自転車",
+   "action": "30km/hを超えない",
+   "law_articles": "22(1), 施行令11条",
+   "law_status": "NPA",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "30 km/h",
+     "meaning": "原付の法定速度",
+     "source": "施行令11条"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S060",
+   "kyosoku_ref": "5-4-1(3)",
+   "category": "速度",
+   "scene": "天候・視界・交通状況",
+   "action": "制限内でも状況に応じた安全な速度",
+   "law_articles": "70",
+   "law_status": "OK",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S061",
+   "kyosoku_ref": "5-4-2",
+   "category": "車間距離",
+   "scene": "前車に追従",
+   "action": "前車の急停止でも追突しない車間を保つ(停止距離=空走+制動)",
+   "law_articles": "26",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "約2倍",
+     "meaning": "濡れた路面・摩耗タイヤの停止距離",
+     "source": "教則 5-4-2(3)"
+    }
+   ],
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_ttc_rss",
+    "poc_driving_traffic"
+   ],
+   "note": "RSS の安全距離 / IDM 車列の追突"
+  },
+  {
+   "id": "S062",
+   "kyosoku_ref": "5-4-3",
+   "category": "ブレーキ",
+   "scene": "減速・停止",
+   "action": "急ブレーキは危険回避時のみ。ABS車は強く踏み続ける",
+   "law_articles": "24",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S063",
+   "kyosoku_ref": "5-4-4(1)",
+   "category": "徐行",
+   "scene": "「徐行」標識の区間",
+   "action": "徐行(=直ちに停止できる速度)",
+   "law_articles": "42, 2(1)(20)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "数値なし",
+     "meaning": "徐行の法的定義は『直ちに停止できる速度』で数値なし",
+     "source": "法2条1項20号"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S064",
+   "kyosoku_ref": "5-4-4(2)",
+   "category": "徐行",
+   "scene": "見通しのきかない交差点(信号なし・優先道路でない)",
+   "action": "徐行",
+   "law_articles": "42(1)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S065",
+   "kyosoku_ref": "5-4-4(3)(4)",
+   "category": "徐行",
+   "scene": "曲がり角付近・上り坂の頂上付近・急な下り坂",
+   "action": "徐行",
+   "law_articles": "42(2)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S066",
+   "kyosoku_ref": "5-5-1(1)",
+   "category": "合図",
+   "scene": "左折・右折・転回",
+   "action": "交差点(地点)の30m手前で方向指示器",
+   "law_articles": "53 (時期・距離は施行令21条=未確認)",
+   "law_status": "PART",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "30 m",
+     "meaning": "右左折・転回の合図開始位置",
+     "source": "教則 5-5-1表"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S067",
+   "kyosoku_ref": "5-5-1(1)",
+   "category": "合図",
+   "scene": "同一方向での進路変更(車線変更)",
+   "action": "変える約3秒前に合図、事前にミラーで安全確認",
+   "law_articles": "53 (時期・距離は施行令21条=未確認)",
+   "law_status": "PART",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "3 s",
+     "meaning": "進路変更の合図開始タイミング",
+     "source": "教則 5-5-1表"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S068",
+   "kyosoku_ref": "5-5-1(1)",
+   "category": "合図",
+   "scene": "徐行・停止・後退",
+   "action": "ブレーキ灯・後退灯を点ける",
+   "law_articles": "53",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S069",
+   "kyosoku_ref": "5-5-1(2)",
+   "category": "環状交差点",
+   "scene": "環状交差点から出る",
+   "action": "出口の1つ手前の出口側方を通過したとき左ウインカー",
+   "law_articles": "53(2), 35の2 (時期は施行令=未確認)",
+   "law_status": "PART",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S070",
+   "kyosoku_ref": "5-5-1(3)",
+   "category": "合図",
+   "scene": "合図の終了",
+   "action": "行為が終わったら速やかに合図をやめる。不要な合図をしない",
+   "law_articles": "53",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S071",
+   "kyosoku_ref": "5-5-1(5)",
+   "category": "警音器",
+   "scene": "警笛鳴らせ標識・警笛区間の見通し不良箇所",
+   "action": "鳴らす。それ以外は危険回避時のみ",
+   "law_articles": "54",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S072",
+   "kyosoku_ref": "5-5-2(1)",
+   "category": "進路変更",
+   "scene": "車線変更",
+   "action": "後続車が急ブレーキ・急ハンドルになる場合は変更しない",
+   "law_articles": "26の2(1)(2)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "TTC等",
+     "meaning": "後続車に要求される減速度で判定可(閾値の法定値なし)",
+     "source": "法26条の2第2項"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S073",
+   "kyosoku_ref": "5-5-2(2)",
+   "category": "進路変更",
+   "scene": "黄色の車線境界線",
+   "action": "黄線を越えて進路変更しない",
+   "law_articles": "26の2(3)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S074",
+   "kyosoku_ref": "5-5-3(1)(2)",
+   "category": "横断・転回",
+   "scene": "横断・転回・後退",
+   "action": "他の交通を妨げる恐れがあれば行わない。禁止標識の場所では行わない",
+   "law_articles": "25の2",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S075",
+   "kyosoku_ref": "5-5-3(3)",
+   "category": "道路外へ",
+   "scene": "道路外の施設へ左折/右折",
+   "action": "あらかじめ左端/中央に寄って徐行",
+   "law_articles": "25",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S076",
+   "kyosoku_ref": "5-5-3(4)",
+   "category": "道路外へ",
+   "scene": "前車が道路外に出るため寄せる合図",
+   "action": "進路変更を妨げない",
+   "law_articles": "25(3)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S077",
+   "kyosoku_ref": "5-6-1(2)ア",
+   "category": "追越し",
+   "scene": "前車が他の自動車を追越し中(二重追越し)",
+   "action": "追越しをしない",
+   "law_articles": "29",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S078",
+   "kyosoku_ref": "5-6-1(2)イ",
+   "category": "追越し",
+   "scene": "前車が右折等で右へ進路変更中",
+   "action": "追越しをしない",
+   "law_articles": "該当明文は未特定(29条は二重追越しのみ)",
+   "law_status": "UNV",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S079",
+   "kyosoku_ref": "5-6-1(2)ウ",
+   "category": "追越し",
+   "scene": "右側にはみ出す追越しで対向車を妨げる/戻れない",
+   "action": "追越しをしない",
+   "law_articles": "28(4)(一般的注意義務のみ、個別明文は未特定)",
+   "law_status": "UNV",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S080",
+   "kyosoku_ref": "5-6-1(2)エ",
+   "category": "追越し",
+   "scene": "後続車が自車を追越そうとしている",
+   "action": "追越しをしない",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S081",
+   "kyosoku_ref": "5-6-1(3)",
+   "category": "追越し禁止場所",
+   "scene": "追越し禁止標識、曲がり角付近、上り坂頂上付近、急な下り坂、トンネル(車線なし)、交差点・踏切・横断歩道・自転車横断帯とその手前30m",
+   "action": "自動車・一般原付を追い越すための進路変更・側方通過をしない(優先道路の交差点は除外)",
+   "law_articles": "30",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "30 m",
+     "meaning": "交差点・踏切・横断歩道・自転車横断帯の手前の追越し禁止区間",
+     "source": "法30条3号"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S082",
+   "kyosoku_ref": "5-6-1(4)",
+   "category": "追越し",
+   "scene": "はみ出し追越し禁止(黄色中央線等)",
+   "action": "右側部分にはみ出して追越ししない",
+   "law_articles": "17(5)(4号括弧書)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S083",
+   "kyosoku_ref": "5-6-2(1)",
+   "category": "追越し",
+   "scene": "追越しの側",
+   "action": "右側から。右折のため中央に寄った車と路面電車は左側から",
+   "law_articles": "28(1)(2)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S084",
+   "kyosoku_ref": "5-6-2(2)",
+   "category": "追越し",
+   "scene": "追越し中",
+   "action": "追い越す車と安全な間隔を保つ",
+   "law_articles": "28(4)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S085",
+   "kyosoku_ref": "5-6-2(4)",
+   "category": "追越され",
+   "scene": "後方から追い越される",
+   "action": "追越し完了まで加速しない。余地がなければ左に寄って譲る",
+   "law_articles": "27",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "加速度≦0",
+     "meaning": "被追越し中の速度増加禁止",
+     "source": "法27条1項"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S086",
+   "kyosoku_ref": "5-6-3",
+   "category": "追越し",
+   "scene": "追越しの手順",
+   "action": "禁止場所でないか確認→前方・右後方確認→右合図→約3秒後に加速しつつ緩やかに右へ→左合図→ルームミラーで見える距離まで進み緩やかに戻る",
+   "law_articles": "28, 53 (3秒は教則のみ)",
+   "law_status": "PART",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "3 s",
+     "meaning": "右合図から進路変更開始まで",
+     "source": "教則 5-6-3(4)"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S087",
+   "kyosoku_ref": "5-6-4",
+   "category": "割込み",
+   "scene": "交差点・踏切等で停止・徐行中の前車",
+   "action": "割り込まない、前を横切らない。並進車への幅寄せをしない",
+   "law_articles": "32",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S088",
+   "kyosoku_ref": "5-6-5(1)",
+   "category": "行き違い",
+   "scene": "対向車とのすれ違い",
+   "action": "安全な間隔を保つ",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_traffic"
+   ],
+   "note": "対向車とのすれ違いの最小の時間差(PET)を採点。横の間隔は無い"
+  },
+  {
+   "id": "S089",
+   "kyosoku_ref": "5-6-5(2)",
+   "category": "行き違い",
+   "scene": "自車の進路前方に障害物(駐車車両等)",
+   "action": "障害物のある側(自車側)が手前で一時停止か減速して対向車に譲る",
+   "law_articles": "該当明文なし(17(5)3号は右側はみ出し可の規定)",
+   "law_status": "NONE",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_traffic"
+   ],
+   "note": "障害物(路肩駐車)のある側が手前で待ち、対向車に譲る(境目の距離を閉形式と照合)"
+  },
+  {
+   "id": "S090",
+   "kyosoku_ref": "5-7-1(1)",
+   "category": "交差点",
+   "scene": "交差点への進入・通行",
+   "action": "右折車・歩行者に注意し安全な速度と方法で。右折時は対向直進二輪に特に注意",
+   "law_articles": "36(4)",
+   "law_status": "OK",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S091",
+   "kyosoku_ref": "5-7-1(3)",
+   "category": "交差点",
+   "scene": "右左折時の内輪差",
+   "action": "左後方の歩行者・自転車を巻き込まない",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S092",
+   "kyosoku_ref": "5-7-2(1)",
+   "category": "交差点",
+   "scene": "左折",
+   "action": "あらかじめ左端に寄り、交差点の側端に沿って徐行",
+   "law_articles": "34(1)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S093",
+   "kyosoku_ref": "5-7-2(2)(3)",
+   "category": "交差点",
+   "scene": "右折(一方通行路からを含む)",
+   "action": "あらかじめ中央(一方通行は右端)に寄り、交差点中心のすぐ内側を徐行",
+   "law_articles": "34(2)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S094",
+   "kyosoku_ref": "5-7-2(5)",
+   "category": "交差点",
+   "scene": "右折時に対向直進・左折車がある",
+   "action": "先に交差点に入っていても進行を妨げない",
+   "law_articles": "37",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S095",
+   "kyosoku_ref": "5-7-2(6)(7)",
+   "category": "交差点",
+   "scene": "進行方向別通行区分・指定方向外進行禁止",
+   "action": "指定区分・指定方向に従う",
+   "law_articles": "35",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S096",
+   "kyosoku_ref": "5-7-2(8)",
+   "category": "交差点",
+   "scene": "前車が右左折のため進路変更の合図",
+   "action": "進路変更を妨げない",
+   "law_articles": "34(6)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S097",
+   "kyosoku_ref": "5-7-2(9)",
+   "category": "交差点",
+   "scene": "前方が混雑し交差点内・横断歩道・踏切・停止禁止部分で止まりそう",
+   "action": "青でも入らない",
+   "law_articles": "50",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S098",
+   "kyosoku_ref": "5-7-3(1)",
+   "category": "信号なし交差点",
+   "scene": "交差道路が優先道路・明らかに広い",
+   "action": "徐行し、交差道路の車を妨げない",
+   "law_articles": "36(2)(3)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S099",
+   "kyosoku_ref": "5-7-3(2)",
+   "category": "信号なし交差点",
+   "scene": "同程度の幅の道路の交差点",
+   "action": "左方から来る車・路面電車を妨げない(左方優先)",
+   "law_articles": "36(1)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S100",
+   "kyosoku_ref": "5-7-3(3)",
+   "category": "信号なし交差点",
+   "scene": "一時停止標識",
+   "action": "停止線直前(無ければ交差点直前)で一時停止し、交差道路の車を妨げない",
+   "law_articles": "43",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "速度0",
+     "meaning": "停止線直前での一時停止",
+     "source": "法43条"
+    }
+   ],
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_longitudinal"
+   ],
+   "note": "一時停止の停止線の手前に止まる位置を採点(技能試験の停止位置不適)"
+  },
+  {
+   "id": "S101",
+   "kyosoku_ref": "5-7-3(4)",
+   "category": "信号なし交差点",
+   "scene": "黄点滅",
+   "action": "他の交通に注意して進行",
+   "law_articles": "7(施行令2条=未確認)",
+   "law_status": "UNV",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S102",
+   "kyosoku_ref": "5-7-4",
+   "category": "環状交差点",
+   "scene": "環状交差点への進入・通行",
+   "action": "左端に寄り側端に沿って徐行。進入時は徐行し環道内の車を妨げない",
+   "law_articles": "35の2, 37の2",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S103",
+   "kyosoku_ref": "5-8-1",
+   "category": "駐停車",
+   "scene": "駐車と停車の区別",
+   "action": "人の乗降と5分以内の荷物積卸しは駐車にならない(停車)",
+   "law_articles": "2(1)(18)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "5 min",
+     "meaning": "荷物の積卸しが停車扱いとなる上限",
+     "source": "法2条1項18号"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S104",
+   "kyosoku_ref": "5-8-2(2)ア-エ",
+   "category": "駐停車禁止",
+   "scene": "駐停車禁止標識・軌道敷・坂の頂上付近・急な坂・トンネル",
+   "action": "駐車も停車もしない",
+   "law_articles": "44(1)1号",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S105",
+   "kyosoku_ref": "5-8-2(2)オ,カ",
+   "category": "駐停車禁止",
+   "scene": "交差点・曲がり角の付近",
+   "action": "交差点内とその側端から5m以内、曲がり角から5m以内で駐停車しない",
+   "law_articles": "44(1)1,2号",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "5 m",
+     "meaning": "交差点側端・曲がり角からの駐停車禁止距離",
+     "source": "法44条1項2号"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S106",
+   "kyosoku_ref": "5-8-2(2)キ",
+   "category": "駐停車禁止",
+   "scene": "横断歩道・自転車横断帯付近",
+   "action": "その上と前後の側端から5m以内で駐停車しない",
+   "law_articles": "44(1)1,3号",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "5 m",
+     "meaning": "横断歩道等の前後の駐停車禁止距離",
+     "source": "法44条1項3号"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S107",
+   "kyosoku_ref": "5-8-2(2)ク",
+   "category": "駐停車禁止",
+   "scene": "踏切付近",
+   "action": "踏切とその前後の側端から10m以内で駐停車しない",
+   "law_articles": "44(1)1,6号",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "10 m",
+     "meaning": "踏切前後の駐停車禁止距離",
+     "source": "法44条1項6号"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S108",
+   "kyosoku_ref": "5-8-2(2)ケ",
+   "category": "駐停車禁止",
+   "scene": "安全地帯付近",
+   "action": "安全地帯の左側とその前後10m以内で駐停車しない",
+   "law_articles": "44(1)4号",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "10 m",
+     "meaning": "安全地帯前後",
+     "source": "法44条1項4号"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S109",
+   "kyosoku_ref": "5-8-2(2)コ",
+   "category": "駐停車禁止",
+   "scene": "バス・路面電車の停留所付近",
+   "action": "標示板(柱)から10m以内で駐停車しない(運行時間中)",
+   "law_articles": "44(1)5号",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "10 m",
+     "meaning": "停留所標示板からの距離",
+     "source": "法44条1項5号"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S110",
+   "kyosoku_ref": "5-8-2(3)",
+   "category": "駐車禁止",
+   "scene": "駐車禁止場所",
+   "action": "駐車場等の出入口3m、工事区域5m、消防用機械器具置場等5m、消火栓等5m、火災報知機1m以内で駐車しない",
+   "law_articles": "45(1)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "3 m",
+     "meaning": "自動車用出入口",
+     "source": "法45条1項1号"
+    },
+    {
+     "value": "5 m",
+     "meaning": "道路工事区域の側端",
+     "source": "法45条1項2号"
+    },
+    {
+     "value": "5 m",
+     "meaning": "消防用機械器具置場・防火水槽",
+     "source": "法45条1項3号"
+    },
+    {
+     "value": "5 m",
+     "meaning": "消火栓・指定消防水利標識",
+     "source": "法45条1項4号"
+    },
+    {
+     "value": "1 m",
+     "meaning": "火災報知機",
+     "source": "法45条1項5号"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S111",
+   "kyosoku_ref": "5-8-2(4)",
+   "category": "駐車禁止",
+   "scene": "駐車後の右側余地",
+   "action": "車の右側に3.5m(標識指定があればその値)以上の余地がない場所に駐車しない(荷卸しで運転者がすぐ運転できる時等を除く)",
+   "law_articles": "45(2)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "3.5 m",
+     "meaning": "駐車時に右側に残すべき余地",
+     "source": "法45条2項"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S112",
+   "kyosoku_ref": "5-8-3(1)-(5)",
+   "category": "駐停車方法",
+   "scene": "駐停車の位置",
+   "action": "歩道等が無ければ道路左端、あれば車道左端に沿う。並列駐停車しない",
+   "law_articles": "47",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "partial",
+   "reproduced_by": [
+    "poc_car_parking"
+   ],
+   "note": "縦列駐車で道路の左端に沿って止める経路。並列駐車の禁止は無い"
+  },
+  {
+   "id": "S113",
+   "kyosoku_ref": "5-8-3(3)",
+   "category": "駐停車方法",
+   "scene": "幅の広い路側帯での駐停車",
+   "action": "路側帯に入る場合は左側に0.75m以上空ける。実線+破線・二本線の路側帯には入らない",
+   "law_articles": "47(3) (0.75mは施行令=未確認)",
+   "law_status": "PART",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "0.75 m",
+     "meaning": "路側帯内駐停車時に残す余地",
+     "source": "教則 5-8-3(3)"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S114",
+   "kyosoku_ref": "5-8-9(2)",
+   "category": "駐車",
+   "scene": "道路上の長時間駐車",
+   "action": "同じ場所に12時間(夜間8時間)以上駐車しない",
+   "law_articles": "車庫法11条(未確認)",
+   "law_status": "UNV",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "12 h",
+     "meaning": "昼間の連続駐車上限",
+     "source": "教則 5-8-9(2)"
+    },
+    {
+     "value": "8 h",
+     "meaning": "夜間の連続駐車上限",
+     "source": "教則 5-8-9(2)"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S115",
+   "kyosoku_ref": "5-8-10",
+   "category": "駐車",
+   "scene": "車から離れる",
+   "action": "エンジン停止・ハンドブレーキ・AT車はP・坂で輪止め、キーを携帯し施錠",
+   "law_articles": "71(5)(5の2)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "not_reproducible",
+   "reproduced_by": [],
+   "note": "降車後の車の扱い(施錠・キー)で、走行の判断ではない"
+  },
+  {
+   "id": "S116",
+   "kyosoku_ref": "5-9-1",
+   "category": "AT車",
+   "scene": "AT車の停止・駐車",
+   "action": "停止中はブレーキをしっかり踏む(クリープ)、完全停止後にP",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S117",
+   "kyosoku_ref": "5-9-2",
+   "category": "ASV",
+   "scene": "運転支援(衝突被害軽減ブレーキ・ACC)使用時",
+   "action": "限界を理解し過信しない。運転者が常時監視",
+   "law_articles": "70",
+   "law_status": "OK",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S118",
+   "kyosoku_ref": "5-9-3(2)",
+   "category": "自動運転",
+   "scene": "使用条件外",
+   "action": "使用条件外では自動運行装置を使わない",
+   "law_articles": "71の4の2(1)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S119",
+   "kyosoku_ref": "5-9-3(3)(4)",
+   "category": "自動運転",
+   "scene": "引継ぎ要請・異常の発生",
+   "action": "直ちに認知し周囲を確認して運転操作を引き継ぐ",
+   "law_articles": "71の4の2(2)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S120",
+   "kyosoku_ref": "6-1-1(1)",
+   "category": "踏切",
+   "scene": "踏切の通過(信号なし)",
+   "action": "直前(停止線直前)で一時停止し目と耳で左右確認",
+   "law_articles": "33(1)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "速度0",
+     "meaning": "踏切直前の一時停止",
+     "source": "法33条1項"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S121",
+   "kyosoku_ref": "6-1-1(1)",
+   "category": "踏切",
+   "scene": "踏切信号機がある",
+   "action": "信号に従えば停止せず通過可",
+   "law_articles": "33(1)但書",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S122",
+   "kyosoku_ref": "6-1-1(3)",
+   "category": "踏切",
+   "scene": "警報機作動中・遮断機が降下中/降りている",
+   "action": "踏切に入らない",
+   "law_articles": "33(2)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S123",
+   "kyosoku_ref": "6-1-1(4)",
+   "category": "踏切",
+   "scene": "前車に続く通過・向こう側が混雑",
+   "action": "前車に続く場合も一時停止。踏切内で詰まる恐れがあれば入らない",
+   "law_articles": "33(1), 50(2)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S124",
+   "kyosoku_ref": "6-1-1(5)",
+   "category": "踏切",
+   "scene": "踏切内の走行",
+   "action": "変速せず一気に、落輪しないようやや中央寄りを",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S125",
+   "kyosoku_ref": "6-1-2",
+   "category": "踏切",
+   "scene": "踏切内で動けなくなった",
+   "action": "非常ボタン・発炎筒で知らせ、車を踏切外へ",
+   "law_articles": "33(3)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S126",
+   "kyosoku_ref": "6-2-1(1)(2)",
+   "category": "坂道",
+   "scene": "上り坂での停止・発進",
+   "action": "前車に近づき過ぎない。発進時はハンドブレーキ活用",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_longitudinal"
+   ],
+   "note": "坂道で止まり、ずり下がり(逆行)の距離を閉形式で採点"
+  },
+  {
+   "id": "S127",
+   "kyosoku_ref": "6-2-1(4)(5)",
+   "category": "坂道",
+   "scene": "下り坂",
+   "action": "エンジンブレーキ活用、車間を広く",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S128",
+   "kyosoku_ref": "6-2-1(6)",
+   "category": "坂道",
+   "scene": "坂道での行き違い",
+   "action": "下りの車が上りの車に譲る。待避所が近ければ上り側でも待避所で待つ",
+   "law_articles": "該当明文なし",
+   "law_status": "NONE",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S129",
+   "kyosoku_ref": "6-2-1(8)",
+   "category": "山道",
+   "scene": "片側ががけの道路で安全に行き違えない",
+   "action": "がけ側の車が一時停止して譲る",
+   "law_articles": "該当明文なし",
+   "law_status": "NONE",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S130",
+   "kyosoku_ref": "6-2-2",
+   "category": "カーブ",
+   "scene": "曲がり角・カーブ",
+   "action": "手前の直線で減速、中央からはみ出さない、内輪差注意、追越さない",
+   "law_articles": "17(4), 30(1), 42(2)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S131",
+   "kyosoku_ref": "6-3-1",
+   "category": "夜間",
+   "scene": "夜間走行",
+   "action": "昼より速度を落とす、薄暮時は早めに点灯",
+   "law_articles": "なし(70)",
+   "law_status": "NONE",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_weather"
+   ],
+   "note": "夜の前照灯の照らす範囲で見えてから止まれる速さ。薄暮の点灯の判断は無い"
+  },
+  {
+   "id": "S132",
+   "kyosoku_ref": "6-3-2(1)",
+   "category": "灯火",
+   "scene": "夜間・トンネル・濃霧",
+   "action": "前照灯等を点灯。昼間でも50m(高速道路は200m)先が見えない場所では点灯",
+   "law_articles": "52(1) (50m/200mは施行令=未確認)",
+   "law_status": "PART",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "50 m",
+     "meaning": "一般道で点灯が必要な視程",
+     "source": "教則 6-3-2(1)"
+    },
+    {
+     "value": "200 m",
+     "meaning": "高速道路で点灯が必要な視程",
+     "source": "教則 6-3-2(1)"
+    }
+   ],
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_weather"
+   ],
+   "note": "前照灯の照らす範囲を物理の単位で描く。点灯の判断の門は無い"
+  },
+  {
+   "id": "S133",
+   "kyosoku_ref": "6-3-2(2)(3)",
+   "category": "灯火",
+   "scene": "前照灯の上下切替",
+   "action": "原則上向き。対向車とすれ違う・前車に続く時や交通量の多い市街地は下向き",
+   "law_articles": "52(2)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S134",
+   "kyosoku_ref": "6-3-2(4)",
+   "category": "灯火",
+   "scene": "見通しの悪い交差点・カーブ手前(夜間)",
+   "action": "上向きか点滅で接近を知らせる",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S135",
+   "kyosoku_ref": "6-3-2(6)",
+   "category": "灯火",
+   "scene": "夜間の路上駐停車",
+   "action": "非常点滅・駐車灯・尾灯を点ける(50m後方から見える場所や停止表示器材設置時を除く)",
+   "law_articles": "52(1) (50mは施行令=未確認)",
+   "law_status": "PART",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "50 m",
+     "meaning": "後方からの視認距離",
+     "source": "教則 6-3-2(6)"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S136",
+   "kyosoku_ref": "6-4-1",
+   "category": "雨",
+   "scene": "雨天",
+   "action": "晴天より減速し車間を十分に。降り始め・鉄板・レールのスリップ、歩行者への水はね防止",
+   "law_articles": "71(1)",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "約2倍",
+     "meaning": "雨天・摩耗タイヤの停止距離",
+     "source": "教則 5-4-2(3)"
+    }
+   ],
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_weather"
+   ],
+   "note": "雨の路面 μ で停止距離が延びる。水はね・降り始めの滑りは無い"
+  },
+  {
+   "id": "S137",
+   "kyosoku_ref": "6-4-2",
+   "category": "雪",
+   "scene": "雪道・凍結路",
+   "action": "滑り止め装着、十分減速・車間、急操作をしない、轍を走る",
+   "law_articles": "71(6)・公安委員会規則(未確認)",
+   "law_status": "UNV",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S138",
+   "kyosoku_ref": "6-4-3",
+   "category": "霧",
+   "scene": "霧・吹雪",
+   "action": "霧灯・前照灯を早めに点灯、減速、必要に応じ警音器",
+   "law_articles": "52, 54",
+   "law_status": "OK",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_weather"
+   ],
+   "note": "霧(Koschmieder)の中で見えてから止まれる速さ。霧灯・警音器は無い"
+  },
+  {
+   "id": "S139",
+   "kyosoku_ref": "6-5(4)-(7)",
+   "category": "緊急時",
+   "scene": "パンク・横滑り・ブレーキ失陥・正面衝突の危険",
+   "action": "パンク=急ブレーキ避け断続制動。横滑り=アクセルを緩め滑る方向へハンドル。正面衝突=警音器とブレーキ、左へ回避",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S140",
+   "kyosoku_ref": "7-前文",
+   "category": "高速道路",
+   "scene": "高速道路への進入可否",
+   "action": "原付・ミニカー・125cc以下二輪、50km/h以上出ない車は通行不可",
+   "law_articles": "75の4ほか(未確認)",
+   "law_status": "UNV",
+   "scoreability": "B",
+   "numbers": [
+    {
+     "value": "50 km/h",
+     "meaning": "これ以上出せない車は高速自動車国道通行不可",
+     "source": "教則 第7章前文"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S141",
+   "kyosoku_ref": "7-2-1",
+   "category": "高速道路",
+   "scene": "本線車道への合流",
+   "action": "加速車線で十分加速し、本線車道の車を妨げない",
+   "law_articles": "75の6",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S142",
+   "kyosoku_ref": "7-2-2(3)",
+   "category": "高速道路",
+   "scene": "法定速度(指定なし・往復分離の高速自動車国道)",
+   "action": "普通車等は最高100km/h、大型貨物等は90、その他80、最低50km/h",
+   "law_articles": "75の4(最低速度義務), 22 (速度値は施行令27条=未確認)",
+   "law_status": "PART",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "100 km/h",
+     "meaning": "普通自動車等の最高速度",
+     "source": "教則 7-2-2(3)"
+    },
+    {
+     "value": "90 km/h",
+     "meaning": "大型貨物・特定中型貨物",
+     "source": "教則 7-2-2(3)"
+    },
+    {
+     "value": "80 km/h",
+     "meaning": "その他・けん引時",
+     "source": "教則 7-2-2(3)"
+    },
+    {
+     "value": "50 km/h",
+     "meaning": "最低速度",
+     "source": "教則 7-2-2(3)"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S143",
+   "kyosoku_ref": "7-2-2(4)",
+   "category": "高速道路",
+   "scene": "高速道路での車間距離",
+   "action": "乾燥・新品タイヤで100km/hなら約100m、80km/hなら約80m。雨・摩耗で約2倍",
+   "law_articles": "26 (数値は教則の目安のみ)",
+   "law_status": "PART",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "約100 m",
+     "meaning": "100 km/hの車間目安",
+     "source": "教則 7-2-2(4)"
+    },
+    {
+     "value": "約80 m",
+     "meaning": "80 km/hの車間目安",
+     "source": "教則 7-2-2(4)"
+    },
+    {
+     "value": "約2倍",
+     "meaning": "湿潤・摩耗時",
+     "source": "教則 7-2-2(4)"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S144",
+   "kyosoku_ref": "7-2-3(1)-(4)",
+   "category": "高速道路",
+   "scene": "本線走行",
+   "action": "車線のやや左寄り。路側帯・路肩を走らない。遅い車は登坂車線。転回・後退・中央分離帯横断をしない",
+   "law_articles": "75の5, 75の8ほか",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S145",
+   "kyosoku_ref": "7-2-3(5)",
+   "category": "高速道路",
+   "scene": "高速道路での追越し",
+   "action": "早めに合図、戻るのは追い越した車全体がルームミラーに映ってから",
+   "law_articles": "28",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S146",
+   "kyosoku_ref": "7-2-3(6)",
+   "category": "緊急自動車",
+   "scene": "高速道路で緊急自動車が合流・流出",
+   "action": "通行を妨げない",
+   "law_articles": "75の6(2)",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S147",
+   "kyosoku_ref": "7-2-3(10)(11)",
+   "category": "高速道路",
+   "scene": "強風・トンネル進入",
+   "action": "減速。横風に注意",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S148",
+   "kyosoku_ref": "7-2-3(13)",
+   "category": "高速道路",
+   "scene": "逆走車・歩行者の存在",
+   "action": "道路情報板に注意",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S149",
+   "kyosoku_ref": "7-2-4(1)",
+   "category": "高速道路",
+   "scene": "高速道路での駐停車",
+   "action": "危険防止・故障時の路肩・PA・料金所以外で駐停車しない",
+   "law_articles": "75の8",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S150",
+   "kyosoku_ref": "7-2-4(2)-(4)",
+   "category": "高速道路",
+   "scene": "高速道路で故障・事故により停止",
+   "action": "後方に停止表示器材、夜間(視程200m以下の昼間も)は非常点滅等。110番、安全な場所へ移動し車外(ガードレール外)へ避難",
+   "law_articles": "75の11",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [
+    {
+     "value": "200 m",
+     "meaning": "昼間でも灯火が必要な視程",
+     "source": "教則 7-2-4(2)"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S151",
+   "kyosoku_ref": "7-2-5",
+   "category": "高速道路",
+   "scene": "本線車道から出る",
+   "action": "あらかじめ出口側の車線へ、減速車線で速度計を見て減速",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "A",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S152",
+   "kyosoku_ref": "10-1-1",
+   "category": "事故",
+   "scene": "交通事故の発生",
+   "action": "安全な場所に停止しエンジン停止、負傷者救護(むやみに動かさない)、警察に報告",
+   "law_articles": "72",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "not_reproducible",
+   "reproduced_by": [],
+   "note": "事故の後の救護と報告は人の行為で、運転の判断の門にならない"
+  },
+  {
+   "id": "S153",
+   "kyosoku_ref": "10-2-1,2",
+   "category": "故障",
+   "scene": "一般道路での故障停止",
+   "action": "交通の妨げにならない場所に停める。夜間は非常点滅灯か停止表示器材",
+   "law_articles": "52 (方法は施行令=未確認)",
+   "law_status": "PART",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S154",
+   "kyosoku_ref": "10-2-4",
+   "category": "故障",
+   "scene": "故障車のけん引",
+   "action": "けん引車と故障車の間を5m以内で確実につなぎ、30cm平方以上の白布をロープに付ける",
+   "law_articles": "59 (5m・白布は施行令=未確認)",
+   "law_status": "PART",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "5 m",
+     "meaning": "けん引時の車間上限",
+     "source": "教則 10-2-4"
+    },
+    {
+     "value": "30 cm平方",
+     "meaning": "ロープに付ける白布",
+     "source": "教則 10-2-4"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S155",
+   "kyosoku_ref": "10-3",
+   "category": "災害",
+   "scene": "地震(警戒宣言・発生)",
+   "action": "低速走行、情報収集、道路外に車を置いて避難等",
+   "law_articles": "なし",
+   "law_status": "NONE",
+   "scoreability": "C",
+   "numbers": [],
+   "status": "not_reproducible",
+   "reproduced_by": [],
+   "note": "地震の情報の収集と避難は運転の判断の外"
+  },
+  {
+   "id": "S156",
+   "kyosoku_ref": "3-3-1(1)(2)",
+   "category": "自転車(相手)",
+   "scene": "自転車・特定小型原付の通行位置",
+   "action": "車道が原則。車道の左側端に沿って通行。自転車道があればそこを通る",
+   "law_articles": "17(1), 18(1), 63の3",
+   "law_status": "OK",
+   "scoreability": "B",
+   "numbers": [],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S157",
+   "kyosoku_ref": "3-3-1(5)",
+   "category": "自転車(相手)",
+   "scene": "普通自転車の歩道通行",
+   "action": "標識がある・13歳未満/70歳以上・車道通行が危険な場合に限り歩道の車道寄りを徐行",
+   "law_articles": "63の4",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "13歳未満/70歳以上",
+     "meaning": "歩道通行可の年齢",
+     "source": "教則 3-3-1(5)"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S158",
+   "kyosoku_ref": "3-3-1(3)",
+   "category": "自転車(相手)",
+   "scene": "特例特定小型原付",
+   "action": "6km/h以下・最高速度表示灯点滅で歩道・路側帯を通行可",
+   "law_articles": "17の2",
+   "law_status": "OK",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "6 km/h",
+     "meaning": "特例特定小型原付の速度上限",
+     "source": "教則 3-3-1(3)"
+    }
+   ],
+   "status": "pending",
+   "reproduced_by": [],
+   "note": ""
+  },
+  {
+   "id": "S159",
+   "kyosoku_ref": "NPA 202603.pdf (教則R6未収録)",
+   "category": "自転車",
+   "scene": "車道を同方向に進む自転車等の右側を通過(追越しを除く)",
+   "action": "十分な間隔がなければ間隔に応じた安全な速度で通過。自転車側はできる限り左側端へ",
+   "law_articles": "18(3)(4) (2026-04-01施行、e-Gov本文未確認)",
+   "law_status": "UNV",
+   "scoreability": "A",
+   "numbers": [
+    {
+     "value": "1 m程度",
+     "meaning": "安全とされる間隔の目安",
+     "source": "警察庁 202603.pdf"
+    },
+    {
+     "value": "20-30 km/h程度",
+     "meaning": "1m取れない時の速度目安",
+     "source": "警察庁 202603.pdf"
+    }
+   ],
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_traffic"
+   ],
+   "note": "自転車の右側を通過する時の間隔。間隔に応じた速度の門は無い"
+  }
+ ]
+}

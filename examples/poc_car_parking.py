@@ -28,6 +28,7 @@ A* で繋ぎ、障害物を無視した Reeds–Shepp 長をヒューリステ�
 この PoC の持ち分は「候補を積分で検証して落とした数を返す」「最適化器の第 2 実装で最小性を測る」「Hybrid A* の
 答えを閉形式で挟む」の 3 つを numpy だけで門にしたこと。RS の式を写すときに mod2pi の折り方((−π, π] か
 [0, 2π) か)を間違えると CCSC 系 8 語が一度も候補に出ない —— 語族を数える門で見つけた。
+教則の場面: S112(docs/drive/kyosoku_scenarios.json、交通の方法に関する教則の再現台帳)
 """
 from __future__ import annotations
 

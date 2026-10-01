@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">passing_decision — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">any</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.passing_decision(dist_oncoming: &#x27;float&#x27;, parked_len: &#x27;float&#x27;, margin_front: &#x27;float&#x27;, margin_back: &#x27;float&#x27;, v_ego: &#x27;float&#x27;, v_oncoming: &#x27;float&#x27;, *, lane_change_time: &#x27;float&#x27;, ego_length: &#x27;float&#x27; = 0.0, pet_min: &#x27;float&#x27; = 0.0, v_obstacle: &#x27;float&#x27; = 0.0) -&gt; &#x27;str&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivetraffic; drivetraffic.passing_decision(dist_oncoming: &#x27;float&#x27;, parked_len: &#x27;float&#x27;, margin_front: &#x27;float&#x27;, margin_back: &#x27;float&#x27;, v_ego: &#x27;float&#x27;, v_oncoming: &#x27;float&#x27;, *, lane_change_time: &#x27;float&#x27;, ego_length: &#x27;float&#x27; = 0.0, pet_min: &#x27;float&#x27; = 0.0, v_obstacle: &#x27;float&#x27; = 0.0) -&gt; &#x27;str&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;passing_decision&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>対向車までの距離 `<code style="color:#22d3bf">dist_oncoming</code>`(判断時、自車が x_in にいるとき)で &quot;go&quot; か &quot;wait&quot; を返す。</p>
+<p>D ≥ D*(`<code style="color:#22d3bf">passing_gap_required</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">d_required</code>`)なら &quot;go&quot;(境目ちょうどは PET = pet_min で go)。</p>
+<p>`<code style="color:#22d3bf">dist_oncoming = +inf</code>` は「対向車なし」= &quot;go&quot;(他の引数の検査はする)。−inf・NaN は ValueError。</p>
+<p>`<code style="color:#22d3bf">v_obstacle</code><code style="color:#22d3bf"> &gt; 0 は走っている障害物(</code><code style="color:#22d3bf">passing_gap_required</code>`)。</p>
+<p>門: D* ± ε で判断が切り替わる / `<code style="color:#22d3bf">passing_simulate</code>` の PET が pet_min になる境目と D* が一致。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_traffic">poc_driving_traffic</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_traffic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">any</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">traffic</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:idm_accel">idm_accel</a> · <a style="color:#22d3bf" href="opdrive:idm_equilibrium_gap">idm_equilibrium_gap</a> · <a style="color:#22d3bf" href="opdrive:idm_platoon_simulate">idm_platoon_simulate</a> · <a style="color:#22d3bf" href="opdrive:driver_style">driver_style</a> · <a style="color:#22d3bf" href="opdrive:lateral_wobble">lateral_wobble</a> · <a style="color:#22d3bf" href="opdrive:ou_estimate">ou_estimate</a> · <a style="color:#22d3bf" href="opdrive:social_force_step">social_force_step</a> · <a style="color:#22d3bf" href="opdrive:pedestrian_crossing">pedestrian_crossing</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetraffic.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

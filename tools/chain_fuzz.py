@@ -2237,6 +2237,97 @@ def _b_global_to_tile(pool, rng):
     return (1234.5, -678.9, 200.0), {}
 
 
+_TR_IDM = {"v0": 13.9, "T": 1.5, "a": 1.0, "b": 1.5, "s0": 2.0, "delta": 4.0}
+_TR_BOX = (12.5, 2.5, 5.0, 2.0, 0.0)
+_TR_PASS = (5.0, 3.0, 3.0, 8.0, 10.0)
+_TR_BUS = {"bus_rear": 40.0, "bus_front": 52.0, "base": 0.002, "peak": 0.05, "spread": 4.0}
+
+
+def _b_idm_accel(pool, rng):
+    import numpy as np
+    return (np.array([5.0, 10.0]), np.array([20.0, 30.0]), np.array([0.0, 1.0])), dict(_TR_IDM)
+
+
+def _b_idm_gap(pool, rng):
+    import numpy as np
+    return (np.array([0.0, 5.0, 10.0]),), {k: _TR_IDM[k] for k in ("v0", "T", "s0", "delta")}
+
+
+def _b_idm_platoon(pool, rng):
+    import drivetraffic as TR
+    p = {k: TR.driver_style("normal")[k] for k in ("v0", "T", "a", "b", "s0", "delta", "length")}
+    return ((lambda t: 10.0 if t < 5 else 8.0), 3), {"params_per_vehicle": p, "dt": 0.1, "t_end": 20.0}
+
+
+def _b_driver_style(pool, rng):
+    return ("sloppy",), {"seed": 1}
+
+
+def _b_lateral_wobble(pool, rng):
+    return (200, 0.05), {"theta": 0.8, "sigma": 0.2, "seed": 3}
+
+
+def _b_ou_estimate(pool, rng):
+    import drivetraffic as TR
+    return (TR.lateral_wobble(2000, 0.05, theta=0.8, sigma=0.2, seed=3), 0.05), {}
+
+
+def _b_social_force(pool, rng):
+    import numpy as np
+    P = np.array([[0.0, 0.0], [10.0, 0.2]])
+    V = np.array([[1.0, 0.0], [-1.0, 0.0]])
+    G = np.array([[20.0, 0.0], [-10.0, 0.0]])
+    return (P, V, G), {"dt": 0.05, "v0": 1.3, "tau": 0.5, "A": 25.0, "B": 0.08, "radius": 0.3}
+
+
+def _b_ped_crossing(pool, rng):
+    return ("wait_then_cross",), {}
+
+
+def _b_occl_reveal(pool, rng):
+    return ((0.0, 0.0), 0.0, _TR_BOX, (16.0, 3.0)), {}
+
+
+def _b_occl_intervals(pool, rng):
+    return ((0.0, 0.0), 0.0, _TR_BOX, (16.0, 3.0), 30.0), {}
+
+
+def _b_occl_speed(pool, rng):
+    import numpy as np
+    return (np.array([5.0, 10.0, 20.0]),), {"reaction": 0.75, "brake": 6.0}
+
+
+def _b_pass_gap(pool, rng):
+    return _TR_PASS, {"lane_change_time": 1.5}
+
+
+def _b_pass_decision(pool, rng):
+    return (60.0,) + _TR_PASS, {"lane_change_time": 1.5}
+
+
+def _b_bus_rate(pool, rng):
+    import numpy as np
+    return (np.linspace(0.0, 100.0, 11),), dict(_TR_BUS)
+
+
+def _b_poisson_events(pool, rng):
+    import drivetraffic as TR
+    return ((lambda x: TR.bus_stop_rate(x, **_TR_BUS)), 100.0), {"rate_max": 0.06, "seed": 2}
+
+
+def _b_poisson_events_xt(pool, rng):
+    import numpy as np
+    return ((lambda x, t: 0.01 + 0.0 * np.asarray(x) * np.asarray(t)), 50.0, 20.0), {"rate_max": 0.02, "seed": 2}
+
+
+def _b_importance_risk(pool, rng):
+    import numpy as np
+    low = lambda x: 0.001 + 0.0 * np.asarray(x)            # noqa: E731
+    high = lambda x: 0.01 + 0.0 * np.asarray(x)            # noqa: E731
+    hit = lambda ev, r: float(np.any((ev >= 40.0) & (ev <= 50.0)))   # noqa: E731
+    return (hit, low, high, 200, 4), {"x_max": 100.0, "boosted_rate_max": 0.02}
+
+
 def _env_world():
     import driveworld as DW
     import numpy as np
@@ -2613,6 +2704,13 @@ OP_ARG_BUILDERS = {
     "hill_hold_brake_min": _b_hill_hold_brake_min, "hill_start_rollback": _b_hill_start_rollback,
     "hill_start_command": _b_hill_start_command, "skill_test_thresholds": _b_skill_test_thresholds,
     "skill_test_score": _b_skill_test_score,
+    "idm_accel": _b_idm_accel, "idm_equilibrium_gap": _b_idm_gap, "idm_platoon_simulate": _b_idm_platoon,
+    "driver_style": _b_driver_style, "lateral_wobble": _b_lateral_wobble, "ou_estimate": _b_ou_estimate,
+    "social_force_step": _b_social_force, "pedestrian_crossing": _b_ped_crossing,
+    "occlusion_reveal_distance": _b_occl_reveal, "occlusion_visible_intervals": _b_occl_intervals,
+    "occlusion_safe_speed": _b_occl_speed, "passing_gap_required": _b_pass_gap, "passing_decision": _b_pass_decision,
+    "passing_simulate": _b_pass_decision, "bus_stop_rate": _b_bus_rate, "poisson_events": _b_poisson_events,
+    "poisson_events_xt": _b_poisson_events_xt, "importance_risk_estimate": _b_importance_risk,
     "tile_hash": _b_tile_hash, "tile_uniform": _b_tile_hash, "pose_normalize": _b_pose_normalize, "tile_params": _b_tile_params,
     "tile_edge_crossing": _b_tile_edge, "tile_roads": _b_tile_ij, "tile_road_distance": _b_tile_xy, "tile_height": _b_tile_xy,
     "tile_mesh": _b_tile_mesh, "tile_digest": _b_tile_digest, "tile_stream": _b_tile_stream, "global_to_tile": _b_global_to_tile,

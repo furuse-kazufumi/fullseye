@@ -4,7 +4,7 @@ dim: drive
 category: terrain
 in: table × table
 out: scalar
-examples: [poc_world_terrain]
+examples: [poc_driving_traffic, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -29,6 +29,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_driving_traffic](../../../../examples/poc_driving_traffic.py) — `py -3.11 examples/poc_driving_traffic.py`
 - [poc_world_terrain](../../../../examples/poc_world_terrain.py) — `py -3.11 examples/poc_world_terrain.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)

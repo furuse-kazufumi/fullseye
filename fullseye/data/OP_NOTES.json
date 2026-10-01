@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2446,
- "n_notes": 2452,
+ "n_ops": 2464,
+ "n_notes": 2470,
  "notes": {
   "vol_dilate": [
    {
@@ -17185,6 +17185,180 @@
     "in": "table × table × matrix × matrix × table",
     "out": "table",
     "path": "docs/ops/drive/terrain/world_materials.md"
+   }
+  ],
+  "bus_stop_rate": [
+   {
+    "op": "bus_stop_rate",
+    "dim": "drive",
+    "category": "traffic",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/traffic/bus_stop_rate.md"
+   }
+  ],
+  "driver_style": [
+   {
+    "op": "driver_style",
+    "dim": "drive",
+    "category": "traffic",
+    "out": "table",
+    "path": "docs/ops/drive/traffic/driver_style.md"
+   }
+  ],
+  "idm_accel": [
+   {
+    "op": "idm_accel",
+    "dim": "drive",
+    "category": "traffic",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/traffic/idm_accel.md"
+   }
+  ],
+  "idm_equilibrium_gap": [
+   {
+    "op": "idm_equilibrium_gap",
+    "dim": "drive",
+    "category": "traffic",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/traffic/idm_equilibrium_gap.md"
+   }
+  ],
+  "idm_platoon_simulate": [
+   {
+    "op": "idm_platoon_simulate",
+    "dim": "drive",
+    "category": "traffic",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/traffic/idm_platoon_simulate.md"
+   }
+  ],
+  "importance_risk_estimate": [
+   {
+    "op": "importance_risk_estimate",
+    "dim": "drive",
+    "category": "traffic",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/traffic/importance_risk_estimate.md"
+   }
+  ],
+  "lateral_wobble": [
+   {
+    "op": "lateral_wobble",
+    "dim": "drive",
+    "category": "traffic",
+    "out": "signal",
+    "path": "docs/ops/drive/traffic/lateral_wobble.md"
+   }
+  ],
+  "occlusion_reveal_distance": [
+   {
+    "op": "occlusion_reveal_distance",
+    "dim": "drive",
+    "category": "traffic",
+    "in": "any",
+    "out": "scalar",
+    "path": "docs/ops/drive/traffic/occlusion_reveal_distance.md"
+   }
+  ],
+  "occlusion_safe_speed": [
+   {
+    "op": "occlusion_safe_speed",
+    "dim": "drive",
+    "category": "traffic",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/traffic/occlusion_safe_speed.md"
+   }
+  ],
+  "occlusion_visible_intervals": [
+   {
+    "op": "occlusion_visible_intervals",
+    "dim": "drive",
+    "category": "traffic",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/traffic/occlusion_visible_intervals.md"
+   }
+  ],
+  "ou_estimate": [
+   {
+    "op": "ou_estimate",
+    "dim": "drive",
+    "category": "traffic",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/drive/traffic/ou_estimate.md"
+   }
+  ],
+  "passing_decision": [
+   {
+    "op": "passing_decision",
+    "dim": "drive",
+    "category": "traffic",
+    "out": "any",
+    "path": "docs/ops/drive/traffic/passing_decision.md"
+   }
+  ],
+  "passing_gap_required": [
+   {
+    "op": "passing_gap_required",
+    "dim": "drive",
+    "category": "traffic",
+    "out": "table",
+    "path": "docs/ops/drive/traffic/passing_gap_required.md"
+   }
+  ],
+  "passing_simulate": [
+   {
+    "op": "passing_simulate",
+    "dim": "drive",
+    "category": "traffic",
+    "out": "table",
+    "path": "docs/ops/drive/traffic/passing_simulate.md"
+   }
+  ],
+  "pedestrian_crossing": [
+   {
+    "op": "pedestrian_crossing",
+    "dim": "drive",
+    "category": "traffic",
+    "out": "table",
+    "path": "docs/ops/drive/traffic/pedestrian_crossing.md"
+   }
+  ],
+  "poisson_events": [
+   {
+    "op": "poisson_events",
+    "dim": "drive",
+    "category": "traffic",
+    "in": "any",
+    "out": "signal",
+    "path": "docs/ops/drive/traffic/poisson_events.md"
+   }
+  ],
+  "poisson_events_xt": [
+   {
+    "op": "poisson_events_xt",
+    "dim": "drive",
+    "category": "traffic",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/traffic/poisson_events_xt.md"
+   }
+  ],
+  "social_force_step": [
+   {
+    "op": "social_force_step",
+    "dim": "drive",
+    "category": "traffic",
+    "in": "points × points × points",
+    "out": "any",
+    "path": "docs/ops/drive/traffic/social_force_step.md"
    }
   ],
   "flow_from_depth_motion": [

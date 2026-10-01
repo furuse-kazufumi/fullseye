@@ -31,6 +31,8 @@ Mobileye の RSS(Shalev-Shwartz ら 2017)が応答時間と加減速の上限か
 正直に書くこと: 光学流の τ が効くのは流れが 1〜十数画素のときで、遠い(サブピクセル)と近すぎる(ピラミッドの外)は外れる。
 真の FoE を与えている(自車の運動は既知とした)。対向車の画素の切り出しは世界の面 id(完全な検出器の代役)。
 
+教則の場面: S061(docs/drive/kyosoku_scenarios.json、交通の方法に関する教則の再現台帳)
+
 Run: py -3.11 examples/poc_ttc_rss.py   (図は FULLSEYE_FIGURE_DIR を設定したときだけ書く)
 """
 from __future__ import annotations

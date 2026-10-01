@@ -28,6 +28,8 @@ CC0 の車・信号機・標識を置き(driveworld)、回転式 LiDAR をメッ
 クランクも S 字も **前進のみでは到達不能**(格子 0.125 m・θ 144 でも)。後退(切り返し)を許すと通る。実際の検定でも
 切り返しは許される(回数で減点)ので、そのまま数を出す。中間の舵角を持つ運動基本形は次の課題。
 
+教則の場面: S003(docs/drive/kyosoku_scenarios.json、交通の方法に関する教則の再現台帳)
+
 Run: py -3.11 examples/poc_driving_school.py   (図は FULLSEYE_FIGURE_DIR を設定したときだけ書く)
 """
 from __future__ import annotations

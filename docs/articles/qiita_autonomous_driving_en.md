@@ -51,6 +51,7 @@ This series lines up the ops built on that bar, one per instalment. Every instal
 | 5 | [Giving the car inertia and slopes — stopping just before the line with reaction and braking distance, and a hill start without rolling back](#5-giving-the-car-inertia-and-slopes--stopping-just-before-the-line-with-reaction-and-braking-distance-and-a-hill-start-without-rolling-back) | Closed-form stopping distance / RSS stopping distance (second implementation) / closed-form hill-start roll-back / energy balance / notice No. 12 deductions |
 | 6 | [Sun and weather — when the morning sun hides the signal, how fast you may drive in fog, wet roads and headlamps at night](#6-sun-and-weather--when-the-morning-sun-hides-the-signal-how-fast-you-may-drive-in-fog-wet-roads-and-headlamps-at-night) | NAOJ published values / shadow = h cot(elevation) / closed-form veil and chromaticity threshold / Koschmieder's law / road-design manual stopping distance (second implementation) / headlamp performance in the safety standard |
 | 7 | [An endless map — tiles made around the car, far tiles dropped, 50 km without a break](#7-an-endless-map--tiles-made-around-the-car-far-tiles-dropped-50-km-without-a-break) | both sides of a seam agree / regeneration fingerprints (SHA-256) / position re-summed as rationals / the (2r + 1)² bound |
+| 8 | [Moving traffic and blind spots — a child behind a parked car, meeting oncoming traffic, a bus stop, bad drivers, a pedestrian waiting at a crossing](#8-moving-traffic-and-blind-spots--a-child-behind-a-parked-car-meeting-oncoming-traffic-a-bus-stop-bad-drivers-a-pedestrian-waiting-at-a-crossing) | closed-form sight lines / IDM equilibrium gap / ∫λ and Adams' formula / the habits and intents given (truth) / the Rules-of-the-Road ledger |
 
 ---
 
@@ -954,12 +955,104 @@ The whole PoC: `py -3.11 examples/poc_driving_endless_map.py` (figures and video
 
 ---
 
+## 8. Moving traffic and blind spots — a child behind a parked car, meeting oncoming traffic, a bus stop, bad drivers, a pedestrian waiting at a crossing
+
+![Dashcam: a child runs out from behind a parked car](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/01_dashcam_occlusion.gif)
+
+*↑ Dashcam. A child is hidden behind the white parked car. The car slows to the "fastest speed that can still stop", 10.7 km/h, before the blind spot, passes alongside, detects the child running out by background subtraction 0.133 s late, and stops short (red box = difference from the map background; bottom right = 3× zoom). [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_traffic/01_dashcam_occlusion.mp4)*
+
+Until now the world stood still. Pedestrians were boxes and solids of revolution placed on the ground, and the only other car was one lead car at constant speed. The author's remarks, one after another, became the scenes: "there still aren't nearly enough pedestrians and disturbances", "bicycles ride on the road too", "there are cars parked at the kerb", "some people drive badly", "not often, but some run out or cut across", "with a parked car you have to think about when to pass oncoming traffic", "while a bus is stopped many people get on and off and someone may run out, so be careful overtaking — better to wait until it leaves", "if someone is waiting on the pavement, stop".
+
+And: "re-read what the driving textbook says and reproduce what is in it." So from the National Public Safety Commission notice *Rules of the Road* (交通の方法に関する教則) I took **159** driver scenes and built a **reproduction ledger** marking each as reproduced / partial / not started / not reproducible (with a reason). Government notices are not copyrightable in Japan (Copyright Act art. 13), so the scenes can be listed; the text is summarised, not copied. So far 8 are reproduced, 11 partial, 7 not reproducible (things like drink-driving or seat belts that never appear in the camera image or the car's motion), and 133 not started. The ledger and the PoCs name each other; fix only one side and a gate fails.
+
+### Scenes and gates
+
+A new module `drivetraffic` (18 ops) and PoC ㉙ build eight scenes.
+
+| Scene | Where the truth comes from | Result |
+|---|---|---|
+| Run-out from a blind spot (S039) | closed form of the sight line grazing the box corner → inverse stopping distance | stops short of the child in all 445 trials over 45 hiding spots (smallest margin 0.188 m); at 1.3× the speed, 3 trials fail to stop |
+| Meeting oncoming traffic (S089) | time spent in the opposite lane vs. the oncoming car's arrival (closed-form threshold D*) | the time-stepped PET = 1 s threshold matches D* to 1.6 × 10⁻⁹; with 600 oncoming cars/h the mean wait is 9.0 s = Adams' formula |
+| Bus stop (S029) | integral of the appearance rate λ(x, t) (erf + time integral) | expected appearances in the can't-stop band: wait for departure 0.0016 < overtake slowly 0.015 < overtake at speed 0.025; default is to wait (cost 15 s) |
+| A platoon with bad drivers (S061) | IDM equilibrium gap s_e(v) = (s0 + vT)/√(1 − (v/v0)^δ) | careful and normal settle to equilibrium; sloppy, whose 1.3 s reaction exceeds its 1.0 s headway, grows an oscillation and crashes at t = 10.8 s |
+| Spotting the dangerous car | the habit given to each car (truth) | reading the strength of lateral wobble (an OU process) by maximum likelihood finds 17 / 17 with no false alarms (position spread finds 13 / 17) |
+| Pedestrian waiting at a crossing (S042) | each pedestrian's "intends to cross" | no crossing pedestrian missed; also stops for 117 who only stand at the kerb (an error on the safe side — the Rules also say to slow to a stoppable speed unless it is clear nobody will cross) |
+| Rare run-outs | count of a non-homogeneous Poisson process = ∫λ | mean = variance = ∫λ; importance sampling agrees with both the closed form and naive MC with 1/25.7 the per-trial variance |
+| Overtaking a cyclist (S053) | lateral clearance (1.5 m is a value this PoC chose, not a legal figure) | adding a margin from the measured wobble keeps ≥ 1.5 m in all 300 trials; without it 234 trials go under |
+
+![Overhead](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/02_overhead_street.gif)
+
+*↑ Overhead view of the full run (86 s, 335 m). Blue = our car, white = parked cars, purple shadow = blind spot, orange = a sloppy oncoming driver, purple = cyclist, yellow = child. It reaches the end without touching any parked car, child, oncoming car, cyclist or bus. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_traffic/02_overhead_street.mp4)*
+
+![Space-time plot of the platoon](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/03_platoon_spacetime.png)
+
+*↑ The lead car only drops from 10 to 8 m/s, yet the sloppy platoon (right) grows a wave backwards and crashes (×). Careful (left) and normal (middle) settle at the equilibrium gap.*
+
+### Perception without learning
+
+Detection just subtracts the map background from the dashcam image (background difference, not frame difference; no learning). It fires 0.133 s (4 frames) after the child first appears in the render (face-label truth), with no false alarms before. Detection + 0.5 s reaction + 6 m/s² braking stops 7.09 m short of the child. As decided earlier, the procedural world is **ground truth for scoring**, not training data.
+
+### ★ Where implementations go wrong
+
+- **Hunting bad drivers by position spread misses one in four.** The standard deviation of lateral position depends on how long you watch; over 20 s it found only 13 of 17 sloppy drivers. The maximum-likelihood **wobble strength σ** from the exact discretisation of the OU process finds all 17. Cyclist overtaking margins use the same estimate.
+- **A blind spot goes visible → hidden → visible again.** A child on the pavement is visible from afar, hidden as you near the parked car, and visible again alongside (hidden for 39.6 m). An op that returns only "first visible" is not enough; I added one that returns the visible intervals.
+- **2D sight lines are later than 3D.** A standing child's head shows over the bonnet, so the render sees it 0.5 s earlier than the 2D calculation. The policy is set in 2D, which errs on the safe side (stated honestly).
+- **An IDM platoon at rest does not stop at exactly s0.** It stops at 2.973 m for s0 = 3 m (a property of the model; a finer step does not remove it). The gate "stopped means s0" was wrong; it is now "can rest with 0 < s ≤ s0".
+- **Blind-spot safety and the wait for oncoming traffic pull against each other.** Passing slowly lengthens the time in the opposite lane from 4.0 s to 7.7 s and doubles the mean wait from 9.0 s to 19.3 s.
+
+### What this does not do
+
+- Driving habits (headway, reaction delay, wobble), walking speed 1.2 m/s and the 1.5 m cyclist clearance are **assumed values** (values without a source are marked as assumptions).
+- Blind spots are 2D (planar sight lines); eye height and car height are not modelled.
+- Pedestrians follow crossing paths and the social force model only; hand signals and gaze are not read.
+- Mirrors, emergency vehicles, predicting signals from pedestrian lights, and indicators come next.
+
+### Run it
+
+```python
+import fullseye as fs
+
+# Behind a parked car: the eye moves +x from (0, 0). The parked car is a box centred (12.5, 2.5), 5 m long, 2 m wide.
+# When the hidden point (16, 3) first becomes visible, how far ahead of the eye is it? (closed form of the grazing sight line)
+d = fs.ledger.occlusion_reveal_distance((0.0, 0.0), 0.0, (12.5, 2.5, 5.0, 2.0, 0.0), (16.0, 3.0))
+print(round(d, 3))
+# 2.0
+
+# the fastest speed that can still stop short of it from the moment it is seen (reaction 0.5 s, braking 6 m/s²)
+v = fs.ledger.occlusion_safe_speed(d, reaction=0.5, brake=6.0)
+print(round(float(v) * 3.6, 1), "km/h")
+# 9.9 km/h
+
+# pass a 5 m parked car (3 m margins) through the opposite lane; our car 8 m/s, oncoming 10 m/s
+g = fs.ledger.passing_gap_required(5.0, 3.0, 3.0, 8.0, 10.0, lane_change_time=1.5)
+print(g["t_occupy"], g["d_required"])
+# 2.875 51.75      ← time in the opposite lane [s], and the oncoming distance beyond which we may go [m]
+for dist in (40.0, 60.0):
+    print(dist, fs.ledger.passing_decision(dist, 5.0, 3.0, 3.0, 8.0, 10.0, lane_change_time=1.5))
+# 40.0 wait
+# 60.0 go
+
+# a bad driver: headway and reaction delay (assumed values)
+s = fs.ledger.driver_style("sloppy")
+print(s["T"], s["reaction_delay"])
+# 1.0 1.3          ← reaction delay longer than the headway
+```
+
+The whole PoC: `py -3.11 examples/poc_driving_traffic.py` (figures and videos when `FULLSEYE_FIGURE_DIR` is set). The Rules-of-the-Road scene ledger is `docs/drive/kyosoku_scenarios.json`.
+
+---
+
 ## Next
 
-**Lateral motion.** The limit before a turning car's tyres slide sideways (the friction circle: longitudinal and lateral forces together stay under μ m g) and the cornering speed limit √(μ g R). This part's wet f goes into the curve: "can this radius be taken at this speed on a wet road?" computed in closed form and then driven. Tyre lateral force is linear (cornering stiffness) and then saturates; the bicycle model's steady-state circle (understeer gradient) is the truth.
+**Decision scenes.** The next scenes come from the Rules-of-the-Road ledger — check the mirrors behind and to the rear left (cyclists on a left turn) before signalling and changing lanes (a mirror is drawn as a virtual camera reflected in the mirror plane, and its blind spot checked against the geometric closed form) / predict the vehicle amber from the pedestrian light's flashing green and slow before the dilemma zone (Gazis–Herman–Maradudin 1960) / notice an ambulance by its flashing light (temporal frequency of pixels) and siren (closed-form Doppler, time difference between two microphones), then pull to the left away from the junction and stop (Road Traffic Act art. 40) / do not obstruct a bus signalling to pull out (art. 31-2). After that comes **lateral motion** (the friction circle and the cornering limit √(μ g R), the bicycle model's steady circle).
 
 ## References
 
+- National Public Safety Commission notice *Rules of the Road* (1978 notice No. 3, last amended 4 Sep 2024 notice No. 37, https://www.npa.go.jp/bureau/traffic/20241113kyousoku.pdf) / Road Traffic Act (archived e-Gov API data, in force 2025-06-01) / National Police Agency notes on the 30 km/h limit on residential roads (2026-09-01) and passing cyclists on their right (2026-04-01).
+- M. Treiber, A. Hennecke, D. Helbing, "Congested traffic states in empirical observations and microscopic simulations", *Phys. Rev. E* 62, 2000 (IDM).
+- D. Helbing and P. Molnár, "Social force model for pedestrian dynamics", *Phys. Rev. E* 51, 1995 / D. Helbing, I. Farkas, T. Vicsek, "Simulating dynamical features of escape panic", *Nature* 407, 2000.
+- P. A. W. Lewis and G. S. Shedler, "Simulation of nonhomogeneous Poisson processes by thinning", *Naval Res. Logistics Quarterly* 26, 1979 / D. Zhao et al., "Accelerated evaluation of automated vehicles safety in lane-change scenarios based on importance sampling techniques", *IEEE T-ITS* 18, 2017.
+- W. F. Adams, "Road traffic considered as a random series", *J. Inst. Civil Engineers* 4, 1936 (mean wait for a gap in a Poisson stream).
 - G. L. Steele Jr., D. Lea, C. H. Flood, "Fast splittable pseudorandom number generators", *OOPSLA* 2014 (SplitMix64) / K. Perlin, "Improving noise", *SIGGRAPH* 2002.
 - NAOJ Ephemeris Computation Office, sunrise/sunset tables 2026, Tokyo (https://eco.mtk.nao.ac.jp/koyomi/dni/2026/s1303.html etc.) and its definition of sunrise (upper limb, horizontal refraction 35′8″).
 - NOAA Global Monitoring Laboratory, *Solar Calculation Details* (https://gml.noaa.gov/grad/solcalc/calcdetails.html) / J. Meeus, *Astronomical Algorithms*, 2nd ed., Willmann-Bell, 1998.
