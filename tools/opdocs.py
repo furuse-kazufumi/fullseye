@@ -1383,16 +1383,52 @@ def _op_path(rec) -> str:
     return os.path.join(DOCS, rec["dim"], _catslug(rec["category"]), rec["name"] + ".md")
 
 
+#: 生成したノートだけが持つ印(frontmatter の version 行の注記)。消してよいかはこれで決める。
+_GENERATED_MARK = "# fullseye lib version this note was generated for"
+
+
+def prune_stale_notes(docs_root: str, written) -> list:
+    """今回書かなかった生成ノートを消し、消したパスを返す。
+
+    ★2026-10-02: op が層を移る(型を ``[]`` → ``any`` に変えて typed 層から外れる等)と、
+    前の層のノート ``<dim>/<旧カテゴリ>/<name>.md`` が残り、「台帳に無いノート」
+    「呼べる層に無いノート」の 2 つの門が全体スイートで初めて落ちた
+    (``tb_crossing_lamp_signal``)。生成器が自分の出力の後始末をする。
+
+    消すのは ``<docs_root>/<dim>/<cat>/<name>.md`` のうち、``guides`` 以外にあり、
+    先頭 600 文字に生成の印を持ち、``written`` に無いものだけ。手書きの文書は消さない。
+    """
+    gone = []
+    for q in sorted(glob.glob(os.path.join(docs_root, "*", "*", "*.md"))):
+        if os.path.basename(os.path.dirname(q)) == "guides":
+            continue
+        if os.path.normcase(os.path.abspath(q)) in written:
+            continue
+        try:
+            with open(q, encoding="utf-8") as f:
+                head = f.read(600)
+        except OSError:
+            continue
+        if head.startswith("---") and _GENERATED_MARK in head:
+            os.remove(q)
+            gone.append(q)
+    return gone
+
+
 def cmd_md():
     recs, idx2d, op_fam, fam_ops = _records()
     by_name = {(r["dim"], r["name"]): r for r in recs}
     n = 0
+    written = set()
     for rec in recs:
         p = _op_path(rec)
         os.makedirs(os.path.dirname(p), exist_ok=True)
         with open(p, "w", encoding="utf-8") as f:
             f.write(_op_md(rec, p, by_name))
+        written.add(os.path.normcase(os.path.abspath(p)))
         n += 1
+    for gone in prune_stale_notes(DOCS, written):
+        print(f"opdocs md: removed stale note {os.path.relpath(gone, DOCS)}")
     # ensure guides dirs exist (authored separately)
     os.makedirs(os.path.join(DOCS, "2d", "guides"), exist_ok=True)
     for _d in LEDGER_DIMS:

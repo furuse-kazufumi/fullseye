@@ -1231,3 +1231,32 @@ def test_nary_notes_document_a_call_form_that_actually_runs():
         got = g.run({"$in%d" % (i + 1): im for i, im in enumerate(ims)}, terminal="out")
         assert np.allclose(got, o.fn(ims, 0.5, 0.5)), \
             f"{o.name}: ノート記載の経路と実装が食い違う"
+
+
+def test_the_generator_removes_a_note_left_behind_in_an_old_layer(tmp_path):
+    """op が層を移ったら、前の層の生成ノートは生成器が消す(手書きと guides は残す)。
+
+    ★2026-10-02: ``crossing_lamp_signal`` の型を ``[]`` → ``any`` に変えた後、
+    ``2d/typed/tb_crossing_lamp_signal.md`` が残り、全体スイートの門 2 つで初めて見つかった。
+    """
+    mark = OD._GENERATED_MARK
+    note = "---\nop: {n}\nversion: 0.2.3  " + mark + "\n---\n\nbody\n"
+    kept = tmp_path / "2d" / "drive" / "crossing_lamp_signal.md"
+    stale = tmp_path / "2d" / "typed" / "tb_crossing_lamp_signal.md"
+    handwritten = tmp_path / "2d" / "typed" / "README_by_hand.md"
+    guide = tmp_path / "2d" / "guides" / "old_guide.md"
+    for p in (kept, stale, handwritten, guide):
+        p.parent.mkdir(parents=True, exist_ok=True)
+    kept.write_text(note.format(n="crossing_lamp_signal"), encoding="utf-8")
+    stale.write_text(note.format(n="tb_crossing_lamp_signal"), encoding="utf-8")
+    handwritten.write_text("# 手で書いた説明\n", encoding="utf-8")
+    guide.write_text(note.format(n="guide"), encoding="utf-8")
+
+    written = {os.path.normcase(os.path.abspath(str(kept)))}
+    gone = OD.prune_stale_notes(str(tmp_path), written)
+
+    assert [os.path.basename(g) for g in gone] == ["tb_crossing_lamp_signal.md"]
+    assert not stale.exists()
+    assert kept.exists() and handwritten.exists() and guide.exists()
+    # 2 回目は何も消さない(冪等)
+    assert OD.prune_stale_notes(str(tmp_path), written) == []
