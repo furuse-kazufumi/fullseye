@@ -1078,15 +1078,19 @@ py -3.11 examples/poc_bilateral_asymmetry.py
 
 *↑ 窓を広げると尖頭が下がり幅が広がる(空間分解能の限界)。*
 
+[![引張試験の荷重を 48 段で上げる過程(lk、窓 31)。真のひずみを 0 → 3000 µε、同時に試験機が 0 → 2.0 度回る。変形像は毎段、斑点を写して描き直す(補間なし)。最終段で微小ひずみ ∂u/∂x の領域平均は 2341 ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/05_tensile_ramp.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/05_tensile_ramp.gif)
+
+*↑ 動く図 ―― 引張試験の荷重を 48 段で上げる過程(lk、窓 31)。真のひずみを 0 → 3000 µε、同時に試験機が 0 → 2.0 度回る。変形像は毎段、斑点を写して描き直す(補間なし)。最終段で微小ひずみ ∂u/∂x の領域平均は 2341 µε(理論 (1+e)cosθ-1 = 2389 µε)—— 材料は 3000 µε 伸びているのに、回転が約 611 µε 少なく見せる。Green-Lagrange は 2961 µε(理論 e+e²/2 = 3005 µε)。地図の色は全コマ共通の尺度。*
+
 ```
 py -3.11 examples/poc_dic_strain.py
 ```
 
 ソース: [examples/poc_dic_strain.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dic_strain.py)
 
-この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_dic_strain)
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_dic_strain)
 
-使用 op(ノートへ): [`piv_cross_correlate`](https://furuse.work/ops/piv/estimate/piv_cross_correlate.html) · [`strain_from_displacement`](https://furuse.work/ops/piv/solid/strain_from_displacement.html)
+使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`piv_cross_correlate`](https://furuse.work/ops/piv/estimate/piv_cross_correlate.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`strain_from_displacement`](https://furuse.work/ops/piv/solid/strain_from_displacement.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
 
 ## No.2026.097 —— ダイの傾きと TSV の位置ずれを 1 つの CT から分ける ―― 傾きは回転まで偽装する
 
@@ -1310,15 +1314,19 @@ py -3.11 examples/poc_metal_grain_size.py
 
 *↑ 2 点キャスト(表層と海底だけ)の一定勾配当てはめ。*
 
+[![主図(動画、640 × 360・30 fps・12 秒): 深さ 50 m の平らな海底を、船が 2 本の測線(間隔 101.4 m)で測る。水色は真の音線(水柱の音速差 -40 m/s の線形プロファイルで円弧に曲がる)、白い点と面は直下](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/17_survey.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/17_survey.gif)
+
+*↑ 動く図 ―― 主図(動画、640 × 360・30 fps・12 秒): 深さ 50 m の平らな海底を、船が 2 本の測線(間隔 101.4 m)で測る。水色は真の音線(水柱の音速差 -40 m/s の線形プロファイルで円弧に曲がる)、白い点と面は直下較正した等音速の処理が記録する海底で、色は「測った − 真の深さ」(高さの誤差だけ画面上 5 倍)。直下は +0.000 m、65 度は -2.697 m —— 平らな海底が外側だけ持ち上がる「スマイル」。最後に重なり帯を回り込むと、同じ海底を直下と最外ビームで測った 2.697 m の段差(TVU 0.820 m の 3.3 倍)が立っている。*
+
 ```
 py -3.11 examples/poc_multibeam_bathymetry.py
 ```
 
 ソース: [examples/poc_multibeam_bathymetry.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_multibeam_bathymetry.py)
 
-この回が作った図は全部で **16 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_multibeam_bathymetry)
+この回が作った図は全部で **17 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_multibeam_bathymetry)
 
-使用 op(ノートへ): [`beamform_delay_sum`](https://furuse.work/ops/rangedoppler/beamform/beamform_delay_sum.html) · [`beamform_doa`](https://furuse.work/ops/rangedoppler/beamform/beamform_doa.html) · [`dem_slope`](https://furuse.work/ops/dem/surface/dem_slope.html) · [`find_peaks`](https://furuse.work/ops/oned/signal/find_peaks.html) · [`interp_scattered`](https://furuse.work/ops/math/interp_poly/interp_scattered.html) · [`peak_subbin`](https://furuse.work/ops/oned/signal/peak_subbin.html) · [`snell_angle`](https://furuse.work/ops/3d/optics/snell_angle.html)
+使用 op(ノートへ): [`beamform_delay_sum`](https://furuse.work/ops/rangedoppler/beamform/beamform_delay_sum.html) · [`beamform_doa`](https://furuse.work/ops/rangedoppler/beamform/beamform_doa.html) · [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`dem_slope`](https://furuse.work/ops/dem/surface/dem_slope.html) · [`find_peaks`](https://furuse.work/ops/oned/signal/find_peaks.html) · [`interp_scattered`](https://furuse.work/ops/math/interp_poly/interp_scattered.html) · [`peak_subbin`](https://furuse.work/ops/oned/signal/peak_subbin.html) · [`snell_angle`](https://furuse.work/ops/3d/optics/snell_angle.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ## No.2026.029 —— 粒度分布を画像から測る ―― 融合と縁切れが逆向きに効き、途中で打ち消し合う
 
@@ -1502,15 +1510,19 @@ py -3.11 examples/poc_screw_thread_metrology.py
 
 *↑ 対照群(平ら/全周)で 2 つを切り分けてから、両方入れる。*
 
+[![主図(動画、640 × 360・30 fps・12 秒): うねりのある地面に置いた山の周りを一周しながら、走査位置を 1 → 2 → 3 か所と増やす。描いているのは補間で埋めた DSM(在庫計算が信じている面)で、色は「補間 − 真の面](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_stockpile_volume/07_scan_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_stockpile_volume/07_scan_orbit.gif)
+
+*↑ 動く図 ―― 主図(動画、640 × 360・30 fps・12 秒): うねりのある地面に置いた山の周りを一周しながら、走査位置を 1 → 2 → 3 か所と増やす。描いているのは補間で埋めた DSM(在庫計算が信じている面)で、色は「補間 − 真の面」(最大 5.23 m)。見えなかった割合は 0.660 → 0.315 → 0.014。在庫量の誤差は真の底面で +17.20 % → +3.05 % → +0.05 %、外周平均の水平底面で +0.51 % → +2.41 % → +1.83 % —— 3 か所で遮蔽は塞がるが、うねり由来の偏りは残る。高さは実寸。*
+
 ```
 py -3.11 examples/poc_stockpile_volume.py
 ```
 
 ソース: [examples/poc_stockpile_volume.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py)
 
-この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_stockpile_volume)
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_stockpile_volume)
 
-使用 op(ノートへ): [`dem_hillshade`](https://furuse.work/ops/dem/shading/dem_hillshade.html) · [`dem_slope`](https://furuse.work/ops/dem/surface/dem_slope.html) · [`dem_viewshed`](https://furuse.work/ops/dem/visibility/dem_viewshed.html) · [`interp_scattered`](https://furuse.work/ops/math/interp_poly/interp_scattered.html) · [`moment_axes`](https://furuse.work/ops/3d/match_pose/moment_axes.html)
+使用 op(ノートへ): [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`dem_hillshade`](https://furuse.work/ops/dem/shading/dem_hillshade.html) · [`dem_slope`](https://furuse.work/ops/dem/surface/dem_slope.html) · [`dem_viewshed`](https://furuse.work/ops/dem/visibility/dem_viewshed.html) · [`interp_scattered`](https://furuse.work/ops/math/interp_poly/interp_scattered.html) · [`moment_axes`](https://furuse.work/ops/3d/match_pose/moment_axes.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ## No.2026.038 —— クリープ試験のひずみ履歴 ―― 累積か直接か
 
@@ -1914,15 +1926,19 @@ py -3.11 examples/poc_vessel_network.py
 
 *↑ ゼロ点は散らばりがいちばん小さく、偏りがいちばん大きい。*
 
+[![動画(800 × 544、12 fps、143 コマ): 真の面積 A0·exp(-kt)(k = 0.12 /day)で縮む創面を 8 日撮る。撮影距離は 1 日 +1.2 % 漂い(この 1 本では 448 → 495 mm)、傾き・方](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/06_healing_video.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/06_healing_video.gif)
+
+*↑ 動く図 ―― 動画(800 × 544、12 fps、143 コマ): 真の面積 A0·exp(-kt)(k = 0.12 /day)で縮む創面を 8 日撮る。撮影距離は 1 日 +1.2 % 漂い(この 1 本では 448 → 495 mm)、傾き・方位・回転も毎回変わる(日と日の間は条件を補間した仮想の撮影、整数日のコマが門と同じ 1 枚)。左 = カメラの像(水色 = 測った塊、紫の十字 = 較正標識)、右 = 正対化した像。M0(1 枚目だけで較正)は0 日目 +10.7 % から 7 日目 -9.9 % へ真値の下へ漂い、下の対数グラフで M0 の傾きだけが急になる。この 1 本の k は M0 0.1473 / M1 0.1253 / M2 0.1174(真値 0.1200)、8 seed の平均は M0 0.1424(+18.7 %)/ M1 0.1225(+2.1 %)/ M2 0.1200(+0.0 %)。*
+
 ```
 py -3.11 examples/poc_wound_area_tracking.py
 ```
 
 ソース: [examples/poc_wound_area_tracking.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_wound_area_tracking.py)
 
-この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_wound_area_tracking)
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_wound_area_tracking)
 
-使用 op(ノートへ): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_select_largest`](https://furuse.work/ops/blob/select/blob_select_largest.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`warp_by_plane`](https://furuse.work/ops/3d/plane_sweep_stereo/warp_by_plane.html)
+使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_select_largest`](https://furuse.work/ops/blob/select/blob_select_largest.html) · [`data_to_pixel`](https://furuse.work/ops/annotate/plot/data_to_pixel.html) · [`gaussian`](https://furuse.work/ops/2d/smoothing/gaussian.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`warp_by_plane`](https://furuse.work/ops/3d/plane_sweep_stereo/warp_by_plane.html)
 
 ## No.2026.123 —— 幼虫コネクトームを reservoir にして数字を読む ―― 配線は効いていない
 
@@ -2586,15 +2602,19 @@ py -3.11 examples/poc_datacenter_thermal_field.py
 
 *↑ 陰影の平均は 北向き 0.354 / 東向き 0.811 / 南向き 0.811 / 西向き 0.354。*
 
+[![主図(動画、640 × 360・30 fps・11 秒): 800 m 四方の地形(セル 5 m)を南南西から北へ回り込み、止まって太陽を一周させる。陰影は描画の光でなく dem_hillshade(仰角 35 度)の出力で塗り、青は de](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/05_terrain_flight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/05_terrain_flight.gif)
+
+*↑ 動く図 ―― 主図(動画、640 × 360・30 fps・11 秒): 800 m 四方の地形(セル 5 m)を南南西から北へ回り込み、止まって太陽を一周させる。陰影は描画の光でなく dem_hillshade(仰角 35 度)の出力で塗り、青は dem_flow_accumulation の集水量 150 セル以上。南向き斜面の陰影の平均は太陽方位 187 度で最大 0.719、北向き斜面は 1 度で最大 0.709 —— 日当たりは斜面の向きで決まる(§6 の平面と同じ結論)。高さは画面上だけ 2.5 倍。*
+
 ```
 py -3.11 examples/poc_dem_terrain.py
 ```
 
 ソース: [examples/poc_dem_terrain.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
 
-この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_dem_terrain)
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_dem_terrain)
 
-使用 op(ノートへ): [`dem_aspect`](https://furuse.work/ops/dem/surface/dem_aspect.html) · [`dem_curvature`](https://furuse.work/ops/dem/surface/dem_curvature.html) · [`dem_fill_sinks`](https://furuse.work/ops/dem/hydrology/dem_fill_sinks.html) · [`dem_flow_accumulation`](https://furuse.work/ops/dem/hydrology/dem_flow_accumulation.html) · [`dem_hillshade`](https://furuse.work/ops/dem/shading/dem_hillshade.html) · [`dem_sky_view_factor`](https://furuse.work/ops/dem/visibility/dem_sky_view_factor.html) · [`dem_slope`](https://furuse.work/ops/dem/surface/dem_slope.html)
+使用 op(ノートへ): [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`dem_aspect`](https://furuse.work/ops/dem/surface/dem_aspect.html) · [`dem_curvature`](https://furuse.work/ops/dem/surface/dem_curvature.html) · [`dem_fill_sinks`](https://furuse.work/ops/dem/hydrology/dem_fill_sinks.html) · [`dem_flow_accumulation`](https://furuse.work/ops/dem/hydrology/dem_flow_accumulation.html) · [`dem_hillshade`](https://furuse.work/ops/dem/shading/dem_hillshade.html) · [`dem_sky_view_factor`](https://furuse.work/ops/dem/visibility/dem_sky_view_factor.html) · [`dem_slope`](https://furuse.work/ops/dem/surface/dem_slope.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ## No.2026.066 —— 系外惑星トランジットを開口測光で取り出す ―― 深さと継続時間は別々に壊れる
 
@@ -2794,15 +2814,19 @@ py -3.11 examples/poc_real_sky_photometry.py
 
 *↑ この回の図*
 
+[![動画(60 コマ、30 fps で撮った 2 秒を 1/3 の速さで再生): 左上 = 斜めカメラ(泡が右へ流れ、空の映り込みは動かない)、右上 = 既知ホモグラフィで正射化したコマと、いま足した対の PIV 変位(矢印 × 8)。下段は対](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/13_accumulate_pairs.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/13_accumulate_pairs.gif)
+
+*↑ 動く図 ―― 動画(60 コマ、30 fps で撮った 2 秒を 1/3 の速さで再生): 左上 = 斜めカメラ(泡が右へ流れ、空の映り込みは動かない)、右上 = 既知ホモグラフィで正射化したコマと、いま足した対の PIV 変位(矢印 × 8)。下段は対を 1 つずつ足した平均から出した表面流速 u(y)(橙)と流量 Q の推移。1 対だけで Q = 11.68 m³/s(-7.3 %)、本文と同じ 20 対で 11.62 m³/s(-7.8 %、閉形式 12.6)、59 対で 11.63 m³/s(-7.7 %)—— **対を足しても流量の誤差はほとんど動かない**。平均で減るのは偶然誤差だけで、u(y) が真値より低めに出る偏りと岸 0 の台形則(だけで約 -2.5 %)は残る。紫は斜め画像のまま 1 尺度で直したゼロ点(近岸で速く遠岸で遅い)*
+
 ```
 py -3.11 examples/poc_river_surface_velocity.py
 ```
 
 ソース: [examples/poc_river_surface_velocity.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_river_surface_velocity.py)
 
-この回が作った図は全部で **12 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_river_surface_velocity)
+この回が作った図は全部で **13 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_river_surface_velocity)
 
-使用 op(ノートへ): [`highpass_image`](https://furuse.work/ops/2d/frequency/highpass_image.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`piv_cross_correlate`](https://furuse.work/ops/piv/estimate/piv_cross_correlate.html) · [`piv_ensemble_correlate`](https://furuse.work/ops/piv/estimate/piv_ensemble_correlate.html) · [`piv_error_stats`](https://furuse.work/ops/piv/assess/piv_error_stats.html) · [`piv_outlier_mask`](https://furuse.work/ops/piv/validate/piv_outlier_mask.html) · [`piv_replace_outliers`](https://furuse.work/ops/piv/validate/piv_replace_outliers.html) · [`piv_sample_at_windows`](https://furuse.work/ops/piv/assess/piv_sample_at_windows.html) · [`piv_to_velocity`](https://furuse.work/ops/piv/field/piv_to_velocity.html) · [`sigma_clip_stack`](https://furuse.work/ops/astrostack/stack/sigma_clip_stack.html) · [`warp_by_plane`](https://furuse.work/ops/3d/plane_sweep_stereo/warp_by_plane.html)
+使用 op(ノートへ): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`highpass_image`](https://furuse.work/ops/2d/frequency/highpass_image.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`piv_cross_correlate`](https://furuse.work/ops/piv/estimate/piv_cross_correlate.html) · [`piv_ensemble_correlate`](https://furuse.work/ops/piv/estimate/piv_ensemble_correlate.html) · [`piv_error_stats`](https://furuse.work/ops/piv/assess/piv_error_stats.html) · [`piv_outlier_mask`](https://furuse.work/ops/piv/validate/piv_outlier_mask.html) · [`piv_replace_outliers`](https://furuse.work/ops/piv/validate/piv_replace_outliers.html) · [`piv_sample_at_windows`](https://furuse.work/ops/piv/assess/piv_sample_at_windows.html) · [`piv_to_velocity`](https://furuse.work/ops/piv/field/piv_to_velocity.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`sigma_clip_stack`](https://furuse.work/ops/astrostack/stack/sigma_clip_stack.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`warp_by_plane`](https://furuse.work/ops/3d/plane_sweep_stereo/warp_by_plane.html)
 
 ## No.2026.035 —— 海氷密接度 ―― 混合画素をどう数えるかで答えが変わる
 

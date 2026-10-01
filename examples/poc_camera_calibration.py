@@ -166,13 +166,16 @@ def _unpack(p, n_views, fit_dist, fit_pp):
     return fx, fy, cx, cy, dist, p[i:].reshape(n_views, 6)
 
 
-def calibrate(obj, obs, fit_dist: bool = True, fit_pp: bool = True):
+def calibrate(obj, obs, fit_dist: bool = True, fit_pp: bool = True, trace=None):
     """内部パラメータ + 歪み + 全姿勢を同時に最小二乗で解く。
 
     初期値は Zhang 法(``calib.camera_calibration``、歪み無視の閉形式)+ 視点ごとの
     ``fs.solve_pnp``。残差は ``distort_points(project_points(...))`` の順方向モデル。
     Zhang が拒否した配置では「焦点距離 ~ 画像幅」という経験則の初期値に落として
-    先へ進む(第 6 章 a の退化配置がこの経路。最適化は止まらず答えを返す)。"""
+    先へ進む(第 6 章 a の退化配置がこの経路。最適化は止まらず答えを返す)。
+
+    ``trace`` に list を渡すと、残差を評価するたびに ``(パラメータ, 残差二乗和)`` を積む
+    (動画用。計算そのものは変えない —— 既定の None では何も積まない)。"""
     n = len(obs)
     try:
         # ★ 穴 (d): camera_calibration の画像点は (row, col)。project_points は (x, y)。
@@ -203,6 +206,8 @@ def calibrate(obj, obs, fit_dist: bool = True, fit_pp: bool = True):
         for k in range(n):
             uv, _ = fs.project_points(obj, K, fs.rodrigues(rt[k, :3]), rt[k, 3:])
             out[k] = fs.distort_points(uv, K, dist) - obs[k]
+        if trace is not None:
+            trace.append((np.array(p, dtype=float, copy=True), float(np.sum(out * out))))
         return out.ravel()
 
     t0 = time.perf_counter()
@@ -278,6 +283,214 @@ def sweep_seeds(obj, poses, sigma, seeds=(2, 7, 11)):
         acc["dcx_full"].append(abs(full["cx"] - TRUE_CX))
         acc["sigma_cx"].append(full["sigma_cx"])
     return {k: float(np.mean(v)) for k, v in acc.items()}
+
+
+# ── 動画: 最適化が収束していく過程と、fx を固定して振ったときの相殺 ───────────── #
+def _vid_txt(img, s, xy, anchor="lt", fs_=12):
+    import annotate as AN
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_), dtype=np.float64)
+
+
+def _fit_fixed_fx(obj, obs, fx, p_start):
+    """fx だけを固定し、残り(fy, 主点, 歪み, 全姿勢)を解き直す。動画の第 2 部専用。"""
+    n = len(obs)
+
+    def resid(q):
+        pp = np.concatenate([[fx], q])
+        _fx, fy, cx, cy, dist, rt = _unpack(pp, n, True, True)
+        K = fs.intrinsic_matrix(_fx, fy, cx, cy)
+        out = np.empty((n, obj.shape[0], 2))
+        for k in range(n):
+            uv, _ = fs.project_points(obj, K, fs.rodrigues(rt[k, :3]), rt[k, 3:])
+            out[k] = fs.distort_points(uv, K, dist) - obs[k]
+        return out.ravel()
+
+    sol = least_squares(resid, np.asarray(p_start, float)[1:], method="lm", max_nfev=4000)
+    pp = np.concatenate([[fx], sol.x])
+    return pp, float(np.sqrt(np.mean(sol.fun.reshape(-1, 2) ** 2) * 2.0))
+
+
+def fig_convergence_video(obj):
+    """傾き 32 度(良い配置)と 2 度(ほぼ正面)を並べ、2 部構成の動画を作る。
+
+    第 1 部: バンドル調整の反復。残差二乗和がそれまでの最良を更新した評価点だけを拾う
+    (``calibrate(trace=...)`` で記録。数値微分のための評価は最良を更新しないので落ちる)。
+    第 2 部: fx を真値の 0.92〜1.08 倍に**固定**して残りを解き直す。悪い配置では板までの距離 Z が
+    fx と同じ比で動いて画素がほとんど動かず、再投影 RMS は平らなまま。
+    ★図を出すときだけ計算する。観測は本文 4 章と同じ(seed=3、``observe`` は自分の Generator を使う)。
+    """
+    if not figs.enabled():
+        return None
+    import annotate as AN
+    import imagedraw as ID
+
+    cfgs = (("傾き 32 度(良い配置)", 32.0), ("傾き 2 度(ほぼ正面)", 2.0))
+    runs = []
+    for label, tilt in cfgs:
+        poses = make_poses(N_VIEWS, tilt_deg=tilt, offset_m=0.14, z_lo=0.55, z_hi=0.85)
+        ob = observe(obj, poses, sigma_px=0.05, seed=3)
+        tr = []
+        r = calibrate(obj, ob, trace=tr)
+        best, steps = np.inf, []
+        for prm, c in tr:
+            if c < best * (1.0 - 1e-3):
+                best = c
+                steps.append(prm)
+        runs.append(dict(label=label, poses=poses, obs=ob, r=r, steps=steps,
+                         p_final=np.asarray(tr[-1][0]) if False else None))
+        # 最終解のパラメータ(trace の中の最良)
+        runs[-1]["p_best"] = min(tr, key=lambda t: t[1])[0]
+
+    def state(run, prm):
+        n = len(run["obs"])
+        fx, fy, cx, cy, dist, rt = _unpack(prm, n, True, True)
+        K = fs.intrinsic_matrix(fx, fy, cx, cy)
+        uv, _ = fs.project_points(obj, K, fs.rodrigues(rt[0, :3]), rt[0, 3:])
+        proj0 = fs.distort_points(uv, K, dist)
+        res = []
+        for k in range(n):
+            u2, _ = fs.project_points(obj, K, fs.rodrigues(rt[k, :3]), rt[k, 3:])
+            res.append(fs.distort_points(u2, K, dist) - run["obs"][k])
+        rms_ = float(np.sqrt(np.mean(np.concatenate(res) ** 2) * 2.0))
+        zt = np.array([t[2] for _, t in run["poses"]])
+        return dict(fx=float(fx), proj0=proj0, rms=rms_, zr=float(np.mean(rt[:, 5] / zt)),
+                    z0=float(rt[0, 5]), z0t=float(zt[0]))
+
+    # 第 2 部: fx を固定して振る(最終解から温めて開始)
+    ratios = np.round(np.linspace(0.92, 1.08, 25), 4)
+    for run in runs:
+        prof = []
+        pb = np.asarray(run["p_best"], float)
+        n = len(run["obs"])
+        for sr in ratios:
+            start = pb.copy()
+            start[0] = sr * TRUE_FX
+            start[1] = pb[1] * sr / (pb[0] / TRUE_FX)
+            rt = start[8:].reshape(n, 6)
+            rt[:, 5] *= sr / (pb[0] / TRUE_FX)        # Z も同じ比で寄せておく(初期値だけ)
+            pp, rr = _fit_fixed_fx(obj, run["obs"], sr * TRUE_FX, start)
+            prof.append((float(sr), pp, rr))
+        run["prof"] = prof
+
+    SC = 0.25
+    PW, PH = int(IMG_W * SC), int(IMG_H * SC)       # 320 x 240
+    GAP, TOP, LAB, SIDE, PLOT_H = 12, 34, 64, 58, 226
+    FW = 2 * PW + 3 * GAP
+    FH = TOP + PH + LAB + SIDE + PLOT_H
+    MAG = 20.0
+    colors = ((0.35, 0.75, 1.0), (1.0, 0.55, 0.0))
+
+    def panel(f, ci, run, st, head):
+        x0 = GAP + ci * (PW + GAP)
+        f[TOP:TOP + PH, x0:x0 + PW] = 0.12
+        o = run["obs"][0] * SC + np.array([x0, TOP])
+        pj = st["proj0"] * SC + np.array([x0, TOP])
+        tip = o + MAG * (pj - o)
+        tip = np.column_stack([np.clip(tip[:, 0], x0, x0 + PW - 1), np.clip(tip[:, 1], TOP, TOP + PH - 1)])
+        for a, b in zip(o, tip):
+            f = ID.draw_line(f, tuple(a), tuple(b), color=colors[ci], width=1)
+        f = ID.draw_markers(f, o, color=(0.95, 0.95, 0.95), size=1, shape="square", width=1)
+        f = np.asarray(f, float)
+        f = _vid_txt(f, run["label"], (x0 + 4, TOP + 4), fs_=12)
+        dfx = 100.0 * (st["fx"] - TRUE_FX) / TRUE_FX
+        f = _vid_txt(f, "%s\n再投影 RMS %.3f px\nfx %.1f(真 %.0f、誤差 %+.2f %%)"
+                     % (head, st["rms"], st["fx"], TRUE_FX, dfx), (x0 + 2, TOP + PH + 4), fs_=11)
+        # 横から見た図: 視点 0 の板までの距離(真 = 白、推定 = 色)
+        y0 = TOP + PH + LAB
+        ax = AN.axes_transform((x0 + 8, y0 + 4, PW - 16, 14), (0.40, 0.75), (0.0, 1.0))
+        f = np.asarray(AN.axes_frame(f, ax), float)
+        for z, c, w in ((st["z0t"], (0.95, 0.95, 0.95), 1), (st["z0"], colors[ci], 3)):
+            px, _ = AN.data_to_pixel(ax, z, 0.5)
+            f = np.asarray(ID.draw_line(f, (px, y0 + 1), (px, y0 + 21), color=c, width=w), float)
+        f = _vid_txt(f, "板までの距離 Z  推定 %.3f m / 真 %.3f m(比 %.4f)" % (st["z0"], st["z0t"], st["z0"] / st["z0t"]),
+                     (x0 + 4, y0 + 22), fs_=10)
+        return f
+
+    def plots(f, xs_list, rms_list, right_list, xlim, xlab, cur_i, right, xticks):
+        """左 = 再投影 RMS(対数)、右 = ``right``("fx": |fx 誤差| % 対数 / "z": Z 比 線形 + 対角線)。"""
+        y0 = TOP + PH + LAB + SIDE + 22
+        w = (FW - 3 * GAP) // 2 - 50
+        hgt = PLOT_H - 82
+        allr = np.concatenate([np.asarray(v) for v in rms_list])
+        axr = AN.axes_transform((GAP + 44, y0, w, hgt), xlim,
+                                (np.log10(0.05), np.log10(max(allr.max(), 0.1) * 1.3)))
+        if right == "fx":
+            alle = np.concatenate([np.abs(np.asarray(v)) for v in right_list])
+            axe = AN.axes_transform((GAP * 2 + 88 + w, y0, w, hgt), xlim,
+                                    (np.log10(0.005), np.log10(max(alle.max(), 0.1) * 1.5)))
+            rttl = "|fx 誤差| [%%](対数、0.005〜%.1f)" % (max(alle.max(), 0.1) * 1.5)
+            conv = lambda v: np.log10(np.maximum(np.abs(np.asarray(v)), 0.005))
+        else:
+            axe = AN.axes_transform((GAP * 2 + 88 + w, y0, w, hgt), xlim, xlim)
+            rttl = "推定 Z / 真 Z(灰の対角線 = fx と同じ比)"
+            conv = lambda v: np.asarray(v, float)
+        lttl = "再投影 RMS [px](対数、0.05〜%.2f)" % (max(allr.max(), 0.1) * 1.3)
+        for ax, ttl in ((axr, lttl), (axe, rttl)):
+            f = np.asarray(AN.axes_frame(f, ax), float)
+            f = np.asarray(AN.ticks(f, ax, xticks=xticks, yticks=[], font_size=9), float)
+            x, y, ww, hh = ax["rect"]
+            f = _vid_txt(f, ttl, (x, y - 3), anchor="lb", fs_=10)
+            f = _vid_txt(f, xlab, (x + ww // 2, y + hh + 18), anchor="ct", fs_=10)
+        if right == "z":
+            f = np.asarray(AN.plot_series(f, axe, np.asarray(xlim), np.asarray(xlim), color=(0.5, 0.5, 0.5), width=1), float)
+        for ci in range(2):
+            xs = np.asarray(xs_list[ci], float)
+            k = min(cur_i, len(xs) - 1)
+            for ax, ys in ((axr, np.log10(np.asarray(rms_list[ci]))),
+                           (axe, conv(right_list[ci]))):
+                if k >= 1:
+                    f = np.asarray(AN.plot_series(f, ax, xs[:k + 1], ys[:k + 1], color=colors[ci], width=2), float)
+                f = np.asarray(AN.plot_series(f, ax, xs[k:k + 1], ys[k:k + 1], kind="scatter",
+                                              color=colors[ci], marker_size=3), float)
+        return f
+
+    frames = []
+    # ---- 第 1 部 ----
+    sts = [[state(run, prm) for prm in run["steps"]] for run in runs]
+    n1 = max(len(v) for v in sts)
+    xs1 = [np.arange(len(v), dtype=float) for v in sts]
+    for i in range(n1):
+        f = np.full((FH, FW, 3), 0.06)
+        f = _vid_txt(f, "第 1 部: バンドル調整の反復(残差 ×%.0f 倍で表示。白 = 観測した角点)" % MAG, (GAP, 8), fs_=13)
+        for ci, run in enumerate(runs):
+            k = min(i, len(sts[ci]) - 1)
+            f = panel(f, ci, run, sts[ci][k], "反復 %d / %d" % (k, len(sts[ci]) - 1))
+        f = plots(f, xs1, [[s_["rms"] for s_ in v] for v in sts],
+                  [[100 * (s_["fx"] - TRUE_FX) / TRUE_FX for s_ in v] for v in sts],
+                  (0.0, float(n1 - 1)), "反復(最良を更新した評価)", i, "fx", list(range(n1)))
+        frames += [np.clip(f, 0, 1)] * (8 if i < n1 - 1 else 16)
+    # ---- 第 2 部 ----
+    prst = [[(sr, state(run, pp), rr) for sr, pp, rr in run["prof"]] for run in runs]
+    for i in range(len(ratios)):
+        f = np.full((FH, FW, 3), 0.06)
+        f = _vid_txt(f, "第 2 部: fx を真値の %.3f 倍に固定し、残りを解き直す" % ratios[i], (GAP, 8), fs_=13)
+        for ci, run in enumerate(runs):
+            sr, st, rr = prst[ci][i]
+            f = panel(f, ci, run, st, "fx 固定 %.3f 倍" % sr)
+        f = plots(f, [ratios, ratios], [[t[2] for t in v] for v in prst],
+                  [[t[1]["zr"] for t in v] for v in prst],
+                  (float(ratios[0]), float(ratios[-1])), "固定した fx / 真の fx", i, "z",
+                  [0.92, 0.96, 1.0, 1.04, 1.08])
+        frames += [np.clip(f, 0, 1)] * (3 if i < len(ratios) - 1 else 16)
+
+    g, b = runs
+    pg, pb_ = g["prof"], b["prof"]
+    rg_end = (pg[0][2], pg[-1][2])
+    rb_end = (pb_[0][2], pb_[-1][2])
+    zb = [state(b, pp)["zr"] for _, pp, _ in (pb_[0], pb_[-1])]
+    cap = ("第 1 部: 同じ雑音 0.05 px の観測を、傾き 32 度(左)と 2 度(右)の配置で解く反復。"
+           "再投影 RMS はどちらも %.3f / %.3f px まで下がるが、fx は左が %.1f(誤差 %.3f %%)、"
+           "右が %.1f(誤差 %.2f %%)で止まる。第 2 部: fx を真値の 0.92〜1.08 倍に固定して残りを"
+           "解き直すと、左は RMS が %.2f / %.2f px(両端)まで跳ね上がるのに、右は %.3f / %.3f px と"
+           "ほとんど動かない —— 板までの距離 Z が fx と同じ比で動いて(Z 比 %.3f / %.3f)、画素の位置を"
+           "保つため。右の配置では再投影誤差が焦点距離について何も言っていない。"
+           % (g["r"]["rms"], b["r"]["rms"], g["r"]["fx"], 100 * abs(g["r"]["fx"] - TRUE_FX) / TRUE_FX,
+              b["r"]["fx"], 100 * abs(b["r"]["fx"] - TRUE_FX) / TRUE_FX,
+              rg_end[0], rg_end[1], rb_end[0], rb_end[1], zb[0], zb[1]))
+    print(f"  [動画] 第 2 部の両端 RMS: 良い配置 {rg_end[0]:.3f}/{rg_end[1]:.3f} px, "
+          f"悪い配置 {rb_end[0]:.3f}/{rb_end[1]:.3f} px")
+    return figs.save_video("calibration_convergence", frames, caption=cap, fps=8.0,
+                           gif_every=2, gif_width=None)
 
 
 def main():
@@ -579,6 +792,7 @@ def main():
     assert hasattr(fs, "camera_calibration"), "穴 (a) を塞いだはず —— facade 露出が外れた"
     assert fs.find_op("camera_calibration") is None, "op ではなく facade 関数(レジストリには載せない)"
 
+    fig_convergence_video(obj)
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")

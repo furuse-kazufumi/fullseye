@@ -104,6 +104,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
 import pivops                                                    # noqa: E402  (flow, info) が要る
+import annotate as AN                                            # noqa: E402  動画のコマに文字・グラフ
 
 SEED = 20260907
 
@@ -830,6 +831,165 @@ def section_figures(sc, zp, rc, ctrl, dens, wins, refl, dts):
     figs.save_table("discharge", ["条件", "速度 RMS [m/s]", "流量の誤差 [%]"], rows,
                     title="速度の誤差と流量の誤差(Q 真値 %.1f m³/s)" % Q_TRUE,
                     caption="速度 RMS は窓の行ごとの u(y) と真値の差。流量は岸 0 の台形則で積分(積分則だけで -2.5 %)。")
+    try:                        # 動画の失敗で本文(数字)を落とさない。理由は examplefig が終了時に出す
+        fig_video_accumulate(sc, zp, rc)
+    except Exception as exc:    # noqa: BLE001
+        figs._errors.append("accumulate_pairs: %s: %s" % (type(exc).__name__, exc))
+
+
+# --------------------------------------------------------------------------- #
+# 9b. 動画 —— 対を 1 つずつ足していく過程(流速分布と流量の推移)              #
+# --------------------------------------------------------------------------- #
+def _txt(img, s, xy, anchor="lt", fs=12):
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs), dtype=np.float64)
+
+
+def _arrow_local(img, p0, p1, color="emphasis"):
+    """矢印を**矢印のまわりの小窓だけ**で描いて戻す。
+
+    ``AN.arrow`` は画像全体を相手に計算するので、大きなコマに何十本も描くと 1 コマ数秒かかる
+    (960 × 780 で 1 本 0.2 s を実測)。描く場所は矢印の外接箱 + 余白だけなので、そこを切って描く。
+    """
+    m = 8
+    x0, x1 = int(np.floor(min(p0[0], p1[0]))) - m, int(np.ceil(max(p0[0], p1[0]))) + m + 1
+    y0, y1 = int(np.floor(min(p0[1], p1[1]))) - m, int(np.ceil(max(p0[1], p1[1]))) + m + 1
+    x0, y0 = max(0, x0), max(0, y0)
+    x1, y1 = min(img.shape[1], x1), min(img.shape[0], y1)
+    sub = np.asarray(AN.arrow(img[y0:y1, x0:x1].copy(), (p0[0] - x0, p0[1] - y0), (p1[0] - x0, p1[1] - y0),
+                              color=color, width=1, head_len=5.0, head_width=4.0), dtype=np.float64)
+    img[y0:y1, x0:x1] = sub
+    return img
+
+
+def fig_video_accumulate(sc, zp, rc):
+    """斜め動画 60 コマを流しながら、正射化 → PIV の対を 1 つずつ足していく動画。
+
+    ★図を出すときだけ呼ばれる(section_figures の先頭で抜ける)。乱数は使わない。
+    計算は本文と同じ部品(rectify / piv_pairs / profile_from_flow / discharge)で、
+    20 対まで足した時点の流量が本文 2) の値と**一致すること**を確かめてから書く
+    (食い違えば書かずに理由を残す)。
+    """
+    n_pair = N_FRAMES - 1
+    rec = [rectify(f) for f in sc["obl"]]
+    ok = rc["rect"]["ok"]
+    info = rc["rect"]["info"]
+    acc = None
+    cnt = None
+    per_pair, run_y, run_u, run_q = [], [], [], []
+    for k in range(n_pair):
+        flow, inf_k, _, _ = piv_pairs(rec, [(k, k + 1)])
+        f = np.nan_to_num(flow)
+        c = np.isfinite(flow).astype(np.float64)
+        acc = f if acc is None else acc + f
+        cnt = c if cnt is None else cnt + c
+        with np.errstate(all="ignore"):
+            mean = np.where(cnt > 0, acc / np.maximum(cnt, 1.0), np.nan)
+        y_k, u_k = profile_from_flow(mean, inf_k, ok)
+        _, u_1 = profile_from_flow(flow, inf_k, ok)
+        per_pair.append((flow, u_1))
+        run_y.append(y_k)
+        run_u.append(u_k)
+        run_q.append(discharge(y_k, u_k))
+    q20 = run_q[N_PAIRS - 1]
+    if not abs(q20 - rc["q_r"]) < 1e-6 * Q_TRUE:
+        figs._errors.append("river video: 20 対の流量 %.6f が本文 %.6f と食い違う" % (q20, rc["q_r"]))
+        return
+    run_q = np.asarray(run_q)
+    e_r = [speed_err(run_y[k], run_u[k]) for k in range(n_pair)]
+
+    # 尺度は全コマで 1 つ(斜め画像の 0.5 / 99.5 % 点を最初のコマで決める)
+    lo, hi = np.percentile(sc["obl"][0], [0.5, 99.5])
+
+    def gray(a):
+        g = np.clip((np.asarray(a) - lo) / (hi - lo), 0.0, 1.0)
+        return np.repeat(g[..., None], 3, axis=2)
+
+    OH, OW = OBL_SHAPE
+    RH, RW = ORTHO_SHAPE
+    PH = 300
+    H, W = OH + PH, OW + RW
+    PW = W // 2
+    y_line = np.linspace(0.0, B_WIDTH, 200)
+    rows_px = np.asarray(info["rows"])
+    cols_px = np.asarray(info["cols"])
+    q_lo = float(np.floor(min(np.nanmin(run_q), Q_TRUE) - 0.6))
+    q_hi = float(np.ceil(max(np.nanmax(run_q), Q_TRUE) + 0.6))
+    # 下段の 2 枚(各 PW × PH)は軸・目盛り・真値・ゼロ点が動かないので、先に 1 度だけ描く
+    ax_u = AN.axes_transform((55, 40, PW - 80, PH - 95), (0.0, B_WIDTH), (0.0, 1.8))
+    ax_q = AN.axes_transform((55, 40, PW - 80, PH - 95), (0.0, float(n_pair)), (q_lo, q_hi))
+    zy, zu = np.asarray(zp["Yrow"]), np.asarray(zp["row_u"])
+    zm = np.isfinite(zy) & np.isfinite(zu) & (zu > 0) & (zu < 1.8) & (zy > 0) & (zy < B_WIDTH)
+    bg_u = np.full((PH, PW, 3), 0.08)
+    bg_u = AN.axes_frame(bg_u, ax_u)
+    bg_u = AN.ticks(bg_u, ax_u, xticks=[0, 2, 4, 6, 8], yticks=[0, 0.5, 1.0, 1.5], font_size=11)
+    bg_u = AN.plot_series(bg_u, ax_u, y_line, profile(y_line), kind="line", color="right", width=2)
+    if zm.any():
+        bg_u = AN.plot_series(bg_u, ax_u, zy[zm], zu[zm], kind="scatter", color="baseline", marker_size=3)
+    bg_u = _txt(bg_u, "表面流速 u(y) [m/s]  水色 = 真値 / 灰 = いまの 1 対\n橙 = 足した平均 / 紫 = ゼロ点(斜めのまま 1 尺度)",
+                (55, 2), fs=11)
+    bg_u = _txt(bg_u, "岸からの距離 y [m](近岸 → 遠岸)", (55 + (PW - 80) // 2, PH - 3), anchor="cb", fs=11)
+    bg_q = np.full((PH, PW, 3), 0.08)
+    bg_q = AN.axes_frame(bg_q, ax_q)
+    bg_q = AN.ticks(bg_q, ax_q, xticks=[0, 10, 20, 30, 40, 50], font_size=11)
+    bg_q = AN.plot_series(bg_q, ax_q, [0.0, float(n_pair)], [Q_TRUE, Q_TRUE], kind="line", color="right", width=2)
+    bg_q = AN.plot_series(bg_q, ax_q, [float(N_PAIRS), float(N_PAIRS)], [q_lo, q_hi], kind="line",
+                          color="neutral", width=1)
+    bg_q = _txt(bg_q, "流量 Q [m³/s]  水色 = 閉形式 %.1f / 橙 = 推定\n灰の縦線 = 本文の %d 対" % (Q_TRUE, N_PAIRS),
+                (55, 2), fs=11)
+    bg_q = _txt(bg_q, "足した対の数", (55 + (PW - 80) // 2, PH - 3), anchor="cb", fs=11)
+    frames = []
+    for t in range(N_FRAMES):
+        k = min(t, n_pair - 1)                 # このコマまでに足した対の数 = k + 1
+        img = np.full((H, W, 3), 0.08)
+        top = gray(sc["obl"][t])
+        top = _txt(top, "t = %.3f s(コマ %d / %d)\n斜めカメラ:泡は流れ、空の映り込みは動かない"
+                   % (t * DT, t, N_FRAMES - 1), (6, 6), fs=13)
+        img[:OH, :OW] = top
+        rp = gray(rec[t])
+        flow, u1 = per_pair[k]
+        # 正射画像の上に、いま足した対の変位(× 8)を矢印で。窓を間引いて描く。
+        for i in range(1, len(rows_px), 3):
+            for j in range(1, len(cols_px), 4):
+                dx, dy = flow[1][i, j], flow[0][i, j]
+                if not (np.isfinite(dx) and np.isfinite(dy)) or not ok[i, j]:
+                    continue
+                x0, y0 = float(cols_px[j]), float(rows_px[i])
+                x1 = float(np.clip(x0 + 8.0 * dx, 2, RW - 3))
+                y1 = float(np.clip(y0 + 8.0 * dy, 2, RH - 3))
+                rp = _arrow_local(rp, (x0, y0), (x1, y1))
+        rp = _txt(rp, "正射化 + PIV(矢印 = 変位 × 8)", (4, 4), fs=11)
+        img[:RH, OW:] = rp
+        side = img[RH:OH, OW:].copy()
+        side = _txt(side, "足した対 %d / %d\n流量 Q = %.2f m³/s\n閉形式 %.2f(誤差 %+.1f %%)"
+                    % (k + 1, n_pair, run_q[k], Q_TRUE, 100 * (run_q[k] / Q_TRUE - 1)), (6, 2), fs=12)
+        img[RH:OH, OW:] = side
+        # 下段左: u(y) —— いまの 1 対(灰)と足した平均(橙)
+        pu = bg_u.copy()
+        m1 = np.isfinite(u1) & (u1 > 0.0) & (u1 < 1.8)
+        if m1.any():
+            pu = AN.plot_series(pu, ax_u, run_y[k][m1], u1[m1], kind="scatter", color="neutral", marker_size=2)
+        mr = np.isfinite(run_u[k])
+        pu = AN.plot_series(pu, ax_u, run_y[k][mr], run_u[k][mr], kind="line", color="emphasis", width=2)
+        pu = _txt(pu, "速度 RMS %.3f m/s" % e_r[k], (PW - 30, PH - 70), anchor="rb", fs=11)
+        img[OH:, :PW] = pu
+        # 下段右: 流量の推移 —— 足した対の数に沿って伸びる
+        pq = bg_q.copy()
+        xs = np.arange(1, k + 2, dtype=float)
+        if k >= 1:
+            pq = AN.plot_series(pq, ax_q, xs, run_q[:k + 1], kind="line", color="emphasis", width=2)
+        pq = AN.plot_series(pq, ax_q, xs[-1:], run_q[k:k + 1], kind="scatter", color="emphasis", marker_size=4)
+        img[OH:, PW:] = pq
+        frames.append(np.clip(img, 0.0, 1.0))
+    figs.save_video(
+        "accumulate_pairs", frames, fps=10.0, gif_every=2, gif_width=640,
+        caption="動画(%d コマ、30 fps で撮った 2 秒を 1/3 の速さで再生): 左上 = 斜めカメラ(泡が右へ流れ、空の映り込みは"
+                "動かない)、右上 = 既知ホモグラフィで正射化したコマと、いま足した対の PIV 変位(矢印 × 8)。下段は対を 1 つずつ"
+                "足した平均から出した表面流速 u(y)(橙)と流量 Q の推移。1 対だけで Q = %.2f m³/s(%+.1f %%)、本文と同じ "
+                "%d 対で %.2f m³/s(%+.1f %%、閉形式 %.1f)、%d 対で %.2f m³/s(%+.1f %%)—— **対を足しても流量の誤差は"
+                "ほとんど動かない**。平均で減るのは偶然誤差だけで、u(y) が真値より低めに出る偏りと岸 0 の台形則(だけで約 -2.5 %%)は"
+                "残る。紫は斜め画像のまま 1 尺度で直したゼロ点(近岸で速く遠岸で遅い)"
+                % (N_FRAMES, run_q[0], 100 * (run_q[0] / Q_TRUE - 1), N_PAIRS, q20, 100 * (q20 / Q_TRUE - 1), Q_TRUE,
+                   n_pair, run_q[-1], 100 * (run_q[-1] / Q_TRUE - 1)))
 
 
 # --------------------------------------------------------------------------- #

@@ -650,6 +650,140 @@ def section8_figures(vol, times, labels, groups, rec, merge):
                     ["組", "粗くした軸", "倍率", "誤差 frame", "位相の幅"],
                     rows_tbl, title="標本化と合体時刻の誤差",
                     caption="空間側は格子の位相でこれだけ動く(偏りより大きい)。")
+    # 5) 動画: 成長と合体、Y 字が描かれていく様子(図を出すときだけ)
+    fig_growth_video(vol, times, labels, groups, merge)
+
+
+# --- 動画(図を出すときだけ)-------------------------------------------------- #
+#: 家族ラベルの色(1 始まり。0 = 背景)。Okabe-Ito から赤緑の対を避けて選ぶ
+VID_FAMILY = [(0.90, 0.62, 0.00), (0.34, 0.71, 0.91), (0.80, 0.47, 0.65), (0.00, 0.45, 0.70),
+              (0.94, 0.89, 0.26), (0.84, 0.37, 0.00), (0.60, 0.60, 0.60), (0.95, 0.95, 0.95)]
+
+
+def _txt(img, s, xy, anchor="lt", fs=12):
+    """文字を下敷きつきで載せる(poc_driving_traffic と同じ書き方)。"""
+    import annotate as AN
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs), dtype=np.float64)
+
+
+def _paint_labels(lab):
+    """家族ラベル(整数)→ RGB。背景は暗い灰。"""
+    out = np.full(lab.shape + (3,), 0.08)
+    for f in range(1, int(lab.max()) + 1):
+        out[lab == f] = VID_FAMILY[(f - 1) % len(VID_FAMILY)]
+    return out
+
+
+def fig_growth_video(vol, times, labels, groups, merge):
+    """★動画: 成長と合体を 1 フレームずつ進め、時空間の断面に Y 字が描かれていく様子を並べる。
+
+    左 = 二値のフレームを 3-D の家族ラベルで塗ったもの(白い細線 = 真の連続円 r = k sqrt(t+4))。
+    右 = 合体する 2 組の中心を通る行の時空間断面(縦 = 時間)が t まで現れていく —— Y 字の
+    分かれ目の高さが合体時刻。白い点線 = 閉形式の真の合体時刻、橙の線 = 観測(家族に限って
+    1 個になった最初のフレーム)。下 = フレームを独立に数えた塊の数(ゼロ点)と真の個数。
+    図を出さない実行では呼ばれない(呼び出し側が ``figs.enabled()`` で先に抜ける)。乱数は使わない。
+    """
+    import annotate as AN
+
+    counts = per_frame_counts(vol)
+    nf = vol.shape[0]
+    tm = {p: true_merge_time(*p) for p in PAIRS}
+    true_n = np.array([len(COLONIES) - sum(1 for p in PAIRS if tm[p] <= t) for t in times])
+    S = 2                                                     # 左の拡大率(200 → 400 px)
+    P = N * S
+    VS = 4                                                    # 断面の縦(時間)の拡大率
+    gap, gh = 8, 170
+    slab_rows = [int(round(COLONIES[i][0] - 0.5)) for i, _ in PAIRS]
+    slab_h = nf * VS
+    W, H = 2 * P + gap, max(P, 2 * slab_h + 3 * 34) + gh
+    x0 = P + gap
+    yy, xx = np.meshgrid((np.arange(P) + 0.5) / S, (np.arange(P) + 0.5) / S, indexing="ij")
+    ax = AN.axes_transform((56, H - gh + 40, W - 84, gh - 74), (0, T - 1), (3, 8))
+    ax_b = AN.axes_transform((56, 40, W - 84, gh - 74), (0, T - 1), (3, 8))   # 同じ軸を下の帯の中の座標で
+    # 動かない部分(断面の見出し・凡例・軸・目盛り)は 1 度だけ描いて毎コマ写す
+    # (文字の合成は画像全体を舐めるので、毎コマ全面に描くと 1 コマ 2 秒かかった)
+    base = np.full((H, W, 3), 0.04)
+    for m, ((i, j), row) in enumerate(zip(PAIRS, slab_rows)):
+        base = _txt(base, "時空間の断面 行 %d(組 %d-%d)縦 = 時間 ↓" % (row, i, j),
+                    (x0 + 4, 34 + m * (slab_h + 34) - 2), anchor="lb", fs=11)
+    base = _txt(base, "白の点線 = 真の合体時刻、橙 = 観測", (W - 6, 34 + 2 * slab_h + 34 + 4), anchor="rt", fs=11)
+    base = np.asarray(AN.axes_frame(base, ax), np.float64)
+    base = np.asarray(AN.ticks(base, ax, xticks=[0, 8, 16, 24, 32, 40, T - 1], yticks=[3, 4, 5, 6, 7, 8],
+                               font_size=10), np.float64)
+    base = _txt(base, "塊の数: 水色 = フレームを独立に数えたもの(8 近傍)、灰 = 真の個数", (W // 2, H - gh + 8),
+                anchor="ct", fs=11)
+    frames = []
+    for k in range(nf):
+        t = float(times[k])
+        f = base.copy()
+        # 左: 家族の色で塗ったフレーム + 真の連続円の縁(文字は左の板の中だけに描く)
+        img = _paint_labels(np.repeat(np.repeat(labels[k], S, 0), S, 1))
+        for i, (cy, cx, _) in enumerate(COLONIES):
+            r = float(radius(i, t))
+            ring = np.clip(0.75 - np.abs(np.hypot(yy - cy, xx - cx) - r) * S, 0.0, 1.0)[..., None]
+            img = img * (1 - 0.85 * ring) + 0.85 * ring
+        s = "t = %2.0f / %d frame\nフレームごとの塊の数 %d(真の個数 %d)" % (t, T - 1, counts[k], true_n[k])
+        img = _txt(img, s, (6, 6), fs=12)
+        for (i, j) in PAIRS:
+            t4 = merge[(i, j)][2]
+            cy = 0.5 * (COLONIES[i][0] + COLONIES[j][0]) * S
+            cx = 0.5 * (COLONIES[i][1] + COLONIES[j][1]) * S
+            if t >= t4:
+                img = _txt(img, "組 %d-%d 合体\n真値 t = %.2f\n観測 t = %.0f" % (i, j, tm[(i, j)], t4),
+                           (int(cx), int(min(P - 76, cy + COLONIES[j][2] * np.sqrt(t + T0) * S + 6))),
+                           anchor="ct", fs=11)
+        a, b = NEAR_MISS
+        mx = 0.5 * (COLONIES[a][1] + COLONIES[b][1]) * S
+        my = 0.5 * (COLONIES[a][0] + COLONIES[b][0]) * S
+        img = _txt(img, "ニアミス %d-%d\n隙間 %.2f" % (a, b, gap_at(a, b, t)), (int(mx) + 40, int(my) + 30),
+                   anchor="lt", fs=11)
+        f[:P, :P] = img
+        # 右: 時空間の断面(t まで現れる)
+        for m, ((i, j), row) in enumerate(zip(PAIRS, slab_rows)):
+            y0 = 34 + m * (slab_h + 34)
+            sl = _paint_labels(labels[:, row, :])
+            sl[k + 1:] = 0.15                                 # まだ来ていない時刻は伏せる
+            sl = np.repeat(np.repeat(sl, VS, 0), S, 1)
+            ytm = int(round(tm[(i, j)] * VS + VS / 2))        # 真の合体時刻(連続)の高さ
+            if 0 <= ytm < slab_h:
+                sl[ytm, ::6] = 1.0
+                sl[ytm, 1::6] = 1.0
+                sl[ytm, 2::6] = 1.0
+            t4 = merge[(i, j)][2]
+            if t >= t4:
+                y4 = int(round(t4 * VS + VS / 2))
+                sl[y4:y4 + 2, :] = (1.0, 0.55, 0.05)
+            yc = min(slab_h - 1, k * VS + VS - 1)             # いまの時刻の行を明るく
+            sl[yc, :] = sl[yc, :] * 0.4 + 0.6
+            f[y0:y0 + slab_h, x0:x0 + P] = sl
+        # 下: 塊の数(ゼロ点)と真の個数 —— 下の帯だけを切り出して描く
+        if k >= 1:                                            # 折れ線は 2 点から
+            xs = times[:k + 1]
+            band = f[H - gh:]
+            band = np.asarray(AN.plot_series(band, ax_b, xs, true_n[:k + 1].astype(float),
+                                             color=(0.85, 0.85, 0.85), width=2), np.float64)
+            band = np.asarray(AN.plot_series(band, ax_b, xs, counts[:k + 1].astype(float) - 0.08,
+                                             color=(0.34, 0.71, 0.91), width=2), np.float64)
+            f[H - gh:] = band
+        frames.append(np.clip(f, 0.0, 1.0))
+    frames += [frames[-1]] * 10                               # 最後の状態を止めて読ませる(MP4 側)
+    drops = [float(times[k]) for k in range(1, nf) if counts[k] < counts[k - 1]]
+    # 最後の減少がニアミスの組を 8 近傍で繋いだせいか、を数えて確かめてから文に書く
+    lab8 = np.asarray(fs.ledger.blob_label(vol[-1], connectivity=8))
+    ca, cb = (COLONIES[c] for c in NEAR_MISS)
+    joined = int(lab8[int(ca[0]), int(ca[1])]) == int(lab8[int(cb[0]), int(cb[1])]) != 0
+    tail = ("最後の t = %.0f の減少はニアミス %d-%d(最終フレームでも隙間 %.2f)を 8 近傍が繋いだ偽の合体で、"
+            "真の個数は %d のまま。" % (drops[-1], NEAR_MISS[0], NEAR_MISS[1], gap_at(*NEAR_MISS, T - 1), int(true_n[-1]))
+            if joined and drops and drops[-1] > max(tm.values()) else "")
+    figs.save_video("growth_merge", frames, fps=6.0, gif_every=1, gif_width=480,
+                    caption="動画(%d フレーム): 左は二値のフレームを 3-D の家族ラベルで塗ったもの(白の細線 = 真の連続円。色は体積全体で決まる家族なので、"
+                            "合体する 2 個は合体の前から同じ色)。"
+                            "右は合体する 2 組の中心を通る行の時空間断面が時刻とともに現れ、Y 字の分かれ目が合体時刻になる"
+                            "(白の点線 = 閉形式の真値 %.2f / %.2f、橙 = 観測 %.0f / %.0f)。下はフレームを独立に数えた塊の数で、"
+                            "減ったのは t = %s。%s"
+                            % (nf, tm[PAIRS[0]], tm[PAIRS[1]], merge[PAIRS[0]][2], merge[PAIRS[1]][2],
+                               ", ".join("%.0f" % d for d in drops), tail))
+    return {"drops": drops, "joined": bool(joined), "true_n_last": int(true_n[-1]), "count_last": int(counts[-1])}
 
 
 def section9_findings(rec, conn, merge):

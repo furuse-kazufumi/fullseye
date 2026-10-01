@@ -3783,7 +3783,7 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
     class ProgramEditor(QtWidgets.QPlainTextEdit):
         BREAK = "#e5484d"
 
-        def __init__(self, words=(), parent=None):
+        def __init__(self, words=(), parent=None, tip=None):
             super().__init__(parent)
             self.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
             f = QtGui.QFont("Consolas"); f.setStyleHint(QtGui.QFont.Monospace); f.setPointSize(10)
@@ -3799,11 +3799,20 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             self._update_gutter_width()
             self._highlight()
             # --- IntelliSense: op-name completion popup ---
-            self._completer = QtWidgets.QCompleter(sorted(set(words)), self)
+            # HDevelop のツールヒントのように、打った文字を名前の**どこかに含む** op を出す。
+            # 絞り込みは opsearch(名前順の一覧への二分探索 + 接尾辞配列への二分探索)で行い、
+            # QCompleter には絞った結果だけを渡す(UnfilteredPopupCompletion = Qt 側で再フィルタしない)。
+            import opsearch
+            self._index = opsearch.OpNameIndex(words)
+            self._tip = tip
+            self._model = QtGui.QStandardItemModel(self)
+            self._completer = QtWidgets.QCompleter(self._model, self)
             self._completer.setWidget(self)
-            self._completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+            self._completer.setCompletionMode(QtWidgets.QCompleter.UnfilteredPopupCompletion)
             self._completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+            self._completer.setMaxVisibleItems(12)
             self._completer.activated.connect(self._insert_completion)
+            self._query = ""
 
         # -- gutter geometry / painting --
         def gutter_width(self):
@@ -3913,11 +3922,27 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
             return c.selectedText()
 
         def _insert_completion(self, completion):
+            # 途中一致でも選べるように、カーソル下の語を**丸ごと**選んだ op 名で置き換える
             c = self.textCursor()
-            extra = len(completion) - len(self._completer.completionPrefix())
-            c.movePosition(QtGui.QTextCursor.Left); c.movePosition(QtGui.QTextCursor.EndOfWord)
-            c.insertText(completion[len(completion) - extra:])
+            c.select(QtGui.QTextCursor.WordUnderCursor)
+            c.insertText(completion)
             self.setTextCursor(c)
+
+        def completion_candidates(self, prefix, limit=50):
+            """打った語に対する候補(順位 → 名前順)。Qt を使わずに試験できる入口。"""
+            return self._index.search(prefix, limit=limit)
+
+        def _fill_model(self, prefix):
+            self._model.clear()
+            for name in self.completion_candidates(prefix):
+                it = QtGui.QStandardItem(name)
+                if self._tip is not None:
+                    try:
+                        it.setToolTip(self._tip(name))
+                    except Exception:                   # noqa: BLE001 - ツールヒントが無くても候補は出す
+                        pass
+                self._model.appendRow(it)
+            self._query = prefix
 
         def keyPressEvent(self, ev):
             comp = self._completer
@@ -3927,10 +3952,12 @@ def _program_editor_class(QtWidgets, QtGui, QtCore):
                 ev.ignore(); return
             super().keyPressEvent(ev)
             prefix = self._text_under_cursor()
-            if len(prefix) >= 2 and prefix[0].isalpha():
-                if prefix != comp.completionPrefix():
-                    comp.setCompletionPrefix(prefix)
-                    comp.popup().setCurrentIndex(comp.completionModel().index(0, 0))
+            if len(prefix) >= 2 and (prefix[0].isalpha() or prefix[0] == "_"):
+                if prefix != self._query:
+                    self._fill_model(prefix)
+                if self._model.rowCount() == 0:
+                    comp.popup().hide(); return
+                comp.popup().setCurrentIndex(comp.completionModel().index(0, 0))
                 cr = self.cursorRect()
                 cr.setWidth(comp.popup().sizeHintForColumn(0)
                             + comp.popup().verticalScrollBar().sizeHint().width())
@@ -4494,7 +4521,8 @@ def build_window(model=None):
     # `op (a,b)` code would enter the pipeline via apply_program (which bypasses the
     # add_stage KeyError backstop) and Help would mislabel it as a knob-tunable op.
     op_names = [r["name"] for r in all_ops if r.get("backend") != "general"]
-    code_edit = ProgEdit(op_names)
+    _row_by_name = {r["name"]: r for r in all_ops if r.get("backend") != "general"}
+    code_edit = ProgEdit(op_names, tip=lambda n: op_tooltip(_row_by_name[n]))
     code_edit.setToolTip("Edit the pipeline as HDevelop-style code: `op (a, b)` (or `op a b`), "
                          "`*`/`#` comments, and control flow `for N … endfor` / `if … else … endif`.\n"
                          "Type for autocomplete; click the gutter to toggle a breakpoint; Step / Run (timed).")

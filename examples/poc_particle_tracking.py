@@ -817,6 +817,145 @@ def section8_figures(rows, cols, movie, rec_density, rec_step, lags, curves):
                      "D比 真値+NN", "D比 真リンク", "D比 ゲート", "ドリフト比"], rows_tbl,
                     title="密度掃引の実測",
                     caption="曖昧と欠測を分けて数えると、D の外れる向きが説明できる。")
+    # 6) 動画: 軌跡が伸びていく様子と、D の推定が離れていく様子(図を出すときだけ)
+    fig_tracking_video(rows, cols, movie)
+
+
+# --- 動画(図を出すときだけ)-------------------------------------------------- #
+#: 動画の 1 コマの拡大率(192 px → 384 px)。点像 1σ 1.5 px は等倍だと小さすぎて見えない
+VID_SCALE = 2
+#: 正しいリンクの色(水色)・誤リンクの色(橙)・判定できないリンクの色(灰)。赤緑の対は避ける
+VID_OK = (0.35, 0.72, 1.0)
+VID_BAD = (1.0, 0.55, 0.05)
+VID_UNK = (0.6, 0.6, 0.6)
+
+
+def _txt(img, s, xy, anchor="lt", fs=12):
+    """文字を下敷きつきで載せる(poc_driving_traffic と同じ書き方)。"""
+    import annotate as AN
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs), dtype=np.float64)
+
+
+def _segment_px(p, q, scale, n_max):
+    """線分 p→q((行, 列))を拡大後の画素へ点で敷く(0.4 px 刻み)。範囲外の点は捨てる。"""
+    a = np.asarray(p, float) * scale + scale / 2.0
+    b = np.asarray(q, float) * scale + scale / 2.0
+    n = max(2, int(np.ceil(np.hypot(*(b - a)) / 0.4)) + 1)
+    s = np.linspace(0.0, 1.0, n)[:, None]
+    pts = np.rint(a[None, :] * (1 - s) + b[None, :] * s).astype(np.int64)
+    ok = (pts[:, 0] >= 0) & (pts[:, 0] < n_max) & (pts[:, 1] >= 0) & (pts[:, 1] < n_max)
+    return pts[ok]
+
+
+def _link_frames(pos, ident, linker):
+    """フレーム間ごとのリンク ``[[(pa, pb, 種別), ...], ...]`` と、そこまでの累積で読んだ D / D 真値、誤リンクの累計。
+
+    種別: 0 = 正しい、1 = 誤り(曖昧も欠測も)、2 = 始点が同定できない検出(判定不能)。
+    誤りの判定は :func:`step_displacements` と同じ(``ident[t+1][j] != ident[t][i]``)なので、
+    最後の値は 2 節・4 節の数字と一致する(``fig_tracking_video`` の戻り値で照合できる)。
+    """
+    links, d_run, n_bad = [], [], []
+    disp, bad = [], 0
+    for t in range(len(pos) - 1):
+        pa, pb = pos[t], pos[t + 1]
+        j_of = linker(pa, pb)
+        cur = []
+        for i in range(pa.shape[0]):
+            j = int(j_of[i])
+            if j < 0:
+                continue
+            disp.append(pb[j] - pa[i])
+            p = int(ident[t][i])
+            kind = 2 if p < 0 else (0 if int(ident[t + 1][j]) == p else 1)
+            bad += int(kind == 1)
+            cur.append((pa[i], pb[j], kind))
+        links.append(cur)
+        d, _, _ = estimate(np.asarray(disp) if disp else np.zeros((0, 2)))
+        d_run.append(d / D_TRUE)
+        n_bad.append(bad)
+    return links, np.asarray(d_run), np.asarray(n_bad)
+
+
+def fig_tracking_video(rows, cols, movie):
+    """★動画: 2 つのリンク規則で軌跡が伸びていく様子と、D の推定が真値から離れていく/留まる様子を並べる。
+
+    左 = ゼロ点(距離だけの最近傍)、右 = ゲートつき最近傍。正しいリンクは水色で薄れていき、
+    誤リンク(橙)は**消えずに積もる** —— 誤りが「どこで・いつ」起きるかが見える。下の帯は
+    t までに集めた変位で読んだ D / D 真値(1.0 が真値)。図を出さない実行では呼ばれない
+    (呼び出し側が ``figs.enabled()`` で先に抜ける)。乱数は使わない。
+    """
+    import annotate as AN
+
+    pos, ident, _ = build_positions(rows, cols, movie, use_detection=True)
+    rules = [("最近傍(ゲートなし)", link_nn), ("ゲートつき(%.1f px まで)" % GATE, link_nn_gated)]
+    runs = [_link_frames(pos, ident, f) for _, f in rules]
+    S = VID_SCALE
+    P = N * S
+    gap, gh = 8, 200
+    W, H = 2 * P + gap, P + gh
+    hi_y = max(2.5, float(np.nanmax([np.nanmax(r[1]) for r in runs])) * 1.1)
+    ax = AN.axes_transform((56, P + 36, W - 84, gh - 70), (1, T - 1), (0.0, hi_y))
+    yt = [float(v) for v in np.arange(0.0, hi_y + 1e-9, 0.5)]
+    ax_b = AN.axes_transform((56, 36, W - 84, gh - 70), (1, T - 1), (0.0, hi_y))   # 同じ軸を下の帯の中の座標で
+    # 動かない部分(軸・目盛り・凡例・真値の線)は 1 度だけ描いて毎コマ写す
+    # (文字の合成は画像全体を舐めるので、毎コマ全面に描くと 1 コマ 1 秒かかった)
+    base = np.full((H, W, 3), 0.06)
+    base = np.asarray(AN.axes_frame(base, ax), np.float64)
+    base = np.asarray(AN.ticks(base, ax, xticks=[1, 10, 20, 30, T - 1], yticks=yt, font_size=10), np.float64)
+    base = np.asarray(AN.plot_series(base, ax, [1, T - 1], [1.0, 1.0], color=(0.8, 0.8, 0.8), width=1), np.float64)
+    base = _txt(base, "t までの変位で読んだ D / D 真値(灰の線 = 真値 1.0)  橙 = 最近傍、水色 = ゲートつき",
+                (W // 2, P + 6), anchor="ct", fs=11)
+    trail =[[np.zeros((P, P)) for _ in range(3)] for _ in rules]   # [規則][種別]
+    cols_k = (VID_OK, VID_BAD, VID_UNK)
+    alpha_k = (0.9, 1.0, 0.7)
+    frames = []
+    for t in range(T):
+        f = base.copy()
+        for k, (name, _) in enumerate(rules):
+            links, d_run, n_bad = runs[k]
+            trail[k][0] *= 0.88                              # 正しいリンクは薄れていく
+            trail[k][2] *= 0.88
+            if t >= 1:
+                for pa, pb, kind in links[t - 1]:
+                    px = _segment_px(pa, pb, S, P)
+                    trail[k][kind][px[:, 0], px[:, 1]] = 1.0
+            g = np.clip(np.repeat(np.repeat(movie[t], S, 0), S, 1), 0.0, 1.0) * 0.8
+            img = np.repeat(g[..., None], 3, 2)
+            for kind in (2, 0, 1):                           # 誤リンクを最後(いちばん上)に
+                w = trail[k][kind][..., None] * alpha_k[kind]
+                img = img * (1 - w) + np.asarray(cols_k[kind])[None, None, :] * w
+            for r, c in pos[t]:                              # 検出(輝度重心)の小さな白い十字
+                rr = int(np.clip(round(r * S + S / 2), 0, P - 1))
+                cc = int(np.clip(round(c * S + S / 2), 0, P - 1))
+                img[max(0, rr - 3):rr + 4, cc, :] = 1.0
+                img[rr, max(0, cc - 3):cc + 4, :] = 1.0
+            x0 = k * (P + gap)
+            if t >= 1:
+                s = "%s\n誤リンク 累計 %d 本\nD / 真値 = %.2f" % (name, int(n_bad[t - 1]), d_run[t - 1])
+            else:
+                s = "%s\n(リンクはまだ無い)" % name
+            img = _txt(img, s, (6, 6), fs=12)                   # 文字は板(パネル)の中だけに描く
+            if k == len(rules) - 1:
+                img = _txt(img, "t = %2d / %d frame" % (t, T - 1), (P - 6, P - 6), anchor="rb", fs=12)
+            f[:P, x0:x0 + P] = img
+        # 下の帯: t までの累積で読んだ D / D 真値 —— 帯だけを切り出して描く
+        if t >= 2:                                             # 折れ線は 2 点から
+            xs = np.arange(1, t + 1, dtype=float)
+            band = f[P:]
+            for k, col in ((0, VID_BAD), (1, VID_OK)):
+                band = np.asarray(AN.plot_series(band, ax_b, xs, runs[k][1][:t], color=col, width=2), np.float64)
+            f[P:] = band
+        frames.append(np.clip(f, 0.0, 1.0))
+    frames += [frames[-1]] * 8                               # 最後の状態を 1.6 s 止めて読ませる(MP4 側)
+    res = {"d_nn": float(runs[0][1][-1]), "d_gate": float(runs[1][1][-1]),
+           "bad_nn": int(runs[0][2][-1]), "bad_gate": int(runs[1][2][-1])}
+    figs.save_video("tracking_links", frames, fps=5.0, gif_every=1, gif_width=480,
+                    caption="動画(%d フレーム、%d × %d px を 2 倍で表示): 左は距離だけの最近傍リンク、右は上限 %.1f px の"
+                            "ゲートつき。水色 = 正しいリンク(薄れていく)、橙 = 誤リンク(消えずに積もる)、灰 = 始点が"
+                            "同定できない検出、白い十字 = 検出。誤リンクの累計は最近傍 %d 本・ゲート %d 本。下の帯は t までに"
+                            "集めた変位で読んだ D / D 真値で、最後は最近傍 %.2f・ゲート %.2f(真値 1.0)。"
+                            % (T, N, N, GATE, res["bad_nn"], res["bad_gate"], res["d_nn"], res["d_gate"]))
+    return res
 
 
 def section9_findings(rec_density, got_peaks):

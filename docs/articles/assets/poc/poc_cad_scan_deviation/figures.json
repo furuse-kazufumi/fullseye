@@ -134,5 +134,27 @@
   ],
   "csv": "13_controls.csv",
   "tsv": "13_controls.tsv"
+ },
+ {
+  "file": "14_align_orbit.gif",
+  "name": "align_orbit",
+  "caption": "主図(動画、640 × 360・30 fps・12 秒): 前半は実測点群(だいだい)が CAD の参照点(灰)に重なるまで —— 位置合わせなし → FPFH 粗合わせ → 点-面 ICP の推定姿勢の間を補間して動かす(偏差 RMS 18285.3 → 105.4 → 81.7 µm)。後半は重なった点群を一周し、符号付き偏差(±0.40 mm、だいだい = 足りない / 青 = 余る)で塗る(形が読めるよう陰影を薄く足した)。公差 ±0.10 mm を外れた面積は推定 2300.6 mm²、真値 2514.5 mm²。左手前の 3 本の線は CAD の x・y・z 軸。",
+  "shape": [
+   270,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 90,
+  "frames_written": 90,
+  "fps": 7.5,
+  "video": "14_align_orbit.mp4",
+  "video_frames": 360,
+  "video_fps": 30.0,
+  "video_shape": [
+   360,
+   640,
+   3
+  ]
  }
 ]

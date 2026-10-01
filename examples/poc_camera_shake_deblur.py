@@ -338,6 +338,110 @@ def estimate_line_kernel(obs, rmin=4.0, rmax=45.0):
     return math.hypot(dy, dx) + 1.0, math.degrees(math.atan2(dy, dx)) % 180.0
 
 
+
+# --------------------------------------------------------------------------- #
+# 動画 —— 仮定した核の角度を少しずつずらしていくと、復元はどこでゼロ点に負けるか   #
+# --------------------------------------------------------------------------- #
+def _vid_txt(img, s, xy, anchor="lt", fs_=13):
+    import annotate as AN
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_), dtype=np.float64)
+
+
+def _kernel_inset(k_true, k_assumed, size=84):
+    """真の核(白)と仮定した核(橙)を同じ台紙に重ねた拡大図。"""
+    n = max(k_true.shape[0], k_assumed.shape[0])
+    def pad(k):
+        out = np.zeros((n, n))
+        o = (n - k.shape[0]) // 2
+        out[o:o + k.shape[0], o:o + k.shape[1]] = k
+        return out / max(float(out.max()), 1e-12)
+    a, b = pad(k_true), pad(k_assumed)
+    rgb = np.zeros((n, n, 3))
+    rgb += a[..., None] * np.array([0.85, 0.85, 0.85])
+    rgb += b[..., None] * np.array([1.0, 0.55, 0.0])
+    rgb = np.clip(rgb, 0.0, 1.0)
+    rep = max(1, size // n)
+    return np.repeat(np.repeat(rgb, rep, 0), rep, 1)
+
+
+def fig_kernel_angle_video(gt, obs40, k_ref, p_null40, p_uns40, ang_break_uns, ang_break_null):
+    """仮定した核の角度ずれを 0 → 30 度へ 0.5 度刻みで回し、そのたびに Wiener で戻し直す。
+
+    ★図を出すときだけ計算する(``figs.enabled()`` が偽なら何もしない)。観測 ``obs40`` は本文 4 章と
+    同じもの(乱数を新たに引かない)。各コマの復元は本文と同じ ``wiener_best``(正則化量は神託)。
+    0 度と 20 度のコマは本文の表の値と一致する。
+    """
+    if not figs.enabled():
+        return None
+    import annotate as AN
+
+    angs = np.round(np.arange(0.0, 30.0 + 1e-9, 0.5), 2)
+    res = []
+    for d in angs:
+        kp = psf_line(15, 20.0 + float(d))
+        p, nsr, est = wiener_best(obs40, kp, gt)
+        res.append((float(d), p, nsr, est, kp))
+    ps = np.array([r[1] for r in res])
+    # 0.5 度刻みでの交点(本文の表は粗い刻みの線形補間)
+    fine_uns = crossing(list(angs), list(ps), p_uns40)
+    fine_null = crossing(list(angs), list(ps), p_null40)
+
+    S = gt.shape[0]
+    GAP, TOP, LAB, PLOT_H = 10, 34, 24, 200
+    FW = 3 * S + 4 * GAP
+    FH = TOP + S + LAB + PLOT_H + 12
+    lut = np.asarray(fs.diverging_lut(256), float)
+    EMAX = 0.25                                   # 誤差の色の尺度(全コマ共通)
+    gray = lambda a: np.repeat(np.clip(a, 0.0, 1.0)[..., None], 3, 2)
+    ylo = float(np.floor(min(ps.min(), p_null40) - 0.5))
+    yhi = float(np.ceil(ps.max() + 0.5))
+    frames = []
+    for i, (d, p, nsr, est, kp) in enumerate(res):
+        f = np.full((FH, FW, 3), 0.06)
+        err = np.clip(est, 0.0, 1.0) - gt
+        idx = np.clip(((err / EMAX) * 0.5 + 0.5) * 255.0, 0, 255).astype(int)
+        pans = (gray(obs40), gray(est), np.clip(lut[idx][..., :3], 0.0, 1.0))
+        for j, pnl in enumerate(pans):
+            x0 = GAP + j * (S + GAP)
+            f[TOP:TOP + S, x0:x0 + S] = pnl
+        ins = _kernel_inset(k_ref, kp)
+        x0 = GAP + (S + GAP) + S - ins.shape[1] - 4
+        f[TOP + 4:TOP + 4 + ins.shape[0], x0:x0 + ins.shape[1]] = ins
+        verdict = ("ゼロ点に勝ち" if p > max(p_null40, p_uns40)
+                   else "★何もしないより悪い" if p < p_null40 else "★アンシャープに負け")
+        labs = ("観測 = ゼロ点「何もしない」%.2f dB" % p_null40,
+                "復元 %.2f dB  %s" % (p, verdict),
+                "復元 − 真値(±%.2f で飽和)" % EMAX)
+        for j, t in enumerate(labs):
+            f = _vid_txt(f, t, (GAP + j * (S + GAP) + 2, TOP + S + 3), fs_=10)
+        f = _vid_txt(f, "仮定した核の角度ずれ %4.1f 度(右上の拡大: 白 = 真の核、橙 = 仮定した核、重なると黄)" % d,
+                     (GAP, 8), fs_=13)
+        ax = AN.axes_transform((60, TOP + S + LAB + 14, FW - 330, PLOT_H - 50), (0.0, 30.0), (ylo, yhi))
+        f = np.asarray(AN.axes_frame(f, ax), float)
+        f = np.asarray(AN.ticks(f, ax, xticks=[0, 5, 10, 15, 20, 25, 30], font_size=10), float)
+        f = np.asarray(AN.plot_series(f, ax, angs, np.full(angs.size, p_null40), color=(0.6, 0.6, 0.6), width=1), float)
+        f = np.asarray(AN.plot_series(f, ax, angs, np.full(angs.size, p_uns40), color=(0.8, 0.3, 0.8), width=1), float)
+        if i >= 1:
+            f = np.asarray(AN.plot_series(f, ax, angs[:i + 1], ps[:i + 1], color=(0.35, 0.75, 1.0), width=2), float)
+        f = np.asarray(AN.plot_series(f, ax, angs[i:i + 1], ps[i:i + 1], kind="scatter",
+                                      color=(1.0, 0.55, 0.0), marker_size=4), float)
+        note = "復元の PSNR [dB](青)\n灰 = 何もしない %.2f dB\n紫 = アンシャープ(神託)%.2f dB\n  (灰とほぼ重なる)\n横軸 = 核の角度ずれ [度]" % (
+            p_null40, p_uns40)
+        if fine_null is not None and d >= fine_null:
+            note += "\n\n%.1f 度で何もしないに抜かれた" % fine_null
+        f = _vid_txt(f, note, (FW - 250, TOP + S + LAB + 14), fs_=11)
+        frames.append(np.clip(f, 0.0, 1.0))
+    frames += [frames[-1]] * 12                    # 最後を止めて読ませる
+    return figs.save_video(
+        "kernel_angle_sweep", frames, fps=8.0, gif_every=2, gif_width=None,
+        caption="15 px・20 度の直線ブレに SNR 40 dB の雑音を載せた観測を、角度を 0〜30 度ずらした核で "
+                "Wiener 復元し直していく(正則化量は毎回神託で最良化)。ずれ 0 度で %.2f dB、20 度で %.2f dB。"
+                "0.5 度刻みで追うと %.1f 度でアンシャープマスク(%.2f dB)に、%.1f 度で「何もしない」(%.2f dB)に"
+                "抜かれる(本文の表の補間では %.1f / %.1f 度)。抜かれた後の復元も「復元した」形をしている —— "
+                "右の誤差地図でだけ、縞状のリンギングが真値からのずれとして見える。"
+                % (ps[0], ps[int(np.argmin(np.abs(angs - 20.0)))], fine_uns, p_uns40, fine_null, p_null40,
+                   ang_break_uns, ang_break_null))
+
 # --------------------------------------------------------------------------- #
 # 本体                                                                         #
 # --------------------------------------------------------------------------- #
@@ -644,6 +748,7 @@ def main():
         raise AssertionError("総和 0 の核が素通りした")
     except ValueError:
         pass
+    fig_kernel_angle_video(gt, obs40, k_ref, p_null40, p_uns40, ang_break_uns, ang_break_null)
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")

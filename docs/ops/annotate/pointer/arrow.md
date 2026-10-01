@@ -4,7 +4,7 @@ dim: annotate
 category: pointer
 in: image2d
 out: image2d
-examples: [annotate_gallery, poc_car_parking, poc_leak_localization, poc_machine_condition_fusion, poc_ttc_rss]
+examples: [annotate_gallery, poc_car_parking, poc_leak_localization, poc_machine_condition_fusion, poc_river_surface_velocity, poc_ttc_rss]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -59,6 +59,7 @@ ValueError
 - [poc_car_parking](../../../../examples/poc_car_parking.py) — `py -3.11 examples/poc_car_parking.py`
 - [poc_leak_localization](../../../../examples/poc_leak_localization.py) — `py -3.11 examples/poc_leak_localization.py`
 - [poc_machine_condition_fusion](../../../../examples/poc_machine_condition_fusion.py) — `py -3.11 examples/poc_machine_condition_fusion.py`
+- [poc_river_surface_velocity](../../../../examples/poc_river_surface_velocity.py) — `py -3.11 examples/poc_river_surface_velocity.py`
 - [poc_ttc_rss](../../../../examples/poc_ttc_rss.py) — `py -3.11 examples/poc_ttc_rss.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

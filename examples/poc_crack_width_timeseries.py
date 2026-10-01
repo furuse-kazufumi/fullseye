@@ -402,6 +402,208 @@ def section_series() -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# 2'. 動画 —— 12 期を、断面を 1 本ずつ切りながら進める(図を出すときだけ)     #
+# --------------------------------------------------------------------------- #
+VID_UP = 2                 # 画像の拡大率(1 px -> 2 x 2 px、最近傍)
+VID_HOLD = 5               # 1 期を測り終えたところで止めるコマ数
+VID_END = 30               # 最後の当てはめを見せるコマ数
+VID_FPS = 12.0
+
+
+def _station_profiles(img: np.ndarray, y_of_x: np.ndarray, m: float) -> list:
+    """:func:`measure_integral` と**同じ断面**を、描画用に返す。
+
+    返りは測点ごとの ``(p0, p1, 欠損の曲線, 幅 [mm])``。幅の平均が門の値
+    (:func:`run_series` の積分法)と一致することを呼び手が assert する
+    (描画用の写しが本体から離れていないことの検査)。
+    """
+    n = math.sqrt(1.0 + m * m)
+    ny, nx = 1.0 / n, -m / n
+    out = []
+    for x0 in stations():
+        y0 = float(np.interp(x0, np.arange(W_PX), y_of_x))
+        p0 = (y0 - R_PROF * ny, x0 - R_PROF * nx)
+        p1 = (y0 + R_PROF * ny, x0 + R_PROF * nx)
+        p = np.asarray(fs.line_profile(img, p0, p1, num=_T.size), np.float64)
+        base = np.polyval(np.polyfit(_T[_OUT], p[_OUT], 1), _T)
+        d = 1.0 - p / np.maximum(base, 1e-6)
+        out.append((p0, p1, d, float(np.trapezoid(d, dx=DT_PROF)) * PX_MM))
+    return out
+
+
+def _vtxt(img, s, xy, anchor="lt", fs_=12, color=None):
+    """文字(poc_driving_traffic の ``_txt`` と同じ書き方、色だけ選べる)。"""
+    import annotate as AN
+    kw = {} if color is None else {"text_color": color}
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_, **kw), dtype=np.float64)
+
+
+def _vdots(a, ax, x, y, color, r=3, ring=False):
+    """データ座標の点を半径 ``r`` px の円で塗る(annotate の散布は 1 点ごとに全画面の
+    重みを作るので、動画の数百コマでは遅すぎる —— 同じ写像 data_to_pixel を使い、塗りだけ直書き)。"""
+    import annotate as AN
+    px, py = AN.data_to_pixel(ax, np.atleast_1d(np.asarray(x, float)), np.atleast_1d(np.asarray(y, float)))
+    H, W = a.shape[:2]
+    for cx, cy in zip(px, py):
+        x0, x1 = max(0, int(cx) - r - 1), min(W, int(cx) + r + 2)
+        y0, y1 = max(0, int(cy) - r - 1), min(H, int(cy) + r + 2)
+        yy, xx = np.mgrid[y0:y1, x0:x1]
+        q = (xx - cx) ** 2 + (yy - cy) ** 2
+        m = (q <= r * r) & ((q >= (r - 1.6) ** 2) if ring else True)
+        a[y0:y1, x0:x1][m] = color
+    return a
+
+
+def _video_series(sch: dict, tex: np.ndarray, w_true: np.ndarray, res: dict,
+                  s_i: float, s_b: float) -> None:
+    """主の動画: 同じ壁を 12 期撮り返し、各期で 24 本の断面を順に切って幅を積み上げる。
+
+    上段 = その期の画像(2 値化マスクを朱で重ねる、切り終えた断面は青、いま切っている断面は橙、
+    右下は断面の周りの拡大)。下段左 = いまの断面の輝度欠損(面積 = 幅)。下段右 = 12 期の
+    時系列(白 = 真値、青 = 積分法、朱 = 2 値化、橙の輪 = 測りかけの期の途中平均)。
+    数字はすべて本体と同じ関数で計算し直し、各期の値が門の値と一致することを assert する。
+    乱数は使わない(雑音の種は本体と同じ ``900 + k`` の使い捨て Generator)。
+    """
+    import annotate as AN
+    import imagedraw as ID
+    import palette as PAL
+
+    c_int, c_bin, c_cur = PAL.role_color("right"), PAL.role_color("wrong"), PAL.role_color("emphasis")
+    c_true, c_axis = (0.93, 0.93, 0.93), (0.62, 0.62, 0.66)
+    up = VID_UP
+    Wf, Hi = W_PX * up, H_PX * up
+    Hf = Hi + 232
+
+    def disp(yx):                               # 画素 (row, col) -> 表示 (x, y)
+        return ((yx[1] + 0.5) * up - 0.5, (yx[0] + 0.5) * up - 0.5)
+
+    ep = []
+    for k in range(N_EPOCH):
+        sc = render(float(w_true[k]), psf=float(sch["psf"][k]), dy=float(sch["dy"][k]),
+                    gain=float(sch["gain"][k]), lit_slope=float(sch["lit_slope"][k]),
+                    lit_curve=float(sch["lit_curve"][k]), tex=tex, noise_seed=900 + k)
+        img = sc["img"]
+        y, m = detect_path(img)
+        prof = _station_profiles(img, y, m)
+        wi = float(np.mean([q[3] for q in prof]))
+        assert abs(wi - float(res["int"][k])) < 1e-12, (k, wi, float(res["int"][k]))
+        b = measure_binary(img, m)
+        assert abs(b - float(res["bin"][k])) < 1e-12, (k, b, float(res["bin"][k]))
+        ep.append((img, deficit_map(img) > BIN_LEVEL, prof))
+
+    dmin = min(float(q[2].min()) for e in ep for q in e[2])
+    dmax = max(float(q[2].max()) for e in ep for q in e[2])
+    ax_p = AN.axes_transform((50, Hi + 24, 222, 166), (-R_PROF, R_PROF),
+                             (min(-0.1, dmin - 0.02), max(0.8, dmax + 0.05)))
+    ax_t = AN.axes_transform((50 + 288, Hi + 24, 222, 166), (-0.1, float(EPOCH_YEAR[-1]) + 0.1), (0.0, 0.40))
+    panel = np.zeros((Hf, Wf, 3))
+    panel[Hi:] = 0.07
+    for ax, xt, yt in ((ax_p, [-12, -6, 0, 6, 12], [0.0, 0.5]), (ax_t, [0, 1, 2], [0.0, 0.1, 0.2, 0.3, 0.4])):
+        panel = np.asarray(AN.axes_frame(panel, ax, color=c_axis), np.float64)
+        panel = np.asarray(AN.ticks(panel, ax, xticks=xt, yticks=yt, color=c_axis, font_size=10,
+                                    text_color=c_axis), np.float64)
+    panel = np.asarray(AN.plot_series(panel, ax_p, [-R_PROF, R_PROF], [0.0, 0.0], color=c_axis, width=1),
+                       np.float64)
+    panel = np.asarray(AN.plot_series(panel, ax_p, [-R_PROF, R_PROF], [BIN_LEVEL, BIN_LEVEL], color=c_bin,
+                                      width=1), np.float64)
+    panel = _vtxt(panel, "断面に沿った位置 [px]", (50 + 111, Hf - 2), anchor="cb", fs_=10, color=c_axis)
+    panel = _vtxt(panel, "経過 [年]", (338 + 111, Hf - 2), anchor="cb", fs_=10, color=c_axis)
+    panel = _vtxt(panel, "幅 [mm]", (338 + 3, Hi + 26), fs_=10, color=c_axis)
+    panel = _vtxt(panel, "朱の線 = 0.5", (50 + 219, Hi + 26), anchor="rt", fs_=10, color=c_bin)
+    for i, (s, c) in enumerate((("— 真値", c_true), ("● 積分法", c_int), ("● 2 値化", c_bin))):
+        panel = _vtxt(panel, s, (338 + 219, Hi + 24 + 162 - 17 * (2 - i)), anchor="rb", fs_=10, color=c)
+    # 断面の欠損を塗る列(画素の x と、データの t の対応は固定)
+    pxs, _ = AN.data_to_pixel(ax_p, _T, np.zeros_like(_T))
+    _, py0 = AN.data_to_pixel(ax_p, [0.0], [0.0])
+    py0 = int(round(float(py0[0])))
+
+    def ts_layer(a, k_done, cur=None, fit=False):
+        """時系列: 測り終えた期 0..k_done-1 の点と、真値の線(いまの期まで)。"""
+        k_show = k_done if cur is None else k_done + 1
+        if k_show >= 2:
+            a = np.asarray(AN.plot_series(a, ax_t, EPOCH_YEAR[:k_show], w_true[:k_show], color=c_true, width=1),
+                           np.float64)
+        if fit:
+            for s, w, c in ((s_i, res["int"], c_int), (s_b, res["bin"], c_bin)):
+                q = float(np.mean(w) - s * np.mean(EPOCH_YEAR))
+                xx = np.array([0.0, float(EPOCH_YEAR[-1])])
+                a = np.asarray(AN.plot_series(a, ax_t, xx, q + s * xx, color=c, width=1), np.float64)
+        if k_show >= 1:
+            a = _vdots(a, ax_t, EPOCH_YEAR[:k_show], w_true[:k_show], c_true, r=1)
+        if k_done >= 1:
+            a = _vdots(a, ax_t, EPOCH_YEAR[:k_done], res["bin"][:k_done], c_bin)
+            a = _vdots(a, ax_t, EPOCH_YEAR[:k_done], res["int"][:k_done], c_int)
+        if cur is not None:
+            a = _vdots(a, ax_t, [EPOCH_YEAR[k_done]], [cur], c_cur, r=5, ring=True)
+        return a
+
+    frames = []
+    for k in range(N_EPOCH):
+        img, mask, prof = ep[k]
+        g = np.clip(img / 1.25, 0.0, 1.0)
+        acc = np.repeat(np.repeat(np.repeat(g[..., None], 3, 2), up, 0), up, 1)
+        mk = np.repeat(np.repeat(mask, up, 0), up, 1)
+        acc[mk] = 0.45 * acc[mk] + 0.55 * np.asarray(c_bin)
+        acc = _vtxt(acc, "拡大 2 倍 →", (Wf - 104, Hi - 4), anchor="rb", fs_=10)
+        n_st = len(prof)
+        for j in range(n_st + VID_HOLD):
+            jj = min(j, n_st - 1)
+            done = j >= n_st
+            if done:
+                top = acc
+            else:
+                top = np.asarray(ID.draw_line(acc, disp(prof[jj][0]), disp(prof[jj][1]), color=c_cur, width=2),
+                                 np.float64)
+            f = panel.copy()
+            f[:Hi] = top
+            # 右下の拡大窓(いまの断面の周り 48 x 48 表示 px を 2 倍)
+            cx, cy = disp(((prof[jj][0][0] + prof[jj][1][0]) / 2, (prof[jj][0][1] + prof[jj][1][1]) / 2))
+            c0 = int(np.clip(round(cx) - 24, 0, Wf - 48))
+            r0 = int(np.clip(round(cy) - 24, 0, Hi - 48))
+            f[Hi - 100:Hi - 4, Wf - 100:Wf - 4] = np.repeat(np.repeat(top[r0:r0 + 48, c0:c0 + 48], 2, 0), 2, 1)
+            f[Hi - 101, Wf - 101:Wf - 3] = c_cur
+            f[Hi - 101:Hi - 3, Wf - 101] = c_cur
+            run = float(np.mean([q[3] for q in prof[:jj + 1]]))
+            txt = ("期 %d/%d  経過 %.2f 年   PSF σ %.2f px  据え直し %+.2f px\n"
+                   "真の幅 %.4f mm   積分法 %.4f mm(断面 %d/%d の平均)"
+                   % (k + 1, N_EPOCH, EPOCH_YEAR[k], sch["psf"][k], sch["dy"][k], w_true[k],
+                      run, jj + 1, n_st))
+            if done:
+                txt += "   2 値化 %.4f mm" % res["bin"][k]
+            f = _vtxt(f, txt, (4, 4), fs_=12)
+            # 下段左: いまの断面の欠損(面積 = 幅)。塗りは列ごとに 0 の線から曲線まで
+            d = prof[jj][2]
+            _, pyd = AN.data_to_pixel(ax_p, _T, d)
+            fill = tuple(0.45 * np.asarray(c_cur))
+            for xq, yq in zip(pxs, pyd):
+                lo, hi = sorted((py0, int(round(float(yq)))))
+                f[lo:hi + 1, int(round(float(xq))):int(round(float(xq))) + 2] = fill
+            f = np.asarray(AN.plot_series(f, ax_p, _T, d, color=c_cur, width=2), np.float64)
+            f = _vtxt(f, "断面 %d の欠損 1 - I/地\n面積 = 幅 %.4f mm" % (jj + 1, prof[jj][3]), (52, Hi + 26), fs_=10)
+            # 下段右: 時系列
+            f = ts_layer(f, k + 1 if done else k, cur=None if done else run)
+            frames.append(np.clip(f, 0.0, 1.0))
+            if not done:                            # 切り終えた断面は青で残す
+                acc = np.asarray(ID.draw_line(acc, disp(prof[jj][0]), disp(prof[jj][1]), color=c_int, width=1),
+                                 np.float64)
+    fin = ts_layer(frames[-1].copy(), N_EPOCH, fit=True)
+    fin = _vtxt(fin, "12 期の当てはめ: 成長率 真値 %.4f / 積分法 %.4f(%+.1f %%)/ 2 値化 %.4f(%+.1f %%)mm/年"
+                % (RATE_MM_YR, s_i, 100 * (s_i - RATE_MM_YR) / RATE_MM_YR, s_b,
+                   100 * (s_b - RATE_MM_YR) / RATE_MM_YR), (4, 52), fs_=12, color=c_cur)
+    frames.extend([np.clip(fin, 0.0, 1.0)] * VID_END)
+    figs.save_video(
+        "series_video", frames, fps=VID_FPS, gif_every=4, gif_width=512,
+        caption="動画(%d × %d、%.0f fps、%d コマ): 同じ壁を 3 年 %d 期撮り返す。各期で中心線に直交する断面を %d 本、"
+                "左から順に切り(橙 = いま切っている断面、右下が拡大)、下段左がその断面の輝度欠損 —— その面積が幅そのもの。"
+                "%d 本の平均が積分法の幅(青、測りかけの期は橙の輪で途中平均)、朱のマスクの画素を数えたのが 2 値化(朱)。真の幅は 1 期 %.3f mm ずつ伸びる"
+                "(%.3f 画素)。最後の当てはめで成長率は 真値 %.4f / 積分法 %.4f / 2 値化 %.4f mm/年。2 値化は期ごとに跳ね"
+                "(%.4f〜%.4f mm)、跳ねの正体はぼけ(PSF σ %.2f〜%.2f px)と据え直しの画素位相。"
+                % (Wf, Hf, VID_FPS, len(frames), N_EPOCH, N_STATION, N_STATION, RATE_MM_YR * DT_YEAR,
+                   RATE_MM_YR * DT_YEAR / PX_MM, RATE_MM_YR, s_i, s_b, float(np.min(res["bin"])),
+                   float(np.max(res["bin"])), float(np.min(sch["psf"])), float(np.max(sch["psf"]))))
+
+
+# --------------------------------------------------------------------------- #
 # 3. 対照群 —— 幅を凍結して環境だけ動かす                                       #
 # --------------------------------------------------------------------------- #
 FROZEN_MM = 0.30
@@ -783,6 +985,8 @@ def main() -> None:
     cl = section_cliff_epochs()
     cw = section_cliff_width()
     section_tool_gaps()
+    if figs.enabled():     # 動画は既存の図の**後**に書く(番号がずれると記事の URL が切れる)。図を出すときだけ組む
+        _video_series(base["sch"], base["tex"], base["true"], base["res"], base["slope_int"], base["slope_bin"])
 
     print("\n" + "=" * 78)
     print("まとめ")

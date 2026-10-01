@@ -457,6 +457,179 @@ def section4_healing_constant():
 
 
 # --------------------------------------------------------------------------- #
+# 4'. 動画 —— 8 日の治癒を、撮影のたびに揺れる較正と一緒に動かす(図を出すときだけ) #
+# --------------------------------------------------------------------------- #
+VID_PER_DAY = 16           # 1 日あたりのコマ数
+VID_END = 30               # 最後に当てはめを見せるコマ数
+VID_FPS = 12.0
+
+
+def _session_poses(seed):
+    """:func:`one_session` と**同じ順で**乱数を引き、各日の撮影条件 (z, tilt, azim, roll) を返す。
+
+    門の乱数(``one_session`` の中の Generator)には触れない —— 同じ種の別 Generator を作るだけ。
+    """
+    rng = np.random.default_rng(seed)
+    out = []
+    for day in range(N_DAY):
+        z = Z0 * (1.0 + DRIFT * day + rng.normal(0.0, JITTER))
+        tl = np.deg2rad(rng.uniform(0.0, 18.0))
+        az = rng.uniform(0.0, 2 * np.pi)
+        ro = np.deg2rad(rng.uniform(-12.0, 12.0))
+        out.append((z, tl, az, ro))
+    return out
+
+
+def _paste_txt(f, s, xy, box, anchor="lt", fs_=12, color=None):
+    """文字を小さい板(``box`` = (x0, y0, x1, y1))の上だけで描いて貼る。
+
+    annotate.text_box は全画素を舐めるので、800 x 520 のコマに毎回掛けると遅い。
+    動かない部分は 1 度だけ描き、動く文字はこの板の中だけで描く。
+    """
+    import annotate as AN
+    x0, y0, x1, y1 = box
+    kw = {} if color is None else {"text_color": color}
+    sub = np.asarray(AN.text_box(f[y0:y1, x0:x1], s, (xy[0] - x0, xy[1] - y0), anchor=anchor,
+                                 font_size=fs_, **kw), np.float64)
+    f[y0:y1, x0:x1] = sub
+    return f
+
+
+def _video_healing(curves, tab):
+    """主の動画: seed 1000 の 8 日を、日と日の間も撮影条件を補間して連続に動かす。
+
+    左上 = カメラの像(水色 = 測った創面の塊、紫の十字 = 較正標識の重心)。右上 = 推定ホモグラフィで
+    正対化した像(M2 が数える絵、1 px = 0.25 mm に固定)。下 = 面積の対数グラフ(白 = 真値、
+    朱 = M0 1 枚目だけで較正、紫 = M1 毎回 長さで較正、青 = M2 毎回 正対化)。
+    整数日のコマは門と同じ撮影で、その値が ``curves`` と一致することを assert する。
+    日と日の間は撮影距離・傾き・方位・回転を線形に補間した**仮想の撮影**(見せ方のためで、門には入らない)。
+    """
+    import annotate as AN
+    import palette as PAL
+
+    poses = _session_poses(1000)
+    c_m = {"M0": PAL.role_color("wrong"), "M1": PAL.role_color("baseline"), "M2": PAL.role_color("right")}
+    c_true, c_axis = (0.93, 0.93, 0.93), (0.62, 0.62, 0.66)
+    names = {"M0": "M0 1 枚目だけで較正", "M1": "M1 毎回 長さで較正", "M2": "M2 毎回 正対化"}
+
+    def lerp_pose(t):
+        if abs(t - round(t)) < 1e-9:                             # 撮影日はその日の条件そのもの
+            return poses[int(round(t))]
+        d0 = min(int(np.floor(t)), N_DAY - 2)
+        u = t - d0
+        a, b = poses[d0], poses[d0 + 1]
+        daz = (b[2] - a[2] + np.pi) % (2 * np.pi) - np.pi      # 方位は近い向きに回す
+        return (a[0] + u * (b[0] - a[0]), a[1] + u * (b[1] - a[1]), a[2] + u * daz, a[3] + u * (b[3] - a[3]))
+
+    ts = np.linspace(0.0, N_DAY - 1, (N_DAY - 1) * VID_PER_DAY + 1)
+    mm_fixed = None
+    rec = []
+    for t in ts:
+        z, tl, az, ro = lerp_pose(float(t))
+        hw = camera_h(z, tl, az, ro)
+        area = A0_MM2 * np.exp(-K_TRUE * t)
+        img = render(hw, area)
+        d = dot_centroids(img)
+        if mm_fixed is None:
+            mm_fixed = mm_per_px_from_length(d, LAYOUT_SIDE)
+        m = measure_all(img, LAYOUT_SIDE, mm_fixed)
+        rimg = rectify(img, homography_from_dots(d, LAYOUT_SIDE))
+        lab = fs.ledger.blob_select_largest(fs.ledger.blob_label((img < T_HI) & (img > T_LO)), 1)
+        rec.append({"t": float(t), "z": z, "tilt": tl, "img": img, "rimg": rimg, "mask": np.asarray(lab) > 0,
+                    "dots": d, "true": float(area), **{k: float(m[k]) for k in ("M0", "M1", "M2")}})
+        if abs(t - round(t)) < 1e-9:                             # 撮影日 = 門と同じ撮影
+            day = int(round(t))
+            for k in ("M0", "M1", "M2"):
+                assert abs(m[k] - curves[k][day]) <= 1e-9 * curves[k][day], (day, k, m[k], curves[k][day])
+
+    days = np.arange(N_DAY, dtype=float)
+    k_one = {k: fit_k(curves[k]) for k in ("M0", "M1", "M2")}
+    allv = [r[k] for r in rec for k in ("true", "M0", "M1", "M2")]
+    ax = AN.axes_transform((64, H_PX + 26, 500, 176), (-0.2, N_DAY - 1 + 0.2),
+                           (0.92 * min(allv), 1.08 * max(allv)), yscale="log")
+    Wf, Hf = 2 * W_PX, H_PX + 244
+    panel = np.zeros((Hf, Wf, 3))
+    panel[H_PX:] = 0.07
+    yt = [v for v in (300, 400, 500, 600, 700, 800, 1000) if ax["ylim"][0] <= v <= ax["ylim"][1]]
+    panel = np.asarray(AN.axes_frame(panel, ax, color=c_axis), np.float64)
+    panel = np.asarray(AN.ticks(panel, ax, xticks=list(range(N_DAY)), yticks=yt, color=c_axis, font_size=10,
+                                text_color=c_axis), np.float64)
+    panel = _paste_txt(panel, "経過日", (64 + 250, Hf - 1), (0, H_PX, Wf, Hf), anchor="cb", fs_=10, color=c_axis)
+    panel = _paste_txt(panel, "面積 [mm²](対数)", (64, H_PX + 4), (0, H_PX, Wf, Hf), fs_=10, color=c_axis)
+    for i, k in enumerate(("true", "M0", "M1", "M2")):
+        s = "— 真値 A0·exp(-kt)" if k == "true" else "— " + names[k]
+        panel = _paste_txt(panel, s, (580, H_PX + 30 + 18 * i), (0, H_PX, Wf, Hf), fs_=11,
+                           color=c_true if k == "true" else c_m[k])
+    panel[:H_PX, W_PX - 1:W_PX + 1] = 0.0
+
+    def to_rgb(g):
+        return np.repeat(np.clip(g, 0.0, 1.0)[..., None], 3, 2)
+
+    def graph(f, n, fit=False):
+        """0..n 番目のコマまでの線と、通り過ぎた撮影日の点。"""
+        tt = np.array([r["t"] for r in rec[:n + 1]])
+        for k, c in (("true", c_true), ("M0", c_m["M0"]), ("M1", c_m["M1"]), ("M2", c_m["M2"])):
+            if n >= 1:
+                f = np.asarray(AN.plot_series(f, ax, tt, [r[k] for r in rec[:n + 1]], color=c,
+                                              width=2 if k == "true" else 1), np.float64)
+        dd = days[days <= tt[-1] + 1e-9]
+        for k in ("M0", "M1", "M2"):
+            px, py = AN.data_to_pixel(ax, dd, np.asarray(curves[k])[:len(dd)])
+            for cx, cy in zip(px, py):
+                f[int(round(cy)) - 2:int(round(cy)) + 3, int(round(cx)) - 2:int(round(cx)) + 3] = c_m[k]
+        if fit:
+            for k in ("M0", "M1", "M2"):
+                a0 = float(np.exp(np.mean(np.log(curves[k])) + k_one[k] * np.mean(days)))
+                xx = np.linspace(0.0, N_DAY - 1, 30)
+                f = np.asarray(AN.plot_series(f, ax, xx, a0 * np.exp(-k_one[k] * xx), color=c_m[k], width=1,
+                                              clip=False), np.float64)
+        return f
+
+    frames = []
+    for n, r in enumerate(rec):
+        f = panel.copy()
+        cam = to_rgb(r["img"] / 0.85)
+        cam[r["mask"]] = 0.5 * cam[r["mask"]] + 0.5 * np.asarray(c_m["M2"])
+        for (u, v) in r["dots"]:
+            iu, iv = int(round(u)), int(round(v))
+            cam[max(0, iv - 7):iv + 8, max(0, iu - 1):iu + 2] = c_m["M1"]
+            cam[max(0, iv - 1):iv + 2, max(0, iu - 7):iu + 8] = c_m["M1"]
+        f[:H_PX, :W_PX - 1] = cam[:, :W_PX - 1]
+        f[:H_PX, W_PX + 1:] = to_rgb(r["rimg"] / 0.85)[:, 1:]
+        shot = abs(r["t"] - round(r["t"])) < 1e-9
+        hdr = ("%d 日目の撮影(門と同じ 1 枚)" % round(r["t"])) if shot else "日と日の間(条件を補間した仮想の撮影)"
+        f = _paste_txt(f, "t = %.2f 日   %s\n撮影距離 %.0f mm(基準比 %+.1f %%)  傾き %.1f°"
+                       % (r["t"], hdr, r["z"], 100 * (r["z"] / Z0 - 1), np.rad2deg(r["tilt"])),
+                       (4, 4), (0, 0, W_PX - 1, H_PX), fs_=12)
+        f = _paste_txt(f, "M2 が数える絵: 推定ホモグラフィで正対化(1 px = %.2f mm に固定)" % S_MM, (W_PX + 5, 4),
+                       (W_PX + 1, 0, Wf, H_PX), fs_=11)
+        vals = "いまの面積 [mm²]\n真値 %6.1f" % r["true"]
+        for k in ("M0", "M1", "M2"):
+            vals += "\n%s %6.1f(%+.1f %%)" % (k, r[k], 100 * (r[k] / r["true"] - 1))
+        f = _paste_txt(f, vals, (580, H_PX + 112), (570, H_PX, Wf, Hf), fs_=11)
+        f = graph(f, n)
+        frames.append(np.clip(f, 0.0, 1.0))
+    fin = graph(frames[-1].copy(), len(rec) - 1, fit=True)
+    fin = _paste_txt(fin, "この 1 本(seed 1000)の k [/day]: 真値 %.4f / M0 %.4f / M1 %.4f / M2 %.4f\n"
+                     "%d seed の平均: M0 %.4f(%+.1f %%)/ M1 %.4f(%+.1f %%)/ M2 %.4f(%+.1f %%)"
+                     % (K_TRUE, k_one["M0"], k_one["M1"], k_one["M2"], N_SEED, tab["M0"][0], tab["M0"][2],
+                        tab["M1"][0], tab["M1"][2], tab["M2"][0], tab["M2"][2]),
+                     (68, H_PX + 26 + 172), (64, H_PX, 564, Hf), anchor="lb", fs_=11, color=(0.94, 0.89, 0.26))
+    frames.extend([np.clip(fin, 0.0, 1.0)] * VID_END)
+    m0 = [100 * (curves["M0"][d] / curves["true"][d] - 1) for d in (0, N_DAY - 1)]
+    figs.save_video(
+        "healing_video", frames, fps=VID_FPS, gif_every=2, gif_width=640,
+        caption="動画(%d × %d、%.0f fps、%d コマ): 真の面積 A0·exp(-kt)(k = %.2f /day)で縮む創面を 8 日撮る。撮影距離は 1 日 %+.1f %% "
+                "漂い(この 1 本では %.0f → %.0f mm)、傾き・方位・回転も毎回変わる(日と日の間は条件を補間した仮想の撮影、整数日のコマが"
+                "門と同じ 1 枚)。左 = カメラの像(水色 = 測った塊、紫の十字 = 較正標識)、右 = 正対化した像。M0(1 枚目だけで較正)は"
+                "0 日目 %+.1f %% から 7 日目 %+.1f %% へ真値の下へ漂い、下の対数グラフで M0 の傾きだけが急になる。この 1 本の k は"
+                " M0 %.4f / M1 %.4f / M2 %.4f(真値 %.4f)、%d seed の平均は M0 %.4f(%+.1f %%)/ M1 %.4f(%+.1f %%)/ M2 %.4f(%+.1f %%)。"
+                % (Wf, Hf, VID_FPS, len(frames), K_TRUE, 100 * DRIFT, poses[0][0], poses[-1][0], m0[0], m0[1],
+                   k_one["M0"], k_one["M1"], k_one["M2"], K_TRUE,
+                   N_SEED, tab["M0"][0], tab["M0"][2], tab["M1"][0], tab["M1"][2], tab["M2"][0], tab["M2"][2]))
+
+
+# --------------------------------------------------------------------------- #
 # 5) 感度の比較                                                                #
 # --------------------------------------------------------------------------- #
 def section5_sensitivity():
@@ -668,6 +841,8 @@ def main():
     assert lay["創面を囲む 104 mm 角"][0] < lay["横 30 mm 角(中心間 61mm)"][0], lay
     assert len(rows) == len(SCENES) and len(series) == 3
 
+    if figs.enabled():     # 動画は既存の図の**後**に書く(番号がずれると記事の URL が切れる)。図を出すときだけ組む
+        _video_healing(one_session(1000), tab)     # 4 節の curves と同じ 1 本(乱数は種 1000 の別 Generator)
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\n経過 %.1f 秒" % (time.time() - t0))

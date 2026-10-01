@@ -873,6 +873,184 @@ def section_tool_gaps() -> None:
           " boundary_vertices を見ること。"
           % (100 * (out[1][2] / out[0][2] - 1), out[1][1]))
 
+# ───────────────────── 動画(図を出すときだけ組む) ─────────────────────
+# 3-D は render3d.render_mesh(z-buffer)で描き、色は頂点の値を重心座標で補間する。
+# ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。
+#   行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+def _v_mesh(Z, xs, ys, step=1):
+    """標高格子 ``Z[行, 列]`` → 三角形メッシュ ``(V, F)``。``xs`` = 列の座標 [m]、``ys`` = 行の座標 [m]
+    (行方向 = 南向き)。世界座標は ``(x, -y, z)``。NaN の頂点に触れる三角形は捨てる。"""
+    Zs = np.asarray(Z, np.float64)[::step, ::step]
+    h, w = Zs.shape
+    gx, gy = np.meshgrid(np.asarray(xs, np.float64)[::step], np.asarray(ys, np.float64)[::step])
+    ok = np.isfinite(Zs).ravel()
+    V = np.column_stack([gx.ravel(), -gy.ravel(), np.where(np.isfinite(Zs), Zs, 0.0).ravel()])
+    idx = np.arange(h * w).reshape(h, w)
+    a, b = idx[:-1, :-1].ravel(), idx[:-1, 1:].ravel()
+    c, d = idx[1:, :-1].ravel(), idx[1:, 1:].ravel()
+    F = np.concatenate([np.column_stack([a, b, d]), np.column_stack([a, d, c])])
+    F = F[ok[F].all(axis=1)]
+    return V, F
+
+
+def _v_render(V, F, vcol, pose, K, w, h, light=None, ambient=0.35, bg=(0.07, 0.08, 0.10)):
+    """頂点色 ``vcol (nv,3)`` のメッシュを描く → ``(rgb (h,w,3), depth (h,w))``。
+    ``light`` = 世界座標の光の向き(None なら頂点色そのまま = 陰影は呼び手が色に焼き込み済み)。"""
+    import render3d as R3
+
+    r = R3.render_mesh(V, F, pose=pose, intrinsics=K, width=w, height=h, attributes=True)
+    img = np.empty((h, w, 3), np.float64)
+    img[:] = bg
+    m = r["face"] >= 0
+    if m.any():
+        fi = r["face"][m]
+        col = np.einsum("nk,nkc->nc", r["bary"][m], np.asarray(vcol, np.float64)[F[fi]])
+        if light is not None:
+            L = pose[:3, :3] @ (np.asarray(light, np.float64) / np.linalg.norm(light))
+            col = col * (ambient + (1.0 - ambient) * np.clip(r["normals"][m] @ L, 0.0, 1.0))[:, None]
+        img[m] = col
+    return np.clip(img, 0.0, 1.0), r["depth"]
+
+
+def _v_project(P, pose, K):
+    """世界座標の点 → ``(列 u, 行 v, 奥行き)``。render_mesh と同じ約束(カメラは -Z を見る)。"""
+    P = np.atleast_2d(np.asarray(P, np.float64))
+    Vc = P @ pose[:3, :3].T + pose[:3, 3]
+    dep = -Vc[:, 2]
+    s = np.where(dep > 1e-9, dep, np.nan)
+    return K[0, 0] * Vc[:, 0] / s + K[0, 2], K[1, 2] - K[1, 1] * Vc[:, 1] / s, dep
+
+
+def _v_disk(img, u, v, r, color):
+    """画面上の (u, v) に半径 r の円を塗る(はみ出しは切る)。"""
+    if not (np.isfinite(u) and np.isfinite(v)):
+        return img
+    h, w = img.shape[:2]
+    r0, r1 = max(0, int(v - r - 1)), min(h, int(v + r + 2))
+    c0, c1 = max(0, int(u - r - 1)), min(w, int(u + r + 2))
+    if r0 >= r1 or c0 >= c1:
+        return img
+    yy, xx = np.mgrid[r0:r1, c0:c1]
+    m = (yy - v) ** 2 + (xx - u) ** 2 <= r * r
+    img[r0:r1, c0:c1][m] = color
+    return img
+
+
+def _v_line(img, p0, p1, color, width=2.0):
+    """画面上の線分 (u0,v0)-(u1,v1)。"""
+    (u0, v0), (u1, v1) = p0, p1
+    if not all(np.isfinite([u0, v0, u1, v1])):
+        return img
+    n = int(max(abs(u1 - u0), abs(v1 - v0)) * 1.5) + 2
+    for t in np.linspace(0.0, 1.0, n):
+        _v_disk(img, u0 + t * (u1 - u0), v0 + t * (v1 - v0), width * 0.5, color)
+    return img
+
+
+def _v_txt(img, s, xy, anchor="lt", fs=13):
+    import annotate as AN
+
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs), dtype=np.float64)
+
+
+def _v_cbar(img, lut, rect, vmin, vmax, unit, fs=11):
+    import annotate as AN
+
+    return np.asarray(AN.color_bar(img, lut, rect, vmin=vmin, vmax=vmax, unit=unit, font_size=fs,
+                                   label_fmt="{:.2f}" if abs(vmax - vmin) < 5 else "{:.0f}"),
+                      dtype=np.float64)
+
+
+def _v_cmap(vals, name, vmin, vmax):
+    """値の並び → RGB(尺度は vmin..vmax で固定)。"""
+    import imgio
+
+    a = np.asarray(vals, np.float64)
+    return np.asarray(imgio.apply_cmap(a.reshape(1, -1), name, vmin=vmin, vmax=vmax),
+                      np.float64).reshape(a.shape + (3,))
+
+
+def fig_section_sweep(ctl: dict, VW=640, VH=360, fps=30.0):
+    """主図(動画): 同じボイド率の 2 条件で、xz 断面を y 方向に掃引しながら 3-D のボイドを回して見る。
+
+    上: 2 値化したボイド(``render3d.marching_cubes``)を、ダイ側界面までの距離 [µm] で塗る。橙の枠が
+    いまの断面、白い枠が接合層(上面 = ダイ側の界面)。下: その断面の観測 CT(ぼけ + 雑音 + むら)に、
+    2 値化の結果を橙で重ねたもの(上端 = ダイ側)。z は画面上だけ 2 倍に伸ばす。
+    """
+    import render3d as R3
+
+    vx = VOXEL
+    zex = 2.0
+    K = R3.intrinsics_from_fov(34.0, VW, 250)
+    ctr = np.array([JOINT / 2, JOINT / 2, T_LAYER / 2 * zex])
+    lut = _v_cmap(np.linspace(0.0, 1000 * T_LAYER, 256), "plasma", 0.0, 1000 * T_LAYER)
+    cases = [("mid_sph_scatter", "球・散在・層中央"), ("int_disc_chain", "扁平・連なり・界面接触")]
+    per = 165
+    frames = []
+    for ci, (key, name) in enumerate(cases):
+        r = ctl["out"][key]
+        est, obs = r["est"], r["obs"]
+        nz, ny, nx = est.shape
+        Vm, Fm = R3.marching_cubes(np.pad(est.astype(float), 1), 0.5)
+        Vm = Vm - 1.0                                    # pad のぶん
+        # 頂点 (z, y, x) [ボクセル] → 世界 (x, y, z) [mm]。ボクセル中心 = (i + 0.5) * vx
+        zw = Z_LO + (Vm[:, 0] + 0.5) * vx
+        Vw = np.column_stack([(Vm[:, 2] + 0.5) * vx, (Vm[:, 1] + 0.5) * vx, zw * zex])
+        gap_um = np.clip(1000.0 * (T_LAYER - zw), 0.0, 1000 * T_LAYER)
+        vcol = _v_cmap(gap_um, "plasma", 0.0, 1000 * T_LAYER)
+        z_top = T_LAYER * zex
+        box = np.array([[0, 0, 0], [JOINT, 0, 0], [JOINT, JOINT, 0], [0, JOINT, 0]], float)
+        for k in range(per):
+            t = k / (per - 1)
+            iy = int(round(t * (ny - 1)))
+            yw = (iy + 0.5) * vx
+            a = np.radians(-100.0 + 60.0 * (ci * per + k) / (2 * per))
+            eye = ctr + np.array([3.1 * np.cos(a), 3.1 * np.sin(a), 1.9])
+            pose = R3.look_at(eye, ctr, up=(0.0, 0.0, 1.0))
+            top, _ = _v_render(Vw, Fm, vcol, pose, K, VW, 250, light=(0.3, -0.5, 0.8), ambient=0.45)
+            # 接合層の枠(下面と上面 = 界面)と、いまの断面の枠
+            for zz, c in ((0.0, (0.55, 0.55, 0.55)), (z_top, (0.95, 0.95, 0.95))):
+                q = box.copy()
+                q[:, 2] = zz
+                u, v, d = _v_project(q, pose, K)
+                for j in range(4):
+                    top = _v_line(top, (u[j], v[j]), (u[(j + 1) % 4], v[(j + 1) % 4]), c, width=1.5)
+            cut = np.array([[0, yw, 0], [JOINT, yw, 0], [JOINT, yw, z_top], [0, yw, z_top]])
+            u, v, d = _v_project(cut, pose, K)
+            for j in range(4):
+                top = _v_line(top, (u[j], v[j]), (u[(j + 1) % 4], v[(j + 1) % 4]), (1.0, 0.55, 0.1), width=2.0)
+            n_here = int(est[:, iy, :].any(axis=0).sum())
+            top = _v_txt(top, "%s(%d / 2)\nボイド率 %.2f %%(真値 %.3f %%)/ 界面離隔の中央値 %.1f µm\n"
+                              "断面 y = %.2f mm で切れているボイドの幅 %d 画素"
+                         % (name, ci + 1, r["frac"], r["frac_true"], r["gap"], yw, n_here), (6, 6), fs=12)
+            top = _v_cbar(top, lut, (VW - 80, 60, 12, 150), 0.0, 1000 * T_LAYER, "µm")
+            top = _v_txt(top, "界面からの距離", (VW - 8, 38), anchor="rt", fs=11)
+            # 下: 断面の CT(z を上向きに、3 倍に拡大)
+            sl = obs[:, iy, :][::-1]
+            sm = est[:, iy, :][::-1]
+            g = np.clip(sl / 1.1, 0.0, 1.0)
+            rgb = np.stack([g, g, g], axis=-1)
+            rgb[sm] = rgb[sm] * 0.35 + 0.65 * np.array([1.0, 0.55, 0.1])
+            s3 = np.repeat(np.repeat(rgb, 3, axis=0), 3, axis=1)
+            bot = np.empty((VH - 250, VW, 3))
+            bot[:] = (0.07, 0.08, 0.10)
+            h3, w3 = s3.shape[:2]
+            r0, c0 = 19, (VW - w3) // 2
+            bot[r0:r0 + h3, c0:c0 + w3] = s3
+            bot = _v_txt(bot, "ダイ", (c0 - 4, r0 + 2), anchor="rt", fs=10)
+            bot = _v_txt(bot, "基板", (c0 - 4, r0 + h3), anchor="rb", fs=10)
+            bot = _v_txt(bot, "観測 CT の xz 断面(橙 = 2 値化でボイド)", (VW // 2, 1), anchor="ct", fs=11)
+            frames.append(np.concatenate([top, bot], axis=0))
+    a, b = (ctl["out"][k] for k, _ in cases)
+    figs.save_video("section_sweep", frames, fps=fps, gif_every=3, gif_width=480,
+                    caption="主図(動画、%d × %d・%.0f fps・%.0f 秒): 同じボイド率の 2 条件(%s %.2f %% / %s %.2f %%)で、"
+                            "xz 断面(橙の枠)を y 方向に掃引しながら 3-D のボイド(2 値化の結果を marching cubes で面に)を回す。"
+                            "色はダイ側界面までの距離 —— 前者は層の中ほど(界面離隔の中央値 %.1f µm)、後者は界面に貼りつく(%.1f µm)。"
+                            "下は同じ断面の観測 CT(上 = ダイ)。合否の 1 個の数字(ボイド率)は 2 つを分けない。z は画面上だけ 2 倍。"
+                            % (VW, VH, fps, len(frames) / fps, cases[0][1], a["frac"], cases[1][1], b["frac"],
+                               a["gap"], b["gap"]))
+
+
 
 # --------------------------------------------------------------------------- #
 def main() -> int:
@@ -889,6 +1067,8 @@ def main() -> int:
     cliff = section_voxel_cliff()
     swp = section_threshold_noise()
     section_tool_gaps()
+    if figs.enabled():                 # 動画は図を出すときだけ組む(図なしの実行を変えない)
+        fig_section_sweep(ctl)
 
     print("\n" + "=" * 78)
     print("まとめ")

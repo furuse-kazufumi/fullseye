@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1158. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1164. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -374,6 +374,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1252** — ★Gibt man für die Kontrollgruppe mit dem wahren Wert 0 ein "%" aus, entsteht durch Division durch null eine sinnlose riesige Zahl. Die Fläche in mm^2 belassen und % nur anfügen, wenn der wahre Wert eine Bedeutung hat.
 - **L1263** — ★Den Unterschied eines einzelnen Laufs nicht als "es hat gewirkt" lesen —— den Seed variieren und mit der Streuung vergleichen
 - **L1353** — ★Ein assert, der auslöst, sobald die Lücke geschlossen ist. Am 2026-09-07 hat er tatsächlich ausgelöst, und diese Zeile wurde umgeschrieben: nach dem Hinweis, dass "Zylinderbohrungen, Fasen und Verrundungen nicht konstruierbar sind", wurden plane / cylinder / torus / capsule ergänzt. Der Hinweis hat das Werkzeug verändert, also halten wir es fest und gehen weiter.
+- **L1375** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_calipers_under_illusion.py`
 
@@ -386,15 +387,15 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_camera_calibration.py`
 
 - **L152** — ── Kalibrierung (eine selbstgebaute minimale Bündelausgleichung. ★ Lücke (e)) ──────────────────────────────────── #
-- **L178** — ★ Lücke (d): Die Bildpunkte von camera_calibration sind (row, col). project_points sind (x, y).
-- **L306** — ★ Lücke (b): reprojection_error kennt die Verzerrung nicht. Selbst wenn man die wahren Werte übergibt, wird es nicht 0.
-- **L527** — 2. ★ Der Hauptpunkt: Der Reprojektions-RMS ist nahezu gleich, doch der fx-Fehler unterscheidet sich um mehr als eine Größenordnung
-- **L535** — 3. ★ Der Kompensationsmechanismus: Das Verhältnis von fx stimmt mit dem Verhältnis von Z überein
-- **L541** — 4b. ★ Eine ehrliche Aufzeichnung einer Niederlage: bei engem Sichtfeld + 0.30 px Rauschen ist der Nullpunkt B, der den Hauptpunkt auf die Bildmitte fixiert, korrekter als ihn zu schätzen (eine Bedingung, unter der man nicht besser sein kann, existiert wirklich)
-- **L557** — ★ Lücke (c): Da die Punkte verzerrt sind, hat es nicht das Degenerationsgatter gestoppt, sondern das nachgelagerte nicht-endliche K-Gatter. Wir prüfen sogar, dass dessen Meldung "neige die Platte" enthält (hinzugefügt 2026-09-06).
-- **L565** — 5b. ★ Lücke (c3): Die geschlossene Form weicht systematisch um den Betrag der Verzerrung ab (nur als Startwert)
-- **L569** — 6. ★ Lücke (b): reprojection_error kennt die Verzerrung nicht -> selbst wenn man die wahren Werte übergibt, bleibt er groß
-- **L575** — 7. ★ Lücke (a) [Behoben 2026-09-19]: Die Schätzung der intrinsischen Parameter ist jetzt über die Fassade zugänglich. Früher war sie von `fs` aus unsichtbar, und dieser Stolperdraht meldete stets „sobald geschlossen, den Docstring aktualisieren“. Jetzt ist sie als `fs.camera_calibration` aufrufbar (Fähigkeitsnotiz `camera-intrinsics-calibration`). Sie ist allerdings eine Fassadenfunktion und kein Op in der Registry (da nicht in der festen Form `(Bild, a, b)`).
+- **L181** — ★ Lücke (d): Die Bildpunkte von camera_calibration sind (row, col). project_points sind (x, y).
+- **L519** — ★ Lücke (b): reprojection_error kennt die Verzerrung nicht. Selbst wenn man die wahren Werte übergibt, wird es nicht 0.
+- **L740** — 2. ★ Der Hauptpunkt: Der Reprojektions-RMS ist nahezu gleich, doch der fx-Fehler unterscheidet sich um mehr als eine Größenordnung
+- **L748** — 3. ★ Der Kompensationsmechanismus: Das Verhältnis von fx stimmt mit dem Verhältnis von Z überein
+- **L754** — 4b. ★ Eine ehrliche Aufzeichnung einer Niederlage: bei engem Sichtfeld + 0.30 px Rauschen ist der Nullpunkt B, der den Hauptpunkt auf die Bildmitte fixiert, korrekter als ihn zu schätzen (eine Bedingung, unter der man nicht besser sein kann, existiert wirklich)
+- **L770** — ★ Lücke (c): Da die Punkte verzerrt sind, hat es nicht das Degenerationsgatter gestoppt, sondern das nachgelagerte nicht-endliche K-Gatter. Wir prüfen sogar, dass dessen Meldung "neige die Platte" enthält (hinzugefügt 2026-09-06).
+- **L778** — 5b. ★ Lücke (c3): Die geschlossene Form weicht systematisch um den Betrag der Verzerrung ab (nur als Startwert)
+- **L782** — 6. ★ Lücke (b): reprojection_error kennt die Verzerrung nicht -> selbst wenn man die wahren Werte übergibt, bleibt er groß
+- **L788** — 7. ★ Lücke (a) [Behoben 2026-09-19]: Die Schätzung der intrinsischen Parameter ist jetzt über die Fassade zugänglich. Früher war sie von `fs` aus unsichtbar, und dieser Stolperdraht meldete stets „sobald geschlossen, den Docstring aktualisieren“. Jetzt ist sie als `fs.camera_calibration` aufrufbar (Fähigkeitsnotiz `camera-intrinsics-calibration`). Sie ist allerdings eine Fassadenfunktion und kein Op in der Registry (da nicht in der festen Form `(Bild, a, b)`).
 
 ## `examples/poc_cell_counting.py`
 
@@ -460,7 +461,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L558** — ★Übergibt man lauter nan (bei keiner Phase messbar) an np.nanmean, erscheint eine Warnung. "Nicht messbar" ist nichts zum Mitteln, daher setzen wir es hier explizit auf nan.
 - **L634** — ★Lasse die nan (nicht messbare Punkte) vor dem Zeichnen weg —— der Liniendiagramm-op weist nicht-endliche Werte zurück.
 - **L808** — ★Löst aus, sobald die Lücke geschlossen ist. Es löste am 2026-09-07 aus und dieser Abschnitt wurde umgeschrieben —— nach dem Hinweis, dass "esdf ein voxel_size der Länge 3 annimmt, die Seite, die dessen Ausgabe zeichnet, jedoch nur kubisch war", nehmen query_distance (und occupancy_grid) nun ein res pro Achse an.
-- **L917** — ★Der Volumenanteil bleibt selbst bei groben Voxeln erhalten; was zuerst stirbt, ist die Form-Kennzahl (die Seite, auf der die Vorhersage falsch lag)
+- **L878** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L1097** — ★Der Volumenanteil bleibt selbst bei groben Voxeln erhalten; was zuerst stirbt, ist die Form-Kennzahl (die Seite, auf der die Vorhersage falsch lag)
 
 ## `examples/poc_datacenter_thermal_field.py`
 
@@ -470,6 +472,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_dem_terrain.py`
 
 - **L42** — ★Ist das Repository-Wurzelverzeichnis nicht im Pfad, wird ``demops`` nicht gefunden (dieses Beispiel importiert `fullseye` nicht, daher greift der Pfad-Hook nicht).
+- **L76** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_dfm_thickness_overhang.py`
 
@@ -554,7 +557,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_focus_stacking.py`
 
-- **L491** — 1. Das Bild wirkt. ★Die Schwelle liegt bei +3 dB — reale Halbleiterbilder bestehen größtenteils aus glattem Metall (Die, Leads), das schon in einem einzelnen Bild scharf ist; daher fällt der AIF-Gewinn kleiner aus als bei einem synthetischen Muster, das überall hochfrequent ist (das ehrliche Bild aus der Praxis; das alte vollflächige Texturfeld ergab +14 dB).
+- **L594** — 1. Das Bild wirkt. ★Die Schwelle liegt bei +3 dB — reale Halbleiterbilder bestehen größtenteils aus glattem Metall (Die, Leads), das schon in einem einzelnen Bild scharf ist; daher fällt der AIF-Gewinn kleiner aus als bei einem synthetischen Muster, das überall hochfrequent ist (das ehrliche Bild aus der Praxis; das alte vollflächige Texturfeld ergab +14 dB).
 
 ## `examples/poc_forensics_roc.py`
 
@@ -642,6 +645,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L823** — ★Wenn zu wenige gültige Cores vorliegen, gilt die LoD nicht als 'gemessen' (die Standardabweichung von 2 Punkten ergibt eine Zahl, hat aber keine Bedeutung).
 - **L826** — ★Wenn du hier ausdünnst, misst C2C am Ende den 'Punktabstand nach dem Ausdünnen', und die Dichteabhängigkeit verschwindet (als ich es zuerst auf 6000 Punkte angeglichen schrieb, ergab sich bei jeder Dichte ein konstanter Wert von 0.42 m).
 - **L946** — --- ★ Genau um den Betrag, den du wegjustierst, verschwindet die Änderung -------------------------------------- #
+- **L1308** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_lightfield_depth.py`
 
@@ -707,7 +711,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1196** — ★Mach die y-Achse zur **Höhe** (= −Tiefe). Zeichnet man die Tiefe unverändert, kippen oben und unten, und eine 'lächelnde' Form sieht aus wie ein 'Stirnrunzeln'.
 - **L1267** — ★Die y-Achse ist −Tiefe. Zeichnet man die Tiefe unverändert, ergibt sich eine auf dem Kopf stehende Abbildung mit der Meeresoberfläche unten und dem Meeresboden oben.
 - **L1301** — ★``op_find`` trifft über partielle Stämme, daher können die Inhalte auch bei einer Anzahl ungleich 0 irrelevant sein ("footprint" → ``sk_median_disk``). **Schau bis zum Namen der obersten Ebene**, bevor du 'existiert nicht' sagst.
-- **L1428** — ★Die Klippe des Alle-Pfade-Falls liegt **früher als vorhergesagt**. Der Unterschied ist die Verzerrung der Amplitudendetektion (eine Grösse, die in der geschlossenen Form fehlt)
+- **L1357** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L1643** — ★Die Klippe des Alle-Pfade-Falls liegt **früher als vorhergesagt**. Der Unterschied ist die Verzerrung der Amplitudendetektion (eine Grösse, die in der geschlossenen Form fehlt)
 
 ## `examples/poc_nuclei_ploidy.py`
 
@@ -815,9 +820,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_registration_basin.py`
 
-- **L656** — ★Wenn der Nutzer `estimate_normals` explizit uebergibt, im Glauben, die Normalen seien doch vorhanden. Das ist der **Rest** der Luecke, 14 Groessenordnungen schlechter als der Standard.
-- **L836** — ★Luecke 1 wurde am 2026-09-06 geschlossen. Dieses assert wurde so umgeschrieben, dass es **den geschlossenen Zustand fixiert** (frueher fixierte es den defekten Zustand: `d_fixed < 1e-6 < d_default` = defekt). Kehrt der Defekt zurueck, schlaegt es hier fehl.
-- **L847** — ★Luecke 2 wurde am 2026-09-06 geschlossen. Frueher war es `< 0.9 * len(ka)` (den defekten Zustand fixierend). Jetzt fixiert es, dass **der Standard eine exakte Uebereinstimmung liefert**.
+- **L785** — ★Wenn der Nutzer `estimate_normals` explizit uebergibt, im Glauben, die Normalen seien doch vorhanden. Das ist der **Rest** der Luecke, 14 Groessenordnungen schlechter als der Standard.
+- **L965** — ★Luecke 1 wurde am 2026-09-06 geschlossen. Dieses assert wurde so umgeschrieben, dass es **den geschlossenen Zustand fixiert** (frueher fixierte es den defekten Zustand: `d_fixed < 1e-6 < d_default` = defekt). Kehrt der Defekt zurueck, schlaegt es hier fehl.
+- **L976** — ★Luecke 2 wurde am 2026-09-06 geschlossen. Frueher war es `< 0.9 * len(ka)` (den defekten Zustand fixierend). Jetzt fixiert es, dass **der Standard eine exakte Uebereinstimmung liefert**.
 
 ## `examples/poc_rotation_invariance_audit.py`
 
@@ -888,11 +893,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_stockpile_volume.py`
 
-- **L698** — ★Je nach Maßstab wechselt der Sieger: Volumen nutzt eine horizontale Grundfläche, der Schwerpunkt eine Ebenenanpassung
-- **L714** — ★Eine Vorhersage, die danebenlag: die Interpolation unterschätzt nicht, sondern **überschätzt**
-- **L717** — ★Auslöschung: mit dem interpolierten Umfang wirkt der Fehler klein, mit nur den sichtbaren Punkten kehrt er zurück
-- **L726** — ★Eine Lücke im Werkzeug. Diese Stelle schlägt an, sobald dem_viewshed behoben ist (das ist der Zweck)
-- **L728** — ★2026-09-08: aufgrund des Befunds dieses PoC wurde der op behoben, also ist **sichtbar** jetzt korrekt. Wir fixieren, dass es mit unserer eigenen Sichtlinienprüfung übereinstimmt und nahe an der geschlossenen Form liegt (es schlägt erneut an, wenn es kaputtgeht).
+- **L658** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L863** — ★Je nach Maßstab wechselt der Sieger: Volumen nutzt eine horizontale Grundfläche, der Schwerpunkt eine Ebenenanpassung
+- **L879** — ★Eine Vorhersage, die danebenlag: die Interpolation unterschätzt nicht, sondern **überschätzt**
+- **L882** — ★Auslöschung: mit dem interpolierten Umfang wirkt der Fehler klein, mit nur den sichtbaren Punkten kehrt er zurück
+- **L891** — ★Eine Lücke im Werkzeug. Diese Stelle schlägt an, sobald dem_viewshed behoben ist (das ist der Zweck)
+- **L893** — ★2026-09-08: aufgrund des Befunds dieses PoC wurde der op behoben, also ist **sichtbar** jetzt korrekt. Wir fixieren, dass es mit unserer eigenen Sichtlinienprüfung übereinstimmt und nahe an der geschlossenen Form liegt (es schlägt erneut an, wenn es kaputtgeht).
 
 ## `examples/poc_strain_history.py`
 
@@ -933,10 +939,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_template_tracking.py`
 
 - **L93** — ★ Lücke (a): es gibt keinen öffentlichen op, der eine Korrelationskarte zurückgibt, daher leihen wir einen privaten. Erst verwenden, nachdem in Kapitel 0 verifiziert wurde, dass er mit dem öffentlichen op ``fs.op.ncc_locate`` übereinstimmt.
-- **L326** — ★ Lücke (d): ein öffentlicher op würde hier stillschweigend [0,0,0] zurückgeben. Stattdessen explizit einen Fehler zurückgeben.
-- **L1138** — (2) Der Nullpunkt hat einen Boden -- Quantisierung ganzzahliger Koordinaten (★ Lücke b)
-- **L1168** — (9) ★ Thema: Stärken und Schwächen der Konfidenz kehren sich je nach Bedingung um
-- **L1172** — ★ Die Kanten, an denen sie jeweils gut sind, sind entgegengesetzt = man kann nicht eines von beiden als Konfidenz wählen
+- **L327** — ★ Lücke (d): ein öffentlicher op würde hier stillschweigend [0,0,0] zurückgeben. Stattdessen explizit einen Fehler zurückgeben.
+- **L1241** — (2) Der Nullpunkt hat einen Boden -- Quantisierung ganzzahliger Koordinaten (★ Lücke b)
+- **L1271** — (9) ★ Thema: Stärken und Schwächen der Konfidenz kehren sich je nach Bedingung um
+- **L1275** — ★ Die Kanten, an denen sie jeweils gut sind, sind entgegengesetzt = man kann nicht eines von beiden als Konfidenz wählen
 
 ## `examples/poc_theorems_as_pictures.py`
 
@@ -1592,12 +1598,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `studio.py`
 
 - **L273** — ★ Rechtsklick auf die Abbildung selbst (Benutzer 2026-09-06: "es wäre schön, das als Abbildung Angezeigte per Rechtsklick in die Zwischenablage kopieren zu können"). Eine Studio-UI-Konvention dieses Repos —— **die Anzeigeseite muss auch per Rechtsklick alles ermöglichen**. Es kann dasselbe wie die Buttonreihe unten (mach es nicht zu einem Entweder-oder).
-- **L4351** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L5342** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L6168** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
-- **L6324** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
-- **L6834** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L9671** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L4378** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L5370** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L6196** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
+- **L6352** — ★ Das Auffanggefäß für Abbildungen. Die Beispiele schreiben hier ein PNG über `examplefig`. In Läufen, die keine Umgebungsvariable übergeben (CLI), wird kein einziges geschrieben, sodass ein Bild nur erscheint, wenn es aus der Galerie ausgeführt wird (die Zahlen und die Geschwindigkeit des Beispiels ändern sich nicht).
+- **L6862** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L9699** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `tests/conftest.py`
 

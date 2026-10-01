@@ -1303,6 +1303,206 @@ def section_tool_gaps() -> None:
     print("  (g) icp_point2point_3d は numpy を渡しても **torch.Tensor を返す**。"
           "``np.asarray`` を忘れると下流で静かに型が変わる。")
 
+# ───────────────────── 動画(図を出すときだけ組む) ─────────────────────
+# 3-D は render3d.render_mesh(z-buffer)で描き、色は頂点の値を重心座標で補間する。
+# ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。
+#   行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+def _v_mesh(Z, xs, ys, step=1):
+    """標高格子 ``Z[行, 列]`` → 三角形メッシュ ``(V, F)``。``xs`` = 列の座標 [m]、``ys`` = 行の座標 [m]
+    (行方向 = 南向き)。世界座標は ``(x, -y, z)``。NaN の頂点に触れる三角形は捨てる。"""
+    Zs = np.asarray(Z, np.float64)[::step, ::step]
+    h, w = Zs.shape
+    gx, gy = np.meshgrid(np.asarray(xs, np.float64)[::step], np.asarray(ys, np.float64)[::step])
+    ok = np.isfinite(Zs).ravel()
+    V = np.column_stack([gx.ravel(), -gy.ravel(), np.where(np.isfinite(Zs), Zs, 0.0).ravel()])
+    idx = np.arange(h * w).reshape(h, w)
+    a, b = idx[:-1, :-1].ravel(), idx[:-1, 1:].ravel()
+    c, d = idx[1:, :-1].ravel(), idx[1:, 1:].ravel()
+    F = np.concatenate([np.column_stack([a, b, d]), np.column_stack([a, d, c])])
+    F = F[ok[F].all(axis=1)]
+    return V, F
+
+
+def _v_render(V, F, vcol, pose, K, w, h, light=None, ambient=0.35, bg=(0.07, 0.08, 0.10)):
+    """頂点色 ``vcol (nv,3)`` のメッシュを描く → ``(rgb (h,w,3), depth (h,w))``。
+    ``light`` = 世界座標の光の向き(None なら頂点色そのまま = 陰影は呼び手が色に焼き込み済み)。"""
+    import render3d as R3
+
+    r = R3.render_mesh(V, F, pose=pose, intrinsics=K, width=w, height=h, attributes=True)
+    img = np.empty((h, w, 3), np.float64)
+    img[:] = bg
+    m = r["face"] >= 0
+    if m.any():
+        fi = r["face"][m]
+        col = np.einsum("nk,nkc->nc", r["bary"][m], np.asarray(vcol, np.float64)[F[fi]])
+        if light is not None:
+            L = pose[:3, :3] @ (np.asarray(light, np.float64) / np.linalg.norm(light))
+            col = col * (ambient + (1.0 - ambient) * np.clip(r["normals"][m] @ L, 0.0, 1.0))[:, None]
+        img[m] = col
+    return np.clip(img, 0.0, 1.0), r["depth"]
+
+
+def _v_project(P, pose, K):
+    """世界座標の点 → ``(列 u, 行 v, 奥行き)``。render_mesh と同じ約束(カメラは -Z を見る)。"""
+    P = np.atleast_2d(np.asarray(P, np.float64))
+    Vc = P @ pose[:3, :3].T + pose[:3, 3]
+    dep = -Vc[:, 2]
+    s = np.where(dep > 1e-9, dep, np.nan)
+    return K[0, 0] * Vc[:, 0] / s + K[0, 2], K[1, 2] - K[1, 1] * Vc[:, 1] / s, dep
+
+
+def _v_disk(img, u, v, r, color):
+    """画面上の (u, v) に半径 r の円を塗る(はみ出しは切る)。"""
+    if not (np.isfinite(u) and np.isfinite(v)):
+        return img
+    h, w = img.shape[:2]
+    r0, r1 = max(0, int(v - r - 1)), min(h, int(v + r + 2))
+    c0, c1 = max(0, int(u - r - 1)), min(w, int(u + r + 2))
+    if r0 >= r1 or c0 >= c1:
+        return img
+    yy, xx = np.mgrid[r0:r1, c0:c1]
+    m = (yy - v) ** 2 + (xx - u) ** 2 <= r * r
+    img[r0:r1, c0:c1][m] = color
+    return img
+
+
+def _v_line(img, p0, p1, color, width=2.0):
+    """画面上の線分 (u0,v0)-(u1,v1)。"""
+    (u0, v0), (u1, v1) = p0, p1
+    if not all(np.isfinite([u0, v0, u1, v1])):
+        return img
+    n = int(max(abs(u1 - u0), abs(v1 - v0)) * 1.5) + 2
+    for t in np.linspace(0.0, 1.0, n):
+        _v_disk(img, u0 + t * (u1 - u0), v0 + t * (v1 - v0), width * 0.5, color)
+    return img
+
+
+def _v_txt(img, s, xy, anchor="lt", fs=13):
+    import annotate as AN
+
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs), dtype=np.float64)
+
+
+def _v_cbar(img, lut, rect, vmin, vmax, unit, fs=11):
+    import annotate as AN
+
+    return np.asarray(AN.color_bar(img, lut, rect, vmin=vmin, vmax=vmax, unit=unit, font_size=fs,
+                                   label_fmt="{:.2f}" if abs(vmax - vmin) < 5 else "{:.0f}"),
+                      dtype=np.float64)
+
+
+def _v_cmap(vals, name, vmin, vmax):
+    """値の並び → RGB(尺度は vmin..vmax で固定)。"""
+    import imgio
+
+    a = np.asarray(vals, np.float64)
+    return np.asarray(imgio.apply_cmap(a.reshape(1, -1), name, vmin=vmin, vmax=vmax),
+                      np.float64).reshape(a.shape + (3,))
+
+
+def _v_points(img, P, col, pose, K, size=2, depth=None):
+    """点群を z-buffer つきで画面に打つ(1 点 = ``size`` 画素四方)。``depth`` を渡すとメッシュより奥の点は描かない。"""
+    h, w = img.shape[:2]
+    u, v, d = _v_project(P, pose, K)
+    ok = np.isfinite(u) & np.isfinite(v) & (d > 0)
+    u, v, d, c = u[ok], v[ok], d[ok], np.asarray(col, np.float64)[ok]
+    zb = np.full((h, w), np.inf) if depth is None else np.asarray(depth, np.float64).copy()
+    order = np.argsort(-d)                               # 奥から描いて手前で上書き
+    u, v, d, c = u[order], v[order], d[order], c[order]
+    for dy in range(size):
+        for dx in range(size):
+            r = np.round(v).astype(np.int64) + dy - size // 2
+            q = np.round(u).astype(np.int64) + dx - size // 2
+            m = (r >= 0) & (r < h) & (q >= 0) & (q < w)
+            rr, qq, dd, cc = r[m], q[m], d[m], c[m]
+            vis = dd <= zb[rr, qq] + 1e-6
+            img[rr[vis], qq[vis]] = cc[vis]
+    return img
+
+
+def fig_flight(ctrl: dict, mm: dict, tr: dict, W=640, H=360, fps=30.0):
+    """主図(動画): 樹冠つきの点群の上を飛び(前半)、崩壊の周りを回りながら DoD と M3C2 を塗り替える(後半)。
+
+    前半の点群は**動画専用の乱数**(``SEED + 101``)で作った時期 1(遮蔽 30 %、樹冠 = 緑)。後半の面は
+    時期 2 の真の地形で、色は §3・§4 の実測(DoD の鉛直差 → M3C2 の法線距離、同じ尺度)。
+    """
+    import render3d as R3
+
+    K = R3.intrinsics_from_fov(42.0, W, H)
+    # ---- 前半: 点群の上を飛ぶ ----
+    pc, gnd = make_cloud(np.random.default_rng(SEED + 101), occl=OCCL)
+    zr = surface(pc[:, 0], pc[:, 1])
+    hgt = pc[:, 2] - zr                                  # 地面からの高さ(樹冠は数 m)
+    shade = np.clip(0.55 + 0.45 * (pc[:, 2] - pc[:, 2].min()) / np.ptp(pc[:, 2]), 0, 1)
+    col = np.where(gnd[:, None], np.array([0.72, 0.62, 0.48]) * shade[:, None],
+                   np.array([0.25, 0.70, 0.30]) * np.clip(0.6 + 0.06 * hgt, 0.6, 1.0)[:, None])
+    n1, n2 = 150, 210
+    frames = []
+    for k in range(n1):
+        t = k / (n1 - 1)
+        eye = np.array([-15.0 + 90.0 * t, 95.0, 12.0])      # 北(谷側)の上空を東へ横切る
+        tgt = np.array([10.0 + 40.0 * t, 30.0, -12.0])
+        pose = R3.look_at(eye, tgt, up=(0.0, 0.0, 1.0))
+        img = np.empty((H, W, 3))
+        img[:] = (0.07, 0.08, 0.10)
+        img = _v_points(img, pc, col, pose, K, size=2)
+        img = _v_txt(img, "時期 1 の航空 LiDAR 点群(%.0f pt/m²、%d 点)\n緑 = 樹冠に当たった点(%.0f %%)/ 茶 = 地表"
+                     % (DENSITY, len(pc), 100 * (1 - gnd.mean())), (6, 6), fs=12)
+        img = _v_txt(img, "傾斜 %.0f 度、北へ下る / 北の上空から" % SLOPE, (6, H - 6), anchor="lb", fs=11)
+        frames.append(img)
+    # ---- 後半: 崩壊の周りを回り、DoD → M3C2 と塗り替える ----
+    cores = mm["res"]["cores"]
+    c = np.unique(cores[:, 0])
+    m = c.size
+    gx, gy = np.meshgrid(c, c)
+    z2 = surface(gx, gy) - change(gx, gy)
+    V, F = _v_mesh(z2, c, -c)                            # 行 = y(北向き正)なので符号を返して世界の Y = +y
+    Lm = mm["res"]["L"].reshape(m, m)
+    dz = ctrl["real"]["dz"]
+    i0 = int(round(c[0] / CELL - 0.5))
+    dzm = dz[i0:i0 + m, i0:i0 + m]
+    vmax = 1.2
+    lut = _v_cmap(np.linspace(-vmax, vmax, 256), "coolwarm", -vmax, vmax)
+    rat = [r for r in mm["ratios"] if r[0] == SLOPE][0]
+    light = np.array([0.3, 0.6, 0.75])
+    ctr = np.array([30.0, 28.0, float(surface(30.0, 28.0))])
+    for k in range(n2):
+        t = k / (n2 - 1)
+        use_m = k >= n2 // 2
+        val = (Lm if use_m else dzm).ravel()
+        vcol = _v_cmap(np.where(np.isfinite(val), val, 0.0), "coolwarm", -vmax, vmax)
+        vcol[~np.isfinite(val)] = (0.15, 0.15, 0.15)       # 測れなかった core は黒っぽく
+        az = np.radians(60.0 + 70.0 * t)                  # 北東 → 北北西(上から見て反時計回り)
+        eye = ctr + np.array([62.0 * np.cos(az), 62.0 * np.sin(az), 34.0])
+        pose = R3.look_at(eye, ctr, up=(0.0, 0.0, 1.0))
+        img, dep = _v_render(V, F, vcol, pose, K, W, H, light=light, ambient=0.55)
+        for (px, py, name) in ((SCAR["x"], SCAR["y"], "崩壊(掘削)"), (LOBE["x"], LOBE["y"], "堆積")):
+            u, v, d = _v_project([[px, py, float(surface(px, py) - change(px, py)) + 3.0]], pose, K)
+            if d[0] > 0 and 56 < u[0] < W - 56 and 30 < v[0] < H - 30:
+                img = _v_disk(img, u[0], v[0], 3, (1.0, 1.0, 1.0))
+                img = _v_txt(img, name, (u[0], v[0] - 5), anchor="cb", fs=11)
+        if use_m:
+            txt = ("M3C2 の法線距離 L(局所平面の法線方向に測る)\n崩壊中心の厚さ %.3f m(法線方向)\n"
+                   "有意な core の土量  掘削 %.1f m³ / 堆積 %.1f m³(真 %.1f / %.1f)"
+                   % (abs(rat[2]), mm["sig"]["ero"], mm["sig"]["dep"], tr["ero"], tr["dep"]))
+        else:
+            txt = ("DoD の鉛直差 dz(標高図を縦に引く)\n崩壊中心の深さ %.3f m(鉛直)= 法線厚さの %.3f 倍\n"
+                   "しきらない土量  掘削 %.1f m³ / 堆積 %.1f m³(真 %.1f / %.1f)"
+                   % (abs(rat[1]), rat[3], ctrl["real"]["ero"], ctrl["real"]["dep"], tr["ero"], tr["dep"]))
+        img = _v_txt(img, txt, (6, 6), fs=12)
+        img = _v_cbar(img, lut, (W - 80, 92, 14, H - 150), -vmax, vmax, "m")
+        img = _v_txt(img, "青 = 下がった", (W - 8, 70), anchor="rt", fs=11)
+        frames.append(img)
+    figs.save_video("flight", frames, fps=fps, gif_every=4, gif_width=480,
+                    caption="主図(動画、%d × %d・%.0f fps・%.0f 秒): 前半は傾斜 %.0f 度の斜面を北の上空から横切り、時期 1 の点群"
+                            "(%.0f pt/m²、樹冠に当たった点 = 緑)を見せる(動画専用の乱数で作った別の標本)。後半は時期 2 の地形の周りを回り、"
+                            "色を DoD の鉛直差から M3C2 の法線距離へ塗り替える(同じ尺度 ±%.1f m、青 = 下がった)。崩壊中心の深さは "
+                            "DoD %.3f m / M3C2 %.3f m で比 %.3f(sec %.0f 度 = %.3f)。有意な core の M3C2 土量は掘削 %.1f / 堆積 %.1f m³"
+                            "(真値 %.1f / %.1f)。黒っぽい所は測れなかった core。"
+                            % (W, H, fps, len(frames) / fps, SLOPE, DENSITY, vmax, abs(rat[1]), abs(rat[2]), rat[3],
+                               SLOPE, rat[4], mm["sig"]["ero"], mm["sig"]["dep"], tr["ero"], tr["dep"]))
+
+
 
 # --------------------------------------------------------------------------- #
 def main() -> int:
@@ -1324,6 +1524,8 @@ def main() -> int:
     oc = section_occlusion(tr, ctrl["lod"])
     nr = section_normals()
     section_figures(ctrl, mm, tr)
+    if figs.enabled():                 # 動画は図を出すときだけ組む(図なしの実行を変えない)
+        fig_flight(ctrl, mm, tr)
     section_tool_gaps()
 
     print("\n" + "=" * 78)

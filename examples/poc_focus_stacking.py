@@ -250,6 +250,109 @@ def psnr(a, b):
     return float(fs.ledger.psnr(np.clip(a, 0.0, 1.0), b, data_range=1.0))
 
 
+
+# ---------------------------------------------------------------------------
+# 動画 —— 焦点を掃引しながら、全焦点画像と距離画像が育つ過程
+# ---------------------------------------------------------------------------
+def _vid_txt(img, s, xy, anchor="lt", fs_=13):
+    import annotate as AN
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_), dtype=np.float64)
+
+
+def fig_sweep_video(stack, focus_mm, fm0, tex, depth, flat, plain):
+    """焦点を 1 枚ずつ進めるたびに「ここまでの最良」で融合し直す過程を 1 本の動画にする。
+
+    ★図を出すときだけ計算する(``figs.enabled()`` が偽なら何もしない)。新しい乱数は使わず、
+    本文で計算済みの ``stack`` / ``fm0`` を前から順に読むだけなので、門の数字は動かない。
+    最後のコマ(全 17 枚)の融合は本文 2・3 節の ``fuse(stack, fm0, focus_mm)`` と一致する。
+    """
+    if not figs.enabled():
+        return None
+    import annotate as AN
+
+    n, H, W = stack.shape
+    UP = 2                                         # 160 px -> 320 px(最近傍。画素を潰さない)
+    PW, PH = W * UP, H * UP
+    GAP, TOP, LAB = 10, 34, 24
+    PLOT_H = 190
+    FW = 3 * PW + 4 * GAP
+    FH = TOP + PH + LAB + PLOT_H + 16
+    lo, hi = float(depth.min()), float(depth.max())
+    up = lambda a: np.repeat(np.repeat(a, UP, 0), UP, 1)
+    gray = lambda a: np.repeat(np.clip(a, 0.0, 1.0)[..., None], 3, 2)
+    p_mid = psnr(stack[n // 2], tex)
+
+    # 掃引の途中経過を前から順に作る(argmax を k 枚目までで取り直す)
+    states = []
+    prev_k = None
+    for k in range(n):
+        kk = fm0[:k + 1].argmax(axis=0)
+        fused_k = np.take_along_axis(stack[:k + 1], kk[None], 0)[0]
+        dmap_k = focus_mm[kk]
+        changed = (kk == k) if prev_k is None else (kk != prev_k)
+        prev_k = kk
+        e = dmap_k - depth
+        states.append(dict(k=k, fused=fused_k, dmap=dmap_k, changed=changed,
+                           psnr=psnr(fused_k, tex), rms_plain=rms(e[plain]),
+                           rms_flat=rms(e[flat]), n_changed=int(changed.sum()),
+                           chg_flat=float(changed[flat].mean()), chg_plain=float(changed[plain].mean())))
+    ks = np.arange(n, dtype=float)
+    ps = np.array([st["psnr"] for st in states])
+    ylo = float(np.floor(min(ps.min(), p_mid) - 1.0))
+    yhi = float(np.ceil(ps.max() + 1.0))
+
+    frames = []
+    hold = [3] * (n - 1) + [10]                    # 各段 3 コマ、最後は長めに止める
+    for st, rep in zip(states, hold):
+        k = st["k"]
+        f = np.full((FH, FW, 3), 0.06)
+        # 1) いま撮っている 1 枚。このコマで「最良」が更新された画素を橙で重ねる
+        cur = gray(stack[k])
+        m = st["changed"]
+        cur[m] = 0.45 * cur[m] + 0.55 * np.array([1.0, 0.55, 0.0])
+        # 2) ここまでの融合(全焦点画像)  3) ここまでの距離画像(尺度は全コマ共通)
+        fu = gray(st["fused"])
+        dm = np.clip(np.asarray(fs.colorize_depth(st["dmap"], vmin=lo, vmax=hi), float)[..., :3], 0, 1)
+        for i, pnl in enumerate((cur, fu, dm)):
+            x0 = GAP + i * (PW + GAP)
+            f[TOP:TOP + PH, x0:x0 + PW] = up(pnl)
+        labs = ("焦点 %.2f mm(%d / %d 枚目)  橙 = この 1 枚で最良が更新" % (focus_mm[k], k + 1, n),
+                "ここまでの全焦点画像  PSNR %.2f dB" % st["psnr"],
+                "ここまでの距離画像  %.1f〜%.1f mm" % (lo, hi))
+        for i, t in enumerate(labs):
+            f = _vid_txt(f, t, (GAP + i * (PW + GAP) + 2, TOP + PH + 3), fs_=11)
+        f = _vid_txt(f, "焦点を掃引しながら融合し直す: 全焦点の絵は育つが、左下の無地の四角の距離は"
+                        "掃引のたびに塗り替わる(テクスチャ有の誤差 %.3f mm / 無地 %.3f mm)"
+                     % (st["rms_plain"], st["rms_flat"]), (GAP, 7), fs_=12)
+        # 下の曲線: 全焦点画像の PSNR(ここまで)と中央 1 枚のゼロ点
+        ax = AN.axes_transform((70, TOP + PH + LAB + 14, FW - 300, PLOT_H - 48),
+                               (0.0, float(n - 1)), (ylo, yhi))
+        f = AN.axes_frame(f, ax)
+        f = AN.ticks(f, ax, xticks=[0, 4, 8, 12, 16], label_fmt="{:g}", font_size=10)
+        f = np.asarray(f, float)
+        f = np.asarray(AN.plot_series(f, ax, ks, np.full(n, p_mid), color=(0.6, 0.6, 0.6), width=1), float)
+        if k >= 1:                                 # 折れ線は 2 点から
+            f = np.asarray(AN.plot_series(f, ax, ks[:k + 1], ps[:k + 1], color=(0.35, 0.75, 1.0), width=2), float)
+        f = np.asarray(AN.plot_series(f, ax, ks[k:k + 1], ps[k:k + 1], kind="scatter",
+                                      color=(1.0, 0.55, 0.0), marker_size=4), float)
+        f = _vid_txt(f, "全焦点画像の PSNR [dB](青)\n灰 = ゼロ点: 中央の 1 枚 %.2f dB\n横軸 = 何枚目まで使ったか"
+                     % p_mid, (FW - 220, TOP + PH + LAB + 14), fs_=11)
+        f = _vid_txt(f, "テクスチャ有の距離誤差 %.3f mm" % st["rms_plain"],
+                     (FW - 220, TOP + PH + LAB + 86), fs_=11)
+        f = np.clip(f, 0.0, 1.0)
+        frames.extend([f] * rep)
+    last = states[-1]
+    return figs.save_video(
+        "focus_sweep", frames, fps=6.0, gif_every=1, gif_width=720,
+        caption="焦点を %.2f〜%.2f mm で %d 枚掃引し、1 枚進むたびに「ここまでで焦点評価が最大の"
+                "フレーム」を画素ごとに選び直す。左 = いまの 1 枚(橙 = この 1 枚で最良が更新された画素)、"
+                "中 = ここまでの全焦点画像、右 = ここまでの距離画像。全焦点画像の PSNR は %.2f dB から"
+                " %.2f dB へ育ち、中央の 1 枚(%.2f dB)を上回る。一方、左下の無地の四角は最後まで"
+                "掃引のたびに塗り替わり(最後の 1 枚でも無地の %.0f %% が入れ替わる。テクスチャ有は %.0f %%)、"
+                "距離誤差は %.3f mm(テクスチャ有 %.3f mm)で終わる。"
+                % (focus_mm[0], focus_mm[-1], n, states[0]["psnr"], last["psnr"], p_mid,
+                   100 * last["chg_flat"], 100 * last["chg_plain"], last["rms_flat"], last["rms_plain"]))
+
 # ---------------------------------------------------------------------------
 def main():
     depth, tex = ground_truth()
@@ -528,6 +631,7 @@ def main():
         raise AssertionError("csi_height_map が焦点評価スタックを通した")
     except ValueError:
         pass
+    fig_sweep_video(stack, focus_mm, fm0, tex, depth, flat, plain)
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")

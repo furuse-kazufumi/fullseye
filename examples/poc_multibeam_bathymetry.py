@@ -1352,6 +1352,218 @@ def section_op_holes():
                             "電波レーダの語彙のまま流用した。")
     return {"holes": holes, "rows": rows, "used": used}
 
+# ───────────────────── 動画(図を出すときだけ組む) ─────────────────────
+# 3-D は render3d.render_mesh(z-buffer)で描き、色は頂点の値を重心座標で補間する。
+# ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。
+#   行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+def _v_mesh(Z, xs, ys, step=1):
+    """標高格子 ``Z[行, 列]`` → 三角形メッシュ ``(V, F)``。``xs`` = 列の座標 [m]、``ys`` = 行の座標 [m]
+    (行方向 = 南向き)。世界座標は ``(x, -y, z)``。NaN の頂点に触れる三角形は捨てる。"""
+    Zs = np.asarray(Z, np.float64)[::step, ::step]
+    h, w = Zs.shape
+    gx, gy = np.meshgrid(np.asarray(xs, np.float64)[::step], np.asarray(ys, np.float64)[::step])
+    ok = np.isfinite(Zs).ravel()
+    V = np.column_stack([gx.ravel(), -gy.ravel(), np.where(np.isfinite(Zs), Zs, 0.0).ravel()])
+    idx = np.arange(h * w).reshape(h, w)
+    a, b = idx[:-1, :-1].ravel(), idx[:-1, 1:].ravel()
+    c, d = idx[1:, :-1].ravel(), idx[1:, 1:].ravel()
+    F = np.concatenate([np.column_stack([a, b, d]), np.column_stack([a, d, c])])
+    F = F[ok[F].all(axis=1)]
+    return V, F
+
+
+def _v_render(V, F, vcol, pose, K, w, h, light=None, ambient=0.35, bg=(0.07, 0.08, 0.10)):
+    """頂点色 ``vcol (nv,3)`` のメッシュを描く → ``(rgb (h,w,3), depth (h,w))``。
+    ``light`` = 世界座標の光の向き(None なら頂点色そのまま = 陰影は呼び手が色に焼き込み済み)。"""
+    import render3d as R3
+
+    r = R3.render_mesh(V, F, pose=pose, intrinsics=K, width=w, height=h, attributes=True)
+    img = np.empty((h, w, 3), np.float64)
+    img[:] = bg
+    m = r["face"] >= 0
+    if m.any():
+        fi = r["face"][m]
+        col = np.einsum("nk,nkc->nc", r["bary"][m], np.asarray(vcol, np.float64)[F[fi]])
+        if light is not None:
+            L = pose[:3, :3] @ (np.asarray(light, np.float64) / np.linalg.norm(light))
+            col = col * (ambient + (1.0 - ambient) * np.clip(r["normals"][m] @ L, 0.0, 1.0))[:, None]
+        img[m] = col
+    return np.clip(img, 0.0, 1.0), r["depth"]
+
+
+def _v_project(P, pose, K):
+    """世界座標の点 → ``(列 u, 行 v, 奥行き)``。render_mesh と同じ約束(カメラは -Z を見る)。"""
+    P = np.atleast_2d(np.asarray(P, np.float64))
+    Vc = P @ pose[:3, :3].T + pose[:3, 3]
+    dep = -Vc[:, 2]
+    s = np.where(dep > 1e-9, dep, np.nan)
+    return K[0, 0] * Vc[:, 0] / s + K[0, 2], K[1, 2] - K[1, 1] * Vc[:, 1] / s, dep
+
+
+def _v_disk(img, u, v, r, color):
+    """画面上の (u, v) に半径 r の円を塗る(はみ出しは切る)。"""
+    if not (np.isfinite(u) and np.isfinite(v)):
+        return img
+    h, w = img.shape[:2]
+    r0, r1 = max(0, int(v - r - 1)), min(h, int(v + r + 2))
+    c0, c1 = max(0, int(u - r - 1)), min(w, int(u + r + 2))
+    if r0 >= r1 or c0 >= c1:
+        return img
+    yy, xx = np.mgrid[r0:r1, c0:c1]
+    m = (yy - v) ** 2 + (xx - u) ** 2 <= r * r
+    img[r0:r1, c0:c1][m] = color
+    return img
+
+
+def _v_line(img, p0, p1, color, width=2.0):
+    """画面上の線分 (u0,v0)-(u1,v1)。"""
+    (u0, v0), (u1, v1) = p0, p1
+    if not all(np.isfinite([u0, v0, u1, v1])):
+        return img
+    n = int(max(abs(u1 - u0), abs(v1 - v0)) * 1.5) + 2
+    for t in np.linspace(0.0, 1.0, n):
+        _v_disk(img, u0 + t * (u1 - u0), v0 + t * (v1 - v0), width * 0.5, color)
+    return img
+
+
+def _v_txt(img, s, xy, anchor="lt", fs=13):
+    import annotate as AN
+
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs), dtype=np.float64)
+
+
+def _v_cbar(img, lut, rect, vmin, vmax, unit, fs=11):
+    import annotate as AN
+
+    return np.asarray(AN.color_bar(img, lut, rect, vmin=vmin, vmax=vmax, unit=unit, font_size=fs,
+                                   label_fmt="{:.2f}" if abs(vmax - vmin) < 5 else "{:.0f}"),
+                      dtype=np.float64)
+
+
+def _v_cmap(vals, name, vmin, vmax):
+    """値の並び → RGB(尺度は vmin..vmax で固定)。"""
+    import imgio
+
+    a = np.asarray(vals, np.float64)
+    return np.asarray(imgio.apply_cmap(a.reshape(1, -1), name, vmin=vmin, vmax=vmax),
+                      np.float64).reshape(a.shape + (3,))
+
+
+def fig_survey(scene, dtm, VW=640, VH=360, fps=30.0):
+    """主図(動画): 船が 2 本の測線を走り、扇形のビームで平らな海底を測っていく。
+
+    水色の曲線 = 真の音線(線形の c(z) で円弧に曲がる、``trace_to_depth``)、白い点 = 直下較正した等音速の
+    処理が記録する海底(§9 と同じ式)。測った面は「測った深さ − 真の深さ」で塗り、**高さの誤差だけ
+    画面上 5 倍**に伸ばす(真の海底は濃い灰の平面)。最後に 2 本の重なり帯の段差を回り込んで見る。
+    """
+    import render3d as R3
+
+    prof, ca = scene["prof"], scene["ca"]
+    beams = np.arange(-65.0, 65.001, 1.0)
+    _, t1, _ = trace_to_depth(prof, beams, DEPTH_REF)
+    z_meas = ca * t1 * np.cos(np.radians(beams))
+    y_meas = ca * t1 * np.sin(np.radians(beams))
+    err = z_meas - DEPTH_REF                         # 負 = 浅く出る(スマイル)
+    ex = 5.0
+    spacing = dtm["spacing"]
+    along = np.arange(0.0, 60.001, 2.0)
+    zs = np.linspace(0.0, DEPTH_REF, 26)[1:]
+    ray_b = beams[::8]
+    ray_x = np.stack([trace_to_depth(prof, ray_b, z)[0] for z in zs], axis=1)   # (本, 深さ)
+    emax = 3.0
+    lut = _v_cmap(np.linspace(-emax, emax, 256), "coolwarm", -emax, emax)
+    K = R3.intrinsics_from_fov(45.0, VW, VH)
+    xlo, xhi = float(y_meas.min()) - 5.0, float(spacing + y_meas.max()) + 5.0
+    zf = -DEPTH_REF - 0.3
+    floor_V = np.array([[xlo, -5.0, zf], [xhi, -5.0, zf], [xhi, 65.0, zf], [xlo, 65.0, zf]])
+    floor_F = np.array([[0, 1, 2], [0, 2, 3]])
+    floor_C = np.full((4, 3), 0.22)
+    per_line, n_orbit = 140, 90
+    frames = []
+
+    def swath(line, n_ping):
+        """測線 line の先頭 n_ping 発ぶんの面(世界座標: x = 航跡直交, Y = 航跡方向, z = 上)。"""
+        if n_ping < 2:
+            return None
+        y0 = (0.0, spacing)[line]
+        Z = -(DEPTH_REF + ex * err)[None, :] * np.ones((n_ping, 1))
+        V, F = _v_mesh(Z, y_meas + y0, -along[:n_ping])   # 行 = ping。ys に -along を渡すと世界の Y = +along
+        C = _v_cmap(np.tile(err, n_ping), "coolwarm", -emax, emax)
+        return V, F, C
+
+    def scene_mesh(parts):
+        Vs, Fs, Cs, off = [floor_V], [floor_F], [floor_C], 4
+        for p in parts:
+            if p is None:
+                continue
+            Vs.append(p[0])
+            Fs.append(p[1] + off)
+            Cs.append(p[2])
+            off += len(p[0])
+        return np.concatenate(Vs), np.concatenate(Fs), np.concatenate(Cs)
+
+    for k in range(2 * per_line + n_orbit):
+        if k < 2 * per_line:
+            line, kk = divmod(k, per_line)
+            s = kk / (per_line - 1) * along[-1]
+            n_ping = int(np.floor(s / 2.0 + 1e-9)) + 1
+            y0 = (0.0, spacing)[line]
+            parts = [swath(0, along.size if line == 1 else n_ping), swath(1, n_ping) if line == 1 else None]
+            ship = np.array([y0, s, 0.0])
+            eye = ship + np.array([-95.0 + 45.0 * line, -70.0, 55.0])
+            tgt = np.array([y0 + 15.0, s + 10.0, -DEPTH_REF + 5.0])
+        else:
+            kk = k - 2 * per_line
+            parts = [swath(0, along.size), swath(1, along.size)]
+            ship = None
+            a = np.radians(-120.0 + 100.0 * kk / (n_orbit - 1))
+            mid = np.array([spacing / 2, 30.0, -DEPTH_REF])
+            eye = mid + np.array([140.0 * np.cos(a), 140.0 * np.sin(a), 70.0])
+            tgt = mid
+        V, F, C = scene_mesh(parts)
+        pose = R3.look_at(eye, tgt, up=(0.0, 0.0, 1.0))
+        img, dep = _v_render(V, F, C, pose, K, VW, VH, light=(0.2, -0.4, 0.9), ambient=0.6)
+        if ship is not None:
+            # 真の音線(曲がる)と、処理が記録した点
+            for j in range(ray_b.size):
+                P = np.column_stack([ship[0] + np.concatenate([[0.0], ray_x[j]]),
+                                     np.full(zs.size + 1, ship[1]), -np.concatenate([[0.0], zs])])
+                u, v, d = _v_project(P, pose, K)
+                for q in range(zs.size):
+                    if d[q] > 0 and d[q + 1] > 0:
+                        img = _v_line(img, (u[q], v[q]), (u[q + 1], v[q + 1]), (0.45, 0.85, 1.0), width=1.2)
+            Pm = np.column_stack([ship[0] + y_meas, np.full(beams.size, ship[1]), -(DEPTH_REF + ex * err)])
+            u, v, d = _v_project(Pm, pose, K)
+            for j in range(beams.size):
+                img = _v_disk(img, u[j], v[j], 1.6, (1.0, 1.0, 1.0))
+            u, v, d = _v_project([ship], pose, K)
+            img = _v_disk(img, u[0], v[0], 6, (1.0, 0.6, 0.1))
+            if 30 < u[0] < VW - 30 and 30 < v[0] < VH - 10:
+                img = _v_txt(img, "測線 %d" % (line + 1), (u[0], v[0] - 9), anchor="cb", fs=11)
+            txt = ("測線 %d / ping %d 発目(2 m ごと)・ビーム ±65 度 %d 本\n"
+                   "直下較正した等音速で処理: 直下 %+.3f m / 65 度 %+.3f m\n"
+                   "IHO %s の TVU(%.0f m)= %.3f m"
+                   % (line + 1, line * along.size + n_ping, beams.size,
+                      err[beams.size // 2], err[-1], ORDER, DEPTH_REF, tvu(DEPTH_REF)))
+        else:
+            txt = ("2 本の測線の重なり帯(間隔 %.1f m)\n同じ海底を直下と最外ビームで測った食い違い %.3f m\n"
+                   "= TVU %.3f m の %.1f 倍 —— 真値なしで見つかる段差"
+                   % (spacing, dtm["mismatch"], tvu(DEPTH_REF), dtm["mismatch"] / tvu(DEPTH_REF)))
+        img = _v_txt(img, txt, (6, 6), fs=12)
+        img = _v_cbar(img, lut, (VW - 80, 92, 14, VH - 150), -emax, emax, "m")
+        img = _v_txt(img, "測った − 真の深さ", (VW - 8, 70), anchor="rt", fs=11)
+        img = _v_txt(img, "高さの誤差は画面上 5 倍 / 水色 = 真の音線 / 灰 = 真の海底", (6, VH - 6), anchor="lb", fs=11)
+        frames.append(img)
+    figs.save_video("survey", frames, fps=fps, gif_every=4, gif_width=480,
+                    caption="主図(動画、%d × %d・%.0f fps・%.0f 秒): 深さ %.0f m の平らな海底を、船が 2 本の測線(間隔 %.1f m)で測る。"
+                            "水色は真の音線(水柱の音速差 %+.0f m/s の線形プロファイルで円弧に曲がる)、白い点と面は直下較正した"
+                            "等音速の処理が記録する海底で、色は「測った − 真の深さ」(高さの誤差だけ画面上 5 倍)。直下は %+.3f m、"
+                            "65 度は %+.3f m —— 平らな海底が外側だけ持ち上がる「スマイル」。最後に重なり帯を回り込むと、"
+                            "同じ海底を直下と最外ビームで測った %.3f m の段差(TVU %.3f m の %.1f 倍)が立っている。"
+                            % (VW, VH, fps, len(frames) / fps, DEPTH_REF, spacing, DELTA_C_REF, err[beams.size // 2], err[-1],
+                               dtm["mismatch"], tvu(DEPTH_REF), dtm["mismatch"] / tvu(DEPTH_REF)))
+
+
 
 # --------------------------------------------------------------------------- #
 def main() -> int:
@@ -1404,6 +1616,9 @@ def main() -> int:
     figs.save_table("summary", ["条件", "値"], rows,
                     title="多ビーム測深 —— 何がどれだけ効くか",
                     caption="直下較正は誤差を消さず、検査されない外側へ移す。")
+    # 動画は図を出すときだけ組む(図なしの実行を変えない)。既存の図の後ろに書く(番号をずらさない)
+    if figs.enabled():
+        fig_survey(scene, dtm)
 
     # --- 所見を固定する(穴が塞がったら鳴る)--------------------------------- #
     # 1. 一定勾配の層に切ったレイトレースは閉形式と一致する(円弧が厳密だから)

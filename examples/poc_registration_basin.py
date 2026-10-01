@@ -299,6 +299,135 @@ def run_cell(method, factory, rot_deg, trans_frac, trials, seed, crop=None):
 
 
 # ---------------------------------------------------------------------------
+# 動画 —— 初期ずれを振った ICP が 1 反復ずつ吸い込まれる/別の盆地に落ちる様子
+# ---------------------------------------------------------------------------
+VIDEO_ROTS = (30.0, 90.0, 150.0)     # 初期回転ずれ [度](同じ軸で振る)
+VIDEO_AXIS = (0.35, -0.55, 0.76)
+VIDEO_TRANS_FRAC = 0.10              # 初期並進ずれ(直径比、同じ向き)
+VIDEO_ITERS = 60                     # 本文の m_icp と同じ反復予算(40 では 90 度がまだ這っている途中)
+VIDEO_SEED = 909090                  # 動画専用の乱数(本文の乱数消費を変えない)
+
+
+def _vid_txt(img, s, xy, anchor="lt", fs_=12):
+    import annotate as AN
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_), dtype=np.float64)
+
+
+def _vid_dots(img, P2, color, r=1):
+    """(N,2) の (col,row) を (2r+1) 角の点で塗る。範囲外は捨てる。"""
+    h, w = img.shape[:2]
+    c = np.round(P2[:, 0]).astype(int)
+    rr = np.round(P2[:, 1]).astype(int)
+    for dy in range(-r, r + 1):
+        for dx in range(-r, r + 1):
+            cc, ry = c + dx, rr + dy
+            m = (cc >= 0) & (cc < w) & (ry >= 0) & (ry < h)
+            img[ry[m], cc[m]] = color
+
+
+def video_icp_basin():
+    """初期回転ずれ 30/90/150 度の点対点 ICP を 1 反復ずつ記録して動画にする。
+
+    ``fs.icp(max_iter=1, init=前回)`` を連鎖して途中を取り出す(op 本体は触らない)。
+    図を出さない実行では何もしない(所要時間を変えない)。動画用の点群は専用の
+    乱数で取り直すので、本文の乱数消費と門の数字は変わらない。
+    """
+    if not figs.enabled():
+        return None
+    import annotate as AN
+
+    rng_v = np.random.default_rng(VIDEO_SEED)
+    src, dst_base, _dn_base, diam = fine(rng_v)
+    u = np.array([0.6, 0.3, -0.74])
+    u /= np.linalg.norm(u)
+    t_true = u * VIDEO_TRANS_FRAC * diam
+    c_src = src.mean(0)
+    cases = []
+    for deg in VIDEO_ROTS:
+        R_true = rot_axis_angle(VIDEO_AXIS, deg)
+        dst = fs.apply_transform(dst_base, R_true, t_true)
+        R, t = np.eye(3), np.zeros(3)
+        Rs, ts = [R], [t]
+        rot, cen = [rot_error_deg(R, R_true)], [cen_error(R, t, R_true, t_true, c_src)]
+        for _ in range(VIDEO_ITERS):
+            R, t = fs.icp(src, dst, max_iter=1, init=(R, t))[:2]
+            R, t = np.asarray(R, float), np.asarray(t, float)
+            Rs.append(R)
+            ts.append(t)
+            rot.append(rot_error_deg(R, R_true))
+            cen.append(cen_error(R, t, R_true, t_true, c_src))
+        # 連鎖 = 一発か: max_iter=VIDEO_ITERS を一度に回した結果と最後の状態を比べる
+        R1, t1 = fs.icp(src, dst, max_iter=VIDEO_ITERS, init=(np.eye(3), np.zeros(3)))[:2]
+        cases.append(dict(deg=deg, dst=dst, Rs=Rs, ts=ts, rot=np.array(rot), cen=np.array(cen),
+                          gap=rot_error_deg(np.asarray(R1), R),
+                          gap_t=float(np.linalg.norm(np.asarray(t1) - t)),
+                          ok=ok(rot[-1], cen[-1], diam)))
+    print("\n=== 動画: 初期ずれを振った点対点 ICP の 1 反復ごとの軌跡(動画専用の点群)===")
+    for c in cases:
+        print(f"  初期 {c['deg']:>5.0f} 度: {VIDEO_ITERS} 反復後 回転誤差 {c['rot'][-1]:7.2f} 度 / 重心誤差 "
+              f"{100 * c['cen'][-1] / diam:5.2f} % 直径 → {'成功' if c['ok'] else '失敗'}"
+              f"(1 反復 x{VIDEO_ITERS} の連鎖と max_iter={VIDEO_ITERS} 一発の差: 回転 {c['gap']:.2e} 度 / "
+              f"並進 {c['gap_t']:.2e})")
+
+    # 斜めから見る正射影。尺度は dst の直径で全コマ・全パネル共通
+    V = rot_axis_angle((1.0, 0.0, 0.0), -28.0) @ rot_axis_angle((0.0, 1.0, 0.0), 35.0)
+    PW, PH, PLOT_H = 260, 260, 228
+    W = PW * len(cases)
+    scale = 0.36 * PW / (0.5 * diam)
+
+    def proj(P, centre):
+        q = (np.asarray(P) - centre) @ V.T
+        return np.stack([PW / 2 + scale * q[:, 0], PH / 2 + 24 - scale * q[:, 1]], axis=1)
+
+    cols = [(0.90, 0.62, 0.0), (0.0, 0.62, 0.45), (0.80, 0.40, 0.70)]
+    ylim = (0.3, 400.0)
+    ax = AN.axes_transform((58, PH + 26, W - 80, PLOT_H - 80), (0, VIDEO_ITERS), ylim, yscale="log")
+    frames = []
+    hold = [0] * 6 + list(range(VIDEO_ITERS + 1)) + [VIDEO_ITERS] * 12
+    for k in hold:
+        f = np.full((PH + PLOT_H, W, 3), 0.07)
+        for j, c in enumerate(cases):
+            pan = np.full((PH, PW, 3), 0.10)
+            centre = c["dst"].mean(0)
+            _vid_dots(pan, proj(c["dst"], centre), (0.55, 0.55, 0.55), r=1)
+            cur = fs.apply_transform(src, c["Rs"][k], c["ts"][k])
+            _vid_dots(pan, proj(cur, centre), cols[j], r=1)
+            pan[:, -2:] = 0.35
+            verdict = ""
+            if k == VIDEO_ITERS:
+                verdict = "\n→ 正しい盆地に入った" if c["ok"] else "\n→ 別の盆地に落ちた"
+            pan = _vid_txt(pan, "初期 %.0f 度 / 反復 %d\n回転誤差 %.1f 度\n重心誤差 直径の %.1f %%%s"
+                           % (c["deg"], k, c["rot"][k], 100 * c["cen"][k] / diam, verdict), (6, 6), fs_=12)
+            f[:PH, j * PW:(j + 1) * PW] = pan
+        f = AN.axes_frame(f, ax)
+        f = AN.ticks(f, ax, xticks=[0, 10, 20, 30, 40, 50, 60], yticks=[1, 3, 10, 30, 100], font_size=11)
+        f = AN.plot_series(f, ax, [0.0, float(VIDEO_ITERS)], [ROT_OK_DEG, ROT_OK_DEG],
+                           color=(0.5, 0.5, 0.5), width=1)
+        for j, c in enumerate(cases):
+            ys = np.clip(c["rot"][:k + 1], ylim[0], ylim[1])
+            xs = np.arange(k + 1, dtype=float)
+            if k == 0:
+                f = AN.plot_series(f, ax, xs, ys, kind="scatter", color=cols[j], marker_size=3)
+            else:
+                f = AN.plot_series(f, ax, xs, ys, color=cols[j], width=2)
+        f = np.asarray(f, np.float64)
+        f = _vid_txt(f, "回転誤差 [度](対数)/ 灰線 = 成功のしきい値 %.0f 度" % ROT_OK_DEG,
+                     (W - 10, PH + 4), anchor="rt", fs_=11)
+        f = _vid_txt(f, "反復の回数", (58 + (W - 80) // 2, PH + PLOT_H - 4), anchor="cb", fs_=11)
+        frames.append(np.clip(f, 0.0, 1.0))
+    res = "、".join("%.0f 度 → %.1f 度(%s)" % (c["deg"], c["rot"][-1], "成功" if c["ok"] else "失敗")
+                   for c in cases)
+    figs.save_video(
+        "icp_basin_iterations", frames, fps=8, gif_every=1, gif_width=None,
+        caption="点対点 ICP を 1 反復ずつ動かす(fs.icp(max_iter=1) を前回の姿勢から連鎖)。灰 = 目標の点群、"
+                "色 = 動かしている点群(斜めから見た正射影)。同じ回転軸で初期回転ずれだけを 30 / 90 / 150 度と変え、"
+                "並進ずれは直径の %.0f %%。反復予算は本文の点対点 ICP と同じ %d 回で、その後の回転誤差: %s。下の曲線は回転誤差の推移(対数、灰線 = 成功の"
+                "しきい値 %.0f 度)。動画専用に取り直した 1 組の点群での 1 試行の軌跡で、成功率は第 2 章の表。"
+                % (100 * VIDEO_TRANS_FRAC, VIDEO_ITERS, res, ROT_OK_DEG))
+    return cases
+
+
+# ---------------------------------------------------------------------------
 def main():
     t_start = time.perf_counter()
 
@@ -854,6 +983,8 @@ def main():
     assert isinstance(nan_out["rmse"], float) and np.isnan(nan_out["rmse"]), \
         "surface_match(refine=False) の rmse が nan でない(穴が塞がった?)"
     assert (nan_out["rmse"] < 1.0) is False, "nan の比較が False にならない"
+
+    video_icp_basin()
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

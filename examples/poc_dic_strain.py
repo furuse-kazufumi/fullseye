@@ -641,6 +641,116 @@ def section10_findings():
 """)
 
 
+# --- 動画: 引張試験の荷重段を上げていく過程(図を出すときだけ) ----------------- #
+def _vtxt(img, s, xy, anchor="lt", fsz=12):
+    """下敷きつきの文字(poc_driving_traffic の _txt と同じ書き方)。"""
+    import annotate as AN
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fsz), dtype=np.float64)
+
+
+def video_tensile_ramp(sp, ref, n_step=48, eps_max=3000e-6, th_max_deg=2.0):
+    """荷重段 k ごとに真のひずみ e と試験機の回転 θ を同時に増やし、lk で測り直す。
+
+    変形像は毎回 ``sp.render`` で斑点の中心を写して描き直す(補間で作らない)。
+    写像は画像中心まわりに ``x' = c + R(θ)·diag(1+e, 1)·(x - c)``。このとき
+    微小ひずみ ∂u/∂x の真値は ``(1+e)cosθ - 1``(回転が嘘の圧縮を作る)、
+    Green-Lagrange の E_xx は ``e + e²/2``(回転に依らない)。乱数は使わない
+    (``sp`` の斑点は ``__init__`` で決まっている)ので、門の数字は動かない。
+    """
+    if not figs.enabled():
+        return None
+    import annotate as AN
+
+    c0 = N / 2.0
+    ks = np.arange(n_step)
+    es = eps_max * ks / (n_step - 1)
+    ths = np.deg2rad(th_max_deg) * ks / (n_step - 1)
+    imgs, m_inf, m_grn, mean_inf, mean_grn = [], [], [], [], []
+    for e, t in zip(es, ths):
+        ct, st = np.cos(t), np.sin(t)
+        cur = sp.render(lambda x, y: c0 + (1.0 + e) * (x - c0) * ct - (y - c0) * st,
+                        lambda x, y: c0 + (1.0 + e) * (x - c0) * st + (y - c0) * ct)
+        uu, vv = est_lk(ref, cur)
+        ei, _, _ = strain(uu, vv, w=31, method="infinitesimal")
+        eg, _, _ = strain(uu, vv, w=31, method="green")
+        imgs.append(cur)
+        m_inf.append(ei)
+        m_grn.append(eg)
+        mean_inf.append(1e6 * float(np.mean(ei[_SL])))
+        mean_grn.append(1e6 * float(np.mean(eg[_SL])))
+    mean_inf, mean_grn = np.array(mean_inf), np.array(mean_grn)
+    th_inf = 1e6 * ((1.0 + es) * np.cos(ths) - 1.0)
+    th_grn = 1e6 * (es + 0.5 * es * es)
+    true_ue = 1e6 * es
+
+    # 地図の色は**全コマ共通の 1 つの尺度**(発散 LUT: 正 = 青、0 = 黒、負 = 橙)。評価外の縁は灰色で伏せる。
+    vmax = 1.05 * eps_max
+    lut = np.asarray(fs.diverging_lut(256))
+    inner = np.zeros((N, N), bool)
+    inner[_SL] = True
+
+    def cmap(f):
+        idx = np.clip(((f / vmax) * 0.5 + 0.5) * 255.0, 0, 255).astype(np.int32)
+        rgb = np.clip(lut[idx][..., :3], 0.0, 1.0)
+        rgb[~inner] = 0.18
+        return rgb
+
+    gap, top = 8, 30
+    W = 3 * N + 4 * gap
+    ph = 250
+    H = top + N + gap + ph + 10
+    ax = AN.axes_transform((60, top + N + gap + 12, W - 60 - 180, ph - 56),
+                           (0.0, float(n_step - 1)), (-200.0, 3400.0))
+    cols = {"true": (0.80, 0.80, 0.80), "inf": (0.90, 0.60, 0.0), "grn": (0.35, 0.70, 0.90)}
+    frames = []
+    for k in range(n_step):
+        f = np.full((H, W, 3), 0.06)
+        x0 = gap
+        f[top:top + N, x0:x0 + N] = np.repeat(np.clip(imgs[k], 0, 1)[..., None], 3, 2)
+        x1 = 2 * gap + N
+        f[top:top + N, x1:x1 + N] = cmap(m_inf[k])
+        x2 = 3 * gap + 2 * N
+        f[top:top + N, x2:x2 + N] = cmap(m_grn[k])
+        f = _vtxt(f, "変形したスペックル(毎段描き直し)", (x0, 6), fsz=13)
+        f = _vtxt(f, "測った ε_xx: 微小ひずみ ∂u/∂x", (x1, 6), fsz=13)
+        f = _vtxt(f, "測った E_xx: Green-Lagrange", (x2, 6), fsz=13)
+        f = _vtxt(f, "青 = 伸び(+%d µε で最も明るい)/ 黒 = 0 / 橙 = 縮み" % round(1e6 * vmax),
+                  (x2 + N - 4, top + N - 4), anchor="rb", fsz=10)
+        f = AN.axes_frame(f, ax)
+        f = AN.ticks(f, ax, xticks=[0, 10, 20, 30, 40], yticks=[0, 1000, 2000, 3000], font_size=11)
+        f = AN.plot_series(f, ax, ks, true_ue, color=cols["true"], width=1)
+        f = AN.plot_series(f, ax, ks, th_inf, color=cols["inf"], width=1)
+        f = AN.plot_series(f, ax, ks, th_grn, color=cols["grn"], width=1)
+        if k >= 1:
+            f = AN.plot_series(f, ax, ks[:k + 1], mean_inf[:k + 1], color=cols["inf"], width=3)
+            f = AN.plot_series(f, ax, ks[:k + 1], mean_grn[:k + 1], color=cols["grn"], width=3)
+        f = AN.plot_series(f, ax, ks[k:k + 1], mean_inf[k:k + 1], kind="scatter",
+                           color=cols["inf"], marker_size=5)
+        f = AN.plot_series(f, ax, ks[k:k + 1], mean_grn[k:k + 1], kind="scatter",
+                           color=cols["grn"], marker_size=5)
+        f = _vtxt(f, "荷重段 → 橙 = 微小ひずみ / 青 = Green / 灰 = 真の伸び e(細線 = 理論、太線 = lk の領域平均)[µε]",
+                  (W // 2, H - 4), anchor="cb", fsz=10)
+        f = _vtxt(f, "荷重段 %d / %d\n真 ε %5.0f µε\n回転 θ %.2f 度\n微小 %6.0f µε\n  (理論 %6.0f)\n"
+                     "Green %6.0f µε\n  (理論 %6.0f)"
+                  % (k, n_step - 1, true_ue[k], np.rad2deg(ths[k]), mean_inf[k], th_inf[k],
+                     mean_grn[k], th_grn[k]), (W - 172, top + N + gap + 14), fsz=12)
+        frames.append(np.clip(f, 0.0, 1.0))
+    k = n_step - 1
+    hold = [frames[-1]] * 12                     # 最後の段で止めて読ませる
+    figs.save_video(
+        "tensile_ramp", frames + hold, fps=8.0, gif_every=1, gif_width=640,
+        caption="引張試験の荷重を %d 段で上げる過程(lk、窓 31)。真のひずみを 0 → %.0f µε、"
+                "同時に試験機が 0 → %.1f 度回る。変形像は毎段、斑点を写して描き直す(補間なし)。"
+                "最終段で微小ひずみ ∂u/∂x の領域平均は %.0f µε(理論 (1+e)cosθ-1 = %.0f µε)—— "
+                "材料は %.0f µε 伸びているのに、回転が約 %.0f µε 少なく見せる。"
+                "Green-Lagrange は %.0f µε(理論 e+e²/2 = %.0f µε)。地図の色は全コマ共通の尺度。"
+                % (n_step, true_ue[k], th_max_deg, mean_inf[k], th_inf[k], true_ue[k],
+                   true_ue[k] - th_inf[k], mean_grn[k], th_grn[k]))
+    print("  [動画] 荷重 %d 段: 最終 微小 %.1f µε(理論 %.1f)/ Green %.1f µε(理論 %.1f)"
+          % (n_step, mean_inf[k], th_inf[k], mean_grn[k], th_grn[k]))
+    return mean_inf, mean_grn
+
+
 def main():
     t0 = time.time()
     print("poc_dic_strain — スペックル画像から**ひずみ**を測る")
@@ -658,6 +768,7 @@ def main():
     section8_noise(sp, ref, ix)
     section9_speckle_quality()
     section10_findings()
+    video_tensile_ramp(sp, ref)
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("経過 %.1f 秒" % (time.time() - t0))

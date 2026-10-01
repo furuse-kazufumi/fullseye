@@ -653,6 +653,171 @@ def section_op_hole():
             "above": int(above.sum()), "above_vis": int(op_vis[above].sum())}
 
 
+# ───────────────────── 動画(図を出すときだけ組む) ─────────────────────
+# 3-D は render3d.render_mesh(z-buffer)で描き、色は頂点の値を重心座標で補間する。
+# ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。
+#   行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+def _v_mesh(Z, xs, ys, step=1):
+    """標高格子 ``Z[行, 列]`` → 三角形メッシュ ``(V, F)``。``xs`` = 列の座標 [m]、``ys`` = 行の座標 [m]
+    (行方向 = 南向き)。世界座標は ``(x, -y, z)``。NaN の頂点に触れる三角形は捨てる。"""
+    Zs = np.asarray(Z, np.float64)[::step, ::step]
+    h, w = Zs.shape
+    gx, gy = np.meshgrid(np.asarray(xs, np.float64)[::step], np.asarray(ys, np.float64)[::step])
+    ok = np.isfinite(Zs).ravel()
+    V = np.column_stack([gx.ravel(), -gy.ravel(), np.where(np.isfinite(Zs), Zs, 0.0).ravel()])
+    idx = np.arange(h * w).reshape(h, w)
+    a, b = idx[:-1, :-1].ravel(), idx[:-1, 1:].ravel()
+    c, d = idx[1:, :-1].ravel(), idx[1:, 1:].ravel()
+    F = np.concatenate([np.column_stack([a, b, d]), np.column_stack([a, d, c])])
+    F = F[ok[F].all(axis=1)]
+    return V, F
+
+
+def _v_render(V, F, vcol, pose, K, w, h, light=None, ambient=0.35, bg=(0.07, 0.08, 0.10)):
+    """頂点色 ``vcol (nv,3)`` のメッシュを描く → ``(rgb (h,w,3), depth (h,w))``。
+    ``light`` = 世界座標の光の向き(None なら頂点色そのまま = 陰影は呼び手が色に焼き込み済み)。"""
+    import render3d as R3
+
+    r = R3.render_mesh(V, F, pose=pose, intrinsics=K, width=w, height=h, attributes=True)
+    img = np.empty((h, w, 3), np.float64)
+    img[:] = bg
+    m = r["face"] >= 0
+    if m.any():
+        fi = r["face"][m]
+        col = np.einsum("nk,nkc->nc", r["bary"][m], np.asarray(vcol, np.float64)[F[fi]])
+        if light is not None:
+            L = pose[:3, :3] @ (np.asarray(light, np.float64) / np.linalg.norm(light))
+            col = col * (ambient + (1.0 - ambient) * np.clip(r["normals"][m] @ L, 0.0, 1.0))[:, None]
+        img[m] = col
+    return np.clip(img, 0.0, 1.0), r["depth"]
+
+
+def _v_project(P, pose, K):
+    """世界座標の点 → ``(列 u, 行 v, 奥行き)``。render_mesh と同じ約束(カメラは -Z を見る)。"""
+    P = np.atleast_2d(np.asarray(P, np.float64))
+    Vc = P @ pose[:3, :3].T + pose[:3, 3]
+    dep = -Vc[:, 2]
+    s = np.where(dep > 1e-9, dep, np.nan)
+    return K[0, 0] * Vc[:, 0] / s + K[0, 2], K[1, 2] - K[1, 1] * Vc[:, 1] / s, dep
+
+
+def _v_disk(img, u, v, r, color):
+    """画面上の (u, v) に半径 r の円を塗る(はみ出しは切る)。"""
+    if not (np.isfinite(u) and np.isfinite(v)):
+        return img
+    h, w = img.shape[:2]
+    r0, r1 = max(0, int(v - r - 1)), min(h, int(v + r + 2))
+    c0, c1 = max(0, int(u - r - 1)), min(w, int(u + r + 2))
+    if r0 >= r1 or c0 >= c1:
+        return img
+    yy, xx = np.mgrid[r0:r1, c0:c1]
+    m = (yy - v) ** 2 + (xx - u) ** 2 <= r * r
+    img[r0:r1, c0:c1][m] = color
+    return img
+
+
+def _v_line(img, p0, p1, color, width=2.0):
+    """画面上の線分 (u0,v0)-(u1,v1)。"""
+    (u0, v0), (u1, v1) = p0, p1
+    if not all(np.isfinite([u0, v0, u1, v1])):
+        return img
+    n = int(max(abs(u1 - u0), abs(v1 - v0)) * 1.5) + 2
+    for t in np.linspace(0.0, 1.0, n):
+        _v_disk(img, u0 + t * (u1 - u0), v0 + t * (v1 - v0), width * 0.5, color)
+    return img
+
+
+def _v_txt(img, s, xy, anchor="lt", fs=13):
+    import annotate as AN
+
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs), dtype=np.float64)
+
+
+def _v_cbar(img, lut, rect, vmin, vmax, unit, fs=11):
+    import annotate as AN
+
+    return np.asarray(AN.color_bar(img, lut, rect, vmin=vmin, vmax=vmax, unit=unit, font_size=fs,
+                                   label_fmt="{:.2f}" if abs(vmax - vmin) < 5 else "{:.0f}"),
+                      dtype=np.float64)
+
+
+def _v_cmap(vals, name, vmin, vmax):
+    """値の並び → RGB(尺度は vmin..vmax で固定)。"""
+    import imgio
+
+    a = np.asarray(vals, np.float64)
+    return np.asarray(imgio.apply_cmap(a.reshape(1, -1), name, vmin=vmin, vmax=vmax),
+                      np.float64).reshape(a.shape + (3,))
+
+
+def fig_scan_orbit(sweep, truth, W=640, H=360, fps=30.0):
+    """主図(動画): 山の周りを一周しながら、走査位置を 1 → 2 → 3 か所と増やす。
+
+    描くのは**補間で埋めた DSM**(= 在庫計算が信じている面)。実際に点が落ちた所は砂色、
+    見えずに補間で埋めた所は「補間 − 真の面」[m] で塗る(coolwarm、赤 = 持ち上がった)。
+    橙の柱が走査位置(高さ = 目線 2.0 m)。数字は §5 の表(うねり・外周平均)と同じ値。
+    """
+    import render3d as R3
+
+    yard = Yard()
+    sel = (np.arange(N) * CELL >= 22.0) & (np.arange(N) * CELL <= 98.0)
+    xs = (np.arange(N) * CELL)[sel]
+    phases = []
+    for n_pos in (1, 2, 3):
+        vis, pos = yard.scan(n_pos)
+        dsm, _ = yard.fill(vis)
+        phases.append((n_pos, vis, pos, dsm))
+    lift_max = max(float(np.nanmax(np.abs((dsm - yard.surf)[np.ix_(sel, sel)]))) for _, _, _, dsm in phases)
+    lut = _v_cmap(np.linspace(-lift_max, lift_max, 256), "coolwarm", -lift_max, lift_max)
+    K = R3.intrinsics_from_fov(40.0, W, H)
+    ctr = np.array([60.0, -60.0, 4.0])
+    sand = np.array([0.80, 0.70, 0.52])
+    grass = np.array([0.55, 0.62, 0.50])
+    light = np.array([0.45, -0.55, 0.75])                # 南東の上から(世界座標 = 東, 北, 上)
+    per = 120
+    frames, shown = [], []
+    for ph, (n_pos, vis, pos, dsm) in enumerate(phases):
+        dz = np.asarray(dsm[np.ix_(sel, sel)], np.float64)
+        V, F = _v_mesh(dz, xs, xs)
+        lift = (dsm - yard.surf)[np.ix_(sel, sel)].ravel()
+        seen = vis[np.ix_(sel, sel)].ravel()
+        foot = yard.foot[np.ix_(sel, sel)].ravel()
+        col = np.where(foot[:, None], sand, grass) * np.ones((lift.size, 3))
+        col[~seen] = _v_cmap(lift[~seen], "coolwarm", -lift_max, lift_max)
+        r = sweep[("うねり", n_pos)]
+        txt = ("走査 %d か所(橙の柱 = 目線 %.1f m)\n底面の中で見えなかった割合 %.3f\n"
+               "在庫量の誤差  真の底面 %+.2f %% / 外周平均の水平底面 %+.2f %%"
+               % (n_pos, EYE_HEIGHT, r["occ"], _pct(r["gt"]["vol"], truth["exact"]),
+                  _pct(r["lv"]["vol"], truth["exact"])))
+        shown.append((n_pos, r["occ"], _pct(r["gt"]["vol"], truth["exact"]), _pct(r["lv"]["vol"], truth["exact"])))
+        for k in range(per):
+            az = np.radians(-90.0 + 360.0 * (ph * per + k) / (3 * per))   # 南から反時計回り(上から見て)
+            eye = ctr + np.array([88.0 * np.cos(az), 88.0 * np.sin(az), 38.0])
+            pose = R3.look_at(eye, ctr, up=(0.0, 0.0, 1.0))
+            img, _ = _v_render(V, F, col, pose, K, W, H, light=light, ambient=0.45)
+            for px, py in pos:
+                gz = float(yard.surf[int(round(py / CELL)), int(round(px / CELL))])
+                u, v, d = _v_project([[px, -py, gz], [px, -py, gz + EYE_HEIGHT * 2.0]], pose, K)
+                if (d > 0).all():
+                    img = _v_line(img, (u[0], v[0]), (u[1], v[1]), (0.95, 0.55, 0.1), width=3.0)
+                    img = _v_disk(img, u[1], v[1], 4.5, (1.0, 0.6, 0.1))
+            img = _v_txt(img, txt, (6, 6), fs=12)
+            img = _v_cbar(img, lut, (W - 64, 92, 14, H - 150), -lift_max, lift_max, "m")
+            img = _v_txt(img, "補間 − 真の面", (W - 8, 70), anchor="rt", fs=11)
+            img = _v_txt(img, "砂色 = 点が落ちた所 / 色 = 補間で埋めた所", (6, H - 6), anchor="lb", fs=11)
+            frames.append(img)
+    figs.save_video("scan_orbit", frames, fps=fps, gif_every=4, gif_width=480,
+                    caption="主図(動画、%d × %d・%.0f fps・%.0f 秒): うねりのある地面に置いた山の周りを一周しながら、走査位置を"
+                            " 1 → 2 → 3 か所と増やす。描いているのは補間で埋めた DSM(在庫計算が信じている面)で、色は"
+                            "「補間 − 真の面」(最大 %.2f m)。見えなかった割合は %s。在庫量の誤差は真の底面で %s、"
+                            "外周平均の水平底面で %s —— 3 か所で遮蔽は塞がるが、うねり由来の偏りは残る。高さは実寸。"
+                            % (W, H, fps, len(frames) / fps, lift_max,
+                               " → ".join("%.3f" % s[1] for s in shown),
+                               " → ".join("%+.2f %%" % s[2] for s in shown),
+                               " → ".join("%+.2f %%" % s[3] for s in shown)))
+    return shown
+
+
 def main():
     t0 = time.perf_counter()
     truth = section_truth()
@@ -740,6 +905,9 @@ def main():
     # わけでもない —— 峰の裏は本当に見えないので、0 でも全数でもないのが正しい。
     assert 0 < hole["above_vis"] < hole["above"], (hole["above_vis"], hole["above"])
 
+    # 動画は図を出すときだけ組む(図なしの実行の所要時間と出力を変えない)
+    if figs.enabled():
+        fig_scan_orbit(sweep, truth)
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print(f"\n所要 {time.perf_counter() - t0:.1f} s")

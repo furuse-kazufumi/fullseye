@@ -38,5 +38,27 @@
    264,
    3
   ]
+ },
+ {
+  "file": "05_terrain_flight.gif",
+  "name": "terrain_flight",
+  "caption": "主図(動画、640 × 360・30 fps・11 秒): 800 m 四方の地形(セル 5 m)を南南西から北へ回り込み、止まって太陽を一周させる。陰影は描画の光でなく dem_hillshade(仰角 35 度)の出力で塗り、青は dem_flow_accumulation の集水量 150 セル以上。南向き斜面の陰影の平均は太陽方位 187 度で最大 0.719、北向き斜面は 1 度で最大 0.709 —— 日当たりは斜面の向きで決まる(§6 の平面と同じ結論)。高さは画面上だけ 2.5 倍。",
+  "shape": [
+   270,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 110,
+  "frames_written": 110,
+  "fps": 10.0,
+  "video": "05_terrain_flight.mp4",
+  "video_frames": 330,
+  "video_fps": 30.0,
+  "video_shape": [
+   360,
+   640,
+   3
+  ]
  }
 ]

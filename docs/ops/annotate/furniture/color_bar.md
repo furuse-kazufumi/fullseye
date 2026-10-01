@@ -4,7 +4,7 @@ dim: annotate
 category: furniture
 in: image2d × lut
 out: image2d
-examples: [annotate_gallery]
+examples: [annotate_gallery, poc_cad_scan_deviation, poc_ct_void_morphology, poc_dem_terrain, poc_lidar_terrain_change, poc_multibeam_bathymetry, poc_stockpile_volume]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -56,6 +56,12 @@ ValueError
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
+- [poc_cad_scan_deviation](../../../../examples/poc_cad_scan_deviation.py) — `py -3.11 examples/poc_cad_scan_deviation.py`
+- [poc_ct_void_morphology](../../../../examples/poc_ct_void_morphology.py) — `py -3.11 examples/poc_ct_void_morphology.py`
+- [poc_dem_terrain](../../../../examples/poc_dem_terrain.py) — `py -3.11 examples/poc_dem_terrain.py`
+- [poc_lidar_terrain_change](../../../../examples/poc_lidar_terrain_change.py) — `py -3.11 examples/poc_lidar_terrain_change.py`
+- [poc_multibeam_bathymetry](../../../../examples/poc_multibeam_bathymetry.py) — `py -3.11 examples/poc_multibeam_bathymetry.py`
+- [poc_stockpile_volume](../../../../examples/poc_stockpile_volume.py) — `py -3.11 examples/poc_stockpile_volume.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

@@ -40,5 +40,27 @@
   ],
   "csv": "04_density_table.csv",
   "tsv": "04_density_table.tsv"
+ },
+ {
+  "file": "05_tracking_links.gif",
+  "name": "tracking_links",
+  "caption": "動画(40 フレーム、192 × 192 px を 2 倍で表示): 左は距離だけの最近傍リンク、右は上限 4.2 px のゲートつき。水色 = 正しいリンク(薄れていく)、橙 = 誤リンク(消えずに積もる)、灰 = 始点が同定できない検出、白い十字 = 検出。誤リンクの累計は最近傍 313 本・ゲート 226 本。下の帯は t までに集めた変位で読んだ D / D 真値で、最後は最近傍 2.15・ゲート 1.12(真値 1.0)。",
+  "shape": [
+   361,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 48,
+  "frames_written": 40,
+  "fps": 5.0,
+  "video": "05_tracking_links.mp4",
+  "video_frames": 48,
+  "video_fps": 5.0,
+  "video_shape": [
+   584,
+   776,
+   3
+  ]
  }
 ]

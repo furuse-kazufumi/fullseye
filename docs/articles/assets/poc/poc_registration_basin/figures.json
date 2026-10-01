@@ -42,5 +42,27 @@
   ],
   "csv": "04_symmetry_lies.csv",
   "tsv": "04_symmetry_lies.tsv"
+ },
+ {
+  "file": "05_icp_basin_iterations.gif",
+  "name": "icp_basin_iterations",
+  "caption": "点対点 ICP を 1 反復ずつ動かす(fs.icp(max_iter=1) を前回の姿勢から連鎖)。灰 = 目標の点群、色 = 動かしている点群(斜めから見た正射影)。同じ回転軸で初期回転ずれだけを 30 / 90 / 150 度と変え、並進ずれは直径の 10 %。反復予算は本文の点対点 ICP と同じ 60 回で、その後の回転誤差: 30 度 → 0.6 度(成功)、90 度 → 0.6 度(成功)、150 度 → 179.5 度(失敗)。下の曲線は回転誤差の推移(対数、灰線 = 成功のしきい値 3 度)。動画専用に取り直した 1 組の点群での 1 試行の軌跡で、成功率は第 2 章の表。",
+  "shape": [
+   488,
+   780,
+   3
+  ],
+  "animated": true,
+  "frames": 79,
+  "frames_written": 61,
+  "fps": 8.0,
+  "video": "05_icp_basin_iterations.mp4",
+  "video_frames": 79,
+  "video_fps": 8.0,
+  "video_shape": [
+   488,
+   780,
+   3
+  ]
  }
 ]

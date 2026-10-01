@@ -93,6 +93,7 @@ import examplefig as figs   # ★fullseye を先に import しないと解決し
 # ★ 穴 (a): 相関マップを返す公開 op が無いので private を借りる。
 #    第 0 章で公開 op ``fs.op.ncc_locate`` と一致することを検算してから使う。
 import ops
+import annotate as AN       # 動画のコマに文字・グラフ
 
 T_START = time.perf_counter()
 
@@ -382,6 +383,106 @@ def loglog_slope(t, e):
 
 
 # ===========================================================================
+# 動画 —— 同じ 70 % 遮蔽で、平坦な遮蔽物とそっくりな別物体を並べて流す
+# ===========================================================================
+def _txt(img, s, xy, anchor="lt", fs=12):
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs), dtype=np.float64)
+
+
+def _box(img, xy, half, color, width=2):
+    """``(x, y)`` 中心・半幅 ``half`` の枠を描く(画素の代入だけ。全画面を舐める op は使わない)。"""
+    col = np.asarray(AN._rgb(color), dtype=np.float64)
+    h, w = img.shape[:2]
+    x0, x1 = int(round(xy[0] - half)), int(round(xy[0] + half))
+    y0, y1 = int(round(xy[1] - half)), int(round(xy[1] + half))
+    for a0, a1, b0, b1 in ((y0, y0 + width, x0, x1 + 1), (y1 - width + 1, y1 + 1, x0, x1 + 1),
+                           (y0, y1 + 1, x0, x0 + width), (y0, y1 + 1, x1 - width + 1, x1 + 1)):
+        a0c, a1c, b0c, b1c = max(0, a0), min(h, a1), max(0, b0), min(w, b1)
+        if a0c < a1c and b0c < b1c:
+            img[a0c:a1c, b0c:b1c] = col
+    return img
+
+
+def fig_video_twin(c_flat, c_twin, f_occ, thr_pk, thr_pr):
+    """左 = 平坦な遮蔽物、右 = 同じ遮蔽率 + そっくりな別物体。どちらも更新なし全域探索(ゼロ点)。
+
+    ★図を出すときだけ呼ばれる。追跡は本文で済んでいる(``est``・ピーク・突出度は本文の値そのもの)
+    ので、ここでは**描くだけ**。乱数は使わない。
+    """
+    Z = 3                                               # 120 × 160 のフレームを 3 倍に(最近傍)
+    FH, FW = FR_H * Z, FR_W * Z
+    GH = 165                                            # 時系列グラフ 1 枚の高さ
+    PH = FH + 2 * GH
+    n = len(c_flat["err"])
+    tt = np.arange(n, dtype=float)
+    e_hi = float(np.ceil(max(np.max(c_flat["err"]), np.max(c_twin["err"]), LOST_PX) / 10.0) * 10.0)
+    ax_e = AN.axes_transform((48, 26, FW - 64, GH - 75), (0.0, float(n - 1)), (0.0, e_hi))
+    ax_p = AN.axes_transform((48, 26, FW - 64, GH - 75), (0.0, float(n - 1)), (-0.05, 1.0))
+    sides = []
+    for title, c in (("平坦な遮蔽物 %.0f %%" % (100 * f_occ), c_flat),
+                     ("同じ遮蔽 + そっくりな別物体", c_twin)):
+        ge = np.full((GH, FW, 3), 0.08)                 # 動かない軸・目盛り・しきい値は 1 度だけ
+        ge = AN.axes_frame(ge, ax_e)
+        ge = AN.ticks(ge, ax_e, yticks=[0, e_hi / 2, e_hi], font_size=10)
+        ge = AN.plot_series(ge, ax_e, [0.0, n - 1.0], [LOST_PX, LOST_PX], kind="line", color="neutral", width=1)
+        ge = _txt(ge, "位置誤差 [px](真値との差)  灰線 = 見失いの線 %.0f px" % LOST_PX, (48, 2), fs=10)
+        gp = np.full((GH, FW, 3), 0.08)
+        gp = AN.axes_frame(gp, ax_p)
+        gp = AN.ticks(gp, ax_p, yticks=[0, 0.5, 1.0], font_size=10)
+        gp = AN.plot_series(gp, ax_p, [0.0, n - 1.0], [thr_pk, thr_pk], kind="line", color="emphasis", width=1)
+        gp = AN.plot_series(gp, ax_p, [0.0, n - 1.0], [thr_pr, thr_pr], kind="line", color="baseline", width=1)
+        gp = _txt(gp, "橙 = ピーク(線 = しきい値 %.3f) / 紫 = 突出度(線 = %.3f)" % (thr_pk, thr_pr), (48, 2), fs=10)
+        gp = _txt(gp, "フレーム", (48 + (FW - 64) // 2, GH - 2), anchor="cb", fs=10)
+        sides.append((title, c, ge, gp))
+    frames = []
+    for t in range(n):
+        cols = []
+        for title, c, ge, gp in sides:
+            f = np.repeat(np.repeat(c["fr"][t], Z, axis=0), Z, axis=1)
+            f = np.repeat(f[..., None], 3, axis=2)
+            lost = bool(c["err"][t] > LOST_PX)
+            f = _box(f, Z * c["tr"][t], Z * HALF, "right", width=2)
+            f = _box(f, Z * c["est"][t], Z * HALF + 4, "wrong" if lost else "emphasis", width=3)
+            pk = float(c["peak"][t])
+            pr = float(c["prom"][t])
+            said = "見つけた" if pk >= thr_pk else "見失った?"
+            truth = "見失っている(%.1f px)" % c["err"][t] if lost else "追えている(%.1f px)" % c["err"][t]
+            f = _txt(f, "%s\nt = %d / %d  ピーク %.3f → 報告「%s」\n実際は %s  突出度 %.3f"
+                     % (title, t, n - 1, pk, said, truth, pr), (4, 4), fs=12)
+            f = _txt(f, "水色 = 真の位置 / 橙 = 推定(赤 = 見失い)", (FW - 4, FH - 4), anchor="rb", fs=10)
+            e = ge.copy()
+            p = gp.copy()
+            if t >= 1:
+                e = AN.plot_series(e, ax_e, tt[:t + 1], c["err"][:t + 1], kind="line", color="wrong", width=2)
+                p = AN.plot_series(p, ax_p, tt[:t + 1], c["peak"][:t + 1], kind="line", color="emphasis", width=2)
+                pm = np.isfinite(c["prom"][:t + 1])
+                if pm.sum() >= 2:
+                    p = AN.plot_series(p, ax_p, tt[:t + 1][pm], c["prom"][:t + 1][pm], kind="line",
+                                       color="baseline", width=2)
+            e = AN.plot_series(e, ax_e, tt[t:t + 1], c["err"][t:t + 1], kind="scatter", color="wrong", marker_size=3)
+            cols.append(np.concatenate([f, e, p], axis=0))
+        gap = np.full((PH, 6, 3), 0.3)
+        frames.append(np.clip(np.concatenate([cols[0], gap, cols[1]], axis=1), 0.0, 1.0))
+    frames += [frames[-1]] * 10                         # 最後のコマで 2 秒止める
+    m = np.arange(n) >= 3
+    nl_f = int(((c_flat["err"] > LOST_PX) & m).sum())
+    nl_t = int(((c_twin["err"] > LOST_PX) & m).sum())
+    ff_t = int(((c_twin["err"] > LOST_PX) & m & (c_twin["peak"] >= thr_pk)).sum())
+    figs.save_video(
+        "twin_vs_flat_occluder", frames, fps=5.0, gif_every=1, gif_width=None,
+        caption="動画(%d フレーム + 最後で 2 秒止め、5 fps): 同じ 1 枚目のテンプレートを更新なし全域探索で追う(ゼロ点)。"
+                "3 フレーム目から真の対象の %.0f %% を左から隠す。左 = 平坦な遮蔽物: ピークは平均 %.3f まで下がって"
+                "しきい値 %.3f を割る(「見失った?」と正直に言う)が、位置は平均 %.2f px で追えている(見失い %d / 27)。"
+                "右 = そっくりな別物体が 51 px 離れて一緒に流れる: 最初の遮蔽フレームで複製に乗り換え、平均誤差 %.2f px、"
+                "見失い %d / 27 —— それなのにピークは平均 %.3f でしきい値を超え、%d / %d フレームで「見つけた」と報告する。"
+                "下段の紫(突出度)は右で平均 %.3f としきい値 %.3f を割って取り違えを疑うが、追えている左でも平均 %.3f で同じく"
+                "割る —— 突出度が測っているのは曖昧さで、正しさではない"
+                % (n, 100 * f_occ, np.nanmean(c_flat["peak"][m]), thr_pk, c_flat["err"].mean(), nl_f,
+                   c_twin["err"].mean(), nl_t, np.nanmean(c_twin["peak"][m]), ff_t, nl_t,
+                   np.nanmean(c_twin["prom"][m]), thr_pr, np.nanmean(c_flat["prom"][m])))
+
+
+# ===========================================================================
 def main():
     rng = np.random.default_rng(20260906)
     world = make_world(rng)
@@ -630,7 +731,8 @@ def main():
         lost = e > LOST_PX
         false_found = int((lost & m & (pk >= THR_PK)).sum())
         n_lost = int((lost & m).sum())
-        ch5[f_occ] = dict(err=e, peak=pk, prom=pr, lost=lost, mask=m)
+        ch5[f_occ] = dict(err=e, peak=pk, prom=pr, lost=lost, mask=m,
+                          est=est, fr=fr, tr=tr)        # est/fr/tr は動画用(参照を持つだけ)
         print(f"{f_occ * 100:>7.0f}{e.mean():>10.2f}{e.max():>8.2f}"
               f"{n_lost:>6} /27{np.nanmean(pk[m]):>12.3f}{np.nanmean(pr[m]):>12.3f}"
               f"{false_found:>10} /{n_lost:<3}")
@@ -667,6 +769,7 @@ def main():
         ff = int((lost & m & (pk >= THR_PK)).sum())
         ffp = int((lost & m & (np.nan_to_num(pr) >= THR_PR)).sum())
         ch5t[f_occ] = dict(err=e, peak=pk, prom=pr, lost=lost, mask=m,
+                           est=est, fr=fr, tr=tr,       # 動画用(参照を持つだけ)
                            ff=ff, ffp=ffp, nl=n_lost)
         print(f"{f_occ * 100:>7.0f}{e.mean():>10.2f}{e.max():>8.2f}"
               f"{n_lost:>6} /27{np.nanmean(pk[m]):>12.3f}{np.nanmean(pr[m]):>12.3f}"
@@ -1188,6 +1291,11 @@ def main():
     assert set(a[4] for a in ch6h) <= set(float(x) for x in range(0, 360, 30)), \
         "shape_locate が 30 度刻み以外を返した"
 
+    if figs.enabled():          # 動画は図を出すときだけ。失敗しても本文(数字)は落とさない
+        try:
+            fig_video_twin(ch5[0.7], ch5t[0.7], 0.7, THR_PK, THR_PR)
+        except Exception as exc:    # noqa: BLE001
+            figs._errors.append("twin_vs_flat_occluder: %s: %s" % (type(exc).__name__, exc))
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
 

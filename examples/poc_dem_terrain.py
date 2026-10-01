@@ -71,6 +71,190 @@ def gaussian_hill(n, cell, amp=50.0, sigma=40.0):
     return amp * np.exp(-(xx ** 2 + yy ** 2) / (2 * sigma ** 2))
 
 
+# ───────────────────── 動画(図を出すときだけ組む) ─────────────────────
+# 3-D は render3d.render_mesh(z-buffer)で描き、色は頂点の値を重心座標で補間する。
+# ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。
+#   行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+def _v_mesh(Z, xs, ys, step=1):
+    """標高格子 ``Z[行, 列]`` → 三角形メッシュ ``(V, F)``。``xs`` = 列の座標 [m]、``ys`` = 行の座標 [m]
+    (行方向 = 南向き)。世界座標は ``(x, -y, z)``。NaN の頂点に触れる三角形は捨てる。"""
+    Zs = np.asarray(Z, np.float64)[::step, ::step]
+    h, w = Zs.shape
+    gx, gy = np.meshgrid(np.asarray(xs, np.float64)[::step], np.asarray(ys, np.float64)[::step])
+    ok = np.isfinite(Zs).ravel()
+    V = np.column_stack([gx.ravel(), -gy.ravel(), np.where(np.isfinite(Zs), Zs, 0.0).ravel()])
+    idx = np.arange(h * w).reshape(h, w)
+    a, b = idx[:-1, :-1].ravel(), idx[:-1, 1:].ravel()
+    c, d = idx[1:, :-1].ravel(), idx[1:, 1:].ravel()
+    F = np.concatenate([np.column_stack([a, b, d]), np.column_stack([a, d, c])])
+    F = F[ok[F].all(axis=1)]
+    return V, F
+
+
+def _v_render(V, F, vcol, pose, K, w, h, light=None, ambient=0.35, bg=(0.07, 0.08, 0.10)):
+    """頂点色 ``vcol (nv,3)`` のメッシュを描く → ``(rgb (h,w,3), depth (h,w))``。
+    ``light`` = 世界座標の光の向き(None なら頂点色そのまま = 陰影は呼び手が色に焼き込み済み)。"""
+    import render3d as R3
+
+    r = R3.render_mesh(V, F, pose=pose, intrinsics=K, width=w, height=h, attributes=True)
+    img = np.empty((h, w, 3), np.float64)
+    img[:] = bg
+    m = r["face"] >= 0
+    if m.any():
+        fi = r["face"][m]
+        col = np.einsum("nk,nkc->nc", r["bary"][m], np.asarray(vcol, np.float64)[F[fi]])
+        if light is not None:
+            L = pose[:3, :3] @ (np.asarray(light, np.float64) / np.linalg.norm(light))
+            col = col * (ambient + (1.0 - ambient) * np.clip(r["normals"][m] @ L, 0.0, 1.0))[:, None]
+        img[m] = col
+    return np.clip(img, 0.0, 1.0), r["depth"]
+
+
+def _v_project(P, pose, K):
+    """世界座標の点 → ``(列 u, 行 v, 奥行き)``。render_mesh と同じ約束(カメラは -Z を見る)。"""
+    P = np.atleast_2d(np.asarray(P, np.float64))
+    Vc = P @ pose[:3, :3].T + pose[:3, 3]
+    dep = -Vc[:, 2]
+    s = np.where(dep > 1e-9, dep, np.nan)
+    return K[0, 0] * Vc[:, 0] / s + K[0, 2], K[1, 2] - K[1, 1] * Vc[:, 1] / s, dep
+
+
+def _v_disk(img, u, v, r, color):
+    """画面上の (u, v) に半径 r の円を塗る(はみ出しは切る)。"""
+    if not (np.isfinite(u) and np.isfinite(v)):
+        return img
+    h, w = img.shape[:2]
+    r0, r1 = max(0, int(v - r - 1)), min(h, int(v + r + 2))
+    c0, c1 = max(0, int(u - r - 1)), min(w, int(u + r + 2))
+    if r0 >= r1 or c0 >= c1:
+        return img
+    yy, xx = np.mgrid[r0:r1, c0:c1]
+    m = (yy - v) ** 2 + (xx - u) ** 2 <= r * r
+    img[r0:r1, c0:c1][m] = color
+    return img
+
+
+def _v_line(img, p0, p1, color, width=2.0):
+    """画面上の線分 (u0,v0)-(u1,v1)。"""
+    (u0, v0), (u1, v1) = p0, p1
+    if not all(np.isfinite([u0, v0, u1, v1])):
+        return img
+    n = int(max(abs(u1 - u0), abs(v1 - v0)) * 1.5) + 2
+    for t in np.linspace(0.0, 1.0, n):
+        _v_disk(img, u0 + t * (u1 - u0), v0 + t * (v1 - v0), width * 0.5, color)
+    return img
+
+
+def _v_txt(img, s, xy, anchor="lt", fs=13):
+    import annotate as AN
+
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs), dtype=np.float64)
+
+
+def _v_cbar(img, lut, rect, vmin, vmax, unit, fs=11):
+    import annotate as AN
+
+    return np.asarray(AN.color_bar(img, lut, rect, vmin=vmin, vmax=vmax, unit=unit, font_size=fs,
+                                   label_fmt="{:.2f}" if abs(vmax - vmin) < 5 else "{:.0f}"),
+                      dtype=np.float64)
+
+
+def _v_cmap(vals, name, vmin, vmax):
+    """値の並び → RGB(尺度は vmin..vmax で固定)。"""
+    import imgio
+
+    a = np.asarray(vals, np.float64)
+    return np.asarray(imgio.apply_cmap(a.reshape(1, -1), name, vmin=vmin, vmax=vmax),
+                      np.float64).reshape(a.shape + (3,))
+
+
+#: 動画の地形(800 m 四方、セル 5 m)。山 2 つ + 南西へ下る 3 度の平面 + 尾根のうねり。
+#: 解析曲面ではない —— 動画は「op の出力がどう見えるか」を見せるためのもので、検算は §1〜6 がしている。
+def _flight_terrain(n=161, cell=5.0):
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float64) * cell
+    z = (95.0 * np.exp(-((xx - 300.0) ** 2 + (yy - 330.0) ** 2) / (2 * 110.0 ** 2))
+         + 60.0 * np.exp(-((xx - 590.0) ** 2 + (yy - 540.0) ** 2) / (2 * 80.0 ** 2))
+         + 7.0 * np.sin(xx / 41.0) * np.cos(yy / 57.0)
+         + plane(n, n, cell, 3.0, 225.0) + 40.0)
+    return z
+
+
+def fig_terrain_flight(cell=5.0, W=640, H=360, fps=30.0):
+    """主図(動画): 地形の上を回り込み(前半)、止まって太陽を一周させる(後半)。
+
+    陰影は描画器の光ではなく **``dem_hillshade`` の出力そのもの**で塗る(コマごとに太陽の方位を
+    変えて呼び直す)。青い筋は ``dem_flow_accumulation`` の集水量 ≥ 150 セルの流路。北・南向き斜面
+    (``dem_aspect`` で 315〜45 度 / 135〜225 度)の陰影の平均を毎コマ印字する。
+    """
+    import render3d as R3
+
+    z = _flight_terrain(cell=cell)
+    n = z.shape[0]
+    xs = np.arange(n) * cell
+    V, F = _v_mesh(z, xs, xs)
+    ex = 2.5                                            # 高さの強調(画面上だけ。数字は実寸)
+    V[:, 2] = (V[:, 2] - z.min()) * ex
+    acc = np.asarray(demops.dem_flow_accumulation(z, cell), np.float64)
+    asp = np.asarray(demops.dem_aspect(z, cell), np.float64)
+    slope = np.asarray(demops.dem_slope(z, cell), np.float64)
+    north = ((asp >= 315.0) | (asp < 45.0)) & (slope > 2.0)
+    south = (asp >= 135.0) & (asp < 225.0) & (slope > 2.0)
+    stream = (acc >= 150.0).ravel()
+    zlo, zhi = float(z.min()), float(z.max())
+    clo = zlo - 0.3 * (zhi - zlo)                       # terrain の下端(海の青)を使わない —— 青は流路に取っておく
+    base = _v_cmap(z.ravel(), "terrain", clo, zhi)
+    K = R3.intrinsics_from_fov(38.0, W, H)
+    ctr = np.array([xs[-1] / 2, -xs[-1] / 2, 0.25 * (zhi - zlo) * ex])
+    lut = _v_cmap(np.linspace(zlo, zhi, 256), "terrain", clo, zhi)
+    n1, n2 = 150, 180                                   # 回り込み 5 s + 太陽を一周 6 s
+    frames, rec = [], []
+    for k in range(n1 + n2):
+        if k < n1:
+            cam_az = 200.0 + 160.0 * k / (n1 - 1)       # 南南西から回って北東の上空へ
+            sun_az = 135.0
+        else:
+            cam_az = 360.0
+            sun_az = (135.0 + 360.0 * (k - n1 + 1) / n2) % 360.0   # +1: 前半の最後のコマと同じ絵を作らない
+        alt = 35.0
+        hs = np.asarray(demops.dem_hillshade(z, cell, azimuth_deg=sun_az, altitude_deg=alt), np.float64)
+        col = base * (0.18 + 0.82 * hs.ravel())[:, None]
+        col[stream] = col[stream] * 0.3 + 0.7 * np.array([0.15, 0.45, 1.0])
+        a = np.radians(cam_az)                          # 方位: 北 0 度・東回り(dem_aspect と同じ)
+        eye = ctr + np.array([980.0 * np.sin(a), 980.0 * np.cos(a), 620.0])
+        pose = R3.look_at(eye, ctr, up=(0.0, 0.0, 1.0))
+        img, _ = _v_render(V, F, col, pose, K, W, H)
+        # 方位の目印: 北の縁の中央に「北」、太陽の方向に「太陽」
+        u, v, d = _v_project([[xs[-1] / 2, 0.0, (zhi - zlo) * ex * 0.15]], pose, K)
+        if d[0] > 0 and 8 < u[0] < W - 30 and 20 < v[0] < H - 10:
+            img = _v_disk(img, u[0], v[0], 4, (1.0, 1.0, 1.0))
+            img = _v_txt(img, "北", (u[0], v[0] - 6), anchor="cb", fs=12)
+        sa = np.radians(sun_az)
+        su, sv, sd = _v_project([ctr + np.array([900.0 * np.sin(sa), 900.0 * np.cos(sa),
+                                                 900.0 * np.tan(np.radians(alt))])], pose, K)
+        if sd[0] > 0 and 14 < su[0] < W - 40 and 14 < sv[0] < H - 30:
+            img = _v_disk(img, su[0], sv[0], 7, (1.0, 0.85, 0.2))
+            img = _v_txt(img, "太陽", (su[0], sv[0] + 10), anchor="ct", fs=11)
+        mn, ms = float(hs[north].mean()), float(hs[south].mean())
+        rec.append((sun_az, mn, ms))
+        img = _v_txt(img, "太陽 方位 %3.0f 度・仰角 %.0f 度(dem_hillshade で塗る)\n"
+                          "陰影の平均  北向き斜面 %.3f / 南向き斜面 %.3f\n"
+                          "青 = 集水量 150 セル以上(dem_flow_accumulation)" % (sun_az, alt, mn, ms),
+                     (6, 6), fs=12)
+        img = _v_cbar(img, lut, (W - 64, 64, 14, H - 120), zlo, zhi, "m")
+        img = _v_txt(img, "高さ 2.5 倍強調", (W - 6, H - 6), anchor="rb", fs=10)
+        frames.append(img)
+    i_s = int(np.argmax([r[2] for r in rec[n1:]])) + n1
+    i_n = int(np.argmax([r[1] for r in rec[n1:]])) + n1
+    figs.save_video("terrain_flight", frames, fps=fps, gif_every=3, gif_width=480,
+                    caption="主図(動画、%d × %d・%.0f fps・%.0f 秒): 800 m 四方の地形(セル 5 m)を南南西から北へ回り込み、"
+                            "止まって太陽を一周させる。陰影は描画の光でなく dem_hillshade(仰角 35 度)の出力で塗り、"
+                            "青は dem_flow_accumulation の集水量 150 セル以上。南向き斜面の陰影の平均は太陽方位 %.0f 度で"
+                            "最大 %.3f、北向き斜面は %.0f 度で最大 %.3f —— 日当たりは斜面の向きで決まる(§6 の平面と同じ結論)。"
+                            "高さは画面上だけ 2.5 倍。"
+                            % (W, H, fps, len(frames) / fps, rec[i_s][0], rec[i_s][2], rec[i_n][0], rec[i_n][1]))
+    return rec
+
+
 def main():
     cell = 5.0
 
@@ -197,6 +381,10 @@ def main():
         print(f"  {label:<16}{1e3 * (time.perf_counter() - t0):>9.1f} ms  (513x513)")
     print("  → 局所演算は速い。水文の 2 つが 2 桁遅いのはアルゴリズムの形によるもので、")
     print("     優先度キューとトポロジカル掃引は逐次依存があり素直にはベクトル化できない。")
+
+    # 動画は図を出すときだけ組む(図なしの実行の所要時間と出力を変えない)
+    if figs.enabled():
+        fig_terrain_flight()
 
     # ---- 自己検査(速さは assert しない)-----------------------------------
     z = plane(41, 41, cell, 12.0, 90.0)

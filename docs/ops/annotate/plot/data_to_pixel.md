@@ -4,7 +4,7 @@ dim: annotate
 category: plot
 in: axes × signal × signal
 out: pairs
-examples: [annotate_gallery]
+examples: [annotate_gallery, poc_camera_calibration, poc_crack_width_timeseries, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -66,6 +66,9 @@ Notes
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
+- [poc_camera_calibration](../../../../examples/poc_camera_calibration.py) — `py -3.11 examples/poc_camera_calibration.py`
+- [poc_crack_width_timeseries](../../../../examples/poc_crack_width_timeseries.py) — `py -3.11 examples/poc_crack_width_timeseries.py`
+- [poc_wound_area_tracking](../../../../examples/poc_wound_area_tracking.py) — `py -3.11 examples/poc_wound_area_tracking.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 

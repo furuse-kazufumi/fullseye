@@ -1370,6 +1370,233 @@ def section_tool_gaps(ref: CadRef) -> None:
           "数字で決まるので、族に入れる価値はある(面積重みは点群では"
           "自明でないため、点 -> 面積の対応を持つ入口が要る)。")
 
+# ───────────────────── 動画(図を出すときだけ組む) ─────────────────────
+# 3-D は render3d.render_mesh(z-buffer)で描き、色は頂点の値を重心座標で補間する。
+# ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。
+#   行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+def _v_mesh(Z, xs, ys, step=1):
+    """標高格子 ``Z[行, 列]`` → 三角形メッシュ ``(V, F)``。``xs`` = 列の座標 [m]、``ys`` = 行の座標 [m]
+    (行方向 = 南向き)。世界座標は ``(x, -y, z)``。NaN の頂点に触れる三角形は捨てる。"""
+    Zs = np.asarray(Z, np.float64)[::step, ::step]
+    h, w = Zs.shape
+    gx, gy = np.meshgrid(np.asarray(xs, np.float64)[::step], np.asarray(ys, np.float64)[::step])
+    ok = np.isfinite(Zs).ravel()
+    V = np.column_stack([gx.ravel(), -gy.ravel(), np.where(np.isfinite(Zs), Zs, 0.0).ravel()])
+    idx = np.arange(h * w).reshape(h, w)
+    a, b = idx[:-1, :-1].ravel(), idx[:-1, 1:].ravel()
+    c, d = idx[1:, :-1].ravel(), idx[1:, 1:].ravel()
+    F = np.concatenate([np.column_stack([a, b, d]), np.column_stack([a, d, c])])
+    F = F[ok[F].all(axis=1)]
+    return V, F
+
+
+def _v_render(V, F, vcol, pose, K, w, h, light=None, ambient=0.35, bg=(0.07, 0.08, 0.10)):
+    """頂点色 ``vcol (nv,3)`` のメッシュを描く → ``(rgb (h,w,3), depth (h,w))``。
+    ``light`` = 世界座標の光の向き(None なら頂点色そのまま = 陰影は呼び手が色に焼き込み済み)。"""
+    import render3d as R3
+
+    r = R3.render_mesh(V, F, pose=pose, intrinsics=K, width=w, height=h, attributes=True)
+    img = np.empty((h, w, 3), np.float64)
+    img[:] = bg
+    m = r["face"] >= 0
+    if m.any():
+        fi = r["face"][m]
+        col = np.einsum("nk,nkc->nc", r["bary"][m], np.asarray(vcol, np.float64)[F[fi]])
+        if light is not None:
+            L = pose[:3, :3] @ (np.asarray(light, np.float64) / np.linalg.norm(light))
+            col = col * (ambient + (1.0 - ambient) * np.clip(r["normals"][m] @ L, 0.0, 1.0))[:, None]
+        img[m] = col
+    return np.clip(img, 0.0, 1.0), r["depth"]
+
+
+def _v_project(P, pose, K):
+    """世界座標の点 → ``(列 u, 行 v, 奥行き)``。render_mesh と同じ約束(カメラは -Z を見る)。"""
+    P = np.atleast_2d(np.asarray(P, np.float64))
+    Vc = P @ pose[:3, :3].T + pose[:3, 3]
+    dep = -Vc[:, 2]
+    s = np.where(dep > 1e-9, dep, np.nan)
+    return K[0, 0] * Vc[:, 0] / s + K[0, 2], K[1, 2] - K[1, 1] * Vc[:, 1] / s, dep
+
+
+def _v_disk(img, u, v, r, color):
+    """画面上の (u, v) に半径 r の円を塗る(はみ出しは切る)。"""
+    if not (np.isfinite(u) and np.isfinite(v)):
+        return img
+    h, w = img.shape[:2]
+    r0, r1 = max(0, int(v - r - 1)), min(h, int(v + r + 2))
+    c0, c1 = max(0, int(u - r - 1)), min(w, int(u + r + 2))
+    if r0 >= r1 or c0 >= c1:
+        return img
+    yy, xx = np.mgrid[r0:r1, c0:c1]
+    m = (yy - v) ** 2 + (xx - u) ** 2 <= r * r
+    img[r0:r1, c0:c1][m] = color
+    return img
+
+
+def _v_line(img, p0, p1, color, width=2.0):
+    """画面上の線分 (u0,v0)-(u1,v1)。"""
+    (u0, v0), (u1, v1) = p0, p1
+    if not all(np.isfinite([u0, v0, u1, v1])):
+        return img
+    n = int(max(abs(u1 - u0), abs(v1 - v0)) * 1.5) + 2
+    for t in np.linspace(0.0, 1.0, n):
+        _v_disk(img, u0 + t * (u1 - u0), v0 + t * (v1 - v0), width * 0.5, color)
+    return img
+
+
+def _v_txt(img, s, xy, anchor="lt", fs=13):
+    import annotate as AN
+
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs), dtype=np.float64)
+
+
+def _v_cbar(img, lut, rect, vmin, vmax, unit, fs=11):
+    import annotate as AN
+
+    return np.asarray(AN.color_bar(img, lut, rect, vmin=vmin, vmax=vmax, unit=unit, font_size=fs,
+                                   label_fmt="{:.2f}" if abs(vmax - vmin) < 5 else "{:.0f}"),
+                      dtype=np.float64)
+
+
+def _v_cmap(vals, name, vmin, vmax):
+    """値の並び → RGB(尺度は vmin..vmax で固定)。"""
+    import imgio
+
+    a = np.asarray(vals, np.float64)
+    return np.asarray(imgio.apply_cmap(a.reshape(1, -1), name, vmin=vmin, vmax=vmax),
+                      np.float64).reshape(a.shape + (3,))
+
+
+def _v_points(img, P, col, pose, K, size=2, depth=None):
+    """点群を z-buffer つきで画面に打つ(1 点 = ``size`` 画素四方)。``depth`` を渡すとメッシュより奥の点は描かない。"""
+    h, w = img.shape[:2]
+    u, v, d = _v_project(P, pose, K)
+    ok = np.isfinite(u) & np.isfinite(v) & (d > 0)
+    u, v, d, c = u[ok], v[ok], d[ok], np.asarray(col, np.float64)[ok]
+    zb = np.full((h, w), np.inf) if depth is None else np.asarray(depth, np.float64).copy()
+    order = np.argsort(-d)                               # 奥から描いて手前で上書き
+    u, v, d, c = u[order], v[order], d[order], c[order]
+    for dy in range(size):
+        for dx in range(size):
+            r = np.round(v).astype(np.int64) + dy - size // 2
+            q = np.round(u).astype(np.int64) + dx - size // 2
+            m = (r >= 0) & (r < h) & (q >= 0) & (q < w)
+            rr, qq, dd, cc = r[m], q[m], d[m], c[m]
+            vis = dd <= zb[rr, qq] + 1e-6
+            img[rr[vis], qq[vis]] = cc[vis]
+    return img
+
+
+def _v_rot_lerp(R0, R1, s):
+    """回転の補間(軸角で s 倍回す)。R0 → R1。"""
+    from scipy.spatial.transform import Rotation
+
+    d = Rotation.from_matrix(R1 @ R0.T).as_rotvec()
+    return Rotation.from_rotvec(d * s).as_matrix() @ R0
+
+
+def fig_align_orbit(ref: CadRef, al: dict, VW=640, VH=360, fps=30.0):
+    """主図(動画): 実測点群が CAD に重なるまで(前半)と、重なった後の偏差を一周して見る(後半)。
+
+    前半は §2-3 の推定そのもの —— 位置合わせなし → FPFH 粗合わせ → 点-面 ICP の (R, t) の間を補間して
+    点群を動かす(灰 = CAD の参照点、だいだい = 実測)。後半は点-面 ICP 後の符号付き偏差で塗る
+    (``palette.diverging_lut``、±0.40 mm、だいだい = 足りない / 青 = 余る)。点は法線がカメラを向くものだけ描く。
+    """
+    import palette
+    import render3d as R3
+
+    sc, keep = al["scan"], al["keep"]
+    K = R3.intrinsics_from_fov(36.0, VW, VH)
+    ctr = np.array([0.0, 0.0, 7.0])
+    light = LIGHT / np.linalg.norm(LIGHT)
+    n_scan = sc["nrm"] @ sc["R_true"]                    # 実測点群の座標での法線(R_true は実測 → CAD)
+    gray = 0.25 + 0.55 * np.clip(ref.nrm @ light, 0, 1)
+    ref_col = np.stack([gray] * 3, axis=1)
+    S = 0.40
+    lut = np.asarray(palette.diverging_lut(256), np.float64)
+    dev = keep["p2plane"]["sig"]
+    dcol = lut[np.clip(((dev / S) * 0.5 + 0.5) * 255.0, 0, 255).astype(np.int64)]
+    # 発散 LUT は 0 付近が黒いので、形が読めるように陰影を薄く足す(色相は変えない)
+    lam = 0.22 * np.clip(sc["nrm"] @ light, 0.0, 1.0)            # sc["nrm"] は CAD 系の公称法線
+    dcol_lit = np.clip(dcol + lam[:, None], 0.0, 1.0)
+    rows = {r[0]: r for r in al["rows"]}
+    stages = [("位置合わせなし(ゼロ点)", keep["none"], rows["なし(ゼロ点)"]),
+              ("FPFH 粗合わせ", keep["fpfh"], rows["FPFH 粗合わせ"]),
+              ("+ 点-面 ICP", keep["p2plane"], rows["+ 点-面 ICP"])]
+
+    def draw(eye, P, Nw, col, with_ref):
+        pose = R3.look_at(eye, ctr, up=(0.0, 0.0, 1.0))
+        img = np.empty((VH, VW, 3))
+        img[:] = (0.07, 0.08, 0.10)
+        Ps, Cs = [], []
+        if with_ref:
+            f = np.einsum("ij,ij->i", ref.nrm, eye - ref.pts) > 0
+            Ps.append(ref.pts[f])
+            Cs.append(ref_col[f])
+        f = np.einsum("ij,ij->i", Nw, eye - P) > 0
+        Ps.append(P[f])
+        Cs.append(col[f])
+        img = _v_points(img, np.concatenate(Ps), np.concatenate(Cs), pose, K, size=2)
+        # 向きの目印: 原点に x(赤)・y(緑)・z(青)の 10 mm の軸
+        o = np.array([-L / 2 - 4.0, -W / 2 - 4.0, 0.0])      # W, H は部品の寸法(画面の大きさは VW, VH)
+        for ax, c, nm in ((0, (0.95, 0.35, 0.3), "x"), (1, (0.4, 0.85, 0.4), "y"), (2, (0.45, 0.6, 1.0), "z")):
+            e = o.copy()
+            e[ax] += 10.0
+            u, v, d = _v_project([o, e], pose, K)
+            if (d > 0).all():
+                img = _v_line(img, (u[0], v[0]), (u[1], v[1]), c, width=2.0)
+                if 10 < u[1] < VW - 20 and 18 < v[1] < VH - 4:
+                    img = _v_txt(img, nm, (u[1], v[1]), anchor="cb", fs=10)
+        return img
+
+    frames = []
+    hold, move = 20, 45
+    n1 = 0
+    for si, (name, st, row) in enumerate(stages):
+        segs = [("hold", hold)] if si == 0 else [("move", move), ("hold", hold)]
+        for kind, nk in segs:
+            for k in range(nk):
+                s = (k + 1) / nk if kind == "move" else 1.0
+                if kind == "move":
+                    R0, t0 = stages[si - 1][1]["R"], stages[si - 1][1]["t"]
+                    R = _v_rot_lerp(R0, st["R"], s)
+                    t = t0 + (st["t"] - t0) * s
+                else:
+                    R, t = st["R"], st["t"]
+                P = sc["pts"] @ R.T + t
+                a = np.radians(-60.0 + 50.0 * n1 / 150.0)
+                eye = ctr + np.array([150.0 * np.cos(a), 150.0 * np.sin(a), 95.0])
+                img = draw(eye, P, n_scan @ R.T, np.tile([1.0, 0.62, 0.2], (len(P), 1)), True)
+                lab = name if kind == "hold" else "→ " + name
+                img = _v_txt(img, "%s\n姿勢の誤差 %s 度 / 点の移動 %s mm\n偏差 RMS %s µm"
+                             % (lab, row[1], row[2], row[3]), (6, 6), fs=12)
+                img = _v_txt(img, "灰 = CAD の参照点 / だいだい = 実測点群", (6, VH - 6), anchor="lb", fs=11)
+                frames.append(img)
+                n1 += 1
+    P = keep["p2plane"]["q"]
+    Nw = n_scan @ keep["p2plane"]["R"].T
+    row = rows["+ 点-面 ICP"]
+    n2 = 210
+    a_last = np.radians(-60.0 + 50.0 * (n1 - 1) / 150.0)
+    for k in range(n2):
+        a = a_last + 2.0 * np.pi * (k + 1) / n2
+        el = 95.0 + 25.0 * np.sin(np.pi * k / n2)
+        eye = ctr + np.array([115.0 * np.cos(a), 115.0 * np.sin(a), el * 0.8])
+        img = draw(eye, P, Nw, dcol_lit, False)
+        img = _v_txt(img, "点-面 ICP 後の符号付き偏差(法線へ射影)\n公差 ±%.2f mm の外: 推定 %s mm² / 真値 %.1f mm²"
+                     % (TOL, row[5], al["a_true"]), (6, 6), fs=12)
+        img = _v_cbar(img, lut, (VW - 80, 92, 14, VH - 150), -S, S, "mm")
+        img = _v_txt(img, "だいだい = 足りない\n青 = 余る", (VW - 8, 50), anchor="rt", fs=11)
+        frames.append(img)
+    figs.save_video("align_orbit", frames, fps=fps, gif_every=4, gif_width=480,
+                    caption="主図(動画、%d × %d・%.0f fps・%.0f 秒): 前半は実測点群(だいだい)が CAD の参照点(灰)に重なるまで —— "
+                            "位置合わせなし → FPFH 粗合わせ → 点-面 ICP の推定姿勢の間を補間して動かす(偏差 RMS %s → %s → %s µm)。"
+                            "後半は重なった点群を一周し、符号付き偏差(±%.2f mm、だいだい = 足りない / 青 = 余る)で塗る(形が読めるよう陰影を薄く足した)。"
+                            "公差 ±%.2f mm を外れた面積は推定 %s mm²、真値 %.1f mm²。左手前の 3 本の線は CAD の x・y・z 軸。"
+                            % (VW, VH, fps, len(frames) / fps, stages[0][2][3], stages[1][2][3], stages[2][2][3],
+                               S, TOL, row[5], al["a_true"]))
+
+
 
 # --------------------------------------------------------------------------- #
 def main() -> int:
@@ -1393,6 +1620,8 @@ def main() -> int:
     ba = section_basin(ref)
     ct = section_controls(ref)
     section_tool_gaps(ref)
+    if figs.enabled():                 # 動画は図を出すときだけ組む(図なしの実行を変えない)
+        fig_align_orbit(ref, al)
 
     # --- 所見を固定する(壊れたら鳴る) --- #
     assert abs(part["vol_mc"] - part["vol"]) / part["vol"] < 0.01, part["vol_mc"]

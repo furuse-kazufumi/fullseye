@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1158. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1164. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -374,6 +374,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L1252** — ★Producing a "%" for the control group whose ground truth is 0 gives a meaningless huge number from division by zero. Present the area in mm^2 as is, and append % only when the ground truth is meaningful.
 - **L1263** — ★Do not read the difference of a single run as "it worked" —— vary the seed and compare against the spread
 - **L1353** — ★An assert that fires once the gap is closed. It actually fired on 2026-09-07, and this line was rewritten: after the note that "cylindrical holes, chamfers, and fillets cannot be built", plane / cylinder / torus / capsule were added. The note changed the tool, so we record it and move on.
+- **L1375** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_calipers_under_illusion.py`
 
@@ -386,15 +387,15 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_camera_calibration.py`
 
 - **L152** — ── Calibration (a hand-rolled minimal bundle adjustment. ★ Gap (e)) ──────────────────────────────────── #
-- **L178** — ★ Gap (d): the image points of camera_calibration are (row, col). project_points are (x, y).
-- **L306** — ★ Gap (b): reprojection_error does not know about distortion. Even passing the ground-truth values does not yield 0.
-- **L527** — 2. ★ The main point: the reprojection RMS is nearly the same, yet the fx error differs by more than an order of magnitude
-- **L535** — 3. ★ The cancellation mechanism: the ratio of fx matches the ratio of Z
-- **L541** — 4b. ★ An honest record of a loss: with a narrow field of view + 0.30 px noise, the zero-point B that pins the principal point to the image center is more correct than estimating it (a condition where you cannot do better really exists)
-- **L557** — ★ Gap (c): since the points are distorted, what stopped it was not the degeneracy gate but the later non-finite K gate. We even confirm that its message contains "tilt the board" (added 2026-09-06).
-- **L565** — 5b. ★ Gap (c3): the closed form is systematically off by the amount of distortion (initial-value only)
-- **L569** — 6. ★ Gap (b): reprojection_error does not know about distortion -> even passing the ground-truth values, it stays large
-- **L575** — 7. ★ Hole (a) [Resolved 2026-09-19]: intrinsic estimation is now exposed on the facade. It used to be invisible from `fs`, and this tripwire kept firing "once it is closed, update the docstring". Now it is callable as `fs.camera_calibration` (capability note `camera-intrinsics-calibration`). It is a facade function, though, not an op in the registry (it is not the fixed `(image, a, b)` form).
+- **L181** — ★ Gap (d): the image points of camera_calibration are (row, col). project_points are (x, y).
+- **L519** — ★ Gap (b): reprojection_error does not know about distortion. Even passing the ground-truth values does not yield 0.
+- **L740** — 2. ★ The main point: the reprojection RMS is nearly the same, yet the fx error differs by more than an order of magnitude
+- **L748** — 3. ★ The cancellation mechanism: the ratio of fx matches the ratio of Z
+- **L754** — 4b. ★ An honest record of a loss: with a narrow field of view + 0.30 px noise, the zero-point B that pins the principal point to the image center is more correct than estimating it (a condition where you cannot do better really exists)
+- **L770** — ★ Gap (c): since the points are distorted, what stopped it was not the degeneracy gate but the later non-finite K gate. We even confirm that its message contains "tilt the board" (added 2026-09-06).
+- **L778** — 5b. ★ Gap (c3): the closed form is systematically off by the amount of distortion (initial-value only)
+- **L782** — 6. ★ Gap (b): reprojection_error does not know about distortion -> even passing the ground-truth values, it stays large
+- **L788** — 7. ★ Hole (a) [Resolved 2026-09-19]: intrinsic estimation is now exposed on the facade. It used to be invisible from `fs`, and this tripwire kept firing "once it is closed, update the docstring". Now it is callable as `fs.camera_calibration` (capability note `camera-intrinsics-calibration`). It is a facade function, though, not an op in the registry (it is not the fixed `(image, a, b)` form).
 
 ## `examples/poc_cell_counting.py`
 
@@ -460,7 +461,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L558** — ★Passing all-nan (nothing could be measured at any phase) to np.nanmean raises a warning. "Could not be measured" is not something to average, so we make it nan explicitly here.
 - **L634** — ★Drop the nan (unmeasurable points) before plotting —— the line-plot op rejects non-finite values.
 - **L808** — ★Fires once the gap is closed. It fired on 2026-09-07 and this section was rewritten —— after the note that "esdf accepts a length-3 voxel_size, yet the side that plots its output was cubic-only", query_distance (and occupancy_grid) came to accept per-axis res.
-- **L917** — ★The volume fraction is preserved even with coarse voxels; what dies first is the shape metric (the side where the prediction was wrong)
+- **L878** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L1097** — ★The volume fraction is preserved even with coarse voxels; what dies first is the shape metric (the side where the prediction was wrong)
 
 ## `examples/poc_datacenter_thermal_field.py`
 
@@ -470,6 +472,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_dem_terrain.py`
 
 - **L42** — ★Unless the repository root is on the path, ``demops`` is not found (this example does not import `fullseye`, so the path hook does not kick in).
+- **L76** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_dfm_thickness_overhang.py`
 
@@ -554,7 +557,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_focus_stacking.py`
 
-- **L491** — 1. The picture works. ★The threshold is +3 dB — real semiconductor images are mostly smooth metal (die, leads), which is already in focus in a single frame, so the AIF gain is smaller than with a synthetic pattern that is high-frequency everywhere (the honest picture of the shop floor; the old full-texture field gave +14 dB).
+- **L594** — 1. The picture works. ★The threshold is +3 dB — real semiconductor images are mostly smooth metal (die, leads), which is already in focus in a single frame, so the AIF gain is smaller than with a synthetic pattern that is high-frequency everywhere (the honest picture of the shop floor; the old full-texture field gave +14 dB).
 
 ## `examples/poc_forensics_roc.py`
 
@@ -642,6 +645,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L823** — ★When there are too few valid cores, do not treat the LoD as 'measured' (the standard deviation of 2 points is a number but carries no meaning).
 - **L826** — ★If you decimate here, C2C ends up measuring the 'post-decimation point spacing' and the density dependence vanishes (when I first wrote it aligned to 6000 points, it came out a constant 0.42 m at every density).
 - **L946** — --- ★ Change vanishes exactly by the amount you align away -------------------------------------- #
+- **L1308** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_lightfield_depth.py`
 
@@ -707,7 +711,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L1196** — ★Make the y-axis **height** (= −depth). Plotting depth as-is flips top and bottom, making a 'smiling' shape look like a 'frown'.
 - **L1267** — ★The y-axis is −depth. Plotting depth as-is gives an upside-down figure with the sea surface at the bottom and the seabed at the top.
 - **L1301** — ★``op_find`` matches on partial stems, so even when the count is non-zero the contents can be irrelevant ("footprint" → ``sk_median_disk``). **Look all the way to the top-level name** before saying 'it does not exist'.
-- **L1428** — ★The cliff of the all-paths case is **earlier than predicted**. The difference is the bias of amplitude detection (a quantity absent from the closed form)
+- **L1357** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L1643** — ★The cliff of the all-paths case is **earlier than predicted**. The difference is the bias of amplitude detection (a quantity absent from the closed form)
 
 ## `examples/poc_nuclei_ploidy.py`
 
@@ -815,9 +820,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_registration_basin.py`
 
-- **L656** — ★When the user explicitly passes `estimate_normals`, thinking "but the normals do exist". This is the **remainder** of the gap, 14 orders of magnitude worse than the default.
-- **L836** — ★Gap 1 was closed on 2026-09-06. This assert has been rewritten to **pin the closed state** (previously it pinned the broken state: `d_fixed < 1e-6 < d_default` = broken). If the breakage returns, this fails.
-- **L847** — ★Gap 2 was closed on 2026-09-06. Previously it was `< 0.9 * len(ka)` (pinning the broken state). Now it pins that **the default gives an exact match**.
+- **L785** — ★When the user explicitly passes `estimate_normals`, thinking "but the normals do exist". This is the **remainder** of the gap, 14 orders of magnitude worse than the default.
+- **L965** — ★Gap 1 was closed on 2026-09-06. This assert has been rewritten to **pin the closed state** (previously it pinned the broken state: `d_fixed < 1e-6 < d_default` = broken). If the breakage returns, this fails.
+- **L976** — ★Gap 2 was closed on 2026-09-06. Previously it was `< 0.9 * len(ka)` (pinning the broken state). Now it pins that **the default gives an exact match**.
 
 ## `examples/poc_rotation_invariance_audit.py`
 
@@ -888,11 +893,12 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_stockpile_volume.py`
 
-- **L698** — ★The winner flips depending on the yardstick: volume uses a horizontal base plane, the centroid uses a plane fit
-- **L714** — ★A prediction that missed: interpolation is not under- but **over**estimating
-- **L717** — ★Cancellation: with the interpolated perimeter the error looks small, and with only the visible points it comes back
-- **L726** — ★A gap in the tooling. This spot will fire once dem_viewshed is fixed (that's the intent)
-- **L728** — ★2026-09-08: the op was fixed on the strength of this PoC's finding, so being **visible** now is correct. We pin that it matches our own line-of-sight test and is close to the closed form (it will fire again if it breaks).
+- **L658** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L863** — ★The winner flips depending on the yardstick: volume uses a horizontal base plane, the centroid uses a plane fit
+- **L879** — ★A prediction that missed: interpolation is not under- but **over**estimating
+- **L882** — ★Cancellation: with the interpolated perimeter the error looks small, and with only the visible points it comes back
+- **L891** — ★A gap in the tooling. This spot will fire once dem_viewshed is fixed (that's the intent)
+- **L893** — ★2026-09-08: the op was fixed on the strength of this PoC's finding, so being **visible** now is correct. We pin that it matches our own line-of-sight test and is close to the closed form (it will fire again if it breaks).
 
 ## `examples/poc_strain_history.py`
 
@@ -933,10 +939,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_template_tracking.py`
 
 - **L93** — ★ Gap (a): there is no public op that returns a correlation map, so we borrow a private one. Use it only after verifying in Chapter 0 that it matches the public op ``fs.op.ncc_locate``.
-- **L326** — ★ Gap (d): a public op would silently return [0,0,0] here. Return an explicit failure instead.
-- **L1138** — (2) The zero point has a floor -- quantization of integer coordinates (★ gap b)
-- **L1168** — (9) ★ Theme: the confidence's strengths and weaknesses reverse with conditions
-- **L1172** — ★ The cliffs each is good at are opposite = you cannot pick either one as the confidence
+- **L327** — ★ Gap (d): a public op would silently return [0,0,0] here. Return an explicit failure instead.
+- **L1241** — (2) The zero point has a floor -- quantization of integer coordinates (★ gap b)
+- **L1271** — (9) ★ Theme: the confidence's strengths and weaknesses reverse with conditions
+- **L1275** — ★ The cliffs each is good at are opposite = you cannot pick either one as the confidence
 
 ## `examples/poc_theorems_as_pictures.py`
 
@@ -1592,12 +1598,12 @@ This repository records *why* things are the way they are in **comments in the s
 ## `studio.py`
 
 - **L273** — ★ Right-click on the figure itself (user 2026-09-06: "it would be nice to be able to right-click what is shown as a figure and copy it to the clipboard"). A Studio UI convention of this repo —— **the display side must let you do everything from a right-click too**. It can do the same as the button row below (do not make it one or the other).
-- **L4351** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L5342** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L6168** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
-- **L6324** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
-- **L6834** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L9671** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L4378** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L5370** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L6196** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L6352** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L6862** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L9699** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `tests/conftest.py`
 

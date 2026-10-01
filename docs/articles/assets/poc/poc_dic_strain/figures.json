@@ -12,7 +12,7 @@
  {
   "file": "02_subpixel_bias.png",
   "name": "subpixel_bias",
-  "caption": "lk は 0.5 px 側へ寄る(教科書の peak locking と逆)。piv は 1 桁小さい。",
+  "caption": "lk は 0.5 px 側へ寄る(教科書の peak locking と逆)。piv は掃引の最大どうしで 5.9 倍、u=0.37 の 1 点では 21 倍小さい。",
   "shape": [
    360,
    560,
@@ -36,6 +36,28 @@
   "shape": [
    349,
    542,
+   3
+  ]
+ },
+ {
+  "file": "05_tensile_ramp.gif",
+  "name": "tensile_ramp",
+  "caption": "引張試験の荷重を 48 段で上げる過程(lk、窓 31)。真のひずみを 0 → 3000 µε、同時に試験機が 0 → 2.0 度回る。変形像は毎段、斑点を写して描き直す(補間なし)。最終段で微小ひずみ ∂u/∂x の領域平均は 2341 µε(理論 (1+e)cosθ-1 = 2389 µε)—— 材料は 3000 µε 伸びているのに、回転が約 611 µε 少なく見せる。Green-Lagrange は 2961 µε(理論 e+e²/2 = 3005 µε)。地図の色は全コマ共通の尺度。",
+  "shape": [
+   443,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 60,
+  "frames_written": 48,
+  "fps": 8.0,
+  "video": "05_tensile_ramp.mp4",
+  "video_frames": 60,
+  "video_fps": 8.0,
+  "video_shape": [
+   554,
+   800,
    3
   ]
  }

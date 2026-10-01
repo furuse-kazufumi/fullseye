@@ -488,6 +488,168 @@ def build_edges(n, max_gap, closed):
     return out
 
 
+# ===========================================================================
+# 動画: 鎖で 1 枚ずつ貼っていくと、ずれが積み上がって最後の 1 本で開く
+# ===========================================================================
+#: キャンバスの縮小: 一周(2πf)を 720 px に収める
+_V_SCALE = 720.0 / (2.0 * np.pi * TRUE_F)
+#: 枠のずれの誇張倍率(表示だけ。ずれは 1-2 px なので等倍では見えない)
+_V_MAG = 20
+#: キャンバス左端の方位角(フレーム 0 が左端に収まり、35 が右端から巻き戻る)
+_V_U0 = np.deg2rad(-25.0)
+_V_PERIM = np.concatenate([
+    np.column_stack([np.linspace(0, IMG_W - 1, 120), np.zeros(120)]),
+    np.column_stack([np.full(90, IMG_W - 1.0), np.linspace(0, IMG_H - 1, 90)]),
+    np.column_stack([np.linspace(IMG_W - 1, 0, 120), np.full(120, IMG_H - 1.0)]),
+    np.column_stack([np.zeros(90), np.linspace(IMG_H - 1, 0, 90)])])
+
+
+def _vid_txt(img, s, xy, anchor="lt", fs_=12):
+    import annotate as AN
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_), dtype=np.float64)
+
+
+def _vid_warp(frame, Q, fc, shape, u0):
+    """フレームを姿勢 ``Q``(世界→カメラ)で円筒キャンバス(焦点 fc、左端の方位 u0)へ写す。
+
+    返りは (値, 有効マスク)。キャンバス画素の方向を求め、カメラへ投影して双一次で拾う(逆写像)。
+    """
+    hc, wc = shape
+    rr, cc = np.mgrid[0:hc, 0:wc].astype(np.float64)
+    az = u0 + cc / fc
+    d = np.stack([np.sin(az), (rr - (hc - 1) / 2.0) / fc, np.cos(az)]).reshape(3, -1)
+    p = K_TRUE @ (np.asarray(Q, float) @ d)
+    front = p[2] > 1e-9
+    zz = np.where(front, p[2], 1.0)
+    x, y = p[0] / zz, p[1] / zz
+    ok = front & (x >= 0) & (x <= IMG_W - 1) & (y >= 0) & (y <= IMG_H - 1)
+    x, y = np.where(ok, x, 0.0).reshape(hc, wc), np.where(ok, y, 0.0).reshape(hc, wc)
+    v = map_coordinates(frame, [y, x], order=1, mode="nearest")
+    return v, ok.reshape(hc, wc)
+
+
+def _vid_outline(img, R_true, Q_est, fc, color):
+    """フレームの枠を点で描く。``Q_est`` があれば真の枠からのずれを ``_V_MAG`` 倍して置く。"""
+    hc, wc = img.shape[:2]
+    ut = pano_uv(R_true, _V_PERIM, focal=fc)
+    if Q_est is not None:
+        ue = pano_uv(np.asarray(Q_est).T, _V_PERIM, focal=fc)
+        du = (ue[:, 0] - ut[:, 0] + np.pi * fc) % (2.0 * np.pi * fc) - np.pi * fc
+        ut = ut + _V_MAG * np.column_stack([du, ue[:, 1] - ut[:, 1]])
+    col = np.round((ut[:, 0] - _V_U0 * fc) % (2.0 * np.pi * fc)).astype(int)
+    row = np.round(ut[:, 1] + (hc - 1) / 2.0).astype(int)
+    for dr in (0, 1):
+        r = row + dr
+        m = (r >= 0) & (r < hc) & (col >= 0) & (col < wc)
+        img[r[m], col[m]] = color
+    return img
+
+
+def fig_chain_video(FRAMES, R_LOOP, Q_CHAIN, Q_CYCLE, pe_chain, pe_cycle,
+                    seam_open, seam_close_chain, seam_close_cycle):
+    """鎖で 1 枚ずつ円筒へ貼る過程の動画。図を出さない実行では何もしない(所要時間を変えない)。
+
+    数値はすべて main が計算済みのもの(姿勢・ずれ)を受け取る。乱数は使わない。
+    """
+    if not figs.enabled():
+        return
+    import annotate as AN
+
+    n = len(FRAMES)
+    fc = TRUE_F * _V_SCALE
+    wc = min(720, int(round(2.0 * np.pi * fc)))
+    hc = int(round(2.0 * fc * np.tan(np.deg2rad(20.0))))
+    warp = [_vid_warp(FRAMES[i], Q_CHAIN[i], fc, (hc, wc), _V_U0) for i in range(n)]
+    # 閉じる継ぎ目(35 と 0 が重なる方位 -12..+8 度)を等倍の焦点で切り出して 4 倍に拡大し、
+    # 2 枚を**色分けして**重ねる(既存の合成は後勝ちの上書きで二重像が出ない —— 穴 l)。
+    zu0, zw, zh, zoom = np.deg2rad(-12.0), 60, 46, 4
+    z0c = _vid_warp(FRAMES[0], Q_CHAIN[0], TRUE_F, (zh, zw), zu0)
+    zLc = _vid_warp(FRAMES[n - 1], Q_CHAIN[n - 1], TRUE_F, (zh, zw), zu0)
+    z0y = _vid_warp(FRAMES[0], Q_CYCLE[0], TRUE_F, (zh, zw), zu0)
+    zLy = _vid_warp(FRAMES[n - 1], Q_CYCLE[n - 1], TRUE_F, (zh, zw), zu0)
+
+    def _zoomwin(a, b=None):
+        """拡大窓。2 枚目があれば重なりを**色分けして**重ねる: 0 を赤紫(R,B)、35 を緑(G)に載せる。
+        合っていれば灰色に戻り、ずれていれば縁に赤紫と緑の縞(二重像)が出る。"""
+        va, ma = a
+        g = np.where(ma, va, 0.0)
+        rgb = np.repeat(g[..., None], 3, 2)
+        if b is not None:
+            vb, mb = b
+            both = ma & mb
+            rgb[both] = np.stack([va[both], vb[both], va[both]], axis=1)
+            only_b = mb & ~ma
+            rgb[only_b] = vb[only_b][:, None]
+        return np.repeat(np.repeat(rgb, zoom, 0), zoom, 1)
+
+    top = 38
+    W, H = 720, top + hc + 28 + zh * zoom + 12
+    COL_CH, COL_CY, COL_T = (1.0, 0.55, 0.0), (0.25, 0.8, 1.0), (1.0, 1.0, 1.0)
+    zy, zx = top + hc + 28, 10
+    pr = (zx + zw * zoom + 70, zy + 40, W - (zx + zw * zoom + 70) - 14, zh * zoom - 68)
+    ymax = 0.5 * np.ceil(2.0 * max(pe_chain.max(), pe_cycle.max()) + 0.5)
+    ax = AN.axes_transform(pr, (0.0, float(n - 1)), (0.0, float(ymax)))
+    yt = np.arange(0.0, ymax + 1e-9, 0.5)
+
+    def frame(k, phase):
+        img = np.full((H, W, 3), 0.08)
+        cv = np.full((hc, wc), 0.12)
+        for i in range(k + 1):                 # 後勝ちで貼る(既存の合成と同じ)
+            v, ok = warp[i]
+            cv[ok] = v[ok]
+        rgb = np.repeat(cv[..., None], 3, 2)
+        rgb = _vid_outline(rgb, R_LOOP[k], None, fc, COL_T)
+        if phase == "cycle":
+            rgb = _vid_outline(rgb, R_LOOP[k], Q_CYCLE[k], fc, COL_CY)
+        else:
+            rgb = _vid_outline(rgb, R_LOOP[k], Q_CHAIN[k], fc, COL_CH)
+        img[top:top + hc, :wc] = rgb
+        if phase == "chain" and k < n - 1:
+            zwin = _zoomwin(z0c)
+            ztxt = "閉じる継ぎ目(35 と 0)を 4 倍に拡大\nまだ 35 枚目が来ていない"
+        elif phase == "cycle":
+            zwin = _zoomwin(z0y, zLy)
+            ztxt = "閉ループ拘束: 0 と 35 を色分けして重ねる\n閉じる継ぎ目のずれ %.2f px(縞がほぼ消える)" % seam_close_cycle
+        else:
+            zwin = _zoomwin(z0c, zLc)
+            ztxt = "鎖: 0 と 35 を色分けして重ねる(4 倍)\n閉じる継ぎ目のずれ %.2f px = 色の縞" % seam_close_chain
+        img[zy:zy + zh * zoom, zx:zx + zw * zoom] = zwin
+        img = _vid_txt(img, ztxt, (zx + 3, zy + 3), fs_=11)
+        img = AN.axes_frame(img, ax)
+        img = AN.ticks(img, ax, xticks=[0, 5, 10, 15, 20, 25, 30, 35], yticks=yt, font_size=10)
+        img = AN.plot_series(img, ax, np.arange(k + 1, dtype=float), pe_chain[:k + 1],
+                             kind="line" if k > 0 else "scatter", color=COL_CH, width=2)
+        if phase == "cycle":
+            img = AN.plot_series(img, ax, np.arange(n, dtype=float), pe_cycle, color=COL_CY, width=2)
+        img = _vid_txt(img, "真の姿勢からのずれ [px] / 横軸 = フレーム番号",
+                       (pr[0] + pr[2] // 2, pr[1] - 4), anchor="cb", fs_=11)
+        if phase == "cycle":
+            head = ("閉ループ拘束(同じ 36 本の辺で解き直す): 姿勢のずれ 最悪 %.2f px"
+                    % pe_cycle.max())
+        else:
+            head = ("鎖で %d / %d 枚目を貼った: このフレームのずれ %.2f px(ここまでの最悪 %.2f px)"
+                    % (k + 1, n, pe_chain[k], pe_chain[:k + 1].max()))
+        img = _vid_txt(img, head, (6, 6), fs_=12)
+        img = _vid_txt(img, "枠: 白 = 真の位置 / 橙 = 鎖の推定 / 水色 = 閉ループ拘束(ずれは %d 倍に誇張)。"
+                       "拡大窓: 赤紫 = 0 枚目、緑 = 35 枚目" % _V_MAG, (6, top + hc + 3), fs_=10)
+        return np.clip(img, 0.0, 1.0)
+
+    frames = []
+    for k in range(n):
+        frames += [frame(k, "chain")] * 3
+    frames += [frame(n - 1, "closed")] * 30
+    frames += [frame(n - 1, "cycle")] * 36
+    figs.save_video(
+        "chain_drift_video", frames, fps=12.0, gif_every=2, gif_width=None,
+        caption="鎖(隣どうしの相対回転を掛けるだけ)で 36 枚を円筒に 1 枚ずつ貼る過程。白い枠が真の位置、"
+                "橙の枠が鎖の推定位置(ずれを %d 倍に誇張)。隣どうしの継ぎ目は平均 %.3f px で合っているのに、"
+                "真の姿勢からのずれ(右下の曲線)は積み上がって最悪 %.2f px(フレーム %d)。一周して 0 枚目(赤紫)と"
+                "35 枚目(緑)を重ねると閉じる継ぎ目が %.2f px 開き、縁に色の縞(二重像)が出る(左下、4 倍拡大)。最後に同じ 36 本の辺を"
+                "閉ループ拘束で解き直すと(水色)、姿勢のずれは最悪 %.2f px、閉じる継ぎ目は %.2f px。"
+                % (_V_MAG, seam_open, pe_chain.max(), int(pe_chain.argmax()),
+                   seam_close_chain, pe_cycle.max(), seam_close_cycle))
+
+
 def rule(title):
     print("\n" + "=" * 76)
     print(title)
@@ -1244,6 +1406,11 @@ def main():
     assert EDGE_CENTER_RATIO > 1.05, "四隅と中央の残差が同じ —— 位置別に見る意味が無い"
     # (11) 既存の部品(DLT / 点変換 / ワープ)は使えた。
     assert E8 <= ERAW and _chk3 < 1e-9 and _chk4 < 0.05, "既存部品の評価が再現しない"
+
+    # 動画は最後に書く(途中に挟むと既存の図の通し番号がずれる)。図なしの実行では即 return。
+    fig_chain_video(FRAMES, R_LOOP, Q_CHAIN, Q_CYCLE, pe_chain,
+                    pose_by_sys["3 閉ループ拘束(厳密)"], SEAM_OPEN, SEAM_CLOSE,
+                    RESULT["3 閉ループ拘束(厳密)"]["close"])
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

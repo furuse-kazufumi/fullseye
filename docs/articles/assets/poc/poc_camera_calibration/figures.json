@@ -42,5 +42,27 @@
    560,
    3
   ]
+ },
+ {
+  "file": "05_calibration_convergence.gif",
+  "name": "calibration_convergence",
+  "caption": "第 1 部: 同じ雑音 0.05 px の観測を、傾き 32 度(左)と 2 度(右)の配置で解く反復。再投影 RMS はどちらも 0.069 / 0.069 px まで下がるが、fx は左が 1199.7(誤差 0.026 %)、右が 1112.0(誤差 7.33 %)で止まる。第 2 部: fx を真値の 0.92〜1.08 倍に固定して残りを解き直すと、左は RMS が 0.54 / 0.45 px(両端)まで跳ね上がるのに、右は 0.069 / 0.069 px とほとんど動かない —— 板までの距離 Z が fx と同じ比で動いて(Z 比 0.920 / 1.080)、画素の位置を保つため。右の配置では再投影誤差が焦点距離について何も言っていない。",
+  "shape": [
+   622,
+   676,
+   3
+  ],
+  "animated": true,
+  "frames": 72,
+  "frames_written": 31,
+  "fps": 4.0,
+  "video": "05_calibration_convergence.mp4",
+  "video_frames": 144,
+  "video_fps": 8.0,
+  "video_shape": [
+   622,
+   676,
+   3
+  ]
  }
 ]
