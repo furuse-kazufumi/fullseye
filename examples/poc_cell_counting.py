@@ -62,7 +62,14 @@ import unicodedata
 
 import numpy as np
 
-import fullseye as fs          # ★先に fullseye を import すること(パスフックが
+import sys
+from pathlib import Path
+
+# ★2026-10-02: 他の PoC と同じく、リポジトリ直下を**自分で** sys.path に足してから fullseye を import する。
+#   パスフック頼みだと、examples/ から PYTHONPATH 無しで走らせたとき(tests/test_poc_scripts_run.py の走らせ方)に
+#   本線の editable install の fullseye が先に入り、この worktree で足した台帳(watersheds_marker)が無くて落ちた。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import fullseye as fs          # noqa: E402  ★先に fullseye を import すること(パスフックが
 import volops                  #   リポジトリ直下を sys.path に足すので順序が要る)
 import segmentation as fsseg   # noqa: F401  (2D watershed の所在を示すために保持)
 

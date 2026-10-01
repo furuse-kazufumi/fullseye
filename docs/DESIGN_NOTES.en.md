@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1170. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1171. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -399,13 +399,14 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_cell_counting.py`
 
-- **L853** — ★The smallest h you can specify is 0.05 x max(distance transform). A single large cell in the image is enough to **raise the lower bound of h for the whole image** (a coupling imposed by the op's spec).
-- **L1041** — ★The headline of this PoC. At the place where the bias line crosses 0, the segmentation error is not a valley.
-- **L1330** — ★Over-merging and missing are different things —— things that stick together have not "disappeared"
-- **L1358** — ★The optimal h moves with density (it always moves by either the bias criterion or the one-to-one criterion)
-- **L1361** — (5) ★A point where the count is correct yet the segmentation is entirely wrong really exists: the bias is under 3 %, yet many segmentation errors remain and the one-to-one correspondence is far from the best.
-- **L1387** — ★The smallest h you can specify rises with the size ratio (a scale coupling imposed by the tool's spec)
-- **L1427** — (10) ★Mechanically confirm that the tool's gap "still exists" (it fails once fixed = a good kind of failure) (a) the distance transform of the evolution op is normalized by its maximum value
+- **L68** _(ja)_ — ★2026-10-02: 他の PoC と同じく、リポジトリ直下を**自分で** sys.path に足してから fullseye を import する。 パスフック頼みだと、examples/ から PYTHONPATH 無しで走らせたとき(tests/test_poc_scripts_run.py の走らせ方)に 本線の editable install の fullseye が先に入り、この worktree で足した台帳(watersheds_marker)が無くて落ちた。
+- **L860** — ★The smallest h you can specify is 0.05 x max(distance transform). A single large cell in the image is enough to **raise the lower bound of h for the whole image** (a coupling imposed by the op's spec).
+- **L1048** — ★The headline of this PoC. At the place where the bias line crosses 0, the segmentation error is not a valley.
+- **L1337** — ★Over-merging and missing are different things —— things that stick together have not "disappeared"
+- **L1365** — ★The optimal h moves with density (it always moves by either the bias criterion or the one-to-one criterion)
+- **L1368** — (5) ★A point where the count is correct yet the segmentation is entirely wrong really exists: the bias is under 3 %, yet many segmentation errors remain and the one-to-one correspondence is far from the best.
+- **L1394** — ★The smallest h you can specify rises with the size ratio (a scale coupling imposed by the tool's spec)
+- **L1434** — (10) ★Mechanically confirm that the tool's gap "still exists" (it fails once fixed = a good kind of failure) (a) the distance transform of the evolution op is normalized by its maximum value
 
 ## `examples/poc_change_detection_misreg.py`
 

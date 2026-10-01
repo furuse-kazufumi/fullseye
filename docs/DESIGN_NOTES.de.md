@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1170. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1171. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -399,13 +399,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_cell_counting.py`
 
-- **L853** — ★Das kleinste h, das man angeben kann, ist 0.05 x max(Distanztransformation). Eine einzige große Zelle im Bild genügt, um **die untere Schranke von h für das gesamte Bild anzuheben** (eine durch die Spezifikation des op bedingte Kopplung).
-- **L1041** — ★Die Überschrift dieses PoC. An der Stelle, wo die Bias-Linie 0 kreuzt, ist der Segmentierungsfehler kein Tal.
-- **L1330** — ★Über-Verschmelzung und Auslassung sind zweierlei —— was zusammenklebt, ist nicht "verschwunden"
-- **L1358** — ★Das optimale h bewegt sich mit der Dichte (es bewegt sich immer nach entweder dem Bias-Kriterium oder dem Eins-zu-eins-Kriterium)
-- **L1361** — (5) ★Ein Punkt, an dem die Zählung stimmt und dennoch die Segmentierung völlig falsch ist, existiert wirklich: der Bias liegt unter 3 %, dennoch bleiben viele Segmentierungsfehler und die Eins-zu-eins-Zuordnung ist weit vom Besten entfernt.
-- **L1387** — ★Das kleinste h, das man angeben kann, steigt mit dem Größenverhältnis (eine durch die Spezifikation des Werkzeugs bedingte Skalenkopplung)
-- **L1427** — (10) ★Maschinell bestätigen, dass die Lücke des Werkzeugs "noch vorhanden" ist (sie fällt durch, sobald sie behoben ist = eine gute Art des Durchfallens) (a) die Distanztransformation des Evolution-op wird auf ihr Maximum normalisiert
+- **L68** _(ja)_ — ★2026-10-02: 他の PoC と同じく、リポジトリ直下を**自分で** sys.path に足してから fullseye を import する。 パスフック頼みだと、examples/ から PYTHONPATH 無しで走らせたとき(tests/test_poc_scripts_run.py の走らせ方)に 本線の editable install の fullseye が先に入り、この worktree で足した台帳(watersheds_marker)が無くて落ちた。
+- **L860** — ★Das kleinste h, das man angeben kann, ist 0.05 x max(Distanztransformation). Eine einzige große Zelle im Bild genügt, um **die untere Schranke von h für das gesamte Bild anzuheben** (eine durch die Spezifikation des op bedingte Kopplung).
+- **L1048** — ★Die Überschrift dieses PoC. An der Stelle, wo die Bias-Linie 0 kreuzt, ist der Segmentierungsfehler kein Tal.
+- **L1337** — ★Über-Verschmelzung und Auslassung sind zweierlei —— was zusammenklebt, ist nicht "verschwunden"
+- **L1365** — ★Das optimale h bewegt sich mit der Dichte (es bewegt sich immer nach entweder dem Bias-Kriterium oder dem Eins-zu-eins-Kriterium)
+- **L1368** — (5) ★Ein Punkt, an dem die Zählung stimmt und dennoch die Segmentierung völlig falsch ist, existiert wirklich: der Bias liegt unter 3 %, dennoch bleiben viele Segmentierungsfehler und die Eins-zu-eins-Zuordnung ist weit vom Besten entfernt.
+- **L1394** — ★Das kleinste h, das man angeben kann, steigt mit dem Größenverhältnis (eine durch die Spezifikation des Werkzeugs bedingte Skalenkopplung)
+- **L1434** — (10) ★Maschinell bestätigen, dass die Lücke des Werkzeugs "noch vorhanden" ist (sie fällt durch, sobald sie behoben ist = eine gute Art des Durchfallens) (a) die Distanztransformation des Evolution-op wird auf ihr Maximum normalisiert
 
 ## `examples/poc_change_detection_misreg.py`
 
