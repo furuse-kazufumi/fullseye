@@ -7,7 +7,7 @@
 
 **fullseye 0.2.3** 的運算子文件。每個運算子各有一份 Markdown 說明(一運算子一檔案,RAD 語料形態),Studio 的 HTML 說明由此批次轉換產生(`tools/opdocs.py html`)。本目錄由資料夾階層自動產生。
 
-- [2D 運算子](./2d/INDEX.md) —— 952 個運算子 / 49 個類別
+- [2D 運算子](./2d/INDEX.md) —— 951 個運算子 / 49 個類別
 - [3D 運算子](./3d/INDEX.md) —— 372 個運算子 / 68 個類別
 - [MATH 運算子](./math/INDEX.md) —— 55 個運算子 / 7 個類別
 - [OPTICS 運算子](./optics/INDEX.md) —— 147 個運算子 / 17 個類別

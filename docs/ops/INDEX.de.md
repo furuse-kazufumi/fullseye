@@ -7,7 +7,7 @@
 
 Operatordokumentation für **fullseye 0.2.3**. Jeder Operator hat eine eigene Markdown-Notiz (eine Datei pro Operator, RAD-Korpusform); die HTML-Hilfe von Studio wird daraus gesammelt konvertiert (`tools/opdocs.py html`). Dieses Inhaltsverzeichnis entsteht durch Ablaufen des Ordnerbaums.
 
-- [2D-Operatoren](./2d/INDEX.md) — 952 Operatoren / 49 Kategorien
+- [2D-Operatoren](./2d/INDEX.md) — 951 Operatoren / 49 Kategorien
 - [3D-Operatoren](./3d/INDEX.md) — 372 Operatoren / 68 Kategorien
 - [MATH-Operatoren](./math/INDEX.md) — 55 Operatoren / 7 Kategorien
 - [OPTICS-Operatoren](./optics/INDEX.md) — 147 Operatoren / 17 Kategorien

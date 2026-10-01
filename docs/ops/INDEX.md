@@ -7,7 +7,7 @@
 
 **fullseye 0.2.3** の op ドキュメント。op ごとの使い方を Markdown で1件1ファイル(RAD コーパス形状)に持ち、Studio の HTML ヘルプはここから一括変換で生成する(`tools/opdocs.py html`)。この目次はフォルダ階層から自動生成。
 
-- [2D operators](./2d/INDEX.md) — 952 ops / 49 categories
+- [2D operators](./2d/INDEX.md) — 951 ops / 49 categories
 - [3D operators](./3d/INDEX.md) — 372 ops / 68 categories
 - [MATH operators](./math/INDEX.md) — 55 ops / 7 categories
 - [OPTICS operators](./optics/INDEX.md) — 147 ops / 17 categories

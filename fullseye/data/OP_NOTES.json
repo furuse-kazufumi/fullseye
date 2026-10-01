@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2520,
- "n_notes": 2526,
+ "n_ops": 2519,
+ "n_notes": 2525,
  "notes": {
   "vol_dilate": [
    {
@@ -8543,16 +8543,6 @@
     "in": "signal",
     "out": "signal",
     "path": "docs/ops/2d/typed/tb_create_funct_1d_array.md"
-   }
-  ],
-  "tb_crossing_lamp_signal": [
-   {
-    "op": "tb_crossing_lamp_signal",
-    "dim": "2d",
-    "category": "typed",
-    "in": "signal",
-    "out": "signal",
-    "path": "docs/ops/2d/typed/tb_crossing_lamp_signal.md"
    }
   ],
   "tb_cutout": [

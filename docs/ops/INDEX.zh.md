@@ -7,7 +7,7 @@
 
 **fullseye 0.2.3** 的算子文档。每个算子各有一份 Markdown 说明(一算子一文件,RAD 语料形态),Studio 的 HTML 帮助由此批量转换生成(`tools/opdocs.py html`)。本目录由目录树自动生成。
 
-- [2D 算子](./2d/INDEX.md) —— 952 个算子 / 49 个类别
+- [2D 算子](./2d/INDEX.md) —— 951 个算子 / 49 个类别
 - [3D 算子](./3d/INDEX.md) —— 372 个算子 / 68 个类别
 - [MATH 算子](./math/INDEX.md) —— 55 个算子 / 7 个类别
 - [OPTICS 算子](./optics/INDEX.md) —— 147 个算子 / 17 个类别

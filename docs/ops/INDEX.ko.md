@@ -7,7 +7,7 @@
 
 **fullseye 0.2.3** 의 오퍼레이터 문서. 오퍼레이터마다 Markdown 노트가 하나씩 있고(1 op = 1 파일, RAD 코퍼스 형태), Studio 의 HTML 도움말은 여기서 일괄 변환합니다(`tools/opdocs.py html`). 이 목차는 폴더 구조에서 자동 생성됩니다.
 
-- [2D 오퍼레이터](./2d/INDEX.md) — 952 개 / 49 카테고리
+- [2D 오퍼레이터](./2d/INDEX.md) — 951 개 / 49 카테고리
 - [3D 오퍼레이터](./3d/INDEX.md) — 372 개 / 68 카테고리
 - [MATH 오퍼레이터](./math/INDEX.md) — 55 개 / 7 카테고리
 - [OPTICS 오퍼레이터](./optics/INDEX.md) — 147 개 / 17 카테고리
