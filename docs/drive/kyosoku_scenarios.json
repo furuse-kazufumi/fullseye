@@ -755,9 +755,11 @@
      "source": "法38条2項"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_crossing"
+   ],
+   "note": "停止車両の横は前に出る前に一時停止(crosswalk_stopped_vehicle_check)。素朴に抜けると全場面が違反、隠れた歩行者に触れる場面あり"
   },
   {
    "id": "S044",
@@ -775,9 +777,11 @@
      "source": "法38条3項・30条3号"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_crossing"
+   ],
+   "note": "横断歩道の手前 30 m 以内で車の前に出ない(crosswalk_overtake_check)、自転車の追抜きは除外どおり違反にしない"
   },
   {
    "id": "S045",
@@ -1652,9 +1656,11 @@
    "law_status": "OK",
    "scoreability": "A",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_crossing"
+   ],
+   "note": "広い道へは徐行し交差道路の車に減速を一切させない(priority_rule・conflict_zone_intervals・obstruction_decel、「明らかに広い」= 幅の比 1.5 と「急に」2.0 m/s² は仮定)"
   },
   {
    "id": "S099",
@@ -1666,9 +1672,11 @@
    "law_status": "OK",
    "scoreability": "B",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_crossing"
+   ],
+   "note": "同程度の幅では左から来る車だけに譲る(36 条 1 項)。右から来る車が譲る場面もある"
   },
   {
    "id": "S100",
@@ -1770,9 +1778,11 @@
      "source": "法44条1項2号"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_crossing"
+   ],
+   "note": "交差点・曲がり角の側端から 5 m(no_stopping_zones = 1 mm 格子で直接塗った答え)"
   },
   {
    "id": "S106",
@@ -1790,9 +1800,11 @@
      "source": "法44条1項3号"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_crossing"
+   ],
+   "note": "横断歩道・自転車横断帯の前後 5 m(no_stopping_zones)"
   },
   {
    "id": "S107",
@@ -1810,9 +1822,11 @@
      "source": "法44条1項6号"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_crossing"
+   ],
+   "note": "踏切の前後 10 m(no_stopping_zones)"
   },
   {
    "id": "S108",
@@ -1830,9 +1844,11 @@
      "source": "法44条1項4号"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_crossing"
+   ],
+   "note": "安全地帯の左側と前後 10 m(no_stopping_zones)"
   },
   {
    "id": "S109",
@@ -1850,9 +1866,11 @@
      "source": "法44条1項5号"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_crossing"
+   ],
+   "note": "停留所の標示板から 10 m(運行時間中、no_stopping_zones の in_service)"
   },
   {
    "id": "S110",
@@ -2061,9 +2079,11 @@
      "source": "法33条1項"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_crossing"
+   ],
+   "note": "直前で一時停止して左右を目で確かめる(crossing_stop_check の look_events)。「耳で」(列車の音)は扱わない"
   },
   {
    "id": "S121",
@@ -2089,9 +2109,11 @@
    "law_status": "OK",
    "scoreability": "B",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_crossing"
+   ],
+   "note": "警報中・遮断機が降下中〜上昇中は入らない(遮断機の状態機械 crossing_gate_state と crossing_stop_check)"
   },
   {
    "id": "S123",
@@ -2103,9 +2125,11 @@
    "law_status": "OK",
    "scoreability": "B",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_crossing"
+   ],
+   "note": "前車に続く場合も一時停止、向こう側の余地が無ければ入らない(exit_room_check、50 条 2 項)"
   },
   {
    "id": "S124",
@@ -2117,9 +2141,11 @@
    "law_status": "NONE",
    "scoreability": "C",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_crossing"
+   ],
+   "note": "踏切の中はやや中央寄り(左の車輪が板の端から 0.5 m 以上内、余裕は仮定)。「変速せず一気に」は見ない"
   },
   {
    "id": "S125",

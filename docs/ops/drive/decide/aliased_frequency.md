@@ -4,7 +4,7 @@ dim: drive
 category: decide
 in: any
 out: any
-examples: [poc_driving_decisions]
+examples: [poc_driving_crossing, poc_driving_decisions]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -31,6 +31,7 @@ f < fps/2 ならそのまま、fps の整数倍に近いほど遅く見える(�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_driving_crossing](../../../../examples/poc_driving_crossing.py) — `py -3.11 examples/poc_driving_crossing.py`
 - [poc_driving_decisions](../../../../examples/poc_driving_decisions.py) — `py -3.11 examples/poc_driving_decisions.py`
 
 ## 型が繋がる次の op(`any` を入力に取れる)

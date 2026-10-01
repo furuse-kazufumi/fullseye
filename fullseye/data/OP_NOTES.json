@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2502,
- "n_notes": 2508,
+ "n_ops": 2520,
+ "n_notes": 2526,
  "notes": {
   "vol_dilate": [
    {
@@ -8545,6 +8545,16 @@
     "path": "docs/ops/2d/typed/tb_create_funct_1d_array.md"
    }
   ],
+  "tb_crossing_lamp_signal": [
+   {
+    "op": "tb_crossing_lamp_signal",
+    "dim": "2d",
+    "category": "typed",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/2d/typed/tb_crossing_lamp_signal.md"
+   }
+  ],
   "tb_cutout": [
    {
     "op": "tb_cutout",
@@ -15947,6 +15957,171 @@
     "category": "course",
     "out": "table",
     "path": "docs/ops/drive/course/course_turnaround.md"
+   }
+  ],
+  "conflict_zone_intervals": [
+   {
+    "op": "conflict_zone_intervals",
+    "dim": "drive",
+    "category": "crossing",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/crossing/conflict_zone_intervals.md"
+   }
+  ],
+  "crossing_clear_time": [
+   {
+    "op": "crossing_clear_time",
+    "dim": "drive",
+    "category": "crossing",
+    "out": "table",
+    "path": "docs/ops/drive/crossing/crossing_clear_time.md"
+   }
+  ],
+  "crossing_gate_state": [
+   {
+    "op": "crossing_gate_state",
+    "dim": "drive",
+    "category": "crossing",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/drive/crossing/crossing_gate_state.md"
+   }
+  ],
+  "crossing_lamp_signal": [
+   {
+    "op": "crossing_lamp_signal",
+    "dim": "drive",
+    "category": "crossing",
+    "out": "any",
+    "path": "docs/ops/drive/crossing/crossing_lamp_signal.md"
+   }
+  ],
+  "crossing_stop_check": [
+   {
+    "op": "crossing_stop_check",
+    "dim": "drive",
+    "category": "crossing",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/crossing/crossing_stop_check.md"
+   }
+  ],
+  "crossing_timing_check": [
+   {
+    "op": "crossing_timing_check",
+    "dim": "drive",
+    "category": "crossing",
+    "out": "table",
+    "path": "docs/ops/drive/crossing/crossing_timing_check.md"
+   }
+  ],
+  "crosswalk_overtake_check": [
+   {
+    "op": "crosswalk_overtake_check",
+    "dim": "drive",
+    "category": "crossing",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/crossing/crosswalk_overtake_check.md"
+   }
+  ],
+  "crosswalk_stopped_vehicle_check": [
+   {
+    "op": "crosswalk_stopped_vehicle_check",
+    "dim": "drive",
+    "category": "crossing",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/crossing/crosswalk_stopped_vehicle_check.md"
+   }
+  ],
+  "exit_room_check": [
+   {
+    "op": "exit_room_check",
+    "dim": "drive",
+    "category": "crossing",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/crossing/exit_room_check.md"
+   }
+  ],
+  "lamp_pair_phase": [
+   {
+    "op": "lamp_pair_phase",
+    "dim": "drive",
+    "category": "crossing",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/crossing/lamp_pair_phase.md"
+   }
+  ],
+  "legal_stop_intervals": [
+   {
+    "op": "legal_stop_intervals",
+    "dim": "drive",
+    "category": "crossing",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/crossing/legal_stop_intervals.md"
+   }
+  ],
+  "no_stopping_zones": [
+   {
+    "op": "no_stopping_zones",
+    "dim": "drive",
+    "category": "crossing",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/crossing/no_stopping_zones.md"
+   }
+  ],
+  "obstruction_decel": [
+   {
+    "op": "obstruction_decel",
+    "dim": "drive",
+    "category": "crossing",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/crossing/obstruction_decel.md"
+   }
+  ],
+  "parking_position_check": [
+   {
+    "op": "parking_position_check",
+    "dim": "drive",
+    "category": "crossing",
+    "out": "table",
+    "path": "docs/ops/drive/crossing/parking_position_check.md"
+   }
+  ],
+  "priority_rule": [
+   {
+    "op": "priority_rule",
+    "dim": "drive",
+    "category": "crossing",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/crossing/priority_rule.md"
+   }
+  ],
+  "sight_triangle_distance": [
+   {
+    "op": "sight_triangle_distance",
+    "dim": "drive",
+    "category": "crossing",
+    "out": "scalar",
+    "path": "docs/ops/drive/crossing/sight_triangle_distance.md"
+   }
+  ],
+  "track_sight_distance": [
+   {
+    "op": "track_sight_distance",
+    "dim": "drive",
+    "category": "crossing",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/crossing/track_sight_distance.md"
    }
   ],
   "aliased_frequency": [

@@ -54,6 +54,7 @@ This series lines up the ops built on that bar, one per instalment. Every instal
 | 8 | [Moving traffic and blind spots — a child behind a parked car, meeting oncoming traffic, a bus stop, bad drivers, a pedestrian waiting at a crossing](#8-moving-traffic-and-blind-spots--a-child-behind-a-parked-car-meeting-oncoming-traffic-a-bus-stop-bad-drivers-a-pedestrian-waiting-at-a-crossing) | closed-form sight lines / IDM equilibrium gap / ∫λ and Adams' formula / the habits and intents given (truth) / the Rules-of-the-Road ledger |
 | 9 | [Decision scenes — checking the rear left in the mirror, predicting amber from the pedestrian light, giving way to an ambulance, waiting for a bus to pull out](#9-decision-scenes--checking-the-rear-left-in-the-mirror-predicting-amber-from-the-pedestrian-light-giving-way-to-an-ambulance-waiting-for-a-bus-to-pull-out) | Fermat point on the mirror / polygon of edge rays / the signal timing / closed forms for GHM and the stop line / emission-time geometry / arts. 40 and 31-2 |
 | 10 | [Lateral motion — slowing before a bend, staying in the lane, keeping left for a left turn, not catching a cyclist with the inner rear wheel](#10-lateral-motion--slowing-before-a-bend-staying-in-the-lane-keeping-left-for-a-left-turn-not-catching-a-cyclist-with-the-inner-rear-wheel) | friction circle and the ordinance / 2-DOF steady offset / off-tracking closed form / the Rules' positioning / sample gate (0.1 % points and KS) |
+| 11 | [Level crossings and right of way — stop just before and look both ways, never enter while the alarm sounds or when the far side is blocked, give way to the wider road](#11-level-crossings-and-right-of-way--stop-just-before-and-look-both-ways-never-enter-while-the-alarm-sounds-or-when-the-far-side-is-blocked-give-way-to-the-wider-road) | railway timing standard / barrier state machine / sight triangle / arts. 36, 38, 44, 50 verdicts / 1 mm grid zones |
 
 ---
 
@@ -1215,12 +1216,98 @@ The whole PoC: `py -3.11 examples/poc_driving_lateral.py` (figures and videos wh
 
 ---
 
+## 11. Level crossings and right of way — stop just before and look both ways, never enter while the alarm sounds or when the far side is blocked, give way to the wider road
+
+![Dashcam: stopping before a level crossing, waiting out the alarm, looking both ways and crossing in one go](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.gif)
+
+*↑ Dashcam (top right = overhead inset). The car stops just before the stop line, looks both ways and moves off — and the alarm starts just then, so it stops again short of the crossing. The barrier comes down, the train (80 km/h) passes, and once the barrier is fully up the car looks both ways and crosses in one go. The second half shows a version that enters although the far side is blocked and ends up stopped on the crossing (room on the far side 2.5 m < 6.0 m needed, Road Traffic Act art. 50(2)). [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.mp4)*
+
+From the not-yet-started part of the Rules-of-the-Road ledger, this part collects scenes that rule-based parts can reproduce: level crossings (stop just before and check both ways, do not enter while the alarm sounds, do not enter when the far side is blocked, keep slightly towards the middle on the crossing), right of way at junctions (slow down and give way to a wider road; with roads of similar width, give way to traffic from the left), pedestrian crossings (stop before passing a car stopped short of the crossing; no overtaking within 30 m), and the no-stopping distances (5 m around junctions and crossings, 10 m around level crossings and bus stops).
+
+All parts are rule-based, and random values pass the same sample gate as last time (two-sided 0.1 % points of the reference distribution one by one with a recorded reason, and KS for the population).
+
+### Scenes and gates
+
+A new module `drivecrossing` (17 ops) and PoC ㉜.
+
+| Scene | Where the truth comes from | Result |
+|---|---|---|
+| Crossing timing | the interpretation standard of the ministerial ordinance on railway technical standards (with barriers: alarm → closed 15 s, closed → arrival 20 s; minimum 10 / 15 s) | trains at or below the line speed meet the minimum. With a fixed start point the alarm lasts 39–120 s depending on train speed; speed-dependent starting brings it to 35.0 s. The speed at which a fixed start point breaks the minimum is 152 km/h in closed form |
+| Crossing the tracks (S120, S122, S123) | verdicts for Road Traffic Act art. 33(1)(2) and 50(2), and the barrier state machine | the 240 rule-following drivers have no violation, all cross, and nobody is on the track when a train arrives (smallest margin 31.5 s). Not stopping: no_stop 79; not looking: no_look 240; entering during the alarm: 157 (matching the 157 counted by the state machine; 23 of them on the track when the train arrives); entering with the far side blocked: no_exit_room 10, stopped on the crossing 7 |
+| A crossing with poor sight lines | closed form of the sight triangle | visible distance 19.03 m closed form vs 19.07 m by ray brute force. The probability that an unseen train arrives before the car has crossed is 7.9 × 10⁻³ with the building, 2.1 × 10⁻² without re-checking, 0 with a clear view. Closed form, naive MC and importance sampling agree within 1.1σ (importance sampling reaches the same precision with about 1/56 of the trials) |
+| Right of way (S098, S099) | verdicts for art. 36(1)–(3) and arrival times of crossing traffic | the rule never makes a car with priority slow down (1 ms replay: no overlap in the conflict zone). A naive driver (30 km/h throughout) obstructs in 104 / 240 scenes. Under the give-way-to-the-left rule there are 50 scenes where a car from the right gives way, so "always give way" is not the answer |
+| Pedestrian crossings (S043, S044) | verdicts for art. 38(2)(3) | passing a stopped car, the naive driver violates in all 240 scenes and touches a hidden pedestrian in 2; within 30 m it pulls ahead of a car in 34. Overtaking a cyclist is exempt, as the law says |
+| No-stopping zones (S105–S109) | art. 44(1) distances painted directly on a 1 mm grid | the zones match on 340,001 grid points. Stopping exactly where one wants violates 476 / 1000 times (all 6 kinds); the rule (nearest legal place) 0, walking 3.5 m further on average |
+| Reading the alarm lamps from pixels | alternating flashes (50 per minute) and the aliasing formula for the camera's fps | 0.833 Hz, phase difference 3.14 rad between the two lamps (alternating). Decimated to 1 frame in 3 it reads 0.500 Hz = the aliasing formula |
+
+![The crossing from above, three policies](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/03_crossing_birdseye.gif)
+
+*↑ From above. Left = the rule, middle = entering although the far side is blocked, right = entering during the alarm. In this particular run the violating cars clear the track before the train, but 23 of the 240 drivers who entered during the alarm were on the track when the train arrived. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_crossing/03_crossing_birdseye.mp4)*
+
+![Right of way](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/04_priority_birdseye.gif)
+
+*↑ Joining a wider road. Left = the rule (slow down and give way; the crossing car needs 0 m/s² of braking), right = naive (30 km/h throughout, forcing the crossing car to brake at 5.1 m/s²; red = sudden braking). [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_crossing/04_priority_birdseye.mp4)*
+
+![A car stopped before a pedestrian crossing](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/02_crosswalk_dashcam.gif)
+
+*↑ The car stops before passing an SUV stopped just short of the crossing, and waits for the pedestrian who crosses from behind it (art. 38(2)). The second half passes at 40 km/h and touches the pedestrian despite braking once they appear. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_crossing/02_crosswalk_dashcam.mp4)*
+
+### ★ Where implementations go wrong
+
+- **"30 seconds from the alarm" is the value for crossings without barriers.** The standard's "alarm → arrival 30 s" applies to alarm-only crossings; with barriers it is "alarm → closed 15 s + closed → arrival 20 s = 35 s". The first version mixed these up, a gate failed, and re-reading the text fixed it.
+- **With a fixed start point, slower trains get longer alarms.** 39–120 s for the sampled trains. To meet the standard's "should not vary greatly with train speed", start the alarm by speed. The speed at which a fixed start point breaks the minimum comes out as 152 km/h in closed form.
+- **The alarm can start just after the car moves off.** Even among rule-following drivers, 2 of 240 had the alarm start where they could no longer stop — the same shape as the amber dilemma. Those who can stop do so again (5 of 240); entries that could not stop are recorded separately from violations (the law has no explicit exception, so this is an interpretation).
+- **Dirt that slipped past the gates.** The lamp pixel series picked up the train's body colour while the train hid the lamp. Frequency and phase still came out right, so no gate caught it; looking at the frames did, and the reading window now ends when the train arrives.
+
+### What this does not do
+
+- "Clearly wider" = width ratio 1.5, "just before" = 2 m / 3 m, "sudden" = 2.0 m/s², the barrier lowering and raising times, the number of trains and the five reference distributions are **assumed values**.
+- The 50 flashes per minute were checked only against a secondary source (the JIS text was not read). The frequency measured from pixels reads back the value put into the render; it does not verify the 50 itself.
+- Checking at the crossing is visual only; "listening" (for a train) is not modelled (S120 is partial). On the crossing only the lateral position is checked, not "without changing gear" (S124 is partial).
+- Pedestrian occlusion is decided in the plane. In the render the head shows over the SUV roof in some frames, which disagrees with the 2D verdict.
+
+### Run it
+
+```python
+import fullseye as fs
+
+# Crossing timing: alarm at t = 0, closed at 15 s, train at 35 s — does it meet the railway standard's minimum (10 s / 15 s)?
+r = fs.ledger.crossing_timing_check(0.0, 15.0, 35.0)
+print(r["warn_to_closed"], r["closed_to_arrival"], r["meets_minimum"])
+# 15.0 20.0 True          ← alarm→closed / closed→arrival [s]
+
+# 3.5 m from the stop to the crossing, crossing 10 m long, car 4.5 m: time to move off and clear it [s]
+c = fs.ledger.crossing_clear_time(3.5, 10.0, 4.5, accel=1.5, v_max=5.56)
+print(round(c["time"], 2))
+# 5.18         ← s (until the rear clears the far side)
+
+# A crossing with a building at the corner: how far along the track can the driver see? (sight-triangle closed form) [m]
+print(round(fs.ledger.sight_triangle_distance(-1.13, 5.55, 4.5, 4.0), 2))
+# 19.03         ← m
+
+# From a 4 m road onto a 7 m road: who gives way? (Road Traffic Act art. 36)
+p = fs.ledger.priority_rule({"width": 4.0}, {"width": 7.0})
+print(p["yield_to"], p["must_slow"])
+# cross True        ← give way to the crossing road, slowly
+
+# No-stopping zones (art. 44) around a pedestrian crossing at 54–58 m and a level crossing at 100–110 m
+z = fs.ledger.no_stopping_zones([{"kind": "crosswalk", "start": 54.0, "end": 58.0},
+                                 {"kind": "railway_crossing", "start": 100.0, "end": 110.0}])
+print(z["merged"].tolist())
+# [[49.0, 63.0], [90.0, 120.0]]   ← no-stopping intervals with 5 m / 10 m added [m]
+```
+
+The whole PoC: `py -3.11 examples/poc_driving_crossing.py` (figures and videos when `FULLSEYE_FIGURE_DIR` is set).
+
+---
+
 ## Next
 
-**Level crossings and right of way.** More not-yet-started scenes from the Rules-of-the-Road ledger that rule-based parts can reproduce — stop just before a level crossing and look both ways, do not enter while the alarm sounds or when the far side is blocked (Road Traffic Act arts. 33 and 50), slow down and give way at a junction with a priority or wider road (art. 36), stop before passing a car stopped short of a pedestrian crossing (art. 38(2)), and the no-parking distances (art. 44: 5 m around junctions and crossings, 10 m around level crossings).
+**The rest of the ledger.** 105 scenes of the Rules-of-the-Road ledger are still not started. Next, those rule-based parts can reproduce — overtaking procedure and no-overtaking places (arts. 28–30: check the right rear, signal, about 3 s, return once the overtaken car shows in the rear-view mirror), not making following cars brake hard when changing lanes (art. 26-2), roundabouts (arts. 35-2 and 37-2), passing on slopes and engine braking downhill.
 
 ## References
 
+- Interpretation standard of the ministerial ordinance on railway technical standards (level-crossing protection: alarm → closed and closed → arrival times) / Road Traffic Act art. 33 (passing level crossings), art. 36 (relations with other vehicles at junctions), art. 38 (priority of pedestrians at crossings), art. 44 (places where stopping and parking are prohibited), art. 50 (no entry into junctions etc.) / Rules of the Road ch. 6 (level crossings).
 - Road Structure Ordinance (art. 15 curve radius, art. 16 superelevation, art. 18 transition sections; text published by MLIT) / R. C. Coulter, "Implementation of the Pure Pursuit Path Tracking Algorithm", CMU-RI-TR-92-01, 1992 / G. M. Hoffmann et al., "Autonomous automobile trajectory tracking for off-road driving" (Stanley), *ACC* 2007 / Yamamoto, Owaki, Uesaka, cyclist speeds, JSCE annual meeting 2011.
 - D. C. Gazis, R. Herman, A. A. Maradudin, "The problem of the amber signal light in traffic flow", *Operations Research* 8, 1960 (dilemma zone).
 - National Police Agency notice 丁運発第44号 (driving-test scoring: 10 points for not checking, 5 for signal faults) / Road Traffic Act art. 40 (priority of emergency vehicles), art. 31-2 (protecting buses pulling out), art. 53 (signals).

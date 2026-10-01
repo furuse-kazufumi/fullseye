@@ -11,6 +11,7 @@
 動く交通参加者と死角(drivetraffic: IDM の車列と運転の癖、OU の横ふらつき、Social Force の歩行者と横断の意図、路肩駐車の死角から止まれる速さ、対向車とのすれ違いの境目、場所と時刻で変わる飛び出しの率、重要度サンプリングの事故率)。
 判断の場面(drivedecide: ミラーを鏡の向こうの仮想カメラで描く・凸面鏡の視野と死角、確認と合図の順序の採点、歩行者信号から車両の黄を予測・ジレンマゾーン、点滅の周波数と折り返し、サイレンのドップラーと到着時間差の方位、緊急車両への譲り(道交法 40 条)とバスの発進(31 条の 2)の採点)。
 横の運動(drivelateral: 摩擦円とカーブの限界速度・道路構造令の最小半径、2 輪等価モデルのアンダーステア勾配と定常円旋回、アッカーマンと内輪差の閉形式・後車軸の軌跡、クロソイドとフレネル積分、pure pursuit と Stanley の制御則と定常の横ずれ、曲率からの速度計画、車線の横位置と TLC、左折・右折の寄り方の採点)。
+踏切と交差点の優先(drivecrossing: 鉄道の解釈基準の警報の時間と遮断機の状態、警報灯の交互点滅を画素から読む、渡り切る時間と向こう側の余地(道交法 33 条・50 条 2 項)、一時停止と左右確認の採点、見通し距離の閉形式、優先道路・広い道路と左方優先(36 条)、交差車の到達時間と急な減速、横断歩道の手前の停止車両と 30 m 以内の追越し(38 条)、駐停車禁止の区間(44 条))。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -36,6 +37,7 @@ import driveinf
 import drivetraffic
 import drivedecide
 import drivelateral
+import drivecrossing
 import drivelong
 import drivettc
 import gsplatnp
@@ -51,7 +53,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -398,6 +400,28 @@ _CATALOG = {
         ("lateral_offset", "drivelateral", ["any"], "table"),
         ("time_to_line_crossing", "drivelateral", [], "scalar"),
         ("turn_maneuver_check", "drivelateral", ["table"], "table"),
+    ],
+    # 踏切と交差点の優先: 鉄道の解釈基準(警報→到達 遮断機つき 35 s・警報機だけ 30 s)と遮断機の状態機械、警報灯の交互点滅
+    # (画素の時間周波数・カメラの fps の折り返し)、渡り切る時間と向こう側の余地(33 条・50 条 2 項)、見通し距離の閉形式、
+    # 優先道路・広い道路と左方優先(36 条)、横断歩道の手前の停止車両・30 m 以内の追越し(38 条)、駐停車禁止の区間(44 条)。
+    "crossing": [
+        ("crossing_timing_check", "drivecrossing", [], "table"),
+        ("crossing_gate_state", "drivecrossing", ["signal"], "table"),
+        ("crossing_lamp_signal", "drivecrossing", [], "any"),
+        ("lamp_pair_phase", "drivecrossing", ["signal", "signal"], "table"),
+        ("crossing_clear_time", "drivecrossing", [], "table"),
+        ("exit_room_check", "drivecrossing", ["any"], "table"),
+        ("crossing_stop_check", "drivecrossing", ["table"], "table"),
+        ("track_sight_distance", "drivecrossing", ["any"], "any"),
+        ("sight_triangle_distance", "drivecrossing", [], "scalar"),
+        ("priority_rule", "drivecrossing", ["table"], "table"),
+        ("conflict_zone_intervals", "drivecrossing", ["any"], "table"),
+        ("obstruction_decel", "drivecrossing", ["any"], "table"),
+        ("crosswalk_overtake_check", "drivecrossing", ["table"], "table"),
+        ("crosswalk_stopped_vehicle_check", "drivecrossing", ["table"], "table"),
+        ("no_stopping_zones", "drivecrossing", ["table"], "table"),
+        ("legal_stop_intervals", "drivecrossing", ["any"], "any"),
+        ("parking_position_check", "drivecrossing", [], "table"),
     ],
 }
 

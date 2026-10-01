@@ -1,8 +1,8 @@
 {
- "n_ops": 2502,
+ "n_ops": 2519,
  "tiers": {
   "color": 12,
-  "ledger": 1551,
+  "ledger": 1568,
   "nary": 17,
   "registry": 922
  },
@@ -2752,6 +2752,19 @@
    ]
   },
   {
+   "name": "conflict_zone_intervals",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
    "name": "contact_angular_momentum",
    "halcon": "",
    "in_sort": "table",
@@ -3382,6 +3395,65 @@
    ]
   },
   {
+   "name": "crossing_clear_time",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "crossing_gate_state",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "crossing_lamp_signal",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "any",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "crossing_stop_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "crossing_timing_check",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "crosswalk_mesh",
    "halcon": "",
    "in_sort": null,
@@ -3391,6 +3463,32 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "crosswalk_overtake_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "crosswalk_stopped_vehicle_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
   },
   {
    "name": "cscalar_to_polar",
@@ -5226,6 +5324,19 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "exit_room_check",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
   },
   {
    "name": "exponential_background",
@@ -8777,6 +8888,20 @@
    ]
   },
   {
+   "name": "lamp_pair_phase",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
    "name": "landmark_asymmetry",
    "halcon": "",
    "in_sort": "points",
@@ -8877,6 +9002,19 @@
    "in_sorts": [
     "image2d",
     "text"
+   ]
+  },
+  {
+   "name": "legal_stop_intervals",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {
@@ -10952,6 +11090,19 @@
    ]
   },
   {
+   "name": "no_stopping_zones",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "noise_inconsistency_map",
    "halcon": "",
    "in_sort": "image2d",
@@ -11157,6 +11308,19 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "obstruction_decel",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
   },
   {
    "name": "occlusion_edges",
@@ -11592,6 +11756,17 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "parking_position_check",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "particle_emit",
@@ -12997,6 +13172,19 @@
    "in_sorts": [
     "image2d",
     "image2d"
+   ]
+  },
+  {
+   "name": "priority_rule",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -15979,6 +16167,17 @@
    ]
   },
   {
+   "name": "sight_triangle_distance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "sigma_clip_stack",
    "halcon": "",
    "in_sort": "images",
@@ -18315,6 +18514,19 @@
     "table",
     "points",
     "points"
+   ]
+  },
+  {
+   "name": "track_sight_distance",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "crossing",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {

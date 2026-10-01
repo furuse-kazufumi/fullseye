@@ -1,4 +1,4 @@
-# DRIVE operator help — 254 ops in 20 categories
+# DRIVE operator help — 271 ops in 21 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -19,6 +19,10 @@
 ### course (13)
 
 [course_contains](course/course_contains.md) · [course_crank](course/course_crank.md) · [course_crossing](course/course_crossing.md) · [course_intersection](course/course_intersection.md) · [course_layout](course/course_layout.md) · [course_loop](course/course_loop.md) · [course_loop_bend](course/course_loop_bend.md) · [course_occupancy](course/course_occupancy.md) · [course_parallel_parking](course/course_parallel_parking.md) · [course_road](course/course_road.md) · [course_s_curve](course/course_s_curve.md) · [course_slope](course/course_slope.md) · [course_turnaround](course/course_turnaround.md)
+
+### crossing (17)
+
+[conflict_zone_intervals](crossing/conflict_zone_intervals.md) · [crossing_clear_time](crossing/crossing_clear_time.md) · [crossing_gate_state](crossing/crossing_gate_state.md) · [crossing_lamp_signal](crossing/crossing_lamp_signal.md) · [crossing_stop_check](crossing/crossing_stop_check.md) · [crossing_timing_check](crossing/crossing_timing_check.md) · [crosswalk_overtake_check](crossing/crosswalk_overtake_check.md) · [crosswalk_stopped_vehicle_check](crossing/crosswalk_stopped_vehicle_check.md) · [exit_room_check](crossing/exit_room_check.md) · [lamp_pair_phase](crossing/lamp_pair_phase.md) · [legal_stop_intervals](crossing/legal_stop_intervals.md) · [no_stopping_zones](crossing/no_stopping_zones.md) · [obstruction_decel](crossing/obstruction_decel.md) · [parking_position_check](crossing/parking_position_check.md) · [priority_rule](crossing/priority_rule.md) · [sight_triangle_distance](crossing/sight_triangle_distance.md) · [track_sight_distance](crossing/track_sight_distance.md)
 
 ### decide (18)
 

@@ -1,0 +1,164 @@
+[
+ {
+  "file": "01_crossing_dashcam.gif",
+  "name": "crossing_dashcam",
+  "caption": "主図(運転者の目 640 × 360、374 コマ、2.0 倍速)。場面 1(259 コマ): 停止線の直前で止まり(33 条 1 項)、左右を見て発進した直後(止まってから 3 s)に警報が始まり、踏切の手前で止まり直す。解釈基準の遮断機の時刻(警報→遮断の終わり 15 s、遮断→到達 20 s)どおりに遮断かんが降り、80 km/h・80 m の列車が過ぎ、かんが上がり切ってから左・右を見て(首を振る)一気に渡る。crossing_stop_check の判定 = 違反なし。右下 = 上から見た図(赤い丸 = 交互に点く警報灯)。場面 2: 向こう側の余地 2.5 m(車長 + 車間 + 余裕 = 6.0 m が要る)なのに入り、踏切の中で止まる(判定 = no_exit_room, stopped_inside)。そこへ警報が始まる。",
+  "shape": [
+   270,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 187,
+  "frames_written": 182,
+  "fps": 4.0,
+  "video": "01_crossing_dashcam.mp4",
+  "video_frames": 374,
+  "video_fps": 8.0,
+  "video_shape": [
+   360,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "02_crosswalk_dashcam.gif",
+  "name": "crosswalk_dashcam",
+  "caption": "車載カメラ(640 × 360、114 コマ)。片側 2 車線、左の車線の SUV が横断歩道の直前で止まっている(歩行者 1.78 m/s が陰から渡る)。場面 1(72 コマ): 横に並ぶ前に一時停止、徐行で横断歩道の直前へ出て、歩行者が見えて渡り終えるまで待つ —— crosswalk_stopped_vehicle_check = 違反なし、触れた = いいえ。場面 2(42 コマ): 40 km/h のまま横を抜け、見えてから 0.75 s 後に 6 m/s² で止まろうとする —— 判定 = 38 条 2 項の違反、触れた = はい。",
+  "shape": [
+   270,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 57,
+  "frames_written": 56,
+  "fps": 3.0,
+  "video": "02_crosswalk_dashcam.mp4",
+  "video_frames": 114,
+  "video_fps": 6.0,
+  "video_shape": [
+   360,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "03_crossing_birdseye.gif",
+  "name": "crossing_birdseye",
+  "caption": "上から見た動画(151 コマ、0.5 秒ごと)。乱数の場面 #116(列車 96 km/h、向こう側の列の後端 = 踏切の端から 3.6 m)を 3 人で。左 = ルール(違反なし)、中 = 向こう側が詰まっていても入る(no_exit_room, stopped_inside)、右 = 警報中でも入る(entered_while_forbidden、列車が着くとき線路の上 = いいえ)。赤い車 = 警報〜上昇中に車体が踏切の上。",
+  "shape": [
+   312,
+   720,
+   3
+  ],
+  "animated": true,
+  "frames": 151,
+  "frames_written": 151,
+  "fps": 4.0,
+  "video": "03_crossing_birdseye.mp4",
+  "video_frames": 151,
+  "video_fps": 4.0,
+  "video_shape": [
+   520,
+   1200,
+   3
+  ]
+ },
+ {
+  "file": "04_priority_birdseye.gif",
+  "name": "priority_birdseye",
+  "caption": "上から見た動画(85 コマ)。狭い道(4 m)から広い道(7.0 m)へ(S098、36 条 2・3 項)。場面 #0 の同じ交差道路の車で、左 = ルール(線で徐行 10 km/h、7.9 s 待ってから、交差道路の車に減速を一切させない時刻に発進)、右 = 30 km/h のまま入る(交差道路の車に要った減速度 最大 5.1 m/s² = 進行妨害)。",
+  "shape": [
+   375,
+   720,
+   3
+  ],
+  "animated": true,
+  "frames": 85,
+  "frames_written": 85,
+  "fps": 5.0,
+  "video": "04_priority_birdseye.mp4",
+  "video_frames": 85,
+  "video_fps": 5.0,
+  "video_shape": [
+   500,
+   960,
+   3
+  ]
+ },
+ {
+  "file": "05_crossing_timeline.png",
+  "name": "crossing_timeline",
+  "caption": "主図の場面 1 の時刻。警報 0 s → 降下の開始 7 s(仮定)→ 遮断の終わり 15 s(解釈基準 4(3) の標準 15 s)→ 列車の到達 35 s(遮断→到達 20 s = 4(5) の標準)→ 列車が過ぎて警報が止まり 39.0 s、かんが上がり切る 45.0 s。灯は 1 灯あたり毎分 50 回(二次資料、未確認)で左右が交互。",
+  "shape": [
+   360,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "06_lamp_pixels.png",
+  "name": "lamp_pixels",
+  "caption": "主図の車載カメラのコマ(4.0 fps、運転者が前を向いて止まっている間、列車が灯を隠す前まで)で、向こう側の柱の 2 灯の画素を読んだ時系列。flash_frequency = 0.833 Hz(真 0.833 Hz)、lamp_pair_phase の位相差 = 3.14 rad(交互 = π)。",
+  "shape": [
+   320,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "07_sample_gate.png",
+  "name": "sample_gate",
+  "caption": "参照 N(40, 6) km/h(仮定)。採った 960 個の KS p は門を通る。全体を 1.25 で割った集団は 1 個ずつの門を 952 / 960 個が通るが、KS は D = 0.56(p = 1e-257)で落とす。",
+  "shape": [
+   360,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "08_hidden_train_estimates.png",
+  "name": "hidden_train_estimates",
+  "caption": "見える距離 19.0 m(sight_triangle_distance = 光線の総当たり)。列車は片方向 1 時間に 6 本(仮定)。閉形式 P = 7.92e-03、本文の試行数で MC 8.05e-03 ± 1.2e-04、IS 8.05e-03 ± 1.2e-04。図はその頭の 5000 回の累積平均。",
+  "shape": [
+   360,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "09_no_stopping_strip.png",
+  "name": "no_stopping_strip",
+  "caption": "44 条 1 項の駐停車禁止の区間(no_stopping_zones)と、車長 4.5 m の車体が丸ごと入る場所(legal_stop_intervals)。止まりたい場所(一様、仮定)1000 件のうち、そのまま止まると違反 476 件(bus_stop 69, corner 50, crosswalk 118, intersection 73, railway_crossing 96, safety_zone 107)、いちばん近い適法の場所へ移ると余分に歩くのは平均 3.5 m。図の点は先頭の 80 件(違反 31)。",
+  "shape": [
+   300,
+   1200,
+   3
+  ]
+ },
+ {
+  "file": "10_crossing_policies.png",
+  "name": "crossing_policies",
+  "caption": "同じ 240 人(列車の速さ・発進・見る時間は標本の門を通った値)を 5 通りの方針で。違反の名前: no_stop = 33 条 1 項(直前で止まらない)、no_look = 同(最後の停止の間に左右を見ない)、entered_while_forbidden = 33 条 2 項、no_exit_room = 50 条 2 項、stopped_inside = 踏切の中で止まった(教則 6-1-1(5))。",
+  "shape": [
+   200,
+   637,
+   3
+  ],
+  "csv": "10_crossing_policies.csv",
+  "tsv": "10_crossing_policies.tsv"
+ },
+ {
+  "file": "11_priority_results.png",
+  "name": "priority_results",
+  "caption": "進行妨害 = 譲るべき相手に 2.0 m/s²(仮定)を超える減速を要らせた場面(obstruction_decel)。",
+  "shape": [
+   176,
+   652,
+   3
+  ],
+  "csv": "11_priority_results.csv",
+  "tsv": "11_priority_results.tsv"
+ }
+]

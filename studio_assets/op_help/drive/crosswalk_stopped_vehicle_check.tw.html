@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">crosswalk_stopped_vehicle_check — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crosswalk_stopped_vehicle_check(ego, stopped, *, crosswalk_start: &#x27;float&#x27;, crosswalk_end: &#x27;float&#x27;, near: &#x27;float&#x27; = 3.0, approach: &#x27;float&#x27; = 10.0, v_stop: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecrossing; drivecrossing.crosswalk_stopped_vehicle_check(ego, stopped, *, crosswalk_start: &#x27;float&#x27;, crosswalk_end: &#x27;float&#x27;, near: &#x27;float&#x27; = 3.0, approach: &#x27;float&#x27; = 10.0, v_stop: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;crosswalk_stopped_vehicle_check&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>横断歩道等(又はその手前の直前)で止まっている車の側方を通って前に出る前に一時停止したか(38 条 2 項)。</p>
+<p>stopped[i] = {&quot;x&quot;: 止まっている車の前端, &quot;t0&quot;, &quot;t1&quot;: 止まっている時間}。前端が [crosswalk_start − near, crosswalk_end]</p>
+<p>にある車だけが対象(near = 「直前」、<b>仮定</b> 3 m)。自分の前端がその前端を越える時刻 t_e が [t0, t1] の中なら、</p>
+<p>t_e より前に、前端が [x − approach, x] にある間に速さ ≤ v_stop になっていなければ違反(approach は <b>仮定</b> 10 m)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_crossing">poc_driving_crossing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_crossing.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">crossing</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:crossing_timing_check">crossing_timing_check</a> · <a style="color:#22d3bf" href="opdrive:crossing_gate_state">crossing_gate_state</a> · <a style="color:#22d3bf" href="opdrive:crossing_lamp_signal">crossing_lamp_signal</a> · <a style="color:#22d3bf" href="opdrive:lamp_pair_phase">lamp_pair_phase</a> · <a style="color:#22d3bf" href="opdrive:crossing_clear_time">crossing_clear_time</a> · <a style="color:#22d3bf" href="opdrive:exit_room_check">exit_room_check</a> · <a style="color:#22d3bf" href="opdrive:crossing_stop_check">crossing_stop_check</a> · <a style="color:#22d3bf" href="opdrive:track_sight_distance">track_sight_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivecrossing.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

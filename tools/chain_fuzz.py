@@ -2551,6 +2551,90 @@ def _b_turn_check(pool, rng):
                            "corner_radius": 6.0, "clearance": 0.5}
 
 
+def _dc_lin(x0, v):
+    import numpy as np
+    t = np.linspace(0.0, 30.0, 301)
+    return {"t": t, "x": x0 + v * t, "v": np.full_like(t, v)}
+
+
+def _b_crossing_timing(pool, rng):
+    return (0.0, 15.0, 35.0), {}
+
+
+def _b_gate_state(pool, rng):
+    import numpy as np
+    return (np.linspace(0.0, 60.0, 601),), {"t_warning": 5.0, "t_lower_start": 12.0, "lower_duration": 8.0,
+                                            "t_clear": 45.0, "raise_duration": 6.0}
+
+
+def _b_lamp_signal(pool, rng):
+    import numpy as np
+    return (np.arange(0.0, 20.0, 0.1),), {"t_on": 0.0, "t_off": 15.0, "exposure": 0.05}
+
+
+def _b_lamp_phase(pool, rng):
+    import numpy as np
+    t = np.arange(250) / 25.0
+    return (np.sin(2 * np.pi * 0.9 * t), np.sin(2 * np.pi * 0.9 * t + np.pi), 25.0), {}
+
+
+def _b_clear_time(pool, rng):
+    return (3.5, 10.0, 4.5), {"accel": 1.5, "v_max": 5.56}
+
+
+def _b_exit_room(pool, rng):
+    import numpy as np
+    return (np.array([14.0, 20.0]), 13.0, 4.5), {}
+
+
+def _b_stop_check(pool, rng):
+    return (_dc_lin(-40.0, 3.0),), {"stop_line": 0.0, "crossing_start": 2.0, "crossing_end": 12.0, "car_length": 4.5}
+
+
+def _b_track_sight(pool, rng):
+    return (22.2, 7.0), {}
+
+
+def _b_sight_triangle(pool, rng):
+    return (-1.13, 5.55, 4.5, 4.0), {}
+
+
+def _b_priority(pool, rng):
+    return ({"width": 4.0}, {"width": 7.0}), {}
+
+
+def _b_conflict_zone(pool, rng):
+    return (10.0, 6.0, 4.5), {"v0": 0.0, "accel": 1.5, "v_max": 8.3}
+
+
+def _b_obstruction(pool, rng):
+    return (40.0, 11.0, 5.0), {}
+
+
+def _b_cw_overtake(pool, rng):
+    o = dict(_dc_lin(80.0, 8.0), kind="car")
+    return (_dc_lin(0.0, 14.0), [o]), {"crosswalk_start": 200.0, "crosswalk_end": 204.0}
+
+
+def _b_cw_stopped(pool, rng):
+    return (_dc_lin(-80.0, 5.0), [{"x": -1.0, "t0": 0.0, "t1": 100.0}]), {"crosswalk_start": 0.0, "crosswalk_end": 4.0}
+
+
+def _b_no_stop_zones(pool, rng):
+    return ([{"kind": "crosswalk", "start": 54.0, "end": 58.0}, {"kind": "bus_stop", "at": 110.0}],), {}
+
+
+def _b_legal_stops(pool, rng):
+    import numpy as np
+    return (np.array([[45.0, 73.0]]), 0.0, 200.0, 4.5), {}
+
+
+def _b_parking_check(pool, rng):
+    import drivecrossing as DC
+    z = DC.no_stopping_zones([{"kind": "crosswalk", "start": 54.0, "end": 58.0}, {"kind": "bus_stop", "at": 110.0}])
+    return (40.0, 44.5, z), {}
+
+
 def _env_world():
     import driveworld as DW
     import numpy as np
@@ -2927,6 +3011,23 @@ OP_ARG_BUILDERS = {
     "hill_hold_brake_min": _b_hill_hold_brake_min, "hill_start_rollback": _b_hill_start_rollback,
     "hill_start_command": _b_hill_start_command, "skill_test_thresholds": _b_skill_test_thresholds,
     "skill_test_score": _b_skill_test_score,
+    "crossing_timing_check": _b_crossing_timing,
+    "crossing_gate_state": _b_gate_state,
+    "crossing_lamp_signal": _b_lamp_signal,
+    "lamp_pair_phase": _b_lamp_phase,
+    "crossing_clear_time": _b_clear_time,
+    "exit_room_check": _b_exit_room,
+    "crossing_stop_check": _b_stop_check,
+    "track_sight_distance": _b_track_sight,
+    "sight_triangle_distance": _b_sight_triangle,
+    "priority_rule": _b_priority,
+    "conflict_zone_intervals": _b_conflict_zone,
+    "obstruction_decel": _b_obstruction,
+    "crosswalk_overtake_check": _b_cw_overtake,
+    "crosswalk_stopped_vehicle_check": _b_cw_stopped,
+    "no_stopping_zones": _b_no_stop_zones,
+    "legal_stop_intervals": _b_legal_stops,
+    "parking_position_check": _b_parking_check,
     "friction_circle_usage": _b_friction_usage,
     "curve_speed_limit": _b_curve_speed,
     "design_min_radius": _b_design_radius,

@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_crossing_lamp_signal — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_crossing_lamp_signal&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>2 灯の赤色せん光灯の明るさ(0..1)を時刻 t(配列)で返す: 形 (n, 2)、列 0 = 左、列 1 = 右。</p>
+<p>1 灯の周期 P = 60 / flash_per_min、点灯 duty·P。右の灯は P/2 遅れ(解釈基準「交互に点滅」)。点くのは</p>
+<p>[t_on, t_off)。`<code style="color:#22d3bf">exposure</code>` &gt; 0 ならカメラの露光 [t, t + exposure] の平均(点灯時間の原始関数で閉形式)。</p>
+<p>2-D 進化レジストリへ橋渡しした drive の op `<code style="color:#22d3bf">crossing_lamp_signal</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p>下面的示例调用的是底层账本算子 <code style="color:#22d3bf">crossing_lamp_signal</code>。此桥接算子只是把同一实现适配为 <code style="color:#22d3bf">fn(v, a, b)</code> 约定，行为完全相同(只是调用形式不同)。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_crossing">poc_driving_crossing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_crossing.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">signal</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_create_funct_1d_array">tb_create_funct_1d_array</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_gauss">tb_smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_mean">tb_smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="op:tb_derivate_funct_1d">tb_derivate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_integrate_funct_1d">tb_integrate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_zero_crossings_funct_1d">tb_zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_abs_funct_1d">tb_abs_funct_1d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_voxel_grid_downsample">tb_voxel_grid_downsample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

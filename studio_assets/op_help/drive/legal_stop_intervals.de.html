@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">legal_stop_intervals — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.legal_stop_intervals(merged, road_start: &#x27;float&#x27;, road_end: &#x27;float&#x27;, car_length: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecrossing; drivecrossing.legal_stop_intervals(merged, road_start: &#x27;float&#x27;, road_end: &#x27;float&#x27;, car_length: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;legal_stop_intervals&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>駐停車禁止の区間(併せた (k, 2))を避けて、車体 [rear, rear + car_length] が丸ごと入る <b>後端の位置</b> の区間 (m, 2)。</p>
+<p>区間の端ちょうど(距離がちょうど 5 m など)は禁止の側に含める(「以内」)ので、車体が端に触れるだけなら許す</p>
+<p>(閉区間の補集合の閉包)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_crossing">poc_driving_crossing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_crossing.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">any</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">crossing</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:crossing_timing_check">crossing_timing_check</a> · <a style="color:#22d3bf" href="opdrive:crossing_gate_state">crossing_gate_state</a> · <a style="color:#22d3bf" href="opdrive:crossing_lamp_signal">crossing_lamp_signal</a> · <a style="color:#22d3bf" href="opdrive:lamp_pair_phase">lamp_pair_phase</a> · <a style="color:#22d3bf" href="opdrive:crossing_clear_time">crossing_clear_time</a> · <a style="color:#22d3bf" href="opdrive:exit_room_check">exit_room_check</a> · <a style="color:#22d3bf" href="opdrive:crossing_stop_check">crossing_stop_check</a> · <a style="color:#22d3bf" href="opdrive:track_sight_distance">track_sight_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivecrossing.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

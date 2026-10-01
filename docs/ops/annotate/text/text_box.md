@@ -4,7 +4,7 @@ dim: annotate
 category: text
 in: image2d × text
 out: image2d
-examples: [annotate_gallery, annotate_paper_tour, drawlist_deferred, poc_ball_bounce, poc_cad_scan_deviation, poc_camera_calibration, poc_camera_shake_deblur, poc_connectome_across_worms, poc_crack_width_timeseries, poc_ct_void_morphology, poc_dem_terrain, poc_dic_strain, poc_driving_decisions, poc_driving_endless_map, poc_driving_lateral, poc_driving_longitudinal, poc_driving_school, poc_driving_traffic, poc_driving_weather, poc_emva1288_sensor, poc_eye_to_brain, poc_focus_stacking, poc_kendama, poc_leak_localization, poc_lidar_terrain_change, poc_machine_condition_fusion, poc_malecns_activity_wave, poc_measurement_system_analysis, poc_multibeam_bathymetry, poc_panorama_drift, poc_particle_tracking, poc_print_warpage_risk, poc_registration_basin, poc_river_surface_velocity, poc_rotation_invariance_audit, poc_stockpile_volume, poc_table_tennis_bounce, poc_table_tennis_rally_loop, poc_table_tennis_spin, poc_template_tracking, poc_timelapse_growth, poc_ttc_rss, poc_world_terrain, poc_wound_area_tracking]
+examples: [annotate_gallery, annotate_paper_tour, drawlist_deferred, poc_ball_bounce, poc_cad_scan_deviation, poc_camera_calibration, poc_camera_shake_deblur, poc_connectome_across_worms, poc_crack_width_timeseries, poc_ct_void_morphology, poc_dem_terrain, poc_dic_strain, poc_driving_crossing, poc_driving_decisions, poc_driving_endless_map, poc_driving_lateral, poc_driving_longitudinal, poc_driving_school, poc_driving_traffic, poc_driving_weather, poc_emva1288_sensor, poc_eye_to_brain, poc_focus_stacking, poc_kendama, poc_leak_localization, poc_lidar_terrain_change, poc_machine_condition_fusion, poc_malecns_activity_wave, poc_measurement_system_analysis, poc_multibeam_bathymetry, poc_panorama_drift, poc_particle_tracking, poc_print_warpage_risk, poc_registration_basin, poc_river_surface_velocity, poc_rotation_invariance_audit, poc_stockpile_volume, poc_table_tennis_bounce, poc_table_tennis_rally_loop, poc_table_tennis_spin, poc_template_tracking, poc_timelapse_growth, poc_ttc_rss, poc_world_terrain, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -100,6 +100,7 @@ ValueError
 - [poc_ct_void_morphology](../../../../examples/poc_ct_void_morphology.py) — `py -3.11 examples/poc_ct_void_morphology.py`
 - [poc_dem_terrain](../../../../examples/poc_dem_terrain.py) — `py -3.11 examples/poc_dem_terrain.py`
 - [poc_dic_strain](../../../../examples/poc_dic_strain.py) — `py -3.11 examples/poc_dic_strain.py`
+- [poc_driving_crossing](../../../../examples/poc_driving_crossing.py) — `py -3.11 examples/poc_driving_crossing.py`
 - [poc_driving_decisions](../../../../examples/poc_driving_decisions.py) — `py -3.11 examples/poc_driving_decisions.py`
 - [poc_driving_endless_map](../../../../examples/poc_driving_endless_map.py) — `py -3.11 examples/poc_driving_endless_map.py`
 - [poc_driving_lateral](../../../../examples/poc_driving_lateral.py) — `py -3.11 examples/poc_driving_lateral.py`

@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">crossing_timing_check — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crossing_timing_check(t_warning, t_closed, t_arrival, *, timing: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecrossing; drivecrossing.crossing_timing_check(t_warning, t_closed, t_arrival, *, timing: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;crossing_timing_check&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>踏切の 3 つの時刻(警報開始・遮断動作の終了・列車の到達)を解釈基準の標準と最小に照らす(配列 = 列車ごと)。</p>
+<p>警報→到達の 30 / 20 秒は解釈基準 5(3) の<b>踏切警報機</b>(遮断機なし)の値。遮断機のある踏切では 4(3)(5) の 2 つ</p>
+<p>(15 + 20 = 35 秒が標準)が効き、30 / 20 秒の側は自動的に満たされる。</p>
+<p>返り値: `<code style="color:#22d3bf">warn_to_closed</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">closed_to_arrival</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">warn_to_arrival</code><code style="color:#22d3bf">(各 [s])、</code><code style="color:#22d3bf">meets_minimum</code>`(3 つとも最小以上)、</p>
+<p>`<code style="color:#22d3bf">deviation</code><code style="color:#22d3bf">(標準からのずれ、3 つ)、</code><code style="color:#22d3bf">spread</code>`(列車ごとの警報開始→到達の最大 − 最小。解釈基準 5(4)「速度等により</p>
+<p>大きく異なるものでない」の量)。時刻の順が逆(遮断終了が警報より前など)は ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_crossing">poc_driving_crossing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_crossing.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">crossing</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:crossing_gate_state">crossing_gate_state</a> · <a style="color:#22d3bf" href="opdrive:crossing_lamp_signal">crossing_lamp_signal</a> · <a style="color:#22d3bf" href="opdrive:lamp_pair_phase">lamp_pair_phase</a> · <a style="color:#22d3bf" href="opdrive:crossing_clear_time">crossing_clear_time</a> · <a style="color:#22d3bf" href="opdrive:exit_room_check">exit_room_check</a> · <a style="color:#22d3bf" href="opdrive:crossing_stop_check">crossing_stop_check</a> · <a style="color:#22d3bf" href="opdrive:track_sight_distance">track_sight_distance</a> · <a style="color:#22d3bf" href="opdrive:sight_triangle_distance">sight_triangle_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivecrossing.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

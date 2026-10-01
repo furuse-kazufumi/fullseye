@@ -1,0 +1,6 @@
+方針	渡った	crossing_stop_check の違反(人数)	列車が着くとき線路の上
+ルール(止まる・左右・警報・余地)	240	なし	0
+止まらない(前の車に続く)	240	no_stop 79	0
+左右を確かめない	240	no_look 240	0
+警報中でも入る	240	entered_while_forbidden 157	23
+向こう側が詰まっていても入る	240	no_exit_room 10, stopped_inside 7	0

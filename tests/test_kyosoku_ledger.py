@@ -61,5 +61,5 @@ def test_the_ledger_and_the_pocs_name_each_other():
 def test_the_counts_are_reported_with_reasons():
     c = Counter(r["status"] for r in _ledger()["scenarios"])
     assert sum(c.values()) == 159
-    assert c["reproduced"] >= 22                  # 第 10 回の時点(下がったら PoC が場面を落とした)
+    assert c["reproduced"] >= 33                  # 第 11 回の時点(下がったら PoC が場面を落とした)
     assert c["not_reproducible"] <= 10            # 「再現不能」に逃がしすぎない

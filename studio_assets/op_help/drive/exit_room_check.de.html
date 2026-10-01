@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">exit_room_check — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exit_room_check(queue_rear, far_edge: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, gap: &#x27;float&#x27; = 1.0, beyond: &#x27;float&#x27; = 0.5)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecrossing; drivecrossing.exit_room_check(queue_rear, far_edge: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, gap: &#x27;float&#x27; = 1.0, beyond: &#x27;float&#x27; = 0.5)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;exit_room_check&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>踏切(横断歩道・交差点も同じ)の向こう側に、自分が止まれる余地があるか(50 条 2 項)。配列可。</p>
+<p>前の車の後端 `<code style="color:#22d3bf">queue_rear</code><code style="color:#22d3bf"> の後ろ </code><code style="color:#22d3bf">gap</code>` で止まると、自分の後端 = queue_rear − gap − car_length。これが</p>
+<p>far_edge + beyond 以上なら入ってよい。返り値: `<code style="color:#22d3bf">room</code><code style="color:#22d3bf"> = queue_rear − far_edge、</code><code style="color:#22d3bf">need</code>` = car_length + gap + beyond、</p>
+<p>`<code style="color:#22d3bf">ok</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">rear_if_stopped</code>`。前の車が無い場合は queue_rear = +∞。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_crossing">poc_driving_crossing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_crossing.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">crossing</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:crossing_timing_check">crossing_timing_check</a> · <a style="color:#22d3bf" href="opdrive:crossing_gate_state">crossing_gate_state</a> · <a style="color:#22d3bf" href="opdrive:crossing_lamp_signal">crossing_lamp_signal</a> · <a style="color:#22d3bf" href="opdrive:lamp_pair_phase">lamp_pair_phase</a> · <a style="color:#22d3bf" href="opdrive:crossing_clear_time">crossing_clear_time</a> · <a style="color:#22d3bf" href="opdrive:crossing_stop_check">crossing_stop_check</a> · <a style="color:#22d3bf" href="opdrive:track_sight_distance">track_sight_distance</a> · <a style="color:#22d3bf" href="opdrive:sight_triangle_distance">sight_triangle_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivecrossing.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

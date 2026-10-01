@@ -5028,6 +5028,50 @@ py -3.11 examples/poc_driving_lateral.py
 
 使用 op(ノートへ): [`ackermann_steer_angles`](https://furuse.work/ops/drive/lateral/ackermann_steer_angles.html) · [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_mesh_object.html) · [`bicycle_model_step`](https://furuse.work/ops/drive/lateral/bicycle_model_step.html) · [`clothoid_design`](https://furuse.work/ops/drive/lateral/clothoid_design.html) · [`clothoid_points`](https://furuse.work/ops/drive/lateral/clothoid_points.html) · [`curvature_speed_plan`](https://furuse.work/ops/drive/lateral/curvature_speed_plan.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`friction_circle_usage`](https://furuse.work/ops/drive/lateral/friction_circle_usage.html) · [`lateral_offset`](https://furuse.work/ops/drive/lateral/lateral_offset.html) · [`offtracking_circle`](https://furuse.work/ops/drive/lateral/offtracking_circle.html) · [`pure_pursuit_circle_offset`](https://furuse.work/ops/drive/lateral/pure_pursuit_circle_offset.html) · [`pure_pursuit_curvature`](https://furuse.work/ops/drive/lateral/pure_pursuit_curvature.html) · [`rear_axle_path`](https://furuse.work/ops/drive/lateral/rear_axle_path.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`time_to_line_crossing`](https://furuse.work/ops/drive/lateral/time_to_line_crossing.html) · [`turn_maneuver_check`](https://furuse.work/ops/drive/lateral/turn_maneuver_check.html) · [`understeer_gradient`](https://furuse.work/ops/drive/lateral/understeer_gradient.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html) · [`world_move`](https://furuse.work/ops/drive/world/world_move.html)
 
+## No.2026.182 —— 踏切と交差点の優先 ―― 直前で止まって左右を見る、警報の間は入らない、向こう側が詰まっていれば入らない、広い道へは譲る
+
+[![踏切と交差点の優先 ―― 直前で止まって左右を見る、警報の間は入らない、向こう側が詰まっていれば入らない、広い道へは譲る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.gif)
+
+*↑ **踏切と交差点の優先 ―― 直前で止まって左右を見る、警報の間は入らない、向こう側が詰まっていれば入らない、広い道へは譲る** ―― 教則の台帳の未着手から、ルールベースの部品で再現できる場面をまとめて拾った —— 踏切(直前で一時停止して左右・警報中は入らない・向こう側が詰まっていれば入らない・やや中央寄り)、交差点の優先(広い道へ徐行して譲る・左方優先)、横断歩道(停止車両の横の一時停止・30 m 以内の追越し禁止)、駐停車禁止の距離。新モジュール drivecrossing 17 op、乱数の値は標本の門(0.1 % 点と KS)。門: 鉄道の解釈基準の時刻(遮断機つき 警報→遮断 15 s・遮断→到達 20 s)を満たし、固定の始動点が最小を割る速さは閉形式で 152 km/h / ルールの 240 人は違反 0・全員が渡り切り・列車が着くとき線路の上 0 人(余裕 最小 31.5 s)、止まらない版 no_stop 79・警報中に入る版 157(状態機械の数と一致、うち 23 人が線路の上)/ 見通しの三角形の閉形式 19.03 m = 光線の総当たり、見えない列車の確率 建物 7.92e-03・確かめ直さない 2.11e-02 を閉形式・MC・重要度サンプリングが 1.1σ 以内で一致 / 広い道で交差道路の車に減速を一切させない、素朴は進行妨害 104 / 240、左方優先は右から来る車が譲る場面もある / 横断歩道の停止車両の横は一時停止、30 m 以内で車の前に出ない(自転車は除外)/ 44 条の禁止区間 = 1 mm 格子で直接塗った答え、止まりたい所に止まると違反 476 / 1000(6 種類すべて)/ 警報灯の交互点滅を画素から 0.833 Hz・位相差 π、間引くと折り返しの式どおり 0.500 Hz。見つけたこと: 警報→到達 30 s は遮断機の無い踏切の値、固定の始動点では遅い列車ほど警報が長い、発進直後に警報が始まるジレンマ、門を素通りした汚れ(灯を隠す列車の色)を目視で見つけた。正直に: 幅の比 1.5・「急に」2.0 m/s²・遮断かんの時刻・参照分布は仮定、警報灯の毎分 50 回は二次資料、音での確認は扱わない。教則の台帳は再現 33・一部 14・不能 7・未着手 105。22 門、18.7 s。*
+
+[![車載カメラ(640 × 360、114 コマ)。片側 2 車線、左の車線の SUV が横断歩道の直前で止まっている(歩行者 1.78 m/s が陰から渡る)。場面 1(72 コマ): 横に並ぶ前に一時停止、徐行で横断歩道の直前へ出て、歩行者](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/02_crosswalk_dashcam.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/02_crosswalk_dashcam.gif)
+
+*↑ 測定の図 ―― 車載カメラ(640 × 360、114 コマ)。片側 2 車線、左の車線の SUV が横断歩道の直前で止まっている(歩行者 1.78 m/s が陰から渡る)。場面 1(72 コマ): 横に並ぶ前に一時停止、徐行で横断歩道の直前へ出て、歩行者が見えて渡り終えるまで待つ —— crosswalk_stopped_vehicle_check = 違反なし、触れた = いいえ。場面 2(42 コマ): 40 km/h のまま横を抜け、見えてから 0.75 s 後に 6 m/s² で止まろうとする —— 判定 = 38 条 2 項の違反、触れた = はい。*
+
+[![主図の場面 1 の時刻。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/05_crossing_timeline_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/05_crossing_timeline.png)
+
+*↑ 主図の場面 1 の時刻。*
+
+[![主図の車載カメラのコマ(4.0 fps、運転者が前を向いて止まっている間、列車が灯を隠す前まで)で、向こう側の柱の 2 灯の画素を読んだ時系列。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/06_lamp_pixels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/06_lamp_pixels.png)
+
+*↑ 主図の車載カメラのコマ(4.0 fps、運転者が前を向いて止まっている間、列車が灯を隠す前まで)で、向こう側の柱の 2 灯の画素を読んだ時系列。*
+
+[![見える距離 19.0 m(sight_triangle_distance = 光線の総当たり)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/08_hidden_train_estimates_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/08_hidden_train_estimates.png)
+
+*↑ 見える距離 19.0 m(sight_triangle_distance = 光線の総当たり)。*
+
+[![同じ 240 人(列車の速さ・発進・見る時間は標本の門を通った値)を 5 通りの方針で。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/10_crossing_policies_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/10_crossing_policies.png)
+
+*↑ 同じ 240 人(列車の速さ・発進・見る時間は標本の門を通った値)を 5 通りの方針で。*
+
+[![上から見た動画(151 コマ、0.5 秒ごと)。乱数の場面 #116(列車 96 km/h、向こう側の列の後端 = 踏切の端から 3.6 m)を 3 人で。左 = ルール(違反なし)、中 = 向こう側が詰まっていても入る(no_exit_r](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/03_crossing_birdseye.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/03_crossing_birdseye.gif)
+
+*↑ 動く図 ―― 上から見た動画(151 コマ、0.5 秒ごと)。乱数の場面 #116(列車 96 km/h、向こう側の列の後端 = 踏切の端から 3.6 m)を 3 人で。左 = ルール(違反なし)、中 = 向こう側が詰まっていても入る(no_exit_room, stopped_inside)、右 = 警報中でも入る(entered_while_forbidden、列車が着くとき線路の上 = いいえ)。赤い車 = 警報〜上昇中に車体が踏切の上。*
+
+[![上から見た動画(85 コマ)。狭い道(4 m)から広い道(7.0 m)へ(S098、36 条 2・3 項)。場面 #0 の同じ交差道路の車で、左 = ルール(線で徐行 10 km/h、7.9 s 待ってから、交差道路の車に減速を一切させない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/04_priority_birdseye.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/04_priority_birdseye.gif)
+
+*↑ 動く図 ―― 上から見た動画(85 コマ)。狭い道(4 m)から広い道(7.0 m)へ(S098、36 条 2・3 項)。場面 #0 の同じ交差道路の車で、左 = ルール(線で徐行 10 km/h、7.9 s 待ってから、交差道路の車に減速を一切させない時刻に発進)、右 = 30 km/h のまま入る(交差道路の車に要った減速度 最大 5.1 m/s² = 進行妨害)。*
+
+```
+py -3.11 examples/poc_driving_crossing.py
+```
+
+ソース: [examples/poc_driving_crossing.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_driving_crossing.py)
+
+この回が作った図は全部で **11 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_crossing)
+
+使用 op(ノートへ): [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_mesh_object.html) · [`aliased_frequency`](https://furuse.work/ops/drive/decide/aliased_frequency.html) · [`conflict_zone_intervals`](https://furuse.work/ops/drive/crossing/conflict_zone_intervals.html) · [`crossing_clear_time`](https://furuse.work/ops/drive/crossing/crossing_clear_time.html) · [`crossing_gate_state`](https://furuse.work/ops/drive/crossing/crossing_gate_state.html) · [`crossing_lamp_signal`](https://furuse.work/ops/drive/crossing/crossing_lamp_signal.html) · [`crossing_stop_check`](https://furuse.work/ops/drive/crossing/crossing_stop_check.html) · [`crossing_timing_check`](https://furuse.work/ops/drive/crossing/crossing_timing_check.html) · [`crosswalk_mesh`](https://furuse.work/ops/drive/terrain/crosswalk_mesh.html) · [`crosswalk_overtake_check`](https://furuse.work/ops/drive/crossing/crosswalk_overtake_check.html) · [`crosswalk_stopped_vehicle_check`](https://furuse.work/ops/drive/crossing/crosswalk_stopped_vehicle_check.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`exit_room_check`](https://furuse.work/ops/drive/crossing/exit_room_check.html) · [`flash_frequency`](https://furuse.work/ops/drive/decide/flash_frequency.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`lamp_pair_phase`](https://furuse.work/ops/drive/crossing/lamp_pair_phase.html) · [`legal_stop_intervals`](https://furuse.work/ops/drive/crossing/legal_stop_intervals.html) · [`no_stopping_zones`](https://furuse.work/ops/drive/crossing/no_stopping_zones.html) · [`obstruction_decel`](https://furuse.work/ops/drive/crossing/obstruction_decel.html) · [`parking_position_check`](https://furuse.work/ops/drive/crossing/parking_position_check.html) · [`pedestrian_mesh`](https://furuse.work/ops/drive/terrain/pedestrian_mesh.html) · [`priority_rule`](https://furuse.work/ops/drive/crossing/priority_rule.html) · [`sight_triangle_distance`](https://furuse.work/ops/drive/crossing/sight_triangle_distance.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) …(他 3)
+
 ### 数学の絵 ―― 定理が門になる回(別記事)
 
 この展示先の回は、計測の展示館ではなく**数学の絵のシリーズ**に掛かっています。分ける基準は「真値がどこから来るか」です —— 計測の展示は測る対象があり真値は対象の側に、ここの回は対象が無く、真値は描いた絵そのものの定理・恒等式・不変量から出ます。記事は手書きなので、生成器はここを描きません。

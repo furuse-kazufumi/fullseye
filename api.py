@@ -537,6 +537,13 @@ import driveinf  # noqa: E402  (終わらない地図: 決定的な区画・継�
 import drivetraffic  # noqa: E402  (動く交通参加者と死角: IDM と癖・横ふらつき・歩行者の意図・死角・すれ違い・稀な飛び出し)
 import drivedecide  # noqa: E402  (判断の場面: ミラー・確認の順序・信号の予測・緊急車両・バスの発進)
 import drivelateral  # noqa: E402  (横の運動: 摩擦円・2 輪モデル・内輪差・クロソイド・位置保持の制御則・速度計画)
+import drivecrossing  # noqa: E402  (踏切と交差点の優先: 警報と遮断機・余地・見通し・優先・横断歩道・駐停車禁止)
+from drivecrossing import (  # noqa: E402,F401
+    crossing_timing_check, crossing_gate_state, crossing_lamp_signal, lamp_pair_phase, crossing_clear_time,
+    exit_room_check, crossing_stop_check, track_sight_distance, sight_triangle_distance, priority_rule,
+    conflict_zone_intervals, obstruction_decel, crosswalk_overtake_check, crosswalk_stopped_vehicle_check,
+    no_stopping_zones, legal_stop_intervals, parking_position_check,
+)
 from drivelateral import (  # noqa: E402,F401
     friction_circle_usage, curve_speed_limit, design_min_radius, understeer_gradient, steady_cornering,
     bicycle_model_step, ackermann_steer_angles, offtracking_circle, rear_axle_path, fresnel_integrals,
