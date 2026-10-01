@@ -44,7 +44,9 @@ def _queries(names, rng):
 
 def test_index_equals_brute_force_on_real_op_names(names, index):
     rng = random.Random(7)
-    for q in _queries(names, rng):
+    qs = _queries(names, rng)
+    assert len(qs) > 500, len(qs)                      # 空の一覧で素通りしない
+    for q in qs:
         assert index.search(q, limit=None) == OS.brute_force_search(names, q), q
         assert index.search(q, limit=50) == OS.brute_force_search(names, q, limit=50), q   # 打ち切りの近道も同じ答え
 
