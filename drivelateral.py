@@ -251,7 +251,7 @@ def curve_speed_limit(radius, *, side_friction: float, superelevation: float = 0
 
 
 def design_min_radius(design_speed_kmh, *, side_friction: float, superelevation: float) -> np.ndarray:
-    """道路構造令の解説 (3) 式の最小曲線半径 R = V² / (127 (i + f)) [m](V は km/h)。
+    """道路構造令の解説 (3) 式の最小曲線半径 R = V² / (127 (i + f)) [m] (V は km/h)。
 
     (2) 式から分母の i f を落とし(i f ≪ 1)、3.6² g ≈ 127 とした設計の式。厳密な上限速度は :func:`curve_speed_limit`。
 

@@ -96,8 +96,10 @@ def scan_notes(ops_docs: str = OPS_DOCS) -> dict[str, list[dict]]:
     for p in sorted(glob.glob(os.path.join(ops_docs, "**", "*.md"), recursive=True)):
         if os.sep + "_fig" + os.sep in p:
             continue
+        # ★frontmatter は閉じ線まで読む(2026-10-02): 先頭 1200 文字で切っていたら、examples: の行が 44 本に伸びた
+        #   text_box の閉じ線が範囲の外に出て「op の無いノート」に見え、索引の op がノートから引けなくなった。
         with open(p, encoding="utf-8") as f:
-            fm = _frontmatter(f.read(1200))
+            fm = _frontmatter(_read_frontmatter_block(f))
         name = fm.get("op")
         if not name:
             continue
@@ -128,6 +130,21 @@ _FM_RE = re.compile(r"\A---\r?\n(.*?)\r?\n---\r?\n", re.S)
 
 class CatalogError(RuntimeError):
     """カタログを組めない(正本が無い等)。黙って空のカタログにしない。"""
+
+
+def _read_frontmatter_block(f, limit: int = 1 << 20) -> str:
+    """先頭の ``---`` から閉じの ``---`` の行までを読む(本文は読まない)。閉じ線が無ければ ``limit`` 文字で打ち切る。"""
+    first = f.readline()
+    if first.strip() != "---":
+        return first
+    buf = [first]
+    n = len(first)
+    for line in f:
+        buf.append(line)
+        n += len(line)
+        if line.strip() == "---" or n > limit:
+            break
+    return "".join(buf)
 
 
 def _frontmatter(text: str) -> dict[str, str]:

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2501,
- "n_notes": 2507,
+ "n_ops": 2502,
+ "n_notes": 2508,
  "notes": {
   "vol_dilate": [
    {
@@ -14469,6 +14469,16 @@
     "in": "text",
     "out": "table",
     "path": "docs/ops/annotate/text/measure_text.md"
+   }
+  ],
+  "text_box": [
+   {
+    "op": "text_box",
+    "dim": "annotate",
+    "category": "text",
+    "in": "image2d × text",
+    "out": "image2d",
+    "path": "docs/ops/annotate/text/text_box.md"
    }
   ],
   "align_frames": [
