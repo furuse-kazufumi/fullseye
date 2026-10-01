@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">aliased_frequency — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aliased_frequency(f, fps)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivedecide; drivedecide.aliased_frequency(f, fps)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;aliased_frequency&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>周波数 `<code style="color:#22d3bf">f</code><code style="color:#22d3bf"> [Hz] の明滅をフレームレート </code><code style="color:#22d3bf">fps</code>` で標本化したときの <b>見かけの</b> 周波数(閉形式)。</p>
+<p>f_a = | f − fps · round(f / fps) |  ∈ [0, fps/2]</p>
+<p>f &lt; fps/2 ならそのまま、fps の整数倍に近いほど遅く見える(車輪が止まって見える現象と同じ)。配列も可。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">any</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">decide</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:mirror_reflection_matrix">mirror_reflection_matrix</a> · <a style="color:#22d3bf" href="opdrive:mirror_virtual_camera">mirror_virtual_camera</a> · <a style="color:#22d3bf" href="opdrive:mirror_aim_normal">mirror_aim_normal</a> · <a style="color:#22d3bf" href="opdrive:convex_mirror_fov">convex_mirror_fov</a> · <a style="color:#22d3bf" href="opdrive:mirror_blind_zone">mirror_blind_zone</a> · <a style="color:#22d3bf" href="opdrive:check_sequence_score">check_sequence_score</a> · <a style="color:#22d3bf" href="opdrive:signal_phase_plan">signal_phase_plan</a> · <a style="color:#22d3bf" href="opdrive:signal_state">signal_state</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivedecide.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

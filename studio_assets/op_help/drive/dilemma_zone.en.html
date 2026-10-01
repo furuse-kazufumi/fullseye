@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dilemma_zone — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dilemma_zone(v, *, reaction: &#x27;float&#x27;, decel: &#x27;float&#x27;, amber: &#x27;float&#x27;, intersection_width: &#x27;float&#x27;, car_length: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivedecide; drivedecide.dilemma_zone(v, *, reaction: &#x27;float&#x27;, decel: &#x27;float&#x27;, amber: &#x27;float&#x27;, intersection_width: &#x27;float&#x27;, car_length: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;dilemma_zone&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>黄信号のジレンマゾーン(Gazis, Herman, Maradudin 1960)。</p>
+<p>速度 `<code style="color:#22d3bf">v</code>` で停止線の手前 x にいるとき黄が点いた:</p>
+<p>止まれる     ⇔ x ≥ x_c = v δ + v²/(2a)                         (δ = reaction、a = decel)</p>
+<p>抜けられる   ⇔ x ≤ x_0 = v τ + ½ a₁ (τ − δ)² − (w + L)          (τ = amber、a₁ = accel ≥ 0、w = 交差点の幅、L = 車長)</p>
+<p>(a₁ = 0 が基本形。加速は反応の後から黄の終わりまで、と置いた形。τ ≤ δ なら加速項は 0。)</p>
+<p>max(x_0, 0) &lt; x &lt; x_c が <b>ジレンマゾーン</b>(止まれず抜けられない。x &lt; 0 は停止線を越えているので除く)、</p>
+<p>x_c ≤ x ≤ x_0 が <b>選べる区間</b>(両方できる)。</p>
+<p>日本の法令の読み: 教則 付表1(黄)は「停止位置に近く安全に止まれない場合はそのまま進行可」= **停止線を越えれば</p>
+<p>よい**(交差点を黄のうちに抜ける義務ではない)。その読みでは `<code style="color:#22d3bf">intersection_width = car_length = 0</code>` として呼ぶ</p>
+<p>(x_0 = vτ)。GHM の「交差点を抜ける」は全赤の時間が無い前提の厳しい読み。</p>
+<p>返り値: `<code style="color:#22d3bf">x_stop_min</code><code style="color:#22d3bf"> = x_c、</code><code style="color:#22d3bf">x_clear_max</code><code style="color:#22d3bf"> = x_0、</code><code style="color:#22d3bf">dilemma</code><code style="color:#22d3bf">((lo, hi) か None)、</code><code style="color:#22d3bf">option</code>`(同)、</p>
+<p>`<code style="color:#22d3bf">length</code><code style="color:#22d3bf">(ジレンマゾーンの長さ、無ければ 0)、</code><code style="color:#22d3bf">v_critical</code>`(a₁ = 0 のとき x_c = x_0 になる速度の組。</p>
+<p>実根が無ければ空 = どの速度でもジレンマが無い)。`<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> は 1 つの数(配列は </code><code style="color:#22d3bf">np.vectorize</code>` などで)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">decide</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:mirror_reflection_matrix">mirror_reflection_matrix</a> · <a style="color:#22d3bf" href="opdrive:mirror_virtual_camera">mirror_virtual_camera</a> · <a style="color:#22d3bf" href="opdrive:mirror_aim_normal">mirror_aim_normal</a> · <a style="color:#22d3bf" href="opdrive:convex_mirror_fov">convex_mirror_fov</a> · <a style="color:#22d3bf" href="opdrive:mirror_blind_zone">mirror_blind_zone</a> · <a style="color:#22d3bf" href="opdrive:check_sequence_score">check_sequence_score</a> · <a style="color:#22d3bf" href="opdrive:signal_phase_plan">signal_phase_plan</a> · <a style="color:#22d3bf" href="opdrive:signal_state">signal_state</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivedecide.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

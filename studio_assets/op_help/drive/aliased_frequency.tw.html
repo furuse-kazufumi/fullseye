@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">aliased_frequency — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aliased_frequency(f, fps)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivedecide; drivedecide.aliased_frequency(f, fps)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;aliased_frequency&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>周波数 `<code style="color:#22d3bf">f</code><code style="color:#22d3bf"> [Hz] の明滅をフレームレート </code><code style="color:#22d3bf">fps</code>` で標本化したときの <b>見かけの</b> 周波数(閉形式)。</p>
+<p>f_a = | f − fps · round(f / fps) |  ∈ [0, fps/2]</p>
+<p>f &lt; fps/2 ならそのまま、fps の整数倍に近いほど遅く見える(車輪が止まって見える現象と同じ)。配列も可。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">any</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">decide</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:mirror_reflection_matrix">mirror_reflection_matrix</a> · <a style="color:#22d3bf" href="opdrive:mirror_virtual_camera">mirror_virtual_camera</a> · <a style="color:#22d3bf" href="opdrive:mirror_aim_normal">mirror_aim_normal</a> · <a style="color:#22d3bf" href="opdrive:convex_mirror_fov">convex_mirror_fov</a> · <a style="color:#22d3bf" href="opdrive:mirror_blind_zone">mirror_blind_zone</a> · <a style="color:#22d3bf" href="opdrive:check_sequence_score">check_sequence_score</a> · <a style="color:#22d3bf" href="opdrive:signal_phase_plan">signal_phase_plan</a> · <a style="color:#22d3bf" href="opdrive:signal_state">signal_state</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivedecide.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

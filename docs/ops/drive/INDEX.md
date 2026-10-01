@@ -1,4 +1,4 @@
-# DRIVE operator help — 216 ops in 18 categories
+# DRIVE operator help — 234 ops in 19 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -19,6 +19,10 @@
 ### course (13)
 
 [course_contains](course/course_contains.md) · [course_crank](course/course_crank.md) · [course_crossing](course/course_crossing.md) · [course_intersection](course/course_intersection.md) · [course_layout](course/course_layout.md) · [course_loop](course/course_loop.md) · [course_loop_bend](course/course_loop_bend.md) · [course_occupancy](course/course_occupancy.md) · [course_parallel_parking](course/course_parallel_parking.md) · [course_road](course/course_road.md) · [course_s_curve](course/course_s_curve.md) · [course_slope](course/course_slope.md) · [course_turnaround](course/course_turnaround.md)
+
+### decide (18)
+
+[aliased_frequency](decide/aliased_frequency.md) · [bus_departure_yield_check](decide/bus_departure_yield_check.md) · [check_sequence_score](decide/check_sequence_score.md) · [convex_mirror_fov](decide/convex_mirror_fov.md) · [dilemma_zone](decide/dilemma_zone.md) · [doppler_shift](decide/doppler_shift.md) · [doppler_track](decide/doppler_track.md) · [flash_frequency](decide/flash_frequency.md) · [mirror_aim_normal](decide/mirror_aim_normal.md) · [mirror_blind_zone](decide/mirror_blind_zone.md) · [mirror_reflection_matrix](decide/mirror_reflection_matrix.md) · [mirror_virtual_camera](decide/mirror_virtual_camera.md) · [predict_amber_onset](decide/predict_amber_onset.md) · [signal_phase_plan](decide/signal_phase_plan.md) · [signal_state](decide/signal_state.md) · [siren_signal](decide/siren_signal.md) · [tdoa_bearing](decide/tdoa_bearing.md) · [yield_maneuver_check](decide/yield_maneuver_check.md)
 
 ### env (16)
 

@@ -9,6 +9,7 @@
 太陽と天気(driveenv: 太陽の位置 = 暦計算室、影・逆光の光幕・霧 Koschmieder・雨・夜の前照灯を物理の単位で描き、見えてから止まれる速さ)。
 終わらない地図(driveinf: 区画の番号と種だけで決まる区画、辺のハッシュで継ぎ目がつながる道、整数格子の起伏、(区画, 区画の中) の座標)。
 動く交通参加者と死角(drivetraffic: IDM の車列と運転の癖、OU の横ふらつき、Social Force の歩行者と横断の意図、路肩駐車の死角から止まれる速さ、対向車とのすれ違いの境目、場所と時刻で変わる飛び出しの率、重要度サンプリングの事故率)。
+判断の場面(drivedecide: ミラーを鏡の向こうの仮想カメラで描く・凸面鏡の視野と死角、確認と合図の順序の採点、歩行者信号から車両の黄を予測・ジレンマゾーン、点滅の周波数と折り返し、サイレンのドップラーと到着時間差の方位、緊急車両への譲り(道交法 40 条)とバスの発進(31 条の 2)の採点)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -32,6 +33,7 @@ import driveterrain
 import driveenv
 import driveinf
 import drivetraffic
+import drivedecide
 import drivelong
 import drivettc
 import gsplatnp
@@ -47,7 +49,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -345,6 +347,30 @@ _CATALOG = {
         ("poisson_events", "drivetraffic", ["any"], "signal"),
         ("poisson_events_xt", "drivetraffic", ["any"], "any"),
         ("importance_risk_estimate", "drivetraffic", ["any"], "table"),
+    ],
+    # 判断の場面: ミラーは鏡の向こうの仮想カメラ(反射 I − 2nnᵀ)、凸面鏡は鏡の縁で反射した光線で死角を囲む。確認の順序は
+    # 教則の「ミラー → 合図(約 3 秒前 / 30 m 手前)→ 進路変更 → 合図をやめる」を丁運発第44号の点数で採点。信号は歩行者の青点滅から
+    # 車両の黄を予測し、ジレンマゾーンは GHM(1960)と停止線の読みの両方。救急車はサイレンのドップラーと 2 本のマイクの到着時間差、
+    # 赤色灯の点滅(カメラの fps で折り返す)、譲りは道交法 40 条、バスの発進は 31 条の 2 の「急に減速しないと譲れない」で採点。
+    "decide": [
+        ("mirror_reflection_matrix", "drivedecide", [], "any"),
+        ("mirror_virtual_camera", "drivedecide", ["any"], "table"),
+        ("mirror_aim_normal", "drivedecide", [], "any"),
+        ("convex_mirror_fov", "drivedecide", [], "table"),
+        ("mirror_blind_zone", "drivedecide", [], "table"),
+        ("check_sequence_score", "drivedecide", ["table"], "table"),
+        ("signal_phase_plan", "drivedecide", [], "table"),
+        ("signal_state", "drivedecide", ["table"], "any"),
+        ("predict_amber_onset", "drivedecide", ["table"], "table"),
+        ("dilemma_zone", "drivedecide", ["any"], "table"),
+        ("flash_frequency", "drivedecide", ["signal"], "table"),
+        ("aliased_frequency", "drivedecide", ["any"], "any"),
+        ("siren_signal", "drivedecide", [], "table"),
+        ("doppler_shift", "drivedecide", ["any"], "any"),
+        ("doppler_track", "drivedecide", ["signal"], "table"),
+        ("tdoa_bearing", "drivedecide", ["signal", "signal"], "table"),
+        ("yield_maneuver_check", "drivedecide", ["table"], "table"),
+        ("bus_departure_yield_check", "drivedecide", ["table"], "table"),
     ],
 }
 

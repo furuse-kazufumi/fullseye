@@ -76,9 +76,11 @@
      "source": "教則 付表1備考"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_decisions"
+   ],
+   "note": "歩行者信号の青点滅から車両の黄を予測し、黄の瞬間にジレンマゾーン(GHM と停止線の読みの両方)に入らない。予測しない自車は 48 / 600 試行で入る"
   },
   {
    "id": "S003",
@@ -458,9 +460,11 @@
      "source": "法40条1項"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_decisions"
+   ],
+   "note": "サイレンのドップラー・到着時間差とミラーの赤色灯の点滅で気づき、交差点の手前で左に寄って一時停止(yield_maneuver_check の 40 条 1 項)"
   },
   {
    "id": "S027",
@@ -472,9 +476,11 @@
    "law_status": "OK",
    "scoreability": "B",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_decisions"
+   ],
+   "note": "交差点の附近でない所では左に寄って譲る(yield_maneuver_check の 40 条 2 項、一時停止は求めない)"
   },
   {
    "id": "S028",
@@ -500,11 +506,12 @@
    "law_status": "OK",
    "scoreability": "B",
    "numbers": [],
-   "status": "partial",
+   "status": "reproduced",
    "reproduced_by": [
-    "poc_driving_traffic"
+    "poc_driving_traffic",
+    "poc_driving_decisions"
    ],
-   "note": "停車中のバスの前後で飛び出しが多い場所。発車まで待つ。発進の合図を妨げない門は無い"
+   "note": "第 8 回 = 停車中のバスの前後の飛び出し(発車まで待つ)。第 9 回 = 発進の合図をしたバスの進路を妨げない門(bus_departure_yield_check: 譲るのに要る減速の閉形式で「急に減速しないと譲れない」を判定)"
   },
   {
    "id": "S030",
@@ -921,9 +928,11 @@
    "law_status": "OK",
    "scoreability": "B",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_decisions"
+   ],
+   "note": "左側の自転車の巻き込みだけ(ドアミラーで左後方を確かめて待つ)。交差道路の自転車と、相手が自車を認識しているかは無い"
   },
   {
    "id": "S055",
@@ -1138,9 +1147,11 @@
      "source": "教則 5-5-1表"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_decisions"
+   ],
+   "note": "左折の 30 m 手前で合図(check_sequence_score、許容 −3 m は仮定)。15 m 手前の版は合図不履行等 5 点の減点"
   },
   {
    "id": "S067",
@@ -1158,9 +1169,11 @@
      "source": "教則 5-5-1表"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_decisions"
+   ],
+   "note": "ミラー → 約 3 秒前に合図 → 進路変更(check_sequence_score、許容 ±0.5 s は仮定)。ミラーが合図の後・無しは安全不確認 10 点"
   },
   {
    "id": "S068",
@@ -1200,9 +1213,11 @@
    "law_status": "OK",
    "scoreability": "B",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_decisions"
+   ],
+   "note": "行為が終わったら合図をやめる / 途中でやめる・出したままは減点(check_sequence_score、2 s 以内は仮定)"
   },
   {
    "id": "S071",
@@ -1522,9 +1537,11 @@
    "law_status": "NONE",
    "scoreability": "B",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_decisions"
+   ],
+   "note": "左折の前に左後方の自転車を確かめて巻き込まない。内輪差(後輪の軌跡)は扱っていない"
   },
   {
    "id": "S092",

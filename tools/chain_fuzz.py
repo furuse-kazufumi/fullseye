@@ -2328,6 +2328,107 @@ def _b_importance_risk(pool, rng):
     return (hit, low, high, 200, 4), {"x_max": 100.0, "boosted_rate_max": 0.02}
 
 
+_DD_PLAN = dict(crossing_length=15.0, ped_green=12.0, walk_speed=1.0, ped_red_to_amber=2.0, amber=3.0, all_red=2.0,
+                cross_green=20.0)
+
+
+def _dd_traj():
+    import numpy as np
+    t = np.arange(0.0, 20.0, 0.1)
+    v = np.maximum(0.0, 10.0 - 1.0 * t)
+    x = 80.0 + np.concatenate([[0.0], np.cumsum(0.5 * (v[1:] + v[:-1]) * 0.1)])
+    y = np.maximum(0.3, 1.5 - 0.1 * np.arange(len(t)))
+    return {"t": t, "x": x, "y": y, "v": v}
+
+
+def _b_mirror_matrix(pool, rng):
+    return ([0.3, -1.0, 0.5, 2.0],), {}
+
+
+def _b_mirror_vcam(pool, rng):
+    import numpy as np
+    P = np.eye(4)
+    P[2, 3] = 5.0
+    return (P, [0.0, 0.0, 1.0, 0.0]), {}
+
+
+def _b_mirror_aim(pool, rng):
+    return ((0.0, 0.4), (1.0, 1.0), (-1.0, 0.1)), {}
+
+
+def _b_convex_fov(pool, rng):
+    return (1.4, 0.18, 0.6), {}
+
+
+def _b_mirror_blind(pool, rng):
+    import drivedecide as DD
+    n0 = DD.mirror_aim_normal((0.4, 0.4), (0.9, 1.05), (-1.0, 0.1))
+    return ((0.4, 0.4), (0.9, 1.05), n0, 0.18), {"mirror_radius": 1.4}
+
+
+def _b_check_seq(pool, rng):
+    return ([{"t": 1.0, "kind": "signal_on"}, {"t": 0.0, "kind": "mirror"}, {"t": 4.0, "kind": "start"},
+             {"t": 7.0, "kind": "end"}, {"t": 7.5, "kind": "signal_off"}],), {}
+
+
+def _b_signal_plan(pool, rng):
+    return (), dict(_DD_PLAN)
+
+
+def _b_signal_state(pool, rng):
+    import drivedecide as DD
+    import numpy as np
+    return (DD.signal_phase_plan(**_DD_PLAN), "ped_A", np.linspace(0.0, 60.0, 61)), {}
+
+
+def _b_predict_amber(pool, rng):
+    return ([(0.0, "green"), (11.5, "green"), (12.0, "flash"), (13.0, "flash")],), {"crossing_length": 15.0}
+
+
+def _b_dilemma(pool, rng):
+    return (13.9,), {"reaction": 1.0, "decel": 3.0, "amber": 3.0, "intersection_width": 20.0,
+                     "car_length": 4.5}
+
+
+def _b_flash_freq(pool, rng):
+    import numpy as np
+    t = np.arange(300) / 30.0
+    return ((np.sin(2 * np.pi * 2.5 * t) > 0).astype(float), 30.0), {}
+
+
+def _b_aliased(pool, rng):
+    return (2.5, 3.75), {}
+
+
+def _b_siren(pool, rng):
+    return (0.5, 8000.0), {}
+
+
+def _b_doppler_shift(pool, rng):
+    return (960.0, 15.0), {}
+
+
+def _b_doppler_track(pool, rng):
+    import drivedecide as DD
+    s = DD.siren_signal(2.0, 16000.0, source_start=(-30.0, 8.0), source_velocity=(15.0, 0.0))
+    return (s["signals"][0], 16000.0), {}
+
+
+def _b_tdoa(pool, rng):
+    import drivedecide as DD
+    s = DD.siren_signal(0.3, 48000.0, source_start=(60.0, 40.0), source_velocity=(0.0, 0.0),
+                        mics=((0.0, 0.075), (0.0, -0.075)))
+    return (s["signals"][0], s["signals"][1], 48000.0, 0.15), {}
+
+
+def _b_yield_check(pool, rng):
+    return (_dd_traj(),), {"t_approach": 0.0, "t_passed": 15.0, "intersections": [(140.0, 155.0)]}
+
+
+def _b_bus_yield(pool, rng):
+    return (_dd_traj(),), {"t_signal": 0.0, "bus_rear_x": 140.0}
+
+
 def _env_world():
     import driveworld as DW
     import numpy as np
@@ -2704,6 +2805,24 @@ OP_ARG_BUILDERS = {
     "hill_hold_brake_min": _b_hill_hold_brake_min, "hill_start_rollback": _b_hill_start_rollback,
     "hill_start_command": _b_hill_start_command, "skill_test_thresholds": _b_skill_test_thresholds,
     "skill_test_score": _b_skill_test_score,
+    "mirror_reflection_matrix": _b_mirror_matrix,
+    "mirror_virtual_camera": _b_mirror_vcam,
+    "mirror_aim_normal": _b_mirror_aim,
+    "convex_mirror_fov": _b_convex_fov,
+    "mirror_blind_zone": _b_mirror_blind,
+    "check_sequence_score": _b_check_seq,
+    "signal_phase_plan": _b_signal_plan,
+    "signal_state": _b_signal_state,
+    "predict_amber_onset": _b_predict_amber,
+    "dilemma_zone": _b_dilemma,
+    "flash_frequency": _b_flash_freq,
+    "aliased_frequency": _b_aliased,
+    "siren_signal": _b_siren,
+    "doppler_shift": _b_doppler_shift,
+    "doppler_track": _b_doppler_track,
+    "tdoa_bearing": _b_tdoa,
+    "yield_maneuver_check": _b_yield_check,
+    "bus_departure_yield_check": _b_bus_yield,
     "idm_accel": _b_idm_accel, "idm_equilibrium_gap": _b_idm_gap, "idm_platoon_simulate": _b_idm_platoon,
     "driver_style": _b_driver_style, "lateral_wobble": _b_lateral_wobble, "ou_estimate": _b_ou_estimate,
     "social_force_step": _b_social_force, "pedestrian_crossing": _b_ped_crossing,

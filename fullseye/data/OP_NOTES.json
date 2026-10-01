@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2464,
- "n_notes": 2470,
+ "n_ops": 2482,
+ "n_notes": 2488,
  "notes": {
   "vol_dilate": [
    {
@@ -15947,6 +15947,180 @@
     "category": "course",
     "out": "table",
     "path": "docs/ops/drive/course/course_turnaround.md"
+   }
+  ],
+  "aliased_frequency": [
+   {
+    "op": "aliased_frequency",
+    "dim": "drive",
+    "category": "decide",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/decide/aliased_frequency.md"
+   }
+  ],
+  "bus_departure_yield_check": [
+   {
+    "op": "bus_departure_yield_check",
+    "dim": "drive",
+    "category": "decide",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/decide/bus_departure_yield_check.md"
+   }
+  ],
+  "check_sequence_score": [
+   {
+    "op": "check_sequence_score",
+    "dim": "drive",
+    "category": "decide",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/decide/check_sequence_score.md"
+   }
+  ],
+  "convex_mirror_fov": [
+   {
+    "op": "convex_mirror_fov",
+    "dim": "drive",
+    "category": "decide",
+    "out": "table",
+    "path": "docs/ops/drive/decide/convex_mirror_fov.md"
+   }
+  ],
+  "dilemma_zone": [
+   {
+    "op": "dilemma_zone",
+    "dim": "drive",
+    "category": "decide",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/decide/dilemma_zone.md"
+   }
+  ],
+  "doppler_shift": [
+   {
+    "op": "doppler_shift",
+    "dim": "drive",
+    "category": "decide",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/decide/doppler_shift.md"
+   }
+  ],
+  "doppler_track": [
+   {
+    "op": "doppler_track",
+    "dim": "drive",
+    "category": "decide",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/drive/decide/doppler_track.md"
+   }
+  ],
+  "flash_frequency": [
+   {
+    "op": "flash_frequency",
+    "dim": "drive",
+    "category": "decide",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/drive/decide/flash_frequency.md"
+   }
+  ],
+  "mirror_aim_normal": [
+   {
+    "op": "mirror_aim_normal",
+    "dim": "drive",
+    "category": "decide",
+    "out": "any",
+    "path": "docs/ops/drive/decide/mirror_aim_normal.md"
+   }
+  ],
+  "mirror_blind_zone": [
+   {
+    "op": "mirror_blind_zone",
+    "dim": "drive",
+    "category": "decide",
+    "out": "table",
+    "path": "docs/ops/drive/decide/mirror_blind_zone.md"
+   }
+  ],
+  "mirror_reflection_matrix": [
+   {
+    "op": "mirror_reflection_matrix",
+    "dim": "drive",
+    "category": "decide",
+    "out": "any",
+    "path": "docs/ops/drive/decide/mirror_reflection_matrix.md"
+   }
+  ],
+  "mirror_virtual_camera": [
+   {
+    "op": "mirror_virtual_camera",
+    "dim": "drive",
+    "category": "decide",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/decide/mirror_virtual_camera.md"
+   }
+  ],
+  "predict_amber_onset": [
+   {
+    "op": "predict_amber_onset",
+    "dim": "drive",
+    "category": "decide",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/decide/predict_amber_onset.md"
+   }
+  ],
+  "signal_phase_plan": [
+   {
+    "op": "signal_phase_plan",
+    "dim": "drive",
+    "category": "decide",
+    "out": "table",
+    "path": "docs/ops/drive/decide/signal_phase_plan.md"
+   }
+  ],
+  "signal_state": [
+   {
+    "op": "signal_state",
+    "dim": "drive",
+    "category": "decide",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/decide/signal_state.md"
+   }
+  ],
+  "siren_signal": [
+   {
+    "op": "siren_signal",
+    "dim": "drive",
+    "category": "decide",
+    "out": "table",
+    "path": "docs/ops/drive/decide/siren_signal.md"
+   }
+  ],
+  "tdoa_bearing": [
+   {
+    "op": "tdoa_bearing",
+    "dim": "drive",
+    "category": "decide",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/decide/tdoa_bearing.md"
+   }
+  ],
+  "yield_maneuver_check": [
+   {
+    "op": "yield_maneuver_check",
+    "dim": "drive",
+    "category": "decide",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/decide/yield_maneuver_check.md"
    }
   ],
   "beta_from_mor": [

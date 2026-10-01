@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">predict_amber_onset — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.predict_amber_onset(observations, *, flash_duration: &#x27;Optional[float]&#x27; = None, crossing_length: &#x27;Optional[float]&#x27; = None, walk_speed: &#x27;float&#x27; = 1.0, ped_red_to_amber: &#x27;float&#x27; = 2.0, t_now: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivedecide; drivedecide.predict_amber_onset(observations, *, flash_duration: &#x27;Optional[float]&#x27; = None, crossing_length: &#x27;Optional[float]&#x27; = None, walk_speed: &#x27;float&#x27; = 1.0, ped_red_to_amber: &#x27;float&#x27; = 2.0, t_now: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;predict_amber_onset&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>並行する歩行者信号の観測(時刻順の `<code style="color:#22d3bf">(t, state)</code>`、state ∈ green / flash / red)から車両の黄の始まりを推定する。</p>
+<p>F = `<code style="color:#22d3bf">flash_duration</code><code style="color:#22d3bf">(無ければ </code><code style="color:#22d3bf">crossing_length / walk_speed</code><code style="color:#22d3bf">)、Δ = </code><code style="color:#22d3bf">ped_red_to_amber</code>`。</p>
+<p>観測の切り替わり(green→flash、flash→red)ごとに黄の時刻が入る区間を作り、その <b>積</b> をとる:</p>
+<p>green→flash(最後の green t_g、最初の flash t_f): 黄 ∈ [t_g + F + Δ, t_f + F + Δ]</p>
+<p>flash→red  (最後の flash t_f&#x27;、最初の red t_r):   黄 ∈ [t_f&#x27; + Δ, t_r + Δ]</p>
+<p>返り値: `<code style="color:#22d3bf">amber_onset</code><code style="color:#22d3bf">(区間の中点)、</code><code style="color:#22d3bf">lo</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">hi</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">half_width</code><code style="color:#22d3bf">(誤差の上限)、</code><code style="color:#22d3bf">remaining</code>`</p>
+<p>= amber_onset − t_now(既定 = 最後の観測時刻)、`<code style="color:#22d3bf">basis</code>`(使った切り替わり)。切り替わりが 1 つも無ければ</p>
+<p>ValueError(青が続いているだけでは「いつ点滅するか」は分からない)。区間が空(観測と F・Δ が矛盾)も ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">decide</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:mirror_reflection_matrix">mirror_reflection_matrix</a> · <a style="color:#22d3bf" href="opdrive:mirror_virtual_camera">mirror_virtual_camera</a> · <a style="color:#22d3bf" href="opdrive:mirror_aim_normal">mirror_aim_normal</a> · <a style="color:#22d3bf" href="opdrive:convex_mirror_fov">convex_mirror_fov</a> · <a style="color:#22d3bf" href="opdrive:mirror_blind_zone">mirror_blind_zone</a> · <a style="color:#22d3bf" href="opdrive:check_sequence_score">check_sequence_score</a> · <a style="color:#22d3bf" href="opdrive:signal_phase_plan">signal_phase_plan</a> · <a style="color:#22d3bf" href="opdrive:signal_state">signal_state</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivedecide.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -52,6 +52,7 @@ This series lines up the ops built on that bar, one per instalment. Every instal
 | 6 | [Sun and weather — when the morning sun hides the signal, how fast you may drive in fog, wet roads and headlamps at night](#6-sun-and-weather--when-the-morning-sun-hides-the-signal-how-fast-you-may-drive-in-fog-wet-roads-and-headlamps-at-night) | NAOJ published values / shadow = h cot(elevation) / closed-form veil and chromaticity threshold / Koschmieder's law / road-design manual stopping distance (second implementation) / headlamp performance in the safety standard |
 | 7 | [An endless map — tiles made around the car, far tiles dropped, 50 km without a break](#7-an-endless-map--tiles-made-around-the-car-far-tiles-dropped-50-km-without-a-break) | both sides of a seam agree / regeneration fingerprints (SHA-256) / position re-summed as rationals / the (2r + 1)² bound |
 | 8 | [Moving traffic and blind spots — a child behind a parked car, meeting oncoming traffic, a bus stop, bad drivers, a pedestrian waiting at a crossing](#8-moving-traffic-and-blind-spots--a-child-behind-a-parked-car-meeting-oncoming-traffic-a-bus-stop-bad-drivers-a-pedestrian-waiting-at-a-crossing) | closed-form sight lines / IDM equilibrium gap / ∫λ and Adams' formula / the habits and intents given (truth) / the Rules-of-the-Road ledger |
+| 9 | [Decision scenes — checking the rear left in the mirror, predicting amber from the pedestrian light, giving way to an ambulance, waiting for a bus to pull out](#9-decision-scenes--checking-the-rear-left-in-the-mirror-predicting-amber-from-the-pedestrian-light-giving-way-to-an-ambulance-waiting-for-a-bus-to-pull-out) | Fermat point on the mirror / polygon of edge rays / the signal timing / closed forms for GHM and the stop line / emission-time geometry / arts. 40 and 31-2 |
 
 ---
 
@@ -1042,12 +1043,104 @@ The whole PoC: `py -3.11 examples/poc_driving_traffic.py` (figures and videos wh
 
 ---
 
+## 9. Decision scenes — checking the rear left in the mirror, predicting amber from the pedestrian light, giving way to an ambulance, waiting for a bus to pull out
+
+![Dashcam: spotting a cyclist in the mirror before a left turn; an ambulance from behind](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/01_decisions_mirrors_ambulance.gif)
+
+*↑ Dashcam (top right = rear-view and door mirrors). Scene 1: signal 30 m before a left turn, having first checked the rear left in the door mirror; a cyclist coming along the kerb strip is spotted and allowed through first. Scene 2: an ambulance from behind. The car notices it by the siren "approaching" and the flashing light in the mirror, pulls to the left and stops short of the junction (1 m before the stop line), then moves off after it has passed. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_decisions/01_decisions_mirrors_ambulance.mp4)*
+
+The last part put moving road users in the world. This part is about **what to check and when to decide** in front of them. The author's remarks — "for signals you also need to predict from what the pedestrian light is doing", "you need to check the mirrors", "you have to do the right thing when an ambulance comes", "while a bus is stopped … better to wait until it leaves" — were mapped onto scenes in the Rules-of-the-Road ledger built last time (signal timing, emergency vehicles, amber lights, buses pulling out).
+
+### Scenes and gates
+
+A new module `drivedecide` (18 ops) and PoC ㉚.
+
+| Scene | Where the truth comes from | Result |
+|---|---|---|
+| Mirror image (S067) | ray tracing to the Fermat point on the mirror (shortest light path) | landmarks drawn through a virtual camera behind the mirror land on the ray-traced pixel (12 points, max 0.50 px); without the left-right flip they are off by a median 228 px |
+| Door-mirror blind spot | polygon bounded by rays reflected at the mirror's edges | no disagreement with 295 posts rendered through the convex mirror's virtual camera; a convex mirror (R 1.4 m) cuts the blind spot of a same-width flat mirror from 37.1 m² to 20.4 m² |
+| Cyclist on a left turn (S054, S091) | the cyclist's position (truth) | checking the mirror: no collision in any of 400 trials (closest 1.08 m); direct view only: 68 trials hit the cyclist |
+| Check order (S066, S067, S070) | the Rules' "mirror → signal (about 3 s before / 30 m before) → change course → cancel", scored with the driving-test deductions (NPA notice 丁運発第44号: 10 points for not checking, 5 for signal faults) | our left turn and lane change lose 0 points; each of 6 broken versions loses exactly its points |
+| Predicting amber from the pedestrian light (S002) | the signal timing (pedestrian flashing green = crossing length / 1.0 m/s, then vehicle amber) | the lamp 200 m ahead (1.8 px) is read from pixels and matches the truth in all 690 frames; the prediction interval contains the true amber in all 585 predictions (half-width 0.267 s; 0.017 s after seeing red) |
+| Dilemma zone (S002) | closed forms for GHM (Gazis–Herman–Maradudin 1960) and the stop-line reading | over 600 trials, with prediction the car is never in the dilemma zone at amber; without, 48 times (10 by the stop-line reading) |
+| Noticing an ambulance (S026) | source and car geometry (synthesised from emission times, not from the Doppler formula) | "approaching / receding" matches the sign of the range rate 99.89 %; the bearing from the time difference between two microphones is within 0.11° of geometry; the flashing light reads 2.498 Hz (formula 2.500), and 1.252 Hz when decimated to 3.75 fps (aliasing formula 1.250) |
+| Giving way to an ambulance (S026, S027) | Road Traffic Act art. 40(1) (near a junction: avoid it, pull to the left and stop) and 40(2) (pull to the left and give way) | our car: no violation; a version that stops without pulling left and one that stops inside the junction each fail on their violation |
+| A bus pulling out (S029) | art. 31-2 "do not obstruct, unless giving way would need sudden braking or steering" → closed form of the deceleration needed | default is to wait until it leaves (no violation, closest gap to the bus 3.18 m); at 40 m the deceleration needed is 2.2957 m/s² = braking simulated at 0.1 ms steps + bisection |
+
+![Predicting the signal](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/02_signal_prediction.gif)
+
+*↑ The first frame where the parallel pedestrian light's green goes out (top right, 4× zoom) says "flashing green has started", and the vehicle amber is predicted from it. The strips below show the position relative to the stop line and the dilemma zone for each car's current speed and braking state (orange = GHM reading, red = stop-line reading). The predicting car (blue) slows early; the non-predicting car (black) is inside the dilemma zone when amber comes on. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_decisions/02_signal_prediction.mp4)*
+
+![Dilemma zone](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/03_dilemma_zone.png)
+
+*↑ (speed, distance to the stop line) at the moment amber comes on. Black = the stopping boundary, orange = clearing the junction (GHM), red = crossing the stop line.*
+
+![Door-mirror blind spot](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/05_mirror_blind_zone.png)
+
+![Siren spectrogram](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/04_siren_spectrogram.png)
+
+*↑ Spectrogram of the synthesised siren at the left microphone. White dots = the true frequency from geometry. Higher while approaching, lower once it has passed.*
+
+### ★ Where implementations go wrong
+
+- **The dilemma zone depends on how you read the rule.** GHM asks the car to clear the junction within the amber; the Rules say you may continue if you are too close to stop safely — that is, it is enough to **cross the stop line**. Under the stop-line reading there is no dilemma below 43 km/h; under GHM (20 m junction) there is one at every speed. At 50 km/h: GHM 17.2–46.0 m, stop line 41.7–46.0 m. Always say which reading was scored.
+- **A mirror image is flipped left to right.** Drawing the mirror as "a camera behind the mirror" gives a mirrored picture. Forget the flip and landmarks are off by a median 228 px; a gate catches this.
+- **Flashing lights alias at the camera's frame rate.** A 2.5 Hz beacon seen at 3.75 fps looks like 1.25 Hz. Identifying emergency vehicles by flash rate means nothing without stating the camera's fps.
+- **Sound alone cannot tell front from back.** The time difference between two microphones cannot separate "5° right" from "175° right-behind". The car decides "behind" because the flashing light shows in the mirror — that is why sound and light are combined.
+- **Waiting is the default, even when there is no duty to give way.** Art. 31-2 lifts the duty if giving way needs sudden braking; at 40 km/h and 13 m there is none. The default is still to wait for the bus to leave (as the author pointed out, people getting on and off may step out).
+
+### What this does not do
+
+- A 1.0 s decision delay, "near a junction" = 30 m, "pulled to the left" = within 1.0 m, flash rates 1.0 / 2.5 Hz and the door mirror's R 1.4 m / 0.18 m width are **assumed values**.
+- The siren's 960 / 770 Hz at 0.65 s each (1.3 s period) are quoted by the Tokyo Fire Department's research bulletin No. 33 (1996) from a 1970 Fire Defense Agency directive (the directive itself not seen). The 3 s amber is the shorter of the "3 or 4 s in practice" in the Japan Society of Traffic Engineers' handbook.
+- The ambulance is visible and audible 100 m behind from the start, so the gates measure detection delay (light 0.233 s, sound 0.3 s), **not how far away it can first be noticed**.
+- Mirrors are a planar (2D) blind spot plus a 3D render at eye height; adjusting the mirror or moving the head to see more is not modelled.
+- Lateral motion (cornering limits, position within the lane) comes next.
+
+### Run it
+
+```python
+import fullseye as fs
+
+# Dilemma zone: amber at 50 km/h (13.9 m/s) — the distances to the stop line where we can neither stop nor clear [m]
+# (reaction 1 s, braking 3 m/s², amber 3 s, junction 20 m wide, car 4.5 m long; the GHM 1960 reading)
+z = fs.ledger.dilemma_zone(13.9, reaction=1.0, decel=3.0, amber=3.0, intersection_width=20.0, car_length=4.5)
+print([round(x, 1) for x in z["dilemma"]])
+# [17.2, 46.1]      ← distance to the stop line where we can neither stop nor clear [m]
+
+# The pedestrian green first went out at t = 20.53 s (flashing has begun). Flashing lasts 10 s; vehicle amber 2 s after pedestrian red
+r = fs.ledger.predict_amber_onset([(0.0, "green"), (20.4, "green"), (20.53, "flash")],
+                                  flash_duration=10.0, ped_red_to_amber=2.0)
+print(r["lo"], r["hi"])
+# 32.4 32.53      ← the true amber lies in here
+
+# Score the check order of a lane change (NPA 丁運発第44号: 10 points for not checking). Here the mirror comes after the signal
+ev = [{"t": 1.0, "kind": "signal_on"}, {"t": 2.0, "kind": "mirror"}, {"t": 4.0, "kind": "start"},
+      {"t": 7.0, "kind": "end"}, {"t": 7.5, "kind": "signal_off"}]
+print(fs.ledger.check_sequence_score(ev)["score"])
+# 90             ← 10 points off for not checking
+
+# A 2.5 Hz flashing light seen by a 3.75 fps camera appears at what frequency? (aliasing)
+print(fs.ledger.aliased_frequency(2.5, 3.75))
+# 1.25
+
+# The frequency heard when a 960 Hz siren approaches at 16.6 m/s
+print(round(fs.ledger.doppler_shift(960.0, 16.6), 1))
+# 1008.8      ← heard higher than 960 Hz
+```
+
+The whole PoC: `py -3.11 examples/poc_driving_decisions.py` (figures and videos when `FULLSEYE_FIGURE_DIR` is set).
+
+---
+
 ## Next
 
-**Decision scenes.** The next scenes come from the Rules-of-the-Road ledger — check the mirrors behind and to the rear left (cyclists on a left turn) before signalling and changing lanes (a mirror is drawn as a virtual camera reflected in the mirror plane, and its blind spot checked against the geometric closed form) / predict the vehicle amber from the pedestrian light's flashing green and slow before the dilemma zone (Gazis–Herman–Maradudin 1960) / notice an ambulance by its flashing light (temporal frequency of pixels) and siren (closed-form Doppler, time difference between two microphones), then pull to the left away from the junction and stop (Road Traffic Act art. 40) / do not obstruct a bus signalling to pull out (art. 31-2). After that comes **lateral motion** (the friction circle and the cornering limit √(μ g R), the bicycle model's steady circle).
+**Lateral motion.** The friction circle and the cornering limit √(μ g R), the bicycle model's steady circle (under- / oversteer), and holding a position within the lane. From the Rules-of-the-Road ledger: slowing before a bend, and positioning for left and right turns (the inner-wheel path).
 
 ## References
 
+- D. C. Gazis, R. Herman, A. A. Maradudin, "The problem of the amber signal light in traffic flow", *Operations Research* 8, 1960 (dilemma zone).
+- National Police Agency notice 丁運発第44号 (driving-test scoring: 10 points for not checking, 5 for signal faults) / Road Traffic Act art. 40 (priority of emergency vehicles), art. 31-2 (protecting buses pulling out), art. 53 (signals).
 - National Public Safety Commission notice *Rules of the Road* (1978 notice No. 3, last amended 4 Sep 2024 notice No. 37, https://www.npa.go.jp/bureau/traffic/20241113kyousoku.pdf) / Road Traffic Act (archived e-Gov API data, in force 2025-06-01) / National Police Agency notes on the 30 km/h limit on residential roads (2026-09-01) and passing cyclists on their right (2026-04-01).
 - M. Treiber, A. Hennecke, D. Helbing, "Congested traffic states in empirical observations and microscopic simulations", *Phys. Rev. E* 62, 2000 (IDM).
 - D. Helbing and P. Molnár, "Social force model for pedestrian dynamics", *Phys. Rev. E* 51, 1995 / D. Helbing, I. Farkas, T. Vicsek, "Simulating dynamical features of escape panic", *Nature* 407, 2000.

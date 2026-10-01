@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mirror_blind_zone — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_blind_zone(eye_xy, mirror_center_xy, mirror_normal_xy, mirror_width, *, mirror_radius=inf, direct_limit_deg: &#x27;float&#x27; = 100.0, roi=(-15.0, -2.0, 0.9, 4.4)) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivedecide; drivedecide.mirror_blind_zone(eye_xy, mirror_center_xy, mirror_normal_xy, mirror_width, *, mirror_radius=inf, direct_limit_deg: &#x27;float&#x27; = 100.0, roi=(-15.0, -2.0, 0.9, 4.4)) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;mirror_blind_zone&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>自車の左後方で、左のドアミラーにも直接の視界にも入らない領域(2D、上から見た図)。</p>
+<p>座標は車の x = 前・y = 左。`<code style="color:#22d3bf">eye_xy</code><code style="color:#22d3bf"> = 運転者の眼、</code><code style="color:#22d3bf">mirror_center_xy</code><code style="color:#22d3bf"> = 鏡の中心、</code><code style="color:#22d3bf">mirror_normal_xy</code>` = 鏡の</p>
+<p>法線(眼の側を向く。`<code style="color:#22d3bf">mirror_aim_normal</code><code style="color:#22d3bf"> で作れる)、</code><code style="color:#22d3bf">mirror_width</code>` = 鏡の幅(上から見た弦の長さ)、</p>
+<p>`<code style="color:#22d3bf">mirror_radius</code><code style="color:#22d3bf"> = 凸面の曲率半径(inf = 平面鏡)。</code><code style="color:#22d3bf">direct_limit_deg</code>` = 首を回さずに直接見える方位の上限</p>
+<p>(前方から左回り。100° は <b>仮定</b>)。`<code style="color:#22d3bf">roi</code>` = (x_min, x_max, y_min, y_max) の対象領域(左の隣の車線。鏡の本体と</p>
+<p>車体を含まないように置くこと = 鏡の光線が車体を通るかは見ていない)。</p>
+<p>鏡で見える領域 = 鏡の両端で反射した 2 本の光線に挟まれ、かつ鏡の弦より眼の側。直接見える = 眼から見た方位 ≤ 上限。</p>
+<p>死角 = roi ∖ (鏡 ∪ 直接) を <b>互いに素な凸多角形の列</b> で返す(凸 ∖ 凸 = 半平面を 1 つずつ外した和)。</p>
+<p>返り値: `<code style="color:#22d3bf">pieces</code><code style="color:#22d3bf">(凸多角形 (k, 2) の list)、</code><code style="color:#22d3bf">area</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">mirror_edges</code>`(両端の点 (2, 2))、</p>
+<p>`<code style="color:#22d3bf">mirror_rays</code><code style="color:#22d3bf">(両端の反射光線の単位ベクトル (2, 2))、</code><code style="color:#22d3bf">mirror_area</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">direct_area</code>`(roi の中で見える面積)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">decide</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:mirror_reflection_matrix">mirror_reflection_matrix</a> · <a style="color:#22d3bf" href="opdrive:mirror_virtual_camera">mirror_virtual_camera</a> · <a style="color:#22d3bf" href="opdrive:mirror_aim_normal">mirror_aim_normal</a> · <a style="color:#22d3bf" href="opdrive:convex_mirror_fov">convex_mirror_fov</a> · <a style="color:#22d3bf" href="opdrive:check_sequence_score">check_sequence_score</a> · <a style="color:#22d3bf" href="opdrive:signal_phase_plan">signal_phase_plan</a> · <a style="color:#22d3bf" href="opdrive:signal_state">signal_state</a> · <a style="color:#22d3bf" href="opdrive:predict_amber_onset">predict_amber_onset</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivedecide.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -535,6 +535,12 @@ from kendama import (  # noqa: E402,F401
 import driveenv  # noqa: E402  (太陽と天気: 太陽の位置・影・逆光・霧・雨・夜の前照灯、見えてから止まれる速さ)
 import driveinf  # noqa: E402  (終わらない地図: 決定的な区画・継ぎ目でつながる道・桁の落ちない座標)
 import drivetraffic  # noqa: E402  (動く交通参加者と死角: IDM と癖・横ふらつき・歩行者の意図・死角・すれ違い・稀な飛び出し)
+import drivedecide  # noqa: E402  (判断の場面: ミラー・確認の順序・信号の予測・緊急車両・バスの発進)
+from drivedecide import (  # noqa: E402,F401
+    mirror_reflection_matrix, mirror_virtual_camera, mirror_aim_normal, convex_mirror_fov, mirror_blind_zone, check_sequence_score,
+    signal_phase_plan, signal_state, predict_amber_onset, dilemma_zone, flash_frequency, aliased_frequency,
+    siren_signal, doppler_shift, doppler_track, tdoa_bearing, yield_maneuver_check, bus_departure_yield_check,
+)
 from drivetraffic import (  # noqa: E402,F401
     idm_accel, idm_equilibrium_gap, idm_platoon_simulate, driver_style, lateral_wobble, ou_estimate,
     social_force_step, pedestrian_crossing, occlusion_reveal_distance, occlusion_visible_intervals, occlusion_safe_speed, passing_gap_required,

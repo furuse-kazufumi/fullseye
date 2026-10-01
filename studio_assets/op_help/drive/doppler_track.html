@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">doppler_track — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doppler_track(signal, fs, *, f_high: &#x27;float&#x27; = 960.0, f_low: &#x27;float&#x27; = 770.0, c: &#x27;float&#x27; = 343.0, smooth: &#x27;float&#x27; = 0.005, guard: &#x27;float&#x27; = 0.01, edge: &#x27;float&#x27; = 0.05, v_tol: &#x27;float&#x27; = 1.0, verdict_window: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivedecide; drivedecide.doppler_track(signal, fs, *, f_high: &#x27;float&#x27; = 960.0, f_low: &#x27;float&#x27; = 770.0, c: &#x27;float&#x27; = 343.0, smooth: &#x27;float&#x27; = 0.005, guard: &#x27;float&#x27; = 0.01, edge: &#x27;float&#x27; = 0.05, v_tol: &#x27;float&#x27; = 1.0, verdict_window: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;doppler_track&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>サイレンの音から瞬時周波数を推定し、近づいている / 遠ざかっているを判定する。</p>
+<p>1. 解析信号(FFT の Hilbert 変換)の位相差 → 瞬時周波数 f(t) = arg(z[n+1] z̄[n]) fs / 2π。</p>
+<p>2. 幅 `<code style="color:#22d3bf">smooth</code>` 秒の移動中央値。</p>
+<p>3. 各時刻で公称の 2 音(`<code style="color:#22d3bf">f_high</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">f_low</code>`)のうち比が近い方を「発した音」とみなし、ドップラー係数</p>
+<p>D = f / f_nom、視線速度 v_r = c (1 − 1/D)(`<code style="color:#22d3bf">doppler_shift</code>` を v_r について解いたもの)。</p>
+<p>4. 音が切り替わる所(中央値の跳び &gt; 20 Hz)の前後 `<code style="color:#22d3bf">guard</code><code style="color:#22d3bf"> 秒と、両端 </code><code style="color:#22d3bf">edge</code><code style="color:#22d3bf"> 秒は無効(</code><code style="color:#22d3bf">valid</code>` = False)。</p>
+<p>5. 判定: 最後の `<code style="color:#22d3bf">verdict_window</code><code style="color:#22d3bf"> 秒の有効な v_r の中央値が +v_tol より大 → </code><code style="color:#22d3bf">&quot;approaching&quot;</code>`、−v_tol より小 →</p>
+<p>`<code style="color:#22d3bf">&quot;receding&quot;</code><code style="color:#22d3bf">、間 → </code><code style="color:#22d3bf">&quot;abeam&quot;</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">state</code><code style="color:#22d3bf"> は各時刻の同じ判定(無効な所は </code><code style="color:#22d3bf">&quot;unknown&quot;</code>`)。</p>
+<p>公称音の取り違えの限界: 振り分けの境目は幾何平均 √(f_h f_l)。低い音が近づいて境目を越えるのは</p>
+<p>v_r = c (1 − √(f_l/f_h))、高い音が遠ざかって越えるのは v_r = −c (√(f_h/f_l) − 1)。960/770 Hz では</p>
+<p>+35.8 m/s(129 km/h)と −40.0 m/s。これより速い視線速度は取り違える(テストで固定)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">decide</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:mirror_reflection_matrix">mirror_reflection_matrix</a> · <a style="color:#22d3bf" href="opdrive:mirror_virtual_camera">mirror_virtual_camera</a> · <a style="color:#22d3bf" href="opdrive:mirror_aim_normal">mirror_aim_normal</a> · <a style="color:#22d3bf" href="opdrive:convex_mirror_fov">convex_mirror_fov</a> · <a style="color:#22d3bf" href="opdrive:mirror_blind_zone">mirror_blind_zone</a> · <a style="color:#22d3bf" href="opdrive:check_sequence_score">check_sequence_score</a> · <a style="color:#22d3bf" href="opdrive:signal_phase_plan">signal_phase_plan</a> · <a style="color:#22d3bf" href="opdrive:signal_state">signal_state</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivedecide.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
