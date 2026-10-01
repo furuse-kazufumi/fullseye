@@ -40,5 +40,27 @@
   ],
   "csv": "04_centroid_gain.csv",
   "tsv": "04_centroid_gain.tsv"
+ },
+ {
+  "file": "05_step_sweep.gif",
+  "name": "step_sweep",
+  "caption": "動画(148 コマ): 仕込む段差を 0 → 0.90 µm へ連続に増やし、同じ表面を 2 つの方法で測る(雑音なし)。左は低い側・高い側 1 画素ずつのコヒーレンス走査の信号で、縦線は csi_height_map(gaussian)が包絡線から読んだ高さ。右は測った段差 vs 仕込んだ段差。包絡線(だいだい)は全域で対角線に乗り、誤差は最大 8.5e-11 nm —— 包絡線には周期が無いので巻き戻らない。位相シフト法(水色、4 段)は段差 0.153 µm(λ/4 = 0.150 µm の直後)で初めて λ/2 ぶん飛び、以後 λ/2 ごとに鋸の歯になる。",
+  "shape": [
+   288,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 74,
+  "frames_written": 69,
+  "fps": 6.0,
+  "video": "05_step_sweep.mp4",
+  "video_frames": 148,
+  "video_fps": 12.0,
+  "video_shape": [
+   434,
+   966,
+   3
+  ]
  }
 ]

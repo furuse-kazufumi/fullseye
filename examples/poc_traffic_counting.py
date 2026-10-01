@@ -799,6 +799,156 @@ def section_tool_gaps() -> None:
 
 
 # --------------------------------------------------------------------------- #
+# --------------------------------------------------------------------------- #
+# 動画(図つきで走らせたときだけ)                                              #
+# --------------------------------------------------------------------------- #
+def _vtxt(img, s, xy, anchor="lt", fs_=12, color=None):
+    """文字(poc_driving_traffic の ``_txt`` と同じ書き方、色だけ選べる)。"""
+    import annotate as AN
+    kw = {} if color is None else {"text_color": color}
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_, **kw), dtype=np.float64)
+
+
+def _vpoly(a, ax, x, y, color, w=1):
+    """データ座標の折れ線を直に塗る(``annotate.plot_series`` は全画面の重みを作るので
+    動画の毎コマには重い —— 同じ写像 ``data_to_pixel`` を使い、0.5 px 刻みの点打ちで描く)。
+    軸の矩形の外には塗らない。"""
+    import annotate as AN
+    x = np.atleast_1d(np.asarray(x, np.float64))
+    y = np.atleast_1d(np.asarray(y, np.float64))
+    if x.size < 2:
+        return a
+    px, py = (np.asarray(v, np.float64) for v in AN.data_to_pixel(ax, x, y))
+    n = np.maximum(1, np.ceil(2.0 * np.hypot(np.diff(px), np.diff(py))).astype(int))
+    xs = np.concatenate([np.linspace(px[i], px[i + 1], n[i], endpoint=False) for i in range(n.size)] + [px[-1:]])
+    ys = np.concatenate([np.linspace(py[i], py[i + 1], n[i], endpoint=False) for i in range(n.size)] + [py[-1:]])
+    x0, y0, ww, hh = ax["rect"]
+    xi, yi = np.rint(xs).astype(int), np.rint(ys).astype(int)
+    for dy in range(-(w // 2), w - w // 2):
+        for dx in range(-(w // 2), w - w // 2):
+            xx, yy = xi + dx, yi + dy
+            ok = (xx >= x0) & (xx < x0 + ww) & (yy >= y0) & (yy < y0 + hh)
+            a[yy[ok], xx[ok]] = color
+    return a
+
+
+def _vaxes(a, ax, xt, yt, c_axis):
+    """軸の枠と目盛り(1 度だけ描いて、各コマはこれを写す)。"""
+    import annotate as AN
+    a = np.asarray(AN.axes_frame(a, ax, color=c_axis), np.float64)
+    return np.asarray(AN.ticks(a, ax, xticks=xt, yticks=yt, color=c_axis, font_size=10, text_color=c_axis),
+                      np.float64)
+
+
+def _vstrip(f, y0, y1, s, xy=(4, 2), fs_=12, color=None, anchor="lt"):
+    """コマの横帯 ``f[y0:y1]`` にだけ文字を書く(全面に text_box を走らせない)。"""
+    f[y0:y1] = _vtxt(f[y0:y1].copy(), s, xy, anchor=anchor, fs_=fs_, color=color)
+    return f
+
+
+VID_UP = 2                  # カメラの 1 px -> 2 x 2 表示 px(最近傍)
+VID_END = 30                # 最後の集計を見せるコマ数
+VID_ROWS = (40, 112)       # 見せるカメラの行(上下の路肩は何も起きないので切る)
+VID_GREY = 48              # 表示の灰の段数(GIF の 256 色を雑音に食われないように。数値には使わない)
+
+
+def _video_counting(sc: dict, zp: dict, sl: dict) -> None:
+    """動画: 180 フレームを撮った速さ(10 fps)で流し、3 つの数え方の数字が並んで伸びる。
+
+    上段 = カメラの画(前景マスクを橙で重ねる。黄の縦線 = 計数列 x = 210、左右の刻み =
+    2 車線の計数行)。下段 = 2 車線のスリット画像 (t, x) が上から 1 行ずつ積まれていく。
+    計数列と交わった帯(= スリット法が数える帯)は青、交わらない帯は朱(この場面には無い)。
+    数字: 真値 = 連続時間で車体の中心が計数列を跨いだ台数(ループとスリットは車体の先端で
+    数えるので、1 台ごとに L/2V だけ早く増える)、仮想ループ = 計数列の占有の立ち上がり、
+    スリット法 = 計数列と交わった帯の数、ゼロ点 = そのフレームの連結成分の数。
+    すべて本体が出した ``sc`` / ``zp`` / ``sl`` を時刻で切っただけ(最後の値が門の値と一致)。
+    """
+    import palette as PAL
+
+    c_ref, c_bad, c_cur = PAL.role_color("right"), PAL.role_color("wrong"), PAL.role_color("emphasis")
+    c_axis = (0.62, 0.62, 0.66)
+    vid, mask, veh = sc["vid"], sc["mask"], sc["veh"]
+    T = vid.shape[0]
+    up = VID_UP
+    r0, r1 = VID_ROWS
+    Wf, Hc = W_PX * up, (r1 - r0) * up
+    yt = 54
+    yk = yt + Hc + 22
+    Hf = yk + T + 22
+    # 時刻ごとの累積の数
+    truth_t = np.asarray([v["cross"] for v in veh if crosses_ref(v, T - 1)])
+    rise = {}
+    first = {}
+    for ln in LANES:
+        occ = mask[:, LANES[ln]["slit"], X_REF].astype(np.int8)
+        rise[ln] = np.nonzero(np.diff(np.r_[0, occ]) == 1)[0]
+        lab = sl[ln]["slit"]["labels"]
+        first[ln] = np.asarray([int(np.nonzero(lab[:, X_REF] == i)[0][0]) for i in sl[ln]["slit"]["ids"]])
+    assert sum(r.size for r in rise.values()) == zp["loop"]
+    assert sum(f.size for f in first.values()) == sum(sl[ln]["slit"]["n_ref"] for ln in LANES)
+    cc = zp["cc"]
+    # スリット画像の塗り(全時刻ぶんを先に作って、各コマは上から k 行だけ見せる)
+    kyms = []
+    for ln in LANES:
+        lab = sl[ln]["slit"]["labels"]
+        img = np.full(lab.shape + (3,), 0.10)
+        on = lab > 0
+        img[on] = c_bad
+        img[np.isin(lab, sl[ln]["slit"]["ids"])] = c_ref
+        img[:, X_REF] = 0.55 * img[:, X_REF] + 0.45 * np.asarray(c_cur)
+        kyms.append(img)
+    panel = np.zeros((Hf, Wf, 3))
+    panel[yt + Hc:] = 0.07
+    panel = _vtxt(panel, "カメラの画(橙 = 前景マスク、黄の縦線 = 計数列 x = %d)" % X_REF, (Wf // 2, yt + Hc + 3),
+                  anchor="ct", fs_=10, color=c_axis)
+    for j, ln in enumerate(LANES):
+        n_out = sl[ln]["slit"]["n_all"] - sl[ln]["slit"]["n_ref"]
+        panel = _vtxt(panel, "%s車線のスリット (t ↓, x →)  青 = 計数列と交わる帯%s"
+                      % ("遠い" if ln == "far" else "近い", " / 朱 = 交わらない帯 %d 本" % n_out if n_out else ""),
+                      (j * W_PX + W_PX // 2, Hf - 2), anchor="cb", fs_=10, color=c_axis)
+    frames = []
+    for i in range(T + VID_END):
+        k = min(i, T - 1)
+        f = panel.copy()
+        gq = np.round(np.clip(vid[k, r0:r1], 0.0, 1.0) * VID_GREY) / VID_GREY
+        g = np.repeat(np.repeat(gq, up, 0), up, 1)[..., None] * np.ones(3)
+        mk = np.repeat(np.repeat(mask[k, r0:r1], up, 0), up, 1)
+        g[mk] = 0.5 * g[mk] + 0.5 * np.asarray(c_cur)
+        g[:, X_REF * up:X_REF * up + 2] = (0.95, 0.90, 0.25)
+        for ln in LANES:
+            r = (LANES[ln]["slit"] - r0) * up
+            g[r:r + 2, :10] = c_ref
+            g[r:r + 2, -10:] = c_ref
+        f[yt:yt + Hc] = g
+        for j, img in enumerate(kyms):
+            f[yk:yk + k + 1, j * W_PX:(j + 1) * W_PX] = img[:k + 1]
+            f[yk + k, j * W_PX:(j + 1) * W_PX] = 0.5 * f[yk + k, j * W_PX:(j + 1) * W_PX] + 0.5
+        f[yk:yk + T, W_PX] = 0.0
+        n_true = int(np.count_nonzero(truth_t <= k))
+        n_loop = sum(int(np.count_nonzero(r <= k)) for r in rise.values())
+        n_slit = sum(int(np.count_nonzero(v <= k)) for v in first.values())
+        if i < T:
+            s = ("フレーム %d/%d(t = %.1f s、%.0f fps)  通過した台数: 真値 %d / 仮想ループ %d / スリット法 %d\n"
+                 "ゼロ点(このフレームの連結成分)%d 個  これまでの最大 %d  ←「いま写っている数」で通過台数ではない"
+                 % (k + 1, T, k / FPS, FPS, n_true, n_loop, n_slit, int(cc[k]), int(cc[:k + 1].max())))
+            f = _vstrip(f, 0, yt, s, fs_=11)
+        else:
+            s = ("通過台数: 真値 %d / 仮想ループ %d / スリット法 %d —— 疎な自由流では同点\n"
+                 "ゼロ点(フレームごとの連結成分の最大値)は %d —— 別の量を測っている"
+                 % (zp["total"], zp["loop"], n_slit, int(cc.max())))
+            f = _vstrip(f, 0, yt, s, fs_=11, color=c_cur)
+        frames.append(np.clip(f, 0.0, 1.0))
+    figs.save_video(
+        "counting_video", frames, fps=FPS, gif_every=2, gif_width=576,
+        caption="動画(%d × %d、%.0f fps、%d コマ = 撮った速さ): 2 車線の道路を 18 秒。上段はカメラの画に前景マスク(橙)と"
+                "計数列(黄の縦線)を重ねたもの、下段は 2 車線の計数行を時間方向に積んだスリット画像 (t, x) が上から"
+                "伸びていく —— 車 1 台が斜めの帯 1 本になり、傾きが速度。見出しの数字は時刻までの累積で、最後は 真値 %d / "
+                "仮想ループ %d / スリット法 %d 台と同点(途中で真値が遅れて見えるのは、真値を車体の中心で、ループとスリットを車体の先端で数えるため)。フレームごとに連結成分を数えるゼロ点は最大 %d で、"
+                "「いま写っている数」を数えているだけ。"
+                % (Wf, Hf, FPS, len(frames), zp["total"], zp["loop"],
+                   sum(sl[ln]["slit"]["n_ref"] for ln in LANES), int(cc.max())))
+
+
 def main() -> None:
     t0 = time.perf_counter()
     print("=" * 78)
@@ -841,6 +991,9 @@ def main() -> None:
     print("  * 渋滞で落ちるのは背景モデル(先頭車の前景率 %.2f -> %.2f、"
           "最終フレームの検出 %d/%d)。"
           % (jam["fg_move"], jam["fg_stop"], jam["seen_last"], jam["onscreen"]))
+    # 動画(図つきのときだけ。既存の図の後ろに書く —— 番号がずれないように)
+    if figs.enabled():
+        _video_counting(sc, zp, sl)
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():

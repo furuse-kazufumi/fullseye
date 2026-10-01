@@ -355,6 +355,162 @@ def drizzle_image(frames, shifts, scale, pixfrac):
 
 
 # --------------------------------------------------------------------------- #
+def _v_txt(img, s, xy, anchor="lt", fs_=12):
+    """文字の板。**小さな板(パネル 1 枚)にだけ**描く —— 全面に描くと遅い。"""
+    import annotate as AN
+
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_), dtype=np.float64)
+
+
+#: 16 枚(4 x 4 の副画素格子)を「少ない枚数でも格子が偏らない」順に並べる(動画の後半用)。
+_DITHER_ORDER = ((0, 0), (2, 2), (0, 2), (2, 0), (1, 1), (3, 3), (1, 3), (3, 1),
+                 (0, 1), (2, 3), (0, 3), (2, 1), (1, 0), (3, 2), (1, 2), (3, 0))
+
+
+def fig_growth_video(scene, truth, ref_amp, s=4, n_ibp=24, hold=10, fps=8.0):
+    """★動画: 推定が育つ様子を 2 幕で見せる。縞の群(周期 24〜3 真値画素)を切り出して表示。
+
+    前半 = 単一画像の IBP(倍率 4、面積平均の順モデル)を 0 → ``n_ibp`` 回。周期 12 以上の
+    落ちた変調は戻るが、ナイキスト(周期 8)より細かい列は 1 本も立たない。
+    後半 = 標本化不足(σ = 0.30)の 16 枚を 1 枚ずつ drizzle に足す(ずれは相互相関で推定)。
+    格子が偏らない順に足し、pixfrac は枚数 k に合わせて ``clip(1.2/√k, 0.4, 1)``(16 枚で本文と
+    同じ 0.4)。被覆の穴は単一画像の bicubic で埋め、その割合を板に出す。乱数は
+    ``dither_offsets`` の固定 seed だけで、本文の乱数の流れには触れない。図を出さない実行では
+    呼ばれない。
+    """
+    if not figs.enabled():
+        return None
+    import annotate as AN
+
+    crop = np.s_[16:144, 24:288]
+    fine = [i for i, p in enumerate(BAR_PERIODS) if p < 2 * s]
+    i12 = BAR_PERIODS.index(12)
+    i6 = BAR_PERIODS.index(6)
+
+    # ---- 前半: IBP の反復(up_ibp と同じ更新式。表示と採点は各段で clip)----
+    lr = down_box(truth, s)
+    est = up_spline(lr, s, 3)
+    p_null = fid(truth, est)[0]
+    act1 = []
+    for it in range(n_ibp + 1):
+        if it:
+            est = est + up_spline(lr - down_box(est, s), s, 3)
+        shown = np.clip(est, 0.0, 1.0)
+        act1.append((it, shown, modulation(shown, ref_amp), fid(truth, shown)[0]))
+
+    # ---- 後半: drizzle に 1 枚ずつ足す --------------------------------------
+    sigma_lr = 0.30
+    blt = band_limited_truth(scene, s, sigma_lr)
+    offs, m = dither_offsets(16, s)
+    frames_lr = [capture(scene, s, sigma_lr, dy, dx) for dy, dx in offs]
+    est_sh = estimate_shifts(frames_lr)
+    single = up_spline(frames_lr[0], s, 3)
+    p_single = fid(blt, single)[0]
+    order = [a * m + b for a, b in _DITHER_ORDER]
+    act2 = []
+    for k in range(1, len(order) + 1):
+        idx = order[:k]
+        pixfrac = float(np.clip(1.2 / np.sqrt(k), 0.4, 1.0))
+        img, wht = drizzle_image([frames_lr[i] for i in idx], est_sh[idx], s, pixfrac)
+        hole = wht <= 1e-9
+        img = np.where(hole, single, img)
+        hole_pct = 100.0 * float(hole[20:-20, 20:-20].mean())
+        act2.append((k, pixfrac, np.clip(img, 0.0, 1.0), modulation(img, ref_amp),
+                     fid(blt, img)[0], hole_pct))
+    mod_blt = modulation(blt, ref_amp)
+    mod_single = modulation(single, ref_amp)
+
+    # ---- 画面 ----
+    CH, CW = 128 * 2, 264 * 2
+    TB, GAP, PW_ = 34, 6, 420
+    FW = CW + GAP + PW_
+    FH = 2 * (TB + CH) + GAP
+    y_top, y_bot = TB, 2 * TB + CH + GAP
+
+    def up2(a):
+        return np.repeat(np.repeat(np.clip(np.asarray(a)[crop], 0.0, 1.0), 2, 0), 2, 1)[..., None] \
+            .repeat(3, 2)
+
+    def title(f, x0, y0, w, s_):
+        f[y0 - TB:y0, x0:x0 + w] = _v_txt(f[y0 - TB:y0, x0:x0 + w], s_, (4, TB // 2), anchor="lm", fs_=13)
+
+    # 右のパネル(周期ごとの変調度の棒)の軸と目盛りは 1 度だけ描く
+    PH2 = FH - TB
+    chart = np.full((PH2, PW_, 3), 0.10)
+    ax = AN.axes_transform((50, 96, PW_ - 66, PH2 - 200), (-0.6, len(BAR_PERIODS) - 0.4), (0.0, 1.15))
+    chart = np.asarray(AN.axes_frame(chart, ax), np.float64)
+    chart = np.asarray(AN.ticks(chart, ax, xticks=list(range(len(BAR_PERIODS))),
+                                yticks=[0.0, 0.2, 0.5, 1.0], label=False, font_size=10), np.float64)
+    chart = np.asarray(AN.ticks(chart, ax, xticks=[], yticks=[0.0, 0.2, 0.5, 1.0], font_size=10),
+                       np.float64)
+    for i, p in enumerate(BAR_PERIODS):
+        px, py = AN.data_to_pixel(ax, float(i), 0.0)
+        chart = _v_txt(chart, str(p), (float(px), float(py) + 8), anchor="ct", fs_=10)
+    chart = _v_txt(chart, "縞の周期 [真値画素](右ほど細かい)", (PW_ // 2 + 20, PH2 - 49), anchor="cb", fs_=10)
+    chart = np.asarray(AN.plot_series(chart, ax, [-0.6, len(BAR_PERIODS) - 0.4], [1.0, 1.0],
+                                      color=(0.55, 0.55, 0.55), width=1), np.float64)
+    xn = (BAR_PERIODS.index(8) + i6) / 2.0                  # 周期 8 と 6 の間 = ナイキストの境
+    chart = np.asarray(AN.plot_series(chart, ax, [xn, xn], [0.0, 1.15], color=(0.85, 0.35, 0.35),
+                                      width=1), np.float64)
+    chart = _v_txt(chart, "赤の縦線 = 低解像のナイキスト\n(右側は単一画像では原理的に戻らない)",
+                   (PW_ - 8, PH2 - 8), anchor="rb", fs_=10)
+    xs_ = np.arange(len(BAR_PERIODS), dtype=float)
+
+    def bars(c, mod, ref, ref_col, col):
+        c = np.asarray(AN.plot_series(c, ax, xs_ - 0.18, np.clip(ref, 0.0, 1.15), kind="bar",
+                                      color=ref_col, bar_width=0.32), np.float64)
+        return np.asarray(AN.plot_series(c, ax, xs_ + 0.18, np.clip(mod, 0.0, 1.15), kind="bar",
+                                         color=col, bar_width=0.32), np.float64)
+
+    C_REF, C_NOW = (0.45, 0.45, 0.50), (0.95, 0.60, 0.20)
+    frames = []
+    base1 = np.full((FH, FW, 3), 0.06)
+    title(base1, 0, y_top, CW, "真値(縞の群、左から周期 24/16/12/8/6/4/3)")
+    title(base1, 0, y_bot, CW, "IBP の推定(倍率 4、面積平均の順モデルだけを使う)")
+    title(base1, CW + GAP, y_top, PW_, "周期ごとの変調度(1.0 = 真値どおり)")
+    base1[y_top:y_top + CH, 0:CW] = up2(truth)
+    c1 = _v_txt(chart.copy(), "灰 = bicubic(零点)/ だいだい = IBP", (8, 6), fs_=11)
+    base1[TB:, CW + GAP:] = c1
+    mod_bic = act1[0][2]
+    for it, shown, mod, psnr in act1 + [act1[-1]] * hold:
+        f = base1.copy()
+        f[y_bot:y_bot + CH, 0:CW] = _v_txt(up2(shown), "反復 %2d 回  PSNR %.2f dB(bicubic %.2f)" % (it, psnr, p_null),
+                                           (5, 5), fs_=12)
+        c = bars(f[TB:, CW + GAP:], mod, mod_bic, C_REF, C_NOW)
+        c = _v_txt(c, "周期 12 の変調度 %.2f(bicubic %.2f)\nナイキストより細かい列の最大 %.2f"
+                   % (mod[i12], mod_bic[i12], max(mod[i] for i in fine)), (8, 40), fs_=11)
+        f[TB:, CW + GAP:] = c
+        frames.append(np.clip(f, 0.0, 1.0))
+
+    base2 = np.full((FH, FW, 3), 0.06)
+    title(base2, 0, y_top, CW, "上限 = レンズを通った像を真値の格子で標本化(σ = 0.30)")
+    title(base2, 0, y_bot, CW, "drizzle(副画素ずれのある低解像を 1 枚ずつ足す)")
+    title(base2, CW + GAP, y_top, PW_, "周期ごとの変調度(1.0 = 真値どおり)")
+    base2[y_top:y_top + CH, 0:CW] = up2(blt)
+    base2[TB:, CW + GAP:] = _v_txt(chart.copy(), "灰 = レンズの上限 / だいだい = drizzle", (8, 6), fs_=11)
+    for k, pixfrac, img, mod, psnr, hole_pct in act2 + [act2[-1]] * hold:
+        f = base2.copy()
+        f[y_bot:y_bot + CH, 0:CW] = _v_txt(up2(img), "%2d 枚  pixfrac %.2f  被覆の穴 %.1f %%\nPSNR %.2f dB(単一画像 %.2f dB)"
+                                           % (k, pixfrac, hole_pct, psnr, p_single), (5, 5), fs_=12)
+        c = bars(f[TB:, CW + GAP:], mod, mod_blt, C_REF, C_NOW)
+        c = _v_txt(c, "周期 6 の変調度 %.2f(単一画像 %.2f、上限 %.2f)"
+                   % (mod[i6], mod_single[i6], mod_blt[i6]), (8, 40), fs_=11)
+        f[TB:, CW + GAP:] = c
+        frames.append(np.clip(f, 0.0, 1.0))
+    last1, last2 = act1[-1], act2[-1]
+    figs.save_video("growth", frames, fps=fps, gif_every=1, gif_width=640,
+                    caption="動画(%d コマ、縞の群を 2 倍で表示): 前半は単一画像の IBP を 0 → %d 回。周期 12 の変調度は"
+                            " %.2f → %.2f と戻るが、ナイキスト(周期 8)より細かい列の最大は %.2f → %.2f にとどまる —— 順モデルの"
+                            "零空間に落ちた縞は何回回しても立たない(PSNR も %.2f → %.2f dB で動かない)。後半は標本化不足(σ = 0.30)"
+                            "の 16 枚を 1 枚ずつ drizzle に足す(ずれは相互相関で推定、pixfrac は枚数に合わせて 1.0 → 0.4、"
+                            "被覆の穴は単一画像の bicubic で埋めて割合を表示)。周期 6 の変調度は単一画像の %.2f から"
+                            " 16 枚で %.2f まで立ち上がる(レンズの上限 %.2f)。PSNR は %.2f → %.2f dB。"
+                            % (len(frames), n_ibp, act1[0][2][i12], last1[2][i12],
+                               max(act1[0][2][i] for i in fine), max(last1[2][i] for i in fine),
+                               act1[0][3], last1[3], mod_single[i6], last2[3][i6], mod_blt[i6], p_single, last2[4]))
+    return {"ibp_mod12": float(last1[2][i12]), "drz_mod6": float(last2[3][i6])}
+
+
 def main():
     t_start = time.perf_counter()
     scene = Scene()
@@ -465,7 +621,7 @@ def main():
     gL, pL, sL = ladder[-1][1], ladder[-1][2], ladder[-1][3]
     print(f"  → 一番強く掛けたところで勾配エネルギーは真値と一致する(比 {gL / g_truth:.2f})のに、")
     print(f"     PSNR は {pL - p0_:+.2f} dB、SSIM は {sL - s0_:+.4f}。**逆を向く**。")
-    print(f"     弱く掛けた a=0.1〜0.5 の帯では PSNR は下がるのに SSIM は上がる ——")
+    print("     弱く掛けた a=0.1〜0.5 の帯では PSNR は下がるのに SSIM は上がる ——")
     print("     3 つの数字が三様なので、1 つだけ出す報告はいくらでも作れる。")
 
     print("\n=== 4. 複数フレーム —— 標本化が足りているかで結論が変わる ===")
@@ -649,6 +805,9 @@ def main():
     assert fid(blt, good)[0] - fid(blt, bad)[0] > 5.0, \
         "ずれの符号を反転しても結果が変わらない —— 合成が効いていない疑い"
 
+    # 動画は既存の図の**最後**に書く(番号が後ろの図のファイル名をずらさないように)。
+    if figs.enabled():
+        fig_growth_video(scene, truth, ref_amp)
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print(f"\n所要 {time.perf_counter() - t_start:.1f} 秒")

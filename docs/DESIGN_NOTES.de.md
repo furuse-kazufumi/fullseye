@@ -619,10 +619,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_interferometry_step.py`
 
-- **L159** — 3) ★Wiederholte Messung — Verzerrung von Streuung trennen # ------------------------------------------------------------------ #
-- **L202** — 4) ★Vergleich mit dem Nullpunkt (die maximale Probe der Einhüllenden) # ------------------------------------------------------------------ #
-- **L274** — 6) ★Rausch-Sweep — wo die Messung zusammenbricht # ------------------------------------------------------------------ #
-- **L314** — ★Eine kleine Streuung ist kein Beleg für Korrektheit
+- **L278** — 3) ★Wiederholte Messung — Verzerrung von Streuung trennen # ------------------------------------------------------------------ #
+- **L321** — 4) ★Vergleich mit dem Nullpunkt (die maximale Probe der Einhüllenden) # ------------------------------------------------------------------ #
+- **L393** — 6) ★Rausch-Sweep — wo die Messung zusammenbricht # ------------------------------------------------------------------ #
+- **L433** — ★Eine kleine Streuung ist kein Beleg für Korrektheit
 
 ## `examples/poc_kendama.py`
 
@@ -655,10 +655,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_livestock_body_volume.py`
 
-- **L1032** — ★3 und 6 Kameras liefern exakt dieselbe Menge an Tangenten (in Parallelprojektion fallen zwei gegenüberliegende zusammen)
-- **L1040** — ★Ungerade 13 Kameras schlagen gerade 16
-- **L1054** — ★Eine 3-D-konvexe Hülle ist kein Ersatz für die 'konvexe Hülle des Querschnitts' (sie verfehlt den Brustumfang deutlich)
-- **L1057** — ★Verdopplungsgesetz: der Brustumfangfehler verdoppelt sich mit dem Körpergewicht (der Rest ist ein Term 2. Ordnung)
+- **L1187** — ★3 und 6 Kameras liefern exakt dieselbe Menge an Tangenten (in Parallelprojektion fallen zwei gegenüberliegende zusammen)
+- **L1195** — ★Ungerade 13 Kameras schlagen gerade 16
+- **L1209** — ★Eine 3-D-konvexe Hülle ist kein Ersatz für die 'konvexe Hülle des Querschnitts' (sie verfehlt den Brustumfang deutlich)
+- **L1212** — ★Verdopplungsgesetz: der Brustumfangfehler verdoppelt sich mit dem Körpergewicht (der Rest ist ein Term 2. Ordnung)
 
 ## `examples/poc_machine_condition_fusion.py`
 

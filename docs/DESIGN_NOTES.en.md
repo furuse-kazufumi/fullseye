@@ -619,10 +619,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_interferometry_step.py`
 
-- **L159** — 3) ★Repeated measurement — separate bias from spread # ------------------------------------------------------------------ #
-- **L202** — 4) ★Comparison with the zero point (the max sample of the envelope) # ------------------------------------------------------------------ #
-- **L274** — 6) ★Noise sweep — where measurement breaks down # ------------------------------------------------------------------ #
-- **L314** — ★A small spread is no evidence of correctness
+- **L278** — 3) ★Repeated measurement — separate bias from spread # ------------------------------------------------------------------ #
+- **L321** — 4) ★Comparison with the zero point (the max sample of the envelope) # ------------------------------------------------------------------ #
+- **L393** — 6) ★Noise sweep — where measurement breaks down # ------------------------------------------------------------------ #
+- **L433** — ★A small spread is no evidence of correctness
 
 ## `examples/poc_kendama.py`
 
@@ -655,10 +655,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_livestock_body_volume.py`
 
-- **L1032** — ★3 cameras and 6 cameras give exactly the same set of tangents (in parallel projection two opposing cameras coincide)
-- **L1040** — ★An odd 13 cameras beat an even 16
-- **L1054** — ★A 3-D convex hull is no substitute for the 'convex hull of the cross-section' (it misses the chest girth by a wide margin)
-- **L1057** — ★Doubling law: the chest-girth error doubles with body weight (the residual is a 2nd-order term)
+- **L1187** — ★3 cameras and 6 cameras give exactly the same set of tangents (in parallel projection two opposing cameras coincide)
+- **L1195** — ★An odd 13 cameras beat an even 16
+- **L1209** — ★A 3-D convex hull is no substitute for the 'convex hull of the cross-section' (it misses the chest girth by a wide margin)
+- **L1212** — ★Doubling law: the chest-girth error doubles with body weight (the residual is a 2nd-order term)
 
 ## `examples/poc_machine_condition_fusion.py`
 

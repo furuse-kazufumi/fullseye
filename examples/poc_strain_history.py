@@ -733,13 +733,172 @@ def section9_tool_gaps():
     print("  (assert 5 本で現状を固定した。穴が埋まったらこの PoC が落ちる。)")
 
 
+# --------------------------------------------------------------------------- #
+# 動画(図つきで走らせたときだけ)                                              #
+# --------------------------------------------------------------------------- #
+def _vtxt(img, s, xy, anchor="lt", fs_=12, color=None):
+    """文字(poc_driving_traffic の ``_txt`` と同じ書き方、色だけ選べる)。"""
+    import annotate as AN
+    kw = {} if color is None else {"text_color": color}
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_, **kw), dtype=np.float64)
+
+
+def _vpoly(a, ax, x, y, color, w=1):
+    """データ座標の折れ線を直に塗る(``annotate.plot_series`` は全画面の重みを作るので
+    動画の毎コマには重い —— 同じ写像 ``data_to_pixel`` を使い、0.5 px 刻みの点打ちで描く)。
+    軸の矩形の外には塗らない。"""
+    import annotate as AN
+    x = np.atleast_1d(np.asarray(x, np.float64))
+    y = np.atleast_1d(np.asarray(y, np.float64))
+    if x.size < 2:
+        return a
+    px, py = (np.asarray(v, np.float64) for v in AN.data_to_pixel(ax, x, y))
+    n = np.maximum(1, np.ceil(2.0 * np.hypot(np.diff(px), np.diff(py))).astype(int))
+    xs = np.concatenate([np.linspace(px[i], px[i + 1], n[i], endpoint=False) for i in range(n.size)] + [px[-1:]])
+    ys = np.concatenate([np.linspace(py[i], py[i + 1], n[i], endpoint=False) for i in range(n.size)] + [py[-1:]])
+    x0, y0, ww, hh = ax["rect"]
+    xi, yi = np.rint(xs).astype(int), np.rint(ys).astype(int)
+    for dy in range(-(w // 2), w - w // 2):
+        for dx in range(-(w // 2), w - w // 2):
+            xx, yy = xi + dx, yi + dy
+            ok = (xx >= x0) & (xx < x0 + ww) & (yy >= y0) & (yy < y0 + hh)
+            a[yy[ok], xx[ok]] = color
+    return a
+
+
+def _vaxes(a, ax, xt, yt, c_axis):
+    """軸の枠と目盛り(1 度だけ描いて、各コマはこれを写す)。"""
+    import annotate as AN
+    a = np.asarray(AN.axes_frame(a, ax, color=c_axis), np.float64)
+    return np.asarray(AN.ticks(a, ax, xticks=xt, yticks=yt, color=c_axis, font_size=10, text_color=c_axis),
+                      np.float64)
+
+
+def _vstrip(f, y0, y1, s, xy=(4, 2), fs_=12, color=None, anchor="lt"):
+    """コマの横帯 ``f[y0:y1]`` にだけ文字を書く(全面に text_box を走らせない)。"""
+    f[y0:y1] = _vtxt(f[y0:y1].copy(), s, xy, anchor=anchor, fs_=fs_, color=color)
+    return f
+
+
+VID_DT = 0.25               # 動画の時間刻み [コマ](真のクリープ曲線はコマの間も滑らかに伸ばす)
+VID_FPS = 8.0
+VID_END = 30                # 最後の要約を見せるコマ数
+VID_ARROW = 3.0             # 変位の矢印の誇張率(窓は 1 つおきに描く)
+
+
+def _video_history(noisy, cum, dirq, tru) -> None:
+    """動画: クリープ試験の 25 コマを順に撮り、ひずみ履歴と誤差が時刻とともに伸びる。
+
+    左 = その時刻のスペックル像に、t=0 との直接 PIV の変位を ``VID_ARROW`` 倍の矢印で
+    重ねる(一様な伸びなので中心から外へ向かう)。右上 = 真ひずみ(白、コマの間も閉形式で
+    滑らかに伸ばす)と、累積(青)・直接(朱)で測った値。右下 = その誤差 [µε]。
+    履歴は第 2 節と同じ雑音の実現(種 1)から出したものをそのまま使う。矢印の場から
+    読んだひずみが直接の履歴と一致することを assert する(同じ呼び方の検算)。
+    """
+    import annotate as AN
+    import palette as PAL
+
+    c_cum, c_dir, c_cur = PAL.role_color("right"), PAL.role_color("wrong"), PAL.role_color("emphasis")
+    c_true, c_axis = (0.93, 0.93, 0.93), (0.62, 0.62, 0.66)
+    flows = [None]
+    for k in range(1, T):
+        flow, info = pivops.piv_cross_correlate(noisy[0], noisy[k], window=WINDOW, overlap=OVERLAP)
+        f = np.asarray(flow)
+        x = np.asarray(info["cols"], float)
+        sl = float(fs.ledger.poly_fit(x, f[1].mean(axis=0), degree=1)["coeffs"][0])
+        assert abs(np.log1p(sl) - dirq[k]) < 1e-12, (k, np.log1p(sl), dirq[k])
+        flows.append((f, np.asarray(info["rows"], float), x))
+    e_cum, e_dir = 1e6 * (cum - tru), 1e6 * (dirq - tru)
+    n_win = int(np.count_nonzero(np.abs(e_cum[1:]) < np.abs(e_dir[1:])))
+    Wf, yt = 720, 58
+    xi, yi = 16, yt + 16
+    Hf = yt + 400
+    lim_e = 1.1 * float(max(np.abs(e_cum).max(), np.abs(e_dir).max()))
+    ax_h = AN.axes_transform((340, yt + 16, 360, 160), (0.0, float(T - 1)), (0.0, 1.05e6 * E_MAX))
+    ax_e = AN.axes_transform((340, yt + 226, 360, 130), (0.0, float(T - 1)), (-lim_e, lim_e))
+    panel = np.zeros((Hf, Wf, 3))
+    panel[yt:] = 0.07
+    panel = _vaxes(panel, ax_h, [0, 6, 12, 18, 24], [0, 20000, 40000, 60000], c_axis)
+    step = 500.0 if lim_e < 1500 else 1000.0
+    panel = _vaxes(panel, ax_e, [0, 6, 12, 18, 24],
+                   list(np.arange(-np.floor(lim_e / step), np.floor(lim_e / step) + 1) * step), c_axis)
+    panel = _vpoly(panel, ax_e, [0.0, float(T - 1)], [0.0, 0.0], (0.30, 0.30, 0.33))
+    panel = _vtxt(panel, "真ひずみ [µε]", (342, yt + 18), fs_=10, color=c_axis)
+    panel = _vtxt(panel, "誤差 [µε]", (342, yt + 228), fs_=10, color=c_axis)
+    panel = _vtxt(panel, "t [コマ]", (340 + 180, Hf - 2), anchor="cb", fs_=10, color=c_axis)
+    for i, (s, c) in enumerate((("— 真値", c_true), ("● 累積(隣のコマと比べて足す)", c_cum),
+                                ("● 直接(いつも t=0 と比べる)", c_dir))):
+        panel = _vtxt(panel, s, (698, yt + 176 - 15 * (3 - i)), anchor="rt", fs_=10, color=c)
+    panel = _vtxt(panel, "スペックル像と、t=0 からの変位(%.0f 倍の矢印)" % VID_ARROW, (xi + N // 2, yi + N + 6),
+                  anchor="ct", fs_=10, color=c_axis)
+
+    def dots(a, ax, xs, ys, color, r=3):
+        px, py = AN.data_to_pixel(ax, np.asarray(xs, float), np.asarray(ys, float))
+        for cx, cy in zip(np.atleast_1d(px), np.atleast_1d(py)):
+            y0, y1 = max(0, int(cy) - r - 1), min(a.shape[0], int(cy) + r + 2)
+            x0, x1 = max(0, int(cx) - r - 1), min(a.shape[1], int(cx) + r + 2)
+            yy, xx = np.mgrid[y0:y1, x0:x1]
+            a[y0:y1, x0:x1][(xx - cx) ** 2 + (yy - cy) ** 2 <= r * r] = color
+        return a
+
+    tv = np.arange(0.0, T - 1 + 1e-9, VID_DT)
+    tt = np.linspace(0.0, float(T - 1), 400)
+    lo, hi = float(np.percentile(noisy[0], 1)), float(np.percentile(noisy[0], 99))
+    frames = []
+    for i in range(tv.size + VID_END):
+        tau = float(tv[min(i, tv.size - 1)])
+        k = int(np.floor(tau + 1e-9))
+        f = panel.copy()
+        g = np.clip((noisy[k] - lo) / (hi - lo), 0.0, 1.0)
+        f[yi:yi + N, xi:xi + N] = g[..., None] * 0.8
+        if k >= 1:
+            fl, rr, cc_ = flows[k]
+            for a_ in range(1, rr.size, 2):
+                for b_ in range(1, cc_.size, 2):
+                    y0p, x0p = yi + rr[a_], xi + cc_[b_]
+                    dy, dx = VID_ARROW * fl[0, a_, b_], VID_ARROW * fl[1, a_, b_]
+                    n = max(2, int(np.ceil(2 * np.hypot(dx, dy))))
+                    px = np.rint(np.linspace(x0p, x0p + dx, n)).astype(int)
+                    py = np.rint(np.linspace(y0p, y0p + dy, n)).astype(int)
+                    ok = (px >= xi) & (px < xi + N) & (py >= yi) & (py < yi + N)
+                    f[py[ok], px[ok]] = c_cur
+                    f[int(round(y0p)) - 1:int(round(y0p)) + 2, int(round(x0p)) - 1:int(round(x0p)) + 2] = (1.0, 1.0, 1.0)
+        sel = tt <= tau + 1e-9
+        f = _vpoly(f, ax_h, tt[sel], 1e6 * true_strain(tt[sel]), c_true, w=1)
+        f = dots(f, ax_h, TIMES[:k + 1], 1e6 * dirq[:k + 1], c_dir, r=3)
+        f = dots(f, ax_h, TIMES[:k + 1], 1e6 * cum[:k + 1], c_cum, r=2)
+        if k >= 1:
+            f = _vpoly(f, ax_e, TIMES[:k + 1], e_dir[:k + 1], c_dir, w=2)
+            f = _vpoly(f, ax_e, TIMES[:k + 1], e_cum[:k + 1], c_cum, w=2)
+        f = dots(f, ax_e, TIMES[:k + 1], e_dir[:k + 1], c_dir, r=2)
+        f = dots(f, ax_e, TIMES[:k + 1], e_cum[:k + 1], c_cum, r=2)
+        if i < tv.size:
+            s = ("t = %.2f(コマ %d/%d を撮ったところ)  真ひずみ %.0f µε\n"
+                 "コマ %d: 累積 %.0f µε(誤差 %+.0f)/ 直接 %.0f µε(誤差 %+.0f)"
+                 % (tau, k, T - 1, 1e6 * true_strain(tau), k, 1e6 * cum[k], e_cum[k], 1e6 * dirq[k], e_dir[k]))
+            f = _vstrip(f, 0, yt, s)
+        else:
+            s = ("終端(6 %% ひずみ): 累積の誤差 %+.0f µε / 直接 %+.0f µε —— 累積が %.0f 倍良い\n"
+                 "この実現では %d/%d コマで累積の誤差が小さい。時間軸に交点は無い(交点は雑音の軸、第 3 節)"
+                 % (e_cum[-1], e_dir[-1], abs(e_dir[-1]) / max(abs(e_cum[-1]), 1e-9), n_win, T - 1))
+            f = _vstrip(f, 0, yt, s, color=c_cur)
+        frames.append(np.clip(f, 0.0, 1.0))
+    figs.save_video(
+        "history_video", frames, fps=VID_FPS, gif_every=1, gif_width=Wf,
+        caption="動画(%d × %d、%.0f fps、%d コマ): クリープ試験を 25 コマ撮る。左はその時刻のスペックル像に、t=0 との"
+                "直接 PIV の変位を %.0f 倍の矢印で重ねたもの(中心から外へ伸びる)。右上は真ひずみ(白、閉形式)と測った"
+                "値(青 = 隣のコマどうしの増分を足す累積、朱 = いつも t=0 と比べる直接)、右下はその誤差。直接の誤差だけが"
+                "変形とともに伸び、終端で 累積 %+.0f µε / 直接 %+.0f µε(雑音の実現 1 通り、第 2 節と同じ種)。"
+                % (Wf, Hf, VID_FPS, len(frames), VID_ARROW, e_cum[-1], e_dir[-1]))
+
+
 def main():
     t0 = time.perf_counter()
     print("poc_strain_history — クリープ試験のひずみ履歴(その 3: 時間発展の DIC)")
     print("既存の piv 族 23 op と strain_from_displacement を使う。新しい op は作らない。")
     print()
     frames = section1_check()
-    section2_zero_point(frames)
+    z2 = section2_zero_point(frames)
     out, cums, dirs, tru, sweep = section3_crossover(frames)
     rec = section4_origin(frames)
     direct_res, _ = section5_direct_breaks(frames)
@@ -748,6 +907,10 @@ def main():
                      direct_res, sweep)
     section8_findings(out, rec, direct_res, tru, rate_rows, sweep)
     section9_tool_gaps()
+    # 動画(図つきのときだけ。既存の図の後ろに書く —— 番号がずれないように)
+    if figs.enabled():
+        _video_history(*z2)
+
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

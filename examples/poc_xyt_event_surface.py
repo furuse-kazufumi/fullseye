@@ -632,6 +632,170 @@ def section11_tool_gaps(state: dict) -> None:
     print("      「時間軸だけ単位が違う」という契約と、到達時刻という出口。")
 
 
+# --------------------------------------------------------------------------- #
+# 動画(図つきで走らせたときだけ)                                              #
+# --------------------------------------------------------------------------- #
+def _vtxt(img, s, xy, anchor="lt", fs_=12, color=None):
+    """文字(poc_driving_traffic の ``_txt`` と同じ書き方、色だけ選べる)。"""
+    import annotate as AN
+    kw = {} if color is None else {"text_color": color}
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_, **kw), dtype=np.float64)
+
+
+def _vpoly(a, ax, x, y, color, w=1):
+    """データ座標の折れ線を直に塗る(``annotate.plot_series`` は全画面の重みを作るので
+    動画の毎コマには重い —— 同じ写像 ``data_to_pixel`` を使い、0.5 px 刻みの点打ちで描く)。
+    軸の矩形の外には塗らない。"""
+    import annotate as AN
+    x = np.atleast_1d(np.asarray(x, np.float64))
+    y = np.atleast_1d(np.asarray(y, np.float64))
+    if x.size < 2:
+        return a
+    px, py = (np.asarray(v, np.float64) for v in AN.data_to_pixel(ax, x, y))
+    n = np.maximum(1, np.ceil(2.0 * np.hypot(np.diff(px), np.diff(py))).astype(int))
+    xs = np.concatenate([np.linspace(px[i], px[i + 1], n[i], endpoint=False) for i in range(n.size)] + [px[-1:]])
+    ys = np.concatenate([np.linspace(py[i], py[i + 1], n[i], endpoint=False) for i in range(n.size)] + [py[-1:]])
+    x0, y0, ww, hh = ax["rect"]
+    xi, yi = np.rint(xs).astype(int), np.rint(ys).astype(int)
+    for dy in range(-(w // 2), w - w // 2):
+        for dx in range(-(w // 2), w - w // 2):
+            xx, yy = xi + dx, yi + dy
+            ok = (xx >= x0) & (xx < x0 + ww) & (yy >= y0) & (yy < y0 + hh)
+            a[yy[ok], xx[ok]] = color
+    return a
+
+
+def _vaxes(a, ax, xt, yt, c_axis):
+    """軸の枠と目盛り(1 度だけ描いて、各コマはこれを写す)。"""
+    import annotate as AN
+    a = np.asarray(AN.axes_frame(a, ax, color=c_axis), np.float64)
+    return np.asarray(AN.ticks(a, ax, xticks=xt, yticks=yt, color=c_axis, font_size=10, text_color=c_axis),
+                      np.float64)
+
+
+def _vstrip(f, y0, y1, s, xy=(4, 2), fs_=12, color=None, anchor="lt"):
+    """コマの横帯 ``f[y0:y1]`` にだけ文字を書く(全面に text_box を走らせない)。"""
+    f[y0:y1] = _vtxt(f[y0:y1].copy(), s, xy, anchor=anchor, fs_=fs_, color=color)
+    return f
+
+
+VID_UP = 2                  # 視野 1 px -> 2 x 2 表示 px(最近傍)
+VID_DT = 0.25               # 動画の時間刻み [ms](カメラは DT_BASE = 1 ms ごと。波面はその間も進む)
+VID_FPS = 20.0
+VID_END = 30                # 最後の要約を見せるコマ数
+
+
+def _video_arrival(truth: np.ndarray, state: dict) -> None:
+    """動画: 2 つの波面が広がり、通り過ぎた画素から到達時刻面が塗られていく。
+
+    左 = 波面の強度(閉形式の場を ``VID_DT`` 刻みで。カメラが撮るのは ``DT_BASE`` ごとの
+    コマだけ)。右 = 線形補間で出した到達時刻 T(x, y)(第 2 章の推定そのもの)を、
+    その時刻を過ぎた画素だけ塗る。点線 = 撮る前に紙の上で分かる合流線(双曲線)。
+    下段 = 源を通る行 72 の断面: 白 = 真値 T(x)、橙 = ゼロ点(初めて超えたコマの時刻、
+    階段)、青 = 線形補間。横線がいまの時刻。数字は第 2 章と同じ ``_err`` で出す。
+    """
+    import annotate as AN
+    import palette as PAL
+
+    c_lin, c_frm, c_cur = PAL.role_color("right"), PAL.role_color("emphasis"), (0.85, 0.85, 0.30)
+    c_true, c_axis = (0.93, 0.93, 0.93), (0.62, 0.62, 0.66)
+    est, m = state["est"], state["mask"]
+    lin, frm = est["linear"], est["frame"]
+    ts = state["ts"]
+    b_l, _s, r_l = _err(lin, truth, m)
+    b_f, _s, r_f = _err(frm, truth, m)
+    t_end = float(ts[-1])
+    tv, vol = make_volume(VID_DT, t_end)
+    up = VID_UP
+    S = N * up
+    yt, gap = 58, 16
+    Wf = 2 * S + 3 * gap
+    xl, xr = gap, 2 * gap + S
+    Hf = yt + S + 46 + 150 + 44
+    t_lo, t_hi = 0.0, float(np.ceil(truth[m].max() + 1.0))
+    cmap = np.asarray(fs.colorize_depth(np.where(m, lin, t_hi), vmin=t_lo, vmax=t_hi), np.float64)[..., :3]
+    cmap = np.repeat(np.repeat(cmap, up, 0), up, 1)
+    ok_up = np.repeat(np.repeat(m, up, 0), up, 1)
+    lin_up = np.repeat(np.repeat(np.where(m, lin, np.inf), up, 0), up, 1)
+    merge = np.repeat(np.repeat(_FIELD & (np.abs(_MERGE) < 0.8), up, 0), up, 1)
+    merge &= ((np.arange(S)[:, None] // 6) % 2 == 0)          # 点線にする
+    row = int(SRC_A[0])
+    ax = AN.axes_transform((52, yt + S + 46, Wf - 70, 150), (0.0, float(N - 1)), (t_lo, t_hi))
+    panel = np.zeros((Hf, Wf, 3))
+    panel[yt + S:] = 0.07
+    panel = _vaxes(panel, ax, [0, 36, 72, 108, 143], [0, 10, 20, 30], c_axis)
+    panel = _vtxt(panel, "波面の強度(源 A は 0 ms、源 B は %.0f ms に点火)" % T_FIRE_B, (xl + S // 2, yt + S + 3),
+                  anchor="ct", fs_=10, color=c_axis)
+    panel = _vtxt(panel, "到達時刻 T(線形補間、通り過ぎた画素だけ)", (xr + S // 2, yt + S + 3), anchor="ct",
+                  fs_=10, color=c_axis)
+    panel = _vtxt(panel, "到達時刻 [ms]  行 %d の断面(評価領域の画素だけ)" % row, (54, yt + S + 24), fs_=10, color=c_axis)
+    panel = _vtxt(panel, "列 [px]", (52 + (Wf - 70) // 2, Hf - 2), anchor="cb", fs_=10, color=c_axis)
+    for i, (s, c) in enumerate((("— 真値", c_true), ("— ゼロ点(コマ番号)", c_frm), ("— 線形補間", c_lin),
+                                ("┄ 予測した合流線", (1.0, 1.0, 1.0)))):
+        panel = _vtxt(panel, s, (Wf - 20, yt + S + 48 + 15 * i), anchor="rt", fs_=10, color=c)
+    xs = np.arange(N, dtype=np.float64)
+    okr = m[row]
+    idx_ok = np.nonzero(okr)[0]
+    for seg in np.split(idx_ok, np.nonzero(np.diff(idx_ok) > 1)[0] + 1):
+        panel = _vpoly(panel, ax, xs[seg], truth[row, seg], c_true, w=1)
+    frames = []
+    for i in range(tv.size + VID_END):
+        k = min(i, tv.size - 1)
+        tau = float(tv[k])
+        kc = int(np.floor(tau / DT_BASE + 1e-9))        # いま手元にあるカメラのコマ
+        f = panel.copy()
+        g = np.clip(vol[k], 0.0, 1.0)
+        f[yt:yt + S, xl:xl + S] = np.repeat(np.repeat(g, up, 0), up, 1)[..., None] * np.array([1.0, 0.92, 0.75])
+        done = ok_up & (lin_up <= tau)
+        rgt = np.full((S, S, 3), 0.10)
+        rgt[~np.repeat(np.repeat(_FIELD, up, 0), up, 1)] = 0.04
+        rgt[done] = cmap[done]
+        for x0, img in ((xl, None), (xr, rgt)):
+            if img is not None:
+                f[yt:yt + S, x0:x0 + S] = img
+            sub = f[yt:yt + S, x0:x0 + S]
+            sub[merge] = 0.35 * sub[merge] + 0.65
+        for x0 in (xl, xr):                                # 断面の行を示す刻み
+            f[yt + row * up, x0:x0 + 6] = c_cur
+            f[yt + row * up, x0 + S - 6:x0 + S] = c_cur
+        sel = okr & (lin[row] <= tau)
+        if sel.sum() >= 2:
+            idx = np.nonzero(sel)[0]
+            # 左右 2 つの区間(源 A と B のあいだで途切れる)を別々に描く
+            for seg in np.split(idx, np.nonzero(np.diff(idx) > 1)[0] + 1):
+                if seg.size >= 2:
+                    st = np.repeat(seg.astype(np.float64), 2)[1:]
+                    sv = np.repeat(frm[row, seg], 2)[:-1]
+                    f = _vpoly(f, ax, st, sv, c_frm, w=1)
+                    f = _vpoly(f, ax, seg.astype(np.float64), lin[row, seg], c_lin, w=2)
+        f = _vpoly(f, ax, [0.0, float(N - 1)], [min(tau, t_hi), min(tau, t_hi)], c_cur, w=1)
+        if i < tv.size:
+            sm = m & (lin <= tau)
+            if sm.sum() > 0:
+                e_l = float(np.sqrt(np.mean((lin - truth)[sm] ** 2)))
+                e_f = float(np.sqrt(np.mean((frm - truth)[sm] ** 2)))
+                s2 = "到達済み %.0f %%   誤差 RMS: ゼロ点 %.3f ms / 線形補間 %.4f ms" % (100 * sm.sum() / m.sum(), e_f, e_l)
+            else:
+                s2 = "到達済み 0 %(まだ波面が評価領域に届いていない)"
+            s = "t = %.2f ms   カメラのコマ %d/%d(%.0f ms ごと)\n%s" % (tau, min(kc, ts.size - 1) + 1, ts.size,
+                                                                   DT_BASE, s2)
+            f = _vstrip(f, 0, yt, s)
+        else:
+            s = ("全画素(%d 個): ゼロ点 偏り %+.3f / RMS %.3f ms → 線形補間 偏り %+.4f / RMS %.4f ms\n"
+                 "ゼロ点の偏りは Δt/2 で何枚撮っても消えない。補間で %.0f 倍よくなる"
+                 % (int(m.sum()), b_f, r_f, b_l, r_l, r_f / r_l))
+            f = _vstrip(f, 0, yt, s, color=c_frm)
+        frames.append(np.clip(f, 0.0, 1.0))
+    figs.save_video(
+        "arrival_video", frames, fps=VID_FPS, gif_every=2, gif_width=Wf,
+        caption="動画(%d × %d、%.0f fps、%d コマ): 2 つの点源から波面が広がる(源 B は %.0f ms 遅れて点火)。左が波面の"
+                "強度、右は線形補間で出した到達時刻を、波面が通り過ぎた画素から順に塗ったもの —— 動画 (t, y, x) を"
+                "1 つの体積とみなしたときの等値面が、こうして 1 枚の面になる。点線は撮る前に閉形式で予測した合流線。"
+                "下段は行 %d の断面で、白 = 真値、橙 = ゼロ点(初めてしきい値を超えたコマの時刻、%.0f ms の階段)、"
+                "青 = 線形補間。最後に全画素の誤差: ゼロ点 RMS %.3f ms(偏り %+.3f)、線形補間 RMS %.4f ms(%.0f 倍)。"
+                % (Wf, Hf, VID_FPS, len(frames), T_FIRE_B, row, DT_BASE, r_f, b_f, r_l, r_f / r_l))
+
+
 def main() -> None:
     t0 = time.perf_counter()
     print("poc_xyt_event_surface — 到達時刻面を (x, y, t) の等値面として取り出す")
@@ -648,6 +812,10 @@ def main() -> None:
     section9_interference(state, truth)
     section10_figures(truth, state, t_mc)
     section11_tool_gaps(state)
+    # 動画(図つきのときだけ。既存の図の後ろに書く —— 番号がずれないように)
+    if figs.enabled():
+        _video_arrival(truth, state)
+
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

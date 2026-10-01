@@ -1067,6 +1067,129 @@ def section_tool_gaps(scene: dict) -> None:
 
 
 # --------------------------------------------------------------------------- #
+def _v_txt(img, s, xy, anchor="lt", fs_=12):
+    """文字の板。**小さな板(パネル 1 枚)にだけ**描く —— 全面に描くと遅い。"""
+    import annotate as AN
+
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_), dtype=np.float64)
+
+
+def fig_decimate_orbit_video(scene: dict, size: int = 480, per_level: int = 34, fps: float = 15.0):
+    """★動画: 部品の周りをカメラで回りながら、簡略化(QEM)の削減率を 0 → 98 % へ段階的に上げる。
+
+    面は平らに塗り(面の法線で陰影 = 三角形が見える)、色は面の 3 頂点の平均曲率 |H|
+    (``vertex_curvature``、magma、尺度は削減前の 99 パーセンタイルで固定)。右の表は
+    7-8 節と同じ削減率・同じ計算(``decimate_qem`` → ``remove_degenerate_faces`` →
+    ``vertex_curvature``、体積は ``inertia_tensor``)で、いまの行を強調する。
+    左下の向きの目印は配列の軸 0(= 貫通穴の軸、画面の上)・1・2(+ 側に角柱ボス)。
+    乱数は使わない。図を出さない実行では呼ばれない。
+    """
+    if not figs.enabled():
+        return None
+    import imgio
+
+    V0, F0 = scene["V"], scene["F"]
+    A0, Vol0 = scene["area"], scene["vol"]
+    levels = []
+    for r in (0.0, 0.30, 0.50, 0.70, 0.85, 0.92, 0.95, 0.98):
+        if r == 0.0:
+            V2, F2 = V0, F0
+        else:
+            V2, F2 = fs.decimate_qem(V0, F0, int(round(len(F0) * (1 - r))))
+        V3, F3 = fs.remove_degenerate_faces(V2, F2)
+        c = np.asarray(L.vertex_curvature((V3, F3)))
+        vol = fs.inertia_tensor(V2, F2)["volume"]
+        levels.append({"r": r, "V": np.asarray(V3), "F": np.asarray(F3, np.int64), "c": c, "nf": len(F2),
+                       "dv": 100 * (vol - Vol0) / Vol0, "da": 100 * (L.mesh_area((V2, F2)) - A0) / A0,
+                       "p95": float(np.percentile(c, 95))})
+    cmax = float(np.percentile(levels[0]["c"], 99))
+    K = np.asarray(fs.intrinsics_from_fov(40.0, size, size))
+    light = np.array([0.25, 0.30, 0.92])
+    rad = np.hypot(_EYE[1], _EYE[2])
+    a0 = np.arctan2(_EYE[2], _EYE[1])
+
+    TB, GAP, TW = 34, 6, 430
+    FW, FH = size + GAP + TW, TB + size
+    base = np.full((FH, FW, 3), 0.06)
+    base[0:TB, 0:size] = _v_txt(base[0:TB, 0:size], "簡略化しながら一周(色 = 平均曲率 |H|、面ごと)", (4, TB // 2),
+                                anchor="lm", fs_=13)
+    base[0:TB, size + GAP:] = _v_txt(base[0:TB, size + GAP:], "7-8 節の表(同じ計算)", (4, TB // 2), anchor="lm", fs_=13)
+    # 色の凡例(magma の帯)は 1 度だけ描く
+    bar = np.asarray(imgio.apply_cmap(np.linspace(0.0, 1.0, 160)[None, :].repeat(10, 0), "magma",
+                                      vmin=0.0, vmax=1.0), np.float64)
+    bar_lab = _v_txt(np.full((30, 214, 3), 0.06), "色 |H| 0 → %.1f /mm" % cmax, (210, 15), anchor="rm", fs_=10)
+    # 表の各行(削減率ごと)はコマごとに描かず、行の板を 1 度ずつ作って貼る
+    head = "削減率   面数   体積の誤差  表面積の誤差  曲率 p95"
+    rows_txt = ["%5.0f %%  %6d   %+8.3f %%  %+8.3f %%  %7.2f" % (100 * lv["r"], lv["nf"], lv["dv"], lv["da"], lv["p95"])
+                for lv in levels]
+    table_h = 30 + 26 * len(levels) + 14
+
+    def table(cur):
+        t = np.full((table_h, TW, 3), 0.10)
+        t = _v_txt(t, head, (6, 4), fs_=12)
+        for i, s in enumerate(rows_txt[:cur + 1]):
+            t = _v_txt(t, s, (6, 30 + 26 * i), fs_=12) if i != cur else np.asarray(
+                __import__("annotate").text_box(t, s, (6, 30 + 26 * i), font_size=12, color="emphasis",
+                                                border=1), np.float64)
+        return t
+
+    tables = [table(i) for i in range(len(levels))]
+    p95_0 = levels[0]["p95"]
+
+    frames = []
+    n_tot = per_level * len(levels)
+    for i, lv in enumerate(levels):
+        cface = lv["c"][lv["F"]].mean(axis=1)
+        fcol = np.asarray(imgio.apply_cmap(cface[None, :], "magma", vmin=0.0, vmax=cmax), np.float64)[0]
+        for k in range(per_level):
+            n = i * per_level + k
+            a = a0 + 2.0 * np.pi * 1.5 * n / n_tot             # 全体で 1.5 周
+            eye = np.array([_EYE[0], rad * np.cos(a), rad * np.sin(a)])
+            pose = np.asarray(fs.look_at(eye, np.zeros(3), _UP))
+            rr = fs.render_mesh(lv["V"], lv["F"], pose=pose, intrinsics=K, width=size, height=size,
+                                attributes=True)
+            face = np.asarray(rr["face"])
+            sil = face >= 0
+            lam = np.clip(np.asarray(rr["normals"]) @ light, 0.0, 1.0)
+            img = np.full((size, size, 3), 0.06)
+            img[sil] = fcol[face[sil]] * (0.30 + 0.70 * lam[sil])[:, None] + 0.10 * lam[sil][:, None]
+            # 向きの目印: 世界の軸 0/1/2 をカメラの回転で写した小さな 3 本(左下)
+            Rc = pose[:3, :3]
+            sub = img[size - 150:, :160].copy()               # 向きの目印は左下の小さな板にだけ描く
+            o = np.array([70.0, 80.0])
+            for ax_i, col, nm in ((0, (0.95, 0.35, 0.30), "0 穴軸"), (1, (0.40, 0.85, 0.40), "1"),
+                                  (2, (0.45, 0.60, 1.00), "2 ボス")):
+                d = Rc[:, ax_i]
+                v2 = np.array([d[0], -d[1]])                     # 画面の右 = カメラの +x、上 = カメラの +y
+                e = o + 46.0 * v2
+                for t_ in np.linspace(0.0, 1.0, 60):
+                    p = np.round(o + (e - o) * t_).astype(int)
+                    sub[p[1] - 1:p[1] + 2, p[0] - 1:p[0] + 2] = col
+                lab = o + (46.0 + 16.0) * v2 / max(np.linalg.norm(v2), 0.35)
+                sub = _v_txt(sub, nm, (float(np.clip(lab[0], 30, 130)), float(np.clip(lab[1], 20, 132))),
+                             anchor="cm", fs_=10)
+            img[size - 150:, :160] = sub
+            img[:96] = _v_txt(img[:96].copy(), "削減 %.0f %%  面 %d 枚\n体積の誤差 %+.3f %%\n曲率 p95 %.2f(削減前 %.2f、%+.0f %%)"
+                              % (100 * lv["r"], lv["nf"], lv["dv"], lv["p95"], p95_0, 100 * (lv["p95"] - p95_0) / p95_0),
+                              (6, 6), fs_=12)
+            f = base.copy()
+            f[TB:TB + size, 0:size] = np.maximum(img, 0.0)
+            f[TB + size - 28:TB + size - 18, size - 176:size - 16] = bar
+            f[TB + size - 60:TB + size - 30, size - 230:size - 16] = bar_lab
+            f[TB:TB + table_h, size + GAP:] = tables[i]
+            frames.append(np.clip(f, 0.0, 1.0))
+    i50 = 2
+    figs.save_video("decimate_orbit", frames, fps=fps, gif_every=3, gif_width=640,
+                    caption="動画(%d コマ、%d × %d px): 健全な部品(面 %d 枚)の周りを 1.5 周しながら、QEM 簡略化の削減率を"
+                            " 0 → 98 %% へ 8 段で上げる。面は平らに塗り、色は面の 3 頂点の平均曲率 |H|(尺度は削減前の"
+                            " 99 パーセンタイル %.1f /mm で固定)。50 %% 削減で体積の誤差は %+.3f %% しかないのに曲率の"
+                            " 95 パーセンタイルは %.2f → %.2f(%+.0f %%)—— 明るい(尖った)面が先に増える。98 %% 削減で"
+                            "ようやく体積 %+.3f %%。左下の 3 本は配列の軸(0 = 貫通穴の軸 = 画面の上、2 = 角柱ボスの側)。"
+                            % (len(frames), size, size, len(F0), cmax, levels[i50]["dv"], p95_0, levels[i50]["p95"],
+                               100 * (levels[i50]["p95"] - p95_0) / p95_0, levels[-1]["dv"]))
+    return {"levels": len(levels), "frames": len(frames)}
+
+
 def main() -> int:
     t0 = time.perf_counter()
     print("=" * 78)
@@ -1102,6 +1225,10 @@ def main() -> int:
     print("  * 自己交差は位相検査を全部通る(表面積 %s / 体積 %s)。"
           % (spike["rows"][-1][4], spike["rows"][-1][5]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
+
+    # 動画は既存の図の**最後**に書く(番号が後ろの図のファイル名をずらさないように)。
+    if figs.enabled():
+        fig_decimate_orbit_video(scene)
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

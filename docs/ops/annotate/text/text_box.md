@@ -4,7 +4,7 @@ dim: annotate
 category: text
 in: image2d × text
 out: image2d
-examples: [annotate_gallery, annotate_paper_tour, drawlist_deferred, poc_ball_bounce, poc_cad_scan_deviation, poc_camera_calibration, poc_camera_shake_deblur, poc_connectome_across_worms, poc_crack_width_timeseries, poc_ct_void_morphology, poc_dem_terrain, poc_dic_strain, poc_driving_crossing, poc_driving_decisions, poc_driving_endless_map, poc_driving_lateral, poc_driving_longitudinal, poc_driving_school, poc_driving_traffic, poc_driving_weather, poc_emva1288_sensor, poc_eye_to_brain, poc_focus_stacking, poc_kendama, poc_leak_localization, poc_lidar_terrain_change, poc_machine_condition_fusion, poc_malecns_activity_wave, poc_measurement_system_analysis, poc_multibeam_bathymetry, poc_panorama_drift, poc_particle_tracking, poc_print_warpage_risk, poc_registration_basin, poc_river_surface_velocity, poc_rotation_invariance_audit, poc_stockpile_volume, poc_table_tennis_bounce, poc_table_tennis_rally_loop, poc_table_tennis_spin, poc_template_tracking, poc_timelapse_growth, poc_ttc_rss, poc_world_terrain, poc_wound_area_tracking]
+examples: [annotate_gallery, annotate_paper_tour, drawlist_deferred, poc_ball_bounce, poc_beam_modal_video, poc_cad_scan_deviation, poc_camera_calibration, poc_camera_shake_deblur, poc_connectome_across_worms, poc_crack_width_timeseries, poc_ct_void_morphology, poc_dehazing, poc_dem_terrain, poc_dic_strain, poc_driving_crossing, poc_driving_decisions, poc_driving_endless_map, poc_driving_lateral, poc_driving_longitudinal, poc_driving_school, poc_driving_traffic, poc_driving_weather, poc_emva1288_sensor, poc_eye_to_brain, poc_focus_stacking, poc_interferometry_step, poc_kendama, poc_leak_localization, poc_lidar_terrain_change, poc_livestock_body_volume, poc_machine_condition_fusion, poc_malecns_activity_wave, poc_measurement_system_analysis, poc_mesh_quality_repair, poc_motion_magnification, poc_multibeam_bathymetry, poc_panorama_drift, poc_particle_tracking, poc_photoelasticity, poc_print_warpage_risk, poc_registration_basin, poc_river_surface_velocity, poc_rotation_invariance_audit, poc_stockpile_volume, poc_strain_history, poc_structure_4d_deterioration, poc_superresolution_limits, poc_table_tennis_bounce, poc_table_tennis_rally_loop, poc_table_tennis_spin, poc_template_tracking, poc_timelapse_growth, poc_traffic_counting, poc_ttc_rss, poc_world_terrain, poc_wound_area_tracking, poc_xyt_event_surface]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -92,12 +92,14 @@ ValueError
 - [annotate_paper_tour](../../../../examples/annotate_paper_tour.py) — `py -3.11 examples/annotate_paper_tour.py`
 - [drawlist_deferred](../../../../examples/drawlist_deferred.py) — `py -3.11 examples/drawlist_deferred.py`
 - [poc_ball_bounce](../../../../examples/poc_ball_bounce.py) — `py -3.11 examples/poc_ball_bounce.py`
+- [poc_beam_modal_video](../../../../examples/poc_beam_modal_video.py) — `py -3.11 examples/poc_beam_modal_video.py`
 - [poc_cad_scan_deviation](../../../../examples/poc_cad_scan_deviation.py) — `py -3.11 examples/poc_cad_scan_deviation.py`
 - [poc_camera_calibration](../../../../examples/poc_camera_calibration.py) — `py -3.11 examples/poc_camera_calibration.py`
 - [poc_camera_shake_deblur](../../../../examples/poc_camera_shake_deblur.py) — `py -3.11 examples/poc_camera_shake_deblur.py`
 - [poc_connectome_across_worms](../../../../examples/poc_connectome_across_worms.py) — `py -3.11 examples/poc_connectome_across_worms.py`
 - [poc_crack_width_timeseries](../../../../examples/poc_crack_width_timeseries.py) — `py -3.11 examples/poc_crack_width_timeseries.py`
 - [poc_ct_void_morphology](../../../../examples/poc_ct_void_morphology.py) — `py -3.11 examples/poc_ct_void_morphology.py`
+- [poc_dehazing](../../../../examples/poc_dehazing.py) — `py -3.11 examples/poc_dehazing.py`
 - [poc_dem_terrain](../../../../examples/poc_dem_terrain.py) — `py -3.11 examples/poc_dem_terrain.py`
 - [poc_dic_strain](../../../../examples/poc_dic_strain.py) — `py -3.11 examples/poc_dic_strain.py`
 - [poc_driving_crossing](../../../../examples/poc_driving_crossing.py) — `py -3.11 examples/poc_driving_crossing.py`
@@ -111,28 +113,38 @@ ValueError
 - [poc_emva1288_sensor](../../../../examples/poc_emva1288_sensor.py) — `py -3.11 examples/poc_emva1288_sensor.py`
 - [poc_eye_to_brain](../../../../examples/poc_eye_to_brain.py) — `py -3.11 examples/poc_eye_to_brain.py`
 - [poc_focus_stacking](../../../../examples/poc_focus_stacking.py) — `py -3.11 examples/poc_focus_stacking.py`
+- [poc_interferometry_step](../../../../examples/poc_interferometry_step.py) — `py -3.11 examples/poc_interferometry_step.py`
 - [poc_kendama](../../../../examples/poc_kendama.py) — `py -3.11 examples/poc_kendama.py`
 - [poc_leak_localization](../../../../examples/poc_leak_localization.py) — `py -3.11 examples/poc_leak_localization.py`
 - [poc_lidar_terrain_change](../../../../examples/poc_lidar_terrain_change.py) — `py -3.11 examples/poc_lidar_terrain_change.py`
+- [poc_livestock_body_volume](../../../../examples/poc_livestock_body_volume.py) — `py -3.11 examples/poc_livestock_body_volume.py`
 - [poc_machine_condition_fusion](../../../../examples/poc_machine_condition_fusion.py) — `py -3.11 examples/poc_machine_condition_fusion.py`
 - [poc_malecns_activity_wave](../../../../examples/poc_malecns_activity_wave.py) — `py -3.11 examples/poc_malecns_activity_wave.py`
 - [poc_measurement_system_analysis](../../../../examples/poc_measurement_system_analysis.py) — `py -3.11 examples/poc_measurement_system_analysis.py`
+- [poc_mesh_quality_repair](../../../../examples/poc_mesh_quality_repair.py) — `py -3.11 examples/poc_mesh_quality_repair.py`
+- [poc_motion_magnification](../../../../examples/poc_motion_magnification.py) — `py -3.11 examples/poc_motion_magnification.py`
 - [poc_multibeam_bathymetry](../../../../examples/poc_multibeam_bathymetry.py) — `py -3.11 examples/poc_multibeam_bathymetry.py`
 - [poc_panorama_drift](../../../../examples/poc_panorama_drift.py) — `py -3.11 examples/poc_panorama_drift.py`
 - [poc_particle_tracking](../../../../examples/poc_particle_tracking.py) — `py -3.11 examples/poc_particle_tracking.py`
+- [poc_photoelasticity](../../../../examples/poc_photoelasticity.py) — `py -3.11 examples/poc_photoelasticity.py`
 - [poc_print_warpage_risk](../../../../examples/poc_print_warpage_risk.py) — `py -3.11 examples/poc_print_warpage_risk.py`
 - [poc_registration_basin](../../../../examples/poc_registration_basin.py) — `py -3.11 examples/poc_registration_basin.py`
 - [poc_river_surface_velocity](../../../../examples/poc_river_surface_velocity.py) — `py -3.11 examples/poc_river_surface_velocity.py`
 - [poc_rotation_invariance_audit](../../../../examples/poc_rotation_invariance_audit.py) — `py -3.11 examples/poc_rotation_invariance_audit.py`
 - [poc_stockpile_volume](../../../../examples/poc_stockpile_volume.py) — `py -3.11 examples/poc_stockpile_volume.py`
+- [poc_strain_history](../../../../examples/poc_strain_history.py) — `py -3.11 examples/poc_strain_history.py`
+- [poc_structure_4d_deterioration](../../../../examples/poc_structure_4d_deterioration.py) — `py -3.11 examples/poc_structure_4d_deterioration.py`
+- [poc_superresolution_limits](../../../../examples/poc_superresolution_limits.py) — `py -3.11 examples/poc_superresolution_limits.py`
 - [poc_table_tennis_bounce](../../../../examples/poc_table_tennis_bounce.py) — `py -3.11 examples/poc_table_tennis_bounce.py`
 - [poc_table_tennis_rally_loop](../../../../examples/poc_table_tennis_rally_loop.py) — `py -3.11 examples/poc_table_tennis_rally_loop.py`
 - [poc_table_tennis_spin](../../../../examples/poc_table_tennis_spin.py) — `py -3.11 examples/poc_table_tennis_spin.py`
 - [poc_template_tracking](../../../../examples/poc_template_tracking.py) — `py -3.11 examples/poc_template_tracking.py`
 - [poc_timelapse_growth](../../../../examples/poc_timelapse_growth.py) — `py -3.11 examples/poc_timelapse_growth.py`
+- [poc_traffic_counting](../../../../examples/poc_traffic_counting.py) — `py -3.11 examples/poc_traffic_counting.py`
 - [poc_ttc_rss](../../../../examples/poc_ttc_rss.py) — `py -3.11 examples/poc_ttc_rss.py`
 - [poc_world_terrain](../../../../examples/poc_world_terrain.py) — `py -3.11 examples/poc_world_terrain.py`
 - [poc_wound_area_tracking](../../../../examples/poc_wound_area_tracking.py) — `py -3.11 examples/poc_wound_area_tracking.py`
+- [poc_xyt_event_surface](../../../../examples/poc_xyt_event_surface.py) — `py -3.11 examples/poc_xyt_event_surface.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

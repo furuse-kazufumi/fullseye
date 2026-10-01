@@ -1549,6 +1549,189 @@ def section_tool_gaps() -> None:
 
 
 # --------------------------------------------------------------------------- #
+# --------------------------------------------------------------------------- #
+# 動画(図つきで走らせたときだけ)                                              #
+# --------------------------------------------------------------------------- #
+def _vtxt(img, s, xy, anchor="lt", fs_=12, color=None):
+    """文字(poc_driving_traffic の ``_txt`` と同じ書き方、色だけ選べる)。"""
+    import annotate as AN
+    kw = {} if color is None else {"text_color": color}
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_, **kw), dtype=np.float64)
+
+
+def _vpoly(a, ax, x, y, color, w=1):
+    """データ座標の折れ線を直に塗る(``annotate.plot_series`` は全画面の重みを作るので
+    動画の毎コマには重い —— 同じ写像 ``data_to_pixel`` を使い、0.5 px 刻みの点打ちで描く)。
+    軸の矩形の外には塗らない。"""
+    import annotate as AN
+    x = np.atleast_1d(np.asarray(x, np.float64))
+    y = np.atleast_1d(np.asarray(y, np.float64))
+    if x.size < 2:
+        return a
+    px, py = (np.asarray(v, np.float64) for v in AN.data_to_pixel(ax, x, y))
+    n = np.maximum(1, np.ceil(2.0 * np.hypot(np.diff(px), np.diff(py))).astype(int))
+    xs = np.concatenate([np.linspace(px[i], px[i + 1], n[i], endpoint=False) for i in range(n.size)] + [px[-1:]])
+    ys = np.concatenate([np.linspace(py[i], py[i + 1], n[i], endpoint=False) for i in range(n.size)] + [py[-1:]])
+    x0, y0, ww, hh = ax["rect"]
+    xi, yi = np.rint(xs).astype(int), np.rint(ys).astype(int)
+    for dy in range(-(w // 2), w - w // 2):
+        for dx in range(-(w // 2), w - w // 2):
+            xx, yy = xi + dx, yi + dy
+            ok = (xx >= x0) & (xx < x0 + ww) & (yy >= y0) & (yy < y0 + hh)
+            a[yy[ok], xx[ok]] = color
+    return a
+
+
+def _vaxes(a, ax, xt, yt, c_axis):
+    """軸の枠と目盛り(1 度だけ描いて、各コマはこれを写す)。"""
+    import annotate as AN
+    a = np.asarray(AN.axes_frame(a, ax, color=c_axis), np.float64)
+    return np.asarray(AN.ticks(a, ax, xticks=xt, yticks=yt, color=c_axis, font_size=10, text_color=c_axis),
+                      np.float64)
+
+
+def _vstrip(f, y0, y1, s, xy=(4, 2), fs_=12, color=None, anchor="lt"):
+    """コマの横帯 ``f[y0:y1]`` にだけ文字を書く(全面に text_box を走らせない)。"""
+    f[y0:y1] = _vtxt(f[y0:y1].copy(), s, xy, anchor=anchor, fs_=fs_, color=color)
+    return f
+
+
+VID_DT = 0.025              # 動画の時間刻み [年]
+VID_FPS = 15.0
+VID_HOLD = 12               # 点検の時点で止めるコマ数(新しい測定が届いたところ)
+VID_END = 30                # 最後の要約を見せるコマ数
+VID_LIM = 8.0               # 展開図の色の範囲 ±[mm](図 map_change と同じ)
+
+
+def _video_years(rate: dict) -> None:
+    """動画: 2 年の時間を流し、真の劣化は連続に、測った劣化は点検のたびに更新される。
+
+    左 = 真の法線方向変化(足跡平均)の展開図。**真値は 3 時点でしか定義していない**ので、
+    点検の間は直線で補間して見せる(図の中にもそう書く)。右 = 法線方向に測った変化
+    (第 7 節の ``rate["L"]``、t0 に合わせた点群どうし)。点検(1 年・2 年)が来るまで
+    前回の地図のまま。下段 = 代表 3 点の時系列: 欠損の谷・下フランジ中央(たわみ)・
+    健全な腹板。線 = 真値、点 = 測定。灰の帯 = t2 の差の誤差 RMS の ±2 倍
+    (これより内側の変化は「変わった」と言えない)。数字はすべて第 7 節の ``rate`` から。
+    """
+    import annotate as AN
+    import palette as PAL
+
+    c_cur, c_axis = PAL.role_color("emphasis"), (0.62, 0.62, 0.66)
+    cols = ((0.95, 0.55, 0.10), (0.35, 0.75, 0.95), (0.80, 0.80, 0.80))
+    lut = np.asarray(fs.diverging_lut(256), np.float64)
+    L = {0: np.zeros(CORES["x"].size), 1: rate["L"][1], 2: rate["L"][2]}
+    tf = {0: np.zeros(CORES["x"].size), 1: rate["tf"][1], 2: rate["tf"][2]}
+    yrs = np.asarray(EPOCH_YEAR, np.float64)
+    g = np.isfinite(L[2]) & np.isfinite(L[1]) & ~CORES["edge"]
+    g2 = np.isfinite(L[2]) & ~CORES["edge"]          # 第 7 節の「差(t0->t2)の誤差 RMS」と同じ範囲
+    e2 = float(np.sqrt(np.mean((L[2][g2] - tf[2][g2]) ** 2)))
+    assert abs(e2 / (EPOCH_YEAR[2] - EPOCH_YEAR[0]) - rate["err_rms"]) < 1e-9, (e2, rate["err_rms"])
+    band = 2.0 * e2
+    # 代表 3 点(どれも測定が有効で縁でない core)
+    i_val = int(np.flatnonzero(g)[np.argmin(tf[2][g])])
+    fl = g & (CORES["seg"] == 3)
+    i_mid = int(np.flatnonzero(fl)[np.argmin(np.abs(CORES["x"][fl] - LSPAN / 2))])
+    wb = g & (CORES["seg"] == 2) & (np.abs(CORES["x"] - CRACK_X) > 1.0)
+    i_web = int(np.flatnonzero(wb)[np.argmin(np.abs(tf[2][wb]))])
+    picks = ((i_val, "欠損の谷"), (i_mid, "下フランジ中央"), (i_web, "健全な腹板"))
+    ky, kx = 10, 6
+    ns, nx = CORES["shape"]
+    mh, mw = ns * ky, nx * kx
+
+    def cmap(v):
+        a = np.asarray(v, np.float64).reshape(ns, nx)
+        bad = ~np.isfinite(a)
+        idx = np.clip((np.nan_to_num(a) / VID_LIM * 0.5 + 0.5) * 255.0, 0, 255).astype(np.int32)
+        rgb = lut[idx]
+        rgb[bad] = 0.25
+        return np.repeat(np.repeat(rgb, ky, 0), kx, 1)
+
+    def mark(img, i, color):
+        r, c = divmod(i, nx)
+        y0, x0 = r * ky, c * kx
+        img[y0, x0:x0 + kx] = color
+        img[y0 + ky - 1, x0:x0 + kx] = color
+        img[y0:y0 + ky, x0] = color
+        img[y0:y0 + ky, x0 + kx - 1] = color
+        return img
+
+    Wf, yt = 640, 58
+    xl, xr, ym = 24, 640 - 24 - mw, yt + 20
+    lo = min(float(tf[2][i_val]), float(L[2][i_val])) - 3.0
+    hi = max(4.0, float(max(L[2][i_mid], L[2][i_web], tf[2][i_mid]))) + 2.0
+    ax = AN.axes_transform((64, ym + mh + 48, Wf - 90, 150), (0.0, 2.0), (lo, hi))
+    Hf = ym + mh + 48 + 150 + 44
+    panel = np.zeros((Hf, Wf, 3))
+    panel[ym + mh:] = 0.07
+    bx0, by0, bw, bh = ax["rect"]
+    pb = np.asarray(AN.data_to_pixel(ax, [0.0, 0.0], [band, -band])[1], np.float64)
+    panel[int(round(pb[0])):int(round(pb[1])) + 1, bx0:bx0 + bw] = 0.20
+    panel = _vaxes(panel, ax, [0.0, 0.5, 1.0, 1.5, 2.0], list(np.arange(np.ceil(lo / 5) * 5, hi, 5.0)), c_axis)
+    panel = _vpoly(panel, ax, [0.0, 2.0], [0.0, 0.0], (0.40, 0.40, 0.43))
+    panel = _vtxt(panel, "真の変化(足跡平均)±%.0f mm" % VID_LIM, (xl + mw // 2, ym - 2), anchor="cb", fs_=10,
+                  color=c_axis)
+    panel = _vtxt(panel, "測った変化(法線方向、最新の点検)", (xr + mw // 2, ym - 2), anchor="cb", fs_=10,
+                  color=c_axis)
+    panel = _vtxt(panel, "橙 = 面が内へ(欠損)/ 青 = 面が外へ(下向きの面のたわみ)/ 灰 = 欠測。縦 = 断面まわり、横 = 橋軸 %.0f m"
+                  % LSPAN, (Wf // 2, ym + mh + 3), anchor="ct", fs_=10, color=c_axis)
+    panel = _vtxt(panel, "法線方向の変化 [mm]  灰の帯 = ±2σ(%.2f mm)の内側は「変わった」と言えない" % band,
+                  (66, ym + mh + 25), fs_=10, color=c_axis)
+    panel = _vtxt(panel, "経過 [年](真値は 3 時点だけ。点検の間は直線で補間して描く)", (64 + (Wf - 90) // 2, Hf - 2),
+                  anchor="cb", fs_=10, color=c_axis)
+    for j, (_i, nm) in enumerate(picks):
+        panel = _vtxt(panel, "— ● %s" % nm, (70, by0 + bh - 4 - 15 * (2 - j)), anchor="lb", fs_=10, color=cols[j])
+    steps = []
+    for t in np.arange(0.0, 2.0 + 1e-9, VID_DT):
+        steps.append(float(t))
+        if any(abs(t - y) < 1e-9 for y in yrs[1:]):
+            steps.extend([float(t)] * VID_HOLD)
+    frames = []
+    for i in range(len(steps) + VID_END):
+        tau = steps[min(i, len(steps) - 1)]
+        kk = int(np.floor(tau + 1e-9))              # 最新の点検
+        k1 = min(kk + 1, 2)
+        w = tau - kk
+        tr = tf[kk] if kk == 2 else (1 - w) * tf[kk] + w * tf[k1]
+        f = panel.copy()
+        a_l, a_r = cmap(tr), cmap(L[kk])
+        for j, (ii, _nm) in enumerate(picks):
+            a_l, a_r = mark(a_l, ii, cols[j]), mark(a_r, ii, cols[j])
+        f[ym:ym + mh, xl:xl + mw] = a_l
+        f[ym:ym + mh, xr:xr + mw] = a_r
+        for j, (ii, _nm) in enumerate(picks):
+            tt = np.r_[yrs[:kk + 1], tau] if tau > yrs[kk] + 1e-9 else yrs[:kk + 1]
+            yy = np.interp(tt, yrs, [tf[0][ii], tf[1][ii], tf[2][ii]])
+            f = _vpoly(f, ax, tt, yy, cols[j], w=1)
+            px, py = AN.data_to_pixel(ax, yrs[:kk + 1], [L[q][ii] for q in range(kk + 1)])
+            for cx, cy in zip(np.atleast_1d(px), np.atleast_1d(py)):
+                y0, x0 = int(round(float(cy))), int(round(float(cx)))
+                f[y0 - 3:y0 + 4, x0 - 3:x0 + 4] = cols[j]
+        xc = int(round(float(np.asarray(AN.data_to_pixel(ax, [tau], [0.0])[0])[0])))
+        f[by0:by0 + bh, xc] = 0.5 * f[by0:by0 + bh, xc] + 0.5
+        if i < len(steps):
+            held = i > 0 and steps[i] == steps[i - 1]
+            s = ("経過 %.2f 年   最新の点検 t%d(%.0f 年)%s\n"
+                 "欠損の谷: 真 %+.2f mm / 測定 %+.2f   下フランジ中央: 真 %+.2f / 測定 %+.2f"
+                 % (tau, kk, yrs[kk], " ← 新しい測定が届いた" if held else "",
+                    float(np.interp(tau, yrs, [tf[0][i_val], tf[1][i_val], tf[2][i_val]])), L[kk][i_val],
+                    float(np.interp(tau, yrs, [tf[0][i_mid], tf[1][i_mid], tf[2][i_mid]])), L[kk][i_mid]))
+            f = _vstrip(f, 0, yt, s, color=c_cur if held else None)
+        else:
+            s = ("2 年の速度の誤差 RMS %.3f mm/年 → 1 mm/年 の進行は 2σ = %.3f mm/年 の下に沈む\n"
+                 "見えるのは帯(±%.2f mm)を越えた欠損の谷だけ。3 回測っても速度は両端の差分と同じ"
+                 % (rate["err_rms"], rate["detect"], band))
+            f = _vstrip(f, 0, yt, s, color=c_cur)
+        frames.append(np.clip(f, 0.0, 1.0))
+    figs.save_video(
+        "years_video", frames, fps=VID_FPS, gif_every=1, gif_width=Wf,
+        caption="動画(%d × %d、%.0f fps、%d コマ): 橋桁を 2 年で 3 回点検する。左は真の法線方向変化(展開図、真値は 3 時点だけ"
+                "定義なので点検の間は直線で補間して描いた)、右は法線方向に測った変化で、点検(1 年・2 年)が来たときだけ更新"
+                "される。下段は代表 3 点の時系列(線 = 真値、点 = 測定)。灰の帯は t2 の差の誤差 RMS の ±2 倍(±%.2f mm)で、"
+                "代表 3 点のうち欠損の谷(真 %+.1f mm)だけが帯を大きく越える。速度の誤差 RMS は %.3f mm/年 で、1 mm/年 の進行は "
+                "2σ = %.3f mm/年 の下に沈む。"
+                % (Wf, Hf, VID_FPS, len(frames), band, float(tf[2][i_val]), rate["err_rms"], rate["detect"]))
+
+
 def main() -> int:
     t0 = time.perf_counter()
     print("=" * 78)
@@ -1660,6 +1843,10 @@ def main() -> int:
     assert all(0.9 < n / p < 1.1 for n, p in zip(pri["num"][:4], pri["pred"][:4])), \
         "溝の薄まりが閉形式 2dh/(πR) から外れた"
     assert abs(pri["num"][1]) < 0.1 * CRACK_MM[2], "細い溝が薄まっていない"
+
+    # 動画(図つきのときだけ。既存の図の後ろに書く —— 番号がずれないように)
+    if figs.enabled():
+        _video_years(rate)
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():

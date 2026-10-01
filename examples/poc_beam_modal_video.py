@@ -777,6 +777,148 @@ def border_gain_profile() -> np.ndarray:
 
 
 # --------------------------------------------------------------------------- #
+# --------------------------------------------------------------------------- #
+# 動画(図つきで走らせたときだけ)                                              #
+# --------------------------------------------------------------------------- #
+def _vtxt(img, s, xy, anchor="lt", fs_=12, color=None):
+    """文字(poc_driving_traffic の ``_txt`` と同じ書き方、色だけ選べる)。"""
+    import annotate as AN
+    kw = {} if color is None else {"text_color": color}
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_, **kw), dtype=np.float64)
+
+
+def _vpoly(a, ax, x, y, color, w=1):
+    """データ座標の折れ線を直に塗る(``annotate.plot_series`` は全画面の重みを作るので
+    動画の毎コマには重い —— 同じ写像 ``data_to_pixel`` を使い、0.5 px 刻みの点打ちで描く)。
+    軸の矩形の外には塗らない。"""
+    import annotate as AN
+    x = np.atleast_1d(np.asarray(x, np.float64))
+    y = np.atleast_1d(np.asarray(y, np.float64))
+    if x.size < 2:
+        return a
+    px, py = (np.asarray(v, np.float64) for v in AN.data_to_pixel(ax, x, y))
+    n = np.maximum(1, np.ceil(2.0 * np.hypot(np.diff(px), np.diff(py))).astype(int))
+    xs = np.concatenate([np.linspace(px[i], px[i + 1], n[i], endpoint=False) for i in range(n.size)] + [px[-1:]])
+    ys = np.concatenate([np.linspace(py[i], py[i + 1], n[i], endpoint=False) for i in range(n.size)] + [py[-1:]])
+    x0, y0, ww, hh = ax["rect"]
+    xi, yi = np.rint(xs).astype(int), np.rint(ys).astype(int)
+    for dy in range(-(w // 2), w - w // 2):
+        for dx in range(-(w // 2), w - w // 2):
+            xx, yy = xi + dx, yi + dy
+            ok = (xx >= x0) & (xx < x0 + ww) & (yy >= y0) & (yy < y0 + hh)
+            a[yy[ok], xx[ok]] = color
+    return a
+
+
+def _vaxes(a, ax, xt, yt, c_axis):
+    """軸の枠と目盛り(1 度だけ描いて、各コマはこれを写す)。"""
+    import annotate as AN
+    a = np.asarray(AN.axes_frame(a, ax, color=c_axis), np.float64)
+    return np.asarray(AN.ticks(a, ax, xticks=xt, yticks=yt, color=c_axis, font_size=10, text_color=c_axis),
+                      np.float64)
+
+
+def _vstrip(f, y0, y1, s, xy=(4, 2), fs_=12, color=None, anchor="lt"):
+    """コマの横帯 ``f[y0:y1]`` にだけ文字を書く(全面に text_box を走らせない)。"""
+    f[y0:y1] = _vtxt(f[y0:y1].copy(), s, xy, anchor=anchor, fs_=fs_, color=color)
+    return f
+
+
+VID_UP = 4                  # 画面 1 px -> 4 x 4 表示 px(最近傍)
+VID_GAIN = 50.0             # 描き込むたわみ線の誇張率(動画の上で目に見える大きさにする)
+VID_FPS = 24.0              # 再生速度(撮影 128 fps の 3/16 = 5.3 倍のスロー再生)
+VID_END = 36                # 最後の同定結果を見せるコマ数
+
+
+def _video_beam(clip: dict, ph: dict, pv: dict, r2: dict) -> None:
+    """動画: 基準条件(A_1 = 0.2 px、妨害入り)の梁を 1 コマずつ再生し、測ったたわみを重ねる。
+
+    上段 = 撮った動画(4 倍表示)。そのまま見ても梁は動いて見えない(0.2 px)。そこに
+    12 測点のたわみを **VID_GAIN = 50 倍に誇張して** 線で重ねる: 白 = 真値 w(x, t)、青 = 位相法
+    (手ぶれ補正後)。下段 = 先端の変位の時系列が時刻とともに伸びる(白 = 真値、
+    青 = 位相法、朱 = PIV、いずれも平均を引いた値 —— 図 tip_waveform と同じ量)。
+    最後のコマに第 2 節の同定結果(f は当たり、ζ_1 は方法で 3 通り)を出す。
+    数字はすべて本体が出した ``ph`` / ``pv`` / ``r2`` をそのまま使う(計算し直さない)。
+    """
+    import annotate as AN
+    import palette as PAL
+
+    c_ph, c_pv, c_cur = PAL.role_color("right"), PAL.role_color("wrong"), PAL.role_color("emphasis")
+    c_true, c_axis = (0.93, 0.93, 0.93), (0.62, 0.62, 0.66)
+    v, t, T = clip["video"], clip["t"], clip["T"]
+    up = VID_UP
+    Wf, Hi = W * up, H * up
+    yt = 58
+    Hf = yt + Hi + 220
+    w_t = clip["w_true"] - clip["w_true"].mean(axis=0)
+    u_ph = ph["u"] - ph["u"].mean(axis=0)
+    u_pv = pv["u"][:, -1] - pv["u"][:, -1].mean()
+    lim = 1.15 * float(max(np.abs(w_t[:, -1]).max(), np.abs(u_ph[:, -1]).max(), np.abs(u_pv).max()))
+    ax = AN.axes_transform((56, yt + Hi + 26, Wf - 72, 150), (0.0, float(t[-1])), (-lim, lim))
+    panel = np.zeros((Hf, Wf, 3))
+    panel[yt + Hi:] = 0.07
+    panel = _vaxes(panel, ax, [0.0, 0.5, 1.0, 1.5, 2.0], [-0.2, 0.0, 0.2], c_axis)
+    panel = _vpoly(panel, ax, [0.0, float(t[-1])], [0.0, 0.0], (0.30, 0.30, 0.33))
+    panel = _vtxt(panel, "先端の変位 [px]", (58, yt + Hi + 6), fs_=10, color=c_axis)
+    panel = _vtxt(panel, "時刻 [s](撮影 %.0f fps、再生は %.1f 倍のスロー)" % (clip["fps"], clip["fps"] / VID_FPS),
+                  (56 + (Wf - 72) // 2, Hf - 2), anchor="cb", fs_=10, color=c_axis)
+    for i, (s, c) in enumerate((("— 真値", c_true), ("— 位相法", c_ph), ("— PIV", c_pv))):
+        panel = _vtxt(panel, s, (Wf - 18, yt + Hi + 28 + 15 * i), anchor="rt", fs_=10, color=c)
+    sx = (np.asarray(clip["stations"], np.float64) + 0.5) * up - 0.5
+    xs_line = np.r_[(X0 + 0.5) * up - 0.5, sx]          # 固定端(たわみ 0)から先端まで
+
+    def defl(a, wv, color, width):
+        """たわみ線(誇張 VID_GAIN 倍)を画像の座標で描く。下向きが正(画像の行と同じ向き)。"""
+        yy = (YC + VID_GAIN * np.r_[0.0, wv] + 0.5) * up - 0.5 + yt
+        n = np.maximum(1, np.ceil(2.0 * np.hypot(np.diff(xs_line), np.diff(yy))).astype(int))
+        px = np.concatenate([np.linspace(xs_line[i], xs_line[i + 1], n[i], endpoint=False) for i in range(n.size)])
+        py = np.concatenate([np.linspace(yy[i], yy[i + 1], n[i], endpoint=False) for i in range(n.size)])
+        xi, yi = np.rint(px).astype(int), np.rint(py).astype(int)
+        for d in range(-(width // 2), width - width // 2):
+            ok = (yi + d >= yt) & (yi + d < yt + Hi) & (xi >= 0) & (xi < Wf)
+            a[yi[ok] + d, xi[ok]] = color
+        return a
+
+    r_ph = r2["phase"]
+    frames = []
+    for i in range(T + VID_END):
+        k = min(i, T - 1)
+        f = panel.copy()
+        g = np.clip(v[k], 0.0, 1.0)
+        f[yt:yt + Hi] = np.repeat(np.repeat(g, up, 0), up, 1)[..., None]
+        f = defl(f, w_t[k], c_true, 3)
+        f = defl(f, u_ph[k], c_ph, 2)
+        for x0 in sx:                                    # 測点の位置(上端の小さな刻み)
+            f[yt:yt + 6, int(round(x0))] = c_cur
+        f = _vpoly(f, ax, t[:k + 1], w_t[:k + 1, -1], c_true, w=1)
+        f = _vpoly(f, ax, t[:k + 1], u_pv[:k + 1], c_pv, w=1)
+        f = _vpoly(f, ax, t[:k + 1], u_ph[:k + 1, -1], c_ph, w=2)
+        xc = int(round(float(np.asarray(AN.data_to_pixel(ax, [t[k]], [0.0])[0])[0])))
+        y0a = ax["rect"][1]
+        f[y0a:y0a + ax["rect"][3], xc] = 0.5 * f[y0a:y0a + ax["rect"][3], xc] + 0.5
+        if i < T:
+            s = ("t = %.3f s(コマ %d/%d)  たわみ線は %.0f 倍に誇張(白 = 真値、青 = 位相法)\n"
+                 "先端の変位: 真値 %+.3f px   位相法 %+.3f px   PIV %+.3f px"
+                 % (t[k], k + 1, T, VID_GAIN, w_t[k, -1], u_ph[k, -1], u_pv[k]))
+            f = _vstrip(f, 0, yt, s)
+        else:
+            s = ("同定(位相法): f_1 %.3f Hz(真 %.3f)  f_2 %.3f(真 %.3f)\n"
+                 "ζ_1 は方法で 3 通り: 半値幅 %.4f / 包絡線 %.4f / 当てはめ %.4f(真 %.3f)"
+                 % (r_ph["f"][0], FN[0], r_ph["f"][1], FN[1], r_ph["zeta_hp"][0], r_ph["zeta_env"][0],
+                    r_ph["zeta_fit"][0], ZETA[0]))
+            f = _vstrip(f, 0, yt, s, color=c_cur)
+        frames.append(np.clip(f, 0.0, 1.0))
+    figs.save_video(
+        "beam_video", frames, fps=VID_FPS, gif_every=3, gif_width=480,
+        caption="動画(%d × %d、%.0f fps、%d コマ): 片持ち梁の自由減衰(A_1 = %.1f px、雑音・照明ちらつき・手ぶれ・"
+                "ローリングシャッター入り、撮影 %.0f fps を %.1f 倍のスローで再生)。画面のままでは梁は動いて見えないので、"
+                "%d 測点のたわみを %.0f 倍に誇張して重ねた(白 = 真値、青 = 位相法の測定)。下段は先端の変位が時刻とともに"
+                "伸びる(白 = 真値、青 = 位相法、朱 = PIV)。最後のコマが同定結果: f_1 は %.3f Hz(真 %.3f)と当たるが、"
+                "同じ時系列から出した ζ_1 は 半値幅 %.4f / 包絡線 %.4f / 当てはめ %.4f(真 %.3f)と方法で 3 通りに割れる。"
+                % (Wf, Hf, VID_FPS, len(frames), clip["a1"], clip["fps"], clip["fps"] / VID_FPS, N_ST, VID_GAIN,
+                   r_ph["f"][0], FN[0], r_ph["zeta_hp"][0], r_ph["zeta_env"][0], r_ph["zeta_fit"][0], ZETA[0]))
+
+
 def main() -> int:
     t0 = time.time()
     print("片持ち梁 %d px、f_n = %.2f / %.2f / %.2f Hz、ζ_n = %s、fps %.0f、%.0f s(%d フレーム)、"
@@ -828,6 +970,10 @@ def main() -> int:
     assert abs(r5["rs"][3] - r5["rs"][2]) < 0.06, r5["rs"]
 
     print("\n所要 %.1f s" % (time.time() - t0))
+    # 動画(図つきのときだけ。既存の図の後ろに書く —— 番号がずれないように)
+    if figs.enabled():
+        _video_beam(*base, r2)
+
     if figs.errors():
         print("図の書き出しで失敗:", figs.errors())
         return 1

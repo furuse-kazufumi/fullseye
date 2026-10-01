@@ -317,6 +317,117 @@ def edge_band(d, width=5):
 
 
 # --------------------------------------------------------------------------- #
+# 動画 —— 霞の濃さを連続に振る(図を出す実行だけ)                               #
+# --------------------------------------------------------------------------- #
+def _v_txt(img, s, xy, anchor="lt", fs_=12):
+    """文字の板。**小さな板(パネル 1 枚)にだけ**描く —— 全面に描くと遅い。"""
+    import annotate as AN
+
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_), dtype=np.float64)
+
+
+def fig_haze_sweep_video(n_sweep=96, n_hold=14, scale=2, fps=12.0):
+    """★動画: 消散係数 beta を薄い霞(視程 1565 m)から濃霧(49 m)まで連続に振る。
+
+    上段 = 霞んだ観測 I / 暗チャネル除霞 / 真値 J、下段 = 推定した透過率 / 真の透過率 /
+    除霞の利得の曲線(beta とともに伸びる)。5 節の表(7 点)を連続にしたもので、
+    計算は同じ関数(``build_scene`` → ``airlight_dcp`` → ``transmission_dcp`` → ``recover``)。
+    乱数は ``scene_radiance`` の固定 seed だけで、本文の乱数の流れには触れない。
+    図を出さない実行では呼ばれない(呼び出し側が ``figs.enabled()`` で先に抜ける)。
+    """
+    if not figs.enabled():
+        return None
+    import annotate as AN
+    import imgio
+
+    betas = np.geomspace(0.0025, 0.08, n_sweep)
+    rows = []
+    for b in betas:
+        i2, j2, t2, _d2 = build_scene(beta=float(b))
+        a2 = airlight_dcp(i2)
+        te = transmission_dcp(i2, a2)
+        rec = recover(i2, a2, te)
+        p_raw, p_dcp = psnr_masked(i2, j2), psnr_masked(rec, j2)
+        p_or = psnr_masked(recover(i2, A_TRUE, t2), j2)
+        rows.append((float(b), i2, rec, j2, te, t2, p_raw, p_dcp, p_or))
+    gain = np.array([r[7] - r[6] for r in rows])
+    neg = [r[0] for r, g in zip(rows, gain) if g < 0.0]
+    b_cross = max(neg) if neg else float("nan")
+
+    PW_, PH_ = W * scale, H * scale                     # パネル 320 x 240
+    TB, GAP = 34, 6                                     # 見出しの帯の高さ・パネル間
+    FW = 3 * PW_ + 2 * GAP
+    FH = 2 * (TB + PH_) + GAP
+    pos = [(c * (PW_ + GAP), r * (TB + PH_ + GAP) + TB) for r in range(2) for c in range(3)]
+    titles = ["霞んだ観測 I(入力)", "暗チャネル除霞(推定)", "真値 J(霞の無いシーン)",
+              "推定した透過率(暗チャネル)", "真の透過率 t = exp(-beta d)",
+              "暗チャネル除霞の利得 [dB] / 横軸 beta(対数)"]
+    # 動かない部分(見出し・軸・目盛り・0 の線・凡例)は 1 度だけ描いて毎コマ写す
+    base = np.full((FH, FW, 3), 0.06)
+    for (x0, y0), ttl in zip(pos, titles):
+        strip = base[y0 - TB:y0, x0:x0 + PW_]
+        base[y0 - TB:y0, x0:x0 + PW_] = _v_txt(strip, ttl, (4, TB // 2), anchor="lm", fs_=13)
+    lo = float(min(gain.min(), 0.0))
+    hi = float(max(gain.max(), 0.0))
+    lo, hi = lo - 0.08 * (hi - lo), hi + 0.08 * (hi - lo)
+    x0p, y0p = pos[5]
+    plot = np.full((PH_, PW_, 3), 0.10)
+    ax = AN.axes_transform((44, 12, PW_ - 64, PH_ - 40), (betas[0], betas[-1]), (lo, hi),
+                           xscale="log")
+    plot = np.asarray(AN.axes_frame(plot, ax), np.float64)
+    yt = [v for v in AN.nice_ticks(lo, hi, 5) if lo <= v <= hi]
+    plot = np.asarray(AN.ticks(plot, ax, xticks=[0.0025, 0.005, 0.01, 0.02, 0.04, 0.08],
+                               yticks=yt, font_size=10), np.float64)
+    plot = np.asarray(AN.plot_series(plot, ax, [betas[0], betas[-1]], [0.0, 0.0],
+                                     color=(0.65, 0.65, 0.65), width=1), np.float64)
+    plot = _v_txt(plot, "灰の線 = 利得 0", (PW_ - 24, PH_ - 34), anchor="rb", fs_=10)
+    base[y0p:y0p + PH_, x0p:x0p + PW_] = plot
+
+    def up(a):
+        return np.repeat(np.repeat(np.clip(a, 0.0, 1.0), scale, 0), scale, 1)
+
+    def tmap(t):
+        return up(np.asarray(imgio.apply_cmap(t, "viridis", vmin=0.0, vmax=1.0), np.float64))
+
+    C_DCP = (0.95, 0.55, 0.15)
+    frames = []
+    seq = list(range(n_sweep)) + [n_sweep - 1] * n_hold
+    for k in seq:
+        b, i2, rec, j2, te, t2, p_raw, p_dcp, p_or = rows[k]
+        f = base.copy()
+        vis = 3.912 / b
+        pans = [up(i2), up(rec), up(j2), tmap(te), tmap(t2)]
+        txt = ["beta = %.4f 1/m\n気象視程 %.0f m" % (b, vis),
+               "PSNR %.2f dB(何もしない %.2f)\nオラクル(真の A と t)%.2f dB" % (p_dcp, p_raw, p_or),
+               "真値(どのコマも同じシーン)",
+               "|推定 - 真値| 平均 %.4f" % float(np.mean(np.abs(te - t2))),
+               "t 中央値 %.4f" % float(np.median(t2))]
+        for (x0, y0), p, s in zip(pos[:5], pans, txt):
+            f[y0:y0 + PH_, x0:x0 + PW_] = _v_txt(p, s, (5, 5), fs_=12)
+        pl = f[y0p:y0p + PH_, x0p:x0p + PW_]
+        if k >= 1:
+            pl = np.asarray(AN.plot_series(pl, ax, betas[:k + 1], gain[:k + 1], color=C_DCP, width=2),
+                            np.float64)
+        pl = np.asarray(AN.plot_series(pl, ax, [b], [gain[k]], kind="scatter", color=C_DCP,
+                                       marker_size=4), np.float64)
+        tag = ("除霞が害(利得 %+.2f dB)" if gain[k] < 0.0 else "利得 %+.2f dB") % gain[k]
+        pl = _v_txt(pl, tag, (50, 16), fs_=12)
+        f[y0p:y0p + PH_, x0p:x0p + PW_] = pl
+        frames.append(np.clip(f, 0.0, 1.0))
+    figs.save_video("haze_sweep", frames, fps=fps, gif_every=2, gif_width=640,
+                    caption="動画(%d コマ、%d × %d px を %d 倍で表示): 消散係数 beta を %.4f(視程 %.0f m)から"
+                            " %.2f(視程 %.0f m)まで連続に振る。上段は霞んだ観測・暗チャネル除霞・真値、下段は"
+                            "推定した透過率・真の透過率と、暗チャネル除霞の PSNR 利得(対 何もしない)の曲線。"
+                            "利得は beta ≦ %.4f(視程 %.0f m 以上)で負 = 薄い霞では除霞が害になる"
+                            "(5 節の 7 点の表では 0.0050 と 0.0075 の間)。濃霧の端では %+.2f dB。"
+                            "真の A と t を与えたオラクルの PSNR は中央上の板に併記。"
+                            "表示は 8 bit に丸めた観測をそのまま使っている。"
+                            % (len(seq), H, W, scale, betas[0], 3.912 / betas[0], betas[-1],
+                               3.912 / betas[-1], b_cross, 3.912 / b_cross, gain[-1]))
+    return {"b_cross": b_cross, "gain_end": float(gain[-1]), "n": len(seq)}
+
+
+# --------------------------------------------------------------------------- #
 # 4. 本体                                                                       #
 # --------------------------------------------------------------------------- #
 def main():
@@ -422,7 +533,7 @@ def main():
     gains = [psnr_masked(methods[2][3], j_true, m) - psnr_masked(img, j_true, m)
              for _n, m in masks]
     total_gain = scores["暗チャネル p=15"][0] - scores["何もしない"][0]
-    print(f"  暗チャネルの利得 [dB]: " + " / ".join(
+    print("  暗チャネルの利得 [dB]: " + " / ".join(
         f"{n.split(' ')[0]} {g:+.2f}" for (n, _m), g in zip(masks, gains)))
     print(f"  → 全体では {total_gain:+.2f} dB だが、その内訳は**近景 {gains[0]:+.2f} dB の劣化**を")
     print(f"     中景 {gains[1]:+.2f} / 遠景 {gains[2]:+.2f} dB の改善が打ち消して出た数字。1 個の数字だと")
@@ -529,7 +640,7 @@ def main():
         g = (lambda v, w, n: f"{v:>{w}.{n}f}" if v == v else f"{'—':>{w}}")
         print(f"  {100 * frac:>8.1f}%{row[1]:>10.3f}{row[2]:>12.3f}{row[3]:>13.4f}"
               f"{row[4]:>12.4f}{g(row[5], 12, 4)}{g(row[6], 12, 4)}{g(row[7], 11, 2)}")
-    print(f"  → 壊れ方が 2 段ある。**上位 0.1 % 明画素法は白い車両が 0.5 % 出た時点で**")
+    print("  → 壊れ方が 2 段ある。**上位 0.1 % 明画素法は白い車両が 0.5 % 出た時点で**")
     print(f"     角度誤差 {white_rows[1][2]:.2f} 度・絶対誤差 {white_rows[1][3]:.3f} に跳ぶ。暗チャネル法は")
     print(f"     {100 * white_rows[3][0]:.0f} % まで無傷({white_rows[3][1]:.3f} 度)で、"
           f"{100 * white_rows[4][0]:.0f} % で初めて {white_rows[4][1]:.2f} 度へ落ちる。")
@@ -655,7 +766,7 @@ def main():
     bias_noisy = float(np.mean(t_n - t_true))
     print(f"  暗チャネルを雑音つきで回すと全体 PSNR は {scores['暗チャネル p=15'][0]:.2f} → "
           f"{p_noisy_dcp:.2f} dB と**上がる**。")
-    print(f"     改善ではない —— 最小値フィルタが雑音の下側だけを拾うので暗チャネルが下がり、")
+    print("     改善ではない —— 最小値フィルタが雑音の下側だけを拾うので暗チャネルが下がり、")
     print(f"     t の系統的な過小評価(平均バイアス {bias_clean:+.4f} → {bias_noisy:+.4f})を")
     print("     偶然打ち消しているだけ。**雑音を足したら指標が良くなったら、指標を疑う。**")
 
@@ -780,6 +891,10 @@ def main():
 
     # (10) 大気光の推定は「色」としては当たる —— 律速が t である根拠の裏取り。
     assert angle_deg(a_dcp, A_TRUE) < 1.5, "暗チャネル法の大気光が色として外れている"
+
+    # 動画は既存の図の**最後**に書く(番号が後ろの図のファイル名をずらさないように)。
+    if figs.enabled():
+        fig_haze_sweep_video()
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

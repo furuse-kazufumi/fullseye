@@ -496,6 +496,132 @@ def section7_findings():
 """)
 
 
+def _v_txt(img, s, xy, anchor="lt", fs_=12):
+    """文字の板。**小さな板(パネル 1 枚)にだけ**描く —— 全面に描くと遅い。"""
+    import annotate as AN
+
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_), dtype=np.float64)
+
+
+def fig_load_video(npx=361, n_load=120, n_rot=90, n_hold=10, fps=15.0):
+    """★動画: 荷重を 0 → P まで上げて縞が湧き出す様子(前半)と、P のまま平面偏光子の対を
+    0 → 90 度回して等傾線(黒い帯)が動く様子(後半)。
+
+    応力場は閉形式(:func:`disc_stress`)、像は本文と同じ :func:`polariscope_image`
+    (Mueller op)と :func:`plane_polariscope`。描画用に格子を ``npx`` 画素へ細かくしただけで、
+    式は本文と同じ。乱数は使わない。図を出さない実行では呼ばれない。
+    """
+    if not figs.enabled():
+        return None
+    import annotate as AN
+    import imgio
+
+    yy, xx = np.mgrid[0:npx, 0:npx].astype(np.float64)
+    pmm = 2.0 * R_MM / (npx - 1)
+    xm, ym = (xx - (npx - 1) / 2.0) * pmm, ((npx - 1) / 2.0 - yy) * pmm
+    disc = xm ** 2 + ym ** 2 <= (R_MM * 0.90) ** 2
+    rim = np.abs(np.hypot(xm, ym) - R_MM) < 0.6 * pmm      # 円板の縁(半径 R)の細い線
+    sxx, syy, txy = disc_stress(xm, ym)                     # P = P_N のときの応力
+    dsig_full, theta = principal_difference(sxx, syy, txy)
+    vmax = float(np.percentile(dsig_full[disc], 99.0))
+    c0 = (npx - 1) // 2                                      # 中心の画素
+    n_c_full = H_MM * float(dsig_full[c0, c0]) / F_SIGMA     # 荷重 P_N での中心の縞次数
+    loads = np.linspace(0.0, P_N, n_load)
+    i_centre = np.array([math_sin2(np.pi * n_c_full * p / P_N) for p in loads])
+
+    S, GAP, TB = npx, 6, 34
+    FW, FH = 3 * S + 2 * GAP, TB + S
+    xs = [0, S + GAP, 2 * (S + GAP)]
+    base = np.full((FH, FW, 3), 0.06)
+
+    def title(f, k, s):
+        strip = f[0:TB, xs[k]:xs[k] + S]
+        f[0:TB, xs[k]:xs[k] + S] = _v_txt(strip, s, (4, TB // 2), anchor="lm", fs_=13)
+
+    # 右のパネル(中心の明るさ vs 荷重)の軸は 1 度だけ描く
+    plot = np.full((S, S, 3), 0.10)
+    ax = AN.axes_transform((46, 40, S - 62, S - 96), (0.0, P_N), (0.0, 1.0))
+    plot = np.asarray(AN.axes_frame(plot, ax), np.float64)
+    plot = np.asarray(AN.ticks(plot, ax, xticks=[0, 100, 200, 300, 400, 500],
+                               yticks=[0.0, 0.5, 1.0], font_size=10), np.float64)
+    plot = _v_txt(plot, "荷重 P [N]", (S // 2 + 20, S - 4), anchor="cb", fs_=10)
+
+    def disc_rgb(v):
+        out = np.where(disc[..., None], v, 0.0)
+        out[rim] = 0.45
+        return out
+
+    frames = []
+    base1 = base.copy()
+    title(base1, 0, "暗視野(円偏光)= 等色線")
+    title(base1, 1, "主応力差 σ1-σ2(真値、0〜%.1f MPa)" % vmax)
+    title(base1, 2, "中心の明るさ(0 = 暗線が中心を通過)")
+    base1[TB:, xs[2]:xs[2] + S] = plot
+    for k, p in enumerate(loads):
+        f = base1.copy()
+        s_ = p / P_N
+        dark = polariscope_image(2.0 * np.pi * H_MM * dsig_full * s_ / F_SIGMA, theta, 90.0)
+        a = disc_rgb(np.repeat(np.clip(dark, 0, 1)[..., None], 3, 2))
+        n_c = n_c_full * s_
+        a = _v_txt(a, "荷重 P = %3.0f N\n中心の縞次数 N = %.2f\n(閉形式 h(σ1-σ2)/fσ)" % (p, n_c), (5, 5), fs_=12)
+        f[TB:, xs[0]:xs[0] + S] = a
+        sig = np.asarray(imgio.apply_cmap(dsig_full * s_, "inferno", vmin=0.0, vmax=vmax), np.float64)
+        b = _v_txt(disc_rgb(sig), "中心 %.3f MPa\n(8P/(πDh))" % (8 * p / (np.pi * 2 * R_MM * H_MM)),
+                   (5, 5), fs_=12)
+        f[TB:, xs[1]:xs[1] + S] = b
+        pl = f[TB:, xs[2]:xs[2] + S]
+        if k >= 1:
+            pl = np.asarray(AN.plot_series(pl, ax, loads[:k + 1], i_centre[:k + 1],
+                                           color=(0.95, 0.85, 0.35), width=2), np.float64)
+        n_pass = int(np.floor(n_c + 1e-9))
+        pl = _v_txt(pl, "暗線の通過 %d 回 → 縞次数は %d 以上" % (n_pass, n_pass), (8, 6), fs_=11)
+        f[TB:, xs[2]:xs[2] + S] = pl
+        frames.append(np.clip(f, 0.0, 1.0))
+    last_plot = frames[-1][TB:, xs[2]:xs[2] + S].copy()
+    frames += [frames[-1]] * n_hold
+
+    # 後半: 荷重 P_N のまま、直交させた平面偏光子の対を回す
+    delta = 2.0 * np.pi * H_MM * dsig_full / F_SIGMA
+    base2 = base.copy()
+    title(base2, 0, "平面偏光(直交)= 等色線 + 等傾線")
+    title(base2, 1, "等傾角 θ(真値)と、いま黒くなる向き")
+    title(base2, 2, "中心の明るさ(荷重 %.0f N で止めた)" % P_N)
+    base2[TB:, xs[2]:xs[2] + S] = last_plot
+    th_rgb = np.asarray(imgio.apply_cmap(np.mod(theta, np.pi) / np.pi, "twilight", vmin=0.0, vmax=1.0),
+                        np.float64)
+    angs = np.linspace(0.0, 90.0, n_rot)
+    for bdeg in angs:
+        f = base2.copy()
+        plane = plane_polariscope(delta, theta, bdeg)
+        a = disc_rgb(np.repeat(np.clip(plane, 0, 1)[..., None], 3, 2))
+        a = _v_txt(a, "偏光子 %.0f 度 / 検光子 %.0f 度" % (bdeg, bdeg + 90.0), (5, 5), fs_=12)
+        f[TB:, xs[0]:xs[0] + S] = a
+        on = disc & (np.abs(np.sin(2.0 * (theta - np.deg2rad(bdeg)))) < 0.05)
+        b = th_rgb.copy()
+        b[on] = (1.0, 1.0, 1.0)
+        b = _v_txt(disc_rgb(b), "白 = 主応力の向きが %.0f 度か %.0f 度\n(この点が左で黒い帯になる)"
+                   % (bdeg, bdeg + 90.0), (5, 5), fs_=11)
+        f[TB:, xs[1]:xs[1] + S] = b
+        frames.append(np.clip(f, 0.0, 1.0))
+    frames += [frames[-1]] * n_hold
+    figs.save_video("load_and_isoclinics", frames, fps=fps, gif_every=3, gif_width=720,
+                    caption="動画(%d コマ、円板 φ%.0f mm を %d 画素で描画、半径 0.9R の外は描かない): 前半は荷重を"
+                            " 0 → %.0f N へ上げる。暗視野(円偏光)の暗線は縞次数が整数の等値線で、荷重点から湧き出して"
+                            "中心へ寄る。中心の縞次数は荷重に比例して %.2f まで増え(閉形式 h(σ1-σ2)/fσ)、右のグラフの"
+                            "中心の明るさ sin²(πN) が 0 に落ちるたびに暗線が中心を通過する(通過 %d 回)。後半は荷重 %.0f N の"
+                            "まま、直交させた平面偏光子の対を 0 → 90 度回す。平面偏光の黒には 2 種類あり、回しても動かない"
+                            "縞は等色線(暗視野と同じ)、回すと動く黒い帯が等傾線 = 主応力の向きが偏光子と平行か直交する点"
+                            "で、中央の真値 θ の図で白く塗った点と重なる。"
+                            "偏光系は fullseye の mueller_element / mueller_apply(暗視野)と sin²(2(θ-β))·sin²(δ/2)(平面)。"
+                            % (len(frames), 2 * R_MM, npx, P_N, n_c_full, int(np.floor(n_c_full)), P_N))
+    return {"n_centre": n_c_full, "frames": len(frames)}
+
+
+def math_sin2(x):
+    """sin² のスカラー版(動画の右のグラフ用)。"""
+    return float(np.sin(x) ** 2)
+
+
 def main():
     t0 = time.time()
     print("poc_photoelasticity — 光弾性で応力を測る(円板の直径圧縮)")
@@ -509,6 +635,9 @@ def main():
     section5_wrapping(dsig, delta, d_hat, k1, k2, k3)
     rows = section6_noise(dsig, theta, delta, m)
     section7_findings()
+    # 動画は既存の図の**最後**に書く(番号が後ろの図のファイル名をずらさないように)。
+    if figs.enabled():
+        fig_load_video()
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("経過 %.1f 秒" % (time.time() - t0))

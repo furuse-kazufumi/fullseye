@@ -121,6 +121,125 @@ def repeat(step_um, noise, mode="gaussian", dz=DZ, n_planes=NP, n=N_TRIAL):
     return bias_nm, std_nm, float(np.mean(rej)), int(ok.sum())
 
 
+def _v_txt(img, s, xy, anchor="lt", fs_=12):
+    """文字の板。**小さな板(パネル 1 枚)にだけ**描く —— 全面に描くと遅い。"""
+    import annotate as AN
+
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_), dtype=np.float64)
+
+
+def fig_step_sweep_video(n_steps=136, s_max=0.90, n_hold=12, fps=12.0):
+    """★動画: 仕込む段差を 0 → 0.90 µm へ連続に増やし、コヒーレンス走査(包絡線)と
+    位相シフト法を同じ表面で測り比べる(7 節の 9 点を連続にしたもの)。
+
+    左 = 低い側・高い側の 1 画素ずつの走査信号と、``csi_height_map`` が読んだ高さ(縦線)。
+    右 = 測った段差 vs 仕込んだ段差。包絡線は対角線に乗り続け、位相シフト法は λ/4 を
+    越えるたびに λ/2 ぶん飛ぶ。雑音なし(seed 0)なので乱数の流れには触れない。
+    図を出さない実行では呼ばれない。
+    """
+    if not figs.enabled():
+        return None
+    import annotate as AN
+
+    steps = np.linspace(0.0, s_max, n_steps)
+    gain_rad = 4.0 * np.pi / LAM
+    z_ax = DZ * np.arange(NP)
+    sel = (z_ax >= BASE - 1.0) & (z_ax <= BASE + s_max + 1.0)
+    zs = z_ax[sel]
+    rows = []
+    for step in steps:
+        _truth, stack = make_stack(float(step), 0.0, 0)
+        hmap = I.csi_height_map(stack, DZ, 0.0, LAM, mode="gaussian", on_invalid="fill")
+        csi = float(np.nanmean(hmap[:, PW:]) - np.nanmean(hmap[:, :PW]))
+        tru = np.full((PH, 2 * PW), 0.0)
+        tru[:, PW:] = step
+        imgs = fringe.synthesize_fringes(tru, n_steps=4, freq=0.0, phase_gain=gain_rad,
+                                         bias=0.5, amplitude=0.4)
+        rec = fringe.decode_fringe(imgs, k=1.0 / gain_rad)
+        psi = float(rec[:, PW:].mean() - rec[:, :PW].mean())
+        rows.append((float(step), csi, psi, stack[sel, PH // 2, PW // 2],
+                     stack[sel, PH // 2, PW + PW // 2],
+                     float(hmap[PH // 2, PW // 2]), float(hmap[PH // 2, PW + PW // 2])))
+    csi_err = max(abs(r[1] - r[0]) for r in rows) * 1000.0
+    jumps = [r[0] for r in rows if abs(r[2] - r[0]) > 1e-6]
+    first_jump = min(jumps) if jumps else float("nan")
+    smin = min(min(r[3].min(), r[4].min()) for r in rows)
+    smax = max(max(r[3].max(), r[4].max()) for r in rows)
+
+    S_W, S_H, GAP, TB = 480, 400, 6, 34
+    FW, FH = 2 * S_W + GAP, TB + S_H
+    xs = [0, S_W + GAP]
+    base = np.full((FH, FW, 3), 0.06)
+    for k, s in enumerate(("走査信号(左右 1 画素ずつ)と読んだ高さ", "測った段差 vs 仕込んだ段差")):
+        strip = base[0:TB, xs[k]:xs[k] + S_W]
+        base[0:TB, xs[k]:xs[k] + S_W] = _v_txt(strip, s, (4, TB // 2), anchor="lm", fs_=13)
+    # 動かない部分(軸・目盛り・対角線・λ/4 の印・凡例)は 1 度だけ描く
+    pa = np.full((S_H, S_W, 3), 0.10)
+    ax_a = AN.axes_transform((50, 70, S_W - 66, S_H - 128), (zs[0], zs[-1]),
+                             (smin - 0.03, smax + 0.03))
+    pa = np.asarray(AN.axes_frame(pa, ax_a), np.float64)
+    pa = np.asarray(AN.ticks(pa, ax_a, xticks=[5.0, 5.5, 6.0, 6.5, 7.0, 7.5],
+                             yticks=[0.2, 0.5, 0.8], font_size=10), np.float64)
+    pa = _v_txt(pa, "走査位置 z [µm]", (S_W // 2 + 20, S_H - 4), anchor="cb", fs_=10)
+    pa = _v_txt(pa, "青 = 低い側 / だいだい = 高い側\n縦線 = 包絡線から読んだ高さ", (S_W - 8, 66),
+                anchor="rb", fs_=10)
+    base[TB:, xs[0]:xs[0] + S_W] = pa
+    pb = np.full((S_H, S_W, 3), 0.10)
+    ylo, yhi = -0.2, s_max + 0.05
+    ax_b = AN.axes_transform((56, 70, S_W - 72, S_H - 128), (0.0, s_max), (ylo, yhi))
+    pb = np.asarray(AN.axes_frame(pb, ax_b), np.float64)
+    pb = np.asarray(AN.ticks(pb, ax_b, xticks=[0.0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9],
+                             yticks=[-0.15, 0.0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9], font_size=10),
+                    np.float64)
+    pb = np.asarray(AN.plot_series(pb, ax_b, [0.0, s_max], [0.0, s_max], color=(0.5, 0.5, 0.5),
+                                   width=1), np.float64)
+    for q in np.arange(LAM / 4, s_max, LAM / 2):            # λ/4 + n·λ/2 = 位相シフト法が飛ぶ所
+        pb = np.asarray(AN.plot_series(pb, ax_b, [q, q], [ylo, yhi], color=(0.30, 0.30, 0.38),
+                                       width=1), np.float64)
+    pb = _v_txt(pb, "仕込んだ段差 [µm](縦の細線 = λ/4 + n·λ/2)", (S_W // 2 + 20, S_H - 4), anchor="cb", fs_=10)
+    pb = _v_txt(pb, "だいだい = コヒーレンス走査(包絡線)\n水色 = 位相シフト法(4 段)\n灰の対角線 = 真値"
+                "(0.15 までは 2 つが重なる)",
+                (S_W - 8, 66), anchor="rb", fs_=10)
+    base[TB:, xs[1]:xs[1] + S_W] = pb
+
+    C_LO, C_HI, C_CSI, C_PSI = (0.40, 0.65, 1.0), (0.95, 0.60, 0.20), (0.95, 0.60, 0.20), (0.40, 0.80, 0.95)
+    frames = []
+    b_acc = base[TB:, xs[1]:xs[1] + S_W].copy()             # 点は溜まる一方なので、新しい点だけ足していく
+    for k in list(range(n_steps)) + [n_steps - 1] * n_hold:
+        step, csi, psi, sig_lo, sig_hi, h_lo, h_hi = rows[k]
+        f = base.copy()
+        a = f[TB:, xs[0]:xs[0] + S_W]
+        y0, y1 = smin - 0.03, smax + 0.03
+        for h, col in ((h_lo, C_LO), (h_hi, C_HI)):
+            if zs[0] <= h <= zs[-1]:
+                a = np.asarray(AN.plot_series(a, ax_a, [h, h], [y0, y1], color=col, width=1), np.float64)
+        a = np.asarray(AN.plot_series(a, ax_a, zs, sig_lo, color=C_LO, width=1), np.float64)
+        a = np.asarray(AN.plot_series(a, ax_a, zs, sig_hi, color=C_HI, width=1), np.float64)
+        a = _v_txt(a, "仕込んだ段差 %.3f µm(= λ/2 の %.2f 倍)\n包絡線の中心の差 %.3f µm"
+                   % (step, step / (LAM / 2), h_hi - h_lo), (8, 6), fs_=12)
+        f[TB:, xs[0]:xs[0] + S_W] = a
+        if len(frames) < n_steps:                             # 止めのコマでは点を足さない
+            b_acc = np.asarray(AN.plot_series(b_acc, ax_b, [step], [psi], kind="scatter",
+                                              color=C_PSI, marker_size=2), np.float64)
+            b_acc = np.asarray(AN.plot_series(b_acc, ax_b, [step], [csi], kind="scatter",
+                                              color=C_CSI, marker_size=2), np.float64)
+        b = b_acc.copy()
+        n_ord = int(round((psi - step) / (LAM / 2)))
+        b = _v_txt(b, "包絡線 %.4f µm(誤差 %+.1e nm)\n位相シフト %.4f µm%s"
+                   % (csi, (csi - step) * 1000.0, psi,
+                      "" if n_ord == 0 else "(λ/2 × %+d 飛んだ)" % n_ord), (8, 6), fs_=12)
+        f[TB:, xs[1]:xs[1] + S_W] = b
+        frames.append(np.clip(f, 0.0, 1.0))
+    figs.save_video("step_sweep", frames, fps=fps, gif_every=2, gif_width=640,
+                    caption="動画(%d コマ): 仕込む段差を 0 → %.2f µm へ連続に増やし、同じ表面を 2 つの方法で測る(雑音なし)。"
+                            "左は低い側・高い側 1 画素ずつのコヒーレンス走査の信号で、縦線は csi_height_map(gaussian)が"
+                            "包絡線から読んだ高さ。右は測った段差 vs 仕込んだ段差。包絡線(だいだい)は全域で対角線に乗り、"
+                            "誤差は最大 %.1e nm —— 包絡線には周期が無いので巻き戻らない。位相シフト法(水色、4 段)は"
+                            "段差 %.3f µm(λ/4 = %.3f µm の直後)で初めて λ/2 ぶん飛び、以後 λ/2 ごとに鋸の歯になる。"
+                            % (len(frames), s_max, csi_err, first_jump, LAM / 4))
+    return {"csi_err_nm": csi_err, "first_jump": first_jump}
+
+
 def main():
     t_all = time.perf_counter()
 
@@ -411,6 +530,9 @@ def main():
           "数えるしかない(6 の右端列)。雑音 5% で 3 割、20% で 5 割が落ちており、"
           "拒否率は測定の信頼度そのもの。拒否数を返す口があると下流で使いやすい。")
 
+    # 動画は既存の図の**最後**に書く(番号が後ろの図のファイル名をずらさないように)。
+    if figs.enabled():
+        fig_step_sweep_video()
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
 

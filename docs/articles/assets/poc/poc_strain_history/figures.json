@@ -40,5 +40,27 @@
   ],
   "csv": "04_rate_table.csv",
   "tsv": "04_rate_table.tsv"
+ },
+ {
+  "file": "05_history_video.gif",
+  "name": "history_video",
+  "caption": "動画(720 × 458、8 fps、127 コマ): クリープ試験を 25 コマ撮る。左はその時刻のスペックル像に、t=0 との直接 PIV の変位を 3 倍の矢印で重ねたもの(中心から外へ伸びる)。右上は真ひずみ(白、閉形式)と測った値(青 = 隣のコマどうしの増分を足す累積、朱 = いつも t=0 と比べる直接)、右下はその誤差。直接の誤差だけが変形とともに伸び、終端で 累積 -49 µε / 直接 -1888 µε(雑音の実現 1 通り、第 2 節と同じ種)。",
+  "shape": [
+   458,
+   720,
+   3
+  ],
+  "animated": true,
+  "frames": 127,
+  "frames_written": 98,
+  "fps": 8.0,
+  "video": "05_history_video.mp4",
+  "video_frames": 127,
+  "video_fps": 8.0,
+  "video_shape": [
+   458,
+   720,
+   3
+  ]
  }
 ]

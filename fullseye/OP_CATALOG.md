@@ -1287,7 +1287,7 @@ _計 934 ops / 48 categories。_
 - `dog` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
 - `edge_transition_width` `image → image` · 例: `gallery2d_edges`
 - `grad_dir` `image → image` · 例: `gallery2d_edges`
-- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `poc_colormap_readability`, `poc_datacenter_thermal_field`, `poc_driving_longitudinal`, `poc_eye_to_brain`, `poc_registration_basin`, `poc_wound_area_tracking`
+- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `poc_colormap_readability`, `poc_datacenter_thermal_field`, `poc_dehazing`, `poc_driving_longitudinal`, `poc_eye_to_brain`, `poc_registration_basin`, `poc_wound_area_tracking`
 - `corner_response` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`, `poc_document_scan`, `poc_matrix_code_reading`
 - `sk_scharr` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
 - `sk_farid` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`

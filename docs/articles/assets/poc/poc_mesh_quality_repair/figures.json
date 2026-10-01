@@ -136,5 +136,27 @@
   ],
   "csv": "13_self_intersection.csv",
   "tsv": "13_self_intersection.tsv"
+ },
+ {
+  "file": "14_decimate_orbit.gif",
+  "name": "decimate_orbit",
+  "caption": "動画(272 コマ、480 × 480 px): 健全な部品(面 11208 枚)の周りを 1.5 周しながら、QEM 簡略化の削減率を 0 → 98 % へ 8 段で上げる。面は平らに塗り、色は面の 3 頂点の平均曲率 |H|(尺度は削減前の 99 パーセンタイル 12.6 /mm で固定)。50 % 削減で体積の誤差は -0.019 % しかないのに曲率の 95 パーセンタイルは 5.89 → 7.72(+31 %)—— 明るい(尖った)面が先に増える。98 % 削減でようやく体積 -4.199 %。左下の 3 本は配列の軸(0 = 貫通穴の軸 = 画面の上、2 = 角柱ボスの側)。",
+  "shape": [
+   359,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 91,
+  "frames_written": 91,
+  "fps": 5.0,
+  "video": "14_decimate_orbit.mp4",
+  "video_frames": 272,
+  "video_fps": 15.0,
+  "video_shape": [
+   514,
+   916,
+   3
+  ]
  }
 ]

@@ -688,7 +688,7 @@ def section_persistent(truth):
           "と素直に減る。")
     print("     分かれ目は**凹みが輪郭に出るか**。背中のくぼみは、どの方位から見ても")
     print("     隣の高い所に隠れて輪郭に現れない = シルエットに情報が無い(K→∞ でも残る)。")
-    print(f"  取りこぼし(真に在る voxel を削った数)は全 K で 0 —— ``dilate=0`` でも "
+    print("  取りこぼし(真に在る voxel を削った数)は全 K で 0 —— ``dilate=0`` でも "
           "被覆意味のシルエットは保守側に丸めている。")
     figs.save_table("persistent", ["K", "過大率", "くぼみを埋めた率", "脚の間の幽霊",
                                    "取りこぼし"], rows,
@@ -978,6 +978,161 @@ def section_figures(truth, pers):
 
 
 # --------------------------------------------------------------------------- #
+def _v_txt(img, s, xy, anchor="lt", fs_=12):
+    """文字の板。**小さな板(パネル 1 枚)にだけ**描く —— 全面に描くと遅い。"""
+    import annotate as AN
+
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_), dtype=np.float64)
+
+
+def _occ_mesh(occ: np.ndarray):
+    """占有 → 三角メッシュ(世界座標 [m])と、各面が接する voxel の添字(8 隅)。
+
+    ``voxel_to_mesh`` の頂点は**配列の添字**(軸 0,1,2 = x,y,z、``carve`` の ij)なので、
+    voxel 中心の規約 ``lo + (i + 0.5) * d`` で世界へ写す(非等方な d を軸ごとに)。
+    """
+    V, F = _L.voxel_to_mesh(np.pad(occ.astype(np.float64), 1), iso=0.5)
+    V = np.asarray(V, np.float64) - 1.0
+    F = np.asarray(F, np.int64)
+    sp = np.array([(hi - lo) / RES for lo, hi in BOUNDS])
+    lo = np.array([b[0] for b in BOUNDS])
+    cen = V[F].mean(axis=1)                                   # 面の重心(添字の座標)
+    base = np.floor(cen).astype(np.int64)
+    corners = [base + np.array([i, j, k]) for i in (0, 1) for j in (0, 1) for k in (0, 1)]
+    return lo + (V + 0.5) * sp, F, corners
+
+
+def fig_hull_orbit_video(truth, pers, w=560, h=420, per_level=30, fps=15.0):
+    """★動画: 牛の周りをカメラで回りながら、彫刻に使うカメラの台数 K を 4 → 48 へ増やす。
+
+    表示するのは視体積交差(``carve`` の占有)の表面。**真の体に接している面は灰、
+    真に空の所に立っている面(= 余分)はだいだい**に塗る(面が接する 8 voxel のどれかが真の
+    占有なら灰)。占有は §4 で数えたもの(``pers["out"][K]["occ"]``)をそのまま使い、
+    数え直さない。最初の段は真の占有そのもの。左下の向きの目印は x(体長)・y・z(上)。
+    乱数は使わない。図を出さない実行では呼ばれない。
+    """
+    if not figs.enabled():
+        return None
+    import imgio  # noqa: F401  (カラーマップは使わないが、描画系の import をここに揃える)
+
+    occ_t = truth["occ"]
+    out = pers["out"]
+    levels = [("真の体(同じ voxel 格子)", occ_t, None)] + [("K = %d 台" % K, out[K]["occ"], K) for K in sorted(out)]
+    meshes = []
+    for name, occ, K in levels:
+        Vw, F, corners = _occ_mesh(occ)
+        on_body = np.zeros(len(F), bool)
+        for c in corners:
+            ok = np.all((c >= 0) & (c < RES), axis=1)
+            hit = np.zeros(len(F), bool)
+            hit[ok] = occ_t[c[ok, 0], c[ok, 1], c[ok, 2]]
+            on_body |= hit
+        meshes.append((name, Vw, F, on_body, K))
+    K_ = np.asarray(fs.intrinsics_from_fov(34.0, w, h))
+    light = np.array([0.30, 0.45, 0.85])
+    C_BODY, C_EXTRA = np.array([0.78, 0.72, 0.62]), np.array([1.00, 0.55, 0.15])
+    tgt = np.array([0.0, 0.0, 0.70])
+
+    TB, GAP, TW = 34, 6, 400
+    FW, FH = w + GAP + TW, TB + h
+    base = np.full((FH, FW, 3), 0.06)
+    base[0:TB, 0:w] = _v_txt(base[0:TB, 0:w], "視体積交差の表面(灰 = 真の体に接する / だいだい = 余分)",
+                             (4, TB // 2), anchor="lm", fs_=13)
+    base[0:TB, w + GAP:] = _v_txt(base[0:TB, w + GAP:], "§4 の表(同じ占有)", (4, TB // 2), anchor="lm", fs_=13)
+    head = "  K   過大率   くぼみを埋めた率   脚の間の幽霊"
+    rows_txt = ["%3d  %.4f      %5.1f %%          %5.2f %%" % (K, out[K]["ratio"], 100 * out[K]["fill"],
+                                                                100 * out[K]["ghost"]) for K in sorted(out)]
+    table_h = 30 + 26 * len(rows_txt) + 14
+
+    def table(cur):
+        import annotate as AN
+
+        t = np.full((table_h, TW, 3), 0.10)
+        t = _v_txt(t, head, (6, 4), fs_=12)
+        for i, s in enumerate(rows_txt[:max(cur, 0) + 1] if cur >= 0 else []):
+            if i == cur:
+                t = np.asarray(AN.text_box(t, s, (6, 30 + 26 * i), font_size=12, color="emphasis", border=1),
+                               np.float64)
+            else:
+                t = _v_txt(t, s, (6, 30 + 26 * i), fs_=12)
+        return t
+
+    tables = [table(i - 1) for i in range(len(levels))]       # 最初の段(真の体)は表の行なし
+    note = _v_txt(np.full((92, TW, 3), 0.06),
+                  "くぼみ = 背中の削痩(輪郭に出ない凹み)\n幽霊 = 腹の下・脚の間の空隙(輪郭に出る)\n"
+                  "真値 %.4f m³ = %.0f kg(密度 %.0f kg/m³)" % (truth["true"], truth["weight"], RHO), (6, 4), fs_=11)
+
+    frames = []
+    n_tot = per_level * len(meshes)
+    for li, (name, Vw, F, on_body, K) in enumerate(meshes):
+        fcol = np.where(on_body[:, None], C_BODY[None, :], C_EXTRA[None, :])
+        for k in range(per_level):
+            n = li * per_level + k
+            a = np.radians(-60.0) + 2.0 * np.pi * n / n_tot       # 全体で 1 周
+            el = np.radians(20.0 + 26.0 * n / n_tot)             # だんだん上から = 台数が多い段ほど背中が見える
+            eye = tgt + 4.3 * np.array([np.cos(el) * np.cos(a), np.cos(el) * np.sin(a), np.sin(el)])
+            pose = np.asarray(fs.look_at(eye, tgt, (0.0, 0.0, 1.0)))
+            rr = fs.render_mesh(Vw, F, pose=pose, intrinsics=K_, width=w, height=h, attributes=True)
+            face = np.asarray(rr["face"])
+            sil = face >= 0
+            lam = np.clip(np.asarray(rr["normals"]) @ light, 0.0, 1.0)
+            img = np.full((h, w, 3), 0.06)
+            img[sil] = fcol[face[sil]] * (0.25 + 0.75 * lam[sil])[:, None]
+            # 地面(z = 0)の目印: 原点を通る x 軸・y 軸の細い線を、体より奥に隠れる所は描かない
+            Rc, tc = pose[:3, :3], pose[:3, 3]
+            for p0, p1 in (((-1.4, 0.0, 0.0), (1.4, 0.0, 0.0)), ((0.0, -0.8, 0.0), (0.0, 0.8, 0.0))):
+                for t_ in np.linspace(0.0, 1.0, 240):
+                    pw = np.array(p0) + (np.array(p1) - np.array(p0)) * t_
+                    pc = Rc @ pw + tc
+                    if pc[2] >= -1e-6:
+                        continue
+                    u = K_[0, 0] * pc[0] / -pc[2] + K_[0, 2]
+                    v = -K_[1, 1] * pc[1] / -pc[2] + K_[1, 2]
+                    ui, vi = int(round(u)), int(round(v))
+                    if 0 <= ui < w and 0 <= vi < h and not sil[vi, ui]:
+                        img[vi, ui] = (0.35, 0.35, 0.40)
+            sub = img[h - 140:, :150].copy()                  # 向きの目印は左下の小さな板にだけ描く
+            o = np.array([62.0, 78.0])
+            for ax_i, col, nm in ((0, (0.95, 0.35, 0.30), "x 体長"), (1, (0.40, 0.85, 0.40), "y 体幅"),
+                                  (2, (0.45, 0.60, 1.00), "z 上")):
+                d = Rc[:, ax_i]
+                v2 = np.array([d[0], -d[1]])                     # 画面の右 = カメラの +x、上 = カメラの +y
+                e = o + 40.0 * v2
+                for t_ in np.linspace(0.0, 1.0, 50):
+                    p = np.round(o + (e - o) * t_).astype(int)
+                    sub[p[1] - 1:p[1] + 2, p[0] - 1:p[0] + 2] = col
+                lab = o + 56.0 * v2 / max(np.linalg.norm(v2), 0.35)
+                sub = _v_txt(sub, nm, (float(np.clip(lab[0], 34, 115)), float(np.clip(lab[1], 16, 122))),
+                             anchor="cm", fs_=10)
+            img[h - 140:, :150] = sub
+            if K is None:
+                s = "%s\n占有 %d voxel(過大率 1 = 基準)" % (name, int(occ_t.sum()))
+            else:
+                o_ = out[K]
+                s = ("%s(軸周り等間隔、%.0f m 先)\n体積 = 真値の %.4f 倍 → 体重換算 %.0f kg(真値 %.0f kg)"
+                     "\n背中のくぼみを埋めた率 %.1f %% / 脚の間の幽霊 %.2f %%"
+                     % (name, D_RING, o_["ratio"], o_["ratio"] * truth["weight"], truth["weight"],
+                        100 * o_["fill"], 100 * o_["ghost"]))
+            img[:96] = _v_txt(img[:96].copy(), s, (6, 6), fs_=12)
+            f = base.copy()
+            f[TB:, 0:w] = img
+            f[TB:TB + table_h, w + GAP:] = tables[li]
+            f[FH - 92:FH, w + GAP:] = note
+            frames.append(np.clip(f, 0.0, 1.0))
+    o4, o48 = out[4], out[48]
+    figs.save_video("hull_orbit", frames, fps=fps, gif_every=3, gif_width=640,
+                    caption="動画(%d コマ、%d × %d px): 牛の周りを 1 周しながら、彫刻に使うカメラの台数を 4 → 48 台"
+                            "(軸周り等間隔、%.0f m 先)へ増やす。表示は §4 で数えた視体積交差の占有の表面で、真の体に接する面は灰、"
+                            "真に空の所に立つ面(余分)はだいだい。最初の段は真の占有。横腹の帯と脚の間の幽霊(%.2f %% → %.2f %%)"
+                            "は台数とともに消えるが、背中のくぼみに被さる蓋は K = 48 でも %.1f %% 埋まったまま"
+                            "(K = 4 で %.1f %%)—— 輪郭に出ない凹みはシルエットに情報が無い。体積は真値の %.4f → %.4f 倍。"
+                            "カメラの仰角は 20 → 46 度へ上げていき、台数の多い段ほど背中の蓋が見える。"
+                            "左下の 3 本は x(体長)・y(体幅)・z(上)、灰の細線は地面の x 軸・y 軸。"
+                            % (len(frames), w, h, D_RING, 100 * o4["ghost"], 100 * o48["ghost"], 100 * o48["fill"],
+                               100 * o4["fill"], o4["ratio"], o48["ratio"]))
+    return {"frames": len(frames)}
+
+
 def main():
     t0 = time.perf_counter()
     truth = section_truth()
@@ -1070,6 +1225,10 @@ def main():
     assert hole["bad_sil"] == 0, hole
     assert hole["bad_occ"] == 0, hole
     assert hole["good_sil"] > 10_000, hole
+
+    # 動画は既存の図の**最後**に書く(番号が後ろの図のファイル名をずらさないように)。
+    if figs.enabled():
+        fig_hull_orbit_video(truth, pers)
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

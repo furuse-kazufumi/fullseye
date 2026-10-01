@@ -5,7 +5,7 @@ category: edges
 in: image
 out: image
 halcon: laplace_of_gauss
-examples: [gallery2d_edges, poc_colormap_readability, poc_datacenter_thermal_field, poc_driving_longitudinal, poc_eye_to_brain, poc_registration_basin, poc_wound_area_tracking]
+examples: [gallery2d_edges, poc_colormap_readability, poc_datacenter_thermal_field, poc_dehazing, poc_driving_longitudinal, poc_eye_to_brain, poc_registration_basin, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -66,6 +66,7 @@ log 0.40 0.50
 - [gallery2d_edges](../../../../examples/gallery2d_edges.py) — `py -3.11 examples/gallery2d_edges.py`
 - [poc_colormap_readability](../../../../examples/poc_colormap_readability.py) — `py -3.11 examples/poc_colormap_readability.py`
 - [poc_datacenter_thermal_field](../../../../examples/poc_datacenter_thermal_field.py) — `py -3.11 examples/poc_datacenter_thermal_field.py`
+- [poc_dehazing](../../../../examples/poc_dehazing.py) — `py -3.11 examples/poc_dehazing.py`
 - [poc_driving_longitudinal](../../../../examples/poc_driving_longitudinal.py) — `py -3.11 examples/poc_driving_longitudinal.py`
 - [poc_eye_to_brain](../../../../examples/poc_eye_to_brain.py) — `py -3.11 examples/poc_eye_to_brain.py`
 - [poc_registration_basin](../../../../examples/poc_registration_basin.py) — `py -3.11 examples/poc_registration_basin.py`

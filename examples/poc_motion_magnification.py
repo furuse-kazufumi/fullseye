@@ -245,6 +245,142 @@ def rel(measured, truth):
 
 
 # --------------------------------------------------------------------------- #
+# --------------------------------------------------------------------------- #
+# 動画(図つきで走らせたときだけ)                                              #
+# --------------------------------------------------------------------------- #
+def _vtxt(img, s, xy, anchor="lt", fs_=12, color=None):
+    """文字(poc_driving_traffic の ``_txt`` と同じ書き方、色だけ選べる)。"""
+    import annotate as AN
+    kw = {} if color is None else {"text_color": color}
+    return np.asarray(AN.text_box(img, s, xy, anchor=anchor, font_size=fs_, **kw), dtype=np.float64)
+
+
+def _vpoly(a, ax, x, y, color, w=1):
+    """データ座標の折れ線を直に塗る(``annotate.plot_series`` は全画面の重みを作るので
+    動画の毎コマには重い —— 同じ写像 ``data_to_pixel`` を使い、0.5 px 刻みの点打ちで描く)。
+    軸の矩形の外には塗らない。"""
+    import annotate as AN
+    x = np.atleast_1d(np.asarray(x, np.float64))
+    y = np.atleast_1d(np.asarray(y, np.float64))
+    if x.size < 2:
+        return a
+    px, py = (np.asarray(v, np.float64) for v in AN.data_to_pixel(ax, x, y))
+    n = np.maximum(1, np.ceil(2.0 * np.hypot(np.diff(px), np.diff(py))).astype(int))
+    xs = np.concatenate([np.linspace(px[i], px[i + 1], n[i], endpoint=False) for i in range(n.size)] + [px[-1:]])
+    ys = np.concatenate([np.linspace(py[i], py[i + 1], n[i], endpoint=False) for i in range(n.size)] + [py[-1:]])
+    x0, y0, ww, hh = ax["rect"]
+    xi, yi = np.rint(xs).astype(int), np.rint(ys).astype(int)
+    for dy in range(-(w // 2), w - w // 2):
+        for dx in range(-(w // 2), w - w // 2):
+            xx, yy = xi + dx, yi + dy
+            ok = (xx >= x0) & (xx < x0 + ww) & (yy >= y0) & (yy < y0 + hh)
+            a[yy[ok], xx[ok]] = color
+    return a
+
+
+def _vaxes(a, ax, xt, yt, c_axis):
+    """軸の枠と目盛り(1 度だけ描いて、各コマはこれを写す)。"""
+    import annotate as AN
+    a = np.asarray(AN.axes_frame(a, ax, color=c_axis), np.float64)
+    return np.asarray(AN.ticks(a, ax, xticks=xt, yticks=yt, color=c_axis, font_size=10, text_color=c_axis),
+                      np.float64)
+
+
+def _vstrip(f, y0, y1, s, xy=(4, 2), fs_=12, color=None, anchor="lt"):
+    """コマの横帯 ``f[y0:y1]`` にだけ文字を書く(全面に text_box を走らせない)。"""
+    f[y0:y1] = _vtxt(f[y0:y1].copy(), s, xy, anchor=anchor, fs_=fs_, color=color)
+    return f
+
+
+VID_UP = 3                  # ROI 1 px -> 3 x 3 表示 px(最近傍)
+VID_ALPHA = 10.0            # 動画で見せる拡大率(第 2 章 b の (iv) と同じ)
+VID_D = 0.1                 # 動画の真の振幅 [px](第 2 章 b と同じ)
+VID_SIGMA = 0.01            # 雑音(第 2 章 b の sigma=0.01 行、種 11)
+VID_FPS = 12.0              # 再生速度(撮影 37 fps の約 1/3 = スロー再生)
+VID_END = 24                # 最後の要約を見せるコマ数
+
+
+def _video_magnify():
+    """動画: 生の映像(0.1 px)と 10 倍拡大を並べ、下段で変位の時系列を伸ばしていく。
+
+    上段左 = 生の ROI、右 = ``motion_magnify`` で 10 倍にした ROI。どちらにも静止時の
+    縞の山の位置に細い縦線を引き、縞がその線の周りで揺れる量を見せる(生では 0.1 px
+    = 表示 0.3 px で見えず、拡大後は 1 px = 表示 3 px で見える)。下段 = 変位の時系列
+    (白 = 真値、青 = 生の映像から ``displacement_series``、橙 = 拡大後に測って 10 で割る)。
+    クリップは第 2 章 b の sigma=0.01 行と同じ(種 11 の使い捨て Generator、本体の乱数は
+    消費しない)。振幅の RMS が第 2 章 b の表と一致することを assert する。
+    """
+    import palette as PAL
+
+    c_raw, c_mag, c_axis = PAL.role_color("right"), PAL.role_color("emphasis"), (0.62, 0.62, 0.66)
+    c_true = (0.93, 0.93, 0.93)
+    vid, disp = make_clip([(VID_D, FREQ, 0.0)], noise_sigma=VID_SIGMA, seed=11)
+    mg = M.motion_magnify(vid, VID_ALPHA, *BAND, FPS)["video"]
+    s_raw = M.displacement_series(vid, *BAND, FPS)[:, 0]
+    s_mag = M.displacement_series(mg, *BAND, FPS)[:, 0] / VID_ALPHA
+    a_raw, a_mag = amp_rms(s_raw), amp_rms(s_mag)
+    assert np.all(np.isfinite(s_raw)) and np.all(np.isfinite(s_mag))
+
+    up = VID_UP
+    side = H * up
+    Wf, Hf = 480, 480
+    xl, xr, yt = 24, 480 - 24 - side, 58
+    import annotate as AN
+    tt = np.arange(T) / FPS
+    ylim = 0.16
+    ay = yt + side + 50                   # 下段の軸の上端
+    ax = AN.axes_transform((52, ay, 410, 140), (0.0, float(tt[-1])), (-ylim, ylim))
+    panel = np.zeros((Hf, Wf, 3))
+    panel[yt + side:] = 0.07
+    panel = _vaxes(panel, ax, [0, 0.5, 1.0, 1.5, 2.0, 2.5], [-0.1, 0.0, 0.1], c_axis)
+    panel = _vpoly(panel, ax, [0.0, float(tt[-1])], [0.0, 0.0], (0.30, 0.30, 0.33))
+    panel = _vtxt(panel, "生の映像(真の振幅 %.1f px)" % VID_D, (xl + side // 2, yt + side + 4), anchor="ct",
+                  fs_=11, color=c_raw)
+    panel = _vtxt(panel, "%.0f 倍に拡大(%.0f px 相当)" % (VID_ALPHA, VID_ALPHA * VID_D),
+                  (xr + side // 2, yt + side + 4), anchor="ct", fs_=11, color=c_mag)
+    panel = _vtxt(panel, "変位 [px]", (54, ay - 23), fs_=10, color=c_axis)
+    panel = _vtxt(panel, "時刻 [s](撮影 %.0f fps、再生はその約 1/3 の速さ)" % FPS, (52 + 205, Hf - 2),
+                  anchor="cb", fs_=10, color=c_axis)
+    for i, (s, c) in enumerate((("— 真値", c_true), ("— 生から測る", c_raw),
+                                ("— 拡大後 ÷%.0f" % VID_ALPHA, c_mag))):
+        panel = _vtxt(panel, s, (150 + 92 * i, ay - 23), fs_=10, color=c)
+    # 静止時の縞の山(列方向の余弦の山 = CYC_X 周期)を細線で示す列
+    crest = [int(round((j * W / CYC_X + 0.5) * up - 0.5)) for j in range(CYC_X)]
+    frames = []
+    for i in range(T + VID_END):
+        k = min(i, T - 1)
+        f = panel.copy()
+        for x0, v in ((xl, vid[k]), (xr, mg[k])):
+            g = np.clip(v, 0.0, 1.0)
+            f[yt:yt + side, x0:x0 + side] = np.repeat(np.repeat(g, up, 0), up, 1)[..., None]
+            for c in crest:
+                f[yt:yt + side, x0 + c] = (1.0, 0.25, 0.10)
+        f = _vpoly(f, ax, tt[:k + 1], disp[:k + 1], c_true, w=1)
+        f = _vpoly(f, ax, tt[:k + 1], s_raw[:k + 1], c_raw, w=2)
+        f = _vpoly(f, ax, tt[:k + 1], s_mag[:k + 1], c_mag, w=1)
+        xc = int(round(float(np.asarray(AN.data_to_pixel(ax, [tt[k]], [0.0])[0])[0])))
+        f[ay:ay + 140, xc] = 0.5 * f[ay:ay + 140, xc] + 0.5
+        if i < T:
+            s = ("t = %.3f s(コマ %d/%d)  雑音 σ %.2f\n真の変位 %+.4f px   生から %+.4f   拡大後 ÷%.0f %+.4f"
+                 % (tt[k], k + 1, T, VID_SIGMA, disp[k], s_raw[k], VID_ALPHA, s_mag[k]))
+            f = _vstrip(f, 0, yt, s)
+        else:
+            s = ("振幅(RMS): 真 %.4f / 生から %.5f / 拡大後 ÷%.0f %.5f px\n"
+                 "拡大で見えるようになるが、測った数字は良くならない" % (VID_D, a_raw, VID_ALPHA, a_mag))
+            f = _vstrip(f, 0, yt, s, color=c_mag)
+        frames.append(np.clip(f, 0.0, 1.0))
+    figs.save_video(
+        "magnify_video", frames, fps=VID_FPS, gif_every=1, gif_width=480,
+        caption="動画(%d × %d、%.0f fps、%d コマ): 3.7 Hz・%.1f px で揺れる表面(雑音 σ %.2f)。左が生の映像、"
+                "右が %.0f 倍に拡大した映像で、朱の細い縦線は静止時の縞の山。生では揺れが表示 %.1f px で目に見えず、"
+                "拡大後は %.0f px 相当で見える。下段は変位の時系列: 白 = 真値、青 = 生の映像から測った値、"
+                "橙 = 拡大後に測って %.0f で割った値。振幅は 真 %.4f / 生から %.5f / 拡大後 %.5f px で、"
+                "拡大しても測定は良くならない(見せるための道具)。"
+                % (Wf, Hf, VID_FPS, len(frames), VID_D, VID_SIGMA, VID_ALPHA, VID_D * up, VID_ALPHA * VID_D,
+                   VID_ALPHA, VID_D, a_raw, a_mag))
+    return a_raw, a_mag
+
+
 def main():
     print("=== 0. 設定と、真値生成器そのものの検算 ===")
     print(f"  ROI {H}x{W} px / {T} frame / {FPS:g} fps / 共振 {FREQ:g} Hz")
@@ -687,6 +823,13 @@ def main():
         raise AssertionError("Nyquist を超えた帯域が素通りした")
     except ValueError:
         pass
+
+    # 動画(図つきのときだけ。既存の図の後ろに書く —— 番号がずれないように)。
+    # 振幅は第 2 章 b の sigma=0.01 行と同じクリップから測り直すので、門の値と一致する。
+    if figs.enabled():
+        a_raw, a_mag = _video_magnify()
+        assert abs(rel(a_raw, 0.1) - err_plain) < 1e-12 and abs(rel(a_mag, 0.1) - err_mag) < 1e-12, \
+            (a_raw, a_mag, err_plain, err_mag)
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
