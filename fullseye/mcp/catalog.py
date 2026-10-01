@@ -49,6 +49,15 @@ FIG_DIR = os.path.join(OPS_DOCS, "_fig")
 OP_INDEX = os.path.join(DOCS, "OP_INDEX.json")
 OP_KNOB = os.path.join(DOCS, "op_knob.json")
 STUDIO_HELP = os.path.join(ROOT, "studio_assets", "op_help")
+
+
+def _help_html_root():
+    """op ヘルプ HTML の根(checkout はディレクトリ、wheel は書庫を展開したキャッシュ —— helpstore)。"""
+    try:
+        import helpstore
+        return helpstore.html_root()
+    except Exception:
+        return STUDIO_HELP
 #: wheel に同梱する図(2-D op の「入力 → 出力」だけ。docs/ops/_fig の掃引図は入らない)
 STUDIO_FIG = os.path.join(STUDIO_HELP, "fig")
 
@@ -391,13 +400,15 @@ class Catalog:
         else:
             # wheel: ノート本文は同梱されない。同梱の Studio help HTML(2-D は直下、
             # 台帳族は op_help/<dim>/)に落ち、**落ちたことと本文の在り処**を書く。
-            html = os.path.join(STUDIO_HELP, name + ".html")
+            # 2026-10-01: wheel の HTML は固め書きの書庫(helpstore)。報告する在り処はパッケージ内の論理的な場所のまま。
+            hroot = _help_html_root()
+            html = os.path.join(hroot, name + ".html")
             if not os.path.exists(html) and e.dim:
-                html = os.path.join(STUDIO_HELP, e.dim, name + ".html")
+                html = os.path.join(hroot, e.dim, name + ".html")
             if os.path.exists(html):
                 with open(html, encoding="utf-8") as f:
                     body = f.read()
-                fmt, src = "html", os.path.relpath(html, ROOT).replace(os.sep, "/")
+                fmt, src = "html", "studio_assets/op_help/" + os.path.relpath(html, hroot).replace(os.sep, "/")
             if e.note_refs:
                 out["note_refs"] = list(e.note_refs)
                 out["note_body_unavailable"] = (

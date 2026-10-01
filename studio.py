@@ -3391,7 +3391,7 @@ def help_langs_available(name, dim="2d", kind="op"):
     生成物を見て決めるので、``tools/opdocs.py html`` を走らせていない環境では
     日本語 1 枚だけが返り、切替リンクは出ない(押しても何も無いリンクを出さない)。
     """
-    base = os.path.join(_ASSETS, "op_help")
+    base = _help_root()
     if kind == "op" and dim != "2d":
         base = os.path.join(base, dim)
     stem = ("guide_" + name) if kind == "guide" else name
@@ -3422,6 +3422,20 @@ def help_lang_bar(name, dim="2d", cur="ja", kind="op"):
             parts.append('<a style="color:#22d3bf" href="lang:%s">%s</a>' % (c, label))
     return ('<p style="color:#8b91a0;font-size:11px;margin:0 0 6px 0">%s: %s</p>'
             % (tr("Language"), " · ".join(parts)))
+
+
+def _help_root():
+    """ヘルプ HTML の根。checkout は studio_assets/op_help、wheel は固め書きの書庫を展開したキャッシュ(helpstore、2026-10-01)。"""
+    try:
+        import helpstore
+        return helpstore.html_root()
+    except Exception:
+        return os.path.join(_ASSETS, "op_help")
+
+
+def _help_fig_root():
+    """ヘルプの図の根。図は書庫に入れないので常にパッケージの中。"""
+    return os.path.join(_ASSETS, "op_help")
 
 
 def _abs_fig_src(html, help_dir):
@@ -3457,13 +3471,13 @@ def op_help_html(name, lang="en", meta=None, dim="2d"):
     rich page (they carry runnable `sample:` pipelines) for a thinner generated one."""
     if dim != "2d":
         return op_help_html_3d(name, meta, lang=lang, subdir=dim)
-    base = os.path.join(_ASSETS, "op_help")
+    base = _help_root()
     for fn in ("%s.%s.html" % (name, lang), "%s.html" % name):
         p = os.path.join(base, fn)
         if os.path.exists(p):
             try:
                 with open(p, encoding="utf-8") as f:
-                    return _abs_fig_src(f.read(), base)
+                    return _abs_fig_src(f.read(), _help_fig_root())
             except Exception:
                 break
     m = meta or {}
@@ -3563,7 +3577,7 @@ def op_help_html_3d(name, meta=None, lang="en", subdir="3d"):
     **silently ignored the language the user picked**; without ``subdir`` the 494 ledger
     help pages that ``opdocs.py html`` generates under ``op_help/<dim>/`` could not be
     opened at all."""
-    base = os.path.join(_ASSETS, "op_help", subdir)
+    base = os.path.join(_help_root(), subdir)
     for fn in ("%s.%s.html" % (name, lang), "%s.html" % name):
         p = os.path.join(base, fn)
         if os.path.exists(p):
@@ -7368,7 +7382,7 @@ def build_window(model=None):
     # pages were generated and shipped but **could not be opened from Studio at all**.
     _help_led = []
     try:
-        _hroot = os.path.join(_ASSETS, "op_help")
+        _hroot = _help_root()
         for _dim in sorted(os.listdir(_hroot)):
             if _dim == "3d" or not os.path.isdir(os.path.join(_hroot, _dim)):
                 continue
@@ -7426,7 +7440,7 @@ def build_window(model=None):
     def show_guide_page(stem):
         """族ガイド / 背景知識ガイドを開く(言語の切替リンクつき)。"""
         lang = _cur_help_lang()
-        base = os.path.join(_ASSETS, "op_help")
+        base = _help_root()
         for fn in ("guide_%s.%s.html" % (stem, lang), "guide_%s.html" % stem):
             p = os.path.join(base, fn)
             if not os.path.exists(p):

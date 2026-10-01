@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1157. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1158. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -1228,10 +1228,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `fullseye/mcp/catalog.py`
 
-- **L61** _(ja)_ — ★``dim`` は **docs/ops の族ディレクトリ名**(``2d`` / ``3d`` / ``oned`` のほか ``optics`` / ``annotate`` … 31 種)で、厳密な次元ではない —— volume を取る registry op は ``2d/3d/`` の下にあり ``dim: 2d``。 次元は ``in`` / ``out`` の sort から読む(2026-09-20、GenSpark 第 31 報 N109。族と次元の分離は 0.2.2)。
-- **L110** _(ja)_ — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
-- **L281** _(ja)_ — ★2026-09-20(GenSpark 第 41 報 N141): 「callable なら op」でクラス 41 個(Image / Pipeline / MissingBackendError / TcpChannel …)が facade 層に op として混ざり、`fullseye_search_ops` の検索面を汚していた。クラスとモジュールは型・器であって op ではない。関数(生 / builtin / functools.partial)だけを op として数える。同じ報の「facade 表に無い 474 件」は halcon_facade_map.json(HALCON 対応表、鍵は `camera.xxx` の名前空間つき)との比較で、 残る 460 件は `import fullseye` で呼べる実関数 —— 表の目的が違うので設計のまま。
-- **L331** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
+- **L70** _(ja)_ — ★``dim`` は **docs/ops の族ディレクトリ名**(``2d`` / ``3d`` / ``oned`` のほか ``optics`` / ``annotate`` … 31 種)で、厳密な次元ではない —— volume を取る registry op は ``2d/3d/`` の下にあり ``dim: 2d``。 次元は ``in`` / ``out`` の sort から読む(2026-09-20、GenSpark 第 31 報 N109。族と次元の分離は 0.2.2)。
+- **L119** _(ja)_ — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
+- **L290** _(ja)_ — ★2026-09-20(GenSpark 第 41 報 N141): 「callable なら op」でクラス 41 個(Image / Pipeline / MissingBackendError / TcpChannel …)が facade 層に op として混ざり、`fullseye_search_ops` の検索面を汚していた。クラスとモジュールは型・器であって op ではない。関数(生 / builtin / functools.partial)だけを op として数える。同じ報の「facade 表に無い 474 件」は halcon_facade_map.json(HALCON 対応表、鍵は `camera.xxx` の名前空間つき)との比較で、 残る 460 件は `import fullseye` で呼べる実関数 —— 表の目的が違うので設計のまま。
+- **L340** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
 
 ## `fullseye/mcp/diagnose.py`
 
@@ -1346,24 +1346,24 @@ This repository records *why* things are the way they are in **comments in the s
 ## `opassist.py`
 
 - **L57** — ★2026-09-08: ops1d (dsp 16 + funct1d 23) was registered yet appeared neither in docs nor in op_run / op_assist / op_find -- 'registered' and 'reachable' are different. Adding them to opdocs made this gate ring on the unreachable side.
-- **L266** — ★Design (2026-09-04, user: 'It's better to handle various container types, but consistency matters too'): At first `kind` mixed in "seq" and "matrix" -- that is, the **value type** (numeric, integer, or choice) and the **container shape** (single, vector, or matrix) competed in one field. From the UI's view an 'int 3-vector' could not be expressed, and only matrices had their structure under the `seq` key, so handling was scattered. This was made orthogonal: `kind` holds only the value type, and the container always goes into `container`. A scalar is not made an exception either (`{"form": "scalar", "shape": ()}`), so the UI can write its branching as a single path.
-- **L381** — ★Longest match. Scanning shortest-first, `sigma_per_mm` matches `_mm` and becomes "mm" (it is actually 1/mm). Get the unit wrong and the UI's number silently becomes something else.
-- **L463** _(ja)_ — ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、 それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
-- **L496** — ★The key point: some arguments **do not have their default given as a tuple**. `center=None` (an optional (row,col)), the required `trans` (3-vector), `k_cam` (3x3 matrix)... looking at the default alone they appear to be 'a single number', and the UI breaks by showing one spin box. Supplement the structure by name.
-- **L704** _(ja)_ — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
-- **L708** _(ja)_ — llmcore(2026-09-24): ★一様乱数にしない —— どの行も似た向きになり、 注意の重みが全行ほぼ一様になって「押しても何も起きない」種になる。 滑らかな画像を 8x8 パッチに切ると、近い場所が近い向きを向く。
-- **L715** — ★Found by measurement: passing a generic 0..1 signal into the wavelength input of `prism_min_deviation_deg` gets rejected by 'wavelength must be positive', making it an **op whose sample does not run**. If the unit is known, seeding it with a range plausible for that quantity is closer to 'runs when you press it'.
-- **L875** — A run of Japanese (CJK) text. ★``_WORD_RE`` is ``[a-z0-9]+``, so a Japanese query **yields not a single word** (``_WORD_RE.findall(...) == []`` on the Japanese input). The stemming stage dies, and because partial match searches for a string that includes the whitespace, a **multi-word Japanese query was structurally always 0 hits** -- in a product whose docstrings are mostly Japanese and that ships in 6 languages. Surfaced on 2026-09-08 when `poc_search_sweep_width` hit it (the Japanese queries for 'point detection' / 'spot detection' / 'small target' via ``op_find`` were all 0 hits, and although sub-pixel-centroid point-target detection is only ``star_detect``, it could not be reached from Japanese).
-- **L928** — The common-prefix length treated as a stem match. ★At 4, "median"/"medial" and "contrast"/"contour" get linked; cutting at 5, "correlation"/"correlate" (8), "segmentation"/"segment" (7), "rotation"/"rotate" (5), and "gaussian"/"gauss" (5) are picked up while the two pairs above are not.
-- **L938** — The **suffix allowed after** the common prefix. ★Deciding by prefix length alone links "median"/"medial" (they share a 5-character "media"). Judging whether the suffix looks like an inflectional ending, "correlation"/"correlate" (ion / e) passes, while "median"/"medial" (n / l) and "corner"/"cornea" (r / a) fall out.
-- **L1034** — ★Floor. Without it, "zzz-nothing-matches" returns `histogram_match` (because "matches" stem-matches `match_*`). If the weight of the matched words is under 15 % of the whole query, it is treated as 'no match'. Measured: "digital image correlation" is 0.19 (passes), "zzz-nothing-matches" is 0.10 (dropped).
-- **L1208** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
-- **L1236** _(ja)_ — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
-- **L1288** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
-- **L1308** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
-- **L1321** _(ja)_ — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
-- **L1331** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
-- **L1349** _(ja)_ — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
+- **L275** — ★Design (2026-09-04, user: 'It's better to handle various container types, but consistency matters too'): At first `kind` mixed in "seq" and "matrix" -- that is, the **value type** (numeric, integer, or choice) and the **container shape** (single, vector, or matrix) competed in one field. From the UI's view an 'int 3-vector' could not be expressed, and only matrices had their structure under the `seq` key, so handling was scattered. This was made orthogonal: `kind` holds only the value type, and the container always goes into `container`. A scalar is not made an exception either (`{"form": "scalar", "shape": ()}`), so the UI can write its branching as a single path.
+- **L390** — ★Longest match. Scanning shortest-first, `sigma_per_mm` matches `_mm` and becomes "mm" (it is actually 1/mm). Get the unit wrong and the UI's number silently becomes something else.
+- **L472** _(ja)_ — ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、 それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
+- **L505** — ★The key point: some arguments **do not have their default given as a tuple**. `center=None` (an optional (row,col)), the required `trans` (3-vector), `k_cam` (3x3 matrix)... looking at the default alone they appear to be 'a single number', and the UI breaks by showing one spin box. Supplement the structure by name.
+- **L713** _(ja)_ — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
+- **L717** _(ja)_ — llmcore(2026-09-24): ★一様乱数にしない —— どの行も似た向きになり、 注意の重みが全行ほぼ一様になって「押しても何も起きない」種になる。 滑らかな画像を 8x8 パッチに切ると、近い場所が近い向きを向く。
+- **L724** — ★Found by measurement: passing a generic 0..1 signal into the wavelength input of `prism_min_deviation_deg` gets rejected by 'wavelength must be positive', making it an **op whose sample does not run**. If the unit is known, seeding it with a range plausible for that quantity is closer to 'runs when you press it'.
+- **L884** — A run of Japanese (CJK) text. ★``_WORD_RE`` is ``[a-z0-9]+``, so a Japanese query **yields not a single word** (``_WORD_RE.findall(...) == []`` on the Japanese input). The stemming stage dies, and because partial match searches for a string that includes the whitespace, a **multi-word Japanese query was structurally always 0 hits** -- in a product whose docstrings are mostly Japanese and that ships in 6 languages. Surfaced on 2026-09-08 when `poc_search_sweep_width` hit it (the Japanese queries for 'point detection' / 'spot detection' / 'small target' via ``op_find`` were all 0 hits, and although sub-pixel-centroid point-target detection is only ``star_detect``, it could not be reached from Japanese).
+- **L937** — The common-prefix length treated as a stem match. ★At 4, "median"/"medial" and "contrast"/"contour" get linked; cutting at 5, "correlation"/"correlate" (8), "segmentation"/"segment" (7), "rotation"/"rotate" (5), and "gaussian"/"gauss" (5) are picked up while the two pairs above are not.
+- **L947** — The **suffix allowed after** the common prefix. ★Deciding by prefix length alone links "median"/"medial" (they share a 5-character "media"). Judging whether the suffix looks like an inflectional ending, "correlation"/"correlate" (ion / e) passes, while "median"/"medial" (n / l) and "corner"/"cornea" (r / a) fall out.
+- **L1043** — ★Floor. Without it, "zzz-nothing-matches" returns `histogram_match` (because "matches" stem-matches `match_*`). If the weight of the matched words is under 15 % of the whole query, it is treated as 'no match'. Measured: "digital image correlation" is 0.19 (passes), "zzz-nothing-matches" is 0.10 (dropped).
+- **L1217** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
+- **L1245** _(ja)_ — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
+- **L1297** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
+- **L1317** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
+- **L1330** _(ja)_ — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
+- **L1340** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
+- **L1358** _(ja)_ — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
 
 ## `ops.py`
 
@@ -1592,12 +1592,12 @@ This repository records *why* things are the way they are in **comments in the s
 ## `studio.py`
 
 - **L273** — ★ Right-click on the figure itself (user 2026-09-06: "it would be nice to be able to right-click what is shown as a figure and copy it to the clipboard"). A Studio UI convention of this repo —— **the display side must let you do everything from a right-click too**. It can do the same as the button row below (do not make it one or the other).
-- **L4337** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L5328** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L6154** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
-- **L6310** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
-- **L6820** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L9657** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L4351** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L5342** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L6168** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L6324** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L6834** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L9671** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `tests/conftest.py`
 
@@ -1877,7 +1877,8 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_op_discovery.py`
 
 - **L247** _(ja)_ — ★2026-09-17 に 3 -> 5。1-D の局所標準偏差と mu 則圧伸を足したため。 新しい 2 件は **1-D 実装に 2-D を渡すと ValueError で鳴る**(既存の `lowpass` と同じ、正しい向き)。危ないのは逆で、下でその 1 つを固定する。
-- **L267** — ★It is not even a pass-through: the fallback returns after **clamping** to the image contract [0,1]. A signal whose negative half became 0 looks like a "filtered signal", so this lies silently. max|diff| = 1.0, minimum -1.0 -> 0.0.
+- **L262** _(ja)_ — ★フォールバックの警告は op ごとに 1 回だけ。同じワーカーで先に別の試験が fs.op.lowpass の フォールバックを起こしていると、ここで警告が来ず落ちた(2026-10-01、-n 6 の全体スイートだけで再現・単独では緑)。 試験の順序に依存しないよう、1 回目の警告をもう一度出せる状態に戻してから見る。
+- **L272** — ★It is not even a pass-through: the fallback returns after **clamping** to the image contract [0,1]. A signal whose negative half became 0 looks like a "filtered signal", so this lies silently. max|diff| = 1.0, minimum -1.0 -> 0.0.
 
 ## `tests/test_op_example_coverage.py`
 
@@ -1902,7 +1903,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_packaging_foundation.py`
 
-- **L170** — ★2026-09-07: the local wheel had sample_sources_ai adding 42 MB (96 MB). The cause was a stale build/lib/ cache (leftovers from before it was removed from package-data get repacked). It is an accident a config-reading check cannot catch, so the actual wheel is checked by tools/ci_wheel_check.py (unshipped_present) and the size cap in ci.yml. The directory was also moved outside the package (tools/fops_article/). Here we require the exclusion to be explicit (as insurance).
+- **L176** — ★2026-09-07: the local wheel had sample_sources_ai adding 42 MB (96 MB). The cause was a stale build/lib/ cache (leftovers from before it was removed from package-data get repacked). It is an accident a config-reading check cannot catch, so the actual wheel is checked by tools/ci_wheel_check.py (unshipped_present) and the size cap in ci.yml. The directory was also moved outside the package (tools/fops_article/). Here we require the exclusion to be explicit (as insurance).
 
 ## `tests/test_pivops.py`
 

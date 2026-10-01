@@ -141,6 +141,12 @@ def test_studio_assets_are_shipped_by_package_data():
         and "__pycache__" not in p                      # import studio_assets が作る(資産ではない)
     ]
     tracked = [f for f in tracked if not f.startswith(_DELIBERATELY_UNSHIPPED)]
+    # 2026-10-01: op ヘルプの HTML(直下と 1 段下)は package-data ではなく**固め書きの書庫**で配る
+    # (setup.py の build_py → helpstore.pack_archive → studio_assets/op_help_html.tar.xz)。その経路が在ることを見てから外す。
+    setup_txt = _read("setup.py")
+    assert "helpstore" in setup_txt and "pack_archive" in setup_txt and "op_help_html.tar.xz" in setup_txt,         "setup.py no longer packs the help HTML into the archive"
+    tracked = [f for f in tracked
+               if not (f.startswith("op_help/") and f.endswith(".html") and f.count("/") <= 2 and "/fig/" not in f)]
     assert tracked, "no studio_assets files found"
     unshipped = [f for f in tracked if not any(fnmatch.fnmatch(f, g) for g in globs)]
     assert not unshipped, f"studio_assets files not covered by any package-data glob: {unshipped}"

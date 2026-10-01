@@ -189,6 +189,15 @@ PRESETS: dict[str, dict[str, dict[str, Any]]] = {
 
 #: **前提チェック**。「動くが意味のある絵にならない」を警告する(例外にしない)。
 #: 各項目 = (op 名, 判定関数, 警告文)。判定は解決済みの kwargs を受ける。
+
+def _help_html_root(here):
+    """op ヘルプ HTML の根(checkout はディレクトリ、wheel は書庫を展開したキャッシュ —— helpstore、2026-10-01)。"""
+    try:
+        import helpstore
+        return helpstore.html_root()
+    except Exception:
+        return os.path.join(here, "studio_assets", "op_help")
+
 def _grating_light_across(kw):
     import numpy as np
     t = np.asarray(kw.get("tangent", (1.0, 0.0, 0.0)), float).ravel()[:3]
@@ -1084,7 +1093,7 @@ def _note_first_line(name: str) -> str:
                 table[stem] = _re.sub(r"[`*]", "", t)[:200]          # _ は残す(gauss_filter を gaussfilter にしない)
                 break
         if not table:                                    # wheel: ノートの本文は無く、help HTML だけがある
-            for p in _glob.glob(os.path.join(here, "studio_assets", "op_help", "*.html")):
+            for p in _glob.glob(os.path.join(_help_html_root(here), "*.html")):
                 stem = os.path.basename(p).split(".")[0]
                 if stem in table:
                     continue
