@@ -131,6 +131,36 @@ white[:16, :16] = True
 print(round(E.veiling_glare_index(0.8 * spot + 0.2, dark, white)["vgi"], 4))   # 0.2
 ```
 
+## カメラを測る(sensorchar)—— EMVA 1288 の手順
+
+カメラのデータシートの量子効率・システムゲイン K・暗雑音・飽和・SNR・ダイナミックレンジ・DSNU・PRNU は、EMVA 1288 Release 4.0 Linear(= ISO 24942)の手順で出した数です。``sensorchar`` の 10 op はその手順そのもの: 同じ露光で 2 枚ずつ撮って平均と時間分散を出し(式 16・18)、photon transfer の傾きで K、暗画像から σ_d(式 53 —— **切片からではない**)、応答の傾きで η を出します。暗画像の分散が 0.24 DN² 未満だと σ_d は推定せず上限を返します(式 54)。合成センサ(``sensor_capture``)が「作る」側、この族が「測る」側です(`examples/poc_emva1288_sensor.py`)。
+
+```python
+import numpy as np
+import sensorchar as SC
+
+# 既知の値でセンサを合成: η = 0.62、K = 0.21 DN/e⁻、暗雑音 3.4 e⁻、12 bit
+rng = np.random.default_rng(0)
+
+
+def shot(mu_p):
+    e = rng.poisson(0.62 * mu_p, (64, 64)) + rng.normal(0.0, 3.4, (64, 64))
+    return np.clip(np.round(0.21 * e + 40.0), 0, 4095)
+
+
+mp = np.linspace(0.0, 25000.0, 20)                                # 露光(光子/画素)
+st = [SC.emva_pair_statistics(shot(m), shot(m)) for m in mp]       # 同じ露光で 2 枚ずつ(式 16・18)
+mu = np.array([s["mu"] for s in st])
+var = np.array([s["var_temporal"] for s in st])
+ptc = SC.emva_photon_transfer(mu[1:], var[1:], mu[0], var[0], mu_y_sat=float(mu.max()))
+qe = SC.emva_quantum_efficiency(mp[1:], mu[1:], mu[0], float(mu.max()), ptc["K"])
+print(round(ptc["K"], 3), round(ptc["sigma_d"], 2), round(qe["eta"], 3))   # 0.214 3.35 0.609(仕込み 0.21 / 3.4 / 0.62)
+
+th = SC.emva_sensitivity_threshold(0.62, 3.4, 0.21)                # SNR = 1 になる露光(式 26)
+print(round(th["mu_p_min"], 2), SC.emva_snr_curve([th["mu_p_min"]], 0.62, 3.4, 0.21)[0, 1])   # 6.78 1.0
+print(round(SC.emva_dynamic_range(25000.0, th["mu_p_min"])["dB"], 1))   # 71.3
+```
+
 ## 設計(design) — 近軸の先を実光線で
 
 上の 4 カテゴリは「設計の出発点」を閉形式で出します。実レンズがそこからどれだけずれるか — 像はどこに結び、どれだけボケ、どの面が原因で、製造ばらつきで歩留まりはどうなるか — は面を 1 枚ずつ**実光線**で通さないと分かりません。`raytrace.py` はそのための逐次光線追跡で、台帳では `opsoptics` の `design` カテゴリ(12 op)に載ります。全 op の共通入力は `lens_system` が返す**検証済みの処方(table)** です:

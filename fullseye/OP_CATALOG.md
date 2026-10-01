@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(280 例)
+### 2-D 画像/信号/幾何(281 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -267,6 +267,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **imaging_quality**
 - **パネル検査のモアレは「本物のムラ」と区別できるか(打ち消しと窓長)** — うなりの周期は 2 つの周期から閉形式で出る(予測 20.00/6.67/4.00 px 対 実測 19.69/6.65/4.00)。★★低域通過でならすと σ=8 px で**合計誤差 +0.9 %** —— 完璧に見えるが内訳は**漏れ +8.3 % / 減衰 -7.4 %**。対照群 2 本(縞だけ / ムラだけ)を置かないと見えない。★★素のノッチは **δ·L が整数のときだけ**効く(+0.7 % 対 +39.1 %)—— 原因はスペクトルリーケージで、**撮り直しではなく解析窓長という software 側の問題**。 `py -3.11 examples/poc_moire_screen.py`
+- **カメラを買わずにカメラを測る —— EMVA 1288 の手順で、既知の値を仕込んだセンサから量子効率・ゲイン・暗雑音を取り戻す** — カメラを買わずにカメラを測る: 既知の η・K・σ_d・暗電流・DSNU・PRNU で物理モデルから合成したセンサを、EMVA 1288(ISO 24942)の推定手順で測り直す。K -0.66 %・σ_d +0.13 %・η +0.67 %・暗電流 +0.6 %・DSNU +0.6 %・PRNU -0.1 %。SNR(μ_p.min) = 1 と理想 SNR = √μ_p は機械精度。★σ_d を photon transfer の切片から出すと +53.5 %。★規格の下限 σ²_y.dark ≥ 0.24 DN² は平らなセンサでは本当の境界だが、DSNU の模様が量子化のディザになり K = 0.10 でも 0.7 %(平ら 29.8 %)。公表値(メーカー公表の 38 型番)で最大 SNR は 0.5 dB 以内、DR は IMX287 だけ食い違う。 `py -3.11 examples/poc_emva1288_sensor.py`
 - **迷光がコントラスト計測を壊す(MTF 合格・黒レベル不合格を同じレンズで作る)** — ★★裾の割合 g を 0 → 0.20 に振ると刃のエッジ SFR の MTF50 は -4.2 %(仕様 0.22 に対し合格のまま)なのに、同じ像の黒レベルは 0.0 → 15.7 %(仕様 3 % に対し不合格)。6 段階のうち **3 段階で判定が割れる**。★★予想が外れた —— 盲点を作るのは**周波数ではなく基準レベルの取り方**で、正弦チャートの絶対コントラストは周期 4 px でも 32 px でもちょうど (1-g)×コアの MTF。★答えが窓で変わり収束しない(黒四角 16 → 256 px で黒レベル 19.6 → 4.5 %)—— **測る範囲を宣言しない迷光の数字は意味を持たない**。 `py -3.11 examples/poc_veiling_glare.py`
 - **画質 op(imgmetrics)で保存時の量子化段数を 1 つ選ぶ** — CIEDE2000 を公開検証表 34 組で、SSIM を既知条件で検定してから、「欠陥が見えなくならない」を合否条件に落として量子化段を決める。 `py -3.11 examples/image_quality_metrics.py`
 - **1 枚の写真を証拠として「どこまで言えるか」まで切り分ける(forensics)** — 知覚ハッシュ→帰無分布→PRNU カメラ指紋→JPEG 品質/ELA/ゴースト→雑音整合→コピー&ムーブ(誤差 0 px)→電子透かしの 7 段。改竄側を自分で作った GT で検定。 `py -3.11 examples/image_forensics_audit.py`
@@ -2297,7 +2298,7 @@ _計 55 ops / 7 categories。_
 - `wave_grating_orders` (` → table`) — Where a grating sends each order: ``d (sin_out - sin_in) = m lambda`` solved for the angle.
 
 ## Optics operators(opsoptics)by category
-_計 137 ops / 16 categories。_
+_計 147 ops / 17 categories。_
 
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
@@ -2452,6 +2453,18 @@ _計 137 ops / 16 categories。_
 - `env_lightbox` (`points → signal`) — 撮影ボックスの環境(広い天井の明かり + ほんのり明るい周囲)。**無彩色**。
 - `render_studio` (`table, table → rgbimage`) — **見せる絵**を描く: 環境光・多重反射・屈折と分散つき(測光の真値は無い)。
 - `sensor_capture` (`rgbimage → rgbimage`) — 放射輝度 → 実センサの出力(ショット雑音・読み出し雑音・飽和・量子化)。
+
+### sensorchar(10)
+- `emva_pair_statistics` (`image2d, image2d → table`) — 同じ露光で撮った 2 枚から、平均・時間分散・空間分散を出す(式 16・18・32)。
+- `emva_photon_transfer` (`signal, signal → table`) — photon transfer 曲線からシステムゲイン K と暗雑音 σ_d を出す(式 50・53・54)。
+- `emva_quantum_efficiency` (`signal, signal → table`) — 応答(特性曲線)の傾きから量子効率 η を出す(式 49・52)。
+- `emva_linearity_error` (`signal, signal → table`) — 直線性の誤差 LE(式 58〜63)。y = μ_y − μ_y.dark を露光 H に**相対偏差の重み 1/y²**で当て(式 59〜61)、
+- `emva_snr_curve` (`signal → matrix`) — 線形モデルの SNR(式 21)と理想センサの SNR(式 23)。
+- `emva_sensitivity_threshold` (` → table`) — 絶対感度しきい値(SNR = 1 になる露光、式 26・27)。
+- `emva_dynamic_range` (` → table`) — ダイナミックレンジ DR = μ_p.sat / μ_p.min(式 28)を倍・dB(20 log10)・bit(log2)で。
+- `emva_dark_current` (`signal, signal → table`) — 暗電流(7.1 節): 暗画像の平均(と分散)を露光時間に直線で当てた傾き。
+- `emva_spatial_nonuniformity` (`volume, volume → table`) — DSNU と PRNU(式 33〜42・66・67)。
+- `emva_defect_pixels` (`image2d → table`) — 欠陥画素の特徴づけ(8.8 節): 対数ヒストグラム(式 73〜75)と積算ヒストグラム(式 77)、しきい値を越える画素の数。
 
 ### surface(5)
 - `metallic_flake_normals` (` → normalmap`) — メタリック塗装のフレーク(アルミ片)の法線場を作る。

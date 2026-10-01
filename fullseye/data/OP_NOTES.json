@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2426,
- "n_notes": 2432,
+ "n_ops": 2436,
+ "n_notes": 2442,
  "notes": {
   "vol_dilate": [
    {
@@ -21828,6 +21828,104 @@
     "in": "table × table × table",
     "out": "table",
     "path": "docs/ops/optics/scene/vision_layout.md"
+   }
+  ],
+  "emva_dark_current": [
+   {
+    "op": "emva_dark_current",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_dark_current.md"
+   }
+  ],
+  "emva_defect_pixels": [
+   {
+    "op": "emva_defect_pixels",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_defect_pixels.md"
+   }
+  ],
+  "emva_dynamic_range": [
+   {
+    "op": "emva_dynamic_range",
+    "dim": "optics",
+    "category": "sensorchar",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_dynamic_range.md"
+   }
+  ],
+  "emva_linearity_error": [
+   {
+    "op": "emva_linearity_error",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_linearity_error.md"
+   }
+  ],
+  "emva_pair_statistics": [
+   {
+    "op": "emva_pair_statistics",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_pair_statistics.md"
+   }
+  ],
+  "emva_photon_transfer": [
+   {
+    "op": "emva_photon_transfer",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_photon_transfer.md"
+   }
+  ],
+  "emva_quantum_efficiency": [
+   {
+    "op": "emva_quantum_efficiency",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_quantum_efficiency.md"
+   }
+  ],
+  "emva_sensitivity_threshold": [
+   {
+    "op": "emva_sensitivity_threshold",
+    "dim": "optics",
+    "category": "sensorchar",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_sensitivity_threshold.md"
+   }
+  ],
+  "emva_snr_curve": [
+   {
+    "op": "emva_snr_curve",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "signal",
+    "out": "matrix",
+    "path": "docs/ops/optics/sensorchar/emva_snr_curve.md"
+   }
+  ],
+  "emva_spatial_nonuniformity": [
+   {
+    "op": "emva_spatial_nonuniformity",
+    "dim": "optics",
+    "category": "sensorchar",
+    "in": "volume × volume",
+    "out": "table",
+    "path": "docs/ops/optics/sensorchar/emva_spatial_nonuniformity.md"
    }
   ],
   "corrosion_mask": [

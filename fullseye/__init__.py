@@ -355,6 +355,10 @@ with warnings.catch_warnings():
     )
     import lensopt  # noqa: E402,F401  (damped-least-squares lens optimisation)
     from lensopt import optimize_lens, merit_function, bend_singlet  # noqa: E402,F401
+    import sensorchar  # noqa: E402,F401  (EMVA 1288 camera characterisation)
+    from sensorchar import (  # noqa: E402,F401
+        emva_pair_statistics, emva_photon_transfer, emva_quantum_efficiency, emva_linearity_error, emva_snr_curve, emva_sensitivity_threshold, emva_dynamic_range, emva_dark_current, emva_spatial_nonuniformity, emva_defect_pixels,
+    )
     import edgesfr  # noqa: E402,F401  (slanted-edge SFR / MTF50 / veiling glare index from photographs)
     from edgesfr import edge_spread, sfr_from_edge, mtf50, veiling_glare_index  # noqa: E402,F401
     import illumdesign  # noqa: E402,F401  (machine-vision illumination design)
@@ -989,6 +993,7 @@ __all__ = [
     "wavefront_from_opd", "seidel_coefficients", "tolerance_analysis",
     "glass_catalog", "sellmeier", "chromatic_shift", "chief_ray", "with_wavelength",
     "lensopt", "optimize_lens", "merit_function", "bend_singlet",
+    "sensorchar", "emva_pair_statistics", "emva_photon_transfer", "emva_quantum_efficiency", "emva_linearity_error", "emva_snr_curve", "emva_sensitivity_threshold", "emva_dynamic_range", "emva_dark_current", "emva_spatial_nonuniformity", "emva_defect_pixels", 
     "edgesfr", "edge_spread", "sfr_from_edge", "mtf50", "veiling_glare_index",
     "illumdesign", "light_source", "irradiance_map", "illumination_uniformity",
     "defect_contrast", "lighting_sweep", "illumination_design",

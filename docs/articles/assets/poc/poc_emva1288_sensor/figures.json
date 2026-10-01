@@ -1,0 +1,54 @@
+[
+ {
+  "file": "01_photon_transfer.gif",
+  "name": "photon_transfer",
+  "caption": "露光を上げながら同じ露光で 2 枚ずつ撮り、平均と時間分散(2 枚の差から、式 18)を 1 点ずつ置く。直線の傾きがシステムゲイン K = 0.2086 DN/e⁻(仕込み 0.21)。飽和の近くでは分散が潰れるので、規格は 0〜70 % の点だけで当てる。",
+  "shape": [
+   440,
+   960,
+   3
+  ],
+  "animated": true,
+  "frames": 44,
+  "frames_written": 32,
+  "fps": 6.0,
+  "video": "01_photon_transfer.mp4",
+  "video_frames": 44,
+  "video_fps": 6.0,
+  "video_shape": [
+   440,
+   960,
+   3
+  ]
+ },
+ {
+  "file": "02_snr_curve.png",
+  "name": "snr_curve",
+  "caption": "SNR は暗い側で傾き 1(暗雑音が支配)、明るい側で傾き 1/2(光子雑音が支配)。SNR = 1 になる露光が絶対感度しきい値 μ_p.min = 6.8 光子。量子化雑音の分だけ μ_e.min = 4.20 e⁻ は暗雑音 3.4 e⁻ より大きい。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_validity_boundary.png",
+  "name": "validity_boundary",
+  "caption": "暗画像の分散が 0.24 DN² より小さいと、規格は σ_d を推定しない(式 53・54)。平らなセンサではそこから下で推定が崩れる。DSNU の模様があると画素ごとのずれが量子化のディザになり、境界の外でも当たる —— 規格の境界は保守側。(分散がちょうど 0 になった K = 0.03 は対数の軸に載らないので省いた)",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_datasheet_dynamic_range.png",
+  "name": "datasheet_dynamic_range",
+  "caption": "Basler の EMVA 1288 データ 38 型番の飽和容量・暗雑音・量子効率から式 (28) で DR を出し直す。37 型番は 3 dB 以内(暗雑音が整数に丸めてあるぶん)、IMX287 だけが外れる —— 暗雑音か DR の欄のどちらかが別条件の値と見られる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

@@ -59,7 +59,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
-[cie_xyz_from_wavelength](../appearance/cie_xyz_from_wavelength.md) · [spectrum_to_srgb](../appearance/spectrum_to_srgb.md) · [thin_film_reflectance](../appearance/thin_film_reflectance.md) · [fresnel_dielectric](../interface/fresnel_dielectric.md) · [fresnel_conductor](../interface/fresnel_conductor.md) · [metal_optical_constants](../mirror/metal_optical_constants.md) · [beer_lambert_transmittance](../glassbody/beer_lambert_transmittance.md) · [slab_transmittance](../glassbody/slab_transmittance.md)
+[emva_photon_transfer](../sensorchar/emva_photon_transfer.md) · [emva_quantum_efficiency](../sensorchar/emva_quantum_efficiency.md) · [emva_linearity_error](../sensorchar/emva_linearity_error.md) · [emva_snr_curve](../sensorchar/emva_snr_curve.md) · [emva_dark_current](../sensorchar/emva_dark_current.md) · [cie_xyz_from_wavelength](../appearance/cie_xyz_from_wavelength.md) · [spectrum_to_srgb](../appearance/spectrum_to_srgb.md) · [thin_film_reflectance](../appearance/thin_film_reflectance.md)
 
 ## 同カテゴリ(`scene`)
 

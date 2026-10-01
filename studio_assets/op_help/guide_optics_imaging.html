@@ -95,6 +95,31 @@ dark[60:68, 60:68] = True                                      # 黒点の中心
 white = np.zeros_like(spot, bool)
 white[:16, :16] = True
 print(round(E.veiling_glare_index(0.8 * spot + 0.2, dark, white)[&quot;vgi&quot;], 4))   # 0.2</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">カメラを測る(sensorchar)—— EMVA 1288 の手順</h3>
+<p>カメラのデータシートの量子効率・システムゲイン K・暗雑音・飽和・SNR・ダイナミックレンジ・DSNU・PRNU は、EMVA 1288 Release 4.0 Linear(= ISO 24942)の手順で出した数です。`<code style="color:#22d3bf">sensorchar</code><code style="color:#22d3bf"> の 10 op はその手順そのもの: 同じ露光で 2 枚ずつ撮って平均と時間分散を出し(式 16・18)、photon transfer の傾きで K、暗画像から σ_d(式 53 —— **切片からではない**)、応答の傾きで η を出します。暗画像の分散が 0.24 DN² 未満だと σ_d は推定せず上限を返します(式 54)。合成センサ(</code><code style="color:#22d3bf">sensor_capture</code><code style="color:#22d3bf">)が「作る」側、この族が「測る」側です(</code>examples/poc_emva1288_sensor.py`)。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import sensorchar as SC
+
+# 既知の値でセンサを合成: η = 0.62、K = 0.21 DN/e⁻、暗雑音 3.4 e⁻、12 bit
+rng = np.random.default_rng(0)
+
+
+def shot(mu_p):
+    e = rng.poisson(0.62 * mu_p, (64, 64)) + rng.normal(0.0, 3.4, (64, 64))
+    return np.clip(np.round(0.21 * e + 40.0), 0, 4095)
+
+
+mp = np.linspace(0.0, 25000.0, 20)                                # 露光(光子/画素)
+st = [SC.emva_pair_statistics(shot(m), shot(m)) for m in mp]       # 同じ露光で 2 枚ずつ(式 16・18)
+mu = np.array([s[&quot;mu&quot;] for s in st])
+var = np.array([s[&quot;var_temporal&quot;] for s in st])
+ptc = SC.emva_photon_transfer(mu[1:], var[1:], mu[0], var[0], mu_y_sat=float(mu.max()))
+qe = SC.emva_quantum_efficiency(mp[1:], mu[1:], mu[0], float(mu.max()), ptc[&quot;K&quot;])
+print(round(ptc[&quot;K&quot;], 3), round(ptc[&quot;sigma_d&quot;], 2), round(qe[&quot;eta&quot;], 3))   # 0.214 3.35 0.609(仕込み 0.21 / 3.4 / 0.62)
+
+th = SC.emva_sensitivity_threshold(0.62, 3.4, 0.21)                # SNR = 1 になる露光(式 26)
+print(round(th[&quot;mu_p_min&quot;], 2), SC.emva_snr_curve([th[&quot;mu_p_min&quot;]], 0.62, 3.4, 0.21)[0, 1])   # 6.78 1.0
+print(round(SC.emva_dynamic_range(25000.0, th[&quot;mu_p_min&quot;])[&quot;dB&quot;], 1))   # 71.3</pre>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">設計(design) — 近軸の先を実光線で</h3>
 <p>上の 4 カテゴリは「設計の出発点」を閉形式で出します。実レンズがそこからどれだけずれるか — 像はどこに結び、どれだけボケ、どの面が原因で、製造ばらつきで歩留まりはどうなるか — は面を 1 枚ずつ<b>実光線</b>で通さないと分かりません。<code style="color:#22d3bf">raytrace.py</code> はそのための逐次光線追跡で、台帳では <code style="color:#22d3bf">opsoptics</code> の <code style="color:#22d3bf">design</code> カテゴリ(12 op)に載ります。全 op の共通入力は <code style="color:#22d3bf">lens_system</code> が返す<b>検証済みの処方(table)</b> です:</p>
 <p style="margin:2px 0 2px 12px">• <b>処方</b>: <code style="color:#22d3bf">lens_system(surfaces, stop, object_mm, wavelength_um, ...)</code>。面は <code style="color:#22d3bf">{&quot;R&quot;, &quot;t&quot;, &quot;n&quot;, &quot;k&quot;, &quot;ap&quot;, &quot;mirror&quot;, &quot;decenter&quot;, &quot;tilt&quot;}</code>(R は曲率中心が +z 側で正、<code style="color:#22d3bf">inf</code> で平面、<code style="color:#22d3bf">k</code> は円錐定数、<code style="color:#22d3bf">n</code> は面の<b>後ろ</b>の媒質 = 数値 / <code style="color:#22d3bf">(n_d, V_d)</code> / <code style="color:#22d3bf">glass</code>)。<code style="color:#22d3bf">thick_lens</code> は空気中の厚肉レンズの閉形式(lensmaker + 主点)、<code style="color:#22d3bf">glass</code> は d 線と F–C 分散から 2 項 Cauchy を張る硝材モデル、<code style="color:#22d3bf">example_system</code> は singlet / doublet / paraboloid / sphere_mirror。</p>

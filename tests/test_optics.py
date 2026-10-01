@@ -881,7 +881,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # mueller_from_intensities / mueller_checks)を追加(127 → 130)。
     # 2026-10-01: imaging に edgesfr の 4 op(edge_spread / sfr_from_edge / mtf50 /
     # veiling_glare_index)を追加(133 → 137)。
-    assert len(opsoptics.OPSOPTICS) == 137
+    # 2026-10-01: sensorchar(EMVA 1288)10 op を新しい族として追加(137 → 147)。
+    assert len(opsoptics.OPSOPTICS) == 147
     # 2026-09-26: wave に 4f 光学プロセッサ 2 op(fourier_plane_filter /
     # four_f_filter)を追加(7 → 9)。
     assert len(opsoptics.list_ops("wave")) == 9
@@ -891,7 +892,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert sorted(opsoptics.categories()) == [
         "appearance", "design", "finish", "geometric", "glassbody", "illumination",
         "imaging", "imaging_sim", "interface", "material", "mirror", "optimization",
-        "polarization", "scene", "surface", "wave"]
+        "polarization", "scene", "sensorchar", "surface", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
     # 同名 op は後勝ちで静かに上書きされる。2026-09-05 に optscene.depth_of_field が
     # optics.depth_of_field(被写界深度の数値)を潰していたのを取り逃していたので、

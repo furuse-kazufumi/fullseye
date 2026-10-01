@@ -1,4 +1,4 @@
-# OPTICS operator help — 137 ops in 16 categories
+# OPTICS operator help — 147 ops in 17 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -73,6 +73,10 @@
 ### scene (44)
 
 [airy_radius_um](scene/airy_radius_um.md) · [camera_rays](scene/camera_rays.md) · [covers_sensor](scene/covers_sensor.md) · [dataset_throughput](scene/dataset_throughput.md) · [defocus_blur](scene/defocus_blur.md) · [diffraction_blur](scene/diffraction_blur.md) · [env_lightbox](scene/env_lightbox.md) · [env_studio](scene/env_studio.md) · [illumination_visibility](scene/illumination_visibility.md) · [inspection_dataset](scene/inspection_dataset.md) · [interface_budget](scene/interface_budget.md) · [layout_capture](scene/layout_capture.md) · [lens_catalog](scene/lens_catalog.md) · [lens_spec](scene/lens_spec.md) · [light_catalog](scene/light_catalog.md) · [light_spec](scene/light_spec.md) · [light_wavelengths](scene/light_wavelengths.md) · [linescan_capture](scene/linescan_capture.md) · [observe_surface](scene/observe_surface.md) · [optical_budget](scene/optical_budget.md) · [optical_camera](scene/optical_camera.md) · [optscene_defect_mask](scene/optscene_defect_mask.md) · [optscene_depth](scene/optscene_depth.md) · [optscene_instances](scene/optscene_instances.md) · [optscene_mask](scene/optscene_mask.md) · [random_defects](scene/random_defects.md) · [reflect_rays](scene/reflect_rays.md) · [register_light](scene/register_light.md) · [render_optscene](scene/render_optscene.md) · [render_studio](scene/render_studio.md) · [scene_box](scene/scene_box.md) · [scene_cylinder](scene/scene_cylinder.md) · [scene_difference](scene/scene_difference.md) · [scene_material](scene/scene_material.md) · [scene_plane](scene/scene_plane.md) · [scene_sphere](scene/scene_sphere.md) · [sensor_capture](scene/sensor_capture.md) · [sensor_catalog](scene/sensor_catalog.md) · [sensor_diagonal_mm](scene/sensor_diagonal_mm.md) · [sensor_spec](scene/sensor_spec.md) · [surface_defect](scene/surface_defect.md) · [surface_finish](scene/surface_finish.md) · [trace_rays](scene/trace_rays.md) · [vision_layout](scene/vision_layout.md)
+
+### sensorchar (10)
+
+[emva_dark_current](sensorchar/emva_dark_current.md) · [emva_defect_pixels](sensorchar/emva_defect_pixels.md) · [emva_dynamic_range](sensorchar/emva_dynamic_range.md) · [emva_linearity_error](sensorchar/emva_linearity_error.md) · [emva_pair_statistics](sensorchar/emva_pair_statistics.md) · [emva_photon_transfer](sensorchar/emva_photon_transfer.md) · [emva_quantum_efficiency](sensorchar/emva_quantum_efficiency.md) · [emva_sensitivity_threshold](sensorchar/emva_sensitivity_threshold.md) · [emva_snr_curve](sensorchar/emva_snr_curve.md) · [emva_spatial_nonuniformity](sensorchar/emva_spatial_nonuniformity.md)
 
 ### surface (5)
 

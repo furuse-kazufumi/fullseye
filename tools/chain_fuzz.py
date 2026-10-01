@@ -406,6 +406,9 @@ def make_generators():
         # rgbvideo(2026-09-21): これまで産む op(points_activity_video)だけで受ける op が無かった。
         # videocube.video_write_gif が受けるので種を置く(小さな色動画、[0, 1])。
         "rgbvideo": lambda rng: np.clip(rng.random((3, 12, 12, 3)), 0.0, 1.0),
+        # volume(2026-10-01): 同じ露光で撮った画像の積み重ね (L, M, N)。sensorchar.emva_spatial_nonuniformity が 2 本受けるが、
+        # カタログに volume を産む op が無く型の到達可能性で blocked になった。暗画像らしい小さな整数の積み重ねにする
+        "volume": lambda rng: 40.0 + rng.poisson(float(rng.uniform(2.0, 30.0)), (4, 12, 12)).astype(np.float64),
         # score = ピークを持つ 3-D 相関/スコア volume。**カタログのどの op も
         # score を出力しない**ので、種を置かないと `refine_peak_newton` が
         # 構造的に到達不能なまま「発見ゼロ」に数えられる(型到達可能性の

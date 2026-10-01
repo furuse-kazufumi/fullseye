@@ -58,6 +58,7 @@ paraboloid / sphere_mirror の 4 処方(テストと例の共通出発点)。
     opsoptics.get("thin_lens")(focal_mm=50.0, object_mm=200.0)
 """
 import edgesfr
+import sensorchar
 import illumdesign
 import optscene
 import lensimage
@@ -74,7 +75,7 @@ import raytrace
 _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
-        "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr,
+        "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar,
         "optscene": optscene}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
@@ -147,6 +148,20 @@ _CATALOG = {
         ("sfr_from_edge", "edgesfr", ["table"], "pairs"),
         ("mtf50", "edgesfr", ["pairs"], "measurement"),
         ("veiling_glare_index", "edgesfr", ["image2d", "image2d", "image2d"], "table"),
+    ],
+    # sensorchar(2026-10-01): カメラを EMVA 1288 Release 4.0 Linear(= ISO 24942)の手順で測る。データシートの η・K・σ_d・
+    # 飽和・SNR・DR・DSNU・PRNU を出す側。合成センサ(sensor_capture)が「作る」側、この族が「測る」側。
+    "sensorchar": [
+        ("emva_pair_statistics", "sensorchar", ["image2d", "image2d"], "table"),
+        ("emva_photon_transfer", "sensorchar", ["signal", "signal"], "table"),
+        ("emva_quantum_efficiency", "sensorchar", ["signal", "signal"], "table"),
+        ("emva_linearity_error", "sensorchar", ["signal", "signal"], "table"),
+        ("emva_snr_curve", "sensorchar", ["signal"], "matrix"),
+        ("emva_sensitivity_threshold", "sensorchar", [], "table"),
+        ("emva_dynamic_range", "sensorchar", [], "table"),
+        ("emva_dark_current", "sensorchar", ["signal", "signal"], "table"),
+        ("emva_spatial_nonuniformity", "sensorchar", ["volume", "volume"], "table"),
+        ("emva_defect_pixels", "sensorchar", ["image2d"], "table"),
     ],
     # appearance(matappear): 微細構造の見え方を**波長から**作る族。回折格子・薄膜干渉・
     # 異方性微小面。入口 2 op(等色関数・分光→sRGB)は波長格子だけで呼べ、残り 3 op は

@@ -1,8 +1,8 @@
 {
- "n_ops": 2426,
+ "n_ops": 2436,
  "tiers": {
   "color": 12,
-  "ledger": 1475,
+  "ledger": 1485,
   "nary": 17,
   "registry": 922
  },
@@ -4590,6 +4590,138 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "emva_dark_current",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "sensorchar",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "emva_defect_pixels",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "sensorchar",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "emva_dynamic_range",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "sensorchar",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "emva_linearity_error",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "sensorchar",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "emva_pair_statistics",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "sensorchar",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "emva_photon_transfer",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "sensorchar",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "emva_quantum_efficiency",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "sensorchar",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "emva_sensitivity_threshold",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "sensorchar",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "emva_snr_curve",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "matrix",
+   "category": "sensorchar",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "emva_spatial_nonuniformity",
+   "halcon": "",
+   "in_sort": "volume",
+   "out_sort": "table",
+   "category": "sensorchar",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "volume",
+    "volume"
+   ]
   },
   {
    "name": "engrave_lines",
