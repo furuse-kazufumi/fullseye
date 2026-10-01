@@ -262,7 +262,7 @@ def vx_warp_affine(image, matrix, *, interpolation, border, constant_value=0):
     """アフィン変換(3.56 節)。**逆写像**: 出力の画素 (x, y) は入力の (x0, y0) から取る(REQ-0498):
     ``x0 = M[0,0]·x + M[0,1]·y + M[0,2]``、``y0 = M[1,0]·x + M[1,1]·y + M[1,2]``。
 
-    *matrix*: 数学の並びの 2×3(1 行目が x0 の係数 a, b, c)。★規格の C の宣言は ``mat[3][2] = {{a,d},{b,e},{c,f}}``
+    *matrix*: 数学の並びの 2×3(1 行目が x0 の係数 a, b, c)。★規格の C の宣言は ``mat[3][2] = { {a,d}, {b,e}, {c,f} }``
     (転置した並び)—— C の配列をそのまま渡すと形が (3, 2) になるので止める。*interpolation*(必須): ``"nearest"`` / ``"bilinear"``。
     *border*(必須): ``"constant"``(*constant_value* で埋める)/ ``"undefined"``(0 で埋める、値は規格上未定義)。
 

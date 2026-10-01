@@ -6,7 +6,7 @@
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>アフィン変換(3.56 節)。<b>逆写像</b>: 出力の画素 (x, y) は入力の (x0, y0) から取る(REQ-0498):</p>
 <p>`<code style="color:#22d3bf">x0 = M[0,0]·x + M[0,1]·y + M[0,2]</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">y0 = M[1,0]·x + M[1,1]·y + M[1,2]</code>`。</p>
-<p>*matrix*: 数学の並びの 2×3(1 行目が x0 の係数 a, b, c)。★規格の C の宣言は `<code style="color:#22d3bf">mat[3][2] = {{a,d},{b,e},{c,f}}</code>`</p>
+<p>*matrix*: 数学の並びの 2×3(1 行目が x0 の係数 a, b, c)。★規格の C の宣言は `<code style="color:#22d3bf">mat[3][2] = { {a,d}, {b,e}, {c,f} }</code>`</p>
 <p>(転置した並び)—— C の配列をそのまま渡すと形が (3, 2) になるので止める。*interpolation*(必須): `<code style="color:#22d3bf">&quot;nearest&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;bilinear&quot;</code>`。</p>
 <p>*border*(必須): `<code style="color:#22d3bf">&quot;constant&quot;</code><code style="color:#22d3bf">(*constant_value* で埋める)/ </code><code style="color:#22d3bf">&quot;undefined&quot;</code>`(0 で埋める、値は規格上未定義)。</p>
 <p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: U8 の 2-D でない / matrix が 2×3 の有限でない / interpolation・border が一覧に無い。</p>
