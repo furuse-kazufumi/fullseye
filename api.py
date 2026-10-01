@@ -544,6 +544,13 @@ from drivecrossing import (  # noqa: E402,F401
     conflict_zone_intervals, obstruction_decel, crosswalk_overtake_check, crosswalk_stopped_vehicle_check,
     no_stopping_zones, legal_stop_intervals, parking_position_check,
 )
+import drivepass  # noqa: E402  (追越しと見えない所: 追越し・進路変更・環状交差点・坂の頂上・カーブミラー)
+from drivepass import (  # noqa: E402,F401
+    overtake_requirement, overtake_return_gap, no_overtaking_zones, overtake_permitted,
+    overtaken_conduct_check, lane_change_follower_decel, lane_change_permitted, roundabout_entry_check,
+    roundabout_signal_point, roundabout_signal_check, crest_sight_distance, crest_safe_speed, hill_meeting_yield,
+    convex_mirror_image, convex_mirror_misjudge, mirror_image_side, mirror_road_coverage,
+)
 from drivelateral import (  # noqa: E402,F401
     friction_circle_usage, curve_speed_limit, design_min_radius, understeer_gradient, steady_cornering,
     bicycle_model_step, ackermann_steer_angles, offtracking_circle, rear_axle_path, fresnel_integrals,

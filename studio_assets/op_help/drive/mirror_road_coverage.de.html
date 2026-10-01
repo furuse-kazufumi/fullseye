@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mirror_road_coverage — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_road_coverage(eye_xy, mirror_center_xy, mirror_normal_xy, mirror_width: &#x27;float&#x27;, *, mirror_radius=inf, road_point, road_direction) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivepass; drivepass.mirror_road_coverage(eye_xy, mirror_center_xy, mirror_normal_xy, mirror_width: &#x27;float&#x27;, *, mirror_radius=inf, road_point, road_direction) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;mirror_road_coverage&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>カーブミラー(凸面の円弧 or 平面)に映る道の範囲(上から見た 2 次元、閉形式)。場面 S064・S130。</p>
+<p>道 = 直線 Q(λ) = road_point + λ·road_direction(単位にする。λ = 0 を交差点の衝突の点に置くと読みやすい)。鏡の両端</p>
+<p>(円弧なら端の法線 N = cos φ n ± sin φ t、φ = asin(w/2R))で眼からの光線を反射させ、道との交点 λ₁, λ₂ を求める。</p>
+<p>凸面では反射光線の向きが鏡の上の位置に単調なので、映る範囲 = [min λ, max λ]。光線が道に届かなければ(平行・背を向ける)</p>
+<p>その側は ±∞(光線の向きと道の向きの内積の符号)。`<code style="color:#22d3bf">blind_near</code>` = λ = 0 から映る範囲の手前の端までの長さ(0 より奥から</p>
+<p>しか映らないとき、交差点の直前が映らない死角)。`<code style="color:#22d3bf">drivedecide.convex_mirror_fov</code>` と同じ端の光線(眼が軸上なら</p>
+<p>2 本の向きの差 = 全視野角)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_pass">poc_driving_pass</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_pass.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">pass</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:overtake_requirement">overtake_requirement</a> · <a style="color:#22d3bf" href="opdrive:overtake_return_gap">overtake_return_gap</a> · <a style="color:#22d3bf" href="opdrive:no_overtaking_zones">no_overtaking_zones</a> · <a style="color:#22d3bf" href="opdrive:overtake_permitted">overtake_permitted</a> · <a style="color:#22d3bf" href="opdrive:overtaken_conduct_check">overtaken_conduct_check</a> · <a style="color:#22d3bf" href="opdrive:lane_change_follower_decel">lane_change_follower_decel</a> · <a style="color:#22d3bf" href="opdrive:lane_change_permitted">lane_change_permitted</a> · <a style="color:#22d3bf" href="opdrive:roundabout_entry_check">roundabout_entry_check</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivepass.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

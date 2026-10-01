@@ -1,0 +1,132 @@
+[
+ {
+  "file": "01_overtake_dashcam.gif",
+  "name": "overtake_dashcam",
+  "caption": "主図(運転席の目 640 × 360、169 コマ、0.25 s ごと = 2 倍速。規則の待ちの長い所は 1 s ごと)。同じ運転者 #114(前の車 34 km/h、加速 1.45 m/s²)と同じ対向車の流れで、前半 69 コマ = 素朴: 頂上の手前 144 m で、見えた範囲(162 m)に対向車が無いので出て、前の車を抜いたらすぐ戻る(車間 0.1 m)—— 対向車との PET 0.8 s。後半 100 コマ = 規則: 見通しが D* = 467 m に届かない間(坂の頂上が隠す)と追越し禁止の区間では待ち、頂上を 30 m 越えた所で出て、ルームミラーに前の車の全体が映る車間 19.7 m(overtake_return_gap)で戻る —— PET 31.1 s。上 = ルームミラー(仮想の眼から撮って左右を反転)、下 = 横から見た縦断(高さを誇張。緑の線 = 目からの見通し、赤い箱 = 見えている対向車、赤い枠 = 坂に隠れた対向車、上の帯 = 要る D*(赤 = 足りない)と見えている距離)。",
+  "shape": [
+   270,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 85,
+  "frames_written": 85,
+  "fps": 4.0,
+  "video": "01_overtake_dashcam.mp4",
+  "video_frames": 169,
+  "video_fps": 8.0,
+  "video_shape": [
+   360,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "02_roundabout_birdseye.gif",
+  "name": "roundabout_birdseye",
+  "caption": "上から見た動画(178 コマ、0.2 s ごと = 実時間)。環状交差点(環道の半径 14 m、右回り)に南から入り 出口 3(右折) へ出る場面 #0 を、同じ環道の車で。左 = 規則: 環道の車に 2.0 m/s² を超える減速を要らせない時刻まで 0.8 s 待ち、徐行(10 km/h)で入り、出口の 1 つ手前の出口の側方で左の合図(roundabout_signal_point、黄の点)—— roundabout_signal_check = 違反なし。右 = 素朴: 20 km/h のまま入り(環道の車に要らせた減速度 最大 3.1 m/s² = 37 条の 2 第 1 項の進行妨害)、右の合図で入り、出口の直前で左に変える(right_signal, left_late)。",
+  "shape": [
+   360,
+   720,
+   3
+  ],
+  "animated": true,
+  "frames": 178,
+  "frames_written": 178,
+  "fps": 5.0,
+  "video": "02_roundabout_birdseye.mp4",
+  "video_frames": 178,
+  "video_fps": 5.0,
+  "video_shape": [
+   480,
+   960,
+   3
+  ]
+ },
+ {
+  "file": "03_mirror_tjunction.gif",
+  "name": "mirror_tjunction",
+  "caption": "目玉の動画(51 コマ、実時間)。見通しの悪い T 字路(右の角は高さ 2 m の塀)で停止線に止まった運転者が、向こう側のカーブミラー(凸面 R 3 m・直径 0.8 m、目から 8.0 m、入射角 45°)を見る。左 = 運転席から見た鏡の拡大: 鏡の中は球面での反射の光線を環境の画像から引いて描いた(視差を深度で 3 回補正、車のメッシュの頂点の厳密な光線追跡と画素で照合)。右から 30 km/h で来る赤い車は、鏡から 29 m のとき鏡の中で高さ 48 px(同じ所の平面鏡なら 189 px)—— 画素の比で読むと 139 m 先。閉形式の読みは縦 140 m・横 253 m(Coddington の式 k_s = 4.75、k_t = 8.58。正面から見る近軸なら k = 6.33 で 187 m)。右上 = 運転席からの広い眺め、右下 = 上から見た本当の位置(赤の線 = 鏡に映らない手前 8.2 m、橙 = 映る範囲、緑 = 塀の陰から直接見える所。下の目盛り = 本当の距離と鏡の読み)。",
+  "shape": [
+   405,
+   720,
+   3
+  ],
+  "animated": true,
+  "frames": 26,
+  "frames_written": 26,
+  "fps": 3.0,
+  "video": "03_mirror_tjunction.mp4",
+  "video_frames": 51,
+  "video_fps": 6.0,
+  "video_shape": [
+   540,
+   960,
+   3
+  ]
+ },
+ {
+  "file": "04_sample_gate.png",
+  "name": "sample_gate",
+  "caption": "参照 N(55, 6) km/h(仮定)。採った 9600 個の KS p は門を通る。全体を 1.25 で割った集団は 1 個ずつの門を 1936 / 2000 個が通るが、KS は D = 0.68(p = 0)で落とす。上側 0.1 % 点 74.7 km/h を規則の運転者が対向車の速さの見積もりに使う。",
+  "shape": [
+   360,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "05_sight_vs_dstar.png",
+  "name": "sight_vs_dstar",
+  "caption": "凸形縦断曲線(±4 %、L 160 m、R 2000 m)の道で、運転者の目(1.2 m)から対向車(1.2 m)が見える距離。頂上の手前 524 m から頂上まで見えている距離が D* の中央値 560 m を下回る(522 m の区間)。30 条 1 号の「付近」(前後 30 m、仮定)はそのうち 60 m だけ —— 残りは28 条 4 項(D* の閉形式)で止める。頂上を越えると見える距離は走査の上限 1000 m に張り付く。",
+  "shape": [
+   380,
+   820,
+   3
+  ]
+ },
+ {
+  "file": "06_overtake_results.png",
+  "name": "overtake_results",
+  "caption": "禁止区間 = 条文を 0.25 m ごとに当てた総当たりで、追越しの道のりが 30 条の区間に掛かった人数。PET = 戻り切った位置に対向車が着くまでの時間(負 = 対向車線にいる間に出会う)。割り込み = ルームミラーに前の車の全体が映る車間 19.7 m より前で戻った人数。",
+  "shape": [
+   128,
+   781,
+   3
+  ],
+  "csv": "06_overtake_results.csv",
+  "tsv": "06_overtake_results.tsv"
+ },
+ {
+  "file": "07_mirror_readings.png",
+  "name": "mirror_readings",
+  "caption": "平面鏡のつもりで像の大きさから距離を読むと k 倍遠い。正面から見る近軸は k = 1 + 2e/R = 6.33(30 m → 190 m)。この T 字路の鏡は入射角 45° の斜めで、Coddington の式で縦 k_s = 4.75(30 m → 143 m)・横 k_t = 8.58(30 m → 258 m)に分かれる(3 次元の光線追跡と 0.5 % 以内)。像は横に潰れて見える。",
+  "shape": [
+   380,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "08_lane_change_decel.png",
+  "name": "lane_change_decel",
+  "caption": "240 場面(後続車の速さ・反応は標本の門を通った値、自車 50 km/h、残す車間 2 m)。lane_change_follower_decel の閉形式で、2 台の時間の行進で最小車間が 2 m になることを確かめた。8 m/s² を超える 5 場面と反応の間に割る(∞)4 場面は図の外(どれも 2.0 m/s² を超え、規則は待つ)。",
+  "shape": [
+   380,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "09_road_structure_order.png",
+  "name": "road_structure_order",
+  "caption": "目の高さ 1.2 m・物の高さ 10 cm(2 条 24 号)。国交省「道路構造令について」に載る 3 行。構造令の本文(e-Gov)とは未照合。",
+  "shape": [
+   152,
+   583,
+   3
+  ],
+  "csv": "09_road_structure_order.csv",
+  "tsv": "09_road_structure_order.tsv"
+ }
+]

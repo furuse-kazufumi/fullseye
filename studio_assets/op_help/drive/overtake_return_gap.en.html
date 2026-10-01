@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">overtake_return_gap — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.overtake_return_gap(*, lane_offset: &#x27;float&#x27;, lead_width: &#x27;float&#x27;, eye_xy=(0.0, -0.35), mirror_center_xy=(0.55, 0.0), mirror_normal_xy=None, mirror_width: &#x27;float&#x27; = 0.25, eye_to_rear: &#x27;float&#x27; = 2.8) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivepass; drivepass.overtake_return_gap(*, lane_offset: &#x27;float&#x27;, lead_width: &#x27;float&#x27;, eye_xy=(0.0, -0.35), mirror_center_xy=(0.55, 0.0), mirror_normal_xy=None, mirror_width: &#x27;float&#x27; = 0.25, eye_to_rear: &#x27;float&#x27; = 2.8) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;overtake_return_gap&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>追い越した前車の <b>全体がルームミラーに映る</b> ときの車間(自車の後端と前車の前端の間)。場面 S086・S145。</p>
+<p>教則 5-6-3(6)「追い越した車がルームミラーで見えるくらいの距離までそのまま進み」・7-2-3「追い越した車全体が</p>
+<p>ルームミラーに映ってから」を幾何にする。座標は自車(x = 前、y = 左、原点 = 眼の真横の車の中心線)。前車は左の車線</p>
+<p>(横の中心 = `<code style="color:#22d3bf">lane_offset</code><code style="color:#22d3bf">、幅 </code><code style="color:#22d3bf">lead_width</code><code style="color:#22d3bf">)で自車の後ろ。ルームミラーは平面鏡(中心 </code><code style="color:#22d3bf">mirror_center_xy</code>`、</p>
+<p>幅 `<code style="color:#22d3bf">mirror_width</code>`、法線は眼の側)。法線を省くと、眼から鏡の中心への光線を真後ろ(−x)へ返す向き</p>
+<p>(`<code style="color:#22d3bf">drivedecide.mirror_aim_normal</code>`)。</p>
+<p>映る ⇔ 仮想の眼 E&#x27;(眼を鏡の直線で折り返した点)と点を結ぶ線分が鏡の線分を通る。道に平行な直線の上では境目は 1 次</p>
+<p>方程式の根で、前の辺の両端(2 隅)で決まる。返り値: `<code style="color:#22d3bf">gap</code><code style="color:#22d3bf"> = 眼の後ろ </code><code style="color:#22d3bf">eye_to_rear</code>` の自車の後端から、前の 2 隅が</p>
+<p>映る前車の前端までの距離、`<code style="color:#22d3bf">corner_limit_x</code><code style="color:#22d3bf">(各隅が映る x の上限)、</code><code style="color:#22d3bf">straight_back_s</code>`(真後ろの方向が鏡のどこを通るか。</p>
+<p>鏡の外なら真後ろが映らない = ValueError)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_pass">poc_driving_pass</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_pass.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">pass</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:overtake_requirement">overtake_requirement</a> · <a style="color:#22d3bf" href="opdrive:no_overtaking_zones">no_overtaking_zones</a> · <a style="color:#22d3bf" href="opdrive:overtake_permitted">overtake_permitted</a> · <a style="color:#22d3bf" href="opdrive:overtaken_conduct_check">overtaken_conduct_check</a> · <a style="color:#22d3bf" href="opdrive:lane_change_follower_decel">lane_change_follower_decel</a> · <a style="color:#22d3bf" href="opdrive:lane_change_permitted">lane_change_permitted</a> · <a style="color:#22d3bf" href="opdrive:roundabout_entry_check">roundabout_entry_check</a> · <a style="color:#22d3bf" href="opdrive:roundabout_signal_point">roundabout_signal_point</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivepass.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

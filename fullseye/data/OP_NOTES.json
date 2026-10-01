@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2519,
- "n_notes": 2525,
+ "n_ops": 2536,
+ "n_notes": 2542,
  "notes": {
   "vol_dilate": [
    {
@@ -17259,6 +17259,171 @@
     "in": "scalar × scalar × scalar",
     "out": "scalar",
     "path": "docs/ops/drive/long/stopping_distance_grade.md"
+   }
+  ],
+  "convex_mirror_image": [
+   {
+    "op": "convex_mirror_image",
+    "dim": "drive",
+    "category": "pass",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/pass/convex_mirror_image.md"
+   }
+  ],
+  "convex_mirror_misjudge": [
+   {
+    "op": "convex_mirror_misjudge",
+    "dim": "drive",
+    "category": "pass",
+    "in": "any × any",
+    "out": "table",
+    "path": "docs/ops/drive/pass/convex_mirror_misjudge.md"
+   }
+  ],
+  "crest_safe_speed": [
+   {
+    "op": "crest_safe_speed",
+    "dim": "drive",
+    "category": "pass",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/pass/crest_safe_speed.md"
+   }
+  ],
+  "crest_sight_distance": [
+   {
+    "op": "crest_sight_distance",
+    "dim": "drive",
+    "category": "pass",
+    "out": "table",
+    "path": "docs/ops/drive/pass/crest_sight_distance.md"
+   }
+  ],
+  "hill_meeting_yield": [
+   {
+    "op": "hill_meeting_yield",
+    "dim": "drive",
+    "category": "pass",
+    "out": "table",
+    "path": "docs/ops/drive/pass/hill_meeting_yield.md"
+   }
+  ],
+  "lane_change_follower_decel": [
+   {
+    "op": "lane_change_follower_decel",
+    "dim": "drive",
+    "category": "pass",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/pass/lane_change_follower_decel.md"
+   }
+  ],
+  "lane_change_permitted": [
+   {
+    "op": "lane_change_permitted",
+    "dim": "drive",
+    "category": "pass",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pass/lane_change_permitted.md"
+   }
+  ],
+  "mirror_image_side": [
+   {
+    "op": "mirror_image_side",
+    "dim": "drive",
+    "category": "pass",
+    "in": "points",
+    "out": "table",
+    "path": "docs/ops/drive/pass/mirror_image_side.md"
+   }
+  ],
+  "mirror_road_coverage": [
+   {
+    "op": "mirror_road_coverage",
+    "dim": "drive",
+    "category": "pass",
+    "out": "table",
+    "path": "docs/ops/drive/pass/mirror_road_coverage.md"
+   }
+  ],
+  "no_overtaking_zones": [
+   {
+    "op": "no_overtaking_zones",
+    "dim": "drive",
+    "category": "pass",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pass/no_overtaking_zones.md"
+   }
+  ],
+  "overtake_permitted": [
+   {
+    "op": "overtake_permitted",
+    "dim": "drive",
+    "category": "pass",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pass/overtake_permitted.md"
+   }
+  ],
+  "overtake_requirement": [
+   {
+    "op": "overtake_requirement",
+    "dim": "drive",
+    "category": "pass",
+    "out": "table",
+    "path": "docs/ops/drive/pass/overtake_requirement.md"
+   }
+  ],
+  "overtake_return_gap": [
+   {
+    "op": "overtake_return_gap",
+    "dim": "drive",
+    "category": "pass",
+    "out": "table",
+    "path": "docs/ops/drive/pass/overtake_return_gap.md"
+   }
+  ],
+  "overtaken_conduct_check": [
+   {
+    "op": "overtaken_conduct_check",
+    "dim": "drive",
+    "category": "pass",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pass/overtaken_conduct_check.md"
+   }
+  ],
+  "roundabout_entry_check": [
+   {
+    "op": "roundabout_entry_check",
+    "dim": "drive",
+    "category": "pass",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pass/roundabout_entry_check.md"
+   }
+  ],
+  "roundabout_signal_check": [
+   {
+    "op": "roundabout_signal_check",
+    "dim": "drive",
+    "category": "pass",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/pass/roundabout_signal_check.md"
+   }
+  ],
+  "roundabout_signal_point": [
+   {
+    "op": "roundabout_signal_point",
+    "dim": "drive",
+    "category": "pass",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/pass/roundabout_signal_point.md"
    }
   ],
   "aim_velocity": [

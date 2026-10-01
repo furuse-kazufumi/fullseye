@@ -1,8 +1,8 @@
 {
- "n_ops": 2519,
+ "n_ops": 2536,
  "tiers": {
   "color": 12,
-  "ledger": 1568,
+  "ledger": 1585,
   "nary": 17,
   "registry": 922
  },
@@ -2854,6 +2854,33 @@
    "in_sorts": []
   },
   {
+   "name": "convex_mirror_image",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "convex_mirror_misjudge",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "any"
+   ]
+  },
+  {
    "name": "copy_move_regions",
    "halcon": "",
    "in_sort": "image2d",
@@ -3368,6 +3395,30 @@
    "tier": "ledger",
    "ledger": "opsmeasure1d",
    "dim": "measure1d",
+   "in_sorts": []
+  },
+  {
+   "name": "crest_safe_speed",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "crest_sight_distance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
    "in_sorts": []
   },
   {
@@ -7686,6 +7737,17 @@
    ]
   },
   {
+   "name": "hill_meeting_yield",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "hill_start_command",
    "halcon": "",
    "in_sort": "scalar",
@@ -8912,6 +8974,32 @@
    "dim": "shapestat",
    "in_sorts": [
     "points"
+   ]
+  },
+  {
+   "name": "lane_change_follower_decel",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "lane_change_permitted",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -10476,6 +10564,19 @@
    "in_sorts": []
   },
   {
+   "name": "mirror_image_side",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
    "name": "mirror_plane_from_pairs",
    "halcon": "",
    "in_sort": "points",
@@ -10494,6 +10595,17 @@
    "in_sort": null,
    "out_sort": "any",
    "category": "decide",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "mirror_road_coverage",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "pass",
    "tier": "ledger",
    "ledger": "opsdrive",
    "dim": "drive",
@@ -11090,6 +11202,19 @@
    ]
   },
   {
+   "name": "no_overtaking_zones",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "no_stopping_zones",
    "halcon": "",
    "in_sort": "table",
@@ -11653,6 +11778,54 @@
    "in_sorts": [
     "image2d",
     "mask"
+   ]
+  },
+  {
+   "name": "overtake_permitted",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "overtake_requirement",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "overtake_return_gap",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "overtaken_conduct_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -15115,6 +15288,46 @@
    "dim": "optics",
    "in_sorts": [
     "signal"
+   ]
+  },
+  {
+   "name": "roundabout_entry_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "roundabout_signal_check",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "roundabout_signal_point",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "pass",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {

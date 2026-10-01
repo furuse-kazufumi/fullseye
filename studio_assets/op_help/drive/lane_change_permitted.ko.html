@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lane_change_permitted — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lane_change_permitted(*, follower: &#x27;Optional[dict]&#x27; = None, boundary: &#x27;str&#x27; = &#x27;none&#x27;, exception: &#x27;Optional[str]&#x27; = None, signal_events: &#x27;Optional[Sequence[dict]]&#x27; = None, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivepass; drivepass.lane_change_permitted(*, follower: &#x27;Optional[dict]&#x27; = None, boundary: &#x27;str&#x27; = &#x27;none&#x27;, exception: &#x27;Optional[str]&#x27; = None, signal_events: &#x27;Optional[Sequence[dict]]&#x27; = None, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;lane_change_permitted&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p>進路変更をしてよいか(条文の判定)。場面 S067・S072・S073。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">follower_sudden_decel</code><code style="color:#22d3bf">(26 条の 2 第 2 項): </code><code style="color:#22d3bf">follower</code>` = {&quot;gap&quot;, &quot;v_follow&quot;, &quot;v_ego&quot;, &quot;reaction&quot;[, &quot;accel_ego&quot;,</p>
+<p>&quot;min_gap&quot;]} に `<code style="color:#22d3bf">lane_change_follower_decel</code><code style="color:#22d3bf"> で要る減速度が </code><code style="color:#22d3bf">sudden</code>` を超える。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">no_lane_change_marking</code><code style="color:#22d3bf">(26 条の 2 第 3 項): </code><code style="color:#22d3bf">boundary</code>` = &quot;yellow&quot;(進路変更の禁止を表示する道路標示)を越える。</p>
+<p>`<code style="color:#22d3bf">exception</code>` = &quot;article40&quot;(緊急自動車に譲る)/ &quot;obstruction&quot;(道路の損壊・工事その他の障害)なら除外(同項 1・2 号)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">signal_*</code><code style="color:#22d3bf">(53 条 1 項・教則 5-5-1「約 3 秒前」): </code><code style="color:#22d3bf">signal_events</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">drivedecide.check_sequence_score</code>`</p>
+<p>(maneuver=&quot;lane_change&quot;)で採点した違反をそのまま足す(施行令 21 条は未確認)。</p>
+<p>26 条の 2 第 1 項「みだりに」は数値にできないので判定しない。返り値: `<code style="color:#22d3bf">ok</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">reasons</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">decel</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">sequence</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_pass">poc_driving_pass</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_pass.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">pass</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:overtake_requirement">overtake_requirement</a> · <a style="color:#22d3bf" href="opdrive:overtake_return_gap">overtake_return_gap</a> · <a style="color:#22d3bf" href="opdrive:no_overtaking_zones">no_overtaking_zones</a> · <a style="color:#22d3bf" href="opdrive:overtake_permitted">overtake_permitted</a> · <a style="color:#22d3bf" href="opdrive:overtaken_conduct_check">overtaken_conduct_check</a> · <a style="color:#22d3bf" href="opdrive:lane_change_follower_decel">lane_change_follower_decel</a> · <a style="color:#22d3bf" href="opdrive:roundabout_entry_check">roundabout_entry_check</a> · <a style="color:#22d3bf" href="opdrive:roundabout_signal_point">roundabout_signal_point</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivepass.py — DRIVE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

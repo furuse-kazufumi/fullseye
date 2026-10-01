@@ -1,4 +1,4 @@
-# DRIVE operator help — 271 ops in 21 categories
+# DRIVE operator help — 288 ops in 22 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -59,6 +59,10 @@
 ### long (13)
 
 [hill_hold_brake_min](long/hill_hold_brake_min.md) · [hill_start_command](long/hill_start_command.md) · [hill_start_rollback](long/hill_start_rollback.md) · [long_energy_residual](long/long_energy_residual.md) · [long_params](long/long_params.md) · [long_simulate](long/long_simulate.md) · [plan_command](long/plan_command.md) · [road_eval](long/road_eval.md) · [road_profile](long/road_profile.md) · [skill_test_score](long/skill_test_score.md) · [skill_test_thresholds](long/skill_test_thresholds.md) · [stop_line_plan](long/stop_line_plan.md) · [stopping_distance_grade](long/stopping_distance_grade.md)
+
+### pass (17)
+
+[convex_mirror_image](pass/convex_mirror_image.md) · [convex_mirror_misjudge](pass/convex_mirror_misjudge.md) · [crest_safe_speed](pass/crest_safe_speed.md) · [crest_sight_distance](pass/crest_sight_distance.md) · [hill_meeting_yield](pass/hill_meeting_yield.md) · [lane_change_follower_decel](pass/lane_change_follower_decel.md) · [lane_change_permitted](pass/lane_change_permitted.md) · [mirror_image_side](pass/mirror_image_side.md) · [mirror_road_coverage](pass/mirror_road_coverage.md) · [no_overtaking_zones](pass/no_overtaking_zones.md) · [overtake_permitted](pass/overtake_permitted.md) · [overtake_requirement](pass/overtake_requirement.md) · [overtake_return_gap](pass/overtake_return_gap.md) · [overtaken_conduct_check](pass/overtaken_conduct_check.md) · [roundabout_entry_check](pass/roundabout_entry_check.md) · [roundabout_signal_check](pass/roundabout_signal_check.md) · [roundabout_signal_point](pass/roundabout_signal_point.md)
 
 ### racket (10)
 

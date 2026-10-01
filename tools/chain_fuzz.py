@@ -2551,6 +2551,98 @@ def _b_turn_check(pool, rng):
                            "corner_radius": 6.0, "clearance": 0.5}
 
 
+def _b_overtake_req(pool, rng):
+    return (60 / 3.6, 40 / 3.6), {"lead_length": 4.5, "ego_length": 4.7, "gap_back": 12.0, "gap_front": 15.0,
+                                  "accel": 1.0, "v_max": 80 / 3.6, "lane_change_time": 2.0,
+                                  "v_oncoming": 60 / 3.6, "pet_min": 2.0}
+
+
+def _b_overtake_return(pool, rng):
+    return (), {"lane_offset": 3.5, "lead_width": 1.7}
+
+
+def _b_no_pass_zones(pool, rng):
+    return ([{"kind": "crosswalk", "start": 300.0, "end": 304.0}, {"kind": "tunnel", "start": 600.0, "end": 900.0}],), {}
+
+
+def _b_overtake_permitted(pool, rng):
+    import drivepass
+    zr = drivepass.no_overtaking_zones([{"kind": "crosswalk", "start": 300.0, "end": 304.0}])
+    return (), {"maneuver_start": 0.0, "maneuver_end": 150.0, "zones_result": zr, "dist_oncoming": 500.0}
+
+
+def _b_overtaken_conduct(pool, rng):
+    import numpy as np
+    t = np.linspace(0.0, 12.0, 121)
+    return ({"t": t, "v": np.full_like(t, 11.0)},), {"t_caught": 2.0, "t_passed": 9.0}
+
+
+def _b_lc_follower(pool, rng):
+    return (20.0, 25.0, 15.0), {"reaction": 1.0}
+
+
+def _b_lc_permitted(pool, rng):
+    return (), {"follower": {"gap": 60.0, "v_follow": 22.0, "v_ego": 20.0, "reaction": 1.0}, "boundary": "white"}
+
+
+def _b_ra_entry(pool, rng):
+    return (0.0, 15.0, [{"theta": 3.0, "speed": 4.0}, {"theta": 1.0, "speed": 5.0}]), {"t_clear": 4.0,
+                                                                                        "entry_speed": 2.0}
+
+
+def _b_ra_signal_point(pool, rng):
+    import math
+    return ([0.0, math.pi / 2, math.pi, 3 * math.pi / 2], 0, 3), {}
+
+
+def _b_ra_signal_check(pool, rng):
+    import math
+    import numpy as np
+    import drivepass
+    arms = [0.0, math.pi / 2, math.pi, 3 * math.pi / 2]
+    sp = drivepass.roundabout_signal_point(arms, 0, 3)
+    prog = np.linspace(0.0, sp["exit_angle"] + 0.2, 601)
+    on = (prog >= sp["signal_angle"]) & (prog <= sp["exit_angle"])
+    return (prog, on), {"arm_angles": arms, "entry": 0, "exit": 3}
+
+
+def _b_crest_sight(pool, rng):
+    return (), {"grade_in": 0.04, "grade_out": -0.04, "length": 120.0}
+
+
+def _b_crest_speed(pool, rng):
+    return (80.0,), {"reaction": 0.75, "brake": 6.0}
+
+
+def _b_hill_yield(pool, rng):
+    return ("down",), {"ego_refuge_distance": 10.0, "other_refuge_distance": 80.0}
+
+
+def _b_cm_image(pool, rng):
+    import numpy as np
+    return (np.array([10.0, 30.0, 60.0]), 3.0), {"eye_distance": 8.0, "object_size": 1.7}
+
+
+def _b_cm_misjudge(pool, rng):
+    import numpy as np
+    return (np.array([10.0, 30.0, 60.0]), np.array([8.0, 10.0, 12.0]), 3.0), {"eye_distance": 8.0}
+
+
+def _b_mirror_side(pool, rng):
+    import numpy as np
+    import drivedecide
+    E, M = np.array([0.0, -4.0]), np.array([-1.0, 5.0])
+    n = drivedecide.mirror_aim_normal(E, M, np.array([1.0, -0.2]))
+    pts = np.array([[x, 2.0] for x in np.linspace(-20.0, 30.0, 11)])
+    pts = pts[(pts - M) @ n > 0.5]
+    return (E, M, n, pts), {"heading": (0.0, 1.0), "velocities": np.tile([[-8.0, 0.0]], (len(pts), 1))}
+
+
+def _b_mirror_cover(pool, rng):
+    return ((9.0, 0.0), (0.0, 0.0), (1.0, 0.0), 0.8), {"mirror_radius": 3.0, "road_point": (20.0, -30.0),
+                                                        "road_direction": (0.0, 1.0)}
+
+
 def _dc_lin(x0, v):
     import numpy as np
     t = np.linspace(0.0, 30.0, 301)
@@ -3028,6 +3120,23 @@ OP_ARG_BUILDERS = {
     "no_stopping_zones": _b_no_stop_zones,
     "legal_stop_intervals": _b_legal_stops,
     "parking_position_check": _b_parking_check,
+    "overtake_requirement": _b_overtake_req,
+    "overtake_return_gap": _b_overtake_return,
+    "no_overtaking_zones": _b_no_pass_zones,
+    "overtake_permitted": _b_overtake_permitted,
+    "overtaken_conduct_check": _b_overtaken_conduct,
+    "lane_change_follower_decel": _b_lc_follower,
+    "lane_change_permitted": _b_lc_permitted,
+    "roundabout_entry_check": _b_ra_entry,
+    "roundabout_signal_point": _b_ra_signal_point,
+    "roundabout_signal_check": _b_ra_signal_check,
+    "crest_sight_distance": _b_crest_sight,
+    "crest_safe_speed": _b_crest_speed,
+    "hill_meeting_yield": _b_hill_yield,
+    "convex_mirror_image": _b_cm_image,
+    "convex_mirror_misjudge": _b_cm_misjudge,
+    "mirror_image_side": _b_mirror_side,
+    "mirror_road_coverage": _b_mirror_cover,
     "friction_circle_usage": _b_friction_usage,
     "curve_speed_limit": _b_curve_speed,
     "design_min_radius": _b_design_radius,

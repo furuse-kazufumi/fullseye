@@ -55,6 +55,7 @@ This series lines up the ops built on that bar, one per instalment. Every instal
 | 9 | [Decision scenes — checking the rear left in the mirror, predicting amber from the pedestrian light, giving way to an ambulance, waiting for a bus to pull out](#9-decision-scenes--checking-the-rear-left-in-the-mirror-predicting-amber-from-the-pedestrian-light-giving-way-to-an-ambulance-waiting-for-a-bus-to-pull-out) | Fermat point on the mirror / polygon of edge rays / the signal timing / closed forms for GHM and the stop line / emission-time geometry / arts. 40 and 31-2 |
 | 10 | [Lateral motion — slowing before a bend, staying in the lane, keeping left for a left turn, not catching a cyclist with the inner rear wheel](#10-lateral-motion--slowing-before-a-bend-staying-in-the-lane-keeping-left-for-a-left-turn-not-catching-a-cyclist-with-the-inner-rear-wheel) | friction circle and the ordinance / 2-DOF steady offset / off-tracking closed form / the Rules' positioning / sample gate (0.1 % points and KS) |
 | 11 | [Level crossings and right of way — stop just before and look both ways, never enter while the alarm sounds or when the far side is blocked, give way to the wider road](#11-level-crossings-and-right-of-way--stop-just-before-and-look-both-ways-never-enter-while-the-alarm-sounds-or-when-the-far-side-is-blocked-give-way-to-the-wider-road) | railway timing standard / barrier state machine / sight triangle / arts. 36, 38, 44, 50 verdicts / 1 mm grid zones |
+| 12 | [Overtaking and what you cannot see — wait while the sight distance is short, return once the car shows in the rear-view mirror, do not obstruct the ring, and curve mirrors make cars look far away](#12-overtaking-and-what-you-cannot-see--wait-while-the-sight-distance-is-short-return-once-the-car-shows-in-the-rear-view-mirror-do-not-obstruct-the-ring-and-curve-mirrors-make-cars-look-far-away) | zones by brute force over the text / time marches / sight-distance table / 3-D mirror ray tracing and Coddington |
 
 ---
 
@@ -1301,12 +1302,93 @@ The whole PoC: `py -3.11 examples/poc_driving_crossing.py` (figures and videos w
 
 ---
 
+## 12. Overtaking and what you cannot see — wait while the sight distance is short, return once the car shows in the rear-view mirror, do not obstruct the ring, and curve mirrors make cars look far away
+
+![A curve mirror seen from the driver's seat: the car in the mirror looks more than 130 m away, but it is about 30 m](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/03_mirror_tjunction.gif)
+
+*↑ A curve mirror at a blind T-junction (convex, R 3 m, diameter 0.8 m — assumed). Left = the mirror seen from the driver's seat (the inside of the mirror is ray-traced), top right = the driver's view, bottom right = true positions and mirror coverage from above. Read from its image size as if the mirror were flat, the red car looks more than 130 m away; it is really about 30 m from the mirror. Because the mirror is seen obliquely, the vertical reading (k_s = 4.75) and the horizontal reading (k_t = 8.58) differ. At the end the car comes into direct view from behind the wall. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_pass/03_mirror_tjunction.mp4)*
+
+From the not-yet-started part of the Rules-of-the-Road ledger, this part collects overtaking and what-you-cannot-see scenes that rule-based parts can reproduce: overtaking (wait while the visible distance is short of the required D*, never overtake in no-overtaking places, return only once the whole overtaken car shows in the rear-view mirror), the overtaken car must not speed up, a lane change must not make the following car brake hard, roundabouts (enter slowly without obstructing the ring, signal left after passing the exit before yours), the sight distance over a crest, and curve mirrors.
+
+The curve mirror is the vehicle-mirror part from earlier (a mirror as a virtual camera) put up beside the road. "Convex mirrors make things look farther away" is common knowledge; how much farther comes out in closed form.
+
+### Scenes and gates
+
+A new module `drivepass` (17 ops) and PoC ㉝.
+
+| Scene | Where the truth comes from | Result |
+|---|---|---|
+| Overtaking (S079, S081, S086) | art. 28(4) (not obstructing oncoming traffic), art. 30 zones checked by brute force every 0.25 m, D* closed form = 1 ms time march | 188 of the 240 rule-following drivers overtake; 0 in no-overtaking zones, smallest PET with oncoming cars 5.62 s, return gap = rear-view-mirror gap 19.75 m (Fermat shortest-path scan 19.74 m). Naive (pull out when nothing is seen, cut back in at once): 18 in no-overtaking zones, 44 with PET < 2 s, 30 meeting in the oncoming lane (PET < 0), and all 240 cut in short of the mirror gap |
+| Being overtaken (S085) | art. 27(1) | a lead car at constant speed has no violation; one that accelerates at 0.4 m/s² while being overtaken gets speed_increased |
+| Lane change (S067, S072) | art. 26-2(2), closed form of the deceleration the follower needs = two-car time march | at the closed-form deceleration the smallest gap is exactly the kept gap (error ≤ 0.0055 m); 0.97 times that breaks it in every case. The rule changes lanes in 219 scenes and waits in 21 because of the follower. Naive: late signal 240, hard braking 21 |
+| Roundabout (S069, S102) | arts. 37-2 and 53, time march along the ring | the rule obstructs 0 and enters slowly, waiting in 44 scenes. The left signal starts exactly when the replay (counting with cross products) passes the exit before yours (error 0.00 s). Naive: obstructs 38 / 240, late signal 240, right signal 76 |
+| Crest (S065, S081) | Road Structure Ordinance (eye 1.2 m, object 10 cm, crest curve radii) and the sight-distance table of art. 19 | reproduces three table rows (20.0 / 20, 161.0 / 160, 209.4 / 210 m). The PoC road's crest: closed form 89.28 m / sight-line scan 89.25 m. The stretch where sight distance is short of D* is 522 m, and the "vicinity" of art. 30 (30 m, assumed) covers only 60 m of it — the rest is stopped by the art. 28(4) judgement |
+| Curve mirror (S064) | closed-form convex-mirror imaging vs exact 3-D ray tracing | seen head-on, the distance read from image size is k·a (k = 1 + 2e/R). Looking at an R 3 m mirror from 8 m, a car 30 m away looks 190.0 m away (ray tracing 190.04 m). At 45° the readings split as Coddington's equations say: 142 m vertically, 257 m horizontally. The near blind stretch the mirror does not show on the road is 8.16 m (scan of 20,001 rays) |
+
+![Overtaking: rule and naive with the same driver and the same oncoming traffic](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/01_overtake_dashcam.gif)
+
+*↑ The same driver (#114) and the same oncoming traffic. First half = naive: 144 m before the crest, with no oncoming car in the visible range, it pulls out and cuts back in right after passing (gap 0.1 m) — PET 0.8 s with the oncoming car that the hill was hiding. Second half = rule: it waits while sight distance is short of D* = 467 m, pulls out 30 m past the crest, and returns at a gap of 19.7 m, where the whole lead car shows in the rear-view mirror — PET 31.1 s. Top = rear-view mirror, bottom = side view of the profile (height exaggerated). [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_pass/01_overtake_dashcam.mp4)*
+
+![Roundabout](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/02_roundabout_birdseye.gif)
+
+*↑ Turning right at a roundabout (passing two exits). Left = rule (waits for the ring traffic, enters slowly, and signals left at the yellow dot, after passing the exit before its own); right = naive (enters at speed, forcing a ring car to brake hard, signals right, and signals left only at the exit). [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_pass/02_roundabout_birdseye.mp4)*
+
+### ★ Where implementations go wrong
+
+- **A convex mirror makes cars look farther, but not necessarily slower.** Read from image size, the distance is k times too large. Speed depends on how you read it: read consistently from how the image size changes, a 10 m/s car looks like 63.3 m/s — **faster**. Only when you know the true distance and anchor to it does it look slower (2.33 m/s). All three readings agree with finite differences of the ray tracing.
+- **An obliquely viewed mirror is two different mirrors.** A T-junction mirror is seen at around 45°. The head-on formula (k = 6.33) lies between the vertical (4.75) and horizontal (8.58) values and matches neither; the image looks squashed sideways. This astigmatism had been listed as "not measured" in the first notes; it agrees with ray tracing within 0.1 %.
+- **The "vicinity" of a crest is not enough.** Art. 30 forbids overtaking near the top of a hill, but an assumed 30 m covers only 60 m of the 522 m where sight distance falls short of D*. The rest is stopped by "do not obstruct oncoming traffic" (art. 28(4)). Implement only the list of forbidden places and this is where the crash happens.
+- **A naive cut-in does not make the overtaken car brake.** The overtaking car is faster, so the deceleration needed by the lead car is 0 m/s². The danger shows in the time headway right after returning (median 0.18 s; the rule gives 1.81 s) and in the PET with oncoming cars. Gate on deceleration alone and the cut-in looks harmless.
+
+### What this does not do
+
+- "Vicinity" = 30 m either side, "steep" = 10 %, "sudden" = 2.0 m/s², crawling = 10 km/h, art. 27 "speeding up" = more than 0.2 m/s, the rear-view-mirror and curve-mirror dimensions and the seven reference distributions are **assumed values**.
+- The text of the cabinet order on signal timing (enforcement order art. 21) was not checked; "about 3 s before" and "the exit before yours" are the Rules-of-the-Road values.
+- Double overtaking, overtaking a car about to turn right, overtaking while being overtaken, the side to overtake on, lane changes across a yellow line and expressway overtaking have op verdicts (truth-table gates) but do not yet occur in the PoC's scenes; they stay not started in the ledger.
+- The curve-mirror scene is a 2-D layout seen from above, and the mirror image is rendered approximately (up to 5 % from exact vertex ray tracing). A state where the car is visible neither in the mirror nor directly did not occur with a 4.5 m car in this layout; showing it with cyclists or pedestrians is the next step.
+
+### Run it
+
+```python
+import fullseye as fs
+
+# Overtaking a 40 km/h car at 60 km/h (accel 1.2 m/s², limit 80 km/h): sight distance D* needed with oncoming cars at 60 km/h [m]
+r = fs.ledger.overtake_requirement(60 / 3.6, 40 / 3.6, lead_length=4.5, ego_length=4.7, gap_back=12.0, gap_front=15.0,
+                                   accel=1.2, v_max=80 / 3.6, lane_change_time=3.0, v_oncoming=60 / 3.6, pet_min=2.0)
+print(round(r["d_required"], 1))
+# 308.8         ← m (sight distance needed so no oncoming car arrives)
+
+# Do not return until the whole lead car shows in the rear-view mirror: the gap at that moment [m]
+print(round(fs.ledger.overtake_return_gap(lane_offset=3.25, lead_width=1.8)["gap"], 2))
+# 19.75        ← m
+
+# Crest (+4 % → -4 %, vertical curve 160 m): distance at which a 10 cm object is visible from eye height 1.2 m [m]
+print(round(fs.ledger.crest_sight_distance(grade_in=0.04, grade_out=-0.04, length=160.0)["sight"], 2))
+# 89.28        ← m
+
+# Curve mirror (convex, R 3 m) seen from 8 m: how far away does a car 30 m off look, judged by its image size?
+m = fs.ledger.convex_mirror_image(30.0, 3.0, eye_distance=8.0)
+print(round(float(m["k"]), 3), round(float(m["flat_equivalent_distance"]), 1))
+# 6.333 190.0  ← k, and how far away a flat mirror would show a car of that image size
+
+# Roundabout (4 arms, clockwise) from entry 0 to exit 1 (passing 2 exits): angle travelled when the left signal starts [rad]
+import math
+sp = fs.ledger.roundabout_signal_point([0.0, math.pi / 2, math.pi, 3 * math.pi / 2], 0, 1)
+print(round(sp["signal_angle"], 4), sp["exits_before"])
+# 3.1416 2  ← π = just past the second exit; 2 exits passed
+```
+
+The whole PoC: `py -3.11 examples/poc_driving_pass.py` (figures and videos when `FULLSEYE_FIGURE_DIR` is set).
+
+---
+
 ## Next
 
-**The rest of the ledger.** 105 scenes of the Rules-of-the-Road ledger are still not started. Next, those rule-based parts can reproduce — overtaking procedure and no-overtaking places (arts. 28–30: check the right rear, signal, about 3 s, return once the overtaken car shows in the rear-view mirror), not making following cars brake hard when changing lanes (art. 26-2), roundabouts (arts. 35-2 and 37-2), passing on slopes and engine braking downhill.
+**The rest of the ledger.** 97 scenes of the Rules-of-the-Road ledger are still not started. Next: put double overtaking, overtaking a car about to turn right, lane changes across a yellow line and expressway overtaking — which have op verdicts but no PoC scene yet — into scenes, and show cyclists and pedestrians in the curve mirror.
 
 ## References
 
+- Road Traffic Act art. 26-2 (restrictions on changing course), art. 27 (duties of a vehicle being caught up), art. 28 (method of overtaking), arts. 29–30 (places where overtaking is prohibited), art. 37-2 (relations at roundabouts), art. 53 (signals) / Road Structure Ordinance arts. 2, 19 (sight distance) and 22 (vertical curves) / Rules of the Road ch. 5 (signals, overtaking, roundabouts) and ch. 6 (slopes) / Coddington's equations (imaging by a spherical mirror at oblique incidence).
 - Interpretation standard of the ministerial ordinance on railway technical standards (level-crossing protection: alarm → closed and closed → arrival times) / Road Traffic Act art. 33 (passing level crossings), art. 36 (relations with other vehicles at junctions), art. 38 (priority of pedestrians at crossings), art. 44 (places where stopping and parking are prohibited), art. 50 (no entry into junctions etc.) / Rules of the Road ch. 6 (level crossings).
 - Road Structure Ordinance (art. 15 curve radius, art. 16 superelevation, art. 18 transition sections; text published by MLIT) / R. C. Coulter, "Implementation of the Pure Pursuit Path Tracking Algorithm", CMU-RI-TR-92-01, 1992 / G. M. Hoffmann et al., "Autonomous automobile trajectory tracking for off-road driving" (Stanley), *ACC* 2007 / Yamamoto, Owaki, Uesaka, cyclist speeds, JSCE annual meeting 2011.
 - D. C. Gazis, R. Herman, A. A. Maradudin, "The problem of the amber signal light in traffic flow", *Operations Research* 8, 1960 (dilemma zone).

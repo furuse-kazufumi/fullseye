@@ -12,6 +12,7 @@
 判断の場面(drivedecide: ミラーを鏡の向こうの仮想カメラで描く・凸面鏡の視野と死角、確認と合図の順序の採点、歩行者信号から車両の黄を予測・ジレンマゾーン、点滅の周波数と折り返し、サイレンのドップラーと到着時間差の方位、緊急車両への譲り(道交法 40 条)とバスの発進(31 条の 2)の採点)。
 横の運動(drivelateral: 摩擦円とカーブの限界速度・道路構造令の最小半径、2 輪等価モデルのアンダーステア勾配と定常円旋回、アッカーマンと内輪差の閉形式・後車軸の軌跡、クロソイドとフレネル積分、pure pursuit と Stanley の制御則と定常の横ずれ、曲率からの速度計画、車線の横位置と TLC、左折・右折の寄り方の採点)。
 踏切と交差点の優先(drivecrossing: 鉄道の解釈基準の警報の時間と遮断機の状態、警報灯の交互点滅を画素から読む、渡り切る時間と向こう側の余地(道交法 33 条・50 条 2 項)、一時停止と左右確認の採点、見通し距離の閉形式、優先道路・広い道路と左方優先(36 条)、交差車の到達時間と急な減速、横断歩道の手前の停止車両と 30 m 以内の追越し(38 条)、駐停車禁止の区間(44 条))。
+追越しと見えない所(drivepass: 追越しに要る時間・道のりと対向車の境目の距離、ルームミラーに前車の全体が映って戻る車間、追越し禁止の区間と判定(28〜30 条)、追い越される側の義務(27 条)、進路変更先の後続車に要る減速度(26 条の 2)、環状交差点の優先と出口の 1 つ手前での合図(37 条の 2・53 条)、坂の頂上の視距(道路構造令の表を再現)と止まれる速さ、坂道の行き違い、カーブミラー(凸面鏡)の像の大きさ・距離と速さの見誤り・像の左右・道の上で映る範囲と死角)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -38,6 +39,7 @@ import drivetraffic
 import drivedecide
 import drivelateral
 import drivecrossing
+import drivepass
 import drivelong
 import drivettc
 import gsplatnp
@@ -53,7 +55,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -422,6 +424,28 @@ _CATALOG = {
         ("no_stopping_zones", "drivecrossing", ["table"], "table"),
         ("legal_stop_intervals", "drivecrossing", ["any"], "any"),
         ("parking_position_check", "drivecrossing", [], "table"),
+    ],
+    # 追越しと見えない所: 追越しの時間と対向車の境目・ルームミラーで戻る距離(28〜30 条・27 条・教則 5-6-3)、後続車に要る減速度と
+    # 進路変更(26 条の 2)、環状交差点の優先と出口の合図(35 条の 2・37 条の 2・53 条 2 項)、凸形縦断曲線の視距(構造令の表を再現)、
+    # 凸面鏡の見誤り・像の左右・道の上で映る範囲。
+    "pass": [
+        ("overtake_requirement", "drivepass", [], "table"),
+        ("overtake_return_gap", "drivepass", [], "table"),
+        ("no_overtaking_zones", "drivepass", ["table"], "table"),
+        ("overtake_permitted", "drivepass", ["table"], "table"),
+        ("overtaken_conduct_check", "drivepass", ["table"], "table"),
+        ("lane_change_follower_decel", "drivepass", ["any"], "table"),
+        ("lane_change_permitted", "drivepass", ["table"], "table"),
+        ("roundabout_entry_check", "drivepass", ["table"], "table"),
+        ("roundabout_signal_point", "drivepass", ["any"], "table"),
+        ("roundabout_signal_check", "drivepass", ["signal", "signal"], "table"),
+        ("crest_sight_distance", "drivepass", [], "table"),
+        ("crest_safe_speed", "drivepass", ["any"], "table"),
+        ("hill_meeting_yield", "drivepass", [], "table"),
+        ("convex_mirror_image", "drivepass", ["any"], "table"),
+        ("convex_mirror_misjudge", "drivepass", ["any", "any"], "table"),
+        ("mirror_image_side", "drivepass", ["points"], "table"),
+        ("mirror_road_coverage", "drivepass", [], "table"),
     ],
 }
 

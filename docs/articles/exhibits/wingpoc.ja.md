@@ -5108,6 +5108,46 @@ py -3.11 examples/poc_driving_crossing.py
 
 使用 op(ノートへ): [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_mesh_object.html) · [`aliased_frequency`](https://furuse.work/ops/drive/decide/aliased_frequency.html) · [`conflict_zone_intervals`](https://furuse.work/ops/drive/crossing/conflict_zone_intervals.html) · [`crossing_clear_time`](https://furuse.work/ops/drive/crossing/crossing_clear_time.html) · [`crossing_gate_state`](https://furuse.work/ops/drive/crossing/crossing_gate_state.html) · [`crossing_lamp_signal`](https://furuse.work/ops/drive/crossing/crossing_lamp_signal.html) · [`crossing_stop_check`](https://furuse.work/ops/drive/crossing/crossing_stop_check.html) · [`crossing_timing_check`](https://furuse.work/ops/drive/crossing/crossing_timing_check.html) · [`crosswalk_mesh`](https://furuse.work/ops/drive/terrain/crosswalk_mesh.html) · [`crosswalk_overtake_check`](https://furuse.work/ops/drive/crossing/crosswalk_overtake_check.html) · [`crosswalk_stopped_vehicle_check`](https://furuse.work/ops/drive/crossing/crosswalk_stopped_vehicle_check.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`exit_room_check`](https://furuse.work/ops/drive/crossing/exit_room_check.html) · [`flash_frequency`](https://furuse.work/ops/drive/decide/flash_frequency.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`lamp_pair_phase`](https://furuse.work/ops/drive/crossing/lamp_pair_phase.html) · [`legal_stop_intervals`](https://furuse.work/ops/drive/crossing/legal_stop_intervals.html) · [`no_stopping_zones`](https://furuse.work/ops/drive/crossing/no_stopping_zones.html) · [`obstruction_decel`](https://furuse.work/ops/drive/crossing/obstruction_decel.html) · [`parking_position_check`](https://furuse.work/ops/drive/crossing/parking_position_check.html) · [`pedestrian_mesh`](https://furuse.work/ops/drive/terrain/pedestrian_mesh.html) · [`priority_rule`](https://furuse.work/ops/drive/crossing/priority_rule.html) · [`sight_triangle_distance`](https://furuse.work/ops/drive/crossing/sight_triangle_distance.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) …(他 3)
 
+## No.2026.183 —— 追越しと見えない所 ―― 見通しが足りなければ待つ、ルームミラーに映ってから戻る、環道の車を妨げない、カーブミラーは遠く見える
+
+[![追越しと見えない所 ―― 見通しが足りなければ待つ、ルームミラーに映ってから戻る、環道の車を妨げない、カーブミラーは遠く見える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/01_overtake_dashcam.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/01_overtake_dashcam.gif)
+
+*↑ **追越しと見えない所 ―― 見通しが足りなければ待つ、ルームミラーに映ってから戻る、環道の車を妨げない、カーブミラーは遠く見える** ―― 教則の台帳の未着手から、ルールベースの部品で再現できる追越しと見えない所の場面 —— 追越し(見通しが要る距離 D* に足りなければ待つ・30 条の禁止区間・ルームミラーに前の車の全体が映ってから戻る)、追い越される側は速さを増さない、進路変更で後続車に急ブレーキをさせない、環状交差点(徐行で入り、出口の 1 つ手前の出口を過ぎたら左の合図)、坂の頂上の視距、カーブミラー。新モジュール drivepass 17 op、乱数の値は標本の門(0.1 % 点と KS)。門: ルームミラーの車間 閉形式 19.75 m = Fermat の最短経路の走査 / 30 条の禁止区間 = 条文の総当たり / 規則の 240 人は 188 人が追い越し、禁止区間 0・対向車との PET 最小 5.62 s、素朴は禁止区間 18・PET < 2 s が 44・割り込み 240 / 240 / 後続車に要る減速度の閉形式 = 2 台の時間の行進 / 環道の車に要る減速度 = 円周の行進、左の合図の時刻 = 出口の通過の再生、素朴は進行妨害 38 / 240 / 道路構造令の視距の表 3 行を再現 / 凸面鏡の大きさから読む距離 k·a = 3 次元の光線追跡(30 m → 190.04 m)、45° の斜めでは Coddington の式どおり縦 k_s = 4.75・横 k_t = 8.58、手前の死角 8.16 m。見つけたこと: 凸面鏡は遠く見えるが、速さは読み方で速くも遅くも見える / 坂の頂上の「付近」30 m は見通しが足りない 522 m のうち 60 m しか覆わない / 素朴な割り込みは前の車に急ブレーキを要らせない(危なさは車間時間と PET に出る)。正直に: 「付近」30 m・「急な」10 %・「急に」2.0 m/s²・徐行 10 km/h・鏡の寸法・参照分布は仮定、施行令 21 条は未確認。教則の台帳は再現 38・一部 17・不能 7・未着手 97。24 門、3.5 s。*
+
+[![上から見た動画(178 コマ、0.2 s ごと = 実時間)。環状交差点(環道の半径 14 m、右回り)に南から入り 出口 3(右折) へ出る場面 #0 を、同じ環道の車で。左 = 規則: 環道の車に 2.0 m/s² を超える減速を要らせ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/02_roundabout_birdseye.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/02_roundabout_birdseye.gif)
+
+*↑ 測定の図 ―― 上から見た動画(178 コマ、0.2 s ごと = 実時間)。環状交差点(環道の半径 14 m、右回り)に南から入り 出口 3(右折) へ出る場面 #0 を、同じ環道の車で。左 = 規則: 環道の車に 2.0 m/s² を超える減速を要らせない時刻まで 0.8 s 待ち、徐行(10 km/h)で入り、出口の 1 つ手前の出口の側方で左の合図(roundabout_signal_point、黄の点)—— roundabout_signal_check = 違反なし。右 = 素朴: 20 km/h のまま入り(環道の車に要らせた減速度 最大 3.1 m/s² = 37 条の 2 第 1 項の進行妨害)、右の合図で入り、出口の直前で左に変える(right_signal, left_late)。*
+
+[![参照 N(55, 6) km/h(仮定)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/04_sample_gate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/04_sample_gate.png)
+
+*↑ 参照 N(55, 6) km/h(仮定)。*
+
+[![凸形縦断曲線(±4 %、L 160 m、R 2000 m)の道で、運転者の目(1.2 m)から対向車(1.2 m)が見える距離。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/05_sight_vs_dstar_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/05_sight_vs_dstar.png)
+
+*↑ 凸形縦断曲線(±4 %、L 160 m、R 2000 m)の道で、運転者の目(1.2 m)から対向車(1.2 m)が見える距離。*
+
+[![平面鏡のつもりで像の大きさから距離を読むと k 倍遠い。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/07_mirror_readings_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/07_mirror_readings.png)
+
+*↑ 平面鏡のつもりで像の大きさから距離を読むと k 倍遠い。*
+
+[![240 場面(後続車の速さ・反応は標本の門を通った値、自車 50 km/h、残す車間 2 m)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/08_lane_change_decel_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/08_lane_change_decel.png)
+
+*↑ 240 場面(後続車の速さ・反応は標本の門を通った値、自車 50 km/h、残す車間 2 m)。*
+
+[![目玉の動画(51 コマ、実時間)。見通しの悪い T 字路(右の角は高さ 2 m の塀)で停止線に止まった運転者が、向こう側のカーブミラー(凸面 R 3 m・直径 0.8 m、目から 8.0 m、入射角 45°)を見る。左 = 運転席から見た](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/03_mirror_tjunction.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/03_mirror_tjunction.gif)
+
+*↑ 動く図 ―― 目玉の動画(51 コマ、実時間)。見通しの悪い T 字路(右の角は高さ 2 m の塀)で停止線に止まった運転者が、向こう側のカーブミラー(凸面 R 3 m・直径 0.8 m、目から 8.0 m、入射角 45°)を見る。左 = 運転席から見た鏡の拡大: 鏡の中は球面での反射の光線を環境の画像から引いて描いた(視差を深度で 3 回補正、車のメッシュの頂点の厳密な光線追跡と画素で照合)。右から 30 km/h で来る赤い車は、鏡から 29 m のとき鏡の中で高さ 48 px(同じ所の平面鏡なら 189 px)—— 画素の比で読むと 139 m 先。閉形式の読みは縦 140 m・横 253 m(Coddington の式 k_s = 4.75、k_t = 8.58。正面から見る近軸なら k = 6.33 で 187 m)。右上 = 運転席からの広い眺め、右下 = 上から見た本当の位置(赤の線 = 鏡に映らない手前 8.2 m、橙 = 映る範囲、緑 = 塀の陰から直接見える所。下の目盛り = 本当の距離と鏡の読み)。*
+
+```
+py -3.11 examples/poc_driving_pass.py
+```
+
+ソース: [examples/poc_driving_pass.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_driving_pass.py)
+
+この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_pass)
+
+使用 op(ノートへ): [`convex_mirror_image`](https://furuse.work/ops/drive/pass/convex_mirror_image.html) · [`convex_mirror_misjudge`](https://furuse.work/ops/drive/pass/convex_mirror_misjudge.html) · [`crest_safe_speed`](https://furuse.work/ops/drive/pass/crest_safe_speed.html) · [`crest_sight_distance`](https://furuse.work/ops/drive/pass/crest_sight_distance.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`lane_change_follower_decel`](https://furuse.work/ops/drive/pass/lane_change_follower_decel.html) · [`lane_change_permitted`](https://furuse.work/ops/drive/pass/lane_change_permitted.html) · [`load_asset`](https://furuse.work/ops/drive/world/load_asset.html) · [`mirror_aim_normal`](https://furuse.work/ops/drive/decide/mirror_aim_normal.html) · [`mirror_road_coverage`](https://furuse.work/ops/drive/pass/mirror_road_coverage.html) · [`no_overtaking_zones`](https://furuse.work/ops/drive/pass/no_overtaking_zones.html) · [`overtake_permitted`](https://furuse.work/ops/drive/pass/overtake_permitted.html) · [`overtake_requirement`](https://furuse.work/ops/drive/pass/overtake_requirement.html) · [`overtake_return_gap`](https://furuse.work/ops/drive/pass/overtake_return_gap.html) · [`overtaken_conduct_check`](https://furuse.work/ops/drive/pass/overtaken_conduct_check.html) · [`roundabout_entry_check`](https://furuse.work/ops/drive/pass/roundabout_entry_check.html) · [`roundabout_signal_check`](https://furuse.work/ops/drive/pass/roundabout_signal_check.html) · [`roundabout_signal_point`](https://furuse.work/ops/drive/pass/roundabout_signal_point.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
+
 ### 数学の絵 ―― 定理が門になる回(別記事)
 
 この展示先の回は、計測の展示館ではなく**数学の絵のシリーズ**に掛かっています。分ける基準は「真値がどこから来るか」です —— 計測の展示は測る対象があり真値は対象の側に、ここの回は対象が無く、真値は描いた絵そのものの定理・恒等式・不変量から出ます。記事は手書きなので、生成器はここを描きません。

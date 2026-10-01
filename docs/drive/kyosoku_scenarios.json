@@ -1125,9 +1125,11 @@
    "law_status": "OK",
    "scoreability": "A",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_pass"
+   ],
+   "note": "カーブミラー(凸面鏡)の読み: 大きさから読む距離 = k·a・斜めでは縦横に分かれる(Coddington)・道の上で映る範囲と手前の死角(convex_mirror_image・convex_mirror_misjudge・mirror_road_coverage)。交差点の手前の徐行と左右の確認の採点は無い"
   },
   {
    "id": "S065",
@@ -1141,7 +1143,8 @@
    "numbers": [],
    "status": "reproduced",
    "reproduced_by": [
-    "poc_driving_lateral"
+    "poc_driving_lateral",
+    "poc_driving_pass"
    ],
    "note": "曲がり角の附近は徐行: 曲率からの速度計画で附近 10 km/h 以下・摩擦円の使用率 最大 0.48"
   },
@@ -1185,7 +1188,8 @@
    ],
    "status": "reproduced",
    "reproduced_by": [
-    "poc_driving_decisions"
+    "poc_driving_decisions",
+    "poc_driving_pass"
    ],
    "note": "ミラー → 約 3 秒前に合図 → 進路変更(check_sequence_score、許容 ±0.5 s は仮定)。ミラーが合図の後・無しは安全不確認 10 点"
   },
@@ -1213,9 +1217,11 @@
    "law_status": "PART",
    "scoreability": "A",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_pass"
+   ],
+   "note": "出口の 1 つ手前の出口を過ぎたら左の合図(roundabout_signal_point / check、施行令 21 条は未確認で時期は教則の値)"
   },
   {
    "id": "S070",
@@ -1263,9 +1269,11 @@
      "source": "法26条の2第2項"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_pass"
+   ],
+   "note": "後続車に要る減速度の閉形式(lane_change_follower_decel)= 2 台の時間の行進、「急に」2.0 m/s²(仮定)を強いない"
   },
   {
    "id": "S073",
@@ -1361,9 +1369,11 @@
    "law_status": "UNV",
    "scoreability": "B",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_pass"
+   ],
+   "note": "見えている距離 ≥ 追越しに要る D*(overtake_requirement・overtake_permitted、28 条 4 項)。素朴は対向車線で出会う場面あり"
   },
   {
    "id": "S080",
@@ -1395,9 +1405,11 @@
      "source": "法30条3号"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_pass"
+   ],
+   "note": "30 条の禁止区間(no_overtaking_zones、手前 30 m・「付近」30 m・「急な」10 % は仮定)を条文の総当たりで照合、坂の頂上は視距の閉形式(crest_sight_distance、構造令の表を再現)"
   },
   {
    "id": "S082",
@@ -1457,9 +1469,11 @@
      "source": "法27条1項"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_pass"
+   ],
+   "note": "追い越される側は速さを増さない(overtaken_conduct_check、27 条 1 項)。左へ譲る(2 項)は op の判定だけ"
   },
   {
    "id": "S086",
@@ -1477,9 +1491,11 @@
      "source": "教則 5-6-3(4)"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_pass"
+   ],
+   "note": "見通しを確かめて出て、ルームミラーに前の車の全体が映る車間で戻る(overtake_return_gap)。右後方の確認と合図の時刻は見ない"
   },
   {
    "id": "S087",
@@ -1724,9 +1740,11 @@
    "law_status": "OK",
    "scoreability": "A",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_pass"
+   ],
+   "note": "環道の車を妨げず徐行で入る(roundabout_entry_check、37 条の 2)= 円周の時間の行進。素朴は進行妨害あり"
   },
   {
    "id": "S103",

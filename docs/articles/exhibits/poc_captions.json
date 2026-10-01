@@ -2021,6 +2021,17 @@
    "run": "py -3.11 examples/poc_driving_crossing.py"
   },
   {
+   "id": "poc_driving_pass",
+   "wing": "lane_drive",
+   "added": "2026-10-02",
+   "numbers_source": "log",
+   "title_ja": "追越しと見えない所 ―― 見通しが足りなければ待つ、ルームミラーに映ってから戻る、環道の車を妨げない、カーブミラーは遠く見える",
+   "title_en": "Overtaking and What You Cannot See — Wait for Sight Distance, Return Once in the Mirror, Do Not Obstruct the Ring, and Why Curve Mirrors Make Cars Look Far",
+   "caption_ja": "教則の台帳の未着手から、ルールベースの部品で再現できる追越しと見えない所の場面 —— 追越し(見通しが要る距離 D* に足りなければ待つ・30 条の禁止区間・ルームミラーに前の車の全体が映ってから戻る)、追い越される側は速さを増さない、進路変更で後続車に急ブレーキをさせない、環状交差点(徐行で入り、出口の 1 つ手前の出口を過ぎたら左の合図)、坂の頂上の視距、カーブミラー。新モジュール drivepass 17 op、乱数の値は標本の門(0.1 % 点と KS)。門: ルームミラーの車間 閉形式 19.75 m = Fermat の最短経路の走査 / 30 条の禁止区間 = 条文の総当たり / 規則の 240 人は 188 人が追い越し、禁止区間 0・対向車との PET 最小 5.62 s、素朴は禁止区間 18・PET < 2 s が 44・割り込み 240 / 240 / 後続車に要る減速度の閉形式 = 2 台の時間の行進 / 環道の車に要る減速度 = 円周の行進、左の合図の時刻 = 出口の通過の再生、素朴は進行妨害 38 / 240 / 道路構造令の視距の表 3 行を再現 / 凸面鏡の大きさから読む距離 k·a = 3 次元の光線追跡(30 m → 190.04 m)、45° の斜めでは Coddington の式どおり縦 k_s = 4.75・横 k_t = 8.58、手前の死角 8.16 m。見つけたこと: 凸面鏡は遠く見えるが、速さは読み方で速くも遅くも見える / 坂の頂上の「付近」30 m は見通しが足りない 522 m のうち 60 m しか覆わない / 素朴な割り込みは前の車に急ブレーキを要らせない(危なさは車間時間と PET に出る)。正直に: 「付近」30 m・「急な」10 %・「急に」2.0 m/s²・徐行 10 km/h・鏡の寸法・参照分布は仮定、施行令 21 条は未確認。教則の台帳は再現 38・一部 17・不能 7・未着手 97。24 門、3.5 s。",
+   "caption_en": "From the not-yet-started part of the Rules-of-the-Road ledger, overtaking and what-you-cannot-see scenes that rule-based parts can reproduce — overtaking (wait while sight distance is short of the required D*, art. 30 no-overtaking zones, return once the whole lead car shows in the rear-view mirror), the overtaken car does not speed up, a lane change must not make the follower brake hard, roundabouts (enter slowly, signal left after passing the exit before yours), sight distance over a crest, and curve mirrors. New module drivepass, 17 ops; random values pass the sample gate (0.1 % points and KS). Gates: rear-view-mirror gap closed form 19.75 m = Fermat shortest-path scan / art. 30 zones = brute force over the text / 188 of the 240 rule-following drivers overtake, 0 in zones, smallest PET with oncoming cars 5.62 s; naive: 18 in zones, 44 with PET < 2 s, 240 / 240 cut-ins / the follower's required deceleration in closed form = two-car time march / the ring car's required deceleration = time march along the ring, and the left signal starts exactly when the replay passes the exit; naive obstructs 38 / 240 / three rows of the Road Structure Ordinance's sight-distance table reproduced / distance read from a convex mirror's image size, k·a = exact 3-D ray tracing (30 m → 190.04 m); at 45° the readings split as Coddington says, k_s = 4.75 vertically and k_t = 8.58 horizontally; near blind stretch 8.16 m. Found on the way: a convex mirror makes cars look farther, but faster or slower depending on how speed is read / a 30 m crest 'vicinity' covers only 60 m of the 522 m where sight distance is short / a naive cut-in needs no hard braking from the lead car (the danger shows in headway and PET). Honestly: 'vicinity' 30 m, 'steep' 10 %, 'sudden' 2.0 m/s², crawling 10 km/h, mirror dimensions and reference distributions are assumptions; enforcement order art. 21 was not checked. The ledger now reads 38 reproduced, 17 partial, 7 not reproducible, 97 not started. 24 gates, 3.5 s.",
+   "run": "py -3.11 examples/poc_driving_pass.py"
+  },
+  {
    "id": "poc_ball_bounce",
    "wing": "wing_xyt",
    "added": "2026-09-29",

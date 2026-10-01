@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">overtake_requirement — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.overtake_requirement(v_ego: &#x27;float&#x27;, v_lead: &#x27;float&#x27;, *, lead_length: &#x27;float&#x27;, ego_length: &#x27;float&#x27;, gap_back: &#x27;float&#x27;, gap_front: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0, v_max: &#x27;Optional[float]&#x27; = None, lane_change_time: &#x27;float&#x27; = 0.0, v_oncoming: &#x27;float&#x27; = 0.0, pet_min: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivepass; drivepass.overtake_requirement(v_ego: &#x27;float&#x27;, v_lead: &#x27;float&#x27;, *, lead_length: &#x27;float&#x27;, ego_length: &#x27;float&#x27;, gap_back: &#x27;float&#x27;, gap_front: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0, v_max: &#x27;Optional[float]&#x27; = None, lane_change_time: &#x27;float&#x27; = 0.0, v_oncoming: &#x27;float&#x27; = 0.0, pet_min: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;overtake_requirement&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>前車を追い越すのに要る時間・道のりと、対向車が来ない境目の距離(閉形式)。場面 S079・S086・S145(28 条 4 項)。</p>
+<p>自車の前端が前車の後端の `<code style="color:#22d3bf">gap_back</code><code style="color:#22d3bf"> 手前で対向車線(又は右の車線)に出てから、自車の後端が前車の前端の </code><code style="color:#22d3bf">gap_front</code>`</p>
+<p>先に出るまで(相対の距離 D = gap_back + lead_length + ego_length + gap_front)。自車は初速 `<code style="color:#22d3bf">v_ego</code><code style="color:#22d3bf"> から </code><code style="color:#22d3bf">accel</code>` で</p>
+<p>`<code style="color:#22d3bf">v_max</code><code style="color:#22d3bf"> まで加速(教則 5-6-3(4)「最高速度の制限内で加速しながら」)、前車は </code><code style="color:#22d3bf">v_lead</code>` で一定。そのあと</p>
+<p>`<code style="color:#22d3bf">lane_change_time</code><code style="color:#22d3bf"> かけて元の車線に戻り切る。</code><code style="color:#22d3bf">gap_front</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">overtake_return_gap</code>` の値を入れると「ルームミラーで</p>
+<p>見える距離」まで進んでから戻る手順(教則 5-6-3(6))になる。</p>
+<p>返り値: `<code style="color:#22d3bf">relative_distance</code><code style="color:#22d3bf"> = D、</code><code style="color:#22d3bf">t_pass</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">t_occupy</code><code style="color:#22d3bf"> = t_pass + lane_change_time、</code><code style="color:#22d3bf">ego_distance</code>`(占有の間に</p>
+<p>自車が進む道のり)、`<code style="color:#22d3bf">v_pass</code><code style="color:#22d3bf">(追い越し終えたときの速さ)、</code><code style="color:#22d3bf">d_required</code>` = ego_distance + v_oncoming (t_occupy +</p>
+<p>pet_min)(判断の時点で対向車がこれより遠ければ、戻り切ってから pet_min 秒以上あとに対向車がその地点に着く)。</p>
+<p>前に出られない(相対速度が正にならない)は ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_pass">poc_driving_pass</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_pass.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">pass</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:overtake_return_gap">overtake_return_gap</a> · <a style="color:#22d3bf" href="opdrive:no_overtaking_zones">no_overtaking_zones</a> · <a style="color:#22d3bf" href="opdrive:overtake_permitted">overtake_permitted</a> · <a style="color:#22d3bf" href="opdrive:overtaken_conduct_check">overtaken_conduct_check</a> · <a style="color:#22d3bf" href="opdrive:lane_change_follower_decel">lane_change_follower_decel</a> · <a style="color:#22d3bf" href="opdrive:lane_change_permitted">lane_change_permitted</a> · <a style="color:#22d3bf" href="opdrive:roundabout_entry_check">roundabout_entry_check</a> · <a style="color:#22d3bf" href="opdrive:roundabout_signal_point">roundabout_signal_point</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivepass.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
