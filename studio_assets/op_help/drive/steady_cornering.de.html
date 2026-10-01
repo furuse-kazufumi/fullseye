@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">steady_cornering — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.steady_cornering(speed: &#x27;float&#x27;, radius: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivelateral; drivelateral.steady_cornering(speed: &#x27;float&#x27;, radius: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;steady_cornering&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>線形 2 輪等価モデルの定常円旋回(速さ u、旋回半径 R = u/r、左旋回を正)。</p>
+<p>R は前向きの速さ u とヨーレート r で定義する(線形モデルの慣習)。重心の軌跡の実際の半径は合成の速さ / r =</p>
+<p>R √(1 + tan²β) で、β が小さい範囲で R に等しい(門で確かめた差は β² の桁)。</p>
+<p>返り値: `<code style="color:#22d3bf">steer</code><code style="color:#22d3bf"> δ = L/R + K u²/R [rad]、</code><code style="color:#22d3bf">yaw_rate</code><code style="color:#22d3bf"> r = u/R、</code><code style="color:#22d3bf">lateral_accel</code>` u²/R、</p>
+<p>`<code style="color:#22d3bf">sideslip</code><code style="color:#22d3bf"> β = l_r/R − m l_f u²/(C_r L R)、</code><code style="color:#22d3bf">yaw_gain</code><code style="color:#22d3bf"> r/δ = (u/L)/(1 + K u²/L)、</code><code style="color:#22d3bf">front_slip</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rear_slip</code>`</p>
+<p>(軸の横すべり角)、`<code style="color:#22d3bf">K</code>`。R &lt; 0 で右旋回(符号がそのまま反転)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: u ≤ 0、R = 0 / 非有限、母数の誤り、1 + K u²/L ≤ 0(臨界速度以上)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">lateral</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:friction_circle_usage">friction_circle_usage</a> · <a style="color:#22d3bf" href="opdrive:curve_speed_limit">curve_speed_limit</a> · <a style="color:#22d3bf" href="opdrive:design_min_radius">design_min_radius</a> · <a style="color:#22d3bf" href="opdrive:understeer_gradient">understeer_gradient</a> · <a style="color:#22d3bf" href="opdrive:bicycle_model_step">bicycle_model_step</a> · <a style="color:#22d3bf" href="opdrive:ackermann_steer_angles">ackermann_steer_angles</a> · <a style="color:#22d3bf" href="opdrive:offtracking_circle">offtracking_circle</a> · <a style="color:#22d3bf" href="opdrive:rear_axle_path">rear_axle_path</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivelateral.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

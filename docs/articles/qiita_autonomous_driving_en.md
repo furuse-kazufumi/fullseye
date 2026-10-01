@@ -53,6 +53,7 @@ This series lines up the ops built on that bar, one per instalment. Every instal
 | 7 | [An endless map — tiles made around the car, far tiles dropped, 50 km without a break](#7-an-endless-map--tiles-made-around-the-car-far-tiles-dropped-50-km-without-a-break) | both sides of a seam agree / regeneration fingerprints (SHA-256) / position re-summed as rationals / the (2r + 1)² bound |
 | 8 | [Moving traffic and blind spots — a child behind a parked car, meeting oncoming traffic, a bus stop, bad drivers, a pedestrian waiting at a crossing](#8-moving-traffic-and-blind-spots--a-child-behind-a-parked-car-meeting-oncoming-traffic-a-bus-stop-bad-drivers-a-pedestrian-waiting-at-a-crossing) | closed-form sight lines / IDM equilibrium gap / ∫λ and Adams' formula / the habits and intents given (truth) / the Rules-of-the-Road ledger |
 | 9 | [Decision scenes — checking the rear left in the mirror, predicting amber from the pedestrian light, giving way to an ambulance, waiting for a bus to pull out](#9-decision-scenes--checking-the-rear-left-in-the-mirror-predicting-amber-from-the-pedestrian-light-giving-way-to-an-ambulance-waiting-for-a-bus-to-pull-out) | Fermat point on the mirror / polygon of edge rays / the signal timing / closed forms for GHM and the stop line / emission-time geometry / arts. 40 and 31-2 |
+| 10 | [Lateral motion — slowing before a bend, staying in the lane, keeping left for a left turn, not catching a cyclist with the inner rear wheel](#10-lateral-motion--slowing-before-a-bend-staying-in-the-lane-keeping-left-for-a-left-turn-not-catching-a-cyclist-with-the-inner-rear-wheel) | friction circle and the ordinance / 2-DOF steady offset / off-tracking closed form / the Rules' positioning / sample gate (0.1 % points and KS) |
 
 ---
 
@@ -1133,12 +1134,94 @@ The whole PoC: `py -3.11 examples/poc_driving_decisions.py` (figures and videos 
 
 ---
 
+## 10. Lateral motion — slowing before a bend, staying in the lane, keeping left for a left turn, not catching a cyclist with the inner rear wheel
+
+![Dashcam: slowing before a bend and staying in the lane; keeping left before a left turn](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/01_lateral_dashcam.gif)
+
+*↑ Dashcam (top right = friction-circle inset with the usage point). The car slows to a speed set by the curvature before the bend and stays in its lane through it. For the left turn, a version that keeps left first is set beside one that turns from the middle of the lane and lets a following cyclist slip in. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_lateral/01_lateral_dashcam.mp4)*
+
+So far the series was mostly longitudinal (stop, wait, give way). This part is **lateral**: what limits a turn, where in the lane to drive, and why a left turn starts by "keeping to the left in advance". From the Rules-of-the-Road ledger: keep to the left, do not straddle lane lines, do not run onto the shoulder, slow down near corners, turn left close to the left edge along the kerb, and turn right just inside the centre of the junction.
+
+Every part is **rule-based** (the author's policy: "let the AI work out combinations of parts, and add parts only if they are rule-based"). No learning is used; each part is gated by a closed form, a published value or a legal rule. A second policy — "if you put random values in, do not accept ones that are statistically far too extreme" — became a gate as well.
+
+### Scenes and gates
+
+A new module `drivelateral` (20 ops) and PoC ㉛.
+
+| Scene | Where the truth comes from | Result |
+|---|---|---|
+| Gate on random values | two-sided 0.1 % points of the reference distribution (one by one) and a KS test (the population) | of 24,000 cyclist speeds, 22 are dropped with a reason and the population has KS p = 0.905. Five impossible values (μ = 1.9 and so on) are dropped one by one. A unit error (m/s divided by 3.6 again) passes the one-by-one gate 86 % of the time, but KS drops it with D = 0.986 |
+| Road geometry | the tables in Road Structure Ordinance arts. 15 and 18, and the manual's allowance (rate of change of lateral acceleration 0.5–0.75 m/s³) | a clothoid with R 100 m and a 40 m transition gives 0.670 m/s³ at the design speed; circle shift 0.666 m (approximation L²/24R 0.667 m) |
+| Slowing before a bend (S065) | the friction circle √(ax² + ay²) ≤ μg and a forward–backward speed plan from the curvature | all 120 planned drivers stay inside the circle (max usage 0.48) and are at most 10 km/h near the corner; without a plan (50 km/h throughout) every one leaves the circle (usage 1.65–2.42) |
+| Staying in the lane (S020, S024, S033) | distance from the four body corners to the centre line and the edge line | nobody straddles the centre line (closest 0.24 m) or runs onto the shoulder (closest 0.34 m). With a fixed 20 m look-ahead all 40 drivers cross the edge line at the corner |
+| Lane-keeping control law | steady lateral offset of pure pursuit (2-DOF formula) | the formula predicts the 0.144–0.250 m offset at the end of the arc to 0.0001 m |
+| Off-tracking (S091) | closed form of the rear-wheel path (tractrix) | at 90° with a 6 m front radius, rear-axle radius 5.4092 m closed form vs 5.4090 m numerical (difference 1.7 × 10⁻⁴ m) |
+| Left turn (S092, S091) | the Rules' "keep close to the left edge in advance and go slowly along the kerb" (turn_maneuver_check) | the keep-left plan has no violation and passes a cyclist waiting at the corner by 0.66 m; following the corner with the front wheel fails as "off-tracking into the corner" and touches the cyclist (0.00 m) |
+| A following cyclist slipping in | cyclist position (truth) and importance-weighted counts | keeping left: no collision (grid, naive MC and importance sampling alike). Not keeping left leaves some: importance sampling p = 0.00024; naive MC 12 hits in 24,000 trials (expected 5.8, two-sided p = 0.03). Per-trial standard deviation about 1/50 |
+| Right turn (S093) | the Rules' "keep to the centre and go slowly just inside the centre of the junction" | the plan has no violation (1.41 m from the centre); a wide turn fails as "outside the centre" and an early cut fails as "not just inside" |
+
+![Two cars from above: planned and unplanned](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/02_lateral_birdseye.gif)
+
+*↑ From above. Left = planned, right = unplanned (50 km/h throughout). Bottom strip = the speed plans of 120 drivers, bottom right = the friction circle. At the tight corner the unplanned car reaches usage 1.74, outside the circle (the model is linear, so tyre saturation is not drawn; the verdict is the usage). [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_lateral/02_lateral_birdseye.mp4)*
+
+![Off-tracking in a left turn](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/04_offtracking_geometry.png)
+
+*↑ Off-tracking in a left turn (from above, 1 m equal scale). Blue / green = front and rear left wheels on the keep-left circle; red / orange = the version that follows the corner with the front wheel. Tracing the corner with the front wheel brings the rear wheel into the cyclist (yellow) waiting there.*
+
+![Sample gate](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/07_sample_gate.png)
+
+*↑ The sample gate. Blue = sampled cyclist speeds, line = reference distribution, black verticals = two-sided 0.1 % points. Red = 2,000 values with a unit error. The one-by-one gate catches only 277 of them; the population KS test catches the rest.*
+
+### ★ Where implementations go wrong
+
+- **The kinematic formula for pure pursuit's steady offset gives only 41–47 % of the real value.** In the linear 2-DOF model the body points inward by the rear slip angle. A one-variable equation that includes it matches the closed-loop simulation to 0.1 mm. The look-ahead cap is set from that equation (without a cap, 38 of 40 drivers exceeded the 0.25 m offset budget).
+- **In a 90° left turn the off-tracking never reaches its steady value.** With a 6 m front radius it is 0.68 m (0.74 m in steady state). Even so, tracing the corner with the front wheel brings the inside rear wheel to 0.74 m from the kerb edge and into a waiting cyclist. That is the geometry behind the Rules' "keep left in advance" and "along the kerb".
+- **A one-by-one gate lets a unit error through.** Speeds divided by 3.6 once too often mostly look like plausible slow cyclists. You need a gate that compares the population with the reference (KS).
+- **Do not drop rare events.** The cyclist is caught only when a fast one (22 km/h and up) arrives just as the car turns. The values are ordinary, so they are not outliers; they are counted with importance-sampling weights. Naive MC hits only 12 times in 24,000 trials, and a 3σ check broke easily at 1–2 hits, so it was replaced by an exact Poisson test.
+
+### What this does not do
+
+- The tyre model is linear, so the motion after the tyres saturate is not drawn. "The unplanned car leaves the friction circle" is a usage > 1 verdict.
+- Speed is imposed from the plan; longitudinal control (throttle and brake) is not modelled.
+- The cyclist is a planar box, and human judgement (looking in the mirror and waiting) is not included — only geometry. Oncoming cars and pedestrians in the right turn are not modelled.
+- The car parameters, junction and road dimensions (6 m corner radius, 3.0 m lane, 0.5 m shoulder), the verdict widths (0.5 m for "keeping left", 10 km/h for "slowly", 30 m for "near") and the reference distributions for μ, the lateral-acceleration cap and the look-ahead time are **assumed values**. Only the mean cyclist speed of 14.5 km/h (NILIM, Yamamoto et al. 2011) and the ordinance tables were checked against primary sources.
+
+### Run it
+
+```python
+import fullseye as fs
+
+# Cornering limit v = √(g R (f + i)/(1 − f i)): radius 100 m, side friction 0.15, superelevation 6 % [km/h]
+v = fs.ledger.curve_speed_limit(100.0, side_friction=0.15, superelevation=0.06)
+print(round(float(v) * 3.6, 1))
+# 51.9          ← km/h
+
+# Off-tracking: inner front wheel radius 6 m, wheelbase 2.7 m, track 1.55 m, after 90° (arc = 6 × π/2) and in steady state
+o = fs.ledger.offtracking_circle(6.0, 2.7, 6.0 * 3.141592653589793 / 2, track=1.55)
+print(round(float(o["offtracking"]), 2), round(float(o["steady"]["offtracking"]), 2))
+# 0.68 0.74    ← at 90° / steady state [m]
+
+# Clothoid: rate of change of lateral acceleration on R 100 m with a 40 m transition at 50 km/h [m/s³]
+c = fs.ledger.clothoid_design(100.0, 40.0, speed=50 / 3.6)
+print(round(c["lateral_jerk"], 3))
+# 0.67         ← inside the manual's 0.5–0.75
+
+# 0.2 m right of the lane centre, heading error 0.01 rad, straight road at 15 m/s: time to cross the line 1.75 m away [s]
+print(round(fs.ledger.time_to_line_crossing(0.2, 0.01, 0.0, 15.0, line_offset=1.75), 2))
+# 10.33         ← s
+```
+
+The whole PoC: `py -3.11 examples/poc_driving_lateral.py` (figures and videos when `FULLSEYE_FIGURE_DIR` is set).
+
+---
+
 ## Next
 
-**Lateral motion.** The friction circle and the cornering limit √(μ g R), the bicycle model's steady circle (under- / oversteer), and holding a position within the lane. From the Rules-of-the-Road ledger: slowing before a bend, and positioning for left and right turns (the inner-wheel path).
+**Level crossings and right of way.** More not-yet-started scenes from the Rules-of-the-Road ledger that rule-based parts can reproduce — stop just before a level crossing and look both ways, do not enter while the alarm sounds or when the far side is blocked (Road Traffic Act arts. 33 and 50), slow down and give way at a junction with a priority or wider road (art. 36), stop before passing a car stopped short of a pedestrian crossing (art. 38(2)), and the no-parking distances (art. 44: 5 m around junctions and crossings, 10 m around level crossings).
 
 ## References
 
+- Road Structure Ordinance (art. 15 curve radius, art. 16 superelevation, art. 18 transition sections; text published by MLIT) / R. C. Coulter, "Implementation of the Pure Pursuit Path Tracking Algorithm", CMU-RI-TR-92-01, 1992 / G. M. Hoffmann et al., "Autonomous automobile trajectory tracking for off-road driving" (Stanley), *ACC* 2007 / Yamamoto, Owaki, Uesaka, cyclist speeds, JSCE annual meeting 2011.
 - D. C. Gazis, R. Herman, A. A. Maradudin, "The problem of the amber signal light in traffic flow", *Operations Research* 8, 1960 (dilemma zone).
 - National Police Agency notice 丁運発第44号 (driving-test scoring: 10 points for not checking, 5 for signal faults) / Road Traffic Act art. 40 (priority of emergency vehicles), art. 31-2 (protecting buses pulling out), art. 53 (signals).
 - National Public Safety Commission notice *Rules of the Road* (1978 notice No. 3, last amended 4 Sep 2024 notice No. 37, https://www.npa.go.jp/bureau/traffic/20241113kyousoku.pdf) / Road Traffic Act (archived e-Gov API data, in force 2025-06-01) / National Police Agency notes on the 30 km/h limit on residential roads (2026-09-01) and passing cyclists on their right (2026-04-01).

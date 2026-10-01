@@ -370,9 +370,11 @@
      "source": "法17条5項4号・教則5-2-1(3)"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_lateral"
+   ],
+   "note": "中央線から左を通行: 120 人の全員の車体の 4 隅が中央線をまたがない(最小 0.24 m)"
   },
   {
    "id": "S021",
@@ -384,9 +386,11 @@
    "law_status": "OK",
    "scoreability": "A",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "partial",
+   "reproduced_by": [
+    "poc_driving_lateral"
+   ],
+   "note": "狙う線を車線の中央から 0.1 m 左に寄せただけ(車両通行帯のない道路の「左に寄って」の幅は仮定)"
   },
   {
    "id": "S022",
@@ -426,9 +430,11 @@
    "law_status": "OK",
    "scoreability": "B",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_lateral"
+   ],
+   "note": "車線をまたがない: 速度計画 + 前方注視距離の上限で全員が車線の中(pure pursuit の定常の横ずれを 2 自由度の式で予算に)"
   },
   {
    "id": "S025",
@@ -571,9 +577,11 @@
      "source": "教則 5-2-7(4)"
     }
    ],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_lateral"
+   ],
+   "note": "路肩 0.5 m にはみ出さない: 外側線まで最小 0.34 m。注視距離 20 m 固定だと曲がり角で全員が越える"
   },
   {
    "id": "S034",
@@ -1127,9 +1135,11 @@
    "law_status": "OK",
    "scoreability": "A",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_lateral"
+   ],
+   "note": "曲がり角の附近は徐行: 曲率からの速度計画で附近 10 km/h 以下・摩擦円の使用率 最大 0.48"
   },
   {
    "id": "S066",
@@ -1537,11 +1547,12 @@
    "law_status": "NONE",
    "scoreability": "B",
    "numbers": [],
-   "status": "partial",
+   "status": "reproduced",
    "reproduced_by": [
-    "poc_driving_decisions"
+    "poc_driving_decisions",
+    "poc_driving_lateral"
    ],
-   "note": "左折の前に左後方の自転車を確かめて巻き込まない。内輪差(後輪の軌跡)は扱っていない"
+   "note": "第 9 回 = ミラーで左後方の自転車を確かめて待つ。第 10 回 = 内輪差の閉形式(後輪の軌跡)で、前輪で隅をなぞると後輪が隅で待つ自転車に触れ、左に寄った円なら最小 0.66 m 離れる"
   },
   {
    "id": "S092",
@@ -1553,9 +1564,11 @@
    "law_status": "OK",
    "scoreability": "A",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_lateral"
+   ],
+   "note": "左折はあらかじめ左端に寄り側端に沿って徐行(turn_maneuver_check、寄る 0.5 m・徐行 10 km/h は仮定)"
   },
   {
    "id": "S093",
@@ -1567,9 +1580,11 @@
    "law_status": "OK",
    "scoreability": "A",
    "numbers": [],
-   "status": "pending",
-   "reproduced_by": [],
-   "note": ""
+   "status": "reproduced",
+   "reproduced_by": [
+    "poc_driving_lateral"
+   ],
+   "note": "右折は中央に寄り交差点の中心のすぐ内側を徐行(turn_maneuver_check、大回り・早回りは違反)"
   },
   {
    "id": "S094",

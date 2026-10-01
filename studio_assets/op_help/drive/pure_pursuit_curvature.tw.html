@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pure_pursuit_curvature — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pure_pursuit_curvature(pose, path, lookahead, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivelateral; drivelateral.pure_pursuit_curvature(pose, path, lookahead, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;pure_pursuit_curvature&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>pure pursuit: 後車軸の中心(`<code style="color:#22d3bf">pose</code>` = (x, y, ψ)、(N, 3) 可)から経路の上で距離 L_d 先の点を狙う曲率 κ = 2 sin α / L_d。</p>
+<p>経路は折線(M, 2)。最も近い点を探し、そこから先で初めて距離が L_d になる点を区間の上で 2 次方程式で求める</p>
+<p>(経路の終わりまで届かなければ終点を狙い、L_d をその距離にする)。`<code style="color:#22d3bf">start_index</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">window</code>` で最も近い点を</p>
+<p>探す範囲を絞る(長い経路の繰り返しを速くする。None なら全体)。</p>
+<p>返り値: `<code style="color:#22d3bf">kappa</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">goal</code><code style="color:#22d3bf"> (N, 2), </code><code style="color:#22d3bf">index</code><code style="color:#22d3bf">(最も近い区間), </code><code style="color:#22d3bf">lateral</code>`(経路からの横ずれ、左が正),</p>
+<p>`<code style="color:#22d3bf">lookahead</code>`(実際の距離)。1 つの pose なら先頭の次元を落とす。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形の誤り、L_d ≤ 0、start_index が範囲外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_lateral">poc_driving_lateral</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_lateral.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">lateral</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:friction_circle_usage">friction_circle_usage</a> · <a style="color:#22d3bf" href="opdrive:curve_speed_limit">curve_speed_limit</a> · <a style="color:#22d3bf" href="opdrive:design_min_radius">design_min_radius</a> · <a style="color:#22d3bf" href="opdrive:understeer_gradient">understeer_gradient</a> · <a style="color:#22d3bf" href="opdrive:steady_cornering">steady_cornering</a> · <a style="color:#22d3bf" href="opdrive:bicycle_model_step">bicycle_model_step</a> · <a style="color:#22d3bf" href="opdrive:ackermann_steer_angles">ackermann_steer_angles</a> · <a style="color:#22d3bf" href="opdrive:offtracking_circle">offtracking_circle</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivelateral.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

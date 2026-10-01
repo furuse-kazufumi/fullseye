@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2482,
- "n_notes": 2488,
+ "n_ops": 2501,
+ "n_notes": 2507,
  "notes": {
   "vol_dilate": [
    {
@@ -14471,16 +14471,6 @@
     "path": "docs/ops/annotate/text/measure_text.md"
    }
   ],
-  "text_box": [
-   {
-    "op": "text_box",
-    "dim": "annotate",
-    "category": "text",
-    "in": "image2d × text",
-    "out": "image2d",
-    "path": "docs/ops/annotate/text/text_box.md"
-   }
-  ],
   "align_frames": [
    {
     "op": "align_frames",
@@ -16735,6 +16725,198 @@
     "in": "table",
     "out": "any",
     "path": "docs/ops/drive/kendamaworld/string_set.md"
+   }
+  ],
+  "ackermann_steer_angles": [
+   {
+    "op": "ackermann_steer_angles",
+    "dim": "drive",
+    "category": "lateral",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/lateral/ackermann_steer_angles.md"
+   }
+  ],
+  "bicycle_model_step": [
+   {
+    "op": "bicycle_model_step",
+    "dim": "drive",
+    "category": "lateral",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/lateral/bicycle_model_step.md"
+   }
+  ],
+  "clothoid_design": [
+   {
+    "op": "clothoid_design",
+    "dim": "drive",
+    "category": "lateral",
+    "out": "table",
+    "path": "docs/ops/drive/lateral/clothoid_design.md"
+   }
+  ],
+  "clothoid_points": [
+   {
+    "op": "clothoid_points",
+    "dim": "drive",
+    "category": "lateral",
+    "out": "table",
+    "path": "docs/ops/drive/lateral/clothoid_points.md"
+   }
+  ],
+  "curvature_speed_plan": [
+   {
+    "op": "curvature_speed_plan",
+    "dim": "drive",
+    "category": "lateral",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/lateral/curvature_speed_plan.md"
+   }
+  ],
+  "curve_speed_limit": [
+   {
+    "op": "curve_speed_limit",
+    "dim": "drive",
+    "category": "lateral",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/lateral/curve_speed_limit.md"
+   }
+  ],
+  "design_min_radius": [
+   {
+    "op": "design_min_radius",
+    "dim": "drive",
+    "category": "lateral",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/lateral/design_min_radius.md"
+   }
+  ],
+  "fresnel_integrals": [
+   {
+    "op": "fresnel_integrals",
+    "dim": "drive",
+    "category": "lateral",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/lateral/fresnel_integrals.md"
+   }
+  ],
+  "friction_circle_usage": [
+   {
+    "op": "friction_circle_usage",
+    "dim": "drive",
+    "category": "lateral",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/lateral/friction_circle_usage.md"
+   }
+  ],
+  "lateral_offset": [
+   {
+    "op": "lateral_offset",
+    "dim": "drive",
+    "category": "lateral",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/lateral/lateral_offset.md"
+   }
+  ],
+  "offtracking_circle": [
+   {
+    "op": "offtracking_circle",
+    "dim": "drive",
+    "category": "lateral",
+    "out": "table",
+    "path": "docs/ops/drive/lateral/offtracking_circle.md"
+   }
+  ],
+  "pure_pursuit_circle_offset": [
+   {
+    "op": "pure_pursuit_circle_offset",
+    "dim": "drive",
+    "category": "lateral",
+    "out": "table",
+    "path": "docs/ops/drive/lateral/pure_pursuit_circle_offset.md"
+   }
+  ],
+  "pure_pursuit_curvature": [
+   {
+    "op": "pure_pursuit_curvature",
+    "dim": "drive",
+    "category": "lateral",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/lateral/pure_pursuit_curvature.md"
+   }
+  ],
+  "rear_axle_path": [
+   {
+    "op": "rear_axle_path",
+    "dim": "drive",
+    "category": "lateral",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/lateral/rear_axle_path.md"
+   }
+  ],
+  "stanley_steer": [
+   {
+    "op": "stanley_steer",
+    "dim": "drive",
+    "category": "lateral",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/lateral/stanley_steer.md"
+   }
+  ],
+  "stanley_straight_decay": [
+   {
+    "op": "stanley_straight_decay",
+    "dim": "drive",
+    "category": "lateral",
+    "out": "signal",
+    "path": "docs/ops/drive/lateral/stanley_straight_decay.md"
+   }
+  ],
+  "steady_cornering": [
+   {
+    "op": "steady_cornering",
+    "dim": "drive",
+    "category": "lateral",
+    "out": "table",
+    "path": "docs/ops/drive/lateral/steady_cornering.md"
+   }
+  ],
+  "time_to_line_crossing": [
+   {
+    "op": "time_to_line_crossing",
+    "dim": "drive",
+    "category": "lateral",
+    "out": "scalar",
+    "path": "docs/ops/drive/lateral/time_to_line_crossing.md"
+   }
+  ],
+  "turn_maneuver_check": [
+   {
+    "op": "turn_maneuver_check",
+    "dim": "drive",
+    "category": "lateral",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/lateral/turn_maneuver_check.md"
+   }
+  ],
+  "understeer_gradient": [
+   {
+    "op": "understeer_gradient",
+    "dim": "drive",
+    "category": "lateral",
+    "out": "table",
+    "path": "docs/ops/drive/lateral/understeer_gradient.md"
    }
   ],
   "lidar_scan": [

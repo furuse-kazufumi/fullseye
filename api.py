@@ -536,6 +536,13 @@ import driveenv  # noqa: E402  (太陽と天気: 太陽の位置・影・逆光�
 import driveinf  # noqa: E402  (終わらない地図: 決定的な区画・継ぎ目でつながる道・桁の落ちない座標)
 import drivetraffic  # noqa: E402  (動く交通参加者と死角: IDM と癖・横ふらつき・歩行者の意図・死角・すれ違い・稀な飛び出し)
 import drivedecide  # noqa: E402  (判断の場面: ミラー・確認の順序・信号の予測・緊急車両・バスの発進)
+import drivelateral  # noqa: E402  (横の運動: 摩擦円・2 輪モデル・内輪差・クロソイド・位置保持の制御則・速度計画)
+from drivelateral import (  # noqa: E402,F401
+    friction_circle_usage, curve_speed_limit, design_min_radius, understeer_gradient, steady_cornering,
+    bicycle_model_step, ackermann_steer_angles, offtracking_circle, rear_axle_path, fresnel_integrals,
+    clothoid_points, clothoid_design, pure_pursuit_curvature, pure_pursuit_circle_offset, stanley_steer,
+    stanley_straight_decay, curvature_speed_plan, lateral_offset, time_to_line_crossing, turn_maneuver_check,
+)
 from drivedecide import (  # noqa: E402,F401
     mirror_reflection_matrix, mirror_virtual_camera, mirror_aim_normal, convex_mirror_fov, mirror_blind_zone, check_sequence_score,
     signal_phase_plan, signal_state, predict_amber_onset, dilemma_zone, flash_frequency, aliased_frequency,

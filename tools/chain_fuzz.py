@@ -2429,6 +2429,128 @@ def _b_bus_yield(pool, rng):
     return (_dd_traj(),), {"t_signal": 0.0, "bus_rear_x": 140.0}
 
 
+_DL_CAR = {"mass": 1500.0, "l_f": 1.2, "l_r": 1.5, "c_f": 80000.0, "c_r": 90000.0, "inertia": 2500.0}
+
+
+def _dl_arc_path():
+    import numpy as np
+    th = np.linspace(0.0, 1.2, 400)
+    return np.stack([50.0 * np.sin(th), 50.0 * (1.0 - np.cos(th))], 1)
+
+
+def _dl_turn():
+    import math
+    import drivelateral as DL
+    import numpy as np
+    ds, y_app, Rf, cx = 0.05, 2.2, 6.5, 26.0
+    cy = y_app + Rf
+    xs = np.arange(-40.0, cx, ds)
+    pre = np.stack([xs, np.full_like(xs, y_app)], 1)
+    n = int(round(Rf * math.pi / 2 / ds))
+    ph = np.linspace(0, math.pi / 2, n + 1)[1:]
+    arc = np.stack([cx + Rf * np.sin(ph), cy - Rf * np.cos(ph)], 1)
+    ys = np.arange(ds, 15.0, ds)
+    post = np.stack([np.full_like(ys, arc[-1, 0]), arc[-1, 1] + ys], 1)
+    F = np.vstack([pre, arc, post])
+    speed = np.where(F[:, 0] < cx - 25.0, 8.0, 2.5)
+    return {"t": np.arange(len(F)), "front": F, "rear": DL.rear_axle_path(F, 2.7)["rear"], "speed": speed,
+            "width": 1.8, "track": 1.55, "front_overhang": 0.9, "rear_overhang": 0.9}
+
+
+def _b_friction_usage(pool, rng):
+    import numpy as np
+    return (np.array([0.0, 2.0, -4.0]), np.array([3.0, 0.0, 5.0])), {"mu": 0.8}
+
+
+def _b_curve_speed(pool, rng):
+    import numpy as np
+    return (np.array([30.0, 100.0, 300.0]),), {"side_friction": 0.15, "superelevation": 0.06}
+
+
+def _b_design_radius(pool, rng):
+    import numpy as np
+    return (np.array([40.0, 60.0, 80.0]),), {"side_friction": 0.13, "superelevation": 0.06}
+
+
+def _b_understeer(pool, rng):
+    return (dict(_DL_CAR),), {}
+
+
+def _b_steady_corner(pool, rng):
+    return (15.0, 100.0, dict(_DL_CAR)), {}
+
+
+def _b_bicycle_step(pool, rng):
+    import numpy as np
+    return (np.zeros(5), 0.02, 15.0, dict(_DL_CAR), 0.01), {}
+
+
+def _b_ackermann(pool, rng):
+    import numpy as np
+    return (np.array([6.0, 12.0]), 2.7, 1.55), {}
+
+
+def _b_offtracking(pool, rng):
+    import numpy as np
+    return (6.0, 2.7, np.linspace(0.0, 9.4, 20)), {"track": 1.55}
+
+
+def _b_rear_axle(pool, rng):
+    return (_dl_arc_path(), 2.7), {}
+
+
+def _b_fresnel(pool, rng):
+    import numpy as np
+    return (np.linspace(0.0, 3.0, 31),), {}
+
+
+def _b_clothoid_pts(pool, rng):
+    import numpy as np
+    return (50.0, np.linspace(0.0, 50.0, 51)), {"kappa1": 1.0 / 100.0}
+
+
+def _b_clothoid_design(pool, rng):
+    return (100.0, 40.0), {"speed": 16.7}
+
+
+def _b_pure_pursuit(pool, rng):
+    return ((0.0, 0.5, 0.0), _dl_arc_path(), 8.0), {}
+
+
+def _b_pp_offset(pool, rng):
+    return (50.0, 8.0, 2.7), {}
+
+
+def _b_stanley(pool, rng):
+    return ((0.0, 0.5, 0.0), _dl_arc_path()), {"gain": 1.0, "speed": 10.0, "softening": 1.0}
+
+
+def _b_stanley_decay(pool, rng):
+    import numpy as np
+    return (0.5, np.linspace(0.0, 5.0, 51)), {"gain": 1.0, "speed": 10.0}
+
+
+def _b_speed_plan(pool, rng):
+    import numpy as np
+    s = np.linspace(0.0, 300.0, 301)
+    k = np.where((s > 120) & (s < 180), 1.0 / 40.0, 0.0)
+    return (s, k), {"v_max": 16.7, "a_lat_max": 2.0, "a_accel": 1.0, "a_decel": 2.0}
+
+
+def _b_lateral_offset(pool, rng):
+    import numpy as np
+    return (np.array([[10.0, 1.5], [20.0, 4.5]]), _dl_arc_path()), {}
+
+
+def _b_tlc(pool, rng):
+    return (0.2, 0.01, 0.0, 15.0), {"line_offset": 1.75}
+
+
+def _b_turn_check(pool, rng):
+    return (_dl_turn(),), {"kind": "left", "x_entry": 24.0, "edge_y": 3.5, "center_y": 0.0, "corner_center": (24.0, 9.5),
+                           "corner_radius": 6.0, "clearance": 0.5}
+
+
 def _env_world():
     import driveworld as DW
     import numpy as np
@@ -2805,6 +2927,26 @@ OP_ARG_BUILDERS = {
     "hill_hold_brake_min": _b_hill_hold_brake_min, "hill_start_rollback": _b_hill_start_rollback,
     "hill_start_command": _b_hill_start_command, "skill_test_thresholds": _b_skill_test_thresholds,
     "skill_test_score": _b_skill_test_score,
+    "friction_circle_usage": _b_friction_usage,
+    "curve_speed_limit": _b_curve_speed,
+    "design_min_radius": _b_design_radius,
+    "understeer_gradient": _b_understeer,
+    "steady_cornering": _b_steady_corner,
+    "bicycle_model_step": _b_bicycle_step,
+    "ackermann_steer_angles": _b_ackermann,
+    "offtracking_circle": _b_offtracking,
+    "rear_axle_path": _b_rear_axle,
+    "fresnel_integrals": _b_fresnel,
+    "clothoid_points": _b_clothoid_pts,
+    "clothoid_design": _b_clothoid_design,
+    "pure_pursuit_curvature": _b_pure_pursuit,
+    "pure_pursuit_circle_offset": _b_pp_offset,
+    "stanley_steer": _b_stanley,
+    "stanley_straight_decay": _b_stanley_decay,
+    "curvature_speed_plan": _b_speed_plan,
+    "lateral_offset": _b_lateral_offset,
+    "time_to_line_crossing": _b_tlc,
+    "turn_maneuver_check": _b_turn_check,
     "mirror_reflection_matrix": _b_mirror_matrix,
     "mirror_virtual_camera": _b_mirror_vcam,
     "mirror_aim_normal": _b_mirror_aim,

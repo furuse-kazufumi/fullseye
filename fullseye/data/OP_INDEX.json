@@ -1,8 +1,8 @@
 {
- "n_ops": 2482,
+ "n_ops": 2502,
  "tiers": {
   "color": 12,
-  "ledger": 1531,
+  "ledger": 1551,
   "nary": 17,
   "registry": 922
  },
@@ -328,6 +328,19 @@
    "in_sorts": [
     "image2d",
     "image2d"
+   ]
+  },
+  {
+   "name": "ackermann_steer_angles",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {
@@ -1697,6 +1710,19 @@
    ]
   },
   {
+   "name": "bicycle_model_step",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
    "name": "bilateral_filter_depth",
    "halcon": "",
    "in_sort": "depth",
@@ -2526,6 +2552,28 @@
     "rgbimage",
     "normalmap"
    ]
+  },
+  {
+   "name": "clothoid_design",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "clothoid_points",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "coherence",
@@ -3469,6 +3517,19 @@
    ]
   },
   {
+   "name": "curvature_speed_plan",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
    "name": "curvature_to_shape_index",
    "halcon": "",
    "in_sort": "curvature",
@@ -3531,6 +3592,19 @@
    "dim": "math",
    "in_sorts": [
     "pairs"
+   ]
+  },
+  {
+   "name": "curve_speed_limit",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {
@@ -4202,6 +4276,19 @@
    "dim": "reprconv",
    "in_sorts": [
     "descriptor"
+   ]
+  },
+  {
+   "name": "design_min_radius",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {
@@ -6332,6 +6419,19 @@
    ]
   },
   {
+   "name": "fresnel_integrals",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
    "name": "fresnel_reflectance",
    "halcon": "",
    "in_sort": "measurement",
@@ -6342,6 +6442,19 @@
    "dim": "3d",
    "in_sorts": [
     "measurement"
+   ]
+  },
+  {
+   "name": "friction_circle_usage",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {
@@ -8700,6 +8813,19 @@
    "dim": "3d",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "lateral_offset",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {
@@ -11144,6 +11270,17 @@
    "in_sorts": []
   },
   {
+   "name": "offtracking_circle",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "opd_map",
    "halcon": "",
    "in_sort": "table",
@@ -13231,6 +13368,30 @@
    ]
   },
   {
+   "name": "pure_pursuit_circle_offset",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "pure_pursuit_curvature",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
    "name": "qft2",
    "halcon": "",
    "in_sort": "qimage",
@@ -13794,6 +13955,19 @@
    "dim": "oned",
    "in_sorts": [
     "file"
+   ]
+  },
+  {
+   "name": "rear_axle_path",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {
@@ -16694,6 +16868,30 @@
    ]
   },
   {
+   "name": "stanley_steer",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "stanley_straight_decay",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "signal",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "star_detect",
    "halcon": "",
    "in_sort": "image2d",
@@ -16810,6 +17008,17 @@
    "in_sorts": [
     "points"
    ]
+  },
+  {
+   "name": "steady_cornering",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "stft",
@@ -17959,6 +18168,17 @@
    ]
   },
   {
+   "name": "time_to_line_crossing",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "to_points",
    "halcon": "",
    "in_sort": "voxel",
@@ -18349,6 +18569,30 @@
     "matrix",
     "matrix"
    ]
+  },
+  {
+   "name": "turn_maneuver_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "understeer_gradient",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lateral",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "unpremultiply",

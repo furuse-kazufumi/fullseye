@@ -1,4 +1,4 @@
-# DRIVE operator help — 234 ops in 19 categories
+# DRIVE operator help — 254 ops in 20 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -43,6 +43,10 @@
 ### kendamaworld (12)
 
 [add_ken](kendamaworld/add_ken.md) · [add_string](kendamaworld/add_string.md) · [camera_perceiver](kendamaworld/camera_perceiver.md) · [ken_mesh](kendamaworld/ken_mesh.md) · [ken_set_pose](kendamaworld/ken_set_pose.md) · [ken_truth](kendamaworld/ken_truth.md) · [kendama_clearance](kendamaworld/kendama_clearance.md) · [kendama_pose](kendamaworld/kendama_pose.md) · [kendama_rig](kendamaworld/kendama_rig.md) · [kendama_world](kendamaworld/kendama_world.md) · [string_mesh](kendamaworld/string_mesh.md) · [string_set](kendamaworld/string_set.md)
+
+### lateral (20)
+
+[ackermann_steer_angles](lateral/ackermann_steer_angles.md) · [bicycle_model_step](lateral/bicycle_model_step.md) · [clothoid_design](lateral/clothoid_design.md) · [clothoid_points](lateral/clothoid_points.md) · [curvature_speed_plan](lateral/curvature_speed_plan.md) · [curve_speed_limit](lateral/curve_speed_limit.md) · [design_min_radius](lateral/design_min_radius.md) · [fresnel_integrals](lateral/fresnel_integrals.md) · [friction_circle_usage](lateral/friction_circle_usage.md) · [lateral_offset](lateral/lateral_offset.md) · [offtracking_circle](lateral/offtracking_circle.md) · [pure_pursuit_circle_offset](lateral/pure_pursuit_circle_offset.md) · [pure_pursuit_curvature](lateral/pure_pursuit_curvature.md) · [rear_axle_path](lateral/rear_axle_path.md) · [stanley_steer](lateral/stanley_steer.md) · [stanley_straight_decay](lateral/stanley_straight_decay.md) · [steady_cornering](lateral/steady_cornering.md) · [time_to_line_crossing](lateral/time_to_line_crossing.md) · [turn_maneuver_check](lateral/turn_maneuver_check.md) · [understeer_gradient](lateral/understeer_gradient.md)
 
 ### lidar (4)
 

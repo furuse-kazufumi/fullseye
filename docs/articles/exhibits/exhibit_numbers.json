@@ -193,6 +193,10 @@
    "accessioned": "2026-10-01",
    "no": "2026.176"
   },
+  "poc_driving_lateral": {
+   "accessioned": "2026-10-01",
+   "no": "2026.181"
+  },
   "poc_driving_longitudinal": {
    "accessioned": "2026-09-30",
    "no": "2026.172"

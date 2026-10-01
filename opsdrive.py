@@ -10,6 +10,7 @@
 終わらない地図(driveinf: 区画の番号と種だけで決まる区画、辺のハッシュで継ぎ目がつながる道、整数格子の起伏、(区画, 区画の中) の座標)。
 動く交通参加者と死角(drivetraffic: IDM の車列と運転の癖、OU の横ふらつき、Social Force の歩行者と横断の意図、路肩駐車の死角から止まれる速さ、対向車とのすれ違いの境目、場所と時刻で変わる飛び出しの率、重要度サンプリングの事故率)。
 判断の場面(drivedecide: ミラーを鏡の向こうの仮想カメラで描く・凸面鏡の視野と死角、確認と合図の順序の採点、歩行者信号から車両の黄を予測・ジレンマゾーン、点滅の周波数と折り返し、サイレンのドップラーと到着時間差の方位、緊急車両への譲り(道交法 40 条)とバスの発進(31 条の 2)の採点)。
+横の運動(drivelateral: 摩擦円とカーブの限界速度・道路構造令の最小半径、2 輪等価モデルのアンダーステア勾配と定常円旋回、アッカーマンと内輪差の閉形式・後車軸の軌跡、クロソイドとフレネル積分、pure pursuit と Stanley の制御則と定常の横ずれ、曲率からの速度計画、車線の横位置と TLC、左折・右折の寄り方の採点)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -34,6 +35,7 @@ import driveenv
 import driveinf
 import drivetraffic
 import drivedecide
+import drivelateral
 import drivelong
 import drivettc
 import gsplatnp
@@ -49,7 +51,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -371,6 +373,31 @@ _CATALOG = {
         ("tdoa_bearing", "drivedecide", ["signal", "signal"], "table"),
         ("yield_maneuver_check", "drivedecide", ["table"], "table"),
         ("bus_departure_yield_check", "drivedecide", ["table"], "table"),
+    ],
+    # 横の運動: 摩擦円(√(ax² + ay²) ≤ μg)とカーブの限界速度・道路構造令の設計式、2 輪等価モデル(定常円旋回の舵角 = L/R + K·ay)、
+    # 低速の内輪差(後輪の軌跡の閉形式)、クロソイド A² = RL、pure pursuit(κ = 2 sin α / Ld)と Stanley、前後 2 パスの速度計画、
+    # TLC の閉形式、教則の左折(左端に寄り側端に沿って徐行)・右折(中央に寄り中心のすぐ内側)の採点。
+    "lateral": [
+        ("friction_circle_usage", "drivelateral", ["any"], "any"),
+        ("curve_speed_limit", "drivelateral", ["any"], "any"),
+        ("design_min_radius", "drivelateral", ["any"], "any"),
+        ("understeer_gradient", "drivelateral", [], "table"),
+        ("steady_cornering", "drivelateral", [], "table"),
+        ("bicycle_model_step", "drivelateral", ["any"], "any"),
+        ("ackermann_steer_angles", "drivelateral", ["any"], "table"),
+        ("offtracking_circle", "drivelateral", [], "table"),
+        ("rear_axle_path", "drivelateral", ["any"], "table"),
+        ("fresnel_integrals", "drivelateral", ["any"], "any"),
+        ("clothoid_points", "drivelateral", [], "table"),
+        ("clothoid_design", "drivelateral", [], "table"),
+        ("pure_pursuit_curvature", "drivelateral", ["any"], "table"),
+        ("pure_pursuit_circle_offset", "drivelateral", [], "table"),
+        ("stanley_steer", "drivelateral", ["any"], "table"),
+        ("stanley_straight_decay", "drivelateral", [], "signal"),
+        ("curvature_speed_plan", "drivelateral", ["any"], "table"),
+        ("lateral_offset", "drivelateral", ["any"], "table"),
+        ("time_to_line_crossing", "drivelateral", [], "scalar"),
+        ("turn_maneuver_check", "drivelateral", ["table"], "table"),
     ],
 }
 

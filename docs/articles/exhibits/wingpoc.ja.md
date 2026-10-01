@@ -4988,6 +4988,46 @@ py -3.11 examples/poc_driving_decisions.py
 
 使用 op(ノートへ): [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_mesh_object.html) · [`aliased_frequency`](https://furuse.work/ops/drive/decide/aliased_frequency.html) · [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`bus_departure_yield_check`](https://furuse.work/ops/drive/decide/bus_departure_yield_check.html) · [`check_sequence_score`](https://furuse.work/ops/drive/decide/check_sequence_score.html) · [`convex_mirror_fov`](https://furuse.work/ops/drive/decide/convex_mirror_fov.html) · [`dilemma_zone`](https://furuse.work/ops/drive/decide/dilemma_zone.html) · [`doppler_shift`](https://furuse.work/ops/drive/decide/doppler_shift.html) · [`doppler_track`](https://furuse.work/ops/drive/decide/doppler_track.html) · [`filled_polygon`](https://furuse.work/ops/annotate/shape/filled_polygon.html) · [`flash_frequency`](https://furuse.work/ops/drive/decide/flash_frequency.html) · [`grid_lines`](https://furuse.work/ops/annotate/plot/grid_lines.html) · [`idm_accel`](https://furuse.work/ops/drive/traffic/idm_accel.html) · [`legend_box`](https://furuse.work/ops/annotate/furniture/legend_box.html) · [`mirror_aim_normal`](https://furuse.work/ops/drive/decide/mirror_aim_normal.html) · [`mirror_blind_zone`](https://furuse.work/ops/drive/decide/mirror_blind_zone.html) · [`mirror_virtual_camera`](https://furuse.work/ops/drive/decide/mirror_virtual_camera.html) · [`nice_ticks`](https://furuse.work/ops/annotate/plot/nice_ticks.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`predict_amber_onset`](https://furuse.work/ops/drive/decide/predict_amber_onset.html) · [`signal_phase_plan`](https://furuse.work/ops/drive/decide/signal_phase_plan.html) · [`signal_state`](https://furuse.work/ops/drive/decide/signal_state.html) · [`siren_signal`](https://furuse.work/ops/drive/decide/siren_signal.html) …(他 6)
 
+## No.2026.181 —— 横の運動 ―― カーブの手前で落とす、車線の中を保つ、左に寄って左折する、内輪差で巻き込まない
+
+[![横の運動 ―― カーブの手前で落とす、車線の中を保つ、左に寄って左折する、内輪差で巻き込まない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/04_offtracking_geometry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/04_offtracking_geometry.png)
+
+*↑ **横の運動 ―― カーブの手前で落とす、車線の中を保つ、左に寄って左折する、内輪差で巻き込まない** ―― 著者の方針 ——「AI には部品の組み合わせを考えてもらう、部品はルールベースに限定して増やす」「ランダムなものを載せるなら、統計に基づいて極端に外れすぎたものは採用しない」。教則の台帳から、道路の左に寄って通行・車線をまたがない・路肩にはみ出さない・曲がり角では徐行・左折は左端に寄り側端に沿って・右折は中央に寄り中心のすぐ内側、を拾った。新モジュール drivelateral 20 op。門: 標本の門(参照分布の両側 0.1 % 点で 1 個ずつ落とし理由を記録、集団は KS)で自転車の速さ 24,000 個から 22 個を落とし KS p = 0.905、単位の誤りは 1 個ずつの門を 86 % が通るが KS が D = 0.986 で落とす / クロソイド R 100 m・L 40 m は道路構造令の表と解説の許容 0.5〜0.75 m/s³ の中 / 120 人の速度計画は摩擦円の使用率 最大 0.48・曲がり角の附近 10 km/h 以下、計画なしは全員が円を出る(使用率 1.65〜2.42)/ 全員が中央線をまたがず(最小 0.24 m)路肩へ出ない(最小 0.34 m)/ pure pursuit の定常の横ずれ = 2 自由度の式 ±0.0001 m / 内輪差の閉形式 = 後輪の軌跡の数値 ±0.2 mm、90° で 0.68 m / 左に寄った左折は違反なし・隅で待つ自転車から 0.66 m、前輪で隅をなぞると内輪差で触れる / 寄らない左折は後ろの自転車の巻き込みが残り、重要度サンプリング p = 0.00024 と素朴な MC 12 / 24000 件が Poisson で食い違わない / 右折は大回り・早回りを違反に。見つけたこと: 運動学の式は定常の横ずれを 41〜47 % に見積もる、90° の左折で内輪差は定常に届かない、1 個ずつの門は単位の誤りを通す、稀な出来事は落とさず重みで数える。正直に: 線形タイヤで飽和は描かない、寸法・判定の幅・μ などの参照分布は仮定(一次は自転車の平均速度と道路構造令の表だけ)。教則の台帳は再現 22・一部 12・不能 7・未着手 118。15 門、45.1 s。*
+
+[![主図(車載カメラ 640 × 360、356 コマ)。場面 1(190 コマ): 半径 100 m のカーブと半径 15 m の曲がり角(道路構造令の設計速度 50・20 km/h の表の値、クロソイドでつなぐ)。curvature_spe](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/01_lateral_dashcam.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/01_lateral_dashcam.gif)
+
+*↑ 測定の図 ―― 主図(車載カメラ 640 × 360、356 コマ)。場面 1(190 コマ): 半径 100 m のカーブと半径 15 m の曲がり角(道路構造令の設計速度 50・20 km/h の表の値、クロソイドでつなぐ)。curvature_speed_plan の計画どおりカーブの手前で減速し、曲がり角の附近は 10 km/h、pure pursuit(注視距離は 2 自由度の定常の横ずれ ≤ 0.25 m で上限)で車線の中を走る。右上 = 摩擦円(黒 = μg、青 = この人の横加速度の上限、赤 = 今の加速度)。場面 2: 外側線から 0.25 m に寄って左折、後ろから 23 km/h の自転車は左に入れない(巻き込み なし)。場面 3: 車線の中央のまま左折、同じ自転車(同じ距離・速さ)が左に入り込み、曲がる車体に触れる(巻き込み あり)。右上 = 上から見た図(青の線 = 後輪の内側の軌跡、橙 = 隅で人・自転車が待つ所)。*
+
+[![摩擦円: 車の加速度を μg で割った点(横 = 横加速度(左旋回を左に描く)、縦 = 縦加速度、黒の円 = 使用率 1)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/03_friction_circle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/03_friction_circle.png)
+
+*↑ 摩擦円: 車の加速度を μg で割った点(横 = 横加速度(左旋回を左に描く)、縦 = 縦加速度、黒の円 = 使用率 1)。*
+
+[![曲率から作る速度計画(前向き・後ろ向きの 2 パス、摩擦円つき)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/05_speed_plan_band_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/05_speed_plan_band.png)
+
+*↑ 曲率から作る速度計画(前向き・後ろ向きの 2 パス、摩擦円つき)。*
+
+[![稀な出来事: 車線の中央のまま左折すると、後ろの自転車が左に入り込んで巻き込まれるのは、速い自転車(22.1 km/h 以上、採った速さの 2.9 %)がちょうど曲がる頃に追いつく細い帯だけ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/06_rare_event_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/06_rare_event_map.png)
+
+*↑ 稀な出来事: 車線の中央のまま左折すると、後ろの自転車が左に入り込んで巻き込まれるのは、速い自転車(22.1 km/h 以上、採った速さの 2.9 %)がちょうど曲がる頃に追いつく細い帯だけ。*
+
+[![乱数の値の門: 自転車の速さは参照分布 N(14.5, 3.5) km/h(平均は国総研の車道の旅行速度、幅は仮定)の両側 0.1 % 点(3.0〜26.0 km/h)の外を 1 個ずつ落としてから採](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/07_sample_gate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/07_sample_gate.png)
+
+*↑ 乱数の値の門: 自転車の速さは参照分布 N(14.5, 3.5) km/h(平均は国総研の車道の旅行速度、幅は仮定)の両側 0.1 % 点(3.0〜26.0 km/h)の外を 1 個ずつ落としてから採り(24000 個、KS p = 0.91)、残りを切断正規との KS で照合する。*
+
+[![上から見た動画(229 コマ)。同じ運転者(μ 0.72)を、curvature_speed_plan の計画どおり(上左、青)と 50 km/h のまま(上右、赤)で走らせ、同じ道のりの所を並べる(60 m 四方、車について動く。点 = ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/02_lateral_birdseye.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/02_lateral_birdseye.gif)
+
+*↑ 動く図 ―― 上から見た動画(229 コマ)。同じ運転者(μ 0.72)を、curvature_speed_plan の計画どおり(上左、青)と 50 km/h のまま(上右、赤)で走らせ、同じ道のりの所を並べる(60 m 四方、車について動く。点 = 過去 12 s の通った跡、青 = 摩擦円の中、赤 = 外)。下左 = 速さ(青の帯 = 120 人の計画の最小〜最大、青の線 = この人、赤 = 計画なし、橙 = 曲がり角の附近の徐行の区間、黒の縦線 = 今)、下右 = 摩擦円(加速度 / μg、横 = 横加速度(左旋回で左)・縦 = 縦加速度)。計画なしの点は曲がり角で円の外へ出る(使用率 最大 2.15 = 線形モデルの外、実際には滑る)。*
+
+```
+py -3.11 examples/poc_driving_lateral.py
+```
+
+ソース: [examples/poc_driving_lateral.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_driving_lateral.py)
+
+この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_lateral)
+
+使用 op(ノートへ): [`ackermann_steer_angles`](https://furuse.work/ops/drive/lateral/ackermann_steer_angles.html) · [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_mesh_object.html) · [`bicycle_model_step`](https://furuse.work/ops/drive/lateral/bicycle_model_step.html) · [`clothoid_design`](https://furuse.work/ops/drive/lateral/clothoid_design.html) · [`clothoid_points`](https://furuse.work/ops/drive/lateral/clothoid_points.html) · [`curvature_speed_plan`](https://furuse.work/ops/drive/lateral/curvature_speed_plan.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`friction_circle_usage`](https://furuse.work/ops/drive/lateral/friction_circle_usage.html) · [`lateral_offset`](https://furuse.work/ops/drive/lateral/lateral_offset.html) · [`offtracking_circle`](https://furuse.work/ops/drive/lateral/offtracking_circle.html) · [`pure_pursuit_circle_offset`](https://furuse.work/ops/drive/lateral/pure_pursuit_circle_offset.html) · [`pure_pursuit_curvature`](https://furuse.work/ops/drive/lateral/pure_pursuit_curvature.html) · [`rear_axle_path`](https://furuse.work/ops/drive/lateral/rear_axle_path.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`time_to_line_crossing`](https://furuse.work/ops/drive/lateral/time_to_line_crossing.html) · [`turn_maneuver_check`](https://furuse.work/ops/drive/lateral/turn_maneuver_check.html) · [`understeer_gradient`](https://furuse.work/ops/drive/lateral/understeer_gradient.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html) · [`world_move`](https://furuse.work/ops/drive/world/world_move.html)
+
 ### 数学の絵 ―― 定理が門になる回(別記事)
 
 この展示先の回は、計測の展示館ではなく**数学の絵のシリーズ**に掛かっています。分ける基準は「真値がどこから来るか」です —— 計測の展示は測る対象があり真値は対象の側に、ここの回は対象が無く、真値は描いた絵そのものの定理・恒等式・不変量から出ます。記事は手書きなので、生成器はここを描きません。
