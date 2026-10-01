@@ -68,11 +68,11 @@
 
 ## 尋找運算子
 
-共有 **2,442 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **58 篇族群指南**。依維度的入口:
+共有 **2,448 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **59 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 934/934、型別台帳 1487/1499、單行門面 `fullseye.<名稱>` 612/1267 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 934/934、型別台帳 1493/1505、單行門面 `fullseye.<名稱>` 612/1268 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 2447 篇中，附有可執行範例的 **2336** 篇(111 篇沒有)，用法說明 120 字以上的 **2333** 篇(114 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)2447 篇全有。
+**內容實測**: 2453 篇中，附有可執行範例的 **2336** 篇(117 篇沒有)，用法說明 120 字以上的 **2339** 篇(114 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)2453 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
@@ -119,6 +119,7 @@
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
+| `vx` | 6 | [INDEX](ops/vx/INDEX.md) · [guide](ops/vx/guides/openvx_ports.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
@@ -220,7 +221,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文件地圖 — 共 213 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 2,442 篇運算子說明與 58 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 2,448 篇運算子說明與 59 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 

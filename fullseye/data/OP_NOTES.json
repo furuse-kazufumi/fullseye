@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2436,
- "n_notes": 2442,
+ "n_ops": 2442,
+ "n_notes": 2448,
  "notes": {
   "vol_dilate": [
    {
@@ -24713,6 +24713,66 @@
     "in": "rgbvolume",
     "out": "rgbimage",
     "path": "docs/ops/volcolor/slice/vol_label_slice_rgb.md"
+   }
+  ],
+  "vx_magnitude": [
+   {
+    "op": "vx_magnitude",
+    "dim": "vx",
+    "category": "gradient",
+    "in": "image2d × image2d",
+    "out": "image2d",
+    "path": "docs/ops/vx/gradient/vx_magnitude.md"
+   }
+  ],
+  "vx_phase": [
+   {
+    "op": "vx_phase",
+    "dim": "vx",
+    "category": "gradient",
+    "in": "image2d × image2d",
+    "out": "image2d",
+    "path": "docs/ops/vx/gradient/vx_phase.md"
+   }
+  ],
+  "vx_sobel3x3": [
+   {
+    "op": "vx_sobel3x3",
+    "dim": "vx",
+    "category": "gradient",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/vx/gradient/vx_sobel3x3.md"
+   }
+  ],
+  "vx_histogram": [
+   {
+    "op": "vx_histogram",
+    "dim": "vx",
+    "category": "pixel",
+    "in": "image2d",
+    "out": "pairs",
+    "path": "docs/ops/vx/pixel/vx_histogram.md"
+   }
+  ],
+  "vx_table_lookup": [
+   {
+    "op": "vx_table_lookup",
+    "dim": "vx",
+    "category": "pixel",
+    "in": "image2d × signal",
+    "out": "image2d",
+    "path": "docs/ops/vx/pixel/vx_table_lookup.md"
+   }
+  ],
+  "vx_nonmax_suppression": [
+   {
+    "op": "vx_nonmax_suppression",
+    "dim": "vx",
+    "category": "suppress",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/vx/suppress/vx_nonmax_suppression.md"
    }
   ]
  }

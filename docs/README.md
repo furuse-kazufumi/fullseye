@@ -70,11 +70,11 @@
 
 ## オペレータを探す
 
-**2,442 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **58 本の族ガイド**があります。次元ごとの入口:
+**2,448 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **59 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 934/934、型つき台帳 1487/1499、1 行ファサード `fullseye.<名前>` 612/1267。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 934/934、型つき台帳 1493/1505、1 行ファサード `fullseye.<名前>` 612/1268。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 2447 本のうち、実行できる例が付いているのは **2336 本**(111 本は例ゼロ)、使い方の説明が 120 字以上あるのは **2333 本**(114 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 2447 本すべてにある。
+**ノートの中身の実測**: 2453 本のうち、実行できる例が付いているのは **2336 本**(117 本は例ゼロ)、使い方の説明が 120 字以上あるのは **2339 本**(114 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 2453 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -121,6 +121,7 @@
 | `rangedoppler` — FMCW レンジドップラー | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [ガイド](ops/rangedoppler/guides/fmcw_range_doppler.md) |
 | `roughness` — 表面粗さ | 6 | [INDEX](ops/roughness/INDEX.md) · [ガイド](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [ガイド](ops/videocube/guides/videocube.md) |
+| `vx` | 6 | [INDEX](ops/vx/INDEX.md) · [ガイド](ops/vx/guides/openvx_ports.md) |
 | `cadmap` — CAD 対応づけ | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
@@ -222,7 +223,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## ドキュメント地図 — 全 213 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 2,442 本と族ガイド 58 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 2,448 本と族ガイド 59 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 

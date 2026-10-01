@@ -68,11 +68,11 @@
 
 ## 연산자 찾기
 
-**2,442개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **58개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**2,448개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **59개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 934/934, 타입 台帳 1487/1499, 한 줄 파사드 `fullseye.<이름>` 612/1267 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 934/934, 타입 台帳 1493/1505, 한 줄 파사드 `fullseye.<이름>` 612/1268 — **파사드는 아직 절반**.
 
-**내용 실측**: 2447건 중 실행 가능한 예제가 붙은 것은 **2336**건(111건은 없음), 사용법이 120자 이상인 것은 **2333**건(114건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2447건 모두.
+**내용 실측**: 2453건 중 실행 가능한 예제가 붙은 것은 **2336**건(117건은 없음), 사용법이 120자 이상인 것은 **2339**건(114건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2453건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -119,6 +119,7 @@
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
+| `vx` | 6 | [INDEX](ops/vx/INDEX.md) · [guide](ops/vx/guides/openvx_ports.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
@@ -220,7 +221,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 문서 지도 — 전 213건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 2,442건과 패밀리 가이드 58건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 2,448건과 패밀리 가이드 59건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 

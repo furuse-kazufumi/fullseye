@@ -89,6 +89,8 @@ LEDGER_DIMS = {
               "module": "graphinv", "family": "graph_invariants"},
     "text": {"registry": "opstext", "table": "OPSTEXT",
              "module": "textregion", "family": "text_region"},
+    "vx": {"registry": "opsvx", "table": "OPSVX",
+           "module": "vxcore", "family": "openvx_ports"},
     "drive": {"registry": "opsdrive", "table": "OPSDRIVE",
               "module": "drivecourse", "family": "driving_school"},
     # --- 2026-09-02 に登録した族。ここに載っていなかったあいだ、これらの op は

@@ -1,8 +1,8 @@
 {
- "n_ops": 2436,
+ "n_ops": 2442,
  "tiers": {
   "color": 12,
-  "ledger": 1485,
+  "ledger": 1491,
   "nary": 17,
   "registry": 922
  },
@@ -19144,6 +19144,87 @@
    "dim": "3d",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "vx_histogram",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "pairs",
+   "category": "pixel",
+   "tier": "ledger",
+   "ledger": "opsvx",
+   "dim": "vx",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "vx_magnitude",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "gradient",
+   "tier": "ledger",
+   "ledger": "opsvx",
+   "dim": "vx",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "vx_nonmax_suppression",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "suppress",
+   "tier": "ledger",
+   "ledger": "opsvx",
+   "dim": "vx",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "vx_phase",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "gradient",
+   "tier": "ledger",
+   "ledger": "opsvx",
+   "dim": "vx",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "vx_sobel3x3",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "gradient",
+   "tier": "ledger",
+   "ledger": "opsvx",
+   "dim": "vx",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "vx_table_lookup",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "pixel",
+   "tier": "ledger",
+   "ledger": "opsvx",
+   "dim": "vx",
+   "in_sorts": [
+    "image2d",
+    "signal"
    ]
   },
   {

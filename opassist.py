@@ -39,6 +39,8 @@ _LEDGERS = (
     ("opsacoustics", "OPSACOUSTICS"), ("opsinterferometry", "OPSINTERFEROMETRY"),
     ("opsflyvision", "OPSFLYVISION"), ("opsspc", "OPSSPC"), ("opsgraph", "OPSGRAPH"),
     ("opstext", "OPSTEXT"),
+    # 2026-10-01: OpenVX 1.3.1 の素の口(勾配・表引き・ヒストグラム・非極大の抑制)。新語なし。
+    ("opsvx", "OPSVX"),
     # 2026-09-29: 自動運転の教習所ワールド(規格寸法のコース / 3-D の世界 / 回転式 LiDAR)。新語なし。
     ("opsdrive", "OPSDRIVE"),
     ("opstomography", "OPSTOMOGRAPHY"), ("opsvolcolor", "OPSVOLCOLOR"),

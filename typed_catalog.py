@@ -690,7 +690,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opstext", "opsdrive", "opsgenerative"):
+                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsgenerative"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
@@ -846,6 +846,12 @@ def catalog():
     for n, m in opstext.OPSTEXT.items():
         if m["func"] is not None:
             ops.append((n, "text", list(m["in"]), m["out"], m["func"]))
+    # OpenVX 1.3.1 の素の口(opsvx 台帳)。**新しい型語彙を 1 つも作らない**判断: U8 / S16 は image2d の dtype として
+    # 呼び出し時に検査して止める(黙って丸めない)。真値は規範文 [REQ-NNNN] を画素ごとに写した第 2 実装(2026-10-01)。
+    import opsvx
+    for n, m in opsvx.OPSVX.items():
+        if m["func"] is not None:
+            ops.append((n, "vx", list(m["in"]), m["out"], m["func"]))
     # 自動運転の教習所ワールド(opsdrive 台帳)。**新しい型語彙を 1 つも作らない**判断:
     # コース・世界・LiDAR の一掃・カメラの像は dict(table)のまま運ぶ(面のラベルと色を
     # 落とすと真値が消える)。占有格子は image2d、姿勢と内部パラメータは matrix、

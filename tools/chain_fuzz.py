@@ -1261,6 +1261,39 @@ def _b_text_boxes(pool, rng):
     return (np.array([[18, 8, 23, 40], [18, 50, 23, 82]]),), {"stroke_width": [5.0, 5.0]}
 
 
+# --- OpenVX の素の口。U8 の段差つき画像 / その Sobel の S16 / 恒等表。 --- #
+def _b_vx_u8(pool, rng):
+    img = rng.integers(0, 256, (24, 32)).astype(np.uint8)
+    img[6:14, 8:20] = 200
+    return (img,), {}
+
+
+def _b_vx_sobel(pool, rng):
+    return _b_vx_u8(pool, rng)[0], {"border": "replicate"}
+
+
+def _b_vx_grad(pool, rng):
+    import vxcore
+    g = vxcore.vx_sobel3x3(_b_vx_u8(pool, rng)[0][0], border="replicate")
+    return (g["gx"], g["gy"]), {}
+
+
+def _b_vx_phase(pool, rng):
+    return _b_vx_grad(pool, rng)[0], {"mapping": "floor"}
+
+
+def _b_vx_lut(pool, rng):
+    return (_b_vx_u8(pool, rng)[0][0], (255 - np.arange(256)).astype(np.uint8)), {}
+
+
+def _b_vx_hist(pool, rng):
+    return _b_vx_u8(pool, rng)[0], {"num_bins": 16, "offset": 0, "range_": 256}
+
+
+def _b_vx_nms(pool, rng):
+    return _b_vx_u8(pool, rng)[0], {"window": 3}
+
+
 def _b_graph_adj(pool, rng):
     B = (rng.random((40, 40)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -2583,6 +2616,12 @@ OP_ARG_BUILDERS = {
     "seg_synapse_nri": _b_seg_wiring_pair,
     "seg_wiring_exposure": _b_seg_wiring,
     "swt_map": _b_text_img,
+    "vx_sobel3x3": _b_vx_sobel,
+    "vx_magnitude": _b_vx_grad,
+    "vx_phase": _b_vx_phase,
+    "vx_table_lookup": _b_vx_lut,
+    "vx_histogram": _b_vx_hist,
+    "vx_nonmax_suppression": _b_vx_nms,
     "text_candidates": _b_text_swt,
     "text_lines": _b_text_boxes,
     # --- 描画: 32x32 では物理的に収まらない 13 op ---------------------------- #

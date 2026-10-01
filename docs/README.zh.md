@@ -68,11 +68,11 @@
 
 ## 查找算子
 
-共有 **2,442 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **58 篇族指南**。按维度的入口:
+共有 **2,448 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **59 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 934/934、类型化台账 1487/1499、单行门面 `fullseye.<名称>` 612/1267 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 934/934、类型化台账 1493/1505、单行门面 `fullseye.<名称>` 612/1268 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 2447 篇中，附有可运行示例的 **2336** 篇(111 篇没有)，用法说明 120 字以上的 **2333** 篇(114 篇仅一行)。结构(调用形式、类型、可衔接算子)2447 篇全有。
+**内容实测**: 2453 篇中，附有可运行示例的 **2336** 篇(117 篇没有)，用法说明 120 字以上的 **2339** 篇(114 篇仅一行)。结构(调用形式、类型、可衔接算子)2453 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -119,6 +119,7 @@
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
+| `vx` | 6 | [INDEX](ops/vx/INDEX.md) · [guide](ops/vx/guides/openvx_ports.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
@@ -220,7 +221,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 213 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,442 篇算子说明与 58 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 2,448 篇算子说明与 59 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 

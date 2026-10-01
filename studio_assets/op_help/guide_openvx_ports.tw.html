@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南僅有日文版(它是人寫的散文,這裡不做機械替換)。</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">OpenVX の素の口 — 使い方ガイド</h2>
+<p>Copyright (c) 2026 Kazufumi Furuse.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>OpenVX 1.3.1(Khronos の視覚処理 API の規格)は、視覚関数ごとに<b>何を受け取り何を返すか</b>を番号つきの規範文 [REQ-NNNN] で決めています。</p>
+<p>2026-09-25 に 61 本を本文まで読んで照合したら、17 本は「Fullseye にも似た op はあるが、入口か出口の形が違う」でした。たとえば <code style="color:#22d3bf">sobel_mag</code> は</p>
+<p>大きさを [0, 1] に正規化して返すので、規格の順序 —— Sobel で gx と gy を出し、別々に大きさと位相へ —— では使えません。</p>
+<p>この族は、その<b>素の口</b>を規範文どおりに開けます(合成 op は消しません)。第 1 陣は 6 op:</p>
+<p style="margin:2px 0 2px 12px">• <b>gradient(3)</b> — <code style="color:#22d3bf">vx_sobel3x3</code>(REQ-0415 の核で gx・gy を別々に、境界は必須の引数)/ <code style="color:#22d3bf">vx_magnitude</code>(REQ-0270: <code style="color:#22d3bf">uint16(sqrt(x²+y²) + 0.5)</code>、32767 で飽和)/</p>
+<p><code style="color:#22d3bf">vx_phase</code>(REQ-0364: 0 ≤ ϕ &lt; 2π を 0〜255 へ。★規格は丸めを決めていないので <code style="color:#22d3bf">mapping=&quot;floor&quot;|&quot;round&quot;</code> を呼び手が選ぶ)。</p>
+<p style="margin:2px 0 2px 12px">• <b>pixel(2)</b> — <code style="color:#22d3bf">vx_table_lookup</code>(REQ-0421: 任意の表を引く、S16 は offset を足して引く、表の外は止める)/ <code style="color:#22d3bf">vx_histogram</code>(REQ-0230: <code style="color:#22d3bf">(I − offset) × numBins / range</code> の升)。</p>
+<p style="margin:2px 0 2px 12px">• <b>suppress(1)</b> — <code style="color:#22d3bf">vx_nonmax_suppression</code>(REQ-0337: 窓の中で<b>前の隣には ≥、後ろの隣には &gt;</b> で勝てば残る。マスクの画素は比べない REQ-0336、抑制した S16 は INT16_MIN REQ-0335)。</p>
+<p>画像は U8 / S16 の dtype を規格どおりに受け、合わなければ止めます(黙って丸めません)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  U8[U8 画像] --&gt; S[vx_sobel3x3]
+  S --&gt;|gx| M[vx_magnitude]
+  S --&gt;|gy| M
+  S --&gt;|gx| P[vx_phase]
+  S --&gt;|gy| P
+  M --&gt; N[vx_nonmax_suppression]
+  U8 --&gt; H[vx_histogram]
+  U8 --&gt; L[vx_table_lookup]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(最小の 1 本)</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import vxcore as V
+
+img = np.zeros((7, 9), np.uint8)
+img[:, 4:] = 100                                                   # 縦の段差(左 0 → 右 100)
+g = V.vx_sobel3x3(img, border=&quot;replicate&quot;)                         # REQ-0415 の核、gx と gy を別々に
+print(g[&quot;gx&quot;][3, 2:7].tolist(), int(g[&quot;gy&quot;].max()))      # [0, 400, 400, 0, 0] 0
+mag = V.vx_magnitude(g[&quot;gx&quot;], g[&quot;gy&quot;])                             # REQ-0270: sqrt + 0.5 を切り捨て、32767 で飽和
+print(mag[3, 3:5].tolist(), V.vx_phase(g[&quot;gx&quot;], g[&quot;gy&quot;], mapping=&quot;floor&quot;)[3, 3])   # [400, 400] 0(右向きの勾配 = 位相 0)
+peaks = V.vx_nonmax_suppression(mag, window=3)                     # REQ-0337: 前の隣に ≥、後ろの隣に &gt;
+print(int((peaks &gt; 0).sum()))          # 1 —— 幅 2・長さ 7 の平らな稜線が右下の 1 画素に潰れる
+print(V.vx_histogram(img, num_bins=4, offset=0, range_=256)[:, 1].tolist())        # [28.0, 35.0, 0.0, 0.0] —— REQ-0230 の升</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">気をつけること</h3>
+<p style="margin:2px 0 2px 12px">• <b>非極大の抑制は「点」のための op です。</b> ≥ と &gt; の非対称のおかげで平らな頂上から 1 画素だけが残りますが、同じ理由で、**平らな稜線(エッジ)も</p>
+<p>1 画素に潰れます**(上の例: 幅 2・長さ 7 の稜線が 1 画素)。エッジを細くしたいときは勾配の向きに沿って比べる Canny の段(<code style="color:#22d3bf">hx_nonmax_dir</code>)を使います。</p>
+<p style="margin:2px 0 2px 12px">• <b>位相の丸めは規格が決めていません。</b> <code style="color:#22d3bf">floor</code> と <code style="color:#22d3bf">round</code> は 2π の直前で 255 と 0 に分かれます。他の実装と突き合わせるときは、どちらかを確かめてから。</p>
+<p style="margin:2px 0 2px 12px">• <b>大きさの 0.5 の足し方。</b> 整数の x² + y² の平方根はちょうど n + 0.5 にならないので、REQ-0270 の「+ 0.5 して切り捨て」と四捨五入は整数の入力では常に同じ答えです。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">真値</h3>
+<p>試験(<code style="color:#22d3bf">tests/test_vxcore.py</code>)は、規範文の式を<b>画素ごとの素朴なループ</b>で写した別の実装と突き合わせます: Sobel は scipy の相関、大きさは REQ-0270 の C の式、</p>
+<p>位相は <code style="color:#22d3bf">math.atan2</code>、ヒストグラムは REQ-0230 の式、非極大の抑制は 3.39 節の 8 つの不等式。≥ と &gt; を入れ替えた壊れた版で 3 件落ちることも確かめてあります。</p>
