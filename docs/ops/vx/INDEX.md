@@ -1,4 +1,4 @@
-# VX operator help — 6 ops in 3 categories
+# VX operator help — 10 ops in 5 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/vx/<category>/<op>.md` を走査。
 
@@ -7,6 +7,14 @@
 - [openvx_ports](guides/openvx_ports.md) — OpenVX の素の口 — 使い方ガイド
 
 ## カテゴリ
+
+### filter (1)
+
+[vx_nonlinear_filter](filter/vx_nonlinear_filter.md)
+
+### geometry (3)
+
+[vx_remap](geometry/vx_remap.md) · [vx_warp_affine](geometry/vx_warp_affine.md) · [vx_warp_perspective](geometry/vx_warp_perspective.md)
 
 ### gradient (3)
 

@@ -1294,6 +1294,27 @@ def _b_vx_nms(pool, rng):
     return _b_vx_u8(pool, rng)[0], {"window": 3}
 
 
+def _b_vx_affine(pool, rng):
+    a = float(rng.uniform(-0.5, 0.5))
+    M = np.array([[np.cos(a), -np.sin(a), rng.uniform(-3, 3)], [np.sin(a), np.cos(a), rng.uniform(-3, 3)]])
+    return (_b_vx_u8(pool, rng)[0][0], M), {"interpolation": "bilinear", "border": "constant"}
+
+
+def _b_vx_persp(pool, rng):
+    H = np.eye(3) + np.array([[0.0, 0.03, 1.0], [0.02, 0.0, -1.0], [0.001, 0.001, 0.0]])
+    return (_b_vx_u8(pool, rng)[0][0], H), {"interpolation": "nearest", "border": "constant"}
+
+
+def _b_vx_remap(pool, rng):
+    img = _b_vx_u8(pool, rng)[0][0]
+    yy, xx = np.mgrid[0:img.shape[0], 0:img.shape[1]].astype(np.float64)
+    return (img, xx + 0.5 * np.sin(yy / 3.0), yy), {"interpolation": "bilinear", "border": "constant"}
+
+
+def _b_vx_nonlinear(pool, rng):
+    return (_b_vx_u8(pool, rng)[0][0], np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)), {"function": "median", "border": "replicate"}
+
+
 def _b_graph_adj(pool, rng):
     B = (rng.random((40, 40)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -2622,6 +2643,10 @@ OP_ARG_BUILDERS = {
     "vx_table_lookup": _b_vx_lut,
     "vx_histogram": _b_vx_hist,
     "vx_nonmax_suppression": _b_vx_nms,
+    "vx_warp_affine": _b_vx_affine,
+    "vx_warp_perspective": _b_vx_persp,
+    "vx_remap": _b_vx_remap,
+    "vx_nonlinear_filter": _b_vx_nonlinear,
     "text_candidates": _b_text_swt,
     "text_lines": _b_text_boxes,
     # --- 描画: 32x32 では物理的に収まらない 13 op ---------------------------- #

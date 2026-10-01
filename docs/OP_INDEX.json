@@ -1,8 +1,8 @@
 {
- "n_ops": 2442,
+ "n_ops": 2446,
  "tiers": {
   "color": 12,
-  "ledger": 1491,
+  "ledger": 1495,
   "nary": 17,
   "registry": 922
  },
@@ -19174,6 +19174,20 @@
    ]
   },
   {
+   "name": "vx_nonlinear_filter",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "filter",
+   "tier": "ledger",
+   "ledger": "opsvx",
+   "dim": "vx",
+   "in_sorts": [
+    "image2d",
+    "matrix"
+   ]
+  },
+  {
    "name": "vx_nonmax_suppression",
    "halcon": "",
    "in_sort": "image2d",
@@ -19201,6 +19215,21 @@
    ]
   },
   {
+   "name": "vx_remap",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "geometry",
+   "tier": "ledger",
+   "ledger": "opsvx",
+   "dim": "vx",
+   "in_sorts": [
+    "image2d",
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
    "name": "vx_sobel3x3",
    "halcon": "",
    "in_sort": "image2d",
@@ -19225,6 +19254,34 @@
    "in_sorts": [
     "image2d",
     "signal"
+   ]
+  },
+  {
+   "name": "vx_warp_affine",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "geometry",
+   "tier": "ledger",
+   "ledger": "opsvx",
+   "dim": "vx",
+   "in_sorts": [
+    "image2d",
+    "matrix"
+   ]
+  },
+  {
+   "name": "vx_warp_perspective",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "geometry",
+   "tier": "ledger",
+   "ledger": "opsvx",
+   "dim": "vx",
+   "in_sorts": [
+    "image2d",
+    "matrix"
    ]
   },
   {

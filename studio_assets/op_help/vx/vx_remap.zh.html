@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vx_remap — VX <code style="color:#22d3bf">geometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × matrix × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_remap(image, map_x, map_y, *, interpolation, border, constant_value=0)</code>(要直接调用实现,<code style="color:#22d3bf">import vxcore; vxcore.vx_remap(image, map_x, map_y, *, interpolation, border, constant_value=0)</code>;从台账取用则 <code style="color:#22d3bf">opsvx.get(&quot;vx_remap&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>remap(3.44 節): 出力 (x, y) = 入力 (map_x[y, x], map_y[y, x])(REQ-0392)。表は出力の形、座標は入力の画素の中心が整数。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: U8 の 2-D でない / map_x と map_y が同じ形の 2-D の実数でない / interpolation・border が一覧に無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image2d</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opvx:vx_sobel3x3">vx_sobel3x3</a> · <a style="color:#22d3bf" href="opvx:vx_magnitude">vx_magnitude</a> · <a style="color:#22d3bf" href="opvx:vx_phase">vx_phase</a> · <a style="color:#22d3bf" href="opvx:vx_table_lookup">vx_table_lookup</a> · <a style="color:#22d3bf" href="opvx:vx_histogram">vx_histogram</a> · <a style="color:#22d3bf" href="opvx:vx_nonmax_suppression">vx_nonmax_suppression</a> · <a style="color:#22d3bf" href="opvx:vx_warp_affine">vx_warp_affine</a> · <a style="color:#22d3bf" href="opvx:vx_warp_perspective">vx_warp_perspective</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">geometry</code>)</h3>
+<p><a style="color:#22d3bf" href="opvx:vx_warp_affine">vx_warp_affine</a> · <a style="color:#22d3bf" href="opvx:vx_warp_perspective">vx_warp_perspective</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: vxcore.py — VX 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

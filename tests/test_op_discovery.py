@@ -259,6 +259,11 @@ def test_the_two_namespaces_overlap_in_exactly_five_names():
 
     # 2-D の op に 1-D を渡しても鳴らない —— 素通しで返る(この非対称が本体)
     import warnings
+    # ★フォールバックの警告は op ごとに 1 回だけ。同じワーカーで先に別の試験が fs.op.lowpass の
+    #   フォールバックを起こしていると、ここで警告が来ず落ちた(2026-10-01、-n 6 の全体スイートだけで再現・単独では緑)。
+    #   試験の順序に依存しないよう、1 回目の警告をもう一度出せる状態に戻してから見る。
+    import backend_safe
+    backend_safe.clear_fallbacks(reset_warnings=True)
     for name in ("lowpass", "highpass"):
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")

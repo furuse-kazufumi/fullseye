@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""vxcore — OpenVX 1.3.1 が「渡せ」「返せ」と言う素の口を開ける op(第 1 陣 6 本)。
+"""vxcore — OpenVX 1.3.1 が「渡せ」「返せ」と言う素の口を開ける op(第 1 陣 6 本 + 第 2 陣 4 本)。
 
 2026-09-25 に OpenVX 1.3.1 の視覚関数 61 本を本文まで読んで照合したところ、17 件は「対応はあるが入口か出口の形が違う」だった
 —— 便利な合成 op(``sobel_mag`` / ``sobel_dir`` / ``nonmax_suppression_amp`` / ``f2_lut_trans`` は引数 ``(v, a, b)`` で
@@ -16,13 +16,19 @@
 * :func:`vx_nonmax_suppression` — 3.39 節: 左上の隣には ≥、右下の隣には > で勝てば残す(REQ-0337)。マスクの非ゼロ画素は比べず残す
   (REQ-0336)。抑制した画素は U8 なら 0、S16 なら INT16_MIN(REQ-0335)。
 
+第 2 陣(2026-10-01): :func:`vx_warp_affine`(3.56、REQ-0498 の**逆写像**)/ :func:`vx_warp_perspective`(3.57、REQ-0508)/
+:func:`vx_remap`(3.44、REQ-0392)/ :func:`vx_nonlinear_filter`(3.38、中央値・最小・最大を任意マスクで、REQ-0325〜0330)。
+標本は画素の中心(整数座標 = 中心、4.4.6 節)。ワープと remap の境界は UNDEFINED と CONSTANT だけ(REQ-0506)。
+★規格の C の宣言は行列を転置した並び(``mat[3][2]``)で持つ —— この op は数学の並び(2×3 / 3×3)だけを受け、(3, 2) は止める。
+
 整数の型(U8 / S16)は規格の型をそのまま守る: 入力の dtype を見て、合わなければ止める(黙って丸めない)。
 """
 from __future__ import annotations
 
 import numpy as np
 
-__all__ = ["vx_sobel3x3", "vx_magnitude", "vx_phase", "vx_table_lookup", "vx_histogram", "vx_nonmax_suppression"]
+__all__ = ["vx_sobel3x3", "vx_magnitude", "vx_phase", "vx_table_lookup", "vx_histogram", "vx_nonmax_suppression",
+           "vx_warp_affine", "vx_warp_perspective", "vx_remap", "vx_nonlinear_filter"]
 
 INT16_MIN = -32768
 _BORDERS = ("replicate", "constant", "undefined")
@@ -205,3 +211,149 @@ def vx_nonmax_suppression(image, *, window, mask=None):
     out = x.copy()
     out[~(keep | ign)] = 0 if x.dtype == np.uint8 else INT16_MIN
     return out
+
+
+# ─────────────────────────────── 第 2 陣: 幾何(3.56 / 3.57 / 3.44)と非線形フィルタ(3.38) ─────────────────────────────
+_INTERP = ("nearest", "bilinear")
+_GEOM_BORDERS = ("constant", "undefined")          # REQ-0506: ワープと remap の境界は UNDEFINED と CONSTANT だけ
+
+
+def _sample(img, x0, y0, interpolation, border, constant_value, fn):
+    """画素の中心で標本を取る(整数座標 = 画素の中心、4.4.6 節)。外は constant で埋める(undefined は 0 —— 値は規格上未定義)。
+
+    最近傍 = 中心がいちばん近い画素。★ちょうど真ん中(.5)は規格に無いので ⌊x + 0.5⌋(+∞ 側)に寄せる。
+    双線形 = 中心からの距離で重みづけ、U8 への戻しは ⌊v + 0.5⌋(規格に無い丸め —— 明記)。
+    """
+    if interpolation not in _INTERP:
+        raise ValueError("%s: interpolation must be one of %r (VX_INTERPOLATION_AREA is not supported, REQ-0503) (got %r)"
+                         % (fn, _INTERP, interpolation))
+    if border not in _GEOM_BORDERS:
+        raise ValueError("%s: border must be one of %r — the standard supports only UNDEFINED and CONSTANT here (got %r)"
+                         % (fn, _GEOM_BORDERS, border))
+    cv = int(constant_value) if border == "constant" else 0
+    if not 0 <= cv <= 255:
+        raise ValueError("%s: constant_value must be in 0..255 (got %r)" % (fn, constant_value))
+    h, w = img.shape
+    src = img.astype(np.float64)
+    finite = np.isfinite(x0) & np.isfinite(y0)
+    x0 = np.where(finite, x0, -1e9)
+    y0 = np.where(finite, y0, -1e9)
+
+    def at(yi, xi):
+        inside = (xi >= 0) & (xi < w) & (yi >= 0) & (yi < h)
+        v = np.full(xi.shape, float(cv))
+        v[inside] = src[yi[inside], xi[inside]]
+        return v
+
+    if interpolation == "nearest":
+        out = at(np.floor(y0 + 0.5).astype(np.int64), np.floor(x0 + 0.5).astype(np.int64))
+    else:
+        xf, yf = np.floor(x0), np.floor(y0)
+        ax, ay = x0 - xf, y0 - yf
+        xi, yi = xf.astype(np.int64), yf.astype(np.int64)
+        out = ((1 - ax) * (1 - ay) * at(yi, xi) + ax * (1 - ay) * at(yi, xi + 1)
+               + (1 - ax) * ay * at(yi + 1, xi) + ax * ay * at(yi + 1, xi + 1))
+        out = np.floor(out + 0.5)
+    out[~finite] = cv
+    return np.clip(out, 0, 255).astype(np.uint8)
+
+
+def vx_warp_affine(image, matrix, *, interpolation, border, constant_value=0):
+    """アフィン変換(3.56 節)。**逆写像**: 出力の画素 (x, y) は入力の (x0, y0) から取る(REQ-0498):
+    ``x0 = M[0,0]·x + M[0,1]·y + M[0,2]``、``y0 = M[1,0]·x + M[1,1]·y + M[1,2]``。
+
+    *matrix*: 数学の並びの 2×3(1 行目が x0 の係数 a, b, c)。★規格の C の宣言は ``mat[3][2] = {{a,d},{b,e},{c,f}}``
+    (転置した並び)—— C の配列をそのまま渡すと形が (3, 2) になるので止める。*interpolation*(必須): ``"nearest"`` / ``"bilinear"``。
+    *border*(必須): ``"constant"``(*constant_value* で埋める)/ ``"undefined"``(0 で埋める、値は規格上未定義)。
+
+    **Raises** ``ValueError``: U8 の 2-D でない / matrix が 2×3 の有限でない / interpolation・border が一覧に無い。
+    """
+    fn = "vx_warp_affine"
+    x = _img(image, "image", fn, (np.uint8,))
+    M = np.asarray(matrix, np.float64)
+    if M.shape != (2, 3) or not np.isfinite(M).all():
+        raise ValueError("%s: matrix must be a finite 2x3 array in mathematical layout (got shape %r) — the C declaration "
+                         "mat[3][2] is the transpose" % (fn, M.shape))
+    h, w = x.shape
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
+    x0 = M[0, 0] * xx + M[0, 1] * yy + M[0, 2]
+    y0 = M[1, 0] * xx + M[1, 1] * yy + M[1, 2]
+    return _sample(x, x0, y0, interpolation, border, constant_value, fn)
+
+
+def vx_warp_perspective(image, matrix, *, interpolation, border, constant_value=0):
+    """射影変換(3.57 節)。逆写像: ``x0 = M[0]·(x, y, 1)``、``y0 = M[1]·(x, y, 1)``、``z0 = M[2]·(x, y, 1)``、
+    出力 (x, y) = 入力 (x0/z0, y0/z0)(REQ-0508)。z0 = 0 の画素は外として埋める。
+
+    *matrix*: 数学の並びの 3×3(規格の C の宣言 ``mat[3][3]`` は転置した並び)。他の引数は :func:`vx_warp_affine` と同じ。
+
+    **Raises** ``ValueError``: U8 の 2-D でない / matrix が 3×3 の有限でない / interpolation・border が一覧に無い。
+    """
+    fn = "vx_warp_perspective"
+    x = _img(image, "image", fn, (np.uint8,))
+    M = np.asarray(matrix, np.float64)
+    if M.shape != (3, 3) or not np.isfinite(M).all():
+        raise ValueError("%s: matrix must be a finite 3x3 array in mathematical layout (got shape %r)" % (fn, M.shape))
+    h, w = x.shape
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
+    x0 = M[0, 0] * xx + M[0, 1] * yy + M[0, 2]
+    y0 = M[1, 0] * xx + M[1, 1] * yy + M[1, 2]
+    z0 = M[2, 0] * xx + M[2, 1] * yy + M[2, 2]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        u = np.where(z0 != 0, x0 / z0, np.nan)
+        v = np.where(z0 != 0, y0 / z0, np.nan)
+    return _sample(x, u, v, interpolation, border, constant_value, fn)
+
+
+def vx_remap(image, map_x, map_y, *, interpolation, border, constant_value=0):
+    """remap(3.44 節): 出力 (x, y) = 入力 (map_x[y, x], map_y[y, x])(REQ-0392)。表は出力の形、座標は入力の画素の中心が整数。
+
+    **Raises** ``ValueError``: U8 の 2-D でない / map_x と map_y が同じ形の 2-D の実数でない / interpolation・border が一覧に無い。
+    """
+    fn = "vx_remap"
+    x = _img(image, "image", fn, (np.uint8,))
+    mx = np.asarray(map_x, np.float64)
+    my = np.asarray(map_y, np.float64)
+    if mx.ndim != 2 or mx.shape != my.shape:
+        raise ValueError("%s: map_x %r and map_y %r must be 2-D arrays of the output shape" % (fn, mx.shape, my.shape))
+    return _sample(x, mx, my, interpolation, border, constant_value, fn)
+
+
+def vx_nonlinear_filter(image, mask, *, function, border, constant_value=0, origin=None):
+    """非線形フィルタ(3.38 節): マスクの真の画素の値の中央値 / 最小(収縮)/ 最大(膨張)(REQ-0325・0330)。
+
+    *function*: ``"median"`` / ``"min"`` / ``"max"``(vx_non_linear_filter_e)。*mask*: 2-D の bool(BOX / CROSS / DISK / OTHER の
+    どれでも)。*origin*: マスクの原点 (行, 列)(VX_MATRIX_ORIGIN、既定は中央 ``(rows // 2, cols // 2)``)。
+    *border*(必須): ``"replicate"`` / ``"constant"`` / ``"undefined"``(端は 0 で埋めて計算する —— 値は規格上未定義)。
+    ★マスクの画素数が偶数のときの中央値は規格に無い —— 昇順に並べた ``n // 2`` 番目(上側の中央値、scipy の median_filter と同じ)を取る。
+    REQ-0327: 9×9 までのマスクは必ず扱う(この実装に上限は無い)。
+
+    **Raises** ``ValueError``: U8 の 2-D でない / function が一覧に無い / mask が 2-D の bool でない・空 / origin がマスクの外。
+    """
+    fn = "vx_nonlinear_filter"
+    x = _img(image, "image", fn, (np.uint8,))
+    if function not in ("median", "min", "max"):
+        raise ValueError("%s: function must be 'median', 'min' or 'max' (got %r)" % (fn, function))
+    m = np.asarray(mask)
+    if m.ndim != 2 or m.dtype != bool or not m.any():
+        raise ValueError("%s: mask must be a non-empty 2-D boolean array (got shape %r, dtype %s)" % (fn, m.shape, m.dtype))
+    mr, mc = m.shape
+    oy, ox = (mr // 2, mc // 2) if origin is None else (int(origin[0]), int(origin[1]))
+    if not (0 <= oy < mr and 0 <= ox < mc):
+        raise ValueError("%s: origin %r lies outside the %dx%d mask" % (fn, origin, mr, mc))
+    if border not in _BORDERS:
+        raise ValueError("%s: border must be one of %r (got %r)" % (fn, _BORDERS, border))
+    cv = int(constant_value)
+    if not 0 <= cv <= 255:
+        raise ValueError("%s: constant_value must be in 0..255 (got %r)" % (fn, constant_value))
+    h, w = x.shape
+    pt, pb, pl, pr = oy, mr - 1 - oy, ox, mc - 1 - ox
+    mode = {"replicate": "edge", "constant": "constant", "undefined": "constant"}[border]
+    kw = {"constant_values": cv if border == "constant" else 0} if mode == "constant" else {}
+    p = np.pad(x, ((pt, pb), (pl, pr)), mode=mode, **kw)
+    stack = np.stack([p[i:i + h, j:j + w] for i, j in zip(*np.nonzero(m))], axis=0)
+    if function == "min":
+        return stack.min(axis=0).astype(np.uint8)
+    if function == "max":
+        return stack.max(axis=0).astype(np.uint8)
+    return np.sort(stack, axis=0)[stack.shape[0] // 2].astype(np.uint8)

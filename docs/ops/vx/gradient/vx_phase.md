@@ -40,7 +40,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[vx_sobel3x3](vx_sobel3x3.md) · [vx_magnitude](vx_magnitude.md) · [vx_table_lookup](../pixel/vx_table_lookup.md) · [vx_histogram](../pixel/vx_histogram.md) · [vx_nonmax_suppression](../suppress/vx_nonmax_suppression.md)
+[vx_sobel3x3](vx_sobel3x3.md) · [vx_magnitude](vx_magnitude.md) · [vx_table_lookup](../pixel/vx_table_lookup.md) · [vx_histogram](../pixel/vx_histogram.md) · [vx_nonmax_suppression](../suppress/vx_nonmax_suppression.md) · [vx_warp_affine](../geometry/vx_warp_affine.md) · [vx_warp_perspective](../geometry/vx_warp_perspective.md) · [vx_remap](../geometry/vx_remap.md)
 
 ## 同カテゴリ(`gradient`)
 

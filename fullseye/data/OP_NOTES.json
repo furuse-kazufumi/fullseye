@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2442,
- "n_notes": 2448,
+ "n_ops": 2446,
+ "n_notes": 2452,
  "notes": {
   "vol_dilate": [
    {
@@ -24713,6 +24713,46 @@
     "in": "rgbvolume",
     "out": "rgbimage",
     "path": "docs/ops/volcolor/slice/vol_label_slice_rgb.md"
+   }
+  ],
+  "vx_nonlinear_filter": [
+   {
+    "op": "vx_nonlinear_filter",
+    "dim": "vx",
+    "category": "filter",
+    "in": "image2d × matrix",
+    "out": "image2d",
+    "path": "docs/ops/vx/filter/vx_nonlinear_filter.md"
+   }
+  ],
+  "vx_remap": [
+   {
+    "op": "vx_remap",
+    "dim": "vx",
+    "category": "geometry",
+    "in": "image2d × matrix × matrix",
+    "out": "image2d",
+    "path": "docs/ops/vx/geometry/vx_remap.md"
+   }
+  ],
+  "vx_warp_affine": [
+   {
+    "op": "vx_warp_affine",
+    "dim": "vx",
+    "category": "geometry",
+    "in": "image2d × matrix",
+    "out": "image2d",
+    "path": "docs/ops/vx/geometry/vx_warp_affine.md"
+   }
+  ],
+  "vx_warp_perspective": [
+   {
+    "op": "vx_warp_perspective",
+    "dim": "vx",
+    "category": "geometry",
+    "in": "image2d × matrix",
+    "out": "image2d",
+    "path": "docs/ops/vx/geometry/vx_warp_perspective.md"
    }
   ],
   "vx_magnitude": [

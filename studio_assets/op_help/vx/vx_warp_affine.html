@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vx_warp_affine — VX <code style="color:#22d3bf">geometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_warp_affine(image, matrix, *, interpolation, border, constant_value=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import vxcore; vxcore.vx_warp_affine(image, matrix, *, interpolation, border, constant_value=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsvx.get(&quot;vx_warp_affine&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>アフィン変換(3.56 節)。<b>逆写像</b>: 出力の画素 (x, y) は入力の (x0, y0) から取る(REQ-0498):</p>
+<p>`<code style="color:#22d3bf">x0 = M[0,0]·x + M[0,1]·y + M[0,2]</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">y0 = M[1,0]·x + M[1,1]·y + M[1,2]</code>`。</p>
+<p>*matrix*: 数学の並びの 2×3(1 行目が x0 の係数 a, b, c)。★規格の C の宣言は `<code style="color:#22d3bf">mat[3][2] = {{a,d},{b,e},{c,f}}</code>`</p>
+<p>(転置した並び)—— C の配列をそのまま渡すと形が (3, 2) になるので止める。*interpolation*(必須): `<code style="color:#22d3bf">&quot;nearest&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;bilinear&quot;</code>`。</p>
+<p>*border*(必須): `<code style="color:#22d3bf">&quot;constant&quot;</code><code style="color:#22d3bf">(*constant_value* で埋める)/ </code><code style="color:#22d3bf">&quot;undefined&quot;</code>`(0 で埋める、値は規格上未定義)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: U8 の 2-D でない / matrix が 2×3 の有限でない / interpolation・border が一覧に無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opvx:vx_sobel3x3">vx_sobel3x3</a> · <a style="color:#22d3bf" href="opvx:vx_magnitude">vx_magnitude</a> · <a style="color:#22d3bf" href="opvx:vx_phase">vx_phase</a> · <a style="color:#22d3bf" href="opvx:vx_table_lookup">vx_table_lookup</a> · <a style="color:#22d3bf" href="opvx:vx_histogram">vx_histogram</a> · <a style="color:#22d3bf" href="opvx:vx_nonmax_suppression">vx_nonmax_suppression</a> · <a style="color:#22d3bf" href="opvx:vx_warp_perspective">vx_warp_perspective</a> · <a style="color:#22d3bf" href="opvx:vx_remap">vx_remap</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">geometry</code>)</h3>
+<p><a style="color:#22d3bf" href="opvx:vx_warp_perspective">vx_warp_perspective</a> · <a style="color:#22d3bf" href="opvx:vx_remap">vx_remap</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: vxcore.py — VX operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

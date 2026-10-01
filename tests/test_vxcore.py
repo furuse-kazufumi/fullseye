@@ -175,3 +175,99 @@ def test_the_ledger_is_wired():
     assert set(V.__all__) <= declared
     from tools.chain_fuzz import OP_ARG_BUILDERS
     assert set(V.__all__) <= set(OP_ARG_BUILDERS)
+
+
+# ─────────────────────────────── 第 2 陣: 幾何と非線形フィルタ ─────────────────────────────
+def _naive_nearest(img, x0, y0, cv):
+    """4.4.6 節の文言(中心がいちばん近い画素、.5 は +∞ 側)を画素ごとに写した第 2 実装。"""
+    h, w = img.shape
+    out = np.empty(x0.shape, np.uint8)
+    for (i, j), xv in np.ndenumerate(x0):
+        xi, yi = math.floor(xv + 0.5), math.floor(y0[i, j] + 0.5)
+        out[i, j] = img[yi, xi] if (0 <= xi < w and 0 <= yi < h) else cv
+    return out
+
+
+def _affine_coords(shape, M):
+    h, w = shape
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
+    return M[0, 0] * xx + M[0, 1] * yy + M[0, 2], M[1, 0] * xx + M[1, 1] * yy + M[1, 2]
+
+
+M_ROT = np.array([[math.cos(0.3), -math.sin(0.3), 4.2], [math.sin(0.3), math.cos(0.3), -2.7]])
+
+
+def test_warp_affine_identity_and_integer_shift_are_exact():
+    I = np.array([[1.0, 0, 0], [0, 1.0, 0]])
+    for interp in ("nearest", "bilinear"):
+        assert np.array_equal(V.vx_warp_affine(IMG, I, interpolation=interp, border="constant"), IMG)
+    S = np.array([[1.0, 0, 3], [0, 1.0, -2]])                       # 逆写像: 出力 (x, y) は入力 (x+3, y-2)
+    out = V.vx_warp_affine(IMG, S, interpolation="nearest", border="constant", constant_value=7)
+    assert np.array_equal(out[2:, :-3], IMG[:-2, 3:])
+    assert (out[:2] == 7).all() and (out[:, -3:] == 7).all()
+
+
+def test_warp_affine_nearest_and_bilinear_match_second_implementations():
+    x0, y0 = _affine_coords(IMG.shape, M_ROT)
+    a = V.vx_warp_affine(IMG, M_ROT, interpolation="nearest", border="constant", constant_value=9)
+    assert np.array_equal(a, _naive_nearest(IMG, x0, y0, 9))
+    b = V.vx_warp_affine(IMG, M_ROT, interpolation="bilinear", border="constant", constant_value=9)
+    # scipy の mode="constant" は標本点が格子の外に出ると丸ごと cval にする(縁の 1 画素で食い違う)。規格の CONSTANT は
+    # 「外の近傍の値を constant とみなして補間する」なので、外の近傍だけを cval で埋める "grid-constant" が同じ約束。
+    ref = ndimage.map_coordinates(IMG.astype(np.float64), [y0, x0], order=1, mode="grid-constant", cval=9.0)
+    assert np.array_equal(b, np.clip(np.floor(ref + 0.5), 0, 255).astype(np.uint8))
+
+
+def test_warp_perspective_degenerates_to_affine_bit_for_bit():
+    P = np.vstack([M_ROT, [0.0, 0.0, 1.0]])
+    for interp in ("nearest", "bilinear"):
+        assert np.array_equal(V.vx_warp_perspective(IMG, P, interpolation=interp, border="constant"),
+                              V.vx_warp_affine(IMG, M_ROT, interpolation=interp, border="constant"))
+    H = np.array([[1.0, 0.05, 1.0], [0.02, 0.95, 0.5], [0.001, 0.002, 1.0]])
+    h, w = IMG.shape
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
+    z = H[2, 0] * xx + H[2, 1] * yy + H[2, 2]
+    u = (H[0, 0] * xx + H[0, 1] * yy + H[0, 2]) / z
+    v = (H[1, 0] * xx + H[1, 1] * yy + H[1, 2]) / z
+    assert np.array_equal(V.vx_warp_perspective(IMG, H, interpolation="nearest", border="constant"), _naive_nearest(IMG, u, v, 0))
+
+
+def test_remap_with_the_affine_grid_equals_warp_affine():
+    x0, y0 = _affine_coords(IMG.shape, M_ROT)
+    for interp in ("nearest", "bilinear"):
+        assert np.array_equal(V.vx_remap(IMG, x0, y0, interpolation=interp, border="constant", constant_value=3),
+                              V.vx_warp_affine(IMG, M_ROT, interpolation=interp, border="constant", constant_value=3))
+
+
+def test_the_c_layout_of_the_matrix_is_refused():
+    with pytest.raises(ValueError, match="transpose"):
+        V.vx_warp_affine(IMG, M_ROT.T, interpolation="nearest", border="constant")   # mat[3][2] をそのまま渡した形
+    with pytest.raises(ValueError, match="UNDEFINED and CONSTANT"):
+        V.vx_warp_affine(IMG, M_ROT, interpolation="nearest", border="replicate")
+    with pytest.raises(ValueError, match="AREA"):
+        V.vx_remap(IMG, *_affine_coords(IMG.shape, M_ROT), interpolation="area", border="constant")
+
+
+def test_nonlinear_filter_matches_scipy_and_a_naive_loop():
+    box = np.ones((3, 3), bool)
+    assert np.array_equal(V.vx_nonlinear_filter(IMG, box, function="median", border="replicate"),
+                          ndimage.median_filter(IMG, footprint=box, mode="nearest"))
+    cross = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+    assert np.array_equal(V.vx_nonlinear_filter(IMG, cross, function="min", border="replicate"),
+                          ndimage.grey_erosion(IMG, footprint=cross, mode="nearest"))
+    assert np.array_equal(V.vx_nonlinear_filter(IMG, cross, function="max", border="constant", constant_value=0),
+                          ndimage.grey_dilation(IMG, footprint=cross, mode="constant", cval=0))
+    other = np.array([[1, 0, 0, 1], [0, 1, 1, 0], [1, 0, 0, 0]], bool)   # OTHER の形、原点は (1, 1) 以外も
+    for origin in (None, (0, 3)):
+        out = V.vx_nonlinear_filter(IMG, other, function="median", border="replicate", origin=origin)
+        oy, ox = (1, 2) if origin is None else origin
+        h, w = IMG.shape
+        want = np.empty_like(IMG)
+        for i in range(h):
+            for j in range(w):
+                vals = sorted(int(IMG[min(max(i + a - oy, 0), h - 1), min(max(j + b - ox, 0), w - 1)])
+                              for a, b in zip(*np.nonzero(other)))
+                want[i, j] = vals[len(vals) // 2]
+        assert np.array_equal(out, want)
+    big = np.ones((9, 9), bool)                                          # REQ-0327: 9×9 は必ず扱う
+    assert V.vx_nonlinear_filter(IMG, big, function="max", border="replicate").max() == IMG.max()

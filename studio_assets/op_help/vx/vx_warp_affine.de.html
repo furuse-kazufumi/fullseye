@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vx_warp_affine — VX <code style="color:#22d3bf">geometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_warp_affine(image, matrix, *, interpolation, border, constant_value=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import vxcore; vxcore.vx_warp_affine(image, matrix, *, interpolation, border, constant_value=0)</code>; aus dem Register: <code style="color:#22d3bf">opsvx.get(&quot;vx_warp_affine&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>アフィン変換(3.56 節)。<b>逆写像</b>: 出力の画素 (x, y) は入力の (x0, y0) から取る(REQ-0498):</p>
+<p>`<code style="color:#22d3bf">x0 = M[0,0]·x + M[0,1]·y + M[0,2]</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">y0 = M[1,0]·x + M[1,1]·y + M[1,2]</code>`。</p>
+<p>*matrix*: 数学の並びの 2×3(1 行目が x0 の係数 a, b, c)。★規格の C の宣言は `<code style="color:#22d3bf">mat[3][2] = {{a,d},{b,e},{c,f}}</code>`</p>
+<p>(転置した並び)—— C の配列をそのまま渡すと形が (3, 2) になるので止める。*interpolation*(必須): `<code style="color:#22d3bf">&quot;nearest&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;bilinear&quot;</code>`。</p>
+<p>*border*(必須): `<code style="color:#22d3bf">&quot;constant&quot;</code><code style="color:#22d3bf">(*constant_value* で埋める)/ </code><code style="color:#22d3bf">&quot;undefined&quot;</code>`(0 で埋める、値は規格上未定義)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: U8 の 2-D でない / matrix が 2×3 の有限でない / interpolation・border が一覧に無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">Leitfaden zur Familie openvx_ports</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opvx:vx_sobel3x3">vx_sobel3x3</a> · <a style="color:#22d3bf" href="opvx:vx_magnitude">vx_magnitude</a> · <a style="color:#22d3bf" href="opvx:vx_phase">vx_phase</a> · <a style="color:#22d3bf" href="opvx:vx_table_lookup">vx_table_lookup</a> · <a style="color:#22d3bf" href="opvx:vx_histogram">vx_histogram</a> · <a style="color:#22d3bf" href="opvx:vx_nonmax_suppression">vx_nonmax_suppression</a> · <a style="color:#22d3bf" href="opvx:vx_warp_perspective">vx_warp_perspective</a> · <a style="color:#22d3bf" href="opvx:vx_remap">vx_remap</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">geometry</code>)</h3>
+<p><a style="color:#22d3bf" href="opvx:vx_warp_perspective">vx_warp_perspective</a> · <a style="color:#22d3bf" href="opvx:vx_remap">vx_remap</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: vxcore.py — VX Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""opsvx — OpenVX 1.3.1 が「渡せ」「返せ」と言う素の口の台帳(第 1 陣 6 op)。
+"""opsvx — OpenVX 1.3.1 が「渡せ」「返せ」と言う素の口の台帳(第 1 陣 6 op + 第 2 陣 4 op)。
 
 Motivation (2026-09-25 の照合、2026-10-01 着手): OpenVX 1.3.1 の視覚関数 61 本を本文まで読んで照合したら、17 件は
 「対応はあるが入口か出口の形が違う」だった。合成 op(``sobel_mag`` / ``nonmax_suppression_amp`` / ``f2_lut_trans``)は
@@ -35,6 +35,17 @@ _CATALOG = {
     # 3.39 Non-Maxima Suppression(REQ-0334〜0337)。前の隣には ≥、後ろの隣には >。
     "suppress": [
         ("vx_nonmax_suppression", "vxcore", ["image2d"], "image2d"),
+    ],
+    # 3.56 Warp Affine / 3.57 Warp Perspective / 3.44 Remap(REQ-0498・0508・0392)。逆写像、画素の中心で標本。
+    # 行列は数学の並び(matrix)、remap の表は出力の形の 2 枚(matrix)。
+    "geometry": [
+        ("vx_warp_affine", "vxcore", ["image2d", "matrix"], "image2d"),
+        ("vx_warp_perspective", "vxcore", ["image2d", "matrix"], "image2d"),
+        ("vx_remap", "vxcore", ["image2d", "matrix", "matrix"], "image2d"),
+    ],
+    # 3.38 Non Linear Filter(REQ-0325〜0330)。マスクは任意の形の bool 行列(BOX / CROSS / DISK / OTHER)。
+    "filter": [
+        ("vx_nonlinear_filter", "vxcore", ["image2d", "matrix"], "image2d"),
     ],
 }
 
