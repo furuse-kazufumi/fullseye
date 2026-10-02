@@ -22,6 +22,26 @@ EXTEND: 実データに差し替えるなら :func:`trace_to_depth` が返す走
 (これは現場でスマイルを見つける実際の手口)と、キャストを取り替えたときの
 差分だけで、絶対誤差は出せません。
 
+**実データの節(``FULLSEYE_DATA_DIR`` を立てたときだけ)**。NOAA NCEI の航海
+NF-14-06(NOAA Ship Nancy Foster、2014-09-11、EPA Palm Beach 投棄場、深さ約
+181 m、Reson SeaBat 7125)の生の HSX と、NOAA が CARIS で作った 5 m の BAG、
+同じ航海の CTD キャスト PB-04 を読みます。データは repo に入れず、
+``$FULLSEYE_DATA_DIR/noaa_multibeam/`` に置いたときだけ節が走ります(無ければ
+「実データ: 無し(合成だけ)」と 1 行出し、門は数えません —— 合成の門と結果は
+データの有無で変わりません)。門は :func:`section_real_noaa` の 3 つ: (R1) 音速
+一定のスマイルが Order 1a を割る角度を §4 の閉形式で**先に**予測して実測と
+比べる、(R2) 隣接測線の重なりの差の 95 % 点が光線追跡では TVU 未満・音速一定では
+TVU 超(両向き)、(R3) ±61 度より外の外れ値は別枠で数え、光線追跡でも直らない
+ことを確かめる。TVU は IHO S-44 Edition 6.1.0(2022-10)の 3.2.3 節
+TVU_max(d) = √(a² + (b·d)²) と 7.3 TABLE 1 の Order 1a(a = 0.5 m, b = 0.013)
+—— 「95 % 信頼水準でこの値を超えてはならない」。
+★**NOT FOR NAVIGATION**(NOAA の ISO メタデータ useLimitation: 生データで QC 未実施、
+保証なし)。出典: National Oceanic and Atmospheric Administration (NOAA) (2014):
+Multibeam collection for NF-14-06: Multibeam data collected aboard NOAA Ship
+NANCY FOSTER (R352) from 03-Sep-14 to 11-Sep-14, Fort Pierce, Florida to Cape
+Canaveral, FL. NOAA National Centers for Environmental Information.
+https://www.ngdc.noaa.gov/ships/nancy_foster/NF-14-06_mb.html, accessed 2026-10-02.
+
 この PoC が示すこと(数字はすべて最終実行の実測値):
 
 1. **ゼロ点(表面の音速計だけを見て定数と仮定)は、直下ビームからもう失格**。
@@ -334,6 +354,10 @@ def trace_for_time(prof, theta_deg, t_one_way):
         # 層の底まで届かない(反転する)列は、残り時間をこの層で使い切る。
         dt_full = np.where(np.abs(s2) >= 1.0, np.inf, dt_full)
         dt = np.minimum(rem, np.where(np.isfinite(dt_full), dt_full, rem))
+        # ★走時を使い切った光線は cosθ が層の途中の値のまま残り、後ろの層で dt_full が
+        #   負になりうる。負の dt は rem を「生き返らせ」光線を進めてしまう(実データの
+        #   152 節点のキャストで 57 度・0.13 s が 110 m → 493 m になった)ので 0 で止める。
+        dt = np.maximum(dt, 0.0)
         live = dt > 0.0                           # まだ走時が残っている列だけ動かす
         if abs(g) > G_TINY:
             # 層内で dt だけ進んだ後の cosθ は tanh(arctanh(cosθ) − g·dt)。
@@ -1566,6 +1590,568 @@ def fig_survey(scene, dtm, VW=640, VH=360, fps=30.0):
 
 
 # --------------------------------------------------------------------------- #
+# --------------------------------------------------------------------------- #
+# 実データ —— NOAA NF-14-06(``FULLSEYE_DATA_DIR`` を立てたときだけ走る)       #
+# --------------------------------------------------------------------------- #
+#: 実データの置き場を指す環境変数。**未設定なら実データの節は丸ごと飛ばす**
+#: (既定のパスは持たない —— CI にはデータが無く、合成の門だけを数える)。
+DATA_ENV = "FULLSEYE_DATA_DIR"
+
+#: ``$FULLSEYE_DATA_DIR`` の下の NOAA 標本の置き場(repo には入れない)。
+NOAA_SUBDIR = "noaa_multibeam"
+
+#: 出典(ISO メタデータ ``otherConstraints`` の "Cite as" を埋めたもの)。
+NOAA_CREDIT = ("National Oceanic and Atmospheric Administration (NOAA) (2014): "
+               "Multibeam collection for NF-14-06: Multibeam data collected aboard "
+               "NOAA Ship NANCY FOSTER (R352) from 03-Sep-14 to 11-Sep-14, Fort Pierce, "
+               "Florida to Cape Canaveral, FL. NOAA National Centers for Environmental "
+               "Information. https://www.ngdc.noaa.gov/ships/nancy_foster/NF-14-06_mb.html, "
+               "accessed 2026-10-02.")
+
+#: ISO メタデータ ``useLimitation`` の要旨。図・印字の全部に付ける。
+NOAA_NOTICE = "NOT FOR NAVIGATION / 航行用ではない(NOAA: raw, not QC'd, no warranty)"
+
+#: BAG の南西セル中心 [m](NAD83 / UTM 17N、BAG メタデータの cornerPoints)と格子 [m]。
+BAG_SW = (603615.0, 2961050.0)
+BAG_RES = 5.0
+
+#: これより外の |角度| [度] は**別枠**で数える(Reson 7125 の外縁。音速では直らない外れ値)。
+REAL_EDGE_DEG = 61.0
+
+#: 角度の階級幅 [度] と、中央値を出す最小本数。
+REAL_BIN_DEG = 1.0
+REAL_MIN_BIN = 50
+
+#: 崖の角度の門の許容 [度](偶部 = 左右平均の崖と、§4 の一定勾配の閉形式の差)。
+#: 実際のキャストは一定勾配でない(表層 1545 → 181 m で 1498 m/s だが途中は曲がる)
+#: ので、閉形式に求めてよいのは 1 度の桁まで。崖の付近で残差曲線の傾きは約
+#: 0.2 m/度しかなく、0.3 m の食い違いで崖は 1.5 度動く —— それ以上の一致は主張しない。
+REAL_CLIFF_TOL_DEG = 1.5
+
+#: HSX(MB-System format 201, MBF_HYSWEEP1)の RMB 行のビーム配列。ビットが立った
+#: 順に 1 行ずつ並ぶ。並びは MB-System の一次ソース ``mbsys_hysweep.h`` /
+#: ``mbr_hysweep1.c``(github.com/dwcaress/MB-System)で確かめたもの。0x0004 は
+#: 東・北の 2 行を消費する。この標本は ``5b01`` = 距離・射出角・方向角・強度・品質・
+#: 不確かさ の 6 行だけ(4698 ping すべて同じ)。
+HSX_RMB_FIELDS = ((0x0001, "range"), (0x0002, "cast"), (0x0004, "east"),
+                  (0x0004, "north"), (0x0008, "depth"), (0x0010, "along"),
+                  (0x0020, "across"), (0x0040, "pitchang"), (0x0080, "rollang"),
+                  (0x0100, "takeoff"), (0x0200, "direction"), (0x0400, "delay"),
+                  (0x0800, "intensity"), (0x1000, "quality"), (0x2000, "flags"),
+                  (0x4000, "uncert"))
+
+
+def real_data_dir(sub: str):
+    """``$FULLSEYE_DATA_DIR/<sub>``。未設定・不在なら ``(None, 理由)``。"""
+    import os
+    d = os.environ.get(DATA_ENV, "").strip()
+    if not d:
+        return None, "%s が未設定" % DATA_ENV
+    p = Path(d) / sub
+    if not p.is_dir():
+        return None, "%s が無い" % p
+    return p, ""
+
+
+def read_svp(path):
+    """HYPACK の .svp(``[SVP_VERSION_2]``、3 行目から ``深さ 音速``)。重複深さは捨てる。"""
+    z, c = [], []
+    for ln in Path(path).read_text().splitlines()[3:]:
+        p = ln.split()
+        if len(p) == 2:
+            z.append(float(p[0]))
+            c.append(float(p[1]))
+    z = np.asarray(z)
+    c = np.asarray(c)
+    o = np.argsort(z, kind="stable")
+    z, c = z[o], c[o]
+    keep = np.r_[True, np.diff(z) > 0]
+    return z[keep], c[keep]
+
+
+def svp_profile(z, c, z_max: float = 600.0):
+    """キャストを PoC の ``(z ノード, c ノード)`` に。表層は最浅値、深層は最深値で延ばす。"""
+    zn = np.r_[0.0, z, max(z_max, float(z[-1]) + 1.0)]
+    cn = np.r_[c[0], c, c[-1]]
+    return zn, cn
+
+
+def _hsx_corrected_angles(theta, direction, roll, pitch):
+    """``mbr_hysweep1.c`` の sonar type 3(球面角)の姿勢補正をベクトル化したもの。
+
+    射出角 θ・方向角 → (α, β)(``mb_takeoff_to_rollpitch``)、α += pitch、
+    β -= (−HCP の roll)、戻す(``mb_rollpitch_to_takeoff``)。
+    """
+    phi = 90.0 - direction
+    x = np.sin(np.radians(theta)) * np.cos(np.radians(phi))
+    y = np.sin(np.radians(theta)) * np.sin(np.radians(phi))
+    rollang = np.arccos(np.clip(x, -1, 1))
+    s = np.sin(rollang)
+    pitchang = np.degrees(np.arcsin(np.clip(
+        np.where(s > 1e-12, y / np.where(s > 1e-12, s, 1), 0), -1, 1)))
+    rollang = np.degrees(rollang)
+    alpha = pitchang + pitch
+    beta = rollang - (-roll)
+    xx = np.cos(np.radians(beta))
+    yy = np.sin(np.radians(alpha)) * np.sin(np.radians(beta))
+    zz = np.cos(np.radians(alpha)) * np.sin(np.radians(beta))
+    return np.degrees(np.arccos(np.clip(zz, -1, 1))), np.degrees(np.arctan2(yy, xx))
+
+
+def hsx_soundings(mb_dir, prof):
+    """生の HSX(gzip)から測深点を作る。npz が無いときの経路。
+
+    深さは 2 通り: ``z_straight`` = 表面の音速計の値を定数とした直線
+    (r cosθ、この PoC のゼロ点)、``z_svp`` = **この PoC の** :func:`trace_for_time`
+    でキャストの中を片道走時 r/c_表面 だけ進めた点。どちらも heave を足す。
+    適用していないもの(隠さない): レバーアーム、喫水、潮位(ファイルは TID=0)、遅延。
+    """
+    import gzip
+    cols = {k: [] for k in ("E", "N", "z_straight", "r", "th", "sv", "heave",
+                            "sgn", "line")}
+    files = sorted(Path(mb_dir).glob("*.HSX.mb201.gz"))
+    for li, f in enumerate(files):
+        with gzip.open(f, "rt", errors="replace") as fh:
+            lines = fh.read().splitlines()
+        pos, gyr, hcp, pings = [], [], [], []
+        i, n_lines = 0, len(lines)
+        while i < n_lines:
+            ln = lines[i]
+            tag = ln[:3]
+            if tag == "POS":
+                p = ln.split()
+                pos.append((float(p[2]), float(p[3]), float(p[4])))
+            elif tag == "GYR":
+                p = ln.split()
+                if p[1] == "0":
+                    gyr.append((float(p[2]), float(p[3])))
+            elif tag == "HCP":
+                p = ln.split()
+                hcp.append((float(p[2]), float(p[3]), float(p[4]), float(p[5])))
+            elif tag == "RMB":
+                p = ln.split()
+                t, bd, nb, sv = float(p[2]), int(p[5], 16), int(p[6]), float(p[7])
+                arr, k = {}, i + 1
+                for bit, name in HSX_RMB_FIELDS:
+                    if bd & bit:
+                        v = np.array(lines[k].split(), dtype=float)
+                        if v.size != nb:
+                            raise ValueError("%s 行 %d: %s が %d 個(%d のはず)"
+                                             % (f.name, k, name, v.size, nb))
+                        arr[name] = v
+                        k += 1
+                pings.append((t, sv, arr))
+                i = k
+                continue
+            i += 1
+        pos, gyr, hcp = np.array(pos), np.array(gyr), np.array(hcp)
+        hd_unw = np.unwrap(np.radians(gyr[:, 1]))
+        for t, sv, a in pings:
+            r = a["range"]
+            nb = r.size
+            q = a.get("quality", np.full(nb, 3.0))
+            ok = (r > 0) & (q >= 2)            # Reson 品質 < 2 は捨てる(MB-System と同じ規則)
+            if not ok.any():
+                continue
+            roll = np.interp(t, hcp[:, 0], hcp[:, 2])
+            pitch = np.interp(t, hcp[:, 0], hcp[:, 3])
+            heave = np.interp(t, hcp[:, 0], hcp[:, 1])
+            th, ph = _hsx_corrected_angles(a["takeoff"], a["direction"], roll, pitch)
+            h = float(np.interp(t, gyr[:, 0], hd_unw))
+            e0 = np.interp(t, pos[:, 0], pos[:, 1])
+            n0 = np.interp(t, pos[:, 0], pos[:, 2])
+            cols["E"].append(np.full(int(ok.sum()), e0))
+            cols["N"].append(np.full(int(ok.sum()), n0))
+            cols["z_straight"].append((r * np.cos(np.radians(th)) + heave)[ok])
+            cols["r"].append(r[ok])
+            cols["th"].append(th[ok])
+            cols["sv"].append(np.full(int(ok.sum()), sv))
+            cols["heave"].append(np.full(int(ok.sum()), heave))
+            # 横向きの符号と、方向角の向き(水平の振り分けに使う)を 1 本に詰める
+            cols["sgn"].append(np.stack([np.cos(np.radians(ph)), np.sin(np.radians(ph)),
+                                         np.full(nb, h)], axis=1)[ok])
+            cols["line"].append(np.full(int(ok.sum()), li))
+    S = {k: np.concatenate(v) for k, v in cols.items()}
+    # 光線追跡はこの PoC の処理側の関数をそのまま使う(層ごとに円弧で厳密)
+    x, z, _ = trace_for_time(prof, S["th"], S["r"] / S["sv"])
+    cph, sph, hh = S["sgn"][:, 0], S["sgn"][:, 1], S["sgn"][:, 2]
+    across, along = x * cph, x * sph
+    return {"E": S["E"] + along * np.sin(hh) + across * np.cos(hh),
+            "N": S["N"] + along * np.cos(hh) - across * np.sin(hh),
+            "z_straight": S["z_straight"], "z_svp": z + S["heave"],
+            "theta": S["th"] * np.sign(cph), "line": S["line"]}
+
+
+def read_bag_depth(path):
+    """BAG(HDF5)の ``BAG_root/elevation`` を深さ [m](正 = 下)に。欠測 1e6 は NaN。"""
+    import h5py
+    with h5py.File(path, "r") as f:
+        el = f["BAG_root/elevation"][:].astype(np.float64)
+    el[el >= 1e6] = np.nan
+    return -el
+
+
+def load_nf1406(root: Path):
+    """NF-14-06 一式。``(dict, "")`` か ``(None, 飛ばす理由)``。
+
+    derived の npz があればそれ(``tools/hsx_soundings.py`` の出力)、無ければ生の
+    HSX から :func:`hsx_soundings` で作る。
+    """
+    try:
+        import h5py  # noqa: F401
+    except ImportError:
+        return None, "h5py が無い(BAG を読めない)"
+    bag = root / "NF-14-06" / "products" / "NF-14-06-EPA_Paml_Beach_5m.bag"
+    svp = root / "NF-14-06" / "ancillary" / "ctd" / "SVP" / "PB-04_142540237.svp"
+    npz = root / "derived" / "soundings_NF-14-06.npz"
+    mb = root / "NF-14-06" / "MB"
+    for p in (bag, svp):
+        if not p.is_file():
+            return None, "%s が無い" % p
+    zc, cc = read_svp(svp)
+    prof = svp_profile(zc, cc)
+    if npz.is_file():
+        with np.load(npz) as d:
+            S = {k: np.asarray(d[k]) for k in ("E", "N", "z_straight", "z_svp",
+                                                "theta", "line")}
+        src = "derived/%s(tools/hsx_soundings.py の出力)" % npz.name
+    elif mb.is_dir() and any(mb.glob("*.HSX.mb201.gz")):
+        S = hsx_soundings(mb, prof)
+        src = "生の HSX %d 本(npz が無いのでこの PoC の光線追跡で処理)" \
+            % len(list(mb.glob("*.HSX.mb201.gz")))
+    else:
+        return None, "測深点(npz も生の HSX も)が無い"
+    return {"S": S, "depth": read_bag_depth(bag), "cast": (zc, cc), "prof": prof,
+            "src": src}, ""
+
+
+def _bag_sample(grid, E, N, flip: bool):
+    col = np.round((E - BAG_SW[0]) / BAG_RES).astype(np.int64)
+    row = np.round((N - BAG_SW[1]) / BAG_RES).astype(np.int64)
+    if flip:
+        row = grid.shape[0] - 1 - row
+    ok = (row >= 0) & (row < grid.shape[0]) & (col >= 0) & (col < grid.shape[1])
+    v = np.full(E.shape, np.nan)
+    v[ok] = grid[row[ok], col[ok]]
+    return v
+
+
+def _bag_cells(E, N, z, shape):
+    """測深点を BAG の 5 m 格子へ平均(行 0 = 南)。点の無いセルは NaN。"""
+    col = np.round((E - BAG_SW[0]) / BAG_RES).astype(np.int64)
+    row = np.round((N - BAG_SW[1]) / BAG_RES).astype(np.int64)
+    ok = (row >= 0) & (row < shape[0]) & (col >= 0) & (col < shape[1])
+    flat = row[ok] * shape[1] + col[ok]
+    cnt = np.bincount(flat, minlength=shape[0] * shape[1]).astype(np.float64)
+    s = np.bincount(flat, weights=z[ok], minlength=shape[0] * shape[1])
+    with np.errstate(invalid="ignore", divide="ignore"):
+        g = np.where(cnt > 0, s / np.maximum(cnt, 1.0), np.nan)
+    return g.reshape(shape)
+
+
+def _crossing(centers, med, lim: float, side: int, edge: float):
+    """直下から片側へ歩き、|中央値| が ``lim`` を最初に越える角度 [度](線形補間)。"""
+    sel = np.where((np.sign(centers) == side) & (np.abs(centers) <= edge)
+                   & np.isfinite(med))[0]
+    sel = sel[np.argsort(np.abs(centers[sel]))]
+    prev = None
+    for k in sel:
+        if abs(med[k]) > lim:
+            if prev is None:
+                return abs(float(centers[k]))
+            a0, a1 = abs(float(centers[prev])), abs(float(centers[k]))
+            m0, m1 = abs(float(med[prev])), abs(float(med[k]))
+            return a0 + (a1 - a0) * (lim - m0) / (m1 - m0)
+        prev = k
+    return float("inf")
+
+
+def section_real_noaa():
+    """実データ: NOAA NF-14-06(EPA Palm Beach 投棄場、深さ約 181 m、Reson 7125)。
+
+    門は 3 つ(数字はすべて実行時に計算する):
+
+    * (R1) **音速一定でスマイルが Order 1a を割る角度**を、測る前に §4 の閉形式
+      (:func:`cliff_from_exact`、Δc と d はキャストと BAG から)で予測し、
+      測深点 − BAG の角度別中央値(直下の偏りを引く)が TVU を越える角度と比べる。
+      TVU は IHO S-44 Edition 6.1.0 の 3.2.3 節 TVU_max(d) = √(a² + (b·d)²)、
+      7.3 TABLE 1 の Order 1a(a = 0.5 m, b = 0.013)。★片舷ずつ測ると左右で
+      ±1.5 度割れる(左 43.9 / 右 41.0 度)ので、残差を角度について**偶部**
+      (音速の取り違えは左右対称)と**奇部**(ロールの小さな取付偏りや参照の
+      左右差は D tanθ δ で反対称)に分け、偶部の崖を比べる。門は (a) 偶部の崖が
+      閉形式から :data:`REAL_CLIFF_TOL_DEG` 以内、(b) キャストの**形のまま**この
+      PoC の :func:`trace_to_depth` で追跡した予測のほうが一定勾配の閉形式より近い、
+      (c) 光線追跡解は ±61 度の中で一度も TVU を越えない、(d) 奇部は 2 つの解で
+      ほぼ同じ(= 左右差は音速ではない。奇部そのものより 4 倍以上小さい差)。
+    * (R2) **隣接測線の重なりの差の 95 % 点**(真値を使わない、現場の検査)が
+      光線追跡解では TVU(1a) 未満、音速一定では TVU(1a) 超(両向き、全対)。
+      S-44 の TVU は 95 % 信頼水準の値なので 95 % 点と比べる。
+    * (R3) **±61 度より外**は別枠で数える。本数は全体の 1 % 未満で、光線追跡でも
+      中央値が TVU を桁で越える —— 音速では直らない外れ値(外縁の検出)であって
+      スマイルではない、を両側で確かめる。
+
+    **報告だけで門にしないもの**: 直下の絶対偏り(光線追跡解で約 −3 m)は
+    喫水・レバーアーム・潮位(ファイルは TID=0)を当てていないことと BAG の鉛直
+    基準が不明(メタデータに無い)ことの和で、音速の性質ではない。左右の非対称は
+    ロールの取付偏り(パッチテスト未実施)を疑うが、手元の資料では確かめられない。
+    """
+    root, why = real_data_dir(NOAA_SUBDIR)
+    D = None
+    if root is not None:
+        D, why = load_nf1406(root)
+    if D is None:
+        print("\n実データ: 無し(合成だけ) —— " + why)
+        return None
+    print("\n" + "=" * 78)
+    print("実データ —— NOAA NF-14-06 / EPA Palm Beach(" + NOAA_NOTICE + ")")
+    print("=" * 78)
+    S, depth = D["S"], D["depth"]
+    zc, cc = D["cast"]
+    print("  出典: " + NOAA_CREDIT)
+    print("  測深点: %s、%d 点 / 測線 %d 本" % (D["src"], S["E"].size,
+                                            int(S["line"].max()) + 1))
+    # 格子の向き: BAG の行 0 が南か北か。測深点との食い違いで決め、決め手の強さも出す
+    mad = {}
+    for flip in (False, True):
+        g = _bag_sample(depth, S["E"], S["N"], flip)
+        d = S["z_svp"] - g
+        m = np.isfinite(d) & (np.abs(S["theta"]) < 30.0)
+        mad[flip] = float(np.median(np.abs(d[m] - np.median(d[m]))))
+    flip = mad[True] < mad[False]
+    print("  BAG の向き: 行 0 = %s(食い違いの MAD %.3f m 対 逆向き %.3f m)"
+          % ("北" if flip else "南", mad[flip], mad[not flip]))
+    ref = _bag_sample(depth, S["E"], S["N"], flip)
+    d_med = float(np.nanmedian(depth))
+    lim = tvu(d_med)
+    print("  BAG 5 m 格子 %d x %d、深さの中央値 %.2f m → IHO S-44 6.1.0 Order 1a の "
+          "TVU = %.3f m" % (depth.shape[0], depth.shape[1], d_med, lim))
+    # 閉形式の予測(測る前に印字): Δc はキャストの表層と、海底深さでの音速の差
+    c0 = float(cc[0])
+    cd = float(np.interp(d_med, zc, cc))
+    dc = cd - c0
+    cmid = 0.5 * (c0 + cd)
+    pred = cliff_from_exact(dc, d_med, c_mid=cmid)
+    pred_t2 = cliff_from_tan2(dc, d_med, c_mid=cmid)
+    th_f = np.arange(0.0, 70.001, 0.05)
+    _, t_f, _ = trace_to_depth(D["prof"], th_f, d_med)
+    dz_cast = (d_med / float(t_f[0])) * t_f * np.cos(np.radians(th_f)) - d_med
+    pred_cast = float(th_f[np.argmax(np.abs(dz_cast) > lim)])
+    print("  キャスト PB-04: 表層 %.2f m/s → %.0f m で %.2f m/s(Δc = %+.1f m/s)"
+          % (c0, d_med, cd, dc))
+    print("  予測(§4 の厳密な閉形式、一定勾配): 崖 = %.2f 度 / ラフな展開式 %.2f 度"
+          % (pred, pred_t2))
+    print("  予測(キャストの形のまま光線追跡、報告のみ): %.2f 度" % pred_cast)
+    print("  ↑ ここまでは測る前。以下が実測。")
+    # 角度別の残差(直下 ±5 度の中央値を偏りとして引く)
+    edges = np.arange(-70.0, 70.001, REAL_BIN_DEG)
+    centers = 0.5 * (edges[1:] + edges[:-1])
+    th = S["theta"]
+    idx = np.digitize(th, edges) - 1
+    res = {}
+    for key in ("z_straight", "z_svp"):
+        d = S[key] - ref
+        m = np.isfinite(d)
+        bias = float(np.median(d[m & (np.abs(th) < 5.0)]))
+        med = np.full(centers.size, np.nan)
+        cnt = np.zeros(centers.size, np.int64)
+        for k in range(centers.size):
+            mk = m & (idx == k)
+            cnt[k] = int(mk.sum())
+            if cnt[k] > REAL_MIN_BIN:
+                med[k] = float(np.median(d[mk])) - bias
+        inner = np.abs(centers) <= REAL_EDGE_DEG
+        outer = m & (np.abs(th) > REAL_EDGE_DEG)
+        res[key] = {"bias": bias, "med": med, "cnt": cnt,
+                    "port": _crossing(centers, med, lim, -1, REAL_EDGE_DEG),
+                    "stbd": _crossing(centers, med, lim, +1, REAL_EDGE_DEG),
+                    "inner_max": float(np.nanmax(np.abs(med[inner]))),
+                    "n_outer": int(outer.sum()), "n": int(m.sum()),
+                    "outer_med": float(np.median(d[outer]) - bias) if outer.any()
+                    else float("nan")}
+    st, sv = res["z_straight"], res["z_svp"]
+    # ★左右に分ける: 音速の取り違えは θ について**偶**(左右対称)。ロールの小さな
+    #   取付偏りや参照格子の左右の食い違いは**奇**(D tanθ δ)。中心対称な階級なので
+    #   k と n−1−k が鏡像。偶部で崖を測り、奇部は両解で同じか(= 音速でない)を見る。
+    mirror = centers.size - 1 - np.arange(centers.size)
+    assert np.allclose(centers[mirror], -centers)
+    for r in (st, sv):
+        r["even"] = 0.5 * (r["med"] + r["med"][mirror])
+        r["odd"] = 0.5 * (r["med"] - r["med"][mirror])        # 右舷側で正 = 右舷が浅い
+        r["even_cliff"] = _crossing(centers, r["even"], lim, +1, REAL_EDGE_DEG)
+    band = (centers >= 20.0) & (centers <= 55.0)
+    odd_gap = float(np.nanmax(np.abs(st["odd"][band] - sv["odd"][band])))
+    odd_max = float(np.nanmax(np.abs(st["odd"][band])))
+    i44 = int(np.argmin(np.abs(centers - 44.5)))
+    roll_eq = math.degrees(abs(float(st["odd"][i44]))
+                           / (d_med * math.tan(math.radians(float(centers[i44])))))
+    print("  %-26s %9s %9s %9s %12s %13s" % ("解", "左舷の崖", "右舷の崖", "偶部の崖",
+                                            "±61 内の最大", "直下の偏り"))
+    for name, r in (("音速一定(表面の音速計)", st), ("光線追跡(キャスト PB-04)", sv)):
+        print("  %-26s %8.2f° %8.2f° %8.2f° %10.3f m %+11.3f m"
+              % (name, r["port"], r["stbd"], r["even_cliff"], r["inner_max"], r["bias"]))
+    print("  ★片舷ずつだと 左 %.2f / 右 %.2f 度 —— 予測 %.2f 度を**はさんで ±%.1f 度**割れる。"
+          % (st["port"], st["stbd"], pred, 0.5 * abs(st["port"] - st["stbd"])))
+    print("     崖の付近で曲線の傾きは約 0.2 m/度しかないので、左右 ±%.2f m の奇部"
+          "(ロール換算 %.2f 度)だけで崖が ±1 度以上動く。" % (abs(float(st["odd"][i44])),
+                                                             roll_eq))
+    print("  ★偶部(左右平均)の崖 %.2f 度: 閉形式(一定勾配)%.2f 度とは %+.2f 度、"
+          "キャストの形のまま追跡した予測 %.2f 度とは %+.2f 度。"
+          % (st["even_cliff"], pred, st["even_cliff"] - pred, pred_cast,
+             st["even_cliff"] - pred_cast))
+    print("     → 一定勾配の閉形式は 1 度の桁で当たり、キャストの**形**を入れると"
+          "さらに近い(実際のキャストは表層が一様でない)。")
+    print("  ★奇部は両解でほぼ同じ(20〜55 度で差 最大 %.3f m、奇部そのものは最大 %.3f m)"
+          " —— **左右差は音速ではない**。" % (odd_gap, odd_max))
+    # 外縁の別枠
+    n_all = st["n"]
+    print("  外縁(|角度| > %.0f 度): %d 本(%.2f %%)。中央値の残差は 音速一定 %+.1f m / "
+          "光線追跡 %+.1f m —— **光線追跡でも直らない**ので音速の問題ではない。"
+          % (REAL_EDGE_DEG, st["n_outer"], 100.0 * st["n_outer"] / n_all,
+             st["outer_med"], sv["outer_med"]))
+    # 報告のみ: 直下の絶対偏りと奇部の原因
+    print("  報告のみ(門にしない): 光線追跡解の直下の偏り %+.2f m(喫水・レバーアーム・"
+          "潮位を未適用、BAG の鉛直基準は不明)。" % sv["bias"])
+    print("     奇部の原因(ロールの取付偏り %.2f 度か、BAG 側の左右差か)は、パッチテストの"
+          "記録が無いので切り分けられない。" % roll_eq)
+    asym = float(st["odd"][i44])
+    # 隣接測線の重なり(真値を使わない)
+    lines = sorted(set(int(v) for v in np.unique(S["line"])))
+    cells = {}
+    for key in ("z_straight", "z_svp"):
+        cells[key] = {li: _bag_cells(S["E"][S["line"] == li], S["N"][S["line"] == li],
+                                     S[key][S["line"] == li], depth.shape)
+                      for li in lines}
+    ov = []
+    print("  隣接測線の重なり(差の 95 % 点、TVU(1a) は重なりの深さの中央値で):")
+    for a, b in zip(lines, lines[1:]):
+        row = [a, b]
+        for key in ("z_svp", "z_straight"):
+            dd = cells[key][a] - cells[key][b]
+            m = np.isfinite(dd)
+            row.append(int(m.sum()))
+            row.append(float(np.percentile(np.abs(dd[m]), 95)) if m.sum() >= 200
+                       else float("nan"))
+        dref = depth[::-1] if flip else depth
+        both = np.isfinite(cells["z_svp"][a] - cells["z_svp"][b])
+        row.append(tvu(float(np.nanmedian(dref[both]))))
+        ov.append(row)
+        print("    測線 %d-%d: %5d セル  光線追跡 %.2f m / 音速一定 %.2f m  (TVU %.2f m)"
+              % (a, b, row[2], row[3], row[5], row[6]))
+    out = {"pred": pred, "pred_t2": pred_t2, "pred_cast": pred_cast, "lim": lim,
+           "dc": dc, "d": d_med, "cmid": cmid, "st": st, "sv": sv, "ov": ov, "mad": mad,
+           "flip": flip, "asym": asym, "odd_gap": odd_gap, "odd_max": odd_max,
+           "roll_eq": roll_eq, "centers": centers, "n": n_all}
+    _fig_real_noaa(out, depth, cells, lines, flip)
+    return out
+
+
+def _fig_real_noaa(R, depth, cells, lines, flip):
+    """実データの図(``enabled()`` のときだけ)。出典と NOT FOR NAVIGATION を必ず載せる。"""
+    if not figs.enabled():
+        return
+    c = R["centers"]
+    keep = np.abs(c) <= REAL_EDGE_DEG
+    th_p = np.arange(-REAL_EDGE_DEG, REAL_EDGE_DEG + 0.01, 0.5)
+    # 予測曲線は崖の予測と同じ Δc・d・c_mid で引く(測る前に決まっている量だけ)
+    pred_curve = np.asarray(smile_exact(np.abs(th_p), R["dc"], R["d"], c_mid=R["cmid"]))
+    series = [("音速一定(表面の音速計)", *finite_xy(c[keep], R["st"]["med"][keep])),
+              ("光線追跡(CTD PB-04)", *finite_xy(c[keep], R["sv"]["med"][keep])),
+              ("予測: §4 の閉形式 Δc=%+.0f m/s" % R["dc"], th_p, pred_curve),
+              ("IHO S-44 Order 1a −TVU", np.r_[-REAL_EDGE_DEG, REAL_EDGE_DEG],
+               np.r_[-R["lim"], -R["lim"]])]
+    figs.save_plot("real_smile", series, xlim=(-REAL_EDGE_DEG, REAL_EDGE_DEG),
+                   xlabel="ロール補正後のビーム角 [度](− 左舷 / + 右舷)",
+                   ylabel="中央値(測深 − BAG)− 直下の偏り [m]",
+                   title="実データのスマイル —— NOAA NF-14-06(NOT FOR NAVIGATION)",
+                   size=(900, 520),
+                   caption=("音速一定は左 %.1f / 右 %.1f 度で Order 1a(−%.2f m)を割る。"
+                            "左右平均(偶部)の崖 %.1f 度は、一定勾配の閉形式 %.1f 度と "
+                            "%+.1f 度、キャストの形のまま追跡した予測 %.1f 度と %+.2f 度。"
+                            "光線追跡は ±61 度の中で割らない。NOT FOR NAVIGATION。出典: %s "
+                            "改変: 生の HSX を姿勢補正・光線追跡し、BAG との差を 1 度ごとの"
+                            "中央値にして直下の偏りを引いた。"
+                            % (R["st"]["port"], R["st"]["stbd"], R["lim"],
+                               R["st"]["even_cliff"], R["pred"],
+                               R["st"]["even_cliff"] - R["pred"], R["pred_cast"],
+                               R["st"]["even_cliff"] - R["pred_cast"], NOAA_CREDIT)))
+    # 地図: BAG と、重なりの最も大きい対の差(音速一定 / 光線追跡)
+    best = max(R["ov"], key=lambda r: r[2])
+    a, b = best[0], best[1]
+    dd_s = cells["z_straight"][a] - cells["z_straight"][b]
+    dd_v = cells["z_svp"][a] - cells["z_svp"][b]
+    rr, cc_ = np.where(np.isfinite(dd_s))
+    # 重なりの帯は南北に長く細い。全長だと細長すぎて題が入らず、save_grid が 8 倍に
+    # 拡大して 1 万 px 幅になった(2026-10-02 に実測)ので、南端から 160 セル(800 m)を切る。
+    r0 = int(rr.min())
+    sl = (slice(r0, min(r0 + 160, int(rr.max()) + 1)),
+          slice(max(int(cc_.min()) - 4, 0), int(cc_.max()) + 5))
+    lim3 = 3.0
+    # 最近傍の整数倍拡大(値を作らない)で短辺を 240 px 以上に
+    # (BAG の深さの面も並べたが、この幅 250 m では 181 m 前後の一色で何も読めず外した)
+    h_, w_ = dd_s[sl].shape
+    k = max(1, int(math.ceil(240.0 / min(h_, w_))))
+
+    def up(a):
+        return np.repeat(np.repeat(np.flipud(a), k, axis=0), k, axis=1)
+
+    figs.save_grid("real_overlap",
+                   [up(np.clip(dd_s[sl], -lim3, lim3)), up(np.clip(dd_v[sl], -lim3, lim3))],
+                   captions=["測線 %d − %d 音速一定 p95 %.2f m" % (a, b, best[5]),
+                             "同 光線追跡 p95 %.2f m" % best[3]],
+                   signed=True, ncols=2,
+                   title="NF-14-06 隣接測線の重なり —— NOT FOR NAVIGATION",
+                   caption=("重なりの最も大きい対(南端から 800 m、北が上)。差の 95 %% 点は "
+                            "音速一定 %.2f m(TVU %.2f m を超える)、光線追跡 %.2f m(下回る)。"
+                            "差の色は ±%.0f m で切った。黒 = 片方の測線しか無いセル。"
+                            "NOT FOR NAVIGATION。出典: %s 改変: 測線ごとに 5 m 格子へ平均して"
+                            "差を取った。" % (best[5], best[6], best[3], lim3, NOAA_CREDIT)))
+
+
+def finite_xy(x, y):
+    """図に渡す前に NaN を落とす(``save_plot`` は有限値しか受けない)。"""
+    x = np.asarray(x, float)
+    y = np.asarray(y, float)
+    m = np.isfinite(x) & np.isfinite(y)
+    return x[m], y[m]
+
+
+def gates_real_noaa(R) -> int:
+    """実データの門。``R`` が None(データ無し)なら 0 本。数えた本数を返す。"""
+    if R is None:
+        return 0
+    st, sv = R["st"], R["sv"]
+    n = 0
+    # 前提: BAG の向きは決め手が強い(逆向きの食い違いが 10 倍以上)
+    assert R["mad"][not R["flip"]] > 10.0 * R["mad"][R["flip"]], R["mad"]
+    n += 1
+    # R1a. 音速一定の崖(偶部 = 左右平均)は §4 の閉形式と ±REAL_CLIFF_TOL_DEG で一致
+    assert abs(st["even_cliff"] - R["pred"]) < REAL_CLIFF_TOL_DEG, (st["even_cliff"], R["pred"])
+    n += 1
+    # R1b. キャストの形のまま追跡した予測のほうが近い(一定勾配は近似であって真値でない)
+    assert abs(st["even_cliff"] - R["pred_cast"]) < abs(st["even_cliff"] - R["pred"]), \
+        (st["even_cliff"], R["pred_cast"], R["pred"])
+    n += 1
+    # R1c. 両向き: 光線追跡は ±61 度の中で Order 1a を一度も割らない(片舷・偶部とも)
+    assert sv["inner_max"] < R["lim"], (sv["inner_max"], R["lim"])
+    assert not any(math.isfinite(sv[k]) for k in ("port", "stbd", "even_cliff")), sv
+    n += 1
+    # R1d. 左右差(奇部)は 2 つの解で同じ —— 音速では生じない成分。奇部が実際に在る
+    #      (0.1 m 超)ことも確かめる(無ければこの門は何も言っていない)
+    assert R["odd_max"] > 0.1, R["odd_max"]
+    assert R["odd_gap"] < 0.25 * R["odd_max"], (R["odd_gap"], R["odd_max"])
+    n += 1
+    # R2. 重なりの差の 95 % 点: 光線追跡 < TVU < 音速一定(全対)
+    assert len(R["ov"]) >= 3, R["ov"]
+    for a, b, n_v, p_v, n_s, p_s, lim in R["ov"]:
+        assert p_v < lim < p_s, (a, b, p_v, lim, p_s)
+        n += 1
+    # R3. 外縁は別枠: 1 % 未満、しかも光線追跡でも中央値が TVU を超える(音速では直らない)
+    assert 0 < st["n_outer"] < 0.01 * R["n"], (st["n_outer"], R["n"])
+    assert abs(sv["outer_med"]) > R["lim"], sv["outer_med"]
+    n += 1
+    return n
+
+
 def main() -> int:
     t0 = time.perf_counter()
     print("=" * 78)
@@ -1687,6 +2273,13 @@ def main() -> int:
     for name in ("sonar", "swath", "bathym", "sound_speed", "tvu", "footprint",
                  "crossline", "raytrace_layers"):
         assert name in holes["holes"], (name, holes["holes"])
+
+    # --- 実データ(FULLSEYE_DATA_DIR があるときだけ。無ければ 1 行で飛ばし、門は数えない)
+    #     合成の門より後ろに置く: 合成の印字・図の番号・門をデータの有無で変えないため。
+    real = section_real_noaa()
+    n_real = gates_real_noaa(real)
+    if n_real:
+        print(f"  実データの門 {n_real} 本: すべて通過")
 
     print(f"\n所要 {time.perf_counter() - t0:.1f} s")
     if figs.errors():

@@ -1385,7 +1385,7 @@ _計 934 ops / 48 categories。_
 - `diameter_region` (halcon: `diameter_region`) `region → feature` · 例: `gallery2d_features`
 - `euler_number` (halcon: `euler_number`) `region → feature` · 例: `gallery2d_features`
 - `min_max_gray` (halcon: `min_max_gray`) `image → feature` · 例: `gallery2d_features`
-- `intensity` (halcon: `intensity`) `image → feature` · 例: `gallery2d_bridge`, `gallery2d_features`, `poc_solder_fillet_aoi`, `poc_video_cube`
+- `intensity` (halcon: `intensity`) `image → feature` · 例: `gallery2d_bridge`, `gallery2d_features`, `poc_multibeam_bathymetry`, `poc_solder_fillet_aoi`, `poc_video_cube`
 - `gray_histo_abs` (halcon: `gray_histo_abs`) `image → feature` · 例: `gallery2d_features`
 - `entropy_gray` (halcon: `entropy_gray`) `image → feature` · 例: `gallery2d_features`
 - `length_xld` (halcon: `length_xld`) `contour → feature` · 例: `gallery2d_features`

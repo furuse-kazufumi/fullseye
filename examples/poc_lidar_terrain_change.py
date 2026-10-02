@@ -14,6 +14,25 @@ EXTEND: 実測に差し替えるなら :func:`make_cloud` の戻り値(記録座
 現地測量か UAV-SfM でしか得られず精度は本 PoC の合成真値より 1 桁悪い ——
 という 3 点が変わります。
 
+**実データの節(``FULLSEYE_DATA_DIR`` を立てたときだけ)**。USGS 3D Elevation Program
+の航空 LiDAR 2 時期(MO_StLouis_2012 と USGS_LPC_MO_StLouis_2017_LAS_2018、Entwine
+Point Tiles)と USGS の 1 m DEM を、セントルイス Forest Park の Art Hill / 美術館の
+500 x 500 m 区画で読みます。データは repo に入れず、``$FULLSEYE_DATA_DIR/usgs_3dep/``
+に置いたときだけ節が走ります(無ければ「実データ: 無し(合成だけ)」と 1 行出し、門は
+数えません —— 合成の門と結果はデータの有無で変わりません)。laspy(LAZ 展開器つき)・
+pyproj・rasterio のどれかが無くても節を飛ばします。門は :func:`section_real_usgs` の
+4 つ: (U1) 鉛直の系統差を引かないと偽の土量が立ち、平坦部で合わせると NMAD の範囲に
+落ちる、(U2) 変化域を含めたまま全体で合わせると区画の正味は 0 に潰れ、trimmed なら
+残る(吸われる量を予測して当てる)、(U3) 地面セルの充填率が合成 §6 の Poisson 予測から
+ずれる向きを、点の撒かれ方(分散指数)で当てる、(U4) EPSG:3857 のまま測る失敗すべき
+対照(面積 1.64 倍)。閾値の一次資料は Heidemann, H.K., 2018, Lidar base specification
+(ver. 1.3, February 2018): USGS Techniques and Methods 11-B4 —— Table 1 の ANPD
+(QL2 ≥ 2.0、QL3 ≥ 0.5 pls/m2)、Table 2 の swath overlap RMSDz(QL2 ≤ 0.08 m)、
+Table 4 の RMSEz(QL2 ≤ 0.100、QL3 ≤ 0.200 m)。
+出典: Map services and data available from U.S. Geological Survey, National Geospatial
+Program(3DEP は public domain。DEM メタデータの useconst に従い、取得機関への謝辞と
+改変の記述を図に載せ、USGS の承認を受けたかのようには書かない)。
+
 この PoC が示すこと(数字はいずれも実行時に印字される実測値):
 
 1. ★★**「DoD は斜面で cos だけ体積を間違える」は間違い**。予想は「傾斜 40 度
@@ -1505,6 +1524,450 @@ def fig_flight(ctrl: dict, mm: dict, tr: dict, W=640, H=360, fps=30.0):
 
 
 # --------------------------------------------------------------------------- #
+# --------------------------------------------------------------------------- #
+# 実データ —— USGS 3DEP Forest Park 2012 / 2017(FULLSEYE_DATA_DIR があるときだけ) #
+# --------------------------------------------------------------------------- #
+#: 実データの置き場を指す環境変数。**未設定なら実データの節は丸ごと飛ばす**
+#: (既定のパスは持たない —— CI にはデータが無く、合成の門だけを数える)。
+DATA_ENV = "FULLSEYE_DATA_DIR"
+
+#: ``$FULLSEYE_DATA_DIR`` の下の USGS 標本の置き場(repo には入れない)。
+USGS_SUBDIR = "usgs_3dep"
+
+#: 2 時期の EPT プロジェクト名(``laz/<名前>/*.laz`` に EPT のノードが置いてある)。
+USGS_EPOCHS = (("2012", "MO_StLouis_2012"),
+               ("2017", "USGS_LPC_MO_StLouis_2017_LAS_2018"))
+
+#: 出典と謝辞(DEM の FGDC メタデータ useconst が「取得機関への謝辞」と「改変の記述」を求める)。
+USGS_CREDIT = ("Map services and data available from U.S. Geological Survey, National "
+               "Geospatial Program. Lidar: USGS 3D Elevation Program, projects MO_StLouis_2012 "
+               "and USGS_LPC_MO_StLouis_2017_LAS_2018 (Entwine Point Tiles, "
+               "https://usgs-lidar-public.s3.amazonaws.com/); DEM: USGS one meter x73y429 "
+               "MO SaintLouis 2017 (published 20200330); accessed October 2, 2026. "
+               "Public domain; not endorsed by USGS.")
+
+#: 改変の記述(useconst: "Any user who modifies the data is obligated to describe ...")。
+USGS_MODIFIED = ("改変: EPT の点を EPSG:3857 から NAD83 / UTM 15N へ変換し、区画 500 x 500 m に"
+                 "切り、地面点(分類 2)を 1 m セルで平均(補間なし)して差を取った。")
+
+#: Lidar Base Specification v1.3(Heidemann 2018, USGS TM 11-B4)Table 1 の ANPD [pls/m2]。
+LBS_ANPD = {"QL2": 2.0, "QL3": 0.5}
+#: 同 Table 2 の QL2 swath overlap difference RMSDz [m](参照のみ。時期間の差とは別の量)。
+LBS_QL2_SWATH_RMSDZ = 0.08
+#: 同 Table 4 の RMSEz(nonvegetated)[m]。QL2 = 0.100、QL3 = 0.200。
+LBS_RMSEZ = {"QL2": 0.100, "QL3": 0.200}
+
+#: 「平坦部」の傾斜 [度](``dem_slope`` で 2017 の DEM から)。系統差はここで測る。
+FLAT_DEG = 5.0
+#: 変化域: 平坦部の系統差を引いた後 |差| がこれを超え、かつ連結して ``CHANGE_MIN_CELLS`` 以上。
+CHANGE_DZ = 0.30
+CHANGE_MIN_CELLS = 20
+#: trimmed の位置合わせで使う割合(合成の §7 の trimmed ICP と同じ 0.6)。
+REAL_TRIM = 0.6
+
+
+def real_data_dir(sub: str):
+    """``$FULLSEYE_DATA_DIR/<sub>``。未設定・不在なら ``(None, 理由)``。"""
+    import os
+    d = os.environ.get(DATA_ENV, "").strip()
+    if not d:
+        return None, "%s が未設定" % DATA_ENV
+    p = Path(d) / sub
+    if not p.is_dir():
+        return None, "%s が無い" % p
+    return p, ""
+
+
+def load_forest_park(root: Path):
+    """2 時期の点(区画内)と 1 m DEM。``(dict, "")`` か ``(None, 飛ばす理由)``。
+
+    EPT は水平を EPSG:3857 で持つ(Z はそのまま)ので、**測る前に** DEM と同じ
+    NAD83 / UTM 15N(EPSG:26915)へ変換する。3857 の座標も対照のため残す。
+    """
+    import json
+    try:
+        import laspy
+        from pyproj import Transformer
+        import rasterio
+    except ImportError as exc:
+        return None, "%s が無い(LAZ / 座標変換 / GeoTIFF を読めない)" % exc.name
+    if not laspy.LazBackend.detect_available():
+        return None, "laspy に LAZ の展開器(lazrs / laszip)が無い"
+    aoi_p = root / "aoi.json"
+    dem_p = root / "dem" / "USGS_1m_x73y429_MO_SaintLouis_2017_AOI.tif"
+    for p in (aoi_p, dem_p):
+        if not p.is_file():
+            return None, "%s が無い" % p
+    aoi = json.loads(aoi_p.read_text(encoding="utf-8"))
+    e0, e1 = aoi["E"]
+    n0, n1 = aoi["N"]
+    tr = Transformer.from_crs("EPSG:3857", "EPSG:%d" % aoi["utm_epsg"], always_xy=True)
+    ep = {}
+    for name, proj in USGS_EPOCHS:
+        files = sorted((root / "laz" / proj).glob("*.laz"))
+        if not files:
+            return None, "laz/%s が無い" % proj
+        cols = {k: [] for k in ("E", "N", "Z", "cls", "rn", "x", "y")}
+        n_read = 0
+        for f in files:
+            las = laspy.read(f)
+            x = np.asarray(las.x)
+            y = np.asarray(las.y)
+            n_read += x.size
+            e, n = tr.transform(x, y)
+            m = (e >= e0) & (e < e1) & (n >= n0) & (n < n1)
+            if not m.any():
+                continue
+            for k, v in (("E", e), ("N", n), ("Z", np.asarray(las.z)),
+                         ("cls", np.asarray(las.classification)),
+                         ("rn", np.asarray(las.return_number)), ("x", x), ("y", y)):
+                cols[k].append(v[m])
+        ep[name] = {k: np.concatenate(v) for k, v in cols.items()}
+        ep[name]["nodes"] = len(files)
+        ep[name]["read"] = n_read
+    with rasterio.open(dem_p) as r:
+        dem_z = r.read(1).astype(np.float64)
+        t = r.transform
+        if r.nodata is not None:
+            dem_z[dem_z == r.nodata] = np.nan
+    if not (abs(t.a - 1.0) < 1e-9 and abs(t.c - e0) < 1e-6 and abs(t.f - n1) < 1e-6):
+        return None, "DEM の窓が区画と一致しない(%s)" % (t,)
+    return {"aoi": aoi, "ep": ep, "dem": dem_z, "box": (e0, e1, n0, n1)}, ""
+
+
+def _grid1m(E, N, Z, box):
+    """1 m セル平均(行 0 = 北)。点の無いセルは NaN。``(格子, 点数)``。"""
+    e0, e1, n0, n1 = box
+    nx, ny = int(round(e1 - e0)), int(round(n1 - n0))
+    c = np.floor(E - e0).astype(np.int64)
+    r = np.floor(n1 - N).astype(np.int64)
+    ok = (c >= 0) & (c < nx) & (r >= 0) & (r < ny)
+    flat = r[ok] * nx + c[ok]
+    k = np.bincount(flat, minlength=nx * ny).astype(np.float64)
+    s = np.bincount(flat, weights=Z[ok], minlength=nx * ny)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        g = np.where(k > 0, s / np.maximum(k, 1.0), np.nan)
+    return g.reshape(ny, nx), k.reshape(ny, nx)
+
+
+def _area_3857(box, epsg_utm: int, n_side: int = 64) -> float:
+    """UTM の区画の 4 辺を細かく刻んで 3857 へ写し、多角形の面積 [3857 の m2](靴紐公式)。"""
+    from pyproj import Transformer
+    e0, e1, n0, n1 = box
+    s = np.linspace(0.0, 1.0, n_side, endpoint=False)
+    xs = np.r_[e0 + (e1 - e0) * s, np.full(n_side, e1), e1 - (e1 - e0) * s, np.full(n_side, e0)]
+    ys = np.r_[np.full(n_side, n0), n0 + (n1 - n0) * s, np.full(n_side, n1), n1 - (n1 - n0) * s]
+    tr = Transformer.from_crs("EPSG:%d" % epsg_utm, "EPSG:3857", always_xy=True)
+    x, y = tr.transform(xs, ys)
+    return float(0.5 * abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1))))
+
+
+def section_real_usgs():
+    """実データ: USGS 3DEP、Forest Park / Art Hill(St. Louis, MO)2012 と 2017。
+
+    門は 4 つ(数字はすべて実行時に計算する):
+
+    * (U1) **鉛直の系統差**: 平坦部(``dem_slope`` < 5 度)の DoD の中央値(約
+      −0.18 m)を引かずに差分すると、変化の無い所まで「掘れた」ことになり偽の
+      土量が立つ(両時期に地面点のあるセルだけで約 −2.4 万 m3。区画全体 25 万 m2 に
+      延ばすと約 −4.6 万 m3)。平坦部の中央値で合わせた後の正味は、1 セルあたり
+      平坦部の NMAD 未満に落ちる(両向き: 合わせる前は NMAD の 3 倍超)。
+    * (U2) **合わせた分だけ変化が消える**(合成 §7 の実データ版): 変化域を含めたまま
+      全セルの平均で合わせると区画の正味は恒等的に 0。★提案は「trimmed なら変化が
+      残る」だったが、実データでは trimmed 後の区画の正味のうち変化域の外が 4 割を
+      占めた(変化域の外の差は平均 ≠ 中央値で、数 mm の差が 13 万セルで数百 m3 になる)。
+      門は (a) 全体で合わせると区画の正味は 0、(b) **変化域そのものの正味は合わせ方
+      (全平均 / trimmed / 平坦部の中央値)によらず 5 % 以内** —— 変化域が数 % しか
+      ないので潰れない、(c) **区画の正味は変化の量として読めない**(変化域の外の寄与が
+      変化域の 30 % を超える)。吸われる鉛直量の予測「変化域の正味 / 全セル数」は、
+      外れた分も含めて印字する(門にしない)。
+    * (U3) **点密度の崖**: 合成 §6 は点を一様乱数(Poisson)で撒くので、地面点密度
+      ρ のセルが空でない割合は 1 − exp(−ρ)。実データの走査は Poisson でない:
+      セルごとの点数の分散/平均(分散指数 D)が 1 未満(規則的)なら予測より
+      **よく埋まり**、1 超(測線の重なりで群れる)なら**埋まらない**。符号を両時期で
+      当てる。比べる範囲は「もう片方の時期に地面点がある」セル(建物・池を除く)。
+      LBS v1.3 Table 1 の ANPD(QL2 ≥ 2.0、QL3 ≥ 0.5 pls/m2)で区分も見る
+      (ANPD はパルス密度なので first return 数で代用 —— 近似)。
+    * (U4) **失敗すべき対照**: EPSG:3857 のまま面積を測ると密度は 1/1.64 に出る。
+      区画の多角形を 3857 に写した面積比を、pyproj の点ごとの面積縮尺の比
+      (測る前に計算)と照合し、点の外接矩形で測るとさらに子午線収差の分
+      (1 + sin 2γ)だけ膨らむことも当てる。
+
+    **報告だけで門にしないもの**: 2017 の地面格子と USGS の DEM の差は独立な精度試験
+    ではない(DEM は同じ 2017 の点から作られた)。時期間の NMAD と LBS Table 2 の
+    swath overlap RMSDz(QL2 ≤ 0.08 m)は別の量なので並べるだけ。
+    """
+    root, why = real_data_dir(USGS_SUBDIR)
+    D = None
+    if root is not None:
+        D, why = load_forest_park(root)
+    if D is None:
+        print("\n実データ: 無し(合成だけ) —— " + why)
+        return None
+    import json
+    from scipy import ndimage
+    from pyproj import Proj
+    print("\n" + "=" * 78)
+    print("実データ —— USGS 3DEP / Forest Park, St. Louis MO(2012 と 2017)")
+    print("=" * 78)
+    print("  出典: " + USGS_CREDIT)
+    print("  " + USGS_MODIFIED)
+    box = D["box"]
+    area = (box[1] - box[0]) * (box[3] - box[2])
+    dem_z = D["dem"]
+    G, K, info = {}, {}, {}
+    for name, _ in USGS_EPOCHS:
+        P = D["ep"][name]
+        g = P["cls"] == 2
+        G[name], K[name] = _grid1m(P["E"][g], P["N"][g], P["Z"][g], box)
+        first = P["rn"] == 1
+        info[name] = {"n": int(P["E"].size), "first": int(first.sum()),
+                      "rho_first": float(first.sum() / area),
+                      "rho_ground": float(g.sum() / area),
+                      "fill": float(np.isfinite(G[name]).mean())}
+        print("  %s: EPT ノード %d 個・%d 点を読み、区画内 %d 点。first return %.2f 点/m2、"
+              "地面点 %.2f 点/m2、地面セルの充填率 %.1f %%"
+              % (name, P["nodes"], P["read"], P["E"].size, info[name]["rho_first"],
+                 info[name]["rho_ground"], 100 * info[name]["fill"]))
+    # ---- U1: 系統差 --------------------------------------------------------- #
+    slope = np.asarray(fs.ledger.dem_slope(dem_z, 1.0), np.float64)
+    flat = slope < FLAT_DEG
+    dod_raw = G["2017"] - G["2012"]
+    valid = np.isfinite(dod_raw)
+    fv = dod_raw[valid & flat]
+    off_flat = float(np.median(fv))
+    nmad = float(1.4826 * np.median(np.abs(fv - off_flat)))
+    n_valid = int(valid.sum())
+    net_raw = float(dod_raw[valid].sum())             # 1 m2 セル → m3
+    dod = dod_raw - off_flat
+    net_flat = float(dod[valid].sum())
+    print("\n  (U1) 鉛直の系統差 —— 平坦部(傾斜 < %.0f 度、%d セル)の DoD 中央値 %+.3f m、"
+          "NMAD %.3f m" % (FLAT_DEG, int((valid & flat).sum()), off_flat, nmad))
+    print("     そのまま引くと偽の正味 %+.0f m3(両時期に地面点のある %d セル = %.0f m2)。"
+          "区画 %.0f m2 全体に延ばすと %+.0f m3。"
+          % (net_raw, n_valid, float(n_valid), area, off_flat * area))
+    print("     平坦部の中央値で合わせた後の正味 %+.0f m3 = 1 セルあたり %+.4f m"
+          "(NMAD %.3f m の %.0f %%)。"
+          % (net_flat, net_flat / n_valid, nmad, 100 * abs(net_flat / n_valid) / nmad))
+    # ---- U2: 合わせた分だけ変化が消える -------------------------------------- #
+    big = np.abs(np.where(valid, dod, 0.0)) > CHANGE_DZ
+    lab, nlab = ndimage.label(big)
+    sizes = np.bincount(lab.ravel(), minlength=nlab + 1)
+    change = (sizes[lab] >= CHANGE_MIN_CELLS) & big
+    v = dod_raw[valid]
+    off_full = float(v.mean())
+    dev = np.abs(v - np.median(v))
+    keep = dev <= np.quantile(dev, REAL_TRIM)
+    off_trim = float(v[keep].mean())
+    net_full = float((v - off_full).sum())
+    net_trim = float((v - off_trim).sum())
+    ch_trim = float((dod_raw[change] - off_trim).sum())
+    ch_full = float((dod_raw[change] - off_full).sum())
+    absorbed = off_full - off_trim
+    pred_abs = ch_trim / n_valid
+    frac_ch = float(change.sum()) / n_valid
+    print("\n  (U2) 合わせた分だけ変化が消える —— 変化域(|差| > %.2f m が %d セル以上連結)"
+          "%d セル = 有効セルの %.1f %%" % (CHANGE_DZ, CHANGE_MIN_CELLS, int(change.sum()),
+                                            100 * frac_ch))
+    print("     位置合わせ        鉛直のずれ [m]   区画の正味 [m3]   変化域の正味 [m3]")
+    print("     全セルの平均       %+.4f        %+10.1f        %+10.1f"
+          % (off_full, net_full, ch_full))
+    print("     trimmed %.0f %%      %+.4f        %+10.1f        %+10.1f"
+          % (100 * REAL_TRIM, off_trim, net_trim, ch_trim))
+    print("     平坦部の中央値     %+.4f        %+10.1f        %+10.1f"
+          % (off_flat, net_flat, float(dod[change].sum())))
+    ch_flat = float(dod[change].sum())
+    ch_all = (ch_full, ch_trim, ch_flat)
+    ch_spread = (max(ch_all) - min(ch_all)) / abs(ch_trim)
+    out_trim = net_trim - ch_trim                      # 変化域の外が区画の正味に足した分
+    nc = valid & ~change
+    steep = nc & (slope > 10.0)
+    flat_nc = nc & flat
+    print("     ★全セルで合わせると区画の正味は %+.1f m3 —— 恒等的に 0。変化域の %+.0f m3 は"
+          "全体へ薄く配られて消える。" % (net_full, ch_trim))
+    print("     ★変化域そのものの正味は合わせ方で %+.0f / %+.0f / %+.0f m3(ばらつき %.1f %%)"
+          "—— 変化域が %.1f %% しかないので**ほとんど潰れない**(合成は 33 %%)。"
+          % (ch_full, ch_trim, ch_flat, 100 * ch_spread, 100 * frac_ch))
+    print("     ★予測(合成 §7 の仕組み)は「吸われる鉛直量 = 変化域の正味 / 全セル数」= %+.4f m"
+          "だが、実測は %+.4f m —— **外れた**。" % (pred_abs, absorbed))
+    print("       trimmed 後の区画の正味 %+.0f m3 = 変化域 %+.0f + 変化域の外 %+.0f m3。"
+          "変化域の外の差は平均 %+.4f / 中央値 %+.4f m と"
+          % (net_trim, ch_trim, out_trim, float(dod_raw[nc].mean()),
+             float(np.median(dod_raw[nc]))))
+    print("       ずれていて(傾斜 10 度超のセルは平均 %+.3f m、平坦部は %+.3f m)、数 mm の差が"
+          " %d セルで数百 m3 になる。" % (float(dod_raw[steep].mean()),
+                                          float(dod_raw[flat_nc].mean()), int(nc.sum())))
+    print("       → **区画の正味は変化の量として読めない**。変化は変化域で積む。"
+          "(傾斜で深く出るのは水平の系統ずれ(合成 §7)の兆候かもしれないが、確かめていない)")
+    # ---- U3: 点密度の崖 ------------------------------------------------------- #
+    print("\n  (U3) 点密度の崖 —— 合成 §6 の予測(Poisson)1 − exp(−ρ) と照合")
+    print("     時期   比べるセル   地面点 ρ [点/m2]   充填率 実測   Poisson 予測   分散指数 D")
+    u3 = {}
+    for name, other in (("2012", "2017"), ("2017", "2012")):
+        m = np.isfinite(G[other])
+        kk = K[name][m]
+        rho = float(kk.mean())
+        fill = float((kk > 0).mean())
+        pois = 1.0 - math.exp(-rho)
+        disp = float(kk.var() / rho)
+        u3[name] = {"rho": rho, "fill": fill, "pois": pois, "D": disp, "cells": int(m.sum())}
+        print("     %s  %9d   %14.3f   %10.1f %%   %10.1f %%   %9.2f"
+              % (name, int(m.sum()), rho, 100 * fill, 100 * pois, disp))
+    print("     ★2012 は D = %.2f(規則的な走査)で Poisson より %+.1f 点 よく埋まり、2017 は"
+          " D = %.2f(測線の重なりで群れる)で %+.1f 点 埋まらない。"
+          % (u3["2012"]["D"], 100 * (u3["2012"]["fill"] - u3["2012"]["pois"]),
+             u3["2017"]["D"], 100 * (u3["2017"]["fill"] - u3["2017"]["pois"])))
+    print("       合成 §6 の「密度だけで崖が決まる」は、点の撒かれ方(D)を 1 と置いた近似。")
+    i12 = info["2012"]
+    print("     注意: 区画全体の充填率 %.1f %% は first return 密度 %.2f の Poisson %.1f %% と"
+          "偶然近いが、" % (100 * i12["fill"], i12["rho_first"],
+                            100 * (1 - math.exp(-i12["rho_first"]))))
+    print("       地面点の密度(%.2f)で予測すると %.1f %% —— 使う密度を間違えた一致で、"
+          "根拠にしない。" % (i12["rho_ground"], 100 * (1 - math.exp(-i12["rho_ground"]))))
+    ql = {}
+    for name in ("2012", "2017"):
+        r = info[name]["rho_first"]
+        ql[name] = "QL2" if r >= LBS_ANPD["QL2"] else ("QL3" if r >= LBS_ANPD["QL3"] else "-")
+    print("     LBS v1.3 Table 1(ANPD、first return で代用): 2012 %.2f → %s 帯、"
+          "2017 %.2f → %s 以上" % (info["2012"]["rho_first"], ql["2012"],
+                                    info["2017"]["rho_first"], ql["2017"]))
+    # ---- U4: 3857 のまま測る(失敗すべき対照) ----------------------------------- #
+    epsg = int(D["aoi"]["utm_epsg"])
+    a3857 = _area_3857(box, epsg)
+    ratio = a3857 / area
+    from pyproj import Transformer
+    lon, lat = Transformer.from_crs("EPSG:%d" % epsg, "EPSG:4326", always_xy=True).transform(
+        0.5 * (box[0] + box[1]), 0.5 * (box[2] + box[3]))
+    f3857 = Proj("EPSG:3857").get_factors(lon, lat)
+    futm = Proj("EPSG:%d" % epsg).get_factors(lon, lat)
+    pred_ratio = f3857.areal_scale / futm.areal_scale
+    gamma = math.radians(futm.meridian_convergence - f3857.meridian_convergence)
+    P17 = D["ep"]["2017"]
+    bbox = float((P17["x"].max() - P17["x"].min()) * (P17["y"].max() - P17["y"].min()))
+    bbox_utm = float((P17["E"].max() - P17["E"].min()) * (P17["N"].max() - P17["N"].min()))
+    bbox_ratio = bbox / bbox_utm
+    pred_bbox = pred_ratio * (1.0 + math.sin(2.0 * abs(gamma)))
+    d_utm = info["2017"]["first"] / area
+    d_3857 = info["2017"]["first"] / a3857
+    print("\n  (U4) 失敗すべき対照 —— EPT の水平は EPSG:3857(Web Mercator)")
+    print("     予測(pyproj の面積縮尺の比、緯度 %.3f 度): %.4f(sec²φ = %.4f)"
+          % (lat, pred_ratio, 1.0 / math.cos(math.radians(lat)) ** 2))
+    print("     実測(区画を 3857 へ写した多角形の面積比): %.4f" % ratio)
+    print("     点の外接矩形で測ると %.4f —— 子午線収差 γ = %.2f 度で区画が傾き、"
+          "予測 × (1 + sin 2γ) = %.4f" % (bbox_ratio, math.degrees(gamma), pred_bbox))
+    print("     → 2017 の first return 密度は UTM で %.2f 点/m2、3857 のまま測ると %.2f 点/m2"
+          "(%.0f %% 少なく出る)。" % (d_utm, d_3857, 100 * (1 - d_3857 / d_utm)))
+    print("       ★この区画では QL の区分は変わらない(2017 は 3857 でも %.2f ≥ 2.0)が、"
+          "UTM で 2.0〜%.2f 点/m2 の測量は 3857 のまま測ると QL2 を落とす。"
+          % (d_3857, LBS_ANPD["QL2"] * pred_ratio))
+    # ---- 分からないこと -------------------------------------------------------- #
+    inv = root / "INVENTORY.json"
+    gshift = float("nan")
+    if inv.is_file():
+        gc = json.loads(inv.read_text(encoding="utf-8")).get("geoid_check", {})
+        gshift = float(gc.get("H12_minus_H03_for_same_h_m", float("nan")))
+    print("\n  分からないこと(門にしない):")
+    print("   * 系統差 %+.3f m の原因。2012 は NAVD88(GEOID03)、2017 は NAVD88(GEOID12B)で、"
+          "ジオイドの差で説明できるのは %+.3f m(%.0f %%)だけ"
+          % (off_flat, gshift, 100 * abs(gshift / off_flat) if math.isfinite(gshift) else float("nan")))
+    print("     (INVENTORY.json の geoid_check: 取得時に PROJ のジオイド格子で計算した値)。"
+          "残りが NAD83 の実現の差か、機器の較正か、地表の変化かは、この資料では決められない。")
+    print("   * 変化域(%d セル)は美術館の建物の周りに集まる。工事などの実変化か、"
+          "分類(地面/建物)の差かは決められない。" % int(change.sum()))
+    print("   * 2012 の飛行日は取れていない(rockyweb は不通、ScienceBase は Cloudflare)。"
+          "LBS の ANPD はパルス密度で、ここは first return 数で代用している。")
+    print("   * 時期間の平坦部 NMAD %.3f m は LBS Table 2 の swath overlap RMSDz(QL2 ≤ %.2f m)"
+          "と同じ量ではない(並べるだけ)。2017 と DEM の差は独立な試験ではない"
+          "(DEM は同じ点から作られた)。" % (nmad, LBS_QL2_SWATH_RMSDZ))
+    out = {"off_flat": off_flat, "nmad": nmad, "n_valid": n_valid, "net_raw": net_raw,
+           "net_flat": net_flat, "net_full": net_full, "net_trim": net_trim,
+           "ch_trim": ch_trim, "ch_full": ch_full, "absorbed": absorbed,
+           "pred_abs": pred_abs, "frac_ch": frac_ch, "ch_spread": ch_spread,
+           "out_trim": out_trim, "u3": u3, "info": info, "ql": ql,
+           "ratio": ratio, "pred_ratio": pred_ratio, "bbox_ratio": bbox_ratio,
+           "pred_bbox": pred_bbox, "d_utm": d_utm, "d_3857": d_3857, "area": area,
+           "gshift": gshift}
+    _fig_real_usgs(out, dem_z, dod_raw, dod, change)
+    return out
+
+
+def _fig_real_usgs(R, dem_z, dod_raw, dod, change):
+    """実データの図(``enabled()`` のときだけ)。出典・謝辞・改変の記述を必ず載せる。"""
+    if not figs.enabled():
+        return
+    hs = np.asarray(fs.ledger.dem_hillshade(dem_z, 1.0), np.float64)
+    lim = 0.5
+    figs.save_grid("real_dod",
+                   [hs, np.clip(dod_raw, -lim, lim), np.clip(dod, -lim, lim),
+                    np.where(change, np.clip(dod, -1.5, 1.5), np.nan)],
+                   captions=["USGS 1 m DEM 陰影(2017)",
+                             "DoD 2017−2012 そのまま(±%.1f m)" % lim,
+                             "平坦部で %+.3f m 合わせた後" % (-R["off_flat"]),
+                             "変化域 %.1f %%(±1.5 m)" % (100 * R["frac_ch"])],
+                   signed=[False, True, True, True], gray=[True, False, False, False],
+                   ncols=2, title="USGS 3DEP Forest Park —— 系統差を引かないと全面が「掘れる」",
+                   caption=("地面点(分類 2)の 1 m セル平均の差。そのまま引くと区画全体が "
+                            "%+.3f m 沈んで見え、有効セルで %+.0f m3 の偽の土量。平坦部の中央値で"
+                            "合わせると残るのは美術館まわりの変化域だけ。黒 = どちらかの時期に"
+                            "地面点が無い(建物・池・樹冠の下)。%s %s"
+                            % (R["off_flat"], R["net_raw"], USGS_MODIFIED, USGS_CREDIT)))
+    rho = np.linspace(0.0, 4.0, 81)
+    u3 = R["u3"]
+    figs.save_plot("real_fill",
+                   [("合成 §6 の予測 1 − exp(−ρ)", rho, 100 * (1 - np.exp(-rho))),
+                    ("2012 実測(D = %.2f)" % u3["2012"]["D"], [u3["2012"]["rho"]],
+                     [100 * u3["2012"]["fill"]]),
+                    ("2017 実測(D = %.2f)" % u3["2017"]["D"], [u3["2017"]["rho"]],
+                     [100 * u3["2017"]["fill"]])],
+                   kinds=["line", "scatter", "scatter"], xlim=(0.0, 4.0), ylim=(0.0, 100.0),
+                   xlabel="地面点の密度 ρ [点/m2](もう片方の時期に地面点のあるセルで)",
+                   ylabel="地面点のある 1 m セル [%]", size=(720, 420),
+                   title="点密度の崖 —— 実データは Poisson でない",
+                   caption=("規則的な走査(分散指数 D < 1)の 2012 は予測より埋まり、測線の重なりで"
+                            "群れる(D > 1)2017 は埋まらない。%s %s"
+                            % (USGS_MODIFIED, USGS_CREDIT)))
+
+
+def gates_real_usgs(R) -> int:
+    """実データの門。``R`` が None(データ無し)なら 0 本。数えた本数を返す。"""
+    if R is None:
+        return 0
+    n = 0
+    # U1. 系統差: 合わせる前は NMAD の 3 倍超、平坦部で合わせた後の正味は 1 セルあたり NMAD 未満
+    assert abs(R["net_raw"] / R["n_valid"]) > 3.0 * R["nmad"], (R["net_raw"], R["nmad"])
+    assert abs(R["net_flat"] / R["n_valid"]) < R["nmad"], (R["net_flat"], R["nmad"])
+    n += 1
+    # U2a. 全セルで合わせると区画の正味は 0(恒等式 —— 変化は全体へ配られて消える)
+    assert abs(R["net_full"]) < 1.0, R["net_full"]
+    assert abs(R["ch_trim"]) > 100.0, R["ch_trim"]            # 変化域が実際に在る
+    n += 1
+    # U2b. 変化域そのものの正味は 3 通りの合わせ方で 5 % 以内(変化域が小さいので潰れない)
+    assert R["frac_ch"] < 0.1, R["frac_ch"]
+    assert R["ch_spread"] < 0.05, R["ch_spread"]
+    n += 1
+    # U2c. 区画の正味は変化の量として読めない: 変化域の外の寄与が変化域の 30 % を超える
+    #      (合成 §7 の「吸われる量 = 変化域の正味 / 全セル数」は実データでは外れる —— その記録)
+    assert abs(R["out_trim"]) > 0.3 * abs(R["ch_trim"]), (R["out_trim"], R["ch_trim"])
+    n += 1
+    # U3. 充填率が Poisson からずれる向きを分散指数 D で当てる(両時期、両向き)
+    for name in ("2012", "2017"):
+        u = R["u3"][name]
+        assert abs(u["D"] - 1.0) > 0.3, (name, u["D"])         # 判定に足る非 Poisson 性
+        assert (u["fill"] - u["pois"]) * (1.0 - u["D"]) > 0.0, (name, u)
+        n += 1
+    #     LBS v1.3 Table 1: 2012 は QL3 帯(0.5 以上 2.0 未満)、2017 は QL2 以上
+    assert R["ql"] == {"2012": "QL3", "2017": "QL2"}, R["ql"]
+    n += 1
+    # U4. 3857 の面積比は予測と 0.5 % 以内、外接矩形は収差の分も 1 % 以内で当たる
+    assert abs(R["ratio"] / R["pred_ratio"] - 1.0) < 0.005, (R["ratio"], R["pred_ratio"])
+    assert abs(R["bbox_ratio"] / R["pred_bbox"] - 1.0) < 0.01, (R["bbox_ratio"], R["pred_bbox"])
+    n += 1
+    #     失敗すべき対照: 3857 のまま測った密度は UTM と 30 % 以上食い違う
+    assert R["d_3857"] < 0.7 * R["d_utm"], (R["d_3857"], R["d_utm"])
+    n += 1
+    return n
+
+
 def main() -> int:
     t0 = time.perf_counter()
     print("=" * 78)
@@ -1600,6 +2063,13 @@ def main() -> int:
     assert abs(oc["wide"][-1] / truth(lod=oc["lmad"][-1])["ero"] - 1) < 0.4, \
         "3x3 窓で分類しても遮蔽で土量が壊れる"
     assert nr["up_raw"] < 0.95, "開いた斜面で法線の符号が揃ってしまった"
+
+    # ---- 実データ(FULLSEYE_DATA_DIR があるときだけ。無ければ 1 行で飛ばし、門は数えない)
+    #      合成の検査より後ろに置く: 合成の印字・図の番号・門をデータの有無で変えないため。
+    real = section_real_usgs()
+    n_real = gates_real_usgs(real)
+    if n_real:
+        print("  実データの門 %d 本: すべて通過" % n_real)
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():

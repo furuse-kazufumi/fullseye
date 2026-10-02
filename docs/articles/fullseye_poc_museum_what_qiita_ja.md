@@ -1330,7 +1330,7 @@ py -3.11 examples/poc_multibeam_bathymetry.py
 
 この回が作った図は全部で **17 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_multibeam_bathymetry)
 
-使用 op(ノートへ): [`beamform_delay_sum`](https://furuse.work/ops/rangedoppler/beamform/beamform_delay_sum.html) · [`beamform_doa`](https://furuse.work/ops/rangedoppler/beamform/beamform_doa.html) · [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`dem_slope`](https://furuse.work/ops/dem/surface/dem_slope.html) · [`find_peaks`](https://furuse.work/ops/oned/signal/find_peaks.html) · [`interp_scattered`](https://furuse.work/ops/math/interp_poly/interp_scattered.html) · [`peak_subbin`](https://furuse.work/ops/oned/signal/peak_subbin.html) · [`snell_angle`](https://furuse.work/ops/3d/optics/snell_angle.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+使用 op(ノートへ): [`beamform_delay_sum`](https://furuse.work/ops/rangedoppler/beamform/beamform_delay_sum.html) · [`beamform_doa`](https://furuse.work/ops/rangedoppler/beamform/beamform_doa.html) · [`color_bar`](https://furuse.work/ops/annotate/furniture/color_bar.html) · [`dem_slope`](https://furuse.work/ops/dem/surface/dem_slope.html) · [`find_peaks`](https://furuse.work/ops/oned/signal/find_peaks.html) · [`intensity`](https://furuse.work/ops/2d/features/intensity.html) · [`interp_scattered`](https://furuse.work/ops/math/interp_poly/interp_scattered.html) · [`peak_subbin`](https://furuse.work/ops/oned/signal/peak_subbin.html) · [`snell_angle`](https://furuse.work/ops/3d/optics/snell_angle.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ## No.2026.029 —— 粒度分布を画像から測る ―― 融合と縁切れが逆向きに効き、途中で打ち消し合う
 
