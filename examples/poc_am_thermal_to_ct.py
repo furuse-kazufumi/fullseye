@@ -2,7 +2,7 @@
 """金属積層造形の「工程中の熱画像」と「造形後の X 線 CT」を、既存の op だけでつなぐ。
 
     py -3.11 examples/poc_am_thermal_to_ct.py
-    FULLSEYE_DATA_DIR=C:/dev/data py -3.11 examples/poc_am_thermal_to_ct.py   # 実データの門も足す
+    FULLSEYE_DATA_DIR=<データの置き場> py -3.11 examples/poc_am_thermal_to_ct.py   # 実データの門も足す
 
 レーザー粉末床溶融(L-PBF)の検査は 2 つの装置に分かれています。**造形中**は高速カメラが
 溶融池の明るさを撮り、**造形後**は X 線 CT が中身と表面を撮る。この PoC は、その両端を
