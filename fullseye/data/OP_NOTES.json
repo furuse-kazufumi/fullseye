@@ -24861,6 +24861,16 @@
     "path": "docs/ops/segmentation/threshold/threshold_triangle.md"
    }
   ],
+  "watersheds_marker": [
+   {
+    "op": "watersheds_marker",
+    "dim": "segmentation",
+    "category": "watershed",
+    "in": "image2d × labels2d",
+    "out": "labels2d",
+    "path": "docs/ops/segmentation/watershed/watersheds_marker.md"
+   }
+  ],
   "distance_peaks": [
    {
     "op": "distance_peaks",
@@ -24889,16 +24899,6 @@
     "in": "voxel",
     "out": "labels",
     "path": "docs/ops/segmentation/watershed3d/watershed_vol.md"
-   }
-  ],
-  "watersheds_marker": [
-   {
-    "op": "watersheds_marker",
-    "dim": "segmentation",
-    "category": "watershed",
-    "in": "image2d × labels2d",
-    "out": "labels2d",
-    "path": "docs/ops/segmentation/watershed/watersheds_marker.md"
    }
   ],
   "lens_area": [

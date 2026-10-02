@@ -1240,10 +1240,11 @@
 ## `fullseye/mcp/catalog.py`
 
 - **L70** — ★``dim`` は **docs/ops の族ディレクトリ名**(``2d`` / ``3d`` / ``oned`` のほか ``optics`` / ``annotate`` … 31 種)で、厳密な次元ではない —— volume を取る registry op は ``2d/3d/`` の下にあり ``dim: 2d``。 次元は ``in`` / ``out`` の sort から読む(2026-09-20、GenSpark 第 31 報 N109。族と次元の分離は 0.2.2)。
-- **L99** — ★frontmatter は閉じ線まで読む(2026-10-02): 先頭 1200 文字で切っていたら、examples: の行が 44 本に伸びた text_box の閉じ線が範囲の外に出て「op の無いノート」に見え、索引の op がノートから引けなくなった。
-- **L121** — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
-- **L307** — ★2026-09-20(GenSpark 第 41 報 N141): 「callable なら op」でクラス 41 個(Image / Pipeline / MissingBackendError / TcpChannel …)が facade 層に op として混ざり、`fullseye_search_ops` の検索面を汚していた。クラスとモジュールは型・器であって op ではない。関数(生 / builtin / functools.partial)だけを op として数える。同じ報の「facade 表に無い 474 件」は halcon_facade_map.json(HALCON 対応表、鍵は `camera.xxx` の名前空間つき)との比較で、 残る 460 件は `import fullseye` で呼べる実関数 —— 表の目的が違うので設計のまま。
-- **L357** — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
+- **L96** — ★2026-10-02: 区切り文字を "/" にそろえてから並べる。素の sorted() は Windows の "\\"(0x5C)と Linux の "/"(0x2F)で順序が変わり、``segmentation/watershed/`` と ``segmentation/watershed3d/`` の 前後が入れ替わって OP_NOTES.json の鍵の順が OS ごとに違った(手元の regen は緑、CI の --check が赤)。
+- **L103** — ★frontmatter は閉じ線まで読む(2026-10-02): 先頭 1200 文字で切っていたら、examples: の行が 44 本に伸びた text_box の閉じ線が範囲の外に出て「op の無いノート」に見え、索引の op がノートから引けなくなった。
+- **L125** — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
+- **L311** — ★2026-09-20(GenSpark 第 41 報 N141): 「callable なら op」でクラス 41 個(Image / Pipeline / MissingBackendError / TcpChannel …)が facade 層に op として混ざり、`fullseye_search_ops` の検索面を汚していた。クラスとモジュールは型・器であって op ではない。関数(生 / builtin / functools.partial)だけを op として数える。同じ報の「facade 表に無い 474 件」は halcon_facade_map.json(HALCON 対応表、鍵は `camera.xxx` の名前空間つき)との比較で、 残る 460 件は `import fullseye` で呼べる実関数 —— 表の目的が違うので設計のまま。
+- **L361** — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
 
 ## `fullseye/mcp/diagnose.py`
 

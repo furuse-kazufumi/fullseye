@@ -93,7 +93,11 @@ def scan_notes(ops_docs: str = OPS_DOCS) -> dict[str, list[dict]]:
     別々に書くと wheel だけ違う集合になる。
     """
     out: dict[str, list[dict]] = {}
-    for p in sorted(glob.glob(os.path.join(ops_docs, "**", "*.md"), recursive=True)):
+    # ★2026-10-02: 区切り文字を "/" にそろえてから並べる。素の sorted() は Windows の "\\"(0x5C)と
+    #   Linux の "/"(0x2F)で順序が変わり、``segmentation/watershed/`` と ``segmentation/watershed3d/`` の
+    #   前後が入れ替わって OP_NOTES.json の鍵の順が OS ごとに違った(手元の regen は緑、CI の --check が赤)。
+    paths = glob.glob(os.path.join(ops_docs, "**", "*.md"), recursive=True)
+    for p in sorted(paths, key=lambda q: q.replace(os.sep, "/")):
         if os.sep + "_fig" + os.sep in p:
             continue
         # ★frontmatter は閉じ線まで読む(2026-10-02): 先頭 1200 文字で切っていたら、examples: の行が 44 本に伸びた
