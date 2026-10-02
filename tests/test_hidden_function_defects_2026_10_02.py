@@ -79,3 +79,28 @@ def test_the_transpose_alias_matches_the_original():
     H = np.arange(16.0).reshape(4, 4)
     assert np.array_equal(T.hom_mat3d_transpose_(H), T.hom_mat3d_transpose(H))
 
+
+
+# ---- 呼び出し元 0 本の公開名 3 つは非推奨(0.3.0 で削除)—— 警告を出し、答えは変えない ---- #
+def test_the_three_dead_public_names_warn_and_still_answer():
+    import pytest
+    import ops
+    import transforms as T
+    import unified as u
+    name = next(iter(ops.SLOTS))
+    with pytest.warns(DeprecationWarning, match="0.3.0"):
+        assert ops.op_slot(name) == ops.SLOTS[name]
+    H = np.arange(16.0).reshape(4, 4)
+    with pytest.warns(DeprecationWarning, match="0.3.0"):
+        assert np.array_equal(T.hom_mat3d_transpose_(H), H.T)
+    with pytest.warns(DeprecationWarning, match="0.3.0"):
+        assert len(u.build_registry().list()) > 1000
+
+
+def test_the_warning_points_at_the_caller_not_the_library():
+    import warnings
+    import transforms as T
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        T.hom_mat3d_transpose_(np.eye(4))
+    assert w and w[0].filename == __file__        # stacklevel=2

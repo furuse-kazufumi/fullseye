@@ -22,6 +22,7 @@ from __future__ import annotations
 import inspect as _inspect
 import json
 import os
+import warnings
 from dataclasses import dataclass, field
 from typing import Callable
 
@@ -497,7 +498,14 @@ def _load_3dgs(reg: Registry) -> None:
 
 def build_registry() -> Registry:
     """4 層(facade 600 / 進化 735 / 知覚 facade / OSS アダプタ)を 1 索引に統合(F2/F3/F4)。
-    facade を最初に登録=bare 名衝突時は genuine facade を優先(既存挙動維持)。"""
+    facade を最初に登録=bare 名衝突時は genuine facade を優先(既存挙動維持)。
+
+    .. deprecated:: 0.2.4
+       呼び出し元が 0 本(2026-10-02 の棚卸し)。0.3.0 で削除する。共有の索引は ``_ensure()``
+       (``fullseye.vision`` が使う遅延構築)から取ること —— これは呼ぶたびに全層を作り直す。
+    """
+    warnings.warn("unified.build_registry は非推奨で 0.3.0 で削除する。"
+                  "共有の索引は fullseye.vision から取ること", DeprecationWarning, stacklevel=2)
     reg = Registry()
     _load_layers(reg)
     return reg

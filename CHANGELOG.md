@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- **非推奨(0.3.0 で削除)**: 呼び出し元が 0 本の公開名 3 つ —— `ops.op_slot`
+  (→ `ops.SLOTS[name]`)、`transforms.hom_mat3d_transpose_`(→ `hom_mat3d_transpose`)、
+  `unified.build_registry`(→ `fullseye.vision` の共有索引)。今は `DeprecationWarning`
+  を出すだけで答えは変わらない(門 = `tests/test_hidden_function_defects_2026_10_02.py`)。
+
 - ★★**どの門も「その特徴が何の次元を持つか」を知らなかった。** 領域を受けて数を
   返す **35 op すべて**に、成分ごとの**尺度指数**(k 倍に拡大したら k^p 倍)を
   宣言させる門を足した = `tests/test_scale_law_2026_09_26.py`。
