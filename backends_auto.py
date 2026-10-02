@@ -41,8 +41,7 @@ try:
     import skimage  # noqa: F401
     from skimage import (filters as skfilters, morphology as skmorph,
                          measure as skmeasure, segmentation as skseg,
-                         restoration as skrest, feature as skfeat,
-                         transform as sktrans, exposure as skexp)
+                         feature as skfeat, transform as sktrans)
     _HAS_SK = True
 except Exception:  # pragma: no cover - skimage is expected but optional
     _HAS_SK = False
@@ -332,8 +331,6 @@ def _sh_pointwise(p):
             return np.abs(np.asarray(v, np.float64))
         if kind == "sqrt":
             return np.sqrt(x)
-        if kind == "square":
-            return x * x
         if kind == "exp":
             return (np.exp(x) - 1.0) / (np.e - 1.0)
         if kind == "log":
@@ -350,8 +347,6 @@ def _sh_pointwise(p):
             return np.arccos(x) / np.pi
         if kind == "atan":
             return np.arctan(x) / (np.pi / 2)
-        if kind == "reciprocal":
-            return _norm(1.0 / np.maximum(x, 1e-3))
         raise ValueError(kind)
     return fn
 
@@ -368,15 +363,6 @@ def _sh_lut(p):
             return np.clip((0.5 + 1.5 * a) * x + (b - 0.5), 0, 1)
         if kind == "invert":
             return 1.0 - x
-        if kind == "sigmoid":
-            return 1.0 / (1.0 + np.exp(-(4 + 12 * a) * (x - (0.2 + 0.6 * b))))
-        if kind == "log_gain":
-            # gain > 1 は log 変換の出力を 1 より上へ押し上げる(実測 max=1.1380,
-            # a=0.5)。`image` は [0,1] 契約なので op の出口で clip する
-            # (`ops._apply` は段間で同じ clip を掛けているので **パイプライン結果は
-            # ビット不変**、直接 `fullseye.apply` した時だけ白飛びが消える)。
-            return np.clip(skexp.adjust_log(x, gain=0.5 + 1.5 * a), 0, 1) if _HAS_SK \
-                else _norm(np.log1p(x))
         if kind == "equalize":
             hist, edges = np.histogram(x, 256, (0, 1))
             cdf = np.cumsum(hist).astype(np.float64)
@@ -385,8 +371,6 @@ def _sh_lut(p):
         if kind == "rescale":
             lo, hi = float(x.min()), float(x.max())
             return (x - lo) / (hi - lo) if hi > lo else x
-        if kind == "clip_range":
-            return np.clip(x, a * 0.5, 0.5 + 0.5 * b)
         if kind == "illuminate":
             sm = ndimage.gaussian_filter(x, 3 + 12 * a)
             return np.clip(x + (0.3 + 0.7 * b) * (x - sm), 0, 1)
@@ -520,8 +504,6 @@ def _sh_graymorph(p):
             return _norm(ndimage.white_tophat(x, footprint=fp))
         if op == "bothat":
             return _norm(ndimage.black_tophat(x, footprint=fp))
-        if op == "gradient":
-            return _norm(ndimage.morphological_gradient(x, footprint=fp))
         raise ValueError(op)
     return fn
 
@@ -561,9 +543,6 @@ def _sh_edge(p):
         if kind == "roberts":
             return _norm(np.hypot(x - _shift_edge(x, -1, -1),
                                   _shift_edge(x, 0, -1) - _shift_edge(x, -1, 0)))
-        if kind == "scharr":
-            sh = np.array([[3, 0, -3], [10, 0, -10], [3, 0, -3]], float)
-            return _norm(np.hypot(ndimage.convolve(x, sh), ndimage.convolve(x, sh.T)))
         if kind == "kirsch":
             return _norm(_compass(x, _KIRSCH))
         if kind == "kirsch_dir":
@@ -599,8 +578,6 @@ def _sh_corner(p):
     def fn(v, a, b):
         x = np.asarray(v, np.float64)
         s = 0.5 + 2.0 * a
-        if kind == "harris" and _HAS_SK:
-            return signed01(skfeat.corner_harris(x, sigma=s))
         if kind == "harris_binomial":                # Harris on a binomially pre-smoothed image
             xb = ndimage.gaussian_filter(x, 0.5 + 1.5 * b)
             if _HAS_SK:
@@ -613,8 +590,6 @@ def _sh_corner(p):
         if kind == "foerstner" and _HAS_SK:
             w, q = skfeat.corner_foerstner(x, sigma=s)
             return _norm(np.nan_to_num(w) * np.nan_to_num(q))
-        if kind == "shi_tomasi" and _HAS_SK:
-            return _norm(skfeat.corner_shi_tomasi(x, sigma=s))
         raise ValueError(kind)
     return fn
 
@@ -677,8 +652,6 @@ def _sh_freq(p):
             return signed01(np.real(np.fft.ifft2(x)))   # 符号つき -> 0 が 0.5
         H, W = x.shape
         rad = np.sqrt(np.fft.fftfreq(H)[:, None] ** 2 + np.fft.fftfreq(W)[None, :] ** 2)
-        if kind == "lowpass":
-            return np.clip(np.real(np.fft.ifft2(np.fft.fft2(x) * (rad <= (0.05 + 0.4 * a)))), 0, 1)
         if kind == "highpass":
             return signed01(np.real(np.fft.ifft2(       # 符号つき -> 0 が 0.5
                 np.fft.fft2(x) * (rad > (0.02 + 0.3 * a)))))
@@ -710,13 +683,9 @@ def _sh_diffusion(p):
                 ce, cw = np.exp(-(de / K) ** 2), np.exp(-(dw / K) ** 2)
                 y = y + 0.2 * (cn * dn + cs * ds + ce * de + cw * dw)
             return np.clip(y, 0, 1)
-        if kind == "tv" and _HAS_SK:
-            return skrest.denoise_tv_chambolle(x, weight=0.02 + 0.3 * a)
         if kind == "bilateral" and _HAS_CV:
             return cv2.bilateralFilter(x.astype(np.float32), 5, 0.05 + 0.4 * b,
                                        1 + 3 * a).astype(np.float64)
-        if kind == "nlm" and _HAS_SK:
-            return skrest.denoise_nl_means(x, patch_size=5, h=0.02 + 0.2 * a)
         raise ValueError(kind)
     return fn
 
@@ -775,10 +744,6 @@ def _sh_texture(p):
             l1 = float(np.abs(g).sum())
             resp = np.abs(ndimage.convolve(x, g, mode="reflect"))
             return np.clip(resp / l1, 0, 1) if l1 > 1e-12 else np.zeros_like(resp)
-        if kind == "lbp" and _HAS_SK:
-            return _norm(skfeat.local_binary_pattern(x, 8, _rad(a)))
-        if kind == "coherence" and _HAS_SK:
-            return signed01(np.nan_to_num(skfeat.shape_index(x, sigma=0.5 + 2 * a)))
         raise ValueError(kind)
     return fn
 
@@ -898,8 +863,6 @@ def _sh_geom(p):
             M = cv2.getPerspectiveTransform(src, dst)
             out = cv2.warpPerspective(x.astype(np.float32), M, (w, h), borderMode=cv2.BORDER_REFLECT)
             return np.clip(out.astype(np.float64), 0, 1)
-        if kind == "swirl" and _HAS_SK:
-            return np.clip(sktrans.swirl(x, strength=1 + 4 * a, radius=30), 0, 1)
         raise ValueError(kind)
     return fn
 
@@ -923,22 +886,8 @@ def _sh_threshold(p):
         if method == "otsu":
             return (x > skfilters.threshold_otsu(x)).astype(np.float64) if _HAS_SK else \
                    (x > x.mean()).astype(np.float64)
-        if method == "li":
-            return (x > skfilters.threshold_li(x)).astype(np.float64)
-        if method == "yen":
-            return (x > skfilters.threshold_yen(x)).astype(np.float64)
-        if method == "triangle":
-            return (x > skfilters.threshold_triangle(x)).astype(np.float64)
-        if method == "isodata":
-            return (x > skfilters.threshold_isodata(x)).astype(np.float64)
-        if method == "mean":
-            return (x > skfilters.threshold_mean(x)).astype(np.float64)
-        if method == "minimum":
-            return (x > skfilters.threshold_minimum(x)).astype(np.float64)
         if method == "sauvola":
             return (x > skfilters.threshold_sauvola(x, window_size=2 * int(a * 6) + 3)).astype(np.float64)
-        if method == "niblack":
-            return (x > skfilters.threshold_niblack(x, window_size=2 * int(a * 6) + 3)).astype(np.float64)
         if method == "dyn":
             return (x - ndimage.uniform_filter(x, _k(a))
                     > (b - 0.5) * 0.4 + _FLAT_TOL).astype(np.float64)
@@ -958,10 +907,6 @@ def _sh_segment(p):
 
     def fn(v, a, b):
         x = np.clip(np.asarray(v, np.float64), 0, 1)
-        if kind == "canny":
-            g = ndimage.gaussian_filter(x, 0.5 + 1.5 * a)
-            m = _norm(np.hypot(ndimage.sobel(g, 1), ndimage.sobel(g, 0)))
-            return (m > (0.1 + 0.5 * b)).astype(np.float64)
         if kind == "sk_canny" and _HAS_SK:
             return skfeat.canny(x, sigma=0.5 + 2 * a).astype(np.float64)
         if kind == "local_max":
@@ -970,14 +915,6 @@ def _sh_segment(p):
             grad = _norm(np.hypot(ndimage.sobel(x, 1), ndimage.sobel(x, 0)))
             markers = ndimage.label(x < (0.2 + 0.3 * a))[0]
             return skseg.find_boundaries(skseg.watershed(grad, markers)).astype(np.float64)
-        if kind == "felzenszwalb" and _HAS_SK:
-            return skseg.find_boundaries(
-                skseg.felzenszwalb(x, scale=20 + 200 * a, channel_axis=None)).astype(np.float64)
-        if kind == "slic" and _HAS_SK:
-            return skseg.find_boundaries(
-                skseg.slic(x, n_segments=int(10 + 80 * a), channel_axis=None)).astype(np.float64)
-        if kind == "chan_vese" and _HAS_SK:
-            return skseg.chan_vese(x, mu=0.1 + 0.4 * a, max_num_iter=60).astype(np.float64)
         if kind == "regiongrow":
             seed = x > (0.5 + 0.3 * a)
             return ndimage.binary_dilation(seed, iterations=1 + int(b * 4)).astype(np.float64)
@@ -1043,14 +980,10 @@ def _sh_region_trans(p):
             return (m.astype(np.float64) - ndimage.binary_erosion(m).astype(np.float64)).clip(0, 1)
         if kind == "skeleton" and _HAS_SK:
             return skmorph.skeletonize(m).astype(np.float64)
-        if kind == "medial" and _HAS_SK:
-            return skmorph.medial_axis(m).astype(np.float64)
         if kind == "thin" and _HAS_SK:
             return skmorph.thin(m).astype(np.float64)
         if kind == "convex" and _HAS_SK:
             return skmorph.convex_hull_image(m).astype(np.float64)
-        if kind == "clear_border" and _HAS_SK:
-            return skseg.clear_border(m).astype(np.float64)
         if kind == "remove_small":
             lab, n = ndimage.label(m)
             if n == 0:
@@ -1410,8 +1343,6 @@ def _sh_xld(p):
                 idx = np.clip(np.round(c).astype(int), [0, 0], [H - 1, W - 1])
                 mask[idx[:, 0], idx[:, 1]] = 1.0
             return ndimage.binary_dilation(mask > 0.5, iterations=1 + int(a * 2)).astype(np.float64)
-        if kind == "count":
-            return np.float64(len(cv["cs"]))
         if kind == "length":
             tot = 0.0
             for c in cv["cs"]:
@@ -1577,13 +1508,6 @@ def _sh_noise(p):
         rng = np.random.default_rng(int(a * 997) + 7)
         if kind == "gaussian":
             return np.clip(x + (0.02 + 0.2 * b) * rng.standard_normal(x.shape), 0, 1)
-        if kind == "sp":
-            m = rng.random(x.shape)
-            p_ = 0.02 + 0.1 * b
-            y = x.copy()
-            y[m < p_] = 0.0
-            y[m > 1 - p_] = 1.0
-            return y
         raise ValueError(kind)
     return fn
 
