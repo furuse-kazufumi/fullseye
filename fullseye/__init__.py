@@ -386,6 +386,9 @@ with warnings.catch_warnings():
     from reconstruction import triangulate_points, rel_pose_to_essential_matrix  # noqa: E402,F401
     from shapematch import pyr_down, image_pyramid  # noqa: E402,F401
     from symmetry3d import rotational_symmetry_score  # noqa: E402,F401
+    # 3-D 合成パイプライン(pipeline3d が import できない環境では api 側の代役 = 呼ぶと ImportError)
+    from api import (  # noqa: E402,F401
+        register_pointclouds, align_cad_to_scan, measure_plane, inspect_roundness, match_sdf, register_auto)
     from engine import FullseyeEngine, diagnose_stages  # noqa: E402,F401  (pipeline runtime)
     import graphengine  # noqa: E402,F401  (DAG pipeline runtime)
     from graphengine import FullseyeGraph  # noqa: E402,F401
@@ -1037,6 +1040,8 @@ __all__ = [
     "dilation2", "get_bounding_box_object_model_3d", "normals_to_gradients", "integrate_gradients",
     "triangulate_points", "rel_pose_to_essential_matrix", "pyr_down", "image_pyramid",
     "rotational_symmetry_score",
+    "register_pointclouds", "align_cad_to_scan", "measure_plane", "inspect_roundness", "match_sdf",
+    "register_auto",
 ]
 
 # ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った

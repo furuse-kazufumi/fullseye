@@ -42,7 +42,11 @@ def align_cad_to_scan(vertices, faces, scan, samples=8000):
 def measure_plane(points):
     """点群 → 支配平面(法線,通過点)+ 平面度(残差 RMS / PV)。検出+計測の合成。OP_COMBINATION #4。"""
     c, n, _ = X.fit_plane_3d(points)
-    d = np.array([X.distance_point_plane(p, c, n) for p in np.asarray(points)])
+    # ★2026-10-02: 以前は符号なし距離 ``distance_point_plane``(|d|)で PV = max|d| − min|d| を出しており、
+    #   平面の両側に散る点では PV を桁で過小に報告した(±h の 2 層で真の 2h·cosθ = 0.0188 に対し 0.0020)。
+    #   平面度の PV は**符号つき**残差の山と谷の差。RMS は 2 乗なので元から正しかった。
+    nh = np.asarray(n, float) / max(float(np.linalg.norm(n)), 1e-300)
+    d = (np.asarray(points, float) - np.asarray(c, float)) @ nh
     return {"normal": n, "point": c,
             "flatness_rms": float(np.sqrt(np.mean(d ** 2))),
             "pv": float(d.max() - d.min())}

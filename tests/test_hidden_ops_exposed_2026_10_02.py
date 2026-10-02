@@ -218,3 +218,53 @@ def test_gaussians_on_a_unit_sphere_mesh_to_radius_one():
     r = np.linalg.norm(np.asarray(mesh.vertices), axis=1)
     assert abs(np.median(r) - 1.0) < 0.01
     assert len(np.asarray(pcd.points)) > 0
+
+
+# ---- 3-D の合成パイプライン(pipeline3d、fs.<名前> へ出した 6 本)----------------- #
+PIPELINE3D = ("register_pointclouds", "align_cad_to_scan", "measure_plane", "inspect_roundness",
+              "match_sdf", "register_auto")
+
+
+def test_pipeline3d_names_are_public():
+    import api
+    for n in PIPELINE3D:
+        assert callable(getattr(fs, n)) and n in fs.__all__ and n in api.__all__, n
+
+
+def test_measure_plane_recovers_a_tilted_plane_exactly_and_measures_known_flatness():
+    """雑音なしの平面は法線が厳密・平面度 0。±h の 2 値の段差を足すと PV = 2h·cosθ(θ = 法線と z の角)。"""
+    rng = np.random.default_rng(0)
+    xy = rng.uniform(-1, 1, (400, 2))
+    n_true = np.array([0.3, -0.2, 1.0])
+    n_true /= np.linalg.norm(n_true)
+    z = -(n_true[0] * xy[:, 0] + n_true[1] * xy[:, 1]) / n_true[2]
+    P = np.c_[xy, z]
+    r = fs.measure_plane(P)
+    assert abs(abs(float(np.dot(r["normal"], n_true))) - 1.0) < 1e-10
+    assert r["flatness_rms"] < 1e-10 and r["pv"] < 1e-10
+    # 各点を法線方向に +h と −h へ複製: 散布行列は元 + 2N h² n nᵀ で固有ベクトルは不変 → 直交距離の
+    # 最小二乗平面は厳密に元の面、符号つき残差は ±h ちょうど(PV = 2h、RMS = h)。
+    # 2026-10-02 の回帰: 符号なし距離で PV を出していた版は PV ≈ 0(max|d| − min|d| = h − h)を返す。
+    h = 0.01
+    r2 = fs.measure_plane(np.vstack([P + h * n_true, P - h * n_true]))
+    assert r2["pv"] == pytest.approx(2 * h, rel=1e-9)
+    assert r2["flatness_rms"] == pytest.approx(h, rel=1e-9)
+
+
+def test_inspect_roundness_on_a_perfect_sphere():
+    rng = np.random.default_rng(1)
+    d = rng.normal(size=(500, 3))
+    d /= np.linalg.norm(d, axis=1, keepdims=True)
+    P = np.array([1.0, -2.0, 0.5]) + 3.0 * d
+    r = fs.inspect_roundness(P)
+    assert np.allclose(r["center"], [1.0, -2.0, 0.5], atol=1e-9)
+    assert r["radius"] == pytest.approx(3.0, abs=1e-9)
+    assert r["roundness_pv"] < 1e-9 and r["rms"] < 1e-9
+
+
+def test_pipeline3d_stand_in_raises_a_clear_import_error():
+    import api
+    f = api._pipeline3d_missing("measure_plane", ImportError("no torch"))
+    with pytest.raises(ImportError, match="pipeline3d"):
+        f(np.zeros((3, 3)))
+

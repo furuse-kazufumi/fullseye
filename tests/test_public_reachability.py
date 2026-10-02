@@ -80,10 +80,10 @@ _INTERNAL = {
     # ★2026-10-02: py-modules の数え漏れ(68 → 408 本)と facade 経路の数え忘れを直して初めて見えた 9 本。
     #   内部の道具(CLI・ヘルプ書庫・n-ary の組立て・Studio の索引・標本データの取得・大画像の実行補助)、
     #   api が別名で包むもの(mesh_decimate → mesh_decimate_preserving)、fs.<module>.<fn> でだけ届くもの
-    #   (pipeline3d の合成 op 6 本)。pipeline3d は**台帳に載せる予定**。
+    #   (pipeline3d の合成 op 6 本 —— 2026-10-02 に fs.<名前> から出して行を消した)。
     #   (watershed3d の 3 本は 2026-10-02 に台帳 opssegmentation の watershed3d へ載せて行を消した。)
     "gsplat_cli": 2, "helpstore": 4, "imgops_nary": 4, "mesh_decimate": 1, "opsearch": 2,
-    "pipeline3d": 6, "sample_data": 7, "scale": 6,
+    "sample_data": 7, "scale": 6,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -208,7 +208,7 @@ def test_pending_exposure_shrinks_when_fixed():
 #: 2026-09-14: 1231 -> 1235。opsspc 台帳の内部 API(_build/list_ops/categories/get/call/
 #: info/missing の非公開分)と spc.py の入力バリデータ(_as_float_array/_as_1d)。op 自身
 #: (spc_xbar_r/spc_cusum/spc_capability/spc_hotelling_t2)は typed_catalog と api から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 838   # 2026-10-02: facade 経路を数えて 1235 → 901、unified registry を数えて 901 → 861、train_class_mlp/svm を facade に載せて 859、watershed3d を台帳に載せて 856、棚卸しの 18 本を fs.<名前> に出して 838(ratchet)
+_HIDDEN_FUNCTIONS_TODAY = 832   # 2026-10-02: facade 経路を数えて 1235 → 901、unified registry を数えて 901 → 861、train_class_mlp/svm を facade に載せて 859、watershed3d を台帳に載せて 856、棚卸しの 18 本を fs.<名前> に出して 838、pipeline3d の 6 本を出して 832(ratchet)
 
 
 def _hidden_total():

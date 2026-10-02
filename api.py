@@ -146,16 +146,37 @@ from measure3d import (  # noqa: E402,F401
 from regionprops3d import inner_box3  # noqa: E402,F401  (3-D inner_rectangle1)
 import measure3d          # noqa: E402,F401
 import regionprops3d      # noqa: E402,F401
+_PIPELINE3D_NAMES = ("register_pointclouds", "align_cad_to_scan", "measure_plane",
+                     "inspect_roundness", "match_sdf", "register_auto")
+
+
+def _pipeline3d_missing(name, why):
+    def _f(*args, **kwargs):
+        raise ImportError("%s は pipeline3d(3-D 合成パイプライン)の op で、import に失敗している: %s" % (name, why))
+    _f.__name__ = name
+    _f.__doc__ = "pipeline3d が import できない環境の代役(呼ぶと ImportError)。"
+    return _f
+
+
 try:                      # full typed 3-D op registry + composite pipelines
     import ops3d          # noqa: E402,F401  (needs the `threed` extra — torch)
     import pipeline3d     # noqa: E402,F401
-except ImportError:       # keep the facade importable on a numpy-only install
+    # ★2026-10-02: 合成パイプライン 6 本を fs.<名前> から出す。以前は ``fs.pipeline3d.<fn>`` でしか届かず、
+    #   公開経路の門では「1 本も届かない島」として _INTERNAL に置かれていた。import 自体は torch が無くても
+    #   通る(torch_lazy)。torch を要るのは呼んだときの FPFH / ICP の側だけ。
+    from pipeline3d import (  # noqa: E402,F401
+        register_pointclouds, align_cad_to_scan, measure_plane, inspect_roundness, match_sdf, register_auto)
+except ImportError as _e:  # keep the facade importable on a numpy-only install
     ops3d = None
     pipeline3d = None
+    for _n in _PIPELINE3D_NAMES:
+        globals()[_n] = _pipeline3d_missing(_n, _e)
 except Exception as _e:   # noqa: BLE001 - installed but BROKEN is not the same as absent
     ops3d = None
     pipeline3d = None
     _bs.record("ops3d", _e, None, source="import")
+    for _n in _PIPELINE3D_NAMES:
+        globals()[_n] = _pipeline3d_missing(_n, _e)
 from registration import (  # noqa: E402,F401
     kabsch, icp, point_to_plane_icp, apply_transform, pca_align, register, feature_register,
 )
@@ -1252,6 +1273,8 @@ __all__ = [
     "dilation2", "get_bounding_box_object_model_3d", "normals_to_gradients", "integrate_gradients",
     "triangulate_points", "rel_pose_to_essential_matrix", "pyr_down", "image_pyramid",
     "rotational_symmetry_score",
+    "register_pointclouds", "align_cad_to_scan", "measure_plane", "inspect_roundness", "match_sdf",
+    "register_auto",
 ]
 
 
