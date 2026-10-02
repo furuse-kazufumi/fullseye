@@ -7,7 +7,7 @@ out: table
 examples: [poc_endless_zoom_and_turning_solids, poc_illusions_and_perpetual_drawing, poc_periodic_video_boundary]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.3  # fullseye lib version this note was generated for
+version: 0.3.0  # fullseye lib version this note was generated for
 ---
 
 # perpetual_loop_seam — GENERATIVE `loop` op

@@ -7,7 +7,7 @@ out: image2d
 examples: [annotate_gallery, poc_cad_scan_deviation, poc_ct_void_morphology, poc_dem_terrain, poc_lidar_terrain_change, poc_multibeam_bathymetry, poc_stockpile_volume]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.3  # fullseye lib version this note was generated for
+version: 0.3.0  # fullseye lib version this note was generated for
 ---
 
 # color_bar — ANNOTATE `furniture` op

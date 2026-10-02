@@ -7,10 +7,51 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
-- **非推奨(0.3.0 で削除)**: 呼び出し元が 0 本の公開名 3 つ —— `ops.op_slot`
+(なし)
+
+## 0.3.0 — 2026-10-03
+
+### 破壊的変更(Breaking)
+
+**op は 1 本も消えていない**(OP_INDEX 2,187 → 2,590、消失 0)。変わったのは返り値の
+**数値と型**で、ほとんどが「HALCON と同じ量を返していなかった」ことの訂正である。
+移行の要点: **領域の形状特徴は正規化値でなく画素・HALCON の定義で返る**ようになった。
+0.2.x の値でしきい値を決めていた呼び出し元は、しきい値を測り直すこと。
+
+返り値の数値・尺度:
+
+- `area_center` / `area_center_xld` — 画布で割った [0,1] → **画素**(30×70 の矩形で面積 0.0525 → 2100)。
+- `contlength` / `get_region_thickness` — 正規化値 → 画素。
+- `diameter_region` / `diameter_xld` — 等面積円の直径(正規化) → **輪郭上 2 点の最大距離**(画素)。
+- `compactness` / `compactness_xld` — `min(1, C/10)` → `max(1, C)`(約 10 倍)。
+- `circularity` / `circularity_xld` — 等周比 → HALCON 式 `min(1, F/(π·max²))`(形の順位も変わる)。
+- `roundness` — `4A/(π·長軸²)` → `1 − σ/μ`。
+- `rectangularity` / `rectangularity_xld` — 外接矩形比 → 等モーメント矩形との差(30° 回した長方形で 0.359 → 0.998)。
+- `height_width_ratio`、`moments_region_2nd` ほか 2 次・3 次モーメント 8 本 — **1.0 の頭打ちを外した**。
+- `xsitk_huang_thresh` / `xsitk_maxentropy_thresh` / `xsitk_moments_thresh` — 前景の向きを訂正(暗い側 → 明るい側)。
+- 大津法(`ops` / GPU 版 / `detect.segment_objects` / FScript `binary_threshold`)— しきい値の取り方を
+  ビン上端の `>=` に統一。平らな板が全面前景になる欠陥の訂正で、実写画像でも最大 0.485 % の画素が変わる。
+- `pipeline3d.measure_plane` — 平面度 PV を符号つき残差で(無符号距離では厚みのある物で桁違いに小さく出ていた)。
+- `final_genuine2.train_class_mlp` / `train_class_svm` — 特徴を標準化して学習(尺度で精度が 0.33〜0.75 に振れていた)。
+  同じ学習データでも予測が変わる。0.2.x で保存したモデルはそのまま動く。
+
+型(typed registry の sort): `eccentricity` / `eccentricity_xld` / `elliptic_axis` /
+`elliptic_axis_xld` / `area_center_xld` の 5 本が `feature`(スカラー)→ `match`(3 成分)。
+
+その他:
+
+- wheel の `studio_assets/op_help/*.html` は helpstore の書庫に移り、初回にキャッシュへ展開する
+  (パッケージ内のファイルを直接読んでいた場合だけ影響)。
+- `sp_local_max_sub_pix` が HALCON 名 `local_max_sub_pix` を名乗るようになった(HALCON 名で引く先が変わる)。
+
+### 非推奨
+
+- **非推奨(0.4.0 で削除)**: 呼び出し元が 0 本の公開名 3 つ —— `ops.op_slot`
   (→ `ops.SLOTS[name]`)、`transforms.hom_mat3d_transpose_`(→ `hom_mat3d_transpose`)、
   `unified.build_registry`(→ `fullseye.vision` の共有索引)。今は `DeprecationWarning`
   を出すだけで答えは変わらない(門 = `tests/test_hidden_function_defects_2026_10_02.py`)。
+
+### 追加・修正
 
 - ★★**どの門も「その特徴が何の次元を持つか」を知らなかった。** 領域を受けて数を
   返す **35 op すべて**に、成分ごとの**尺度指数**(k 倍に拡大したら k^p 倍)を

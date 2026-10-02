@@ -8,7 +8,7 @@ halcon: laplace_of_gauss
 examples: [gallery2d_edges, poc_colormap_readability, poc_datacenter_thermal_field, poc_dehazing, poc_driving_longitudinal, poc_eye_to_brain, poc_registration_basin, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.3  # fullseye lib version this note was generated for
+version: 0.3.0  # fullseye lib version this note was generated for
 ---
 
 # log — 2D `edges` op

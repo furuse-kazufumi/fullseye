@@ -7,7 +7,7 @@ out: table
 examples: [poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.3  # fullseye lib version this note was generated for
+version: 0.3.0  # fullseye lib version this note was generated for
 ---
 
 # flow_from_depth_motion — DRIVE `ttc` op

@@ -7,7 +7,7 @@ out: any
 examples: [poc_driving_traffic]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.3  # fullseye lib version this note was generated for
+version: 0.3.0  # fullseye lib version this note was generated for
 ---
 
 # occlusion_safe_speed — DRIVE `traffic` op

@@ -81,19 +81,19 @@ def test_the_transpose_alias_matches_the_original():
 
 
 
-# ---- 呼び出し元 0 本の公開名 3 つは非推奨(0.3.0 で削除)—— 警告を出し、答えは変えない ---- #
+# ---- 呼び出し元 0 本の公開名 3 つは非推奨(0.3.0 で非推奨・0.4.0 で削除)—— 警告を出し、答えは変えない ---- #
 def test_the_three_dead_public_names_warn_and_still_answer():
     import pytest
     import ops
     import transforms as T
     import unified as u
     name = next(iter(ops.SLOTS))
-    with pytest.warns(DeprecationWarning, match="0.3.0"):
+    with pytest.warns(DeprecationWarning, match="0.4.0"):
         assert ops.op_slot(name) == ops.SLOTS[name]
     H = np.arange(16.0).reshape(4, 4)
-    with pytest.warns(DeprecationWarning, match="0.3.0"):
+    with pytest.warns(DeprecationWarning, match="0.4.0"):
         assert np.array_equal(T.hom_mat3d_transpose_(H), H.T)
-    with pytest.warns(DeprecationWarning, match="0.3.0"):
+    with pytest.warns(DeprecationWarning, match="0.4.0"):
         assert len(u.build_registry().list()) > 1000
 
 

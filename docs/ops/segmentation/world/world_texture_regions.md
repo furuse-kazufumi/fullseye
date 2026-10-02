@@ -7,7 +7,7 @@ out: table
 examples: [poc_graph_hierarchy_segmentation, poc_segmentation_gauntlet]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.3  # fullseye lib version this note was generated for
+version: 0.3.0  # fullseye lib version this note was generated for
 ---
 
 # world_texture_regions — SEGMENTATION `world` op

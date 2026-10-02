@@ -8,7 +8,7 @@ halcon: area_center
 examples: [gallery2d_features, shape_factors_closed_form, threshold_family_agreement]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.3  # fullseye lib version this note was generated for
+version: 0.3.0  # fullseye lib version this note was generated for
 ---
 
 # area_frac — 2D `features` op

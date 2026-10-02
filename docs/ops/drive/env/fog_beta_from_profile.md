@@ -7,7 +7,7 @@ out: table
 examples: [poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.2.3  # fullseye lib version this note was generated for
+version: 0.3.0  # fullseye lib version this note was generated for
 ---
 
 # fog_beta_from_profile — DRIVE `env` op
