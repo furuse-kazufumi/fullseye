@@ -52,12 +52,21 @@ facade(統一 registry)は HALCON 名で引く層で、docs/ops のノート・�
   なので既存の ``table``。生産者 1(``learn_ndim_norm``)・消費者 1
   (``class_ndim_norm``)で族の中に閉じる。
 * 特徴ベクトル群 (N, D) は既存の ``matrix``。LUT は 1-D なので既存の ``signal``。
+
+## 同じ台帳に足したカテゴリ(2026-10-02)
+
+* ``score`` / ``world``(第 1 陣、``segeval`` / ``segworld``): 分割の採点と真値つき合成世界。
+* ``contour``(第 2 陣、``segcontour``): snake・GVF・Chan–Vese・形態学的 AC・DRLSE・再初期化・
+  平均曲率流。新語なし(image2d / mask / pairs / table)。ガイド
+  ``docs/ops/segmentation/guides/active_contours_and_level_sets.md``。
 """
 import segmentation
 import segeval
 import segworld
+import segcontour
 
-_MOD = {"segmentation": segmentation, "segeval": segeval, "segworld": segworld}
+_MOD = {"segmentation": segmentation, "segeval": segeval, "segworld": segworld,
+        "segcontour": segcontour}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -104,6 +113,22 @@ _CATALOG = {
         ("world_thin_structures", "segworld", [], "table"),
         ("lens_area", "segworld", [], "scalar"),
         ("voronoi_cells", "segworld", ["points"], "table"),
+    ],
+    # 輪郭を動かす —— 変分・動的輪郭とレベルセット(segcontour、2026-10-02 第 2 陣)。
+    #   返りは全部 dict → table。snake の初期点 (N, 2) [row, col] は既存の pairs。
+    #   level_set_reinit / curvature_flow は φ(実数、φ<0 が内側)もマスクも受けるが、
+    #   image2d の種(0..1 の傾斜)は内側が無く fail-closed の ValueError → mask で宣言。
+    "contour": [
+        ("snake_evolve", "segcontour", ["image2d", "pairs"], "table"),
+        ("gvf_field", "segcontour", ["image2d"], "table"),
+        ("chan_vese_energy", "segcontour", ["image2d", "mask"], "table"),
+        ("chan_vese_evolve", "segcontour", ["image2d", "mask"], "table"),
+        ("morph_chan_vese", "segcontour", ["image2d", "mask"], "table"),
+        ("morph_geodesic_ac", "segcontour", ["image2d", "mask"], "table"),
+        ("edge_stop_g", "segcontour", ["image2d"], "table"),
+        ("level_set_reinit", "segcontour", ["mask"], "table"),
+        ("drle_evolve", "segcontour", ["image2d", "mask"], "table"),
+        ("curvature_flow", "segcontour", ["mask"], "table"),
     ],
 }
 

@@ -968,6 +968,9 @@ def catalog():
         # world(segworld 8。world_* はノブ → table、lens_area → scalar、
         # voronoi_cells は points → table)を追加。多入力か、単入力でも out=table
         # (TYPE_TO_SORT に無い)なので橋はやはり架からず 2-D の件数は不変。
+        # 2026-10-02 追補 2: 第 2 陣 contour(segcontour 10)。単入力は gvf_field /
+        # edge_stop_g(image2d → table)と level_set_reinit / curvature_flow
+        # (mask → table)で、どれも out=table なので橋は架からず 2-D の件数は不変。
         ("opssegmentation", "OPSSEGMENTATION", "segmentation"),
     ):
         _m = __import__(_mod)

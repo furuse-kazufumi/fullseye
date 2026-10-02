@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">snake_evolve — SEGMENTATION <code style="color:#22d3bf">contour</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.snake_evolve(image, init_points, *, alpha: &#x27;float&#x27; = 0.1, beta: &#x27;float&#x27; = 0.1, gamma: &#x27;float&#x27; = 1.0, external: &#x27;str&#x27; = &#x27;edge&#x27;, w_line: &#x27;float&#x27; = 0.0, w_edge: &#x27;float&#x27; = 1.0, sigma: &#x27;float&#x27; = 1.0, kappa: &#x27;float&#x27; = 1.0, gvf=None, gvf_mu: &#x27;float&#x27; = 0.2, max_px_move: &#x27;Optional[float]&#x27; = None, n_iter: &#x27;int&#x27; = 300, spline_order: &#x27;int&#x27; = 3, tol: &#x27;float&#x27; = 0.0, resample_every: &#x27;int&#x27; = 0, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import segcontour; segcontour.snake_evolve(image, init_points, *, alpha: &#x27;float&#x27; = 0.1, beta: &#x27;float&#x27; = 0.1, gamma: &#x27;float&#x27; = 1.0, external: &#x27;str&#x27; = &#x27;edge&#x27;, w_line: &#x27;float&#x27; = 0.0, w_edge: &#x27;float&#x27; = 1.0, sigma: &#x27;float&#x27; = 1.0, kappa: &#x27;float&#x27; = 1.0, gvf=None, gvf_mu: &#x27;float&#x27; = 0.2, max_px_move: &#x27;Optional[float]&#x27; = None, n_iter: &#x27;int&#x27; = 300, spline_order: &#x27;int&#x27; = 3, tol: &#x27;float&#x27; = 0.0, resample_every: &#x27;int&#x27; = 0, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;snake_evolve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>離散 snake（Kass–Witkin–Terzopoulos 1988）的半隱式更新 x_t = (A + γI)^(-1)(γ x_(t-1) − f_x)（式 (19)(20)）（snake_evolve）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>閉じた snake(周期境界)の点 `<code style="color:#22d3bf">init_points</code>`(N, 2)= [row, col]、N ≥ 5。内部エネルギー</p>
+<p>E_int = ½ Σ (α |v_(i+1) − v_i|² + β |v_(i+1) − 2v_i + v_(i−1)|²) = ½ xᵀ A x(陰的)。外力(陽的)は `<code style="color:#22d3bf">external</code>` で選ぶ:</p>
+<p>`<code style="color:#22d3bf">&quot;edge&quot;</code>` = ポテンシャル P = w_line · G_σ*I + w_edge · |∇(G_σ*I)|²、E_ext = −κ Σ P(v_i)(Kass の E_line と E_edge)、</p>
+<p>`<code style="color:#22d3bf">&quot;potential&quot;</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">image</code>` をそのまま P として使う(第 2 実装と同じ P を渡すため)、</p>
+<p>`<code style="color:#22d3bf">&quot;gvf&quot;</code><code style="color:#22d3bf"> = 力そのものが −κ (v, u)(GVF、</code><code style="color:#22d3bf">gvf</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">gvf_field</code><code style="color:#22d3bf"> の返りを渡すか、</code><code style="color:#22d3bf">gvf_mu</code>` で内部で作る)、</p>
+<p>`<code style="color:#22d3bf">&quot;none&quot;</code><code style="color:#22d3bf"> = 外力 0。P は </code><code style="color:#22d3bf">spline_order</code>` 次の補間スプライン(値と微分が整合)で点の位置へ。</p>
+<p>`<code style="color:#22d3bf">max_px_move</code>` を与えると 1 反復の移動を max_px_move · tanh(Δ) に制限(skimage と同じ。近接勾配の性質は失う)。</p>
+<p>`<code style="color:#22d3bf">resample_every</code>` &gt; 0 なら k 反復ごとに弧長で等間隔に打ち直す(凹部へ入るとき点が疎になるのを防ぐ。エネルギーの</p>
+<p>単調性はその時点で途切れる)。点は画像の範囲 [0, H−1] × [0, W−1] に切り詰める。</p>
+<p>返り値: `<code style="color:#22d3bf">points</code><code style="color:#22d3bf">(N, 2)、</code><code style="color:#22d3bf">mask</code><code style="color:#22d3bf">(折れ線の内側)、</code><code style="color:#22d3bf">energy</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">energy_internal</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">energy_external</code>`(反復ごと、</p>
+<p>先頭 = 初期。GVF では外力のエネルギーが定義されないので total と external は NaN)、`<code style="color:#22d3bf">n_increase</code>`(エネルギーが</p>
+<p>増えた反復の数、GVF なら None)、`<code style="color:#22d3bf">max_increase</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">lipschitz</code>`(κP のヘッセ行列のスペクトルノルムの格子上の最大 =</p>
+<p>外力の勾配の Lipschitz 定数の見積り)、`<code style="color:#22d3bf">gamma_ge_lipschitz</code>`(γ ≥ L なら降下補題で単調非増加が保証される)、</p>
+<p>`<code style="color:#22d3bf">radius_factor</code><code style="color:#22d3bf">(外力 0 の円の 1 反復の縮み γ/(γ + λ_1) の閉形式)、</code><code style="color:#22d3bf">history</code>`(record_every ごとの点)、</p>
+<p>`<code style="color:#22d3bf">n_iter</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">converged</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">contour</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:gvf_field">gvf_field</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_energy">chan_vese_energy</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_evolve">chan_vese_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:morph_chan_vese">morph_chan_vese</a> · <a style="color:#22d3bf" href="opsegmentation:morph_geodesic_ac">morph_geodesic_ac</a> · <a style="color:#22d3bf" href="opsegmentation:edge_stop_g">edge_stop_g</a> · <a style="color:#22d3bf" href="opsegmentation:level_set_reinit">level_set_reinit</a> · <a style="color:#22d3bf" href="opsegmentation:drle_evolve">drle_evolve</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segcontour.py — SEGMENTATION 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

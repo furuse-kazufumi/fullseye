@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">chan_vese_energy — SEGMENTATION <code style="color:#22d3bf">contour</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chan_vese_energy(image, phi, *, mu: &#x27;float&#x27; = 0.1, nu: &#x27;float&#x27; = 0.0, lambda1: &#x27;float&#x27; = 1.0, lambda2: &#x27;float&#x27; = 1.0, eps: &#x27;float&#x27; = 1.0, eta: &#x27;float&#x27; = 0.1) -&gt; &#x27;Dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import segcontour; segcontour.chan_vese_energy(image, phi, *, mu: &#x27;float&#x27; = 0.1, nu: &#x27;float&#x27; = 0.0, lambda1: &#x27;float&#x27; = 1.0, lambda2: &#x27;float&#x27; = 1.0, eps: &#x27;float&#x27; = 1.0, eta: &#x27;float&#x27; = 0.1) -&gt; &#x27;Dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;chan_vese_energy&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Chan–Vese 2001 energy F = μ Length + ν Area(inside) + λ1 ∫_in |I − c1|² + λ2 ∫_out |I − c2|² (two-phase) (chan_vese_energy).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">phi</code>` は φ(内側 φ &lt; 0)か bool のマスク(符号付き距離に直す)。正則化: 内側の重み H_ε(−φ)(論文の arctan 版)、</p>
+<p>長さ = Σ δ_ε(φ) |Dφ|_η(前進差分、|Dφ|_η = √(D_x² + D_y² + η²))。c1 / c2 = 内 / 外の H_ε で重みづけた平均(式 (6)(7))。</p>
+<p>同じマスクの「鋭い」版(`<code style="color:#22d3bf">energy_sharp</code>`)も返す: 長さ = 4 近傍で内外が変わる辺の数、内外は φ &lt; 0 で 0/1。</p>
+<p>返り値: `<code style="color:#22d3bf">energy</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">length</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">area</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">fit_inside</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fit_outside</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">c1</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">c2</code>`(H_ε で重みづけた平均 ——</p>
+<p>ε = 1 の arctan は裾が長いので 2 値の画像でも 0/1 から離れる)、`<code style="color:#22d3bf">energy_sharp</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">perimeter_sharp</code>`、</p>
+<p>`<code style="color:#22d3bf">c1_sharp</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">c2_sharp</code>`(φ &lt; 0 の内外の平均)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• (none yet)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">contour</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:snake_evolve">snake_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:gvf_field">gvf_field</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_evolve">chan_vese_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:morph_chan_vese">morph_chan_vese</a> · <a style="color:#22d3bf" href="opsegmentation:morph_geodesic_ac">morph_geodesic_ac</a> · <a style="color:#22d3bf" href="opsegmentation:edge_stop_g">edge_stop_g</a> · <a style="color:#22d3bf" href="opsegmentation:level_set_reinit">level_set_reinit</a> · <a style="color:#22d3bf" href="opsegmentation:drle_evolve">drle_evolve</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segcontour.py — SEGMENTATION operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

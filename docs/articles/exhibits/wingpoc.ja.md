@@ -3162,7 +3162,7 @@ py -3.11 examples/poc_gravitational_lens_invariants.py
 
 ### 撮像品質・復元ウィング ―― 絵が良くなることと真値に近づくことは別
 
-手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 14 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
+手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 15 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
 
 見た目の指標は真値を最大値としません。霞んだ入力の対比が真値より高い、アンシャープで勾配は真値に一致するのに PSNR は落ちる、雑音を足すと PSNR が上がる。逆に、ナイキストより細かい縞を戻したのに PSNR が -0.01 dB しか動かない場面もあります。
 
@@ -3639,6 +3639,50 @@ py -3.11 examples/poc_segmentation_gauntlet.py
 この回が作った図は全部で **13 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_segmentation_gauntlet)
 
 使用 op(ノートへ): [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`local_threshold`](https://furuse.work/ops/2d/segmentation/local_threshold.html) · [`otsu`](https://furuse.work/ops/2d/segmentation/otsu.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`seg_score_card`](https://furuse.work/ops/segmentation/score/seg_score_card.html) · [`sg_watershed_gradient`](https://furuse.work/ops/2d/segment/sg_watershed_gradient.html) · [`sk_chan_vese`](https://furuse.work/ops/2d/segmentation/sk_chan_vese.html) · [`sk_felzenszwalb`](https://furuse.work/ops/2d/segmentation/sk_felzenszwalb.html) · [`sk_niblack`](https://furuse.work/ops/2d/segmentation/sk_niblack.html) · [`sk_sauvola`](https://furuse.work/ops/2d/segmentation/sk_sauvola.html) · [`sk_slic`](https://furuse.work/ops/2d/segmentation/sk_slic.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`watersheds`](https://furuse.work/ops/2d/segmentation/watersheds.html) · [`world_blobs_touching`](https://furuse.work/ops/segmentation/world/world_blobs_touching.html) · [`world_gradient_illumination`](https://furuse.work/ops/segmentation/world/world_gradient_illumination.html) · [`world_grains_voronoi`](https://furuse.work/ops/segmentation/world/world_grains_voronoi.html) · [`world_parts_with_shadow`](https://furuse.work/ops/segmentation/world/world_parts_with_shadow.html) · [`world_texture_regions`](https://furuse.work/ops/segmentation/world/world_texture_regions.html) · [`world_thin_structures`](https://furuse.work/ops/segmentation/world/world_thin_structures.html) · [`xsk_random_walker`](https://furuse.work/ops/2d/segmentation/xsk_random_walker.html)
+
+## No.2026.186 —— 動的輪郭とレベルセット ―― 輪郭が縮み、凹みに入り、エッジで止まるまでを閉形式で確かめる
+
+[![動的輪郭とレベルセット ―― 輪郭が縮み、凹みに入り、エッジで止まるまでを閉形式で確かめる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/01_inputs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/01_inputs.png)
+
+*↑ **動的輪郭とレベルセット ―― 輪郭が縮み、凹みに入り、エッジで止まるまでを閉形式で確かめる** ―― セグメンテーション拡充の第 2 陣 —— 新モジュール segcontour 10 op(snake・勾配ベクトル流 GVF・Chan–Vese のエネルギーと発展・形態学的 Chan–Vese・形態学的測地的 active contour とエッジ停止関数・符号付き距離への再初期化・DRLSE・平均曲率流)。各 op に閉形式か第 2 実装の門: 外力 0 の円の snake は巡回行列の固有値の閉形式どおり縮む(誤差 3e-14)、skimage の active_contour と 1e-13 で一致 / 曲率流の面積は dA/dt = −2π(円 −6.2767、凹んだ星形も −6.2822)/ 再初期化後の |∇φ| の 10〜90 % 点 0.987〜1.012、零等高線は動かない / 古典の snake のエネルギーは増えない(γ ≥ L、増加 0 回)、Chan–Vese(凸緩和の交互最小化)も 4 世界で単調非増加 / 既存 op sk_chan_vese と Dice 0.995。採点は第 1 陣の segeval と segworld: U 字の凹部に古典の snake は入れず(凹部を 100 % 覆ったまま、辺の途中も外に浮く —— エッジの勾配の力は辺の近くにしか届かない)、同じ α・β・γ で外力だけ GVF に替えると入る(被覆 1.0 %、Dice 0.993)/ 照明の勾配では大域の 2 平均の Chan–Vese が J=0.187 で負け、エッジで止まる局所の手法(測地的 AC 0.960・DRLSE 0.938)が勝つ / 触れ合う粒はマスクとしては Dice 0.97 でも 10 粒が 1 つ / 影のある部品はどの輪郭法も J < 0.7。正直に: Chan–Vese 2001 は単調減少を主張していない(門は凸緩和の側で立てた)、GVF・形態学的 snake・DRLSE・Sussman の式は原論文を未照合(要確認)、DRLSE は照明の勾配でエネルギーが 247 回増えた(陽的な刻み、門にしない)。12 門、6.4 s。*
+
+[![c の更新(内外の平均)と、c を固定した凸緩和(Chan–Esedoglu–Nikolova)の交互最小化。どの世界でも1 度も増えず、分割が変わらなくなった所で止まる(門 5)。止まった所が真値に近いかは別(表を見る)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/02_cv_energy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/02_cv_energy.png)
+
+*↑ 測定の図 ―― c の更新(内外の平均)と、c を固定した凸緩和(Chan–Esedoglu–Nikolova)の交互最小化。どの世界でも1 度も増えず、分割が変わらなくなった所で止まる(門 5)。止まった所が真値に近いかは別(表を見る)。*
+
+[![γ = 1 ≥ L = 0.463(外力の勾配の Lipschitz 定数)なので降下補題により全体は増えない(実測 増加 0 回)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/03_snake_energy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/03_snake_energy.png)
+
+*↑ γ = 1 ≥ L = 0.463(外力の勾配の Lipschitz 定数)なので降下補題により全体は増えない(実測 増加 0 回)。*
+
+[![dA/dt = −∮κ ds = −2π。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/04_curvature_area_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/04_curvature_area.png)
+
+*↑ dA/dt = −∮κ ds = −2π。*
+
+[![Jaccard/Dice は物体マスク、境界 F は τ = 2 px。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/05_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/05_scores.png)
+
+*↑ Jaccard/Dice は物体マスク、境界 F は τ = 2 px。*
+
+[![U 字の凹部: 同じ α・β・γ で外力だけ違う。古典(赤)は凹部の口に橋を架けて止まり、辺の途中も外に浮いたまま(エッジの勾配の力は辺の近くにしか届かない)、GVF(青)は奥まで入る。緑 = 真の縁。1 コマ = 20 反復。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/06_u_shape_snakes.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/06_u_shape_snakes.gif)
+
+*↑ 動く図 ―― U 字の凹部: 同じ α・β・γ で外力だけ違う。古典(赤)は凹部の口に橋を架けて止まり、辺の途中も外に浮いたまま(エッジの勾配の力は辺の近くにしか届かない)、GVF(青)は奥まで入る。緑 = 真の縁。1 コマ = 20 反復。*
+
+[![照明の勾配の上の暗い物体(反転して渡す)。全画面の矩形から 4 手法の輪郭が動く。大域の 2 平均(Chan–Vese・形態学的 CV)は明るい側の背景ごと切り、エッジで止まる GAC・DRLSE は物体に貼り付く(GAC は雑音の粒を数十](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/07_gradient_world_contours.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/07_gradient_world_contours.gif)
+
+*↑ 動く図 ―― 照明の勾配の上の暗い物体(反転して渡す)。全画面の矩形から 4 手法の輪郭が動く。大域の 2 平均(Chan–Vese・形態学的 CV)は明るい側の背景ごと切り、エッジで止まる GAC・DRLSE は物体に貼り付く(GAC は雑音の粒を数十個残す = 表の予測の個数)。緑 = 真の縁、各手法のコマは反復数に比例して間引いて 40 コマに揃えた。*
+
+[![凹んだ星形の平均曲率流。凹部は外へ、凸部は内へ動き、丸くなりながら面積は毎時間 2π ずつ減る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/08_curvature_flow_star.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/08_curvature_flow_star.gif)
+
+*↑ 動く図 ―― 凹んだ星形の平均曲率流。凹部は外へ、凸部は内へ動き、丸くなりながら面積は毎時間 2π ずつ減る。*
+
+```
+py -3.11 examples/poc_active_contours.py
+```
+
+ソース: [examples/poc_active_contours.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_active_contours.py)
+
+この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_active_contours)
+
+使用 op(ノートへ): [`chan_vese_evolve`](https://furuse.work/ops/segmentation/contour/chan_vese_evolve.html) · [`curvature_flow`](https://furuse.work/ops/segmentation/contour/curvature_flow.html) · [`drle_evolve`](https://furuse.work/ops/segmentation/contour/drle_evolve.html) · [`edge_stop_g`](https://furuse.work/ops/segmentation/contour/edge_stop_g.html) · [`gvf_field`](https://furuse.work/ops/segmentation/contour/gvf_field.html) · [`level_set_reinit`](https://furuse.work/ops/segmentation/contour/level_set_reinit.html) · [`morph_chan_vese`](https://furuse.work/ops/segmentation/contour/morph_chan_vese.html) · [`morph_geodesic_ac`](https://furuse.work/ops/segmentation/contour/morph_geodesic_ac.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`seg_score_card`](https://furuse.work/ops/segmentation/score/seg_score_card.html) · [`sk_chan_vese`](https://furuse.work/ops/2d/segmentation/sk_chan_vese.html) · [`snake_evolve`](https://furuse.work/ops/segmentation/contour/snake_evolve.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_blobs_touching`](https://furuse.work/ops/segmentation/world/world_blobs_touching.html) · [`world_gradient_illumination`](https://furuse.work/ops/segmentation/world/world_gradient_illumination.html) · [`world_parts_with_shadow`](https://furuse.work/ops/segmentation/world/world_parts_with_shadow.html) · [`world_thin_structures`](https://furuse.work/ops/segmentation/world/world_thin_structures.html)
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 

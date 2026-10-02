@@ -15103,6 +15103,86 @@
    "tw": "矩形內種子的 Voronoi 分割，以多邊形回傳（含面積與內部邊長；半平面暴力法，O(n^2)）（voronoi_cells）。",
    "ko": "사각형 안 씨앗의 보로노이 분할을 다각형(넓이·내부 변 길이 포함)으로 반환(반평면 완전탐색, O(n^2))(voronoi_cells).",
    "de": "Voronoi-Partition von Keimen in einem Rechteck, als Polygone mit Flächen und inneren Kantenlängen zurückgegeben (Brute-Force-Halbebenen, O(n^2)) (voronoi_cells)."
+  },
+  "segmentation/snake_evolve": {
+   "fp": "33c1febfc18d",
+   "en": "Semi-implicit update of the discrete snake (Kass–Witkin–Terzopoulos 1988): x_t = (A + γI)^(-1)(γ x_(t-1) − f_x) (eqs. (19)(20)) (snake_evolve).",
+   "zh": "离散 snake（Kass–Witkin–Terzopoulos 1988）的半隐式更新 x_t = (A + γI)^(-1)(γ x_(t-1) − f_x)（式 (19)(20)）（snake_evolve）。",
+   "tw": "離散 snake（Kass–Witkin–Terzopoulos 1988）的半隱式更新 x_t = (A + γI)^(-1)(γ x_(t-1) − f_x)（式 (19)(20)）（snake_evolve）。",
+   "ko": "이산 snake(Kass–Witkin–Terzopoulos 1988)의 반음적 갱신 x_t = (A + γI)^(-1)(γ x_(t-1) − f_x)(식 (19)(20))(snake_evolve).",
+   "de": "Semi-implizites Update der diskreten Snake (Kass–Witkin–Terzopoulos 1988): x_t = (A + γI)^(-1)(γ x_(t-1) − f_x) (Gl. (19)(20)) (snake_evolve)."
+  },
+  "segmentation/gvf_field": {
+   "fp": "10ad3e37ce4b",
+   "en": "Gradient vector flow (Xu–Prince 1998): the field (u, v) that smoothly diffuses the gradient of the edge map f away from the edges (gvf_field).",
+   "zh": "梯度矢量流（Xu–Prince 1998）：把边缘图 f 的梯度平滑地扩散到远离边缘处的场 (u, v)（gvf_field）。",
+   "tw": "梯度向量流（Xu–Prince 1998）：把邊緣圖 f 的梯度平滑地擴散到遠離邊緣處的場 (u, v)（gvf_field）。",
+   "ko": "그래디언트 벡터 흐름(Xu–Prince 1998): 에지 맵 f의 그래디언트를 에지에서 먼 곳까지 매끄럽게 확산시킨 장 (u, v)(gvf_field).",
+   "de": "Gradient Vector Flow (Xu–Prince 1998): das Feld (u, v), das den Gradienten der Kantenkarte f glatt von den Kanten weg diffundiert (gvf_field)."
+  },
+  "segmentation/chan_vese_energy": {
+   "fp": "398148690d33",
+   "en": "Chan–Vese 2001 energy F = μ Length + ν Area(inside) + λ1 ∫_in |I − c1|² + λ2 ∫_out |I − c2|² (two-phase) (chan_vese_energy).",
+   "zh": "Chan–Vese 2001 的能量 F = μ Length + ν Area(inside) + λ1 ∫_in |I − c1|² + λ2 ∫_out |I − c2|²（两相）（chan_vese_energy）。",
+   "tw": "Chan–Vese 2001 的能量 F = μ Length + ν Area(inside) + λ1 ∫_in |I − c1|² + λ2 ∫_out |I − c2|²（兩相）（chan_vese_energy）。",
+   "ko": "Chan–Vese 2001 에너지 F = μ Length + ν Area(inside) + λ1 ∫_in |I − c1|² + λ2 ∫_out |I − c2|²(2상)(chan_vese_energy).",
+   "de": "Chan–Vese-2001-Energie F = μ Length + ν Area(inside) + λ1 ∫_in |I − c1|² + λ2 ∫_out |I − c2|² (zweiphasig) (chan_vese_energy)."
+  },
+  "segmentation/chan_vese_evolve": {
+   "fp": "87e1beed51ed",
+   "en": "Minimises the two-phase Chan–Vese 2001 energy (by default alternating minimisation of the convex relaxation; the level-set gradient descent can also be chosen) (chan_vese_evolve).",
+   "zh": "最小化 Chan–Vese 2001 的两相能量（默认是凸松弛的交替最小化，也可选择水平集梯度下降）（chan_vese_evolve）。",
+   "tw": "最小化 Chan–Vese 2001 的兩相能量（預設是凸鬆弛的交替最小化，也可選擇水平集梯度下降）（chan_vese_evolve）。",
+   "ko": "Chan–Vese 2001의 2상 에너지를 최소화한다(기본은 볼록 완화의 교대 최소화, 레벨셋 경사 하강도 선택 가능)(chan_vese_evolve).",
+   "de": "Minimiert die zweiphasige Chan–Vese-2001-Energie (standardmäßig alternierende Minimierung der konvexen Relaxation; der Level-Set-Gradientenabstieg ist wählbar) (chan_vese_evolve)."
+  },
+  "segmentation/morph_chan_vese": {
+   "fp": "3f1191c0762a",
+   "en": "Morphological Chan–Vese (MorphACWE of Márquez-Neila–Baumela–Álvarez 2014). One iteration = data step + smoothing step (morph_chan_vese).",
+   "zh": "形态学 Chan–Vese（Márquez-Neila–Baumela–Álvarez 2014 的 MorphACWE）。1 次迭代 = 数据步 + 平滑步（morph_chan_vese）。",
+   "tw": "形態學 Chan–Vese（Márquez-Neila–Baumela–Álvarez 2014 的 MorphACWE）。1 次迭代 = 資料步 + 平滑步（morph_chan_vese）。",
+   "ko": "형태학적 Chan–Vese(Márquez-Neila–Baumela–Álvarez 2014의 MorphACWE). 1회 반복 = 데이터 단계 + 평활 단계(morph_chan_vese).",
+   "de": "Morphologisches Chan–Vese (MorphACWE von Márquez-Neila–Baumela–Álvarez 2014). Eine Iteration = Datenschritt + Glättungsschritt (morph_chan_vese)."
+  },
+  "segmentation/morph_geodesic_ac": {
+   "fp": "8e5f1d49da2c",
+   "en": "Morphological geodesic active contour (MorphGAC of Márquez-Neila et al. 2014). gimage = an image that is small on edges (the g of edge_stop_g) (morph_geodesic_ac).",
+   "zh": "形态学测地主动轮廓（Márquez-Neila 等 2014 的 MorphGAC）。gimage = 在边缘处取小值的图像（edge_stop_g 的 g）（morph_geodesic_ac）。",
+   "tw": "形態學測地主動輪廓（Márquez-Neila 等 2014 的 MorphGAC）。gimage = 在邊緣處取小值的影像（edge_stop_g 的 g）（morph_geodesic_ac）。",
+   "ko": "형태학적 측지 능동 윤곽(Márquez-Neila 등 2014의 MorphGAC). gimage = 에지에서 작은 값을 갖는 영상(edge_stop_g의 g)(morph_geodesic_ac).",
+   "de": "Morphologische geodätische aktive Kontur (MorphGAC von Márquez-Neila et al. 2014). gimage = ein Bild, das an Kanten klein ist (das g von edge_stop_g) (morph_geodesic_ac)."
+  },
+  "segmentation/edge_stop_g": {
+   "fp": "c5d94343dd6a",
+   "en": "Edge-stopping function g = 1 / (1 + |∇(G_σ * I)|² / k²) (the p = 2 form of Caselles–Kimmel–Sapiro 1997) (edge_stop_g).",
+   "zh": "边缘停止函数 g = 1 / (1 + |∇(G_σ * I)|² / k²)（Caselles–Kimmel–Sapiro 1997 中 p = 2 的形式）（edge_stop_g）。",
+   "tw": "邊緣停止函數 g = 1 / (1 + |∇(G_σ * I)|² / k²)（Caselles–Kimmel–Sapiro 1997 中 p = 2 的形式）（edge_stop_g）。",
+   "ko": "에지 정지 함수 g = 1 / (1 + |∇(G_σ * I)|² / k²)(Caselles–Kimmel–Sapiro 1997의 p = 2 형태)(edge_stop_g).",
+   "de": "Kanten-Stoppfunktion g = 1 / (1 + |∇(G_σ * I)|² / k²) (die p = 2-Form von Caselles–Kimmel–Sapiro 1997) (edge_stop_g)."
+  },
+  "segmentation/level_set_reinit": {
+   "fp": "1a32140f4bcb",
+   "en": "Turns φ (inside where φ < 0) into the signed distance function of the same zero level set (level_set_reinit).",
+   "zh": "把 φ（φ < 0 为内侧）改写为同一零等值线的符号距离函数（level_set_reinit）。",
+   "tw": "把 φ（φ < 0 為內側）改寫為同一零等值線的符號距離函數（level_set_reinit）。",
+   "ko": "φ(φ < 0이 내부)를 같은 영 등위선의 부호 거리 함수로 바꾼다(level_set_reinit).",
+   "de": "Macht aus φ (innen, wo φ < 0) die vorzeichenbehaftete Abstandsfunktion derselben Null-Niveaulinie (level_set_reinit)."
+  },
+  "segmentation/drle_evolve": {
+   "fp": "5c2d2ddb7139",
+   "en": "Edge-based distance-regularized level set evolution DRLSE (Li–Xu–Gui–Fox 2010). No re-initialisation (drle_evolve).",
+   "zh": "距离正则化水平集 DRLSE（Li–Xu–Gui–Fox 2010）的边缘版。不做重新初始化（drle_evolve）。",
+   "tw": "距離正則化水平集 DRLSE（Li–Xu–Gui–Fox 2010）的邊緣版。不做重新初始化（drle_evolve）。",
+   "ko": "거리 정규화 레벨셋 DRLSE(Li–Xu–Gui–Fox 2010)의 에지 버전. 재초기화하지 않는다(drle_evolve).",
+   "de": "Kantenbasierte abstandsregularisierte Level-Set-Evolution DRLSE (Li–Xu–Gui–Fox 2010). Ohne Reinitialisierung (drle_evolve)."
+  },
+  "segmentation/curvature_flow": {
+   "fp": "ce2e38244c18",
+   "en": "Level-set form of mean curvature flow (curve-shortening flow) φ_t = |∇φ| div(∇φ/|∇φ|) (inside where φ < 0; shrinks from the convex parts) (curvature_flow).",
+   "zh": "平均曲率流（曲线缩短流）的水平集形式 φ_t = |∇φ| div(∇φ/|∇φ|)（φ < 0 为内侧，从凸处开始收缩）（curvature_flow）。",
+   "tw": "平均曲率流（曲線縮短流）的水平集形式 φ_t = |∇φ| div(∇φ/|∇φ|)（φ < 0 為內側，從凸處開始收縮）（curvature_flow）。",
+   "ko": "평균 곡률 흐름(곡선 단축 흐름)의 레벨셋 형태 φ_t = |∇φ| div(∇φ/|∇φ|)(φ < 0이 내부, 볼록한 곳부터 줄어든다)(curvature_flow).",
+   "de": "Level-Set-Form des mittleren Krümmungsflusses (Kurvenverkürzungsfluss) φ_t = |∇φ| div(∇φ/|∇φ|) (innen, wo φ < 0; schrumpft von den konvexen Stellen her) (curvature_flow)."
   }
  }
 }

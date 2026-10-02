@@ -155,6 +155,9 @@ py-modules = [
   # 2026-10-02: セグメンテーション第 1 陣。採点の物差し(segeval)と真値つき合成世界(segworld)の実体。
   #   opssegmentation 台帳に score / world カテゴリとして載る。segcompare / metrics3d に依存。
   "segeval", "segworld",
+  # 2026-10-02: セグメンテーション第 2 陣。変分・動的輪郭(snake / GVF / Chan–Vese / 形態学的 AC /
+  #   DRLSE / 再初期化 / 平均曲率流)の実体。opssegmentation 台帳に contour カテゴリとして載る。
+  "segcontour",
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
   "backends_scipy", "backends_ski2",

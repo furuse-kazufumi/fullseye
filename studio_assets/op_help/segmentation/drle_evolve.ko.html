@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">drle_evolve — SEGMENTATION <code style="color:#22d3bf">contour</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.drle_evolve(image, init, *, mu: &#x27;Optional[float]&#x27; = None, lambda_: &#x27;float&#x27; = 5.0, alpha: &#x27;float&#x27; = 1.5, epsilon: &#x27;float&#x27; = 1.5, dt: &#x27;float&#x27; = 1.0, sigma: &#x27;float&#x27; = 1.5, k: &#x27;float&#x27; = 0.00392156862745098, g=None, n_iter: &#x27;int&#x27; = 300, c0: &#x27;float&#x27; = 2.0, potential: &#x27;str&#x27; = &#x27;double_well&#x27;, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segcontour; segcontour.drle_evolve(image, init, *, mu: &#x27;Optional[float]&#x27; = None, lambda_: &#x27;float&#x27; = 5.0, alpha: &#x27;float&#x27; = 1.5, epsilon: &#x27;float&#x27; = 1.5, dt: &#x27;float&#x27; = 1.0, sigma: &#x27;float&#x27; = 1.5, k: &#x27;float&#x27; = 0.00392156862745098, g=None, n_iter: &#x27;int&#x27; = 300, c0: &#x27;float&#x27; = 2.0, potential: &#x27;str&#x27; = &#x27;double_well&#x27;, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;drle_evolve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>거리 정규화 레벨셋 DRLSE(Li–Xu–Gui–Fox 2010)의 에지 버전. 재초기화하지 않는다(drle_evolve).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>φ_t = μ div(d_p(|∇φ|)∇φ) + λ δ_ε(φ) div(g ∇φ/|∇φ|) + α g δ_ε(φ)(φ &lt; 0 が内側、α &gt; 0 で縮む)。</p>
+<p>d_p(s) = p&#x27;(s)/s。二重井戸 p2(s) = (1 − cos 2πs)/(2π)²(s ≤ 1)、(s − 1)²/2(s ≥ 1)、単井戸 p1(s) = (s − 1)²/2。</p>
+<p>初期 = 2 値の段差(内側 −c0、外側 +c0、Li の例と同じ)。g = `<code style="color:#22d3bf">edge_stop_g(image, sigma, k)</code><code style="color:#22d3bf"> の g(</code><code style="color:#22d3bf">g</code>` で直接与えても</p>
+<p>よい)。μ の既定は 0.2/dt、CFL 条件 μ dt &lt; 1/4 を満たさなければ ValueError。境界は Li のコードの Neumann。</p>
+<p>エネルギー ε(φ) = μ Σ p(|∇φ|) + λ Σ g δ_ε(φ)|∇φ| + α Σ g H_ε(−φ) も各反復で記録する(実測、門ではない)。</p>
+<p>返り値: `<code style="color:#22d3bf">mask</code><code style="color:#22d3bf">(φ &lt; 0)、</code><code style="color:#22d3bf">phi</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">grad</code><code style="color:#22d3bf">(|φ| ≤ ε の |∇φ| 分位点)、</code><code style="color:#22d3bf">grad_trace</code>`(record_every ごとの中央値)、</p>
+<p>`<code style="color:#22d3bf">energy</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_increase</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">history</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_iter</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">contour</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:snake_evolve">snake_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:gvf_field">gvf_field</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_energy">chan_vese_energy</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_evolve">chan_vese_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:morph_chan_vese">morph_chan_vese</a> · <a style="color:#22d3bf" href="opsegmentation:morph_geodesic_ac">morph_geodesic_ac</a> · <a style="color:#22d3bf" href="opsegmentation:edge_stop_g">edge_stop_g</a> · <a style="color:#22d3bf" href="opsegmentation:level_set_reinit">level_set_reinit</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segcontour.py — SEGMENTATION 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

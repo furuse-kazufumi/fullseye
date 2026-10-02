@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">chan_vese_evolve — SEGMENTATION <code style="color:#22d3bf">contour</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chan_vese_evolve(image, init, *, method: &#x27;str&#x27; = &#x27;convex&#x27;, mu: &#x27;float&#x27; = 0.1, nu: &#x27;float&#x27; = 0.0, lambda1: &#x27;float&#x27; = 1.0, lambda2: &#x27;float&#x27; = 1.0, eps: &#x27;float&#x27; = 1.0, eta: &#x27;float&#x27; = 0.1, dt: &#x27;float&#x27; = 5.0, n_iter: &#x27;int&#x27; = 200, n_inner: &#x27;int&#x27; = 200, tol: &#x27;float&#x27; = 0.0, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import segcontour; segcontour.chan_vese_evolve(image, init, *, method: &#x27;str&#x27; = &#x27;convex&#x27;, mu: &#x27;float&#x27; = 0.1, nu: &#x27;float&#x27; = 0.0, lambda1: &#x27;float&#x27; = 1.0, lambda2: &#x27;float&#x27; = 1.0, eps: &#x27;float&#x27; = 1.0, eta: &#x27;float&#x27; = 0.1, dt: &#x27;float&#x27; = 5.0, n_iter: &#x27;int&#x27; = 200, n_inner: &#x27;int&#x27; = 200, tol: &#x27;float&#x27; = 0.0, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;chan_vese_evolve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Minimises the two-phase Chan–Vese 2001 energy (by default alternating minimisation of the convex relaxation; the level-set gradient descent can also be chosen) (chan_vese_evolve).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>2 つの方法:</p>
+<p>`<code style="color:#22d3bf">method=&quot;convex&quot;</code>`(既定)= c の更新(内外の平均 = 最適)と、c を固定した分割の更新の交互最小化。分割の更新は</p>
+<p>Chan–Esedoglu–Nikolova 2006 の凸緩和 min_(u∈[0,1]) μ TV(u) + Σ (ν + λ1 (I − c1)² − λ2 (I − c2)²) u を</p>
+<p>Chambolle–Pock で `<code style="color:#22d3bf">n_inner</code>` 回解いて 1/2 で 2 値化する(TV は異方的な前進差分 = 2 値なら 4 近傍の割れ目の数 =</p>
+<p>`<code style="color:#22d3bf">chan_vese_energy</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">perimeter_sharp</code>`。離散の余面積公式で、緩和の最小解をどの閾値で切っても 2 値の最小解)。</p>
+<p>鋭いエネルギー(`<code style="color:#22d3bf">energy</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">chan_vese_energy</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">energy_sharp</code>`)は交互最小化で単調非増加 —— 内側の解法の誤差で</p>
+<p>増えそうなら更新を捨てて止める(`<code style="color:#22d3bf">n_guard</code>`、0 のはず)。</p>
+<p>`<code style="color:#22d3bf">method=&quot;level_set&quot;</code><code style="color:#22d3bf"> = 滑らかなエネルギー(</code><code style="color:#22d3bf">chan_vese_energy</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">energy</code>`)を <b>離散エネルギーの厳密な勾配</b> で降下する。</p>
+<p>勾配 = μ(δ_ε&#x27;(φ) |Dφ|_η + Dᵀ(δ_ε(φ) Dφ / |Dφ|_η)) − δ_ε(φ)(ν + λ1 (I − c1)² − λ2 (I − c2)²)(D = 前進差分、</p>
+<p>Dᵀ = その随伴。連続の極限で −δ_ε κ μ の項になり論文の式 (9) の右辺の符号反転と一致)。c1, c2 は φ ごとの最適値なので</p>
+<p>包絡線定理で勾配に入らない。刻みは `<code style="color:#22d3bf">dt</code>` から始め、Armijo 条件 E_new ≤ E − 10⁻⁴ dt |∇E|² を満たすまで半分にする</p>
+<p>(満たしたら次の反復は 1.1 倍、上限 dt)。よってエネルギーは単調非増加(`<code style="color:#22d3bf">n_increase</code>` は 0 のはず、後退の回数は</p>
+<p>`<code style="color:#22d3bf">n_rejected</code>`)。<b>実測の限界</b>: 厳密な勾配は界面を動かすより |φ| を膨らませて H_ε を鋭くする向きにも下がるので、</p>
+<p>遠い画素(δ_ε が小さい)は事実上動かず局所解で止まる(楕円 + 雑音 σ = 0.2 で 300 反復後も誤り約 800 画素、convex は</p>
+<p>数十画素)。論文が再初期化を「任意」として載せている理由の 1 つ。`<code style="color:#22d3bf">init</code>` = bool のマスク(内側)か φ(内側 φ &lt; 0)。</p>
+<p>返り値: `<code style="color:#22d3bf">mask</code><code style="color:#22d3bf">(φ &lt; 0)、</code><code style="color:#22d3bf">phi</code><code style="color:#22d3bf">(convex は 2 値の符号付き距離)、</code><code style="color:#22d3bf">energy</code><code style="color:#22d3bf">(先頭 = 初期)、</code><code style="color:#22d3bf">c1</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">c2</code>`、</p>
+<p>`<code style="color:#22d3bf">n_rejected</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_guard</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_increase</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">duality_gap</code>`(convex の内側の解法の主双対ギャップ、外側の反復ごと)、</p>
+<p>`<code style="color:#22d3bf">history</code><code style="color:#22d3bf">(record_every ごとのマスク)、</code><code style="color:#22d3bf">n_iter</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">converged</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">method</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">contour</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:snake_evolve">snake_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:gvf_field">gvf_field</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_energy">chan_vese_energy</a> · <a style="color:#22d3bf" href="opsegmentation:morph_chan_vese">morph_chan_vese</a> · <a style="color:#22d3bf" href="opsegmentation:morph_geodesic_ac">morph_geodesic_ac</a> · <a style="color:#22d3bf" href="opsegmentation:edge_stop_g">edge_stop_g</a> · <a style="color:#22d3bf" href="opsegmentation:level_set_reinit">level_set_reinit</a> · <a style="color:#22d3bf" href="opsegmentation:drle_evolve">drle_evolve</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segcontour.py — SEGMENTATION operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gvf_field — SEGMENTATION <code style="color:#22d3bf">contour</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gvf_field(image, *, mu: &#x27;float&#x27; = 0.2, sigma: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;direct&#x27;, n_iter: &#x27;int&#x27; = 2000, dt: &#x27;Optional[float]&#x27; = None, edge_map=None) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import segcontour; segcontour.gvf_field(image, *, mu: &#x27;float&#x27; = 0.2, sigma: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;direct&#x27;, n_iter: &#x27;int&#x27; = 2000, dt: &#x27;Optional[float]&#x27; = None, edge_map=None) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;gvf_field&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Gradient vector flow (Xu–Prince 1998): the field (u, v) that smoothly diffuses the gradient of the edge map f away from the edges (gvf_field).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>E = ∬ μ(u_x² + u_y² + v_x² + v_y²) + |∇f|² |(u, v) − ∇f|² の最小化。Euler 方程式</p>
+<p>μ∇²u − (u − f_x)(f_x² + f_y²) = 0、μ∇²v − (v − f_y)(f_x² + f_y²) = 0(線形)。</p>
+<p>`<code style="color:#22d3bf">method=&quot;iterate&quot;</code>` = 論文の時間発展 u ← u + Δt(μ∇²u − b(u − f_x))、b = |∇f|²(陽的、Δt ≤ 1/(4μ + max b))。</p>
+<p>`<code style="color:#22d3bf">method=&quot;direct&quot;</code>` = 同じ離散方程式 (μL − diag b) u = −b f_x を疎行列で直接解く(定常解そのもの)。</p>
+<p>辺の地図 f は既定で |∇(G_σ * I)| を最大 1 に正規化したもの(`<code style="color:#22d3bf">edge_map</code>` で直接与えてもよい)。境界は Neumann。</p>
+<p>u = 列(x)方向、v = 行(y)方向の成分。</p>
+<p>返り値: `<code style="color:#22d3bf">u</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">v</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">edge_map</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">fx</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fy</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">residual_max</code><code style="color:#22d3bf">(Euler 方程式の残差の最大)、</code><code style="color:#22d3bf">residual_rel</code>`</p>
+<p>(残差 / max(b |∇f|))、`<code style="color:#22d3bf">n_iter</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">method</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">mu</code>`。f が平坦なら場は 0(残差 0)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">contour</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:snake_evolve">snake_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_energy">chan_vese_energy</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_evolve">chan_vese_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:morph_chan_vese">morph_chan_vese</a> · <a style="color:#22d3bf" href="opsegmentation:morph_geodesic_ac">morph_geodesic_ac</a> · <a style="color:#22d3bf" href="opsegmentation:edge_stop_g">edge_stop_g</a> · <a style="color:#22d3bf" href="opsegmentation:level_set_reinit">level_set_reinit</a> · <a style="color:#22d3bf" href="opsegmentation:drle_evolve">drle_evolve</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segcontour.py — SEGMENTATION operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

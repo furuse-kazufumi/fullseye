@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gvf_field — SEGMENTATION <code style="color:#22d3bf">contour</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gvf_field(image, *, mu: &#x27;float&#x27; = 0.2, sigma: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;direct&#x27;, n_iter: &#x27;int&#x27; = 2000, dt: &#x27;Optional[float]&#x27; = None, edge_map=None) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segcontour; segcontour.gvf_field(image, *, mu: &#x27;float&#x27; = 0.2, sigma: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;direct&#x27;, n_iter: &#x27;int&#x27; = 2000, dt: &#x27;Optional[float]&#x27; = None, edge_map=None) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;gvf_field&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>그래디언트 벡터 흐름(Xu–Prince 1998): 에지 맵 f의 그래디언트를 에지에서 먼 곳까지 매끄럽게 확산시킨 장 (u, v)(gvf_field).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>E = ∬ μ(u_x² + u_y² + v_x² + v_y²) + |∇f|² |(u, v) − ∇f|² の最小化。Euler 方程式</p>
+<p>μ∇²u − (u − f_x)(f_x² + f_y²) = 0、μ∇²v − (v − f_y)(f_x² + f_y²) = 0(線形)。</p>
+<p>`<code style="color:#22d3bf">method=&quot;iterate&quot;</code>` = 論文の時間発展 u ← u + Δt(μ∇²u − b(u − f_x))、b = |∇f|²(陽的、Δt ≤ 1/(4μ + max b))。</p>
+<p>`<code style="color:#22d3bf">method=&quot;direct&quot;</code>` = 同じ離散方程式 (μL − diag b) u = −b f_x を疎行列で直接解く(定常解そのもの)。</p>
+<p>辺の地図 f は既定で |∇(G_σ * I)| を最大 1 に正規化したもの(`<code style="color:#22d3bf">edge_map</code>` で直接与えてもよい)。境界は Neumann。</p>
+<p>u = 列(x)方向、v = 行(y)方向の成分。</p>
+<p>返り値: `<code style="color:#22d3bf">u</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">v</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">edge_map</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">fx</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fy</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">residual_max</code><code style="color:#22d3bf">(Euler 方程式の残差の最大)、</code><code style="color:#22d3bf">residual_rel</code>`</p>
+<p>(残差 / max(b |∇f|))、`<code style="color:#22d3bf">n_iter</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">method</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">mu</code>`。f が平坦なら場は 0(残差 0)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">contour</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:snake_evolve">snake_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_energy">chan_vese_energy</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_evolve">chan_vese_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:morph_chan_vese">morph_chan_vese</a> · <a style="color:#22d3bf" href="opsegmentation:morph_geodesic_ac">morph_geodesic_ac</a> · <a style="color:#22d3bf" href="opsegmentation:edge_stop_g">edge_stop_g</a> · <a style="color:#22d3bf" href="opsegmentation:level_set_reinit">level_set_reinit</a> · <a style="color:#22d3bf" href="opsegmentation:drle_evolve">drle_evolve</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segcontour.py — SEGMENTATION 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

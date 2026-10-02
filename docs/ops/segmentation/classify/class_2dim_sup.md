@@ -35,7 +35,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`mask` を入力に取れる)
 
-[expand_gray](../grow/expand_gray.md)
+[expand_gray](../grow/expand_gray.md) · [chan_vese_energy](../contour/chan_vese_energy.md) · [chan_vese_evolve](../contour/chan_vese_evolve.md) · [morph_chan_vese](../contour/morph_chan_vese.md) · [morph_geodesic_ac](../contour/morph_geodesic_ac.md) · [level_set_reinit](../contour/level_set_reinit.md) · [drle_evolve](../contour/drle_evolve.md) · [curvature_flow](../contour/curvature_flow.md)
 
 ## 同カテゴリ(`classify`)
 

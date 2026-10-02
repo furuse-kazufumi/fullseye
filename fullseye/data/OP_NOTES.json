@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2561,
- "n_notes": 2567,
+ "n_ops": 2571,
+ "n_notes": 2577,
  "notes": {
   "vol_dilate": [
    {
@@ -24499,6 +24499,106 @@
     "in": "image2d × image2d",
     "out": "mask",
     "path": "docs/ops/segmentation/compare/check_difference.md"
+   }
+  ],
+  "chan_vese_energy": [
+   {
+    "op": "chan_vese_energy",
+    "dim": "segmentation",
+    "category": "contour",
+    "in": "image2d × mask",
+    "out": "table",
+    "path": "docs/ops/segmentation/contour/chan_vese_energy.md"
+   }
+  ],
+  "chan_vese_evolve": [
+   {
+    "op": "chan_vese_evolve",
+    "dim": "segmentation",
+    "category": "contour",
+    "in": "image2d × mask",
+    "out": "table",
+    "path": "docs/ops/segmentation/contour/chan_vese_evolve.md"
+   }
+  ],
+  "curvature_flow": [
+   {
+    "op": "curvature_flow",
+    "dim": "segmentation",
+    "category": "contour",
+    "in": "mask",
+    "out": "table",
+    "path": "docs/ops/segmentation/contour/curvature_flow.md"
+   }
+  ],
+  "drle_evolve": [
+   {
+    "op": "drle_evolve",
+    "dim": "segmentation",
+    "category": "contour",
+    "in": "image2d × mask",
+    "out": "table",
+    "path": "docs/ops/segmentation/contour/drle_evolve.md"
+   }
+  ],
+  "edge_stop_g": [
+   {
+    "op": "edge_stop_g",
+    "dim": "segmentation",
+    "category": "contour",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/contour/edge_stop_g.md"
+   }
+  ],
+  "gvf_field": [
+   {
+    "op": "gvf_field",
+    "dim": "segmentation",
+    "category": "contour",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/contour/gvf_field.md"
+   }
+  ],
+  "level_set_reinit": [
+   {
+    "op": "level_set_reinit",
+    "dim": "segmentation",
+    "category": "contour",
+    "in": "mask",
+    "out": "table",
+    "path": "docs/ops/segmentation/contour/level_set_reinit.md"
+   }
+  ],
+  "morph_chan_vese": [
+   {
+    "op": "morph_chan_vese",
+    "dim": "segmentation",
+    "category": "contour",
+    "in": "image2d × mask",
+    "out": "table",
+    "path": "docs/ops/segmentation/contour/morph_chan_vese.md"
+   }
+  ],
+  "morph_geodesic_ac": [
+   {
+    "op": "morph_geodesic_ac",
+    "dim": "segmentation",
+    "category": "contour",
+    "in": "image2d × mask",
+    "out": "table",
+    "path": "docs/ops/segmentation/contour/morph_geodesic_ac.md"
+   }
+  ],
+  "snake_evolve": [
+   {
+    "op": "snake_evolve",
+    "dim": "segmentation",
+    "category": "contour",
+    "in": "image2d × pairs",
+    "out": "table",
+    "path": "docs/ops/segmentation/contour/snake_evolve.md"
    }
   ],
   "expand_gray": [

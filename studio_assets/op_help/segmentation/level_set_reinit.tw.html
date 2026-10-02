@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">level_set_reinit — SEGMENTATION <code style="color:#22d3bf">contour</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.level_set_reinit(phi, *, method: &#x27;str&#x27; = &#x27;sussman&#x27;, n_iter: &#x27;int&#x27; = 100, dt: &#x27;float&#x27; = 0.5, band: &#x27;float&#x27; = 3.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import segcontour; segcontour.level_set_reinit(phi, *, method: &#x27;str&#x27; = &#x27;sussman&#x27;, n_iter: &#x27;int&#x27; = 100, dt: &#x27;float&#x27; = 0.5, band: &#x27;float&#x27; = 3.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;level_set_reinit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>把 φ（φ &lt; 0 為內側）改寫為同一零等值線的符號距離函數（level_set_reinit）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">method=&quot;sussman&quot;</code>` = φ_τ + S(φ0)(|∇φ| − 1) = 0(Sussman–Smereka–Osher 1994)を Godunov の風上差分で</p>
+<p>`<code style="color:#22d3bf">n_iter</code><code style="color:#22d3bf"> 回(刻み </code><code style="color:#22d3bf">dt</code>` ≤ 0.5)。界面に接する格子点(4 近傍で符号が変わる)は Russo–Smereka 2000 の subcell fix:</p>
+<p>D = φ0 / Δφ0(Δφ0 = 中心差分の勾配の大きさと片側差分の最大)へ緩和させ、零等高線を動かさない。</p>
+<p>`<code style="color:#22d3bf">method=&quot;edt&quot;</code>` = マスク φ &lt; 0 から距離変換で作る符号付き距離(第 2 実装。零等高線は画素の中心の中間に量子化され、</p>
+<p>最大で半画素動く)。bool のマスクを渡すと edt の符号付き距離を φ0 として使う。</p>
+<p>返り値: `<code style="color:#22d3bf">phi</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">grad</code><code style="color:#22d3bf">(|φ| ≤ band での |∇φ| の 10/50/90 % 点と画素数)、</code><code style="color:#22d3bf">grad_before</code>`(同、入力)、</p>
+<p>`<code style="color:#22d3bf">zero_hausdorff</code><code style="color:#22d3bf">(前後の零等高線の Hausdorff、画素)、</code><code style="color:#22d3bf">method</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_iter</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">contour</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:snake_evolve">snake_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:gvf_field">gvf_field</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_energy">chan_vese_energy</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_evolve">chan_vese_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:morph_chan_vese">morph_chan_vese</a> · <a style="color:#22d3bf" href="opsegmentation:morph_geodesic_ac">morph_geodesic_ac</a> · <a style="color:#22d3bf" href="opsegmentation:edge_stop_g">edge_stop_g</a> · <a style="color:#22d3bf" href="opsegmentation:drle_evolve">drle_evolve</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segcontour.py — SEGMENTATION 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

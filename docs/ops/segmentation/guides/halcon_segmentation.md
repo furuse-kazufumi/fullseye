@@ -128,6 +128,20 @@ inside = fs.ledger.class_ndim_norm([im, im ** 2], model, thresh=2.0)
   (HALCON は byte 画像 + LUT ハンドル)。2-D の LUT を渡すと `(H, W, k)` が返り、
   台帳の `labels2d` にならない。
 
+## 同じ台帳の他のカテゴリ(採点・真値つき世界・動的輪郭)
+
+この台帳(`opssegmentation`)には HALCON 章の 9 op の後に、分けた結果を**採点する**側・**真値を作る**側・**輪郭で分ける**側が
+同居している。詳しくは [分割の採点と真値つき合成世界](segmentation_scoring_and_worlds.md) と
+[動的輪郭とレベルセット](active_contours_and_level_sets.md)。
+
+| カテゴリ | op |
+|---|---|
+| score(採点) | `seg_confusion_table` / `seg_dice_jaccard` / `seg_boundary_f` / `seg_hausdorff` / `seg_mean_surface_distance` / `seg_under_over_segmentation` / `seg_object_counts_match` / `seg_score_card` |
+| world(真値つき合成世界) | `world_blobs_touching` / `world_grains_voronoi` / `world_parts_with_shadow` / `world_texture_regions` / `world_gradient_illumination` / `world_thin_structures` / `lens_area` / `voronoi_cells` |
+| contour(動的輪郭・レベルセット) | `snake_evolve` / `gvf_field` / `chan_vese_energy` / `chan_vese_evolve` / `morph_chan_vese` / `morph_geodesic_ac` / `edge_stop_g` / `level_set_reinit` / `drle_evolve` / `curvature_flow` |
+
+HALCON 側の op で分けた結果は、そのまま `seg_score_card` に真値と一緒に渡せる(背景 0 の約束だけ揃える)。
+
 ## 関連
 
 - `blob_analysis`(`opsblob`): 分けたあとに**物体ごとに測って選ぶ**側。`watersheds_marker` /

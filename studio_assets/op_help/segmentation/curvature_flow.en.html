@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">curvature_flow — SEGMENTATION <code style="color:#22d3bf">contour</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_flow(phi, *, t_end: &#x27;float&#x27; = 50.0, dt: &#x27;float&#x27; = 0.2, eta: &#x27;float&#x27; = 1e-08, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import segcontour; segcontour.curvature_flow(phi, *, t_end: &#x27;float&#x27; = 50.0, dt: &#x27;float&#x27; = 0.2, eta: &#x27;float&#x27; = 1e-08, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;curvature_flow&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Level-set form of mean curvature flow (curve-shortening flow) φ_t = |∇φ| div(∇φ/|∇φ|) (inside where φ &lt; 0; shrinks from the convex parts) (curvature_flow).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>陽的な中心差分: φ_t = (φ_xx φ_y² − 2 φ_x φ_y φ_xy + φ_yy φ_x²) / (φ_x² + φ_y² + η)、刻み dt ≤ 0.25(安定条件)。</p>
+<p>`<code style="color:#22d3bf">phi</code><code style="color:#22d3bf"> = φ か bool のマスク(符号付き距離に直す)。面積は各刻みで </code><code style="color:#22d3bf">clip(0.5 − φ/|∇φ|, 0, 1)</code>` の和。</p>
+<p>門: 単純閉曲線の囲む面積は dA/dt = −∮ κ ds = −2π(回転数 1、凸でなくても)。円なら r(t)² = r0² − 2t。</p>
+<p>返り値: `<code style="color:#22d3bf">phi</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">mask</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">times</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">areas</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">area_rate</code><code style="color:#22d3bf">(面積 vs 時間の最小二乗の傾き)、</code><code style="color:#22d3bf">area_rate_theory</code>` = −2π、</p>
+<p>`<code style="color:#22d3bf">history</code><code style="color:#22d3bf">(record_every 刻みごとのマスク)、</code><code style="color:#22d3bf">n_steps</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">contour</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:snake_evolve">snake_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:gvf_field">gvf_field</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_energy">chan_vese_energy</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_evolve">chan_vese_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:morph_chan_vese">morph_chan_vese</a> · <a style="color:#22d3bf" href="opsegmentation:morph_geodesic_ac">morph_geodesic_ac</a> · <a style="color:#22d3bf" href="opsegmentation:edge_stop_g">edge_stop_g</a> · <a style="color:#22d3bf" href="opsegmentation:level_set_reinit">level_set_reinit</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segcontour.py — SEGMENTATION operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

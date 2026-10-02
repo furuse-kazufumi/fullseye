@@ -4,7 +4,7 @@ dim: segmentation
 category: score
 in: labels2d × labels2d
 out: table
-examples: [poc_segmentation_gauntlet]
+examples: [poc_active_contours, poc_segmentation_gauntlet]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -39,6 +39,7 @@ Hausdorff・HD95・ASSD(境界が無ければ NaN)、過分割・未分割、分
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_active_contours](../../../../examples/poc_active_contours.py) — `py -3.11 examples/poc_active_contours.py`
 - [poc_segmentation_gauntlet](../../../../examples/poc_segmentation_gauntlet.py) — `py -3.11 examples/poc_segmentation_gauntlet.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

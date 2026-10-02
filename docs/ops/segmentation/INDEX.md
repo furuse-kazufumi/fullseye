@@ -1,4 +1,4 @@
-# SEGMENTATION operator help — 25 ops in 6 categories
+# SEGMENTATION operator help — 35 ops in 7 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/segmentation/<category>/<op>.md` を走査。
 
@@ -8,6 +8,7 @@
 
 ## 背景知識ガイド(op の手前にある物理・規約)
 
+- [active_contours_and_level_sets](guides/active_contours_and_level_sets.md) — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか
 - [segmentation_scoring_and_worlds](guides/segmentation_scoring_and_worlds.md) — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か
 
 ## カテゴリ
@@ -19,6 +20,10 @@
 ### compare (1)
 
 [check_difference](compare/check_difference.md)
+
+### contour (10)
+
+[chan_vese_energy](contour/chan_vese_energy.md) · [chan_vese_evolve](contour/chan_vese_evolve.md) · [curvature_flow](contour/curvature_flow.md) · [drle_evolve](contour/drle_evolve.md) · [edge_stop_g](contour/edge_stop_g.md) · [gvf_field](contour/gvf_field.md) · [level_set_reinit](contour/level_set_reinit.md) · [morph_chan_vese](contour/morph_chan_vese.md) · [morph_geodesic_ac](contour/morph_geodesic_ac.md) · [snake_evolve](contour/snake_evolve.md)
 
 ### grow (2)
 

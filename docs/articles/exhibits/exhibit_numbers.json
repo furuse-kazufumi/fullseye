@@ -1,6 +1,10 @@
 {
  "_note": "収蔵台帳。追記のみ。収蔵番号は受け入れた瞬間に 1 回だけ発行し、以後変えない・再利用しない。番号は「どこに展示しているか」とは独立なので、記事間の移動でも 棟の分割でも動かない。除籍は retired に理由つきで記録し、番号は欠番のまま残す。訂正は消さずに note 欄へ。発行は tools/gen_exhibit_numbers.py。",
  "issued": {
+  "poc_active_contours": {
+   "accessioned": "2026-10-02",
+   "no": "2026.186"
+  },
   "poc_allsky_cloud_cover": {
    "accessioned": "2026-09-06",
    "no": "2026.001"

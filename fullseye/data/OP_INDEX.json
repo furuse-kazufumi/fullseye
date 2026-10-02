@@ -1,8 +1,8 @@
 {
- "n_ops": 2561,
+ "n_ops": 2571,
  "tiers": {
   "color": 12,
-  "ledger": 1610,
+  "ledger": 1620,
   "nary": 17,
   "registry": 922
  },
@@ -2453,6 +2453,34 @@
    ]
   },
   {
+   "name": "chan_vese_energy",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "contour",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d",
+    "mask"
+   ]
+  },
+  {
+   "name": "chan_vese_evolve",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "contour",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d",
+    "mask"
+   ]
+  },
+  {
    "name": "check_difference",
    "halcon": "",
    "in_sort": "image2d",
@@ -3724,6 +3752,19 @@
    "in_sorts": []
   },
   {
+   "name": "curvature_flow",
+   "halcon": "",
+   "in_sort": "mask",
+   "out_sort": "table",
+   "category": "contour",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "mask"
+   ]
+  },
+  {
    "name": "curvature_maps",
    "halcon": "",
    "in_sort": "voxel",
@@ -4788,6 +4829,20 @@
    ]
   },
   {
+   "name": "drle_evolve",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "contour",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d",
+    "mask"
+   ]
+  },
+  {
    "name": "dtof_cube_depth",
    "halcon": "",
    "in_sort": "histcube",
@@ -4909,6 +4964,19 @@
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "edge_stop_g",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "contour",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
    "in_sorts": [
     "image2d"
    ]
@@ -7696,6 +7764,19 @@
    ]
   },
   {
+   "name": "gvf_field",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "contour",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "gyroid_isosurface",
    "halcon": "",
    "in_sort": null,
@@ -9289,6 +9370,19 @@
    "in_sorts": []
   },
   {
+   "name": "level_set_reinit",
+   "halcon": "",
+   "in_sort": "mask",
+   "out_sort": "table",
+   "category": "contour",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "mask"
+   ]
+  },
+  {
    "name": "lf_all_in_focus",
    "halcon": "",
    "in_sort": "lightfield",
@@ -10867,6 +10961,20 @@
    ]
   },
   {
+   "name": "morph_chan_vese",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "contour",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d",
+    "mask"
+   ]
+  },
+  {
    "name": "morph_close3d",
    "halcon": "",
    "in_sort": "voxel",
@@ -10903,6 +11011,20 @@
    "dim": "3d",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "morph_geodesic_ac",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "contour",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d",
+    "mask"
    ]
   },
   {
@@ -17054,6 +17176,20 @@
    "dim": "oned",
    "in_sorts": [
     "signal"
+   ]
+  },
+  {
+   "name": "snake_evolve",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "contour",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d",
+    "pairs"
    ]
   },
   {

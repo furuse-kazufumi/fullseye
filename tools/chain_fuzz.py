@@ -3204,6 +3204,111 @@ _SEGBATCH1_ENTRIES = {
 # --- /セグメンテーション 第 1 陣の 16 op ------------------------------------------------- #
 
 
+# --- セグメンテーション 第 2 陣(opssegmentation の contour、2026-10-02)の種 ---------- #
+# 汎用の種では走らない/走っても意味が無い理由(op ごと):
+#   全 10 本: 汎用の image2d は一様乱数で「縁」が無く、輪郭はどこにも止まらない(snake は縮み切る、
+#     Chan–Vese は雑音を 2 値に割る、GAC は風船で全面に広がる)= 走るが壊れ方の違いが出ない。
+#     真値の分かる明るい円盤(半径 11、少しぼかし + 小さな雑音)を共通の画像にする。
+#   snake_evolve : 第 2 入力の (N, 2) [row, col] の閉曲線は汎用の種に無い(pairs の生成器が無い)。
+#     円盤を囲む半径 18 の円(40 点)を初期輪郭にする。
+#   chan_vese_* / morph_* / drle_evolve : 初期の内外(mask)は円盤と食い違う四角にする
+#     (汎用の mask は乱数の画素で、内外が細切れ = 初期値として意味が無い)。
+#   drle_evolve : 円盤を外から囲む四角から縮める(既定の k = 1/255 は 0..1 の画像で縁を強く止める。
+#     255 倍して渡すと g が広い帯で潰れ、縁の 1 周外で止まって Dice 0.39 だった = 実測)。
+#   level_set_reinit / curvature_flow : 入力は φ か mask。円盤の mask を渡す(内外の両方が要る)。
+#   反復は既定か少なめ(48x48 で 1 本 0.1 秒未満)。snake と DRLSE は既定の 300 反復でないと
+#     縁まで届かない(60 反復の snake は Dice 0.61、40 反復の DRLSE は 0.39 = 実測)。
+# apply.py はこのブロックを tools/chain_fuzz.py の第 1 陣ブロックの直後(``OP_ARG_BUILDERS = {`` の前)に
+# 挿入し、辞書には下の 10 行(``_SEGBATCH2_ENTRIES`` と同じ対応)を足す。
+def _segbatch2_disk(rng, size=48, radius=11.0):
+    """明るい円盤(中心 + 小さなずれ、半径 radius)の画像 0..1 と、その真のマスク。"""
+    from scipy import ndimage as _ndi
+    cy = size / 2.0 + rng.uniform(-1.0, 1.0)
+    cx = size / 2.0 + rng.uniform(-1.0, 1.0)
+    yy, xx = np.mgrid[0:size, 0:size]
+    truth = (yy - cy) ** 2 + (xx - cx) ** 2 <= radius ** 2
+    im = _ndi.gaussian_filter(truth.astype(np.float64), 1.0)
+    im = np.clip(im + 0.02 * rng.standard_normal(im.shape), 0.0, 1.0)
+    return im, truth
+
+
+def _segbatch2_box(size=48, lo=8, hi=36):
+    """円盤と食い違う四角の初期マスク(左上へずらす)。"""
+    m = np.zeros((size, size), bool)
+    m[lo:hi, lo:hi] = True
+    return m
+
+
+def _b_segcontour_snake_evolve(pool, rng):
+    im, _ = _segbatch2_disk(rng)
+    t = np.linspace(0.0, 2.0 * np.pi, 40, endpoint=False)
+    init = np.c_[24.0 + 18.0 * np.sin(t), 24.0 + 18.0 * np.cos(t)]      # (N, 2) [row, col]
+    return (im, init), {"alpha": 0.05, "beta": 0.05, "gamma": 1.0, "n_iter": 300}
+
+
+def _b_segcontour_gvf_field(pool, rng):
+    im, _ = _segbatch2_disk(rng)
+    return (im,), {"mu": 0.2, "method": "direct"}
+
+
+def _b_segcontour_chan_vese_energy(pool, rng):
+    im, _ = _segbatch2_disk(rng)
+    return (im, _segbatch2_box()), {}
+
+
+def _b_segcontour_chan_vese_evolve(pool, rng):
+    im, _ = _segbatch2_disk(rng)
+    return (im, _segbatch2_box()), {"method": "convex", "n_iter": 30, "n_inner": 50}
+
+
+def _b_segcontour_morph_chan_vese(pool, rng):
+    im, _ = _segbatch2_disk(rng)
+    return (im, _segbatch2_box()), {"n_iter": 20}
+
+
+def _b_segcontour_morph_geodesic_ac(pool, rng):
+    im, _ = _segbatch2_disk(rng)
+    gy, gx = np.gradient(im)
+    g = 1.0 / (1.0 + (gx * gx + gy * gy) / 0.02 ** 2)                    # 縁で小さい画像(edge_stop_g と同じ形)
+    init = _segbatch2_box(lo=4, hi=44)                                    # 円盤を外から囲む → 風船で縮める
+    return (g, init), {"n_iter": 40, "balloon": -1.0}
+
+
+def _b_segcontour_edge_stop_g(pool, rng):
+    im, _ = _segbatch2_disk(rng)
+    return (im,), {"sigma": 1.0, "k": 0.1}
+
+
+def _b_segcontour_level_set_reinit(pool, rng):
+    _, truth = _segbatch2_disk(rng)
+    return (truth,), {"n_iter": 30}
+
+
+def _b_segcontour_drle_evolve(pool, rng):
+    im, _ = _segbatch2_disk(rng)
+    return (im, _segbatch2_box(lo=4, hi=44)), {"n_iter": 300}
+
+
+def _b_segcontour_curvature_flow(pool, rng):
+    _, truth = _segbatch2_disk(rng)
+    return (truth,), {"t_end": 10.0}
+
+
+_SEGBATCH2_ENTRIES = {
+    "snake_evolve": _b_segcontour_snake_evolve,
+    "gvf_field": _b_segcontour_gvf_field,
+    "chan_vese_energy": _b_segcontour_chan_vese_energy,
+    "chan_vese_evolve": _b_segcontour_chan_vese_evolve,
+    "morph_chan_vese": _b_segcontour_morph_chan_vese,
+    "morph_geodesic_ac": _b_segcontour_morph_geodesic_ac,
+    "edge_stop_g": _b_segcontour_edge_stop_g,
+    "level_set_reinit": _b_segcontour_level_set_reinit,
+    "drle_evolve": _b_segcontour_drle_evolve,
+    "curvature_flow": _b_segcontour_curvature_flow,
+}
+# --- /セグメンテーション 第 2 陣の 10 op ------------------------------------------------- #
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -3266,6 +3371,17 @@ OP_ARG_BUILDERS = {
     "world_thin_structures": _b_segworld_world_thin_structures,
     "lens_area": _b_segworld_lens_area,
     "voronoi_cells": _b_segworld_voronoi_cells,
+    # --- セグメンテーション 第 2 陣 contour の 10 op(opssegmentation、2026-10-02) --- #
+    "snake_evolve": _b_segcontour_snake_evolve,
+    "gvf_field": _b_segcontour_gvf_field,
+    "chan_vese_energy": _b_segcontour_chan_vese_energy,
+    "chan_vese_evolve": _b_segcontour_chan_vese_evolve,
+    "morph_chan_vese": _b_segcontour_morph_chan_vese,
+    "morph_geodesic_ac": _b_segcontour_morph_geodesic_ac,
+    "edge_stop_g": _b_segcontour_edge_stop_g,
+    "level_set_reinit": _b_segcontour_level_set_reinit,
+    "drle_evolve": _b_segcontour_drle_evolve,
+    "curvature_flow": _b_segcontour_curvature_flow,
     "graph_strength_growth": _b_graph_growth,
     "graph_kcore": _b_graph_kcore,
     "graph_rich_club_curve": _b_graph_rich_club,

@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">morph_chan_vese — SEGMENTATION <code style="color:#22d3bf">contour</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph_chan_vese(image, init, *, n_iter: &#x27;int&#x27; = 100, smoothing: &#x27;int&#x27; = 1, lambda1: &#x27;float&#x27; = 1.0, lambda2: &#x27;float&#x27; = 1.0, phase: &#x27;int&#x27; = 0, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import segcontour; segcontour.morph_chan_vese(image, init, *, n_iter: &#x27;int&#x27; = 100, smoothing: &#x27;int&#x27; = 1, lambda1: &#x27;float&#x27; = 1.0, lambda2: &#x27;float&#x27; = 1.0, phase: &#x27;int&#x27; = 0, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;morph_chan_vese&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Morphologisches Chan–Vese (MorphACWE von Márquez-Neila–Baumela–Álvarez 2014). Eine Iteration = Datenschritt + Glättungsschritt (morph_chan_vese).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>データ段: c1 = 内側の平均、c0 = 外側の平均、aux = |∇u|(λ1 (I − c1)² − λ2 (I − c0)²)、aux &lt; 0 の画素を内側、</p>
+<p>aux &gt; 0 を外側に(|∇u| ≠ 0 = 境界の近くだけが動く)。平滑段: 曲率の作用素(SI∘IS と IS∘SI を交互)を `<code style="color:#22d3bf">smoothing</code>` 回。</p>
+<p>`<code style="color:#22d3bf">phase</code>` = 最初に使う作用素(0 = SI∘IS)。skimage の実装は交互の位相をモジュールの大域状態に持つので、</p>
+<p>同じ入力でも直前の呼び出しで結果が変わりうる —— ここは呼び出しごとに `<code style="color:#22d3bf">phase</code>` から始める(決定的)。</p>
+<p>当てはめのエネルギー E_fit = λ1 Σ_in (I − c1)² + λ2 Σ_out (I − c0)² を各段の前後で記録する。</p>
+<p>門(厳密): c を固定した E_fit は画素ごとの和なので、データ段で反転した画素はどれも E_fit を下げ(または等しく)、</p>
+<p>その後 c を平均に更新するとさらに下がる ⇒ データ段の前後で E_fit は単調非増加(`<code style="color:#22d3bf">n_data_increase</code>` = 0)。</p>
+<p>平滑段は E_fit を上げうる(`<code style="color:#22d3bf">fit_after_smooth</code>` で実測)。</p>
+<p>返り値: `<code style="color:#22d3bf">mask</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">fit_before_data</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fit_after_data</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fit_after_smooth</code><code style="color:#22d3bf">(反復ごと)、</code><code style="color:#22d3bf">n_data_increase</code>`、</p>
+<p>`<code style="color:#22d3bf">history</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_iter</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_changed</code>`(反復ごとに変わった画素数)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">contour</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:snake_evolve">snake_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:gvf_field">gvf_field</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_energy">chan_vese_energy</a> · <a style="color:#22d3bf" href="opsegmentation:chan_vese_evolve">chan_vese_evolve</a> · <a style="color:#22d3bf" href="opsegmentation:morph_geodesic_ac">morph_geodesic_ac</a> · <a style="color:#22d3bf" href="opsegmentation:edge_stop_g">edge_stop_g</a> · <a style="color:#22d3bf" href="opsegmentation:level_set_reinit">level_set_reinit</a> · <a style="color:#22d3bf" href="opsegmentation:drle_evolve">drle_evolve</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segcontour.py — SEGMENTATION Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

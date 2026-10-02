@@ -1,0 +1,120 @@
+[
+ {
+  "file": "01_inputs.png",
+  "name": "inputs",
+  "caption": "GVF は辺の勾配を μ∇² で辺から離れた所まで拡散した場(Euler 方程式の残差 3.9e-15)。古典の snake の力は辺の近くにしか無いので U 字の凹部の中は力 0。",
+  "shape": [
+   1819,
+   1600,
+   3
+  ]
+ },
+ {
+  "file": "02_cv_energy.png",
+  "name": "cv_energy",
+  "caption": "c の更新(内外の平均)と、c を固定した凸緩和(Chan–Esedoglu–Nikolova)の交互最小化。どの世界でも1 度も増えず、分割が変わらなくなった所で止まる(門 5)。止まった所が真値に近いかは別(表を見る)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_snake_energy.png",
+  "name": "snake_energy",
+  "caption": "γ = 1 ≥ L = 0.463(外力の勾配の Lipschitz 定数)なので降下補題により全体は増えない(実測 増加 0 回)。内部(張力と曲げ)は角に巻き付くぶん少し上がり、外力が縁に乗るぶん大きく下がる。1000 反復でもまだ下がり続ける(遅い)が、凹部の口に架かった橋の下には力が無いので、何反復回しても凹部には入らない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_curvature_area.png",
+  "name": "curvature_area",
+  "caption": "dA/dt = −∮κ ds = −2π。円(傾き -6.277)も凹んだ星形(-6.282)も同じ速さ —— 凹部は外へ膨らみ、凸部は縮み、総和は回転数だけで決まる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_scores.png",
+  "name": "scores",
+  "caption": "Jaccard/Dice は物体マスク、境界 F は τ = 2 px。2 相の手法(CV・形態学的 CV)は物体の側を真値に近い方に取る(反転と書いた行)。照明の勾配では大域の 2 平均が壊れ、エッジで止まる局所の手法が通る。",
+  "shape": [
+   392,
+   581,
+   3
+  ],
+  "csv": "05_scores.csv",
+  "tsv": "05_scores.tsv"
+ },
+ {
+  "file": "06_u_shape_snakes.gif",
+  "name": "u_shape_snakes",
+  "caption": "U 字の凹部: 同じ α・β・γ で外力だけ違う。古典(赤)は凹部の口に橋を架けて止まり、辺の途中も外に浮いたまま(エッジの勾配の力は辺の近くにしか届かない)、GVF(青)は奥まで入る。緑 = 真の縁。1 コマ = 20 反復。",
+  "shape": [
+   318,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 51,
+  "frames_written": 51,
+  "fps": 8.0,
+  "video": "06_u_shape_snakes.mp4",
+  "video_frames": 51,
+  "video_fps": 8.0,
+  "video_shape": [
+   384,
+   774,
+   3
+  ]
+ },
+ {
+  "file": "07_gradient_world_contours.gif",
+  "name": "gradient_world_contours",
+  "caption": "照明の勾配の上の暗い物体(反転して渡す)。全画面の矩形から 4 手法の輪郭が動く。大域の 2 平均(Chan–Vese・形態学的 CV)は明るい側の背景ごと切り、エッジで止まる GAC・DRLSE は物体に貼り付く(GAC は雑音の粒を数十個残す = 表の予測の個数)。緑 = 真の縁、各手法のコマは反復数に比例して間引いて 40 コマに揃えた。",
+  "shape": [
+   408,
+   560,
+   3
+  ],
+  "animated": true,
+  "frames": 20,
+  "frames_written": 20,
+  "fps": 3.0,
+  "video": "07_gradient_world_contours.mp4",
+  "video_frames": 40,
+  "video_fps": 6.0,
+  "video_shape": [
+   966,
+   1326,
+   3
+  ]
+ },
+ {
+  "file": "08_curvature_flow_star.gif",
+  "name": "curvature_flow_star",
+  "caption": "凹んだ星形の平均曲率流。凹部は外へ、凸部は内へ動き、丸くなりながら面積は毎時間 2π ずつ減る。",
+  "shape": [
+   288,
+   288,
+   3
+  ],
+  "animated": true,
+  "frames": 76,
+  "frames_written": 76,
+  "fps": 10.0,
+  "video": "08_curvature_flow_star.mp4",
+  "video_frames": 76,
+  "video_fps": 10.0,
+  "video_shape": [
+   288,
+   288,
+   3
+  ]
+ }
+]

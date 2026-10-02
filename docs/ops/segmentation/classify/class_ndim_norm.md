@@ -36,7 +36,7 @@ feature_images: (H,W,D) or D 枚の 2D。
 
 ## 型が繋がる次の op(`mask` を入力に取れる)
 
-[class_2dim_sup](class_2dim_sup.md) · [expand_gray](../grow/expand_gray.md)
+[class_2dim_sup](class_2dim_sup.md) · [expand_gray](../grow/expand_gray.md) · [chan_vese_energy](../contour/chan_vese_energy.md) · [chan_vese_evolve](../contour/chan_vese_evolve.md) · [morph_chan_vese](../contour/morph_chan_vese.md) · [morph_geodesic_ac](../contour/morph_geodesic_ac.md) · [level_set_reinit](../contour/level_set_reinit.md) · [drle_evolve](../contour/drle_evolve.md)
 
 ## 同カテゴリ(`classify`)
 
