@@ -58,7 +58,10 @@ jobs:
         run: |
           python tools/ci_wheel_check.py --dump ops_editable.json
           pip install -q build
-          python -m build --wheel -o dist_check
+          # ★2026-10-03: 公開(release.yml)と同じ道で建てる = sdist → その sdist から wheel。
+          # ここが --wheel(checkout から直接)だったので、v0.3.0 の公開だけが
+          # 「sdist に HTML が無く書庫を詰められない」で落ちた(CI は緑のまま)。
+          python -m build -o dist_check
           python -m venv .wheelenv
           .wheelenv/bin/pip install -q numpy scipy dist_check/*.whl
           .wheelenv/bin/python tools/ci_wheel_check.py --dump ops_wheel.json
