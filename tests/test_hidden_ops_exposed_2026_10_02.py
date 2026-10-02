@@ -41,6 +41,8 @@ def _ncc_naive(v, t, z, y, x):
     return float(a @ b / np.sqrt((a @ a) * (b @ b)))
 
 
+@pytest.mark.skipif(importlib.util.find_spec("torch") is None,
+                    reason="ncc_map_3d は torch の optional backend を使う(CI の full suite には torch が無い)")
 def test_ncc_map_3d_peaks_at_the_cut_out_and_matches_a_naive_loop():
     rng = np.random.default_rng(0)
     v = rng.random((20, 22, 24))

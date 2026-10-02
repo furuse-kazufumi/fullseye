@@ -20,6 +20,7 @@
 """
 from __future__ import annotations
 
+import importlib.util
 import math
 import sys
 import time
@@ -37,12 +38,17 @@ def run() -> dict:
     out = {}
 
     rng = np.random.default_rng(0)
-    v = rng.random((20, 22, 24))
-    m = np.asarray(fs.ncc_map_3d([v], v[5:10, 6:11, 7:12].copy())[0])
-    peak = tuple(int(i) for i in np.unravel_index(int(np.argmax(m)), m.shape))
-    print("1) ncc_map_3d: 峰 %s(テンプレートの中心 (7, 8, 9))、値 %.6f" % (peak, m[peak]))
-    assert peak == (7, 8, 9) and abs(m[peak] - 1.0) < 1e-6
-    out["ncc_peak"] = peak
+    if importlib.util.find_spec("torch") is not None:
+        v = rng.random((20, 22, 24))
+        m = np.asarray(fs.ncc_map_3d([v], v[5:10, 6:11, 7:12].copy())[0])
+        peak = tuple(int(i) for i in np.unravel_index(int(np.argmax(m)), m.shape))
+        print("1) ncc_map_3d: 峰 %s(テンプレートの中心 (7, 8, 9))、値 %.6f" % (peak, m[peak]))
+        assert peak == (7, 8, 9) and abs(m[peak] - 1.0) < 1e-6
+        out["ncc_peak"] = peak
+    else:
+        # ncc_map_3d は torch の optional backend を使う(pip install "fullseye[gpu]")。無ければ飛ばす。
+        print("1) ncc_map_3d: torch が無いので飛ばした(pip install \"fullseye[gpu]\" で走る)")
+        rng.random((20, 22, 24))                     # 以降の乱数列を torch の有無で変えない
 
     x = np.indices((32, 32))[1].astype(float)
     img = 1 / (1 + np.exp(-(x - 15.5) / 0.8))
