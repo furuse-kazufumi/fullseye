@@ -54,37 +54,36 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #: 違うので名前照合では届かないが、op 経由では毎回走っている)、例の登録簿。
 #: 数字は不可視な関数の本数で、増減しても意図的なら書き換えてよい。
 _INTERNAL = {
-    "accel_bridge": 9, "accel_match": 6, "accel_vol": 3, "accuracy_bench": 4,
+    "accel_bridge": 9, "accel_match": 6, "accel_vol": 3,
     "algo_codegen": 4, "algo_difftest": 8, "backends": 4, "backends_auto": 2,
     "backends_color": 3, "backends_cv2b": 1, "backends_dl": 3, "backends_extra": 1,
     "backends_halcon_ext": 1, "backends_kornia": 1, "backends_macro": 1,
     "backends_pil": 1, "backends_r3": 1, "backends_scipy": 1, "backends_ski2": 1,
     "backends_typed": 1, "baseline": 4, "bench": 1, "catalog": 2, "codegen": 2,
-    "difftest": 1, "dispositions": 3, "evis_fullseye_bridge": 4, "evolve": 2,
-    "examples2d": 11, "examples3d": 11, "fast": 31, "final_genuine": 20,
-    "final_genuine2": 9, "fscript": 29, "fsruntime": 8, "g1_policy_bridge": 5,
+    "difftest": 1, "dispositions": 3, "evolve": 2,
+    "examples2d": 11, "examples3d": 11, "fast": 31,
+    "fscript": 29, "fsruntime": 8,
     "gi_render": 2, "graph": 3, "graph_seed": 2, "halcon_coverage": 9,
     "halcon_scrape": 9, "honest_summary": 1, "imgevolve": 14, "lib_coverage": 3,
     "param_specs": 10, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
-    "report": 1, "robust": 3, "samples": 2, "shapematch_gpu": 3, "sim_source": 9,
+    "report": 1, "robust": 3, "samples": 2, "shapematch_gpu": 3,
     "studio": 65, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
     #   `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には
-    #   `fullseye.op.<名前>` 経由で届く。ここに残る 1〜6 本は各モジュールのデモ入口
-    #   (`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。
+    #   `fullseye.vision.gsplat.<名前>` 経由で届く(2026-10-02 訂正: `fullseye.op.<名前>` は存在しない。
+    #   unified registry を公開経路として数えたら 17 モジュールが島でなくなり行を消した)。
+    #   ここに残る 1〜6 本は各モジュールのデモ入口(`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。
     #   —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という
     #   二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
-    "bin_pick": 1, "event_camera": 1, "focus_stack": 1, "fullseye_3dgs": 3,
-    "gaits": 2, "gsplat_sugar": 3, "lidar_sim": 1, "pick_render": 1,
-    "polar_cam": 1, "sensor_fusion": 1, "stereo_sim": 1, "walk_physics": 6,
-    "world_render": 1,
+    "fullseye_3dgs": 3, "gaits": 2,
     # ★2026-10-02: py-modules の数え漏れ(68 → 408 本)と facade 経路の数え忘れを直して初めて見えた 9 本。
     #   内部の道具(CLI・ヘルプ書庫・n-ary の組立て・Studio の索引・標本データの取得・大画像の実行補助)、
     #   api が別名で包むもの(mesh_decimate → mesh_decimate_preserving)、fs.<module>.<fn> でだけ届くもの
-    #   (pipeline3d の合成 op 6 本、watershed3d の 3 本)。後の 2 つは**台帳に載せる予定**(セグメンテーション拡充の陣)。
+    #   (pipeline3d の合成 op 6 本)。pipeline3d は**台帳に載せる予定**。
+    #   (watershed3d の 3 本は 2026-10-02 に台帳 opssegmentation の watershed3d へ載せて行を消した。)
     "gsplat_cli": 2, "helpstore": 4, "imgops_nary": 4, "mesh_decimate": 1, "opsearch": 2,
-    "pipeline3d": 6, "sample_data": 7, "scale": 6, "watershed3d": 3,
+    "pipeline3d": 6, "sample_data": 7, "scale": 6,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
@@ -139,6 +138,16 @@ def _public_names():
     with io.open(os.path.join(ROOT, "fullseye", "data", "halcon_facade_map.json"), encoding="utf-8") as f:
         fmap = json.load(f)
     names |= {v.rpartition(".")[2] for k, v in fmap.items() if not k.startswith("_") and isinstance(v, str)}
+    # ★2026-10-02: 5 つ目の公開経路 = unified registry(``fs.vision.<名前空間>.<op>``)。3DGS などの op は
+    #   文字列 "module.func" から ``_lazy_call`` で登録され、facade map にも台帳にも名前が出ない
+    #   (sugar_mesh・tsdf_mesh・route_planning 等)。"module.func" 形の ``module`` 欄だけを数える
+    #   (``fs.apply('x')`` のような呼び出し式は関数名ではない)。
+    reg = fs.vision._ensure()
+    uops = reg._ops.values() if isinstance(reg._ops, dict) else reg._ops
+    unified = {u.module.rpartition(".")[2] for u in uops
+               if isinstance(u.module, str) and re.fullmatch(r"[A-Za-z_][\w.]*", u.module)}
+    assert len(unified) > 100, "unified registry を数え損ねている: %d" % len(unified)
+    names |= unified
     return names
 
 
@@ -199,7 +208,7 @@ def test_pending_exposure_shrinks_when_fixed():
 #: 2026-09-14: 1231 -> 1235。opsspc 台帳の内部 API(_build/list_ops/categories/get/call/
 #: info/missing の非公開分)と spc.py の入力バリデータ(_as_float_array/_as_1d)。op 自身
 #: (spc_xbar_r/spc_cusum/spc_capability/spc_hotelling_t2)は typed_catalog と api から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 901   # 2026-10-02: facade 経路を数えて 1235 → 901(ratchet)
+_HIDDEN_FUNCTIONS_TODAY = 856   # 2026-10-02: facade 経路を数えて 1235 → 901、unified registry を数えて 901 → 861、train_class_mlp/svm を facade に載せて 859、watershed3d を台帳に載せて 856(ratchet)
 
 
 def _hidden_total():
@@ -232,6 +241,21 @@ def test_hidden_function_total_does_not_grow():
         "公開経路から呼べない関数が %d -> %d に増えた。新しく足した関数は "
         "facade / 型つき台帳 / 2-D op のどれかに載せること。"
         % (_HIDDEN_FUNCTIONS_TODAY, now)
+    )
+
+
+def test_internal_rows_are_still_islands():
+    """_INTERNAL の行は「1 本も届かない島」であり続けること(届くようになったら行を消す)。
+
+    2026-10-02: unified registry を公開経路に数えたら 17 行が島でなくなったが、下の検査は
+    skip するだけで誰も掃除を要求していなかった(skip の文言は存在しない検査を指していた)。
+    """
+    requires_full_registry()
+    now = _invisible_counts()
+    stale = sorted(n for n in _INTERNAL if n not in now)
+    assert not stale, (
+        "公開経路から届くようになったのに _INTERNAL に残っている: " + ", ".join(stale)
+        + "  —— この表から行を消すこと。"
     )
 
 

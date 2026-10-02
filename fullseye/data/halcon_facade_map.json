@@ -596,6 +596,8 @@
   "stationary_camera_self_calibration": "final_genuine2.stationary_camera_self_calibration",
   "classify_image_class_mlp": "final_genuine2.classify_image_class_mlp",
   "classify_image_class_svm": "final_genuine2.classify_image_class_svm",
+  "train_class_mlp": "final_genuine2.train_class_mlp",
+  "train_class_svm": "final_genuine2.train_class_svm",
   "points_sojka": "final_genuine2.points_sojka",
   "area_object_model_3d": "final_genuine2.area_object_model_3d",
   "create_planar_uncalib_deformable_model_xld": "shapematch.create_planar_uncalib_deformable_model_xld",

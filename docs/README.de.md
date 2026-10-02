@@ -68,11 +68,11 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**2,593 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **63 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**2,596 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **63 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 934/934, typisiertes Ledger 1638/1650, Fassade `fullseye.<name>` 612/1268 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 934/934, typisiertes Ledger 1641/1653, Fassade `fullseye.<name>` 612/1268 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 2598 Notizen verweisen **2460** auf mindestens ein lauffähiges Beispiel (138 ohne), **2472** haben einen Nutzungsabschnitt ab 120 Zeichen (126 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 2598.
+**Gemessener Inhalt**: von 2601 Notizen verweisen **2463** auf mindestens ein lauffähiges Beispiel (138 ohne), **2475** haben einen Nutzungsabschnitt ab 120 Zeichen (126 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 2601.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
@@ -81,8 +81,8 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `drive` | 288 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 147 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `math` | 55 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
+| `segmentation` | 54 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
-| `segmentation` | 51 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
 | `gfx2d` | 44 | [INDEX](ops/gfx2d/INDEX.md) |
 | `oned` | 42 | [INDEX](ops/oned/INDEX.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
@@ -222,7 +222,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Dokumentkarte — alle 213
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 2,593 Operator-Notizen und 63 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 2,596 Operator-Notizen und 63 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 

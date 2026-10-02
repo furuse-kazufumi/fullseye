@@ -105,6 +105,26 @@ def stationary_camera_self_calibration(homographies):
 
 
 # ── MLP / SVM 分類(小規模 genuine 学習)──────────────────────────────────────── #
+def _standardise_fit(X):
+    """特徴ごとの平均と標準偏差(定数の列は 1 にして割り算を守る)。
+
+    2026-10-02: 学習も分類も生の特徴をそのまま使っていたため、特徴の大きさが ~4 を超えると
+    MLP の tanh が飽和して 3 クラスで正答率 0.69、SVM は 0.04 や 400 の尺度で 0.33〜0.75 に落ちた
+    (HALCON の train_class_mlp にも前処理 'normalization' がある)。モデルに mu/sd を持たせ、
+    分類側でも同じ変換をかける。mu/sd を持たない古いモデルはそのまま通す。
+    """
+    mu = X.mean(0)
+    sd = X.std(0)
+    sd = np.where(sd > 0, sd, 1.0)
+    return mu, sd
+
+
+def _standardise_apply(X, model):
+    if "mu" in model:
+        return (X - model["mu"]) / model["sd"]
+    return X
+
+
 def _train_mlp(X, y, hidden=8, epochs=300, lr=0.5, seed=0):
     rng = np.random.default_rng(seed)
     classes = np.unique(y); K = len(classes)
@@ -130,21 +150,35 @@ def classify_image_class_mlp(feature_images, model):
     if isinstance(F, (list, tuple)):
         F = np.stack([_img(f) for f in F], axis=-1)
     F = _img(F); H, W, D = F.shape
-    X = F.reshape(-1, D)
+    X = _standardise_apply(F.reshape(-1, D), model)
     h = np.tanh(X @ model["W1"] + model["b1"])
     o = h @ model["W2"] + model["b2"]
     return model["classes"][o.argmax(1)].reshape(H, W)
 
 
 def train_class_mlp(features, labels, hidden=8, epochs=300):
-    """MLP 分類器を学習(train_class_mlp)。"""
-    return _train_mlp(np.asarray(features, float).reshape(len(features), -1),
-                      np.asarray(labels).ravel(), hidden, epochs)
+    """MLP 分類器を学習(train_class_mlp)。
+
+    ``features`` は (N, D)、``labels`` は (N,)。特徴は学習データの平均・標準偏差で標準化し、
+    その値をモデル(``mu`` / ``sd``)に残す —— ``classify_image_class_mlp`` が同じ変換をかける。
+    戻り値は ``classify_image_class_mlp`` にそのまま渡せる dict。
+    """
+    X = np.asarray(features, float).reshape(len(features), -1)
+    mu, sd = _standardise_fit(X)
+    model = _train_mlp((X - mu) / sd, np.asarray(labels).ravel(), hidden, epochs)
+    model["mu"], model["sd"] = mu, sd
+    return model
 
 
 def train_class_svm(features, labels, C=1.0, epochs=300, lr=0.01):
-    """線形 SVM(hinge 損失, one-vs-rest)を学習(train_class_svm)。"""
+    """線形 SVM(hinge 損失, one-vs-rest)を学習(train_class_svm)。
+
+    特徴は標準化してから学習し、``mu`` / ``sd`` をモデルに残す(``classify_image_class_svm`` が使う)。
+    one-vs-rest の線形分離なので、一直線に並んだ 3 クラスの真ん中のような配置は苦手(既知の限界)。
+    """
     X = np.asarray(features, float).reshape(len(features), -1)
+    mu, sd = _standardise_fit(X)
+    X = (X - mu) / sd
     y = np.asarray(labels).ravel(); classes = np.unique(y)
     D = X.shape[1]; Ws = []
     for c in classes:
@@ -157,7 +191,7 @@ def train_class_svm(features, labels, C=1.0, epochs=300, lr=0.01):
             db = -C * t[mask].sum()
             w -= lr * dw; b -= lr * db
         Ws.append((w, b))
-    return {"weights": Ws, "classes": classes}
+    return {"weights": Ws, "classes": classes, "mu": mu, "sd": sd}
 
 
 def classify_image_class_svm(feature_images, model):
@@ -166,7 +200,7 @@ def classify_image_class_svm(feature_images, model):
     if isinstance(F, (list, tuple)):
         F = np.stack([_img(f) for f in F], axis=-1)
     F = _img(F); H, W, D = F.shape
-    X = F.reshape(-1, D)
+    X = _standardise_apply(F.reshape(-1, D), model)
     scores = np.column_stack([X @ w + b for w, b in model["weights"]])
     return model["classes"][scores.argmax(1)].reshape(H, W)
 

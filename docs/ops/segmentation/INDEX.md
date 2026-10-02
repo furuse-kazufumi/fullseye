@@ -1,4 +1,4 @@
-# SEGMENTATION operator help — 51 ops in 9 categories
+# SEGMENTATION operator help — 54 ops in 10 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/segmentation/<category>/<op>.md` を走査。
 
@@ -45,6 +45,10 @@
 ### watershed (1)
 
 [watersheds_marker](watershed/watersheds_marker.md)
+
+### watershed3d (3)
+
+[distance_peaks](watershed3d/distance_peaks.md) · [separate_touching](watershed3d/separate_touching.md) · [watershed_vol](watershed3d/watershed_vol.md)
 
 ### world (8)
 

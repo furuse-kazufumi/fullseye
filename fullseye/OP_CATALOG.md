@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(291 例)
+### 2-D 画像/信号/幾何(292 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -149,6 +149,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **segmentation**
 - **グラフ・階層・閾値のセグメンテーション —— 最大フロー = 最小カット、ultrametric、つまみを回すと粗から細へ** — グラフ・階層・閾値のセグメンテーション 16 op(graph cut・α-expansion・SRM・成分木の属性開放・準平坦領域・階層分水嶺と UCM・SNIC・quick shift・三角法・isodata・Kittler・Kapur)を定理(最大フロー = 最小カット、E ≤ 2c E*、ultrametric 等)と第 2 実装の門で確かめ、真値つき世界で掃引して採点する。 `py -3.11 examples/poc_graph_hierarchy_segmentation.py`
 - **動的輪郭とレベルセット —— 輪郭が縮み、凹みに入り、エッジで止まるまでを閉形式で確かめる** — 動的輪郭とレベルセット 10 op(snake・GVF・Chan–Vese・形態学的 CV・測地的 AC・再初期化・DRLSE・曲率流)を、閉形式と第 2 実装の門で確かめ、真値つきの合成世界で segeval により採点する。U 字の凹部に古典の snake は入れず GVF は入る、照明の勾配では大域の Chan–Vese が負け局所の手法が勝つ。 `py -3.11 examples/poc_active_contours.py`
+- **接した 2 つの球を 3-D 分水嶺で割る —— 連結成分では 1 個、距離変換シードでは体積の等しい 2 個** — 台帳 opssegmentation の watershed3d(distance_peaks / watershed_vol / separate_touching)を fullseye.ledger から呼び、鏡映対称に置いた接する 2 球が連結成分では融合して 1 個、分水嶺では 2 個に割れて体積が厳密に等しいこと、前景をちょうど覆うこと、半径の違う球では大きい方のラベルが大きいことを確かめる。 `py -3.11 examples/watershed3d_tour.py`
 - **HALCON の Segmentation 章の 9 op を一巡する —— 差の検査・特徴空間の分類・領域成長・マーカー付き分水嶺** — segmentation.py に実装されていながら台帳に載っていなかった 9 op(check_difference / class_2dim_sup・unsup / learn_ndim_norm・class_ndim_norm / classify_image_class_lut / expand_gray / regiongrowing_n / watersheds_marker)を fullseye.ledger から順に呼び、合成画像で各 op の答えを数えて確かめる(マーカー付き分水嶺は尾根で割れる)。 `py -3.11 examples/halcon_segmentation_tour.py`
 - **12 通りの自動しきい値に同じ絵を見せる —— 割れてよい数と、割れては困る向き** — 値が 2 種類しかない板(明部ちょうど 400 px)を大域 10 種・局所 4 種の自動しきい値に見せ、大域が全部 400 px で一致することを assert。局所は数が外れてよいが向きは同じであることを確かめる。向きが逆だと面積が 400 から3,696(9.2 倍)になり例外も警告も出ないところまで見せる。実際に SimpleITK 由来の 3 op が補集合を返していたのをこの形で見つけた。 `py -3.11 examples/threshold_family_agreement.py`
 - **細胞の計数と分割(計数が合っていて分割が全部外れる点がある)** — 既知の位置・大きさ・重なりで細胞を配置して真値を握る。★**偏り +0.3 個(0.4 %)なのに分割誤り 13.3 件**という点が実在する(過分割 +1 と過統合 -1 が相殺する)。★**過分割は重なりに反応しない** —— 密度を 5 段振っても過分割の列はほぼ一定で、過分割は種の撒き方が、過統合は重なりが決める別原因。★「最適な h は密度で動く」は基準を書かないと真偽が決まらない(偏り基準では1.1→0.0 と動き、1対1 基準では 0.4 で動かない)。縁の規約だけで計数が 13 % 動く。 `py -3.11 examples/poc_cell_counting.py`

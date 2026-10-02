@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">separate_touching — SEGMENTATION <code style="color:#22d3bf">watershed3d</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import watershed3d; watershed3d.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;separate_touching&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>genuinely-new (B): 接触物体を 1 呼び出しで自動分離する常用ラッパ。</p>
+<p>「複数物体が接触して 1 連結成分に融合している」典型ケースを、距離変換→極大 NMS シード化→</p>
+<p>分水嶺という定型パイプラインを畳んで 1 コールで割る(公開 API では 3 op を手で繋ぐ必要が</p>
+<p>あるところを常用ケース向けに 1 関数化)。中身は `<code style="color:#22d3bf">watershed_vol(..., markers=None)</code>`。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>binary : array_like</p>
+<p>bool または 0/1 の 3D 前景ボリューム。</p>
+<p>min_distance : float</p>
+<p>分離シードの最小間隔(voxel)。想定物体半径程度が目安。</p>
+<p>method : {&quot;auto&quot;, &quot;skimage&quot;, &quot;scipy&quot;}</p>
+<p>バックエンド選択。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>labels : ndarray(int32)</p>
+<p>binary と同形状。背景 0、分離された各物体に 1..k のラベル。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:watershed3d_tour">watershed3d_tour</a> — <code style="color:#22d3bf">py -3.11 examples/watershed3d_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">labels</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">watershed3d</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:distance_peaks">distance_peaks</a> · <a style="color:#22d3bf" href="opsegmentation:watershed_vol">watershed_vol</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: watershed3d.py — SEGMENTATION Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

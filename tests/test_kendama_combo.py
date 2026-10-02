@@ -11,14 +11,22 @@
 """
 from __future__ import annotations
 
+import importlib.util
 import os
 import sys
 
 import numpy as np
 import pytest
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "examples"))
-import poc_kendama as CD  # noqa: E402
+# ★2026-10-02: 以前は examples/ を sys.path の先頭に**入れっぱなし**にしていた。同じ xdist ワーカーで後から
+#   ``import event_camera`` した test_sensor_sims が、ルートの event_camera.py でなく同名の
+#   examples/event_camera.py(デモ)を拾い ``run_event_demo`` が無いと落ちた(ワーカーへの振り分け次第で出る)。
+#   PoC はファイルから直接読み、sys.path を汚さない。
+_POC = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "examples", "poc_kendama.py")
+_spec = importlib.util.spec_from_file_location("poc_kendama", _POC)
+CD = importlib.util.module_from_spec(_spec)
+sys.modules.setdefault("poc_kendama", CD)
+_spec.loader.exec_module(CD)
 import kendama as KD  # noqa: E402
 import kendamaworld as KW  # noqa: E402
 

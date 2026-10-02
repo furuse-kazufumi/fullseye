@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">watershed_vol — SEGMENTATION <code style="color:#22d3bf">watershed3d</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import watershed3d; watershed3d.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;watershed_vol&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>距離変換シードの分水嶺で 3D 前景を物体ごとのラベルに分割する(公開 op の薄い合成)。</p>
+<p>連結成分では 1 個に融合する<b>接触/僅かな重なり</b>を割るのが目的。EDT は</p>
+<p>:func:<code style="color:#22d3bf">volops.vol_distance_transform</code>、skimage 分水嶺は :func:<code style="color:#22d3bf">volops.vol_watershed</code> に</p>
+<p>委譲し、本モジュールは (A) skimage 不在時の純 scipy フォールバックと、シード自動生成の</p>
+<p>グルーだけを足す。`<code style="color:#22d3bf">markers</code><code style="color:#22d3bf"> を省略すると距離変換の局所極大(</code><code style="color:#22d3bf">min_distance</code>` NMS)を</p>
+<p>自動シードにする。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>binary : array_like</p>
+<p>bool または 0/1 の 3D 前景ボリューム。</p>
+<p>markers : ndarray or None</p>
+<p>シードを外部指定する場合の int ラベル配列(binary と同形状、0=無し, 1..n=シード)。</p>
+<p>None なら距離変換の極大から自動生成する。</p>
+<p>min_distance : float</p>
+<p>`<code style="color:#22d3bf">markers=None</code>` のときのシード最小間隔(voxel)。</p>
+<p>method : {&quot;auto&quot;, &quot;skimage&quot;, &quot;scipy&quot;}</p>
+<p>バックエンド選択。&quot;skimage&quot; 指定で不在なら fail-closed(ImportError)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>labels : ndarray(int32)</p>
+<p>binary と同形状。背景 0、各物体に 1..k のラベル(前景を過不足なく被覆)。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>形状不正・退化入力・不正 method のとき(fail-closed)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:watershed3d_tour">watershed3d_tour</a> — <code style="color:#22d3bf">py -3.11 examples/watershed3d_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">labels</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">watershed3d</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:distance_peaks">distance_peaks</a> · <a style="color:#22d3bf" href="opsegmentation:separate_touching">separate_touching</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: watershed3d.py — SEGMENTATION operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

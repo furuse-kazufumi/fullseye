@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">distance_peaks — SEGMENTATION <code style="color:#22d3bf">watershed3d</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_peaks(binary, min_distance: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import watershed3d; watershed3d.distance_peaks(binary, min_distance: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;distance_peaks&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>前景距離変換の局所極大を `<code style="color:#22d3bf">min_distance</code>` NMS で間引いた int マーカ配列を返す。</p>
+<p>:func:<code style="color:#22d3bf">volops.vol_distance_transform</code> + :func:<code style="color:#22d3bf">volops.vol_local_maxima</code> の薄い合成に、</p>
+<p>「極大座標→ラベル配列(1 物体 1 シード)」の後処理を足したもの(`<code style="color:#22d3bf">watershed_vol</code>` が</p>
+<p>内部で使うシード生成を単体で公開=可視化・検証用)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>binary : array_like</p>
+<p>bool または 0/1 の 3D 前景ボリューム。</p>
+<p>min_distance : float</p>
+<p>採用シード間の最小ユークリッド距離(voxel)。物体間隔より小さく、物体内ノイズ極大の</p>
+<p>間隔より大きく取る。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>markers : ndarray(int32)</p>
+<p>binary と同形状。0=シード無し、1..k=各シードラベル。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:watershed3d_tour">watershed3d_tour</a> — <code style="color:#22d3bf">py -3.11 examples/watershed3d_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">labels</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">watershed3d</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:watershed_vol">watershed_vol</a> · <a style="color:#22d3bf" href="opsegmentation:separate_touching">separate_touching</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: watershed3d.py — SEGMENTATION operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

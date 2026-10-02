@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2587,
- "n_notes": 2593,
+ "n_ops": 2590,
+ "n_notes": 2596,
  "notes": {
   "vol_dilate": [
    {
@@ -24859,6 +24859,36 @@
     "in": "image2d",
     "out": "table",
     "path": "docs/ops/segmentation/threshold/threshold_triangle.md"
+   }
+  ],
+  "distance_peaks": [
+   {
+    "op": "distance_peaks",
+    "dim": "segmentation",
+    "category": "watershed3d",
+    "in": "voxel",
+    "out": "labels",
+    "path": "docs/ops/segmentation/watershed3d/distance_peaks.md"
+   }
+  ],
+  "separate_touching": [
+   {
+    "op": "separate_touching",
+    "dim": "segmentation",
+    "category": "watershed3d",
+    "in": "voxel",
+    "out": "labels",
+    "path": "docs/ops/segmentation/watershed3d/separate_touching.md"
+   }
+  ],
+  "watershed_vol": [
+   {
+    "op": "watershed_vol",
+    "dim": "segmentation",
+    "category": "watershed3d",
+    "in": "voxel",
+    "out": "labels",
+    "path": "docs/ops/segmentation/watershed3d/watershed_vol.md"
    }
   ],
   "watersheds_marker": [

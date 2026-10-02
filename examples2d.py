@@ -344,6 +344,11 @@ EXAMPLES = [
                 "ことを長さを伸ばして assert し、周囲長の 2 つの推定量が**逆の形で外す**"
                 "(perimeter は円で +5%・crofton は正方形で -5%、どちらも解像度で消えない)"
                 "ことを示す。"},
+    {"id": "watershed3d_tour", "task": "segmentation", "data": "synthetic",
+     "name": "接した 2 つの球を 3-D 分水嶺で割る —— 連結成分では 1 個、距離変換シードでは体積の等しい 2 個",
+     "summary": "台帳 opssegmentation の watershed3d(distance_peaks / watershed_vol / separate_touching)を fullseye.ledger から呼び、"
+                "鏡映対称に置いた接する 2 球が連結成分では融合して 1 個、分水嶺では 2 個に割れて体積が厳密に等しいこと、"
+                "前景をちょうど覆うこと、半径の違う球では大きい方のラベルが大きいことを確かめる。"},
     {"id": "halcon_segmentation_tour", "task": "segmentation", "data": "synthetic",
      "name": "HALCON の Segmentation 章の 9 op を一巡する —— 差の検査・特徴空間の分類・領域成長・マーカー付き分水嶺",
      "summary": "segmentation.py に実装されていながら台帳に載っていなかった 9 op(check_difference / class_2dim_sup・unsup / "

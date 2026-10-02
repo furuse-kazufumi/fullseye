@@ -128,7 +128,7 @@ inside = fs.ledger.class_ndim_norm([im, im ** 2], model, thresh=2.0)
   (HALCON は byte 画像 + LUT ハンドル)。2-D の LUT を渡すと `(H, W, k)` が返り、
   台帳の `labels2d` にならない。
 
-## 同じ台帳の他のカテゴリ(採点・真値つき世界・動的輪郭・グラフと階層・閾値)
+## 同じ台帳の他のカテゴリ(採点・真値つき世界・動的輪郭・グラフと階層・閾値・3-D 分水嶺)
 
 この台帳(`opssegmentation`)には HALCON 章の 9 op の後に、分けた結果を**採点する**側・**真値を作る**側・**輪郭で分ける**側・
 **グラフと階層・閾値の定理で分ける**側が同居している。詳しくは
@@ -143,6 +143,20 @@ inside = fs.ledger.class_ndim_norm([im, im ** 2], model, thresh=2.0)
 | contour(動的輪郭・レベルセット) | `snake_evolve` / `gvf_field` / `chan_vese_energy` / `chan_vese_evolve` / `morph_chan_vese` / `morph_geodesic_ac` / `edge_stop_g` / `level_set_reinit` / `drle_evolve` / `curvature_flow` |
 | graph(グラフ・階層・超画素) | `graph_cut_binary` / `alpha_expansion` / `statistical_region_merging` / `max_tree` / `area_opening_attr` / `quasi_flat_zones` / `alpha_tree` / `hierarchical_watershed` / `ultrametric_contour_map` / `snic_superpixels` / `quickshift` / `superpixel_quality` |
 | threshold(閾値の 4 定理) | `threshold_triangle` / `threshold_isodata` / `threshold_kittler` / `threshold_kapur` |
+| watershed3d(接触した 3-D 物体を割る) | `distance_peaks` / `watershed_vol` / `separate_touching` |
+
+`watershed3d` は 2-D の `watersheds_marker` の 3-D 版ではなく、**距離変換の極大をシードにして接した物体を割る**
+定型(`volops` の距離変換・極大・分水嶺の薄い合成 + skimage が無いときの純 scipy の代替)。入口は `voxel`
+(2 値の (D, H, W))、出口は `labels`(3-D の int ラベル)。門は鏡映対称な 2 球で体積が厳密に等しいこと、
+scipy と skimage の 2 実装が同じ分割になること(`tests/test_watershed3d_ledger.py`)。
+
+```python
+import fullseye as fs
+lab = fs.ledger.separate_touching(volume > 0, min_distance=5.0)   # 接した粒を 1 個ずつのラベルに
+seeds = fs.ledger.distance_peaks(volume > 0, min_distance=5.0)     # 割る前にシードの数を見る
+```
+
+走る例: `py -3.11 examples/watershed3d_tour.py`(接した 2 球が連結成分では 1 個、分水嶺では体積の等しい 2 個)。
 
 HALCON 側の op で分けた結果は、そのまま `seg_score_card` に真値と一緒に渡せる(背景 0 の約束だけ揃える)。
 

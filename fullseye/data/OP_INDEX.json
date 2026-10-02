@@ -1,8 +1,8 @@
 {
- "n_ops": 2587,
+ "n_ops": 2590,
  "tiers": {
   "color": 12,
-  "ledger": 1636,
+  "ledger": 1639,
   "nary": 17,
   "registry": 922
  },
@@ -4708,6 +4708,19 @@
    "dim": "3d",
    "in_sorts": [
     "primitive"
+   ]
+  },
+  {
+   "name": "distance_peaks",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "labels",
+   "category": "watershed3d",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "voxel"
    ]
   },
   {
@@ -16559,6 +16572,19 @@
    "in_sorts": []
   },
   {
+   "name": "separate_touching",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "labels",
+   "category": "watershed3d",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "voxel"
+   ]
+  },
+  {
    "name": "sfr_from_edge",
    "halcon": "",
    "in_sort": "table",
@@ -21088,6 +21114,19 @@
    "dim": "imgforensics",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "watershed_vol",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "labels",
+   "category": "watershed3d",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "voxel"
    ]
   },
   {

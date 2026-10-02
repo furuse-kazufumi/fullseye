@@ -68,11 +68,11 @@
 
 ## 연산자 찾기
 
-**2,593개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **63개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**2,596개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **63개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 934/934, 타입 台帳 1638/1650, 한 줄 파사드 `fullseye.<이름>` 612/1268 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 934/934, 타입 台帳 1641/1653, 한 줄 파사드 `fullseye.<이름>` 612/1268 — **파사드는 아직 절반**.
 
-**내용 실측**: 2598건 중 실행 가능한 예제가 붙은 것은 **2460**건(138건은 없음), 사용법이 120자 이상인 것은 **2472**건(126건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2598건 모두.
+**내용 실측**: 2601건 중 실행 가능한 예제가 붙은 것은 **2463**건(138건은 없음), 사용법이 120자 이상인 것은 **2475**건(126건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2601건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -81,8 +81,8 @@
 | `drive` | 288 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 147 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `math` | 55 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
+| `segmentation` | 54 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
-| `segmentation` | 51 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
 | `gfx2d` | 44 | [INDEX](ops/gfx2d/INDEX.md) |
 | `oned` | 42 | [INDEX](ops/oned/INDEX.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
@@ -222,7 +222,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 문서 지도 — 전 213건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 2,593건과 패밀리 가이드 63건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 2,596건과 패밀리 가이드 63건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 

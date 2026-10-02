@@ -63,15 +63,21 @@ facade(統一 registry)は HALCON 名で引く層で、docs/ops のノート・�
   SRM・成分木と属性開放・準平坦領域と α-tree・dynamics の階層分水嶺と UCM・超画素 SNIC / quick shift と
   その採点、閾値 4 定理(三角法・isodata・Kittler・Kapur)。新語なし(image2d / labels2d / table)。ガイド
   ``docs/ops/segmentation/guides/graph_hierarchy_and_thresholds.md``。
+* ``watershed3d``(2026-10-02、``watershed3d``): 接触した 3-D 物体を距離変換シードの分水嶺で割る 3 本
+  (``distance_peaks`` / ``watershed_vol`` / ``separate_touching``)。それまで ``fs.watershed3d.<fn>`` でしか
+  届かず台帳に無かった(公開経路の門で ``_INTERNAL`` に理由つきで置いていたもの)。入口は ``voxel``
+  (D,H,W の 2 値体積)、出口は ``labels``(3-D の int ラベル、``ops3d`` の ``vol_watershed`` と同じ型)。
+  HALCON の ``watershed`` 章とは別カテゴリ(``watersheds_marker`` は 2-D の HALCON 9 本の 1 本)。
 """
 import segmentation
 import segeval
 import segworld
 import segcontour
 import seggraph
+import watershed3d
 
 _MOD = {"segmentation": segmentation, "segeval": segeval, "segworld": segworld,
-        "segcontour": segcontour, "seggraph": seggraph}
+        "segcontour": segcontour, "seggraph": seggraph, "watershed3d": watershed3d}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -160,6 +166,12 @@ _CATALOG = {
         ("threshold_isodata", "seggraph", ["image2d"], "table"),
         ("threshold_kittler", "seggraph", ["image2d"], "table"),
         ("threshold_kapur", "seggraph", ["image2d"], "table"),
+    ],
+    # 3-D で割る —— 接触した物体を距離変換シードの分水嶺で分ける(watershed3d、2026-10-02)
+    "watershed3d": [
+        ("distance_peaks", "watershed3d", ["voxel"], "labels"),
+        ("watershed_vol", "watershed3d", ["voxel"], "labels"),
+        ("separate_touching", "watershed3d", ["voxel"], "labels"),
     ],
 }
 

@@ -101,7 +101,7 @@ inside = fs.ledger.class_ndim_norm([im, im ** 2], model, thresh=2.0)</pre>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">classify_image_class_lut</code> は float 画像を <code style="color:#22d3bf">[0, 1]</code> とみなして <code style="color:#22d3bf">round(v·(L−1))</code> で引く</p>
 <p>(HALCON は byte 画像 + LUT ハンドル)。2-D の LUT を渡すと <code style="color:#22d3bf">(H, W, k)</code> が返り、</p>
 <p>台帳の <code style="color:#22d3bf">labels2d</code> にならない。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">同じ台帳の他のカテゴリ(採点・真値つき世界・動的輪郭・グラフと階層・閾値)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同じ台帳の他のカテゴリ(採点・真値つき世界・動的輪郭・グラフと階層・閾値・3-D 分水嶺)</h3>
 <p>この台帳(<code style="color:#22d3bf">opssegmentation</code>)には HALCON 章の 9 op の後に、分けた結果を<b>採点する</b>側・<b>真値を作る</b>側・<b>輪郭で分ける</b>側・</p>
 <p><b>グラフと階層・閾値の定理で分ける</b>側が同居している。詳しくは</p>
 <p><a style="color:#22d3bf" href="op:segmentation_scoring_and_worlds">分割の採点と真値つき合成世界</a>、</p>
@@ -114,6 +114,15 @@ inside = fs.ledger.class_ndim_norm([im, im ** 2], model, thresh=2.0)</pre>
 <p>| contour(動的輪郭・レベルセット) | <code style="color:#22d3bf">snake_evolve</code> / <code style="color:#22d3bf">gvf_field</code> / <code style="color:#22d3bf">chan_vese_energy</code> / <code style="color:#22d3bf">chan_vese_evolve</code> / <code style="color:#22d3bf">morph_chan_vese</code> / <code style="color:#22d3bf">morph_geodesic_ac</code> / <code style="color:#22d3bf">edge_stop_g</code> / <code style="color:#22d3bf">level_set_reinit</code> / <code style="color:#22d3bf">drle_evolve</code> / <code style="color:#22d3bf">curvature_flow</code> |</p>
 <p>| graph(グラフ・階層・超画素) | <code style="color:#22d3bf">graph_cut_binary</code> / <code style="color:#22d3bf">alpha_expansion</code> / <code style="color:#22d3bf">statistical_region_merging</code> / <code style="color:#22d3bf">max_tree</code> / <code style="color:#22d3bf">area_opening_attr</code> / <code style="color:#22d3bf">quasi_flat_zones</code> / <code style="color:#22d3bf">alpha_tree</code> / <code style="color:#22d3bf">hierarchical_watershed</code> / <code style="color:#22d3bf">ultrametric_contour_map</code> / <code style="color:#22d3bf">snic_superpixels</code> / <code style="color:#22d3bf">quickshift</code> / <code style="color:#22d3bf">superpixel_quality</code> |</p>
 <p>| threshold(閾値の 4 定理) | <code style="color:#22d3bf">threshold_triangle</code> / <code style="color:#22d3bf">threshold_isodata</code> / <code style="color:#22d3bf">threshold_kittler</code> / <code style="color:#22d3bf">threshold_kapur</code> |</p>
+<p>| watershed3d(接触した 3-D 物体を割る) | <code style="color:#22d3bf">distance_peaks</code> / <code style="color:#22d3bf">watershed_vol</code> / <code style="color:#22d3bf">separate_touching</code> |</p>
+<p><code style="color:#22d3bf">watershed3d</code> は 2-D の <code style="color:#22d3bf">watersheds_marker</code> の 3-D 版ではなく、<b>距離変換の極大をシードにして接した物体を割る</b></p>
+<p>定型(<code style="color:#22d3bf">volops</code> の距離変換・極大・分水嶺の薄い合成 + skimage が無いときの純 scipy の代替)。入口は <code style="color:#22d3bf">voxel</code></p>
+<p>(2 値の (D, H, W))、出口は <code style="color:#22d3bf">labels</code>(3-D の int ラベル)。門は鏡映対称な 2 球で体積が厳密に等しいこと、</p>
+<p>scipy と skimage の 2 実装が同じ分割になること(<code style="color:#22d3bf">tests/test_watershed3d_ledger.py</code>)。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
+lab = fs.ledger.separate_touching(volume &gt; 0, min_distance=5.0)   # 接した粒を 1 個ずつのラベルに
+seeds = fs.ledger.distance_peaks(volume &gt; 0, min_distance=5.0)     # 割る前にシードの数を見る</pre>
+<p>走る例: <code style="color:#22d3bf">py -3.11 examples/watershed3d_tour.py</code>(接した 2 球が連結成分では 1 個、分水嶺では体積の等しい 2 個)。</p>
 <p>HALCON 側の op で分けた結果は、そのまま <code style="color:#22d3bf">seg_score_card</code> に真値と一緒に渡せる(背景 0 の約束だけ揃える)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">blob_analysis</code>(<code style="color:#22d3bf">opsblob</code>): 分けたあとに<b>物体ごとに測って選ぶ</b>側。<code style="color:#22d3bf">watersheds_marker</code> /</p>
