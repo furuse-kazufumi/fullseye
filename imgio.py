@@ -210,9 +210,17 @@ def ensure_gray(x):
 
 
 def ensure_color(x):
+    """(H, W, 3) の float64 にそろえる(灰色は 3 チャネルへ複製、1 チャネルも同様、RGBA はアルファを捨てる)。
+
+    ★2026-10-02: 以前は 2-D だけを複製し、RGBA は 4 チャネルのまま返していた(呼び出し側は 3 色で上描きする)。
+    """
     a = np.asarray(x, np.float64)
     if a.ndim == 2:
         return np.repeat(a[:, :, None], 3, axis=2)
+    if a.ndim == 3 and a.shape[2] == 1:
+        return np.repeat(a, 3, axis=2)
+    if a.ndim == 3 and a.shape[2] == 4:
+        return a[:, :, :3].copy()
     return a
 
 

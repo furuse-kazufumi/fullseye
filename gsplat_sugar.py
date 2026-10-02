@@ -31,7 +31,10 @@ def _quats_to_R(q):
 
 def gaussians_to_mesh(g, *, opacity_thresh=0.25, poisson_depth=8, density_pct=6,
                       knn=30, sor_std=0.0, pca=True, boundary_frac=0.08, log=print):
-    """学習済みガウシアン dict -> Open3D TriangleMesh(法線つき点群 + Poisson)。
+    """学習済みガウシアン dict -> ``(mesh, pcd)``(Open3D の TriangleMesh と、法線つき点群 PointCloud)。
+
+    Poisson 再構成の結果と、その入力にした法線つき点群の**組**を返す(2026-10-02 訂正: 以前の docstring は
+    TriangleMesh 1 つを返すと書いていた)。
 
     法線: 薄軸(最小スケール軸)を「向きの参照」としてだけ使い、実際の法線は局所近傍
     PCA で再推定する。円盤ごとに独立してばらつく薄軸をそのまま Poisson に渡すと表面が

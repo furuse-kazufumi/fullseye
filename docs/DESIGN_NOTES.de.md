@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1174. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1176. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -72,8 +72,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `backend_safe.py`
 
 - **L159** _(ja)_ — ★2026-09-20(GenSpark 第 44 報 N158): 環状バッファは黙って古い方を捨てる。捨てた数を数えないと、 `fallbacks()` が 256 件しか返さない理由が利用者から見えない(counts と件数が合わない)。
-- **L431** _(ja)_ — ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、 レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の docstring に「NaN を返す理由」が書いてあることを確かめること。
-- **L502** — ★Ein feature-Op gibt einen numpy-**Skalar** zurück, kein ndarray, daher sah der Zweig oben ihn nie: eine NaN/Inf-Messung (z. B. ein 0/0 in sk_blur_effect auf einem degenerierten Frame) floss früher direkt aus api.apply heraus. Nicht-endliche Skalare werden ebenfalls auf den sort-Fallback geschrubbt, damit die deklarierte Garantie „endlich, sort-gültig“ auch für feature/contour-Skalare tatsächlich gilt.
+- **L435** _(ja)_ — ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、 レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の docstring に「NaN を返す理由」が書いてあることを確かめること。
+- **L506** — ★Ein feature-Op gibt einen numpy-**Skalar** zurück, kein ndarray, daher sah der Zweig oben ihn nie: eine NaN/Inf-Messung (z. B. ein 0/0 in sk_blur_effect auf einem degenerierten Frame) floss früher direkt aus api.apply heraus. Nicht-endliche Skalare werden ebenfalls auf den sort-Fallback geschrubbt, damit die deklarierte Garantie „endlich, sort-gültig“ auch für feature/contour-Skalare tatsächlich gilt.
 
 ## `backends.py`
 
@@ -1308,8 +1308,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L99** — ★**Zwei Kriterien** (2026-09-08, am selben Tag behoben). Zunaechst wurde nur nach 'CIE L* hat 0 Umkehrungen' ausgewaehlt, doch ``poc_colormap_readability`` mass, dass **``cividis`` trotz 0 Umkehrungen einen Farbdifferenz-Grat aufwirft**. Selbst bei monotoner Helligkeit erscheint bei ungleichmaessiger Farbdifferenz-Schrittweite eine **nicht vorhandene Grenze** in einem glatten Feld -- es gab sich nach einem einseitigen Kriterium als 'sicher' aus. Gemessen (512 Stufen, max / median der benachbarten Farbdifferenz sowie die Anzahl der lokalen Maxima, die das 1.6-fache des Medians ueberschreiten): ========== ========== ============== ========== Map / L*-Umkehrungen / dE max/median / Gratanzahl ========== ========== ============== ========== ``gray`` 0 1.33 0 ``viridis`` 0 1.38 0 ``plasma`` 0 1.38 0 ``magma`` 0 1.48 0 ``inferno`` 0 1.50 0 ``cividis`` 0 **2.23** **1** ``turbo`` 1 1.78 1 ========== ========== ============== ========== ``cividis`` wurde entfernt, **weil die approximierte LUT dieses repo grob ist**, nicht wegen eines Problems des veroeffentlichten cividis selbst (seine 6 Kontrollpunkte sind die wenigsten unter den sequenziellen Maps). Fuer alle, die mit Blick auf Farbsehschwaechen waehlen wollen, steht :data:`CVD_SAFE` bereit. ``tests/test_pseudocolour_family.py`` misst jedes Mal beide Kriterien.
 - **L124** — Maps, denen nachgesagt wird, dass ihre Reihenfolge auch bei Farbsehschwaeche (P/D-Typ) lesbar bleibt. ★Die approximierte LUT von ``cividis`` hat 6 Kontrollpunkte und eine grobe Farbdifferenz-Schrittweite und erfuellt das :data:`PERCEPTUAL_SAFE`-Kriterium nicht (gemessen dE max/median 2.23). Mit mehr Kontrollpunkten liesse es sich in beide aufnehmen -- da das haendische Abschreiben von Primaerquellenwerten eine Vorgeschichte von Tippfehlern hat, wird dies bis zur Bestaetigung der Quelle zurueckgestellt.
-- **L708** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N120): PFM は float 専用の形式なのに、既定の 8 bit 経路が 0..255 の 値を float32 として書き、読むと 0..1 に clip されて別画像になっていた(往復 max|Δ| 0.98)。 PFM の既定は float(無損失)。
-- **L897** _(ja)_ — ★2026-09-20(GenSpark 第 18 報 N78): 無い・ディレクトリ・読めない、が全部同じ文だった。
+- **L716** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N120): PFM は float 専用の形式なのに、既定の 8 bit 経路が 0..255 の 値を float32 として書き、読むと 0..1 に clip されて別画像になっていた(往復 max|Δ| 0.98)。 PFM の既定は float(無損失)。
+- **L905** _(ja)_ — ★2026-09-20(GenSpark 第 18 報 N78): 無い・ディレクトリ・読めない、が全部同じ文だった。
 
 ## `imgmetrics.py`
 
@@ -1517,6 +1517,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L896** _(ja)_ — ★向きの符号は回転の規約で変わる。定理が言うのは「周期 104 で**同じ**斜めの 変位を繰り返す」ことなので、そちらを門にする(大きさは縦横とも 2)。
 - **L903** _(ja)_ — ★高速道路は**正味で 104 歩あたりちょうど 12 マス**黒を増やす(実測で整数)。 最初は「104 歩で 52 マス」と書いたが実測 0.114/歩 と合わず、測り直して 12/104 = 0.11538 だった。周期の中で塗っては消すので、正味はずっと少ない。
 - **L920** _(ja)_ — ★★描いた円が**本当に接しているか**。平方根の枝を選び損ねると、 絵としては「フラクタルっぽい」まま外へ逃げる鎖が出る(実際に出した)。
+
+## `photometric.py`
+
+- **L98** _(ja)_ — ★2026-10-02: 以前は ``np.sign(nz) * 1e-6 + 1e-12`` で、nz がちょうど 0(真横を向く法線)のとき np.sign(0) = 0 になり分母が 1e-12 → p = -1e12 を返していた(±1e-6 で抑えるつもりが効かない)。 0 は正の側に寄せる。真横の法線の勾配は本来無限大で、ここでは |p|, |q| ≤ 1e6 に抑えた値になる。
 
 ## `pivops.py`
 
@@ -1830,6 +1834,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_honest_summary_arithmetic.py`
 
 - **L41** — Es auf "bei Fehlen mit Begründung skip" setzen —— ★das CI vom 2026-09-08 wurde hier rot: anzunehmen, was lokal vorhanden ist, sei auch im CI da, macht nur lokal grün (gleiches Muster wie `feedback_gate_computed_a_verdict_then_discarded_it`).
+
+## `tests/test_kendama_combo.py`
+
+- **L21** _(ja)_ — ★2026-10-02: 以前は examples/ を sys.path の先頭に**入れっぱなし**にしていた。同じ xdist ワーカーで後から ``import event_camera`` した test_sensor_sims が、ルートの event_camera.py でなく同名の examples/event_camera.py(デモ)を拾い ``run_event_demo`` が無いと落ちた(ワーカーへの振り分け次第で出る)。 PoC はファイルから直接読み、sys.path を汚さない。
 
 ## `tests/test_knob_b_options.py`
 

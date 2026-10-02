@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1174. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1176. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -72,8 +72,8 @@ This repository records *why* things are the way they are in **comments in the s
 ## `backend_safe.py`
 
 - **L159** _(ja)_ — ★2026-09-20(GenSpark 第 44 報 N158): 環状バッファは黙って古い方を捨てる。捨てた数を数えないと、 `fallbacks()` が 256 件しか返さない理由が利用者から見えない(counts と件数が合わない)。
-- **L431** _(ja)_ — ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、 レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の docstring に「NaN を返す理由」が書いてあることを確かめること。
-- **L502** — ★A feature op returns a numpy SCALAR, not an ndarray, so the branch above never saw it: a NaN/Inf measurement (e.g. a 0/0 inside sk_blur_effect on a degenerate frame) used to flow straight out of api.apply. Scrub non-finite scalars to the sort fallback so the declared "finite, sort-valid" guarantee actually holds for feature/contour scalars too.
+- **L435** _(ja)_ — ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、 レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の docstring に「NaN を返す理由」が書いてあることを確かめること。
+- **L506** — ★A feature op returns a numpy SCALAR, not an ndarray, so the branch above never saw it: a NaN/Inf measurement (e.g. a 0/0 inside sk_blur_effect on a degenerate frame) used to flow straight out of api.apply. Scrub non-finite scalars to the sort fallback so the declared "finite, sort-valid" guarantee actually holds for feature/contour scalars too.
 
 ## `backends.py`
 
@@ -1308,8 +1308,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L99** — ★**Two criteria** (2026-09-08, fixed within the same day). At first the choice used only 'CIE L* has 0 reversals', but ``poc_colormap_readability`` measured that **``cividis`` raises a colour-difference ridge despite 0 reversals**. Even with monotone lightness, if the colour-difference spacing is uneven a **nonexistent boundary** appears in a smooth field -- it had claimed to be 'safe' on a one-sided criterion. Measured (512 steps, max / median of adjacent colour difference, and the count of local maxima exceeding 1.6x the median): ========== ========== ============== ========== Map / L* reversals / dE max/median / ridge count ========== ========== ============== ========== ``gray`` 0 1.33 0 ``viridis`` 0 1.38 0 ``plasma`` 0 1.38 0 ``magma`` 0 1.48 0 ``inferno`` 0 1.50 0 ``cividis`` 0 **2.23** **1** ``turbo`` 1 1.78 1 ========== ========== ============== ========== ``cividis`` was dropped **because this repo's approximate LUT is coarse**, not a problem with the published cividis itself (its 6 control points are the fewest among the sequential maps). For those who want to choose with colour-vision deficiency in mind, :data:`CVD_SAFE` is provided. ``tests/test_pseudocolour_family.py`` measures both criteria every time.
 - **L124** — Maps said to keep their order readable even with colour-vision deficiency (P/D type). ★``cividis``'s approximate LUT has 6 control points and a coarse colour-difference spacing, and does not meet the :data:`PERCEPTUAL_SAFE` criterion (measured dE max/median 2.23). Adding control points would let it enter both -- since hand-copying primary-source values has a prior record of typos, this is held until the source can be confirmed.
-- **L708** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N120): PFM は float 専用の形式なのに、既定の 8 bit 経路が 0..255 の 値を float32 として書き、読むと 0..1 に clip されて別画像になっていた(往復 max|Δ| 0.98)。 PFM の既定は float(無損失)。
-- **L897** _(ja)_ — ★2026-09-20(GenSpark 第 18 報 N78): 無い・ディレクトリ・読めない、が全部同じ文だった。
+- **L716** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N120): PFM は float 専用の形式なのに、既定の 8 bit 経路が 0..255 の 値を float32 として書き、読むと 0..1 に clip されて別画像になっていた(往復 max|Δ| 0.98)。 PFM の既定は float(無損失)。
+- **L905** _(ja)_ — ★2026-09-20(GenSpark 第 18 報 N78): 無い・ディレクトリ・読めない、が全部同じ文だった。
 
 ## `imgmetrics.py`
 
@@ -1517,6 +1517,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L896** _(ja)_ — ★向きの符号は回転の規約で変わる。定理が言うのは「周期 104 で**同じ**斜めの 変位を繰り返す」ことなので、そちらを門にする(大きさは縦横とも 2)。
 - **L903** _(ja)_ — ★高速道路は**正味で 104 歩あたりちょうど 12 マス**黒を増やす(実測で整数)。 最初は「104 歩で 52 マス」と書いたが実測 0.114/歩 と合わず、測り直して 12/104 = 0.11538 だった。周期の中で塗っては消すので、正味はずっと少ない。
 - **L920** _(ja)_ — ★★描いた円が**本当に接しているか**。平方根の枝を選び損ねると、 絵としては「フラクタルっぽい」まま外へ逃げる鎖が出る(実際に出した)。
+
+## `photometric.py`
+
+- **L98** _(ja)_ — ★2026-10-02: 以前は ``np.sign(nz) * 1e-6 + 1e-12`` で、nz がちょうど 0(真横を向く法線)のとき np.sign(0) = 0 になり分母が 1e-12 → p = -1e12 を返していた(±1e-6 で抑えるつもりが効かない)。 0 は正の側に寄せる。真横の法線の勾配は本来無限大で、ここでは |p|, |q| ≤ 1e6 に抑えた値になる。
 
 ## `pivops.py`
 
@@ -1830,6 +1834,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_honest_summary_arithmetic.py`
 
 - **L41** — Make it "skip with a reason if absent" —— ★the 2026-09-08 CI went red here: assuming what you have locally is also present in CI makes only local green (same pattern as `feedback_gate_computed_a_verdict_then_discarded_it`).
+
+## `tests/test_kendama_combo.py`
+
+- **L21** _(ja)_ — ★2026-10-02: 以前は examples/ を sys.path の先頭に**入れっぱなし**にしていた。同じ xdist ワーカーで後から ``import event_camera`` した test_sensor_sims が、ルートの event_camera.py でなく同名の examples/event_camera.py(デモ)を拾い ``run_event_demo`` が無いと落ちた(ワーカーへの振り分け次第で出る)。 PoC はファイルから直接読み、sys.path を汚さない。
 
 ## `tests/test_knob_b_options.py`
 

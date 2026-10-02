@@ -59,7 +59,11 @@ def reduce_domain(image, region):
 
 
 def get_domain(image):
-    """画像の domain(非ゼロ/全域)を bool mask で返す(get_domain)。"""
+    """画像の domain を bool mask で返す(get_domain)。素の配列には domain の概念が無いので**常に全面 True**。
+
+    (2026-10-02 訂正: 以前は「非ゼロ/全域」と書いていたが、実装は値によらず全面を返す。公開済みの
+    ``hx_get_domain`` と同じ答え。非ゼロの画素が欲しいなら ``image != 0``。)
+    """
     im = _img(image)
     return np.ones(im.shape, bool)
 

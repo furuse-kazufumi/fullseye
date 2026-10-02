@@ -74,7 +74,16 @@ def derivate_vector_field(vfield_row, vfield_col, feature="divergence"):
 
 
 def gen_gauss_bandpass(shape, sigma_low, sigma_high):
-    """周波数領域のガウス帯域通過マスクを生成(gen_gauss_bandpass)。"""
+    """周波数領域のガウス帯域通過マスクを生成(gen_gauss_bandpass)。
+
+    マスク = exp(−r²/2σ_high²) − exp(−r²/2σ_low²)(r は周波数 [cycles/px])。``σ_low`` が低域側の遮断、
+    ``σ_high`` が高域側の遮断で、``0 < sigma_low < sigma_high`` でなければならない。
+    ★2026-10-02: 逆に渡すとマスクが全面で負(最小 −0.945)になり、検証もされず黙って通っていた → ValueError。
+    """
+    if not (0 < sigma_low < sigma_high):
+        raise ValueError(
+            "gen_gauss_bandpass: 0 < sigma_low < sigma_high が必要 (sigma_low=%r, sigma_high=%r)。"
+            "逆に渡すとマスクが負になり帯域を通さず反転させる" % (sigma_low, sigma_high))
     H, W = shape
     fy = np.fft.fftfreq(H)[:, None]; fx = np.fft.fftfreq(W)[None, :]
     r = np.sqrt(fx ** 2 + fy ** 2)

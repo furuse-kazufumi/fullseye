@@ -95,7 +95,10 @@ def normals_to_gradients(normals):
     """法線 (...,3) → 勾配 (p,q)=(dz/dx, dz/dy)。n ∝ (-p,-q,1) ゆえ p=-nx/nz, q=-ny/nz。"""
     n = np.asarray(normals, float)
     nz = n[..., 2]
-    nz = np.where(np.abs(nz) < 1e-6, np.sign(nz) * 1e-6 + 1e-12, nz)
+    # ★2026-10-02: 以前は ``np.sign(nz) * 1e-6 + 1e-12`` で、nz がちょうど 0(真横を向く法線)のとき
+    #   np.sign(0) = 0 になり分母が 1e-12 → p = -1e12 を返していた(±1e-6 で抑えるつもりが効かない)。
+    #   0 は正の側に寄せる。真横の法線の勾配は本来無限大で、ここでは |p|, |q| ≤ 1e6 に抑えた値になる。
+    nz = np.where(np.abs(nz) < 1e-6, np.where(nz < 0, -1e-6, 1e-6), nz)
     p = -n[..., 0] / nz
     q = -n[..., 1] / nz
     return p, q
