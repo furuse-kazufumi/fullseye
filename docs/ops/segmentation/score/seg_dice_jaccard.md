@@ -4,7 +4,7 @@ dim: segmentation
 category: score
 in: labels2d × labels2d
 out: table
-examples: [poc_segmentation_gauntlet]
+examples: [poc_am_thermal_to_ct, poc_segmentation_gauntlet]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ Jaccard J = ∩/∪、Dice D = 2∩/(|P|+|T|)。両方空なら 1(何も無い�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_am_thermal_to_ct](../../../../examples/poc_am_thermal_to_ct.py) — `py -3.11 examples/poc_am_thermal_to_ct.py`
 - [poc_segmentation_gauntlet](../../../../examples/poc_segmentation_gauntlet.py) — `py -3.11 examples/poc_segmentation_gauntlet.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

@@ -1,0 +1,118 @@
+[
+ {
+  "file": "01_melt_pool_frames.gif",
+  "name": "melt_pool_frames",
+  "caption": "NIST Line_3_1_1 (325 W, 960 mm/s): raw signal in DL, false colour; magenta = saturated 4095 DL (a lower bound, >= 1402 C at eps=1), navy = 0 (below 100 DL, no measurement). Every 2nd frame of 30 kHz. Source: National Institute of Standards and Technology (NIST), doi:10.18434/mds2-2716 (thermography) and doi:10.18434/mds2-2291 (XCT, measured at Georgia Tech); subsets extracted 2026-10-02, thresholded/cropped/false-coloured here (modified). Provided AS IS, https://www.nist.gov/open/license",
+  "shape": [
+   128,
+   960,
+   3
+  ],
+  "animated": true,
+  "frames": 181,
+  "frames_written": 181,
+  "fps": 15.0,
+  "video": "01_melt_pool_frames.mp4",
+  "video_frames": 181,
+  "video_fps": 15.0,
+  "video_shape": [
+   160,
+   1200,
+   3
+  ]
+ },
+ {
+  "file": "02_dl_to_celsius.png",
+  "name": "dl_to_celsius",
+  "caption": "calibration T = 14388/(a ln(c eps/x + 1)) - b/a (reading of the file's model string is our assumption). 4095 DL = 1402 C at eps=1, 1641 C at eps=0.3. Pixels >= 2759 DL are above the liquidus for any eps <= 1. Source: National Institute of Standards and Technology (NIST), doi:10.18434/mds2-2716 (thermography) and doi:10.18434/mds2-2291 (XCT, measured at Georgia Tech); subsets extracted 2026-10-02, thresholded/cropped/false-coloured here (modified). Provided AS IS, https://www.nist.gov/open/license",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_cooling_curve.png",
+  "name": "cooling_curve",
+  "caption": "Line_0_1, row 300: 19 saturated frames are only a lower bound; the curve stops at frame 189 where the camera reports 0 (below 100 DL) instead of falling to -204 C. Source: National Institute of Standards and Technology (NIST), doi:10.18434/mds2-2716 (thermography) and doi:10.18434/mds2-2291 (XCT, measured at Georgia Tech); subsets extracted 2026-10-02, thresholded/cropped/false-coloured here (modified). Provided AS IS, https://www.nist.gov/open/license",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_time_axis.png",
+  "name": "time_axis",
+  "caption": "Y pad: the command (XYPT, no time step stored) and the staring camera agree on the count and on the long last interval, yet drift apart by 2.3 % per period; unresolved. Source: National Institute of Standards and Technology (NIST), doi:10.18434/mds2-2716 (thermography) and doi:10.18434/mds2-2291 (XCT, measured at Georgia Tech); subsets extracted 2026-10-02, thresholded/cropped/false-coloured here (modified). Provided AS IS, https://www.nist.gov/open/license",
+  "shape": [
+   320,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "05_pool_repeatability.png",
+  "name": "pool_repeatability",
+  "caption": "mean length of the region >= 2759 DL (above liquidus for any eps <= 1) over steady frames; power 245/285/325 W, speed 800/960/1200 mm/s, spot 49/67/82 um. Source: National Institute of Standards and Technology (NIST), doi:10.18434/mds2-2716 (thermography) and doi:10.18434/mds2-2291 (XCT, measured at Georgia Tech); subsets extracted 2026-10-02, thresholded/cropped/false-coloured here (modified). Provided AS IS, https://www.nist.gov/open/license",
+  "shape": [
+   360,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "06_ct_slices.gif",
+  "name": "ct_slices",
+  "caption": "XCT slices 121..320 (z = 1.75..4.16 mm, build direction) with the STL cross-section in red. Note the powder/dross hanging under the hole crown and the 45 deg notch. Source: National Institute of Standards and Technology (NIST), doi:10.18434/mds2-2716 (thermography) and doi:10.18434/mds2-2291 (XCT, measured at Georgia Tech); subsets extracted 2026-10-02, thresholded/cropped/false-coloured here (modified). Provided AS IS, https://www.nist.gov/open/license",
+  "shape": [
+   364,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 34,
+  "frames_written": 34,
+  "fps": 6.0,
+  "video": "06_ct_slices.mp4",
+  "video_frames": 34,
+  "video_fps": 6.0,
+  "video_shape": [
+   440,
+   774,
+   3
+  ]
+ },
+ {
+  "file": "07_ct_hole_crown.png",
+  "name": "ct_hole_crown",
+  "caption": "slice at z = 4.00 mm just below the crown of the 4 mm hole: particles hang into the hole from the down-facing surface; red = design. Source: National Institute of Standards and Technology (NIST), doi:10.18434/mds2-2716 (thermography) and doi:10.18434/mds2-2291 (XCT, measured at Georgia Tech); subsets extracted 2026-10-02, thresholded/cropped/false-coloured here (modified). Provided AS IS, https://www.nist.gov/open/license",
+  "shape": [
+   440,
+   278,
+   3
+  ]
+ },
+ {
+  "file": "08_protrusion_by_facing.png",
+  "name": "protrusion_by_facing",
+  "caption": "XCT vs STL: protrusion = p95 of the signed distance (outward positive) after subtracting the median of each 0.25 mm surface cell (form error); line = the 4 mm hole per n_z bin (bins with >= 200 points), dots = 45 deg notch and vertical walls. Source: National Institute of Standards and Technology (NIST), doi:10.18434/mds2-2716 (thermography) and doi:10.18434/mds2-2291 (XCT, measured at Georgia Tech); subsets extracted 2026-10-02, thresholded/cropped/false-coloured here (modified). Provided AS IS, https://www.nist.gov/open/license",
+  "shape": [
+   360,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "09_numbers.png",
+  "name": "numbers",
+  "caption": "synthetic gates always run; NIST gates only when FULLSEYE_DATA_DIR has nist_ammt. Source: National Institute of Standards and Technology (NIST), doi:10.18434/mds2-2716 (thermography) and doi:10.18434/mds2-2291 (XCT, measured at Georgia Tech); subsets extracted 2026-10-02, thresholded/cropped/false-coloured here (modified). Provided AS IS, https://www.nist.gov/open/license",
+  "shape": [
+   584,
+   698,
+   3
+  ],
+  "csv": "09_numbers.csv",
+  "tsv": "09_numbers.tsv"
+ }
+]

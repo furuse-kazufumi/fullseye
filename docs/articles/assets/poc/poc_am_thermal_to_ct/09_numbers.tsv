@@ -1,0 +1,22 @@
+quantity	value	bar
+4095 DL at eps=1 / 0.3	1401.5 / 1640.8 C	eps is a required argument
+eps-free lower bound of the melt pool	>= 2759 DL	liquidus 1336 C at eps=1
+synthetic: pitch from pool front	max 0.16 % off	< 0.3 %
+synthetic: pool length vs closed form	max 0.09 px	< 0.6 px
+synthetic: between/within SD, length / area	19 x / 27 x	> 3
+synthetic: injected 2.3 % clock mismatch	+2.31 %	reads back within 0.1 %
+synth CT: Dice / boundary F, right vs 5 slices off	0.997/0.99 vs 0.985/0.84	right scores higher
+synth CT: protrusion down/up, dross only down	3.18	> 1.5
+synth CT: same, dross everywhere (control)	0.99	0.8 .. 1.25
+synth CT: voids found / detection limit	2 of 7 / 5.2 vox	no false voids, limit <= 6 vox
+NIST: laser-on runs / thermal bursts	24 / 24	equal
+NIST: period mismatch (unresolved)	+2.30 %	recorded, |x| < 3 %
+NIST: pixel pitch, 21 tracks	21.31 um, max 0.20 % off	< 0.3 %
+NIST: pool length between/within SD	14.9 x	> 3
+NIST: pool area between/within SD	5.7 x	> 3
+NIST CT: analytic design vs STL sections	min Dice 1.0000	> 0.995
+NIST CT: registration Dice (mirror)	0.9829 (0.785)	> 0.97
+NIST CT: protrusion down / up	63 / 32 um	down > up
+NIST CT: same tilt |n_z| 0.2-0.37 down / up	38 / 32 um	reported only
+NIST CT: enclosed air >= 8 vox (deeper than 0.1 mm)	7 (0)	limit ~63 um (synthetic)
+NIST CT: section Dice / boundary F(2 px)	0.9811 / 0.729	Dice > 0.97

@@ -138,5 +138,25 @@
    640,
    3
   ]
+ },
+ {
+  "file": "13_real_dod.png",
+  "name": "real_dod",
+  "caption": "地面点(分類 2)の 1 m セル平均の差。そのまま引くと区画全体が -0.183 m 沈んで見え、有効セルで -23619 m3 の偽の土量。平坦部の中央値で合わせると残るのは美術館まわりの変化域だけ。黒 = どちらかの時期に地面点が無い(建物・池・樹冠の下)。改変: EPT の点を EPSG:3857 から NAD83 / UTM 15N へ変換し、区画 500 x 500 m に切り、地面点(分類 2)を 1 m セルで平均(補間なし)して差を取った。 Map services and data available from U.S. Geological Survey, National Geospatial Program. Lidar: USGS 3D Elevation Program, projects MO_StLouis_2012 and USGS_LPC_MO_StLouis_2017_LAS_2018 (Entwine Point Tiles, https://usgs-lidar-public.s3.amazonaws.com/); DEM: USGS one meter x73y429 MO SaintLouis 2017 (published 20200330); accessed October 2, 2026. Public domain; not endorsed by USGS.",
+  "shape": [
+   1135,
+   1030,
+   3
+  ]
+ },
+ {
+  "file": "14_real_fill.png",
+  "name": "real_fill",
+  "caption": "規則的な走査(分散指数 D < 1)の 2012 は予測より埋まり、測線の重なりで群れる(D > 1)2017 は埋まらない。改変: EPT の点を EPSG:3857 から NAD83 / UTM 15N へ変換し、区画 500 x 500 m に切り、地面点(分類 2)を 1 m セルで平均(補間なし)して差を取った。 Map services and data available from U.S. Geological Survey, National Geospatial Program. Lidar: USGS 3D Elevation Program, projects MO_StLouis_2012 and USGS_LPC_MO_StLouis_2017_LAS_2018 (Entwine Point Tiles, https://usgs-lidar-public.s3.amazonaws.com/); DEM: USGS one meter x73y429 MO SaintLouis 2017 (published 20200330); accessed October 2, 2026. Public domain; not endorsed by USGS.",
+  "shape": [
+   420,
+   720,
+   3
+  ]
  }
 ]

@@ -4,7 +4,7 @@ dim: printpath
 category: slice
 in: mesh
 out: voxel
-examples: [poc_print_layer_inspection]
+examples: [poc_am_thermal_to_ct, poc_print_layer_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -35,6 +35,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_am_thermal_to_ct](../../../../examples/poc_am_thermal_to_ct.py) — `py -3.11 examples/poc_am_thermal_to_ct.py`
 - [poc_print_layer_inspection](../../../../examples/poc_print_layer_inspection.py) — `py -3.11 examples/poc_print_layer_inspection.py`
 
 ## 型が繋がる次の op(`voxel` を入力に取れる)

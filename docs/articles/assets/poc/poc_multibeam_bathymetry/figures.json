@@ -198,5 +198,25 @@
    640,
    3
   ]
+ },
+ {
+  "file": "18_real_smile.png",
+  "name": "real_smile",
+  "caption": "音速一定は左 43.9 / 右 41.0 度で Order 1a(−2.41 m)を割る。左右平均(偶部)の崖 42.4 度は、一定勾配の閉形式 43.4 度と -1.0 度、キャストの形のまま追跡した予測 42.4 度と +0.05 度。光線追跡は ±61 度の中で割らない。NOT FOR NAVIGATION。出典: National Oceanic and Atmospheric Administration (NOAA) (2014): Multibeam collection for NF-14-06: Multibeam data collected aboard NOAA Ship NANCY FOSTER (R352) from 03-Sep-14 to 11-Sep-14, Fort Pierce, Florida to Cape Canaveral, FL. NOAA National Centers for Environmental Information. https://www.ngdc.noaa.gov/ships/nancy_foster/NF-14-06_mb.html, accessed 2026-10-02. 改変: 生の HSX を姿勢補正・光線追跡し、BAG との差を 1 度ごとの中央値にして直下の偏りを引いた。",
+  "shape": [
+   520,
+   900,
+   3
+  ]
+ },
+ {
+  "file": "19_real_overlap.png",
+  "name": "real_overlap",
+  "caption": "重なりの最も大きい対(南端から 800 m、北が上)。差の 95 % 点は 音速一定 4.01 m(TVU 2.29 m を超える)、光線追跡 1.57 m(下回る)。差の色は ±3 m で切った。黒 = 片方の測線しか無いセル。NOT FOR NAVIGATION。出典: National Oceanic and Atmospheric Administration (NOAA) (2014): Multibeam collection for NF-14-06: Multibeam data collected aboard NOAA Ship NANCY FOSTER (R352) from 03-Sep-14 to 11-Sep-14, Fort Pierce, Florida to Cape Canaveral, FL. NOAA National Centers for Environmental Information. https://www.ngdc.noaa.gov/ships/nancy_foster/NF-14-06_mb.html, accessed 2026-10-02. 改変: 測線ごとに 5 m 格子へ平均して差を取った。",
+  "shape": [
+   1213,
+   534,
+   3
+  ]
  }
 ]

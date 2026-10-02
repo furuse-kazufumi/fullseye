@@ -4,7 +4,7 @@ dim: blob
 category: connect
 in: mask
 out: labels2d
-examples: [blob_split_tour, poc_bone_trabecular_thickness, poc_bump_coplanarity, poc_em_split_merge_score, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_gravitational_lens_invariants, poc_leaf_disease_area, poc_machine_condition_fusion, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_pipe_wall_loss, poc_print_warpage_risk, poc_pv_thermal_survey, poc_real_coin_metrology, poc_rotation_invariance_audit, poc_sea_ice_concentration, poc_segmentation_gauntlet, poc_solar_el_inspection, poc_solder_fillet_aoi, poc_timelapse_growth, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
+examples: [blob_split_tour, poc_am_thermal_to_ct, poc_bone_trabecular_thickness, poc_bump_coplanarity, poc_em_split_merge_score, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_gravitational_lens_invariants, poc_leaf_disease_area, poc_machine_condition_fusion, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_pipe_wall_loss, poc_print_warpage_risk, poc_pv_thermal_survey, poc_real_coin_metrology, poc_rotation_invariance_audit, poc_sea_ice_concentration, poc_segmentation_gauntlet, poc_solar_el_inspection, poc_solder_fillet_aoi, poc_timelapse_growth, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -53,6 +53,7 @@ Examples
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [blob_split_tour](../../../../examples/blob_split_tour.py) — `py -3.11 examples/blob_split_tour.py`
+- [poc_am_thermal_to_ct](../../../../examples/poc_am_thermal_to_ct.py) — `py -3.11 examples/poc_am_thermal_to_ct.py`
 - [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
 - [poc_bump_coplanarity](../../../../examples/poc_bump_coplanarity.py) — `py -3.11 examples/poc_bump_coplanarity.py`
 - [poc_em_split_merge_score](../../../../examples/poc_em_split_merge_score.py) — `py -3.11 examples/poc_em_split_merge_score.py`

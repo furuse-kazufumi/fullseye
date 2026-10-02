@@ -5,7 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: binary_threshold
-examples: [gallery2d_segmentation, poc_cell_counting, poc_fresco_craquelure, poc_leaf_disease_area, poc_nuclei_ploidy, poc_vegetation_cover, threshold_family_agreement]
+examples: [gallery2d_segmentation, poc_am_thermal_to_ct, poc_cell_counting, poc_fresco_craquelure, poc_leaf_disease_area, poc_nuclei_ploidy, poc_vegetation_cover, threshold_family_agreement]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -60,6 +60,7 @@ sk_otsu 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
+- [poc_am_thermal_to_ct](../../../../examples/poc_am_thermal_to_ct.py) — `py -3.11 examples/poc_am_thermal_to_ct.py`
 - [poc_cell_counting](../../../../examples/poc_cell_counting.py) — `py -3.11 examples/poc_cell_counting.py`
 - [poc_fresco_craquelure](../../../../examples/poc_fresco_craquelure.py) — `py -3.11 examples/poc_fresco_craquelure.py`
 - [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`

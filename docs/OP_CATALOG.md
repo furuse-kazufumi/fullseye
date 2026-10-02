@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(288 例)
+### 2-D 画像/信号/幾何(289 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -119,6 +119,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **衝突までの時間と安全距離 —— τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する** — 教習所の周回コースで対向車(8 m/s)を車載カメラで撮り、τ(Lee 1976)を 3 経路で出す: 深度像 + 剛体運動の閉形式(真値)、光学流(LK)→ time_to_contact、見かけの面積の平方根。恒等式 = 真の流れを入れると 1 コマ後の τ で、1 コマ足すと真値と 1e-9。真の τ は 1 秒に 1 秒ずつ減る。RSS(Shalev-Shwartz 2017)の安全距離は ad-rss-lib の公表パラメータ・試験値と一致し、Lemma 2 は最悪ケースの時間積分と 1e-6 で一致。停車車両に「危険」を出した瞬間に制動すると停止時の間隔は閉形式どおり。対向車線の車は τ が 0.3 s まで落ちても横の安全距離(0.73 m < 2.2 m)で RSS は騒がず、寄ってくると危険になる。正直に: 流れの τ が効くのは車が像で大きい区間だけ。 `py -3.11 examples/poc_ttc_rss.py`
 - **世界を広げる —— 閉形式の地形と世界座標の材質、手続きの木と歩行者で、拡大の中心を流れから取り戻す** — 教習所の周回コースを fBm の起伏(乱数位相の正弦の和、高さも勾配も閉形式、スペクトル β̂ 3.59 = 2H + 2)の中に置き、道の周り 2 m は平ら(コースへの距離場は |∇d| = 1)、路面はうねる。描画した深度から画素の世界座標を戻して Perlin の雑音で材質を評価する(粒・染み・水溜り・摩耗した白線、真値は画素単位)。手続きの木 70 本・歩行者・横断歩道は体積と面積が閉形式。15 巡目で「既知」にした拡大の中心(FoE)を路面の LK の流れだけから出すと、模様ありで 1.9 px、無地の路面では 57 px 外れる。真の流れなら 1e-13(定理)。正直に: 摩耗した白線と水溜りは明るさのしきい値では最良でも 25 % を間違える(それが狙い)。 `py -3.11 examples/poc_world_terrain.py`
 - **卓球の球を先駆者の目で測る —— 真値つきの台で、多カメラ追跡・三角測量・軌道予測・跳ね・スピンを定理で採点する** — ITTF 寸法の台に 40 mm の球(模様 14 個)を置き、トップスピンの打球を 2 台 + 近接 1 台のカメラで 100 fps・0.6 秒撮る。力学は定理が門: 真空の RK4 は閉形式と 1e-12、放物線の当てはめは g = 9.81 を 4e-15 で戻し、乱数 500 通りの衝突で接触点まわりの角運動量は 4.9e-16 で保存、30.5 cm から落とした最初の跳ね 24.7 cm は ITTF の 24〜26 cm の中。色度の検出は中央値 0.152 px、DLT の三角測量は検出から中央値 1.61 mm、等加速度 Kalman は放物線の真値で新息 8.2e-09 m。跳ねの前 15 コマから運動方程式で初期状態を当てて跳ねを越えて予測すると、真のスピンを知っていれば着地点 0.4 cm、スピンを無視すると 20.2 cm 外れる。近接カメラ(1000 fps)の模様を Kabsch で対応づけた角速度は真値と 3.7 %、反発係数は運動方程式の当てはめで 0.9114(真値 0.90)。正直に: 放物線で e を出すと 0.9398(抗力とマグヌスを g に吸って 4.4 % ずれる)、検出は色が既知の合成映像。ラリー: 送り合いは上限 12 本、攻める側が入ると 9 本、知覚雑音 5 cm までは不変・10 cm で 2 本。 `py -3.11 examples/poc_ball_bounce.py`
+- **金属積層造形の熱画像から X 線 CT へ —— 生信号を温度と呼ばない、時間軸と画素ピッチ、下向き面だけに付く粉** — 金属積層造形(NIST AMMT、In718)の工程中の熱画像を、温度と呼ばずに生信号のまま扱い(ε は必須の引数、飽和は下限、0 は測定なし)、走査指令との時間軸・画素ピッチ・溶融池の再現性を測り、造形後の X 線 CT と設計 STL の断面を既存 op でつなぐ。データが無ければ真値つきの合成で同じ門。 `py -3.11 examples/poc_am_thermal_to_ct.py`
 - **セグメンテーションの関門 —— 真値つきの 6 つの世界に 10 手法を当て、どの物差しがどの壊れ方に盲目かを測る** — 真値つきの合成世界 6 種(触れ合う粒・ボロノイ結晶粒・影のある部品・質感だけ違う領域・照明の勾配・細い構造)に既存のセグメンテーション10 手法を既定のノブで当て、新しい物差し(Dice/Jaccard・境界 F・Hausdorff・過分割/未分割・個数の一致、segcompare の VI/Rand)で採点。門 = 真 vs 真が満点、どの物差しがどの壊れ方に盲目か(Otsu は J=0.95 でも粒が全部融合、勾配の分水嶺は境界 F=1.00 でも過分割 339)。影のある部品は閾値のオラクルでも J=0.29。 `py -3.11 examples/poc_segmentation_gauntlet.py`
 - **追越しと見えない所 —— 見通しが足りなければ待つ、ルームミラーに映ってから戻る、環道の車を妨げない、カーブミラーは遠く見える** — 教則の台帳の未着手から、追越し(見通しが D* に足りなければ待つ・禁止区間・ルームミラーに映ってから戻る)、進路変更、環状交差点、坂の頂上、カーブミラー。新モジュール drivepass 17 op。規則の 240 人は禁止区間 0・対向車との PET 最小 5.62 s、素朴は割り込み 240 / 240。凸面鏡 R 3 m を 8 m 離れて見ると 30 m 先の車が 190.04 m 先に見える(光線追跡)。正直に: 「付近」30 m・「急に」2.0 m/s²・鏡の寸法・参照分布は仮定、施行令 21 条は未確認。 `py -3.11 examples/poc_driving_pass.py`
 - **踏切と交差点の優先 —— 直前で止まって左右を見る、警報の間は入らない、向こう側が詰まっていれば入らない、広い道へは譲る** — 教則の台帳の未着手から、ルールベースの部品で再現できる踏切・交差点の優先・横断歩道・駐停車禁止の場面。新モジュール drivecrossing 17 op(解釈基準の警報の時間と遮断機の状態機械・警報灯を画素から読む・渡り切る時間と向こう側の余地・見通しの閉形式・36 条の優先・38 条・44 条の禁止区間)。ルールの 240 人は違反 0・列車が着くとき線路の上 0 人(余裕 最小 31.5 s)、警報中に入る版は 157 件で 23 人が線路の上。正直に: 幅の比 1.5・「急に」2.0 m/s²・遮断かんの時刻・参照分布は仮定、警報灯の毎分 50 回は二次資料。 `py -3.11 examples/poc_driving_crossing.py`
@@ -1146,7 +1147,7 @@ _計 934 ops / 48 categories。_
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
 
 ### 3d(12)
-- `vol_gaussian` `volume → volume` · 例: `gallery2d_physics_alife_3d`
+- `vol_gaussian` `volume → volume` · 例: `gallery2d_physics_alife_3d`, `poc_am_thermal_to_ct`
 - `vol_median` `volume → volume` · 例: `gallery2d_physics_alife_3d`
 - `vol_erode` `volume → volume` · 例: `gallery2d_physics_alife_3d`, `poc_warehouse_flow`
 - `vol_dilate` `volume → volume` · 例: `gallery2d_physics_alife_3d`, `poc_warehouse_flow`
@@ -1699,7 +1700,7 @@ _計 934 ops / 48 categories。_
 - `ph_total_variation_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### rank(23)
-- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `genspark_external_review`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_compound_eye`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
+- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `genspark_external_review`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_am_thermal_to_ct`, `poc_astro_photometry`, `poc_compound_eye`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_colormap_readability`
@@ -1837,7 +1838,7 @@ _計 934 ops / 48 categories。_
 - `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `degenerate_inputs`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_segmentation_gauntlet`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`, `threshold_family_agreement`, `typed_results_json`
 - `canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`, `poc_real_coin_metrology`
 - `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`
-- `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_cell_counting`, `poc_fresco_craquelure`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_vegetation_cover`, `threshold_family_agreement`
+- `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_am_thermal_to_ct`, `poc_cell_counting`, `poc_fresco_craquelure`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_vegetation_cover`, `threshold_family_agreement`
 - `sk_li` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
