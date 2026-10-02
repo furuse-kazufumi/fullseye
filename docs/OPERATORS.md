@@ -567,7 +567,7 @@
 | `r2_split_skeleton_lines` | region | region | split_skeleton_lines | - | - | - |
 | `em_skeleton` | region | region |  | - | - | - |
 | `r2_endpoints_skeleton` | region | region |  | - | - | - |
-| `sp_local_max_sub_pix` | image->contour | subpix |  | - | - | - |
+| `sp_local_max_sub_pix` | image->contour | subpix | local_max_sub_pix | - | - | - |
 | `sp_local_min_sub_pix` | image->contour | subpix | local_min_sub_pix | - | - | - |
 | `sp_saddle_points_sub_pix` | image->contour | subpix | saddle_points_sub_pix | - | - | - |
 | `sp_critical_points_sub_pix` | image->contour | subpix | critical_points_sub_pix | - | - | - |

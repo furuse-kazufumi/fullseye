@@ -4,6 +4,7 @@ dim: 2d
 category: subpix
 in: image
 out: contour
+halcon: local_max_sub_pix
 examples: [gallery2d_geometry]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -14,6 +15,7 @@ version: 0.2.3  # fullseye lib version this note was generated for
 
 - **データ種**: `image` → `contour`
 - **呼び出し**: `fullseye.apply(img, "sp_local_max_sub_pix", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **HALCON 相当**: `local_max_sub_pix`(意味・パラメータは HALCON リファレンスが参考になる)
 
 ![sp_local_max_sub_pix: input → output](../../_fig/sp_local_max_sub_pix.png)
 

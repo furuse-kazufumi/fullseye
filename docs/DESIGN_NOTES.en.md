@@ -5,13 +5,14 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1179. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1181. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
 
 - **L296** _(ja)_ — ★CPU 側(ops._otsu)と同じく**ビンの上端**で切る(2026-09-26)。 中点で切ると argmax ビンの背景画素が前景に混ざる。ここを直し忘れると 同じ絵で CPU と GPU の答えが割れる(test_fast_parity が門)。
-- **L811** _(ja)_ — interior 差の判定閾値。★2026-09-20(GenSpark 第 32・33 報 N116): 0.0002 の差に "exact" と出て、 語が実測と矛盾していた —— 判定は閾値で決まるので、語に閾値を添える。
+- **L688** _(ja)_ — ★2026-10-02: HALCON 名は ``local_max``(画素精度のマスク)。以前は ``local_max_sub_pix`` と書いていた。
+- **L812** _(ja)_ — interior 差の判定閾値。★2026-09-20(GenSpark 第 32・33 報 N116): 0.0002 の差に "exact" と出て、 語が実測と矛盾していた —— 判定は閾値で決まるので、語に閾値を添える。
 
 ## `accel_match.py`
 
@@ -136,6 +137,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `backends_scipy.py`
 
 - **L198** — ★At lambda >= ~12 scipy throws "boundary conditions did not converge", and the guard's fallback was the **identity** (the old 1+40a made 70% identity for a>=0.3, including the default 0.5. 2026-09-05 Fable review). We aligned the description to 1-11 as well.
+
+## `backends_subpix.py`
+
+- **L451** _(ja)_ — ★2026-10-02: 以前は halcon "" で「local_max_sub_pix は core op が既にカバー」と書いていたが、 core の ``local_max`` が名乗るのは画素精度の HALCON ``local_max``(サブピクセルではない)で、 ``local_max_sub_pix`` を名乗る op は 1 本も無かった(accel の表だけが誤って書いていた)。 兄弟の sp_local_min_sub_pix は local_min_sub_pix を名乗っており、max 側だけが空いていた。
 
 ## `backends_typed.py`
 

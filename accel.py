@@ -685,7 +685,8 @@ ACCEL = {
     "otsu": (_otsu, "otsu", "binary_threshold"),
     "dyn_threshold": (_dyn_threshold, "dyn_threshold", "dyn_threshold"),
     "canny": (_canny, "canny", "edges_image"),
-    "local_max": (_local_max, "local_max", "local_max_sub_pix"),
+    # ★2026-10-02: HALCON 名は ``local_max``(画素精度のマスク)。以前は ``local_max_sub_pix`` と書いていた。
+    "local_max": (_local_max, "local_max", "local_max"),
     "adaptive_gauss_thresh": (_adaptive_gauss, "adaptive_gauss_thresh", "local_threshold"),
     # Batch 3: 二値 reconstruction(fill_up は fill_holes と同一 core 実装の twin)
     "fill_holes": (_fill_holes_bin, "fill_holes", "fill_up"),

@@ -448,9 +448,11 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         return w
 
     return [
-        # halcon "" — local_max_sub_pix is already covered by a core op; genuine
-        # alternate impl, not new coverage (no double-claim).
-        Op("sp_local_max_sub_pix", "subpix", "", IMAGE, CONTOUR, _safe(sp_local_max_sub_pix)),
+        # ★2026-10-02: 以前は halcon "" で「local_max_sub_pix は core op が既にカバー」と書いていたが、
+        #   core の ``local_max`` が名乗るのは画素精度の HALCON ``local_max``(サブピクセルではない)で、
+        #   ``local_max_sub_pix`` を名乗る op は 1 本も無かった(accel の表だけが誤って書いていた)。
+        #   兄弟の sp_local_min_sub_pix は local_min_sub_pix を名乗っており、max 側だけが空いていた。
+        Op("sp_local_max_sub_pix", "subpix", "local_max_sub_pix", IMAGE, CONTOUR, _safe(sp_local_max_sub_pix)),
         Op("sp_local_min_sub_pix", "subpix", "local_min_sub_pix", IMAGE, CONTOUR, _safe(sp_local_min_sub_pix)),
         Op("sp_saddle_points_sub_pix", "subpix", "saddle_points_sub_pix", IMAGE, CONTOUR, _safe(sp_saddle_points_sub_pix)),
         Op("sp_critical_points_sub_pix", "subpix", "critical_points_sub_pix", IMAGE, CONTOUR, _safe(sp_critical_points_sub_pix)),

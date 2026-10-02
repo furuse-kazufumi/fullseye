@@ -1947,7 +1947,7 @@ _計 934 ops / 48 categories。_
 - `f2_gauss_pyramid` (halcon: `gen_gauss_pyramid`) `image → image` · 例: `gallery2d_smoothing_rank`
 
 ### subpix(6)
-- `sp_local_max_sub_pix` `image → contour` · 例: `gallery2d_geometry`
+- `sp_local_max_sub_pix` (halcon: `local_max_sub_pix`) `image → contour` · 例: `gallery2d_geometry`
 - `sp_local_min_sub_pix` (halcon: `local_min_sub_pix`) `image → contour` · 例: `gallery2d_geometry`
 - `sp_saddle_points_sub_pix` (halcon: `saddle_points_sub_pix`) `image → contour` · 例: `gallery2d_geometry`
 - `sp_critical_points_sub_pix` (halcon: `critical_points_sub_pix`) `image → contour` · 例: `gallery2d_geometry`

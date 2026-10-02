@@ -28369,7 +28369,7 @@
   },
   {
    "name": "sp_local_max_sub_pix",
-   "halcon": "",
+   "halcon": "local_max_sub_pix",
    "in_sort": "image",
    "out_sort": "contour",
    "category": "subpix",

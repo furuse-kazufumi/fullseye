@@ -9,7 +9,8 @@
 ## `accel.py`
 
 - **L296** — ★CPU 側(ops._otsu)と同じく**ビンの上端**で切る(2026-09-26)。 中点で切ると argmax ビンの背景画素が前景に混ざる。ここを直し忘れると 同じ絵で CPU と GPU の答えが割れる(test_fast_parity が門)。
-- **L811** — interior 差の判定閾値。★2026-09-20(GenSpark 第 32・33 報 N116): 0.0002 の差に "exact" と出て、 語が実測と矛盾していた —— 判定は閾値で決まるので、語に閾値を添える。
+- **L688** — ★2026-10-02: HALCON 名は ``local_max``(画素精度のマスク)。以前は ``local_max_sub_pix`` と書いていた。
+- **L812** — interior 差の判定閾値。★2026-09-20(GenSpark 第 32・33 報 N116): 0.0002 の差に "exact" と出て、 語が実測と矛盾していた —— 判定は閾値で決まるので、語に閾値を添える。
 
 ## `accel_match.py`
 
@@ -134,6 +135,10 @@
 ## `backends_scipy.py`
 
 - **L198** — ★lambda >= ~12 で scipy が「boundary conditions did not converge」を投げ、 guard の fallback = **恒等**になっていた(旧 1+40a は a>=0.3、既定 0.5 を 含む 7 割が恒等。2026-09-05 Fable レビュー)。説明も 1〜11 に合わせた。
+
+## `backends_subpix.py`
+
+- **L451** — ★2026-10-02: 以前は halcon "" で「local_max_sub_pix は core op が既にカバー」と書いていたが、 core の ``local_max`` が名乗るのは画素精度の HALCON ``local_max``(サブピクセルではない)で、 ``local_max_sub_pix`` を名乗る op は 1 本も無かった(accel の表だけが誤って書いていた)。 兄弟の sp_local_min_sub_pix は local_min_sub_pix を名乗っており、max 側だけが空いていた。
 
 ## `backends_typed.py`
 

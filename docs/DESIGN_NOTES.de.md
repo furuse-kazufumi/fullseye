@@ -5,13 +5,14 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1179. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1181. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
 
 - **L296** _(ja)_ — ★CPU 側(ops._otsu)と同じく**ビンの上端**で切る(2026-09-26)。 中点で切ると argmax ビンの背景画素が前景に混ざる。ここを直し忘れると 同じ絵で CPU と GPU の答えが割れる(test_fast_parity が門)。
-- **L811** _(ja)_ — interior 差の判定閾値。★2026-09-20(GenSpark 第 32・33 報 N116): 0.0002 の差に "exact" と出て、 語が実測と矛盾していた —— 判定は閾値で決まるので、語に閾値を添える。
+- **L688** _(ja)_ — ★2026-10-02: HALCON 名は ``local_max``(画素精度のマスク)。以前は ``local_max_sub_pix`` と書いていた。
+- **L812** _(ja)_ — interior 差の判定閾値。★2026-09-20(GenSpark 第 32・33 報 N116): 0.0002 の差に "exact" と出て、 語が実測と矛盾していた —— 判定は閾値で決まるので、語に閾値を添える。
 
 ## `accel_match.py`
 
@@ -136,6 +137,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `backends_scipy.py`
 
 - **L198** — ★Bei lambda >= ~12 wirft scipy "boundary conditions did not converge", und der Fallback des guard war die **Identität** (das alte 1+40a machte bei a>=0.3, einschließlich des Standards 0.5, 70% zur Identität. 2026-09-05 Fable-Review). Wir haben auch die Beschreibung auf 1〜11 angepasst.
+
+## `backends_subpix.py`
+
+- **L451** _(ja)_ — ★2026-10-02: 以前は halcon "" で「local_max_sub_pix は core op が既にカバー」と書いていたが、 core の ``local_max`` が名乗るのは画素精度の HALCON ``local_max``(サブピクセルではない)で、 ``local_max_sub_pix`` を名乗る op は 1 本も無かった(accel の表だけが誤って書いていた)。 兄弟の sp_local_min_sub_pix は local_min_sub_pix を名乗っており、max 側だけが空いていた。
 
 ## `backends_typed.py`
 

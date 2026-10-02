@@ -88,6 +88,15 @@ def _assert_contour(out, H, W):
 # --------------------------------------------------------------------------- #
 # 1. FUNCTIONAL GATE                                                          #
 # --------------------------------------------------------------------------- #
+def test_each_subpix_op_names_its_own_halcon_operator():
+    """sp_* はどれも同名の HALCON サブピクセル演算子を名乗る(2026-10-02: max 側だけ空だった回帰)。"""
+    want = {"sp_local_max_sub_pix": "local_max_sub_pix", "sp_local_min_sub_pix": "local_min_sub_pix",
+            "sp_saddle_points_sub_pix": "saddle_points_sub_pix",
+            "sp_critical_points_sub_pix": "critical_points_sub_pix",
+            "sp_plateaus": "plateaus", "sp_lowlands_center": "lowlands_center"}
+    assert {n: BY_NAME[n].halcon for n in want} == want
+
+
 def test_expected_ops_present():
     assert set(BY_NAME) == {
         "sp_local_max_sub_pix", "sp_local_min_sub_pix", "sp_saddle_points_sub_pix",

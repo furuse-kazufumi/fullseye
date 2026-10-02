@@ -7897,6 +7897,7 @@
     "category": "subpix",
     "in": "image",
     "out": "contour",
+    "halcon": "local_max_sub_pix",
     "path": "docs/ops/2d/subpix/sp_local_max_sub_pix.md"
    }
   ],
