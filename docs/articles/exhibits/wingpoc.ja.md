@@ -3162,7 +3162,7 @@ py -3.11 examples/poc_gravitational_lens_invariants.py
 
 ### 撮像品質・復元ウィング ―― 絵が良くなることと真値に近づくことは別
 
-手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 15 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
+手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 16 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
 
 見た目の指標は真値を最大値としません。霞んだ入力の対比が真値より高い、アンシャープで勾配は真値に一致するのに PSNR は落ちる、雑音を足すと PSNR が上がる。逆に、ナイキストより細かい縞を戻したのに PSNR が -0.01 dB しか動かない場面もあります。
 
@@ -3683,6 +3683,54 @@ py -3.11 examples/poc_active_contours.py
 この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_active_contours)
 
 使用 op(ノートへ): [`chan_vese_evolve`](https://furuse.work/ops/segmentation/contour/chan_vese_evolve.html) · [`curvature_flow`](https://furuse.work/ops/segmentation/contour/curvature_flow.html) · [`drle_evolve`](https://furuse.work/ops/segmentation/contour/drle_evolve.html) · [`edge_stop_g`](https://furuse.work/ops/segmentation/contour/edge_stop_g.html) · [`gvf_field`](https://furuse.work/ops/segmentation/contour/gvf_field.html) · [`level_set_reinit`](https://furuse.work/ops/segmentation/contour/level_set_reinit.html) · [`morph_chan_vese`](https://furuse.work/ops/segmentation/contour/morph_chan_vese.html) · [`morph_geodesic_ac`](https://furuse.work/ops/segmentation/contour/morph_geodesic_ac.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`seg_score_card`](https://furuse.work/ops/segmentation/score/seg_score_card.html) · [`sk_chan_vese`](https://furuse.work/ops/2d/segmentation/sk_chan_vese.html) · [`snake_evolve`](https://furuse.work/ops/segmentation/contour/snake_evolve.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_blobs_touching`](https://furuse.work/ops/segmentation/world/world_blobs_touching.html) · [`world_gradient_illumination`](https://furuse.work/ops/segmentation/world/world_gradient_illumination.html) · [`world_parts_with_shadow`](https://furuse.work/ops/segmentation/world/world_parts_with_shadow.html) · [`world_thin_structures`](https://furuse.work/ops/segmentation/world/world_thin_structures.html)
+
+## No.2026.187 —— グラフ・階層・閾値のセグメンテーション ―― 最大フロー = 最小カット、ultrametric、つまみを回すと粗から細へ
+
+[![グラフ・階層・閾値のセグメンテーション ―― 最大フロー = 最小カット、ultrametric、つまみを回すと粗から細へ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/01_inputs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/01_inputs.png)
+
+*↑ **グラフ・階層・閾値のセグメンテーション ―― 最大フロー = 最小カット、ultrametric、つまみを回すと粗から細へ** ―― セグメンテーション拡充の第 3 陣 —— 新モジュール seggraph 16 op。門: graph cut は 3×4 の 40 問で総当たりの最小と一致、最大フロー = 最小カット(160×160 でも整数で厳密)/ α-expansion は 80 問すべて E ≤ 2c·E*(Boykov–Veksler–Zabih 2001 Theorem 6.1)、局所解に留まる 3×3 の罠も示す / 成分木の面積開放は冪等・反拡大で skimage と画素一致 / 準平坦領域 = 最小全域木を α で切った連結成分(6 つの α)、α を増やすと入れ子 / 階層分水嶺は盆地 107 個の全 3 つ組で ultrametric の違反 0、生き残る盆地 = dynamics > θ / SNIC の超画素は全部 4-連結、境界の再現率は SLIC と 0.05 以内 / isodata は不動点、三角法は skimage と一致、Kapur は総当たりの最大。どの世界でどれが勝つか: 触れ合う粒の階層分水嶺は θ = 0 で 19 領域の過分割、θ = 0.5〜3.5 で 10 粒ちょうど、大きな θ で 1 領域 / graph cut の λ = 0.1 は雑音の粒の Dice を +0.13 上げ、同じ λ で幅 1〜3 px の線を −0.13 下げる / SRM は結晶粒で VI 0.74〜0.90 bit まで下がるが、平均が同じで質感だけ違う世界ではどの q でも 1 領域より良くならない / 照明の勾配で Kittler は Dice 0.93〜0.99、isodata は 0.29〜0.41。掃引の動画 3 本(θ・q・λ)。正直に: SRM の述語の係数、Kittler・Kapur・三角法の原典の規約、SNIC の式 (1) は原論文を未照合(要確認)。13 門、6.4 s。*
+
+[![−距離変換の地形の 1 本の最小全域森を、dynamics ≤ θ の辺で結ぶ。θ = 0 は雑音の凹みまで盆地にして過分割、θ = 0.5〜3 px で粒の数ちょうど、くびれの深さ(重なり 20 %)を超えると隣の粒と融合する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/02_watershed_theta_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/02_watershed_theta.png)
+
+*↑ 測定の図 ―― −距離変換の地形の 1 本の最小全域森を、dynamics ≤ θ の辺で結ぶ。θ = 0 は雑音の凹みまで盆地にして過分割、θ = 0.5〜3 px で粒の数ちょうど、くびれの深さ(重なり 20 %)を超えると隣の粒と融合する。*
+
+[![エネルギーは毎回厳密に最小(最大フロー = 最小カット)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/03_graph_cut_lambda_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/03_graph_cut_lambda.png)
+
+*↑ エネルギーは毎回厳密に最小(最大フロー = 最小カット)。*
+
+[![結晶粒は q = 256 付近で VI が 1 bit を切る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/04_srm_q_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/04_srm_q.png)
+
+*↑ 結晶粒は q = 256 付近で VI が 1 bit を切る。*
+
+[![Kittler は 2 クラスの分散を別々に持つので Bayes の最小誤差の閾値(2 次方程式の根)に乗る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/05_thresholds_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/05_thresholds.png)
+
+*↑ Kittler は 2 クラスの分散を別々に持つので Bayes の最小誤差の閾値(2 次方程式の根)に乗る。*
+
+[![照明の勾配では背景の裾が長く、2 平均の中点(isodata)は背景の中に落ちる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/06_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/06_scores.png)
+
+*↑ 照明の勾配では背景の裾が長く、2 平均の中点(isodata)は背景の中に落ちる。*
+
+[![触れ合う粒の階層分水嶺。θ を大 → 小 → 大に振る: 1 領域から粒の数ちょうどを経て雑音の凹みで過分割へ、そして戻る。どのコマも同じ 1 本の木の切り方(入れ子)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.gif)
+
+*↑ 動く図 ―― 触れ合う粒の階層分水嶺。θ を大 → 小 → 大に振る: 1 領域から粒の数ちょうどを経て雑音の凹みで過分割へ、そして戻る。どのコマも同じ 1 本の木の切り方(入れ子)。*
+
+[![結晶粒の SRM。q = 1(全部 1 領域)から 1024(細切れ)へ。q = 256 前後で粒界に沿う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/09_srm_q_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/09_srm_q_sweep.gif)
+
+*↑ 動く図 ―― 結晶粒の SRM。q = 1(全部 1 領域)から 1024(細切れ)へ。q = 256 前後で粒界に沿う。*
+
+[![graph cut の λ を 0 → 0.3。黄 = 正解の物体、赤 = 余計、青 = 取り逃し。左の雑音の点は消え、右の細い線も同じ λ で途切れて消える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/10_graph_cut_lambda_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/10_graph_cut_lambda_sweep.gif)
+
+*↑ 動く図 ―― graph cut の λ を 0 → 0.3。黄 = 正解の物体、赤 = 余計、青 = 取り逃し。左の雑音の点は消え、右の細い線も同じ λ で途切れて消える。*
+
+```
+py -3.11 examples/poc_graph_hierarchy_segmentation.py
+```
+
+ソース: [examples/poc_graph_hierarchy_segmentation.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_graph_hierarchy_segmentation.py)
+
+この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation)
+
+使用 op(ノートへ): [`alpha_expansion`](https://furuse.work/ops/segmentation/graph/alpha_expansion.html) · [`alpha_tree`](https://furuse.work/ops/segmentation/graph/alpha_tree.html) · [`area_opening_attr`](https://furuse.work/ops/segmentation/graph/area_opening_attr.html) · [`graph_cut_binary`](https://furuse.work/ops/segmentation/graph/graph_cut_binary.html) · [`hierarchical_watershed`](https://furuse.work/ops/segmentation/graph/hierarchical_watershed.html) · [`quasi_flat_zones`](https://furuse.work/ops/segmentation/graph/quasi_flat_zones.html) · [`quickshift`](https://furuse.work/ops/segmentation/graph/quickshift.html) · [`seg_boundary_f`](https://furuse.work/ops/segmentation/score/seg_boundary_f.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`seg_object_counts_match`](https://furuse.work/ops/segmentation/score/seg_object_counts_match.html) · [`seg_score_card`](https://furuse.work/ops/segmentation/score/seg_score_card.html) · [`seg_under_over_segmentation`](https://furuse.work/ops/segmentation/score/seg_under_over_segmentation.html) · [`snic_superpixels`](https://furuse.work/ops/segmentation/graph/snic_superpixels.html) · [`statistical_region_merging`](https://furuse.work/ops/segmentation/graph/statistical_region_merging.html) · [`superpixel_quality`](https://furuse.work/ops/segmentation/graph/superpixel_quality.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`threshold_isodata`](https://furuse.work/ops/segmentation/threshold/threshold_isodata.html) · [`threshold_kapur`](https://furuse.work/ops/segmentation/threshold/threshold_kapur.html) · [`threshold_kittler`](https://furuse.work/ops/segmentation/threshold/threshold_kittler.html) · [`threshold_triangle`](https://furuse.work/ops/segmentation/threshold/threshold_triangle.html) · [`ultrametric_contour_map`](https://furuse.work/ops/segmentation/graph/ultrametric_contour_map.html) · [`world_blobs_touching`](https://furuse.work/ops/segmentation/world/world_blobs_touching.html) · [`world_gradient_illumination`](https://furuse.work/ops/segmentation/world/world_gradient_illumination.html) · [`world_grains_voronoi`](https://furuse.work/ops/segmentation/world/world_grains_voronoi.html) …(他 3)
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 

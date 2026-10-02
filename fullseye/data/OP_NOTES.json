@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2571,
- "n_notes": 2577,
+ "n_ops": 2587,
+ "n_notes": 2593,
  "notes": {
   "vol_dilate": [
    {
@@ -24601,6 +24601,126 @@
     "path": "docs/ops/segmentation/contour/snake_evolve.md"
    }
   ],
+  "alpha_expansion": [
+   {
+    "op": "alpha_expansion",
+    "dim": "segmentation",
+    "category": "graph",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/graph/alpha_expansion.md"
+   }
+  ],
+  "alpha_tree": [
+   {
+    "op": "alpha_tree",
+    "dim": "segmentation",
+    "category": "graph",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/graph/alpha_tree.md"
+   }
+  ],
+  "area_opening_attr": [
+   {
+    "op": "area_opening_attr",
+    "dim": "segmentation",
+    "category": "graph",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/graph/area_opening_attr.md"
+   }
+  ],
+  "graph_cut_binary": [
+   {
+    "op": "graph_cut_binary",
+    "dim": "segmentation",
+    "category": "graph",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/graph/graph_cut_binary.md"
+   }
+  ],
+  "hierarchical_watershed": [
+   {
+    "op": "hierarchical_watershed",
+    "dim": "segmentation",
+    "category": "graph",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/graph/hierarchical_watershed.md"
+   }
+  ],
+  "max_tree": [
+   {
+    "op": "max_tree",
+    "dim": "segmentation",
+    "category": "graph",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/graph/max_tree.md"
+   }
+  ],
+  "quasi_flat_zones": [
+   {
+    "op": "quasi_flat_zones",
+    "dim": "segmentation",
+    "category": "graph",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/graph/quasi_flat_zones.md"
+   }
+  ],
+  "quickshift": [
+   {
+    "op": "quickshift",
+    "dim": "segmentation",
+    "category": "graph",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/graph/quickshift.md"
+   }
+  ],
+  "snic_superpixels": [
+   {
+    "op": "snic_superpixels",
+    "dim": "segmentation",
+    "category": "graph",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/graph/snic_superpixels.md"
+   }
+  ],
+  "statistical_region_merging": [
+   {
+    "op": "statistical_region_merging",
+    "dim": "segmentation",
+    "category": "graph",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/graph/statistical_region_merging.md"
+   }
+  ],
+  "superpixel_quality": [
+   {
+    "op": "superpixel_quality",
+    "dim": "segmentation",
+    "category": "graph",
+    "in": "labels2d × labels2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/graph/superpixel_quality.md"
+   }
+  ],
+  "ultrametric_contour_map": [
+   {
+    "op": "ultrametric_contour_map",
+    "dim": "segmentation",
+    "category": "graph",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/graph/ultrametric_contour_map.md"
+   }
+  ],
   "expand_gray": [
    {
     "op": "expand_gray",
@@ -24699,6 +24819,46 @@
     "in": "labels2d × labels2d",
     "out": "table",
     "path": "docs/ops/segmentation/score/seg_under_over_segmentation.md"
+   }
+  ],
+  "threshold_isodata": [
+   {
+    "op": "threshold_isodata",
+    "dim": "segmentation",
+    "category": "threshold",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/threshold/threshold_isodata.md"
+   }
+  ],
+  "threshold_kapur": [
+   {
+    "op": "threshold_kapur",
+    "dim": "segmentation",
+    "category": "threshold",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/threshold/threshold_kapur.md"
+   }
+  ],
+  "threshold_kittler": [
+   {
+    "op": "threshold_kittler",
+    "dim": "segmentation",
+    "category": "threshold",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/threshold/threshold_kittler.md"
+   }
+  ],
+  "threshold_triangle": [
+   {
+    "op": "threshold_triangle",
+    "dim": "segmentation",
+    "category": "threshold",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/threshold/threshold_triangle.md"
    }
   ],
   "watersheds_marker": [

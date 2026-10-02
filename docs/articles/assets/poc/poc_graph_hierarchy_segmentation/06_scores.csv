@@ -1,0 +1,21 @@
+﻿世界,手法,Dice / 境界再現率,備考
+勾配 seed 0,三角法,0.468,
+勾配 seed 0,isodata,0.355,
+勾配 seed 0,Kittler,0.954,
+勾配 seed 0,Kapur,0.704,
+勾配 seed 1,三角法,0.988,
+勾配 seed 1,isodata,0.408,
+勾配 seed 1,Kittler,0.987,
+勾配 seed 1,Kapur,0.700,
+勾配 seed 2,三角法,0.964,
+勾配 seed 2,isodata,0.292,
+勾配 seed 2,Kittler,0.932,
+勾配 seed 2,Kapur,0.615,
+影の部品,三角法,0.426,影と暗い面(限界)
+影の部品,isodata,0.145,影と暗い面(限界)
+影の部品,Kittler,0.149,影と暗い面(限界)
+影の部品,Kapur,0.256,影と暗い面(限界)
+結晶粒,SNIC,1.000,超画素 196、CUSE 0.053
+結晶粒,SLIC(skimage),0.992,超画素 154、CUSE 0.073
+結晶粒,quick shift,0.994,超画素 64、CUSE 0.054
+結晶粒,quickshift(skimage),0.994,超画素 65、CUSE 0.054

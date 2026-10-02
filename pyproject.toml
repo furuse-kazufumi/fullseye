@@ -158,6 +158,9 @@ py-modules = [
   # 2026-10-02: セグメンテーション第 2 陣。変分・動的輪郭(snake / GVF / Chan–Vese / 形態学的 AC /
   #   DRLSE / 再初期化 / 平均曲率流)の実体。opssegmentation 台帳に contour カテゴリとして載る。
   "segcontour",
+  # 2026-10-02: セグメンテーション第 3 陣。グラフ・階層・閾値(graph cut / α-expansion / SRM / 成分木 /
+  #   準平坦領域 / 階層分水嶺 / 超画素 / 閾値 4 定理)の実体。opssegmentation 台帳に graph / threshold として載る。
+  "seggraph",
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
   "backends_scipy", "backends_ski2",

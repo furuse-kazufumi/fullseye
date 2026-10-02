@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">quickshift — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quickshift(image, *, kernel_size: &#x27;float&#x27; = 3.0, max_dist: &#x27;float&#x27; = 6.0, ratio: &#x27;float&#x27; = 1.0, search_radius: &#x27;int&#x27; = 10) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import seggraph; seggraph.quickshift(image, *, kernel_size: &#x27;float&#x27; = 3.0, max_dist: &#x27;float&#x27; = 6.0, ratio: &#x27;float&#x27; = 1.0, search_radius: &#x27;int&#x27; = 10) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;quickshift&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>quick shift(Vedaldi–Soatto 2008): 特徴 (y, x, ratio · I) で Parzen 密度 P_i = Σ_j exp(−D_ij²/(2σ²))(窓 3σ、σ =</p>
+<p>`<code style="color:#22d3bf">kernel_size</code><code style="color:#22d3bf">)を見積もり、各画素を「密度が上の点のうち最も近い点」(半径 </code><code style="color:#22d3bf">search_radius</code>` の窓の中)に繋ぎ、</p>
+<p>長さ &gt; `<code style="color:#22d3bf">max_dist</code>` の枝を切った木の成分を領域にする。</p>
+<p>密度の同点は画素番号で決める(乱数なし)。木は `<code style="color:#22d3bf">max_dist</code>` に依らない(search_radius を固定すれば)ので、</p>
+<p>max_dist を増やした分割は入れ子になる(切る枝が減るだけ)。返す: `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(1..k)、</code><code style="color:#22d3bf">n_segments</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">parent</code>`</p>
+<p>(平らな添字、根は自分)、`<code style="color:#22d3bf">link</code><code style="color:#22d3bf">(親までの距離、根は inf)、</code><code style="color:#22d3bf">density</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">graph</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:graph_cut_binary">graph_cut_binary</a> · <a style="color:#22d3bf" href="opsegmentation:alpha_expansion">alpha_expansion</a> · <a style="color:#22d3bf" href="opsegmentation:statistical_region_merging">statistical_region_merging</a> · <a style="color:#22d3bf" href="opsegmentation:max_tree">max_tree</a> · <a style="color:#22d3bf" href="opsegmentation:area_opening_attr">area_opening_attr</a> · <a style="color:#22d3bf" href="opsegmentation:quasi_flat_zones">quasi_flat_zones</a> · <a style="color:#22d3bf" href="opsegmentation:alpha_tree">alpha_tree</a> · <a style="color:#22d3bf" href="opsegmentation:hierarchical_watershed">hierarchical_watershed</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: seggraph.py — SEGMENTATION operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

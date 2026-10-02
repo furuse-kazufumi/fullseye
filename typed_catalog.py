@@ -971,6 +971,9 @@ def catalog():
         # 2026-10-02 追補 2: 第 2 陣 contour(segcontour 10)。単入力は gvf_field /
         # edge_stop_g(image2d → table)と level_set_reinit / curvature_flow
         # (mask → table)で、どれも out=table なので橋は架からず 2-D の件数は不変。
+        # 2026-10-02 追補 3: 第 3 陣 graph(seggraph 12)/ threshold(seggraph 4)。単入力の 15 本は
+        # どれも image2d → table、superpixel_quality は labels2d × 2 → table。out=table なので
+        # 橋は架からず 2-D の件数は不変。
         ("opssegmentation", "OPSSEGMENTATION", "segmentation"),
     ):
         _m = __import__(_mod)

@@ -159,6 +159,9 @@ EXAMPLES = [
                 "初期状態を当てて跳ねを越えて予測すると、真のスピンを知っていれば着地点 0.4 cm、スピンを無視すると 20.2 cm 外れる。"
                 "近接カメラ(1000 fps)の模様を Kabsch で対応づけた角速度は真値と 3.7 %、反発係数は運動方程式の当てはめで 0.9114(真値 0.90)。"
                 "正直に: 放物線で e を出すと 0.9398(抗力とマグヌスを g に吸って 4.4 % ずれる)、検出は色が既知の合成映像。ラリー: 送り合いは上限 12 本、攻める側が入ると 9 本、知覚雑音 5 cm までは不変・10 cm で 2 本。"},
+    {"id": "poc_graph_hierarchy_segmentation", "task": "segmentation", "data": "synthetic",
+     "name": "グラフ・階層・閾値のセグメンテーション —— 最大フロー = 最小カット、ultrametric、つまみを回すと粗から細へ",
+     "summary": "グラフ・階層・閾値のセグメンテーション 16 op(graph cut・α-expansion・SRM・成分木の属性開放・準平坦領域・階層分水嶺と UCM・SNIC・quick shift・三角法・isodata・Kittler・Kapur)を定理(最大フロー = 最小カット、E ≤ 2c E*、ultrametric 等)と第 2 実装の門で確かめ、真値つき世界で掃引して採点する。"},
     {"id": "poc_active_contours", "task": "segmentation", "data": "synthetic",
      "name": "動的輪郭とレベルセット —— 輪郭が縮み、凹みに入り、エッジで止まるまでを閉形式で確かめる",
      "summary": "動的輪郭とレベルセット 10 op(snake・GVF・Chan–Vese・形態学的 CV・測地的 AC・再初期化・DRLSE・曲率流)を、閉形式と第 2 実装の門で確かめ、真値つきの合成世界で segeval により採点する。U 字の凹部に古典の snake は入れず GVF は入る、照明の勾配では大域の Chan–Vese が負け局所の手法が勝つ。"},

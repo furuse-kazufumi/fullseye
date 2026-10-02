@@ -1,8 +1,8 @@
 {
- "n_ops": 2571,
+ "n_ops": 2587,
  "tiers": {
   "color": 12,
-  "ledger": 1620,
+  "ledger": 1636,
   "nary": 17,
   "registry": 922
  },
@@ -605,6 +605,19 @@
    ]
   },
   {
+   "name": "alpha_expansion",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "graph",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "alpha_shape_boundary",
    "halcon": "",
    "in_sort": "points",
@@ -628,6 +641,19 @@
    "dim": "3d",
    "in_sorts": [
     "points"
+   ]
+  },
+  {
+   "name": "alpha_tree",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "graph",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -1301,6 +1327,19 @@
    "dim": "3d",
    "in_sorts": [
     "points"
+   ]
+  },
+  {
+   "name": "area_opening_attr",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "graph",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -7303,6 +7342,19 @@
    ]
   },
   {
+   "name": "graph_cut_binary",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "graph",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "graph_cycle3",
    "halcon": "",
    "in_sort": "matrix",
@@ -7887,6 +7939,19 @@
    "dim": "3d",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "hierarchical_watershed",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "graph",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -10222,6 +10287,19 @@
    "dim": "reprconv",
    "in_sorts": [
     "matrix"
+   ]
+  },
+  {
+   "name": "max_tree",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "graph",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -14010,6 +14088,19 @@
    ]
   },
   {
+   "name": "quasi_flat_zones",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "graph",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "quat_color_filter",
    "halcon": "",
    "in_sort": "qimage",
@@ -14127,6 +14218,19 @@
    "in_sorts": [
     "sdf",
     "points"
+   ]
+  },
+  {
+   "name": "quickshift",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "graph",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -17206,6 +17310,19 @@
    ]
   },
   {
+   "name": "snic_superpixels",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "graph",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "sobel3d",
    "halcon": "",
    "in_sort": "voxel",
@@ -17792,6 +17909,19 @@
    ]
   },
   {
+   "name": "statistical_region_merging",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "graph",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "steady_cornering",
    "halcon": "",
    "in_sort": null,
@@ -18121,6 +18251,20 @@
    "in_sorts": [
     "scalar",
     "scalar"
+   ]
+  },
+  {
+   "name": "superpixel_quality",
+   "halcon": "",
+   "in_sort": "labels2d",
+   "out_sort": "table",
+   "category": "graph",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "labels2d",
+    "labels2d"
    ]
   },
   {
@@ -18794,6 +18938,58 @@
    ]
   },
   {
+   "name": "threshold_isodata",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "threshold",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "threshold_kapur",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "threshold",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "threshold_kittler",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "threshold",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "threshold_triangle",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "threshold",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "ticks",
    "halcon": "",
    "in_sort": "image2d",
@@ -19376,6 +19572,19 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "ultrametric_contour_map",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "graph",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {

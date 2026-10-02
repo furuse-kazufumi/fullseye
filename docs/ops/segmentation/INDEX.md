@@ -1,4 +1,4 @@
-# SEGMENTATION operator help — 35 ops in 7 categories
+# SEGMENTATION operator help — 51 ops in 9 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/segmentation/<category>/<op>.md` を走査。
 
@@ -9,6 +9,7 @@
 ## 背景知識ガイド(op の手前にある物理・規約)
 
 - [active_contours_and_level_sets](guides/active_contours_and_level_sets.md) — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか
+- [graph_hierarchy_and_thresholds](guides/graph_hierarchy_and_thresholds.md) — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか
 - [segmentation_scoring_and_worlds](guides/segmentation_scoring_and_worlds.md) — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か
 
 ## カテゴリ
@@ -25,6 +26,10 @@
 
 [chan_vese_energy](contour/chan_vese_energy.md) · [chan_vese_evolve](contour/chan_vese_evolve.md) · [curvature_flow](contour/curvature_flow.md) · [drle_evolve](contour/drle_evolve.md) · [edge_stop_g](contour/edge_stop_g.md) · [gvf_field](contour/gvf_field.md) · [level_set_reinit](contour/level_set_reinit.md) · [morph_chan_vese](contour/morph_chan_vese.md) · [morph_geodesic_ac](contour/morph_geodesic_ac.md) · [snake_evolve](contour/snake_evolve.md)
 
+### graph (12)
+
+[alpha_expansion](graph/alpha_expansion.md) · [alpha_tree](graph/alpha_tree.md) · [area_opening_attr](graph/area_opening_attr.md) · [graph_cut_binary](graph/graph_cut_binary.md) · [hierarchical_watershed](graph/hierarchical_watershed.md) · [max_tree](graph/max_tree.md) · [quasi_flat_zones](graph/quasi_flat_zones.md) · [quickshift](graph/quickshift.md) · [snic_superpixels](graph/snic_superpixels.md) · [statistical_region_merging](graph/statistical_region_merging.md) · [superpixel_quality](graph/superpixel_quality.md) · [ultrametric_contour_map](graph/ultrametric_contour_map.md)
+
 ### grow (2)
 
 [expand_gray](grow/expand_gray.md) · [regiongrowing_n](grow/regiongrowing_n.md)
@@ -32,6 +37,10 @@
 ### score (8)
 
 [seg_boundary_f](score/seg_boundary_f.md) · [seg_confusion_table](score/seg_confusion_table.md) · [seg_dice_jaccard](score/seg_dice_jaccard.md) · [seg_hausdorff](score/seg_hausdorff.md) · [seg_mean_surface_distance](score/seg_mean_surface_distance.md) · [seg_object_counts_match](score/seg_object_counts_match.md) · [seg_score_card](score/seg_score_card.md) · [seg_under_over_segmentation](score/seg_under_over_segmentation.md)
+
+### threshold (4)
+
+[threshold_isodata](threshold/threshold_isodata.md) · [threshold_kapur](threshold/threshold_kapur.md) · [threshold_kittler](threshold/threshold_kittler.md) · [threshold_triangle](threshold/threshold_triangle.md)
 
 ### watershed (1)
 

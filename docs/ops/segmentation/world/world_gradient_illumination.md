@@ -4,7 +4,7 @@ dim: segmentation
 category: world
 in: 
 out: table
-examples: [poc_active_contours, poc_segmentation_gauntlet]
+examples: [poc_active_contours, poc_graph_hierarchy_segmentation, poc_segmentation_gauntlet]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -41,6 +41,7 @@ I(x, y) = i0 + g_x x/(W−1) + g_y y/(H−1)(i0 + g_x + g_y ≤ 1)、画像 = I 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_active_contours](../../../../examples/poc_active_contours.py) — `py -3.11 examples/poc_active_contours.py`
+- [poc_graph_hierarchy_segmentation](../../../../examples/poc_graph_hierarchy_segmentation.py) — `py -3.11 examples/poc_graph_hierarchy_segmentation.py`
 - [poc_segmentation_gauntlet](../../../../examples/poc_segmentation_gauntlet.py) — `py -3.11 examples/poc_segmentation_gauntlet.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

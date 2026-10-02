@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">alpha_expansion — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_expansion(image, means: &#x27;Optional[Sequence[float]]&#x27; = None, *, lam: &#x27;float&#x27; = 1.0, pairwise: &#x27;str&#x27; = &#x27;potts&#x27;, truncation: &#x27;float&#x27; = 2.0, connectivity: &#x27;int&#x27; = 4, max_cycles: &#x27;int&#x27; = 10, init=None) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import seggraph; seggraph.alpha_expansion(image, means: &#x27;Optional[Sequence[float]]&#x27; = None, *, lam: &#x27;float&#x27; = 1.0, pairwise: &#x27;str&#x27; = &#x27;potts&#x27;, truncation: &#x27;float&#x27; = 2.0, connectivity: &#x27;int&#x27; = 4, max_cycles: &#x27;int&#x27; = 10, init=None) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;alpha_expansion&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>다중 레이블 α-expansion(Boykov–Veksler–Zabih 2001): E(f) = Σ (I_p − μ_(f_p))² + λ Σ w_pq V(f_p, f_q), V는 거리 함수(metric)(alpha_expansion).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">means</code><code style="color:#22d3bf"> = 各ラベルの平均 μ_1..μ_L(L ≥ 2。省くと画素の値の 1/6・1/2・5/6 分位の 3 ラベル)。V は </code><code style="color:#22d3bf">&quot;potts&quot;</code><code style="color:#22d3bf">([α ≠ β]、c = 1)か </code><code style="color:#22d3bf">&quot;truncated_linear&quot;</code>`</p>
+<p>(min(|α − β|, T)、T ≥ 1 なら計量、c = min(L − 1, T))。1 周 = α = 1..L の expansion を順に。各移動は 2 値の graph cut で</p>
+<p>厳密に解き、<b>エネルギーが厳密に下がる時だけ</b> 受け入れる。1 周で 1 度も受け入れなければ止まる(論文と同じ)。</p>
+<p>返す: `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(1..L)、</code><code style="color:#22d3bf">energy</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">energies</code><code style="color:#22d3bf">(受け入れの列、単調減少)、</code><code style="color:#22d3bf">move_minima</code>`(各移動の 2 値問題の最小、</p>
+<p>今の値以下 = 門)、`<code style="color:#22d3bf">c</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">bound_factor</code>` = 2c(Theorem 6.1: E(f̂) ≤ 2c E(f*))。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">graph</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:graph_cut_binary">graph_cut_binary</a> · <a style="color:#22d3bf" href="opsegmentation:statistical_region_merging">statistical_region_merging</a> · <a style="color:#22d3bf" href="opsegmentation:max_tree">max_tree</a> · <a style="color:#22d3bf" href="opsegmentation:area_opening_attr">area_opening_attr</a> · <a style="color:#22d3bf" href="opsegmentation:quasi_flat_zones">quasi_flat_zones</a> · <a style="color:#22d3bf" href="opsegmentation:alpha_tree">alpha_tree</a> · <a style="color:#22d3bf" href="opsegmentation:hierarchical_watershed">hierarchical_watershed</a> · <a style="color:#22d3bf" href="opsegmentation:ultrametric_contour_map">ultrametric_contour_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: seggraph.py — SEGMENTATION 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -4,7 +4,7 @@ dim: segmentation
 category: score
 in: labels2d × labels2d
 out: table
-examples: [poc_am_thermal_to_ct]
+examples: [poc_am_thermal_to_ct, poc_graph_hierarchy_segmentation]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.3  # fullseye lib version this note was generated for
@@ -42,6 +42,7 @@ F = 2PR/(P+R)。境界は :func:`_boundary` の規約(ラベルの割れ目、1 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_am_thermal_to_ct](../../../../examples/poc_am_thermal_to_ct.py) — `py -3.11 examples/poc_am_thermal_to_ct.py`
+- [poc_graph_hierarchy_segmentation](../../../../examples/poc_graph_hierarchy_segmentation.py) — `py -3.11 examples/poc_graph_hierarchy_segmentation.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

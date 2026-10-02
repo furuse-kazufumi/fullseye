@@ -4,13 +4,13 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**67 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**68 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
 ### The Image Quality and Restoration Wing — Looking Better and Getting Closer to the Truth Are Different Things
 
-Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The 15 exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.
+Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The 16 exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.
 
 Appearance metrics do not peak at the truth: a hazy input has higher contrast than the true scene; unsharp masking matches the true gradient energy while PSNR drops; adding noise raises PSNR. Conversely, a method can restore stripes finer than Nyquist while PSNR moves by only -0.01 dB.
 
@@ -531,6 +531,54 @@ Source: [examples/poc_active_contours.py](https://github.com/furuse-kazufumi/ful
 This run produced **8 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_active_contours)
 
 Ops used (notes): [`chan_vese_evolve`](https://furuse.work/ops/segmentation/contour/chan_vese_evolve.html) · [`curvature_flow`](https://furuse.work/ops/segmentation/contour/curvature_flow.html) · [`drle_evolve`](https://furuse.work/ops/segmentation/contour/drle_evolve.html) · [`edge_stop_g`](https://furuse.work/ops/segmentation/contour/edge_stop_g.html) · [`gvf_field`](https://furuse.work/ops/segmentation/contour/gvf_field.html) · [`level_set_reinit`](https://furuse.work/ops/segmentation/contour/level_set_reinit.html) · [`morph_chan_vese`](https://furuse.work/ops/segmentation/contour/morph_chan_vese.html) · [`morph_geodesic_ac`](https://furuse.work/ops/segmentation/contour/morph_geodesic_ac.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`seg_score_card`](https://furuse.work/ops/segmentation/score/seg_score_card.html) · [`sk_chan_vese`](https://furuse.work/ops/2d/segmentation/sk_chan_vese.html) · [`snake_evolve`](https://furuse.work/ops/segmentation/contour/snake_evolve.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_blobs_touching`](https://furuse.work/ops/segmentation/world/world_blobs_touching.html) · [`world_gradient_illumination`](https://furuse.work/ops/segmentation/world/world_gradient_illumination.html) · [`world_parts_with_shadow`](https://furuse.work/ops/segmentation/world/world_parts_with_shadow.html) · [`world_thin_structures`](https://furuse.work/ops/segmentation/world/world_thin_structures.html)
+
+## No.2026.187 —— Graph, Hierarchical and Threshold Segmentation — Max Flow = Min Cut, Ultrametrics, and Turning a Knob From Coarse to Fine
+
+[![Graph, Hierarchical and Threshold Segmentation — Max Flow = Min Cut, Ultrametrics, and Turning a Knob From Coarse to Fine](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/01_inputs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/01_inputs.png)
+
+*↑ **Graph, Hierarchical and Threshold Segmentation — Max Flow = Min Cut, Ultrametrics, and Turning a Knob From Coarse to Fine** ―― Segmentation expansion, batch 3 — new module seggraph, 16 ops. Gates: graph cut matches the brute-force minimum on 40 problems of 3×4 pixels, and max flow = min cut (exactly, in integers, even at 160×160) / α-expansion stays within E ≤ 2c·E* on all 80 problems (Boykov–Veksler–Zabih 2001, Theorem 6.1), and a 3×3 trap shows it can stop at a local optimum / area opening on the component tree is idempotent and anti-extensive and matches skimage pixel for pixel / quasi-flat zones = connected components of the minimum spanning tree cut at α (six values of α), nested as α grows / the hierarchical watershed has 0 ultrametric violations over all triples of 107 basins, and the surviving basins are those with dynamics > θ / every SNIC superpixel is 4-connected and its boundary recall is within 0.05 of SLIC / isodata is a fixed point, triangle matches skimage, Kapur is the brute-force maximum. Which method wins where: on touching blobs the hierarchical watershed gives 19 regions at θ = 0 (over-segmented), exactly 10 blobs for θ = 0.5–3.5, and one region at large θ / graph cut at λ = 0.1 raises Dice on noisy blobs by +0.13 and lowers it on 1–3 px lines by −0.13 at the same λ / SRM gets down to 0.74–0.90 bit of VI on grains but on same-mean texture regions never beats a single region at any q / under an illumination gradient Kittler scores Dice 0.93–0.99 and isodata 0.29–0.41. Three sweep videos (θ, q, λ). Honestly: SRM's predicate constants, the original conventions of Kittler, Kapur and the triangle method, and SNIC's equation (1) were not checked against the papers. 13 gates, 6.4 s.*
+
+[![−距離変換の地形の 1 本の最小全域森を、dynamics ≤ θ の辺で結ぶ。θ = 0 は雑音の凹みまで盆地にして過分割、θ = 0.5〜3 px で粒の数ちょうど、くびれの深さ(重なり 20 %)を超えると隣の粒と融合する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/02_watershed_theta_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/02_watershed_theta.png)
+
+*↑ The measurement ―― −距離変換の地形の 1 本の最小全域森を、dynamics ≤ θ の辺で結ぶ。θ = 0 は雑音の凹みまで盆地にして過分割、θ = 0.5〜3 px で粒の数ちょうど、くびれの深さ(重なり 20 %)を超えると隣の粒と融合する。 (figure labels are in Japanese; the numbers are the same)*
+
+[![エネルギーは毎回厳密に最小(最大フロー = 最小カット)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/03_graph_cut_lambda_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/03_graph_cut_lambda.png)
+
+*↑ エネルギーは毎回厳密に最小(最大フロー = 最小カット)。*
+
+[![結晶粒は q = 256 付近で VI が 1 bit を切る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/04_srm_q_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/04_srm_q.png)
+
+*↑ 結晶粒は q = 256 付近で VI が 1 bit を切る。*
+
+[![Kittler は 2 クラスの分散を別々に持つので Bayes の最小誤差の閾値(2 次方程式の根)に乗る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/05_thresholds_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/05_thresholds.png)
+
+*↑ Kittler は 2 クラスの分散を別々に持つので Bayes の最小誤差の閾値(2 次方程式の根)に乗る。*
+
+[![照明の勾配では背景の裾が長く、2 平均の中点(isodata)は背景の中に落ちる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/06_scores_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/06_scores.png)
+
+*↑ 照明の勾配では背景の裾が長く、2 平均の中点(isodata)は背景の中に落ちる。*
+
+[![触れ合う粒の階層分水嶺。θ を大 → 小 → 大に振る: 1 領域から粒の数ちょうどを経て雑音の凹みで過分割へ、そして戻る。どのコマも同じ 1 本の木の切り方(入れ子)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/08_watershed_theta_sweep.gif)
+
+*↑ The animation ―― 触れ合う粒の階層分水嶺。θ を大 → 小 → 大に振る: 1 領域から粒の数ちょうどを経て雑音の凹みで過分割へ、そして戻る。どのコマも同じ 1 本の木の切り方(入れ子)。*
+
+[![結晶粒の SRM。q = 1(全部 1 領域)から 1024(細切れ)へ。q = 256 前後で粒界に沿う。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/09_srm_q_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/09_srm_q_sweep.gif)
+
+*↑ The animation ―― 結晶粒の SRM。q = 1(全部 1 領域)から 1024(細切れ)へ。q = 256 前後で粒界に沿う。*
+
+[![graph cut の λ を 0 → 0.3。黄 = 正解の物体、赤 = 余計、青 = 取り逃し。左の雑音の点は消え、右の細い線も同じ λ で途切れて消える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/10_graph_cut_lambda_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/10_graph_cut_lambda_sweep.gif)
+
+*↑ The animation ―― graph cut の λ を 0 → 0.3。黄 = 正解の物体、赤 = 余計、青 = 取り逃し。左の雑音の点は消え、右の細い線も同じ λ で途切れて消える。*
+
+```
+py -3.11 examples/poc_graph_hierarchy_segmentation.py
+```
+
+Source: [examples/poc_graph_hierarchy_segmentation.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_graph_hierarchy_segmentation.py)
+
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation)
+
+Ops used (notes): [`alpha_expansion`](https://furuse.work/ops/segmentation/graph/alpha_expansion.html) · [`alpha_tree`](https://furuse.work/ops/segmentation/graph/alpha_tree.html) · [`area_opening_attr`](https://furuse.work/ops/segmentation/graph/area_opening_attr.html) · [`graph_cut_binary`](https://furuse.work/ops/segmentation/graph/graph_cut_binary.html) · [`hierarchical_watershed`](https://furuse.work/ops/segmentation/graph/hierarchical_watershed.html) · [`quasi_flat_zones`](https://furuse.work/ops/segmentation/graph/quasi_flat_zones.html) · [`quickshift`](https://furuse.work/ops/segmentation/graph/quickshift.html) · [`seg_boundary_f`](https://furuse.work/ops/segmentation/score/seg_boundary_f.html) · [`seg_dice_jaccard`](https://furuse.work/ops/segmentation/score/seg_dice_jaccard.html) · [`seg_object_counts_match`](https://furuse.work/ops/segmentation/score/seg_object_counts_match.html) · [`seg_score_card`](https://furuse.work/ops/segmentation/score/seg_score_card.html) · [`seg_under_over_segmentation`](https://furuse.work/ops/segmentation/score/seg_under_over_segmentation.html) · [`snic_superpixels`](https://furuse.work/ops/segmentation/graph/snic_superpixels.html) · [`statistical_region_merging`](https://furuse.work/ops/segmentation/graph/statistical_region_merging.html) · [`superpixel_quality`](https://furuse.work/ops/segmentation/graph/superpixel_quality.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`threshold_isodata`](https://furuse.work/ops/segmentation/threshold/threshold_isodata.html) · [`threshold_kapur`](https://furuse.work/ops/segmentation/threshold/threshold_kapur.html) · [`threshold_kittler`](https://furuse.work/ops/segmentation/threshold/threshold_kittler.html) · [`threshold_triangle`](https://furuse.work/ops/segmentation/threshold/threshold_triangle.html) · [`ultrametric_contour_map`](https://furuse.work/ops/segmentation/graph/ultrametric_contour_map.html) · [`world_blobs_touching`](https://furuse.work/ops/segmentation/world/world_blobs_touching.html) · [`world_gradient_illumination`](https://furuse.work/ops/segmentation/world/world_gradient_illumination.html) · [`world_grains_voronoi`](https://furuse.work/ops/segmentation/world/world_grains_voronoi.html) … (+3)
 
 ### The Time-as-3-D Wing — A Video Is One Volume
 

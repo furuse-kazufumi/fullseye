@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">superpixel_quality — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.superpixel_quality(labels_sp, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import seggraph; seggraph.superpixel_quality(labels_sp, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;superpixel_quality&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>超画素の採点: 境界の再現率(`<code style="color:#22d3bf">segeval.seg_boundary_f</code>` の recall、許容 τ)、補正つき未分割誤差 CUSE =</p>
+<p>(1/N) Σ_k |S_k − G_max(S_k)|(Neubert–Protzel 2012、SNIC 論文の式 (2))、ASA = 1 − CUSE、Neubert–Protzel の未分割誤差</p>
+<p>UE = (1/N) Σ_G Σ_(S∩G≠∅) min(|S∩G|, |S − G|)、超画素の数。真値の 0 も 1 つの領域として数える(背景も被覆の対象)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">graph</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:graph_cut_binary">graph_cut_binary</a> · <a style="color:#22d3bf" href="opsegmentation:alpha_expansion">alpha_expansion</a> · <a style="color:#22d3bf" href="opsegmentation:statistical_region_merging">statistical_region_merging</a> · <a style="color:#22d3bf" href="opsegmentation:max_tree">max_tree</a> · <a style="color:#22d3bf" href="opsegmentation:area_opening_attr">area_opening_attr</a> · <a style="color:#22d3bf" href="opsegmentation:quasi_flat_zones">quasi_flat_zones</a> · <a style="color:#22d3bf" href="opsegmentation:alpha_tree">alpha_tree</a> · <a style="color:#22d3bf" href="opsegmentation:hierarchical_watershed">hierarchical_watershed</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: seggraph.py — SEGMENTATION operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,140 @@
+[
+ {
+  "file": "01_inputs.png",
+  "name": "inputs",
+  "caption": "UCM は隣り合う画素が同じ領域になる最小の閾値。盆地の全 3 つ組で ultrametric(違反 0)、閾値で切ると階層の 1 段になる(門 5)。",
+  "shape": [
+   1287,
+   2690,
+   3
+  ]
+ },
+ {
+  "file": "02_watershed_theta.png",
+  "name": "watershed_theta",
+  "caption": "−距離変換の地形の 1 本の最小全域森を、dynamics ≤ θ の辺で結ぶ。θ = 0 は雑音の凹みまで盆地にして過分割、θ = 0.5〜3 px で粒の数ちょうど、くびれの深さ(重なり 20 %)を超えると隣の粒と融合する。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_graph_cut_lambda.png",
+  "name": "graph_cut_lambda",
+  "caption": "エネルギーは毎回厳密に最小(最大フロー = 最小カット)。それでも正解に近づくかは別で、平滑項は「境界の長さ」を罰するので、細長い物ほど消える。雑音の粒(σ = 0.15)は λ = 0.1 で +0.12、幅 1〜3 px の線は同じ λ で −0.1 以上下がる(3 seed の平均。seed ごとの値は実行ログ)。",
+  "shape": [
+   420,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "04_srm_q.png",
+  "name": "srm_q",
+  "caption": "結晶粒は q = 256 付近で VI が 1 bit を切る。質感だけ違う世界では、q を上げると平均の揺らぎで細切れになるだけで、どの q でも「全部 1 領域」より良くならない(q ≤ 32 では質感の VI は 1 領域の線と重なって見えない)。",
+  "shape": [
+   420,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "05_thresholds.png",
+  "name": "thresholds",
+  "caption": "Kittler は 2 クラスの分散を別々に持つので Bayes の最小誤差の閾値(2 次方程式の根)に乗る。isodata は2 平均の中点、三角法は山頂と裾を結ぶ線から最も遠いビン、Kapur は 2 クラスのエントロピーの和の最大。",
+  "shape": [
+   420,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "06_scores.png",
+  "name": "scores",
+  "caption": "照明の勾配では背景の裾が長く、2 平均の中点(isodata)は背景の中に落ちる。Kittler は背景の分散を大きく見積もって物体側へ寄る。超画素は境界の再現率(τ = 2 px)と補正つき未分割誤差 CUSE。",
+  "shape": [
+   560,
+   504,
+   3
+  ],
+  "csv": "06_scores.csv",
+  "tsv": "06_scores.tsv"
+ },
+ {
+  "file": "07_superpixels.png",
+  "name": "superpixels",
+  "caption": "白 = 超画素の境界。真の粒界は全部どれかの境界の 2 px 以内(境界再現率)。SNIC(m = 0.1)は暗い粒界の線そのものを細い超画素として切り出す(粒界の両側に白線が 2 本並ぶ所)= 値の距離が位置の距離より強い設定の表れ。",
+  "shape": [
+   669,
+   1768,
+   3
+  ]
+ },
+ {
+  "file": "08_watershed_theta_sweep.gif",
+  "name": "watershed_theta_sweep",
+  "caption": "触れ合う粒の階層分水嶺。θ を大 → 小 → 大に振る: 1 領域から粒の数ちょうどを経て雑音の凹みで過分割へ、そして戻る。どのコマも同じ 1 本の木の切り方(入れ子)。",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 26,
+  "frames_written": 25,
+  "fps": 2.0,
+  "video": "08_watershed_theta_sweep.mp4",
+  "video_frames": 26,
+  "video_fps": 2.0,
+  "video_shape": [
+   480,
+   480,
+   3
+  ]
+ },
+ {
+  "file": "09_srm_q_sweep.gif",
+  "name": "srm_q_sweep",
+  "caption": "結晶粒の SRM。q = 1(全部 1 領域)から 1024(細切れ)へ。q = 256 前後で粒界に沿う。",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 11,
+  "frames_written": 11,
+  "fps": 1.5,
+  "video": "09_srm_q_sweep.mp4",
+  "video_frames": 11,
+  "video_fps": 1.5,
+  "video_shape": [
+   576,
+   576,
+   3
+  ]
+ },
+ {
+  "file": "10_graph_cut_lambda_sweep.gif",
+  "name": "graph_cut_lambda_sweep",
+  "caption": "graph cut の λ を 0 → 0.3。黄 = 正解の物体、赤 = 余計、青 = 取り逃し。左の雑音の点は消え、右の細い線も同じ λ で途切れて消える。",
+  "shape": [
+   398,
+   720,
+   3
+  ],
+  "animated": true,
+  "frames": 9,
+  "frames_written": 9,
+  "fps": 1.5,
+  "video": "10_graph_cut_lambda_sweep.mp4",
+  "video_frames": 9,
+  "video_fps": 1.5,
+  "video_shape": [
+   600,
+   1086,
+   3
+  ]
+ }
+]

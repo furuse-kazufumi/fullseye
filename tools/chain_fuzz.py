@@ -3309,6 +3309,162 @@ _SEGBATCH2_ENTRIES = {
 # --- /セグメンテーション 第 2 陣の 10 op ------------------------------------------------- #
 
 
+# --- セグメンテーション 第 3 陣(opssegmentation の graph / threshold、2026-10-02)の種 ------ #
+# 汎用の種では走らない/走っても意味が無い理由(op ごと):
+#   全 16 本: 汎用の image2d は一様乱数(平らなヒストグラム・縁も盆地も無い)。
+#     graph cut / α-expansion / SRM / 閾値 4 本 : 2 峰(3 峰)のヒストグラムが無いと「どこで割っても同じ」
+#       = 走るが、閾値の定理(不動点・最小誤差・最大エントロピー)も平滑項の効き目も出ない。
+#       → 真値の分かる段の画像(背景 0.2・円盤 0.75、3 ラベル版は帯を足す)+ 小さな雑音。
+#       閾値 4 本は雑音を 0.1 に上げる: 雑音 0.03 だと 2 峰の間に空のビンが続き、Kittler の J・Kapur の H は
+#       その区間で平ら(どこで割っても同じ分割)= 同点の取り方しか試せない(実測: Kittler 0.29、SimpleITK 0.47、
+#       マスクは同一)。雑音 0.1 で谷が埋まり、基準の曲線そのものが閾値を決める。
+#     graph_cut_binary / alpha_expansion : 雑音 0.12(段の差 0.25 の半分)。雑音 0.03 だと画素ごとの判定が
+#       既に最小で、α-expansion の移動が 1 つも受け入れられない(実測 n_accepted = 0)= 平滑項を試していない。
+#       0.12 では受け入れ 3〜4 回でエネルギーが単調に下がる。
+#     quickshift : 特徴は (y, x, ratio·I)。ratio = 1 だと明るさの段 0.55 が空間の 1 画素より小さく、全面 1 領域
+#       (実測 n_segments = 1)。ratio = 20 で段が 11 になり max_dist = 4 の枝が段で切れる。
+#     max_tree / area_opening_attr : 一様乱数は画素ごとに極大で、成分木が画素数ぶんの葉になるだけ。
+#       → 大きな明るい四角 + 小さな明るい点(面積 1〜4、開放で消えるべきもの)。
+#     quasi_flat_zones / alpha_tree : 一様乱数は隣の差が大きく、どの α でも「全画素が別の領域」。
+#       → 平らな台地 3 枚(差 0.3)+ 台地内の微小な揺れ(α = 0.05 で 1 枚にまとまる大きさ)。
+#     hierarchical_watershed / ultrametric_contour_map : 地形の極小が画素ごとに散る。
+#       → 深さの違う 3 つの谷(ガウスの窪み)= dynamics が段になる地形。
+#     snic_superpixels / quickshift : 構造の無い画像では超画素が格子そのもの。→ 段の画像を使う。
+#   superpixel_quality : 2 枚の labels2d。汎用の labels2d は blob の番号で、超画素と真値の関係が無い。
+#     → 真値 = 円盤(0 = 背景、1 = 円盤)、超画素 = 4x4 の格子のブロック(円盤の縁を跨ぐ = CUSE > 0)。
+#   画像は 24〜32 画素角(Python の Union-Find / 待ち行列なので 1 本 0.1 秒前後に抑える)。
+# apply.py はこのブロックを tools/chain_fuzz.py の第 2 陣ブロックの直後(``OP_ARG_BUILDERS = {`` の前)に
+# 挿入し、辞書には下の 16 行(``_SEGBATCH3_ENTRIES`` と同じ対応)を足す。
+def _segbatch3_steps(rng, size=28, three=False, noise=0.03):
+    """背景 0.2 に明るい円盤 0.75(three=True なら上端に 0.45 の帯も)+ 雑音 ``noise``。0..1 に切る。"""
+    yy, xx = np.mgrid[0:size, 0:size]
+    c = size / 2.0 + rng.uniform(-1.5, 1.5, 2)
+    im = np.full((size, size), 0.2)
+    im[(yy - c[0]) ** 2 + (xx - c[1]) ** 2 <= (size * 0.3) ** 2] = 0.75
+    if three:
+        im[: size // 5, :] = 0.45
+    return np.clip(im + noise * rng.standard_normal(im.shape), 0.0, 1.0)
+
+
+def _segbatch3_speckles(rng, size=28):
+    """暗い背景に大きな明るい四角(面積 100)と小さな明るい点 6 個(面積 1〜4)。"""
+    im = 0.1 + 0.02 * rng.random((size, size))
+    im[4:14, 4:14] = 0.8
+    for _ in range(6):
+        r, c = rng.integers(16, size - 2, 2)
+        h, w = rng.integers(1, 3, 2)
+        im[r:r + h, c:c + w] = 0.6 + 0.3 * rng.random()
+    return im
+
+
+def _segbatch3_plateaus(rng, size=24):
+    """台地 3 枚(0.1 / 0.4 / 0.7、縦の帯)+ 台地の中の揺れ ±0.01(α = 0.05 で 1 枚にまとまる)。"""
+    im = np.empty((size, size))
+    im[:, : size // 3] = 0.1
+    im[:, size // 3: 2 * size // 3] = 0.4
+    im[:, 2 * size // 3:] = 0.7
+    return im + rng.uniform(-0.01, 0.01, im.shape)
+
+
+def _segbatch3_valleys(rng, size=28):
+    """深さ 1.0 / 0.6 / 0.3 の 3 つの谷(ガウスの窪み、σ = 4)+ ごく小さな揺れ。低い所が盆地。"""
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float64)
+    f = np.ones((size, size))
+    for (cy, cx), depth in zip(((7, 7), (7, 20), (20, 13)), (1.0, 0.6, 0.3)):
+        f -= depth * np.exp(-((yy - cy) ** 2 + (xx - cx) ** 2) / (2.0 * 4.0 ** 2))
+    return f + 1e-3 * rng.random(f.shape)
+
+
+def _b_seggraph_graph_cut_binary(pool, rng):
+    return (_segbatch3_steps(rng, noise=0.12),), {"lam": 0.05}
+
+
+def _b_seggraph_alpha_expansion(pool, rng):
+    return (_segbatch3_steps(rng, three=True, noise=0.12), [0.2, 0.45, 0.75]), {"lam": 0.05, "max_cycles": 5}
+
+
+def _b_seggraph_statistical_region_merging(pool, rng):
+    return (_segbatch3_steps(rng),), {"q": 32.0}
+
+
+def _b_seggraph_max_tree(pool, rng):
+    return (_segbatch3_speckles(rng),), {}
+
+
+def _b_seggraph_area_opening_attr(pool, rng):
+    return (_segbatch3_speckles(rng), 8.0), {}                  # 面積 < 8 の点は消え、四角(100)は残る
+
+
+def _b_seggraph_quasi_flat_zones(pool, rng):
+    return (_segbatch3_plateaus(rng), 0.05), {}
+
+
+def _b_seggraph_alpha_tree(pool, rng):
+    return (_segbatch3_plateaus(rng), (0.0, 0.05, 0.35)), {}    # 画素ごと → 台地 3 枚 → 1 枚
+
+
+def _b_seggraph_hierarchical_watershed(pool, rng):
+    return (_segbatch3_valleys(rng),), {"n_regions": 2}
+
+
+def _b_seggraph_ultrametric_contour_map(pool, rng):
+    return (_segbatch3_valleys(rng),), {}
+
+
+def _b_seggraph_snic_superpixels(pool, rng):
+    return (_segbatch3_steps(rng),), {"n_segments": 16, "compactness": 0.1}
+
+
+def _b_seggraph_quickshift(pool, rng):
+    return (_segbatch3_steps(rng, size=20),), {"kernel_size": 2.0, "max_dist": 4.0, "ratio": 20.0, "search_radius": 6}
+
+
+def _b_seggraph_superpixel_quality(pool, rng):
+    size = 24
+    yy, xx = np.mgrid[0:size, 0:size]
+    c = size / 2.0 + rng.uniform(-1.0, 1.0, 2)
+    truth = ((yy - c[0]) ** 2 + (xx - c[1]) ** 2 <= 49.0).astype(np.int64)        # 0 = 背景、1 = 円盤
+    sp = (yy // 6) * 4 + (xx // 6) + 1                                           # 4x4 の格子(1..16)
+    return (sp.astype(np.int64), truth), {"tau": 2.0}
+
+
+def _b_seggraph_threshold_triangle(pool, rng):
+    return (_segbatch3_steps(rng, size=32, noise=0.1),), {"nbins": 64}
+
+
+def _b_seggraph_threshold_isodata(pool, rng):
+    return (_segbatch3_steps(rng, size=32, noise=0.1),), {"nbins": 64}
+
+
+def _b_seggraph_threshold_kittler(pool, rng):
+    return (_segbatch3_steps(rng, size=32, noise=0.1),), {"nbins": 64}
+
+
+def _b_seggraph_threshold_kapur(pool, rng):
+    return (_segbatch3_steps(rng, size=32, noise=0.1),), {"nbins": 64}
+
+
+_SEGBATCH3_ENTRIES = {
+    "graph_cut_binary": _b_seggraph_graph_cut_binary,
+    "alpha_expansion": _b_seggraph_alpha_expansion,
+    "statistical_region_merging": _b_seggraph_statistical_region_merging,
+    "max_tree": _b_seggraph_max_tree,
+    "area_opening_attr": _b_seggraph_area_opening_attr,
+    "quasi_flat_zones": _b_seggraph_quasi_flat_zones,
+    "alpha_tree": _b_seggraph_alpha_tree,
+    "hierarchical_watershed": _b_seggraph_hierarchical_watershed,
+    "ultrametric_contour_map": _b_seggraph_ultrametric_contour_map,
+    "snic_superpixels": _b_seggraph_snic_superpixels,
+    "quickshift": _b_seggraph_quickshift,
+    "superpixel_quality": _b_seggraph_superpixel_quality,
+    "threshold_triangle": _b_seggraph_threshold_triangle,
+    "threshold_isodata": _b_seggraph_threshold_isodata,
+    "threshold_kittler": _b_seggraph_threshold_kittler,
+    "threshold_kapur": _b_seggraph_threshold_kapur,
+}
+# --- /セグメンテーション 第 3 陣の 16 op ------------------------------------------------- #
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -3382,6 +3538,23 @@ OP_ARG_BUILDERS = {
     "level_set_reinit": _b_segcontour_level_set_reinit,
     "drle_evolve": _b_segcontour_drle_evolve,
     "curvature_flow": _b_segcontour_curvature_flow,
+    # --- セグメンテーション 第 3 陣 graph / threshold の 16 op(opssegmentation、2026-10-02) --- #
+    "graph_cut_binary": _b_seggraph_graph_cut_binary,
+    "alpha_expansion": _b_seggraph_alpha_expansion,
+    "statistical_region_merging": _b_seggraph_statistical_region_merging,
+    "max_tree": _b_seggraph_max_tree,
+    "area_opening_attr": _b_seggraph_area_opening_attr,
+    "quasi_flat_zones": _b_seggraph_quasi_flat_zones,
+    "alpha_tree": _b_seggraph_alpha_tree,
+    "hierarchical_watershed": _b_seggraph_hierarchical_watershed,
+    "ultrametric_contour_map": _b_seggraph_ultrametric_contour_map,
+    "snic_superpixels": _b_seggraph_snic_superpixels,
+    "quickshift": _b_seggraph_quickshift,
+    "superpixel_quality": _b_seggraph_superpixel_quality,
+    "threshold_triangle": _b_seggraph_threshold_triangle,
+    "threshold_isodata": _b_seggraph_threshold_isodata,
+    "threshold_kittler": _b_seggraph_threshold_kittler,
+    "threshold_kapur": _b_seggraph_threshold_kapur,
     "graph_strength_growth": _b_graph_growth,
     "graph_kcore": _b_graph_kcore,
     "graph_rich_club_curve": _b_graph_rich_club,

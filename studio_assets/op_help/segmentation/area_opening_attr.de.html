@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">area_opening_attr — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.area_opening_attr(image, threshold: &#x27;float&#x27; = 16.0, *, attribute: &#x27;str&#x27; = &#x27;area&#x27;, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import seggraph; seggraph.area_opening_attr(image, threshold: &#x27;float&#x27; = 16.0, *, attribute: &#x27;str&#x27; = &#x27;area&#x27;, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;area_opening_attr&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Attributöffnung (Salembier et al. 1998): entfernt die Knoten des Komponentenbaums mit Attribut &lt; `<code style="color:#22d3bf">threshold</code>` und setzt jedes Pixel auf den Wert seines nächsten Vorfahren mit Attribut ≥ Schwelle (area_opening_attr).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">attribute</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">&quot;area&quot;</code><code style="color:#22d3bf">(画素数、skimage の area_opening と同じ「面積が閾値未満の明るい構造を消す」)か </code><code style="color:#22d3bf">&quot;diameter&quot;</code>`</p>
+<p>(外接矩形の長い辺、skimage の diameter_opening)。どちらも <b>2 値の集合の</b> 増加する属性なので、結果は代数的開放 =</p>
+<p>冪等・反拡大・増加。成分の中の最大値に依る「高さ」は集合の属性でなく(h-maxima と同じく)冪等にならないので載せない</p>
+<p>(実測で 2 回目に値が変わった)。</p>
+<p>返す: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">(開放の結果)、</code><code style="color:#22d3bf">n_nodes_kept</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_nodes</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">removed</code>`(値が下がった画素の数)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">graph</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:graph_cut_binary">graph_cut_binary</a> · <a style="color:#22d3bf" href="opsegmentation:alpha_expansion">alpha_expansion</a> · <a style="color:#22d3bf" href="opsegmentation:statistical_region_merging">statistical_region_merging</a> · <a style="color:#22d3bf" href="opsegmentation:max_tree">max_tree</a> · <a style="color:#22d3bf" href="opsegmentation:quasi_flat_zones">quasi_flat_zones</a> · <a style="color:#22d3bf" href="opsegmentation:alpha_tree">alpha_tree</a> · <a style="color:#22d3bf" href="opsegmentation:hierarchical_watershed">hierarchical_watershed</a> · <a style="color:#22d3bf" href="opsegmentation:ultrametric_contour_map">ultrametric_contour_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: seggraph.py — SEGMENTATION Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

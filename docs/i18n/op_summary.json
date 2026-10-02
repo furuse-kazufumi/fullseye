@@ -15183,6 +15183,134 @@
    "tw": "平均曲率流（曲線縮短流）的水平集形式 φ_t = |∇φ| div(∇φ/|∇φ|)（φ < 0 為內側，從凸處開始收縮）（curvature_flow）。",
    "ko": "평균 곡률 흐름(곡선 단축 흐름)의 레벨셋 형태 φ_t = |∇φ| div(∇φ/|∇φ|)(φ < 0이 내부, 볼록한 곳부터 줄어든다)(curvature_flow).",
    "de": "Level-Set-Form des mittleren Krümmungsflusses (Kurvenverkürzungsfluss) φ_t = |∇φ| div(∇φ/|∇φ|) (innen, wo φ < 0; schrumpft von den konvexen Stellen her) (curvature_flow)."
+  },
+  "segmentation/graph_cut_binary": {
+   "fp": "76c30f4a66ce",
+   "en": "Binary graph cut (Boykov–Jolly 2001): minimises E = Σ_p D_p(x_p) + λ Σ w_pq [x_p ≠ x_q] exactly by max-flow / min-cut (graph_cut_binary).",
+   "zh": "二值 graph cut（Boykov–Jolly 2001）：用最大流 / 最小割精确地最小化 E = Σ_p D_p(x_p) + λ Σ w_pq [x_p ≠ x_q]（graph_cut_binary）。",
+   "tw": "二值 graph cut（Boykov–Jolly 2001）：以最大流 / 最小割精確地最小化 E = Σ_p D_p(x_p) + λ Σ w_pq [x_p ≠ x_q]（graph_cut_binary）。",
+   "ko": "2값 graph cut(Boykov–Jolly 2001): E = Σ_p D_p(x_p) + λ Σ w_pq [x_p ≠ x_q]를 최대 흐름 / 최소 컷으로 정확히 최소화한다(graph_cut_binary).",
+   "de": "Binärer Graph Cut (Boykov–Jolly 2001): minimiert E = Σ_p D_p(x_p) + λ Σ w_pq [x_p ≠ x_q] exakt per Max-Flow / Min-Cut (graph_cut_binary)."
+  },
+  "segmentation/alpha_expansion": {
+   "fp": "ca0c128ffc65",
+   "en": "Multi-label α-expansion (Boykov–Veksler–Zabih 2001): E(f) = Σ (I_p − μ_(f_p))² + λ Σ w_pq V(f_p, f_q), where V is a metric (alpha_expansion).",
+   "zh": "多标签 α-expansion（Boykov–Veksler–Zabih 2001）：E(f) = Σ (I_p − μ_(f_p))² + λ Σ w_pq V(f_p, f_q)，V 为度量（alpha_expansion）。",
+   "tw": "多標籤 α-expansion（Boykov–Veksler–Zabih 2001）：E(f) = Σ (I_p − μ_(f_p))² + λ Σ w_pq V(f_p, f_q)，V 為度量（alpha_expansion）。",
+   "ko": "다중 레이블 α-expansion(Boykov–Veksler–Zabih 2001): E(f) = Σ (I_p − μ_(f_p))² + λ Σ w_pq V(f_p, f_q), V는 거리 함수(metric)(alpha_expansion).",
+   "de": "Mehrlabel-α-Expansion (Boykov–Veksler–Zabih 2001): E(f) = Σ (I_p − μ_(f_p))² + λ Σ w_pq V(f_p, f_q), wobei V eine Metrik ist (alpha_expansion)."
+  },
+  "segmentation/statistical_region_merging": {
+   "fp": "fcf640b30552",
+   "en": "Statistical region merging SRM (Nock–Nielsen 2004): processes pairs of neighbouring pixels in ascending order of |I_p − I_q| and merges them when the predicate P(R, R') holds (statistical_region_merging).",
+   "zh": "统计区域合并 SRM（Nock–Nielsen 2004）：按 |I_p − I_q| 的升序处理相邻像素对，谓词 P(R, R') 为真则合并（statistical_region_merging）。",
+   "tw": "統計區域合併 SRM（Nock–Nielsen 2004）：依 |I_p − I_q| 的遞增順序處理相鄰像素對，述詞 P(R, R') 為真則合併（statistical_region_merging）。",
+   "ko": "통계적 영역 병합 SRM(Nock–Nielsen 2004): 이웃 화소 쌍을 |I_p − I_q|의 오름차순으로 처리하고, 술어 P(R, R')가 참이면 병합한다(statistical_region_merging).",
+   "de": "Statistisches Region Merging SRM (Nock–Nielsen 2004): verarbeitet Paare benachbarter Pixel aufsteigend nach |I_p − I_q| und verschmilzt sie, wenn das Prädikat P(R, R') gilt (statistical_region_merging)."
+  },
+  "segmentation/max_tree": {
+   "fp": "ab8d572f6101",
+   "en": "Component tree (max-tree): builds the tree of connected components of the upper level sets {f ≥ h} with Union-Find (pixels processed in descending order of value) (max_tree).",
+   "zh": "成分树（max-tree）：用 Union-Find 构建上水平集 {f ≥ h} 的连通分量树（按像素值降序处理）（max_tree）。",
+   "tw": "成分樹（max-tree）：以 Union-Find 建構上水平集 {f ≥ h} 的連通成分樹（依像素值遞減順序處理）（max_tree）。",
+   "ko": "성분 트리(max-tree): 상위 집합 {f ≥ h}의 연결 성분 트리를 Union-Find로 만든다(화소를 값의 내림차순으로 처리)(max_tree).",
+   "de": "Komponentenbaum (Max-Tree): baut den Baum der Zusammenhangskomponenten der Obermengen {f ≥ h} mit Union-Find (Pixel in absteigender Wertreihenfolge verarbeitet) (max_tree)."
+  },
+  "segmentation/area_opening_attr": {
+   "fp": "a805cdf200dc",
+   "en": "Attribute opening (Salembier et al. 1998): removes the component-tree nodes whose attribute < ``threshold`` and sets each pixel to the value of its nearest ancestor with attribute ≥ threshold (area_opening_attr).",
+   "zh": "属性开运算（Salembier 等 1998）：删除成分树中属性 < ``threshold`` 的节点，并使每个像素取“属性 ≥ 阈值的最近祖先”的值（area_opening_attr）。",
+   "tw": "屬性斷開（Salembier 等 1998）：刪除成分樹中屬性 < ``threshold`` 的節點，並使每個像素取「屬性 ≥ 閾值的最近祖先」的值（area_opening_attr）。",
+   "ko": "속성 열림(Salembier 등 1998): 성분 트리의 노드 중 속성 < ``threshold``인 것을 지우고, 각 화소를 '속성 ≥ 임계값인 가장 가까운 조상'의 값으로 한다(area_opening_attr).",
+   "de": "Attributöffnung (Salembier et al. 1998): entfernt die Knoten des Komponentenbaums mit Attribut < ``threshold`` und setzt jedes Pixel auf den Wert seines nächsten Vorfahren mit Attribut ≥ Schwelle (area_opening_attr)."
+  },
+  "segmentation/quasi_flat_zones": {
+   "fp": "a536678c0dd4",
+   "en": "α-quasi-flat zones (Soille 2008): the connected components joined only by neighbour edges with |f_p − f_q| ≤ α. Returns: ``labels`` (1..k), ``n_zones`` (quasi_flat_zones).",
+   "zh": "α-准平坦区域（Soille 2008）：仅用 |f_p − f_q| ≤ α 的相邻边连接而成的连通分量。返回：``labels``（1..k）、``n_zones``（quasi_flat_zones）。",
+   "tw": "α-準平坦區域（Soille 2008）：僅以 |f_p − f_q| ≤ α 的相鄰邊連接而成的連通成分。回傳：``labels``（1..k）、``n_zones``（quasi_flat_zones）。",
+   "ko": "α-준평탄 영역(Soille 2008): |f_p − f_q| ≤ α인 인접 변만으로 이은 연결 성분. 반환: ``labels``(1..k), ``n_zones``(quasi_flat_zones).",
+   "de": "α-quasi-flache Zonen (Soille 2008): die Zusammenhangskomponenten, die nur über Nachbarkanten mit |f_p − f_q| ≤ α verbunden sind. Rückgabe: ``labels`` (1..k), ``n_zones`` (quasi_flat_zones)."
+  },
+  "segmentation/alpha_tree": {
+   "fp": "4f1a1b687845",
+   "en": "α-tree: builds the minimum spanning tree of the grid weighted by neighbour differences (Kruskal in scipy) and returns the partition for each α using only the tree edges of weight ≤ α (alpha_tree).",
+   "zh": "α-tree：构建以相邻差为权重的网格最小生成树（scipy 的 Kruskal），仅用权重 ≤ α 的树边给出每个 α 的划分（alpha_tree）。",
+   "tw": "α-tree：建構以相鄰差為權重的格網最小生成樹（scipy 的 Kruskal），僅用權重 ≤ α 的樹邊給出每個 α 的分割（alpha_tree）。",
+   "ko": "α-tree: 이웃 차를 가중치로 한 격자의 최소 신장 트리(scipy의 Kruskal)를 만들고, 가중치 ≤ α인 트리 변만으로 α마다의 분할을 낸다(alpha_tree).",
+   "de": "α-Tree: baut den minimalen Spannbaum des Gitters mit den Nachbardifferenzen als Gewichten (Kruskal in scipy) und liefert für jedes α die Partition aus den Baumkanten mit Gewicht ≤ α (alpha_tree)."
+  },
+  "segmentation/hierarchical_watershed": {
+   "fp": "81aba8c7455f",
+   "en": "Hierarchical watershed by dynamics: attaches the dynamics saliency to the edges of the minimum spanning forest of the relief ``image`` (low places are basins) and returns the components joined by edges with saliency ≤ ``threshold`` (if ``n_regions`` is given, the smallest threshold that yields that many regions is used) (hierarchical_watershed).",
+   "zh": "基于 dynamics 的层次分水岭：为地形 ``image``（低处为盆地）的最小生成森林的边赋予 dynamics 显著度，返回由显著度 ≤ ``threshold`` 的边连接的分量（给定 ``n_regions`` 时，使用得到该区域数的最小阈值）（hierarchical_watershed）。",
+   "tw": "基於 dynamics 的階層分水嶺：為地形 ``image``（低處為盆地）的最小生成森林的邊賦予 dynamics 顯著度，回傳由顯著度 ≤ ``threshold`` 的邊連接的成分（給定 ``n_regions`` 時，使用得到該區域數的最小閾值）（hierarchical_watershed）。",
+   "ko": "dynamics에 의한 계층 워터셰드: 지형 ``image``(낮은 곳이 분지)의 최소 신장 숲의 변에 dynamics 돌출도(saliency)를 붙이고, 돌출도 ≤ ``threshold``인 변으로 이은 성분을 반환한다(``n_regions``를 주면 그 개수가 되는 최소 임계값을 쓴다)(hierarchical_watershed).",
+   "de": "Hierarchische Wasserscheide über Dynamics: versieht die Kanten des minimalen Spannwaldes des Reliefs ``image`` (niedrige Stellen sind Becken) mit der Dynamics-Salienz und gibt die über Kanten mit Salienz ≤ ``threshold`` verbundenen Komponenten zurück (ist ``n_regions`` gegeben, wird die kleinste Schwelle verwendet, die so viele Regionen ergibt) (hierarchical_watershed)."
+  },
+  "segmentation/ultrametric_contour_map": {
+   "fp": "44f45354f9a9",
+   "en": "Ultrametric contour map (UCM) of the dynamics hierarchy: the value between neighbouring pixels p, q = the smallest threshold at which p and q fall into the same region (ultrametric_contour_map).",
+   "zh": "dynamics 层次的超度量轮廓图（UCM）：相邻像素 p、q 的值 =“p 与 q 成为同一区域的最小阈值”（ultrametric_contour_map）。",
+   "tw": "dynamics 階層的超度量輪廓圖（UCM）：相鄰像素 p、q 的值 =「p 與 q 成為同一區域的最小閾值」（ultrametric_contour_map）。",
+   "ko": "dynamics 계층의 초거리 윤곽 지도(UCM): 이웃한 화소 p, q의 값 = 'p와 q가 같은 영역이 되는 최소 임계값'(ultrametric_contour_map).",
+   "de": "Ultrametrische Konturkarte (UCM) der Dynamics-Hierarchie: der Wert zwischen benachbarten Pixeln p, q = die kleinste Schwelle, bei der p und q in dieselbe Region fallen (ultrametric_contour_map)."
+  },
+  "segmentation/snic_superpixels": {
+   "fp": "09318f334a50",
+   "en": "SNIC (Algorithm 1 of Achanta–Süsstrunk 2017): non-iterative superpixels grown from grid seeds with a priority queue (snic_superpixels).",
+   "zh": "SNIC（Achanta–Süsstrunk 2017 的 Algorithm 1）：从网格种子出发、用优先队列生长的非迭代超像素（snic_superpixels）。",
+   "tw": "SNIC（Achanta–Süsstrunk 2017 的 Algorithm 1）：從格網種子出發、以優先佇列生長的非迭代超像素（snic_superpixels）。",
+   "ko": "SNIC(Achanta–Süsstrunk 2017의 Algorithm 1): 격자 씨앗에서 우선순위 큐로 키우는 비반복 슈퍼픽셀(snic_superpixels).",
+   "de": "SNIC (Algorithmus 1 von Achanta–Süsstrunk 2017): nicht-iterative Superpixel, die mit einer Prioritätswarteschlange aus Gittersaaten wachsen (snic_superpixels)."
+  },
+  "segmentation/quickshift": {
+   "fp": "8d0f5febbcea",
+   "en": "Quick shift (Vedaldi–Soatto 2008): estimates the Parzen density P_i = Σ_j exp(−D_ij²/(2σ²)) on the features (y, x, ratio · I) (window 3σ, σ = ``kernel_size``), links each pixel to the nearest point of higher density (inside a window of radius ``search_radius``), and takes the components of the tree, after cutting branches longer than ``max_dist``, as the regions (quickshift).",
+   "zh": "quick shift（Vedaldi–Soatto 2008）：在特征 (y, x, ratio · I) 上估计 Parzen 密度 P_i = Σ_j exp(−D_ij²/(2σ²))（窗 3σ，σ = ``kernel_size``），把每个像素连到“密度更高的点中最近的点”（半径 ``search_radius`` 的窗内），剪去长度 > ``max_dist`` 的枝后，以树的分量作为区域（quickshift）。",
+   "tw": "quick shift（Vedaldi–Soatto 2008）：在特徵 (y, x, ratio · I) 上估計 Parzen 密度 P_i = Σ_j exp(−D_ij²/(2σ²))（窗 3σ，σ = ``kernel_size``），把每個像素連到「密度更高的點中最近的點」（半徑 ``search_radius`` 的窗內），剪去長度 > ``max_dist`` 的枝後，以樹的成分作為區域（quickshift）。",
+   "ko": "quick shift(Vedaldi–Soatto 2008): 특징 (y, x, ratio · I) 위에서 Parzen 밀도 P_i = Σ_j exp(−D_ij²/(2σ²))(창 3σ, σ = ``kernel_size``)를 추정하고, 각 화소를 '밀도가 더 높은 점 중 가장 가까운 점'(반경 ``search_radius``의 창 안)에 잇고, 길이 > ``max_dist``인 가지를 자른 트리의 성분을 영역으로 한다(quickshift).",
+   "de": "Quick Shift (Vedaldi–Soatto 2008): schätzt auf den Merkmalen (y, x, ratio · I) die Parzen-Dichte P_i = Σ_j exp(−D_ij²/(2σ²)) (Fenster 3σ, σ = ``kernel_size``), verbindet jedes Pixel mit dem nächstgelegenen Punkt höherer Dichte (im Fenster mit Radius ``search_radius``) und nimmt die Komponenten des Baums nach dem Abschneiden der Äste länger als ``max_dist`` als Regionen (quickshift)."
+  },
+  "segmentation/superpixel_quality": {
+   "fp": "0bc38380ac19",
+   "en": "Superpixel scoring: boundary recall (the recall of ``segeval.seg_boundary_f``, tolerance τ), the corrected undersegmentation error CUSE = (1/N) Σ_k |S_k − G_max(S_k)| (Neubert–Protzel 2012, eq. (2) of the SNIC paper), ASA = 1 − CUSE, the Neubert–Protzel undersegmentation error UE = (1/N) Σ_G Σ_(S∩G≠∅) min(|S∩G|, |S − G|), and the number of superpixels. Label 0 of the truth also counts as a region (the background must be covered too) (superpixel_quality).",
+   "zh": "超像素评分：边界召回率（``segeval.seg_boundary_f`` 的 recall，容差 τ）、校正欠分割误差 CUSE = (1/N) Σ_k |S_k − G_max(S_k)|（Neubert–Protzel 2012，SNIC 论文的式 (2)）、ASA = 1 − CUSE、Neubert–Protzel 的欠分割误差 UE = (1/N) Σ_G Σ_(S∩G≠∅) min(|S∩G|, |S − G|)、超像素的数量。真值的 0 也算作一个区域（背景也是覆盖的对象）（superpixel_quality）。",
+   "tw": "超像素評分：邊界召回率（``segeval.seg_boundary_f`` 的 recall，容差 τ）、校正欠分割誤差 CUSE = (1/N) Σ_k |S_k − G_max(S_k)|（Neubert–Protzel 2012，SNIC 論文的式 (2)）、ASA = 1 − CUSE、Neubert–Protzel 的欠分割誤差 UE = (1/N) Σ_G Σ_(S∩G≠∅) min(|S∩G|, |S − G|)、超像素的數量。真值的 0 也算作一個區域（背景也是覆蓋的對象）（superpixel_quality）。",
+   "ko": "슈퍼픽셀 채점: 경계 재현율(``segeval.seg_boundary_f``의 recall, 허용 τ), 보정 과소분할 오차 CUSE = (1/N) Σ_k |S_k − G_max(S_k)|(Neubert–Protzel 2012, SNIC 논문의 식 (2)), ASA = 1 − CUSE, Neubert–Protzel의 과소분할 오차 UE = (1/N) Σ_G Σ_(S∩G≠∅) min(|S∩G|, |S − G|), 슈퍼픽셀 수. 참값의 0도 하나의 영역으로 센다(배경도 덮어야 할 대상)(superpixel_quality).",
+   "de": "Superpixel-Bewertung: Randrecall (der Recall von ``segeval.seg_boundary_f``, Toleranz τ), der korrigierte Untersegmentierungsfehler CUSE = (1/N) Σ_k |S_k − G_max(S_k)| (Neubert–Protzel 2012, Gl. (2) des SNIC-Artikels), ASA = 1 − CUSE, der Untersegmentierungsfehler nach Neubert–Protzel UE = (1/N) Σ_G Σ_(S∩G≠∅) min(|S∩G|, |S − G|) und die Anzahl der Superpixel. Label 0 der Wahrheit zählt ebenfalls als Region (auch der Hintergrund muss abgedeckt werden) (superpixel_quality)."
+  },
+  "segmentation/threshold_triangle": {
+   "fp": "b292967e81fe",
+   "en": "Triangle method (Zack–Rogers–Latt 1977): the threshold is the bin (b, h_b) between the peak (b_p, h_p) and the end bin of the longer tail (b_e, 0) whose signed perpendicular distance from the line joining them is largest (below the line is positive). Returns: ``threshold`` (centre of that bin), ``mask`` = image > threshold, ``bin``, ``distance`` (distance of each bin, nan outside the range). The zero height at the end point and the choice of tail follow the skimage / ImageJ convention (original paper to be confirmed) (threshold_triangle).",
+   "zh": "三角法（Zack–Rogers–Latt 1977）：连接峰顶 (b_p, h_p) 与长尾一侧端点的箱 (b_e, 0)，取其间各箱 (b, h_b) 到该线的有符号垂直距离最大的箱为阈值（线的下侧为正）。返回：``threshold``（该箱的中心）、``mask`` = image > threshold、``bin``、``distance``（各箱的距离，范围外为 nan）。端点高度为 0、尾侧的选法与 skimage / ImageJ 的约定相同（原文待确认）（threshold_triangle）。",
+   "tw": "三角法（Zack–Rogers–Latt 1977）：連接峰頂 (b_p, h_p) 與長尾一側端點的箱 (b_e, 0)，取其間各箱 (b, h_b) 到該線的有號垂直距離最大的箱為閾值（線的下側為正）。回傳：``threshold``（該箱的中心）、``mask`` = image > threshold、``bin``、``distance``（各箱的距離，範圍外為 nan）。端點高度為 0、尾側的選法與 skimage / ImageJ 的慣例相同（原文待確認）（threshold_triangle）。",
+   "ko": "삼각법(Zack–Rogers–Latt 1977): 정점 (b_p, h_p)과 긴 꼬리 쪽 끝 빈 (b_e, 0)을 잇는 선에서, 그 사이 빈 (b, h_b)까지의 부호 있는 수직 거리가 최대인 빈을 임계값으로 한다(선의 아래쪽이 양). 반환: ``threshold``(그 빈의 중심), ``mask`` = image > threshold, ``bin``, ``distance``(빈마다의 거리, 범위 밖은 nan). 끝점의 높이 0과 꼬리 쪽 선택은 skimage / ImageJ와 같은 규약(원전은 확인 필요)(threshold_triangle).",
+   "de": "Dreiecksmethode (Zack–Rogers–Latt 1977): Schwelle ist der Bin (b, h_b) zwischen dem Gipfel (b_p, h_p) und dem End-Bin des längeren Ausläufers (b_e, 0), dessen vorzeichenbehafteter senkrechter Abstand zur Verbindungsgeraden am größten ist (unterhalb der Geraden positiv). Rückgabe: ``threshold`` (Mitte dieses Bins), ``mask`` = image > threshold, ``bin``, ``distance`` (Abstand jedes Bins, außerhalb des Bereichs nan). Die Höhe 0 am Endpunkt und die Wahl des Ausläufers folgen der Konvention von skimage / ImageJ (Original noch zu prüfen) (threshold_triangle)."
+  },
+  "segmentation/threshold_isodata": {
+   "fp": "8a8eede0edfa",
+   "en": "ISODATA (Ridler–Calvard 1978): iterates t ← (μ_≤t + μ_>t)/2 **on the pixel values** until the partition stops changing (initial value = mean) (threshold_isodata).",
+   "zh": "isodata（Ridler–Calvard 1978）：**在像素值上**反复执行 t ← (μ_≤t + μ_>t)/2，直到划分不再变化（初值 = 平均值）（threshold_isodata）。",
+   "tw": "isodata（Ridler–Calvard 1978）：**在像素值上**反覆執行 t ← (μ_≤t + μ_>t)/2，直到分割不再變化（初值 = 平均值）（threshold_isodata）。",
+   "ko": "isodata(Ridler–Calvard 1978): **화소 값 위에서** t ← (μ_≤t + μ_>t)/2를 분할이 바뀌지 않을 때까지 반복한다(초기값 = 평균)(threshold_isodata).",
+   "de": "ISODATA (Ridler–Calvard 1978): iteriert t ← (μ_≤t + μ_>t)/2 **auf den Pixelwerten**, bis sich die Aufteilung nicht mehr ändert (Startwert = Mittelwert) (threshold_isodata)."
+  },
+  "segmentation/threshold_kittler": {
+   "fp": "58111428ed6f",
+   "en": "Minimum-error threshold (Kittler–Illingworth 1986): at each bin t, splits into a low side (bins ≤ t) and a high side and minimises J(t) = 1 + 2(P1 ln σ1 + P2 ln σ2) − 2(P1 ln P1 + P2 ln P2) (σ is the standard deviation of the bin centres on each side; bins where either side has σ = 0 are excluded). Returns: ``threshold`` = upper edge of that bin (the mask is decided by bin index > t = consistent at the edge values too), ``mask``, ``bin``, ``criterion`` (J, nan for excluded bins) (threshold_kittler).",
+   "zh": "最小误差阈值（Kittler–Illingworth 1986）：在每个箱 t 处分为低侧（箱 ≤ t）与高侧，最小化 J(t) = 1 + 2(P1 ln σ1 + P2 ln σ2) − 2(P1 ln P1 + P2 ln P2)（σ 为各侧箱中心的标准差；任一侧 σ 为 0 的箱除外）。返回：``threshold`` = 该箱的上端（mask 按箱号 > t 决定 = 端点上的值也不矛盾）、``mask``、``bin``、``criterion``（J，被排除的箱为 nan）（threshold_kittler）。",
+   "tw": "最小誤差閾值（Kittler–Illingworth 1986）：在每個箱 t 處分為低側（箱 ≤ t）與高側，最小化 J(t) = 1 + 2(P1 ln σ1 + P2 ln σ2) − 2(P1 ln P1 + P2 ln P2)（σ 為各側箱中心的標準差；任一側 σ 為 0 的箱除外）。回傳：``threshold`` = 該箱的上端（mask 依箱號 > t 決定 = 端點上的值也不矛盾）、``mask``、``bin``、``criterion``（J，被排除的箱為 nan）（threshold_kittler）。",
+   "ko": "최소 오차 임계값(Kittler–Illingworth 1986): 각 빈 t에서 낮은 쪽(빈 ≤ t)과 높은 쪽으로 나누어 J(t) = 1 + 2(P1 ln σ1 + P2 ln σ2) − 2(P1 ln P1 + P2 ln P2)를 최소화한다(σ는 각 쪽 빈 중심의 표준편차. 어느 한쪽의 σ가 0인 빈은 제외). 반환: ``threshold`` = 그 빈의 상단(mask는 빈 번호 > t로 결정 = 끝의 값에서도 모순 없음), ``mask``, ``bin``, ``criterion``(J, 제외한 빈은 nan)(threshold_kittler).",
+   "de": "Minimalfehler-Schwelle (Kittler–Illingworth 1986): teilt an jedem Bin t in eine untere Seite (Bins ≤ t) und eine obere Seite und minimiert J(t) = 1 + 2(P1 ln σ1 + P2 ln σ2) − 2(P1 ln P1 + P2 ln P2) (σ ist die Standardabweichung der Bin-Mitten jeder Seite; Bins, bei denen eine Seite σ = 0 hat, werden ausgeschlossen). Rückgabe: ``threshold`` = Oberkante dieses Bins (die Maske wird über Bin-Index > t bestimmt = auch an den Randwerten widerspruchsfrei), ``mask``, ``bin``, ``criterion`` (J, ausgeschlossene Bins nan) (threshold_kittler)."
+  },
+  "segmentation/threshold_kapur": {
+   "fp": "6ab1441164a5",
+   "en": "Maximum-entropy threshold (Kapur–Sahoo–Wong 1985): the bin t that maximises H(t) = −Σ_(i ≤ t) (p_i/P1) ln(p_i/P1) − Σ_(i > t) (p_i/P2) ln(p_i/P2) (only bins where both sides have positive probability). Returns: ``threshold`` = upper edge of that bin, ``mask`` (bin index > t), ``bin``, ``entropy`` (H, nan for excluded bins) (threshold_kapur).",
+   "zh": "最大熵阈值（Kapur–Sahoo–Wong 1985）：使 H(t) = −Σ_(i ≤ t) (p_i/P1) ln(p_i/P1) − Σ_(i > t) (p_i/P2) ln(p_i/P2) 最大的箱 t（仅限两侧概率均为正的箱）。返回：``threshold`` = 该箱的上端、``mask``（箱号 > t）、``bin``、``entropy``（H，被排除的箱为 nan）（threshold_kapur）。",
+   "tw": "最大熵閾值（Kapur–Sahoo–Wong 1985）：使 H(t) = −Σ_(i ≤ t) (p_i/P1) ln(p_i/P1) − Σ_(i > t) (p_i/P2) ln(p_i/P2) 最大的箱 t（僅限兩側機率皆為正的箱）。回傳：``threshold`` = 該箱的上端、``mask``（箱號 > t）、``bin``、``entropy``（H，被排除的箱為 nan）（threshold_kapur）。",
+   "ko": "최대 엔트로피 임계값(Kapur–Sahoo–Wong 1985): H(t) = −Σ_(i ≤ t) (p_i/P1) ln(p_i/P1) − Σ_(i > t) (p_i/P2) ln(p_i/P2)를 최대로 하는 빈 t(양쪽 모두 확률이 양인 빈만). 반환: ``threshold`` = 그 빈의 상단, ``mask``(빈 번호 > t), ``bin``, ``entropy``(H, 제외한 빈은 nan)(threshold_kapur).",
+   "de": "Maximum-Entropie-Schwelle (Kapur–Sahoo–Wong 1985): der Bin t, der H(t) = −Σ_(i ≤ t) (p_i/P1) ln(p_i/P1) − Σ_(i > t) (p_i/P2) ln(p_i/P2) maximiert (nur Bins, bei denen beide Seiten positive Wahrscheinlichkeit haben). Rückgabe: ``threshold`` = Oberkante dieses Bins, ``mask`` (Bin-Index > t), ``bin``, ``entropy`` (H, ausgeschlossene Bins nan) (threshold_kapur)."
   }
  }
 }

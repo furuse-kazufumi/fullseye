@@ -59,14 +59,19 @@ facade(統一 registry)は HALCON 名で引く層で、docs/ops のノート・�
 * ``contour``(第 2 陣、``segcontour``): snake・GVF・Chan–Vese・形態学的 AC・DRLSE・再初期化・
   平均曲率流。新語なし(image2d / mask / pairs / table)。ガイド
   ``docs/ops/segmentation/guides/active_contours_and_level_sets.md``。
+* ``graph`` / ``threshold``(第 3 陣、``seggraph``): graph cut(最大フロー = 最小カット)・α-expansion・
+  SRM・成分木と属性開放・準平坦領域と α-tree・dynamics の階層分水嶺と UCM・超画素 SNIC / quick shift と
+  その採点、閾値 4 定理(三角法・isodata・Kittler・Kapur)。新語なし(image2d / labels2d / table)。ガイド
+  ``docs/ops/segmentation/guides/graph_hierarchy_and_thresholds.md``。
 """
 import segmentation
 import segeval
 import segworld
 import segcontour
+import seggraph
 
 _MOD = {"segmentation": segmentation, "segeval": segeval, "segworld": segworld,
-        "segcontour": segcontour}
+        "segcontour": segcontour, "seggraph": seggraph}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -129,6 +134,32 @@ _CATALOG = {
         ("level_set_reinit", "segcontour", ["mask"], "table"),
         ("drle_evolve", "segcontour", ["image2d", "mask"], "table"),
         ("curvature_flow", "segcontour", ["mask"], "table"),
+    ],
+    # グラフと階層で分ける —— graph cut・α-expansion・SRM・成分木・準平坦領域・階層分水嶺・超画素
+    #   (seggraph、2026-10-02 第 3 陣)。返りは全部 dict → table。単入力で走るように第 2 引数
+    #   (alpha_expansion の means・area_opening_attr の threshold・quasi_flat_zones の alpha)は既定値つき。
+    #   superpixel_quality だけ 2 枚のラベル画像(超画素, 真値)= score と同じ入口。
+    "graph": [
+        ("graph_cut_binary", "seggraph", ["image2d"], "table"),
+        ("alpha_expansion", "seggraph", ["image2d"], "table"),
+        ("statistical_region_merging", "seggraph", ["image2d"], "table"),
+        ("max_tree", "seggraph", ["image2d"], "table"),
+        ("area_opening_attr", "seggraph", ["image2d"], "table"),
+        ("quasi_flat_zones", "seggraph", ["image2d"], "table"),
+        ("alpha_tree", "seggraph", ["image2d"], "table"),
+        ("hierarchical_watershed", "seggraph", ["image2d"], "table"),
+        ("ultrametric_contour_map", "seggraph", ["image2d"], "table"),
+        ("snic_superpixels", "seggraph", ["image2d"], "table"),
+        ("quickshift", "seggraph", ["image2d"], "table"),
+        ("superpixel_quality", "seggraph", ["labels2d", "labels2d"], "table"),
+    ],
+    # 閾値の 4 定理 —— 三角法・isodata・Kittler の最小誤差・Kapur の最大エントロピー(seggraph)。
+    #   返りは threshold・mask・基準の曲線の dict → table(mask だけ返すと門が台帳から見えなくなる)。
+    "threshold": [
+        ("threshold_triangle", "seggraph", ["image2d"], "table"),
+        ("threshold_isodata", "seggraph", ["image2d"], "table"),
+        ("threshold_kittler", "seggraph", ["image2d"], "table"),
+        ("threshold_kapur", "seggraph", ["image2d"], "table"),
     ],
 }
 

@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">statistical_region_merging — SEGMENTATION <code style="color:#22d3bf">graph</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.statistical_region_merging(image, *, q: &#x27;float&#x27; = 32.0, g: &#x27;int&#x27; = 256, value_range=(0.0, 1.0), connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import seggraph; seggraph.statistical_region_merging(image, *, q: &#x27;float&#x27; = 32.0, g: &#x27;int&#x27; = 256, value_range=(0.0, 1.0), connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;statistical_region_merging&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>統計區域合併 SRM（Nock–Nielsen 2004）：依 |I_p − I_q| 的遞增順序處理相鄰像素對，述詞 P(R, R&#x27;) 為真則合併（statistical_region_merging）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>画素の値は `<code style="color:#22d3bf">value_range</code>` を [0, g − 1] に線形に写して使う(範囲の外の値は ValueError)。</p>
+<p>P(R, R&#x27;) ⇔ |R̄ − R̄&#x27;| ≤ √(b²(R) + b²(R&#x27;))、b(R) = g √(ln(|R_|R||/δ) / (2Q|R|))、ln|R_l| = min(l, g) ln(l + 1)、</p>
+<p>δ = 1/(6|I|²)(述語の係数は <b>要確認</b>、モジュールの説明参照)。Q(`<code style="color:#22d3bf">q</code>`)が大きいほど b が小さく、併合を渋る(細かい)。</p>
+<p>返す: `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(1..k)、</code><code style="color:#22d3bf">n_regions</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">means</code><code style="color:#22d3bf">(領域ごとの平均、元の値の尺度)、</code><code style="color:#22d3bf">n_merges</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">q</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">graph</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:graph_cut_binary">graph_cut_binary</a> · <a style="color:#22d3bf" href="opsegmentation:alpha_expansion">alpha_expansion</a> · <a style="color:#22d3bf" href="opsegmentation:max_tree">max_tree</a> · <a style="color:#22d3bf" href="opsegmentation:area_opening_attr">area_opening_attr</a> · <a style="color:#22d3bf" href="opsegmentation:quasi_flat_zones">quasi_flat_zones</a> · <a style="color:#22d3bf" href="opsegmentation:alpha_tree">alpha_tree</a> · <a style="color:#22d3bf" href="opsegmentation:hierarchical_watershed">hierarchical_watershed</a> · <a style="color:#22d3bf" href="opsegmentation:ultrametric_contour_map">ultrametric_contour_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: seggraph.py — SEGMENTATION 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
