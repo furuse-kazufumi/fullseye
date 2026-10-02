@@ -37,3 +37,15 @@ def test_the_shipped_notes_are_in_posix_path_order():
     for metas in notes.values():
         first_seen.append(metas[0]["path"])
     assert first_seen == sorted(first_seen)
+
+
+# ---- tools/opdocs.py の 2 か所(同じ形の素の sorted)も同じ規則に -------------------- #
+def test_knowledge_guides_follow_the_posix_path(tmp_path, monkeypatch):
+    from tools import opdocs
+    for rel in ("drive3d/guides/b.md", "drive/guides/a.md", "drive_x/guides/c.md"):
+        p = tmp_path / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text("---\napplies_to: none\n---\n# %s\n" % p.stem, encoding="utf-8")
+    monkeypatch.setattr(opdocs, "DOCS", str(tmp_path))
+    monkeypatch.setattr(opdocs, "_KNOWLEDGE_GUIDES", None)
+    assert [g["stem"] for g in opdocs.knowledge_guides()] == ["a", "b", "c"]

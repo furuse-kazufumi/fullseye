@@ -259,7 +259,8 @@ def knowledge_guides():
     if _KNOWLEDGE_GUIDES is None:
         fams = _family_guide_stems()
         out = []
-        for g in sorted(glob.glob(os.path.join(DOCS, "*", "guides", "*.md"))):
+        for g in sorted(glob.glob(os.path.join(DOCS, "*", "guides", "*.md")),
+                       key=lambda q: q.replace(os.sep, "/")):  # OS で順が変わらない(scan_notes と同じ)
             stem = os.path.splitext(os.path.basename(g))[0]
             if stem in fams:
                 continue
@@ -1404,7 +1405,8 @@ def prune_stale_notes(docs_root: str, written) -> list:
     先頭 600 文字に生成の印を持ち、``written`` に無いものだけ。手書きの文書は消さない。
     """
     gone = []
-    for q in sorted(glob.glob(os.path.join(docs_root, "*", "*", "*.md"))):
+    for q in sorted(glob.glob(os.path.join(docs_root, "*", "*", "*.md")),
+                   key=lambda q: q.replace(os.sep, "/")):
         if os.path.basename(os.path.dirname(q)) == "guides":
             continue
         if os.path.normcase(os.path.abspath(q)) in written:
