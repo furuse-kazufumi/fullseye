@@ -209,7 +209,8 @@ def hom_mat3d_scale_local(H, sx=1.0, sy=1.0, sz=1.0):
 
 
 def hom_mat3d_transpose_(H):
-    return _m(H).T
+    """``hom_mat3d_transpose`` の別名(名前を残すだけ。本文の複製はやめた、2026-10-02)。"""
+    return hom_mat3d_transpose(H)
 
 
 def hom_mat3d_project(H, px, py, pz):

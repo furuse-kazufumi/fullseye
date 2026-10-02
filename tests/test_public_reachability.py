@@ -54,7 +54,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #: 違うので名前照合では届かないが、op 経由では毎回走っている)、例の登録簿。
 #: 数字は不可視な関数の本数で、増減しても意図的なら書き換えてよい。
 _INTERNAL = {
-    "accel_bridge": 9, "accel_match": 6, "accel_vol": 3,
+    "accel_bridge": 9, "accel_vol": 3,
     "algo_codegen": 4, "algo_difftest": 8, "backends": 4, "backends_auto": 2,
     "backends_color": 3, "backends_cv2b": 1, "backends_dl": 3, "backends_extra": 1,
     "backends_halcon_ext": 1, "backends_kornia": 1, "backends_macro": 1,
@@ -208,7 +208,7 @@ def test_pending_exposure_shrinks_when_fixed():
 #: 2026-09-14: 1231 -> 1235。opsspc 台帳の内部 API(_build/list_ops/categories/get/call/
 #: info/missing の非公開分)と spc.py の入力バリデータ(_as_float_array/_as_1d)。op 自身
 #: (spc_xbar_r/spc_cusum/spc_capability/spc_hotelling_t2)は typed_catalog と api から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 856   # 2026-10-02: facade 経路を数えて 1235 → 901、unified registry を数えて 901 → 861、train_class_mlp/svm を facade に載せて 859、watershed3d を台帳に載せて 856(ratchet)
+_HIDDEN_FUNCTIONS_TODAY = 838   # 2026-10-02: facade 経路を数えて 1235 → 901、unified registry を数えて 901 → 861、train_class_mlp/svm を facade に載せて 859、watershed3d を台帳に載せて 856、棚卸しの 18 本を fs.<名前> に出して 838(ratchet)
 
 
 def _hidden_total():

@@ -61,3 +61,21 @@ def test_ensure_color_always_returns_three_channels(shape):
     assert out.shape == (5, 6, 3)
     if len(shape) == 3 and shape[2] >= 3:
         assert np.array_equal(out, a[:, :, :3])
+
+
+def test_build_registry_and_the_lazy_registry_load_the_same_layers():
+    """unified.build_registry と _ensure は同じ層を同じ順に積む(手順を 1 か所にした回帰)。"""
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        import unified as u
+        a, b = u.build_registry(), u._ensure()
+    assert sorted(a.list()) == sorted(b.list())
+    assert len(a.list()) > 1000
+
+
+def test_the_transpose_alias_matches_the_original():
+    import transforms as T
+    H = np.arange(16.0).reshape(4, 4)
+    assert np.array_equal(T.hom_mat3d_transpose_(H), T.hom_mat3d_transpose(H))
+

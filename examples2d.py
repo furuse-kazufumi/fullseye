@@ -344,6 +344,11 @@ EXAMPLES = [
                 "ことを長さを伸ばして assert し、周囲長の 2 つの推定量が**逆の形で外す**"
                 "(perimeter は円で +5%・crofton は正方形で -5%、どちらも解像度で消えない)"
                 "ことを示す。"},
+    {"id": "hidden_ops_tour", "task": "imgmetrics", "data": "synthetic",
+     "name": "公開経路の無かった道具 18 本を一巡する —— 3-D の NCC・サブピクセルの端・帯域通過・法線の積分・二視点の幾何・ピラミッド・回転対称",
+     "summary": "棚卸し(2026-10-02)で fullseye のどこからも呼べなかった 18 本を fs.<名前> から呼び、答えの決まる入力で確かめる: "
+                "切り出しの位置で NCC = 1、x.5 の端は放物線補間で厳密、純正弦波の利得 = マスクの値、周期面は Frankot–Chellappa で 1e-15、"
+                "雑音なしの三角測量、本質行列の特異値 (σ, σ, 0)、ピラミッドの大きさ、4 回対称の点群は次数 2・4 で 0。"},
     {"id": "watershed3d_tour", "task": "segmentation", "data": "synthetic",
      "name": "接した 2 つの球を 3-D 分水嶺で割る —— 連結成分では 1 個、距離変換シードでは体積の等しい 2 個",
      "summary": "台帳 opssegmentation の watershed3d(distance_peaks / watershed_vol / separate_touching)を fullseye.ledger から呼び、"

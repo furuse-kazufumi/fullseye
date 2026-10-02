@@ -371,6 +371,21 @@ with warnings.catch_warnings():
         psf_from_opd, psf_field_grid, distortion_map, render_through_lens, defect_dataset,
         calibration_views,
     )
+    # ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。
+    #   どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。
+    #   門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
+    from accel_match import ncc_map_3d  # noqa: E402,F401  (3-D 正規化相互相関マップ)
+    from backend_safe import gradient_normals, subpixel_refine_edges  # noqa: E402,F401
+    from filters_arith import min_max_gray_n  # noqa: E402,F401
+    from filters_flow import gen_gauss_bandpass, apply_bandpass  # noqa: E402,F401
+    from gsplat_sugar import gaussians_to_mesh  # noqa: E402,F401  (open3d は呼んだときだけ要る)
+    from imgio import ensure_gray, ensure_color  # noqa: E402,F401
+    from morph_minkowski import dilation2  # noqa: E402,F401
+    from objmodel3d import get_bounding_box_object_model_3d  # noqa: E402,F401
+    from photometric import normals_to_gradients, integrate_gradients  # noqa: E402,F401
+    from reconstruction import triangulate_points, rel_pose_to_essential_matrix  # noqa: E402,F401
+    from shapematch import pyr_down, image_pyramid  # noqa: E402,F401
+    from symmetry3d import rotational_symmetry_score  # noqa: E402,F401
     from engine import FullseyeEngine, diagnose_stages  # noqa: E402,F401  (pipeline runtime)
     import graphengine  # noqa: E402,F401  (DAG pipeline runtime)
     from graphengine import FullseyeGraph  # noqa: E402,F401
@@ -1017,6 +1032,11 @@ __all__ = [
     "judge", "inspect_batch", "as_verdict",
     "compare_to_golden", "golden_measure", "golden_spec",
     "inspection_fixture", "spec_margins",
+    "ncc_map_3d", "gradient_normals", "subpixel_refine_edges", "min_max_gray_n",
+    "gen_gauss_bandpass", "apply_bandpass", "gaussians_to_mesh", "ensure_gray", "ensure_color",
+    "dilation2", "get_bounding_box_object_model_3d", "normals_to_gradients", "integrate_gradients",
+    "triangulate_points", "rel_pose_to_essential_matrix", "pyr_down", "image_pyramid",
+    "rotational_symmetry_score",
 ]
 
 # ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った

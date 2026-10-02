@@ -499,13 +499,23 @@ def build_registry() -> Registry:
     """4 層(facade 600 / 進化 735 / 知覚 facade / OSS アダプタ)を 1 索引に統合(F2/F3/F4)。
     facade を最初に登録=bare 名衝突時は genuine facade を優先(既存挙動維持)。"""
     reg = Registry()
+    _load_layers(reg)
+    return reg
+
+
+def _load_layers(reg: Registry) -> None:
+    """層を決まった順に積む。``build_registry`` と ``_ensure`` の**唯一の**手順。
+
+    ★2026-10-02: 以前は 2 か所に同じ 6 行が別々に書かれていた(build_registry は参照 0 本で、
+    層を足すと _ensure だけ直って片方が古いまま残る危険があった)。順序は意味を持つ ——
+    facade を最初に登録 = bare 名の衝突時は genuine facade が勝つ。
+    """
     _load_facade(reg)          # 1. genuine facade(優先)
     _load_evolution(reg)       # 2. 進化 registry(a/b ノブ)
     _load_perception(reg)      # 3. 知覚 facade(自然シグネチャ)
     _load_oss(reg)             # 4. OSS アダプタ(OpenCV/skimage、numpy フォールバック)
     _load_sim(reg)             # 5. sim-source(物理→視覚の入力供給、F4)
     _load_3dgs(reg)            # 6. 3DGS/SuGaR/メッシュ再生(provenance=3dgs)
-    return reg
 
 
 # ── 遅延構築 + 名前空間の遅延公開(F1/F2)─────────────────────────────────────── #
@@ -520,12 +530,7 @@ def _ensure() -> Registry:
     if _registry is None:
         reg = Registry()
         _registry = reg                      # 層ロード前に publish(再入時は途中の reg を返す)
-        _load_facade(reg)
-        _load_evolution(reg)
-        _load_perception(reg)
-        _load_oss(reg)
-        _load_sim(reg)
-        _load_3dgs(reg)
+        _load_layers(reg)
     return _registry
 
 
