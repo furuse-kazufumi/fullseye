@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: a77086926760 -->
+<!-- i18n-source-sha: 3ff1623c4ad6 -->
 # Fullseye Studio 완전 가이드
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · **한국어** · [Deutsch](./STUDIO_GUIDE.de.md)
@@ -214,6 +214,30 @@ Studio는 "파이프라인에서만 코드를 호출할 수 있는" 단계를 �
 - **System settings**(Tools ▸ System settings… / Ctrl+,): 카테고리 트리+페이지 구성.
   Execution(스레드 수 / 타임아웃)·Windows(창 개수 상한)·Display(기본 LUT / region 렌더링)·
   Editor(글꼴 크기 / 실행 인터프리터).
+
+## 드래그 앤 드롭으로 열 수 있는 것(2026-10-03)
+
+파일이나 폴더를 **메인 창에 끌어다 놓으면** 종류에 맞는 창이 열립니다(여러 개를 한꺼번에 놓으면 여러 창).
+전체 목록은 **Help ▸ 열 수 있는 파일(드래그 앤 드롭)…** 에 있습니다. 그 표는 Studio가 실제로 쓰는 확장자
+상수에서 만들어지므로 이 절보다 새로울 수 있습니다.
+
+| 놓는 것 | 여는 곳 | 비고 |
+|---|---|---|
+| 이미지(png / jpg / tif / webp / pgm / pfm / jp2 …), 폴더 | 이미지 뷰어 | 목록, 확대, 픽셀 값, 히스토그램, '파이프라인 입력으로 사용'. 폴더는 바로 안의 이미지 |
+| `.py` | Python 편집기(파일마다 탭 하나) | |
+| `.json` | 파이프라인 | |
+| 점군과 메시(PLY / STL / PCD / OBJ / OFF / XYZ) | 3-D 뷰어 | **ASCII와 바이너리 모두**(PLY는 리틀·빅 엔디언, PCD는 binary_compressed도) |
+| 3DGS(`.ply` / `.splat`) | 3-D 뷰어 | 색은 구면 조화 DC 항, 불투명도 0.05 미만은 숨김 |
+| 의료 볼륨(NIfTI / NRRD / MHA / DICOM) | 3-D 뷰어 | SimpleITK 등이 필요 |
+| glTF(`.glb` / `.gltf`), LiDAR(`.las` / `.laz`) | 3-D 뷰어 | pygltflib / laspy 필요 |
+| 로봇(MJCF / URDF) | 3-D 뷰어 | `.xml`은 루트가 `<mujoco>` 또는 `<robot>`일 때만. mujoco 필요 |
+| 모션 캡처(`.bvh`), 뉴런 형태(`.swc`) | 3-D 뷰어 | BVH 관절 궤적을 시간으로 색칠 |
+| 동영상, 애니메이션 GIF, HDF5 | 비디오 큐브 | |
+| 이벤트 카메라 (x, y, t, p)(txt / csv / npy / npz) | 비디오 큐브 | 내용으로 판별해 극성 프레임으로 |
+| `.npy` | 형태로 분류 | 2-D → 입력 이미지, (N, 3 / 6) → 점군, 3-D → 볼륨 |
+| Markdown, SVG | 문서 뷰어 | |
+| 오디오(wav / mp3 / flac / ogg …) | 오디오 창 | 파형, 스펙트로그램, 재생. WAV 이외는 soundfile |
+| 로봇 모델 + qpos `.npy` (T, nq) 를 함께 | 로봇 재생 | 슬라이더와 재생 버튼 |
 
 ## Export와 Save/Open의 관계
 

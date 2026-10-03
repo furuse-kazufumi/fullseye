@@ -453,3 +453,59 @@ def test_drop_model_with_qpos_plays_the_trajectory(tmp_path):
     bad = tmp_path / "bad.npy"; np.save(bad, np.zeros((5, 3)))
     win.drop_handler([str(xml), str(bad)])
     assert _ERRORS and "nq" in _ERRORS[-1][1]                           # 列の数が合わなければ名指しで断る
+
+
+# ── ヘルプの「開けるファイル」表(2026-10-03、ユーザー「ヘルプにも機能として書いておいたほうがいい」)──────── #
+def test_help_table_lists_every_extension_studio_opens():
+    """表は拡張子の定数から組み立てる —— 定数に足したのに表から漏れた拡張子が 1 つでもあれば落ちる。"""
+    rows = studio._drop_format_rows()
+    listed = {e for _k, _w, exts, _n in rows for e in exts}
+    every = set(studio.IMAGE_FILE_EXTS + studio.MODEL3D_FILE_EXTS + studio.VIDEO_FILE_EXTS
+                + studio.DOCUMENT_FILE_EXTS + studio.AUDIO_FILE_EXTS) | {".py", ".pyw", ".json", ".xml", ".npy"}
+    assert len(every) > 60
+    assert every - listed == set(), every - listed
+    cats = set(studio._classify_dropped_paths([])) - {"other"}
+    assert len(cats) == 9
+    assert cats - {k for k, *_ in rows} == set()                      # 振り分けの全分類に行がある
+
+
+def test_help_table_rows_agree_with_the_classifier(tmp_path):
+    """表が「3-D ビューアで開く」と言う拡張子は、本当に 3-D に振り分けられる(中身で見分ける物は除く)。"""
+    sniffed = {"events", "arrays", "player"}                          # 中身・組み合わせで決まる行
+    checked = 0
+    for key, _what, exts, _note in studio._drop_format_rows():
+        if key in sniffed:
+            continue
+        for e in exts:
+            if e in (".gif", ".xml"):                                 # 1 コマか / 根の要素で決まる
+                continue
+            got = studio._classify_dropped_paths([str(tmp_path / ("f" + e))])
+            assert got[key] == [str(tmp_path / ("f" + e))], (e, key, {k: v for k, v in got.items() if v})
+            checked += 1
+    assert checked > 50
+
+
+def test_help_menu_opens_the_formats_table_in_the_ui_language():
+    _app()
+    win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    texts = [a.text() for a in win._menus["help"].actions()]
+    assert "Files you can open (drag & drop)…" in texts
+    dlg = win._show_drop_formats()
+    html = dlg._browser.toPlainText()
+    assert ".splat" in html and ".bvh" in html and "binary_compressed" in html
+    win._apply_language("ja")
+    try:
+        assert "開けるファイル(ドラッグ・アンド・ドロップ)…" in [a.text() for a in win._menus["help"].actions()]
+        txt = win._show_drop_formats()._browser.toPlainText()
+        assert "画像ビューア" in txt and "ASCII とバイナリの両方" in txt
+    finally:
+        win._apply_language("en")
+
+
+def test_quick_guide_mentions_drag_and_drop_in_every_language():
+    names = {"en": "Files you can open"}
+    for lang, guide in studio.HELP_I18N.items():
+        assert ".splat" in guide and "MJCF" in guide, lang
+        want = names.get(lang) or studio.STRINGS_I18N["Files you can open"][lang]
+        assert want in guide, lang
+    assert len(studio.HELP_I18N) == 6

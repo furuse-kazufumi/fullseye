@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: a77086926760 -->
+<!-- i18n-source-sha: 3ff1623c4ad6 -->
 # The complete guide to Fullseye Studio
 
 [日本語](./STUDIO_GUIDE.md) · **English** · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md)
@@ -267,6 +267,30 @@ a **Python development environment**.
 - **System settings** (Tools ▸ System settings… / Ctrl+,): a category tree + paged layout. Execution
   (threads / timeout), Windows (window cap), Display (default LUT / region drawing), Editor (font
   size / interpreter to run with).
+
+## What you can open by drag and drop (2026-10-03)
+
+**Drop files or folders onto the main window** and each opens in the window that fits it (several files at
+once open several windows). The full list is under **Help ▸ Files you can open (drag & drop)…**; that table is
+built from the extension constants Studio actually uses, so it can be newer than this section.
+
+| What you drop | Opens in | Notes |
+|---|---|---|
+| Images (png / jpg / tif / webp / pgm / pfm / jp2 …), folders | Image viewer | List, zoom, pixel values, histogram, "Use as pipeline input". A folder opens the images directly inside it |
+| `.py` | Python editor (one tab per file) | |
+| `.json` | Pipeline | |
+| Point clouds and meshes (PLY / STL / PCD / OBJ / OFF / XYZ) | 3-D viewer | **ASCII and binary both** (PLY in little- and big-endian, PCD also binary_compressed) |
+| 3DGS (`.ply` / `.splat`) | 3-D viewer | Colour from the SH DC term; splats with opacity < 0.05 hidden |
+| Medical volumes (NIfTI / NRRD / MHA / DICOM) | 3-D viewer | Needs SimpleITK or similar |
+| glTF (`.glb` / `.gltf`), LiDAR (`.las` / `.laz`) | 3-D viewer | Needs pygltflib / laspy |
+| Robots (MJCF / URDF) | 3-D viewer | `.xml` only when its root is `<mujoco>` or `<robot>`. Needs mujoco |
+| Motion capture (`.bvh`), neuron morphology (`.swc`) | 3-D viewer | BVH joint paths coloured by time |
+| Videos, animated GIF, HDF5 | Video cube | |
+| Event-camera (x, y, t, p) (txt / csv / npy / npz) | Video cube | Recognised from the content, turned into polarity frames |
+| `.npy` | By shape | 2-D → input image, (N, 3 / 6) → point cloud, 3-D → volume |
+| Markdown, SVG | Document viewer | |
+| Audio (wav / mp3 / flac / ogg …) | Audio window | Waveform, spectrogram, playback. Non-WAV needs soundfile |
+| A robot model + a qpos `.npy` (T, nq) together | Robot player | Slider and play button |
 
 ## The relationship between Export and Save/Open
 

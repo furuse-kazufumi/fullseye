@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: a77086926760 -->
+<!-- i18n-source-sha: 3ff1623c4ad6 -->
 # Fullseye Studio 完全指南
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · **简体中文** · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md)
@@ -213,6 +213,29 @@ Studio 已经超越了"只能从流水线调用代码"的阶段，也可以作�
 - **System settings**(Tools ▸ System settings… / Ctrl+,): 分类树+分页结构。
   Execution(线程数 / 超时)·Windows(窗口数上限)·Display(默认 LUT / region 绘制)·
   Editor(字体大小 / 执行解释器)。
+
+## 可以拖放打开的文件(2026-10-03)
+
+把文件或文件夹**拖放到主窗口**,就会在合适的窗口中打开(一次拖放多个文件会打开多个窗口)。完整列表见
+**Help ▸ 可打开的文件(拖放)…**;那张表由 Studio 实际使用的扩展名常量生成,可能比本节更新。
+
+| 拖放的内容 | 打开方式 | 说明 |
+|---|---|---|
+| 图像(png / jpg / tif / webp / pgm / pfm / jp2 …)、文件夹 | 图像查看器 | 列表、缩放、像素值、直方图、“用作流水线输入”。文件夹打开其中直接包含的图像 |
+| `.py` | Python 编辑器(每个文件一个标签页) | |
+| `.json` | 流水线 | |
+| 点云与网格(PLY / STL / PCD / OBJ / OFF / XYZ) | 3-D 查看器 | **ASCII 与二进制皆可**(PLY 小端与大端,PCD 也支持 binary_compressed) |
+| 3DGS(`.ply` / `.splat`) | 3-D 查看器 | 颜色取球谐 DC 项;不透明度 < 0.05 的被隐藏 |
+| 医学体数据(NIfTI / NRRD / MHA / DICOM) | 3-D 查看器 | 需要 SimpleITK 等 |
+| glTF(`.glb` / `.gltf`)、LiDAR(`.las` / `.laz`) | 3-D 查看器 | 需要 pygltflib / laspy |
+| 机器人(MJCF / URDF) | 3-D 查看器 | `.xml` 仅当根元素为 `<mujoco>` 或 `<robot>`。需要 mujoco |
+| 动作捕捉(`.bvh`)、神经元形态(`.swc`) | 3-D 查看器 | BVH 关节轨迹按时间着色 |
+| 视频、动画 GIF、HDF5 | 视频立方体 | |
+| 事件相机 (x, y, t, p)(txt / csv / npy / npz) | 视频立方体 | 按内容识别,转成带极性的帧 |
+| `.npy` | 按形状 | 2-D → 输入图像,(N, 3 / 6) → 点云,3-D → 体数据 |
+| Markdown、SVG | 文档查看器 | |
+| 音频(wav / mp3 / flac / ogg …) | 音频窗口 | 波形、频谱图、播放。WAV 以外需要 soundfile |
+| 机器人模型 + qpos `.npy` (T, nq) 一起 | 机器人回放 | 滑块与播放按钮 |
 
 ## Export 与 Save/Open 的关系
 

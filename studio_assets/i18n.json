@@ -263,12 +263,12 @@
   }
  },
  "guide": {
-  "en": "Fullseye Studio — quick guide\n\n• Operators panel: pick an op, read its signature + HTML help, Insert into the pipeline.\n• Program (code) panel: edit the pipeline as text, autocomplete as you type,\n  click the gutter for breakpoints, Run (timed) shows each line's ms.\n• Variables & Objects: every stage's output; display any of them in a graphics window.\n• Windows menu: show/float every panel, open several graphics windows,\n  or 'Float all panels' for multi-monitor work.\n• The window position, panel layout and language are remembered between sessions.",
-  "ja": "Fullseye Studio — クイックガイド\n\n• Operators パネル: op を選び署名と HTML ヘルプを読み、Insert でパイプラインへ。\n• Program(コード)パネル: パイプラインをテキスト編集、入力で自動補完、\n  行番号左でブレークポイント、Run(計時)で各行の ms を表示。\n• Variables & Objects: 各ステージの出力。任意の変数をグラフィクス窓に表示。\n• Windows メニュー: 各パネルの表示/フロート、複数グラフィクス窓、\n  「Float all panels」で複数モニタ作業。\n• ウィンドウ位置・パネル配置・言語はセッション間で記憶されます。",
-  "zh": "Fullseye Studio — 快速指南\n\n• 算子面板:选择算子,查看其签名与 HTML 帮助,点击 Insert 加入流水线。\n• 程序(代码)面板:以文本编辑流水线,输入即自动补全,\n  点击行号槽设断点,Run(计时)显示每行毫秒。\n• 变量与对象:每个阶段的输出;可在图形窗口中显示任意变量。\n• Windows 菜单:显示/浮动各面板、打开多个图形窗口,\n  或用「Float all panels」进行多显示器工作。\n• 窗口位置、面板布局与语言会在会话之间保存。",
-  "tw": "Fullseye Studio — 快速指南\n\n• 運算子面板:挑一個運算子,讀它的簽章 + HTML 說明,再 Insert 進管線。\n• Program(程式碼)面板:以文字編輯管線,輸入時自動完成,\n  點擊行號槽設中斷點,Run(計時)會顯示每行的 ms。\n• Variables & Objects:每個階段的輸出;任何一個都能顯示在圖形視窗。\n• Windows 選單:顯示/浮動各面板,開多個圖形視窗,\n  或用 'Float all panels' 做多螢幕作業。\n• 視窗位置、面板配置與語言會在下次啟動時還原。",
-  "ko": "Fullseye Studio — 빠른 안내\n\n• 연산자 패널: 연산자를 고르고, 시그니처와 HTML 도움말을 읽고, Insert 로 파이프라인에 넣습니다.\n• Program(코드) 패널: 파이프라인을 텍스트로 편집합니다. 입력하면 자동 완성되고,\n  여백을 누르면 중단점이 켜지며, Run(계측)은 각 줄의 ms 를 보여 줍니다.\n• Variables & Objects: 각 단계의 출력. 어느 것이든 그래픽 창에 표시할 수 있습니다.\n• Windows 메뉴: 패널을 표시/분리하고, 그래픽 창을 여러 개 열고,\n  여러 모니터로 작업하려면 'Float all panels' 를 씁니다.\n• 창 위치, 패널 배치, 언어는 다음 실행 때 복원됩니다.",
-  "de": "Fullseye Studio — Kurzanleitung\n\n• Operatoren-Panel: einen Operator wählen, seine Signatur und HTML-Hilfe lesen,\n  mit Insert in die Pipeline übernehmen.\n• Program-Panel (Code): die Pipeline als Text bearbeiten, Autovervollständigung\n  beim Tippen, Klick auf den Rand setzt Haltepunkte, Run (gemessen) zeigt die ms je Zeile.\n• Variables & Objects: die Ausgabe jeder Stufe; jede lässt sich in einem Grafikfenster anzeigen.\n• Windows-Menü: Panels ein-/ausblenden und lösen, mehrere Grafikfenster öffnen\n  oder 'Float all panels' für die Arbeit an mehreren Monitoren.\n• Fensterposition, Panel-Layout und Sprache bleiben zwischen den Sitzungen erhalten."
+  "en": "Fullseye Studio — quick guide\n\n• Operators panel: pick an op, read its signature + HTML help, Insert into the pipeline.\n• Program (code) panel: edit the pipeline as text, autocomplete as you type,\n  click the gutter for breakpoints, Run (timed) shows each line's ms.\n• Variables & Objects: every stage's output; display any of them in a graphics window.\n• Windows menu: show/float every panel, open several graphics windows,\n  or 'Float all panels' for multi-monitor work.\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D files (PLY / STL / PCD / OBJ in ASCII or binary,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  and audio each open in the right window. Help ▸ Files you can open lists every type.\n• The window position, panel layout and language are remembered between sessions.",
+  "ja": "Fullseye Studio — クイックガイド\n\n• Operators パネル: op を選び署名と HTML ヘルプを読み、Insert でパイプラインへ。\n• Program(コード)パネル: パイプラインをテキスト編集、入力で自動補完、\n  行番号左でブレークポイント、Run(計時)で各行の ms を表示。\n• Variables & Objects: 各ステージの出力。任意の変数をグラフィクス窓に表示。\n• Windows メニュー: 各パネルの表示/フロート、複数グラフィクス窓、\n  「Float all panels」で複数モニタ作業。\n• ドラッグ・アンド・ドロップ: 画像・.py・パイプライン(.json)・3-D(PLY / STL / PCD / OBJ の ASCII とバイナリ、\n  3DGS の .ply / .splat、glTF、LAS、MJCF / URDF、BVH、SWC、ボリューム)・動画・イベントカメラ・Markdown / SVG・\n  音声を、それぞれ合う窓で開きます。全種類は Help ▸ 開けるファイル。\n• ウィンドウ位置・パネル配置・言語はセッション間で記憶されます。",
+  "zh": "Fullseye Studio — 快速指南\n\n• 算子面板:选择算子,查看其签名与 HTML 帮助,点击 Insert 加入流水线。\n• 程序(代码)面板:以文本编辑流水线,输入即自动补全,\n  点击行号槽设断点,Run(计时)显示每行毫秒。\n• 变量与对象:每个阶段的输出;可在图形窗口中显示任意变量。\n• Windows 菜单:显示/浮动各面板、打开多个图形窗口,\n  或用「Float all panels」进行多显示器工作。\n• 拖放:图像、.py 脚本、流水线(.json)、3-D 文件(ASCII 或二进制的 PLY / STL / PCD / OBJ、\n  3DGS .ply / .splat、glTF、LAS、MJCF / URDF、BVH、SWC、体数据)、视频、事件相机数据、Markdown / SVG\n  和音频都会在合适的窗口打开。全部类型见 Help ▸ 可打开的文件。\n• 窗口位置、面板布局与语言会在会话之间保存。",
+  "tw": "Fullseye Studio — 快速指南\n\n• 運算子面板:挑一個運算子,讀它的簽章 + HTML 說明,再 Insert 進管線。\n• Program(程式碼)面板:以文字編輯管線,輸入時自動完成,\n  點擊行號槽設中斷點,Run(計時)會顯示每行的 ms。\n• Variables & Objects:每個階段的輸出;任何一個都能顯示在圖形視窗。\n• Windows 選單:顯示/浮動各面板,開多個圖形視窗,\n  或用 'Float all panels' 做多螢幕作業。\n• 拖放:影像、.py 腳本、管線(.json)、3-D 檔案(ASCII 或二進位的 PLY / STL / PCD / OBJ、\n  3DGS .ply / .splat、glTF、LAS、MJCF / URDF、BVH、SWC、體積資料)、影片、事件相機資料、Markdown / SVG\n  與音訊都會在合適的視窗開啟。全部類型見 Help ▸ 可開啟的檔案。\n• 視窗位置、面板配置與語言會在下次啟動時還原。",
+  "ko": "Fullseye Studio — 빠른 안내\n\n• 연산자 패널: 연산자를 고르고, 시그니처와 HTML 도움말을 읽고, Insert 로 파이프라인에 넣습니다.\n• Program(코드) 패널: 파이프라인을 텍스트로 편집합니다. 입력하면 자동 완성되고,\n  여백을 누르면 중단점이 켜지며, Run(계측)은 각 줄의 ms 를 보여 줍니다.\n• Variables & Objects: 각 단계의 출력. 어느 것이든 그래픽 창에 표시할 수 있습니다.\n• Windows 메뉴: 패널을 표시/분리하고, 그래픽 창을 여러 개 열고,\n  여러 모니터로 작업하려면 'Float all panels' 를 씁니다.\n• 드래그 앤 드롭: 이미지, .py 스크립트, 파이프라인(.json), 3-D 파일(ASCII 또는 바이너리 PLY / STL / PCD / OBJ,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, 볼륨), 동영상, 이벤트 카메라 데이터, Markdown / SVG,\n  오디오가 각각 알맞은 창에서 열립니다. 전체 종류는 Help ▸ 열 수 있는 파일.\n• 창 위치, 패널 배치, 언어는 다음 실행 때 복원됩니다.",
+  "de": "Fullseye Studio — Kurzanleitung\n\n• Operatoren-Panel: einen Operator wählen, seine Signatur und HTML-Hilfe lesen,\n  mit Insert in die Pipeline übernehmen.\n• Program-Panel (Code): die Pipeline als Text bearbeiten, Autovervollständigung\n  beim Tippen, Klick auf den Rand setzt Haltepunkte, Run (gemessen) zeigt die ms je Zeile.\n• Variables & Objects: die Ausgabe jeder Stufe; jede lässt sich in einem Grafikfenster anzeigen.\n• Windows-Menü: Panels ein-/ausblenden und lösen, mehrere Grafikfenster öffnen\n  oder 'Float all panels' für die Arbeit an mehreren Monitoren.\n• Drag & Drop: Bilder, .py-Skripte, Pipelines (.json), 3-D-Dateien (PLY / STL / PCD / OBJ in ASCII oder binär,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, Volumen), Videos, Eventkamera-Daten, Markdown / SVG\n  und Audio öffnen sich jeweils im passenden Fenster. Alle Typen: Help ▸ Öffnebare Dateien.\n• Fensterposition, Panel-Layout und Sprache bleiben zwischen den Sitzungen erhalten."
  },
  "strings": {
   "&File": {
@@ -578,6 +578,244 @@
    "tw": "語言",
    "ko": "언어",
    "de": "Sprache"
+  },
+  "Files you can open (drag & drop)…": {
+   "ja": "開けるファイル(ドラッグ・アンド・ドロップ)…",
+   "zh": "可打开的文件(拖放)…",
+   "tw": "可開啟的檔案(拖放)…",
+   "ko": "열 수 있는 파일(드래그 앤 드롭)…",
+   "de": "Öffnebare Dateien (Drag & Drop)…"
+  },
+  "Files you can open": {
+   "ja": "開けるファイル",
+   "zh": "可打开的文件",
+   "tw": "可開啟的檔案",
+   "ko": "열 수 있는 파일",
+   "de": "Öffnebare Dateien"
+  },
+  "Drop files or folders onto the main window (or open them from the File menu). Several files at once open several windows.": {
+   "ja": "ファイルやフォルダをメイン画面に落とします(File メニューからも開けます)。複数まとめて落とすと複数の窓が開きます。",
+   "zh": "将文件或文件夹拖放到主窗口(也可从 File 菜单打开)。一次拖放多个文件会打开多个窗口。",
+   "tw": "將檔案或資料夾拖放到主視窗(也可從 File 選單開啟)。一次拖放多個檔案會開啟多個視窗。",
+   "ko": "파일이나 폴더를 메인 창에 끌어다 놓습니다(File 메뉴에서도 열 수 있음). 여러 개를 한꺼번에 놓으면 여러 창이 열립니다.",
+   "de": "Dateien oder Ordner auf das Hauptfenster ziehen (oder über das Menü File öffnen). Mehrere Dateien öffnen mehrere Fenster."
+  },
+  "Opens in": {
+   "ja": "開く先",
+   "zh": "打开方式",
+   "tw": "開啟方式",
+   "ko": "여는 곳",
+   "de": "Öffnet in"
+  },
+  "Extensions": {
+   "ja": "拡張子",
+   "zh": "扩展名",
+   "tw": "副檔名",
+   "ko": "확장자",
+   "de": "Endungen"
+  },
+  "Notes": {
+   "ja": "補足",
+   "zh": "说明",
+   "tw": "說明",
+   "ko": "비고",
+   "de": "Hinweise"
+  },
+  "Image viewer": {
+   "ja": "画像ビューア",
+   "zh": "图像查看器",
+   "tw": "影像檢視器",
+   "ko": "이미지 뷰어",
+   "de": "Bildbetrachter"
+  },
+  "Python editor (one tab per file)": {
+   "ja": "Python エディタ(1 ファイル 1 タブ)",
+   "zh": "Python 编辑器(每个文件一个标签页)",
+   "tw": "Python 編輯器(每個檔案一個分頁)",
+   "ko": "Python 편집기(파일마다 탭 하나)",
+   "de": "Python-Editor (ein Tab pro Datei)"
+  },
+  "Pipeline (replaces the current one)": {
+   "ja": "パイプライン(今のものと置き換え)",
+   "zh": "流水线(替换当前的)",
+   "tw": "管線(取代目前的)",
+   "ko": "파이프라인(현재 것을 교체)",
+   "de": "Pipeline (ersetzt die aktuelle)"
+  },
+  "3-D viewer: point clouds and meshes": {
+   "ja": "3-D ビューア: 点群とメッシュ",
+   "zh": "3-D 查看器:点云与网格",
+   "tw": "3-D 檢視器:點雲與網格",
+   "ko": "3-D 뷰어: 점군과 메시",
+   "de": "3-D-Ansicht: Punktwolken und Netze"
+  },
+  "3-D viewer: 3-D Gaussian splats": {
+   "ja": "3-D ビューア: 3D ガウシアン・スプラッティング",
+   "zh": "3-D 查看器:3D 高斯泼溅",
+   "tw": "3-D 檢視器:3D 高斯潑濺",
+   "ko": "3-D 뷰어: 3D 가우시안 스플래팅",
+   "de": "3-D-Ansicht: 3D Gaussian Splats"
+  },
+  "3-D viewer: medical volumes": {
+   "ja": "3-D ビューア: 医用ボリューム",
+   "zh": "3-D 查看器:医学体数据",
+   "tw": "3-D 檢視器:醫學體積資料",
+   "ko": "3-D 뷰어: 의료 볼륨",
+   "de": "3-D-Ansicht: medizinische Volumen"
+  },
+  "3-D viewer: glTF scenes and LiDAR": {
+   "ja": "3-D ビューア: glTF のシーンと LiDAR",
+   "zh": "3-D 查看器:glTF 场景与 LiDAR",
+   "tw": "3-D 檢視器:glTF 場景與 LiDAR",
+   "ko": "3-D 뷰어: glTF 장면과 LiDAR",
+   "de": "3-D-Ansicht: glTF-Szenen und LiDAR"
+  },
+  "3-D viewer: robot models (MJCF / URDF)": {
+   "ja": "3-D ビューア: ロボットのモデル(MJCF / URDF)",
+   "zh": "3-D 查看器:机器人模型(MJCF / URDF)",
+   "tw": "3-D 檢視器:機器人模型(MJCF / URDF)",
+   "ko": "3-D 뷰어: 로봇 모델(MJCF / URDF)",
+   "de": "3-D-Ansicht: Robotermodelle (MJCF / URDF)"
+  },
+  "3-D viewer: motion capture (BVH) and neuron morphology (SWC)": {
+   "ja": "3-D ビューア: モーションキャプチャ(BVH)と神経細胞の形(SWC)",
+   "zh": "3-D 查看器:动作捕捉(BVH)与神经元形态(SWC)",
+   "tw": "3-D 檢視器:動作擷取(BVH)與神經元形態(SWC)",
+   "ko": "3-D 뷰어: 모션 캡처(BVH)와 뉴런 형태(SWC)",
+   "de": "3-D-Ansicht: Motion Capture (BVH) und Neuronenmorphologie (SWC)"
+  },
+  "Video cube": {
+   "ja": "動画の立方体",
+   "zh": "视频立方体",
+   "tw": "影片立方體",
+   "ko": "비디오 큐브",
+   "de": "Videowürfel"
+  },
+  "Event camera: frames in the video cube": {
+   "ja": "イベントカメラ: コマにして動画の立方体へ",
+   "zh": "事件相机:转成帧放入视频立方体",
+   "tw": "事件相機:轉成影格放入影片立方體",
+   "ko": "이벤트 카메라: 프레임으로 만들어 비디오 큐브로",
+   "de": "Eventkamera: Frames im Videowürfel"
+  },
+  "NumPy array": {
+   "ja": "NumPy 配列",
+   "zh": "NumPy 数组",
+   "tw": "NumPy 陣列",
+   "ko": "NumPy 배열",
+   "de": "NumPy-Array"
+  },
+  "Document viewer": {
+   "ja": "文書ビューア",
+   "zh": "文档查看器",
+   "tw": "文件檢視器",
+   "ko": "문서 뷰어",
+   "de": "Dokumentbetrachter"
+  },
+  "Audio window": {
+   "ja": "音声の窓",
+   "zh": "音频窗口",
+   "tw": "音訊視窗",
+   "ko": "오디오 창",
+   "de": "Audiofenster"
+  },
+  "Robot player": {
+   "ja": "ロボットの再生",
+   "zh": "机器人回放",
+   "tw": "機器人重播",
+   "ko": "로봇 재생",
+   "de": "Roboter-Player"
+  },
+  "List, zoom, pixel values, histogram, 'Use as pipeline input'. A folder opens the images directly inside it; a single-frame GIF is an image.": {
+   "ja": "一覧・拡大・画素値・ヒストグラム・「パイプラインの入力にする」。フォルダは直下の画像を開く。1 コマの GIF は画像。",
+   "zh": "列表、缩放、像素值、直方图、“用作流水线输入”。文件夹会打开其中直接包含的图像;单帧 GIF 视为图像。",
+   "tw": "清單、縮放、像素值、直方圖、「用作管線輸入」。資料夾會開啟其中直接包含的影像;單格 GIF 視為影像。",
+   "ko": "목록, 확대, 픽셀 값, 히스토그램, '파이프라인 입력으로 사용'. 폴더는 바로 안의 이미지를 엽니다. 한 프레임 GIF는 이미지입니다.",
+   "de": "Liste, Zoom, Pixelwerte, Histogramm, „Als Pipeline-Eingabe verwenden“. Ein Ordner öffnet die Bilder direkt darin; ein GIF mit einem Frame ist ein Bild."
+  },
+  "ASCII and binary both: PLY (ASCII / binary little- and big-endian), STL (ASCII / binary), PCD (ASCII / binary / binary_compressed).": {
+   "ja": "ASCII とバイナリの両方: PLY(ASCII / バイナリのリトル・ビッグエンディアン)、STL(ASCII / バイナリ)、PCD(ASCII / binary / binary_compressed)。",
+   "zh": "ASCII 与二进制皆可:PLY(ASCII / 二进制小端与大端)、STL(ASCII / 二进制)、PCD(ASCII / binary / binary_compressed)。",
+   "tw": "ASCII 與二進位皆可:PLY(ASCII / 二進位小端與大端)、STL(ASCII / 二進位)、PCD(ASCII / binary / binary_compressed)。",
+   "ko": "ASCII와 바이너리 모두: PLY(ASCII / 바이너리 리틀·빅 엔디언), STL(ASCII / 바이너리), PCD(ASCII / binary / binary_compressed).",
+   "de": "ASCII und binär: PLY (ASCII / binär Little- und Big-Endian), STL (ASCII / binär), PCD (ASCII / binary / binary_compressed)."
+  },
+  "A PLY with f_dc / opacity / scale / rot is recognised from its header. Colour = SH DC term; splats with opacity < 0.05 are hidden.": {
+   "ja": "f_dc / opacity / scale / rot を持つ PLY はヘッダで見分ける。色 = 球面調和の DC 項。不透明度 0.05 未満は隠す。",
+   "zh": "带有 f_dc / opacity / scale / rot 的 PLY 由文件头识别。颜色 = 球谐 DC 项;不透明度 < 0.05 的泼溅被隐藏。",
+   "tw": "帶有 f_dc / opacity / scale / rot 的 PLY 由檔頭辨識。顏色 = 球諧 DC 項;不透明度 < 0.05 的潑濺會隱藏。",
+   "ko": "f_dc / opacity / scale / rot 가 있는 PLY는 헤더로 판별합니다. 색 = 구면 조화 DC 항. 불투명도 0.05 미만은 숨깁니다.",
+   "de": "Ein PLY mit f_dc / opacity / scale / rot wird am Header erkannt. Farbe = SH-DC-Term; Splats mit Deckkraft < 0.05 werden ausgeblendet."
+  },
+  "Needs SimpleITK (or nibabel / pydicom).": {
+   "ja": "SimpleITK(または nibabel / pydicom)が要る。",
+   "zh": "需要 SimpleITK(或 nibabel / pydicom)。",
+   "tw": "需要 SimpleITK(或 nibabel / pydicom)。",
+   "ko": "SimpleITK(또는 nibabel / pydicom)가 필요합니다.",
+   "de": "Benötigt SimpleITK (oder nibabel / pydicom)."
+  },
+  "glTF needs pygltflib; LAS needs laspy (LAZ also lazrs or laszip). LAS colours are used when present.": {
+   "ja": "glTF は pygltflib、LAS は laspy が要る(LAZ はさらに lazrs か laszip)。LAS に色があれば使う。",
+   "zh": "glTF 需要 pygltflib;LAS 需要 laspy(LAZ 还需 lazrs 或 laszip)。LAS 带颜色时会使用。",
+   "tw": "glTF 需要 pygltflib;LAS 需要 laspy(LAZ 還需 lazrs 或 laszip)。LAS 帶顏色時會使用。",
+   "ko": "glTF는 pygltflib, LAS는 laspy가 필요합니다(LAZ는 lazrs 또는 laszip도). LAS에 색이 있으면 사용합니다.",
+   "de": "glTF benötigt pygltflib; LAS benötigt laspy (LAZ zusätzlich lazrs oder laszip). LAS-Farben werden genutzt, falls vorhanden."
+  },
+  ".xml only when its root element is <mujoco> or <robot>. Needs mujoco (and open3d for the geom meshes).": {
+   "ja": ".xml は根の要素が <mujoco> か <robot> の時だけ。mujoco が要る(geom のメッシュには open3d も)。",
+   "zh": ".xml 仅当根元素为 <mujoco> 或 <robot> 时。需要 mujoco(geom 网格还需 open3d)。",
+   "tw": ".xml 僅當根元素為 <mujoco> 或 <robot> 時。需要 mujoco(geom 網格還需 open3d)。",
+   "ko": ".xml은 루트 요소가 <mujoco> 또는 <robot>일 때만. mujoco가 필요합니다(geom 메시에는 open3d도).",
+   "de": ".xml nur, wenn das Wurzelelement <mujoco> oder <robot> ist. Benötigt mujoco (und open3d für die Geom-Netze)."
+  },
+  "BVH: joint paths coloured by time. SWC: coloured by compartment type.": {
+   "ja": "BVH: 関節の軌跡を時刻で色分け。SWC: 部位の種類で色分け。",
+   "zh": "BVH:关节轨迹按时间着色。SWC:按区段类型着色。",
+   "tw": "BVH:關節軌跡依時間著色。SWC:依區段類型著色。",
+   "ko": "BVH: 관절 궤적을 시간으로 색칠. SWC: 구획 종류로 색칠.",
+   "de": "BVH: Gelenkbahnen nach Zeit eingefärbt. SWC: nach Kompartimenttyp eingefärbt."
+  },
+  "An animated GIF opens here; HDF5 stacks too.": {
+   "ja": "アニメーション GIF はこちら。HDF5 のスタックも。",
+   "zh": "动画 GIF 在此打开;HDF5 堆栈也是。",
+   "tw": "動畫 GIF 在此開啟;HDF5 堆疊也是。",
+   "ko": "애니메이션 GIF는 여기서 열립니다. HDF5 스택도.",
+   "de": "Animierte GIFs öffnen sich hier, ebenso HDF5-Stapel."
+  },
+  "Recognised from the content: four columns x, y, t, p (header names, or inferred from the values).": {
+   "ja": "中身で見分ける: 4 列 x, y, t, p(見出しの名前、または値から推定)。",
+   "zh": "按内容识别:四列 x, y, t, p(列名,或由数值推断)。",
+   "tw": "依內容辨識:四欄 x, y, t, p(欄名,或由數值推斷)。",
+   "ko": "내용으로 판별: 네 열 x, y, t, p(헤더 이름 또는 값에서 추정).",
+   "de": "Am Inhalt erkannt: vier Spalten x, y, t, p (Kopfzeilennamen oder aus den Werten erschlossen)."
+  },
+  "2-D or (H, W, 3|4): pipeline input image. (N, 3|6): point cloud. Other 3-D: volume.": {
+   "ja": "2-D か (H, W, 3|4): パイプラインの入力画像。(N, 3|6): 点群。その他の 3-D: ボリューム。",
+   "zh": "2-D 或 (H, W, 3|4):流水线输入图像。(N, 3|6):点云。其他 3-D:体数据。",
+   "tw": "2-D 或 (H, W, 3|4):管線輸入影像。(N, 3|6):點雲。其他 3-D:體積資料。",
+   "ko": "2-D 또는 (H, W, 3|4): 파이프라인 입력 이미지. (N, 3|6): 점군. 그 밖의 3-D: 볼륨.",
+   "de": "2-D oder (H, W, 3|4): Pipeline-Eingabebild. (N, 3|6): Punktwolke. Sonstiges 3-D: Volumen."
+  },
+  "Markdown is rendered; SVG is drawn.": {
+   "ja": "Markdown は整形して、SVG は絵として表示。",
+   "zh": "Markdown 渲染显示;SVG 绘制显示。",
+   "tw": "Markdown 渲染顯示;SVG 繪製顯示。",
+   "ko": "Markdown은 렌더링, SVG는 그림으로 표시.",
+   "de": "Markdown wird gerendert, SVG gezeichnet."
+  },
+  "Waveform, spectrogram (dB) and playback. Formats other than WAV need soundfile.": {
+   "ja": "波形・スペクトログラム(dB)・再生。WAV 以外は soundfile が要る。",
+   "zh": "波形、频谱图(dB)与播放。WAV 以外的格式需要 soundfile。",
+   "tw": "波形、頻譜圖(dB)與播放。WAV 以外的格式需要 soundfile。",
+   "ko": "파형, 스펙트로그램(dB), 재생. WAV 이외 형식은 soundfile이 필요합니다.",
+   "de": "Wellenform, Spektrogramm (dB) und Wiedergabe. Andere Formate als WAV benötigen soundfile."
+  },
+  "Drop a robot model together with a qpos trajectory .npy of shape (T, nq): slider + play.": {
+   "ja": "ロボットのモデルと形 (T, nq) の qpos 軌跡 .npy を一緒に落とす: スライダ + 再生。",
+   "zh": "将机器人模型与形状为 (T, nq) 的 qpos 轨迹 .npy 一起拖放:滑块 + 播放。",
+   "tw": "將機器人模型與形狀為 (T, nq) 的 qpos 軌跡 .npy 一起拖放:滑桿 + 播放。",
+   "ko": "로봇 모델과 형태 (T, nq) 의 qpos 궤적 .npy 를 함께 놓습니다: 슬라이더 + 재생.",
+   "de": "Ein Robotermodell zusammen mit einer qpos-Trajektorie (.npy, Form (T, nq)) ablegen: Schieberegler + Wiedergabe."
   }
  }
 }

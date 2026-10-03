@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: a77086926760 -->
+<!-- i18n-source-sha: 3ff1623c4ad6 -->
 # Vollständiger Leitfaden zu Fullseye Studio
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · **Deutsch**
@@ -264,6 +264,31 @@ auch als **Python-Entwicklungsumgebung** nutzen.
 - **System settings** (Tools ▸ System settings… / Strg+,): Kategoriebaum mit Seitenaufbau. Execution
   (Threads/Timeout) · Windows (Fensterobergrenze) · Display (Standard-LUT / region-Darstellung) ·
   Editor (Schriftgröße / ausführender Interpreter).
+
+## Was sich per Drag & Drop öffnen lässt (2026-10-03)
+
+**Dateien oder Ordner auf das Hauptfenster ziehen** – jede öffnet sich im passenden Fenster (mehrere Dateien auf
+einmal öffnen mehrere Fenster). Die vollständige Liste steht unter **Help ▸ Öffnebare Dateien (Drag & Drop)…**;
+diese Tabelle wird aus den Endungskonstanten gebaut, die Studio tatsächlich verwendet, und kann daher neuer sein
+als dieser Abschnitt.
+
+| Was Sie ablegen | Öffnet in | Hinweise |
+|---|---|---|
+| Bilder (png / jpg / tif / webp / pgm / pfm / jp2 …), Ordner | Bildbetrachter | Liste, Zoom, Pixelwerte, Histogramm, „Als Pipeline-Eingabe verwenden“. Ein Ordner öffnet die Bilder direkt darin |
+| `.py` | Python-Editor (ein Tab pro Datei) | |
+| `.json` | Pipeline | |
+| Punktwolken und Netze (PLY / STL / PCD / OBJ / OFF / XYZ) | 3-D-Ansicht | **ASCII und binär** (PLY Little- und Big-Endian, PCD auch binary_compressed) |
+| 3DGS (`.ply` / `.splat`) | 3-D-Ansicht | Farbe aus dem SH-DC-Term; Splats mit Deckkraft < 0.05 ausgeblendet |
+| Medizinische Volumen (NIfTI / NRRD / MHA / DICOM) | 3-D-Ansicht | Benötigt SimpleITK o. ä. |
+| glTF (`.glb` / `.gltf`), LiDAR (`.las` / `.laz`) | 3-D-Ansicht | Benötigt pygltflib / laspy |
+| Roboter (MJCF / URDF) | 3-D-Ansicht | `.xml` nur mit Wurzel `<mujoco>` oder `<robot>`. Benötigt mujoco |
+| Motion Capture (`.bvh`), Neuronenmorphologie (`.swc`) | 3-D-Ansicht | BVH-Gelenkbahnen nach Zeit eingefärbt |
+| Videos, animierte GIFs, HDF5 | Videowürfel | |
+| Eventkamera (x, y, t, p) (txt / csv / npy / npz) | Videowürfel | Am Inhalt erkannt, zu Polaritäts-Frames |
+| `.npy` | Nach Form | 2-D → Eingabebild, (N, 3 / 6) → Punktwolke, 3-D → Volumen |
+| Markdown, SVG | Dokumentbetrachter | |
+| Audio (wav / mp3 / flac / ogg …) | Audiofenster | Wellenform, Spektrogramm, Wiedergabe. Nicht-WAV benötigt soundfile |
+| Robotermodell + qpos-`.npy` (T, nq) zusammen | Roboter-Player | Schieberegler und Wiedergabeknopf |
 
 ## Zusammenhang zwischen Export und Save/Open
 

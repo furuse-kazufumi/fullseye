@@ -852,6 +852,67 @@ def _classify_dropped_paths(paths):
     return out
 
 
+#: ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。
+#: 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので
+#: 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
+_ROBOT_MODEL_EXTS = (".xml", ".urdf", ".mjcf")
+_SPLAT_EXTS = (".splat", ".ply")
+_VOLUME_EXTS = (".nii", ".gz", ".nrrd", ".nhdr", ".mha", ".mhd", ".dcm")
+_SCENE_EXTS = (".glb", ".gltf", ".las", ".laz")
+_MOTION_EXTS = (".bvh", ".swc")
+_MESH_EXTS = tuple(e for e in MODEL3D_FILE_EXTS
+                   if e not in _VOLUME_EXTS + _SCENE_EXTS + _MOTION_EXTS + _ROBOT_MODEL_EXTS + (".splat",))
+
+
+def _drop_format_rows():
+    """ドラッグ・アンド・ドロップ(と File ▸ Open)で開けるファイルの一覧。ヘルプの表と門が使う(headless)。"""
+    return [
+        ("images", "Image viewer", IMAGE_FILE_EXTS,
+         "List, zoom, pixel values, histogram, 'Use as pipeline input'. A folder opens the images directly inside "
+         "it; a single-frame GIF is an image."),
+        ("scripts", "Python editor (one tab per file)", (".py", ".pyw"), ""),
+        ("pipelines", "Pipeline (replaces the current one)", (".json",), ""),
+        ("models3d", "3-D viewer: point clouds and meshes", _MESH_EXTS,
+         "ASCII and binary both: PLY (ASCII / binary little- and big-endian), STL (ASCII / binary), "
+         "PCD (ASCII / binary / binary_compressed)."),
+        ("models3d", "3-D viewer: 3-D Gaussian splats", _SPLAT_EXTS,
+         "A PLY with f_dc / opacity / scale / rot is recognised from its header. Colour = SH DC term; "
+         "splats with opacity < 0.05 are hidden."),
+        ("models3d", "3-D viewer: medical volumes", _VOLUME_EXTS, "Needs SimpleITK (or nibabel / pydicom)."),
+        ("models3d", "3-D viewer: glTF scenes and LiDAR", _SCENE_EXTS,
+         "glTF needs pygltflib; LAS needs laspy (LAZ also lazrs or laszip). LAS colours are used when present."),
+        ("models3d", "3-D viewer: robot models (MJCF / URDF)", _ROBOT_MODEL_EXTS,
+         ".xml only when its root element is <mujoco> or <robot>. Needs mujoco (and open3d for the geom meshes)."),
+        ("models3d", "3-D viewer: motion capture (BVH) and neuron morphology (SWC)", _MOTION_EXTS,
+         "BVH: joint paths coloured by time. SWC: coloured by compartment type."),
+        ("videos", "Video cube", VIDEO_FILE_EXTS + (".gif",), "An animated GIF opens here; HDF5 stacks too."),
+        ("events", "Event camera: frames in the video cube", (".txt", ".csv", ".npy", ".npz"),
+         "Recognised from the content: four columns x, y, t, p (header names, or inferred from the values)."),
+        ("arrays", "NumPy array", (".npy",),
+         "2-D or (H, W, 3|4): pipeline input image. (N, 3|6): point cloud. Other 3-D: volume."),
+        ("documents", "Document viewer", DOCUMENT_FILE_EXTS, "Markdown is rendered; SVG is drawn."),
+        ("audio", "Audio window", AUDIO_FILE_EXTS,
+         "Waveform, spectrogram (dB) and playback. Formats other than WAV need soundfile."),
+        ("player", "Robot player", _ROBOT_MODEL_EXTS + (".npy",),
+         "Drop a robot model together with a qpos trajectory .npy of shape (T, nq): slider + play."),
+    ]
+
+
+def _drop_formats_html():
+    """ヘルプの「開けるファイル」表(HTML)。現在の UI 言語で(未訳は英語)。"""
+    import html as _h
+    rows = []
+    for _key, what, exts, note in _drop_format_rows():
+        rows.append("<tr><td><b>%s</b></td><td><code>%s</code></td><td>%s</td></tr>"
+                    % (_h.escape(tr(what)), _h.escape(" ".join(exts)), _h.escape(tr(note)) if note else ""))
+    return ("<h3>%s</h3><p>%s</p><table border='1' cellspacing='0' cellpadding='4'>"
+            "<tr><th>%s</th><th>%s</th><th>%s</th></tr>%s</table>"
+            % (_h.escape(tr("Files you can open")),
+               _h.escape(tr("Drop files or folders onto the main window (or open them from the File menu). "
+                            "Several files at once open several windows.")),
+               _h.escape(tr("Opens in")), _h.escape(tr("Extensions")), _h.escape(tr("Notes")), "".join(rows)))
+
+
 def _viewer_image_info(arr, path=None):
     """画像ビューアの情報欄(headless): 大きさ・チャンネル・値域・平均・標準偏差・ファイルの大きさ。"""
     a = np.asarray(arr)
@@ -4557,6 +4618,9 @@ def build_window(model=None):
     m.addAction(act_op_help); m.addAction(act_samples); m.addSeparator()
     act_guide = _act("Quick guide (en/ja/zh)", "Shift+F2", "A short guide in the selected language")
     m.addAction(act_guide)
+    act_formats = _act("Files you can open (drag & drop)…", "",
+                       "Every file type Studio opens by drag and drop: what opens it, ASCII / binary, needed packages")
+    m.addAction(act_formats)
     m.addSeparator()
     act_feedback = QtGui.QAction("Feedback / Report an issue…", win)
     act_feedback.setToolTip("Open the GitHub issue tracker — bug reports, operator "
@@ -10439,6 +10503,18 @@ def build_window(model=None):
             pass
     act_guide.triggered.connect(show_guide)
     win._show_guide = show_guide
+
+    def show_drop_formats():
+        dlg = QtWidgets.QDialog(win); tag_dialog(dlg, "reference"); dlg.setModal(False)
+        dlg.setWindowTitle(tr("Files you can open"))
+        lay = QtWidgets.QVBoxLayout(dlg)
+        tb_ = QtWidgets.QTextBrowser(); tb_.setHtml(_drop_formats_html()); lay.addWidget(tb_)
+        dlg._browser = tb_
+        dlg.resize(860, 620); dlg.show()
+        win._last_formats_help = dlg
+        return dlg
+    act_formats.triggered.connect(lambda _=False: show_drop_formats())
+    win._show_drop_formats = show_drop_formats
 
     try:                                     # restore the remembered language
         if os.environ.get("QT_QPA_PLATFORM") != "offscreen":

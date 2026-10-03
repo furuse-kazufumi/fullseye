@@ -46,6 +46,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   `.py` = Python エディタのタブ(エディタに落としても開く。以前はパスが文字で貼られた)、`.json` = パイプライン、
   点群・メッシュ・3DGS・医用ボリューム = 3-D ビューア、動画・アニメーション GIF・HDF = Video cube、`.npy` は形で振り分け。
   以前は 1 本目しか見ず `.py` は「未対応」だった。**ASCII とバイナリの両方**を門で固定: PLY(ASCII / LE / BE)・STL・PCD。
+- ★**Studio のヘルプに「開けるファイル」を機能として書いた**(ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」):
+  Help ▸ Files you can open (drag & drop)… が全形式の表(開く先・ASCII / バイナリ・要るパッケージ)を出す。表は Studio が
+  実際に使う拡張子の定数から組み立てる(`studio._drop_format_rows`)ので、形式を足せば表にも出る。門は 2 本: 定数の拡張子が
+  1 つでも表から漏れたら落ちる / 表の「開く先」と実際の振り分け(`_classify_dropped_paths`)が 1 拡張子でも食い違えば落ちる。
+  6 言語の訳(i18n.json)、Quick guide(Shift+F2)に 1 項目、`docs/STUDIO_GUIDE*.md` 6 言語に節を追加。
 - ★**Studio: ロボットのモデル + qpos 軌跡を一緒に落とすと再生**(MJCF / URDF + (T, nq) の .npy): 3-D ビューア + コマの
   スライダ + 再生。各コマで mj_forward して組み立て直す(OpenGL 不要)。`sim_source.MuJoCo.scene_mesh(qpos)` を新設(局所
   メッシュを持ち回す)。門: ヒンジ 90° で (1, 0, 0) の球が (0, 1, 0) へ。列の数が nq と違えば名指しで断る。
