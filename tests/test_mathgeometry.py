@@ -59,6 +59,7 @@ def test_delaunay_count_and_empty_circles():
         P = rng.random((n, 2))
         d = G.delaunay_triangulate(P)
         assert d["n_triangles"] == 2 * n - len(d["hull"]) - 2
+        assert len(d["circumcenters"]) == d["n_triangles"] > 0          # 空の列で下の表明が空振りしない
         for c, r in zip(d["circumcenters"], d["circumradii"]):
             assert np.sum(np.linalg.norm(P - c, axis=1) < r - 1e-9) == 0
     with pytest.raises(ValueError):
@@ -91,6 +92,7 @@ def test_delaunay_3d_has_empty_circumspheres_and_euler_one():
     P = np.random.default_rng(2).random((150, 3))
     d = G.delaunay_triangulate(P)
     assert d["dim"] == 3
+    assert len(d["circumcenters"]) == len(d["simplices"]) > 0
     for c, r in zip(d["circumcenters"], d["circumradii"]):
         assert np.sum(np.linalg.norm(P - c, axis=1) < r - 1e-9) == 0
     E, Fc = set(), set()

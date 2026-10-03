@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1189. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1190. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -522,6 +522,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_document_scan.py`
 
 - **L271** — ★Wendet man sobel_dir direkt auf eine binäre Maske an, wird die Gradientenrichtung auf 0/90 Grad quantisiert, und die richtungsbehaftete Hough mit einer Stimme pro Punkt kollabiert auf diese beiden Linien (gemessen: 2 der 4 Linien sind exakt 0.00 / 90.00 Grad). Erst weichzeichnen, dann die Richtung messen.
+
+## `examples/poc_driving_decisions.py`
+
+- **L247** _(ja)_ — ★2026-10-03 まで縞が x に 10 m 長く y に並んでいた(90° 回っていた、ユーザー指摘)。下の門が向きを確かめる。
 
 ## `examples/poc_driving_endless_map.py`
 

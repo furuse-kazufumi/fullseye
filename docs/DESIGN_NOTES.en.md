@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1189. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1190. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -522,6 +522,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_document_scan.py`
 
 - **L271** — ★Applying sobel_dir directly to a binary mask quantizes the gradient direction to 0/90 degrees, and the one-point-one-vote directional Hough collapses onto those two lines (measured: 2 of the 4 lines are exactly 0.00 / 90.00 degrees). Blur first, then measure the direction.
+
+## `examples/poc_driving_decisions.py`
+
+- **L247** _(ja)_ — ★2026-10-03 まで縞が x に 10 m 長く y に並んでいた(90° 回っていた、ユーザー指摘)。下の門が向きを確かめる。
 
 ## `examples/poc_driving_endless_map.py`
 
