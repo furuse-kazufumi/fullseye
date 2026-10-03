@@ -4458,7 +4458,7 @@ py -3.11 examples/poc_periodic_video_boundary.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 8 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 9 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -4639,6 +4639,46 @@ py -3.11 examples/poc_carla_bridge.py
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_carla_bridge)
 
 使用 op(ノートへ): [`camera_pose_to_carla`](https://furuse.work/ops/drive/carla/camera_pose_to_carla.html) · [`carla_camera_pose`](https://furuse.work/ops/drive/carla/carla_camera_pose.html) · [`carla_depth_decode`](https://furuse.work/ops/drive/carla/carla_depth_decode.html) · [`carla_depth_encode`](https://furuse.work/ops/drive/carla/carla_depth_encode.html) · [`carla_label_map`](https://furuse.work/ops/drive/carla/carla_label_map.html) · [`carla_label_unmap`](https://furuse.work/ops/drive/carla/carla_label_unmap.html) · [`carla_labels`](https://furuse.work/ops/drive/carla/carla_labels.html) · [`carla_rotation_angles`](https://furuse.work/ops/drive/carla/carla_rotation_angles.html) · [`carla_scene_load`](https://furuse.work/ops/drive/carla/carla_scene_load.html) · [`carla_scene_save`](https://furuse.work/ops/drive/carla/carla_scene_save.html) · [`carla_scene_synthetic`](https://furuse.work/ops/drive/carla/carla_scene_synthetic.html) · [`carla_transform_matrix`](https://furuse.work/ops/drive/carla/carla_transform_matrix.html) · [`intrinsics_to_fullseye`](https://furuse.work/ops/drive/carla/intrinsics_to_fullseye.html) · [`lead_truth_depth`](https://furuse.work/ops/drive/carla/lead_truth_depth.html) · [`scene_pair_table`](https://furuse.work/ops/drive/carla/scene_pair_table.html)
+
+## No.2026.191 —— 町を 1 つに組む ―― 教習所の要素を自動で継ぎ、入口から出口まで通して走り、途中の停止線を全部採点する
+
+[![町を 1 つに組む ―― 教習所の要素を自動で継ぎ、入口から出口まで通して走り、途中の停止線を全部採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/01_town_overview_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/01_town_overview.png)
+
+*↑ **町を 1 つに組む ―― 教習所の要素を自動で継ぎ、入口から出口まで通して走り、途中の停止線を全部採点する** ―― 著者の発案「各 PoC 系列で 1 回ずつ集大成を作る。第 1 弾は運転」の土台。これまで要素ごとに置いて個別に採点してきた交差点・踏切・坂道・縦列駐車を、新モジュール drivetown(10 op)で 1 本の道に継ぐ(要素 k+1 の entry を要素 k の exit に合わせる閉形式の配置、0.05 m の食い込み)。既定の町は 9 要素 235.1 m。中心線に沿う縦だけの運転は、先の停止線を止まっている先行車と見なして IDM で減速し、交差点は 2 秒、踏切は左右確認の後に発進し、警報中に着けば遮断かんが上がるまで待つ(踏切には遮断機つき警報機・遮断かん・列車を置き、解釈基準の状態機械で動かす)。法規パック town_rules は JP = 左側通行・踏切は常に停止と確認、US・DE = 右側通行・警報中だけ停止で、JP 以外は一次資料を確認していないので verified False と表に出す。図は町の俯瞰(多角形・中心線・停止線・止まった位置・信号機)、速度と加速度の時間図、車載カメラの通し走行(赤信号で停止 → 青で発進 → 遮断中 → 列車の通過 → 上がって発進 → 坂道の手前)、法規パック 9 通りの表、教則 159 場面の台帳の内訳。門 38 本: 警報 20 s の列車で踏切の発進 65.50 s ≥ 上昇完了 65.45 s、警報中に踏切面にかかった時間 0、JP は 2 回停止・US/DE は列車なしなら 1 回、右側通行の停止線は交差点中心の鏡像(s 40.95 ↔ 65.95)、遮断中のコマに遮断かん 1078 画素・列車のコマに 46,129 画素、 継ぎ目 8 か所の位置差 − overlap = 1.1e-14、向きの差 0、総延長 = Σ centerline_length − 0.05 × 8 で差 0、停止線の位置は規格の寸法から閉形式、停止は停止線の 0.537 / 0.536 m 手前、|a| 最大 1.877 ≤ 3、台形則の ∫v dt と s の差 3.9e-11 m、制動距離 ≥ v²/2b、既存の crossing_stop_check が ok、同じ指令を long_simulate(RK4)に渡した第 2 実装と停止位置の差 0.002 m。正直に: 横は中心線に貼り付け、信号は「2 秒待てば青」の規則で灯火の色は読まない、他車・歩行者は置かない。US/DE の保持時間などは JP の値の流用。*
+
+[![IDM(a_max 1.5、b_max 3.0、v_max 8)で停止線の手前に止まる。交差点は 2 秒。踏切は左右確認 4 秒の後、警報 20 s に始まった状態機械(降下 → 遮断 → 列車 → 上昇)が idle に戻る 65.5 s](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/02_town_speed_time_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/02_town_speed_time.png)
+
+*↑ 測定の図 ―― IDM(a_max 1.5、b_max 3.0、v_max 8)で停止線の手前に止まる。交差点は 2 秒。踏切は左右確認 4 秒の後、警報 20 s に始まった状態機械(降下 → 遮断 → 列車 → 上昇)が idle に戻る 65.5 s まで待って発進。下の帯 = 警報中の区間と列車が踏切に居る区間。|a| の最大 1.88 m/s²。*
+
+[![止まった位置は停止線の 0.54, 0.54 m 手前。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/03_town_speed_distance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/03_town_speed_distance.png)
+
+*↑ 止まった位置は停止線の 0.54, 0.54 m 手前。*
+
+[![GIF の 6 コマ(静止画)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/05_town_camera_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/05_town_camera_frames.png)
+
+*↑ GIF の 6 コマ(静止画)。*
+
+[![JP = 左側通行・踏切は常に停止 + 左右確認(道路交通法 33 条 1 項、本文で確認)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/06_town_rules_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/06_town_rules_table.png)
+
+*↑ JP = 左側通行・踏切は常に停止 + 左右確認(道路交通法 33 条 1 項、本文で確認)。*
+
+[![docs/drive/kyosoku_scenarios.json の件数。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/07_town_kyosoku_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/07_town_kyosoku_table.png)
+
+*↑ docs/drive/kyosoku_scenarios.json の件数。*
+
+[![車載カメラ(640×400、13 コマ)で町を通し走行。赤信号で止まり、青で発進、踏切で止まって左右を見て、下りた遮断かんと点滅する警報灯の前で列車が過ぎて上がるまで待ってから渡り、坂を越えて縦列駐車の前を抜ける。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/04_town_drive_through.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/04_town_drive_through.gif)
+
+*↑ 動く図 ―― 車載カメラ(640×400、13 コマ)で町を通し走行。赤信号で止まり、青で発進、踏切で止まって左右を見て、下りた遮断かんと点滅する警報灯の前で列車が過ぎて上がるまで待ってから渡り、坂を越えて縦列駐車の前を抜ける。*
+
+```
+py -3.11 examples/poc_driving_town.py
+```
+
+ソース: [examples/poc_driving_town.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_driving_town.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_town)
+
+使用 op(ノートへ): [`course_crank`](https://furuse.work/ops/drive/course/course_crank.html) · [`course_loop_bend`](https://furuse.work/ops/drive/course/course_loop_bend.html) · [`course_road`](https://furuse.work/ops/drive/course/course_road.html) · [`course_s_curve`](https://furuse.work/ops/drive/course/course_s_curve.html) · [`crossing_stop_check`](https://furuse.work/ops/drive/crossing/crossing_stop_check.html) · [`idm_accel`](https://furuse.work/ops/drive/traffic/idm_accel.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`kyosoku_summary`](https://furuse.work/ops/drive/town/kyosoku_summary.html) · [`long_params`](https://furuse.work/ops/drive/long/long_params.html) · [`long_simulate`](https://furuse.work/ops/drive/long/long_simulate.html) · [`town_centerline`](https://furuse.work/ops/drive/town/town_centerline.html) · [`town_chain`](https://furuse.work/ops/drive/town/town_chain.html) · [`town_checks`](https://furuse.work/ops/drive/town/town_checks.html) · [`town_crossing_state`](https://furuse.work/ops/drive/town/town_crossing_state.html) · [`town_layout`](https://furuse.work/ops/drive/town/town_layout.html) · [`town_rules`](https://furuse.work/ops/drive/town/town_rules.html) · [`town_run`](https://furuse.work/ops/drive/town/town_run.html) · [`town_stop_lines`](https://furuse.work/ops/drive/town/town_stop_lines.html) · [`town_world`](https://furuse.work/ops/drive/town/town_world.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
 
 ## No.2026.133 —— 公共カメラはどこを向いているか ―― 位置しか公開されない固定カメラの向きを、写真そのものから決める
 

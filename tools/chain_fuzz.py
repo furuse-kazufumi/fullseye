@@ -3077,6 +3077,59 @@ def _b_lead_from_depth(pool, rng):
     return (np.minimum(sc["depth"], 1000.0), sc["label"], CB.intrinsics_to_fullseye(sc["K"]), 1.6), {}
 
 
+_FUZZ_TOWN = {}
+
+
+def _fuzz_town():
+    """小さな町(drivetown の "short")と、その通し走行。計算は 1 回だけ。"""
+    if "layout" not in _FUZZ_TOWN:
+        import drivetown as TN
+        L = TN.town_layout("short")
+        _FUZZ_TOWN["layout"] = L
+        _FUZZ_TOWN["run"] = TN.town_run(L, dt=0.1)
+    return _FUZZ_TOWN
+
+
+def _b_town_chain(pool, rng):
+    import drivecourse as DC
+    return ([DC.course_road(10.0), DC.course_intersection(), DC.course_road(10.0)],), {"overlap": float(rng.uniform(0.02, 0.1))}
+
+
+def _b_town_layout(pool, rng):
+    return ("short",), {}
+
+
+def _b_town_layout_arg(pool, rng):
+    return (_fuzz_town()["layout"],), {}
+
+
+def _b_town_run(pool, rng):
+    return (_fuzz_town()["layout"],), {"dt": 0.1, "v_max": float(rng.uniform(5.0, 9.0))}
+
+
+def _b_town_checks(pool, rng):
+    t = _fuzz_town()
+    return (t["run"], t["layout"]), {}
+
+
+def _b_kyosoku_summary(pool, rng):
+    return (), {}
+
+
+def _b_town_rules(pool, rng):
+    return (str(rng.choice(["JP", "US", "DE"])),), {}
+
+
+def _b_town_crossing_state(pool, rng):
+    import drivetown as TN
+    t = _fuzz_town()
+    if "world" not in t:
+        t["world"] = TN.town_world(t["layout"])
+    if "run_train" not in t:
+        t["run_train"] = TN.town_run(t["layout"], dt=0.1, train=20.0)
+    return (t["world"], float(rng.uniform(0.0, 80.0)), t["run_train"]["train"]), {}
+
+
 def _b_events_to_frames(pool, rng):
     import motionio
     return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
@@ -3963,6 +4016,10 @@ OP_ARG_BUILDERS = {
     "carla_scene_check": _b_carla_scene, "carla_scene_load": _b_carla_scene_load, "carla_scene_save": _b_carla_scene_save,
     "carla_scene_synthetic": _b_carla_scene_synthetic, "carla_scene_world": _b_carla_scene, "carla_scene_render": _b_carla_scene,
     "lead_truth_depth": _b_carla_scene, "lead_from_depth": _b_lead_from_depth, "scene_pair_table": _b_carla_scene,
+    "town_chain": _b_town_chain, "town_layout": _b_town_layout, "town_world": _b_town_layout_arg,
+    "town_centerline": _b_town_layout_arg, "town_stop_lines": _b_town_layout_arg, "town_run": _b_town_run,
+    "town_checks": _b_town_checks, "kyosoku_summary": _b_kyosoku_summary,
+    "town_rules": _b_town_rules, "town_crossing_state": _b_town_crossing_state,
     "sign_params": _b_sign_kind, "sign_image": _b_sign_img, "plate_mesh_from_image": _b_plate_mesh,
     "sign_mesh": _b_sign_mesh, "add_sign": _b_add_sign, "signal_jp_mesh": _b_signal_jp,
     "add_signal_jp": _b_add_signal_jp,

@@ -1,4 +1,4 @@
-# DRIVE operator help — 334 ops in 26 categories
+# DRIVE operator help — 344 ops in 27 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -95,6 +95,10 @@
 ### terrain (20)
 
 [add_mesh_object](terrain/add_mesh_object.md) · [course_distance](terrain/course_distance.md) · [crosswalk_mesh](terrain/crosswalk_mesh.md) · [fbm_gradient](terrain/fbm_gradient.md) · [fbm_height](terrain/fbm_height.md) · [fbm_params](terrain/fbm_params.md) · [material_params](terrain/material_params.md) · [mesh_signed_volume](terrain/mesh_signed_volume.md) · [pedestrian_mesh](terrain/pedestrian_mesh.md) · [perlin2](terrain/perlin2.md) · [radial_periodogram](terrain/radial_periodogram.md) · [scatter_offroad](terrain/scatter_offroad.md) · [spectral_slope](terrain/spectral_slope.md) · [terrain_gradient](terrain/terrain_gradient.md) · [terrain_height](terrain/terrain_height.md) · [terrain_mesh](terrain/terrain_mesh.md) · [terrain_params](terrain/terrain_params.md) · [tree_mesh](terrain/tree_mesh.md) · [world_apply_terrain](terrain/world_apply_terrain.md) · [world_materials](terrain/world_materials.md)
+
+### town (10)
+
+[kyosoku_summary](town/kyosoku_summary.md) · [town_centerline](town/town_centerline.md) · [town_chain](town/town_chain.md) · [town_checks](town/town_checks.md) · [town_crossing_state](town/town_crossing_state.md) · [town_layout](town/town_layout.md) · [town_rules](town/town_rules.md) · [town_run](town/town_run.md) · [town_stop_lines](town/town_stop_lines.md) · [town_world](town/town_world.md)
 
 ### traffic (18)
 

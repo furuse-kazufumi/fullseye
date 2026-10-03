@@ -4,7 +4,7 @@ dim: drive
 category: course
 in: 
 out: table
-examples: [poc_driving_longitudinal, poc_driving_school, poc_driving_weather]
+examples: [poc_driving_longitudinal, poc_driving_school, poc_driving_town, poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -32,6 +32,7 @@ version: 0.3.0  # fullseye lib version this note was generated for
 
 - [poc_driving_longitudinal](../../../../examples/poc_driving_longitudinal.py) — `py -3.11 examples/poc_driving_longitudinal.py`
 - [poc_driving_school](../../../../examples/poc_driving_school.py) — `py -3.11 examples/poc_driving_school.py`
+- [poc_driving_town](../../../../examples/poc_driving_town.py) — `py -3.11 examples/poc_driving_town.py`
 - [poc_driving_weather](../../../../examples/poc_driving_weather.py) — `py -3.11 examples/poc_driving_weather.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

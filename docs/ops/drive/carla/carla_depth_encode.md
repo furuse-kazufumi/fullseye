@@ -31,7 +31,7 @@ version: 0.3.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`rgb` を入力に取れる)
 
-[spin_from_marker_sequence](../balltrack/spin_from_marker_sequence.md) · [carla_depth_decode](carla_depth_decode.md) · [carla_transform_matrix](carla_transform_matrix.md) · [carla_pose_to_world](carla_pose_to_world.md) · [carla_camera_pose](carla_camera_pose.md) · [carla_xy_yaw](carla_xy_yaw.md) · [carla_scene_load](carla_scene_load.md) · [julian_day](../env/julian_day.md)
+[spin_from_marker_sequence](../balltrack/spin_from_marker_sequence.md) · [carla_depth_decode](carla_depth_decode.md) · [carla_transform_matrix](carla_transform_matrix.md) · [carla_pose_to_world](carla_pose_to_world.md) · [carla_camera_pose](carla_camera_pose.md) · [carla_xy_yaw](carla_xy_yaw.md) · [carla_scene_load](carla_scene_load.md) · [town_chain](../town/town_chain.md)
 
 ## 同カテゴリ(`carla`)
 

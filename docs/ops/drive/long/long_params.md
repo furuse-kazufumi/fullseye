@@ -4,7 +4,7 @@ dim: drive
 category: long
 in: 
 out: table
-examples: [poc_driving_longitudinal, poc_driving_traffic, poc_driving_weather]
+examples: [poc_driving_longitudinal, poc_driving_town, poc_driving_traffic, poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -46,6 +46,7 @@ dict : 引数と同じキー + ``k``(空気抵抗の係数 [1/m])。
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_driving_longitudinal](../../../../examples/poc_driving_longitudinal.py) — `py -3.11 examples/poc_driving_longitudinal.py`
+- [poc_driving_town](../../../../examples/poc_driving_town.py) — `py -3.11 examples/poc_driving_town.py`
 - [poc_driving_traffic](../../../../examples/poc_driving_traffic.py) — `py -3.11 examples/poc_driving_traffic.py`
 - [poc_driving_weather](../../../../examples/poc_driving_weather.py) — `py -3.11 examples/poc_driving_weather.py`
 

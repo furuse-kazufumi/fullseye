@@ -1,0 +1,80 @@
+[
+ {
+  "file": "01_town_overview.png",
+  "name": "town_overview",
+  "caption": "road → 交差点 → road → 踏切 → road → 坂道 → road → 縦列駐車 → road を town_chain で継いだ町(縮尺は等倍)。停止線は交差点 4 本と踏切 1 本の全部を描き、走行路の 2 本の手前に止まった位置(手前 0.54, 0.54 m)と遮断機の柱 2 本を印にした。",
+  "shape": [
+   420,
+   1738,
+   3
+  ]
+ },
+ {
+  "file": "02_town_speed_time.png",
+  "name": "town_speed_time",
+  "caption": "IDM(a_max 1.5、b_max 3.0、v_max 8)で停止線の手前に止まる。交差点は 2 秒。踏切は左右確認 4 秒の後、警報 20 s に始まった状態機械(降下 → 遮断 → 列車 → 上昇)が idle に戻る 65.5 s まで待って発進。下の帯 = 警報中の区間と列車が踏切に居る区間。|a| の最大 1.88 m/s²。",
+  "shape": [
+   400,
+   1407,
+   3
+  ]
+ },
+ {
+  "file": "03_town_speed_distance.png",
+  "name": "town_speed_distance",
+  "caption": "止まった位置は停止線の 0.54, 0.54 m 手前。制動距離 18.7, 29.6 m(定理の下限 6.4, 8.3 m)。",
+  "shape": [
+   360,
+   1100,
+   3
+  ]
+ },
+ {
+  "file": "04_town_drive_through.gif",
+  "name": "town_drive_through",
+  "caption": "車載カメラ(640×400、13 コマ)で町を通し走行。赤信号で止まり、青で発進、踏切で止まって左右を見て、下りた遮断かんと点滅する警報灯の前で列車が過ぎて上がるまで待ってから渡り、坂を越えて縦列駐車の前を抜ける。",
+  "shape": [
+   400,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 13,
+  "frames_written": 13,
+  "fps": 2.0
+ },
+ {
+  "file": "05_town_camera_frames.png",
+  "name": "town_camera_frames",
+  "caption": "GIF の 6 コマ(静止画)。面の真値から数えた画素: 信号機 1620、遮断かん 4618(遮断中)、列車 183298、斜面 42117。遮断かんの黄黒と警報灯の赤はdrivecrossing の状態機械(crossing_gate_state / crossing_lamp_signal)の値で描いている。",
+  "shape": [
+   894,
+   1960,
+   3
+  ]
+ },
+ {
+  "file": "06_town_rules_table.png",
+  "name": "town_rules_table",
+  "caption": "JP = 左側通行・踏切は常に停止 + 左右確認(道路交通法 33 条 1 項、本文で確認)。US / DE = 右側通行・警報中だけ停止(二次情報、一次確認 = no → 数字・規則を断定しない。保持 2 s は JP の流用)。交差点の停止線は side で鏡像の 1 本になる。事象: pass = 止まらず通過、wait_gate = 上がるまで待った、commit = 止まれない距離で警報が始まり進んだ(drivecrossing の unavoidable)。",
+  "shape": [
+   296,
+   944,
+   3
+  ],
+  "csv": "06_town_rules_table.csv",
+  "tsv": "06_town_rules_table.tsv"
+ },
+ {
+  "file": "07_town_kyosoku_table.png",
+  "name": "town_kyosoku_table",
+  "caption": "docs/drive/kyosoku_scenarios.json の件数。reproduced 38 / partial 17 / pending 97 / not_reproducible 7。",
+  "shape": [
+   1496,
+   502,
+   3
+  ],
+  "csv": "07_town_kyosoku_table.csv",
+  "tsv": "07_town_kyosoku_table.tsv"
+ }
+]

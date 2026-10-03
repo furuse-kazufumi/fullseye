@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2700,
- "n_notes": 2706,
+ "n_ops": 2710,
+ "n_notes": 2716,
  "notes": {
   "vol_dilate": [
    {
@@ -18354,6 +18354,103 @@
     "in": "table × table × matrix × matrix × table",
     "out": "table",
     "path": "docs/ops/drive/terrain/world_materials.md"
+   }
+  ],
+  "kyosoku_summary": [
+   {
+    "op": "kyosoku_summary",
+    "dim": "drive",
+    "category": "town",
+    "out": "table",
+    "path": "docs/ops/drive/town/kyosoku_summary.md"
+   }
+  ],
+  "town_centerline": [
+   {
+    "op": "town_centerline",
+    "dim": "drive",
+    "category": "town",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/town/town_centerline.md"
+   }
+  ],
+  "town_chain": [
+   {
+    "op": "town_chain",
+    "dim": "drive",
+    "category": "town",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/town/town_chain.md"
+   }
+  ],
+  "town_checks": [
+   {
+    "op": "town_checks",
+    "dim": "drive",
+    "category": "town",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/town/town_checks.md"
+   }
+  ],
+  "town_crossing_state": [
+   {
+    "op": "town_crossing_state",
+    "dim": "drive",
+    "category": "town",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/town/town_crossing_state.md"
+   }
+  ],
+  "town_layout": [
+   {
+    "op": "town_layout",
+    "dim": "drive",
+    "category": "town",
+    "out": "table",
+    "path": "docs/ops/drive/town/town_layout.md"
+   }
+  ],
+  "town_rules": [
+   {
+    "op": "town_rules",
+    "dim": "drive",
+    "category": "town",
+    "out": "table",
+    "path": "docs/ops/drive/town/town_rules.md"
+   }
+  ],
+  "town_run": [
+   {
+    "op": "town_run",
+    "dim": "drive",
+    "category": "town",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/town/town_run.md"
+   }
+  ],
+  "town_stop_lines": [
+   {
+    "op": "town_stop_lines",
+    "dim": "drive",
+    "category": "town",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/town/town_stop_lines.md"
+   }
+  ],
+  "town_world": [
+   {
+    "op": "town_world",
+    "dim": "drive",
+    "category": "town",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/town/town_world.md"
    }
   ],
   "bus_stop_rate": [

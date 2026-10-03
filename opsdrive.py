@@ -4,6 +4,7 @@
 卓球の球の力学・追跡・真値つきの台・ラケット(ballistics / balltrack / ballworld / racket)/
 日本の信号灯器と道路標識(roadjp、公表寸法をそのまま頂点に持つ)/
 けん玉の定理と閉ループの捕球・真値つきのけんの世界(kendama / kendamaworld)。
+町を 1 つに組む(drivetown: 教習所の要素を自動で継いで 1 本の道にし、縦だけの通し走行を停止線ごとに採点、教則 159 場面の台帳の集計)。
 外部の高写実シミュレータ(CARLA 0.9.16)の撮影記録を自前の世界の規約に写す橋(carlabridge: 左手系の鏡映・カメラの向き・主点の 0.5 画素・24 bit の深度・29 タグ → 14 ラベル、往復の門つき、numpy だけ)。
 世界を 3D Gaussian Splatting にして描く(gsplatnp: 面に貼ったガウシアン + EWA 描画、密度と誤差のつまみ)。
 車の縦の運動と坂(drivelong: 空走 + 制動の停止距離の閉形式、坂の保持と発進のずり下がり、技能試験の減点)。
@@ -48,6 +49,7 @@ import motionio
 import drivehumanoid
 import agvfleet
 import carlabridge
+import drivetown
 import driveworld
 import kendama
 import kendamaworld
@@ -60,7 +62,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -349,6 +351,24 @@ _CATALOG = {
         ("lead_truth_depth", "carlabridge", ["table"], "scalar"),
         ("lead_from_depth", "carlabridge", ["image2d", "image2d", "matrix"], "table"),
         ("scene_pair_table", "carlabridge", ["table"], "table"),
+    ],
+    # 町を 1 つに組む(2026-10-04、集大成の土台): 教習所の要素を自動で継ぐ(要素 k+1 の entry を要素 k の exit に、配置 p = target ∘ entry⁻¹)、
+    # 1 本の中心線、流入車線の停止線、縦だけの通し走行(先の停止線を止まっている先行車と見なす IDM)、通しの採点、教則 159 場面の台帳の集計、
+    # 法規パック(JP = 左・踏切は常に停止 + 確認 / US・DE = 右・警報中だけ、JP 以外は一次確認なし = verified False)、踏切の設備(遮断機つき警報機・遮断かん・列車)を
+    # drivecrossing の状態機械(警報 → 降下 → 遮断 → 上昇)で動かす。
+    # 真値 = 継ぎ目の位置差 = overlap・向きの差 0(閉形式)、総延長 = Σ centerline_length − overlap × 継ぎ目数、台形則の ∫v dt = s、
+    # 制動距離 ≥ v²/(2b)、drivecrossing.crossing_stop_check を実際に呼ぶ、同じ指令を drivelong.long_simulate(RK4)に渡した第 2 実装。
+    "town": [
+        ("town_chain", "drivetown", ["any"], "table"),
+        ("town_layout", "drivetown", [], "table"),
+        ("town_world", "drivetown", ["table"], "table"),
+        ("town_centerline", "drivetown", ["table"], "any"),
+        ("town_stop_lines", "drivetown", ["table"], "table"),
+        ("town_rules", "drivetown", [], "table"),
+        ("town_crossing_state", "drivetown", ["table"], "table"),
+        ("town_run", "drivetown", ["table"], "table"),
+        ("town_checks", "drivetown", ["table", "table"], "table"),
+        ("kyosoku_summary", "drivetown", [], "table"),
     ],
     # 車の縦の運動: m dv/dt = 駆動 − 制動 − m g sin θ − c_rr m g cos θ − ½ρC_dA v|v|(止まっている間はブレーキの保持の範囲で動かない)。
     # 真値 = 停止距離の閉形式 vρ + (1/2k)ln(1 + k v²/A)(A = b ± g sin θ + c_rr g cos θ)、rsssafety との一致、坂道発進のずり下がりの閉形式、

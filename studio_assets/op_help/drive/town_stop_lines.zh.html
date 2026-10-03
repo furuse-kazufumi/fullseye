@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">town_stop_lines — DRIVE <code style="color:#22d3bf">town</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_stop_lines(layout, *, side: &#x27;str&#x27; = &#x27;left&#x27;) -&gt; &#x27;List[dict]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetown; drivetown.town_stop_lines(layout, *, side: &#x27;str&#x27; = &#x27;left&#x27;) -&gt; &#x27;List[dict]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;town_stop_lines&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>町の停止線を弧長順に並べる: ``[{&quot;s&quot;, &quot;x&quot;, &quot;y&quot;, &quot;yaw&quot;, &quot;kind&quot;, &quot;element&quot;, &quot;crossing_zone&quot;: (s0, s1) | None,</p>
+<p>&quot;drawn&quot;: bool}, ...]``。</p>
+<p>交差点: 要素の `<code style="color:#22d3bf">stop_lines</code><code style="color:#22d3bf">(線分 (2, 2))のうち **中心線に端点が載り、進行方向の </code><code style="color:#22d3bf">side</code>` の側へ延びる物** が走行路の</p>
+<p>停止線(4 本のうち 1 本。左側通行なら左、右側通行なら鏡像の 1 本)。踏切: 停止線の位置は <b>踏切面 − stop_setback の閉形式</b></p>
+<p>(drivecourse は左車線にしか白線を描かないので side に依らない。`<code style="color:#22d3bf">drawn</code>` = その側に白線が描かれているか)。</p>
+<p>`<code style="color:#22d3bf">s</code><code style="color:#22d3bf"> は中心線上の弧長、</code><code style="color:#22d3bf">yaw</code><code style="color:#22d3bf"> はそこでの進行方向。踏切は踏切面の弧長の範囲 </code><code style="color:#22d3bf">crossing_zone</code>` も付ける。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: layout が town_chain の物でない、side が left/right でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">town</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:town_layout">town_layout</a> · <a style="color:#22d3bf" href="opdrive:town_world">town_world</a> · <a style="color:#22d3bf" href="opdrive:town_centerline">town_centerline</a> · <a style="color:#22d3bf" href="opdrive:town_rules">town_rules</a> · <a style="color:#22d3bf" href="opdrive:town_crossing_state">town_crossing_state</a> · <a style="color:#22d3bf" href="opdrive:town_run">town_run</a> · <a style="color:#22d3bf" href="opdrive:town_checks">town_checks</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetown.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

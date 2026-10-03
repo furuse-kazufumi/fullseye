@@ -4,7 +4,7 @@ dim: drive
 category: course
 in: 
 out: table
-examples: [poc_driving_school]
+examples: [poc_driving_school, poc_driving_town]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -37,6 +37,7 @@ B < w + r(2 つの角が重なる)、arc_pts が 1 以上の整数でない。
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_driving_school](../../../../examples/poc_driving_school.py) — `py -3.11 examples/poc_driving_school.py`
+- [poc_driving_town](../../../../examples/poc_driving_town.py) — `py -3.11 examples/poc_driving_town.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

@@ -4,7 +4,7 @@ dim: drive
 category: traffic
 in: any
 out: any
-examples: [poc_driving_decisions, poc_driving_traffic]
+examples: [poc_driving_decisions, poc_driving_town, poc_driving_traffic]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -37,6 +37,7 @@ Intelligent Driver Model の加速度(Treiber, Hennecke, Helbing 2000)。
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_driving_decisions](../../../../examples/poc_driving_decisions.py) — `py -3.11 examples/poc_driving_decisions.py`
+- [poc_driving_town](../../../../examples/poc_driving_town.py) — `py -3.11 examples/poc_driving_town.py`
 - [poc_driving_traffic](../../../../examples/poc_driving_traffic.py) — `py -3.11 examples/poc_driving_traffic.py`
 
 ## 型が繋がる次の op(`any` を入力に取れる)

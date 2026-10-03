@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">town_stop_lines — DRIVE <code style="color:#22d3bf">town</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_stop_lines(layout, *, side: &#x27;str&#x27; = &#x27;left&#x27;) -&gt; &#x27;List[dict]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivetown; drivetown.town_stop_lines(layout, *, side: &#x27;str&#x27; = &#x27;left&#x27;) -&gt; &#x27;List[dict]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;town_stop_lines&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>町の停止線を弧長順に並べる: ``[{&quot;s&quot;, &quot;x&quot;, &quot;y&quot;, &quot;yaw&quot;, &quot;kind&quot;, &quot;element&quot;, &quot;crossing_zone&quot;: (s0, s1) | None,</p>
+<p>&quot;drawn&quot;: bool}, ...]``。</p>
+<p>交差点: 要素の `<code style="color:#22d3bf">stop_lines</code><code style="color:#22d3bf">(線分 (2, 2))のうち **中心線に端点が載り、進行方向の </code><code style="color:#22d3bf">side</code>` の側へ延びる物** が走行路の</p>
+<p>停止線(4 本のうち 1 本。左側通行なら左、右側通行なら鏡像の 1 本)。踏切: 停止線の位置は <b>踏切面 − stop_setback の閉形式</b></p>
+<p>(drivecourse は左車線にしか白線を描かないので side に依らない。`<code style="color:#22d3bf">drawn</code>` = その側に白線が描かれているか)。</p>
+<p>`<code style="color:#22d3bf">s</code><code style="color:#22d3bf"> は中心線上の弧長、</code><code style="color:#22d3bf">yaw</code><code style="color:#22d3bf"> はそこでの進行方向。踏切は踏切面の弧長の範囲 </code><code style="color:#22d3bf">crossing_zone</code>` も付ける。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: layout が town_chain の物でない、side が left/right でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">town</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:town_layout">town_layout</a> · <a style="color:#22d3bf" href="opdrive:town_world">town_world</a> · <a style="color:#22d3bf" href="opdrive:town_centerline">town_centerline</a> · <a style="color:#22d3bf" href="opdrive:town_rules">town_rules</a> · <a style="color:#22d3bf" href="opdrive:town_crossing_state">town_crossing_state</a> · <a style="color:#22d3bf" href="opdrive:town_run">town_run</a> · <a style="color:#22d3bf" href="opdrive:town_checks">town_checks</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetown.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

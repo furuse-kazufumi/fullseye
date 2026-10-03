@@ -1,0 +1,10 @@
+﻿規則,側,踏切,列車,停止,どこで,交差点の停止線 s,所要 [s],事象,採点,一次確認
+JP,left,always,列車なし,2,intersection+crossing,40.95,53.5,-,ok,yes
+JP,left,always,警報 20 s,2,intersection+crossing,40.95,85.2,wait_gate,ok,yes
+JP,left,always,警報が 4 m 手前で開始,2,intersection+crossing,40.95,90.1,wait_gate,ok,yes
+US,right,when_active,列車なし,1,intersection,65.95,42.1,pass,ok,no
+US,right,when_active,警報 20 s,2,intersection+crossing,65.95,85.2,wait_gate,ok,no
+US,right,when_active,警報が 4 m 手前で開始,1,intersection,65.95,42.1,"commit,pass",ok,no
+DE,right,when_active,列車なし,1,intersection,65.95,42.1,pass,ok,no
+DE,right,when_active,警報 20 s,2,intersection+crossing,65.95,85.2,wait_gate,ok,no
+DE,right,when_active,警報が 4 m 手前で開始,1,intersection,65.95,42.1,"commit,pass",ok,no

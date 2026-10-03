@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">town_checks — DRIVE <code style="color:#22d3bf">town</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_checks(run, layout, *, car_length: &#x27;float&#x27; = 4.5, tol: &#x27;float&#x27; = 1e-09) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivetown; drivetown.town_checks(run, layout, *, car_length: &#x27;float&#x27; = 4.5, tol: &#x27;float&#x27; = 1e-09) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;town_checks&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>通し走行の採点(閉形式の門 + 既存の踏切の採点 op)。</p>
+<p>`<code style="color:#22d3bf">stops</code><code style="color:#22d3bf">: 目標になった停止線ごと(弧長順)に </code>`{&quot;kind&quot;, &quot;s_line&quot;, &quot;s_stop&quot;, &quot;before&quot; = s_line − s_stop, &quot;ok&quot; (0 ≤ before ≤ 1.0),</p>
+<p>&quot;crossing&quot;: crossing_stop_check の結果(踏切だけ。`<code style="color:#22d3bf">train</code>` があれば警報中の区間を forbidden_intervals に渡す),</p>
+<p>&quot;skipped&quot;: 動的な目標で止まらなかった}`<code style="color:#22d3bf">。</code><code style="color:#22d3bf">count_ok</code>` = 停止の回数 = 静的な停止線 + 止まった動的な停止線の数。</p>
+<p>`<code style="color:#22d3bf">kinematics</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">{&quot;a_max_abs&quot;, &quot;v_max&quot;, &quot;v_min&quot;, &quot;integral_gap&quot; = max|台形則 ∫v dt − (s − s0)|, &quot;ok&quot;}</code>`</p>
+<p>(|a| ≤ max(a_max, b_max)、0 ≤ v ≤ v_max、integral_gap ≤ dt·v_max)。`<code style="color:#22d3bf">braking</code>`: 停止ごとに減速を始めた速度 v_b と制動距離 d_b、</p>
+<p>定理 d_b ≥ v_b²/(2 b_max) の ok。`<code style="color:#22d3bf">train</code><code style="color:#22d3bf">(列車があれば): </code>`{&quot;inside_while_forbidden_s&quot;(警報中に車体が踏切面にかかっていた</p>
+<p>時間)、&quot;go_after_clear&quot;(踏切の発進が警報停止 + 上昇の後)、&quot;timing_meets_minimum&quot;, &quot;ok&quot;}`<code style="color:#22d3bf">。</code><code style="color:#22d3bf">ok</code>` = 全部。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: run が town_run の物でない、layout が town_chain の物でない、car_length が正でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">town</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:town_layout">town_layout</a> · <a style="color:#22d3bf" href="opdrive:town_world">town_world</a> · <a style="color:#22d3bf" href="opdrive:town_centerline">town_centerline</a> · <a style="color:#22d3bf" href="opdrive:town_stop_lines">town_stop_lines</a> · <a style="color:#22d3bf" href="opdrive:town_rules">town_rules</a> · <a style="color:#22d3bf" href="opdrive:town_crossing_state">town_crossing_state</a> · <a style="color:#22d3bf" href="opdrive:town_run">town_run</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetown.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
