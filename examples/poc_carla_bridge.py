@@ -226,8 +226,7 @@ def main():
         raise SystemExit("FAIL: figures")
     if n_ok != len(_GATES):
         raise SystemExit("FAIL: " + ", ".join(n for n, ok in _GATES if not ok))
-    print("
-PASS")
+    print("\nPASS")
 
 
 if __name__ == "__main__":
