@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2650,
- "n_notes": 2656,
+ "n_ops": 2653,
+ "n_notes": 2659,
  "notes": {
   "vol_dilate": [
    {
@@ -17269,6 +17269,34 @@
     "in": "scalar × scalar × scalar",
     "out": "scalar",
     "path": "docs/ops/drive/long/stopping_distance_grade.md"
+   }
+  ],
+  "events_to_frames": [
+   {
+    "op": "events_to_frames",
+    "dim": "drive",
+    "category": "motion_io",
+    "in": "table",
+    "out": "voxel",
+    "path": "docs/ops/drive/motion_io/events_to_frames.md"
+   }
+  ],
+  "read_bvh": [
+   {
+    "op": "read_bvh",
+    "dim": "drive",
+    "category": "motion_io",
+    "out": "table",
+    "path": "docs/ops/drive/motion_io/read_bvh.md"
+   }
+  ],
+  "read_events": [
+   {
+    "op": "read_events",
+    "dim": "drive",
+    "category": "motion_io",
+    "out": "table",
+    "path": "docs/ops/drive/motion_io/read_events.md"
    }
   ],
   "convex_mirror_image": [

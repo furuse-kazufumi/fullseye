@@ -2850,6 +2850,69 @@ def _b_gs_render_fn(pool, rng):
     return (GS.gs_from_world(_gs_quad_world(), spacing=0.01),), {}
 
 
+def _fuzz_file(name, data: bytes) -> str:
+    """読み手の op 用の小さなファイルを一時ディレクトリに書く(builder は値でなくパスを渡す)。"""
+    d = tempfile.mkdtemp(prefix="fuzz_io_")
+    p = os.path.join(d, name)
+    with open(p, "wb") as f:
+        f.write(data)
+    return p
+
+
+def _b_gs_read_file(pool, rng):
+    names = ["x", "y", "z", "f_dc_0", "f_dc_1", "f_dc_2", "opacity", "scale_0", "scale_1", "scale_2",
+             "rot_0", "rot_1", "rot_2", "rot_3"]
+    n = 16
+    data = np.column_stack([rng.normal(size=(n, 3)), rng.normal(size=(n, 3)), rng.normal(size=n),
+                            np.log(rng.random((n, 3)) * 0.1 + 0.01), rng.normal(size=(n, 4))]).astype("<f4")
+    head = "ply\nformat binary_little_endian 1.0\nelement vertex %d\n%send_header\n" % (
+        n, "".join("property float %s\n" % k for k in names))
+    return (_fuzz_file("g.ply", head.encode("ascii") + data.tobytes()),), {}
+
+
+_FUZZ_BVH = """HIERARCHY
+ROOT hip
+{
+  OFFSET 0 0 0
+  CHANNELS 6 Xposition Yposition Zposition Zrotation Xrotation Yrotation
+  JOINT spine
+  {
+    OFFSET 0 1 0
+    CHANNELS 3 Zrotation Xrotation Yrotation
+    End Site
+    {
+      OFFSET 0 1 0
+    }
+  }
+}
+MOTION
+Frames: 2
+Frame Time: 0.033
+0 0 0 0 0 0 0 0 0
+1 0 0 30 10 5 20 0 0
+"""
+
+
+def _b_read_bvh(pool, rng):
+    return (_fuzz_file("m.bvh", _FUZZ_BVH.encode("ascii")),), {}
+
+
+def _fuzz_events(rng, n=200):
+    return {"x": rng.integers(0, 16, n), "y": rng.integers(0, 12, n), "t": np.sort(rng.integers(0, 10000, n)),
+            "p": rng.integers(0, 2, n)}
+
+
+def _b_read_events(pool, rng):
+    e = _fuzz_events(rng)
+    rows = "".join("%d %d %d %d\n" % r for r in zip(e["x"], e["y"], e["t"], e["p"]))
+    return (_fuzz_file("ev.txt", rows.encode("ascii")),), {}
+
+
+def _b_events_to_frames(pool, rng):
+    import motionio
+    return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
+
+
 def _b_graph_kcore(pool, rng):
     B = (rng.random((30, 30)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -3713,6 +3776,8 @@ OP_ARG_BUILDERS = {
     "veiling_luminance": _b_veiling_luminance, "veil_chroma_limit": _b_veil_chroma_limit, "sight_stop_speed": _b_sight_stop_speed,
     "env_params": _b_env_params, "tone_map": _b_tone_map, "env_render": _b_env_render,
     "gs_from_world": _b_gs_from_world, "gs_update": _b_gs_update, "gs_render": _b_gs_render, "gs_render_fn": _b_gs_render_fn,
+    "gs_read_file": _b_gs_read_file, "read_bvh": _b_read_bvh, "read_events": _b_read_events,
+    "events_to_frames": _b_events_to_frames,
     "sign_params": _b_sign_kind, "sign_image": _b_sign_img, "plate_mesh_from_image": _b_plate_mesh,
     "sign_mesh": _b_sign_mesh, "add_sign": _b_add_sign, "signal_jp_mesh": _b_signal_jp,
     "add_signal_jp": _b_add_signal_jp,

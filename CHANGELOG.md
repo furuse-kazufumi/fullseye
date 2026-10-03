@@ -46,6 +46,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   `.py` = Python エディタのタブ(エディタに落としても開く。以前はパスが文字で貼られた)、`.json` = パイプライン、
   点群・メッシュ・3DGS・医用ボリューム = 3-D ビューア、動画・アニメーション GIF・HDF = Video cube、`.npy` は形で振り分け。
   以前は 1 本目しか見ず `.py` は「未対応」だった。**ASCII とバイナリの両方**を門で固定: PLY(ASCII / LE / BE)・STL・PCD。
+- ★**Studio の D&D 第 2 陣 + `motionio`(新)**: `read_bvh`(モーションキャプチャ、順運動学まで。門 = 手で計算できる骨格)、
+  `read_events` / `events_to_frames`(イベントカメラの x y t p。列の順は見出しか中身で決め、極性の和を保存)。Studio は BVH を
+  関節の軌跡(時間の色)、SWC を神経の骨格(種類の色)として 3-D ビューアへ、イベントを Video cube へ、Markdown / SVG を
+  新しい文書ビューア(Qt 標準の描画器、依存なし)へ。全 プロジェクトの棚卸しから、依存の少ないものを先に取り込んだ。
 - ★**`gs_read_file`**(gsplatnp): 3DGS の INRIA 形式 PLY(ASCII / バイナリ両エンディアン)と `.splat` を読み、中心・色(SH DC)・
   不透明度(sigmoid)・大きさ(exp)・向きを返す。**以前の Studio は 3DGS の PLY を色無しの点群として開いていた**。
 - Studio Inspector: dict を返す op が中身に関係なく「輪郭 0 本」と出ていた → 表(欄ごとの形と値域)・組・列で出す。

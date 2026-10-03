@@ -1,4 +1,4 @@
-# DRIVE operator help — 289 ops in 22 categories
+# DRIVE operator help — 292 ops in 23 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -59,6 +59,10 @@
 ### long (13)
 
 [hill_hold_brake_min](long/hill_hold_brake_min.md) · [hill_start_command](long/hill_start_command.md) · [hill_start_rollback](long/hill_start_rollback.md) · [long_energy_residual](long/long_energy_residual.md) · [long_params](long/long_params.md) · [long_simulate](long/long_simulate.md) · [plan_command](long/plan_command.md) · [road_eval](long/road_eval.md) · [road_profile](long/road_profile.md) · [skill_test_score](long/skill_test_score.md) · [skill_test_thresholds](long/skill_test_thresholds.md) · [stop_line_plan](long/stop_line_plan.md) · [stopping_distance_grade](long/stopping_distance_grade.md)
+
+### motion_io (3)
+
+[events_to_frames](motion_io/events_to_frames.md) · [read_bvh](motion_io/read_bvh.md) · [read_events](motion_io/read_events.md)
 
 ### pass (17)
 

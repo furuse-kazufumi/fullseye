@@ -708,7 +708,39 @@ IMAGE_FILE_EXTS = (".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp", ".
 #: 3-D ビューアで開く拡張子: 点群・メッシュ・3DGS(.ply/.splat)・医用ボリューム。``.tif`` は画像側(2-D が普通)。
 MODEL3D_FILE_EXTS = (".ply", ".splat", ".pcd", ".xyz", ".pts", ".asc", ".obj", ".stl", ".off", ".npz",
                      ".nii", ".gz", ".nrrd", ".nhdr", ".mha", ".mhd", ".dcm",
-                     ".glb", ".gltf", ".las", ".laz", ".urdf", ".mjcf")
+                     ".glb", ".gltf", ".las", ".laz", ".urdf", ".mjcf", ".bvh", ".swc")
+#: 文書ビューアで開く拡張子(Qt の標準の描画器: Markdown = QTextBrowser、SVG = QSvgRenderer)
+DOCUMENT_FILE_EXTS = (".md", ".markdown", ".svg")
+
+
+def _events_kind(path):
+    """.txt / .csv / .npy / .npz がイベントカメラの (x, y, t, p) か(先頭だけ読んで判定)。"""
+    import motionio
+    ext = os.path.splitext(path)[1].lower()
+    try:
+        if ext in (".txt", ".csv"):
+            with open(path, "r", encoding="utf-8", errors="replace") as f:
+                head = [ln for _, ln in zip(range(400), f)]
+            first = head[0] if head else ""
+            if any(ch.isalpha() for ch in first.replace("e-", "").replace("e+", "")):
+                hdr = [h.strip().lower() for h in first.replace(",", " ").split()]
+                return all(any(a in hdr for a in al) for al in motionio._ALIASES.values())
+            A = np.loadtxt(head, delimiter="," if "," in first else None, ndmin=2)
+        elif ext == ".npz":
+            with np.load(path, allow_pickle=False) as z:
+                keys = list(z.keys())
+            return all(any(a in keys for a in al) for al in motionio._ALIASES.values())
+        else:
+            A = np.load(path, mmap_mode="r", allow_pickle=False)
+            if A.dtype.names:
+                return all(any(a in A.dtype.names for a in al) for al in motionio._ALIASES.values())
+            A = np.asarray(A[:400])
+        if A.ndim != 2 or A.shape[1] != 4:
+            return False
+        motionio._guess_columns(np.asarray(A, np.float64))
+        return True
+    except Exception:                                           # 推定できない = イベントではない
+        return False
 
 
 def _robot_xml_kind(path):
@@ -756,8 +788,10 @@ def _classify_dropped_paths(paths):
     フォルダは**直下の画像**に展開する(名前順)。返り値 ``{"images", "scripts", "pipelines", "other"}``。
     ``scripts`` = ``.py``(Python エディタのタブで開く)、``pipelines`` = ``.json``(パイプラインとして開く)、
     ``models3d`` = 点群・メッシュ・3DGS・ボリューム・glTF・LAS/LAZ・MJCF/URDF(3-D ビューア)、``videos`` = 動画・アニメーション GIF・HDF の
-    スタック(動画の立方体)、``arrays`` = 2-D の .npy(画像としてパイプラインの入力に)。"""
-    out = {"images": [], "scripts": [], "pipelines": [], "models3d": [], "videos": [], "arrays": [], "other": []}
+    スタック(動画の立方体)、``arrays`` = 2-D の .npy(画像としてパイプラインの入力に)、``events`` = イベントカメラ
+    の (x, y, t, p)(極性つきのコマにして動画の立方体)、``documents`` = Markdown / SVG(文書ビューア)。"""
+    out = {"images": [], "scripts": [], "pipelines": [], "models3d": [], "videos": [], "arrays": [], "events": [],
+           "documents": [], "other": []}
     for p in paths or []:
         p = os.fspath(p)
         if os.path.isdir(p):
@@ -773,8 +807,12 @@ def _classify_dropped_paths(paths):
         ext = os.path.splitext(p)[1].lower()
         if ext == ".gif" and _is_animated_gif(p):
             key = "videos"
+        elif ext in (".txt", ".csv", ".npy", ".npz") and _events_kind(p):
+            key = "events"
         elif ext == ".npy":
             key = _npy_kind(p)
+        elif ext in DOCUMENT_FILE_EXTS:
+            key = "documents"
         elif ext == ".xml":
             key = "models3d" if _robot_xml_kind(p) else "other"
         else:
@@ -6657,6 +6695,49 @@ def build_window(model=None):
         persist_dialog_geometry(dlg, "ex2d"); win._ex2d_dlg = dlg
         win._localize(dlg); dlg.show()
 
+    def show_document_viewer(path):
+        """Markdown(QTextBrowser の setMarkdown)と SVG(QSvgRenderer で窓の大きさに描く)を見る窓。依存なし。"""
+        ext = os.path.splitext(path)[1].lower()
+        dlg = QtWidgets.QDialog(win); tag_dialog(dlg, "reference"); dlg.setModal(False)
+        dlg.setWindowTitle("Document — %s" % os.path.basename(path))
+        lay = QtWidgets.QVBoxLayout(dlg)
+        try:
+            if ext == ".svg":
+                from PySide6 import QtSvg
+                rend = QtSvg.QSvgRenderer(path)
+                if not rend.isValid():
+                    raise ValueError("not a valid SVG")
+                sz = rend.defaultSize()
+                k = min(1.0, 900.0 / max(sz.width(), 1), 700.0 / max(sz.height(), 1)) if sz.width() > 0 else 1.0
+                img = QtGui.QImage(max(1, int(sz.width() * k * 2)), max(1, int(sz.height() * k * 2)),
+                                   QtGui.QImage.Format_ARGB32)
+                img.fill(QtGui.QColor("white"))
+                p = QtGui.QPainter(img); rend.render(p); p.end()
+                lbl = QtWidgets.QLabel()
+                lbl.setPixmap(QtGui.QPixmap.fromImage(img).scaled(int(sz.width() * k) or 1, int(sz.height() * k) or 1,
+                                                                  QtCore.Qt.KeepAspectRatio,
+                                                                  QtCore.Qt.SmoothTransformation))
+                sc = QtWidgets.QScrollArea(); sc.setWidget(lbl); sc.setWidgetResizable(True)
+                lay.addWidget(sc)
+                dlg._image = img
+            else:
+                with open(path, "r", encoding="utf-8", errors="replace") as f:
+                    text = f.read()
+                tb = QtWidgets.QTextBrowser(); tb.setOpenExternalLinks(True)
+                tb.document().setBaseUrl(QtCore.QUrl.fromLocalFile(os.path.dirname(os.path.abspath(path)) + os.sep))
+                tb.setMarkdown(text)
+                lay.addWidget(tb)
+                dlg._browser = tb
+        except Exception as e:
+            dlg.deleteLater()
+            report_error("Could not open document", "%s\n\n%s" % (path, e)); return None
+        dlg.resize(820, 640)
+        win._localize(dlg)
+        dlg.show()
+        win._last_document = dlg
+        return dlg
+    win._show_document_viewer = show_document_viewer
+
     def show_image_viewer(paths=None):
         """画像ビューア(MATLAB の imtool に近い): 一覧 + 拡大縮小・移動 + 画素の値 + 情報 + ヒストグラム。
 
@@ -8200,6 +8281,25 @@ def build_window(model=None):
             P, attrs = meshio_opt.read_las(str(path))
             C = attrs.get("rgb") if isinstance(attrs, dict) else None          # (N, 3) [0, 1](読み手が 8/16 bit を判定)
             return "points", P, None, C
+        if ext == ".bvh":
+            import motionio
+            b = motionio.read_bvh(str(path))
+            T, J = b["positions"].shape[:2]
+            P = b["positions"].reshape(-1, 3)
+            tt = np.repeat(np.linspace(0.0, 1.0, T), J)
+            C = np.column_stack([tt, 0.35 + 0.0 * tt, 1.0 - tt])           # 時間の色: 青 → 赤
+            flash("BVH %s: %d joints × %d frames (%.1f s) — joint paths coloured by time (blue → red)"
+                  % (os.path.basename(str(path)), J, T, T * b["frame_time"]))
+            return "points", P, None, C
+        if ext == ".swc":
+            import treemorph
+            tr = treemorph.tree_from_swc(str(path))
+            pal = np.array([[0.6, 0.6, 0.6], [0.95, 0.85, 0.2], [0.3, 0.6, 1.0], [0.95, 0.35, 0.3],
+                            [0.9, 0.4, 0.9], [0.4, 0.9, 0.5]])
+            C = pal[np.clip(np.asarray(tr["type"], int), 0, len(pal) - 1)]
+            flash("SWC %s: %d nodes (soma yellow, axon blue, dendrites red/purple)"
+                  % (os.path.basename(str(path)), len(tr["xyz"])))
+            return "points", np.asarray(tr["xyz"], np.float64), None, C
         if ext in (".xml", ".urdf", ".mjcf"):
             kind = _robot_xml_kind(path) or ("urdf" if ext == ".urdf" else "mjcf")
             V, F = _robot_mesh(path)
@@ -9291,7 +9391,7 @@ def build_window(model=None):
         return dlg
     win._open_eye_brain_panel = open_eye_brain_panel
 
-    def open_video_cube_panel(path=None):
+    def open_video_cube_panel(path=None, clip=None, name=None):
         """Tools ▸ Video cube: 動画(か z スタック)を空間 × 時間の立方体として見る(Video Summagator の再実装)。
         左 = 立方体(ドラッグで回転)、右上 = 断面(x–t スリットスキャン / y–t / x–y、スライダで位置、クリックでその
         フレームへ)、右下 = そのフレーム。入力は合成のデモ、.npy の (T, H, W)、GIF / 動画(imageio か video.read_frames)、
@@ -9493,7 +9593,10 @@ def build_window(model=None):
         pos.valueChanged.connect(lambda _v: redraw_cut())
         save_btn.clicked.connect(on_save)
         state["clip"], state["name"] = demo_clip()
-        if path:                                         # D&D / 引数で渡された動画・スタック
+        if clip is not None:                             # 呼び手が作ったコマ(イベントカメラ等)
+            state["clip"], state["name"] = np.asarray(clip, np.float64), name or "clip"
+            source.blockSignals(True); source.setCurrentIndex(1); source.blockSignals(False)
+        elif path:                                       # D&D / 引数で渡された動画・スタック
             try:
                 state["clip"], state["name"] = load_file(path)
                 source.blockSignals(True); source.setCurrentIndex(1); source.blockSignals(False)
@@ -9660,10 +9763,30 @@ def build_window(model=None):
             open_video_cube_panel(p)
         for p in kinds["arrays"][:1]:
             _load_array_path(p)
-        handled = any(kinds[k] for k in ("images", "scripts", "pipelines", "models3d", "videos", "arrays"))
+        for p in kinds["events"][:1]:
+            _open_events(p)
+        for p in kinds["documents"][:4]:
+            show_document_viewer(p)
+        handled = any(kinds[k] for k in ("images", "scripts", "pipelines", "models3d", "videos", "arrays", "events",
+                                         "documents"))
         if kinds["other"] and not handled:
             flash("drop: unsupported file '%s' — drop images / a folder, .py, .json, 3-D (ply, splat, obj, stl, pcd, "
-                  "nii, dcm …), video (mp4, avi, animated gif, hdf) or .npy" % os.path.basename(kinds["other"][0]))
+                  "glb, las, urdf, bvh, swc, nii, dcm …), video (mp4, avi, animated gif, hdf), events (x y t p), "
+                  ".md / .svg or .npy" % os.path.basename(kinds["other"][0]))
+
+    def _open_events(path):
+        """イベントカメラのファイル → 極性つきのコマ (T, H, W) → 動画の立方体(ON = 明、OFF = 暗、0 = 灰)。"""
+        import motionio
+        try:
+            ev = motionio.read_events(path)
+            fr = motionio.events_to_frames(ev, 48)
+        except Exception as e:
+            report_error("Could not open events", "%s\n\n%s" % (path, e)); return None
+        m = float(np.abs(fr).max()) or 1.0
+        flash("events %s: %s events, %d×%d, columns %s%s" % (
+            os.path.basename(path), f"{ev['x'].size:,}", ev["shape"][1], ev["shape"][0], ev["columns"],
+            " (guessed from the data)" if ev["guessed"] else ""))
+        return open_video_cube_panel(clip=0.5 + 0.5 * fr / m, name=os.path.basename(path))
 
     def _load_array_path(path):
         """2-D(か H×W×3)の .npy を画像としてパイプラインの入力に。値が [0, 1] の外なら最小–最大で [0, 1] に写す。"""

@@ -272,3 +272,99 @@ def test_drop_physical_ai_formats_opens_the_3d_viewer(tmp_path):
     p = tmp_path / "m2.xml"; p.write_text(MJCF, encoding="utf-8")
     v = _drop_and_get_viewer(win, str(p))
     assert abs(v._V[:, 0].max() - 0.35) < 1e-6 and abs(v._V[:, 2].max() - 0.55) < 1e-6
+
+
+# ── 第 2 陣: BVH・イベントカメラ・SWC・Markdown / SVG ───────────────────────────────────────── #
+BVH = """HIERARCHY
+ROOT hip
+{
+  OFFSET 0 0 0
+  CHANNELS 6 Xposition Yposition Zposition Zrotation Xrotation Yrotation
+  JOINT spine
+  {
+    OFFSET 0 1 0
+    CHANNELS 3 Zrotation Xrotation Yrotation
+    End Site
+    {
+      OFFSET 0 2 0
+    }
+  }
+}
+MOTION
+Frames: 3
+Frame Time: 0.0333333
+0 0 0 0 0 0 0 0 0
+5 0 0 90 0 0 0 0 0
+0 0 0 90 0 0 90 0 0
+"""
+
+
+def test_bvh_forward_kinematics_matches_hand_computation(tmp_path):
+    """根を Z まわりに 90° 回すと (0, 1, 0) の子は (−1, 0, 0)。子も 90° 回すと末端 (0, 2, 0) は 180° 回って (−1, −2, 0)。"""
+    import motionio
+    p = tmp_path / "t.bvh"; p.write_text(BVH, encoding="ascii")
+    b = motionio.read_bvh(str(p))
+    assert b["names"] == ["hip", "spine", "spine_end"] and b["parents"].tolist() == [-1, 0, 1]
+    P = b["positions"]
+    assert np.allclose(P[0], [[0, 0, 0], [0, 1, 0], [0, 3, 0]])
+    assert np.allclose(P[1], [[5, 0, 0], [4, 0, 0], [2, 0, 0]])
+    assert np.allclose(P[2], [[0, 0, 0], [-1, 0, 0], [-1, -2, 0]])
+    bad = tmp_path / "bad.bvh"; bad.write_text(BVH.replace("0 0 0 90 0 0 90 0 0", "0 0 0 90"), encoding="ascii")
+    with pytest.raises(ValueError):
+        motionio.read_bvh(str(bad))
+
+
+@pytest.mark.parametrize("layout", ["x y t p", "x,y,p,t", "t,x,y,p header"])
+def test_event_columns_are_found_by_name_or_by_content(tmp_path, layout):
+    import motionio
+    rng = np.random.default_rng(0)
+    n = 500
+    x, y = rng.integers(0, 34, n), rng.integers(0, 30, n)
+    t, p = np.sort(rng.integers(0, 300000, n)), rng.integers(0, 2, n)
+    f = tmp_path / "ev.csv"
+    if layout == "x y t p":
+        np.savetxt(f, np.column_stack([x, y, t, p]), fmt="%d")
+    elif layout == "x,y,p,t":
+        np.savetxt(f, np.column_stack([x, y, p, t]), fmt="%d", delimiter=",")
+    else:
+        np.savetxt(f, np.column_stack([t, x, y, p]), fmt="%d", delimiter=",", header="t,x,y,p", comments="")
+    e = motionio.read_events(str(f))
+    assert (e["x"] == x).all() and (e["y"] == y).all() and (e["t"] == t).all()
+    assert (e["p"] == np.where(p > 0, 1, -1)).all() and e["guessed"] == ("header" not in layout)
+    fr = motionio.events_to_frames(e, 10)
+    assert fr.shape == (10, 30, 34) and fr.sum() == np.where(p > 0, 1, -1).sum()   # 1 個も落とさない
+    assert studio._events_kind(str(f))
+
+
+def test_drop_wave2_bvh_events_swc_and_documents(tmp_path):
+    _app()
+    win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    p = tmp_path / "walk.bvh"; p.write_text(BVH, encoding="ascii")
+    v = _drop_and_get_viewer(win, str(p))
+    assert len(v._P) == 9 and v._colors is not None                  # 3 関節 × 3 コマ、時間の色
+    swc = tmp_path / "n.swc"
+    swc.write_text("# soma + 2\n1 1 0 0 0 1 -1\n2 3 1 0 0 0.5 1\n3 3 2 1 0 0.5 2\n", encoding="ascii")
+    v = _drop_and_get_viewer(win, str(swc))
+    assert np.allclose(v._P, [[0, 0, 0], [1, 0, 0], [2, 1, 0]])
+    rng = np.random.default_rng(1)
+    ev = tmp_path / "ev.txt"
+    np.savetxt(ev, np.column_stack([rng.integers(0, 20, 300), rng.integers(0, 10, 300),
+                                    np.sort(rng.integers(0, 9000, 300)), rng.integers(0, 2, 300)]), fmt="%d")
+    win.drop_handler([str(ev)])
+    clip = win._video_cube_dialog._state["clip"]
+    assert clip.shape == (48, 10, 20) and 0.0 <= clip.min() and clip.max() <= 1.0, (clip.shape, _ERRORS)
+    md = tmp_path / "r.md"; md.write_text("# Title\n\n* one\n* two\n\n```python\nx = 1\n```\n", encoding="utf-8")
+    win.drop_handler([str(md)])
+    assert "Title" in win._last_document._browser.toPlainText() and not _ERRORS
+    svg = tmp_path / "c.svg"
+    svg.write_text('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="20"><rect width="20" height="20" '
+                   'fill="#ff0000"/></svg>', encoding="utf-8")
+    win.drop_handler([str(svg)])
+    img = win._last_document._image
+    left = QtGui_pixel(img, 0.25, 0.5); right = QtGui_pixel(img, 0.75, 0.5)
+    assert left[0] > 200 and left[1] < 60 and right == (255, 255, 255), (left, right)
+
+
+def QtGui_pixel(img, fx, fy):
+    c = img.pixelColor(int(img.width() * fx), int(img.height() * fy))
+    return (c.red(), c.green(), c.blue())

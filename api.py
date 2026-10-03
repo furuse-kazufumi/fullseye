@@ -675,6 +675,8 @@ from drivelong import (  # noqa: E402,F401
 )
 import gsplatnp  # noqa: E402  (世界 → 3D Gaussian Splatting: 面に貼ったガウシアンと EWA 描画、密度と誤差のつまみ)
 from gsplatnp import gs_from_world, gs_update, gs_render, gs_render_fn, gs_read_file  # noqa: E402,F401
+import motionio  # noqa: E402  (動きのデータ: BVH モーションキャプチャ・イベントカメラの x y t p、2026-10-03)
+from motionio import read_bvh, read_events, events_to_frames  # noqa: E402,F401
 import kendamaworld  # noqa: E402  (けんの真値つき世界: けん + 大皿 + 糸のメッシュ、カメラの組、皿の投影の真値)
 from kendamaworld import (  # noqa: E402,F401
     ken_mesh, add_ken, ken_set_pose, string_mesh, add_string, string_set, kendama_world, kendama_rig, ken_truth,
