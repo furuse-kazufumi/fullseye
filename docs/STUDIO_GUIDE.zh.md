@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 363598497bd3 -->
+<!-- i18n-source-sha: bbeba242062b -->
 # Fullseye Studio 完全指南
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · **简体中文** · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md)
@@ -125,6 +125,7 @@ fullseye-studio             # 若已 pip install -e .，可用控制台脚本
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
 | Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
 | Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
+| Pipeline as code → editor | `Ctrl+Shift+E` | | |
 
 每个操作无论从菜单、工具栏还是按钮触发，都会调用同一个处理函数（一个动作、多个入口）。
 
@@ -257,6 +258,7 @@ Studio 已经超越了"只能从流水线调用代码"的阶段，也可以作�
   选中台账 op 会插入**列出数据参数与必填参数的调用形式**,例如 `dem_slope(dem, cell_size=)`,光标停在第一个空位。
   在 op 名称上右键或按 Ctrl+Shift+L,即可打开该 op 的运行窗口。
 - **命令面板(Ctrl+P)**:输入 `ledger: 名称`,三步(Ctrl+P → 名称 → Enter)即可打开任意台账 op 的窗口。
+- **从正在看的结果出发**:在主画面的图像上右键 →"把流水线作为代码送到编辑器"(Ctrl+Shift+E,读取当前图像并运行的脚本)/"把此结果交给台账 op…"(运行窗口的图像输入已预选为当前结果)。
 
 有些 op 用样本跑不起来(这是各 op 样本构造方式的限制;2026-10-03 实测 60 个中 27 个能直接用样本运行)。
 窗口本身没有增加失败,由"与把样本直接传给 op 的结果一致"这道门来确认。

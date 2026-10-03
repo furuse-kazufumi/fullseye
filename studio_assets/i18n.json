@@ -1012,6 +1012,20 @@
    "tw": "補全 fs. / fs.ledger. 名稱",
    "ko": "fs. / fs.ledger. 이름 완성",
    "de": "fs.- / fs.ledger.-Namen vervollständigen"
+  },
+  "Pipeline as code → editor": {
+   "ja": "パイプラインをコードとしてエディタへ",
+   "zh": "把流水线作为代码送到编辑器",
+   "tw": "把管線作為程式碼送到編輯器",
+   "ko": "파이프라인을 코드로 에디터에",
+   "de": "Pipeline als Code → Editor"
+  },
+  "Send this result to a ledger op…": {
+   "ja": "この結果を台帳の op へ…",
+   "zh": "把此结果交给台账 op…",
+   "tw": "把此結果交給台帳 op…",
+   "ko": "이 결과를 대장 op로…",
+   "de": "Dieses Ergebnis an eine Ledger-Op…"
   }
  }
 }

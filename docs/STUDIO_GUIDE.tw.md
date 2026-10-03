@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 363598497bd3 -->
+<!-- i18n-source-sha: bbeba242062b -->
 # Fullseye Studio 完全指南
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · **繁體中文** · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md)
@@ -125,6 +125,7 @@ fullseye-studio             # 若已 pip install -e .，可用主控台腳本
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
 | Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
 | Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
+| Pipeline as code → editor | `Ctrl+Shift+E` | | |
 
 每個動作無論從選單、工具列或按鈕觸發，都會呼叫同一個處理函式（一個動作、多個入口）。
 
@@ -257,6 +258,7 @@ Studio 已經超越「只能從流水線呼叫程式碼」的階段，也可以�
   選取台帳 op 會插入**列出資料參數與必填參數的呼叫形式**,例如 `dem_slope(dem, cell_size=)`,游標停在第一個空位。
   在 op 名稱上按右鍵或按 Ctrl+Shift+L,即可開啟該 op 的執行視窗。
 - **命令面板(Ctrl+P)**:輸入 `ledger: 名稱`,三步(Ctrl+P → 名稱 → Enter)即可開啟任意台帳 op 的視窗。
+- **從正在看的結果出發**:在主畫面的影像上按右鍵 →「把管線作為程式碼送到編輯器」(Ctrl+Shift+E,讀取目前影像並執行的腳本)/「把此結果交給台帳 op…」(執行視窗的影像輸入已預選為目前結果)。
 
 有些 op 用樣本跑不起來(這是各 op 樣本建構方式的限制;2026-10-03 實測 60 個中 27 個能直接用樣本執行)。
 視窗本身沒有增加失敗,由「與把樣本直接傳給 op 的結果一致」這道門來確認。

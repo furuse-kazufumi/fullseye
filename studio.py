@@ -4882,6 +4882,11 @@ def build_window(model=None):
     act_open_pipe = _act("Open pipeline…", "Ctrl+Shift+O", "Load a pipeline from JSON")
     act_save_pipe = _act("Save pipeline…", "Ctrl+Shift+S", "Save the pipeline to JSON")
     act_export = _act("Export…", "Ctrl+E", "Export as an --ops string and Python code")
+    # 見ている結果からコードへ(2026-10-03): 右クリック・メニュー・キーのどこからでも同じ動作
+    act_code_to_editor = _act("Pipeline as code → editor", "Ctrl+Shift+E",
+                              "Put this pipeline into the Python Editor as a runnable script (reads the open image)")
+    act_result_to_ledger = _act("Send this result to a ledger op…", None,
+                                "Open the ledger-op window with the shown result as its image input")
     act_quit = _act("Quit", "Ctrl+Q", "Close Fullseye Studio")
     act_remove = _act("Remove stage", "Del", "Remove the selected pipeline stage")
     act_up = _act("Move stage up", "Ctrl+Up", "Move the selected stage earlier")
@@ -5285,6 +5290,7 @@ def build_window(model=None):
     # QAction objects; the Display-mode submenu is attached once it exists)
     view.set_context_actions(lambda: [act_fit, act_11, act_zin, act_zout, None,
                                       act_save_res, act_save_view, act_copy_res, None,
+                                      act_code_to_editor, act_result_to_ledger, None,
                                       getattr(win, "_display_menu", None), act_3d])
     b_zin = _tbtn("zin", "Zoom in (Ctrl+=)")
     b_zout = _tbtn("zout", "Zoom out (Ctrl+-)")
@@ -7796,6 +7802,20 @@ def build_window(model=None):
         ed.setFocus()
         return ed
     win._insert_code_into_editor = insert_code_into_editor
+
+    def pipeline_script():
+        """いまのパイプラインを、開いている画像に当てて走るスクリプトにする。"""
+        path = state.get("image_path")
+        first = (("img = fullseye.read_image(%r)" % path.replace(chr(92), "/")) if path
+                 else "img = fullseye.read_image('your_image.png')   # the image open in Studio")
+        tail = ["", first, "result = pipeline(img)"]
+        return model.export_python() + chr(10).join(tail) + chr(10)
+
+    act_code_to_editor.triggered.connect(
+        lambda _=False: insert_code_into_editor(pipeline_script(), "pipeline.py"))
+    act_result_to_ledger.triggered.connect(lambda _=False: open_ledger_runner(prefer_image=True))
+    win._pipeline_script = pipeline_script
+    win._main_view = view                                # 右クリックの項目をテストで数える
 
     def open_code_window(title, text):
         # A read-only, syntax-highlighted CODE window inside the MDI area — the sample-
@@ -10989,7 +11009,7 @@ def build_window(model=None):
     act_formats.triggered.connect(lambda _=False: show_drop_formats())
     win._show_drop_formats = show_drop_formats
 
-    def open_ledger_runner(op=None):
+    def open_ledger_runner(op=None, prefer_image=False):
         """台帳 op を型に合った入力欄で走らせる窓(MATLAB で関数を 1 本呼ぶ感覚)。
 
         左で op を探し、右に引数のフォームが出る。データ入力は「合成の見本」
@@ -11035,7 +11055,8 @@ def build_window(model=None):
         right.addWidget(info)
         timer = QtCore.QTimer(dlg); timer.setSingleShot(True); timer.setInterval(250)
         st = {"op": None, "specs": [], "widgets": {}, "sources": {}, "result": None,
-              "sample": None, "error": None, "image": None, "history": [], "script": ""}
+              "sample": None, "error": None, "image": None, "history": [], "script": "",
+              "prefer_image": bool(prefer_image)}
 
         def fill_list():
             q = search.text().strip()
@@ -11109,6 +11130,8 @@ def build_window(model=None):
                     srcs = QtWidgets.QComboBox()
                     for s_ in LEDGER_SOURCES:
                         srcs.addItem(tr(s_), s_)
+                    if st["prefer_image"] and spec.get("sort") in _IMAGE_SORTS:
+                        srcs.setCurrentIndex(LEDGER_SOURCES.index("current image"))   # 結果 → op
                     srcs.currentIndexChanged.connect(lambda _=0: changed())
                     st["sources"][spec["name"]] = srcs
                     form.addRow("%s  [%s]" % (spec["name"], spec.get("sort")), srcs)

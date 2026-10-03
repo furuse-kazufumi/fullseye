@@ -250,3 +250,27 @@ def test_the_command_palette_reaches_every_ledger_op():
     win._actions["palette"].trigger()
     assert win._last_ledger_runner._state["op"] == "piv_quiver"
     assert any(lbl.startswith("ledger: ") for lbl in win._palette["labels"])
+
+
+def test_from_the_shown_result_to_code_and_to_a_ledger_op():
+    """メイン画面の右クリックから: パイプラインを走るコードとしてエディタへ / 結果を台帳 op の入力へ。"""
+    QtWidgets, app = _app()
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("gaussian")
+    win, model = studio.build_window(m)
+    menu = win._main_view.build_context_menu()
+    labels = [a.text() for a in menu.actions()]
+    assert "Pipeline as code → editor" in labels and "Send this result to a ledger op…" in labels
+    script = win._pipeline_script()
+    assert "def pipeline(frame):" in script and script.rstrip().endswith("result = pipeline(img)")
+    # 開いている画像のパスが無いときは置き場所を示す行(読む人が差し替える)
+    assert "your_image.png" in script or "read_image(" in script
+    ed = win._insert_code_into_editor(script, "pipeline.py")
+    assert "result = pipeline(img)" in ed.toPlainText()
+    # 結果 → 台帳 op: 画像を取る入力は「いまの画像」が最初から選ばれている
+    win._stage_list.setCurrentRow(0)
+    app.processEvents()
+    dlg = win._open_ledger_runner("image_entropy" if "image_entropy" in studio.ledger_op_names()
+                                  else "dem_slope", prefer_image=True)
+    srcs = list(dlg._state["sources"].values())
+    assert srcs and srcs[0].currentData() == "current image"

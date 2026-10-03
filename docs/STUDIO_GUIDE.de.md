@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 363598497bd3 -->
+<!-- i18n-source-sha: bbeba242062b -->
 # Vollständiger Leitfaden zu Fullseye Studio
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · **Deutsch**
@@ -163,6 +163,7 @@ Die wichtigsten (aus den `act_*`-Definitionen in `studio.py`):
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
 | Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
 | Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
+| Pipeline as code → editor | `Ctrl+Shift+E` | | |
 
 Jede Aktion ruft, egal ob über Menü, Werkzeugleiste oder Schaltfläche ausgelöst, denselben Handler auf (eine
 Aktion, mehrere Zugänge).
@@ -316,6 +317,7 @@ zum Typ jedes Arguments** ausführt. Links Namen oder Wörter suchen, eine Op w�
   Eine gewählte Ledger-Op fügt **den Aufruf mit Daten- und Pflichtargumenten** ein – z. B. `dem_slope(dem, cell_size=)` – mit dem
   Cursor in der ersten Lücke. Rechtsklick auf einen Op-Namen oder Strg+Umschalt+L darauf öffnet das Fenster dieser Op.
 - **Befehlspalette (Strg+P)**: `ledger: Name` öffnet das Fenster jeder Ledger-Op mit drei Eingaben (Strg+P → Name → Enter).
+- **Vom angezeigten Ergebnis aus**: Rechtsklick auf das Hauptbild → „Pipeline als Code → Editor“ (Strg+Umschalt+E; ein Skript, das das geöffnete Bild liest und läuft) / „Dieses Ergebnis an eine Ledger-Op…“ (das Fenster öffnet sich mit dem angezeigten Ergebnis als Bildeingabe).
 
 Manche Ops laufen nicht mit ihrem Beispiel (eine Grenze der Beispielerzeugung pro Op: am 2026-10-03 liefen 27 von 60
 Stichproben-Ops so). Dass das Fenster selbst keine Fehler hinzufügt, prüft ein Gate: Es muss mit der direkten Übergabe

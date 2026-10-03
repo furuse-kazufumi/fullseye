@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 363598497bd3 -->
+<!-- i18n-source-sha: bbeba242062b -->
 # The complete guide to Fullseye Studio
 
 [日本語](./STUDIO_GUIDE.md) · **English** · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md)
@@ -169,6 +169,7 @@ Inside the app, **Help ▸ Keyboard shortcuts (F1)** shows the full list in a ta
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
 | Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
 | Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
+| Pipeline as code → editor | `Ctrl+Shift+E` | | |
 
 Each action is invoked by the same handler whether from the menu, the toolbar or a button (one
 action, several entry points).
@@ -319,6 +320,7 @@ on the right.
   Picking a ledger op inserts **the call with its data and required arguments** — e.g. `dem_slope(dem, cell_size=)` — with the
   cursor in the first blank. Right-click an op name, or press Ctrl+Shift+L on it, to open that op's window.
 - **Command palette (Ctrl+P)**: `ledger: name` opens the window for any ledger op in three keystrokes (Ctrl+P → name → Enter).
+- **From the result you are looking at**: right-click the main image → "Pipeline as code → editor" (Ctrl+Shift+E; a script that reads the open image and runs) / "Send this result to a ledger op…" (the window opens with the shown result already selected as the image input).
 
 Some ops do not run on their sample (a limit of how each op's sample is built: on 2026-10-03, 27 of 60 sampled ops ran
 as is). That the window adds no failures of its own is checked by a gate: it must agree with passing the sample to the

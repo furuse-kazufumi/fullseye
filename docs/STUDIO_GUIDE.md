@@ -122,6 +122,7 @@ fullseye-studio             # pip install -e . 済みなら、コンソールス
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
 | Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
 | Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
+| Pipeline as code → editor | `Ctrl+Shift+E` | | |
 
 各アクションはメニュー・ツールバー・ボタンのいずれからも同じハンドラで呼ばれます（1 動作・複数入口）。
 
@@ -258,6 +259,7 @@ Studio は「パイプラインからしかコードを呼べない」段階を�
   台帳の op を選ぶと `dem_slope(dem, cell_size=)` のように**データ引数と必須引数を並べた形**が入り、カーソルが最初の空欄に来ます。
   op 名の上で右クリックか Ctrl+Shift+L で、その op の実行窓が開きます。
 - **コマンドパレット(Ctrl+P)**: `ledger: 名前` で、台帳のどの op の実行窓も 3 手(Ctrl+P → 名前 → Enter)で開きます。
+- **見ている結果から**: メイン画面の画像を右クリック →「パイプラインをコードとしてエディタへ」(Ctrl+Shift+E。開いている画像を読んで走るスクリプト)/「この結果を台帳の op へ…」(実行窓の画像入力に、いま見ている結果が最初から選ばれる)。
 
 見本で走らない op もあります(op ごとの見本の作り方の限界で、2026-10-03 の実測では 60 本中 27 本が見本のまま走る)。
 窓の側が失敗を増やしていないことは、「見本を直接 op に渡した結果と一致する」門で確かめています。

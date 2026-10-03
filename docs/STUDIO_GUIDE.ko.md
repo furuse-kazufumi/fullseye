@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 363598497bd3 -->
+<!-- i18n-source-sha: bbeba242062b -->
 # Fullseye Studio 완전 가이드
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · **한국어** · [Deutsch](./STUDIO_GUIDE.de.md)
@@ -125,6 +125,7 @@ fullseye-studio             # pip install -e .가 되어 있다면 콘솔 스크
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
 | Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
 | Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
+| Pipeline as code → editor | `Ctrl+Shift+E` | | |
 
 각 동작은 메뉴·툴바·버튼 중 어느 것에서 호출하든 동일한 핸들러가 실행됩니다(하나의 동작, 여러 개의 입구).
 
@@ -262,6 +263,7 @@ Studio는 "파이프라인에서만 코드를 호출할 수 있는" 단계를 �
   대장 op를 고르면 `dem_slope(dem, cell_size=)`처럼 **데이터 인수와 필수 인수를 늘어놓은 형태**가 들어가고 커서가 첫 빈칸에 옵니다.
   op 이름 위에서 오른쪽 클릭하거나 Ctrl+Shift+L을 누르면 그 op의 실행 창이 열립니다.
 - **명령 팔레트(Ctrl+P)**: `ledger: 이름`으로 어떤 대장 op의 창이든 세 번(Ctrl+P → 이름 → Enter)에 엽니다.
+- **보고 있는 결과에서**: 메인 화면의 이미지를 오른쪽 클릭 → "파이프라인을 코드로 에디터에"(Ctrl+Shift+E, 열린 이미지를 읽어 실행하는 스크립트) / "이 결과를 대장 op로…"(실행 창의 이미지 입력에 지금 보는 결과가 처음부터 선택됨).
 
 샘플로 실행되지 않는 op도 있습니다(op별 샘플을 만드는 방식의 한계로, 2026-10-03 실측에서는 60개 중 27개가 샘플 그대로 실행됨).
 창이 실패를 늘리지 않는다는 것은 "샘플을 op에 직접 넘긴 결과와 일치한다"는 게이트로 확인합니다.
