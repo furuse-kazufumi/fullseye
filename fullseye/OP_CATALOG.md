@@ -2240,7 +2240,7 @@ _計 42 ops / 3 categories。_
 - `signal_features` (`signal → table`) — A compact acoustic/vibration feature vector for anomaly detection:
 
 ## Math operators(opsmath)by category
-_計 113 ops / 12 categories。_
+_計 114 ops / 12 categories。_
 
 
 視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。北極星は「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
@@ -2357,7 +2357,7 @@ _計 113 ops / 12 categories。_
 - `stat_correlation` (`matrix → matrix`) — Pearson correlation matrix of ``(N, D)`` observations → ``(D, D)``.
 - `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
 
-### transform(15)
+### transform(16)
 - `abel_transform` (`signal → signal`) — 軸対称な分布 f(r)(r = 0, dr, 2dr, … の標本)を投影 A(y) に写す(前向き Abel 変換)。
 - `abel_inverse` (`signal → signal`) — 投影 A(y) から軸対称な分布 f(r) を戻す(逆 Abel 変換 = 軸対称物体の断層化)。
 - `abel_inverse_image` (`image2d → table`) — 軸対称な物体を横から撮った**画像**(縦 = 対称軸の向き、横 = 軸からの距離)を、行ごとに逆 Abel して断面画像にする。
@@ -2369,6 +2369,7 @@ _計 113 ops / 12 categories。_
 - `tf_step_response` (`signal, signal, signal → signal`) — 単位ステップ応答 y(t) = L⁻¹[H(s)/s](t)。
 - `tf_bilinear` (`signal, signal → table`) — Tustin(双一次)変換 s = K (z − 1)/(z + 1) で連続系を離散系に写す。
 - `laplace_inverse_talbot` (`signal, signal, signal → signal`) — 有理関数 F(s) = num(s)/den(s) の数値逆ラプラス変換(固定 Talbot 法)。
+- `hankel_image` (`image2d → table`) — 軸対称な画像(円い開口・ガウスの塊・回折の輪)の 2 次元フーリエ変換を、動径の 1 本の Hankel 変換で求める。
 - `dct_transform` (`image2d → table`) — 正規直交 DCT-II(``inverse=True`` で DCT-III = 逆変換)を N 次元で。
 - `wavelet_filters` (` → table`) — Daubechies の正規直交ウェーブレット dbN のフィルタを、教科書の構成(スペクトル分解)で作る。
 - `dwt_transform` (`image2d → table`) — Daubechies dbN の多段・N 次元の離散ウェーブレット変換(周期境界で厳密に正規直交)。

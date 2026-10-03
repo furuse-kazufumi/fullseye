@@ -1,23 +1,41 @@
 ---
-op: dwt_inverse
+op: hankel_image
 dim: math
 category: transform
-in: table
-out: image2d
+in: image2d
+out: table
 examples: [transforms_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
 ---
 
-# dwt_inverse — MATH `transform` op
+# hankel_image — MATH `transform` op
 
-- **データ種**: `table` → `image2d`
-- **呼び出し**: `import fullseye as fs; fs.ledger.dwt_inverse(coeffs: 'dict') -> 'np.ndarray'` (実装を直接呼ぶなら `import mathtransforms; mathtransforms.dwt_inverse(coeffs: 'dict') -> 'np.ndarray'`、台帳から引くなら `opsmath.get("dwt_inverse")`)
+- **データ種**: `image2d` → `table`
+- **呼び出し**: `import fullseye as fs; fs.ledger.hankel_image(image, *, center=None, spacing: 'float' = 1.0, n: 'int' = 256, r_max: 'float | None' = None) -> 'dict'` (実装を直接呼ぶなら `import mathtransforms; mathtransforms.hankel_image(image, *, center=None, spacing: 'float' = 1.0, n: 'int' = 256, r_max: 'float | None' = None) -> 'dict'`、台帳から引くなら `opsmath.get("hankel_image")`)
 
 ## 使い方
 
-``dwt_transform`` の結果から元の配列に戻す(正規直交なので解析の転置)。
+軸対称な画像(円い開口・ガウスの塊・回折の輪)の 2 次元フーリエ変換を、動径の 1 本の Hankel 変換で求める。
+
+画像を中心からの距離で 1 画素幅の輪に分けて平均し(動径の分布)、``hankel_transform``(0 次)にかける。
+軸対称なら 2 次元の変換が**1 本の積分**で済み(輪で平均するので雑音も 1/√(輪の画素数) に減る)、軸対称から
+どれだけ崩れているか(``asymmetry``)を数で返す。周波数の刻みは 2-D FFT と同じく 1/(2·半径) 程度で、細かくはならない。
+
+Args:
+    image: 2-D の実画像。
+    center: 中心 (行, 列)。省略すると明るさの重心。
+    spacing: 1 画素の長さ(周波数の単位を決める)。
+    n: Hankel 変換の標本数。
+    r_max: 使う半径の上限(既定 = 中心から画像の縁までの最短距離。角の欠けた輪は使わない)。
+
+Returns:
+    ``nu``(周波数)・``F``(2-D フーリエ変換の動径断面、∬ f e^{−2πi k·x} dx の値)・``r``・``profile``(動径の分布)・
+    ``center``・``asymmetry`` = ‖画像 − 分布から作り直した軸対称の画像‖ / ‖画像‖(0 なら軸対称。暗い背景で薄めない)。
+
+門: 半径 R の円板は F(ν) = R J₁(2πνR)/ν(Airy)、exp(−π r²/σ²) は σ² exp(−π σ² ν²)(自己双対の拡大)、
+2-D FFT の動径断面と一致。
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -43,9 +61,9 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 - [transforms_tour](../../../../examples/transforms_tour.py) — `py -3.11 examples/transforms_tour.py`
 
-## 型が繋がる次の op(`image2d` を入力に取れる)
+## 型が繋がる次の op(`table` を入力に取れる)
 
-[wave_fringe_period](../wave/wave_fringe_period.md) · [abel_inverse_image](abel_inverse_image.md) · [abel_revolve](abel_revolve.md) · [hankel_image](hankel_image.md) · [dct_transform](dct_transform.md) · [dwt_transform](dwt_transform.md) · [chebyshev_coeffs_nd](../numerics/chebyshev_coeffs_nd.md) · [geodesic_heat_grid](../geometry/geodesic_heat_grid.md)
+[dynsys_poincare_section](../dynsys/dynsys_poincare_section.md) · [dwt_inverse](dwt_inverse.md) · [chebyshev_eval_nd](../numerics/chebyshev_eval_nd.md)
 
 ## 同カテゴリ(`transform`)
 

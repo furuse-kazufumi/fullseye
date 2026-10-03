@@ -17,7 +17,7 @@ with warnings.catch_warnings():
 
 LEDGER = ["abel_transform", "abel_inverse", "abel_inverse_image", "abel_revolve", "hankel_transform", "tf_poles_zeros", "tf_freq_response",
           "tf_impulse_response", "tf_step_response", "tf_bilinear", "laplace_inverse_talbot",
-          "dct_transform", "wavelet_filters", "dwt_transform", "dwt_inverse"]
+          "dct_transform", "wavelet_filters", "dwt_transform", "dwt_inverse", "hankel_image"]
 
 
 # ---- 公開経路 --------------------------------------------------------------------- #
@@ -283,3 +283,55 @@ def test_dwt_rejects_bad_shapes():
         M.wavelet_filters(11)
     with pytest.raises(ValueError):
         M.dwt_inverse({"approx": np.zeros(4)})
+
+
+# ── 画像の動径から 2 次元フーリエ変換(hankel_image)───────────────────────────────────────────── #
+def _disk_image(N, c, R, s=8):
+    ys, xs = (np.indices((N * s, N * s)) + 0.5) / s - 0.5
+    return (np.hypot(ys - c, xs - c) <= R).reshape(N, s, N, s).mean((1, 3))
+
+
+def test_hankel_image_gaussian_and_airy():
+    """ガウス exp(−πr²/σ²) → σ² exp(−πσ²ν²)、半径 R の円板 → R J₁(2πνR)/ν(Airy)。画像 1 枚から 1e-2 以内。"""
+    from scipy import special
+    N, c = 257, 128
+    yy, xx = np.indices((N, N))
+    sig = 24.0
+    o = M.hankel_image(np.exp(-math.pi * np.hypot(yy - c, xx - c) ** 2 / sig ** 2))
+    m = o["nu"] < 0.2
+    assert np.abs(o["F"][m] - sig ** 2 * np.exp(-math.pi * sig ** 2 * o["nu"][m] ** 2)).max() < 3e-3 * sig ** 2
+    assert np.allclose(o["center"], (c, c), atol=1e-9)
+    for R in (20.0, 40.0):
+        o = M.hankel_image(_disk_image(N, c, R), center=(c, c))
+        m = (o["nu"] > 0) & (o["nu"] < 0.2)
+        airy = R * special.j1(2 * math.pi * o["nu"][m] * R) / o["nu"][m]
+        assert np.abs(o["F"][m] - airy).max() < 1e-2 * math.pi * R * R
+
+
+def test_hankel_image_matches_the_fft2_radial_slice():
+    """独立経路: 2-D FFT の動径断面(1/N 刻みの粗い周波数)に、Hankel 側を補間して重ねると一致する。"""
+    N, c, R = 257, 128, 20.0
+    D = _disk_image(N, c, R)
+    o = M.hankel_image(D, center=(c, c))
+    F2 = np.abs(np.fft.fftshift(np.fft.fft2(np.fft.ifftshift(D))))[c, c:]
+    fq = np.fft.fftshift(np.fft.fftfreq(N))[c:]
+    m = fq < 0.2
+    assert np.abs(np.interp(fq[m], o["nu"], np.abs(o["F"])) - F2[m]).max() < 3e-2 * math.pi * R * R
+
+
+def test_hankel_image_reports_asymmetry():
+    """軸対称なら asymmetry ≈ 0、楕円は崩れるほど大きい(単調)。"""
+    N, c = 257, 128
+    yy, xx = np.indices((N, N))
+    assert M.hankel_image(np.exp(-math.pi * np.hypot(yy - c, xx - c) ** 2 / 144))["asymmetry"] < 1e-2
+    a = [M.hankel_image(np.exp(-math.pi * (((yy - c) / 10) ** 2 + ((xx - c) / b) ** 2)))["asymmetry"] for b in (10.5, 12, 16)]
+    assert a[0] < a[1] < a[2] and a[2] > 0.15
+
+
+def test_hankel_image_rejects_bad_input():
+    with pytest.raises(ValueError):
+        M.hankel_image(np.ones((4, 4)))
+    with pytest.raises(ValueError):
+        M.hankel_image(np.zeros((32, 32)))                                    # 重心が無い
+    with pytest.raises(ValueError):
+        M.hankel_image(np.ones((32, 32)), center=(1, 1))                      # 縁に近すぎる

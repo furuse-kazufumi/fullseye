@@ -20,6 +20,8 @@ fullseye には FFT・DCT・Radon は揃っていたが、**Laplace 変換の系
    表すので縁の周りに波紋が出る。Daubechies のウェーブレット(JPEG 2000)は場所を持つので縁がくっきり残る。
    ただし 1% まで削ると差は消え、0.5% では DCT が上回る(どちらが勝つかは残す量で決まる)。
 6. **消失モーメント** —— dbN の詳細係数は N−1 次までの多項式をちょうど 0 にする。2 次式は db3 で消え、db2 では残る。
+7. **円い穴の写真から回折像** —— 軸対称な画像の 2 次元フーリエ変換は、動径の分布 1 本の Hankel 変換で済む
+   (fs.hankel_image)。2-D FFT の断面・Airy の閉じた式と重なる。楕円に崩すと「軸対称でない」を数で返す。
 
 【グラウンドトゥルース】すべて閉じた式。Abel: ガウスの対 / Hankel: 円板 ↔ J₁ / s 領域: 2 次系のステップ応答 /
 Talbot: 1/√s ↔ 1/√(πt) と行列指数(別経路)。DCT / DWT: 逆変換で元に戻る(正規直交、Parseval)。
@@ -203,6 +205,24 @@ def run() -> dict:
     print("6) 2 次式の詳細係数(継ぎ目を除く最大): db2 %.1e / db3 %.1e" % (np.abs(d_db2[2:-2]).max(), np.abs(d_db3[2:-3]).max()))
     assert np.abs(d_db3[2:-3]).max() < 1e-11 < 1e-3 < np.abs(d_db2[2:-2]).max()
 
+    # ---- 7. 円い穴の写真から回折像 -------------------------------------------------------------- #
+    Nh, ch, Rh, ss = 257, 128, 20.0, 8
+    ys_, xs_ = (np.indices((Nh * ss, Nh * ss)) + 0.5) / ss - 0.5
+    hole = (np.hypot(ys_ - ch, xs_ - ch) <= Rh).reshape(Nh, ss, Nh, ss).mean((1, 3))
+    hi = fs.hankel_image(hole, center=(ch, ch))
+    mh = (hi["nu"] > 0) & (hi["nu"] < 0.15)
+    airy_h = Rh * special.j1(2 * math.pi * hi["nu"][mh] * Rh) / hi["nu"][mh]
+    f2 = np.abs(np.fft.fftshift(np.fft.fft2(np.fft.ifftshift(hole))))[ch, ch:]
+    fq2 = np.fft.fftshift(np.fft.fftfreq(Nh))[ch:]
+    err_h = float(np.abs(hi["F"][mh] - airy_h).max() / (math.pi * Rh * Rh))
+    yy_, xx_ = np.indices((Nh, Nh))
+    ell = np.hypot((yy_ - ch) / 1.0, (xx_ - ch) / 1.3) <= Rh
+    asym_ell = fs.hankel_image(ell.astype(float), center=(ch, ch))["asymmetry"]
+    print("7) 円い穴(半径 %.0f 画素)の写真 → 回折像: Airy との最大差 %.1e(山の高さ比)、非対称度 円 %.3f / 楕円 %.2f"
+          % (Rh, err_h, hi["asymmetry"], asym_ell))
+    assert err_h < 1e-2 and asym_ell > 2 * hi["asymmetry"]
+    out.update(hankel_image_err=err_h)
+
     # ---- 図(学習系サイトの型: 真値は破線、失敗例を隣に、同じ量は同じ色) ---------------------- #
     if figs.enabled():
         figs.save_grid("abel_flame",
@@ -298,6 +318,17 @@ def run() -> dict:
                                "db2 は 1 次までなので 2 次の項が %.1e 残り(失敗例)、db3 は %.0e(丸め誤差)。"
                                "滑らかな部分の係数がほぼ 0 になる —— これが圧縮が効く理由。"
                                % (np.abs(d_db2[2:-2]).max(), max(np.abs(d_db3[2:-3]).max(), 1e-17)))
+        mf = fq2 < 0.15
+        figs.save_plot("hole_diffraction",
+                       [("Airy の閉じた式 R·J₁(2πνR)/ν", hi["nu"][mh], np.abs(airy_h)),
+                        ("2-D FFT の断面(1/257 刻み)", fq2[mf], f2[mf]),
+                        ("動径の分布 1 本の Hankel 変換(fs.hankel_image)", hi["nu"][mh], np.abs(hi["F"][mh]))],
+                       kinds=["line", "scatter", "line"], styles=["dashed", None, None],
+                       colors=["reference", "wrong", "emphasis"], xlabel="空間周波数 ν(1/画素)", ylabel="|F(ν)|",
+                       title="円い穴の写真から回折像 —— 2 次元の変換が 1 本の積分で済む",
+                       caption="半径 %.0f 画素の円い穴の写真。軸対称なので、中心からの距離ごとに平均した分布 1 本を Hankel 変換すれば、"
+                               "2-D FFT と同じ回折像(Airy)になる(閉じた式との差は山の高さの %.1f%%)。穴を楕円に崩すと非対称度が "
+                               "%.3f → %.2f に上がり、「この方法を使ってよいか」を数で知らせる。" % (Rh, 100 * err_h, hi["asymmetry"], asym_ell))
     assert not figs.errors(), figs.errors()
 
     out["elapsed_s"] = round(time.perf_counter() - t0, 3)

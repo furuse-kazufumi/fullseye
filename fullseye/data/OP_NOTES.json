@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2648,
- "n_notes": 2654,
+ "n_ops": 2649,
+ "n_notes": 2655,
  "notes": {
   "vol_dilate": [
    {
@@ -21340,6 +21340,16 @@
     "in": "image2d",
     "out": "table",
     "path": "docs/ops/math/transform/dwt_transform.md"
+   }
+  ],
+  "hankel_image": [
+   {
+    "op": "hankel_image",
+    "dim": "math",
+    "category": "transform",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/math/transform/hankel_image.md"
    }
   ],
   "hankel_transform": [

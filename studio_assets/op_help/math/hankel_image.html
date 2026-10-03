@@ -1,9 +1,23 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<h2 style="color:#f5a524;margin:0 0 4px 0">dwt_inverse — MATH <code style="color:#22d3bf">transform</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dwt_inverse(coeffs: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathtransforms; mathtransforms.dwt_inverse(coeffs: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;dwt_inverse&quot;)</code>)</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">hankel_image — MATH <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathtransforms; mathtransforms.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;hankel_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>`<code style="color:#22d3bf">dwt_transform</code>` の結果から元の配列に戻す(正規直交なので解析の転置)。</p>
+<p>軸対称な画像(円い開口・ガウスの塊・回折の輪)の 2 次元フーリエ変換を、動径の 1 本の Hankel 変換で求める。</p>
+<p>画像を中心からの距離で 1 画素幅の輪に分けて平均し(動径の分布)、`<code style="color:#22d3bf">hankel_transform</code>`(0 次)にかける。</p>
+<p>軸対称なら 2 次元の変換が<b>1 本の積分</b>で済み(輪で平均するので雑音も 1/√(輪の画素数) に減る)、軸対称から</p>
+<p>どれだけ崩れているか(`<code style="color:#22d3bf">asymmetry</code>`)を数で返す。周波数の刻みは 2-D FFT と同じく 1/(2·半径) 程度で、細かくはならない。</p>
+<p>Args:</p>
+<p>image: 2-D の実画像。</p>
+<p>center: 中心 (行, 列)。省略すると明るさの重心。</p>
+<p>spacing: 1 画素の長さ(周波数の単位を決める)。</p>
+<p>n: Hankel 変換の標本数。</p>
+<p>r_max: 使う半径の上限(既定 = 中心から画像の縁までの最短距離。角の欠けた輪は使わない)。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">nu</code><code style="color:#22d3bf">(周波数)・</code><code style="color:#22d3bf">F</code><code style="color:#22d3bf">(2-D フーリエ変換の動径断面、∬ f e^{−2πi k·x} dx の値)・</code><code style="color:#22d3bf">r</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">profile</code>`(動径の分布)・</p>
+<p>`<code style="color:#22d3bf">center</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">asymmetry</code>` = ‖画像 − 分布から作り直した軸対称の画像‖ / ‖画像‖(0 なら軸対称。暗い背景で薄めない)。</p>
+<p>門: 半径 R の円板は F(ν) = R J₁(2πνR)/ν(Airy)、exp(−π r²/σ²) は σ² exp(−π σ² ν²)(自己双対の拡大)、</p>
+<p>2-D FFT の動径断面と一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• **complex 入力は <code style="color:#22d3bf">ValueError</code>** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
@@ -19,8 +33,8 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:transforms_tour">transforms_tour</a> — <code style="color:#22d3bf">py -3.11 examples/transforms_tour.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
-<p><a style="color:#22d3bf" href="opmath:wave_fringe_period">wave_fringe_period</a> · <a style="color:#22d3bf" href="opmath:abel_inverse_image">abel_inverse_image</a> · <a style="color:#22d3bf" href="opmath:abel_revolve">abel_revolve</a> · <a style="color:#22d3bf" href="opmath:hankel_image">hankel_image</a> · <a style="color:#22d3bf" href="opmath:dct_transform">dct_transform</a> · <a style="color:#22d3bf" href="opmath:dwt_transform">dwt_transform</a> · <a style="color:#22d3bf" href="opmath:chebyshev_coeffs_nd">chebyshev_coeffs_nd</a> · <a style="color:#22d3bf" href="opmath:geodesic_heat_grid">geodesic_heat_grid</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a> · <a style="color:#22d3bf" href="opmath:dwt_inverse">dwt_inverse</a> · <a style="color:#22d3bf" href="opmath:chebyshev_eval_nd">chebyshev_eval_nd</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">transform</code>)</h3>
 <p><a style="color:#22d3bf" href="opmath:abel_transform">abel_transform</a> · <a style="color:#22d3bf" href="opmath:abel_inverse">abel_inverse</a> · <a style="color:#22d3bf" href="opmath:abel_inverse_image">abel_inverse_image</a> · <a style="color:#22d3bf" href="opmath:abel_revolve">abel_revolve</a> · <a style="color:#22d3bf" href="opmath:hankel_transform">hankel_transform</a> · <a style="color:#22d3bf" href="opmath:tf_poles_zeros">tf_poles_zeros</a> · <a style="color:#22d3bf" href="opmath:tf_freq_response">tf_freq_response</a> · <a style="color:#22d3bf" href="opmath:tf_impulse_response">tf_impulse_response</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

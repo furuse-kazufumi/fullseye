@@ -38,6 +38,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - ★**Chebyshev 補間の N 次元版 2 op**: `chebyshev_coeffs_nd`(テンソル積の Lobatto 格子 → DCT-I で係数)・`chebyshev_eval_nd`
   (散在点か格子で評価)。門: 多項式の厳密再現、係数の減衰が Bernstein の楕円 ρ と 6 桁一致、3-D のスペクトル収束。
   numerics_tour に「2 次元の Runge 現象」(等間隔 25×25 は誤差 8e5、Chebyshev は 8e-3)。
+- ★**`hankel_image`**: 軸対称な画像の 2-D フーリエ変換を動径の分布 1 本の Hankel 変換で(中心は明るさの重心、軸対称からの崩れを
+  `asymmetry` で報告)。門: 円板 → Airy、ガウスの自己双対、2-D FFT の断面と一致、楕円で単調に増える非対称度。transforms_tour に
+  「円い穴の写真から回折像」。★下書きの docstring に「周波数を細かく取れる」と書いたが、刻みは FFT と同じ 1/(2·半径) —— 削った。
 - **非推奨(0.4.0 で削除)**: `gen_contour_nurbs_xld`・`gen_nurbs_interp`(`contours_xld2`)—— 名前に反して NURBS ではなく、
   重みなしで全制御点を通る**補間 B スプライン**だった。呼ぶと `DeprecationWarning`、docstring に正体と移行先
   (`nurbs_curve`)を書いた。動作は変えていない。

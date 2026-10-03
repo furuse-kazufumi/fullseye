@@ -196,7 +196,7 @@ with warnings.catch_warnings():
         tf_bilinear,
         laplace_inverse_talbot,
         laplace_inverse_func,
-        dct_transform, wavelet_filters, dwt_transform, dwt_inverse,
+        hankel_image, dct_transform, wavelet_filters, dwt_transform, dwt_inverse,
         # 数値計算の古典と特殊関数(2026-10-03)
         erf,
         erfc,
@@ -892,7 +892,7 @@ __all__ = [
     "dynsys_lyapunov_spectrum", "dynsys_bifurcation_map",
     "dynsys_correlation_dimension",
     "abel_transform", "abel_inverse", "abel_inverse_image", "abel_revolve", "hankel_transform", "tf_poles_zeros", "tf_freq_response", "tf_impulse_response", "tf_step_response", "tf_bilinear", "laplace_inverse_talbot", "laplace_inverse_func",
-    "dct_transform", "wavelet_filters", "dwt_transform", "dwt_inverse",
+    "hankel_image", "dct_transform", "wavelet_filters", "dwt_transform", "dwt_inverse",
     "erf", "erfc", "bessel", "gauss_quadrature", "gauss_cubature", "chebyshev_coeffs_nd", "chebyshev_eval_nd", "low_discrepancy", "chebyshev_nodes", "interp_barycentric", "integrate_hamiltonian",
     "lomb_scargle", "music_doa", "esprit_doa", "ula_snapshots", "n_sources_mdl", "hilbert_analytic",
     "assign_hungarian", "hist_distance", "stat_ttest_paired", "stat_ttest_welch", "stat_ks_test", "stat_chi2_gof", "crlb_gaussian", "kalman_smooth", "mat_expm", "mat_logm", "se3_exp", "se3_log",

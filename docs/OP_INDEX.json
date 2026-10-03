@@ -1,8 +1,8 @@
 {
- "n_ops": 2648,
+ "n_ops": 2649,
  "tiers": {
   "color": 12,
-  "ledger": 1697,
+  "ledger": 1698,
   "nary": 17,
   "registry": 922
  },
@@ -8165,6 +8165,19 @@
    "tier": "ledger",
    "ledger": "opsprintpath",
    "dim": "printpath",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "hankel_image",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "transform",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
    "in_sorts": [
     "image2d"
    ]

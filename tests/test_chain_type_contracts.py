@@ -282,6 +282,7 @@ def test_opsmath_call_returns_declared_types():
         "esprit_doa": (snap, 2),
         "n_sources_mdl": (snap,),
         "hilbert_analytic": (np.cos(np.linspace(0, 20, 64)),),
+        "hankel_image": (np.exp(-np.hypot(*(np.indices((33, 33)) - 16.0)) ** 2 / 40.0),),
         "dct_transform": (np.random.default_rng(0).random((8, 8)),),
         "wavelet_filters": (2,),
         "dwt_transform": (np.random.default_rng(0).random((8, 8)),),

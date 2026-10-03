@@ -29,7 +29,7 @@ from scipy import interpolate, linalg, special
 
 __all__ = [
     "abel_transform", "abel_inverse", "abel_inverse_image", "abel_revolve",
-    "hankel_transform",
+    "hankel_transform", "hankel_image",
     "tf_poles_zeros", "tf_freq_response", "tf_impulse_response", "tf_step_response",
     "tf_bilinear", "laplace_inverse_talbot", "laplace_inverse_func",
     "dct_transform", "wavelet_filters", "dwt_transform", "dwt_inverse",
@@ -544,3 +544,59 @@ def dwt_inverse(coeffs: dict) -> np.ndarray:
             allb = nb
         cur = allb[""]
     return cur
+
+
+def hankel_image(image, *, center=None, spacing: float = 1.0, n: int = 256, r_max: float | None = None) -> dict:
+    """軸対称な画像(円い開口・ガウスの塊・回折の輪)の 2 次元フーリエ変換を、動径の 1 本の Hankel 変換で求める。
+
+    画像を中心からの距離で 1 画素幅の輪に分けて平均し(動径の分布)、``hankel_transform``(0 次)にかける。
+    軸対称なら 2 次元の変換が**1 本の積分**で済み(輪で平均するので雑音も 1/√(輪の画素数) に減る)、軸対称から
+    どれだけ崩れているか(``asymmetry``)を数で返す。周波数の刻みは 2-D FFT と同じく 1/(2·半径) 程度で、細かくはならない。
+
+    Args:
+        image: 2-D の実画像。
+        center: 中心 (行, 列)。省略すると明るさの重心。
+        spacing: 1 画素の長さ(周波数の単位を決める)。
+        n: Hankel 変換の標本数。
+        r_max: 使う半径の上限(既定 = 中心から画像の縁までの最短距離。角の欠けた輪は使わない)。
+
+    Returns:
+        ``nu``(周波数)・``F``(2-D フーリエ変換の動径断面、∬ f e^{−2πi k·x} dx の値)・``r``・``profile``(動径の分布)・
+        ``center``・``asymmetry`` = ‖画像 − 分布から作り直した軸対称の画像‖ / ‖画像‖(0 なら軸対称。暗い背景で薄めない)。
+
+    門: 半径 R の円板は F(ν) = R J₁(2πνR)/ν(Airy)、exp(−π r²/σ²) は σ² exp(−π σ² ν²)(自己双対の拡大)、
+    2-D FFT の動径断面と一致。
+    """
+    img = np.asarray(image, dtype=np.float64)
+    if img.ndim != 2 or min(img.shape) < 8 or not np.all(np.isfinite(img)):
+        raise ValueError("hankel_image: 8×8 以上の有限値の 2-D 画像")
+    h = float(spacing)
+    if not (h > 0 and math.isfinite(h)):
+        raise ValueError("hankel_image: spacing は正の有限値")
+    H, W = img.shape
+    yy, xx = np.indices(img.shape, dtype=np.float64)
+    if center is None:
+        tot = img.sum()
+        if not tot > 0:
+            raise ValueError("hankel_image: 明るさの総和が 0 以下で重心が無い(center を渡す)")
+        cy, cx = float((img * yy).sum() / tot), float((img * xx).sum() / tot)
+    else:
+        cy, cx = (float(v) for v in center)
+    rr = np.hypot(yy - cy, xx - cx)
+    lim = min(cy, cx, H - 1 - cy, W - 1 - cx) if r_max is None else float(r_max) / h
+    if lim < 4:
+        raise ValueError("hankel_image: 中心が縁に近すぎる(半径 4 画素以上が要る)")
+    k = np.rint(rr).astype(int)
+    nb = int(lim) + 1
+    sel = k < nb
+    cnt = np.bincount(k[sel], minlength=nb).astype(float)
+    s1 = np.bincount(k[sel], img[sel], minlength=nb)
+    sr = np.bincount(k[sel], rr[sel], minlength=nb)
+    ok = cnt > 0
+    prof = s1[ok] / cnt[ok]
+    r = sr[ok] / cnt[ok] * h                                   # 輪の**平均半径**(整数の k ではない: 内側の輪ほど偏る)
+    # 非対称度: 分布から作り直した軸対称の画像との残差(輪の中の明るさの勾配は数えない)
+    sym = np.interp(rr[sel] * h, r, prof)
+    asym = float(np.linalg.norm(img[sel] - sym) / max(float(np.linalg.norm(img[sel])), np.finfo(float).tiny))
+    ht = hankel_transform(r, prof, r_max=float(r[-1]), order=0, n=int(n))
+    return {"nu": ht["nu"], "F": ht["F"], "r": r, "profile": prof, "center": (cy, cx), "asymmetry": asym}

@@ -170,6 +170,7 @@ _CATALOG = {
         ("tf_bilinear", "mathtransforms", ["signal", "signal"], "table"),
         ("laplace_inverse_talbot", "mathtransforms", ["signal", "signal", "signal"], "signal"),
         # 係数を返す直交変換(N 次元、2026-10-03)。既存の xsp_dct / xmh_haar は画像 → 見せる画像で係数が無かった
+        ("hankel_image", "mathtransforms", ["image2d"], "table"),
         ("dct_transform", "mathtransforms", ["image2d"], "table"),
         ("wavelet_filters", "mathtransforms", [], "table"),
         ("dwt_transform", "mathtransforms", ["image2d"], "table"),
