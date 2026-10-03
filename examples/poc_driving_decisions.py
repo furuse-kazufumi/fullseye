@@ -243,8 +243,10 @@ def build_world():
         for yy in np.arange(-ROAD + 0.2, ROAD - 0.2, 0.9):
             V, F = _quad(xs, xs + 4.0, yy, yy + 0.45)
             add_flat(w, V, F, 12, (0.93, 0.93, 0.90), "crosswalk")
-    for yy in np.arange(ROAD + 0.4, ROAD + 3.0, 0.9):                       # 並行する横断歩道(交差道路を渡る)
-        V, F = _quad(X_CROSS[0] + 0.2, X_CROSS[1] - 0.2, yy, yy + 0.45)
+    # 並行する横断歩道(交差道路を渡る): 歩く向きは x、縞は交差道路の車の向き(y)に長く、x に並ぶ。
+    # ★2026-10-03 まで縞が x に 10 m 長く y に並んでいた(90° 回っていた、ユーザー指摘)。下の門が向きを確かめる。
+    for xx in np.arange(X_CROSS[0] + 0.2, X_CROSS[1] - 0.2 - 0.45 + 1e-9, 0.9):
+        V, F = _quad(xx, xx + 0.45, ROAD + 0.4, ROAD + 3.4)
         add_flat(w, V, F, 12, (0.93, 0.93, 0.90), "crosswalk_par")
     V, F = _quad(S_LINE - 0.45, S_LINE, 0.05, EDGE)                         # 停止線
     add_flat(w, V, F, 9, DW._LINE_COLOR, "stop_line")
@@ -296,6 +298,32 @@ def build_world():
     ids["marker"] = add_obj(w, {"V": V, "F": F, "color": np.tile([1.0, 0.0, 1.0], (len(F), 1)), "label": 17,
                                 "dims": (0.14, 0.14, 0.14)}, -900.0, 80.0, 0.0, "marker")
     return w, ids
+
+
+def check_crosswalk_orientation(w):
+    """横断歩道の縞の向きの門: 縞は**渡る道の車の向きに長く**、縞の並び(中心の広がり)は**渡る道の幅をほぼ覆う**。
+
+    主道路(x 向き、幅 2·ROAD)を渡る "crosswalk" は x に長く y に並び、交差道路(y 向き、幅 X_CROSS)を渡る
+    "crosswalk_par" は y に長く x に並ぶ。90° 回った縞は向きも広がりも両方で落ちる(以前の版で実際に起きた)。"""
+    road_w = {"crosswalk": (1, 2 * ROAD), "crosswalk_par": (0, X_CROSS[1] - X_CROSS[0])}   # (渡る向きの軸, 渡る道の幅)
+    for name, (ax, width) in road_w.items():
+        objs = [o for o in w["objects"] if o["name"] == name]
+        groups = {}
+        for o in objs:
+            V = w["V"][o["verts"][0]:o["verts"][1], :2]
+            ext = V.max(axis=0) - V.min(axis=0)
+            c = V.mean(axis=0)
+            groups.setdefault(round(float(c[1 - ax]) / 5.0), []).append((ext, c))   # 同じ横断歩道の縞を束ねる
+        ok = bool(objs)
+        worst = 0.0
+        for g in groups.values():
+            long_ok = all(e[1 - ax] > 2 * e[ax] for e, _ in g)             # 縞は車の向き(渡る向きと直交)に長い
+            cs = np.array([c[ax] for _, c in g])
+            span = float(cs.max() - cs.min() + 0.45) / width
+            worst = max(worst, abs(1 - span))
+            ok = ok and long_ok and span > 0.8
+        gate("横断歩道の縞の向き(%s): 渡る道の車の向きに長く、道幅の 8 割以上に並ぶ" % name, ok,
+             "(縞 %d 本、並びの過不足 最大 %.0f%%)" % (len(objs), 100 * worst))
 
 
 def move(w, i, x, y, yaw=0.0, z=0.0):
@@ -1826,6 +1854,7 @@ def main() -> int:
     tm = {}
     t = time.time()
     w, ids = build_world()
+    check_crosswalk_orientation(w)
     MIR = scene_mirrors(w, ids)
     tm["mirror"] = time.time() - t
     t = time.time()
