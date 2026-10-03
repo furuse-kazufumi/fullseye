@@ -16,6 +16,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   - ★**逆 Abel の「殻剥きは雑音に強い」は半分しか正しくなかった**: 雑音の誤差は微分が `1/dr`、殻剥きが `1/√dr` で増え、
     **標本数で優劣が逆転する**(n=60 では微分、n=960 では殻剥き)。片側だけの主張を書いた docstring を両向きの門で直した。
   - 例 `examples/transforms_tour.py`: 炎の断層化・円い穴の Airy・2 次系の減衰比と Bode・Talbot の M と丸め。
+- ★**推定と統計の古典 12 op(math 台帳 `estimation`、陣 3)**: Hungarian 割当・ヒストグラムの距離(KL/JS/Bhattacharyya/
+  Hellinger/χ²)・仮説検定(対応のある t・Welch・KS・χ² 適合度)・Cramér–Rao 下界・Kalman フィルタ + RTS 平滑化・
+  行列の exp/log と SE(3) の exp/log(`mathestimation.py`、門 `tests/test_mathestimation.py` 8 本)。
+  - ★**KL ≥ 0 の門で欠陥を捕まえた**: 床(eps)を q 全体に掛けていて、1e-49 の q が 1e-12 に持ち上がり KL(p‖p) = −3e-10。
+    床は q がちょうど 0 の所だけに直した。
+  - 例 `examples/estimation_tour.py`(貪欲 vs Hungarian・途切れた観測の Kalman・下界に乗る精度・平らな p 値・縮む行列補間)。
+- **図(examplefig)**: `save_plot(colors=)` で系列ごとの色(MATLAB の 'Color')、ラベルが空の系列は凡例に載せない
+  ('HandleVisibility','off')。線分ごとに凡例と色が並んで読めなかった割当の図で踏んだ。
 - ★**FFT では足りないスペクトル推定 5 op(math 台帳 `spectral`、陣 1b)**: Lomb–Scargle(不等間隔の周期図)、
   MUSIC / ESPRIT(部分空間法の到来方向推定)、MDL による波源の数の推定、答えの決まるアレイ入力(`mathspectral.py`、
   門 `tests/test_mathspectral.py` 6 本)。rangedoppler.py が「別の契約」と明記して入れていなかったもの。

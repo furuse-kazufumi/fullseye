@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mat_logm — MATH <code style="color:#22d3bf">estimation</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_logm(A) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathestimation; mathestimation.mat_logm(A) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;mat_logm&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>行列の主対数 log A(e^X = A となる X のうち固有値の虚部が (−π, π] のもの、scipy)。</p>
+<p>負の実固有値を持つ行列は実の主対数を持たない → ValueError(複素数を黙って返さない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
+<p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
+<p style="margin:2px 0 2px 12px">• **complex 输入一律 <code style="color:#22d3bf">ValueError</code>** —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• **含被掩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒绝「剥掉掩码直接使用下面原值」的隐式转换。请显式选择填充还是丢弃。</p>
+<p style="margin:2px 0 2px 12px">• **所有输入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明确给出个数后拒绝 —— 它会污染整个结果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形状严格</b>:不对 1-D 与 2-D 做隐式提升或广播(向量槽位收到矩阵、矩阵槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;请显式 reshape)。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩阵的算子与 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超过 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万个元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">matrix</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opmath:mat_solve">mat_solve</a> · <a style="color:#22d3bf" href="opmath:mat_lstsq">mat_lstsq</a> · <a style="color:#22d3bf" href="opmath:mat_svd">mat_svd</a> · <a style="color:#22d3bf" href="opmath:mat_eigh">mat_eigh</a> · <a style="color:#22d3bf" href="opmath:mat_pinv">mat_pinv</a> · <a style="color:#22d3bf" href="opmath:mat_cond">mat_cond</a> · <a style="color:#22d3bf" href="opmath:stat_covariance">stat_covariance</a> · <a style="color:#22d3bf" href="opmath:stat_correlation">stat_correlation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">estimation</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:assign_hungarian">assign_hungarian</a> · <a style="color:#22d3bf" href="opmath:hist_distance">hist_distance</a> · <a style="color:#22d3bf" href="opmath:stat_ttest_paired">stat_ttest_paired</a> · <a style="color:#22d3bf" href="opmath:stat_ttest_welch">stat_ttest_welch</a> · <a style="color:#22d3bf" href="opmath:stat_ks_test">stat_ks_test</a> · <a style="color:#22d3bf" href="opmath:stat_chi2_gof">stat_chi2_gof</a> · <a style="color:#22d3bf" href="opmath:crlb_gaussian">crlb_gaussian</a> · <a style="color:#22d3bf" href="opmath:kalman_smooth">kalman_smooth</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathestimation.py — MATH 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

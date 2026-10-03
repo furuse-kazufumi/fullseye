@@ -98,6 +98,14 @@
 <p style="margin:2px 0 2px 12px">• <b>music_doa</b><code style="color:#22d3bf">(X, n_sources=None)</code> / <b>esprit_doa</b><code style="color:#22d3bf">(X, n_sources=None)</code> — 部分空間法の到来方向推定。遅延和(<code style="color:#22d3bf">rangedoppler.beamform_doa</code>)は 1 ビーム幅の中の 2 波を分けられないが、こちらは分ける。<b>前提</b>: 波源の数が正しい・波どうしが無相関。同じ信号の反射(相関した波)では共分散の階数が潰れて割れない(門で確かめてある)。<code style="color:#22d3bf">n_sources=None</code> は MDL で推定。</p>
 <p style="margin:2px 0 2px 12px">• <b>n_sources_mdl</b><code style="color:#22d3bf">(X)</code> — 波源の数の推定(Wax &amp; Kailath 1985)。白色雑音・スナップショット数 ≫ 素子数が前提。</p>
 <p style="margin:2px 0 2px 12px">• <b>ula_snapshots</b><code style="color:#22d3bf">(angles_deg, n_elements, n_snapshots, snr_db=None)</code> — 答えの決まる入力(無相関の複素ガウス信号 + 白色雑音)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">estimation(推定と統計の古典 — 2026-10-03)</h3>
+<p>実装は <code style="color:#22d3bf">mathestimation.py</code>、例は <code style="color:#22d3bf">py -3.11 examples/estimation_tour.py</code>。門は第 2 実装(scipy・総当たり・一括最小二乗)と定理。</p>
+<p style="margin:2px 0 2px 12px">• <b>assign_hungarian</b><code style="color:#22d3bf">(cost, maximize=False)</code> — 割当問題。貪欲な最近傍(近い組から結ぶ)は追跡を取り違えることがある。禁止の組は inf でなく大きな有限値で。</p>
+<p style="margin:2px 0 2px 12px">• <b>hist_distance</b><code style="color:#22d3bf">(p, q, metric=&quot;kl&quot;|&quot;js&quot;|&quot;bhattacharyya&quot;|&quot;hellinger&quot;|&quot;chi2&quot;)</code> — 和で正規化する。★KL の床(eps)は q が<b>ちょうど 0</b> の所だけ(q 全体を床上げした最初の版は KL(p‖p) = −3e-10 を返した)。</p>
+<p style="margin:2px 0 2px 12px">• <b>stat_ttest_paired / stat_ttest_welch / stat_ks_test / stat_chi2_gof</b> — scipy と p 値が一致。帰無仮説の下で p は一様 = 「有意」の 5% は偶然。χ² は期待度数 &lt; 5 の区分の数も返す。</p>
+<p style="margin:2px 0 2px 12px">• <b>crlb_gaussian</b><code style="color:#22d3bf">(x, theta, sigma, model=&quot;constant&quot;|&quot;line&quot;|&quot;gaussian_peak&quot;|&quot;exp_decay&quot;|&quot;sinusoid&quot;)</code> — 白色ガウス雑音での Cramér–Rao 下界。最小二乗(効率的)はこれに一致し、どんな不偏推定もこれより良くならない。</p>
+<p style="margin:2px 0 2px 12px">• <b>kalman_smooth</b><code style="color:#22d3bf">(z, F, H, Q, R, x0, P0)</code> — Kalman フィルタ + RTS 平滑化。NaN の観測は欠測。平滑化 = 一括の最小二乗(定理、共分散も一致)。</p>
+<p style="margin:2px 0 2px 12px">• <b>mat_expm / mat_logm / se3_exp / se3_log</b> — 行列の指数・主対数(負の実固有値は拒否)、SE(3) の閉じた式。姿勢の補間は行列でなく ξ = se3_log の上で混ぜる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み)</h3>
 <p>repo 直下で <code style="color:#22d3bf">py -3.11</code> の対話環境か、<code style="color:#22d3bf">PYTHONPATH</code> に repo を通して実行。フィット厳密復元・PSD/直交性・SVD⇔固有値の交差検証・fail-closed(範囲外拒否)を数値で確認して <code style="color:#22d3bf">PASS</code> を出します(本ガイド作成時に実行し PASS を確認済み。16 op 全てを通すフル版は <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code>)。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np

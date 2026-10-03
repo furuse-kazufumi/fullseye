@@ -1,8 +1,8 @@
 {
- "n_ops": 2612,
+ "n_ops": 2624,
  "tiers": {
   "color": 12,
-  "ledger": 1661,
+  "ledger": 1673,
   "nary": 17,
   "registry": 922
  },
@@ -1379,6 +1379,19 @@
    "dim": "annotate",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "assign_hungarian",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "estimation",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
    ]
   },
   {
@@ -3619,6 +3632,20 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "crlb_gaussian",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "estimation",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
   },
   {
    "name": "crosshair",
@@ -8137,6 +8164,20 @@
    ]
   },
   {
+   "name": "hist_distance",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "measurement",
+   "category": "estimation",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
    "name": "histogram_match",
    "halcon": "",
    "in_sort": "image2d",
@@ -9042,6 +9083,25 @@
    "dim": "drive",
    "in_sorts": [
     "points"
+   ]
+  },
+  {
+   "name": "kalman_smooth",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "estimation",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "matrix",
+    "matrix",
+    "matrix",
+    "signal",
+    "matrix"
    ]
   },
   {
@@ -10196,6 +10256,32 @@
    "in_sort": "matrix",
    "out_sort": "table",
    "category": "linalg",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "mat_expm",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "estimation",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "mat_logm",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "estimation",
    "tier": "ledger",
    "ledger": "opsmath",
    "dim": "math",
@@ -16376,6 +16462,32 @@
    ]
   },
   {
+   "name": "se3_exp",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "matrix",
+   "category": "estimation",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "se3_log",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "signal",
+   "category": "estimation",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "seg_boundary_f",
    "halcon": "",
    "in_sort": "labels2d",
@@ -18040,6 +18152,19 @@
    ]
   },
   {
+   "name": "stat_chi2_gof",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "estimation",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
    "name": "stat_correlation",
    "halcon": "",
    "in_sort": "matrix",
@@ -18088,6 +18213,47 @@
    "ledger": "opsmath",
    "dim": "math",
    "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "stat_ks_test",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "estimation",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "stat_ttest_paired",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "estimation",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "stat_ttest_welch",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "estimation",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal",
     "signal"
    ]
   },

@@ -146,6 +146,17 @@ flowchart LR
 - **n_sources_mdl**`(X)` — 波源の数の推定(Wax & Kailath 1985)。白色雑音・スナップショット数 ≫ 素子数が前提。
 - **ula_snapshots**`(angles_deg, n_elements, n_snapshots, snr_db=None)` — 答えの決まる入力(無相関の複素ガウス信号 + 白色雑音)。
 
+### estimation(推定と統計の古典 — 2026-10-03)
+
+実装は `mathestimation.py`、例は `py -3.11 examples/estimation_tour.py`。門は第 2 実装(scipy・総当たり・一括最小二乗)と定理。
+
+- **assign_hungarian**`(cost, maximize=False)` — 割当問題。貪欲な最近傍(近い組から結ぶ)は追跡を取り違えることがある。禁止の組は inf でなく大きな有限値で。
+- **hist_distance**`(p, q, metric="kl"|"js"|"bhattacharyya"|"hellinger"|"chi2")` — 和で正規化する。★KL の床(eps)は q が**ちょうど 0** の所だけ(q 全体を床上げした最初の版は KL(p‖p) = −3e-10 を返した)。
+- **stat_ttest_paired / stat_ttest_welch / stat_ks_test / stat_chi2_gof** — scipy と p 値が一致。帰無仮説の下で p は一様 = 「有意」の 5% は偶然。χ² は期待度数 < 5 の区分の数も返す。
+- **crlb_gaussian**`(x, theta, sigma, model="constant"|"line"|"gaussian_peak"|"exp_decay"|"sinusoid")` — 白色ガウス雑音での Cramér–Rao 下界。最小二乗(効率的)はこれに一致し、どんな不偏推定もこれより良くならない。
+- **kalman_smooth**`(z, F, H, Q, R, x0, P0)` — Kalman フィルタ + RTS 平滑化。NaN の観測は欠測。平滑化 = 一括の最小二乗(定理、共分散も一致)。
+- **mat_expm / mat_logm / se3_exp / se3_log** — 行列の指数・主対数(負の実固有値は拒否)、SE(3) の閉じた式。姿勢の補間は行列でなく ξ = se3_log の上で混ぜる。
+
 ## 動く最小例(検証済み)
 
 repo 直下で `py -3.11` の対話環境か、`PYTHONPATH` に repo を通して実行。フィット厳密復元・PSD/直交性・SVD⇔固有値の交差検証・fail-closed(範囲外拒否)を数値で確認して `PASS` を出します(本ガイド作成時に実行し PASS を確認済み。16 op 全てを通すフル版は `py -3.11 examples/math_metrology.py`)。

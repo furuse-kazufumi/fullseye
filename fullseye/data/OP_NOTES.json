@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2612,
- "n_notes": 2618,
+ "n_ops": 2624,
+ "n_notes": 2630,
  "notes": {
   "vol_dilate": [
    {
@@ -20677,6 +20677,126 @@
     "category": "dynsys",
     "out": "flow2d",
     "path": "docs/ops/math/dynsys/ode_vector_field_grid.md"
+   }
+  ],
+  "assign_hungarian": [
+   {
+    "op": "assign_hungarian",
+    "dim": "math",
+    "category": "estimation",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/math/estimation/assign_hungarian.md"
+   }
+  ],
+  "crlb_gaussian": [
+   {
+    "op": "crlb_gaussian",
+    "dim": "math",
+    "category": "estimation",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/math/estimation/crlb_gaussian.md"
+   }
+  ],
+  "hist_distance": [
+   {
+    "op": "hist_distance",
+    "dim": "math",
+    "category": "estimation",
+    "in": "signal × signal",
+    "out": "measurement",
+    "path": "docs/ops/math/estimation/hist_distance.md"
+   }
+  ],
+  "kalman_smooth": [
+   {
+    "op": "kalman_smooth",
+    "dim": "math",
+    "category": "estimation",
+    "in": "matrix × matrix × matrix × matrix × matrix × signal × matrix",
+    "out": "table",
+    "path": "docs/ops/math/estimation/kalman_smooth.md"
+   }
+  ],
+  "mat_expm": [
+   {
+    "op": "mat_expm",
+    "dim": "math",
+    "category": "estimation",
+    "in": "matrix",
+    "out": "matrix",
+    "path": "docs/ops/math/estimation/mat_expm.md"
+   }
+  ],
+  "mat_logm": [
+   {
+    "op": "mat_logm",
+    "dim": "math",
+    "category": "estimation",
+    "in": "matrix",
+    "out": "matrix",
+    "path": "docs/ops/math/estimation/mat_logm.md"
+   }
+  ],
+  "se3_exp": [
+   {
+    "op": "se3_exp",
+    "dim": "math",
+    "category": "estimation",
+    "in": "signal",
+    "out": "matrix",
+    "path": "docs/ops/math/estimation/se3_exp.md"
+   }
+  ],
+  "se3_log": [
+   {
+    "op": "se3_log",
+    "dim": "math",
+    "category": "estimation",
+    "in": "matrix",
+    "out": "signal",
+    "path": "docs/ops/math/estimation/se3_log.md"
+   }
+  ],
+  "stat_chi2_gof": [
+   {
+    "op": "stat_chi2_gof",
+    "dim": "math",
+    "category": "estimation",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/math/estimation/stat_chi2_gof.md"
+   }
+  ],
+  "stat_ks_test": [
+   {
+    "op": "stat_ks_test",
+    "dim": "math",
+    "category": "estimation",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/math/estimation/stat_ks_test.md"
+   }
+  ],
+  "stat_ttest_paired": [
+   {
+    "op": "stat_ttest_paired",
+    "dim": "math",
+    "category": "estimation",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/math/estimation/stat_ttest_paired.md"
+   }
+  ],
+  "stat_ttest_welch": [
+   {
+    "op": "stat_ttest_welch",
+    "dim": "math",
+    "category": "estimation",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/math/estimation/stat_ttest_welch.md"
    }
   ],
   "interp_cubic": [

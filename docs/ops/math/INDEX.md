@@ -1,4 +1,4 @@
-# MATH operator help — 77 ops in 10 categories
+# MATH operator help — 89 ops in 11 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/math/<category>/<op>.md` を走査。
 
@@ -24,6 +24,10 @@
 ### dynsys (6)
 
 [dynsys_bifurcation_map](dynsys/dynsys_bifurcation_map.md) · [dynsys_correlation_dimension](dynsys/dynsys_correlation_dimension.md) · [dynsys_lyapunov_spectrum](dynsys/dynsys_lyapunov_spectrum.md) · [dynsys_poincare_section](dynsys/dynsys_poincare_section.md) · [ode_flow_states](dynsys/ode_flow_states.md) · [ode_vector_field_grid](dynsys/ode_vector_field_grid.md)
+
+### estimation (12)
+
+[assign_hungarian](estimation/assign_hungarian.md) · [crlb_gaussian](estimation/crlb_gaussian.md) · [hist_distance](estimation/hist_distance.md) · [kalman_smooth](estimation/kalman_smooth.md) · [mat_expm](estimation/mat_expm.md) · [mat_logm](estimation/mat_logm.md) · [se3_exp](estimation/se3_exp.md) · [se3_log](estimation/se3_log.md) · [stat_chi2_gof](estimation/stat_chi2_gof.md) · [stat_ks_test](estimation/stat_ks_test.md) · [stat_ttest_paired](estimation/stat_ttest_paired.md) · [stat_ttest_welch](estimation/stat_ttest_welch.md)
 
 ### interp_poly (6)
 

@@ -403,6 +403,21 @@ from mathspectral import (  # noqa: E402,F401
     ula_snapshots,
     n_sources_mdl,
 )
+# 推定と統計の古典(割当・分布の距離・検定・Cramér–Rao・Kalman 平滑化・行列の指数と対数、2026-10-03)
+from mathestimation import (  # noqa: E402,F401
+    assign_hungarian,
+    hist_distance,
+    stat_ttest_paired,
+    stat_ttest_welch,
+    stat_ks_test,
+    stat_chi2_gof,
+    crlb_gaussian,
+    kalman_smooth,
+    mat_expm,
+    mat_logm,
+    se3_exp,
+    se3_log,
+)
 # 仮想マシンビジョン環境: 部品を買う前に「その構成で狙う欠陥が見つかるか」を
 # 閉形式の光学 + 数式で作った欠陥 + 撮像連鎖で先に確かめる層。
 import defectgen  # noqa: E402  (mathematical defect models with pixel-perfect masks)
@@ -1142,6 +1157,19 @@ __all__ = [
     "esprit_doa",
     "ula_snapshots",
     "n_sources_mdl",
+    # 推定と統計の古典(2026-10-03)
+    "assign_hungarian",
+    "hist_distance",
+    "stat_ttest_paired",
+    "stat_ttest_welch",
+    "stat_ks_test",
+    "stat_chi2_gof",
+    "crlb_gaussian",
+    "kalman_smooth",
+    "mat_expm",
+    "mat_logm",
+    "se3_exp",
+    "se3_log",
     "visiondesign", "system_geometry", "resolving_power", "system_feasibility",
     "image_formation", "detectability_limit",
     "defectgen", "defect_scratch", "defect_pits", "defect_crack", "defect_blob",

@@ -271,6 +271,20 @@ def test_opsmath_call_returns_declared_types():
         "music_doa": (snap, 2),
         "esprit_doa": (snap, 2),
         "n_sources_mdl": (snap,),
+        # 推定と統計の古典(2026-10-03)
+        "assign_hungarian": (np.array([[4.0, 1.0, 3.0], [2.0, 0.0, 5.0], [3.0, 2.0, 2.0]]),),
+        "hist_distance": (np.array([1.0, 2.0, 3.0]), np.array([2.0, 2.0, 2.0])),
+        "stat_ttest_paired": (np.array([1.0, 2.0, 3.5, 4.0]), np.array([1.2, 2.1, 3.0, 4.6])),
+        "stat_ttest_welch": (np.array([1.0, 2.0, 3.5, 4.0]), np.array([2.2, 3.1, 4.0, 5.6, 4.4])),
+        "stat_ks_test": (np.linspace(-2, 2, 30),),
+        "stat_chi2_gof": (np.array([18.0, 22.0, 30.0, 30.0]),),
+        "crlb_gaussian": (np.linspace(-3, 3, 40), np.array([1.0, 0.2, 0.8]), 0.05),
+        "kalman_smooth": (np.linspace(0, 1, 10)[:, None], np.eye(1), np.eye(1), 0.01 * np.eye(1), 0.1 * np.eye(1),
+                          np.zeros(1), np.eye(1)),
+        "mat_expm": (np.array([[0.0, -0.3], [0.3, 0.0]]),),
+        "mat_logm": (np.array([[2.0, 0.1], [0.0, 1.5]]),),
+        "se3_exp": (np.array([0.1, 0.2, 0.3, 0.1, -0.2, 0.3]),),
+        "se3_log": (np.eye(4),),
     })
     from tools.chain_fuzz import TYPE_CHECKS
     missing = [n for n in opsmath.OPSMATH if n not in args]

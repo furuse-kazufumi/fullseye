@@ -20,11 +20,13 @@ funct1d に既存で、ここでは重複させない。
 import numpy as np
 
 import mathops
+import mathestimation
 import mathnumerics
 import mathspectral
 import mathtransforms
 
-_MOD = {"mathops": mathops, "mathtransforms": mathtransforms, "mathnumerics": mathnumerics, "mathspectral": mathspectral}
+_MOD = {"mathops": mathops, "mathtransforms": mathtransforms, "mathnumerics": mathnumerics, "mathspectral": mathspectral,
+        "mathestimation": mathestimation}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   種別語彙: matrix(2-D)/ signal(1-D array)/ measurement / table(dict)/
@@ -179,6 +181,22 @@ _CATALOG = {
         ("music_doa", "mathspectral", ["matrix"], "table"),
         ("esprit_doa", "mathspectral", ["matrix"], "table"),
         ("n_sources_mdl", "mathspectral", ["matrix"], "table"),
+    ],
+    # 推定と統計の古典(2026-10-03、陣 3)。棚卸しで割当・分布の距離・仮説検定・Cramér–Rao・汎用の Kalman 平滑化・
+    #   行列の指数と対数が op として無かった(内部では使っていても、呼べる op ではなかった)。
+    "estimation": [
+        ("assign_hungarian", "mathestimation", ["matrix"], "table"),
+        ("hist_distance", "mathestimation", ["signal", "signal"], "measurement"),
+        ("stat_ttest_paired", "mathestimation", ["signal", "signal"], "table"),
+        ("stat_ttest_welch", "mathestimation", ["signal", "signal"], "table"),
+        ("stat_ks_test", "mathestimation", ["signal"], "table"),
+        ("stat_chi2_gof", "mathestimation", ["signal"], "table"),
+        ("crlb_gaussian", "mathestimation", ["signal", "signal"], "table"),
+        ("kalman_smooth", "mathestimation", ["matrix", "matrix", "matrix", "matrix", "matrix", "signal", "matrix"], "table"),
+        ("mat_expm", "mathestimation", ["matrix"], "matrix"),
+        ("mat_logm", "mathestimation", ["matrix"], "matrix"),
+        ("se3_exp", "mathestimation", ["signal"], "matrix"),
+        ("se3_log", "mathestimation", ["matrix"], "signal"),
     ],
 }
 

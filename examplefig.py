@@ -555,11 +555,14 @@ def _upscale(imgs, factor):
 
 def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str = "",
               caption: str = "", size=(560, 360), xlim=None, ylim=None,
-              kinds=None, styles=None) -> Path | None:
+              kinds=None, styles=None, colors=None) -> Path | None:
     """折れ線・散布のグラフを書く。``series`` = ``[(ラベル, x, y), ...]``。
 
     ``styles`` は系列ごとの線種(``None`` / ``"dashed"`` / ``"dotted"``)の列。**真値・参照線は破線**にする
     —— 実線どうしが重なると、データと参照の区別がつかない(2026-10-03、傾きの参照線で踏んだ)。
+    ``colors`` は系列ごとの配色の役割名(``"reference"`` / ``"emphasis"`` / ``"right"`` / ``"wrong"`` / ``"neutral"``)の列
+    (MATLAB の 'Color')。同じ意味の線分を何本も描くときは同じ色にする。**ラベルが空の系列は凡例に載せない**
+    (MATLAB の 'HandleVisibility','off')—— 線分ごとに凡例が並ぶと読めない(2026-10-03、割当の図で踏んだ)。
 
     軸・目盛り・格子・凡例はすべて fullseye の annotate 族が引く。
     """
@@ -593,7 +596,7 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
         colours = ("reference", "emphasis", "right", "wrong", "neutral")
         legend = []
         for k, (label, x, y) in enumerate(series):
-            c = colours[k % len(colours)]
+            c = colors[k] if colors else colours[k % len(colours)]
             kind = (kinds[k] if kinds else "line")
             ls = styles[k] if styles else None
             extra = {}
@@ -603,7 +606,8 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
             img = np.asarray(fs.plot_series(img, ax, np.asarray(x, float),
                                             np.asarray(y, float), kind=kind,
                                             color=c, width=2, marker_size=3, **extra))
-            legend.append((c, label))
+            if label and (c, label) not in legend:
+                legend.append((c, label))
         if len(legend) > 1:
             # ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと
             #   減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を
