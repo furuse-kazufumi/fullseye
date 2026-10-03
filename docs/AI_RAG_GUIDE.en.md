@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: a36ed1151422 -->
+<!-- i18n-source-sha: 04d83f516862 -->
 # Using Fullseye as an AI assistant's RAG (for Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · **English** · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -80,9 +80,9 @@ unless you re-ingest (Tiers 0/1 never go stale because they always read the live
 
 An op note answers "what does this op do"; it does not answer "what should I measure in this process, for this part".
 [`docs/literature/`](literature/INDEX.md) fills that gap: external literature corpora (mechanical design, mechatronic parts,
-manufacturing processes — about 7,000 OpenAlex metadata records) summarised per cluster, with **the ops to use in each
+manufacturing processes, driving simulation and evaluation, sensor simulation — about 8,900 OpenAlex metadata records; one theme → op table per field) summarised per cluster, with **the ops to use in each
 cluster** (a hand-written theme → op table whose op names are checked against the shipped notes at generation time) and
-the title / year / DOI of representative papers as provenance. Read it as: process or part → literature cluster → ops to
+the title / year / DOI of representative papers as provenance. Read it as: process, part or driving-evaluation topic → literature cluster → ops to
 use → op note (type contract, runnable example) → implementation. Abstracts are not copied, and ops are never picked by
 word overlap (that was measured to surface unrelated ops on generic words and dropped). Because the corpora live outside
 the repo, this layer alone is rebuilt with `tools/gen_literature_notes.py --rad-root <RAD>`, and

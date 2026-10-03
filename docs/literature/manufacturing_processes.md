@@ -8,7 +8,7 @@
 
 **来歴**: OpenAlex から取得した論文メタデータ **2,400 本**(2012 年以降、`fetch_openalex_topical.py`)を TF-IDF + k-means で **64 クラスタ**に階層化し(raptor の `corpus2skill`、2026-09-21)、各クラスタの要約を LLM(claude-haiku-4-5)が書いた。ここに載せるのは**その要約と、代表論文の題名・著者・年・DOI だけ**(メタデータは CC0。抄録は出版社の権利なので写さない)。要約は生成時の英語のまま。**正直な限界**: 文献は原理・選定・校正の研究が中心で、型番やデータシートの数値(製品知識)は薄い。
 
-**使い方(op に落とす)**: 各クラスタの「**使う op**」は、知識のテーマ → op の対応表(`tools/gen_literature_notes.py` の `THEME_OPS`、人が書いたもの)で引いた**実在の op**(生成時に出荷ノート 2,062 本の一覧と突き合わせ、無ければ止まる)。op の後ろはなぜ使うかと型。テーマに当たらないクラスタは「op に落ちていない」と書く(Fullseye に無い領域を隠さない)。読む順: 工程・部品の話題 → クラスタ → 使う op → op ノート(型の契約・実行できる例)→ 実装。末尾の「op → クラスタ」で逆に引ける。
+**使い方(op に落とす)**: 各クラスタの「**使う op**」は、知識のテーマ → op の対応表(`tools/gen_literature_notes.py` の `THEME_OPS`、人が書いたもの)で引いた**実在の op**(生成時に出荷ノート 2,660 本の一覧と突き合わせ、無ければ止まる)。op の後ろはなぜ使うかと型。テーマに当たらないクラスタは「op に落ちていない」と書く(Fullseye に無い領域を隠さない)。読む順: 工程・部品の話題 → クラスタ → 使う op → op ノート(型の契約・実行できる例)→ 実装。末尾の「op → クラスタ」で逆に引ける。
 
 ## 目次
 
@@ -51,12 +51,12 @@ This cluster covers advanced semiconductor materials and quantum-scale phenomena
 
 - 使う op: [`csi_height_map`](../ops/interferometry/surface/csi_height_map.md)(白色干渉の高さ、zscan → depth)、[`csi_envelope`](../ops/interferometry/envelope/csi_envelope.md)(干渉包絡、sweep → signal)、[`chromatic_confocal_height`](../ops/interferometry/chromatic/chromatic_confocal_height.md)(クロマティック共焦点、sweep → measurement)、[`surface_psd`](../ops/roughness/measure/surface_psd.md)(研磨面のスペクトル、depth → pairs)、[`thin_film_reflectance`](../ops/optics/appearance/thin_film_reflectance.md)(薄膜の反射率、signal → signal)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(パターン欠陥、image → image)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Ultrawide‐Bandgap Semiconductors: Research Opportunities and Challenges. [10.1002/aelm.201600501](https://doi.org/10.1002/aelm.201600501)
-  - — (n.d.). Rolling Up a Monolayer MoS2Sheet. [10.1002/smll.201601413](https://doi.org/10.1002/smll.201601413)
-  - — (n.d.). Use of projector based augmented reality to improve manual spot-welding precision and accuracy for automotive manufacturing. [10.1007/s00170-016-9164-5](https://doi.org/10.1007/s00170-016-9164-5)
-  - — (n.d.). A new criterion for assessing discriminant validity in variance-based structural equation modeling. [10.1007/s11747-014-0403-8](https://doi.org/10.1007/s11747-014-0403-8)
-  - — (n.d.). An integrated design tool for timber plate structures to generate joints geometry, fabrication toolpath, and robot trajectories. [10.1016/j.autcon.2021.103875](https://doi.org/10.1016/j.autcon.2021.103875)
-  - — (n.d.). Parallel convolutional processing using an integrated photonic tensor core. `W3120165331`
+  - J. Feldmann et al. (2025). Parallel convolutional processing using an integrated photonic tensor core. [W3120165331](https://www.nature.com/articles/s41586-020-03070-1)
+  - Afshin Rashid (2024). The use of nano photoelectric process in the production of electronic nanowires. [10.22541/au.173101501.10417535/v1](https://doi.org/10.22541/au.173101501.10417535/v1)
+  - Francesco Borsoi et al. (2023). Shared control of a 16 semiconductor quantum dot crossbar array. [10.1038/s41565-023-01491-3](https://doi.org/10.1038/s41565-023-01491-3)
+  - Robert Bogue (2023). The role of robots in the electronics industry. [10.1108/ir-04-2023-0082](https://doi.org/10.1108/ir-04-2023-0082)
+  - Zhican Zhou et al. (2023). Prospects and applications of on-chip lasers. [10.1186/s43593-022-00027-x](https://doi.org/10.1186/s43593-022-00027-x)
+  - Fabien Alibart et al. (2012). High precision tuning of state for memristive devices by adaptable variation-tolerant algorithm. [10.1088/0957-4484/23/7/075201](https://doi.org/10.1088/0957-4484/23/7/075201)
 
 ### lithography / optical / fabrication
 
@@ -64,24 +64,24 @@ This cluster encompasses advanced optical and fabrication techniques for creatin
 
 - 使う op: [`csi_height_map`](../ops/interferometry/surface/csi_height_map.md)(白色干渉の高さ、zscan → depth)、[`csi_envelope`](../ops/interferometry/envelope/csi_envelope.md)(干渉包絡、sweep → signal)、[`chromatic_confocal_height`](../ops/interferometry/chromatic/chromatic_confocal_height.md)(クロマティック共焦点、sweep → measurement)、[`surface_psd`](../ops/roughness/measure/surface_psd.md)(研磨面のスペクトル、depth → pairs)、[`thin_film_reflectance`](../ops/optics/appearance/thin_film_reflectance.md)(薄膜の反射率、signal → signal)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(パターン欠陥、image → image)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Nanomaterials: Processing and Characterization with Lasers. [10.1002/9783527646821](https://doi.org/10.1002/9783527646821)
-  - — (n.d.). Nanoimprint Lithography Facilitated Plasmonic‐Photonic Coupling for Enhanced Photoconductivity and Photocatalysis. [10.1002/adfm.202105054](https://doi.org/10.1002/adfm.202105054)
-  - — (n.d.). Two‐Photon Polymerization Lithography for Optics and Photonics: Fundamentals, Materials, Technologies, and Applications. [10.1002/adfm.202214211](https://doi.org/10.1002/adfm.202214211)
-  - — (n.d.). Fabrication of Transistors on Flexible Substrates: from Mass‐Printing to High‐Resolution Alternative Lithography Strategies. [10.1002/adma.201202949](https://doi.org/10.1002/adma.201202949)
-  - — (n.d.). Unclonable Plasmonic Security Labels Achieved by Shadow‐Mask‐Lithography‐Assisted Self‐Assembly. [10.1002/adma.201505022](https://doi.org/10.1002/adma.201505022)
-  - — (n.d.). Comprehensive Performance Analysis of Interconnect Variation by Double and Triple Patterning Lithography Processes. [10.5573/jsts.2014.14.6.824](https://doi.org/10.5573/jsts.2014.14.6.824)
+  - Mitchell Modarelli et al. (2024). 5-Axis CNC micro-milling machine for three-dimensional microfluidics. [10.1039/d4lc00496e](https://doi.org/10.1039/d4lc00496e)
+  - Iason Giannopoulos et al. (2024). Extreme ultraviolet lithography reaches 5 nm resolution. [10.1039/d4nr01332h](https://doi.org/10.1039/d4nr01332h)
+  - Hao Wang et al. (2023). Two‐Photon Polymerization Lithography for Optics and Photonics: Fundamentals, Materials, Technologies, and Applications. [10.1002/adfm.202214211](https://doi.org/10.1002/adfm.202214211)
+  - Arun Jaiswal et al. (2023). Two decades of two-photon lithography: Materials science perspective for additive manufacturing of 2D/3D nano-microstructures. [10.1016/j.isci.2023.106374](https://doi.org/10.1016/j.isci.2023.106374)
+  - Mohammad S. M. Saifullah et al. (2022). Patterning at the Resolution Limit of Commercial Electron Beam Lithography. [10.1021/acs.nanolett.2c02339](https://doi.org/10.1021/acs.nanolett.2c02339)
+  - Yuelin Du et al. (2012). Hybrid lithography optimization with E-Beam and immersion processes for 16nm 1D gridded design. [10.1109/aspdac.2012.6165047](https://doi.org/10.1109/aspdac.2012.6165047)
 
 ### manufacturing / industry / review
 
 This cluster covers advanced manufacturing technologies, industrial processes, and control systems with applications spanning laser-based manufacturing, additive techniques, and intelligent automation.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Wavelength Tunable CdSe Nanowire Lasers Based on the Absorption‐Emission‐Absorption Process. [10.1002/adma.201203692](https://doi.org/10.1002/adma.201203692)
-  - — (n.d.). Green Product Innovation in Manufacturing Firms: A Sustainability‐Oriented Dynamic Capability Perspective. [10.1002/bse.1932](https://doi.org/10.1002/bse.1932)
-  - — (n.d.). A review of aerosol jet printing—a non-traditional hybrid process for micro-manufacturing. [10.1007/s00170-019-03438-2](https://doi.org/10.1007/s00170-019-03438-2)
-  - — (n.d.). Review on model predictive control: an engineering perspective. [10.1007/s00170-021-07682-3](https://doi.org/10.1007/s00170-021-07682-3)
-  - — (n.d.). Thulium fiber laser: the new player for kidney stone treatment? A comparison with Holmium:YAG laser. [10.1007/s00345-019-02654-5](https://doi.org/10.1007/s00345-019-02654-5)
-  - — (n.d.). Statistical Methods for Environmental Pollution Monitoring. `W4302211326`
+  - Riaan De Beer (2026). DSFB Structural Semiotics Engine for Semiconductor Process Control - A Deterministic Augmentation Layer for Typed Residual Interpretation for Fault Detection and Run-to-Run Variation in Advanced Manufacturing. [10.5281/zenodo.19413110](https://doi.org/10.5281/zenodo.19413110)
+  - Xu He et al. (2025). In-process monitoring strategies and methods in metal forming: A selective review. [10.1016/j.jmapro.2025.02.011](https://doi.org/10.1016/j.jmapro.2025.02.011)
+  - Bangxu Liu et al. (2025). Process Control in Semiconductor Manufacturing Based on Deep Distributional Soft Actor-Critic Reinforcement Learning. [10.1109/tsm.2025.3539223](https://doi.org/10.1109/tsm.2025.3539223)
+  - Dinu Darabă et al. (2024). Digital Twin Used in Real-Time Monitoring of Operations Performed on CNC Technological Equipment. [10.3390/app142210088](https://doi.org/10.3390/app142210088)
+  - Sufinah Dahari et al. (2024). Robust Control Chart Application in Semiconductor Manufacturing Process. [10.37934/araset.43.2.203219](https://doi.org/10.37934/araset.43.2.203219)
+  - Sa Ge et al. (2012). Progress of Strip Casting Technology for Steel; Historical Developments. [10.2355/isijinternational.52.2109](https://doi.org/10.2355/isijinternational.52.2109)
 
 ### coatings / coating / deposition
 
@@ -89,24 +89,24 @@ This cluster covers coating and deposition technologies used to create functiona
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Lubricant‐Infused Nanoparticulate Coatings Assembled by Layer‐by‐Layer Deposition. [10.1002/adfm.201401289](https://doi.org/10.1002/adfm.201401289)
-  - — (n.d.). Recent Developments and Practical Feasibility of Polymer‐Based Antifouling Coatings. [10.1002/adfm.202000936](https://doi.org/10.1002/adfm.202000936)
-  - — (n.d.). Coating Strategies Using Layer‐by‐layer Deposition for Cell Encapsulation. [10.1002/asia.201600145](https://doi.org/10.1002/asia.201600145)
-  - — (n.d.). Beyond Traditional Coatings: A Review on Thermal-Sprayed Functional and Smart Coatings. [10.1007/s11666-019-00857-1](https://doi.org/10.1007/s11666-019-00857-1)
-  - — (n.d.). Laser textured superhydrophobic surfaces and their applications for homogeneous spot deposition. [10.1016/j.apsusc.2016.01.019](https://doi.org/10.1016/j.apsusc.2016.01.019)
-  - — (n.d.). Handbook of Thin Film Process Technology: 98/1 Reactive Sputtering. `W1986891282`
+  - Gregor Primc et al. (2024). Surface Modification of Polymers by Plasma Treatment for Appropriate Adhesion of Coatings. [10.3390/ma17071494](https://doi.org/10.3390/ma17071494)
+  - Hamoon Hemmatpour et al. (2023). New insights in polydopamine formation via surface adsorption. [10.1038/s41467-023-36303-8](https://doi.org/10.1038/s41467-023-36303-8)
+  - Masoud Sabzi et al. (2023). A Review on Sustainable Manufacturing of Ceramic-Based Thin Films by Chemical Vapor Deposition (CVD): Reactions Kinetics and the Deposition Mechanisms. [10.3390/coatings13010188](https://doi.org/10.3390/coatings13010188)
+  - Amrinder Mehta et al. (2022). Processing and Advancements in the Development of Thermal Barrier Coatings: A Review. [10.3390/coatings12091318](https://doi.org/10.3390/coatings12091318)
+  - Muhammad Ali Butt (2022). Thin-Film Coating Methods: A Successful Marriage of High-Quality and Cost-Effectiveness—A Brief Exploration. [10.3390/coatings12081115](https://doi.org/10.3390/coatings12081115)
+  - Pierpaolo Spinelli et al. (2012). Broadband omnidirectional antireflection coating based on subwavelength surface Mie resonators. [10.1038/ncomms1691](https://doi.org/10.1038/ncomms1691)
 
 ### organic / synthesis / metal
 
 This cluster covers advanced synthesis and production techniques for metal-organic frameworks (MOFs) and hybrid materials, including mechanochemical synthesis, freeze casting, and large-scale manufacturing methods.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Large‐Scale Production of Metal–Organic Frameworks. [10.1002/adfm.202309089](https://doi.org/10.1002/adfm.202309089)
-  - — (n.d.). Recent Developments in Mechanochemical Materials Synthesis by Extrusion. [10.1002/adma.201505352](https://doi.org/10.1002/adma.201505352)
-  - — (n.d.). Controlling Molecular Doping in Organic Semiconductors. [10.1002/adma.201703063](https://doi.org/10.1002/adma.201703063)
-  - — (n.d.). Freeze Casting: From Low‐Dimensional Building Blocks to Aligned Porous Structures—A Review of Novel Materials, Methods, and Applications. [10.1002/adma.201907176](https://doi.org/10.1002/adma.201907176)
-  - — (n.d.). Drivers and Pathways for the Recovery of Critical Metals from Waste‐Printed Circuit Boards. [10.1002/advs.202309635](https://doi.org/10.1002/advs.202309635)
-  - — (n.d.). Extrusion of Metals, Polymers and Food Products. [10.5772/65577](https://doi.org/10.5772/65577)
+  - Temitayo E Oladimeji et al. (2024). Review on the impact of heavy metals from industrial wastewater effluent and removal technologies. [10.1016/j.heliyon.2024.e40370](https://doi.org/10.1016/j.heliyon.2024.e40370)
+  - Dong Xia et al. (2024). Drivers and Pathways for the Recovery of Critical Metals from Waste‐Printed Circuit Boards. [10.1002/advs.202309635](https://doi.org/10.1002/advs.202309635)
+  - В. Л. Ланин et al. (2024). Chapter 5. Assembly and Mounting of Electronic Modules on Printed Circuit Boards. [10.3103/s1068375524700054](https://doi.org/10.3103/s1068375524700054)
+  - R. Vieira et al. (2024). Design, Fabrication, and Assembly of the SPARC Toroidal Field Model Coil. [10.1109/tasc.2024.3356571](https://doi.org/10.1109/tasc.2024.3356571)
+  - Amarajothi Dhakshinamoorthy et al. (2024). Metal–organic framework heterojunctions for photocatalysis. [10.1039/d3cs00205e](https://doi.org/10.1039/d3cs00205e)
+  - Claudia Seiler et al. (2012). Heavy metal driven co-selection of antibiotic resistance in soil and water bodies impacted by agriculture and aquaculture. [10.3389/fmicb.2012.00399](https://doi.org/10.3389/fmicb.2012.00399)
 
 ### lithium / battery / batteries
 
@@ -114,12 +114,12 @@ This cluster covers advanced lithium and battery technologies, focusing on mater
 
 - 使う op: [`fbp_volume`](../ops/tomography/volume/fbp_volume.md)(電池 CT の再構成、sinostack → voxel)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(電極・セパレータの厚み、voxel → signal)、[`vol_label`](../ops/3d/regionprops/vol_label.md)(層のラベル、voxel → labels)、[`vol_region_props`](../ops/3d/regionprops/vol_region_props.md)(層の性質、labels → table)、[`metal_trace_interpolate`](../ops/tomography/artifact/metal_trace_interpolate.md)(金属アーチファクト、sinogram → sinogram)、[`beam_hardening_correct`](../ops/tomography/artifact/beam_hardening_correct.md)(カッピング、sinogram → sinogram)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Structural and Electrochemical Study of Al2O3 and TiO2 Coated Li1.2Ni0.13Mn0.54Co0.13O2 Cathode Material Using ALD. [10.1002/aenm.201300269](https://doi.org/10.1002/aenm.201300269)
-  - — (n.d.). Doctor‐Blade Casting Fabrication of Ultrathin Li Metal Electrode for High‐Energy‐Density Batteries. [10.1002/aenm.202102259](https://doi.org/10.1002/aenm.202102259)
-  - — (n.d.). Current Status and Future Perspective on Lithium Metal Anode Production Methods. [10.1002/aenm.202203744](https://doi.org/10.1002/aenm.202203744)
-  - — (n.d.). A Mini-Review on Metal Recycling from Spent Lithium Ion Batteries. [10.1016/j.eng.2018.05.018](https://doi.org/10.1016/j.eng.2018.05.018)
-  - — (n.d.). Lithium Metal Anodes with Nonaqueous Electrolytes. [10.1021/acs.chemrev.0c00275](https://doi.org/10.1021/acs.chemrev.0c00275)
-  - — (n.d.). Surface engineering toward stable lithium metal anodes. [10.1126/sciadv.adf1550](https://doi.org/10.1126/sciadv.adf1550)
+  - Shaozhen Huang et al. (2023). Interfacial friction enabling ≤ 20 μm thin free-standing lithium strips for lithium metal batteries. [10.1038/s41467-023-41514-0](https://doi.org/10.1038/s41467-023-41514-0)
+  - Gongxun Lu et al. (2023). Surface engineering toward stable lithium metal anodes. [10.1126/sciadv.adf1550](https://doi.org/10.1126/sciadv.adf1550)
+  - Begoña Acebedo et al. (2023). Current Status and Future Perspective on Lithium Metal Anode Production Methods. [10.1002/aenm.202203744](https://doi.org/10.1002/aenm.202203744)
+  - Junmou Du et al. (2021). Doctor‐Blade Casting Fabrication of Ultrathin Li Metal Electrode for High‐Energy‐Density Batteries. [10.1002/aenm.202102259](https://doi.org/10.1002/aenm.202102259)
+  - Haifeng Yu et al. (2021). Surface enrichment and diffusion enabling gradient-doping and coating of Ni-rich cathode toward Li-ion batteries. [10.1038/s41467-021-24893-0](https://doi.org/10.1038/s41467-021-24893-0)
+  - Fei Ding et al. (2013). Dendrite-Free Lithium Deposition via Self-Healing Electrostatic Shield Mechanism. [10.1021/ja312241y](https://doi.org/10.1021/ja312241y)
 
 ### composites / composite / fiber
 
@@ -127,12 +127,12 @@ This cluster covers fiber-reinforced composite (FRC) materials, their manufactur
 
 - 使う op: [`spectrum_to_srgb`](../ops/optics/appearance/spectrum_to_srgb.md)(分光 → 色、signal → vector)、[`thin_film_reflectance`](../ops/optics/appearance/thin_film_reflectance.md)(薄膜の干渉色、signal → signal)、[`material_catalog`](../ops/optics/material/material_catalog.md)(材質の外観表、 → table)、[`oren_nayar`](../ops/optics/material/oren_nayar.md)(粗い面の反射、normalmap → image2d)、[`brdf_microfacet`](../ops/specular/reflectance/brdf_microfacet.md)(微小面の反射、normalmap → image2d)、[`metallic_flake_normals`](../ops/optics/surface/metallic_flake_normals.md)(メタリック塗装、 → normalmap)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Graphene and CNT‐Based Smart Fiber‐Reinforced Composites: A Review. [10.1002/adfm.202205723](https://doi.org/10.1002/adfm.202205723)
-  - — (n.d.). Sustainable Fiber‐Reinforced Composites: A Review. [10.1002/adsu.202200258](https://doi.org/10.1002/adsu.202200258)
-  - — (n.d.). In‐line residual strain monitoring for thermoplastic automated tape layup using fiber Bragg grating sensors. [10.1002/pc.26480](https://doi.org/10.1002/pc.26480)
-  - — (n.d.). Design and Manufacturing of a Novel Shear Thickening Fluid Composite (STFC) with Enhanced out-of-Plane Properties and Damage Suppression. [10.1007/s10443-016-9532-1](https://doi.org/10.1007/s10443-016-9532-1)
-  - — (n.d.). Review on Manufacture of Military Composite Helmet. [10.1007/s10443-021-09944-5](https://doi.org/10.1007/s10443-021-09944-5)
-  - — (n.d.). Scientific Advancements in Composite Materials for Aircraft Applications: A Review. [10.3390/polym14225007](https://doi.org/10.3390/polym14225007)
+  - Xiaofei Ma et al. (2024). Design, modeling, and manufacturing of high strain composites for space deployable structures. [10.1038/s44172-024-00223-2](https://doi.org/10.1038/s44172-024-00223-2)
+  - Alexander Air et al. (2023). Manufacturing feasibility of a bend free ellipsoidal composite pressure vessel using automated fibre placement. [10.1016/j.compositesa.2023.107968](https://doi.org/10.1016/j.compositesa.2023.107968)
+  - Devyani Thapliyal et al. (2023). Natural Fibers Composites: Origin, Importance, Consumption Pattern, and Challenges. [10.3390/jcs7120506](https://doi.org/10.3390/jcs7120506)
+  - Omar El Hawary et al. (2023). An Overview of Natural Fiber Composites for Marine Applications. [10.3390/jmse11051076](https://doi.org/10.3390/jmse11051076)
+  - Bisma Parveez et al. (2022). Scientific Advancements in Composite Materials for Aircraft Applications: A Review. [10.3390/polym14225007](https://doi.org/10.3390/polym14225007)
+  - James S. Lightfoot et al. (2013). Defects in woven preforms: Formation mechanisms and the effects of laminate design and layup protocol. [10.1016/j.compositesa.2013.04.004](https://doi.org/10.1016/j.compositesa.2013.04.004)
 
 ### wearable / sensors / health
 
@@ -140,12 +140,12 @@ This cluster covers wearable and sensor technologies integrated with healthcare 
 
 - 使う op: [`bearing_defect_frequencies`](../ops/acoustics/bearing/bearing_defect_frequencies.md)(軸受の欠陥周波数、 → table)、[`envelope_spectrum`](../ops/acoustics/bearing/envelope_spectrum.md)(包絡スペクトル、signal → table)、[`spectral_kurtosis`](../ops/acoustics/bearing/spectral_kurtosis.md)(衝撃の帯域、signal → table)、[`cepstrum`](../ops/acoustics/bearing/cepstrum.md)(ケプストラム、signal → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(次数スペクトル、signal → table)、[`stft`](../ops/acoustics/transform/stft.md)(時間周波数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Nanomaterial‐Enabled Wearable Sensors for Healthcare. [10.1002/adhm.201700889](https://doi.org/10.1002/adhm.201700889)
-  - — (n.d.). Disposable Sensors in Diagnostics, Food, and Environmental Monitoring. [10.1002/adma.201806739](https://doi.org/10.1002/adma.201806739)
-  - — (n.d.). Wearable and Stretchable Strain Sensors: Materials, Sensing Mechanisms, and Applications. [10.1002/aisy.202000039](https://doi.org/10.1002/aisy.202000039)
-  - — (n.d.). Metal oxide semiconductors for gas sensing. [10.1002/eng2.12604](https://doi.org/10.1002/eng2.12604)
-  - — (n.d.). Remote health monitoring of elderly through wearable sensors. [10.1007/s11042-018-7134-7](https://doi.org/10.1007/s11042-018-7134-7)
-  - — (n.d.). Recent Advances in Piezoelectric Wafer Active Sensors for Structural Health Monitoring Applications. [10.3390/s19020383](https://doi.org/10.3390/s19020383)
+  - Dohyung Kim et al. (2024). Recent developments in wearable breath sensors for healthcare monitoring. [10.1038/s43246-024-00480-w](https://doi.org/10.1038/s43246-024-00480-w)
+  - Fupeng Gao et al. (2022). Wearable and flexible electrochemical sensors for sweat analysis: a review. [10.1038/s41378-022-00443-6](https://doi.org/10.1038/s41378-022-00443-6)
+  - Neeraj Goel et al. (2022). Metal oxide semiconductors for gas sensing. [10.1002/eng2.12604](https://doi.org/10.1002/eng2.12604)
+  - Farida Sabry et al. (2022). Machine Learning for Healthcare Wearable Devices: The Big Picture. [10.1155/2022/4653923](https://doi.org/10.1155/2022/4653923)
+  - Peter H. Charlton et al. (2022). Wearable Photoplethysmography for Cardiovascular Monitoring. [10.1109/jproc.2022.3149785](https://doi.org/10.1109/jproc.2022.3149785)
+  - Shyamal Patel et al. (2012). A review of wearable sensors and systems with application in rehabilitation. [10.1186/1743-0003-9-21](https://doi.org/10.1186/1743-0003-9-21)
 
 ## forming / sheet / metal
 
@@ -170,12 +170,12 @@ This cluster covers the phenomenon of springback in sheet metal and tube bending
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(DIC の変位 → ひずみ、image2d × image2d → image2d)、[`piv_deform_pass`](../ops/piv/estimate/piv_deform_pass.md)(変形を追う相関、image2d × image2d × flow2d → flow2d)、[`correlation_quality`](../ops/piv/solid/correlation_quality.md)(相関の信頼度、image2d × image2d × flow2d → image2d)、[`speckle_quality`](../ops/piv/solid/speckle_quality.md)(スペックルの良さ、image2d → table)、[`angle_between_planes`](../ops/3d/geometry/angle_between_planes.md)(曲げ角、primitive → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(フランジ面、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Analysis of the Size Effect on Springback Behavior in Micro‐ S caled U‐ B ending Process of Sheet Metals. [10.1002/adem.201300275](https://doi.org/10.1002/adem.201300275)
-  - — (n.d.). Springback analysis of AA5754 after hot stamping: experiments and FE modelling. [10.1007/s00170-016-9166-3](https://doi.org/10.1007/s00170-016-9166-3)
-  - — (n.d.). Springback prediction of thick-walled high-strength titanium tube bending. [10.1016/j.cja.2013.07.039](https://doi.org/10.1016/j.cja.2013.07.039)
-  - — (n.d.). Effect of bending temperatures on the microstructure and springback of a TRIP steel sheet. [10.1016/j.dt.2019.11.018](https://doi.org/10.1016/j.dt.2019.11.018)
-  - — (n.d.). Springback in Sheet Metal U Bending-Fea and Neural Network Approach. [10.1016/j.mspro.2014.07.100](https://doi.org/10.1016/j.mspro.2014.07.100)
-  - — (n.d.). SPRINGBACK REDUCTION IN SHEET METAL BENDING PROCESS. `W2586187863`
+  - Lotfi Ben Said et al. (2025). Anisotropic Plasticity in Sheet Metal Forming: Experimental and Numerical Analysis of Springback Using U-Bending Test. [10.3390/machines13111029](https://doi.org/10.3390/machines13111029)
+  - Vũ Đức Quảng (2025). The Optimization of Rotary Bending Die Process: Criteria for the Metal Sheet Angles and Springback Effects. [10.48084/etasr.9706](https://doi.org/10.48084/etasr.9706)
+  - Kuang-Jau Fann et al. (2025). An Artificial Intelligence Application for In-Process Springback Control of Sheet Metal Bending. [10.1115/1.4067740](https://doi.org/10.1115/1.4067740)
+  - M.A.H. Mithu et al. (2025). Predicting springback in V-bending: Effects of load, load holding time, and heat treatment on common sheet-metal forming operations. [10.1016/j.mtcomm.2025.111668](https://doi.org/10.1016/j.mtcomm.2025.111668)
+  - Jingjing Xu et al. (2024). Simulation and Prediction of Springback in Sheet Metal Bending Process Based on Embedded Control System. [10.3390/s24237863](https://doi.org/10.3390/s24237863)
+  - Youpeng You (2012). Study on springback control of V-bending process of metal sheet. [W2386869368](http://en.cnki.com.cn/Article_en/CJFDTOTAL-CLKG201202008.htm)
 
 ### drawing / deep / forming
 
@@ -183,12 +183,12 @@ This cluster covers deep drawing and sheet metal forming processes, focusing on 
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(DIC の変位 → ひずみ、image2d × image2d → image2d)、[`piv_deform_pass`](../ops/piv/estimate/piv_deform_pass.md)(変形を追う相関、image2d × image2d × flow2d → flow2d)、[`correlation_quality`](../ops/piv/solid/correlation_quality.md)(相関の信頼度、image2d × image2d × flow2d → image2d)、[`speckle_quality`](../ops/piv/solid/speckle_quality.md)(スペックルの良さ、image2d → table)、[`angle_between_planes`](../ops/3d/geometry/angle_between_planes.md)(曲げ角、primitive → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(フランジ面、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). A simulation and experimental study on the deep drawing process of SPCC sheet using the graphical method. [10.1016/j.aej.2021.07.009](https://doi.org/10.1016/j.aej.2021.07.009)
-  - — (n.d.). Experimental and numerical studies on formability of extra-deep drawing steel in incremental sheet metal forming. [10.1016/j.jmrt.2014.03.009](https://doi.org/10.1016/j.jmrt.2014.03.009)
-  - — (n.d.). Analysis of Earring in Circular-shell Deep-drawing of bcc and hcp Sheet Metals. [10.1016/j.proeng.2014.10.093](https://doi.org/10.1016/j.proeng.2014.10.093)
-  - — (n.d.). New approach on controlling strain distribution manufactured in sheet metal components during deep drawing process. [10.1016/j.proeng.2017.10.740](https://doi.org/10.1016/j.proeng.2017.10.740)
-  - — (n.d.). Effect on the mechanical properties of sheet metals after the use of drawbeads in deep drawing. [10.1051/matecconf/201819005001](https://doi.org/10.1051/matecconf/201819005001)
-  - — (n.d.). A Practical Approach to Analysis of Hydro-Mechanical Deep Drawing of Superalloy Sheet Metals Using Finite Element Method. `W2270255006`
+  - İ. Çelik et al. (2025). Improving Deep Drawing Quality of DD13 Sheet Metal: Optimization of Process Parameters Using Box–Behnken Design. [10.3390/ma18071424](https://doi.org/10.3390/ma18071424)
+  - Shun‐Fa Hwang et al. (2022). Deep Drawing Behavior of Metal-Composite Sandwich Plates. [10.3390/ma15196612](https://doi.org/10.3390/ma15196612)
+  - Duan Chen et al. (2022). Research on the Application of Ductile Fracture Criterion in Fracture Prediction during Sheet Metal Deep Drawing. [10.2320/matertrans.mt-m2022060](https://doi.org/10.2320/matertrans.mt-m2022060)
+  - The-Thanh Luyen et al. (2021). A simulation and experimental study on the deep drawing process of SPCC sheet using the graphical method. [10.1016/j.aej.2021.07.009](https://doi.org/10.1016/j.aej.2021.07.009)
+  - Xin Luo et al. (2020). Forming limit of sheet metal in cylindrical deep drawing with a conical die. [10.1088/1757-899x/967/1/012087](https://doi.org/10.1088/1757-899x/967/1/012087)
+  - Ramani V. Reddy (2012). Effect of Various Parameters on the Wrinkling In Deep Drawing Cylindrical Cups. [W2184118262](http://ijettjournal.org/volume-3/issue-1/IJETT-V3I1P210.pdf)
 
 ### forging / simulation / forming
 
@@ -196,12 +196,12 @@ This cluster covers computational and experimental techniques for simulating met
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(DIC の変位 → ひずみ、image2d × image2d → image2d)、[`piv_deform_pass`](../ops/piv/estimate/piv_deform_pass.md)(変形を追う相関、image2d × image2d × flow2d → flow2d)、[`correlation_quality`](../ops/piv/solid/correlation_quality.md)(相関の信頼度、image2d × image2d × flow2d → image2d)、[`speckle_quality`](../ops/piv/solid/speckle_quality.md)(スペックルの良さ、image2d → table)、[`angle_between_planes`](../ops/3d/geometry/angle_between_planes.md)(曲げ角、primitive → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(フランジ面、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Analysis of Forging Cracks during Hot Compression of Powder Metallurgy Nickel‐Based Superalloy on Simulation and Experiment. [10.1002/adem.201600270](https://doi.org/10.1002/adem.201600270)
-  - — (n.d.). Simulation of 1.2765 DIN steel billet and crack analysis during the forging process using DEFORM 3D software. [10.1002/mawe.202000191](https://doi.org/10.1002/mawe.202000191)
-  - — (n.d.). Application of Numerical Simulation and Physical Modeling for Verifying a Cold Forging Process for Rotary Sleeves. [10.1007/s11665-021-06314-x](https://doi.org/10.1007/s11665-021-06314-x)
-  - — (n.d.). Automated design of multi-stage forging sequences for die forging. [10.1007/s11740-023-01190-x](https://doi.org/10.1007/s11740-023-01190-x)
-  - — (n.d.). Numerical simulation and experimental validation of microstructure evolution during the upsetting process of a large size martensitic stainless steel forging. [10.1007/s12289-024-01840-0](https://doi.org/10.1007/s12289-024-01840-0)
-  - — (n.d.). Hammer forging process of lever drop forging from AZ31 magnesium alloy. `W643154413`
+  - Simin Dourandish et al. (2024). Numerical simulation and experimental validation of microstructure evolution during the upsetting process of a large size martensitic stainless steel forging. [10.1007/s12289-024-01840-0](https://doi.org/10.1007/s12289-024-01840-0)
+  - Zhenhong Wang et al. (2024). Numerical Simulation and Process Parameter Optimization of Warm Forging Near-Net Forming for Spiral Bevel Gear. [10.3390/app14031147](https://doi.org/10.3390/app14031147)
+  - Yosep Kim et al. (2023). Optimizing process parameters for hot forging of Ti-6242 alloy: A machine learning and FEM simulation approach. [10.1016/j.jmrt.2023.11.193](https://doi.org/10.1016/j.jmrt.2023.11.193)
+  - Joonhee Park et al. (2023). Numerical Simulation of Crack Condition in Forging Products of M50 Bearing Steel Based on Processing Map Theory. [10.3390/met13050921](https://doi.org/10.3390/met13050921)
+  - Marek Hawryluk et al. (2023). Analysis and Improvement of an Industrial Process of Hot Die Forging of an Elongated Forging Tipped with a Joggle with the Use of Numerical Simulation Results. [10.12913/22998624/162158](https://doi.org/10.12913/22998624/162158)
+  - Xia Hua et al. (2012). Numerical Simulation of Blank-making Roll Forging Process for Heavy Automotive Front Axle. [10.2991/mems.2012.86](https://doi.org/10.2991/mems.2012.86)
 
 ### forming / sheet / metal
 
@@ -209,12 +209,12 @@ This cluster covers metal sheet forming and manufacturing technologies, includin
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(DIC の変位 → ひずみ、image2d × image2d → image2d)、[`piv_deform_pass`](../ops/piv/estimate/piv_deform_pass.md)(変形を追う相関、image2d × image2d × flow2d → flow2d)、[`correlation_quality`](../ops/piv/solid/correlation_quality.md)(相関の信頼度、image2d × image2d × flow2d → image2d)、[`speckle_quality`](../ops/piv/solid/speckle_quality.md)(スペックルの良さ、image2d → table)、[`angle_between_planes`](../ops/3d/geometry/angle_between_planes.md)(曲げ角、primitive → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(フランジ面、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Multi-fidelity optimization of metal sheets concerning manufacturability in deep-drawing processes. [10.1007/s00158-023-03631-8](https://doi.org/10.1007/s00158-023-03631-8)
-  - — (n.d.). Strategies for residual stress adjustment in bulk metal forming. [10.1007/s00419-021-01903-7](https://doi.org/10.1007/s00419-021-01903-7)
-  - — (n.d.). Galling phenomena in metal forming. [10.1007/s40544-020-0430-z](https://doi.org/10.1007/s40544-020-0430-z)
-  - — (n.d.). Lightweight in Automotive Components by Forming Technology. [10.1007/s42154-020-00103-3](https://doi.org/10.1007/s42154-020-00103-3)
-  - — (n.d.). Investigation on extrusion processes in sheet-bulk metal forming from coil. [10.1016/j.cirpj.2020.08.007](https://doi.org/10.1016/j.cirpj.2020.08.007)
-  - — (n.d.). Manufacturing of Geared Sheet Metal Components by a Single-Stage Sheet-Bulk Metal Forming Process. `W2272300389`
+  - Xuefeng Tang et al. (2025). Recent progress on plastic forming of laminated metal composites: Processes, heterogeneous deformation, and interfacial regulation. [10.1016/j.jmst.2025.01.007](https://doi.org/10.1016/j.jmst.2025.01.007)
+  - Arne Kaps et al. (2023). Multi-fidelity optimization of metal sheets concerning manufacturability in deep-drawing processes. [10.1007/s00158-023-03631-8](https://doi.org/10.1007/s00158-023-03631-8)
+  - Raphaela März (2023). Numerical investigation on the deep drawing of sheet metals with an additively applied coating. [10.21741/9781644902479-100](https://doi.org/10.21741/9781644902479-100)
+  - Graziana Cavone et al. (2022). MPC-Based Process Control of Deep Drawing: An Industry 4.0 Case Study in Automotive. [10.1109/tase.2022.3177362](https://doi.org/10.1109/tase.2022.3177362)
+  - Shiming Liu et al. (2022). Tool path planning of consecutive free-form sheet metal stamping with deep learning. [10.1016/j.jmatprotec.2022.117530](https://doi.org/10.1016/j.jmatprotec.2022.117530)
+  - Marion Merklein et al. (2012). Experimental Study of a Full Forward Extrusion Process from Metal Strip. [10.4028/www.scientific.net/kem.504-506.587](https://doi.org/10.4028/www.scientific.net/kem.504-506.587)
 
 ### drawing / forming / sheet
 
@@ -222,12 +222,12 @@ This cluster covers advanced sheet metal forming techniques, particularly deep d
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(DIC の変位 → ひずみ、image2d × image2d → image2d)、[`piv_deform_pass`](../ops/piv/estimate/piv_deform_pass.md)(変形を追う相関、image2d × image2d × flow2d → flow2d)、[`correlation_quality`](../ops/piv/solid/correlation_quality.md)(相関の信頼度、image2d × image2d × flow2d → image2d)、[`speckle_quality`](../ops/piv/solid/speckle_quality.md)(スペックルの良さ、image2d → table)、[`angle_between_planes`](../ops/3d/geometry/angle_between_planes.md)(曲げ角、primitive → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(フランジ面、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Heated Hydro ‐Mechanical Deep Drawing of Magnesium Sheet Metal. [10.1002/9781118859803.ch62](https://doi.org/10.1002/9781118859803.ch62)
-  - — (n.d.). Hot Deep Drawing Processing of Titanium Sheet Metal Parts for High Temperature Applications. [10.1002/adem.201800544](https://doi.org/10.1002/adem.201800544)
-  - — (n.d.). Tribology in metal forming at elevated temperatures. [10.1007/s40544-015-0077-3](https://doi.org/10.1007/s40544-015-0077-3)
-  - — (n.d.). Formability studies of ASS 304 and evaluation of friction for Al in deep drawing setup at elevated temperatures using LS-DYNA. [10.1016/j.jksues.2012.12.006](https://doi.org/10.1016/j.jksues.2012.12.006)
-  - — (n.d.). Sheet Metal Forming Using Additively Manufactured Polymer Tools. [10.1016/j.procir.2020.04.013](https://doi.org/10.1016/j.procir.2020.04.013)
-  - — (n.d.). Cryogenic Sheet Metal Forming - An Overview. [10.4028/www.scientific.net/msf.941.1397](https://doi.org/10.4028/www.scientific.net/msf.941.1397)
+  - Michael Geueke et al. (2024). Sustainable tool technology: Wood-based forming tools for deep drawing of sheet metal. [10.1088/1757-899x/1307/1/012018](https://doi.org/10.1088/1757-899x/1307/1/012018)
+  - Günther Schuh et al. (2020). Sheet Metal Forming Using Additively Manufactured Polymer Tools. [10.1016/j.procir.2020.04.013](https://doi.org/10.1016/j.procir.2020.04.013)
+  - Günther Schuh et al. (2019). A Review on Flexible Forming of Sheet Metal Parts. [10.1109/ieem44572.2019.8978879](https://doi.org/10.1109/ieem44572.2019.8978879)
+  - Sebastian Suttner et al. (2019). Cross-profile deep drawing of magnesium alloy AZ31 sheet metal for springback analysis under various temperatures. [10.1016/j.promfg.2019.02.155](https://doi.org/10.1016/j.promfg.2019.02.155)
+  - Florian Grabner et al. (2018). Cryogenic Sheet Metal Forming - An Overview. [10.4028/www.scientific.net/msf.941.1397](https://doi.org/10.4028/www.scientific.net/msf.941.1397)
+  - Jayahari Lade et al. (2013). Formability studies of ASS 304 and evaluation of friction for Al in deep drawing setup at elevated temperatures using LS-DYNA. [10.1016/j.jksues.2012.12.006](https://doi.org/10.1016/j.jksues.2012.12.006)
 
 ### friction / forming / drawing
 
@@ -235,12 +235,12 @@ This cluster covers friction behavior, lubrication strategies, and material form
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(DIC の変位 → ひずみ、image2d × image2d → image2d)、[`piv_deform_pass`](../ops/piv/estimate/piv_deform_pass.md)(変形を追う相関、image2d × image2d × flow2d → flow2d)、[`correlation_quality`](../ops/piv/solid/correlation_quality.md)(相関の信頼度、image2d × image2d × flow2d → image2d)、[`speckle_quality`](../ops/piv/solid/speckle_quality.md)(スペックルの良さ、image2d → table)、[`angle_between_planes`](../ops/3d/geometry/angle_between_planes.md)(曲げ角、primitive → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(フランジ面、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Modelling and parameter identification of coefficient of friction for deep-drawing quality steel sheets using the CatBoost machine learning algorithm and neural networks. [10.1007/s00170-022-10544-1](https://doi.org/10.1007/s00170-022-10544-1)
-  - — (n.d.). Investigation of the friction behavior between dry/infiltrated glass fiber fabric and metal sheet during deep drawing of fiber metal laminates. [10.1007/s11740-022-01141-y](https://doi.org/10.1007/s11740-022-01141-y)
-  - — (n.d.). Dry Deep Drawing of Aluminum and the Influence of Sheet Metal Roughness. [10.1007/s11837-020-04173-w](https://doi.org/10.1007/s11837-020-04173-w)
-  - — (n.d.). Closed-loop control of product properties in metal forming. [10.1016/j.cirp.2016.06.002](https://doi.org/10.1016/j.cirp.2016.06.002)
-  - — (n.d.). Investigating the relationship of hardness and flow stress in metal forming. [10.1016/j.ijmecsci.2022.107571](https://doi.org/10.1016/j.ijmecsci.2022.107571)
-  - — (n.d.). Tribology in Metal Working. `W1481613522`
+  - T. Miłek (2023). Experimental Determination of Material Boundary Conditions for Computer Simulation of Sheet Metal Deep Drawing Processes. [10.12913/22998624/172364](https://doi.org/10.12913/22998624/172364)
+  - Tomasz Trzepieciński et al. (2022). Application of Artificial Neural Networks to the Analysis of Friction Behaviour in a Drawbead Profile in Sheet Metal Forming. [10.3390/ma15249022](https://doi.org/10.3390/ma15249022)
+  - Sherwan Mohammed Najm et al. (2022). Modelling and parameter identification of coefficient of friction for deep-drawing quality steel sheets using the CatBoost machine learning algorithm and neural networks. [10.1007/s00170-022-10544-1](https://doi.org/10.1007/s00170-022-10544-1)
+  - Roland Lachmayer et al. (2022). Process-Integrated Lubrication in Sheet Metal Forming. [10.3390/jmmp6050121](https://doi.org/10.3390/jmmp6050121)
+  - André Rudnytskyj et al. (2022). Investigating the relationship of hardness and flow stress in metal forming. [10.1016/j.ijmecsci.2022.107571](https://doi.org/10.1016/j.ijmecsci.2022.107571)
+  - Maria Nilsson (2012). Tribology in Metal Working. [W1481613522](http://urn.kb.se/resolve?urn=urn:nbn:se:du-11730)
 
 ### forming / sheet / springback
 
@@ -248,12 +248,12 @@ This cluster covers springback compensation and control strategies in sheet meta
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(DIC の変位 → ひずみ、image2d × image2d → image2d)、[`piv_deform_pass`](../ops/piv/estimate/piv_deform_pass.md)(変形を追う相関、image2d × image2d × flow2d → flow2d)、[`correlation_quality`](../ops/piv/solid/correlation_quality.md)(相関の信頼度、image2d × image2d × flow2d → image2d)、[`speckle_quality`](../ops/piv/solid/speckle_quality.md)(スペックルの良さ、image2d → table)、[`angle_between_planes`](../ops/3d/geometry/angle_between_planes.md)(曲げ角、primitive → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(フランジ面、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). A Springback Compensation Strategy and Applications to Bending Cases. [10.1002/srin.201200220](https://doi.org/10.1002/srin.201200220)
-  - — (n.d.). Review on the influence of process parameters in incremental sheet forming. [10.1007/s00170-016-8426-6](https://doi.org/10.1007/s00170-016-8426-6)
-  - — (n.d.). 3D printed prototyping tools for flexible sheet metal drawing. [10.1007/s00170-021-07312-y](https://doi.org/10.1007/s00170-021-07312-y)
-  - — (n.d.). Advances and challenges on springback control for creep age forming of aluminum alloy. [10.1016/j.cja.2021.10.019](https://doi.org/10.1016/j.cja.2021.10.019)
-  - — (n.d.). A toolpath strategy for improving geometric accuracy in double-sided incremental sheet forming. [10.1016/j.cja.2021.12.002](https://doi.org/10.1016/j.cja.2021.12.002)
-  - — (n.d.). Emerging Trends in Single Point Incremental Sheet Forming of Lightweight Metals. [10.3390/met11081188](https://doi.org/10.3390/met11081188)
+  - Bo Wei et al. (2022). Deformation and Springback Behavior of Sheet Metal With Convex-Shaped Surfaces in Heat-Assisted Incremental Bending Process Based on Minimum Energy Method. [10.1115/1.4055961](https://doi.org/10.1115/1.4055961)
+  - Sattar Ullah et al. (2021). A toolpath strategy for improving geometric accuracy in double-sided incremental sheet forming. [10.1016/j.cja.2021.12.002](https://doi.org/10.1016/j.cja.2021.12.002)
+  - Liwen Zhang et al. (2021). Advances and challenges on springback control for creep age forming of aluminum alloy. [10.1016/j.cja.2021.10.019](https://doi.org/10.1016/j.cja.2021.10.019)
+  - Tomasz Trzepieciński et al. (2021). Emerging Trends in Single Point Incremental Sheet Forming of Lightweight Metals. [10.3390/met11081188](https://doi.org/10.3390/met11081188)
+  - Peter Frohn-Sörensen et al. (2021). 3D printed prototyping tools for flexible sheet metal drawing. [10.1007/s00170-021-07312-y](https://doi.org/10.1007/s00170-021-07312-y)
+  - Juan Liao et al. (2012). A Springback Compensation Strategy and Applications to Bending Cases. [10.1002/srin.201200220](https://doi.org/10.1002/srin.201200220)
 
 ### rolling / forming / asymmetric
 
@@ -261,12 +261,12 @@ This cluster covers metal rolling and forming processes, with emphasis on asymme
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(DIC の変位 → ひずみ、image2d × image2d → image2d)、[`piv_deform_pass`](../ops/piv/estimate/piv_deform_pass.md)(変形を追う相関、image2d × image2d × flow2d → flow2d)、[`correlation_quality`](../ops/piv/solid/correlation_quality.md)(相関の信頼度、image2d × image2d × flow2d → image2d)、[`speckle_quality`](../ops/piv/solid/speckle_quality.md)(スペックルの良さ、image2d → table)、[`angle_between_planes`](../ops/3d/geometry/angle_between_planes.md)(曲げ角、primitive → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(フランジ面、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Mixed Eulerian–Lagrangian description in materials processing: deformation of a metal sheet in a rolling mill. [10.1002/nme.5314](https://doi.org/10.1002/nme.5314)
-  - — (n.d.). Principles and Applications of Metal Rolling. [10.1017/cbo9781139879293](https://doi.org/10.1017/cbo9781139879293)
-  - — (n.d.). A deformation mechanism of hard metal surrounded by soft metal during roll forming. [10.1038/srep05017](https://doi.org/10.1038/srep05017)
-  - — (n.d.). Metal rolling - Asymmetrical rolling process. [10.1088/1757-899x/106/1/012019](https://doi.org/10.1088/1757-899x/106/1/012019)
-  - — (n.d.). Stability Analysis of Chatter in Tandem Rolling Mills—Part 1: Single- and Multi-Stand Negative Damping Effect. [10.1115/1.4024032](https://doi.org/10.1115/1.4024032)
-  - — (n.d.). Research of Combined Process “Rolling-Pressing” Influence on the Microstructure and Mechanical Properties of Aluminium. [10.4028/www.scientific.net/amr.814.68](https://doi.org/10.4028/www.scientific.net/amr.814.68)
+  - Ajay R. Bhardwaj et al. (2024). Rolling Process in Metal Forming: A Brief Review. [10.22214/ijraset.2024.64145](https://doi.org/10.22214/ijraset.2024.64145)
+  - Jakob Kraner et al. (2020). A review of asymmetric rolling. [10.17222/mit.2020.158](https://doi.org/10.17222/mit.2020.158)
+  - Gabriela Vincze et al. (2020). Asymmetrical Rolling of Aluminum Alloys and Steels: A Review. [10.3390/met10091126](https://doi.org/10.3390/met10091126)
+  - Yury Vetyukov et al. (2016). Mixed Eulerian–Lagrangian description in materials processing: deformation of a metal sheet in a rolling mill. [10.1002/nme.5314](https://doi.org/10.1002/nme.5314)
+  - Siddhartha Ray (2016). Principles and Applications of Metal Rolling. [10.1017/cbo9781139879293](https://doi.org/10.1017/cbo9781139879293)
+  - Huyue Zhao et al. (2013). Stability Analysis of Chatter in Tandem Rolling Mills—Part 1: Single- and Multi-Stand Negative Damping Effect. [10.1115/1.4024032](https://doi.org/10.1115/1.4024032)
 
 ## machining / optimization / surface
 
@@ -295,12 +295,12 @@ This cluster covers Electrical Discharge Machining (EDM) and its variants, inclu
 
 - 使う op: [`gaussian_beam`](../ops/optics/wave/gaussian_beam.md)(ビームの伝搬、 → table)、[`airy_pattern`](../ops/optics/wave/airy_pattern.md)(集光スポット、 → image2d)、[`depth_of_field`](../ops/optics/geometric/depth_of_field.md)(焦点深度、 → table)、[`beer_lambert_transmittance`](../ops/optics/glassbody/beer_lambert_transmittance.md)(透過率、signal → signal)、[`fresnel_dielectric`](../ops/optics/interface/fresnel_dielectric.md)(反射率、signal → signal)、[`irradiance_map`](../ops/optics/illumination/irradiance_map.md)(照度分布、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Experimental study on green electrical discharge machining in tap water of Ti–6Al–4V and parameters optimization. [10.1007/s00170-013-5274-5](https://doi.org/10.1007/s00170-013-5274-5)
-  - — (n.d.). Multi-objective parametric optimization of nano powder mixed electrical discharge machining of AlSiCp using response surface methodology and particle swarm optimization. [10.1016/j.aej.2017.02.006](https://doi.org/10.1016/j.aej.2017.02.006)
-  - — (n.d.). Degradation of titanium 6Al–4V fatigue strength due to electrical discharge machining. [10.1016/j.ijfatigue.2014.02.018](https://doi.org/10.1016/j.ijfatigue.2014.02.018)
-  - — (n.d.). Effect of dielectric fluid with surfactant and graphite powder on Electrical Discharge Machining of titanium alloy using Taguchi method. [10.1016/j.jestch.2015.03.009](https://doi.org/10.1016/j.jestch.2015.03.009)
-  - — (n.d.). Machining parameter optimization and experimental investigations of nano-graphene mixed electrical discharge machining of nitinol shape memory alloy. [10.1016/j.jmrt.2022.05.076](https://doi.org/10.1016/j.jmrt.2022.05.076)
-  - — (n.d.). Multi-Response Optimization of Electrical Discharge Machining Using the Desirability Function. [10.3390/mi10010072](https://doi.org/10.3390/mi10010072)
+  - Jay Vora et al. (2022). Machining parameter optimization and experimental investigations of nano-graphene mixed electrical discharge machining of nitinol shape memory alloy. [10.1016/j.jmrt.2022.05.076](https://doi.org/10.1016/j.jmrt.2022.05.076)
+  - Arun Kumar Rouniyar et al. (2019). Fabrication and experimental investigation of magnetic field assisted powder mixed electrical discharge machining on machining of aluminum 6061 alloy. [10.1177/0954405419838954](https://doi.org/10.1177/0954405419838954)
+  - Rafał Świercz et al. (2019). Multi-Response Optimization of Electrical Discharge Machining Using the Desirability Function. [10.3390/mi10010072](https://doi.org/10.3390/mi10010072)
+  - Rafał Świercz et al. (2017). Experimental Investigation of Surface Layer Properties of High Thermal Conductivity Tool Steel after Electrical Discharge Machining. [10.3390/met7120550](https://doi.org/10.3390/met7120550)
+  - Shalini Mohanty et al. (2017). Multi-objective parametric optimization of nano powder mixed electrical discharge machining of AlSiCp using response surface methodology and particle swarm optimization. [10.1016/j.aej.2017.02.006](https://doi.org/10.1016/j.aej.2017.02.006)
+  - Vineet Srivastava et al. (2012). Performance Evaluation of Electrical Discharge Machining (EDM) Process Using Cryogenically Cooled Electrode. [10.1080/10426914.2011.602790](https://doi.org/10.1080/10426914.2011.602790)
 
 ### cutting / roughness / surface
 
@@ -308,12 +308,12 @@ This cluster covers advanced cutting and machining techniques that control surfa
 
 - 使う op: [`mesh_area`](../ops/3d/mesh_process/mesh_area.md)(表面積、mesh → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積、mesh → measurement)、[`vertex_curvature`](../ops/3d/mesh_process/vertex_curvature.md)(曲率(角・フィレット)、mesh → curvature)、[`decimate_qem`](../ops/3d/mesh_process/decimate_qem.md)(間引き、mesh → mesh)、[`mesh_isotropic_remesh`](../ops/3d/resolution/mesh_isotropic_remesh.md)(等方リメッシュ、mesh → mesh)、[`mesh_to_voxel`](../ops/3d/transform/mesh_to_voxel.md)(メッシュ → 体積、mesh → voxel)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). The study on minimum uncut chip thickness and cutting forces during laser-assisted turning of WC/NiCr clad layers. [10.1007/s00170-017-0035-5](https://doi.org/10.1007/s00170-017-0035-5)
-  - — (n.d.). Effect of machinability, microstructure and hardness of deep cryogenic treatment in hard turning of AISI D2 steel with ceramic cutting. [10.1016/j.jmrt.2019.11.037](https://doi.org/10.1016/j.jmrt.2019.11.037)
-  - — (n.d.). Laser Cutting in the Production of Lithium Ion Cells. [10.1016/j.phpro.2012.10.032](https://doi.org/10.1016/j.phpro.2012.10.032)
-  - — (n.d.). Laser Cutting of Leather: Tool for Industry or Designers?. [10.1016/j.phpro.2015.11.028](https://doi.org/10.1016/j.phpro.2015.11.028)
-  - — (n.d.). Effect of Cutting Parameters on Cutting Force and Surface Roughness During Finish Hard Turning AISI52100 Grade Steel. [10.1016/j.procir.2012.05.016](https://doi.org/10.1016/j.procir.2012.05.016)
-  - — (n.d.). RSM Based Modeling for Surface Roughness Prediction in Laser Machining. `W2496423448`
+  - Dragan Rodić et al. (2025). Integration of RSM and Machine Learning for Accurate Prediction of Surface Roughness in Laser Processing. [10.3390/app15137064](https://doi.org/10.3390/app15137064)
+  - A. Balasuadhakar et al. (2025). Machine learning prediction of surface roughness in sustainable machining of AISI H11 tool steel. [10.1016/j.smmf.2025.100075](https://doi.org/10.1016/j.smmf.2025.100075)
+  - Wahyu Lestari et al. (2023). Optimization of the cutting process on machining time of ankle foot as transtibial prosthesis components using response surface methodology. [10.1016/j.rineng.2023.101736](https://doi.org/10.1016/j.rineng.2023.101736)
+  - Leszek Łatka et al. (2023). The influence of the laser cutting process parameters on the quality of the cut edge. [10.1088/1742-6596/2676/1/012001](https://doi.org/10.1088/1742-6596/2676/1/012001)
+  - Zhuo Wei et al. (2023). An Optimization Method for Laser Cutting Process Parameters Based on GPR and Seq2Seq. [10.1109/cac59555.2023.10451672](http://dx.doi.org/10.1109/cac59555.2023.10451672)
+  - Gaurav Bartarya et al. (2012). Effect of Cutting Parameters on Cutting Force and Surface Roughness During Finish Hard Turning AISI52100 Grade Steel. [10.1016/j.procir.2012.05.016](https://doi.org/10.1016/j.procir.2012.05.016)
 
 ### chatter / milling / stability
 
@@ -321,12 +321,12 @@ This cluster covers the analysis and mitigation of chatter vibrations in milling
 
 - 使う op: [`surface_filter`](../ops/roughness/prepare/surface_filter.md)(粗さのフィルタ(うねりと分ける)、depth → depth)、[`surface_form_remove`](../ops/roughness/prepare/surface_form_remove.md)(形状の除去、depth → depth)、[`profile_params`](../ops/roughness/measure/profile_params.md)(Ra / Rz など、signal → table)、[`surface_params`](../ops/roughness/measure/surface_params.md)(Sa / Sq など、depth → table)、[`surface_psd`](../ops/roughness/measure/surface_psd.md)(面のパワースペクトル、depth → pairs)、[`stft`](../ops/acoustics/transform/stft.md)(びびりの時間周波数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Tool path pattern and feed direction selection in robotic milling for increased chatter-free material removal rate. [10.1007/s00170-016-9896-2](https://doi.org/10.1007/s00170-016-9896-2)
-  - — (n.d.). On time-domain methods for milling stability analysis. [10.1007/s11434-012-5499-y](https://doi.org/10.1007/s11434-012-5499-y)
-  - — (n.d.). Chatter prediction for uncertain parameters. [10.1007/s40436-018-0230-0](https://doi.org/10.1007/s40436-018-0230-0)
-  - — (n.d.). Chatter stability prediction in four-axis milling of aero-engine casings with bull-nose end mill. [10.1016/j.cja.2015.06.001](https://doi.org/10.1016/j.cja.2015.06.001)
-  - — (n.d.). A review of chatter vibration research in milling. [10.1016/j.cja.2018.11.007](https://doi.org/10.1016/j.cja.2018.11.007)
-  - — (n.d.). Stability Analysis of Model Regenerative Chatter of Milling Process Using First Order Least Square Full Discretization Method. `W2508080100`
+  - Chuan-Jing Shen et al. (2025). Mapping model of structure nonlinearity and feedrate for predicting chatter stability in robotic milling. [10.1016/j.ymssp.2025.113654](https://doi.org/10.1016/j.ymssp.2025.113654)
+  - Yongjian Ji et al. (2025). Newton–Simpson-based predictor–corrector methods for milling chatter stability prediction. [10.1038/s41598-024-84329-9](https://doi.org/10.1038/s41598-024-84329-9)
+  - Xiangqian Liu et al. (2024). Milling stability considering multiple effects and variable rotational speed milling chatter control. [10.1177/09544054241304160](https://doi.org/10.1177/09544054241304160)
+  - Jixiang Huang et al. (2024). Modeling of Chatter Stability for the Robot Milling of Natural Marble. [10.3390/machines12120942](https://doi.org/10.3390/machines12120942)
+  - Yongjian Ji et al. (2024). Research on the influence of cutter overhang length on robotic milling chatter stability. [10.1038/s41598-024-76165-8](https://doi.org/10.1038/s41598-024-76165-8)
+  - Chigbogu G. Ozoegwu et al. (2012). Time Domain Chatter Stability Comparison of Turning and Milling Processes. [W2181738710](http://www.ijmse.org/Volume3/Issue11/paper6.pdf)
 
 ### tool / machining / cnc
 
@@ -334,12 +334,12 @@ This cluster covers computer numerical control (CNC) machining operations, encom
 
 - 使う op: [`surface_filter`](../ops/roughness/prepare/surface_filter.md)(粗さのフィルタ(うねりと分ける)、depth → depth)、[`surface_form_remove`](../ops/roughness/prepare/surface_form_remove.md)(形状の除去、depth → depth)、[`profile_params`](../ops/roughness/measure/profile_params.md)(Ra / Rz など、signal → table)、[`surface_params`](../ops/roughness/measure/surface_params.md)(Sa / Sq など、depth → table)、[`surface_psd`](../ops/roughness/measure/surface_psd.md)(面のパワースペクトル、depth → pairs)、[`stft`](../ops/acoustics/transform/stft.md)(びびりの時間周波数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Optimisation of CNC routing operations of wooden furniture parts. [10.1007/s00170-012-4647-5](https://doi.org/10.1007/s00170-012-4647-5)
-  - — (n.d.). Using spindle noise to monitor tool wear in a turning process. [10.1007/s00170-015-8303-8](https://doi.org/10.1007/s00170-015-8303-8)
-  - — (n.d.). Tool wear monitoring in roughing and finishing processes based on machine internal data. [10.1007/s00170-021-06748-6](https://doi.org/10.1007/s00170-021-06748-6)
-  - — (n.d.). Accurate prediction of machining feedrate and cycle times considering interpolator dynamics. [10.1007/s00170-021-07211-2](https://doi.org/10.1007/s00170-021-07211-2)
-  - — (n.d.). Machining Digital Twin using real-time model-based simulations and lookahead function for closed loop machining control. [10.1007/s00170-021-07867-w](https://doi.org/10.1007/s00170-021-07867-w)
-  - — (n.d.). Toolpath and Cutter Orientation Optimization in 5-Axis CNC Machining of Free-form Surfaces Using Flat-end Mills. `W2304745216`
+  - Tuan A. Z. Rahman et al. (2025). Vibration-Based Tool Condition Monitoring for CNC Grinding Process. [10.1109/iscaie64985.2025.11081136](https://doi.org/10.1109/iscaie64985.2025.11081136)
+  - Arbnor Pajaziti et al. (2025). Optimization of Toolpath Planning and CNC Machine Performance in Time-Efficient Machining. [10.3390/machines13010065](https://doi.org/10.3390/machines13010065)
+  - Bai Jiang et al. (2025). Local corner smoothing based on deep learning for CNC machine tools. [10.1038/s41598-024-84577-9](https://doi.org/10.1038/s41598-024-84577-9)
+  - Luís Henrique Andrade Maia et al. (2024). Enhancing Machining Efficiency: Real-Time Monitoring of Tool Wear with Acoustic Emission and STFT Techniques. [10.3390/lubricants12110380](https://doi.org/10.3390/lubricants12110380)
+  - C. Domínguez-Monferrer et al. (2024). Spot-checking machine learning algorithms for tool wear monitoring in automatic drilling operations in CFRP/Ti6Al4V/Al stacks in the aircraft industry. [10.1016/j.jmsy.2024.08.023](https://doi.org/10.1016/j.jmsy.2024.08.023)
+  - Ernesto Lo Valvo et al. (2012). CNC Milling Machine Simulation in Engineering Education. [10.3991/ijoe.v8i2.2047](https://doi.org/10.3991/ijoe.v8i2.2047)
 
 ### roughness / surface / prediction
 
@@ -347,12 +347,12 @@ This cluster covers predictive modeling and optimization techniques for surface 
 
 - 使う op: [`mesh_area`](../ops/3d/mesh_process/mesh_area.md)(表面積、mesh → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積、mesh → measurement)、[`vertex_curvature`](../ops/3d/mesh_process/vertex_curvature.md)(曲率(角・フィレット)、mesh → curvature)、[`decimate_qem`](../ops/3d/mesh_process/decimate_qem.md)(間引き、mesh → mesh)、[`mesh_isotropic_remesh`](../ops/3d/resolution/mesh_isotropic_remesh.md)(等方リメッシュ、mesh → mesh)、[`mesh_to_voxel`](../ops/3d/transform/mesh_to_voxel.md)(メッシュ → 体積、mesh → voxel)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Artificial intelligence for automatic prediction of required surface roughness by monitoring wear on face mill teeth. [10.1007/s10845-017-1381-8](https://doi.org/10.1007/s10845-017-1381-8)
-  - — (n.d.). Prediction of the Functional Performance of Machined Components Based on Surface Topography: State of the Art. [10.1007/s11665-016-2293-z](https://doi.org/10.1007/s11665-016-2293-z)
-  - — (n.d.). A novel approach to predict surface roughness in machining operations using fuzzy set theory. [10.1016/j.jcde.2015.04.002](https://doi.org/10.1016/j.jcde.2015.04.002)
-  - — (n.d.). Surface roughness prediction in machining using two-stage domain-incremental learning with input dimensionality expansion. [10.1016/j.jmsy.2025.03.014](https://doi.org/10.1016/j.jmsy.2025.03.014)
-  - — (n.d.). Surface roughness prediction with chip morphology using fuzzy logic on milling machine. [10.1016/j.matpr.2020.02.506](https://doi.org/10.1016/j.matpr.2020.02.506)
-  - — (n.d.). Response surface and artificial neural network prediction model and optimization for surface roughness in machining. [10.5267/j.ijiec.2014.11.001](https://doi.org/10.5267/j.ijiec.2014.11.001)
+  - Elango Natarajan et al. (2025). Ensemble Learning-Based Metamodel for Enhanced Surface Roughness Prediction in Polymeric Machining. [10.3390/machines13070570](https://doi.org/10.3390/machines13070570)
+  - Clayton Cooper et al. (2025). Surface roughness prediction in machining using two-stage domain-incremental learning with input dimensionality expansion. [10.1016/j.jmsy.2025.03.014](https://doi.org/10.1016/j.jmsy.2025.03.014)
+  - Katarzyna Antosz et al. (2025). Application of Machine Learning to the Prediction of Surface Roughness in the Milling Process on the Basis of Sensor Signals. [10.3390/ma18010148](https://doi.org/10.3390/ma18010148)
+  - Van-Long Trinh (2024). A Review of the Surface Roughness Prediction Methods in Finishing Machining. [10.48084/etasr.7710](https://doi.org/10.48084/etasr.7710)
+  - Amreeta R Kaigude et al. (2024). Surface roughness prediction of AISI D2 tool steel during powder mixed EDM using supervised machine learning. [10.1038/s41598-024-60543-3](https://doi.org/10.1038/s41598-024-60543-3)
+  - U. Natarajan et al. (2012). Prediction of Surface Roughness in Milling by Machine Vision Using ANFIS. [10.3722/cadaps.2012.269-288](https://doi.org/10.3722/cadaps.2012.269-288)
 
 ### discharge / electrical / machining
 
@@ -360,12 +360,12 @@ This cluster covers electrical discharge machining (EDM) and wire electrical dis
 
 - 使う op: [`surface_filter`](../ops/roughness/prepare/surface_filter.md)(粗さのフィルタ(うねりと分ける)、depth → depth)、[`surface_form_remove`](../ops/roughness/prepare/surface_form_remove.md)(形状の除去、depth → depth)、[`profile_params`](../ops/roughness/measure/profile_params.md)(Ra / Rz など、signal → table)、[`surface_params`](../ops/roughness/measure/surface_params.md)(Sa / Sq など、depth → table)、[`surface_psd`](../ops/roughness/measure/surface_psd.md)(面のパワースペクトル、depth → pairs)、[`stft`](../ops/acoustics/transform/stft.md)(びびりの時間周波数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Understanding the wire electrical discharge machining of Ti6Al4V alloy. [10.1016/j.heliyon.2019.e01473](https://doi.org/10.1016/j.heliyon.2019.e01473)
-  - — (n.d.). Electrical discharge machining of ceramic nanocomposites: sublimation phenomena and adaptive control. [10.1016/j.heliyon.2019.e02629](https://doi.org/10.1016/j.heliyon.2019.e02629)
-  - — (n.d.). A systematic review on powder mixed electrical discharge machining. [10.1016/j.heliyon.2019.e02963](https://doi.org/10.1016/j.heliyon.2019.e02963)
-  - — (n.d.). Methods and variables in Electrical discharge machining of titanium alloy – A review. [10.1016/j.heliyon.2020.e05554](https://doi.org/10.1016/j.heliyon.2020.e05554)
-  - — (n.d.). TEM study on the electrical discharge machined surface of single-crystal silicon. [10.1016/j.jmatprotec.2012.11.028](https://doi.org/10.1016/j.jmatprotec.2012.11.028)
-  - — (n.d.). Current Research Trends in Wire Electrical Discharge Machining: An Overview. `W2336458553`
+  - Isam Qasem et al. (2025). Machine Learning-Based Prediction of EDM Material Removal Rate and Surface Roughness. [10.3390/jmmp9080274](https://doi.org/10.3390/jmmp9080274)
+  - AMS B Finishes Processes and Fluids Committee (2024). Electrical Discharge Machining. [10.4271/ams2549](https://doi.org/10.4271/ams2549)
+  - C. Sarala Rubi et al. (2024). Comprehensive review on wire electrical discharge machining: a non-traditional material removal process. [10.3389/fmech.2024.1322605](https://doi.org/10.3389/fmech.2024.1322605)
+  - Ibrahem Maher et al. (2023). Ultrasonic Vibration Assisted Electrical Discharge Machining and Micro-Electrical Discharge Machining: A Review. [10.1080/10910344.2023.2263780](https://doi.org/10.1080/10910344.2023.2263780)
+  - N. Manikandan et al. (2023). Machinability of Titanium Grade 5 Alloy for Wire Electrical Discharge Machining Using a Hybrid Learning Algorithm. [10.3390/info14080439](https://doi.org/10.3390/info14080439)
+  - Rajeev Kumar et al. (2012). Current Research Trends in Wire Electrical Discharge Machining: An Overview. [W2336458553](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.668.7067)
 
 ### cutting / laser / kerf
 
@@ -373,12 +373,12 @@ This cluster focuses on laser cutting and kerf quality characteristics across va
 
 - 使う op: [`surface_filter`](../ops/roughness/prepare/surface_filter.md)(粗さのフィルタ(うねりと分ける)、depth → depth)、[`surface_form_remove`](../ops/roughness/prepare/surface_form_remove.md)(形状の除去、depth → depth)、[`profile_params`](../ops/roughness/measure/profile_params.md)(Ra / Rz など、signal → table)、[`surface_params`](../ops/roughness/measure/surface_params.md)(Sa / Sq など、depth → table)、[`surface_psd`](../ops/roughness/measure/surface_psd.md)(面のパワースペクトル、depth → pairs)、[`stft`](../ops/acoustics/transform/stft.md)(びびりの時間周波数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Predicting kerf quality characteristics in laser cutting of basalt fibers reinforced polymer composites using neural network and chimp optimization. [10.1016/j.aej.2022.04.032](https://doi.org/10.1016/j.aej.2022.04.032)
-  - — (n.d.). Simulation, statistical modeling, and optimization of CO2 laser cutting process of polycarbonate sheets. [10.1016/j.ijleo.2020.164932](https://doi.org/10.1016/j.ijleo.2020.164932)
-  - — (n.d.). Improving laser cutting quality of polymethylmethacrylate sheet: experimental investigation and optimization. [10.1016/j.jmrt.2019.11.059](https://doi.org/10.1016/j.jmrt.2019.11.059)
-  - — (n.d.). Experimental investigation on laser cutting of PMMA sheets: Effects of process factors on kerf characteristics. [10.1016/j.jmrt.2021.01.012](https://doi.org/10.1016/j.jmrt.2021.01.012)
-  - — (n.d.). Numerical Investigation of the Effect of Some Parameters on Temperature Field and Kerf Width in Laser Cutting Process. [10.1016/j.phpro.2012.10.112](https://doi.org/10.1016/j.phpro.2012.10.112)
-  - — (n.d.). An Analysis the Effect of Process Parameters on Heat Affected Zone in Laser Cutting Using Response Surface Methodology. `W2189601987`
+  - Oğuzhan Der et al. (2025). INVESTIGATION OF THE EFFECTS OF PROCESS PARAMETERS ON MACHINING PERFORMANCE IN LASER CUTTING OF 3D-PRINTED PLA. [10.46519/ij3dptdi.1581618](https://doi.org/10.46519/ij3dptdi.1581618)
+  - Gökhan Başar et al. (2025). Multi-objective optimization of process parameters for laser cutting polyethylene using fuzzy AHP-based MCDM methods. [10.1177/09544089251319202](https://doi.org/10.1177/09544089251319202)
+  - Yeda Wang et al. (2024). Optimization Method of Sheet Metal Laser Cutting Process Parameters under Heat Influence. [10.3390/machines12030206](https://doi.org/10.3390/machines12030206)
+  - D. Srinivasan et al. (2023). OPTIMIZATION OF LASER CUTTING PROCESS PARAMETERS ON SS347 USING GRA AND TOPSIS. [10.1142/s0218625x23500397](https://doi.org/10.1142/s0218625x23500397)
+  - Ivan Pinćjer et al. (2023). Optimization of Tensile Strength in the Paper Material Cutting Process Based on CO2 Laser Process Parameters. [10.3390/ma16072719](https://doi.org/10.3390/ma16072719)
+  - Karim Kheloufi et al. (2012). Numerical Investigation of the Effect of Some Parameters on Temperature Field and Kerf Width in Laser Cutting Process. [10.1016/j.phpro.2012.10.112](https://doi.org/10.1016/j.phpro.2012.10.112)
 
 ### grinding / wheel / monitoring
 
@@ -386,12 +386,12 @@ This cluster covers advanced monitoring and quality control techniques for grind
 
 - 使う op: [`temporal_bandpass`](../ops/motionmag/temporal/temporal_bandpass.md)(動画の時間帯域(揺らぎ)、video → video)、[`motion_magnify`](../ops/motionmag/magnify/motion_magnify.md)(微小な動きの拡大、video → table)、[`video_spacetime_cube`](../ops/videocube/cube/video_spacetime_cube.md)(時空間の立方体、video → voxel)、[`video_summary_keyframes`](../ops/videocube/summary/video_summary_keyframes.md)(要約コマ、video → indices)、[`blob_count`](../ops/2d/features/blob_count.md)(スパッタ・粒の数、region → feature)、[`area_center`](../ops/2d/features/area_center.md)(溶融池の面積と重心、region → match)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). In-process detection of grinding burn using machine learning. [10.1007/s00170-021-06896-9](https://doi.org/10.1007/s00170-021-06896-9)
-  - — (n.d.). In-process belt-image-based material removal rate monitoring for abrasive belt grinding using CatBoost algorithm. [10.1007/s00170-022-10341-w](https://doi.org/10.1007/s00170-022-10341-w)
-  - — (n.d.). Use of machine learning models in condition monitoring of abrasive belt in robotic arm grinding process. [10.1007/s10845-024-02410-6](https://doi.org/10.1007/s10845-024-02410-6)
-  - — (n.d.). Fiber-reinforced composites in milling and grinding: machining bottlenecks and advanced strategies. [10.1007/s11465-022-0680-8](https://doi.org/10.1007/s11465-022-0680-8)
-  - — (n.d.). Review on monolayer CBN superabrasive wheels for grinding metallic materials. [10.1016/j.cja.2016.07.003](https://doi.org/10.1016/j.cja.2016.07.003)
-  - — (n.d.). Condition monitoring of gear grinding processes. `W3165122112`
+  - Mochamad Denny Surindra et al. (2024). Use of machine learning models in condition monitoring of abrasive belt in robotic arm grinding process. [10.1007/s10845-024-02410-6](https://doi.org/10.1007/s10845-024-02410-6)
+  - Yan Lu et al. (2023). Online Process Monitoring Based on Proprioceptive Signals for Robotic Grinding. [10.1109/tim.2023.3277936](http://dx.doi.org/10.1109/tim.2023.3277936)
+  - Mariusz Deja (2022). Method of Monitoring of the Grinding Process with Lapping Kinematics Using Audible Sound Analysis. [10.36897/jme/157255](https://doi.org/10.36897/jme/157255)
+  - Yuxiang Wang et al. (2022). In-process belt-image-based material removal rate monitoring for abrasive belt grinding using CatBoost algorithm. [10.1007/s00170-022-10341-w](https://doi.org/10.1007/s00170-022-10341-w)
+  - Qingyu Meng et al. (2022). Modelling of grinding mechanics: A review. [10.1016/j.cja.2022.10.006](https://doi.org/10.1016/j.cja.2022.10.006)
+  - Taghi Tawakoli et al. (2012). An Experimental Study on the Dynamic Behavior of Grinding Wheels in High Efficiency Deep Grinding. [10.1016/j.procir.2012.04.068](https://doi.org/10.1016/j.procir.2012.04.068)
 
 ## injection / molding / warpage
 
@@ -418,12 +418,12 @@ This cluster covers optimization techniques and process parameters in injection 
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Multi‐response optimization of shrinkage, clamp force, and part weight in simulated injection molding process of a dialysis micro‐filter. [10.1002/app.51732](https://doi.org/10.1002/app.51732)
-  - — (n.d.). Optimization of Processing Conditions for Rice Bran-based Bioplastics Through Extrusion and Injection Molding. [10.1007/s10924-024-03377-4](https://doi.org/10.1007/s10924-024-03377-4)
-  - — (n.d.). Optimizing injection molding simulations: comparative performance of Kriging and RSM surrogate models for process efficiency. [10.1007/s44245-025-00115-5](https://doi.org/10.1007/s44245-025-00115-5)
-  - — (n.d.). Sustainable injection moulding: The impact of materials selection and gate location on part warpage and injection pressure. [10.1016/j.susmat.2015.07.001](https://doi.org/10.1016/j.susmat.2015.07.001)
-  - — (n.d.). Injection Molding Analysis for Bird-Feeder by Optimizing the Shrinkage and Warpage Deformation. [10.1109/wccs62745.2024.10765522](https://doi.org/10.1109/wccs62745.2024.10765522)
-  - — (n.d.). ENHANCED INJECTION MOLDING ANALYSIS: OPTIMIZING SHRINKAGE, WARPAGE, AND AIR TRAPS THROUGH ADVANCED SIMULATION TECHNIQUES. [10.1142/s0219525925400107](https://doi.org/10.1142/s0219525925400107)
+  - Zineb Achor et al. (2025). ENHANCED INJECTION MOLDING ANALYSIS: OPTIMIZING SHRINKAGE, WARPAGE, AND AIR TRAPS THROUGH ADVANCED SIMULATION TECHNIQUES. [10.1142/s0219525925400107](https://doi.org/10.1142/s0219525925400107)
+  - Markus Baum et al. (2025). Optimizing injection molding simulations: comparative performance of Kriging and RSM surrogate models for process efficiency. [10.1007/s44245-025-00115-5](https://doi.org/10.1007/s44245-025-00115-5)
+  - Zineb Achor et al. (2024). Injection Molding Analysis for Bird-Feeder by Optimizing the Shrinkage and Warpage Deformation. [10.1109/wccs62745.2024.10765522](https://doi.org/10.1109/wccs62745.2024.10765522)
+  - María Alonso‐González et al. (2024). Optimization of Processing Conditions for Rice Bran-based Bioplastics Through Extrusion and Injection Molding. [10.1007/s10924-024-03377-4](https://doi.org/10.1007/s10924-024-03377-4)
+  - Behzad Shiroud Heidari et al. (2021). Multi‐response optimization of shrinkage, clamp force, and part weight in simulated injection molding process of a dialysis micro‐filter. [10.1002/app.51732](https://doi.org/10.1002/app.51732)
+  - Marton Huszar et al. (2015). Sustainable injection moulding: The impact of materials selection and gate location on part warpage and injection pressure. [10.1016/j.susmat.2015.07.001](https://doi.org/10.1016/j.susmat.2015.07.001)
 
 ### injection / molding / warpage
 
@@ -431,12 +431,12 @@ This cluster covers the analysis, prediction, and optimization of shrinkage and 
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Shrinkage and Warpage Optimization of Expanded‐Perlite‐Filled Polypropylene Composites in Extrusion‐Based Additive Manufacturing. [10.1002/mame.201700143](https://doi.org/10.1002/mame.201700143)
-  - — (n.d.). Review on the performances, foaming and injection molding simulation of natural fiber composites. [10.1002/pc.25902](https://doi.org/10.1002/pc.25902)
-  - — (n.d.). Analysis and optimization of injection molding process on warpage based on Taguchi design and PSO algorithm. [10.1007/s00170-025-15099-5](https://doi.org/10.1007/s00170-025-15099-5)
-  - — (n.d.). Predicting shrinkage and warpage in injection molding: Towards automatized mold design. [10.1063/1.5008119](https://doi.org/10.1063/1.5008119)
-  - — (n.d.). Multi-objective optimization of GFRP injection molding process parameters, using GA-ELM, MOFA, and GRA-TOPSIS. [10.1139/tcsme-2021-0053](https://doi.org/10.1139/tcsme-2021-0053)
-  - — (n.d.). Minimization of shrinkage in injection molding process of acetal polymer gear using Taguchi DOE optimization and ANOVA method. `W2770475890`
+  - Lei Zhang et al. (2025). Analysis and optimization of injection molding process on warpage based on Taguchi design and PSO algorithm. [10.1007/s00170-025-15099-5](https://doi.org/10.1007/s00170-025-15099-5)
+  - Chiwapon Nitnara et al. (2023). Simulation-Based Optimization of Injection Molding Process Parameters for Minimizing Warpage by ANN and GA. [10.14716/ijtech.v14i2.5573](https://doi.org/10.14716/ijtech.v14i2.5573)
+  - Wei‐Chun Lin et al. (2022). Analysis of the Warpage Phenomenon of Micro-Sized Parts with Precision Injection Molding by Experiment, Numerical Simulation, and Grey Theory. [10.3390/polym14091845](https://doi.org/10.3390/polym14091845)
+  - Mehdi Moayyedian et al. (2021). Optimization of Injection-Molding Process for Thin-Walled Polypropylene Part Using Artificial Neural Network and Taguchi Techniques. [10.3390/polym13234158](https://doi.org/10.3390/polym13234158)
+  - Xin Liu et al. (2021). Multi-objective optimization of GFRP injection molding process parameters, using GA-ELM, MOFA, and GRA-TOPSIS. [10.1139/tcsme-2021-0053](https://doi.org/10.1139/tcsme-2021-0053)
+  - Yong Nie et al. (2013). Optimization of the Injection Molding Process Parameters Based on Moldflow and Orthogonal Experiment. [10.4028/www.scientific.net/kem.561.239](https://doi.org/10.4028/www.scientific.net/kem.561.239)
 
 ### cooling / conformal / injection
 
@@ -444,12 +444,12 @@ This cluster covers the design, optimization, and implementation of cooling syst
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Using Bayesian optimization for warpage compensation in injection molding. [10.1002/mawe.202300157](https://doi.org/10.1002/mawe.202300157)
-  - — (n.d.). A review of liquid silicone rubber injection molding: Process variables and process modeling. [10.1002/pen.25618](https://doi.org/10.1002/pen.25618)
-  - — (n.d.). Dynamic conformal cooling improves injection molding. [10.1007/s00170-021-06794-0](https://doi.org/10.1007/s00170-021-06794-0)
-  - — (n.d.). Development of a Smart Plastic Injection Mold with Conformal Cooling Channels. [10.1016/j.promfg.2017.07.020](https://doi.org/10.1016/j.promfg.2017.07.020)
-  - — (n.d.). Mold Flow Analysis and Optimization in Injection Molding Process for Semiconductor Packages. [10.1109/icept56209.2022.9873324](https://doi.org/10.1109/icept56209.2022.9873324)
-  - — (n.d.). Design and simulation-based optimization of cooling channels for plastic injection mold. [10.5772/32730](https://doi.org/10.5772/32730)
+  - Steffen Tillmann et al. (2024). Using Bayesian optimization for warpage compensation in injection molding. [10.1002/mawe.202300157](https://doi.org/10.1002/mawe.202300157)
+  - Omar Ahmed Mohamed et al. (2024). A simulation study of conformal cooling channels in plastic injection molding. [10.25916/sut.26226614](http://hdl.handle.net/1959.3/380361)
+  - Janez Gotlih et al. (2022). A Holistic Approach to Cooling System Selection and Injection Molding Process Optimization Based on Non-Dominated Sorting. [10.3390/polym14224842](https://doi.org/10.3390/polym14224842)
+  - Jinxin Huang et al. (2022). Mold Flow Analysis and Optimization in Injection Molding Process for Semiconductor Packages. [10.1109/icept56209.2022.9873324](https://doi.org/10.1109/icept56209.2022.9873324)
+  - Chil-Chyuan Kuo et al. (2021). Improving Cooling Performance of Injection Molding Tool with Conformal Cooling Channel by Adding Hybrid Fillers. [10.3390/polym13081224](https://doi.org/10.3390/polym13081224)
+  - Hong‐Seok Park et al. (2012). Design and simulation-based optimization of cooling channels for plastic injection mold. [10.5772/32730](https://doi.org/10.5772/32730)
 
 ### injection / molding / warpage
 
@@ -457,12 +457,12 @@ This cluster addresses the optimization of injection molding processes with a fo
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Optimisation of Injection Moulding Parameter towards Shrinkage and Warpage for Polypropylene-Nanoclay-Gigantochloa Scortechinii Nanocomposites. [10.1016/j.proeng.2017.04.137](https://doi.org/10.1016/j.proeng.2017.04.137)
-  - — (n.d.). Influence of molding conditions on the shrinkage and warpage behavior of standardized test specimens. [10.1063/1.4965468](https://doi.org/10.1063/1.4965468)
-  - — (n.d.). Shrinkage and Warpage Detailed Analysis and Optimization for the Injection Molding Process Using Multistage Experimental Design. [10.1080/08982112.2013.852679](https://doi.org/10.1080/08982112.2013.852679)
-  - — (n.d.). Experimental study of warpage and shrinkage in injection molding of HDPE/rPET/wood composites with multiobjective optimization. [10.1080/10426914.2018.1512123](https://doi.org/10.1080/10426914.2018.1512123)
-  - — (n.d.). Optimizing and Modeling for Plastic Injection Molding Process using Taguchi Method. [10.1088/1742-6596/1026/1/012018](https://doi.org/10.1088/1742-6596/1026/1/012018)
-  - — (n.d.). Warpage and Shrinkage Optimization of Injection-Molded Plastic Spoon Parts for Biodegradable Polymers Using Taguchi, ANOVA and Artificial Neural Network Methods. `W3140820820`
+  - Hu yuwang et al. (2025). Deformation analysis method for precision injection molding of optical plastic lenses with a multi section approach based on warpage and shrinkage behavior. [10.1364/oe.551538](https://doi.org/10.1364/oe.551538)
+  - Feng Guo et al. (2024). Multi-Objectives Optimization of Plastic Injection Molding Process Parameters Based on Numerical DNN-GA-MCS Strategy. [10.3390/polym16162247](https://doi.org/10.3390/polym16162247)
+  - Jinping Chen et al. (2023). Design and Parametric Optimization of the Injection Molding Process Using Statistical Analysis and Numerical Simulation. [10.3390/pr11020414](https://doi.org/10.3390/pr11020414)
+  - Guillermo Hiyane-Nashiro et al. (2022). Optimization of the Reduction of Shrinkage and Warpage for Plastic Parts in the Injection Molding Process by Extended Adaptive Weighted Summation Method. [10.3390/polym14235133](https://doi.org/10.3390/polym14235133)
+  - Ermias Aswossie Berihun et al. (2022). Parameter Optimization of PET Plastic Preform Bottles in Injection Molding Process Using Grey-Based Taguchi Method. [10.1155/2022/4416602](https://doi.org/10.1155/2022/4416602)
+  - Shi Jun Fu (2012). Optimization of Process Parameters for Injection Molding Based on Taguchi Technique. [10.4028/www.scientific.net/amr.538-541.1170](https://doi.org/10.4028/www.scientific.net/amr.538-541.1170)
 
 ### molding / injection / optimization
 
@@ -470,12 +470,12 @@ This cluster covers computational and optimization techniques for injection mold
 
 - 使う op: [`vol_euler_number`](../ops/3d/feature/vol_euler_number.md)(連結性(閉じた空隙の数)、voxel → measurement)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(最小肉厚、voxel → signal)、[`edt_jfa`](../ops/3d/feature/edt_jfa.md)(距離変換(肉厚・隙間)、voxel → sdf)、[`vol_granulometry`](../ops/3d/feature/vol_granulometry.md)(空隙の大きさ分布、voxel → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積(材料量)、mesh → measurement)、[`inertia_tensor`](../ops/3d/moment_invariant/inertia_tensor.md)(慣性テンソル、points → matrix)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Computer Modeling for Injection Molding. [10.1002/9781118444887](https://doi.org/10.1002/9781118444887)
-  - — (n.d.). Comparative Study of Multi‐objective Bayesian Optimization and NSGA‐III based Approaches for Injection Molding Process. [10.1002/adts.202400135](https://doi.org/10.1002/adts.202400135)
-  - — (n.d.). Modeling and Optimization of the Injection‐Molding Process: A Review. [10.1002/adv.21683](https://doi.org/10.1002/adv.21683)
-  - — (n.d.). The investigation on PVT control method establishment for scientific injection molding parameter setting and its quality control. [10.1002/pen.25521](https://doi.org/10.1002/pen.25521)
-  - — (n.d.). Induced network-based transfer learning in injection molding for process modelling and optimization with artificial neural networks. [10.1007/s00170-020-06511-3](https://doi.org/10.1007/s00170-020-06511-3)
-  - — (n.d.). Optimization of Plastic Injection Molding Process by Combination of Artificial Neural Network and Genetic Algorithm. `W4385970240`
+  - Yung‐Tsan Jou et al. (2025). Sustainable Optimization of the Injection Molding Process Using Particle Swarm Optimization (PSO). [10.3390/app15158417](https://doi.org/10.3390/app15158417)
+  - Jiyoung Jung et al. (2024). Comparative Study of Multi‐objective Bayesian Optimization and NSGA‐III based Approaches for Injection Molding Process. [10.1002/adts.202400135](https://doi.org/10.1002/adts.202400135)
+  - Mohamed EL Ghadoui et al. (2023). A hybrid optimization approach for intelligent manufacturing in plastic injection molding by using artificial neural network and genetic algorithm. [10.1038/s41598-023-48679-0](https://doi.org/10.1038/s41598-023-48679-0)
+  - Markus Baum et al. (2023). Approaches for Numerical Modeling and Simulation of the Filling Phase in Injection Molding: A Review. [10.3390/polym15214220](https://doi.org/10.3390/polym15214220)
+  - Mateusz Czepiel et al. (2023). Advanced Injection Molding Methods: Review. [10.3390/ma16175802](https://doi.org/10.3390/ma16175802)
+  - Rashi A. Yadav et al. (2012). Recent Methods for Optimization of Plastic Injection Molding Process - A Literature Review. [W2362698793](https://www.ijser.org/researchpaper/Recent-Methods-for-Optimization-of-Plastic-Injection-Molding-Process-A-Literature-Review.pdf)
 
 ### injection / molding / warpage
 
@@ -483,12 +483,12 @@ This cluster addresses injection molding as a manufacturing process, with partic
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Thermomechanical properties and water uptake capacity of soy protein‐based bioplastics processed by injection molding. [10.1002/app.43524](https://doi.org/10.1002/app.43524)
-  - — (n.d.). Optimization and numerical simulation analysis for molded thin‐walled parts fabricated using wood‐filled polypropylene composites via plastic injection molding. [10.1002/pen.23979](https://doi.org/10.1002/pen.23979)
-  - — (n.d.). Development of a novel control strategy for a highly segmented injection mold tempering for inline part warpage control. [10.1002/pen.25481](https://doi.org/10.1002/pen.25481)
-  - — (n.d.). Measurement of specific volume of polymers under simulated injection molding processes. [10.1016/j.matdes.2020.109136](https://doi.org/10.1016/j.matdes.2020.109136)
-  - — (n.d.). Prediction and validation of the specific volume for inline warpage control in injection molding. [10.1016/j.polymertesting.2021.107393](https://doi.org/10.1016/j.polymertesting.2021.107393)
-  - — (n.d.). Prediction of Mechanical Property of Glass Fiber Reinforced Polycarbonate and Evaluation of Warpage through Injection Molding. [10.7317/pk.2014.38.6.708](https://doi.org/10.7317/pk.2014.38.6.708)
+  - Hanjui Chang et al. (2023). Liquid Silicone Rubber Headlamp Lens Injection Molding Process Optimization Based on Tie Bar Elongation and NSGA III. [10.3390/polym15214278](https://doi.org/10.3390/polym15214278)
+  - Van-Long Trinh et al. (2023). STUDY ON THE INFLUENCE OF INJECTION MOLDING PARAMETERS ON THE WARPAGE AND SHRINKAGE IN HOT RUNNER SYSTEM MOLD. [10.54684/ijmmt.2023.15.1.155](http://doi.org/10.54684/ijmmt.2023.15.1.155)
+  - Huang DongYou et al. (2022). Shrinkage and Warpage Mechanism of Overflow Water-Assisted Injection Molding Short Fiber-Reinforced Polymers. [10.1155/2022/6596464](https://doi.org/10.1155/2022/6596464)
+  - Chi‐Wei Su et al. (2022). Optimization process parameters and adaptive quality monitoring injection molding process for materials with different viscosity. [10.1016/j.polymertesting.2022.107526](https://doi.org/10.1016/j.polymertesting.2022.107526)
+  - Christian Hopmann et al. (2021). Prediction and validation of the specific volume for inline warpage control in injection molding. [10.1016/j.polymertesting.2021.107393](https://doi.org/10.1016/j.polymertesting.2021.107393)
+  - Zhi Bian et al. (2012). Effect of Processing Conditions on the Shrinkage and Warpage of Glass Fiber Reinforced PP Using Microcellular Injection Molding. [10.4028/www.scientific.net/kem.501.294](https://doi.org/10.4028/www.scientific.net/kem.501.294)
 
 ### injection / molding / packing
 
@@ -496,12 +496,12 @@ This cluster covers injection molding and related manufacturing processes (compr
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Injection‐compression molding process on optical quality optimization of plastic lens array. [10.1002/pat.6166](https://doi.org/10.1002/pat.6166)
-  - — (n.d.). Modeling of pvT behavior of semi-crystalline polymer based on the two-domain Tait equation of state for injection molding. [10.1016/j.matdes.2019.108149](https://doi.org/10.1016/j.matdes.2019.108149)
-  - — (n.d.). Multi-Objective Optimization of Injection Molding Process for Determination of Feasible Moldability Index. [10.1016/j.procir.2019.04.213](https://doi.org/10.1016/j.procir.2019.04.213)
-  - — (n.d.). Optimization of injection molding process parameters for the lining of IV hydrogen storage cylinder. [10.1038/s41598-023-27848-1](https://doi.org/10.1038/s41598-023-27848-1)
-  - — (n.d.). Injection Molding Process Optimization of Polypropylene using Orthogonal Experiment Method Based on Tensile Strength. [10.1088/1757-899x/612/3/032102](https://doi.org/10.1088/1757-899x/612/3/032102)
-  - — (n.d.). Application of Intelligent Modeling Method to Optimize the Multiple Quality Characteristics of the Injection Molding Process of Automobile Lock Parts. [10.3390/polym13152515](https://doi.org/10.3390/polym13152515)
+  - Chao‐Ming Lin et al. (2023). Injection‐compression molding process on optical quality optimization of plastic lens array. [10.1002/pat.6166](https://doi.org/10.1002/pat.6166)
+  - Jin Li et al. (2023). Optimization of injection molding process parameters for the lining of IV hydrogen storage cylinder. [10.1038/s41598-023-27848-1](https://doi.org/10.1038/s41598-023-27848-1)
+  - Kai Yang et al. (2022). Research on Optimization of Injection Molding Process Parameters of Automobile Plastic Front-End Frame. [10.1155/2022/5955725](https://doi.org/10.1155/2022/5955725)
+  - Chao‐Ming Lin et al. (2022). Optimization of Injection-Compression Molding Processing Conditions for Fresnel Lens Based on Optical Performance and Geometry Deformation Considerations. [10.1109/access.2022.3184320](https://doi.org/10.1109/access.2022.3184320)
+  - Wei‐Tai Huang et al. (2021). Application of Intelligent Modeling Method to Optimize the Multiple Quality Characteristics of the Injection Molding Process of Automobile Lock Parts. [10.3390/polym13152515](https://doi.org/10.3390/polym13152515)
+  - Alejandro Alvarado‐Iniesta et al. (2013). Optimization of injection molding process parameters by a hybrid of artificial neural network and artificial bee colony algorithm. [10.17533/udea.redin.16309](http://dx.doi.org/10.17533/udea.redin.16309)
 
 ### injection / molding / warpage
 
@@ -509,12 +509,12 @@ This cluster addresses the optimization of injection molding process parameters 
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Optimization of injection molding process parameters based on GA-ELM-GA. [10.1051/matecconf/202235501029](https://doi.org/10.1051/matecconf/202235501029)
-  - — (n.d.). Injection molding process optimization of plastic packaging device based on GA and BP neural network. [10.1109/icept59018.2023.10492007](https://doi.org/10.1109/icept59018.2023.10492007)
-  - — (n.d.). Multiobjective Optimization Method for Polymer Injection Molding Based on a Genetic Algorithm. [10.1155/2019/9012085](https://doi.org/10.1155/2019/9012085)
-  - — (n.d.). Multi-objective optimization of injection molding process parameters based on BO-RFR and NSGAⅡ methods. [10.1515/ipp-2020-4063](https://doi.org/10.1515/ipp-2020-4063)
-  - — (n.d.). Quality prediction and control of thin-walled shell injection molding based on GWO-PSO, ACO-BP, and NSGA-II. [10.1515/polyeng-2022-0085](https://doi.org/10.1515/polyeng-2022-0085)
-  - — (n.d.). Optimization of Injection Molding Process Parameters with Material Properties Based on GA and BP. [10.4028/www.scientific.net/amm.345.586](https://doi.org/10.4028/www.scientific.net/amm.345.586)
+  - Tengjiao Hong et al. (2025). Multi-Objective Optimization of Injection Molding Process Parameters for Junction Boxes Based on BP Neural Network and NSGA-II Algorithm. [10.3390/ma18030577](https://doi.org/10.3390/ma18030577)
+  - Feng Liu et al. (2023). Multi-Objective Optimization of Injection Molding Process Parameters for Moderately Thick Plane Lens Based on PSO-BPNN, OMOPSO, and TOPSIS. [10.3390/pr12010036](https://doi.org/10.3390/pr12010036)
+  - FU Ru-yi et al. (2023). Injection molding process optimization of plastic packaging device based on GA and BP neural network. [10.1109/icept59018.2023.10492007](https://doi.org/10.1109/icept59018.2023.10492007)
+  - Yanli Cao et al. (2022). Multi-objective optimization of injection molding process parameters based on BO-RFR and NSGAⅡ methods. [10.1515/ipp-2020-4063](https://doi.org/10.1515/ipp-2020-4063)
+  - Feng Lin et al. (2022). OPTIMIZATION OF INJECTION MOLDING QUALITY BASED ON BP NEURAL NETWORK AND PSO. [10.17222/mit.2022.516](https://doi.org/10.17222/mit.2022.516)
+  - Xiao Hong Tan et al. (2013). Optimization of Injection Molding Process Parameters with Material Properties Based on GA and BP. [10.4028/www.scientific.net/amm.345.586](https://doi.org/10.4028/www.scientific.net/amm.345.586)
 
 ## welding / weld / arc
 
@@ -540,12 +540,12 @@ This cluster covers Wire and Arc Additive Manufacturing (WAAM) technologies, foc
 
 - 使う op: [`decode_fringe`](../ops/3d/structured_light/decode_fringe.md)(構造化光の縞を復号、images → depth)、[`unwrap_phase_2d`](../ops/3d/structured_light/unwrap_phase_2d.md)(位相のアンラップ、image2d → image2d)、[`triangulate_column`](../ops/3d/structured_light/triangulate_column.md)(三角測量 → ビードの高さ、image2d → depth)、[`fit_poly_surface`](../ops/3d/surface_fit/fit_poly_surface.md)(母材面、image2d × image2d × image2d → poly_surface)、[`surface_form_error`](../ops/3d/surface_fit/surface_form_error.md)(ビードの形状誤差、image2d → measurement)、[`specular_free_transform`](../ops/specular/dichromatic/specular_free_transform.md)(アークの映り込みを除く、rgbimage → rgbimage)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Non-destructive testing application of radiography and ultrasound for wire and arc additive manufacturing. [10.1016/j.addma.2018.03.020](https://doi.org/10.1016/j.addma.2018.03.020)
-  - — (n.d.). Porosity in wire arc additive manufacturing of aluminium alloys. [10.1016/j.addma.2021.101993](https://doi.org/10.1016/j.addma.2021.101993)
-  - — (n.d.). Influence of WAAM-CMT deposition parameters on wall geometry. [10.1016/j.aime.2022.100105](https://doi.org/10.1016/j.aime.2022.100105)
-  - — (n.d.). Formability, microstructure evolution and mechanical properties of wire arc additively manufactured AZ80M magnesium alloy using gas tungsten arc welding. [10.1016/j.jma.2020.01.003](https://doi.org/10.1016/j.jma.2020.01.003)
-  - — (n.d.). Review on effect of heat input for wire arc additive manufacturing process. [10.1016/j.jmrt.2021.02.002](https://doi.org/10.1016/j.jmrt.2021.02.002)
-  - — (n.d.). A Review of Non-Destructive Testing (NDT) Techniques for Defect Detection: Application to Fusion Welding and Future Wire Arc Additive Manufacturing Processes. [10.3390/ma15103697](https://doi.org/10.3390/ma15103697)
+  - André Luiz Brito Novelino et al. (2022). Influence of WAAM-CMT deposition parameters on wall geometry. [10.1016/j.aime.2022.100105](https://doi.org/10.1016/j.aime.2022.100105)
+  - Zhiwei Lyu et al. (2022). Homogenization of microstructure and mechanical properties of wire arc additive manufactured martensitic stainless steel through optimization of post-process heat treatment. [10.1016/j.jmrt.2022.10.077](https://doi.org/10.1016/j.jmrt.2022.10.077)
+  - Bin Shen et al. (2022). Multimodal-based weld reinforcement monitoring system for wire arc additive manufacturing. [10.1016/j.jmrt.2022.07.086](https://doi.org/10.1016/j.jmrt.2022.07.086)
+  - Masoud Shaloo et al. (2022). A Review of Non-Destructive Testing (NDT) Techniques for Defect Detection: Application to Fusion Welding and Future Wire Arc Additive Manufacturing Processes. [10.3390/ma15103697](https://doi.org/10.3390/ma15103697)
+  - Tobias Hauser et al. (2021). Porosity in wire arc additive manufacturing of aluminium alloys. [10.1016/j.addma.2021.101993](https://doi.org/10.1016/j.addma.2021.101993)
+  - Wessel W. Wits et al. (2015). Laser Beam Welding of Titanium Additive Manufactured Parts. [10.1016/j.procir.2015.04.013](https://doi.org/10.1016/j.procir.2015.04.013)
 
 ### weld / welding / arc
 
@@ -553,12 +553,12 @@ This cluster covers advanced gas metal arc welding (GMAW) and tungsten inert gas
 
 - 使う op: [`decode_fringe`](../ops/3d/structured_light/decode_fringe.md)(構造化光の縞を復号、images → depth)、[`unwrap_phase_2d`](../ops/3d/structured_light/unwrap_phase_2d.md)(位相のアンラップ、image2d → image2d)、[`triangulate_column`](../ops/3d/structured_light/triangulate_column.md)(三角測量 → ビードの高さ、image2d → depth)、[`fit_poly_surface`](../ops/3d/surface_fit/fit_poly_surface.md)(母材面、image2d × image2d × image2d → poly_surface)、[`surface_form_error`](../ops/3d/surface_fit/surface_form_error.md)(ビードの形状誤差、image2d → measurement)、[`specular_free_transform`](../ops/specular/dichromatic/specular_free_transform.md)(アークの映り込みを除く、rgbimage → rgbimage)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Weld bead geometry real-time control in gas metal arc welding processes using intelligent systems. [10.1007/s00170-022-10384-z](https://doi.org/10.1007/s00170-022-10384-z)
-  - — (n.d.). Bead geometry modeling on uneven base metal surface by fuzzy systems for multi-pass welding. [10.1016/j.eswa.2021.115356](https://doi.org/10.1016/j.eswa.2021.115356)
-  - — (n.d.). Gas Metal arc Pulse Welding with Alternating Current for Lightweight Materials. [10.1016/j.matpr.2015.05.008](https://doi.org/10.1016/j.matpr.2015.05.008)
-  - — (n.d.). Environmental and Social Life Cycle Assessment of Welding Technologies. [10.1016/j.procir.2014.07.084](https://doi.org/10.1016/j.procir.2014.07.084)
-  - — (n.d.). Online measurement of bead geometry in GMAW-based additive manufacturing using passive vision. [10.1088/0957-0233/24/11/115103](https://doi.org/10.1088/0957-0233/24/11/115103)
-  - — (n.d.). Real-Time Weld Quality Prediction Using a Laser Vision Sensor in a Lap Fillet Joint during Gas Metal Arc Welding. [10.3390/s20061625](https://doi.org/10.3390/s20061625)
+  - Gwang-Gook Kim et al. (2024). Vision-Based Acquisition Model for Molten Pool and Weld-Bead Profile in Gas Metal Arc Welding. [10.3390/met14121413](https://doi.org/10.3390/met14121413)
+  - Jorge Andrés Girón-Cruz et al. (2022). Weld bead geometry real-time control in gas metal arc welding processes using intelligent systems. [10.1007/s00170-022-10384-z](https://doi.org/10.1007/s00170-022-10384-z)
+  - Csongor Márk Horváth et al. (2021). Bead geometry modeling on uneven base metal surface by fuzzy systems for multi-pass welding. [10.1016/j.eswa.2021.115356](https://doi.org/10.1016/j.eswa.2021.115356)
+  - Habib Hamed Zargari et al. (2020). Metallurgical Characterization of Penetration Shape Change in Workpiece Vibration-Assisted Tandem-Pulsed Gas Metal Arc Welding. [10.3390/ma13143096](https://doi.org/10.3390/ma13143096)
+  - Lu Zhang et al. (2020). Characterization of GMAW (Gas Metal Arc Welding) Penetration Using Ultrasonics. [10.3390/ma13102307](https://doi.org/10.3390/ma13102307)
+  - Jun Xiong et al. (2013). Online measurement of bead geometry in GMAW-based additive manufacturing using passive vision. [10.1088/0957-0233/24/11/115103](https://doi.org/10.1088/0957-0233/24/11/115103)
 
 ### stir / welding / friction
 
@@ -566,12 +566,12 @@ This cluster covers friction stir welding (FSW) and related solid-state joining 
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(DIC の変位 → ひずみ、image2d × image2d → image2d)、[`piv_deform_pass`](../ops/piv/estimate/piv_deform_pass.md)(変形を追う相関、image2d × image2d × flow2d → flow2d)、[`correlation_quality`](../ops/piv/solid/correlation_quality.md)(相関の信頼度、image2d × image2d × flow2d → image2d)、[`speckle_quality`](../ops/piv/solid/speckle_quality.md)(スペックルの良さ、image2d → table)、[`angle_between_planes`](../ops/3d/geometry/angle_between_planes.md)(曲げ角、primitive → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(フランジ面、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). A status report on the hybrid metal extrusion & bonding ( HYB ) process and its applications. [10.1002/mdp2.41](https://doi.org/10.1002/mdp2.41)
-  - — (n.d.). Temperature control of robotic friction stir welding using the thermoelectric effect. [10.1007/s00170-013-5279-0](https://doi.org/10.1007/s00170-013-5279-0)
-  - — (n.d.). Application and use of different aluminium alloys with respect to workability, strength and welding parameter optimization. [10.1016/j.asej.2020.05.013](https://doi.org/10.1016/j.asej.2020.05.013)
-  - — (n.d.). Effect of friction stir processing on mechanical properties and heat transfer of TIG welded joint of AA6061 and AA7075. [10.1016/j.dt.2020.04.014](https://doi.org/10.1016/j.dt.2020.04.014)
-  - — (n.d.). Investigation of mechanical properties and heat transfer of welded joint of AA6061 and AA7075 using TIG+FSP welding approach. [10.1016/j.jajp.2020.100003](https://doi.org/10.1016/j.jajp.2020.100003)
-  - — (n.d.). Investigation of Nondestructive Testing Methods for Friction Stir Welding. [10.3390/met9060624](https://doi.org/10.3390/met9060624)
+  - Mohamed M. Z. Ahmed et al. (2023). Friction Stir Welding of Aluminum in the Aerospace Industry: The Current Progress and State-of-the-Art Review. [10.3390/ma16082971](https://doi.org/10.3390/ma16082971)
+  - Dhanesh G. Mohan et al. (2021). A Review on Friction Stir Welding of Steels. [10.1186/s10033-021-00655-3](https://doi.org/10.1186/s10033-021-00655-3)
+  - Mostafa M. El-Sayed et al. (2021). Welding and processing of metallic materials by using friction stir technique: A review. [10.1016/j.jajp.2021.100059](https://doi.org/10.1016/j.jajp.2021.100059)
+  - Daniel Wallerstein et al. (2021). Recent Developments in Laser Welding of Aluminum Alloys to Steel. [10.3390/met11040622](https://doi.org/10.3390/met11040622)
+  - Deekshant Varshney et al. (2020). Application and use of different aluminium alloys with respect to workability, strength and welding parameter optimization. [10.1016/j.asej.2020.05.013](https://doi.org/10.1016/j.asej.2020.05.013)
+  - Jeroen De Backer et al. (2013). Temperature control of robotic friction stir welding using the thermoelectric effect. [10.1007/s00170-013-5279-0](https://doi.org/10.1007/s00170-013-5279-0)
 
 ### welding / residual / stresses
 
@@ -579,12 +579,12 @@ This cluster covers the formation, measurement, and mitigation of residual stres
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(全視野ひずみ、image2d × image2d → image2d)、[`piv_multipass`](../ops/piv/estimate/piv_multipass.md)(多段の変位推定、image2d × image2d → flow2d)、[`motion_magnify`](../ops/motionmag/magnify/motion_magnify.md)(微小変形の拡大、video → table)、[`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`vol_frangi`](../ops/3d/feature/vol_frangi.md)(CT 中の管状き裂の強調、voxel → voxel)、[`canny`](../ops/2d/segmentation/canny.md)(き裂のエッジ、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Investigation of temperature and residual stresses field of submerged arc welding by finite element method and experiments. [10.1007/s00170-016-8509-4](https://doi.org/10.1007/s00170-016-8509-4)
-  - — (n.d.). Control of welding distortion during gas metal arc welding of AH36 plates by stress engineering. [10.1007/s00170-016-8869-9](https://doi.org/10.1007/s00170-016-8869-9)
-  - — (n.d.). Quality assessment in laser welding: a critical review. [10.1007/s00170-017-0461-4](https://doi.org/10.1007/s00170-017-0461-4)
-  - — (n.d.). Laser-arc hybrid welding of 12- and 15-mm thick structural steel. [10.1007/s00170-020-05192-2](https://doi.org/10.1007/s00170-020-05192-2)
-  - — (n.d.). A comprehensive review of residual stresses in carbon steel welding: formation mechanisms, mitigation strategies, and advanced post-weld heat treatment techniques. [10.1007/s00170-025-15088-8](https://doi.org/10.1007/s00170-025-15088-8)
-  - — (n.d.). An Integrated Approach of GRA Coupled with Principal Component Analysis for Multi-Optimization of Shielded Metal Arc Welding (SMAW) Process. [10.3390/ma13163457](https://doi.org/10.3390/ma13163457)
+  - Oluwasegun Eso Falodun et al. (2025). A comprehensive review of residual stresses in carbon steel welding: formation mechanisms, mitigation strategies, and advanced post-weld heat treatment techniques. [10.1007/s00170-025-15088-8](https://doi.org/10.1007/s00170-025-15088-8)
+  - Yong Liu et al. (2020). Measurement and analysis of welding deformation in arc welded lap joints of thin steel sheets with different material properties. [10.1016/j.jmapro.2020.11.038](https://doi.org/10.1016/j.jmapro.2020.11.038)
+  - Mohsin Iqbal Qazi et al. (2020). An Integrated Approach of GRA Coupled with Principal Component Analysis for Multi-Optimization of Shielded Metal Arc Welding (SMAW) Process. [10.3390/ma13163457](https://doi.org/10.3390/ma13163457)
+  - Tomasz Kik (2020). Heat Source Models in Numerical Simulations of Laser Welding. [10.3390/ma13112653](https://doi.org/10.3390/ma13112653)
+  - Ruben B.O. Acevedo et al. (2020). Residual stress analysis of additive manufacturing of metallic parts using ultrasonic waves: State of the art review. [10.1016/j.jmrt.2020.05.092](https://doi.org/10.1016/j.jmrt.2020.05.092)
+  - Jean‐Pierre Kruth et al. (2012). Assessing and comparing influencing factors of residual stresses in selective laser melting using a novel analysis method. [10.1177/0954405412437085](https://doi.org/10.1177/0954405412437085)
 
 ### welding / weld / welded
 
@@ -592,12 +592,12 @@ This cluster covers advanced welding techniques and processes for joining dissim
 
 - 使う op: [`decode_fringe`](../ops/3d/structured_light/decode_fringe.md)(構造化光の縞を復号、images → depth)、[`unwrap_phase_2d`](../ops/3d/structured_light/unwrap_phase_2d.md)(位相のアンラップ、image2d → image2d)、[`triangulate_column`](../ops/3d/structured_light/triangulate_column.md)(三角測量 → ビードの高さ、image2d → depth)、[`fit_poly_surface`](../ops/3d/surface_fit/fit_poly_surface.md)(母材面、image2d × image2d × image2d → poly_surface)、[`surface_form_error`](../ops/3d/surface_fit/surface_form_error.md)(ビードの形状誤差、image2d → measurement)、[`specular_free_transform`](../ops/specular/dichromatic/specular_free_transform.md)(アークの映り込みを除く、rgbimage → rgbimage)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Exploring the hybrid metal extrusion and bonding process for butt welding of Al–Mg–Si alloys. [10.1007/s00170-018-2234-0](https://doi.org/10.1007/s00170-018-2234-0)
-  - — (n.d.). Electrical and thermal stability of Al-Cu welds: Performance benchmarking of the hybrid metal extrusion and bonding process. [10.1016/j.jmapro.2022.04.029](https://doi.org/10.1016/j.jmapro.2022.04.029)
-  - — (n.d.). Penetration and mixing of filler wire in hybrid laser welding. [10.1016/j.jmatprotec.2020.117040](https://doi.org/10.1016/j.jmatprotec.2020.117040)
-  - — (n.d.). Study on the weldability, microstructure and mechanical properties of thick Inconel 617 plate using narrow gap laser welding method. [10.1016/j.matdes.2019.107823](https://doi.org/10.1016/j.matdes.2019.107823)
-  - — (n.d.). Grain refinement and laser energy distribution during laser oscillating welding of Invar alloy. [10.1016/j.matdes.2019.108195](https://doi.org/10.1016/j.matdes.2019.108195)
-  - — (n.d.). The Influence of the Post-Weld Heat Treatment on the Microstructure of Inconel 625/Carbon Steel Bimetal Joint Obtained by Explosive Welding. [10.3390/met9020246](https://doi.org/10.3390/met9020246)
+  - Jiajia Shen et al. (2023). Microstructure evolution and mechanical properties in a gas tungsten arc welded Fe42Mn28Co10Cr15Si5 metastable high entropy alloy. [10.1016/j.msea.2023.144722](https://doi.org/10.1016/j.msea.2023.144722)
+  - Xueli Wang et al. (2022). Effect of Post-Weld Heat Treatment on Microstructure and Fracture Toughness of X80 Pipeline Steel Welded Joint. [10.3390/ma15196646](https://doi.org/10.3390/ma15196646)
+  - Jiajia Shen et al. (2022). Microstructure and mechanical properties of gas metal arc welded CoCrFeMnNi joints using a 410 stainless steel filler metal. [10.1016/j.msea.2022.144025](https://doi.org/10.1016/j.msea.2022.144025)
+  - Jiajia Shen et al. (2022). Microstructure and mechanical properties of gas metal arc welded CoCrFeMnNi joints using a 308 stainless steel filler metal. [10.1016/j.scriptamat.2022.115053](https://doi.org/10.1016/j.scriptamat.2022.115053)
+  - Ashok Kumar Perka et al. (2022). Advanced High-Strength Steels for Automotive Applications: Arc and Laser Welding Process, Properties, and Challenges. [10.3390/met12061051](https://doi.org/10.3390/met12061051)
+  - N. Kishore Babu et al. (2012). Effect of titanium–boron additions on grain refinement of AA 2219 gas tungsten arc welds. [10.1179/1362171812y.0000000020](https://doi.org/10.1179/1362171812y.0000000020)
 
 ### bead / welding / weld
 
@@ -605,12 +605,12 @@ This cluster covers welding techniques, bead formation, and quality optimization
 
 - 使う op: [`decode_fringe`](../ops/3d/structured_light/decode_fringe.md)(構造化光の縞を復号、images → depth)、[`unwrap_phase_2d`](../ops/3d/structured_light/unwrap_phase_2d.md)(位相のアンラップ、image2d → image2d)、[`triangulate_column`](../ops/3d/structured_light/triangulate_column.md)(三角測量 → ビードの高さ、image2d → depth)、[`fit_poly_surface`](../ops/3d/surface_fit/fit_poly_surface.md)(母材面、image2d × image2d × image2d → poly_surface)、[`surface_form_error`](../ops/3d/surface_fit/surface_form_error.md)(ビードの形状誤差、image2d → measurement)、[`specular_free_transform`](../ops/specular/dichromatic/specular_free_transform.md)(アークの映り込みを除く、rgbimage → rgbimage)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). The potential of wire feed pulsation to influence factors that govern weld penetration in GMA welding. [10.1007/s00170-020-06037-8](https://doi.org/10.1007/s00170-020-06037-8)
-  - — (n.d.). Optimizing submerged arc welding using response surface methodology, regression analysis, and genetic algorithm. [10.1016/j.dt.2018.01.008](https://doi.org/10.1016/j.dt.2018.01.008)
-  - — (n.d.). Experimental investigation and optimization of weld bead characteristics during submerged arc welding of AISI 1023 steel. [10.1016/j.dt.2018.08.004](https://doi.org/10.1016/j.dt.2018.08.004)
-  - — (n.d.). Parameters controlling weld bead profile in conduction laser welding. [10.1016/j.jmatprotec.2017.06.026](https://doi.org/10.1016/j.jmatprotec.2017.06.026)
-  - — (n.d.). Influence of heat input on the appearance, microstructure and microhardness of pulsed gas metal arc welded Al alloy weldment. [10.1016/j.jmrt.2022.09.028](https://doi.org/10.1016/j.jmrt.2022.09.028)
-  - — (n.d.). An Investigation on Relationship between Process Control Para meters and Weld Penetration for Robotic CO2 Arc Welding using Fa ctorial Design Approach. `W2124024992`
+  - Kristijan Šket et al. (2025). Predictive Modelling of Weld Bead Geometry in Wire Arc Additive Manufacturing. [10.3390/jmmp9020067](https://doi.org/10.3390/jmmp9020067)
+  - Min Seop So et al. (2024). Prediction of Metal Additively Manufactured Bead Geometry Using Deep Neural Network. [10.3390/s24196250](https://doi.org/10.3390/s24196250)
+  - Reza Asadi et al. (2023). Process monitoring by deep neural networks in directed energy deposition: CNN-based detection, segmentation, and statistical analysis of melt pools. [10.1016/j.rcim.2023.102710](https://doi.org/10.1016/j.rcim.2023.102710)
+  - Samir Khrais et al. (2023). Impact of Gas Metal Arc Welding Parameters on Bead Geometry and Material Distortion of AISI 316L. [10.3390/jmmp7040123](https://doi.org/10.3390/jmmp7040123)
+  - Guang Yang et al. (2023). Weld Defect Detection of a CMT Arc-Welded Aluminum Alloy Sheet Based on Arc Sound Signal Processing. [10.3390/app13085152](https://doi.org/10.3390/app13085152)
+  - Jiayou Wang et al. (2012). A Swing Arc System for Narrow Gap GMA Welding. [10.2355/isijinternational.52.110](https://doi.org/10.2355/isijinternational.52.110)
 
 ### welding / stainless / duplex
 
@@ -618,12 +618,12 @@ This cluster covers welding processes and metallurgical behavior of duplex and s
 
 - 使う op: [`decode_fringe`](../ops/3d/structured_light/decode_fringe.md)(構造化光の縞を復号、images → depth)、[`unwrap_phase_2d`](../ops/3d/structured_light/unwrap_phase_2d.md)(位相のアンラップ、image2d → image2d)、[`triangulate_column`](../ops/3d/structured_light/triangulate_column.md)(三角測量 → ビードの高さ、image2d → depth)、[`fit_poly_surface`](../ops/3d/surface_fit/fit_poly_surface.md)(母材面、image2d × image2d × image2d → poly_surface)、[`surface_form_error`](../ops/3d/surface_fit/surface_form_error.md)(ビードの形状誤差、image2d → measurement)、[`specular_free_transform`](../ops/specular/dichromatic/specular_free_transform.md)(アークの映り込みを除く、rgbimage → rgbimage)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Bead by bead study of a multipass shielded metal arc-welded super-duplex stainless steel. [10.1007/s40194-019-00829-7](https://doi.org/10.1007/s40194-019-00829-7)
-  - — (n.d.). Microstructure investigation of duplex stainless steel welds using arc heat treatment technique. [10.1007/s40194-020-00906-2](https://doi.org/10.1007/s40194-020-00906-2)
-  - — (n.d.). Microstructure of laser metal deposited duplex stainless steel: Influence of shielding gas and heat treatment. [10.1007/s40194-020-01036-5](https://doi.org/10.1007/s40194-020-01036-5)
-  - — (n.d.). Weldability, machinability and surfacing of commercial duplex stainless steel AISI2205 for marine applications – A recent review. [10.1016/j.jare.2017.01.002](https://doi.org/10.1016/j.jare.2017.01.002)
-  - — (n.d.). Effect of solubilization heat treatment on microstructure and corrosion resistance of joints welded with the autogenous TIG process duplex stainless steel. [10.1016/j.jmrt.2023.08.014](https://doi.org/10.1016/j.jmrt.2023.08.014)
-  - — (n.d.). Studies on Effects of Welding Parameters on the Mechanical Properties of Welded Low-Carbon Steel. [10.4236/jmmce.2015.33017](https://doi.org/10.4236/jmmce.2015.33017)
+  - Ali Tahaei et al. (2024). A comparison of microstructure and mechanical characteristics correlation of the joint specimens for duplex stainless steel UNS S32304 and super-duplex stainless steel UNS S32750: The role of post-weld heat treatment. [10.1177/14644207241233150](https://doi.org/10.1177/14644207241233150)
+  - Flávia Wagner Pinheiro et al. (2023). Effect of solubilization heat treatment on microstructure and corrosion resistance of joints welded with the autogenous TIG process duplex stainless steel. [10.1016/j.jmrt.2023.08.014](https://doi.org/10.1016/j.jmrt.2023.08.014)
+  - María Asunción Valiente Bermejo et al. (2020). Microstructure of laser metal deposited duplex stainless steel: Influence of shielding gas and heat treatment. [10.1007/s40194-020-01036-5](https://doi.org/10.1007/s40194-020-01036-5)
+  - A. Putz et al. (2020). Microstructure investigation of duplex stainless steel welds using arc heat treatment technique. [10.1007/s40194-020-00906-2](https://doi.org/10.1007/s40194-020-00906-2)
+  - Leander Schmidt et al. (2020). Acoustic process monitoring in laser beam welding. [10.1016/j.procir.2020.09.139](https://doi.org/10.1016/j.procir.2020.09.139)
+  - Nils Stenbacka (2013). On arc efficiency in gas tungsten arc welding. [10.1590/s0104-92242013000400010](https://doi.org/10.1590/s0104-92242013000400010)
 
 ### welding / weld / penetration
 
@@ -631,12 +631,12 @@ This cluster covers advanced welding processes and real-time quality control tec
 
 - 使う op: [`decode_fringe`](../ops/3d/structured_light/decode_fringe.md)(構造化光の縞を復号、images → depth)、[`unwrap_phase_2d`](../ops/3d/structured_light/unwrap_phase_2d.md)(位相のアンラップ、image2d → image2d)、[`triangulate_column`](../ops/3d/structured_light/triangulate_column.md)(三角測量 → ビードの高さ、image2d → depth)、[`fit_poly_surface`](../ops/3d/surface_fit/fit_poly_surface.md)(母材面、image2d × image2d × image2d → poly_surface)、[`surface_form_error`](../ops/3d/surface_fit/surface_form_error.md)(ビードの形状誤差、image2d → measurement)、[`specular_free_transform`](../ops/specular/dichromatic/specular_free_transform.md)(アークの映り込みを除く、rgbimage → rgbimage)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Robotic welding system for adaptive process control in gas metal arc welding. [10.1007/s40194-024-01756-y](https://doi.org/10.1007/s40194-024-01756-y)
-  - — (n.d.). Detection of molten pool state using ResNet50 and control of molten pool penetration in CO2 gas shielded arc welding. [10.1007/s40194-025-02020-7](https://doi.org/10.1007/s40194-025-02020-7)
-  - — (n.d.). Laser welding in e-mobility: process characterization and monitoring. [10.1007/s40516-023-00216-7](https://doi.org/10.1007/s40516-023-00216-7)
-  - — (n.d.). Modeling and strategies for arc welding penetration control algorithm: a review. [10.1007/s44245-025-00113-7](https://doi.org/10.1007/s44245-025-00113-7)
-  - — (n.d.). Burn-through prediction and weld depth estimation by deep learning model monitoring the molten pool in gas metal arc welding with gap fluctuation. [10.1016/j.jmapro.2020.10.019](https://doi.org/10.1016/j.jmapro.2020.10.019)
-  - — (n.d.). Adaptive Predictive Control of Weld Penetration Depth Based on Hammerstein Model in Pulsed Gas Metal Arc Welding. [10.3901/jme.2019.19.138](https://doi.org/10.3901/jme.2019.19.138)
+  - Zhi Zeng et al. (2025). Modeling and strategies for arc welding penetration control algorithm: a review. [10.1007/s44245-025-00113-7](https://doi.org/10.1007/s44245-025-00113-7)
+  - Satoshi Yamane et al. (2025). Detection of molten pool state using ResNet50 and control of molten pool penetration in CO2 gas shielded arc welding. [10.1007/s40194-025-02020-7](https://doi.org/10.1007/s40194-025-02020-7)
+  - Alexander Biber et al. (2024). Robotic welding system for adaptive process control in gas metal arc welding. [10.1007/s40194-024-01756-y](https://doi.org/10.1007/s40194-024-01756-y)
+  - Shinichi Tashiro (2024). Interaction Mechanism of Arc, Keyhole, and Weld Pool in Keyhole Plasma Arc Welding: A Review. [10.3390/ma17061348](https://doi.org/10.3390/ma17061348)
+  - Caterina Angeloni et al. (2023). Laser welding in e-mobility: process characterization and monitoring. [10.1007/s40516-023-00216-7](https://doi.org/10.1007/s40516-023-00216-7)
+  - H-S Ham et al. (2012). Measurement of arc pressure and shield gas pressure effect on surface of molten pool in TIG welding. [10.1179/1362171812y.0000000052](https://doi.org/10.1179/1362171812y.0000000052)
 
 ## defect / detection / inspection
 
@@ -667,12 +667,12 @@ This cluster covers defect detection and quality assurance methodologies for pri
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Deep learning based solder joint defect detection on industrial printed circuit board X-ray images. [10.1007/s40747-021-00600-w](https://doi.org/10.1007/s40747-021-00600-w)
-  - — (n.d.). Application of Mask R-CNN and YOLOv8 algorithms for defect detection in printed circuit board manufacturing. [10.1007/s42452-025-06641-x](https://doi.org/10.1007/s42452-025-06641-x)
-  - — (n.d.). Soldering defect detection in automatic optical inspection. [10.1016/j.aei.2019.101004](https://doi.org/10.1016/j.aei.2019.101004)
-  - — (n.d.). Defect detection of printed circuit board assembly based on YOLOv5. [10.1038/s41598-024-70176-1](https://doi.org/10.1038/s41598-024-70176-1)
-  - — (n.d.). Modal testing circuit board assembly of an electronic apparatus by laser vibrometry. [10.1088/1757-899x/156/1/012005](https://doi.org/10.1088/1757-899x/156/1/012005)
-  - — (n.d.). Surface roughness prediction of machined components using gray level co-occurrence matrix and Bagging Tree. [10.5937/fme2002468p](https://doi.org/10.5937/fme2002468p)
+  - Muhammad Mohsin et al. (2025). Artificial Intelligence Approach for Waste-Printed Circuit Board Recycling: A Systematic Review. [10.3390/computers14080304](https://doi.org/10.3390/computers14080304)
+  - Maurizio Calabrese et al. (2025). Application of Mask R-CNN and YOLOv8 algorithms for defect detection in printed circuit board manufacturing. [10.1007/s42452-025-06641-x](https://doi.org/10.1007/s42452-025-06641-x)
+  - Ling Qin et al. (2025). DCD-Net: Dense Component Detection Network for Printed Circuit Board Assembly Inspection. [10.1109/access.2025.3629085](https://doi.org/10.1109/access.2025.3629085)
+  - Minghui Shen et al. (2024). Defect detection of printed circuit board assembly based on YOLOv5. [10.1038/s41598-024-70176-1](https://doi.org/10.1038/s41598-024-70176-1)
+  - Nikolay Petkov et al. (2024). Printed circuit board and printed circuit board assembly methods for testing and visual inspection: a review. [10.11591/eei.v13i4.7601](https://doi.org/10.11591/eei.v13i4.7601)
+  - Csaba Benedek et al. (2012). Solder Paste Scooping Detection by Multilevel Visual Inspection of Printed Circuit Boards. [10.1109/tie.2012.2193859](https://doi.org/10.1109/tie.2012.2193859)
 
 ### detection / defect / segmentation
 
@@ -680,12 +680,12 @@ This cluster covers image segmentation and deep learning techniques for automate
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Deep learning-based image segmentation for defect detection in additive manufacturing: an overview. [10.1007/s00170-024-14191-6](https://doi.org/10.1007/s00170-024-14191-6)
-  - — (n.d.). Review of image segmentation techniques for layup defect detection in the Automated Fiber Placement process. [10.1007/s10845-021-01774-3](https://doi.org/10.1007/s10845-021-01774-3)
-  - — (n.d.). Extendable machine tool wear monitoring process using image segmentation based deep learning model and automatic detection of depth of cut line. [10.1016/j.engappai.2024.108570](https://doi.org/10.1016/j.engappai.2024.108570)
-  - — (n.d.). Welding defect detection based on local image enhancement. [10.1049/iet-ipr.2018.5840](https://doi.org/10.1049/iet-ipr.2018.5840)
-  - — (n.d.). Enhanced defect detection in radiography images of welded objects. [10.1080/10589759.2018.1544251](https://doi.org/10.1080/10589759.2018.1544251)
-  - — (n.d.). Automatic Laser Welding Defect Detection and Classification using Sobel-Contour Shape Detection. `W2600372068`
+  - Abdulrahim Mohammed et al. (2025). Advances and Challenges in Deep Learning for Automated Welding Defect Detection: A Technical Survey. [10.1109/access.2025.3574083](https://doi.org/10.1109/access.2025.3574083)
+  - Shanwen Zhang et al. (2024). Combining Multi-Scale U-Net With Transformer for Welding Defect Detection of Oil/Gas Pipeline. [10.1109/access.2024.3521220](https://doi.org/10.1109/access.2024.3521220)
+  - Beidou Ding et al. (2024). Data enhanced YOLOv8s algorithm for X-ray weld defect detection. [10.1080/10589759.2024.2421941](https://doi.org/10.1080/10589759.2024.2421941)
+  - Sourabh Deshpande et al. (2024). Deep learning-based image segmentation for defect detection in additive manufacturing: an overview. [10.1007/s00170-024-14191-6](https://doi.org/10.1007/s00170-024-14191-6)
+  - Wan Azani Mustafa et al. (2024). Significant effect of image contrast enhancement on weld defect detection. [10.1371/journal.pone.0306010](https://doi.org/10.1371/journal.pone.0306010)
+  - Issam Ben Mhamed et al. (2012). Weld defect detection using a modified anisotropic diffusion model. [10.1186/1687-6180-2012-46](https://doi.org/10.1186/1687-6180-2012-46)
 
 ### wafer / defect / inspection
 
@@ -693,12 +693,12 @@ This cluster covers automated defect detection and inspection techniques for sem
 
 - 使う op: [`m1_measure_pos`](../ops/2d/measure1d/m1_measure_pos.md)(エッジ位置(1-D 計測)、image → contour)、[`m1_measure_pairs`](../ops/2d/measure1d/m1_measure_pairs.md)(対のエッジ = 幅、image → feature)、[`edges_sub_pix`](../ops/2d/contour/edges_sub_pix.md)(サブピクセル輪郭、image → contour)、[`fit_poly_surface`](../ops/3d/surface_fit/fit_poly_surface.md)(面の当てはめ、image2d × image2d × image2d → poly_surface)、[`surface_form_error`](../ops/3d/surface_fit/surface_form_error.md)(平面度・形状誤差、image2d → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(基準面、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Deep Learning-Based Detection of Defects in Wafer Buffer Zone During Semiconductor Packaging Process. [10.1007/s42493-024-00103-z](https://doi.org/10.1007/s42493-024-00103-z)
-  - — (n.d.). Research on surface defect detection of glass wafer based on visual inspection. [10.1016/j.egyr.2022.09.128](https://doi.org/10.1016/j.egyr.2022.09.128)
-  - — (n.d.). Towards efficient wafer visual inspection: Exploring novel lightweight approaches for anomaly detection and defect segmentation. [10.1016/j.iswa.2025.200576](https://doi.org/10.1016/j.iswa.2025.200576)
-  - — (n.d.). A hybrid Decision Support System for automating decision making in the event of defects in the era of Zero Defect Manufacturing. [10.1016/j.jii.2021.100263](https://doi.org/10.1016/j.jii.2021.100263)
-  - — (n.d.). Anomaly Detection Approaches for Semiconductor Manufacturing. [10.1016/j.promfg.2017.07.353](https://doi.org/10.1016/j.promfg.2017.07.353)
-  - — (n.d.). Predictive Models for Equipment Fault Detection in the Semiconductor Manufacturing Process. [10.7763/ijet.2016.v8.898](https://doi.org/10.7763/ijet.2016.v8.898)
+  - Ivo S. Façoco et al. (2025). Towards efficient wafer visual inspection: Exploring novel lightweight approaches for anomaly detection and defect segmentation. [10.1016/j.iswa.2025.200576](https://doi.org/10.1016/j.iswa.2025.200576)
+  - Zuoda Zhou et al. (2024). Characterization of Multimodal Spot Scanning Imaging System for Wafer Defect Inspection. [10.1109/tsm.2024.3481291](https://doi.org/10.1109/tsm.2024.3481291)
+  - Ping-Hung Wu et al. (2024). Elevating Wafer Defect Inspection with Denoising Diffusion Probabilistic Model. [10.3390/math12203164](https://doi.org/10.3390/math12203164)
+  - Changlian Yan et al. (2024). Innovative wafer defect inspection mode: self-adaptive pattern to pattern inspection. [10.1117/12.3010013](https://doi.org/10.1117/12.3010013)
+  - Tae-Yeon Kim et al. (2024). Deep Learning-Based Detection of Defects in Wafer Buffer Zone During Semiconductor Packaging Process. [10.1007/s42493-024-00103-z](https://doi.org/10.1007/s42493-024-00103-z)
+  - Ming Luo et al. (2012). Data-based fault-tolerant control of the semiconductor manufacturing process based on K-nearest neighbor nonparametric regression. [10.1109/wcica.2012.6358387](https://doi.org/10.1109/wcica.2012.6358387)
 
 ### pcb / circuit / board
 
@@ -706,12 +706,12 @@ This cluster covers automated visual inspection and defect detection techniques 
 
 - 使う op: [`ncc_locate`](../ops/2d/matching/ncc_locate.md)(部品の位置決め、image → match)、[`shape_locate`](../ops/2d/matching/shape_locate.md)(形状マッチング、image → match)、[`edges_sub_pix`](../ops/2d/contour/edges_sub_pix.md)(はんだフィレットの輪郭、image → contour)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(多方向照明の設計、 → table)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(欠陥コントラスト、table → table)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(異物・欠け、image → image)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Automatic printed circuit board inspection: a comprehensible survey. [10.1007/s44163-023-00081-5](https://doi.org/10.1007/s44163-023-00081-5)
-  - — (n.d.). Robust image registration of printed circuit boards using improved SIFT‐PSO algorithm. [10.1049/joe.2018.8274](https://doi.org/10.1049/joe.2018.8274)
-  - — (n.d.). HRIPCB: a challenging dataset for PCB defects detection and classification. [10.1049/joe.2019.1183](https://doi.org/10.1049/joe.2019.1183)
-  - — (n.d.). Automated Detection of Printed Circuit Boards (PCB) Defects by Using Machine Learning in Electronic Manufacturing: Current Approaches. [10.1088/1757-899x/767/1/012064](https://doi.org/10.1088/1757-899x/767/1/012064)
-  - — (n.d.). Enhancing EfficientNet-YOLOv4 for Integrated Circuit Detection on Printed Circuit Board (PCB). [10.1109/access.2024.3359639](https://doi.org/10.1109/access.2024.3359639)
-  - — (n.d.). Automatic Extraction of Component Inspection Regions from Printed Circuit Board by Image Clustering. [10.5370/kiee.2012.61.3.472](https://doi.org/10.5370/kiee.2012.61.3.472)
+  - Luis Augusto Libório Oliveira Fonseca et al. (2024). Automatic printed circuit board inspection: a comprehensible survey. [10.1007/s44163-023-00081-5](https://doi.org/10.1007/s44163-023-00081-5)
+  - Shiek Chi Tay et al. (2024). Enhancing EfficientNet-YOLOv4 for Integrated Circuit Detection on Printed Circuit Board (PCB). [10.1109/access.2024.3359639](https://doi.org/10.1109/access.2024.3359639)
+  - Dwight T. Dumpert (2023). Infrared Techniques for Printed Circuit Board (PCB) Evaluation. [10.1201/9781003420200-9](https://doi.org/10.1201/9781003420200-9)
+  - Jie Niu et al. (2023). An Improved YOLOv5 Network for Detection of Printed Circuit Board Defects. [10.1155/2023/7270093](https://doi.org/10.1155/2023/7270093)
+  - Kai Zhang (2023). Using deep learning to automatic inspection system of printed circuit board in manufacturing industry under the internet of things. [10.2298/csis220718020z](https://doi.org/10.2298/csis220718020z)
+  - Zuwairie Ibrahim et al. (2012). Performance Evaluation of Wavelet-Based Algorithm for Printed Circuit Board (PCB) Inspection. [10.11113/jt.v35.609](https://doi.org/10.11113/jt.v35.609)
 
 ### detection / defect / network
 
@@ -719,12 +719,12 @@ This cluster covers automated defect detection systems for critical infrastructu
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). WDI-YOLO: A lightweight steel bridge weld defect detection algorithm using UAV images. [10.1016/j.jcsr.2025.109833](https://doi.org/10.1016/j.jcsr.2025.109833)
-  - — (n.d.). Triple Pseudo-Siamese network with hybrid attention mechanism for welding defect detection. [10.1016/j.matdes.2022.110645](https://doi.org/10.1016/j.matdes.2022.110645)
-  - — (n.d.). Research on surface defect detection algorithm of pipeline weld based on YOLOv7. [10.1038/s41598-024-52451-3](https://doi.org/10.1038/s41598-024-52451-3)
-  - — (n.d.). DSF-YOLO for weld defect detection in X-ray images with dynamic staged fusion. [10.1038/s41598-025-06811-2](https://doi.org/10.1038/s41598-025-06811-2)
-  - — (n.d.). Application of MFL on Girth-Weld Defect Detection of Oil and Gas Pipelines. [10.1061/(asce)ps.1949-1204.0000497](https://doi.org/10.1061/(asce)ps.1949-1204.0000497)
-  - — (n.d.). LF-YOLO: A Lighter and Faster YOLO for Weld Defect Detection of X-ray Image. [10.48550/arxiv.2110.15045](https://doi.org/10.48550/arxiv.2110.15045)
+  - Wei Ji et al. (2025). WDI-YOLO: A lightweight steel bridge weld defect detection algorithm using UAV images. [10.1016/j.jcsr.2025.109833](https://doi.org/10.1016/j.jcsr.2025.109833)
+  - Meng Zhang et al. (2025). DSF-YOLO for weld defect detection in X-ray images with dynamic staged fusion. [10.1038/s41598-025-06811-2](https://doi.org/10.1038/s41598-025-06811-2)
+  - Ngo Thi Thanh Hoa et al. (2025). Weld-CNN: Advancing non-destructive testing with a hybrid deep learning model for weld defect detection. [10.1177/16878132251341615](https://doi.org/10.1177/16878132251341615)
+  - Weijie Liu et al. (2025). Resistance Spot Welding Defect Detection Based on Visual Inspection: Improved Faster R-CNN Model. [10.3390/machines13010033](https://doi.org/10.3390/machines13010033)
+  - Kehao Shi et al. (2024). TGSYOLO: Template-Guidance Siamese Network for SMT Welding Defect Detection. [10.1109/tcpmt.2024.3491163](https://doi.org/10.1109/tcpmt.2024.3491163)
+  - Pouria Aryan et al. (2018). An Overview of Non-Destructive Testing Methods for Integrated Circuit Packaging Inspection. [10.3390/s18071981](https://doi.org/10.3390/s18071981)
 
 ### wafer / classification / defect
 
@@ -732,12 +732,12 @@ This cluster focuses on automated defect detection and classification in semicon
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Evaluation of the machine learning classifier in wafer defects classification. [10.1016/j.icte.2021.04.007](https://doi.org/10.1016/j.icte.2021.04.007)
-  - — (n.d.). A voting-based ensemble feature network for semiconductor wafer defect classification. [10.1038/s41598-022-20630-9](https://doi.org/10.1038/s41598-022-20630-9)
-  - — (n.d.). Analysing semiconductor manufacturing big data for root cause detection of excursion for yield enhancement. [10.1080/00207543.2015.1109153](https://doi.org/10.1080/00207543.2015.1109153)
-  - — (n.d.). Unsupervised Pre-Training of Imbalanced Data for Identification of Wafer Map Defect Patterns. [10.1109/access.2021.3068378](https://doi.org/10.1109/access.2021.3068378)
-  - — (n.d.). A Systematic Review of Deep Learning for Silicon Wafer Defect Recognition. [10.1109/access.2021.3106171](https://doi.org/10.1109/access.2021.3106171)
-  - — (n.d.). Automated Fiber Placement Defect Identity Cards: Cause, Anticipation, Existence, Significance, and Progression. `W3169701122`
+  - Yang-Chao Liu et al. (2024). Overview of Silicon Carbide Wafer Defect Types and Inspection Techniques. [10.1109/sslchinaifws64644.2024.10835376](https://doi.org/10.1109/sslchinaifws64644.2024.10835376)
+  - Sabrina Anger et al. (2023). Combining Full Wafer Inspection with Deep Learning to Recognize Wafers with Critical Defects. [10.1109/asmc57536.2023.10121122](https://doi.org/10.1109/asmc57536.2023.10121122)
+  - Koon Hian Ang et al. (2023). Classification of Wafer Defects with Optimized Deep Learning Model. [10.5954/icarob.2023.os25-4](https://doi.org/10.5954/icarob.2023.os25-4)
+  - Sampa Misra et al. (2022). A voting-based ensemble feature network for semiconductor wafer defect classification. [10.1038/s41598-022-20630-9](https://doi.org/10.1038/s41598-022-20630-9)
+  - José L. Gómez-Sirvent et al. (2022). Optimal Feature Selection for Defect Classification in Semiconductor Wafers. [10.1109/tsm.2022.3146849](https://doi.org/10.1109/tsm.2022.3146849)
+  - Justin Nduhura-Munga et al. (2013). A Literature Review on Sampling Techniques in Semiconductor Manufacturing. [10.1109/tsm.2013.2256943](https://doi.org/10.1109/tsm.2013.2256943)
 
 ### detection / defect / learning
 
@@ -745,12 +745,12 @@ This cluster covers automated detection and classification of manufacturing defe
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Journal of Intelligent Manufacturing. [10.1007/10845.1572-8145](https://doi.org/10.1007/10845.1572-8145)
-  - — (n.d.). Tool wear classification using time series imaging and deep learning. [10.1007/s00170-019-04090-6](https://doi.org/10.1007/s00170-019-04090-6)
-  - — (n.d.). Surface defect inspection of industrial products with object detection deep networks: a systematic review. [10.1007/s10462-024-10956-3](https://doi.org/10.1007/s10462-024-10956-3)
-  - — (n.d.). A convolutional approach to quality monitoring for laser manufacturing. [10.1007/s10845-019-01495-8](https://doi.org/10.1007/s10845-019-01495-8)
-  - — (n.d.). Synthetic image data augmentation for fibre layup inspection processes: Techniques to enhance the data set. [10.1007/s10845-021-01738-7](https://doi.org/10.1007/s10845-021-01738-7)
-  - — (n.d.). Welding Defect Detection with Deep Learning Architectures. [10.5772/intechopen.101951](https://doi.org/10.5772/intechopen.101951)
+  - Ghada A. Elhendawy et al. (2025). Machine Vision-Assisted Welding Defect Detection System with Convolutional Neural Networks. [10.1007/s12541-025-01281-y](https://doi.org/10.1007/s12541-025-01281-y)
+  - Gaoyang Liu et al. (2025). A real-time welding defect detection framework based on RT-DETR deep neural network. [10.1016/j.aei.2025.103318](https://doi.org/10.1016/j.aei.2025.103318)
+  - Antonio Contreras Ortiz et al. (2025). Multiclass Evaluation of Vision Transformers for Industrial Welding Defect Detection. [10.3390/mca30020024](https://doi.org/10.3390/mca30020024)
+  - Amir-M. Naddaf-Sh et al. (2025). Leveraging Segment Anything Model (SAM) for Weld Defect Detection in Industrial Ultrasonic B-Scan Images. [10.3390/s25010277](https://doi.org/10.3390/s25010277)
+  - Fengyuan Zuo et al. (2025). A Complex Welding Defect Detection Method Based on Active Learning in Pipeline Transportation System. [10.1109/tim.2025.3551482](https://doi.org/10.1109/tim.2025.3551482)
+  - **Date:** 2013-05-25 (2013). Journal of Intelligent Manufacturing. [10.1007/10845.1572-8145](https://doi.org/10.1007/10845.1572-8145)
 
 ### wafer / inspection / defect
 
@@ -758,12 +758,12 @@ This cluster focuses on defect detection and inspection methodologies for semico
 
 - 使う op: [`m1_measure_pos`](../ops/2d/measure1d/m1_measure_pos.md)(エッジ位置(1-D 計測)、image → contour)、[`m1_measure_pairs`](../ops/2d/measure1d/m1_measure_pairs.md)(対のエッジ = 幅、image → feature)、[`edges_sub_pix`](../ops/2d/contour/edges_sub_pix.md)(サブピクセル輪郭、image → contour)、[`fit_poly_surface`](../ops/3d/surface_fit/fit_poly_surface.md)(面の当てはめ、image2d × image2d × image2d → poly_surface)、[`surface_form_error`](../ops/3d/surface_fit/surface_form_error.md)(平面度・形状誤差、image2d → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(基準面、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Image Simulation and Analysis to Predict the Sensitivity Performance of a Multi-Electron Beam Wafer Defect Inspection Tool. [10.1017/s1431927616003950](https://doi.org/10.1017/s1431927616003950)
-  - — (n.d.). Optical wafer defect inspection at the 10 nm technology node and beyond. [10.1088/2631-7990/ac64d7](https://doi.org/10.1088/2631-7990/ac64d7)
-  - — (n.d.). E-beam inspection of EUV programmed defect wafers for printability analysis. [10.1109/asmc.2013.6552751](https://doi.org/10.1109/asmc.2013.6552751)
-  - — (n.d.). Detection of printable EUV mask absorber defects and defect adders by full chip optical inspection of EUV patterned wafers. [10.1109/asmc.2016.7491106](https://doi.org/10.1109/asmc.2016.7491106)
-  - — (n.d.). Wafer backside cleaning for defect reduction and litho hot spots mitigation: DI: Defect inspection and reduction. [10.1109/asmc.2018.8373151](https://doi.org/10.1109/asmc.2018.8373151)
-  - — (n.d.). Balancing the Efficiency and Sensitivity of Defect Inspection of Non-Patterned Wafers with TDI-Based Dark-Field Scattering Microscopy. [10.3390/s24051622](https://doi.org/10.3390/s24051622)
+  - Fei Yu et al. (2024). Balancing the Efficiency and Sensitivity of Defect Inspection of Non-Patterned Wafers with TDI-Based Dark-Field Scattering Microscopy. [10.3390/s24051622](https://doi.org/10.3390/s24051622)
+  - Jinlong Zhu et al. (2022). Optical wafer defect inspection at the 10 nm technology node and beyond. [10.1088/2631-7990/ac64d7](https://doi.org/10.1088/2631-7990/ac64d7)
+  - Lindarti Purwaningsih et al. (2021). Defect Inspection Wafer Notch Orientation and Defect Detection Dependency. [10.31399/asm.cp.istfa2021p0403](https://doi.org/10.31399/asm.cp.istfa2021p0403)
+  - Weiming Ren et al. (2019). Multi-beam technology for defect inspection of wafer and mask. [10.1117/12.2536565](https://doi.org/10.1117/12.2536565)
+  - Kaushik Sah et al. (2018). EUV stochastic defect monitoring with advanced broadband optical wafer inspection and e-beam review systems. [10.1117/12.2501825](https://doi.org/10.1117/12.2501825)
+  - Tsuyoshi Amano et al. (2012). Impact of the phase defect structure on an actinic dark-field blank inspection signal and wafer printability. [10.1117/12.916309](https://doi.org/10.1117/12.916309)
 
 ## microstructure / properties / solder
 
@@ -792,11 +792,11 @@ This cluster covers hot tearing and cracking defects in metal casting processes,
 
 - 使う op: [`filtered_backprojection`](../ops/tomography/reconstruct/filtered_backprojection.md)(CT 再構成、sinogram → image2d)、[`sart_reconstruct`](../ops/tomography/reconstruct/sart_reconstruct.md)(少数投影の再構成、sinogram → image2d)、[`beam_hardening_correct`](../ops/tomography/artifact/beam_hardening_correct.md)(カッピングの補正、sinogram → sinogram)、[`ring_artifact_remove`](../ops/tomography/artifact/ring_artifact_remove.md)(リングアーチファクト、sinogram → sinogram)、[`vol_label`](../ops/3d/regionprops/vol_label.md)(空隙のラベル、voxel → labels)、[`vol_region_props`](../ops/3d/regionprops/vol_region_props.md)(空隙の性質、labels → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). A review on hot tearing of magnesium alloys. [10.1016/j.jma.2016.08.003](https://doi.org/10.1016/j.jma.2016.08.003)
-  - — (n.d.). Methoding and Simulation of LM 6 Sand Casting for Defect Minimization with its Experimental Validation. [10.1016/j.proeng.2014.12.393](https://doi.org/10.1016/j.proeng.2014.12.393)
-  - — (n.d.). Mold Design Optimization for Sand Casting of Complex Geometries Using Advance Simulation Tools. [10.1080/10426914.2011.648250](https://doi.org/10.1080/10426914.2011.648250)
-  - — (n.d.). Development of New Mold Flux for Continuous Casting Based on Non-Newtonian Fluid Properties. [10.2355/isijinternational.54.865](https://doi.org/10.2355/isijinternational.54.865)
-  - — (n.d.). A Prediction Model for Internal Cracks during Slab Continuous Casting. [10.3390/met9050587](https://doi.org/10.3390/met9050587)
+  - Yiwen Kong et al. (2019). A Prediction Model for Internal Cracks during Slab Continuous Casting. [10.3390/met9050587](https://doi.org/10.3390/met9050587)
+  - Jiangfeng Song et al. (2016). A review on hot tearing of magnesium alloys. [10.1016/j.jma.2016.08.003](https://doi.org/10.1016/j.jma.2016.08.003)
+  - Chandrashekhar Choudhari et al. (2014). Methoding and Simulation of LM 6 Sand Casting for Defect Minimization with its Experimental Validation. [10.1016/j.proeng.2014.12.393](https://doi.org/10.1016/j.proeng.2014.12.393)
+  - Keiji Watanabe et al. (2014). Development of New Mold Flux for Continuous Casting Based on Non-Newtonian Fluid Properties. [10.2355/isijinternational.54.865](https://doi.org/10.2355/isijinternational.54.865)
+  - Hassan Iqbal et al. (2012). Mold Design Optimization for Sand Casting of Complex Geometries Using Advance Simulation Tools. [10.1080/10426914.2011.648250](https://doi.org/10.1080/10426914.2011.648250)
 
 ### solder / soldering / joints
 
@@ -804,12 +804,12 @@ This cluster covers soldering technologies and processes used in electronic pack
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(全視野ひずみ、image2d × image2d → image2d)、[`piv_multipass`](../ops/piv/estimate/piv_multipass.md)(多段の変位推定、image2d × image2d → flow2d)、[`motion_magnify`](../ops/motionmag/magnify/motion_magnify.md)(微小変形の拡大、video → table)、[`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`vol_frangi`](../ops/3d/feature/vol_frangi.md)(CT 中の管状き裂の強調、voxel → voxel)、[`canny`](../ops/2d/segmentation/canny.md)(き裂のエッジ、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Intense Pulsed Light Soldering of Sn–3.0Ag–0.5Cu Ball Grid Array Component on Au/Pd(P)/Ni(P) Surface‐Finished Printed Circuit Board and Its Drop Impact Reliability. [10.1002/adem.202201635](https://doi.org/10.1002/adem.202201635)
-  - — (n.d.). Morphology and Shear Strength of Lead-Free Solder Joints with Sn3.0Ag0.5Cu Solder Paste Reinforced with Ceramic Nanoparticles. [10.1007/s11664-016-4832-7](https://doi.org/10.1007/s11664-016-4832-7)
-  - — (n.d.). Effective Solder for Improved Thermo-Mechanical Reliability of Solder Joints in a Ball Grid Array (BGA) Soldered on Printed Circuit Board (PCB). [10.1007/s11664-020-08525-9](https://doi.org/10.1007/s11664-020-08525-9)
-  - — (n.d.). Nucleation and growth of Ag3Sn in Sn-Ag and Sn-Ag-Cu solder alloys. [10.1016/j.actamat.2023.118831](https://doi.org/10.1016/j.actamat.2023.118831)
-  - — (n.d.). Optimization of reflow soldering temperature curve based on genetic algorithm. [10.1016/j.egyr.2021.09.195](https://doi.org/10.1016/j.egyr.2021.09.195)
-  - — (n.d.). Dissolution Phenomenon of Sb Powder into Sn-3Ag-0.5Cu Solder in Reflow Process and Reliability Assessment for Micro-joint. [10.7791/jspmee.3.192](https://doi.org/10.7791/jspmee.3.192)
+  - Muhammad Yasar Razzaq et al. (2025). Effects of solder solidification temperature on residual stress distribution and failure location in BGA solder joints. [10.1016/j.microrel.2025.115609](https://doi.org/10.1016/j.microrel.2025.115609)
+  - Lei Li et al. (2024). Thermal Fatigue Failure of Micro-Solder Joints in Electronic Packaging Devices: A Review. [10.3390/ma17102365](https://doi.org/10.3390/ma17102365)
+  - Rilwan Kayode Apalowo et al. (2024). Thermal fatigue life prediction and intermetallic compound behaviour of SAC305 BGA solder joints subject to accelerated thermal cycling test. [10.1108/ssmt-12-2023-0075](https://doi.org/10.1108/ssmt-12-2023-0075)
+  - Wei Shen et al. (2024). Effect of Warpage on Solder Joint Fatigue Life by Influencing the Solder Joint Shape in BGA Packages. [10.1109/tcpmt.2024.3372520](https://doi.org/10.1109/tcpmt.2024.3372520)
+  - Fangzhou Chen et al. (2023). Effect of Residual Stress After Reflow Soldering of Ball Grid Array Mixed Solder Joint on Thermal Cycling Reliability. [10.1109/icrms59672.2023.00217](https://doi.org/10.1109/icrms59672.2023.00217)
+  - Chun‐Sean Lau et al. (2012). Computational fluid dynamic and thermal analysis for BGA assembly during forced convection reflow soldering process. [10.1108/09540911211214659](https://doi.org/10.1108/09540911211214659)
 
 ### casting / solidification / alloys
 
@@ -817,12 +817,12 @@ This cluster covers advanced casting and solidification techniques for producing
 
 - 使う op: [`filtered_backprojection`](../ops/tomography/reconstruct/filtered_backprojection.md)(CT 再構成、sinogram → image2d)、[`sart_reconstruct`](../ops/tomography/reconstruct/sart_reconstruct.md)(少数投影の再構成、sinogram → image2d)、[`beam_hardening_correct`](../ops/tomography/artifact/beam_hardening_correct.md)(カッピングの補正、sinogram → sinogram)、[`ring_artifact_remove`](../ops/tomography/artifact/ring_artifact_remove.md)(リングアーチファクト、sinogram → sinogram)、[`vol_label`](../ops/3d/regionprops/vol_label.md)(空隙のラベル、voxel → labels)、[`vol_region_props`](../ops/3d/regionprops/vol_region_props.md)(空隙の性質、labels → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Review on Modeling and Simulation of Continuous Casting. [10.1002/srin.201700312](https://doi.org/10.1002/srin.201700312)
-  - — (n.d.). Novel casting processes for single-crystal turbine blades of superalloys. [10.1007/s11465-018-0475-0](https://doi.org/10.1007/s11465-018-0475-0)
-  - — (n.d.). Grain Refinement and Improvement of Solidification Defects in Direct-Chill Cast Billets of A4032 Alloy by Melt Conditioning. [10.1007/s11663-017-1016-7](https://doi.org/10.1007/s11663-017-1016-7)
-  - — (n.d.). Latest advances in extrusion processes of light metals. [10.1007/s43452-024-00988-5](https://doi.org/10.1007/s43452-024-00988-5)
-  - — (n.d.). Influence of Fe-rich intermetallics on solidification defects in Al–Si–Cu alloys. [10.1016/j.actamat.2014.01.007](https://doi.org/10.1016/j.actamat.2014.01.007)
-  - — (n.d.). Solidification of Metals and Alloys. [10.5772/intechopen.94393](https://doi.org/10.5772/intechopen.94393)
+  - D. Leśniak et al. (2024). Latest advances in extrusion processes of light metals. [10.1007/s43452-024-00988-5](https://doi.org/10.1007/s43452-024-00988-5)
+  - Yuhong Zhao (2023). Understanding and design of metallic alloys guided by phase-field simulations. [10.1038/s41524-023-01038-z](https://doi.org/10.1038/s41524-023-01038-z)
+  - Guojiang Dong et al. (2023). Process optimization of A356 aluminum alloy wheel hub fabricated by low-pressure die casting with simulation and experimental coupling methods. [10.1016/j.jmrt.2023.03.214](https://doi.org/10.1016/j.jmrt.2023.03.214)
+  - Honggang Zhong et al. (2022). Solidification structure and central segregation of 6Cr13Mo stainless steel under simulated continuous casting conditions. [10.1016/j.jmrt.2022.08.115](https://doi.org/10.1016/j.jmrt.2022.08.115)
+  - Yuchao Yao et al. (2022). Effect of steel strip feeding on the columnar-equiaxed solidification in a large continuous casting round bloom. [10.1016/j.jmrt.2022.08.010](https://doi.org/10.1016/j.jmrt.2022.08.010)
+  - John A. Taylor (2012). Iron-Containing Intermetallic Phases in Al-Si Based Casting Alloys. [10.1016/j.mspro.2012.06.004](https://doi.org/10.1016/j.mspro.2012.06.004)
 
 ### treatment / heat / microstructure
 
@@ -830,12 +830,12 @@ This cluster encompasses the relationship between heat treatment processes and r
 
 - 使う op: [`spectrum_to_srgb`](../ops/optics/appearance/spectrum_to_srgb.md)(分光 → 色、signal → vector)、[`thin_film_reflectance`](../ops/optics/appearance/thin_film_reflectance.md)(薄膜の干渉色、signal → signal)、[`material_catalog`](../ops/optics/material/material_catalog.md)(材質の外観表、 → table)、[`oren_nayar`](../ops/optics/material/oren_nayar.md)(粗い面の反射、normalmap → image2d)、[`brdf_microfacet`](../ops/specular/reflectance/brdf_microfacet.md)(微小面の反射、normalmap → image2d)、[`metallic_flake_normals`](../ops/optics/surface/metallic_flake_normals.md)(メタリック塗装、 → normalmap)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Effect of Heat Treatment on Microstructure and Mechanical Properties of 2.25Cr–1Mo Steel. [10.1002/srin.201200130](https://doi.org/10.1002/srin.201200130)
-  - — (n.d.). Microstructures, Heat Treatment, and Properties of Boron‐Alloyed Tool Steels. [10.1002/srin.201900416](https://doi.org/10.1002/srin.201900416)
-  - — (n.d.). A Study on the Effects of Different Heat‐Treatment Parameters on Microstructure–Mechanical Properties and Corrosion Behavior of Maraging Steel Produced by Direct Metal Laser Sintering. [10.1002/srin.202000195](https://doi.org/10.1002/srin.202000195)
-  - — (n.d.). Fe–Mn–C–Al Low‐Density Steel for Structural Materials: A Review of Alloying, Heat Treatment, Microstructure, and Mechanical Properties. [10.1002/srin.202200191](https://doi.org/10.1002/srin.202200191)
-  - — (n.d.). The influence of heat treatment and resulting microstructures on the thermophysical properties of martensitic steels. [10.1007/s10853-013-7665-2](https://doi.org/10.1007/s10853-013-7665-2)
-  - — (n.d.). EFFECTS OF HEAT TREATMENTS ON MICROSTRUCTURES AND MECHANICAL PROPERTIES OF DUAL PHASE ODS STEELS FOR HIGH TEMPERATURE STRENGTH. [10.5516/net.02.2013.529](https://doi.org/10.5516/net.02.2013.529)
+  - Jian Zhang et al. (2024). Effect of heat treatment on the microstructure and mechanical properties of 18Ni 300 maraging steel manufactured by wire + arc additive manufacturing. [10.1080/17452759.2024.2397007](https://doi.org/10.1080/17452759.2024.2397007)
+  - Chenhui Zhu et al. (2024). Effect of heat treatment processes on the microstructure and mechanical properties of 00Cr13Ni5Mo super martensitic stainless steel (SMSS). [10.1016/j.jmrt.2024.08.030](https://doi.org/10.1016/j.jmrt.2024.08.030)
+  - Yanbin Du et al. (2024). Effect of heat treatment on microstructure and mechanical properties of Fe60 coating by laser cladding on 304 stainless steel. [10.1016/j.jmrt.2024.02.046](https://doi.org/10.1016/j.jmrt.2024.02.046)
+  - Kunda Du et al. (2023). Effect of Heat Treatment Process on Microstructure and Mechanical Properties of High-Carbon H13 Steel. [10.3390/pr11113239](https://doi.org/10.3390/pr11113239)
+  - Jun Ge et al. (2023). Post-Process Treatments for Additive-Manufactured Metallic Structures: A Comprehensive Review. [10.1007/s11665-023-08051-9](https://doi.org/10.1007/s11665-023-08051-9)
+  - E. V. Zaretsky (2012). Rolling bearing steels – a technical and historical perspective. [10.1179/1743284711y.0000000043](https://doi.org/10.1179/1743284711y.0000000043)
 
 ### powder / sintering / metallurgy
 
@@ -843,12 +843,12 @@ This cluster covers powder metallurgy and sintering techniques for producing adv
 
 - 使う op: [`temporal_bandpass`](../ops/motionmag/temporal/temporal_bandpass.md)(動画の時間帯域(揺らぎ)、video → video)、[`motion_magnify`](../ops/motionmag/magnify/motion_magnify.md)(微小な動きの拡大、video → table)、[`video_spacetime_cube`](../ops/videocube/cube/video_spacetime_cube.md)(時空間の立方体、video → voxel)、[`video_summary_keyframes`](../ops/videocube/summary/video_summary_keyframes.md)(要約コマ、video → indices)、[`blob_count`](../ops/2d/features/blob_count.md)(スパッタ・粒の数、region → feature)、[`area_center`](../ops/2d/features/area_center.md)(溶融池の面積と重心、region → match)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Powder Metallurgy and Sintered Materials. [10.1002/14356007.a22_105.pub2](https://doi.org/10.1002/14356007.a22_105.pub2)
-  - — (n.d.). Powder Metallurgy Strategies to Improve Properties and Processing of Titanium Alloys: A Review. [10.1002/adem.201600743](https://doi.org/10.1002/adem.201600743)
-  - — (n.d.). Powder Metallurgy Route to Ultrafine‐Grained Refractory Metals. [10.1002/adma.202205807](https://doi.org/10.1002/adma.202205807)
-  - — (n.d.). Potential of the KOBO extrusion process for nonferrous metals in the form of solids and chips. [10.1007/s00170-023-11596-7](https://doi.org/10.1007/s00170-023-11596-7)
-  - — (n.d.). Thermoanalytical techniques for characterizing sintering processes in ferrous powder metallurgy. [10.1007/s10973-022-11740-7](https://doi.org/10.1007/s10973-022-11740-7)
-  - — (n.d.). Thermal Stress Analysis of Powder Metallurgy Sintering Process Based on ANSYS. [10.4028/www.scientific.net/kem.667.244](https://doi.org/10.4028/www.scientific.net/kem.667.244)
+  - Peng Zhang et al. (2024). A study on hydrogen embrittlement of a high-strength pipeline steel weldment after microstructure manipulation by targeted heat treatments. [10.1016/j.ijhydene.2024.12.012](https://doi.org/10.1016/j.ijhydene.2024.12.012)
+  - Ara Go et al. (2024). Fabrication of 17-4PH stainless steel by metal material extrusion: Effects of process parameters and heat treatment on physical properties. [10.1016/j.matdes.2024.113471](https://doi.org/10.1016/j.matdes.2024.113471)
+  - W. Bochniak et al. (2023). Potential of the KOBO extrusion process for nonferrous metals in the form of solids and chips. [10.1007/s00170-023-11596-7](https://doi.org/10.1007/s00170-023-11596-7)
+  - Hangli Qian et al. (2023). The dependence of microstructure and mechanical properties on substrate heat treatment in AlN ceramics/AgCuTi/316 stainless steel brazed joints. [10.1016/j.vacuum.2023.112094](https://doi.org/10.1016/j.vacuum.2023.112094)
+  - Raquel de Oro Calderon et al. (2022). Thermoanalytical techniques for characterizing sintering processes in ferrous powder metallurgy. [10.1007/s10973-022-11740-7](https://doi.org/10.1007/s10973-022-11740-7)
+  - Sumesh Narayan et al. (2012). Some aspects of barreling in sintered plain carbon steel powder metallurgy preforms during cold upsetting. [10.1590/s1516-14392012005000029](https://doi.org/10.1590/s1516-14392012005000029)
 
 ### casting / solidification / defects
 
@@ -856,12 +856,12 @@ This cluster covers the science and engineering of casting and solidification pr
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Thermophysical Properties and Solidification Defects of Fe-22Mn-0.7C TWIP Steel. [10.1002/srin.201500022](https://doi.org/10.1002/srin.201500022)
-  - — (n.d.). Initial Solidification and Its Related Heat Transfer Phenomena in the Continuous Casting Mold. [10.1002/srin.201600488](https://doi.org/10.1002/srin.201600488)
-  - — (n.d.). Bifilm defects and porosity in Al cast alloys. [10.1007/s00170-015-8240-6](https://doi.org/10.1007/s00170-015-8240-6)
-  - — (n.d.). Experimental and numerical investigations of oxide-related defects in Al alloy gravity die castings. [10.1007/s00170-021-07680-5](https://doi.org/10.1007/s00170-021-07680-5)
-  - — (n.d.). Digital twin for directional solidification of a single-crystal turbine blade. [10.1016/j.actamat.2022.118579](https://doi.org/10.1016/j.actamat.2022.118579)
-  - — (n.d.). Advance in Research of Casting Defects of Directionally Solidified Nickel-based Single Superalloys. `W2369146819`
+  - Zhishuai Jin et al. (2022). Effect of casting temperature on the solidification process and (micro)structure of Zr-based metallic glasses. [10.1016/j.jmrt.2022.12.110](https://doi.org/10.1016/j.jmrt.2022.12.110)
+  - Haijie Zhang et al. (2022). Digital twin for directional solidification of a single-crystal turbine blade. [10.1016/j.actamat.2022.118579](https://doi.org/10.1016/j.actamat.2022.118579)
+  - Paweł Kwiatoń et al. (2022). Numerical Research on the Formation of Casting Defects During the Solidification Process of CuAl10Fe3Mn2 Alloy. [10.12693/aphyspola.142.188](https://doi.org/10.12693/aphyspola.142.188)
+  - L. Sowa et al. (2022). Influence of Basic Physical Phenomena of the Casting-Riser System Solidification Process on Defects Formation in The Casting. [10.12693/aphyspola.142.48](https://doi.org/10.12693/aphyspola.142.48)
+  - Jon Sertucha et al. (2022). Casting Defects in Sand-Mold Cast Irons—An Illustrated Review with Emphasis on Spheroidal Graphite Cast Irons. [10.3390/met12030504](https://doi.org/10.3390/met12030504)
+  - Hengzhi Fu (2012). Advance in Research of Casting Defects of Directionally Solidified Nickel-based Single Superalloys. [W2369146819](https://en.cnki.com.cn/Article_en/CJFDTotal-CLGC201201021.htm)
 
 ### treatment / heat / steel
 
@@ -869,12 +869,12 @@ This cluster covers the relationship between thermal processing and microstructu
 
 - 使う op: [`spectrum_to_srgb`](../ops/optics/appearance/spectrum_to_srgb.md)(分光 → 色、signal → vector)、[`thin_film_reflectance`](../ops/optics/appearance/thin_film_reflectance.md)(薄膜の干渉色、signal → signal)、[`material_catalog`](../ops/optics/material/material_catalog.md)(材質の外観表、 → table)、[`oren_nayar`](../ops/optics/material/oren_nayar.md)(粗い面の反射、normalmap → image2d)、[`brdf_microfacet`](../ops/specular/reflectance/brdf_microfacet.md)(微小面の反射、normalmap → image2d)、[`metallic_flake_normals`](../ops/optics/surface/metallic_flake_normals.md)(メタリック塗装、 → normalmap)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Microstructure evolution and critical stress for twinning in the CrMnFeCoNi high-entropy alloy. [10.1016/j.actamat.2016.07.038](https://doi.org/10.1016/j.actamat.2016.07.038)
-  - — (n.d.). Microstructure evolution during in-situ heating of AlSi10Mg alloy powders and additive manufactured parts. [10.1016/j.addma.2020.101605](https://doi.org/10.1016/j.addma.2020.101605)
-  - — (n.d.). Columnar-to-equiaxed grain transition in powder bed fusion via mimicking casting solidification and promoting in situ recrystallization. [10.1016/j.addma.2021.102086](https://doi.org/10.1016/j.addma.2021.102086)
-  - — (n.d.). Laser powder bed fusion of 17–4 PH stainless steel: A comparative study on the effect of heat treatment on the microstructure evolution and mechanical properties. [10.1016/j.addma.2021.102176](https://doi.org/10.1016/j.addma.2021.102176)
-  - — (n.d.). Effects of the heat treatment on the microstructure and corrosion behavior of 316 L stainless steel manufactured by Laser Powder Bed Fusion. [10.1016/j.corsci.2022.110777](https://doi.org/10.1016/j.corsci.2022.110777)
-  - — (n.d.). HEAT TREATMENT EFFECT ON MARAGING STEEL MANUFACTURED BY LASER POWDER BED FUSION TECHNOLOGY: MICROSTRUCTURE AND MECHANICAL PROPERTIES. [10.36547/ams.27.3.973](https://doi.org/10.36547/ams.27.3.973)
+  - Meng Zhao et al. (2024). Effect of heat treatment on microstructure and hydrogen embrittlement of additively manufactured and cast 18Ni300 maraging steel. [10.1016/j.jmrt.2024.12.002](https://doi.org/10.1016/j.jmrt.2024.12.002)
+  - Liangliang Zhang et al. (2024). Influence of layer thickness and heat treatment on microstructure and properties of selective laser melted maraging stainless steel. [10.1016/j.jmrt.2024.10.097](https://doi.org/10.1016/j.jmrt.2024.10.097)
+  - Minchao Cui et al. (2024). Microstructure classification of steel samples with different heat-treatment processes based on laser-induced breakdown spectroscopy (LIBS). [10.1039/d3ja00453h](https://doi.org/10.1039/d3ja00453h)
+  - Tejas Gundgire et al. (2023). Synergistic effects of heat treatments and severe shot peening on residual stresses and microstructure in 316L stainless steel produced by laser powder bed fusion. [10.1016/j.jmatprotec.2023.118229](https://doi.org/10.1016/j.jmatprotec.2023.118229)
+  - Shubo Gao et al. (2023). Additive manufacturing of alloys with programmable microstructure and properties. [10.1038/s41467-023-42326-y](https://doi.org/10.1038/s41467-023-42326-y)
+  - Pavel Krakhmalev et al. (2015). In situ heat treatment in selective laser melted martensitic AISI 420 stainless steels. [10.1016/j.matdes.2015.08.045](https://doi.org/10.1016/j.matdes.2015.08.045)
 
 ### powder / sintering / composites
 
@@ -882,12 +882,12 @@ This cluster covers powder metallurgy and sintering techniques for manufacturing
 
 - 使う op: [`temporal_bandpass`](../ops/motionmag/temporal/temporal_bandpass.md)(動画の時間帯域(揺らぎ)、video → video)、[`motion_magnify`](../ops/motionmag/magnify/motion_magnify.md)(微小な動きの拡大、video → table)、[`video_spacetime_cube`](../ops/videocube/cube/video_spacetime_cube.md)(時空間の立方体、video → voxel)、[`video_summary_keyframes`](../ops/videocube/summary/video_summary_keyframes.md)(要約コマ、video → indices)、[`blob_count`](../ops/2d/features/blob_count.md)(スパッタ・粒の数、region → feature)、[`area_center`](../ops/2d/features/area_center.md)(溶融池の面積と重心、region → match)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). High Strength and High Wear‐Resistant Ti Composites Fabricated by Powder Metallurgy Pressureless Sintering. [10.1002/admt.202200219](https://doi.org/10.1002/admt.202200219)
-  - — (n.d.). Effect of in-plane fiber waviness defects on the compressive properties of quasi-isotropic thermoplastic composites. [10.1016/j.compstruct.2021.114166](https://doi.org/10.1016/j.compstruct.2021.114166)
-  - — (n.d.). Grain growth kinetics and densification mechanism of Ti/CaB6 composites by powder metallurgy pressureless sintering. [10.1016/j.jallcom.2022.168686](https://doi.org/10.1016/j.jallcom.2022.168686)
-  - — (n.d.). Properties of aluminum matrix Nano composites prepared by powder metallurgy processing. [10.1016/j.jksues.2015.11.001](https://doi.org/10.1016/j.jksues.2015.11.001)
-  - — (n.d.). Development of Mg based biomaterial with improved mechanical and degradation properties using powder metallurgy. [10.1016/j.jma.2020.02.011](https://doi.org/10.1016/j.jma.2020.02.011)
-  - — (n.d.). Wear behaviour of sintered steels obtained using powder metallurgy method. [10.5755/j01.mech.23.4.18982](https://doi.org/10.5755/j01.mech.23.4.18982)
+  - Hexin Tian et al. (2024). An Improved Process for Solving the Sintering Problem of Al-Si Alloy Powder Metallurgy. [10.3390/met14111295](https://doi.org/10.3390/met14111295)
+  - Shimaa A. Abolkassem et al. (2024). Microstructure, mechanical, and magnetic properties of powder metallurgy FeCoNiSi–Cu, FeCoNiSi–Mn, and FeCoNiSi-Ti equiatomic HEAs manufactured by spark plasma sintering. [10.1016/j.jmrt.2024.11.252](https://doi.org/10.1016/j.jmrt.2024.11.252)
+  - Dilşad Akgümüş Gök et al. (2024). A review on processing, mechanical and wear properties of Al matrix composites reinforced with Al2O3, SiC, B4C and MgO by powder metallurgy method. [10.1016/j.jmrt.2024.06.110](https://doi.org/10.1016/j.jmrt.2024.06.110)
+  - T. Sathish et al. (2023). Influence of synthesizing parameters on surface qualities of aluminium alloy AA5083/ CNT/MoS2 nanocomposite in powder metallurgy technique. [10.1016/j.jmrt.2023.10.043](https://doi.org/10.1016/j.jmrt.2023.10.043)
+  - B09 Committee (2023). Test Methods for Density of Compacted or Sintered Powder Metallurgy (PM) Products Using Archimedes Principle. [10.1520/b0962-23](https://doi.org/10.1520/b0962-23)
+  - Nouari Saheb et al. (2012). Spark Plasma Sintering of Metals and Metal Matrix Nanocomposites: A Review. [10.1155/2012/983470](https://doi.org/10.1155/2012/983470)
 
 ## additive / manufacturing / printing
 
@@ -913,12 +913,12 @@ This cluster covers additive manufacturing (3D printing) technologies, materials
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Selective Laser Melting. [10.1002/latj.201290018](https://doi.org/10.1002/latj.201290018)
-  - — (n.d.). Digital twin-based sustainable intelligent manufacturing: a review. [10.1007/s40436-020-00302-5](https://doi.org/10.1007/s40436-020-00302-5)
-  - — (n.d.). An insight into additive manufacturing of fiber reinforced polymer composite. [10.1016/j.ijlmm.2019.08.004](https://doi.org/10.1016/j.ijlmm.2019.08.004)
-  - — (n.d.). The barriers to the progression of additive manufacture: Perspectives from UK industry. [10.1016/j.ijpe.2018.02.003](https://doi.org/10.1016/j.ijpe.2018.02.003)
-  - — (n.d.). Supporting disassembly processes through simulation tools: A systematic literature review with a focus on printed circuit boards. [10.1016/j.jmsy.2021.07.009](https://doi.org/10.1016/j.jmsy.2021.07.009)
-  - — (n.d.). Development and implementation of a control system for a retrofitted CNC machine by using Arduino. [10.5937/fmet1704565q](https://doi.org/10.5937/fmet1704565q)
+  - John Norrish et al. (2021). A review of wire arc additive manufacturing: development, principles, process physics, implementation and current status. [10.1088/1361-6463/ac1e4a](https://doi.org/10.1088/1361-6463/ac1e4a)
+  - Byron Blakey-Milner et al. (2021). Metal additive manufacturing in aerospace: A review. [10.1016/j.matdes.2021.110008](https://doi.org/10.1016/j.matdes.2021.110008)
+  - Claudio Sassanelli et al. (2021). Supporting disassembly processes through simulation tools: A systematic literature review with a focus on printed circuit boards. [10.1016/j.jmsy.2021.07.009](https://doi.org/10.1016/j.jmsy.2021.07.009)
+  - Jingchao Jiang et al. (2020). Path Planning Strategies to Optimize Accuracy, Quality, Build Time and Material Use in Additive Manufacturing: A Review. [10.3390/mi11070633](https://doi.org/10.3390/mi11070633)
+  - Bin He et al. (2020). Digital twin-based sustainable intelligent manufacturing: a review. [10.1007/s40436-020-00302-5](https://doi.org/10.1007/s40436-020-00302-5)
+  - Sebastian Bremen et al. (2012). Selective Laser Melting. [10.1002/latj.201290018](https://doi.org/10.1002/latj.201290018)
 
 ### fdm / fused / deposition
 
@@ -926,12 +926,12 @@ This cluster comprehensively covers fused deposition modeling (FDM) and fused fi
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Effect of fused deposition modeling process parameters on the mechanical properties of recycled polyethylene terephthalate parts. [10.1002/app.49709](https://doi.org/10.1002/app.49709)
-  - — (n.d.). Investigation of metal‐polymer composites manufactured by fused deposition modeling with regard to process parameters. [10.1002/pc.26285](https://doi.org/10.1002/pc.26285)
-  - — (n.d.). Extrusion‐Based Fused Deposition Modeling for Printing Sensors and Electrodes: Materials, Process Parameters, and Applications. [10.1002/smm2.70027](https://doi.org/10.1002/smm2.70027)
-  - — (n.d.). Gaining a better understanding of the extrusion process in fused filament fabrication 3D printing: a review. [10.1007/s00170-021-06918-6](https://doi.org/10.1007/s00170-021-06918-6)
-  - — (n.d.). The effect of process parameters on geometric deviations in 3D printing with fused deposition modelling. [10.1007/s00170-022-09924-4](https://doi.org/10.1007/s00170-022-09924-4)
-  - — (n.d.). INFLUENCE OF PROCESS PARAMETERS ON DIMENSIONAL ACCURACY OF PARTS MANUFACTURED USING FUSED DEPOSITION MODELLING TECHNOLOGY. [10.5604/20804075.1062340](https://doi.org/10.5604/20804075.1062340)
+  - Vijayvignesh Namasivayam Sukumaar et al. (2025). A comprehensive review on the influence of fused deposition modelling process parameters upon thermoplastic composite materials. [10.1016/j.aiepr.2025.11.006](https://doi.org/10.1016/j.aiepr.2025.11.006)
+  - Carlo Massaroni et al. (2025). Extrusion‐Based Fused Deposition Modeling for Printing Sensors and Electrodes: Materials, Process Parameters, and Applications. [10.1002/smm2.70027](https://doi.org/10.1002/smm2.70027)
+  - S. Raja et al. (2024). Fused deposition modeling process parameter optimization on the development of graphene enhanced polyethylene terephthalate glycol. [10.1038/s41598-024-80376-4](https://doi.org/10.1038/s41598-024-80376-4)
+  - Lucas Gallup et al. (2024). Influence of Fused Deposition Modeling Process Parameters on Constitutive Model of Hyperelastic Thermoplastic Polyurethane. [10.3390/polym17010026](https://doi.org/10.3390/polym17010026)
+  - Navin Kumar Balasubramainian et al. (2024). Optimization of process parameters to minimize circularity error and surface roughness in fused deposition modelling (FDM) using Taguchi method for biomedical implant fabrication. [10.1080/20550340.2024.2406156](https://doi.org/10.1080/20550340.2024.2406156)
+  - Jin Wen Zhang et al. (2012). Process-Parameter Optimization for Fused Deposition Modeling Based on Taguchi Method. [10.4028/www.scientific.net/amr.538-541.444](https://doi.org/10.4028/www.scientific.net/amr.538-541.444)
 
 ### additive / pool / melt
 
@@ -939,12 +939,12 @@ This cluster covers machine learning applications in additive manufacturing (AM)
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Machine learning techniques in additive manufacturing: a state of the art review on design, processes and production control. [10.1007/s10845-022-02029-5](https://doi.org/10.1007/s10845-022-02029-5)
-  - — (n.d.). Research and application of machine learning for additive manufacturing. [10.1016/j.addma.2022.102691](https://doi.org/10.1016/j.addma.2022.102691)
-  - — (n.d.). MeltpoolNet: Melt pool characteristic prediction in Metal Additive Manufacturing using machine learning. [10.1016/j.addma.2022.102817](https://doi.org/10.1016/j.addma.2022.102817)
-  - — (n.d.). A novel machine learning-based approach for in-situ surface roughness prediction in laser powder-bed fusion. [10.1016/j.addma.2024.104354](https://doi.org/10.1016/j.addma.2024.104354)
-  - — (n.d.). Evaluating the cost competitiveness of metal additive manufacturing – A case study with metal material extrusion. [10.1016/j.cirpj.2023.06.005](https://doi.org/10.1016/j.cirpj.2023.06.005)
-  - — (n.d.). Review of Intelligence for Additive and Subtractive Manufacturing: Current Status and Future Prospects. [10.3390/mi14030508](https://doi.org/10.3390/mi14030508)
+  - Yi-Ping Chen et al. (2025). Real-time decision-making for Digital Twin in additive manufacturing with Model Predictive Control using time-series deep neural networks. [10.1016/j.jmsy.2025.03.009](https://doi.org/10.1016/j.jmsy.2025.03.009)
+  - Siqi Zhang et al. (2024). Engineering-Guided Deep Learning of Melt-Pool Dynamics for Additive Manufacturing Quality Monitoring. [10.1115/1.4066026](https://doi.org/10.1115/1.4066026)
+  - Sahar Toorandaz et al. (2024). A novel machine learning-based approach for in-situ surface roughness prediction in laser powder-bed fusion. [10.1016/j.addma.2024.104354](https://doi.org/10.1016/j.addma.2024.104354)
+  - Mohamed Abubakr Hassan et al. (2024). Monitoring Variability in Melt Pool Spatiotemporal Dynamics (VIMPS): Towards Proactive Humping Detection in Additive Manufacturing. [10.3390/jmmp8030114](https://doi.org/10.3390/jmmp8030114)
+  - Mathias Sæterbø et al. (2023). Evaluating the cost competitiveness of metal additive manufacturing – A case study with metal material extrusion. [10.1016/j.cirpj.2023.06.005](https://doi.org/10.1016/j.cirpj.2023.06.005)
+  - Patcharapit Promoppatum et al. (2017). A Comprehensive Comparison of the Analytical and Numerical Prediction of the Thermal History and Solidification Microstructure of Inconel 718 Products Made by Laser Powder-Bed Fusion. [10.1016/j.eng.2017.05.023](https://doi.org/10.1016/j.eng.2017.05.023)
 
 ### extrusion / printing / additive
 
@@ -952,12 +952,12 @@ This cluster covers extrusion-based and material extrusion additive manufacturin
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Recent Advances in Extrusion‐Based 3D Printing for Biomedical Applications. [10.1002/adhm.201701161](https://doi.org/10.1002/adhm.201701161)
-  - — (n.d.). Three‐Dimensional Printing of Multifunctional Nanocomposites: Manufacturing Techniques and Applications. [10.1002/adma.201506215](https://doi.org/10.1002/adma.201506215)
-  - — (n.d.). Extrusion and Microfluidic‐Based Bioprinting to Fabricate Biomimetic Tissues and Organs. [10.1002/admt.201901044](https://doi.org/10.1002/admt.201901044)
-  - — (n.d.). Material extrusion‐based additive manufacturing of polypropylene: A review on how to improve dimensional inaccuracy and warpage. [10.1002/app.48545](https://doi.org/10.1002/app.48545)
-  - — (n.d.). Structural failure during extrusion-based 3D printing processes. [10.1007/s00170-019-03844-6](https://doi.org/10.1007/s00170-019-03844-6)
-  - — (n.d.). Advantages and effectiveness of the powder metallurgy in manufacturing technologies. `W2951839922`
+  - Anmol Sharma et al. (2025). Machine learning based approach for surface roughness prediction in precision dental prototyping. [10.1038/s41598-025-17487-z](https://doi.org/10.1038/s41598-025-17487-z)
+  - Khalil Khanafer et al. (2024). Thermal Conductivity of 3D-Printed Metal Using Extrusion-Based Metal Additive Manufacturing Process. [10.1115/1.4066639](https://doi.org/10.1115/1.4066639)
+  - Thomas Forstner et al. (2024). Influence of wax addition on feedstock processing behavior in additive manufacturing of metals by material extrusion. [10.1007/s40964-024-00671-4](https://doi.org/10.1007/s40964-024-00671-4)
+  - Longfei Zhou et al. (2024). Additive Manufacturing: A Comprehensive Review. [10.3390/s24092668](https://doi.org/10.3390/s24092668)
+  - Xueying Wei et al. (2024). Optimizing metal part distortion in the material extrusion-thermal debinding-sintering process: An experimental and numerical study. [10.1016/j.heliyon.2024.e28899](https://doi.org/10.1016/j.heliyon.2024.e28899)
+  - Ulf Roar Aakenes (2013). Industrialising of the Hybrid Metal Extrusion a Bonding(HYB) Method – from Prototype towards Commercial Process. [W1638123936](https://ntnuopen.ntnu.no/ntnu-xmlui/handle/11250/249434)
 
 ### additive / manufacturing / printing
 
@@ -965,12 +965,12 @@ This cluster covers the materials, processes, and engineering principles of addi
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Metal Alloys for Fusion‐Based Additive Manufacturing. [10.1002/adem.201700952](https://doi.org/10.1002/adem.201700952)
-  - — (n.d.). A Review on Functionally Graded Materials and Structures via Additive Manufacturing: From Multi‐Scale Design to Versatile Functional Properties. [10.1002/admt.201900981](https://doi.org/10.1002/admt.201900981)
-  - — (n.d.). Laser and electron‐beam powder‐bed additive manufacturing of metallic implants: A review on processes, materials and designs. [10.1002/jor.23075](https://doi.org/10.1002/jor.23075)
-  - — (n.d.). Additive manufacturing methods and modelling approaches: a critical review. [10.1007/s00170-015-7576-2](https://doi.org/10.1007/s00170-015-7576-2)
-  - — (n.d.). Review of defects in lattice structures manufactured by powder bed fusion. [10.1007/s00170-019-04753-4](https://doi.org/10.1007/s00170-019-04753-4)
-  - — (n.d.). Literature review of metal additive manufacturing defects. [10.6028/nist.ams.100-16](https://doi.org/10.6028/nist.ams.100-16)
+  - Mustafijur Rahman et al. (2023). A review on nanomaterial-based additive manufacturing: dynamics in properties, prospects, and challenges. [10.1007/s40964-023-00514-8](https://doi.org/10.1007/s40964-023-00514-8)
+  - Ismail Fidan et al. (2023). Recent Inventions in Additive Manufacturing: Holistic Review. [10.3390/inventions8040103](https://doi.org/10.3390/inventions8040103)
+  - Danilo D’Andrea (2023). Additive Manufacturing of AISI 316L Stainless Steel: A Review. [10.3390/met13081370](https://doi.org/10.3390/met13081370)
+  - Abid Ali Shah et al. (2023). A Review of the Recent Developments and Challenges in Wire Arc Additive Manufacturing (WAAM) Process. [10.3390/jmmp7030097](https://doi.org/10.3390/jmmp7030097)
+  - Francesco Ciccone et al. (2023). Optimization with artificial intelligence in additive manufacturing: a systematic review. [10.1007/s40430-023-04200-2](https://doi.org/10.1007/s40430-023-04200-2)
+  - Dongdong Gu et al. (2012). Laser additive manufacturing of metallic components: materials, processes and mechanisms. [10.1179/1743280411y.0000000014](https://doi.org/10.1179/1743280411y.0000000014)
 
 ### additive / manufacturing / powder
 
@@ -978,12 +978,12 @@ This cluster covers laser powder bed fusion (LPBF) and selective laser melting (
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Energy Coupling Mechanisms and Scaling Behavior Associated with Laser Powder Bed Fusion Additive Manufacturing. [10.1002/adem.201900185](https://doi.org/10.1002/adem.201900185)
-  - — (n.d.). Machine‐Learning‐Based Monitoring of Laser Powder Bed Fusion. [10.1002/admt.201800136](https://doi.org/10.1002/admt.201800136)
-  - — (n.d.). Defect Formation Mechanisms in Selective Laser Melting: A Review. [10.1007/s10033-017-0121-5](https://doi.org/10.1007/s10033-017-0121-5)
-  - — (n.d.). Methods for Rapid Pore Classification in Metal Additive Manufacturing. [10.1007/s11837-019-03761-9](https://doi.org/10.1007/s11837-019-03761-9)
-  - — (n.d.). Powders for powder bed fusion: a review. [10.1007/s40964-019-00078-6](https://doi.org/10.1007/s40964-019-00078-6)
-  - — (n.d.). Porosity Measurements and Analysis for Metal Additive Manufacturing Process Control. [10.6028/jres.119.019](https://doi.org/10.6028/jres.119.019)
+  - Kai Zhang et al. (2024). Pore evolution mechanisms during directed energy deposition additive manufacturing. [10.1038/s41467-024-45913-9](https://doi.org/10.1038/s41467-024-45913-9)
+  - Neng Ren et al. (2023). Solute trapping and non-equilibrium microstructure during rapid solidification of additive manufacturing. [10.1038/s41467-023-43563-x](https://doi.org/10.1038/s41467-023-43563-x)
+  - John Robinson et al. (2023). Melt Pool Monitoring and X-ray Computed Tomography-Informed Characterisation of Laser Powder Bed Additively Manufactured Silver–Diamond Composites. [10.3390/machines11121037](https://doi.org/10.3390/machines11121037)
+  - Jageon Koo et al. (2023). Downskin Surface Roughness Prediction with Machine Learning for As-Built CM247LC Fabricated Via Powder Bed Fusion with a Laser Beam. [10.1089/3dp.2022.0365](https://doi.org/10.1089/3dp.2022.0365)
+  - Jincheng Wang et al. (2023). Understanding melt pool characteristics in laser powder bed fusion: An overview of single- and multi-track melt pools for process optimization. [10.1016/j.apmate.2023.100137](https://doi.org/10.1016/j.apmate.2023.100137)
+  - Tom Craeghs et al. (2012). Detection of Process Failures in Layerwise Laser Melting with Optical Process Monitoring. [10.1016/j.phpro.2012.10.097](https://doi.org/10.1016/j.phpro.2012.10.097)
 
 ### additive / situ / monitoring
 
@@ -991,12 +991,12 @@ This cluster focuses on real-time monitoring techniques and machine learning app
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Process monitoring and machine learning for defect detection in laser-based metal additive manufacturing. [10.1007/s10845-023-02119-y](https://doi.org/10.1007/s10845-023-02119-y)
-  - — (n.d.). A deep learning-based model for defect detection in laser-powder bed fusion using in-situ thermographic monitoring. [10.1007/s40964-019-00108-3](https://doi.org/10.1007/s40964-019-00108-3)
-  - — (n.d.). Process monitoring for material extrusion additive manufacturing: a state-of-the-art review. [10.1007/s40964-021-00192-4](https://doi.org/10.1007/s40964-021-00192-4)
-  - — (n.d.). An in situ crack detection approach in additive manufacturing based on acoustic emission and machine learning. [10.1016/j.addlet.2023.100130](https://doi.org/10.1016/j.addlet.2023.100130)
-  - — (n.d.). In-Situ Quality Intelligent Classification of Additively Manufactured Parts Using a Multi-Sensor Fusion Based Melt Pool Monitoring System. [10.1016/j.amf.2024.200153](https://doi.org/10.1016/j.amf.2024.200153)
-  - — (n.d.). Measurement Science Needs for Real-time Control of Additive Manufacturing Powder Bed Fusion Processes. [10.6028/nist.ir.8036](https://doi.org/10.6028/nist.ir.8036)
+  - Demeke Abay Ashebir et al. (2024). Detecting Multi-Scale Defects in Material Extrusion Additive Manufacturing of Fiber-Reinforced Thermoplastic Composites: A Review of Challenges and Advanced Non-Destructive Testing Techniques. [10.3390/polym16212986](https://doi.org/10.3390/polym16212986)
+  - Boon Xian Chai et al. (2024). Smart Industrial Internet of Things Framework for Composites Manufacturing. [10.3390/s24154852](https://doi.org/10.3390/s24154852)
+  - Qianru Wu et al. (2024). In-Situ Quality Intelligent Classification of Additively Manufactured Parts Using a Multi-Sensor Fusion Based Melt Pool Monitoring System. [10.1016/j.amf.2024.200153](https://doi.org/10.1016/j.amf.2024.200153)
+  - Beytullah Aydogan et al. (2024). Review of In Situ Detection and Ex Situ Characterization of Porosity in Laser Powder Bed Fusion Metal Additive Manufacturing. [10.3390/met14060669](https://doi.org/10.3390/met14060669)
+  - Nabin Bastola et al. (2023). A Review of the Residual Stress Generation in Metal Additive Manufacturing: Analysis of Cause, Measurement, Effects, and Prevention. [10.3390/mi14071480](https://doi.org/10.3390/mi14071480)
+  - Sang Jeen Hong et al. (2012). Process Optimization for Flexible Printed Circuit Board Assembly Manufacturing. [10.4313/teem.2012.13.3.129](https://doi.org/10.4313/teem.2012.13.3.129)
 
 ### fused / deposition / printing
 
@@ -1004,12 +1004,12 @@ This cluster encompasses the optimization and control of fused deposition modeli
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Optimization of process parameters in fused deposition modelling of thermoplastics: A review. [10.1002/mawe.202000193](https://doi.org/10.1002/mawe.202000193)
-  - — (n.d.). A grey‐based Taguchi method to optimize fused deposition modelling process parameters for manufacture of a hip joint implant. [10.1002/mawe.202100129](https://doi.org/10.1002/mawe.202100129)
-  - — (n.d.). Study of processing parameters in fused deposition modeling based on mechanical properties of acrylonitrile‐butadiene‐styrene filament. [10.1002/pen.24875](https://doi.org/10.1002/pen.24875)
-  - — (n.d.). Re‐entrant auxetic structures fabricated by fused deposition modeling: An experimental study of influence of process parameters under compressive loading. [10.1002/pen.25546](https://doi.org/10.1002/pen.25546)
-  - — (n.d.). Effect of processing parameters on flexural properties of 3D ‐printed polyetherketoneketone using fused deposition modeling. [10.1002/pen.25590](https://doi.org/10.1002/pen.25590)
-  - — (n.d.). Effect of Process Parameters on Mechanical Strength of Fabricated Parts using the Fused Deposition Modelling Method. [10.7736/kspe.2019.36.8.705](https://doi.org/10.7736/kspe.2019.36.8.705)
+  - Nareen Hafidh Obaeed et al. (2024). Optimizing Fused Deposition Modelling Process Parameters for Medical Grade Polymethylmethacrylate Flexural Strength. [10.12913/22998624/182876](https://doi.org/10.12913/22998624/182876)
+  - Raja Subramani et al. (2024). Effect of fused deposition modeling process parameter in influence of mechanical property of acrylonitrile butadiene styrene polymer. [10.24294/ace.v7i1.3576](https://doi.org/10.24294/ace.v7i1.3576)
+  - Hariprasad Tarigonda et al. (2023). Desirability function analysis approach for optimization of fused deposition modelling process parameters. [10.1515/ijmr-2022-0266](https://doi.org/10.1515/ijmr-2022-0266)
+  - Mojtaba Karamimoghadam et al. (2023). Influence of post-processing CO2 laser cutting and FFF 3D printing parameters on the surface morphology of PLAs: Statistical modelling and RSM optimisation. [10.1016/j.ijlmm.2023.01.004](https://doi.org/10.1016/j.ijlmm.2023.01.004)
+  - Ravi M. Patel et al. (2022). Investigation of Fused Deposition Modelling Process Parameters in 3D Printing for Composite Material (Poly Lactic Acid and Banana Fibre). [10.15282/ijame.19.3.2022.14.0774](https://doi.org/10.15282/ijame.19.3.2022.14.0774)
+  - C.W. Ziemian et al. (2012). Anisotropic Mechanical Properties of ABS Parts Fabricated by Fused Deposition Modelling. [10.5772/34233](https://doi.org/10.5772/34233)
 
 ## op → クラスタ(逆引き)
 

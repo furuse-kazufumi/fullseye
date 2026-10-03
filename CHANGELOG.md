@@ -7,6 +7,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**文献層(RAG の Tier 3)に運転の 2 分野**: `docs/literature/driving_simulation.md`(運転のシミュレーションと評価、OpenAlex 1,197 本・
+  62 クラスタ・代表論文 356・op リンク 433)と `sensor_simulation.md`(カメラ・LiDAR・レーダーの模擬、704 本・56 クラスタ・311・426)。
+  シナリオ試験・重要度サンプリング・天候・3DGS・EMVA 1288・ローリングシャッターなどのクラスタから、`opsdrive` とセンサー系の op へ落とす。
+  - ★**テーマ → op の表を分野ごとに分けた**(`THEME_TABLES`)。共通の 1 枚に足すと、運転の「digital twin」が製造の予知保全の op に当たる。
+  - ★**出荷済みの文献層の代表論文が全部「— (n.d.)」だった**: corpus2skill が葉へ写すときに Authors / Date / URL を落とし、「新しい順」も
+    日付なしで並んでいた。葉の Source が指す元ファイルから欠けた欄だけを補う(パスは書かない)→ 製造の 3 分野も著者・年・日付順で作り直した。
+  - 要約は corpus2skill の LLM 段(API キーなし)の代わりに Claude のサブエージェントが書き、上位クラスタの Navigation 節は機械で足した。
+
 - ★**見たもの・試したものを少ない手数でコードへ(Studio ⇄ Python エディタ)。** 台帳 op の実行窓に「エディタに差し込む」
   (見本の作り直しまで含む**そのまま走るスクリプト**をカーソル位置へ。import は無いものだけ先頭に)と「履歴をスクリプトに」
   (「直前の結果」で繋いだ手順が `result = …` の連なりで走る)。Python エディタに補完が無かった → `fs.ledger.` / `fs.` の後で

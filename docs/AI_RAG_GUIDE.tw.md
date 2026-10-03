@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: a36ed1151422 -->
+<!-- i18n-source-sha: 04d83f516862 -->
 # 將 Fullseye 用作 AI 助理 RAG 的方法（針對 Claude Code）
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · **繁體中文** · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -55,9 +55,9 @@ py -3.11 raptor_corpus2skill.py --source <fullseye>/docs/ops --name fullseye_ops
 ## Tier 3（內建）：文獻層——把製造技術知識落到「該用哪些 op」
 
 op 筆記回答「這個 op 做什麼」，卻不回答「在這道工序、這個零件上該量什麼」。
-[`docs/literature/`](literature/INDEX.md) 填補這個空隙：外部文獻語料（機械設計、機電零組件、製造製程，約 7,000 筆 OpenAlex
-中繼資料）依叢集摘要，並附上**每個叢集要用的 op**（人工撰寫的主題 → op 對照表，生成時以出貨筆記核對 op 名是否存在）以及代表
-論文的標題 / 年份 / DOI 作為來源。閱讀順序：製程或零件 → 文獻叢集 → 要用的 op → op 筆記（型別契約、可執行範例）→ 實作。
+[`docs/literature/`](literature/INDEX.md) 填補這個空隙：外部文獻語料（機械設計、機電零組件、製造製程、駕駛模擬與評估、感測器模擬，約 8,900 筆 OpenAlex
+中繼資料；主題 → op 對照表依領域分開）依叢集摘要，並附上**每個叢集要用的 op**（人工撰寫的主題 → op 對照表，生成時以出貨筆記核對 op 名是否存在）以及代表
+論文的標題 / 年份 / DOI 作為來源。閱讀順序：製程、零件或駕駛評估話題 → 文獻叢集 → 要用的 op → op 筆記（型別契約、可執行範例）→ 實作。
 不複製摘要，也從不用字面重合挑 op（實測會被通用詞帶出無關 op，已捨棄）。語料本體不在儲存庫裡，因此只有這一層用
 `tools/gen_literature_notes.py --rad-root <RAD>` 重建，`tests/test_literature_notes.py` 守住它的形狀。
 

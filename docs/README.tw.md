@@ -220,7 +220,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文件地圖 — 共 213 篇
+## 文件地圖 — 共 215 篇
 
 完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 2,666 篇運算子說明與 63 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
@@ -356,7 +356,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(136)
+**Other**(138)
 
 | 文件 | 內容 |
 |---|---|
@@ -495,6 +495,8 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`hardening/table-sort-mixes-rows-and-spec-dicts.md`](hardening/table-sort-mixes-rows-and-spec-dicts.md) | id: table-sort-mixes-rows-and-spec-dicts |
 | [`hardening/unknown-operator-hides-missing-backend.md`](hardening/unknown-operator-hides-missing-backend.md) | id: unknown-operator-hides-missing-backend |
 | [`hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md`](hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md) | id: wrappers-were-scalars-and-hints-were-raw-type-errors |
+| [`literature/driving_simulation.md`](literature/driving_simulation.md) | 文献層: 運転のシミュレーションと評価 _(ja)_ |
 | [`literature/oss_landscape_notes.md`](literature/oss_landscape_notes.md) | OSS landscape notes (verified 2026-09-21) |
+| [`literature/sensor_simulation.md`](literature/sensor_simulation.md) | 文献層: センサーの模擬(カメラ・LiDAR・レーダー) _(ja)_ |
 
 <!-- docmap:end -->

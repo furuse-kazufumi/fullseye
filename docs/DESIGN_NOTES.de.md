@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1202. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1204. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -2166,6 +2166,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tools/gen_hero_materials.py`
 
 - **L65** — ★Die Wicklungsreihenfolge ist nach aussen. Kehrt man sie um, zeigen die Normalen nach innen, und render_beauty gibt **ohne eine Exception auszuloesen reines Schwarz** zurueck (so war die erste Version, und nur die Duennschicht-Kugel war schwarz).
+
+## `tools/gen_literature_notes.py`
+
+- **L67** _(ja)_ — ★2026-10-03: 運転の系列の集大成と「開かれた運転基盤」のために足した 2 分野。テーマ表は製造の表と分ける (共通の 1 枚に足すと、運転の「digital twin」が製造の予知保全の op に、製造の「reconstruction」が 3DGS に当たる)。
+- **L399** _(ja)_ — ★2026-10-03: corpus2skill は葉へ写すときに Authors / Date / URL の行を落とす(元の papers/*.md には在る)。 その結果、出荷した文献層の代表論文がすべて「— (n.d.)」になり、「新しい順」も日付なしで並んでいた。 葉の **Source:** が指す元ファイルから、欠けた欄だけを補う(元のパスは読むだけで、出力には書かない)。
 
 ## `tools/gen_maturity.py`
 

@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: a36ed1151422 -->
+<!-- i18n-source-sha: 04d83f516862 -->
 # Fullseye als RAG eines KI-Assistenten nutzen (für Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · **Deutsch**
@@ -56,7 +56,7 @@ Hinweis: Ein geclusterter Korpus ist eine **Momentaufnahme zum Zeitpunkt der Auf
 
 Eine Op-Notiz beantwortet „was tut dieser Op“, nicht „was messe ich in diesem Prozess, an diesem Teil“.
 [`docs/literature/`](literature/INDEX.md) schließt diese Lücke: externe Literaturkorpora (Maschinenbau-Konstruktion,
-Mechatronik-Bauteile, Fertigungsprozesse — etwa 7.000 OpenAlex-Metadatensätze), je Cluster zusammengefasst, mit **den in
+Mechatronik-Bauteile, Fertigungsprozesse, Fahrsimulation und -bewertung, Sensorsimulation — etwa 8.900 OpenAlex-Metadatensätze; je Fachgebiet eine Thema → Op-Tabelle), je Cluster zusammengefasst, mit **den in
 jedem Cluster zu verwendenden Ops** (eine handgeschriebene Thema → Op-Tabelle, deren Op-Namen beim Erzeugen gegen die
 ausgelieferten Notizen geprüft werden) und Titel / Jahr / DOI repräsentativer Arbeiten als Herkunft. Lesereihenfolge:
 Prozess oder Bauteil → Literatur-Cluster → Ops → Op-Notiz (Typvertrag, lauffähiges Beispiel) → Implementierung.

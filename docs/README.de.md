@@ -220,7 +220,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 213
+## Dokumentkarte — alle 215
 
 Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 2,666 Operator-Notizen und 63 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
@@ -356,7 +356,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(136)
+**Other**(138)
 
 | Dokument | Inhalt |
 |---|---|
@@ -495,6 +495,8 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`hardening/table-sort-mixes-rows-and-spec-dicts.md`](hardening/table-sort-mixes-rows-and-spec-dicts.md) | id: table-sort-mixes-rows-and-spec-dicts |
 | [`hardening/unknown-operator-hides-missing-backend.md`](hardening/unknown-operator-hides-missing-backend.md) | id: unknown-operator-hides-missing-backend |
 | [`hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md`](hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md) | id: wrappers-were-scalars-and-hints-were-raw-type-errors |
+| [`literature/driving_simulation.md`](literature/driving_simulation.md) | 文献層: 運転のシミュレーションと評価 _(ja)_ |
 | [`literature/oss_landscape_notes.md`](literature/oss_landscape_notes.md) | OSS landscape notes (verified 2026-09-21) |
+| [`literature/sensor_simulation.md`](literature/sensor_simulation.md) | 文献層: センサーの模擬(カメラ・LiDAR・レーダー) _(ja)_ |
 
 <!-- docmap:end -->

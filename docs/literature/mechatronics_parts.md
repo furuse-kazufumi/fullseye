@@ -8,7 +8,7 @@
 
 **来歴**: OpenAlex から取得した論文メタデータ **2,400 本**(2012 年以降、`fetch_openalex_topical.py`)を TF-IDF + k-means で **64 クラスタ**に階層化し(raptor の `corpus2skill`、2026-09-21)、各クラスタの要約を LLM(claude-haiku-4-5)が書いた。ここに載せるのは**その要約と、代表論文の題名・著者・年・DOI だけ**(メタデータは CC0。抄録は出版社の権利なので写さない)。要約は生成時の英語のまま。**正直な限界**: 文献は原理・選定・校正の研究が中心で、型番やデータシートの数値(製品知識)は薄い。
 
-**使い方(op に落とす)**: 各クラスタの「**使う op**」は、知識のテーマ → op の対応表(`tools/gen_literature_notes.py` の `THEME_OPS`、人が書いたもの)で引いた**実在の op**(生成時に出荷ノート 2,062 本の一覧と突き合わせ、無ければ止まる)。op の後ろはなぜ使うかと型。テーマに当たらないクラスタは「op に落ちていない」と書く(Fullseye に無い領域を隠さない)。読む順: 工程・部品の話題 → クラスタ → 使う op → op ノート(型の契約・実行できる例)→ 実装。末尾の「op → クラスタ」で逆に引ける。
+**使い方(op に落とす)**: 各クラスタの「**使う op**」は、知識のテーマ → op の対応表(`tools/gen_literature_notes.py` の `THEME_OPS`、人が書いたもの)で引いた**実在の op**(生成時に出荷ノート 2,660 本の一覧と突き合わせ、無ければ止まる)。op の後ろはなぜ使うかと型。テーマに当たらないクラスタは「op に落ちていない」と書く(Fullseye に無い領域を隠さない)。読む順: 工程・部品の話題 → クラスタ → 使う op → op ノート(型の契約・実行できる例)→ 実装。末尾の「op → クラスタ」で逆に引ける。
 
 ## 目次
 
@@ -43,12 +43,12 @@ This cluster covers motor speed control systems, particularly brushless DC (BLDC
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Bat algorithm optimized fuzzy PD based speed controller for brushless direct current motor. [10.1016/j.jestch.2015.11.004](https://doi.org/10.1016/j.jestch.2015.11.004)
-  - — (n.d.). Fuzzy Auto-adjust PID Controller Design of Brushless DC Motor. [10.1016/j.phpro.2012.05.249](https://doi.org/10.1016/j.phpro.2012.05.249)
-  - — (n.d.). Fuzzy-PID control system design of brushless DC motor based on vector control. [10.1109/cac.2017.8243777](https://doi.org/10.1109/cac.2017.8243777)
-  - — (n.d.). Design of Fuzzy PID controller for Brushless DC motor. [10.1109/iccci.2012.6158919](https://doi.org/10.1109/iccci.2012.6158919)
-  - — (n.d.). Speed Control of Three Phase Induction Motor Using Indirect Field Oriented Control Based on Real-Time Control System. [10.1109/iciteed.2018.8534864](https://doi.org/10.1109/iciteed.2018.8534864)
-  - — (n.d.). Software interfacing of servo motor with microcontroller. `W603901346`
+  - Muhammed A. Ibrahim et al. (2019). Optimal PID controller of a brushless dc motor using genetic algorithm. [10.11591/ijpeds.v10.i2.pp822-830](https://doi.org/10.11591/ijpeds.v10.i2.pp822-830)
+  - Indra Ferdiansyah et al. (2018). Speed Control of Three Phase Induction Motor Using Indirect Field Oriented Control Based on Real-Time Control System. [10.1109/iciteed.2018.8534864](https://doi.org/10.1109/iciteed.2018.8534864)
+  - Hayder Salim Hameed (2018). Brushless DC motor controller design using MATLAB applications. [10.1109/isces.2018.8340526](https://doi.org/10.1109/isces.2018.8340526)
+  - Sheng Yang et al. (2017). Fuzzy-PID control system design of brushless DC motor based on vector control. [10.1109/cac.2017.8243777](https://doi.org/10.1109/cac.2017.8243777)
+  - Igor Bolgov et al. (2016). Detailed simulation model of the two-phase brushless DC motor designed for VFD integration. [10.1109/rtucon.2016.7763154](https://doi.org/10.1109/rtucon.2016.7763154)
+  - R. Arulmozhiyal et al. (2012). Design of Fuzzy PID controller for Brushless DC motor. [10.1109/iccci.2012.6158919](https://doi.org/10.1109/iccci.2012.6158919)
 
 ### induction / oriented / motor
 
@@ -56,12 +56,12 @@ This cluster covers field-oriented control (FOC) and direct torque control (DTC)
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Field-oriented control based on parallel proportional–integral controllers of induction motor drive. [10.1016/j.egyr.2023.04.008](https://doi.org/10.1016/j.egyr.2023.04.008)
-  - — (n.d.). Direct torque control versus indirect field-oriented control of induction motors for electric vehicle applications. [10.1016/j.jestch.2020.04.002](https://doi.org/10.1016/j.jestch.2020.04.002)
-  - — (n.d.). Indirect Field Oriented Control of Three-phase Induction Motor Based on Current-source Inverter. [10.1016/j.proeng.2017.01.192](https://doi.org/10.1016/j.proeng.2017.01.192)
-  - — (n.d.). Speed Tracking of Indirect Field Oriented Control Induction Motor Using Neural Network. [10.1016/j.protcy.2013.12.173](https://doi.org/10.1016/j.protcy.2013.12.173)
-  - — (n.d.). Indirect field‐oriented torque control of induction motor considering magnetic saturation effect: error analysis. [10.1049/iet-epa.2016.0680](https://doi.org/10.1049/iet-epa.2016.0680)
-  - — (n.d.). Current sensorless method based on field-oriented control in induction motor drive. `W3164060852`
+  - Jiwon Yoo et al. (2023). FEA-Assisted Experimental Parameter Map Identification of Induction Motor for Wide-Range Field-Oriented Control. [10.1109/tpel.2023.3325535](https://doi.org/10.1109/tpel.2023.3325535)
+  - Dalal Zellouma et al. (2023). Field-oriented control based on parallel proportional–integral controllers of induction motor drive. [10.1016/j.egyr.2023.04.008](https://doi.org/10.1016/j.egyr.2023.04.008)
+  - Mohamed Elgbaily et al. (2022). A Combined Control Scheme of Direct Torque Control and Field-Oriented Control Algorithms for Three-Phase Induction Motor: Experimental Validation. [10.3390/math10203842](https://doi.org/10.3390/math10203842)
+  - Lorenzo Carbone et al. (2022). Induction Motor Field-Oriented Sensorless Control with Filter and Long Cable. [10.3390/en15041484](https://doi.org/10.3390/en15041484)
+  - Khaliqur Rahman et al. (2022). Field-Oriented Control of Five-Phase Induction Motor Fed From Space Vector Modulated Matrix Converter. [10.1109/access.2022.3142014](https://doi.org/10.1109/access.2022.3142014)
+  - Moulay Rachid Douırı et al. (2012). Genetic Algorithms Based Fuzzy Speed C ontrollers for Indirect Field Oriented Control of Induction Motor Drive. [W2343341758](https://www.naun.org/main/NAUN/circuitssystemssignal/17-073.pdf)
 
 ### motor / brushless / electric
 
@@ -69,12 +69,12 @@ This cluster covers the design, optimization, and control of brushless DC motors
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Optimization design of brushless DC motor based on improved JAYA algorithm. [10.1038/s41598-024-54582-z](https://doi.org/10.1038/s41598-024-54582-z)
-  - — (n.d.). Cuckoo search as a tool for optimal design of PM brushless DC motor. [10.1108/compel-01-2018-0025](https://doi.org/10.1108/compel-01-2018-0025)
-  - — (n.d.). The Efficiency of Hybrid Stepping Motors: Analyzing the Impact of Control Algorithms. [10.1109/mias.2013.2288403](https://doi.org/10.1109/mias.2013.2288403)
-  - — (n.d.). Permanent Magnet Brushless DC Motor Design for Solar Fed Surface Type Water Pumping. [10.1109/picc51425.2020.9362417](https://doi.org/10.1109/picc51425.2020.9362417)
-  - — (n.d.). Predator–Prey Brain Storm Optimization for DC Brushless Motor. [10.1109/tmag.2013.2262296](https://doi.org/10.1109/tmag.2013.2262296)
-  - — (n.d.). Design of Cooling System on Brushless DC Motor to Improve Heat Transfers Efficiency. [10.5109/4794206](https://doi.org/10.5109/4794206)
+  - Cheng Yuan et al. (2024). Optimization design of brushless DC motor based on improved JAYA algorithm. [10.1038/s41598-024-54582-z](https://doi.org/10.1038/s41598-024-54582-z)
+  - Safril Safril et al. (2022). Design of Cooling System on Brushless DC Motor to Improve Heat Transfers Efficiency. [10.5109/4794206](https://doi.org/10.5109/4794206)
+  - Yusuf Yaşa (2022). An Efficient Brushless DC Motor Design for Unmanned Aerial Vehicles. [10.31590/ejosat.1083838](https://doi.org/10.31590/ejosat.1083838)
+  - Aryadip Sen et al. (2020). Permanent Magnet Brushless DC Motor Design for Solar Fed Surface Type Water Pumping. [10.1109/picc51425.2020.9362417](https://doi.org/10.1109/picc51425.2020.9362417)
+  - Goga Cvetkovski et al. (2018). Cuckoo search as a tool for optimal design of PM brushless DC motor. [10.1108/compel-01-2018-0025](https://doi.org/10.1108/compel-01-2018-0025)
+  - Jiancheng Fang et al. (2012). Instantaneous Torque Control of Small Inductance Brushless DC Motor. [10.1109/tpel.2012.2193420](https://doi.org/10.1109/tpel.2012.2193420)
 
 ### stepper / motor / control
 
@@ -82,12 +82,12 @@ This cluster covers the control systems and methodologies for stepper and servo 
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Motion Control with an Arduino: Servo and Stepper Motor Controls. [10.1007/978-1-4302-4267-3_5](https://doi.org/10.1007/978-1-4302-4267-3_5)
-  - — (n.d.). Position Control of Hybrid Stepper Motor Using Brain Emotional Controller. [10.1016/j.egypro.2011.12.1200](https://doi.org/10.1016/j.egypro.2011.12.1200)
-  - — (n.d.). Stepper motor control with DRV 8825 driver based on square wave signal from AVR microcontroller timer. [10.1063/1.5097484](https://doi.org/10.1063/1.5097484)
-  - — (n.d.). A Compound Control for Hybrid Stepper Motor Based on PI and Sliding Mode Control. [10.1109/access.2024.3490793](https://doi.org/10.1109/access.2024.3490793)
-  - — (n.d.). Research on stepper motor motion control based on MCU. [10.1109/cac.2017.8243312](https://doi.org/10.1109/cac.2017.8243312)
-  - — (n.d.). Design Of Stepper Motor Control Interface With Embedded Systems. `W2974653161`
+  - Grzegorz Góra et al. (2026). Investigating the Impact of Stepper Motor Control Strategy on the Level of Vibrations. [10.3390/app16094561](https://doi.org/10.3390/app16094561)
+  - Dawei Dong et al. (2025). A fully integrated stepper motor driver with a novel integrated current sensing technology. [10.1587/elex.22.20250071](https://doi.org/10.1587/elex.22.20250071)
+  - Lixian Song et al. (2024). A Compound Control for Hybrid Stepper Motor Based on PI and Sliding Mode Control. [10.1109/access.2024.3490793](https://doi.org/10.1109/access.2024.3490793)
+  - Vinod Kumar S et al. (2022). Study of Stepper Motor Control using Programmable Logic Controller (PLC) based on Industry 4.0. [10.1109/smartgencon56628.2022.10083617](https://doi.org/10.1109/smartgencon56628.2022.10083617)
+  - Shilong Lv et al. (2022). Step Motor Control Based on PLC. [10.1109/wcmeim56910.2022.10021545](https://doi.org/10.1109/wcmeim56910.2022.10021545)
+  - Mojtaba Khalilian et al. (2012). Position Control of Hybrid Stepper Motor Using Brain Emotional Controller. [10.1016/j.egypro.2011.12.1200](https://doi.org/10.1016/j.egypro.2011.12.1200)
 
 ### brushless / motor / bldc
 
@@ -95,12 +95,12 @@ This cluster covers brushless DC (BLDC) motor design, control, and optimization 
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Optimal PID control of a brushless DC motor using PSO and BF techniques. [10.1016/j.asej.2013.09.013](https://doi.org/10.1016/j.asej.2013.09.013)
-  - — (n.d.). Design and analysis of a brushless DC motor for applications in robotics. [10.1049/iet-epa.2011.0267](https://doi.org/10.1049/iet-epa.2011.0267)
-  - — (n.d.). Hybrid Optimization Approach for Improved Efficiency in Permanent Magnet Brushless DC Motor Design: Combining Cauchy Particle Swarm & Moth Flame Methods. [10.1080/15325008.2023.2202667](https://doi.org/10.1080/15325008.2023.2202667)
-  - — (n.d.). Design of fuzzy PI controller for brushless DC motor based on PSO–GSA algorithm. [10.1080/21642583.2020.1723144](https://doi.org/10.1080/21642583.2020.1723144)
-  - — (n.d.). Improvement Parameters for Design Brushless DC Motor by Moth Flame Optimization. [10.1088/1757-899x/745/1/012019](https://doi.org/10.1088/1757-899x/745/1/012019)
-  - — (n.d.). Optimal Design of a Brushless DC Motor, by Cuckoo Optimization Algorithm (RESEARCH NOTE). `W2610536931`
+  - Praveenkumar Chandran et al. (2023). Hybrid Optimization Approach for Improved Efficiency in Permanent Magnet Brushless DC Motor Design: Combining Cauchy Particle Swarm & Moth Flame Methods. [10.1080/15325008.2023.2202667](https://doi.org/10.1080/15325008.2023.2202667)
+  - Łukasz Knypiński et al. (2023). Optimal design of brushless DC motor for electromobility propulsion applications using Taguchi method. [10.2478/jee-2023-0015](https://doi.org/10.2478/jee-2023-0015)
+  - Öztürk Tosun et al. (2022). The Design of the Outer-Rotor Brushless DC Motor and an Investigation of Motor Axial-Length-to-Pole-Pitch Ratio. [10.3390/su141912743](https://doi.org/10.3390/su141912743)
+  - Ghufran W. Abedulabbas et al. (2022). Design a PI Controller Based on PSO and GWO for a Brushless DC Motor. [10.18280/jesa.550305](https://doi.org/10.18280/jesa.550305)
+  - Sharankumar Shastri et al. (2020). Design and Analysis of Brushless DC Motors for Ceiling Fan Application. [10.1109/pedes49360.2020.9379863](https://doi.org/10.1109/pedes49360.2020.9379863)
+  - Teodoro Cardoso Bora et al. (2012). Bat-Inspired Optimization Approach for the Brushless DC Wheel Motor Problem. [10.1109/tmag.2011.2176108](https://doi.org/10.1109/tmag.2011.2176108)
 
 ### permanent / magnet / motor
 
@@ -108,12 +108,12 @@ This cluster covers the design, control, and fault management of permanent magne
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Computationally efficient multi‐step direct predictive torque control for surface‐mounted permanent magnet synchronous motor. [10.1049/iet-epa.2016.0221](https://doi.org/10.1049/iet-epa.2016.0221)
-  - — (n.d.). Field‐oriented control based on hysteresis band current controller for a permanent magnet synchronous motor driven by a direct matrix converter. [10.1049/iet-pel.2017.0651](https://doi.org/10.1049/iet-pel.2017.0651)
-  - — (n.d.). Research on a permanent magnet tubular linear generator for direct drive wave energy conversion. [10.1049/iet-rpg.2012.0364](https://doi.org/10.1049/iet-rpg.2012.0364)
-  - — (n.d.). Fault Diagnosis and Fault-Tolerant Control of PMSM Drives–State of the Art and Future Challenges. [10.1109/access.2022.3180153](https://doi.org/10.1109/access.2022.3180153)
-  - — (n.d.). Critical Aspects of Electric Motor Drive Controllers and Mitigation of Torque Ripple—Review. [10.1109/access.2022.3187515](https://doi.org/10.1109/access.2022.3187515)
-  - — (n.d.). Design and Simulation of Field Oriented Control and Direct Torque Control for a Permanent Magnet Synchronous Motor with Positive Saliency. `W566082117`
+  - S.B. Ron Carter et al. (2023). Field-Oriented Control (FOC) for Permanent Magnet Synchronous Motors (PMSM) In Electric Vehicle. [10.1109/nelex59773.2023.10421371](https://doi.org/10.1109/nelex59773.2023.10421371)
+  - Kai Ren et al. (2023). Design and Analysis of a Permanent Magnet Brushless DC Motor in an Automotive Cooling System. [10.3390/wevj14080228](https://doi.org/10.3390/wevj14080228)
+  - Qian Fang et al. (2023). Electromechanical Actuator Servo Control Technology Based on Active Disturbance Rejection Control. [10.3390/electronics12081934](https://doi.org/10.3390/electronics12081934)
+  - Xiao Tang et al. (2023). A Novel Field-Oriented Control Algorithm for Permanent Magnet Synchronous Motors in 60° Coordinate Systems. [10.3390/act12020092](https://doi.org/10.3390/act12020092)
+  - Yixiao Luo et al. (2022). Predictive Current Control for Six-Phase PMSM Motor With Multi-Step Synthesis Based Virtual Vectors. [10.1109/tec.2022.3210308](https://doi.org/10.1109/tec.2022.3210308)
+  - Anders Kronberg (2012). Design and Simulation of Field Oriented Control and Direct Torque Control for a Permanent Magnet Synchronous Motor with Positive Saliency. [W566082117](http://urn.kb.se/resolve?urn=urn:nbn:se:uu:diva-176343)
 
 ### bldc / motor / brushless
 
@@ -121,12 +121,12 @@ This cluster covers brushless DC (BLDC) motor technology, including motor design
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Permanent Magnet Brushless DC Motor Drives and Controls. [10.1002/9781118188347](https://doi.org/10.1002/9781118188347)
-  - — (n.d.). Design and Implementation of Brushless DC Motor Drive and Control System. [10.1016/j.proeng.2012.01.291](https://doi.org/10.1016/j.proeng.2012.01.291)
-  - — (n.d.). Design of Permanent Magnet Brushless DC Motor Control System Based on dsPIC30F4012. [10.1016/j.proeng.2012.01.647](https://doi.org/10.1016/j.proeng.2012.01.647)
-  - — (n.d.). Design of buck‐type current source inverter fed brushless DC motor drive and its application to position sensorless control with square‐wave current. [10.1049/iet-epa.2013.0002](https://doi.org/10.1049/iet-epa.2013.0002)
-  - — (n.d.). Simple brushless DC motor drive for solar photovoltaic array fed water pumping system. [10.1049/iet-pel.2015.0852](https://doi.org/10.1049/iet-pel.2015.0852)
-  - — (n.d.). The Design of Motor Drive for Brushless DC Motor. [10.5772/intechopen.78815](https://doi.org/10.5772/intechopen.78815)
+  - Richard Pravin A et al. (2024). Optimal Rotor Design and Analysis of Energy-Efficient Brushless DC Motor-Driven Centrifugal Monoset Pump for Agriculture Applications. [10.3390/en17102280](https://doi.org/10.3390/en17102280)
+  - Hui Wang et al. (2023). Design and Control of Wireless Permanent-Magnet Brushless DC Motors. [10.1109/tec.2023.3292178](https://doi.org/10.1109/tec.2023.3292178)
+  - Romanela Lajić et al. (2023). Digital Position Control System With a BLDC Motor Using Field Oriented Control. [10.1109/infoteh57020.2023.10094070](https://doi.org/10.1109/infoteh57020.2023.10094070)
+  - Antun Skurić et al. (2022). SimpleFOC: A Field Oriented Control (FOC) Library for Controlling Brushless Direct Current (BLDC) and Stepper Motors. [10.21105/joss.04232](https://doi.org/10.21105/joss.04232)
+  - Sunil Patil et al. (2022). “Design & Simulation of Brushless DC Motor Using ANSYS for EV Application”. [10.1109/sceecs54111.2022.9740973](https://doi.org/10.1109/sceecs54111.2022.9740973)
+  - QingpingWu et al. (2012). Design of Permanent Magnet Brushless DC Motor Control System Based on dsPIC30F4012. [10.1016/j.proeng.2012.01.647](https://doi.org/10.1016/j.proeng.2012.01.647)
 
 ### pid / motor / bldc
 
@@ -134,12 +134,12 @@ This cluster covers advanced control methodologies for brushless DC (BLDC) motor
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Design methodology and experimental verification of intelligent speed controllers for sensorless permanent magnet Brushless DC motor. [10.1002/2050-7038.12991](https://doi.org/10.1002/2050-7038.12991)
-  - — (n.d.). Adaptive fractional order PID controller tuning for brushless DC motor using Artificial Bee Colony algorithm. [10.1016/j.rico.2021.100032](https://doi.org/10.1016/j.rico.2021.100032)
-  - — (n.d.). Design and control of shunt active power filter for power quality improvement of utility powered brushless DC motor drives. [10.1080/00051144.2020.1789402](https://doi.org/10.1080/00051144.2020.1789402)
-  - — (n.d.). Systematic design of multi-objective enhanced genetic algorithm optimized fractional order PID controller for sensorless brushless DC motor drive. [10.1108/cw-07-2020-0137](https://doi.org/10.1108/cw-07-2020-0137)
-  - — (n.d.). Design and tuning of fractional order PID controller for speed control of permanent magnet brushless DC motor. [10.1109/cmi.2016.7413764](https://doi.org/10.1109/cmi.2016.7413764)
-  - — (n.d.). Fuzzy Gain Scheduling of PID (FGS-PID) for Speed Control Three Phase Induction Motor Based on Indirect Field Oriented Control (IFOC). [10.24003/emitter.v4i2.147](https://doi.org/10.24003/emitter.v4i2.147)
+  - K. Vanchinathan et al. (2021). Systematic design of multi-objective enhanced genetic algorithm optimized fractional order PID controller for sensorless brushless DC motor drive. [10.1108/cw-07-2020-0137](https://doi.org/10.1108/cw-07-2020-0137)
+  - K. Vanchinathan et al. (2021). Adaptive fractional order PID controller tuning for brushless DC motor using Artificial Bee Colony algorithm. [10.1016/j.rico.2021.100032](https://doi.org/10.1016/j.rico.2021.100032)
+  - K. Vanchinathan et al. (2021). Design methodology and experimental verification of intelligent speed controllers for sensorless permanent magnet Brushless DC motor. [10.1002/2050-7038.12991](https://doi.org/10.1002/2050-7038.12991)
+  - Abdul Wali Abdul Ali et al. (2020). A Review on The AC Servo Motor Control Systems. [10.11113/elektrika.v19n2.214](https://doi.org/10.11113/elektrika.v19n2.214)
+  - Subasankari Kumaresan et al. (2020). Design and control of shunt active power filter for power quality improvement of utility powered brushless DC motor drives. [10.1080/00051144.2020.1789402](https://doi.org/10.1080/00051144.2020.1789402)
+  - R. Shanmugasundram et al. (2012). Implementation and Performance Analysis of Digital Controllers for Brushless DC Motor Drives. [10.1109/tmech.2012.2226469](https://doi.org/10.1109/tmech.2012.2226469)
 
 ## power / battery / gate
 
@@ -164,12 +164,12 @@ This cluster covers lithium-ion battery technologies and materials science, with
 
 - 使う op: [`fbp_volume`](../ops/tomography/volume/fbp_volume.md)(電池 CT の再構成、sinostack → voxel)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(電極・セパレータの厚み、voxel → signal)、[`vol_label`](../ops/3d/regionprops/vol_label.md)(層のラベル、voxel → labels)、[`vol_region_props`](../ops/3d/regionprops/vol_region_props.md)(層の性質、labels → table)、[`metal_trace_interpolate`](../ops/tomography/artifact/metal_trace_interpolate.md)(金属アーチファクト、sinogram → sinogram)、[`beam_hardening_correct`](../ops/tomography/artifact/beam_hardening_correct.md)(カッピング、sinogram → sinogram)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Revisiting the Role of Polysulfides in Lithium–Sulfur Batteries. [10.1002/adma.201705590](https://doi.org/10.1002/adma.201705590)
-  - — (n.d.). Commercialization of Lithium Battery Technologies for Electric Vehicles. [10.1002/aenm.201900161](https://doi.org/10.1002/aenm.201900161)
-  - — (n.d.). High‐Energy Lithium‐Ion Batteries: Recent Progress and a Promising Future in Applications. [10.1002/eem2.12450](https://doi.org/10.1002/eem2.12450)
-  - — (n.d.). Thermal management of lithium-ion batteries for electric vehicles. [10.1002/er.1956](https://doi.org/10.1002/er.1956)
-  - — (n.d.). Li-ion battery dynamics model parameter estimation using datasheets and particle swarm optimization. [10.1002/er.3497](https://doi.org/10.1002/er.3497)
-  - — (n.d.). A Systems Approach to Lithium-Ion Battery Management. `W609213945`
+  - Joselyn Stephane Menye et al. (2025). Lithium Battery Degradation and Failure Mechanisms: A State-of-the-Art Review. [10.3390/en18020342](https://doi.org/10.3390/en18020342)
+  - Magui Mama et al. (2024). Comprehensive review of multi-scale Lithium-ion batteries modeling: From electro-chemical dynamics up to heat transfer in battery thermal management system. [10.1016/j.enconman.2024.119223](https://doi.org/10.1016/j.enconman.2024.119223)
+  - Mehwish Khan Mahek et al. (2024). A comprehensive review of thermoelectric cooling technologies for enhanced thermal management in lithium-ion battery systems. [10.1016/j.heliyon.2024.e40649](https://doi.org/10.1016/j.heliyon.2024.e40649)
+  - R. Suganya et al. (2024). Understanding lithium-ion battery management systems in electric vehicles: Environmental and health impacts, comparative study, and future trends: A review. [10.1016/j.rineng.2024.103047](https://doi.org/10.1016/j.rineng.2024.103047)
+  - Foo Shen Hwang et al. (2023). Review of battery thermal management systems in electric vehicles. [10.1016/j.rser.2023.114171](https://doi.org/10.1016/j.rser.2023.114171)
+  - Gholamreza Karimi et al. (2012). Thermal management of lithium-ion batteries for electric vehicles. [10.1002/er.1956](https://doi.org/10.1002/er.1956)
 
 ### converter / converters / voltage
 
@@ -177,12 +177,12 @@ This cluster covers DC-DC converter topologies, designs, and applications across
 
 - 使う op: [`fbp_volume`](../ops/tomography/volume/fbp_volume.md)(電池 CT の再構成、sinostack → voxel)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(電極・セパレータの厚み、voxel → signal)、[`vol_label`](../ops/3d/regionprops/vol_label.md)(層のラベル、voxel → labels)、[`vol_region_props`](../ops/3d/regionprops/vol_region_props.md)(層の性質、labels → table)、[`metal_trace_interpolate`](../ops/tomography/artifact/metal_trace_interpolate.md)(金属アーチファクト、sinogram → sinogram)、[`beam_hardening_correct`](../ops/tomography/artifact/beam_hardening_correct.md)(カッピング、sinogram → sinogram)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Improved power quality bridgeless Cuk converter fed brushless DC motor drive for air conditioning system. [10.1049/iet-pel.2013.0050](https://doi.org/10.1049/iet-pel.2013.0050)
-  - — (n.d.). Non‐isolated multi‐input–single‐output DC/DC converter for photovoltaic power generation systems. [10.1049/iet-pel.2013.0977](https://doi.org/10.1049/iet-pel.2013.0977)
-  - — (n.d.). Review of dc–dc converters for multi‐terminal HVDC transmission networks. [10.1049/iet-pel.2015.0530](https://doi.org/10.1049/iet-pel.2015.0530)
-  - — (n.d.). Reliability of Power Electronic Converter Systems. [10.1049/pbpo080e](https://doi.org/10.1049/pbpo080e)
-  - — (n.d.). System-Level Efficiency Evaluation of Isolated DC/DC Converters in Power Electronics Transformers for Medium-Voltage DC Systems. [10.1109/access.2019.2909014](https://doi.org/10.1109/access.2019.2909014)
-  - — (n.d.). Automatic Data Extraction Based on Semiconductor Datasheet for Design Automation of Power Converters. [10.23919/ipec-himeji2022-ecce53331.2022.9806859](https://doi.org/10.23919/ipec-himeji2022-ecce53331.2022.9806859)
+  - Rimon Gadelrab et al. (2023). PCB-Based Magnetic Integration and Design Optimization for Three-Phase LLC. [10.1109/tpel.2023.3285652](https://doi.org/10.1109/tpel.2023.3285652)
+  - Ahmed Nabih et al. (2023). Design of 98.8% Efficient 400-to-48-V $LLC$ Converter With Optimized Matrix Transformer and Matrix Inductor. [10.1109/tpel.2023.3244869](https://doi.org/10.1109/tpel.2023.3244869)
+  - Shuai Zhao et al. (2022). Parameter Estimation of Power Electronic Converters With Physics-Informed Machine Learning. [10.1109/tpel.2022.3176468](https://doi.org/10.1109/tpel.2022.3176468)
+  - Fanghao Tian et al. (2022). Automatic Data Extraction Based on Semiconductor Datasheet for Design Automation of Power Converters. [10.23919/ipec-himeji2022-ecce53331.2022.9806859](https://doi.org/10.23919/ipec-himeji2022-ecce53331.2022.9806859)
+  - Hesamodin Allahyari et al. (2022). Reliability Analysis and Failure Mode Effects of a Modular Multilevel Pulse Generator. [10.1109/pedstc53976.2022.9767401](https://doi.org/10.1109/pedstc53976.2022.9767401)
+  - Chia‐Ling Wei et al. (2012). Design of an Average-Current-Mode Noninverting Buck–Boost DC–DC Converter With Reduced Switching and Conduction Losses. [10.1109/tpel.2012.2193144](https://doi.org/10.1109/tpel.2012.2193144)
 
 ### emi / sic / electromagnetic
 
@@ -190,12 +190,12 @@ This cluster addresses electromagnetic interference (EMI) mitigation and electro
 
 - 使う op: [`fbp_volume`](../ops/tomography/volume/fbp_volume.md)(電池 CT の再構成、sinostack → voxel)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(電極・セパレータの厚み、voxel → signal)、[`vol_label`](../ops/3d/regionprops/vol_label.md)(層のラベル、voxel → labels)、[`vol_region_props`](../ops/3d/regionprops/vol_region_props.md)(層の性質、labels → table)、[`metal_trace_interpolate`](../ops/tomography/artifact/metal_trace_interpolate.md)(金属アーチファクト、sinogram → sinogram)、[`beam_hardening_correct`](../ops/tomography/artifact/beam_hardening_correct.md)(カッピング、sinogram → sinogram)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). A State-of-the-Art Review on Conducted Electromagnetic Interference in Non-Isolated DC to DC Converters. [10.1109/access.2019.2961954](https://doi.org/10.1109/access.2019.2961954)
-  - — (n.d.). An Integrated Active Gate Driver for Half-bridge SiC MOSFET Power Modules. [10.1109/apec43599.2022.9773723](https://doi.org/10.1109/apec43599.2022.9773723)
-  - — (n.d.). Design of Active SiC MOSFET Gate Driver for Crosstalk Suppression Considering Impedance Coordination between Gate Loop and Power Loop. [10.1109/apec.2019.8721795](https://doi.org/10.1109/apec.2019.8721795)
-  - — (n.d.). A Novel Active Gate Driver with Auxiliary Gate Current Control Circuit for Improving Switching Performance of High-Power SiC MOSFET Modules. [10.1109/ciycee49808.2020.9332773](https://doi.org/10.1109/ciycee49808.2020.9332773)
-  - — (n.d.). An Integrated Gate Driver with Active Delay Control Method for Series Connected SiC MOSFETs. [10.1109/compel.2018.8459904](https://doi.org/10.1109/compel.2018.8459904)
-  - — (n.d.). Design Considerations for Adding Series Inductors to Reduce Electromagnetic Field Interference in an Over-Coupled WPT System. [10.3390/en14102791](https://doi.org/10.3390/en14102791)
+  - Fengchen Yang et al. (2025). ReThink: Reveal the Threat of Electromagnetic Interference on Power Inverters. [10.14722/ndss.2025.230691](https://doi.org/10.14722/ndss.2025.230691)
+  - Qiang Li et al. (2024). Active Gate Driver With the Independent Suppression of Overshoot and Oscillation for SiC MOSFET Modules. [10.1109/tie.2024.3433436](https://doi.org/10.1109/tie.2024.3433436)
+  - Eric Persson (2023). Optimizing PCB Layout for HV GaN Power Transistors. [10.1109/mpel.2023.3275311](https://doi.org/10.1109/mpel.2023.3275311)
+  - Pengfei Xiang et al. (2022). An Active Gate Driver of SiC MOSFET Module Based on PCB Rogowski Coil for Optimizing Tradeoff Between Overshoot and Switching Loss. [10.1109/tpel.2022.3201018](https://doi.org/10.1109/tpel.2022.3201018)
+  - Dongwoo Han et al. (2022). An Integrated Active Gate Driver for Half-bridge SiC MOSFET Power Modules. [10.1109/apec43599.2022.9773723](https://doi.org/10.1109/apec43599.2022.9773723)
+  - Djilali Hamza et al. (2012). Digital Active EMI Control Technique for Switch Mode Power Converters. [10.1109/temc.2012.2213590](https://doi.org/10.1109/temc.2012.2213590)
 
 ### power / microgrid / converters
 
@@ -203,12 +203,12 @@ This cluster covers power converter technologies, control strategies, and stabil
 
 - 使う op: [`fbp_volume`](../ops/tomography/volume/fbp_volume.md)(電池 CT の再構成、sinostack → voxel)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(電極・セパレータの厚み、voxel → signal)、[`vol_label`](../ops/3d/regionprops/vol_label.md)(層のラベル、voxel → labels)、[`vol_region_props`](../ops/3d/regionprops/vol_region_props.md)(層の性質、labels → table)、[`metal_trace_interpolate`](../ops/tomography/artifact/metal_trace_interpolate.md)(金属アーチファクト、sinogram → sinogram)、[`beam_hardening_correct`](../ops/tomography/artifact/beam_hardening_correct.md)(カッピング、sinogram → sinogram)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). A Virtual Synchronous Machine implementation for distributed control of power converters in SmartGrids. [10.1016/j.epsr.2015.01.001](https://doi.org/10.1016/j.epsr.2015.01.001)
-  - — (n.d.). Nature of power electronics and integration of power conversion with communication for talkative power. [10.1038/s41467-020-16262-0](https://doi.org/10.1038/s41467-020-16262-0)
-  - — (n.d.). Power Quality Control of Smart Hybrid AC/DC Microgrids: An Overview. [10.1109/access.2019.2912376](https://doi.org/10.1109/access.2019.2912376)
-  - — (n.d.). DC Microgrid Planning, Operation, and Control: A Comprehensive Review. [10.1109/access.2021.3062840](https://doi.org/10.1109/access.2021.3062840)
-  - — (n.d.). Power electronic technologies for flexible DC distribution grids. [10.1109/ipec.2014.6869670](https://doi.org/10.1109/ipec.2014.6869670)
-  - — (n.d.). EMC Component Modeling and System-Level Simulations of Power Converters: AC Motor Drives. [10.3390/en14061568](https://doi.org/10.3390/en14061568)
+  - Bernhard Wunsch et al. (2021). EMC Component Modeling and System-Level Simulations of Power Converters: AC Motor Drives. [10.3390/en14061568](https://doi.org/10.3390/en14061568)
+  - Fahad Saleh Al–Ismail (2021). DC Microgrid Planning, Operation, and Control: A Comprehensive Review. [10.1109/access.2021.3062840](https://doi.org/10.1109/access.2021.3062840)
+  - Roberto Rosso et al. (2021). Grid-Forming Converters: Control Approaches, Grid-Synchronization, and Future Trends—A Review. [10.1109/ojia.2021.3074028](https://doi.org/10.1109/ojia.2021.3074028)
+  - Xiangning He et al. (2020). Nature of power electronics and integration of power conversion with communication for talkative power. [10.1038/s41467-020-16262-0](https://doi.org/10.1038/s41467-020-16262-0)
+  - Qianwen Xu et al. (2020). Review on Advanced Control Technologies for Bidirectional DC/DC Converters in DC Microgrids. [10.1109/jestpe.2020.2978064](https://doi.org/10.1109/jestpe.2020.2978064)
+  - Josep M. Guerrero et al. (2012). Advanced Control Architectures for Intelligent Microgrids—Part II: Power Quality, Energy Storage, and AC/DC Microgrids. [10.1109/tie.2012.2196889](https://doi.org/10.1109/tie.2012.2196889)
 
 ### gate / mosfet / sic
 
@@ -216,12 +216,12 @@ This cluster covers gate driver design and control mechanisms for wide-bandgap s
 
 - 使う op: [`fbp_volume`](../ops/tomography/volume/fbp_volume.md)(電池 CT の再構成、sinostack → voxel)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(電極・セパレータの厚み、voxel → signal)、[`vol_label`](../ops/3d/regionprops/vol_label.md)(層のラベル、voxel → labels)、[`vol_region_props`](../ops/3d/regionprops/vol_region_props.md)(層の性質、labels → table)、[`metal_trace_interpolate`](../ops/tomography/artifact/metal_trace_interpolate.md)(金属アーチファクト、sinogram → sinogram)、[`beam_hardening_correct`](../ops/tomography/artifact/beam_hardening_correct.md)(カッピング、sinogram → sinogram)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Principles of Power Electronics. [10.1017/9781009023894](https://doi.org/10.1017/9781009023894)
-  - — (n.d.). Experimental Comparison of High‐Speed Gate Driver Design for 1.2‐kV/120‐A Si IGBT and SiC MOSFET Modules. [10.1049/iet-pel.2016.0668](https://doi.org/10.1049/iet-pel.2016.0668)
-  - — (n.d.). A Review on IGBT Module Failure Modes and Lifetime Testing. [10.1109/access.2021.3049738](https://doi.org/10.1109/access.2021.3049738)
-  - — (n.d.). Gate driver design for 1.7kV SiC MOSFET module with Rogowski current sensor for shortcircuit protection. [10.1109/apec.2016.7467921](https://doi.org/10.1109/apec.2016.7467921)
-  - — (n.d.). A MV intelligent gate driver for 15kV SiC IGBT and 10kV SiC MOSFET. [10.1109/apec.2016.7468153](https://doi.org/10.1109/apec.2016.7468153)
-  - — (n.d.). Gate driver with high common mode rejection and self turn-on mitigation for a 10 kV SiC MOSFET enabled MV converter. [10.23919/epe17ecceeurope.2017.8099274](https://doi.org/10.23919/epe17ecceeurope.2017.8099274)
+  - Fanghao Tian et al. (2024). Automated Extraction of Data From MOSFET Datasheets for Power Converter Design Automation. [10.1109/jestpe.2024.3456592](https://doi.org/10.1109/jestpe.2024.3456592)
+  - John G. Kassakian et al. (2023). Principles of Power Electronics. [10.1017/9781009023894](https://doi.org/10.1017/9781009023894)
+  - Dobroslav Dankov et al. (2022). Study of Power GaN MOSFET Gate Drivers. [10.1109/electronica55578.2022.9874434](https://doi.org/10.1109/electronica55578.2022.9874434)
+  - Rui Wang et al. (2022). Integrating 10-kV SiC MOSFET Into Battery Energy Storage System With a Scalable Converter-Based Self-Powered Gate Driver. [10.1109/jestpe.2022.3142298](https://doi.org/10.1109/jestpe.2022.3142298)
+  - Hyun-Bin Jo et al. (2021). MOSFET Gate Driver Circuit Design for High Repetitive (200 kHz) High Voltage (10 kV) Solid-State Pulsed-Power Modulator. [10.1109/tpel.2021.3062612](https://doi.org/10.1109/tpel.2021.3062612)
+  - Riccardo Pittini et al. (2013). Switching performance evaluation of commercial SiC power devices (SiC JFET and SiC MOSFET) in relation to the gate driver complexity. [10.1109/ecce-asia.2013.6579102](https://doi.org/10.1109/ecce-asia.2013.6579102)
 
 ### gate / sic / mosfets
 
@@ -229,12 +229,12 @@ This cluster covers SiC (Silicon Carbide) MOSFET gate driver design, reliability
 
 - 使う op: [`fbp_volume`](../ops/tomography/volume/fbp_volume.md)(電池 CT の再構成、sinostack → voxel)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(電極・セパレータの厚み、voxel → signal)、[`vol_label`](../ops/3d/regionprops/vol_label.md)(層のラベル、voxel → labels)、[`vol_region_props`](../ops/3d/regionprops/vol_region_props.md)(層の性質、labels → table)、[`metal_trace_interpolate`](../ops/tomography/artifact/metal_trace_interpolate.md)(金属アーチファクト、sinogram → sinogram)、[`beam_hardening_correct`](../ops/tomography/artifact/beam_hardening_correct.md)(カッピング、sinogram → sinogram)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Impact of the gate driver voltage on temperature sensitive electrical parameters for condition monitoring of SiC power MOSFETs. [10.1016/j.microrel.2017.06.082](https://doi.org/10.1016/j.microrel.2017.06.082)
-  - — (n.d.). A Brief Overview of SiC MOSFET Failure Modes and Design Reliability. [10.1016/j.procir.2016.09.025](https://doi.org/10.1016/j.procir.2016.09.025)
-  - — (n.d.). Review and analysis of SiC MOSFETs’ ruggedness and reliability. [10.1049/iet-pel.2019.0587](https://doi.org/10.1049/iet-pel.2019.0587)
-  - — (n.d.). A Physics-Derived and Datasheet-Driven Non-Iterative Analytical Model for Comparing MOSFETs in Various Power Converter Conditions Faster Than SPICE Simulations to Help Device Selection. [10.1109/access.2025.3642055](https://doi.org/10.1109/access.2025.3642055)
-  - — (n.d.). Design trends in smart gate driver ICs for power MOSFETs and IGBTs. [10.1109/asicon.2017.8252424](https://doi.org/10.1109/asicon.2017.8252424)
-  - — (n.d.). A Smart Gate Driver for SiC Power MOSFETs with Aging Compensation and Ringing Suppression. [10.23919/ispsd50666.2021.9452261](https://doi.org/10.23919/ispsd50666.2021.9452261)
+  - Khaled Redwan Choudhury et al. (2025). A Physics-Derived and Datasheet-Driven Non-Iterative Analytical Model for Comparing MOSFETs in Various Power Converter Conditions Faster Than SPICE Simulations to Help Device Selection. [10.1109/access.2025.3642055](https://doi.org/10.1109/access.2025.3642055)
+  - Ji Shu et al. (2024). Gate Driver Design for SiC Power MOSFETs With a Low-Voltage GaN HEMT for Switching Loss Reduction and Gate Protection. [10.1109/tpel.2024.3353460](https://doi.org/10.1109/tpel.2024.3353460)
+  - Yang He et al. (2023). Active Gate Driver for Dynamic Current Balancing of Parallel-Connected SiC MOSFETs. [10.1109/tpel.2023.3243053](https://doi.org/10.1109/tpel.2023.3243053)
+  - Nianzun Qi et al. (2022). Influence of Gate Driver Loop Inductance on SiC MOSFET Module Turn-on Gate Voltage Oscillation in High Power Application. [10.1109/itecasia-pacific56316.2022.9941889](https://doi.org/10.1109/itecasia-pacific56316.2022.9941889)
+  - Jack Knoll et al. (2022). 1.2 kV SiC MOSFET Full-Bridge Power Module with Integrated Gate Driver and Coupled Inductor. [10.1109/ecce50734.2022.9947473](https://doi.org/10.1109/ecce50734.2022.9947473)
+  - Zhiqiang Wang et al. (2014). Design and Performance Evaluation of Overcurrent Protection Schemes for Silicon Carbide (SiC) Power MOSFETs. [10.1109/tie.2013.2297304](https://doi.org/10.1109/tie.2013.2297304)
 
 ### converters / power / converter
 
@@ -242,12 +242,12 @@ This cluster covers power converter technologies and topologies used in renewabl
 
 - 使う op: [`fbp_volume`](../ops/tomography/volume/fbp_volume.md)(電池 CT の再構成、sinostack → voxel)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(電極・セパレータの厚み、voxel → signal)、[`vol_label`](../ops/3d/regionprops/vol_label.md)(層のラベル、voxel → labels)、[`vol_region_props`](../ops/3d/regionprops/vol_region_props.md)(層の性質、labels → table)、[`metal_trace_interpolate`](../ops/tomography/artifact/metal_trace_interpolate.md)(金属アーチファクト、sinogram → sinogram)、[`beam_hardening_correct`](../ops/tomography/artifact/beam_hardening_correct.md)(カッピング、sinogram → sinogram)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Experimental assessment of maximum power extraction from solar panel with different converter topologies. [10.1002/etep.2712](https://doi.org/10.1002/etep.2712)
-  - — (n.d.). Review and Development of Electric Motor Systems and Electric Powertrains for New Energy Vehicles. [10.1007/s42154-021-00139-z](https://doi.org/10.1007/s42154-021-00139-z)
-  - — (n.d.). Review on non-isolated DC-DC converters and their control techniques for renewable energy applications. [10.1016/j.asej.2021.03.022](https://doi.org/10.1016/j.asej.2021.03.022)
-  - — (n.d.). The state-of-the-art of power electronics converters configurations in electric vehicle technologies. [10.1016/j.pedc.2021.100001](https://doi.org/10.1016/j.pedc.2021.100001)
-  - — (n.d.). Digital twin based monitoring and control for DC-DC converters. [10.1038/s41467-023-41248-z](https://doi.org/10.1038/s41467-023-41248-z)
-  - — (n.d.). DC-DC Converter Topologies for Electric Vehicles, Plug-in Hybrid Electric Vehicles and Fast Charging Stations: State of the Art and Future Trends. [10.3390/en12081569](https://doi.org/10.3390/en12081569)
+  - Zhongcheng Lei et al. (2023). Digital twin based monitoring and control for DC-DC converters. [10.1038/s41467-023-41248-z](https://doi.org/10.1038/s41467-023-41248-z)
+  - Hadi Tarzamni et al. (2023). Nonisolated High Step-Up DC–DC Converters: Comparative Review and Metrics Applicability. [10.1109/tpel.2023.3264172](https://doi.org/10.1109/tpel.2023.3264172)
+  - Andrew Wileman et al. (2023). A Component Level Digital Twin Model for Power Converter Health Monitoring. [10.1109/access.2023.3243432](https://doi.org/10.1109/access.2023.3243432)
+  - Md Safayatullah et al. (2022). A Comprehensive Review of Power Converter Topologies and Control Methods for Electric Vehicle Fast Charging Applications. [10.1109/access.2022.3166935](https://doi.org/10.1109/access.2022.3166935)
+  - Mohsen Mohammadzadeh et al. (2022). Application of Mixture of Experts in Machine Learning-Based Controlling of DC-DC Power Electronics Converter. [10.1109/access.2022.3218667](https://doi.org/10.1109/access.2022.3218667)
+  - Djilali Hamza et al. (2012). Implementation of a Novel Digital Active EMI Technique in a DSP-Based DC–DC Digital Controller Used in Electric Vehicle (EV). [10.1109/tpel.2012.2223764](https://doi.org/10.1109/tpel.2012.2223764)
 
 ### gate / sic / driver
 
@@ -255,12 +255,12 @@ This cluster covers gate driver design and control circuits for wide-bandgap sem
 
 - 使う op: [`fbp_volume`](../ops/tomography/volume/fbp_volume.md)(電池 CT の再構成、sinostack → voxel)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(電極・セパレータの厚み、voxel → signal)、[`vol_label`](../ops/3d/regionprops/vol_label.md)(層のラベル、voxel → labels)、[`vol_region_props`](../ops/3d/regionprops/vol_region_props.md)(層の性質、labels → table)、[`metal_trace_interpolate`](../ops/tomography/artifact/metal_trace_interpolate.md)(金属アーチファクト、sinogram → sinogram)、[`beam_hardening_correct`](../ops/tomography/artifact/beam_hardening_correct.md)(カッピング、sinogram → sinogram)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). An improved gate driver for power MOSFETs using a cascode configuration. [10.1049/cp.2014.0303](https://doi.org/10.1049/cp.2014.0303)
-  - — (n.d.). A review of silicon carbide MOSFETs in electrified vehicles: Application, challenges, and future development. [10.1049/pel2.12524](https://doi.org/10.1049/pel2.12524)
-  - — (n.d.). GaN-based power devices: Physics, reliability, and perspectives. [10.1063/5.0061354](https://doi.org/10.1063/5.0061354)
-  - — (n.d.). The 2018 GaN power electronics roadmap. [10.1088/1361-6463/aaaf9d](https://doi.org/10.1088/1361-6463/aaaf9d)
-  - — (n.d.). A Resonant Gate Driver for Silicon Carbide MOSFETs. [10.1109/access.2018.2885023](https://doi.org/10.1109/access.2018.2885023)
-  - — (n.d.). Silicon Carbide Converters and MEMS Devices for High-temperature Power Electronics: A Critical Review. [10.3390/mi10060406](https://doi.org/10.3390/mi10060406)
+  - Vuong Van Cuong et al. (2025). Thermal Stability of Gate Driver Circuits Based on 4H-SiC MOSFETs at 300°C for High-Power Applications. [10.1109/jeds.2025.3546959](https://doi.org/10.1109/jeds.2025.3546959)
+  - Matteo Buffolo et al. (2024). Review and Outlook on GaN and SiC Power Devices: Industrial State-of-the-Art, Applications, and Perspectives. [10.1109/ted.2023.3346369](https://doi.org/10.1109/ted.2023.3346369)
+  - Bufan Shi et al. (2023). A review of silicon carbide MOSFETs in electrified vehicles: Application, challenges, and future development. [10.1049/pel2.12524](https://doi.org/10.1049/pel2.12524)
+  - Joseph P. Kozak et al. (2023). Stability, Reliability, and Robustness of GaN Power Devices: A Review. [10.1109/tpel.2023.3266365](https://doi.org/10.1109/tpel.2023.3266365)
+  - Mathis Picot-Digoix et al. (2023). Quasi-Flying Gate Concept Used for Short-Circuit Detection on SiC Power MOSFETs Based on a Dual-Port Gate Driver. [10.1109/tpel.2023.3258640](https://doi.org/10.1109/tpel.2023.3258640)
+  - Zheyu Zhang et al. (2013). Active Gate Driver for Crosstalk Suppression of SiC Devices in a Phase-Leg Configuration. [10.1109/tpel.2013.2268058](https://doi.org/10.1109/tpel.2013.2268058)
 
 ## piezoelectric / control / actuators
 
@@ -287,12 +287,12 @@ This cluster addresses control strategies for piezoelectric actuators (PEAs), wi
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Enhanced adaptive control for a benchmark piezoelectric‐actuated system via fuzzy approximation. [10.1002/acs.3033](https://doi.org/10.1002/acs.3033)
-  - — (n.d.). Enhanced discrete‐time sliding mode strategy with application to piezoelectric actuator control. [10.1049/iet-cta.2013.0361](https://doi.org/10.1049/iet-cta.2013.0361)
-  - — (n.d.). Robust and fast non‐singular terminal sliding mode control for piezoelectric actuators. [10.1049/iet-cta.2015.0401](https://doi.org/10.1049/iet-cta.2015.0401)
-  - — (n.d.). Piezoelectric d36 in-plane shear-mode of lead-free BZT-BCT single crystals for torsion actuation. [10.1063/1.4975587](https://doi.org/10.1063/1.4975587)
-  - — (n.d.). A fast non-singular terminal sliding mode control based on perturbation estimation for piezoelectric actuators systems. [10.1080/00207179.2016.1185157](https://doi.org/10.1080/00207179.2016.1185157)
-  - — (n.d.). A Survey of Modeling and Control of Piezoelectric Actuators. [10.4236/mme.2013.31001](https://doi.org/10.4236/mme.2013.31001)
+  - Gerardo Flores et al. (2021). Robust Nonlinear Control for a Piezoelectric Actuator in a Robotic Hand Using Only Position Measurements. [10.1109/lcsys.2021.3087102](https://doi.org/10.1109/lcsys.2021.3087102)
+  - Jie Deng et al. (2021). A 2-DOF Needle Insertion Device Using Inertial Piezoelectric Actuator. [10.1109/tie.2021.3073313](https://doi.org/10.1109/tie.2021.3073313)
+  - Roman Baraniuk et al. (2020). Simplification of the Model of Piezoelectric Actuator Control Based on Preliminary Measurements. [10.3390/act9030090](https://doi.org/10.3390/act9030090)
+  - Wenjun Li et al. (2020). Neural Network Self-Tuning Control for a Piezoelectric Actuator. [10.3390/s20123342](https://doi.org/10.3390/s20123342)
+  - Deqing Huang et al. (2019). Current-Cycle Iterative Learning Control for High-Precision Position Tracking of Piezoelectric Actuator System via Active Disturbance Rejection Control for Hysteresis Compensation. [10.1109/tie.2019.2946554](https://doi.org/10.1109/tie.2019.2946554)
+  - Yangqiu Xie et al. (2012). Nonlinear Modeling and Decoupling Control of XY Micropositioning Stages With Piezoelectric Actuators. [10.1109/tmech.2012.2187794](https://doi.org/10.1109/tmech.2012.2187794)
 
 ### alloy / shape / memory
 
@@ -300,12 +300,12 @@ This cluster covers shape memory alloy (SMA) actuators and their design, modelin
 
 - 使う op: [`mesh_area`](../ops/3d/mesh_process/mesh_area.md)(表面積、mesh → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積、mesh → measurement)、[`vertex_curvature`](../ops/3d/mesh_process/vertex_curvature.md)(曲率(角・フィレット)、mesh → curvature)、[`decimate_qem`](../ops/3d/mesh_process/decimate_qem.md)(間引き、mesh → mesh)、[`mesh_isotropic_remesh`](../ops/3d/resolution/mesh_isotropic_remesh.md)(等方リメッシュ、mesh → mesh)、[`mesh_to_voxel`](../ops/3d/transform/mesh_to_voxel.md)(メッシュ → 体積、mesh → voxel)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). A two-dimensional analytical model and experimental validation of garter stitch knitted shape memory alloy actuator architecture. [10.1088/0964-1726/21/8/085011](https://doi.org/10.1088/0964-1726/21/8/085011)
-  - — (n.d.). High-speed and high-efficiency shape memory alloy actuation. [10.1088/1361-665x/aac9e1](https://doi.org/10.1088/1361-665x/aac9e1)
-  - — (n.d.). Shape memory alloy actuator with active cooling device and deflectable winglet application. [10.1088/1361-665x/aba9ab](https://doi.org/10.1088/1361-665x/aba9ab)
-  - — (n.d.). The shape memory alloy actuator controlled by the Sun’s radiation. [10.1088/2053-1591/aa75bb](https://doi.org/10.1088/2053-1591/aa75bb)
-  - — (n.d.). Shape Memory Alloy Actuators for Silicon Microgrippers. [10.1109/jmems.2019.2936288](https://doi.org/10.1109/jmems.2019.2936288)
-  - — (n.d.). Application of Ni-Ti shape memory alloy actuators in a walking micro-robot. [10.5755/j01.mech.20.1.3531](https://doi.org/10.5755/j01.mech.20.1.3531)
+  - Bartosz Minorowicz et al. (2022). Design and Control of Magnetic Shape Memory Alloy Actuators. [10.3390/ma15134400](https://doi.org/10.3390/ma15134400)
+  - Richard Dauksher et al. (2021). Characterization and Analysis of a Flexural Shape Memory Alloy Actuator. [10.3390/act10080202](https://doi.org/10.3390/act10080202)
+  - Zhiwen Mao et al. (2020). Shape memory alloy actuator with active cooling device and deflectable winglet application. [10.1088/1361-665x/aba9ab](https://doi.org/10.1088/1361-665x/aba9ab)
+  - Saeed Karimi et al. (2020). Self-sensing feedback control of multiple interacting shape memory alloy actuators in a 3D steerable active needle. [10.1177/1045389x20919971](https://doi.org/10.1177/1045389x20919971)
+  - Mayra Garcés-Schröder et al. (2019). Shape Memory Alloy Actuators for Silicon Microgrippers. [10.1109/jmems.2019.2936288](https://doi.org/10.1109/jmems.2019.2936288)
+  - Darren J. Hartl et al. (2012). Phenomenological modeling of induced transformation anisotropy in shape memory alloy actuators. [10.1117/12.915972](https://doi.org/10.1117/12.915972)
 
 ### servo / control / adaptive
 
@@ -313,12 +313,12 @@ This cluster covers adaptive and robust control techniques for servo systems and
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Sliding Mode Disturbance Observer‐based Motion Control for a Piezoelectric Actuator‐based Surgical Device. [10.1002/asjc.1649](https://doi.org/10.1002/asjc.1649)
-  - — (n.d.). Adaptive Control of the Electro‐Hydraulic Servo‐System with External Disturbances. [10.1002/asjc.602](https://doi.org/10.1002/asjc.602)
-  - — (n.d.). A linear ADRC-based robust high-dynamic double-loop servo system for aircraft electro-mechanical actuators. [10.1016/j.cja.2019.03.036](https://doi.org/10.1016/j.cja.2019.03.036)
-  - — (n.d.). Disturbance rejection-based robust control for micropositioning of piezoelectric actuators. [10.1016/j.crme.2013.11.003](https://doi.org/10.1016/j.crme.2013.11.003)
-  - — (n.d.). A bounded-error approach to simultaneous state and actuator fault estimation for a class of nonlinear systems. [10.1016/j.jprocont.2017.01.002](https://doi.org/10.1016/j.jprocont.2017.01.002)
-  - — (n.d.). Fault-tolerant control of a hydraulic servo actuator via adaptive dynamic programming. [10.3934/mmc.2023016](https://doi.org/10.3934/mmc.2023016)
+  - Wesley Roozing et al. (2025). Anti-Backlash Mechanisms for Cycloidal Drive Robotic Actuators: Design and Evaluation. [10.1109/lra.2025.3619805](https://doi.org/10.1109/lra.2025.3619805)
+  - Ping Li et al. (2024). Event-Triggered Control for Servo Motor Systems Based on Fully Actuated System Approach and Dynamical Compensator. [10.1109/tie.2024.3515273](https://doi.org/10.1109/tie.2024.3515273)
+  - Ping Li et al. (2024). High-Order Fully Actuated Control Approach for Servo Systems Based on Dynamical Compensator and Extended State Observer. [10.1109/tmech.2024.3356594](https://doi.org/10.1109/tmech.2024.3356594)
+  - K. Ali et al. (2023). Practical Adaptive Fast Terminal Sliding Mode Control for Servo Motors. [10.3390/act12120433](https://doi.org/10.3390/act12120433)
+  - Vladimir Djordjevic et al. (2023). Data-driven control of hydraulic servo actuator: An event-triggered adaptive dynamic programming approach. [10.3934/mbe.2023376](https://doi.org/10.3934/mbe.2023376)
+  - Robert D. Vocke et al. (2012). Design and testing of a high-specific work actuator using miniature pneumatic artificial muscles. [10.1177/1045389x11431743](https://doi.org/10.1177/1045389x11431743)
 
 ### vibration / piezoelectric / control
 
@@ -326,12 +326,12 @@ This cluster covers the design, optimization, and control of piezoelectric and v
 
 - 使う op: [`bearing_defect_frequencies`](../ops/acoustics/bearing/bearing_defect_frequencies.md)(軸受の欠陥周波数、 → table)、[`envelope_spectrum`](../ops/acoustics/bearing/envelope_spectrum.md)(包絡スペクトル、signal → table)、[`spectral_kurtosis`](../ops/acoustics/bearing/spectral_kurtosis.md)(衝撃の帯域、signal → table)、[`cepstrum`](../ops/acoustics/bearing/cepstrum.md)(ケプストラム、signal → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(次数スペクトル、signal → table)、[`stft`](../ops/acoustics/transform/stft.md)(時間周波数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Optimal configuration of piezoelectric sensors and actuators for active vibration control of a plate using a genetic algorithm. [10.1007/s00707-015-1388-1](https://doi.org/10.1007/s00707-015-1388-1)
-  - — (n.d.). Analysis and control of micro-stepping characteristics of ultrasonic motor. [10.1007/s11465-019-0577-3](https://doi.org/10.1007/s11465-019-0577-3)
-  - — (n.d.). Experimental validation of vibration control in membrane structures using dielectric elastomer actuators in a vacuum environment. [10.1016/j.ijmecsci.2020.106049](https://doi.org/10.1016/j.ijmecsci.2020.106049)
-  - — (n.d.). Piezoelectric Actuator Design and Application on Active Vibration Control. [10.1016/j.phpro.2012.03.251](https://doi.org/10.1016/j.phpro.2012.03.251)
-  - — (n.d.). A morphing aerofoil with highly controllable aerodynamic performance. [10.1017/aer.2016.113](https://doi.org/10.1017/aer.2016.113)
-  - — (n.d.). High-Bandwidth Morphing Actuator for Aeroelastic Model Control. [10.3390/aerospace6020013](https://doi.org/10.3390/aerospace6020013)
+  - Sherif Okda et al. (2024). Active vibration control of gearbox housing using inertial mass actuators. [10.1088/1361-665x/ad6656](https://doi.org/10.1088/1361-665x/ad6656)
+  - Naoto Wakiyama et al. (2021). Nonlinear Vibration Control of L-Shaped Arm by Using Servo Motor Actuator. [10.1109/iai53119.2021.9619343](https://doi.org/10.1109/iai53119.2021.9619343)
+  - Kamalpreet Singh et al. (2021). Vibration control of cantilever beam using poling tuned piezoelectric actuator. [10.1080/15397734.2021.1891934](https://doi.org/10.1080/15397734.2021.1891934)
+  - Zihui Zhu et al. (2021). Triaxial Fast Tool Servo Using Hybrid Electromagnetic–Piezoelectric Actuation for Diamond Turning. [10.1109/tie.2021.3060635](https://doi.org/10.1109/tie.2021.3060635)
+  - Toshiki Hiruta et al. (2020). Experimental validation of vibration control in membrane structures using dielectric elastomer actuators in a vacuum environment. [10.1016/j.ijmecsci.2020.106049](https://doi.org/10.1016/j.ijmecsci.2020.106049)
+  - Li Sui et al. (2012). Piezoelectric Actuator Design and Application on Active Vibration Control. [10.1016/j.phpro.2012.03.251](https://doi.org/10.1016/j.phpro.2012.03.251)
 
 ### alloy / sma / shape
 
@@ -339,12 +339,12 @@ This cluster covers Shape Memory Alloy (SMA) actuators, their design methodologi
 
 - 使う op: [`mesh_area`](../ops/3d/mesh_process/mesh_area.md)(表面積、mesh → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積、mesh → measurement)、[`vertex_curvature`](../ops/3d/mesh_process/vertex_curvature.md)(曲率(角・フィレット)、mesh → curvature)、[`decimate_qem`](../ops/3d/mesh_process/decimate_qem.md)(間引き、mesh → mesh)、[`mesh_isotropic_remesh`](../ops/3d/resolution/mesh_isotropic_remesh.md)(等方リメッシュ、mesh → mesh)、[`mesh_to_voxel`](../ops/3d/transform/mesh_to_voxel.md)(メッシュ → 体積、mesh → voxel)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Shape Memory Alloy Actuators. [10.1002/9781118426913](https://doi.org/10.1002/9781118426913)
-  - — (n.d.). Shape Memory Alloy (SMA) Actuators: The Role of Material, Form, and Scaling Effects. [10.1002/adma.202208517](https://doi.org/10.1002/adma.202208517)
-  - — (n.d.). Design and Anchorage Dependence of Shape Memory Alloy Actuators on Enhanced Voiding of a Bladder. [10.1002/admt.201700184](https://doi.org/10.1002/admt.201700184)
-  - — (n.d.). Highly Dynamic Shape Memory Alloy Actuator for Fast Moving Soft Robots. [10.1002/admt.201800540](https://doi.org/10.1002/admt.201800540)
-  - — (n.d.). High‐power MEMS switch enabled by carbon‐nanotube contact and shape‐memory‐alloy actuator. [10.1002/pssa.201228678](https://doi.org/10.1002/pssa.201228678)
-  - — (n.d.). Electrical Resistivity-Based Study of Self-Sensing Properties for Shape Memory Alloy-Actuated Artificial Muscle. [10.3390/s131012958](https://doi.org/10.3390/s131012958)
+  - Qiang Liu et al. (2023). Shape memory alloy actuators for haptic wearables: A review. [10.1016/j.matdes.2023.112264](https://doi.org/10.1016/j.matdes.2023.112264)
+  - Stefano Rodinò et al. (2023). A multiphysics dynamic model for shape memory alloy actuators. [10.1016/j.sna.2023.114602](https://doi.org/10.1016/j.sna.2023.114602)
+  - Qussay Y. Hamid et al. (2023). Shape memory alloys actuated upper limb devices: A review. [10.1016/j.snr.2023.100160](https://doi.org/10.1016/j.snr.2023.100160)
+  - Min‐Soo Kim et al. (2023). Shape Memory Alloy (SMA) Actuators: The Role of Material, Form, and Scaling Effects. [10.1002/adma.202208517](https://doi.org/10.1002/adma.202208517)
+  - Md Mehedi Hasan et al. (2021). Structural fatigue and fracture of shape memory alloy actuators: Current status and perspectives. [10.1177/1045389x211057216](https://doi.org/10.1177/1045389x211057216)
+  - Thomas Georges et al. (2012). Characterization and design of antagonistic shape memory alloy actuators. [10.1088/0964-1726/21/3/035010](https://doi.org/10.1088/0964-1726/21/3/035010)
 
 ### piezoelectric / hysteresis / actuator
 
@@ -352,12 +352,12 @@ This cluster covers piezoelectric actuators and their control systems, with part
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Development of a fast tool servo in noncircular turning and its control. [10.1016/j.ymssp.2013.08.011](https://doi.org/10.1016/j.ymssp.2013.08.011)
-  - — (n.d.). Precision tracking control of piezoelectric actuator based on Bouc-Wen hysteresis compensator. [10.1049/el.2012.2940](https://doi.org/10.1049/el.2012.2940)
-  - — (n.d.). A review of nonlinear hysteresis modeling and control of piezoelectric actuators. [10.1063/1.5093000](https://doi.org/10.1063/1.5093000)
-  - — (n.d.). Modified KP Model for Hysteresis of Magnetic Shape Memory Alloy Actuator. [10.1080/02564602.2014.968642](https://doi.org/10.1080/02564602.2014.968642)
-  - — (n.d.). Two-dimensional dynamics of a quasi-static legged piezoelectric actuator. [10.1088/0964-1726/21/5/055007](https://doi.org/10.1088/0964-1726/21/5/055007)
-  - — (n.d.). Recent Advances in the Control of Piezoelectric Actuators. [10.5772/59099](https://doi.org/10.5772/59099)
+  - Huaiyong Li et al. (2024). Modeling and Control of a Linear Piezoelectric Actuator. [10.3390/act13020055](https://doi.org/10.3390/act13020055)
+  - Mithun Kanchan et al. (2023). Application of Modeling and Control Approaches of Piezoelectric Actuators: A Review. [10.3390/technologies11060155](https://doi.org/10.3390/technologies11060155)
+  - Gerardo Flores et al. (2021). Model Predictive Control Based on the Generalized Bouc-Wen Model for Piezoelectric Actuators in Robotic Hand With Only Position Measurements. [10.1109/lcsys.2021.3136456](https://doi.org/10.1109/lcsys.2021.3136456)
+  - Yewei Yu et al. (2021). Neural-Network-Based Iterative Learning Control for Hysteresis in a Magnetic Shape Memory Alloy Actuator. [10.1109/tmech.2021.3075057](https://doi.org/10.1109/tmech.2021.3075057)
+  - Pengxiu Geng et al. (2020). Direct Inverse Hysteresis Compensation of a Pneumatic Artificial Muscles Actuated Delta Mechanism. [10.1109/cyber50695.2020.9279112](https://doi.org/10.1109/cyber50695.2020.9279112)
+  - Filip Szufnarowski et al. (2012). Two-dimensional dynamics of a quasi-static legged piezoelectric actuator. [10.1088/0964-1726/21/5/055007](https://doi.org/10.1088/0964-1726/21/5/055007)
 
 ### harmonic / drive / hysteresis
 
@@ -365,12 +365,12 @@ This cluster covers the modeling, characterization, and control of nonlinear dyn
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Design and calibration of spoke piezoelectric six-dimensional force/torque sensor for space manipulator. [10.1016/j.cja.2023.03.012](https://doi.org/10.1016/j.cja.2023.03.012)
-  - — (n.d.). A new computationally efficient model of the non-linear dynamics in harmonic drive reducers. [10.1016/j.mechmachtheory.2025.105992](https://doi.org/10.1016/j.mechmachtheory.2025.105992)
-  - — (n.d.). Synchronized motion control and precision positioning compensation of a 3-DOFs macro–micro parallel manipulator fully actuated by piezoelectric actuators. [10.1088/1361-665x/aa8b23](https://doi.org/10.1088/1361-665x/aa8b23)
-  - — (n.d.). Measurement and analysis of backlash on harmonic drive. [10.1088/1757-899x/542/1/012005](https://doi.org/10.1088/1757-899x/542/1/012005)
-  - — (n.d.). Modeling and Identification of Hysteresis in Robot Joints with Cycloidal Drives. [10.1109/amc51637.2022.9729274](https://doi.org/10.1109/amc51637.2022.9729274)
-  - — (n.d.). Modeling and control of piezoelectric inertia–friction actuators: review and future research directions. [10.5194/ms-6-95-2015](https://doi.org/10.5194/ms-6-95-2015)
+  - Roberto Guida et al. (2025). A new computationally efficient model of the non-linear dynamics in harmonic drive reducers. [10.1016/j.mechmachtheory.2025.105992](https://doi.org/10.1016/j.mechmachtheory.2025.105992)
+  - Yingjun Li et al. (2023). Design and calibration of spoke piezoelectric six-dimensional force/torque sensor for space manipulator. [10.1016/j.cja.2023.03.012](https://doi.org/10.1016/j.cja.2023.03.012)
+  - Patrick Mesmer et al. (2022). Modeling and Identification of Hysteresis in Robot Joints with Cycloidal Drives. [10.1109/amc51637.2022.9729274](https://doi.org/10.1109/amc51637.2022.9729274)
+  - Yazhen WANG et al. (2022). Experimental study on the influence of flexible bearing clearance on natural frequency of harmonic reducer. [10.1299/jamdsm.2022jamdsm0012](https://doi.org/10.1299/jamdsm.2022jamdsm0012)
+  - Stein Crispel et al. (2021). A Novel Wolfrom-Based Gearbox for Robotic Actuators. [10.1109/tmech.2021.3079471](https://doi.org/10.1109/tmech.2021.3079471)
+  - Hongwei Zhang et al. (2014). Modeling of Torsional Compliance and Hysteresis Behaviors in Harmonic Drives. [10.1109/tmech.2014.2311382](https://doi.org/10.1109/tmech.2014.2311382)
 
 ### sma / alloy / shape
 
@@ -378,12 +378,12 @@ This cluster covers the design, control, and application of Shape Memory Alloy (
 
 - 使う op: [`mesh_area`](../ops/3d/mesh_process/mesh_area.md)(表面積、mesh → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積、mesh → measurement)、[`vertex_curvature`](../ops/3d/mesh_process/vertex_curvature.md)(曲率(角・フィレット)、mesh → curvature)、[`decimate_qem`](../ops/3d/mesh_process/decimate_qem.md)(間引き、mesh → mesh)、[`mesh_isotropic_remesh`](../ops/3d/resolution/mesh_isotropic_remesh.md)(等方リメッシュ、mesh → mesh)、[`mesh_to_voxel`](../ops/3d/transform/mesh_to_voxel.md)(メッシュ → 体積、mesh → voxel)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Sliding mode control of a shape memory alloy actuated active flexible needle. [10.1017/s0263574718000334](https://doi.org/10.1017/s0263574718000334)
-  - — (n.d.). Long Shape Memory Alloy Tendon-based Soft Robotic Actuators and Implementation as a Soft Gripper. [10.1038/s41598-019-47794-1](https://doi.org/10.1038/s41598-019-47794-1)
-  - — (n.d.). Engineering design framework for a shape memory alloy coil spring actuator using a static two-state model. [10.1088/0964-1726/21/5/055009](https://doi.org/10.1088/0964-1726/21/5/055009)
-  - — (n.d.). Indirect intelligent sliding mode control of a shape memory alloy actuated flexible beam using hysteretic recurrent neural networks. [10.1088/0964-1726/21/8/085015](https://doi.org/10.1088/0964-1726/21/8/085015)
-  - — (n.d.). Development of a morphing flap using shape memory alloy actuators: the aerodynamic characteristics of a morphing flap. [10.1088/0964-1726/23/7/074015](https://doi.org/10.1088/0964-1726/23/7/074015)
-  - — (n.d.). Robust Switched Tracking Control for Wheeled Mobile Robots Considering the Actuators and Drivers. [10.3390/s18124316](https://doi.org/10.3390/s18124316)
+  - Jung Woo Sohn et al. (2023). Application of Shape Memory Alloy Actuators to Vibration and Motion Control of Structural Systems: A Review. [10.3390/app13020995](https://doi.org/10.3390/app13020995)
+  - Jihyeong Lee et al. (2019). Long Shape Memory Alloy Tendon-based Soft Robotic Actuators and Implementation as a Soft Gripper. [10.1038/s41598-019-47794-1](https://doi.org/10.1038/s41598-019-47794-1)
+  - Daohui Zhang et al. (2019). Active Modeling and Control for Shape Memory Alloy Actuators. [10.1109/access.2019.2936256](https://doi.org/10.1109/access.2019.2936256)
+  - José Rafael García-Sánchez et al. (2018). Robust Switched Tracking Control for Wheeled Mobile Robots Considering the Actuators and Drivers. [10.3390/s18124316](https://doi.org/10.3390/s18124316)
+  - Felix Orlando Maria Joseph et al. (2018). Sliding mode control of a shape memory alloy actuated active flexible needle. [10.1017/s0263574718000334](https://doi.org/10.1017/s0263574718000334)
+  - John H. Crews et al. (2012). Design optimization of a shape memory alloy–actuated robotic catheter. [10.1177/1045389x12436738](https://doi.org/10.1177/1045389x12436738)
 
 ## analysis / abstract / review
 
@@ -418,12 +418,12 @@ This cluster covers the neurobiology and biomechanics of motor systems, includin
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). The Art of Building Small: From Molecular Switches to Motors (Nobel Lecture). [10.1002/anie.201702979](https://doi.org/10.1002/anie.201702979)
-  - — (n.d.). The Use of Diuretics in Heart Failure with Congestion — A Position Statement from the Heart Failure Association of the European Society of Cardiology. [10.1002/ejhf.1369](https://doi.org/10.1002/ejhf.1369)
-  - — (n.d.). Predictions not commands: active inference in the motor system. [10.1007/s00429-012-0475-5](https://doi.org/10.1007/s00429-012-0475-5)
-  - — (n.d.). In AI We Trust: Ethics, Artificial Intelligence, and Reliability. [10.1007/s11948-020-00228-y](https://doi.org/10.1007/s11948-020-00228-y)
-  - — (n.d.). Cancer chemotherapy and beyond: Current status, drug candidates, associated risks and progress in targeted therapeutics. [10.1016/j.gendis.2022.02.007](https://doi.org/10.1016/j.gendis.2022.02.007)
-  - — (n.d.). Human Perceptual-Motor Performance 1. [10.4324/9781003176688-1](https://doi.org/10.4324/9781003176688-1)
+  - Rendy Hosea et al. (2024). The two sides of chromosomal instability: drivers and brakes in cancer. [10.1038/s41392-024-01767-7](https://doi.org/10.1038/s41392-024-01767-7)
+  - Hany Ahmed et al. (2022). Microbiota-derived metabolites as drivers of gut–brain communication. [10.1080/19490976.2022.2102878](https://doi.org/10.1080/19490976.2022.2102878)
+  - Haifeng Huang et al. (2022). An All Servo-Driven Bird-Like Flapping-Wing Aerial Robot Capable of Autonomous Flight. [10.1109/tmech.2022.3182418](https://doi.org/10.1109/tmech.2022.3182418)
+  - Helena Targa Dias Anastacio et al. (2022). Neuronal hyperexcitability in Alzheimer’s disease: what are the drivers behind this aberrant phenotype?. [10.1038/s41398-022-02024-7](https://doi.org/10.1038/s41398-022-02024-7)
+  - Uttpal Anand et al. (2022). Cancer chemotherapy and beyond: Current status, drug candidates, associated risks and progress in targeted therapeutics. [10.1016/j.gendis.2022.02.007](https://doi.org/10.1016/j.gendis.2022.02.007)
+  - Larry A. Allen et al. (2012). Decision Making in Advanced Heart Failure. [10.1161/cir.0b013e31824f2173](https://doi.org/10.1161/cir.0b013e31824f2173)
 
 ### monitoring / health / driver
 
@@ -431,12 +431,12 @@ This cluster covers monitoring, health assessment, and driver-related diagnostic
 
 - 使う op: [`temporal_bandpass`](../ops/motionmag/temporal/temporal_bandpass.md)(動画の時間帯域(揺らぎ)、video → video)、[`motion_magnify`](../ops/motionmag/magnify/motion_magnify.md)(微小な動きの拡大、video → table)、[`video_spacetime_cube`](../ops/videocube/cube/video_spacetime_cube.md)(時空間の立方体、video → voxel)、[`video_summary_keyframes`](../ops/videocube/summary/video_summary_keyframes.md)(要約コマ、video → indices)、[`blob_count`](../ops/2d/features/blob_count.md)(スパッタ・粒の数、region → feature)、[`area_center`](../ops/2d/features/area_center.md)(溶融池の面積と重心、region → match)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Disposable Sensors in Diagnostics, Food, and Environmental Monitoring. [10.1002/adma.201806739](https://doi.org/10.1002/adma.201806739)
-  - — (n.d.). Toward Flexible Surface‐Enhanced Raman Scattering (SERS) Sensors for Point‐of‐Care Diagnostics. [10.1002/advs.201900925](https://doi.org/10.1002/advs.201900925)
-  - — (n.d.). Wearable and implantable bioelectronics as eco‐friendly and patient‐friendly integrated nanoarchitectonics for next‐generation smart healthcare technology. [10.1002/eom2.12356](https://doi.org/10.1002/eom2.12356)
-  - — (n.d.). Vision-based human activity recognition: a survey. [10.1007/s11042-020-09004-3](https://doi.org/10.1007/s11042-020-09004-3)
-  - — (n.d.). AI-based chatbots in customer service and their effects on user compliance. [10.1007/s12525-020-00414-7](https://doi.org/10.1007/s12525-020-00414-7)
-  - — (n.d.). Protein biogenesis machinery is a driver of replicative aging in yeast. [10.7554/elife.08527](https://doi.org/10.7554/elife.08527)
+  - Dan Curavale et al. (2026). Efficient Similarity-Based Datasheet Retrieval and Analysis Using Retrieval-Augmented Generation for Electronic Component Selection. [10.3390/electronics15112301](https://doi.org/10.3390/electronics15112301)
+  - Chanthol Eang et al. (2024). Predictive Maintenance and Fault Detection for Motor Drive Control Systems in Industrial Robots Using CNN-RNN-Based Observers. [10.3390/s25010025](https://doi.org/10.3390/s25010025)
+  - Tomasz Neumann (2024). Analysis of Advanced Driver-Assistance Systems for Safe and Comfortable Driving of Motor Vehicles. [10.3390/s24196223](https://doi.org/10.3390/s24196223)
+  - Songhui Zhang et al. (2024). A novel on-line approach for evaluating transmission errors in harmonic drives. [10.1177/16878132241276666](https://doi.org/10.1177/16878132241276666)
+  - Xiaobing Shen et al. (2024). Artificial Intelligence Applications in High-Frequency Magnetic Components Design for Power Electronics Systems: An Overview. [10.1109/tpel.2024.3381431](https://doi.org/10.1109/tpel.2024.3381431)
+  - Lin Liu et al. (2012). Comparison of Next-Generation Sequencing Systems. [10.1155/2012/251364](https://doi.org/10.1155/2012/251364)
 
 ### electromagnetic / emi / antenna
 
@@ -444,34 +444,34 @@ This cluster covers electromagnetic interference (EMI) shielding, antenna design
 
 - 使う op: [`fbp_volume`](../ops/tomography/volume/fbp_volume.md)(電池 CT の再構成、sinostack → voxel)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(電極・セパレータの厚み、voxel → signal)、[`vol_label`](../ops/3d/regionprops/vol_label.md)(層のラベル、voxel → labels)、[`vol_region_props`](../ops/3d/regionprops/vol_region_props.md)(層の性質、labels → table)、[`metal_trace_interpolate`](../ops/tomography/artifact/metal_trace_interpolate.md)(金属アーチファクト、sinogram → sinogram)、[`beam_hardening_correct`](../ops/tomography/artifact/beam_hardening_correct.md)(カッピング、sinogram → sinogram)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Catenary Electromagnetics for Ultra‐Broadband Lightweight Absorbers and Large‐Scale Flat Antennas. [10.1002/advs.201801691](https://doi.org/10.1002/advs.201801691)
-  - — (n.d.). A novel electromagnetic bandgap design applied for suppression of printed circuit board electromagnetic radiation. [10.1002/mmce.21990](https://doi.org/10.1002/mmce.21990)
-  - — (n.d.). Impact of electromagnetic interference on the functional safety of smart power devices for automotive applications. [10.1007/s00502-018-0633-4](https://doi.org/10.1007/s00502-018-0633-4)
-  - — (n.d.). Tailorable, Lightweight and Superelastic Liquid Metal Monoliths for Multifunctional Electromagnetic Interference Shielding. [10.1007/s40820-021-00766-5](https://doi.org/10.1007/s40820-021-00766-5)
-  - — (n.d.). Flash-Induced High-Throughput Porous Graphene via Synergistic Photo-Effects for Electromagnetic Interference Shielding. [10.1007/s40820-023-01157-8](https://doi.org/10.1007/s40820-023-01157-8)
-  - — (n.d.). Low-Cost Wireless Temperature Measurement: Design, Manufacture, and Testing of a PCB-Based Wireless Passive Temperature Sensor. [10.3390/s18020532](https://doi.org/10.3390/s18020532)
+  - Horia-Nicolai Teodorescu et al. (2024). Aspects of EMI, EMC due to Randomness in the Electronic Circuits and the PCB. [10.1109/ae61743.2024.10710278](https://doi.org/10.1109/ae61743.2024.10710278)
+  - Naresh D. Sanandiya et al. (2024). Chitosan-based electroconductive inks without chemical reaction for cost-effective and versatile 3D printing for electromagnetic interference (EMI) shielding and strain-sensing applications. [10.1016/j.carbpol.2024.122161](https://doi.org/10.1016/j.carbpol.2024.122161)
+  - Jonathan Tersur Orasugh et al. (2024). Progress in polymer nonwoven textile materials in electromagnetic interference shielding applications. [10.1186/s42252-024-00054-6](https://doi.org/10.1186/s42252-024-00054-6)
+  - Huamin Jie et al. (2024). A review of intentional electromagnetic interference in power electronics: Conducted and radiated susceptibility. [10.1049/pel2.12685](https://doi.org/10.1049/pel2.12685)
+  - Jorge Victoria et al. (2024). Advanced Characterization of a Hybrid Shielding Solution for Reducing Electromagnetic Interferences at Board Level. [10.3390/electronics13030598](https://doi.org/10.3390/electronics13030598)
+  - Chih-Ying Hsiao et al. (2012). Radiation Suppression for Cable-Attached Packages Utilizing a Compact Embedded Common-Mode Filter. [10.1109/tcpmt.2012.2207458](https://doi.org/10.1109/tcpmt.2012.2207458)
 
 ### meta / review / analysis
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Exercise-based cardiac rehabilitation for adults with heart failure. [10.1002/14651858.cd003331.pub5](https://doi.org/10.1002/14651858.cd003331.pub5)
-  - — (n.d.). 2016 ESC Guidelines for the Diagnosis and Treatment of Acute and Chronic Heart Failure. [10.1002/ejhf.592](https://doi.org/10.1002/ejhf.592)
-  - — (n.d.). Unravelling selection signatures in a single dog breed suggests recent selection for morphological and behavioral traits. [10.1002/ggn2.10024](https://doi.org/10.1002/ggn2.10024)
-  - — (n.d.). Accuracy of real-time shear wave elastography for assessing liver fibrosis in chronic hepatitis C: A pilot study. [10.1002/hep.25936](https://doi.org/10.1002/hep.25936)
-  - — (n.d.). Global prevalence of sarcopenia and severe sarcopenia: a systematic review and meta‐analysis. [10.1002/jcsm.12783](https://doi.org/10.1002/jcsm.12783)
-  - — (n.d.). High force density linear permanent magnet motors : "electromagnetic muscle actuators". `W1603632003`
+  - Asad Ur Rehman Bajwa et al. (2025). Material selection in the construction industry: a systematic literature review on multi-criteria decision making. [10.1007/s10669-025-10001-w](https://doi.org/10.1007/s10669-025-10001-w)
+  - Saleh Khalaj Monfared et al. (2023). LeakyOhm: Secret Bits Extraction using Impedance Analysis. [10.1145/3576915.3623092](https://doi.org/10.1145/3576915.3623092)
+  - Mahmoud A. Soliman et al. (2022). Hybrid African vultures–grey wolf optimizer approach for electrical parameters extraction of solar panel models. [10.1016/j.egyr.2022.10.401](https://doi.org/10.1016/j.egyr.2022.10.401)
+  - Sameer M. Zuberi et al. (2022). ILAE classification and definition of epilepsy syndromes with onset in neonates and infants: Position statement by the ILAE Task Force on Nosology and Definitions. [10.1111/epi.17239](https://doi.org/10.1111/epi.17239)
+  - Nicola Specchio et al. (2022). International League Against Epilepsy classification and definition of epilepsy syndromes with onset in childhood: Position paper by the ILAE Task Force on Nosology and Definitions. [10.1111/epi.17241](https://doi.org/10.1111/epi.17241)
+  - Bryan P. Ruddy (2012). High force density linear permanent magnet motors : "electromagnetic muscle actuators". [W1603632003](https://hdl.handle.net/2292/21403)
 
 ### review / applications / energy
 
 This cluster covers the assessment, optimization, and reliability of energy systems and related infrastructure, with emphasis on renewable energy technologies, sustainability, and failure analysis.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Reliable, resilient and sustainable water management: the Safe & SuRe approach. [10.1002/gch2.1010](https://doi.org/10.1002/gch2.1010)
-  - — (n.d.). Photovoltaic failure and degradation modes. [10.1002/pip.2866](https://doi.org/10.1002/pip.2866)
-  - — (n.d.). Actuator Design. [10.1007/978-3-031-04536-3_9](https://doi.org/10.1007/978-3-031-04536-3_9)
-  - — (n.d.). Fleets of robots for environmentally-safe pest control in agriculture. [10.1007/s11119-016-9476-3](https://doi.org/10.1007/s11119-016-9476-3)
-  - — (n.d.). Piezoelectric Materials for Controlling Electro-Chemical Processes. [10.1007/s40820-020-00489-z](https://doi.org/10.1007/s40820-020-00489-z)
-  - — (n.d.). Fluid Power Circuits and Controls: Fundamentals and Applications. `W656438136`
+  - Spoorthi Singh et al. (2025). Adaptive control strategies for button motor actuated insect scale flapping wing MAV mechanisms. [10.1038/s41598-025-13834-2](https://doi.org/10.1038/s41598-025-13834-2)
+  - Sara Bordignon et al. (2023). Simplified water-source heat pump models for predicting heat extraction and rejection. [10.1016/j.renene.2023.119701](https://doi.org/10.1016/j.renene.2023.119701)
+  - Haoran Li et al. (2023). MagNet-AI: Neural Network as Datasheet for Magnetics Modeling and Material Recommendation. [10.1109/tpel.2023.3309233](https://doi.org/10.1109/tpel.2023.3309233)
+  - Sergio Ferrarini et al. (2023). A method for the assessment and compensation of positioning errors in industrial robots. [10.1016/j.rcim.2023.102622](https://doi.org/10.1016/j.rcim.2023.102622)
+  - Sayeedurrahman et al. (2023). A solar tracking system with light-dependent resistors and a stepper motor controlled by a microcontroller. [10.1109/ic2e357697.2023.10262787](http://dx.doi.org/10.1109/ic2e357697.2023.10262787)
+  - Rainer Mautz (2012). Indoor positioning technologies. [10.3929/ethz-a-007313554](http://hdl.handle.net/20.500.11850/54888)
 
 ### failure / fmea / reliability
 
@@ -479,24 +479,24 @@ This cluster covers Failure Mode and Effects Analysis (FMEA) and related reliabi
 
 - 使う op: [`null_distribution`](../ops/imgforensics/calibration/null_distribution.md)(帰無分布(誤報率)、signal → table)、[`evidence_quantile`](../ops/imgforensics/calibration/evidence_quantile.md)(証拠量の位置、measurement × table → table)、[`spc_capability`](../ops/spc/capability/spc_capability.md)(工程能力、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). An Evidential Failure Mode and Effects Analysis Using Linguistic Terms. [10.1002/qre.2075](https://doi.org/10.1002/qre.2075)
-  - — (n.d.). A new risk prioritization model for failure mode and effects analysis. [10.1002/qre.2269](https://doi.org/10.1002/qre.2269)
-  - — (n.d.). Fuzzy smart failure modes and effects analysis to improve safety performance of system: Case study of an aircraft landing system. [10.1002/qre.2607](https://doi.org/10.1002/qre.2607)
-  - — (n.d.). An improved failure mode and effects analysis method based on uncertainty measure in the evidence theory. [10.1002/qre.2660](https://doi.org/10.1002/qre.2660)
-  - — (n.d.). Improving reliability and safety of airborne wind energy systems. [10.1002/we.2433](https://doi.org/10.1002/we.2433)
-  - — (n.d.). Comprehensive Reliability Allocation Method for CNC Lathes Based on Cubic Transformed Functions of Failure Mode and Effects Analysis. `W3145148658`
+  - Chao Huang et al. (2024). Reliability Prediction for New Prefabricated Track Structures Based on the Fuzzy Failure Modes, Effects, and Criticality Analysis Method. [10.3390/app14125338](https://doi.org/10.3390/app14125338)
+  - Rajkumar Bhimgonda Patil et al. (2024). A Reliability and Risk Assessment of Solar Photovoltaic Panels Using a Failure Mode and Effects Analysis Approach: A Case Study. [10.3390/su16104183](https://doi.org/10.3390/su16104183)
+  - Iman Aoueryagel et al. (2024). Improving Reliability in Al Hoceima Seawater Desalination Plant by Failure Modes, Effects, and Criticality Analysis Model. [10.12912/27197050/186268](https://doi.org/10.12912/27197050/186268)
+  - Shaymaa M. M. El-Awady (2023). Overview of Failure Mode and Effects Analysis (FMEA): A Patient Safety Tool. [10.36401/jqsh-23-x2](https://doi.org/10.36401/jqsh-23-x2)
+  - He Li et al. (2022). Assessment of failure rates and reliability of floating offshore wind turbines. [10.1016/j.ress.2022.108777](https://doi.org/10.1016/j.ress.2022.108777)
+  - Jun Li et al. (2012). Reliability Analysis of Aircraft Equipment Based on FMECA Method. [10.1016/j.phpro.2012.03.316](https://doi.org/10.1016/j.phpro.2012.03.316)
 
 ### cell / cells / strain
 
 This cluster covers biological and biomechanical systems at the cellular and tissue level, including bone mechanics under loading, bacterial strain interactions with nanomaterials, cell culture and differentiation, and molecular processes like translation and gene expression.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Bones' adaptive response to mechanical loading is essentially linear between the low strains associated with disuse and the high strains associated with the lamellar/woven bone transition. [10.1002/jbmr.1599](https://doi.org/10.1002/jbmr.1599)
-  - — (n.d.). Attachment efficiency of gold nanoparticles by Gram-positive and Gram-negative bacterial strains governed by surface charges. [10.1007/s11051-019-4617-z](https://doi.org/10.1007/s11051-019-4617-z)
-  - — (n.d.). Ex vivo determination of bone tissue strains for an in vivo mouse tibial loading model. [10.1016/j.jbiomech.2014.03.035](https://doi.org/10.1016/j.jbiomech.2014.03.035)
-  - — (n.d.). Proposal of a generic constitutive model for deformation-dependent dielectric constant of dielectric elastomers. [10.1016/j.jestch.2021.04.001](https://doi.org/10.1016/j.jestch.2021.04.001)
-  - — (n.d.). Mechanical behaviour of additively-manufactured polymeric octet-truss lattice structures under quasi-static and dynamic compressive loading. [10.1016/j.matdes.2018.11.035](https://doi.org/10.1016/j.matdes.2018.11.035)
-  - — (n.d.). SPOTL: Some Programs for Ocean-Tide Loading. `W97311291`
+  - Qingsong Pan et al. (2023). Atomic faulting induced exceptional cryogenic strain hardening in gradient cell–structured alloy. [10.1126/science.adj3974](https://doi.org/10.1126/science.adj3974)
+  - George A. Brooks et al. (2023). Lactate as a myokine and exerkine: drivers and signals of physiology and metabolism. [10.1152/japplphysiol.00497.2022](https://doi.org/10.1152/japplphysiol.00497.2022)
+  - Hao Su et al. (2022). State of the Art and Future Opportunities in MRI-Guided Robot-Assisted Surgery and Interventions. [10.1109/jproc.2022.3169146](https://doi.org/10.1109/jproc.2022.3169146)
+  - Yoonho Kim et al. (2022). Telerobotic neurovascular interventions with magnetic manipulation. [10.1126/scirobotics.abg9907](https://doi.org/10.1126/scirobotics.abg9907)
+  - Abhishek Sharma et al. (2021). A Novel Opposition-Based Arithmetic Optimization Algorithm for Parameter Extraction of PEM Fuel Cell. [10.3390/electronics10222834](https://doi.org/10.3390/electronics10222834)
+  - Toshihiro Sugiyama et al. (2012). Bones' adaptive response to mechanical loading is essentially linear between the low strains associated with disuse and the high strains associated with the lamellar/woven bone transition. [10.1002/jbmr.1599](https://doi.org/10.1002/jbmr.1599)
 
 ### strain / measurement / sensor
 
@@ -504,12 +504,12 @@ This cluster covers measurement techniques and sensor technologies for character
 
 - 使う op: [`m1_measure_pos`](../ops/2d/measure1d/m1_measure_pos.md)(エッジ位置(1-D 計測)、image → contour)、[`m1_measure_pairs`](../ops/2d/measure1d/m1_measure_pairs.md)(対のエッジ = 幅、image → feature)、[`edges_sub_pix`](../ops/2d/contour/edges_sub_pix.md)(サブピクセル輪郭、image → contour)、[`fit_poly_surface`](../ops/3d/surface_fit/fit_poly_surface.md)(面の当てはめ、image2d × image2d × image2d → poly_surface)、[`surface_form_error`](../ops/3d/surface_fit/surface_form_error.md)(平面度・形状誤差、image2d → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(基準面、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Controlling quantum dot emission by integration of semiconductor nanomembranes onto piezoelectric actuators. [10.1002/pssb.201100775](https://doi.org/10.1002/pssb.201100775)
-  - — (n.d.). A review of solid–fluid selection options for optical-based measurements in single-phase liquid, two-phase liquid–liquid and multiphase solid–liquid flows. [10.1007/s00348-017-2386-y](https://doi.org/10.1007/s00348-017-2386-y)
-  - — (n.d.). The Juno Magnetic Field Investigation. [10.1007/s11214-017-0334-z](https://doi.org/10.1007/s11214-017-0334-z)
-  - — (n.d.). Microstructure evolution and critical stress for twinning in the CrMnFeCoNi high-entropy alloy. [10.1016/j.actamat.2016.07.038](https://doi.org/10.1016/j.actamat.2016.07.038)
-  - — (n.d.). Reasons for the superior mechanical properties of medium-entropy CrCoNi compared to high-entropy CrMnFeCoNi. [10.1016/j.actamat.2017.02.036](https://doi.org/10.1016/j.actamat.2017.02.036)
-  - — (n.d.). Dynamic calibration of force torque and pressure sensors. `W2533094834`
+  - Hsin-Jung Huang et al. (2025). Uncertainty Analysis of a Force and Torque Sensor Calibration Machine Utilizing Electromagnetic Actuation. [10.1109/jsen.2025.3526616](https://doi.org/10.1109/jsen.2025.3526616)
+  - Shudong Zhuang et al. (2024). Temperature field analysis and compensation improvement of load cell. [10.1038/s41598-024-76688-0](https://doi.org/10.1038/s41598-024-76688-0)
+  - Yubo Wang et al. (2024). Strain Effect on Dielectricity of Elastic Thermoplastic Polyurethanes. [10.3390/polym16111465](https://doi.org/10.3390/polym16111465)
+  - Yubo Wang et al. (2024). Strain Effect on Dielectricity of Elastic Thermoplastic Polyurethanes. [10.20944/preprints202404.0378.v1](https://doi.org/10.20944/preprints202404.0378.v1)
+  - Dapeng Chen et al. (2024). Development and Evaluation of Refreshable Braille Display and Active Touch-Reading System for Digital Reading of the Visually Impaired. [10.1109/tnsre.2024.3363495](https://doi.org/10.1109/tnsre.2024.3363495)
+  - Waris Obitayo et al. (2012). A Review: Carbon Nanotube-Based Piezoresistive Strain Sensors. [10.1155/2012/652438](https://doi.org/10.1155/2012/652438)
 
 ## inertial / navigation / calibration
 
@@ -536,12 +536,12 @@ This cluster covers the calibration methodologies and error correction technique
 
 - 使う op: [`calibration_views`](../ops/optics/imaging_sim/calibration_views.md)(校正板の合成ビュー、table → table)、[`distortion_map`](../ops/optics/imaging_sim/distortion_map.md)(歪みの地図、table → table)、[`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(外部パラメータ、points × keypoints → pose)、[`bundle_adjust`](../ops/3d/bundle_adjust/bundle_adjust.md)(多視点の同時最適化、pose × points → table)、[`project_spherical`](../ops/3d/lidar_projection/project_spherical.md)(LiDAR の球面投影、points → image2d)、[`depth_to_points`](../ops/3d/transform/depth_to_points.md)(深度 → 点群、depth → points)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Calibration of an inertial-magnetic measurement unit without external equipment, in the presence of dynamic magnetic disturbances. [10.1088/0957-0233/25/12/125106](https://doi.org/10.1088/0957-0233/25/12/125106)
-  - — (n.d.). Magnetic position sensors. [10.1088/1361-6501/ac32eb](https://doi.org/10.1088/1361-6501/ac32eb)
-  - — (n.d.). Control and estimation with threshold sensing for Inertial Measurement Unit calibration using a piezoelectric microstage. [10.1109/acc.2014.6859359](https://doi.org/10.1109/acc.2014.6859359)
-  - — (n.d.). Inertial Measurement Unit Calibration Method Based on Neural Network. [10.1109/cisp-bmei60920.2023.10373286](https://doi.org/10.1109/cisp-bmei60920.2023.10373286)
-  - — (n.d.). A Novel redundant inertial measurement unit and calibration algorithm. [10.1109/icoom.2013.6626481](https://doi.org/10.1109/icoom.2013.6626481)
-  - — (n.d.). Calibration of a magnetometer in combination with inertial sensors. `W2161962330`
+  - Jae-Young Shin et al. (2025). On-Site Implementation of External Wrench Measurement via Non-Linear Optimization in Six-Axis Force–Torque Sensor Calibration and Crosstalk Compensation. [10.3390/app15031510](https://doi.org/10.3390/app15031510)
+  - Jieqiong Wang et al. (2023). Inertial Measurement Unit Calibration Method Based on Neural Network. [10.1109/cisp-bmei60920.2023.10373286](https://doi.org/10.1109/cisp-bmei60920.2023.10373286)
+  - Zuhao Zou et al. (2023). Robust Equipment-Free Calibration of Low-Cost Inertial Measurement Units. [10.1109/tim.2023.3234081](https://doi.org/10.1109/tim.2023.3234081)
+  - Pavel Ripka et al. (2021). Magnetic position sensors. [10.1088/1361-6501/ac32eb](https://doi.org/10.1088/1361-6501/ac32eb)
+  - Christopher Doer et al. (2020). Radar Inertial Odometry With Online Calibration. [10.23919/enc48637.2020.9317343](https://doi.org/10.23919/enc48637.2020.9317343)
+  - Manon Kok et al. (2012). Calibration of a magnetometer in combination with inertial sensors. [W2161962330](http://urn.kb.se/resolve?urn=urn:nbn:se:liu:diva-85897)
 
 ### ins / gnss / navigation
 
@@ -549,11 +549,11 @@ This cluster covers integrated inertial navigation system (INS) and global navig
 
 - 使う op: [`calibration_views`](../ops/optics/imaging_sim/calibration_views.md)(校正板の合成ビュー、table → table)、[`distortion_map`](../ops/optics/imaging_sim/distortion_map.md)(歪みの地図、table → table)、[`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(外部パラメータ、points × keypoints → pose)、[`bundle_adjust`](../ops/3d/bundle_adjust/bundle_adjust.md)(多視点の同時最適化、pose × points → table)、[`project_spherical`](../ops/3d/lidar_projection/project_spherical.md)(LiDAR の球面投影、points → image2d)、[`depth_to_points`](../ops/3d/transform/depth_to_points.md)(深度 → 点群、depth → points)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). An INS/GNSS integrated navigation in GNSS denied environment using recurrent neural network. [10.1016/j.dt.2019.08.011](https://doi.org/10.1016/j.dt.2019.08.011)
-  - — (n.d.). Inertial Measurement Unit Error Modeling Tutorial: Inertial Navigation System State Estimation with Real-Time Sensor Calibration. [10.1109/mcs.2022.3209059](https://doi.org/10.1109/mcs.2022.3209059)
-  - — (n.d.). A LSTM Algorithm Estimating Pseudo Measurements for Aiding INS during GNSS Signal Outages. [10.3390/rs12020256](https://doi.org/10.3390/rs12020256)
-  - — (n.d.). A GRU and AKF-Based Hybrid Algorithm for Improving INS/GNSS Navigation Accuracy during GNSS Outage. [10.3390/rs14030752](https://doi.org/10.3390/rs14030752)
-  - — (n.d.). A Novel Method for AI-Assisted INS/GNSS Navigation System Based on CNN-GRU and CKF during GNSS Outage. [10.3390/rs14184494](https://doi.org/10.3390/rs14184494)
+  - Jay A. Farrell et al. (2022). Inertial Measurement Unit Error Modeling Tutorial: Inertial Navigation System State Estimation with Real-Time Sensor Calibration. [10.1109/mcs.2022.3209059](https://doi.org/10.1109/mcs.2022.3209059)
+  - Shuai Zhao et al. (2022). A Novel Method for AI-Assisted INS/GNSS Navigation System Based on CNN-GRU and CKF during GNSS Outage. [10.3390/rs14184494](https://doi.org/10.3390/rs14184494)
+  - Yanan Tang et al. (2022). A GRU and AKF-Based Hybrid Algorithm for Improving INS/GNSS Navigation Accuracy during GNSS Outage. [10.3390/rs14030752](https://doi.org/10.3390/rs14030752)
+  - Wei Fang et al. (2020). A LSTM Algorithm Estimating Pseudo Measurements for Aiding INS during GNSS Signal Outages. [10.3390/rs12020256](https://doi.org/10.3390/rs12020256)
+  - Hai-fa Dai et al. (2019). An INS/GNSS integrated navigation in GNSS denied environment using recurrent neural network. [10.1016/j.dt.2019.08.011](https://doi.org/10.1016/j.dt.2019.08.011)
 
 ### gnss / navigation / fusion
 
@@ -561,12 +561,12 @@ This cluster covers integrated navigation systems that combine GNSS (Global Navi
 
 - 使う op: [`calibration_views`](../ops/optics/imaging_sim/calibration_views.md)(校正板の合成ビュー、table → table)、[`distortion_map`](../ops/optics/imaging_sim/distortion_map.md)(歪みの地図、table → table)、[`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(外部パラメータ、points × keypoints → pose)、[`bundle_adjust`](../ops/3d/bundle_adjust/bundle_adjust.md)(多視点の同時最適化、pose × points → table)、[`project_spherical`](../ops/3d/lidar_projection/project_spherical.md)(LiDAR の球面投影、points → image2d)、[`depth_to_points`](../ops/3d/transform/depth_to_points.md)(深度 → 点群、depth → points)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Factor graph optimization for GNSS/INS integration: A comparison with the extended Kalman filter. [10.1002/navi.421](https://doi.org/10.1002/navi.421)
-  - — (n.d.). Experimental 2D extended Kalman filter sensor fusion for low-cost GNSS/IMU/Odometers precise positioning system. [10.1016/j.measurement.2022.110963](https://doi.org/10.1016/j.measurement.2022.110963)
-  - — (n.d.). Analysis and calibration of the mounting errors between inertial measurement unit and turntable in dual-axis rotational inertial navigation system. [10.1088/0957-0233/24/11/115002](https://doi.org/10.1088/0957-0233/24/11/115002)
-  - — (n.d.). High-rate multi-GNSS attitude determination: experiments, comparisons with inertial measurement units and applications of GNSS rotational seismology to the 2011 Tohoku Mw9.0 earthquake. [10.1088/1361-6501/aaf987](https://doi.org/10.1088/1361-6501/aaf987)
-  - — (n.d.). Distributed Error Correction of EKF Algorithm in Multi-Sensor Fusion Localization Model. [10.1109/access.2020.2995170](https://doi.org/10.1109/access.2020.2995170)
-  - — (n.d.). Assessment of Noise of MEMS IMU Sensors of Different Grades for GNSS/IMU Navigation. [10.3390/s24061953](https://doi.org/10.3390/s24061953)
+  - Vladimir Suvorkin et al. (2024). Assessment of Noise of MEMS IMU Sensors of Different Grades for GNSS/IMU Navigation. [10.3390/s24061953](https://doi.org/10.3390/s24061953)
+  - Kaushik A. Iyer et al. (2024). Enhancing Positioning in GNSS Denied Environments Based on an Extended Kalman Filter Using Past GNSS Measurements and IMU. [10.1109/tvt.2024.3360076](https://doi.org/10.1109/tvt.2024.3360076)
+  - Miti Ruchanurucks et al. (2024). The Best Linear Solution for a Camera and an Inertial Measurement Unit Calibration. [10.1201/9781003343783-15](https://doi.org/10.1201/9781003343783-15)
+  - Yuming Yin et al. (2023). Sensor Fusion of GNSS and IMU Data for Robust Localization via Smoothed Error State Kalman Filter. [10.3390/s23073676](https://doi.org/10.3390/s23073676)
+  - Lianxiao Meng et al. (2022). RETRACTED: A Survey of GNSS Spoofing and Anti-Spoofing Technology. [10.3390/rs14194826](https://doi.org/10.3390/rs14194826)
+  - Jianhui Hu et al. (2012). An Improved PMSM Rotor Position Sensor Based on Linear Hall Sensors. [10.1109/tmag.2012.2202279](https://doi.org/10.1109/tmag.2012.2202279)
 
 ### gnss / positioning / navigation
 
@@ -574,12 +574,12 @@ This cluster covers the vulnerabilities, limitations, and security challenges in
 
 - 使う op: [`calibration_views`](../ops/optics/imaging_sim/calibration_views.md)(校正板の合成ビュー、table → table)、[`distortion_map`](../ops/optics/imaging_sim/distortion_map.md)(歪みの地図、table → table)、[`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(外部パラメータ、points × keypoints → pose)、[`bundle_adjust`](../ops/3d/bundle_adjust/bundle_adjust.md)(多視点の同時最適化、pose × points → table)、[`project_spherical`](../ops/3d/lidar_projection/project_spherical.md)(LiDAR の球面投影、points → image2d)、[`depth_to_points`](../ops/3d/transform/depth_to_points.md)(深度 → 点群、depth → points)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). GNSS Vulnerabilities and Existing Solutions: A Review of the Literature. [10.1109/access.2020.2973759](https://doi.org/10.1109/access.2020.2973759)
-  - — (n.d.). GNSS User Technology: State-of-the-Art and Future Trends. [10.1109/access.2022.3165594](https://doi.org/10.1109/access.2022.3165594)
-  - — (n.d.). A Survey of Positioning Systems Using Visible LED Lights. [10.1109/comst.2018.2806558](https://doi.org/10.1109/comst.2018.2806558)
-  - — (n.d.). GNSS multipath detection using a machine learning approach. [10.1109/itsc.2017.8317700](https://doi.org/10.1109/itsc.2017.8317700)
-  - — (n.d.). A Survey on IoT Positioning Leveraging LPWAN, GNSS, and LEO-PNT. [10.1109/jiot.2023.3243207](https://doi.org/10.1109/jiot.2023.3243207)
-  - — (n.d.). GNSS Spoofing Detection Based on Coupled Visual/Inertial/GNSS Navigation System. [10.3390/s21206769](https://doi.org/10.3390/s21206769)
+  - Nurlan Boguspayev et al. (2023). A Comprehensive Review of GNSS/INS Integration Techniques for Land and Air Vehicle Applications. [10.3390/app13084819](https://doi.org/10.3390/app13084819)
+  - Thomas Janssen et al. (2023). A Survey on IoT Positioning Leveraging LPWAN, GNSS, and LEO-PNT. [10.1109/jiot.2023.3243207](https://doi.org/10.1109/jiot.2023.3243207)
+  - Daniel Egea-Roca et al. (2022). GNSS User Technology: State-of-the-Art and Future Trends. [10.1109/access.2022.3165594](https://doi.org/10.1109/access.2022.3165594)
+  - Nianzu Gu et al. (2021). GNSS Spoofing Detection Based on Coupled Visual/Inertial/GNSS Navigation System. [10.3390/s21206769](https://doi.org/10.3390/s21206769)
+  - Xingxing Li et al. (2021). Semi-tightly coupled integration of multi-GNSS PPP and S-VINS for precise positioning in GNSS-challenged environments. [10.1186/s43020-020-00033-9](https://doi.org/10.1186/s43020-020-00033-9)
+  - Amedeo Rodi Vetrella et al. (2016). Differential GNSS and Vision-Based Tracking to Improve Navigation Performance in Cooperative Multi-UAV Systems. [10.3390/s16122164](https://doi.org/10.3390/s16122164)
 
 ### visual / inertial / imu
 
@@ -587,12 +587,12 @@ This cluster covers visual-inertial sensor fusion systems for autonomous aerial 
 
 - 使う op: [`calibration_views`](../ops/optics/imaging_sim/calibration_views.md)(校正板の合成ビュー、table → table)、[`distortion_map`](../ops/optics/imaging_sim/distortion_map.md)(歪みの地図、table → table)、[`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(外部パラメータ、points × keypoints → pose)、[`bundle_adjust`](../ops/3d/bundle_adjust/bundle_adjust.md)(多視点の同時最適化、pose × points → table)、[`project_spherical`](../ops/3d/lidar_projection/project_spherical.md)(LiDAR の球面投影、points → image2d)、[`depth_to_points`](../ops/3d/transform/depth_to_points.md)(深度 → 点群、depth → points)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Autonomous aerial navigation using monocular visual‐inertial fusion. [10.1002/rob.21732](https://doi.org/10.1002/rob.21732)
-  - — (n.d.). Real-time onboard visual-inertial state estimation and self-calibration of MAVs in unknown environments. [10.1109/icra.2012.6225147](https://doi.org/10.1109/icra.2012.6225147)
-  - — (n.d.). A synchronized visual-inertial sensor system with FPGA pre-processing for accurate real-time SLAM. [10.1109/icra.2014.6906892](https://doi.org/10.1109/icra.2014.6906892)
-  - — (n.d.). Unified temporal and spatial calibration for multi-sensor systems. [10.1109/iros.2013.6696514](https://doi.org/10.1109/iros.2013.6696514)
-  - — (n.d.). A robust and modular multi-sensor fusion approach applied to MAV navigation. [10.1109/iros.2013.6696917](https://doi.org/10.1109/iros.2013.6696917)
-  - — (n.d.). Inertial measurement unit-camera calibration based on incomplete inertial sensor information. [10.1631/jzus.c1400038](https://doi.org/10.1631/jzus.c1400038)
+  - Carlos Campos et al. (2021). ORB-SLAM3: An Accurate Open-Source Library for Visual, Visual–Inertial, and Multimap SLAM. [10.1109/tro.2021.3075644](https://doi.org/10.1109/tro.2021.3075644)
+  - Tong Qin et al. (2018). VINS-Mono: A Robust and Versatile Monocular Visual-Inertial State Estimator. [10.1109/tro.2018.2853729](https://doi.org/10.1109/tro.2018.2853729)
+  - Yi Lin et al. (2017). Autonomous aerial navigation using monocular visual‐inertial fusion. [10.1002/rob.21732](https://doi.org/10.1002/rob.21732)
+  - Ronald Clark et al. (2017). VINet: Visual-Inertial Odometry as a Sequence-to-Sequence Learning Problem. [10.1609/aaai.v31i1.11215](https://doi.org/10.1609/aaai.v31i1.11215)
+  - Fendy Santoso et al. (2016). Visual–Inertial Navigation Systems for Aerial Robotics: Sensor Fusion and Technology. [10.1109/tase.2016.2582752](https://doi.org/10.1109/tase.2016.2582752)
+  - Stephan Weiß et al. (2012). Real-time onboard visual-inertial state estimation and self-calibration of MAVs in unknown environments. [10.1109/icra.2012.6225147](https://doi.org/10.1109/icra.2012.6225147)
 
 ### calibration / inertial / measurement
 
@@ -600,12 +600,12 @@ This cluster covers the calibration and characterization of inertial measurement
 
 - 使う op: [`m1_measure_pos`](../ops/2d/measure1d/m1_measure_pos.md)(エッジ位置(1-D 計測)、image → contour)、[`m1_measure_pairs`](../ops/2d/measure1d/m1_measure_pairs.md)(対のエッジ = 幅、image → feature)、[`edges_sub_pix`](../ops/2d/contour/edges_sub_pix.md)(サブピクセル輪郭、image → contour)、[`fit_poly_surface`](../ops/3d/surface_fit/fit_poly_surface.md)(面の当てはめ、image2d × image2d × image2d → poly_surface)、[`surface_form_error`](../ops/3d/surface_fit/surface_form_error.md)(平面度・形状誤差、image2d → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(基準面、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Improving the calibration process of inertial measurement unit for marine applications. [10.1002/navi.400](https://doi.org/10.1002/navi.400)
-  - — (n.d.). External multi-modal imaging sensor calibration for sensor fusion: A review. [10.1016/j.inffus.2023.101806](https://doi.org/10.1016/j.inffus.2023.101806)
-  - — (n.d.). Thermal Calibration Procedure and Thermal Characterisation of Low-cost Inertial Measurement Units. [10.1017/s0373463315000600](https://doi.org/10.1017/s0373463315000600)
-  - — (n.d.). Anin situhand calibration method using a pseudo-observation scheme for low-end inertial measurement units. [10.1088/0957-0233/23/10/105104](https://doi.org/10.1088/0957-0233/23/10/105104)
-  - — (n.d.). Calibration of an inertial measurement unit. [10.1109/icar.2013.6766539](https://doi.org/10.1109/icar.2013.6766539)
-  - — (n.d.). Multicomponent force/torque sensor with integrated calibration system. `W2917669556`
+  - Zhouyan Qiu et al. (2023). External multi-modal imaging sensor calibration for sensor fusion: A review. [10.1016/j.inffus.2023.101806](https://doi.org/10.1016/j.inffus.2023.101806)
+  - A. Eljubrani et al. (2022). MEMS Inertial Measurement Unit Calibration Using Low Cost Hardware. [10.1109/sta56120.2022.10019246](https://doi.org/10.1109/sta56120.2022.10019246)
+  - Xu Ru et al. (2022). MEMS Inertial Sensor Calibration Technology: Current Status and Future Trends. [10.3390/mi13060879](https://doi.org/10.3390/mi13060879)
+  - Cheng Ding et al. (2021). In Situ Calibration of Six-Axis Force–Torque Sensors for Industrial Robots With Tilting Base. [10.1109/tro.2021.3127391](https://doi.org/10.1109/tro.2021.3127391)
+  - Xin Zhang et al. (2021). Low-Cost Inertial Measurement Unit Calibration With Nonlinear Scale Factors. [10.1109/tii.2021.3077296](https://doi.org/10.1109/tii.2021.3077296)
+  - D. V. Volynskii et al. (2012). Calibration of fiber-optic gyros within strapdown inertial measurement units. [10.1134/s2075108712030108](https://doi.org/10.1134/s2075108712030108)
 
 ### gnss / localization / navigation
 
@@ -613,12 +613,12 @@ This cluster covers localization and navigation technologies for autonomous syst
 
 - 使う op: [`calibration_views`](../ops/optics/imaging_sim/calibration_views.md)(校正板の合成ビュー、table → table)、[`distortion_map`](../ops/optics/imaging_sim/distortion_map.md)(歪みの地図、table → table)、[`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(外部パラメータ、points × keypoints → pose)、[`bundle_adjust`](../ops/3d/bundle_adjust/bundle_adjust.md)(多視点の同時最適化、pose × points → table)、[`project_spherical`](../ops/3d/lidar_projection/project_spherical.md)(LiDAR の球面投影、points → image2d)、[`depth_to_points`](../ops/3d/transform/depth_to_points.md)(深度 → 点群、depth → points)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). GNSS‐stereo‐inertial SLAM for arable farming. [10.1002/rob.22232](https://doi.org/10.1002/rob.22232)
-  - — (n.d.). Research on Multi-Sensor Fusion SLAM Algorithm Based on Improved Gmapping. [10.1109/access.2023.3243633](https://doi.org/10.1109/access.2023.3243633)
-  - — (n.d.). Research on GNSS INS & GNSS/INS Integrated Navigation Method for Autonomous Vehicles: A Survey. [10.1109/access.2023.3299290](https://doi.org/10.1109/access.2023.3299290)
-  - — (n.d.). Improved Multi-Sensor Fusion Positioning System Based on GNSS/LiDAR/Vision/IMU With Semi-Tight Coupling and Graph Optimization in GNSS Challenging Environments. [10.1109/access.2023.3311359](https://doi.org/10.1109/access.2023.3311359)
-  - — (n.d.). A Survey on Fusion-Based Indoor Positioning. [10.1109/comst.2019.2951036](https://doi.org/10.1109/comst.2019.2951036)
-  - — (n.d.). GNSS/IMU/ODO/LiDAR-SLAM Integrated Navigation System Using IMU/ODO Pre-Integration. [10.3390/s20174702](https://doi.org/10.3390/s20174702)
+  - Imen Jarraya et al. (2025). Gnss-denied unmanned aerial vehicle navigation: analyzing computational complexity, sensor fusion, and localization methodologies. [10.1186/s43020-025-00162-z](https://doi.org/10.1186/s43020-025-00162-z)
+  - Dongjiao He et al. (2025). LIGO: A Tightly Coupled LiDAR-Inertial-GNSS Odometry Based on a Hierarchy Fusion Framework for Global Localization With Real-Time Mapping. [10.1109/tro.2025.3530298](https://doi.org/10.1109/tro.2025.3530298)
+  - Xin Xia et al. (2023). Integrated Inertial-LiDAR-Based Map Matching Localization for Varying Environments. [10.1109/tiv.2023.3298892](https://doi.org/10.1109/tiv.2023.3298892)
+  - Javier Cremona et al. (2023). GNSS‐stereo‐inertial SLAM for arable farming. [10.1002/rob.22232](https://doi.org/10.1002/rob.22232)
+  - Tong Hua et al. (2023). M2C-GVIO: motion manifold constraint aided GNSS-visual-inertial odometry for ground vehicles. [10.1186/s43020-023-00102-9](https://doi.org/10.1186/s43020-023-00102-9)
+  - Tianxing Chu et al. (2012). Monocular Camera/IMU/GNSS Integration for Ground Vehicle Navigation in Challenging GNSS Environments. [10.3390/s120303162](https://doi.org/10.3390/s120303162)
 
 ### inertial / calibration / imu
 
@@ -626,12 +626,12 @@ This cluster addresses the calibration and utilization of Inertial Measurement U
 
 - 使う op: [`calibration_views`](../ops/optics/imaging_sim/calibration_views.md)(校正板の合成ビュー、table → table)、[`distortion_map`](../ops/optics/imaging_sim/distortion_map.md)(歪みの地図、table → table)、[`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(外部パラメータ、points × keypoints → pose)、[`bundle_adjust`](../ops/3d/bundle_adjust/bundle_adjust.md)(多視点の同時最適化、pose × points → table)、[`project_spherical`](../ops/3d/lidar_projection/project_spherical.md)(LiDAR の球面投影、points → image2d)、[`depth_to_points`](../ops/3d/transform/depth_to_points.md)(深度 → 点群、depth → points)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Upper limb joint kinematics using wearable magnetic and inertial measurement units: an anatomical calibration procedure based on bony landmark identification. [10.1038/s41598-019-50759-z](https://doi.org/10.1038/s41598-019-50759-z)
-  - — (n.d.). Human pose recovery using wireless inertial measurement units. [10.1088/0967-3334/33/12/2099](https://doi.org/10.1088/0967-3334/33/12/2099)
-  - — (n.d.). Alignment-Free, Self-Calibrating Elbow Angles Measurement Using Inertial Sensors. [10.1109/jbhi.2016.2639537](https://doi.org/10.1109/jbhi.2016.2639537)
-  - — (n.d.). Lower Limb Sensor-to-Segment Calibration for Joint Kinematics Analysis With Inertial Measurement Units: Is There an Ideal Method?. [10.1109/jsen.2022.3209883](https://doi.org/10.1109/jsen.2022.3209883)
-  - — (n.d.). OpenSense: An open-source toolbox for inertial-measurement-unit-based measurement of lower extremity kinematics over long durations. [10.1186/s12984-022-01001-x](https://doi.org/10.1186/s12984-022-01001-x)
-  - — (n.d.). Inertial Measurement Unit to Segment Calibration Based on Physically Constrained Pose Generation. [10.9746/jcmsi.13.122](https://doi.org/10.9746/jcmsi.13.122)
+  - Matthew B. Rhudy et al. (2024). Knee Angle Estimation with Dynamic Calibration Using Inertial Measurement Units for Running. [10.3390/s24020695](https://doi.org/10.3390/s24020695)
+  - Mitchell Ekdahl et al. (2023). Inertial Measurement Unit Sensor-to-Segment Calibration Comparison for Sport-Specific Motion Analysis. [10.3390/s23187987](https://doi.org/10.3390/s23187987)
+  - Benjamin M. Presley et al. (2023). Balance Assessment Using a Smartwatch Inertial Measurement Unit with Principal Component Analysis for Anatomical Calibration. [10.3390/s23104585](https://doi.org/10.3390/s23104585)
+  - Léonie Pacher et al. (2022). Lower Limb Sensor-to-Segment Calibration for Joint Kinematics Analysis With Inertial Measurement Units: Is There an Ideal Method?. [10.1109/jsen.2022.3209883](https://doi.org/10.1109/jsen.2022.3209883)
+  - Mazen Al Borno et al. (2022). OpenSense: An open-source toolbox for inertial-measurement-unit-based measurement of lower extremity kinematics over long durations. [10.1186/s12984-022-01001-x](https://doi.org/10.1186/s12984-022-01001-x)
+  - Élcio Jeronimo de Oliveira et al. (2012). Inertial measurement unit calibration procedure for a redundant tetrahedral gyro configuration with wavelet denoising. [10.5028/jatm.2012.04026111](https://doi.org/10.5028/jatm.2012.04026111)
 
 ## event / time / network
 
@@ -660,12 +660,12 @@ This cluster covers event-based vision sensors (DVS/event cameras) and their app
 
 - 使う op: [`video_spacetime_cube`](../ops/videocube/cube/video_spacetime_cube.md)(時空間の立方体、video → voxel)、[`photon_sample`](../ops/photon/counting/photon_sample.md)(光子到達の標本化、image2d → image2d)、[`tcspc_stats`](../ops/photon/tcspc/tcspc_stats.md)(時間相関の統計、counts → table)、[`temporal_bandpass`](../ops/motionmag/temporal/temporal_bandpass.md)(時間帯域、video → video)、[`lens_system`](../ops/optics/design/lens_system.md)(レンズ系の定義、 → table)、[`paraxial_trace`](../ops/optics/design/paraxial_trace.md)(近軸追跡、table → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Neuromorphic vision: From sensors to event‐based algorithms. [10.1002/widm.1310](https://doi.org/10.1002/widm.1310)
-  - — (n.d.). Low-latency automotive vision with event cameras. [10.1038/s41586-024-07409-w](https://doi.org/10.1038/s41586-024-07409-w)
-  - — (n.d.). Neuromorphic vision sensors: Principle, progress and perspectives. [10.1088/1674-4926/42/1/013105](https://doi.org/10.1088/1674-4926/42/1/013105)
-  - — (n.d.). A new event-driven Dynamic Vision Sensor based Physical Unclonable Function for camera authentication in reactive monitoring system. [10.1109/asianhost.2016.7835551](https://doi.org/10.1109/asianhost.2016.7835551)
-  - — (n.d.). Back to Event Basics: Self-Supervised Learning of Image Reconstruction for Event Cameras via Photometric Constancy. [10.1109/cvpr46437.2021.00345](https://doi.org/10.1109/cvpr46437.2021.00345)
-  - — (n.d.). Memristor–CMOS Hybrid Circuits Implementing Event-Driven Neural Networks for Dynamic Vision Sensor Camera. [10.3390/mi15040426](https://doi.org/10.3390/mi15040426)
+  - Daniel Gehrig et al. (2024). Low-latency automotive vision with event cameras. [10.1038/s41586-024-07409-w](https://doi.org/10.1038/s41586-024-07409-w)
+  - R.H. Yoon et al. (2024). Memristor–CMOS Hybrid Circuits Implementing Event-Driven Neural Networks for Dynamic Vision Sensor Camera. [10.3390/mi15040426](https://doi.org/10.3390/mi15040426)
+  - Brian McReynolds et al. (2022). Experimental methods to predict dynamic vision sensor event camera performance. [10.1117/1.oe.61.7.074103](https://doi.org/10.1117/1.oe.61.7.074103)
+  - Shasha Guo et al. (2022). Low Cost and Latency Event Camera Background Activity Denoising. [10.1109/tpami.2022.3152999](https://doi.org/10.1109/tpami.2022.3152999)
+  - Antonio Vitale et al. (2021). Event-driven Vision and Control for UAVs on a Neuromorphic Chip. [10.1109/icra48506.2021.9560881](https://www.zora.uzh.ch/handle/20.500.14742/194237)
+  - Tobi Delbrück et al. (2013). Robotic goalie with 3 ms reaction time at 4% CPU load using event-based dynamic vision sensor. [10.3389/fnins.2013.00223](https://doi.org/10.3389/fnins.2013.00223)
 
 ### detection / intrusion / anomaly
 
@@ -673,24 +673,24 @@ This cluster covers intrusion detection and anomaly detection techniques across 
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Unsupervised real-time anomaly detection for streaming data. [10.1016/j.neucom.2017.04.070](https://doi.org/10.1016/j.neucom.2017.04.070)
-  - — (n.d.). Securing the CAN bus using deep learning for intrusion detection in vehicles. [10.1038/s41598-025-98433-x](https://doi.org/10.1038/s41598-025-98433-x)
-  - — (n.d.). Deep Learning Approach for Intelligent Intrusion Detection System. [10.1109/access.2019.2895334](https://doi.org/10.1109/access.2019.2895334)
-  - — (n.d.). CANet: An Unsupervised Intrusion Detection System for High Dimensional CAN Bus Data. [10.1109/access.2020.2982544](https://doi.org/10.1109/access.2020.2982544)
-  - — (n.d.). Intrusion Detection Method Using Bi-Directional GPT for in-Vehicle Controller Area Networks. [10.1109/access.2021.3110524](https://doi.org/10.1109/access.2021.3110524)
-  - — (n.d.). A Multi-Modal Distributed Real-Time IoT System for Urban Traffic Control (Invited Paper). [10.4230/oasics.ng-res.2024.2](https://doi.org/10.4230/oasics.ng-res.2024.2)
+  - Ritu Rai et al. (2025). Securing the CAN bus using deep learning for intrusion detection in vehicles. [10.1038/s41598-025-98433-x](https://doi.org/10.1038/s41598-025-98433-x)
+  - Dan Yang et al. (2024). A Multivariate Time Series Prediction Method for Automotive Controller Area Network Bus Data. [10.3390/electronics13142707](https://doi.org/10.3390/electronics13142707)
+  - Vinayak Tanksale (2024). Intrusion detection system for controller area network. [10.1186/s42400-023-00195-4](https://doi.org/10.1186/s42400-023-00195-4)
+  - Khanam et al. (2024). A Multi-Modal Distributed Real-Time IoT System for Urban Traffic Control (Invited Paper). [10.4230/oasics.ng-res.2024.2](https://drops.dagstuhl.de/entities/document/10.4230/OASIcs.NG-RES.2024.2)
+  - Natasha Alkhatib et al. (2022). CAN-BERT do it? Controller Area Network Intrusion Detection System based on BERT Language Model. [10.1109/aiccsa56895.2022.10017800](https://doi.org/10.1109/aiccsa56895.2022.10017800)
+  - Subutai Ahmad et al. (2017). Unsupervised real-time anomaly detection for streaming data. [10.1016/j.neucom.2017.04.070](https://doi.org/10.1016/j.neucom.2017.04.070)
 
 ### depth / flight / pixel
 
 This cluster covers time-of-flight (ToF) and depth imaging technologies, focusing on single-pixel and pixel-array sensor architectures for 3D distance measurement.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Single-pixel three-dimensional imaging with time-based depth resolution. [10.1038/ncomms12010](https://doi.org/10.1038/ncomms12010)
-  - — (n.d.). Global shutter‐mesh architecture with surround‐boosted driving scheme for time‐of‐flight depth sensors. [10.1049/el.2014.4392](https://doi.org/10.1049/el.2014.4392)
-  - — (n.d.). Histogram‐based mixed‐signal time‐to‐digital‐converter array for direct time‐of‐flight depth sensors. [10.1049/el.2018.7914](https://doi.org/10.1049/el.2018.7914)
-  - — (n.d.). Single-Shot Real-Time Multiple-Path Time-of-Flight Depth Imaging for Multi-Aperture and Macro-Pixel Sensors. [10.1109/icassp40776.2020.9054565](https://doi.org/10.1109/icassp40776.2020.9054565)
-  - — (n.d.). 5.2 A 1200×900 6µm 450fps Geiger-Mode Vertical Avalanche Photodiodes CMOS Image Sensor for a 250m Time-of-Flight Ranging System Using Direct-Indirect-Mixed Frame Synthesis with Configurable-Depth-Resolution Down to 10cm. [10.1109/isscc19947.2020.9063045](https://doi.org/10.1109/isscc19947.2020.9063045)
-  - — (n.d.). Bio-inspired Reconfigurable Elastomer-liquid Lens: Design, Actuation and Optimization. `W2523964655`
+  - Tatsuya Yui et al. (2026). A 25-Mpts/s Back-Illuminated Stacked SPAD Direct Time-of-Flight Depth Sensor With Equivalent Time Sampling and Pixel-Level Threshold Control for Automotive LiDAR. [10.1109/jssc.2026.3663598](https://doi.org/10.1109/jssc.2026.3663598)
+  - Tatsuya Yui et al. (2025). A 25M Points/s Back-Illuminated Stacked SPAD Direct Time-of-Flight Depth Sensor with Equivalent Time Sampling for Automotive LiDAR. [10.23919/vlsitechnologyandcir65189.2025.11075078](https://doi.org/10.23919/vlsitechnologyandcir65189.2025.11075078)
+  - Arthur F. Pétusseau et al. (2024). Subsurface fluorescence time-of-flight imaging using a large-format single-photon avalanche diode sensor for tumor depth assessment. [10.1117/1.jbo.29.1.016004](https://doi.org/10.1117/1.jbo.29.1.016004)
+  - István Gyöngy et al. (2023). A Direct Time-of-Flight Image Sensor With In-Pixel Surface Detection and Dynamic Vision. [10.1109/jstqe.2023.3238520](https://doi.org/10.1109/jstqe.2023.3238520)
+  - Jing Gao et al. (2023). A Deblurring Method for Indirect Time-of-Flight Depth Sensor. [10.1109/jsen.2022.3229687](https://doi.org/10.1109/jsen.2022.3229687)
+  - Mohamed Lamine Hafiane et al. (2012). Depth Resolution Enhancement Technique for CMOS Time-of-Flight 3-D Image Sensors. [10.1109/jsen.2012.2187350](https://doi.org/10.1109/jsen.2012.2187350)
 
 ### event / cameras / events
 
@@ -698,24 +698,24 @@ This cluster covers event-based camera technology and its applications in comput
 
 - 使う op: [`calibration_views`](../ops/optics/imaging_sim/calibration_views.md)(校正板の合成ビュー、table → table)、[`distortion_map`](../ops/optics/imaging_sim/distortion_map.md)(歪みの地図、table → table)、[`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(外部パラメータ、points × keypoints → pose)、[`bundle_adjust`](../ops/3d/bundle_adjust/bundle_adjust.md)(多視点の同時最適化、pose × points → table)、[`project_spherical`](../ops/3d/lidar_projection/project_spherical.md)(LiDAR の球面投影、points → image2d)、[`depth_to_points`](../ops/3d/transform/depth_to_points.md)(深度 → 点群、depth → points)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Video to Events: Recycling Video Datasets for Event Cameras. [10.1109/cvpr42600.2020.00364](https://doi.org/10.1109/cvpr42600.2020.00364)
-  - — (n.d.). Event-Based Vision Meets Deep Learning on Steering Prediction for Self-Driving Cars. [10.1109/cvpr.2018.00568](https://doi.org/10.1109/cvpr.2018.00568)
-  - — (n.d.). Events-To-Video: Bringing Modern Computer Vision to Event Cameras. [10.1109/cvpr.2019.00398](https://doi.org/10.1109/cvpr.2019.00398)
-  - — (n.d.). Focus Is All You Need: Loss Functions for Event-Based Vision. [10.1109/cvpr.2019.01256](https://doi.org/10.1109/cvpr.2019.01256)
-  - — (n.d.). CED: Color Event Camera Dataset. [10.1109/cvprw.2019.00215](https://doi.org/10.1109/cvprw.2019.00215)
-  - — (n.d.). Real-time Visual-Inertial Odometry for Event Cameras using Keyframe-based Nonlinear Optimization. [10.5244/c.31.16](https://doi.org/10.5244/c.31.16)
+  - Florian Mahlknecht et al. (2022). Exploring Event Camera-Based Odometry for Planetary Robots. [10.1109/lra.2022.3187826](https://doi.org/10.1109/lra.2022.3187826)
+  - Ling Gao et al. (2022). VECtor: A Versatile Event-Centric Benchmark for Multi-Sensor SLAM. [10.1109/lra.2022.3186770](https://doi.org/10.1109/lra.2022.3186770)
+  - Daniel Gehrig et al. (2021). Combining Events and Frames Using Recurrent Asynchronous Multimodal Networks for Monocular Depth Prediction. [10.1109/lra.2021.3060707](https://doi.org/10.1109/lra.2021.3060707)
+  - Sihao Sun et al. (2021). Autonomous Quadrotor Flight Despite Rotor Failure With Onboard Vision Sensors: Frames vs. Events. [10.1109/lra.2020.3048875](https://doi.org/10.1109/lra.2020.3048875)
+  - Etienne Pérot et al. (2020). Learning to Detect Objects with a 1 Megapixel Event Camera. [10.48550/arxiv.2009.13436](http://arxiv.org/abs/2009.13436)
+  - Elias Mueggler et al. (2015). Lifetime estimation of events from Dynamic Vision Sensors. [10.1109/icra.2015.7139876](https://doi.org/10.1109/icra.2015.7139876)
 
 ### deep / detection / neural
 
 This cluster covers neural network-based detection systems applied across diverse domains including video surveillance, defect identification, object recognition, and activity analysis.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Real-time video fire/smoke detection based on CNN in antifire surveillance systems. [10.1007/s11554-020-01044-0](https://doi.org/10.1007/s11554-020-01044-0)
-  - — (n.d.). State of the Art in Defect Detection Based on Machine Vision. [10.1007/s40684-021-00343-6](https://doi.org/10.1007/s40684-021-00343-6)
-  - — (n.d.). Vision-based Robot Manipulator for Industrial Applications. [10.1016/j.procs.2018.07.025](https://doi.org/10.1016/j.procs.2018.07.025)
-  - — (n.d.). Automatically identifying, counting, and describing wild animals in camera-trap images with deep learning. [10.1073/pnas.1719367115](https://doi.org/10.1073/pnas.1719367115)
-  - — (n.d.). FPGA-Based Accelerators of Deep Learning Networks for Learning and Classification: A Review. [10.1109/access.2018.2890150](https://doi.org/10.1109/access.2018.2890150)
-  - — (n.d.). ENet: A Deep Neural Network Architecture for Real-Time Semantic\n Segmentation. [10.48550/arxiv.1606.02147](https://doi.org/10.48550/arxiv.1606.02147)
+  - Qian Hui et al. (2025). A Review of Multi-Sensor Fusion in Autonomous Driving. [10.3390/s25196033](https://doi.org/10.3390/s25196033)
+  - Babar et al. (2024). DeepTrust^RT: Confidential Deep Neural Inference Meets Real-Time!. [10.4230/lipics.ecrts.2024.13](https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ECRTS.2024.13)
+  - Xing Chen et al. (2023). A Comprehensive Review of Deep Learning-Based PCB Defect Detection. [10.1109/access.2023.3339561](https://doi.org/10.1109/access.2023.3339561)
+  - Jia Yao et al. (2021). A Real-Time Detection Algorithm for Kiwifruit Defects Based on YOLOv5. [10.3390/electronics10141711](https://doi.org/10.3390/electronics10141711)
+  - Zhonghe Ren et al. (2021). State of the Art in Defect Detection Based on Machine Vision. [10.1007/s40684-021-00343-6](https://doi.org/10.1007/s40684-021-00343-6)
+  - Shaoqing Ren et al. (2015). Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks. [10.48550/arxiv.1506.01497](http://arxiv.org/abs/1506.01497)
 
 ### attacks / security / network
 
@@ -723,12 +723,12 @@ This cluster covers security vulnerabilities and defensive strategies in automot
 
 - 使う op: [`video_spacetime_cube`](../ops/videocube/cube/video_spacetime_cube.md)(時空間の立方体、video → voxel)、[`photon_sample`](../ops/photon/counting/photon_sample.md)(光子到達の標本化、image2d → image2d)、[`tcspc_stats`](../ops/photon/tcspc/tcspc_stats.md)(時間相関の統計、counts → table)、[`temporal_bandpass`](../ops/motionmag/temporal/temporal_bandpass.md)(時間帯域、video → video)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Formal timing analysis of CAN-to-Ethernet gateway strategies in automotive networks. [10.1007/s11241-015-9243-y](https://doi.org/10.1007/s11241-015-9243-y)
-  - — (n.d.). Time-Sensitive Networking in automotive embedded systems: State of the art and research opportunities. [10.1016/j.sysarc.2021.102137](https://doi.org/10.1016/j.sysarc.2021.102137)
-  - — (n.d.). An Intelligent Secured Framework for Cyberattack Detection in Electric Vehicles’ CAN Bus Using Machine Learning. [10.1109/access.2019.2937576](https://doi.org/10.1109/access.2019.2937576)
-  - — (n.d.). A Distributed Real-Time Operating System with Distributed Shared Memory for Embedded Control Systems. [10.1109/dasc.2013.71](https://doi.org/10.1109/dasc.2013.71)
-  - — (n.d.). CANShield: Deep-Learning-Based Intrusion Detection Framework for Controller Area Networks at the Signal Level. [10.1109/jiot.2023.3303271](https://doi.org/10.1109/jiot.2023.3303271)
-  - — (n.d.). Can We Trust AI-Powered Real-Time Embedded Systems? (Invited Paper). [10.4230/oasics.ng-res.2022.1](https://doi.org/10.4230/oasics.ng-res.2022.1)
+  - Seong Hoon Jeong et al. (2023). X-CANIDS: Signal-Aware Explainable Intrusion Detection System for Controller Area Network-Based In-Vehicle Network. [10.1109/tvt.2023.3327275](https://doi.org/10.1109/tvt.2023.3327275)
+  - Md Hasan Shahriar et al. (2023). CANShield: Deep-Learning-Based Intrusion Detection Framework for Controller Area Networks at the Signal Level. [10.1109/jiot.2023.3303271](https://doi.org/10.1109/jiot.2023.3303271)
+  - Bifta Sama Bari et al. (2023). Intrusion Detection in Vehicle Controller Area Network (CAN) Bus Using Machine Learning: A Comparative Performance Study. [10.3390/s23073610](https://doi.org/10.3390/s23073610)
+  - Theyazn H. H. Aldhyani et al. (2022). Attacks to Automatous Vehicles: A Deep Learning Algorithm for Cybersecurity. [10.3390/s22010360](https://doi.org/10.3390/s22010360)
+  - Buttazzo et al. (2022). Can We Trust AI-Powered Real-Time Embedded Systems? (Invited Paper). [10.4230/oasics.ng-res.2022.1](https://drops.dagstuhl.de/entities/document/10.4230/OASIcs.NG-RES.2022.1)
+  - Dip Goswami et al. (2012). Challenges in automotive cyber-physical systems design. [10.1109/samos.2012.6404199](https://doi.org/10.1109/samos.2012.6404199)
 
 ### depth / flight / tof
 
@@ -736,24 +736,24 @@ This cluster covers time-of-flight (ToF) depth sensing technologies and their ap
 
 - 使う op: [`calibration_views`](../ops/optics/imaging_sim/calibration_views.md)(校正板の合成ビュー、table → table)、[`distortion_map`](../ops/optics/imaging_sim/distortion_map.md)(歪みの地図、table → table)、[`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(外部パラメータ、points × keypoints → pose)、[`bundle_adjust`](../ops/3d/bundle_adjust/bundle_adjust.md)(多視点の同時最適化、pose × points → table)、[`project_spherical`](../ops/3d/lidar_projection/project_spherical.md)(LiDAR の球面投影、points → image2d)、[`depth_to_points`](../ops/3d/transform/depth_to_points.md)(深度 → 点群、depth → points)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Analyzing the potential of a time-of-flight depth sensor for assembly assistance. [10.1016/j.procs.2022.01.263](https://doi.org/10.1016/j.procs.2022.01.263)
-  - — (n.d.). Straightforward reconstruction of 3D surfaces and topography with a camera: Accuracy and geoscience application. [10.1029/2011jf002289](https://doi.org/10.1029/2011jf002289)
-  - — (n.d.). Noise modelling in time‐of‐flight sensors with application to depth noise removal and uncertainty estimation in three‐dimensional measurement. [10.1049/iet-cvi.2014.0135](https://doi.org/10.1049/iet-cvi.2014.0135)
-  - — (n.d.). Time-of-flight sensor fusion with depth measurement reliability weighting. [10.1109/3dtv.2014.6874759](https://doi.org/10.1109/3dtv.2014.6874759)
-  - — (n.d.). 3D Reconstruction With Time-of-Flight Depth Camera and Multiple Mirrors. [10.1109/access.2018.2854262](https://doi.org/10.1109/access.2018.2854262)
-  - — (n.d.). Comparing the performance of structured light depth sensors and traditional time-of-flight depth sensors for use in a lunar mining environment. `W3029073257`
+  - Cienna N. Becker et al. (2023). Plastic Classification Using Optical Parameter Features Measured with the TMF8801 Direct Time-of-Flight Depth Sensor. [10.3390/s23063324](https://doi.org/10.3390/s23063324)
+  - Daniel Niedermayr et al. (2022). Analyzing the potential of a time-of-flight depth sensor for assembly assistance. [10.1016/j.procs.2022.01.263](https://doi.org/10.1016/j.procs.2022.01.263)
+  - Yu He et al. (2020). Error correction of depth images for multiview time-of-flight vision sensors. [10.1177/1729881420942379](https://doi.org/10.1177/1729881420942379)
+  - Patrick Hübner et al. (2020). Evaluation of HoloLens Tracking and Depth Sensing for Indoor Mapping Applications. [10.3390/s20041021](https://doi.org/10.3390/s20041021)
+  - Kartik E. Cholachgudda et al. (2019). Geometric Calibration of a Time-of-Flight Depth Sensor and a Colour Camera Pair. [10.1109/icoac48765.2019.246859](https://doi.org/10.1109/icoac48765.2019.246859)
+  - Kourosh Khoshelham et al. (2012). Accuracy and Resolution of Kinect Depth Data for Indoor Mapping Applications. [10.3390/s120201437](https://doi.org/10.3390/s120201437)
 
 ### bus / automotive / vehicle
 
 This cluster covers security research on automotive vehicle networks, with primary focus on the Controller Area Network (CAN) bus—the dominant in-vehicle network protocol used in modern automobiles.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). can-train-and-test: A curated CAN dataset for automotive intrusion detection. [10.1016/j.cose.2024.103777](https://doi.org/10.1016/j.cose.2024.103777)
-  - — (n.d.). ReCAN – Dataset for reverse engineering of Controller Area Networks. [10.1016/j.dib.2020.105149](https://doi.org/10.1016/j.dib.2020.105149)
-  - — (n.d.). A survey of deep learning-based intrusion detection in automotive applications. [10.1016/j.eswa.2023.119771](https://doi.org/10.1016/j.eswa.2023.119771)
-  - — (n.d.). Analytical and Experimental Performance Evaluations of CAN-FD Bus. [10.1109/access.2018.2826522](https://doi.org/10.1109/access.2018.2826522)
-  - — (n.d.). LSTM-Based Intrusion Detection System for In-Vehicle Can Bus Communications. [10.1109/access.2020.3029307](https://doi.org/10.1109/access.2020.3029307)
-  - — (n.d.). State-of-the-Art Survey on In-Vehicle Network Communication (CAN-Bus) Security and Vulnerabilities. [10.48550/arxiv.1802.01725](https://doi.org/10.48550/arxiv.1802.01725)
+  - Brooke Lampe et al. (2024). can-train-and-test: A curated CAN dataset for automotive intrusion detection. [10.1016/j.cose.2024.103777](https://doi.org/10.1016/j.cose.2024.103777)
+  - Damilola Oladimeji et al. (2023). CANAttack: Assessing Vulnerabilities within Controller Area Network. [10.3390/s23198223](https://doi.org/10.3390/s23198223)
+  - Brooke Lampe et al. (2023). A survey of deep learning-based intrusion detection in automotive applications. [10.1016/j.eswa.2023.119771](https://doi.org/10.1016/j.eswa.2023.119771)
+  - Alessio Buscemi et al. (2023). A Survey on Controller Area Network Reverse Engineering. [10.1109/comst.2023.3264928](https://doi.org/10.1109/comst.2023.3264928)
+  - Brooke Lampe et al. (2023). Intrusion Detection in the Automotive Domain: A Comprehensive Review. [10.1109/comst.2023.3309864](https://doi.org/10.1109/comst.2023.3309864)
+  - Haklin Kimm et al. (2014). Controller Area Network for fault tolerant small satellite system design. [10.1109/isie.2014.6864590](https://doi.org/10.1109/isie.2014.6864590)
 
 ## rehabilitation / robot / control
 
@@ -782,12 +782,12 @@ This cluster covers the design, control, and optimization of robotic actuators a
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Energy-efficient and high-precision control of hydraulic robots. [10.1016/j.conengprac.2018.12.013](https://doi.org/10.1016/j.conengprac.2018.12.013)
-  - — (n.d.). Control of a biped robot driven by elastomer-based series elastic actuator. [10.1109/amc.2012.6197136](https://doi.org/10.1109/amc.2012.6197136)
-  - — (n.d.). Cycloid vs. harmonic drives for use in high ratio, single stage robotic transmissions. [10.1109/icra.2012.6224739](https://doi.org/10.1109/icra.2012.6224739)
-  - — (n.d.). A robotic manipulator design with novel soft actuators. [10.1109/icra.2017.7989220](https://doi.org/10.1109/icra.2017.7989220)
-  - — (n.d.). Series pneumatic artificial muscles (sPAMs) and application to a soft continuum robot. [10.1109/icra.2017.7989648](https://doi.org/10.1109/icra.2017.7989648)
-  - — (n.d.). Application of Proprioception Quasi-Direct Drive Actuators on Dynamic Robotic Systems. `W2997785869`
+  - Sijia Liu et al. (2024). Design and Control of an Untethered Robotic Tuna Based on a Hydraulic Soft Actuator. [10.1109/tmech.2024.3401111](https://doi.org/10.1109/tmech.2024.3401111)
+  - Xu Li et al. (2023). Design and Control for WLR-3P: A Hydraulic Wheel-Legged Robot. [10.34133/cbsystems.0025](https://doi.org/10.34133/cbsystems.0025)
+  - Edoardo Idà et al. (2022). Cable-Driven Parallel Robot Actuators: State of the Art and Novel Servo-Winch Concept. [10.3390/act11100290](https://doi.org/10.3390/act11100290)
+  - Barkan Uğurlu et al. (2021). Benchmarking Torque Control Strategies for a Torsion-Based Series Elastic Actuator. [10.1109/mra.2021.3124154](https://doi.org/10.1109/mra.2021.3124154)
+  - Mark W. Spong (2021). An Historical Perspective on the Control of Robotic Manipulators. [10.1146/annurev-control-042920-094829](https://doi.org/10.1146/annurev-control-042920-094829)
+  - Kouki Abe et al. (2012). Control of a biped robot driven by elastomer-based series elastic actuator. [10.1109/amc.2012.6197136](https://doi.org/10.1109/amc.2012.6197136)
 
 ### exoskeleton / rehabilitation / exoskeletons
 
@@ -795,12 +795,12 @@ This cluster covers the design, control, and implementation of exoskeletons and 
 
 - 使う op: [`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(カメラから物体の姿勢、points × keypoints → pose)、[`dlt_pose`](../ops/3d/pose_estimation/dlt_pose.md)(姿勢の直接解、points × keypoints → pose)、[`reprojection_error`](../ops/3d/pose_estimation/reprojection_error.md)(姿勢の検証、points × keypoints → measurement)、[`optimize_pose_graph`](../ops/3d/pose_graph/optimize_pose_graph.md)(軌跡の整合、pose → table)、[`relative_pose`](../ops/3d/pose_graph/relative_pose.md)(相対姿勢、pose × pose → pose)、[`register_cpd_rigid`](../ops/3d/deform/register_cpd_rigid.md)(剛体の位置合わせ、points × points → pose)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Design and control of an active knee orthosis driven by a rotary Series Elastic Actuator. [10.1016/j.conengprac.2015.09.008](https://doi.org/10.1016/j.conengprac.2015.09.008)
-  - — (n.d.). State-of-the-art research in robotic hip exoskeletons: A general review. [10.1016/j.jot.2019.09.006](https://doi.org/10.1016/j.jot.2019.09.006)
-  - — (n.d.). Series-elastic actuator with two degree-of-freedom PID control improves torque control in a powered knee exoskeleton. [10.1017/wtc.2023.20](https://doi.org/10.1017/wtc.2023.20)
-  - — (n.d.). Motion control of series-elastic actuators. [10.1109/acc.2016.7525610](https://doi.org/10.1109/acc.2016.7525610)
-  - — (n.d.). Force/torque sensorless impedance control for indirect driven robot-aided gait rehabilitation system. [10.1109/aim.2015.7222611](https://doi.org/10.1109/aim.2015.7222611)
-  - — (n.d.). Design of a Knee Exoskeleton Using Foot Pressure and Knee Torque Sensors. [10.5772/60782](https://doi.org/10.5772/60782)
+  - Daniel Jorge et al. (2025). Biomechanics-Informed Mechatronics Design of Comfort-Centered Portable Hip Exoskeleton: Actuator, Wearable Interface, Controller. [10.1109/tmrb.2025.3560394](https://doi.org/10.1109/tmrb.2025.3560394)
+  - Yves F. Nazon et al. (2025). Characterization of a Quasi-Direct Drive Knee Perturbation System for Mechanical Impedance Estimation. [10.1109/lra.2025.3539551](https://doi.org/10.1109/lra.2025.3539551)
+  - Susan Zhao et al. (2024). Design and Validation of a Modular, Backdrivable Ankle Exoskeleton. [10.1109/biorob60516.2024.10719721](https://doi.org/10.1109/biorob60516.2024.10719721)
+  - Julian Seiler et al. (2024). Human-Exoskeleton Interaction Force Estimation Based on Quasi-Direct Drive Actuators. [10.1109/biorob60516.2024.10719722](https://doi.org/10.1109/biorob60516.2024.10719722)
+  - Jennifer K. Leestma et al. (2024). Dynamic Duo: Design and Validation of an Autonomous Frontal and Sagittal Actuating Hip Exoskeleton for Balance Modulation During Perturbed Locomotion. [10.1109/lra.2024.3371290](https://doi.org/10.1109/lra.2024.3371290)
+  - Nikos Karavas et al. (2012). Design, modeling and control of a series elastic actuator for an assistive knee exoskeleton. [10.1109/biorob.2012.6290757](https://doi.org/10.1109/biorob.2012.6290757)
 
 ### pneumatic / artificial / muscle
 
@@ -808,12 +808,12 @@ This cluster covers pneumatic artificial muscles (PAMs) and related soft actuato
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Energy Efficient Trajectories for an Industrial ABB Robot. [10.1016/j.procir.2014.06.043](https://doi.org/10.1016/j.procir.2014.06.043)
-  - — (n.d.). The design and mathematical modelling of novel extensor bending pneumatic artificial muscles (EBPAMs) for soft exoskeletons. [10.1016/j.robot.2017.10.010](https://doi.org/10.1016/j.robot.2017.10.010)
-  - — (n.d.). Adaptive fuzzy sliding mode control of an actuator powered by two opposing pneumatic artificial muscles. [10.1038/s41598-023-34491-3](https://doi.org/10.1038/s41598-023-34491-3)
-  - — (n.d.). Mechanism and bias considerations for design of a bi-directional pneumatic artificial muscle actuator. [10.1088/0964-1726/23/12/125039](https://doi.org/10.1088/0964-1726/23/12/125039)
-  - — (n.d.). Dynamics of a pneumatic artificial muscle actuation system driving a trailing edge flap. [10.1088/0964-1726/23/9/095014](https://doi.org/10.1088/0964-1726/23/9/095014)
-  - — (n.d.). Practical active force control with iterative learning scheme applied to a pneumatic artificial muscle actuated robotic arm. `W328371564`
+  - QIN Yanding et al. (2025). Design and Control of a Pneumatic Artificial Muscle Actuated Exoskeleton Robot for Upper Limb Rehabilitation. [10.3901/jme.2025.03.225](https://doi.org/10.3901/jme.2025.03.225)
+  - Dexter Felix Brown et al. (2024). A Piecewise Particle Swarm Optimisation Modelling Method for Pneumatic Artificial Muscle Actuators. [10.3390/act13080286](https://doi.org/10.3390/act13080286)
+  - Yuta Takeda et al. (2024). Encrypted Simultaneous Control of Joint Angle and Stiffness of Antagonistic Pneumatic Artificial Muscle Actuator by Polynomial Approximation. [10.1109/tmech.2024.3405189](https://doi.org/10.1109/tmech.2024.3405189)
+  - Katalin Schäffer et al. (2024). Soft Wrist Exosuit Actuated by Fabric Pneumatic Artificial Muscles. [10.1109/tmrb.2024.3385795](https://doi.org/10.1109/tmrb.2024.3385795)
+  - Shuzhen Diao et al. (2023). Prescribed-Time Adaptive Fuzzy Control for Pneumatic Artificial Muscle-Actuated Parallel Robots With Input Constraints. [10.1109/tfuzz.2023.3341930](https://doi.org/10.1109/tfuzz.2023.3341930)
+  - Musa Mailah et al. (2012). Practical active force control with iterative learning scheme applied to a pneumatic artificial muscle actuated robotic arm. [W328371564](http://eprints.utm.my/id/eprint/47396/)
 
 ### legged / drive / quasi
 
@@ -821,12 +821,12 @@ This cluster covers actuator design and control systems for legged robots, focus
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Position control of hybrid pneumatic-electric actuators. [10.1109/acc.2012.6315400](https://doi.org/10.1109/acc.2012.6315400)
-  - — (n.d.). Additive manufacturing for agile legged robots with hydraulic actuation. [10.1109/icar.2015.7251444](https://doi.org/10.1109/icar.2015.7251444)
-  - — (n.d.). R2poweR: The Proof-of-Concept of a Backdrivable, High-Ratio Gearbox for Human-Robot Collaboration. [10.1109/icra46639.2022.9811923](https://doi.org/10.1109/icra46639.2022.9811923)
-  - — (n.d.). Cycloidal Quasi-Direct Drive Actuator Designs with Learning-Based Torque Estimation for Legged Robotics. [10.1109/icra55743.2025.11127436](https://doi.org/10.1109/icra55743.2025.11127436)
-  - — (n.d.). Design and Experimental Characterisation of a Novel Quasi-Direct Drive Actuator for Highly Dynamic Robotic Applications. [10.1109/icra57147.2024.10611567](https://doi.org/10.1109/icra57147.2024.10611567)
-  - — (n.d.). Quadrupedal Walking over Complex Terrain with a Quasi-Direct Drive Actuated Robot. [10.55417/fr.2022013](https://doi.org/10.55417/fr.2022013)
+  - Jonathan Mi et al. (2025). Design of a Variable Stiffness Quasi-Direct Drive Cable-Actuated Tensegrity Robot. [10.1109/lra.2025.3586519](https://doi.org/10.1109/lra.2025.3586519)
+  - Alvin Zhu et al. (2025). Cycloidal Quasi-Direct Drive Actuator Designs with Learning-Based Torque Estimation for Legged Robotics. [10.1109/icra55743.2025.11127436](https://doi.org/10.1109/icra55743.2025.11127436)
+  - Zhu et al. (2024). Cycloidal Quasi-Direct Drive Actuator Designs with Learning-based Torque Estimation for Legged Robotics. [10.48550/arxiv.2410.16591](http://arxiv.org/abs/2410.16591)
+  - C. Adrián Pérez-Díaz et al. (2024). Design and Experimental Characterisation of a Novel Quasi-Direct Drive Actuator for Highly Dynamic Robotic Applications. [10.1109/icra57147.2024.10611567](https://doi.org/10.1109/icra57147.2024.10611567)
+  - Takateru Yoshida et al. (2023). Experimental Evaluation of a Quasi-direct-drive Actuator with a 3D-printed Planetary Gear Reducer. [10.1109/sii55687.2023.10039274](https://doi.org/10.1109/sii55687.2023.10039274)
+  - Gary M. Bone et al. (2012). Position control of hybrid pneumatic-electric actuators. [10.1109/acc.2012.6315400](https://doi.org/10.1109/acc.2012.6315400)
 
 ### force / calibration / torque
 
@@ -834,24 +834,24 @@ This cluster covers the design, calibration, and application of six-axis force/t
 
 - 使う op: [`calibration_views`](../ops/optics/imaging_sim/calibration_views.md)(校正板の合成ビュー、table → table)、[`distortion_map`](../ops/optics/imaging_sim/distortion_map.md)(歪みの地図、table → table)、[`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(外部パラメータ、points × keypoints → pose)、[`bundle_adjust`](../ops/3d/bundle_adjust/bundle_adjust.md)(多視点の同時最適化、pose × points → table)、[`project_spherical`](../ops/3d/lidar_projection/project_spherical.md)(LiDAR の球面投影、points → image2d)、[`depth_to_points`](../ops/3d/transform/depth_to_points.md)(深度 → 点群、depth → points)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Design and Calibration of a Six-axis Force/torque Sensor with Large Measurement Range Used for the Space Manipulator. [10.1016/j.proeng.2014.12.699](https://doi.org/10.1016/j.proeng.2014.12.699)
-  - — (n.d.). Structural Design and Static Calibration of Six-axis Force/Torque Sensor. [10.1088/1742-6596/2557/1/012075](https://doi.org/10.1088/1742-6596/2557/1/012075)
-  - — (n.d.). A Polyetheretherketone Six-Axis Force/Torque Sensor. [10.1109/access.2019.2932387](https://doi.org/10.1109/access.2019.2932387)
-  - — (n.d.). Hybrid Deep Learning Approach of a 6-Axis Force-Torque Sensor Calibration for a Wheeled Humanoid Robot. [10.1109/aicconf64766.2025.11064254](https://doi.org/10.1109/aicconf64766.2025.11064254)
-  - — (n.d.). Contact force estimation for robotic assembly using motor torques. [10.1109/coase.2014.6899487](https://doi.org/10.1109/coase.2014.6899487)
-  - — (n.d.). On the Calibration of Force/Torque Sensors in Robotics. [10.48550/arxiv.1904.06158](https://doi.org/10.48550/arxiv.1904.06158)
+  - H. Meneses et al. (2025). Hybrid Deep Learning Approach of a 6-Axis Force-Torque Sensor Calibration for a Wheeled Humanoid Robot. [10.1109/aicconf64766.2025.11064254](https://doi.org/10.1109/aicconf64766.2025.11064254)
+  - Shuhan Li et al. (2024). Multiaxis Force/Torque Sensor Technologies: Design Principles and Robotic Force Control Applications: A Review. [10.1109/jsen.2024.3495507](https://doi.org/10.1109/jsen.2024.3495507)
+  - J. W. Hwang et al. (2024). Automated Calibration Robotic System Capable of Producing Versatile Force Combinations for Multiaxis Force/Torque Sensors. [10.1109/tii.2024.3359349](https://doi.org/10.1109/tii.2024.3359349)
+  - Hosameldin Awadalla Omer Mohamed et al. (2023). Nonlinear In-situ Calibration of Strain-Gauge Force/Torque Sensors for Humanoid Robots. [10.1109/humanoids57100.2023.10375227](http://dx.doi.org/10.1109/humanoids57100.2023.10375227)
+  - Shuge Li et al. (2023). Structural Design and Static Calibration of Six-axis Force/Torque Sensor. [10.1088/1742-6596/2557/1/012075](https://doi.org/10.1088/1742-6596/2557/1/012075)
+  - Andreas Stolt et al. (2012). Force controlled robotic assembly without a force sensor. [10.1109/icra.2012.6224837](https://doi.org/10.1109/icra.2012.6224837)
 
 ### impedance / elastic / series
 
 This cluster covers the design, control, and safety analysis of Series Elastic Actuators (SEAs) and their impedance characteristics.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Human-adaptive control of series elastic actuators. [10.1017/s0263574714001519](https://doi.org/10.1017/s0263574714001519)
-  - — (n.d.). Feedback parameter selection for impedance control of series elastic actuators. [10.1109/humanoids.2014.7041485](https://doi.org/10.1109/humanoids.2014.7041485)
-  - — (n.d.). Safe high impedance control of a series-elastic actuator with a disturbance observer. [10.1109/icra40945.2020.9197402](https://doi.org/10.1109/icra40945.2020.9197402)
-  - — (n.d.). Rendering viscoelasticity with Series Elastic Actuators using cascade control. [10.1109/icra.2014.6907196](https://doi.org/10.1109/icra.2014.6907196)
-  - — (n.d.). Relaxing the Conservatism of Passivity Condition for Impedance Controlled Series Elastic Actuators. [10.1109/iros40897.2019.8968217](https://doi.org/10.1109/iros40897.2019.8968217)
-  - — (n.d.). Impedance Control Approaches for Series Elastic Actuators. `W2399786964`
+  - Hyunwook Lee et al. (2024). Robust Elastic Structure Preserving Control for High Impedance Rendering of Series Elastic Actuator. [10.1109/lra.2024.3366016](https://doi.org/10.1109/lra.2024.3366016)
+  - Abner Asignacion et al. (2021). High-Stiffness Control of Series Elastic Actuators Using a Noise Reduction Disturbance Observer. [10.1109/tie.2021.3106016](https://doi.org/10.1109/tie.2021.3106016)
+  - Hyunwook Lee et al. (2020). Passivity Controller Based on Load-Side Damping Assignment for High Stiffness Controlled Series Elastic Actuators. [10.1109/tie.2020.3013751](https://doi.org/10.1109/tie.2020.3013751)
+  - Kevin Haninger et al. (2020). Safe high impedance control of a series-elastic actuator with a disturbance observer. [10.1109/icra40945.2020.9197402](https://doi.org/10.1109/icra40945.2020.9197402)
+  - Hyunwook Lee et al. (2019). Relaxing the Conservatism of Passivity Condition for Impedance Controlled Series Elastic Actuators. [10.1109/iros40897.2019.8968217](https://doi.org/10.1109/iros40897.2019.8968217)
+  - Nevio Luigi Tagliamonte et al. (2013). Passivity constraints for the impedance control of series elastic actuators. [10.1177/0959651813511615](https://doi.org/10.1177/0959651813511615)
 
 ### joint / robot / torque
 
@@ -859,24 +859,24 @@ This cluster covers advanced control and sensing techniques for robotic joints, 
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(全視野ひずみ、image2d × image2d → image2d)、[`piv_multipass`](../ops/piv/estimate/piv_multipass.md)(多段の変位推定、image2d × image2d → flow2d)、[`motion_magnify`](../ops/motionmag/magnify/motion_magnify.md)(微小変形の拡大、video → table)、[`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`vol_frangi`](../ops/3d/feature/vol_frangi.md)(CT 中の管状き裂の強調、voxel → voxel)、[`canny`](../ops/2d/segmentation/canny.md)(き裂のエッジ、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Adaptive neural tracking control for flexible joint robot including hydraulic actuator dynamics with disturbance observer. [10.1002/rnc.7412](https://doi.org/10.1002/rnc.7412)
-  - — (n.d.). Scaling laws for robotic transmissions. [10.1016/j.mechmachtheory.2019.06.027](https://doi.org/10.1016/j.mechmachtheory.2019.06.027)
-  - — (n.d.). Collaborative robot dynamics with physical human–robot interaction and parameter identification with PINN. [10.1016/j.mechmachtheory.2023.105439](https://doi.org/10.1016/j.mechmachtheory.2023.105439)
-  - — (n.d.). Decentralized integral sliding mode control for modular and reconfigurable robot with harmonic drive transmission based on joint torque estimation. [10.1109/ccdc.2015.7161920](https://doi.org/10.1109/ccdc.2015.7161920)
-  - — (n.d.). Design Harmonic Drive for Application in Robot Joint. [10.1109/icmee56406.2022.10093325](https://doi.org/10.1109/icmee56406.2022.10093325)
-  - — (n.d.). Design and Performance of Nonlinear Control for an Electro-Hydraulic Actuator Considering a Wearable Robot. [10.3390/pr7060389](https://doi.org/10.3390/pr7060389)
+  - Ya Chen et al. (2024). Harmonic drive friction loss based on an integrated joint for collaborative robots. [10.1142/s1793962325500072](https://doi.org/10.1142/s1793962325500072)
+  - Van Du Phan et al. (2024). Adaptive neural tracking control for flexible joint robot including hydraulic actuator dynamics with disturbance observer. [10.1002/rnc.7412](https://doi.org/10.1002/rnc.7412)
+  - Xingyu Yang et al. (2023). Collaborative robot dynamics with physical human–robot interaction and parameter identification with PINN. [10.1016/j.mechmachtheory.2023.105439](https://doi.org/10.1016/j.mechmachtheory.2023.105439)
+  - ThanhTrung Trang et al. (2022). Design Harmonic Drive for Application in Robot Joint. [10.1109/icmee56406.2022.10093325](https://doi.org/10.1109/icmee56406.2022.10093325)
+  - Xingyu Yang et al. (2022). Dynamic Modeling and Digital Twin of a Harmonic Drive Based Collaborative Robot Joint. [10.1109/icra46639.2022.9812458](https://doi.org/10.1109/icra46639.2022.9812458)
+  - Hongwei Zhang et al. (2013). Torque estimation technique of robotic joint with harmonic drive transmission. [10.1109/icra.2013.6630998](https://doi.org/10.1109/icra.2013.6630998)
 
 ### elastic / sea / series
 
 This cluster covers the control theory, design methodologies, and practical implementations of series elastic actuators—mechanical systems with compliant springs in series with actuators used in robotics and prosthetics.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). On practical solutions of series elastic actuator control in the context of active disturbance rejection. [10.1002/adc2.69](https://doi.org/10.1002/adc2.69)
-  - — (n.d.). Actuator Control for the NASA‐JSC Valkyrie Humanoid Robot: A Decoupled Dynamics Approach for Torque Control of Series Elastic Robots. [10.1002/rob.21556](https://doi.org/10.1002/rob.21556)
-  - — (n.d.). Improving the Dynamic Force Control of Series Elastic Actuation Using Motors of High Torque-to-Inertia Ratios. [10.1109/access.2020.2963885](https://doi.org/10.1109/access.2020.2963885)
-  - — (n.d.). Design and torque-mode control of a cable-driven rotary series elastic actuator for subject-robot interaction. [10.1109/aim.2015.7222525](https://doi.org/10.1109/aim.2015.7222525)
-  - — (n.d.). Model based control of series elastic actuators. [10.1109/biorob.2012.6290300](https://doi.org/10.1109/biorob.2012.6290300)
-  - — (n.d.). Novel series elastic actuator design and velocity control. `W2348940036`
+  - Xiaoqian Ren et al. (2022). Integrated Task Sensing and Whole Body Control for Mobile Manipulation With Series Elastic Actuators. [10.1109/tase.2022.3156127](https://doi.org/10.1109/tase.2022.3156127)
+  - Igor Shardyko et al. (2021). Series Elastic Actuator Control Based on Active Damping Injection with Positive Torque Feedback. [10.1109/icieam51226.2021.9446352](https://doi.org/10.1109/icieam51226.2021.9446352)
+  - Jinfeng Chen et al. (2021). On practical solutions of series elastic actuator control in the context of active disturbance rejection. [10.1002/adc2.69](https://doi.org/10.1002/adc2.69)
+  - Haoran Zhong et al. (2021). Toward Safe Human–Robot Interaction: A Fast- Response Admittance Control Method for Series Elastic Actuator. [10.1109/tase.2021.3057883](https://doi.org/10.1109/tase.2021.3057883)
+  - Yeongtae Jung et al. (2020). Torque Control of a Series Elastic Tendon-Sheath Actuation Mechanism. [10.1109/tmech.2020.2997945](https://doi.org/10.1109/tmech.2020.2997945)
+  - Markus Grün et al. (2012). Model based control of series elastic actuators. [10.1109/biorob.2012.6290300](https://doi.org/10.1109/biorob.2012.6290300)
 
 ## soft / materials / tactile
 
@@ -905,12 +905,12 @@ This cluster covers the convergence of soft materials, tactile sensing, and inte
 This cluster covers hydrogel materials—polymer networks infiltrated with water—and their physical and functional properties.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Recent Progress in Biomimetic Anisotropic Hydrogel Actuators. [10.1002/advs.201801584](https://doi.org/10.1002/advs.201801584)
-  - — (n.d.). Hydrogel fibers for wearable sensors and soft actuators. [10.1016/j.isci.2023.106796](https://doi.org/10.1016/j.isci.2023.106796)
-  - — (n.d.). Soft Materials by Design: Unconventional Polymer Networks Give Extreme Properties. [10.1021/acs.chemrev.0c01088](https://doi.org/10.1021/acs.chemrev.0c01088)
-  - — (n.d.). Peptide-enhanced tough, resilient and adhesive eutectogels for highly reliable strain/pressure sensing under extreme conditions. [10.1038/s41467-022-34522-z](https://doi.org/10.1038/s41467-022-34522-z)
-  - — (n.d.). Ultrarobust subzero healable materials enabled by polyphenol nano-assemblies. [10.1038/s41467-023-36461-9](https://doi.org/10.1038/s41467-023-36461-9)
-  - — (n.d.). Textile-Based Weft Knitted Strain Sensors: Effect of Fabric Parameters on Sensor Properties. [10.3390/s130811114](https://doi.org/10.3390/s130811114)
+  - Jiaxuan Du et al. (2023). Hydrogel fibers for wearable sensors and soft actuators. [10.1016/j.isci.2023.106796](https://doi.org/10.1016/j.isci.2023.106796)
+  - Nan Wang et al. (2023). Ultrarobust subzero healable materials enabled by polyphenol nano-assemblies. [10.1038/s41467-023-36461-9](https://doi.org/10.1038/s41467-023-36461-9)
+  - Yan Zhang et al. (2022). Peptide-enhanced tough, resilient and adhesive eutectogels for highly reliable strain/pressure sensing under extreme conditions. [10.1038/s41467-022-34522-z](https://doi.org/10.1038/s41467-022-34522-z)
+  - Xiaoxing Xia et al. (2022). Responsive materials architected in space and time. [10.1038/s41578-022-00450-z](https://doi.org/10.1038/s41578-022-00450-z)
+  - Fiona Diehl et al. (2022). Plasmonic nanomaterials with responsive polymer hydrogels for sensing and actuation. [10.1039/d1cs01083b](https://doi.org/10.1039/d1cs01083b)
+  - Özgür Atalay et al. (2013). Textile-Based Weft Knitted Strain Sensors: Effect of Fabric Parameters on Sensor Properties. [10.3390/s130811114](https://doi.org/10.3390/s130811114)
 
 ### soft / materials / actuators
 
@@ -918,12 +918,12 @@ This cluster covers soft actuators and materials used in soft robotics systems, 
 
 - 使う op: [`tac_contact_mask`](../ops/2d/tactile/tac_contact_mask.md)(接触域、image → region)、[`tac_pressure_proxy`](../ops/2d/tactile/tac_pressure_proxy.md)(圧力の代理量、image → image)、[`tac_shear_field`](../ops/2d/tactile/tac_shear_field.md)(ずれ場、image → image)、[`tac_surface_normal`](../ops/2d/tactile/tac_surface_normal.md)(接触面の法線、image → image)、[`tac_height_from_shading`](../ops/2d/tactile/tac_height_from_shading.md)(陰影からの高さ、image → image)、[`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Pneumatic Networks for Soft Robotics that Actuate Rapidly. [10.1002/adfm.201303288](https://doi.org/10.1002/adfm.201303288)
-  - — (n.d.). Fast‐Response, Stiffness‐Tunable Soft Actuator by Hybrid Multimaterial 3D Printing. [10.1002/adfm.201806698](https://doi.org/10.1002/adfm.201806698)
-  - — (n.d.). Magnetic Actuation Methods in Bio/Soft Robotics. [10.1002/adfm.202005137](https://doi.org/10.1002/adfm.202005137)
-  - — (n.d.). 25th Anniversary Article: A Soft Future: From Robots and Sensor Skin to Energy Harvesters. [10.1002/adma.201303349](https://doi.org/10.1002/adma.201303349)
-  - — (n.d.). Soft Actuators for Small‐Scale Robotics. [10.1002/adma.201603483](https://doi.org/10.1002/adma.201603483)
-  - — (n.d.). Bioinspired Hydrogels as Platforms for Life-Science Applications: Challenges and Opportunities. [10.3390/polym14122365](https://doi.org/10.3390/polym14122365)
+  - Yeongju Jung et al. (2024). Untethered soft actuators for soft standalone robotics. [10.1038/s41467-024-47639-0](https://doi.org/10.1038/s41467-024-47639-0)
+  - Chongjing Cao et al. (2024). Actuation strategy characterizations of a vibro-impact crawling robot driven by dielectric elastomer actuators. [10.1088/1361-665x/ad3ecd](https://doi.org/10.1088/1361-665x/ad3ecd)
+  - Yipin Su et al. (2024). Electromechanical Deformations and Bifurcations in Soft Dielectrics: A Review. [10.3390/ma17071499](https://doi.org/10.3390/ma17071499)
+  - Yuzhe Wang et al. (2024). Pioneering healthcare with soft robotic devices: A review. [10.1002/smmd.20230045](https://doi.org/10.1002/smmd.20230045)
+  - Haifeng Xu et al. (2024). 3D nanofabricated soft microrobots with super-compliant picoforce springs as onboard sensors and actuators. [10.1038/s41565-023-01567-0](https://doi.org/10.1038/s41565-023-01567-0)
+  - Hod Lipson (2013). Challenges and Opportunities for Design, Simulation, and Fabrication of Soft Robots. [10.1089/soro.2013.0007](https://doi.org/10.1089/soro.2013.0007)
 
 ### haptic / sensory / pressure
 
@@ -931,12 +931,12 @@ This cluster addresses the design, fabrication, and application of haptic and se
 
 - 使う op: [`tac_contact_mask`](../ops/2d/tactile/tac_contact_mask.md)(接触域、image → region)、[`tac_pressure_proxy`](../ops/2d/tactile/tac_pressure_proxy.md)(圧力の代理量、image → image)、[`tac_shear_field`](../ops/2d/tactile/tac_shear_field.md)(ずれ場、image → image)、[`tac_surface_normal`](../ops/2d/tactile/tac_surface_normal.md)(接触面の法線、image → image)、[`tac_height_from_shading`](../ops/2d/tactile/tac_height_from_shading.md)(陰影からの高さ、image → image)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). An Artificial Sensory Neuron with Tactile Perceptual Learning. [10.1002/adma.201801291](https://doi.org/10.1002/adma.201801291)
-  - — (n.d.). Cutaneous Electrohydraulic (CUTE) Wearable Devices for Pleasant Broad‐Bandwidth Haptic Cues. [10.1002/advs.202402461](https://doi.org/10.1002/advs.202402461)
-  - — (n.d.). Cellular shape micromachined actuator ribbons. [10.1038/s41378-022-00421-y](https://doi.org/10.1038/s41378-022-00421-y)
-  - — (n.d.). A multifunctional soft robotic shape display with high-speed actuation, sensing, and control. [10.1038/s41467-023-39842-2](https://doi.org/10.1038/s41467-023-39842-2)
-  - — (n.d.). HaPouch: A Miniaturized, Soft, and Wearable Haptic Display Device Using a Liquid-to-Gas Phase Change Actuator. [10.1109/access.2022.3141385](https://doi.org/10.1109/access.2022.3141385)
-  - — (n.d.). Handshake Feedback in a Haptic Glove Using Pouch Actuators. [10.3390/act12020051](https://doi.org/10.3390/act12020051)
+  - Natalia Sanchez‐Tamayo et al. (2024). Cutaneous Electrohydraulic (CUTE) Wearable Devices for Pleasant Broad‐Bandwidth Haptic Cues. [10.1002/advs.202402461](https://doi.org/10.1002/advs.202402461)
+  - Brian K. Johnson et al. (2023). A multifunctional soft robotic shape display with high-speed actuation, sensing, and control. [10.1038/s41467-023-39842-2](https://doi.org/10.1038/s41467-023-39842-2)
+  - Seiya Yamaguchi et al. (2023). Handshake Feedback in a Haptic Glove Using Pouch Actuators. [10.3390/act12020051](https://doi.org/10.3390/act12020051)
+  - Amin Abbasalipour et al. (2022). Cellular shape micromachined actuator ribbons. [10.1038/s41378-022-00421-y](https://doi.org/10.1038/s41378-022-00421-y)
+  - Ryusei Uramune et al. (2022). HaPouch: A Miniaturized, Soft, and Wearable Haptic Display Device Using a Liquid-to-Gas Phase Change Actuator. [10.1109/access.2022.3141385](https://doi.org/10.1109/access.2022.3141385)
+  - Marco Aggravi et al. (2018). Design and Evaluation of a Wearable Haptic Device for Skin Stretch, Pressure, and Vibrotactile Stimuli. [10.1109/lra.2018.2810887](https://doi.org/10.1109/lra.2018.2810887)
 
 ### tactile / sensor / skin
 
@@ -944,12 +944,12 @@ This cluster covers the design, fabrication, and integration of tactile and forc
 
 - 使う op: [`calibration_views`](../ops/optics/imaging_sim/calibration_views.md)(校正板の合成ビュー、table → table)、[`distortion_map`](../ops/optics/imaging_sim/distortion_map.md)(歪みの地図、table → table)、[`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(外部パラメータ、points × keypoints → pose)、[`bundle_adjust`](../ops/3d/bundle_adjust/bundle_adjust.md)(多視点の同時最適化、pose × points → table)、[`project_spherical`](../ops/3d/lidar_projection/project_spherical.md)(LiDAR の球面投影、points → image2d)、[`depth_to_points`](../ops/3d/transform/depth_to_points.md)(深度 → 点群、depth → points)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Finger‐Skin‐Inspired Flexible Optical Sensor for Force Sensing and Slip Detection in Robotic Grasping. [10.1002/admt.202100285](https://doi.org/10.1002/admt.202100285)
-  - — (n.d.). Human‐Like Electronic Skin‐Integrated Soft Robotic Hand. [10.1002/aisy.201900018](https://doi.org/10.1002/aisy.201900018)
-  - — (n.d.). Design and analysis of an origami-based three-finger manipulator. [10.1017/s0263574717000340](https://doi.org/10.1017/s0263574717000340)
-  - — (n.d.). Fully Printed Flexible Fingerprint-like Three-Axis Tactile and Slip Force and Temperature Sensors for Artificial Skin. [10.1021/nn506293y](https://doi.org/10.1021/nn506293y)
-  - — (n.d.). Triboelectric nanogenerator sensors for soft robotics aiming at digital twin applications. [10.1038/s41467-020-19059-3](https://doi.org/10.1038/s41467-020-19059-3)
-  - — (n.d.). Improved GelSight tactile sensor for measuring geometry and slip. `W3104208381`
+  - Branden Romero et al. (2024). EyeSight Hand: Design of a Fully-Actuated Dexterous Robot Hand with Integrated Vision-Based Tactile Sensors and Compliant Actuation. [10.1109/iros58592.2024.10802778](https://doi.org/10.1109/iros58592.2024.10802778)
+  - Jaime Hernandez et al. (2023). Current Designs of Robotic Arm Grippers: A Comprehensive Systematic Review. [10.3390/robotics12010005](https://doi.org/10.3390/robotics12010005)
+  - Zeyu Lu et al. (2022). GTac: A Biomimetic Tactile Sensor With Skin-Like Heterogeneous Force Feedback for Robots. [10.1109/jsen.2022.3181128](https://doi.org/10.1109/jsen.2022.3181128)
+  - Kyungseo Park et al. (2022). A biomimetic elastomeric robot skin using electrical impedance and acoustic tomography for tactile sensing. [10.1126/scirobotics.abm7187](https://doi.org/10.1126/scirobotics.abm7187)
+  - Huanbo Sun et al. (2022). A soft thumb-sized vision-based sensor with accurate all-round force perception. [10.1038/s42256-021-00439-3](https://doi.org/10.1038/s42256-021-00439-3)
+  - Ravinder Dahiya et al. (2013). Directions Toward Effective Utilization of Tactile Skin: A Review. [10.1109/jsen.2013.2279056](https://doi.org/10.1109/jsen.2013.2279056)
 
 ### tactile / skin / sensors
 
@@ -957,12 +957,12 @@ This cluster covers the design, development, and application of tactile sensors 
 
 - 使う op: [`calibration_views`](../ops/optics/imaging_sim/calibration_views.md)(校正板の合成ビュー、table → table)、[`distortion_map`](../ops/optics/imaging_sim/distortion_map.md)(歪みの地図、table → table)、[`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(外部パラメータ、points × keypoints → pose)、[`bundle_adjust`](../ops/3d/bundle_adjust/bundle_adjust.md)(多視点の同時最適化、pose × points → table)、[`project_spherical`](../ops/3d/lidar_projection/project_spherical.md)(LiDAR の球面投影、points → image2d)、[`depth_to_points`](../ops/3d/transform/depth_to_points.md)(深度 → 点群、depth → points)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Recent Progress in Flexible Pressure Sensors Based Electronic Skin. [10.1002/adem.202001187](https://doi.org/10.1002/adem.202001187)
-  - — (n.d.). Energy‐Autonomous, Flexible, and Transparent Tactile Skin. [10.1002/adfm.201606287](https://doi.org/10.1002/adfm.201606287)
-  - — (n.d.). Bioinspired Triboelectric Nanogenerators as Self‐Powered Electronic Skin for Robotic Tactile Sensing. [10.1002/adfm.201907312](https://doi.org/10.1002/adfm.201907312)
-  - — (n.d.). Nanomaterial‐Enabled Wearable Sensors for Healthcare. [10.1002/adhm.201700889](https://doi.org/10.1002/adhm.201700889)
-  - — (n.d.). 25th Anniversary Article: The Evolution of Electronic Skin (E‐Skin): A Brief History, Design Considerations, and Recent Progress. [10.1002/adma.201302240](https://doi.org/10.1002/adma.201302240)
-  - — (n.d.). Embedded sensing: integrating sensors in 3-D printed structures. [10.5194/jsss-7-169-2018](https://doi.org/10.5194/jsss-7-169-2018)
+  - Shuai Wang et al. (2024). A Skin-Inspired High-Performance Tactile Sensor for Accurate Recognition of Object Softness. [10.1021/acsnano.4c04100](https://doi.org/10.1021/acsnano.4c04100)
+  - Justyna Gołąbek et al. (2024). A Review of Recent Advances in Human-Motion Energy Harvesting Nanogenerators, Self-Powering Smart Sensors and Self-Charging Electronics. [10.3390/s24041069](https://doi.org/10.3390/s24041069)
+  - Zhiwei Lin et al. (2023). Insights into Materials, Physics, and Applications in Flexible and Wearable Acoustic Sensing Technology. [10.1002/adma.202306880](https://doi.org/10.1002/adma.202306880)
+  - Yuyao Lu et al. (2023). Machine Learning‐Enabled Tactile Sensor Design for Dynamic Touch Decoding. [10.1002/advs.202303949](https://doi.org/10.1002/advs.202303949)
+  - Sugato Hajra et al. (2023). Revolutionizing self-powered robotic systems with triboelectric nanogenerators. [10.1016/j.nanoen.2023.108729](https://doi.org/10.1016/j.nanoen.2023.108729)
+  - Perla Maiolino et al. (2013). A Flexible and Robust Large Scale Capacitive Tactile System for Robots. [10.1109/jsen.2013.2258149](https://doi.org/10.1109/jsen.2013.2258149)
 
 ### muscles / soft / artificial
 
@@ -970,12 +970,12 @@ This cluster covers the design, fabrication, and application of soft artificial 
 
 - 使う op: [`tac_contact_mask`](../ops/2d/tactile/tac_contact_mask.md)(接触域、image → region)、[`tac_pressure_proxy`](../ops/2d/tactile/tac_pressure_proxy.md)(圧力の代理量、image → image)、[`tac_shear_field`](../ops/2d/tactile/tac_shear_field.md)(ずれ場、image → image)、[`tac_surface_normal`](../ops/2d/tactile/tac_surface_normal.md)(接触面の法線、image → image)、[`tac_height_from_shading`](../ops/2d/tactile/tac_height_from_shading.md)(陰影からの高さ、image → image)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Miniature Soft Electromagnetic Actuators for Robotic Applications. [10.1002/adfm.201800244](https://doi.org/10.1002/adfm.201800244)
-  - — (n.d.). Soft Electromagnetic Artificial Muscles Using High‐Density Liquid‐Metal Solenoid Coils and Bistable Stretchable Magnetic Housings. [10.1002/adfm.202302895](https://doi.org/10.1002/adfm.202302895)
-  - — (n.d.). Liquid Crystal Elastomer Hollow Fibers as Artificial Muscles with Large and Rapid Actuation Enabled by Thermal‐Pneumatic Enhanced Effect. [10.1002/adfm.202402403](https://doi.org/10.1002/adfm.202402403)
-  - — (n.d.). Artificial Muscles: Mechanisms, Applications, and Challenges. [10.1002/adma.201704407](https://doi.org/10.1002/adma.201704407)
-  - — (n.d.). 3D Printing of Liquid Crystal Elastomeric Actuators with Spatially Programed Nematic Order. [10.1002/adma.201706164](https://doi.org/10.1002/adma.201706164)
-  - — (n.d.). Light-Driven Linear Inchworm Motor Based on Liquid Crystal Elastomer Actuators Fabricated with Rubbing Overwriting. [10.3390/ma14216688](https://doi.org/10.3390/ma14216688)
+  - Aliya Zhagiparova et al. (2025). Recent Developments in Pneumatic Artificial Muscle Actuators. [10.3390/act14120582](https://doi.org/10.3390/act14120582)
+  - Jiazhe Ma et al. (2024). Liquid Crystal Elastomer Hollow Fibers as Artificial Muscles with Large and Rapid Actuation Enabled by Thermal‐Pneumatic Enhanced Effect. [10.1002/adfm.202402403](https://doi.org/10.1002/adfm.202402403)
+  - Miao Feng et al. (2023). X-crossing pneumatic artificial muscles. [10.1126/sciadv.adi7133](https://doi.org/10.1126/sciadv.adi7133)
+  - Jiseong Shin et al. (2023). Thermo-Pneumatic Artificial Muscle: Air-Based Thermo-Pneumatic Artificial Muscles for Pumpless Pneumatic Actuation. [10.1089/soro.2022.0229](https://doi.org/10.1089/soro.2022.0229)
+  - Gyowook Shin et al. (2023). Soft Electromagnetic Artificial Muscles Using High‐Density Liquid‐Metal Solenoid Coils and Bistable Stretchable Magnetic Housings. [10.1002/adfm.202302895](https://doi.org/10.1002/adfm.202302895)
+  - Benjamin Woods et al. (2012). Fatigue life testing of swaged pneumatic artificial muscles as actuators for aerospace applications. [10.1177/1045389x11433495](https://doi.org/10.1177/1045389x11433495)
 
 ### tactile / haptic / skin
 
@@ -983,12 +983,12 @@ This cluster covers haptic and tactile technologies that enable touch sensation 
 
 - 使う op: [`tac_contact_mask`](../ops/2d/tactile/tac_contact_mask.md)(接触域、image → region)、[`tac_pressure_proxy`](../ops/2d/tactile/tac_pressure_proxy.md)(圧力の代理量、image → image)、[`tac_shear_field`](../ops/2d/tactile/tac_shear_field.md)(ずれ場、image → image)、[`tac_surface_normal`](../ops/2d/tactile/tac_surface_normal.md)(接触面の法線、image → image)、[`tac_height_from_shading`](../ops/2d/tactile/tac_height_from_shading.md)(陰影からの高さ、image → image)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Haptic Perception, Mechanics, and Material Technologies for Virtual Reality. [10.1002/adfm.202008186](https://doi.org/10.1002/adfm.202008186)
-  - — (n.d.). Recent Advances and Opportunities of Active Materials for Haptic Technologies in Virtual and Augmented Reality. [10.1002/adfm.202008831](https://doi.org/10.1002/adfm.202008831)
-  - — (n.d.). Soft Somatosensitive Actuators via Embedded 3D Printing. [10.1002/adma.201706383](https://doi.org/10.1002/adma.201706383)
-  - — (n.d.). Biomimetic Hairy Whiskers for Robotic Skin Tactility. [10.1002/adma.202101891](https://doi.org/10.1002/adma.202101891)
-  - — (n.d.). Wearable Triboelectric Visual Sensors for Tactile Perception. [10.1002/adma.202209117](https://doi.org/10.1002/adma.202209117)
-  - — (n.d.). Novel Tactile Sensor Technology and Smart Tactile Sensing Systems: A Review. [10.3390/s17112653](https://doi.org/10.3390/s17112653)
+  - Chun Ki Yiu et al. (2025). Skin-interfaced multimodal sensing and tactile feedback system as enhanced human-machine interface for closed-loop drone control. [10.1126/sciadv.adt6041](https://doi.org/10.1126/sciadv.adt6041)
+  - Yanhua Liu et al. (2025). Triboelectric tactile sensor for pressure and temperature sensing in high-temperature applications. [10.1038/s41467-024-55771-0](https://doi.org/10.1038/s41467-024-55771-0)
+  - Yuan Guo et al. (2024). Active electronic skin: an interface towards ambient haptic feedback on physical surfaces. [10.1038/s41528-024-00311-5](https://doi.org/10.1038/s41528-024-00311-5)
+  - Chao Dang et al. (2024). Fibres—threads of intelligence—enable a new generation of wearable systems. [10.1039/d4cs00286e](https://doi.org/10.1039/d4cs00286e)
+  - Haiyan Qiao et al. (2023). Non‐equilibrium‐Growing Aesthetic Ionic Skin for Fingertip‐Like Strain‐Undisturbed Tactile Sensation and Texture Recognition. [10.1002/adma.202300593](https://doi.org/10.1002/adma.202300593)
+  - Harshal Sonar et al. (2016). Soft Pneumatic Actuator Skin with Piezoelectric Sensors for Vibrotactile Feedback. [10.3389/frobt.2015.00038](https://doi.org/10.3389/frobt.2015.00038)
 
 ### soft / robots / robotics
 
@@ -996,12 +996,12 @@ This cluster covers soft robotics and robotic systems that utilize flexible, com
 
 - 使う op: [`tac_contact_mask`](../ops/2d/tactile/tac_contact_mask.md)(接触域、image → region)、[`tac_pressure_proxy`](../ops/2d/tactile/tac_pressure_proxy.md)(圧力の代理量、image → image)、[`tac_shear_field`](../ops/2d/tactile/tac_shear_field.md)(ずれ場、image → image)、[`tac_surface_normal`](../ops/2d/tactile/tac_surface_normal.md)(接触面の法線、image → image)、[`tac_height_from_shading`](../ops/2d/tactile/tac_height_from_shading.md)(陰影からの高さ、image → image)、[`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(カメラから物体の姿勢、points × keypoints → pose)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Elastic Inflatable Actuators for Soft Robotic Applications. [10.1002/adma.201604977](https://doi.org/10.1002/adma.201604977)
-  - — (n.d.). Soft Robotic Manipulators: Designs, Actuation, Stiffness Tuning, and Sensing. [10.1002/admt.202100018](https://doi.org/10.1002/admt.202100018)
-  - — (n.d.). Toward Perceptive Soft Robots: Progress and Challenges. [10.1002/advs.201800541](https://doi.org/10.1002/advs.201800541)
-  - — (n.d.). Advanced Intelligent Systems for Surgical Robotics. [10.1002/aisy.201900138](https://doi.org/10.1002/aisy.201900138)
-  - — (n.d.). Magnetic Actuation Systems for Miniature Robots: A Review. [10.1002/aisy.202000082](https://doi.org/10.1002/aisy.202000082)
-  - — (n.d.). Continuous Backbone “Continuum” Robot Manipulators. [10.5402/2013/726506](https://doi.org/10.5402/2013/726506)
+  - Keisuke Iguchi et al. (2024). Agile robotic fish based on direct drive of continuum body. [10.1038/s44182-024-00014-z](https://doi.org/10.1038/s44182-024-00014-z)
+  - Kumar J. Jyothish et al. (2024). A Survey on Robotic Prosthetics: Neuroprosthetics, Soft Actuators, and Control Strategies. [10.1145/3648355](https://doi.org/10.1145/3648355)
+  - Afonso Silva et al. (2024). Integrated Design and Fabrication of Pneumatic Soft Robot Actuators in a Single Casting Step. [10.34133/cbsystems.0137](https://doi.org/10.34133/cbsystems.0137)
+  - Feifei Chen et al. (2023). Morphological Design for Pneumatic Soft Actuators and Robots With Desired Deformation Behavior. [10.1109/tro.2023.3323825](https://doi.org/10.1109/tro.2023.3323825)
+  - Chidanand Hegde et al. (2023). Sensing in Soft Robotics. [10.1021/acsnano.3c04089](https://doi.org/10.1021/acsnano.3c04089)
+  - Ryan Beasley (2012). Medical Robots: Current Systems and Research Directions. [10.1155/2012/401613](https://doi.org/10.1155/2012/401613)
 
 ## op → クラスタ(逆引き)
 

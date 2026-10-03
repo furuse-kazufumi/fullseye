@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1202. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1204. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -2166,6 +2166,11 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tools/gen_hero_materials.py`
 
 - **L65** — ★The winding order is outward. Reverse it and the normals point inward, and render_beauty returns **pure black without raising an exception** (the first version was like that, and only the thin-film sphere was black).
+
+## `tools/gen_literature_notes.py`
+
+- **L67** _(ja)_ — ★2026-10-03: 運転の系列の集大成と「開かれた運転基盤」のために足した 2 分野。テーマ表は製造の表と分ける (共通の 1 枚に足すと、運転の「digital twin」が製造の予知保全の op に、製造の「reconstruction」が 3DGS に当たる)。
+- **L399** _(ja)_ — ★2026-10-03: corpus2skill は葉へ写すときに Authors / Date / URL の行を落とす(元の papers/*.md には在る)。 その結果、出荷した文献層の代表論文がすべて「— (n.d.)」になり、「新しい順」も日付なしで並んでいた。 葉の **Source:** が指す元ファイルから、欠けた欄だけを補う(元のパスは読むだけで、出力には書かない)。
 
 ## `tools/gen_maturity.py`
 

@@ -8,7 +8,7 @@
 
 **来歴**: OpenAlex から取得した論文メタデータ **2,240 本**(2012 年以降、`fetch_openalex_topical.py`)を TF-IDF + k-means で **64 クラスタ**に階層化し(raptor の `corpus2skill`、2026-09-21)、各クラスタの要約を LLM(claude-haiku-4-5)が書いた。ここに載せるのは**その要約と、代表論文の題名・著者・年・DOI だけ**(メタデータは CC0。抄録は出版社の権利なので写さない)。要約は生成時の英語のまま。**正直な限界**: 文献は原理・選定・校正の研究が中心で、型番やデータシートの数値(製品知識)は薄い。
 
-**使い方(op に落とす)**: 各クラスタの「**使う op**」は、知識のテーマ → op の対応表(`tools/gen_literature_notes.py` の `THEME_OPS`、人が書いたもの)で引いた**実在の op**(生成時に出荷ノート 2,062 本の一覧と突き合わせ、無ければ止まる)。op の後ろはなぜ使うかと型。テーマに当たらないクラスタは「op に落ちていない」と書く(Fullseye に無い領域を隠さない)。読む順: 工程・部品の話題 → クラスタ → 使う op → op ノート(型の契約・実行できる例)→ 実装。末尾の「op → クラスタ」で逆に引ける。
+**使い方(op に落とす)**: 各クラスタの「**使う op**」は、知識のテーマ → op の対応表(`tools/gen_literature_notes.py` の `THEME_OPS`、人が書いたもの)で引いた**実在の op**(生成時に出荷ノート 2,660 本の一覧と突き合わせ、無ければ止まる)。op の後ろはなぜ使うかと型。テーマに当たらないクラスタは「op に落ちていない」と書く(Fullseye に無い領域を隠さない)。読む順: 工程・部品の話題 → クラスタ → 使う op → op ノート(型の契約・実行できる例)→ 実装。末尾の「op → クラスタ」で逆に引ける。
 
 ## 目次
 
@@ -45,12 +45,12 @@ This cluster covers techniques and methodologies for reconstructing three-dimens
 
 - 使う op: [`voxel_grid_downsample`](../ops/3d/preprocess/voxel_grid_downsample.md)(スキャン点群を等間隔に間引く、points → points)、[`statistical_outlier_removal`](../ops/3d/preprocess/statistical_outlier_removal.md)(外れ点を落とす、points → points)、[`estimate_normals`](../ops/3d/curvature/estimate_normals.md)(法線(面の向き)、points → normals)、[`icp_point2plane`](../ops/3d/refine/icp_point2plane.md)(設計形状との位置合わせ、points × points × normals → pose)、[`register_fpfh`](../ops/3d/feature_register/register_fpfh.md)(初期姿勢の無い位置合わせ、points × points → pose)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(平面プリミティブの当てはめ、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Processing of Topological BIM Queries using Boundary Representation Based Methods. [10.1016/j.aei.2014.06.001](https://doi.org/10.1016/j.aei.2014.06.001)
-  - — (n.d.). Reconstructing compact building models from point clouds using deep implicit fields. [10.1016/j.isprsjprs.2022.09.017](https://doi.org/10.1016/j.isprsjprs.2022.09.017)
-  - — (n.d.). Point2Building: Reconstructing buildings from airborne LiDAR point clouds. [10.1016/j.isprsjprs.2024.07.012](https://doi.org/10.1016/j.isprsjprs.2024.07.012)
-  - — (n.d.). Novel algorithms for 3D surface point cloud boundary detection and edge reconstruction. [10.1016/j.jcde.2018.02.001](https://doi.org/10.1016/j.jcde.2018.02.001)
-  - — (n.d.). Point2CAD: Reverse Engineering CAD Models from 3D Point Clouds. [10.1109/cvpr52733.2024.00361](https://doi.org/10.1109/cvpr52733.2024.00361)
-  - — (n.d.). Mapping between BIM models and 3d GIS city models of different levels of detail. `W1024085964`
+  - Yujia Liu et al. (2024). Point2Building: Reconstructing buildings from airborne LiDAR point clouds. [10.1016/j.isprsjprs.2024.07.012](https://doi.org/10.1016/j.isprsjprs.2024.07.012)
+  - Yujia Liu et al. (2024). Point2CAD: Reverse Engineering CAD Models from 3D Point Clouds. [10.1109/cvpr52733.2024.00361](https://doi.org/10.1109/cvpr52733.2024.00361)
+  - Yujia Liu et al. (2023). Point2CAD: Reverse Engineering CAD Models from 3D Point Clouds. [10.48550/arxiv.2312.04962](http://arxiv.org/abs/2312.04962)
+  - Zhaiyu Chen et al. (2022). Reconstructing compact building models from point clouds using deep implicit fields. [10.1016/j.isprsjprs.2022.09.017](https://doi.org/10.1016/j.isprsjprs.2022.09.017)
+  - Elena Camuffo et al. (2022). Recent Advancements in Learning Algorithms for Point Clouds: An Updated Overview. [10.3390/s22041357](https://doi.org/10.3390/s22041357)
+  - Jack C.P. Cheng et al. (2013). Mapping between BIM models and 3d GIS city models of different levels of detail. [W1024085964](http://repository.ust.hk/ir/Record/1783.1-65798)
 
 ### signed / distance / reconstruction
 
@@ -58,11 +58,11 @@ This cluster covers signed distance field (SDF) representations and their applic
 
 - 使う op: [`box_sdf`](../ops/3d/sdf_csg/box_sdf.md)(直方体の SDF、coordgrid → sdf)、[`cylinder_sdf`](../ops/3d/sdf_csg/cylinder_sdf.md)(円筒の SDF、coordgrid → sdf)、[`capsule_sdf`](../ops/3d/sdf_csg/capsule_sdf.md)(カプセル、coordgrid → sdf)、[`plane_sdf`](../ops/3d/sdf_csg/plane_sdf.md)(平面(切り欠き)、coordgrid → sdf)、[`sdf_union`](../ops/3d/sdf_csg/sdf_union.md)(和、sdf × sdf → sdf)、[`sdf_subtract`](../ops/3d/sdf_csg/sdf_subtract.md)(差(穴)、sdf × sdf → sdf)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Domain Generalization by Solving Jigsaw Puzzles. [10.1109/cvpr.2019.00233](https://doi.org/10.1109/cvpr.2019.00233)
-  - — (n.d.). Shading-based refinement on volumetric signed distance functions. [10.1145/2766887](https://doi.org/10.1145/2766887)
-  - — (n.d.). Chisel: Real Time Large Scale 3D Reconstruction Onboard a Mobile Device using Spatially Hashed Signed Distance Fields. [10.15607/rss.2015.xi.040](https://doi.org/10.15607/rss.2015.xi.040)
-  - — (n.d.). iSDF: Real-Time Neural Signed Distance Fields for Robot Perception. [10.15607/rss.2022.xviii.012](https://doi.org/10.15607/rss.2022.xviii.012)
-  - — (n.d.). Signed Distance Fields: A Natural Representation for Both Mapping and Planning. [10.3929/ethz-a-010820134](https://doi.org/10.3929/ethz-a-010820134)
+  - Joseph D. Ortiz et al. (2022). iSDF: Real-Time Neural Signed Distance Fields for Robot Perception. [10.15607/rss.2022.xviii.012](https://doi.org/10.15607/rss.2022.xviii.012)
+  - Fabio Maria Carlucci et al. (2019). Domain Generalization by Solving Jigsaw Puzzles. [10.1109/cvpr.2019.00233](https://doi.org/10.1109/cvpr.2019.00233)
+  - Helen Oleynikova et al. (2016). Signed Distance Fields: A Natural Representation for Both Mapping and Planning. [10.3929/ethz-a-010820134](http://hdl.handle.net/20.500.11850/128029)
+  - Michael Zollhöfer et al. (2015). Shading-based refinement on volumetric signed distance functions. [10.1145/2766887](https://doi.org/10.1145/2766887)
+  - Matthew Klingensmith et al. (2015). Chisel: Real Time Large Scale 3D Reconstruction Onboard a Mobile Device using Spatially Hashed Signed Distance Fields. [10.15607/rss.2015.xi.040](https://doi.org/10.15607/rss.2015.xi.040)
 
 ### csg / geometry / constructive
 
@@ -70,12 +70,12 @@ This cluster covers constructive solid geometry (CSG) techniques and geometric m
 
 - 使う op: [`mesh_area`](../ops/3d/mesh_process/mesh_area.md)(表面積、mesh → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積、mesh → measurement)、[`vertex_curvature`](../ops/3d/mesh_process/vertex_curvature.md)(曲率(角・フィレット)、mesh → curvature)、[`decimate_qem`](../ops/3d/mesh_process/decimate_qem.md)(間引き、mesh → mesh)、[`mesh_isotropic_remesh`](../ops/3d/resolution/mesh_isotropic_remesh.md)(等方リメッシュ、mesh → mesh)、[`mesh_to_voxel`](../ops/3d/transform/mesh_to_voxel.md)(メッシュ → 体積、mesh → voxel)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Modeling of Surface Location Errors in a Multi-scale Milling Simulation System Using a Tool Model Based on Triangle Meshes. [10.1016/j.procir.2015.08.064](https://doi.org/10.1016/j.procir.2015.08.064)
-  - — (n.d.). Computing Numerically-Optimal Bounding Boxes for Constructive Solid Geometry (CSG) Components in Monte Carlo Particle Transport Calculations. [10.1051/snamc/201402506](https://doi.org/10.1051/snamc/201402506)
-  - — (n.d.). BIM/GIS integration for web GIS-based bridge management. [10.1080/19475683.2020.1743355](https://doi.org/10.1080/19475683.2020.1743355)
-  - — (n.d.). Reconstruction of three-dimensional porous media using generative adversarial neural networks. [10.1103/physreve.96.043309](https://doi.org/10.1103/physreve.96.043309)
-  - — (n.d.). From quantitative spatial operator to qualitative spatial relation using Constructive Solid Geometry, logic rules and optimized 9-IM model: A semantic based approach. [10.1109/csae.2012.6272992](https://doi.org/10.1109/csae.2012.6272992)
-  - — (n.d.). UCSG-Net -- Unsupervised Discovering of Constructive Solid Geometry Tree. `W3103515043`
+  - Maximilian Mews et al. (2024). Don't Mesh with Me: Generating Constructive Solid Geometry Instead of Meshes by Fine-Tuning a Code-Generation LLM. [10.48550/arxiv.2411.15279](http://arxiv.org/abs/2411.15279)
+  - J. Chen et al. (2024). FR-CSG: Fast and Reliable Modeling for Constructive Solid Geometry. [10.1109/tvcg.2024.3481278](https://doi.org/10.1109/tvcg.2024.3481278)
+  - Paul Romano et al. (2024). Point containment algorithms for constructive solid geometry with unbounded primitives. [10.48550/arxiv.2406.13030](http://arxiv.org/abs/2406.13030)
+  - Zoë Marschner et al. (2023). Constructive Solid Geometry on Neural Signed Distance Fields. [10.1145/3610548.3618170](https://doi.org/10.1145/3610548.3618170)
+  - Yuanqi Li et al. (2023). Surface and Edge Detection for Primitive Fitting of Point Clouds. [10.1145/3588432.3591522](https://doi.org/10.1145/3588432.3591522)
+  - Helmi Ben Hmida et al. (2012). From quantitative spatial operator to qualitative spatial relation using Constructive Solid Geometry, logic rules and optimized 9-IM model: A semantic based approach. [10.1109/csae.2012.6272992](https://doi.org/10.1109/csae.2012.6272992)
 
 ### point / cloud / cultural
 
@@ -83,12 +83,12 @@ This cluster covers techniques for processing, analyzing, and reconstructing 3D 
 
 - 使う op: [`voxel_grid_downsample`](../ops/3d/preprocess/voxel_grid_downsample.md)(スキャン点群を等間隔に間引く、points → points)、[`statistical_outlier_removal`](../ops/3d/preprocess/statistical_outlier_removal.md)(外れ点を落とす、points → points)、[`estimate_normals`](../ops/3d/curvature/estimate_normals.md)(法線(面の向き)、points → normals)、[`icp_point2plane`](../ops/3d/refine/icp_point2plane.md)(設計形状との位置合わせ、points × points × normals → pose)、[`register_fpfh`](../ops/3d/feature_register/register_fpfh.md)(初期姿勢の無い位置合わせ、points × points → pose)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(平面プリミティブの当てはめ、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). PCT: Point cloud transformer. [10.1007/s41095-021-0229-5](https://doi.org/10.1007/s41095-021-0229-5)
-  - — (n.d.). Exploring the potential of 3D scanning in Industry 4.0: An overview. [10.1016/j.ijcce.2022.08.003](https://doi.org/10.1016/j.ijcce.2022.08.003)
-  - — (n.d.). Single Camera Photogrammetry for Reverse Engineering and Fabrication of Ancient and Modern Artifacts. [10.1016/j.procir.2015.01.073](https://doi.org/10.1016/j.procir.2015.01.073)
-  - — (n.d.). A Sustainable Reverse Engineering Process. [10.1016/j.procir.2021.01.144](https://doi.org/10.1016/j.procir.2021.01.144)
-  - — (n.d.). Automatic generation of structural geometric digital twins from point clouds. [10.1038/s41598-022-26307-7](https://doi.org/10.1038/s41598-022-26307-7)
-  - — (n.d.). As-built modeling of piping system from terrestrial laser-scanned point clouds using normal-based region growing. [10.7315/jcde.2014.002](https://doi.org/10.7315/jcde.2014.002)
+  - Д. И. Рухович et al. (2025). CAD-Recode: Reverse Engineering CAD Code From Point Clouds. [10.1109/iccv51701.2025.00914](https://doi.org/10.1109/iccv51701.2025.00914)
+  - Xi‐Lin Wang et al. (2025). From 2D CAD Drawings to 3D Parametric Models: A Vision-Language Approach. [10.1609/aaai.v39i8.32858](https://doi.org/10.1609/aaai.v39i8.32858)
+  - Mohammad Sadil Khan et al. (2024). CAD-SIGNet: CAD Language Inference from Point Clouds Using Layer-Wise Sketch Instance Guided Attention. [10.1109/cvpr52733.2024.00451](https://doi.org/10.1109/cvpr52733.2024.00451)
+  - Keneni W. Tesema et al. (2023). Point Cloud Completion: A Survey. [10.1109/tvcg.2023.3344935](https://doi.org/10.1109/tvcg.2023.3344935)
+  - Jan Polák et al. (2023). From Structural Optimization Results to Parametric CAD Modeling—Automated, Skeletonization-Based Truss Recognition. [10.3390/app13095670](https://doi.org/10.3390/app13095670)
+  - Kuang-Hua Chang (2012). A Review on Shape Engineering and Design Parameterization in Reverse Engineering. [10.5772/32419](https://doi.org/10.5772/32419)
 
 ### implicit / shape / shapes
 
@@ -96,12 +96,12 @@ This cluster covers implicit neural representations for 3D shape modeling, gener
 
 - 使う op: [`mesh_area`](../ops/3d/mesh_process/mesh_area.md)(表面積、mesh → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積、mesh → measurement)、[`vertex_curvature`](../ops/3d/mesh_process/vertex_curvature.md)(曲率(角・フィレット)、mesh → curvature)、[`decimate_qem`](../ops/3d/mesh_process/decimate_qem.md)(間引き、mesh → mesh)、[`mesh_isotropic_remesh`](../ops/3d/resolution/mesh_isotropic_remesh.md)(等方リメッシュ、mesh → mesh)、[`mesh_to_voxel`](../ops/3d/transform/mesh_to_voxel.md)(メッシュ → 体積、mesh → voxel)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). A survey on deep geometry learning: From a representation perspective. [10.1007/s41095-020-0174-8](https://doi.org/10.1007/s41095-020-0174-8)
-  - — (n.d.). Recent advances in implicit representation-based 3D shape generation. [10.1007/s44267-024-00042-1](https://doi.org/10.1007/s44267-024-00042-1)
-  - — (n.d.). Geom-DeepONet: A point-cloud-based deep operator network for field predictions on 3D parameterized geometries. [10.1016/j.cma.2024.117130](https://doi.org/10.1016/j.cma.2024.117130)
-  - — (n.d.). 3PSDF: Three-Pole Signed Distance Function for Learning Surfaces with Arbitrary Topologies. [10.1109/cvpr52688.2022.01797](https://doi.org/10.1109/cvpr52688.2022.01797)
-  - — (n.d.). DeepCurrents: Learning Implicit Representations of Shapes with Boundaries. [10.1109/cvpr52688.2022.01811](https://doi.org/10.1109/cvpr52688.2022.01811)
-  - — (n.d.). Overfit Neural Networks as a Compact Shape Representation. `W3088938682`
+  - J. Wang et al. (2024). Implicit Swept Volume SDF: Enabling Continuous Collision-Free Trajectory Generation for Arbitrary Shapes. [10.1145/3658181](https://doi.org/10.1145/3658181)
+  - Yujie Lu et al. (2024). Unsigned Orthogonal Distance Fields: An Accurate Neural Implicit Representation for Diverse 3D Shapes. [10.1109/cvpr52733.2024.01942](https://doi.org/10.1109/cvpr52733.2024.01942)
+  - Junyan He et al. (2024). Geom-DeepONet: A point-cloud-based deep operator network for field predictions on 3D parameterized geometries. [10.1016/j.cma.2024.117130](https://doi.org/10.1016/j.cma.2024.117130)
+  - Jia-Mu Sun et al. (2024). Recent advances in implicit representation-based 3D shape generation. [10.1007/s44267-024-00042-1](https://doi.org/10.1007/s44267-024-00042-1)
+  - Ziya Erkoç et al. (2023). HyperDiffusion: Generating Implicit Neural Fields with Weight-Space Diffusion. [10.1109/iccv51070.2023.01315](https://doi.org/10.1109/iccv51070.2023.01315)
+  - Robert I. Saye (2014). High-order methods for computing distances to implicitly defined surfaces. [10.2140/camcos.2014.9.107](https://doi.org/10.2140/camcos.2014.9.107)
 
 ### reverse / cad / cloud
 
@@ -109,24 +109,24 @@ This cluster covers reverse engineering methodologies applied to physical object
 
 - 使う op: [`voxel_grid_downsample`](../ops/3d/preprocess/voxel_grid_downsample.md)(スキャン点群を等間隔に間引く、points → points)、[`statistical_outlier_removal`](../ops/3d/preprocess/statistical_outlier_removal.md)(外れ点を落とす、points → points)、[`estimate_normals`](../ops/3d/curvature/estimate_normals.md)(法線(面の向き)、points → normals)、[`icp_point2plane`](../ops/3d/refine/icp_point2plane.md)(設計形状との位置合わせ、points × points × normals → pose)、[`register_fpfh`](../ops/3d/feature_register/register_fpfh.md)(初期姿勢の無い位置合わせ、points × points → pose)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(平面プリミティブの当てはめ、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Rapid and accurate reverse engineering of geometry based on a multi-sensor system. [10.1007/s00170-014-5997-y](https://doi.org/10.1007/s00170-014-5997-y)
-  - — (n.d.). Innovative design of a helmet based on reverse engineering and 3D printing. [10.1016/j.aej.2021.02.006](https://doi.org/10.1016/j.aej.2021.02.006)
-  - — (n.d.). Reverse engineering of mechanical parts: A template-based approach. [10.1016/j.jcde.2017.11.009](https://doi.org/10.1016/j.jcde.2017.11.009)
-  - — (n.d.). A case study on use of 3D scanning for reverse engineering and quality control. [10.1016/j.matpr.2021.01.828](https://doi.org/10.1016/j.matpr.2021.01.828)
-  - — (n.d.). Tool Path Generation, for Complex Surface Machining, Using Point Cloud Data. [10.1016/j.procir.2014.07.076](https://doi.org/10.1016/j.procir.2014.07.076)
-  - — (n.d.). The Research of Reverse Engineering Based on Geomagic Studio. [10.4028/www.scientific.net/amm.365-366.133](https://doi.org/10.4028/www.scientific.net/amm.365-366.133)
+  - Binoy Debnath et al. (2025). Integrating Reverse Engineering for Digital Model Reconstruction and Remanufacturing of Mechanical Components: A Systematic Review. [10.3390/metrology5040066](https://doi.org/10.3390/metrology5040066)
+  - P. Turek et al. (2024). Analysis of the Accuracy of CAD Modeling in Engineering and Medical Industries Based on Measurement Data Using Reverse Engineering Methods. [10.3390/designs8030050](https://doi.org/10.3390/designs8030050)
+  - Long Zheng et al. (2023). Reverse Engineering-Inspired Parametric 3D Geometry Model of Marine Propeller. [10.2478/pomr-2023-0037](https://doi.org/10.2478/pomr-2023-0037)
+  - Michal Fabián et al. (2022). Reverse Engineering and Rapid Prototyping in the Process of Developing Prototypes of Automotive Parts. [10.21062/mft.2022.084](https://doi.org/10.21062/mft.2022.084)
+  - Linlin Fan et al. (2022). A Reverse Modeling Method Based on CAD Model Prior and Surface Modeling. [10.3390/machines10100905](https://doi.org/10.3390/machines10100905)
+  - Atul Kumar et al. (2012). Industrial Application of Point Cloud / STL Data for Reverse Engineering. [10.2507/daaam.scibook.2012.38](https://doi.org/10.2507/daaam.scibook.2012.38)
 
 ### image / radiance / views
 
 This cluster covers neural radiance fields (NeRF) and advanced computer vision techniques for 3D scene understanding, pose estimation, and view synthesis.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Attention mechanisms in computer vision: A survey. [10.1007/s41095-022-0271-y](https://doi.org/10.1007/s41095-022-0271-y)
-  - — (n.d.). D-NeRF: neural radiance fields for dynamic scenes. [10.1109/cvpr46437.2021.01018](https://doi.org/10.1109/cvpr46437.2021.01018)
-  - — (n.d.). HOISDF: Constraining 3D Hand-Object Pose Estimation with Global Signed Distance Fields. [10.1109/cvpr52733.2024.00989](https://doi.org/10.1109/cvpr52733.2024.00989)
-  - — (n.d.). Seeing 3D Chairs: Exemplar Part-Based 2D-3D Alignment Using a Large Dataset of CAD Models. [10.1109/cvpr.2014.487](https://doi.org/10.1109/cvpr.2014.487)
-  - — (n.d.). Object Detection via a Multi-region and Semantic Segmentation-Aware CNN Model. [10.1109/iccv.2015.135](https://doi.org/10.1109/iccv.2015.135)
-  - — (n.d.). H-NeRF: Neural Radiance Fields for Rendering and Temporal Reconstruction of Humans in Motion. [10.48550/arxiv.2110.13746](https://doi.org/10.48550/arxiv.2110.13746)
+  - Haozhe Qi et al. (2024). HOISDF: Constraining 3D Hand-Object Pose Estimation with Global Signed Distance Fields. [10.1109/cvpr52733.2024.00989](https://doi.org/10.1109/cvpr52733.2024.00989)
+  - Meng-Hao Guo et al. (2022). Attention mechanisms in computer vision: A survey. [10.1007/s41095-022-0271-y](https://doi.org/10.1007/s41095-022-0271-y)
+  - Ben Mildenhall et al. (2021). NeRF. [10.1145/3503250](https://doi.org/10.1145/3503250)
+  - Hongyi Xu et al. (2021). H-NeRF: Neural Radiance Fields for Rendering and Temporal Reconstruction of Humans in Motion. [10.48550/arxiv.2110.13746](http://arxiv.org/abs/2110.13746)
+  - Yen-Chen Lin et al. (2021). iNeRF: Inverting Neural Radiance Fields for Pose Estimation. [10.1109/iros51168.2021.9636708](https://doi.org/10.1109/iros51168.2021.9636708)
+  - Mathieu Aubry et al. (2014). Seeing 3D Chairs: Exemplar Part-Based 2D-3D Alignment Using a Large Dataset of CAD Models. [10.1109/cvpr.2014.487](https://doi.org/10.1109/cvpr.2014.487)
 
 ### registration / point / cloud
 
@@ -134,12 +134,12 @@ This cluster covers point cloud registration techniques and their applications i
 
 - 使う op: [`voxel_grid_downsample`](../ops/3d/preprocess/voxel_grid_downsample.md)(スキャン点群を等間隔に間引く、points → points)、[`statistical_outlier_removal`](../ops/3d/preprocess/statistical_outlier_removal.md)(外れ点を落とす、points → points)、[`estimate_normals`](../ops/3d/curvature/estimate_normals.md)(法線(面の向き)、points → normals)、[`icp_point2plane`](../ops/3d/refine/icp_point2plane.md)(設計形状との位置合わせ、points × points × normals → pose)、[`register_fpfh`](../ops/3d/feature_register/register_fpfh.md)(初期姿勢の無い位置合わせ、points × points → pose)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(平面プリミティブの当てはめ、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Reverse Engineering: Investigation of Optimization Techniques in Point Clouds Registration. [10.1002/pamm.202000165](https://doi.org/10.1002/pamm.202000165)
-  - — (n.d.). Leveraging railway topology to automatically generate track geometric information models from airborne LiDAR data. [10.1016/j.autcon.2023.105068](https://doi.org/10.1016/j.autcon.2023.105068)
-  - — (n.d.). A Review of Research on Point Cloud Registration Methods. [10.1088/1757-899x/782/2/022070](https://doi.org/10.1088/1757-899x/782/2/022070)
-  - — (n.d.). Point Cloud Registration Based on MCMC-SA ICP Algorithm. [10.1109/access.2019.2919989](https://doi.org/10.1109/access.2019.2919989)
-  - — (n.d.). Automatic segmentation and feature identification of laser scanning point cloud data for reverse engineering. [10.1109/isfa.2016.7790175](https://doi.org/10.1109/isfa.2016.7790175)
-  - — (n.d.). TEASER: Fast and Certifiable Point Cloud Registration. [10.48550/arxiv.2001.07715](https://doi.org/10.48550/arxiv.2001.07715)
+  - M. R. Mahendrini Fernando Ariyachandra et al. (2023). Leveraging railway topology to automatically generate track geometric information models from airborne LiDAR data. [10.1016/j.autcon.2023.105068](https://doi.org/10.1016/j.autcon.2023.105068)
+  - Su Yang et al. (2023). Three-Dimensional Point Cloud Semantic Segmentation for Cultural Heritage: A Comprehensive Review. [10.3390/rs15030548](https://doi.org/10.3390/rs15030548)
+  - Valeria Croce et al. (2021). From the Semantic Point Cloud to Heritage-Building Information Modeling: A Semiautomatic Approach Exploiting Machine Learning. [10.3390/rs13030461](https://doi.org/10.3390/rs13030461)
+  - George Yacout et al. (2021). Reverse Engineering: Investigation of Optimization Techniques in Point Clouds Registration. [10.1002/pamm.202000165](https://doi.org/10.1002/pamm.202000165)
+  - Simone Teruggi et al. (2020). A Hierarchical Machine Learning Approach for Multi-Level and Multi-Resolution 3D Point Cloud Classification. [10.3390/rs12162598](https://doi.org/10.3390/rs12162598)
+  - Enrique Valero et al. (2012). Automatic Method for Building Indoor Boundary Models from Dense Point Clouds Collected by Laser Scanners. [10.3390/s121216099](https://doi.org/10.3390/s121216099)
 
 ## cad / parametric / design
 
@@ -165,11 +165,11 @@ This cluster covers interactive sketch-based interfaces and constraint-solving s
 
 - 使う op: [`box_sdf`](../ops/3d/sdf_csg/box_sdf.md)(直方体の SDF、coordgrid → sdf)、[`cylinder_sdf`](../ops/3d/sdf_csg/cylinder_sdf.md)(円筒の SDF、coordgrid → sdf)、[`capsule_sdf`](../ops/3d/sdf_csg/capsule_sdf.md)(カプセル、coordgrid → sdf)、[`plane_sdf`](../ops/3d/sdf_csg/plane_sdf.md)(平面(切り欠き)、coordgrid → sdf)、[`sdf_union`](../ops/3d/sdf_csg/sdf_union.md)(和、sdf × sdf → sdf)、[`sdf_subtract`](../ops/3d/sdf_csg/sdf_subtract.md)(差(穴)、sdf × sdf → sdf)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Real-time data-driven interactive rough sketch inking. [10.1145/3197517.3201370](https://doi.org/10.1145/3197517.3201370)
-  - — (n.d.). Sketch-n-Sketch. [10.1145/3332165.3347925](https://doi.org/10.1145/3332165.3347925)
-  - — (n.d.). Geometric Sketch Constraint Solving with User Feedback. [10.2514/1.i010110](https://doi.org/10.2514/1.i010110)
-  - — (n.d.). The Engineering Sketch Pad: A Solid-Modeling, Feature-Based, Web-Enabled System for Building Parametric Geometry. [10.2514/6.2013-3073](https://doi.org/10.2514/6.2013-3073)
-  - — (n.d.). Geometric Sketch Constraint Solving with User Feedback. [10.2514/6.2013-702](https://doi.org/10.2514/6.2013-702)
+  - Brian Hempel et al. (2019). Sketch-n-Sketch. [10.1145/3332165.3347925](https://doi.org/10.1145/3332165.3347925)
+  - Edgar Simo‐Serra et al. (2018). Real-time data-driven interactive rough sketch inking. [10.1145/3197517.3201370](https://doi.org/10.1145/3197517.3201370)
+  - Bridget M. Dixon et al. (2014). Geometric Sketch Constraint Solving with User Feedback. [10.2514/1.i010110](https://doi.org/10.2514/1.i010110)
+  - Robert Haimes et al. (2013). The Engineering Sketch Pad: A Solid-Modeling, Feature-Based, Web-Enabled System for Building Parametric Geometry. [10.2514/6.2013-3073](https://doi.org/10.2514/6.2013-3073)
+  - Bridget Dxon et al. (2013). Geometric Sketch Constraint Solving with User Feedback. [10.2514/6.2013-702](https://doi.org/10.2514/6.2013-702)
 
 ### programming / cad / interface
 
@@ -177,12 +177,12 @@ This cluster covers the integration of programming paradigms with Computer-Aided
 
 - 使う op: [`box_sdf`](../ops/3d/sdf_csg/box_sdf.md)(直方体の SDF、coordgrid → sdf)、[`cylinder_sdf`](../ops/3d/sdf_csg/cylinder_sdf.md)(円筒の SDF、coordgrid → sdf)、[`capsule_sdf`](../ops/3d/sdf_csg/capsule_sdf.md)(カプセル、coordgrid → sdf)、[`plane_sdf`](../ops/3d/sdf_csg/plane_sdf.md)(平面(切り欠き)、coordgrid → sdf)、[`sdf_union`](../ops/3d/sdf_csg/sdf_union.md)(和、sdf × sdf → sdf)、[`sdf_subtract`](../ops/3d/sdf_csg/sdf_subtract.md)(差(穴)、sdf × sdf → sdf)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Use of Vectorial Tolerances for Direct Representation and Analysis in CAD-systems. [10.1016/j.procir.2015.04.071](https://doi.org/10.1016/j.procir.2015.04.071)
-  - — (n.d.). Interactive Programming for Parametric CAD. [10.1111/cgf.14046](https://doi.org/10.1111/cgf.14046)
-  - — (n.d.). CoilCAM: Enabling Parametric Design for Clay 3D Printing Through an Action-Oriented Toolpath Programming System. [10.1145/3544548.3580745](https://doi.org/10.1145/3544548.3580745)
-  - — (n.d.). Introducing Bidirectional Programming in Constructive Solid Geometry-Based CAD. [10.1145/3607822.3614521](https://doi.org/10.1145/3607822.3614521)
-  - — (n.d.). Parametric CAD modeling for open source scientific hardware: Comparing OpenSCAD and FreeCAD Python scripts. [10.1371/journal.pone.0225795](https://doi.org/10.1371/journal.pone.0225795)
-  - — (n.d.). Programming In The Model — A New Scripting Interface for Parametric CAD Systems. [10.52842/conf.acadia.2013.191](https://doi.org/10.52842/conf.acadia.2013.191)
+  - J. González et al. (2023). Introducing Bidirectional Programming in Constructive Solid Geometry-Based CAD. [10.1145/3607822.3614521](https://doi.org/10.1145/3607822.3614521)
+  - Samuelle Bourgault et al. (2023). CoilCAM: Enabling Parametric Design for Clay 3D Printing Through an Action-Oriented Toolpath Programming System. [10.1145/3544548.3580745](https://doi.org/10.1145/3544548.3580745)
+  - Aman Mathur et al. (2020). Interactive Programming for Parametric CAD. [10.1111/cgf.14046](https://doi.org/10.1111/cgf.14046)
+  - Felipe Machado et al. (2019). Parametric CAD modeling for open source scientific hardware: Comparing OpenSCAD and FreeCAD Python scripts. [10.1371/journal.pone.0225795](https://doi.org/10.1371/journal.pone.0225795)
+  - Annika Geis et al. (2015). Use of Vectorial Tolerances for Direct Representation and Analysis in CAD-systems. [10.1016/j.procir.2015.04.071](https://doi.org/10.1016/j.procir.2015.04.071)
+  - Robert Haimes et al. (2012). On The Construction of Aircraft Conceptual Geometry for High-Fidelity Analysis and Design. [10.2514/6.2012-683](https://doi.org/10.2514/6.2012-683)
 
 ### cad / parametric / modeling
 
@@ -190,24 +190,24 @@ This cluster covers parametric and feature-based CAD modeling methodologies, foc
 
 - 使う op: [`box_sdf`](../ops/3d/sdf_csg/box_sdf.md)(直方体の SDF、coordgrid → sdf)、[`cylinder_sdf`](../ops/3d/sdf_csg/cylinder_sdf.md)(円筒の SDF、coordgrid → sdf)、[`capsule_sdf`](../ops/3d/sdf_csg/capsule_sdf.md)(カプセル、coordgrid → sdf)、[`plane_sdf`](../ops/3d/sdf_csg/plane_sdf.md)(平面(切り欠き)、coordgrid → sdf)、[`sdf_union`](../ops/3d/sdf_csg/sdf_union.md)(和、sdf × sdf → sdf)、[`sdf_subtract`](../ops/3d/sdf_csg/sdf_subtract.md)(差(穴)、sdf × sdf → sdf)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Development of knowledge based parametric CAD modeling system for spur gear: An approach. [10.1016/j.aej.2018.07.010](https://doi.org/10.1016/j.aej.2018.07.010)
-  - — (n.d.). Feature-based translation of CAD models with macro-parametric approach: issues of feature mapping, persistent naming, and constraint translation. [10.1093/jcde/qwaa043](https://doi.org/10.1093/jcde/qwaa043)
-  - — (n.d.). Development of Parametric CAD Model and Structural Analysis of the Car Jack. [10.12913/22998624/109791](https://doi.org/10.12913/22998624/109791)
-  - — (n.d.). GAJA: 3D CAD methodology for developing a parametric system for the automatic (re)modeling of the cutting components of compound washer dies. [10.1631/jzus.a1200245](https://doi.org/10.1631/jzus.a1200245)
-  - — (n.d.). A Synchronous CAD/CAE Modeling Method and Applications in Parametric Parts Library. [10.2174/1874155x01509010189](https://doi.org/10.2174/1874155x01509010189)
-  - — (n.d.). Parametric CAD Modeling to aid Simulation-Driven Design : An evaluation and improvement of methods used at Scania. `W2623265238`
+  - Seda Yilmaz et al. (2024). CAD and constructive solid geometry modeling of the Molten Salt Reactor Experiment with OpenMC. [10.3389/fnuen.2024.1385478](https://doi.org/10.3389/fnuen.2024.1385478)
+  - Mutahar Safdar et al. (2020). Feature-based translation of CAD models with macro-parametric approach: issues of feature mapping, persistent naming, and constraint translation. [10.1093/jcde/qwaa043](https://doi.org/10.1093/jcde/qwaa043)
+  - Nedim Pervan et al. (2019). Development of Parametric CAD Model and Structural Analysis of the Car Jack. [10.12913/22998624/109791](https://doi.org/10.12913/22998624/109791)
+  - E. Jayakiran Reddy et al. (2018). Development of knowledge based parametric CAD modeling system for spur gear: An approach. [10.1016/j.aej.2018.07.010](https://doi.org/10.1016/j.aej.2018.07.010)
+  - Andreas Grandicki et al. (2017). Parametric CAD Modeling to aid Simulation-Driven Design : An evaluation and improvement of methods used at Scania. [W2623265238](http://urn.kb.se/resolve?urn=urn:nbn:se:liu:diva-138121)
+  - Yongming Wang et al. (2012). UML Modeling and Parametric Design for Cross Shaft Universal Coupling CAD System. [10.4304/jsw.7.9.2069-2075](https://doi.org/10.4304/jsw.7.9.2069-2075)
 
 ### education / students / engineering
 
 This cluster covers pedagogical approaches and technical methodologies for teaching advanced engineering design and CAD/CAE tools to students and preservice educators.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Project-based learning of advanced CAD/CAE tools in engineering education. [10.1007/s12008-020-00687-4](https://doi.org/10.1007/s12008-020-00687-4)
-  - — (n.d.). CAD-integrated design for manufacturing and assembly in mechanical design. [10.1080/0951192x.2021.1992659](https://doi.org/10.1080/0951192x.2021.1992659)
-  - — (n.d.). An exploratory study of informed engineering design behaviors associated with scientific explanations. [10.1186/s40594-015-0019-7](https://doi.org/10.1186/s40594-015-0019-7)
-  - — (n.d.). Effects of infusing the engineering design process into STEM project-based learning to develop preservice technology teachers’ engineering design thinking. [10.1186/s40594-020-00258-9](https://doi.org/10.1186/s40594-020-00258-9)
-  - — (n.d.). Recording of machine tool operation plan for the generation of the CNC programs of a parametric CAD model. [10.1299/jsmelem.2021.10.185-177](https://doi.org/10.1299/jsmelem.2021.10.185-177)
-  - — (n.d.). Incorporating Engineering Design Challenges into STEM Courses. `W2162934093`
+  - Myela Paige et al. (2023). The Impact of Hands-on Geometric Dimensioning and Tolerancing Intervention Activities on Students in Engineering Design. [10.18260/3-1-1153-36044](https://doi.org/10.18260/3-1-1153-36044)
+  - Loris Barbieri et al. (2022). Performance-Driven Engineering Design Approaches Based on Generative Design and Topology Optimization Tools: A Comparative Study. [10.3390/app12042106](https://doi.org/10.3390/app12042106)
+  - Federico Campi et al. (2021). CAD-integrated design for manufacturing and assembly in mechanical design. [10.1080/0951192x.2021.1992659](https://doi.org/10.1080/0951192x.2021.1992659)
+  - Kuen‐Yi Lin et al. (2021). Effects of infusing the engineering design process into STEM project-based learning to develop preservice technology teachers’ engineering design thinking. [10.1186/s40594-020-00258-9](https://doi.org/10.1186/s40594-020-00258-9)
+  - German HERRERA-GRANADOS et al. (2021). Recording of machine tool operation plan for the generation of the CNC programs of a parametric CAD model. [10.1299/jsmelem.2021.10.185-177](https://doi.org/10.1299/jsmelem.2021.10.185-177)
+  - Daniel L. Householder et al. (2012). Incorporating Engineering Design Challenges into STEM Courses. [W2162934093](https://digitalcommons.usu.edu/ete_facpub/19)
 
 ### cad / journal / publishes
 
@@ -215,12 +215,12 @@ This cluster encompasses Computer-Aided Design (CAD) and Applications journal pu
 
 - 使う op: [`box_sdf`](../ops/3d/sdf_csg/box_sdf.md)(直方体の SDF、coordgrid → sdf)、[`cylinder_sdf`](../ops/3d/sdf_csg/cylinder_sdf.md)(円筒の SDF、coordgrid → sdf)、[`capsule_sdf`](../ops/3d/sdf_csg/capsule_sdf.md)(カプセル、coordgrid → sdf)、[`plane_sdf`](../ops/3d/sdf_csg/plane_sdf.md)(平面(切り欠き)、coordgrid → sdf)、[`sdf_union`](../ops/3d/sdf_csg/sdf_union.md)(和、sdf × sdf → sdf)、[`sdf_subtract`](../ops/3d/sdf_csg/sdf_subtract.md)(差(穴)、sdf × sdf → sdf)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Study of a Point Cloud Segmentation with Part Type Recognition for Tolerance Inspection of Plastic Components via Reverse Engineering. [10.1080/16864360.2014.914382](https://doi.org/10.1080/16864360.2014.914382)
-  - — (n.d.). Generative engineering design methodology used for the development of surface-based components. [10.1080/16864360.2016.1273581](https://doi.org/10.1080/16864360.2016.1273581)
-  - — (n.d.). Reverse engineering modeling methods and tools: a survey. [10.1080/16864360.2017.1397894](https://doi.org/10.1080/16864360.2017.1397894)
-  - — (n.d.). As-scanned Point Clouds Generation for Virtual Reverse Engineer-ing of CAD Assembly Models. [10.14733/cadaps.2019.1171-1182](https://doi.org/10.14733/cadaps.2019.1171-1182)
-  - — (n.d.). Assessment of Parametric Assembly Models Based on CAD Quality Dimensions. [10.14733/cadaps.2019.628-653](https://doi.org/10.14733/cadaps.2019.628-653)
-  - — (n.d.). Parametric CAD Modeling: New Principles for Robust Sketch Constraints. [10.14733/cadaps.2023.56-81](https://doi.org/10.14733/cadaps.2023.56-81)
+  - Tim Brix Nerenst et al. (2022). Parametric CAD Modeling: New Principles for Robust Sketch Constraints. [10.14733/cadaps.2023.56-81](https://doi.org/10.14733/cadaps.2023.56-81)
+  - Harald E. Otto et al. (2020). Parametric Feature-Based Solid Model Deficiency Identification to Support Learning Outcomes Assessment in CAD Education. [10.14733/cadaps.2021.411-442](https://doi.org/10.14733/cadaps.2021.411-442)
+  - Francesco Buonamici et al. (2020). Generative Design: An Explorative Study. [10.14733/cadaps.2021.144-155](https://doi.org/10.14733/cadaps.2021.144-155)
+  - Jérémy Montlahuc et al. (2019). As-scanned Point Clouds Generation for Virtual Reverse Engineer-ing of CAD Assembly Models. [10.14733/cadaps.2019.1171-1182](https://doi.org/10.14733/cadaps.2019.1171-1182)
+  - Jeffrey Otey et al. (2018). Assessment of Parametric Assembly Models Based on CAD Quality Dimensions. [10.14733/cadaps.2019.628-653](https://doi.org/10.14733/cadaps.2019.628-653)
+  - Michele Bici et al. (2014). Study of a Point Cloud Segmentation with Part Type Recognition for Tolerance Inspection of Plastic Components via Reverse Engineering. [10.1080/16864360.2014.914382](https://doi.org/10.1080/16864360.2014.914382)
 
 ### cad / parametric / design
 
@@ -228,12 +228,12 @@ This cluster covers the intersection of Computer-Aided Design (CAD) systems, par
 
 - 使う op: [`box_sdf`](../ops/3d/sdf_csg/box_sdf.md)(直方体の SDF、coordgrid → sdf)、[`cylinder_sdf`](../ops/3d/sdf_csg/cylinder_sdf.md)(円筒の SDF、coordgrid → sdf)、[`capsule_sdf`](../ops/3d/sdf_csg/capsule_sdf.md)(カプセル、coordgrid → sdf)、[`plane_sdf`](../ops/3d/sdf_csg/plane_sdf.md)(平面(切り欠き)、coordgrid → sdf)、[`sdf_union`](../ops/3d/sdf_csg/sdf_union.md)(和、sdf × sdf → sdf)、[`sdf_subtract`](../ops/3d/sdf_csg/sdf_subtract.md)(差(穴)、sdf × sdf → sdf)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Generative AI meets CAD: enhancing engineering design to manufacturing processes with large language models. [10.1007/s00170-025-15830-2](https://doi.org/10.1007/s00170-025-15830-2)
-  - — (n.d.). A quantitative analysis of parametric CAD model complexity and its relationship to perceived modeling complexity. [10.1016/j.aei.2023.101970](https://doi.org/10.1016/j.aei.2023.101970)
-  - — (n.d.). Yeditepe spine mesh: Finite element modeling and validation of a parametric CAD model of lumbar spine. [10.1016/j.medengphy.2022.103911](https://doi.org/10.1016/j.medengphy.2022.103911)
-  - — (n.d.). Application of generative AI technologies to engineering design. [10.1016/j.procir.2025.01.025](https://doi.org/10.1016/j.procir.2025.01.025)
-  - — (n.d.). A Review on Approaches for Handling Bezier Curves in CAD for Manufacturing. [10.1016/j.proeng.2014.12.394](https://doi.org/10.1016/j.proeng.2014.12.394)
-  - — (n.d.). ModiYacht: Intelligent CAD Tool for Parametric, Generative, Attributive and Interactive Modelling of Yacht Hull Forms. [10.5957/imdc-2022-311](https://doi.org/10.5957/imdc-2022-311)
+  - Qianzhi Jing et al. (2026). Req2CAD: bridging functional requirements and parametric CAD models to support conceptual 3D design. [10.1145/3772318.3791949](https://doi.org/10.1145/3772318.3791949)
+  - Jiahao Li et al. (2026). ReCAD: Reinforcement Learning Enhanced Parametric CAD Model Generation with Vision-Language Models. [10.1609/aaai.v40i8.37544](https://doi.org/10.1609/aaai.v40i8.37544)
+  - Aman Kukreja et al. (2026). From imprecision to precision in virtual reality: a machine learning approach to parametric CAD modelling. [10.1080/09544828.2026.2616581](https://doi.org/10.1080/09544828.2026.2616581)
+  - JianFei Liang et al. (2025). CADCL: Reconstruct parametric CAD models from B-rep via contrastive learning. [10.1093/jcde/qwaf102](https://doi.org/10.1093/jcde/qwaf102)
+  - Nirmal Panta et al. (2025). MEDA: A Multi-Agent System For Parametric CAD Model Creation. [10.1115/detc2025-163946](https://doi.org/10.1115/detc2025-163946)
+  - M. A. R. Paramio et al. (2012). Assessing red deer antler density with a hydrostatic method versus a new parametric volume-modelling technique using 3D-CAD. [10.1071/an12015](https://doi.org/10.1071/an12015)
 
 ### scattering / sar / radar
 
@@ -241,20 +241,20 @@ This cluster covers techniques for automatically extracting and modeling scatter
 
 - 使う op: [`fmcw_range_profile`](../ops/rangedoppler/process/fmcw_range_profile.md)(FMCW の距離、beatcube → signal)、[`beamform_delay_sum`](../ops/rangedoppler/beamform/beamform_delay_sum.md)(ビームフォーミング、beatcube → signal)、[`range_doppler_map`](../ops/rangedoppler/process/range_doppler_map.md)(距離・速度、beatcube → image2d)、[`angular_spectrum_propagate`](../ops/optics/wave/angular_spectrum_propagate.md)(波の伝搬、cimage → cimage)、[`stft`](../ops/acoustics/transform/stft.md)(時間周波数、signal → table)、[`gcc_delay`](../ops/acoustics/dual/gcc_delay.md)(到達時間差、signal × signal → measurement)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). A Forward Approach to Establish Parametric Scattering Center Models for Known Complex Radar Targets Applied to SAR ATR. [10.1109/tap.2014.2360700](https://doi.org/10.1109/tap.2014.2360700)
-  - — (n.d.). An Automatic and Forward Method to Establish 3-D Parametric Scattering Center Models of Complex Targets for Target Recognition. [10.1109/tgrs.2020.2989856](https://doi.org/10.1109/tgrs.2020.2989856)
+  - Jin Liu et al. (2020). An Automatic and Forward Method to Establish 3-D Parametric Scattering Center Models of Complex Targets for Target Recognition. [10.1109/tgrs.2020.2989856](https://doi.org/10.1109/tgrs.2020.2989856)
+  - Yang He et al. (2014). A Forward Approach to Establish Parametric Scattering Center Models for Known Complex Radar Targets Applied to SAR ATR. [10.1109/tap.2014.2360700](https://doi.org/10.1109/tap.2014.2360700)
 
 ### students / education / courses
 
 This cluster covers pedagogical approaches and curriculum design strategies for engineering education, with emphasis on developing practical problem-solving and design skills.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Teaching Creativity in Engineering Courses. [10.1002/jee.20048](https://doi.org/10.1002/jee.20048)
-  - — (n.d.). Integrating Analysis and Design in Mechanical Engineering Education. [10.1016/j.procir.2015.01.042](https://doi.org/10.1016/j.procir.2015.01.042)
-  - — (n.d.). Project-based learning in an engineering-design course – developing mechanical- engineering graduates for the world of work. [10.1016/j.procir.2020.02.215](https://doi.org/10.1016/j.procir.2020.02.215)
-  - — (n.d.). Advancing integrated STEM learning through engineering design: Sixth-grade students’ design and construction of earthquake resistant buildings. [10.1080/00220671.2016.1264053](https://doi.org/10.1080/00220671.2016.1264053)
-  - — (n.d.). Rethinking models of feedback for learning: the challenge of design. [10.1080/02602938.2012.691462](https://doi.org/10.1080/02602938.2012.691462)
-  - — (n.d.). Approach to E-Learning Fundamental Aspects of Software Engineering. [10.55056/ceur-ws.org/vol-848/icteri-2012-ceur-ws-paper-17-p-176-187.pdf](https://doi.org/10.55056/ceur-ws.org/vol-848/icteri-2012-ceur-ws-paper-17-p-176-187.pdf)
+  - Lucy King et al. (2020). A Structure For Integration Of Manufacturing And Mechanical Design Engineering Courses. [10.18260/1-2--11748](https://doi.org/10.18260/1-2--11748)
+  - Ramesh Kuppuswamy et al. (2020). Project-based learning in an engineering-design course – developing mechanical- engineering graduates for the world of work. [10.1016/j.procir.2020.02.215](https://doi.org/10.1016/j.procir.2020.02.215)
+  - Lyn D. English et al. (2016). Advancing integrated STEM learning through engineering design: Sixth-grade students’ design and construction of earthquake resistant buildings. [10.1080/00220671.2016.1264053](https://doi.org/10.1080/00220671.2016.1264053)
+  - Reuven Katz (2015). Integrating Analysis and Design in Mechanical Engineering Education. [10.1016/j.procir.2015.01.042](https://doi.org/10.1016/j.procir.2015.01.042)
+  - Shanna Daly et al. (2014). Teaching Creativity in Engineering Courses. [10.1002/jee.20048](https://doi.org/10.1002/jee.20048)
+  - E.M. Lavrischeva et al. (2012). Approach to E-Learning Fundamental Aspects of Software Engineering. [10.55056/ceur-ws.org/vol-848/icteri-2012-ceur-ws-paper-17-p-176-187.pdf](https://doi.org/10.55056/ceur-ws.org/vol-848/icteri-2012-ceur-ws-paper-17-p-176-187.pdf)
 
 ## fatigue / bolted / joints
 
@@ -279,12 +279,12 @@ This cluster covers the design, analysis, and performance of bolted connections 
 
 - 使う op: [`polar_unwrap`](../ops/3d/curvilinear/polar_unwrap.md)(歯車の極座標展開(歯形)、image2d → image2d)、[`cylinder_unwrap`](../ops/3d/curvilinear/cylinder_unwrap.md)(円筒面の展開(ねじ山)、voxel → voxel)、[`m1_measure_pairs`](../ops/2d/measure1d/m1_measure_pairs.md)(歯厚・ピッチ、image → feature)、[`edges_sub_pix`](../ops/2d/contour/edges_sub_pix.md)(歯形の輪郭、image → contour)、[`envelope_spectrum`](../ops/acoustics/bearing/envelope_spectrum.md)(歯車の噛み合い振動、signal → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(次数スペクトル、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Design theory and numerical analysis of earthquake‐resilient joint with slotted bolted connection. [10.1002/tal.2053](https://doi.org/10.1002/tal.2053)
-  - — (n.d.). Design of crown pillar thickness using finite element method and multivariate regression analysis. [10.1016/j.ijmst.2017.06.017](https://doi.org/10.1016/j.ijmst.2017.06.017)
-  - — (n.d.). Experimental study and stress analysis of rock bolt anchorage performance. [10.1016/j.jrmge.2014.06.002](https://doi.org/10.1016/j.jrmge.2014.06.002)
-  - — (n.d.). Principles of rockbolting design. [10.1016/j.jrmge.2017.04.002](https://doi.org/10.1016/j.jrmge.2017.04.002)
-  - — (n.d.). Laboratory pull-out tests on fully grouted rock bolts and cable bolts: Results and lessons learned. [10.1016/j.jrmge.2017.04.005](https://doi.org/10.1016/j.jrmge.2017.04.005)
-  - — (n.d.). Production of Patient-Individual Hip Cups by Sheet Metal Forming: Simulation-Based Planning and Metal Forming Adapted Design Method. [10.4028/www.scientific.net/amr.907.253](https://doi.org/10.4028/www.scientific.net/amr.907.253)
+  - Jingsheng Zhou et al. (2025). Ductile Fracture Simulation of Shear-Out Strength Behavior and Design Equations of Bolted Lap Joints. [10.1061/jsendh.steng-14623](https://doi.org/10.1061/jsendh.steng-14623)
+  - Jianbin Wu et al. (2023). Design theory and numerical analysis of earthquake‐resilient joint with slotted bolted connection. [10.1002/tal.2053](https://doi.org/10.1002/tal.2053)
+  - Manchao He et al. (2022). Experimental study on the shear performance of quasi-NPR steel bolted rock joints. [10.1016/j.jrmge.2022.03.011](https://doi.org/10.1016/j.jrmge.2022.03.011)
+  - Marcin Szpunar et al. (2021). Central Composite Design Optimisation in Single Point Incremental Forming of Truncated Cones from Commercially Pure Titanium Grade 2 Sheet Metals. [10.3390/ma14133634](https://doi.org/10.3390/ma14133634)
+  - Emad Jahangir et al. (2021). Development and application of an interface constitutive model for fully grouted rock-bolts and cable-bolts. [10.1016/j.jrmge.2021.03.011](https://doi.org/10.1016/j.jrmge.2021.03.011)
+  - A. V. Khomenko et al. (2012). Statistical theory of the boundary friction of atomically flat solid surfaces in the presence of a lubricant layer. [10.3367/ufne.0182.201210f.1081](https://doi.org/10.3367/ufne.0182.201210f.1081)
 
 ### fatigue / strength / fracture
 
@@ -292,12 +292,12 @@ This cluster covers the mechanics of material failure under cyclic loading, fati
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(全視野ひずみ、image2d × image2d → image2d)、[`piv_multipass`](../ops/piv/estimate/piv_multipass.md)(多段の変位推定、image2d × image2d → flow2d)、[`motion_magnify`](../ops/motionmag/magnify/motion_magnify.md)(微小変形の拡大、video → table)、[`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`vol_frangi`](../ops/3d/feature/vol_frangi.md)(CT 中の管状き裂の強調、voxel → voxel)、[`canny`](../ops/2d/segmentation/canny.md)(き裂のエッジ、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Superelastic Hard Carbon Nanofiber Aerogels. [10.1002/adma.201900651](https://doi.org/10.1002/adma.201900651)
-  - — (n.d.). System dynamics in structural strength and vibration fatigue life assessment of the swing bar for high‐speed maglev train. [10.1002/msd2.12045](https://doi.org/10.1002/msd2.12045)
-  - — (n.d.). Recommendations for Fatigue Design of Welded Joints and Components. [10.1007/978-3-031-57667-6](https://doi.org/10.1007/978-3-031-57667-6)
-  - — (n.d.). Rolling element bearing failure analysis: A case study. [10.1016/j.csefa.2012.11.003](https://doi.org/10.1016/j.csefa.2012.11.003)
-  - — (n.d.). Comparison of local fatigue assessment methods for high-quality butt-welded joints made of high-strength steel. [10.1016/j.finmec.2021.100056](https://doi.org/10.1016/j.finmec.2021.100056)
-  - — (n.d.). Rolling Bearing Life Prediction, Theory, and Application. `W2169483509`
+  - A. F. Hobbacher et al. (2024). Recommendations for Fatigue Design of Welded Joints and Components. [10.1007/978-3-031-57667-6](https://doi.org/10.1007/978-3-031-57667-6)
+  - Oleg Gaidai et al. (2023). Floating wind turbines structural details fatigue life assessment. [10.1038/s41598-023-43554-4](https://doi.org/10.1038/s41598-023-43554-4)
+  - Feng Guo et al. (2022). System dynamics in structural strength and vibration fatigue life assessment of the swing bar for high‐speed maglev train. [10.1002/msd2.12045](https://doi.org/10.1002/msd2.12045)
+  - Luca Susmel (2022). Notches, nominal stresses, fatigue strength reduction factors and constant/variable amplitude multiaxial fatigue loading. [10.1016/j.ijfatigue.2022.106941](https://doi.org/10.1016/j.ijfatigue.2022.106941)
+  - Ansel C. Ugural (2022). Mechanical Engineering Design. [10.1201/9781003251378](https://doi.org/10.1201/9781003251378)
+  - M. Ramji et al. (2012). Design of composite patch reinforcement applied to mixed-mode cracked panel using finite element analysis. [10.1177/0731684412440601](https://doi.org/10.1177/0731684412440601)
 
 ### bolted / joints / bolt
 
@@ -305,12 +305,12 @@ This cluster covers the mechanical behavior, design, and analysis of bolted and 
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(全視野ひずみ、image2d × image2d → image2d)、[`piv_multipass`](../ops/piv/estimate/piv_multipass.md)(多段の変位推定、image2d × image2d → flow2d)、[`motion_magnify`](../ops/motionmag/magnify/motion_magnify.md)(微小変形の拡大、video → table)、[`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`vol_frangi`](../ops/3d/feature/vol_frangi.md)(CT 中の管状き裂の強調、voxel → voxel)、[`canny`](../ops/2d/segmentation/canny.md)(き裂のエッジ、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Mechanical behavior of gas‐saturated methane hydrate‐bearing sediments. [10.1002/2013jb010233](https://doi.org/10.1002/2013jb010233)
-  - — (n.d.). Combined and interactive effects of interference fit and preloads on composite joints. [10.1016/j.cja.2014.04.014](https://doi.org/10.1016/j.cja.2014.04.014)
-  - — (n.d.). A novel virtual material layer model for predicting natural frequencies of composite bolted joints. [10.1016/j.cja.2020.05.028](https://doi.org/10.1016/j.cja.2020.05.028)
-  - — (n.d.). Bolt insertion damage and mechanical behaviors investigation of CFRP/CFRP interference fit bolted joints. [10.1016/j.cja.2022.01.027](https://doi.org/10.1016/j.cja.2022.01.027)
-  - — (n.d.). Design and investigation of composite bolted π-joints with an unconventional configuration under bending load. [10.1016/j.compositesb.2015.09.026](https://doi.org/10.1016/j.compositesb.2015.09.026)
-  - — (n.d.). Thermal Contact Conductance in Bolted Joints. `W168835186`
+  - Yu Chen et al. (2024). Load transfer mechanism and design strength of hybrid bolted joint with friction- and bearing-type connections. [10.1016/j.istruc.2024.108020](https://doi.org/10.1016/j.istruc.2024.108020)
+  - Omar A.I. Azeem (2024). A machine learning assisted preliminary design methodology for bolted composite joints in large structures. [10.1017/aer.2024.104](https://doi.org/10.1017/aer.2024.104)
+  - Kadir Sarı et al. (2024). A Software for Optimum Design of Laterally Loaded Bolted Joints. [10.29109/gujsc.1385010](https://doi.org/10.29109/gujsc.1385010)
+  - Emre Erbil et al. (2023). Fastening solutions on composite structures: Progressive damage analysis of a unique bolted joint design for single-lap CFRP laminate. [10.1080/15376494.2023.2272240](https://doi.org/10.1080/15376494.2023.2272240)
+  - Dario Croccolo et al. (2023). Optimization of Bolted Joints: A Literature Review. [10.3390/met13101708](https://doi.org/10.3390/met13101708)
+  - Albin K.J. Hasselström et al. (2012). Thermal Contact Conductance in Bolted Joints. [W168835186](http://studentarbeten.chalmers.se/publication/159027-thermal-contact-conductance-in-bolted-joints)
 
 ### fiber / strength / reinforced
 
@@ -318,12 +318,12 @@ This cluster covers the engineering and material science of fiber-reinforced and
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(全視野ひずみ、image2d × image2d → image2d)、[`piv_multipass`](../ops/piv/estimate/piv_multipass.md)(多段の変位推定、image2d × image2d → flow2d)、[`motion_magnify`](../ops/motionmag/magnify/motion_magnify.md)(微小変形の拡大、video → table)、[`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`vol_frangi`](../ops/3d/feature/vol_frangi.md)(CT 中の管状き裂の強調、voxel → voxel)、[`canny`](../ops/2d/segmentation/canny.md)(き裂のエッジ、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Toward Strong and Tough Glass and Ceramic Scaffolds for Bone Repair. [10.1002/adfm.201301121](https://doi.org/10.1002/adfm.201301121)
-  - — (n.d.). Review on the performances, foaming and injection molding simulation of natural fiber composites. [10.1002/pc.25902](https://doi.org/10.1002/pc.25902)
-  - — (n.d.). A Review on Structural Behavior, Design, and Application of Ultra-High-Performance Fiber-Reinforced Concrete. [10.1007/s40069-016-0143-x](https://doi.org/10.1007/s40069-016-0143-x)
-  - — (n.d.). Review of hybrid composites fatigue. [10.1016/j.compstruct.2021.114358](https://doi.org/10.1016/j.compstruct.2021.114358)
-  - — (n.d.). A review on machinability of carbon fiber reinforced polymer (CFRP) and glass fiber reinforced polymer (GFRP) composite materials. [10.1016/j.dt.2018.02.001](https://doi.org/10.1016/j.dt.2018.02.001)
-  - — (n.d.). MECHANICAL DESIGN, IMPACT ENERGY ABSORPTION AND APPLICATIONS OF AUXETIC STRUCTURES IN AUTOMOBILE LIGHTWEIGHT ENGINEERING. [10.6052/0459-1879-20-333](https://doi.org/10.6052/0459-1879-20-333)
+  - Asha Viswanath et al. (2022). Design of novel isosurface strut-based lattice structures: Effective stiffness, strength, anisotropy and fatigue properties. [10.1016/j.matdes.2022.111293](https://doi.org/10.1016/j.matdes.2022.111293)
+  - Kenneth Kanayo Alaneme et al. (2022). Application of finite element analysis for optimizing selection and design of Ti-based biometallic alloys for fractures and tissues rehabilitation: a review. [10.1016/j.jmrt.2022.05.001](https://doi.org/10.1016/j.jmrt.2022.05.001)
+  - Peiyuan Zuo et al. (2021). Review of hybrid composites fatigue. [10.1016/j.compstruct.2021.114358](https://doi.org/10.1016/j.compstruct.2021.114358)
+  - Chung‐Chan Hung et al. (2021). A Review of Developments and Challenges for UHPC in Structural Engineering: Behavior, Analysis, and Design. [10.1061/(asce)st.1943-541x.0003073](https://doi.org/10.1061/(asce)st.1943-541x.0003073)
+  - Haiyuan Zhao et al. (2021). Design and Mechanical Properties Verification of Gradient Voronoi Scaffold for Bone Tissue Engineering. [10.3390/mi12060664](https://doi.org/10.3390/mi12060664)
+  - Qiang Fu et al. (2013). Toward Strong and Tough Glass and Ceramic Scaffolds for Bone Repair. [10.1002/adfm.201301121](https://doi.org/10.1002/adfm.201301121)
 
 ### finite / element / analysis
 
@@ -331,12 +331,12 @@ This cluster covers the application of finite element analysis (FEA) as a comput
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(全視野ひずみ、image2d × image2d → image2d)、[`piv_multipass`](../ops/piv/estimate/piv_multipass.md)(多段の変位推定、image2d × image2d → flow2d)、[`motion_magnify`](../ops/motionmag/magnify/motion_magnify.md)(微小変形の拡大、video → table)、[`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`vol_frangi`](../ops/3d/feature/vol_frangi.md)(CT 中の管状き裂の強調、voxel → voxel)、[`canny`](../ops/2d/segmentation/canny.md)(き裂のエッジ、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Finite Element Analysis of Structures Through Unified Formulation. [10.1002/9781118536643](https://doi.org/10.1002/9781118536643)
-  - — (n.d.). A review on modelling techniques for formability prediction of sheet metal forming. [10.1016/j.ijlmm.2018.06.003](https://doi.org/10.1016/j.ijlmm.2018.06.003)
-  - — (n.d.). Design and finite element analysis of a fatigue life prediction for safe and economical machine shaft. [10.1016/j.jmrt.2017.10.007](https://doi.org/10.1016/j.jmrt.2017.10.007)
-  - — (n.d.). Design and Finite Element Analysis of an Automotive Clutch Assembly. [10.1016/j.mspro.2014.07.063](https://doi.org/10.1016/j.mspro.2014.07.063)
-  - — (n.d.). Design and analysis of strut-based lattice structures for vibration isolation. [10.1016/j.precisioneng.2017.09.010](https://doi.org/10.1016/j.precisioneng.2017.09.010)
-  - — (n.d.). Finite Element Analysis of Pressure Vessel and Piping Design. `W2187180293`
+  - Mohamad Norfaieqwan Bin Kamarudin et al. (2022). Buckling Analysis of a Thin-Walled Structure Using Finite Element Method and Design of Experiments. [10.3390/aerospace9100541](https://doi.org/10.3390/aerospace9100541)
+  - Alberto Ciampaglia et al. (2020). Design and analysis of automotive lightweight materials suspension based on finite element analysis. [10.1177/0954406220947457](https://doi.org/10.1177/0954406220947457)
+  - Ivan Argatov et al. (2020). Contact Geometry Adaptation in Fretting Wear: A Constructive Review. [10.3389/fmech.2020.00051](https://doi.org/10.3389/fmech.2020.00051)
+  - Dejun Jia et al. (2019). Design and simulation analysis of Lattice bone plate based on finite element method. [10.1080/15376494.2019.1665759](https://doi.org/10.1080/15376494.2019.1665759)
+  - Thanh Q. Nguyen (2019). Finite Element Analysis in Automobile Chassis Design. [10.4028/www.scientific.net/amm.889.461](https://doi.org/10.4028/www.scientific.net/amm.889.461)
+  - Bandarupalli Praneeth (2012). Finite Element Analysis of Pressure Vessel and Piping Design. [W2187180293](http://www.ijettjournal.org/volume-3/issue-5/IJETT-V3I5P203.pdf)
 
 ### bolted / joint / gasket
 
@@ -344,12 +344,12 @@ This cluster covers the engineering analysis and design of bolted joints, gasket
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(全視野ひずみ、image2d × image2d → image2d)、[`piv_multipass`](../ops/piv/estimate/piv_multipass.md)(多段の変位推定、image2d × image2d → flow2d)、[`motion_magnify`](../ops/motionmag/magnify/motion_magnify.md)(微小変形の拡大、video → table)、[`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`vol_frangi`](../ops/3d/feature/vol_frangi.md)(CT 中の管状き裂の強調、voxel → voxel)、[`canny`](../ops/2d/segmentation/canny.md)(き裂のエッジ、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Mechanical properties of solid polymers. [10.1002/9781119967125](https://doi.org/10.1002/9781119967125)
-  - — (n.d.). BeamDyn: a high‐fidelity wind turbine blade solver in the FAST modular framework. [10.1002/we.2101](https://doi.org/10.1002/we.2101)
-  - — (n.d.). Structural topology optimization of aircraft wing leading edge fabricated of multilayer composites. [10.1016/j.ast.2025.109993](https://doi.org/10.1016/j.ast.2025.109993)
-  - — (n.d.). Experimental, numerical simulation and design methodology for a novel sleeve fully bolted joint in modular buildings. [10.1016/j.jcsr.2025.109763](https://doi.org/10.1016/j.jcsr.2025.109763)
-  - — (n.d.). The influence of bearing grease composition on friction in rolling/sliding concentrated contacts. [10.1016/j.triboint.2015.10.012](https://doi.org/10.1016/j.triboint.2015.10.012)
-  - — (n.d.). Connecting Rod with Enhanced Performance through Fast and Precise Bolted Joint Design Methodology. [10.4271/2016-36-0406](https://doi.org/10.4271/2016-36-0406)
+  - Ines Boujnah et al. (2025). Towards precision in bolted joint design: a preliminary machine learning-based parameter prediction. [10.1017/pds.2025.10335](https://doi.org/10.1017/pds.2025.10335)
+  - Changjun Zhong et al. (2025). Experimental, numerical simulation and design methodology for a novel sleeve fully bolted joint in modular buildings. [10.1016/j.jcsr.2025.109763](https://doi.org/10.1016/j.jcsr.2025.109763)
+  - Yihao Dong et al. (2025). Structural topology optimization of aircraft wing leading edge fabricated of multilayer composites. [10.1016/j.ast.2025.109993](https://doi.org/10.1016/j.ast.2025.109993)
+  - Péter Grubits et al. (2024). Structural topology optimization for plastic-limit behavior of I-beams, considering various beam-column connections. [10.1080/15397734.2024.2412757](https://doi.org/10.1080/15397734.2024.2412757)
+  - Nidhal Jamia et al. (2020). An equivalent model of a nonlinear bolted flange joint. [10.1016/j.ymssp.2020.107507](https://doi.org/10.1016/j.ymssp.2020.107507)
+  - E. V. Zaretsky (2012). Rolling bearing steels – a technical and historical perspective. [10.1179/1743284711y.0000000043](https://doi.org/10.1179/1743284711y.0000000043)
 
 ### bolt / preload / bolted
 
@@ -357,12 +357,12 @@ This cluster addresses detection, measurement, and monitoring of bolt preload an
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(全視野ひずみ、image2d × image2d → image2d)、[`piv_multipass`](../ops/piv/estimate/piv_multipass.md)(多段の変位推定、image2d × image2d → flow2d)、[`motion_magnify`](../ops/motionmag/magnify/motion_magnify.md)(微小変形の拡大、video → table)、[`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`vol_frangi`](../ops/3d/feature/vol_frangi.md)(CT 中の管状き裂の強調、voxel → voxel)、[`canny`](../ops/2d/segmentation/canny.md)(き裂のエッジ、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Automated structural bolt looseness detection using deep learning‐based prediction model. [10.1002/stc.2899](https://doi.org/10.1002/stc.2899)
-  - — (n.d.). Health monitoring of bolted joints using the time reversal method and piezoelectric transducers. [10.1088/0964-1726/25/2/025010](https://doi.org/10.1088/0964-1726/25/2/025010)
-  - — (n.d.). Bolt preload measurement based on the acoustoelastic effect using smart piezoelectric bolt. [10.1088/1361-665x/ab06dc](https://doi.org/10.1088/1361-665x/ab06dc)
-  - — (n.d.). Bolt-joint structural health monitoring by the method of electromechanical impedance. [10.1108/aeat-01-2013-0006](https://doi.org/10.1108/aeat-01-2013-0006)
-  - — (n.d.). Simple Contact Stiffness Model Validation for Tie Bolt Rotor Design With Butt Joints and Pilot Fits. [10.1115/1.4045102](https://doi.org/10.1115/1.4045102)
-  - — (n.d.). STUDY ON JOINT DUCTILITY ASSURANCE DESIGN OF GLUED LAMINATED TIMBER FRAME WITH TENSILE BOLT TYPE JOINT. [10.5610/jaee.18.3_63](https://doi.org/10.5610/jaee.18.3_63)
+  - Gregory McKiernan et al. (2026). Design and Measurements of the BOLT-1B Joint Steps. [10.2514/1.a36741](https://doi.org/10.2514/1.a36741)
+  - Cheng Yuan et al. (2021). Automated structural bolt looseness detection using deep learning‐based prediction model. [10.1002/stc.2899](https://doi.org/10.1002/stc.2899)
+  - Rusong Miao et al. (2020). A Review of Bolt Tightening Force Measurement and Loosening Detection. [10.3390/s20113165](https://doi.org/10.3390/s20113165)
+  - Aaron Rimpel et al. (2019). Simple Contact Stiffness Model Validation for Tie Bolt Rotor Design With Butt Joints and Pilot Fits. [10.1115/1.4045102](https://doi.org/10.1115/1.4045102)
+  - Qingchao Sun et al. (2019). Bolt preload measurement based on the acoustoelastic effect using smart piezoelectric bolt. [10.1088/1361-665x/ab06dc](https://doi.org/10.1088/1361-665x/ab06dc)
+  - Igor Pavelko et al. (2014). Bolt-joint structural health monitoring by the method of electromechanical impedance. [10.1108/aeat-01-2013-0006](https://doi.org/10.1108/aeat-01-2013-0006)
 
 ### implant / bone / stress
 
@@ -370,12 +370,12 @@ This cluster addresses biomechanical analysis of implants (orthopedic and dental
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(全視野ひずみ、image2d × image2d → image2d)、[`piv_multipass`](../ops/piv/estimate/piv_multipass.md)(多段の変位推定、image2d × image2d → flow2d)、[`motion_magnify`](../ops/motionmag/magnify/motion_magnify.md)(微小変形の拡大、video → table)、[`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`vol_frangi`](../ops/3d/feature/vol_frangi.md)(CT 中の管状き裂の強調、voxel → voxel)、[`canny`](../ops/2d/segmentation/canny.md)(き裂のエッジ、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Stress shielding effect after total hip arthroplasty varies between combinations of stem design and stiffness—a comparing biomechanical finite element analysis. [10.1007/s00264-023-05825-7](https://doi.org/10.1007/s00264-023-05825-7)
-  - — (n.d.). The effect of implant neck microthread design on stress distribution of peri-implant bone with different level: A finite element analysis. [10.1016/j.jds.2019.12.003](https://doi.org/10.1016/j.jds.2019.12.003)
-  - — (n.d.). Biomechanical effect of implant design on four implants supporting mandibular full-arch fixed dentures: In vitro test and finite element analysis. [10.1016/j.jfma.2019.12.001](https://doi.org/10.1016/j.jfma.2019.12.001)
-  - — (n.d.). In vitro fatigue tests and in silico finite element analysis of dental implants with different fixture/abutment joint types using computer-aided design models. [10.1016/j.jpor.2017.03.006](https://doi.org/10.1016/j.jpor.2017.03.006)
-  - — (n.d.). The influence of uncemented femoral stem length and design on its primary stability: a finite element analysis. [10.1080/10255842.2012.662677](https://doi.org/10.1080/10255842.2012.662677)
-  - — (n.d.). Evaluation of design parameters of eight dental implant designs: A two-dimensional finite element analysis. [10.4103/1119-3077.97308](https://doi.org/10.4103/1119-3077.97308)
+  - René Burchard et al. (2023). Stress shielding effect after total hip arthroplasty varies between combinations of stem design and stiffness—a comparing biomechanical finite element analysis. [10.1007/s00264-023-05825-7](https://doi.org/10.1007/s00264-023-05825-7)
+  - Vamsi Krishna Dommeti et al. (2023). Design of customized coated dental implants using finite element analysis. [10.17219/dmp/142447](https://doi.org/10.17219/dmp/142447)
+  - Ziting Zheng et al. (2022). Influence of margin design and restorative material on the stress distribution of endocrowns: a 3D finite element analysis. [10.1186/s12903-022-02063-y](https://doi.org/10.1186/s12903-022-02063-y)
+  - Yash Vardhana Gupta et al. (2020). Design of dental implant using design of experiment and topology optimization: A finite element analysis study. [10.1177/0954411920967146](https://doi.org/10.1177/0954411920967146)
+  - Rawa Omar Ibrahim et al. (2020). Mechanical and thermal stress evaluation of PEEK prefabricated post with different head design in endodontically treated tooth: 3D-finite element analysis. [10.4012/dmj.2020-053](https://doi.org/10.4012/dmj.2020-053)
+  - SR Desai et al. (2012). Evaluation of design parameters of eight dental implant designs: A two-dimensional finite element analysis. [10.4103/1119-3077.97308](https://doi.org/10.4103/1119-3077.97308)
 
 ## optimization / topology / design
 
@@ -402,12 +402,12 @@ This cluster focuses on computational optimization techniques for gear design, c
 
 - 使う op: [`vol_euler_number`](../ops/3d/feature/vol_euler_number.md)(連結性(閉じた空隙の数)、voxel → measurement)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(最小肉厚、voxel → signal)、[`edt_jfa`](../ops/3d/feature/edt_jfa.md)(距離変換(肉厚・隙間)、voxel → sdf)、[`vol_granulometry`](../ops/3d/feature/vol_granulometry.md)(空隙の大きさ分布、voxel → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積(材料量)、mesh → measurement)、[`inertia_tensor`](../ops/3d/moment_invariant/inertia_tensor.md)(慣性テンソル、points → matrix)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Macro geometry optimization of a helical gear pair for mass, efficiency, and transmission error. [10.1016/j.mechmachtheory.2019.103634](https://doi.org/10.1016/j.mechmachtheory.2019.103634)
-  - — (n.d.). Multi-objective optimization of hypoid gears to improve operating characteristics. [10.1016/j.mechmachtheory.2019.103727](https://doi.org/10.1016/j.mechmachtheory.2019.103727)
-  - — (n.d.). Selection of Material for Optimal Design Using Multi-criteria Decision Making. [10.1016/j.mspro.2014.07.073](https://doi.org/10.1016/j.mspro.2014.07.073)
-  - — (n.d.). Design of Acoustical Optimized Bevel Gears Using Manufacturing Simulation. [10.1016/j.procir.2015.12.103](https://doi.org/10.1016/j.procir.2015.12.103)
-  - — (n.d.). Optimal Design of a Heavy Duty Helical Gear Pair Using Particle Swarm Optimization Technique. [10.1016/j.protcy.2014.08.065](https://doi.org/10.1016/j.protcy.2014.08.065)
-  - — (n.d.). Design and Numerical Analysis of Optimized Planetary Gear Box. [10.9790/1684-17010030511](https://doi.org/10.9790/1684-17010030511)
+  - Yihong Gu et al. (2025). Study on the Dynamic Characteristics of the Gear Lubrication Flow Field with Baffles and Optimization Design Strategies. [10.3390/lubricants13040143](https://doi.org/10.3390/lubricants13040143)
+  - Marah A. Elsiedy et al. (2024). Multi-objective design optimization of polymer spur gears using a hybrid approach. [10.1186/s44147-024-00443-5](https://doi.org/10.1186/s44147-024-00443-5)
+  - Yunda Zhao et al. (2024). Multi-Objective Optimization Design of Cycloid-Pin Gears Based on RV Reducer Precision Transmission Performance. [10.3390/en17030654](https://doi.org/10.3390/en17030654)
+  - Chiu-Hung Chen (2023). Application of Multiple Deep Neural Networks to Multi-Solution Synthesis of Linkage Mechanisms. [10.3390/machines11111018](https://doi.org/10.3390/machines11111018)
+  - Wen Xin et al. (2023). A multi-objective optimization design approach of large mining planetary gear reducer. [10.1038/s41598-023-45745-5](https://doi.org/10.1038/s41598-023-45745-5)
+  - S. Padmanabhan et al. (2012). A Performance Study of Real Coded Genetic Algorithm on Gear Design Optimization. [10.4028/www.scientific.net/amr.622-623.64](https://doi.org/10.4028/www.scientific.net/amr.622-623.64)
 
 ### topology / optimization / structural
 
@@ -415,12 +415,12 @@ This cluster covers structural design optimization techniques that integrate top
 
 - 使う op: [`vol_euler_number`](../ops/3d/feature/vol_euler_number.md)(連結性(閉じた空隙の数)、voxel → measurement)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(最小肉厚、voxel → signal)、[`edt_jfa`](../ops/3d/feature/edt_jfa.md)(距離変換(肉厚・隙間)、voxel → sdf)、[`vol_granulometry`](../ops/3d/feature/vol_granulometry.md)(空隙の大きさ分布、voxel → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積(材料量)、mesh → measurement)、[`inertia_tensor`](../ops/3d/moment_invariant/inertia_tensor.md)(慣性テンソル、points → matrix)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Generative Deep Neural Networks for Inverse Materials Design Using Backpropagation and Active Learning. [10.1002/advs.201902607](https://doi.org/10.1002/advs.201902607)
-  - — (n.d.). A new hole insertion method for level set based structural topology optimization. [10.1002/nme.4384](https://doi.org/10.1002/nme.4384)
-  - — (n.d.). An engineering method for complex structural optimization involving both size and topology design variables. [10.1002/nme.5957](https://doi.org/10.1002/nme.5957)
-  - — (n.d.). On topology optimization of design‐dependent pressure‐loaded three‐dimensional structures and compliant mechanisms. [10.1002/nme.6618](https://doi.org/10.1002/nme.6618)
-  - — (n.d.). Numerical algorithm for solving time‐fractional partial integrodifferential equations subject to initial and Dirichlet boundary conditions. [10.1002/num.22209](https://doi.org/10.1002/num.22209)
-  - — (n.d.). Topology Design Methods for Structural Optimization. `W2885836329`
+  - Weiwei He et al. (2024). Multi-level physics informed deep learning for solving partial differential equations in computational structural mechanics. [10.1038/s44172-024-00303-3](https://doi.org/10.1038/s44172-024-00303-3)
+  - Yang Liu et al. (2024). Ultrastiff metamaterials generated through a multilayer strategy and topology optimization. [10.1038/s41467-024-47089-8](https://doi.org/10.1038/s41467-024-47089-8)
+  - Martin Juan José Bucher et al. (2023). Performance-Based Generative Design for Parametric Modeling of Engineering Structures Using Deep Conditional Generative Models. [10.1016/j.autcon.2023.105128](https://doi.org/10.1016/j.autcon.2023.105128)
+  - Hyogu Jeong et al. (2023). A complete Physics-Informed Neural Network-based framework for structural topology optimization. [10.1016/j.cma.2023.116401](https://doi.org/10.1016/j.cma.2023.116401)
+  - Tobias Würth et al. (2023). Physics-informed neural networks for data-free surrogate modelling and engineering optimization – An example from composite manufacturing. [10.1016/j.matdes.2023.112034](https://doi.org/10.1016/j.matdes.2023.112034)
+  - Peter D. Dunning et al. (2012). A new hole insertion method for level set based structural topology optimization. [10.1002/nme.4384](https://doi.org/10.1002/nme.4384)
 
 ### surrogate / optimization / fidelity
 
@@ -428,12 +428,12 @@ This cluster covers surrogate modeling and multi-fidelity optimization technique
 
 - 使う op: [`vol_euler_number`](../ops/3d/feature/vol_euler_number.md)(連結性(閉じた空隙の数)、voxel → measurement)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(最小肉厚、voxel → signal)、[`edt_jfa`](../ops/3d/feature/edt_jfa.md)(距離変換(肉厚・隙間)、voxel → sdf)、[`vol_granulometry`](../ops/3d/feature/vol_granulometry.md)(空隙の大きさ分布、voxel → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積(材料量)、mesh → measurement)、[`inertia_tensor`](../ops/3d/moment_invariant/inertia_tensor.md)(慣性テンソル、points → matrix)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Co‐optimization of CO2‐EOR and storage processes in mature oil reservoirs. [10.1002/ghg.1618](https://doi.org/10.1002/ghg.1618)
-  - — (n.d.). Applications of multi-fidelity multi-output Kriging to engineering design optimization. [10.1007/s00158-023-03567-z](https://doi.org/10.1007/s00158-023-03567-z)
-  - — (n.d.). Research on multi-fidelity aerodynamic optimization methods. [10.1016/j.cja.2013.02.004](https://doi.org/10.1016/j.cja.2013.02.004)
-  - — (n.d.). Whole-process design and experimental validation of landing gear lower drag stay with global/local linked driven optimization strategy. [10.1016/j.cja.2020.07.035](https://doi.org/10.1016/j.cja.2020.07.035)
-  - — (n.d.). An evaluation of adaptive surrogate modeling based optimization with two benchmark problems. [10.1016/j.envsoft.2014.05.026](https://doi.org/10.1016/j.envsoft.2014.05.026)
-  - — (n.d.). Kriging surrogate model and its application to design optimization:A review of recent progress. `W2743852359`
+  - Sergiy Plankovskyy et al. (2025). Review of Physics-Informed Neural Networks: Challenges in Loss Function Design and Geometric Integration. [10.3390/math13203289](https://doi.org/10.3390/math13203289)
+  - Musaddiq Al Ali et al. (2024). Metaheuristic aided structural topology optimization method for heat sink design with low electromagnetic interference. [10.1038/s41598-024-54083-z](https://doi.org/10.1038/s41598-024-54083-z)
+  - David J. J. Toal (2023). Applications of multi-fidelity multi-output Kriging to engineering design optimization. [10.1007/s00158-023-03567-z](https://doi.org/10.1007/s00158-023-03567-z)
+  - Maolin Shi et al. (2023). A multi-fidelity surrogate model based on extreme support vector regression: fusing different fidelity data for engineering design. [10.1108/ec-10-2021-0583](https://doi.org/10.1108/ec-10-2021-0583)
+  - Kai Wang et al. (2023). An efficient geometric constraint handling method for surrogate-based aerodynamic shape optimization. [10.1080/19942060.2022.2153173](https://doi.org/10.1080/19942060.2022.2153173)
+  - Sławomir Kozieł et al. (2012). Simulation-Driven Design Optimization and Modeling for Microwave Engineering. [10.1142/p860](https://doi.org/10.1142/p860)
 
 ### bayesian / optimization / algorithms
 
@@ -441,12 +441,12 @@ This cluster covers Bayesian optimization and advanced algorithmic approaches fo
 
 - 使う op: [`vol_euler_number`](../ops/3d/feature/vol_euler_number.md)(連結性(閉じた空隙の数)、voxel → measurement)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(最小肉厚、voxel → signal)、[`edt_jfa`](../ops/3d/feature/edt_jfa.md)(距離変換(肉厚・隙間)、voxel → sdf)、[`vol_granulometry`](../ops/3d/feature/vol_granulometry.md)(空隙の大きさ分布、voxel → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積(材料量)、mesh → measurement)、[`inertia_tensor`](../ops/3d/moment_invariant/inertia_tensor.md)(慣性テンソル、points → matrix)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Hyperparameter optimization: Foundations, algorithms, best practices, and open challenges. [10.1002/widm.1484](https://doi.org/10.1002/widm.1484)
-  - — (n.d.). Bayesian optimization with adaptive surrogate models for automated experimental design. [10.1038/s41524-021-00662-x](https://doi.org/10.1038/s41524-021-00662-x)
-  - — (n.d.). Bayesian Optimization for Materials Design with Mixed Quantitative and Qualitative Variables. [10.1038/s41598-020-60652-9](https://doi.org/10.1038/s41598-020-60652-9)
-  - — (n.d.). A predictive machine learning approach for microstructure optimization and materials design. [10.1038/srep11551](https://doi.org/10.1038/srep11551)
-  - — (n.d.). Pymoo: Multi-Objective Optimization in Python. [10.1109/access.2020.2990567](https://doi.org/10.1109/access.2020.2990567)
-  - — (n.d.). Practical Bayesian Optimization of Machine Learning Algorithms. `W2950182411`
+  - Bernd Bischl et al. (2023). Hyperparameter optimization: Foundations, algorithms, best practices, and open challenges. [10.1002/widm.1484](https://doi.org/10.1002/widm.1484)
+  - Bowen Lei et al. (2021). Bayesian optimization with adaptive surrogate models for automated experimental design. [10.1038/s41524-021-00662-x](https://doi.org/10.1038/s41524-021-00662-x)
+  - José E. Rayas‐Sánchez et al. (2021). Advanced RF and Microwave Design Optimization: A Journey and a Vision of Future Trends. [10.1109/jmw.2020.3034263](https://doi.org/10.1109/jmw.2020.3034263)
+  - Yichi Zhang et al. (2020). Bayesian Optimization for Materials Design with Mixed Quantitative and Qualitative Variables. [10.1038/s41598-020-60652-9](https://doi.org/10.1038/s41598-020-60652-9)
+  - Julian Blank et al. (2020). Pymoo: Multi-Objective Optimization in Python. [10.1109/access.2020.2990567](https://doi.org/10.1109/access.2020.2990567)
+  - Jasper Snoek et al. (2012). Practical Bayesian Optimization of Machine Learning Algorithms. [W2950182411](http://nrs.harvard.edu/urn-3:HUL.InstRepos:11708816)
 
 ### topology / optimization / structural
 
@@ -454,12 +454,12 @@ This cluster covers systematic methods for optimizing structural designs and mat
 
 - 使う op: [`vol_euler_number`](../ops/3d/feature/vol_euler_number.md)(連結性(閉じた空隙の数)、voxel → measurement)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(最小肉厚、voxel → signal)、[`edt_jfa`](../ops/3d/feature/edt_jfa.md)(距離変換(肉厚・隙間)、voxel → sdf)、[`vol_granulometry`](../ops/3d/feature/vol_granulometry.md)(空隙の大きさ分布、voxel → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積(材料量)、mesh → measurement)、[`inertia_tensor`](../ops/3d/moment_invariant/inertia_tensor.md)(慣性テンソル、points → matrix)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Labyrinthine Acoustic Metamaterials with a Subwavelength Bandgap Inspired by Topology‐Optimized Structural Design. [10.1002/adem.202201104](https://doi.org/10.1002/adem.202201104)
-  - — (n.d.). Inverse Design of Energy‐Absorbing Metamaterials by Topology Optimization. [10.1002/advs.202204977](https://doi.org/10.1002/advs.202204977)
-  - — (n.d.). Structural shape and topology optimization of cast parts using level set method. [10.1002/nme.5503](https://doi.org/10.1002/nme.5503)
-  - — (n.d.). Level set topology optimization of structural problems with interface cohesion. [10.1002/nme.5540](https://doi.org/10.1002/nme.5540)
-  - — (n.d.). Isogeometric analysis of 3D solids in boundary representation for problems in nonlinear solid mechanics and structural dynamics. [10.1002/nme.6893](https://doi.org/10.1002/nme.6893)
-  - — (n.d.). On understanding of design problem formulation for compliant mechanisms through topology optimization. [10.5194/ms-4-357-2013](https://doi.org/10.5194/ms-4-357-2013)
+  - Tianshu Tang et al. (2024). Topology Optimization: A Review for Structural Designs Under Statics Problems. [10.3390/ma17235970](https://doi.org/10.3390/ma17235970)
+  - Muayad Habashneh et al. (2024). Plastic-limit probabilistic structural topology optimization of steel beams. [10.1016/j.apm.2024.01.029](https://doi.org/10.1016/j.apm.2024.01.029)
+  - Muayad Habashneh et al. (2023). Optimizing structural topology design through consideration of fatigue crack propagation. [10.1016/j.cma.2023.116629](https://doi.org/10.1016/j.cma.2023.116629)
+  - Yunzhen He et al. (2023). A hole-filling based approach to controlling structural complexity in topology optimization. [10.1016/j.cma.2023.116391](https://doi.org/10.1016/j.cma.2023.116391)
+  - Yafeng Wang et al. (2023). Multi-material topology optimization for maximizing structural stability under thermo-mechanical loading. [10.1016/j.cma.2023.115938](https://doi.org/10.1016/j.cma.2023.115938)
+  - Vipul Mehta et al. (2012). Two-Step Design of Multicontact-Aided Cellular Compliant Mechanisms for Stress Relief. [10.1115/1.4007694](https://doi.org/10.1115/1.4007694)
 
 ### magnetic / torque / electric
 
@@ -467,12 +467,12 @@ This cluster covers the design, optimization, and control of magnetic gear syste
 
 - 使う op: [`displacement_series`](../ops/motionmag/measure/displacement_series.md)(変位の時系列、video → pairs)、[`phase_displacement`](../ops/motionmag/measure/phase_displacement.md)(位相ベースの微小変位、video → table)、[`riesz_displacement_series`](../ops/quat/motion/riesz_displacement_series.md)(Riesz 変換の変位、video → pairs)、[`temporal_band_power`](../ops/motionmag/temporal/temporal_band_power.md)(帯域ごとの動きの量、video → image2d)、[`band_snr`](../ops/motionmag/temporal/band_snr.md)(動きの SN、video → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(回転次数、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Design and Optimization of Axial Field Flux-Switching Magnetic Gear Composite Motor Based on Varying-Network Magnetic Circuit. [10.1109/access.2023.3275444](https://doi.org/10.1109/access.2023.3275444)
-  - — (n.d.). Machine design optimization based on finite element analysis in a high-throughput computing environment. [10.1109/ecce.2012.6342727](https://doi.org/10.1109/ecce.2012.6342727)
-  - — (n.d.). Design and optimization of magnetic gears with arrangement and mechanical constraints for wind turbine applications. [10.1109/ever.2016.7476341](https://doi.org/10.1109/ever.2016.7476341)
-  - — (n.d.). Magnetic Gear Design Optimization by Genetic Algorithm with ANN Controlled Crossover and Mutation. [10.1109/hitech53072.2021.9614208](https://doi.org/10.1109/hitech53072.2021.9614208)
-  - — (n.d.). A method for optimizing the design of SPM type magnetic gear based on reluctance network analysis. [10.1109/icelmach.2012.6349834](https://doi.org/10.1109/icelmach.2012.6349834)
-  - — (n.d.). Optimization Design of Magnetic Gear Based on Genetic Algorithm Toolbox of Matlab. [10.5370/jeet.2016.11.5.1202](https://doi.org/10.5370/jeet.2016.11.5.1202)
+  - Hangyeol Song et al. (2023). Magnetic Gear-Based Actuator: A Framework of Design, Optimization, and Disturbance Observer-Based Torque Control. [10.1109/lra.2023.3313011](https://doi.org/10.1109/lra.2023.3313011)
+  - Libing Jing et al. (2023). Design and Optimization of Coaxial Magnetic Gear With Double-Layer PMs and Spoke Structure for Tidal Power Generation. [10.1109/tmech.2023.3261987](https://doi.org/10.1109/tmech.2023.3261987)
+  - Gerardo Ruiz-Ponce et al. (2023). Design Optimization of an Axial Flux Magnetic Gear by Using Reluctance Network Modeling and Genetic Algorithm. [10.3390/en16041852](https://doi.org/10.3390/en16041852)
+  - Xiao-bin XU et al. (2023). Design and Optimization of Axial Field Flux-Switching Magnetic Gear Composite Motor Based on Varying-Network Magnetic Circuit. [10.1109/access.2023.3275444](https://doi.org/10.1109/access.2023.3275444)
+  - Changwoo Lee et al. (2022). Topology Optimization for the Manufacturable and Structurally Safe Synchronous Reluctance Motors With Multiple Iron Webs and Bridges. [10.1109/tie.2022.3148751](https://doi.org/10.1109/tie.2022.3148751)
+  - Michinari Fukuoka et al. (2012). A method for optimizing the design of SPM type magnetic gear based on reluctance network analysis. [10.1109/icelmach.2012.6349834](https://doi.org/10.1109/icelmach.2012.6349834)
 
 ### algorithms / optimization / problems
 
@@ -480,12 +480,12 @@ This cluster covers optimization algorithms and mathematical methods for solving
 
 - 使う op: [`vol_euler_number`](../ops/3d/feature/vol_euler_number.md)(連結性(閉じた空隙の数)、voxel → measurement)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(最小肉厚、voxel → signal)、[`edt_jfa`](../ops/3d/feature/edt_jfa.md)(距離変換(肉厚・隙間)、voxel → sdf)、[`vol_granulometry`](../ops/3d/feature/vol_granulometry.md)(空隙の大きさ分布、voxel → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積(材料量)、mesh → measurement)、[`inertia_tensor`](../ops/3d/moment_invariant/inertia_tensor.md)(慣性テンソル、points → matrix)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Geometric Methods on Low-Rank Matrix and Tensor Manifolds. [10.1007/978-3-030-31351-7_9](https://doi.org/10.1007/978-3-030-31351-7_9)
-  - — (n.d.). Topology optimization of multi-scale structures: a review. [10.1007/s00158-021-02881-8](https://doi.org/10.1007/s00158-021-02881-8)
-  - — (n.d.). Evolutionary algorithms and their applications to engineering problems. [10.1007/s00521-020-04832-8](https://doi.org/10.1007/s00521-020-04832-8)
-  - — (n.d.). An exhaustive review of the metaheuristic algorithms for search and optimization: taxonomy, applications, and open challenges. [10.1007/s10462-023-10470-y](https://doi.org/10.1007/s10462-023-10470-y)
-  - — (n.d.). Derivative-free optimization: a review of algorithms and comparison of software implementations. [10.1007/s10898-012-9951-y](https://doi.org/10.1007/s10898-012-9951-y)
-  - — (n.d.). Quantum SDP-Solvers: Better upper and lower bounds. [10.22331/q-2020-02-14-230](https://doi.org/10.22331/q-2020-02-14-230)
+  - Sunday O. Oladejo et al. (2024). The Hiking Optimization Algorithm: A novel human-based metaheuristic approach. [10.1016/j.knosys.2024.111880](https://doi.org/10.1016/j.knosys.2024.111880)
+  - Kanchan Rajwar et al. (2023). An exhaustive review of the metaheuristic algorithms for search and optimization: taxonomy, applications, and open challenges. [10.1007/s10462-023-10470-y](https://doi.org/10.1007/s10462-023-10470-y)
+  - Jing Liang et al. (2022). A Survey on Evolutionary Constrained Multiobjective Optimization. [10.1109/tevc.2022.3155533](https://doi.org/10.1109/tevc.2022.3155533)
+  - E Weinan et al. (2021). Algorithms for solving high dimensional PDEs: from nonlinear Monte Carlo to machine learning. [10.1088/1361-6544/ac337f](https://doi.org/10.1088/1361-6544/ac337f)
+  - Jun Tang et al. (2021). A Review on Representative Swarm Intelligence Algorithms for Solving Optimization Problems: Applications and Trends. [10.1109/jas.2021.1004129](https://doi.org/10.1109/jas.2021.1004129)
+  - Luis Miguel Rios et al. (2012). Derivative-free optimization: a review of algorithms and comparison of software implementations. [10.1007/s10898-012-9951-y](https://doi.org/10.1007/s10898-012-9951-y)
 
 ### surrogate / optimization / algorithms
 
@@ -493,12 +493,12 @@ This cluster covers surrogate modeling and optimization algorithms used to effic
 
 - 使う op: [`vol_euler_number`](../ops/3d/feature/vol_euler_number.md)(連結性(閉じた空隙の数)、voxel → measurement)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(最小肉厚、voxel → signal)、[`edt_jfa`](../ops/3d/feature/edt_jfa.md)(距離変換(肉厚・隙間)、voxel → sdf)、[`vol_granulometry`](../ops/3d/feature/vol_granulometry.md)(空隙の大きさ分布、voxel → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積(材料量)、mesh → measurement)、[`inertia_tensor`](../ops/3d/moment_invariant/inertia_tensor.md)(慣性テンソル、points → matrix)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Overview of Surrogate Modeling in Chemical Process Engineering. [10.1002/cite.201800091](https://doi.org/10.1002/cite.201800091)
-  - — (n.d.). Ensemble of Surrogates for Dual Response Surface Modeling in Robust Parameter Design. [10.1002/qre.1298](https://doi.org/10.1002/qre.1298)
-  - — (n.d.). Improving kriging surrogates of high-dimensional design models by Partial Least Squares dimension reduction. [10.1007/s00158-015-1395-9](https://doi.org/10.1007/s00158-015-1395-9)
-  - — (n.d.). OpenMDAO: an open-source framework for multidisciplinary design, analysis, and optimization. [10.1007/s00158-019-02211-z](https://doi.org/10.1007/s00158-019-02211-z)
-  - — (n.d.). Secretary bird optimization algorithm: a new metaheuristic for solving global optimization problems. [10.1007/s10462-024-10729-y](https://doi.org/10.1007/s10462-024-10729-y)
-  - — (n.d.). Surrogate-Based Optimization. [10.5772/36125](https://doi.org/10.5772/36125)
+  - Ankush Kapoor et al. (2025). A Surrogate-Assisted Multiconcept Optimization Framework for Real-World Engineering Design. [10.1115/1.4068404](https://doi.org/10.1115/1.4068404)
+  - Youfa Fu et al. (2024). Secretary bird optimization algorithm: a new metaheuristic for solving global optimization problems. [10.1007/s10462-024-10729-y](https://doi.org/10.1007/s10462-024-10729-y)
+  - Xiaopeng Wang et al. (2024). Artificial Protozoa Optimizer (APO): A novel bio-inspired metaheuristic algorithm for engineering optimization. [10.1016/j.knosys.2024.111737](https://doi.org/10.1016/j.knosys.2024.111737)
+  - Shervin Zakeri et al. (2023). A decision analysis model for material selection using simple ranking process. [10.1038/s41598-023-35405-z](https://doi.org/10.1038/s41598-023-35405-z)
+  - Nayan Sarker et al. (2023). Applications of Machine Learning and Deep Learning in Antenna Design, Optimization, and Selection: A Review. [10.1109/access.2023.3317371](https://doi.org/10.1109/access.2023.3317371)
+  - Xiaojian Zhou et al. (2012). Ensemble of Surrogates for Dual Response Surface Modeling in Robust Parameter Design. [10.1002/qre.1298](https://doi.org/10.1002/qre.1298)
 
 ## robot / robotic / control
 
@@ -526,12 +526,12 @@ This cluster covers the mathematical and computational foundations for analyzing
 
 - 使う op: [`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(カメラから物体の姿勢、points × keypoints → pose)、[`dlt_pose`](../ops/3d/pose_estimation/dlt_pose.md)(姿勢の直接解、points × keypoints → pose)、[`reprojection_error`](../ops/3d/pose_estimation/reprojection_error.md)(姿勢の検証、points × keypoints → measurement)、[`optimize_pose_graph`](../ops/3d/pose_graph/optimize_pose_graph.md)(軌跡の整合、pose → table)、[`relative_pose`](../ops/3d/pose_graph/relative_pose.md)(相対姿勢、pose × pose → pose)、[`register_cpd_rigid`](../ops/3d/deform/register_cpd_rigid.md)(剛体の位置合わせ、points × points → pose)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). A parallel learning particle swarm optimizer for inverse kinematics of robotic manipulator. [10.1002/int.22543](https://doi.org/10.1002/int.22543)
-  - — (n.d.). Kinematic Modelling and Position Control of A 3-DOF Parallel Stabilizing Robot Manipulator. [10.1007/s10846-022-01795-x](https://doi.org/10.1007/s10846-022-01795-x)
-  - — (n.d.). A Comparison of Damped Least Squares Algorithms for Inverse Kinematics of Robot Manipulators. [10.1016/j.ifacol.2017.08.1209](https://doi.org/10.1016/j.ifacol.2017.08.1209)
-  - — (n.d.). Kinematic analysis and geometrical improvement of an industrial robotic arm. [10.1016/j.jksues.2018.03.005](https://doi.org/10.1016/j.jksues.2018.03.005)
-  - — (n.d.). A robust geometric method of singularity avoidance for kinematically redundant planar parallel robot manipulators. [10.1016/j.mechmachtheory.2020.103863](https://doi.org/10.1016/j.mechmachtheory.2020.103863)
-  - — (n.d.). IW-PSO APPROACH TO THE INVERSE KINEMATICS PROBLEM SOLUTION OF A 7-DOF SERIAL ROBOT MANIPULATOR. `W3217251856`
+  - Ana Calzada-García et al. (2025). A Review on Inverse Kinematics, Control and Planning for Robotic Manipulators With and Without Obstacles via Deep Neural Networks. [10.3390/a18010023](https://doi.org/10.3390/a18010023)
+  - Yiming Li et al. (2024). Configuration Space Distance Fields for Manipulation Planning. [10.15607/rss.2024.xx.131](https://doi.org/10.15607/rss.2024.xx.131)
+  - Zhengtai Xie et al. (2023). A Biobjective Scheme for Kinematic Control of Mobile Robotic Arms With Manipulability Optimization. [10.1109/tmech.2023.3313516](https://doi.org/10.1109/tmech.2023.3313516)
+  - Zhengtai Xie et al. (2023). A Bi-Criteria Kinematic Strategy for Motion/Force Control of Robotic Manipulator. [10.1109/tase.2023.3313564](https://doi.org/10.1109/tase.2023.3313564)
+  - Yuchuang Tong et al. (2023). Adaptive Tracking Control of Robotic Manipulators With Unknown Kinematics and Uncertain Dynamics. [10.1109/tase.2023.3309964](https://doi.org/10.1109/tase.2023.3309964)
+  - Luiz A. Radavelli et al. (2012). A Comparative Study of the Kinematics of Robots Manipulators by Denavit-Hartenberg and Dual Quaternion. [W2796076341](https://cimec.org.ar/ojs/index.php/mc/article/view/4224)
 
 ### linkage / bar / mechanisms
 
@@ -539,24 +539,24 @@ This cluster addresses the synthesis, analysis, and design of linkage mechanisms
 
 - 使う op: [`polar_unwrap`](../ops/3d/curvilinear/polar_unwrap.md)(歯車の極座標展開(歯形)、image2d → image2d)、[`cylinder_unwrap`](../ops/3d/curvilinear/cylinder_unwrap.md)(円筒面の展開(ねじ山)、voxel → voxel)、[`m1_measure_pairs`](../ops/2d/measure1d/m1_measure_pairs.md)(歯厚・ピッチ、image → feature)、[`edges_sub_pix`](../ops/2d/contour/edges_sub_pix.md)(歯形の輪郭、image → contour)、[`envelope_spectrum`](../ops/acoustics/bearing/envelope_spectrum.md)(歯車の噛み合い振動、signal → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(次数スペクトル、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Synthesis and analysis of Fulleroid-like deployable Archimedean mechanisms based on an overconstrained eight-bar linkage. [10.1016/j.mechmachtheory.2019.03.004](https://doi.org/10.1016/j.mechmachtheory.2019.03.004)
-  - — (n.d.). The Grand 4R Four-Bar Based Inherently Balanced Linkage Architecture for synthesis of shaking force balanced and gravity force balanced mechanisms. [10.1016/j.mechmachtheory.2020.103815](https://doi.org/10.1016/j.mechmachtheory.2020.103815)
-  - — (n.d.). Deep generative model-based synthesis framework of four-bar linkage mechanisms with target conditions. [10.1093/jcde/qwae084](https://doi.org/10.1093/jcde/qwae084)
-  - — (n.d.). The Spring-Connected Rigid Block Model Based Automatic Synthesis of Planar Linkage Mechanisms: Numerical Issues and Remedies. [10.1115/1.4006266](https://doi.org/10.1115/1.4006266)
-  - — (n.d.). A Spatial Eight-Bar Linkage and Its Association With the Deployable Platonic Mechanisms. [10.1115/1.4025472](https://doi.org/10.1115/1.4025472)
-  - — (n.d.). Graphical synthesis of 6-bar dwell linkage mechanism. [10.5937/fmet1902226c](https://doi.org/10.5937/fmet1902226c)
+  - Enrique Soriano Heras et al. (2024). Mathematical Dimensional Synthesis of Four-Bar Linkages Based on Cognate Mechanisms. [10.3390/math13010011](https://doi.org/10.3390/math13010011)
+  - Sumin Lee et al. (2024). Deep generative model-based synthesis framework of four-bar linkage mechanisms with target conditions. [10.1093/jcde/qwae084](https://doi.org/10.1093/jcde/qwae084)
+  - Asok Kumar Mallik et al. (2021). Kinematic Analysis and Synthesis of Mechanisms. [10.1201/9780429327278](https://doi.org/10.1201/9780429327278)
+  - Volkert van der Wijk (2020). The Grand 4R Four-Bar Based Inherently Balanced Linkage Architecture for synthesis of shaking force balanced and gravity force balanced mechanisms. [10.1016/j.mechmachtheory.2020.103815](https://doi.org/10.1016/j.mechmachtheory.2020.103815)
+  - Haohua Xiu et al. (2019). Synthesis and analysis of Fulleroid-like deployable Archimedean mechanisms based on an overconstrained eight-bar linkage. [10.1016/j.mechmachtheory.2019.03.004](https://doi.org/10.1016/j.mechmachtheory.2019.03.004)
+  - Sang Jun Nam et al. (2012). The Spring-Connected Rigid Block Model Based Automatic Synthesis of Planar Linkage Mechanisms: Numerical Issues and Remedies. [10.1115/1.4006266](https://doi.org/10.1115/1.4006266)
 
 ### surgical / kinematic / invasive
 
 This cluster covers the kinematic design, mechanical optimization, and control systems for minimally invasive surgical robots, particularly focusing on remote-center-of-motion (RCM) mechanisms and master-slave manipulation architectures.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). A master manipulator with a remote‐center‐of‐motion kinematic structure for a minimally invasive robotic surgical system. [10.1002/rcs.1865](https://doi.org/10.1002/rcs.1865)
-  - — (n.d.). Kinematic design considerations for minimally invasive surgical robots: an overview. [10.1002/rcs.453](https://doi.org/10.1002/rcs.453)
-  - — (n.d.). Underwater manipulators: A review. [10.1016/j.oceaneng.2018.06.018](https://doi.org/10.1016/j.oceaneng.2018.06.018)
-  - — (n.d.). Configuration comparison among kinematically optimized continuum manipulators for robotic surgeries through a single access port. [10.1017/s0263574714000976](https://doi.org/10.1017/s0263574714000976)
-  - — (n.d.). Mechanism Design and Optimization of a Haptic Master Manipulator for Laparoscopic Surgical Robots. [10.1109/access.2019.2943622](https://doi.org/10.1109/access.2019.2943622)
-  - — (n.d.). Optimization design and test of rice plug seedling transplanting mechanism of planetary gear train with incomplete eccentric circular gear and non-circular gears. [10.25165/j.ijabe.20171006.2712](https://doi.org/10.25165/j.ijabe.20171006.2712)
+  - Botao Lin et al. (2022). A Modular Lockable Mechanism for Tendon-Driven Robots: Design, Modeling and Characterization. [10.1109/lra.2022.3142907](https://doi.org/10.1109/lra.2022.3142907)
+  - José Cornejo et al. (2021). Mechanical and Kinematic Design of Surgical Mini Robotic Manipulator used into SP-LAP Multi-DOF Platform for Training and Simulation. [10.1109/intercon52678.2021.9532965](https://doi.org/10.1109/intercon52678.2021.9532965)
+  - Theodosia Lourdes Thomas et al. (2021). Surgical Applications of Compliant Mechanisms: A Review. [10.1115/1.4049491](https://doi.org/10.1115/1.4049491)
+  - Tianqi Xu et al. (2019). Millimeter-scale flexible robots with programmable three-dimensional magnetization and motions. [10.1126/scirobotics.aav4494](https://doi.org/10.1126/scirobotics.aav4494)
+  - Yunlei Liang et al. (2019). Mechanism Design and Optimization of a Haptic Master Manipulator for Laparoscopic Surgical Robots. [10.1109/access.2019.2943622](https://doi.org/10.1109/access.2019.2943622)
+  - Chin‐Hsing Kuo et al. (2012). Kinematic design considerations for minimally invasive surgical robots: an overview. [10.1002/rcs.453](https://doi.org/10.1002/rcs.453)
 
 ### compliant / mechanism / mechanisms
 
@@ -564,12 +564,12 @@ This cluster covers the design, modeling, and optimization of compliant mechanis
 
 - 使う op: [`polar_unwrap`](../ops/3d/curvilinear/polar_unwrap.md)(歯車の極座標展開(歯形)、image2d → image2d)、[`cylinder_unwrap`](../ops/3d/curvilinear/cylinder_unwrap.md)(円筒面の展開(ねじ山)、voxel → voxel)、[`m1_measure_pairs`](../ops/2d/measure1d/m1_measure_pairs.md)(歯厚・ピッチ、image → feature)、[`edges_sub_pix`](../ops/2d/contour/edges_sub_pix.md)(歯形の輪郭、image → contour)、[`envelope_spectrum`](../ops/acoustics/bearing/envelope_spectrum.md)(歯車の噛み合い振動、signal → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(次数スペクトル、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Handbook of Compliant Mechanisms. [10.1002/9781118516485](https://doi.org/10.1002/9781118516485)
-  - — (n.d.). Design of a compliant lever-type passive vibration isolator with quasi-zero-stiffness mechanism. [10.1016/j.jsv.2023.117758](https://doi.org/10.1016/j.jsv.2023.117758)
-  - — (n.d.). Design of compliant mechanisms using continuum topology optimization: A review. [10.1016/j.mechmachtheory.2019.103622](https://doi.org/10.1016/j.mechmachtheory.2019.103622)
-  - — (n.d.). Design, modeling, and control of a monolithic compliant x-y-θ microstage using a double-rocker mechanism. [10.1016/j.precisioneng.2021.03.014](https://doi.org/10.1016/j.precisioneng.2021.03.014)
-  - — (n.d.). A design approach to fully compliant multistable mechanisms employing a single bistable mechanism. [10.1080/15397734.2019.1707685](https://doi.org/10.1080/15397734.2019.1707685)
-  - — (n.d.). Design methods for compliant mechanisms used in new age industries: A review. [10.5937/jaes14-8229](https://doi.org/10.5937/jaes14-8229)
+  - Kamil Kocak et al. (2023). Design of a compliant lever-type passive vibration isolator with quasi-zero-stiffness mechanism. [10.1016/j.jsv.2023.117758](https://doi.org/10.1016/j.jsv.2023.117758)
+  - Mingxiang Ling et al. (2022). Dynamic Design of a Novel High-Speed Piezoelectric Flow Control Valve Based on Compliant Mechanism. [10.1109/tmech.2022.3169761](https://doi.org/10.1109/tmech.2022.3169761)
+  - Shrishail B. Sollapur et al. (2022). Design and Experimental Investigation of XY Compliant Mechanism for Precision Applications. [10.1149/10701.4967ecst](https://doi.org/10.1149/10701.4967ecst)
+  - Tinghao Liu et al. (2022). Design of Deployable Structures by Using Bistable Compliant Mechanisms. [10.3390/mi13050651](https://doi.org/10.3390/mi13050651)
+  - Jincheng Guo et al. (2021). Stiffness-Oriented Structure Topology Optimization for Hinge-Free Compliant Mechanisms Design. [10.3390/app112210831](https://doi.org/10.3390/app112210831)
+  - **Date:** 2013-02-04 (2013). Handbook of Compliant Mechanisms. [10.1002/9781118516485](https://doi.org/10.1002/9781118516485)
 
 ### compliant / mechanism / force
 
@@ -577,12 +577,12 @@ This cluster covers the design, modeling, and optimization of compliant mechanis
 
 - 使う op: [`polar_unwrap`](../ops/3d/curvilinear/polar_unwrap.md)(歯車の極座標展開(歯形)、image2d → image2d)、[`cylinder_unwrap`](../ops/3d/curvilinear/cylinder_unwrap.md)(円筒面の展開(ねじ山)、voxel → voxel)、[`m1_measure_pairs`](../ops/2d/measure1d/m1_measure_pairs.md)(歯厚・ピッチ、image → feature)、[`edges_sub_pix`](../ops/2d/contour/edges_sub_pix.md)(歯形の輪郭、image → contour)、[`envelope_spectrum`](../ops/acoustics/bearing/envelope_spectrum.md)(歯車の噛み合い振動、signal → table)、[`order_spectrum`](../ops/acoustics/order/order_spectrum.md)(次数スペクトル、signal → table)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Design and nonlinear modeling of a novel planar compliant parallelogram mechanism with general tensural-compresural beams. [10.1016/j.mechmachtheory.2020.103950](https://doi.org/10.1016/j.mechmachtheory.2020.103950)
-  - — (n.d.). Design and modeling of a compact compliant stroke amplification mechanism with completely distributed compliance for ground-mounted actuators. [10.1016/j.mechmachtheory.2021.104566](https://doi.org/10.1016/j.mechmachtheory.2021.104566)
-  - — (n.d.). Configuration design and experimental verification of a variable constant-force compliant mechanism. [10.1017/s0263574722000340](https://doi.org/10.1017/s0263574722000340)
-  - — (n.d.). The design and kinetostatic modeling of 3PPR planar compliant parallel mechanism based on compliance matrix method. [10.1063/1.5080252](https://doi.org/10.1063/1.5080252)
-  - — (n.d.). Comparison of K0.5Na0.5NbO3 and PbZr0.52Ti0.48O3 compliant-mechanism-design energy harvesters. [10.1063/5.0037731](https://doi.org/10.1063/5.0037731)
-  - — (n.d.). Robotic hummingbird: design of a control mechanism for a hovering flapping wing micro air vehicle. `W1825870426`
+  - Zekui Lyu et al. (2023). Design of a Compliant Vertical Micropositioning Stage Based on Lamina Emergent Mechanisms. [10.1109/tmech.2023.3235336](https://doi.org/10.1109/tmech.2023.3235336)
+  - Tinghao Liu et al. (2022). Design of a Cylindrical Compliant Linear Guide with Decoupling Parallelogram Mechanisms. [10.3390/mi13081275](https://doi.org/10.3390/mi13081275)
+  - Jan Dittli et al. (2022). Design of a compliant, stabilizing wrist mechanism for a pediatric hand exoskeleton. [10.1109/icorr55369.2022.9896550](https://doi.org/10.1109/icorr55369.2022.9896550)
+  - Ke Xü et al. (2022). Design of a Compliant Flapping-Wing Mechanism With Flapping–Twist–Swing Motion. [10.1109/tmech.2022.3175884](https://doi.org/10.1109/tmech.2022.3175884)
+  - Bingxiao Ding et al. (2022). Configuration design and experimental verification of a variable constant-force compliant mechanism. [10.1017/s0263574722000340](https://doi.org/10.1017/s0263574722000340)
+  - Allen B. Mackay et al. (2012). Metrics for Evaluation and Design of Large-Displacement Linear-Motion Compliant Mechanisms. [10.1115/1.4004191](https://doi.org/10.1115/1.4004191)
 
 ### robot / robots / robotic
 
@@ -590,12 +590,12 @@ This cluster encompasses robotic system design, control, and navigation technolo
 
 - 使う op: [`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(カメラから物体の姿勢、points × keypoints → pose)、[`dlt_pose`](../ops/3d/pose_estimation/dlt_pose.md)(姿勢の直接解、points × keypoints → pose)、[`reprojection_error`](../ops/3d/pose_estimation/reprojection_error.md)(姿勢の検証、points × keypoints → measurement)、[`optimize_pose_graph`](../ops/3d/pose_graph/optimize_pose_graph.md)(軌跡の整合、pose → table)、[`relative_pose`](../ops/3d/pose_graph/relative_pose.md)(相対姿勢、pose × pose → pose)、[`register_cpd_rigid`](../ops/3d/deform/register_cpd_rigid.md)(剛体の位置合わせ、points × points → pose)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). A review: On path planning strategies for navigation of mobile robot. [10.1016/j.dt.2019.04.011](https://doi.org/10.1016/j.dt.2019.04.011)
-  - — (n.d.). An expressional simplified mechanism in anthropomorphic face robot design. [10.1017/s0263574714001787](https://doi.org/10.1017/s0263574714001787)
-  - — (n.d.). Bio-inspired controllable adhesion for robotics: mechanisms, design, and future directions. [10.1017/s0263574725101793](https://doi.org/10.1017/s0263574725101793)
-  - — (n.d.). Sampling-Based Robot Motion Planning: A Review. [10.1109/access.2014.2302442](https://doi.org/10.1109/access.2014.2302442)
-  - — (n.d.). Design and Implementation of a Two-Wheel and Hopping Robot With a Linkage Mechanism. [10.1109/access.2018.2859840](https://doi.org/10.1109/access.2018.2859840)
-  - — (n.d.). A Survey and Analysis of Multi-Robot Coordination. [10.5772/57313](https://doi.org/10.5772/57313)
+  - Tianhui Sun et al. (2025). Bio-inspired controllable adhesion for robotics: mechanisms, design, and future directions. [10.1017/s0263574725101793](https://doi.org/10.1017/s0263574725101793)
+  - Muhammad Faizan Shah et al. (2023). Mechanism Design and Control of Shoulder Rehabilitation Robots: A Review. [10.1109/tmrb.2023.3310086](https://doi.org/10.1109/tmrb.2023.3310086)
+  - Zhuo Wang et al. (2023). Optimization Design and Performance Analysis of a Bionic Knee Joint Based on the Geared Five-Bar Mechanism. [10.3390/bioengineering10050582](https://doi.org/10.3390/bioengineering10050582)
+  - Mikhail Koptev et al. (2022). Neural Joint Space Implicit Signed Distance Functions for Reactive Robot Manipulator Control. [10.1109/lra.2022.3227860](https://doi.org/10.1109/lra.2022.3227860)
+  - Young-Ha Shin et al. (2022). Design of KAIST HOUND, a Quadruped Robot Platform for Fast and Efficient Locomotion with Mixed-Integer Nonlinear Optimization of a Gear Train. [10.1109/icra46639.2022.9811755](https://doi.org/10.1109/icra46639.2022.9811755)
+  - Bilge Mutlu et al. (2012). Conversational gaze mechanisms for humanlike robots. [10.1145/2070719.2070725](https://doi.org/10.1145/2070719.2070725)
 
 ### soft / robotics / robots
 
@@ -603,12 +603,12 @@ This cluster covers the design, actuation, and control mechanisms of soft robots
 
 - 使う op: [`tac_contact_mask`](../ops/2d/tactile/tac_contact_mask.md)(接触域、image → region)、[`tac_pressure_proxy`](../ops/2d/tactile/tac_pressure_proxy.md)(圧力の代理量、image → image)、[`tac_shear_field`](../ops/2d/tactile/tac_shear_field.md)(ずれ場、image → image)、[`tac_surface_normal`](../ops/2d/tactile/tac_surface_normal.md)(接触面の法線、image → image)、[`tac_height_from_shading`](../ops/2d/tactile/tac_height_from_shading.md)(陰影からの高さ、image → image)、[`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(カメラから物体の姿勢、points × keypoints → pose)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Pneumatic Networks for Soft Robotics that Actuate Rapidly. [10.1002/adfm.201303288](https://doi.org/10.1002/adfm.201303288)
-  - — (n.d.). Soft Actuators for Small‐Scale Robotics. [10.1002/adma.201603483](https://doi.org/10.1002/adma.201603483)
-  - — (n.d.). Soft Robotic Grippers. [10.1002/adma.201707035](https://doi.org/10.1002/adma.201707035)
-  - — (n.d.). Functional Fibers and Fabrics for Soft Robotics, Wearables, and Human–Robot Interface. [10.1002/adma.202002640](https://doi.org/10.1002/adma.202002640)
-  - — (n.d.). Bistable and Multistable Actuators for Soft Robots: Structures, Materials, and Functionalities. [10.1002/adma.202110384](https://doi.org/10.1002/adma.202110384)
-  - — (n.d.). Mechanism Design for Robotics. [10.3390/robotics8020030](https://doi.org/10.3390/robotics8020030)
+  - Weiqiang Dou et al. (2023). Design and Modeling of a Hybrid Soft Robotic Manipulator With Compliant Mechanism. [10.1109/lra.2023.3248485](https://doi.org/10.1109/lra.2023.3248485)
+  - Öncay Yaşa et al. (2022). An Overview of Soft Robotics. [10.1146/annurev-control-062322-100607](https://doi.org/10.1146/annurev-control-062322-100607)
+  - Yinding Chi et al. (2022). Bistable and Multistable Actuators for Soft Robots: Structures, Materials, and Functionalities. [10.1002/adma.202110384](https://doi.org/10.1002/adma.202110384)
+  - Yoonho Kim et al. (2022). Magnetic Soft Materials and Robots. [10.1021/acs.chemrev.1c00481](https://doi.org/10.1021/acs.chemrev.1c00481)
+  - Matheus S. Xavier et al. (2020). Finite Element Modeling of Soft Fluidic Actuators: Overview and Recent Developments. [10.1002/aisy.202000187](https://doi.org/10.1002/aisy.202000187)
+  - Bobak Mosadegh et al. (2014). Pneumatic Networks for Soft Robotics that Actuate Rapidly. [10.1002/adfm.201303288](https://doi.org/10.1002/adfm.201303288)
 
 ### robot / robots / mechanism
 
@@ -616,12 +616,12 @@ This cluster covers the design, control, and implementation of robotic mechanism
 
 - 使う op: [`pnp_ransac`](../ops/3d/pose_estimation/pnp_ransac.md)(カメラから物体の姿勢、points × keypoints → pose)、[`dlt_pose`](../ops/3d/pose_estimation/dlt_pose.md)(姿勢の直接解、points × keypoints → pose)、[`reprojection_error`](../ops/3d/pose_estimation/reprojection_error.md)(姿勢の検証、points × keypoints → measurement)、[`optimize_pose_graph`](../ops/3d/pose_graph/optimize_pose_graph.md)(軌跡の整合、pose → table)、[`relative_pose`](../ops/3d/pose_graph/relative_pose.md)(相対姿勢、pose × pose → pose)、[`register_cpd_rigid`](../ops/3d/deform/register_cpd_rigid.md)(剛体の位置合わせ、points × points → pose)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Amphibious Pattern Design of a Robotic Fish with Wheel‐propeller‐fin Mechanisms. [10.1002/rob.21470](https://doi.org/10.1002/rob.21470)
-  - — (n.d.). A snake-like robot for real-world inspection applications (the design and control of a practical active cord mechanism). [10.1080/01691864.2013.752318](https://doi.org/10.1080/01691864.2013.752318)
-  - — (n.d.). Mechanism design of a biomimetic quadruped robot. [10.1108/ir-11-2016-0310](https://doi.org/10.1108/ir-11-2016-0310)
-  - — (n.d.). Automatic Generation of Kinematics and Dynamics Model Descriptions for Modular Reconfigurable Robot Manipulators. [10.1109/case49439.2021.9551680](https://doi.org/10.1109/case49439.2021.9551680)
-  - — (n.d.). Biological swimming mechanism analysis and design of robotic frog. [10.1109/icma.2013.6618176](https://doi.org/10.1109/icma.2013.6618176)
-  - — (n.d.). Design and Analysis of a Wall-Climbing Robot Based on a Mechanism Utilizing Hook-Like Claws. [10.5772/53895](https://doi.org/10.5772/53895)
+  - Guanqi Liang et al. (2024). Decoding modular reconfigurable robots: A survey on mechanisms and design. [10.1177/02783649241283847](https://doi.org/10.1177/02783649241283847)
+  - Omer Saleem et al. (2023). Fuzzy-Immune-Regulated Adaptive Degree-of-Stability LQR for a Self-Balancing Robotic Mechanism: Design and HIL Realization. [10.1109/lra.2023.3286176](https://doi.org/10.1109/lra.2023.3286176)
+  - Xiaomeng Liu et al. (2023). Multi-Branch Cellular Space Robot Mechanism Design and Climbing Behavior Research. [10.1115/1.4056602](https://doi.org/10.1115/1.4056602)
+  - Jizhuang Fan et al. (2022). Design of the Jump Mechanism for a Biomimetic Robotic Frog. [10.3390/biomimetics7040142](https://doi.org/10.3390/biomimetics7040142)
+  - Hobyeong Chae et al. (2022). A Tethered Façade Cleaning Robot Based on a Dual Rope Windlass Climbing Mechanism: Design and Experiments. [10.1109/tmech.2022.3172689](https://doi.org/10.1109/tmech.2022.3172689)
+  - Fengyu Xu et al. (2012). Design and Analysis of a Wall-Climbing Robot Based on a Mechanism Utilizing Hook-Like Claws. [10.5772/53895](https://doi.org/10.5772/53895)
 
 ## additive / manufacturing / printing
 
@@ -649,12 +649,12 @@ This cluster covers the design, manufacturing, and performance analysis of latti
 
 - 使う op: [`vol_euler_number`](../ops/3d/feature/vol_euler_number.md)(連結性(閉じた空隙の数)、voxel → measurement)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(最小肉厚、voxel → signal)、[`edt_jfa`](../ops/3d/feature/edt_jfa.md)(距離変換(肉厚・隙間)、voxel → sdf)、[`vol_granulometry`](../ops/3d/feature/vol_granulometry.md)(空隙の大きさ分布、voxel → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積(材料量)、mesh → measurement)、[`inertia_tensor`](../ops/3d/moment_invariant/inertia_tensor.md)(慣性テンソル、points → matrix)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Effective Mechanical Properties of Additive Manufactured Strut‐Lattice Structures: Experimental and Finite Element Study. [10.1002/adem.202100879](https://doi.org/10.1002/adem.202100879)
-  - — (n.d.). Review of defects in lattice structures manufactured by powder bed fusion. [10.1007/s00170-019-04753-4](https://doi.org/10.1007/s00170-019-04753-4)
-  - — (n.d.). A voxel-based method of constructing and skinning conformal and functionally graded lattice structures suitable for additive manufacturing. [10.1016/j.addma.2016.10.006](https://doi.org/10.1016/j.addma.2016.10.006)
-  - — (n.d.). Compressive failure modes and energy absorption in additively manufactured double gyroid lattices. [10.1016/j.addma.2017.04.003](https://doi.org/10.1016/j.addma.2017.04.003)
-  - — (n.d.). Strategies for functionally graded lattice structures derived using topology optimisation for Additive Manufacturing. [10.1016/j.addma.2017.11.008](https://doi.org/10.1016/j.addma.2017.11.008)
-  - — (n.d.). Cellular Helmet Liner Design through Bio-inspired Structures and Topology Optimization of Compliant Mechanism Lattices. [10.4271/2018-01-1057](https://doi.org/10.4271/2018-01-1057)
+  - Jiuyi Li et al. (2025). Additively manufactured metallic TPMS lattice structures: design strategies, fabrication, multifunctional properties, and applications. [10.1038/s44334-025-00057-6](https://doi.org/10.1038/s44334-025-00057-6)
+  - Jinlin Yang et al. (2025). Additive Manufacturing and Influencing Factors of Lattice Structures: A Review. [10.3390/ma18071397](https://doi.org/10.3390/ma18071397)
+  - Xuyu Zhang et al. (2025). A review of structural topology optimization for fiber-reinforced composites. [10.1016/j.compositesb.2025.112393](https://doi.org/10.1016/j.compositesb.2025.112393)
+  - Yuhua Li et al. (2024). High Mechanical Performance of Lattice Structures Fabricated by Additive Manufacturing. [10.3390/met14101165](https://doi.org/10.3390/met14101165)
+  - Numan Khan et al. (2024). A systematic review of design for additive manufacturing of aerospace lattice structures: Current trends and future directions. [10.1016/j.paerosci.2024.101021](https://doi.org/10.1016/j.paerosci.2024.101021)
+  - Asliah Seharing et al. (2014). A review on integration of lightweight gradient lattice structures in additive manufacturing parts. [10.1177/1687814020916951](https://doi.org/10.1177/1687814020916951)
 
 ### printing / additive / manufacturing
 
@@ -662,12 +662,12 @@ This cluster covers advanced additive manufacturing and 3D printing technologies
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Robotic 3D Printing of Continuous Fiber Reinforced Thermoset Composites. [10.1002/admt.202400839](https://doi.org/10.1002/admt.202400839)
-  - — (n.d.). WAAM system with interpass temperature control and forced cooling for near-net-shape printing of small metal components. [10.1007/s00170-020-05958-8](https://doi.org/10.1007/s00170-020-05958-8)
-  - — (n.d.). Generation of continuous hybrid zig-zag and contour paths for 3D printing. [10.1007/s00170-021-08418-z](https://doi.org/10.1007/s00170-021-08418-z)
-  - — (n.d.). Designing 3D-printed concrete structures with scaled fabrication models. [10.1007/s44223-024-00070-3](https://doi.org/10.1007/s44223-024-00070-3)
-  - — (n.d.). Controls and process planning strategies for 5-axis laser directed energy deposition of Ti-6Al-4V using an 8-axis industrial robot and rotary motion. [10.1016/j.addma.2022.103048](https://doi.org/10.1016/j.addma.2022.103048)
-  - — (n.d.). Design of 3D-Printed Titanium Compliant Mechanisms. `W787954873`
+  - Muhammad Sayeed Mahmud et al. (2025). A COMPREHENSIVE ANALYSIS OF NON-PLANAR TOOLPATH OPTIMIZATION IN MULTI-AXIS 3D PRINTING: EVALUATING THE EFFICIENCY OF CURVED LAYER SLICING STRATEGIES. [10.63125/5fdxa722](https://doi.org/10.63125/5fdxa722)
+  - Tianyu Zhang et al. (2025). Toolpath generation for high density spatial fiber printing guided by principal stresses. [10.1016/j.compositesb.2025.112154](https://www.sciencedirect.com/science/article/pii/S1359836825000447/pdf)
+  - Jaime Gould et al. (2024). TRAvel Slicer: Continuous Extrusion Toolpaths for 3D Printing. [10.1145/3654777.3676349](https://doi.org/10.1145/3654777.3676349)
+  - Yefan Zhi et al. (2024). Designing 3D-printed concrete structures with scaled fabrication models. [10.1007/s44223-024-00070-3](https://doi.org/10.1007/s44223-024-00070-3)
+  - Arif M. Abdullah et al. (2024). Robotic 3D Printing of Continuous Fiber Reinforced Thermoset Composites. [10.1002/admt.202400839](https://doi.org/10.1002/admt.202400839)
+  - Ezekiel G. Merriam et al. (2014). Design of 3D-Printed Titanium Compliant Mechanisms. [W787954873](http://esmats.eu/amspapers/pastpapers/pdfs/2014/merriam.pdf)
 
 ### printing / additive / manufacturing
 
@@ -675,12 +675,12 @@ This cluster covers additive manufacturing (3D printing) technologies and their 
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Tomographic Volumetric Additive Manufacturing of Silicon Oxycarbide Ceramics. [10.1002/adem.202101345](https://doi.org/10.1002/adem.202101345)
-  - — (n.d.). Recent Progress on Polymer Materials for Additive Manufacturing. [10.1002/adfm.202003062](https://doi.org/10.1002/adfm.202003062)
-  - — (n.d.). Three‐dimensional printing of high‐mass loading electrodes for energy storage applications. [10.1002/inf2.12181](https://doi.org/10.1002/inf2.12181)
-  - — (n.d.). Photopolymerization-based additive manufacturing of ceramics: A systematic review. [10.1007/s40145-021-0468-z](https://doi.org/10.1007/s40145-021-0468-z)
-  - — (n.d.). Additive manufacturing by digital light processing: a review. [10.1007/s40964-022-00336-0](https://doi.org/10.1007/s40964-022-00336-0)
-  - — (n.d.). Powder Injection Molding of Metal and Ceramic Parts. [10.5772/38070](https://doi.org/10.5772/38070)
+  - Seulhee Kwon et al. (2025). Understanding and Resolving 3D Printing Challenges: A Systematic Literature Review. [10.3390/pr13061772](https://doi.org/10.3390/pr13061772)
+  - Ivan Malashin et al. (2024). Machine Learning in 3D and 4D Printing of Polymer Composites: A Review. [10.3390/polym16223125](https://doi.org/10.3390/polym16223125)
+  - Bilal Cinici et al. (2024). Fabrication Strategies for Bioceramic Scaffolds in Bone Tissue Engineering with Generative Design Applications. [10.3390/biomimetics9070409](https://doi.org/10.3390/biomimetics9070409)
+  - Zibo Zuo et al. (2024). Strategies towards large-scale 3D printing without size constraints. [10.1080/17452759.2024.2346821](https://doi.org/10.1080/17452759.2024.2346821)
+  - Longfei Zhou et al. (2024). Additive Manufacturing: A Comprehensive Review. [10.3390/s24092668](https://doi.org/10.3390/s24092668)
+  - Benjamin Vayre et al. (2012). Metallic additive manufacturing: state-of-the-art review and prospects. [10.1051/meca/2012003](https://doi.org/10.1051/meca/2012003)
 
 ### additive / manufacturing / printing
 
@@ -688,12 +688,12 @@ This cluster covers additive manufacturing (3D printing) technologies, processes
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Additive manufacturing methods and modelling approaches: a critical review. [10.1007/s00170-015-7576-2](https://doi.org/10.1007/s00170-015-7576-2)
-  - — (n.d.). A design framework for additive manufacturing. [10.1007/s00170-019-03627-z](https://doi.org/10.1007/s00170-019-03627-z)
-  - — (n.d.). Machine learning techniques in additive manufacturing: a state of the art review on design, processes and production control. [10.1007/s10845-022-02029-5](https://doi.org/10.1007/s10845-022-02029-5)
-  - — (n.d.). Role of additive manufacturing applications towards environmental sustainability. [10.1016/j.aiepr.2021.07.005](https://doi.org/10.1016/j.aiepr.2021.07.005)
-  - — (n.d.). A Survey of Topology Optimization Methods Considering Manufacturable Structural Feature Constraints for Additive Manufacturing Structures. [10.1016/j.amf.2024.200143](https://doi.org/10.1016/j.amf.2024.200143)
-  - — (n.d.). A Review of Additive Manufacturing. [10.5402/2012/208760](https://doi.org/10.5402/2012/208760)
+  - Fatih Altun et al. (2025). AI-Driven Innovations in 3D Printing: Optimization, Automation, and Intelligent Control. [10.3390/jmmp9100329](https://doi.org/10.3390/jmmp9100329)
+  - Edoardo Risaliti et al. (2025). Optimizing Lightweight Material Selection in Automotive Engineering: A Hybrid Methodology Incorporating Ashby’s Method and VIKOR Analysis. [10.3390/machines13010063](https://doi.org/10.3390/machines13010063)
+  - Shutian Liu et al. (2024). A Survey of Topology Optimization Methods Considering Manufacturable Structural Feature Constraints for Additive Manufacturing Structures. [10.1016/j.amf.2024.200143](https://doi.org/10.1016/j.amf.2024.200143)
+  - Xiaonan Wang et al. (2024). Concrete 3D printing technology for sustainable construction: A review on raw material, concrete type and performance. [10.1016/j.dibe.2024.100378](https://doi.org/10.1016/j.dibe.2024.100378)
+  - Chan Soo Ha et al. (2023). Rapid inverse design of metamaterials based on prescribed mechanical behavior through machine learning. [10.1038/s41467-023-40854-1](https://doi.org/10.1038/s41467-023-40854-1)
+  - Kaufui V. Wong et al. (2012). A Review of Additive Manufacturing. [10.5402/2012/208760](https://doi.org/10.5402/2012/208760)
 
 ### manufacturing / additive / powder
 
@@ -701,12 +701,12 @@ This cluster covers advanced manufacturing techniques in additive manufacturing 
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Using semantic Geometric Dimensioning and Tolerancing (GD &T) information from STEP AP242 neutral exchange files for robotic applications. [10.1007/s12008-023-01242-7](https://doi.org/10.1007/s12008-023-01242-7)
-  - — (n.d.). A review of geometric dimensioning and tolerancing (GD&T) of additive manufacturing and powder bed fusion lattices. [10.1007/s40964-022-00304-8](https://doi.org/10.1007/s40964-022-00304-8)
-  - — (n.d.). Laser peening: A tool for additive manufacturing post-processing. [10.1016/j.addma.2018.09.013](https://doi.org/10.1016/j.addma.2018.09.013)
-  - — (n.d.). Parametrically designed surface topography on CAD models of additively manufactured lattice structures for improved design validation. [10.1016/j.addma.2020.101731](https://doi.org/10.1016/j.addma.2020.101731)
-  - — (n.d.). Automated design of additive manufactured flow components with consideration of overhang constraint. [10.1016/j.addma.2021.102119](https://doi.org/10.1016/j.addma.2021.102119)
-  - — (n.d.). An Additive Manufacturing Test Artifact. [10.6028/jres.119.017](https://doi.org/10.6028/jres.119.017)
+  - Shafi Khurieshi Mohammed et al. (2023). Using semantic Geometric Dimensioning and Tolerancing (GD &T) information from STEP AP242 neutral exchange files for robotic applications. [10.1007/s12008-023-01242-7](https://doi.org/10.1007/s12008-023-01242-7)
+  - Mark Armstrong et al. (2022). An overview of modern metal additive manufacturing technology. [10.1016/j.jmapro.2022.10.060](https://doi.org/10.1016/j.jmapro.2022.10.060)
+  - Eujin Pei et al. (2022). A review of geometric dimensioning and tolerancing (GD&T) of additive manufacturing and powder bed fusion lattices. [10.1007/s40964-022-00304-8](https://doi.org/10.1007/s40964-022-00304-8)
+  - Richard Buswell et al. (2022). Geometric quality assurance for 3D concrete printing and hybrid construction manufacturing using a standardised test part for benchmarking capability. [10.1016/j.cemconres.2022.106773](https://doi.org/10.1016/j.cemconres.2022.106773)
+  - Germain Sossou et al. (2022). An Assembly-Oriented Design Framework for Additive Manufacturing. [10.3390/designs6010020](https://doi.org/10.3390/designs6010020)
+  - Benjamin Vayre et al. (2012). Designing for Additive Manufacturing. [10.1016/j.procir.2012.07.108](https://doi.org/10.1016/j.procir.2012.07.108)
 
 ### additive / fdm / manufacturing
 
@@ -714,12 +714,12 @@ This cluster covers additive manufacturing (AM) and fused deposition modeling (F
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Artificial Intelligence‐Augmented Additive Manufacturing: Insights on Closed‐Loop 3D Printing. [10.1002/aisy.202400102](https://doi.org/10.1002/aisy.202400102)
-  - — (n.d.). Using finite element analysis to influence the infill design of fused deposition modelled parts. [10.1007/s40964-017-0034-y](https://doi.org/10.1007/s40964-017-0034-y)
-  - — (n.d.). VOLCO: A predictive model for 3D printed microarchitecture. [10.1016/j.addma.2018.04.004](https://doi.org/10.1016/j.addma.2018.04.004)
-  - — (n.d.). Collaborative optimization design of process parameter and structural topology for laser additive manufacturing. [10.1016/j.cja.2021.12.010](https://doi.org/10.1016/j.cja.2021.12.010)
-  - — (n.d.). Effect of varying spatial orientations on build time requirements for FDM process: A case study. [10.1016/j.dt.2016.11.006](https://doi.org/10.1016/j.dt.2016.11.006)
-  - — (n.d.). Design Consideration for Additive Manufacturing: Fused Deposition Modelling. [10.4236/ojapps.2017.76024](https://doi.org/10.4236/ojapps.2017.76024)
+  - Wei Zhang et al. (2025). A static and high-cycle fatigue characterization framework of metallic lattice structures additive manufactured via fused deposition modeling based method. [10.1016/j.matdes.2025.113761](https://doi.org/10.1016/j.matdes.2025.113761)
+  - Abdul Rahman Sani et al. (2024). Artificial Intelligence‐Augmented Additive Manufacturing: Insights on Closed‐Loop 3D Printing. [10.1002/aisy.202400102](https://doi.org/10.1002/aisy.202400102)
+  - Hussein Alzyod et al. (2023). Material-Dependent Effect of Common Printing Parameters on Residual Stress and Warpage Deformation in 3D Printing: A Comprehensive Finite Element Analysis Study. [10.3390/polym15132893](https://doi.org/10.3390/polym15132893)
+  - Douglas A. J. Brion et al. (2022). Generalisable 3D printing error detection and correction via multi-head neural networks. [10.1038/s41467-022-31985-y](https://doi.org/10.1038/s41467-022-31985-y)
+  - Shaoying Li et al. (2021). Collaborative optimization design of process parameter and structural topology for laser additive manufacturing. [10.1016/j.cja.2021.12.010](https://doi.org/10.1016/j.cja.2021.12.010)
+  - L. Villalpando et al. (2014). An Optimization Approach for Components Built by Fused Deposition Modeling with Parametric Internal Structures. [10.1016/j.procir.2014.02.050](https://doi.org/10.1016/j.procir.2014.02.050)
 
 ### additive / manufacturing / materials
 
@@ -727,24 +727,24 @@ This cluster covers the intersection of additive manufacturing (3D printing) and
 
 - 使う op: [`mesh_slice_contours`](../ops/printpath/slice/mesh_slice_contours.md)(メッシュを層の輪郭に、mesh → table)、[`mesh_slice_stack`](../ops/printpath/slice/mesh_slice_stack.md)(層マスクの積み、mesh → voxel)、[`contours_to_gcode`](../ops/printpath/slice/contours_to_gcode.md)(輪郭 → G-code、table → table)、[`gcode_read`](../ops/printpath/gcode/gcode_read.md)(G-code を線分の表に、text → table)、[`gcode_write`](../ops/printpath/gcode/gcode_write.md)(表 → G-code、table × text → text)、[`gcode_layer_image`](../ops/printpath/gcode/gcode_layer_image.md)(層の期待画像、table → image2d)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Optimally‐Tailored Spinodal Architected Materials for Multiscale Design and Manufacturing. [10.1002/adma.202109304](https://doi.org/10.1002/adma.202109304)
-  - — (n.d.). Additive Manufacturing: Unlocking the Evolution of Energy Materials. [10.1002/advs.201700187](https://doi.org/10.1002/advs.201700187)
-  - — (n.d.). Lightweight in Automotive Components by Forming Technology. [10.1007/s42154-020-00103-3](https://doi.org/10.1007/s42154-020-00103-3)
-  - — (n.d.). Synthetic bone: Design by additive manufacturing. [10.1016/j.actbio.2019.07.049](https://doi.org/10.1016/j.actbio.2019.07.049)
-  - — (n.d.). The influence of laser parameters, scanning strategies and material on the fatigue strength of a stochastic porous structure. [10.1016/j.addma.2018.05.024](https://doi.org/10.1016/j.addma.2018.05.024)
-  - — (n.d.). Case Studies on Local Reinforcement of Sheet Metal Components by Laser Additive Manufacturing. [10.3390/met7040113](https://doi.org/10.3390/met7040113)
+  - Bo Peng et al. (2023). Machine learning-enabled constrained multi-objective design of architected materials. [10.1038/s41467-023-42415-y](https://doi.org/10.1038/s41467-023-42415-y)
+  - Fabio Distefano et al. (2023). Titanium Lattice Structures Produced via Additive Manufacturing for a Bone Scaffold: A Review. [10.3390/jfb14030125](https://doi.org/10.3390/jfb14030125)
+  - Chaolin Tan et al. (2022). Mechanical property and biological behaviour of additive manufactured TiNi functionally graded lattice structure. [10.1088/2631-7990/ac94fa](https://doi.org/10.1088/2631-7990/ac94fa)
+  - Kadir Günaydın et al. (2022). Energy absorption enhancement of additively manufactured hexagonal and re-entrant (auxetic) lattice structures by using multi-material reinforcements. [10.1016/j.addma.2022.103076](https://doi.org/10.1016/j.addma.2022.103076)
+  - Chenxi Lu et al. (2022). Architectural Design and Additive Manufacturing of Mechanical Metamaterials: A Review. [10.1016/j.eng.2021.12.023](https://doi.org/10.1016/j.eng.2021.12.023)
+  - Eric Wycisk et al. (2014). Effects of Defects in Laser Additive Manufactured Ti-6Al-4V on Fatigue Properties. [10.1016/j.phpro.2014.08.120](https://doi.org/10.1016/j.phpro.2014.08.120)
 
 ### dfma / assembly / manufacturing
 
 This cluster covers Design for Manufacturing and Assembly (DFMA) methodologies applied across construction, additive manufacturing, and industrial product design.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Frontiers in construction 3D printing: self-monitoring, multi-robot, drone-assisted processes. [10.1007/s40964-024-00794-8](https://doi.org/10.1007/s40964-024-00794-8)
-  - — (n.d.). 3D printing in construction: sustainable technology for building industry. [10.1007/s40964-025-01314-y](https://doi.org/10.1007/s40964-025-01314-y)
-  - — (n.d.). BIM-based preassembly analysis for design for manufacturing and assembly of prefabricated bridges. [10.1016/j.autcon.2024.105338](https://doi.org/10.1016/j.autcon.2024.105338)
-  - — (n.d.). A new part consolidation method to embrace the design freedom of additive manufacturing. [10.1016/j.jmapro.2015.06.024](https://doi.org/10.1016/j.jmapro.2015.06.024)
-  - — (n.d.). Tolerance Optimization Design Based on the Manufacturing-costs of Assembly Quality. [10.1016/j.procir.2015.04.087](https://doi.org/10.1016/j.procir.2015.04.087)
-  - — (n.d.). Early Cost Estimate of Product during Design Stage Using Design for Manufacturing and Assembly (DFMA) Principles. [10.4028/www.scientific.net/amr.622-623.540](https://doi.org/10.4028/www.scientific.net/amr.622-623.540)
+  - Saeed Banihashemi et al. (2025). 3D printing in construction: sustainable technology for building industry. [10.1007/s40964-025-01314-y](https://doi.org/10.1007/s40964-025-01314-y)
+  - Shuai Li et al. (2024). Frontiers in construction 3D printing: self-monitoring, multi-robot, drone-assisted processes. [10.1007/s40964-024-00794-8](https://doi.org/10.1007/s40964-024-00794-8)
+  - Paul Schaechtl et al. (2024). Knowledge-based product and process design synthesis of additively manufactured non-assembly mechanisms. [10.1080/09544828.2024.2339162](https://doi.org/10.1080/09544828.2024.2339162)
+  - Song Du et al. (2024). A BIM-enabled robot control system for automated integration between rebar reinforcement and 3D concrete printing. [10.1080/17452759.2024.2332423](https://doi.org/10.1080/17452759.2024.2332423)
+  - Duy-Cuong Nguyen et al. (2024). BIM-based preassembly analysis for design for manufacturing and assembly of prefabricated bridges. [10.1016/j.autcon.2024.105338](https://doi.org/10.1016/j.autcon.2024.105338)
+  - K. Annamalai et al. (2012). Early Cost Estimate of Product during Design Stage Using Design for Manufacturing and Assembly (DFMA) Principles. [10.4028/www.scientific.net/amr.622-623.540](https://doi.org/10.4028/www.scientific.net/amr.622-623.540)
 
 ## injection / molding / fault
 
@@ -770,12 +770,12 @@ This cluster covers computational and signal processing methods for detecting an
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). A new bearing fault diagnosis method based on modified convolutional neural networks. [10.1016/j.cja.2019.07.011](https://doi.org/10.1016/j.cja.2019.07.011)
-  - — (n.d.). Bearing vibration data collected under time-varying rotational speed conditions. [10.1016/j.dib.2018.11.019](https://doi.org/10.1016/j.dib.2018.11.019)
-  - — (n.d.). Vibration Analysis Techniques for Rotating Machinery and its effect on Bearing Faults. [10.1016/j.promfg.2018.02.036](https://doi.org/10.1016/j.promfg.2018.02.036)
-  - — (n.d.). Rolling bearing fault diagnosis via STFT and improved instantaneous frequency estimation method. [10.1016/j.promfg.2020.07.014](https://doi.org/10.1016/j.promfg.2020.07.014)
-  - — (n.d.). A Review of Dynamic Modeling and Fault Identifications Methods for Rolling Element Bearing. [10.1016/j.protcy.2014.08.057](https://doi.org/10.1016/j.protcy.2014.08.057)
-  - — (n.d.). Rolling Element Bearing Analysis. `W2181634873`
+  - You Keshun et al. (2024). A novel rolling bearing fault diagnosis method based on time-series fusion transformer with interpretability analysis. [10.1080/10589759.2024.2425813](https://doi.org/10.1080/10589759.2024.2425813)
+  - Xin Li et al. (2024). A review on convolutional neural network in rolling bearing fault diagnosis. [10.1088/1361-6501/ad356e](https://doi.org/10.1088/1361-6501/ad356e)
+  - Mailson Ribeiro Santos et al. (2024). SHapley Additive exPlanations (SHAP) for Efficient Feature Selection in Rolling Bearing Fault Diagnosis. [10.3390/make6010016](https://doi.org/10.3390/make6010016)
+  - Xingjun Zhu et al. (2023). Adaptive Multiscale Convolution Manifold Embedding Networks for Intelligent Fault Diagnosis of Servo Motor-Cylindrical Rolling Bearing Under Variable Working Conditions. [10.1109/tmech.2023.3314215](https://doi.org/10.1109/tmech.2023.3314215)
+  - Nguyễn Đức Thuận et al. (2023). HUST bearing: a practical dataset for ball bearing fault diagnosis. [10.1186/s13104-023-06400-4](https://doi.org/10.1186/s13104-023-06400-4)
+  - Brian P. Graney et al. (2012). Rolling Element Bearing Analysis. [W2181634873](http://www.asnt.org/temp/graney_jan2012.pdf)
 
 ### denture / bases / molding
 
@@ -783,8 +783,8 @@ This cluster covers comparative analyses of denture base fabrication methods, sp
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Comparing accuracy of denture bases fabricated by injection molding, CAD/CAM milling, and rapid prototyping method. [10.4047/jap.2019.11.1.55](https://doi.org/10.4047/jap.2019.11.1.55)
-  - — (n.d.). Comparative evaluation of flexural strength of denture base resin materials processed using compression molding technique, injection molding technique, and computer-aided design CAM technique: An in vitro study. [10.4103/1735-3327.361360](https://doi.org/10.4103/1735-3327.361360)
+  - RutikaC Patankar et al. (2022). Comparative evaluation of flexural strength of denture base resin materials processed using compression molding technique, injection molding technique, and computer-aided design CAM technique: An in vitro study. [10.4103/1735-3327.361360](https://doi.org/10.4103/1735-3327.361360)
+  - Suji Lee et al. (2019). Comparing accuracy of denture bases fabricated by injection molding, CAD/CAM milling, and rapid prototyping method. [10.4047/jap.2019.11.1.55](https://doi.org/10.4047/jap.2019.11.1.55)
 
 ### molding / injection / process
 
@@ -792,12 +792,12 @@ This cluster covers injection molding as a manufacturing process, with emphasis 
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Computer Modeling for Injection Molding. [10.1002/9781118444887](https://doi.org/10.1002/9781118444887)
-  - — (n.d.). A review of current advancements in high surface quality injection molding: Measurement, influencing factors, prediction, and control. [10.1016/j.polymertesting.2022.107718](https://doi.org/10.1016/j.polymertesting.2022.107718)
-  - — (n.d.). Monitoring and Control for Thermoplastics Injection Molding A Review. [10.1016/j.procir.2017.12.229](https://doi.org/10.1016/j.procir.2017.12.229)
-  - — (n.d.). Predicting shrinkage and warpage in injection molding: Towards automatized mold design. [10.1063/1.5008119](https://doi.org/10.1063/1.5008119)
-  - — (n.d.). Design and development of thermoelectric cooler to control mold temperature in injection molding machine. [10.1063/1.5118156](https://doi.org/10.1063/1.5118156)
-  - — (n.d.). DIGITAL TWIN: MANUFACTURING EXCELLENCE THROUGH VIRTUAL FACTORY REPLICATION. [10.5281/zenodo.1493930](https://doi.org/10.5281/zenodo.1493930)
+  - Mateusz Czepiel et al. (2023). Advanced Injection Molding Methods: Review. [10.3390/ma16175802](https://doi.org/10.3390/ma16175802)
+  - Jinsu Gim et al. (2022). A review of current advancements in high surface quality injection molding: Measurement, influencing factors, prediction, and control. [10.1016/j.polymertesting.2022.107718](https://doi.org/10.1016/j.polymertesting.2022.107718)
+  - Chi-Hung Lo et al. (2022). Design of Injection Molding of Side Mirror Cover. [10.18494/sam3828](https://doi.org/10.18494/sam3828)
+  - Senthil Kumaran Selvaraj et al. (2022). A Review on Machine Learning Models in Injection Molding Machines. [10.1155/2022/1949061](https://doi.org/10.1155/2022/1949061)
+  - Donggyun Im et al. (2021). A Data-Centric Approach to Design and Analysis of a Surface-Inspection System Based on Deep Learning in the Plastic Injection Molding Industry. [10.3390/pr9111895](https://doi.org/10.3390/pr9111895)
+  - Donald F. Heaney (2012). Handbook of metal injection molding. [10.1533/9780857096234](https://doi.org/10.1533/9780857096234)
 
 ### cooling / molding / injection
 
@@ -805,12 +805,12 @@ This cluster covers the design and optimization of cooling systems in injection 
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Improving the Quality and Productivity of Molded Parts with a New Design of Conformal Cooling Channels for the Injection Molding Process. [10.1002/adv.21524](https://doi.org/10.1002/adv.21524)
-  - — (n.d.). Establishing a rapid cooling complex mold design for the quality improvement of microcellular injection molding. [10.1002/pen.25538](https://doi.org/10.1002/pen.25538)
-  - — (n.d.). Dynamic conformal cooling improves injection molding. [10.1007/s00170-021-06794-0](https://doi.org/10.1007/s00170-021-06794-0)
-  - — (n.d.). New Design Feature of Mold in Injection Molding For Scrap Reduction. [10.1016/j.promfg.2015.07.042](https://doi.org/10.1016/j.promfg.2015.07.042)
-  - — (n.d.). Optimal Conformal Cooling Channels in 3D Printed Dies for Plastic Injection Molding. [10.1016/j.promfg.2016.08.076](https://doi.org/10.1016/j.promfg.2016.08.076)
-  - — (n.d.). Conformal cooling channels in injection molding tools – design considerations. `W3201529915`
+  - Yuandi Wang et al. (2023). Design and Optimization of Conformal Cooling Channels for Increasing Cooling Efficiency in Injection Molding. [10.3390/app13137437](https://doi.org/10.3390/app13137437)
+  - Van–Thuc Nguyen et al. (2023). Conformal Cooling Channel Design for Improving Temperature Distribution on the Cavity Surface in the Injection Molding Process. [10.3390/polym15132793](https://doi.org/10.3390/polym15132793)
+  - Yuan-Ping Luh et al. (2023). Automated Design of Honeycomb Conformal Cooling Channels for Improving Injection Molding Quality. [10.30657/pea.2023.29.7](https://doi.org/10.30657/pea.2023.29.7)
+  - Sofia B. Rocha et al. (2022). Optimization to Assist Design and Analysis of Temperature Control Strategies for Injection Molding—A Review. [10.3390/ma15124048](https://doi.org/10.3390/ma15124048)
+  - Andreas Kirchheim et al. (2021). Dynamic conformal cooling improves injection molding. [10.1007/s00170-021-06794-0](https://doi.org/10.1007/s00170-021-06794-0)
+  - Alban Agazzi et al. (2013). Uniform Cooling and Part Warpage Reduction in Injection Molding Thanks to the Design of an Effective Cooling System. [10.4028/www.scientific.net/kem.554-557.1611](https://doi.org/10.4028/www.scientific.net/kem.554-557.1611)
 
 ### injection / molding / molded
 
@@ -818,12 +818,12 @@ This cluster covers injection molding and related manufacturing techniques, incl
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Fundamentals of rapid injection molding for microfluidic cell-based assays. [10.1039/c7lc01052d](https://doi.org/10.1039/c7lc01052d)
-  - — (n.d.). Sequential design of an injection molding process using a calibrated predictor. [10.1080/00224065.2018.1474696](https://doi.org/10.1080/00224065.2018.1474696)
-  - — (n.d.). Review on the Effects of Process Parameters on Strength, Shrinkage, and Warpage of Injection Molding Plastic Component. [10.1080/03602559.2015.1132466](https://doi.org/10.1080/03602559.2015.1132466)
-  - — (n.d.). Review of Factors that Affect Shrinkage of Molded Part in Injection Molding. [10.1080/10426914.2014.880467](https://doi.org/10.1080/10426914.2014.880467)
-  - — (n.d.). Progress in Titanium Metal Powder Injection Molding. [10.3390/ma6083641](https://doi.org/10.3390/ma6083641)
-  - — (n.d.). Assessing the Suitability of Freeform Injection Molding for Low Volume Injection Molded Parts: A Design Science Approach. [10.3390/su13031313](https://doi.org/10.3390/su13031313)
+  - Elham Sharifi et al. (2021). Assessing the Suitability of Freeform Injection Molding for Low Volume Injection Molded Parts: A Design Science Approach. [10.3390/su13031313](https://doi.org/10.3390/su13031313)
+  - Po-Hsu Allen Chen et al. (2018). Sequential design of an injection molding process using a calibrated predictor. [10.1080/00224065.2018.1474696](https://doi.org/10.1080/00224065.2018.1474696)
+  - Ulri N. Lee et al. (2018). Fundamentals of rapid injection molding for microfluidic cell-based assays. [10.1039/c7lc01052d](https://doi.org/10.1039/c7lc01052d)
+  - Manoraj Mohan et al. (2016). Review on the Effects of Process Parameters on Strength, Shrinkage, and Warpage of Injection Molding Plastic Component. [10.1080/03602559.2015.1132466](https://doi.org/10.1080/03602559.2015.1132466)
+  - Daniele Annicchiarico et al. (2014). Review of Factors that Affect Shrinkage of Molded Part in Injection Molding. [10.1080/10426914.2014.880467](https://doi.org/10.1080/10426914.2014.880467)
+  - Randall M. German (2013). Progress in Titanium Metal Powder Injection Molding. [10.3390/ma6083641](https://doi.org/10.3390/ma6083641)
 
 ### molding / injection / taguchi
 
@@ -831,12 +831,12 @@ This cluster covers the application of Taguchi design methodology and injection 
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). The influence of mold design and process parameters on dimensional shrinkage of perfluoroalkoxy alkane injection molding parts. [10.1002/app.55757](https://doi.org/10.1002/app.55757)
-  - — (n.d.). Analysis and optimization of injection molding process on warpage based on Taguchi design and PSO algorithm. [10.1007/s00170-025-15099-5](https://doi.org/10.1007/s00170-025-15099-5)
-  - — (n.d.). Transfer-Learning: Bridging the Gap between Real and Simulation Data for Machine Learning in Injection Molding. [10.1016/j.procir.2018.03.087](https://doi.org/10.1016/j.procir.2018.03.087)
-  - — (n.d.). Shrinkage and Warpage Detailed Analysis and Optimization for the Injection Molding Process Using Multistage Experimental Design. [10.1080/08982112.2013.852679](https://doi.org/10.1080/08982112.2013.852679)
-  - — (n.d.). Optimization Parameters to Reduce the Warpage Defect of Plastic Injection Molding Process for A Thin-Shell Part Using Design of Experiment. [10.1088/1757-899x/551/1/012027](https://doi.org/10.1088/1757-899x/551/1/012027)
-  - — (n.d.). Dynamic of taking out molding parts at injection molding. `W2592992404`
+  - Lei Zhang et al. (2025). Analysis and optimization of injection molding process on warpage based on Taguchi design and PSO algorithm. [10.1007/s00170-025-15099-5](https://doi.org/10.1007/s00170-025-15099-5)
+  - Xuemei Li et al. (2024). The influence of mold design and process parameters on dimensional shrinkage of perfluoroalkoxy alkane injection molding parts. [10.1002/app.55757](https://doi.org/10.1002/app.55757)
+  - Jinping Chen et al. (2023). Design and Parametric Optimization of the Injection Molding Process Using Statistical Analysis and Numerical Simulation. [10.3390/pr11020414](https://doi.org/10.3390/pr11020414)
+  - Melsiani Rosdiani Fillipin Saduk et al. (2022). Engineering Design of Soft Gripper and Manufacturing by TPE Hollow Injection Molding. [10.1109/iet-iceta56553.2022.9971524](https://doi.org/10.1109/iet-iceta56553.2022.9971524)
+  - S. Ramesh et al. (2021). Simulation Process of Injection Molding and Optimization for Automobile Instrument Parameter in Embedded System. [10.1155/2021/9720297](https://doi.org/10.1155/2021/9720297)
+  - Shaik Mohamed Mohamed Yusoff et al. (2012). A Plastic Injection Molding Process Characterization Using Experimental Design Technique: A Case Study. [10.11113/jt.v41.686](https://doi.org/10.11113/jt.v41.686)
 
 ### molding / injection / mold
 
@@ -844,12 +844,12 @@ This cluster covers the technical fundamentals of injection molding and related 
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Modeling and Optimization of the Injection‐Molding Process: A Review. [10.1002/adv.21683](https://doi.org/10.1002/adv.21683)
-  - — (n.d.). A review of liquid silicone rubber injection molding: Process variables and process modeling. [10.1002/pen.25618](https://doi.org/10.1002/pen.25618)
-  - — (n.d.). Lightweight and tough PP/talc composite foam with bimodal nanoporous structure achieved by microcellular injection molding. [10.1016/j.matdes.2020.109051](https://doi.org/10.1016/j.matdes.2020.109051)
-  - — (n.d.). Comparison of Injection Molding Technologies for the Production of Micro-optical Devices. [10.1016/j.proeng.2014.03.122](https://doi.org/10.1016/j.proeng.2014.03.122)
-  - — (n.d.). Injection molding. Influence of process parameters on mechanical properties of polypropylene polymer. A first study. [10.1016/j.prostr.2017.12.027](https://doi.org/10.1016/j.prostr.2017.12.027)
-  - — (n.d.). Quality Prediction for Injection Molding by Using a Multilayer Perceptron Neural Network. [10.3390/polym12081812](https://doi.org/10.3390/polym12081812)
+  - Matthew R. Bont et al. (2021). A review of liquid silicone rubber injection molding: Process variables and process modeling. [10.1002/pen.25618](https://doi.org/10.1002/pen.25618)
+  - Jože Tavčar et al. (2020). A multicriteria function for polymer gear design optimization. [10.1093/jcde/qwaa097](https://doi.org/10.1093/jcde/qwaa097)
+  - Kun‐Cheng Ke et al. (2020). Quality Prediction for Injection Molding by Using a Multilayer Perceptron Neural Network. [10.3390/polym12081812](https://doi.org/10.3390/polym12081812)
+  - Jinchuan Zhao et al. (2020). Lightweight and tough PP/talc composite foam with bimodal nanoporous structure achieved by microcellular injection molding. [10.1016/j.matdes.2020.109051](https://doi.org/10.1016/j.matdes.2020.109051)
+  - Dario Loaldi et al. (2020). Experimental Validation of Injection Molding Simulations of 3D Microparts and Microstructured Components Using Virtual Design of Experiments and Multi-Scale Modeling. [10.3390/mi11060614](https://doi.org/10.3390/mi11060614)
+  - Nan Zhang et al. (2012). Towards nano-injection molding. [10.1016/s1369-7021(12)70092-5](https://doi.org/10.1016/s1369-7021(12)70092-5)
 
 ### clamping / injection / molding
 
@@ -857,9 +857,9 @@ This cluster covers the technical and design aspects of injection molding machin
 
 - 使う op: [`dc_local_contrast_norm`](../ops/2d/decomposition/dc_local_contrast_norm.md)(照明むらを除いた局所コントラスト、image → image)、[`dc_rpca_sparse`](../ops/2d/decomposition/dc_rpca_sparse.md)(背景から外れる疎な欠陥、image → image)、[`defect_contrast`](../ops/optics/illumination/defect_contrast.md)(照明条件での欠陥コントラスト、table → table)、[`illumination_design`](../ops/optics/illumination/illumination_design.md)(欠陥が出る照明の設計、 → table)、[`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md)(照明を振って最良を探す、 → pairs)、[`auto_threshold`](../ops/2d/segmentation/auto_threshold.md)(二値化、image → region)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Injection Molding of Soft Robots. [10.1002/admt.202100605](https://doi.org/10.1002/admt.202100605)
-  - — (n.d.). Optimal design on Watt-chain double-toggle mold clamping mechanism for injection molding machine. [10.1177/00368504211041488](https://doi.org/10.1177/00368504211041488)
-  - — (n.d.). Kansei Engineering Applied to the Form Design of Injection Molding Machines. [10.4236/ojapps.2012.23030](https://doi.org/10.4236/ojapps.2012.23030)
+  - Michael A. Bell et al. (2021). Injection Molding of Soft Robots. [10.1002/admt.202100605](https://doi.org/10.1002/admt.202100605)
+  - Long–Chang Hsieh et al. (2021). Optimal design on Watt-chain double-toggle mold clamping mechanism for injection molding machine. [10.1177/00368504211041488](https://doi.org/10.1177/00368504211041488)
+  - Ming‐Shyan Huang et al. (2012). Kansei Engineering Applied to the Form Design of Injection Molding Machines. [10.4236/ojapps.2012.23030](https://doi.org/10.4236/ojapps.2012.23030)
 
 ## materials / review / design
 
@@ -886,12 +886,12 @@ This cluster encompasses systematic reviews and syntheses of intervention design
 This cluster encompasses research on disease prevention, management, and treatment across multiple biological systems, with emphasis on interventional strategies, molecular mechanisms, and therapeutic approaches.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Interventions for preventing obesity in children. [10.1002/14651858.cd001871.pub4](https://doi.org/10.1002/14651858.cd001871.pub4)
-  - — (n.d.). Acupuncture for symptomatic gastroparesis. [10.1002/14651858.cd009676.pub2](https://doi.org/10.1002/14651858.cd009676.pub2)
-  - — (n.d.). Educational interventions for improving primary caregiver complementary feeding practices for children aged 24 months and under. [10.1002/14651858.cd011768.pub2](https://doi.org/10.1002/14651858.cd011768.pub2)
-  - — (n.d.). Work-break schedules for preventing musculoskeletal symptoms and disorders in healthy workers. [10.1002/14651858.cd012886.pub2](https://doi.org/10.1002/14651858.cd012886.pub2)
-  - — (n.d.). Inspiratory muscle training, with or without concomitant pulmonary rehabilitation, for chronic obstructive pulmonary disease (COPD). [10.1002/14651858.cd013778.pub2](https://doi.org/10.1002/14651858.cd013778.pub2)
-  - — (n.d.). Impact of HIV‐related stigma on treatment adherence: systematic review and meta‐synthesis. [10.7448/ias.16.3.18640](https://doi.org/10.7448/ias.16.3.18640)
+  - Yongjie Li et al. (2025). Immune cell regulatory networks in chronic obstructive pulmonary disease: mechanistic analysis from innate to adaptive immunity. [10.3389/fimmu.2025.1651808](https://doi.org/10.3389/fimmu.2025.1651808)
+  - Abdul Raheem et al. (2025). The emerging role of tissue regulatory T cells in tissue repair and regeneration. [10.3389/fimmu.2025.1640113](https://doi.org/10.3389/fimmu.2025.1640113)
+  - Jussi Saukkonen et al. (2024). Updates on the Treatment of Drug-Susceptible and Drug-Resistant Tuberculosis: An Official ATS/CDC/ERS/IDSA Clinical Practice Guideline. [10.1164/rccm.202410-2096st](https://doi.org/10.1164/rccm.202410-2096st)
+  - Maryam Ehsasatvatan et al. (2024). Designing and immunomolecular analysis of a new broad-spectrum multiepitope vaccine against divergent human papillomavirus types. [10.1371/journal.pone.0311351](https://doi.org/10.1371/journal.pone.0311351)
+  - Klaudia Jomová et al. (2024). Heavy metals: toxicity and human health effects. [10.1007/s00204-024-03903-2](https://doi.org/10.1007/s00204-024-03903-2)
+  - Fiona Duncan et al. (2012). Fatigue after Stroke: A Systematic Review of Associations with Impaired Physical Fitness. [10.1111/j.1747-4949.2011.00741.x](https://doi.org/10.1111/j.1747-4949.2011.00741.x)
 
 ### generative / learning / intelligence
 
@@ -899,12 +899,12 @@ This cluster explores generative AI and machine learning systems that autonomous
 
 - 使う op: [`vol_euler_number`](../ops/3d/feature/vol_euler_number.md)(連結性(閉じた空隙の数)、voxel → measurement)、[`vol_wall_thickness`](../ops/3d/probe/vol_wall_thickness.md)(最小肉厚、voxel → signal)、[`edt_jfa`](../ops/3d/feature/edt_jfa.md)(距離変換(肉厚・隙間)、voxel → sdf)、[`vol_granulometry`](../ops/3d/feature/vol_granulometry.md)(空隙の大きさ分布、voxel → measurement)、[`mesh_volume`](../ops/3d/mesh_process/mesh_volume.md)(体積(材料量)、mesh → measurement)、[`inertia_tensor`](../ops/3d/moment_invariant/inertia_tensor.md)(慣性テンソル、points → matrix)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). AI‐Driven Generative Design Redefines the Engineering Process. [10.1002/9781394271078.ch17](https://doi.org/10.1002/9781394271078.ch17)
-  - — (n.d.). Generative models for molecular discovery: Recent advances and challenges. [10.1002/wcms.1608](https://doi.org/10.1002/wcms.1608)
-  - — (n.d.). Journal of Intelligent Manufacturing. [10.1007/10845.1572-8145](https://doi.org/10.1007/10845.1572-8145)
-  - — (n.d.). Deep learning modelling techniques: current progress, applications, advantages, and challenges. [10.1007/s10462-023-10466-8](https://doi.org/10.1007/s10462-023-10466-8)
-  - — (n.d.). Digital deception: generative artificial intelligence in social engineering and phishing. [10.1007/s10462-024-10973-2](https://doi.org/10.1007/s10462-024-10973-2)
-  - — (n.d.). Generative models for graph-based protein design. `W2957874522`
+  - Sanghee Lee et al. (2025). The influence of generative AI with prompt engineering on creative design in architectural education. [10.1080/13467581.2025.2552446](https://doi.org/10.1080/13467581.2025.2552446)
+  - Daniel Lee et al. (2025). Prompt engineering in higher education: a systematic review to help inform curricula. [10.1186/s41239-025-00503-7](https://doi.org/10.1186/s41239-025-00503-7)
+  - Harpreet Kaur Channi et al. (2025). AI‐Driven Generative Design Redefines the Engineering Process. [10.1002/9781394271078.ch17](https://doi.org/10.1002/9781394271078.ch17)
+  - Tao Shen et al. (2024). Accurate RNA 3D structure prediction using a language model-based deep learning approach. [10.1038/s41592-024-02487-0](https://doi.org/10.1038/s41592-024-02487-0)
+  - Reihaneh Samsami (2024). Optimizing the Utilization of Generative Artificial Intelligence (AI) in the AEC Industry: ChatGPT Prompt Engineering and Design. [10.3390/civileng5040049](https://doi.org/10.3390/civileng5040049)
+  - Steve A. Maas et al. (2012). FEBio: Finite Elements for Biomechanics. [10.1115/1.4005694](https://doi.org/10.1115/1.4005694)
 
 ### metal / organic / materials
 
@@ -912,12 +912,12 @@ This cluster covers the intersection of metallic and organic materials science, 
 
 - 使う op: [`spectrum_to_srgb`](../ops/optics/appearance/spectrum_to_srgb.md)(分光 → 色、signal → vector)、[`thin_film_reflectance`](../ops/optics/appearance/thin_film_reflectance.md)(薄膜の干渉色、signal → signal)、[`material_catalog`](../ops/optics/material/material_catalog.md)(材質の外観表、 → table)、[`oren_nayar`](../ops/optics/material/oren_nayar.md)(粗い面の反射、normalmap → image2d)、[`brdf_microfacet`](../ops/specular/reflectance/brdf_microfacet.md)(微小面の反射、normalmap → image2d)、[`metallic_flake_normals`](../ops/optics/surface/metallic_flake_normals.md)(メタリック塗装、 → normalmap)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Non‐Noble‐Metal‐Based Electrocatalysts toward the Oxygen Evolution Reaction. [10.1002/adfm.201910274](https://doi.org/10.1002/adfm.201910274)
-  - — (n.d.). Bubble‐Sheet‐Like Interface Design with an Ultrastable Solid Electrolyte Layer for High‐Performance Dual‐Ion Batteries. [10.1002/adma.201606805](https://doi.org/10.1002/adma.201606805)
-  - — (n.d.). Defective Metal‐Organic Frameworks. [10.1002/adma.201704501](https://doi.org/10.1002/adma.201704501)
-  - — (n.d.). Ultrafine Co Nanoparticles Encapsulated in Carbon‐Nanotubes‐Grafted Graphene Sheets as Advanced Electrocatalysts for the Hydrogen Evolution Reaction. [10.1002/adma.201802011](https://doi.org/10.1002/adma.201802011)
-  - — (n.d.). Progress and Perspective of Ceramic/Polymer Composite Solid Electrolytes for Lithium Batteries. [10.1002/advs.201903088](https://doi.org/10.1002/advs.201903088)
-  - — (n.d.). Raman Spectroscopic Study of Solid Solution Spinel Oxides. [10.34917/2476131](https://doi.org/10.34917/2476131)
+  - Amarajothi Dhakshinamoorthy et al. (2024). Metal–organic framework heterojunctions for photocatalysis. [10.1039/d3cs00205e](https://doi.org/10.1039/d3cs00205e)
+  - Li‐Yuan Zhu et al. (2023). Advances in Noble Metal-Decorated Metal Oxide Nanomaterials for Chemiresistive Gas Sensors: Overview. [10.1007/s40820-023-01047-z](https://doi.org/10.1007/s40820-023-01047-z)
+  - Zhuo Li et al. (2023). Ionic Conduction in Polymer‐Based Solid Electrolytes. [10.1002/advs.202201718](https://doi.org/10.1002/advs.202201718)
+  - Henry Adenusi et al. (2023). Lithium Batteries and the Solid Electrolyte Interphase (SEI)—Progress and Outlook. [10.1002/aenm.202203307](https://doi.org/10.1002/aenm.202203307)
+  - Qianwen Liu et al. (2021). A Review on Metal- and Metal Oxide-Based Nanozymes: Properties, Mechanisms, and Applications. [10.1007/s40820-021-00674-8](https://doi.org/10.1007/s40820-021-00674-8)
+  - Antonin Faes et al. (2012). A Review of RedOx Cycling of Solid Oxide Fuel Cells Anode. [10.3390/membranes2030585](https://doi.org/10.3390/membranes2030585)
 
 ### materials / applications / properties
 
@@ -925,24 +925,24 @@ This cluster encompasses the design, processing, characterization, and practical
 
 - 使う op: [`spectrum_to_srgb`](../ops/optics/appearance/spectrum_to_srgb.md)(分光 → 色、signal → vector)、[`thin_film_reflectance`](../ops/optics/appearance/thin_film_reflectance.md)(薄膜の干渉色、signal → signal)、[`material_catalog`](../ops/optics/material/material_catalog.md)(材質の外観表、 → table)、[`oren_nayar`](../ops/optics/material/oren_nayar.md)(粗い面の反射、normalmap → image2d)、[`brdf_microfacet`](../ops/specular/reflectance/brdf_microfacet.md)(微小面の反射、normalmap → image2d)、[`metallic_flake_normals`](../ops/optics/surface/metallic_flake_normals.md)(メタリック塗装、 → normalmap)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Home parenteral nutrition for people with inoperable malignant bowel obstruction. [10.1002/14651858.cd012812](https://doi.org/10.1002/14651858.cd012812)
-  - — (n.d.). Geomagnetically induced currents: Science, engineering, and applications readiness. [10.1002/2016sw001501](https://doi.org/10.1002/2016sw001501)
-  - — (n.d.). Journal of Geophysical Research: Solid Earth. [10.1002/(issn)2169-9356](https://doi.org/10.1002/(issn)2169-9356)
-  - — (n.d.). Design, Processing, Microstructure, Properties, and Applications of Advanced Intermetallic TiAl Alloys. [10.1002/adem.201200231](https://doi.org/10.1002/adem.201200231)
-  - — (n.d.). Optimizing Bulk Metallic Glasses for Robust, Highly Wear‐Resistant Gears. [10.1002/adem.201600541](https://doi.org/10.1002/adem.201600541)
-  - — (n.d.). National Diet and Nutrition Survey : results from years 7 and 8 (combined) of the Rolling Programme (2014/2015 – 2015/2016). `W2791075222`
+  - N. G. McCrum et al. (2026). Principles of Polymer Engineering. [10.1093/9780191821677.001.0001](https://doi.org/10.1093/9780191821677.001.0001)
+  - Claudio Zeni et al. (2025). A generative model for inorganic materials design. [10.1038/s41586-025-08628-5](https://doi.org/10.1038/s41586-025-08628-5)
+  - Adam B. Peters et al. (2024). Materials design for hypersonics. [10.1038/s41467-024-46753-3](https://doi.org/10.1038/s41467-024-46753-3)
+  - Zilong Han et al. (2024). Design of Fatigue‐Resistant Hydrogels. [10.1002/adfm.202313498](https://doi.org/10.1002/adfm.202313498)
+  - Doksoo Lee et al. (2023). Data‐Driven Design for Metamaterials and Multiscale Systems: A Review. [10.1002/adma.202305254](https://doi.org/10.1002/adma.202305254)
+  - Brian Evans (2012). Practical 3D Printers. [10.1007/978-1-4302-4393-9](https://doi.org/10.1007/978-1-4302-4393-9)
 
 ### climate / atmospheric / variability
 
 This cluster encompasses climate modeling, atmospheric processes, and variability research, focusing on how Earth system models represent physical processes like cloud microphysics, evapotranspiration, and ocean circulation.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Global synthesis of vegetation control on evapotranspiration partitioning. [10.1002/2014gl061439](https://doi.org/10.1002/2014gl061439)
-  - — (n.d.). Representation of microphysical processes in cloud‐resolving models: Spectral (bin) microphysics versus bulk parameterization. [10.1002/2014rg000468](https://doi.org/10.1002/2014rg000468)
-  - — (n.d.). The impact of glacier geometry on meltwater plume structure and submarine melt in Greenland fjords. [10.1002/2016gl070170](https://doi.org/10.1002/2016gl070170)
-  - — (n.d.). Characteristics of the ocean simulations in the Max Planck Institute Ocean Model (MPIOM) the ocean component of the MPI‐Earth system model. [10.1002/jame.20023](https://doi.org/10.1002/jame.20023)
-  - — (n.d.). Climate and carbon cycle changes from 1850 to 2100 in MPI‐ESM simulations for the Coupled Model Intercomparison Project phase 5. [10.1002/jame.20038](https://doi.org/10.1002/jame.20038)
-  - — (n.d.). IPCC, 2023: Climate Change 2023: Synthesis Report. Contribution of Working Groups I, II and III to the Sixth Assessment Report of the Intergovernmental Panel on Climate Change [Core Writing Team, H. Lee and J. Romero (eds.)]. IPCC, Geneva, Switzerland. [10.59327/ipcc/ar6-9789291691647](https://doi.org/10.59327/ipcc/ar6-9789291691647)
+  - The Core Writing Team et al. (2024). Climate Change 2023 Synthesis Report. [10.1163/9789004322714_cclc_2023-0258-1193](https://doi.org/10.1163/9789004322714_cclc_2023-0258-1193)
+  - Katherine Calvin et al. (2023). IPCC, 2023: Climate Change 2023: Synthesis Report. Contribution of Working Groups I, II and III to the Sixth Assessment Report of the Intergovernmental Panel on Climate Change [Core Writing Team, H. Lee and J. Romero (eds.)]. IPCC, Geneva, Switzerland. [10.59327/ipcc/ar6-9789291691647](https://doi.org/10.59327/ipcc/ar6-9789291691647)
+  - Vivek K. Arora et al. (2020). Carbon–concentration and carbon–climate feedbacks in CMIP6 models and their comparison to CMIP5 models. [10.5194/bg-17-4173-2020](https://doi.org/10.5194/bg-17-4173-2020)
+  - Neil C. Swart et al. (2019). The Canadian Earth System Model version 5 (CanESM5.0.3). [10.5194/gmd-12-4823-2019](https://doi.org/10.5194/gmd-12-4823-2019)
+  - Isaac M. Held et al. (2019). Structure and Performance of GFDL's CM4.0 Climate Model. [10.1029/2019ms001829](https://doi.org/10.1029/2019ms001829)
+  - Daniel Stone et al. (2012). Tropospheric OH and HO2 radicals: field measurements and model comparisons. [10.1039/c2cs35140d](https://doi.org/10.1039/c2cs35140d)
 
 ### forming / design / sheet
 
@@ -950,36 +950,36 @@ This cluster covers parametric design methodologies, optimization techniques, an
 
 - 使う op: [`strain_from_displacement`](../ops/piv/solid/strain_from_displacement.md)(DIC の変位 → ひずみ、image2d × image2d → image2d)、[`piv_deform_pass`](../ops/piv/estimate/piv_deform_pass.md)(変形を追う相関、image2d × image2d × flow2d → flow2d)、[`correlation_quality`](../ops/piv/solid/correlation_quality.md)(相関の信頼度、image2d × image2d × flow2d → image2d)、[`speckle_quality`](../ops/piv/solid/speckle_quality.md)(スペックルの良さ、image2d → table)、[`angle_between_planes`](../ops/3d/geometry/angle_between_planes.md)(曲げ角、primitive → measurement)、[`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md)(フランジ面、points → primitive)
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). A simple and efficient unstructured finite volume scheme for solving the shallow water equations in overland flow applications. [10.1002/2014wr016547](https://doi.org/10.1002/2014wr016547)
-  - — (n.d.). Complexity measures from geometric actions onVirasoro and Kac-Moody orbits. [10.1007/jhep11(2020)003](https://doi.org/10.1007/jhep11(2020)003)
-  - — (n.d.). Hydrodynamic hull form optimization using parametric models. [10.1007/s00773-011-0148-8](https://doi.org/10.1007/s00773-011-0148-8)
-  - — (n.d.). Extended MULTIMOORA method based on Shannon entropy weight for materials selection. [10.1007/s40092-015-0123-9](https://doi.org/10.1007/s40092-015-0123-9)
-  - — (n.d.). Pore-scale imaging and modelling. [10.1016/j.advwatres.2012.03.003](https://doi.org/10.1016/j.advwatres.2012.03.003)
-  - — (n.d.). The Aegis Forward-Base Burner: Q_E Closure, Plug Requirement, and Mirror Confinement in an Islanded Low-Neutron D–³He Tandem Mirror. [10.5281/zenodo.22645693](https://doi.org/10.5281/zenodo.22645693)
+  - Priyanca Ford et al. (2026). The Aegis Forward-Base Burner: Q_E Closure, Plug Requirement, and Mirror Confinement in an Islanded Low-Neutron D–³He Tandem Mirror. [10.5281/zenodo.22645693](https://www.kronosfusionenergy.com/publications/aegis-burner.html)
+  - Ullah et al. (2026). Applied Mechanics and Materials. [10.4028/www.scientific.net/amm](https://doi.org/10.4028/www.scientific.net/amm)
+  - Orlando Corigliano et al. (2022). On the Technology of Solid Oxide Fuel Cell (SOFC) Energy Systems for Stationary Power Generation: A Review. [10.3390/su142215276](https://doi.org/10.3390/su142215276)
+  - Samya Sen et al. (2022). Thixotropic spectra and Ashby-style charts for thixotropy. [10.1122/8.0000446](https://doi.org/10.1122/8.0000446)
+  - Qinying Yan et al. (2022). The Finite Element Analysis Research on Microneedle Design Strategy and Transdermal Drug Delivery System. [10.3390/pharmaceutics14081625](https://doi.org/10.3390/pharmaceutics14081625)
+  - Soonhung Han et al. (2012). Hydrodynamic hull form optimization using parametric models. [10.1007/s00773-011-0148-8](https://doi.org/10.1007/s00773-011-0148-8)
 
 ### dfma / design / assembly
 
 This cluster covers Design for Manufacturing and Assembly (DFMA) methodologies and their integration into product development processes.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Product Design for Manufacturing and Assembly. [10.1002/9781118985960.meh202](https://doi.org/10.1002/9781118985960.meh202)
-  - — (n.d.). Latina/o Adolescents' Funds of Knowledge Related to Engineering. [10.1002/jee.20117](https://doi.org/10.1002/jee.20117)
-  - — (n.d.). Process models in design and development. [10.1007/s00163-017-0262-7](https://doi.org/10.1007/s00163-017-0262-7)
-  - — (n.d.). Design for manufacturing and assembly methods in the product development process of mechanical products: a systematic literature review. [10.1007/s00170-022-08837-6](https://doi.org/10.1007/s00170-022-08837-6)
-  - — (n.d.). Particle Swarm Optimization Algorithm and Its Applications: A Systematic Review. [10.1007/s11831-021-09694-4](https://doi.org/10.1007/s11831-021-09694-4)
-  - — (n.d.). Affordances as materials potential: What design can do for materials development. `W3010533850`
+  - Chathuri Widanage et al. (2024). Integrating Design for Manufacture and Assembly (DfMA) with BIM for infrastructure. [10.1016/j.autcon.2024.105705](https://doi.org/10.1016/j.autcon.2024.105705)
+  - Sadaf Montazeri et al. (2024). Design for Manufacturing and Assembly (DfMA) in Construction: A Holistic Review of Current Trends and Future Directions. [10.3390/buildings14010285](https://doi.org/10.3390/buildings14010285)
+  - Zbigniew Humienny et al. (2023). ISO GPS and ASME GDT standards – differences and similarities in definitions of measurands. [10.24425/mms.2023.147954](https://doi.org/10.24425/mms.2023.147954)
+  - Muhammad Naeem et al. (2023). A Step-by-Step Process of Thematic Analysis to Develop a Conceptual Model in Qualitative Research. [10.1177/16094069231205789](https://doi.org/10.1177/16094069231205789)
+  - Anda Iviana Juniani et al. (2022). Design for Manufacturing, Assembly, and Reliability: An Integrated Framework for Product Redesign and Innovation. [10.3390/designs6050088](https://doi.org/10.3390/designs6050088)
+  - Ibuchim Ogunkah et al. (2012). Investigating Factors Affecting Material Selection: The Impacts on Green Vernacular Building Materials in the Design-Decision Making Process. [10.3390/buildings2010001](https://doi.org/10.3390/buildings2010001)
 
 ### industry / digital / manufacturing
 
 This cluster covers the intersection of digital transformation, automation, and manufacturing systems in Industry 4.0 environments.
 
 - 代表論文(新しい順 + いちばん古い 1 本):
-  - — (n.d.). Wearable Sensors‐Enabled Human–Machine Interaction Systems: From Design to Application. [10.1002/adfm.202008936](https://doi.org/10.1002/adfm.202008936)
-  - — (n.d.). Smart design engineering: a literature review of the impact of the 4th industrial revolution on product design and development. [10.1007/s00163-020-00330-z](https://doi.org/10.1007/s00163-020-00330-z)
-  - — (n.d.). Review on model predictive control: an engineering perspective. [10.1007/s00170-021-07682-3](https://doi.org/10.1007/s00170-021-07682-3)
-  - — (n.d.). Reconfigurable manufacturing systems: Principles, design, and future trends. [10.1007/s11465-018-0483-0](https://doi.org/10.1007/s11465-018-0483-0)
-  - — (n.d.). Understanding anthropomorphism in service provision: a meta-analysis of physical robots, chatbots, and other AI. [10.1007/s11747-020-00762-y](https://doi.org/10.1007/s11747-020-00762-y)
-  - — (n.d.). Digital control engineering : analysis and design. `W1532156674`
+  - Marcello M. Mariani et al. (2024). Generative artificial intelligence in innovation management: A preview of future research developments. [10.1016/j.jbusres.2024.114542](https://doi.org/10.1016/j.jbusres.2024.114542)
+  - Godfred Fobiri et al. (2022). Reality Capture in Construction Project Management: A Review of Opportunities and Challenges. [10.3390/buildings12091381](https://doi.org/10.3390/buildings12091381)
+  - Max Schwenzer et al. (2021). Review on model predictive control: an engineering perspective. [10.1007/s00170-021-07682-3](https://doi.org/10.1007/s00170-021-07682-3)
+  - Jianxin Jiao et al. (2021). Design Engineering in the Age of Industry 4.0. [10.1115/1.4051041](https://doi.org/10.1115/1.4051041)
+  - Deborah Sumter et al. (2021). Key Competencies for Design in a Circular Economy: Exploring Gaps in Design Knowledge and Skills for a Circular Economy. [10.3390/su13020776](https://doi.org/10.3390/su13020776)
+  - Jeannette Pols (2012). Care at a Distance : On the Closeness of Technology. [10.26530/oapen_413032](https://doi.org/10.26530/oapen_413032)
 
 ## op → クラスタ(逆引き)
 

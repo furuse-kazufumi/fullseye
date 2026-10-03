@@ -64,10 +64,95 @@ CORPORA = {
                 "SPC・Cpk、デジタルツイン・予知保全。",
         "why": "工程ごとの「何を測れば品質が分かるか」。検査ワークフロー層・`spc` 族・3D 計測・`roughness` 族・振動の PoC の当て先。",
     },
+    # ★2026-10-03: 運転の系列の集大成と「開かれた運転基盤」のために足した 2 分野。テーマ表は製造の表と分ける
+    #   (共通の 1 枚に足すと、運転の「digital twin」が製造の予知保全の op に、製造の「reconstruction」が 3DGS に当たる)。
+    "driving_simulation": {
+        "title": "運転のシミュレーションと評価",
+        "what": "シミュレータ(CARLA・MetaDrive・AWSIM・SUMO 連成・デジタルツイン)、シナリオに基づく試験(OpenSCENARIO・危険度指標・"
+                "コーナーケース・危険シナリオ生成)、稀な事象の加速評価(重要度サンプリング)、閉ループ評価(nuPlan・NAVSIM・Bench2Drive)、"
+                "ニューラル再構成(NeRF・3DGS)、sim-to-real(ドメインギャップ・悪天候・合成データの真値)。",
+        "why": "運転 PoC の系列(`opsdrive` の 22 カテゴリ)を**評価の作法**につなぐ。どの量を真値で採点できるか、閉じた商用スタックが"
+               "何を握っているか、自前の世界と CARLA を同じ場面で比べるときに何を測るか。",
+        "themes": "drive",
+    },
+    "sensor_simulation": {
+        "title": "センサーの模擬(カメラ・LiDAR・レーダー)",
+        "what": "カメラの雑音(EMVA 1288)・ISP・HDR・LED のちらつき・レンズのフレアと周辺減光・ローリングシャッター・モーションブラー、"
+                "LiDAR の強度と入射角・霧と降雪の減衰、レーダーの伝搬とドップラー、センサー模擬の検証。",
+        "why": "自前の世界の描画を**物理で根拠づける**ための知識。各効果は閉形式の門が立つ(cos⁴ 減光・PTC の傾き・Koschmieder・"
+               "LiDAR 方程式)ので、CARLA の写実と比べる前に Fullseye 側の正しさを固められる。",
+        "themes": "drive",
+    },
 }
 
 #: 知識のテーマ(クラスタ名・葉の名前に出る語)→ 使う op と、その理由。**op 名は生成時に実在を検証**する。
 #: 当たらない語は当てない(何でも紐づけると嘘になる)。docs 参照だけのテーマ(op 無し)は ops を空にし、doc に入口を書く。
+#: 運転・センサーの分野のテーマ表(2026-10-03)。照合はクラスタ名と葉の名前の語。op 名は生成時に実在を検証する。
+#: 当たる op が無い領域(無線光通信・言語モデルの運転)は ops を空にして「Fullseye の外」と正直に出す。
+DRIVE_THEMES: list[dict] = [
+    {"keys": ("rare", "importance", "sampling", "accelerated", "failure", "monte", "carlo", "markov", "event", "events", "mixture", "piecewise"),
+     "theme": "稀な事象の加速評価(重要度サンプリング)",
+     "ops": [("importance_risk_estimate", "発生率を上げて走らせ、重みで本来の事故率に戻す(不偏)"), ("poisson_events", "稀な事象を頻度つきで置く"),
+             ("poisson_events_xt", "場所と時刻で変わる発生率 λ(x, t)"), ("bus_stop_rate", "停車中のバスの前後で上がる飛び出しの率")]},
+    {"keys": ("scenario", "scenarios", "criticality", "critical", "testing", "test", "collision", "corner", "cases", "ads", "safety"),
+     "theme": "シナリオ試験と危険度の指標",
+     "ops": [("ttc_truth", "衝突までの時間の真値"), ("ttc_from_range", "距離の列からの TTC"), ("rss_longitudinal_check", "RSS の縦の安全距離"),
+             ("rss_lateral_check", "RSS の横の安全距離"), ("dilemma_zone", "黄信号のジレンマゾーン(閉形式)"), ("occlusion_safe_speed", "死角から止まれる速さ"),
+             ("turn_maneuver_check", "右左折の採点"), ("skill_test_score", "技能試験の減点")]},
+    {"keys": ("traffic", "sumo", "cav", "cavs", "merging", "micro", "vehicular", "codrive", "management", "distributed"),
+     "theme": "交通流と他車の振る舞い",
+     "ops": [("idm_platoon_simulate", "IDM の車列"), ("idm_equilibrium_gap", "IDM の定常車間(閉形式)"), ("driver_style", "運転の癖を個体ごとに"),
+             ("lateral_wobble", "車線内のふらつき"), ("lane_change_permitted", "進路変更の可否"), ("passing_decision", "すれ違いの判断"),
+             ("social_force_step", "歩行者の Social Force")]},
+    {"keys": ("simulator", "simulators", "simulation", "simulations", "autoware", "carla", "virtual", "digital", "twin", "twins", "sim2real", "interaction", "automation"),
+     "theme": "自前の世界(真値つきの描画とセンサー)",
+     "ops": [("world_build", "コースから 3-D の世界"), ("world_camera", "色・ラベル・深度・面番号を一度に"), ("world_move", "物体を動かす"),
+             ("lidar_scan", "同じ世界の LiDAR"), ("env_render", "太陽・霧・雨・夜"), ("tile_stream", "終わらない地図"), ("gs_from_world", "世界 → 3DGS")]},
+    {"keys": ("weather", "adverse", "fog", "rain", "snow", "snowfall", "precipitation", "ice", "icing", "cloud", "clouds", "conditions", "wind", "drop", "realweather"),
+     "theme": "天候と視程(閉形式で根拠づける)",
+     "ops": [("koschmieder", "視程と消散係数(Koschmieder)"), ("beta_from_mor", "気象光学距離 → 消散係数"), ("fog_beta_from_profile", "画像の明るさの縦断から霧の濃さ"),
+             ("veiling_luminance", "まぶしさの光幕輝度"), ("sight_stop_speed", "見える距離で止まれる速さ"), ("env_params", "天候の母数")]},
+    {"keys": ("lidar", "lidars", "laser", "intensity", "incidence", "angle", "point", "hsl", "railway"),
+     "theme": "LiDAR(距離・強度・幾何)",
+     "ops": [("lidar_spec", "走査の仕様"), ("lidar_scan", "世界を走査"), ("ray_plane_range", "平面までの距離(閉形式)"), ("ray_box_ranges", "箱までの距離(閉形式)"),
+             ("project_spherical", "球面投影")]},
+    {"keys": ("radar", "fmcw", "doppler", "propagation", "ray"),
+     "theme": "レーダー・ドップラー・音の到来方向",
+     "ops": [("fmcw_range_profile", "FMCW の距離"), ("range_doppler_map", "距離・速度の地図"), ("doppler_shift", "ドップラーの閉形式"),
+             ("doppler_track", "サイレンの周波数の追跡"), ("tdoa_bearing", "到着時間差から方向")]},
+    {"keys": ("synthetic", "domain", "adaptation", "real", "realistic", "detection", "translation"),
+     "theme": "sim-to-real の比較(同じ場面を対で測る)",
+     "ops": [("psnr", "画素の差"), ("ssim", "構造の類似"), ("ms_ssim", "多段の構造類似"), ("ssim_map", "どこが違うかの地図"),
+             ("world_camera", "真値つきの対の描画")]},
+    {"keys": ("nerf", "radiance", "neural", "gaussian", "splatting", "reconstruction", "reconstruct", "view", "views", "synthesis", "rendering", "occlusions", "fields"),
+     "theme": "ニューラル再構成と 3DGS",
+     "ops": [("gs_from_world", "メッシュの世界 → ガウス"), ("gs_render", "ガウスの描画"), ("gs_update", "ガウスの更新"), ("gs_read_file", "3DGS の読み込み"),
+             ("humanoid_impostors", "向き × 位相の事前描画(安い代替)")]},
+    {"keys": ("planning", "trajectory", "loop", "closed", "policy", "end", "reinforcement", "imitation", "expert", "motion", "navigation", "racing"),
+     "theme": "計画と制御(ルールベースの側)",
+     "ops": [("curvature_speed_plan", "曲率から速度の計画"), ("pure_pursuit_curvature", "pure pursuit"), ("stanley_steer", "Stanley"),
+             ("stop_line_plan", "停止線までの計画"), ("long_simulate", "縦の運動"), ("bicycle_model_step", "自転車モデル")]},
+    {"keys": ("shutter", "rolling", "blur", "deblurring", "stripes", "imu", "star"),
+     "theme": "ローリングシャッターとブラー(閉形式)",
+     "ops": [("aug_rolling_shutter", "ローリングシャッター(斜線の傾き = v·t_line)"), ("aug_motion_blur", "モーションブラー(スペクトルの零点)"),
+             ("xkor_motion_blur", "第 2 実装のブラー")]},
+    {"keys": ("isp", "signal", "noise", "camera", "sensors", "imaging", "cis", "scmos", "microscopy", "fluorescence", "measurement", "image", "images"),
+     "theme": "カメラの雑音と ISP(EMVA 1288)",
+     "ops": [("aug_shot_noise", "光子の雑音"), ("aug_read_noise", "読み出し雑音"), ("emva_snr_curve", "EMVA 1288 の SNR 曲線"),
+             ("raw_demosaic_bilinear", "デモザイク"), ("tone_map", "階調"), ("estimate_noise", "雑音の推定"), ("noise_sigma", "雑音の標準偏差")]},
+    {"keys": ("hdr", "exposure", "flicker", "p2020", "lighting"),
+     "theme": "HDR と LED のちらつき",
+     "ops": [("tone_map", "HDR の階調圧縮"), ("deflicker", "ちらつきの除去"), ("flash_frequency", "点滅の周波数"), ("aliased_frequency", "フレームレートとのエイリアシング")]},
+    {"keys": ("flare", "lens", "vignetting", "correction", "calibration", "optical", "oblique", "surfaces"),
+     "theme": "レンズ(周辺減光・歪み・フレア・MTF)",
+     "ops": [("aug_vignette", "cos⁴ の周辺減光"), ("vignette", "周辺減光"), ("distortion_map", "歪みの地図"), ("psf_to_mtf", "PSF → MTF"),
+             ("mtf50", "解像の指標"), ("veiling_glare_index", "ベールグレアの指数")]},
+    {"keys": ("communication", "wireless", "vlc", "positioning", "v2x", "nlos", "ultraviolet"),
+     "theme": "通信(V2X・可視光通信)", "ops": []},
+    {"keys": ("language", "video", "diffusion", "videos", "action", "future", "avatar", "continual", "intelligence", "learning"),
+     "theme": "学習・生成の運転モデル(採点する側は上の門)", "ops": []},
+]
+
 THEME_OPS: list[dict] = [
     {"keys": ("point", "cloud", "clouds", "scan", "scanning", "registration", "reverse"), "theme": "点群 → 当てはめ → CAD(逆設計)",
      "ops": [("voxel_grid_downsample", "スキャン点群を等間隔に間引く"), ("statistical_outlier_removal", "外れ点を落とす"),
@@ -256,21 +341,29 @@ class OpIndex:
                                           "out": n.get("out", ""), "rel": rel.split("docs/ops/", 1)[-1]})
         if not self.ops:
             raise SystemExit("no op notes listed (fail-closed)")
-        missing = sorted({op for th in THEME_OPS for op, _why in th["ops"] if op not in self.ops})
+        missing = sorted({op for table in THEME_TABLES.values() for th in table for op, _why in th["ops"]
+                          if op not in self.ops})
         if missing:
             raise SystemExit("THEME_OPS names ops that are not in the shipped notes (renamed or removed?): %s — fix the table (fail-closed)"
                              % ", ".join(missing))
 
 
-def _themes_for(text: str) -> list[dict]:
-    """テーマの語を、ハイフンを残した形(time-of-flight)と空白に開いた形(point-cloud → point cloud)の両方で照合する。"""
+def _themes_for(text: str, table: list[dict] | None = None) -> list[dict]:
+    """テーマの語を、ハイフンを残した形(time-of-flight)と空白に開いた形(point-cloud → point cloud)の両方で照合する。
+
+    ``table`` は分野のテーマ表(``CORPORA[name]["themes"]`` → :data:`THEME_TABLES`)。省くと製造の表。
+    """
     low = text.lower()
     forms = [" " + re.sub(r"[^a-z0-9\-]+", " ", low) + " ", " " + re.sub(r"[^a-z0-9]+", " ", low) + " "]
     hits = []
-    for th in THEME_OPS:
+    for th in (THEME_OPS if table is None else table):
         if any((" " + k + " ") in w for k in th["keys"] for w in forms):
             hits.append(th)
     return hits
+
+
+#: 分野ごとのテーマ表。CORPORA の "themes" で選ぶ(既定 = 製造の THEME_OPS)
+THEME_TABLES = {"default": THEME_OPS, "drive": DRIVE_THEMES}
 
 
 def _slug(name: str) -> str:
@@ -303,12 +396,23 @@ def _paper(path: str) -> dict | None:
         return m.group(1).strip() if m else ""
 
     authors = field("Authors")
+    # ★2026-10-03: corpus2skill は葉へ写すときに Authors / Date / URL の行を落とす(元の papers/*.md には在る)。
+    #   その結果、出荷した文献層の代表論文がすべて「— (n.d.)」になり、「新しい順」も日付なしで並んでいた。
+    #   葉の **Source:** が指す元ファイルから、欠けた欄だけを補う(元のパスは読むだけで、出力には書かない)。
+    src = field("Source")
+    extra = {}
+    if src and not (authors and field("Date")) and os.path.isfile(src):
+        orig = _read(src)
+        for key in ("Authors", "Date", "URL"):
+            m2 = re.search(r"^\*\*" + key + r":\*\*\s*(.*)$", orig, re.M)
+            extra[key] = m2.group(1).strip() if m2 else ""
+        authors = authors or extra["Authors"]
     if authors:
         names = [a.strip() for a in authors.replace(" et al.", "").split(",") if a.strip()]
         authors = names[0] + (" et al." if len(names) > 1 else "") if names else ""
-    date = field("Date")
+    date = field("Date") or extra.get("Date", "")
     doi = field("DOI/ID") or field("arXiv")
-    url = field("URL")
+    url = field("URL") or extra.get("URL", "")
     oa = field("OpenAlex")
     if not (doi or url or oa):
         raise SystemExit("paper without DOI / URL / OpenAlex id: %s (fail-closed — the corpus writer always records one)" % os.path.basename(path))
@@ -335,6 +439,7 @@ def _fmt_paper(p: dict) -> str:
 
 def build_corpus(rad_root: str, name: str, idx: OpIndex, max_papers: int) -> tuple[str, dict]:
     cdir = os.path.join(rad_root, name + "_corpus_v2")
+    table = THEME_TABLES[CORPORA[name].get("themes", "default")]
     if not os.path.isfile(os.path.join(cdir, "INDEX.md")):
         raise SystemExit("corpus not found: %s (INDEX.md missing) — refusing to write an empty literature note" % cdir)
     meta = json.load(open(os.path.join(cdir, "metadata.json"), encoding="utf-8")) if os.path.isfile(os.path.join(cdir, "metadata.json")) else {}
@@ -384,8 +489,9 @@ def build_corpus(rad_root: str, name: str, idx: OpIndex, max_papers: int) -> tup
         if not navs:
             navs = [{"dir": "", "name": t["name"]}]
         # クラスタ自身の名前で当たったテーマを先に、葉の名前だけで当たったテーマを後に(溶接のクラスタで「板金」が先頭に来ない)
-        themes_name = _themes_for(t["name"])
-        themes = themes_name + [th for th in _themes_for(" ".join(nv["name"] for nv in navs)) if th not in themes_name]
+        themes_name = _themes_for(t["name"], table)
+        themes = themes_name + [th for th in _themes_for(" ".join(nv["name"] for nv in navs), table)
+                                if th not in themes_name]
         out.append("## %s\n" % t["name"])
         out.append("**%s 本**\n" % t["n"])
         ov = _first_sentences(_section(md, "Overview"), 2)
@@ -427,7 +533,7 @@ def build_corpus(rad_root: str, name: str, idx: OpIndex, max_papers: int) -> tup
             if lov:
                 out.append(lov + "\n")
             lops: list[tuple[str, str]] = []
-            for th in _themes_for(nv["name"]):
+            for th in _themes_for(nv["name"], table):
                 for op, why in th["ops"]:
                     if all(op != o for o, _w in lops):
                         lops.append((op, why))
@@ -457,8 +563,8 @@ def build_corpus(rad_root: str, name: str, idx: OpIndex, max_papers: int) -> tup
 def build_index(rows: dict[str, dict], n_notes: int) -> str:
     out = ["# 文献層 —— RAD コーパスからの、op に繋がる来歴つき要約\n",
            "<!-- generated by tools/gen_literature_notes.py; do not edit by hand -->\n",
-           "Fullseye の RAG(`docs/ops` の op ノート %s 本)は **op を有効に使うための土台**。この層は製造技術の周辺知識"
-           "(設計 → 工程 → 検査)を、外部の文献コーパス(raptor の RAD、OpenAlex メタデータ)のクラスタごとに要約し、"
+           "Fullseye の RAG(`docs/ops` の op ノート %s 本)は **op を有効に使うための土台**。この層は周辺分野の知識 —— 製造"
+           "(設計 → 工程 → 検査)と運転(シミュレーション・評価・センサーの模擬)—— を、外部の文献コーパス(raptor の RAD、OpenAlex メタデータ)のクラスタごとに要約し、"
            "**その知識で使う op**(人が書いたテーマ → op の対応表、op 名は生成時に出荷ノートと突き合わせる)と、代表論文の題名・年・DOI を"
            "来歴として付けたもの。抄録は写さない。op ノートと違い**コーパス本体は repo に無い**ので `tools/regen_all.py` の鎖には入れず、"
            "`tools/gen_literature_notes.py --rad-root <RAD>` で作り直す(`tests/test_literature_notes.py` が形を守る)。\n" % f"{n_notes:,}",
@@ -468,10 +574,11 @@ def build_index(rows: dict[str, dict], n_notes: int) -> str:
         out.append("| [%s](%s.md) | %s | %d | %d | %d | %d | %d | %d | %d / %d | %s |" % (
             CORPORA[name]["title"], name, f"{r['documents']:,}", r["clusters"], r["tops"], r["leaves"], r["papers"], r["oplinks"], r["ops"],
             r["uncovered"], r["tops"], r["built"]))
-    out.append("\n**読み方**: 工程・部品の話題 → 該当する文献層のクラスタ → 「使う op」→ op ノート(型の契約・実行できる例)→ 実装。"
+    out.append("\n**読み方**: 工程・部品・運転の評価の話題 → 該当する文献層のクラスタ → 「使う op」→ op ノート(型の契約・実行できる例)→ 実装。"
                "逆に op から引くときは各ファイル末尾の「op → クラスタ」。\n")
-    out.append("**正直な限界**: 文献は原理・選定・校正の研究が中心で、製品カタログ(型番・定格)は含まない。op の対応は人が書いた表で、"
+    out.append("**正直な限界**: 文献は原理・選定・校正・評価の研究が中心で、製品カタログ(型番・定格)や規格の本文は含まない。op の対応は人が書いた表で、"
                "当たらないクラスタは「op に落ちていない」と数える(上の列)—— そこが Fullseye に無い領域か、表の未整備。"
+               "テーマ表は分野ごとに分けてある(運転の「digital twin」が製造の予知保全に当たらないように)。"
                "語の一致(BM25)で op を引く案は、一般語で無関係の op が並んだので捨てた。\n")
     return "\n".join(out) + "\n"
 
