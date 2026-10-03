@@ -205,6 +205,10 @@
    "accessioned": "2026-10-01",
    "no": "2026.176"
   },
+  "poc_driving_humanoids": {
+   "accessioned": "2026-10-03",
+   "no": "2026.188"
+  },
   "poc_driving_lateral": {
    "accessioned": "2026-10-01",
    "no": "2026.181"

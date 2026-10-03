@@ -2010,6 +2010,17 @@
    "run": "py -3.11 examples/poc_driving_lateral.py"
   },
   {
+   "id": "poc_driving_humanoids",
+   "wing": "lane_drive",
+   "added": "2026-10-03",
+   "numbers_source": "log",
+   "title_ja": "横断歩道を渡るヒューマノイド ―― 車の物理は正確なまま、歩く側は安く描く",
+   "title_en": "Humanoids on the Crosswalk — Keep the Car's Physics Exact, Draw the Walkers Cheaply",
+   "caption_ja": "著者の発案「人の代わりにヒューマノイドも何種類か擬似的に歩かせる」「当たり判定はそこまで精密でなくていい」「物体ごとの描画をマスク付きで作っておく」。MuJoCo Menagerie の実在ロボット 7 機種(G1・H1・T1・Berkeley Humanoid・N1・TALOS・Apollo)から、関節の役割を名前でなく体の形から決めた手続き的な歩行 1 周期を作り、見た目を 2 通りで軽くする。新モジュール drivehumanoid(台帳 4 op + fs.humanoid_walk_clip)。門: 毎コマ接地・支持脚が滑らない / 格子で間引いたメッシュのずれ ≤ √3·格子幅(G1 は 393,270 → 1,497 三角形、格子 5.5 cm、最大のずれ 6.4 cm)/ 向き 16 × 位相 12 のマスク付き事前描画が直接の描画と一致(段の上で IoU 0.984〜1.000)、手前の壁で 612 → 0 画素。10 体の 1 コマは地面だけの 1.02 倍(事前描画)・1.23 倍(間引き)・4.50 倍(1 体 30,000 三角形)。正直に: 歩き方は周期の式で重心とバランスは解かない、事前描画は遠くから水平に見た絵を縮めて貼る、間引くと G1 の首が消えて頭が浮く(IoU 0.77)、OP3 と ToddlerBot は外した。",
+   "caption_en": "The author's ideas: \"let several kinds of humanoid walk in the driving world in place of people\", \"collisions need not be precise\", \"draw each object in advance with a mask\". From seven real robots in MuJoCo Menagerie (G1, H1, T1, Berkeley Humanoid, N1, TALOS, Apollo), one procedural gait cycle is built with joint roles taken from the body's shape rather than its names, and the look is made cheap in two ways. New module drivehumanoid (4 ledger ops + fs.humanoid_walk_clip). Gates: grounded every frame and no stance-foot slip / grid-decimated mesh shifts ≤ √3·cell (G1 393,270 → 1,497 triangles, cell 5.5 cm, largest shift 6.4 cm) / masked impostors drawn from 16 directions × 12 phases match direct rendering (IoU 0.984–1.000 on the steps), and a wall in front takes 612 pixels to 0. Ten bodies cost 1.02× the ground alone (impostors), 1.23× (decimated) and 4.50× (30,000 triangles each). Honestly: the gait is a periodic formula without balance, impostors are far horizontal pictures scaled down, decimation drops G1's neck so the head floats (IoU 0.77), and OP3 and ToddlerBot are left out.",
+   "run": "py -3.11 examples/poc_driving_humanoids.py"
+  },
+  {
    "id": "poc_driving_crossing",
    "wing": "lane_drive",
    "added": "2026-10-02",

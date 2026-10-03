@@ -5256,6 +5256,34 @@ This run produced **8 figures** in total - [see them all](https://github.com/fur
 
 Ops used (notes): [`ackermann_steer_angles`](https://furuse.work/ops/drive/lateral/ackermann_steer_angles.html) · [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_mesh_object.html) · [`bicycle_model_step`](https://furuse.work/ops/drive/lateral/bicycle_model_step.html) · [`clothoid_design`](https://furuse.work/ops/drive/lateral/clothoid_design.html) · [`clothoid_points`](https://furuse.work/ops/drive/lateral/clothoid_points.html) · [`curvature_speed_plan`](https://furuse.work/ops/drive/lateral/curvature_speed_plan.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`friction_circle_usage`](https://furuse.work/ops/drive/lateral/friction_circle_usage.html) · [`lateral_offset`](https://furuse.work/ops/drive/lateral/lateral_offset.html) · [`offtracking_circle`](https://furuse.work/ops/drive/lateral/offtracking_circle.html) · [`pure_pursuit_circle_offset`](https://furuse.work/ops/drive/lateral/pure_pursuit_circle_offset.html) · [`pure_pursuit_curvature`](https://furuse.work/ops/drive/lateral/pure_pursuit_curvature.html) · [`rear_axle_path`](https://furuse.work/ops/drive/lateral/rear_axle_path.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`time_to_line_crossing`](https://furuse.work/ops/drive/lateral/time_to_line_crossing.html) · [`turn_maneuver_check`](https://furuse.work/ops/drive/lateral/turn_maneuver_check.html) · [`understeer_gradient`](https://furuse.work/ops/drive/lateral/understeer_gradient.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html) · [`world_move`](https://furuse.work/ops/drive/world/world_move.html)
 
+## No.2026.188 —— Humanoids on the Crosswalk — Keep the Car's Physics Exact, Draw the Walkers Cheaply
+
+[![Humanoids on the Crosswalk — Keep the Car's Physics Exact, Draw the Walkers Cheaply](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/01_humanoid_decimation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/01_humanoid_decimation.png)
+
+*↑ **Humanoids on the Crosswalk — Keep the Car's Physics Exact, Draw the Walkers Cheaply** ―― The author's ideas: "let several kinds of humanoid walk in the driving world in place of people", "collisions need not be precise", "draw each object in advance with a mask". From seven real robots in MuJoCo Menagerie (G1, H1, T1, Berkeley Humanoid, N1, TALOS, Apollo), one procedural gait cycle is built with joint roles taken from the body's shape rather than its names, and the look is made cheap in two ways. New module drivehumanoid (4 ledger ops + fs.humanoid_walk_clip). Gates: grounded every frame and no stance-foot slip / grid-decimated mesh shifts ≤ √3·cell (G1 393,270 → 1,497 triangles, cell 5.5 cm, largest shift 6.4 cm) / masked impostors drawn from 16 directions × 12 phases match direct rendering (IoU 0.984–1.000 on the steps), and a wall in front takes 612 pixels to 0. Ten bodies cost 1.02× the ground alone (impostors), 1.23× (decimated) and 4.50× (30,000 triangles each). Honestly: the gait is a periodic formula without balance, impostors are far horizontal pictures scaled down, decimation drops G1's neck so the head floats (IoU 0.77), and OP3 and ToddlerBot are left out.*
+
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/02_humanoid_three_ways_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/02_humanoid_three_ways.png)
+
+*↑ The measurement (figure labels are in Japanese; the numbers are the same)*
+
+[![同じ場面の 1 コマ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/04_humanoids_crossing_still_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/04_humanoids_crossing_still.png)
+
+*↑ 同じ場面の 1 コマ*
+
+[![横断歩道を渡る 7 機種(マスク付きの事前描画、1 体 数 ms)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.gif)
+
+*↑ The animation ―― 横断歩道を渡る 7 機種(マスク付きの事前描画、1 体 数 ms)*
+
+```
+py -3.11 examples/poc_driving_humanoids.py
+```
+
+Source: [examples/poc_driving_humanoids.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_driving_humanoids.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_humanoids)
+
+Ops used (notes): [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_mesh_object.html) · [`crosswalk_mesh`](https://furuse.work/ops/drive/terrain/crosswalk_mesh.html) · [`humanoid_clip_mesh`](https://furuse.work/ops/drive/humanoid/humanoid_clip_mesh.html) · [`humanoid_impostors`](https://furuse.work/ops/drive/humanoid/humanoid_impostors.html) · [`pedestrian_mesh`](https://furuse.work/ops/drive/terrain/pedestrian_mesh.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html) · [`world_camera_impostors`](https://furuse.work/ops/drive/humanoid/world_camera_impostors.html)
+
 ## No.2026.182 —— Level Crossings and Right of Way — Stop and Look, Never Enter During the Alarm or Into a Blocked Exit, Yield to the Wider Road
 
 [![Level Crossings and Right of Way — Stop and Look, Never Enter During the Alarm or Into a Blocked Exit, Yield to the Wider Road](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.gif)

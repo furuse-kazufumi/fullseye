@@ -56,6 +56,7 @@ This series lines up the ops built on that bar, one per instalment. Every instal
 | 10 | [Lateral motion — slowing before a bend, staying in the lane, keeping left for a left turn, not catching a cyclist with the inner rear wheel](#10-lateral-motion--slowing-before-a-bend-staying-in-the-lane-keeping-left-for-a-left-turn-not-catching-a-cyclist-with-the-inner-rear-wheel) | friction circle and the ordinance / 2-DOF steady offset / off-tracking closed form / the Rules' positioning / sample gate (0.1 % points and KS) |
 | 11 | [Level crossings and right of way — stop just before and look both ways, never enter while the alarm sounds or when the far side is blocked, give way to the wider road](#11-level-crossings-and-right-of-way--stop-just-before-and-look-both-ways-never-enter-while-the-alarm-sounds-or-when-the-far-side-is-blocked-give-way-to-the-wider-road) | railway timing standard / barrier state machine / sight triangle / arts. 36, 38, 44, 50 verdicts / 1 mm grid zones |
 | 12 | [Overtaking and what you cannot see — wait while the sight distance is short, return once the car shows in the rear-view mirror, do not obstruct the ring, and curve mirrors make cars look far away](#12-overtaking-and-what-you-cannot-see--wait-while-the-sight-distance-is-short-return-once-the-car-shows-in-the-rear-view-mirror-do-not-obstruct-the-ring-and-curve-mirrors-make-cars-look-far-away) | zones by brute force over the text / time marches / sight-distance table / 3-D mirror ray tracing and Coddington |
+| 13 | [Humanoids on the crosswalk — keep the car's physics exact, draw the walkers cheaply](#13-humanoids-on-the-crosswalk--keep-the-cars-physics-exact-draw-the-walkers-cheaply) | grounded every frame and no stance-foot slip / decimation shift ≤ √3·cell / IoU against direct rendering / hidden behind a nearer wall |
 
 ---
 
@@ -1379,6 +1380,78 @@ print(round(sp["signal_angle"], 4), sp["exits_before"])
 ```
 
 The whole PoC: `py -3.11 examples/poc_driving_pass.py` (figures and videos when `FULLSEYE_FIGURE_DIR` is set).
+
+## 13. Humanoids on the crosswalk — keep the car's physics exact, draw the walkers cheaply
+
+![Seven humanoid models crossing (pre-rendered impostors with masks)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.gif)
+
+*↑ Seven real robots from MuJoCo Menagerie (Unitree G1 and H1, Booster T1, Berkeley Humanoid, Fourier N1, PAL TALOS, Apptronik Apollo) crossing at a pedestrian crossing, seen from the car camera. Each body is drawn in advance from 16 directions × 12 gait phases; every frame scales that picture and pastes it, comparing depth with whatever stands in front. [MP4](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.mp4)*
+
+Pedestrians in the earlier parts were procedural shapes: three boxes and a head. This part replaces them with real humanoids.
+
+In a self-driving test the car is what needs accurate physics. The things walking around it only need to move plausibly and to have a collision box from their outer extent. The visual meshes of real robots are heavy, though: G1 alone has 393,270 triangles. Even cut down to 30,000 triangles each, ten bodies make a frame take 4.5 times as long as the ground alone. So the walkers are drawn cheaply, in two ways:
+
+- For camera images, a picture drawn in advance for each direction and phase (with a mask and depth) is pasted.
+- For LiDAR and depth, a mesh whose vertices are merged on a grid is used, and the amount of shape lost is returned as numbers.
+
+### Scenes and gates
+
+New module `drivehumanoid` (4 ledger ops plus `fs.humanoid_walk_clip`) and PoC ㉞.
+
+| Part | Where the truth comes from | Result |
+|---|---|---|
+| One gait cycle | every frame touches the ground, moves forward, and the stance foot does not slide | holds for all 7 models; one cycle advances 0.47–0.94 m |
+| Decimated mesh | merged points stay in their grid cell (shift ≤ √3 × cell) | G1: 393,270 → 1,497 triangles, cell 5.5 cm, largest shift 6.4 cm (bound 9.5 cm) |
+| Pre-rendered impostors | the same pose drawn directly from the mesh | when direction and phase fall exactly on the steps, IoU 0.984, 0.991, 0.990, 1.000 at 6–12 m; a wall in front takes 612 pixels to 0 |
+| Cost per frame (640 × 400, 10 bodies) | time to draw the ground alone | impostors 1.02×, decimated mesh 1.23×, fine mesh (30,000 triangles each) 4.50× |
+
+![The same pose drawn three ways](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/02_humanoid_three_ways.png)
+
+*↑ G1 in one pose, drawn three ways: fine mesh (left), mesh decimated to 1,497 triangles (middle), impostor (right). In the middle the neck collapses into the grid and disappears, so the head floats (IoU 0.77). The impostor keeps the look even with direction and phase rounded to the steps (IoU 0.85).*
+
+![Decimation table for the seven models](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/01_humanoid_decimation.png)
+
+*↑ The visual meshes of the seven models decimated to a budget of 1,500 triangles each. Apollo starts at 1.55 million triangles, so its cell grows to 16.2 cm and its largest shift is 14.1 cm.*
+
+### ★ Where implementations go wrong
+
+- **Looking joints up by name hits a different spelling for every model.** The hip pitch joint is `left_hip_pitch_joint` on G1, `LL_HFE` on Berkeley Humanoid and `leg_left_3_joint` on TALOS. Adding names per model breaks with every new robot. Here the chain is walked from each leaf body (a part with no children) to the root, and the joints whose axis points sideways are assigned hip, knee and ankle from the root outward. Left and right come from where the parts are.
+- **The knee tells you which way the body faces.** A knee's range is wide on the side it bends to. Multiplying that side by the direction of the axis tells whether the body was built facing +x or −x. No per-model tuning is needed.
+- **Counting forward motion in two places makes the stance foot slide by a whole step.** Advance the walked distance either in the placement or in the shape, not both. Subtracting it in both moves the grounded foot backwards by one step every frame. The gate — vertices on the ground in two consecutive frames move by at most 15 % of the distance walked — rejects this.
+- **A too-small budget removes whole parts.** A part smaller than the grid cell collapses and leaves no triangles; the neck in the figure above is one. The number of parts lost is returned as `geoms_dropped`; check it when you choose a budget.
+
+### What this does not do
+
+- The gait is a periodic formula; the centre of mass and balance are not solved. Slopes, steps, stopping and turning are not handled yet.
+- Impostors are pictures taken horizontally from far away and scaled down. A camera high up or close by sees a perspective difference; the IoU in the gates above is its size.
+- The impostor's shading is fixed to the light direction it was drawn with. Passing another light to `world_camera_impostors` does not redraw the pictures. They cast no shadows either.
+- OP3 (facing direction not detected correctly) and ToddlerBot (a box left at its feet) are left out of the seven.
+- Menagerie models are not put in the repository. Their location comes from the environment variable `FULLSEYE_MENAGERIE_DIR`; without it only the PoC's impostor gates (run on the box pedestrian) execute.
+
+### Run it
+
+```python
+import os
+import fullseye as fs
+
+# One gait cycle from Menagerie's G1 (joint roles come from the body's shape, not its names)
+g1 = os.path.join(os.environ["FULLSEYE_MENAGERIE_DIR"], "unitree_g1", "g1.xml")
+clip = fs.humanoid_walk_clip(g1)
+print(clip["decimation"]["tris_before"], clip["decimation"]["tris_after"], round(clip["cycle_length"], 2))
+# 393270 1497 0.75   ← triangles before, after, metres per cycle
+
+# The shape after walking 0.5 m (origin under the hips, +x forward)
+m = fs.ledger.humanoid_clip_mesh(clip, 0.5)
+print(m["V"].shape)
+# (634, 3)
+
+# Draw 16 directions × 12 phases with masks in advance (each frame pastes them with world_camera_impostors)
+imp = fs.ledger.humanoid_impostors(clip, n_yaw=16, n_phase=12, res=128)
+print(imp["color"].shape)
+# (16, 12, 128, 128, 3)
+```
+
+The whole PoC is `py -3.11 examples/poc_driving_humanoids.py` (figures and videos when `FULLSEYE_FIGURE_DIR` is set).
 
 ---
 

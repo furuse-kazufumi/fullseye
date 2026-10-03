@@ -5256,6 +5256,34 @@ py -3.11 examples/poc_driving_lateral.py
 
 使用 op(ノートへ): [`ackermann_steer_angles`](https://furuse.work/ops/drive/lateral/ackermann_steer_angles.html) · [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_mesh_object.html) · [`bicycle_model_step`](https://furuse.work/ops/drive/lateral/bicycle_model_step.html) · [`clothoid_design`](https://furuse.work/ops/drive/lateral/clothoid_design.html) · [`clothoid_points`](https://furuse.work/ops/drive/lateral/clothoid_points.html) · [`curvature_speed_plan`](https://furuse.work/ops/drive/lateral/curvature_speed_plan.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`friction_circle_usage`](https://furuse.work/ops/drive/lateral/friction_circle_usage.html) · [`lateral_offset`](https://furuse.work/ops/drive/lateral/lateral_offset.html) · [`offtracking_circle`](https://furuse.work/ops/drive/lateral/offtracking_circle.html) · [`pure_pursuit_circle_offset`](https://furuse.work/ops/drive/lateral/pure_pursuit_circle_offset.html) · [`pure_pursuit_curvature`](https://furuse.work/ops/drive/lateral/pure_pursuit_curvature.html) · [`rear_axle_path`](https://furuse.work/ops/drive/lateral/rear_axle_path.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`time_to_line_crossing`](https://furuse.work/ops/drive/lateral/time_to_line_crossing.html) · [`turn_maneuver_check`](https://furuse.work/ops/drive/lateral/turn_maneuver_check.html) · [`understeer_gradient`](https://furuse.work/ops/drive/lateral/understeer_gradient.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html) · [`world_move`](https://furuse.work/ops/drive/world/world_move.html)
 
+## No.2026.188 —— 横断歩道を渡るヒューマノイド ―― 車の物理は正確なまま、歩く側は安く描く
+
+[![横断歩道を渡るヒューマノイド ―― 車の物理は正確なまま、歩く側は安く描く](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/01_humanoid_decimation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/01_humanoid_decimation.png)
+
+*↑ **横断歩道を渡るヒューマノイド ―― 車の物理は正確なまま、歩く側は安く描く** ―― 著者の発案「人の代わりにヒューマノイドも何種類か擬似的に歩かせる」「当たり判定はそこまで精密でなくていい」「物体ごとの描画をマスク付きで作っておく」。MuJoCo Menagerie の実在ロボット 7 機種(G1・H1・T1・Berkeley Humanoid・N1・TALOS・Apollo)から、関節の役割を名前でなく体の形から決めた手続き的な歩行 1 周期を作り、見た目を 2 通りで軽くする。新モジュール drivehumanoid(台帳 4 op + fs.humanoid_walk_clip)。門: 毎コマ接地・支持脚が滑らない / 格子で間引いたメッシュのずれ ≤ √3·格子幅(G1 は 393,270 → 1,497 三角形、格子 5.5 cm、最大のずれ 6.4 cm)/ 向き 16 × 位相 12 のマスク付き事前描画が直接の描画と一致(段の上で IoU 0.984〜1.000)、手前の壁で 612 → 0 画素。10 体の 1 コマは地面だけの 1.02 倍(事前描画)・1.23 倍(間引き)・4.50 倍(1 体 30,000 三角形)。正直に: 歩き方は周期の式で重心とバランスは解かない、事前描画は遠くから水平に見た絵を縮めて貼る、間引くと G1 の首が消えて頭が浮く(IoU 0.77)、OP3 と ToddlerBot は外した。*
+
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/02_humanoid_three_ways_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/02_humanoid_three_ways.png)
+
+*↑ 測定の図*
+
+[![同じ場面の 1 コマ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/04_humanoids_crossing_still_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/04_humanoids_crossing_still.png)
+
+*↑ 同じ場面の 1 コマ*
+
+[![横断歩道を渡る 7 機種(マスク付きの事前描画、1 体 数 ms)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/03_humanoids_crossing.gif)
+
+*↑ 動く図 ―― 横断歩道を渡る 7 機種(マスク付きの事前描画、1 体 数 ms)*
+
+```
+py -3.11 examples/poc_driving_humanoids.py
+```
+
+ソース: [examples/poc_driving_humanoids.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_driving_humanoids.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_humanoids)
+
+使用 op(ノートへ): [`add_mesh_object`](https://furuse.work/ops/drive/terrain/add_mesh_object.html) · [`crosswalk_mesh`](https://furuse.work/ops/drive/terrain/crosswalk_mesh.html) · [`humanoid_clip_mesh`](https://furuse.work/ops/drive/humanoid/humanoid_clip_mesh.html) · [`humanoid_impostors`](https://furuse.work/ops/drive/humanoid/humanoid_impostors.html) · [`pedestrian_mesh`](https://furuse.work/ops/drive/terrain/pedestrian_mesh.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html) · [`world_camera_impostors`](https://furuse.work/ops/drive/humanoid/world_camera_impostors.html)
+
 ## No.2026.182 —— 踏切と交差点の優先 ―― 直前で止まって左右を見る、警報の間は入らない、向こう側が詰まっていれば入らない、広い道へは譲る
 
 [![踏切と交差点の優先 ―― 直前で止まって左右を見る、警報の間は入らない、向こう側が詰まっていれば入らない、広い道へは譲る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.gif)

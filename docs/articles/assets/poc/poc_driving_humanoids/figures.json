@@ -1,0 +1,56 @@
+[
+ {
+  "file": "01_humanoid_decimation.png",
+  "name": "humanoid_decimation",
+  "caption": "",
+  "shape": [
+   248,
+   618,
+   3
+  ],
+  "csv": "01_humanoid_decimation.csv",
+  "tsv": "01_humanoid_decimation.tsv"
+ },
+ {
+  "file": "02_humanoid_three_ways.png",
+  "name": "humanoid_three_ways",
+  "caption": "",
+  "shape": [
+   452,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "03_humanoids_crossing.gif",
+  "name": "humanoids_crossing",
+  "caption": "横断歩道を渡る 7 機種(マスク付きの事前描画、1 体 数 ms)",
+  "shape": [
+   400,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 32,
+  "frames_written": 32,
+  "fps": 8.0,
+  "video": "03_humanoids_crossing.mp4",
+  "video_frames": 32,
+  "video_fps": 8.0,
+  "video_shape": [
+   400,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "04_humanoids_crossing_still.png",
+  "name": "humanoids_crossing_still",
+  "caption": "同じ場面の 1 コマ",
+  "shape": [
+   400,
+   640,
+   3
+  ]
+ }
+]

@@ -140,6 +140,26 @@ def menagerie_part(root):
     for k, v in results.items():
         print("  %-24s %.3f s(地面だけの %.2f 倍)" % (k, v, v / t_ground))
     assert results["マスク付きの事前描画"] <= 1.5 * t_ground + 0.01
+    # 同じ姿勢を 3 通りで(何を失い、何を保つか): 精細なメッシュ / 間引いたメッシュ / 事前描画
+    d0 = "unitree_g1" if "unitree_g1" in names else names[0]
+    Kc = DW.camera_intrinsics(40, 360, 400)
+    pc = DW.camera_pose((-4.0, -1.5, 1.0), (0.0, 0.0, 0.7))
+    s0, yaw0 = 0.3 * hi[d0]["cycle_length"], 0.4
+    panels = []
+    for clip in (hi[d0], lo[d0]):
+        w = _ground_world()
+        DT.add_mesh_object(w, H.humanoid_clip_mesh(clip, s0), 0.0, 0.0, yaw0)
+        panels.append(DW.world_camera(w, pc, Kc, 360, 400))
+    panels.append(H.world_camera_impostors(_ground_world(), pc, Kc, 360, 400,
+                                           [{"imp": imps[d0], "x": 0.0, "y": 0.0, "yaw": yaw0, "distance": s0}]))
+    ref = panels[0]["label"] == 7
+    ious = [float((ref & (q["label"] == 7)).sum() / max((ref | (q["label"] == 7)).sum(), 1)) for q in panels[1:]]
+    print("%s を 1 体、同じ姿勢で: 間引いたメッシュの一致度 %.3f、事前描画の一致度 %.3f(精細なメッシュに対して、"
+          "方位と位相は段に丸めたまま)" % (d0, ious[0], ious[1]))
+    figs.save_grid("humanoid_three_ways", [q["color"] for q in panels],
+                   captions=["精細なメッシュ(%d 三角形)" % len(hi[d0]["F"]),
+                             "間引いたメッシュ(%d 三角形、IoU %.2f)" % (len(lo[d0]["F"]), ious[0]),
+                             "事前描画(IoU %.2f)" % ious[1]], ncols=3)
     # 渡る群れの動画(事前描画)
     frames = []
     for f in range(32):
@@ -150,7 +170,8 @@ def menagerie_part(root):
             a2.append({"imp": acts[k]["imp"], "x": x, "y": y + math.sin(yaw) * (dist - s), "yaw": yaw,
                        "distance": dist})
         frames.append(H.world_camera_impostors(base, pose, K, W, Hh, a2)["color"])
-    figs.save_gif("humanoids_crossing", frames, caption="横断歩道を渡る 7 機種(マスク付きの事前描画、1 体 数 ms)", fps=8)
+    figs.save_video("humanoids_crossing", frames, caption="横断歩道を渡る 7 機種(マスク付きの事前描画、1 体 数 ms)",
+                    fps=8.0, gif_every=1, gif_width=640)
     figs.save("humanoids_crossing_still", frames[16], caption="同じ場面の 1 コマ")
 
 
@@ -167,6 +188,10 @@ def main():
     else:
         print("[skip] Menagerie の部分: FULLSEYE_MENAGERIE_DIR と mujoco が要る(%s)"
               % ("mujoco なし" if not have_mj else "場所の指定なし"))
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+        print("FAIL")
+        return 1
     print("PASS")
     return 0
 
