@@ -46,6 +46,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   `.py` = Python エディタのタブ(エディタに落としても開く。以前はパスが文字で貼られた)、`.json` = パイプライン、
   点群・メッシュ・3DGS・医用ボリューム = 3-D ビューア、動画・アニメーション GIF・HDF = Video cube、`.npy` は形で振り分け。
   以前は 1 本目しか見ず `.py` は「未対応」だった。**ASCII とバイナリの両方**を門で固定: PLY(ASCII / LE / BE)・STL・PCD。
+- ★**Studio: ロボットのモデル + qpos 軌跡を一緒に落とすと再生**(MJCF / URDF + (T, nq) の .npy): 3-D ビューア + コマの
+  スライダ + 再生。各コマで mj_forward して組み立て直す(OpenGL 不要)。`sim_source.MuJoCo.scene_mesh(qpos)` を新設(局所
+  メッシュを持ち回す)。門: ヒンジ 90° で (1, 0, 0) の球が (0, 1, 0) へ。列の数が nq と違えば名指しで断る。
 - ★**Studio の D&D 第 3 陣: 音声**: WAV(stdlib)/ mp3・flac・ogg …(soundfile があれば)を落とすと**音声の窓**: 波形の包絡・
   スペクトログラム(dB、時間と周波数の目盛り)・情報・再生(QtMultimedia)・「スペクトログラムを入力にする」。読み手は既存の
   `dsp.read_audio`(全プロジェクトの棚卸しでは「無い」とされたが Fullseye に在った)。soundfile が無ければ入れ方を名指しして断る。

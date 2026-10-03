@@ -8349,7 +8349,7 @@ def build_window(model=None):
         except ImportError as e:
             raise ImportError("MJCF / URDF の表示には mujoco が要る: pip install mujoco (%s)" % e) from None
         try:
-            geoms = src.scene_geometries()
+            return src.scene_mesh()
         except ImportError as e:
             raise ImportError("MJCF / URDF の表示には open3d が要る: pip install open3d (%s)" % e) from None
         finally:
@@ -8357,14 +8357,54 @@ def build_window(model=None):
                 src.close()
             except Exception:                                  # noqa: BLE001
                 pass
-        Vs, Fs, off = [], [], 0
-        for g in geoms:
-            v = np.asarray(g.vertices, np.float64); f = np.asarray(g.triangles, np.int64)
-            if len(v) and len(f):
-                Vs.append(v); Fs.append(f + off); off += len(v)
-        if not Vs:
-            raise ValueError("%s: 表示できる geom が無い(plane / hfield だけ)" % os.path.basename(str(path)))
-        return np.vstack(Vs), np.vstack(Fs)
+
+    def show_robot_player(model_path, qpos):
+        """モデル(MJCF / URDF)+ qpos 軌跡 (T, nq) を再生する窓: 3-D ビューア + コマのスライダ + 再生。
+
+        各コマで mj_forward して全 geom を組み立て直す(OpenGL を使わない = 画面の無い所でも動く)。"""
+        import mujoco
+        import sim_source
+        Q = np.asarray(qpos, np.float64)
+        try:
+            src = sim_source.MuJoCo(mujoco.MjModel.from_xml_path(str(model_path)))
+        except Exception as e:
+            report_error("Could not open robot model", "%s\n\n%s" % (model_path, e)); return None
+        if Q.ndim != 2 or Q.shape[1] != src._m.nq:
+            report_error("qpos does not fit the model", "%s: qpos %s, model nq = %d"
+                         % (os.path.basename(str(model_path)), Q.shape, src._m.nq)); return None
+        dlg = QtWidgets.QDialog(win); tag_dialog(dlg, "reference"); dlg.setModal(False)
+        dlg.setWindowTitle("Robot player — %s (%d frames)" % (os.path.basename(str(model_path)), len(Q)))
+        lay = QtWidgets.QVBoxLayout(dlg)
+        v3 = Viewer3D(); lay.addWidget(v3, 1)
+        row = QtWidgets.QHBoxLayout()
+        b_play = QtWidgets.QPushButton("Play"); sl = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+        sl.setRange(0, len(Q) - 1); lbl = QtWidgets.QLabel("frame 0 / %d" % (len(Q) - 1))
+        row.addWidget(b_play); row.addWidget(sl, 1); row.addWidget(lbl); lay.addLayout(row)
+        timer = QtCore.QTimer(dlg); timer.setInterval(33)
+
+        def show_frame(k):
+            V, F = src.scene_mesh(Q[int(k)])
+            v3.set_mesh(V, F)
+            lbl.setText("frame %d / %d" % (int(k), len(Q) - 1))
+            dlg._last_V = V
+        sl.valueChanged.connect(show_frame)
+
+        def tick():
+            sl.setValue((sl.value() + 1) % len(Q))
+
+        def toggle():
+            if timer.isActive():
+                timer.stop(); b_play.setText("Play")
+            else:
+                timer.start(); b_play.setText("Pause")
+        timer.timeout.connect(tick); b_play.clicked.connect(lambda _=False: toggle())
+        dlg.finished.connect(lambda _r: (timer.stop(), src.close()))
+        show_frame(0)
+        dlg._show_frame = show_frame; dlg._slider = sl; dlg._viewer = v3
+        win._localize(dlg); dlg.resize(760, 620); dlg.show()
+        win._last_robot_player = dlg
+        return dlg
+    win._show_robot_player = show_robot_player
 
     def _load_3d_file(path):
         """Load a 3-D file -> ``('mesh', V, F, None)`` or ``('points', P, None, C)``.
@@ -9867,6 +9907,14 @@ def build_window(model=None):
                 win._pyedit["open_path"](p)
         for p in kinds["pipelines"][:1]:
             _open_pipe_path(p)
+        robots = [p for p in kinds["models3d"] if os.path.splitext(p)[1].lower() in (".xml", ".urdf", ".mjcf")]
+        npys = [p for p in kinds["arrays"] + kinds["models3d"] if p.lower().endswith(".npy")]
+        if robots and npys:
+            # ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、
+            #   モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
+            show_robot_player(robots[0], np.load(npys[0], allow_pickle=False))
+            kinds["models3d"] = [p for p in kinds["models3d"] if p not in (robots[0], npys[0])]
+            kinds["arrays"] = [p for p in kinds["arrays"] if p != npys[0]]
         for p in kinds["models3d"][:4]:                          # 3-D は 1 ファイル 1 窓(窓の数の上限まで)
             open_viewer3d(p)
         for p in kinds["videos"][:1]:

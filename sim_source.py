@@ -236,6 +236,35 @@ class MuJoCo:
             geoms.append(mesh)
         return geoms
 
+    def scene_mesh(self, qpos=None):
+        """全 geom を **1 つの三角形メッシュ** ``(V, F)`` に(世界座標)。``qpos`` を渡すとその姿勢で(mj_forward)。
+
+        geom の局所メッシュは初回に作って持つ(軌跡の再生でコマごとに作り直さない)。plane / hfield は入れない。
+        Studio の「モデル + qpos 軌跡を落とすと再生」が使う(2026-10-03)。GL 不要。"""
+        import mujoco
+        if qpos is not None:
+            q = np.asarray(qpos, np.float64).ravel()
+            if q.size != self._m.nq:
+                raise ValueError("scene_mesh: qpos の長さ %d がモデルの nq %d と違う" % (q.size, self._m.nq))
+            self._d.qpos[:] = q
+            mujoco.mj_forward(self._m, self._d)
+        cache = getattr(self, "_local_mesh_cache", None)
+        if cache is None:
+            cache = []
+            for g in range(self._m.ngeom):
+                mesh = self._geom_local_mesh(g)
+                if mesh is not None:
+                    cache.append((g, np.asarray(mesh.vertices, np.float64), np.asarray(mesh.triangles, np.int64)))
+            self._local_mesh_cache = cache
+        Vs, Fs, off = [], [], 0
+        d = self._d
+        for g, V, F in cache:
+            R = np.asarray(d.geom_xmat[g]).reshape(3, 3)
+            Vs.append(V @ R.T + np.asarray(d.geom_xpos[g])); Fs.append(F + off); off += len(V)
+        if not Vs:
+            raise ValueError("scene_mesh: 表示できる geom が無い(plane / hfield だけ)")
+        return np.vstack(Vs), np.vstack(Fs)
+
     def point_cloud(self, cam=0, stride: int = 2, max_range: float | None = None) -> np.ndarray:
         """深度を逆投影した world 点群 (N,3)。背景(遠クリップ面)は除外。
         視覚 op(``elevation_map`` 等)にそのまま渡せる = sim→vision の橋。"""

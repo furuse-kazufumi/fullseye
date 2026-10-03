@@ -409,3 +409,47 @@ def test_drop_wav_opens_the_audio_window_and_feeds_the_pipeline(tmp_path):
     bad = tmp_path / "x.mp3"; bad.write_bytes(b"\0" * 64)
     win.drop_handler([str(bad)])
     assert _ERRORS and "soundfile" in _ERRORS[-1][1]                  # 読めない時は入れ方を名指し
+
+
+# ── 第 3 陣: ロボットのモデル + qpos 軌跡の再生 ───────────────────────────────────────────────── #
+ARM = """<mujoco model="arm">
+  <worldbody>
+    <body name="link" pos="0 0 0">
+      <joint name="hinge" type="hinge" axis="0 0 1"/>
+      <geom type="sphere" size="0.05" pos="1 0 0"/>
+    </body>
+  </worldbody>
+</mujoco>
+"""
+
+
+def test_scene_mesh_follows_qpos():
+    """ヒンジを z まわりに 90° 回すと、(1, 0, 0) の球は (0, 1, 0) へ。メッシュの中心で確かめる(手計算)。"""
+    pytest.importorskip("mujoco"); pytest.importorskip("open3d")
+    import mujoco
+    import sim_source
+    src = sim_source.MuJoCo(mujoco.MjModel.from_xml_string(ARM))
+    for q, c in ((0.0, (1, 0, 0)), (np.pi / 2, (0, 1, 0)), (np.pi, (-1, 0, 0))):
+        V, F = src.scene_mesh([q])
+        assert np.allclose(V.mean(axis=0), c, atol=1e-6), (q, V.mean(axis=0))
+    with pytest.raises(ValueError):
+        src.scene_mesh([0.0, 1.0])                                  # nq と違う長さ
+    src.close()
+
+
+def test_drop_model_with_qpos_plays_the_trajectory(tmp_path):
+    pytest.importorskip("mujoco"); pytest.importorskip("open3d")
+    _app()
+    win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    xml = tmp_path / "arm.xml"; xml.write_text(ARM, encoding="utf-8")
+    q = np.linspace(0, np.pi, 20)[:, None]                            # (T, nq) = (20, 1)
+    qp = tmp_path / "arm_qpos.npy"; np.save(qp, q)
+    win.drop_handler([str(xml), str(qp)])
+    dlg = win._last_robot_player
+    assert dlg is not None and not _ERRORS, _ERRORS
+    assert np.allclose(dlg._last_V.mean(axis=0), (1, 0, 0), atol=1e-6)
+    dlg._slider.setValue(19)
+    assert np.allclose(dlg._last_V.mean(axis=0), (-1, 0, 0), atol=1e-6)
+    bad = tmp_path / "bad.npy"; np.save(bad, np.zeros((5, 3)))
+    win.drop_handler([str(xml), str(bad)])
+    assert _ERRORS and "nq" in _ERRORS[-1][1]                           # 列の数が合わなければ名指しで断る
