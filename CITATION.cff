@@ -17,8 +17,11 @@ identifiers:
     value: 10.5281/zenodo.22761195
     description: "Concept DOI (resolves to the newest archived version; each GitHub Release mints a version DOI)"
   - type: doi
+    value: 10.5281/zenodo.23112789
+    description: "Version DOI for 0.3.0"
+  - type: doi
     value: 10.5281/zenodo.22885866
-    description: "Version DOI for 0.2.2 (no version DOI exists for 0.2.3: it was tagged and published to PyPI without a GitHub Release, so Zenodo never archived it; the 0.3.0 version DOI is added here after its Release)"
+    description: "Version DOI for 0.2.2 (0.2.3 was published to PyPI without a GitHub Release at the time; its Release was created afterwards on 2026-10-03)"
   - type: doi
     value: 10.5281/zenodo.22851588
     description: "Version DOI for 0.2.1"

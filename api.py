@@ -395,6 +395,14 @@ from mathnumerics import (  # noqa: E402,F401
     interp_barycentric,
     integrate_hamiltonian,
 )
+# FFT では足りないスペクトル推定(不等間隔の周期図・部分空間法の到来方向推定、2026-10-03)
+from mathspectral import (  # noqa: E402,F401
+    lomb_scargle,
+    music_doa,
+    esprit_doa,
+    ula_snapshots,
+    n_sources_mdl,
+)
 # 仮想マシンビジョン環境: 部品を買う前に「その構成で狙う欠陥が見つかるか」を
 # 閉形式の光学 + 数式で作った欠陥 + 撮像連鎖で先に確かめる層。
 import defectgen  # noqa: E402  (mathematical defect models with pixel-perfect masks)
@@ -1128,6 +1136,12 @@ __all__ = [
     "chebyshev_nodes",
     "interp_barycentric",
     "integrate_hamiltonian",
+    # スペクトル推定(2026-10-03)
+    "lomb_scargle",
+    "music_doa",
+    "esprit_doa",
+    "ula_snapshots",
+    "n_sources_mdl",
     "visiondesign", "system_geometry", "resolving_power", "system_feasibility",
     "image_formation", "detectability_limit",
     "defectgen", "defect_scratch", "defect_pits", "defect_crack", "defect_blob",

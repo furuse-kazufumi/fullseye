@@ -16,6 +16,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   - ★**逆 Abel の「殻剥きは雑音に強い」は半分しか正しくなかった**: 雑音の誤差は微分が `1/dr`、殻剥きが `1/√dr` で増え、
     **標本数で優劣が逆転する**(n=60 では微分、n=960 では殻剥き)。片側だけの主張を書いた docstring を両向きの門で直した。
   - 例 `examples/transforms_tour.py`: 炎の断層化・円い穴の Airy・2 次系の減衰比と Bode・Talbot の M と丸め。
+- ★**FFT では足りないスペクトル推定 5 op(math 台帳 `spectral`、陣 1b)**: Lomb–Scargle(不等間隔の周期図)、
+  MUSIC / ESPRIT(部分空間法の到来方向推定)、MDL による波源の数の推定、答えの決まるアレイ入力(`mathspectral.py`、
+  門 `tests/test_mathspectral.py` 6 本)。rangedoppler.py が「別の契約」と明記して入れていなかったもの。
+  8 素子・ビーム幅 12.7° で 6° 離れた 2 波を、遅延和は 1 つに融かし、MUSIC/ESPRIT は割る。相関した 2 波では割れない(前提の門)。
+  - ★**図を見て失敗例の嘘に気づいた**: 最初は「格子の上の欠測を 0 で埋めた FFT」を Lomb–Scargle の対照にしたが、それも正しい周波数に
+    峰を立てていた(格子が残れば周期は残る)。本当の失敗の型「時刻を無視して並び順のまま FFT」(峰が 6% ずれる)に差し替えた。
+  - 例 `examples/spectral_tour.py`。
 - ★**数値計算の古典 8 op(math 台帳 `numerics`、陣 2)**: Gauss 求積・低食い違い列(Halton/Sobol)・Chebyshev 点と
   重心補間・ハミルトン系の時間積分(Verlet/Euler/RK4)・erf/erfc・Bessel(`mathnumerics.py`、門 `tests/test_mathnumerics.py` 19 本)。
   - ★**「良すぎる」結果を疑って 2 件見つけた**: スクランブル無しの Sobol の積分誤差の傾きが −2.2 と出たのは、被積分関数

@@ -228,6 +228,8 @@ _OP_BRIDGE_SKIP = {
     # 2026-10-03: 特殊関数は「数の列 → 数の列」で、画像の明るさに erf や Bessel を当てる意味が無い
     #   (order / kind も knob a/b に写らない)。台帳(fs.ledger.erf ほか)と fs.<名前> から使う。
     "erf", "erfc", "bessel",
+    # 2026-10-03: アレイのスナップショットを「作る」生成器(到来角の列 → 複素行列)。画像を受けない。
+    "ula_snapshots",
 }
 
 

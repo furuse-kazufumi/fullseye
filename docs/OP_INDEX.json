@@ -1,8 +1,8 @@
 {
- "n_ops": 2607,
+ "n_ops": 2612,
  "tiers": {
   "color": 12,
-  "ledger": 1656,
+  "ledger": 1661,
   "nary": 17,
   "registry": 922
  },
@@ -5470,6 +5470,19 @@
    ]
   },
   {
+   "name": "esprit_doa",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "essential_8point",
    "halcon": "",
    "in_sort": "image2d",
@@ -10036,6 +10049,21 @@
    ]
   },
   {
+   "name": "lomb_scargle",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "signal"
+   ]
+  },
+  {
    "name": "long_energy_residual",
    "halcon": "",
    "in_sort": "table",
@@ -11588,6 +11616,19 @@
    ]
   },
   {
+   "name": "music_doa",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "mutual_information",
    "halcon": "",
    "in_sort": "image2d",
@@ -11599,6 +11640,19 @@
    "in_sorts": [
     "image2d",
     "image2d"
+   ]
+  },
+  {
+   "name": "n_sources_mdl",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
    ]
   },
   {
@@ -19827,6 +19881,19 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "ula_snapshots",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "matrix",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal"
    ]
   },
   {

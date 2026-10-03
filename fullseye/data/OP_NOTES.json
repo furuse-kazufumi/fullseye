@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2607,
- "n_notes": 2613,
+ "n_ops": 2612,
+ "n_notes": 2618,
  "notes": {
   "vol_dilate": [
    {
@@ -20874,6 +20874,56 @@
     "category": "numerics",
     "out": "matrix",
     "path": "docs/ops/math/numerics/low_discrepancy.md"
+   }
+  ],
+  "esprit_doa": [
+   {
+    "op": "esprit_doa",
+    "dim": "math",
+    "category": "spectral",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/math/spectral/esprit_doa.md"
+   }
+  ],
+  "lomb_scargle": [
+   {
+    "op": "lomb_scargle",
+    "dim": "math",
+    "category": "spectral",
+    "in": "signal × signal × signal",
+    "out": "table",
+    "path": "docs/ops/math/spectral/lomb_scargle.md"
+   }
+  ],
+  "music_doa": [
+   {
+    "op": "music_doa",
+    "dim": "math",
+    "category": "spectral",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/math/spectral/music_doa.md"
+   }
+  ],
+  "n_sources_mdl": [
+   {
+    "op": "n_sources_mdl",
+    "dim": "math",
+    "category": "spectral",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/math/spectral/n_sources_mdl.md"
+   }
+  ],
+  "ula_snapshots": [
+   {
+    "op": "ula_snapshots",
+    "dim": "math",
+    "category": "spectral",
+    "in": "signal",
+    "out": "matrix",
+    "path": "docs/ops/math/spectral/ula_snapshots.md"
    }
   ],
   "stat_correlation": [

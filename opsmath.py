@@ -21,9 +21,10 @@ import numpy as np
 
 import mathops
 import mathnumerics
+import mathspectral
 import mathtransforms
 
-_MOD = {"mathops": mathops, "mathtransforms": mathtransforms, "mathnumerics": mathnumerics}
+_MOD = {"mathops": mathops, "mathtransforms": mathtransforms, "mathnumerics": mathnumerics, "mathspectral": mathspectral}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   種別語彙: matrix(2-D)/ signal(1-D array)/ measurement / table(dict)/
@@ -169,6 +170,15 @@ _CATALOG = {
         ("chebyshev_nodes", "mathnumerics", [], "signal"),
         ("interp_barycentric", "mathnumerics", ["signal", "signal", "signal"], "signal"),
         ("integrate_hamiltonian", "mathnumerics", ["signal", "signal"], "table"),
+    ],
+    # FFT では足りないスペクトル推定(2026-10-03)。スナップショットは (素子, 時刻) の複素行列だが、
+    #   複素 2-D の語彙は cimage(画像)しか無く意味が違うので matrix(複素を許す)で受ける。
+    "spectral": [
+        ("lomb_scargle", "mathspectral", ["signal", "signal", "signal"], "table"),
+        ("ula_snapshots", "mathspectral", ["signal"], "matrix"),
+        ("music_doa", "mathspectral", ["matrix"], "table"),
+        ("esprit_doa", "mathspectral", ["matrix"], "table"),
+        ("n_sources_mdl", "mathspectral", ["matrix"], "table"),
     ],
 }
 

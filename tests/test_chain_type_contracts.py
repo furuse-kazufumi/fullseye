@@ -240,6 +240,8 @@ def test_opsmath_call_returns_declared_types():
         "dynsys_bifurcation_map": ("logistic", 2.5, 4.0, 40),
         "dynsys_correlation_dimension": (orbit,),
     })
+    import mathspectral
+    snap = mathspectral.ula_snapshots([10.0, 16.0], 8, 64, snr_db=20)
     # フーリエ以外の積分変換と s 領域(2026-10-03)。伝達関数の係数は降べきの signal。
     rr = np.linspace(0.0, 4.0, 64)
     gauss = np.exp(-rr ** 2)
@@ -263,6 +265,12 @@ def test_opsmath_call_returns_declared_types():
         "chebyshev_nodes": (9,),
         "interp_barycentric": (np.linspace(-1, 1, 5), np.linspace(-1, 1, 5) ** 2, np.linspace(-1, 1, 11)),
         "integrate_hamiltonian": (np.array([1.0]), np.array([0.0]), 0.1, 20),
+        # スペクトル推定(2026-10-03)
+        "lomb_scargle": (np.linspace(0, 10, 40), np.sin(np.linspace(0, 10, 40)), np.linspace(0.05, 1.0, 20)),
+        "ula_snapshots": (np.array([10.0, 16.0]), 8, 64),
+        "music_doa": (snap, 2),
+        "esprit_doa": (snap, 2),
+        "n_sources_mdl": (snap,),
     })
     from tools.chain_fuzz import TYPE_CHECKS
     missing = [n for n in opsmath.OPSMATH if n not in args]

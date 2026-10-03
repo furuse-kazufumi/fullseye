@@ -137,6 +137,15 @@ flowchart LR
 - **integrate_hamiltonian**`(q0, p0, dt, n_steps, system="harmonic"|"pendulum"|"kepler", method="verlet"|"euler"|"rk4")` — Verlet はエネルギー誤差が有界で時間反転で戻る。Euler は毎歩 (1+ω²dt²) 倍。**RK4 は短時間は Verlet より正確だが誤差が時間に比例して増え、いずれ抜かれる**(dt=0.2 で t≈2300、dt=0.1 では約 18 万歩目)。
 - **erf / erfc / bessel**`(x, order, kind)` — 値は scipy.special。ガウスでぼけた段差の断面は ½(1+erf(x/σ√2))。大きな x の 1−erf は桁落ちするので erfc を使う。門は奇関数性・導関数・Wronskian・漸化式。
 
+### spectral(FFT では足りないスペクトル推定 — 2026-10-03)
+
+実装は `mathspectral.py`、例は `py -3.11 examples/spectral_tour.py`。規約: 等間隔線形アレイ、間隔 d は波長単位(既定 0.5)、到来角は正面から、`a(θ)_m = exp(−2πi·d·m·sin θ)`。
+
+- **lomb_scargle**`(t, y, freqs)` — 時刻が不等間隔な観測の周期図(Scargle の τ つき)。等間隔ならフーリエ周波数で `|DFT|²/N` と恒等的に一致。時刻を無視して並び順のまま FFT するのが典型的な間違い(峰がずれる)。
+- **music_doa**`(X, n_sources=None)` / **esprit_doa**`(X, n_sources=None)` — 部分空間法の到来方向推定。遅延和(`rangedoppler.beamform_doa`)は 1 ビーム幅の中の 2 波を分けられないが、こちらは分ける。**前提**: 波源の数が正しい・波どうしが無相関。同じ信号の反射(相関した波)では共分散の階数が潰れて割れない(門で確かめてある)。`n_sources=None` は MDL で推定。
+- **n_sources_mdl**`(X)` — 波源の数の推定(Wax & Kailath 1985)。白色雑音・スナップショット数 ≫ 素子数が前提。
+- **ula_snapshots**`(angles_deg, n_elements, n_snapshots, snr_db=None)` — 答えの決まる入力(無相関の複素ガウス信号 + 白色雑音)。
+
 ## 動く最小例(検証済み)
 
 repo 直下で `py -3.11` の対話環境か、`PYTHONPATH` に repo を通して実行。フィット厳密復元・PSD/直交性・SVD⇔固有値の交差検証・fail-closed(範囲外拒否)を数値で確認して `PASS` を出します(本ガイド作成時に実行し PASS を確認済み。16 op 全てを通すフル版は `py -3.11 examples/math_metrology.py`)。
