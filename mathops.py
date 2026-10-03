@@ -95,6 +95,7 @@ import numpy as np
 
 __all__ = [
     "mat_solve", "mat_lstsq", "mat_svd", "mat_eigh", "mat_pinv", "mat_cond",
+    "mat_lu", "mat_qr", "mat_cholesky", "mat_eig",
     "stat_describe", "stat_histogram", "stat_covariance", "stat_correlation",
     "stat_zscore",
     "interp_linear", "interp_cubic", "interp_scattered",
@@ -130,6 +131,7 @@ __all__ = [
 #: The public math operators, by name (introspection / facade wiring).
 MATHOPS = [
     "mat_solve", "mat_lstsq", "mat_svd", "mat_eigh", "mat_pinv", "mat_cond",
+    "mat_lu", "mat_qr", "mat_cholesky", "mat_eig",
     "stat_describe", "stat_histogram", "stat_covariance", "stat_correlation",
     "stat_zscore",
     "interp_linear", "interp_cubic", "interp_scattered",
@@ -3724,3 +3726,133 @@ def dynsys_correlation_dimension(points, n_radii=24, r_lo=None, r_hi=None,
     b = max(a + 3, int(0.8 * lr.size))
     slope = float(np.polyfit(lr[a:b], lc[a:b], 1)[0])
     return slope
+
+
+# ── Factorisations a student meets first (2026-10-03) ────────────────────────────────────────── #
+# LU / QR were reachable only through the HALCON facade names ``decompose_matrix`` /
+# ``orthogonal_decompose_matrix`` (classified "plumbing", absent from OP_INDEX and the ledger).
+# Each op also carries the textbook *failure* next to the success, because that is what the
+# factorisation is for: LU without pivoting blows up on a tiny pivot; classical Gram–Schmidt loses
+# orthogonality like κ², modified Gram–Schmidt like κ·ε, Householder stays at ε.
+
+def mat_lu(a, pivoting="partial"):
+    """LU factorisation ``P @ A = L @ U`` (``L`` unit lower, ``U`` upper).
+
+    ``pivoting="partial"`` (default, LAPACK ``getrf``) swaps rows so every multiplier is ``|l| <= 1``.
+    ``pivoting="none"`` is plain Gaussian elimination, kept **on purpose** as the classic failure: on
+    ``[[1e-20, 1], [1, 1]]`` the multiplier is 1e20, ``U[1,1]`` rounds to −1e20 and ``L @ U`` loses the
+    original ``A[1,1] = 1`` entirely (Trefethen & Bau, Lecture 20).
+
+    Returns a dict: ``P``, ``L``, ``U``, ``growth`` = max|U| / max|A| (the growth factor; huge growth
+    means the factorisation is numerically meaningless) and ``residual`` = max|P A − L U| / max|A|.
+    """
+    A = _require_matrix(a, "a")
+    _check_elements(A, "mat_lu")
+    n, m = A.shape
+    if n != m:
+        raise ValueError(f"mat_lu: square matrix required, got {A.shape}")
+    mode = str(pivoting)
+    if mode == "partial":
+        from scipy.linalg import lu
+        Pt, L, U = lu(A)
+        P = Pt.T
+    elif mode == "none":
+        L = np.eye(n)
+        U = A.copy()
+        for k in range(n - 1):
+            if U[k, k] == 0.0:
+                raise ValueError("mat_lu(pivoting='none'): zero pivot at step %d — use pivoting='partial'" % k)
+            f = U[k + 1:, k] / U[k, k]
+            L[k + 1:, k] = f
+            U[k + 1:, k:] -= f[:, None] * U[k, k:][None, :]
+            U[k + 1:, k] = 0.0
+        P = np.eye(n)
+    else:
+        raise ValueError("mat_lu: pivoting must be 'partial' or 'none'")
+    scale = max(float(np.abs(A).max()), np.finfo(float).tiny)
+    return {"P": P, "L": L, "U": U, "growth": float(np.abs(U).max()) / scale,
+            "residual": float(np.abs(P @ A - L @ U).max()) / scale}
+
+
+def mat_qr(a, method="householder"):
+    """QR factorisation ``A = Q @ R`` (``Q`` with orthonormal columns, ``R`` upper triangular).
+
+    ``method``: ``"householder"`` (default, LAPACK ``geqrf``), ``"mgs"`` (modified Gram–Schmidt) or
+    ``"cgs"`` (classical Gram–Schmidt). All three give the same ``Q`` in exact arithmetic; in floating
+    point the **loss of orthogonality** ``max|QᵀQ − I|`` grows like ε·κ² for CGS, ε·κ for MGS and stays
+    near ε for Householder (Björck 1967; Giraud et al. 2005) — the reason libraries use Householder.
+
+    Returns a dict: ``Q``, ``R``, ``orthogonality_loss``, ``residual`` = max|A − QR| / max|A|,
+    ``cond`` = 2-norm condition number of ``A``.
+    """
+    A = _require_matrix(a, "a")
+    _check_elements(A, "mat_qr")
+    n, m = A.shape
+    if n < m:
+        raise ValueError(f"mat_qr: needs rows >= cols (tall or square), got {A.shape}")
+    meth = str(method)
+    if meth == "householder":
+        Q, R = np.linalg.qr(A)
+    elif meth in ("mgs", "cgs"):
+        Q = np.zeros((n, m))
+        R = np.zeros((m, m))
+        V = A.copy()
+        for j in range(m):
+            v = A[:, j].copy() if meth == "cgs" else V[:, j].copy()
+            for i in range(j):
+                R[i, j] = Q[:, i] @ (A[:, j] if meth == "cgs" else v)
+                v -= R[i, j] * Q[:, i]
+            R[j, j] = np.linalg.norm(v)
+            if R[j, j] <= 1e-14 * max(float(np.linalg.norm(A[:, j])), np.finfo(float).tiny):
+                raise ValueError("mat_qr: columns are linearly dependent (rank deficient)")
+            Q[:, j] = v / R[j, j]
+    else:
+        raise ValueError("mat_qr: method must be 'householder', 'mgs' or 'cgs'")
+    scale = max(float(np.abs(A).max()), np.finfo(float).tiny)
+    return {"Q": Q, "R": R, "orthogonality_loss": float(np.abs(Q.T @ Q - np.eye(m)).max()),
+            "residual": float(np.abs(A - Q @ R).max()) / scale, "cond": float(np.linalg.cond(A))}
+
+
+def mat_cholesky(a):
+    """Cholesky factorisation ``A = L @ Lᵀ`` of a symmetric positive-definite matrix.
+
+    Half the work of LU and no pivoting needed. It is also the cheapest **test** for positive
+    definiteness: a covariance matrix that is not SPD (estimated from too few samples, or edited by
+    hand) raises ``ValueError`` here instead of yielding a NaN later. Returns ``L`` (lower triangular,
+    positive diagonal) and ``log_det`` = 2·Σ log L_ii (the stable way to get log|A| for Gaussians).
+    """
+    A = _require_matrix(a, "a")
+    _check_elements(A, "mat_cholesky")
+    if A.shape[0] != A.shape[1]:
+        raise ValueError(f"mat_cholesky: square matrix required, got {A.shape}")
+    scale = max(float(np.abs(A).max()), np.finfo(float).tiny)
+    if float(np.abs(A - A.T).max()) > _SYM_RTOL * scale:
+        raise ValueError("mat_cholesky: matrix is not symmetric — symmetrise with (A + A.T) / 2 if it is noise")
+    try:
+        L = np.linalg.cholesky(A)
+    except np.linalg.LinAlgError as e:
+        raise ValueError("mat_cholesky: matrix is not positive definite (%s)" % e) from None
+    return {"L": L, "log_det": float(2.0 * np.sum(np.log(np.diag(L))))}
+
+
+def mat_eig(a):
+    """Eigen-decomposition of a **general** square matrix ``A V = V diag(w)`` (complex in general).
+
+    The non-symmetric companion of :func:`mat_eigh`: a rotation has eigenvalues e^{±iθ}, a Markov
+    matrix has eigenvalue 1 with the stationary distribution as eigenvector. Also returns the
+    eigenvector condition number ``cond_V`` = κ(V): near-defective matrices (a Jordan block nudged by
+    1e-10) have κ(V) ~ 1e5+ and their eigenvalues move by √ of a perturbation — computed, not hidden.
+
+    Returns a dict: ``w`` (complex, sorted by descending |w|), ``V`` (columns, unit 2-norm),
+    ``residual`` = max|AV − V diag(w)| / max|A|, ``cond_V``.
+    """
+    A = _require_matrix(a, "a")
+    _check_elements(A, "mat_eig")
+    if A.shape[0] != A.shape[1]:
+        raise ValueError(f"mat_eig: square matrix required, got {A.shape}")
+    w, V = np.linalg.eig(A)
+    o = np.lexsort((-w.imag, -np.abs(w)))
+    w, V = w[o], V[:, o]
+    scale = max(float(np.abs(A).max()), np.finfo(float).tiny)
+    return {"w": w, "V": V, "residual": float(np.abs(A @ V - V * w[None, :]).max()) / scale,
+            "cond_V": float(np.linalg.cond(V))}

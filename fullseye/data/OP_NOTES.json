@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2642,
- "n_notes": 2648,
+ "n_ops": 2646,
+ "n_notes": 2652,
  "notes": {
   "vol_dilate": [
    {
@@ -20956,6 +20956,16 @@
     "path": "docs/ops/math/interp_poly/poly_roots.md"
    }
   ],
+  "mat_cholesky": [
+   {
+    "op": "mat_cholesky",
+    "dim": "math",
+    "category": "linalg",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/math/linalg/mat_cholesky.md"
+   }
+  ],
   "mat_cond": [
    {
     "op": "mat_cond",
@@ -20964,6 +20974,16 @@
     "in": "matrix",
     "out": "measurement",
     "path": "docs/ops/math/linalg/mat_cond.md"
+   }
+  ],
+  "mat_eig": [
+   {
+    "op": "mat_eig",
+    "dim": "math",
+    "category": "linalg",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/math/linalg/mat_eig.md"
    }
   ],
   "mat_eigh": [
@@ -20986,6 +21006,16 @@
     "path": "docs/ops/math/linalg/mat_lstsq.md"
    }
   ],
+  "mat_lu": [
+   {
+    "op": "mat_lu",
+    "dim": "math",
+    "category": "linalg",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/math/linalg/mat_lu.md"
+   }
+  ],
   "mat_pinv": [
    {
     "op": "mat_pinv",
@@ -20994,6 +21024,16 @@
     "in": "matrix",
     "out": "matrix",
     "path": "docs/ops/math/linalg/mat_pinv.md"
+   }
+  ],
+  "mat_qr": [
+   {
+    "op": "mat_qr",
+    "dim": "math",
+    "category": "linalg",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/math/linalg/mat_qr.md"
    }
   ],
   "mat_solve": [

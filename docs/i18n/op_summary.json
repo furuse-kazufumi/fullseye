@@ -15311,6 +15311,38 @@
    "tw": "最大熵閾值（Kapur–Sahoo–Wong 1985）：使 H(t) = −Σ_(i ≤ t) (p_i/P1) ln(p_i/P1) − Σ_(i > t) (p_i/P2) ln(p_i/P2) 最大的箱 t（僅限兩側機率皆為正的箱）。回傳：``threshold`` = 該箱的上端、``mask``（箱號 > t）、``bin``、``entropy``（H，被排除的箱為 nan）（threshold_kapur）。",
    "ko": "최대 엔트로피 임계값(Kapur–Sahoo–Wong 1985): H(t) = −Σ_(i ≤ t) (p_i/P1) ln(p_i/P1) − Σ_(i > t) (p_i/P2) ln(p_i/P2)를 최대로 하는 빈 t(양쪽 모두 확률이 양인 빈만). 반환: ``threshold`` = 그 빈의 상단, ``mask``(빈 번호 > t), ``bin``, ``entropy``(H, 제외한 빈은 nan)(threshold_kapur).",
    "de": "Maximum-Entropie-Schwelle (Kapur–Sahoo–Wong 1985): der Bin t, der H(t) = −Σ_(i ≤ t) (p_i/P1) ln(p_i/P1) − Σ_(i > t) (p_i/P2) ln(p_i/P2) maximiert (nur Bins, bei denen beide Seiten positive Wahrscheinlichkeit haben). Rückgabe: ``threshold`` = Oberkante dieses Bins, ``mask`` (Bin-Index > t), ``bin``, ``entropy`` (H, ausgeschlossene Bins nan) (threshold_kapur)."
+  },
+  "math/mat_lu": {
+   "fp": "1e78a43ebcf1",
+   "ja": "LU 分解 ``P @ A = L @ U``(``L`` は対角が 1 の下三角、``U`` は上三角)。",
+   "zh": "LU 分解 ``P @ A = L @ U``(``L`` 为单位下三角,``U`` 为上三角)。",
+   "tw": "LU 分解 ``P @ A = L @ U``(``L`` 為單位下三角,``U`` 為上三角)。",
+   "ko": "LU 분해 ``P @ A = L @ U`` (``L``은 단위 하삼각, ``U``는 상삼각).",
+   "de": "LU-Zerlegung ``P @ A = L @ U`` (``L`` normierte untere, ``U`` obere Dreiecksmatrix)."
+  },
+  "math/mat_qr": {
+   "fp": "be2121bbf67d",
+   "ja": "QR 分解 ``A = Q @ R``(``Q`` は列が正規直交、``R`` は上三角)。",
+   "zh": "QR 分解 ``A = Q @ R``(``Q`` 的列为标准正交,``R`` 为上三角)。",
+   "tw": "QR 分解 ``A = Q @ R``(``Q`` 的各行彼此標準正交,``R`` 為上三角)。",
+   "ko": "QR 분해 ``A = Q @ R`` (``Q``는 정규직교 열, ``R``는 상삼각).",
+   "de": "QR-Zerlegung ``A = Q @ R`` (``Q`` mit orthonormalen Spalten, ``R`` obere Dreiecksmatrix)."
+  },
+  "math/mat_cholesky": {
+   "fp": "84ea37639cdd",
+   "ja": "対称正定値行列の Cholesky 分解 ``A = L @ Lᵀ``。",
+   "zh": "对称正定矩阵的 Cholesky 分解 ``A = L @ Lᵀ``。",
+   "tw": "對稱正定矩陣的 Cholesky 分解 ``A = L @ Lᵀ``。",
+   "ko": "대칭 양의 정부호 행렬의 Cholesky 분해 ``A = L @ Lᵀ``.",
+   "de": "Cholesky-Zerlegung ``A = L @ Lᵀ`` einer symmetrisch positiv definiten Matrix."
+  },
+  "math/mat_eig": {
+   "fp": "1dc144c9f759",
+   "ja": "**一般の**正方行列の固有分解 ``A V = V diag(w)``(一般に複素数)。",
+   "zh": "**一般**方阵的特征分解 ``A V = V diag(w)``(一般为复数)。",
+   "tw": "**一般**方陣的特徵分解 ``A V = V diag(w)``(一般為複數)。",
+   "ko": "**일반** 정방행렬의 고유분해 ``A V = V diag(w)`` (일반적으로 복소수).",
+   "de": "Eigenzerlegung einer **allgemeinen** quadratischen Matrix ``A V = V diag(w)`` (im Allgemeinen komplex)."
   }
  }
 }

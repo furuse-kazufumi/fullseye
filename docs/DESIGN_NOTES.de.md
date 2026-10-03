@@ -45,22 +45,22 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `api.py`
 
 - **L164** _(ja)_ — ★2026-10-02: 合成パイプライン 6 本を fs.<名前> から出す。以前は ``fs.pipeline3d.<fn>`` でしか届かず、 公開経路の門では「1 本も届かない島」として _INTERNAL に置かれていた。import 自体は torch が無くても 通る(torch_lazy)。torch を要るのは呼んだときの FPFH / ICP の側だけ。
-- **L795** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
-- **L811** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
-- **L866** — ★``annotate.overlay_mask`` wird **bewusst nicht auf oberster Ebene exponiert**. Das gleichnamige ``imgio.overlay_mask`` ist bereits als ``fs.overlay_mask`` öffentlich, und Argumente wie Bedeutung unterscheiden sich (imgio = rohes RGB, mask>0.5, fill/margin / annotate = Rollenname-Farbe, Gewichte [0,1] erlaubt, lehnt Form-Fehlanpassung ab). Legt man dem gleichen Namen ein anderes Versprechen auf, erhält der Aufrufer keine Ausnahme, sondern **ein plausibel anderes Bild**. Breaking Changes an der öffentlichen API machen wir nicht im Alleingang, daher die rollentragende Variante über ``fs.annotate.overlay_mask`` beziehen.
-- **L1002** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L1502** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
-- **L1520** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
-- **L1589** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
-- **L1884** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
-- **L1915** — ★ **Für Farbbilder gibt es derzeit keinen korrekten Aufruf**: Übergibt man sie gemeinsam, vermischen sich die Farben, und ruft man pro Kanal dreimal auf, teilt ein selbstnormalisierender op jeden Kanal durch sein eigenes Maximum und zerstört die Verhältnisse zwischen den Kanälen (der Winkelfehler der Grey-Edge-Methode steigt von 1.03 Grad mit unserem eigenen Sobel -> 4.17 Grad pro Bild -> 27.86 Grad pro Kanal, 29.14 Grad am Nullpunkt). Wohin man sich neigt, ist eine **Vertragsentscheidung**, deshalb ändern wir hier keinen einzigen Standardwert, verweigern nur bei `on_error="raise"` und protokollieren es standardmäßig im Register, damit es sichtbar bleibt. Details und Optionen in docs/KNOWN_ISSUES.md.
-- **L2199** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
-- **L2235** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L2556** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L2796** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L2800** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L2921** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L2931** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L796** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
+- **L812** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
+- **L867** — ★``annotate.overlay_mask`` wird **bewusst nicht auf oberster Ebene exponiert**. Das gleichnamige ``imgio.overlay_mask`` ist bereits als ``fs.overlay_mask`` öffentlich, und Argumente wie Bedeutung unterscheiden sich (imgio = rohes RGB, mask>0.5, fill/margin / annotate = Rollenname-Farbe, Gewichte [0,1] erlaubt, lehnt Form-Fehlanpassung ab). Legt man dem gleichen Namen ein anderes Versprechen auf, erhält der Aufrufer keine Ausnahme, sondern **ein plausibel anderes Bild**. Breaking Changes an der öffentlichen API machen wir nicht im Alleingang, daher die rollentragende Variante über ``fs.annotate.overlay_mask`` beziehen.
+- **L1003** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
+- **L1504** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
+- **L1522** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
+- **L1591** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
+- **L1886** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
+- **L1917** — ★ **Für Farbbilder gibt es derzeit keinen korrekten Aufruf**: Übergibt man sie gemeinsam, vermischen sich die Farben, und ruft man pro Kanal dreimal auf, teilt ein selbstnormalisierender op jeden Kanal durch sein eigenes Maximum und zerstört die Verhältnisse zwischen den Kanälen (der Winkelfehler der Grey-Edge-Methode steigt von 1.03 Grad mit unserem eigenen Sobel -> 4.17 Grad pro Bild -> 27.86 Grad pro Kanal, 29.14 Grad am Nullpunkt). Wohin man sich neigt, ist eine **Vertragsentscheidung**, deshalb ändern wir hier keinen einzigen Standardwert, verweigern nur bei `on_error="raise"` und protokollieren es standardmäßig im Register, damit es sichtbar bleibt. Details und Optionen in docs/KNOWN_ISSUES.md.
+- **L2201** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
+- **L2237** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L2558** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L2798** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L2802** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L2923** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L2933** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -145,8 +145,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `backends_typed.py`
 
-- **L415** _(ja)_ — ★本当に効く r_lo / r_hi(半径の窓)だが、後者は既定が None で「データから決める」 意味なので、正の数値既定を要求する橋の選定には載らない。嘘のノブを 1 本足すより **a だけを配線して b を『未使用』と書く**ほうが正しい。
-- **L587** — ★Bis 2026-09-05 wurde ``tools/chain_fuzz`` (nicht mitgeliefert) per sys.path-Manipulation geladen. Im wheel schlug es fehl, und da das build() darunter still [] zurückgab, verschwanden die tb_*-143-ops.
+- **L416** _(ja)_ — ★本当に効く r_lo / r_hi(半径の窓)だが、後者は既定が None で「データから決める」 意味なので、正の数値既定を要求する橋の選定には載らない。嘘のノブを 1 本足すより **a だけを配線して b を『未使用』と書く**ほうが正しい。
+- **L588** — ★Bis 2026-09-05 wurde ``tools/chain_fuzz`` (nicht mitgeliefert) per sys.path-Manipulation geladen. Im wheel schlug es fehl, und da das build() darunter still [] zurückgab, verschwanden die tb_*-143-ops.
 
 ## `ballistics.py`
 
@@ -1243,11 +1243,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `fullseye/__init__.py`
 
-- **L426** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L465** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L655** — ★Der Adapter, der sich an den deklarierten out-Typ haelt, **verwirft alles ab dem 2. Element** eines op, der ein Tupel zurueckgibt (``wht`` von ``drizzle_resample``, ``info`` von ``piv_cross_correlate``). Wird die verworfene Seite benoetigt, war sie ueber den Eingang des ledger nicht erreichbar. Am 2026-09-06 schrieb ein Superaufloesungs-PoC ``flow, info = fs.ledger.piv_cross_correlate(...)``, entpackte das (2,R,C) entlang der 1. Achse, nutzte die 2. Zeile von dy als dx und machte die Verschiebungsschaetzung von 0.12 -> 0.74 px (ohne Ausnahme). Mit ``.raw`` erreicht man die rohe Rueckgabe: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
-- **L1080** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L1106** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L427** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
+- **L466** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L656** — ★Der Adapter, der sich an den deklarierten out-Typ haelt, **verwirft alles ab dem 2. Element** eines op, der ein Tupel zurueckgibt (``wht`` von ``drizzle_resample``, ``info`` von ``piv_cross_correlate``). Wird die verworfene Seite benoetigt, war sie ueber den Eingang des ledger nicht erreichbar. Am 2026-09-06 schrieb ein Superaufloesungs-PoC ``flow, info = fs.ledger.piv_cross_correlate(...)``, entpackte das (2,R,C) entlang der 1. Achse, nutzte die 2. Zeile von dy als dx und machte die Verschiebungsschaetzung von 0.12 -> 0.74 px (ohne Ausnahme). Mit ``.raw`` erreicht man die rohe Rueckgabe: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
+- **L1082** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1108** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1352,17 +1352,17 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `mathops.py`
 
-- **L113** _(ja)_ — 定理が門になる図(2026-09-23)。★`MATHOPS`(台帳が読む一覧)と `__all__` (import * の公開面)は**別物**で、両方に書かないと片方だけ通る。
-- **L1711** _(ja)_ — ★既存の cplx_* は閉曲線を点列で持つ層(積分・巻き数・ローラン・等角写像)。# ここで足すのは**領域**の層 —— 値の場・位相彩色・ニュートンの吸引域・ # 脱出時間・翼まわりのポテンシャル流。新しい語は 1 つも作らない # (cimage / rgbimage / labels2d / mask / roots / signal はすべて既存)。 # 真値は「使った式」ではなく、偏角の原理・Cayley の定理・主カージオイドの # 閉形式内部判定・c=0 のジュリア集合(単位円板)・そして既存 op である # cplx_winding_number / cplx_cr_residual / cplx_joukowski / poly_roots。 # --------------------------------------------------------------------------- #
-- **L2165** _(ja)_ — ★もう一方の臨界点 -b は円の**内側**になければならない。外に出ると dz/dzeta = 0 が流れの領域に現れ、そこで速度が発散する(翼でなく尖りが 2 つある図形になる)。
-- **L2278** _(ja)_ — ★どれも「きれいな図」だが、**採ったのはきれいだからではなく、 正しさを定理が言えるから**である。数学の図はきれいなので、合って いるかを誰も確かめない —— だから絵の外に真値を置く: circle_packing_apollonian デカルトの円定理(厳密な代数等式)+ 整数充填 ford_circles 接するのは |ps - qr| = 1 のときに限る(整数で厳密) phyllotaxis_pattern 隣の番号差がフィボナッチ数(黄金角のときだけ) ifs_fractal モランの式 sum r^d = 1 と、既存 fractal_dimension space_filling_curve 4^n 点をちょうど 1 回ずつ・隣は必ず距離 1 相棒(neighbour_index_gaps / ifs_similarity_dimension / curve_locality)は **主張を数にする側**で、これが無いと「それらしい絵」しか残らない。 ------------------------------------------------------------------------- #
-- **L2391** _(ja)_ — ★四つ組の**最後**が「直前に生まれた円」。それを落とす反射は**親をもう一度** 作るので、種の四つ組だけ 4 方向、以降は 3 方向に進む。ここを間違えると depth 3 で 56 個のはずが 88 個になった(実測。一意な円は 56 のままなので、 絵は正しく見えるが同じ円を何度も描き、以降の段が指数的に太る)。
-- **L2787** _(ja)_ — ★ムーア曲線 = ヒルベルト曲線 4 本を輪に閉じたもの。四分割の**向きと進む方向**は 総当たり(8 対称 x 反転、4096 通り)で「継ぎ目 3 か所と折り返しが全部距離 1」を 満たす 32 解を出し、その 1 つを固定した。手で置くと隣接条件が静かに壊れる (最初の実装は隣接 False・閉 False のまま、絵としては正しく見えていた)。
-- **L2893** _(ja)_ — ★クラドニ図形は「板」ではなく**膜**の解である。よく見る cos*cos - cos*cos は ヘルムホルツ方程式 + ノイマン境界の膜のモードで、実際のクラドニ板は **重調和方程式**に従う別物。砂が節線に集まる絵は同じでも周波数比は合わない。 ここでは膜と明記し、膜の真値(閉形式の固有値・ベッセル零点)だけで採点する。 干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)。 ------------------------------------------------------------------------- #
-- **L3237** _(ja)_ — ★真値は**公表値か閉形式だけ**: 線形系は expm(At)x0 が厳密解で刻み半分に すると誤差が 1/16(4 次)、Lorenz のリアプノフ指数の**和**はトレース恒等式 により厳密に -(sigma+1+beta)、ロジスティック写像の周期倍分岐は 3 と 1+sqrt6、 相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
-- **L3241** _(ja)_ — ★関数(callable)を引数に取らない —— 型付き台帳は入力を sort で登録し、 連鎖ファザーがデータから引数を組むので callable は載らない。系は族名か係数配列。 ------------------------------------------------------------------------- #
-- **L3412** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
-- **L3710** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
+- **L114** _(ja)_ — 定理が門になる図(2026-09-23)。★`MATHOPS`(台帳が読む一覧)と `__all__` (import * の公開面)は**別物**で、両方に書かないと片方だけ通る。
+- **L1713** _(ja)_ — ★既存の cplx_* は閉曲線を点列で持つ層(積分・巻き数・ローラン・等角写像)。# ここで足すのは**領域**の層 —— 値の場・位相彩色・ニュートンの吸引域・ # 脱出時間・翼まわりのポテンシャル流。新しい語は 1 つも作らない # (cimage / rgbimage / labels2d / mask / roots / signal はすべて既存)。 # 真値は「使った式」ではなく、偏角の原理・Cayley の定理・主カージオイドの # 閉形式内部判定・c=0 のジュリア集合(単位円板)・そして既存 op である # cplx_winding_number / cplx_cr_residual / cplx_joukowski / poly_roots。 # --------------------------------------------------------------------------- #
+- **L2167** _(ja)_ — ★もう一方の臨界点 -b は円の**内側**になければならない。外に出ると dz/dzeta = 0 が流れの領域に現れ、そこで速度が発散する(翼でなく尖りが 2 つある図形になる)。
+- **L2280** _(ja)_ — ★どれも「きれいな図」だが、**採ったのはきれいだからではなく、 正しさを定理が言えるから**である。数学の図はきれいなので、合って いるかを誰も確かめない —— だから絵の外に真値を置く: circle_packing_apollonian デカルトの円定理(厳密な代数等式)+ 整数充填 ford_circles 接するのは |ps - qr| = 1 のときに限る(整数で厳密) phyllotaxis_pattern 隣の番号差がフィボナッチ数(黄金角のときだけ) ifs_fractal モランの式 sum r^d = 1 と、既存 fractal_dimension space_filling_curve 4^n 点をちょうど 1 回ずつ・隣は必ず距離 1 相棒(neighbour_index_gaps / ifs_similarity_dimension / curve_locality)は **主張を数にする側**で、これが無いと「それらしい絵」しか残らない。 ------------------------------------------------------------------------- #
+- **L2393** _(ja)_ — ★四つ組の**最後**が「直前に生まれた円」。それを落とす反射は**親をもう一度** 作るので、種の四つ組だけ 4 方向、以降は 3 方向に進む。ここを間違えると depth 3 で 56 個のはずが 88 個になった(実測。一意な円は 56 のままなので、 絵は正しく見えるが同じ円を何度も描き、以降の段が指数的に太る)。
+- **L2789** _(ja)_ — ★ムーア曲線 = ヒルベルト曲線 4 本を輪に閉じたもの。四分割の**向きと進む方向**は 総当たり(8 対称 x 反転、4096 通り)で「継ぎ目 3 か所と折り返しが全部距離 1」を 満たす 32 解を出し、その 1 つを固定した。手で置くと隣接条件が静かに壊れる (最初の実装は隣接 False・閉 False のまま、絵としては正しく見えていた)。
+- **L2895** _(ja)_ — ★クラドニ図形は「板」ではなく**膜**の解である。よく見る cos*cos - cos*cos は ヘルムホルツ方程式 + ノイマン境界の膜のモードで、実際のクラドニ板は **重調和方程式**に従う別物。砂が節線に集まる絵は同じでも周波数比は合わない。 ここでは膜と明記し、膜の真値(閉形式の固有値・ベッセル零点)だけで採点する。 干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)。 ------------------------------------------------------------------------- #
+- **L3239** _(ja)_ — ★真値は**公表値か閉形式だけ**: 線形系は expm(At)x0 が厳密解で刻み半分に すると誤差が 1/16(4 次)、Lorenz のリアプノフ指数の**和**はトレース恒等式 により厳密に -(sigma+1+beta)、ロジスティック写像の周期倍分岐は 3 と 1+sqrt6、 相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
+- **L3243** _(ja)_ — ★関数(callable)を引数に取らない —— 型付き台帳は入力を sort で登録し、 連鎖ファザーがデータから引数を組むので callable は載らない。系は族名か係数配列。 ------------------------------------------------------------------------- #
+- **L3414** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
+- **L3712** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
 
 ## `medial.py`
 
@@ -1467,11 +1467,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `opsmath.py`
 
-- **L92** _(ja)_ — ★閉形式の内部判定。脱出時間の図に「ここは絶対に出ない」を重ねられる。
-- **L97** _(ja)_ — ★定理が門になる図(2026-09-23)。数学の図はきれいなので、合っているかを 誰も確かめない —— ここに入れるのは**絵の外に真値がある**ものだけ。 デカルトの円定理 / |ps - qr| = 1 / フィボナッチの斜列 / モランの式 / 4^n 点をちょうど 1 回ずつ。相棒の 3 本は「主張を数にする」側で、 これが無いと「それらしい絵」しか残らない。
-- **L103** _(ja)_ — ★型は `pairs`(N,2)。`points` は **(N,3) の 3 次元点**で、 最初そちらで登録して型契約の門に捕まった —— 名前が似ているので 取り違えやすい(門が無ければ「もっともらしく間違った」宣言が残った)。
-- **L118** _(ja)_ — ★波動(2026-09-23)。クラドニ図形は「板」ではなく**膜**の解 —— 板は重調和 方程式に従う別物で、砂が節線に集まる絵は同じでも周波数比は合わない。膜と 明記して、膜の閉形式(矩形は pi^2(m^2/a^2 + n^2/b^2)、円はベッセルの零点) だけで採点する。干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)が独立に持っている。
-- **L135** _(ja)_ — ★力学系(2026-09-23)。真値は公表値か閉形式だけ: 線形系は expm(At)x0 が 厳密解で刻み半分なら誤差 1/16(4 次)、Lorenz のリアプノフ指数の**和**は トレース恒等式で厳密に -(sigma+1+beta)、ロジスティックの周期倍分岐は 3 と 1+sqrt6、相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
+- **L97** _(ja)_ — ★閉形式の内部判定。脱出時間の図に「ここは絶対に出ない」を重ねられる。
+- **L102** _(ja)_ — ★定理が門になる図(2026-09-23)。数学の図はきれいなので、合っているかを 誰も確かめない —— ここに入れるのは**絵の外に真値がある**ものだけ。 デカルトの円定理 / |ps - qr| = 1 / フィボナッチの斜列 / モランの式 / 4^n 点をちょうど 1 回ずつ。相棒の 3 本は「主張を数にする」側で、 これが無いと「それらしい絵」しか残らない。
+- **L108** _(ja)_ — ★型は `pairs`(N,2)。`points` は **(N,3) の 3 次元点**で、 最初そちらで登録して型契約の門に捕まった —— 名前が似ているので 取り違えやすい(門が無ければ「もっともらしく間違った」宣言が残った)。
+- **L123** _(ja)_ — ★波動(2026-09-23)。クラドニ図形は「板」ではなく**膜**の解 —— 板は重調和 方程式に従う別物で、砂が節線に集まる絵は同じでも周波数比は合わない。膜と 明記して、膜の閉形式(矩形は pi^2(m^2/a^2 + n^2/b^2)、円はベッセルの零点) だけで採点する。干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)が独立に持っている。
+- **L140** _(ja)_ — ★力学系(2026-09-23)。真値は公表値か閉形式だけ: 線形系は expm(At)x0 が 厳密解で刻み半分なら誤差 1/16(4 次)、Lorenz のリアプノフ指数の**和**は トレース恒等式で厳密に -(sigma+1+beta)、ロジスティックの周期倍分岐は 3 と 1+sqrt6、相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
 
 ## `opsoptics.py`
 
@@ -1714,7 +1714,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_chain_type_contracts.py`
 
-- **L221** _(ja)_ — だけなので、格子も積分時間も最小で足りる。★二重スリットは「縞が 3 本 入らない」と fail-closed するので、スクリーンの幅と分離を検証済みの 組み合わせ(550 nm / 200 um / 200 mm / 5 um 画素)で渡す。
+- **L222** _(ja)_ — だけなので、格子も積分時間も最小で足りる。★二重スリットは「縞が 3 本 入らない」と fail-closed するので、スクリーンの幅と分離を検証済みの 組み合わせ(550 nm / 200 um / 200 mm / 5 um 画素)で渡す。
 
 ## `tests/test_ci_wheel_check_paths.py`
 
@@ -1873,7 +1873,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_mathops.py`
 
-- **L518** _(ja)_ — tier1 16 + complex 18 + construct 8 + wave 6 + dynsys 6。★ここは op を 足すたびに動く行なので、足した理由を残しておく(35 = 複素平面の 面 8 op、43 = 定理が門になる図 8 op、55 = 波動 6 + 力学系 6)。
+- **L518** _(ja)_ — tier1 16 + complex 18 + construct 8 + wave 6 + dynsys 6。★ここは op を 足すたびに動く行なので、足した理由を残しておく(35 = 複素平面の 面 8 op、43 = 定理が門になる図 8 op、55 = 波動 6 + 力学系 6、59 = LU/QR/Cholesky/一般の固有値)。
 - **L1109** _(ja)_ — ★極は標本に乗れないので**偶数**格子で(零点と違って値が数にならない)
 - **L1485** _(ja)_ — ★数学の図はきれいなので、合っているかを誰も確かめない。ここでは絵を一度も 見ずに、**定理と既存 op**だけで合否を決める。 --------------------------------------------------------------------------- #
 - **L1563** _(ja)_ — ★円は (p/q, 1/(2q^2)) に**載っている**ので、接触は 2 次元の距離で見る。 x の差だけで測ると 0/1 と 1/9 のような組を「接していない」と読む (距離 0.1111 対 半径和 0.5062)—— 最初これで落ちた。

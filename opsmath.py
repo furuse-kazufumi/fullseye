@@ -55,6 +55,11 @@ _CATALOG = {
         ("mat_eigh", "mathops", ["matrix"], "table"),
         ("mat_pinv", "mathops", ["matrix"], "matrix"),
         ("mat_cond", "mathops", ["matrix"], "measurement"),
+        # 学生が最初に出会う分解(2026-10-03)。LU/QR は HALCON 名(decompose_matrix 等)でしか呼べず索引に無かった
+        ("mat_lu", "mathops", ["matrix"], "table"),
+        ("mat_qr", "mathops", ["matrix"], "table"),
+        ("mat_cholesky", "mathops", ["matrix"], "table"),
+        ("mat_eig", "mathops", ["matrix"], "table"),
     ],
     "stats": [
         ("stat_describe", "mathops", ["signal"], "table"),

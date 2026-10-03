@@ -68,11 +68,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**2,648 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **63 family guides**. Entry points by dimension:
+**2,652 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **63 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 934/934, typed ledger 1693/1705, one-line facade `fullseye.<name>` 664/1345 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 934/934, typed ledger 1697/1709, one-line facade `fullseye.<name>` 668/1349 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 2653 notes, **2503** link at least one runnable example (150 have none) and **2516** have a usage section of 120+ characters (137 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2653.
+**Measured substance**: of 2657 notes, **2504** link at least one runnable example (153 have none) and **2520** have a usage section of 120+ characters (137 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2657.
 
 | dimension | ops | entry |
 |---|---:|---|
@@ -80,7 +80,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `3d` | 372 | [INDEX](ops/3d/INDEX.md) |
 | `drive` | 288 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 147 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
-| `math` | 107 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
+| `math` | 111 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `segmentation` | 54 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
 | `gfx2d` | 44 | [INDEX](ops/gfx2d/INDEX.md) |
@@ -222,7 +222,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Document map — all 213
 
-The complete map, so that **no document is unreachable from this index** (the 2,648 per-op notes and 63 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 2,652 per-op notes and 63 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 

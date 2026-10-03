@@ -31,6 +31,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   一致 / db1〜db8 の直交性と消失モーメント・db2 の閉形式 / 1-D・2-D・3-D で Parseval と完全再構成 / H[cos] = sin・Bedrosian。
   図: 係数 5% の圧縮(DCT は縁に波紋、ウェーブレットは縁に留まる)と「0.5% では DCT が勝つ」逆転、消失モーメントの成功と失敗、
   チャープの瞬時周波数、包絡線が戻る時と戻らない時。
+- ★**学生が最初に出会う分解 4 op**: `mat_lu`・`mat_qr`・`mat_cholesky`・`mat_eig`(一般の行列、複素)。LU/QR は HALCON 名
+  `decompose_matrix`・`orthogonal_decompose_matrix` でしか呼べず、索引でも台帳でも「配管」扱いだった。失敗例を同じ op に:
+  ピボットなしの LU(増大率 1e20、残差 1.0)、古典 Gram–Schmidt の直交性の損失 ε·κ²(κ = 1e9 で崩壊)、Jordan ブロックの固有値が
+  √ε で動く(κ(V) で報告)。numerics_tour に「同じ QR でも作り方で崩れ方が違う」の図。
 - **非推奨(0.4.0 で削除)**: `gen_contour_nurbs_xld`・`gen_nurbs_interp`(`contours_xld2`)—— 名前に反して NURBS ではなく、
   重みなしで全制御点を通る**補間 B スプライン**だった。呼ぶと `DeprecationWarning`、docstring に正体と移行先
   (`nurbs_curve`)を書いた。動作は変えていない。

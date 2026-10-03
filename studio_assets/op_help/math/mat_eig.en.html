@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mat_eig — MATH <code style="color:#22d3bf">linalg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_eig(a)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.mat_eig(a)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;mat_eig&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Eigen-decomposition of a <b>general</b> square matrix `<code style="color:#22d3bf">A V = V diag(w)</code>` (complex in general).</p>
+<p>The non-symmetric companion of :func:<code style="color:#22d3bf">mat_eigh</code>: a rotation has eigenvalues e^{±iθ}, a Markov</p>
+<p>matrix has eigenvalue 1 with the stationary distribution as eigenvector. Also returns the</p>
+<p>eigenvector condition number `<code style="color:#22d3bf">cond_V</code>` = κ(V): near-defective matrices (a Jordan block nudged by</p>
+<p>1e-10) have κ(V) ~ 1e5+ and their eigenvalues move by √ of a perturbation — computed, not hidden.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">w</code><code style="color:#22d3bf"> (complex, sorted by descending |w|), </code><code style="color:#22d3bf">V</code>` (columns, unit 2-norm),</p>
+<p>`<code style="color:#22d3bf">residual</code><code style="color:#22d3bf"> = max|AV − V diag(w)| / max|A|, </code><code style="color:#22d3bf">cond_V</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every mathops op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
+<p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• (none yet)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a> · <a style="color:#22d3bf" href="opmath:dwt_inverse">dwt_inverse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">linalg</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:mat_solve">mat_solve</a> · <a style="color:#22d3bf" href="opmath:mat_lstsq">mat_lstsq</a> · <a style="color:#22d3bf" href="opmath:mat_svd">mat_svd</a> · <a style="color:#22d3bf" href="opmath:mat_eigh">mat_eigh</a> · <a style="color:#22d3bf" href="opmath:mat_pinv">mat_pinv</a> · <a style="color:#22d3bf" href="opmath:mat_cond">mat_cond</a> · <a style="color:#22d3bf" href="opmath:mat_lu">mat_lu</a> · <a style="color:#22d3bf" href="opmath:mat_qr">mat_qr</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

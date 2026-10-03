@@ -52,7 +52,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[mat_solve](../linalg/mat_solve.md) · [mat_lstsq](../linalg/mat_lstsq.md) · [mat_svd](../linalg/mat_svd.md) · [mat_eigh](../linalg/mat_eigh.md) · [mat_pinv](../linalg/mat_pinv.md) · [mat_cond](../linalg/mat_cond.md) · [stat_covariance](../stats/stat_covariance.md) · [stat_correlation](../stats/stat_correlation.md)
+[mat_solve](../linalg/mat_solve.md) · [mat_lstsq](../linalg/mat_lstsq.md) · [mat_svd](../linalg/mat_svd.md) · [mat_eigh](../linalg/mat_eigh.md) · [mat_pinv](../linalg/mat_pinv.md) · [mat_cond](../linalg/mat_cond.md) · [mat_lu](../linalg/mat_lu.md) · [mat_qr](../linalg/mat_qr.md)
 
 ## 同カテゴリ(`numerics`)
 

@@ -2240,7 +2240,7 @@ _計 42 ops / 3 categories。_
 - `signal_features` (`signal → table`) — A compact acoustic/vibration feature vector for anomaly detection:
 
 ## Math operators(opsmath)by category
-_計 107 ops / 12 categories。_
+_計 111 ops / 12 categories。_
 
 
 視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。北極星は「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
@@ -2317,13 +2317,17 @@ _計 107 ops / 12 categories。_
 - `poly_eval` (`signal, signal → signal`) — Evaluate a polynomial (coefficients highest-power-first) at *x*.
 - `poly_roots` (`signal → roots`) — All roots of a polynomial (coefficients highest-power-first) — complex
 
-### linalg(6)
+### linalg(10)
 - `mat_solve` (`matrix, signal → signal`) — Solve the square linear system ``A x = b`` (LAPACK ``gesv``, LU with
 - `mat_lstsq` (`matrix, signal → table`) — Least-squares solution of an over-determined system ``A x ≈ b``
 - `mat_svd` (`matrix → table`) — Singular value decomposition ``A = U @ diag(s) @ Vt`` (LAPACK ``gesdd``).
 - `mat_eigh` (`matrix → table`) — Eigen-decomposition of a **symmetric** matrix (LAPACK ``syevd``).
 - `mat_pinv` (`matrix → matrix`) — Moore-Penrose pseudo-inverse via SVD, with the cutoff **explicit**.
 - `mat_cond` (`matrix → measurement`) — Spectral (2-norm) condition number ``s_max / s_min`` — the numerical
+- `mat_lu` (`matrix → table`) — LU factorisation ``P @ A = L @ U`` (``L`` unit lower, ``U`` upper).
+- `mat_qr` (`matrix → table`) — QR factorisation ``A = Q @ R`` (``Q`` with orthonormal columns, ``R`` upper triangular).
+- `mat_cholesky` (`matrix → table`) — Cholesky factorisation ``A = L @ Lᵀ`` of a symmetric positive-definite matrix.
+- `mat_eig` (`matrix → table`) — Eigen-decomposition of a **general** square matrix ``A V = V diag(w)`` (complex in general).
 
 ### numerics(9)
 - `erf` (`signal → signal`) — 誤差関数 erf(x) = (2/√π) ∫_0^x e^{−t²} dt。

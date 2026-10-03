@@ -517,8 +517,8 @@ def test_mathops_registry_names_resolve():
     # tier1 16 + tier2 complex 10 + interp_scattered(2026-09-08、散在点)
     # tier1 16 + complex 18 + construct 8 + wave 6 + dynsys 6。★ここは op を
     #   足すたびに動く行なので、足した理由を残しておく(35 = 複素平面の
-    #   面 8 op、43 = 定理が門になる図 8 op、55 = 波動 6 + 力学系 6)。
-    assert len(mathops.MATHOPS) == 55
+    #   面 8 op、43 = 定理が門になる図 8 op、55 = 波動 6 + 力学系 6、59 = LU/QR/Cholesky/一般の固有値)。
+    assert len(mathops.MATHOPS) == 59
     for name in mathops.MATHOPS:
         assert callable(getattr(mathops, name)), name
         assert name in mathops.__all__
@@ -1750,6 +1750,6 @@ def test_the_new_construct_ops_are_registered_and_reachable():
     for n in names:
         assert hasattr(fs, n) and n in fs.__all__, n
         assert hasattr(fs.ledger, n), n
-    assert len(mathops.MATHOPS) == 55
+    assert len(mathops.MATHOPS) == 59
     assert sum(1 for r in opsmath.OPSMATH.values()
                if r["category"] == "construct") == 8

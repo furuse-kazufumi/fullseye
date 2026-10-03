@@ -1,4 +1,4 @@
-# MATH operator help — 107 ops in 12 categories
+# MATH operator help — 111 ops in 12 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/math/<category>/<op>.md` を走査。
 
@@ -37,9 +37,9 @@
 
 [interp_cubic](interp_poly/interp_cubic.md) · [interp_linear](interp_poly/interp_linear.md) · [interp_scattered](interp_poly/interp_scattered.md) · [poly_eval](interp_poly/poly_eval.md) · [poly_fit](interp_poly/poly_fit.md) · [poly_roots](interp_poly/poly_roots.md)
 
-### linalg (6)
+### linalg (10)
 
-[mat_cond](linalg/mat_cond.md) · [mat_eigh](linalg/mat_eigh.md) · [mat_lstsq](linalg/mat_lstsq.md) · [mat_pinv](linalg/mat_pinv.md) · [mat_solve](linalg/mat_solve.md) · [mat_svd](linalg/mat_svd.md)
+[mat_cholesky](linalg/mat_cholesky.md) · [mat_cond](linalg/mat_cond.md) · [mat_eig](linalg/mat_eig.md) · [mat_eigh](linalg/mat_eigh.md) · [mat_lstsq](linalg/mat_lstsq.md) · [mat_lu](linalg/mat_lu.md) · [mat_pinv](linalg/mat_pinv.md) · [mat_qr](linalg/mat_qr.md) · [mat_solve](linalg/mat_solve.md) · [mat_svd](linalg/mat_svd.md)
 
 ### numerics (9)
 

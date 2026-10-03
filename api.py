@@ -348,6 +348,7 @@ from funct1d import (  # noqa: E402,F401
 )
 from mathops import (  # noqa: E402,F401
     mat_solve, mat_lstsq, mat_svd, mat_eigh, mat_pinv, mat_cond,
+    mat_lu, mat_qr, mat_cholesky, mat_eig,
     stat_describe, stat_histogram, stat_covariance, stat_correlation,
     stat_zscore,
     interp_linear, interp_cubic, interp_scattered,
@@ -1132,6 +1133,7 @@ __all__ = [
     "get_y_value_funct_1d", "create_funct_1d_array", "create_funct_1d_pairs",
     "match_funct_1d_trans",
     "mathops", "mat_solve", "mat_lstsq", "mat_svd", "mat_eigh", "mat_pinv", "mat_cond",
+    "mat_lu", "mat_qr", "mat_cholesky", "mat_eig",
     "stat_describe", "stat_histogram", "stat_covariance", "stat_correlation",
     "stat_zscore",
     "interp_linear", "interp_cubic", "interp_scattered",

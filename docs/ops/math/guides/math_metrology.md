@@ -73,6 +73,10 @@ flowchart TB
 - **mat_eigh**`(a)` — **対称行列専用**(検証つき)の固有分解(`syevd`)。`max|A - A.T|` がスケールの 1e-10 を超えると `ValueError` — 非対称行列を対称ソルバに食わせると片三角だけ読んで「もっともらしく間違う」+ 複素固有値をこの実数 API は表現できない、の二重の罠を fail-closed。ノイズで非対称なら `(A + A.T)/2` を明示。戻りは昇順 `w` と列固有ベクトル `V`。固有ベクトルにも符号不定あり。
 - **mat_pinv**`(a, rcond=1e-12)` — Moore-Penrose 擬似逆行列。カットオフ `rcond`(= 正則化そのもの)を隠さず名前付き引数に。任意の `(m, n)` で動き、`m > n` は最小二乗解、`m < n` は最小ノルム解。
 - **mat_cond**`(a)` — スペクトル条件数 `smax/smin`。族全体の数値カナリア: `~1e3` は快適、`~1e8` で半分の桁が消え、`> 1e12` では `mat_solve` を信じない(厳密特異は raise ではなく **inf を返す** — 「どれだけ悪条件か」への正直な答え)。
+- **mat_lu**`(a, pivoting="partial")` — `P A = L U`。`growth`(増大率)と `residual` も返す。★`pivoting="none"` は教科書の失敗例として残してある: `[[1e-20, 1], [1, 1]]` で増大率 1e20、`L U` から `A[1,1]` が消える(残差 1.0)。
+- **mat_qr**`(a, method="householder")` — `A = Q R`。`method` に `"mgs"`・`"cgs"`(修正・古典 Gram–Schmidt)。★直交性の損失 `max|QᵀQ − I|` は古典が ε·κ²(κ = 1e9 で完全に崩れる)、修正が ε·κ、Householder は ε のまま。3 つとも `A = QR` 自体は成り立つ —— 崩れるのは Q だけ(図: numerics_tour の qr_orthogonality)。
+- **mat_cholesky**`(a)` — `A = L Lᵀ`(対称正定値)。正定値かどうかの一番安い検査でもある(正定値でなければ ValueError)。`log_det` = 2 Σ log L_ii(ガウスの対数尤度の安定な行列式)。
+- **mat_eig**`(a)` — **一般の**行列の固有分解(複素)。回転は e^{±iθ}、Markov 行列は固有値 1 と定常分布。`cond_V` = κ(V): 1e-10 だけ崩した Jordan ブロックでは固有値が √ の 1e-5 動き、κ(V) ≈ 1e5 で知らせる。LU/QR は以前 HALCON 名 `decompose_matrix`・`orthogonal_decompose_matrix` でしか呼べなかった。
 
 ### stats(残差・ノイズの特徴づけ)
 

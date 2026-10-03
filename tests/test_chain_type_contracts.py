@@ -162,6 +162,7 @@ def test_opsmath_call_returns_declared_types():
         "mat_solve": (spd, np.ones(5)), "mat_lstsq": (A, np.ones(6)),
         "mat_svd": (A,), "mat_eigh": (spd,), "mat_pinv": (A,),
         "mat_cond": (spd,),
+        "mat_lu": (S,), "mat_qr": (A,), "mat_cholesky": (spd,), "mat_eig": (S,),
         "stat_describe": (y,), "stat_histogram": (y,),
         "stat_covariance": (A,), "stat_correlation": (A,),
         "stat_zscore": (y,),

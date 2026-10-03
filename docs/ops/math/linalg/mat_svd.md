@@ -68,7 +68,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`linalg`)
 
-[mat_solve](mat_solve.md) · [mat_lstsq](mat_lstsq.md) · [mat_eigh](mat_eigh.md) · [mat_pinv](mat_pinv.md) · [mat_cond](mat_cond.md)
+[mat_solve](mat_solve.md) · [mat_lstsq](mat_lstsq.md) · [mat_eigh](mat_eigh.md) · [mat_pinv](mat_pinv.md) · [mat_cond](mat_cond.md) · [mat_lu](mat_lu.md) · [mat_qr](mat_qr.md) · [mat_cholesky](mat_cholesky.md)
 
 ---
 *Provenance: mathops.py — MATH operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

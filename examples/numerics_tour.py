@@ -13,6 +13,9 @@
    積分誤差の減り方が N^{−1/2}(乱数)より速い(ここでは ≈ N^{−1})。
 4. **Gauss 求積** —— n 点で 2n−1 次の多項式まで厳密。2n 次で初めて誤差が出る。
 5. **誤差関数** —— ガウスでぼけた段差の形は ½(1 + erf(x/(σ√2)))。画像の「ぼけた縁」の正体。
+6. **QR 分解の 3 つの作り方** —— 同じ行列を古典 Gram–Schmidt・修正 Gram–Schmidt・Householder で直交化する。
+   紙の上では同じ答えだが、行列が悪条件(条件数 κ が大きい)になると、古典は直交性を κ² の速さで失い κ = 1e9 で
+   完全に崩れる。修正は κ の速さ、Householder は丸め誤差のまま。ライブラリが Householder を使う理由。
 
 【グラウンドトゥルース】すべて閉じた式か定理(Runge 関数・調和振動子の円軌道と (1+ω²dt²)^n・積分 = 1・
 単項式の積分・erf の導関数)。
@@ -110,6 +113,22 @@ def run() -> dict:
     assert eerr < 1e-2                                  # 離散の核の標本化ぶん(実測 4.6e-3)
     out["erf_edge_err"] = eerr
 
+    # ---- 6. QR の 3 つの作り方 ---------------------------------------------------------- #
+    rng_q = np.random.default_rng(1)
+    Uq, _ = np.linalg.qr(rng_q.standard_normal((40, 12)))
+    Vq, _ = np.linalg.qr(rng_q.standard_normal((12, 12)))
+    kap = np.arange(0, 13)
+    qloss = {m: [] for m in ("cgs", "mgs", "householder")}
+    for k in kap:
+        Aq = Uq @ np.diag(np.logspace(0, -float(k), 12)) @ Vq.T
+        for m in qloss:
+            qloss[m].append(fs.mat_qr(Aq, m)["orthogonality_loss"])
+    print("6) 直交性の損失 max|QᵀQ − I|(κ = 1e4 / 1e9): 古典 GS %.0e / %.0e、修正 GS %.0e / %.0e、Householder %.0e / %.0e"
+          % (qloss["cgs"][4], qloss["cgs"][9], qloss["mgs"][4], qloss["mgs"][9],
+             qloss["householder"][4], qloss["householder"][9]))
+    assert qloss["cgs"][9] > 0.5 and qloss["mgs"][9] < 1e-6 and max(qloss["householder"]) < 1e-14
+    out.update(qr_loss_cgs_k9=qloss["cgs"][9], qr_loss_mgs_k9=qloss["mgs"][9])
+
     # ---- 図 --------------------------------------------------------------------------- #
     if figs.enabled():
         n_show = 11                                   # 暴れ方が枠に収まる点数(13 点で −3.6 まで振れる)
@@ -171,6 +190,22 @@ def run() -> dict:
                        caption="白黒の段差をガウスでぼかすと、断面は erf の形になる。縁の幅から σ(ぼけの大きさ)が測れる。")
         figs.save_table("gauss", ["点の数 n", "厳密な次数 2n−1", "その次数までの最大誤差", "2n 次の誤差"], rows,
                         title="Gauss–Legendre 求積 —— n 点で 2n−1 次まで厳密")
+        eps = np.finfo(float).eps
+        floor = 1e-17
+        figs.save_plot("qr_orthogonality",
+                       [("ε·κ²(傾き 2)", kap[kap <= 8], np.log10(eps * 10.0 ** (2 * kap[kap <= 8]))),
+                        ("ε·κ(傾き 1)", kap, np.log10(eps * 10.0 ** kap)),
+                        ("古典 Gram–Schmidt", kap, np.log10(np.array(qloss["cgs"]) + floor)),
+                        ("修正 Gram–Schmidt", kap, np.log10(np.array(qloss["mgs"]) + floor)),
+                        ("Householder(fs.mat_qr の既定)", kap, np.log10(np.array(qloss["householder"]) + floor))],
+                       styles=["dashed", "dotted", None, None, None],
+                       colors=["neutral", "neutral", "wrong", "right", "emphasis"],
+                       ylim=(-17, 1), xlabel="log10(条件数 κ)", ylabel="log10 max|Q^T Q − I|(直交性の損失)",
+                       title="同じ QR でも作り方で直交性の崩れ方が違う",
+                       caption="40×12 の行列の特異値を 1 から 10^−k まで並べ、k を 0〜12 に振る。古典 Gram–Schmidt は ε·κ²(破線)に"
+                               "沿って崩れ、κ = 1e9 で直交性が完全に無くなる(損失 %.2f)。修正 Gram–Schmidt は ε·κ(点線)に沿う。"
+                               "Householder は κ によらず %.0e。3 つとも A = QR 自体は丸め誤差で成り立つ —— 崩れるのは Q だけ。"
+                               % (qloss["cgs"][9], max(qloss["householder"])))
     assert not figs.errors(), figs.errors()
 
     out["elapsed_s"] = round(time.perf_counter() - t0, 3)

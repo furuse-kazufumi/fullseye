@@ -234,7 +234,8 @@ _OP_BRIDGE_SKIP = {
     #   (画像に expm を当てても意味が無く、logm は負の固有値で拒否する)。
     "mat_expm", "mat_logm", "se3_exp", "se3_log",
     "nurbs_curve", "nurbs_revolve",
-    "hilbert_analytic",                             # 1-D の時系列(画像の行ではない)                 # 制御点の並び(画像でも信号でもない)
+    "hilbert_analytic",
+    "mat_lu", "mat_qr", "mat_cholesky", "mat_eig",  # 分解は dict を返す(行列 1 枚ではない)                             # 1-D の時系列(画像の行ではない)                 # 制御点の並び(画像でも信号でもない)
 }
 
 

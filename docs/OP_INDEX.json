@@ -1,8 +1,8 @@
 {
- "n_ops": 2642,
+ "n_ops": 2646,
  "tiers": {
   "color": 12,
-  "ledger": 1691,
+  "ledger": 1695,
   "nary": 17,
   "registry": 922
  },
@@ -10379,10 +10379,36 @@
    "in_sorts": []
   },
   {
+   "name": "mat_cholesky",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "linalg",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "mat_cond",
    "halcon": "",
    "in_sort": "matrix",
    "out_sort": "measurement",
+   "category": "linalg",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "mat_eig",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
    "category": "linalg",
    "tier": "ledger",
    "ledger": "opsmath",
@@ -10445,10 +10471,36 @@
    ]
   },
   {
+   "name": "mat_lu",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "linalg",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "mat_pinv",
    "halcon": "",
    "in_sort": "matrix",
    "out_sort": "matrix",
+   "category": "linalg",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "mat_qr",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
    "category": "linalg",
    "tier": "ledger",
    "ledger": "opsmath",

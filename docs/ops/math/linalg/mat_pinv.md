@@ -62,11 +62,11 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 
-[mat_solve](mat_solve.md) · [mat_lstsq](mat_lstsq.md) · [mat_svd](mat_svd.md) · [mat_eigh](mat_eigh.md) · [mat_cond](mat_cond.md) · [stat_covariance](../stats/stat_covariance.md) · [stat_correlation](../stats/stat_correlation.md) · [wave_nodal_lines](../wave/wave_nodal_lines.md)
+[mat_solve](mat_solve.md) · [mat_lstsq](mat_lstsq.md) · [mat_svd](mat_svd.md) · [mat_eigh](mat_eigh.md) · [mat_cond](mat_cond.md) · [mat_lu](mat_lu.md) · [mat_qr](mat_qr.md) · [mat_cholesky](mat_cholesky.md)
 
 ## 同カテゴリ(`linalg`)
 
-[mat_solve](mat_solve.md) · [mat_lstsq](mat_lstsq.md) · [mat_svd](mat_svd.md) · [mat_eigh](mat_eigh.md) · [mat_cond](mat_cond.md)
+[mat_solve](mat_solve.md) · [mat_lstsq](mat_lstsq.md) · [mat_svd](mat_svd.md) · [mat_eigh](mat_eigh.md) · [mat_cond](mat_cond.md) · [mat_lu](mat_lu.md) · [mat_qr](mat_qr.md) · [mat_cholesky](mat_cholesky.md)
 
 ---
 *Provenance: mathops.py — MATH operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
