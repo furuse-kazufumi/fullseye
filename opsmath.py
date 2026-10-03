@@ -21,12 +21,14 @@ import numpy as np
 
 import mathops
 import mathestimation
+import mathgeometry
 import mathnumerics
 import mathspectral
 import mathtransforms
 
 _MOD = {"mathops": mathops, "mathtransforms": mathtransforms, "mathnumerics": mathnumerics, "mathspectral": mathspectral,
-        "mathestimation": mathestimation}
+        "mathestimation": mathestimation,
+        "mathgeometry": mathgeometry}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   種別語彙: matrix(2-D)/ signal(1-D array)/ measurement / table(dict)/
@@ -197,6 +199,17 @@ _CATALOG = {
         ("mat_logm", "mathestimation", ["matrix"], "matrix"),
         ("se3_exp", "mathestimation", ["signal"], "matrix"),
         ("se3_log", "mathestimation", ["matrix"], "signal"),
+    ],
+    # 離散幾何と位相の古典(2026-10-03、陣 4)。最初から 2-D/3-D: Delaunay は (N,2) の三角形と (N,3) の四面体、
+    #   測地距離はメッシュ(geodesic_heat)と画像・ボリュームの格子(geodesic_heat_grid)。
+    #   メッシュは既存の語彙 mesh(頂点と面の組)で受ける(match3d の mesh_to_points と同じ)。
+    "geometry": [
+        ("mesh_euler_characteristic", "mathgeometry", ["mesh"], "table"),
+        ("angle_defect", "mathgeometry", ["mesh"], "table"),
+        ("delaunay_triangulate", "mathgeometry", ["matrix"], "table"),
+        ("geodesic_heat", "mathgeometry", ["mesh"], "table"),
+        ("geodesic_heat_grid", "mathgeometry", ["image2d"], "table"),
+        ("mesh_torus", "mathgeometry", [], "mesh"),
     ],
 }
 

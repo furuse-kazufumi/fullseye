@@ -107,6 +107,14 @@
 <p style="margin:2px 0 2px 12px">• <b>crlb_gaussian</b><code style="color:#22d3bf">(x, theta, sigma, model=&quot;constant&quot;|&quot;line&quot;|&quot;gaussian_peak&quot;|&quot;exp_decay&quot;|&quot;sinusoid&quot;)</code> — 白色ガウス雑音での Cramér–Rao 下界。最小二乗(効率的)はこれに一致し、どんな不偏推定もこれより良くならない。</p>
 <p style="margin:2px 0 2px 12px">• <b>kalman_smooth</b><code style="color:#22d3bf">(z, F, H, Q, R, x0, P0)</code> — Kalman フィルタ + RTS 平滑化。NaN の観測は欠測。平滑化 = 一括の最小二乗(定理、共分散も一致)。</p>
 <p style="margin:2px 0 2px 12px">• <b>mat_expm / mat_logm / se3_exp / se3_log</b> — 行列の指数・主対数(負の実固有値は拒否)、SE(3) の閉じた式。姿勢の補間は行列でなく ξ = se3_log の上で混ぜる。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">geometry(離散幾何と位相 — 2026-10-03、2-D/3-D)</h3>
+<p>実装は <code style="color:#22d3bf">mathgeometry.py</code>、例は <code style="color:#22d3bf">py -3.11 examples/geometry_tour.py</code>。メッシュは <code style="color:#22d3bf">(vertices, faces)</code> でも mesh の組でもよい。</p>
+<p style="margin:2px 0 2px 12px">• <b>mesh_euler_characteristic</b><code style="color:#22d3bf">(mesh)</code> — V − E + F、閉じた曲面なら種数。境界辺・非多様体辺の数も。</p>
+<p style="margin:2px 0 2px 12px">• <b>angle_defect</b><code style="color:#22d3bf">(mesh)</code> — 頂点ごとの離散 Gauss 曲率。<b>閉じたメッシュでは総和が厳密に 2πχ</b>(Descartes の定理)— どんなに歪めても穴の数だけで決まる。境界は π − Σθ の項を含めて Gauss–Bonnet。</p>
+<p style="margin:2px 0 2px 12px">• <b>delaunay_triangulate</b><code style="color:#22d3bf">(points)</code> — (N,2) は三角形、(N,3) は四面体。門は空円性・空球性、2-D の三角形の数 2n − h − 2、3-D の V − E + F − T = 1。</p>
+<p style="margin:2px 0 2px 12px">• <b>geodesic_heat</b><code style="color:#22d3bf">(mesh, source=0)</code> — 熱法の測地距離(Crane 2013)。辺をたどる <code style="color:#22d3bf">geodesic_mesh</code>(Dijkstra)は細かくしても 7.7% で止まるが、熱法は真値へ収束する。</p>
+<p style="margin:2px 0 2px 12px">• <b>geodesic_heat_grid</b><code style="color:#22d3bf">(mask, source=None, spacing=1)</code> — 2-D 画像・3-D ボリュームの格子の上で、障害物を避けた距離。8 近傍の Dijkstra は等距離線が八角形に歪み(何も無くても 4.5%)、熱法は円。★実装の要点: 発散と Laplacian を<b>同じ差分行列 G から</b>作る(別々に作った最初の版は隅で距離が 0.52 倍に縮んだ)/ 熱の段は直接法(熱は遠くで 1e-30 まで落ち、反復法の絶対誤差が向きを壊した)。</p>
+<p style="margin:2px 0 2px 12px">• <b>mesh_torus</b><code style="color:#22d3bf">(R, r, n_u, n_v)</code> — 種数 1 の見本(χ = 0)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み)</h3>
 <p>repo 直下で <code style="color:#22d3bf">py -3.11</code> の対話環境か、<code style="color:#22d3bf">PYTHONPATH</code> に repo を通して実行。フィット厳密復元・PSD/直交性・SVD⇔固有値の交差検証・fail-closed(範囲外拒否)を数値で確認して <code style="color:#22d3bf">PASS</code> を出します(本ガイド作成時に実行し PASS を確認済み。16 op 全てを通すフル版は <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code>)。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np

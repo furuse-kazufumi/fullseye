@@ -157,6 +157,17 @@ flowchart LR
 - **kalman_smooth**`(z, F, H, Q, R, x0, P0)` — Kalman フィルタ + RTS 平滑化。NaN の観測は欠測。平滑化 = 一括の最小二乗(定理、共分散も一致)。
 - **mat_expm / mat_logm / se3_exp / se3_log** — 行列の指数・主対数(負の実固有値は拒否)、SE(3) の閉じた式。姿勢の補間は行列でなく ξ = se3_log の上で混ぜる。
 
+### geometry(離散幾何と位相 — 2026-10-03、2-D/3-D)
+
+実装は `mathgeometry.py`、例は `py -3.11 examples/geometry_tour.py`。メッシュは `(vertices, faces)` でも mesh の組でもよい。
+
+- **mesh_euler_characteristic**`(mesh)` — V − E + F、閉じた曲面なら種数。境界辺・非多様体辺の数も。
+- **angle_defect**`(mesh)` — 頂点ごとの離散 Gauss 曲率。**閉じたメッシュでは総和が厳密に 2πχ**(Descartes の定理)— どんなに歪めても穴の数だけで決まる。境界は π − Σθ の項を含めて Gauss–Bonnet。
+- **delaunay_triangulate**`(points)` — (N,2) は三角形、(N,3) は四面体。門は空円性・空球性、2-D の三角形の数 2n − h − 2、3-D の V − E + F − T = 1。
+- **geodesic_heat**`(mesh, source=0)` — 熱法の測地距離(Crane 2013)。辺をたどる `geodesic_mesh`(Dijkstra)は細かくしても 7.7% で止まるが、熱法は真値へ収束する。
+- **geodesic_heat_grid**`(mask, source=None, spacing=1)` — 2-D 画像・3-D ボリュームの格子の上で、障害物を避けた距離。8 近傍の Dijkstra は等距離線が八角形に歪み(何も無くても 4.5%)、熱法は円。★実装の要点: 発散と Laplacian を**同じ差分行列 G から**作る(別々に作った最初の版は隅で距離が 0.52 倍に縮んだ)/ 熱の段は直接法(熱は遠くで 1e-30 まで落ち、反復法の絶対誤差が向きを壊した)。
+- **mesh_torus**`(R, r, n_u, n_v)` — 種数 1 の見本(χ = 0)。
+
 ## 動く最小例(検証済み)
 
 repo 直下で `py -3.11` の対話環境か、`PYTHONPATH` に repo を通して実行。フィット厳密復元・PSD/直交性・SVD⇔固有値の交差検証・fail-closed(範囲外拒否)を数値で確認して `PASS` を出します(本ガイド作成時に実行し PASS を確認済み。16 op 全てを通すフル版は `py -3.11 examples/math_metrology.py`)。

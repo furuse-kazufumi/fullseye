@@ -418,6 +418,15 @@ from mathestimation import (  # noqa: E402,F401
     se3_exp,
     se3_log,
 )
+# 離散幾何と位相の古典(Euler 標数・角欠損・Delaunay・熱法の測地距離、2026-10-03)
+from mathgeometry import (  # noqa: E402,F401
+    mesh_euler_characteristic,
+    angle_defect,
+    delaunay_triangulate,
+    geodesic_heat,
+    geodesic_heat_grid,
+    mesh_torus,
+)
 # 仮想マシンビジョン環境: 部品を買う前に「その構成で狙う欠陥が見つかるか」を
 # 閉形式の光学 + 数式で作った欠陥 + 撮像連鎖で先に確かめる層。
 import defectgen  # noqa: E402  (mathematical defect models with pixel-perfect masks)
@@ -1170,6 +1179,13 @@ __all__ = [
     "mat_logm",
     "se3_exp",
     "se3_log",
+    # 離散幾何と位相の古典(2026-10-03)
+    "mesh_euler_characteristic",
+    "angle_defect",
+    "delaunay_triangulate",
+    "geodesic_heat",
+    "geodesic_heat_grid",
+    "mesh_torus",
     "visiondesign", "system_geometry", "resolving_power", "system_feasibility",
     "image_formation", "detectability_limit",
     "defectgen", "defect_scratch", "defect_pits", "defect_crack", "defect_blob",

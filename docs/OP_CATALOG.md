@@ -13,13 +13,14 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(297 例)
+### 2-D 画像/信号/幾何(298 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
 
 **math**
 - **分解が遅いのはアルゴリズムのせいではない(BLAS スレッド上限)** — 多コア機で SVD 系が遅くなる原因(スレッド過剰割り当て)を自分の機械で測り、op 側と自前 numpy 側の両方で上限の効果を出す。行列積は逆に遅くなること、上限は短辺で決まることまで含めて、速さを assert せず印字する。 `py -3.11 examples/blas_thread_budget.py`
+- **離散幾何と位相を画像・メッシュ・点群で —— 壁のある部屋の歩く距離・球面の測地線・トーラスの Gauss–Bonnet・Delaunay** — 棚卸し(2026-10-03)で op として無かった 6 本を 2-D/3-D で: 壁のすき間を回り込む距離を画像の格子で熱法により求め、8 近傍の Dijkstra は等距離線が八角形に歪んで誤差が細かくしても消えない(10.8 倍)/ 球面では辺の Dijkstra が 7.7% で止まり熱法は 0.8% まで減る / トーラスの角欠損は外側が正・内側が負で総和は歪めても 0、球は 4π / Delaunay の三角形の数は 2n−h−2 で外接円・3-D の外接球は空。 `py -3.11 examples/geometry_tour.py`
 - **推定と統計の古典を素朴なやり方と並べる —— 割当・Kalman 平滑化・Cramér–Rao 下界・帰無仮説の p 値・姿勢の補間** — 棚卸し(2026-10-03)で op として無かった 12 本: 貪欲な対応付けは総距離 4.90 で全点を取り違え Hungarian は 2.65、観測が途切れても Kalman 平滑化は前後から軌跡を戻し(RMS 0.38 → 0.15、一括最小二乗と厳密に一致)、直線の当てはめの精度は Cramér–Rao 下界にぴったり乗り、差の無い 2 群を 2000 回比べると 5% 前後が偶然「有意」、4×4 行列を直線で混ぜた姿勢の補間は途中で体積が 0.07 倍に縮み se3 の exp/log なら剛体のまま。 `py -3.11 examples/estimation_tour.py`
 - **FFT では足りないスペクトル推定 —— 6° 離れた 2 つの電波を MUSIC で割る・時刻がばらばらな観測の周期を Lomb–Scargle で** — 棚卸し(2026-10-03)で 0 本だった部分空間法と不等間隔の周期図: 8 素子のアンテナ列(ビーム幅 12.7°)で 6° 離れた 2 波は遅延和では 1 つの山に融け、MUSIC は 2 本の峰、ESPRIT は格子なしで角度を解き、波源の数は MDL で当てる。同じ信号の反射(相関した 2 波)では MUSIC も割れない。時刻を無視して並び順のまま FFT すると周期の峰がずれ、Lomb–Scargle は観測時刻のまま真の周波数に峰を立てる(等間隔なら周期図と恒等的に一致)。 `py -3.11 examples/spectral_tour.py`
 - **数値計算の古典を失敗例と並べて見る —— Runge 現象・Euler の渦巻きと Verlet の輪・乱数と Sobol・Gauss 求積・ぼけた縁の erf** — 棚卸し(2026-10-03)でどの層にも無かった 8 本を、うまくいく方法とうまくいかない方法を同じ軸に並べて確かめる: 等間隔の補間は 41 点で誤差 1e5、Chebyshev 点は 3e-4 / Euler はエネルギーが 300 歩で 20 倍、Verlet は有界、RK4 は短時間は正確だが誤差が時間に比例して増え t≈2300 で Verlet に抜かれる / 積分誤差の傾き 乱数 −0.5・Sobol −1 / Gauss は n 点で 2n−1 次まで厳密 / ガウスでぼけた段差は ½(1+erf)。 `py -3.11 examples/numerics_tour.py`
@@ -2239,7 +2240,7 @@ _計 42 ops / 3 categories。_
 - `signal_features` (`signal → table`) — A compact acoustic/vibration feature vector for anomaly detection:
 
 ## Math operators(opsmath)by category
-_計 89 ops / 11 categories。_
+_計 95 ops / 12 categories。_
 
 
 視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。北極星は「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
@@ -2295,6 +2296,14 @@ _計 89 ops / 11 categories。_
 - `mat_logm` (`matrix → matrix`) — 行列の主対数 log A(e^X = A となる X のうち固有値の虚部が (−π, π] のもの、scipy)。
 - `se3_exp` (`signal → matrix`) — SE(3) の指数写像: 6 次元のねじれ ξ = (v, ω)(並進速度 v、回転ベクトル ω)→ 4×4 の剛体変換。
 - `se3_log` (`matrix → signal`) — SE(3) の対数写像: 4×4 の剛体変換 → 6 次元のねじれ ξ = (v, ω)(回転角 < π)。門: se3_log(se3_exp(ξ)) = ξ。
+
+### geometry(6)
+- `mesh_euler_characteristic` (`mesh → table`) — 三角形メッシュの V − E + F と、閉じた向き付け可能な曲面なら種数 g = (2 − χ)/2。
+- `angle_defect` (`mesh → table`) — 頂点ごとの角欠損(離散 Gauss 曲率)K_v = 2π − Σ(その頂点での三角形の角)。境界の頂点は π − Σ(測地曲率)。
+- `delaunay_triangulate` (`matrix → table`) — 平面 (N, 2) の三角形分割、または空間 (N, 3) の四面体分割(Delaunay、scipy.spatial = Qhull)。
+- `geodesic_heat` (`mesh → table`) — 熱法による曲面上の測地距離(Crane et al. 2013)。``source`` は頂点番号(または番号の列、既定は頂点 0)。
+- `geodesic_heat_grid` (`image2d → table`) — 2-D 画像・3-D ボリュームの格子の上で、障害物を避けた測地距離を熱法で求める(Crane et al. 2013 の格子版)。
+- `mesh_torus` (` → mesh`) — トーラス(ドーナツ)の閉じた三角形メッシュ (vertices, faces)。大きい半径 R・管の半径 r(R > r > 0)。
 
 ### interp_poly(6)
 - `interp_linear` (`signal, signal, signal → signal`) — Piecewise-linear interpolation of ``(x, y)`` samples at query *xq*.

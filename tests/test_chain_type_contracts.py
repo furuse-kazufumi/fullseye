@@ -240,6 +240,7 @@ def test_opsmath_call_returns_declared_types():
         "dynsys_bifurcation_map": ("logistic", 2.5, 4.0, 40),
         "dynsys_correlation_dimension": (orbit,),
     })
+    import mathgeometry
     import mathspectral
     snap = mathspectral.ula_snapshots([10.0, 16.0], 8, 64, snr_db=20)
     # フーリエ以外の積分変換と s 領域(2026-10-03)。伝達関数の係数は降べきの signal。
@@ -285,6 +286,13 @@ def test_opsmath_call_returns_declared_types():
         "mat_logm": (np.array([[2.0, 0.1], [0.0, 1.5]]),),
         "se3_exp": (np.array([0.1, 0.2, 0.3, 0.1, -0.2, 0.3]),),
         "se3_log": (np.eye(4),),
+        # 離散幾何と位相の古典(2026-10-03)
+        "mesh_euler_characteristic": (mathgeometry.mesh_torus(2.0, 0.7, 12, 8),),
+        "angle_defect": (mathgeometry.mesh_torus(2.0, 0.7, 12, 8),),
+        "delaunay_triangulate": (np.random.default_rng(0).random((20, 2)),),
+        "geodesic_heat": (mathgeometry.mesh_torus(2.0, 0.7, 12, 8),),
+        "geodesic_heat_grid": (np.ones((16, 16), bool),),
+        "mesh_torus": (),
     })
     from tools.chain_fuzz import TYPE_CHECKS
     missing = [n for n in opsmath.OPSMATH if n not in args]

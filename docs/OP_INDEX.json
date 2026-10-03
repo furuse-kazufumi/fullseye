@@ -1,8 +1,8 @@
 {
- "n_ops": 2624,
+ "n_ops": 2630,
  "tiers": {
   "color": 12,
-  "ledger": 1673,
+  "ledger": 1679,
   "nary": 17,
   "registry": 922
  },
@@ -732,6 +732,19 @@
    "dim": "3d",
    "in_sorts": [
     "primitive"
+   ]
+  },
+  {
+   "name": "angle_defect",
+   "halcon": "",
+   "in_sort": "mesh",
+   "out_sort": "table",
+   "category": "geometry",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "mesh"
    ]
   },
   {
@@ -4180,6 +4193,19 @@
    ]
   },
   {
+   "name": "delaunay_triangulate",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "geometry",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "delta_e_2000",
    "halcon": "",
    "in_sort": "lab",
@@ -7247,6 +7273,32 @@
    "ledger": "ops3d",
    "dim": "3d",
    "in_sorts": []
+  },
+  {
+   "name": "geodesic_heat",
+   "halcon": "",
+   "in_sort": "mesh",
+   "out_sort": "table",
+   "category": "geometry",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "mesh"
+   ]
+  },
+  {
+   "name": "geodesic_heat_grid",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "geometry",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "image2d"
+   ]
   },
   {
    "name": "geodesic_mesh",
@@ -10813,6 +10865,19 @@
    ]
   },
   {
+   "name": "mesh_euler_characteristic",
+   "halcon": "",
+   "in_sort": "mesh",
+   "out_sort": "table",
+   "category": "geometry",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "mesh"
+   ]
+  },
+  {
    "name": "mesh_isotropic_remesh",
    "halcon": "",
    "in_sort": "mesh",
@@ -10982,6 +11047,17 @@
    "in_sorts": [
     "mesh"
    ]
+  },
+  {
+   "name": "mesh_torus",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "mesh",
+   "category": "geometry",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
   },
   {
    "name": "mesh_volume",

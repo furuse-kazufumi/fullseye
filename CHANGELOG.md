@@ -16,6 +16,16 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   - ★**逆 Abel の「殻剥きは雑音に強い」は半分しか正しくなかった**: 雑音の誤差は微分が `1/dr`、殻剥きが `1/√dr` で増え、
     **標本数で優劣が逆転する**(n=60 では微分、n=960 では殻剥き)。片側だけの主張を書いた docstring を両向きの門で直した。
   - 例 `examples/transforms_tour.py`: 炎の断層化・円い穴の Airy・2 次系の減衰比と Bode・Talbot の M と丸め。
+- ★**離散幾何と位相 6 op(math 台帳 `geometry`、陣 4、最初から 2-D/3-D)**: オイラー標数と種数・角欠損(離散 Gauss–Bonnet)・
+  Delaunay(2-D 三角形 / 3-D 四面体)・熱法の測地距離(メッシュ / 画像とボリュームの格子)・トーラスのメッシュ
+  (`mathgeometry.py`、門 `tests/test_mathgeometry.py`)。「次元を上げられるなら上げて、画像や 3-D ではそちらが主役」の指示で
+  格子版(障害物を避ける歩く距離)と 3-D Delaunay を同じ陣に入れた。
+  - ★**自分の実装の欠陥 2 件を門で捕まえた**: 格子の熱法で発散(中心差分)と Laplacian(5 点)を別々に作り、互いの随伴でなかったため
+    隅で距離が真値の 0.52 倍に縮んだ → 同じ差分行列 G から作る(誤差が細かくするたびに半分: 0.027 → 0.014 → 0.007)。
+    速さのため熱の段を共役勾配法にしたら 3-D の誤差が 0.045 → 0.279 —— 熱は遠くで 1e-30 まで落ち、反復法の絶対誤差が勾配の向きを
+    壊した → 熱の段は直接法、定数のずれが無害な Poisson の段だけ CG(10.4 → 5.2 秒、精度は元のまま)。
+  - 例 `examples/geometry_tour.py`(八角形に歪む Dijkstra と円になる熱法・球面の収束・トーラスの角欠損の展開図・Delaunay の空円)。
+- **図(examplefig.save_plot)**: `aspect="equal"`(MATLAB の axis equal)。縮尺が違うと外接円が楕円に見えた。
 - ★**推定と統計の古典 12 op(math 台帳 `estimation`、陣 3)**: Hungarian 割当・ヒストグラムの距離(KL/JS/Bhattacharyya/
   Hellinger/χ²)・仮説検定(対応のある t・Welch・KS・χ² 適合度)・Cramér–Rao 下界・Kalman フィルタ + RTS 平滑化・
   行列の exp/log と SE(3) の exp/log(`mathestimation.py`、門 `tests/test_mathestimation.py` 8 本)。

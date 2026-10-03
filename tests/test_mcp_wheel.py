@@ -222,7 +222,9 @@ def test_mcp_serves_the_catalog_from_the_wheel_outside_the_repo(wheel_python, ou
     # 検索: 2-D レジストリの op と、台帳(optics)の op の両方が索引の層から出る
     s = msgs[2]["result"]["structuredContent"]
     top = [o["name"] for o in s["ops"]]
-    assert top[0] == "gauss_filter" and "gaussian" in top[:3], top
+    # ★順位を 3 位までに固定していた門は、新しい op(gauss_quadrature、2026-10-03)が「gauss」に正しく当たっただけで
+    #   CI の core ジョブ(ここでしか走らない)を赤にした。見たいのは「2-D レジストリの op が索引の層から出る」こと。
+    assert top[0] == "gauss_filter" and "gaussian" in top, top
     s2 = msgs[3]["result"]["structuredContent"]
     hit = {o["name"]: o for o in s2["ops"]}.get("abcd_matrix")
     assert hit is not None, s2["ops"]

@@ -555,7 +555,7 @@ def _upscale(imgs, factor):
 
 def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str = "",
               caption: str = "", size=(560, 360), xlim=None, ylim=None,
-              kinds=None, styles=None, colors=None) -> Path | None:
+              kinds=None, styles=None, colors=None, aspect=None) -> Path | None:
     """折れ線・散布のグラフを書く。``series`` = ``[(ラベル, x, y), ...]``。
 
     ``styles`` は系列ごとの線種(``None`` / ``"dashed"`` / ``"dotted"``)の列。**真値・参照線は破線**にする
@@ -563,6 +563,8 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
     ``colors`` は系列ごとの配色の役割名(``"reference"`` / ``"emphasis"`` / ``"right"`` / ``"wrong"`` / ``"neutral"``)の列
     (MATLAB の 'Color')。同じ意味の線分を何本も描くときは同じ色にする。**ラベルが空の系列は凡例に載せない**
     (MATLAB の 'HandleVisibility','off')—— 線分ごとに凡例が並ぶと読めない(2026-10-03、割当の図で踏んだ)。
+    ``aspect="equal"`` で x と y の 1 単位を同じ画素数にする(MATLAB の axis equal)。範囲は狭い側を中央から広げる
+    —— 縮尺が違うと円が楕円に見える(2026-10-03、Delaunay の外接円で踏んだ)。
 
     軸・目盛り・格子・凡例はすべて fullseye の annotate 族が引く。
     """
@@ -583,6 +585,17 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
             xl = (xl[0] - 0.5, xl[1] + 0.5)
         pad = 0.06 * (yl[1] - yl[0] or 1.0)
         yl = (yl[0] - pad, yl[1] + pad)
+        if aspect == "equal":
+            pw, ph = w - 96, h - 108                       # 下の rect と同じ大きさ
+            sx, sy = (xl[1] - xl[0]) / pw, (yl[1] - yl[0]) / ph
+            if sx > sy:
+                c_, half = 0.5 * (yl[0] + yl[1]), 0.5 * sx * ph
+                yl = (c_ - half, c_ + half)
+            else:
+                c_, half = 0.5 * (xl[0] + xl[1]), 0.5 * sy * pw
+                xl = (c_ - half, c_ + half)
+        elif aspect is not None:
+            raise ValueError("save_plot: aspect は None か 'equal'")
         # ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって
         #   「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
         rect = (72, 44, w - 96, h - 108)

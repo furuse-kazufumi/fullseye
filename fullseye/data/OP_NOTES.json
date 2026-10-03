@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2624,
- "n_notes": 2630,
+ "n_ops": 2630,
+ "n_notes": 2636,
  "notes": {
   "vol_dilate": [
    {
@@ -20797,6 +20797,65 @@
     "in": "signal × signal",
     "out": "table",
     "path": "docs/ops/math/estimation/stat_ttest_welch.md"
+   }
+  ],
+  "angle_defect": [
+   {
+    "op": "angle_defect",
+    "dim": "math",
+    "category": "geometry",
+    "in": "mesh",
+    "out": "table",
+    "path": "docs/ops/math/geometry/angle_defect.md"
+   }
+  ],
+  "delaunay_triangulate": [
+   {
+    "op": "delaunay_triangulate",
+    "dim": "math",
+    "category": "geometry",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/math/geometry/delaunay_triangulate.md"
+   }
+  ],
+  "geodesic_heat": [
+   {
+    "op": "geodesic_heat",
+    "dim": "math",
+    "category": "geometry",
+    "in": "mesh",
+    "out": "table",
+    "path": "docs/ops/math/geometry/geodesic_heat.md"
+   }
+  ],
+  "geodesic_heat_grid": [
+   {
+    "op": "geodesic_heat_grid",
+    "dim": "math",
+    "category": "geometry",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/math/geometry/geodesic_heat_grid.md"
+   }
+  ],
+  "mesh_euler_characteristic": [
+   {
+    "op": "mesh_euler_characteristic",
+    "dim": "math",
+    "category": "geometry",
+    "in": "mesh",
+    "out": "table",
+    "path": "docs/ops/math/geometry/mesh_euler_characteristic.md"
+   }
+  ],
+  "mesh_torus": [
+   {
+    "op": "mesh_torus",
+    "dim": "math",
+    "category": "geometry",
+    "out": "mesh",
+    "path": "docs/ops/math/geometry/mesh_torus.md"
    }
   ],
   "interp_cubic": [
