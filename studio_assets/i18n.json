@@ -816,6 +816,160 @@
    "tw": "將機器人模型與形狀為 (T, nq) 的 qpos 軌跡 .npy 一起拖放:滑桿 + 播放。",
    "ko": "로봇 모델과 형태 (T, nq) 의 qpos 궤적 .npy 를 함께 놓습니다: 슬라이더 + 재생.",
    "de": "Ein Robotermodell zusammen mit einer qpos-Trajektorie (.npy, Form (T, nq)) ablegen: Schieberegler + Wiedergabe."
+  },
+  "flow2d %d×%d: zero everywhere (no motion)": {
+   "ja": "flow2d %d×%d: どこも 0(動きなし)",
+   "zh": "flow2d %d×%d：处处为 0(没有运动)",
+   "tw": "flow2d %d×%d：處處為 0(沒有運動)",
+   "ko": "flow2d %d×%d: 모든 곳이 0(움직임 없음)",
+   "de": "flow2d %d×%d: überall 0 (keine Bewegung)"
+  },
+  "flow2d %d×%d: hue = direction, brightness = speed; the longest arrow is 0.9 × the spacing (max speed %s)": {
+   "ja": "flow2d %d×%d: 色相 = 向き・明るさ = 速さ。いちばん長い矢印が間隔の 0.9 倍(最大の速さ %s)",
+   "zh": "flow2d %d×%d：色相 = 方向，亮度 = 速度；最长的箭头为间距的 0.9 倍(最大速度 %s)",
+   "tw": "flow2d %d×%d：色相 = 方向，亮度 = 速度；最長的箭頭為間距的 0.9 倍(最大速度 %s)",
+   "ko": "flow2d %d×%d: 색상 = 방향, 밝기 = 속도. 가장 긴 화살표가 간격의 0.9배(최대 속도 %s)",
+   "de": "flow2d %d×%d: Farbton = Richtung, Helligkeit = Geschwindigkeit; der längste Pfeil ist 0,9 × der Abstand (max. Geschwindigkeit %s)"
+  },
+  "RGBA composited over white": {
+   "ja": "RGBA を白地に合成して表示",
+   "zh": "RGBA 合成到白底上显示",
+   "tw": "RGBA 合成到白底上顯示",
+   "ko": "RGBA를 흰 바탕에 합성해 표시",
+   "de": "RGBA über Weiß komponiert"
+  },
+  "single channel shown as grey": {
+   "ja": "1 チャンネルを濃淡で表示",
+   "zh": "单通道以灰度显示",
+   "tw": "單通道以灰階顯示",
+   "ko": "단일 채널을 회색조로 표시",
+   "de": "Einzelner Kanal als Graustufen"
+  },
+  "complex values: |z| divided by its maximum %s": {
+   "ja": "複素数: 絶対値 |z| を最大値 %s で割って表示",
+   "zh": "复数：|z| 除以其最大值 %s",
+   "tw": "複數：|z| 除以其最大值 %s",
+   "ko": "복소수: |z|를 최댓값 %s로 나눔",
+   "de": "Komplexe Werte: |z| geteilt durch das Maximum %s"
+  },
+  "1-D series of %d points as a line (%d non-finite points left out)": {
+   "ja": "1-D 系列 %d 点を折れ線で表示(非有限の %d 点は省いた)",
+   "zh": "将 %d 点的一维序列画成折线(省略 %d 个非有限点)",
+   "tw": "將 %d 點的一維序列畫成折線(省略 %d 個非有限點)",
+   "ko": "%d점의 1차원 계열을 꺾은선으로(비유한 %d점 제외)",
+   "de": "1-D-Reihe mit %d Punkten als Linie (%d nicht-endliche Punkte ausgelassen)"
+  },
+  "%d 1-D columns of the table (length %d) as lines": {
+   "ja": "表の 1-D 欄 %d 本(長さ %d)を折れ線で表示",
+   "zh": "表中 %d 个一维列(长度 %d)画成折线",
+   "tw": "表中 %d 個一維欄(長度 %d)畫成折線",
+   "ko": "표의 1차원 열 %d개(길이 %d)를 꺾은선으로",
+   "de": "%d 1-D-Spalten der Tabelle (Länge %d) als Linien"
+  },
+  " (%d more left out)": {
+   "ja": "(ほか %d 本は省略)",
+   "zh": "(另有 %d 列省略)",
+   "tw": "(另有 %d 欄省略)",
+   "ko": " (나머지 %d개 생략)",
+   "de": " (%d weitere ausgelassen)"
+  },
+  "Run a ledger op…": {
+   "ja": "台帳の op を実行…",
+   "zh": "运行台账 op…",
+   "tw": "執行台帳 op…",
+   "ko": "대장 op 실행…",
+   "de": "Ledger-Op ausführen…"
+  },
+  "Run a ledger op": {
+   "ja": "台帳の op を実行",
+   "zh": "运行台账 op",
+   "tw": "執行台帳 op",
+   "ko": "대장 op 실행",
+   "de": "Ledger-Op ausführen"
+  },
+  "Search ops (name or words)": {
+   "ja": "op を探す(名前か言葉で)",
+   "zh": "搜索 op(名称或词语)",
+   "tw": "搜尋 op(名稱或詞語)",
+   "ko": "op 검색(이름 또는 단어)",
+   "de": "Ops suchen (Name oder Wörter)"
+  },
+  "Re-run when a value changes": {
+   "ja": "値を変えたら自動で再実行",
+   "zh": "值改变时自动重新运行",
+   "tw": "值改變時自動重新執行",
+   "ko": "값이 바뀌면 자동으로 다시 실행",
+   "de": "Bei Wertänderung neu ausführen"
+  },
+  "Copy image": {
+   "ja": "画像をコピー",
+   "zh": "复制图像",
+   "tw": "複製影像",
+   "ko": "이미지 복사",
+   "de": "Bild kopieren"
+  },
+  "required": {
+   "ja": "必須",
+   "zh": "必填",
+   "tw": "必填",
+   "ko": "필수",
+   "de": "erforderlich"
+  },
+  "No current image — open one or use the sample": {
+   "ja": "いまの画像がありません —— 画像を開くか、見本を使ってください",
+   "zh": "当前没有图像 —— 请打开图像或使用样本",
+   "tw": "目前沒有影像 —— 請開啟影像或使用樣本",
+   "ko": "현재 이미지가 없습니다 —— 이미지를 열거나 샘플을 사용하세요",
+   "de": "Kein aktuelles Bild — eines öffnen oder das Beispiel verwenden"
+  },
+  "No result yet — run once first": {
+   "ja": "まだ結果がありません —— 先に 1 回実行してください",
+   "zh": "还没有结果 —— 请先运行一次",
+   "tw": "還沒有結果 —— 請先執行一次",
+   "ko": "아직 결과가 없습니다 —— 먼저 한 번 실행하세요",
+   "de": "Noch kein Ergebnis — zuerst einmal ausführen"
+  },
+  "Nothing to draw — see the text below": {
+   "ja": "絵にできるものがありません —— 下の文字を見てください",
+   "zh": "没有可绘制的内容 —— 请看下方文字",
+   "tw": "沒有可繪製的內容 —— 請看下方文字",
+   "ko": "그릴 것이 없습니다 —— 아래 글을 보세요",
+   "de": "Nichts zu zeichnen — siehe Text unten"
+  },
+  "values [%s, %s] stretched to [0, 1] for display": {
+   "ja": "値域 [%s, %s] を [0, 1] に伸ばして表示",
+   "zh": "值域 [%s, %s] 拉伸到 [0, 1] 显示",
+   "tw": "值域 [%s, %s] 拉伸到 [0, 1] 顯示",
+   "ko": "값 범위 [%s, %s]를 [0, 1]로 늘려 표시",
+   "de": "Werte [%s, %s] für die Anzeige auf [0, 1] gestreckt"
+  },
+  "sample (synthetic)": {
+   "ja": "見本(合成)",
+   "zh": "样本(合成)",
+   "tw": "樣本(合成)",
+   "ko": "샘플(합성)",
+   "de": "Beispiel (synthetisch)"
+  },
+  "current image": {
+   "ja": "いまの画像",
+   "zh": "当前图像",
+   "tw": "目前影像",
+   "ko": "현재 이미지",
+   "de": "aktuelles Bild"
+  },
+  "last result": {
+   "ja": "直前の結果",
+   "zh": "上一次结果",
+   "tw": "上一次結果",
+   "ko": "직전 결과",
+   "de": "letztes Ergebnis"
+  },
+  "sample value: ": {
+   "ja": "見本の値: ",
+   "zh": "样本值：",
+   "tw": "樣本值：",
+   "ko": "샘플 값: ",
+   "de": "Beispielwert: "
   }
  }
 }

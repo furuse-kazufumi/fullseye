@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 3ff1623c4ad6 -->
+<!-- i18n-source-sha: 002b7515a73c -->
 # The complete guide to Fullseye Studio
 
 [日本語](./STUDIO_GUIDE.md) · **English** · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md)
@@ -168,6 +168,7 @@ Inside the app, **Help ▸ Keyboard shortcuts (F1)** shows the full list in a ta
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
 | Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
+| Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
 
 Each action is invoked by the same handler whether from the menu, the toolbar or a button (one
 action, several entry points).
@@ -291,6 +292,41 @@ built from the extension constants Studio actually uses, so it can be newer than
 | Markdown, SVG | Document viewer | |
 | Audio (wav / mp3 / flac / ogg …) | Audio window | Waveform, spectrogram, playback. Non-WAV needs soundfile |
 | A robot model + a qpos `.npy` (T, nq) together | Robot player | Slider and play button |
+
+## Try any ledger op (Tools ▸ Run a ledger op…, Ctrl+Shift+L) (2026-10-03)
+
+A window that runs typed-ledger ops (PIV, math, driving, 3-D … about 1,700 of them) with **input fields that match
+each argument's type**. Type a name or words in the search box on the left, pick an op, and its argument form appears
+on the right.
+
+- **Data inputs** come from "sample (synthetic)", "current image" or "last result". The sample is a synthetic input
+  with known truth built for that op; "last result" is **the result of the last op run in this window**, so picking
+  another op passes it on (e.g. make a flow field with `ode_vector_field_grid`, then set `piv_quiver`'s input to
+  "last result" for an arrow plot). An input of the wrong type (the current image into a flow2d slot) is refused with
+  the reason instead of running.
+- **Arguments**: integer box, real-number box, check box, a choice list where the op has choices, a text line
+  otherwise. Empty means the default, `None` means None, lists are `1, 2, 3`. Matrix or dict samples are kept as the
+  token `<sample>`. A value that cannot be read is **never silently replaced by the default** — the window says
+  which argument and why.
+- **Run** shows the result as a picture and as its contents (shape, range, fields), plus **the one line of Python that
+  does the same** ("Copy code" pastes it into a script; it is the MATLAB command history).
+- With "**Re-run when a value changes**" on, every change re-runs the op (exploring with the controls).
+
+Some ops do not run on their sample (a limit of how each op's sample is built: on 2026-10-03, 26 of 60 sampled ops ran
+as is). That the window adds no failures of its own is checked by a gate: it must agree with passing the sample to the
+op directly.
+
+### How the result view shows things
+
+Results that are not pixels are drawn according to their shape (the right panel and the window above share this).
+
+| Result | Shown as |
+|---|---|
+| `flow2d` `(2, h, w)` | arrows (longest = 0.9 × spacing) over a colour wheel where hue = direction, brightness = speed |
+| 1-D numbers | a line (MATLAB `plot(y)`) |
+| table (dict) | its numeric columns of equal length as lines; the x axis is a `t` / `x` / `freq` … column if there is one |
+| `(h, w, 4)` / `(h, w, 1)` / complex | RGB over white / grey / magnitude \|z\| |
+| empty arrays, 4-D and more | shape and range as text (the first value is not shown as a "scalar") |
 
 ## The relationship between Export and Save/Open
 

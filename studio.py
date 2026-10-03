@@ -603,14 +603,29 @@ def _is_binary(a):
 def inspect_result(val):
     """Sort-aware inspection of a pipeline result -- the Studio's variable / image /
     region checker. Returns a dict of human-readable fields (headless, testable)."""
+    if isinstance(val, np.ndarray) and val.size == 0:
+        return {"kind": "empty", "shape": tuple(int(s) for s in val.shape), "dtype": str(val.dtype)}
+    if _is_flow2d(val):
+        # ★2026-10-03: (2, h, w) を "color" と判定し、描けずに**前の画像が残って**いた。
+        sp = np.hypot(val[0], val[1])
+        fin = np.isfinite(sp)
+        return {"kind": "flow2d", "shape": tuple(int(s) for s in val.shape), "dtype": str(val.dtype),
+                "speed_max": round(float(np.max(sp[fin])), 4) if fin.any() else float("nan"),
+                "speed_mean": round(float(np.mean(sp[fin])), 4) if fin.any() else float("nan"),
+                "nonfinite": int((~fin).sum())}
     if isinstance(val, np.ndarray) and val.ndim in (2, 3):
         fin = np.isfinite(val)
-        kind = "color" if val.ndim == 3 else ("region" if _is_binary(val) else "image")
+        cplx = val.dtype.kind == "c"
+        # ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
+        num = np.abs(val) if cplx else val
+        kind = "color" if val.ndim == 3 else ("region" if not cplx and _is_binary(val) else "image")
         d = {"kind": kind, "shape": tuple(int(s) for s in val.shape), "dtype": str(val.dtype),
-             "min": round(float(np.nanmin(val)), 4) if fin.any() else float("nan"),
-             "max": round(float(np.nanmax(val)), 4) if fin.any() else float("nan"),
-             "mean": round(float(np.nanmean(val)), 4) if fin.any() else float("nan"),
+             "min": round(float(np.nanmin(num)), 4) if fin.any() else float("nan"),
+             "max": round(float(np.nanmax(num)), 4) if fin.any() else float("nan"),
+             "mean": round(float(np.nanmean(num)), 4) if fin.any() else float("nan"),
              "nonfinite": int((~fin).sum())}
+        if cplx:
+            d["values"] = "|z| (complex)"
         if kind == "region":
             from scipy import ndimage
             m = val > 0.5
@@ -635,12 +650,207 @@ def inspect_result(val):
     if isinstance(val, (tuple, list)) and not (len(val) and np.isscalar(val[0]) and len(val) == 1):
         return {"kind": "tuple", "n_items": len(val), "items": [_describe_value(v) for v in list(val)[:12]]}
     arr = np.asarray(val)
+    # ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を
+    #   スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
+    if arr.size == 0:
+        return {"kind": "empty", "shape": tuple(int(s) for s in arr.shape), "dtype": str(arr.dtype)}
+    if arr.ndim >= 3:
+        return {"kind": "array", "shape": tuple(int(s) for s in arr.shape), "dtype": str(arr.dtype),
+                "summary": _describe_value(arr)}
     if arr.dtype.kind in "biufc" and arr.size >= 1 and arr.ndim <= 1 and arr.size > 1:
         return {"kind": "series", "length": int(arr.size), "summary": _describe_value(arr)}
     try:
         return {"kind": "feature", "value": round(float(arr.reshape(-1)[0]), 6)}
     except (TypeError, ValueError):
         return {"kind": "object", "type": type(val).__name__}
+
+
+def _is_flow2d(val) -> bool:
+    """``(2, h, w)`` の実数配列 = 変位・速度の場(``pivops.FLOW2D_SHAPE``)。
+
+    ``(2, w, 3)`` は 2 行の RGB 画像とも読めるので、最後の軸が 3 か 4 なら画像側に倒す。
+    """
+    return (isinstance(val, np.ndarray) and val.ndim == 3 and val.shape[0] == 2
+            and val.shape[1] >= 2 and val.shape[2] >= 2 and val.shape[2] not in (3, 4)
+            and val.dtype.kind in "biuf")
+
+
+#: 表の中で横軸として使う欄の名前(この順に探す)
+_X_FIELDS = ("t", "time", "x", "s", "freq", "f", "frequency", "r", "radius", "k", "lag", "n")
+
+
+def result_preview(val, max_px=640):
+    """そのままでは画像にならない結果を、**見て読める絵**にする(Qt 不要・テスト可能)。
+
+    返りは ``{"image": (h, w) か (h, w, 3) の [0, 1] 配列, "note": 1 行の説明}`` か、
+    描きようが無ければ ``None``。
+
+    * ``flow2d`` ``(2, h, w)`` → 色相図(向き)の上に矢印図(MATLAB の quiver)
+    * ``(h, w, 4)`` → 白地に合成した RGB、``(h, w, 1)`` → 濃淡
+    * 複素数の 2-D → 絶対値
+    * 1-D の数列 → 折れ線(MATLAB の plot(y))
+    * 表(dict)→ 同じ長さの数値の 1-D 欄を重ねて折れ線。横軸は ``t`` / ``x`` / ``freq`` …
+      の欄があればそれ、無ければ番号
+
+    ★2026-10-03: 台帳の op(~1,700 本)の多くは系列や表を返すのに、結果ビューは
+    「Nothing to display」としか言えなかった。
+    """
+    try:
+        if _is_flow2d(val):
+            import pivops
+            f = np.nan_to_num(np.asarray(val, dtype=np.float64))
+            h, w = f.shape[1:]
+            up = int(max(2, min(16, max_px // max(h, w))))
+            if not np.any(f):
+                return {"image": np.full((h * up, w * up, 3), 0.5),
+                        "note": tr("flow2d %d×%d: zero everywhere (no motion)") % (h, w)}
+            wheel = pivops.piv_flow_to_rgbimage(f).repeat(up, 0).repeat(up, 1)
+            img = pivops.piv_quiver(f, upsample=up, background=0.35 + 0.65 * wheel)
+            sp = np.hypot(f[0], f[1])
+            return {"image": img, "note": tr("flow2d %d×%d: hue = direction, brightness = speed; the longest "
+                                             "arrow is 0.9 × the spacing (max speed %s)")
+                    % (h, w, fmt_num(sp.max(), 4))}
+        if isinstance(val, np.ndarray) and val.ndim == 3 and val.shape[2] == 4:
+            a = np.clip(np.nan_to_num(val.astype(np.float64)), 0, 1)
+            al = a[..., 3:4]
+            return {"image": a[..., :3] * al + (1.0 - al), "note": tr("RGBA composited over white")}
+        if isinstance(val, np.ndarray) and val.ndim == 3 and val.shape[2] == 1:
+            return {"image": np.clip(np.nan_to_num(val[..., 0].astype(np.float64)), 0, 1),
+                    "note": tr("single channel shown as grey")}
+        if isinstance(val, np.ndarray) and val.ndim == 2 and val.dtype.kind == "c":
+            m = np.abs(val)
+            top = float(m.max()) or 1.0
+            return {"image": m / top, "note": tr("complex values: |z| divided by its maximum %s") % fmt_num(top, 4)}
+        import examplefig
+        arr = None
+        if not isinstance(val, dict):
+            try:
+                arr = np.asarray(val)
+            except Exception:                               # noqa: BLE001
+                arr = None
+        if arr is not None and arr.ndim == 1 and arr.size >= 2 and arr.dtype.kind in "biuf":
+            y = arr.astype(np.float64)
+            ok = np.isfinite(y)
+            if ok.sum() < 2:
+                return None
+            x = np.arange(y.size, dtype=np.float64)
+            img = examplefig.render_plot([("", x[ok], y[ok])], xlabel="index", title="series ×%d" % y.size)
+            return {"image": img, "note": tr("1-D series of %d points as a line (%d non-finite points left out)")
+                    % (y.size, int((~ok).sum()))}
+        if isinstance(val, dict) and "cs" not in val:
+            cols = {}
+            for k, v in val.items():
+                a = np.asarray(v) if isinstance(v, (np.ndarray, list, tuple)) else None
+                if a is not None and a.ndim == 1 and a.size >= 2 and a.dtype.kind in "biuf":
+                    cols[str(k)] = a.astype(np.float64)
+            if not cols:
+                return None
+            # いちばん多い長さの欄だけを同じグラフに載せる
+            lens = [c.size for c in cols.values()]
+            n = max(set(lens), key=lens.count)
+            cols = {k: c for k, c in cols.items() if c.size == n}
+            xname = next((k for k in _X_FIELDS if k in cols), None)
+            x = cols.pop(xname) if xname else np.arange(n, dtype=np.float64)
+            if not cols:                                      # 横軸の欄しか無い
+                cols, xname, x = {xname: x}, None, np.arange(n, dtype=np.float64)
+            series = []
+            for k, y in list(cols.items())[:5]:
+                ok = np.isfinite(x) & np.isfinite(y)
+                if ok.sum() >= 2:
+                    series.append((k, x[ok], y[ok]))
+            if not series:
+                return None
+            img = examplefig.render_plot(series, xlabel=xname or "index",
+                                         title="table: " + ", ".join(k for k, _, _ in series))
+            more = len(cols) - len(series)
+            return {"image": img, "note": tr("%d 1-D columns of the table (length %d) as lines") % (len(series), n)
+                    + (tr(" (%d more left out)") % more if more > 0 else "")}
+    except Exception as exc:                                  # noqa: BLE001
+        return {"image": None, "note": "preview failed: %s" % truncate(exc, 120)}
+    return None
+
+
+# --------------------------------------------------------------------------- #
+# 台帳 op を Studio から走らせる(2026-10-03)。
+# Studio が走らせられたのは 2-D の進化 op(a/b ノブ)だけで、台帳の ~1,700 op は
+# ヘルプの表を読めても**押して試す手段が無かった**(「CLI から実行してください」)。
+# 部品は opassist にある: param_spec(引数の型)/ sample_input(合成の見本)。
+# --------------------------------------------------------------------------- #
+
+#: 「いまの画像」を渡してよい入力の型(2-D の配列として意味が通るもの)
+_IMAGE_SORTS = frozenset({"image2d", "image", "gray", "depth", "mask", "region", "rgb",
+                          "labels2d", "normalmap", "complex2d"})
+
+#: 文字にできない見本の値(行列・辞書)を欄に置くときの印。消して書けば自分の値になる
+SAMPLE_TOKEN = "<sample>"
+
+#: データ入力の入手元(表示名は tr で訳す)
+LEDGER_SOURCES = ("sample (synthetic)", "current image", "last result")
+
+
+def ledger_op_names():
+    """台帳の全 op 名(並べ替え済み)。"""
+    import fullseye as fs
+    return sorted(n for n in dir(fs.ledger) if not n.startswith("_"))
+
+
+def parse_ledger_param(spec, text):
+    """フォームの 1 欄の文字列を、引数の値にする。空欄は既定値。
+
+    ``kind`` は opassist.param_spec の分類(number / int / bool / choice / text)。
+    ``container`` が列(``form != "scalar"``)なら ``"1, 2, 3"`` を tuple にする。
+    ``None`` と書けば None。読めない値は ValueError(**黙って既定値に戻さない** ——
+    入れた値が効いていないのに結果だけ出ると、学生は値が効いたと思う)。
+    """
+    s = ("" if text is None else str(text)).strip()
+    if s == "":
+        return spec.get("default")
+    if s.lower() == "none":
+        return None
+    kind = spec.get("kind")
+    form = (spec.get("container") or {}).get("form", "scalar")
+    if form not in ("scalar", "data") and kind in ("number", "int", "bool", "text"):
+        parts = [p.strip() for p in s.strip("()[]").split(",") if p.strip()]
+        conv = {"int": int, "bool": lambda v: v.lower() in ("1", "true", "yes"),
+                "text": str}.get(kind, float)
+        try:
+            return tuple(conv(p) for p in parts)
+        except ValueError:
+            raise ValueError("%s: expected a list like '1, 2, 3', got %r" % (spec["name"], text))
+    try:
+        if kind == "int":
+            return int(s)
+        if kind == "number":
+            return float(s)
+        if kind == "bool":
+            return s.lower() in ("1", "true", "yes", "on")
+    except ValueError:
+        raise ValueError("%s: expected %s, got %r" % (spec["name"], kind, text))
+    return s
+
+
+def ledger_call_code(op, data_names, kwargs):
+    """同じことをする 1 行の Python(MATLAB のコマンド履歴に当たる)。
+
+    既定値と同じ引数は書かない(読む人が「何を変えたか」だけ見えるように)。
+    """
+    def show(v):
+        if isinstance(v, np.ndarray) or isinstance(v, dict):
+            return "<%s>" % _describe_value(v)              # 中身は出さない(1 行に収まらない)
+        return repr(v)
+    args = list(data_names) + ["%s=%s" % (k, show(v)) for k, v in kwargs.items()]
+    return "import fullseye as fs\nresult = fs.ledger.%s(%s)" % (op, ", ".join(args))
+
+
+def run_ledger_op(op, data, kwargs):
+    """台帳 op を 1 回走らせる。返りは ``(結果, 秒)``。例外はそのまま上げる。"""
+    import time as _time
+
+    import fullseye as fs
+    fn = getattr(fs.ledger, op)
+    t0 = _time.perf_counter()
+    out = fn(*data, **kwargs)
+    return out, _time.perf_counter() - t0
 
 
 def _describe_value(v) -> str:
@@ -686,6 +896,12 @@ def image_info_summary(d):
         if d.get("nonfinite"):
             out += " · %d non-finite" % d["nonfinite"]
         return out
+    if k == "flow2d":
+        shp = "×".join(str(v) for v in d.get("shape", ()))
+        out = "flow2d %s · |v| max %s mean %s" % (shp, d.get("speed_max"), d.get("speed_mean"))
+        if d.get("nonfinite"):
+            out += " · %d non-finite" % d["nonfinite"]
+        return out
     if k == "feature":
         return "scalar = %s" % d.get("value")
     if k == "contour":
@@ -699,6 +915,10 @@ def image_info_summary(d):
         return "object · %s" % d.get("type", "?")
     if k == "series":
         return "series ×%d · %s" % (d.get("length", 0), d.get("summary", ""))
+    if k == "array":
+        return d.get("summary", "array")
+    if k == "empty":
+        return "empty array %s" % "×".join(str(v) for v in d.get("shape", ()))
     return "no image"
 
 
@@ -4529,7 +4749,7 @@ def build_window(model=None):
         return mm
 
     m = _menu(mb, "&File", "file")
-    act_viewer = _act("Image Viewer…", "Ctrl+Shift+O",
+    act_viewer = _act("Image Viewer…", "Ctrl+Shift+I",    # ★O は Open pipeline と重なり、どちらも発火しなかった
                       "Open images (or drop images / a folder) to look at them: zoom, pixel values, histogram")
     m.addAction(act_open_img); m.addAction(act_viewer); m.addAction(act_demo)          # image in
     m.addSeparator()
@@ -4611,6 +4831,11 @@ def build_window(model=None):
     win._act_video_cube = act_video_cube
     menu_tools.addAction(act_eye_brain)                        # compound eye → connectome wave (2026-09-20)
     menu_tools.addAction(act_video_cube)                       # space × time cube (2026-09-21)
+    act_ledger_run = _act("Run a ledger op…", "Ctrl+Shift+L",
+                          "Pick any of the typed-ledger ops, fill its arguments in typed fields, run it on a "
+                          "synthetic sample or the current image, and copy the one-line Python that does the same")
+    menu_tools.addAction(act_ledger_run)                       # 台帳 op を押して試す (2026-10-03)
+    win._act_ledger_run = act_ledger_run
     win._act_physical_ai = act_physical_ai
     menu_tools.addSeparator()
     lang_menu = _menu(menu_tools, "Language / 言語 / 语言", "language")  # UI/help language = a preference, not Help
@@ -5423,8 +5648,26 @@ def build_window(model=None):
                 # Swallowing keeps a cosmetic extra from blanking a good result, but
                 # we say so in one line instead of failing silently.
                 insp += "\n\n(region features unavailable: %s)" % truncate(e, 80)
+        # そのまま画素にできるのは実数の (h, w) と (h, w, 3) だけ。ほかは見せ方を選ぶ
+        drawable = (isinstance(val, np.ndarray) and val.dtype.kind in "biuf"
+                    and (val.ndim == 2 or (val.ndim == 3 and val.shape[2] == 3)))
+        prev = None
+        if not drawable:
+            prev = result_preview(val)
+            if prev is not None:
+                insp += "\n\nPreview: %s" % prev["note"]
         inspector.setPlainText(insp)
-        if isinstance(val, np.ndarray) and val.ndim in (2, 3):
+        if prev is not None and prev.get("image") is not None:
+            qi = _to_qimage(prev["image"], QtGui)
+            if qi is not None:
+                pm = QtGui.QPixmap.fromImage(qi)
+                if state.pop("fit_next", False):
+                    view.set_pixmap(pm); view.fit()
+                elif not view.set_pixmap_keep_view(pm):
+                    view.fit()
+            hist_view.clear(); state["result"] = prev["image"]; state["raw"] = val
+            return
+        if drawable:
             shown = apply_display(val, display.currentText(), base=model.image,  # region overlay uses the source
                                   draw=state["draw"])                            # dev_set_draw/color/line_width
             qi = _to_qimage(shown, QtGui)
@@ -10515,6 +10758,260 @@ def build_window(model=None):
         return dlg
     act_formats.triggered.connect(lambda _=False: show_drop_formats())
     win._show_drop_formats = show_drop_formats
+
+    def open_ledger_runner(op=None):
+        """台帳 op を型に合った入力欄で走らせる窓(MATLAB で関数を 1 本呼ぶ感覚)。
+
+        左で op を探し、右に引数のフォームが出る。データ入力は「合成の見本」
+        「いまの画像」「直前の結果」から選ぶ。実行すると結果を絵(result_preview)
+        と中身(inspect_result)で見せ、**同じことをする 1 行の Python** を出す。
+        「自動で再実行」を入れると、値を変えるたびに走り直す。
+        """
+        import html as _h
+
+        import opassist
+        dlg = QtWidgets.QDialog(win); tag_dialog(dlg, "editor"); dlg.setModal(False)
+        dlg.setWindowTitle(tr("Run a ledger op"))
+        root = QtWidgets.QHBoxLayout(dlg)
+        left = QtWidgets.QVBoxLayout(); root.addLayout(left, 1)
+        search = QtWidgets.QLineEdit(); search.setPlaceholderText(tr("Search ops (name or words)"))
+        search.setClearButtonEnabled(True)
+        left.addWidget(search)
+        op_list = QtWidgets.QListWidget(); left.addWidget(op_list, 1)
+        names = ledger_op_names()
+
+        right = QtWidgets.QVBoxLayout(); root.addLayout(right, 3)
+        title = QtWidgets.QLabel(); title.setWordWrap(True); right.addWidget(title)
+        form_box = QtWidgets.QWidget(); form = QtWidgets.QFormLayout(form_box)
+        scroll = QtWidgets.QScrollArea(); scroll.setWidgetResizable(True); scroll.setWidget(form_box)
+        scroll.setMaximumHeight(260); right.addWidget(scroll)
+        row = QtWidgets.QHBoxLayout(); right.addLayout(row)
+        b_run = QtWidgets.QPushButton(tr("Run")); b_run.setDefault(True); row.addWidget(b_run)
+        auto = QtWidgets.QCheckBox(tr("Re-run when a value changes")); row.addWidget(auto)
+        b_copy = QtWidgets.QPushButton(tr("Copy code")); row.addWidget(b_copy)
+        row.addStretch(1)
+        code = QtWidgets.QPlainTextEdit(); code.setReadOnly(True); code.setMaximumHeight(52)
+        code.setFont(QtGui.QFontDatabase.systemFont(QtGui.QFontDatabase.FixedFont))
+        right.addWidget(code)
+        pic = QtWidgets.QLabel(); pic.setAlignment(QtCore.Qt.AlignCenter); pic.setMinimumHeight(240)
+        pic.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+        act_copy_pic = QtGui.QAction(tr("Copy image"), pic); pic.addAction(act_copy_pic)
+        right.addWidget(pic, 2)
+        info = QtWidgets.QPlainTextEdit(); info.setReadOnly(True); info.setMaximumHeight(150)
+        right.addWidget(info)
+        timer = QtCore.QTimer(dlg); timer.setSingleShot(True); timer.setInterval(250)
+        st = {"op": None, "specs": [], "widgets": {}, "sources": {}, "result": None,
+              "sample": None, "error": None, "image": None}
+
+        def fill_list():
+            q = search.text().strip()
+            hits = [n for n in names if q.lower() in n.lower()] if q else names
+            if q and not hits:
+                try:                                    # 名前に無ければ説明文から探す(和文も可)
+                    hits = [h["name"] for h in opassist.find(q, limit=40) if h.get("name") in names]
+                except Exception:                       # noqa: BLE001 — 検索は補助
+                    hits = []
+            op_list.clear(); op_list.addItems(hits)
+
+        def widget_for(spec):
+            kind, d = spec.get("kind"), spec.get("default")
+            form_ = (spec.get("container") or {}).get("form", "scalar")
+            if kind == "bool" and form_ == "scalar":
+                w = QtWidgets.QCheckBox(); w.setChecked(bool(d)); w.toggled.connect(lambda _=0: changed())
+                return w
+            if kind == "choice":
+                w = QtWidgets.QComboBox(); w.addItems([str(c) for c in spec.get("choices") or []])
+                if d is not None and str(d) in [str(c) for c in spec.get("choices") or []]:
+                    w.setCurrentText(str(d))
+                w.currentIndexChanged.connect(lambda _=0: changed())
+                return w
+            if kind == "int" and form_ == "scalar" and isinstance(d, int):
+                w = QtWidgets.QSpinBox(); w.setRange(-10 ** 9, 10 ** 9); w.setValue(int(d))
+                w.valueChanged.connect(lambda _=0: changed())
+                return w
+            # 既定値が nan / inf の引数(「指定なし」の印)は数の箱に入らないので行入力にする
+            if kind == "number" and form_ == "scalar" and isinstance(d, float) and math.isfinite(d):
+                w = QtWidgets.QDoubleSpinBox()
+                mag = abs(d)
+                dec = 3 if mag == 0 or mag >= 0.1 else min(10, int(-np.floor(np.log10(mag))) + 3)
+                w.setDecimals(dec); w.setRange(-1e12, 1e12); w.setValue(d)
+                w.setSingleStep(10.0 ** (-dec + 1) if mag < 0.1 and mag > 0 else max(abs(d) * 0.1, 0.1))
+                w.valueChanged.connect(lambda _=0: changed())
+                return w
+            w = QtWidgets.QLineEdit()
+            w.setPlaceholderText("None" if d is None else repr(d))
+            if spec.get("required"):
+                w.setPlaceholderText(tr("required"))
+            w.editingFinished.connect(changed)
+            return w
+
+        def value_of(spec, w):
+            if isinstance(w, QtWidgets.QCheckBox):
+                return w.isChecked()
+            if isinstance(w, QtWidgets.QComboBox):
+                ch = spec.get("choices") or []
+                return ch[w.currentIndex()] if 0 <= w.currentIndex() < len(ch) else None
+            if isinstance(w, (QtWidgets.QSpinBox, QtWidgets.QDoubleSpinBox)):
+                return w.value()
+            if w.text().strip() == SAMPLE_TOKEN and st["sample"] is not None:
+                return (st["sample"][1] or {}).get(spec["name"], spec.get("default"))
+            return parse_ledger_param(spec, w.text())
+
+        def select(name):
+            if name not in names:
+                return False
+            while form.rowCount():
+                form.removeRow(0)
+            # 直前の結果は消さない —— 別の op の入力に「直前の結果」として渡せる(op を繋ぐ)
+            st.update(op=name, specs=opassist.param_spec(name), widgets={}, sources={},
+                      sample=None, error=None)
+            try:
+                first = opassist._note_first_line(name)
+            except Exception:                           # noqa: BLE001
+                first = ""
+            title.setText("<b>%s</b> — %s" % (name, _h.escape(first or "")))
+            for spec in st["specs"]:
+                if spec.get("kind") == "data":
+                    srcs = QtWidgets.QComboBox()
+                    for s_ in LEDGER_SOURCES:
+                        srcs.addItem(tr(s_), s_)
+                    srcs.currentIndexChanged.connect(lambda _=0: changed())
+                    st["sources"][spec["name"]] = srcs
+                    form.addRow("%s  [%s]" % (spec["name"], spec.get("sort")), srcs)
+                else:
+                    w = widget_for(spec)
+                    if spec.get("doc"):
+                        w.setToolTip(spec["doc"])
+                    st["widgets"][spec["name"]] = w
+                    form.addRow(spec["name"] + (" *" if spec.get("required") else ""), w)
+            # 必須の引数は見本の値で埋めておく(空欄のまま押すと TypeError しか出ない)
+            try:
+                st["sample"] = opassist.sample_input(name)
+            except Exception as e:                      # noqa: BLE001
+                st["sample"] = None; st["error"] = "no sample input: %s" % truncate(e, 120)
+            if st["sample"] is not None:
+                for k, v in (st["sample"][1] or {}).items():
+                    w = st["widgets"].get(k)
+                    if isinstance(w, QtWidgets.QLineEdit) and not w.text():
+                        if isinstance(v, (str, int, float, bool)) or v is None or (
+                                isinstance(v, (tuple, list)) and all(np.isscalar(x) for x in v)):
+                            w.setText(v if isinstance(v, str) else repr(v))
+                        else:
+                            # 行列・辞書のような見本は文字にすると読み戻せない
+                            # (3x3 の K が array([[…]]) になって ValueError だった)→ 印で持つ
+                            w.setText(SAMPLE_TOKEN)
+                            w.setToolTip((w.toolTip() + chr(10) if w.toolTip() else "")
+                                         + tr("sample value: ") + _describe_value(v))
+            code.setPlainText(""); info.setPlainText(""); pic.clear()
+            items = op_list.findItems(name, QtCore.Qt.MatchExactly)
+            if items:
+                op_list.setCurrentItem(items[0])
+            return True
+
+        def gather():
+            """(データの並び, 名前の並び, 引数) を集める。読めない値は ValueError。"""
+            data, dnames, kwargs = [], [], {}
+            samples = list(st["sample"][0]) if st["sample"] is not None else []
+            di = 0
+            for spec in st["specs"]:
+                if spec.get("kind") == "data":
+                    src = st["sources"][spec["name"]].currentData()
+                    if src == "current image":
+                        v = state.get("raw")
+                        if not isinstance(v, np.ndarray):
+                            raise ValueError(tr("No current image — open one or use the sample"))
+                        if spec.get("sort") not in _IMAGE_SORTS:
+                            raise ValueError("%s [%s]: the current image is not a %s"
+                                             % (spec["name"], spec.get("sort"), spec.get("sort")))
+                        data.append(v); dnames.append("img")
+                    elif src == "last result":
+                        if st["result"] is None:
+                            raise ValueError(tr("No result yet — run once first"))
+                        data.append(st["result"]); dnames.append("result")
+                    else:
+                        if di >= len(samples):
+                            raise ValueError("%s: no synthetic sample for type %s"
+                                             % (spec["name"], spec.get("sort")))
+                        data.append(samples[di]); dnames.append(spec["name"])
+                    di += 1
+                    continue
+                w = st["widgets"][spec["name"]]
+                v = value_of(spec, w)
+                if spec.get("required") and v is None:
+                    raise ValueError("%s: %s" % (spec["name"], tr("required")))
+                if v != spec.get("default") or spec.get("required"):
+                    kwargs[spec["name"]] = v
+            return data, dnames, kwargs
+
+        def run():
+            if not st["op"]:
+                return None
+            try:
+                data, dnames, kwargs = gather()
+                code.setPlainText(ledger_call_code(st["op"], dnames, kwargs))
+                out, sec = run_ledger_op(st["op"], data, kwargs)
+            except Exception as e:                      # noqa: BLE001 — 何が悪いかを窓に出す
+                st["error"] = "%s: %s" % (type(e).__name__, e)
+                info.setPlainText(st["error"]); pic.clear()
+                return None
+            st["result"], st["error"] = out, None
+            d = inspect_result(out)
+            txt = format_inspection(d)
+            img = None
+            if isinstance(out, np.ndarray) and out.dtype.kind in "biuf" and (
+                    out.ndim == 2 or (out.ndim == 3 and out.shape[2] == 3)):
+                img, note = np.clip(np.nan_to_num(out.astype(np.float64)), 0, 1), ""
+                if out.ndim == 2 and (out.min() < 0 or out.max() > 1):
+                    lo, hi = float(np.nanmin(out)), float(np.nanmax(out))
+                    img = (np.nan_to_num(out.astype(np.float64)) - lo) / ((hi - lo) or 1.0)
+                    note = tr("values [%s, %s] stretched to [0, 1] for display") % (fmt_num(lo, 4), fmt_num(hi, 4))
+            else:
+                p = result_preview(out)
+                note = p["note"] if p else ""
+                img = p.get("image") if p else None
+            info.setPlainText(("%.3f s\n" % sec) + txt + ("\n\nPreview: " + note if note else ""))
+            st["image"] = img
+            if img is not None:
+                qi = _to_qimage(img, QtGui)
+                if qi is not None:
+                    pm = QtGui.QPixmap.fromImage(qi)
+                    pic.setPixmap(pm.scaled(max(pic.width(), 320), max(pic.height(), 240),
+                                            QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
+            else:
+                pic.setText(tr("Nothing to draw — see the text below"))
+            return out
+
+        def changed():
+            if auto.isChecked():
+                timer.start()
+
+        def copy_code():
+            QtWidgets.QApplication.clipboard().setText(code.toPlainText())
+
+        def copy_pic():
+            if st["image"] is not None:
+                qi = _to_qimage(st["image"], QtGui)
+                if qi is not None:
+                    QtWidgets.QApplication.clipboard().setImage(qi)
+
+        timer.timeout.connect(run)
+        search.textChanged.connect(lambda _=0: fill_list())
+        op_list.currentTextChanged.connect(lambda n: n and n != st["op"] and select(n))
+        b_run.clicked.connect(lambda _=False: run())
+        b_copy.clicked.connect(lambda _=False: copy_code())
+        act_copy_pic.triggered.connect(lambda _=False: copy_pic())
+        fill_list()
+        if op:
+            search.setText(op)
+            select(op)
+        dlg._state = st; dlg._select = select; dlg._run = run; dlg._search = search
+        dlg._op_list = op_list; dlg._auto = auto; dlg._code = code; dlg._info = info; dlg._pic = pic
+        dlg._timer = timer
+        dlg.resize(1100, 760); dlg.show()
+        win._last_ledger_runner = dlg
+        return dlg
+    act_ledger_run.triggered.connect(lambda _=False: open_ledger_runner())
+    win._open_ledger_runner = open_ledger_runner
 
     try:                                     # restore the remembered language
         if os.environ.get("QT_QPA_PLATFORM") != "offscreen":

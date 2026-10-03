@@ -7,6 +7,20 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**Studio から台帳の op を押して試せるようにした(Tools ▸ Run a ledger op…、Ctrl+Shift+L)。** Studio が走らせられたのは 2-D の
+  進化 op だけで、台帳の ~1,700 op はヘルプの表を読めても「CLI から実行してください」だった。`opassist.param_spec` の型から入力欄
+  (整数・実数・真偽・選択・行)を組み、データ入力は見本(合成)/いまの画像/直前の結果(op を繋げる)から選ぶ。実行すると絵と中身、
+  **同じことをする 1 行の Python**(MATLAB のコマンド履歴)を出し、「値を変えたら自動で再実行」で探れる。読めない値は既定値に黙って
+  戻さず理由を出す。門: 窓で走るかどうかが「見本を直接 op に渡した結果」と一致(行列の見本を文字にして読み戻せず、窓だけが落とす
+  ケースがあったのを直した)。見本のまま走るのは実測 60 本中 26 本で、残りは opassist の見本の限界(印字のみ)。
+- ★**結果ビューが描けない結果を描くようにした。** `(2, h, w)` の flow2d を "color" と判定し、描けずに**前の画像が残って**いた。
+  1-D 系列と表は「Nothing to display」。いまは flow2d = 色相図 + 矢印図、系列 = 折れ線、表 = 同じ長さの数値の欄を重ねた折れ線
+  (横軸は `t` / `x` / `freq` …)、RGBA = 白地に合成、複素数 = |z|。空の配列は IndexError、4 次元以上は先頭の 1 値を
+  「スカラー」と見せていたのも直した。描画は `examplefig.render_plot`(`save_plot` から絵だけを切り出した)。
+- **ショートカットの重複**: Ctrl+Shift+O が Open pipeline と Image Viewer の両方に付き、Qt はあいまいなキーを**どちらも発火しない**。
+  Image Viewer を Ctrl+Shift+I に移し、ウィンドウの全アクションでキーの重複を数える門を足した(元の割り当てに戻すと名指しで落ちる)。
+- STUDIO_GUIDE(6 言語)に節「台帳の op を押して試す」と結果ビューの見せ方の表。新しい UI 文言 24 本を 5 言語に。
+
 - ★**矢印図と流線が無かった(MATLAB の `quiver` / `streamline` / `streamslice`)。** `flow2d` の出口は色相図と LIC だけで、
   LIC は前後を落とす。`mathops.ode_vector_field_grid` の docstring は「quiver・streamlines で描ける」と書いていたが、どちらも
   存在しなかった。PIV 台帳の `visualise` に 3 op を足した: `piv_streamlines`(RK4 + 双一次補間、種を省くと Jobard–Lefer の

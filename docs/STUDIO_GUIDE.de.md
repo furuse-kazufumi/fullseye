@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 3ff1623c4ad6 -->
+<!-- i18n-source-sha: 002b7515a73c -->
 # Vollständiger Leitfaden zu Fullseye Studio
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · **Deutsch**
@@ -162,6 +162,7 @@ Die wichtigsten (aus den `act_*`-Definitionen in `studio.py`):
 | Quit | `Ctrl+Q` | Reset to start | `Home` |
 | Command palette | `Ctrl+P` | Step forward | `Ctrl+→` |
 | Keyboard shortcuts | `F1` | Run all | `Ctrl+Enter` |
+| Image Viewer | `Ctrl+Shift+I` | Run a ledger op | `Ctrl+Shift+L` |
 
 Jede Aktion ruft, egal ob über Menü, Werkzeugleiste oder Schaltfläche ausgelöst, denselben Handler auf (eine
 Aktion, mehrere Zugänge).
@@ -289,6 +290,38 @@ als dieser Abschnitt.
 | Markdown, SVG | Dokumentbetrachter | |
 | Audio (wav / mp3 / flac / ogg …) | Audiofenster | Wellenform, Spektrogramm, Wiedergabe. Nicht-WAV benötigt soundfile |
 | Robotermodell + qpos-`.npy` (T, nq) zusammen | Roboter-Player | Schieberegler und Wiedergabeknopf |
+
+## Jede Ledger-Op ausprobieren (Tools ▸ Ledger-Op ausführen…, Strg+Umschalt+L) (2026-10-03)
+
+Ein Fenster, das Ops der typisierten Ledger (PIV, Mathematik, Fahren, 3-D … rund 1.700) mit **Eingabefeldern passend
+zum Typ jedes Arguments** ausführt. Links Namen oder Wörter suchen, eine Op wählen – rechts erscheint das Argumentformular.
+
+- **Dateneingaben** stammen aus „Beispiel (synthetisch)“, „aktuelles Bild“ oder „letztes Ergebnis“. Das Beispiel ist
+  eine für die Op synthetisierte Eingabe mit bekannter Wahrheit; „letztes Ergebnis“ ist **das Ergebnis der zuletzt in
+  diesem Fenster ausgeführten Op** – so lässt es sich an die nächste Op weitergeben (z. B. mit `ode_vector_field_grid`
+  ein Strömungsfeld erzeugen und die Eingabe von `piv_quiver` auf „letztes Ergebnis“ setzen: ein Pfeilbild). Eine Eingabe
+  vom falschen Typ (das aktuelle Bild in einem flow2d-Feld) wird mit Begründung abgelehnt statt ausgeführt.
+- **Argumente**: Ganzzahl-Feld, Gleitkomma-Feld, Häkchen, Auswahlliste bei Ops mit Auswahl, sonst eine Textzeile.
+  Leer bedeutet Standardwert, `None` bedeutet None, Listen als `1, 2, 3`. Matrix- oder dict-Beispiele werden als Marke
+  `<sample>` gehalten. Ein unlesbarer Wert wird **nie stillschweigend durch den Standardwert ersetzt** – das Fenster
+  nennt Argument und Grund.
+- **Ausführen** zeigt das Ergebnis als Bild und als Inhalt (Form, Wertebereich, Felder) sowie **die eine Python-Zeile,
+  die dasselbe tut** („Code kopieren“ fügt sie in ein Skript ein; das entspricht dem MATLAB-Befehlsverlauf).
+- Mit „**Bei Wertänderung neu ausführen**“ läuft die Op bei jeder Änderung neu.
+
+Manche Ops laufen nicht mit ihrem Beispiel (eine Grenze der Beispielerzeugung pro Op: am 2026-10-03 liefen 26 von 60
+Stichproben-Ops so). Dass das Fenster selbst keine Fehler hinzufügt, prüft ein Gate: Es muss mit der direkten Übergabe
+des Beispiels an die Op übereinstimmen.
+
+### Wie die Ergebnisansicht darstellt
+
+| Ergebnis | Darstellung |
+|---|---|
+| `flow2d` `(2, h, w)` | Pfeile (längster = 0,9 × Abstand) über einem Farbkreis mit Farbton = Richtung, Helligkeit = Geschwindigkeit |
+| 1-D-Zahlen | eine Linie (MATLAB `plot(y)`) |
+| Tabelle (dict) | gleich lange numerische Spalten als Linien; x-Achse ist eine Spalte `t` / `x` / `freq` …, falls vorhanden |
+| `(h, w, 4)` / `(h, w, 1)` / komplex | RGB über Weiß / Graustufen / Betrag \|z\| |
+| leere Arrays, 4-D und mehr | Form und Wertebereich als Text (der erste Wert wird nicht als „Skalar“ gezeigt) |
 
 ## Zusammenhang zwischen Export und Save/Open
 
