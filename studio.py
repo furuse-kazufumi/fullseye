@@ -596,6 +596,10 @@ def histogram_image(arr, bins=64, w=256, h=64):
 
 
 def _is_binary(a):
+    # ★2026-10-04: bool の配列(占有格子など、台帳の op が返す)は np.round が bool へ書き戻せず落ちた —— bool はそのまま二値
+    if a.dtype == bool:
+        return True
+    a = np.asarray(a, dtype=np.float64) if a.dtype.kind in "iu" else a
     u = np.unique(a[np.isfinite(a)]) if a.size else a
     return u.size <= 2 and set(np.round(u, 6).tolist()).issubset({0.0, 1.0})
 

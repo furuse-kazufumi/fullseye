@@ -99,3 +99,11 @@ def test_the_window_draws_a_flow2d_result_instead_of_keeping_the_old_image():
         assert win._state["raw"] is value, kind
         assert win._state["result"] is not None and win._state["result"].ndim in (2, 3), kind
         assert "Preview:" in win._inspector.toPlainText(), kind
+
+
+def test_a_boolean_grid_is_a_region_not_a_crash():
+    """★2026-10-04: bool の 2-D(倉庫の占有格子)で _is_binary が np.round の書き戻しで落ちた(CI 赤で発見)。"""
+    g = np.zeros((6, 9), dtype=bool)
+    g[2, 1:5] = True
+    d = studio.inspect_result(g)
+    assert d["kind"] == "region" and d["regions"] == 1 and d["area_px"] == 4
