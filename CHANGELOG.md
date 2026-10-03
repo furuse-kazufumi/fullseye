@@ -16,9 +16,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   - ★**逆 Abel の「殻剥きは雑音に強い」は半分しか正しくなかった**: 雑音の誤差は微分が `1/dr`、殻剥きが `1/√dr` で増え、
     **標本数で優劣が逆転する**(n=60 では微分、n=960 では殻剥き)。片側だけの主張を書いた docstring を両向きの門で直した。
   - 例 `examples/transforms_tour.py`: 炎の断層化・円い穴の Airy・2 次系の減衰比と Bode・Talbot の M と丸め。
+- ★**数値計算の古典 8 op(math 台帳 `numerics`、陣 2)**: Gauss 求積・低食い違い列(Halton/Sobol)・Chebyshev 点と
+  重心補間・ハミルトン系の時間積分(Verlet/Euler/RK4)・erf/erfc・Bessel(`mathnumerics.py`、門 `tests/test_mathnumerics.py` 19 本)。
+  - ★**「良すぎる」結果を疑って 2 件見つけた**: スクランブル無しの Sobol の積分誤差の傾きが −2.2 と出たのは、被積分関数
+    sin(πx) と点列がどちらも 0.5 に対称で打ち消し合っていたため(非対称な関数では −1.0)。RK4 のエネルギー誤差が Verlet より
+    小さいのは短時間だけで、時間に比例して増え dt=0.2 では t≈2300 で抜かれる(dt=0.1 では約 18 万歩目で、最初の門の時間に入らなかった)。
+  - 例 `examples/numerics_tour.py`: Runge 現象・位相空間の渦巻きと輪・エネルギー誤差の包絡・乱数と Sobol の点と傾き・ぼけた縁。
 - **図の表現力(MATLAB に近づける第一歩)**: `examplefig.save_grid(vrange=)` で色の範囲を固定(`clim`。既定の 1 枚ごとの
   正規化は誤差 0.002 の差の図も真っ赤に見せていた)、`save_plot(styles=)` で破線・点線(真値・参照線は破線に)、
-  凡例をデータの少ない隅へ自動で置く(`legend('best')`)、軸名の帯が x 軸の目盛りの数字を隠していたのを直した。
+  凡例を**データの線の画素を最も隠さない隅**へ置き、どの隅でも隠すなら軸の外(右)に出す(`legend('best')` / `'eastoutside'`)、軸名の帯が x 軸の目盛りの数字を隠していたのを直した。
 
 ## 0.3.0 — 2026-10-03
 

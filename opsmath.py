@@ -20,9 +20,10 @@ funct1d に既存で、ここでは重複させない。
 import numpy as np
 
 import mathops
+import mathnumerics
 import mathtransforms
 
-_MOD = {"mathops": mathops, "mathtransforms": mathtransforms}
+_MOD = {"mathops": mathops, "mathtransforms": mathtransforms, "mathnumerics": mathnumerics}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   種別語彙: matrix(2-D)/ signal(1-D array)/ measurement / table(dict)/
@@ -155,6 +156,19 @@ _CATALOG = {
         ("tf_step_response", "mathtransforms", ["signal", "signal", "signal"], "signal"),
         ("tf_bilinear", "mathtransforms", ["signal", "signal"], "table"),
         ("laplace_inverse_talbot", "mathtransforms", ["signal", "signal", "signal"], "signal"),
+    ],
+    # 数値計算の古典と特殊関数(2026-10-03、陣 2)。棚卸しで Gauss 求積・低食い違い列・Chebyshev・
+    #   シンプレクティック積分・erf・Bessel がどの層にも op として無かった。
+    #   low_discrepancy は (n, dim) の点集合なので matrix(points は (N,3) の 3 次元点で別物)。
+    "numerics": [
+        ("erf", "mathnumerics", ["signal"], "signal"),
+        ("erfc", "mathnumerics", ["signal"], "signal"),
+        ("bessel", "mathnumerics", ["signal"], "signal"),
+        ("gauss_quadrature", "mathnumerics", [], "table"),
+        ("low_discrepancy", "mathnumerics", [], "matrix"),
+        ("chebyshev_nodes", "mathnumerics", [], "signal"),
+        ("interp_barycentric", "mathnumerics", ["signal", "signal", "signal"], "signal"),
+        ("integrate_hamiltonian", "mathnumerics", ["signal", "signal"], "table"),
     ],
 }
 

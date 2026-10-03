@@ -225,6 +225,9 @@ _OP_BRIDGE_SKIP = {
     #   自動的に橋が架かるが、橋が渡すのは画像を潰した 1 本の信号で、中心も半径の向きも持たない
     #   (意味のある出力にならない)。dr も knob a/b に写らない。台帳(fs.ledger.abel_*)から使う。
     "abel_transform", "abel_inverse",
+    # 2026-10-03: 特殊関数は「数の列 → 数の列」で、画像の明るさに erf や Bessel を当てる意味が無い
+    #   (order / kind も knob a/b に写らない)。台帳(fs.ledger.erf ほか)と fs.<名前> から使う。
+    "erf", "erfc", "bessel",
 }
 
 

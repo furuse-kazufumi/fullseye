@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">integrate_hamiltonian — MATH <code style="color:#22d3bf">numerics</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.integrate_hamiltonian(q0, p0, dt: &#x27;float&#x27; = 0.05, n_steps: &#x27;int&#x27; = 1000, *, system: &#x27;str&#x27; = &#x27;harmonic&#x27;, method: &#x27;str&#x27; = &#x27;verlet&#x27;, **params) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathnumerics; mathnumerics.integrate_hamiltonian(q0, p0, dt: &#x27;float&#x27; = 0.05, n_steps: &#x27;int&#x27; = 1000, *, system: &#x27;str&#x27; = &#x27;harmonic&#x27;, method: &#x27;str&#x27; = &#x27;verlet&#x27;, **params) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;integrate_hamiltonian&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>名前つきのハミルトン系(質量 1)を時間積分する。返り値 `<code style="color:#22d3bf">{&quot;t&quot;,&quot;q&quot;,&quot;p&quot;,&quot;energy&quot;,&quot;energy_drift&quot;}</code>`。</p>
+<p>`<code style="color:#22d3bf">method</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;verlet&quot;</code>` —— 速度 Verlet(シンプレクティック・時間反転対称)。エネルギー誤差は O(dt²) で<b>有界</b>のまま</p>
+<p>振動し、長時間でも増えない。dt を負にして回すと元の状態に(丸め誤差まで)戻る。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;euler&quot;</code>` —— 陽的 Euler(比較用の失敗例)。調和振動子ではエネルギーが毎ステップ (1 + ω²dt²) 倍に増え、</p>
+<p>位相空間で外向きの渦巻きになる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;rk4&quot;</code>` —— 古典的 4 次 Runge–Kutta。短時間はとても正確だが、シンプレクティックではないので</p>
+<p>エネルギーは長時間でゆっくり減り続ける(有界ではない)。</p>
+<p>`<code style="color:#22d3bf">system</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">&quot;harmonic&quot;</code><code style="color:#22d3bf">(omega)/ </code><code style="color:#22d3bf">&quot;pendulum&quot;</code><code style="color:#22d3bf">(omega)/ </code><code style="color:#22d3bf">&quot;kepler&quot;</code>`(mu、2-D)。</p>
+<p>門: Verlet のエネルギー誤差が有界 / 時間反転で戻る / Euler の増幅率が (1 + ω²dt²)^n。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
+<p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
+<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
+<p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">Leitfaden zur Familie math_metrology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:numerics_tour">numerics_tour</a> — <code style="color:#22d3bf">py -3.11 examples/numerics_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">numerics</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:erf">erf</a> · <a style="color:#22d3bf" href="opmath:erfc">erfc</a> · <a style="color:#22d3bf" href="opmath:bessel">bessel</a> · <a style="color:#22d3bf" href="opmath:gauss_quadrature">gauss_quadrature</a> · <a style="color:#22d3bf" href="opmath:low_discrepancy">low_discrepancy</a> · <a style="color:#22d3bf" href="opmath:chebyshev_nodes">chebyshev_nodes</a> · <a style="color:#22d3bf" href="opmath:interp_barycentric">interp_barycentric</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathnumerics.py — MATH Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

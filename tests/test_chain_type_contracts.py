@@ -254,6 +254,15 @@ def test_opsmath_call_returns_declared_types():
         "tf_step_response": (np.array([1.0]), np.array([1.0, 1.0]), tt),
         "tf_bilinear": (np.array([1.0]), np.array([1.0, 1.0]), 10.0),
         "laplace_inverse_talbot": (np.array([1.0]), np.array([1.0, 1.0]), tt),
+        # 数値計算の古典と特殊関数(2026-10-03)
+        "erf": (np.linspace(-2, 2, 9),),
+        "erfc": (np.linspace(-2, 2, 9),),
+        "bessel": (np.linspace(0.5, 5, 9),),
+        "gauss_quadrature": (5,),
+        "low_discrepancy": (16, 2),
+        "chebyshev_nodes": (9,),
+        "interp_barycentric": (np.linspace(-1, 1, 5), np.linspace(-1, 1, 5) ** 2, np.linspace(-1, 1, 11)),
+        "integrate_hamiltonian": (np.array([1.0]), np.array([0.0]), 0.1, 20),
     })
     from tools.chain_fuzz import TYPE_CHECKS
     missing = [n for n in opsmath.OPSMATH if n not in args]

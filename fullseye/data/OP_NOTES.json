@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2599,
- "n_notes": 2605,
+ "n_ops": 2607,
+ "n_notes": 2613,
  "notes": {
   "vol_dilate": [
    {
@@ -20797,6 +20797,83 @@
     "in": "matrix",
     "out": "table",
     "path": "docs/ops/math/linalg/mat_svd.md"
+   }
+  ],
+  "bessel": [
+   {
+    "op": "bessel",
+    "dim": "math",
+    "category": "numerics",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/math/numerics/bessel.md"
+   }
+  ],
+  "chebyshev_nodes": [
+   {
+    "op": "chebyshev_nodes",
+    "dim": "math",
+    "category": "numerics",
+    "out": "signal",
+    "path": "docs/ops/math/numerics/chebyshev_nodes.md"
+   }
+  ],
+  "erf": [
+   {
+    "op": "erf",
+    "dim": "math",
+    "category": "numerics",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/math/numerics/erf.md"
+   }
+  ],
+  "erfc": [
+   {
+    "op": "erfc",
+    "dim": "math",
+    "category": "numerics",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/math/numerics/erfc.md"
+   }
+  ],
+  "gauss_quadrature": [
+   {
+    "op": "gauss_quadrature",
+    "dim": "math",
+    "category": "numerics",
+    "out": "table",
+    "path": "docs/ops/math/numerics/gauss_quadrature.md"
+   }
+  ],
+  "integrate_hamiltonian": [
+   {
+    "op": "integrate_hamiltonian",
+    "dim": "math",
+    "category": "numerics",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/math/numerics/integrate_hamiltonian.md"
+   }
+  ],
+  "interp_barycentric": [
+   {
+    "op": "interp_barycentric",
+    "dim": "math",
+    "category": "numerics",
+    "in": "signal × signal × signal",
+    "out": "signal",
+    "path": "docs/ops/math/numerics/interp_barycentric.md"
+   }
+  ],
+  "low_discrepancy": [
+   {
+    "op": "low_discrepancy",
+    "dim": "math",
+    "category": "numerics",
+    "out": "matrix",
+    "path": "docs/ops/math/numerics/low_discrepancy.md"
    }
   ],
   "stat_correlation": [

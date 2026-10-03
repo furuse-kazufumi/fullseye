@@ -588,6 +588,7 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
         img = np.asarray(fs.grid_lines(img, ax, xticks=xt, yticks=yt, alpha=0.25))
         img = np.asarray(fs.axes_frame(img, ax, width=1))
         img = np.asarray(fs.ticks(img, ax, xticks=xt, yticks=yt, tick_len=5, font_size=10))
+        plain = img.copy()                              # データを描く前(凡例の置き場所を選ぶのに使う)
         # 役名は annotate の配色表にあるものだけ("accent" は無い)。
         colours = ("reference", "emphasis", "right", "wrong", "neutral")
         legend = []
@@ -604,26 +605,34 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
                                             color=c, width=2, marker_size=3, **extra))
             legend.append((c, label))
         if len(legend) > 1:
-            # ★2026-10-03: 凡例は**データの少ない隅**に置く(MATLAB の legend('best'))。右上固定だと、
-            #   減衰の遅い応答の山が凡例の下に隠れた。軸を 4 象限に割り、点の少ない象限の隅を選ぶ。
+            # ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと
+            #   減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を
+            #   半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、
+            #   その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
             x0, y0, rw, rh = rect
-            cnt = {"rt": 0, "lt": 0, "rb": 0, "lb": 0}
-            for _lab, x, y in series:
-                x = np.asarray(x, float).ravel()
-                y = np.asarray(y, float).ravel()
-                ok = np.isfinite(x) & np.isfinite(y)
-                fx = (x[ok] - xl[0]) / (xl[1] - xl[0])
-                fy = (y[ok] - yl[0]) / (yl[1] - yl[0])
-                right, top = fx >= 0.5, fy >= 0.5
-                cnt["rt"] += int(np.sum(right & top))
-                cnt["lt"] += int(np.sum(~right & top))
-                cnt["rb"] += int(np.sum(right & ~top))
-                cnt["lb"] += int(np.sum(~right & ~top))
-            corner = min(("rt", "lt", "rb", "lb"), key=lambda k: (cnt[k], k != "rt"))
             pos = {"rt": (x0 + rw - 6, y0 + 6), "lt": (x0 + 6, y0 + 6),
-                   "rb": (x0 + rw - 6, y0 + rh - 6), "lb": (x0 + 6, y0 + rh - 6)}[corner]
-            img = np.asarray(fs.legend_box(img, legend, pos, anchor=corner,
-                                           markers=True, font_size=11, swatch=11, pad=6))
+                   "rb": (x0 + rw - 6, y0 + rh - 6), "lb": (x0 + 6, y0 + rh - 6)}
+            ink = np.abs(img - plain).max(axis=2) > 0.05       # データ線だけが描いた画素
+            best, best_cost, box_w = "rt", None, 0
+            for corner in ("rt", "lt", "rb", "lb"):
+                probe = np.asarray(fs.legend_box(np.ones_like(img), legend, pos[corner], anchor=corner,
+                                                 markers=True, font_size=11, swatch=11, pad=6))
+                box = np.abs(probe - 1.0).max(axis=2) > 0.02
+                cols = np.flatnonzero(box.any(axis=0))
+                box_w = max(box_w, int(cols.max() - cols.min() + 1) if cols.size else 0)
+                cost = int(np.sum(ink & box))
+                if best_cost is None or cost < best_cost:
+                    best, best_cost = corner, cost
+            if best_cost > 40:
+                # どの隅でもデータを隠す(Runge の図は四隅すべてに線がある)→ 軸の外、右に出す
+                # (MATLAB の 'eastoutside')。キャンバスを凡例の幅だけ広げる。
+                wide = np.ones((img.shape[0], img.shape[1] + box_w + 16, 3))
+                wide[:, :img.shape[1]] = img
+                img = np.asarray(fs.legend_box(wide, legend, (img.shape[1] + 4, y0 + 6), anchor="lt",
+                                               markers=True, font_size=11, swatch=11, pad=6))
+            else:
+                img = np.asarray(fs.legend_box(img, legend, pos[best], anchor=best,
+                                               markers=True, font_size=11, swatch=11, pad=6))
         head = title or name
         img = np.asarray(fs.text_box(img, head, (10, 8), anchor="lt", font_size=13))
         foot = (xlabel + ("   |   " if xlabel and ylabel else "") + ylabel).strip()

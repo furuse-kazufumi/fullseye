@@ -127,6 +127,16 @@ flowchart LR
 - **tf_bilinear**`(num, den, fs, prewarp_hz=None)` — Tustin 変換。`scipy.signal.bilinear` と係数が一致し、前歪みを与えた周波数で連続系と応答が厳密に一致する。左半面の極は単位円内へ。
 - **laplace_inverse_talbot**`(num, den, t, M=32)` / **laplace_inverse_func**`(F, t, M=32)`(`fs.<名前>` のみ)— 固定 Talbot 法の数値逆ラプラス。有理関数では行列指数と別経路で一致(1e-8)。`1/√s ↔ 1/√(πt)` のような分岐点つきも戻せる。**M は増やせば良いわけではない**: M≈20 で 1e-12、M=68 では丸めで 1e-4 に悪化。
 
+### numerics(数値計算の古典と特殊関数 — 2026-10-03)
+
+実装は `mathnumerics.py`、例は `py -3.11 examples/numerics_tour.py`(失敗例と並べた図つき)。
+
+- **gauss_quadrature**`(n, kind="legendre"|"hermite"|"laguerre"|"chebyshev", a=None, b=None)` — 節点と重み。n 点で **2n−1 次まで厳密**、2n 次で初めて誤差(門は両向き)。
+- **low_discrepancy**`(n, dim=2, kind="halton"|"sobol"|"random")` — 低食い違い列。積分誤差の傾きは乱数 −0.5、Sobol ≈ −1。★傾きは**非対称な被積分関数**で測ること: 0.5 に対称な sin(πx) だとスクランブル無しの Sobol が打ち消し合って −2.2 という「良すぎる」値が出る。
+- **chebyshev_nodes**`(n, a, b)` / **interp_barycentric**`(xk, yk, x)` — 重心公式(係数を経由しない)。等間隔の点では Runge 現象(41 点で誤差 1e5)、Chebyshev 点なら収束(3e-4)。
+- **integrate_hamiltonian**`(q0, p0, dt, n_steps, system="harmonic"|"pendulum"|"kepler", method="verlet"|"euler"|"rk4")` — Verlet はエネルギー誤差が有界で時間反転で戻る。Euler は毎歩 (1+ω²dt²) 倍。**RK4 は短時間は Verlet より正確だが誤差が時間に比例して増え、いずれ抜かれる**(dt=0.2 で t≈2300、dt=0.1 では約 18 万歩目)。
+- **erf / erfc / bessel**`(x, order, kind)` — 値は scipy.special。ガウスでぼけた段差の断面は ½(1+erf(x/σ√2))。大きな x の 1−erf は桁落ちするので erfc を使う。門は奇関数性・導関数・Wronskian・漸化式。
+
 ## 動く最小例(検証済み)
 
 repo 直下で `py -3.11` の対話環境か、`PYTHONPATH` に repo を通して実行。フィット厳密復元・PSD/直交性・SVD⇔固有値の交差検証・fail-closed(範囲外拒否)を数値で確認して `PASS` を出します(本ガイド作成時に実行し PASS を確認済み。16 op 全てを通すフル版は `py -3.11 examples/math_metrology.py`)。

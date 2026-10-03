@@ -1,8 +1,8 @@
 {
- "n_ops": 2599,
+ "n_ops": 2607,
  "tiers": {
   "color": 12,
-  "ledger": 1648,
+  "ledger": 1656,
   "nary": 17,
   "registry": 922
  },
@@ -1762,6 +1762,19 @@
    "in_sorts": []
   },
   {
+   "name": "bessel",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "numerics",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
    "name": "beta_from_mor",
    "halcon": "",
    "in_sort": "scalar",
@@ -2544,6 +2557,17 @@
     "image2d",
     "mask"
    ]
+  },
+  {
+   "name": "chebyshev_nodes",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "signal",
+   "category": "numerics",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
   },
   {
    "name": "check_difference",
@@ -5394,6 +5418,32 @@
    ]
   },
   {
+   "name": "erf",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "numerics",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "erfc",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "numerics",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
    "name": "error_level_map",
    "halcon": "",
    "in_sort": "image2d",
@@ -6943,6 +6993,17 @@
     "image2d",
     "measurehandle"
    ]
+  },
+  {
+   "name": "gauss_quadrature",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "numerics",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
   },
   {
    "name": "gaussian_beam",
@@ -8611,6 +8672,20 @@
    ]
   },
   {
+   "name": "integrate_hamiltonian",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "numerics",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
    "name": "integrate_normals",
    "halcon": "",
    "in_sort": "normalmap",
@@ -8634,6 +8709,21 @@
    "dim": "optics",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "interp_barycentric",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "numerics",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "signal"
    ]
   },
   {
@@ -9983,6 +10073,17 @@
     "scalar",
     "any"
    ]
+  },
+  {
+   "name": "low_discrepancy",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "matrix",
+   "category": "numerics",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
   },
   {
    "name": "lucky_select",

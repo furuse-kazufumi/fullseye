@@ -384,6 +384,17 @@ from mathtransforms import (  # noqa: E402,F401
     laplace_inverse_talbot,
     laplace_inverse_func,
 )
+# 数値計算の古典(求積・低食い違い列・Chebyshev・シンプレクティック積分)と特殊関数(2026-10-03)
+from mathnumerics import (  # noqa: E402,F401
+    erf,
+    erfc,
+    bessel,
+    gauss_quadrature,
+    low_discrepancy,
+    chebyshev_nodes,
+    interp_barycentric,
+    integrate_hamiltonian,
+)
 # 仮想マシンビジョン環境: 部品を買う前に「その構成で狙う欠陥が見つかるか」を
 # 閉形式の光学 + 数式で作った欠陥 + 撮像連鎖で先に確かめる層。
 import defectgen  # noqa: E402  (mathematical defect models with pixel-perfect masks)
@@ -1108,6 +1119,15 @@ __all__ = [
     "tf_bilinear",
     "laplace_inverse_talbot",
     "laplace_inverse_func",
+    # 数値計算の古典と特殊関数(2026-10-03)
+    "erf",
+    "erfc",
+    "bessel",
+    "gauss_quadrature",
+    "low_discrepancy",
+    "chebyshev_nodes",
+    "interp_barycentric",
+    "integrate_hamiltonian",
     "visiondesign", "system_geometry", "resolving_power", "system_feasibility",
     "image_formation", "detectability_limit",
     "defectgen", "defect_scratch", "defect_pits", "defect_crack", "defect_blob",
