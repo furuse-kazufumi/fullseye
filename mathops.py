@@ -3425,10 +3425,11 @@ def ode_vector_field_grid(system="rossler", params=None, bounds=(-10.0, 10.0, -1
     Returns ``(2, H, W)`` with components ``(dy, dx)`` — the library's
     ``flow2d`` layout — so the **existing flow2d viewers** render it with no new
     drawing code: ``piv_flow_to_rgbimage`` (colour wheel), ``piv_flow_magnitude`` and
-    ``piv_line_integral_convolution`` (texture along the flow). (★2026-10-03: this
-    docstring used to name "quiver, streamlines, flow_magnitude" — **no quiver or
-    streamline op exists yet**, and ``fs.flow_magnitude`` takes two components,
-    not a flow2d array.) For a
+    ``piv_line_integral_convolution`` (texture along the flow), ``piv_quiver``
+    (arrows) and ``piv_streamline_image`` / ``piv_streamlines`` (evenly spaced
+    streamlines). (★2026-10-03: this docstring used to name "quiver, streamlines,
+    flow_magnitude" before any quiver or streamline op existed; they were added the
+    same day. ``fs.flow_magnitude`` takes two components, not a flow2d array.) For a
     3-D system, *plane* picks the slice (``xy`` / ``xz`` / ``yz``) and *offset*
     fixes the third coordinate.
 

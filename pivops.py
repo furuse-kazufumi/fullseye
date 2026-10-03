@@ -82,6 +82,8 @@ __all__ = [
     "piv_velocity_gradient", "piv_q_criterion", "piv_swirling_strength",
     "piv_strain_rate", "piv_flow_to_rgbimage", "piv_line_integral_convolution",
     "piv_deform_pass", "piv_ensemble_correlate", "piv_time_statistics",
+    # --- 矢印図と流線(2026-10-03 追加)---
+    "piv_streamlines", "piv_quiver", "piv_streamline_image",
 ]
 
 #: 変位場の形の約束。``(2, h, w)`` で成分は ``(dy, dx)``、単位は画素/フレーム。
@@ -1276,3 +1278,489 @@ def piv_time_statistics(images, window=32, overlap=0.5, **kw):
     return {"mean": mean, "rms": rms, "reynolds": reynolds,
             "turbulence_intensity": ti, "n_pairs": len(flows),
             "rows": info["rows"], "cols": info["cols"], "step": info["step"]}
+
+
+# ---------------------------------------------------------------------------
+# 矢印図と流線 —— MATLAB の quiver / streamline / streamslice に当たる出口
+# (2026-10-03)。色相図と LIC だけでは「どちら向きに・どれだけ」が読めない。
+# ---------------------------------------------------------------------------
+
+_STREAM_STOPS = ("boundary", "stagnation", "collision", "closed", "self", "max_steps")
+
+
+def _bilinear_at(a, r, c):
+    """``a`` の 1 点 ``(r, c)`` での双一次補間(範囲内であることは呼び手が保証)。"""
+    h, w = a.shape
+    r0 = min(int(r), h - 2) if h > 1 else 0
+    c0 = min(int(c), w - 2) if w > 1 else 0
+    fr = r - r0
+    fc = c - c0
+    return ((a[r0, c0] * (1.0 - fc) + a[r0, c0 + 1] * fc) * (1.0 - fr)
+            + (a[r0 + 1, c0] * (1.0 - fc) + a[r0 + 1, c0 + 1] * fc) * fr)
+
+
+class _PointHash:
+    """流線の標本点を升目で引く(Jobard–Lefer の「近すぎるか」判定)。"""
+
+    def __init__(self, cell):
+        self.cell = float(cell)
+        self.bins = {}
+
+    def _key(self, r, c):
+        return (int(r // self.cell), int(c // self.cell))
+
+    def add(self, r, c, line, idx):
+        self.bins.setdefault(self._key(r, c), []).append((r, c, line, idx))
+
+    def nearest_other(self, r, c, radius, ignore=None):
+        """``radius`` 以内にある点のうち、``ignore(line, idx)`` が偽の最初の 1 つ。
+
+        返りは ``(line, idx)`` か ``None``。自分の線の直近の点は呼び手が
+        ``ignore`` で外す —— 数えると 1 歩目で自分に衝突する。
+        """
+        kr, kc = self._key(r, c)
+        reach = int(np.ceil(radius / self.cell))
+        r2 = radius * radius
+        for dr in range(-reach, reach + 1):
+            for dc in range(-reach, reach + 1):
+                for (pr, pc, pl, pi) in self.bins.get((kr + dr, kc + dc), ()):
+                    if ignore is not None and ignore(pl, pi):
+                        continue
+                    if (pr - r) ** 2 + (pc - c) ** 2 < r2:
+                        return pl, pi
+        return None
+
+
+def _trace_one(fy, fx, seed, h_step, max_steps, vmin, grid, d_test, line_id, sign,
+               offset=0):
+    """種から片方向に RK4 で流線をたどる。返りは ``(points, stop)``。
+
+    向きの場は**正規化した速度**(弧長で進む)。止まる理由:
+    範囲外(boundary)/速さが ``vmin`` 未満(stagnation)/別の線に ``d_test``
+    より近づいた(collision)/自分の始点に戻った(closed)/自分の途中に
+    近づいた(self)/歩数の上限(max_steps)。
+
+    ``offset``: この追跡の点が台帳で何番から振られるか(後ろ向きは前向きの
+    続き)。自分の線の点のうち、この追跡の直近と、種の近く(前向きの最初の
+    ``recent`` 点)は衝突に数えない。
+    """
+    H, W = fy.shape
+
+    def vel(r, c):
+        if not (0.0 <= r <= H - 1 and 0.0 <= c <= W - 1):
+            return None
+        vy = _bilinear_at(fy, r, c)
+        vx = _bilinear_at(fx, r, c)
+        s = (vy * vy + vx * vx) ** 0.5
+        if s < vmin:
+            return 0.0, 0.0, s
+        return sign * vy / s, sign * vx / s, s
+
+    pts = [(float(seed[0]), float(seed[1]))]
+    # 自分の線で「直近」とみなす歩数。d_test をこの歩数で越えるまでは自己衝突を数えない
+    recent = int(np.ceil(2.0 * d_test / h_step)) + 2
+    travelled = 0.0
+    r, c = pts[0]
+    if grid is not None and offset == 0:
+        grid.add(r, c, line_id, 0)
+    for _ in range(int(max_steps)):
+        k1 = vel(r, c)
+        if k1 is None:
+            return pts, "boundary"
+        if k1[2] < vmin:
+            return pts, "stagnation"
+        k2 = vel(r + 0.5 * h_step * k1[0], c + 0.5 * h_step * k1[1])
+        if k2 is None or k2[2] < vmin:
+            return pts, "boundary" if k2 is None else "stagnation"
+        k3 = vel(r + 0.5 * h_step * k2[0], c + 0.5 * h_step * k2[1])
+        if k3 is None or k3[2] < vmin:
+            return pts, "boundary" if k3 is None else "stagnation"
+        k4 = vel(r + h_step * k3[0], c + h_step * k3[1])
+        if k4 is None or k4[2] < vmin:
+            return pts, "boundary" if k4 is None else "stagnation"
+        nr = r + h_step / 6.0 * (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0])
+        nc = c + h_step / 6.0 * (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1])
+        if not (0.0 <= nr <= H - 1 and 0.0 <= nc <= W - 1):
+            return pts, "boundary"
+        travelled += ((nr - r) ** 2 + (nc - c) ** 2) ** 0.5
+        if grid is not None:
+            near_from = offset + len(pts) - recent
+
+            def ignore(pl, pi):
+                if pl != line_id:
+                    return False
+                if pi >= near_from:                  # この追跡の直近
+                    return True
+                if travelled <= 4.0 * d_test and pi < recent:
+                    return True                      # まだ種の近く(前向きの出だし)
+                return offset > 0 and pi < recent    # 後ろ向きは前向きの出だしを数えない
+            hit = grid.nearest_other(nr, nc, d_test, ignore)
+            if hit is not None:
+                if hit[0] != line_id:
+                    return pts, "collision"
+                # 自分の始点付近へ戻った = 閉じた軌道(剛体回転・渦の芯の周り)
+                if offset == 0 and hit[1] * h_step <= 3.0 * d_test:
+                    pts.append((nr, nc))
+                    return pts, "closed"
+                return pts, "self"
+        pts.append((nr, nc))
+        if grid is not None:
+            # 進めるたびに登録する(後で纏めて入れると、自分の始点へ戻っても見えない)
+            grid.add(nr, nc, line_id, offset + len(pts) - 1)
+        r, c = nr, nc
+    return pts, "max_steps"
+
+
+def piv_streamlines(flow, seeds=None, separation=None, step=0.25, max_length=None,
+                    min_speed=1e-3, test_ratio=0.5):
+    """流線を RK4 でたどる(MATLAB の ``stream2`` / ``streamslice`` に当たる)。
+
+    ``seeds`` を省くと **Jobard–Lefer(1997)の等間隔配置**で種を自動で置く。
+    流線どうしが ``separation`` 程度の間隔で並び、``test_ratio * separation``
+    より近づいた所で打ち切る。矢印図は密にすると潰れ、種を手で置くと空白が
+    残るが、この配置は**空白も重なりも作らない**(下の 2 つの性質を門にしている)。
+
+    * 別々の流線の標本点どうしは ``test_ratio * separation`` より近づかない。
+    * 速さが ``min_speed`` 以上の格子点はどれも、どこかの流線から
+      ``separation`` 以内にある(取りこぼしの無さ)。
+
+    座標は flow の格子(行 0 が上、``(row, col)``)。向きの場は速さで割って
+    **弧長で進む**ので、1 歩は ``step`` 格子。速さは流線上の各点で別に返す。
+
+    Args:
+        flow: ``(2, h, w)``(``dy, dx``)。
+        seeds: ``(n, 2)`` の ``(row, col)``。``None`` で自動配置。
+        separation: 流線の間隔 [格子]。``None`` で ``max(h, w) / 25``(2 以上)。
+        step: RK4 の 1 歩 [格子]。
+        max_length: 片方向の最大の長さ [格子]。``None`` で ``4 * (h + w)``。
+        min_speed: これより遅い所で止める(**最大の速さに対する比**)。
+        test_ratio: 打ち切りの距離を ``separation`` の何倍にするか(0 < x ≤ 1)。
+    Returns:
+        dict(table): ``paths``(``(m_i, 2)`` の list、上流 → 下流の順)、
+        ``speed``(各点の速さの list)、``seeds``、``stop``(``(後ろ, 前)`` の
+        理由の組の list)、``n``、``separation``、``d_test``、``step``、
+        ``stop_counts``(理由ごとの数)。
+    Raises:
+        ValueError: flow の形・非有限、パラメータ範囲外、種が格子の外。
+    """
+    f = _flow(flow)
+    _needs_a_grid(f, "piv_streamlines")
+    if not np.all(np.isfinite(f)):
+        raise ValueError("piv_streamlines: flow holds non-finite values; replace outliers first "
+                         "(piv_replace_outliers) — a NaN would end every line it touches")
+    H, W = f.shape[1:]
+    h_step = _positive(step, "step")
+    d_sep = (max(2.0, max(H, W) / 25.0) if separation is None
+             else _positive(separation, "separation"))
+    tr = float(test_ratio)
+    if not (0.0 < tr <= 1.0):
+        raise ValueError(f"test_ratio must be in (0, 1], got {test_ratio}")
+    if h_step > 0.5 * tr * d_sep:
+        raise ValueError(f"step {h_step} is too coarse for separation {d_sep} "
+                         f"(needs step <= {0.5 * tr * d_sep:g}); a step longer than half the "
+                         "test distance jumps over neighbouring lines")
+    L = 4.0 * (H + W) if max_length is None else _positive(max_length, "max_length")
+    max_steps = int(np.ceil(L / h_step))
+    fy, fx = f[0], f[1]
+    vmax = float(np.max(np.hypot(fy, fx)))
+    if vmax <= _EPS:
+        raise ValueError("piv_streamlines: the flow is zero everywhere; there is nothing to trace")
+    vmin = float(min_speed) * vmax
+    d_test = tr * d_sep
+    grid = _PointHash(d_sep)
+
+    auto = seeds is None
+    if auto:
+        queue = []
+        # 最初の種は最も速い格子点(止まった所から始めると 1 本目が空になる)
+        mag = np.hypot(fy, fx)
+        r0, c0 = np.unravel_index(int(np.argmax(mag)), mag.shape)
+        queue.append((float(r0), float(c0)))
+        # 取りこぼしを拾う予備の種: separation/2 間隔の格子
+        sp = 0.5 * d_sep
+        fall = [(float(r), float(c))
+                for r in np.arange(0.0, H - 1 + 1e-9, sp)
+                for c in np.arange(0.0, W - 1 + 1e-9, sp)]
+    else:
+        s = np.asarray(seeds, dtype=np.float64)
+        if s.ndim != 2 or s.shape[1] != 2 or s.shape[0] == 0:
+            raise ValueError(f"seeds must be (n, 2) (row, col), got shape {s.shape}")
+        if not np.all(np.isfinite(s)):
+            raise ValueError("seeds hold non-finite values")
+        out = (s[:, 0] < 0) | (s[:, 0] > H - 1) | (s[:, 1] < 0) | (s[:, 1] > W - 1)
+        if np.any(out):
+            raise ValueError(f"{int(out.sum())} seed(s) lie outside the {H}x{W} grid "
+                             "(rows 0..h-1, cols 0..w-1)")
+        queue = [tuple(map(float, p)) for p in s]
+        fall = []
+
+    paths, speeds, used_seeds, stops = [], [], [], []
+    qi, fi = 0, 0
+    while True:
+        if qi < len(queue):
+            seed = queue[qi]
+            qi += 1
+        elif fi < len(fall):
+            seed = fall[fi]
+            fi += 1
+        else:
+            break
+        sr, sc = seed
+        if not (0.0 <= sr <= H - 1 and 0.0 <= sc <= W - 1):
+            continue
+        sv = (_bilinear_at(fy, sr, sc) ** 2 + _bilinear_at(fx, sr, sc) ** 2) ** 0.5
+        if sv < vmin:
+            if not auto:
+                paths.append(np.array([[sr, sc]]))
+                speeds.append(np.array([sv]))
+                used_seeds.append((sr, sc))
+                stops.append(("stagnation", "stagnation"))
+            continue
+        lid = len(paths)
+        if auto and grid.nearest_other(sr, sc, d_sep) is not None:
+            continue
+        # 種の点は先に登録しない: 前向きの線を登録してから後ろ向きをたどる
+        fwd, stop_f = _trace_one(fy, fx, seed, h_step, max_steps, vmin,
+                                 grid if auto else None, d_test, lid, +1.0)
+        if stop_f == "closed":
+            bwd, stop_b = [(float(sr), float(sc))], "closed"
+        else:
+            # 後ろ向きの点の番号は前向きの続き(len(fwd) 以降)として登録する
+            bwd, stop_b = _trace_one(fy, fx, seed, h_step, max_steps, vmin,
+                                     grid if auto else None, d_test, lid, -1.0,
+                                     offset=len(fwd))
+        pts = np.array(bwd[::-1] + fwd[1:], dtype=np.float64)
+        sp_ = np.hypot([_bilinear_at(fy, r, c) for r, c in pts],
+                       [_bilinear_at(fx, r, c) for r, c in pts])
+        paths.append(pts)
+        speeds.append(sp_)
+        used_seeds.append((sr, sc))
+        stops.append((stop_b, stop_f))
+        if auto:
+            # 新しい種: 線の各点から左右へ separation だけずらした所(Jobard–Lefer)
+            if len(pts) >= 2:
+                d = np.gradient(pts, axis=0)
+                n = np.hypot(d[:, 0], d[:, 1])
+                n[n == 0] = 1.0
+                nr, nc = -d[:, 1] / n, d[:, 0] / n
+                every = max(1, int(round(0.5 * d_sep / h_step)))
+                for k in range(0, len(pts), every):
+                    for sg in (1.0, -1.0):
+                        queue.append((pts[k, 0] + sg * d_sep * nr[k],
+                                      pts[k, 1] + sg * d_sep * nc[k]))
+    counts = {k: 0 for k in _STREAM_STOPS}
+    for a, b in stops:
+        counts[a] += 1
+        counts[b] += 1
+    return {"paths": paths, "speed": speeds, "seeds": np.array(used_seeds).reshape(-1, 2),
+            "stop": stops, "n": len(paths), "separation": float(d_sep),
+            "d_test": float(d_test), "step": float(h_step), "stop_counts": counts}
+
+
+def _quiver_segments(flow, spacing, scale):
+    """矢印の起点と先端(flow の格子座標、``(row, col)``)と、使った倍率。"""
+    f = _flow(flow)
+    H, W = f.shape[1:]
+    sp = int(spacing)
+    r = np.arange((H - 1) % sp // 2, H, sp)
+    c = np.arange((W - 1) % sp // 2, W, sp)
+    R, C = np.meshgrid(r, c, indexing="ij")
+    vy = f[0][R, C]
+    vx = f[1][R, C]
+    mag = np.hypot(vy, vx)
+    top = float(np.max(mag)) if mag.size else 0.0
+    if scale is None:
+        # MATLAB の自動倍率と同じ考え: 最も長い矢印が間隔の 0.9 倍
+        k = 0.9 * sp / top if top > _EPS else 0.0
+    else:
+        k = _positive(scale, "scale")
+    p0 = np.stack([R.ravel(), C.ravel()], axis=1).astype(np.float64)
+    p1 = p0 + k * np.stack([vy.ravel(), vx.ravel()], axis=1)
+    return p0, p1, k
+
+
+def _stamp_segment(alpha, x0, y0, x1, y1, half):
+    """線分の被覆率(縁 1 画素で線形に落とす)を ``alpha`` に最大値で重ねる。
+
+    外接矩形だけを計算する(画像全体を毎回なめると矢印 400 本で十数秒かかる)。
+    """
+    H, W = alpha.shape
+    pad = half + 1.0
+    ca, cb = int(max(0, np.floor(min(x0, x1) - pad))), int(min(W - 1, np.ceil(max(x0, x1) + pad)))
+    ra, rb = int(max(0, np.floor(min(y0, y1) - pad))), int(min(H - 1, np.ceil(max(y0, y1) + pad)))
+    if ca > cb or ra > rb:
+        return
+    yy, xx = np.mgrid[ra:rb + 1, ca:cb + 1].astype(np.float64)
+    dx, dy = x1 - x0, y1 - y0
+    L2 = dx * dx + dy * dy
+    t = np.clip(((xx - x0) * dx + (yy - y0) * dy) / L2, 0.0, 1.0) if L2 > 0 else 0.0
+    d = np.hypot(xx - (x0 + t * dx), yy - (y0 + t * dy))
+    cov = np.clip(half + 0.5 - d, 0.0, 1.0)
+    sub = alpha[ra:rb + 1, ca:cb + 1]
+    np.maximum(sub, cov, out=sub)
+
+
+def _stamp_triangle(alpha, tri):
+    """三角形の被覆率(各辺からの符号つき距離で縁を 1 画素ぼかす)。"""
+    H, W = alpha.shape
+    t = np.asarray(tri, dtype=np.float64)
+    ca, cb = int(max(0, np.floor(t[:, 0].min() - 1))), int(min(W - 1, np.ceil(t[:, 0].max() + 1)))
+    ra, rb = int(max(0, np.floor(t[:, 1].min() - 1))), int(min(H - 1, np.ceil(t[:, 1].max() + 1)))
+    if ca > cb or ra > rb:
+        return
+    yy, xx = np.mgrid[ra:rb + 1, ca:cb + 1].astype(np.float64)
+    area = ((t[1, 0] - t[0, 0]) * (t[2, 1] - t[0, 1]) - (t[1, 1] - t[0, 1]) * (t[2, 0] - t[0, 0]))
+    if abs(area) < 1e-12:
+        return
+    sgn = 1.0 if area > 0 else -1.0
+    cov = np.ones_like(xx)
+    for k in range(3):
+        ax, ay = t[k]
+        bx, by = t[(k + 1) % 3]
+        ex, ey = bx - ax, by - ay
+        n = np.hypot(ex, ey)
+        sd = sgn * (ex * (yy - ay) - ey * (xx - ax)) / n      # 内側が正
+        cov = np.minimum(cov, np.clip(sd + 0.5, 0.0, 1.0))
+    sub = alpha[ra:rb + 1, ca:cb + 1]
+    np.maximum(sub, cov, out=sub)
+
+
+def _stamp_arrow(alpha, x0, y0, x1, y1, half, head_len, head_width):
+    """起点 → 先端の矢印。矢じりが軸より長いときは軸長の 8 割まで相似に縮める。"""
+    dx, dy = x1 - x0, y1 - y0
+    L = float(np.hypot(dx, dy))
+    if L <= 0.0:
+        return
+    if head_len > 0.8 * L:
+        k = 0.8 * L / head_len
+        head_len, head_width = head_len * k, head_width * k
+    ux, uy = dx / L, dy / L
+    bx, by = x1 - head_len * ux, y1 - head_len * uy
+    _stamp_segment(alpha, x0, y0, bx, by, half)
+    hw = 0.5 * head_width
+    _stamp_triangle(alpha, [(x1, y1), (bx - hw * uy, by + hw * ux), (bx + hw * uy, by - hw * ux)])
+
+
+def _composite(img, alpha, color):
+    import annotate
+    col = np.asarray(annotate._rgb(color), dtype=np.float64)
+    a = alpha[..., None]
+    return img * (1.0 - a) + col * a
+
+
+def _canvas(background, shape_out):
+    H, W = shape_out
+    if background is None:
+        return np.ones((H, W, 3))
+    b = np.asarray(background, dtype=np.float64)
+    if b.ndim == 2:
+        b = np.repeat(b[..., None], 3, axis=2)
+    if b.shape != (H, W, 3):
+        raise ValueError(f"background must be ({H}, {W}) or ({H}, {W}, 3) — the flow grid "
+                         f"times upsample — got {np.asarray(background).shape}")
+    if not np.all(np.isfinite(b)):
+        raise ValueError("background holds non-finite values")
+    return np.clip(b, 0.0, 1.0)
+
+
+_INK = (0.08, 0.08, 0.12)
+
+
+def piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None,
+               color=_INK, width=1.5):
+    """矢印図(MATLAB の ``quiver``)。返りは ``(h*upsample, w*upsample, 3)``。
+
+    ``spacing`` 格子ごとに 1 本、起点を格子点に置き、先端を ``起点 + scale * v``
+    に引く。``scale`` を省くと **最も長い矢印が間隔の 0.9 倍** になる(MATLAB の
+    自動倍率と同じ考え方で、隣の矢印に重ならない)。**倍率は図ごとに変わる**
+    ので、並べて比べる図では ``scale`` を固定する。長さが 1 画素に満たない
+    矢印は描かない(向きの無い点は印と読まれる)。
+
+    Args:
+        flow: ``(2, h, w)``(``dy, dx``)。
+        spacing: 矢印の間隔 [格子]。``None`` で長い辺に約 20 本。
+        scale: 矢印の長さ = ``scale * 速さ`` [格子]。
+        upsample: 出力の倍率(矢じりを描ける大きさにする)。
+        background: ``(h*upsample, w*upsample)`` か ``(…, 3)``。``None`` で白。
+            色相図(``piv_flow_to_rgbimage`` を拡大したもの)や LIC を敷ける。
+        color / width: 矢印の色(palette の役割名か RGB)と軸の太さ [px]。
+            既定は黒に近い墨色(色相図を敷いても読める)。
+    Returns:
+        ``(h*upsample, w*upsample, 3)`` float64、値域 [0, 1]。
+    """
+    f = _flow(flow)
+    _needs_a_grid(f, "piv_quiver")
+    if not np.all(np.isfinite(f)):
+        raise ValueError("piv_quiver: flow holds non-finite values; replace outliers first")
+    H, W = f.shape[1:]
+    up = int(upsample)
+    if up < 2:
+        raise ValueError(f"upsample must be >= 2 (an arrowhead needs pixels), got {upsample}")
+    sp = max(1, int(round(max(H, W) / 20.0))) if spacing is None else int(spacing)
+    if sp < 1:
+        raise ValueError(f"spacing must be >= 1, got {spacing}")
+    half = 0.5 * _positive(width, "width")
+    p0, p1, _k = _quiver_segments(f, sp, scale)
+    img = _canvas(background, (H * up, W * up))
+    alpha = np.zeros((H * up, W * up))
+    head = max(4.0, 0.3 * sp * up)
+    for a, b in zip(p0, p1):
+        x0, y0 = (a[1] + 0.5) * up - 0.5, (a[0] + 0.5) * up - 0.5
+        x1, y1 = (b[1] + 0.5) * up - 0.5, (b[0] + 0.5) * up - 0.5
+        if np.hypot(x1 - x0, y1 - y0) < 1.0:
+            continue
+        _stamp_arrow(alpha, x0, y0, x1, y1, half, head, 0.7 * head)
+    return _composite(img, alpha, color)
+
+
+def piv_streamline_image(flow, upsample=8, background=None, color=_INK, width=1.5,
+                         arrows=True, **stream_kw):
+    """流線図(MATLAB の ``streamslice``)。返りは ``(h*upsample, w*upsample, 3)``。
+
+    :func:`piv_streamlines` の等間隔配置で線を引き、各線の弧長の中ほどに
+    向きの矢じりを 1 つ置く(LIC と違って**前後が読める**)。線の間隔が揃うので、
+    **線の密度では速さを表さない** —— 速さを見たいときは ``background`` に
+    ``piv_flow_magnitude`` か色相図を敷く。
+
+    Args:
+        flow: ``(2, h, w)``。
+        upsample / background / color / width: :func:`piv_quiver` と同じ。
+        arrows: 矢じりを置くか。
+        **stream_kw: :func:`piv_streamlines` へ素通し(``separation`` など)。
+    Returns:
+        ``(h*upsample, w*upsample, 3)`` float64、値域 [0, 1]。
+    """
+    f = _flow(flow)
+    up = int(upsample)
+    if up < 2:
+        raise ValueError(f"upsample must be >= 2, got {upsample}")
+    half = 0.5 * _positive(width, "width")
+    st = piv_streamlines(f, **stream_kw)
+    H, W = f.shape[1:]
+    img = _canvas(background, (H * up, W * up))
+    alpha = np.zeros((H * up, W * up))
+    head = max(5.0, 0.35 * st["separation"] * up)
+    for pts in st["paths"]:
+        if len(pts) < 2:
+            continue
+        xy = np.stack([(pts[:, 1] + 0.5) * up - 0.5, (pts[:, 0] + 0.5) * up - 0.5], axis=1)
+        for (x0, y0), (x1, y1) in zip(xy[:-1], xy[1:]):
+            _stamp_segment(alpha, x0, y0, x1, y1, half)
+        if arrows:
+            s = np.concatenate([[0.0], np.cumsum(np.hypot(*np.diff(xy, axis=0).T))])
+            if s[-1] < 2.0 * head:
+                continue
+            k = int(np.searchsorted(s, 0.5 * s[-1]))
+            j = int(np.searchsorted(s, s[k] - head))
+            # 矢じりだけを描く(軸は流線そのもの)
+            ux, uy = xy[k] - xy[j]
+            n = float(np.hypot(ux, uy))
+            if n <= 0:
+                continue
+            ux, uy = ux / n, uy / n
+            tx, ty = xy[k]
+            bx, by = tx - head * ux, ty - head * uy
+            hw = 0.35 * head
+            _stamp_triangle(alpha, [(tx, ty), (bx - hw * uy, by + hw * ux),
+                                    (bx + hw * uy, by - hw * ux)])
+    return _composite(img, alpha, color)

@@ -1,8 +1,8 @@
 {
- "n_ops": 2657,
+ "n_ops": 2660,
  "tiers": {
   "color": 12,
-  "ledger": 1706,
+  "ledger": 1709,
   "nary": 17,
   "registry": 922
  },
@@ -13680,6 +13680,19 @@
    ]
   },
   {
+   "name": "piv_quiver",
+   "halcon": "",
+   "in_sort": "flow2d",
+   "out_sort": "rgb",
+   "category": "visualise",
+   "tier": "ledger",
+   "ledger": "opspiv",
+   "dim": "piv",
+   "in_sorts": [
+    "flow2d"
+   ]
+  },
+  {
    "name": "piv_replace_outliers",
    "halcon": "",
    "in_sort": "flow2d",
@@ -13712,6 +13725,32 @@
    "in_sort": "flow2d",
    "out_sort": "image2d",
    "category": "field",
+   "tier": "ledger",
+   "ledger": "opspiv",
+   "dim": "piv",
+   "in_sorts": [
+    "flow2d"
+   ]
+  },
+  {
+   "name": "piv_streamline_image",
+   "halcon": "",
+   "in_sort": "flow2d",
+   "out_sort": "rgb",
+   "category": "visualise",
+   "tier": "ledger",
+   "ledger": "opspiv",
+   "dim": "piv",
+   "in_sorts": [
+    "flow2d"
+   ]
+  },
+  {
+   "name": "piv_streamlines",
+   "halcon": "",
+   "in_sort": "flow2d",
+   "out_sort": "table",
+   "category": "visualise",
    "tier": "ledger",
    "ledger": "opspiv",
    "dim": "piv",

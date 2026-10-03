@@ -68,11 +68,11 @@
 
 ## 尋找運算子
 
-共有 **2,663 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **63 篇族群指南**。依維度的入口:
+共有 **2,666 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **63 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 934/934、型別台帳 1708/1720、單行門面 `fullseye.<名稱>` 671/1353 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 934/934、型別台帳 1711/1723、單行門面 `fullseye.<名稱>` 671/1353 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 2668 篇中，附有可執行範例的 **2510** 篇(158 篇沒有)，用法說明 120 字以上的 **2530** 篇(138 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)2668 篇全有。
+**內容實測**: 2671 篇中，附有可執行範例的 **2513** 篇(158 篇沒有)，用法說明 120 字以上的 **2533** 篇(138 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)2671 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
@@ -87,8 +87,8 @@
 | `oned` | 42 | [INDEX](ops/oned/INDEX.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
 | `generative` | 30 | [INDEX](ops/generative/INDEX.md) · [guide](ops/generative/guides/generative_art.md) |
+| `piv` | 29 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [guide](ops/conngraph/guides/conngraph.md) |
-| `piv` | 26 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `dem` | 25 | [INDEX](ops/dem/INDEX.md) · [guide](ops/dem/guides/dem_terrain_analysis.md) |
 | `imgmetrics` | 24 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `printpath` | 23 | [INDEX](ops/printpath/INDEX.md) · [guide](ops/printpath/guides/printpath.md) |
@@ -222,7 +222,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文件地圖 — 共 213 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 2,663 篇運算子說明與 63 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 2,666 篇運算子說明與 63 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 

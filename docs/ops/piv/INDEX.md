@@ -1,4 +1,4 @@
-# PIV operator help — 26 ops in 7 categories
+# PIV operator help — 29 ops in 7 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/piv/<category>/<op>.md` を走査。
 
@@ -32,9 +32,9 @@
 
 [piv_outlier_mask](validate/piv_outlier_mask.md) · [piv_replace_outliers](validate/piv_replace_outliers.md)
 
-### visualise (2)
+### visualise (5)
 
-[piv_flow_to_rgbimage](visualise/piv_flow_to_rgbimage.md) · [piv_line_integral_convolution](visualise/piv_line_integral_convolution.md)
+[piv_flow_to_rgbimage](visualise/piv_flow_to_rgbimage.md) · [piv_line_integral_convolution](visualise/piv_line_integral_convolution.md) · [piv_quiver](visualise/piv_quiver.md) · [piv_streamline_image](visualise/piv_streamline_image.md) · [piv_streamlines](visualise/piv_streamlines.md)
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

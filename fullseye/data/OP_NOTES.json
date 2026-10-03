@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2657,
- "n_notes": 2663,
+ "n_ops": 2660,
+ "n_notes": 2666,
  "notes": {
   "vol_dilate": [
    {
@@ -24014,6 +24014,36 @@
     "in": "flow2d",
     "out": "image2d",
     "path": "docs/ops/piv/visualise/piv_line_integral_convolution.md"
+   }
+  ],
+  "piv_quiver": [
+   {
+    "op": "piv_quiver",
+    "dim": "piv",
+    "category": "visualise",
+    "in": "flow2d",
+    "out": "rgb",
+    "path": "docs/ops/piv/visualise/piv_quiver.md"
+   }
+  ],
+  "piv_streamline_image": [
+   {
+    "op": "piv_streamline_image",
+    "dim": "piv",
+    "category": "visualise",
+    "in": "flow2d",
+    "out": "rgb",
+    "path": "docs/ops/piv/visualise/piv_streamline_image.md"
+   }
+  ],
+  "piv_streamlines": [
+   {
+    "op": "piv_streamlines",
+    "dim": "piv",
+    "category": "visualise",
+    "in": "flow2d",
+    "out": "table",
+    "path": "docs/ops/piv/visualise/piv_streamlines.md"
    }
   ],
   "read_3mf": [

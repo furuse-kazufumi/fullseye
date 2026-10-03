@@ -7,6 +7,16 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**矢印図と流線が無かった(MATLAB の `quiver` / `streamline` / `streamslice`)。** `flow2d` の出口は色相図と LIC だけで、
+  LIC は前後を落とす。`mathops.ode_vector_field_grid` の docstring は「quiver・streamlines で描ける」と書いていたが、どちらも
+  存在しなかった。PIV 台帳の `visualise` に 3 op を足した: `piv_streamlines`(RK4 + 双一次補間、種を省くと Jobard–Lefer の
+  等間隔配置、線ごとに止まった理由)、`piv_quiver`(最長の矢印 = 間隔の 0.9 倍の自動倍率)、`piv_streamline_image`(矢じりつき)。
+  門は定理(`tests/test_piv_flowlines.py` 19 本): 剛体回転の流線は円(1.2e-6)/流れ関数は流線上で一定(8e-5)/別の線は
+  `d_test` より近づかない/取りこぼしは証明できる上限 `(1+√2/4)·separation` 以内/描いた矢印の主軸と矢じりの側。
+  RK4 を Euler に、予備の種を空に、衝突判定を無効に、の 3 通りに壊すと、それぞれ別の門が落ちることを確かめた。
+  例 `piv_field_analysis_tour.py` 節 10: Lamb–Oseen 渦の流線が円(4.0e-4)、色相図・LIC・矢印図・流線図の 4 面図。
+  - 描画は矢印 1 本ごとに外接矩形だけを塗る(`annotate.arrow` は 1 本ごとに画像全体をなめ、流線 33 本で 2.9 秒 → 0.24 秒)。
+
 - ★★**Laplace 変換の系統が 1 本も無かった。** 「フーリエ系は色々あるのにラプラス系は無いのでは」という指摘から全層
   (op 2,590 + facade 3,274 名)を綴りを変えて引き、0 本を確認(`laplace` op は HALCON のラプラシアン、
   `transfer_function` は周波数領域の H(f))。同じ棚卸しを 4 分野に広げ、「有名な数学なのに op に無い」優先度 A を 25 件洗い出した。

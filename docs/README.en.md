@@ -68,11 +68,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**2,663 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **63 family guides**. Entry points by dimension:
+**2,666 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **63 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 934/934, typed ledger 1708/1720, one-line facade `fullseye.<name>` 671/1353 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 934/934, typed ledger 1711/1723, one-line facade `fullseye.<name>` 671/1353 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 2668 notes, **2510** link at least one runnable example (158 have none) and **2530** have a usage section of 120+ characters (138 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2668.
+**Measured substance**: of 2671 notes, **2513** link at least one runnable example (158 have none) and **2533** have a usage section of 120+ characters (138 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 2671.
 
 | dimension | ops | entry |
 |---|---:|---|
@@ -87,8 +87,8 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `oned` | 42 | [INDEX](ops/oned/INDEX.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
 | `generative` | 30 | [INDEX](ops/generative/INDEX.md) · [guide](ops/generative/guides/generative_art.md) |
+| `piv` | 29 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [guide](ops/conngraph/guides/conngraph.md) |
-| `piv` | 26 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `dem` | 25 | [INDEX](ops/dem/INDEX.md) · [guide](ops/dem/guides/dem_terrain_analysis.md) |
 | `imgmetrics` | 24 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `printpath` | 23 | [INDEX](ops/printpath/INDEX.md) · [guide](ops/printpath/guides/printpath.md) |
@@ -222,7 +222,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Document map — all 213
 
-The complete map, so that **no document is unreachable from this index** (the 2,663 per-op notes and 63 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 2,666 per-op notes and 63 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 

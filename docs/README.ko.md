@@ -68,11 +68,11 @@
 
 ## 연산자 찾기
 
-**2,663개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **63개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**2,666개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **63개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 934/934, 타입 台帳 1708/1720, 한 줄 파사드 `fullseye.<이름>` 671/1353 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 934/934, 타입 台帳 1711/1723, 한 줄 파사드 `fullseye.<이름>` 671/1353 — **파사드는 아직 절반**.
 
-**내용 실측**: 2668건 중 실행 가능한 예제가 붙은 것은 **2510**건(158건은 없음), 사용법이 120자 이상인 것은 **2530**건(138건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2668건 모두.
+**내용 실측**: 2671건 중 실행 가능한 예제가 붙은 것은 **2513**건(158건은 없음), 사용법이 120자 이상인 것은 **2533**건(138건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 2671건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -87,8 +87,8 @@
 | `oned` | 42 | [INDEX](ops/oned/INDEX.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
 | `generative` | 30 | [INDEX](ops/generative/INDEX.md) · [guide](ops/generative/guides/generative_art.md) |
+| `piv` | 29 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [guide](ops/conngraph/guides/conngraph.md) |
-| `piv` | 26 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `dem` | 25 | [INDEX](ops/dem/INDEX.md) · [guide](ops/dem/guides/dem_terrain_analysis.md) |
 | `imgmetrics` | 24 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `printpath` | 23 | [INDEX](ops/printpath/INDEX.md) · [guide](ops/printpath/guides/printpath.md) |
@@ -222,7 +222,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 문서 지도 — 전 213건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 2,663건과 패밀리 가이드 63건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 2,666건과 패밀리 가이드 63건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 

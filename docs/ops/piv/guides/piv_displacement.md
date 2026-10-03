@@ -13,13 +13,13 @@ version: 0.1.0
 
 **2 枚の画像から、どこがどれだけ動いたかを測る**層です。入力はトレーサ粒子を写した画像対、出力は窓ごとの変位ベクトル場 `(2, h, w)`(成分 `(dy, dx)`、単位は画素/フレーム)。流体計測(PIV)が本来の用途ですが、原理は相互相関なので、模様があるものなら粒子でなくても動きが取れます。
 
-26 op / 7 カテゴリ(numpy と scipy のみ。台帳は `opspiv.py`、実体は `pivops.py` と `dic.py`):
+29 op / 7 カテゴリ(numpy と scipy のみ。台帳は `opspiv.py`、実体は `pivops.py` と `dic.py`):
 
 - **synth(3)** — `piv_synth_particles` / `piv_synth_pair` / `piv_synth_sequence`: 既知の変位場を持つ画像対と画像列を作る。**この族の全テストの真値の供給源**。
 - **estimate(4)** — `piv_cross_correlate` / `piv_multipass` / `piv_deform_pass` / `piv_ensemble_correlate`: 本体。窓ごとの FFT 相互相関、粗→細の多段、窓変形、相関の合算。
 - **validate(2)** — `piv_outlier_mask` / `piv_replace_outliers`: 正規化中央値検定と穴埋め。
 - **field(8)** — `piv_vorticity` / `piv_divergence` / `piv_flow_magnitude` / `piv_to_velocity` / `piv_velocity_gradient` / `piv_q_criterion` / `piv_swirling_strength` / `piv_strain_rate`: 場の微分・不変量・単位変換。
-- **visualise(2)** — `piv_flow_to_rgbimage` / `piv_line_integral_convolution`: 出口。これが無いと `flow2d` は「作れるが見られない」型になる。
+- **visualise(5)** — `piv_flow_to_rgbimage` / `piv_line_integral_convolution` / `piv_quiver` / `piv_streamlines` / `piv_streamline_image`: 出口。これが無いと `flow2d` は「作れるが見られない」型になる。
 - **solid(3)** — `strain_from_displacement` / `correlation_quality` / `speckle_quality`: **固体側(DIC、デジタル画像相関)**。同じ相関器を使うが、出す量が違う(下の節)。
 - **assess(4)** — `piv_sample_at_windows` / `piv_error_stats` / `piv_peak_locking` / `piv_time_statistics`: 真値との突き合わせ、系統誤差、時間統計。
 
@@ -201,10 +201,15 @@ assert np.isfinite(v).all()
 
 > Q も λ_ci も**閾値を必要とする**量です。`Q > 0` だけでは薄い領域まで拾うので、閾値をどう決めたかを書かない渦可視化は、絵の美しさが閾値の産物である可能性を隠しています。閾値を振ったときの面積変化を併記してください。
 
-## 見せ方(可視化の 2 つ)
+## 見せ方(可視化の 5 つ)
 
 - `piv_flow_to_rgbimage` — 色相 = 向き、明度 = 速さ。`reprconv.flow_to_rgbimage` の 2 次元版(あちらは 3-D シーンフロー専用)。**`scale` を省くと図ごとに色の意味が変わる**ので、複数の図を並べるなら固定すること。色相環の凡例は図の側で必ず一緒に焼く。
 - `piv_line_integral_convolution` — 流れに沿って白色雑音を平均した模様。矢印は密にすると潰れ、疎にすると構造を見落としますが、LIC は画素ごとに積分するので密度の選択が要りません。**向きの情報は落ちる**(前後を区別しない)ので、回転の向きを見たいときは矢印か色相図と併用します。積分長を伸ばすと滑らかになりますが、渦の芯のように曲率が大きい場所では**構造が伸びて嘘になります**。
+- `piv_quiver` — 矢印図(MATLAB の `quiver`)。`spacing` 格子ごとに 1 本、長さは `scale × 速さ`。`scale` を省くと**最も長い矢印が間隔の 0.9 倍**になる(隣に重ならない)。この倍率は図ごとに変わるので、並べて比べる図では `scale` を固定します。`background` に色相図を敷くと、向きを色と矢印の両方で読めます。
+- `piv_streamlines` — 流線を RK4 でたどった折れ線の表(MATLAB の `stream2`)。種を省くと **Jobard–Lefer の等間隔配置**で自動に置き、別の線どうしは `d_test = test_ratio × separation` より近づかず、動いている点はどれも `(1 + √2/4) × separation` 以内に線を持ちます(両方とも門)。線ごとに止まった理由(枠・淀み・衝突・閉じた軌道・自己接近・歩数)を返すので、**線が途切れた理由が図の外で分かります**。
+- `piv_streamline_image` — 等間隔の流線を矢じりつきで描く(MATLAB の `streamslice`)。LIC と違って**前後が読めます**。線の間隔は揃えてあるので、**線の密度は速さを表しません** —— 速さは `background` に `piv_flow_magnitude` を敷いて見せます。
+
+> 門: 剛体回転の流線は円(半径の相対の振れ 1.2e-6)、流れ関数 ψ は流線の上で一定(振れ 8e-5、振れ幅 2 に対して)、描いた矢印の主軸が場の向きと 2° 以内で一致し矢じりが先端側にある(`tests/test_piv_flowlines.py`)。
 
 ## 精度を上げる 2 つの道(実測つき)
 

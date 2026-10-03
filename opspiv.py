@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opspiv —— 粒子画像流速測定(PIV)op の統一レジストリ。
 
-実体は ``pivops.py``(23 op)と ``dic.py``(3 op)—— 計 26 op / 7 カテゴリ。
+実体は ``pivops.py``(26 op)と ``dic.py``(3 op)—— 計 29 op / 7 カテゴリ。
 台帳の役目は 3 つ:
 docs/ops へノートを出す・連鎖ファザーに食わせる・宣言型と素の返りを橋渡しする。
 
@@ -32,7 +32,7 @@ _MOD = {"pivops": pivops, "dic": dic}
 #     deform_pass / ensemble_correlate / replace_outliers / to_velocity /
 #     sample_at_windows)、**消費が 13 op**(場の量 8・可視化 2・検定 2・評価 3
 #     の重なりを含む)で、族の中で生成と消費が閉じている。
-#     ★ 出口(``visualise`` の 2 op)を必ず持たせている —— 作れるが見られない
+#     ★ 出口(``visualise`` の 5 op)を必ず持たせている —— 作れるが見られない
 #     型は、連鎖の途中で行き止まりになり「狭い sort」を生む。
 #
 #     両方向の fail-closed も実測で確認済み: ``reprconv.flow_magnitude`` に
@@ -97,6 +97,11 @@ _CATALOG = {
     "visualise": [
         ("piv_flow_to_rgbimage", "pivops", ["flow2d"], "rgb"),
         ("piv_line_integral_convolution", "pivops", ["flow2d"], "image2d"),
+        # 矢印図と流線(MATLAB の quiver / streamslice)。色相図と LIC だけでは
+        # 「どちら向きに・どれだけ」が読めない(LIC は前後を落とす)。2026-10-03
+        ("piv_streamlines", "pivops", ["flow2d"], "table"),
+        ("piv_quiver", "pivops", ["flow2d"], "rgb"),
+        ("piv_streamline_image", "pivops", ["flow2d"], "rgb"),
     ],
     # 固体側 —— DIC(デジタル画像相関)。**流体の PIV と同じ相関器を使うが、
     # 出す量が違う**。2026-09-06 に実測して足した 3 本(`dic.py`):

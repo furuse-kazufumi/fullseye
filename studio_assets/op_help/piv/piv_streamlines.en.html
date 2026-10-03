@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_streamlines — PIV <code style="color:#22d3bf">visualise</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_streamlines(flow, seeds=None, separation=None, step=0.25, max_length=None, min_speed=0.001, test_ratio=0.5)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_streamlines(flow, seeds=None, separation=None, step=0.25, max_length=None, min_speed=0.001, test_ratio=0.5)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_streamlines&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>流線を RK4 でたどる(MATLAB の `<code style="color:#22d3bf">stream2</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">streamslice</code>` に当たる)。</p>
+<p>`<code style="color:#22d3bf">seeds</code>` を省くと <b>Jobard–Lefer(1997)の等間隔配置</b>で種を自動で置く。</p>
+<p>流線どうしが `<code style="color:#22d3bf">separation</code><code style="color:#22d3bf"> 程度の間隔で並び、</code><code style="color:#22d3bf">test_ratio * separation</code>`</p>
+<p>より近づいた所で打ち切る。矢印図は密にすると潰れ、種を手で置くと空白が</p>
+<p>残るが、この配置は<b>空白も重なりも作らない</b>(下の 2 つの性質を門にしている)。</p>
+<p style="margin:2px 0 2px 12px">• 別々の流線の標本点どうしは `<code style="color:#22d3bf">test_ratio * separation</code>` より近づかない。</p>
+<p style="margin:2px 0 2px 12px">• 速さが `<code style="color:#22d3bf">min_speed</code>` 以上の格子点はどれも、どこかの流線から</p>
+<p>`<code style="color:#22d3bf">separation</code>` 以内にある(取りこぼしの無さ)。</p>
+<p>座標は flow の格子(行 0 が上、`<code style="color:#22d3bf">(row, col)</code>`)。向きの場は速さで割って</p>
+<p><b>弧長で進む</b>ので、1 歩は `<code style="color:#22d3bf">step</code>` 格子。速さは流線上の各点で別に返す。</p>
+<p>Args:</p>
+<p>flow: `<code style="color:#22d3bf">(2, h, w)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">dy, dx</code>`)。</p>
+<p>seeds: `<code style="color:#22d3bf">(n, 2)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">(row, col)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">None</code>` で自動配置。</p>
+<p>separation: 流線の間隔 [格子]。`<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">max(h, w) / 25</code>`(2 以上)。</p>
+<p>step: RK4 の 1 歩 [格子]。</p>
+<p>max_length: 片方向の最大の長さ [格子]。`<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">4 * (h + w)</code>`。</p>
+<p>min_speed: これより遅い所で止める(<b>最大の速さに対する比</b>)。</p>
+<p>test_ratio: 打ち切りの距離を `<code style="color:#22d3bf">separation</code>` の何倍にするか(0 &lt; x ≤ 1)。</p>
+<p>Returns:</p>
+<p>dict(table): `<code style="color:#22d3bf">paths</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">(m_i, 2)</code>` の list、上流 → 下流の順)、</p>
+<p>`<code style="color:#22d3bf">speed</code><code style="color:#22d3bf">(各点の速さの list)、</code><code style="color:#22d3bf">seeds</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">stop</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">(後ろ, 前)</code>` の</p>
+<p>理由の組の list)、`<code style="color:#22d3bf">n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">separation</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">d_test</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">step</code>`、</p>
+<p>`<code style="color:#22d3bf">stop_counts</code>`(理由ごとの数)。</p>
+<p>Raises:</p>
+<p>ValueError: flow の形・非有限、パラメータ範囲外、種が格子の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_field_analysis_tour">piv_field_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/piv_field_analysis_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">visualise</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_flow_to_rgbimage">piv_flow_to_rgbimage</a> · <a style="color:#22d3bf" href="oppiv:piv_line_integral_convolution">piv_line_integral_convolution</a> · <a style="color:#22d3bf" href="oppiv:piv_quiver">piv_quiver</a> · <a style="color:#22d3bf" href="oppiv:piv_streamline_image">piv_streamline_image</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_streamlines — PIV <code style="color:#22d3bf">visualise</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_streamlines(flow, seeds=None, separation=None, step=0.25, max_length=None, min_speed=0.001, test_ratio=0.5)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_streamlines(flow, seeds=None, separation=None, step=0.25, max_length=None, min_speed=0.001, test_ratio=0.5)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_streamlines&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>流線を RK4 でたどる(MATLAB の `<code style="color:#22d3bf">stream2</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">streamslice</code>` に当たる)。</p>
+<p>`<code style="color:#22d3bf">seeds</code>` を省くと <b>Jobard–Lefer(1997)の等間隔配置</b>で種を自動で置く。</p>
+<p>流線どうしが `<code style="color:#22d3bf">separation</code><code style="color:#22d3bf"> 程度の間隔で並び、</code><code style="color:#22d3bf">test_ratio * separation</code>`</p>
+<p>より近づいた所で打ち切る。矢印図は密にすると潰れ、種を手で置くと空白が</p>
+<p>残るが、この配置は<b>空白も重なりも作らない</b>(下の 2 つの性質を門にしている)。</p>
+<p style="margin:2px 0 2px 12px">• 別々の流線の標本点どうしは `<code style="color:#22d3bf">test_ratio * separation</code>` より近づかない。</p>
+<p style="margin:2px 0 2px 12px">• 速さが `<code style="color:#22d3bf">min_speed</code>` 以上の格子点はどれも、どこかの流線から</p>
+<p>`<code style="color:#22d3bf">separation</code>` 以内にある(取りこぼしの無さ)。</p>
+<p>座標は flow の格子(行 0 が上、`<code style="color:#22d3bf">(row, col)</code>`)。向きの場は速さで割って</p>
+<p><b>弧長で進む</b>ので、1 歩は `<code style="color:#22d3bf">step</code>` 格子。速さは流線上の各点で別に返す。</p>
+<p>Args:</p>
+<p>flow: `<code style="color:#22d3bf">(2, h, w)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">dy, dx</code>`)。</p>
+<p>seeds: `<code style="color:#22d3bf">(n, 2)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">(row, col)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">None</code>` で自動配置。</p>
+<p>separation: 流線の間隔 [格子]。`<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">max(h, w) / 25</code>`(2 以上)。</p>
+<p>step: RK4 の 1 歩 [格子]。</p>
+<p>max_length: 片方向の最大の長さ [格子]。`<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">4 * (h + w)</code>`。</p>
+<p>min_speed: これより遅い所で止める(<b>最大の速さに対する比</b>)。</p>
+<p>test_ratio: 打ち切りの距離を `<code style="color:#22d3bf">separation</code>` の何倍にするか(0 &lt; x ≤ 1)。</p>
+<p>Returns:</p>
+<p>dict(table): `<code style="color:#22d3bf">paths</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">(m_i, 2)</code>` の list、上流 → 下流の順)、</p>
+<p>`<code style="color:#22d3bf">speed</code><code style="color:#22d3bf">(各点の速さの list)、</code><code style="color:#22d3bf">seeds</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">stop</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">(後ろ, 前)</code>` の</p>
+<p>理由の組の list)、`<code style="color:#22d3bf">n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">separation</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">d_test</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">step</code>`、</p>
+<p>`<code style="color:#22d3bf">stop_counts</code>`(理由ごとの数)。</p>
+<p>Raises:</p>
+<p>ValueError: flow の形・非有限、パラメータ範囲外、種が格子の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_field_analysis_tour">piv_field_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/piv_field_analysis_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">visualise</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_flow_to_rgbimage">piv_flow_to_rgbimage</a> · <a style="color:#22d3bf" href="oppiv:piv_line_integral_convolution">piv_line_integral_convolution</a> · <a style="color:#22d3bf" href="oppiv:piv_quiver">piv_quiver</a> · <a style="color:#22d3bf" href="oppiv:piv_streamline_image">piv_streamline_image</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

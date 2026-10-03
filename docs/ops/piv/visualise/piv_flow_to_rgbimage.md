@@ -52,7 +52,7 @@ Returns:
 
 ## 同カテゴリ(`visualise`)
 
-[piv_line_integral_convolution](piv_line_integral_convolution.md)
+[piv_line_integral_convolution](piv_line_integral_convolution.md) · [piv_streamlines](piv_streamlines.md) · [piv_quiver](piv_quiver.md) · [piv_streamline_image](piv_streamline_image.md)
 
 ---
 *Provenance: pivops.py — PIV operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

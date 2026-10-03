@@ -32,6 +32,11 @@
 8. **ピークロッキング**(``piv_peak_locking``)—— 同じ場で centroid の c0 が gauss3 を上回る。
 9. **可視化**(``piv_flow_to_rgbimage`` / ``piv_line_integral_convolution``)——
    右・上・左・下の 4 方向が決まった色に写り、LIC の縞は流れの向きに伸びる。
+10. **矢印図と流線**(``piv_quiver`` / ``piv_streamlines`` / ``piv_streamline_image``)——
+   MATLAB の ``quiver`` / ``streamslice`` に当たる。軸対称な Lamb–Oseen 渦の流線は
+   **円**なので、たどった線の半径が一定か(相対の振れ)で積分を検算する。等間隔配置は
+   「別の線どうしが ``d_test`` より近づかない」を全点の対で数える。
+   ``FULLSEYE_FIGURE_DIR`` を設定すると、色相図・LIC・矢印図・流線図を 4 枚並べた図を出す。
 
 読み方: 各節で「真値」「測定」「差」を並べて印字し、末尾の assert が閾値。速さは
 印字するだけで assert しない。
@@ -47,6 +52,7 @@ import numpy as np
 # リポジトリ直下を通す(この例は ``fullseye`` を import しないのでパスフックが効かない)
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import dic                                                       # noqa: E402
+import examplefig                                                # noqa: E402
 import pivops                                                    # noqa: E402
 
 H = W = 256
@@ -350,6 +356,46 @@ def run() -> dict:
     out["visual"] = {"rgb_max_err": rgb_err, "brightness_max_err": bright_err,
                      "lic_aniso_h_lag2": an["h", 2], "lic_aniso_v_lag2": an["v", 2]}
 
+    # ------------------------------------------------------------------ 10
+    print("\n=== 10. 矢印図と流線 —— 軸対称な渦の流線は円 ===")
+    ng = 64                                            # 256 px の像を 64 格子で標本
+    k = H / ng
+    gr, gc = (np.mgrid[0:ng, 0:ng].astype(np.float64) + 0.5) * k - 0.5
+    vflow = np.stack(lamb_oseen_vortex(gr, gc))
+    t1 = time.perf_counter()
+    st = pivops.piv_streamlines(vflow)
+    t_st = time.perf_counter() - t1
+    gcen = (ng - 1) / 2.0
+    circ = 0.0
+    for pth in st["paths"]:
+        if len(pth) > 1:
+            rad = np.hypot(pth[:, 0] - gcen, pth[:, 1] - gcen)
+            circ = max(circ, float(np.ptp(rad) / rad.mean()))
+    pts = np.concatenate(st["paths"])
+    lid = np.concatenate([np.full(len(pth), i) for i, pth in enumerate(st["paths"])])
+    close = 0
+    for i0 in range(0, len(pts), 512):
+        d = np.sqrt(((pts[i0:i0 + 512, None, :] - pts[None, :, :]) ** 2).sum(-1))
+        close += int(np.count_nonzero((d < st["d_test"] * (1 - 1e-9))
+                                      & (lid[i0:i0 + 512, None] != lid[None, :])))
+    print(f"  流線 {st['n']} 本(間隔 {st['separation']:.2f} 格子、{t_st:.2f} 秒)/ "
+          f"止まった理由 {dict((a, b) for a, b in st['stop_counts'].items() if b)}")
+    print(f"  半径の相対の振れ(最大): {circ:.1e}   ← 円なら 0。残りは双一次補間と RK4 の誤差")
+    print(f"  別の線どうしで d_test={st['d_test']:.2f} より近い点の対: {close // 2}")
+    up = 8
+    wheel = pivops.piv_flow_to_rgbimage(vflow).repeat(up, 0).repeat(up, 1)
+    lic = pivops.piv_line_integral_convolution(vflow, length=16, upsample=up, seed=3)
+    quiv = pivops.piv_quiver(vflow, upsample=up, background=0.35 + 0.65 * wheel)
+    mag = pivops.piv_flow_magnitude(vflow)
+    shade = 1.0 - 0.45 * (mag / mag.max()).repeat(up, 0).repeat(up, 1)
+    slim = pivops.piv_streamline_image(vflow, upsample=up, background=shade)
+    examplefig.save_grid(
+        "vortex_four_views", [wheel, lic, quiv, slim],
+        ["色相 = 向き・明るさ = 速さ", "LIC(前後は読めない)",
+         "矢印図(最長 = 間隔の 0.9 倍)", "流線(等間隔・濃い地 = 速い)"],
+        title="同じ Lamb–Oseen 渦を 4 通りに描く", ncols=2)
+    out["streamlines"] = {"n": st["n"], "circle_rel_ptp": circ, "close_pairs": close // 2}
+
     elapsed = time.perf_counter() - t0
     out["elapsed_s"] = elapsed
     print(f"\n所要 {elapsed:.2f} 秒")
@@ -382,6 +428,10 @@ def run() -> dict:
     assert rgb_err < 1e-9 and bright_err < 1e-9, (rgb_err, bright_err)
     assert lic_h.shape == (64, 64) and 0.0 <= lic_h.min() and lic_h.max() <= 1.0
     assert an["h", 2] < 0.3 and an["v", 2] > 3.0, an
+    sl = out["streamlines"]
+    assert sl["n"] >= 15 and sl["close_pairs"] == 0, sl
+    assert sl["circle_rel_ptp"] < 5e-3, sl                 # 軸対称な渦の流線は円
+    assert examplefig.errors() == [], examplefig.errors()
     print("PASS")
     return out
 
