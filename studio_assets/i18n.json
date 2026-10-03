@@ -970,6 +970,48 @@
    "tw": "樣本值：",
    "ko": "샘플 값: ",
    "de": "Beispielwert: "
+  },
+  "Insert into editor": {
+   "ja": "エディタに差し込む",
+   "zh": "插入到编辑器",
+   "tw": "插入到編輯器",
+   "ko": "에디터에 넣기",
+   "de": "In Editor einfügen"
+  },
+  "Put this code at the cursor of the Python Editor (opens it if needed)": {
+   "ja": "このコードを Python エディタのカーソル位置に入れる(無ければ開く)",
+   "zh": "把这段代码放到 Python 编辑器的光标处(需要时打开编辑器)",
+   "tw": "把這段程式碼放到 Python 編輯器的游標處(需要時開啟編輯器)",
+   "ko": "이 코드를 Python 에디터의 커서 위치에 넣기(없으면 열기)",
+   "de": "Diesen Code an der Cursorposition des Python-Editors einfügen (öffnet ihn bei Bedarf)"
+  },
+  "Session as script": {
+   "ja": "履歴をスクリプトに",
+   "zh": "把历史作为脚本",
+   "tw": "把歷史作為腳本",
+   "ko": "기록을 스크립트로",
+   "de": "Sitzung als Skript"
+  },
+  "Every successful run in this window, in order, as one script": {
+   "ja": "この窓で成功した実行を順に 1 本のスクリプトにする",
+   "zh": "把此窗口中成功的运行按顺序合成一个脚本",
+   "tw": "把此視窗中成功的執行依序合成一個腳本",
+   "ko": "이 창에서 성공한 실행을 순서대로 하나의 스크립트로",
+   "de": "Alle erfolgreichen Läufe in diesem Fenster der Reihe nach als ein Skript"
+  },
+  "Try %s in the ledger op window": {
+   "ja": "%s を台帳 op の実行窓で試す",
+   "zh": "在台账 op 窗口中试运行 %s",
+   "tw": "在台帳 op 視窗中試跑 %s",
+   "ko": "%s를 대장 op 창에서 시험",
+   "de": "%s im Ledger-Op-Fenster ausprobieren"
+  },
+  "Complete fs. / fs.ledger. name": {
+   "ja": "fs. / fs.ledger. の名前を補完",
+   "zh": "补全 fs. / fs.ledger. 名称",
+   "tw": "補全 fs. / fs.ledger. 名稱",
+   "ko": "fs. / fs.ledger. 이름 완성",
+   "de": "fs.- / fs.ledger.-Namen vervollständigen"
   }
  }
 }

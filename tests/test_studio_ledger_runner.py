@@ -118,7 +118,7 @@ def test_the_window_runs_exactly_what_a_direct_call_runs():
 
     窓が成績を悪くしていないかの門(2026-10-03: 3x3 の K を文字にして読み戻せず、
     直接なら通る形の引数を窓だけが落としていた)。見本そのものの質(opassist.sample_input)
-    は別の話で、成功率は印字だけする(実測 60 本中 26 本)。
+    は別の話で、成功率は印字だけする(実測 60 本中 27 本。flow2d の見本を足す前は 26 本)。
     """
     import fullseye as fs
     import opassist
@@ -169,3 +169,84 @@ def test_no_two_window_actions_share_a_shortcut():
             seen.setdefault(key, a)
     assert not dup, dup
     assert seen.get("Ctrl+Shift+L") is win._act_ledger_run
+
+
+# =========================================================================
+# 見たもの・試したものを、少ない手数でコードへ(2026-10-03)
+# =========================================================================
+
+def test_the_window_script_runs_as_is_and_imports_merge_once():
+    import fullseye as fs                               # noqa: F401
+    t = studio.ledger_script("piv_quiver", [("flow", "sample")], {"spacing": 4.0})
+    ns = {}
+    exec(t, ns)                                         # 見本の作り直しまで含めて、そのまま走る
+    assert ns["result"].ndim == 3
+    doc, _ = studio.merge_script_into("import numpy as np\n", 19,
+                                      studio.ledger_script("ode_vector_field_grid", [], {}))
+    doc, pos = studio.merge_script_into(doc, len(doc),
+                                        studio.ledger_script("piv_flow_magnitude", [("flow", "result")], {}))
+    assert doc.count("import fullseye as fs") == 1 and doc.startswith("import fullseye as fs\n")
+    ns = {}
+    exec(doc, ns)
+    assert ns["result"].ndim == 2                       # 場 → 速さ と繋がった
+    assert pos == len(doc)
+
+
+def test_call_templates_and_completions_save_keystrokes():
+    text, pos = studio.ledger_call_template("dem_slope")
+    assert text == "dem_slope(dem, cell_size=)" and text[pos - 1] == "="   # 最初の空欄へ
+    text, pos = studio.ledger_call_template("ode_vector_field_grid")
+    assert text == "ode_vector_field_grid()" and text[pos] == ")"           # 括弧の中
+    word, cands, kind = studio.editor_completions("y = fs.ledger.piv_qu")
+    assert (word, kind) == ("piv_qu", "ledger") and cands[0] == "piv_quiver"
+    word, cands, kind = studio.editor_completions("img = fs.read_im")
+    assert kind == "facade" and cands[0] == "read_image"
+    assert studio.editor_completions("x = np.zer")[2] is None              # fs の外では出さない
+
+
+def test_runner_to_editor_and_back_in_a_few_clicks():
+    QtWidgets, app = _app()
+    from PySide6 import QtCore, QtTest
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    dlg = win._open_ledger_runner("ode_vector_field_grid")
+    assert dlg._run() is not None
+    ed = dlg._insert()                                  # 1 クリック: エディタが開き、走るコードが入る
+    assert "result = fs.ledger.ode_vector_field_grid()" in ed.toPlainText()
+    dlg._select("piv_quiver")
+    dlg._state["sources"]["flow"].setCurrentIndex(studio.LEDGER_SOURCES.index("last result"))
+    assert dlg._run() is not None
+    ed = dlg._insert()                                  # 2 回目は同じタブのカーソル位置へ、import は増えない
+    txt = ed.toPlainText()
+    assert txt.count("import fullseye as fs") == 1
+    assert txt.index("ode_vector_field_grid") < txt.index("piv_quiver(result")
+    ns = {}
+    exec(dlg._session_script(), ns)                     # 履歴 = 繋いだ 2 手がそのまま走る
+    assert ns["result"].ndim == 3 and ns["result"].shape[2] == 3
+
+    # エディタで補完: fs.ledger.piv_qu → piv_quiver(flow)、カーソルは括弧の中の引数の後
+    ed.selectAll(); ed.insertPlainText("")
+    QtTest.QTest.keyClicks(ed, "fs.ledger.piv_qu")
+    assert ed._completer.popup().isVisible() or ed._cmodel.stringList()[:1] == ["piv_quiver"]
+    ed._insert_completion("piv_quiver")
+    assert ed.toPlainText() == "fs.ledger.piv_quiver(flow)"
+    # エディタ → 実行窓: カーソル下の op 名で開く
+    cur = ed.textCursor(); cur.setPosition(14); ed.setTextCursor(cur)
+    assert ed.word_under_cursor() == "piv_quiver"
+    ed.on_open_ledger_op(ed.word_under_cursor())
+    assert win._last_ledger_runner._state["op"] == "piv_quiver"
+
+
+def test_the_command_palette_reaches_every_ledger_op():
+    """Ctrl+P → 名前 → Enter の 3 手で、台帳のどの op の実行窓も開く。"""
+    QtWidgets, app = _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    from PySide6 import QtCore
+    assert win._actions["ledger_run"] is win._act_ledger_run
+
+    def type_and_enter():
+        win._palette["edit"].setText("ledger: piv_quiver")
+        win._palette["run"]()
+    QtCore.QTimer.singleShot(0, type_and_enter)        # パレットは exec() で開く → 開いた直後に打つ
+    win._actions["palette"].trigger()
+    assert win._last_ledger_runner._state["op"] == "piv_quiver"
+    assert any(lbl.startswith("ledger: ") for lbl in win._palette["labels"])

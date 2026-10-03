@@ -853,6 +853,114 @@ def run_ledger_op(op, data, kwargs):
     return out, _time.perf_counter() - t0
 
 
+def ledger_script(op, inputs, kwargs, sample_kw=(), image_path=None):
+    """窓で走らせた 1 回を、**そのまま走るスクリプト**にする(エディタへ差し込む・コピーする用)。
+
+    ``inputs`` はデータ入力ごとの ``(名前, 入手元)``。入手元は ``"sample"``(合成の見本。
+    ``opassist.sample_input`` で作り直す)/ ``"image"``(Studio で開いている画像。パスが
+    分かればそれを読む)/ ``"result"``(直前の行の ``result``。op を繋いだ履歴はこの名前で続く)。
+    ``sample_kw`` は値を見本から取った引数(行列や辞書 —— 文字にすると読み戻せない)。
+
+    返りは ``import`` の行と本体を改行でつないだ文字列。差し込む側は ``import`` の行だけを
+    文書の先頭に寄せる(:func:`split_script_imports`)。
+    """
+    sample_kw = set(sample_kw)
+    need_sample = any(src == "sample" for _, src in inputs) or bool(sample_kw)
+    head = ["import fullseye as fs"] + (["import opassist"] if need_sample else [])
+    body = []
+    if need_sample:
+        body.append("_data, _kw = opassist.sample_input(%r)   # synthetic sample: replace with your data" % op)
+    names = []
+    for k, (name, src) in enumerate(inputs):
+        if src == "sample":
+            body.append("%s = _data[%d]" % (name, k))
+            names.append(name)
+        elif src == "image":
+            path = image_path or "your_image.png"
+            body.append("img = fs.read_image(%r)" % path.replace("\\", "/"))
+            names.append("img")
+        else:
+            names.append("result")
+    args = names + [("%s=_kw[%r]" % (k, k)) if k in sample_kw else ("%s=%r" % (k, v))
+                    for k, v in kwargs.items()]
+    body.append("result = fs.ledger.%s(%s)" % (op, ", ".join(args)))
+    return "\n".join(head + body)
+
+
+def split_script_imports(text):
+    """スクリプトを ``(import の行の並び, 本体)`` に分ける。"""
+    imports, body = [], []
+    for ln in text.splitlines():
+        (imports if ln.startswith(("import ", "from ")) and not body else body).append(ln)
+    return imports, "\n".join(body)
+
+
+def merge_script_into(doc, cursor_pos, text):
+    """文書 ``doc`` の ``cursor_pos`` に ``text`` を差し込んだ結果と、新しいカーソル位置。
+
+    ``import`` の行は、文書に**まだ無いものだけ**を先頭に足す(同じ import が増えていかない)。
+    本体はカーソルの位置に、前後を改行で区切って入れる。
+    """
+    imports, body = split_script_imports(text)
+    have = set(doc.splitlines())
+    add = [ln for ln in imports if ln not in have]
+    pre = "\n".join(add) + "\n" if add else ""
+    cursor_pos = max(0, min(int(cursor_pos), len(doc)))
+    before, after = doc[:cursor_pos], doc[cursor_pos:]
+    if before and not before.endswith("\n"):
+        body = "\n" + body
+    ins = body + ("\n" if not body.endswith("\n") else "")
+    new = pre + before + ins + after
+    return new, len(pre) + len(before) + len(ins)
+
+
+def ledger_call_template(op):
+    """エディタの補完で入れる呼び出しの形: データ引数と必須引数を並べ、カーソルを最初の空欄へ。
+
+    返りは ``(文字列, カーソルの位置)``。例 ``dem_slope(dem, cell_size=)`` → ``=`` の直後。
+    必須でない引数は書かない(既定値で走る —— 書き足すのは窓かヘルプを見てから)。
+    """
+    try:
+        import opassist
+        specs = opassist.param_spec(op)
+    except Exception:                                   # noqa: BLE001 — 形が分からなければ括弧だけ
+        return op + "()", len(op) + 1
+    parts = []
+    for s in specs:
+        if s.get("kind") == "data":
+            parts.append(s["name"])
+        elif s.get("required"):
+            parts.append(s["name"] + "=")
+    text = "%s(%s)" % (op, ", ".join(parts))
+    import re
+    m = re.search(r"=(?=[,)])", text)                   # 最初の空欄(必須引数の = の直後)
+    if m:
+        return text, m.end()
+    return text, (len(text) if parts else len(text) - 1)  # 空欄が無ければ末尾 / 引数なしは括弧の中
+
+
+def editor_completions(line_before_cursor, limit=60):
+    """Python エディタの補完候補: ``fs.ledger.<途中>`` なら台帳の op、``fs.<途中>`` なら facade の名前。
+
+    返りは ``(打ちかけの語, 候補の並び, 種類)``。種類は ``"ledger"`` / ``"facade"`` / ``None``。
+    前方一致を先に、含むものを後に並べる(``quiv`` → ``piv_quiver``)。
+    """
+    import re
+    m = re.search(r"\b(fs\.ledger|fs)\.([A-Za-z_][A-Za-z0-9_]*)?$", line_before_cursor)
+    if not m:
+        return "", [], None
+    which, word = m.group(1), (m.group(2) or "")
+    import fullseye as fs
+    if which == "fs.ledger":
+        pool, kind = ledger_op_names(), "ledger"
+    else:
+        pool, kind = sorted(n for n in dir(fs) if not n.startswith("_")), "facade"
+    w = word.lower()
+    head = [n for n in pool if n.lower().startswith(w)]
+    rest = [n for n in pool if w and w in n.lower() and not n.lower().startswith(w)]
+    return word, (head + rest)[:limit], kind
+
+
 def _describe_value(v) -> str:
     """表の 1 欄を 1 行で: 配列は形・型・値域、数はその値、入れ子は件数(Inspector 用)。"""
     if isinstance(v, np.ndarray):
@@ -4282,6 +4390,8 @@ def _code_editor_class(QtWidgets, QtGui, QtCore):
     class CodeEditor(QtWidgets.QPlainTextEdit):
         #: ドロップされたファイルの受け手(Python エディタが ``open_path`` を入れる)。None なら既定の動作。
         on_drop_files = None
+        #: カーソル下の台帳 op 名で実行窓を開く受け手(Python エディタが入れる)。None なら項目を出さない。
+        on_open_ledger_op = None
 
         def _local_files(self, ev):
             md = ev.mimeData()
@@ -4326,6 +4436,71 @@ def _code_editor_class(QtWidgets, QtGui, QtCore):
             self.blockCountChanged.connect(lambda _n: self._update_gutter_width())
             self.updateRequest.connect(self._update_gutter)
             self._update_gutter_width()
+            # --- 入力補助(2026-10-03): ``fs.ledger.`` / ``fs.`` の後で名前を出す ---
+            # 台帳の op を選ぶと、データ引数と必須引数を並べた呼び出しの形まで入れ、
+            # カーソルを最初の空欄に置く(打つ手数を減らす。何を渡すかは形が教える)。
+            self._cmodel = QtCore.QStringListModel(self)
+            self._completer = QtWidgets.QCompleter(self._cmodel, self)
+            self._completer.setWidget(self)
+            self._completer.setCompletionMode(QtWidgets.QCompleter.UnfilteredPopupCompletion)
+            self._completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+            self._completer.setMaxVisibleItems(12)
+            self._completer.activated.connect(self._insert_completion)
+            self._ckind = None
+            self._cword = ""
+
+        def _line_before_cursor(self):
+            cur = self.textCursor()
+            return cur.block().text()[: cur.positionInBlock()]
+
+        def word_under_cursor(self):
+            """カーソル下の識別子(右クリック・Ctrl+Shift+L で op を開くのに使う)。"""
+            import re
+            cur = self.textCursor()
+            text, i = cur.block().text(), cur.positionInBlock()
+            for m in re.finditer(r"[A-Za-z_][A-Za-z0-9_]*", text):
+                if m.start() <= i <= m.end():
+                    return m.group(0)
+            return ""
+
+        def show_completions(self, force=False):
+            """候補を出す。出したら True。``force`` は Ctrl+Space(打ちかけが空でも出す)。"""
+            word, cands, kind = editor_completions(self._line_before_cursor())
+            if kind is None or not cands or (not word and not force):
+                self._completer.popup().hide()
+                return False
+            self._ckind, self._cword = kind, word
+            self._cmodel.setStringList(cands)
+            rect = self.cursorRect()
+            rect.setWidth(max(260, self._completer.popup().sizeHintForColumn(0) + 24))
+            self._completer.complete(rect)
+            self._completer.popup().setCurrentIndex(self._cmodel.index(0, 0))
+            return True
+
+        def _insert_completion(self, name):
+            cur = self.textCursor()
+            for _ in range(len(self._cword)):
+                cur.deletePreviousChar()
+            if self._ckind == "ledger":
+                text, pos = ledger_call_template(name)
+                start = cur.position()
+                cur.insertText(text)
+                cur.setPosition(start + pos)
+            else:
+                cur.insertText(name)
+            self.setTextCursor(cur)
+            self._completer.popup().hide()
+
+        def contextMenuEvent(self, ev):
+            menu = self.createStandardContextMenu()
+            word = self.word_under_cursor()
+            if self.on_open_ledger_op is not None and word and word in ledger_op_names():
+                menu.addSeparator()
+                a = menu.addAction(tr("Try %s in the ledger op window") % word + "\tCtrl+Shift+L")
+                a.triggered.connect(lambda _=False, w=word: self.on_open_ledger_op(w))
+            a2 = menu.addAction(tr("Complete fs. / fs.ledger. name") + "\tCtrl+Space")
+            a2.triggered.connect(lambda _=False: self.show_completions(force=True))
+            menu.exec(ev.globalPos())
 
         def gutter_width(self):
             digits = max(2, len(str(max(1, self.blockCount()))))
@@ -4364,6 +4539,15 @@ def _code_editor_class(QtWidgets, QtGui, QtCore):
                 block = block.next(); top += bh; n += 1
 
         def keyPressEvent(self, ev):
+            # 候補が出ている間の Enter / Tab / Esc は候補の側が受ける(Qt の QCompleter の作法)
+            if self._completer.popup().isVisible() and ev.key() in (
+                    QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter, QtCore.Qt.Key_Tab,
+                    QtCore.Qt.Key_Escape, QtCore.Qt.Key_Backtab):
+                ev.ignore()
+                return
+            if ev.key() == QtCore.Qt.Key_Space and ev.modifiers() & QtCore.Qt.ControlModifier:
+                self.show_completions(force=True)
+                return
             if ev.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
                 cur = self.textCursor()
                 line = cur.block().text()[: cur.positionInBlock()]
@@ -4378,6 +4562,10 @@ def _code_editor_class(QtWidgets, QtGui, QtCore):
                 self.insertPlainText("    ")
                 return
             super().keyPressEvent(ev)
+            t = ev.text()
+            if (t and (t.isalnum() or t in "._")) or (
+                    self._completer.popup().isVisible() and ev.key() == QtCore.Qt.Key_Backspace):
+                self.show_completions()
 
     return CodeEditor
 
@@ -4836,6 +5024,7 @@ def build_window(model=None):
                           "synthetic sample or the current image, and copy the one-line Python that does the same")
     menu_tools.addAction(act_ledger_run)                       # 台帳 op を押して試す (2026-10-03)
     win._act_ledger_run = act_ledger_run
+    _palette_extra = {"ledger_run": act_ledger_run}     # win._actions は後で作る → そこへ足す
     win._act_physical_ai = act_physical_ai
     menu_tools.addSeparator()
     lang_menu = _menu(menu_tools, "Language / 言語 / 语言", "language")  # UI/help language = a preference, not Help
@@ -7377,6 +7566,7 @@ def build_window(model=None):
             # ever replaced, so no discard-confirm is needed
             ed = CodeEditor()
             ed.on_drop_files = lambda fs_: win.drop_handler(fs_)   # .py はタブで、画像はビューアで
+            ed.on_open_ledger_op = lambda name: win._open_ledger_runner(name)   # エディタ → 実行窓
             ed._hl = Highlighter(ed.document())
             ed._path = path; ed._hint = hint; ed._dirty = False
             ed.setPlainText(text)
@@ -7557,6 +7747,13 @@ def build_window(model=None):
         QtGui.QShortcut(QtGui.QKeySequence("F5"), dlg, run_code)
         QtGui.QShortcut(QtGui.QKeySequence("Ctrl+S"), dlg, do_save)
 
+        def open_word_in_runner():
+            ed = cur_editor()
+            w = ed.word_under_cursor() if ed is not None else ""
+            win._open_ledger_runner(w if w in ledger_op_names() else None)
+        # 別窓なので本体の Ctrl+Shift+L は届かない —— エディタにも同じキーを置く
+        QtGui.QShortcut(QtGui.QKeySequence("Ctrl+Shift+L"), dlg, open_word_in_runner)
+
         win._pyedit = {"dlg": dlg, "tabs": tabs_ed, "editor": cur_editor, "output": out,
                        "status": status, "run": run_code, "stop": stop_code,
                        "open_tab": open_tab, "close_tab": close_tab, "save_to": save_to,
@@ -7569,6 +7766,36 @@ def build_window(model=None):
         win._pyedit_dlg = dlg
         win._localize(dlg)                     # register + translate this lazy dialog
         dlg.show()
+
+    def insert_code_into_editor(text, hint="ledger.py"):
+        """コードを Python エディタへ差し込む。エディタが無ければ開いて新しいタブに入れる。
+
+        開いていれば**いまのタブのカーソル位置**へ。import の行は、まだ無いものだけ先頭に足す
+        (同じ import が増えていかない)。1 回の元に戻す(Ctrl+Z)で取り消せる。
+        """
+        def _at_end(ed):
+            # 新しく開いたタブはカーソルが先頭に残る —— 次の差し込みが前に入らないよう末尾へ
+            if ed is not None:
+                c = ed.textCursor(); c.movePosition(QtGui.QTextCursor.End); ed.setTextCursor(c)
+            return ed
+        if getattr(win, "_pyedit_dlg", None) is None:
+            show_python_editor(text, hint)
+            return _at_end(win._pyedit["editor"]())
+        win._pyedit_dlg.show(); win._pyedit_dlg.raise_()
+        ed = win._pyedit["editor"]()
+        if ed is None:
+            return _at_end(win._pyedit["open_tab"](text, hint))
+        new, pos = merge_script_into(ed.toPlainText(), ed.textCursor().position(), text)
+        cur = ed.textCursor()
+        cur.beginEditBlock()
+        cur.select(QtGui.QTextCursor.Document)
+        cur.insertText(new)
+        cur.endEditBlock()
+        cur.setPosition(min(pos, len(new)))
+        ed.setTextCursor(cur)
+        ed.setFocus()
+        return ed
+    win._insert_code_into_editor = insert_code_into_editor
 
     def open_code_window(title, text):
         # A read-only, syntax-highlighted CODE window inside the MDI area — the sample-
@@ -7631,6 +7858,8 @@ def build_window(model=None):
         items += [("recent: " + os.path.basename(p), (lambda p=p: _open_recent(p)))
                   for p in _recent_paths()]
         items += [("op: " + r["name"], (lambda n=r["name"]: add_op_by_name(n))) for r in all_ops]
+        # 台帳の op は「実行窓をその op で開く」(Ctrl+P → 名前 → Enter の 3 手で試せる。2026-10-03)
+        items += [("ledger: " + n, (lambda n=n: win._open_ledger_runner(n))) for n in ledger_op_names()]
         labels = [lbl for lbl, _ in items]
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Command palette")
         tag_dialog(dlg, "editor")
@@ -10386,6 +10615,7 @@ def build_window(model=None):
         "duplicate_stage": act_dup, "move_top": act_top, "move_bottom": act_bottom,
         "focus_search": act_focus_search,
     }
+    win._actions.update(_palette_extra)                 # Tools ▸ Run a ledger op もパレットから
     win.addAction(act_focus_search)          # app-wide Ctrl+F -> operator search
     # -- multi-monitor: pop every tool panel out as its own top-level window --- #
     def float_all_panels(floating=True):
@@ -10789,8 +11019,12 @@ def build_window(model=None):
         b_run = QtWidgets.QPushButton(tr("Run")); b_run.setDefault(True); row.addWidget(b_run)
         auto = QtWidgets.QCheckBox(tr("Re-run when a value changes")); row.addWidget(auto)
         b_copy = QtWidgets.QPushButton(tr("Copy code")); row.addWidget(b_copy)
+        b_insert = QtWidgets.QPushButton(tr("Insert into editor")); row.addWidget(b_insert)
+        b_insert.setToolTip(tr("Put this code at the cursor of the Python Editor (opens it if needed)"))
+        b_session = QtWidgets.QPushButton(tr("Session as script")); row.addWidget(b_session)
+        b_session.setToolTip(tr("Every successful run in this window, in order, as one script"))
         row.addStretch(1)
-        code = QtWidgets.QPlainTextEdit(); code.setReadOnly(True); code.setMaximumHeight(52)
+        code = QtWidgets.QPlainTextEdit(); code.setReadOnly(True); code.setMaximumHeight(96)
         code.setFont(QtGui.QFontDatabase.systemFont(QtGui.QFontDatabase.FixedFont))
         right.addWidget(code)
         pic = QtWidgets.QLabel(); pic.setAlignment(QtCore.Qt.AlignCenter); pic.setMinimumHeight(240)
@@ -10801,7 +11035,7 @@ def build_window(model=None):
         right.addWidget(info)
         timer = QtCore.QTimer(dlg); timer.setSingleShot(True); timer.setInterval(250)
         st = {"op": None, "specs": [], "widgets": {}, "sources": {}, "result": None,
-              "sample": None, "error": None, "image": None}
+              "sample": None, "error": None, "image": None, "history": [], "script": ""}
 
         def fill_list():
             q = search.text().strip()
@@ -10909,8 +11143,8 @@ def build_window(model=None):
             return True
 
         def gather():
-            """(データの並び, 名前の並び, 引数) を集める。読めない値は ValueError。"""
-            data, dnames, kwargs = [], [], {}
+            """(データ, 名前, 引数, 入手元, 見本から取った引数) を集める。読めない値は ValueError。"""
+            data, dnames, kwargs, prov, from_sample = [], [], {}, [], set()
             samples = list(st["sample"][0]) if st["sample"] is not None else []
             di = 0
             for spec in st["specs"]:
@@ -10923,38 +11157,52 @@ def build_window(model=None):
                         if spec.get("sort") not in _IMAGE_SORTS:
                             raise ValueError("%s [%s]: the current image is not a %s"
                                              % (spec["name"], spec.get("sort"), spec.get("sort")))
-                        data.append(v); dnames.append("img")
+                        data.append(v); dnames.append("img"); prov.append((spec["name"], "image"))
                     elif src == "last result":
                         if st["result"] is None:
                             raise ValueError(tr("No result yet — run once first"))
                         data.append(st["result"]); dnames.append("result")
+                        prov.append((spec["name"], "result"))
                     else:
                         if di >= len(samples):
                             raise ValueError("%s: no synthetic sample for type %s"
                                              % (spec["name"], spec.get("sort")))
                         data.append(samples[di]); dnames.append(spec["name"])
+                        prov.append((spec["name"], "sample"))
                     di += 1
                     continue
                 w = st["widgets"][spec["name"]]
                 v = value_of(spec, w)
                 if spec.get("required") and v is None:
                     raise ValueError("%s: %s" % (spec["name"], tr("required")))
-                if v != spec.get("default") or spec.get("required"):
+                if isinstance(w, QtWidgets.QLineEdit) and w.text().strip() == SAMPLE_TOKEN:
+                    from_sample.add(spec["name"])
+                if from_sample.intersection([spec["name"]]) or _differs(v, spec.get("default")) \
+                        or spec.get("required"):
                     kwargs[spec["name"]] = v
-            return data, dnames, kwargs
+            return data, dnames, kwargs, prov, from_sample
+
+        def _differs(a, b):
+            try:
+                return bool(a != b) if not isinstance(a, np.ndarray) else True
+            except Exception:                           # noqa: BLE001 — 比べられない値は「違う」
+                return True
 
         def run():
             if not st["op"]:
                 return None
             try:
-                data, dnames, kwargs = gather()
-                code.setPlainText(ledger_call_code(st["op"], dnames, kwargs))
+                data, dnames, kwargs, prov, from_sample = gather()
+                st["script"] = ledger_script(st["op"], prov, kwargs, from_sample,
+                                             image_path=state.get("image_path"))
+                code.setPlainText(st["script"])
                 out, sec = run_ledger_op(st["op"], data, kwargs)
             except Exception as e:                      # noqa: BLE001 — 何が悪いかを窓に出す
                 st["error"] = "%s: %s" % (type(e).__name__, e)
                 info.setPlainText(st["error"]); pic.clear()
                 return None
             st["result"], st["error"] = out, None
+            st["history"].append(st["script"])
             d = inspect_result(out)
             txt = format_inspection(d)
             img = None
@@ -10988,6 +11236,19 @@ def build_window(model=None):
         def copy_code():
             QtWidgets.QApplication.clipboard().setText(code.toPlainText())
 
+        def session_script():
+            """成功した実行を順に 1 本のスクリプトへ(import は 1 回だけ)。"""
+            doc = ""
+            for sc in st["history"]:
+                doc, _ = merge_script_into(doc, len(doc), sc)
+            return doc
+
+        def insert_into_editor(text=None):
+            t = text if text is not None else code.toPlainText()
+            if t.strip():
+                return insert_code_into_editor(t, "%s.py" % (st["op"] or "ledger"))
+            return None
+
         def copy_pic():
             if st["image"] is not None:
                 qi = _to_qimage(st["image"], QtGui)
@@ -10999,6 +11260,8 @@ def build_window(model=None):
         op_list.currentTextChanged.connect(lambda n: n and n != st["op"] and select(n))
         b_run.clicked.connect(lambda _=False: run())
         b_copy.clicked.connect(lambda _=False: copy_code())
+        b_insert.clicked.connect(lambda _=False: insert_into_editor())
+        b_session.clicked.connect(lambda _=False: insert_into_editor(session_script()))
         act_copy_pic.triggered.connect(lambda _=False: copy_pic())
         fill_list()
         if op:
@@ -11007,6 +11270,7 @@ def build_window(model=None):
         dlg._state = st; dlg._select = select; dlg._run = run; dlg._search = search
         dlg._op_list = op_list; dlg._auto = auto; dlg._code = code; dlg._info = info; dlg._pic = pic
         dlg._timer = timer
+        dlg._insert = insert_into_editor; dlg._session_script = session_script
         dlg.resize(1100, 760); dlg.show()
         win._last_ledger_runner = dlg
         return dlg

@@ -7,6 +7,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**見たもの・試したものを少ない手数でコードへ(Studio ⇄ Python エディタ)。** 台帳 op の実行窓に「エディタに差し込む」
+  (見本の作り直しまで含む**そのまま走るスクリプト**をカーソル位置へ。import は無いものだけ先頭に)と「履歴をスクリプトに」
+  (「直前の結果」で繋いだ手順が `result = …` の連なりで走る)。Python エディタに補完が無かった → `fs.ledger.` / `fs.` の後で
+  名前の候補(Ctrl+Space)、台帳の op を選ぶと `dem_slope(dem, cell_size=)` のように**データ引数と必須引数の形**を入れて最初の
+  空欄へ。op 名の上で右クリック / Ctrl+Shift+L でその op の実行窓へ。コマンドパレット(Ctrl+P)に `ledger: 名前` で全台帳 op。
+  門: 差し込んだコードと履歴のスクリプトを実際に exec して走ること、import が増えないこと、パレットを実際に打って開くこと。
+- **opassist の見本に flow2d が無かった**ので、PIV 台帳の flow2d を取る op が見本では全滅していた → 渦 + 一様流の場を足し、
+  PIV 26 op 中 21 が見本のまま走る(残り 5 は op ごとの見本の都合)。実行窓の抜き取り 60 本では 26 → 27。
+
 - ★**Studio から台帳の op を押して試せるようにした(Tools ▸ Run a ledger op…、Ctrl+Shift+L)。** Studio が走らせられたのは 2-D の
   進化 op だけで、台帳の ~1,700 op はヘルプの表を読めても「CLI から実行してください」だった。`opassist.param_spec` の型から入力欄
   (整数・実数・真偽・選択・行)を組み、データ入力は見本(合成)/いまの画像/直前の結果(op を繋げる)から選ぶ。実行すると絵と中身、

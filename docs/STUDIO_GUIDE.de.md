@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 002b7515a73c -->
+<!-- i18n-source-sha: 363598497bd3 -->
 # Vollständiger Leitfaden zu Fullseye Studio
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · **Deutsch**
@@ -308,8 +308,16 @@ zum Typ jedes Arguments** ausführt. Links Namen oder Wörter suchen, eine Op w�
 - **Ausführen** zeigt das Ergebnis als Bild und als Inhalt (Form, Wertebereich, Felder) sowie **die eine Python-Zeile,
   die dasselbe tut** („Code kopieren“ fügt sie in ein Skript ein; das entspricht dem MATLAB-Befehlsverlauf).
 - Mit „**Bei Wertänderung neu ausführen**“ läuft die Op bei jeder Änderung neu.
+- **Mit einem Klick in den Editor**: „In Editor einfügen“ setzt den Code des Fensters (ein **sofort lauffähiges Skript**, das
+  auch das Beispiel neu erzeugt) an die Cursorposition des Python-Editors (öffnet ihn bei Bedarf; nur fehlende Importe werden oben
+  ergänzt). „Sitzung als Skript“ fasst alle erfolgreichen Läufe dieses Fensters der Reihe nach zusammen (über „letztes Ergebnis“
+  verkettete Schritte werden zu einer Folge von `result = …`).
+- **Auch vom Editor aus**: Im Python-Editor erscheinen nach `fs.ledger.` oder `fs.` Namensvorschläge (jederzeit mit Strg+Leertaste).
+  Eine gewählte Ledger-Op fügt **den Aufruf mit Daten- und Pflichtargumenten** ein – z. B. `dem_slope(dem, cell_size=)` – mit dem
+  Cursor in der ersten Lücke. Rechtsklick auf einen Op-Namen oder Strg+Umschalt+L darauf öffnet das Fenster dieser Op.
+- **Befehlspalette (Strg+P)**: `ledger: Name` öffnet das Fenster jeder Ledger-Op mit drei Eingaben (Strg+P → Name → Enter).
 
-Manche Ops laufen nicht mit ihrem Beispiel (eine Grenze der Beispielerzeugung pro Op: am 2026-10-03 liefen 26 von 60
+Manche Ops laufen nicht mit ihrem Beispiel (eine Grenze der Beispielerzeugung pro Op: am 2026-10-03 liefen 27 von 60
 Stichproben-Ops so). Dass das Fenster selbst keine Fehler hinzufügt, prüft ein Gate: Es muss mit der direkten Übergabe
 des Beispiels an die Op übereinstimmen.
 

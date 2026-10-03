@@ -67,8 +67,8 @@ _INTERNAL = {
     "halcon_scrape": 9, "honest_summary": 1, "imgevolve": 14, "lib_coverage": 3,
     "param_specs": 10, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
     "report": 1, "robust": 3, "samples": 2, "shapematch_gpu": 3,
-    # studio 2026-10-03 +5: 結果プレビューと台帳 op の実行窓の部品(GUI の内側)
-    "studio": 70, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
+    # studio 2026-10-03 +10: 結果プレビュー・台帳 op の実行窓・エディタへ繋ぐ部品(GUI の内側)
+    "studio": 75, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
     #   `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には
@@ -209,7 +209,7 @@ def test_pending_exposure_shrinks_when_fixed():
 #: 2026-09-14: 1231 -> 1235。opsspc 台帳の内部 API(_build/list_ops/categories/get/call/
 #: info/missing の非公開分)と spc.py の入力バリデータ(_as_float_array/_as_1d)。op 自身
 #: (spc_xbar_r/spc_cusum/spc_capability/spc_hotelling_t2)は typed_catalog と api から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 838   # 2026-10-02: facade 経路を数えて 1235 → 901、unified registry を数えて 901 → 861、train_class_mlp/svm を facade に載せて 859、watershed3d を台帳に載せて 856、棚卸しの 18 本を fs.<名前> に出して 838、pipeline3d の 6 本を出して 832、2026-10-03 に Studio の GUI 部品 5 本(studio は内部専用)と examplefig.render_plot(図の書き出しの内側)で 838(ratchet)
+_HIDDEN_FUNCTIONS_TODAY = 843   # 2026-10-02: facade 経路を数えて 1235 → 901、unified registry を数えて 901 → 861、train_class_mlp/svm を facade に載せて 859、watershed3d を台帳に載せて 856、棚卸しの 18 本を fs.<名前> に出して 838、pipeline3d の 6 本を出して 832、2026-10-03 に Studio の GUI 部品 5 本(studio は内部専用)と examplefig.render_plot(図の書き出しの内側)で 838、エディタへ繋ぐ Studio の部品 5 本で 843(ratchet)
 
 
 def _hidden_total():

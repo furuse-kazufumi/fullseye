@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 002b7515a73c -->
+<!-- i18n-source-sha: 363598497bd3 -->
 # The complete guide to Fullseye Studio
 
 [日本語](./STUDIO_GUIDE.md) · **English** · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md)
@@ -311,8 +311,16 @@ on the right.
 - **Run** shows the result as a picture and as its contents (shape, range, fields), plus **the one line of Python that
   does the same** ("Copy code" pastes it into a script; it is the MATLAB command history).
 - With "**Re-run when a value changes**" on, every change re-runs the op (exploring with the controls).
+- **Into the editor in one click**: "Insert into editor" puts the window's code (a **script that runs as is**, rebuilding the
+  sample too) at the cursor of the Python Editor (opening it if needed; only imports the document lacks are added at the top).
+  "Session as script" collects every successful run in this window, in order (steps chained through "last result" become a
+  sequence of `result = …` lines).
+- **From the editor too**: in the Python Editor, typing after `fs.ledger.` or `fs.` offers names (Ctrl+Space at any time).
+  Picking a ledger op inserts **the call with its data and required arguments** — e.g. `dem_slope(dem, cell_size=)` — with the
+  cursor in the first blank. Right-click an op name, or press Ctrl+Shift+L on it, to open that op's window.
+- **Command palette (Ctrl+P)**: `ledger: name` opens the window for any ledger op in three keystrokes (Ctrl+P → name → Enter).
 
-Some ops do not run on their sample (a limit of how each op's sample is built: on 2026-10-03, 26 of 60 sampled ops ran
+Some ops do not run on their sample (a limit of how each op's sample is built: on 2026-10-03, 27 of 60 sampled ops ran
 as is). That the window adds no failures of its own is checked by a gate: it must agree with passing the sample to the
 op directly.
 

@@ -729,6 +729,9 @@ def sample_input(op_name: str):
         #   滑らかな画像を 8x8 パッチに切ると、近い場所が近い向きを向く。
         "tokens": _sample_tokens,
         "attnmap": _sample_attnmap,
+        # flow2d(2026-10-03): 種が無く、PIV 台帳の flow2d を取る op(矢印図・流線・渦度・Q 基準 …)が
+        #   全部「押しても動かない」だった(Studio の台帳 op 実行窓で実測)。渦 + 一様な流れ。
+        "flow2d": _sample_flow2d,
     }
     #: 単位に合う種(汎用の 0..1 では意味を持たない量がある)。
     #: ★ 実測で判明: `prism_min_deviation_deg` の波長入力に 0..1 の汎用 signal を渡すと
@@ -754,6 +757,20 @@ def sample_input(op_name: str):
             # 書き先のパス名は発明しない —— None を渡し、op が「path is None — pass a file path」と言う。
             kwargs[spec["name"]] = None if (writes_file and spec["name"] in _PATH_PARAMS) else _sample_value(spec)
     return args, kwargs
+
+
+def _sample_flow2d():
+    """32x32 の ``(dy, dx)``: 滑らかな渦(Lamb–Oseen 形)に右向きの一様な流れを重ねた場。
+
+    ★一様乱数にしない —— 渦度・Q 基準・流線は**構造が無いと**どのノブでも同じ絵になる。
+    渦の中心を少しずらして左右・上下の対称も破る(対称な種は向きの取り違えを隠す)。
+    """
+    import numpy as np
+    r, c = np.mgrid[0:32, 0:32].astype(np.float64)
+    dy, dx = r - 13.0, c - 17.5
+    rr = np.hypot(dy, dx) + 1e-9
+    vt = 3.0 / rr * (1.0 - np.exp(-(rr / 6.0) ** 2))
+    return np.stack([vt * (-dx / rr), vt * (dy / rr) + 0.25])
 
 
 def _sample_mask():

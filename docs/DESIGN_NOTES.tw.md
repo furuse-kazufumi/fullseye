@@ -1394,18 +1394,18 @@
 - **L509** — ★要點在此:有些參數**其預設值並非以 tuple 給出**。`center=None`(可省略的 (row,col))、必需的 `trans`(3 向量)、`k_cam`(3x3 矩陣)... 只看預設值就會看成「一個數值」,UI 便只出一個 spin box 而崩潰。用名字補足結構。
 - **L723** _(ja)_ — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
 - **L727** _(ja)_ — llmcore(2026-09-24): ★一様乱数にしない —— どの行も似た向きになり、 注意の重みが全行ほぼ一様になって「押しても何も起きない」種になる。 滑らかな画像を 8x8 パッチに切ると、近い場所が近い向きを向く。
-- **L734** — ★實測發現:向 `prism_min_deviation_deg` 的波長輸入傳入 0..1 的通用 signal,會被「波長須為正值」拒絕,變成一個**範例跑不動的 op**。若已知單位,以該量的合理範圍作種,更接近「一按就動」。
-- **L913** — 日文(CJK)的連綴。★``_WORD_RE`` 為 ``[a-z0-9]+``,因此日語查詢**一個詞都取不到**(對日語輸入而言 ``_WORD_RE.findall(...) == []``)。詞幹那一段失效,而部分匹配是連空白一起去找字串,所以**日語的多詞查詢在結構上必定 0 命中** -- 在一款 docstring 大半為日語、以 6 種語言分發的產品裡。2026-09-08 由 `poc_search_sweep_width` 踩到而查明(經 ``op_find`` 查「點檢出」/「光斑檢出」/「小目標」的日語查詢均為 0 命中,而帶次像素質心的點目標檢出只有 ``star_detect``,卻無法從日語抵達)。
-- **L966** — 視為詞幹一致的公共前綴長度。★取 4 會把 "median"/"medial" 及 "contrast"/"contour" 連到一起;切在 5,則 "correlation"/"correlate"(8)、"segmentation"/"segment"(7)、"rotation"/"rotate"(5)、"gaussian"/"gauss"(5) 能被拾取,而上述兩組不會。
-- **L976** — 公共前綴**之後允許的詞尾**。★僅憑前綴長度判定會把 "median"/"medial" 連起來(共有 5 個字元的 "media")。看詞尾是否像屈折詞尾,則 "correlation"/"correlate"(ion / e)通過,而 "median"/"medial"(n / l)與 "corner"/"cornea"(r / a)落選。
-- **L1072** — ★下限。沒有它時,"zzz-nothing-matches" 會回傳 `histogram_match`(因為 "matches" 與 `match_*` 詞幹一致)。若命中詞的權重不足整條查詢的 15 %,則視為「未命中」。實測:"digital image correlation" 為 0.19(通過),"zzz-nothing-matches" 為 0.10(丟棄)。
-- **L1246** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
-- **L1274** _(ja)_ — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
-- **L1326** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
-- **L1346** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
-- **L1359** _(ja)_ — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
-- **L1369** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
-- **L1387** _(ja)_ — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
+- **L737** — ★實測發現:向 `prism_min_deviation_deg` 的波長輸入傳入 0..1 的通用 signal,會被「波長須為正值」拒絕,變成一個**範例跑不動的 op**。若已知單位,以該量的合理範圍作種,更接近「一按就動」。
+- **L930** — 日文(CJK)的連綴。★``_WORD_RE`` 為 ``[a-z0-9]+``,因此日語查詢**一個詞都取不到**(對日語輸入而言 ``_WORD_RE.findall(...) == []``)。詞幹那一段失效,而部分匹配是連空白一起去找字串,所以**日語的多詞查詢在結構上必定 0 命中** -- 在一款 docstring 大半為日語、以 6 種語言分發的產品裡。2026-09-08 由 `poc_search_sweep_width` 踩到而查明(經 ``op_find`` 查「點檢出」/「光斑檢出」/「小目標」的日語查詢均為 0 命中,而帶次像素質心的點目標檢出只有 ``star_detect``,卻無法從日語抵達)。
+- **L983** — 視為詞幹一致的公共前綴長度。★取 4 會把 "median"/"medial" 及 "contrast"/"contour" 連到一起;切在 5,則 "correlation"/"correlate"(8)、"segmentation"/"segment"(7)、"rotation"/"rotate"(5)、"gaussian"/"gauss"(5) 能被拾取,而上述兩組不會。
+- **L993** — 公共前綴**之後允許的詞尾**。★僅憑前綴長度判定會把 "median"/"medial" 連起來(共有 5 個字元的 "media")。看詞尾是否像屈折詞尾,則 "correlation"/"correlate"(ion / e)通過,而 "median"/"medial"(n / l)與 "corner"/"cornea"(r / a)落選。
+- **L1089** — ★下限。沒有它時,"zzz-nothing-matches" 會回傳 `histogram_match`(因為 "matches" 與 `match_*` 詞幹一致)。若命中詞的權重不足整條查詢的 15 %,則視為「未命中」。實測:"digital image correlation" 為 0.19(通過),"zzz-nothing-matches" 為 0.10(丟棄)。
+- **L1263** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
+- **L1291** _(ja)_ — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
+- **L1343** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
+- **L1363** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
+- **L1376** _(ja)_ — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
+- **L1386** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
+- **L1404** _(ja)_ — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
 
 ## `ops.py`
 
@@ -1647,18 +1647,18 @@
 - **L619** _(ja)_ — ★2026-10-03: 複素数は虚部を黙って捨てた min/max を出していた。|z| で数える
 - **L642** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
 - **L653** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
-- **L1075** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
-- **L5012** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L6022** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L6848** — ★ 圖的承接盤。範例經 `examplefig` 往此處寫 PNG。不傳環境變數的執行（CLI）中一張都不寫，故只有從畫廊執行時才出圖（範例的數值與速度不變）。
-- **L7004** — ★ 圖的承接盤。範例經 `examplefig` 往此處寫 PNG。不傳環境變數的執行（CLI）中一張都不寫，故只有從畫廊執行時才出圖（範例的數值與速度不變）。
-- **L7798** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L8653** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
-- **L8726** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
-- **L8729** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
-- **L10201** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
-- **L10220** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
-- **L11092** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L1183** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
+- **L5201** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L6211** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L7037** — ★ 圖的承接盤。範例經 `examplefig` 往此處寫 PNG。不傳環境變數的執行（CLI）中一張都不寫，故只有從畫廊執行時才出圖（範例的數值與速度不變）。
+- **L7193** — ★ 圖的承接盤。範例經 `examplefig` 往此處寫 PNG。不傳環境變數的執行（CLI）中一張都不寫，故只有從畫廊執行時才出圖（範例的數值與速度不變）。
+- **L8027** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L8882** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
+- **L8955** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
+- **L8958** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
+- **L10430** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
+- **L10449** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
+- **L11356** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `tests/conftest.py`
 
@@ -1992,12 +1992,12 @@
 
 ## `tests/test_public_reachability.py`
 
-- **L71** _(ja)_ — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.vision.gsplat.<名前>` 経由で届く(2026-10-02 訂正: `fullseye.op.<名前>` は存在しない。 unified registry を公開経路として数えたら 17 モジュールが島でなくなり行を消した)。 ここに残る 1〜6 本は各モジュールのデモ入口(`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
-- **L80** _(ja)_ — ★2026-10-02: py-modules の数え漏れ(68 → 408 本)と facade 経路の数え忘れを直して初めて見えた 9 本。 内部の道具(CLI・ヘルプ書庫・n-ary の組立て・Studio の索引・標本データの取得・大画像の実行補助)、 api が別名で包むもの(mesh_decimate → mesh_decimate_preserving)、fs.<module>.<fn> でだけ届くもの (pipeline3d の合成 op 6 本 —— 2026-10-02 に fs.<名前> から出して行を消した)。 (watershed3d の 3 本は 2026-10-02 に台帳 opssegmentation の watershed3d へ載せて行を消した。)
-- **L93** _(ja)_ — ★2026-09-15: 33 行すべてが公開経路(fullseye.<名前> / .ledger / .op)に届くように なっており、2 番目の検査が「この表から行を消すこと」と 33 件を挙げた。 消した 33: transforms / mosaic / fit_transform / tools_geom / matrix / shapematch / objmodel3d / matching3d / matching / calib / caltab / calibration3d / contours_xld / contours_xld2 / image_channels / filters_freq / filters_flow / regions_setops / regions_gen / region_morph / morph_minkowski / segmentation / image_gen / image_paint / misc_vision / imgops_nary / scattered / inspection / pipeline3d / watershed3d / mesh_decimate / sample_data / scale。 表は空でも残す —— 「出すべきなのに出ていない」ものが次に現れたときの器。
-- **L115** _(ja)_ — ★2026-10-02: コメント行の ``[[feedback_...]]`` で非貪欲の ``\]`` が止まり、py-modules 407 本のうち 68 本しか数えていなかった(339 本が門に映らない)。コメントを剥いでから囲みを取る。
-- **L133** _(ja)_ — ★2026-10-02: 4 つ目の公開経路 = 知覚 facade(fullseye.vision.<群>.<関数>、halcon_facade_map.json の "module.func" が実体)。HALCON 章の実装(segmentation.py 等)はここからだけ届いていた。 py-modules の数え漏れ(68 → 408 本)を直した途端に 35 モジュールが「見えない」と出たが、 その多くは facade 経由で届く。利用者が呼べる経路は全部数える。
-- **L141** _(ja)_ — ★2026-10-02: 5 つ目の公開経路 = unified registry(``fs.vision.<名前空間>.<op>``)。3DGS などの op は 文字列 "module.func" から ``_lazy_call`` で登録され、facade map にも台帳にも名前が出ない (sugar_mesh・tsdf_mesh・route_planning 等)。"module.func" 形の ``module`` 欄だけを数える (``fs.apply('x')`` のような呼び出し式は関数名ではない)。
+- **L72** _(ja)_ — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.vision.gsplat.<名前>` 経由で届く(2026-10-02 訂正: `fullseye.op.<名前>` は存在しない。 unified registry を公開経路として数えたら 17 モジュールが島でなくなり行を消した)。 ここに残る 1〜6 本は各モジュールのデモ入口(`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
+- **L81** _(ja)_ — ★2026-10-02: py-modules の数え漏れ(68 → 408 本)と facade 経路の数え忘れを直して初めて見えた 9 本。 内部の道具(CLI・ヘルプ書庫・n-ary の組立て・Studio の索引・標本データの取得・大画像の実行補助)、 api が別名で包むもの(mesh_decimate → mesh_decimate_preserving)、fs.<module>.<fn> でだけ届くもの (pipeline3d の合成 op 6 本 —— 2026-10-02 に fs.<名前> から出して行を消した)。 (watershed3d の 3 本は 2026-10-02 に台帳 opssegmentation の watershed3d へ載せて行を消した。)
+- **L94** _(ja)_ — ★2026-09-15: 33 行すべてが公開経路(fullseye.<名前> / .ledger / .op)に届くように なっており、2 番目の検査が「この表から行を消すこと」と 33 件を挙げた。 消した 33: transforms / mosaic / fit_transform / tools_geom / matrix / shapematch / objmodel3d / matching3d / matching / calib / caltab / calibration3d / contours_xld / contours_xld2 / image_channels / filters_freq / filters_flow / regions_setops / regions_gen / region_morph / morph_minkowski / segmentation / image_gen / image_paint / misc_vision / imgops_nary / scattered / inspection / pipeline3d / watershed3d / mesh_decimate / sample_data / scale。 表は空でも残す —— 「出すべきなのに出ていない」ものが次に現れたときの器。
+- **L116** _(ja)_ — ★2026-10-02: コメント行の ``[[feedback_...]]`` で非貪欲の ``\]`` が止まり、py-modules 407 本のうち 68 本しか数えていなかった(339 本が門に映らない)。コメントを剥いでから囲みを取る。
+- **L134** _(ja)_ — ★2026-10-02: 4 つ目の公開経路 = 知覚 facade(fullseye.vision.<群>.<関数>、halcon_facade_map.json の "module.func" が実体)。HALCON 章の実装(segmentation.py 等)はここからだけ届いていた。 py-modules の数え漏れ(68 → 408 本)を直した途端に 35 モジュールが「見えない」と出たが、 その多くは facade 経由で届く。利用者が呼べる経路は全部数える。
+- **L142** _(ja)_ — ★2026-10-02: 5 つ目の公開経路 = unified registry(``fs.vision.<名前空間>.<op>``)。3DGS などの op は 文字列 "module.func" から ``_lazy_call`` で登録され、facade map にも台帳にも名前が出ない (sugar_mesh・tsdf_mesh・route_planning 等)。"module.func" 形の ``module`` 欄だけを数える (``fs.apply('x')`` のような呼び出し式は関数名ではない)。
 
 ## `tests/test_raster.py`
 
