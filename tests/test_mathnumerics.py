@@ -17,7 +17,7 @@ with warnings.catch_warnings():
     import mathnumerics as N
     import opsmath
 
-LEDGER = ["erf", "erfc", "bessel", "gauss_quadrature", "low_discrepancy", "chebyshev_nodes",
+LEDGER = ["erf", "erfc", "bessel", "gauss_quadrature", "gauss_cubature", "low_discrepancy", "chebyshev_nodes",
           "interp_barycentric", "integrate_hamiltonian"]
 
 
@@ -165,3 +165,21 @@ def test_kepler_circular_orbit_keeps_its_radius():
     assert rad.max() - rad.min() < 1e-4 and k["energy_drift"] < 1e-8
     with pytest.raises(ValueError):
         N.integrate_hamiltonian([1.0], [0.0], 0.1, 10, system="kepler")
+
+
+@pytest.mark.parametrize("n", [2, 3, 5])
+def test_gauss_cubature_is_exact_per_axis_to_degree_2n_minus_1(n):
+    q = N.gauss_cubature(n, 2)
+    X, w = q["nodes"], q["weights"]
+
+    def exact(p, r):
+        return (0 if p % 2 else 2 / (p + 1)) * (0 if r % 2 else 2 / (r + 1))
+    assert max(abs(np.sum(w * X[:, 0] ** p * X[:, 1] ** r) - exact(p, r)) for p in range(2 * n) for r in range(2 * n)) < 1e-13
+    assert abs(np.sum(w * X[:, 0] ** (2 * n)) - exact(2 * n, 0)) > 1e-9
+
+
+def test_gauss_cubature_3d_box_volume_and_rejects_huge_grids():
+    q = N.gauss_cubature(4, 3, 0, [1, 2, 3])
+    assert q["weights"].sum() == pytest.approx(6.0, abs=1e-12) and q["nodes"].shape == (64, 3)
+    with pytest.raises(ValueError):
+        N.gauss_cubature(200, 4)

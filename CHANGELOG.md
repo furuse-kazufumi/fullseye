@@ -16,6 +16,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   - ★**逆 Abel の「殻剥きは雑音に強い」は半分しか正しくなかった**: 雑音の誤差は微分が `1/dr`、殻剥きが `1/√dr` で増え、
     **標本数で優劣が逆転する**(n=60 では微分、n=960 では殻剥き)。片側だけの主張を書いた docstring を両向きの門で直した。
   - 例 `examples/transforms_tour.py`: 炎の断層化・円い穴の Airy・2 次系の減衰比と Bode・Talbot の M と丸め。
+- ★**次元を上げた 3 op(画像・3-D が主役)**: `abel_inverse_image`(炎の写真の各行を逆 Abel → 断面画像、左右の非対称を
+  `asymmetry` で報告)、`abel_revolve`(断面を軸のまわりに回して 3-D ボリューム)、`gauss_cubature`(Gauss–Legendre の
+  テンソル積で 2-D/3-D の箱の求積)。門: ガウスの塊の写真から断面が 1e-2 で戻る / 3-D を横から足し直すと写真に 2e-3 で戻る /
+  求積は軸ごとに 2n−1 次まで厳密。transforms_tour に「写真 1 枚から 3-D へ」(水平断面に外側の殻が輪として現れる)。
 - ★**離散幾何と位相 6 op(math 台帳 `geometry`、陣 4、最初から 2-D/3-D)**: オイラー標数と種数・角欠損(離散 Gauss–Bonnet)・
   Delaunay(2-D 三角形 / 3-D 四面体)・熱法の測地距離(メッシュ / 画像とボリュームの格子)・トーラスのメッシュ
   (`mathgeometry.py`、門 `tests/test_mathgeometry.py`)。「次元を上げられるなら上げて、画像や 3-D ではそちらが主役」の指示で

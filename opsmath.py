@@ -154,6 +154,9 @@ _CATALOG = {
     "transform": [
         ("abel_transform", "mathtransforms", ["signal"], "signal"),
         ("abel_inverse", "mathtransforms", ["signal"], "signal"),
+        # 次元を上げた版(2026-10-03): 写真 1 枚 → 断面画像 → 回して 3-D ボリューム
+        ("abel_inverse_image", "mathtransforms", ["image2d"], "table"),
+        ("abel_revolve", "mathtransforms", ["image2d"], "voxel"),
         ("hankel_transform", "mathtransforms", ["signal", "signal"], "table"),
         ("tf_poles_zeros", "mathtransforms", ["signal", "signal"], "table"),
         ("tf_freq_response", "mathtransforms", ["signal", "signal", "signal"], "table"),
@@ -170,6 +173,7 @@ _CATALOG = {
         ("erfc", "mathnumerics", ["signal"], "signal"),
         ("bessel", "mathnumerics", ["signal"], "signal"),
         ("gauss_quadrature", "mathnumerics", [], "table"),
+        ("gauss_cubature", "mathnumerics", [], "table"),
         ("low_discrepancy", "mathnumerics", [], "matrix"),
         ("chebyshev_nodes", "mathnumerics", [], "signal"),
         ("interp_barycentric", "mathnumerics", ["signal", "signal", "signal"], "signal"),

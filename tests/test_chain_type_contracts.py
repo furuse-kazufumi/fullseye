@@ -250,6 +250,8 @@ def test_opsmath_call_returns_declared_types():
     args.update({
         "abel_transform": (gauss, float(rr[1])),
         "abel_inverse": (gauss, float(rr[1])),
+        "abel_inverse_image": (np.tile(np.exp(-np.linspace(-3, 3, 41) ** 2), (6, 1)),),
+        "abel_revolve": (np.tile(gauss[:12], (4, 1)),),
         "hankel_transform": (rr, gauss),
         "tf_poles_zeros": (np.array([1.0, 2.0]), np.array([1.0, 3.0, 2.0])),
         "tf_freq_response": (np.array([1.0]), np.array([1.0, 1.0]), np.logspace(-1, 1, 8)),
@@ -262,6 +264,7 @@ def test_opsmath_call_returns_declared_types():
         "erfc": (np.linspace(-2, 2, 9),),
         "bessel": (np.linspace(0.5, 5, 9),),
         "gauss_quadrature": (5,),
+        "gauss_cubature": (3, 2),
         "low_discrepancy": (16, 2),
         "chebyshev_nodes": (9,),
         "interp_barycentric": (np.linspace(-1, 1, 5), np.linspace(-1, 1, 5) ** 2, np.linspace(-1, 1, 11)),

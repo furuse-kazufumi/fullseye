@@ -91,6 +91,15 @@ def run() -> dict:
     gerr = float(np.abs(fs.abel_transform(g, dr) - math.sqrt(math.pi) * sig * g).max())
     assert gerr < 1e-5
     out.update(abel_err_derivative=ed, abel_err_onion=eo, abel_noise_derivative=nd, abel_noise_onion=no)
+    # 次元を上げる: 写真 1 枚(投影画像)→ 断面画像 → 軸のまわりに回して 3-D ボリューム
+    photo = _mirror(A)
+    img_res = fs.abel_inverse_image(photo, dr)
+    vol = fs.abel_revolve(img_res["slice"], dr)
+    back = vol.sum(axis=1) * dr
+    w0 = (photo.shape[1] - back.shape[1]) // 2
+    rerr = float(np.abs(back - photo[:, w0:w0 + back.shape[1]]).max() / photo.max())
+    print("   写真 1 枚 → 断面 → 3-D ボリューム %s。横から見直すと写真との差 %.1e(相対)" % (vol.shape, rerr))
+    assert rerr < 0.02 and img_res["asymmetry"] < 1e-9
 
     # ---- 2. Hankel: 円い開口 → Airy ------------------------------------------------ #
     a = 1.0
@@ -152,6 +161,15 @@ def run() -> dict:
                        caption="縦が高さ、横が中心からの距離(左右対称)。(b) しか撮れなくても、軸対称なら (c) に戻せる。"
                                "(d) は (a) と同じ色の目盛りで描いた差で、ほぼ黒 = 戻せている(殻剥き法、最大誤差 %.3f、"
                                "真値の最大 %.2f)。" % (eo, F.max()))
+        hz = int(0.7 * vol.shape[0])
+        figs.save_grid("abel_3d",
+                       [photo / photo.max(), _mirror(img_res["slice"]), vol[hz], vol[:, vol.shape[1] // 2, :]],
+                       ["横から撮った写真(投影)", "逆 Abel の断面", "3-D を高さ %d で水平に切る" % hz, "3-D を縦に切る"],
+                       ncols=4, vrange=[(0.0, 1.0)] + [(0.0, float(F.max()))] * 3,
+                       title="写真 1 枚から 3-D へ —— 軸対称なら、見えない奥行きが戻る",
+                       caption="(a) は奥行きが足し合わさった写真。(b) 各行を逆 Abel して断面に、(c)(d) 断面を軸のまわりに回して 3-D に。"
+                               "水平に切ると (c)、写真では重なって見えなかった外側の明るい殻が「輪」として現れる。"
+                               "3-D を横から足し合わせ直すと写真に戻る(差 %.0e)。" % rerr)
         figs.save_plot("abel_noise_scaling",
                        [("微分で戻す(傾き %.2f)" % slope_d, np.log10(ns), np.log10(noise_d)),
                         ("殻を剥いて戻す(傾き %.2f)" % slope_o, np.log10(ns), np.log10(noise_o)),

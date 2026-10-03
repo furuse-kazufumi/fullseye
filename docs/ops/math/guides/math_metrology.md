@@ -122,6 +122,7 @@ flowchart LR
 棚卸しで **Laplace 変換の系統が 0 本**、Abel・Hankel も 0 本だった(`laplace` op は HALCON のラプラシアン、`transfer_function` は周波数領域の H(f) で別物)。実装は `mathtransforms.py`、例は `py -3.11 examples/transforms_tour.py`(図つき)。
 
 - **abel_transform**`(f, dr)` / **abel_inverse**`(A, dr, method="derivative"|"onion")` — 軸対称な物(炎・プラズマ)の断面 f(r) と、横から撮った投影 A(y)。門はガウスの対 `exp(−r²/σ²) ↔ √π σ exp(−y²/σ²)`。**逆は 2 経路**を持つ: 微分の求積は滑らかな投影に高精度だが雑音の誤差が `1/dr` で増え、殻剥きは `1/√dr` —— **標本数で優劣が逆転する**(雑音 1%: n=60 では微分、n=960 では殻剥きが良い)。
+- **abel_inverse_image**`(image, dr, center=None, method="onion")` / **abel_revolve**`(slice, dr)` — 次元を上げた Abel: 横から撮った写真(縦 = 対称軸)の各行を逆 Abel して断面画像に、断面を軸のまわりに回して 3-D ボリュームに。左右の非対称は `asymmetry` に出る(軸対称の仮定の検算)。3-D を横から足し直すと写真に戻る。
 - **hankel_transform**`(r, f, order=0, n=256)` — 軸対称な関数の 2 次元フーリエ変換 = 動径の Hankel 変換(2π 規約)。quasi-discrete 法で核が対合(`T·T = I`)。門: `exp(−π r²)` は自己双対、円板 → `a·J₁(2πaν)/ν`(最初の暗い輪 `0.61/a` = 分解能 `1.22λ/D` の正体)、2-D FFT の動径断面と一致。
 - **tf_poles_zeros / tf_freq_response / tf_impulse_response / tf_step_response**`(num, den, …)` — 有理伝達関数 `H(s) = num/den`(係数は降べき、`poly_eval` と同じ並び)。応答は部分分数でなく**拡大行列の指数関数**で厳密に解くので、重根・原点の極(積分器)でも分岐しない。非プロパー(分子の次数 > 分母)は `ValueError`。
 - **tf_bilinear**`(num, den, fs, prewarp_hz=None)` — Tustin 変換。`scipy.signal.bilinear` と係数が一致し、前歪みを与えた周波数で連続系と応答が厳密に一致する。左半面の極は単位円内へ。
@@ -132,6 +133,7 @@ flowchart LR
 実装は `mathnumerics.py`、例は `py -3.11 examples/numerics_tour.py`(失敗例と並べた図つき)。
 
 - **gauss_quadrature**`(n, kind="legendre"|"hermite"|"laguerre"|"chebyshev", a=None, b=None)` — 節点と重み。n 点で **2n−1 次まで厳密**、2n 次で初めて誤差(門は両向き)。
+- **gauss_cubature**`(n, dim=2, a=-1, b=1)` — テンソル積の求積(2-D 画像の画素平均、3-D の体積積分)。軸ごとに 2n−1 次まで厳密。点の数 n^dim(dim > 6 は低食い違い列へ)。
 - **low_discrepancy**`(n, dim=2, kind="halton"|"sobol"|"random")` — 低食い違い列。積分誤差の傾きは乱数 −0.5、Sobol ≈ −1。★傾きは**非対称な被積分関数**で測ること: 0.5 に対称な sin(πx) だとスクランブル無しの Sobol が打ち消し合って −2.2 という「良すぎる」値が出る。
 - **chebyshev_nodes**`(n, a, b)` / **interp_barycentric**`(xk, yk, x)` — 重心公式(係数を経由しない)。等間隔の点では Runge 現象(41 点で誤差 1e5)、Chebyshev 点なら収束(3e-4)。
 - **integrate_hamiltonian**`(q0, p0, dt, n_steps, system="harmonic"|"pendulum"|"kepler", method="verlet"|"euler"|"rk4")` — Verlet はエネルギー誤差が有界で時間反転で戻る。Euler は毎歩 (1+ω²dt²) 倍。**RK4 は短時間は Verlet より正確だが誤差が時間に比例して増え、いずれ抜かれる**(dt=0.2 で t≈2300、dt=0.1 では約 18 万歩目)。

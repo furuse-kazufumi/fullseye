@@ -1,4 +1,4 @@
-# MATH operator help — 95 ops in 12 categories
+# MATH operator help — 98 ops in 12 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/math/<category>/<op>.md` を走査。
 
@@ -41,9 +41,9 @@
 
 [mat_cond](linalg/mat_cond.md) · [mat_eigh](linalg/mat_eigh.md) · [mat_lstsq](linalg/mat_lstsq.md) · [mat_pinv](linalg/mat_pinv.md) · [mat_solve](linalg/mat_solve.md) · [mat_svd](linalg/mat_svd.md)
 
-### numerics (8)
+### numerics (9)
 
-[bessel](numerics/bessel.md) · [chebyshev_nodes](numerics/chebyshev_nodes.md) · [erf](numerics/erf.md) · [erfc](numerics/erfc.md) · [gauss_quadrature](numerics/gauss_quadrature.md) · [integrate_hamiltonian](numerics/integrate_hamiltonian.md) · [interp_barycentric](numerics/interp_barycentric.md) · [low_discrepancy](numerics/low_discrepancy.md)
+[bessel](numerics/bessel.md) · [chebyshev_nodes](numerics/chebyshev_nodes.md) · [erf](numerics/erf.md) · [erfc](numerics/erfc.md) · [gauss_cubature](numerics/gauss_cubature.md) · [gauss_quadrature](numerics/gauss_quadrature.md) · [integrate_hamiltonian](numerics/integrate_hamiltonian.md) · [interp_barycentric](numerics/interp_barycentric.md) · [low_discrepancy](numerics/low_discrepancy.md)
 
 ### spectral (5)
 
@@ -53,9 +53,9 @@
 
 [stat_correlation](stats/stat_correlation.md) · [stat_covariance](stats/stat_covariance.md) · [stat_describe](stats/stat_describe.md) · [stat_histogram](stats/stat_histogram.md) · [stat_zscore](stats/stat_zscore.md)
 
-### transform (9)
+### transform (11)
 
-[abel_inverse](transform/abel_inverse.md) · [abel_transform](transform/abel_transform.md) · [hankel_transform](transform/hankel_transform.md) · [laplace_inverse_talbot](transform/laplace_inverse_talbot.md) · [tf_bilinear](transform/tf_bilinear.md) · [tf_freq_response](transform/tf_freq_response.md) · [tf_impulse_response](transform/tf_impulse_response.md) · [tf_poles_zeros](transform/tf_poles_zeros.md) · [tf_step_response](transform/tf_step_response.md)
+[abel_inverse](transform/abel_inverse.md) · [abel_inverse_image](transform/abel_inverse_image.md) · [abel_revolve](transform/abel_revolve.md) · [abel_transform](transform/abel_transform.md) · [hankel_transform](transform/hankel_transform.md) · [laplace_inverse_talbot](transform/laplace_inverse_talbot.md) · [tf_bilinear](transform/tf_bilinear.md) · [tf_freq_response](transform/tf_freq_response.md) · [tf_impulse_response](transform/tf_impulse_response.md) · [tf_poles_zeros](transform/tf_poles_zeros.md) · [tf_step_response](transform/tf_step_response.md)
 
 ### wave (6)
 

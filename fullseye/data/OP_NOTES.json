@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2630,
- "n_notes": 2636,
+ "n_ops": 2633,
+ "n_notes": 2639,
  "notes": {
   "vol_dilate": [
    {
@@ -21017,6 +21017,15 @@
     "path": "docs/ops/math/numerics/erfc.md"
    }
   ],
+  "gauss_cubature": [
+   {
+    "op": "gauss_cubature",
+    "dim": "math",
+    "category": "numerics",
+    "out": "table",
+    "path": "docs/ops/math/numerics/gauss_cubature.md"
+   }
+  ],
   "gauss_quadrature": [
    {
     "op": "gauss_quadrature",
@@ -21163,6 +21172,26 @@
     "in": "signal",
     "out": "signal",
     "path": "docs/ops/math/transform/abel_inverse.md"
+   }
+  ],
+  "abel_inverse_image": [
+   {
+    "op": "abel_inverse_image",
+    "dim": "math",
+    "category": "transform",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/math/transform/abel_inverse_image.md"
+   }
+  ],
+  "abel_revolve": [
+   {
+    "op": "abel_revolve",
+    "dim": "math",
+    "category": "transform",
+    "in": "image2d",
+    "out": "voxel",
+    "path": "docs/ops/math/transform/abel_revolve.md"
    }
   ],
   "abel_transform": [

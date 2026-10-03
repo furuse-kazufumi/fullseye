@@ -23,7 +23,7 @@ from scipy import special
 __all__ = [
     "bessel", "erf", "erfc",
     "chebyshev_nodes", "interp_barycentric",
-    "gauss_quadrature",
+    "gauss_quadrature", "gauss_cubature",
     "low_discrepancy",
     "integrate_hamiltonian",
 ]
@@ -107,6 +107,31 @@ def gauss_quadrature(n: int, kind: str = "legendre", a: float | None = None, b: 
         raise ValueError("gauss_quadrature: 区間 [a, b] を写せるのは kind='legendre' だけ")
     return {"nodes": np.asarray(x), "weights": np.asarray(w), "integral": what,
             "exact_degree": 2 * n - 1, "kind": kind}
+
+
+def gauss_cubature(n: int, dim: int = 2, a=-1.0, b=1.0) -> dict:
+    """Gauss–Legendre のテンソル積で、箱 [a, b]^dim(a, b は軸ごとでも可)の求積の節点 (n^dim, dim) と重み。
+
+    画像の画素平均・ボリュームの体積積分・PSF の積分に。各軸で 2n−1 次までの多項式の積を**厳密に**積分する
+    (門: x^p y^q で p, q <= 2n−1 は厳密、どれかが 2n で誤差)。点の数は n^dim なので高次元では急に増える
+    (dim > 6 では低食い違い列の方が向く)。
+    """
+    n, dim = int(n), int(dim)
+    if not (1 <= dim <= 6 and 1 <= n and n ** dim <= 2_000_000):
+        raise ValueError("gauss_cubature: 1 <= dim <= 6、n^dim <= 2e6")
+    lo = np.broadcast_to(np.asarray(a, dtype=np.float64), (dim,))
+    hi = np.broadcast_to(np.asarray(b, dtype=np.float64), (dim,))
+    if np.any(hi <= lo):
+        raise ValueError("gauss_cubature: 各軸で b > a")
+    x, w = np.polynomial.legendre.leggauss(n)
+    axes = [0.5 * (hi[d] - lo[d]) * x + 0.5 * (hi[d] + lo[d]) for d in range(dim)]
+    wts = [0.5 * (hi[d] - lo[d]) * w for d in range(dim)]
+    grids = np.meshgrid(*axes, indexing="ij")
+    W = np.ones_like(grids[0])
+    for d in range(dim):
+        W = W * np.meshgrid(*[wts[k] if k == d else np.ones(n) for k in range(dim)], indexing="ij")[d]
+    return {"nodes": np.stack([g_.ravel() for g_ in grids], axis=1), "weights": W.ravel(),
+            "exact_degree_per_axis": 2 * n - 1}
 
 
 # ---------------------------------------------------------------------------- #

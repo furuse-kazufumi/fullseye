@@ -375,6 +375,8 @@ from mathops import (  # noqa: E402,F401
 from mathtransforms import (  # noqa: E402,F401
     abel_transform,
     abel_inverse,
+    abel_inverse_image,
+    abel_revolve,
     hankel_transform,
     tf_poles_zeros,
     tf_freq_response,
@@ -390,6 +392,7 @@ from mathnumerics import (  # noqa: E402,F401
     erfc,
     bessel,
     gauss_quadrature,
+    gauss_cubature,
     low_discrepancy,
     chebyshev_nodes,
     interp_barycentric,
@@ -1143,6 +1146,8 @@ __all__ = [
     # フーリエ以外の積分変換と s 領域(2026-10-03)
     "abel_transform",
     "abel_inverse",
+    "abel_inverse_image",
+    "abel_revolve",
     "hankel_transform",
     "tf_poles_zeros",
     "tf_freq_response",
@@ -1156,6 +1161,7 @@ __all__ = [
     "erfc",
     "bessel",
     "gauss_quadrature",
+    "gauss_cubature",
     "low_discrepancy",
     "chebyshev_nodes",
     "interp_barycentric",

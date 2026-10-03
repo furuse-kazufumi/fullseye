@@ -28,7 +28,7 @@ import numpy as np
 from scipy import interpolate, linalg, special
 
 __all__ = [
-    "abel_transform", "abel_inverse",
+    "abel_transform", "abel_inverse", "abel_inverse_image", "abel_revolve",
     "hankel_transform",
     "tf_poles_zeros", "tf_freq_response", "tf_impulse_response", "tf_step_response",
     "tf_bilinear", "laplace_inverse_talbot", "laplace_inverse_func",
@@ -118,6 +118,53 @@ def abel_inverse(A, dr: float = 1.0, *, method: str = "derivative", n_quad: int 
         g = dA(yy) / yy                                    # A'(y)/y は y→0 でも有限(A は偶関数)
         out[i] = -(1.0 / math.pi) * 0.5 * U * float(np.dot(w, g))
     return out
+
+
+def abel_inverse_image(image, dr: float = 1.0, *, center: float | None = None, method: str = "onion") -> dict:
+    """軸対称な物体を横から撮った**画像**(縦 = 対称軸の向き、横 = 軸からの距離)を、行ごとに逆 Abel して断面画像にする。
+
+    炎・プラズマ・噴流の写真は、奥行き方向に足し合わさった投影しか写らない。各行を中心列で左右に分け、
+    2 つの半分を平均してから(左右の非対称を均す)逆 Abel する。``center`` は対称軸の列(既定 = 明るさの重心、
+    行ごとではなく画像全体で 1 本)。返り値 ``{"slice", "center", "asymmetry"}`` —— slice は (H, R) の f(z, r)、
+    asymmetry は左右の半分の差の大きさ(0 に近いほど軸対称の仮定が成り立つ)。
+    門: 3-D のガウスの塊の投影から、断面のガウスが戻る(閉じた式)。
+    """
+    a = np.asarray(image, dtype=np.float64)
+    if a.ndim != 2 or a.shape[1] < 8 or not np.all(np.isfinite(a)):
+        raise ValueError("abel_inverse_image: 有限な 2-D 画像(横 8 画素以上)")
+    H, W = a.shape
+    if center is None:
+        prof = np.clip(a, 0, None).sum(axis=0)
+        center = float(np.sum(prof * np.arange(W)) / max(prof.sum(), 1e-300))
+    c = float(center)
+    R = int(min(c, W - 1 - c))
+    if R < 4:
+        raise ValueError("abel_inverse_image: 対称軸が端に寄りすぎ(半径 %d 画素)" % R)
+    xs = np.arange(R + 1, dtype=np.float64)
+    cols = np.arange(W, dtype=np.float64)
+    right = np.stack([np.interp(c + xs, cols, row) for row in a])
+    left = np.stack([np.interp(c - xs, cols, row) for row in a])
+    half = 0.5 * (left + right)
+    asym = float(np.abs(left - right).mean() / max(np.abs(half).mean(), 1e-300))
+    sl = np.stack([abel_inverse(row, dr, method=method) for row in half])
+    return {"slice": sl, "center": c, "asymmetry": asym}
+
+
+def abel_revolve(slice_rows, dr: float = 1.0) -> np.ndarray:
+    """断面 f(z, r)((H, R)、r = 0, dr, …)を対称軸のまわりに回して 3-D ボリューム (H, 2R−1, 2R−1) にする。
+
+    ``abel_inverse_image`` と組むと、1 枚の写真から軸対称な物体の 3-D の分布が戻る。
+    門: できたボリュームを横に足し合わせる(投影する)と、元の投影画像に戻る(往復)。
+    """
+    s = np.asarray(slice_rows, dtype=np.float64)
+    if s.ndim != 2 or s.shape[1] < 2 or not np.all(np.isfinite(s)):
+        raise ValueError("abel_revolve: (H, R) の有限な断面")
+    H, R = s.shape
+    g = np.arange(-(R - 1), R, dtype=np.float64)
+    rr = np.hypot(g[:, None], g[None, :])
+    r = np.arange(R, dtype=np.float64)
+    vol = np.stack([np.interp(rr, r, row, right=0.0) for row in s])
+    return vol
 
 
 # ---------------------------------------------------------------------------- #

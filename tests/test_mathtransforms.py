@@ -15,7 +15,7 @@ with warnings.catch_warnings():
     import mathtransforms as M
     import opsmath
 
-LEDGER = ["abel_transform", "abel_inverse", "hankel_transform", "tf_poles_zeros", "tf_freq_response",
+LEDGER = ["abel_transform", "abel_inverse", "abel_inverse_image", "abel_revolve", "hankel_transform", "tf_poles_zeros", "tf_freq_response",
           "tf_impulse_response", "tf_step_response", "tf_bilinear", "laplace_inverse_talbot"]
 
 
@@ -177,3 +177,33 @@ def test_tustin_matches_scipy_and_prewarp_is_exact_at_its_frequency():
     Hc = np.polyval(num, 1j * w0) / np.polyval(den, 1j * w0)
     assert abs(Hd - Hc) < 1e-12
     assert np.all(np.abs(np.roots(p["den_z"])) < 1)               # 安定 → 単位円内
+
+
+# ---- 次元を上げた Abel(写真 → 断面画像 → 3-D)------------------------------------------ #
+def _flame_projection(H=40, W=161, dr=0.05):
+    c = (W - 1) / 2
+    y = (np.arange(W) - c) * dr
+    s = 0.8 + 0.6 * np.linspace(0, 1, H)
+    return np.sqrt(math.pi) * s[:, None] * np.exp(-y[None, :] ** 2 / s[:, None] ** 2), s, dr, c
+
+
+def test_abel_inverse_image_recovers_the_gaussian_slices():
+    proj, s, dr, c = _flame_projection()
+    res = M.abel_inverse_image(proj, dr)
+    r = np.arange(res["slice"].shape[1]) * dr
+    assert res["center"] == pytest.approx(c) and res["asymmetry"] < 1e-12
+    assert np.abs(res["slice"] - np.exp(-r[None, :] ** 2 / s[:, None] ** 2)).max() < 1e-2
+    lop = proj.copy()
+    lop[:, : int(c)] *= 1.3                                   # 左右が非対称な写真は asymmetry に出る
+    assert M.abel_inverse_image(lop, dr, center=c)["asymmetry"] > 0.05
+
+
+def test_revolving_the_slice_and_projecting_returns_the_photograph():
+    proj, s, dr, c = _flame_projection()
+    R = 80                                                    # r の最大 3.95(裾を切らない: 60 では s=1.4 の裾が欠けて端で 0.03 ずれた)
+    r = np.arange(R) * dr
+    vol = M.abel_revolve(np.exp(-r[None, :] ** 2 / s[:, None] ** 2), dr)
+    assert vol.shape == (40, 2 * R - 1, 2 * R - 1)
+    back = vol.sum(axis=1) * dr
+    i0 = int(c) - (R - 1)
+    assert np.abs(back - proj[:, i0:i0 + 2 * R - 1]).max() < 2e-3
