@@ -18,7 +18,7 @@ with warnings.catch_warnings():
     import opsmath
 
 LEDGER = ["erf", "erfc", "bessel", "gauss_quadrature", "gauss_cubature", "low_discrepancy", "chebyshev_nodes",
-          "interp_barycentric", "integrate_hamiltonian"]
+          "interp_barycentric", "integrate_hamiltonian", "chebyshev_coeffs_nd", "chebyshev_eval_nd"]
 
 
 def test_public_and_ledger():
@@ -183,3 +183,55 @@ def test_gauss_cubature_3d_box_volume_and_rejects_huge_grids():
     assert q["weights"].sum() == pytest.approx(6.0, abs=1e-12) and q["nodes"].shape == (64, 3)
     with pytest.raises(ValueError):
         N.gauss_cubature(200, 4)
+
+
+# ── Chebyshev 補間の N 次元版 ───────────────────────────────────────────────────────────────── #
+def test_chebyshev_nd_reproduces_polynomials_on_a_box():
+    """各軸の次数が n_i − 1 以下の多項式は、任意の箱の上で丸め誤差まで再現する(格子の上でも散在点でも)。"""
+    B = [(0.0, 2.0), (-1.0, 3.0)]
+    x, y = N.chebyshev_nodes(6, 0, 2), N.chebyshev_nodes(5, -1, 3)
+    X, Y = np.meshgrid(x, y, indexing="ij")
+
+    def f(X, Y):
+        return 1 + X - 2 * X ** 3 * Y ** 2 + 0.5 * X ** 5 * Y ** 4
+    c = N.chebyshev_coeffs_nd(f(X, Y), B)
+    P = np.random.default_rng(0).random((50, 2)) * [2, 4] + [0, -1]
+    assert np.abs(N.chebyshev_eval_nd(c, P) - f(P[:, 0], P[:, 1])).max() < 1e-11
+    gx, gy = np.linspace(0, 2, 7), np.linspace(-1, 3, 9)
+    GX, GY = np.meshgrid(gx, gy, indexing="ij")
+    assert np.abs(N.chebyshev_eval_nd(c, (gx, gy)) - f(GX, GY)).max() < 1e-11
+
+
+def test_chebyshev_coefficients_decay_at_the_bernstein_rate():
+    """1/(a − x) の係数は ρ^−k(ρ = a + √(a² − 1))で落ちる —— 極の位置が収束の速さを決める定理。"""
+    a, n = 1.5, 40
+    c = N.chebyshev_coeffs_nd(1.0 / (a - N.chebyshev_nodes(n)))
+    k = np.arange(n)
+    slope = np.polyfit(k[2:30], np.log(c["decay"][0][2:30]), 1)[0]
+    assert abs(math.exp(-slope) - (a + math.sqrt(a * a - 1))) < 1e-4
+
+
+def test_chebyshev_nd_converges_spectrally_in_3d():
+    """3-D の滑らかな関数: 各軸の点を倍にするごとに誤差が桁で落ち、tail(最後の係数)が誤差の目安になる。"""
+    errs, tails = [], []
+    Q = np.random.default_rng(1).uniform(-1, 1, (2000, 3))
+
+    def F(X, Y, Z):
+        return 1.0 / (1 + 4 * (X ** 2 + Y ** 2 + Z ** 2))
+    for n in (8, 16, 32):
+        t = N.chebyshev_nodes(n)
+        c = N.chebyshev_coeffs_nd(F(*np.meshgrid(t, t, t, indexing="ij")))
+        errs.append(float(np.abs(N.chebyshev_eval_nd(c, Q) - F(*Q.T)).max()))
+        tails.append(c["tail"])
+    assert errs[0] > 30 * errs[1] > 30 * 30 * errs[2] and errs[2] < 1e-5
+    assert all(e < 100 * t for e, t in zip(errs, tails)) and len(errs) == 3
+
+
+def test_chebyshev_nd_rejects_bad_input():
+    with pytest.raises(ValueError):
+        N.chebyshev_coeffs_nd(np.ones((1, 4)))
+    with pytest.raises(ValueError):
+        N.chebyshev_coeffs_nd(np.ones((3, 3)), [(1, 0), (0, 1)])
+    c = N.chebyshev_coeffs_nd(np.ones((3, 3)))
+    with pytest.raises(ValueError):
+        N.chebyshev_eval_nd(c, np.array([[2.0, 0.0]]))                   # 外挿はしない

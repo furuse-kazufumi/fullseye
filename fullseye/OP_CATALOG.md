@@ -2240,7 +2240,7 @@ _計 42 ops / 3 categories。_
 - `signal_features` (`signal → table`) — A compact acoustic/vibration feature vector for anomaly detection:
 
 ## Math operators(opsmath)by category
-_計 111 ops / 12 categories。_
+_計 113 ops / 12 categories。_
 
 
 視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。北極星は「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
@@ -2329,12 +2329,14 @@ _計 111 ops / 12 categories。_
 - `mat_cholesky` (`matrix → table`) — Cholesky factorisation ``A = L @ Lᵀ`` of a symmetric positive-definite matrix.
 - `mat_eig` (`matrix → table`) — Eigen-decomposition of a **general** square matrix ``A V = V diag(w)`` (complex in general).
 
-### numerics(9)
+### numerics(11)
 - `erf` (`signal → signal`) — 誤差関数 erf(x) = (2/√π) ∫_0^x e^{−t²} dt。
 - `erfc` (`signal → signal`) — 相補誤差関数 erfc(x) = 1 − erf(x)。大きな x で 1 − erf を引き算すると桁落ちするので別に持つ
 - `bessel` (`signal → signal`) — Bessel 関数。``kind`` = ``"j"``(第 1 種 J)/ ``"y"``(第 2 種 Y)/ ``"i"``・``"k"``(変形)。
 - `gauss_quadrature` (` → table`) — n 点の Gauss 求積の節点と重み。∫ f ≈ Σ w_k f(x_k)。
 - `gauss_cubature` (` → table`) — Gauss–Legendre のテンソル積で、箱 [a, b]^dim(a, b は軸ごとでも可)の求積の節点 (n^dim, dim) と重み。
+- `chebyshev_coeffs_nd` (`image2d → table`) — テンソル積の Chebyshev–Lobatto 格子で標本化した値から、N 次元の Chebyshev 係数を求める(DCT-I)。
+- `chebyshev_eval_nd` (`table, matrix → signal`) — ``chebyshev_coeffs_nd`` の係数を点 (M, d) で評価する(各軸 T_k(t) = cos(k·arccos t))。
 - `low_discrepancy` (` → matrix`) — [0, 1)^dim の低食い違い点列 (n, dim)。
 - `chebyshev_nodes` (` → signal`) — 区間 [a, b] の Chebyshev 点 n 個(昇順)。
 - `interp_barycentric` (`signal, signal, signal → signal`) — 点 (xk, yk) を通る多項式(次数 len−1)を、重心公式で x に評価する(Berrut & Trefethen 2004)。

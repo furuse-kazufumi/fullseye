@@ -1,8 +1,8 @@
 {
- "n_ops": 2646,
+ "n_ops": 2648,
  "tiers": {
   "color": 12,
-  "ledger": 1695,
+  "ledger": 1697,
   "nary": 17,
   "registry": 922
  },
@@ -2608,6 +2608,33 @@
    "in_sorts": [
     "image2d",
     "mask"
+   ]
+  },
+  {
+   "name": "chebyshev_coeffs_nd",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "numerics",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "chebyshev_eval_nd",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "signal",
+   "category": "numerics",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "table",
+    "matrix"
    ]
   },
   {

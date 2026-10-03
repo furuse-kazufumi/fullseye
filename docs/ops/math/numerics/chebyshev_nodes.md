@@ -52,7 +52,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`numerics`)
 
-[erf](erf.md) · [erfc](erfc.md) · [bessel](bessel.md) · [gauss_quadrature](gauss_quadrature.md) · [gauss_cubature](gauss_cubature.md) · [low_discrepancy](low_discrepancy.md) · [interp_barycentric](interp_barycentric.md) · [integrate_hamiltonian](integrate_hamiltonian.md)
+[erf](erf.md) · [erfc](erfc.md) · [bessel](bessel.md) · [gauss_quadrature](gauss_quadrature.md) · [gauss_cubature](gauss_cubature.md) · [chebyshev_coeffs_nd](chebyshev_coeffs_nd.md) · [chebyshev_eval_nd](chebyshev_eval_nd.md) · [low_discrepancy](low_discrepancy.md)
 
 ---
 *Provenance: mathnumerics.py — MATH operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

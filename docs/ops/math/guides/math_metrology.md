@@ -143,6 +143,7 @@ flowchart LR
 - **gauss_cubature**`(n, dim=2, a=-1, b=1)` — テンソル積の求積(2-D 画像の画素平均、3-D の体積積分)。軸ごとに 2n−1 次まで厳密。点の数 n^dim(dim > 6 は低食い違い列へ)。
 - **low_discrepancy**`(n, dim=2, kind="halton"|"sobol"|"random")` — 低食い違い列。積分誤差の傾きは乱数 −0.5、Sobol ≈ −1。★傾きは**非対称な被積分関数**で測ること: 0.5 に対称な sin(πx) だとスクランブル無しの Sobol が打ち消し合って −2.2 という「良すぎる」値が出る。
 - **chebyshev_nodes**`(n, a, b)` / **interp_barycentric**`(xk, yk, x)` — 重心公式(係数を経由しない)。等間隔の点では Runge 現象(41 点で誤差 1e5)、Chebyshev 点なら収束(3e-4)。
+- **chebyshev_coeffs_nd**`(values, box=None)` / **chebyshev_eval_nd**`(coeffs, points)` — Chebyshev 補間を N 次元に(テンソル積の Chebyshev–Lobatto 格子、係数は DCT-I)。`points` は散在点 (M, d) か軸ごとの 1-D 配列の組(格子)。門: 次数内の多項式を任意の箱で 1e-11 で再現 / 1/(a − x) の係数は Bernstein の楕円 ρ = a + √(a² − 1) で落ちる(6 桁一致)/ 3-D でも点を倍にするごとに桁で減る。★2-D の Runge: 等間隔 25×25 は誤差 8e5、Chebyshev は 8e-3。`tail` が打ち切り誤差の目安。
 - **integrate_hamiltonian**`(q0, p0, dt, n_steps, system="harmonic"|"pendulum"|"kepler", method="verlet"|"euler"|"rk4")` — Verlet はエネルギー誤差が有界で時間反転で戻る。Euler は毎歩 (1+ω²dt²) 倍。**RK4 は短時間は Verlet より正確だが誤差が時間に比例して増え、いずれ抜かれる**(dt=0.2 で t≈2300、dt=0.1 では約 18 万歩目)。
 - **erf / erfc / bessel**`(x, order, kind)` — 値は scipy.special。ガウスでぼけた段差の断面は ½(1+erf(x/σ√2))。大きな x の 1−erf は桁落ちするので erfc を使う。門は奇関数性・導関数・Wronskian・漸化式。
 

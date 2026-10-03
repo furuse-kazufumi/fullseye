@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2646,
- "n_notes": 2652,
+ "n_ops": 2648,
+ "n_notes": 2654,
  "notes": {
   "vol_dilate": [
    {
@@ -21064,6 +21064,26 @@
     "in": "signal",
     "out": "signal",
     "path": "docs/ops/math/numerics/bessel.md"
+   }
+  ],
+  "chebyshev_coeffs_nd": [
+   {
+    "op": "chebyshev_coeffs_nd",
+    "dim": "math",
+    "category": "numerics",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/math/numerics/chebyshev_coeffs_nd.md"
+   }
+  ],
+  "chebyshev_eval_nd": [
+   {
+    "op": "chebyshev_eval_nd",
+    "dim": "math",
+    "category": "numerics",
+    "in": "table × matrix",
+    "out": "signal",
+    "path": "docs/ops/math/numerics/chebyshev_eval_nd.md"
    }
   ],
   "chebyshev_nodes": [

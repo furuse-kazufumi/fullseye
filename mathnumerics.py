@@ -22,7 +22,7 @@ from scipy import special
 
 __all__ = [
     "bessel", "erf", "erfc",
-    "chebyshev_nodes", "interp_barycentric",
+    "chebyshev_nodes", "interp_barycentric", "chebyshev_coeffs_nd", "chebyshev_eval_nd",
     "gauss_quadrature", "gauss_cubature",
     "low_discrepancy",
     "integrate_hamiltonian",
@@ -313,3 +313,84 @@ def integrate_hamiltonian(q0, p0, dt: float = 0.05, n_steps: int = 1000, *, syst
     return {"t": dt * np.arange(n + 1), "q": Q, "p": P, "energy": E,
             "energy_drift": float(np.max(np.abs(E - E[0])) / max(abs(E[0]), 1e-300)),
             "method": method, "system": system}
+
+
+# ── Chebyshev 補間を N 次元に(テンソル積、DCT-I で係数)────────────────────────────────────────── #
+_LETTERS = "abcdefgh"
+
+
+def _box(box, d):
+    if box is None:
+        return np.array([[-1.0, 1.0]] * d)
+    B = np.asarray(box, dtype=np.float64).reshape(-1, 2)
+    if B.shape[0] == 1 and d > 1:
+        B = np.repeat(B, d, axis=0)
+    if B.shape != (d, 2) or np.any(B[:, 1] <= B[:, 0]):
+        raise ValueError("chebyshev: box は軸ごとの (lo, hi) で lo < hi")
+    return B
+
+
+def chebyshev_coeffs_nd(values, box=None) -> dict:
+    """テンソル積の Chebyshev–Lobatto 格子で標本化した値から、N 次元の Chebyshev 係数を求める(DCT-I)。
+
+    Args:
+        values: 形 (n1, …, nd) の配列。軸 i の標本は ``chebyshev_nodes(n_i, lo_i, hi_i)``(昇順)の上の値。
+        box: 軸ごとの区間 [(lo, hi), …](省略で全軸 [−1, 1]、1 組なら全軸に共通)。
+
+    Returns:
+        ``coeffs`` (n1, …, nd): f ≈ Σ c[k] Π T_{k_i}(t_i)(t_i は [−1, 1] に写した座標)、``box``、
+        ``decay`` = 軸ごとに |c| の最大を次数ごとに並べた列(滑らかな関数は幾何級数的に落ちる = スペクトル収束)、
+        ``tail`` = 各軸の最後の 2 次数の |c| の最大(打ち切り誤差の目安。小さいほど点数が足りている)。
+
+    門: 次数が各軸 n_i − 1 以下の多項式は厳密に再現する / 1/(a − x) 型の極を持つ関数の係数は
+    ρ^−k(ρ = a + √(a² − 1)、Bernstein の楕円)で落ちる。画像では、照明むら・反りなどの**滑らかな面**を
+    数十の係数で表す(多項式のべき基底は高次で悪条件、Chebyshev は安定)。
+    """
+    from scipy import fft as _fft
+    V = np.asarray(values, dtype=np.float64)
+    if V.ndim < 1 or V.ndim > len(_LETTERS) or min(V.shape) < 2 or not np.all(np.isfinite(V)):
+        raise ValueError("chebyshev_coeffs_nd: 1〜8 次元、各軸 2 点以上の有限値")
+    d = V.ndim
+    B = _box(box, d)
+    C = V[tuple(slice(None, None, -1) for _ in range(d))]          # 昇順 → cos(jπ/(n−1)) の降順
+    for ax in range(d):
+        n = C.shape[ax]
+        C = _fft.dct(C, type=1, axis=ax) / (n - 1)
+        idx = [slice(None)] * d
+        for k in (0, n - 1):
+            idx[ax] = k
+            C[tuple(idx)] *= 0.5
+    decay = [np.abs(np.moveaxis(C, ax, 0)).reshape(C.shape[ax], -1).max(axis=1) for ax in range(d)]
+    tail = float(max(float(dc[-2:].max()) for dc in decay))
+    return {"coeffs": C, "box": B, "decay": decay, "tail": tail}
+
+
+def chebyshev_eval_nd(coeffs, points, box=None) -> np.ndarray:
+    """``chebyshev_coeffs_nd`` の係数を点 (M, d) で評価する(各軸 T_k(t) = cos(k·arccos t))。
+
+    ``points`` が d 本の 1-D 配列の組なら、その格子(外積)の上で評価して形 (m1, …, md) を返す。
+    """
+    C = np.asarray(coeffs["coeffs"] if isinstance(coeffs, dict) else coeffs, dtype=np.float64)
+    d = C.ndim
+    B = _box(coeffs.get("box") if isinstance(coeffs, dict) and box is None else box, d)
+
+    def _T(x, ax):
+        t = (2.0 * np.asarray(x, np.float64) - (B[ax, 0] + B[ax, 1])) / (B[ax, 1] - B[ax, 0])
+        if np.any(np.abs(t) > 1 + 1e-12):
+            raise ValueError("chebyshev_eval_nd: 点が box の外(外挿はしない)")
+        return np.cos(np.arange(C.shape[ax])[None, :] * np.arccos(np.clip(t, -1, 1))[:, None])
+
+    if isinstance(points, (tuple, list)) and len(points) == d and all(np.ndim(p) == 1 for p in points):
+        out = C
+        for ax in range(d):
+            out = np.tensordot(_T(points[ax], ax), out, axes=([1], [ax]))
+            out = np.moveaxis(out, 0, ax)
+        return out
+    P = np.asarray(points, dtype=np.float64)
+    if P.ndim == 1 and d == 1:
+        P = P[:, None]
+    if P.ndim != 2 or P.shape[1] != d:
+        raise ValueError(f"chebyshev_eval_nd: 点は (M, {d})")
+    ks = _LETTERS[:d]
+    spec = ks + "," + ",".join("m" + k for k in ks) + "->m"
+    return np.einsum(spec, C, *[_T(P[:, ax], ax) for ax in range(d)], optimize=True)

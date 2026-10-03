@@ -1,4 +1,4 @@
-# MATH operator help — 111 ops in 12 categories
+# MATH operator help — 113 ops in 12 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/math/<category>/<op>.md` を走査。
 
@@ -41,9 +41,9 @@
 
 [mat_cholesky](linalg/mat_cholesky.md) · [mat_cond](linalg/mat_cond.md) · [mat_eig](linalg/mat_eig.md) · [mat_eigh](linalg/mat_eigh.md) · [mat_lstsq](linalg/mat_lstsq.md) · [mat_lu](linalg/mat_lu.md) · [mat_pinv](linalg/mat_pinv.md) · [mat_qr](linalg/mat_qr.md) · [mat_solve](linalg/mat_solve.md) · [mat_svd](linalg/mat_svd.md)
 
-### numerics (9)
+### numerics (11)
 
-[bessel](numerics/bessel.md) · [chebyshev_nodes](numerics/chebyshev_nodes.md) · [erf](numerics/erf.md) · [erfc](numerics/erfc.md) · [gauss_cubature](numerics/gauss_cubature.md) · [gauss_quadrature](numerics/gauss_quadrature.md) · [integrate_hamiltonian](numerics/integrate_hamiltonian.md) · [interp_barycentric](numerics/interp_barycentric.md) · [low_discrepancy](numerics/low_discrepancy.md)
+[bessel](numerics/bessel.md) · [chebyshev_coeffs_nd](numerics/chebyshev_coeffs_nd.md) · [chebyshev_eval_nd](numerics/chebyshev_eval_nd.md) · [chebyshev_nodes](numerics/chebyshev_nodes.md) · [erf](numerics/erf.md) · [erfc](numerics/erfc.md) · [gauss_cubature](numerics/gauss_cubature.md) · [gauss_quadrature](numerics/gauss_quadrature.md) · [integrate_hamiltonian](numerics/integrate_hamiltonian.md) · [interp_barycentric](numerics/interp_barycentric.md) · [low_discrepancy](numerics/low_discrepancy.md)
 
 ### spectral (6)
 

@@ -184,6 +184,9 @@ _CATALOG = {
         ("bessel", "mathnumerics", ["signal"], "signal"),
         ("gauss_quadrature", "mathnumerics", [], "table"),
         ("gauss_cubature", "mathnumerics", [], "table"),
+        # Chebyshev 補間の N 次元版(テンソル積、2026-10-03)。照明むら・反りなど滑らかな面を少数の係数で
+        ("chebyshev_coeffs_nd", "mathnumerics", ["image2d"], "table"),
+        ("chebyshev_eval_nd", "mathnumerics", ["table", "matrix"], "signal"),
         ("low_discrepancy", "mathnumerics", [], "matrix"),
         ("chebyshev_nodes", "mathnumerics", [], "signal"),
         ("interp_barycentric", "mathnumerics", ["signal", "signal", "signal"], "signal"),

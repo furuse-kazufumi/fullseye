@@ -242,6 +242,7 @@ def test_opsmath_call_returns_declared_types():
         "dynsys_correlation_dimension": (orbit,),
     })
     import mathgeometry
+    import mathnumerics
     import mathtransforms
     import mathspectral
     snap = mathspectral.ula_snapshots([10.0, 16.0], 8, 64, snr_db=20)
@@ -267,6 +268,9 @@ def test_opsmath_call_returns_declared_types():
         "bessel": (np.linspace(0.5, 5, 9),),
         "gauss_quadrature": (5,),
         "gauss_cubature": (3, 2),
+        "chebyshev_coeffs_nd": (np.random.default_rng(0).random((6, 5)),),
+        "chebyshev_eval_nd": (mathnumerics.chebyshev_coeffs_nd(np.random.default_rng(0).random((6, 5))),
+                              np.random.default_rng(1).uniform(-1, 1, (7, 2))),
         "low_discrepancy": (16, 2),
         "chebyshev_nodes": (9,),
         "interp_barycentric": (np.linspace(-1, 1, 5), np.linspace(-1, 1, 5) ** 2, np.linspace(-1, 1, 11)),

@@ -35,6 +35,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   `decompose_matrix`・`orthogonal_decompose_matrix` でしか呼べず、索引でも台帳でも「配管」扱いだった。失敗例を同じ op に:
   ピボットなしの LU(増大率 1e20、残差 1.0)、古典 Gram–Schmidt の直交性の損失 ε·κ²(κ = 1e9 で崩壊)、Jordan ブロックの固有値が
   √ε で動く(κ(V) で報告)。numerics_tour に「同じ QR でも作り方で崩れ方が違う」の図。
+- ★**Chebyshev 補間の N 次元版 2 op**: `chebyshev_coeffs_nd`(テンソル積の Lobatto 格子 → DCT-I で係数)・`chebyshev_eval_nd`
+  (散在点か格子で評価)。門: 多項式の厳密再現、係数の減衰が Bernstein の楕円 ρ と 6 桁一致、3-D のスペクトル収束。
+  numerics_tour に「2 次元の Runge 現象」(等間隔 25×25 は誤差 8e5、Chebyshev は 8e-3)。
 - **非推奨(0.4.0 で削除)**: `gen_contour_nurbs_xld`・`gen_nurbs_interp`(`contours_xld2`)—— 名前に反して NURBS ではなく、
   重みなしで全制御点を通る**補間 B スプライン**だった。呼ぶと `DeprecationWarning`、docstring に正体と移行先
   (`nurbs_curve`)を書いた。動作は変えていない。

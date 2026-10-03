@@ -17,6 +17,10 @@
    紙の上では同じ答えだが、行列が悪条件(条件数 κ が大きい)になると、古典は直交性を κ² の速さで失い κ = 1e9 で
    完全に崩れる。修正は κ の速さ、Householder は丸め誤差のまま。ライブラリが Householder を使う理由。
 
+7. **2 次元の Runge 現象** —— 1/(1 + 25(x² + y²)) を格子の点で補間する。等間隔の格子では点を増やすほど
+   四隅が爆発し(25×25 で誤差 8e5)、Chebyshev の格子(fs.chebyshev_coeffs_nd)では減り続ける。画像の照明むらのような
+   滑らかな面を少数の係数で表すときの点の置き方。
+
 【グラウンドトゥルース】すべて閉じた式か定理(Runge 関数・調和振動子の円軌道と (1+ω²dt²)^n・積分 = 1・
 単項式の積分・erf の導関数)。
 """
@@ -129,6 +133,29 @@ def run() -> dict:
     assert qloss["cgs"][9] > 0.5 and qloss["mgs"][9] < 1e-6 and max(qloss["householder"]) < 1e-14
     out.update(qr_loss_cgs_k9=qloss["cgs"][9], qr_loss_mgs_k9=qloss["mgs"][9])
 
+    # ---- 7. 2 次元の Runge 現象 ------------------------------------------------------------ #
+    def _runge2(X, Y):
+        return 1.0 / (1.0 + 25.0 * (X ** 2 + Y ** 2))
+    gq = np.linspace(-1, 1, 161)
+    true2 = _runge2(*np.meshgrid(gq, gq, indexing="ij"))
+    r2_n = [9, 13, 17, 25]
+    r2_eq, r2_ch, show = [], [], {}
+    for nn in r2_n:
+        ee = np.linspace(-1, 1, nn)
+        Vg = _runge2(*np.meshgrid(ee, ee, indexing="ij"))
+        tmp = np.array([fs.interp_barycentric(ee, Vg[:, j], gq) for j in range(nn)]).T
+        Eq = np.array([fs.interp_barycentric(ee, tmp[i], gq) for i in range(gq.size)])
+        cn = fs.chebyshev_nodes(nn)
+        Ch = fs.chebyshev_eval_nd(fs.chebyshev_coeffs_nd(_runge2(*np.meshgrid(cn, cn, indexing="ij"))), (gq, gq))
+        r2_eq.append(float(np.abs(Eq - true2).max()))
+        r2_ch.append(float(np.abs(Ch - true2).max()))
+        if nn == 13:
+            show = {"eq": Eq, "ch": Ch, "ee": ee, "cn": cn}
+    print("7) 2 次元の Runge(最大誤差、点 %s): 等間隔 %s / Chebyshev %s"
+          % ("・".join("%d²" % v for v in r2_n), " ".join("%.0e" % v for v in r2_eq), " ".join("%.0e" % v for v in r2_ch)))
+    assert r2_eq[-1] > 1e4 and r2_ch[-1] < 1e-2 and all(a > b for a, b in zip(r2_ch, r2_ch[1:])) and len(r2_ch) == 4
+    out.update(runge2d_equi_25=r2_eq[-1], runge2d_cheb_25=r2_ch[-1])
+
     # ---- 図 --------------------------------------------------------------------------- #
     if figs.enabled():
         n_show = 11                                   # 暴れ方が枠に収まる点数(13 点で −3.6 まで振れる)
@@ -206,6 +233,31 @@ def run() -> dict:
                                "沿って崩れ、κ = 1e9 で直交性が完全に無くなる(損失 %.2f)。修正 Gram–Schmidt は ε·κ(点線)に沿う。"
                                "Householder は κ によらず %.0e。3 つとも A = QR 自体は丸め誤差で成り立つ —— 崩れるのは Q だけ。"
                                % (qloss["cgs"][9], max(qloss["householder"])))
+
+        def _dots(img, xs):
+            out_ = np.asarray(img, float).copy()
+            idx = np.rint((xs + 1) / 2 * (gq.size - 1)).astype(int)
+            for i in idx:
+                for j in idx:
+                    out_[max(i - 1, 0):i + 2, max(j - 1, 0):j + 2] = out_.max() if out_.max() > 0 else 1.0
+            return out_
+        figs.save_grid("runge_2d",
+                       [true2, show["eq"], show["ch"], _dots(np.zeros_like(true2), show["cn"]),
+                        np.abs(show["eq"] - true2), np.abs(show["ch"] - true2)],
+                       ["真の面 1/(1+25(x²+y²))", "等間隔 13×13 の補間", "Chebyshev 13×13 の補間(fs.chebyshev_coeffs_nd)",
+                        "Chebyshev の点の置き方(端ほど密)", "等間隔の誤差", "Chebyshev の誤差(同じ目盛り)"],
+                       ncols=3, vrange=[(0, 1)] * 3 + [(0, 1), (0, 0.5), (0, 0.5)],
+                       title="2 次元の Runge 現象 —— 点を等間隔に置くと四隅が爆発する",
+                       caption="同じ 169 個の値から面を作る。等間隔の格子では四隅で振動が爆発し(最大誤差 %.0f、上段中は 0〜1 で切っている)、"
+                               "Chebyshev の格子(端に向かって密)では最大 %.2f。点を 25×25 に増やすと等間隔は %.0e まで悪化し、"
+                               "Chebyshev は %.3f まで下がる。"
+                               % (r2_eq[1], r2_ch[1], r2_eq[-1], r2_ch[-1]))
+        figs.save_plot("runge_2d_convergence",
+                       [("等間隔の格子", np.array(r2_n), np.log10(r2_eq)), ("Chebyshev の格子", np.array(r2_n), np.log10(r2_ch))],
+                       colors=["wrong", "emphasis"], xlabel="各軸の点の数", ylabel="log10(最大誤差)",
+                       title="点を増やしたときの誤差 —— 等間隔は増え、Chebyshev は減る",
+                       caption="Chebyshev の減り方は関数の極(x² + y² = −1/25)が実軸に近いほど遅い(Bernstein の楕円)。"
+                               "それでも点を増やせば必ず減る。等間隔は増やすほど悪くなる。")
     assert not figs.errors(), figs.errors()
 
     out["elapsed_s"] = round(time.perf_counter() - t0, 3)
