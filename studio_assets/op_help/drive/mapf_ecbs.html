@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mapf_ecbs — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;mapf_ecbs&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>上段を焦点探索にした CBS(ECBS の上段と同じ考え方、Barer ら 2014)。総コストが <b>最適の w 倍以内</b>。</p>
+<p>開いている節のうち最小の総コスト `<code style="color:#22d3bf">LB</code>` は最適値以下(最適解はどれかの節の下にある)。そこで</p>
+<p>`<code style="color:#22d3bf">コスト ≤ w · LB</code>` の節(焦点)の中から<b>衝突の少ない</b>ものを展開する。返す計画は</p>
+<p>`<code style="color:#22d3bf">cost ≤ w · LB ≤ w · 最適</code><code style="color:#22d3bf">(門)。返りは :func:</code>mapf_cbs<code style="color:#22d3bf"> の dict に </code><code style="color:#22d3bf">lower_bound</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">w</code>` を足したもの。</p>
+<p>細い通路で最適の CBS が同じ長さの譲り合いの組を全部調べて止まるのを、衝突の少ない側へ寄せて抜ける。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_agv_fleet">poc_agv_fleet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_agv_fleet.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">agv</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:warehouse_grid">warehouse_grid</a> · <a style="color:#22d3bf" href="opdrive:grid_distances">grid_distances</a> · <a style="color:#22d3bf" href="opdrive:mapf_cbs">mapf_cbs</a> · <a style="color:#22d3bf" href="opdrive:mapf_joint_astar">mapf_joint_astar</a> · <a style="color:#22d3bf" href="opdrive:mapf_prioritized">mapf_prioritized</a> · <a style="color:#22d3bf" href="opdrive:plan_conflicts">plan_conflicts</a> · <a style="color:#22d3bf" href="opdrive:plan_cost">plan_cost</a> · <a style="color:#22d3bf" href="opdrive:adg_build">adg_build</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: agvfleet.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

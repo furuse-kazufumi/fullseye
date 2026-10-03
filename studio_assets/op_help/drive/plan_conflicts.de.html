@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">plan_conflicts — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_conflicts(paths)</code> (die Implementierung direkt: <code style="color:#22d3bf">import agvfleet; agvfleet.plan_conflicts(paths)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;plan_conflicts&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>衝突の一覧: 同じ時刻に同じマス(vertex)・すれ違い(edge)・追従(follow)。</p>
+<p>返りは `<code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>`。着いた車両はその場に居続けるものとして数える。</p>
+<p>follow は「i が時刻 t にマス v へ<b>入った</b>とき、j が t-1 に v に居た」(i ≠ j)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_agv_fleet">poc_agv_fleet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_agv_fleet.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">agv</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:warehouse_grid">warehouse_grid</a> · <a style="color:#22d3bf" href="opdrive:grid_distances">grid_distances</a> · <a style="color:#22d3bf" href="opdrive:mapf_cbs">mapf_cbs</a> · <a style="color:#22d3bf" href="opdrive:mapf_ecbs">mapf_ecbs</a> · <a style="color:#22d3bf" href="opdrive:mapf_joint_astar">mapf_joint_astar</a> · <a style="color:#22d3bf" href="opdrive:mapf_prioritized">mapf_prioritized</a> · <a style="color:#22d3bf" href="opdrive:plan_cost">plan_cost</a> · <a style="color:#22d3bf" href="opdrive:adg_build">adg_build</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: agvfleet.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

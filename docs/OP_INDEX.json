@@ -1,8 +1,8 @@
 {
- "n_ops": 2660,
+ "n_ops": 2673,
  "tiers": {
   "color": 12,
-  "ledger": 1709,
+  "ledger": 1722,
   "nary": 17,
   "registry": 922
  },
@@ -547,6 +547,32 @@
    "in_sort": "table",
    "out_sort": "scalar",
    "category": "kendamaworld",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "adg_build",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "agv",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "adg_execute",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "agv",
    "tier": "ledger",
    "ledger": "opsdrive",
    "dim": "drive",
@@ -7990,6 +8016,19 @@
    "in_sorts": []
   },
   {
+   "name": "grid_distances",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "agv",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "grid_lines",
    "halcon": "",
    "in_sort": "image2d",
@@ -10458,6 +10497,58 @@
    ]
   },
   {
+   "name": "mapf_cbs",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "agv",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "mapf_ecbs",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "agv",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "mapf_joint_astar",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "agv",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "mapf_prioritized",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "agv",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "marker_direction",
    "halcon": "",
    "in_sort": null,
@@ -12046,6 +12137,19 @@
    "dim": "math",
    "in_sorts": [
     "matrix"
+   ]
+  },
+  {
+   "name": "naive_execute",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "agv",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -13862,6 +13966,32 @@
    "in_sort": "table",
    "out_sort": "any",
    "category": "long",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "plan_conflicts",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "agv",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "plan_cost",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "agv",
    "tier": "ledger",
    "ledger": "opsdrive",
    "dim": "drive",
@@ -20542,6 +20672,32 @@
    ]
   },
   {
+   "name": "vda5050_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "agv",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "vda5050_order",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "agv",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "vector_to_shift",
    "halcon": "",
    "in_sort": "vector",
@@ -21895,6 +22051,17 @@
    "in_sorts": [
     "normalmap"
    ]
+  },
+  {
+   "name": "warehouse_grid",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "any",
+   "category": "agv",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "warp_by_plane",

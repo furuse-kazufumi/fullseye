@@ -45,6 +45,7 @@ import drivettc
 import gsplatnp
 import motionio
 import drivehumanoid
+import agvfleet
 import driveworld
 import kendama
 import kendamaworld
@@ -57,7 +58,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -295,6 +296,25 @@ _CATALOG = {
         ("world_pose_humanoid", "drivehumanoid", ["table"], "any"),
         ("humanoid_impostors", "drivehumanoid", ["table"], "table"),
         ("world_camera_impostors", "drivehumanoid", ["table", "matrix", "matrix"], "table"),
+    ],
+    # 工場・倉庫の AGV の群れ(2026-10-03): 床の格子(bool の占有格子 = image2d、True = 走れる)の上の複数台の経路計画
+    # (CBS = 最適 / 焦点探索 = 最適の w 倍以内 / 結合 A* = 第 2 実装 / 優先度付き = 不完全)と、遅れても詰まらない実行
+    # (行動依存グラフ ADG)、計画を VDA 5050 の order にして仕様の規則で検査する。計画・結果・order は dict / list = table。
+    # 真値 = CBS と結合 A* の総コストの一致、焦点探索 ≤ w·最適、ADG は遅れを入れても衝突 0・デッドロック 0(Hönig ら 2019)。
+    "agv": [
+        ("warehouse_grid", "agvfleet", [], "any"),
+        ("grid_distances", "agvfleet", ["image2d"], "image2d"),
+        ("mapf_cbs", "agvfleet", ["image2d"], "table"),
+        ("mapf_ecbs", "agvfleet", ["image2d"], "table"),
+        ("mapf_joint_astar", "agvfleet", ["image2d"], "table"),
+        ("mapf_prioritized", "agvfleet", ["image2d"], "table"),
+        ("plan_conflicts", "agvfleet", ["table"], "table"),
+        ("plan_cost", "agvfleet", ["table"], "scalar"),
+        ("adg_build", "agvfleet", ["table"], "table"),
+        ("adg_execute", "agvfleet", ["table"], "table"),
+        ("naive_execute", "agvfleet", ["table"], "table"),
+        ("vda5050_order", "agvfleet", ["table"], "table"),
+        ("vda5050_check", "agvfleet", ["table"], "table"),
     ],
     # 車の縦の運動: m dv/dt = 駆動 − 制動 − m g sin θ − c_rr m g cos θ − ½ρC_dA v|v|(止まっている間はブレーキの保持の範囲で動かない)。
     # 真値 = 停止距離の閉形式 vρ + (1/2k)ln(1 + k v²/A)(A = b ± g sin θ + c_rr g cos θ)、rsssafety との一致、坂道発進のずり下がりの閉形式、

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2660,
- "n_notes": 2666,
+ "n_ops": 2673,
+ "n_notes": 2679,
  "notes": {
   "vol_dilate": [
    {
@@ -15393,6 +15393,135 @@
     "in": "depth",
     "out": "image2d",
     "path": "docs/ops/dem/visibility/dem_viewshed.md"
+   }
+  ],
+  "adg_build": [
+   {
+    "op": "adg_build",
+    "dim": "drive",
+    "category": "agv",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/agv/adg_build.md"
+   }
+  ],
+  "adg_execute": [
+   {
+    "op": "adg_execute",
+    "dim": "drive",
+    "category": "agv",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/agv/adg_execute.md"
+   }
+  ],
+  "grid_distances": [
+   {
+    "op": "grid_distances",
+    "dim": "drive",
+    "category": "agv",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/drive/agv/grid_distances.md"
+   }
+  ],
+  "mapf_cbs": [
+   {
+    "op": "mapf_cbs",
+    "dim": "drive",
+    "category": "agv",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/drive/agv/mapf_cbs.md"
+   }
+  ],
+  "mapf_ecbs": [
+   {
+    "op": "mapf_ecbs",
+    "dim": "drive",
+    "category": "agv",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/drive/agv/mapf_ecbs.md"
+   }
+  ],
+  "mapf_joint_astar": [
+   {
+    "op": "mapf_joint_astar",
+    "dim": "drive",
+    "category": "agv",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/drive/agv/mapf_joint_astar.md"
+   }
+  ],
+  "mapf_prioritized": [
+   {
+    "op": "mapf_prioritized",
+    "dim": "drive",
+    "category": "agv",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/drive/agv/mapf_prioritized.md"
+   }
+  ],
+  "naive_execute": [
+   {
+    "op": "naive_execute",
+    "dim": "drive",
+    "category": "agv",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/agv/naive_execute.md"
+   }
+  ],
+  "plan_conflicts": [
+   {
+    "op": "plan_conflicts",
+    "dim": "drive",
+    "category": "agv",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/agv/plan_conflicts.md"
+   }
+  ],
+  "plan_cost": [
+   {
+    "op": "plan_cost",
+    "dim": "drive",
+    "category": "agv",
+    "in": "table",
+    "out": "scalar",
+    "path": "docs/ops/drive/agv/plan_cost.md"
+   }
+  ],
+  "vda5050_check": [
+   {
+    "op": "vda5050_check",
+    "dim": "drive",
+    "category": "agv",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/agv/vda5050_check.md"
+   }
+  ],
+  "vda5050_order": [
+   {
+    "op": "vda5050_order",
+    "dim": "drive",
+    "category": "agv",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/agv/vda5050_order.md"
+   }
+  ],
+  "warehouse_grid": [
+   {
+    "op": "warehouse_grid",
+    "dim": "drive",
+    "category": "agv",
+    "out": "any",
+    "path": "docs/ops/drive/agv/warehouse_grid.md"
    }
   ],
   "apex_sequence": [

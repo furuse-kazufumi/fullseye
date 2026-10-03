@@ -1,0 +1,58 @@
+[
+ {
+  "file": "01_agv_naive_vs_adg.gif",
+  "name": "agv_naive_vs_adg",
+  "caption": "同じ 12 台の計画・同じ遅れ(1 手ごとに 30 %)。左は詰まる —— 赤の矢印が「互いに相手を待つ」閉路 —— ただしこれは珍しい例で、641 件のデッドロックのうち閉路は 1 件、残りは先に着いて居座った車が後から通るはずの車の道を塞ぐ封鎖。右は全台が着く",
+  "shape": [
+   121,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 31,
+  "frames_written": 24,
+  "fps": 4.0,
+  "video": "01_agv_naive_vs_adg.mp4",
+  "video_frames": 31,
+  "video_fps": 4.0,
+  "video_shape": [
+   198,
+   788,
+   3
+  ]
+ },
+ {
+  "file": "02_agv_naive_vs_adg_still.png",
+  "name": "agv_naive_vs_adg_still",
+  "caption": "最後のコマ(左: デッドロック、右: 全台到着)",
+  "shape": [
+   198,
+   788,
+   3
+  ]
+ },
+ {
+  "file": "03_agv_deadlock_vs_delay.png",
+  "name": "agv_deadlock_vs_delay",
+  "caption": "同じ 12 台の計画を、遅れの確率ごとに 200 通り走らせたデッドロックの割合。行動依存グラフはどの確率でも 0、素朴な実行は遅れ 5 % ですでに 2 割を超える",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_agv_prioritized_counterexample.gif",
+  "name": "agv_prioritized_counterexample",
+  "caption": "優先度付き計画が、どちらを先にしても解けない問題(CBS の総コスト 9)。CBS は片方に道を譲らせて解く",
+  "shape": [
+   312,
+   390,
+   3
+  ],
+  "animated": true,
+  "frames": 9,
+  "frames_written": 6,
+  "fps": 2.0
+ }
+]

@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 31 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 32 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -915,6 +915,34 @@ Source: [examples/poc_print_layer_inspection.py](https://github.com/furuse-kazuf
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_print_layer_inspection)
 
 Ops used (notes): [`contours_to_gcode`](https://furuse.work/ops/printpath/slice/contours_to_gcode.html) · [`gcode_extrusion_volume`](https://furuse.work/ops/printpath/gcode/gcode_extrusion_volume.html) · [`gcode_layer_image`](https://furuse.work/ops/printpath/gcode/gcode_layer_image.html) · [`gcode_read`](https://furuse.work/ops/printpath/gcode/gcode_read.html) · [`gcode_time_estimate`](https://furuse.work/ops/printpath/gcode/gcode_time_estimate.html) · [`gcode_write`](https://furuse.work/ops/printpath/gcode/gcode_write.html) · [`mesh_slice_contours`](https://furuse.work/ops/printpath/slice/mesh_slice_contours.html) · [`mesh_slice_stack`](https://furuse.work/ops/printpath/slice/mesh_slice_stack.html) · [`print_layer_defect_map`](https://furuse.work/ops/printpath/inspect/print_layer_defect_map.html) · [`read_3mf`](https://furuse.work/ops/printpath/format/read_3mf.html) · [`vol_render_transfer`](https://furuse.work/ops/videocube/render/vol_render_transfer.html) · [`write_3mf`](https://furuse.work/ops/printpath/format/write_3mf.html)
+
+## No.2026.189 —— A Warehouse That Does Not Jam When Vehicles Run Late — A Correct Plan Alone Still Stops an AGV Fleet
+
+[![A Warehouse That Does Not Jam When Vehicles Run Late — A Correct Plan Alone Still Stops an AGV Fleet](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/01_agv_naive_vs_adg.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/01_agv_naive_vs_adg.gif)
+
+*↑ **A Warehouse That Does Not Jam When Vehicles Run Late — A Correct Plan Alone Still Stops an AGV Fleet** ―― The author's remark: "we have done nothing on AGVs, the simple vehicles manufacturing uses everywhere". A transport plan for 12 vehicles on a floor grid is built with focal-search CBS (cost 96 ≤ 1.1 × lower bound 88), then executed 1000 times with each vehicle delayed with probability 0.3 per step. Naive execution ("move if the next cell is free") jams in 641 of 1000 runs; execution that follows the action dependency graph (ADG, Hönig et al. 2019) has 0 collisions and 0 deadlocks. Of the 641 jams, 640 were a vehicle that had arrived and stayed parked in the aisle; only 1 was a cycle of waits. Gates: the CBS sum of costs matches the optimum of A* over the joint state of all vehicles (a second implementation) in 40 / 40 cases, focal search ≤ 1.3 × optimum in 40 / 40, a concrete instance that prioritized planning cannot solve in any order (CBS and joint A* both cost 9), and every VDA 5050 order passes the structural rules. Honestly: one step is a fixed time on a discrete grid; acceleration, turning and vehicle size are not modelled.*
+
+[![最後のコマ(左: デッドロック、右: 全台到着)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/02_agv_naive_vs_adg_still_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/02_agv_naive_vs_adg_still.png)
+
+*↑ The measurement ―― 最後のコマ(左: デッドロック、右: 全台到着) (figure labels are in Japanese; the numbers are the same)*
+
+[![同じ 12 台の計画を、遅れの確率ごとに 200 通り走らせたデッドロックの割合。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/03_agv_deadlock_vs_delay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/03_agv_deadlock_vs_delay.png)
+
+*↑ 同じ 12 台の計画を、遅れの確率ごとに 200 通り走らせたデッドロックの割合。*
+
+[![優先度付き計画が、どちらを先にしても解けない問題(CBS の総コスト 9)。CBS は片方に道を譲らせて解く](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/04_agv_prioritized_counterexample.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/04_agv_prioritized_counterexample.gif)
+
+*↑ The animation ―― 優先度付き計画が、どちらを先にしても解けない問題(CBS の総コスト 9)。CBS は片方に道を譲らせて解く*
+
+```
+py -3.11 examples/poc_agv_fleet.py
+```
+
+Source: [examples/poc_agv_fleet.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_agv_fleet.py)
+
+This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_agv_fleet)
+
+Ops used (notes): [`adg_build`](https://furuse.work/ops/drive/agv/adg_build.html) · [`adg_execute`](https://furuse.work/ops/drive/agv/adg_execute.html) · [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`mapf_cbs`](https://furuse.work/ops/drive/agv/mapf_cbs.html) · [`mapf_ecbs`](https://furuse.work/ops/drive/agv/mapf_ecbs.html) · [`mapf_joint_astar`](https://furuse.work/ops/drive/agv/mapf_joint_astar.html) · [`mapf_prioritized`](https://furuse.work/ops/drive/agv/mapf_prioritized.html) · [`naive_execute`](https://furuse.work/ops/drive/agv/naive_execute.html) · [`plan_conflicts`](https://furuse.work/ops/drive/agv/plan_conflicts.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`vda5050_check`](https://furuse.work/ops/drive/agv/vda5050_check.html) · [`vda5050_order`](https://furuse.work/ops/drive/agv/vda5050_order.html) · [`warehouse_grid`](https://furuse.work/ops/drive/agv/warehouse_grid.html)
 
 ## No.2026.185 —— From Melt-Pool Thermography to X-ray CT in Metal Additive Manufacturing — Raw Signal Is Not Temperature, Time Axis and Pixel Pitch, and Powder That Clings Only to Down-Facing Surfaces
 

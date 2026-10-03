@@ -2947,6 +2947,50 @@ def _b_world_camera_impostors(pool, rng):
     return (w, P, K, 96, 60, [{"imp": imp, "x": 9.0, "y": 3.0, "yaw": 1.0, "distance": 0.3}]), {}
 
 
+def _fuzz_agv():
+    """AGV の小さな問題: 棚 1 列の倉庫の格子に 3 台(出発と目的地は走れるマス)。CBS で解いた計画も返す。"""
+    import agvfleet as AF
+    g = AF.warehouse_grid(1, 2, 2, 1, 1)[0]
+    S, G = [(0, 0), (0, 6), (2, 3)], [(2, 6), (2, 0), (0, 3)]
+    return g, S, G, AF.mapf_cbs(g, S, G, max_nodes=2000)["paths"]
+
+
+def _b_warehouse_grid(pool, rng):
+    return (1, 2, 2, 1, 1), {}
+
+
+def _b_grid_distances(pool, rng):
+    g = _fuzz_agv()[0]
+    return (g, (2, 6)), {}
+
+
+def _b_mapf(pool, rng):
+    g, S, G, _ = _fuzz_agv()
+    return (g, S, G), {}
+
+
+def _b_agv_paths(pool, rng):
+    return (_fuzz_agv()[3],), {}
+
+
+def _b_adg_execute(pool, rng):
+    import agvfleet as AF
+    return (AF.adg_build(_fuzz_agv()[3]),), {"delay_prob": 0.3, "seed": int(rng.integers(0, 100))}
+
+
+def _b_naive_execute(pool, rng):
+    return (_fuzz_agv()[3],), {"delay_prob": 0.3, "seed": int(rng.integers(0, 100))}
+
+
+def _b_vda5050_order(pool, rng):
+    return (_fuzz_agv()[3][0],), {"order_id": "fuzz"}
+
+
+def _b_vda5050_check(pool, rng):
+    import agvfleet as AF
+    return (AF.vda5050_order(_fuzz_agv()[3][0]),), {}
+
+
 def _b_events_to_frames(pool, rng):
     import motionio
     return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
@@ -3819,6 +3863,11 @@ OP_ARG_BUILDERS = {
     "events_to_frames": _b_events_to_frames,
     "humanoid_clip_mesh": _b_humanoid_clip_mesh, "world_pose_humanoid": _b_world_pose_humanoid,
     "humanoid_impostors": _b_humanoid_impostors, "world_camera_impostors": _b_world_camera_impostors,
+    "warehouse_grid": _b_warehouse_grid, "grid_distances": _b_grid_distances,
+    "mapf_cbs": _b_mapf, "mapf_ecbs": _b_mapf, "mapf_joint_astar": _b_mapf, "mapf_prioritized": _b_mapf,
+    "plan_conflicts": _b_agv_paths, "plan_cost": _b_agv_paths, "adg_build": _b_agv_paths,
+    "adg_execute": _b_adg_execute, "naive_execute": _b_naive_execute,
+    "vda5050_order": _b_vda5050_order, "vda5050_check": _b_vda5050_check,
     "sign_params": _b_sign_kind, "sign_image": _b_sign_img, "plate_mesh_from_image": _b_plate_mesh,
     "sign_mesh": _b_sign_mesh, "add_sign": _b_add_sign, "signal_jp_mesh": _b_signal_jp,
     "add_signal_jp": _b_add_signal_jp,

@@ -2021,6 +2021,17 @@
    "run": "py -3.11 examples/poc_driving_humanoids.py"
   },
   {
+   "id": "poc_agv_fleet",
+   "wing": "wing_industrial",
+   "added": "2026-10-03",
+   "numbers_source": "log",
+   "title_ja": "遅れても詰まらない倉庫 ―― AGV の群れは「計画が正しい」だけでは止まる",
+   "title_en": "A Warehouse That Does Not Jam When Vehicles Run Late — A Correct Plan Alone Still Stops an AGV Fleet",
+   "caption_ja": "著者の発案「製造業でよく使われる AGV 系は全然やってないな」。床の格子を走る 12 台の搬送計画を焦点探索の CBS で作り(コスト 96 ≤ 1.1 × 下界 88)、同じ計画を各車両が 1 手ごとに確率 0.3 で遅れる条件で 1000 通り実行した図。「次のマスが空いていれば進む」素朴な実行は 641 / 1000 が詰まり、行動依存グラフ(ADG、Hönig ら 2019)に従う実行は衝突 0・デッドロック 0。詰まった 641 件のうち 640 件は着いて居座る車が通路を塞いだもので、待ちの閉路は 1 件だけだった。門: CBS の総コストが全台を 1 つの状態にした A*(第 2 実装)の最適値と 40 / 40 で一致、焦点探索 ≤ 1.3·最適 40 / 40、優先度付き計画がどの順でも解けない問題の実例(CBS と結合 A* は総コスト 9)、VDA 5050 の order は規則の違反 0。正直に: 1 手 = 一定時間の格子の離散モデルで、加減速・旋回・車体の大きさは入れていない。",
+   "caption_en": "The author's remark: \"we have done nothing on AGVs, the simple vehicles manufacturing uses everywhere\". A transport plan for 12 vehicles on a floor grid is built with focal-search CBS (cost 96 ≤ 1.1 × lower bound 88), then executed 1000 times with each vehicle delayed with probability 0.3 per step. Naive execution (\"move if the next cell is free\") jams in 641 of 1000 runs; execution that follows the action dependency graph (ADG, Hönig et al. 2019) has 0 collisions and 0 deadlocks. Of the 641 jams, 640 were a vehicle that had arrived and stayed parked in the aisle; only 1 was a cycle of waits. Gates: the CBS sum of costs matches the optimum of A* over the joint state of all vehicles (a second implementation) in 40 / 40 cases, focal search ≤ 1.3 × optimum in 40 / 40, a concrete instance that prioritized planning cannot solve in any order (CBS and joint A* both cost 9), and every VDA 5050 order passes the structural rules. Honestly: one step is a fixed time on a discrete grid; acceleration, turning and vehicle size are not modelled.",
+   "run": "py -3.11 examples/poc_agv_fleet.py"
+  },
+  {
    "id": "poc_driving_crossing",
    "wing": "lane_drive",
    "added": "2026-10-02",

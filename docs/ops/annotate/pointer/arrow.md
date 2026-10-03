@@ -4,7 +4,7 @@ dim: annotate
 category: pointer
 in: image2d
 out: image2d
-examples: [annotate_gallery, poc_car_parking, poc_leak_localization, poc_machine_condition_fusion, poc_river_surface_velocity, poc_ttc_rss]
+examples: [annotate_gallery, poc_agv_fleet, poc_car_parking, poc_leak_localization, poc_machine_condition_fusion, poc_river_surface_velocity, poc_ttc_rss]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -56,6 +56,7 @@ ValueError
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
+- [poc_agv_fleet](../../../../examples/poc_agv_fleet.py) — `py -3.11 examples/poc_agv_fleet.py`
 - [poc_car_parking](../../../../examples/poc_car_parking.py) — `py -3.11 examples/poc_car_parking.py`
 - [poc_leak_localization](../../../../examples/poc_leak_localization.py) — `py -3.11 examples/poc_leak_localization.py`
 - [poc_machine_condition_fusion](../../../../examples/poc_machine_condition_fusion.py) — `py -3.11 examples/poc_machine_condition_fusion.py`

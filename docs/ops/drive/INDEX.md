@@ -1,8 +1,12 @@
-# DRIVE operator help — 296 ops in 24 categories
+# DRIVE operator help — 309 ops in 25 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
 ## カテゴリ
+
+### agv (13)
+
+[adg_build](agv/adg_build.md) · [adg_execute](agv/adg_execute.md) · [grid_distances](agv/grid_distances.md) · [mapf_cbs](agv/mapf_cbs.md) · [mapf_ecbs](agv/mapf_ecbs.md) · [mapf_joint_astar](agv/mapf_joint_astar.md) · [mapf_prioritized](agv/mapf_prioritized.md) · [naive_execute](agv/naive_execute.md) · [plan_conflicts](agv/plan_conflicts.md) · [plan_cost](agv/plan_cost.md) · [vda5050_check](agv/vda5050_check.md) · [vda5050_order](agv/vda5050_order.md) · [warehouse_grid](agv/warehouse_grid.md)
 
 ### ball (26)
 

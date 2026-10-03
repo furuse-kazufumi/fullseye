@@ -2,7 +2,7 @@
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 31 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 32 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -915,6 +915,34 @@ py -3.11 examples/poc_print_layer_inspection.py
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_print_layer_inspection)
 
 使用 op(ノートへ): [`contours_to_gcode`](https://furuse.work/ops/printpath/slice/contours_to_gcode.html) · [`gcode_extrusion_volume`](https://furuse.work/ops/printpath/gcode/gcode_extrusion_volume.html) · [`gcode_layer_image`](https://furuse.work/ops/printpath/gcode/gcode_layer_image.html) · [`gcode_read`](https://furuse.work/ops/printpath/gcode/gcode_read.html) · [`gcode_time_estimate`](https://furuse.work/ops/printpath/gcode/gcode_time_estimate.html) · [`gcode_write`](https://furuse.work/ops/printpath/gcode/gcode_write.html) · [`mesh_slice_contours`](https://furuse.work/ops/printpath/slice/mesh_slice_contours.html) · [`mesh_slice_stack`](https://furuse.work/ops/printpath/slice/mesh_slice_stack.html) · [`print_layer_defect_map`](https://furuse.work/ops/printpath/inspect/print_layer_defect_map.html) · [`read_3mf`](https://furuse.work/ops/printpath/format/read_3mf.html) · [`vol_render_transfer`](https://furuse.work/ops/videocube/render/vol_render_transfer.html) · [`write_3mf`](https://furuse.work/ops/printpath/format/write_3mf.html)
+
+## No.2026.189 —— 遅れても詰まらない倉庫 ―― AGV の群れは「計画が正しい」だけでは止まる
+
+[![遅れても詰まらない倉庫 ―― AGV の群れは「計画が正しい」だけでは止まる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/01_agv_naive_vs_adg.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/01_agv_naive_vs_adg.gif)
+
+*↑ **遅れても詰まらない倉庫 ―― AGV の群れは「計画が正しい」だけでは止まる** ―― 著者の発案「製造業でよく使われる AGV 系は全然やってないな」。床の格子を走る 12 台の搬送計画を焦点探索の CBS で作り(コスト 96 ≤ 1.1 × 下界 88)、同じ計画を各車両が 1 手ごとに確率 0.3 で遅れる条件で 1000 通り実行した図。「次のマスが空いていれば進む」素朴な実行は 641 / 1000 が詰まり、行動依存グラフ(ADG、Hönig ら 2019)に従う実行は衝突 0・デッドロック 0。詰まった 641 件のうち 640 件は着いて居座る車が通路を塞いだもので、待ちの閉路は 1 件だけだった。門: CBS の総コストが全台を 1 つの状態にした A*(第 2 実装)の最適値と 40 / 40 で一致、焦点探索 ≤ 1.3·最適 40 / 40、優先度付き計画がどの順でも解けない問題の実例(CBS と結合 A* は総コスト 9)、VDA 5050 の order は規則の違反 0。正直に: 1 手 = 一定時間の格子の離散モデルで、加減速・旋回・車体の大きさは入れていない。*
+
+[![最後のコマ(左: デッドロック、右: 全台到着)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/02_agv_naive_vs_adg_still_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/02_agv_naive_vs_adg_still.png)
+
+*↑ 測定の図 ―― 最後のコマ(左: デッドロック、右: 全台到着)*
+
+[![同じ 12 台の計画を、遅れの確率ごとに 200 通り走らせたデッドロックの割合。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/03_agv_deadlock_vs_delay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/03_agv_deadlock_vs_delay.png)
+
+*↑ 同じ 12 台の計画を、遅れの確率ごとに 200 通り走らせたデッドロックの割合。*
+
+[![優先度付き計画が、どちらを先にしても解けない問題(CBS の総コスト 9)。CBS は片方に道を譲らせて解く](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/04_agv_prioritized_counterexample.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/04_agv_prioritized_counterexample.gif)
+
+*↑ 動く図 ―― 優先度付き計画が、どちらを先にしても解けない問題(CBS の総コスト 9)。CBS は片方に道を譲らせて解く*
+
+```
+py -3.11 examples/poc_agv_fleet.py
+```
+
+ソース: [examples/poc_agv_fleet.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_agv_fleet.py)
+
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_agv_fleet)
+
+使用 op(ノートへ): [`adg_build`](https://furuse.work/ops/drive/agv/adg_build.html) · [`adg_execute`](https://furuse.work/ops/drive/agv/adg_execute.html) · [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`mapf_cbs`](https://furuse.work/ops/drive/agv/mapf_cbs.html) · [`mapf_ecbs`](https://furuse.work/ops/drive/agv/mapf_ecbs.html) · [`mapf_joint_astar`](https://furuse.work/ops/drive/agv/mapf_joint_astar.html) · [`mapf_prioritized`](https://furuse.work/ops/drive/agv/mapf_prioritized.html) · [`naive_execute`](https://furuse.work/ops/drive/agv/naive_execute.html) · [`plan_conflicts`](https://furuse.work/ops/drive/agv/plan_conflicts.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`vda5050_check`](https://furuse.work/ops/drive/agv/vda5050_check.html) · [`vda5050_order`](https://furuse.work/ops/drive/agv/vda5050_order.html) · [`warehouse_grid`](https://furuse.work/ops/drive/agv/warehouse_grid.html)
 
 ## No.2026.185 —— 金属積層造形の熱画像から X 線 CT へ ―― 生信号を温度と呼ばない、時間軸と画素ピッチ、下向き面だけに付く粉
 

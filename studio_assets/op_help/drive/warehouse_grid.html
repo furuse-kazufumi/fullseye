@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">warehouse_grid — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">any</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import agvfleet; agvfleet.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;warehouse_grid&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>棚の列と通路でできた倉庫の格子(True = 走れる)。</p>
+<p>棚は横長の 1 行 × `<code style="color:#22d3bf">rack_len</code><code style="color:#22d3bf"> マスのブロックで、上下左右を幅 </code><code style="color:#22d3bf">aisle</code><code style="color:#22d3bf"> の通路が囲む。外周に </code><code style="color:#22d3bf">margin</code>`</p>
+<p>マスの走行帯(ステーションの前)を置く。返りは `<code style="color:#22d3bf">(grid, info)</code>`、info に棚のマスの一覧と外周の帯。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_agv_fleet">poc_agv_fleet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_agv_fleet.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">any</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">agv</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:grid_distances">grid_distances</a> · <a style="color:#22d3bf" href="opdrive:mapf_cbs">mapf_cbs</a> · <a style="color:#22d3bf" href="opdrive:mapf_ecbs">mapf_ecbs</a> · <a style="color:#22d3bf" href="opdrive:mapf_joint_astar">mapf_joint_astar</a> · <a style="color:#22d3bf" href="opdrive:mapf_prioritized">mapf_prioritized</a> · <a style="color:#22d3bf" href="opdrive:plan_conflicts">plan_conflicts</a> · <a style="color:#22d3bf" href="opdrive:plan_cost">plan_cost</a> · <a style="color:#22d3bf" href="opdrive:adg_build">adg_build</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: agvfleet.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

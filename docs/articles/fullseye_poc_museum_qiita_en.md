@@ -34,7 +34,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 
 | Article | Wings | Exhibits |
 |---|---|---:|
-| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 100 |
+| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 101 |
 | [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 68 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
 | [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 13 |
@@ -61,13 +61,13 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 ## Recently added (newest first)
 
 - 2026-10-03 — No.2026.188 Humanoids on the Crosswalk — Keep the Car's Physics Exact, Draw the Walkers Cheaply
+- 2026-10-03 — No.2026.189 A Warehouse That Does Not Jam When Vehicles Run Late — A Correct Plan Alone Still Stops an AGV Fleet
 - 2026-10-02 — No.2026.182 Level Crossings and Right of Way — Stop and Look, Never Enter During the Alarm or Into a Blocked Exit, Yield to the Wider Road
 - 2026-10-02 — No.2026.183 Overtaking and What You Cannot See — Wait for Sight Distance, Return Once in the Mirror, Do Not Obstruct the Ring, and Why Curve Mirrors Make Cars Look Far
 - 2026-10-02 — No.2026.184 The Segmentation Gauntlet — Ten Methods Across Six Worlds With Ground Truth, and Which Measure Is Blind to Which Failure
 - 2026-10-02 — No.2026.185 From Melt-Pool Thermography to X-ray CT in Metal Additive Manufacturing — Raw Signal Is Not Temperature, Time Axis and Pixel Pitch, and Powder That Clings Only to Down-Facing Surfaces
 - 2026-10-02 — No.2026.186 Active Contours and Level Sets — Checking With Closed Forms How a Contour Shrinks, Enters a Concavity and Stops at an Edge
 - 2026-10-02 — No.2026.187 Graph, Hierarchical and Threshold Segmentation — Max Flow = Min Cut, Ultrametrics, and Turning a Knob From Coarse to Fine
-- 2026-10-01 — No.2026.178 Measuring a Camera Without Buying One — Recovering Quantum Efficiency, Gain and Dark Noise from a Planted Sensor with the EMVA 1288 Procedure
 
 ## Applying it to your own problem
 
