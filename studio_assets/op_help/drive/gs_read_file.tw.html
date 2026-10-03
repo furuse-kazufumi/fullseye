@@ -1,22 +1,29 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<h2 style="color:#f5a524;margin:0 0 4px 0">gs_update — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_update(gs: &#x27;dict&#x27;, world: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_update(gs: &#x27;dict&#x27;, world: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;gs_update&quot;)</code>)</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">gs_read_file — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;gs_read_file&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>世界の<b>いまの</b>頂点からガウシアンの中心・向きを計算し直す(その場で書き換えて同じ dict を返す)。</p>
-<p>μ = Σ_k bary_k · V[F[face, k]] + R · offset_local、R = 面の局所座標 [t1 t2 n]。面の数が作ったときと違う世界は ValueError</p>
-<p>(物体を足した・消した世界には使えない: 作り直すこと)。剛体で動かした物体のガウシアンは同じ剛体変換で動く(門)。</p>
+<p>3D Gaussian Splatting のファイルを読み、ガウスの中心・色・不透明度・大きさ・向きを返す。</p>
+<p>対応: <b>INRIA 形式の .ply</b>(x, y, z, f_dc_0..2, opacity(logit), scale_0..2(log), rot_0..3(wxyz)。</p>
+<p>`<code style="color:#22d3bf">gsplat_train_native</code>` の出力もこれ)と <b>.splat</b>(1 個 32 バイト: 位置 3×f32、大きさ 3×f32、</p>
+<p>RGBA 4×u8、回転 4×u8(wxyz、(q·128)+128))。</p>
+<p>Args:</p>
+<p>path: ファイル。</p>
+<p>min_opacity: これ未満の不透明度のガウスを落とす(0 なら全部)。</p>
+<p>Returns:</p>
+<p>``{&quot;xyz&quot; (N,3), &quot;rgb&quot; (N,3) [0,1], &quot;opacity&quot; (N,) [0,1], &quot;scale&quot; (N,3)(実寸、exp 済み),</p>
+<p>&quot;rot&quot; (N,4) wxyz 単位四元数, &quot;n_total&quot;, &quot;format&quot;}``。色は 0 次の球面調和だけ(視点で変わる高次は捨てる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_kendama">poc_kendama</a> — <code style="color:#22d3bf">py -3.11 examples/poc_kendama.py</code></p>
+<p style="margin:2px 0 2px 12px">• (尚無)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
 <p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">gsplat</code>)</h3>
-<p><a style="color:#22d3bf" href="opdrive:gs_from_world">gs_from_world</a> · <a style="color:#22d3bf" href="opdrive:gs_render">gs_render</a> · <a style="color:#22d3bf" href="opdrive:gs_render_fn">gs_render_fn</a> · <a style="color:#22d3bf" href="opdrive:gs_read_file">gs_read_file</a></p>
+<p><a style="color:#22d3bf" href="opdrive:gs_from_world">gs_from_world</a> · <a style="color:#22d3bf" href="opdrive:gs_update">gs_update</a> · <a style="color:#22d3bf" href="opdrive:gs_render">gs_render</a> · <a style="color:#22d3bf" href="opdrive:gs_render_fn">gs_render_fn</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <p>*Provenance: gsplatnp.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

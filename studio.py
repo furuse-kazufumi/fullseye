@@ -270,6 +270,15 @@ def _figures_tab(QtWidgets, QtCore, QtGui):
                 continue
             shown = pm.scaledToWidth(900, QtCore.Qt.SmoothTransformation)                 if pm.width() > 900 else pm
             pic.setPixmap(shown)
+            # ★2026-10-03: GIF を QPixmap で読むと 1 コマ目しか出なかった(例の図の 1/4 は掃引 GIF)。QMovie で回す。
+            if png.lower().endswith(".gif"):
+                mv = QtGui.QMovie(png)
+                if mv.isValid():
+                    if pm.width() > 900:
+                        mv.setScaledSize(shown.size())
+                    pic.setMovie(mv)
+                    pic._movie = mv                                  # 参照を持たないと GC で止まる
+                    mv.start()
             # ★図そのものを右クリック(ユーザー 2026-09-06:「図で表示したものを
             #   右クリックしてクリップボードにコピーできるといいね」)。この repo の
             #   Studio UI 規約 —— **表示系は右クリックからも一通りできること**。
@@ -613,11 +622,54 @@ def inspect_result(val):
                 sizes = ndimage.sum(np.ones_like(lab, float), lab, range(1, n + 1))
                 d["largest_region_px"] = int(sizes.max())
         return d
-    if isinstance(val, dict):
+    if isinstance(val, dict) and "cs" in val:
         return {"kind": "contour", "n_contours": int(len(val.get("cs", [])))}
+    # ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は
+    #   {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。
+    #   輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
+    if isinstance(val, dict):
+        return {"kind": "table", "n_fields": len(val),
+                "fields": {str(k): _describe_value(v) for k, v in list(val.items())[:24]}}
     if val is None:
         return {"kind": "none"}
-    return {"kind": "feature", "value": round(float(np.asarray(val).reshape(-1)[0]), 6)}
+    if isinstance(val, (tuple, list)) and not (len(val) and np.isscalar(val[0]) and len(val) == 1):
+        return {"kind": "tuple", "n_items": len(val), "items": [_describe_value(v) for v in list(val)[:12]]}
+    arr = np.asarray(val)
+    if arr.dtype.kind in "biufc" and arr.size >= 1 and arr.ndim <= 1 and arr.size > 1:
+        return {"kind": "series", "length": int(arr.size), "summary": _describe_value(arr)}
+    try:
+        return {"kind": "feature", "value": round(float(arr.reshape(-1)[0]), 6)}
+    except (TypeError, ValueError):
+        return {"kind": "object", "type": type(val).__name__}
+
+
+def _describe_value(v) -> str:
+    """表の 1 欄を 1 行で: 配列は形・型・値域、数はその値、入れ子は件数(Inspector 用)。"""
+    if isinstance(v, np.ndarray):
+        if v.size == 0:
+            return "array %s (empty)" % fmt_shape(v.shape)
+        if v.dtype.kind in "biuf":
+            fin = np.isfinite(v)
+            rng = "[%s, %s]" % (fmt_num(np.min(v[fin])), fmt_num(np.max(v[fin]))) if fin.any() else "[non-finite]"
+            return "array %s %s %s" % (fmt_shape(v.shape), v.dtype, rng)
+        if v.dtype.kind == "c":
+            return "array %s complex |max| %s" % (fmt_shape(v.shape), fmt_num(np.abs(v).max()))
+        return "array %s %s" % (fmt_shape(v.shape), v.dtype)
+    if isinstance(v, (bool, np.bool_)):
+        return str(bool(v))
+    if isinstance(v, (int, np.integer)):
+        return str(int(v))
+    if isinstance(v, (float, np.floating)):
+        return "%.6g" % float(v)
+    if isinstance(v, complex):
+        return "%s%+sj" % (fmt_num(v.real, 6), fmt_num(v.imag, 6))
+    if isinstance(v, dict):
+        return "dict (%d keys)" % len(v)
+    if isinstance(v, (tuple, list)):
+        return "%s of %d" % (type(v).__name__, len(v))
+    if isinstance(v, str):
+        return v if len(v) <= 60 else v[:57] + "..."
+    return type(v).__name__
 
 
 def image_info_summary(d):
@@ -638,11 +690,158 @@ def image_info_summary(d):
         return "scalar = %s" % d.get("value")
     if k == "contour":
         return "contours ×%d" % d.get("n_contours", 0)
+    if k == "table":
+        keys = list(d.get("fields", {}))
+        return "table · %d fields: %s%s" % (d.get("n_fields", 0), ", ".join(keys[:6]), "…" if len(keys) > 6 else "")
+    if k == "tuple":
+        return "tuple of %d" % d.get("n_items", 0)
+    if k == "object":
+        return "object · %s" % d.get("type", "?")
+    if k == "series":
+        return "series ×%d · %s" % (d.get("length", 0), d.get("summary", ""))
     return "no image"
 
 
+#: 画像として開く拡張子(imgio.load が読めるもの。OpenCV → raster → Pillow の順に試す)
+IMAGE_FILE_EXTS = (".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp", ".pgm", ".ppm", ".pnm", ".pbm",
+                   ".pfm", ".gif", ".jp2")
+#: 3-D ビューアで開く拡張子: 点群・メッシュ・3DGS(.ply/.splat)・医用ボリューム。``.tif`` は画像側(2-D が普通)。
+MODEL3D_FILE_EXTS = (".ply", ".splat", ".pcd", ".xyz", ".pts", ".asc", ".obj", ".stl", ".off", ".npz",
+                     ".nii", ".gz", ".nrrd", ".nhdr", ".mha", ".mhd", ".dcm",
+                     ".glb", ".gltf", ".las", ".laz", ".urdf", ".mjcf")
+
+
+def _robot_xml_kind(path):
+    """.xml の根の要素で MJCF(``<mujoco>``)/ URDF(``<robot>``)を見分ける。それ以外は None(先頭 8 KB だけ読む)。"""
+    try:
+        with open(path, "rb") as f:
+            head = f.read(8192).decode("utf-8", "replace")
+    except OSError:
+        return None
+    import re as _re
+    m = _re.search(r"<\s*([A-Za-z_][\w.-]*)", _re.sub(r"<\?.*?\?>|<!--.*?-->", "", head, flags=_re.S))
+    tag = m.group(1).lower() if m else ""
+    return "mjcf" if tag == "mujoco" else "urdf" if tag == "robot" else None
+#: 動画の立方体(Tools ▸ Video cube)で開く拡張子。アニメーション GIF もこちら(1 コマの GIF は画像)。
+VIDEO_FILE_EXTS = (".mp4", ".avi", ".mov", ".mkv", ".webm", ".hdf", ".h5", ".hdf5")
+
+
+def _is_animated_gif(path):
+    try:
+        from PIL import Image
+        with Image.open(path) as im:
+            return int(getattr(im, "n_frames", 1)) > 1
+    except Exception:                                         # 読めない GIF は画像側で理由を出す
+        return False
+
+
+def _npy_kind(path):
+    """.npy を形で振り分ける: (N, 3) / (N, 6) = 点群 → 3-D、2-D = 画像、3-D = ボリューム → 3-D、他 = other。"""
+    try:
+        a = np.load(path, mmap_mode="r", allow_pickle=False)
+    except Exception:
+        return "other"
+    if a.ndim == 2 and a.shape[1] in (3, 6) and a.shape[0] > 8:
+        return "models3d"
+    if a.ndim == 2 or (a.ndim == 3 and a.shape[2] in (3, 4)):
+        return "arrays"
+    if a.ndim == 3:
+        return "models3d"
+    return "other"
+
+
+def _classify_dropped_paths(paths):
+    """ドラッグ・アンド・ドロップされたパスを種類で分ける(headless、順序は保つ)。
+
+    フォルダは**直下の画像**に展開する(名前順)。返り値 ``{"images", "scripts", "pipelines", "other"}``。
+    ``scripts`` = ``.py``(Python エディタのタブで開く)、``pipelines`` = ``.json``(パイプラインとして開く)、
+    ``models3d`` = 点群・メッシュ・3DGS・ボリューム・glTF・LAS/LAZ・MJCF/URDF(3-D ビューア)、``videos`` = 動画・アニメーション GIF・HDF の
+    スタック(動画の立方体)、``arrays`` = 2-D の .npy(画像としてパイプラインの入力に)。"""
+    out = {"images": [], "scripts": [], "pipelines": [], "models3d": [], "videos": [], "arrays": [], "other": []}
+    for p in paths or []:
+        p = os.fspath(p)
+        if os.path.isdir(p):
+            try:
+                kids = sorted(os.listdir(p))
+            except OSError:
+                out["other"].append(p)
+                continue
+            out["images"].extend(os.path.join(p, k) for k in kids
+                                 if os.path.splitext(k)[1].lower() in IMAGE_FILE_EXTS
+                                 and os.path.isfile(os.path.join(p, k)))
+            continue
+        ext = os.path.splitext(p)[1].lower()
+        if ext == ".gif" and _is_animated_gif(p):
+            key = "videos"
+        elif ext == ".npy":
+            key = _npy_kind(p)
+        elif ext == ".xml":
+            key = "models3d" if _robot_xml_kind(p) else "other"
+        else:
+            key = ("images" if ext in IMAGE_FILE_EXTS else "scripts" if ext in (".py", ".pyw")
+                   else "pipelines" if ext == ".json" else "models3d" if ext in MODEL3D_FILE_EXTS
+                   else "videos" if ext in VIDEO_FILE_EXTS else "other")
+        out[key].append(p)
+    return out
+
+
+def _viewer_image_info(arr, path=None):
+    """画像ビューアの情報欄(headless): 大きさ・チャンネル・値域・平均・標準偏差・ファイルの大きさ。"""
+    a = np.asarray(arr)
+    h, w = a.shape[:2]
+    ch = 1 if a.ndim == 2 else int(a.shape[2])
+    fin = np.isfinite(a)
+    d = {"size": "%d × %d" % (w, h), "channels": ch, "dtype": str(a.dtype),
+         "min": fmt_num(np.min(a[fin]), 4) if fin.any() else "nan",
+         "max": fmt_num(np.max(a[fin]), 4) if fin.any() else "nan",
+         "mean": fmt_num(np.mean(a[fin]), 4) if fin.any() else "nan",
+         "std": fmt_num(np.std(a[fin]), 4) if fin.any() else "nan"}
+    if path:
+        try:
+            d["file"] = "%s (%.1f KB)" % (os.path.basename(path), os.path.getsize(path) / 1024.0)
+        except OSError:
+            d["file"] = os.path.basename(path)
+    return d
+
+
+def _viewer_pixel_text(arr, x, y):
+    """カーソルの下の画素(headless)。x = 列、y = 行(画素の中心が整数)。範囲外は空文字。
+
+    値は [0, 1] のまま出し、8 bit の段数(×255)も添える(元の画像の数字と照合できるように)。"""
+    a = np.asarray(arr)
+    c, r = int(math.floor(x + 0.5)), int(math.floor(y + 0.5))
+    if not (0 <= r < a.shape[0] and 0 <= c < a.shape[1]):
+        return ""
+    v = a[r, c]
+    if np.ndim(v) == 0:
+        return "x=%d  y=%d   value %.4f  (8-bit %d)" % (c, r, float(v), int(round(float(v) * 255)))
+    vals = [float(t) for t in np.ravel(v)[:4]]
+    names = "RGBA"[:len(vals)]
+    return "x=%d  y=%d   " % (c, r) + "  ".join("%s %.4f" % (n, t) for n, t in zip(names, vals)) \
+        + "  (8-bit %s)" % ",".join(str(int(round(t * 255))) for t in vals)
+
+
+def _viewer_histogram(arr, bins=64):
+    """ヒストグラム(headless): チャンネルごとの度数 ``(C, bins)`` と範囲 [0, 1] の端。"""
+    a = np.asarray(arr, np.float64)
+    chans = [a] if a.ndim == 2 else [a[..., i] for i in range(min(a.shape[2], 3))]
+    edges = np.linspace(0.0, 1.0, int(bins) + 1)
+    counts = np.array([np.histogram(np.clip(c[np.isfinite(c)], 0, 1), bins=edges)[0] for c in chans])
+    return counts, edges
+
+
 def format_inspection(d):
-    return "\n".join(f"{k}: {v}" for k, v in d.items())
+    lines = []
+    for k, v in d.items():
+        if isinstance(v, dict):                                 # 表の欄は 1 欄 1 行に字下げ
+            lines.append(f"{k}:")
+            lines.extend(f"  {kk}: {vv}" for kk, vv in v.items())
+        elif isinstance(v, list):
+            lines.append(f"{k}:")
+            lines.extend(f"  [{i}] {vv}" for i, vv in enumerate(v))
+        else:
+            lines.append(f"{k}: {v}")
+    return "\n".join(lines)
 
 
 def fmt_num(x, decimals=3):
@@ -3664,6 +3863,56 @@ def _python_highlighter_class(QtGui, QtCore):
     return PythonHighlighter
 
 
+def _zoom_view_class(QtWidgets, QtGui, QtCore):
+    """画像ビューアの表示面: ホイールで拡大縮小(カーソルの位置を中心に)、左ドラッグで移動、
+    カーソルの下の画素を ``on_hover(x, y)`` で知らせる(x = 列、y = 行、シーン座標 = 画素)。"""
+
+    class ZoomView(QtWidgets.QGraphicsView):
+        def __init__(self, parent=None):
+            super().__init__(parent)
+            self.setScene(QtWidgets.QGraphicsScene(self))
+            self._item = QtWidgets.QGraphicsPixmapItem()
+            self._item.setTransformationMode(QtCore.Qt.FastTransformation)   # 拡大で画素が見える(ぼかさない)
+            self.scene().addItem(self._item)
+            self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
+            self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
+            self.setMouseTracking(True)
+            self.setBackgroundBrush(QtGui.QColor(40, 40, 44))
+            self.on_hover = None
+            self.on_zoom = None
+
+        def set_pixmap(self, pm):
+            self._item.setPixmap(pm)
+            self.scene().setSceneRect(QtCore.QRectF(pm.rect()))
+
+        def zoom(self):
+            return float(self.transform().m11())
+
+        def set_zoom(self, z):
+            z = max(0.02, min(float(z), 64.0))
+            self.setTransform(QtGui.QTransform.fromScale(z, z))
+            if self.on_zoom:
+                self.on_zoom(z)
+
+        def fit(self):
+            if not self._item.pixmap().isNull():
+                self.fitInView(self._item, QtCore.Qt.KeepAspectRatio)
+                if self.on_zoom:
+                    self.on_zoom(self.zoom())
+
+        def wheelEvent(self, ev):
+            f = 1.25 if ev.angleDelta().y() > 0 else 1 / 1.25
+            self.set_zoom(self.zoom() * f)
+
+        def mouseMoveEvent(self, ev):
+            super().mouseMoveEvent(ev)
+            if self.on_hover:
+                p = self.mapToScene(ev.position().toPoint())
+                self.on_hover(p.x() - 0.5, p.y() - 0.5)
+
+    return ZoomView
+
+
 def _code_editor_class(QtWidgets, QtGui, QtCore):
     """Editable Python code-editor widget factory for the Python Editor: monospace
     font, a line-number gutter, Tab -> 4 spaces, and auto-indent on Enter (copies
@@ -3683,6 +3932,33 @@ def _code_editor_class(QtWidgets, QtGui, QtCore):
             self._editor.paint_gutter(ev)
 
     class CodeEditor(QtWidgets.QPlainTextEdit):
+        #: ドロップされたファイルの受け手(Python エディタが ``open_path`` を入れる)。None なら既定の動作。
+        on_drop_files = None
+
+        def _local_files(self, ev):
+            md = ev.mimeData()
+            return [u.toLocalFile() for u in md.urls() if u.isLocalFile()] if md.hasUrls() else []
+
+        def dragEnterEvent(self, ev):
+            if self.on_drop_files and self._local_files(ev):
+                ev.acceptProposedAction()               # ファイルは「パスを文字で貼る」のでなく開く
+            else:
+                super().dragEnterEvent(ev)
+
+        def dragMoveEvent(self, ev):
+            if self.on_drop_files and self._local_files(ev):
+                ev.acceptProposedAction()
+            else:
+                super().dragMoveEvent(ev)
+
+        def dropEvent(self, ev):
+            files = self._local_files(ev)
+            if self.on_drop_files and files:
+                self.on_drop_files(files)
+                ev.acceptProposedAction()
+            else:
+                super().dropEvent(ev)
+
         def __init__(self, parent=None):
             super().__init__(parent)
             self.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
@@ -4125,7 +4401,9 @@ def build_window(model=None):
         return mm
 
     m = _menu(mb, "&File", "file")
-    m.addAction(act_open_img); m.addAction(act_demo)          # image in
+    act_viewer = _act("Image Viewer…", "Ctrl+Shift+O",
+                      "Open images (or drop images / a folder) to look at them: zoom, pixel values, histogram")
+    m.addAction(act_open_img); m.addAction(act_viewer); m.addAction(act_demo)          # image in
     m.addSeparator()
     m.addAction(act_open_pipe); m.addAction(act_save_pipe); m.addAction(act_export)  # pipeline docs
     win._recent_menu = _menu(m, "Open Recent", "recent")     # populated by _rebuild_recent_menu()
@@ -5507,8 +5785,8 @@ def build_window(model=None):
         return True
 
     def load_image():
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open image", "",
-                                                        "Images (*.png *.jpg *.bmp *.tif)")
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(
+            win, "Open image", "", "Images (%s)" % " ".join("*" + e for e in IMAGE_FILE_EXTS))
         if path:
             _load_image_path(path)
 
@@ -6379,6 +6657,165 @@ def build_window(model=None):
         persist_dialog_geometry(dlg, "ex2d"); win._ex2d_dlg = dlg
         win._localize(dlg); dlg.show()
 
+    def show_image_viewer(paths=None):
+        """画像ビューア(MATLAB の imtool に近い): 一覧 + 拡大縮小・移動 + 画素の値 + 情報 + ヒストグラム。
+
+        画像を落とすと一覧に足す(フォルダも可)。「入力にする」で今の画像をパイプラインの入力にする。
+        ←/→ で前後、F で全体、1 で等倍。色はそのまま表示する(パイプラインの入力は従来どおり灰色で読む)。"""
+        dlg = getattr(win, "_viewer_dlg", None)
+        if dlg is not None:
+            dlg.show(); dlg.raise_(); dlg.activateWindow()
+            if paths:
+                dlg._add(paths)
+            return dlg
+        dlg = QtWidgets.QDialog(win); tag_dialog(dlg, "reference"); dlg.setModal(False)
+        dlg.setWindowTitle("Image Viewer")
+        dlg.setAcceptDrops(True)
+        ZoomView = _zoom_view_class(QtWidgets, QtGui, QtCore)
+        h = QtWidgets.QHBoxLayout(dlg)
+        lst = QtWidgets.QListWidget()
+        lst.setViewMode(QtWidgets.QListView.ListMode)
+        lst.setIconSize(QtCore.QSize(64, 64)); lst.setMinimumWidth(190); lst.setMaximumWidth(260)
+        lst.setToolTip("開いた画像(ここへ画像やフォルダを落とすと足せる)")
+        h.addWidget(lst)
+        mid = QtWidgets.QVBoxLayout()
+        view = ZoomView()
+        mid.addWidget(view, 1)
+        bar = QtWidgets.QHBoxLayout()
+        b_fit = QtWidgets.QPushButton("Fit (F)"); b_one = QtWidgets.QPushButton("1:1 (1)")
+        b_use = QtWidgets.QPushButton("Use as pipeline input")
+        b_use.setToolTip("この画像をパイプラインの入力にする(File ▸ Open image と同じ)")
+        zoom_lbl = QtWidgets.QLabel("100%")
+        for wdg in (b_fit, b_one, zoom_lbl):
+            bar.addWidget(wdg)
+        bar.addStretch(1); bar.addWidget(b_use)
+        mid.addLayout(bar)
+        pix_lbl = QtWidgets.QLabel(" ")
+        pix_lbl.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        mid.addWidget(pix_lbl)
+        h.addLayout(mid, 1)
+        side = QtWidgets.QVBoxLayout()
+        info = QtWidgets.QPlainTextEdit(); info.setReadOnly(True); info.setMaximumWidth(260)
+        hist = QtWidgets.QLabel(); hist.setFixedSize(256, 120)
+        side.addWidget(QtWidgets.QLabel("Info")); side.addWidget(info, 1)
+        side.addWidget(QtWidgets.QLabel("Histogram")); side.addWidget(hist)
+        h.addLayout(side)
+        st = {"arrays": {}, "cur": None}
+
+        def _qimage(a):
+            a8 = np.ascontiguousarray(np.clip(np.nan_to_num(a), 0, 1) * 255 + 0.5).astype(np.uint8)
+            if a8.ndim == 2:
+                qi = QtGui.QImage(a8.data, a8.shape[1], a8.shape[0], a8.strides[0], QtGui.QImage.Format_Grayscale8)
+            else:
+                a8 = np.ascontiguousarray(a8[..., :3])
+                qi = QtGui.QImage(a8.data, a8.shape[1], a8.shape[0], a8.strides[0], QtGui.QImage.Format_RGB888)
+            return qi.copy()                                      # numpy の寿命から切り離す
+
+        def _hist_pixmap(a):
+            counts, _e = _viewer_histogram(a, 64)
+            pm = QtGui.QPixmap(256, 120); pm.fill(QtGui.QColor(30, 30, 34))
+            p = QtGui.QPainter(pm)
+            cols = [QtGui.QColor(220, 220, 220)] if counts.shape[0] == 1 else \
+                [QtGui.QColor(230, 80, 80, 160), QtGui.QColor(80, 200, 80, 160), QtGui.QColor(90, 140, 240, 160)]
+            top = max(int(counts.max()), 1)
+            for c, col in zip(counts, cols):
+                p.setPen(QtCore.Qt.NoPen); p.setBrush(col)
+                for i, n in enumerate(c):
+                    hh = int(round(110 * n / top))
+                    p.drawRect(i * 4, 118 - hh, 4, hh)
+            p.end()
+            return pm
+
+        def _load(path):
+            if path not in st["arrays"]:
+                st["arrays"][path] = imgio.load(path, color=True)
+                a = st["arrays"][path]
+                if a.ndim == 3 and np.allclose(a[..., 0], a[..., 1]) and np.allclose(a[..., 1], a[..., 2]):
+                    st["arrays"][path] = a[..., 0]                 # 色の無い画像は灰色で(値を 1 つで読む)
+            return st["arrays"][path]
+
+        def show(path):
+            try:
+                a = _load(path)
+            except Exception as e:
+                report_error("Image Viewer", "%s\n\n%s" % (path, e)); return
+            st["cur"] = path
+            view.set_pixmap(QtGui.QPixmap.fromImage(_qimage(a)))
+            view.fit()
+            info.setPlainText(format_inspection(_viewer_image_info(a, path)))
+            hist.setPixmap(_hist_pixmap(a))
+            dlg.setWindowTitle("Image Viewer — %s" % os.path.basename(path))
+
+        def _add(new_paths):
+            kinds = _classify_dropped_paths(new_paths)
+            first = None
+            for p in kinds["images"]:
+                if not any(lst.item(i).data(QtCore.Qt.UserRole) == p for i in range(lst.count())):
+                    it = QtWidgets.QListWidgetItem(os.path.basename(p))
+                    it.setData(QtCore.Qt.UserRole, p); it.setToolTip(p)
+                    try:
+                        it.setIcon(QtGui.QIcon(QtGui.QPixmap.fromImage(_qimage(_load(p))).scaled(
+                            64, 64, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)))
+                    except Exception as e:                       # 読めない画像は一覧に残し、開く時に理由を出す
+                        _log_soft_failure("viewer thumbnail", e)
+                    lst.addItem(it)
+                first = first or p
+            if kinds["scripts"] or kinds["pipelines"]:
+                win.drop_handler(kinds["scripts"] + kinds["pipelines"])
+            if first is not None:
+                for i in range(lst.count()):
+                    if lst.item(i).data(QtCore.Qt.UserRole) == first:
+                        lst.setCurrentRow(i)
+            elif kinds["other"]:
+                flash("viewer: not an image — %s" % os.path.basename(kinds["other"][0]))
+
+        def _on_row(i):
+            if 0 <= i < lst.count():
+                show(lst.item(i).data(QtCore.Qt.UserRole))
+
+        def _hover(x, y):
+            a = st["arrays"].get(st["cur"])
+            pix_lbl.setText(_viewer_pixel_text(a, x, y) if a is not None else " ")
+
+        def _use():
+            if st["cur"] and _load_image_path(st["cur"]):
+                flash("pipeline input ← %s" % os.path.basename(st["cur"]))
+
+        def _step(k):
+            if lst.count():
+                lst.setCurrentRow((lst.currentRow() + k) % lst.count())
+
+        lst.currentRowChanged.connect(_on_row)
+        view.on_hover = _hover
+        view.on_zoom = lambda z: zoom_lbl.setText("%d%%" % round(100 * z))
+        b_fit.clicked.connect(lambda _=False: view.fit())
+        b_one.clicked.connect(lambda _=False: view.set_zoom(1.0))
+        b_use.clicked.connect(lambda _=False: _use())
+        for key, fn in (("F", view.fit), ("1", lambda: view.set_zoom(1.0)),
+                        ("Right", lambda: _step(1)), ("Left", lambda: _step(-1))):
+            QtGui.QShortcut(QtGui.QKeySequence(key), dlg, fn)
+
+        def _drag_enter(ev):
+            if ev.mimeData().hasUrls():
+                ev.acceptProposedAction()
+
+        def _drop(ev):
+            fs_ = [u.toLocalFile() for u in ev.mimeData().urls() if u.isLocalFile()]
+            if fs_:
+                _add(fs_); ev.acceptProposedAction()
+        dlg.dragEnterEvent = _drag_enter
+        dlg.dropEvent = _drop
+        dlg._add = _add; dlg._list = lst; dlg._view = view; dlg._info = info
+        dlg._pixel = pix_lbl; dlg._hover = _hover; dlg._use = _use; dlg._state = st
+        persist_dialog_geometry(dlg, "imgviewer", default_size=(1100, 700))
+        win._viewer_dlg = dlg
+        win._localize(dlg)
+        dlg.show()
+        if paths:
+            _add(paths)
+        return dlg
+    win._show_image_viewer = show_image_viewer
+
     def show_python_editor(code_text=None, name_hint=None):
         # Qt Creator / HDevelop-style Python workbench: a MULTI-DOCUMENT (tabbed) editor
         # + run console, so a worked example (or any fullseye script) can be opened,
@@ -6441,6 +6878,7 @@ def build_window(model=None):
             # every document is its own tab (HDevelop main + sub-scripts); nothing is
             # ever replaced, so no discard-confirm is needed
             ed = CodeEditor()
+            ed.on_drop_files = lambda fs_: win.drop_handler(fs_)   # .py はタブで、画像はビューアで
             ed._hl = Highlighter(ed.document())
             ed._path = path; ed._hint = hint; ed._dirty = False
             ed.setPlainText(text)
@@ -6876,6 +7314,12 @@ def build_window(model=None):
     stage_list.model().rowsMoved.connect(on_rows_moved)     # drag-reorder -> permute model
     # menu / toolbar actions (share the same handlers as the buttons)
     act_open_img.triggered.connect(load_image); act_demo.triggered.connect(use_demo)
+
+    def _open_viewer_dialog():
+        ps, _f = QtWidgets.QFileDialog.getOpenFileNames(
+            win, "Open images", "", "Images (%s)" % " ".join("*" + e for e in IMAGE_FILE_EXTS))
+        show_image_viewer(ps or None)
+    act_viewer.triggered.connect(lambda _=False: _open_viewer_dialog())
     act_save_res.triggered.connect(save_result); act_export.triggered.connect(export)
     act_save_view.triggered.connect(save_view)
     act_copy_res.triggered.connect(copy_result)
@@ -7696,12 +8140,40 @@ def build_window(model=None):
     b_3d.clicked.connect(open_3d); act_3d.triggered.connect(open_3d)
 
     # ---- interactive 3-D viewer (View ▸ 3D viewer, Ctrl+4, disp_* directives) --- #
-    _POINT_FILE_FILTER = ("3-D data (*.ply *.pcd *.xyz *.txt *.pts *.asc *.obj *.stl "
-                          "*.off *.npy *.npz "
+    _POINT_FILE_FILTER = ("3-D data (*.ply *.splat *.pcd *.xyz *.txt *.pts *.asc *.obj *.stl "
+                          "*.off *.npy *.npz *.glb *.gltf *.las *.laz *.xml *.urdf *.mjcf "
                           "*.nii *.nii.gz *.nrrd *.nhdr *.mha *.mhd *.tif *.tiff *.dcm)"
                           ";;All files (*)")
     _VOLUME_EXTS = (".nii", ".gz", ".nrrd", ".nhdr", ".mha", ".mhd",
                     ".tif", ".tiff", ".dcm")
+
+    def _robot_mesh(path):
+        """MJCF / URDF → 全 geom をワールド座標で 1 つのメッシュに(MuJoCo が姿勢を計算、関節は qpos = 0)。"""
+        try:
+            import mujoco
+            import sim_source
+            # ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と
+            #   取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
+            src = sim_source.MuJoCo(mujoco.MjModel.from_xml_path(str(path)))
+        except ImportError as e:
+            raise ImportError("MJCF / URDF の表示には mujoco が要る: pip install mujoco (%s)" % e) from None
+        try:
+            geoms = src.scene_geometries()
+        except ImportError as e:
+            raise ImportError("MJCF / URDF の表示には open3d が要る: pip install open3d (%s)" % e) from None
+        finally:
+            try:
+                src.close()
+            except Exception:                                  # noqa: BLE001
+                pass
+        Vs, Fs, off = [], [], 0
+        for g in geoms:
+            v = np.asarray(g.vertices, np.float64); f = np.asarray(g.triangles, np.int64)
+            if len(v) and len(f):
+                Vs.append(v); Fs.append(f + off); off += len(v)
+        if not Vs:
+            raise ValueError("%s: 表示できる geom が無い(plane / hfield だけ)" % os.path.basename(str(path)))
+        return np.vstack(Vs), np.vstack(Fs)
 
     def _load_3d_file(path):
         """Load a 3-D file -> ``('mesh', V, F, None)`` or ``('points', P, None, C)``.
@@ -7713,6 +8185,33 @@ def build_window(model=None):
         points. Raises on an unreadable file."""
         import mesh as meshmod
         ext = os.path.splitext(str(path))[1].lower()
+        # ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として
+        #   **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。
+        #   楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
+        # ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。
+        #   読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
+        if ext in (".glb", ".gltf"):
+            import meshio_opt
+            V, F = meshio_opt.read_gltf_merged(str(path))[:2]
+            V, F = validate_mesh_faces(V, F)
+            return "mesh", V, F, None
+        if ext in (".las", ".laz"):
+            import meshio_opt
+            P, attrs = meshio_opt.read_las(str(path))
+            C = attrs.get("rgb") if isinstance(attrs, dict) else None          # (N, 3) [0, 1](読み手が 8/16 bit を判定)
+            return "points", P, None, C
+        if ext in (".xml", ".urdf", ".mjcf"):
+            kind = _robot_xml_kind(path) or ("urdf" if ext == ".urdf" else "mjcf")
+            V, F = _robot_mesh(path)
+            flash("%s %s: %s vertices, %s triangles (joints at qpos = 0)"
+                  % (kind.upper(), os.path.basename(str(path)), f"{len(V):,}", f"{len(F):,}"))
+            return "mesh", V, F, None
+        import gsplatnp                           # lazy: 3DGS を開く時だけ
+        if ext == ".splat" or (ext == ".ply" and gsplatnp._gs_is_splat_ply(path)):
+            gs = gsplatnp.gs_read_file(path, min_opacity=0.05)
+            flash("3DGS %s: %s gaussians (%s shown, opacity ≥ 0.05) — centres coloured by SH DC"
+                  % (gs["format"], f"{gs['n_total']:,}", f"{len(gs['xyz']):,}"))
+            return "points", gs["xyz"], None, gs["rgb"]
         if ext in _VOLUME_EXTS:
             import volio                          # lazy: SimpleITK etc. optional
             vol, meta = volio.read_volume(str(path))
@@ -8792,7 +9291,7 @@ def build_window(model=None):
         return dlg
     win._open_eye_brain_panel = open_eye_brain_panel
 
-    def open_video_cube_panel():
+    def open_video_cube_panel(path=None):
         """Tools ▸ Video cube: 動画(か z スタック)を空間 × 時間の立方体として見る(Video Summagator の再実装)。
         左 = 立方体(ドラッグで回転)、右上 = 断面(x–t スリットスキャン / y–t / x–y、スライダで位置、クリックでその
         フレームへ)、右下 = そのフレーム。入力は合成のデモ、.npy の (T, H, W)、GIF / 動画(imageio か video.read_frames)、
@@ -8994,6 +9493,12 @@ def build_window(model=None):
         pos.valueChanged.connect(lambda _v: redraw_cut())
         save_btn.clicked.connect(on_save)
         state["clip"], state["name"] = demo_clip()
+        if path:                                         # D&D / 引数で渡された動画・スタック
+            try:
+                state["clip"], state["name"] = load_file(path)
+                source.blockSignals(True); source.setCurrentIndex(1); source.blockSignals(False)
+            except Exception as e:                                                         # noqa: BLE001
+                status.setText("could not read %s: %s — showing the demo clip" % (os.path.basename(path), e))
         rebuild()
         dlg._state = state; dlg._render = render; dlg._on_drag = on_drag; dlg._on_cut_click = on_cut_click   # for headless tests
         dlg._rebuild = rebuild; dlg._show_frame = show_frame; dlg._mode = mode; dlg._plane = plane; dlg._pos = pos
@@ -9132,18 +9637,50 @@ def build_window(model=None):
             _open_pipe_path(path)
 
     # drag-and-drop dispatcher: image file -> base frame, .json -> pipeline.
-    _DROP_IMG_EXTS = (".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff")
-
     def _handle_drop(paths):
-        f = paths[0]
-        ext = os.path.splitext(f)[1].lower()
-        if ext in _DROP_IMG_EXTS:
-            _load_image_path(f)
-        elif ext == ".json":
-            _open_pipe_path(f)
-        else:
-            flash("drop: unsupported file '%s' — drop an image or a .json pipeline"
-                  % os.path.basename(f))
+        # ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」):
+        #   以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく:
+        #   画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、
+        #   .py = Python エディタのタブ、.json = パイプライン。
+        kinds = _classify_dropped_paths(paths)
+        imgs = kinds["images"]
+        if len(imgs) == 1 and len(paths) == 1 and not os.path.isdir(paths[0]):
+            _load_image_path(imgs[0])
+        elif imgs:
+            show_image_viewer(imgs)
+        if kinds["scripts"]:
+            show_python_editor()
+            for p in kinds["scripts"]:
+                win._pyedit["open_path"](p)
+        for p in kinds["pipelines"][:1]:
+            _open_pipe_path(p)
+        for p in kinds["models3d"][:4]:                          # 3-D は 1 ファイル 1 窓(窓の数の上限まで)
+            open_viewer3d(p)
+        for p in kinds["videos"][:1]:
+            open_video_cube_panel(p)
+        for p in kinds["arrays"][:1]:
+            _load_array_path(p)
+        handled = any(kinds[k] for k in ("images", "scripts", "pipelines", "models3d", "videos", "arrays"))
+        if kinds["other"] and not handled:
+            flash("drop: unsupported file '%s' — drop images / a folder, .py, .json, 3-D (ply, splat, obj, stl, pcd, "
+                  "nii, dcm …), video (mp4, avi, animated gif, hdf) or .npy" % os.path.basename(kinds["other"][0]))
+
+    def _load_array_path(path):
+        """2-D(か H×W×3)の .npy を画像としてパイプラインの入力に。値が [0, 1] の外なら最小–最大で [0, 1] に写す。"""
+        try:
+            a = np.asarray(np.load(path, allow_pickle=False), np.float64)
+        except Exception as e:
+            report_error("Could not open array", "%s\n\n%s" % (path, e)); return False
+        if a.ndim == 3:
+            a = a[..., :3].mean(axis=2)
+        lo, hi = float(np.nanmin(a)), float(np.nanmax(a))
+        if lo < 0.0 or hi > 1.0:
+            a = (a - lo) / (hi - lo) if hi > lo else np.zeros_like(a)
+            flash("%s: values [%.4g, %.4g] mapped to [0, 1]" % (os.path.basename(path), lo, hi))
+        model.set_image(np.nan_to_num(a))
+        state["image_path"] = os.path.abspath(path); state["fit_next"] = True
+        _set_title(); show_result()
+        return True
     win.drop_handler = _handle_drop
 
     # -- recent files (QSettings-backed): File > Open Recent ------------------- #

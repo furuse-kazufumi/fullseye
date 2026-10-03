@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import numpy as np
 
-__all__ = ["gs_from_world", "gs_update", "gs_render", "gs_render_fn"]
+__all__ = ["gs_from_world", "gs_update", "gs_render", "gs_render_fn", "gs_read_file"]
 
 _LOW_PASS = 0.3          # px²(3DGS の実装と同じ抗エイリアスの足し込み)
 _ALPHA_MIN = 1.0 / 255.0
@@ -329,3 +329,78 @@ def gs_render_fn(gs: dict, **render_kw):
     render.n_calls = 0
     render.n_pairs = 0
     return render
+
+
+# ── 3DGS のファイルを読む(.ply = INRIA 形式 / .splat = 32 バイト形式)───────────────────────────── #
+#: 0 次の球面調和の定数 Y_0^0 = 1/(2√π)。3DGS の色は rgb = 0.5 + SH_C0 · f_dc(Kerbl et al. 2023 の実装と同じ)
+SH_C0 = 0.28209479177387814
+
+
+def _gs_is_splat_ply(path) -> bool:
+    """PLY が 3DGS の学習結果(``f_dc_0`` と ``opacity`` の欄を持つ)かを、ヘッダだけ読んで判定する。"""
+    try:
+        with open(path, "rb") as f:
+            head = f.read(65536)
+    except OSError:
+        return False
+    end = head.find(b"end_header")
+    if not head.startswith(b"ply") or end < 0:
+        return False
+    hdr = head[:end].decode("ascii", "replace").split()
+    return "f_dc_0" in hdr and "opacity" in hdr
+
+
+def gs_read_file(path, *, min_opacity: float = 0.0) -> dict:
+    """3D Gaussian Splatting のファイルを読み、ガウスの中心・色・不透明度・大きさ・向きを返す。
+
+    対応: **INRIA 形式の .ply**(x, y, z, f_dc_0..2, opacity(logit), scale_0..2(log), rot_0..3(wxyz)。
+    ``gsplat_train_native`` の出力もこれ)と **.splat**(1 個 32 バイト: 位置 3×f32、大きさ 3×f32、
+    RGBA 4×u8、回転 4×u8(wxyz、(q·128)+128))。
+
+    Args:
+        path: ファイル。
+        min_opacity: これ未満の不透明度のガウスを落とす(0 なら全部)。
+
+    Returns:
+        ``{"xyz" (N,3), "rgb" (N,3) [0,1], "opacity" (N,) [0,1], "scale" (N,3)(実寸、exp 済み),
+        "rot" (N,4) wxyz 単位四元数, "n_total", "format"}``。色は 0 次の球面調和だけ(視点で変わる高次は捨てる)。
+    """
+    import os
+    p = os.fspath(path)
+    ext = os.path.splitext(p)[1].lower()
+    if ext == ".splat":
+        raw = np.fromfile(p, dtype=np.uint8)
+        if raw.size == 0 or raw.size % 32:
+            raise ValueError("gs_read_file: .splat の大きさ %d バイトが 32 の倍数でない" % raw.size)
+        rec = raw.reshape(-1, 32)
+        f32 = rec[:, :24].copy().view("<f4").reshape(-1, 6)
+        xyz, scale = f32[:, :3].astype(np.float64), f32[:, 3:6].astype(np.float64)
+        rgba = rec[:, 24:28].astype(np.float64) / 255.0
+        q = (rec[:, 28:32].astype(np.float64) - 128.0) / 128.0
+        rgb, op, fmt = rgba[:, :3], rgba[:, 3], "splat"
+    elif ext == ".ply":
+        import mesh as _mesh
+        with open(p, "rb") as f:
+            data = _mesh._ply_data(f.read(), p)
+        el = data.get("vertex")
+        sc = el["scalars"] if el else {}
+        need = ["x", "y", "z", "f_dc_0", "f_dc_1", "f_dc_2", "opacity"]
+        miss = [k for k in need if k not in sc]
+        if miss:
+            raise ValueError("gs_read_file: 3DGS の PLY ではない(欄 %s が無い)" % ", ".join(miss))
+        xyz = np.column_stack([sc["x"], sc["y"], sc["z"]]).astype(np.float64)
+        dc = np.column_stack([sc["f_dc_0"], sc["f_dc_1"], sc["f_dc_2"]]).astype(np.float64)
+        rgb = np.clip(0.5 + SH_C0 * dc, 0.0, 1.0)
+        op = 1.0 / (1.0 + np.exp(-np.asarray(sc["opacity"], np.float64)))
+        scale = (np.exp(np.column_stack([sc[k] for k in ("scale_0", "scale_1", "scale_2")]).astype(np.float64))
+                 if all(k in sc for k in ("scale_0", "scale_1", "scale_2")) else np.zeros_like(xyz))
+        q = (np.column_stack([sc[k] for k in ("rot_0", "rot_1", "rot_2", "rot_3")]).astype(np.float64)
+             if all(k in sc for k in ("rot_0", "rot_1", "rot_2", "rot_3")) else np.tile([1.0, 0, 0, 0], (len(xyz), 1)))
+        fmt = "ply"
+    else:
+        raise ValueError("gs_read_file: .ply か .splat を渡す(%s)" % ext)
+    q = q / np.maximum(np.linalg.norm(q, axis=1, keepdims=True), 1e-12)
+    n_total = len(xyz)
+    keep = np.isfinite(xyz).all(axis=1) & (op >= float(min_opacity))
+    return {"xyz": xyz[keep], "rgb": rgb[keep], "opacity": op[keep], "scale": scale[keep], "rot": q[keep],
+            "n_total": n_total, "format": fmt}

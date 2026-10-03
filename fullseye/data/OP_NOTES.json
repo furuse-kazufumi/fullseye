@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2649,
- "n_notes": 2655,
+ "n_ops": 2650,
+ "n_notes": 2656,
  "notes": {
   "vol_dilate": [
    {
@@ -16456,6 +16456,15 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/drive/gsplat/gs_from_world.md"
+   }
+  ],
+  "gs_read_file": [
+   {
+    "op": "gs_read_file",
+    "dim": "drive",
+    "category": "gsplat",
+    "out": "table",
+    "path": "docs/ops/drive/gsplat/gs_read_file.md"
    }
   ],
   "gs_render": [

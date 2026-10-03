@@ -1,8 +1,8 @@
 {
- "n_ops": 2649,
+ "n_ops": 2650,
  "tiers": {
   "color": 12,
-  "ledger": 1698,
+  "ledger": 1699,
   "nary": 17,
   "registry": 922
  },
@@ -8002,6 +8002,17 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "gs_read_file",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "gsplat",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "gs_render",

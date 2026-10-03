@@ -41,6 +41,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - ★**`hankel_image`**: 軸対称な画像の 2-D フーリエ変換を動径の分布 1 本の Hankel 変換で(中心は明るさの重心、軸対称からの崩れを
   `asymmetry` で報告)。門: 円板 → Airy、ガウスの自己双対、2-D FFT の断面と一致、楕円で単調に増える非対称度。transforms_tour に
   「円い穴の写真から回折像」。★下書きの docstring に「周波数を細かく取れる」と書いたが、刻みは FFT と同じ 1/(2·半径) —— 削った。
+- ★**Studio: ドラッグ・アンド・ドロップと画像ビューア**(ユーザー要望): 画像 1 枚 = 入力に、複数枚やフォルダ = 新しい
+  **Image Viewer**(File ▸ Image Viewer…、Ctrl+Shift+O: 一覧・ホイールで拡大・画素の値・情報・ヒストグラム・「入力にする」)、
+  `.py` = Python エディタのタブ(エディタに落としても開く。以前はパスが文字で貼られた)、`.json` = パイプライン、
+  点群・メッシュ・3DGS・医用ボリューム = 3-D ビューア、動画・アニメーション GIF・HDF = Video cube、`.npy` は形で振り分け。
+  以前は 1 本目しか見ず `.py` は「未対応」だった。**ASCII とバイナリの両方**を門で固定: PLY(ASCII / LE / BE)・STL・PCD。
+- ★**`gs_read_file`**(gsplatnp): 3DGS の INRIA 形式 PLY(ASCII / バイナリ両エンディアン)と `.splat` を読み、中心・色(SH DC)・
+  不透明度(sigmoid)・大きさ(exp)・向きを返す。**以前の Studio は 3DGS の PLY を色無しの点群として開いていた**。
+- Studio Inspector: dict を返す op が中身に関係なく「輪郭 0 本」と出ていた → 表(欄ごとの形と値域)・組・列で出す。
+  Figures タブの GIF が 1 コマ目しか出なかった → QMovie で再生。
 - **非推奨(0.4.0 で削除)**: `gen_contour_nurbs_xld`・`gen_nurbs_interp`(`contours_xld2`)—— 名前に反して NURBS ではなく、
   重みなしで全制御点を通る**補間 B スプライン**だった。呼ぶと `DeprecationWarning`、docstring に正体と移行先
   (`nurbs_curve`)を書いた。動作は変えていない。

@@ -1,26 +1,35 @@
 ---
-op: gs_update
+op: gs_read_file
 dim: drive
 category: gsplat
-in: table × table
+in: 
 out: table
-examples: [poc_kendama]
+examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
 ---
 
-# gs_update — DRIVE `gsplat` op
+# gs_read_file — DRIVE `gsplat` op
 
-- **データ種**: `table × table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.gs_update(gs: 'dict', world: 'dict') -> 'dict'` (実装を直接呼ぶなら `import gsplatnp; gsplatnp.gs_update(gs: 'dict', world: 'dict') -> 'dict'`、台帳から引くなら `opsdrive.get("gs_update")`)
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
+- **呼び出し**: `import fullseye as fs; fs.ledger.gs_read_file(path, *, min_opacity: 'float' = 0.0) -> 'dict'` (実装を直接呼ぶなら `import gsplatnp; gsplatnp.gs_read_file(path, *, min_opacity: 'float' = 0.0) -> 'dict'`、台帳から引くなら `opsdrive.get("gs_read_file")`)
 
 ## 使い方
 
-世界の**いまの**頂点からガウシアンの中心・向きを計算し直す(その場で書き換えて同じ dict を返す)。
+3D Gaussian Splatting のファイルを読み、ガウスの中心・色・不透明度・大きさ・向きを返す。
 
-μ = Σ_k bary_k · V[F[face, k]] + R · offset_local、R = 面の局所座標 [t1 t2 n]。面の数が作ったときと違う世界は ValueError
-(物体を足した・消した世界には使えない: 作り直すこと)。剛体で動かした物体のガウシアンは同じ剛体変換で動く(門)。
+対応: **INRIA 形式の .ply**(x, y, z, f_dc_0..2, opacity(logit), scale_0..2(log), rot_0..3(wxyz)。
+``gsplat_train_native`` の出力もこれ)と **.splat**(1 個 32 バイト: 位置 3×f32、大きさ 3×f32、
+RGBA 4×u8、回転 4×u8(wxyz、(q·128)+128))。
+
+Args:
+    path: ファイル。
+    min_opacity: これ未満の不透明度のガウスを落とす(0 なら全部)。
+
+Returns:
+    ``{"xyz" (N,3), "rgb" (N,3) [0,1], "opacity" (N,) [0,1], "scale" (N,3)(実寸、exp 済み),
+    "rot" (N,4) wxyz 単位四元数, "n_total", "format"}``。色は 0 次の球面調和だけ(視点で変わる高次は捨てる)。
 
 ## 参考(サンプルデータ・文献)
 
@@ -30,7 +39,7 @@ version: 0.3.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [poc_kendama](../../../../examples/poc_kendama.py) — `py -3.11 examples/poc_kendama.py`
+- (まだありません)
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
@@ -38,7 +47,7 @@ version: 0.3.0  # fullseye lib version this note was generated for
 
 ## 同カテゴリ(`gsplat`)
 
-[gs_from_world](gs_from_world.md) · [gs_render](gs_render.md) · [gs_render_fn](gs_render_fn.md) · [gs_read_file](gs_read_file.md)
+[gs_from_world](gs_from_world.md) · [gs_update](gs_update.md) · [gs_render](gs_render.md) · [gs_render_fn](gs_render_fn.md)
 
 ---
 *Provenance: gsplatnp.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

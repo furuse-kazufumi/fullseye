@@ -45,7 +45,7 @@ fail-closed: 画像の大きさ ≤ 0、max_radius < 1、組の数が ``max_pair
 
 ## 同カテゴリ(`gsplat`)
 
-[gs_from_world](gs_from_world.md) · [gs_update](gs_update.md) · [gs_render_fn](gs_render_fn.md)
+[gs_from_world](gs_from_world.md) · [gs_update](gs_update.md) · [gs_render_fn](gs_render_fn.md) · [gs_read_file](gs_read_file.md)
 
 ---
 *Provenance: gsplatnp.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

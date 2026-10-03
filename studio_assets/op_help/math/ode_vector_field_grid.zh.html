@@ -6,8 +6,12 @@
 <p>在网格上采样具名场 —— 现有查看器可直接接收的 `<code style="color:#22d3bf">flow2d</code>`。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Returns `<code style="color:#22d3bf">(2, H, W)</code><code style="color:#22d3bf"> with components </code><code style="color:#22d3bf">(dy, dx)</code>` — the library&#x27;s</p>
-<p>`<code style="color:#22d3bf">flow2d</code>` layout — so the <b>existing flow family</b> (quiver, streamlines,</p>
-<p>colour wheel, `<code style="color:#22d3bf">flow_magnitude</code>`) renders it with no new drawing code. For a</p>
+<p>`<code style="color:#22d3bf">flow2d</code>` layout — so the <b>existing flow2d viewers</b> render it with no new</p>
+<p>drawing code: `<code style="color:#22d3bf">piv_flow_to_rgbimage</code><code style="color:#22d3bf"> (colour wheel), </code><code style="color:#22d3bf">piv_flow_magnitude</code>` and</p>
+<p>`<code style="color:#22d3bf">piv_line_integral_convolution</code>` (texture along the flow). (★2026-10-03: this</p>
+<p>docstring used to name &quot;quiver, streamlines, flow_magnitude&quot; — **no quiver or</p>
+<p>streamline op exists yet**, and `<code style="color:#22d3bf">fs.flow_magnitude</code>` takes two components,</p>
+<p>not a flow2d array.) For a</p>
 <p>3-D system, *plane* picks the slice (`<code style="color:#22d3bf">xy</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">xz</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">yz</code>`) and *offset*</p>
 <p>fixes the third coordinate.</p>
 <p>★<b>Why this earns its place</b>: it is the bridge that keeps this family from</p>

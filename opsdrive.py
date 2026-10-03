@@ -274,6 +274,8 @@ _CATALOG = {
         ("gs_update", "gsplatnp", ["table", "table"], "table"),
         ("gs_render", "gsplatnp", ["table", "matrix"], "table"),
         ("gs_render_fn", "gsplatnp", ["table"], "any"),
+        # 3DGS のファイル(.ply = INRIA 形式 / .splat)を読む入口(2026-10-03、Studio の D&D から)
+        ("gs_read_file", "gsplatnp", [], "table"),
     ],
     # 車の縦の運動: m dv/dt = 駆動 − 制動 − m g sin θ − c_rr m g cos θ − ½ρC_dA v|v|(止まっている間はブレーキの保持の範囲で動かない)。
     # 真値 = 停止距離の閉形式 vρ + (1/2k)ln(1 + k v²/A)(A = b ± g sin θ + c_rr g cos θ)、rsssafety との一致、坂道発進のずり下がりの閉形式、

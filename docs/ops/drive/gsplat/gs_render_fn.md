@@ -37,7 +37,7 @@ version: 0.3.0  # fullseye lib version this note was generated for
 
 ## 同カテゴリ(`gsplat`)
 
-[gs_from_world](gs_from_world.md) · [gs_update](gs_update.md) · [gs_render](gs_render.md)
+[gs_from_world](gs_from_world.md) · [gs_update](gs_update.md) · [gs_render](gs_render.md) · [gs_read_file](gs_read_file.md)
 
 ---
 *Provenance: gsplatnp.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

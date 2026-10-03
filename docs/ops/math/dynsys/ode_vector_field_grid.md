@@ -20,8 +20,12 @@ version: 0.3.0  # fullseye lib version this note was generated for
 Sample a named field on a grid — a ``flow2d`` the existing viewers take.
 
 Returns ``(2, H, W)`` with components ``(dy, dx)`` — the library's
-``flow2d`` layout — so the **existing flow family** (quiver, streamlines,
-colour wheel, ``flow_magnitude``) renders it with no new drawing code. For a
+``flow2d`` layout — so the **existing flow2d viewers** render it with no new
+drawing code: ``piv_flow_to_rgbimage`` (colour wheel), ``piv_flow_magnitude`` and
+``piv_line_integral_convolution`` (texture along the flow). (★2026-10-03: this
+docstring used to name "quiver, streamlines, flow_magnitude" — **no quiver or
+streamline op exists yet**, and ``fs.flow_magnitude`` takes two components,
+not a flow2d array.) For a
 3-D system, *plane* picks the slice (``xy`` / ``xz`` / ``yz``) and *offset*
 fixes the third coordinate.
 

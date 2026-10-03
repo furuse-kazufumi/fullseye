@@ -3814,3 +3814,17 @@ def test_video_cube_panel_opens_and_responds_headless(tmp_path, monkeypatch):
     clip, name = dlg._load_file(str(p))
     assert clip.shape == (6, 20, 24) and name == "clip.npy"
     dlg.close()
+
+def test_inspect_result_shows_tables_tuples_and_series_not_contours():
+    """dict は「輪郭 0 本」ではなく表として欄ごとに出す(台帳 op の大半は表を返す)。組・列・その他も種類で出す。"""
+    t = studio.inspect_result({"distance": np.arange(6.0).reshape(2, 3), "t": 0.25, "ok": True})
+    assert t["kind"] == "table" and t["n_fields"] == 3
+    assert t["fields"]["distance"].startswith("array 2×3 float64") and t["fields"]["t"] == "0.25"
+    assert studio.image_info_summary(t).startswith("table · 3 fields: distance, t, ok")
+    assert "  distance: array 2×3" in studio.format_inspection(t)
+    assert studio.inspect_result({"cs": [1, 2]})["kind"] == "contour"
+    m = studio.inspect_result((np.zeros((4, 3)), np.zeros((2, 3), int)))
+    assert m["kind"] == "tuple" and m["n_items"] == 2
+    s = studio.inspect_result(np.arange(5.0))
+    assert s["kind"] == "series" and s["length"] == 5
+    assert studio.inspect_result("abc")["kind"] == "object"
