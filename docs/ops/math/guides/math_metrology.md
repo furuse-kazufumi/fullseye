@@ -127,6 +127,9 @@ flowchart LR
 - **tf_poles_zeros / tf_freq_response / tf_impulse_response / tf_step_response**`(num, den, …)` — 有理伝達関数 `H(s) = num/den`(係数は降べき、`poly_eval` と同じ並び)。応答は部分分数でなく**拡大行列の指数関数**で厳密に解くので、重根・原点の極(積分器)でも分岐しない。非プロパー(分子の次数 > 分母)は `ValueError`。
 - **tf_bilinear**`(num, den, fs, prewarp_hz=None)` — Tustin 変換。`scipy.signal.bilinear` と係数が一致し、前歪みを与えた周波数で連続系と応答が厳密に一致する。左半面の極は単位円内へ。
 - **laplace_inverse_talbot**`(num, den, t, M=32)` / **laplace_inverse_func**`(F, t, M=32)`(`fs.<名前>` のみ)— 固定 Talbot 法の数値逆ラプラス。有理関数では行列指数と別経路で一致(1e-8)。`1/√s ↔ 1/√(πt)` のような分岐点つきも戻せる。**M は増やせば良いわけではない**: M≈20 で 1e-12、M=68 では丸めで 1e-4 に悪化。
+- **dct_transform**`(x, axes=None, inverse=False)` — 正規直交 DCT-II を N 次元で(画像・ボリューム)。返す `compaction` は大きい順の係数のエネルギー累積(滑らかな画像は 2% の係数で 99.9%、白色雑音は 15% 未満)。既存の `xsp_dct` は画像 → 見せる画像で係数を返さない。
+- **wavelet_filters**`(order)` — Daubechies dbN のフィルタを教科書の構成(スペクトル分解)で作る。表を写さない。門は直交性 Σ h_i h_{i+2s} = δ_s と N 個の消失モーメント、db2 の閉形式。
+- **dwt_transform**`(x, order=2, levels=1, axes=None)` / **dwt_inverse**`(coeffs)` — 多段・N 次元の DWT(周期境界で厳密に正規直交)。2-D の帯は `ad`・`da`・`dd`、3-D は 7 個。★係数を 5% 残す圧縮は DCT より 8 dB 良いが、0.5% では DCT が上 —— 勝ち負けは残す量で決まる。dbN は N−1 次までの多項式を詳細係数から消す(2 次式は db3 で 1e-14、db2 では残る)。
 
 ### numerics(数値計算の古典と特殊関数 — 2026-10-03)
 
@@ -146,6 +149,7 @@ flowchart LR
 - **lomb_scargle**`(t, y, freqs)` — 時刻が不等間隔な観測の周期図(Scargle の τ つき)。等間隔ならフーリエ周波数で `|DFT|²/N` と恒等的に一致。時刻を無視して並び順のまま FFT するのが典型的な間違い(峰がずれる)。
 - **music_doa**`(X, n_sources=None)` / **esprit_doa**`(X, n_sources=None)` — 部分空間法の到来方向推定。遅延和(`rangedoppler.beamform_doa`)は 1 ビーム幅の中の 2 波を分けられないが、こちらは分ける。**前提**: 波源の数が正しい・波どうしが無相関。同じ信号の反射(相関した波)では共分散の階数が潰れて割れない(門で確かめてある)。`n_sources=None` は MDL で推定。
 - **n_sources_mdl**`(X)` — 波源の数の推定(Wax & Kailath 1985)。白色雑音・スナップショット数 ≫ 素子数が前提。
+- **hilbert_analytic**`(x, fs=1)` — 解析信号 x + i·H[x] と振幅(包絡線)・連続位相・瞬時周波数。門: H[cos] = sin(周期が窓に収まれば 2e-13)、線形チャープの周波数、Bedrosian の定理(包絡線が搬送波より遅ければ振幅が 5e-13 で戻る、速いと 0.40 ずれる)。端は FFT の周期の仮定で乱れる。2-D 版は `monogenic_signal`(Riesz)。
 - **ula_snapshots**`(angles_deg, n_elements, n_snapshots, snr_db=None)` — 答えの決まる入力(無相関の複素ガウス信号 + 白色雑音)。
 
 ### estimation(推定と統計の古典 — 2026-10-03)

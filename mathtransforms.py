@@ -32,6 +32,7 @@ __all__ = [
     "hankel_transform",
     "tf_poles_zeros", "tf_freq_response", "tf_impulse_response", "tf_step_response",
     "tf_bilinear", "laplace_inverse_talbot", "laplace_inverse_func",
+    "dct_transform", "wavelet_filters", "dwt_transform", "dwt_inverse",
 ]
 
 
@@ -392,3 +393,154 @@ def laplace_inverse_func(F, t, *, M: int = 32) -> np.ndarray:
         val += float(np.sum(np.real(np.exp(ti * S) * Ff(S) * (1.0 + 1j * sig))))
         out[i] = r / M * val
     return out
+
+
+# ── 係数を返す直交変換: DCT と Daubechies のウェーブレット(N 次元) ─────────────────────────────── #
+# 既存の xsp_dct / xmh_haar は「画像 → 見せるための画像」で、係数も逆変換も Parseval の門も無かった。
+# ここは係数そのものを返し、逆変換で丸め誤差まで戻ることを門にする。2-D 画像・3-D ボリュームにそのまま効く。
+
+def dct_transform(x, *, axes=None, inverse: bool = False) -> dict:
+    """正規直交 DCT-II(``inverse=True`` で DCT-III = 逆変換)を N 次元で。
+
+    Args:
+        x: 任意次元の実配列(信号・画像・ボリューム)。
+        axes: 変換する軸(省略で全軸)。
+        inverse: True なら係数から元に戻す。
+
+    Returns:
+        ``coeffs``(同じ形)、``energy``(Σx²、正規直交なので変換の前後で同じ = Parseval)、
+        ``compaction`` = 大きい順に並べた係数のエネルギーの累積割合(先頭 1% で何割を持つか、が JPEG の理由)。
+
+    門は定義式 C[k, n] = √(2/N)·c_k·cos(π(2n+1)k / 2N) の行列と一致すること・逆変換で 1e-12 で戻ること。
+    """
+    from scipy import fft as _fft
+    a = np.asarray(x, dtype=np.float64)
+    if a.ndim == 0 or a.size == 0 or not np.all(np.isfinite(a)):
+        raise ValueError("dct_transform: 有限値の 1 次元以上の配列")
+    ax = tuple(range(a.ndim)) if axes is None else tuple(int(i) for i in np.atleast_1d(axes))
+    y = (_fft.idctn if inverse else _fft.dctn)(a, type=2, axes=ax, norm="ortho")
+    e = np.sort((y * y).ravel())[::-1]
+    tot = float(e.sum())
+    comp = np.cumsum(e) / tot if tot > 0 else np.ones_like(e)
+    return {"coeffs": y, "energy": tot, "compaction": comp}
+
+
+def _binom(n: int, k: int) -> int:
+    return math.comb(n, k)
+
+
+def wavelet_filters(order: int = 2) -> dict:
+    """Daubechies の正規直交ウェーブレット dbN のフィルタを、教科書の構成(スペクトル分解)で作る。
+
+    |H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2))、P(y) = Σ_{k<N} C(N−1+k, k) y^k(Daubechies 1988)。P の根から単位円の
+    内側の零点を選び、(1 + z⁻¹)^N と掛け合わせる。表を写さないので桁落ちの転記ミスが無い(門が値を確かめる)。
+
+    Returns:
+        ``lowpass`` h(長さ 2N、和 √2)、``highpass`` g[n] = (−1)^n h[2N−1−n]、``order``、
+        ``vanishing_moments`` = N(次数 N−1 までの多項式を詳細係数で消す)。order=1 は Haar。
+    """
+    N = int(order)
+    if not 1 <= N <= 10:
+        raise ValueError("wavelet_filters: order は 1〜10(それより上はスペクトル分解の丸めが効く)")
+    P = np.array([_binom(N - 1 + k, k) for k in range(N)], dtype=np.float64)    # y^0 .. y^{N-1}
+    q = np.array([1.0])
+    if N > 1:
+        for yr in np.roots(P[::-1]):
+            # y = (2 − z − 1/z)/4 → z² − (2 − 4y) z + 1 = 0、単位円の内側の根を取る
+            zs = np.roots([1.0, -(2.0 - 4.0 * yr), 1.0])
+            z = zs[np.argmin(np.abs(zs))]
+            q = np.convolve(q, [1.0, -z])
+        q = np.real_if_close(q, tol=1e6).real
+    h = q
+    for _ in range(N):
+        h = np.convolve(h, [1.0, 1.0])
+    h = h * (math.sqrt(2.0) / h.sum())
+    L = h.size
+    g = np.array([(-1) ** n * h[L - 1 - n] for n in range(L)])
+    return {"lowpass": h, "highpass": g, "order": N, "vanishing_moments": N}
+
+
+def _analysis_axis(a, h, g, axis):
+    a = np.moveaxis(a, axis, -1)
+    n = a.shape[-1]
+    if n % 2:
+        raise ValueError("dwt_transform: 各段で変換する軸の長さは偶数(2^levels の倍数)")
+    idx = (2 * np.arange(n // 2)[:, None] + np.arange(h.size)[None, :]) % n   # 周期境界 → 厳密に直交
+    seg = a[..., idx]
+    lo, hi = seg @ h, seg @ g
+    return np.moveaxis(lo, -1, axis), np.moveaxis(hi, -1, axis)
+
+
+def _synthesis_axis(lo, hi, h, g, axis):
+    lo, hi = np.moveaxis(lo, axis, -1), np.moveaxis(hi, axis, -1)
+    m = lo.shape[-1]
+    n = 2 * m
+    out = np.zeros(lo.shape[:-1] + (n,))
+    idx = (2 * np.arange(m)[:, None] + np.arange(h.size)[None, :]) % n
+    for j in range(h.size):                                   # 解析の転置(直交なので逆変換)
+        out[..., idx[:, j]] += lo * h[j] + hi * g[j]          # 1 つの j の中では添字が重ならない
+    return np.moveaxis(out, -1, axis)
+
+
+def dwt_transform(x, *, order: int = 2, levels: int = 1, axes=None) -> dict:
+    """Daubechies dbN の多段・N 次元の離散ウェーブレット変換(周期境界で厳密に正規直交)。
+
+    Args:
+        x: 実配列(1-D 信号・2-D 画像・3-D ボリューム)。変換する軸の長さは 2^levels の倍数。
+        order: dbN の N(1 = Haar)。
+        levels: 段数。各段で近似(全軸ローパス)をさらに分ける。
+        axes: 変換する軸(省略で全軸)。
+
+    Returns:
+        ``approx`` 最後の近似、``details`` = 段ごとの dict(キーは軸ごとの 'a'/'d' の並び、例 2-D なら
+        'ad'・'da'・'dd')、``energy_in``・``energy_out``(Parseval で一致)、``order``・``levels``・``axes``。
+        ``dwt_inverse`` に丸ごと渡すと元に戻る。
+    """
+    a = np.asarray(x, dtype=np.float64)
+    if a.ndim == 0 or a.size == 0 or not np.all(np.isfinite(a)):
+        raise ValueError("dwt_transform: 有限値の 1 次元以上の配列")
+    ax = tuple(range(a.ndim)) if axes is None else tuple(int(i) % a.ndim for i in np.atleast_1d(axes))
+    lv = int(levels)
+    if lv < 1:
+        raise ValueError("dwt_transform: levels は 1 以上")
+    for i in ax:
+        if a.shape[i] % (2 ** lv):
+            raise ValueError(f"dwt_transform: 軸 {i} の長さ {a.shape[i]} が 2^levels = {2 ** lv} の倍数でない")
+    f = wavelet_filters(order)
+    h, g = f["lowpass"], f["highpass"]
+    details = []
+    cur = a
+    for _ in range(lv):
+        bands = {"": cur}
+        for i in ax:
+            nb = {}
+            for key, arr in bands.items():
+                lo, hi = _analysis_axis(arr, h, g, i)
+                nb[key + "a"], nb[key + "d"] = lo, hi
+            bands = nb
+        cur = bands.pop("a" * len(ax))
+        details.append(bands)
+    e_out = float((cur * cur).sum() + sum((v * v).sum() for d in details for v in d.values()))
+    return {"approx": cur, "details": details, "energy_in": float((a * a).sum()), "energy_out": e_out,
+            "order": f["order"], "levels": lv, "axes": ax}
+
+
+def dwt_inverse(coeffs: dict) -> np.ndarray:
+    """``dwt_transform`` の結果から元の配列に戻す(正規直交なので解析の転置)。"""
+    if not isinstance(coeffs, dict) or not {"approx", "details", "order", "axes"} <= set(coeffs):
+        raise ValueError("dwt_inverse: dwt_transform の戻り値(approx・details・order・axes)を渡す")
+    f = wavelet_filters(coeffs["order"])
+    h, g = f["lowpass"], f["highpass"]
+    ax = tuple(coeffs["axes"])
+    cur = np.asarray(coeffs["approx"], dtype=np.float64)
+    for bands in reversed(coeffs["details"]):
+        allb = dict(bands)
+        allb["a" * len(ax)] = cur
+        for depth in range(len(ax) - 1, -1, -1):
+            i = ax[depth]
+            nb = {}
+            for key in {k[:depth] for k in allb}:
+                nb[key] = _synthesis_axis(allb[key + "a"], allb[key + "d"], h, g, i)
+            allb = nb
+        cur = allb[""]
+    return cur

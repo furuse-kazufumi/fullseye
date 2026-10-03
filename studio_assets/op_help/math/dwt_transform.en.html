@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dwt_transform — MATH <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dwt_transform(x, *, order: &#x27;int&#x27; = 2, levels: &#x27;int&#x27; = 1, axes=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathtransforms; mathtransforms.dwt_transform(x, *, order: &#x27;int&#x27; = 2, levels: &#x27;int&#x27; = 1, axes=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;dwt_transform&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>Daubechies dbN の多段・N 次元の離散ウェーブレット変換(周期境界で厳密に正規直交)。</p>
+<p>Args:</p>
+<p>x: 実配列(1-D 信号・2-D 画像・3-D ボリューム)。変換する軸の長さは 2^levels の倍数。</p>
+<p>order: dbN の N(1 = Haar)。</p>
+<p>levels: 段数。各段で近似(全軸ローパス)をさらに分ける。</p>
+<p>axes: 変換する軸(省略で全軸)。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">approx</code><code style="color:#22d3bf"> 最後の近似、</code><code style="color:#22d3bf">details</code>` = 段ごとの dict(キーは軸ごとの &#x27;a&#x27;/&#x27;d&#x27; の並び、例 2-D なら</p>
+<p>&#x27;ad&#x27;・&#x27;da&#x27;・&#x27;dd&#x27;)、`<code style="color:#22d3bf">energy_in</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">energy_out</code><code style="color:#22d3bf">(Parseval で一致)、</code><code style="color:#22d3bf">order</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">levels</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">axes</code>`。</p>
+<p>`<code style="color:#22d3bf">dwt_inverse</code>` に丸ごと渡すと元に戻る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every mathops op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
+<p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:transforms_tour">transforms_tour</a> — <code style="color:#22d3bf">py -3.11 examples/transforms_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a> · <a style="color:#22d3bf" href="opmath:dwt_inverse">dwt_inverse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">transform</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:abel_transform">abel_transform</a> · <a style="color:#22d3bf" href="opmath:abel_inverse">abel_inverse</a> · <a style="color:#22d3bf" href="opmath:abel_inverse_image">abel_inverse_image</a> · <a style="color:#22d3bf" href="opmath:abel_revolve">abel_revolve</a> · <a style="color:#22d3bf" href="opmath:hankel_transform">hankel_transform</a> · <a style="color:#22d3bf" href="opmath:tf_poles_zeros">tf_poles_zeros</a> · <a style="color:#22d3bf" href="opmath:tf_freq_response">tf_freq_response</a> · <a style="color:#22d3bf" href="opmath:tf_impulse_response">tf_impulse_response</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathtransforms.py — MATH operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

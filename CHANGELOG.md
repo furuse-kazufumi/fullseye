@@ -25,6 +25,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   2 次 NURBS が円そのもの(半径のずれ 9e-16、隅の制御点は円の外 (√2−1)R で曲線は通らない)/ 射影変換と可換 / 回した球と
   トーラスが丸め誤差で厳密 / 重みを上げると単調に寄る。geometry_tour に「隅の重みを 1/√2 にした時だけ円」の図 2 枚
   (普通の B スプラインは隅の向きで最大 1.061 に膨らむ)。
+- ★**係数を返す直交変換と瞬時周波数 5 op**: `dct_transform`(N 次元の正規直交 DCT)・`wavelet_filters`(Daubechies dbN を
+  スペクトル分解で構成)・`dwt_transform` / `dwt_inverse`(多段・N 次元)・`hilbert_analytic`(解析信号・包絡線・瞬時周波数)。
+  既存の `xsp_dct`・`xmh_haar`・`xsp_hilbert_env` は「画像 → 見せる画像」で係数も逆変換も無かった。門: DCT が定義式の行列と
+  一致 / db1〜db8 の直交性と消失モーメント・db2 の閉形式 / 1-D・2-D・3-D で Parseval と完全再構成 / H[cos] = sin・Bedrosian。
+  図: 係数 5% の圧縮(DCT は縁に波紋、ウェーブレットは縁に留まる)と「0.5% では DCT が勝つ」逆転、消失モーメントの成功と失敗、
+  チャープの瞬時周波数、包絡線が戻る時と戻らない時。
 - **非推奨(0.4.0 で削除)**: `gen_contour_nurbs_xld`・`gen_nurbs_interp`(`contours_xld2`)—— 名前に反して NURBS ではなく、
   重みなしで全制御点を通る**補間 B スプライン**だった。呼ぶと `DeprecationWarning`、docstring に正体と移行先
   (`nurbs_curve`)を書いた。動作は変えていない。

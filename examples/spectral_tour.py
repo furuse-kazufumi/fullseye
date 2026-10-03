@@ -15,6 +15,10 @@
    (★最初は「格子の上の欠測を 0 で埋めた FFT」を失敗例にしたが、図を見るとそれも正しい周波数に峰を立てていた
    —— 格子が残っていれば周期は残る。失敗例として嘘だったので差し替えた、2026-10-03。)
 
+3. **瞬時周波数(Hilbert)** —— 解析信号 x + i·H[x] の位相を微分すると「今この瞬間の周波数」が読める。
+   上がり続けるチャープでも追える。振幅変調は包絡線がそのまま戻る(Bedrosian の定理)が、包絡線の揺れが
+   搬送波より速いと戻らない(失敗例を隣に)。
+
 【グラウンドトゥルース】電波の到来角(10°, 16°)と時系列の周波数(0.137)は自分で決めた真値。
 Lomb–Scargle = 周期図(等間隔)は Scargle 1982 の恒等式。
 """
@@ -101,6 +105,22 @@ def run() -> dict:
     assert eq < 1e-10
     out.update(ls_peak=ls["peak_freq"], ls_equals_periodogram=eq)
 
+    # ---- 3. 瞬時周波数 ---------------------------------------------------------------- #
+    th = np.arange(4000) / 1000.0
+    chirp = np.cos(2 * math.pi * (20 * th + 30 * th ** 2 / 2))
+    hc = fs.hilbert_analytic(chirp, 1000)
+    f_true_c = 20 + 30 * th
+    err_mid = float(np.abs(hc["frequency"][800:-800] - f_true_c[800:-800]).max())
+    env_ok = 1 + 0.5 * np.cos(2 * math.pi * 3 * th)
+    env_bad = 1 + 0.5 * np.cos(2 * math.pi * 15 * th)
+    a_ok = fs.hilbert_analytic(env_ok * np.cos(2 * math.pi * 120 * th), 1000)["amplitude"]
+    a_bad = fs.hilbert_analytic(env_bad * np.cos(2 * math.pi * 10 * th), 1000)["amplitude"]
+    e_ok, e_bad = float(np.abs(a_ok - env_ok).max()), float(np.abs(a_bad - env_bad).max())
+    print("3) チャープの瞬時周波数(端の 0.8 s を除く最大差)%.4f Hz / 包絡線の復元: 揺れ 3 Hz・搬送 120 Hz %.1e、"
+          "揺れ 15 Hz・搬送 10 Hz %.2f" % (err_mid, e_ok, e_bad))
+    assert err_mid < 0.02 and e_ok < 1e-10 and e_bad > 0.2
+    out.update(chirp_freq_err=err_mid, bedrosian_ok=e_ok, bedrosian_broken=e_bad)
+
     # ---- 図 ---------------------------------------------------------------------------- #
     if figs.enabled():
         sel = (grid > -20) & (grid < 45)
@@ -137,6 +157,28 @@ def run() -> dict:
                        kinds=["scatter", "line"], styles=[None, "dashed"],
                        xlabel="時刻", ylabel="値", title="観測の時刻がばらばら —— 間隔は 0.2〜2.6、30〜55 は空白",
                        caption="この点だけから周期 1/%.3f ≈ %.1f を当てる。" % (f_true, 1 / f_true))
+        figs.save_plot("chirp_frequency",
+                       [("真の周波数 20 + 30t", th, f_true_c), ("解析信号の位相の傾き(fs.hilbert_analytic)", th, hc["frequency"])],
+                       styles=["dashed", None], colors=["reference", "emphasis"], ylim=(0, 160),
+                       xlabel="時刻(秒)", ylabel="周波数(Hz)",
+                       title="上がり続ける音の「今の周波数」—— 位相を微分して読む",
+                       caption="20 Hz から 1 秒に 30 Hz ずつ上がるチャープ。FFT は全体で 1 本のスペクトルしか出さないが、"
+                               "解析信号の位相の傾きは時刻ごとの周波数を返し、破線の真値に乗る(端から 0.8 秒より内側で最大差 %.3f Hz)。"
+                               "両端の乱れは FFT が信号を周期とみなすため。" % err_mid)
+        sl = slice(0, 700)
+        figs.save_plot("bedrosian",
+                       [("信号(包絡線 3 Hz × 搬送波 120 Hz)", th[sl], (env_ok * np.cos(2 * math.pi * 120 * th))[sl]),
+                        ("真の包絡線", th[sl], env_ok[sl]),
+                        ("|解析信号|", th[sl], a_ok[sl]),
+                        ("失敗例: 包絡線 15 Hz × 搬送波 10 Hz の |解析信号|", th[sl], a_bad[sl] + 3.0),
+                        ("その真の包絡線", th[sl], env_bad[sl] + 3.0)],
+                       styles=[None, "dashed", None, None, "dashed"],
+                       colors=["neutral", "reference", "emphasis", "wrong", "reference"],
+                       xlabel="時刻(秒)", ylabel="値(失敗例は +3 ずらして表示)",
+                       title="包絡線が戻る時と戻らない時(Bedrosian の定理)",
+                       caption="包絡線の揺れ(3 Hz)が搬送波(120 Hz)より十分遅ければ、|解析信号| は真の包絡線に丸め誤差 %.0e で重なる。"
+                               "包絡線の揺れ(15 Hz)が搬送波(10 Hz)より速いと周波数が混ざり、最大 %.2f ずれる(上段、破線が真の包絡線)。"
+                               % (max(e_ok, 1e-16), e_bad))
     assert not figs.errors(), figs.errors()
 
     out["elapsed_s"] = round(time.perf_counter() - t0, 3)

@@ -51,11 +51,11 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[dynsys_poincare_section](../dynsys/dynsys_poincare_section.md)
+[dynsys_poincare_section](../dynsys/dynsys_poincare_section.md) · [dwt_inverse](../transform/dwt_inverse.md)
 
 ## 同カテゴリ(`spectral`)
 
-[ula_snapshots](ula_snapshots.md) · [music_doa](music_doa.md) · [esprit_doa](esprit_doa.md) · [n_sources_mdl](n_sources_mdl.md)
+[ula_snapshots](ula_snapshots.md) · [music_doa](music_doa.md) · [esprit_doa](esprit_doa.md) · [n_sources_mdl](n_sources_mdl.md) · [hilbert_analytic](hilbert_analytic.md)
 
 ---
 *Provenance: mathspectral.py — MATH operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

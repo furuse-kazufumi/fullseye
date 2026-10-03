@@ -16,7 +16,8 @@ with warnings.catch_warnings():
     import opsmath
 
 LEDGER = ["abel_transform", "abel_inverse", "abel_inverse_image", "abel_revolve", "hankel_transform", "tf_poles_zeros", "tf_freq_response",
-          "tf_impulse_response", "tf_step_response", "tf_bilinear", "laplace_inverse_talbot"]
+          "tf_impulse_response", "tf_step_response", "tf_bilinear", "laplace_inverse_talbot",
+          "dct_transform", "wavelet_filters", "dwt_transform", "dwt_inverse"]
 
 
 # ---- 公開経路 --------------------------------------------------------------------- #
@@ -207,3 +208,78 @@ def test_revolving_the_slice_and_projecting_returns_the_photograph():
     back = vol.sum(axis=1) * dr
     i0 = int(c) - (R - 1)
     assert np.abs(back - proj[:, i0:i0 + 2 * R - 1]).max() < 2e-3
+
+
+# ── 係数を返す直交変換(DCT・Daubechies DWT、N 次元)──────────────────────────────────────────── #
+def test_dct_matches_definition_and_inverts_in_3d():
+    """定義式の行列 C[k,n] = √(2/N)·c_k·cos(π(2n+1)k/2N) と一致し、3-D でも逆変換で戻り、エネルギーは保存。"""
+    N = 12
+    n = np.arange(N)
+    C = np.sqrt(2 / N) * np.cos(np.pi * (2 * n + 1) * n[:, None] / (2 * N))
+    C[0] /= np.sqrt(2)
+    x = np.random.default_rng(0).standard_normal(N)
+    assert np.abs(M.dct_transform(x)["coeffs"] - C @ x).max() < 1e-12
+    vol = np.random.default_rng(1).random((16, 24, 8))
+    r = M.dct_transform(vol)
+    assert np.abs(M.dct_transform(r["coeffs"], inverse=True)["coeffs"] - vol).max() < 1e-12
+    assert abs(r["energy"] - float((vol * vol).sum())) < 1e-9 * r["energy"]
+
+
+def test_dct_compacts_smooth_images_not_noise():
+    """滑らかな画像は少数の係数にエネルギーが集まる(JPEG の理由)。白色雑音は集まらない(失敗例)。"""
+    yy, xx = np.mgrid[0:64, 0:64] / 64.0
+    smooth = np.exp(-((xx - 0.4) ** 2 + (yy - 0.6) ** 2) / 0.05) + 0.3 * xx
+    noise = np.random.default_rng(2).standard_normal((64, 64))
+    k = int(0.02 * 64 * 64)
+    assert M.dct_transform(smooth)["compaction"][k] > 0.999
+    assert M.dct_transform(noise)["compaction"][k] < 0.15
+
+
+@pytest.mark.parametrize("order", range(1, 9))
+def test_daubechies_filters_are_orthonormal_with_n_vanishing_moments(order):
+    """スペクトル分解で作った dbN: Σ h_i h_{i+2s} = δ_s(直交)、Σ n^m g_n = 0(m < N、消失モーメント)、Σ h = √2。"""
+    f = M.wavelet_filters(order)
+    h, g = f["lowpass"], f["highpass"]
+    L = h.size
+    assert L == 2 * order and abs(h.sum() - math.sqrt(2)) < 1e-12
+    for s in range(order):
+        assert abs(float(np.dot(h[:L - 2 * s], h[2 * s:])) - (1.0 if s == 0 else 0.0)) < 1e-13
+    for m in range(order):
+        assert abs(float(np.sum(np.arange(L) ** m * g))) < 1e-9 * max(1.0, float(np.sum(np.abs(np.arange(L) ** m * g))))
+
+
+def test_db2_closed_form_and_haar():
+    """db2 は閉形式 (1+√3, 3+√3, 3−√3, 1−√3)/(4√2)、db1 は Haar (1, 1)/√2。"""
+    r3 = math.sqrt(3)
+    ref = np.array([1 + r3, 3 + r3, 3 - r3, 1 - r3]) / (4 * math.sqrt(2))
+    assert np.abs(M.wavelet_filters(2)["lowpass"] - ref).max() < 1e-14
+    assert np.abs(M.wavelet_filters(1)["lowpass"] - np.array([1, 1]) / math.sqrt(2)).max() < 1e-15
+
+
+@pytest.mark.parametrize("shape,levels", [((64,), 3), ((32, 48), 2), ((16, 16, 8), 2)])
+def test_dwt_is_orthonormal_in_nd(shape, levels):
+    """1-D・2-D・3-D で Parseval(エネルギー保存)と完全再構成。2-D の帯は 'ad'・'da'・'dd'、3-D は 7 個。"""
+    X = np.random.default_rng(3).standard_normal(shape)
+    c = M.dwt_transform(X, order=3, levels=levels)
+    assert abs(c["energy_in"] - c["energy_out"]) < 1e-11 * c["energy_in"]
+    assert np.abs(M.dwt_inverse(c) - X).max() < 1e-12
+    assert len(c["details"]) == levels and len(c["details"][0]) == 2 ** len(shape) - 1
+
+
+def test_dwt_vanishing_moments_kill_polynomials_below_order():
+    """dbN の詳細係数は N−1 次までの多項式を消す: 2 次式は db3 で消え(1e-12)、db2 では残る(失敗例)。"""
+    t = np.arange(256.0)
+    p = 1 + 0.3 * t - 0.002 * t ** 2
+    d3 = M.dwt_transform(p, order=3)["details"][0]["d"]
+    d2 = M.dwt_transform(p, order=2)["details"][0]["d"]
+    assert np.abs(d3[2:-3]).max() < 1e-11                    # 周期境界の継ぎ目だけは除く
+    assert np.abs(d2[2:-2]).max() > 1e-3
+
+
+def test_dwt_rejects_bad_shapes():
+    with pytest.raises(ValueError):
+        M.dwt_transform(np.zeros(30), levels=2)                  # 30 は 4 の倍数でない
+    with pytest.raises(ValueError):
+        M.wavelet_filters(11)
+    with pytest.raises(ValueError):
+        M.dwt_inverse({"approx": np.zeros(4)})

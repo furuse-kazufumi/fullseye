@@ -2240,7 +2240,7 @@ _計 42 ops / 3 categories。_
 - `signal_features` (`signal → table`) — A compact acoustic/vibration feature vector for anomaly detection:
 
 ## Math operators(opsmath)by category
-_計 102 ops / 12 categories。_
+_計 107 ops / 12 categories。_
 
 
 視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。北極星は「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
@@ -2336,12 +2336,13 @@ _計 102 ops / 12 categories。_
 - `interp_barycentric` (`signal, signal, signal → signal`) — 点 (xk, yk) を通る多項式(次数 len−1)を、重心公式で x に評価する(Berrut & Trefethen 2004)。
 - `integrate_hamiltonian` (`signal, signal → table`) — 名前つきのハミルトン系(質量 1)を時間積分する。返り値 ``{"t","q","p","energy","energy_drift"}``。
 
-### spectral(5)
+### spectral(6)
 - `lomb_scargle` (`signal, signal, signal → table`) — 不等間隔の時系列 (t, y) の Lomb–Scargle 周期図(Scargle 1982 の時刻ずらし τ つき、平均を引いてから)。
 - `ula_snapshots` (`signal → matrix`) — 等間隔線形アレイが受ける複素スナップショット (M, K) を作る(到来方向推定の答えの決まる入力)。
 - `music_doa` (`matrix → table`) — MUSIC(Schmidt 1986): 共分散の雑音部分空間に直交する向きを探す。
 - `esprit_doa` (`matrix → table`) — ESPRIT(Roy & Kailath 1989): アレイの「1 素子ずらし」の不変性から、格子を使わずに向きを解く。
 - `n_sources_mdl` (`matrix → table`) — スナップショットから波源の数を MDL 基準で推定する(Wax & Kailath 1985)。
+- `hilbert_analytic` (`signal → table`) — 解析信号 z = x + i·H[x](FFT で負の周波数を消す)と、そこから読む振幅・瞬時位相・瞬時周波数。
 
 ### stats(5)
 - `stat_describe` (`signal → table`) — Five-number-plus summary of a 1-D sample, as a plain dict.
@@ -2350,7 +2351,7 @@ _計 102 ops / 12 categories。_
 - `stat_correlation` (`matrix → matrix`) — Pearson correlation matrix of ``(N, D)`` observations → ``(D, D)``.
 - `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
 
-### transform(11)
+### transform(15)
 - `abel_transform` (`signal → signal`) — 軸対称な分布 f(r)(r = 0, dr, 2dr, … の標本)を投影 A(y) に写す(前向き Abel 変換)。
 - `abel_inverse` (`signal → signal`) — 投影 A(y) から軸対称な分布 f(r) を戻す(逆 Abel 変換 = 軸対称物体の断層化)。
 - `abel_inverse_image` (`image2d → table`) — 軸対称な物体を横から撮った**画像**(縦 = 対称軸の向き、横 = 軸からの距離)を、行ごとに逆 Abel して断面画像にする。
@@ -2362,6 +2363,10 @@ _計 102 ops / 12 categories。_
 - `tf_step_response` (`signal, signal, signal → signal`) — 単位ステップ応答 y(t) = L⁻¹[H(s)/s](t)。
 - `tf_bilinear` (`signal, signal → table`) — Tustin(双一次)変換 s = K (z − 1)/(z + 1) で連続系を離散系に写す。
 - `laplace_inverse_talbot` (`signal, signal, signal → signal`) — 有理関数 F(s) = num(s)/den(s) の数値逆ラプラス変換(固定 Talbot 法)。
+- `dct_transform` (`image2d → table`) — 正規直交 DCT-II(``inverse=True`` で DCT-III = 逆変換)を N 次元で。
+- `wavelet_filters` (` → table`) — Daubechies の正規直交ウェーブレット dbN のフィルタを、教科書の構成(スペクトル分解)で作る。
+- `dwt_transform` (`image2d → table`) — Daubechies dbN の多段・N 次元の離散ウェーブレット変換(周期境界で厳密に正規直交)。
+- `dwt_inverse` (`table → image2d`) — ``dwt_transform`` の結果から元の配列に戻す(正規直交なので解析の転置)。
 
 ### wave(6)
 - `wave_membrane_mode` (` → matrix`) — One eigenmode of a vibrating **membrane** — the shape the sand draws.

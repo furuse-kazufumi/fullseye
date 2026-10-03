@@ -19,7 +19,7 @@ import math
 
 import numpy as np
 
-__all__ = ["esprit_doa", "lomb_scargle", "music_doa", "n_sources_mdl", "ula_snapshots"]
+__all__ = ["esprit_doa", "hilbert_analytic", "lomb_scargle", "music_doa", "n_sources_mdl", "ula_snapshots"]
 
 
 def lomb_scargle(t, y, freqs) -> dict:
@@ -146,3 +146,38 @@ def esprit_doa(X, n_sources: int | None = None, *, spacing: float = 0.5) -> dict
     s = np.clip(-np.angle(lam) / (2 * math.pi * d), -1.0, 1.0)
     return {"doa_deg": np.sort(np.degrees(np.arcsin(s))), "eigenvalues": vals,
             "n_sources": n, "n_sources_estimated": n_sources is None}
+
+
+def hilbert_analytic(x, fs: float = 1.0) -> dict:
+    """解析信号 z = x + i·H[x](FFT で負の周波数を消す)と、そこから読む振幅・瞬時位相・瞬時周波数。
+
+    Args:
+        x: 実の 1-D 信号。
+        fs: 標本化周波数(瞬時周波数の単位を決める)。
+
+    Returns:
+        ``analytic`` 複素の解析信号、``amplitude`` |z|(包絡線)、``phase`` 連続につないだ位相 [rad]、
+        ``frequency`` 瞬時周波数 = 位相の時間微分 / 2π(中心差分、長さは x と同じ)。
+
+    門: cos → sin(Hilbert 変換の定義)、線形チャープの瞬時周波数が f0 + k·t、Bedrosian の定理(包絡線が
+    搬送波より低い帯域なら AM 信号の振幅がそのまま戻る)。端は周期の仮定で乱れる(信号を窓で絞ると減る)。
+    """
+    a = np.asarray(x, dtype=np.float64).ravel()
+    if a.size < 4 or not np.all(np.isfinite(a)):
+        raise ValueError("hilbert_analytic: 有限値の 1-D 信号で 4 点以上")
+    rate = float(fs)
+    if not (rate > 0 and math.isfinite(rate)):
+        raise ValueError("hilbert_analytic: fs は正の有限値")
+    n = a.size
+    X = np.fft.fft(a)
+    w = np.zeros(n)
+    w[0] = 1.0
+    if n % 2 == 0:
+        w[n // 2] = 1.0
+        w[1:n // 2] = 2.0
+    else:
+        w[1:(n + 1) // 2] = 2.0
+    z = np.fft.ifft(X * w)
+    ph = np.unwrap(np.angle(z))
+    freq = np.gradient(ph) * rate / (2 * math.pi)
+    return {"analytic": z, "amplitude": np.abs(z), "phase": ph, "frequency": freq}

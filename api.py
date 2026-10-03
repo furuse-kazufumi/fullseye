@@ -385,6 +385,10 @@ from mathtransforms import (  # noqa: E402,F401
     tf_bilinear,
     laplace_inverse_talbot,
     laplace_inverse_func,
+    dct_transform,
+    wavelet_filters,
+    dwt_transform,
+    dwt_inverse,
 )
 # 数値計算の古典(求積・低食い違い列・Chebyshev・シンプレクティック積分)と特殊関数(2026-10-03)
 from mathnumerics import (  # noqa: E402,F401
@@ -405,6 +409,7 @@ from mathspectral import (  # noqa: E402,F401
     esprit_doa,
     ula_snapshots,
     n_sources_mdl,
+    hilbert_analytic,
 )
 # 推定と統計の古典(割当・分布の距離・検定・Cramér–Rao・Kalman 平滑化・行列の指数と対数、2026-10-03)
 from mathestimation import (  # noqa: E402,F401
@@ -1160,6 +1165,10 @@ __all__ = [
     "tf_bilinear",
     "laplace_inverse_talbot",
     "laplace_inverse_func",
+    "dct_transform",
+    "wavelet_filters",
+    "dwt_transform",
+    "dwt_inverse",
     # 数値計算の古典と特殊関数(2026-10-03)
     "erf",
     "erfc",
@@ -1176,6 +1185,7 @@ __all__ = [
     "esprit_doa",
     "ula_snapshots",
     "n_sources_mdl",
+    "hilbert_analytic",
     # 推定と統計の古典(2026-10-03)
     "assign_hungarian",
     "hist_distance",

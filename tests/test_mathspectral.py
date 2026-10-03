@@ -16,7 +16,7 @@ with warnings.catch_warnings():
     import mathspectral as S
     import opsmath
 
-LEDGER = ["lomb_scargle", "ula_snapshots", "music_doa", "esprit_doa", "n_sources_mdl"]
+LEDGER = ["lomb_scargle", "ula_snapshots", "music_doa", "esprit_doa", "n_sources_mdl", "hilbert_analytic"]
 
 
 def test_public_and_ledger():
@@ -82,3 +82,37 @@ def test_coherent_sources_break_music_as_the_docstring_warns():
     assert vals[1] < 1e-10 * vals[0]                          # 階数 1
     doa = S.music_doa(X, 2)["doa_deg"]
     assert not np.allclose(doa, [10.0, 16.0], atol=1.0)
+
+
+# ── 解析信号と瞬時周波数(Hilbert)───────────────────────────────────────────────────────────────── #
+def test_hilbert_turns_cos_into_sin():
+    """Hilbert 変換の定義: H[cos] = sin。周期が窓にちょうど収まれば丸め誤差まで一致し、瞬時周波数は一定。"""
+    t = np.arange(4000) / 1000.0
+    r = S.hilbert_analytic(np.cos(2 * np.pi * 50 * t), 1000)
+    assert np.abs(r["analytic"].imag - np.sin(2 * np.pi * 50 * t)).max() < 1e-10
+    assert np.abs(r["frequency"] - 50).max() < 1e-8
+    assert np.abs(r["amplitude"] - 1).max() < 1e-10
+
+
+def test_hilbert_bedrosian_holds_and_breaks():
+    """Bedrosian の定理: 包絡線の帯域が搬送波より下なら振幅がそのまま戻る(5e-13)。重なると戻らない(失敗例)。"""
+    t = np.arange(4000) / 1000.0
+    env = 1 + 0.5 * np.cos(2 * np.pi * 3 * t)
+    assert np.abs(S.hilbert_analytic(env * np.cos(2 * np.pi * 120 * t), 1000)["amplitude"] - env).max() < 1e-10
+    env2 = 1 + 0.5 * np.cos(2 * np.pi * 90 * t)
+    assert np.abs(S.hilbert_analytic(env2 * np.cos(2 * np.pi * 60 * t), 1000)["amplitude"] - env2).max() > 0.2
+
+
+def test_hilbert_chirp_frequency_converges_away_from_the_ends():
+    """線形チャープ f(t) = f0 + k·t: 内側では瞬時周波数が真値に乗り、端の乱れ(周期の仮定)は端から離れるほど減る。"""
+    t = np.arange(4000) / 1000.0
+    r = S.hilbert_analytic(np.cos(2 * np.pi * (20 * t + 30 * t ** 2 / 2)), 1000)
+    err = [np.abs(r["frequency"][m:-m] - (20 + 30 * t[m:-m])).max() for m in (100, 400, 800)]
+    assert err[0] > err[1] > err[2] and err[2] < 0.02
+
+
+def test_hilbert_rejects_bad_input():
+    with pytest.raises(ValueError):
+        S.hilbert_analytic([1.0, 2.0])
+    with pytest.raises(ValueError):
+        S.hilbert_analytic(np.ones(16), fs=0)

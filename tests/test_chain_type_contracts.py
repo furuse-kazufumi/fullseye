@@ -241,6 +241,7 @@ def test_opsmath_call_returns_declared_types():
         "dynsys_correlation_dimension": (orbit,),
     })
     import mathgeometry
+    import mathtransforms
     import mathspectral
     snap = mathspectral.ula_snapshots([10.0, 16.0], 8, 64, snr_db=20)
     # フーリエ以外の積分変換と s 領域(2026-10-03)。伝達関数の係数は降べきの signal。
@@ -275,6 +276,11 @@ def test_opsmath_call_returns_declared_types():
         "music_doa": (snap, 2),
         "esprit_doa": (snap, 2),
         "n_sources_mdl": (snap,),
+        "hilbert_analytic": (np.cos(np.linspace(0, 20, 64)),),
+        "dct_transform": (np.random.default_rng(0).random((8, 8)),),
+        "wavelet_filters": (2,),
+        "dwt_transform": (np.random.default_rng(0).random((8, 8)),),
+        "dwt_inverse": (mathtransforms.dwt_transform(np.random.default_rng(0).random((8, 8))),),
         # 推定と統計の古典(2026-10-03)
         "assign_hungarian": (np.array([[4.0, 1.0, 3.0], [2.0, 0.0, 5.0], [3.0, 2.0, 2.0]]),),
         "hist_distance": (np.array([1.0, 2.0, 3.0]), np.array([2.0, 2.0, 2.0])),

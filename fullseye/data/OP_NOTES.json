@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2637,
- "n_notes": 2643,
+ "n_ops": 2642,
+ "n_notes": 2648,
  "notes": {
   "vol_dilate": [
    {
@@ -21112,6 +21112,16 @@
     "path": "docs/ops/math/spectral/esprit_doa.md"
    }
   ],
+  "hilbert_analytic": [
+   {
+    "op": "hilbert_analytic",
+    "dim": "math",
+    "category": "spectral",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/math/spectral/hilbert_analytic.md"
+   }
+  ],
   "lomb_scargle": [
    {
     "op": "lomb_scargle",
@@ -21242,6 +21252,36 @@
     "path": "docs/ops/math/transform/abel_transform.md"
    }
   ],
+  "dct_transform": [
+   {
+    "op": "dct_transform",
+    "dim": "math",
+    "category": "transform",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/math/transform/dct_transform.md"
+   }
+  ],
+  "dwt_inverse": [
+   {
+    "op": "dwt_inverse",
+    "dim": "math",
+    "category": "transform",
+    "in": "table",
+    "out": "image2d",
+    "path": "docs/ops/math/transform/dwt_inverse.md"
+   }
+  ],
+  "dwt_transform": [
+   {
+    "op": "dwt_transform",
+    "dim": "math",
+    "category": "transform",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/math/transform/dwt_transform.md"
+   }
+  ],
   "hankel_transform": [
    {
     "op": "hankel_transform",
@@ -21310,6 +21350,15 @@
     "in": "signal × signal × signal",
     "out": "signal",
     "path": "docs/ops/math/transform/tf_step_response.md"
+   }
+  ],
+  "wavelet_filters": [
+   {
+    "op": "wavelet_filters",
+    "dim": "math",
+    "category": "transform",
+    "out": "table",
+    "path": "docs/ops/math/transform/wavelet_filters.md"
    }
   ],
   "wave_fringe_period": [

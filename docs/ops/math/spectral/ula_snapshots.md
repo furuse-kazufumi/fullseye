@@ -51,7 +51,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`spectral`)
 
-[lomb_scargle](lomb_scargle.md) · [music_doa](music_doa.md) · [esprit_doa](esprit_doa.md) · [n_sources_mdl](n_sources_mdl.md)
+[lomb_scargle](lomb_scargle.md) · [music_doa](music_doa.md) · [esprit_doa](esprit_doa.md) · [n_sources_mdl](n_sources_mdl.md) · [hilbert_analytic](hilbert_analytic.md)
 
 ---
 *Provenance: mathspectral.py — MATH operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

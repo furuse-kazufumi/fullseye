@@ -1,0 +1,64 @@
+---
+op: wavelet_filters
+dim: math
+category: transform
+in: 
+out: table
+examples: []
+author: Kazufumi Furuse
+license: Apache-2.0
+version: 0.3.0  # fullseye lib version this note was generated for
+---
+
+# wavelet_filters — MATH `transform` op
+
+- **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
+- **呼び出し**: `import fullseye as fs; fs.ledger.wavelet_filters(order: 'int' = 2) -> 'dict'` (実装を直接呼ぶなら `import mathtransforms; mathtransforms.wavelet_filters(order: 'int' = 2) -> 'dict'`、台帳から引くなら `opsmath.get("wavelet_filters")`)
+
+## 使い方
+
+Daubechies の正規直交ウェーブレット dbN のフィルタを、教科書の構成(スペクトル分解)で作る。
+
+|H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2))、P(y) = Σ_{k<N} C(N−1+k, k) y^k(Daubechies 1988)。P の根から単位円の
+内側の零点を選び、(1 + z⁻¹)^N と掛け合わせる。表を写さないので桁落ちの転記ミスが無い(門が値を確かめる)。
+
+Returns:
+    ``lowpass`` h(長さ 2N、和 √2)、``highpass`` g[n] = (−1)^n h[2N−1−n]、``order``、
+    ``vanishing_moments`` = N(次数 N−1 までの多項式を詳細係数で消す)。order=1 は Haar。
+
+## ファミリ共通の入力契約(fail-closed)
+
+mathops の全 op は入力を検証してから計算する(黙って通さない):
+
+- **complex 入力は `ValueError`** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。`.real`/`.imag`/`abs()` を明示するか、複素対応の complexops を使う。
+- **masked array(masked 要素あり)は `ValueError`** — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。
+- **NaN/Inf は全入力で `ValueError`**(件数を明示して拒否 — 結果全体に伝播するため)。
+- **形状は厳格**: 1-D と 2-D を暗黙昇格・ブロードキャストしない(vector 枠に matrix、matrix 枠に vector は `ValueError`。reshape を明示する)。
+- **サイズ上限**: 行列を取る op と `stat_histogram` の bins は `mathops.MAX_ELEMENTS`(2^26 ≈ 6700 万要素)超で `ValueError`。
+
+## 詳しい使い方ガイド
+
+- [math_metrology ファミリ ガイド](../guides/math_metrology.md)
+
+## 参考(サンプルデータ・文献)
+
+- [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
+- [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
+- アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。
+
+## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
+
+- (まだありません)
+
+## 型が繋がる次の op(`table` を入力に取れる)
+
+[dynsys_poincare_section](../dynsys/dynsys_poincare_section.md) · [dwt_inverse](dwt_inverse.md)
+
+## 同カテゴリ(`transform`)
+
+[abel_transform](abel_transform.md) · [abel_inverse](abel_inverse.md) · [abel_inverse_image](abel_inverse_image.md) · [abel_revolve](abel_revolve.md) · [hankel_transform](hankel_transform.md) · [tf_poles_zeros](tf_poles_zeros.md) · [tf_freq_response](tf_freq_response.md) · [tf_impulse_response](tf_impulse_response.md)
+
+---
+*Provenance: mathtransforms.py — MATH operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+
+© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

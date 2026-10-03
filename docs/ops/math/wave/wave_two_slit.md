@@ -65,7 +65,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[wave_fringe_period](wave_fringe_period.md) · [abel_inverse_image](../transform/abel_inverse_image.md) · [abel_revolve](../transform/abel_revolve.md) · [geodesic_heat_grid](../geometry/geodesic_heat_grid.md)
+[wave_fringe_period](wave_fringe_period.md) · [abel_inverse_image](../transform/abel_inverse_image.md) · [abel_revolve](../transform/abel_revolve.md) · [dct_transform](../transform/dct_transform.md) · [dwt_transform](../transform/dwt_transform.md) · [geodesic_heat_grid](../geometry/geodesic_heat_grid.md)
 
 ## 同カテゴリ(`wave`)
 

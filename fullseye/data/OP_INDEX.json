@@ -1,8 +1,8 @@
 {
- "n_ops": 2637,
+ "n_ops": 2642,
  "tiers": {
   "color": 12,
-  "ledger": 1686,
+  "ledger": 1691,
   "nary": 17,
   "registry": 922
  },
@@ -4117,6 +4117,19 @@
    ]
   },
   {
+   "name": "dct_transform",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "transform",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "decimate_qem",
    "halcon": "",
    "in_sort": "mesh",
@@ -5060,6 +5073,32 @@
    "dim": "photon",
    "in_sorts": [
     "counts"
+   ]
+  },
+  {
+   "name": "dwt_inverse",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "transform",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "dwt_transform",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "transform",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -8195,6 +8234,19 @@
    "dim": "segmentation",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "hilbert_analytic",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal"
    ]
   },
   {
@@ -21861,6 +21913,17 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "wavelet_filters",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "transform",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
   },
   {
    "name": "weave_normals",

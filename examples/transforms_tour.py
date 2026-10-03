@@ -16,9 +16,13 @@ fullseye には FFT・DCT・Radon は揃っていたが、**Laplace 変換の系
 3. **s 領域** —— 2 次系 ω²/(s² + 2ζωs + ω²) の減衰比 ζ を 4 通りに振る。極が虚軸に近いほど揺れが長く残る。
 4. **逆ラプラス(Talbot)** —— 1/√s(分岐点があり部分分数では解けない)を数値で戻す。節点数 M を増やすと
    誤差は指数的に減るが、増やしすぎると丸めで再び悪化する(倍精度の限界)。
+5. **DCT とウェーブレットで圧縮** —— 画像の係数を大きい順に数 % だけ残して戻す。DCT(JPEG)は全体に広がる波で
+   表すので縁の周りに波紋が出る。Daubechies のウェーブレット(JPEG 2000)は場所を持つので縁がくっきり残る。
+   ただし 1% まで削ると差は消え、0.5% では DCT が上回る(どちらが勝つかは残す量で決まる)。
+6. **消失モーメント** —— dbN の詳細係数は N−1 次までの多項式をちょうど 0 にする。2 次式は db3 で消え、db2 では残る。
 
 【グラウンドトゥルース】すべて閉じた式。Abel: ガウスの対 / Hankel: 円板 ↔ J₁ / s 領域: 2 次系のステップ応答 /
-Talbot: 1/√s ↔ 1/√(πt) と行列指数(別経路)。
+Talbot: 1/√s ↔ 1/√(πt) と行列指数(別経路)。DCT / DWT: 逆変換で元に戻る(正規直交、Parseval)。
 """
 from __future__ import annotations
 
@@ -151,6 +155,54 @@ def run() -> dict:
     assert two_paths < 1e-8
     out.update(talbot_best_M=best, talbot_best_err=min(errs), talbot_two_paths=two_paths)
 
+    # ---- 5. DCT とウェーブレットで圧縮 ------------------------------------------------- #
+    nimg = 128
+    gy, gx = np.mgrid[0:nimg, 0:nimg] / nimg
+    img = (0.3 * gx + 0.5 * np.exp(-((gx - .65) ** 2 + (gy - .35) ** 2) / 0.02)
+           + ((np.abs(gx - .3) < .15) & (np.abs(gy - .65) < .15)) * 0.6 + (np.hypot(gx - .7, gy - .75) < .12) * 0.4)
+
+    def _keep_top(arrs, frac):
+        flat = np.concatenate([a.ravel() for a in arrs])
+        thr = np.sort(np.abs(flat))[::-1][int(frac * flat.size)]
+        return [np.where(np.abs(a) > thr, a, 0.0) for a in arrs]
+
+    def _psnr(r):
+        return float(10 * np.log10(np.ptp(img) ** 2 / np.mean((r - img) ** 2)))
+
+    dct_c = fs.dct_transform(img)["coeffs"]
+    dwt_c = fs.dwt_transform(img, order=3, levels=4)
+    keys = [list(d) for d in dwt_c["details"]]
+
+    def _dwt_keep(frac):
+        arrs = [dwt_c["approx"]] + [dwt_c["details"][i][k] for i, ks in enumerate(keys) for k in ks]
+        kept = _keep_top(arrs, frac)
+        c2 = dict(dwt_c)
+        c2["approx"] = kept[0]
+        it = iter(kept[1:])
+        c2["details"] = [{k: next(it) for k in ks} for ks in keys]
+        return fs.dwt_inverse(c2)
+
+    fracs = [0.005, 0.01, 0.02, 0.05, 0.1]
+    ps_dct, ps_dwt = [], []
+    for fr in fracs:
+        ps_dct.append(_psnr(fs.dct_transform(_keep_top([dct_c], fr)[0], inverse=True)["coeffs"]))
+        ps_dwt.append(_psnr(_dwt_keep(fr)))
+    rec_dct = fs.dct_transform(_keep_top([dct_c], 0.05)[0], inverse=True)["coeffs"]
+    rec_dwt = _dwt_keep(0.05)
+    print("5) 係数を 5%% だけ残す: PSNR DCT %.1f dB / db3 ウェーブレット %.1f dB(1%% では %.1f / %.1f)"
+          % (ps_dct[3], ps_dwt[3], ps_dct[1], ps_dwt[1]))
+    assert ps_dwt[3] > ps_dct[3] + 5 and abs(ps_dwt[1] - ps_dct[1]) < 2 and ps_dct[0] > ps_dwt[0]
+    assert np.abs(fs.dwt_inverse(dwt_c) - img).max() < 1e-12
+    out.update(psnr_dct_5=ps_dct[3], psnr_dwt_5=ps_dwt[3])
+
+    # ---- 6. 消失モーメント ------------------------------------------------------------ #
+    tq = np.arange(256.0)
+    quad = 1 + 0.3 * tq - 0.002 * tq ** 2
+    d_db2 = fs.dwt_transform(quad, order=2)["details"][0]["d"]
+    d_db3 = fs.dwt_transform(quad, order=3)["details"][0]["d"]
+    print("6) 2 次式の詳細係数(継ぎ目を除く最大): db2 %.1e / db3 %.1e" % (np.abs(d_db2[2:-2]).max(), np.abs(d_db3[2:-3]).max()))
+    assert np.abs(d_db3[2:-3]).max() < 1e-11 < 1e-3 < np.abs(d_db2[2:-2]).max()
+
     # ---- 図(学習系サイトの型: 真値は破線、失敗例を隣に、同じ量は同じ色) ---------------------- #
     if figs.enabled():
         figs.save_grid("abel_flame",
@@ -217,6 +269,35 @@ def run() -> dict:
                          ["Talbot の最良誤差(M=%d)" % best, "%.1e" % min(errs), "< 1e-9"],
                          ["Talbot と行列指数の差", "%.1e" % two_paths, "< 1e-8"]],
                         title="transforms_tour の数")
+        figs.save_grid("compression",
+                       [img, rec_dct, rec_dwt, np.hypot(*np.gradient(img)), np.abs(rec_dct - img), np.abs(rec_dwt - img)],
+                       ["元の画像(128×128)", "DCT で係数 5%%(PSNR %.1f dB)" % ps_dct[3],
+                        "db3 ウェーブレットで係数 5%%(%.1f dB)" % ps_dwt[3], "縁の場所(元の画像の勾配)", "DCT の誤差", "ウェーブレットの誤差(同じ目盛り)"],
+                       ncols=3, vrange=[(0, float(img.max()))] * 3 + [(0, 0.1), (0, 0.15), (0, 0.15)],
+                       title="係数を 5% だけ残して戻す —— 縁の周りに波紋が出るか",
+                       caption="DCT(JPEG の方式)は画像全体に広がる波の重ね合わせなので、四角や円の縁の周りに波紋が残る(下段中)。"
+                               "ウェーブレット(JPEG 2000 の方式)は場所を持つ小さな波なので、縁の誤差がその場に留まる(下段右)。"
+                               "どちらも全部の係数を残せば丸め誤差まで元に戻る(正規直交)。")
+        figs.save_plot("compression_psnr",
+                       [("DCT", np.log10(np.array(fracs) * 100), ps_dct),
+                        ("db3 ウェーブレット", np.log10(np.array(fracs) * 100), ps_dwt)],
+                       colors=["wrong", "emphasis"], kinds=["line", "line"],
+                       xlabel="log10(残す係数 %)", ylabel="PSNR(dB、高いほど元に近い)",
+                       title="残す量で勝ち負けが変わる",
+                       caption="5%% 残すとウェーブレットが %.1f dB 上(%.1f 対 %.1f)。1%% まで削ると差は %.1f dB でほぼ並び、"
+                               "0.5%% では DCT が上(%.1f 対 %.1f)—— 「ウェーブレットはいつも勝つ」は言い過ぎ。"
+                               % (ps_dwt[3] - ps_dct[3], ps_dwt[3], ps_dct[3], abs(ps_dwt[1] - ps_dct[1]), ps_dct[0], ps_dwt[0]))
+        floor = 1e-17
+        figs.save_plot("vanishing_moments",
+                       [("db2(消えるのは 1 次まで)", np.arange(2, d_db2.size - 2), np.log10(np.abs(d_db2[2:-2]) + floor)),
+                        ("db3(2 次まで消える)", np.arange(2, d_db3.size - 3), np.log10(np.abs(d_db3[2:-3]) + floor))],
+                       colors=["wrong", "emphasis"],
+                       xlabel="詳細係数の位置", ylabel="log10 |詳細係数|",
+                       title="2 次式 1 + 0.3t − 0.002t² の詳細係数 —— db3 では丸め誤差まで 0",
+                       caption="dbN の高域フィルタは Σ nᵐ g[n] = 0(m < N)を満たすので、N−1 次までの多項式を詳細係数から消す。"
+                               "db2 は 1 次までなので 2 次の項が %.1e 残り(失敗例)、db3 は %.0e(丸め誤差)。"
+                               "滑らかな部分の係数がほぼ 0 になる —— これが圧縮が効く理由。"
+                               % (np.abs(d_db2[2:-2]).max(), max(np.abs(d_db3[2:-3]).max(), 1e-17)))
     assert not figs.errors(), figs.errors()
 
     out["elapsed_s"] = round(time.perf_counter() - t0, 3)
