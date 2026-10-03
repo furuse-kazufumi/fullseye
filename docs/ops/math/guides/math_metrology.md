@@ -117,6 +117,16 @@ flowchart LR
 - **cplx_mobius**`(z, a, b, c, d)` — `(az+b)/(cz+d)`。円と直線を円と直線に写す。`ad - bc ≈ 0`(定数写像に潰れる)と極 `z = -d/c` は `ValueError`。
 - **cplx_cr_residual**`(f, spacing=1.0)` — 標本場の Cauchy-Riemann 残差(0 = 正則、2 = 共役)。**行が虚部の増える向き**という規約が答えの符号を決めます(画像配列は行が下向きなので、そのまま渡すと共役を測って 2 が出ます — `f[::-1]` で反転)。中心差分は 2 次まで厳密(`z²` は 0)、それ以上は `O(h²)` の床(実測: `z³` で h=0.05 のとき 1.7e-3、h/2 で 4.2e-4)。
 
+### transform(フーリエ以外の積分変換と s 領域 — 2026-10-03)
+
+棚卸しで **Laplace 変換の系統が 0 本**、Abel・Hankel も 0 本だった(`laplace` op は HALCON のラプラシアン、`transfer_function` は周波数領域の H(f) で別物)。実装は `mathtransforms.py`、例は `py -3.11 examples/transforms_tour.py`(図つき)。
+
+- **abel_transform**`(f, dr)` / **abel_inverse**`(A, dr, method="derivative"|"onion")` — 軸対称な物(炎・プラズマ)の断面 f(r) と、横から撮った投影 A(y)。門はガウスの対 `exp(−r²/σ²) ↔ √π σ exp(−y²/σ²)`。**逆は 2 経路**を持つ: 微分の求積は滑らかな投影に高精度だが雑音の誤差が `1/dr` で増え、殻剥きは `1/√dr` —— **標本数で優劣が逆転する**(雑音 1%: n=60 では微分、n=960 では殻剥きが良い)。
+- **hankel_transform**`(r, f, order=0, n=256)` — 軸対称な関数の 2 次元フーリエ変換 = 動径の Hankel 変換(2π 規約)。quasi-discrete 法で核が対合(`T·T = I`)。門: `exp(−π r²)` は自己双対、円板 → `a·J₁(2πaν)/ν`(最初の暗い輪 `0.61/a` = 分解能 `1.22λ/D` の正体)、2-D FFT の動径断面と一致。
+- **tf_poles_zeros / tf_freq_response / tf_impulse_response / tf_step_response**`(num, den, …)` — 有理伝達関数 `H(s) = num/den`(係数は降べき、`poly_eval` と同じ並び)。応答は部分分数でなく**拡大行列の指数関数**で厳密に解くので、重根・原点の極(積分器)でも分岐しない。非プロパー(分子の次数 > 分母)は `ValueError`。
+- **tf_bilinear**`(num, den, fs, prewarp_hz=None)` — Tustin 変換。`scipy.signal.bilinear` と係数が一致し、前歪みを与えた周波数で連続系と応答が厳密に一致する。左半面の極は単位円内へ。
+- **laplace_inverse_talbot**`(num, den, t, M=32)` / **laplace_inverse_func**`(F, t, M=32)`(`fs.<名前>` のみ)— 固定 Talbot 法の数値逆ラプラス。有理関数では行列指数と別経路で一致(1e-8)。`1/√s ↔ 1/√(πt)` のような分岐点つきも戻せる。**M は増やせば良いわけではない**: M≈20 で 1e-12、M=68 では丸めで 1e-4 に悪化。
+
 ## 動く最小例(検証済み)
 
 repo 直下で `py -3.11` の対話環境か、`PYTHONPATH` に repo を通して実行。フィット厳密復元・PSD/直交性・SVD⇔固有値の交差検証・fail-closed(範囲外拒否)を数値で確認して `PASS` を出します(本ガイド作成時に実行し PASS を確認済み。16 op 全てを通すフル版は `py -3.11 examples/math_metrology.py`)。

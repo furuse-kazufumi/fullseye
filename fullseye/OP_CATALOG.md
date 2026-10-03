@@ -13,13 +13,14 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(293 例)
+### 2-D 画像/信号/幾何(294 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
 
 **math**
 - **分解が遅いのはアルゴリズムのせいではない(BLAS スレッド上限)** — 多コア機で SVD 系が遅くなる原因(スレッド過剰割り当て)を自分の機械で測り、op 側と自前 numpy 側の両方で上限の効果を出す。行列積は逆に遅くなること、上限は短辺で決まることまで含めて、速さを assert せず印字する。 `py -3.11 examples/blas_thread_budget.py`
+- **フーリエ以外の積分変換を一巡する —— 炎の Abel 断層化・円い穴の Airy(Hankel)・2 次系の応答・数値逆ラプラス** — 棚卸し(2026-10-03)で 0 本だった Laplace 系統と Abel・Hankel を足した 10 本を、閉じた式と重ねて確かめる: 横から撮った炎の像から逆 Abel で断面を戻し(2 つの独立な戻し方)、雑音の誤差が微分では 1/dr、殻剥きでは 1/√dr で増えて標本数で優劣が逆転すること、円板の Hankel 変換が J₁ の閉じた式に重なり最初の暗い輪が 0.61/a、2 次系の減衰比を振ったステップ応答と Bode、1/√s の Talbot 逆変換が M=20 前後で 1e-12 に届き増やしすぎると丸めで悪化すること。 `py -3.11 examples/transforms_tour.py`
 - **視覚計測を支える数学 op(mathops)を計測ワークフローで一巡** — 平面フィット→残差統計→共分散楕円の主軸化→較正曲線の多項式フィット(条件数監視)→補間で逆引き。mathops 16 op を実データ風に通し閉形式 GT と照合。 `py -3.11 examples/math_metrology.py`
 - **複素解析 op(mathops tier2)を閉形式の真値と突き合わせる** — 偏角原理で零点数、コーシー積分で内部値復元、等角性・正則性判定を点列として持つ閉曲線から numpy 演算で答える。 `py -3.11 examples/math_complex.py`
 
@@ -2235,7 +2236,7 @@ _計 42 ops / 3 categories。_
 - `signal_features` (`signal → table`) — A compact acoustic/vibration feature vector for anomaly detection:
 
 ## Math operators(opsmath)by category
-_計 55 ops / 7 categories。_
+_計 64 ops / 8 categories。_
 
 
 視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。北極星は「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
@@ -2300,6 +2301,17 @@ _計 55 ops / 7 categories。_
 - `stat_covariance` (`matrix → matrix`) — Sample covariance matrix of ``(N, D)`` observations → ``(D, D)``.
 - `stat_correlation` (`matrix → matrix`) — Pearson correlation matrix of ``(N, D)`` observations → ``(D, D)``.
 - `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
+
+### transform(9)
+- `abel_transform` (`signal → signal`) — 軸対称な分布 f(r)(r = 0, dr, 2dr, … の標本)を投影 A(y) に写す(前向き Abel 変換)。
+- `abel_inverse` (`signal → signal`) — 投影 A(y) から軸対称な分布 f(r) を戻す(逆 Abel 変換 = 軸対称物体の断層化)。
+- `hankel_transform` (`signal, signal → table`) — p 次の Hankel 変換 F(ν) = 2π ∫_0^∞ f(r) J_p(2πνr) r dr を quasi-discrete 法で。
+- `tf_poles_zeros` (`signal, signal → table`) — H(s) = num/den の極・零点・直流ゲイン・安定性。
+- `tf_freq_response` (`signal, signal, signal → table`) — 周波数応答 H(jω)(Bode 線図の中身)。ω は rad/s。位相は連続に unwrap した度。
+- `tf_impulse_response` (`signal, signal, signal → signal`) — インパルス応答 h(t) = L⁻¹[H(s)](t)(厳密にプロパーな部分。直達項のデルタは返さない)。
+- `tf_step_response` (`signal, signal, signal → signal`) — 単位ステップ応答 y(t) = L⁻¹[H(s)/s](t)。
+- `tf_bilinear` (`signal, signal → table`) — Tustin(双一次)変換 s = K (z − 1)/(z + 1) で連続系を離散系に写す。
+- `laplace_inverse_talbot` (`signal, signal, signal → signal`) — 有理関数 F(s) = num(s)/den(s) の数値逆ラプラス変換(固定 Talbot 法)。
 
 ### wave(6)
 - `wave_membrane_mode` (` → matrix`) — One eigenmode of a vibrating **membrane** — the shape the sand draws.

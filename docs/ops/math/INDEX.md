@@ -1,4 +1,4 @@
-# MATH operator help — 55 ops in 7 categories
+# MATH operator help — 64 ops in 8 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/math/<category>/<op>.md` を走査。
 
@@ -36,6 +36,10 @@
 ### stats (5)
 
 [stat_correlation](stats/stat_correlation.md) · [stat_covariance](stats/stat_covariance.md) · [stat_describe](stats/stat_describe.md) · [stat_histogram](stats/stat_histogram.md) · [stat_zscore](stats/stat_zscore.md)
+
+### transform (9)
+
+[abel_inverse](transform/abel_inverse.md) · [abel_transform](transform/abel_transform.md) · [hankel_transform](transform/hankel_transform.md) · [laplace_inverse_talbot](transform/laplace_inverse_talbot.md) · [tf_bilinear](transform/tf_bilinear.md) · [tf_freq_response](transform/tf_freq_response.md) · [tf_impulse_response](transform/tf_impulse_response.md) · [tf_poles_zeros](transform/tf_poles_zeros.md) · [tf_step_response](transform/tf_step_response.md)
 
 ### wave (6)
 

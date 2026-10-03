@@ -173,7 +173,7 @@ def _note_unique(path, name: str) -> None:
         _written.setdefault(digest, name)
 
 
-def _to_rgb8(v, signed: bool, gray: bool = False):
+def _to_rgb8(v, signed: bool, gray: bool = False, vrange=None):
     """(H,W) か (H,W,3|4) → uint8 RGB。**値域の伸ばし方をここに 1 か所だけ持つ**。
 
     ``gray=True`` は (H,W) を**グレースケール**で塗る(疑似カラーにしない)。
@@ -181,6 +181,10 @@ def _to_rgb8(v, signed: bool, gray: bool = False):
     見せる量 —— は疑似カラーにすると「ボケ→シャープ」が読み取れず、ヒートマップに
     見えてしまう(2026-09-13、焦点合成 PoC で踏んだ)。深度・位相・残差のような
     「場」は従来どおり疑似カラー/発散色のままにする。
+
+    ``vrange=(lo, hi)`` で**色の範囲を固定**する(MATLAB の ``clim``)。既定は 1 枚ごとに min..max へ
+    伸ばすので、誤差 0.002 の差の図も真っ赤に見える(2026-10-03、逆 Abel の差の図で踏んだ)。
+    並べて比べる図は同じ ``vrange`` を渡すこと。
     """
     import fullseye as fs
 
@@ -196,19 +200,24 @@ def _to_rgb8(v, signed: bool, gray: bool = False):
         return (np.clip(a[..., :3], 0, 1) * 255).astype(np.uint8)
     if a.ndim != 2:
         raise ValueError("examplefig.save: (H,W) か (H,W,3|4) のみ。来たのは %r" % (a.shape,))
+    if vrange is not None:
+        vlo, vhi = (float(x) for x in vrange)
+        if not vhi > vlo:
+            raise ValueError("examplefig: vrange は lo < hi(来たのは %r)" % (vrange,))
     if gray:
-        lo, hi = float(a.min()), float(a.max())
+        lo, hi = (vlo, vhi) if vrange is not None else (float(a.min()), float(a.max()))
         g = (a - lo) / (hi - lo) if hi - lo > 1e-12 else np.zeros_like(a)
         g = np.clip(g, 0.0, 1.0)
         return (np.repeat(g[..., None], 3, axis=2) * 255).astype(np.uint8)
     if signed:
-        m = float(np.max(np.abs(a))) or 1.0
+        m = (max(abs(vlo), abs(vhi)) if vrange is not None else float(np.max(np.abs(a)))) or 1.0
         lut = np.asarray(fs.diverging_lut(256))
         idx = np.clip(((a / m) * 0.5 + 0.5) * 255.0, 0, 255).astype(np.int32)
         return (np.clip(lut[idx], 0, 1) * 255).astype(np.uint8)
     # ★`colorize_depth` は **float [0,1]** を返す。`np.asarray(..., np.uint8)` で
     #   受けると 0.x が全部 0 に切り捨てられて真っ黒になる(2026-09-06 に踏んだ)。
-    rgb = np.asarray(fs.colorize_depth(a), np.float64)[..., :3]
+    kw = {"vmin": vlo, "vmax": vhi} if vrange is not None else {}
+    rgb = np.asarray(fs.colorize_depth(a, **kw), np.float64)[..., :3]
     return (np.clip(rgb, 0, 1) * 255).astype(np.uint8)
 
 
@@ -453,23 +462,24 @@ def reset() -> None:
 # --------------------------------------------------------------------------- #
 # 図の組み立て —— すべて fullseye の annotate 族で作る                          #
 # --------------------------------------------------------------------------- #
-def _panel(v, signed=False, title="", gray=False):
+def _panel(v, signed=False, title="", gray=False, vrange=None):
     """1 枚のパネル(uint8 RGB)。題を左上に置く。"""
     import fullseye as fs
 
-    rgb = _to_rgb8(v, signed, gray).astype(np.float64) / 255.0
+    rgb = _to_rgb8(v, signed, gray, vrange).astype(np.float64) / 255.0
     if title:
         rgb = np.asarray(fs.text_box(rgb, title, (6, 6), anchor="lt", font_size=12))
     return rgb
 
 
 def save_grid(name: str, panels, captions=None, title=None, ncols=2,
-              signed=False, caption: str = "", gray=False) -> Path | None:
+              signed=False, caption: str = "", gray=False, vrange=None) -> Path | None:
     """複数の画像を 1 枚の多パネル図に組んで書く(:func:`annotate_figure_grid`)。
 
     ``signed`` と ``gray`` は 1 個の bool でも、パネルごとの列でもよい。
     ``gray=True`` のパネルは疑似カラーにせずグレースケールで塗る(強度そのもの
     を「絵」として見せる量に使う。詳細は :func:`_to_rgb8`)。
+    ``vrange`` は ``(lo, hi)`` 1 つ(全パネル共通)か、パネルごとの列(``None`` = そのパネルは自動)。
     """
     if target_dir() is None:
         return None
@@ -478,8 +488,14 @@ def save_grid(name: str, panels, captions=None, title=None, ncols=2,
 
         sg = signed if isinstance(signed, (list, tuple)) else [signed] * len(panels)
         gr = gray if isinstance(gray, (list, tuple)) else [gray] * len(panels)
-        imgs = [_panel(v, bool(s), gray=bool(g))
-                for v, s, g in zip(panels, sg, gr)]
+        if vrange is None or (len(vrange) == 2 and np.isscalar(vrange[0])):
+            vr = [vrange] * len(panels)
+        else:
+            vr = list(vrange)
+            if len(vr) != len(panels):
+                raise ValueError("vrange の列はパネルと同じ数(%d != %d)" % (len(vr), len(panels)))
+        imgs = [_panel(v, bool(s), gray=bool(g), vrange=r_)
+                for v, s, g, r_ in zip(panels, sg, gr, vr)]
         caps = list(captions or [])
         # ★2026-09-08: パネルが小さいと題が入らず、``annotate_figure_grid`` が
         # (正しく)拒否して**図が 1 枚黙って消えていた**。29×19 の core 格子や
@@ -539,8 +555,11 @@ def _upscale(imgs, factor):
 
 def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str = "",
               caption: str = "", size=(560, 360), xlim=None, ylim=None,
-              kinds=None) -> Path | None:
+              kinds=None, styles=None) -> Path | None:
     """折れ線・散布のグラフを書く。``series`` = ``[(ラベル, x, y), ...]``。
+
+    ``styles`` は系列ごとの線種(``None`` / ``"dashed"`` / ``"dotted"``)の列。**真値・参照線は破線**にする
+    —— 実線どうしが重なると、データと参照の区別がつかない(2026-10-03、傾きの参照線で踏んだ)。
 
     軸・目盛り・格子・凡例はすべて fullseye の annotate 族が引く。
     """
@@ -561,7 +580,9 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
             xl = (xl[0] - 0.5, xl[1] + 0.5)
         pad = 0.06 * (yl[1] - yl[0] or 1.0)
         yl = (yl[0] - pad, yl[1] + pad)
-        rect = (72, 44, w - 96, h - 92)
+        # ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって
+        #   「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
+        rect = (72, 44, w - 96, h - 108)
         ax = fs.axes_transform(rect, xl, yl)
         xt, yt = fs.nice_ticks(xl[0], xl[1], 6), fs.nice_ticks(yl[0], yl[1], 5)
         img = np.asarray(fs.grid_lines(img, ax, xticks=xt, yticks=yt, alpha=0.25))
@@ -573,12 +594,35 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
         for k, (label, x, y) in enumerate(series):
             c = colours[k % len(colours)]
             kind = (kinds[k] if kinds else "line")
+            ls = styles[k] if styles else None
+            extra = {}
+            if ls:
+                import imagedraw
+                extra = {"style": {"style": imagedraw.DrawStyle(line_style=ls)}}
             img = np.asarray(fs.plot_series(img, ax, np.asarray(x, float),
                                             np.asarray(y, float), kind=kind,
-                                            color=c, width=2, marker_size=3))
+                                            color=c, width=2, marker_size=3, **extra))
             legend.append((c, label))
         if len(legend) > 1:
-            img = np.asarray(fs.legend_box(img, legend, (w - 14, 50), anchor="rt",
+            # ★2026-10-03: 凡例は**データの少ない隅**に置く(MATLAB の legend('best'))。右上固定だと、
+            #   減衰の遅い応答の山が凡例の下に隠れた。軸を 4 象限に割り、点の少ない象限の隅を選ぶ。
+            x0, y0, rw, rh = rect
+            cnt = {"rt": 0, "lt": 0, "rb": 0, "lb": 0}
+            for _lab, x, y in series:
+                x = np.asarray(x, float).ravel()
+                y = np.asarray(y, float).ravel()
+                ok = np.isfinite(x) & np.isfinite(y)
+                fx = (x[ok] - xl[0]) / (xl[1] - xl[0])
+                fy = (y[ok] - yl[0]) / (yl[1] - yl[0])
+                right, top = fx >= 0.5, fy >= 0.5
+                cnt["rt"] += int(np.sum(right & top))
+                cnt["lt"] += int(np.sum(~right & top))
+                cnt["rb"] += int(np.sum(right & ~top))
+                cnt["lb"] += int(np.sum(~right & ~top))
+            corner = min(("rt", "lt", "rb", "lb"), key=lambda k: (cnt[k], k != "rt"))
+            pos = {"rt": (x0 + rw - 6, y0 + 6), "lt": (x0 + 6, y0 + 6),
+                   "rb": (x0 + rw - 6, y0 + rh - 6), "lb": (x0 + 6, y0 + rh - 6)}[corner]
+            img = np.asarray(fs.legend_box(img, legend, pos, anchor=corner,
                                            markers=True, font_size=11, swatch=11, pad=6))
         head = title or name
         img = np.asarray(fs.text_box(img, head, (10, 8), anchor="lt", font_size=13))

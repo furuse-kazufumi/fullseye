@@ -371,6 +371,19 @@ from mathops import (  # noqa: E402,F401
     dynsys_lyapunov_spectrum, dynsys_bifurcation_map,
     dynsys_correlation_dimension,
 )
+# フーリエ以外の積分変換(Abel / Hankel / Laplace)と s 領域の線形系(2026-10-03)
+from mathtransforms import (  # noqa: E402,F401
+    abel_transform,
+    abel_inverse,
+    hankel_transform,
+    tf_poles_zeros,
+    tf_freq_response,
+    tf_impulse_response,
+    tf_step_response,
+    tf_bilinear,
+    laplace_inverse_talbot,
+    laplace_inverse_func,
+)
 # 仮想マシンビジョン環境: 部品を買う前に「その構成で狙う欠陥が見つかるか」を
 # 閉形式の光学 + 数式で作った欠陥 + 撮像連鎖で先に確かめる層。
 import defectgen  # noqa: E402  (mathematical defect models with pixel-perfect masks)
@@ -1084,6 +1097,17 @@ __all__ = [
     "ode_flow_states", "ode_vector_field_grid", "dynsys_poincare_section",
     "dynsys_lyapunov_spectrum", "dynsys_bifurcation_map",
     "dynsys_correlation_dimension",
+    # フーリエ以外の積分変換と s 領域(2026-10-03)
+    "abel_transform",
+    "abel_inverse",
+    "hankel_transform",
+    "tf_poles_zeros",
+    "tf_freq_response",
+    "tf_impulse_response",
+    "tf_step_response",
+    "tf_bilinear",
+    "laplace_inverse_talbot",
+    "laplace_inverse_func",
     "visiondesign", "system_geometry", "resolving_power", "system_feasibility",
     "image_formation", "detectability_limit",
     "defectgen", "defect_scratch", "defect_pits", "defect_crack", "defect_blob",

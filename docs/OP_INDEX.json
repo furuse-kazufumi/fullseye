@@ -1,8 +1,8 @@
 {
- "n_ops": 2590,
+ "n_ops": 2599,
  "tiers": {
   "color": 12,
-  "ledger": 1639,
+  "ledger": 1648,
   "nary": 17,
   "registry": 922
  },
@@ -301,6 +301,32 @@
    "dim": "optics",
    "in_sorts": [
     "matrix"
+   ]
+  },
+  {
+   "name": "abel_inverse",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "transform",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "abel_transform",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "transform",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal"
    ]
   },
   {
@@ -7888,6 +7914,20 @@
    ]
   },
   {
+   "name": "hankel_transform",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "transform",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
    "name": "harris3d_keypoints",
    "halcon": "",
    "in_sort": "voxel",
@@ -9244,6 +9284,21 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "laplace_inverse_talbot",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "transform",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "signal"
    ]
   },
   {
@@ -18900,6 +18955,79 @@
    "dim": "text",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "tf_bilinear",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "transform",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "tf_freq_response",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "transform",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "tf_impulse_response",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "transform",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "tf_poles_zeros",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "transform",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "tf_step_response",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "transform",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "signal"
    ]
   },
   {

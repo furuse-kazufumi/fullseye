@@ -349,6 +349,12 @@ EXAMPLES = [
      "summary": "棚卸し(2026-10-02)で fullseye のどこからも呼べなかった 18 本を fs.<名前> から呼び、答えの決まる入力で確かめる: "
                 "切り出しの位置で NCC = 1、x.5 の端は放物線補間で厳密、純正弦波の利得 = マスクの値、周期面は Frankot–Chellappa で 1e-15、"
                 "雑音なしの三角測量、本質行列の特異値 (σ, σ, 0)、ピラミッドの大きさ、4 回対称の点群は次数 2・4 で 0。"},
+    {"id": "transforms_tour", "task": "math", "data": "synthetic",
+     "name": "フーリエ以外の積分変換を一巡する —— 炎の Abel 断層化・円い穴の Airy(Hankel)・2 次系の応答・数値逆ラプラス",
+     "summary": "棚卸し(2026-10-03)で 0 本だった Laplace 系統と Abel・Hankel を足した 10 本を、閉じた式と重ねて確かめる: "
+                "横から撮った炎の像から逆 Abel で断面を戻し(2 つの独立な戻し方)、雑音の誤差が微分では 1/dr、殻剥きでは 1/√dr で"
+                "増えて標本数で優劣が逆転すること、円板の Hankel 変換が J₁ の閉じた式に重なり最初の暗い輪が 0.61/a、"
+                "2 次系の減衰比を振ったステップ応答と Bode、1/√s の Talbot 逆変換が M=20 前後で 1e-12 に届き増やしすぎると丸めで悪化すること。"},
     {"id": "watershed3d_tour", "task": "segmentation", "data": "synthetic",
      "name": "接した 2 つの球を 3-D 分水嶺で割る —— 連結成分では 1 個、距離変換シードでは体積の等しい 2 個",
      "summary": "台帳 opssegmentation の watershed3d(distance_peaks / watershed_vol / separate_touching)を fullseye.ledger から呼び、"

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2590,
- "n_notes": 2596,
+ "n_ops": 2599,
+ "n_notes": 2605,
  "notes": {
   "vol_dilate": [
    {
@@ -20847,6 +20847,96 @@
     "in": "signal",
     "out": "signal",
     "path": "docs/ops/math/stats/stat_zscore.md"
+   }
+  ],
+  "abel_inverse": [
+   {
+    "op": "abel_inverse",
+    "dim": "math",
+    "category": "transform",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/math/transform/abel_inverse.md"
+   }
+  ],
+  "abel_transform": [
+   {
+    "op": "abel_transform",
+    "dim": "math",
+    "category": "transform",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/math/transform/abel_transform.md"
+   }
+  ],
+  "hankel_transform": [
+   {
+    "op": "hankel_transform",
+    "dim": "math",
+    "category": "transform",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/math/transform/hankel_transform.md"
+   }
+  ],
+  "laplace_inverse_talbot": [
+   {
+    "op": "laplace_inverse_talbot",
+    "dim": "math",
+    "category": "transform",
+    "in": "signal × signal × signal",
+    "out": "signal",
+    "path": "docs/ops/math/transform/laplace_inverse_talbot.md"
+   }
+  ],
+  "tf_bilinear": [
+   {
+    "op": "tf_bilinear",
+    "dim": "math",
+    "category": "transform",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/math/transform/tf_bilinear.md"
+   }
+  ],
+  "tf_freq_response": [
+   {
+    "op": "tf_freq_response",
+    "dim": "math",
+    "category": "transform",
+    "in": "signal × signal × signal",
+    "out": "table",
+    "path": "docs/ops/math/transform/tf_freq_response.md"
+   }
+  ],
+  "tf_impulse_response": [
+   {
+    "op": "tf_impulse_response",
+    "dim": "math",
+    "category": "transform",
+    "in": "signal × signal × signal",
+    "out": "signal",
+    "path": "docs/ops/math/transform/tf_impulse_response.md"
+   }
+  ],
+  "tf_poles_zeros": [
+   {
+    "op": "tf_poles_zeros",
+    "dim": "math",
+    "category": "transform",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/math/transform/tf_poles_zeros.md"
+   }
+  ],
+  "tf_step_response": [
+   {
+    "op": "tf_step_response",
+    "dim": "math",
+    "category": "transform",
+    "in": "signal × signal × signal",
+    "out": "signal",
+    "path": "docs/ops/math/transform/tf_step_response.md"
    }
   ],
   "wave_fringe_period": [

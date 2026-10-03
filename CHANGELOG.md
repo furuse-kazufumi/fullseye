@@ -7,7 +7,18 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
-(なし)
+- ★★**Laplace 変換の系統が 1 本も無かった。** 「フーリエ系は色々あるのにラプラス系は無いのでは」という指摘から全層
+  (op 2,590 + facade 3,274 名)を綴りを変えて引き、0 本を確認(`laplace` op は HALCON のラプラシアン、
+  `transfer_function` は周波数領域の H(f))。同じ棚卸しを 4 分野に広げ、「有名な数学なのに op に無い」優先度 A を 25 件洗い出した。
+  第 1 陣として math 台帳に **`transform` カテゴリ 9 op** + `fs.laplace_inverse_func` を足した(`mathtransforms.py`):
+  Abel(前向き・逆 2 経路)、Hankel(quasi-discrete、核が対合)、s 領域の極零・Bode・インパルス/ステップ応答
+  (拡大行列の指数関数で厳密)・Tustin・固定 Talbot の数値逆ラプラス。門は閉じた式だけ(`tests/test_mathtransforms.py` 16 本)。
+  - ★**逆 Abel の「殻剥きは雑音に強い」は半分しか正しくなかった**: 雑音の誤差は微分が `1/dr`、殻剥きが `1/√dr` で増え、
+    **標本数で優劣が逆転する**(n=60 では微分、n=960 では殻剥き)。片側だけの主張を書いた docstring を両向きの門で直した。
+  - 例 `examples/transforms_tour.py`: 炎の断層化・円い穴の Airy・2 次系の減衰比と Bode・Talbot の M と丸め。
+- **図の表現力(MATLAB に近づける第一歩)**: `examplefig.save_grid(vrange=)` で色の範囲を固定(`clim`。既定の 1 枚ごとの
+  正規化は誤差 0.002 の差の図も真っ赤に見せていた)、`save_plot(styles=)` で破線・点線(真値・参照線は破線に)、
+  凡例をデータの少ない隅へ自動で置く(`legend('best')`)、軸名の帯が x 軸の目盛りの数字を隠していたのを直した。
 
 ## 0.3.0 — 2026-10-03
 

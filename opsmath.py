@@ -20,8 +20,9 @@ funct1d に既存で、ここでは重複させない。
 import numpy as np
 
 import mathops
+import mathtransforms
 
-_MOD = {"mathops": mathops}
+_MOD = {"mathops": mathops, "mathtransforms": mathtransforms}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   種別語彙: matrix(2-D)/ signal(1-D array)/ measurement / table(dict)/
@@ -140,6 +141,20 @@ _CATALOG = {
         # 相関次元は (N,3) の軌道を食う。既存の fractal_dimension(箱数え)が
         # 別の測り方の真値になる。
         ("dynsys_correlation_dimension", "mathops", ["points"], "measurement"),
+    ],
+    # フーリエ以外の積分変換と s 領域の線形系(2026-10-03)。棚卸しで Laplace の系統が 0 本だった。
+    #   伝達関数 H(s) = num/den の係数は降べきの signal(poly_eval と同じ並び)。
+    #   laplace_inverse_func(任意の呼び出し可能 F(s))は型に載らないので台帳でなく fs.<名前> だけ。
+    "transform": [
+        ("abel_transform", "mathtransforms", ["signal"], "signal"),
+        ("abel_inverse", "mathtransforms", ["signal"], "signal"),
+        ("hankel_transform", "mathtransforms", ["signal", "signal"], "table"),
+        ("tf_poles_zeros", "mathtransforms", ["signal", "signal"], "table"),
+        ("tf_freq_response", "mathtransforms", ["signal", "signal", "signal"], "table"),
+        ("tf_impulse_response", "mathtransforms", ["signal", "signal", "signal"], "signal"),
+        ("tf_step_response", "mathtransforms", ["signal", "signal", "signal"], "signal"),
+        ("tf_bilinear", "mathtransforms", ["signal", "signal"], "table"),
+        ("laplace_inverse_talbot", "mathtransforms", ["signal", "signal", "signal"], "signal"),
     ],
 }
 

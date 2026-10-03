@@ -240,6 +240,21 @@ def test_opsmath_call_returns_declared_types():
         "dynsys_bifurcation_map": ("logistic", 2.5, 4.0, 40),
         "dynsys_correlation_dimension": (orbit,),
     })
+    # フーリエ以外の積分変換と s 領域(2026-10-03)。伝達関数の係数は降べきの signal。
+    rr = np.linspace(0.0, 4.0, 64)
+    gauss = np.exp(-rr ** 2)
+    tt = np.linspace(0.05, 3.0, 12)
+    args.update({
+        "abel_transform": (gauss, float(rr[1])),
+        "abel_inverse": (gauss, float(rr[1])),
+        "hankel_transform": (rr, gauss),
+        "tf_poles_zeros": (np.array([1.0, 2.0]), np.array([1.0, 3.0, 2.0])),
+        "tf_freq_response": (np.array([1.0]), np.array([1.0, 1.0]), np.logspace(-1, 1, 8)),
+        "tf_impulse_response": (np.array([1.0]), np.array([1.0, 1.0]), tt),
+        "tf_step_response": (np.array([1.0]), np.array([1.0, 1.0]), tt),
+        "tf_bilinear": (np.array([1.0]), np.array([1.0, 1.0]), 10.0),
+        "laplace_inverse_talbot": (np.array([1.0]), np.array([1.0, 1.0]), tt),
+    })
     from tools.chain_fuzz import TYPE_CHECKS
     missing = [n for n in opsmath.OPSMATH if n not in args]
     assert not missing, f"test args missing for: {missing}"

@@ -221,6 +221,10 @@ _OP_BRIDGE_SKIP = {
     # 2026-09-21: EM 断面の膜応答(image2d → image2d)。台帳(fullseye.ledger.seg_membrane_response)から
     #   sigma つきで使う op で、橋の knob a/b は sigma に写らず「効かないノブ」になる。橋は架けない。
     "seg_membrane_response",
+    # 2026-10-03: Abel 変換は「軸対称な物体の動径分布 f(r)(r = 0 から外へ)」を受ける。signal→signal で
+    #   自動的に橋が架かるが、橋が渡すのは画像を潰した 1 本の信号で、中心も半径の向きも持たない
+    #   (意味のある出力にならない)。dr も knob a/b に写らない。台帳(fs.ledger.abel_*)から使う。
+    "abel_transform", "abel_inverse",
 }
 
 
