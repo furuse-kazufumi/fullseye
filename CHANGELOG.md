@@ -20,6 +20,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   `asymmetry` で報告)、`abel_revolve`(断面を軸のまわりに回して 3-D ボリューム)、`gauss_cubature`(Gauss–Legendre の
   テンソル積で 2-D/3-D の箱の求積)。門: ガウスの塊の写真から断面が 1e-2 で戻る / 3-D を横から足し直すと写真に 2e-3 で戻る /
   求積は軸ごとに 2n−1 次まで厳密。transforms_tour に「写真 1 枚から 3-D へ」(水平断面に外側の殻が輪として現れる)。
+- ★**本物の NURBS 4 op(重みつき、制御点を通らない)**: `nurbs_curve`・`nurbs_circle`・`nurbs_surface`・`nurbs_revolve`
+  (Piegl & Tiller の定義どおり、Cox–de Boor + 同次座標)。門: 重み 1 なら scipy の B スプラインと 3e-16 で一致 / 9 点の
+  2 次 NURBS が円そのもの(半径のずれ 9e-16、隅の制御点は円の外 (√2−1)R で曲線は通らない)/ 射影変換と可換 / 回した球と
+  トーラスが丸め誤差で厳密 / 重みを上げると単調に寄る。geometry_tour に「隅の重みを 1/√2 にした時だけ円」の図 2 枚
+  (普通の B スプラインは隅の向きで最大 1.061 に膨らむ)。
+- **非推奨(0.4.0 で削除)**: `gen_contour_nurbs_xld`・`gen_nurbs_interp`(`contours_xld2`)—— 名前に反して NURBS ではなく、
+  重みなしで全制御点を通る**補間 B スプライン**だった。呼ぶと `DeprecationWarning`、docstring に正体と移行先
+  (`nurbs_curve`)を書いた。動作は変えていない。
 - ★**離散幾何と位相 6 op(math 台帳 `geometry`、陣 4、最初から 2-D/3-D)**: オイラー標数と種数・角欠損(離散 Gauss–Bonnet)・
   Delaunay(2-D 三角形 / 3-D 四面体)・熱法の測地距離(メッシュ / 画像とボリュームの格子)・トーラスのメッシュ
   (`mathgeometry.py`、門 `tests/test_mathgeometry.py`)。「次元を上げられるなら上げて、画像や 3-D ではそちらが主役」の指示で

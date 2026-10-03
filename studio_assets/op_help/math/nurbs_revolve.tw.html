@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">nurbs_revolve — MATH <code style="color:#22d3bf">geometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;nurbs_revolve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>平面の NURBS 曲線 (r, z) を z 軸のまわりに 1 周回した回転面(Piegl &amp; Tiller §8.5)。</p>
+<p>断面の各制御点を `<code style="color:#22d3bf">nurbs_circle</code>` の 9 点で回し、重みを掛け合わせる。断面が厳密な円弧なら、出来る曲面も厳密な</p>
+<p>球・トーラス・円錐になる(多項式の曲面では近似しかできない)。</p>
+<p>Args:</p>
+<p>profile: (m, 2) の断面の制御点 (r, z)。r は軸からの距離(0 以上)。</p>
+<p>weights, degree, knots: 断面の NURBS(`<code style="color:#22d3bf">nurbs_curve</code>` と同じ)。</p>
+<p>n: (周方向, 断面方向) の評価点数。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">nurbs_surface</code><code style="color:#22d3bf"> と同じ dict に </code><code style="color:#22d3bf">control_net</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">net_weights</code>` を足したもの。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
+<p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
+<p style="margin:2px 0 2px 12px">• **complex 輸入一律 <code style="color:#22d3bf">ValueError</code>** —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• **含被遮罩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒絕「剝掉遮罩直接使用下面原值」的隱式轉換。請明確選擇填補還是丟棄。</p>
+<p style="margin:2px 0 2px 12px">• **所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明確給出個數後拒絕 —— 它會汙染整個結果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形狀嚴格</b>:不對 1-D 與 2-D 做隱式提升或廣播(向量槽位收到矩陣、矩陣槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;請明確 reshape)。</p>
+<p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩陣的運算子與 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超過 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 萬個元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:geometry_tour">geometry_tour</a> — <code style="color:#22d3bf">py -3.11 examples/geometry_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">geometry</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:mesh_euler_characteristic">mesh_euler_characteristic</a> · <a style="color:#22d3bf" href="opmath:angle_defect">angle_defect</a> · <a style="color:#22d3bf" href="opmath:delaunay_triangulate">delaunay_triangulate</a> · <a style="color:#22d3bf" href="opmath:geodesic_heat">geodesic_heat</a> · <a style="color:#22d3bf" href="opmath:geodesic_heat_grid">geodesic_heat_grid</a> · <a style="color:#22d3bf" href="opmath:mesh_torus">mesh_torus</a> · <a style="color:#22d3bf" href="opmath:nurbs_curve">nurbs_curve</a> · <a style="color:#22d3bf" href="opmath:nurbs_circle">nurbs_circle</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathgeometry.py — MATH 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

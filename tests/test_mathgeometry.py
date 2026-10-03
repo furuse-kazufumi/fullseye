@@ -14,7 +14,7 @@ with warnings.catch_warnings():
     import opsmath
 
 LEDGER = ["mesh_euler_characteristic", "angle_defect", "delaunay_triangulate", "geodesic_heat", "geodesic_heat_grid",
-          "mesh_torus"]
+          "mesh_torus", "nurbs_curve", "nurbs_circle", "nurbs_surface", "nurbs_revolve"]
 
 
 def test_public_and_ledger():
@@ -163,3 +163,87 @@ def test_grid_heat_in_a_3d_volume():
     assert np.abs(D - true).max() < 0.06
     with pytest.raises(ValueError):
         G.geodesic_heat_grid(M, (0, 0))
+
+
+# ── NURBS: 重みつきで制御点を通らない本物(旧 gen_contour_nurbs_xld は補間 B スプラインだった) ─────── #
+def test_nurbs_unit_weights_equal_scipy_bspline():
+    """重みが全部 1 なら NURBS は普通の B スプライン —— scipy の独立実装と丸め誤差で一致し、基底の和は 1。"""
+    from scipy.interpolate import BSpline
+    P = np.random.default_rng(0).random((7, 2))
+    r = G.nurbs_curve(P, degree=3, n=101)
+    ref = BSpline(r["knots"], P, 3)(r["u"])
+    assert np.abs(r["points"] - ref).max() < 1e-12
+    assert np.abs(r["basis"].sum(axis=1) - 1).max() < 1e-12
+    assert np.allclose(r["points"][[0, -1]], P[[0, -1]])          # clamped: 端点だけは通る
+
+
+def test_nurbs_circle_is_exact_and_misses_corner_points():
+    """9 点の 2 次 NURBS は円そのもの(多項式では不可能)。隅の制御点は円の外 (√2−1)R にあって曲線は通らない。"""
+    from scipy.spatial import cKDTree
+    c = G.nurbs_circle(2.0, (1.0, -1.0))
+    q = G.nurbs_curve(c["control_points"], c["weights"], degree=2, knots=c["knots"], n=2001)
+    d = np.linalg.norm(q["points"] - [1.0, -1.0], axis=1)
+    assert np.abs(d - 2.0).max() < 1e-13
+    gap = cKDTree(q["points"]).query(c["control_points"][1])[0]
+    assert abs(gap - (math.sqrt(2) - 1) * 2.0) < 1e-6
+    # 重みを 1 にすると円でなくなる(重みが要る理由)
+    q1 = G.nurbs_curve(c["control_points"], None, degree=2, knots=c["knots"], n=2001)
+    assert np.abs(np.linalg.norm(q1["points"] - [1.0, -1.0], axis=1) - 2.0).max() > 0.05
+
+
+def test_nurbs_commutes_with_projective_maps():
+    """NURBS は射影変換と可換: 同次座標の制御点を変換してから描く = 描いてから変換する(B スプラインは不可)。"""
+    c = G.nurbs_circle(1.0)
+    H = np.array([[1.1, 0.2, 0.3], [-0.1, 0.9, 0.5], [0.05, -0.08, 1.0]])
+    q = G.nurbs_curve(c["control_points"], c["weights"], degree=2, knots=c["knots"], n=501)
+    Pw = np.column_stack([c["control_points"] * c["weights"][:, None], c["weights"]]) @ H.T
+    q2 = G.nurbs_curve(Pw[:, :2] / Pw[:, 2:], Pw[:, 2], degree=2, knots=c["knots"], n=501)
+    h = np.column_stack([q["points"], np.ones(501)]) @ H.T
+    assert np.abs(q2["points"] - h[:, :2] / h[:, 2:]).max() < 1e-12
+
+
+def test_nurbs_weight_pulls_curve_toward_its_point():
+    """重みを上げるほど曲線はその制御点に寄る(単調)。∞ の極限で点を通る。"""
+    P = np.array([[0, 0], [1, 2], [2, -1], [3, 3], [4, 0], [5, 1]], float)
+    gaps = []
+    for wt in (0.25, 1.0, 4.0, 64.0):
+        w = np.ones(6)
+        w[3] = wt
+        pts = G.nurbs_curve(P, w, degree=3, n=4001)["points"]
+        gaps.append(np.linalg.norm(pts - P[3], axis=1).min())
+    assert all(a > b for a, b in zip(gaps, gaps[1:])), gaps
+    assert gaps[-1] < 0.05 * gaps[1]
+
+
+def test_nurbs_revolve_gives_exact_sphere_and_torus():
+    """断面が厳密な円弧なら回転面も厳密: 球の半径・トーラスの管の半径が丸め誤差で一定。メッシュは閉じた曲面の位相。"""
+    h = 1 / math.sqrt(2)
+    prof = np.array([[0, -1], [1, -1], [1, 0], [1, 1], [0, 1]], float) * 3.0
+    s = G.nurbs_revolve(prof, [1, h, 1, h, 1], degree=2, knots=[0, 0, 0, .5, .5, 1, 1, 1], n=(40, 30))
+    assert np.abs(np.linalg.norm(s["points"], axis=2) - 3.0).max() < 1e-12
+    cc = G.nurbs_circle(0.7, (2.0, 0.0))
+    t = G.nurbs_revolve(cc["control_points"], cc["weights"], degree=2, knots=cc["knots"], n=(40, 30))
+    X = t["points"]
+    assert np.abs(np.hypot(np.hypot(X[..., 0], X[..., 1]) - 2.0, X[..., 2]) - 0.7).max() < 1e-12
+    V, F = t["mesh"]
+    assert V.shape == (40 * 30, 3) and F.shape == (2 * 39 * 29, 3)
+
+
+def test_nurbs_rejects_bad_input():
+    with pytest.raises(ValueError):
+        G.nurbs_curve(np.zeros((3, 2)), degree=3)                 # 次数が高すぎ
+    with pytest.raises(ValueError):
+        G.nurbs_curve(np.random.rand(5, 2), [1, 1, -1, 1, 1])     # 負の重み
+    with pytest.raises(ValueError):
+        G.nurbs_curve(np.random.rand(5, 2), knots=[0, 0, 0, 1, 1])  # 節点の数
+    with pytest.raises(ValueError):
+        G.nurbs_revolve(np.array([[-1.0, 0], [1, 1]]), degree=1)   # 軸の反対側
+
+
+def test_old_nurbs_names_warn_they_are_interpolating_bsplines():
+    """旧 2 本は非推奨: 呼ぶと警告し、docstring が「本当は補間 B スプライン」と言う。"""
+    import contours_xld2
+    for f in (contours_xld2.gen_contour_nurbs_xld, contours_xld2.gen_nurbs_interp):
+        assert "補間 B スプライン" in f.__doc__ and "nurbs_curve" in f.__doc__
+        with pytest.warns(DeprecationWarning):
+            f(np.array([[10, 10], [40, 80], [90, 30], [120, 100]], float), 3, 20)

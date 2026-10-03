@@ -1,8 +1,8 @@
 {
- "n_ops": 2633,
+ "n_ops": 2637,
  "tiers": {
   "color": 12,
-  "ledger": 1682,
+  "ledger": 1686,
   "nary": 17,
   "registry": 922
  },
@@ -12140,6 +12140,54 @@
    "in_sorts": [
     "signal"
    ]
+  },
+  {
+   "name": "nurbs_circle",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "geometry",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
+  },
+  {
+   "name": "nurbs_curve",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "geometry",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "nurbs_revolve",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "geometry",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "nurbs_surface",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "geometry",
+   "tier": "ledger",
+   "ledger": "opsmath",
+   "dim": "math",
+   "in_sorts": []
   },
   {
    "name": "obb",

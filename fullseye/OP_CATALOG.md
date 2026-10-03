@@ -2240,7 +2240,7 @@ _計 42 ops / 3 categories。_
 - `signal_features` (`signal → table`) — A compact acoustic/vibration feature vector for anomaly detection:
 
 ## Math operators(opsmath)by category
-_計 98 ops / 12 categories。_
+_計 102 ops / 12 categories。_
 
 
 視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。北極星は「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
@@ -2297,13 +2297,17 @@ _計 98 ops / 12 categories。_
 - `se3_exp` (`signal → matrix`) — SE(3) の指数写像: 6 次元のねじれ ξ = (v, ω)(並進速度 v、回転ベクトル ω)→ 4×4 の剛体変換。
 - `se3_log` (`matrix → signal`) — SE(3) の対数写像: 4×4 の剛体変換 → 6 次元のねじれ ξ = (v, ω)(回転角 < π)。門: se3_log(se3_exp(ξ)) = ξ。
 
-### geometry(6)
+### geometry(10)
 - `mesh_euler_characteristic` (`mesh → table`) — 三角形メッシュの V − E + F と、閉じた向き付け可能な曲面なら種数 g = (2 − χ)/2。
 - `angle_defect` (`mesh → table`) — 頂点ごとの角欠損(離散 Gauss 曲率)K_v = 2π − Σ(その頂点での三角形の角)。境界の頂点は π − Σ(測地曲率)。
 - `delaunay_triangulate` (`matrix → table`) — 平面 (N, 2) の三角形分割、または空間 (N, 3) の四面体分割(Delaunay、scipy.spatial = Qhull)。
 - `geodesic_heat` (`mesh → table`) — 熱法による曲面上の測地距離(Crane et al. 2013)。``source`` は頂点番号(または番号の列、既定は頂点 0)。
 - `geodesic_heat_grid` (`image2d → table`) — 2-D 画像・3-D ボリュームの格子の上で、障害物を避けた測地距離を熱法で求める(Crane et al. 2013 の格子版)。
 - `mesh_torus` (` → mesh`) — トーラス(ドーナツ)の閉じた三角形メッシュ (vertices, faces)。大きい半径 R・管の半径 r(R > r > 0)。
+- `nurbs_curve` (`matrix → table`) — NURBS 曲線を評価する(重みつき・制御点は一般に通らない)。
+- `nurbs_circle` (` → table`) — 円を厳密に表す 2 次 NURBS(Piegl & Tiller 例 7.1: 正方形の 4 隅と 4 辺の中点、隅の重みは 1/√2)。
+- `nurbs_surface` (` → table`) — NURBS 曲面(テンソル積)を評価する。
+- `nurbs_revolve` (`matrix → table`) — 平面の NURBS 曲線 (r, z) を z 軸のまわりに 1 周回した回転面(Piegl & Tiller §8.5)。
 
 ### interp_poly(6)
 - `interp_linear` (`signal, signal, signal → signal`) — Piecewise-linear interpolation of ``(x, y)`` samples at query *xq*.

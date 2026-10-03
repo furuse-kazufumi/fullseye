@@ -1,4 +1,4 @@
-# MATH operator help — 98 ops in 12 categories
+# MATH operator help — 102 ops in 12 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/math/<category>/<op>.md` を走査。
 
@@ -29,9 +29,9 @@
 
 [assign_hungarian](estimation/assign_hungarian.md) · [crlb_gaussian](estimation/crlb_gaussian.md) · [hist_distance](estimation/hist_distance.md) · [kalman_smooth](estimation/kalman_smooth.md) · [mat_expm](estimation/mat_expm.md) · [mat_logm](estimation/mat_logm.md) · [se3_exp](estimation/se3_exp.md) · [se3_log](estimation/se3_log.md) · [stat_chi2_gof](estimation/stat_chi2_gof.md) · [stat_ks_test](estimation/stat_ks_test.md) · [stat_ttest_paired](estimation/stat_ttest_paired.md) · [stat_ttest_welch](estimation/stat_ttest_welch.md)
 
-### geometry (6)
+### geometry (10)
 
-[angle_defect](geometry/angle_defect.md) · [delaunay_triangulate](geometry/delaunay_triangulate.md) · [geodesic_heat](geometry/geodesic_heat.md) · [geodesic_heat_grid](geometry/geodesic_heat_grid.md) · [mesh_euler_characteristic](geometry/mesh_euler_characteristic.md) · [mesh_torus](geometry/mesh_torus.md)
+[angle_defect](geometry/angle_defect.md) · [delaunay_triangulate](geometry/delaunay_triangulate.md) · [geodesic_heat](geometry/geodesic_heat.md) · [geodesic_heat_grid](geometry/geodesic_heat_grid.md) · [mesh_euler_characteristic](geometry/mesh_euler_characteristic.md) · [mesh_torus](geometry/mesh_torus.md) · [nurbs_circle](geometry/nurbs_circle.md) · [nurbs_curve](geometry/nurbs_curve.md) · [nurbs_revolve](geometry/nurbs_revolve.md) · [nurbs_surface](geometry/nurbs_surface.md)
 
 ### interp_poly (6)
 

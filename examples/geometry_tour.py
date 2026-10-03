@@ -12,8 +12,11 @@
 3. **Gauss–Bonnet** —— トーラスの頂点ごとの曲がり(角欠損)を展開図に描く。外側は凸で正、内側は鞍で負。
    総和はどんなに歪めてもちょうど 0(= 2πχ、χ = 0)。球はちょうど 4π。穴の数だけで総和が決まる。
 4. **Delaunay 分割** —— どの三角形の外接円の中にも他の点が無い。三角形の数は 2n − h − 2。3-D でも外接球が空。
+5. **NURBS の重み** —— 正方形の 8 点から 2 次曲線を引く。重みが全部 1(普通の B スプライン)だと円からずれ、
+   隅の重みを 1/√2 にした瞬間だけ**円そのもの**になる。重みを上げ下げすると曲線が隅に寄ったり離れたりする。
+   同じ円を回すと球・トーラスも厳密に描ける(多項式の曲面では近似しかできない)。
 
-【グラウンドトゥルース】ユークリッド距離・大円距離 Rθ・2πχ・2n − h − 2。
+【グラウンドトゥルース】ユークリッド距離・大円距離 Rθ・2πχ・2n − h − 2・円の半径。
 """
 from __future__ import annotations
 
@@ -132,6 +135,27 @@ def run() -> dict:
     v3 = sum(int(np.sum(np.linalg.norm(P3 - cc, axis=1) < r - 1e-9)) for cc, r in zip(d3["circumcenters"], d3["circumradii"]))
     assert v3 == 0
 
+    # ---- 5. NURBS の重み ------------------------------------------------------------------ #
+    circ = fs.nurbs_circle(1.0)
+    Cp, Uk = circ["control_points"], circ["knots"]
+    h = 1.0 / math.sqrt(2.0)
+    sweep = {}
+    for wc in (0.3, h, 1.0, 3.0):
+        w = np.where(np.arange(9) % 2 == 1, wc, 1.0)
+        sweep[wc] = fs.nurbs_curve(Cp, w, degree=2, knots=Uk, n=721)["points"]
+    rad = {wc: np.linalg.norm(q, axis=1) for wc, q in sweep.items()}
+    dev_b = float(np.abs(rad[1.0] - 1).max())
+    dev_n = float(np.abs(rad[h] - 1).max())
+    print("5) 正方形の 8 点から引いた 2 次曲線の半径のずれ: 重み 1(B スプライン)%.3f / 隅 1/√2(NURBS)%.1e"
+          % (dev_b, dev_n))
+    assert dev_n < 1e-13 and dev_b > 0.05
+    prof = np.array([[0, -1], [1, -1], [1, 0], [1, 1], [0, 1]], float)
+    nsph = fs.nurbs_revolve(prof, [1, h, 1, h, 1], degree=2, knots=[0, 0, 0, .5, .5, 1, 1, 1], n=(48, 32))
+    dev_s = float(np.abs(np.linalg.norm(nsph["points"], axis=2) - 1).max())
+    print("   その円を回した球の半径のずれ %.1e(頂点 %d)" % (dev_s, len(nsph["mesh"][0])))
+    assert dev_s < 1e-13
+    out.update(nurbs_circle_dev=dev_n, bspline_circle_dev=dev_b, nurbs_sphere_dev=dev_s)
+
     # ---- 図 ---------------------------------------------------------------------------- #
     if figs.enabled():
         vmax = float(np.max(Dh[np.isfinite(Dh)]))
@@ -184,6 +208,38 @@ def run() -> dict:
                        title="Delaunay 分割 —— どの外接円の中にも、ほかの点が無い",
                        caption="40 点を三角形 %d 個に分割(= 2n − h − 2)。破線は外接円の例。3-D の 80 点でも外接球の中に点は 0 個。"
                                % dl["n_triangles"])
+        th = np.linspace(0, 2 * math.pi, 361)
+        lab = {0.3: "隅の重み 0.3(離れる)", h: "隅の重み 1/√2 = 0.707(円そのもの)", 1.0: "重み 1(普通の B スプライン)",
+               3.0: "隅の重み 3(寄る)"}
+        series = [("真の円", np.cos(th), np.sin(th)),
+                  ("制御点を結ぶ折れ線", Cp[:, 0], Cp[:, 1]),
+                  ("制御点", Cp[:, 0], Cp[:, 1])]
+        series += [(lab[wc], sweep[wc][:, 0], sweep[wc][:, 1]) for wc in (0.3, 1.0, 3.0, h)]
+        figs.save_plot("nurbs_weights", series, size=(600, 560),
+                       kinds=["line", "line", "scatter", "line", "line", "line", "line"],
+                       styles=["dashed", "dotted", None, None, None, None, None],
+                       colors=["reference", "neutral", "neutral", (0.59, 0.35, 0.82), "wrong", "right", "emphasis"],
+                       xlim=(-1.15, 1.15), ylim=(-1.15, 1.15), aspect="equal", xlabel="x", ylabel="y",
+                       title="NURBS の重み —— 隅を 1/√2 にした時だけ円そのもの",
+                       caption="正方形の 4 隅と 4 辺の中点(9 点、最初と最後は同じ点)から 2 次曲線を引く。曲線は隅の点を通らない。"
+                               "重みが全部 1 の普通の B スプラインは円から最大 %.3f ずれる。隅の重みを 1/√2 にすると"
+                               "ずれは %.0e(丸め誤差)で、破線の真の円と重なる。重みを上げると隅に寄り、下げると離れる。"
+                               % (dev_b, max(dev_n, 1e-16)))
+        ang = np.degrees(np.arctan2(sweep[1.0][:, 1], sweep[1.0][:, 0])) % 360
+        o = np.argsort(ang)
+        angn = np.degrees(np.arctan2(sweep[h][:, 1], sweep[h][:, 0])) % 360
+        on = np.argsort(angn)
+        figs.save_plot("nurbs_radius",
+                       [("真の半径 1", [0, 360], [1, 1]),
+                        ("重み 1(B スプライン)", ang[o], rad[1.0][o]),
+                        ("隅の重み 1/√2(NURBS)", angn[on], rad[h][on])],
+                       styles=["dashed", None, None], colors=["reference", "wrong", "emphasis"],
+                       xlim=(0, 360), xlabel="角度(度)", ylabel="中心からの距離",
+                       title="円を一周したときの半径 —— 多項式は 90° ごとに波打つ",
+                       caption="普通の B スプライン(重み 1)は辺の中点の向き(0°・90°…)で半径 1、隅の向き(45°・135°…)で外へ膨らみ、"
+                               "%.3f の幅で波打つ。"
+                               "NURBS は一周どこでも半径 1(ずれ %.0e)。これを z 軸のまわりに回した球も半径のずれ %.0e。"
+                               % (float(np.ptp(rad[1.0])), max(dev_n, 1e-16), max(dev_s, 1e-16)))
     assert not figs.errors(), figs.errors()
 
     out["elapsed_s"] = round(time.perf_counter() - t0, 3)

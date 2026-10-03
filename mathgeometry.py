@@ -12,6 +12,8 @@
 * **熱法の測地距離**(Crane, Weischedel & Wardetzky 2013)—— 曲面上の最短距離を、熱を少しだけ広げる → 勾配の向きを
   正規化する → Poisson 方程式を解く、の 3 段で求める。辺をたどる Dijkstra(``geodesic_mesh``)は辺の方向にしか
   進めず距離を過大に見積もるが、熱法は面の中を斜めに進める。
+* **NURBS 曲線・曲面**(Piegl & Tiller 1997)—— 重みつきの有理 B スプライン。多項式では描けない円・球・トーラスを
+  **厳密に** 描け、射影変換と可換。制御点は一般に通らない(旧 ``gen_contour_nurbs_xld`` は通る補間だった)。
 
 門は ``tests/test_mathgeometry.py``。
 """
@@ -24,7 +26,7 @@ from scipy import sparse
 from scipy.sparse import linalg as splinalg
 
 __all__ = ["angle_defect", "delaunay_triangulate", "geodesic_heat", "geodesic_heat_grid", "mesh_euler_characteristic",
-           "mesh_torus"]
+           "mesh_torus", "nurbs_circle", "nurbs_curve", "nurbs_revolve", "nurbs_surface"]
 
 
 def _mesh(vertices, faces=None):
@@ -327,3 +329,183 @@ def geodesic_heat(vertices, faces=None, source=0, *, t: float | None = None) -> 
     phi = splinalg.spsolve(Lr, div)
     phi = phi - phi[src].mean()
     return {"distance": phi - phi[src].min(), "t": t}
+
+
+# ── NURBS(非一様有理 B スプライン)——重みつきで、制御点を通らない本物 ─────────────────────────── #
+# 旧 ``contours_xld2.gen_contour_nurbs_xld`` は重みを持たず点を通す補間 B スプラインだった(名前と中身が違う)。
+# ここでは Piegl & Tiller "The NURBS Book"(1997)の定義どおり: 節点列 U・次数 p・制御点 P_i・重み w_i で
+#     C(u) = Σ N_{i,p}(u) w_i P_i / Σ N_{i,p}(u) w_i
+# 門は「重み 1 なら scipy の B スプラインと一致」「9 点の 2 次 NURBS が円そのもの(半径誤差 1e-15)」
+# 「射影変換と可換」「回転面が球・トーラスそのもの」。
+
+def _clamped_knots(n_ctrl: int, p: int) -> np.ndarray:
+    """両端を p+1 重にした一様節点列(端点で制御点を通る = clamped)。"""
+    inner = n_ctrl - p - 1
+    return np.concatenate([np.zeros(p + 1), np.arange(1, inner + 1) / (inner + 1), np.ones(p + 1)])
+
+
+def _check_knots(U, n_ctrl: int, p: int) -> np.ndarray:
+    U = np.asarray(U, dtype=np.float64).ravel()
+    if U.size != n_ctrl + p + 1:
+        raise ValueError(f"NURBS: 節点の数は 制御点数 + 次数 + 1 = {n_ctrl + p + 1}(渡されたのは {U.size})")
+    if np.any(np.diff(U) < 0):
+        raise ValueError("NURBS: 節点列は単調非減少")
+    if U[p] >= U[n_ctrl]:
+        raise ValueError("NURBS: 定義域 [U[p], U[n]] が空(節点が重なりすぎ)")
+    return U
+
+
+def _bspline_basis(U: np.ndarray, p: int, n_ctrl: int, u: np.ndarray) -> np.ndarray:
+    """Cox–de Boor の漸化式で全基底 N_{i,p}(u) を (len(u), n_ctrl) で返す(右端 u = U[n] も含める)。"""
+    u = np.asarray(u, dtype=np.float64)
+    m = U.size - 1
+    N = np.zeros((u.size, m))
+    for i in range(m):
+        N[:, i] = (U[i] <= u) & (u < U[i + 1])
+    # 右端: 定義域の最後の空でない区間に入れる(半開区間だと u = U[n] で全基底が 0 になる)
+    last = max(i for i in range(n_ctrl) if U[i] < U[i + 1])
+    N[u >= U[n_ctrl], :] = 0.0
+    N[u >= U[n_ctrl], last] = 1.0
+    for k in range(1, p + 1):
+        Nk = np.zeros((u.size, m - k))
+        for i in range(m - k):
+            d1, d2 = U[i + k] - U[i], U[i + k + 1] - U[i + 1]
+            a = (u - U[i]) / d1 * N[:, i] if d1 > 0 else 0.0
+            b = (U[i + k + 1] - u) / d2 * N[:, i + 1] if d2 > 0 else 0.0
+            Nk[:, i] = a + b
+        N = Nk
+    return N[:, :n_ctrl]
+
+
+def nurbs_curve(control_points, weights=None, *, degree: int = 3, knots=None, n: int = 200) -> dict:
+    """NURBS 曲線を評価する(重みつき・制御点は一般に通らない)。
+
+    Args:
+        control_points: (m, d) の制御点(d = 2 なら平面、3 なら空間)。
+        weights: 長さ m の正の重み。省略すると全部 1(= 普通の B スプライン)。重みを大きくすると曲線がその点に寄る。
+        degree: 次数 p(m − 1 以下)。
+        knots: 長さ m + p + 1 の節点列。省略すると両端 p+1 重の一様節点(端点だけは制御点を通る)。
+        n: 評価する点の数(定義域を等分)。
+
+    Returns:
+        ``points`` (n, d) 曲線上の点、``u`` パラメータ、``basis`` (n, m) 有理基底 R_i(u)(各行の和は 1)、
+        ``knots``・``weights``・``degree``。
+
+    例: 9 点の 2 次 NURBS で円を **厳密に** 描く(``nurbs_circle`` が制御点・重み・節点を返す)。多項式の
+    B スプラインでは円は近似しかできない —— 重みが要る理由がここにある。
+    """
+    P = np.asarray(control_points, dtype=np.float64)
+    if P.ndim != 2 or P.shape[0] < 2 or P.shape[1] not in (2, 3):
+        raise ValueError("nurbs_curve: 制御点は (m, 2) か (m, 3) で 2 個以上")
+    m = P.shape[0]
+    p = int(degree)
+    if not 1 <= p <= m - 1:
+        raise ValueError(f"nurbs_curve: 次数は 1〜{m - 1}(制御点 {m} 個)")
+    w = np.ones(m) if weights is None else np.asarray(weights, dtype=np.float64).ravel()
+    if w.size != m or np.any(~np.isfinite(w)) or np.any(w <= 0):
+        raise ValueError("nurbs_curve: 重みは制御点と同じ数の正の有限値")
+    U = _clamped_knots(m, p) if knots is None else _check_knots(knots, m, p)
+    if int(n) < 2:
+        raise ValueError("nurbs_curve: n は 2 以上")
+    u = np.linspace(U[p], U[m], int(n))
+    N = _bspline_basis(U, p, m, u)
+    Nw = N * w[None, :]
+    R = Nw / Nw.sum(axis=1, keepdims=True)
+    return {"points": R @ P, "u": u, "basis": R, "knots": U, "weights": w, "degree": p}
+
+
+def nurbs_circle(radius: float = 1.0, center=(0.0, 0.0)) -> dict:
+    """円を厳密に表す 2 次 NURBS(Piegl & Tiller 例 7.1: 正方形の 4 隅と 4 辺の中点、隅の重みは 1/√2)。
+
+    返す ``control_points``・``weights``・``knots``・``degree`` をそのまま ``nurbs_curve`` に渡すと、どの点も中心から
+    ``radius`` の距離にある(丸め誤差まで)。隅の制御点は円の外 (√2 − 1)·radius の所にあり、曲線は通らない。
+    """
+    r = float(radius)
+    if not (r > 0 and math.isfinite(r)):
+        raise ValueError("nurbs_circle: 半径は正の有限値")
+    c = np.asarray(center, dtype=np.float64).ravel()
+    if c.size != 2:
+        raise ValueError("nurbs_circle: 中心は (x, y)")
+    sq = np.array([[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1], [1, 0]], dtype=np.float64)
+    h = 1.0 / math.sqrt(2.0)
+    w = np.array([1, h, 1, h, 1, h, 1, h, 1], dtype=np.float64)
+    U = np.array([0, 0, 0, .25, .25, .5, .5, .75, .75, 1, 1, 1], dtype=np.float64)
+    return {"control_points": c + r * sq, "weights": w, "knots": U, "degree": 2}
+
+
+def nurbs_surface(control_net, weights=None, *, degree=(3, 3), knots_u=None, knots_v=None, n=(48, 48)) -> dict:
+    """NURBS 曲面(テンソル積)を評価する。
+
+    Args:
+        control_net: (mu, mv, 3) の制御網。
+        weights: (mu, mv) の正の重み(省略で全部 1)。
+        degree: (p, q)。
+        knots_u, knots_v: 各方向の節点列(省略で clamped 一様)。
+        n: (nu, nv) 評価点の格子。
+
+    Returns:
+        ``points`` (nu, nv, 3)、``mesh`` = (V, F) の三角形メッシュ(``geodesic_heat`` などにそのまま渡せる)、
+        ``u``・``v``・``knots_u``・``knots_v``・``weights``。
+    """
+    P = np.asarray(control_net, dtype=np.float64)
+    if P.ndim != 3 or P.shape[2] != 3 or P.shape[0] < 2 or P.shape[1] < 2:
+        raise ValueError("nurbs_surface: 制御網は (mu, mv, 3) で各方向 2 個以上")
+    mu, mv = P.shape[:2]
+    p, q = (int(degree), int(degree)) if np.isscalar(degree) else (int(degree[0]), int(degree[1]))
+    if not (1 <= p <= mu - 1 and 1 <= q <= mv - 1):
+        raise ValueError(f"nurbs_surface: 次数は (1〜{mu - 1}, 1〜{mv - 1})")
+    w = np.ones((mu, mv)) if weights is None else np.asarray(weights, dtype=np.float64)
+    if w.shape != (mu, mv) or np.any(~np.isfinite(w)) or np.any(w <= 0):
+        raise ValueError("nurbs_surface: 重みは (mu, mv) の正の有限値")
+    Uu = _clamped_knots(mu, p) if knots_u is None else _check_knots(knots_u, mu, p)
+    Uv = _clamped_knots(mv, q) if knots_v is None else _check_knots(knots_v, mv, q)
+    nu, nv = (int(n), int(n)) if np.isscalar(n) else (int(n[0]), int(n[1]))
+    if nu < 2 or nv < 2:
+        raise ValueError("nurbs_surface: n は各方向 2 以上")
+    u = np.linspace(Uu[p], Uu[mu], nu)
+    v = np.linspace(Uv[q], Uv[mv], nv)
+    Nu = _bspline_basis(Uu, p, mu, u)                              # (nu, mu)
+    Nv = _bspline_basis(Uv, q, mv, v)                              # (nv, mv)
+    num = np.einsum("ai,bj,ij,ijk->abk", Nu, Nv, w, P)
+    den = np.einsum("ai,bj,ij->ab", Nu, Nv, w)
+    S = num / den[..., None]
+    ii, jj = np.meshgrid(np.arange(nu - 1), np.arange(nv - 1), indexing="ij")
+    a = (ii * nv + jj).ravel()
+    F = np.concatenate([np.column_stack([a, a + nv, a + 1]), np.column_stack([a + 1, a + nv, a + nv + 1])])
+    return {"points": S, "mesh": (S.reshape(-1, 3), F), "u": u, "v": v, "knots_u": Uu, "knots_v": Uv, "weights": w}
+
+
+def nurbs_revolve(profile, weights=None, *, degree: int = 2, knots=None, n=(48, 48)) -> dict:
+    """平面の NURBS 曲線 (r, z) を z 軸のまわりに 1 周回した回転面(Piegl & Tiller §8.5)。
+
+    断面の各制御点を ``nurbs_circle`` の 9 点で回し、重みを掛け合わせる。断面が厳密な円弧なら、出来る曲面も厳密な
+    球・トーラス・円錐になる(多項式の曲面では近似しかできない)。
+
+    Args:
+        profile: (m, 2) の断面の制御点 (r, z)。r は軸からの距離(0 以上)。
+        weights, degree, knots: 断面の NURBS(``nurbs_curve`` と同じ)。
+        n: (周方向, 断面方向) の評価点数。
+
+    Returns:
+        ``nurbs_surface`` と同じ dict に ``control_net``・``net_weights`` を足したもの。
+    """
+    Q = np.asarray(profile, dtype=np.float64)
+    if Q.ndim != 2 or Q.shape[1] != 2 or Q.shape[0] < 2:
+        raise ValueError("nurbs_revolve: 断面は (m, 2) の (r, z)")
+    if np.any(Q[:, 0] < 0):
+        raise ValueError("nurbs_revolve: r(軸からの距離)は 0 以上")
+    m = Q.shape[0]
+    wq = np.ones(m) if weights is None else np.asarray(weights, dtype=np.float64).ravel()
+    if wq.size != m or np.any(wq <= 0):
+        raise ValueError("nurbs_revolve: 重みは断面の制御点と同じ数の正の値")
+    circ = nurbs_circle(1.0)
+    C, wc = circ["control_points"], circ["weights"]
+    net = np.zeros((9, m, 3))
+    net[:, :, 0] = C[:, 0][:, None] * Q[:, 0][None, :]
+    net[:, :, 1] = C[:, 1][:, None] * Q[:, 0][None, :]
+    net[:, :, 2] = Q[:, 1][None, :]
+    W = wc[:, None] * wq[None, :]
+    nn = (int(n), int(n)) if np.isscalar(n) else (int(n[0]), int(n[1]))
+    out = nurbs_surface(net, W, degree=(2, int(degree)), knots_u=circ["knots"], knots_v=knots, n=nn)
+    out["control_net"], out["net_weights"] = net, W
+    return out

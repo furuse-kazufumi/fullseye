@@ -169,6 +169,10 @@ flowchart LR
 - **geodesic_heat**`(mesh, source=0)` — 熱法の測地距離(Crane 2013)。辺をたどる `geodesic_mesh`(Dijkstra)は細かくしても 7.7% で止まるが、熱法は真値へ収束する。
 - **geodesic_heat_grid**`(mask, source=None, spacing=1)` — 2-D 画像・3-D ボリュームの格子の上で、障害物を避けた距離。8 近傍の Dijkstra は等距離線が八角形に歪み(何も無くても 4.5%)、熱法は円。★実装の要点: 発散と Laplacian を**同じ差分行列 G から**作る(別々に作った最初の版は隅で距離が 0.52 倍に縮んだ)/ 熱の段は直接法(熱は遠くで 1e-30 まで落ち、反復法の絶対誤差が向きを壊した)。
 - **mesh_torus**`(R, r, n_u, n_v)` — 種数 1 の見本(χ = 0)。
+- **nurbs_curve**`(control_points, weights=None, degree=3, knots=None, n=200)` — 重みつきの有理 B スプライン曲線(Piegl & Tiller)。重みが全部 1 なら普通の B スプライン、重みを上げるとその制御点に寄る。端点以外の制御点は通らない。返す `basis` は有理基底(各行の和が 1)。
+- **nurbs_circle**`(radius, center)` — 円を**厳密に**描く 9 点・2 次の NURBS(隅の重み 1/√2)。多項式の B スプラインは隅の向きで最大 6.1% 膨らむ。
+- **nurbs_surface**`(control_net, weights, degree=(3,3))` — テンソル積の曲面。`mesh` = (V, F) を返すので `geodesic_heat` や `angle_defect` にそのまま渡せる。
+- **nurbs_revolve**`(profile, weights, degree=2)` — 断面 (r, z) を z 軸のまわりに回した回転面。断面が円弧なら球・トーラスが丸め誤差で厳密。★NURBS は射影変換と可換(同次座標の制御点を変換してから描く = 描いてから変換する)。旧 `gen_contour_nurbs_xld` は補間 B スプラインで、0.4.0 で削除する。
 
 ## 動く最小例(検証済み)
 

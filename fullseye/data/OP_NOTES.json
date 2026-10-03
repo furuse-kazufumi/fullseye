@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2633,
- "n_notes": 2639,
+ "n_ops": 2637,
+ "n_notes": 2643,
  "notes": {
   "vol_dilate": [
    {
@@ -20856,6 +20856,44 @@
     "category": "geometry",
     "out": "mesh",
     "path": "docs/ops/math/geometry/mesh_torus.md"
+   }
+  ],
+  "nurbs_circle": [
+   {
+    "op": "nurbs_circle",
+    "dim": "math",
+    "category": "geometry",
+    "out": "table",
+    "path": "docs/ops/math/geometry/nurbs_circle.md"
+   }
+  ],
+  "nurbs_curve": [
+   {
+    "op": "nurbs_curve",
+    "dim": "math",
+    "category": "geometry",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/math/geometry/nurbs_curve.md"
+   }
+  ],
+  "nurbs_revolve": [
+   {
+    "op": "nurbs_revolve",
+    "dim": "math",
+    "category": "geometry",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/math/geometry/nurbs_revolve.md"
+   }
+  ],
+  "nurbs_surface": [
+   {
+    "op": "nurbs_surface",
+    "dim": "math",
+    "category": "geometry",
+    "out": "table",
+    "path": "docs/ops/math/geometry/nurbs_surface.md"
    }
   ],
   "interp_cubic": [

@@ -45,22 +45,22 @@
 ## `api.py`
 
 - **L164** _(ja)_ — ★2026-10-02: 合成パイプライン 6 本を fs.<名前> から出す。以前は ``fs.pipeline3d.<fn>`` でしか届かず、 公開経路の門では「1 本も届かない島」として _INTERNAL に置かれていた。import 自体は torch が無くても 通る(torch_lazy)。torch を要るのは呼んだときの FPFH / ICP の側だけ。
-- **L786** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
-- **L802** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
-- **L857** — ★``annotate.overlay_mask`` **有意不暴露到頂層**。同名的 ``imgio.overlay_mask`` 已作為 ``fs.overlay_mask`` 公開，其參數與含義都不同(imgio = 原始 RGB、mask>0.5、fill/margin / annotate = 角色名的顏色、也可用權重 [0,1]、拒絕形狀不匹配)。在同名上載入不同的約定，呼叫方收到的不是例外而是**看似合理卻不同的圖**。公開 API 的破壞性變更不擅自做，故帶角色的那個用 ``fs.annotate.overlay_mask`` 取用。
-- **L993** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L1484** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
-- **L1502** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
-- **L1571** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
-- **L1866** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
-- **L1897** — ★ **目前對彩色影像沒有正確的呼叫方式**:整批傳入會混色,按通道呼叫 3 次會讓自正規化的 op 把每個通道除以各自的最大值,破壞通道間的比值(灰階邊緣法的角度誤差從自建 Sobel 的 1.03 度 -> 每圖 4.17 度 -> 每通道 27.86 度,零點 29.14 度)。倒向哪一邊是**合約的決定**,所以這裡不改動任何一個預設數值,僅在 `on_error="raise"` 時拒絕,預設則記入台帳使其可見。詳情與選項見 docs/KNOWN_ISSUES.md。
-- **L2181** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
-- **L2217** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L2538** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L2778** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L2782** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L2903** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L2913** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L790** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
+- **L806** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
+- **L861** — ★``annotate.overlay_mask`` **有意不暴露到頂層**。同名的 ``imgio.overlay_mask`` 已作為 ``fs.overlay_mask`` 公開，其參數與含義都不同(imgio = 原始 RGB、mask>0.5、fill/margin / annotate = 角色名的顏色、也可用權重 [0,1]、拒絕形狀不匹配)。在同名上載入不同的約定，呼叫方收到的不是例外而是**看似合理卻不同的圖**。公開 API 的破壞性變更不擅自做，故帶角色的那個用 ``fs.annotate.overlay_mask`` 取用。
+- **L997** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
+- **L1492** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
+- **L1510** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
+- **L1579** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
+- **L1874** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
+- **L1905** — ★ **目前對彩色影像沒有正確的呼叫方式**:整批傳入會混色,按通道呼叫 3 次會讓自正規化的 op 把每個通道除以各自的最大值,破壞通道間的比值(灰階邊緣法的角度誤差從自建 Sobel 的 1.03 度 -> 每圖 4.17 度 -> 每通道 27.86 度,零點 29.14 度)。倒向哪一邊是**合約的決定**,所以這裡不改動任何一個預設數值,僅在 `on_error="raise"` 時拒絕,預設則記入台帳使其可見。詳情與選項見 docs/KNOWN_ISSUES.md。
+- **L2189** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
+- **L2225** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L2546** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L2786** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L2790** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L2911** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L2921** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -145,8 +145,8 @@
 
 ## `backends_typed.py`
 
-- **L413** _(ja)_ — ★本当に効く r_lo / r_hi(半径の窓)だが、後者は既定が None で「データから決める」 意味なので、正の数値既定を要求する橋の選定には載らない。嘘のノブを 1 本足すより **a だけを配線して b を『未使用』と書く**ほうが正しい。
-- **L585** — ★在 2026-09-05 之前透過操作 sys.path 讀取 ``tools/chain_fuzz``(未隨附)。在 wheel 中會失敗,而下面的 build() 悄悄回傳 [],所以 tb_* 143 個 op 消失了。
+- **L414** _(ja)_ — ★本当に効く r_lo / r_hi(半径の窓)だが、後者は既定が None で「データから決める」 意味なので、正の数値既定を要求する橋の選定には載らない。嘘のノブを 1 本足すより **a だけを配線して b を『未使用』と書く**ほうが正しい。
+- **L586** — ★在 2026-09-05 之前透過操作 sys.path 讀取 ``tools/chain_fuzz``(未隨附)。在 wheel 中會失敗,而下面的 build() 悄悄回傳 [],所以 tb_* 143 個 op 消失了。
 
 ## `ballistics.py`
 
@@ -1243,11 +1243,11 @@
 
 ## `fullseye/__init__.py`
 
-- **L423** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L462** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L652** — ★與宣告 out 型別對齊的 adapter，會**丟棄回傳元組的 op 的第 2 項及以後**(``drizzle_resample`` 的 ``wht``、``piv_cross_correlate`` 的 ``info``)。當被丟棄的一側需要用到時,從台帳入口就搆不著。2026-09-06,某超解析度 PoC 寫成 ``flow, info = fs.ledger.piv_cross_correlate(...)``,沿第 1 軸拆開 (2,R,C),把 dy 的第 2 列當作 dx 使用,使偏移估計從 0.12 -> 0.74 像素(不拋例外)。用 ``.raw`` 可搆到原始回傳:``fs.ledger.piv_cross_correlate.raw(a, b)``。
-- **L1075** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L1101** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L424** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
+- **L463** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L653** — ★與宣告 out 型別對齊的 adapter，會**丟棄回傳元組的 op 的第 2 項及以後**(``drizzle_resample`` 的 ``wht``、``piv_cross_correlate`` 的 ``info``)。當被丟棄的一側需要用到時,從台帳入口就搆不著。2026-09-06,某超解析度 PoC 寫成 ``flow, info = fs.ledger.piv_cross_correlate(...)``,沿第 1 軸拆開 (2,R,C),把 dy 的第 2 列當作 dx 使用,使偏移估計從 0.12 -> 0.74 像素(不拋例外)。用 ``.raw`` 可搆到原始回傳:``fs.ledger.piv_cross_correlate.raw(a, b)``。
+- **L1077** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1103** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1347,8 +1347,8 @@
 
 ## `mathgeometry.py`
 
-- **L222** _(ja)_ — ★最初は発散を np.gradient(中心差分)で取り、Poisson を 5 点 Laplacian で解いていた —— 2 つが互いの随伴でなく、 縁で発散の総和も釣り合わず、隅で距離が真値の 0.52 倍に縮んだ(2026-10-03)。同じ G から両方を作ると Poisson は「勾配が X に最も近い φ」の最小二乗そのものになり、縁(断熱)でも無矛盾になる。
-- **L245** _(ja)_ — ★熱の段は直接法で解く: u は距離とともに e^{−r/h} で 1e-30 まで落ち、遠くの勾配の「向き」はその極小値の 相対精度に乗っている。CG は絶対誤差 ~1e-12 で止まり、極小値を塗りつぶして遠くの向きを壊した (3-D で誤差 0.045 → 0.279、2026-10-03)。定数のずれが無害な Poisson の段だけ CG にする。
+- **L224** _(ja)_ — ★最初は発散を np.gradient(中心差分)で取り、Poisson を 5 点 Laplacian で解いていた —— 2 つが互いの随伴でなく、 縁で発散の総和も釣り合わず、隅で距離が真値の 0.52 倍に縮んだ(2026-10-03)。同じ G から両方を作ると Poisson は「勾配が X に最も近い φ」の最小二乗そのものになり、縁(断熱)でも無矛盾になる。
+- **L247** _(ja)_ — ★熱の段は直接法で解く: u は距離とともに e^{−r/h} で 1e-30 まで落ち、遠くの勾配の「向き」はその極小値の 相対精度に乗っている。CG は絶対誤差 ~1e-12 で止まり、極小値を塗りつぶして遠くの向きを壊した (3-D で誤差 0.045 → 0.279、2026-10-03)。定数のずれが無害な Poisson の段だけ CG にする。
 
 ## `mathops.py`
 

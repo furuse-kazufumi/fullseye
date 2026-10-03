@@ -233,6 +233,7 @@ _OP_BRIDGE_SKIP = {
     # 2026-10-03: 行列の指数・対数と SE(3) の exp/log は「行列 ↔ 行列/ベクトル」の代数で、画像を受けない
     #   (画像に expm を当てても意味が無く、logm は負の固有値で拒否する)。
     "mat_expm", "mat_logm", "se3_exp", "se3_log",
+    "nurbs_curve", "nurbs_revolve",                 # 制御点の並び(画像でも信号でもない)
 }
 
 

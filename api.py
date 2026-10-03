@@ -429,6 +429,10 @@ from mathgeometry import (  # noqa: E402,F401
     geodesic_heat,
     geodesic_heat_grid,
     mesh_torus,
+    nurbs_curve,
+    nurbs_circle,
+    nurbs_surface,
+    nurbs_revolve,
 )
 # 仮想マシンビジョン環境: 部品を買う前に「その構成で狙う欠陥が見つかるか」を
 # 閉形式の光学 + 数式で作った欠陥 + 撮像連鎖で先に確かめる層。
@@ -1192,6 +1196,10 @@ __all__ = [
     "geodesic_heat",
     "geodesic_heat_grid",
     "mesh_torus",
+    "nurbs_curve",
+    "nurbs_circle",
+    "nurbs_surface",
+    "nurbs_revolve",
     "visiondesign", "system_geometry", "resolving_power", "system_feasibility",
     "image_formation", "detectability_limit",
     "defectgen", "defect_scratch", "defect_pits", "defect_crack", "defect_blob",

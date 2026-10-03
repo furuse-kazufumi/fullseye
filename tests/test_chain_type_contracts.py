@@ -295,6 +295,10 @@ def test_opsmath_call_returns_declared_types():
         "delaunay_triangulate": (np.random.default_rng(0).random((20, 2)),),
         "geodesic_heat": (mathgeometry.mesh_torus(2.0, 0.7, 12, 8),),
         "geodesic_heat_grid": (np.ones((16, 16), bool),),
+        "nurbs_curve": (np.array([[0.0, 0.0], [1.0, 2.0], [2.0, -1.0], [3.0, 1.0]]),),
+        "nurbs_circle": (),
+        "nurbs_surface": (np.random.default_rng(0).random((4, 4, 3)),),
+        "nurbs_revolve": (np.array([[1.0, 0.0], [2.0, 1.0], [1.0, 2.0]]),),
         "mesh_torus": (),
     })
     from tools.chain_fuzz import TYPE_CHECKS

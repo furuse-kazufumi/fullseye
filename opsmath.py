@@ -214,6 +214,10 @@ _CATALOG = {
         ("geodesic_heat", "mathgeometry", ["mesh"], "table"),
         ("geodesic_heat_grid", "mathgeometry", ["image2d"], "table"),
         ("mesh_torus", "mathgeometry", [], "mesh"),
+        ("nurbs_curve", "mathgeometry", ["matrix"], "table"),
+        ("nurbs_circle", "mathgeometry", [], "table"),
+        ("nurbs_surface", "mathgeometry", [], "table"),
+        ("nurbs_revolve", "mathgeometry", ["matrix"], "table"),
     ],
 }
 

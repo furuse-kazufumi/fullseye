@@ -609,7 +609,7 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
         colours = ("reference", "emphasis", "right", "wrong", "neutral")
         legend = []
         for k, (label, x, y) in enumerate(series):
-            c = colors[k] if colors else colours[k % len(colours)]
+            c = colors[k] if colors and colors[k] is not None else colours[k % len(colours)]
             kind = (kinds[k] if kinds else "line")
             ls = styles[k] if styles else None
             extra = {}
