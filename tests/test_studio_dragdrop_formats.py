@@ -368,3 +368,44 @@ def test_drop_wave2_bvh_events_swc_and_documents(tmp_path):
 def QtGui_pixel(img, fx, fy):
     c = img.pixelColor(int(img.width() * fx), int(img.height() * fy))
     return (c.red(), c.green(), c.blue())
+
+
+# ── 第 3 陣: 音声(波形 + スペクトログラム)─────────────────────────────────────────────────── #
+def _write_wav(path, x, rate):
+    import wave
+    a = np.clip(np.round(x * 32767), -32768, 32767).astype("<i2")
+    with wave.open(str(path), "wb") as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(rate); w.writeframes(a.tobytes())
+
+
+def test_audio_view_data_puts_a_tone_at_its_frequency():
+    """1 kHz の正弦波: スペクトログラムの最大は 1 kHz の行(窓の分解能 rate/win の範囲)、包絡は ±振幅。"""
+    rate = 16000
+    t = np.arange(rate) / rate
+    d = studio._audio_view_data(0.5 * np.sin(2 * np.pi * 1000 * t), rate)
+    f_peak = d["freqs"][np.argmax(d["spec_db"].mean(axis=1))]
+    assert abs(f_peak - 1000) <= rate / 1024
+    assert abs(d["env_max"].max() - 0.5) < 1e-3 and abs(d["env_min"].min() + 0.5) < 1e-3
+    assert d["spec_db"].max() == 0.0 and d["spec_db"].min() >= -80.0
+    assert d["info"]["duration"] == "1.000 s"
+
+
+def test_drop_wav_opens_the_audio_window_and_feeds_the_pipeline(tmp_path):
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    rate = 8000
+    t = np.arange(rate // 2) / rate
+    chirp = 0.4 * np.sin(2 * np.pi * (200 * t + 3000 * t ** 2))      # 200 Hz → 3.2 kHz
+    p = tmp_path / "chirp.wav"
+    _write_wav(p, chirp, rate)
+    win.drop_handler([str(p)])
+    dlg = win._last_audio
+    assert dlg is not None and not _ERRORS, _ERRORS
+    spec = dlg._data["spec_db"]
+    early = dlg._data["freqs"][np.argmax(spec[:, 1])]; late = dlg._data["freqs"][np.argmax(spec[:, -2])]
+    assert early < 800 < 2000 < late                                  # チャープは時間とともに上がる(0.4 s で 2.6 kHz)
+    dlg._use()
+    assert model.image.shape == spec.shape and 0.0 <= model.image.min() and model.image.max() <= 1.0
+    bad = tmp_path / "x.mp3"; bad.write_bytes(b"\0" * 64)
+    win.drop_handler([str(bad)])
+    assert _ERRORS and "soundfile" in _ERRORS[-1][1]                  # 読めない時は入れ方を名指し

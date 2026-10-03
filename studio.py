@@ -711,6 +711,32 @@ MODEL3D_FILE_EXTS = (".ply", ".splat", ".pcd", ".xyz", ".pts", ".asc", ".obj", "
                      ".glb", ".gltf", ".las", ".laz", ".urdf", ".mjcf", ".bvh", ".swc")
 #: 文書ビューアで開く拡張子(Qt の標準の描画器: Markdown = QTextBrowser、SVG = QSvgRenderer)
 DOCUMENT_FILE_EXTS = (".md", ".markdown", ".svg")
+#: 音声の窓で開く拡張子(dsp.read_audio: WAV は stdlib、他は soundfile が要る)
+AUDIO_FILE_EXTS = (".wav", ".mp3", ".flac", ".ogg", ".oga", ".m4a", ".aac", ".aif", ".aiff")
+
+
+def _audio_view_data(x, rate, win=1024, floor_db=-80.0, width=900):
+    """音声の窓の中身(headless): スペクトログラム(dB、最大 = 0 dB、床 floor_db)と波形の包絡(画素の列ごとの最小・最大)。
+
+    Returns:
+        ``spec_db`` (F, T)、``freqs`` [Hz]、``times`` [s]、``env_min`` / ``env_max`` (width,)、
+        ``info``(標本化周波数・長さ・ピーク・RMS)。
+    """
+    import dsp
+    x = np.asarray(x, np.float64).ravel()
+    if x.size == 0:
+        raise ValueError("audio: 0 samples")
+    w = int(min(win, max(16, 2 ** int(np.floor(np.log2(max(x.size, 16)))))))
+    f, t, S = dsp.spectrogram(x, rate=float(rate), win=w, hop=w // 4)
+    db = 20.0 * np.log10(np.maximum(S, 1e-12))
+    db = np.maximum(db - db.max(), float(floor_db))
+    edges = np.linspace(0, x.size, int(width) + 1).astype(int)
+    env_min = np.array([x[a:max(b, a + 1)].min() for a, b in zip(edges[:-1], edges[1:])])
+    env_max = np.array([x[a:max(b, a + 1)].max() for a, b in zip(edges[:-1], edges[1:])])
+    info = {"rate": "%g Hz" % float(rate), "duration": "%.3f s" % (x.size / float(rate)), "samples": int(x.size),
+            "peak": fmt_num(float(np.abs(x).max()), 4), "rms": fmt_num(float(np.sqrt(np.mean(x * x))), 4),
+            "window": "%d samples (hop %d)" % (w, w // 4)}
+    return {"spec_db": db, "freqs": f, "times": t, "env_min": env_min, "env_max": env_max, "info": info}
 
 
 def _events_kind(path):
@@ -789,9 +815,10 @@ def _classify_dropped_paths(paths):
     ``scripts`` = ``.py``(Python エディタのタブで開く)、``pipelines`` = ``.json``(パイプラインとして開く)、
     ``models3d`` = 点群・メッシュ・3DGS・ボリューム・glTF・LAS/LAZ・MJCF/URDF(3-D ビューア)、``videos`` = 動画・アニメーション GIF・HDF の
     スタック(動画の立方体)、``arrays`` = 2-D の .npy(画像としてパイプラインの入力に)、``events`` = イベントカメラ
-    の (x, y, t, p)(極性つきのコマにして動画の立方体)、``documents`` = Markdown / SVG(文書ビューア)。"""
+    の (x, y, t, p)(極性つきのコマにして動画の立方体)、``documents`` = Markdown / SVG(文書ビューア)、
+    ``audio`` = 音声(波形 + スペクトログラム)。"""
     out = {"images": [], "scripts": [], "pipelines": [], "models3d": [], "videos": [], "arrays": [], "events": [],
-           "documents": [], "other": []}
+           "documents": [], "audio": [], "other": []}
     for p in paths or []:
         p = os.fspath(p)
         if os.path.isdir(p):
@@ -813,6 +840,8 @@ def _classify_dropped_paths(paths):
             key = _npy_kind(p)
         elif ext in DOCUMENT_FILE_EXTS:
             key = "documents"
+        elif ext in AUDIO_FILE_EXTS:
+            key = "audio"
         elif ext == ".xml":
             key = "models3d" if _robot_xml_kind(p) else "other"
         else:
@@ -6695,6 +6724,87 @@ def build_window(model=None):
         persist_dialog_geometry(dlg, "ex2d"); win._ex2d_dlg = dlg
         win._localize(dlg); dlg.show()
 
+    def show_audio_viewer(path):
+        """音声の窓: 波形(包絡)・スペクトログラム(dB、目盛りつき)・情報・再生・「スペクトログラムを入力にする」。"""
+        import dsp
+        try:
+            x, rate = dsp.read_audio(path)
+            d = _audio_view_data(x, rate)
+        except Exception as e:
+            hint = ("" if path.lower().endswith(".wav") else
+                    "\n\nWAV 以外(mp3 / flac / ogg …)は soundfile が要る: pip install soundfile")
+            report_error("Could not open audio", "%s\n\n%s%s" % (path, e, hint)); return None
+        dlg = QtWidgets.QDialog(win); tag_dialog(dlg, "reference"); dlg.setModal(False)
+        dlg.setWindowTitle("Audio — %s" % os.path.basename(path))
+        lay = QtWidgets.QVBoxLayout(dlg)
+        W, Hw, Hs, L, B = 900, 120, 300, 64, 28                     # 幅・波形の高さ・スペクトログラムの高さ・左と下の余白
+
+        def _axes_pixmap(h, draw, xticks, yticks, ylab):
+            pm = QtGui.QPixmap(W + L + 12, h + B + 8); pm.fill(QtGui.QColor(26, 26, 30))
+            p = QtGui.QPainter(pm)
+            draw(p, L, 4, W, h)
+            p.setPen(QtGui.QColor(200, 200, 200)); p.drawRect(L, 4, W, h)
+            f = p.font(); f.setPointSize(8); p.setFont(f)
+            for v, pos in xticks:
+                xx = L + int(pos * W); p.drawLine(xx, 4 + h, xx, 8 + h); p.drawText(xx - 20, h + 22, "%g s" % v)
+            for v, pos in yticks:
+                yy = 4 + int((1 - pos) * h); p.drawLine(L - 4, yy, L, yy); p.drawText(2, yy + 4, v)
+            p.save(); p.translate(12, 4 + h // 2); p.rotate(-90); p.restore()
+            p.end()
+            return pm
+
+        dur = len(np.asarray(x).ravel()) / float(rate)
+        tk = [(round(v, 3), v / dur) for v in np.linspace(0, dur, 6)]
+
+        def draw_wave(p, x0, y0, w, h):
+            p.setPen(QtGui.QColor(90, 170, 255))
+            for i, (a, b) in enumerate(zip(d["env_min"], d["env_max"])):
+                p.drawLine(x0 + i, y0 + int((1 - (b + 1) / 2) * h), x0 + i, y0 + int((1 - (a + 1) / 2) * h))
+        wave = QtWidgets.QLabel(); wave.setPixmap(_axes_pixmap(Hw, draw_wave, tk, [("+1", 1.0), ("0", 0.5), ("−1", 0.0)], ""))
+        spec = d["spec_db"]
+        rgb = imgio.apply_cmap((spec[::-1] - spec.min()) / max(float(np.ptp(spec)), 1e-9), name="inferno")
+        rgb8 = np.ascontiguousarray((np.clip(rgb, 0, 1) * 255).astype(np.uint8))
+        qi = QtGui.QImage(rgb8.data, rgb8.shape[1], rgb8.shape[0], rgb8.strides[0], QtGui.QImage.Format_RGB888).copy()
+        fmax = float(d["freqs"][-1])
+
+        def draw_spec(p, x0, y0, w, h):
+            p.drawImage(QtCore.QRect(x0, y0, w, h), qi)
+        fk = [("%g Hz" % round(v), v / fmax) for v in np.linspace(0, fmax, 5)]
+        spec_lbl = QtWidgets.QLabel(); spec_lbl.setPixmap(_axes_pixmap(Hs, draw_spec, tk, fk, ""))
+        lay.addWidget(QtWidgets.QLabel("Waveform")); lay.addWidget(wave)
+        lay.addWidget(QtWidgets.QLabel("Spectrogram (dB, 0 = loudest, floor −80 dB)")); lay.addWidget(spec_lbl)
+        info = QtWidgets.QLabel("   ".join("%s: %s" % kv for kv in d["info"].items()))
+        info.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        lay.addWidget(info)
+        bar = QtWidgets.QHBoxLayout()
+        b_play = QtWidgets.QPushButton("Play"); b_stop = QtWidgets.QPushButton("Stop")
+        b_use = QtWidgets.QPushButton("Use spectrogram as pipeline input")
+        for b_ in (b_play, b_stop):
+            bar.addWidget(b_)
+        bar.addStretch(1); bar.addWidget(b_use); lay.addLayout(bar)
+        try:
+            from PySide6 import QtMultimedia
+            player = QtMultimedia.QMediaPlayer(dlg); out = QtMultimedia.QAudioOutput(dlg)
+            player.setAudioOutput(out); player.setSource(QtCore.QUrl.fromLocalFile(os.path.abspath(path)))
+            b_play.clicked.connect(lambda _=False: player.play()); b_stop.clicked.connect(lambda _=False: player.stop())
+            dlg._player = player; dlg._audio_out = out
+        except Exception as e:                                       # 再生できなくても見るのはできる
+            _log_soft_failure("audio playback", e)
+            b_play.setEnabled(False); b_stop.setEnabled(False)
+
+        def _use():
+            img = (spec[::-1] - spec.min()) / max(float(np.ptp(spec)), 1e-9)
+            model.set_image(img); state["fit_next"] = True; show_result()
+            flash("pipeline input ← spectrogram of %s (%d × %d, dB normalised)" % (os.path.basename(path), *img.shape))
+        b_use.clicked.connect(lambda _=False: _use())
+        dlg._data = d; dlg._use = _use
+        win._localize(dlg)
+        dlg.resize(W + L + 40, Hw + Hs + 2 * B + 160)
+        dlg.show()
+        win._last_audio = dlg
+        return dlg
+    win._show_audio_viewer = show_audio_viewer
+
     def show_document_viewer(path):
         """Markdown(QTextBrowser の setMarkdown)と SVG(QSvgRenderer で窓の大きさに描く)を見る窓。依存なし。"""
         ext = os.path.splitext(path)[1].lower()
@@ -9767,12 +9877,14 @@ def build_window(model=None):
             _open_events(p)
         for p in kinds["documents"][:4]:
             show_document_viewer(p)
+        for p in kinds["audio"][:2]:
+            show_audio_viewer(p)
         handled = any(kinds[k] for k in ("images", "scripts", "pipelines", "models3d", "videos", "arrays", "events",
-                                         "documents"))
+                                         "documents", "audio"))
         if kinds["other"] and not handled:
             flash("drop: unsupported file '%s' — drop images / a folder, .py, .json, 3-D (ply, splat, obj, stl, pcd, "
                   "glb, las, urdf, bvh, swc, nii, dcm …), video (mp4, avi, animated gif, hdf), events (x y t p), "
-                  ".md / .svg or .npy" % os.path.basename(kinds["other"][0]))
+                  ".md / .svg, audio (wav, mp3, flac …) or .npy" % os.path.basename(kinds["other"][0]))
 
     def _open_events(path):
         """イベントカメラのファイル → 極性つきのコマ (T, H, W) → 動画の立方体(ON = 明、OFF = 暗、0 = 灰)。"""

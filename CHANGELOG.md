@@ -46,6 +46,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   `.py` = Python エディタのタブ(エディタに落としても開く。以前はパスが文字で貼られた)、`.json` = パイプライン、
   点群・メッシュ・3DGS・医用ボリューム = 3-D ビューア、動画・アニメーション GIF・HDF = Video cube、`.npy` は形で振り分け。
   以前は 1 本目しか見ず `.py` は「未対応」だった。**ASCII とバイナリの両方**を門で固定: PLY(ASCII / LE / BE)・STL・PCD。
+- ★**Studio の D&D 第 3 陣: 音声**: WAV(stdlib)/ mp3・flac・ogg …(soundfile があれば)を落とすと**音声の窓**: 波形の包絡・
+  スペクトログラム(dB、時間と周波数の目盛り)・情報・再生(QtMultimedia)・「スペクトログラムを入力にする」。読み手は既存の
+  `dsp.read_audio`(全プロジェクトの棚卸しでは「無い」とされたが Fullseye に在った)。soundfile が無ければ入れ方を名指しして断る。
 - ★**Studio の D&D 第 2 陣 + `motionio`(新)**: `read_bvh`(モーションキャプチャ、順運動学まで。門 = 手で計算できる骨格)、
   `read_events` / `events_to_frames`(イベントカメラの x y t p。列の順は見出しか中身で決め、極性の和を保存)。Studio は BVH を
   関節の軌跡(時間の色)、SWC を神経の骨格(種類の色)として 3-D ビューアへ、イベントを Video cube へ、Markdown / SVG を
