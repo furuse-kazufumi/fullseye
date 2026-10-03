@@ -1,8 +1,8 @@
 {
- "n_ops": 2653,
+ "n_ops": 2657,
  "tiers": {
   "color": 12,
-  "ledger": 1702,
+  "ledger": 1706,
   "nary": 17,
   "registry": 922
  },
@@ -8462,6 +8462,32 @@
    "dim": "gfx2d",
    "in_sorts": [
     "rgb"
+   ]
+  },
+  {
+   "name": "humanoid_clip_mesh",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "humanoid",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "humanoid_impostors",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "humanoid",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -22165,6 +22191,21 @@
    ]
   },
   {
+   "name": "world_camera_impostors",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "humanoid",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
    "name": "world_gradient_illumination",
    "halcon": "",
    "in_sort": null,
@@ -22226,6 +22267,19 @@
    "ledger": "opssegmentation",
    "dim": "segmentation",
    "in_sorts": []
+  },
+  {
+   "name": "world_pose_humanoid",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "humanoid",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
   },
   {
    "name": "world_texture_regions",

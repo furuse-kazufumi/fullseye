@@ -2908,6 +2908,45 @@ def _b_read_events(pool, rng):
     return (_fuzz_file("ev.txt", rows.encode("ascii")),), {}
 
 
+def _fuzz_clip():
+    """mujoco の要らない歩行クリップ(箱の歩行者の脚を開閉する 8 コマ)—— 台帳の再生 op はこれで回す。"""
+    import driveterrain as DTR
+    T = 8
+    ms = [DTR.pedestrian_mesh(1.7, stride=0.4 * np.sin(2 * np.pi * k / T)) for k in range(T)]
+    return {"V": np.stack([m["V"] for m in ms]), "F": ms[0]["F"], "color": ms[0]["color"], "label": 7,
+            "dims": ms[0]["dims"], "advance": np.linspace(0, 1.2, T, endpoint=False), "cycle_length": 1.2}
+
+
+def _b_humanoid_clip_mesh(pool, rng):
+    return (_fuzz_clip(), 0.37), {}
+
+
+def _b_world_pose_humanoid(pool, rng):
+    import drivecourse as DC
+    import driveterrain as DTR
+    import driveworld as DW
+    import drivehumanoid as DH
+    clip = _fuzz_clip()
+    w = DW.world_build(DC.course_road(30.0, 7.0), ground_step=4.0)
+    i = DTR.add_mesh_object(w, DH.humanoid_clip_mesh(clip, 0.0), 5.0, 1.0, 0.0, name="humanoid")
+    return (w, i, clip, 0.6, 5.5, 1.0, 0.0), {}
+
+
+def _b_humanoid_impostors(pool, rng):
+    return (_fuzz_clip(),), {"n_yaw": 4, "n_phase": 2, "res": 24}
+
+
+def _b_world_camera_impostors(pool, rng):
+    import drivecourse as DC
+    import driveworld as DW
+    import drivehumanoid as DH
+    imp = DH.humanoid_impostors(_fuzz_clip(), n_yaw=4, n_phase=2, res=24)
+    w = DW.world_build(DC.course_road(30.0, 7.0), ground_step=4.0)
+    K = DW.camera_intrinsics(60.0, 96, 60)
+    P = DW.camera_pose((1.0, 3.5, 1.35), (21.0, 3.5, 0.9))
+    return (w, P, K, 96, 60, [{"imp": imp, "x": 9.0, "y": 3.0, "yaw": 1.0, "distance": 0.3}]), {}
+
+
 def _b_events_to_frames(pool, rng):
     import motionio
     return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
@@ -3778,6 +3817,8 @@ OP_ARG_BUILDERS = {
     "gs_from_world": _b_gs_from_world, "gs_update": _b_gs_update, "gs_render": _b_gs_render, "gs_render_fn": _b_gs_render_fn,
     "gs_read_file": _b_gs_read_file, "read_bvh": _b_read_bvh, "read_events": _b_read_events,
     "events_to_frames": _b_events_to_frames,
+    "humanoid_clip_mesh": _b_humanoid_clip_mesh, "world_pose_humanoid": _b_world_pose_humanoid,
+    "humanoid_impostors": _b_humanoid_impostors, "world_camera_impostors": _b_world_camera_impostors,
     "sign_params": _b_sign_kind, "sign_image": _b_sign_img, "plate_mesh_from_image": _b_plate_mesh,
     "sign_mesh": _b_sign_mesh, "add_sign": _b_add_sign, "signal_jp_mesh": _b_signal_jp,
     "add_signal_jp": _b_add_signal_jp,

@@ -1,4 +1,4 @@
-# DRIVE operator help — 292 ops in 23 categories
+# DRIVE operator help — 296 ops in 24 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -35,6 +35,10 @@
 ### gsplat (5)
 
 [gs_from_world](gsplat/gs_from_world.md) · [gs_read_file](gsplat/gs_read_file.md) · [gs_render](gsplat/gs_render.md) · [gs_render_fn](gsplat/gs_render_fn.md) · [gs_update](gsplat/gs_update.md)
+
+### humanoid (4)
+
+[humanoid_clip_mesh](humanoid/humanoid_clip_mesh.md) · [humanoid_impostors](humanoid/humanoid_impostors.md) · [world_camera_impostors](humanoid/world_camera_impostors.md) · [world_pose_humanoid](humanoid/world_pose_humanoid.md)
 
 ### inf (12)
 

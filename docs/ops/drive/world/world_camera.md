@@ -4,7 +4,7 @@ dim: drive
 category: world
 in: table × matrix × matrix
 out: table
-examples: [poc_ball_bounce, poc_driving_crossing, poc_driving_decisions, poc_driving_endless_map, poc_driving_lateral, poc_driving_longitudinal, poc_driving_pass, poc_driving_school, poc_driving_traffic, poc_kendama, poc_table_tennis_bounce, poc_table_tennis_spin, poc_ttc_rss, poc_world_terrain]
+examples: [poc_ball_bounce, poc_driving_crossing, poc_driving_decisions, poc_driving_endless_map, poc_driving_humanoids, poc_driving_lateral, poc_driving_longitudinal, poc_driving_pass, poc_driving_school, poc_driving_traffic, poc_kendama, poc_table_tennis_bounce, poc_table_tennis_spin, poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -35,6 +35,7 @@ render3d.render_mesh(attributes=True) の三角形 id から面の色・ラベ�
 - [poc_driving_crossing](../../../../examples/poc_driving_crossing.py) — `py -3.11 examples/poc_driving_crossing.py`
 - [poc_driving_decisions](../../../../examples/poc_driving_decisions.py) — `py -3.11 examples/poc_driving_decisions.py`
 - [poc_driving_endless_map](../../../../examples/poc_driving_endless_map.py) — `py -3.11 examples/poc_driving_endless_map.py`
+- [poc_driving_humanoids](../../../../examples/poc_driving_humanoids.py) — `py -3.11 examples/poc_driving_humanoids.py`
 - [poc_driving_lateral](../../../../examples/poc_driving_lateral.py) — `py -3.11 examples/poc_driving_lateral.py`
 - [poc_driving_longitudinal](../../../../examples/poc_driving_longitudinal.py) — `py -3.11 examples/poc_driving_longitudinal.py`
 - [poc_driving_pass](../../../../examples/poc_driving_pass.py) — `py -3.11 examples/poc_driving_pass.py`

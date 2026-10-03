@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">world_camera_impostors — DRIVE <code style="color:#22d3bf">humanoid</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_camera_impostors(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, actors=(), **camera_kw) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivehumanoid; drivehumanoid.world_camera_impostors(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, actors=(), **camera_kw) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;world_camera_impostors&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>:func:<code style="color:#22d3bf">driveworld.world_camera</code> で世界を撮り、`<code style="color:#22d3bf">actors</code>` のインポスタを<b>深度で前後を比べて</b>貼る。</p>
+<p>`<code style="color:#22d3bf">actors</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">[{&quot;imp&quot;: humanoid_impostors の返り値, &quot;x&quot;, &quot;y&quot;, &quot;yaw&quot;, &quot;distance&quot; (歩いた距離 [m])}, …]</code>`。</p>
+<p>向きの段 = 体から見たカメラの方位を n_yaw 段に丸めたもの、位相 = 歩いた距離を周期で割った余りに最も近い段。</p>
+<p>大きさ = 実際のカメラの「1 m あたりの画素」/ 事前描画の「1 m あたりの画素」(最近傍で拡大縮小)。</p>
+<p>返り値は world_camera と同じ鍵。貼った画素は `<code style="color:#22d3bf">label</code><code style="color:#22d3bf"> = 物体のラベル(7)、</code><code style="color:#22d3bf">face</code>` = −2(三角形が無い)、</p>
+<p>`<code style="color:#22d3bf">shade</code><code style="color:#22d3bf"> = 1。加えて </code><code style="color:#22d3bf">&quot;impostor_pixels&quot;</code>`(貼った画素の数)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_humanoids">poc_driving_humanoids</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_humanoids.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">humanoid</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:humanoid_clip_mesh">humanoid_clip_mesh</a> · <a style="color:#22d3bf" href="opdrive:world_pose_humanoid">world_pose_humanoid</a> · <a style="color:#22d3bf" href="opdrive:humanoid_impostors">humanoid_impostors</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivehumanoid.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

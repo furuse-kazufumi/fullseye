@@ -6,7 +6,7 @@ tags:
   - physics
   - ImageProcessing
   - robotics
-public_private: true
+public_private: false
 public_id: a82bf9f341cc4f04ca75
 ---
 

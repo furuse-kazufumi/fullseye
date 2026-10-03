@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2653,
- "n_notes": 2659,
+ "n_ops": 2657,
+ "n_notes": 2663,
  "notes": {
   "vol_dilate": [
    {
@@ -16495,6 +16495,46 @@
     "in": "table × table",
     "out": "table",
     "path": "docs/ops/drive/gsplat/gs_update.md"
+   }
+  ],
+  "humanoid_clip_mesh": [
+   {
+    "op": "humanoid_clip_mesh",
+    "dim": "drive",
+    "category": "humanoid",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/humanoid/humanoid_clip_mesh.md"
+   }
+  ],
+  "humanoid_impostors": [
+   {
+    "op": "humanoid_impostors",
+    "dim": "drive",
+    "category": "humanoid",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/humanoid/humanoid_impostors.md"
+   }
+  ],
+  "world_camera_impostors": [
+   {
+    "op": "world_camera_impostors",
+    "dim": "drive",
+    "category": "humanoid",
+    "in": "table × matrix × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/humanoid/world_camera_impostors.md"
+   }
+  ],
+  "world_pose_humanoid": [
+   {
+    "op": "world_pose_humanoid",
+    "dim": "drive",
+    "category": "humanoid",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/humanoid/world_pose_humanoid.md"
    }
   ],
   "global_to_tile": [

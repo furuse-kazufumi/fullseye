@@ -44,6 +44,7 @@ import drivelong
 import drivettc
 import gsplatnp
 import motionio
+import drivehumanoid
 import driveworld
 import kendama
 import kendamaworld
@@ -56,7 +57,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -284,6 +285,16 @@ _CATALOG = {
         ("read_bvh", "motionio", [], "table"),
         ("read_events", "motionio", [], "table"),
         ("events_to_frames", "motionio", ["table"], "voxel"),
+    ],
+    # 運転の世界を歩くヒューマノイド(2026-10-03): 実在ロボットの MJCF から 1 周期の歩行を作り(humanoid_walk_clip、mujoco が
+    # 要るので台帳の外・facade だけ)、再生は numpy。見た目 = 格子で間引いたメッシュ(LiDAR・深度)か、向き × 位相ごとの
+    # マスク付きの事前描画(カメラ画像、1 体 数 ms)。当たり判定は外形の箱(車ほどの正確さは要らない)。
+    # 真値 = 間引きのずれ ≤ √3·格子幅(定理)、事前描画と直接の描画のマスクの一致、手前の物に隠れること。
+    "humanoid": [
+        ("humanoid_clip_mesh", "drivehumanoid", ["table"], "table"),
+        ("world_pose_humanoid", "drivehumanoid", ["table"], "any"),
+        ("humanoid_impostors", "drivehumanoid", ["table"], "table"),
+        ("world_camera_impostors", "drivehumanoid", ["table", "matrix", "matrix"], "table"),
     ],
     # 車の縦の運動: m dv/dt = 駆動 − 制動 − m g sin θ − c_rr m g cos θ − ½ρC_dA v|v|(止まっている間はブレーキの保持の範囲で動かない)。
     # 真値 = 停止距離の閉形式 vρ + (1/2k)ln(1 + k v²/A)(A = b ± g sin θ + c_rr g cos θ)、rsssafety との一致、坂道発進のずり下がりの閉形式、

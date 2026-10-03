@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">world_pose_humanoid — DRIVE <code style="color:#22d3bf">humanoid</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_pose_humanoid(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, clip: &#x27;dict&#x27;, distance: &#x27;float&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;) -&gt; &#x27;None&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivehumanoid; drivehumanoid.world_pose_humanoid(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, clip: &#x27;dict&#x27;, distance: &#x27;float&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;) -&gt; &#x27;None&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;world_pose_humanoid&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>世界の物体 `<code style="color:#22d3bf">i</code><code style="color:#22d3bf">(:func:</code>driveterrain.add_mesh_object<code style="color:#22d3bf"> で </code><code style="color:#22d3bf">humanoid_clip_mesh</code>` を置いたもの)を、歩いた距離</p>
+<p>`<code style="color:#22d3bf">distance</code><code style="color:#22d3bf"> の姿勢にして </code><code style="color:#22d3bf">(x, y, yaw)</code><code style="color:#22d3bf"> へ置き直す(頂点だけ書き換える。面・色・ラベル・</code><code style="color:#22d3bf">dims</code>` は不変)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">any</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">humanoid</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:humanoid_clip_mesh">humanoid_clip_mesh</a> · <a style="color:#22d3bf" href="opdrive:humanoid_impostors">humanoid_impostors</a> · <a style="color:#22d3bf" href="opdrive:world_camera_impostors">world_camera_impostors</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivehumanoid.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

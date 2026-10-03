@@ -677,6 +677,9 @@ import gsplatnp  # noqa: E402  (世界 → 3D Gaussian Splatting: 面に貼っ�
 from gsplatnp import gs_from_world, gs_update, gs_render, gs_render_fn, gs_read_file  # noqa: E402,F401
 import motionio  # noqa: E402  (動きのデータ: BVH モーションキャプチャ・イベントカメラの x y t p、2026-10-03)
 from motionio import read_bvh, read_events, events_to_frames  # noqa: E402,F401
+import drivehumanoid  # noqa: E402  (運転の世界を歩くヒューマノイド: 間引いたメッシュ + マスク付きの事前描画、2026-10-03)
+from drivehumanoid import (  # noqa: E402,F401
+    humanoid_walk_clip, humanoid_clip_mesh, world_pose_humanoid, humanoid_impostors, world_camera_impostors)
 import kendamaworld  # noqa: E402  (けんの真値つき世界: けん + 大皿 + 糸のメッシュ、カメラの組、皿の投影の真値)
 from kendamaworld import (  # noqa: E402,F401
     ken_mesh, add_ken, ken_set_pose, string_mesh, add_string, string_set, kendama_world, kendama_rig, ken_truth,
@@ -1172,6 +1175,7 @@ __all__ = [
     "tf_bilinear",
     "laplace_inverse_talbot",
     "laplace_inverse_func",
+    "humanoid_walk_clip",
     "hankel_image",
     "dct_transform",
     "wavelet_filters",

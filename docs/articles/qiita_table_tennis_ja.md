@@ -6,7 +6,7 @@ tags:
   - 物理
   - 画像処理
   - robotics
-public_private: true
+public_private: false
 public_id: b6498dc822bf9eed100f
 ---
 
