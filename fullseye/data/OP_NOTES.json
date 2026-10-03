@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2673,
- "n_notes": 2679,
+ "n_ops": 2700,
+ "n_notes": 2706,
  "notes": {
   "vol_dilate": [
    {
@@ -8966,6 +8966,26 @@
     "path": "docs/ops/2d/typed/tb_integrate_funct_1d.md"
    }
   ],
+  "tb_intrinsics_to_carla": [
+   {
+    "op": "tb_intrinsics_to_carla",
+    "dim": "2d",
+    "category": "typed",
+    "in": "matrix",
+    "out": "matrix",
+    "path": "docs/ops/2d/typed/tb_intrinsics_to_carla.md"
+   }
+  ],
+  "tb_intrinsics_to_fullseye": [
+   {
+    "op": "tb_intrinsics_to_fullseye",
+    "dim": "2d",
+    "category": "typed",
+    "in": "matrix",
+    "out": "matrix",
+    "path": "docs/ops/2d/typed/tb_intrinsics_to_fullseye.md"
+   }
+  ],
   "tb_iqft2": [
    {
     "op": "tb_iqft2",
@@ -15957,6 +15977,252 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/drive/ballworld/table_world.md"
+   }
+  ],
+  "camera_pose_to_carla": [
+   {
+    "op": "camera_pose_to_carla",
+    "dim": "drive",
+    "category": "carla",
+    "in": "matrix",
+    "out": "any",
+    "path": "docs/ops/drive/carla/camera_pose_to_carla.md"
+   }
+  ],
+  "carla_camera_pose": [
+   {
+    "op": "carla_camera_pose",
+    "dim": "drive",
+    "category": "carla",
+    "in": "any",
+    "out": "matrix",
+    "path": "docs/ops/drive/carla/carla_camera_pose.md"
+   }
+  ],
+  "carla_depth_decode": [
+   {
+    "op": "carla_depth_decode",
+    "dim": "drive",
+    "category": "carla",
+    "in": "rgb",
+    "out": "image2d",
+    "path": "docs/ops/drive/carla/carla_depth_decode.md"
+   }
+  ],
+  "carla_depth_encode": [
+   {
+    "op": "carla_depth_encode",
+    "dim": "drive",
+    "category": "carla",
+    "in": "image2d",
+    "out": "rgb",
+    "path": "docs/ops/drive/carla/carla_depth_encode.md"
+   }
+  ],
+  "carla_intrinsics": [
+   {
+    "op": "carla_intrinsics",
+    "dim": "drive",
+    "category": "carla",
+    "out": "matrix",
+    "path": "docs/ops/drive/carla/carla_intrinsics.md"
+   }
+  ],
+  "carla_label_map": [
+   {
+    "op": "carla_label_map",
+    "dim": "drive",
+    "category": "carla",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/drive/carla/carla_label_map.md"
+   }
+  ],
+  "carla_label_unmap": [
+   {
+    "op": "carla_label_unmap",
+    "dim": "drive",
+    "category": "carla",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/drive/carla/carla_label_unmap.md"
+   }
+  ],
+  "carla_labels": [
+   {
+    "op": "carla_labels",
+    "dim": "drive",
+    "category": "carla",
+    "out": "table",
+    "path": "docs/ops/drive/carla/carla_labels.md"
+   }
+  ],
+  "carla_pose_to_world": [
+   {
+    "op": "carla_pose_to_world",
+    "dim": "drive",
+    "category": "carla",
+    "in": "any",
+    "out": "matrix",
+    "path": "docs/ops/drive/carla/carla_pose_to_world.md"
+   }
+  ],
+  "carla_rotation_angles": [
+   {
+    "op": "carla_rotation_angles",
+    "dim": "drive",
+    "category": "carla",
+    "in": "matrix",
+    "out": "any",
+    "path": "docs/ops/drive/carla/carla_rotation_angles.md"
+   }
+  ],
+  "carla_rotation_matrix": [
+   {
+    "op": "carla_rotation_matrix",
+    "dim": "drive",
+    "category": "carla",
+    "out": "matrix",
+    "path": "docs/ops/drive/carla/carla_rotation_matrix.md"
+   }
+  ],
+  "carla_scene_check": [
+   {
+    "op": "carla_scene_check",
+    "dim": "drive",
+    "category": "carla",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/carla/carla_scene_check.md"
+   }
+  ],
+  "carla_scene_load": [
+   {
+    "op": "carla_scene_load",
+    "dim": "drive",
+    "category": "carla",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/carla/carla_scene_load.md"
+   }
+  ],
+  "carla_scene_render": [
+   {
+    "op": "carla_scene_render",
+    "dim": "drive",
+    "category": "carla",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/carla/carla_scene_render.md"
+   }
+  ],
+  "carla_scene_save": [
+   {
+    "op": "carla_scene_save",
+    "dim": "drive",
+    "category": "carla",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/carla/carla_scene_save.md"
+   }
+  ],
+  "carla_scene_synthetic": [
+   {
+    "op": "carla_scene_synthetic",
+    "dim": "drive",
+    "category": "carla",
+    "out": "table",
+    "path": "docs/ops/drive/carla/carla_scene_synthetic.md"
+   }
+  ],
+  "carla_scene_world": [
+   {
+    "op": "carla_scene_world",
+    "dim": "drive",
+    "category": "carla",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/carla/carla_scene_world.md"
+   }
+  ],
+  "carla_transform_matrix": [
+   {
+    "op": "carla_transform_matrix",
+    "dim": "drive",
+    "category": "carla",
+    "in": "any",
+    "out": "matrix",
+    "path": "docs/ops/drive/carla/carla_transform_matrix.md"
+   }
+  ],
+  "carla_xy_yaw": [
+   {
+    "op": "carla_xy_yaw",
+    "dim": "drive",
+    "category": "carla",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/carla/carla_xy_yaw.md"
+   }
+  ],
+  "intrinsics_to_carla": [
+   {
+    "op": "intrinsics_to_carla",
+    "dim": "drive",
+    "category": "carla",
+    "in": "matrix",
+    "out": "matrix",
+    "path": "docs/ops/drive/carla/intrinsics_to_carla.md"
+   }
+  ],
+  "intrinsics_to_fullseye": [
+   {
+    "op": "intrinsics_to_fullseye",
+    "dim": "drive",
+    "category": "carla",
+    "in": "matrix",
+    "out": "matrix",
+    "path": "docs/ops/drive/carla/intrinsics_to_fullseye.md"
+   }
+  ],
+  "lead_from_depth": [
+   {
+    "op": "lead_from_depth",
+    "dim": "drive",
+    "category": "carla",
+    "in": "image2d × image2d × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/carla/lead_from_depth.md"
+   }
+  ],
+  "lead_truth_depth": [
+   {
+    "op": "lead_truth_depth",
+    "dim": "drive",
+    "category": "carla",
+    "in": "table",
+    "out": "scalar",
+    "path": "docs/ops/drive/carla/lead_truth_depth.md"
+   }
+  ],
+  "scene_pair_table": [
+   {
+    "op": "scene_pair_table",
+    "dim": "drive",
+    "category": "carla",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/carla/scene_pair_table.md"
+   }
+  ],
+  "world_pose_to_carla": [
+   {
+    "op": "world_pose_to_carla",
+    "dim": "drive",
+    "category": "carla",
+    "in": "matrix",
+    "out": "any",
+    "path": "docs/ops/drive/carla/world_pose_to_carla.md"
    }
   ],
   "course_contains": [

@@ -1,10 +1,10 @@
 {
- "n_ops": 2673,
+ "n_ops": 2700,
  "tiers": {
   "color": 12,
-  "ledger": 1722,
+  "ledger": 1747,
   "nary": 17,
-  "registry": 922
+  "registry": 924
  },
  "sorts": [
   "angle",
@@ -2398,6 +2398,19 @@
    ]
   },
   {
+   "name": "camera_pose_to_carla",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "any",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "camera_rays",
    "halcon": "",
    "in_sort": "table",
@@ -2487,6 +2500,232 @@
    "dim": "graph",
    "in_sorts": [
     "matrix"
+   ]
+  },
+  {
+   "name": "carla_camera_pose",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "matrix",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "carla_depth_decode",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "image2d",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb"
+   ]
+  },
+  {
+   "name": "carla_depth_encode",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "rgb",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "carla_intrinsics",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "matrix",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "carla_label_map",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "carla_label_unmap",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "carla_labels",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "carla_pose_to_world",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "matrix",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "carla_rotation_angles",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "any",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "carla_rotation_matrix",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "matrix",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "carla_scene_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "carla_scene_load",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "carla_scene_render",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "carla_scene_save",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "carla_scene_synthetic",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "carla_scene_world",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "carla_transform_matrix",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "matrix",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "carla_xy_yaw",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {
@@ -9122,6 +9361,32 @@
    ]
   },
   {
+   "name": "intrinsics_to_carla",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "intrinsics_to_fullseye",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "invariants",
    "halcon": "",
    "in_sort": "efdmodel",
@@ -9806,6 +10071,34 @@
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lead_from_depth",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "image2d",
+    "matrix"
+   ]
+  },
+  {
+   "name": "lead_truth_depth",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
    "in_sorts": [
     "table"
    ]
@@ -16878,6 +17171,19 @@
    "in_sorts": []
   },
   {
+   "name": "scene_pair_table",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "scene_plane",
    "halcon": "",
    "in_sort": null,
@@ -22485,6 +22791,19 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "world_pose_to_carla",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "any",
+   "category": "carla",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix"
    ]
   },
   {
@@ -30172,6 +30491,26 @@
    "halcon": "",
    "in_sort": "signal",
    "out_sort": "signal",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
+   "name": "tb_intrinsics_to_carla",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
+   "name": "tb_intrinsics_to_fullseye",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
    "category": "typed",
    "tier": "registry",
    "module": "backends_typed",

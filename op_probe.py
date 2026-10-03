@@ -332,8 +332,17 @@ def _dichromatic_probe():
     return _generators()["rgbimage"](np.random.default_rng(20260908))
 
 
+def _intrinsics_probe(rng=None):
+    """ピンホールの内部パラメータ K(3×3、正の焦点距離、主点は像の中)—— 乱数の matrix は形も符号も K ではない。"""
+    return np.array([[320.0, 0.0, 320.0], [0.0, 320.0, 180.0], [0.0, 0.0, 1.0]])
+
+
 #: ``op 名 -> (探針を作る関数, なぜ sort 既定では駄目か)``
 OP_PROBE_OVERRIDE = {
+    "tb_intrinsics_to_fullseye": (_intrinsics_probe,
+        "matrix の一般形(乱数の 2-D)は 3×3 の K ではなく fail-closed で拒否される →"
+        " fallback が入力を通し、恒等の顔をする。主点を 0.5 画素ずらす op なので K を渡せば差が出る"),
+    "tb_intrinsics_to_carla": (_intrinsics_probe, "同上(主点を 0.5 画素戻す)"),
     "tb_monogenic_amplitude": (_monogenic_probe,
         "qimage は色の四元数とモノジェニック信号の 2 つを兼ねている。"
         "前者は実部 0・k に青、後者は実部が帯域通過像で k が 0 —— 両立しない"),

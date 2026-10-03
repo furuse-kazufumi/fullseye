@@ -125,6 +125,10 @@ DOMAIN_MISMATCH = {
     # ★2026-09-13: op が evolute 検証を得て厳格化。ECEF は地球表面(中心から ~6.4M m)の
     # 座標を要るが、画像由来の合成点は原点付近で**必ず楕円体の evolute 内**に落ちるため
     # 正しく拒否される(実データでは動く。合成入力では図を作れない恒久的な定義域ミスマッチ)。
+    # ★2026-10-04: 主点を 0.5 画素ずらすだけの橋(CARLA ↔ Fullseye の内部パラメータ)。3×3 で焦点距離が正の K しか受けず、
+    # 汎用の合成 matrix は fail-closed で拒否される(op_probe の探針 K では走る —— tests/test_backends_typed_liveness.py)。
+    "tb_intrinsics_to_fullseye": "3×3 で焦点距離が正の K だけを受け、汎用の合成 matrix は fail-closed で拒否される(op_probe の探針では走る)",
+    "tb_intrinsics_to_carla": "同上(主点を 0.5 画素戻す橋)",
     "tb_dem_ecef_to_geodetic": "ECEF は地球表面座標(中心から ~6.4M m)を要るが、画像由来の合成点は原点付近で楕円体の evolute 内に落ち必ず拒否される",
 }
 

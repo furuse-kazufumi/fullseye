@@ -2032,6 +2032,17 @@
    "run": "py -3.11 examples/poc_agv_fleet.py"
   },
   {
+   "id": "poc_carla_bridge",
+   "wing": "wing_geometry",
+   "added": "2026-10-04",
+   "numbers_source": "log",
+   "title_ja": "同じ場面を 2 つの世界で撮る ―― 写実シミュレータの深度を閉形式の真値で採点し、自前の世界と並べる",
+   "title_en": "One Scene, Two Worlds — Scoring a Photoreal Simulator's Depth Against a Closed-Form Truth, Side by Side with Our Own World",
+   "caption_ja": "著者の発案「一番リアルに近い環境に、今までの技術を駆使した完成形を載せたい」→ 環境は両方。自前の世界(真値を全部持つが写実ではない)と外部の高写実シミュレータ CARLA 0.9.16(コード MIT・アセット CC-BY、写実だが中の式は見えない)を、同じ規約で結ぶ橋 carlabridge(25 op、numpy だけ)の図。Town04 の直線で自車の前方に先行車を 8〜64 m で置いて RGB・深度・意味分割を撮り、記録の姿勢(左手系・度)を右手系に写して後ろ面までの像面距離を閉形式で出し、同じルールベースの知覚(車のラベルの画素の深度の中央値)を CARLA の像と、同じ内部パラメータ・取り付けで自前の世界を描き直した像の両方に掛けた。CARLA の深度は全コマ真値 +0.10 m(箱の原点のずれ)、自前の描き直しは ±0.3 m、車の画素数は両方で 1/d²(両対数の傾き −1.94 / −1.99)、画素数の比 0.90〜1.08。門: 回転行列が CARLA の客体の get_matrix と一致、カメラ姿勢 = look_at、深度の往復 ≤ 量子化 1 段、自前の世界 → 記録 → 描き直しが画素単位で同じ。正直に: CARLA の真値そのものは検証できない ―― 確かめたのは規約が可逆なことと閉形式との一致で、一致は正しさの証拠ではない。CARLA の像のアセットは CC-BY(CARLA team)。",
+   "caption_en": "The author's wish: \"put the finished form of everything we built into the most realistic environment there is\" — so, both environments. Our own world (all ground truth, not photoreal) and the external photoreal simulator CARLA 0.9.16 (code MIT, assets CC-BY; photoreal, but its formulas are hidden) are joined by a bridge, carlabridge (25 ops, numpy only). On a straight in Town04 a lead car is placed 8–64 m ahead and RGB, depth and semantic images are captured; the recorded poses (left-handed, degrees) are mapped to our right-handed frame and the image-plane distance to the rear face is computed in closed form; the same rule-based perception (median depth over car-labelled pixels) is applied to CARLA's image and to our own world re-rendered with the same intrinsics and mounting. CARLA's depth sits +0.10 m from the truth in every frame (bounding-box origin offset), our re-render within ±0.3 m, the car pixel count follows 1/d² in both (log-log slopes −1.94 / −1.99) with pixel ratios 0.90–1.08. Gates: rotation matrices equal CARLA's own get_matrix, camera pose equals look_at, depth round-trips within one quantisation step, world → record → re-render is pixel-identical. Honestly: CARLA's truth itself cannot be verified — what is verified is that the conventions are invertible and agree with the closed form; agreement is not proof of correctness. CARLA imagery uses CC-BY assets (CARLA team).",
+   "run": "py -3.11 examples/poc_carla_bridge.py"
+  },
+  {
    "id": "poc_driving_crossing",
    "wing": "lane_drive",
    "added": "2026-10-02",

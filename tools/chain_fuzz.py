@@ -2991,6 +2991,92 @@ def _b_vda5050_check(pool, rng):
     return (AF.vda5050_order(_fuzz_agv()[3][0]),), {}
 
 
+_FUZZ_CARLA = {}
+
+
+def _fuzz_carla_scene():
+    """CARLA の規約の小さな場面記録(自前の世界 64×36、先行車 12 m)。描画は 1 回だけ。"""
+    if "scene" not in _FUZZ_CARLA:
+        import carlabridge as CB
+        _FUZZ_CARLA["scene"] = CB.carla_scene_synthetic(12.0, width=64, height=36)
+    return _FUZZ_CARLA["scene"]
+
+
+def _b_carla_none(pool, rng):
+    return (), {}
+
+
+def _b_carla_scene(pool, rng):
+    return (_fuzz_carla_scene(),), {}
+
+
+def _b_carla_semantic(pool, rng):
+    return (_fuzz_carla_scene()["semantic"],), {}
+
+
+def _b_carla_label(pool, rng):
+    return (_fuzz_carla_scene()["label"],), {}
+
+
+def _b_carla_depth_raw(pool, rng):
+    return (_fuzz_carla_scene()["depth_raw"],), {}
+
+
+def _b_carla_depth(pool, rng):
+    return (np.minimum(_fuzz_carla_scene()["depth"], 1000.0),), {}
+
+
+def _b_carla_intrinsics(pool, rng):
+    return (float(rng.uniform(40, 120)), 64, 36), {}
+
+
+def _b_carla_K(pool, rng):
+    return (_fuzz_carla_scene()["K"],), {}
+
+
+def _b_carla_angles(pool, rng):
+    return tuple(float(v) for v in rng.uniform(-60, 60, 3)), {}
+
+
+def _b_carla_R(pool, rng):
+    import carlabridge as CB
+    return (CB.carla_rotation_matrix(*rng.uniform(-60, 60, 3)),), {}
+
+
+def _b_carla_t6(pool, rng):
+    return (np.concatenate([rng.uniform(-10, 10, 3), rng.uniform(-60, 60, 3)]),), {}
+
+
+def _b_carla_T4(pool, rng):
+    import carlabridge as CB
+    return (CB.carla_pose_to_world(np.concatenate([rng.uniform(-10, 10, 3), rng.uniform(-60, 60, 3)])),), {}
+
+
+def _b_carla_cam_pose(pool, rng):
+    return (_fuzz_carla_scene()["pose"],), {}
+
+
+def _b_carla_scene_load(pool, rng):
+    import carlabridge as CB
+    p = _fuzz_file("scene.npz", b"")
+    CB.carla_scene_save(_fuzz_carla_scene(), p)
+    return (p,), {}
+
+
+def _b_carla_scene_save(pool, rng):
+    return (_fuzz_carla_scene(), _fuzz_file("scene_out.npz", b"")), {}
+
+
+def _b_carla_scene_synthetic(pool, rng):
+    return (float(rng.uniform(6, 30)),), {"width": 64, "height": 36}
+
+
+def _b_lead_from_depth(pool, rng):
+    import carlabridge as CB
+    sc = _fuzz_carla_scene()
+    return (np.minimum(sc["depth"], 1000.0), sc["label"], CB.intrinsics_to_fullseye(sc["K"]), 1.6), {}
+
+
 def _b_events_to_frames(pool, rng):
     import motionio
     return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
@@ -3868,6 +3954,15 @@ OP_ARG_BUILDERS = {
     "plan_conflicts": _b_agv_paths, "plan_cost": _b_agv_paths, "adg_build": _b_agv_paths,
     "adg_execute": _b_adg_execute, "naive_execute": _b_naive_execute,
     "vda5050_order": _b_vda5050_order, "vda5050_check": _b_vda5050_check,
+    "carla_labels": _b_carla_none, "carla_label_map": _b_carla_semantic, "carla_label_unmap": _b_carla_label,
+    "carla_depth_decode": _b_carla_depth_raw, "carla_depth_encode": _b_carla_depth,
+    "carla_intrinsics": _b_carla_intrinsics, "intrinsics_to_fullseye": _b_carla_K, "intrinsics_to_carla": _b_carla_K,
+    "carla_rotation_matrix": _b_carla_angles, "carla_rotation_angles": _b_carla_R, "carla_transform_matrix": _b_carla_t6,
+    "carla_pose_to_world": _b_carla_t6, "world_pose_to_carla": _b_carla_T4, "carla_camera_pose": _b_carla_t6,
+    "camera_pose_to_carla": _b_carla_cam_pose, "carla_xy_yaw": _b_carla_t6,
+    "carla_scene_check": _b_carla_scene, "carla_scene_load": _b_carla_scene_load, "carla_scene_save": _b_carla_scene_save,
+    "carla_scene_synthetic": _b_carla_scene_synthetic, "carla_scene_world": _b_carla_scene, "carla_scene_render": _b_carla_scene,
+    "lead_truth_depth": _b_carla_scene, "lead_from_depth": _b_lead_from_depth, "scene_pair_table": _b_carla_scene,
     "sign_params": _b_sign_kind, "sign_image": _b_sign_img, "plate_mesh_from_image": _b_plate_mesh,
     "sign_mesh": _b_sign_mesh, "add_sign": _b_add_sign, "signal_jp_mesh": _b_signal_jp,
     "add_signal_jp": _b_add_signal_jp,

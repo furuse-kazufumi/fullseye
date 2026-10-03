@@ -1,5 +1,5 @@
 {
- "generated_for": 934,
+ "generated_for": 936,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -15089,6 +15089,16 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "tb_intrinsics_to_carla": {
+   "in_sort": "matrix",
+   "reason": "同上(主点を 0.5 画素戻す橋)",
+   "status": "domain"
+  },
+  "tb_intrinsics_to_fullseye": {
+   "in_sort": "matrix",
+   "reason": "3×3 で焦点距離が正の K だけを受け、汎用の合成 matrix は fail-closed で拒否される(op_probe の探針では走る)",
+   "status": "domain"
+  },
   "tb_iqft2": {
    "color_ok": false,
    "extra": {
@@ -21886,7 +21896,7 @@
  },
  "size": 128,
  "stats": {
-  "domain": 3,
+  "domain": 5,
   "empty": 1,
   "failed": 0,
   "ok": 930,

@@ -1,4 +1,4 @@
-# DRIVE operator help — 309 ops in 25 categories
+# DRIVE operator help — 334 ops in 26 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -19,6 +19,10 @@
 ### ballworld (9)
 
 [add_ball](ballworld/add_ball.md) · [ball_mesh](ballworld/ball_mesh.md) · [ball_set_pose](ballworld/ball_set_pose.md) · [ball_truth](ballworld/ball_truth.md) · [camera_rig](ballworld/camera_rig.md) · [icosphere](ballworld/icosphere.md) · [rotation_from_omega](ballworld/rotation_from_omega.md) · [table_params](ballworld/table_params.md) · [table_world](ballworld/table_world.md)
+
+### carla (25)
+
+[camera_pose_to_carla](carla/camera_pose_to_carla.md) · [carla_camera_pose](carla/carla_camera_pose.md) · [carla_depth_decode](carla/carla_depth_decode.md) · [carla_depth_encode](carla/carla_depth_encode.md) · [carla_intrinsics](carla/carla_intrinsics.md) · [carla_label_map](carla/carla_label_map.md) · [carla_label_unmap](carla/carla_label_unmap.md) · [carla_labels](carla/carla_labels.md) · [carla_pose_to_world](carla/carla_pose_to_world.md) · [carla_rotation_angles](carla/carla_rotation_angles.md) · [carla_rotation_matrix](carla/carla_rotation_matrix.md) · [carla_scene_check](carla/carla_scene_check.md) · [carla_scene_load](carla/carla_scene_load.md) · [carla_scene_render](carla/carla_scene_render.md) · [carla_scene_save](carla/carla_scene_save.md) · [carla_scene_synthetic](carla/carla_scene_synthetic.md) · [carla_scene_world](carla/carla_scene_world.md) · [carla_transform_matrix](carla/carla_transform_matrix.md) · [carla_xy_yaw](carla/carla_xy_yaw.md) · [intrinsics_to_carla](carla/intrinsics_to_carla.md) · [intrinsics_to_fullseye](carla/intrinsics_to_fullseye.md) · [lead_from_depth](carla/lead_from_depth.md) · [lead_truth_depth](carla/lead_truth_depth.md) · [scene_pair_table](carla/scene_pair_table.md) · [world_pose_to_carla](carla/world_pose_to_carla.md)
 
 ### course (13)
 

@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：610 / 1205 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：610 / 1206 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel.py`
@@ -2099,8 +2099,8 @@
 - **L305** — 事件位置（点过程）-- point_spectrum 的入口。★**不要只用均匀随机**：没有周期成分就一次也不会触及「寻找周期的 op」的有意义行为，所以用把 12 个无关事件混入周期 17.0 序列的**结构化数据**作种子（随机-only 的测试会隐藏结构缺陷，是本 repo 的规律）。
 - **L922** — ★混有非有限值的点云会**让 KD 树的构建本身以生的 ValueError 崩溃**（scipy："data must be finite"）。池的设计是记录 NONFINITE 后仍保留值，所以脏点云来到这里是预期之内 -- 由构建方防范。2026-09-06 实际踩到：新的族增加后连锁的走法变了，在 seed 3_000_0xx 命中这条路径，fuzzer 自身停止了（不是 op 的缺陷而是**工具的缺陷**。无法绑定的输入约定为跳过而非抛异常）。
 - **L1241** _(ja)_ — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L4296** — ★到 2026-09-02 为止一直是 ``lambda v: True`` = **因为谓词被计为「有」，反而比没有更糟**（点检脚本也会把它计为「有谓词」）。实测下它连 None / 42 / 字符串 / dict 都放行。正典是通过**全部运行**消费侧 6 个 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）来确定的：6 个 op 都只接受上面两种形状，其余的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 变成指名的 fail-closed（实测）。因为**不接受 (2,N)**，把 2-tuple 用 np.stack 压成 (2,N) 的 3 个 adapter 改成了 axis=1。长度不同的两条（histogram 的 counts/edges）也不是「对」，予以拒绝。
-- **L4414** — ★「恰好 2 个元素」与 pose（用 `len >= 2` 允许 info）**是有意不同的**。实测 2026-09-02：把 mesh 作为单个参数接收的 4 个既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）对 3-tuple 会送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 个元素。也就是说 **本 repo 的 mesh sort 正典是 2-tuple**，多余的元素不是「信息更多」，而是让下游全灭的类型层面的谎言。唯一的例外 `voxel_to_mesh`（返回 (v, f, n)）现在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（与 gicp / vol_label 同样处理）。
+- **L4391** — ★到 2026-09-02 为止一直是 ``lambda v: True`` = **因为谓词被计为「有」，反而比没有更糟**（点检脚本也会把它计为「有谓词」）。实测下它连 None / 42 / 字符串 / dict 都放行。正典是通过**全部运行**消费侧 6 个 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）来确定的：6 个 op 都只接受上面两种形状，其余的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 变成指名的 fail-closed（实测）。因为**不接受 (2,N)**，把 2-tuple 用 np.stack 压成 (2,N) 的 3 个 adapter 改成了 axis=1。长度不同的两条（histogram 的 counts/edges）也不是「对」，予以拒绝。
+- **L4509** — ★「恰好 2 个元素」与 pose（用 `len >= 2` 允许 info）**是有意不同的**。实测 2026-09-02：把 mesh 作为单个参数接收的 4 个既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）对 3-tuple 会送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 个元素。也就是说 **本 repo 的 mesh sort 正典是 2-tuple**，多余的元素不是「信息更多」，而是让下游全灭的类型层面的谎言。唯一的例外 `voxel_to_mesh`（返回 (v, f, n)）现在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（与 gicp / vol_label 同样处理）。
 
 ## `tools/chain_mine.py`
 
@@ -2183,8 +2183,9 @@
 - **L99** _(ja)_ — ★2026-09-17: `deskew` は「傾いていないものは動かさない」op なので、合成の 標準入力(canonical_image)に掛けると **in と out が同じ絵**になり、図が 何も語らなくなっていた(実測: 標準入力 8 枚のうち 5 枚で恒等、図は恒等の 方)。走ったことと意味のある出力が出たことは別 —— 先に 7.0 度 傾けてから 渡す(rotate_img の角度は -45 + 90a なので a=0.5778 が +7.0 度)。
 - **L115** — ★2026-09-08：在这张表里的 `tb_angle_3points` 和 `tb_indices_to_labels`，不是「在图的定义域之外」，而是 **不该放到桥上的 op**。前者取 3 条向量，所以单条点云无法调用；后者返回 1-D，却把声明的 out 定为 `labels`（→ volume = ndim 3）。两者都保持注册着却**一次也没运行过**，fail-soft 返回着貌似合理的值。移到 `backends_typed._OP_BRIDGE_SKIP`，并从这张表里移除 -- 有「出不了图」的记录，却在任何地方都没有「无法运行」本身的记录（有两道门，只有一道察觉到了）。
 - **L125** _(ja)_ — ★2026-09-13: op が evolute 検証を得て厳格化。ECEF は地球表面(中心から ~6.4M m)の 座標を要るが、画像由来の合成点は原点付近で**必ず楕円体の evolute 内**に落ちるため 正しく拒否される(実データでは動く。合成入力では図を作れない恒久的な定義域ミスマッチ)。
-- **L137** — ★2026-09-07（用户指示「不必汇总成一张。分阶段的、有多个条件的分开出」「有些东西用伪彩色更好懂」「复杂的甚至可以用动画 GIF」）。在主图 `<op>.png` 之外，再加：`<op>.a.jpg` / `<op>.b.jpg` — 把旋钮拨到 0.1 / 0.5 / 0.9 的 3 张（**仅当输出变化时**。不变化就在 manifest 写理由）`<op>.chain.jpg` — 有前置 op 的 op 的阶段图（图像 → 中间 → 输出）`<op>.gif` — 当输出是视频 / 光场 / 体积时，依次展示帧 / 视点 / 切片（静图 `<op>.png` 为完成形，GIF 是追加。Studio 的 QTextBrowser 显示第 1 帧）。伪彩色只施加于**量的场**（距离·相位·朝向·深度·曲率 …）的输出，并在标题写 `(viridis)`。滤波类保持灰色（不呈现为会变色的 op）。
-- **L753** — ★「跑了」和「出了有意义的输出」是两回事（2026-09-07，用户指出「out 全黑是怎么回事?」）。把空数组算作「有图」，黑板就成了图。空就记为空，并在笔记里写理由。
+- **L128** _(ja)_ — ★2026-10-04: 主点を 0.5 画素ずらすだけの橋(CARLA ↔ Fullseye の内部パラメータ)。3×3 で焦点距離が正の K しか受けず、 汎用の合成 matrix は fail-closed で拒否される(op_probe の探針 K では走る —— tests/test_backends_typed_liveness.py)。
+- **L141** — ★2026-09-07（用户指示「不必汇总成一张。分阶段的、有多个条件的分开出」「有些东西用伪彩色更好懂」「复杂的甚至可以用动画 GIF」）。在主图 `<op>.png` 之外，再加：`<op>.a.jpg` / `<op>.b.jpg` — 把旋钮拨到 0.1 / 0.5 / 0.9 的 3 张（**仅当输出变化时**。不变化就在 manifest 写理由）`<op>.chain.jpg` — 有前置 op 的 op 的阶段图（图像 → 中间 → 输出）`<op>.gif` — 当输出是视频 / 光场 / 体积时，依次展示帧 / 视点 / 切片（静图 `<op>.png` 为完成形，GIF 是追加。Studio 的 QTextBrowser 显示第 1 帧）。伪彩色只施加于**量的场**（距离·相位·朝向·深度·曲率 …）的输出，并在标题写 `(viridis)`。滤波类保持灰色（不呈现为会变色的 op）。
+- **L757** — ★「跑了」和「出了有意义的输出」是两回事（2026-09-07，用户指出「out 全黑是怎么回事?」）。把空数组算作「有图」，黑板就成了图。空就记为空，并在笔记里写理由。
 
 ## `tools/gen_wing2d_gallery.py`
 

@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_carla_two_worlds.png",
+  "name": "carla_two_worlds",
+  "caption": "同じ場面を 2 つの世界で: 左から CARLA の RGB、同じ内部パラメータ・取り付けで自前の世界を描き直した像、CARLA の意味分割を Fullseye のラベルに写した像、自前の世界のラベル(面の真値)。CARLA 0.9.16 の像はアセットが CC-BY(CARLA team)。",
+  "shape": [
+   1534,
+   5170,
+   3
+  ]
+ },
+ {
+  "file": "02_carla_depth_error.png",
+  "name": "carla_depth_error",
+  "caption": "先行車の後ろ面までの像面距離の真値は記録の姿勢から閉形式で出す。車のラベルの画素の深度の中央値は CARLA で全コマ +0.1 m、自前の描き直しで ±0.3 m。最下行から平らな路面の式で出す距離は後輪の接地を見るのでバンパーより 0.5 m ほど先を指す。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_carla_pixels_inverse_square.png",
+  "name": "carla_pixels_inverse_square",
+  "caption": "像面に平行な後ろ面の面積は距離の 2 乗に反比例する。CARLA と自前の世界の両方で両対数の傾きが −2 に近く、画素数の比は 0.90〜1.08。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_carla_pair_table.png",
+  "name": "carla_pair_table",
+  "caption": "コマごとの数字。真値は閉形式、誤差は m、画素数は中央の帯にある車のラベルの画素。",
+  "shape": [
+   248,
+   567,
+   3
+  ],
+  "csv": "04_carla_pair_table.csv",
+  "tsv": "04_carla_pair_table.tsv"
+ }
+]

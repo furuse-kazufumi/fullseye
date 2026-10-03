@@ -4,6 +4,7 @@
 卓球の球の力学・追跡・真値つきの台・ラケット(ballistics / balltrack / ballworld / racket)/
 日本の信号灯器と道路標識(roadjp、公表寸法をそのまま頂点に持つ)/
 けん玉の定理と閉ループの捕球・真値つきのけんの世界(kendama / kendamaworld)。
+外部の高写実シミュレータ(CARLA 0.9.16)の撮影記録を自前の世界の規約に写す橋(carlabridge: 左手系の鏡映・カメラの向き・主点の 0.5 画素・24 bit の深度・29 タグ → 14 ラベル、往復の門つき、numpy だけ)。
 世界を 3D Gaussian Splatting にして描く(gsplatnp: 面に貼ったガウシアン + EWA 描画、密度と誤差のつまみ)。
 車の縦の運動と坂(drivelong: 空走 + 制動の停止距離の閉形式、坂の保持と発進のずり下がり、技能試験の減点)。
 太陽と天気(driveenv: 太陽の位置 = 暦計算室、影・逆光の光幕・霧 Koschmieder・雨・夜の前照灯を物理の単位で描き、見えてから止まれる速さ)。
@@ -46,6 +47,7 @@ import gsplatnp
 import motionio
 import drivehumanoid
 import agvfleet
+import carlabridge
 import driveworld
 import kendama
 import kendamaworld
@@ -58,7 +60,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -315,6 +317,38 @@ _CATALOG = {
         ("naive_execute", "agvfleet", ["table"], "table"),
         ("vda5050_order", "agvfleet", ["table"], "table"),
         ("vda5050_check", "agvfleet", ["table"], "table"),
+    ],
+    # 外部の高写実シミュレータ(CARLA 0.9.16)の撮影記録を自前の世界の規約に写す橋(2026-10-04、集大成の最初の部品)。numpy だけで動く —— CARLA の
+    # パッケージもサーバも要らず、repo の外の撮影記録(npz = table)だけを読む。規約 = 左手系 → 右手系の鏡映(R_f = M R_c M)、CARLA のカメラ
+    # (+x を見る)→ render3d のカメラ(−z を見る)、主点の 0.5 画素、24 bit の深度の復号式、29 タグ → 14 ラベル。真値 = CARLA の客体が返した
+    # 回転行列(焼き込み)、look_at との一致、往復の恒等(深度は量子化 1 段以内)、自前の世界 → 記録 → 描き直しが画素単位で同じ、
+    # 記録の姿勢から閉形式で出した後ろ面までの距離と深度の中央値の一致、車の画素数 ∝ 1/d²。
+    "carla": [
+        ("carla_labels", "carlabridge", [], "table"),
+        ("carla_label_map", "carlabridge", ["image2d"], "image2d"),
+        ("carla_label_unmap", "carlabridge", ["image2d"], "image2d"),
+        ("carla_depth_decode", "carlabridge", ["rgb"], "image2d"),
+        ("carla_depth_encode", "carlabridge", ["image2d"], "rgb"),
+        ("carla_intrinsics", "carlabridge", [], "matrix"),
+        ("intrinsics_to_fullseye", "carlabridge", ["matrix"], "matrix"),
+        ("intrinsics_to_carla", "carlabridge", ["matrix"], "matrix"),
+        ("carla_rotation_matrix", "carlabridge", [], "matrix"),
+        ("carla_rotation_angles", "carlabridge", ["matrix"], "any"),
+        ("carla_transform_matrix", "carlabridge", ["any"], "matrix"),
+        ("carla_pose_to_world", "carlabridge", ["any"], "matrix"),
+        ("world_pose_to_carla", "carlabridge", ["matrix"], "any"),
+        ("carla_camera_pose", "carlabridge", ["any"], "matrix"),
+        ("camera_pose_to_carla", "carlabridge", ["matrix"], "any"),
+        ("carla_xy_yaw", "carlabridge", ["any"], "any"),
+        ("carla_scene_check", "carlabridge", ["table"], "table"),
+        ("carla_scene_load", "carlabridge", ["any"], "table"),
+        ("carla_scene_save", "carlabridge", ["table"], "any"),
+        ("carla_scene_synthetic", "carlabridge", [], "table"),
+        ("carla_scene_world", "carlabridge", ["table"], "table"),
+        ("carla_scene_render", "carlabridge", ["table"], "table"),
+        ("lead_truth_depth", "carlabridge", ["table"], "scalar"),
+        ("lead_from_depth", "carlabridge", ["image2d", "image2d", "matrix"], "table"),
+        ("scene_pair_table", "carlabridge", ["table"], "table"),
     ],
     # 車の縦の運動: m dv/dt = 駆動 − 制動 − m g sin θ − c_rr m g cos θ − ½ρC_dA v|v|(止まっている間はブレーキの保持の範囲で動かない)。
     # 真値 = 停止距離の閉形式 vρ + (1/2k)ln(1 + k v²/A)(A = b ± g sin θ + c_rr g cos θ)、rsssafety との一致、坂道発進のずり下がりの閉形式、
