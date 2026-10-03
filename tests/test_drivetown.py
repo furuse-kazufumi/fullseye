@@ -191,7 +191,7 @@ def test_rules_change_the_stops_and_the_default_is_jp():
         assert [k for _, k, *_ in r["stops"]] == ["intersection"] and ck["ok"] and ck["count_ok"]
         assert r["targets"] == ["static", "dynamic"] and ck["stops"][1]["skipped"]
         assert len(r["events"]) > 0
-    assert any(ev[0] == "pass" and ev[3] == "crossing" for ev in r["events"])
+        assert any(ev[0] == "pass" and ev[3] == "crossing" for ev in r["events"])
         assert abs(r["stop_lines"][0]["s"] - 65.95) <= 1e-9                                 # 鏡像の停止線に止まる
         assert ck["stops"][1]["crossing"]["ok"]                                            # 信号制御扱いで no_stop は免除
 
