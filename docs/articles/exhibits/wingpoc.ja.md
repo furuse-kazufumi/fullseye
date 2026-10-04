@@ -988,7 +988,7 @@ py -3.11 examples/poc_am_thermal_to_ct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 23 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 24 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -1651,6 +1651,46 @@ py -3.11 examples/poc_surface_roughness.py
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_surface_roughness)
 
 使用 op(ノートへ): [`profile_params`](https://furuse.work/ops/roughness/measure/profile_params.html) · [`surface_filter`](https://furuse.work/ops/roughness/prepare/surface_filter.html) · [`surface_form_remove`](https://furuse.work/ops/roughness/prepare/surface_form_remove.html) · [`surface_params`](https://furuse.work/ops/roughness/measure/surface_params.html) · [`surface_psd`](https://furuse.work/ops/roughness/measure/surface_psd.html) · [`surface_synth_psd`](https://furuse.work/ops/roughness/synth/surface_synth_psd.html)
+
+## No.2026.196 —— 視触覚センサ(弾性膜 + カメラ)の合成と逆算 ―― Hertz 接触とフォトメトリックステレオの閉形式を門に、球の押し込みから力を読む
+
+[![視触覚センサ(弾性膜 + カメラ)の合成と逆算 ―― Hertz 接触とフォトメトリックステレオの閉形式を門に、球の押し込みから力を読む](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/01_tacsim_membrane_rgb_crop_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/01_tacsim_membrane_rgb_crop.png)
+
+*↑ **視触覚センサ(弾性膜 + カメラ)の合成と逆算 ―― Hertz 接触とフォトメトリックステレオの閉形式を門に、球の押し込みから力を読む** ―― 物理シミュ × Fullseye 系列の第 2 弾(「自作の罠は限界: 真値・門・被験者の 1 つを外から」)。外から来るものは閉形式 2 系統。弾性接触 = Hertz(Johnson, Contact Mechanics, CUP 1985: a³ = 3FR/(4E*)、δ = a²/R、p(r) = p0√(1 − r²/a²)、半空間の表面変位は内側 δ − r²/(2R)・外側 式 3.42a、r = a で値 δ/2 と傾き −a/R が連続)。光学 = Woodham 1980 のフォトメトリックステレオ N = L⁻¹I と Frankot-Chellappa 1988 の法線積分(弾性膜を 3 色の方向照明で撮って 1 枚で法線を読む原理は Johnson & Adelson, CVPR 2009)。自分で作ったのは 3 つ: 外側解の半径方向スロープの閉形式 dh/dr = (2/πR)[r arcsin(a/r) − a√(1 − a²/r²)](導出、数値微分と 5e-9 で一致)、それを法線場のスロープ分布に 1 パラメータ a で当てる逆算(高さの積分を通らないので FFT 積分の振幅減衰・有限窓・オフセットの影響を受けない)、δ の 1D 積分に Boussinesq の遠方場 ū_z ≈ F/(πE*r) の裾 r_max·s̄(r_max) を足す窓打ち切りの補正。被験者は Fullseye の既存 op(photometric_stereo / integrate_normals / surface_normals / render_lambertian、measure.fit_circle)。新モジュール tacsim 14 op。図は圧痕まわりの等倍切り出し(62.5 µm/px、a = 0.88 mm = 14 px)、球・円柱・直線エッジ・F 字スタンプの合成像と復元高さ、荷重を 0.005 → 0.12 N に上げる GIF(左 合成像、右 Hertz の a–F 曲線に点が増える)、復元高さと真値の断面、スロープ分布と Hertz 模型、a–F に 2 経路の測定点、壊れる場所(較正ずれ・雑音)。門 17 本: 複合弾性率の極限、Hertz の恒等式(1e-9)、圧力の面積分 = F・線積分 = F/L(0.1 %)、表面変位の内外連続とスロープの導出検算、Frankot-Chellappa の往復 0.11 µm(δ = 261 µm)、Woodham の厳密性(中央 0.0001°)、当てはめ経路 a 0.05〜0.26 %・F 0.14〜0.79 %(0.02〜0.12 N)、δ 経路 δ 0.28〜0.84 %・F 0.43〜1.26 %、模型なしのリングは −8.2〜−4.9 %(分解能の予測 −0.7 px/a = −7.8〜−4.3 % と 1 pt 以内)、a ∝ F^{1/3}(指数 0.3335)、窓打ち切りの不足 4.37 %(閉形式 ū_z(r_max)/δ = 4.7 %)、ambient 0.03 を引かないと δ が 3.17 % 低い(予測 ambient/sin 55° = 3.7 %)、仰角 15° の較正ずれは斜面 0.00° → 5.69°・平坦域 0.05°、雑音 σ = 0.03 で法線 2.7° でも F 0.5 %、4 形状の往復 RMS 0.4〜0.6 µm(スタンプは 60° の壁の付着影で 10.8 µm)、円柱の幾何接触半幅 √(2Rd − d²) = 1.308 mm(実測 1.312)、tac_contact_mask は recall 0.92 だが面積 1.78 倍。正直に: 小変形 Hertz(δ/R ≈ 0.09)、Lambertian・影なし・鏡面なし、半無限の膜、粘弾性・マーカーなし。模型なしのリングは a = 14 px では 5 % 内側(当てはめ経路が主、リングは第 2 実装)。踏んだ罠: |∇h| のしきい値の帯は非対称なカスプで 9 % 内側に寄る、FFT 積分は深い局所のへこみを 13 % 減衰、ambient 項が法線を 3.7 % 寝かせる(実機の参照フレーム較正に当たる引き算が要る)。門だけ 0.7 s、図込み 12 s。*
+
+[![球・円柱・直線エッジ・F 字スタンプを 0.3 mm 押し込んだ膜(幾何学的な追従、弾性の裾なし、46.9 µm/px、中央 ±1.9 mm を 3 倍)。上 = 3 色照明の合成像、下 = フォトメトリックステレオ + Frankot-C](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/02_tacsim_four_shapes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/02_tacsim_four_shapes.png)
+
+*↑ 測定の図 ―― 球・円柱・直線エッジ・F 字スタンプを 0.3 mm 押し込んだ膜(幾何学的な追従、弾性の裾なし、46.9 µm/px、中央 ±1.9 mm を 3 倍)。上 = 3 色照明の合成像、下 = フォトメトリックステレオ + Frankot-Chellappa で復元した高さ(接触域の RMS を併記)。*
+
+[![中央行の断面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/04_tacsim_height_cross_section_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/04_tacsim_height_cross_section.png)
+
+*↑ 中央行の断面。*
+
+[![法線場から取った半径方向スロープの方位平均(点)と、1 パラメータ a で当てた Hertz のスロープ模型(破線: 内側 r/R、外側 (2/πR)[r arcsin(a/r) − a√(1−a²/](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/05_tacsim_slope_profile_fit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/05_tacsim_slope_profile_fit.png)
+
+*↑ 法線場から取った半径方向スロープの方位平均(点)と、1 パラメータ a で当てた Hertz のスロープ模型(破線: 内側 r/R、外側 (2/πR)[r arcsin(a/r) − a√(1−a²/r²)])。*
+
+[![破線 = Hertz の閉形式。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/06_tacsim_hertz_a_vs_F_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/06_tacsim_hertz_a_vs_F.png)
+
+*↑ 破線 = Hertz の閉形式。*
+
+[![壊れる場所: 法線の角誤差 [deg)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/07_tacsim_failure_modes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/07_tacsim_failure_modes.png)
+
+*↑ 壊れる場所: 法線の角誤差 [deg]。*
+
+[![荷重を 0.005 → 0.12 N に上げる(12 コマ)。左 = 圧痕まわり ±2.0 mm の合成像(62.5 µm/px を 4 倍)、右 = Hertz の a–F 曲線(破線 = 閉形式)に、各コマの像から当てはめ経路で読んだ ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/03_tacsim_force_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/03_tacsim_force_sweep.gif)
+
+*↑ 動く図 ―― 荷重を 0.005 → 0.12 N に上げる(12 コマ)。左 = 圧痕まわり ±2.0 mm の合成像(62.5 µm/px を 4 倍)、右 = Hertz の a–F 曲線(破線 = 閉形式)に、各コマの像から当てはめ経路で読んだ a が点として増えていく。*
+
+```
+py -3.11 examples/poc_tacsim_elastic_membrane.py
+```
+
+ソース: [examples/poc_tacsim_elastic_membrane.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tacsim_elastic_membrane.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane)
+
+使用 op(ノートへ): [`combined_modulus`](https://furuse.work/ops/drive/tacsim/combined_modulus.html) · [`contact_radius_fit`](https://furuse.work/ops/drive/tacsim/contact_radius_fit.html) · [`contact_radius_ring`](https://furuse.work/ops/drive/tacsim/contact_radius_ring.html) · [`hertz_cylinder`](https://furuse.work/ops/drive/tacsim/hertz_cylinder.html) · [`hertz_force`](https://furuse.work/ops/drive/tacsim/hertz_force.html) · [`hertz_pressure`](https://furuse.work/ops/drive/tacsim/hertz_pressure.html) · [`hertz_sphere`](https://furuse.work/ops/drive/tacsim/hertz_sphere.html) · [`hertz_surface_uz`](https://furuse.work/ops/drive/tacsim/hertz_surface_uz.html) · [`integrate_normals`](https://furuse.work/ops/3d/photometric/integrate_normals.html) · [`membrane_delta_from_normals`](https://furuse.work/ops/drive/tacsim/membrane_delta_from_normals.html) · [`membrane_indent_shape`](https://furuse.work/ops/drive/tacsim/membrane_indent_shape.html) · [`membrane_indent_sphere`](https://furuse.work/ops/drive/tacsim/membrane_indent_sphere.html) · [`membrane_lights`](https://furuse.work/ops/drive/tacsim/membrane_lights.html) · [`membrane_recover`](https://furuse.work/ops/drive/tacsim/membrane_recover.html) · [`membrane_render_rgb`](https://furuse.work/ops/drive/tacsim/membrane_render_rgb.html) · [`photometric_stereo`](https://furuse.work/ops/3d/photometric/photometric_stereo.html) · [`tac_contact_mask`](https://furuse.work/ops/2d/tactile/tac_contact_mask.html)
 
 ## No.2026.142 —— その数字のうち、いくつが測り方のものか ―― ゲージ R&R と測定の不確かさ
 

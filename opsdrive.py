@@ -18,6 +18,7 @@
 踏切と交差点の優先(drivecrossing: 鉄道の解釈基準の警報の時間と遮断機の状態、警報灯の交互点滅を画素から読む、渡り切る時間と向こう側の余地(道交法 33 条・50 条 2 項)、一時停止と左右確認の採点、見通し距離の閉形式、優先道路・広い道路と左方優先(36 条)、交差車の到達時間と急な減速、横断歩道の手前の停止車両と 30 m 以内の追越し(38 条)、駐停車禁止の区間(44 条))。
 追越しと見えない所(drivepass: 追越しに要る時間・道のりと対向車の境目の距離、ルームミラーに前車の全体が映って戻る車間、追越し禁止の区間と判定(28〜30 条)、追い越される側の義務(27 条)、進路変更先の後続車に要る減速度(26 条の 2)、環状交差点の優先と出口の 1 つ手前での合図(37 条の 2・53 条)、坂の頂上の視距(道路構造令の表を再現)と止まれる速さ、坂道の行き違い、カーブミラー(凸面鏡)の像の大きさ・距離と速さの見誤り・像の左右・道の上で映る範囲と死角)。
 柔らかい手首のペグ挿入(pegsim: Whitney の準静的幾何 —— 二点接触の深さ・くさび・かじり・面取りの許容 —— を門に、手首 RGB-D 1 枚から穴中心とペグ先端を 3-D で読む計測、真値つきの合成 RGB-D、MJCF。mujoco が要る場面・描画・接触・挿入は facade だけ)。
+視触覚センサ(tacsim: Hertz 接触の閉形式 —— 接触半径・押し込み・圧力・半空間の表面変位 —— を真値に、弾性膜を 3 色照明で撮った像を合成し、フォトメトリックステレオで法線 → 接触半径と力を逆算。スロープ分布への Hertz 模型の当てはめ・模型なしのリング・δ の 1D 積分の 3 経路)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -61,6 +62,7 @@ import kendama
 import kendamaworld
 import lidarsim
 import pegsim
+import tacsim
 import racket
 import roadjp
 import rsssafety
@@ -69,7 +71,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -617,6 +619,27 @@ _CATALOG = {
         ("peg_synthetic_rgbd", "pegsim", ["table"], "table"),
         ("insertion_grid_summary", "pegsim", ["table"], "table"),
         ("peg_scene_mjcf", "pegsim", ["table"], "any"),
+    ],
+    # 視触覚センサ = 弾性膜 + カメラ(2026-10-04、物理シミュ × Fullseye 系列の第 2 弾): 真値 = Hertz 接触の閉形式(Johnson 1985: a³ = 3FR/4E*、
+    # δ = a²/R、p0√(1−r²/a²)、半空間の表面変位の内外解)+ Woodham 1980 のフォトメトリックステレオ + Frankot-Chellappa 1988 の積分。
+    # 導出したのは外側のスロープ閉形式 (2/πR)[r arcsin(a/r) − a√(1−a²/r²)] と、それを法線場のスロープ分布に 1 パラメータ a で当てる逆算
+    # (高さの積分を通らない)、δ の 1D 積分に Boussinesq の遠方場の裾を足す窓打ち切りの補正。合成は 3 色方向照明の Lambertian(各色 = 1 光源、
+    # Johnson & Adelson CVPR 2009 の原理)。被験者は photometric 系 4 op と measure.fit_circle(第 2 実装)。全部 numpy、facade 不要。
+    "tacsim": [
+        ("combined_modulus", "tacsim", ["scalar", "scalar"], "scalar"),
+        ("hertz_sphere", "tacsim", ["scalar", "scalar", "scalar"], "table"),
+        ("hertz_force", "tacsim", ["scalar", "scalar"], "scalar"),
+        ("hertz_cylinder", "tacsim", ["scalar", "scalar", "scalar"], "table"),
+        ("hertz_surface_uz", "tacsim", ["matrix", "scalar", "scalar", "scalar"], "matrix"),
+        ("hertz_pressure", "tacsim", ["matrix", "scalar", "scalar"], "matrix"),
+        ("membrane_indent_sphere", "tacsim", ["table"], "table"),
+        ("membrane_indent_shape", "tacsim", ["text", "scalar"], "table"),
+        ("membrane_lights", "tacsim", ["scalar"], "matrix"),
+        ("membrane_render_rgb", "tacsim", ["normalmap", "matrix"], "rgb"),
+        ("membrane_recover", "tacsim", ["rgb", "matrix", "scalar"], "table"),
+        ("contact_radius_ring", "tacsim", ["image2d", "scalar"], "table"),
+        ("contact_radius_fit", "tacsim", ["normalmap", "matrix", "matrix", "scalar", "scalar"], "table"),
+        ("membrane_delta_from_normals", "tacsim", ["normalmap", "matrix", "matrix", "scalar"], "scalar"),
     ],
 }
 

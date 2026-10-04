@@ -7,6 +7,19 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**視触覚センサ(弾性膜 + カメラ)の合成と逆算**(新モジュール `tacsim` 14 op、台帳 `tacsim`(opsdrive)、PoC `poc_tacsim_elastic_membrane`、
+  wing_metrology): 物理シミュ × Fullseye 系列の第 2 弾。真値は閉形式 2 系統 —— 弾性接触 = Hertz(Johnson, *Contact Mechanics* 1985: a³ = 3FR/4E*、
+  δ = a²/R、p = p0√(1−r²/a²)、半空間の表面変位は内側 δ − r²/2R・外側 式 3.42a)、光学 = Woodham 1980 のフォトメトリックステレオ N = L⁻¹I +
+  Frankot-Chellappa 1988 の積分(弾性膜を 3 色の方向照明で撮り 1 枚で法線を読む原理は Johnson & Adelson CVPR 2009)。導出したのは外側解の
+  **半径方向スロープの閉形式** (2/πR)[r arcsin(a/r) − a√(1−a²/r²)](r = a で a/R に連続、数値微分と 1e-7)と、それを法線場のスロープ分布に
+  1 パラメータ a で当てる逆算(高さの積分を通らないので FFT 積分の振幅減衰・有限窓・オフセットの影響を受けない)、δ の 1D 積分に Boussinesq の
+  遠方場 ū_z ≈ F/(πE*r) の裾 r_max·s̄(r_max) を足す窓打ち切りの補正。門 17 本: 当てはめ経路 a ≤ 0.3 %・F ≤ 0.8 %(0.02〜0.12 N)、δ 経路
+  δ ≤ 0.9 %・F ≤ 1.3 %、模型なしのリング(方位角 72 本の副画素ピーク → measure.fit_circle)は分解能の予測 −0.7 px/a どおり内側(a = 9〜16 px で
+  −8〜−5 %)、a ∝ F^{1/3}(指数 0.333)、窓打ち切りの不足が閉形式 ū_z(r_max)/δ = 4.7 % と 1 pt 以内、ambient 項を引かないと δ が
+  ambient/sin(仰角) = 3.7 % 低い、仰角の 15° 較正ずれは斜面だけを壊す(平坦域は方位対称で無傷)、雑音 σ = 0.03 でも F 5 % 以内、
+  球・円柱・直線エッジ・スタンプの往復(円柱の幾何接触半幅 √(2Rd − d²))。正直に: 小変形 Hertz(δ/R ≈ 0.09)、Lambertian・影なし・鏡面なし、
+  半無限の膜、粘弾性・マーカーなし。踏んだ罠: |∇h| のしきい値の帯は非対称なカスプで 9 % 内側に寄る、FFT 積分は深い局所のへこみを 13 % 減衰、
+  ambient 項が法線を 3.7 % 寝かせる(実機の参照フレーム較正に当たる引き算が要る)。
 - ★**柔らかい手首のペグ挿入**(新モジュール `pegsim` 18 op + mujoco の facade 9、台帳 `pegsim`(opsdrive)、PoC `poc_pegsim_insertion`、wing_geometry):
   物理シミュ × Fullseye 系列の第 1 弾。真値は 2 つの外から —— 定理 = Whitney 1982 の準静的幾何(原著は有料で未読、著者本人の MIT OCW 2.875
   Class 3 スライドの式: 二点接触 l/d = c/θ、θ_m = √(2c)、くさび θ > c/μ、かじりの平行四辺形 λ = l/(2rμ))、接触 = MuJoCo。二点接触の深さは

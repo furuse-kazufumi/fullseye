@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">contact_radius_ring — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_radius_ring(h, pitch: &#x27;float&#x27;, n_az: &#x27;int&#x27; = 72, step_px: &#x27;float&#x27; = 0.25, r_max_px: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacsim; tacsim.contact_radius_ring(h, pitch: &#x27;float&#x27;, n_az: &#x27;int&#x27; = 72, step_px: &#x27;float&#x27; = 0.25, r_max_px: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;contact_radius_ring&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>高さ場から接触半径 a を<b>模型なし</b>で読む: 接触縁 r = a は半径方向の傾き |∂h/∂r| が最大になる輪(Hertz では内側 r/R で</p>
+<p>増え、外側は √ で急に落ちるカスプ)。方位角 `<code style="color:#22d3bf">n_az</code><code style="color:#22d3bf"> 本の半径線に沿って |∇h| を </code><code style="color:#22d3bf">step_px</code>` 刻みで双線形補間し、各線の</p>
+<p>ピークを放物線補間で副画素化 → 72 点に :func:<code style="color:#22d3bf">measure.fit_circle</code>(第 2 実装)と半径の中央値。</p>
+<p>返り: `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">(中央値 × pitch)[m]、</code><code style="color:#22d3bf">a_circle</code><code style="color:#22d3bf">(円当てはめの半径 × pitch)、</code><code style="color:#22d3bf">r_px</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">cy</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">cx</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rms_px</code>`(円)、</p>
+<p>`<code style="color:#22d3bf">radii_px</code><code style="color:#22d3bf">(方位角ごとのピーク半径)、</code><code style="color:#22d3bf">centre</code><code style="color:#22d3bf">(重心 (cy, cx))、</code><code style="color:#22d3bf">bias_px_per_a</code>`(分解能の限界の目安 = −0.7 px / a、</p>
+<p>双線形補間がカスプを約 1 px 平滑するので a が 14 px なら −5 %、21 px なら −3 % 内側に出る —— 実測値、模型なしの代償)。</p>
+<p>しきい値の帯の重心(試作 v1)が 9 % 内側に寄った反省から、帯でなくピーク位置を使い、半径方向の傾きは h の双線形標本の</p>
+<p>1 px スパン差分(np.gradient の 2 px より平滑が少ない)で取る。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: へこみが無い、pitch ≤ 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacsim_elastic_membrane">poc_tacsim_elastic_membrane</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacsim_elastic_membrane.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">tacsim</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:combined_modulus">combined_modulus</a> · <a style="color:#22d3bf" href="opdrive:hertz_sphere">hertz_sphere</a> · <a style="color:#22d3bf" href="opdrive:hertz_force">hertz_force</a> · <a style="color:#22d3bf" href="opdrive:hertz_cylinder">hertz_cylinder</a> · <a style="color:#22d3bf" href="opdrive:hertz_surface_uz">hertz_surface_uz</a> · <a style="color:#22d3bf" href="opdrive:hertz_pressure">hertz_pressure</a> · <a style="color:#22d3bf" href="opdrive:membrane_indent_sphere">membrane_indent_sphere</a> · <a style="color:#22d3bf" href="opdrive:membrane_indent_shape">membrane_indent_shape</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacsim.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

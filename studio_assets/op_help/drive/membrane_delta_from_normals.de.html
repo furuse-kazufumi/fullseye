@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">membrane_delta_from_normals — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">normalmap × matrix × matrix × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_delta_from_normals(normals, X, Y, pitch: &#x27;float&#x27;, tail: &#x27;str&#x27; = &#x27;boussinesq&#x27;, centre_xy=None) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacsim; tacsim.membrane_delta_from_normals(normals, X, Y, pitch: &#x27;float&#x27;, tail: &#x27;str&#x27; = &#x27;boussinesq&#x27;, centre_xy=None) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;membrane_delta_from_normals&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>中心の沈み込み δ を法線場から: 半径方向スロープ s̄(r) を中心から窓の端まで 1D 積分(∫ s̄ dr = ū_z(0) − ū_z(r_max))し、</p>
+<p>`<code style="color:#22d3bf">tail=&quot;boussinesq&quot;</code>` なら遠方場 ū_z ≈ C/r(点荷重の Boussinesq 解、Johnson §3.2)から残りの裾 ū_z(r_max) = r_max · s̄(r_max)</p>
+<p>を足す(窓の端の最後の 3 ビンの中央値)。`<code style="color:#22d3bf">tail=&quot;none&quot;</code>` は裾なし(有限窓の過小評価をそのまま返す —— 間違いの量を測るため)。</p>
+<p>高さの FFT 積分を通らないので振幅の減衰を受けない。返り: δ [m]。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 未知の tail、pitch ≤ 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacsim_elastic_membrane">poc_tacsim_elastic_membrane</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacsim_elastic_membrane.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">scalar</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">tacsim</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:combined_modulus">combined_modulus</a> · <a style="color:#22d3bf" href="opdrive:hertz_sphere">hertz_sphere</a> · <a style="color:#22d3bf" href="opdrive:hertz_force">hertz_force</a> · <a style="color:#22d3bf" href="opdrive:hertz_cylinder">hertz_cylinder</a> · <a style="color:#22d3bf" href="opdrive:hertz_surface_uz">hertz_surface_uz</a> · <a style="color:#22d3bf" href="opdrive:hertz_pressure">hertz_pressure</a> · <a style="color:#22d3bf" href="opdrive:membrane_indent_sphere">membrane_indent_sphere</a> · <a style="color:#22d3bf" href="opdrive:membrane_indent_shape">membrane_indent_shape</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacsim.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

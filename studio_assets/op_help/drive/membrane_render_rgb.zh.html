@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">membrane_render_rgb — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">normalmap × matrix</code> → <code style="color:#22d3bf">rgb</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_render_rgb(normals, lights, albedo: &#x27;float&#x27; = 1.0, ambient: &#x27;float&#x27; = 0.03, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacsim; tacsim.membrane_render_rgb(normals, lights, albedo: &#x27;float&#x27; = 1.0, ambient: &#x27;float&#x27; = 0.03, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_render_rgb&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>法線場 (H, W, 3) + 光源 (3, 3) → 視触覚センサ風の RGB (H, W, 3) float。チャネル k = 光源 k の Lambertian 像</p>
+<p>albedo·(max(N·L_k, 0) + ambient)(:func:<code style="color:#22d3bf">photometric.render_lambertian</code> を 3 回、第 2 実装)。`<code style="color:#22d3bf">noise</code>` &gt; 0 なら正規乱数を足す。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: normals が (H, W, 3) でない、lights が (3, 3) でない、noise &lt; 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacsim_elastic_membrane">poc_tacsim_elastic_membrane</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacsim_elastic_membrane.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">rgb</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_depth_decode">carla_depth_decode</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">tacsim</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:combined_modulus">combined_modulus</a> · <a style="color:#22d3bf" href="opdrive:hertz_sphere">hertz_sphere</a> · <a style="color:#22d3bf" href="opdrive:hertz_force">hertz_force</a> · <a style="color:#22d3bf" href="opdrive:hertz_cylinder">hertz_cylinder</a> · <a style="color:#22d3bf" href="opdrive:hertz_surface_uz">hertz_surface_uz</a> · <a style="color:#22d3bf" href="opdrive:hertz_pressure">hertz_pressure</a> · <a style="color:#22d3bf" href="opdrive:membrane_indent_sphere">membrane_indent_sphere</a> · <a style="color:#22d3bf" href="opdrive:membrane_indent_shape">membrane_indent_shape</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacsim.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

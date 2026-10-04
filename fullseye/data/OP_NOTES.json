@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2771,
- "n_notes": 2777,
+ "n_ops": 2785,
+ "n_notes": 2791,
  "notes": {
   "vol_dilate": [
    {
@@ -18650,6 +18650,146 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/drive/rss/rss_worst_case_gap_opposite.md"
+   }
+  ],
+  "combined_modulus": [
+   {
+    "op": "combined_modulus",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "scalar × scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/tacsim/combined_modulus.md"
+   }
+  ],
+  "contact_radius_fit": [
+   {
+    "op": "contact_radius_fit",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "normalmap × matrix × matrix × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacsim/contact_radius_fit.md"
+   }
+  ],
+  "contact_radius_ring": [
+   {
+    "op": "contact_radius_ring",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "image2d × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacsim/contact_radius_ring.md"
+   }
+  ],
+  "hertz_cylinder": [
+   {
+    "op": "hertz_cylinder",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacsim/hertz_cylinder.md"
+   }
+  ],
+  "hertz_force": [
+   {
+    "op": "hertz_force",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "scalar × scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/tacsim/hertz_force.md"
+   }
+  ],
+  "hertz_pressure": [
+   {
+    "op": "hertz_pressure",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "matrix × scalar × scalar",
+    "out": "matrix",
+    "path": "docs/ops/drive/tacsim/hertz_pressure.md"
+   }
+  ],
+  "hertz_sphere": [
+   {
+    "op": "hertz_sphere",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacsim/hertz_sphere.md"
+   }
+  ],
+  "hertz_surface_uz": [
+   {
+    "op": "hertz_surface_uz",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "matrix × scalar × scalar × scalar",
+    "out": "matrix",
+    "path": "docs/ops/drive/tacsim/hertz_surface_uz.md"
+   }
+  ],
+  "membrane_delta_from_normals": [
+   {
+    "op": "membrane_delta_from_normals",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "normalmap × matrix × matrix × scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/tacsim/membrane_delta_from_normals.md"
+   }
+  ],
+  "membrane_indent_shape": [
+   {
+    "op": "membrane_indent_shape",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "text × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacsim/membrane_indent_shape.md"
+   }
+  ],
+  "membrane_indent_sphere": [
+   {
+    "op": "membrane_indent_sphere",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/tacsim/membrane_indent_sphere.md"
+   }
+  ],
+  "membrane_lights": [
+   {
+    "op": "membrane_lights",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "scalar",
+    "out": "matrix",
+    "path": "docs/ops/drive/tacsim/membrane_lights.md"
+   }
+  ],
+  "membrane_recover": [
+   {
+    "op": "membrane_recover",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "rgb × matrix × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacsim/membrane_recover.md"
+   }
+  ],
+  "membrane_render_rgb": [
+   {
+    "op": "membrane_render_rgb",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "normalmap × matrix",
+    "out": "rgb",
+    "path": "docs/ops/drive/tacsim/membrane_render_rgb.md"
    }
   ],
   "add_mesh_object": [

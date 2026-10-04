@@ -1,4 +1,4 @@
-# DRIVE operator help — 394 ops in 30 categories
+# DRIVE operator help — 408 ops in 31 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -103,6 +103,10 @@
 ### rss (10)
 
 [rss_lateral](rss/rss_lateral.md) · [rss_lateral_check](rss/rss_lateral_check.md) · [rss_longitudinal_check](rss/rss_longitudinal_check.md) · [rss_longitudinal_opposite](rss/rss_longitudinal_opposite.md) · [rss_longitudinal_same](rss/rss_longitudinal_same.md) · [rss_params](rss/rss_params.md) · [rss_stopping_distance](rss/rss_stopping_distance.md) · [rss_worst_case_gap](rss/rss_worst_case_gap.md) · [rss_worst_case_gap_lateral](rss/rss_worst_case_gap_lateral.md) · [rss_worst_case_gap_opposite](rss/rss_worst_case_gap_opposite.md)
+
+### tacsim (14)
+
+[combined_modulus](tacsim/combined_modulus.md) · [contact_radius_fit](tacsim/contact_radius_fit.md) · [contact_radius_ring](tacsim/contact_radius_ring.md) · [hertz_cylinder](tacsim/hertz_cylinder.md) · [hertz_force](tacsim/hertz_force.md) · [hertz_pressure](tacsim/hertz_pressure.md) · [hertz_sphere](tacsim/hertz_sphere.md) · [hertz_surface_uz](tacsim/hertz_surface_uz.md) · [membrane_delta_from_normals](tacsim/membrane_delta_from_normals.md) · [membrane_indent_shape](tacsim/membrane_indent_shape.md) · [membrane_indent_sphere](tacsim/membrane_indent_sphere.md) · [membrane_lights](tacsim/membrane_lights.md) · [membrane_recover](tacsim/membrane_recover.md) · [membrane_render_rgb](tacsim/membrane_render_rgb.md)
 
 ### terrain (20)
 

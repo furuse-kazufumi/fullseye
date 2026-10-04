@@ -49,6 +49,16 @@ def test_peg_params_defaults_and_fail_closed():
         P.whitney_clearance({"r": 1.0})
 
 
+def _rot_err_deg(R_est, R_true):
+    """2 つの回転の差の角 [deg]。``acos((tr−1)/2)`` は単位行列の近くで ``acos(1−ε) ≈ √(2ε)`` の
+    床(2e-8 rad = 1.2e-6°)を持ち、1e-7° の門は丸めの向きで通ったり落ちたりする(手元は tr = 3.0、
+    Linux CI は 2.9999999999999996)。歪対称部 ‖D − Dᵀ‖_F = 2√2 |sin θ| は θ → 0 で桁を失わない。"""
+    D = np.asarray(R_est, float) @ np.asarray(R_true, float).T
+    s = np.linalg.norm(D - D.T) / (2.0 * math.sqrt(2.0))
+    return math.degrees(math.asin(min(1.0, s)))
+
+
+
 def test_whitney_clearance_hand_values():
     wc = P.whitney_clearance(KP)
     assert wc["c"] == pytest.approx(0.2 / 5.2, rel=1e-12)                    # (D − d)/D、OCW p.11
@@ -290,7 +300,7 @@ def test_camera_world_to_cv_and_pnp_identity():
     assert np.all(z > 0) and np.all((uv >= 0) & (uv <= [639, 479])), uv
     R2, t2, rms = camera.solve_pnp(X, uv, K)
     assert rms < 1e-9
-    assert math.degrees(math.acos(min(1.0, (np.trace(R2 @ R.T) - 1) / 2))) < 1e-7
+    assert _rot_err_deg(R2, R) < 1e-7
     assert np.linalg.norm(t2 - t) < 1e-9
     assert np.allclose(z, (X @ R.T + t)[:, 2])
     with pytest.raises(ValueError, match="rotation"):

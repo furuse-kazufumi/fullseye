@@ -1,8 +1,8 @@
 {
- "n_ops": 2771,
+ "n_ops": 2785,
  "tiers": {
   "color": 12,
-  "ledger": 1818,
+  "ledger": 1832,
   "nary": 17,
   "registry": 924
  },
@@ -3265,6 +3265,20 @@
    ]
   },
   {
+   "name": "combined_modulus",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "compare_frame",
    "halcon": "",
    "in_sort": "image2d",
@@ -3383,6 +3397,37 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "contact_radius_fit",
+   "halcon": "",
+   "in_sort": "normalmap",
+   "out_sort": "table",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "normalmap",
+    "matrix",
+    "matrix",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "contact_radius_ring",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar"
    ]
   },
   {
@@ -8787,6 +8832,81 @@
    ]
   },
   {
+   "name": "hertz_cylinder",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "hertz_force",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "hertz_pressure",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "hertz_sphere",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "hertz_surface_uz",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "hessian3d",
    "halcon": "",
    "in_sort": "voxel",
@@ -11792,6 +11912,91 @@
    "in_sorts": [
     "voxel",
     "voxel"
+   ]
+  },
+  {
+   "name": "membrane_delta_from_normals",
+   "halcon": "",
+   "in_sort": "normalmap",
+   "out_sort": "scalar",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "normalmap",
+    "matrix",
+    "matrix",
+    "scalar"
+   ]
+  },
+  {
+   "name": "membrane_indent_shape",
+   "halcon": "",
+   "in_sort": "text",
+   "out_sort": "table",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "text",
+    "scalar"
+   ]
+  },
+  {
+   "name": "membrane_indent_sphere",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "membrane_lights",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "matrix",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar"
+   ]
+  },
+  {
+   "name": "membrane_recover",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "table",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "matrix",
+    "scalar"
+   ]
+  },
+  {
+   "name": "membrane_render_rgb",
+   "halcon": "",
+   "in_sort": "normalmap",
+   "out_sort": "rgb",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "normalmap",
+    "matrix"
    ]
   },
   {

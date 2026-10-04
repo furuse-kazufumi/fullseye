@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">hertz_cylinder — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_cylinder(F_per_L: &#x27;float&#x27;, R: &#x27;float&#x27;, Estar: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacsim; tacsim.hertz_cylinder(F_per_L: &#x27;float&#x27;, R: &#x27;float&#x27;, Estar: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;hertz_cylinder&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>円柱(半径 R)を弾性半空間に線荷重 F/L で押す線接触(Johnson 1985 §4.2): 接触半幅 b = √(4(F/L)R/(πE*))、p0 = 2(F/L)/(πb)。</p>
+<p>返り: `<code style="color:#22d3bf">b</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">p0</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">pm</code>` = (F/L)/(2b) = (π/4)p0、入力。2-D の押し込み δ は対数的で参照点に依存するため返さない。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: ≤ 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacsim_elastic_membrane">poc_tacsim_elastic_membrane</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacsim_elastic_membrane.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">tacsim</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:combined_modulus">combined_modulus</a> · <a style="color:#22d3bf" href="opdrive:hertz_sphere">hertz_sphere</a> · <a style="color:#22d3bf" href="opdrive:hertz_force">hertz_force</a> · <a style="color:#22d3bf" href="opdrive:hertz_surface_uz">hertz_surface_uz</a> · <a style="color:#22d3bf" href="opdrive:hertz_pressure">hertz_pressure</a> · <a style="color:#22d3bf" href="opdrive:membrane_indent_sphere">membrane_indent_sphere</a> · <a style="color:#22d3bf" href="opdrive:membrane_indent_shape">membrane_indent_shape</a> · <a style="color:#22d3bf" href="opdrive:membrane_lights">membrane_lights</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacsim.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">membrane_indent_shape — DRIVE <code style="color:#22d3bf">tacsim</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">text × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_indent_shape(shape: &#x27;str&#x27;, depth: &#x27;float&#x27;, n: &#x27;int&#x27; = 128, fov: &#x27;float&#x27; = 0.006, R: &#x27;float&#x27; = 0.003, edge_deg: &#x27;float&#x27; = 30.0, tip_radius: &#x27;float&#x27; = 0.0003, size: &#x27;float&#x27; = 0.002) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacsim; tacsim.membrane_indent_shape(shape: &#x27;str&#x27;, depth: &#x27;float&#x27;, n: &#x27;int&#x27; = 128, fov: &#x27;float&#x27; = 0.006, R: &#x27;float&#x27; = 0.003, edge_deg: &#x27;float&#x27; = 30.0, tip_radius: &#x27;float&#x27; = 0.0003, size: &#x27;float&#x27; = 0.002) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;membrane_indent_shape&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>既知形状の剛体を深さ `<code style="color:#22d3bf">depth</code>` だけ押し込んだゲル膜の高さ場を<b>幾何学的な追従</b>で作る: h = −max(0, depth − z_ind(x, y))。</p>
+<p>弾性の裾(Hertz の外側解)は入れない —— 球は :func:<code style="color:#22d3bf">membrane_indent_sphere</code> が Hertz で正確に作るので、こちらは</p>
+<p>円柱・直線エッジ・スタンプのように閉形式の裾が無い形を<b>同じ流儀で</b>並べるための道具。`<code style="color:#22d3bf">shape</code>`:</p>
+<p>`<code style="color:#22d3bf">&quot;sphere&quot;</code><code style="color:#22d3bf">(半径 R の球冠 z = R − √(R² − r²))、</code><code style="color:#22d3bf">&quot;cylinder&quot;</code><code style="color:#22d3bf">(軸は y、z = R − √(R² − x²))、</code><code style="color:#22d3bf">&quot;edge&quot;</code>`(直線エッジ:</p>
+<p>先端半径 tip_radius で丸めた角 edge_deg のくさび z = (√(x² + ρ²) − ρ) tan α)、`<code style="color:#22d3bf">&quot;stamp&quot;</code>`(一辺 size の &quot;F&quot; 字の平らなスタンプ、</p>
+<p>外側は距離 × tan 60° で立ち上がる)。法線は :func:<code style="color:#22d3bf">photometric.surface_normals</code>(h/pitch)で取る(第 2 実装)。</p>
+<p>返り: `<code style="color:#22d3bf">h</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">normals</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">pitch</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">X</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">Y</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">contact</code><code style="color:#22d3bf">(z_ind &lt; depth)・</code><code style="color:#22d3bf">z_ind</code>`。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 未知の shape、depth ≤ 0、球・円柱で depth ≥ R。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacsim_elastic_membrane">poc_tacsim_elastic_membrane</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacsim_elastic_membrane.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">tacsim</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:combined_modulus">combined_modulus</a> · <a style="color:#22d3bf" href="opdrive:hertz_sphere">hertz_sphere</a> · <a style="color:#22d3bf" href="opdrive:hertz_force">hertz_force</a> · <a style="color:#22d3bf" href="opdrive:hertz_cylinder">hertz_cylinder</a> · <a style="color:#22d3bf" href="opdrive:hertz_surface_uz">hertz_surface_uz</a> · <a style="color:#22d3bf" href="opdrive:hertz_pressure">hertz_pressure</a> · <a style="color:#22d3bf" href="opdrive:membrane_indent_sphere">membrane_indent_sphere</a> · <a style="color:#22d3bf" href="opdrive:membrane_lights">membrane_lights</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacsim.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

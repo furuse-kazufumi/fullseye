@@ -239,7 +239,7 @@ def contact_state_predict(kp, tip_xyz, axis, tol: float = 0.06e-3) -> dict:
     if a[2] < 0:
         a = -a                                               # 軸は先端から上へ
     r, R, W = kp["r"], kp["R"], kp["chamfer"]
-    th = math.acos(min(1.0, abs(float(a[2]))))
+    th = math.atan2(math.hypot(float(a[0]), float(a[1])), abs(float(a[2])))   # acos(|a_z|) は 0 近傍で √ε の床(1e-8 rad)を持つ
     ax = a[:2]
     nxy = float(np.linalg.norm(ax))
     u = ax / nxy if nxy > 1e-12 else np.array([1.0, 0.0])
@@ -1013,7 +1013,7 @@ def peg_contact_state(scene) -> dict:
     cons = _peg_contacts(scene)
     tip, a = _peg_axis(scene)
     depth = -float(tip[2])
-    tilt = math.acos(min(1.0, abs(float(a[2]))))
+    tilt = math.atan2(math.hypot(float(a[0]), float(a[1])), abs(float(a[2])))
     force = float(sum(c["fn"] for c in cons))
     base = {"contacts": cons, "force": force, "depth": depth, "tilt": tilt}
     if any(c["kind"] == "floor" for c in cons):

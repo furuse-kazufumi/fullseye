@@ -3461,6 +3461,87 @@ def _b_peg_mjcf(pool, rng):
     return (_fuzz_peg()["kp"],), {"lg": None if rng.uniform() < 0.5 else float(rng.uniform(0.0, 0.04)), "offsamples": int(rng.choice([0, 4]))}
 
 
+_FUZZ_TAC = {}
+
+
+def _fuzz_tac():
+    """視触覚の小さな場面(球 R = 3 mm・F = 0.08 N・64 px・視野 12 mm)を 1 回だけ作る(tacsim、numpy だけ)。"""
+    if "gh" not in _FUZZ_TAC:
+        import tacsim as TS
+        Es = TS.combined_modulus(0.2e6, 0.48)
+        hz = TS.hertz_sphere(0.08, 3.0e-3, Es)
+        gh = TS.membrane_indent_sphere(hz, 64, 12.0e-3)
+        L = TS.membrane_lights(55.0)
+        rgb = TS.membrane_render_rgb(gh["normals"], L, ambient=0.03)
+        rec = TS.membrane_recover(rgb, L, gh["pitch"], ambient=0.03)
+        _FUZZ_TAC.update({"Es": Es, "hz": hz, "gh": gh, "L": L, "rgb": rgb, "rec": rec})
+    return _FUZZ_TAC
+
+
+def _b_tac_modulus(pool, rng):
+    return (float(rng.uniform(1e5, 1e7)), float(rng.uniform(0.0, 0.49))), {}
+
+
+def _b_tac_sphere(pool, rng):
+    return (float(rng.uniform(0.01, 0.3)), float(rng.uniform(1e-3, 6e-3)), _fuzz_tac()["Es"]), {}
+
+
+def _b_tac_force(pool, rng):
+    kw = {"a": float(rng.uniform(2e-4, 1.5e-3))} if rng.uniform() < 0.5 else {"delta": float(rng.uniform(2e-5, 4e-4))}
+    return (3.0e-3, _fuzz_tac()["Es"]), kw
+
+
+def _b_tac_cyl(pool, rng):
+    return (float(rng.uniform(5.0, 200.0)), float(rng.uniform(1e-3, 6e-3)), _fuzz_tac()["Es"]), {}
+
+
+def _b_tac_uz(pool, rng):
+    hz = _fuzz_tac()["hz"]
+    return (_fuzz_tac()["gh"]["r"], hz["a"], hz["delta"], hz["R"]), {}
+
+
+def _b_tac_pressure(pool, rng):
+    hz = _fuzz_tac()["hz"]
+    return (_fuzz_tac()["gh"]["r"], hz["a"], hz["p0"]), {}
+
+
+def _b_tac_indent(pool, rng):
+    return (_fuzz_tac()["hz"],), {"n": int(rng.integers(32, 64)), "fov": 12.0e-3}
+
+
+def _b_tac_shape(pool, rng):
+    return (str(rng.choice(["sphere", "cylinder", "edge", "stamp"])), float(rng.uniform(0.1e-3, 0.5e-3))), {"n": 40, "fov": 6.0e-3}
+
+
+def _b_tac_lights(pool, rng):
+    return (float(rng.uniform(30.0, 80.0)),), {}
+
+
+def _b_tac_render(pool, rng):
+    f = _fuzz_tac()
+    return (f["gh"]["normals"], f["L"]), {"ambient": float(rng.uniform(0.0, 0.05)), "noise": float(rng.uniform(0.0, 0.01))}
+
+
+def _b_tac_recover(pool, rng):
+    f = _fuzz_tac()
+    return (f["rgb"], f["L"], f["gh"]["pitch"]), {"ambient": 0.03}
+
+
+def _b_tac_ring(pool, rng):
+    f = _fuzz_tac()
+    return (f["rec"]["height"], f["gh"]["pitch"]), {"n_az": int(rng.choice([36, 72]))}
+
+
+def _b_tac_fit(pool, rng):
+    f = _fuzz_tac()
+    return (f["rec"]["normals"], f["gh"]["X"], f["gh"]["Y"], 3.0e-3, f["gh"]["pitch"]), {}
+
+
+def _b_tac_delta(pool, rng):
+    f = _fuzz_tac()
+    return (f["rec"]["normals"], f["gh"]["X"], f["gh"]["Y"], f["gh"]["pitch"]), {"tail": str(rng.choice(["boussinesq", "none"]))}
+
+
 def _b_events_to_frames(pool, rng):
     import motionio
     return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
@@ -4366,6 +4447,11 @@ OP_ARG_BUILDERS = {
     "hole_centre_from_rgbd": _b_peg_rgbd, "peg_tip_from_rgbd": _b_peg_rgbd, "peg_offset_from_rgbd": _b_peg_offset,
     "peg_measure_overlay": _b_peg_overlay, "camera_world_to_cv": _b_peg_cam, "peg_synthetic_rgbd": _b_peg_syn,
     "insertion_grid_summary": _b_peg_grid, "peg_scene_mjcf": _b_peg_mjcf,
+    "combined_modulus": _b_tac_modulus, "hertz_sphere": _b_tac_sphere, "hertz_force": _b_tac_force, "hertz_cylinder": _b_tac_cyl,
+    "hertz_surface_uz": _b_tac_uz, "hertz_pressure": _b_tac_pressure, "membrane_indent_sphere": _b_tac_indent,
+    "membrane_indent_shape": _b_tac_shape, "membrane_lights": _b_tac_lights, "membrane_render_rgb": _b_tac_render,
+    "membrane_recover": _b_tac_recover, "contact_radius_ring": _b_tac_ring, "contact_radius_fit": _b_tac_fit,
+    "membrane_delta_from_normals": _b_tac_delta,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

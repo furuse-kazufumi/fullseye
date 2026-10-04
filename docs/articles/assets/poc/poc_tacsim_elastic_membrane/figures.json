@@ -1,0 +1,76 @@
+[
+ {
+  "file": "01_tacsim_membrane_rgb_crop.png",
+  "name": "tacsim_membrane_rgb_crop",
+  "caption": "球(R = 3 mm)を 0.08 N で押した弾性膜の合成像、圧痕まわり ±1.9 mm を等倍の画素で 4 倍に拡大(センサ分解能 62.5 µm/px、接触半径 a = 0.88 mm = 14.2 px)。方位 90/210/330°・仰角 55° の 3 色照明で、各色チャネルが 1 光源の Lambertian 像。",
+  "shape": [
+   248,
+   248,
+   3
+  ]
+ },
+ {
+  "file": "02_tacsim_four_shapes.png",
+  "name": "tacsim_four_shapes",
+  "caption": "球・円柱・直線エッジ・F 字スタンプを 0.3 mm 押し込んだ膜(幾何学的な追従、弾性の裾なし、46.9 µm/px、中央 ±1.9 mm を 3 倍)。上 = 3 色照明の合成像、下 = フォトメトリックステレオ + Frankot-Chellappa で復元した高さ(接触域の RMS を併記)。",
+  "shape": [
+   1054,
+   1970,
+   3
+  ]
+ },
+ {
+  "file": "03_tacsim_force_sweep.gif",
+  "name": "tacsim_force_sweep",
+  "caption": "荷重を 0.005 → 0.12 N に上げる(12 コマ)。左 = 圧痕まわり ±2.0 mm の合成像(62.5 µm/px を 4 倍)、右 = Hertz の a–F 曲線(破線 = 閉形式)に、各コマの像から当てはめ経路で読んだ a が点として増えていく。",
+  "shape": [
+   256,
+   676,
+   3
+  ],
+  "animated": true,
+  "frames": 12,
+  "frames_written": 12,
+  "fps": 3.0
+ },
+ {
+  "file": "04_tacsim_height_cross_section.png",
+  "name": "tacsim_height_cross_section",
+  "caption": "中央行の断面。破線 = Hertz の閉形式(内側 δ − r²/(2R)、外側 Johnson 3.42a、δ = 261 µm)、点 = 合成像から復元した高さ(Frankot-Chellappa、平均を真値に合わせた)。遠方場の裾が窓の端(±8 mm)でも 0 に戻らないのが見える。",
+  "shape": [
+   400,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "05_tacsim_slope_profile_fit.png",
+  "name": "tacsim_slope_profile_fit",
+  "caption": "法線場から取った半径方向スロープの方位平均(点)と、1 パラメータ a で当てた Hertz のスロープ模型(破線: 内側 r/R、外側 (2/πR)[r arcsin(a/r) − a√(1−a²/r²)])。点線 = 真の a。カスプの位置が接触縁で、高さの積分を通らずに a が決まる。",
+  "shape": [
+   400,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "06_tacsim_hertz_a_vs_F.png",
+  "name": "tacsim_hertz_a_vs_F",
+  "caption": "破線 = Hertz の閉形式。当てはめ経路(主)は曲線に乗る(≤ 1 %)。模型なしのリングは常に内側で、ずれは分解能の予測 −0.7 px/a どおり(a = 9 px で −8 %、16 px で −5 %)—— 模型を使わない代償を数で見せる。",
+  "shape": [
+   400,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "07_tacsim_failure_modes.png",
+  "name": "tacsim_failure_modes",
+  "caption": "壊れる場所: 法線の角誤差 [deg]。左 = 正しい照明(ほぼ 0、接触縁の薄い輪は付着影)。中 = 仰角を 15° 誤って較正すると斜面全体が系統的に悪化し、平坦域は方位対称で無傷。右 = 画素雑音 σ = 0.03 は一様に荒れるが、分布に当てる経路の F は 5 % 以内に残る。",
+  "shape": [
+   564,
+   1576,
+   3
+  ]
+ }
+]

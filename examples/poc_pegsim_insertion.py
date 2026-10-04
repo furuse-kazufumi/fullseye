@@ -51,6 +51,16 @@ DEG = math.pi / 180.0
 KP = P.peg_params()
 
 
+def _rot_err_deg(R_est, R_true):
+    """2 つの回転の差の角 [deg]。``acos((tr−1)/2)`` は単位行列の近くで ``acos(1−ε) ≈ √(2ε)`` の
+    床(2e-8 rad = 1.2e-6°)を持ち、1e-7° の門は丸めの向きで通ったり落ちたりする(手元は tr = 3.0、
+    Linux CI は 2.9999999999999996)。歪対称部 ‖D − Dᵀ‖_F = 2√2 |sin θ| は θ → 0 で桁を失わない。"""
+    D = np.asarray(R_est, float) @ np.asarray(R_true, float).T
+    s = np.linalg.norm(D - D.T) / (2.0 * math.sqrt(2.0))
+    return math.degrees(math.asin(min(1.0, s)))
+
+
+
 def gate(name, ok, detail=""):
     _GATES.append((name, bool(ok)))
     print("  [%s] %s %s" % ("ok" if ok else "NG", name, detail))
@@ -117,7 +127,7 @@ def numpy_part():
                    [0.002, 0.001, 0.010], [0.002, 0.001, 0.030], [0.03, 0.02, 0.0], [-0.02, 0.03, 0.0]])
     uv, _ = camera.project_points(X, K, R, t)
     R2, t2, rms = camera.solve_pnp(X, uv, K)
-    rot_err = math.degrees(math.acos(min(1.0, (np.trace(R2 @ R.T) - 1) / 2)))
+    rot_err = _rot_err_deg(R2, R)
     gate("PnP の恒等式: MuJoCo のカメラ姿勢を OpenCV の (R, t) に写して投影した 12 点から camera.solve_pnp が姿勢を戻す(回転 < 1e-7°、"
          "並進 < 1e-9 m、再投影 rms < 1e-9 px)", rot_err < 1e-7 and np.linalg.norm(t2 - t) < 1e-9 and rms < 1e-9,
          "rot %.1e°, rms %.1e px" % (rot_err, rms))
