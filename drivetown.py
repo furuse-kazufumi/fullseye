@@ -86,7 +86,7 @@ __all__ = [
 _TWO_PI = 2.0 * math.pi
 TOWN_NAMES = ("default", "short")
 KYOSOKU_STATUSES = ("reproduced", "partial", "pending", "not_reproducible")
-_STOP_KINDS = ("intersection", "crossing")      # 停止線を持つ要素の kind(drivecourse)
+_STOP_KINDS = ("intersection", "crossing", "stop_sign")      # 停止線を持つ要素の kind(drivecourse)+ 一時停止(drivejapan の経路)
 _ON_LINE_TOL = 1e-6                              # 停止線の端点が中心線の上にあると見る距離 [m]
 _MODES = ("cruise", "brake", "hold", "look", "wait")
 
@@ -173,7 +173,18 @@ def _check_element(e, k: int, op: str) -> dict:
     return e
 
 
+def _is_route(layout) -> bool:
+    """drivejapan.osm_route の返り値(折線 ``polyline`` と弧長 ``cum``、停止線 ``stop_lines``)か。"""
+    return isinstance(layout, dict) and layout.get("kind") == "route" and all(k in layout for k in ("polyline", "cum", "stop_lines"))
+
+
 def _check_layout(layout, op: str) -> dict:
+    if _is_route(layout):
+        P = np.asarray(layout["polyline"], np.float64)
+        c = np.asarray(layout["cum"], np.float64)
+        if P.ndim != 2 or P.shape[1] != 2 or len(P) < 2 or c.shape != (len(P),) or not np.all(np.diff(c) >= 0) or c[-1] <= 0:
+            raise ValueError("%s: route must have a polyline (K>=2, 2) with a non-decreasing arc length cum of positive total" % op)
+        return layout
     if not isinstance(layout, dict) or layout.get("kind") != "layout" or "chain" not in layout:
         raise ValueError("%s: layout must come from town_chain (a course_layout dict with a 'chain' record)" % op)
     ch = layout["chain"]
@@ -677,6 +688,8 @@ def _ground_z(layout: dict, s) -> np.ndarray:
     """弧長 s の路面高(坂道要素の profile だけが z > 0)。"""
     s = np.asarray(s, np.float64)
     z = np.zeros_like(s)
+    if _is_route(layout):
+        return z
     s_start = layout["chain"]["s_start"]
     for k, e in enumerate(layout["elements"]):
         if e.get("kind") == "slope" and "profile" in e:
@@ -759,7 +772,7 @@ def town_run(layout, *, dt: float = 0.05, v_max: float = 8.0, a_max: float = 1.5
     ``stop_lines``(目標になり得た停止線)、``targets``(停止線ごとの "static" / "dynamic")、``train``(時刻の dict か None)、
     ``rules``、``params``、``total_length``。
 
-    **Raises** ``ValueError``: layout が town_chain の物でない、dt/v_max/a_max/b_max/保持時間が不正、stop_at に知らない kind、
+    **Raises** ``ValueError``: layout が town_chain の物でも drivejapan.osm_route の "route" でもない、dt/v_max/a_max/b_max/保持時間が不正、stop_at に知らない kind、
     rules/train が不正、停止線を越えてしまった(IDM の想定外)、t_max までに終点に着かない。"""
     op = "town_run"
     _check_layout(layout, op)
@@ -776,7 +789,7 @@ def town_run(layout, *, dt: float = 0.05, v_max: float = 8.0, a_max: float = 1.5
     if margin > 1.0:
         raise ValueError("%s: stop_margin must be <= 1.0 m (the stop must be within 1.0 m of the line)" % op)
     if stop_at is None:
-        kinds = ("intersection", "crossing")
+        kinds = _STOP_KINDS
         dyn = {"crossing": R["crossing_stop"] == "when_active"}
     else:
         kinds = tuple(stop_at)
@@ -787,10 +800,15 @@ def town_run(layout, *, dt: float = 0.05, v_max: float = 8.0, a_max: float = 1.5
     vs = min(0.05, b_max * dt) if v_stop is None else _positive(v_stop, "v_stop", op)
     if vs > b_max * dt + 1e-12:
         raise ValueError("%s: v_stop (%g) must be <= b_max * dt (%g) so the final stop stays within b_max" % (op, vs, b_max * dt))
-    P, c = _chain_polyline(layout)
+    if _is_route(layout):
+        P, c = np.asarray(layout["polyline"], np.float64), np.asarray(layout["cum"], np.float64)
+        lines = [d for d in layout["stop_lines"] if d["kind"] in kinds]
+        widths = [float(layout.get("crossing_width", 7.0))]
+    else:
+        P, c = _chain_polyline(layout)
+        lines = [d for d in town_stop_lines(layout, side=R["side"]) if d["kind"] in kinds]
+        widths = [float(e.get("width", 7.0)) for e in layout["elements"] if e.get("kind") == "crossing"]
     L = float(c[-1])
-    lines = [d for d in town_stop_lines(layout, side=R["side"]) if d["kind"] in kinds]
-    widths = [float(e.get("width", 7.0)) for e in layout["elements"] if e.get("kind") == "crossing"]
     TR = _train_timing(train, widths[0] if widths else 7.0, op)
     targets = ["dynamic" if dyn.get(d["kind"], False) else "static" for d in lines]
     holds = sum(stop_hold if d["kind"] != "crossing" else 4 * look_hold for d in lines)

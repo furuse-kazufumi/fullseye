@@ -22,13 +22,14 @@
 <p>`<code style="color:#22d3bf">stops</code><code style="color:#22d3bf"> = [(s_stop, kind, t_arrive, t_leave), ...]、</code><code style="color:#22d3bf">events</code>` = [(&quot;stop&quot;|&quot;go&quot;|&quot;look&quot;|&quot;wait_gate&quot;|&quot;commit&quot;|&quot;pass&quot;|&quot;end&quot;, t, ...)]、</p>
 <p>`<code style="color:#22d3bf">stop_lines</code><code style="color:#22d3bf">(目標になり得た停止線)、</code><code style="color:#22d3bf">targets</code><code style="color:#22d3bf">(停止線ごとの &quot;static&quot; / &quot;dynamic&quot;)、</code><code style="color:#22d3bf">train</code>`(時刻の dict か None)、</p>
 <p>`<code style="color:#22d3bf">rules</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">params</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">total_length</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: layout が town_chain の物でない、dt/v_max/a_max/b_max/保持時間が不正、stop_at に知らない kind、</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: layout が town_chain の物でも drivejapan.osm_route の &quot;route&quot; でもない、dt/v_max/a_max/b_max/保持時間が不正、stop_at に知らない kind、</p>
 <p>rules/train が不正、停止線を越えてしまった(IDM の想定外)、t_max までに終点に着かない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_japan_town">poc_driving_japan_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_japan_town.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
 <p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>

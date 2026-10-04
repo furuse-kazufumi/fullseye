@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">citygml_synthetic — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">any</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.citygml_synthetic(n: &#x27;int&#x27; = 4, *, origin: &#x27;tuple[float, float]&#x27; = (35.6716, 139.765), spacing: &#x27;float&#x27; = 30.0, size: &#x27;float&#x27; = 12.0, heights: &#x27;Sequence[float] | None&#x27; = None, ground_z: &#x27;float&#x27; = 0.0, omit_measured_height: &#x27;Iterable[int]&#x27; = (), use_lod0_footprint: &#x27;bool&#x27; = False, ns_building: &#x27;str&#x27; = &#x27;http://www.opengis.net/citygml/building/2.0&#x27;) -&gt; &#x27;str&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveplateau; driveplateau.citygml_synthetic(n: &#x27;int&#x27; = 4, *, origin: &#x27;tuple[float, float]&#x27; = (35.6716, 139.765), spacing: &#x27;float&#x27; = 30.0, size: &#x27;float&#x27; = 12.0, heights: &#x27;Sequence[float] | None&#x27; = None, ground_z: &#x27;float&#x27; = 0.0, omit_measured_height: &#x27;Iterable[int]&#x27; = (), use_lod0_footprint: &#x27;bool&#x27; = False, ns_building: &#x27;str&#x27; = &#x27;http://www.opengis.net/citygml/building/2.0&#x27;) -&gt; &#x27;str&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;citygml_synthetic&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>本物と同じ構造の最小 CityGML 2.0 文字列を作る(テスト・デモ用)。</p>
+<p>建物は `<code style="color:#22d3bf">size</code><code style="color:#22d3bf"> [m] の正方形を </code><code style="color:#22d3bf">spacing</code>` [m] 間隔で x 方向に並べ、各建物に</p>
+<p>`<code style="color:#22d3bf">bldg:measuredHeight</code><code style="color:#22d3bf"> と </code>`bldg:lod1Solid &gt; gml:Solid &gt; gml:exterior &gt;</p>
+<p>gml:CompositeSurface &gt; gml:surfaceMember × 6 &gt; gml:Polygon &gt; gml:exterior &gt;</p>
+<p>gml:LinearRing &gt; gml:posList``(底面 + 側面 4 + 天面、lat lon alt の順)を書く。</p>
+<p>等距円筒近似は線形なので、局所座標で作った正方形は読み戻すと面積が size² に一致する。</p>
+<p>Args:</p>
+<p>n: 建物数(≥ 0)。</p>
+<p>origin: 建物 0 の中心の (lat, lon) [deg]。</p>
+<p>spacing: 建物中心の間隔 [m]。</p>
+<p>size: 正方形の一辺 [m]。</p>
+<p>heights: 各建物の高さ [m]。None なら `<code style="color:#22d3bf">10 + 5*i</code>`。</p>
+<p>ground_z: 底面の標高 [m]。</p>
+<p>omit_measured_height: この添字の建物では `<code style="color:#22d3bf">measuredHeight</code>` を書かない。</p>
+<p>use_lod0_footprint: True なら lod1Solid の前に `<code style="color:#22d3bf">lod0FootPrint</code>`(底面のみ)も書く。</p>
+<p>ns_building: bldg 名前空間 URI(版違いの試験用に差し替え可)。</p>
+<p>Returns:</p>
+<p>UTF-8 で書き出せる CityGML 文字列。</p>
+<p>Raises:</p>
+<p>ValueError: n が負、size/spacing が非正、heights の長さ不一致や非正。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_japan_town">poc_driving_japan_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_japan_town.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">any</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">japan</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:osm_synthetic">osm_synthetic</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a> · <a style="color:#22d3bf" href="opdrive:osm_road_graph">osm_road_graph</a> · <a style="color:#22d3bf" href="opdrive:osm_road_mask">osm_road_mask</a> · <a style="color:#22d3bf" href="opdrive:osm_road_loops">osm_road_loops</a> · <a style="color:#22d3bf" href="opdrive:osm_route">osm_route</a> · <a style="color:#22d3bf" href="opdrive:japan_world">japan_world</a> · <a style="color:#22d3bf" href="opdrive:japan_stats">japan_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: driveplateau.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

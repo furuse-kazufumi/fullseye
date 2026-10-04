@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">jp_stop_marking_mesh — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">any</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jp_stop_marking_mesh(*, char_h: &#x27;float&#x27; = 2.4, char_w: &#x27;float&#x27; = 0.8, gap: &#x27;float&#x27; = 1.0, z: &#x27;float&#x27; = 0.007)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivejapan; drivejapan.jp_stop_marking_mesh(*, char_h: &#x27;float&#x27; = 2.4, char_w: &#x27;float&#x27; = 0.8, gap: &#x27;float&#x27; = 1.0, z: &#x27;float&#x27; = 0.007)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;jp_stop_marking_mesh&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>路面文字「止まれ」(法定外表示、白)。局所座標: 原点 = 字の列の手前端(車に近い側)の車線中心、+x = 進む向き、+y = 左。</p>
+<p>寸法は警察庁「交通規制基準」第 46 の図例(1): 1 字 240 × 80 cm、画 15 cm、横棒 30 cm、字間 1 m、縦表示で遠い方から</p>
+<p>止・ま・れ(運転者は上から読む = 遠い字が上)。設置指針では停止線の 1〜3 m 手前から(:data:<code style="color:#22d3bf">JP_TOMARE_SETBACK_M</code>)。</p>
+<p>字形は折線の略字形(曲線は近似)。返り値 (V, F, colors)。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 寸法が正でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_japan_town">poc_driving_japan_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_japan_town.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">any</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">japan</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:osm_synthetic">osm_synthetic</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a> · <a style="color:#22d3bf" href="opdrive:osm_road_graph">osm_road_graph</a> · <a style="color:#22d3bf" href="opdrive:osm_road_mask">osm_road_mask</a> · <a style="color:#22d3bf" href="opdrive:osm_road_loops">osm_road_loops</a> · <a style="color:#22d3bf" href="opdrive:osm_route">osm_route</a> · <a style="color:#22d3bf" href="opdrive:japan_world">japan_world</a> · <a style="color:#22d3bf" href="opdrive:japan_stats">japan_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivejapan.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

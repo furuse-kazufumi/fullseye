@@ -585,10 +585,14 @@ def section8_tool_gaps():
     print("      4 節で見た「主点ドリフト → 半径比例の寸法誤差」を校正で吸収できない。")
     print("      `dist_center=` を受ける引数が要る(OpenCV も持っていない穴)。")
 
-    # (d) 面積・距離を物体平面で測る口が無い(1-D キャリパーは画素の話)
-    assert not any(n in allnames for n in ("polygon_area", "shoelace", "planar_measure"))
-    print("  (d) 物体平面での**多角形の面積**を出す口が公開層に無い")
-    print("      ('polygon_area'/'shoelace'/'planar_measure' で 0 件)。")
+    # (d) 面積・距離を物体平面で測る口が無い(1-D キャリパーは画素の話)。
+    #     2026-10-04: driveplateau.polygon_area(局所平面 [m] の多角形の靴紐面積、台帳 "japan")で穴の半分が埋まった。
+    #     残り = 画像の多角形を校正で物体平面に写してから面積を出す口('shoelace'/'planar_measure' は依然 0 件)。
+    assert "polygon_area" in allnames
+    assert not any(n in allnames for n in ("shoelace", "planar_measure"))
+    print("  (d) 物体平面での**多角形の面積**は 2026-10-04 に `polygon_area`(driveplateau、")
+    print("      局所平面 [m] の靴紐)で埋まったが、画像の多角形を校正で物体平面に写してから")
+    print("      測る口は無い('shoelace'/'planar_measure' で 0 件)。")
     print("      `measure3d` 族は (depth,row,col) の 3-D 計測、`measuring1d` は")
     print("      画素の 1-D キャリパー。**平面ワークの 2-D 寸法**という")
     print("      いちばん普通の用途がその間に落ちている(この PoC は 3 行書いた)。")

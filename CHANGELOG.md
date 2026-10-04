@@ -7,6 +7,18 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**実在の日本の町を自前の世界に建てる**(新モジュール `drivejapan` 15 op + `driveplateau` 7 op、台帳 `japan`、PoC `poc_driving_japan_town`、
+  wing_geometry): ユーザーの「出来れば日本のマップでやりたい」。外部シミュレータの同梱マップは欧米の町なので、**道は OpenStreetMap、建物は
+  国交省 PLATEAU、道具立てと規則は日本のもの**で自前に組む。道路の形は幅つき線分のラスタ和集合を `contours_xld` の境界追跡でループにし
+  (面積 = 画素数 × step² が厳密)、穴 = 街区に歩道と縁石。一時停止 330-A(一辺 80 cm)・停止線(45 cm)・路面文字「止まれ」(交通規制基準
+  図例(1): 240 × 80 cm × 3 字、字間 1 m、縦表示)・日本式の横断歩道(進行方向に平行な 45 cm の縞)・踏切警標・電柱・カーブミラーを規格の
+  寸法で置く。最短路(一方通行を守る)を左の車線中心に寄せ、信号・一時停止・踏切を停止線にして `town_run` で通して走る(`town_run` /
+  `town_checks` が "route" 入力を受けるようになった。停止線の kind に `stop_sign`)。`driveworld.LABELS` に 14 building / 15 sidewalk /
+  16 pole。`tools/plateau_fetch.py` は数 GB の配布 zip から必要な CityGML だけを HTTP Range で取り出す(2.5 GB の zip から 26 MB)。門 24 本、
+  実データ(銀座 0.7 × 0.6 km、OSM 586 辺・街区 122・PLATEAU 852 棟)で 461 m を停止 7 回で走って ok。
+  正直に: 幅は OSM にタグが無い辺(6 割)が種別の既定、他車・歩行者・現示なし、字形は略字形、地盤は平ら。データは repo に入れない
+  (`FULLSEYE_OSM_DATA` / `FULLSEYE_PLATEAU_DATA`)。図の出典: © OpenStreetMap contributors(ODbL)/ 国土交通省 Project PLATEAU。
+  見送り: AWSIM(西新宿の実在マップ)は地図資産が CC BY-NC で商用不可、CARLA に日本の町を作るのは Unreal Editor のビルドが要る。
 - ★**町を 1 つに組む**(新モジュール `drivetown`、台帳 `town` 8 op、PoC `poc_driving_town`、展示 wing_geometry 2026.191 —— 運転記事に回を書くまで展示館に置く): 集大成の土台。教習所の要素
   (:mod:`drivecourse`)を**自動で継ぐ**(要素 k+1 の entry を要素 k の exit に合わせる閉形式の配置 p = target ∘ entry⁻¹、0.05 m の食い込み —
   poc_driving_school の私的な tf / ahead を公開 op に)、既定の町 9 要素 235.1 m、1 本の中心線、流入車線の停止線、先の停止線を止まっている

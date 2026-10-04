@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**70 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**71 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1278,7 +1278,7 @@ Ops used (notes): [`moving_average_window`](https://furuse.work/ops/videostream/
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 9 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 10 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -1499,6 +1499,46 @@ Source: [examples/poc_driving_town.py](https://github.com/furuse-kazufumi/fullse
 This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_town)
 
 Ops used (notes): [`course_crank`](https://furuse.work/ops/drive/course/course_crank.html) · [`course_loop_bend`](https://furuse.work/ops/drive/course/course_loop_bend.html) · [`course_road`](https://furuse.work/ops/drive/course/course_road.html) · [`course_s_curve`](https://furuse.work/ops/drive/course/course_s_curve.html) · [`crossing_stop_check`](https://furuse.work/ops/drive/crossing/crossing_stop_check.html) · [`idm_accel`](https://furuse.work/ops/drive/traffic/idm_accel.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`kyosoku_summary`](https://furuse.work/ops/drive/town/kyosoku_summary.html) · [`long_params`](https://furuse.work/ops/drive/long/long_params.html) · [`long_simulate`](https://furuse.work/ops/drive/long/long_simulate.html) · [`town_centerline`](https://furuse.work/ops/drive/town/town_centerline.html) · [`town_chain`](https://furuse.work/ops/drive/town/town_chain.html) · [`town_checks`](https://furuse.work/ops/drive/town/town_checks.html) · [`town_crossing_state`](https://furuse.work/ops/drive/town/town_crossing_state.html) · [`town_layout`](https://furuse.work/ops/drive/town/town_layout.html) · [`town_rules`](https://furuse.work/ops/drive/town/town_rules.html) · [`town_run`](https://furuse.work/ops/drive/town/town_run.html) · [`town_stop_lines`](https://furuse.work/ops/drive/town/town_stop_lines.html) · [`town_world`](https://furuse.work/ops/drive/town/town_world.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
+
+## No.2026.192 —— Building a Real Japanese Town in Our Own World and Driving It — Roads from OpenStreetMap, Buildings from PLATEAU, Japanese Furniture and Rules
+
+[![Building a Real Japanese Town in Our Own World and Driving It — Roads from OpenStreetMap, Buildings from PLATEAU, Japanese Furniture and Rules](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/04_japan_town_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/04_japan_town_frames.png)
+
+*↑ **Building a Real Japanese Town in Our Own World and Driving It — Roads from OpenStreetMap, Buildings from PLATEAU, Japanese Furniture and Rules** ―― The author's wish: "if possible, do it on a Japanese map". The bundled maps of external photoreal simulators are European or American towns with right-hand traffic, and adding a Japanese town would need an editor build and Japanese assets, so we build Japan in our own world instead. The road network is an OpenStreetMap extract (equirectangular projection; widths from OSM tags or the Road Structure Ordinance lane widths as defaults). The road shape is the raster union of edges drawn as width-carrying segments, traced into boundary loops by Fullseye's own contour tracer (contours_xld, whose area equals the pixel count exactly); the holes are city blocks, given pavements and kerbs. Buildings come from MLIT's Project PLATEAU CityGML (LOD1 footprint and height → extruded prisms, driveplateau). The street furniture follows the regulation dimensions: the stop sign (330-A, 80 cm side), the stop line (45 cm), the road lettering 止まれ (Traffic Regulation Standard figure (1): 240 × 80 cm per character, 1 m apart, vertical), Japanese crosswalks with 45 cm stripes parallel to travel, crossbucks, utility poles and curve mirrors. The route is the shortest path (respecting one-way streets) shifted to the left-hand lane centre, with signals, stop signs and level crossings as stop lines, driven by drivetown's through-run under the JP rule pack. Figures: Ginza 0.7 × 0.6 km from above, a bird's-eye view with 852 PLATEAU buildings, an on-board drive-through (stop at red → go on green → stop sign), the same run's frames, the furniture before a stop sign with its label image, the road-network table and the speed profile. 24 gates: 0.001° of latitude = 111.3195 m and agreement with a second implementation to 1e-9, straight-road union area = L w + π(w/2)² within 0.04 %, loop area = pixel count × step² within 1.5e-11 m², 4 holes in the 3 × 3 grid, shortest path 160 m with stop lines at 76.25 / 156.25 m in closed form, right-hand route mirrored, a 320 m detour around a reversed one-way street, two stops 0.54 m short of their lines with town_checks ok, the stop-sign plate 0.8 m on a side with its top at 2.5 m, the 止まれ column 9.2 m long, sign and lettering visible in the frame before the stop sign, and a 30 m synthetic CityGML prism. On real data: 586 OSM edges, 122 blocks, 852 buildings, area gate 5e-8 m², and a 461 m route to a signalled junction driven with 7 stops, ok. Honestly: 60 % of widths are class defaults where OSM has no tag; no lane assignment, signal phases, other vehicles or pedestrians; the 止まれ glyphs are polyline approximations (official dimensions); crossbuck plate sizes are assumed; slivers under 4 m² are not built; PLATEAU ground relief is ignored. Figure credits: roads © OpenStreetMap contributors (ODbL), buildings: MLIT Project PLATEAU. The data themselves are not committed.*
+
+[![銀座 0.7 × 0.6 km の俯瞰: OSM の道路網を幅つきでラスタ化した和集合の穴 = 街区(歩道 + 縁石)、信号・横断歩道・電柱。 道路: © OpenStreetMap contributors (ODbL) / 建物: 出典](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/01_japan_town_topdown_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/01_japan_town_topdown.png)
+
+*↑ The measurement ―― 銀座 0.7 × 0.6 km の俯瞰: OSM の道路網を幅つきでラスタ化した和集合の穴 = 街区(歩道 + 縁石)、信号・横断歩道・電柱。 道路: © OpenStreetMap contributors (ODbL) / 建物: 出典 国土交通省 Project PLATEAU (figure labels are in Japanese; the numbers are the same)*
+
+[![PLATEAU(国交省 3D 都市モデル、LOD1 の足元と高さ)の建物 852 棟を押し出し柱で立てた銀座。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/02_japan_town_bird_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/02_japan_town_bird.png)
+
+*↑ PLATEAU(国交省 3D 都市モデル、LOD1 の足元と高さ)の建物 852 棟を押し出し柱で立てた銀座。*
+
+[![日本の道具立て(寸法は道路標識令 別表第二 / 交通規制基準 第 46 図例(1))。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/05_japan_furniture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/05_japan_furniture.png)
+
+*↑ 日本の道具立て(寸法は道路標識令 別表第二 / 交通規制基準 第 46 図例(1))。*
+
+[![幅の由来: {'lanes': 192, 'default': 375, 'width': 19}(width タグ / lanes × 車線幅 / 種別の既定)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/06_japan_road_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/06_japan_road_table.png)
+
+*↑ 幅の由来: {'lanes': 192, 'default': 375, 'width': 19}(width タグ / lanes × 車線幅 / 種別の既定)。*
+
+[![停止線: [(3.3, 'intersection'), (15.2, 'intersection'), (133.1, 'intersection'), (396.4, 'intersection'](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/07_japan_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/07_japan_speed.png)
+
+*↑ 停止線: [(3.3, 'intersection'), (15.2, 'intersection'), (133.1, 'intersection'), (396.4, 'intersection'), (419.3, 'intersection'), (432.1, 'intersection'…*
+
+[![左の車線中心を通して走る車載カメラ(JP 法規パック): 赤で停止 → 2 秒で青 → 発進、一時停止では止まって確認。道路: © OpenStreetMap contributors (ODbL) / 建物: 出典 国土交通省 Proje](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/03_japan_town_drive.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/03_japan_town_drive.gif)
+
+*↑ The animation ―― 左の車線中心を通して走る車載カメラ(JP 法規パック): 赤で停止 → 2 秒で青 → 発進、一時停止では止まって確認。道路: © OpenStreetMap contributors (ODbL) / 建物: 出典 国土交通省 Project PLATEAU*
+
+```
+py -3.11 examples/poc_driving_japan_town.py
+```
+
+Source: [examples/poc_driving_japan_town.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_driving_japan_town.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_japan_town)
+
+Ops used (notes): [`citygml_synthetic`](https://furuse.work/ops/drive/japan/citygml_synthetic.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`japan_stats`](https://furuse.work/ops/drive/japan/japan_stats.html) · [`japan_world`](https://furuse.work/ops/drive/japan/japan_world.html) · [`jp_sign_stop_mesh`](https://furuse.work/ops/drive/japan/jp_sign_stop_mesh.html) · [`jp_stop_marking_mesh`](https://furuse.work/ops/drive/japan/jp_stop_marking_mesh.html) · [`latlon_to_local`](https://furuse.work/ops/drive/japan/latlon_to_local.html) · [`osm_parse`](https://furuse.work/ops/drive/japan/osm_parse.html) · [`osm_road_graph`](https://furuse.work/ops/drive/japan/osm_road_graph.html) · [`osm_road_loops`](https://furuse.work/ops/drive/japan/osm_road_loops.html) · [`osm_road_mask`](https://furuse.work/ops/drive/japan/osm_road_mask.html) · [`osm_route`](https://furuse.work/ops/drive/japan/osm_route.html) · [`osm_synthetic`](https://furuse.work/ops/drive/japan/osm_synthetic.html) · [`plateau_parse`](https://furuse.work/ops/drive/japan/plateau_parse.html) · [`town_checks`](https://furuse.work/ops/drive/town/town_checks.html) · [`town_run`](https://furuse.work/ops/drive/town/town_run.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
 
 ## No.2026.133 —— Where Is the Public Camera Looking — The Orientation of a Fixed Camera Whose Only Published Fact Is Its Position, from the Picture Itself
 

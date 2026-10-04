@@ -4,7 +4,7 @@ dim: drive
 category: town
 in: table
 out: table
-examples: [poc_driving_town]
+examples: [poc_driving_japan_town, poc_driving_town]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -39,7 +39,7 @@ dict : ``t, s, x, y, z, v, yaw, a`` (各 (n,))、``mode`` (n,) 文字列("cruise
 ``stop_lines``(目標になり得た停止線)、``targets``(停止線ごとの "static" / "dynamic")、``train``(時刻の dict か None)、
 ``rules``、``params``、``total_length``。
 
-**Raises** ``ValueError``: layout が town_chain の物でない、dt/v_max/a_max/b_max/保持時間が不正、stop_at に知らない kind、
+**Raises** ``ValueError``: layout が town_chain の物でも drivejapan.osm_route の "route" でもない、dt/v_max/a_max/b_max/保持時間が不正、stop_at に知らない kind、
 rules/train が不正、停止線を越えてしまった(IDM の想定外)、t_max までに終点に着かない。
 
 ## 参考(サンプルデータ・文献)
@@ -50,6 +50,7 @@ rules/train が不正、停止線を越えてしまった(IDM の想定外)、t_
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_driving_japan_town](../../../../examples/poc_driving_japan_town.py) — `py -3.11 examples/poc_driving_japan_town.py`
 - [poc_driving_town](../../../../examples/poc_driving_town.py) — `py -3.11 examples/poc_driving_town.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

@@ -1,0 +1,78 @@
+[
+ {
+  "file": "01_japan_town_topdown.png",
+  "name": "japan_town_topdown",
+  "caption": "銀座 0.7 × 0.6 km の俯瞰: OSM の道路網を幅つきでラスタ化した和集合の穴 = 街区(歩道 + 縁石)、信号・横断歩道・電柱。 道路: © OpenStreetMap contributors (ODbL) / 建物: 出典 国土交通省 Project PLATEAU",
+  "shape": [
+   700,
+   900,
+   3
+  ]
+ },
+ {
+  "file": "02_japan_town_bird.png",
+  "name": "japan_town_bird",
+  "caption": "PLATEAU(国交省 3D 都市モデル、LOD1 の足元と高さ)の建物 852 棟を押し出し柱で立てた銀座。道路: © OpenStreetMap contributors (ODbL) / 建物: 出典 国土交通省 Project PLATEAU",
+  "shape": [
+   800,
+   1280,
+   3
+  ]
+ },
+ {
+  "file": "03_japan_town_drive.gif",
+  "name": "japan_town_drive",
+  "caption": "左の車線中心を通して走る車載カメラ(JP 法規パック): 赤で停止 → 2 秒で青 → 発進、一時停止では止まって確認。道路: © OpenStreetMap contributors (ODbL) / 建物: 出典 国土交通省 Project PLATEAU",
+  "shape": [
+   400,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 28,
+  "frames_written": 24,
+  "fps": 2.0
+ },
+ {
+  "file": "04_japan_town_frames.png",
+  "name": "japan_town_frames",
+  "caption": "同じ走行のコマ(時刻・弧長・速度・状態)。道路: © OpenStreetMap contributors (ODbL) / 建物: 出典 国土交通省 Project PLATEAU",
+  "shape": [
+   894,
+   2610,
+   3
+  ]
+ },
+ {
+  "file": "05_japan_furniture.png",
+  "name": "japan_furniture",
+  "caption": "日本の道具立て(寸法は道路標識令 別表第二 / 交通規制基準 第 46 図例(1))。字形は略字形。",
+  "shape": [
+   452,
+   1310,
+   3
+  ]
+ },
+ {
+  "file": "06_japan_road_table.png",
+  "name": "japan_road_table",
+  "caption": "幅の由来: {'lanes': 192, 'default': 375, 'width': 19}(width タグ / lanes × 車線幅 / 種別の既定)。節点の特徴: {'traffic_signals': 46, 'crossing': 146, 'stop': 3, 'give_way': 0, 'level_crossing': 0}。道路: © OpenStreetMap contributors (ODbL) / 建物: 出典 国土交通省 Project PLATEAU",
+  "shape": [
+   320,
+   360,
+   3
+  ],
+  "csv": "06_japan_road_table.csv",
+  "tsv": "06_japan_road_table.tsv"
+ },
+ {
+  "file": "07_japan_speed.png",
+  "name": "japan_speed",
+  "caption": "停止線: [(3.3, 'intersection'), (15.2, 'intersection'), (133.1, 'intersection'), (396.4, 'intersection'), (419.3, 'intersection'), (432.1, 'intersection'), (453.6, 'intersection')]",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

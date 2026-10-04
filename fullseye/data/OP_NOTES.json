@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2710,
- "n_notes": 2716,
+ "n_ops": 2732,
+ "n_notes": 2738,
  "notes": {
   "vol_dilate": [
    {
@@ -17045,6 +17045,218 @@
     "category": "inf",
     "out": "scalar",
     "path": "docs/ops/drive/inf/tile_uniform.md"
+   }
+  ],
+  "building_prisms": [
+   {
+    "op": "building_prisms",
+    "dim": "drive",
+    "category": "japan",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/japan/building_prisms.md"
+   }
+  ],
+  "buildings_in_box": [
+   {
+    "op": "buildings_in_box",
+    "dim": "drive",
+    "category": "japan",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/japan/buildings_in_box.md"
+   }
+  ],
+  "citygml_synthetic": [
+   {
+    "op": "citygml_synthetic",
+    "dim": "drive",
+    "category": "japan",
+    "out": "any",
+    "path": "docs/ops/drive/japan/citygml_synthetic.md"
+   }
+  ],
+  "japan_stats": [
+   {
+    "op": "japan_stats",
+    "dim": "drive",
+    "category": "japan",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/japan/japan_stats.md"
+   }
+  ],
+  "japan_world": [
+   {
+    "op": "japan_world",
+    "dim": "drive",
+    "category": "japan",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/japan/japan_world.md"
+   }
+  ],
+  "jp_crossbuck_mesh": [
+   {
+    "op": "jp_crossbuck_mesh",
+    "dim": "drive",
+    "category": "japan",
+    "out": "any",
+    "path": "docs/ops/drive/japan/jp_crossbuck_mesh.md"
+   }
+  ],
+  "jp_mirror_mesh": [
+   {
+    "op": "jp_mirror_mesh",
+    "dim": "drive",
+    "category": "japan",
+    "out": "any",
+    "path": "docs/ops/drive/japan/jp_mirror_mesh.md"
+   }
+  ],
+  "jp_pole_mesh": [
+   {
+    "op": "jp_pole_mesh",
+    "dim": "drive",
+    "category": "japan",
+    "out": "any",
+    "path": "docs/ops/drive/japan/jp_pole_mesh.md"
+   }
+  ],
+  "jp_sign_stop_mesh": [
+   {
+    "op": "jp_sign_stop_mesh",
+    "dim": "drive",
+    "category": "japan",
+    "out": "any",
+    "path": "docs/ops/drive/japan/jp_sign_stop_mesh.md"
+   }
+  ],
+  "jp_stop_marking_length": [
+   {
+    "op": "jp_stop_marking_length",
+    "dim": "drive",
+    "category": "japan",
+    "out": "scalar",
+    "path": "docs/ops/drive/japan/jp_stop_marking_length.md"
+   }
+  ],
+  "jp_stop_marking_mesh": [
+   {
+    "op": "jp_stop_marking_mesh",
+    "dim": "drive",
+    "category": "japan",
+    "out": "any",
+    "path": "docs/ops/drive/japan/jp_stop_marking_mesh.md"
+   }
+  ],
+  "latlon_to_local": [
+   {
+    "op": "latlon_to_local",
+    "dim": "drive",
+    "category": "japan",
+    "in": "any × any",
+    "out": "any",
+    "path": "docs/ops/drive/japan/latlon_to_local.md"
+   }
+  ],
+  "osm_parse": [
+   {
+    "op": "osm_parse",
+    "dim": "drive",
+    "category": "japan",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/japan/osm_parse.md"
+   }
+  ],
+  "osm_road_graph": [
+   {
+    "op": "osm_road_graph",
+    "dim": "drive",
+    "category": "japan",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/japan/osm_road_graph.md"
+   }
+  ],
+  "osm_road_loops": [
+   {
+    "op": "osm_road_loops",
+    "dim": "drive",
+    "category": "japan",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/japan/osm_road_loops.md"
+   }
+  ],
+  "osm_road_mask": [
+   {
+    "op": "osm_road_mask",
+    "dim": "drive",
+    "category": "japan",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/japan/osm_road_mask.md"
+   }
+  ],
+  "osm_route": [
+   {
+    "op": "osm_route",
+    "dim": "drive",
+    "category": "japan",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/japan/osm_route.md"
+   }
+  ],
+  "osm_synthetic": [
+   {
+    "op": "osm_synthetic",
+    "dim": "drive",
+    "category": "japan",
+    "out": "any",
+    "path": "docs/ops/drive/japan/osm_synthetic.md"
+   }
+  ],
+  "plateau_parse": [
+   {
+    "op": "plateau_parse",
+    "dim": "drive",
+    "category": "japan",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/japan/plateau_parse.md"
+   }
+  ],
+  "polygon_area": [
+   {
+    "op": "polygon_area",
+    "dim": "drive",
+    "category": "japan",
+    "in": "any",
+    "out": "scalar",
+    "path": "docs/ops/drive/japan/polygon_area.md"
+   }
+  ],
+  "prism_mesh": [
+   {
+    "op": "prism_mesh",
+    "dim": "drive",
+    "category": "japan",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/japan/prism_mesh.md"
+   }
+  ],
+  "triangulate_polygon": [
+   {
+    "op": "triangulate_polygon",
+    "dim": "drive",
+    "category": "japan",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/japan/triangulate_polygon.md"
    }
   ],
   "catch_plan_ballistic": [

@@ -22,13 +22,14 @@
 <p>`<code style="color:#22d3bf">stops</code><code style="color:#22d3bf"> = [(s_stop, kind, t_arrive, t_leave), ...]、</code><code style="color:#22d3bf">events</code>` = [(&quot;stop&quot;|&quot;go&quot;|&quot;look&quot;|&quot;wait_gate&quot;|&quot;commit&quot;|&quot;pass&quot;|&quot;end&quot;, t, ...)]、</p>
 <p>`<code style="color:#22d3bf">stop_lines</code><code style="color:#22d3bf">(目標になり得た停止線)、</code><code style="color:#22d3bf">targets</code><code style="color:#22d3bf">(停止線ごとの &quot;static&quot; / &quot;dynamic&quot;)、</code><code style="color:#22d3bf">train</code>`(時刻の dict か None)、</p>
 <p>`<code style="color:#22d3bf">rules</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">params</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">total_length</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: layout が town_chain の物でない、dt/v_max/a_max/b_max/保持時間が不正、stop_at に知らない kind、</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: layout が town_chain の物でも drivejapan.osm_route の &quot;route&quot; でもない、dt/v_max/a_max/b_max/保持時間が不正、stop_at に知らない kind、</p>
 <p>rules/train が不正、停止線を越えてしまった(IDM の想定外)、t_max までに終点に着かない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_japan_town">poc_driving_japan_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_japan_town.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
 <p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>

@@ -4,6 +4,7 @@
 卓球の球の力学・追跡・真値つきの台・ラケット(ballistics / balltrack / ballworld / racket)/
 日本の信号灯器と道路標識(roadjp、公表寸法をそのまま頂点に持つ)/
 けん玉の定理と閉ループの捕球・真値つきのけんの世界(kendama / kendamaworld)。
+実在の日本の町(drivejapan / driveplateau: OSM の道路網をラスタ和集合と輪郭追跡で街区にし、PLATEAU の建物を柱で立て、一時停止・「止まれ」・踏切警標・日本式の横断歩道を規格の寸法で置き、最短路を左の車線で通して走る)。
 町を 1 つに組む(drivetown: 教習所の要素を自動で継いで 1 本の道にし、縦だけの通し走行を停止線ごとに採点、教則 159 場面の台帳の集計)。
 外部の高写実シミュレータ(CARLA 0.9.16)の撮影記録を自前の世界の規約に写す橋(carlabridge: 左手系の鏡映・カメラの向き・主点の 0.5 画素・24 bit の深度・29 タグ → 14 ラベル、往復の門つき、numpy だけ)。
 世界を 3D Gaussian Splatting にして描く(gsplatnp: 面に貼ったガウシアン + EWA 描画、密度と誤差のつまみ)。
@@ -50,6 +51,8 @@ import drivehumanoid
 import agvfleet
 import carlabridge
 import drivetown
+import drivejapan
+import driveplateau
 import driveworld
 import kendama
 import kendamaworld
@@ -62,7 +65,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -369,6 +372,34 @@ _CATALOG = {
         ("town_run", "drivetown", ["table"], "table"),
         ("town_checks", "drivetown", ["table", "table"], "table"),
         ("kyosoku_summary", "drivetown", [], "table"),
+    ],
+    # 実在の日本の町(2026-10-04、「出来れば日本のマップで」): 道路網 = OpenStreetMap(ODbL)、建物 = 国交省 PLATEAU(CC BY 4.0)、道具立て = 道路標識令・
+    # 交通規制基準の寸法(一時停止 330-A 一辺 80 cm、停止線 45 cm、「止まれ」240 × 80 cm × 3 字、横断歩道 45 cm の縞)。道路の形は幅つき線分の
+    # ラスタ和集合を contours_xld の境界追跡でループにする(面積 = 画素数 × step² が厳密)。真値 = 等距円筒の閉形式、直線路の面積 L w + π(w/2)²、
+    # 最短路の長さ・停止線の位置の閉形式、右側通行は鏡像、一方通行の遵守、PLATEAU の柱の体積 = 面積 × 高さ(発散定理)。
+    "japan": [
+        ("osm_synthetic", "drivejapan", [], "any"),
+        ("osm_parse", "drivejapan", ["any"], "table"),
+        ("osm_road_graph", "drivejapan", ["table"], "table"),
+        ("osm_road_mask", "drivejapan", ["table"], "table"),
+        ("osm_road_loops", "drivejapan", ["table"], "table"),
+        ("osm_route", "drivejapan", ["table"], "table"),
+        ("japan_world", "drivejapan", ["table"], "table"),
+        ("japan_stats", "drivejapan", ["table"], "table"),
+        ("latlon_to_local", "drivejapan", ["any", "any"], "any"),
+        ("jp_sign_stop_mesh", "drivejapan", [], "any"),
+        ("jp_crossbuck_mesh", "drivejapan", [], "any"),
+        ("jp_pole_mesh", "drivejapan", [], "any"),
+        ("jp_mirror_mesh", "drivejapan", [], "any"),
+        ("jp_stop_marking_mesh", "drivejapan", [], "any"),
+        ("jp_stop_marking_length", "drivejapan", [], "scalar"),
+        ("citygml_synthetic", "driveplateau", [], "any"),
+        ("plateau_parse", "driveplateau", ["any"], "table"),
+        ("buildings_in_box", "driveplateau", ["table"], "any"),
+        ("building_prisms", "driveplateau", ["any"], "any"),
+        ("prism_mesh", "driveplateau", ["any"], "any"),
+        ("triangulate_polygon", "driveplateau", ["any"], "any"),
+        ("polygon_area", "driveplateau", ["any"], "scalar"),
     ],
     # 車の縦の運動: m dv/dt = 駆動 − 制動 − m g sin θ − c_rr m g cos θ − ½ρC_dA v|v|(止まっている間はブレーキの保持の範囲で動かない)。
     # 真値 = 停止距離の閉形式 vρ + (1/2k)ln(1 + k v²/A)(A = b ± g sin θ + c_rr g cos θ)、rsssafety との一致、坂道発進のずり下がりの閉形式、

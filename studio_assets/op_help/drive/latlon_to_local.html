@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">latlon_to_local — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.latlon_to_local(lat, lon, origin) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivejapan; drivejapan.latlon_to_local(lat, lon, origin) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;latlon_to_local&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>緯度経度 [deg] → 原点 origin = (lat0, lon0) まわりの等距円筒近似の平面座標 (x 東, y 北) [m]。</p>
+<p>x = R cos(lat0) Δλ、y = R Δφ(R = 6378137 m)。1 km 四方で 1e-5 の歪み(cos の変化)なので町 1 つには十分。配列可。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 緯度経度が範囲外・非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_japan_town">poc_driving_japan_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_japan_town.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">any</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">japan</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:osm_synthetic">osm_synthetic</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a> · <a style="color:#22d3bf" href="opdrive:osm_road_graph">osm_road_graph</a> · <a style="color:#22d3bf" href="opdrive:osm_road_mask">osm_road_mask</a> · <a style="color:#22d3bf" href="opdrive:osm_road_loops">osm_road_loops</a> · <a style="color:#22d3bf" href="opdrive:osm_route">osm_route</a> · <a style="color:#22d3bf" href="opdrive:japan_world">japan_world</a> · <a style="color:#22d3bf" href="opdrive:japan_stats">japan_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivejapan.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

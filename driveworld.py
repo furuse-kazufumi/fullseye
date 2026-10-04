@@ -50,7 +50,8 @@ __all__ = [
 
 LABELS = {0: "ground", 1: "kerb", 2: "car", 3: "traffic_light", 4: "sign", 5: "cone",
           6: "block", 7: "pedestrian", 8: "rail", 9: "line",
-          10: "terrain", 11: "puddle", 12: "crosswalk", 13: "tree"}     # 10 以降は driveterrain(16 巡目)
+          10: "terrain", 11: "puddle", 12: "crosswalk", 13: "tree",      # 10 以降は driveterrain(16 巡目)
+          14: "building", 15: "sidewalk", 16: "pole"}                     # 14 以降は drivejapan(実在の町: PLATEAU の建物・街区の歩道・電柱)
 
 #: 同梱する CC0 資産: 名前 → (キット, ファイル, 実寸 (長さ x, 幅 y, 高さ z) [m], ラベル)。
 ASSETS = {

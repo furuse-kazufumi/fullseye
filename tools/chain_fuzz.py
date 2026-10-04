@@ -3130,6 +3130,93 @@ def _b_town_crossing_state(pool, rng):
     return (t["world"], float(rng.uniform(0.0, 80.0)), t["run_train"]["train"]), {}
 
 
+_FUZZ_JAPAN = {}
+
+
+def _fuzz_japan():
+    """合成の 3 × 3 格子の町(drivejapan.osm_synthetic)と、その世界・経路。計算は 1 回だけ。"""
+    if "graph" not in _FUZZ_JAPAN:
+        import drivejapan as DJ
+        import driveplateau as PL
+        xml = DJ.osm_synthetic("grid", n=3, pitch=80.0)
+        osm = DJ.osm_parse(xml)
+        g = DJ.osm_road_graph(osm)
+        xy = {i: n["xy"] for i, n in g["nodes"].items()}
+        src = min(xy, key=lambda k: (xy[k][0] + 80) ** 2 + xy[k][1] ** 2)
+        dst = min(xy, key=lambda k: (xy[k][0] - 80) ** 2 + xy[k][1] ** 2)
+        cg = PL.plateau_parse(PL.citygml_synthetic(n=3, origin=osm["origin"], spacing=30.0, size=10.0), origin=osm["origin"])
+        _FUZZ_JAPAN.update({"xml": xml, "osm": osm, "graph": g, "mask": DJ.osm_road_mask(g, step=1.0), "src": src, "dst": dst,
+                            "route": DJ.osm_route(g, src, dst), "citygml": cg, "square": [[0.0, 0.0], [10.0, 0.0], [10.0, 8.0], [0.0, 8.0]]})
+    return _FUZZ_JAPAN
+
+
+def _b_osm_synthetic(pool, rng):
+    return (str(rng.choice(["grid", "line"])),), {"n": int(rng.integers(2, 4))}
+
+
+def _b_osm_parse(pool, rng):
+    return (_fuzz_japan()["xml"],), {}
+
+
+def _b_osm_graph_arg(pool, rng):
+    return (_fuzz_japan()["osm"],), {}
+
+
+def _b_japan_graph_arg(pool, rng):
+    return (_fuzz_japan()["graph"],), {}
+
+
+def _b_osm_road_mask(pool, rng):
+    return (_fuzz_japan()["graph"],), {"step": float(rng.choice([0.5, 1.0]))}
+
+
+def _b_osm_road_loops(pool, rng):
+    return (_fuzz_japan()["mask"],), {}
+
+
+def _b_osm_route(pool, rng):
+    t = _fuzz_japan()
+    return (t["graph"], t["src"], t["dst"]), {"side": str(rng.choice(["left", "right"]))}
+
+
+def _b_japan_world(pool, rng):
+    t = _fuzz_japan()
+    return (t["graph"],), {"step": 1.0, "props": bool(rng.integers(0, 2)), "buildings": t["citygml"]["buildings"] if rng.integers(0, 2) else None}
+
+
+def _b_latlon_to_local(pool, rng):
+    return (35.67 + float(rng.uniform(-0.01, 0.01)), 139.76 + float(rng.uniform(-0.01, 0.01)), (35.67, 139.76)), {}
+
+
+def _b_jp_mesh(pool, rng):
+    return (), {}
+
+
+def _b_citygml_synthetic(pool, rng):
+    return (int(rng.integers(1, 4)),), {}
+
+
+def _b_plateau_parse(pool, rng):
+    import driveplateau as PL
+    return (PL.citygml_synthetic(n=2),), {}
+
+
+def _b_buildings_in_box(pool, rng):
+    return (_fuzz_japan()["citygml"], -100.0, 100.0, -100.0, 100.0), {}
+
+
+def _b_building_prisms(pool, rng):
+    return (_fuzz_japan()["citygml"]["buildings"],), {}
+
+
+def _b_prism_mesh(pool, rng):
+    return (_fuzz_japan()["square"], float(rng.uniform(3.0, 30.0))), {}
+
+
+def _b_polygon_arg(pool, rng):
+    return (_fuzz_japan()["square"],), {}
+
+
 def _b_events_to_frames(pool, rng):
     import motionio
     return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
@@ -4020,6 +4107,12 @@ OP_ARG_BUILDERS = {
     "town_centerline": _b_town_layout_arg, "town_stop_lines": _b_town_layout_arg, "town_run": _b_town_run,
     "town_checks": _b_town_checks, "kyosoku_summary": _b_kyosoku_summary,
     "town_rules": _b_town_rules, "town_crossing_state": _b_town_crossing_state,
+    "osm_synthetic": _b_osm_synthetic, "osm_parse": _b_osm_parse, "osm_road_graph": _b_osm_graph_arg, "osm_road_mask": _b_osm_road_mask,
+    "osm_road_loops": _b_osm_road_loops, "osm_route": _b_osm_route, "japan_world": _b_japan_world, "japan_stats": _b_japan_graph_arg,
+    "latlon_to_local": _b_latlon_to_local, "jp_sign_stop_mesh": _b_jp_mesh, "jp_crossbuck_mesh": _b_jp_mesh, "jp_pole_mesh": _b_jp_mesh,
+    "jp_mirror_mesh": _b_jp_mesh, "jp_stop_marking_mesh": _b_jp_mesh, "jp_stop_marking_length": _b_jp_mesh,
+    "citygml_synthetic": _b_citygml_synthetic, "plateau_parse": _b_plateau_parse, "buildings_in_box": _b_buildings_in_box,
+    "building_prisms": _b_building_prisms, "prism_mesh": _b_prism_mesh, "triangulate_polygon": _b_polygon_arg, "polygon_area": _b_polygon_arg,
     "sign_params": _b_sign_kind, "sign_image": _b_sign_img, "plate_mesh_from_image": _b_plate_mesh,
     "sign_mesh": _b_sign_mesh, "add_sign": _b_add_sign, "signal_jp_mesh": _b_signal_jp,
     "add_signal_jp": _b_add_signal_jp,

@@ -1,4 +1,4 @@
-# DRIVE operator help — 344 ops in 27 categories
+# DRIVE operator help — 366 ops in 28 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -51,6 +51,10 @@
 ### inf (12)
 
 [global_to_tile](inf/global_to_tile.md) · [pose_normalize](inf/pose_normalize.md) · [tile_digest](inf/tile_digest.md) · [tile_edge_crossing](inf/tile_edge_crossing.md) · [tile_hash](inf/tile_hash.md) · [tile_height](inf/tile_height.md) · [tile_mesh](inf/tile_mesh.md) · [tile_params](inf/tile_params.md) · [tile_road_distance](inf/tile_road_distance.md) · [tile_roads](inf/tile_roads.md) · [tile_stream](inf/tile_stream.md) · [tile_uniform](inf/tile_uniform.md)
+
+### japan (22)
+
+[building_prisms](japan/building_prisms.md) · [buildings_in_box](japan/buildings_in_box.md) · [citygml_synthetic](japan/citygml_synthetic.md) · [japan_stats](japan/japan_stats.md) · [japan_world](japan/japan_world.md) · [jp_crossbuck_mesh](japan/jp_crossbuck_mesh.md) · [jp_mirror_mesh](japan/jp_mirror_mesh.md) · [jp_pole_mesh](japan/jp_pole_mesh.md) · [jp_sign_stop_mesh](japan/jp_sign_stop_mesh.md) · [jp_stop_marking_length](japan/jp_stop_marking_length.md) · [jp_stop_marking_mesh](japan/jp_stop_marking_mesh.md) · [latlon_to_local](japan/latlon_to_local.md) · [osm_parse](japan/osm_parse.md) · [osm_road_graph](japan/osm_road_graph.md) · [osm_road_loops](japan/osm_road_loops.md) · [osm_road_mask](japan/osm_road_mask.md) · [osm_route](japan/osm_route.md) · [osm_synthetic](japan/osm_synthetic.md) · [plateau_parse](japan/plateau_parse.md) · [polygon_area](japan/polygon_area.md) · [prism_mesh](japan/prism_mesh.md) · [triangulate_polygon](japan/triangulate_polygon.md)
 
 ### kendama (19)
 

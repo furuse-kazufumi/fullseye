@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">osm_road_mask — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_road_mask(graph: &#x27;dict&#x27;, *, step: &#x27;float&#x27; = 0.5, margin: &#x27;float&#x27; = 6.0, bbox=None) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivejapan; drivejapan.osm_road_mask(graph: &#x27;dict&#x27;, *, step: &#x27;float&#x27; = 0.5, margin: &#x27;float&#x27; = 6.0, bbox=None) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;osm_road_mask&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>辺を幅つきの線分(端は丸)として描いた <b>道路の和集合</b> の 2 値画像。</p>
+<p>画素 (r, c) の中心 = (xmin + (c + ½) step, ymin + (r + ½) step)、行は y の増える向き(数学座標。表示で上下を返す)。</p>
+<p>返り値 `<code style="color:#22d3bf">{&quot;mask&quot;: (H, W) bool, &quot;xmin&quot;, &quot;ymin&quot;, &quot;step&quot;, &quot;shape&quot;, &quot;area_m2&quot;: 画素数 × step²}</code>`。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: step ≤ 0、画像が 4e7 画素を超える(step を粗く)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_japan_town">poc_driving_japan_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_japan_town.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">japan</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:osm_synthetic">osm_synthetic</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a> · <a style="color:#22d3bf" href="opdrive:osm_road_graph">osm_road_graph</a> · <a style="color:#22d3bf" href="opdrive:osm_road_loops">osm_road_loops</a> · <a style="color:#22d3bf" href="opdrive:osm_route">osm_route</a> · <a style="color:#22d3bf" href="opdrive:japan_world">japan_world</a> · <a style="color:#22d3bf" href="opdrive:japan_stats">japan_stats</a> · <a style="color:#22d3bf" href="opdrive:latlon_to_local">latlon_to_local</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivejapan.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
