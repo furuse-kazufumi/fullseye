@@ -21,6 +21,7 @@
 視触覚センサ(tacsim: Hertz 接触の閉形式 —— 接触半径・押し込み・圧力・半空間の表面変位 —— を真値に、弾性膜を 3 色照明で撮った像を合成し、フォトメトリックステレオで法線 → 接触半径と力を逆算。スロープ分布への Hertz 模型の当てはめ・模型なしのリング・δ の 1D 積分の 3 経路)。
 マーカー配列のせん断(tacslip: Cattaneo–Mindlin の部分滑りを真値に、固着円・滑り環・接線力をマーカー追跡から逆算。接触円の外側は Cerruti 核の FFT 畳み込み、逆算は相似則で畳み込み 1 回。有限要素の節点変位で半空間が外れる半径を数に。マーカー中心の (N, 2) は matrix で運ぶ)。
 触覚双極子 → 把持内トルク(tactorque: マーカー変位場の発散を電荷と見た双極子(arXiv 2404.15626 の再実装)で傾きトルク、剛体回転でねじり、平均で並進に分ける。真値 = Johnson 1985 の閉形式: 平頭押し込み子の圧 + 傾きモーメントの反対称項、Boussinesq 核、Gauss の恒等式 ∇·ū = −(1−2ν)p/2G(双極子 = 圧力の 1 次モーメント、形状不変)、Reissner–Sagoci のねじり。純せん断の漏れ (1−ν)/(1−2ν)·Q·R を窓で切る。有限要素では有限厚が膨らんで符号が逆)。
+エアホッケーのパック追跡・予測・打ち返し(puck: 学習なし、全部ルール。真値 = Coulomb の等減速と壁の 2 つの反発係数の閉形式(区間ごとに繋ぐ、鏡映法と一致)、5 節リンクの FK/IK(円と円の交点)、第 2 実装 = 外部シムの台の MJCF(粘性減衰 c/m = 0.5 /s で Coulomb ではない、e・kₜ は測って出る)。合成の真上カメラ(被覆率の反エイリアス、モーションブラー = v·τ/2)、検出は balltrack の facade、速度は向き固定の最小二乗、打点計画は一定角速度の規則。リンク寸法・サーボ速度・打具半径・守備線は仮定)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -67,6 +68,7 @@ import pegsim
 import tacsim
 import tacslip
 import tactorque
+import puck
 import racket
 import roadjp
 import rsssafety
@@ -75,7 +77,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -698,6 +700,40 @@ _CATALOG = {
         ("torque_decompose", "tactorque", ["matrix", "matrix", "scalar", "scalar", "scalar"], "table"),
         ("dipole_torque_resolution", "tactorque", ["matrix", "matrix", "scalar", "scalar", "scalar", "scalar", "scalar"], "table"),
         ("grasp_torque_frame", "tactorque", ["image2d", "image2d", "scalar", "scalar", "scalar", "scalar", "scalar", "scalar"], "table"),
+    ],
+    # エアホッケーのパック追跡・予測・打ち返し(2026-10-04、物理シミュ × Fullseye 系列 第 3 弾): 低価格のエアホッケーロボット(Shinjo ほか、IROS 2024、
+    # doi 10.1109/iros58592.2024.10801458)の鎖 カメラ → 検出 → 速度 → 予測 → 5 節リンクの計画 を学習なしで。真値 = 閉形式(Coulomb の等減速 a = μg、壁は
+    # 法線 −e・接線 kₜ: 記法は Cross 2022 doi 10.1088/1361-6404/ac4b47、Spong 2001 の衝突模型は未読で未検証)、5 節リンクの FK∘IK 恒等、第 2 実装 = Robot Air
+    # Hockey Challenge の台の MJCF(Liu ほか arXiv 2411.05718、MIT、repo に同梱せず FULLSEYE_AIRHOCKEY_DATA の下)—— 読んで分かったのは減速が粘性減衰
+    # c/m = 0.5 /s(Coulomb ではない)で、壁の e・kₜ は軟接触から測って出ること。自前の Coulomb 版 MJCF(文字列、mujoco 不要)も持つ。2-vector(p, v, q, E)は
+    # signal、(N,2) は matrix、コマは image2d、コマ列は any。mujoco が要る 2 本(puck_challenge_mjcf / puck_mujoco_run)は facade だけで台帳には載せない。
+    "puck": [
+        ("puck_table", "puck", [], "table"),
+        ("puck_wall_bounce", "puck", ["signal", "signal", "scalar", "scalar"], "table"),
+        ("puck_slide_predict", "puck", ["signal", "signal", "table", "scalar"], "table"),
+        ("puck_state_at", "puck", ["table", "signal"], "table"),
+        ("puck_crossing_point", "puck", ["table", "scalar"], "any"),
+        ("puck_mirror_path", "puck", ["signal", "signal", "table", "scalar"], "signal"),
+        ("puck_stop_distance", "puck", ["scalar", "table"], "scalar"),
+        ("puck_camera", "puck", ["table"], "table"),
+        ("puck_pinhole_camera", "puck", ["table", "scalar", "scalar", "signal"], "table"),
+        ("puck_world_to_pixel", "puck", ["table", "matrix"], "matrix"),
+        ("puck_pixel_to_world", "puck", ["table", "matrix"], "matrix"),
+        ("puck_render_frame", "puck", ["table", "signal"], "image2d"),
+        ("puck_synth_frames", "puck", ["table", "table", "signal", "signal"], "table"),
+        ("puck_detect", "puck", ["image2d", "table"], "any"),
+        ("puck_track", "puck", ["any", "table"], "table"),
+        ("puck_velocity_estimate", "puck", ["signal", "matrix", "table"], "table"),
+        ("puck_mu_from_decel", "puck", ["signal", "matrix"], "table"),
+        ("puck_restitution_from_wall", "puck", ["signal", "matrix", "table"], "table"),
+        ("fivebar_link", "puck", [], "table"),
+        ("fivebar_fk", "puck", ["signal", "table"], "any"),
+        ("fivebar_ik", "puck", ["signal", "table"], "any"),
+        ("fivebar_workspace", "puck", ["table"], "table"),
+        ("fivebar_reach_interval", "puck", ["table", "scalar"], "table"),
+        ("striker_plan", "puck", ["any", "signal", "table"], "table"),
+        ("fivebar_trajectory", "puck", ["signal", "table", "signal"], "matrix"),
+        ("puck_scene_mjcf", "puck", ["table"], "any"),
     ],
 }
 

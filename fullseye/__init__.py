@@ -198,6 +198,7 @@ with warnings.catch_warnings():
         laplace_inverse_func,
         humanoid_walk_clip,   # 運転の世界を歩くヒューマノイド(MJCF → 歩行 1 周期、mujoco が要るので台帳の外、2026-10-03)
         peg_scene_build, peg_set_pose, peg_wrist_render, peg_scene_close, peg_contact_state, peg_two_point_depth_sim, peg_depth_sample_offset, peg_insertion_run, peg_insertion_grid,   # 柔らかい手首のペグ挿入(mujoco が要るので台帳の外、2026-10-04)
+        puck_challenge_mjcf, puck_mujoco_run,   # エアホッケーの外部シムの台と MuJoCo の走行(mujoco が要るので台帳の外、2026-10-04)
         hankel_image, dct_transform, wavelet_filters, dwt_transform, dwt_inverse,
         # 数値計算の古典と特殊関数(2026-10-03)
         erf,
@@ -895,6 +896,7 @@ __all__ = [
     "dynsys_correlation_dimension",
     "abel_transform", "abel_inverse", "abel_inverse_image", "abel_revolve", "hankel_transform", "tf_poles_zeros", "tf_freq_response", "tf_impulse_response", "tf_step_response", "tf_bilinear", "laplace_inverse_talbot", "laplace_inverse_func", "humanoid_walk_clip",
     "peg_scene_build", "peg_set_pose", "peg_wrist_render", "peg_scene_close", "peg_contact_state", "peg_two_point_depth_sim", "peg_depth_sample_offset", "peg_insertion_run", "peg_insertion_grid",
+    "puck_challenge_mjcf", "puck_mujoco_run",
     "hankel_image", "dct_transform", "wavelet_filters", "dwt_transform", "dwt_inverse",
     "erf", "erfc", "bessel", "gauss_quadrature", "gauss_cubature", "chebyshev_coeffs_nd", "chebyshev_eval_nd", "low_discrepancy", "chebyshev_nodes", "interp_barycentric", "integrate_hamiltonian",
     "lomb_scargle", "music_doa", "esprit_doa", "ula_snapshots", "n_sources_mdl", "hilbert_analytic",

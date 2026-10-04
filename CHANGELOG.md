@@ -7,6 +7,18 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**エアホッケーのパックを追い、予測し、5 節リンクで打ち返す**(新モジュール `puck` 26 op + mujoco の facade 2、台帳 `puck`(opsdrive)、PoC
+  `poc_air_hockey_intercept`、wing_geometry): 物理シミュ × Fullseye 系列 第 3 弾。低価格のエアホッケーロボット(Shinjo ほか、IROS 2024、
+  doi 10.1109/iros58592.2024.10801458)の鎖 カメラ → 検出 → 速度 → 予測 → 5 節リンクの計画 を、既存部品(`balltrack`、`ballistics`、`calib`)と閉形式だけで
+  学習なしに組む。真値 = 閉形式(Coulomb の等減速、壁の法線 −e・接線 kₜ —— 記法は Cross 2022、Spong 2001 は未読で未検証 —— を区間ごとに繋ぐ: 鏡映法と
+  3e-15 m、Euler と 1.5e-5 m)、5 節リンクの FK∘IK(2e-15 m)、**第 2 実装 = Robot Air Hockey Challenge の台の MJCF**(Liu ほか arXiv 2411.05718、MIT、repo に
+  同梱せず `FULLSEYE_AIRHOCKEY_DATA` の下)。★第 2 実装が模型の違いを暴いた: Challenge の台はパックと台面の接触を切り、滑り関節の**粘性減衰 c/m = 0.5 /s**
+  で減速する(Coulomb ではない、実測の傾き −0.4999 /s)、壁は軟接触で e_n = 0.739・kₜ = 0.852 は測って出る。`puck_slide_predict(model="viscous")` を足すと MuJoCo と
+  壁の前 0.11 mm・壁 1 回の後 0.4 mm。`puck_detect` のしきい値は台の値の少し下 0.85(0.5 だと縁の画素が切れて 0.08 px 偏る、実測)。モーションブラーの重心は
+  v·τ/2(閉形式、0.004 px)。門 16 本(numpy、1.6 s)+ `--full` 6 本(MuJoCo、13 s): 検出の重心 max 0.0059 px、速度 N = 12 で 0.01 %、雑音ありの交点 20 本
+  rms 0.2 mm、守備線で届く区間 |y| ≤ 0.369(隅は届かない、正直)、μ 0.7 %、e・kₜ 0.01 %、速いパックは 45 px/コマで対応が切れる、全鎖 20 本は届く 12 本を
+  12 本打てた(交点誤差 中央 1.2 mm)。正直に: リンク寸法・サーボ 6 rad/s・打具 40 mm・守備線・既定 μ / e / kₜ は仮定(論文の実機の数は未読)、実機映像は無い、
+  壁の滑り/把持と回転は未実装、自前 Coulomb MJCF の減速は μg から 3.3 % ずれる(軟接触か設定かは未切り分け)。
 - ★**視触覚センサのマーカー場から「触覚双極子」で把持内の傾き・ねじりトルクを読む**(新モジュール `tactorque` 17 op、台帳 `tactorque`(opsdrive)、PoC
   `poc_tactile_dipole_torque`、wing_metrology): 物理シミュ × Fullseye 系列 第 2 弾の第 3 本。再実装した方法 = Fuchioka & Hamaya, ICRA 2024, arXiv 2404.15626
   (学習なし・光学模型なし: マーカー変位場の発散を電荷と見た双極子で傾きトルク、原点は正負の重心の中点、係数は力覚センサで較正。著者のコードは無ライセンス

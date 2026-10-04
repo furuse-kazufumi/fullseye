@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">puck_detect — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_detect(frame, cam: &#x27;dict&#x27;, *, mode: &#x27;str&#x27; = &#x27;dark&#x27;, thresh: &#x27;float&#x27; = 0.85, radius_tol: &#x27;float&#x27; = 0.5, color=None, color_tol: &#x27;float&#x27; = 0.25)</code>(要直接呼叫實作,<code style="color:#22d3bf">import puck; puck.puck_detect(frame, cam: &#x27;dict&#x27;, *, mode: &#x27;str&#x27; = &#x27;dark&#x27;, thresh: &#x27;float&#x27; = 0.85, radius_tol: &#x27;float&#x27; = 0.5, color=None, color_tol: &#x27;float&#x27; = 0.25)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;puck_detect&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>:func:<code style="color:#22d3bf">balltrack.ball_detect</code> の facade: 真上のコマから円盤を 1 つ取り、ホモグラフィで台の平面 (x, y) [m] に写す。</p>
+<p>`<code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> = &quot;dark&quot;(白い台に暗いパック、合成)/ &quot;color&quot;・&quot;chroma&quot;(色で、MuJoCo の赤いパック)。</code><code style="color:#22d3bf">thresh</code>` は台の値</p>
+<p>(0.92)の少し下に置く: `<code style="color:#22d3bf">ball_detect</code>` の重みは (thresh − 画素値) なので、しきい値が台に近いほど重み ∝ 被覆率で</p>
+<p>重心が面積重心に一致する。中間の 0.5 では縁の画素が切れて位相依存の偏りが出る(実測 2026-10-04、r = 6.3 px:</p>
+<p>thresh 0.5 → 最大 0.08 px / 0.7 → 0.03 / 0.85 → 0.005、雑音 σ 0.01 でも 0.014)。半径が期待</p>
+<p>(puck_radius·px_per_m)の (1 ± radius_tol) 倍から外れる塊は捨てる。返り値 `<code style="color:#22d3bf">{&quot;col&quot;,&quot;row&quot;,&quot;radius&quot;,&quot;fill&quot;,&quot;x&quot;,&quot;y&quot;}</code>` か、</p>
+<p>見つからなければ `<code style="color:#22d3bf">None</code><code style="color:#22d3bf">(fail-closed)。知らない </code><code style="color:#22d3bf">mode</code>` は ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_air_hockey_intercept">poc_air_hockey_intercept</a> — <code style="color:#22d3bf">py -3.11 examples/poc_air_hockey_intercept.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">any</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">puck</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:puck_table">puck_table</a> · <a style="color:#22d3bf" href="opdrive:puck_wall_bounce">puck_wall_bounce</a> · <a style="color:#22d3bf" href="opdrive:puck_slide_predict">puck_slide_predict</a> · <a style="color:#22d3bf" href="opdrive:puck_state_at">puck_state_at</a> · <a style="color:#22d3bf" href="opdrive:puck_crossing_point">puck_crossing_point</a> · <a style="color:#22d3bf" href="opdrive:puck_mirror_path">puck_mirror_path</a> · <a style="color:#22d3bf" href="opdrive:puck_stop_distance">puck_stop_distance</a> · <a style="color:#22d3bf" href="opdrive:puck_camera">puck_camera</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: puck.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

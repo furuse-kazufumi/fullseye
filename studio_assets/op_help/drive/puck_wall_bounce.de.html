@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">puck_wall_bounce — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_wall_bounce(v, normal, e: &#x27;float&#x27;, kt: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import puck; puck.puck_wall_bounce(v, normal, e: &#x27;float&#x27;, kt: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;puck_wall_bounce&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>壁との衝突: 法線成分 vₙ&#x27; = −e vₙ、接線成分 vₜ&#x27; = kₜ vₜ(e = 法線の反発係数、kₜ = 接線の保持率 = 接線の反発係数)。</p>
+<p>回転は持たない(壁の摩擦で入る回転は接線の減りに畳んである。Cross 2022 のディスク衝突は「滑りか把持か」で接線の</p>
+<p>反発係数を書く —— その 2 領域は入れていない)。返り値</p>
+<p>`<code style="color:#22d3bf">{&quot;v&quot;, &quot;vn_in&quot;, &quot;vn_out&quot;, &quot;vt_in&quot;, &quot;vt_out&quot;, &quot;energy_ratio&quot;}</code>`。法線だけの衝突なら energy_ratio = e²(門)。</p>
+<p>`<code style="color:#22d3bf">v·n ≥ 0</code>`(離れていく)なら何もしない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_air_hockey_intercept">poc_air_hockey_intercept</a> — <code style="color:#22d3bf">py -3.11 examples/poc_air_hockey_intercept.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">puck</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:puck_table">puck_table</a> · <a style="color:#22d3bf" href="opdrive:puck_slide_predict">puck_slide_predict</a> · <a style="color:#22d3bf" href="opdrive:puck_state_at">puck_state_at</a> · <a style="color:#22d3bf" href="opdrive:puck_crossing_point">puck_crossing_point</a> · <a style="color:#22d3bf" href="opdrive:puck_mirror_path">puck_mirror_path</a> · <a style="color:#22d3bf" href="opdrive:puck_stop_distance">puck_stop_distance</a> · <a style="color:#22d3bf" href="opdrive:puck_camera">puck_camera</a> · <a style="color:#22d3bf" href="opdrive:puck_pinhole_camera">puck_pinhole_camera</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: puck.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

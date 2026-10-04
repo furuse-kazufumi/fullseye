@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">puck_table — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_table(*, x_half: &#x27;float&#x27; = 0.974, y_half: &#x27;float&#x27; = 0.519, puck_radius: &#x27;float&#x27; = 0.03165, mass: &#x27;float&#x27; = 0.01, mu: &#x27;float&#x27; = 0.02, e: &#x27;float&#x27; = 0.8, kt: &#x27;float&#x27; = 1.0, g: &#x27;float&#x27; = 9.81, goal_half: &#x27;float&#x27; = 0.125, damping: &#x27;float&#x27; = 0.005) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import puck; puck.puck_table(*, x_half: &#x27;float&#x27; = 0.974, y_half: &#x27;float&#x27; = 0.519, puck_radius: &#x27;float&#x27; = 0.03165, mass: &#x27;float&#x27; = 0.01, mu: &#x27;float&#x27; = 0.02, e: &#x27;float&#x27; = 0.8, kt: &#x27;float&#x27; = 1.0, g: &#x27;float&#x27; = 9.81, goal_half: &#x27;float&#x27; = 0.125, damping: &#x27;float&#x27; = 0.005) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;puck_table&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>台とパックの数(既定は Robot Air Hockey Challenge の `<code style="color:#22d3bf">table.xml</code>` から読んだ値、MIT、arXiv 2411.05718)。</p>
+<p>壁の内面: 端の rim は中心 |x| = 1.019・半厚 0.045 → `<code style="color:#22d3bf">x_half</code><code style="color:#22d3bf"> = 0.974、横の rim は |y| = 0.564・半厚 0.045 → </code><code style="color:#22d3bf">y_half</code>` = 0.519。</p>
+<p>端の rim は |y| &lt; 0.125 が空いている(ゴール、`<code style="color:#22d3bf">goal_half</code>`)。パック: 円柱 半径 0.03165、質量 0.01 kg。</p>
+<p>`<code style="color:#22d3bf">mu</code><code style="color:#22d3bf">(Coulomb)と </code><code style="color:#22d3bf">e</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">kt</code><code style="color:#22d3bf">(壁の法線・接線の反発係数)は MJCF に **無い**(減速は粘性 </code><code style="color:#22d3bf">damping</code>`、壁は軟接触)ので</p>
+<p>こちらの既定は仮定。返り値は dict(`<code style="color:#22d3bf">table</code>` sort)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_air_hockey_intercept">poc_air_hockey_intercept</a> — <code style="color:#22d3bf">py -3.11 examples/poc_air_hockey_intercept.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">puck</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:puck_wall_bounce">puck_wall_bounce</a> · <a style="color:#22d3bf" href="opdrive:puck_slide_predict">puck_slide_predict</a> · <a style="color:#22d3bf" href="opdrive:puck_state_at">puck_state_at</a> · <a style="color:#22d3bf" href="opdrive:puck_crossing_point">puck_crossing_point</a> · <a style="color:#22d3bf" href="opdrive:puck_mirror_path">puck_mirror_path</a> · <a style="color:#22d3bf" href="opdrive:puck_stop_distance">puck_stop_distance</a> · <a style="color:#22d3bf" href="opdrive:puck_camera">puck_camera</a> · <a style="color:#22d3bf" href="opdrive:puck_pinhole_camera">puck_pinhole_camera</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: puck.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

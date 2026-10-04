@@ -1,0 +1,70 @@
+[
+ {
+  "file": "01_airhockey_frame_detect_predict.png",
+  "name": "airhockey_frame_detect_predict",
+  "caption": "343 px/m の真上カメラの 16 コマ目(120 fps、雑音 σ 0.01)。緑の点 = 検出した中心 16 個、橙 = 等減速 + 壁反射の予測線、十字 = 守備線 x = −0.75 との交点(真値との差 0.0 mm、756 ms 先)。右 = パックの等倍切り出し(最近傍 8 倍、32×32 px)に副画素の重心(緑の十字、真値との差 0.004 px)と期待半径の円。重心は被覆率で読むので画素の 1/100 まで出る —— 門 7 は 50 点で max 0.0059 px。",
+  "shape": [
+   397,
+   977,
+   3
+  ]
+ },
+ {
+  "file": "02_airhockey_prediction_cone_narrows.gif",
+  "name": "airhockey_prediction_cone_narrows",
+  "caption": "粗いカメラ(100 px/m、雑音 σ 0.06)でも、コマが増えるほど守備線上の交点の 95 % 帯(赤)が細る: N = 3 で 145 mm → N = 16 で 7 mm。緑の十字 = 真の交点。",
+  "shape": [
+   232,
+   414,
+   3
+  ],
+  "animated": true,
+  "frames": 14,
+  "frames_written": 14,
+  "fps": 3.0
+ },
+ {
+  "file": "03_airhockey_velocity_error_vs_N.png",
+  "name": "airhockey_velocity_error_vs_N",
+  "caption": "検出から最小二乗で出した速度の誤差は N とともに縮み、最小二乗の分散の 3σ(破線)の内側に収まる(N = 12 で 0.01 %、N = 24 で 0.01 %)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_airhockey_fivebar_intercept.gif",
+  "name": "airhockey_fivebar_intercept",
+  "caption": "8 コマで予測した交点へ、5 節リンク(一定角速度 ≤ 6 rad/s、寸法は仮定)が 191 ms で先回りして打具(緑の円、半径 40 mm は仮定)を置く。交点の到着は 823 ms 先。",
+  "shape": [
+   264,
+   446,
+   3
+  ],
+  "animated": true,
+  "frames": 18,
+  "frames_written": 18,
+  "fps": 6.0
+ },
+ {
+  "file": "05_airhockey_where_it_breaks.png",
+  "name": "airhockey_where_it_breaks",
+  "caption": "どこで壊れるか。(a) モーションブラーは重心を v·τ/2 ずらす(閉形式どおり、|Δ| max 0.004 px; 露光の中央の時刻を打てば消える)。(b) 壁の接線保持 kₜ を知らないと跳ねた後の予測が扇に開く(0.6〜1.0)。(c) 1 コマの移動が max_jump 40 px を超えると ball_track の対応が切れる(10 コマ中 {20: 10, 35: 10, 45: 1, 80: 1})。",
+  "shape": [
+   412,
+   1720,
+   3
+  ]
+ },
+ {
+  "file": "06_airhockey_mujoco_vs_closed_form.png",
+  "name": "airhockey_mujoco_vs_closed_form",
+  "caption": "Challenge の台では速さが指数で落ちる(粘性減衰 c/m = 0.5 /s、実測の傾き -0.4999 /s)。測った e_n = 0.739・kₜ = 0.852 を入れた粘性の閉形式(破線)は MuJoCo に重なり(壁の前 0.110 mm、壁 1 回の後 0.4 mm)、Coulomb の直線減速(点線)は別の模型 —— 第 2 実装が模型の違いを暴いた。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

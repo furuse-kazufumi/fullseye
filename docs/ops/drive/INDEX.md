@@ -1,4 +1,4 @@
-# DRIVE operator help — 445 ops in 33 categories
+# DRIVE operator help — 471 ops in 34 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -91,6 +91,10 @@
 ### pegsim (18)
 
 [camera_world_to_cv](pegsim/camera_world_to_cv.md) · [chamfer_capture](pegsim/chamfer_capture.md) · [circle_fit_known_radius](pegsim/circle_fit_known_radius.md) · [contact_state_predict](pegsim/contact_state_predict.md) · [coverage_edge_points](pegsim/coverage_edge_points.md) · [cylinder_fit_known_radius](pegsim/cylinder_fit_known_radius.md) · [hole_centre_from_rgbd](pegsim/hole_centre_from_rgbd.md) · [insertion_grid_summary](pegsim/insertion_grid_summary.md) · [jamming_diagram](pegsim/jamming_diagram.md) · [peg_measure_overlay](pegsim/peg_measure_overlay.md) · [peg_offset_from_rgbd](pegsim/peg_offset_from_rgbd.md) · [peg_params](pegsim/peg_params.md) · [peg_scene_mjcf](pegsim/peg_scene_mjcf.md) · [peg_synthetic_rgbd](pegsim/peg_synthetic_rgbd.md) · [peg_tip_from_rgbd](pegsim/peg_tip_from_rgbd.md) · [two_point_depth](pegsim/two_point_depth.md) · [wedging_check](pegsim/wedging_check.md) · [whitney_clearance](pegsim/whitney_clearance.md)
+
+### puck (26)
+
+[fivebar_fk](puck/fivebar_fk.md) · [fivebar_ik](puck/fivebar_ik.md) · [fivebar_link](puck/fivebar_link.md) · [fivebar_reach_interval](puck/fivebar_reach_interval.md) · [fivebar_trajectory](puck/fivebar_trajectory.md) · [fivebar_workspace](puck/fivebar_workspace.md) · [puck_camera](puck/puck_camera.md) · [puck_crossing_point](puck/puck_crossing_point.md) · [puck_detect](puck/puck_detect.md) · [puck_mirror_path](puck/puck_mirror_path.md) · [puck_mu_from_decel](puck/puck_mu_from_decel.md) · [puck_pinhole_camera](puck/puck_pinhole_camera.md) · [puck_pixel_to_world](puck/puck_pixel_to_world.md) · [puck_render_frame](puck/puck_render_frame.md) · [puck_restitution_from_wall](puck/puck_restitution_from_wall.md) · [puck_scene_mjcf](puck/puck_scene_mjcf.md) · [puck_slide_predict](puck/puck_slide_predict.md) · [puck_state_at](puck/puck_state_at.md) · [puck_stop_distance](puck/puck_stop_distance.md) · [puck_synth_frames](puck/puck_synth_frames.md) · [puck_table](puck/puck_table.md) · [puck_track](puck/puck_track.md) · [puck_velocity_estimate](puck/puck_velocity_estimate.md) · [puck_wall_bounce](puck/puck_wall_bounce.md) · [puck_world_to_pixel](puck/puck_world_to_pixel.md) · [striker_plan](puck/striker_plan.md)
 
 ### racket (10)
 

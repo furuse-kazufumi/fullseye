@@ -684,6 +684,10 @@ import pegsim  # noqa: E402  (柔らかい手首のペグ挿入: MuJoCo の場�
 from pegsim import (  # noqa: E402,F401
     peg_scene_build, peg_set_pose, peg_wrist_render, peg_scene_close, peg_contact_state, peg_two_point_depth_sim, peg_depth_sample_offset, peg_insertion_run, peg_insertion_grid,
 )
+import puck  # noqa: E402  (エアホッケーのパック追跡・予測・打ち返し: 閉形式と外部シムの台で、学習なし。台帳は opsdrive "puck")
+from puck import (  # noqa: E402,F401
+    puck_challenge_mjcf, puck_mujoco_run,
+)
 import kendamaworld  # noqa: E402  (けんの真値つき世界: けん + 大皿 + 糸のメッシュ、カメラの組、皿の投影の真値)
 from kendamaworld import (  # noqa: E402,F401
     ken_mesh, add_ken, ken_set_pose, string_mesh, add_string, string_set, kendama_world, kendama_rig, ken_truth,
@@ -1189,6 +1193,8 @@ __all__ = [
     "peg_depth_sample_offset",
     "peg_insertion_run",
     "peg_insertion_grid",
+    "puck_challenge_mjcf",
+    "puck_mujoco_run",
     "hankel_image",
     "dct_transform",
     "wavelet_filters",

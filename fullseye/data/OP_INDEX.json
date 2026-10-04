@@ -1,8 +1,8 @@
 {
- "n_ops": 2829,
+ "n_ops": 2855,
  "tiers": {
   "color": 12,
-  "ledger": 1876,
+  "ledger": 1902,
   "nary": 17,
   "registry": 924
  },
@@ -7108,6 +7108,87 @@
    "dim": "3d",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "fivebar_fk",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "any",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "table"
+   ]
+  },
+  {
+   "name": "fivebar_ik",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "any",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "table"
+   ]
+  },
+  {
+   "name": "fivebar_link",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "fivebar_reach_interval",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "scalar"
+   ]
+  },
+  {
+   "name": "fivebar_trajectory",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "matrix",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "table",
+    "signal"
+   ]
+  },
+  {
+   "name": "fivebar_workspace",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -16469,6 +16550,279 @@
    ]
   },
   {
+   "name": "puck_camera",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "puck_crossing_point",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "scalar"
+   ]
+  },
+  {
+   "name": "puck_detect",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "any",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "table"
+   ]
+  },
+  {
+   "name": "puck_mirror_path",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "table",
+    "scalar"
+   ]
+  },
+  {
+   "name": "puck_mu_from_decel",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "matrix"
+   ]
+  },
+  {
+   "name": "puck_pinhole_camera",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "scalar",
+    "scalar",
+    "signal"
+   ]
+  },
+  {
+   "name": "puck_pixel_to_world",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "matrix",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "matrix"
+   ]
+  },
+  {
+   "name": "puck_render_frame",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "signal"
+   ]
+  },
+  {
+   "name": "puck_restitution_from_wall",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "matrix",
+    "table"
+   ]
+  },
+  {
+   "name": "puck_scene_mjcf",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "puck_slide_predict",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "table",
+    "scalar"
+   ]
+  },
+  {
+   "name": "puck_state_at",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "signal"
+   ]
+  },
+  {
+   "name": "puck_stop_distance",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "table"
+   ]
+  },
+  {
+   "name": "puck_synth_frames",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table",
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "puck_table",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "puck_track",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "table"
+   ]
+  },
+  {
+   "name": "puck_velocity_estimate",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "matrix",
+    "table"
+   ]
+  },
+  {
+   "name": "puck_wall_bounce",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "puck_world_to_pixel",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "matrix",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "matrix"
+   ]
+  },
+  {
    "name": "punch_pressure",
    "halcon": "",
    "in_sort": "matrix",
@@ -20776,6 +21130,21 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "striker_plan",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "puck",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "signal",
     "table"
    ]
   },

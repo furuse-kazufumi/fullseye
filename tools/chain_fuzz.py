@@ -3845,6 +3845,155 @@ def _b_tq_frame(pool, rng):
     return (f["m_ref"], f["m_cur"], 0.85, 4.0, 1.5, f["pitch"], f["G"], f["nu"]), {"a": f["a"]}
 
 
+_FUZZ_PK = {}
+
+
+def _fuzz_pk():
+    """エアホッケーの小さな場面(台は既定、合成カメラ 120 px/m、6 コマ、跳ねのある 30 コマ)を 1 回だけ作る(puck)。"""
+    if "tb" not in _FUZZ_PK:
+        import puck as PK
+        tb = PK.puck_table(mu=0.02, e=0.8, kt=0.9)
+        cam = PK.puck_camera(tb, px_per_m=120.0)
+        link = PK.fivebar_link()
+        syn = PK.puck_synth_frames(tb, cam, (0.4, 0.15), (-1.4, 0.55), fps=120.0, n_frames=6)
+        bounce = PK.puck_synth_frames(tb, cam, (0.3, 0.30), (-1.0, 1.2), fps=120.0, n_frames=30)
+        pred = PK.puck_slide_predict((0.5, 0.1), (-1.5, 0.3), tb, 4.0)
+        crossing = PK.puck_crossing_point(pred, -0.75)
+        q0 = PK.fivebar_ik((-0.75, 0.0), link)
+        plan = PK.striker_plan(crossing, q0, link, omega_max=6.0)
+        _FUZZ_PK.update({"tb": tb, "tb1": PK.puck_table(mu=0.0, e=1.0, kt=1.0), "cam": cam, "link": link, "syn": syn, "bounce": bounce,
+                         "pred": pred, "crossing": crossing, "q0": q0, "plan": plan})
+    return _FUZZ_PK
+
+
+def _b_pk_table(pool, rng):
+    return (), {"mu": float(rng.uniform(0.01, 0.05))}
+
+
+def _b_pk_bounce(pool, rng):
+    return (np.array([float(rng.uniform(-1, 1)), -float(rng.uniform(0.5, 2.0))]), np.array([0.0, 1.0]), float(rng.uniform(0.5, 1.0))), {"kt": 0.9}
+
+
+def _b_pk_predict(pool, rng):
+    f = _fuzz_pk()
+    return (np.array([float(rng.uniform(-0.5, 0.5)), float(rng.uniform(-0.3, 0.3))]), np.array([float(rng.uniform(-2, 2)), float(rng.uniform(-2, 2))]), f["tb"], 2.0), \
+        {"model": str(rng.choice(["coulomb", "viscous", "none"]))}
+
+
+def _b_pk_state(pool, rng):
+    f = _fuzz_pk()
+    return (f["pred"], np.linspace(0.0, 1.0, 5)), {}
+
+
+def _b_pk_crossing(pool, rng):
+    f = _fuzz_pk()
+    return (f["pred"], -0.75), {}
+
+
+def _b_pk_mirror(pool, rng):
+    f = _fuzz_pk()
+    return (np.array([0.1, 0.05]), np.array([float(rng.uniform(-3, 3)), float(rng.uniform(-3, 3))]), f["tb1"], float(rng.uniform(0.5, 3.0))), {}
+
+
+def _b_pk_stop(pool, rng):
+    f = _fuzz_pk()
+    return (float(rng.uniform(0.5, 3.0)), f["tb"]), {}
+
+
+def _b_pk_camera(pool, rng):
+    f = _fuzz_pk()
+    return (f["tb"],), {"px_per_m": float(rng.choice([100.0, 200.0, 343.0]))}
+
+
+def _b_pk_pinhole(pool, rng):
+    f = _fuzz_pk()
+    return (f["tb"], 1.5, 50.0, np.array([240, 400])), {}
+
+
+def _b_pk_w2p(pool, rng):
+    f = _fuzz_pk()
+    return (f["cam"], rng.uniform([-0.9, -0.45], [0.9, 0.45], size=(5, 2))), {}
+
+
+def _b_pk_p2w(pool, rng):
+    f = _fuzz_pk()
+    return (f["cam"], rng.uniform([10, 10], [200, 100], size=(5, 2))), {}
+
+
+def _b_pk_render(pool, rng):
+    f = _fuzz_pk()
+    return (f["cam"], rng.uniform([-0.9, -0.45], [0.9, 0.45])), {}
+
+
+def _b_pk_synth(pool, rng):
+    f = _fuzz_pk()
+    return (f["tb"], f["cam"], np.array([0.4, 0.15]), np.array([-1.4, 0.55])), {"n_frames": 4}
+
+
+def _b_pk_detect(pool, rng):
+    f = _fuzz_pk()
+    return (f["syn"]["frames"][0], f["cam"]), {}
+
+
+def _b_pk_track(pool, rng):
+    f = _fuzz_pk()
+    return (f["syn"]["frames"], f["cam"]), {}
+
+
+def _b_pk_velocity(pool, rng):
+    f = _fuzz_pk()
+    return (f["syn"]["t"], f["syn"]["truth_xy"], f["tb"]), {}
+
+
+def _b_pk_mu(pool, rng):
+    f = _fuzz_pk()
+    return (f["syn"]["t"], f["syn"]["truth_xy"]), {}
+
+
+def _b_pk_restitution(pool, rng):
+    f = _fuzz_pk()
+    return (f["bounce"]["t"], f["bounce"]["truth_xy"], f["tb"]), {}
+
+
+def _b_pk_link(pool, rng):
+    return (), {"l2": float(rng.uniform(0.3, 0.4))}
+
+
+def _b_pk_fk(pool, rng):
+    f = _fuzz_pk()
+    return (f["q0"], f["link"]), {}
+
+
+def _b_pk_ik(pool, rng):
+    f = _fuzz_pk()
+    return (np.array([-0.75, float(rng.uniform(-0.3, 0.3))]), f["link"]), {}
+
+
+def _b_pk_workspace(pool, rng):
+    f = _fuzz_pk()
+    return (f["link"],), {"n": 21}
+
+
+def _b_pk_reach(pool, rng):
+    f = _fuzz_pk()
+    return (f["link"], -0.75), {"n": 101}
+
+
+def _b_pk_plan(pool, rng):
+    f = _fuzz_pk()
+    return (f["crossing"], f["q0"], f["link"]), {}
+
+
+def _b_pk_traj(pool, rng):
+    f = _fuzz_pk()
+    return (f["q0"], f["plan"], np.linspace(0.0, 1.0, 5)), {}
+
+
+def _b_pk_mjcf(pool, rng):
+    f = _fuzz_pk()
+    return (f["tb"],), {}
+
+
 def _b_events_to_frames(pool, rng):
     import motionio
     return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
@@ -4768,6 +4917,13 @@ OP_ARG_BUILDERS = {
     "torsion_stick_field": _b_tq_torsion, "marker_divergence": _b_tq_div, "rigid_rotation_fit": _b_tq_rot, "tactile_dipole_moment": _b_tq_dipole,
     "dipole_to_torque_fit": _b_tq_fit, "torque_decompose": _b_tq_decompose, "dipole_torque_resolution": _b_tq_resolution,
     "grasp_torque_frame": _b_tq_frame,
+    "puck_table": _b_pk_table, "puck_wall_bounce": _b_pk_bounce, "puck_slide_predict": _b_pk_predict, "puck_state_at": _b_pk_state,
+    "puck_crossing_point": _b_pk_crossing, "puck_mirror_path": _b_pk_mirror, "puck_stop_distance": _b_pk_stop, "puck_camera": _b_pk_camera,
+    "puck_pinhole_camera": _b_pk_pinhole, "puck_world_to_pixel": _b_pk_w2p, "puck_pixel_to_world": _b_pk_p2w, "puck_render_frame": _b_pk_render,
+    "puck_synth_frames": _b_pk_synth, "puck_detect": _b_pk_detect, "puck_track": _b_pk_track, "puck_velocity_estimate": _b_pk_velocity,
+    "puck_mu_from_decel": _b_pk_mu, "puck_restitution_from_wall": _b_pk_restitution, "fivebar_link": _b_pk_link, "fivebar_fk": _b_pk_fk,
+    "fivebar_ik": _b_pk_ik, "fivebar_workspace": _b_pk_workspace, "fivebar_reach_interval": _b_pk_reach, "striker_plan": _b_pk_plan,
+    "fivebar_trajectory": _b_pk_traj, "puck_scene_mjcf": _b_pk_mjcf,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

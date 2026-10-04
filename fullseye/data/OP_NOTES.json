@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2829,
- "n_notes": 2835,
+ "n_ops": 2855,
+ "n_notes": 2861,
  "notes": {
   "vol_dilate": [
    {
@@ -18387,6 +18387,264 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/drive/pegsim/whitney_clearance.md"
+   }
+  ],
+  "fivebar_fk": [
+   {
+    "op": "fivebar_fk",
+    "dim": "drive",
+    "category": "puck",
+    "in": "signal × table",
+    "out": "any",
+    "path": "docs/ops/drive/puck/fivebar_fk.md"
+   }
+  ],
+  "fivebar_ik": [
+   {
+    "op": "fivebar_ik",
+    "dim": "drive",
+    "category": "puck",
+    "in": "signal × table",
+    "out": "any",
+    "path": "docs/ops/drive/puck/fivebar_ik.md"
+   }
+  ],
+  "fivebar_link": [
+   {
+    "op": "fivebar_link",
+    "dim": "drive",
+    "category": "puck",
+    "out": "table",
+    "path": "docs/ops/drive/puck/fivebar_link.md"
+   }
+  ],
+  "fivebar_reach_interval": [
+   {
+    "op": "fivebar_reach_interval",
+    "dim": "drive",
+    "category": "puck",
+    "in": "table × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/puck/fivebar_reach_interval.md"
+   }
+  ],
+  "fivebar_trajectory": [
+   {
+    "op": "fivebar_trajectory",
+    "dim": "drive",
+    "category": "puck",
+    "in": "signal × table × signal",
+    "out": "matrix",
+    "path": "docs/ops/drive/puck/fivebar_trajectory.md"
+   }
+  ],
+  "fivebar_workspace": [
+   {
+    "op": "fivebar_workspace",
+    "dim": "drive",
+    "category": "puck",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/puck/fivebar_workspace.md"
+   }
+  ],
+  "puck_camera": [
+   {
+    "op": "puck_camera",
+    "dim": "drive",
+    "category": "puck",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/puck/puck_camera.md"
+   }
+  ],
+  "puck_crossing_point": [
+   {
+    "op": "puck_crossing_point",
+    "dim": "drive",
+    "category": "puck",
+    "in": "table × scalar",
+    "out": "any",
+    "path": "docs/ops/drive/puck/puck_crossing_point.md"
+   }
+  ],
+  "puck_detect": [
+   {
+    "op": "puck_detect",
+    "dim": "drive",
+    "category": "puck",
+    "in": "image2d × table",
+    "out": "any",
+    "path": "docs/ops/drive/puck/puck_detect.md"
+   }
+  ],
+  "puck_mirror_path": [
+   {
+    "op": "puck_mirror_path",
+    "dim": "drive",
+    "category": "puck",
+    "in": "signal × signal × table × scalar",
+    "out": "signal",
+    "path": "docs/ops/drive/puck/puck_mirror_path.md"
+   }
+  ],
+  "puck_mu_from_decel": [
+   {
+    "op": "puck_mu_from_decel",
+    "dim": "drive",
+    "category": "puck",
+    "in": "signal × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/puck/puck_mu_from_decel.md"
+   }
+  ],
+  "puck_pinhole_camera": [
+   {
+    "op": "puck_pinhole_camera",
+    "dim": "drive",
+    "category": "puck",
+    "in": "table × scalar × scalar × signal",
+    "out": "table",
+    "path": "docs/ops/drive/puck/puck_pinhole_camera.md"
+   }
+  ],
+  "puck_pixel_to_world": [
+   {
+    "op": "puck_pixel_to_world",
+    "dim": "drive",
+    "category": "puck",
+    "in": "table × matrix",
+    "out": "matrix",
+    "path": "docs/ops/drive/puck/puck_pixel_to_world.md"
+   }
+  ],
+  "puck_render_frame": [
+   {
+    "op": "puck_render_frame",
+    "dim": "drive",
+    "category": "puck",
+    "in": "table × signal",
+    "out": "image2d",
+    "path": "docs/ops/drive/puck/puck_render_frame.md"
+   }
+  ],
+  "puck_restitution_from_wall": [
+   {
+    "op": "puck_restitution_from_wall",
+    "dim": "drive",
+    "category": "puck",
+    "in": "signal × matrix × table",
+    "out": "table",
+    "path": "docs/ops/drive/puck/puck_restitution_from_wall.md"
+   }
+  ],
+  "puck_scene_mjcf": [
+   {
+    "op": "puck_scene_mjcf",
+    "dim": "drive",
+    "category": "puck",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/puck/puck_scene_mjcf.md"
+   }
+  ],
+  "puck_slide_predict": [
+   {
+    "op": "puck_slide_predict",
+    "dim": "drive",
+    "category": "puck",
+    "in": "signal × signal × table × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/puck/puck_slide_predict.md"
+   }
+  ],
+  "puck_state_at": [
+   {
+    "op": "puck_state_at",
+    "dim": "drive",
+    "category": "puck",
+    "in": "table × signal",
+    "out": "table",
+    "path": "docs/ops/drive/puck/puck_state_at.md"
+   }
+  ],
+  "puck_stop_distance": [
+   {
+    "op": "puck_stop_distance",
+    "dim": "drive",
+    "category": "puck",
+    "in": "scalar × table",
+    "out": "scalar",
+    "path": "docs/ops/drive/puck/puck_stop_distance.md"
+   }
+  ],
+  "puck_synth_frames": [
+   {
+    "op": "puck_synth_frames",
+    "dim": "drive",
+    "category": "puck",
+    "in": "table × table × signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/puck/puck_synth_frames.md"
+   }
+  ],
+  "puck_table": [
+   {
+    "op": "puck_table",
+    "dim": "drive",
+    "category": "puck",
+    "out": "table",
+    "path": "docs/ops/drive/puck/puck_table.md"
+   }
+  ],
+  "puck_track": [
+   {
+    "op": "puck_track",
+    "dim": "drive",
+    "category": "puck",
+    "in": "any × table",
+    "out": "table",
+    "path": "docs/ops/drive/puck/puck_track.md"
+   }
+  ],
+  "puck_velocity_estimate": [
+   {
+    "op": "puck_velocity_estimate",
+    "dim": "drive",
+    "category": "puck",
+    "in": "signal × matrix × table",
+    "out": "table",
+    "path": "docs/ops/drive/puck/puck_velocity_estimate.md"
+   }
+  ],
+  "puck_wall_bounce": [
+   {
+    "op": "puck_wall_bounce",
+    "dim": "drive",
+    "category": "puck",
+    "in": "signal × signal × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/puck/puck_wall_bounce.md"
+   }
+  ],
+  "puck_world_to_pixel": [
+   {
+    "op": "puck_world_to_pixel",
+    "dim": "drive",
+    "category": "puck",
+    "in": "table × matrix",
+    "out": "matrix",
+    "path": "docs/ops/drive/puck/puck_world_to_pixel.md"
+   }
+  ],
+  "striker_plan": [
+   {
+    "op": "striker_plan",
+    "dim": "drive",
+    "category": "puck",
+    "in": "any × signal × table",
+    "out": "table",
+    "path": "docs/ops/drive/puck/striker_plan.md"
    }
   ],
   "aim_velocity": [
