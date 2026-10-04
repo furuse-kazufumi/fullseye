@@ -3190,7 +3190,7 @@ Ops used (notes): [`blob_label`](https://furuse.work/ops/blob/connect/blob_label
 
 ### The Image Quality and Restoration Wing — Looking Better and Getting Closer to the Truth Are Different Things
 
-Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The 16 exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.
+Deblurring, upscaling, dehazing, focus stacking, reconstructing from projections, ranging by counting photons. Restoration is where 'it looks better' and 'it is closer to the truth' are most easily confused. The 17 exhibits here synthesise the kernel, the depth, the airlight, the PSD, the projections and the arrival time themselves, so the two can be scored separately.
 
 Appearance metrics do not peak at the truth: a hazy input has higher contrast than the true scene; unsharp masking matches the true gradient energy while PSNR drops; adding noise raises PSNR. Conversely, a method can restore stripes finer than Nyquist while PSNR moves by only -0.01 dB.
 
@@ -3531,6 +3531,42 @@ Source: [examples/poc_superresolution_limits.py](https://github.com/furuse-kazuf
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_superresolution_limits)
 
 Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`data_to_pixel`](https://furuse.work/ops/annotate/plot/data_to_pixel.html) · [`drizzle_resample`](https://furuse.work/ops/astrostack/stack/drizzle_resample.html) · [`piv_cross_correlate`](https://furuse.work/ops/piv/estimate/piv_cross_correlate.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`psnr`](https://furuse.work/ops/imgmetrics/fidelity/psnr.html) · [`ssim`](https://furuse.work/ops/imgmetrics/fidelity/ssim.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`unsharp`](https://furuse.work/ops/2d/smoothing/unsharp.html) · [`vol_fft_lowpass`](https://furuse.work/ops/3d/frequency/vol_fft_lowpass.html) · [`vol_resize`](https://furuse.work/ops/3d/geom_transform/vol_resize.html) · [`volume_downsample`](https://furuse.work/ops/3d/preprocess/volume_downsample.html)
+
+## No.2026.194 —— Measuring Image-Quality Metrics Against a Public Ground Truth — TID2013's 3,000 Images × 971 Observers and the Authors' Published Values as the Gate
+
+[![Measuring Image-Quality Metrics Against a Public Ground Truth — TID2013's 3,000 Images × 971 Observers and the Authors' Published Values as the Gate](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/06_tid2013_pair_ssim_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/06_tid2013_pair_ssim_map.png)
+
+*↑ **Measuring Image-Quality Metrics Against a Public Ground Truth — TID2013's 3,000 Images × 971 Observers and the Authors' Published Values as the Gate** ―― The first image-side PoC under the new rule of bringing the truth in from outside. Truth = TID2013 (Ponomarenko et al., 25 references × 24 distortions × 5 levels = 3,000 images, MOS from 971 observers); reference = the 14 metric value files the authors ship with the data (psnr.txt, ssim.txt, …) and their published rank-correlation table. The new module iqatid (11 ops): the authors' luminance convention (BT.601 limited-range integer Y′, not stated on the page and found by measurement; full-range Y is 1.321 dB off), Spearman with average ranks and Kendall τ_b (these two reproduce all 14 published rows), the published table, the index reader with validation (3,000 rows, the name set must match the files on disk, case-insensitive), evaluation, comparison with the authors' values and per-distortion correlation. Figures: MOS vs PSNR / SSIM scatter, SROCC per distortion type (local block distortion 0.15 / 0.63, contrast 0.44 / 0.45 and saturation 0.22 / 0.22 are weak), histograms of the differences to the authors' values, a table of published / reproduced / Fullseye values for 14 metrics, and one reference–distorted pair with its SSIM map. 21 gates: closed forms for the rank correlations (monotone 1, reversed −1, hand-computed ties ρ = 8.5/√95 and τ_b = 7/√90, 1e-12 against the second implementation in graphinv), Y′ endpoints 16 / 235, PSNR of a 1-LSB shift = 48.13 dB, SSIM identity 1, the 14-row published table. Real data, 3,000 pairs in 110 s: Fullseye's RGB PSNR matches the authors' PSNRc to four decimals (max 0.00005 dB), luminance PSNR matches to 0.00017 dB on the 2,774 pairs outside reference I12 (I12's 115 pairs have 28 pixels whose luminance lands exactly on .5 and round the other way, 0.00058 dB; reported as a separate gate rather than silently dropped), SSIM on Y′ to 0.000051, rank correlations PSNR 0.6395 / 0.4699 (published 0.640 / 0.470) and SSIM 0.6370 / 0.4635 (0.637 / 0.464), and the 14 authors' rows reproduced to 0.00048. The authors write exact matches of luminance PSNR as 100000.0 (111 rows, all saturation changes). Honestly: the four-decimal agreement comes from following the same original implementation's conventions (the old ssim_index.m: 11×11 Gaussian σ 1.5, borders cropped, no downsampling), not from SSIM being good (it ranks 10th of 14). FSIM / FSIMc / VIF / GMSD are not implemented; only their published values are tabulated. Images and MOS are not committed (research-and-education-only terms, FULLSEYE_TID2013_DATA). CI runs the synthetic gates only.*
+
+[![971 人の MOS と Fullseye の PSNR(作者の輝度規約 Y′、psnr.txt と 4 桁一致)。順位相関は公表値どおり低い —— PSNR は歪み種が混ざると主観に合わない。 彩度変化で Y′ が変わらない 106 組(](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/01_tid2013_mos_vs_psnr_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/01_tid2013_mos_vs_psnr.png)
+
+*↑ The measurement ―― 971 人の MOS と Fullseye の PSNR(作者の輝度規約 Y′、psnr.txt と 4 桁一致)。順位相関は公表値どおり低い —— PSNR は歪み種が混ざると主観に合わない。 彩度変化で Y′ が変わらない 106 組(PSNR = inf、MOS 3.4〜6.0)は図に載らない(順位相関には最大の順位で入れてある)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![同じ 3,000 組と Fullseye の SSIM(Wang 2004 の既定、ssim.txt と 4 桁一致)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/02_tid2013_mos_vs_ssim_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/02_tid2013_mos_vs_ssim.png)
+
+*↑ 同じ 3,000 組と Fullseye の SSIM(Wang 2004 の既定、ssim.txt と 4 桁一致)。*
+
+[![歪み種ごとの順位相関(各 25 参照 × 5 段)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/03_tid2013_srocc_by_distortion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/03_tid2013_srocc_by_distortion.png)
+
+*↑ 歪み種ごとの順位相関(各 25 参照 × 5 段)。*
+
+[![作者値との行ごとの差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/04_tid2013_author_diff_hist_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/04_tid2013_author_diff_hist.png)
+
+*↑ 作者値との行ごとの差。*
+
+[![公表表(ページ / readme TABLE III・IV)と、同梱の作者値 + mos.txt から平均順位・τ_b で再現した値、Fullseye 実装がある 3 本の自前値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/05_tid2013_published_vs_reproduced_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/05_tid2013_published_vs_reproduced.png)
+
+*↑ 公表表(ページ / readme TABLE III・IV)と、同梱の作者値 + mos.txt から平均順位・τ_b で再現した値、Fullseye 実装がある 3 本の自前値。*
+
+```
+py -3.11 examples/poc_iqa_tid2013.py
+```
+
+Source: [examples/poc_iqa_tid2013.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_iqa_tid2013.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_iqa_tid2013)
+
+Ops used (notes): [`luma_limited_u8`](https://furuse.work/ops/imgmetrics/iqa/luma_limited_u8.html) · [`psnr`](https://furuse.work/ops/imgmetrics/fidelity/psnr.html) · [`rank_data`](https://furuse.work/ops/imgmetrics/iqa/rank_data.html) · [`rank_kendall_b`](https://furuse.work/ops/imgmetrics/iqa/rank_kendall_b.html) · [`rank_spearman`](https://furuse.work/ops/imgmetrics/iqa/rank_spearman.html) · [`ssim`](https://furuse.work/ops/imgmetrics/fidelity/ssim.html) · [`ssim_map`](https://furuse.work/ops/imgmetrics/fidelity/ssim_map.html) · [`tid2013_by_distortion`](https://furuse.work/ops/imgmetrics/iqa/tid2013_by_distortion.html) · [`tid2013_compare`](https://furuse.work/ops/imgmetrics/iqa/tid2013_compare.html) · [`tid2013_evaluate`](https://furuse.work/ops/imgmetrics/iqa/tid2013_evaluate.html) · [`tid2013_index`](https://furuse.work/ops/imgmetrics/iqa/tid2013_index.html) · [`tid2013_metric_values`](https://furuse.work/ops/imgmetrics/iqa/tid2013_metric_values.html) · [`tid2013_published`](https://furuse.work/ops/imgmetrics/iqa/tid2013_published.html) · [`tid2013_root`](https://furuse.work/ops/imgmetrics/iqa/tid2013_root.html)
 
 ## No.2026.135 —— Holding a Course with a Fly's Optic Lobe Alone — From the Lamina to the Steering, Without Learning
 

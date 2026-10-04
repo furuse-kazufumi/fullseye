@@ -47,7 +47,7 @@ dict
 
 ## 型が繋がる次の op(`metrics` を入力に取れる)
 
-[measure_with](measure_with.md) · [metrics_table](metrics_table.md)
+[luma_limited_u8](../iqa/luma_limited_u8.md) · [rank_data](../iqa/rank_data.md) · [tid2013_index](../iqa/tid2013_index.md) · [measure_with](measure_with.md) · [metrics_table](metrics_table.md)
 
 ## 同カテゴリ(`report`)
 

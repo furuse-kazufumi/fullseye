@@ -52,7 +52,7 @@ CIE XYZ → CIE 1976 L\*a\*b\*。既定の白色点は D65 2°。
 
 ## 型が繋がる次の op(`lab` を入力に取れる)
 
-[lab_to_rgb](lab_to_rgb.md) · [delta_e_2000](../colordiff/delta_e_2000.md) · [delta_e_76](../colordiff/delta_e_76.md)
+[lab_to_rgb](lab_to_rgb.md) · [delta_e_2000](../colordiff/delta_e_2000.md) · [delta_e_76](../colordiff/delta_e_76.md) · [luma_limited_u8](../iqa/luma_limited_u8.md) · [rank_data](../iqa/rank_data.md) · [tid2013_index](../iqa/tid2013_index.md)
 
 ## 同カテゴリ(`colorspace`)
 

@@ -49,7 +49,7 @@ version: 0.3.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-—
+[luma_limited_u8](../iqa/luma_limited_u8.md) · [rank_data](../iqa/rank_data.md) · [tid2013_index](../iqa/tid2013_index.md) · [tid2013_by_distortion](../iqa/tid2013_by_distortion.md)
 
 ## 同カテゴリ(`report`)
 

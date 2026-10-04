@@ -3279,6 +3279,81 @@ def _b_cr_checker_result(pool, rng):
     return (path,), {}
 
 
+_FUZZ_TID = {}
+
+
+def _fuzz_tid():
+    """TID2013 の配布物と同じ形の小さな偽物(25 × 24 × 5 の 8×8 BMP と mos_with_names.txt)を一時フォルダに 1 回だけ作る。"""
+    if "root" not in _FUZZ_TID:
+        import tempfile
+        from pathlib import Path
+        import numpy as _np
+        from PIL import Image
+        rt = Path(tempfile.mkdtemp(prefix="fuzz_tid2013_"))
+        (rt / "reference_images").mkdir()
+        (rt / "distorted_images").mkdir()
+        (rt / "metrics_values").mkdir()
+        rng = _np.random.default_rng(0)
+        names, mos = [], []
+        for r in range(1, 26):
+            Image.fromarray(rng.integers(0, 256, (8, 8, 3), dtype=_np.uint8)).save(rt / "reference_images" / ("I%02d.BMP" % r))
+            for t in range(1, 25):
+                for lv in range(1, 6):
+                    nm = "i%02d_%02d_%d.bmp" % (r, t, lv)
+                    Image.fromarray(rng.integers(0, 256, (8, 8, 3), dtype=_np.uint8)).save(rt / "distorted_images" / nm)
+                    names.append(nm)
+                    mos.append(float(rng.uniform(0.5, 7.5)))
+        with open(rt / "mos_with_names.txt", "w", encoding="ascii") as f:
+            for m, nm in zip(mos, names):
+                f.write("%.5f %s\n" % (m, nm))
+        with open(rt / "metrics_values" / "PSNR.txt", "w", encoding="ascii") as f:
+            for _ in names:
+                f.write("%.4f\n" % float(rng.uniform(20.0, 40.0)))
+        import iqatid as IQ
+        _FUZZ_TID.update({"root": rt, "index": IQ.tid2013_index(rt), "mos": _np.asarray(mos), "values": _np.asarray([rng.uniform(20, 40) for _ in names])})
+    return _FUZZ_TID
+
+
+def _b_luma_limited_u8(pool, rng):
+    return (rng.integers(0, 256, (16, 20, 3), dtype=np.uint8),), {}
+
+
+def _b_rank_pair(pool, rng):
+    n = int(rng.integers(5, 40))
+    return (rng.random(n), rng.random(n)), {}
+
+
+def _b_rank_data(pool, rng):
+    return (rng.random(int(rng.integers(3, 30))),), {}
+
+
+def _b_noargs(pool, rng):
+    return (), {}
+
+
+def _b_tid_root(pool, rng):
+    return (_fuzz_tid()["root"],), {}
+
+
+def _b_tid_metric_values(pool, rng):
+    return (_fuzz_tid()["root"], "psnr"), {}
+
+
+def _b_tid_evaluate(pool, rng):
+    import imgmetrics
+    return (_fuzz_tid()["root"], imgmetrics.psnr), {"subset": int(rng.integers(3, 12))}
+
+
+def _b_tid_compare(pool, rng):
+    t = _fuzz_tid()
+    return (t["values"], t["values"] + rng.normal(0, 1e-3, len(t["values"])), t["mos"]), {}
+
+
+def _b_tid_by_distortion(pool, rng):
+    t = _fuzz_tid()
+    return (t["values"], t["index"]), {}
+
+
 def _b_events_to_frames(pool, rng):
     import motionio
     return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
@@ -4178,6 +4253,9 @@ OP_ARG_BUILDERS = {
     "cr_synthetic": _b_cr_synthetic, "cr_read": _b_cr_read, "cr_route": _b_cr_route, "ks_step": _b_ks_step, "cr_drive": _b_cr_drive,
     "cr_drive_sweep": _b_cr_scene_arg, "cr_feasible": _b_cr_feasible, "cr_collision": _b_cr_scene_run, "cr_solution_xml": _b_cr_scene_run,
     "cr_checker_result": _b_cr_checker_result,
+    "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
+    "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
+    "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,
     "sign_params": _b_sign_kind, "sign_image": _b_sign_img, "plate_mesh_from_image": _b_plate_mesh,
     "sign_mesh": _b_sign_mesh, "add_sign": _b_add_sign, "signal_jp_mesh": _b_signal_jp,
     "add_signal_jp": _b_add_signal_jp,

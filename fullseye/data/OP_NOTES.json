@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2742,
- "n_notes": 2748,
+ "n_ops": 2753,
+ "n_notes": 2759,
  "notes": {
   "vol_dilate": [
    {
@@ -20720,6 +20720,114 @@
     "in": "image2d × image2d",
     "out": "scalar",
     "path": "docs/ops/imgmetrics/information/normalized_mutual_information.md"
+   }
+  ],
+  "luma_limited_u8": [
+   {
+    "op": "luma_limited_u8",
+    "dim": "imgmetrics",
+    "category": "iqa",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/imgmetrics/iqa/luma_limited_u8.md"
+   }
+  ],
+  "rank_data": [
+   {
+    "op": "rank_data",
+    "dim": "imgmetrics",
+    "category": "iqa",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/imgmetrics/iqa/rank_data.md"
+   }
+  ],
+  "rank_kendall_b": [
+   {
+    "op": "rank_kendall_b",
+    "dim": "imgmetrics",
+    "category": "iqa",
+    "in": "any × any",
+    "out": "scalar",
+    "path": "docs/ops/imgmetrics/iqa/rank_kendall_b.md"
+   }
+  ],
+  "rank_spearman": [
+   {
+    "op": "rank_spearman",
+    "dim": "imgmetrics",
+    "category": "iqa",
+    "in": "any × any",
+    "out": "scalar",
+    "path": "docs/ops/imgmetrics/iqa/rank_spearman.md"
+   }
+  ],
+  "tid2013_by_distortion": [
+   {
+    "op": "tid2013_by_distortion",
+    "dim": "imgmetrics",
+    "category": "iqa",
+    "in": "any × table",
+    "out": "table",
+    "path": "docs/ops/imgmetrics/iqa/tid2013_by_distortion.md"
+   }
+  ],
+  "tid2013_compare": [
+   {
+    "op": "tid2013_compare",
+    "dim": "imgmetrics",
+    "category": "iqa",
+    "in": "any × any × any",
+    "out": "table",
+    "path": "docs/ops/imgmetrics/iqa/tid2013_compare.md"
+   }
+  ],
+  "tid2013_evaluate": [
+   {
+    "op": "tid2013_evaluate",
+    "dim": "imgmetrics",
+    "category": "iqa",
+    "in": "any × any",
+    "out": "table",
+    "path": "docs/ops/imgmetrics/iqa/tid2013_evaluate.md"
+   }
+  ],
+  "tid2013_index": [
+   {
+    "op": "tid2013_index",
+    "dim": "imgmetrics",
+    "category": "iqa",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/imgmetrics/iqa/tid2013_index.md"
+   }
+  ],
+  "tid2013_metric_values": [
+   {
+    "op": "tid2013_metric_values",
+    "dim": "imgmetrics",
+    "category": "iqa",
+    "in": "any × any",
+    "out": "any",
+    "path": "docs/ops/imgmetrics/iqa/tid2013_metric_values.md"
+   }
+  ],
+  "tid2013_published": [
+   {
+    "op": "tid2013_published",
+    "dim": "imgmetrics",
+    "category": "iqa",
+    "out": "table",
+    "path": "docs/ops/imgmetrics/iqa/tid2013_published.md"
+   }
+  ],
+  "tid2013_root": [
+   {
+    "op": "tid2013_root",
+    "dim": "imgmetrics",
+    "category": "iqa",
+    "out": "any",
+    "path": "docs/ops/imgmetrics/iqa/tid2013_root.md"
    }
   ],
   "compare_images": [

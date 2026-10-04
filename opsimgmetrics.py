@@ -56,8 +56,9 @@ op                            答え合わせの出所
     opsimgmetrics.verified_against("delta_e_2000")
 """
 import imgmetrics
+import iqatid
 
-_MOD = {"imgmetrics": imgmetrics}
+_MOD = {"imgmetrics": imgmetrics, "iqatid": iqatid}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -110,6 +111,22 @@ _CATALOG = {
     # compare_images だけが metrics を産んで誰も食わない袋小路だった。
     # measure_with は「前と同じ条件で測り直す」= 出力を入力へ戻す形で、
     # data_range を毎回書かせる煩雑さと、条件が消える事故を同時に片付ける。
+    # 公開の正解で測る(2026-10-04、「自作の罠を自分で解くのは限界」→ 真値を外から): TID2013(3,000 枚 × 971 人の MOS)と作者の公表値(PSNR SROCC 0.640 /
+    # SSIM 0.637 …)を門に。作者の輝度は limited-range の整数 Y′(実測で特定、ページに明記なし)。順位相関は平均順位の Spearman と τ_b(公表 14 本を再現)。
+    # 画像と MOS は repo に入れない(研究・教育目的のみの配布)。
+    "iqa": [
+        ("luma_limited_u8", "iqatid", ["any"], "any"),
+        ("rank_data", "iqatid", ["any"], "any"),
+        ("rank_spearman", "iqatid", ["any", "any"], "scalar"),
+        ("rank_kendall_b", "iqatid", ["any", "any"], "scalar"),
+        ("tid2013_published", "iqatid", [], "table"),
+        ("tid2013_root", "iqatid", [], "any"),
+        ("tid2013_index", "iqatid", ["any"], "table"),
+        ("tid2013_metric_values", "iqatid", ["any", "any"], "any"),
+        ("tid2013_evaluate", "iqatid", ["any", "any"], "table"),
+        ("tid2013_compare", "iqatid", ["any", "any", "any"], "table"),
+        ("tid2013_by_distortion", "iqatid", ["any", "table"], "table"),
+    ],
     "report": [
         ("compare_images", "imgmetrics", ["image2d", "image2d"], "metrics"),
         ("measure_with", "imgmetrics", ["metrics", "image2d", "image2d"], "metrics"),

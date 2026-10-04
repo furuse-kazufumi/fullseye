@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tid2013_published — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_published() -&gt; &#x27;Dict[str, Tuple[float, float]]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import iqatid; iqatid.tid2013_published() -&gt; &#x27;Dict[str, Tuple[float, float]]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_published&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>公表の順位相関表 {metric: (SROCC, KROCC)}(14 本)。</p>
+<p>出典: https://www.ponomarenko.info/tid2013.htm(Last changed 2015-03-23)の「Ranking of compared metrics in accordance with</p>
+<p>Spearman / Kendall correlation with MOS」、配布物 readme の TABLE III / IV と同一。鍵は配布物 `<code style="color:#22d3bf">metrics_values/&lt;鍵&gt;.txt</code>` の</p>
+<p>ファイル名(小文字)。<b>同梱の作者値と mos.txt から、Spearman = 平均順位・Kendall = τ_b で 14 本すべて 3 桁一致</b></p>
+<p>(|差| ≤ 0.0005 / 0.00044、2026-10-04)。ページ冒頭の「PSNR … is 0.69」と使用例の「FSIMc Full : 0.666」は表と食い違う</p>
+<p>(前者は TID2008 の名残、後者は τ_a 0.66626 に一致 —— どちらも推測)ので門には使わない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_iqa_tid2013">poc_iqa_tid2013</a> — <code style="color:#22d3bf">py -3.11 examples/poc_iqa_tid2013.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:luma_limited_u8">luma_limited_u8</a> · <a style="color:#22d3bf" href="opimgmetrics:rank_data">rank_data</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_index">tid2013_index</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_by_distortion">tid2013_by_distortion</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">iqa</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:luma_limited_u8">luma_limited_u8</a> · <a style="color:#22d3bf" href="opimgmetrics:rank_data">rank_data</a> · <a style="color:#22d3bf" href="opimgmetrics:rank_spearman">rank_spearman</a> · <a style="color:#22d3bf" href="opimgmetrics:rank_kendall_b">rank_kendall_b</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_root">tid2013_root</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_index">tid2013_index</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_metric_values">tid2013_metric_values</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_evaluate">tid2013_evaluate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: iqatid.py — IMGMETRICS Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

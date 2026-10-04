@@ -111,6 +111,8 @@ DIRECTIONS = {
     "psnr": "higher",
     "ssim": "higher",
     "ms_ssim": "higher",
+    "rank_spearman": "higher",        # 指標の値と MOS の順位相関(iqatid)。1 に近いほど人の評価に沿う
+    "rank_kendall_b": "higher",
     "mutual_information": "higher",
     "normalized_mutual_information": "higher",
     "image_entropy": "higher",

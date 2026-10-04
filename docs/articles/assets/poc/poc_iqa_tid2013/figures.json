@@ -1,0 +1,64 @@
+[
+ {
+  "file": "01_tid2013_mos_vs_psnr.png",
+  "name": "tid2013_mos_vs_psnr",
+  "caption": "971 人の MOS と Fullseye の PSNR(作者の輝度規約 Y′、psnr.txt と 4 桁一致)。順位相関は公表値どおり低い —— PSNR は歪み種が混ざると主観に合わない。 彩度変化で Y′ が変わらない 106 組(PSNR = inf、MOS 3.4〜6.0)は図に載らない(順位相関には最大の順位で入れてある)。",
+  "shape": [
+   420,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "02_tid2013_mos_vs_ssim.png",
+  "name": "tid2013_mos_vs_ssim",
+  "caption": "同じ 3,000 組と Fullseye の SSIM(Wang 2004 の既定、ssim.txt と 4 桁一致)。SSIM が高いのに MOS が低い塊(右下)は平均シフト・コントラスト変化など SSIM が鈍い歪み。",
+  "shape": [
+   420,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "03_tid2013_srocc_by_distortion.png",
+  "name": "tid2013_srocc_by_distortion",
+  "caption": "歪み種ごとの順位相関(各 25 参照 × 5 段)。単一の歪み種の中では PSNR も SSIM も 0.8〜0.95 と高く、全体の 0.64 は歪み種をまたぐ比較で崩れる。 低い種: 15 Local block-wise distortions (PSNR 0.15 / SSIM 0.64), 17 Contrast change (PSNR 0.44 / SSIM 0.46), 18 Change of color saturation (PSNR 0.23 / SSIM 0.23)。",
+  "shape": [
+   380,
+   852,
+   3
+  ]
+ },
+ {
+  "file": "04_tid2013_author_diff_hist.png",
+  "name": "tid2013_author_diff_hist",
+  "caption": "作者値との行ごとの差。SSIM は作者値の 4 桁丸めの幅(±0.00005)に収まり、PSNR は ±0.0002 dB(丸め幅の 3 倍、作者側の算術の差と推測) —— 同じ規約を踏んだ証拠で、指標の良さの証拠ではない。 PSNR の図は、作者が完全一致の印(100000.0)を書いた 111 行(こちらも 106 行は inf、5 行は 86.6 dB)と、輝度がちょうど k.5 の 28 画素で 作者と 1 LSB 食い違う参照 I12 の行(最大 0.0006 dB、別の門)を除く。",
+  "shape": [
+   352,
+   1150,
+   3
+  ]
+ },
+ {
+  "file": "05_tid2013_published_vs_reproduced.png",
+  "name": "tid2013_published_vs_reproduced",
+  "caption": "公表表(ページ / readme TABLE III・IV)と、同梱の作者値 + mos.txt から平均順位・τ_b で再現した値、Fullseye 実装がある 3 本の自前値。FSIM / VIF 等は未実装で公表値のみ。",
+  "shape": [
+   416,
+   678,
+   3
+  ],
+  "csv": "05_tid2013_published_vs_reproduced.csv",
+  "tsv": "05_tid2013_published_vs_reproduced.tsv"
+ },
+ {
+  "file": "06_tid2013_pair_ssim_map.png",
+  "name": "tid2013_pair_ssim_map",
+  "caption": "1 組の例。SSIM map は縁(窓半径 5 画素)を落とした 374 × 502。暗い所ほど構造が壊れている。",
+  "shape": [
+   436,
+   1576,
+   3
+  ]
+ }
+]

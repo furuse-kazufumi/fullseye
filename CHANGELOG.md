@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**公開の正解で画質指標を測る**(新モジュール `iqatid` 11 op、台帳 `iqa`(opsimgmetrics)、PoC `poc_iqa_tid2013`、wing_imaging): 真値を外から持ち込む画像側の
+  第 1 弾。TID2013 の 3,000 枚 × 971 人の MOS と、作者が同梱した 14 指標の値・公表の順位相関表を門に。作者の輝度規約 = BT.601 limited-range の整数 Y′
+  (実測で特定)、平均順位の Spearman と τ_b。Fullseye の PSNR(RGB)は作者の PSNRc と 4 桁一致、SSIM(Y′)は 0.000051、順位相関は公表 0.640 / 0.637 を
+  0.001 以内で再現、作者値 14 本を 0.0005 で再現。門 21 本。正直に: 4 桁一致は同じ原実装の規約を踏んだからで SSIM の性能の話ではない、FSIM / VIF 等は未実装、
+  画像と MOS は repo に入れない(研究・教育目的のみ)。踏んだ罠: bsdtar(Windows の tar.exe)は RAR4 を開けるが BMP 200 本を壊す → 配布物の CRC で全数照合して
+  7-Zip で差し替え(「展開できた ≠ 中身が正しい」)、作者は完全一致を 100000.0 と書く、参照 I12 の 28 画素が丁度 .5 で丸めの向きが食い違う。
 - ★**他人の場面 × 自分の運転手 × 他人の採点器**(新モジュール `drivecommonroad` 10 op、台帳 `commonroad`、PoC `poc_driving_commonroad`、wing_geometry):
   ユーザーの「自分でトラップ作って自分で攻略する形は限界がある」→ 真値・門・被験者の 1 つを外から持ち込む第 1 弾。場面 = CommonRoad(TUM、BSD-3)の
   公開シナリオ、採点器 = TUM drivability-checker(WSL、`tools/check_solution_json.py` が合否を JSON に)、自分のものは運転手(縦 IDM + pure-pursuit +

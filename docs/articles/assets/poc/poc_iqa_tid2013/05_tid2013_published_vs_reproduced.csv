@@ -1,0 +1,15 @@
+﻿metric,SROCC pub,SROCC (author values),KROCC pub,τ_b (author values),Fullseye SROCC / τ_b
+fsimc,0.851,0.8510,0.667,0.6669,— (not in Fullseye)
+psnrha,0.819,0.8187,0.643,0.6433,— (not in Fullseye)
+psnrhma,0.813,0.8128,0.632,0.6316,— (not in Fullseye)
+fsim,0.801,0.8007,0.630,0.6300,— (not in Fullseye)
+mssim,0.787,0.7872,0.608,0.6079,— (not in Fullseye)
+psnrc,0.687,0.6869,0.496,0.4958,0.6869 / 0.4958
+vsnr,0.681,0.6809,0.508,0.5077,— (not in Fullseye)
+psnrhvs,0.654,0.6536,0.508,0.5077,— (not in Fullseye)
+psnr,0.640,0.6395,0.470,0.4700,0.6395 / 0.4699
+ssim,0.637,0.6370,0.464,0.4636,0.6370 / 0.4635
+nqm,0.635,0.6349,0.466,0.4662,— (not in Fullseye)
+psnrhvsm,0.625,0.6246,0.482,0.4818,— (not in Fullseye)
+vifp,0.608,0.6084,0.457,0.4567,— (not in Fullseye)
+wsnr,0.580,0.5796,0.446,0.4463,— (not in Fullseye)

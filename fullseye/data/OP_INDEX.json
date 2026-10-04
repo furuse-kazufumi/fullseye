@@ -1,8 +1,8 @@
 {
- "n_ops": 2742,
+ "n_ops": 2753,
  "tiers": {
   "color": 12,
-  "ledger": 1789,
+  "ledger": 1800,
   "nary": 17,
   "registry": 924
  },
@@ -11035,6 +11035,19 @@
    ]
   },
   {
+   "name": "luma_limited_u8",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "iqa",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
    "name": "m3c2_distance",
    "halcon": "",
    "in_sort": "points",
@@ -15981,6 +15994,47 @@
    ]
   },
   {
+   "name": "rank_data",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "iqa",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "rank_kendall_b",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "scalar",
+   "category": "iqa",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "any",
+    "any"
+   ]
+  },
+  {
+   "name": "rank_spearman",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "scalar",
+   "category": "iqa",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "any",
+    "any"
+   ]
+  },
+  {
    "name": "ransac_cylinder",
    "halcon": "",
    "in_sort": "points",
@@ -20729,6 +20783,98 @@
     "image2d",
     "axes"
    ]
+  },
+  {
+   "name": "tid2013_by_distortion",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "iqa",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "any",
+    "table"
+   ]
+  },
+  {
+   "name": "tid2013_compare",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "iqa",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "any",
+    "any",
+    "any"
+   ]
+  },
+  {
+   "name": "tid2013_evaluate",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "iqa",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "any",
+    "any"
+   ]
+  },
+  {
+   "name": "tid2013_index",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "iqa",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "tid2013_metric_values",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "iqa",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "any",
+    "any"
+   ]
+  },
+  {
+   "name": "tid2013_published",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "iqa",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": []
+  },
+  {
+   "name": "tid2013_root",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "any",
+   "category": "iqa",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": []
   },
   {
    "name": "tile_digest",

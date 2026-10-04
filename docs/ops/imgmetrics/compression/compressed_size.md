@@ -39,7 +39,7 @@ stdlib の ``zlib`` / ``lzma`` のみ。dtype と shape の違いが結果を変
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)
 
-—
+[luma_limited_u8](../iqa/luma_limited_u8.md) · [rank_data](../iqa/rank_data.md) · [tid2013_index](../iqa/tid2013_index.md)
 
 ## 同カテゴリ(`compression`)
 
