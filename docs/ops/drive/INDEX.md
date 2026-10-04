@@ -1,4 +1,4 @@
-# DRIVE operator help — 428 ops in 32 categories
+# DRIVE operator help — 445 ops in 33 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -111,6 +111,10 @@
 ### tacslip (20)
 
 [cerruti_kernel](tacslip/cerruti_kernel.md) · [cerruti_surface_displacement](tacslip/cerruti_surface_displacement.md) · [displace_markers](tacslip/displace_markers.md) · [fem_nodes_load](tacslip/fem_nodes_load.md) · [fem_vs_halfspace](tacslip/fem_vs_halfspace.md) · [hertz_surface_ur](tacslip/hertz_surface_ur.md) · [hertzian_tangential_inner](tacslip/hertzian_tangential_inner.md) · [marker_detect](tacslip/marker_detect.md) · [marker_image](tacslip/marker_image.md) · [marker_match_grow](tacslip/marker_match_grow.md) · [marker_track](tacslip/marker_track.md) · [membrane_markers](tacslip/membrane_markers.md) · [membrane_render_markers](tacslip/membrane_render_markers.md) · [membrane_shear_field](tacslip/membrane_shear_field.md) · [mindlin_fit](tacslip/mindlin_fit.md) · [mindlin_model](tacslip/mindlin_model.md) · [mindlin_partial_slip](tacslip/mindlin_partial_slip.md) · [mindlin_traction](tacslip/mindlin_traction.md) · [slip_entropy](tacslip/slip_entropy.md) · [stick_radius_modelfree](tacslip/stick_radius_modelfree.md)
+
+### tactorque (17)
+
+[boussinesq_kernel](tactorque/boussinesq_kernel.md) · [boussinesq_surface_displacement](tactorque/boussinesq_surface_displacement.md) · [dipole_to_torque_fit](tactorque/dipole_to_torque_fit.md) · [dipole_torque_resolution](tactorque/dipole_torque_resolution.md) · [ellipse_pressure_shifted](tactorque/ellipse_pressure_shifted.md) · [grasp_torque_frame](tactorque/grasp_torque_frame.md) · [hertz_pressure_shifted](tactorque/hertz_pressure_shifted.md) · [marker_divergence](tactorque/marker_divergence.md) · [pressure_first_moment](tactorque/pressure_first_moment.md) · [punch_pressure](tactorque/punch_pressure.md) · [punch_surface_uz](tactorque/punch_surface_uz.md) · [rigid_rotation_fit](tactorque/rigid_rotation_fit.md) · [surface_divergence_closed_form](tactorque/surface_divergence_closed_form.md) · [tactile_dipole_moment](tactorque/tactile_dipole_moment.md) · [tilt_shear_field](tactorque/tilt_shear_field.md) · [torque_decompose](tactorque/torque_decompose.md) · [torsion_stick_field](tactorque/torsion_stick_field.md)
 
 ### terrain (20)
 

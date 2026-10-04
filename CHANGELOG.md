@@ -7,6 +7,20 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**視触覚センサのマーカー場から「触覚双極子」で把持内の傾き・ねじりトルクを読む**(新モジュール `tactorque` 17 op、台帳 `tactorque`(opsdrive)、PoC
+  `poc_tactile_dipole_torque`、wing_metrology): 物理シミュ × Fullseye 系列 第 2 弾の第 3 本。再実装した方法 = Fuchioka & Hamaya, ICRA 2024, arXiv 2404.15626
+  (学習なし・光学模型なし: マーカー変位場の発散を電荷と見た双極子で傾きトルク、原点は正負の重心の中点、係数は力覚センサで較正。著者のコードは無ライセンス
+  なので本文の式だけから)。真値 = Johnson 1985 の閉形式(平頭押し込み子の圧 3.34 + 傾きモーメントの反対称項 3Mx/(2πa³√(a²−r²))、Boussinesq の点荷重解、Hertz 圧の
+  表面変位 3.41b・3.42a、楕円 Hertz 圧 4.24、無滑りねじり Reissner–Sagoci β = 3M_z/(16Ga³))と有限要素の節点変位(有限厚ドーム、`FULLSEYE_TAXIM_DATA`)。
+  自分で導いたのは 3 つ: **Gauss の法則は半空間で恒等式** ∇·ū = −(1−2ν)p/(2G)(双極子 = 圧力の 1 次モーメント × 係数、押し込み子の形に依らない —— 3 形状で
+  密 0.001 %・格子 0.25 %)、Cerruti 点荷重の場の発散 −(1−ν)Qx/(2πGr³)(純せん断が窓全体に偽の傾き (1−ν)/(1−2ν)·Q·R = 32 N·mm を作る → 固着円の窓で 0.001 N·mm)、
+  基線形式(|u| を電荷に)は対称な傾きで恒等的に 0。被験者は既存 op: `tacslip.marker_track`、`tacslip.cerruti_kernel` の畳み込み(ねじりの独立実装、β −0.47 %)、
+  `sceneflow.flow_divergence` / `flow_curl`(散在最小二乗の 5 点と 1e-15)、`pivops.piv_vorticity`(規約 (dy, dx) で −curl)。門 16 本(門だけ 1.6 s): 平頭圧の格子積分
+  0.9 %、核 0.03 %、Gauss 恒等式 0.2 %、純法線 1e-15、D ∝ M R² = 1.000000・係数 0.04 %、分解(傾き 2.4 %・ねじり 0.5 %・並進 0.04 px)、雑音 0.03 px → σ_M 0.11 N·mm、
+  像から M1 0.7 %・追跡 0.005 px・961/961、FEM は膨らんで符号が逆・斜め荷重はせん断漏れの符号。正直に: 半空間の係数は実機(有限厚・ほぼ非圧縮)の大きさを
+  与えない(1 N·mm が 0.06 px)、Johnson の式番号 3 つは本文で未確認(独立実装で数値検証)、Lubkin の部分滑りねじりは未実装。踏んだ罠: 9 点の平面当ては縁で
+  11 % ずれる(5 点で中心差分)、平均 curl/2 は縁で 11 % 低い(剛体回転の最小二乗)、格子の副画素位相をねじりが拾って傾きに 2 % 漏れる、原点不変の門は格子の
+  正味電荷 1e-3 で破れる。
 - ★**視触覚センサのマーカー配列からせん断場・固着/滑り・接線力を読む**(新モジュール `tacslip` 20 op、台帳 `tacslip`(opsdrive)、PoC
   `poc_tacsim_marker_shear`、wing_metrology): 物理シミュ × Fullseye 系列 第 2 弾の第 2 本(第 1 本 = `tacsim`、法線荷重)。真値は 2 系統 ——
   **閉形式**(Johnson, *Contact Mechanics* 1985: Cattaneo 1938 / Mindlin 1949 の部分滑り §7.2 —— 固着円 c/a = (1 − Q/μP)^{1/3}、q = q′ − q″、

@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ellipse_pressure_shifted — DRIVE <code style="color:#22d3bf">tactorque</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × matrix × scalar × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ellipse_pressure_shifted(X, Y, a: &#x27;float&#x27;, b: &#x27;float&#x27;, P: &#x27;float&#x27;, d=(0.0, 0.0)) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tactorque; tactorque.ellipse_pressure_shifted(X, Y, a: &#x27;float&#x27;, b: &#x27;float&#x27;, P: &#x27;float&#x27;, d=(0.0, 0.0)) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;ellipse_pressure_shifted&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>半軸 a(x)・b(y)[m] の楕円 Hertz 圧 p0 √(1 − x′²/a² − y′²/b²) [Pa]、P = 2πab p0/3(Johnson 1985 式 4.24)、中心を d にずらす。</p>
+<p>b ≫ a で円筒(稜・くさび状)の押し込みに近い形 —— 形状不変の門の 3 つ目。<b>Raises</b> ValueError: a, b, P ≤ 0、X と Y の形が違う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tactile_dipole_torque">poc_tactile_dipole_torque</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tactile_dipole_torque.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">matrix</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:relative_motion">relative_motion</a> · <a style="color:#22d3bf" href="opdrive:foe_from_motion">foe_from_motion</a> · <a style="color:#22d3bf" href="opdrive:flow_from_depth_motion">flow_from_depth_motion</a> · <a style="color:#22d3bf" href="opdrive:ttc_truth">ttc_truth</a> · <a style="color:#22d3bf" href="opdrive:world_materials">world_materials</a> · <a style="color:#22d3bf" href="opdrive:mesh_signed_volume">mesh_signed_volume</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">tactorque</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:punch_pressure">punch_pressure</a> · <a style="color:#22d3bf" href="opdrive:punch_surface_uz">punch_surface_uz</a> · <a style="color:#22d3bf" href="opdrive:hertz_pressure_shifted">hertz_pressure_shifted</a> · <a style="color:#22d3bf" href="opdrive:pressure_first_moment">pressure_first_moment</a> · <a style="color:#22d3bf" href="opdrive:boussinesq_kernel">boussinesq_kernel</a> · <a style="color:#22d3bf" href="opdrive:boussinesq_surface_displacement">boussinesq_surface_displacement</a> · <a style="color:#22d3bf" href="opdrive:surface_divergence_closed_form">surface_divergence_closed_form</a> · <a style="color:#22d3bf" href="opdrive:tilt_shear_field">tilt_shear_field</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tactorque.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

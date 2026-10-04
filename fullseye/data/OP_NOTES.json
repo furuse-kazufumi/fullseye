@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2812,
- "n_notes": 2818,
+ "n_ops": 2829,
+ "n_notes": 2835,
  "notes": {
   "vol_dilate": [
    {
@@ -18990,6 +18990,176 @@
     "in": "matrix × matrix",
     "out": "table",
     "path": "docs/ops/drive/tacslip/stick_radius_modelfree.md"
+   }
+  ],
+  "boussinesq_kernel": [
+   {
+    "op": "boussinesq_kernel",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tactorque/boussinesq_kernel.md"
+   }
+  ],
+  "boussinesq_surface_displacement": [
+   {
+    "op": "boussinesq_surface_displacement",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "matrix × table",
+    "out": "table",
+    "path": "docs/ops/drive/tactorque/boussinesq_surface_displacement.md"
+   }
+  ],
+  "dipole_to_torque_fit": [
+   {
+    "op": "dipole_to_torque_fit",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/tactorque/dipole_to_torque_fit.md"
+   }
+  ],
+  "dipole_torque_resolution": [
+   {
+    "op": "dipole_torque_resolution",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "matrix × matrix × scalar × scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tactorque/dipole_torque_resolution.md"
+   }
+  ],
+  "ellipse_pressure_shifted": [
+   {
+    "op": "ellipse_pressure_shifted",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "matrix × matrix × scalar × scalar × scalar",
+    "out": "matrix",
+    "path": "docs/ops/drive/tactorque/ellipse_pressure_shifted.md"
+   }
+  ],
+  "grasp_torque_frame": [
+   {
+    "op": "grasp_torque_frame",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "image2d × image2d × scalar × scalar × scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tactorque/grasp_torque_frame.md"
+   }
+  ],
+  "hertz_pressure_shifted": [
+   {
+    "op": "hertz_pressure_shifted",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "matrix × matrix × table",
+    "out": "matrix",
+    "path": "docs/ops/drive/tactorque/hertz_pressure_shifted.md"
+   }
+  ],
+  "marker_divergence": [
+   {
+    "op": "marker_divergence",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "matrix × matrix × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tactorque/marker_divergence.md"
+   }
+  ],
+  "pressure_first_moment": [
+   {
+    "op": "pressure_first_moment",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "matrix × matrix × matrix × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tactorque/pressure_first_moment.md"
+   }
+  ],
+  "punch_pressure": [
+   {
+    "op": "punch_pressure",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "matrix × matrix × scalar × scalar",
+    "out": "matrix",
+    "path": "docs/ops/drive/tactorque/punch_pressure.md"
+   }
+  ],
+  "punch_surface_uz": [
+   {
+    "op": "punch_surface_uz",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "matrix × scalar × scalar × scalar × scalar",
+    "out": "matrix",
+    "path": "docs/ops/drive/tactorque/punch_surface_uz.md"
+   }
+  ],
+  "rigid_rotation_fit": [
+   {
+    "op": "rigid_rotation_fit",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "matrix × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/tactorque/rigid_rotation_fit.md"
+   }
+  ],
+  "surface_divergence_closed_form": [
+   {
+    "op": "surface_divergence_closed_form",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "matrix × scalar × scalar",
+    "out": "matrix",
+    "path": "docs/ops/drive/tactorque/surface_divergence_closed_form.md"
+   }
+  ],
+  "tactile_dipole_moment": [
+   {
+    "op": "tactile_dipole_moment",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "matrix × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/tactorque/tactile_dipole_moment.md"
+   }
+  ],
+  "tilt_shear_field": [
+   {
+    "op": "tilt_shear_field",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "matrix × matrix × table",
+    "out": "table",
+    "path": "docs/ops/drive/tactorque/tilt_shear_field.md"
+   }
+  ],
+  "torque_decompose": [
+   {
+    "op": "torque_decompose",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "matrix × matrix × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tactorque/torque_decompose.md"
+   }
+  ],
+  "torsion_stick_field": [
+   {
+    "op": "torsion_stick_field",
+    "dim": "drive",
+    "category": "tactorque",
+    "in": "matrix × matrix × scalar × scalar × table × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tactorque/torsion_stick_field.md"
    }
   ],
   "add_mesh_object": [

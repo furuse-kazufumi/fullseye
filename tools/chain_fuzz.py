@@ -3723,6 +3723,128 @@ def _b_slip_fem_cmp(pool, rng):
     return (f["fz"], f["fxz"]), {}
 
 
+_FUZZ_TQ = {}
+
+
+def _fuzz_tq():
+    """触覚双極子の小さな場面(平頭 a = 1.5 mm・P = 0.5 N・M = 0.1 N·mm、48 px・視野 6 mm、マーカー 4 px)を 1 回だけ作る(tactorque)。"""
+    if "X" not in _FUZZ_TQ:
+        import tacsim as TS
+        import tacslip as SL
+        import tactorque as TQ
+        from scipy import ndimage
+        E, nu, G = 0.2e6, 0.48, 0.2e6 / (2 * 1.48)
+        n, fov = 48, 6.0e-3
+        X, Y, r, pitch = TS._grid(n, fov)
+        a, P, M = 1.5e-3, 0.5, 0.1e-3
+        hz = TS.hertz_sphere(P, 3.0e-3, TS.combined_modulus(E, nu))
+        kb = TQ.boussinesq_kernel(n, pitch, G, nu, sub=2)
+        kc = SL.cerruti_kernel(n, pitch, G, nu, sub=2)
+        p0 = TQ.punch_pressure(X, Y, a, P, (0.0, 0.0), pitch=pitch)
+        pM = TQ.punch_pressure(X, Y, a, P, (M, 0.0), pitch=pitch)
+        dp = TQ.tilt_shear_field(p0, pM, kb)
+        mk = SL.membrane_markers(n, 4.0)
+        mk = mk[(mk[:, 0] >= 0) & (mk[:, 0] < n) & (mk[:, 1] >= 0) & (mk[:, 1] < n)]
+        mk_m = (mk - (n - 1) / 2.0) * pitch
+        um = np.column_stack([ndimage.map_coordinates(f, [mk[:, 1], mk[:, 0]], order=1, mode="nearest") for f in (dp["ux"], dp["uy"])])
+        bg = np.full((n, n, 3), 0.6)
+        p_cur = SL.displace_markers(mk, dp["ux"], dp["uy"], pitch)
+        m_ref = SL.marker_image(SL.membrane_render_markers(bg, mk, 1.5, 0.85), bg)
+        m_cur = SL.marker_image(SL.membrane_render_markers(bg, p_cur, 1.5, 0.85), bg)
+        coef = -(1.0 - 2.0 * nu) / (2.0 * G)
+        Ms = np.linspace(0.0, M, 5)
+        _FUZZ_TQ.update({"X": X, "Y": Y, "r": r, "pitch": pitch, "G": G, "nu": nu, "a": a, "P": P, "M": M, "hz": hz, "kb": kb, "kc": kc,
+                         "p0": p0, "pM": pM, "mk_m": mk_m, "um": um, "area": (4.0 * pitch) ** 2, "fit_r": 1.5 * 4.0 * pitch, "coef": coef,
+                         "m_ref": m_ref, "m_cur": m_cur, "Ms": Ms, "Ds": coef * Ms * 0.9})
+    return _FUZZ_TQ
+
+
+def _b_tq_punch(pool, rng):
+    f = _fuzz_tq()
+    return (f["X"], f["Y"], f["a"], f["P"]), {"M1": (float(rng.uniform(0.0, 0.3)) * f["P"] * f["a"] / 3.0, 0.0), "pitch": f["pitch"]}
+
+
+def _b_tq_punch_uz(pool, rng):
+    f = _fuzz_tq()
+    return (f["r"], f["a"], f["P"], f["G"], f["nu"]), {}
+
+
+def _b_tq_hertz_shift(pool, rng):
+    f = _fuzz_tq()
+    return (f["X"], f["Y"], f["hz"]), {"d": (float(rng.uniform(-0.2e-3, 0.2e-3)), 0.0)}
+
+
+def _b_tq_ellipse(pool, rng):
+    f = _fuzz_tq()
+    return (f["X"], f["Y"], 1.0e-3, float(rng.uniform(1.5e-3, 2.5e-3)), f["P"]), {}
+
+
+def _b_tq_moment(pool, rng):
+    f = _fuzz_tq()
+    return (f["pM"], f["X"], f["Y"], f["pitch"]), {}
+
+
+def _b_tq_kernel(pool, rng):
+    f = _fuzz_tq()
+    return (int(rng.choice([16, 24, 32])), f["pitch"], f["G"], f["nu"]), {"sub": 2}
+
+
+def _b_tq_conv(pool, rng):
+    f = _fuzz_tq()
+    return (f["p0"] * float(rng.uniform(0.5, 2.0)), f["kb"]), {}
+
+
+def _b_tq_div_cf(pool, rng):
+    f = _fuzz_tq()
+    return (f["pM"], f["G"], f["nu"]), {}
+
+
+def _b_tq_tilt(pool, rng):
+    f = _fuzz_tq()
+    return (f["p0"], f["pM"], f["kb"]), {}
+
+
+def _b_tq_torsion(pool, rng):
+    f = _fuzz_tq()
+    return (f["X"], f["Y"], f["a"], float(rng.uniform(0.05e-3, 0.2e-3)), f["kc"], f["G"]), {}
+
+
+def _b_tq_div(pool, rng):
+    f = _fuzz_tq()
+    return (f["mk_m"], f["um"], f["fit_r"]), {}
+
+
+def _b_tq_rot(pool, rng):
+    f = _fuzz_tq()
+    return (f["mk_m"], f["um"]), {"window": (0.0, 0.0, 0.9 * f["a"])}
+
+
+def _b_tq_dipole(pool, rng):
+    f = _fuzz_tq()
+    form = str(rng.choice(["divergence", "norm_cross", "radial"]))
+    return (f["mk_m"], f["um"]), {"form": form, "origin": "centre", "area": f["area"], "radius": f["fit_r"]}
+
+
+def _b_tq_fit(pool, rng):
+    f = _fuzz_tq()
+    return (f["Ds"], f["Ms"]), {}
+
+
+def _b_tq_decompose(pool, rng):
+    f = _fuzz_tq()
+    return (f["mk_m"], f["um"], f["area"], f["G"], f["nu"]), {"a": f["a"], "radius": f["fit_r"], "window": (0.0, 0.0, f["a"] + f["fit_r"])}
+
+
+def _b_tq_resolution(pool, rng):
+    f = _fuzz_tq()
+    return (f["mk_m"], f["um"], 0.03, f["pitch"], f["coef"], f["area"], f["fit_r"]), {"trials": 4}
+
+
+def _b_tq_frame(pool, rng):
+    f = _fuzz_tq()
+    return (f["m_ref"], f["m_cur"], 0.85, 4.0, 1.5, f["pitch"], f["G"], f["nu"]), {"a": f["a"]}
+
+
 def _b_events_to_frames(pool, rng):
     import motionio
     return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
@@ -4640,6 +4762,12 @@ OP_ARG_BUILDERS = {
     "marker_match_grow": _b_slip_match, "marker_track": _b_slip_track, "mindlin_model": _b_slip_model, "mindlin_fit": _b_slip_fit,
     "stick_radius_modelfree": _b_slip_stick, "slip_entropy": _b_slip_entropy, "fem_nodes_load": _b_slip_fem_load,
     "fem_vs_halfspace": _b_slip_fem_cmp,
+    "punch_pressure": _b_tq_punch, "punch_surface_uz": _b_tq_punch_uz, "hertz_pressure_shifted": _b_tq_hertz_shift,
+    "ellipse_pressure_shifted": _b_tq_ellipse, "pressure_first_moment": _b_tq_moment, "boussinesq_kernel": _b_tq_kernel,
+    "boussinesq_surface_displacement": _b_tq_conv, "surface_divergence_closed_form": _b_tq_div_cf, "tilt_shear_field": _b_tq_tilt,
+    "torsion_stick_field": _b_tq_torsion, "marker_divergence": _b_tq_div, "rigid_rotation_fit": _b_tq_rot, "tactile_dipole_moment": _b_tq_dipole,
+    "dipole_to_torque_fit": _b_tq_fit, "torque_decompose": _b_tq_decompose, "dipole_torque_resolution": _b_tq_resolution,
+    "grasp_torque_frame": _b_tq_frame,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

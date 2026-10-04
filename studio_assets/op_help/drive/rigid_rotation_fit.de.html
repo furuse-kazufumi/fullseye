@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">rigid_rotation_fit — DRIVE <code style="color:#22d3bf">tactorque</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rigid_rotation_fit(pts, u, window=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tactorque; tactorque.rigid_rotation_fit(pts, u, window=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;rigid_rotation_fit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>窓内のマーカー場に剛体変位 u ≈ t + ω ẑ×r を最小二乗で当てる: `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> = 平均変位、</code><code style="color:#22d3bf">omega</code>` = Σ (x′u′_y − y′u′_x)/Σ r′²</p>
+<p>(′ は窓内平均を引いたもの)、`<code style="color:#22d3bf">resid_rms</code><code style="color:#22d3bf"> = 残差 RMS、</code><code style="color:#22d3bf">n</code>`。無滑りねじりでは円内が剛体回転(u_θ = βr)なので ω = β が真値</p>
+<p>(平均 curl/2 は円の縁で当てはめが外に漏れて低くなる —— 実測 11 %)。`<code style="color:#22d3bf">window</code>` = (cx, cy, R)。<b>Raises</b> ValueError: 点が 3 未満。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tactile_dipole_torque">poc_tactile_dipole_torque</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tactile_dipole_torque.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">tactorque</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:punch_pressure">punch_pressure</a> · <a style="color:#22d3bf" href="opdrive:punch_surface_uz">punch_surface_uz</a> · <a style="color:#22d3bf" href="opdrive:hertz_pressure_shifted">hertz_pressure_shifted</a> · <a style="color:#22d3bf" href="opdrive:ellipse_pressure_shifted">ellipse_pressure_shifted</a> · <a style="color:#22d3bf" href="opdrive:pressure_first_moment">pressure_first_moment</a> · <a style="color:#22d3bf" href="opdrive:boussinesq_kernel">boussinesq_kernel</a> · <a style="color:#22d3bf" href="opdrive:boussinesq_surface_displacement">boussinesq_surface_displacement</a> · <a style="color:#22d3bf" href="opdrive:surface_divergence_closed_form">surface_divergence_closed_form</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tactorque.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

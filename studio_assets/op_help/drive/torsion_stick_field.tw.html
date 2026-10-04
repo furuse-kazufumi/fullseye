@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">torsion_stick_field — DRIVE <code style="color:#22d3bf">tactorque</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × matrix × scalar × scalar × table × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.torsion_stick_field(X, Y, a: &#x27;float&#x27;, Mz: &#x27;float&#x27;, kern: &#x27;dict&#x27;, G: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tactorque; tactorque.torsion_stick_field(X, Y, a: &#x27;float&#x27;, Mz: &#x27;float&#x27;, kern: &#x27;dict&#x27;, G: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;torsion_stick_field&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>無滑りねじり(Reissner–Sagoci、Johnson 1985 §3.9 相当、式番号は未確認 → 畳み込みで数値検証)の表面変位場: トラクション</p>
+<p>q_θ = 3M_z r/(4πa³√(a²−r²)) を :func:<code style="color:#22d3bf">tacslip.cerruti_kernel</code> の核で畳んだ `<code style="color:#22d3bf">ux</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">uy</code><code style="color:#22d3bf"> [m] と、閉形式 </code><code style="color:#22d3bf">beta</code>` = 3M_z/(16Ga³)、</p>
+<p>円内の剛体回転 `<code style="color:#22d3bf">ux_cf</code><code style="color:#22d3bf"> = −βy・</code><code style="color:#22d3bf">uy_cf</code><code style="color:#22d3bf"> = βx(r &lt; a)、トラクション </code><code style="color:#22d3bf">qx</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">qy</code>`。畳み込みが円内で一様な u_θ/r = β を返すことで β の式を</p>
+<p>独立実装で検証する(−0.5 %、一様性 0.14 %、実測)。Lubkin 1951 の部分滑り(固着半径 c)は未実装(docstring 参照)。</p>
+<p><b>Raises</b> ValueError: G ≤ 0、a ≤ 0、X と Y の形が違う、核の格子が合わない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tactile_dipole_torque">poc_tactile_dipole_torque</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tactile_dipole_torque.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">tactorque</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:punch_pressure">punch_pressure</a> · <a style="color:#22d3bf" href="opdrive:punch_surface_uz">punch_surface_uz</a> · <a style="color:#22d3bf" href="opdrive:hertz_pressure_shifted">hertz_pressure_shifted</a> · <a style="color:#22d3bf" href="opdrive:ellipse_pressure_shifted">ellipse_pressure_shifted</a> · <a style="color:#22d3bf" href="opdrive:pressure_first_moment">pressure_first_moment</a> · <a style="color:#22d3bf" href="opdrive:boussinesq_kernel">boussinesq_kernel</a> · <a style="color:#22d3bf" href="opdrive:boussinesq_surface_displacement">boussinesq_surface_displacement</a> · <a style="color:#22d3bf" href="opdrive:surface_divergence_closed_form">surface_divergence_closed_form</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tactorque.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

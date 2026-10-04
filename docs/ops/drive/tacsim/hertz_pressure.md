@@ -4,7 +4,7 @@ dim: drive
 category: tacsim
 in: matrix × scalar × scalar
 out: matrix
-examples: [poc_tacsim_elastic_membrane, poc_tacsim_marker_shear]
+examples: [poc_tacsim_elastic_membrane, poc_tacsim_marker_shear, poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -29,6 +29,7 @@ Hertz の接触圧 p(r) = p0 √(1 − r²/a²)(r < a)、外は 0。r と同じ�
 
 - [poc_tacsim_elastic_membrane](../../../../examples/poc_tacsim_elastic_membrane.py) — `py -3.11 examples/poc_tacsim_elastic_membrane.py`
 - [poc_tacsim_marker_shear](../../../../examples/poc_tacsim_marker_shear.py) — `py -3.11 examples/poc_tacsim_marker_shear.py`
+- [poc_tactile_dipole_torque](../../../../examples/poc_tactile_dipole_torque.py) — `py -3.11 examples/poc_tactile_dipole_torque.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 

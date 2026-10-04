@@ -20,6 +20,7 @@
 柔らかい手首のペグ挿入(pegsim: Whitney の準静的幾何 —— 二点接触の深さ・くさび・かじり・面取りの許容 —— を門に、手首 RGB-D 1 枚から穴中心とペグ先端を 3-D で読む計測、真値つきの合成 RGB-D、MJCF。mujoco が要る場面・描画・接触・挿入は facade だけ)。
 視触覚センサ(tacsim: Hertz 接触の閉形式 —— 接触半径・押し込み・圧力・半空間の表面変位 —— を真値に、弾性膜を 3 色照明で撮った像を合成し、フォトメトリックステレオで法線 → 接触半径と力を逆算。スロープ分布への Hertz 模型の当てはめ・模型なしのリング・δ の 1D 積分の 3 経路)。
 マーカー配列のせん断(tacslip: Cattaneo–Mindlin の部分滑りを真値に、固着円・滑り環・接線力をマーカー追跡から逆算。接触円の外側は Cerruti 核の FFT 畳み込み、逆算は相似則で畳み込み 1 回。有限要素の節点変位で半空間が外れる半径を数に。マーカー中心の (N, 2) は matrix で運ぶ)。
+触覚双極子 → 把持内トルク(tactorque: マーカー変位場の発散を電荷と見た双極子(arXiv 2404.15626 の再実装)で傾きトルク、剛体回転でねじり、平均で並進に分ける。真値 = Johnson 1985 の閉形式: 平頭押し込み子の圧 + 傾きモーメントの反対称項、Boussinesq 核、Gauss の恒等式 ∇·ū = −(1−2ν)p/2G(双極子 = 圧力の 1 次モーメント、形状不変)、Reissner–Sagoci のねじり。純せん断の漏れ (1−ν)/(1−2ν)·Q·R を窓で切る。有限要素では有限厚が膨らんで符号が逆)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -65,6 +66,7 @@ import lidarsim
 import pegsim
 import tacsim
 import tacslip
+import tactorque
 import racket
 import roadjp
 import rsssafety
@@ -73,7 +75,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -670,6 +672,32 @@ _CATALOG = {
         ("slip_entropy", "tacslip", ["signal"], "scalar"),
         ("fem_nodes_load", "tacslip", ["text", "text"], "table"),
         ("fem_vs_halfspace", "tacslip", ["table", "table"], "table"),
+    ],
+    # 触覚双極子 → 把持内トルク(2026-10-04、物理シミュ × Fullseye 系列 第 2 弾の第 3 本): 論文(Fuchioka & Hamaya, ICRA 2024, arXiv 2404.15626)の
+    # 式 4–11 を再実装(学習なし・光学模型なし。著者のコードは無ライセンスなので読まず、本文の式だけから)。真値 = Johnson 1985 の閉形式: 平頭押し込み子の
+    # 圧 p = P/(2πa√(a²−r²))(式 3.34)+ 傾きモーメントの反対称項 3Mx/(2πa³√(a²−r²))(∫x p dA = M、導出)、Boussinesq の点荷重解(§3.2)、Hertz 圧の表面変位
+    # (3.41b・3.42a)、楕円 Hertz 圧(4.24)、無滑りねじり(Reissner–Sagoci)q_θ = 3M_z r/(4πa³√(a²−r²))・β = 3M_z/(16Ga³)。自分で導いたのは Gauss の法則が
+    # 半空間で恒等式になること ∇·ū = −(1−2ν)p/(2G)(双極子 = 圧力の 1 次モーメント × 係数、押し込み子の形に依らない)、Cerruti 点荷重の場の発散 −(1−ν)Qx/(2πGr³)
+    # (純せん断が窓全体に偽の傾き (1−ν)/(1−2ν)·Q·R を作る → 窓を固着円に限る)、基線形式(|u| を電荷に)が対称な傾きで恒等的に 0 になること。
+    # 第 2 真値 = 有限要素の節点変位(有限厚ドーム、tacslip.fem_nodes_load): 有限厚は膨らんで符号が逆、斜め荷重の双極子はせん断漏れの符号。全部 numpy + scipy。
+    "tactorque": [
+        ("punch_pressure", "tactorque", ["matrix", "matrix", "scalar", "scalar"], "matrix"),
+        ("punch_surface_uz", "tactorque", ["matrix", "scalar", "scalar", "scalar", "scalar"], "matrix"),
+        ("hertz_pressure_shifted", "tactorque", ["matrix", "matrix", "table"], "matrix"),
+        ("ellipse_pressure_shifted", "tactorque", ["matrix", "matrix", "scalar", "scalar", "scalar"], "matrix"),
+        ("pressure_first_moment", "tactorque", ["matrix", "matrix", "matrix", "scalar"], "table"),
+        ("boussinesq_kernel", "tactorque", ["scalar", "scalar", "scalar", "scalar"], "table"),
+        ("boussinesq_surface_displacement", "tactorque", ["matrix", "table"], "table"),
+        ("surface_divergence_closed_form", "tactorque", ["matrix", "scalar", "scalar"], "matrix"),
+        ("tilt_shear_field", "tactorque", ["matrix", "matrix", "table"], "table"),
+        ("torsion_stick_field", "tactorque", ["matrix", "matrix", "scalar", "scalar", "table", "scalar"], "table"),
+        ("marker_divergence", "tactorque", ["matrix", "matrix", "scalar"], "table"),
+        ("rigid_rotation_fit", "tactorque", ["matrix", "matrix"], "table"),
+        ("tactile_dipole_moment", "tactorque", ["matrix", "matrix"], "table"),
+        ("dipole_to_torque_fit", "tactorque", ["signal", "signal"], "table"),
+        ("torque_decompose", "tactorque", ["matrix", "matrix", "scalar", "scalar", "scalar"], "table"),
+        ("dipole_torque_resolution", "tactorque", ["matrix", "matrix", "scalar", "scalar", "scalar", "scalar", "scalar"], "table"),
+        ("grasp_torque_frame", "tactorque", ["image2d", "image2d", "scalar", "scalar", "scalar", "scalar", "scalar", "scalar"], "table"),
     ],
 }
 

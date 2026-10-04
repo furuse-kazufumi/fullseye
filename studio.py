@@ -11236,7 +11236,9 @@ def build_window(model=None):
             if isinstance(out, np.ndarray) and out.dtype.kind in "biuf" and (
                     out.ndim == 2 or (out.ndim == 3 and out.shape[2] == 3)):
                 img, note = np.clip(np.nan_to_num(out.astype(np.float64)), 0, 1), ""
-                if out.ndim == 2 and (out.min() < 0 or out.max() > 1):
+                # 空の 2-D 結果(例: 星が無い像の star_detect → (0, 2))は直接呼べば素通りする —— 窓だけが min() で落ちていた(2026-10-04、台帳 1,881 本で
+                # 60 本抽出の門が star_detect を引いて発覚)。空なら伸縮せず、そのまま。
+                if out.ndim == 2 and out.size > 0 and (out.min() < 0 or out.max() > 1):
                     lo, hi = float(np.nanmin(out)), float(np.nanmax(out))
                     img = (np.nan_to_num(out.astype(np.float64)) - lo) / ((hi - lo) or 1.0)
                     note = tr("values [%s, %s] stretched to [0, 1] for display") % (fmt_num(lo, 4), fmt_num(hi, 4))

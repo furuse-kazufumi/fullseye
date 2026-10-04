@@ -1,8 +1,8 @@
 {
- "n_ops": 2812,
+ "n_ops": 2829,
  "tiers": {
   "color": 12,
-  "ledger": 1859,
+  "ledger": 1876,
   "nary": 17,
   "registry": 924
  },
@@ -2128,6 +2128,36 @@
    "dim": "3d",
    "in_sorts": [
     "mesh"
+   ]
+  },
+  {
+   "name": "boussinesq_kernel",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "boussinesq_surface_displacement",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "table"
    ]
   },
   {
@@ -5401,6 +5431,39 @@
    ]
   },
   {
+   "name": "dipole_to_torque_fit",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "dipole_torque_resolution",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "displace_markers",
    "halcon": "",
    "in_sort": "matrix",
@@ -5880,6 +5943,23 @@
    "ledger": "opstomography",
    "dim": "tomography",
    "in_sorts": []
+  },
+  {
+   "name": "ellipse_pressure_shifted",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
   },
   {
    "name": "ellipse_sinogram",
@@ -8630,6 +8710,26 @@
    ]
   },
   {
+   "name": "grasp_torque_frame",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "image2d",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "grating_rgb",
    "halcon": "",
    "in_sort": "normalmap",
@@ -9017,6 +9117,21 @@
     "matrix",
     "scalar",
     "scalar"
+   ]
+  },
+  {
+   "name": "hertz_pressure_shifted",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "table"
    ]
   },
   {
@@ -11584,6 +11699,21 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "marker_divergence",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "scalar"
+   ]
   },
   {
    "name": "marker_image",
@@ -15916,6 +16046,22 @@
    ]
   },
   {
+   "name": "pressure_first_moment",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "matrix",
+    "scalar"
+   ]
+  },
+  {
    "name": "principal_curvatures",
    "halcon": "",
    "in_sort": "points",
@@ -16320,6 +16466,39 @@
    "in_sorts": [
     "image2d",
     "image2d"
+   ]
+  },
+  {
+   "name": "punch_pressure",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "punch_surface_uz",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
    ]
   },
   {
@@ -17797,6 +17976,20 @@
    "in_sorts": [
     "points",
     "points"
+   ]
+  },
+  {
+   "name": "rigid_rotation_fit",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix"
    ]
   },
   {
@@ -20816,6 +21009,21 @@
    ]
   },
   {
+   "name": "surface_divergence_closed_form",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "surface_filter",
    "halcon": "",
    "in_sort": "depth",
@@ -21088,6 +21296,20 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "tactile_dipole_moment",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix"
    ]
   },
   {
@@ -21819,6 +22041,21 @@
    ]
   },
   {
+   "name": "tilt_shear_field",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "table"
+   ]
+  },
+  {
    "name": "time_to_line_crossing",
    "halcon": "",
    "in_sort": null,
@@ -21910,6 +22147,41 @@
    "dim": "3d",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "torque_decompose",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "torsion_stick_field",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tactorque",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "scalar",
+    "scalar",
+    "table",
+    "scalar"
    ]
   },
   {
