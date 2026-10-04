@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(308 例)
+### 2-D 画像/信号/幾何(309 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -31,6 +31,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **metrology**
 - **全数の 2-D 検査と抜き取りの 3-D 検査を対応づける(格子は自分に重なる)** — 規則正しく並んだ接合部は点の配置だけでは装置間で一対一に対応づかない(6x5 の格子は 30 点すべての距離署名が縮退し、署名は 9 種類しかない)。3 辺が異なる基準マークを入れると対応が厳密に決まる。そのうえで AOI の見かけのボイド率は CT の体積率と相関 0.973、悪い順 5 個も 5/5 一致するのに、寿命に効く界面接触ボイド 27 個のうちその 5 個で拾えるのは 19 % だけ —— 順位が合うことは危ない個体を拾えることを意味しない。 `py -3.11 examples/poc_aoi_ct_traceability.py`
 - **白色干渉によるナノメートルの段差計測(どこまで測れるか)** — 既知の段差 50-500 nm を合成し、コヒーレンス走査で測り返す。偏りと散らばりを分け、走査ステップと雑音を振って測れなくなる境目を出す。最大サンプルというゼロ点に対しサブサンプル推定がどれだけ稼ぐかも測る。 `py -3.11 examples/poc_interferometry_step.py`
+- **視触覚センサのマーカー配列からせん断場・固着/滑り・接線力を読む —— Cattaneo–Mindlin の閉形式と有限要素の節点変位を門に** — 物理シミュ × Fullseye 系列 第 2 弾の第 2 本(第 1 本 = 法線荷重)。真値は 2 系統: 閉形式(Johnson 1985: Cattaneo–Mindlin の部分滑り c/a = (1 − Q/μP)^{1/3}・q = q′ − q″・δx = 3μP(2−ν)/(16Ga)[1 − (1−Q/μP)^{2/3}]・kt = 8Ga/(2−ν)、Hertz 形接線トラクションの円内解 3.91、法線荷重の半径変位 3.41b、Cerruti の点荷重解)と、有限要素の節点変位(有限厚ドーム状ゲル、Robo-Touch/Taxim 同梱 MIT、FULLSEYE_TAXIM_DATA があるとき)。自分で作ったのは接触円の外側(閉形式なし)を画素平均の Cerruti 核で FFT 畳み込み(円内の 3.91 と 0.02 %)、任意の固着半径の場を相似則 g(x) − (c/a)²g(x·a/c) で出す逆算模型(畳み込み 1 回、真の変位で c/a 0.001)、変位で中心を移してから描くマーカー像。被験者 = 既存 op(blob2d の重心、pivops の窓相関、backends_subpix の副画素極値、tac_shear_field、measure.fit_circle)。新モジュール tacslip 20 op。門 20 本(FEM 2 本はデータがあるとき): ∫q dA = Q、kt、錨 70.5 µm、ūr の最大は 0.93a、固着円の一様性 0.006 %、遠方 1/r、重心の往復 0.003 px、追跡 RMS 0.01 px(961/961)、逆算 Q/μP 0.03・c/a 0.02・μ と Q の分離(μ は低 Q で 2c/(1−c²) 倍に増幅、0.75 以上で 3 %)、全滑りで核が消える、指数 0.34、エントロピー単調、tac_shear_field は分けない、密度・雑音、FEM の r½ = 2.3 mm と Cerruti の ν 0.49〜0.51。正直に: 半空間・小変形・Coulomb・準静的、FEM は点荷重状で荷重不明(形だけ)、相関と最近傍は |u| ≥ ピッチ/2 を測れない(対応は視野の縁が遠方場という前提)。踏んだ罠: 規則格子の PIV は 5 px を −3 px と読む(格子周期のエイリアス)、半径 2 px の円盤の重心は ±0.03 px の pixel-locking で格子共通モードになり c/a を 0.02 ずらす(半径 2.5 px + 反復ガウス重みで 3 分の 1、剛体シフト項は 1/r の尾と縮退して逆効果)、ūr の最大は縁でなく 0.93a、滑り環で隣のマーカーの縞が繋がる。 `py -3.11 examples/poc_tacsim_marker_shear.py`
 - **視触覚センサ(弾性膜 + カメラ)の合成と逆算 —— Hertz 接触とフォトメトリックステレオの閉形式を門に、球の押し込みから力を読む** — 物理シミュ × Fullseye 系列の第 2 弾。真値は閉形式 2 系統: 弾性接触 = Hertz(Johnson 1985: a³ = 3FR/4E*、δ = a²/R、p0√(1−r²/a²)、半空間の表面変位の内外解)、光学 = Woodham 1980 のフォトメトリックステレオ + Frankot-Chellappa 1988 の積分(弾性膜を 3 色照明で撮る原理は Johnson & Adelson CVPR 2009)。自分で作ったのは外側のスロープ閉形式 (2/πR)[r arcsin(a/r) − a√(1−a²/r²)](導出)、それを法線場のスロープ分布に 1 パラメータ a で当てる逆算(高さの積分を通らない)、δ の 1D 積分に Boussinesq の遠方場の裾を足す補正。新モジュール tacsim 14 op。門 17 本: 恒等式・圧力積分・内外連続とスロープの導出検算(1e-7)・FC 往復・Woodham の厳密性(中央 0.0°)、当てはめ経路 a ≤ 0.3 %・F ≤ 0.8 %(4 荷重)、δ 経路 δ ≤ 0.9 %・F ≤ 1.3 %、模型なしのリングは −0.7 px/a の予測どおり内側(−8〜−5 %)、a ∝ F^{1/3}(指数 0.333)、窓打ち切りの不足 = ū_z(r_max)/δ = 4.7 % の閉形式、ambient を引かないと δ が 3.7 % 低い、照明仰角の較正ずれは斜面だけ(0.5° → 6°)、雑音 σ = 0.03 でも F 5 % 以内、4 形状の往復、tac_contact_mask は裾まで拾う。正直に: 小変形 Hertz、Lambertian・影なし、半無限の膜。踏んだ罠: |∇h| のしきい値の帯は 9 % 内側、FFT 積分は深いへこみを 13 % 減衰、ambient が法線を 3.7 % 寝かせる。 `py -3.11 examples/poc_tacsim_elastic_membrane.py`
 - **部品の寸法検査(サブピクセル計測と、埋もれていた実装の実地評価)** — SDF から解析的に部品を作り、既知の PSF と画素積分で合成して真値を握る。ゼロ点(大津の整数幅)比 **41 倍**、スロット幅の偏り -0.5000 → -0.0113 px、合成不確かさ 0.0196 px = 0.245 um。★壊れるのは「ぼけ」ではなく**エッジ間距離 / PSF 幅**で、3.09 を切ると偏り 0.05 px 超 —— しかも 1.58 まで「対が見つかった」と答え続ける(失敗を返さない)。★**縁の定義を宣言しないと16 px = 200 um 動く**(サブピクセルの 3 桁上)。丸い縁は必ず小さく出る(直径誤差 ≈ -σ²/ρ を実測で確認)。真値をきりの良い整数に置くと副画素の周期誤差が消えることも示す。 `py -3.11 examples/poc_dimensional_inspection.py`
 - **星の位置を測る(理論下限を下回ったら、それは推定できていない印)** — 既知の天球座標に星を置き、既知の投影と PSF で合成するのでプレート定数まで真値が既知。**理論下限(Fisher)を下回った手法はゼロ**で、暗い端で下回って見えるゼロ点は真のずれへの感度 0.038 = 初期値を返しているだけ(散らばり0.2790 px は 1/√12 = 0.2887 と一致)。★予想が外れた 2 件: 既知 PSF の相関は標本化不足に**弱く**(FWHM 1.0 で 4 手法中最悪)、飽和画素を捨てる処置は**捨て方で符号が変わる**(重心なら 10 倍悪化、当てはめなら 121 倍改善)。偽解は 4000 回で 0 件でも「起きない」ではなく「測れていない」—— 総当たり通り数を掛けて初めて期待 5.77 件という使える数字になる。 `py -3.11 examples/poc_star_astrometry.py`
@@ -1962,7 +1963,7 @@ _計 936 ops / 48 categories。_
 - `f2_gauss_pyramid` (halcon: `gen_gauss_pyramid`) `image → image` · 例: `gallery2d_smoothing_rank`
 
 ### subpix(6)
-- `sp_local_max_sub_pix` (halcon: `local_max_sub_pix`) `image → contour` · 例: `gallery2d_geometry`
+- `sp_local_max_sub_pix` (halcon: `local_max_sub_pix`) `image → contour` · 例: `gallery2d_geometry`, `poc_tacsim_marker_shear`
 - `sp_local_min_sub_pix` (halcon: `local_min_sub_pix`) `image → contour` · 例: `gallery2d_geometry`
 - `sp_saddle_points_sub_pix` (halcon: `saddle_points_sub_pix`) `image → contour` · 例: `gallery2d_geometry`
 - `sp_critical_points_sub_pix` (halcon: `critical_points_sub_pix`) `image → contour` · 例: `gallery2d_geometry`
@@ -1974,7 +1975,7 @@ _計 936 ops / 48 categories。_
 - `tac_height_from_shading` `image → image` · 例: `sim2real_and_alife`
 - `tac_surface_normal` `image → image` · 例: `sim2real_and_alife`
 - `tac_pressure_proxy` `image → image` · 例: `sim2real_and_alife`
-- `tac_shear_field` `image → image` · 例: `sim2real_and_alife`
+- `tac_shear_field` `image → image` · 例: `poc_tacsim_marker_shear`, `sim2real_and_alife`
 
 ### texture(28)
 - `std_filter` (halcon: `deviation_image`) `image → image` · 例: `gallery2d_texture_freq`

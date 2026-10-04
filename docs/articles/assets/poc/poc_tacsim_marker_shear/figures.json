@@ -1,0 +1,76 @@
+[
+ {
+  "file": "01_tacslip_marker_frames.png",
+  "name": "tacslip_marker_frames",
+  "caption": "球(R = 6 mm)を 0.5 N で押した膜のマーカー配列(ピッチ 0.5 mm = 8 px、半径 2.5 px)、圧痕まわり ±4.8 mm を 2 倍。左 = 法線荷重だけの基準像、中 = 接線 Q = 0.5 μP を掛けた像、右 = マーカー追跡の変位ベクトル(4 倍)。固着円(緑、c/a = 0.794)の中は一様に動き、滑り環で遅れ、外側は 1/r で尾を引く。",
+  "shape": [
+   660,
+   1864,
+   3
+  ]
+ },
+ {
+  "file": "02_tacslip_stick_circle_shrinks.gif",
+  "name": "tacslip_stick_circle_shrinks",
+  "caption": "接線力を 0 → μP に上げる(12 コマ)。左 = マーカー像 + 追跡ベクトル(4 倍)、緑 = 閉形式の固着円 c = a(1 − Q/μP)^{1/3}、赤 = 画像から当てた c、白 = 接触円 a。右 = c/a の閉形式(破線)に各コマの推定点が増える。Q = μP で核が消え全滑り。",
+  "shape": [
+   304,
+   724,
+   3
+  ],
+  "animated": true,
+  "frames": 12,
+  "frames_written": 12,
+  "fps": 2.5
+ },
+ {
+  "file": "03_tacslip_traction_q_r.png",
+  "name": "tacslip_traction_q_r",
+  "caption": "接線トラクション q(r) = μp0[√(1−r²/a²) − (c/a)√(1−r²/c²)]。固着円 r < c では Coulomb の限界 μp(r)(破線)の下、滑り環 c < r < a では 限界に張り付く。Q が増えると c が縮み、張り付く環が内へ広がる。",
+  "shape": [
+   400,
+   862,
+   3
+  ]
+ },
+ {
+  "file": "04_tacslip_delta_x_vs_Q.png",
+  "name": "tacslip_delta_x_vs_Q",
+  "caption": "剛体球の接線変位 δx = 3μP(2−ν)/(16Ga)[1 − (1−Q/μP)^{2/3}] (破線)と初期剛性 kt = 8Ga/(2−ν) の直線(点線)。点 = 固着核(r < 0.3c)のマーカー変位の中央値。全滑りで 8.22 px。",
+  "shape": [
+   400,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "05_tacslip_entropy_vs_Q.png",
+  "name": "tacslip_entropy_vs_Q",
+  "caption": "接触円内のマーカー変位の大きさのヒストグラム(16 ビン)のエントロピー。ビンを全滑り δx に固定した版は単調非減少(Yuan 2017 の定性値)。ビンを場ごとの最大に合わせた「形だけ」の版は固着核が縮むほど滑り環の勾配に乗るマーカーが増えて上がる。",
+  "shape": [
+   400,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "06_tacslip_fem_vs_halfspace.png",
+  "name": "tacslip_fem_vs_halfspace",
+  "caption": "第 2 真値: 有限要素の節点変位(ドーム状の有限厚ゲル、Robo-Touch/Taxim リポジトリ同梱、MIT)と半空間解。左 = r·u を 0.5〜0.8 mm で 1 に正規化。半空間なら 1 のまま、FEM は r½ = 2.3 mm で半分 —— 有限厚の効き(接線の r·dx は法線より緩やかに落ちる)。右 = 斜め荷重の dx(θ) を r = 2 mm に換算。Cerruti の A + B cos²θ に乗り、異方性から読む ν = 0.51。ただし FEM の山は半空間の当てはめより尖る(r½ の外で比が 2 を超える前兆)。角度依存はほぼ残り、半径減衰が先に外れる。",
+  "shape": [
+   432,
+   1718,
+   3
+  ]
+ },
+ {
+  "file": "07_tacslip_failure_modes.png",
+  "name": "tacslip_failure_modes",
+  "caption": "壊れる場所。(a) 規則格子(8 px)に窓相関を当てると、ずれが 4 px を超えた所で読みが u − 8 に飛ぶ(5 → −3)。±1.5 px のジッタ格子なら飛ばない。対応を「視野の縁から連続性で伸ばす」のはこのため。(b) マーカー間隔 8 → 16 px で接触円内が 53 → 13 個に減っても Q/μP の誤差は 0.05 以内 —— 効くのは数より固着縁に対するマーカーの位置。(c) 画素雑音 σ = 0.05 で追跡 RMS は 0.03 px に増えるが Q/μP は 0.05 以内(全マーカーで当てる)。",
+  "shape": [
+   432,
+   1600,
+   3
+  ]
+ }
+]

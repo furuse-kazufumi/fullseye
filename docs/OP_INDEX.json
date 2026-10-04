@@ -1,8 +1,8 @@
 {
- "n_ops": 2792,
+ "n_ops": 2812,
  "tiers": {
   "color": 12,
-  "ledger": 1839,
+  "ledger": 1859,
   "nary": 17,
   "registry": 924
  },
@@ -2873,6 +2873,36 @@
    ]
   },
   {
+   "name": "cerruti_kernel",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "cerruti_surface_displacement",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "table"
+   ]
+  },
+  {
    "name": "chamfer_capture",
    "halcon": "",
    "in_sort": "table",
@@ -5371,6 +5401,22 @@
    ]
   },
   {
+   "name": "displace_markers",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "matrix",
+    "scalar"
+   ]
+  },
+  {
    "name": "displacement_band_weights",
    "halcon": "",
    "in_sort": "mesh",
@@ -6528,6 +6574,34 @@
    "dim": "tomography",
    "in_sorts": [
     "sinostack"
+   ]
+  },
+  {
+   "name": "fem_nodes_load",
+   "halcon": "",
+   "in_sort": "text",
+   "out_sort": "table",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "text",
+    "text"
+   ]
+  },
+  {
+   "name": "fem_vs_halfspace",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
    ]
   },
   {
@@ -8961,6 +9035,23 @@
    ]
   },
   {
+   "name": "hertz_surface_ur",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "hertz_surface_uz",
    "halcon": "",
    "in_sort": "matrix",
@@ -8971,6 +9062,24 @@
    "dim": "drive",
    "in_sorts": [
     "matrix",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "hertzian_tangential_inner",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "scalar",
     "scalar",
     "scalar",
     "scalar"
@@ -11451,6 +11560,21 @@
    ]
   },
   {
+   "name": "marker_detect",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "marker_direction",
    "halcon": "",
    "in_sort": null,
@@ -11460,6 +11584,52 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "marker_image",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "image2d",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "rgb"
+   ]
+  },
+  {
+   "name": "marker_match_grow",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "scalar"
+   ]
+  },
+  {
+   "name": "marker_track",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "image2d",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
   },
   {
    "name": "mat_cholesky",
@@ -12041,6 +12211,20 @@
    ]
   },
   {
+   "name": "membrane_markers",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "matrix",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "membrane_recover",
    "halcon": "",
    "in_sort": "rgb",
@@ -12056,6 +12240,22 @@
    ]
   },
   {
+   "name": "membrane_render_markers",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "rgb",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "matrix",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "membrane_render_rgb",
    "halcon": "",
    "in_sort": "normalmap",
@@ -12067,6 +12267,23 @@
    "in_sorts": [
     "normalmap",
     "matrix"
+   ]
+  },
+  {
+   "name": "membrane_shear_field",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table",
+    "matrix",
+    "matrix",
+    "table"
    ]
   },
   {
@@ -12466,6 +12683,70 @@
    "dim": "3d",
    "in_sorts": [
     "points"
+   ]
+  },
+  {
+   "name": "mindlin_fit",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
+   "name": "mindlin_model",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "matrix",
+    "matrix",
+    "table",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "mindlin_partial_slip",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "table",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "mindlin_traction",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "table"
    ]
   },
   {
@@ -19350,6 +19631,19 @@
    "in_sorts": []
   },
   {
+   "name": "slip_entropy",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "scalar",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
    "name": "smallest_box3",
    "halcon": "",
    "in_sort": "points",
@@ -20155,6 +20449,20 @@
    "ledger": "opsacoustics",
    "dim": "acoustics",
    "in_sorts": []
+  },
+  {
+   "name": "stick_radius_modelfree",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix"
+   ]
   },
   {
    "name": "stipple_energy",

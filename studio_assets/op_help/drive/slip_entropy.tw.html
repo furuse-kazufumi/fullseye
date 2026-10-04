@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">slip_entropy — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slip_entropy(mag, bins: &#x27;int&#x27; = 16, vmax=None) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tacslip; tacslip.slip_entropy(mag, bins: &#x27;int&#x27; = 16, vmax=None) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;slip_entropy&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>変位の大きさ |u| の列のヒストグラム(bins 本、範囲 [0, vmax] —— 省略時は最大値)の Shannon エントロピーを ln(bins) で正規化(0..1)。</p>
+<p>Yuan 2017 の滑りの指標: 固着核が縮んで滑り環の勾配に乗るマーカーが増えると上がる。<b>Raises</b> ValueError: 点が無い、bins &lt; 2。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacsim_marker_shear">poc_tacsim_marker_shear</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacsim_marker_shear.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">scalar</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">tacslip</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:mindlin_partial_slip">mindlin_partial_slip</a> · <a style="color:#22d3bf" href="opdrive:mindlin_traction">mindlin_traction</a> · <a style="color:#22d3bf" href="opdrive:hertz_surface_ur">hertz_surface_ur</a> · <a style="color:#22d3bf" href="opdrive:hertzian_tangential_inner">hertzian_tangential_inner</a> · <a style="color:#22d3bf" href="opdrive:cerruti_kernel">cerruti_kernel</a> · <a style="color:#22d3bf" href="opdrive:cerruti_surface_displacement">cerruti_surface_displacement</a> · <a style="color:#22d3bf" href="opdrive:membrane_shear_field">membrane_shear_field</a> · <a style="color:#22d3bf" href="opdrive:membrane_markers">membrane_markers</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacslip.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

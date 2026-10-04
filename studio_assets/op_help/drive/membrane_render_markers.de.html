@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">membrane_render_markers — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgb × matrix × scalar × scalar</code> → <code style="color:#22d3bf">rgb</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_render_markers(rgb, pts, r_px: &#x27;float&#x27;, dark: &#x27;float&#x27;, sub: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacslip; tacslip.membrane_render_markers(rgb, pts, r_px: &#x27;float&#x27;, dark: &#x27;float&#x27;, sub: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;membrane_render_markers&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>RGB (H, W, 3) に黒い円盤のマーカー(中心 pts (N, 2) [px]、半径 r_px)を描く: 画素の被覆率で rgb *= 1 − dark·coverage。</p>
+<p>被覆率は円盤の縁の画素だけ sub² の副標本(内側 1・外側 0)。像を補間して歪めないので真値が厳密。</p>
+<p><b>Raises</b> ValueError: rgb が (H, W, 3) でない、pts が (N, 2) でない、r_px ≤ 0、dark が [0, 1] の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacsim_marker_shear">poc_tacsim_marker_shear</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacsim_marker_shear.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">rgb</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_depth_decode">carla_depth_decode</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">tacslip</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:mindlin_partial_slip">mindlin_partial_slip</a> · <a style="color:#22d3bf" href="opdrive:mindlin_traction">mindlin_traction</a> · <a style="color:#22d3bf" href="opdrive:hertz_surface_ur">hertz_surface_ur</a> · <a style="color:#22d3bf" href="opdrive:hertzian_tangential_inner">hertzian_tangential_inner</a> · <a style="color:#22d3bf" href="opdrive:cerruti_kernel">cerruti_kernel</a> · <a style="color:#22d3bf" href="opdrive:cerruti_surface_displacement">cerruti_surface_displacement</a> · <a style="color:#22d3bf" href="opdrive:membrane_shear_field">membrane_shear_field</a> · <a style="color:#22d3bf" href="opdrive:membrane_markers">membrane_markers</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacslip.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -4,7 +4,7 @@ dim: piv
 category: estimate
 in: image2d × image2d
 out: flow2d
-examples: [piv_field_analysis_tour, piv_flow_from_particles, poc_beam_modal_video, poc_change_detection_misreg, poc_dic_strain, poc_print_registration, poc_river_surface_velocity, poc_strain_history, poc_superresolution_limits]
+examples: [piv_field_analysis_tour, piv_flow_from_particles, poc_beam_modal_video, poc_change_detection_misreg, poc_dic_strain, poc_print_registration, poc_river_surface_velocity, poc_strain_history, poc_superresolution_limits, poc_tacsim_marker_shear]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -84,6 +84,7 @@ Returns:
 - [poc_river_surface_velocity](../../../../examples/poc_river_surface_velocity.py) — `py -3.11 examples/poc_river_surface_velocity.py`
 - [poc_strain_history](../../../../examples/poc_strain_history.py) — `py -3.11 examples/poc_strain_history.py`
 - [poc_superresolution_limits](../../../../examples/poc_superresolution_limits.py) — `py -3.11 examples/poc_superresolution_limits.py`
+- [poc_tacsim_marker_shear](../../../../examples/poc_tacsim_marker_shear.py) — `py -3.11 examples/poc_tacsim_marker_shear.py`
 
 ## 型が繋がる次の op(`flow2d` を入力に取れる)
 

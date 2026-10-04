@@ -4,7 +4,7 @@ dim: 2d
 category: tactile
 in: image
 out: image
-examples: [sim2real_and_alife]
+examples: [poc_tacsim_marker_shear, sim2real_and_alife]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -64,6 +64,7 @@ tac_shear_field 0.50 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_tacsim_marker_shear](../../../../examples/poc_tacsim_marker_shear.py) — `py -3.11 examples/poc_tacsim_marker_shear.py`
 - [sim2real_and_alife](../../../../examples/sim2real_and_alife.py) — `py -3.11 examples/sim2real_and_alife.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

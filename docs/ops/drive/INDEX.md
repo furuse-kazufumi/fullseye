@@ -1,4 +1,4 @@
-# DRIVE operator help — 408 ops in 31 categories
+# DRIVE operator help — 428 ops in 32 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -107,6 +107,10 @@
 ### tacsim (14)
 
 [combined_modulus](tacsim/combined_modulus.md) · [contact_radius_fit](tacsim/contact_radius_fit.md) · [contact_radius_ring](tacsim/contact_radius_ring.md) · [hertz_cylinder](tacsim/hertz_cylinder.md) · [hertz_force](tacsim/hertz_force.md) · [hertz_pressure](tacsim/hertz_pressure.md) · [hertz_sphere](tacsim/hertz_sphere.md) · [hertz_surface_uz](tacsim/hertz_surface_uz.md) · [membrane_delta_from_normals](tacsim/membrane_delta_from_normals.md) · [membrane_indent_shape](tacsim/membrane_indent_shape.md) · [membrane_indent_sphere](tacsim/membrane_indent_sphere.md) · [membrane_lights](tacsim/membrane_lights.md) · [membrane_recover](tacsim/membrane_recover.md) · [membrane_render_rgb](tacsim/membrane_render_rgb.md)
+
+### tacslip (20)
+
+[cerruti_kernel](tacslip/cerruti_kernel.md) · [cerruti_surface_displacement](tacslip/cerruti_surface_displacement.md) · [displace_markers](tacslip/displace_markers.md) · [fem_nodes_load](tacslip/fem_nodes_load.md) · [fem_vs_halfspace](tacslip/fem_vs_halfspace.md) · [hertz_surface_ur](tacslip/hertz_surface_ur.md) · [hertzian_tangential_inner](tacslip/hertzian_tangential_inner.md) · [marker_detect](tacslip/marker_detect.md) · [marker_image](tacslip/marker_image.md) · [marker_match_grow](tacslip/marker_match_grow.md) · [marker_track](tacslip/marker_track.md) · [membrane_markers](tacslip/membrane_markers.md) · [membrane_render_markers](tacslip/membrane_render_markers.md) · [membrane_shear_field](tacslip/membrane_shear_field.md) · [mindlin_fit](tacslip/mindlin_fit.md) · [mindlin_model](tacslip/mindlin_model.md) · [mindlin_partial_slip](tacslip/mindlin_partial_slip.md) · [mindlin_traction](tacslip/mindlin_traction.md) · [slip_entropy](tacslip/slip_entropy.md) · [stick_radius_modelfree](tacslip/stick_radius_modelfree.md)
 
 ### terrain (20)
 

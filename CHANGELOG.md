@@ -7,6 +7,27 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**視触覚センサのマーカー配列からせん断場・固着/滑り・接線力を読む**(新モジュール `tacslip` 20 op、台帳 `tacslip`(opsdrive)、PoC
+  `poc_tacsim_marker_shear`、wing_metrology): 物理シミュ × Fullseye 系列 第 2 弾の第 2 本(第 1 本 = `tacsim`、法線荷重)。真値は 2 系統 ——
+  **閉形式**(Johnson, *Contact Mechanics* 1985: Cattaneo 1938 / Mindlin 1949 の部分滑り §7.2 —— 固着円 c/a = (1 − Q/μP)^{1/3}、q = q′ − q″、
+  δx = 3μP(2−ν)/(16Ga)[1 − (1−Q/μP)^{2/3}]、kt = 8Ga/(2−ν)、固着円内の表面変位は一様; Hertz 形接線トラクションの円内解 式 3.91; 法線荷重の半径変位
+  式 3.41b; Cerruti の点荷重解 式 3.22)と、**有限要素の節点変位**(有限厚ドーム状ゲル、Robo-Touch/Taxim リポジトリ同梱、MIT。`FULLSEYE_TAXIM_DATA`
+  があるときだけ、repo には入れない)。自分で作ったのは 3 つ: 接触円の**外側**の接線変位(閉形式が無い)を画素平均の Cerruti 核(中心画素は解析積分
+  4h ln(1+√2))で FFT 畳み込み —— 円内の 3.91 と ūx 0.017 %・固着円の一様性 std 0.006 %; 任意の固着半径の場を**相似則** g(x) − (c/a)²g(x·a/c) で
+  出す逆算模型(畳み込み 1 回、真の変位で c/a 0.001; c/a 格子の線形補間は 0.01 ずれて捨てた); 変位で中心を移してから描くマーカー像(補間しない)。
+  被験者は既存 op: `blob2d.blob_label` / `blob_features`(重心)、`pivops.piv_cross_correlate`(窓相関、第 2 実装)、`backends_subpix` の副画素極値、
+  `backends_tactile.tac_shear_field`(別被験者)、`measure.fit_circle`。門 20 本(門だけ 2.8 s): ∫q dA = Q、dδx/dQ(0) = 1/kt、計画書の錨 70.5 µm、
+  ūr(a)/δ = 2(1−2ν)/(3π(1−ν)) = 1.6 %、重心の往復(重み 0.003 px、二値 0.16 px)、追跡 RMS 0.007〜0.010 px(Q/μP 0.25〜0.9、961/961)、
+  逆算 Q/μP 誤差 0.026 → 0.007・c/a 0.011・Q 0.4〜0.9 %、**μ と Q は G・ν・a 既知なら別々に決まる**(計画書の「比でしか決まらない」を訂正)が
+  μ の誤差は c/a の 2c/(1−c²) 倍(10.2 → 1.2 %)、全滑りで核が消える、指数 0.341、エントロピー(Yuan 2017)単調、`tac_shear_field` は固着/滑りを
+  分けない(核 0.043・環 0.039)、FEM は r·dz が 1/r から 2 倍外れる r½ = 2.27 mm(有限厚)・dx(θ) は Cerruti の A + B cos²θ で ν 0.49〜0.51・
+  r = 3 mm では比 2.4 > 半空間の上限 2。正直に: 半空間・小変形・剛体球・Coulomb・準静的、μ は低 Q で決まりにくい、FEM は点荷重状で荷重不明
+  (形の比較のみ、dz ケースにも dy/dz 0.25 の非対称)、相関と最近傍は |u| ≥ ピッチ/2 を測れない(対応は「視野の縁 = 遠方場」の前提)。
+  **踏んだ罠**(全部門に固定): 規則格子に相関を当てると格子周期でエイリアス(8 px 格子を 5 px ずらすと −3 px、多段 64→32 は ±8/±16 に飛ぶ、
+  ジッタ格子なら正しい)—— 対応は視野の縁から連続性で伸ばす; 半径 2 px の円盤の重心は ±0.03 px の pixel-locking が格子共通モードになり c/a を
+  0.02 ずらす(半径 2.5 px + 反復ガウス重み σ = 半径で 0.004 px、剛体シフト項は 1/r の尾と縮退して逆効果); ūr の最大は縁でなく r = 0.93a
+  (ūr(a) の 1.022 倍); 滑り環で隣接間隔が 8 → 6 px に縮み低しきい値の縞が繋がる(距離変換で本体へ割り当て)。δx_full ≈ マーカーピッチは
+  最悪の組(実機設計はピッチ > 2·δx_full か非周期配置)。
 - ★**知覚指標 FSIM / FSIMc / GMSD / VIF を外から来た真値で 4 桁一致させる**(新モジュール `iqafsim` 7 op、台帳 `perceptual`(opsimgmetrics)、
   PoC `poc_iqa_fsim_gmsd_vif`、wing_imaging): IQA 第 2 弾。第 1 弾(2026.194)が「未実装で公表値だけ表に」していた FSIM / FSIMc / VIFP を numpy + scipy
   だけで実装し、配布物に無い GMSD も足した。一次情報 = Zhang, Zhang, Mou, Zhang 2011(FSIM、DOI 10.1109/TIP.2011.2109730)、Kovesi 1999(位相一致。公開コードは

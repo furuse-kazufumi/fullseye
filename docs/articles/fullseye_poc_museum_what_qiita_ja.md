@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **102 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **103 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -996,7 +996,7 @@ py -3.11 examples/poc_am_thermal_to_ct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 24 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 25 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -1699,6 +1699,42 @@ py -3.11 examples/poc_tacsim_elastic_membrane.py
 この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane)
 
 使用 op(ノートへ): [`combined_modulus`](https://furuse.work/ops/drive/tacsim/combined_modulus.html) · [`contact_radius_fit`](https://furuse.work/ops/drive/tacsim/contact_radius_fit.html) · [`contact_radius_ring`](https://furuse.work/ops/drive/tacsim/contact_radius_ring.html) · [`hertz_cylinder`](https://furuse.work/ops/drive/tacsim/hertz_cylinder.html) · [`hertz_force`](https://furuse.work/ops/drive/tacsim/hertz_force.html) · [`hertz_pressure`](https://furuse.work/ops/drive/tacsim/hertz_pressure.html) · [`hertz_sphere`](https://furuse.work/ops/drive/tacsim/hertz_sphere.html) · [`hertz_surface_uz`](https://furuse.work/ops/drive/tacsim/hertz_surface_uz.html) · [`integrate_normals`](https://furuse.work/ops/3d/photometric/integrate_normals.html) · [`membrane_delta_from_normals`](https://furuse.work/ops/drive/tacsim/membrane_delta_from_normals.html) · [`membrane_indent_shape`](https://furuse.work/ops/drive/tacsim/membrane_indent_shape.html) · [`membrane_indent_sphere`](https://furuse.work/ops/drive/tacsim/membrane_indent_sphere.html) · [`membrane_lights`](https://furuse.work/ops/drive/tacsim/membrane_lights.html) · [`membrane_recover`](https://furuse.work/ops/drive/tacsim/membrane_recover.html) · [`membrane_render_rgb`](https://furuse.work/ops/drive/tacsim/membrane_render_rgb.html) · [`photometric_stereo`](https://furuse.work/ops/3d/photometric/photometric_stereo.html) · [`tac_contact_mask`](https://furuse.work/ops/2d/tactile/tac_contact_mask.html)
+
+## No.2026.198 —— 視触覚センサのマーカー配列からせん断場・固着/滑り・接線力を読む ―― Cattaneo–Mindlin の閉形式と有限要素の節点変位を門に
+
+[![視触覚センサのマーカー配列からせん断場・固着/滑り・接線力を読む ―― Cattaneo–Mindlin の閉形式と有限要素の節点変位を門に](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/01_tacslip_marker_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/01_tacslip_marker_frames.png)
+
+*↑ **視触覚センサのマーカー配列からせん断場・固着/滑り・接線力を読む ―― Cattaneo–Mindlin の閉形式と有限要素の節点変位を門に** ―― 物理シミュ × Fullseye 系列 第 2 弾の第 2 本(第 1 本 = 法線荷重の押し込みから力)。外から来るものは 2 系統。閉形式(Johnson, Contact Mechanics, CUP 1985): Cattaneo 1938 / Mindlin 1949 の部分滑り(§7.2)―― 球を法線 P で押したまま接線 Q < μP を掛けると固着円 c/a = (1 − Q/μP)^{1/3}、接線トラクション q = q′ − q″(Hertz 形 2 つの差、滑り環では Coulomb の限界 μp(r) に張り付く)、剛体球の接線変位 δx = 3μP(2−ν)/(16Ga)[1 − (1−Q/μP)^{2/3}]、初期接線剛性 kt = 8Ga/(2−ν)、固着円内の表面変位は一様。Hertz 形接線トラクションの円内解(式 3.91)、法線荷重の半径変位(式 3.41b)、接線点荷重の半空間解 = Cerruti(式 3.22)。有限要素の節点変位(有限厚のドーム状ゲル、Robo-Touch/Taxim リポジトリ同梱、MIT。環境変数 FULLSEYE_TAXIM_DATA があるときだけ、repo には入れない)。公表の定性値(Yuan, Dong, Adelson, Sensors 2017): 滑りは周縁から、変位ヒストグラムのエントロピーは部分滑りで増える。自分で作ったのは 3 つ: 接触円の外側と滑り環の接線変位には閉形式が無いので Cerruti 核を画素平均(中心画素は解析積分 4h ln(1+√2))で離散化して FFT で畳む(円内の 3.91 と ūx 0.017 %・ūy 0.03 %、固着円の一様性 std 0.006 %)、任意の固着半径の場を相似則 g(x) − (c/a)²g(x·a/c) で出す逆算模型(畳み込み 1 回、真の変位で c/a 0.001)、マーカー像は変位で中心を移してから描く(補間しない)。被験者は Fullseye の既存 op: blob2d.blob_label / blob_features(重心)、pivops.piv_cross_correlate(窓相関、第 2 実装)、backends_subpix の副画素極値、backends_tactile.tac_shear_field(別被験者)、measure.fit_circle、tacsim の Hertz と膜の合成。新モジュール tacslip 20 op。寸法は分解能の罠を先に潰して決めた: R = 6 mm・P = 0.5 N・E 0.2 MPa・ν 0.48 → a = 2.05 mm = 32.9 px(62.5 µm/px)、マーカー 0.5 mm = 8 px(半径 2.5 px)で接触円内 53 個、全滑り δx = 514 µm = 8.2 px、μ = 0.5 は仮定(計画書の錨 70.5 µm を再現する値)。図は基準像/荷重後/追跡ベクトルの 3 連(固着円の中は一様に動き、滑り環で遅れ、外側は 1/r)、接線力を 0 → μP に上げる GIF(閉形式の固着円 緑と画像から当てた c 赤が重なり、全滑りで核が消える)、q(r) の 2 項、δx–Q(閉形式線と固着核の中央値)、エントロピー vs Q/μP、有限要素 vs 半空間(r·u の減衰と dx(θ) の角度依存)、壊れる場所(格子エイリアス・密度・雑音)。門 20 本(有限要素の 2 本はデータがあるとき、門だけ 2.8 s、図込み 19 s): ∫q dA = Q(6e-7)、c/a の閉形式と全滑りの印、dδx/dQ(0) = 1/kt(1e-6)と錨 70.6 µm、ūr(a)/δ = 2(1−2ν)/(3π(1−ν)) = 1.6 %(導出)、Cerruti 畳み込み vs 3.91、固着円の一様性、遠方 1/r(3a で 1.016)、重心の往復(反復ガウス重み 0.003 px・二値 0.16 px、格子共通のバイアス 0.010 → 0.004 px)、法線荷重だけでは最大 0.187 px = |ūr| の最大(r = 0.93a、ūr(a) の 1.022 倍)、追跡 RMS 0.007〜0.010 px(Q/μP 0.25〜0.9、961/961 対応)、PIV は 8 px 格子を 5 px ずらすと −3.000 px(ジッタ格子で 4.999)・探索を ±3.8 px に絞れば固着円で 0.03 px、逆算 Q/μP 誤差 0.026 → 0.007・c/a 0.011・Q 0.4〜0.9 %・μ 10.2 → 1.2 %(μ と Q は G・ν・a 既知なら別々に決まるが、μ の誤差は c/a の 2c/(1−c²) 倍 = 10.4 → 1.2 倍に増幅)、模型なしの固着半径は 2.3〜4.7 px(= ピッチの分解能)、全滑りで c/a 0.000・核のばらつき 42 %、指数 0.341(閉形式 1/3)、エントロピー 0.078 → 0.677 で単調非減少、tac_shear_field は核 0.043・環 0.039 で分けない、マーカー間隔 16 px(円内 13 個)でも Q/μP 0.03 以内・画素雑音 σ 0.05 で追跡 RMS 0.031 px、有限要素は r·dz が 1/r から 2 倍外れる r½ = 2.27 mm(1 mm 0.88・2 mm 0.57・3 mm 0.32)、斜め荷重の dx(θ) は r = 1.5〜2 mm で Cerruti の A + B cos²θ(R² 0.78〜0.80)に乗り ν 0.49〜0.51、r = 3 mm では比 2.4 > 半空間の上限 2。正直に: 半空間・小変形・剛体球・Coulomb・準静的(incipient slip の時間発展・粘弾性なし、全滑り近くの縁はせん断ひずみ 0.25 で線形の外)、μ は低 Q で決まりにくい(Q/μP 0.25 で 10 %)、有限要素は点荷重状(接触 < 節点間隔 0.16 mm)で固着円は試せず荷重も不明(形の比較だけ、dz ケースにも dy/dz = 0.25 の非対称)、相関と最近傍は |u| ≥ ピッチ/2 を原理的に測れない(対応は「視野の縁は遠方場」という前提に依る)、53 個のマーカーではエントロピーに段がつく。踏んだ罠: 規則格子に相関を当てると格子周期でエイリアス(多段 64→32 は第 1 段が ±8/±16 に飛ぶ)、核の変位 6.4 px は隣の基準位置から 1.6 px なので最近傍の種も飛ぶ(縁から連続性で伸ばす)、半径 2 px の円盤の重心は ±0.03 px の pixel-locking が格子共通モードになり c/a を 0.02 ずらす(半径 2.5 px + 反復ガウス重みで 3 分の 1、剛体シフト項は 1/r の尾と縮退して逆効果)、ūr の最大は縁でなく 0.93a、滑り環で隣接間隔が 8 → 6 px に縮み低しきい値の縞が繋がる、c/a 格子の線形補間模型は 0.01 ずれる。δx_full ≈ マーカーピッチは最悪の組 ―― 実機設計はピッチ > 2·δx_full か非周期配置。*
+
+[![接線力を 0 → μP に上げる(12 コマ)。左 = マーカー像 + 追跡ベクトル(4 倍)、緑 = 閉形式の固着円 c = a(1 − Q/μP)^{1/3}、赤 = 画像から当てた c、白 = 接触円 a。右 = c/a の閉形式(破](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/02_tacslip_stick_circle_shrinks.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/02_tacslip_stick_circle_shrinks.gif)
+
+*↑ 測定の図 ―― 接線力を 0 → μP に上げる(12 コマ)。左 = マーカー像 + 追跡ベクトル(4 倍)、緑 = 閉形式の固着円 c = a(1 − Q/μP)^{1/3}、赤 = 画像から当てた c、白 = 接触円 a。右 = c/a の閉形式(破線)に各コマの推定点が増える。Q = μP で核が消え全滑り。*
+
+[![接線トラクション q(r) = μp0[√(1−r²/a²) − (c/a)√(1−r²/c²))。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/03_tacslip_traction_q_r_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/03_tacslip_traction_q_r.png)
+
+*↑ 接線トラクション q(r) = μp0[√(1−r²/a²) − (c/a)√(1−r²/c²)]。*
+
+[![剛体球の接線変位 δx = 3μP(2−ν)/(16Ga)[1 − (1−Q/μP)^{2/3}) (破線)と初期剛性 kt = 8Ga/(2−ν) の直線(点線)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/04_tacslip_delta_x_vs_Q_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/04_tacslip_delta_x_vs_Q.png)
+
+*↑ 剛体球の接線変位 δx = 3μP(2−ν)/(16Ga)[1 − (1−Q/μP)^{2/3}] (破線)と初期剛性 kt = 8Ga/(2−ν) の直線(点線)。*
+
+[![接触円内のマーカー変位の大きさのヒストグラム(16 ビン)のエントロピー。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/05_tacslip_entropy_vs_Q_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/05_tacslip_entropy_vs_Q.png)
+
+*↑ 接触円内のマーカー変位の大きさのヒストグラム(16 ビン)のエントロピー。*
+
+[![第 2 真値: 有限要素の節点変位(ドーム状の有限厚ゲル、Robo-Touch/Taxim リポジトリ同梱、MIT)と半空間解。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/06_tacslip_fem_vs_halfspace_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/06_tacslip_fem_vs_halfspace.png)
+
+*↑ 第 2 真値: 有限要素の節点変位(ドーム状の有限厚ゲル、Robo-Touch/Taxim リポジトリ同梱、MIT)と半空間解。*
+
+```
+py -3.11 examples/poc_tacsim_marker_shear.py
+```
+
+ソース: [examples/poc_tacsim_marker_shear.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tacsim_marker_shear.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_tacsim_marker_shear)
+
+使用 op(ノートへ): [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`cerruti_kernel`](https://furuse.work/ops/drive/tacslip/cerruti_kernel.html) · [`cerruti_surface_displacement`](https://furuse.work/ops/drive/tacslip/cerruti_surface_displacement.html) · [`combined_modulus`](https://furuse.work/ops/drive/tacsim/combined_modulus.html) · [`displace_markers`](https://furuse.work/ops/drive/tacslip/displace_markers.html) · [`fem_nodes_load`](https://furuse.work/ops/drive/tacslip/fem_nodes_load.html) · [`fem_vs_halfspace`](https://furuse.work/ops/drive/tacslip/fem_vs_halfspace.html) · [`hertz_pressure`](https://furuse.work/ops/drive/tacsim/hertz_pressure.html) · [`hertz_sphere`](https://furuse.work/ops/drive/tacsim/hertz_sphere.html) · [`hertz_surface_ur`](https://furuse.work/ops/drive/tacslip/hertz_surface_ur.html) · [`hertzian_tangential_inner`](https://furuse.work/ops/drive/tacslip/hertzian_tangential_inner.html) · [`marker_detect`](https://furuse.work/ops/drive/tacslip/marker_detect.html) · [`marker_image`](https://furuse.work/ops/drive/tacslip/marker_image.html) · [`marker_track`](https://furuse.work/ops/drive/tacslip/marker_track.html) · [`membrane_indent_sphere`](https://furuse.work/ops/drive/tacsim/membrane_indent_sphere.html) · [`membrane_lights`](https://furuse.work/ops/drive/tacsim/membrane_lights.html) · [`membrane_markers`](https://furuse.work/ops/drive/tacslip/membrane_markers.html) · [`membrane_render_markers`](https://furuse.work/ops/drive/tacslip/membrane_render_markers.html) · [`membrane_render_rgb`](https://furuse.work/ops/drive/tacsim/membrane_render_rgb.html) · [`membrane_shear_field`](https://furuse.work/ops/drive/tacslip/membrane_shear_field.html) · [`mindlin_fit`](https://furuse.work/ops/drive/tacslip/mindlin_fit.html) · [`mindlin_model`](https://furuse.work/ops/drive/tacslip/mindlin_model.html) · [`mindlin_partial_slip`](https://furuse.work/ops/drive/tacslip/mindlin_partial_slip.html) · [`mindlin_traction`](https://furuse.work/ops/drive/tacslip/mindlin_traction.html) …(他 5)
 
 ## No.2026.142 —— その数字のうち、いくつが測り方のものか ―― ゲージ R&R と測定の不確かさ
 

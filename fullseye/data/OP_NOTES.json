@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2792,
- "n_notes": 2798,
+ "n_ops": 2812,
+ "n_notes": 2818,
  "notes": {
   "vol_dilate": [
    {
@@ -18790,6 +18790,206 @@
     "in": "normalmap × matrix",
     "out": "rgb",
     "path": "docs/ops/drive/tacsim/membrane_render_rgb.md"
+   }
+  ],
+  "cerruti_kernel": [
+   {
+    "op": "cerruti_kernel",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacslip/cerruti_kernel.md"
+   }
+  ],
+  "cerruti_surface_displacement": [
+   {
+    "op": "cerruti_surface_displacement",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "matrix × table",
+    "out": "table",
+    "path": "docs/ops/drive/tacslip/cerruti_surface_displacement.md"
+   }
+  ],
+  "displace_markers": [
+   {
+    "op": "displace_markers",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "matrix × matrix × matrix × scalar",
+    "out": "matrix",
+    "path": "docs/ops/drive/tacslip/displace_markers.md"
+   }
+  ],
+  "fem_nodes_load": [
+   {
+    "op": "fem_nodes_load",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "text × text",
+    "out": "table",
+    "path": "docs/ops/drive/tacslip/fem_nodes_load.md"
+   }
+  ],
+  "fem_vs_halfspace": [
+   {
+    "op": "fem_vs_halfspace",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/tacslip/fem_vs_halfspace.md"
+   }
+  ],
+  "hertz_surface_ur": [
+   {
+    "op": "hertz_surface_ur",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "matrix × scalar × scalar × scalar × scalar",
+    "out": "matrix",
+    "path": "docs/ops/drive/tacslip/hertz_surface_ur.md"
+   }
+  ],
+  "hertzian_tangential_inner": [
+   {
+    "op": "hertzian_tangential_inner",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "matrix × matrix × scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacslip/hertzian_tangential_inner.md"
+   }
+  ],
+  "marker_detect": [
+   {
+    "op": "marker_detect",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "image2d × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacslip/marker_detect.md"
+   }
+  ],
+  "marker_image": [
+   {
+    "op": "marker_image",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "rgb × rgb",
+    "out": "image2d",
+    "path": "docs/ops/drive/tacslip/marker_image.md"
+   }
+  ],
+  "marker_match_grow": [
+   {
+    "op": "marker_match_grow",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "matrix × matrix × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacslip/marker_match_grow.md"
+   }
+  ],
+  "marker_track": [
+   {
+    "op": "marker_track",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "image2d × image2d × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacslip/marker_track.md"
+   }
+  ],
+  "membrane_markers": [
+   {
+    "op": "membrane_markers",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "scalar × scalar",
+    "out": "matrix",
+    "path": "docs/ops/drive/tacslip/membrane_markers.md"
+   }
+  ],
+  "membrane_render_markers": [
+   {
+    "op": "membrane_render_markers",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "rgb × matrix × scalar × scalar",
+    "out": "rgb",
+    "path": "docs/ops/drive/tacslip/membrane_render_markers.md"
+   }
+  ],
+  "membrane_shear_field": [
+   {
+    "op": "membrane_shear_field",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "table × table × matrix × matrix × table",
+    "out": "table",
+    "path": "docs/ops/drive/tacslip/membrane_shear_field.md"
+   }
+  ],
+  "mindlin_fit": [
+   {
+    "op": "mindlin_fit",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "table × matrix × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/tacslip/mindlin_fit.md"
+   }
+  ],
+  "mindlin_model": [
+   {
+    "op": "mindlin_model",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "table × matrix × matrix × table × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacslip/mindlin_model.md"
+   }
+  ],
+  "mindlin_partial_slip": [
+   {
+    "op": "mindlin_partial_slip",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "scalar × table × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacslip/mindlin_partial_slip.md"
+   }
+  ],
+  "mindlin_traction": [
+   {
+    "op": "mindlin_traction",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "matrix × table",
+    "out": "matrix",
+    "path": "docs/ops/drive/tacslip/mindlin_traction.md"
+   }
+  ],
+  "slip_entropy": [
+   {
+    "op": "slip_entropy",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "signal",
+    "out": "scalar",
+    "path": "docs/ops/drive/tacslip/slip_entropy.md"
+   }
+  ],
+  "stick_radius_modelfree": [
+   {
+    "op": "stick_radius_modelfree",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "matrix × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/tacslip/stick_radius_modelfree.md"
    }
   ],
   "add_mesh_object": [

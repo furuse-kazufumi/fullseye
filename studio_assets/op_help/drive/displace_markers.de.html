@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">displace_markers — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × matrix × matrix × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.displace_markers(pts, fx, fy, pitch: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacslip; tacslip.displace_markers(pts, fx, fy, pitch: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;displace_markers&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>変位場 fx, fy (n, n) [m] でマーカー中心 (N, 2) [px] を移す(場は中心位置で双線形標本化、画素に換算して足す)。</p>
+<p><b>Raises</b> ValueError: pts が (N, 2) でない、fx と fy の形が違う、pitch ≤ 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacsim_marker_shear">poc_tacsim_marker_shear</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacsim_marker_shear.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">matrix</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:relative_motion">relative_motion</a> · <a style="color:#22d3bf" href="opdrive:foe_from_motion">foe_from_motion</a> · <a style="color:#22d3bf" href="opdrive:flow_from_depth_motion">flow_from_depth_motion</a> · <a style="color:#22d3bf" href="opdrive:ttc_truth">ttc_truth</a> · <a style="color:#22d3bf" href="opdrive:world_materials">world_materials</a> · <a style="color:#22d3bf" href="opdrive:mesh_signed_volume">mesh_signed_volume</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">tacslip</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:mindlin_partial_slip">mindlin_partial_slip</a> · <a style="color:#22d3bf" href="opdrive:mindlin_traction">mindlin_traction</a> · <a style="color:#22d3bf" href="opdrive:hertz_surface_ur">hertz_surface_ur</a> · <a style="color:#22d3bf" href="opdrive:hertzian_tangential_inner">hertzian_tangential_inner</a> · <a style="color:#22d3bf" href="opdrive:cerruti_kernel">cerruti_kernel</a> · <a style="color:#22d3bf" href="opdrive:cerruti_surface_displacement">cerruti_surface_displacement</a> · <a style="color:#22d3bf" href="opdrive:membrane_shear_field">membrane_shear_field</a> · <a style="color:#22d3bf" href="opdrive:membrane_markers">membrane_markers</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacslip.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

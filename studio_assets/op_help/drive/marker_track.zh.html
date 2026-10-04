@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">marker_track — DRIVE <code style="color:#22d3bf">tacslip</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d × scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.marker_track(m_ref, m_cur, dark: &#x27;float&#x27;, pitch_px: &#x27;float&#x27;, r_px: &#x27;float&#x27;, piv: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacslip; tacslip.marker_track(m_ref, m_cur, dark: &#x27;float&#x27;, pitch_px: &#x27;float&#x27;, r_px: &#x27;float&#x27;, piv: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;marker_track&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>基準・荷重後のマーカー像(:func:<code style="color:#22d3bf">marker_image</code>)から変位ベクトル場: 検出(:func:<code style="color:#22d3bf">marker_detect</code>、2 枚)→ 連続性で対応</p>
+<p>(:func:<code style="color:#22d3bf">marker_match_grow</code>)→ `<code style="color:#22d3bf">u</code><code style="color:#22d3bf"> = p1 − p0 [px]。返り </code><code style="color:#22d3bf">p0</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">p1</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">u</code><code style="color:#22d3bf">(各 (M, 2))、</code><code style="color:#22d3bf">matched</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n0</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n1</code>`。</p>
+<p>`<code style="color:#22d3bf">piv=True</code><code style="color:#22d3bf"> なら :func:</code>pivops.piv_cross_correlate<code style="color:#22d3bf"> の場(第 2 実装、探索 ±0.12 窓)を </code><code style="color:#22d3bf">piv_flow</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">piv_info</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">piv_at</code>`(点列で標本化する</p>
+<p>関数)として付ける。<b>Raises</b> ValueError: 2 枚の形が違う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacsim_marker_shear">poc_tacsim_marker_shear</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacsim_marker_shear.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">tacslip</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:mindlin_partial_slip">mindlin_partial_slip</a> · <a style="color:#22d3bf" href="opdrive:mindlin_traction">mindlin_traction</a> · <a style="color:#22d3bf" href="opdrive:hertz_surface_ur">hertz_surface_ur</a> · <a style="color:#22d3bf" href="opdrive:hertzian_tangential_inner">hertzian_tangential_inner</a> · <a style="color:#22d3bf" href="opdrive:cerruti_kernel">cerruti_kernel</a> · <a style="color:#22d3bf" href="opdrive:cerruti_surface_displacement">cerruti_surface_displacement</a> · <a style="color:#22d3bf" href="opdrive:membrane_shear_field">membrane_shear_field</a> · <a style="color:#22d3bf" href="opdrive:membrane_markers">membrane_markers</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacslip.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

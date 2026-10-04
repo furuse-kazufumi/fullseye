@@ -19,6 +19,7 @@
 追越しと見えない所(drivepass: 追越しに要る時間・道のりと対向車の境目の距離、ルームミラーに前車の全体が映って戻る車間、追越し禁止の区間と判定(28〜30 条)、追い越される側の義務(27 条)、進路変更先の後続車に要る減速度(26 条の 2)、環状交差点の優先と出口の 1 つ手前での合図(37 条の 2・53 条)、坂の頂上の視距(道路構造令の表を再現)と止まれる速さ、坂道の行き違い、カーブミラー(凸面鏡)の像の大きさ・距離と速さの見誤り・像の左右・道の上で映る範囲と死角)。
 柔らかい手首のペグ挿入(pegsim: Whitney の準静的幾何 —— 二点接触の深さ・くさび・かじり・面取りの許容 —— を門に、手首 RGB-D 1 枚から穴中心とペグ先端を 3-D で読む計測、真値つきの合成 RGB-D、MJCF。mujoco が要る場面・描画・接触・挿入は facade だけ)。
 視触覚センサ(tacsim: Hertz 接触の閉形式 —— 接触半径・押し込み・圧力・半空間の表面変位 —— を真値に、弾性膜を 3 色照明で撮った像を合成し、フォトメトリックステレオで法線 → 接触半径と力を逆算。スロープ分布への Hertz 模型の当てはめ・模型なしのリング・δ の 1D 積分の 3 経路)。
+マーカー配列のせん断(tacslip: Cattaneo–Mindlin の部分滑りを真値に、固着円・滑り環・接線力をマーカー追跡から逆算。接触円の外側は Cerruti 核の FFT 畳み込み、逆算は相似則で畳み込み 1 回。有限要素の節点変位で半空間が外れる半径を数に。マーカー中心の (N, 2) は matrix で運ぶ)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -63,6 +64,7 @@ import kendamaworld
 import lidarsim
 import pegsim
 import tacsim
+import tacslip
 import racket
 import roadjp
 import rsssafety
@@ -71,7 +73,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -640,6 +642,34 @@ _CATALOG = {
         ("contact_radius_ring", "tacsim", ["image2d", "scalar"], "table"),
         ("contact_radius_fit", "tacsim", ["normalmap", "matrix", "matrix", "scalar", "scalar"], "table"),
         ("membrane_delta_from_normals", "tacsim", ["normalmap", "matrix", "matrix", "scalar"], "scalar"),
+    ],
+    # 視触覚のマーカー配列 → せん断場・固着/滑り(2026-10-04、物理シミュ × Fullseye 系列 第 2 弾の第 2 本): 真値 = Cattaneo–Mindlin の部分滑り
+    # (Johnson 1985 §7.2: c/a = (1 − Q/μP)^{1/3}、q = q′ − q″、δx = 3μP(2−ν)/(16Ga)[1 − (1−Q/μP)^{2/3}]、kt = 8Ga/(2−ν))+ Hertz 形接線トラクションの
+    # 円内解(式 3.91)+ 法線荷重の半径変位(式 3.41b)+ Cerruti の点荷重解(式 3.22)、第 2 真値 = 有限要素の節点変位(有限厚ドーム、形だけ)。
+    # 自分で作ったのは接触円の外側の接線変位(閉形式なし)を画素平均の Cerruti 核で FFT 畳み込みすること、任意の固着半径の場を相似則
+    # g(x) − (c/a)²g(x·a/c) で出す逆算模型(畳み込み 1 回)、変位で中心を移してから描くマーカー像、縁から連続性で伸ばす対応(規則格子の
+    # エイリアス対策)、反復ガウス重みの重心(pixel-locking 対策)。被験者は blob2d / pivops / backends_subpix / tac_shear_field。全部 numpy + scipy。
+    "tacslip": [
+        ("mindlin_partial_slip", "tacslip", ["scalar", "table", "scalar", "scalar", "scalar"], "table"),
+        ("mindlin_traction", "tacslip", ["matrix", "table"], "matrix"),
+        ("hertz_surface_ur", "tacslip", ["matrix", "scalar", "scalar", "scalar", "scalar"], "matrix"),
+        ("hertzian_tangential_inner", "tacslip", ["matrix", "matrix", "scalar", "scalar", "scalar", "scalar"], "table"),
+        ("cerruti_kernel", "tacslip", ["scalar", "scalar", "scalar", "scalar"], "table"),
+        ("cerruti_surface_displacement", "tacslip", ["matrix", "table"], "table"),
+        ("membrane_shear_field", "tacslip", ["table", "table", "matrix", "matrix", "table"], "table"),
+        ("membrane_markers", "tacslip", ["scalar", "scalar"], "matrix"),
+        ("displace_markers", "tacslip", ["matrix", "matrix", "matrix", "scalar"], "matrix"),
+        ("membrane_render_markers", "tacslip", ["rgb", "matrix", "scalar", "scalar"], "rgb"),
+        ("marker_image", "tacslip", ["rgb", "rgb"], "image2d"),
+        ("marker_detect", "tacslip", ["image2d", "scalar", "scalar"], "table"),
+        ("marker_match_grow", "tacslip", ["matrix", "matrix", "scalar"], "table"),
+        ("marker_track", "tacslip", ["image2d", "image2d", "scalar", "scalar", "scalar"], "table"),
+        ("mindlin_model", "tacslip", ["table", "matrix", "matrix", "table", "scalar", "scalar"], "table"),
+        ("mindlin_fit", "tacslip", ["table", "matrix", "matrix"], "table"),
+        ("stick_radius_modelfree", "tacslip", ["matrix", "matrix"], "table"),
+        ("slip_entropy", "tacslip", ["signal"], "scalar"),
+        ("fem_nodes_load", "tacslip", ["text", "text"], "table"),
+        ("fem_vs_halfspace", "tacslip", ["table", "table"], "table"),
     ],
 }
 

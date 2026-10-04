@@ -3574,6 +3574,155 @@ def _b_tac_delta(pool, rng):
     return (f["rec"]["normals"], f["gh"]["X"], f["gh"]["Y"], f["gh"]["pitch"]), {"tail": str(rng.choice(["boussinesq", "none"]))}
 
 
+_FUZZ_SLIP = {}
+
+
+def _fuzz_slip():
+    """マーカー配列のせん断の小さな場面(球 R = 3 mm・P = 0.1 N → a = 0.95 mm、48 px・視野 6 mm = 6.3a、マーカー 4 px・Q/μP 0.5)を 1 回だけ作る(tacslip)。
+    有限要素の節点テキストは半空間の点荷重場を合成して一時ディレクトリに書く(repo の外のデータに依存しない)。"""
+    if "hz" not in _FUZZ_SLIP:
+        import os
+        import tempfile
+
+        import tacsim as TS
+        import tacslip as SL
+        E, nu, G = 0.2e6, 0.48, 0.2e6 / (2 * 1.48)
+        Es = TS.combined_modulus(E, nu)
+        hz = TS.hertz_sphere(0.1, 3.0e-3, Es)
+        n, fov = 48, 6.0e-3
+        X, Y, r, pitch = TS._grid(n, fov)
+        kern = SL.cerruti_kernel(n, pitch, G, nu)
+        mp = SL.mindlin_partial_slip(0.5 * 0.5 * 0.1, hz, 0.5, G, nu)
+        fld = SL.membrane_shear_field(hz, mp, X, Y, kern)
+        gh = TS.membrane_indent_sphere(hz, n, fov)
+        bg = TS.membrane_render_rgb(gh["normals"], TS.membrane_lights(55.0), ambient=0.03)
+        pts = SL.membrane_markers(n, 4.0)
+        p_ref = SL.displace_markers(pts, fld["urx"], fld["ury"], pitch)
+        p_cur = SL.displace_markers(pts, fld["urx"] + fld["ux"], fld["ury"] + fld["uy"], pitch)
+        m_ref = SL.marker_image(SL.membrane_render_markers(bg, p_ref, 1.5, 0.85), bg)
+        m_cur = SL.marker_image(SL.membrane_render_markers(bg, p_cur, 1.5, 0.85), bg)
+        tr = SL.marker_track(m_ref, m_cur, 0.85, 4.0, 1.5)
+        model = SL.mindlin_model(hz, X, Y, kern, G, nu)
+        tmp = tempfile.mkdtemp(prefix="fuzz_fem_")
+        rng = np.random.default_rng(3)
+        rr = np.sqrt(rng.uniform(0.05e-3 ** 2, 8e-3 ** 2, 1500)); th = rng.uniform(-np.pi, np.pi, 1500)
+        Xn, Yn, Zn = 0.03 + rr * np.cos(th), 0.035 + rr * np.sin(th), 0.05 + rr ** 2 / 0.06
+        dz = (1 - nu) * 0.02 / (2 * np.pi * G * rr)
+        dx = 0.02 / (4 * np.pi * G) * (2 * (1 - nu) + 2 * nu * np.cos(th) ** 2) / rr
+        dy = 0.02 / (4 * np.pi * G) * 2 * nu * np.cos(th) * np.sin(th) / rr
+        head = "Node Number\tX Location (m)\tY Location (m)\tZ Location (m)\tDirectional Deformation (m)\n"
+        for name, comps in (("dz_case", (0 * dz, 0 * dz, dz)), ("dxdz_case", (dx, dy, dz))):
+            for c, d in zip("xyz", comps):
+                with open(os.path.join(tmp, "%s_%s.txt" % (name, c)), "w", encoding="utf-8") as fh:
+                    fh.write(head)
+                    fh.writelines("%d\t%.6e\t%.6e\t%.6e\t%.6e\n" % (k + 1, Xn[k], Yn[k], Zn[k], d[k]) for k in range(len(rr)))
+        fz, fxz = SL.fem_nodes_load(tmp, "dz_case"), SL.fem_nodes_load(tmp, "dxdz_case")
+        _FUZZ_SLIP.update({"hz": hz, "G": G, "nu": nu, "X": X, "Y": Y, "r": r, "pitch": pitch, "kern": kern, "mp": mp, "fld": fld, "bg": bg,
+                           "pts": pts, "p_ref": p_ref, "p_cur": p_cur, "m_ref": m_ref, "m_cur": m_cur, "tr": tr, "model": model,
+                           "fem_dir": tmp, "fz": fz, "fxz": fxz})
+    return _FUZZ_SLIP
+
+
+def _b_slip_partial(pool, rng):
+    f = _fuzz_slip()
+    return (float(rng.uniform(0.0, 0.3)), f["hz"], 0.5, f["G"], f["nu"]), {}
+
+
+def _b_slip_traction(pool, rng):
+    f = _fuzz_slip()
+    return (f["r"], f["mp"]), {}
+
+
+def _b_slip_ur(pool, rng):
+    f = _fuzz_slip()
+    return (f["r"], f["hz"]["a"], f["hz"]["p0"], f["G"], f["nu"]), {}
+
+
+def _b_slip_inner(pool, rng):
+    f = _fuzz_slip()
+    return (f["X"], f["Y"], float(rng.uniform(1e3, 5e4)), f["hz"]["a"], f["G"], f["nu"]), {}
+
+
+def _b_slip_kernel(pool, rng):
+    f = _fuzz_slip()
+    return (int(rng.choice([16, 24, 32])), f["pitch"], f["G"], f["nu"]), {"sub": 2}
+
+
+def _b_slip_conv(pool, rng):
+    f = _fuzz_slip()
+    return (f["fld"]["q"] * float(rng.uniform(0.5, 2.0)), f["kern"]), {}
+
+
+def _b_slip_field(pool, rng):
+    f = _fuzz_slip()
+    return (f["hz"], f["mp"], f["X"], f["Y"], f["kern"]), {}
+
+
+def _b_slip_markers(pool, rng):
+    return (48, float(rng.uniform(3.0, 8.0))), {}
+
+
+def _b_slip_displace(pool, rng):
+    f = _fuzz_slip()
+    return (f["pts"], f["fld"]["ux"], f["fld"]["uy"], f["pitch"]), {}
+
+
+def _b_slip_render(pool, rng):
+    f = _fuzz_slip()
+    return (f["bg"], f["p_cur"], float(rng.uniform(1.0, 2.0)), float(rng.uniform(0.5, 0.95))), {}
+
+
+def _b_slip_image(pool, rng):
+    f = _fuzz_slip()
+    import tacslip as SL
+    return (SL.membrane_render_markers(f["bg"], f["p_ref"], 1.5, 0.85), f["bg"]), {}
+
+
+def _b_slip_detect(pool, rng):
+    f = _fuzz_slip()
+    return (f["m_ref"] if rng.uniform() < 0.5 else f["m_cur"], 0.85, 1.5), {}
+
+
+def _b_slip_match(pool, rng):
+    f = _fuzz_slip()
+    return (f["p_ref"], f["p_cur"], 4.0), {}
+
+
+def _b_slip_track(pool, rng):
+    f = _fuzz_slip()
+    return (f["m_ref"], f["m_cur"], 0.85, 4.0, 1.5), {}
+
+
+def _b_slip_model(pool, rng):
+    f = _fuzz_slip()
+    return (f["hz"], f["X"], f["Y"], f["kern"], f["G"], f["nu"]), {}
+
+
+def _b_slip_fit(pool, rng):
+    f = _fuzz_slip()
+    return (f["model"], f["tr"]["p0"], f["tr"]["u"] * f["pitch"]), {"n_coarse": 21, "n_fine": 9}
+
+
+def _b_slip_stick(pool, rng):
+    f = _fuzz_slip()
+    return (f["tr"]["p0"] - 23.5, f["tr"]["u"]), {}
+
+
+def _b_slip_entropy(pool, rng):
+    f = _fuzz_slip()
+    return (np.hypot(f["tr"]["u"][:, 0], f["tr"]["u"][:, 1]),), {"bins": int(rng.choice([8, 16]))}
+
+
+def _b_slip_fem_load(pool, rng):
+    f = _fuzz_slip()
+    return (f["fem_dir"], str(rng.choice(["dz_case", "dxdz_case"]))), {}
+
+
+def _b_slip_fem_cmp(pool, rng):
+    f = _fuzz_slip()
+    return (f["fz"], f["fxz"]), {}
+
+
 def _b_events_to_frames(pool, rng):
     import motionio
     return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
@@ -4484,6 +4633,13 @@ OP_ARG_BUILDERS = {
     "membrane_indent_shape": _b_tac_shape, "membrane_lights": _b_tac_lights, "membrane_render_rgb": _b_tac_render,
     "membrane_recover": _b_tac_recover, "contact_radius_ring": _b_tac_ring, "contact_radius_fit": _b_tac_fit,
     "membrane_delta_from_normals": _b_tac_delta,
+    "mindlin_partial_slip": _b_slip_partial, "mindlin_traction": _b_slip_traction, "hertz_surface_ur": _b_slip_ur,
+    "hertzian_tangential_inner": _b_slip_inner, "cerruti_kernel": _b_slip_kernel, "cerruti_surface_displacement": _b_slip_conv,
+    "membrane_shear_field": _b_slip_field, "membrane_markers": _b_slip_markers, "displace_markers": _b_slip_displace,
+    "membrane_render_markers": _b_slip_render, "marker_image": _b_slip_image, "marker_detect": _b_slip_detect,
+    "marker_match_grow": _b_slip_match, "marker_track": _b_slip_track, "mindlin_model": _b_slip_model, "mindlin_fit": _b_slip_fit,
+    "stick_radius_modelfree": _b_slip_stick, "slip_entropy": _b_slip_entropy, "fem_nodes_load": _b_slip_fem_load,
+    "fem_vs_halfspace": _b_slip_fem_cmp,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,
