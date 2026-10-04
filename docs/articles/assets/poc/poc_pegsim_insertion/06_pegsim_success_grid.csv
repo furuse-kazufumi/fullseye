@@ -1,0 +1,5 @@
+﻿ε₀ [mm],off θ₀=0.0°,off θ₀=1.5°,off θ₀=3.0°,on θ₀=0.0°,on θ₀=1.5°,on θ₀=3.0°
+0.0,ok,ok,ok,ok,ok,ok
+1.0,ok,ok,ok,ok,ok,ok
+2.0,fail,fail,fail,ok,ok,ok
+3.0,fail,fail,fail,ok,ok,ok

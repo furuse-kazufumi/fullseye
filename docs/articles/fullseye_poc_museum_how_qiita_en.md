@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**73 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**74 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1314,7 +1314,7 @@ Ops used (notes): [`moving_average_window`](https://furuse.work/ops/videostream/
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 11 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 12 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -1611,6 +1611,42 @@ Source: [examples/poc_driving_commonroad.py](https://github.com/furuse-kazufumi/
 This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_commonroad)
 
 Ops used (notes): [`boundary`](https://furuse.work/ops/2d/region/boundary.html) · [`cr_checker_result`](https://furuse.work/ops/drive/commonroad/cr_checker_result.html) · [`cr_collision`](https://furuse.work/ops/drive/commonroad/cr_collision.html) · [`cr_drive`](https://furuse.work/ops/drive/commonroad/cr_drive.html) · [`cr_drive_sweep`](https://furuse.work/ops/drive/commonroad/cr_drive_sweep.html) · [`cr_feasible`](https://furuse.work/ops/drive/commonroad/cr_feasible.html) · [`cr_read`](https://furuse.work/ops/drive/commonroad/cr_read.html) · [`cr_route`](https://furuse.work/ops/drive/commonroad/cr_route.html) · [`cr_solution_xml`](https://furuse.work/ops/drive/commonroad/cr_solution_xml.html) · [`cr_synthetic`](https://furuse.work/ops/drive/commonroad/cr_synthetic.html) · [`ks_step`](https://furuse.work/ops/drive/commonroad/ks_step.html)
+
+## No.2026.195 —— Peg-in-Hole with a Compliant Wrist — Whitney's Quasi-Static Geometry as the Gate, a Wrist Camera to Centre the Peg, MuJoCo Contacts to Check It
+
+[![Peg-in-Hole with a Compliant Wrist — Whitney's Quasi-Static Geometry as the Gate, a Wrist Camera to Centre the Peg, MuJoCo Contacts to Check It](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/03_pegsim_wrist_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/03_pegsim_wrist_overlay.png)
+
+*↑ **Peg-in-Hole with a Compliant Wrist — Whitney's Quasi-Static Geometry as the Gate, a Wrist Camera to Centre the Peg, MuJoCo Contacts to Check It** ―― The first exhibit of the physics-simulation × Fullseye series (the physics side of the rule 'home-made traps have a ceiling: bring in the truth, the gate or the subject from outside'). Two things come from outside. The theorem: Whitney 1982 (ASME J. Dyn. Sys. Meas. Control 104(1), DOI 10.1115/1.3149634; the paper itself is paywalled and was not read — the formulas are taken from the author's own MIT OCW 2.875 Class 3 slides: two-point contact depth l/d = c/θ, θ_m = √(2c), wedging if θ > c/μ, the jamming parallelogram with λ = l/(2rμ)). The contact physics: MuJoCo (contact points, normal forces, mj_geomDistance). No learning — only the rule measure → correct → descend → slow down on force. Three things are our own: the two-point depth made exact for a 3-D cylinder, l tan θ = 2R − r(cos θ + sec θ) (derived; l sin θ ≈ 2c_r to fourth order), a second implementation that predicts the number of contact points from the true pose by geometry alone, and a measurement that reads the hole centre (anti-aliased edge lifted onto the plate plane, then a circle fit) and the peg tip (known-radius cylinder on the depth points, the tip from the silhouette end matched against the projected rim circle) in 3-D from one wrist RGB-D frame. New module pegsim, 18 ops (plus 9 facade functions that need mujoco). Figures: wrist-camera overlay (green = truth, red = estimate, yellow = edge points, 3× inset), insertion GIF with correction, GIF of the peg sliding down the chamfer without correction, three theoretical l₂ curves with the MuJoCo measurements, the jamming diagram at l = 2 / 8 mm, and the success table. 23 gates: Whitney's quantities by hand (c = 0.0385, θ_m = 15.9°, chamfer tolerance 1.2 mm, c/μ = 7.35°), l₂ sin θ = 0.3977–0.3999 mm (2c_r = 0.400), the 2-D rectangle approximation is 0.52 mm off at 6° (counter-example), the second implementation switches from one to two points at l₂ ∓ 0.05 mm, PnP identity to 1e-9, the known-radius circle fit agrees with measure.fit_circle to 1e-9 on a full circle and has a median centre error of 0.15 px on a 25° arc (free fit 3.3 px), the synthetic RGB-D (analytic ray cast, no mujoco) gives the hole centre to 0.004 px and the offset to 0.0004 mm, and the image-plane ellipse centre is 0.80 px away from the projected circle centre (why we fit in 3-D). MuJoCo gates: the depth buffer under MSAA holds sample 0 at (−0.125, +0.375) px (pixel centre with offsamples=0); over 8 poses (|ε| ≤ 3 mm, |θ| ≤ 3°) the hole centre is within 0.18 px (free circle) / 0.045 px (drawing radius R + W), the offset within 0.024 / 0.010 mm, the tip's lateral error 0.003 px; l₂ measured by bisection on mj_geomDistance matches the closed form to 0.017–0.070 mm (1.5–6°) with l₂ sin θ = 0.396–0.398 mm; the contact state switches one-point / two-point at l₂ ∓ 0.3 mm; the insertion with ε = (2, 1) mm and θ = 2° succeeds and the first two-point tick has l sin θ = 0.400 mm; 7 servo iterations take the true offset from 2.24 to 0.03 mm; without correction ε₀ = 1 mm is pushed in by the chamfer; the grid ε₀ {0, 1, 2, 3} mm × θ₀ {0, 1.5, 3}° succeeds up to 1 mm without correction (2 mm and more stop at the mouth — the chamfer tolerance is 1.2 mm) and 12 / 12 with it. Honestly: the tip's axial position comes from the coverage of one silhouette pixel and is off by up to 0.50 px (the 0.3 px target is not met); the raw agreement between predicted and simulated contact counts is 0.69 (0.96 within ±1 — soft contacts flicker between 0/1 and 1/2 points); the wrist is a rigid body on springs with no actuator lag, flex or calibration error; wedging cannot occur at θ ≤ 3° with μ = 0.3 and was not provoked; the original paper was not read. Traps: MuJoCo's 4× MSAA depth is the depth at sample 0, not at the pixel centre (measured on a tilted plane; depth is rendered from a second compile with offsamples=0), the default 28 slices of a cylinder pull the radius 0.04 mm inwards (numslices=128), and the first 2-D rectangle approximation D = d/cos θ + l tan θ is 0.5 mm wrong at θ = 6°. Without mujoco the MuJoCo gates are skipped and the 12 numpy gates decide. 37 s.*
+
+[![傾き θ で二点接触が始まる深さ l₂(最狭部から)。3-D の円柱で厳密にした (1′) と小角の式 l₂ sin θ = 2c_r は重なり、2-D の長方形近似は θ = 6° で 0.5 mm 浅い。点は MuJoCo の mj_g](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/01_pegsim_two_point_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/01_pegsim_two_point_depth.png)
+
+*↑ The measurement ―― 傾き θ で二点接触が始まる深さ l₂(最狭部から)。3-D の円柱で厳密にした (1′) と小角の式 l₂ sin θ = 2c_r は重なり、2-D の長方形近似は θ = 6° で 0.5 mm 浅い。点は MuJoCo の mj_geomDistance の二分法で測った値(閉形式と 0.07 mm 以内)。1° では 22.9 mm と穴の深さ 20 mm を超え、二点接触は起きない。 (figure labels are in Japanese; the numbers are the same)*
+
+[![Whitney のかじりの図(OCW p.34): 二点接触中にペグが進むのは加える力の比がこの平行四辺形の内側にあるとき。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/02_pegsim_jamming_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/02_pegsim_jamming_diagram.png)
+
+*↑ Whitney のかじりの図(OCW p.34): 二点接触中にペグが進むのは加える力の比がこの平行四辺形の内側にあるとき。*
+
+[![初期横ずれ ε₀ × 傾き θ₀ の成功 / 失敗(各 1 走行、ずれの向きは 30°)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/06_pegsim_success_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/06_pegsim_success_grid.png)
+
+*↑ 初期横ずれ ε₀ × 傾き θ₀ の成功 / 失敗(各 1 走行、ずれの向きは 30°)。*
+
+[![補正ありの挿入(ε₀ = (2, 1) mm、θ₀ = 2°、側面カメラ、0.15 s ごと): サーボで穴の上に寄せ、下げ、一点 → 二点接触を経て 15 mm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/04_pegsim_insert_corrected.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/04_pegsim_insert_corrected.gif)
+
+*↑ The animation ―― 補正ありの挿入(ε₀ = (2, 1) mm、θ₀ = 2°、側面カメラ、0.15 s ごと): サーボで穴の上に寄せ、下げ、一点 → 二点接触を経て 15 mm。*
+
+[![補正なし(ε₀ = 1 mm < 面取りの許容 1.2 mm、θ₀ = 2°): 面取りが柔らかい手首を横へ押し、ペグが滑り込む。2 mm では入口で止まる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/05_pegsim_chamfer_slide_no_correction.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/05_pegsim_chamfer_slide_no_correction.gif)
+
+*↑ The animation ―― 補正なし(ε₀ = 1 mm < 面取りの許容 1.2 mm、θ₀ = 2°): 面取りが柔らかい手首を横へ押し、ペグが滑り込む。2 mm では入口で止まる。*
+
+```
+py -3.11 examples/poc_pegsim_insertion.py
+```
+
+Source: [examples/poc_pegsim_insertion.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pegsim_insertion.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pegsim_insertion)
+
+Ops used (notes): [`camera_world_to_cv`](https://furuse.work/ops/drive/pegsim/camera_world_to_cv.html) · [`chamfer_capture`](https://furuse.work/ops/drive/pegsim/chamfer_capture.html) · [`circle_fit_known_radius`](https://furuse.work/ops/drive/pegsim/circle_fit_known_radius.html) · [`contact_state_predict`](https://furuse.work/ops/drive/pegsim/contact_state_predict.html) · [`jamming_diagram`](https://furuse.work/ops/drive/pegsim/jamming_diagram.html) · [`peg_measure_overlay`](https://furuse.work/ops/drive/pegsim/peg_measure_overlay.html) · [`peg_offset_from_rgbd`](https://furuse.work/ops/drive/pegsim/peg_offset_from_rgbd.html) · [`peg_params`](https://furuse.work/ops/drive/pegsim/peg_params.html) · [`peg_scene_mjcf`](https://furuse.work/ops/drive/pegsim/peg_scene_mjcf.html) · [`peg_synthetic_rgbd`](https://furuse.work/ops/drive/pegsim/peg_synthetic_rgbd.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`two_point_depth`](https://furuse.work/ops/drive/pegsim/two_point_depth.html) · [`wedging_check`](https://furuse.work/ops/drive/pegsim/wedging_check.html) · [`whitney_clearance`](https://furuse.work/ops/drive/pegsim/whitney_clearance.html)
 
 ## No.2026.133 —— Where Is the Public Camera Looking — The Orientation of a Fixed Camera Whose Only Published Fact Is Its Position, from the Picture Itself
 

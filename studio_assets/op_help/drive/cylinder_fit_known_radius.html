@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cylinder_fit_known_radius — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cylinder_fit_known_radius(points, r: &#x27;float&#x27;, axis_point, axis, iters: &#x27;int&#x27; = 25) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsim; pegsim.cylinder_fit_known_radius(points, r: &#x27;float&#x27;, axis_point, axis, iters: &#x27;int&#x27; = 25) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;cylinder_fit_known_radius&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>半径 r が既知の円柱を 3-D 点群 (N, 3) に当てる: 軸上の点(軸に垂直な 2 自由度)と軸の向き(2 自由度)を Gauss-Newton で。</p>
+<p>初期値 `<code style="color:#22d3bf">axis_point</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">axis</code><code style="color:#22d3bf"> から出発し、残差 = 軸からの距離 − r。返り: </code><code style="color:#22d3bf">axis_point</code><code style="color:#22d3bf">(3,)、</code><code style="color:#22d3bf">axis</code>`(単位、入力の向きを保つ)、</p>
+<p>`<code style="color:#22d3bf">rms</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">。**Raises** </code><code style="color:#22d3bf">ValueError</code>`: 点が 5 未満、r ≤ 0、axis がゼロ。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">pegsim</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:peg_params">peg_params</a> · <a style="color:#22d3bf" href="opdrive:whitney_clearance">whitney_clearance</a> · <a style="color:#22d3bf" href="opdrive:two_point_depth">two_point_depth</a> · <a style="color:#22d3bf" href="opdrive:wedging_check">wedging_check</a> · <a style="color:#22d3bf" href="opdrive:jamming_diagram">jamming_diagram</a> · <a style="color:#22d3bf" href="opdrive:chamfer_capture">chamfer_capture</a> · <a style="color:#22d3bf" href="opdrive:contact_state_predict">contact_state_predict</a> · <a style="color:#22d3bf" href="opdrive:circle_fit_known_radius">circle_fit_known_radius</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegsim.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

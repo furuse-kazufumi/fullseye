@@ -3354,6 +3354,113 @@ def _b_tid_by_distortion(pool, rng):
     return (t["values"], t["index"]), {}
 
 
+_FUZZ_PEG = {}
+
+
+def _fuzz_peg():
+    """ペグ挿入の寸法と、真値つきの合成 RGB-D(pegsim.peg_synthetic_rgbd、解析的レイキャスト、mujoco 不要)を 1 回だけ作る。"""
+    if "syn" not in _FUZZ_PEG:
+        import pegsim as PS
+        kp = PS.peg_params()
+        syn = PS.peg_synthetic_rgbd(kp, (0.002, 0.001, 0.010), (0.0349, 0.0, 0.9994), width=240, height=180, supersample=2)
+        _FUZZ_PEG.update({"kp": kp, "syn": syn})
+    return _FUZZ_PEG
+
+
+def _b_peg_kp(pool, rng):
+    return (_fuzz_peg()["kp"],), {}
+
+
+def _b_peg_theta(pool, rng):
+    return (_fuzz_peg()["kp"], float(rng.uniform(0.01, 0.12))), {"model": str(rng.choice(["exact", "small_angle", "rectangle"]))}
+
+
+def _b_peg_wedge(pool, rng):
+    return (_fuzz_peg()["kp"], float(rng.uniform(0.0, 0.25))), {}
+
+
+def _b_peg_jam(pool, rng):
+    return (_fuzz_peg()["kp"], float(rng.uniform(0.0, 0.015))), {"fx_over_fz": float(rng.uniform(-4, 4)), "m_over_rfz": float(rng.uniform(-6, 6))}
+
+
+def _b_peg_eps(pool, rng):
+    return (_fuzz_peg()["kp"], float(rng.uniform(-3e-3, 3e-3))), {}
+
+
+def _b_peg_predict(pool, rng):
+    th = float(rng.uniform(0.0, 0.06))
+    tip = (float(rng.uniform(-3e-4, 3e-4)), float(rng.uniform(-3e-4, 3e-4)), -float(rng.uniform(0.0, 0.015)))
+    return (_fuzz_peg()["kp"], tip, (np.sin(th), 0.0, np.cos(th))), {}
+
+
+def _b_peg_circle(pool, rng):
+    ph = np.linspace(0.0, float(rng.uniform(0.6, 2 * np.pi)), 40)
+    pts = np.column_stack([50.0 + 30.0 * np.sin(ph), 60.0 + 30.0 * np.cos(ph)]) + rng.normal(0, 0.05, (40, 2))
+    return (pts, 30.0), {}
+
+
+def _b_peg_cyl(pool, rng):
+    a = np.array([float(rng.uniform(-0.1, 0.1)), 0.0, 1.0])
+    a /= np.linalg.norm(a)
+    e1 = np.cross(a, [0, 1.0, 0])
+    e1 /= np.linalg.norm(e1)
+    e2 = np.cross(a, e1)
+    t = np.linspace(0, 0.03, 10)
+    ph = np.linspace(-np.pi / 2, np.pi / 2, 12)
+    T, PH = np.meshgrid(t, ph, indexing="ij")
+    c = np.array([0.002, -0.001, 0.09])
+    P = c + T.ravel()[:, None] * a + 5e-3 * (np.cos(PH).ravel()[:, None] * e1 + np.sin(PH).ravel()[:, None] * e2)
+    return (P, 5e-3, c + rng.normal(0, 1e-4, 3), a + np.array([0.01, 0.0, 0.0])), {}
+
+
+def _b_peg_edge(pool, rng):
+    H, W, ss = 60, 70, 4
+    cy, cx, r = 30.0 + float(rng.uniform(-0.5, 0.5)), 35.0 + float(rng.uniform(-0.5, 0.5)), 18.0
+    yy, xx = np.mgrid[0:H * ss, 0:W * ss]
+    cov = ((((yy + 0.5) / ss - 0.5 - cy) ** 2 + ((xx + 0.5) / ss - 0.5 - cx) ** 2) <= r * r).reshape(H, ss, W, ss).mean(axis=(1, 3))
+    gray = 200.0 * (1 - cov) + 20.0 * cov
+    yi, xi = np.mgrid[0:H, 0:W]
+    d = np.hypot(yi - cy, xi - cx)
+    return (gray, d > r, d <= r), {}
+
+
+def _b_peg_rgbd(pool, rng):
+    s = _fuzz_peg()["syn"]
+    return (s["rgb"], s["depth"], s["K"]), {}
+
+
+def _b_peg_offset(pool, rng):
+    s = _fuzz_peg()["syn"]
+    return (s["rgb"], s["depth"], s["K"], s["R_cam_to_world"]), {}
+
+
+def _b_peg_overlay(pool, rng):
+    s = _fuzz_peg()["syn"]
+    uv = np.vstack([s["uv_tip"], s["uv_hole"]])
+    return (s["rgb"], uv, uv + rng.normal(0, 0.3, uv.shape)), {}
+
+
+def _b_peg_cam(pool, rng):
+    q, _ = np.linalg.qr(rng.normal(size=(3, 3)))
+    if np.linalg.det(q) < 0:
+        q[:, 0] = -q[:, 0]
+    return (q, rng.normal(size=3) * 0.1), {}
+
+
+def _b_peg_syn(pool, rng):
+    return (_fuzz_peg()["kp"],), {"tip_xyz": (float(rng.uniform(-2e-3, 2e-3)), 0.0, 0.01), "width": 64, "height": 48, "supersample": 1}
+
+
+def _b_peg_grid(pool, rng):
+    rows = [{"eps_mm": e, "tilt_deg": t, "correct": c, "success": bool(c or e <= 1.0)}
+            for c in (False, True) for e in (0.0, 1.0, 2.0) for t in (0.0, 2.0)]
+    return (rows,), {}
+
+
+def _b_peg_mjcf(pool, rng):
+    return (_fuzz_peg()["kp"],), {"lg": None if rng.uniform() < 0.5 else float(rng.uniform(0.0, 0.04)), "offsamples": int(rng.choice([0, 4]))}
+
+
 def _b_events_to_frames(pool, rng):
     import motionio
     return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
@@ -4253,6 +4360,12 @@ OP_ARG_BUILDERS = {
     "cr_synthetic": _b_cr_synthetic, "cr_read": _b_cr_read, "cr_route": _b_cr_route, "ks_step": _b_ks_step, "cr_drive": _b_cr_drive,
     "cr_drive_sweep": _b_cr_scene_arg, "cr_feasible": _b_cr_feasible, "cr_collision": _b_cr_scene_run, "cr_solution_xml": _b_cr_scene_run,
     "cr_checker_result": _b_cr_checker_result,
+    "peg_params": _b_course_none, "whitney_clearance": _b_peg_kp, "two_point_depth": _b_peg_theta, "wedging_check": _b_peg_wedge,
+    "jamming_diagram": _b_peg_jam, "chamfer_capture": _b_peg_eps, "contact_state_predict": _b_peg_predict,
+    "circle_fit_known_radius": _b_peg_circle, "cylinder_fit_known_radius": _b_peg_cyl, "coverage_edge_points": _b_peg_edge,
+    "hole_centre_from_rgbd": _b_peg_rgbd, "peg_tip_from_rgbd": _b_peg_rgbd, "peg_offset_from_rgbd": _b_peg_offset,
+    "peg_measure_overlay": _b_peg_overlay, "camera_world_to_cv": _b_peg_cam, "peg_synthetic_rgbd": _b_peg_syn,
+    "insertion_grid_summary": _b_peg_grid, "peg_scene_mjcf": _b_peg_mjcf,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

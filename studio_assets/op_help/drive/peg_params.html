@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">peg_params — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_params(r: &#x27;float&#x27; = 0.005, R: &#x27;float&#x27; = 0.0052, hole_depth: &#x27;float&#x27; = 0.02, chamfer: &#x27;float&#x27; = 0.001, chamfer_deg: &#x27;float&#x27; = 45.0, peg_length: &#x27;float&#x27; = 0.04, mu: &#x27;float&#x27; = 0.3, n_seg: &#x27;int&#x27; = 36, k_trans: &#x27;float&#x27; = 600.0, k_rot: &#x27;float&#x27; = 1.5, image_size=(640, 480), fovy_deg: &#x27;float&#x27; = 40.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsim; pegsim.peg_params(r: &#x27;float&#x27; = 0.005, R: &#x27;float&#x27; = 0.0052, hole_depth: &#x27;float&#x27; = 0.02, chamfer: &#x27;float&#x27; = 0.001, chamfer_deg: &#x27;float&#x27; = 45.0, peg_length: &#x27;float&#x27; = 0.04, mu: &#x27;float&#x27; = 0.3, n_seg: &#x27;int&#x27; = 36, k_trans: &#x27;float&#x27; = 600.0, k_rot: &#x27;float&#x27; = 1.5, image_size=(640, 480), fovy_deg: &#x27;float&#x27; = 40.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;peg_params&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>ペグと穴の寸法の表(m・rad): ペグ半径 r、穴半径 R、穴の深さ、面取りの幅と角、ペグ長、摩擦係数、手首剛性、手首カメラ。</p>
+<p>既定は試作の寸法: r = 5.0 mm、R = 5.2 mm(半径 clearance 0.2 mm、c = 0.0385)、深さ 20 mm、45° の面取り 1 mm、ペグ 40 mm、</p>
+<p>μ = 0.3(MuJoCo の滑り摩擦)。`<code style="color:#22d3bf">n_seg</code><code style="color:#22d3bf"> は穴の壁を近似する箱の数(MJCF)、</code><code style="color:#22d3bf">k_trans</code><code style="color:#22d3bf"> [N/m]・</code><code style="color:#22d3bf">k_rot</code>` [N m/rad] は</p>
+<p>手首(コンプライアント支持)の並進・回転剛性、`<code style="color:#22d3bf">image_size</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">fovy_deg</code>` は手首カメラ。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: r ≤ 0、R ≤ r、面取りが穴より深い、μ &lt; 0、面取り角が (0°, 90°) の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pegsim_insertion">poc_pegsim_insertion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pegsim_insertion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">pegsim</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:whitney_clearance">whitney_clearance</a> · <a style="color:#22d3bf" href="opdrive:two_point_depth">two_point_depth</a> · <a style="color:#22d3bf" href="opdrive:wedging_check">wedging_check</a> · <a style="color:#22d3bf" href="opdrive:jamming_diagram">jamming_diagram</a> · <a style="color:#22d3bf" href="opdrive:chamfer_capture">chamfer_capture</a> · <a style="color:#22d3bf" href="opdrive:contact_state_predict">contact_state_predict</a> · <a style="color:#22d3bf" href="opdrive:circle_fit_known_radius">circle_fit_known_radius</a> · <a style="color:#22d3bf" href="opdrive:cylinder_fit_known_radius">cylinder_fit_known_radius</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegsim.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

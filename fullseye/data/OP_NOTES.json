@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2753,
- "n_notes": 2759,
+ "n_ops": 2771,
+ "n_notes": 2777,
  "notes": {
   "vol_dilate": [
    {
@@ -18208,6 +18208,185 @@
     "in": "any",
     "out": "table",
     "path": "docs/ops/drive/pass/roundabout_signal_point.md"
+   }
+  ],
+  "camera_world_to_cv": [
+   {
+    "op": "camera_world_to_cv",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/drive/pegsim/camera_world_to_cv.md"
+   }
+  ],
+  "chamfer_capture": [
+   {
+    "op": "chamfer_capture",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pegsim/chamfer_capture.md"
+   }
+  ],
+  "circle_fit_known_radius": [
+   {
+    "op": "circle_fit_known_radius",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/drive/pegsim/circle_fit_known_radius.md"
+   }
+  ],
+  "contact_state_predict": [
+   {
+    "op": "contact_state_predict",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pegsim/contact_state_predict.md"
+   }
+  ],
+  "coverage_edge_points": [
+   {
+    "op": "coverage_edge_points",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "image2d × image2d × image2d",
+    "out": "matrix",
+    "path": "docs/ops/drive/pegsim/coverage_edge_points.md"
+   }
+  ],
+  "cylinder_fit_known_radius": [
+   {
+    "op": "cylinder_fit_known_radius",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "points",
+    "out": "table",
+    "path": "docs/ops/drive/pegsim/cylinder_fit_known_radius.md"
+   }
+  ],
+  "hole_centre_from_rgbd": [
+   {
+    "op": "hole_centre_from_rgbd",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "rgb × image2d × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/pegsim/hole_centre_from_rgbd.md"
+   }
+  ],
+  "insertion_grid_summary": [
+   {
+    "op": "insertion_grid_summary",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pegsim/insertion_grid_summary.md"
+   }
+  ],
+  "jamming_diagram": [
+   {
+    "op": "jamming_diagram",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pegsim/jamming_diagram.md"
+   }
+  ],
+  "peg_measure_overlay": [
+   {
+    "op": "peg_measure_overlay",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "rgb × matrix × matrix",
+    "out": "rgb",
+    "path": "docs/ops/drive/pegsim/peg_measure_overlay.md"
+   }
+  ],
+  "peg_offset_from_rgbd": [
+   {
+    "op": "peg_offset_from_rgbd",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "rgb × image2d × matrix × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/pegsim/peg_offset_from_rgbd.md"
+   }
+  ],
+  "peg_params": [
+   {
+    "op": "peg_params",
+    "dim": "drive",
+    "category": "pegsim",
+    "out": "table",
+    "path": "docs/ops/drive/pegsim/peg_params.md"
+   }
+  ],
+  "peg_scene_mjcf": [
+   {
+    "op": "peg_scene_mjcf",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/pegsim/peg_scene_mjcf.md"
+   }
+  ],
+  "peg_synthetic_rgbd": [
+   {
+    "op": "peg_synthetic_rgbd",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pegsim/peg_synthetic_rgbd.md"
+   }
+  ],
+  "peg_tip_from_rgbd": [
+   {
+    "op": "peg_tip_from_rgbd",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "rgb × image2d × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/pegsim/peg_tip_from_rgbd.md"
+   }
+  ],
+  "two_point_depth": [
+   {
+    "op": "two_point_depth",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "table",
+    "out": "scalar",
+    "path": "docs/ops/drive/pegsim/two_point_depth.md"
+   }
+  ],
+  "wedging_check": [
+   {
+    "op": "wedging_check",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pegsim/wedging_check.md"
+   }
+  ],
+  "whitney_clearance": [
+   {
+    "op": "whitney_clearance",
+    "dim": "drive",
+    "category": "pegsim",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pegsim/whitney_clearance.md"
    }
   ],
   "aim_velocity": [

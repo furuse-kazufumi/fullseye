@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">contact_state_predict — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_state_predict(kp, tip_xyz, axis, tol: &#x27;float&#x27; = 6e-05) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsim; pegsim.contact_state_predict(kp, tip_xyz, axis, tol: &#x27;float&#x27; = 6e-05) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;contact_state_predict&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>真のペグ姿勢(先端中心と軸の向き)から、接触点の数と場所を<b>幾何だけで</b>予測する(接触計算と独立な第 2 実装)。</p>
+<p>先端の縁の円(半径 r、水平投影は e₁ 方向 r・傾き方向 r cos θ の楕円)が穴の最狭部の円 R(面取り帯では高さに応じた円錐の半径)に</p>
+<p>届けば「tip」、胴の最狭部(z = −W)での水平断面(半径 r と r/cos θ の楕円)が R に届けば「mouth」。胴が面取りの円錐に触れる</p>
+<p>場所は tan θ &lt; 1 なら必ず最狭部の縁になる(円錐の半径は高さに 1 で増え、断面の中心は tan θ でしか動かない)。</p>
+<p>返り: `<code style="color:#22d3bf">n</code><code style="color:#22d3bf">(0/1/2)、</code><code style="color:#22d3bf">where</code><code style="color:#22d3bf">(&quot;none&quot; / &quot;chamfer&quot; / &quot;tip&quot; / &quot;mouth&quot; / &quot;tip+mouth&quot;)、</code><code style="color:#22d3bf">depth</code>`(口の面からの先端深さ、</p>
+<p>負なら空中)、`<code style="color:#22d3bf">depth_below_chamfer</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">tilt</code><code style="color:#22d3bf"> [rad]。</code><code style="color:#22d3bf">tol</code>` は「届いた」とみなす半径方向の余裕。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: axis がゼロ、tip_xyz の形が (3,) でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pegsim_insertion">poc_pegsim_insertion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pegsim_insertion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">pegsim</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:peg_params">peg_params</a> · <a style="color:#22d3bf" href="opdrive:whitney_clearance">whitney_clearance</a> · <a style="color:#22d3bf" href="opdrive:two_point_depth">two_point_depth</a> · <a style="color:#22d3bf" href="opdrive:wedging_check">wedging_check</a> · <a style="color:#22d3bf" href="opdrive:jamming_diagram">jamming_diagram</a> · <a style="color:#22d3bf" href="opdrive:chamfer_capture">chamfer_capture</a> · <a style="color:#22d3bf" href="opdrive:circle_fit_known_radius">circle_fit_known_radius</a> · <a style="color:#22d3bf" href="opdrive:cylinder_fit_known_radius">cylinder_fit_known_radius</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegsim.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

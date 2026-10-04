@@ -680,6 +680,10 @@ from motionio import read_bvh, read_events, events_to_frames  # noqa: E402,F401
 import drivehumanoid  # noqa: E402  (運転の世界を歩くヒューマノイド: 間引いたメッシュ + マスク付きの事前描画、2026-10-03)
 from drivehumanoid import (  # noqa: E402,F401
     humanoid_walk_clip, humanoid_clip_mesh, world_pose_humanoid, humanoid_impostors, world_camera_impostors)
+import pegsim  # noqa: E402  (柔らかい手首のペグ挿入: MuJoCo の場面・手首カメラ・接触状態・ルールベースの挿入。台帳は opsdrive "pegsim")
+from pegsim import (  # noqa: E402,F401
+    peg_scene_build, peg_set_pose, peg_wrist_render, peg_scene_close, peg_contact_state, peg_two_point_depth_sim, peg_depth_sample_offset, peg_insertion_run, peg_insertion_grid,
+)
 import kendamaworld  # noqa: E402  (けんの真値つき世界: けん + 大皿 + 糸のメッシュ、カメラの組、皿の投影の真値)
 from kendamaworld import (  # noqa: E402,F401
     ken_mesh, add_ken, ken_set_pose, string_mesh, add_string, string_set, kendama_world, kendama_rig, ken_truth,
@@ -1176,6 +1180,15 @@ __all__ = [
     "laplace_inverse_talbot",
     "laplace_inverse_func",
     "humanoid_walk_clip",
+    "peg_scene_build",
+    "peg_set_pose",
+    "peg_wrist_render",
+    "peg_scene_close",
+    "peg_contact_state",
+    "peg_two_point_depth_sim",
+    "peg_depth_sample_offset",
+    "peg_insertion_run",
+    "peg_insertion_grid",
     "hankel_image",
     "dct_transform",
     "wavelet_filters",

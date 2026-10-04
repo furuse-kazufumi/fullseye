@@ -7,6 +7,17 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**柔らかい手首のペグ挿入**(新モジュール `pegsim` 18 op + mujoco の facade 9、台帳 `pegsim`(opsdrive)、PoC `poc_pegsim_insertion`、wing_geometry):
+  物理シミュ × Fullseye 系列の第 1 弾。真値は 2 つの外から —— 定理 = Whitney 1982 の準静的幾何(原著は有料で未読、著者本人の MIT OCW 2.875
+  Class 3 スライドの式: 二点接触 l/d = c/θ、θ_m = √(2c)、くさび θ > c/μ、かじりの平行四辺形 λ = l/(2rμ))、接触 = MuJoCo。二点接触の深さは
+  3-D の円柱で厳密に l tan θ = 2R − r(cos θ + sec θ)(導出、l sin θ ≈ 2c_r が 4 次まで)、真の姿勢から接触点数を幾何だけで予測する第 2 実装、
+  手首 RGB-D 1 枚から穴中心(反エイリアスの縁 → 板の平面 → 円)とペグ先端(既知半径の円柱 + 影の端)を 3-D で読む計測、真値つきの合成 RGB-D
+  (解析的レイキャスト、mujoco 不要)。門 23 本: l₂ sin θ = 0.3977〜0.3999 mm、mj_geomDistance の l₂ は閉形式と 0.07 mm 以内、挿入の二点接触の
+  始まりで l sin θ = 0.400 mm(走行ごとに 0.4003〜0.4004)、8 姿勢で穴中心 0.18 px(自由な円)/ 0.045 px(治具の半径)・相対ずれ 0.024 / 0.010 mm、サーボ 7 回で 2.24 →
+  0.034 mm、格子は補正なし 1 mm まで(面取りの許容 1.2 mm)・補正あり 12 / 12。正直に: 先端の軸方向は 0.50 px(0.3 px 未達)、接触点数の
+  生の一致 0.69(±1 で 0.96)、剛体 + ばねの手首。踏んだ罠: MuJoCo の MSAA(offsamples=4)の depth は画素中心でなく**サンプル 0 の位置
+  (−0.125, +0.375) px** の深度(傾けた平面で実測 → depth は offsamples=0 で別コンパイル)、円柱の既定 28 スライスで半径が 0.04 mm 内側
+  (numslices=128)、2-D の長方形近似 D = d/cos θ + l tan θ は θ = 6° で 0.5 mm ずれる。
 - ★**公開の正解で画質指標を測る**(新モジュール `iqatid` 11 op、台帳 `iqa`(opsimgmetrics)、PoC `poc_iqa_tid2013`、wing_imaging): 真値を外から持ち込む画像側の
   第 1 弾。TID2013 の 3,000 枚 × 971 人の MOS と、作者が同梱した 14 指標の値・公表の順位相関表を門に。作者の輝度規約 = BT.601 limited-range の整数 Y′
   (実測で特定)、平均順位の Spearman と τ_b。Fullseye の PSNR(RGB)は作者の PSNRc と 4 桁一致、SSIM(Y′)は 0.000051、順位相関は公表 0.640 / 0.637 を

@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **73 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **74 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1314,7 +1314,7 @@ py -3.11 examples/poc_periodic_video_boundary.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 11 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 12 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -1611,6 +1611,42 @@ py -3.11 examples/poc_driving_commonroad.py
 この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_commonroad)
 
 使用 op(ノートへ): [`boundary`](https://furuse.work/ops/2d/region/boundary.html) · [`cr_checker_result`](https://furuse.work/ops/drive/commonroad/cr_checker_result.html) · [`cr_collision`](https://furuse.work/ops/drive/commonroad/cr_collision.html) · [`cr_drive`](https://furuse.work/ops/drive/commonroad/cr_drive.html) · [`cr_drive_sweep`](https://furuse.work/ops/drive/commonroad/cr_drive_sweep.html) · [`cr_feasible`](https://furuse.work/ops/drive/commonroad/cr_feasible.html) · [`cr_read`](https://furuse.work/ops/drive/commonroad/cr_read.html) · [`cr_route`](https://furuse.work/ops/drive/commonroad/cr_route.html) · [`cr_solution_xml`](https://furuse.work/ops/drive/commonroad/cr_solution_xml.html) · [`cr_synthetic`](https://furuse.work/ops/drive/commonroad/cr_synthetic.html) · [`ks_step`](https://furuse.work/ops/drive/commonroad/ks_step.html)
+
+## No.2026.195 —— 柔らかい手首のペグ挿入 ―― Whitney の準静的幾何を門に、手首カメラの計測で穴へ寄せ、MuJoCo の接触で確かめる
+
+[![柔らかい手首のペグ挿入 ―― Whitney の準静的幾何を門に、手首カメラの計測で穴へ寄せ、MuJoCo の接触で確かめる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/03_pegsim_wrist_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/03_pegsim_wrist_overlay.png)
+
+*↑ **柔らかい手首のペグ挿入 ―― Whitney の準静的幾何を門に、手首カメラの計測で穴へ寄せ、MuJoCo の接触で確かめる** ―― 物理シミュ × Fullseye 系列の第 1 弾(「自作の罠は限界: 真値・門・被験者の 1 つを外から」の物理側)。外から来るものは 2 つ。定理 = Whitney 1982(ASME J. Dyn. Sys. Meas. Control 104(1)、DOI 10.1115/1.3149634。原著は有料で未読、式は著者本人の MIT OCW 2.875 Class 3 スライドの本文から: 二点接触の深さ l/d = c/θ、θ_m = √(2c)、くさび θ > c/μ、かじりの平行四辺形 λ = l/(2rμ))。接触の物理 = MuJoCo(接触点・法線力・mj_geomDistance)。学習は使わず、計測 → 補正 → 下げる → 力で減速、のルールだけ。自分で作ったのは 3 つ: 3-D の円柱で厳密にした二点接触の深さ l tan θ = 2R − r(cos θ + sec θ)(導出、l sin θ ≈ 2c_r が 4 次まで正確)、真の姿勢から接触点数を幾何だけで予測する第 2 実装、手首 RGB-D 1 枚から穴中心(反エイリアスの縁を板の平面へ持ち上げて円を当てる)とペグ先端(depth の点群に既知半径の円柱、先端は影の端を投影した縁の円で合わせる)を 3-D で読む計測。新モジュール pegsim 18 op(+ mujoco が要る facade 9)。図は手首カメラの重ね図(緑 = 真値・赤 = 推定・黄 = 縁の点、右下に 3 倍拡大)、補正ありの挿入 GIF、補正なしで面取りを滑る GIF、l₂ の理論線 3 本と MuJoCo の実測点、かじりの図(l = 2 / 8 mm)、成功率の表。門 23 本: Whitney の量の手計算(c = 0.0385、θ_m = 15.9°、面取りの許容 1.2 mm、c/μ = 7.35°)、l₂ sin θ = 0.3977〜0.3999 mm(2c_r = 0.400)、2-D の長方形近似は 6° で 0.52 mm ずれる(反例)、第 2 実装が l₂ ∓ 0.05 mm で 1 点 / 2 点に切り替わる、PnP の恒等式 1e-9、既知半径の円当てはめは全周で measure.fit_circle と 1e-9・25° の弧では中央値 0.15 px(自由な当てはめ 3.3 px)、合成 RGB-D(解析的レイキャスト、mujoco 不要)で穴中心 0.004 px・相対ずれ 0.0004 mm、画像面の楕円の中心は円の中心の投影から 0.80 px ずれる(3-D で当てる理由)。MuJoCo の門: 深度バッファは MSAA でサンプル 0 の位置 (−0.125, +0.375) px(offsamples=0 なら画素中心)、8 姿勢(|ε| ≤ 3 mm、|θ| ≤ 3°)で穴中心 max 0.18 px(自由な円)/ 0.045 px(治具の図面の半径 R + W で当てる)・相対ずれ 0.024 / 0.010 mm・先端の横 0.003 px、mj_geomDistance の二分法で測った l₂ が閉形式と 0.017〜0.070 mm(1.5〜6°)で l₂ sin θ = 0.396〜0.398 mm、接触状態が l₂ ∓ 0.3 mm で一点 / 二点、ε = (2, 1) mm・θ = 2° の挿入が成功して二点接触の始まりで l sin θ = 0.400 mm、サーボ 7 回で真のずれ 2.24 → 0.03 mm、補正なし ε₀ = 1 mm は面取りが押して入る、格子 ε₀ {0, 1, 2, 3} mm × θ₀ {0, 1.5, 3}° は補正なし 1 mm まで(2 mm 以上は入口で止まる = 面取りの許容 1.2 mm)・補正あり 12 / 12。正直に: 先端の軸方向は影の端 1 画素の被覆率だけから読むので max 0.50 px(目標 0.3 px は未達)、接触点数の予測と接触計算の一致は生で 0.69(±1 で 0.96 —— 柔らかい接触は 0/1 点・1/2 点の間でちらつく)、剛体 + ばねの手首で実機の遅れ・たわみ・較正誤差は入れていない、くさびは θ ≤ 3°・μ = 0.3 では起きない領域で起こす実験はしていない、原著未読。踏んだ罠: MuJoCo の 4×MSAA の depth は画素中心でなくサンプル 0 の位置の深度(傾けた平面で実測、depth は offsamples=0 で別コンパイル)、円柱の既定 28 スライスで半径が 0.04 mm 内側(numslices=128)、最初に書いた 2-D の長方形近似 D = d/cos θ + l tan θ は θ = 6° で 0.5 mm 違う。mujoco が無ければ MuJoCo の門は [skip] で numpy の門 12 本だけ。37 s。*
+
+[![傾き θ で二点接触が始まる深さ l₂(最狭部から)。3-D の円柱で厳密にした (1′) と小角の式 l₂ sin θ = 2c_r は重なり、2-D の長方形近似は θ = 6° で 0.5 mm 浅い。点は MuJoCo の mj_g](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/01_pegsim_two_point_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/01_pegsim_two_point_depth.png)
+
+*↑ 測定の図 ―― 傾き θ で二点接触が始まる深さ l₂(最狭部から)。3-D の円柱で厳密にした (1′) と小角の式 l₂ sin θ = 2c_r は重なり、2-D の長方形近似は θ = 6° で 0.5 mm 浅い。点は MuJoCo の mj_geomDistance の二分法で測った値(閉形式と 0.07 mm 以内)。1° では 22.9 mm と穴の深さ 20 mm を超え、二点接触は起きない。*
+
+[![Whitney のかじりの図(OCW p.34): 二点接触中にペグが進むのは加える力の比がこの平行四辺形の内側にあるとき。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/02_pegsim_jamming_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/02_pegsim_jamming_diagram.png)
+
+*↑ Whitney のかじりの図(OCW p.34): 二点接触中にペグが進むのは加える力の比がこの平行四辺形の内側にあるとき。*
+
+[![初期横ずれ ε₀ × 傾き θ₀ の成功 / 失敗(各 1 走行、ずれの向きは 30°)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/06_pegsim_success_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/06_pegsim_success_grid.png)
+
+*↑ 初期横ずれ ε₀ × 傾き θ₀ の成功 / 失敗(各 1 走行、ずれの向きは 30°)。*
+
+[![補正ありの挿入(ε₀ = (2, 1) mm、θ₀ = 2°、側面カメラ、0.15 s ごと): サーボで穴の上に寄せ、下げ、一点 → 二点接触を経て 15 mm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/04_pegsim_insert_corrected.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/04_pegsim_insert_corrected.gif)
+
+*↑ 動く図 ―― 補正ありの挿入(ε₀ = (2, 1) mm、θ₀ = 2°、側面カメラ、0.15 s ごと): サーボで穴の上に寄せ、下げ、一点 → 二点接触を経て 15 mm。*
+
+[![補正なし(ε₀ = 1 mm < 面取りの許容 1.2 mm、θ₀ = 2°): 面取りが柔らかい手首を横へ押し、ペグが滑り込む。2 mm では入口で止まる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/05_pegsim_chamfer_slide_no_correction.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/05_pegsim_chamfer_slide_no_correction.gif)
+
+*↑ 動く図 ―― 補正なし(ε₀ = 1 mm < 面取りの許容 1.2 mm、θ₀ = 2°): 面取りが柔らかい手首を横へ押し、ペグが滑り込む。2 mm では入口で止まる。*
+
+```
+py -3.11 examples/poc_pegsim_insertion.py
+```
+
+ソース: [examples/poc_pegsim_insertion.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pegsim_insertion.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pegsim_insertion)
+
+使用 op(ノートへ): [`camera_world_to_cv`](https://furuse.work/ops/drive/pegsim/camera_world_to_cv.html) · [`chamfer_capture`](https://furuse.work/ops/drive/pegsim/chamfer_capture.html) · [`circle_fit_known_radius`](https://furuse.work/ops/drive/pegsim/circle_fit_known_radius.html) · [`contact_state_predict`](https://furuse.work/ops/drive/pegsim/contact_state_predict.html) · [`jamming_diagram`](https://furuse.work/ops/drive/pegsim/jamming_diagram.html) · [`peg_measure_overlay`](https://furuse.work/ops/drive/pegsim/peg_measure_overlay.html) · [`peg_offset_from_rgbd`](https://furuse.work/ops/drive/pegsim/peg_offset_from_rgbd.html) · [`peg_params`](https://furuse.work/ops/drive/pegsim/peg_params.html) · [`peg_scene_mjcf`](https://furuse.work/ops/drive/pegsim/peg_scene_mjcf.html) · [`peg_synthetic_rgbd`](https://furuse.work/ops/drive/pegsim/peg_synthetic_rgbd.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`two_point_depth`](https://furuse.work/ops/drive/pegsim/two_point_depth.html) · [`wedging_check`](https://furuse.work/ops/drive/pegsim/wedging_check.html) · [`whitney_clearance`](https://furuse.work/ops/drive/pegsim/whitney_clearance.html)
 
 ## No.2026.133 —— 公共カメラはどこを向いているか ―― 位置しか公開されない固定カメラの向きを、写真そのものから決める
 

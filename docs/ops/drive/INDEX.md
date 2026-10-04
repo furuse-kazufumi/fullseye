@@ -1,4 +1,4 @@
-# DRIVE operator help — 376 ops in 29 categories
+# DRIVE operator help — 394 ops in 30 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -87,6 +87,10 @@
 ### pass (17)
 
 [convex_mirror_image](pass/convex_mirror_image.md) · [convex_mirror_misjudge](pass/convex_mirror_misjudge.md) · [crest_safe_speed](pass/crest_safe_speed.md) · [crest_sight_distance](pass/crest_sight_distance.md) · [hill_meeting_yield](pass/hill_meeting_yield.md) · [lane_change_follower_decel](pass/lane_change_follower_decel.md) · [lane_change_permitted](pass/lane_change_permitted.md) · [mirror_image_side](pass/mirror_image_side.md) · [mirror_road_coverage](pass/mirror_road_coverage.md) · [no_overtaking_zones](pass/no_overtaking_zones.md) · [overtake_permitted](pass/overtake_permitted.md) · [overtake_requirement](pass/overtake_requirement.md) · [overtake_return_gap](pass/overtake_return_gap.md) · [overtaken_conduct_check](pass/overtaken_conduct_check.md) · [roundabout_entry_check](pass/roundabout_entry_check.md) · [roundabout_signal_check](pass/roundabout_signal_check.md) · [roundabout_signal_point](pass/roundabout_signal_point.md)
+
+### pegsim (18)
+
+[camera_world_to_cv](pegsim/camera_world_to_cv.md) · [chamfer_capture](pegsim/chamfer_capture.md) · [circle_fit_known_radius](pegsim/circle_fit_known_radius.md) · [contact_state_predict](pegsim/contact_state_predict.md) · [coverage_edge_points](pegsim/coverage_edge_points.md) · [cylinder_fit_known_radius](pegsim/cylinder_fit_known_radius.md) · [hole_centre_from_rgbd](pegsim/hole_centre_from_rgbd.md) · [insertion_grid_summary](pegsim/insertion_grid_summary.md) · [jamming_diagram](pegsim/jamming_diagram.md) · [peg_measure_overlay](pegsim/peg_measure_overlay.md) · [peg_offset_from_rgbd](pegsim/peg_offset_from_rgbd.md) · [peg_params](pegsim/peg_params.md) · [peg_scene_mjcf](pegsim/peg_scene_mjcf.md) · [peg_synthetic_rgbd](pegsim/peg_synthetic_rgbd.md) · [peg_tip_from_rgbd](pegsim/peg_tip_from_rgbd.md) · [two_point_depth](pegsim/two_point_depth.md) · [wedging_check](pegsim/wedging_check.md) · [whitney_clearance](pegsim/whitney_clearance.md)
 
 ### racket (10)
 

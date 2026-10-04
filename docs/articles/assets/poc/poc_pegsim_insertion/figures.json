@@ -1,0 +1,72 @@
+[
+ {
+  "file": "01_pegsim_two_point_depth.png",
+  "name": "pegsim_two_point_depth",
+  "caption": "傾き θ で二点接触が始まる深さ l₂(最狭部から)。3-D の円柱で厳密にした (1′) と小角の式 l₂ sin θ = 2c_r は重なり、2-D の長方形近似は θ = 6° で 0.5 mm 浅い。点は MuJoCo の mj_geomDistance の二分法で測った値(閉形式と 0.07 mm 以内)。1° では 22.9 mm と穴の深さ 20 mm を超え、二点接触は起きない。",
+  "shape": [
+   400,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "02_pegsim_jamming_diagram.png",
+  "name": "pegsim_jamming_diagram",
+  "caption": "Whitney のかじりの図(OCW p.34): 二点接触中にペグが進むのは加える力の比がこの平行四辺形の内側にあるとき。縦辺は F_x/F_z = ±1/μ、縦軸の切片は ±λ(λ = l/(2rμ))。深さ l が増えると縦に広がり、かじりにくくなる。",
+  "shape": [
+   480,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_pegsim_wrist_overlay.png",
+  "name": "pegsim_wrist_overlay",
+  "caption": "手首 RGB-D(640×480、半分に縮小)から読んだ穴中心とペグ先端。緑の大きな十字 = 真値、赤の小さな十字 = 推定、黄の点 = 円当てはめに使った反エイリアスの縁。右下は穴まわりの 3 倍拡大。サーボ 1 回で横ずれは半分になる。",
+  "shape": [
+   574,
+   670,
+   3
+  ]
+ },
+ {
+  "file": "04_pegsim_insert_corrected.gif",
+  "name": "pegsim_insert_corrected",
+  "caption": "補正ありの挿入(ε₀ = (2, 1) mm、θ₀ = 2°、側面カメラ、0.15 s ごと): サーボで穴の上に寄せ、下げ、一点 → 二点接触を経て 15 mm。",
+  "shape": [
+   240,
+   320,
+   3
+  ],
+  "animated": true,
+  "frames": 36,
+  "frames_written": 35,
+  "fps": 6.0
+ },
+ {
+  "file": "05_pegsim_chamfer_slide_no_correction.gif",
+  "name": "pegsim_chamfer_slide_no_correction",
+  "caption": "補正なし(ε₀ = 1 mm < 面取りの許容 1.2 mm、θ₀ = 2°): 面取りが柔らかい手首を横へ押し、ペグが滑り込む。2 mm では入口で止まる。",
+  "shape": [
+   240,
+   320,
+   3
+  ],
+  "animated": true,
+  "frames": 31,
+  "frames_written": 31,
+  "fps": 6.0
+ },
+ {
+  "file": "06_pegsim_success_grid.png",
+  "name": "pegsim_success_grid",
+  "caption": "初期横ずれ ε₀ × 傾き θ₀ の成功 / 失敗(各 1 走行、ずれの向きは 30°)。補正なしは面取りの許容 1.2 mm までしか救えず、手首カメラで補正すると 3 mm・3° まで全部入る。",
+  "shape": [
+   176,
+   606,
+   3
+  ],
+  "csv": "06_pegsim_success_grid.csv",
+  "tsv": "06_pegsim_success_grid.tsv"
+ }
+]

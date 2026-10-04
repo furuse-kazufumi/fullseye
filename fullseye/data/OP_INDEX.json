@@ -1,8 +1,8 @@
 {
- "n_ops": 2753,
+ "n_ops": 2771,
  "tiers": {
   "color": 12,
-  "ledger": 1800,
+  "ledger": 1818,
   "nary": 17,
   "registry": 924
  },
@@ -2463,6 +2463,19 @@
    ]
   },
   {
+   "name": "camera_world_to_cv",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
    "name": "canny3d",
    "halcon": "",
    "in_sort": "voxel",
@@ -2860,6 +2873,19 @@
    ]
   },
   {
+   "name": "chamfer_capture",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "chamfer_distance",
    "halcon": "",
    "in_sort": "points",
@@ -3027,6 +3053,19 @@
    "dim": "optics",
    "in_sorts": [
     "signal"
+   ]
+  },
+  {
+   "name": "circle_fit_known_radius",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix"
    ]
   },
   {
@@ -3339,6 +3378,19 @@
    "in_sort": "table",
    "out_sort": "signal",
    "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "contact_state_predict",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegsim",
    "tier": "ledger",
    "ledger": "opsdrive",
    "dim": "drive",
@@ -3718,6 +3770,21 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "coverage_edge_points",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "matrix",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "image2d",
+    "image2d"
+   ]
   },
   {
    "name": "covers_sensor",
@@ -4478,6 +4545,19 @@
    "tier": "ledger",
    "ledger": "ops3d",
    "dim": "3d",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
+   "name": "cylinder_fit_known_radius",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
    "in_sorts": [
     "points"
    ]
@@ -8845,6 +8925,21 @@
    ]
   },
   {
+   "name": "hole_centre_from_rgbd",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "table",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "image2d",
+    "matrix"
+   ]
+  },
+  {
    "name": "hole_detect",
    "halcon": "",
    "in_sort": "image2d",
@@ -9334,6 +9429,19 @@
    ]
   },
   {
+   "name": "insertion_grid_summary",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "inside_outside",
    "halcon": "",
    "in_sort": "points",
@@ -9614,6 +9722,19 @@
    "tier": "ledger",
    "ledger": "opsacoustics",
    "dim": "acoustics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "jamming_diagram",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
    "in_sorts": [
     "table"
    ]
@@ -13869,6 +13990,89 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "peg_measure_overlay",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "rgb",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
+   "name": "peg_offset_from_rgbd",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "table",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "image2d",
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
+   "name": "peg_params",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "peg_scene_mjcf",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "peg_synthetic_rgbd",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "peg_tip_from_rgbd",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "table",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "image2d",
+    "matrix"
+   ]
   },
   {
    "name": "pendulum_launch_speed",
@@ -21575,6 +21779,19 @@
    ]
   },
   {
+   "name": "two_point_depth",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "ula_snapshots",
    "halcon": "",
    "in_sort": "signal",
@@ -23286,6 +23503,19 @@
    "in_sorts": []
   },
   {
+   "name": "wedging_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "weighting_response",
    "halcon": "",
    "in_sort": "signal",
@@ -23309,6 +23539,19 @@
    "dim": "optics",
    "in_sorts": [
     "rgbimage"
+   ]
+  },
+  {
+   "name": "whitney_clearance",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
